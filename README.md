@@ -1,0 +1,87 @@
+# MOSH LAB 👁️
+
+MLow's glitch instrument. A PhotoMosh style effect rack rebuilt from scratch as a native desktop app: 48 stackable WebGL effects, seeded randomness, loop perfect GIF export, MP4 and WebM capture, webcam and video input, and the full MLOW x Blossom identity baked in.
+
+Every animation in the engine is periodic, so a GIF's last frame hands off to the first with no seam. Every random decision flows from the seed field, so any look is reproducible forever.
+
+## Run it
+
+```bash
+npm install
+npm start
+```
+
+No build step. The app is plain HTML, CSS, and JavaScript inside `app/`; Electron just gives it a window, a menu, and a Dock icon. You can also open `app/index.html` directly in any Chromium browser and everything works.
+
+## Build a distributable
+
+```bash
+npm run dist        # macOS dmg (Apple Silicon)
+npm run dist:win    # Windows installer
+npm run dist:linux  # Linux AppImage
+```
+
+Output lands in `dist/`. Unsigned by default; set the usual electron-builder signing env vars if you want notarization.
+
+## The rack
+
+48 effects in five stages. The chain runs top to bottom and every effect can be reordered, locked, and tuned.
+
+- **Geometry**: kaleido, mirror, bulge/pinch, swirl, tile, wave warp, ripple scan, wobble
+- **Break**: pixelate, LED wall, slices, glitch blocks, datamosh, melt, JPEG crush, crystals, interlace
+- **Texture**: RGB shift, bad TV, VHS, noise, ghost trails, glow, blur, sharpen, oil paint
+- **Color**: hue/levels, dither lab, posterize, halftone, edges, duotone, heatmap, prism, invert, solarize, deep fry, strobe
+- **Finish**: scanlines, CRT, vignette, code overlay, ASCII, emoji mosaic, emoji rain, petal storm, blossom stamp, cam HUD
+
+### Dither Lab 🧮
+
+Eight threshold algorithms (Bayer 2x2 / 4x4 / 8x8, interleaved gradient noise, white noise, halftone dot, diagonal lines, checker) crossed with seven palettes (gray levels, 1 bit, Game Boy, 8 bit RGB, Blossom brand, print CMY, original color). GIF export additionally runs Floyd Steinberg error diffusion over a median cut palette.
+
+### Mosh buttons
+
+- **MOSH 🎛️** picks 2 to 5 unlocked effects with art directed parameter ranges and orders them sanely.
+- **HYPER 🌀** picks 4 to 8 and opens every parameter to its full range.
+- **AUTO ♻️** re-rolls on its own every N loops. Point it at the webcam and let it run.
+- **🔒** on any effect protects it from all three.
+- **↩️** restores the chain from before the last roll.
+
+### Export
+
+- **GIF**: one perfect loop, custom encoder, global palette, dithered.
+- **MP4 / WebM**: records N loops of live playback at 30 fps.
+- **PNG**: current frame at export resolution.
+- **Batch GIF**: the same chain across every loaded image, one file each.
+
+### Sources
+
+Images (load a whole folder), video files, or the webcam. The chain does not care what it is fed.
+
+### Settings
+
+Everything autosaves as you work and comes back on launch. SAVE ALL exports a portable settings file; presets save individually and travel as JSON.
+
+## Secrets 🤫
+
+The eye is watching. A few things worth typing, clicking, or entering as a seed. One of them is a number that matters.
+
+## Structure
+
+```
+moshlab/
+  main.js              Electron shell
+  app/
+    index.html         layout and brand skin
+    effects.js         the 48 GLSL effect definitions
+    overlays.js        canvas drawn layers and the preset bank
+    app.js             engine, UI, export, persistence
+    brand-assets.js    MLOW logo, eye, and the 7 Blossom icons as data URIs
+  build/               app icons
+```
+
+Adding an effect is one entry in `effects.js`: an id, a stage, a param schema, and a fragment shader. The UI, randomizer, presets, and persistence pick it up automatically.
+
+## Brand
+
+Identity follows the MLow brand system: Ink Black ground, Evil Eye Blue and Shock Pink accents, Georgia display type over Consolas labels, the evil eye as the sovereign mark and the Blossom icons as the community mark.
+
+Built by MLOW with Claude. MIT license.

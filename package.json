@@ -1,0 +1,32 @@
+{
+  "name": "moshlab",
+  "productName": "MOSH LAB",
+  "version": "2.0.0",
+  "description": "MLow's glitch instrument. A PhotoMosh style effect rack rebuilt as a native app: 46 stackable WebGL effects, seeded randomness, loop perfect GIF export, MP4 and WebM capture, webcam and video input.",
+  "author": "MLOW",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "nyc.mlow.moshlab",
+    "productName": "MOSH LAB",
+    "files": ["main.js", "app/**/*"],
+    "directories": { "buildResources": "build", "output": "dist" },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.graphics-design",
+      "target": [{ "target": "dmg", "arch": ["arm64"] }]
+    },
+    "win": { "icon": "build/icon.png", "target": ["nsis"] },
+    "linux": { "icon": "build/icon.png", "target": ["AppImage"] }
+  }
+}
