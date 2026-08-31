@@ -44,8 +44,9 @@ for(const line of lines){
   const r = JSON.parse(line);
   const gifFile = encodeURIComponent(path.basename(r.gif));
   const treatment = (r.chain||[]).map(c=>FX_LABEL[c.id]||c.id).join(' + ');
+  const article = /^[AEIOUX]/i.test(r.familyName) ? 'an' : 'a';
   const description =
-    `${r.name} returns as a ${r.familyName} glitch edition, moshed through MOSH LAB and gifted to the holder of the original. ${r.tag}`;
+    `${r.name} returns as ${article} ${r.familyName} glitch edition, moshed through MOSH LAB and gifted to the holder of the original. ${r.tag}`;
   const meta = {
     name: `${r.name} · ${r.familyName}`,
     description,
