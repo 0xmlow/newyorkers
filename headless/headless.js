@@ -19,6 +19,89 @@ function hexToRgb(h){const n=parseInt(h.slice(1),16);return[((n>>16)&255)/255,((
 
 const blossomImgs = BRAND.blossoms.map(src=>{ const i=new Image(); i.src=src; return i; });
 
+/* hi res brand marks from the Blossom Design System, used by the brandhaunt pass */
+const HDIR = require('path').dirname(decodeURIComponent(location.pathname));
+function assetImg(f){ const i=new Image(); i.src='file://'+encodeURI(HDIR+'/assets/'+f).replace(/#/g,'%23'); return i; }
+const MARKS = {
+  eye: [assetImg('MLOW-logo-white-transp-1500.png')],
+  blossoms: [1,2,3,4,5,6,7].map(n=>assetImg('Blossom Icons-0'+n+'.png')),
+};
+
+/* brandhaunt: glitched MLOW logos + blossom icons haunting the frame.
+   Drawer scatters marks and slice displaces the layer; the shader adds
+   band jitter and RGB split, and the arc envelope gates p_amt so marks
+   flash hardest at peak corruption. Headless only, injected before compile. */
+EFFECTS.push({id:'brandhaunt', name:'BRAND HAUNT', stage:5, ovDraw:'brandhaunt', params:[
+  {k:'dens', min:0, max:1, step:0.01, def:0.3},
+  {k:'size', min:0.05, max:0.6, step:0.01, def:0.2},
+  {k:'split', min:0, max:0.03, step:0.001, def:0.008},
+  {k:'jit', min:0, max:0.15, step:0.001, def:0.03},
+  {k:'amt', min:0, max:1, step:0.01, def:0.8},
+  {k:'spd', min:1, max:30, step:1, def:6, int:true},
+  {k:'mode', type:'select', options:['mix','eyes','blossoms'], def:0},
+], frag:`
+uniform float p_dens, p_size, p_split, p_jit, p_amt, p_spd, p_mode;
+void main(){
+  vec2 uv = v_uv;
+  float band = floor(uv.y*28.0);
+  float off = (h2(vec2(band, floor(u_t*p_spd)))-0.5)*p_jit;
+  vec2 u2 = clamp(uv + vec2(off, 0.0), 0.0, 1.0);
+  vec4 a = texture2D(u_ov, clamp(u2+vec2(p_split,0.0), 0.0, 1.0));
+  vec4 b = texture2D(u_ov, u2);
+  vec4 c2 = texture2D(u_ov, clamp(u2-vec2(p_split,0.0), 0.0, 1.0));
+  vec3 mark = vec3(a.r, b.g, c2.b);
+  float alpha = max(max(a.a, b.a), c2.a)*p_amt;
+  vec3 base = texture2D(u_tex, v_uv).rgb;
+  gl_FragColor = vec4(mix(base, mark, alpha), 1.0);
+}`});
+/* blossom icons ship as black shapes; tint them so they glow on night art */
+const TINT_COLORS = ['#FFFFFF','#FFFFFF','#FFFFFF','#00E5FF','#FF2E63','#2962FF','#D7FF1F'];
+const tintCache = new Map();
+function tinted(img, color){
+  const key = img.src + color;
+  let c = tintCache.get(key);
+  if(!c){
+    c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const x = c.getContext('2d');
+    x.drawImage(img, 0, 0);
+    x.globalCompositeOperation = 'source-in';
+    x.fillStyle = color;
+    x.fillRect(0, 0, c.width, c.height);
+    tintCache.set(key, c);
+  }
+  return c;
+}
+OVERLAY_DRAWERS.brandhaunt = function(ctx, w, h, step, e, env){
+  ctx.clearRect(0,0,w,h);
+  const rng = env.rng(9107 ^ ((step<0?0:step)*97));
+  const n = Math.round(2 + e.params.dens*12);
+  const mode = Math.round(e.params.mode);
+  for(let i=0;i<n;i++){
+    const useEye = mode===1 || (mode===0 && rng()<0.35);
+    const pool = useEye ? MARKS.eye : MARKS.blossoms;
+    let img = pool[Math.floor(rng()*pool.length)];
+    if(!img.complete || !img.naturalWidth) continue;
+    if(!useEye) img = tinted(img, TINT_COLORS[Math.floor(rng()*TINT_COLORS.length)]);
+    const s = (0.35+rng()*0.9) * e.params.size * Math.min(w,h);
+    const x = rng()*w, y = rng()*h;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate((rng()-0.5)*0.9);
+    ctx.globalAlpha = 0.55 + rng()*0.45;
+    const ar = img.height ? (img.naturalHeight||img.height)/Math.max(1,(img.naturalWidth||img.width)) : 1;
+    ctx.drawImage(img, -s/2, -s*ar/2, s, s*ar);
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+  const slices = 3 + Math.floor(rng()*6);
+  for(let i=0;i<slices;i++){
+    const y = Math.floor(rng()*h), bh = 2 + Math.floor(rng()*Math.max(2, h*0.03));
+    const dx = Math.round((rng()-0.5)*w*0.12);
+    ctx.drawImage(ctx.canvas, 0, y, w, bh, dx, y, w, bh);
+  }
+};
+
 /* ---------- gl ---------- */
 const canvas = document.getElementById('gl');
 const gl = canvas.getContext('webgl2', {preserveDrawingBuffer:true}) || canvas.getContext('webgl', {preserveDrawingBuffer:true});
@@ -323,14 +406,16 @@ function encodeGIF(w, h, indexedFrames, palette, delayCs){
   put(0x3B);
   return new Uint8Array(out);
 }
-function quantizeFrames(frames, w, h){
+function quantizeFrames(frames, w, h, maxColors){
   const samples = [];
   const stride = Math.max(1, Math.floor((frames.length*w*h)/50000));
   for(let f=0; f<frames.length; f++){
     const d = frames[f];
     for(let i=f%stride; i<w*h; i+=stride) samples.push([d[i*4], d[i*4+1], d[i*4+2]]);
   }
-  const palette = medianCut(samples, 255);
+  const used = Math.max(8, Math.min(255, maxColors || 255));
+  const palette = medianCut(samples, used);
+  const nUsed = palette.length;
   while(palette.length<256) palette.push([0,0,0]);
   const cache = new Map();
   function nearest(r,g,b){
@@ -338,7 +423,7 @@ function quantizeFrames(frames, w, h){
     let idx = cache.get(key);
     if(idx !== undefined) return idx;
     let bd = 1e9;
-    for(let i=0;i<255;i++){
+    for(let i=0;i<nUsed;i++){
       const p = palette[i];
       const d = (r-p[0])*(r-p[0]) + (g-p[1])*(g-p[1])*1.5 + (b-p[2])*(b-p[2]);
       if(d < bd){ bd=d; idx=i; }
@@ -379,10 +464,11 @@ function quantizeFrames(frames, w, h){
 
 function captureLoopFrames(w, h, frames){
   refreshSample();
-  for(let k=0; k<frames*2; k++) render(k/frames % 1);
+  for(let k=0; k<frames*2; k++){ const ph = k/frames % 1; setPhaseParams(ph); render(ph); }
   const out = [];
   const buf = new Uint8Array(w*h*4);
   for(let k=0; k<frames; k++){
+    setPhaseParams(k/frames);
     render(k/frames);
     gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     const flip = new Uint8ClampedArray(w*h*4);
@@ -390,6 +476,22 @@ function captureLoopFrames(w, h, frames){
     out.push(flip);
   }
   return out;
+}
+
+/* ---------- escalation arc ----------
+   The house treatment: the loop opens legible, corruption escalates to a
+   mid loop collapse, then melts back clean so the loop lands seamless.
+   Params written as {a, b} in a family ride this envelope every frame. */
+let arcSpecs = [];
+let arcCurve = ph => 0;
+function sstep(e0, e1, x){ const t = Math.max(0, Math.min(1, (x-e0)/(e1-e0))); return t*t*(3-2*t); }
+function makeArc(kind, pow){
+  if(kind === 'ramp') return ph => Math.pow(Math.min(1, ph/0.82), pow) * (1 - sstep(0.9, 1, ph));
+  return ph => Math.pow(0.5 - 0.5*Math.cos(TAU*ph), pow);   /* burst */
+}
+function setPhaseParams(ph){
+  const v = arcCurve(ph);
+  for(const s of arcSpecs) s.e.params[s.k] = +(s.a + (s.b - s.a)*v).toFixed(4);
 }
 
 /* ---------- recipe engine ---------- */
@@ -413,19 +515,53 @@ function applyRecipe(seed, forceFamily){
   const family = FAMILIES.find(f=>f.key===forceFamily) || FAMILIES[Math.floor(rng()*FAMILIES.length)];
   resetChain();
   state.seed = seed;
-  state.loopSec = family.loop;
+  arcSpecs = [];
+  const range = v => Array.isArray(v) ? v[0] + rng()*(v[1]-v[0]) : v;
+  const frames = Math.round(range(family.frames || 20));
+  const delayCs = Math.round(range(family.delayCs || 8));
+  const maxColors = Math.round(range(family.maxColors || [160, 220]));
+  const arcPow = +range(family.arcPow || [1.6, 3.2]).toFixed(3);
+  arcCurve = makeArc(family.arc || 'burst', arcPow);
+  state.loopSec = frames*delayCs/100;
+
   const order = [];
-  for(const [id, params] of family.fx){
+  function applyFx(id, params){
     const e = state.chain.find(x=>x.id===id);
-    if(!e) continue;
+    if(!e) return null;
     const def = fxDef(id);
     e.on = true;
     for(const p of def.params){
-      const base = (params[p.k] !== undefined) ? params[p.k] : p.def;
-      e.params[p.k] = (params[p.k] !== undefined) ? jitterParam(p, base, rng) : base;
+      const spec = params[p.k];
+      if(spec === undefined) continue;
+      if(spec && typeof spec === 'object' && 'pick' in spec){
+        e.params[p.k] = spec.pick[Math.floor(rng()*spec.pick.length)];
+      } else if(spec && typeof spec === 'object' && 'a' in spec){
+        const a = jitterParam(p, spec.a, rng), b = jitterParam(p, spec.b, rng);
+        arcSpecs.push({e, k:p.k, a, b});
+        e.params[p.k] = a;
+      } else {
+        e.params[p.k] = jitterParam(p, spec, rng);
+      }
     }
     order.push(e);
+    return e;
   }
+  for(const [id, params] of family.fx) applyFx(id, params);
+
+  /* every piece is haunted by the brand unless the family styles it itself */
+  let brandMode = null;
+  if(!order.some(e=>e.id==='brandhaunt')){
+    const e = applyFx('brandhaunt', {
+      dens: {a:0.06, b:0.55}, size: 0.16, split: 0.006,
+      jit: {a:0.004, b:0.05}, amt: {a:0, b:0.85}, spd: 6,
+      mode: {pick:[0,0,0,1,2]},
+    });
+    if(e) brandMode = ['mix','eyes','blossoms'][Math.round(e.params.mode)];
+  } else {
+    const e = order.find(x=>x.id==='brandhaunt');
+    brandMode = ['mix','eyes','blossoms'][Math.round(e.params.mode)];
+  }
+
   /* seeded bonus finisher, 30% of tokens get one extra light effect */
   let bonus = null;
   if(rng() < 0.3){
@@ -439,7 +575,6 @@ function applyRecipe(seed, forceFamily){
       for(const p of def.params){
         if(p.type==='color'||p.type==='select'){ e.params[p.k]=p.def; continue; }
         const r = p.r || [p.min + 0.15*(p.max-p.min), p.min + 0.45*(p.max-p.min)];
-        /* keep bonus subtle: sample the lower half of the rand range */
         let v = r[0] + rng()*(r[1]-r[0])*0.5;
         if(p.int || p.step >= 1) v = Math.round(v);
         e.params[p.k] = +(+v).toFixed(4);
@@ -450,7 +585,7 @@ function applyRecipe(seed, forceFamily){
   }
   const rest = state.chain.filter(e => !order.includes(e));
   state.chain = order.concat(rest);
-  return {family, bonus};
+  return {family, bonus, frames, delayCs, maxColors, arcPow, brandMode};
 }
 
 /* ---------- io ---------- */
@@ -463,6 +598,7 @@ function loadImage(p){
   });
 }
 function stillPNG(w, h, ph){
+  setPhaseParams(ph);
   render(ph);
   const buf = new Uint8Array(w*h*4);
   gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
@@ -480,7 +616,7 @@ const sleep0 = ()=>new Promise(r=>setTimeout(r,0));
 /* ---------- main ---------- */
 async function main(){
   /* overlay drawers stamp these bitmaps; make sure they are decoded first */
-  await Promise.all(blossomImgs.map(i=>i.decode().catch(()=>{})));
+  await Promise.all([...blossomImgs, ...MARKS.eye, ...MARKS.blossoms].map(i=>i.decode().catch(()=>{})));
   const q = new URLSearchParams(location.search);
   const job = JSON.parse(fs.readFileSync(q.get('job'), 'utf8'));
   const outDir = job.out;
@@ -496,8 +632,7 @@ async function main(){
       try{ already.add(JSON.parse(line).token); }catch(e){}
     }
   }
-  const maxDim = job.maxDim || 720;
-  const delayCs = job.delayCs || 6;   /* 6cs = 16.7fps */
+  const maxDim = job.maxDim || 1920;
   const t0 = Date.now();
   let done = 0, skipped = 0, failed = 0;
 
@@ -511,21 +646,23 @@ async function main(){
       if(w !== renderW || h !== renderH) allocTargets(w, h);
       uploadSource(img);
 
-      const seed = 'MLOW-NY-' + item.token + '-GLITCH-V1';
-      const {family, bonus} = applyRecipe(seed, item.family);
-      const frames = Math.max(8, Math.round(state.loopSec*100/delayCs));
+      const seed = 'MLOW-NY-' + item.token + '-GLITCH-V2';
+      const r = applyRecipe(seed, item.family);
+      const {family, bonus, frames, delayCs, maxColors, arcPow, brandMode} = r;
 
       const raw = captureLoopFrames(w, h, frames);
-      const {indexed, palette} = quantizeFrames(raw, w, h);
+      const {indexed, palette} = quantizeFrames(raw, w, h, maxColors);
       const gifBytes = encodeGIF(w, h, indexed, palette, delayCs);
       const base = item.token + ' ' + item.name;
       fs.writeFileSync(path.join(gifDir, base + '.gif'), Buffer.from(gifBytes));
-      fs.writeFileSync(path.join(stillDir, base + '.png'), stillPNG(w, h, 0.37));
+      fs.writeFileSync(path.join(stillDir, base + '.png'), stillPNG(w, h, 0.72));
 
       const rec = {
         token: item.token, name: item.name, seed,
         family: family.key, familyName: family.name, tag: family.tag,
         bonus, loopSec: state.loopSec, frames, w, h, delayCs,
+        fps: +(100/delayCs).toFixed(1), maxColors,
+        arc: family.arc || 'burst', arcPow, brandMode,
         src: item.src,
         gif: 'gifs/' + base + '.gif',
         still: 'stills/' + base + '.png',
