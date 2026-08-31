@@ -28,7 +28,7 @@ const batch = [];
 let n = 0;
 for(const line of lines){
   const r = JSON.parse(line);
-  const gifFile = path.basename(r.gif);
+  const gifFile = encodeURIComponent(path.basename(r.gif));
   const description =
     `${r.name} returns as a ${r.familyName} glitch edition, moshed through MOSH LAB and gifted to the holder of the original. ${r.tag}`;
   const meta = {
