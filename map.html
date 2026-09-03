@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>NEW YORKERS · The Atlas</title>
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<style>
+:root{
+  --ink:#0D0D0D; --card:#141820; --divider:#2A3040;
+  --cloud:#F0F4F8; --slate:#8899AA; --blue:#2962FF; --cyan:#00E5FF; --pink:#FF2E63;
+  --serif:Georgia,"Playfair Display",serif;
+  --sans:-apple-system,"Helvetica Neue",Calibri,Arial,sans-serif;
+  --mono:Consolas,Menlo,ui-monospace,monospace;
+  --rail:322px; --detail:400px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--cloud);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit;cursor:pointer;color:inherit}
+a{color:var(--cyan);text-decoration:none}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-thumb{background:var(--divider);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#3D4456}
+::-webkit-scrollbar-track{background:transparent}
+#map{position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;cursor:grab;touch-action:none}
+#map.drag{cursor:grabbing}
+.mono{font-family:var(--mono)}
+.k{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue)}
+
+/* ------------------------------------------------ boot ------------ */
+#boot{position:fixed;inset:0;z-index:200;background:var(--ink);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:24px;transition:opacity .7s ease}
+#boot.gone{opacity:0;pointer-events:none}
+#boot .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--slate);margin-bottom:16px}
+#boot h1{font-family:var(--serif);font-size:clamp(34px,6vw,68px);letter-spacing:.1em;color:#fff}
+#boot .sub{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--cyan);margin-top:12px}
+#boot .breath{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--slate);max-width:560px;
+  margin:22px 0 26px;line-height:1.6}
+#boot .bar{width:min(320px,70vw);height:2px;background:var(--divider);overflow:hidden}
+#boot .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));
+  transition:width .3s ease}
+#boot .note{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--slate);margin-top:14px}
+
+/* ------------------------------------------------ chrome ---------- */
+#top{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;gap:14px;
+  padding:12px 16px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(13,13,13,.94) 20%,rgba(13,13,13,0))}
+#top .brand{display:flex;align-items:center;gap:11px;pointer-events:auto}
+#top .brand img{height:24px}
+#top .bt{font-family:var(--serif);font-size:16px;letter-spacing:.14em;color:#fff;line-height:1.1}
+#top .bs{font-family:var(--mono);font-size:8.5px;letter-spacing:.26em;color:var(--slate);margin-top:3px}
+#top .sp{flex:1}
+#top .acts{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;justify-content:flex-end}
+.btn{background:rgba(20,24,32,.86);border:1px solid var(--divider);color:var(--cloud);font-family:var(--mono);
+  font-size:10px;letter-spacing:.14em;padding:7px 12px;border-radius:2px;transition:all .18s;white-space:nowrap}
+.btn:hover{border-color:var(--blue);color:#fff;background:rgba(41,98,255,.14)}
+.btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.sm{padding:5px 9px;font-size:9px;letter-spacing:.1em}
+
+/* ------------------------------------------------ left rail ------- */
+#rail{position:fixed;z-index:38;left:0;top:0;bottom:0;width:var(--rail);background:rgba(13,13,13,.96);
+  border-right:1px solid var(--divider);display:flex;flex-direction:column;
+  transform:translateX(-101%);transition:transform .38s cubic-bezier(.22,1,.36,1)}
+#rail.open{transform:none}
+#rail .rh{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid var(--divider);
+  background-image:radial-gradient(rgba(41,98,255,.06) 1px,transparent 1px);background-size:13px 13px}
+#rail .rh .t{font-family:var(--serif);font-size:15px;letter-spacing:.14em;color:#fff;flex:1}
+#rail .rb{flex:1;overflow-y:auto;padding:4px 16px 90px}
+.grp{margin-top:20px}
+.grp>.k{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.grp>.k span{margin-left:auto;color:var(--slate);letter-spacing:.14em}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:transparent;border:1px solid var(--divider);color:var(--slate);font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.1em;padding:5px 8px;border-radius:2px;transition:all .16s;
+  display:flex;align-items:center;gap:6px}
+.chip:hover{color:var(--cloud);border-color:#3a4256}
+.chip.on{color:#fff;border-color:currentColor;background:rgba(255,255,255,.05)}
+.chip i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block;flex:none}
+.chip b{font-weight:400;opacity:.55;font-size:8.5px}
+#q{width:100%;background:var(--card);border:1px solid var(--divider);color:#fff;font-size:13px;
+  padding:10px 11px;border-radius:2px;outline:none;font-family:var(--sans)}
+#q:focus{border-color:var(--cyan)}
+.rowsw{display:flex;align-items:center;justify-content:space-between;padding:8px 0;
+  border-bottom:1px solid rgba(42,48,64,.6);font-size:12px;color:var(--cloud)}
+.rowsw small{display:block;color:var(--slate);font-size:10.5px;margin-top:2px;line-height:1.4}
+.sw{width:34px;height:19px;border-radius:10px;background:#242a38;border:1px solid var(--divider);
+  position:relative;flex:none;transition:all .2s}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;
+  background:var(--slate);transition:all .2s}
+.sw.on{background:rgba(41,98,255,.35);border-color:var(--blue)}
+.sw.on:after{left:17px;background:var(--cyan)}
+#eraRange{display:flex;gap:4px;align-items:center}
+.eraB{flex:1;background:transparent;border:1px solid var(--divider);color:var(--slate);font-family:var(--mono);
+  font-size:9px;padding:6px 0;border-radius:2px;transition:all .16s;text-align:center}
+.eraB.on{background:linear-gradient(180deg,rgba(41,98,255,.3),rgba(0,229,255,.12));border-color:var(--blue);color:#fff}
+.legend{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:10px;color:var(--slate)}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend i{width:9px;height:9px;border-radius:50%;flex:none}
+
+/* ------------------------------------------------ detail ---------- */
+#detail{position:fixed;z-index:39;right:0;top:0;bottom:0;width:var(--detail);max-width:100vw;
+  background:rgba(13,13,13,.975);border-left:1px solid var(--divider);display:flex;flex-direction:column;
+  transform:translateX(101%);transition:transform .38s cubic-bezier(.22,1,.36,1)}
+#detail.open{transform:none}
+#detail .dh{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--divider)}
+#detail .dh .k{flex:1}
+#detail .db{flex:1;overflow-y:auto;padding:0 0 60px}
+.shot{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#0a0d12}
+.shots{display:flex;gap:2px;padding:2px 0 0;background:#0a0d12}
+.shots img{flex:1;aspect-ratio:16/10;object-fit:cover;opacity:.5;transition:opacity .2s;min-width:0}
+.shots img:hover,.shots img.on{opacity:1}
+.dpad{padding:16px 18px}
+.dtitle{font-family:var(--serif);font-size:23px;color:#fff;line-height:1.25}
+.dnum{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--cyan);margin-bottom:6px}
+.dstory{font-family:var(--serif);font-style:italic;font-size:14.5px;line-height:1.65;color:var(--cloud);
+  margin-top:12px;padding-left:12px;border-left:2px solid var(--blue)}
+.meta{margin-top:18px;border-top:1px solid var(--divider)}
+.mrow{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid rgba(42,48,64,.55);font-size:12.5px}
+.mrow .mk{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--slate);text-transform:uppercase;
+  min-width:104px;padding-top:2px;flex:none}
+.mrow .mv{color:var(--cloud);line-height:1.5}
+.mrow .mv em{font-style:normal;color:var(--slate)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:2px 7px;
+  border:1px solid currentColor;border-radius:2px;margin:0 4px 4px 0}
+.mini{display:flex;gap:9px;align-items:center;width:100%;text-align:left;background:none;border:none;
+  border-bottom:1px solid rgba(42,48,64,.55);padding:8px 0;color:var(--cloud);transition:background .16s}
+.mini:hover{background:rgba(41,98,255,.09)}
+.mini img{width:56px;aspect-ratio:16/10;object-fit:cover;flex:none;border:1px solid var(--divider);background:#0a0d12}
+.mini .mn{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--cyan)}
+.mini .mt{font-size:12.5px;line-height:1.3;margin-top:2px}
+.mini .mx{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--slate);flex:none;text-align:right}
+.dsec{padding:16px 18px 4px}
+.dsec>.k{margin-bottom:8px}
+
+/* ------------------------------------------------ tooltip --------- */
+#tip{position:fixed;z-index:60;pointer-events:none;display:none;background:rgba(9,11,15,.96);
+  border:1px solid var(--divider);border-left:2px solid var(--cyan);padding:9px 12px;max-width:290px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#tip .tn{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--cyan)}
+#tip .tt{font-family:var(--serif);font-size:15px;color:#fff;margin-top:3px;line-height:1.25}
+#tip .tm{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--slate);margin-top:5px}
+#tip .ts{font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--slate);margin-top:6px;line-height:1.5}
+#tip img{width:100%;aspect-ratio:16/9;object-fit:cover;margin:-9px -12px 8px;width:calc(100% + 24px);
+  max-width:none;display:block}
+
+/* ------------------------------------------------ bottom ---------- */
+#bottom{position:fixed;z-index:37;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:12px;
+  padding:14px 16px;pointer-events:none;
+  background:linear-gradient(0deg,rgba(13,13,13,.9) 25%,rgba(13,13,13,0))}
+#stat{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--slate);line-height:1.85;
+  pointer-events:auto}
+#stat b{color:var(--cloud);font-weight:400}
+#stat .hi{color:var(--cyan)}
+#bottom .sp{flex:1}
+#zoomctl{display:flex;flex-direction:column;gap:4px;pointer-events:auto}
+#scalebar{pointer-events:auto;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--slate);
+  text-align:center}
+#scalebar .sb{height:3px;border:1px solid var(--slate);border-top:none;margin-bottom:3px}
+#toast{position:fixed;z-index:70;left:50%;bottom:86px;transform:translateX(-50%);background:rgba(9,11,15,.95);
+  border:1px solid var(--divider);border-left:2px solid var(--pink);padding:9px 16px;font-family:var(--mono);
+  font-size:10.5px;letter-spacing:.14em;color:var(--cloud);display:none}
+
+/* ------------------------------------------------ help ------------ */
+#help{position:fixed;inset:0;z-index:80;background:rgba(9,11,15,.93);display:none;align-items:center;
+  justify-content:center;padding:24px;backdrop-filter:blur(4px)}
+#help.open{display:flex}
+#help .hw{max-width:660px;width:100%;background:var(--card);border:1px solid var(--divider);
+  border-top:2px solid var(--blue);padding:26px 28px;max-height:86vh;overflow-y:auto}
+#help h2{font-family:var(--serif);font-size:24px;color:#fff;margin-bottom:6px}
+#help p{font-size:13px;line-height:1.7;color:var(--slate);margin-bottom:14px}
+#help p b{color:var(--cloud);font-weight:400}
+#help .kb{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px 18px;margin:14px 0}
+#help .kb div{display:flex;gap:9px;font-size:12px;color:var(--cloud);align-items:baseline}
+#help .kb kbd{font-family:var(--mono);font-size:9.5px;background:#0d1016;border:1px solid var(--divider);
+  padding:2px 6px;border-radius:2px;color:var(--cyan);flex:none}
+#help table{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:12px}
+#help td{padding:6px 0;border-bottom:1px solid var(--divider);color:var(--cloud);vertical-align:top}
+#help td:first-child{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--cyan);
+  text-transform:uppercase;width:96px;padding-right:14px}
+@media (max-width:900px){
+  :root{--rail:100vw;--detail:100vw}
+  #top .acts .wide{display:none}
+  #top .brand img{height:19px}
+  #top .bt{font-size:13px;letter-spacing:.1em}
+  #top .bs{font-size:7px;letter-spacing:.18em}
+  #stat{font-size:9px;line-height:1.7}
+  .btn{padding:6px 9px;font-size:9px}
+}
+</style>
+</head>
+<body>
+<canvas id="map"></canvas>
+
+<div id="tip"></div>
+<div id="toast"></div>
+
+<div id="top">
+  <div class="brand">
+    <img src="assets/brand/eye_truecolor.png" alt="">
+    <div><div class="bt">NEW YORKERS</div><div class="bs">THE ATLAS · WHERE IT HAPPENS</div></div>
+  </div>
+  <div class="sp"></div>
+  <div class="acts">
+    <button class="btn" id="bRail">☰ FILTERS</button>
+    <button class="btn wide" id="bHeat">HEAT</button>
+    <button class="btn wide" id="bThread">THREADS</button>
+    <button class="btn wide" id="bLabels">LABELS</button>
+    <button class="btn" id="bDice">⚄ RANDOM</button>
+    <button class="btn wide" id="bReset">RESET VIEW</button>
+    <button class="btn" id="bHelp">?</button>
+  </div>
+</div>
+
+<div id="rail">
+  <div class="rh"><img src="assets/brand/eye_truecolor.png" style="height:18px" alt="">
+    <div class="t">FILTERS</div>
+    <button class="btn sm" id="bClear">CLEAR</button>
+    <button class="btn sm" id="bRailX">✕</button></div>
+  <div class="rb">
+    <div class="grp"><div class="k">SEARCH <span id="qn"></span></div>
+      <input id="q" placeholder="title, story, place, neighborhood…" autocomplete="off"></div>
+    <div class="grp"><div class="k">ERA <span id="eraN"></span></div><div id="eraRange"></div></div>
+    <div class="grp"><div class="k">FAMILY <span id="famN"></span></div><div class="chips" id="famC"></div></div>
+    <div class="grp"><div class="k">SCENE <span id="scnN"></span></div><div class="chips" id="scnC"></div></div>
+    <div class="grp"><div class="k">BOROUGH</div><div class="chips" id="boroC"></div></div>
+    <div class="grp"><div class="k">LOCATION PRECISION</div><div class="chips" id="precC"></div></div>
+    <div class="grp"><div class="k">LAYERS</div><div id="layerC"></div></div>
+    <div class="grp"><div class="k">COLOUR BY</div><div class="chips" id="colorC"></div></div>
+    <div class="grp"><div class="k">LEGEND</div><div class="legend" id="legendC"></div></div>
+    <div class="grp"><div class="k">PLACE INDEX <span id="plN"></span></div>
+      <div id="plSortRow" class="chips" style="margin-bottom:8px"></div>
+      <div id="plList"></div></div>
+  </div>
+</div>
+
+<div id="detail">
+  <div class="dh"><div class="k" id="dKind">PIECE</div>
+    <button class="btn sm" id="dPrev">‹</button><button class="btn sm" id="dNext">›</button>
+    <button class="btn sm" id="dClose">✕</button></div>
+  <div class="db" id="dBody"></div>
+</div>
+
+<div id="bottom">
+  <div id="stat"></div>
+  <div class="sp"></div>
+  <div id="scalebar"><div class="sb" id="sbBar"></div><span id="sbTxt"></span></div>
+  <div id="zoomctl">
+    <button class="btn sm" id="bIn">+</button>
+    <button class="btn sm" id="bOut">−</button>
+  </div>
+</div>
+
+<div id="help"><div class="hw" id="helpBody"></div></div>
+
+<div id="boot">
+  <div class="eyebrow">A NETWORKED DIGITAL ART COLLECTION</div>
+  <h1>THE ATLAS</h1>
+  <div class="sub" id="introSub">FIVE BOROUGHS</div>
+  <div class="breath">Every New Yorker stands somewhere. This is the map of where.</div>
+  <div class="bar"><i id="bootBar"></i></div>
+  <div class="note" id="bootNote">PLOTTING THE CENSUS…</div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/geo.js"></script>
+<script>
+/* =====================================================================
+   NEW YORKERS · THE ATLAS
+   A geographic reading of the census. Canvas 2D, no dependencies.
+   ===================================================================== */
+const D = window.NY_DATA, GEO = window.NY_GEO;
+const $ = s => document.querySelector(s);
+const el = (t,c,h)=>{const n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n;};
+
+/* ---------------------------------------------------------- palette */
+const FAM_COL = {
+  Citizens:'#00E5FF', Heroes:'#2962FF', Villains:'#FF2E63', Hustlers:'#FFB300',
+  Degens:'#B14DFF',  Underground:'#00C853', Places:'#FF6D3F', Builders:'#FFD54F',
+  Strays:'#7CFFB2',  Stoop:'#FF8FB1', Transplants:'#4DD0E1', Design:'#9AA7B4', Process:'#5C7080'
+};
+const SCENE_COL = {
+  Subway:'#00E5FF', Street:'#FFB300', Stoop:'#FF8FB1', Rooftop:'#B14DFF', Bodega:'#FF6D3F',
+  Interior:'#FFD54F', Park:'#00C853', Water:'#2962FF', Night:'#FF2E63', Work:'#7CFFB2',
+  Civic:'#4DD0E1', Weather:'#9AA7B4', Citywide:'#5C7080'
+};
+const ERA_COL = ['#5C7080','#2962FF','#3D7BFF','#00A6FF','#00E5FF','#7CFFB2','#FFB300','#FF2E63','#B14DFF','#FF7A59','#00C853','#F5E663','#FF8AD8','#6EE7F0','#C9A8FF','#FFD166'];
+const BORO_COL = { Manhattan:'#00E5FF', Brooklyn:'#FF2E63', Queens:'#FFB300',
+                   Bronx:'#00C853', 'Staten Island':'#B14DFF', Citywide:'#5C7080' };
+const PREC_LABEL = {
+  site:['SITE','pinned to a named address, landmark or corner'],
+  area:['AREA','pinned to a neighbourhood, line or waterway'],
+  borough:['BOROUGH','the borough is known, the block is not'],
+  citywide:['CITYWIDE','no fixed address. Scattered across the five boroughs']
+};
+
+/* ---------------------------------------------------------- join */
+const PIECES = D.pieces;
+const byId = {}; PIECES.forEach(p => byId[p.id] = p);
+const geoById = {}; GEO.pieces.forEach(g => geoById[g.id] = g);
+const PLACES = GEO.places, NB = GEO.nb;
+
+// enrich every piece with its geo record
+const ITEMS = PIECES.map(p => {
+  const g = geoById[p.id] || {prec:'citywide', sc:'Citywide'};
+  const place = g.p ? PLACES[g.p] : null;
+  const nb = g.nb ? NB[g.nb] : null;
+  return {
+    p, id:p.id, n:p.n, t:p.t, fam:p.f, era:p.e, cat:p.cat||'', story:p.story||'',
+    lat:g.lat, lon:g.lon, placeKey:g.p||null, place, nb, nbKey:g.nb||null,
+    prec:g.prec||'citywide', src:g.src||'', scene:g.sc||'Citywide', inf:!!g.inf,
+    boro: place ? place.boro : '',           // the borough the record actually claims
+    scatterBoro: g.boro || '',                // where an illustrative dot happened to land
+    amb:!!g.amb, spread:!!g.spread,
+    motion:(p.g&&p.g.length)||(p.v&&p.v.length) ? ((p.v&&p.v.length)?'video':'gif') : null,
+    thumb: p.st && p.st.length ? p.st[0] : null,
+    states: p.st || [],
+    search:(p.t+' '+(p.story||'')+' '+p.f+' '+(p.cat||'')+' '+(place?place.name:'')+' '+(nb?nb.name:'')+' '+(g.sc||'')).toLowerCase()
+  };
+});
+const byNum = {}; ITEMS.forEach(i => { if(i.n!=null) byNum[i.n]=i; });
+const ITEM_BY_ID = {}; ITEMS.forEach(i => ITEM_BY_ID[i.id]=i);
+{ const el=document.getElementById('introSub'); if(el) el.textContent=ITEMS.length.toLocaleString()+' PIECES · FIVE BOROUGHS'; }
+const ERAS = D.story.eras || [];
+const FAMS = Object.keys(FAM_COL).filter(f => ITEMS.some(i=>i.fam===f));
+const SCENES = GEO.scenes;
+const BOROS = ['Manhattan','Brooklyn','Queens','Bronx','Staten Island'];
+
+// place -> items
+const placeItems = {};
+ITEMS.forEach(i => { if(i.placeKey){ (placeItems[i.placeKey] ||= []).push(i); } });
+// neighbourhood -> items
+const nbItems = {};
+ITEMS.forEach(i => { if(i.nbKey){ (nbItems[i.nbKey] ||= []).push(i); } });
+// threads
+const THREADS = (D.story.threads||[]).map(t=>({...t, items:(t.nums||[]).map(n=>byNum[n]).filter(Boolean)}));
+// edges between pieces
+const EDGES = (D.edges||[]).map(e=>({a:byId[e[0]], b:byId[e[1]], ty:e[2]})).filter(e=>e.a&&e.b);
+const edgeIndex = {};
+EDGES.forEach(e=>{ (edgeIndex[e.a.id] ||= []).push({o:e.b,ty:e.ty}); (edgeIndex[e.b.id] ||= []).push({o:e.a,ty:e.ty}); });
+
+/* ---------------------------------------------------------- projection */
+const P = {
+  x: lon => lon,
+  y: lat => -(180/Math.PI)*Math.log(Math.tan(Math.PI/4 + lat*Math.PI/360))
+};
+ITEMS.forEach(i => { if(i.lat!=null){ i.wx = P.x(i.lon); i.wy = P.y(i.lat); } });
+Object.values(PLACES).forEach(p => { p.wx = P.x(p.lon); p.wy = P.y(p.lat); });
+Object.values(NB).forEach(n => { n.wx = P.x(n.lon); n.wy = P.y(n.lat); });
+
+// pre-project the basemap once
+const LAND = GEO.boro.map(b => ({
+  name:b.n, col:BORO_COL[b.n],
+  rings:b.r.map(r => r.map(pt => [P.x(pt[0]), P.y(pt[1])]))
+}));
+const HOODS = Object.entries(NB).map(([k,v]) => ({
+  key:k, name:v.name, boro:v.boro, park:v.park, wx:v.wx, wy:v.wy, nl:v.nl, na:v.na, nd:v.nd||0,
+  rings:(v.poly||[]).map(r => r.map(pt => [P.x(pt[0]), P.y(pt[1])]))
+}));
+let maxHoodLoc = 1; HOODS.forEach(h => { if(h.nl > maxHoodLoc) maxHoodLoc = h.nl; });
+HOODS.forEach(h => {
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  h.rings.forEach(r=>r.forEach(p=>{ if(p[0]<x0)x0=p[0]; if(p[0]>x1)x1=p[0];
+                                    if(p[1]<y0)y0=p[1]; if(p[1]>y1)y1=p[1]; }));
+  h.bb=[x0,x1,y0,y1];
+});
+const heatT = n => n>0 ? Math.log(1+n)/Math.log(1+maxHoodLoc) : 0;
+
+const BB = (()=>{ let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  LAND.forEach(l=>l.rings.forEach(r=>r.forEach(p=>{
+    if(p[0]<x0)x0=p[0]; if(p[0]>x1)x1=p[0]; if(p[1]<y0)y0=p[1]; if(p[1]>y1)y1=p[1];})));
+  return {x0,x1,y0,y1};})();
+
+/* ---------------------------------------------------------- view */
+const cv = $('#map'), ctx = cv.getContext('2d');
+let W=0, H=0, DPR=1;
+const view = {x:(BB.x0+BB.x1)/2, y:(BB.y0+BB.y1)/2, k:1, k0:1};
+let userMoved=false;
+function resize(){
+  // a tab opened in the background can measure 0 by 0; wait for a real size rather than freezing blank
+  if(!window.innerWidth || !window.innerHeight){ setTimeout(resize, 300); return; }
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.style.width = W+'px'; cv.style.height = H+'px';
+  cv.width = W*DPR; cv.height = H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  if(!userMoved) fitAll(false); else draw();
+}
+function fitAll(anim){
+  const padL = rail.open ? 330 : 40, padR = detailOpen ? 410 : 40;
+  const w = Math.max(200, W - padL - padR), h = Math.max(200, H - 150);
+  const k = Math.min(w/(BB.x1-BB.x0), h/(BB.y1-BB.y0)) * 0.96;
+  const cx = (BB.x0+BB.x1)/2 - ((padR-padL)/2)/k, cy=(BB.y0+BB.y1)/2 + 12/k;
+  view.k0 = k;
+  if(anim) flyTo(cx,cy,k); else { view.x=cx; view.y=cy; view.k=k; draw(); }
+}
+const sx = wx => (wx - view.x)*view.k + W/2;
+const sy = wy => (wy - view.y)*view.k + H/2;
+const ux = px => (px - W/2)/view.k + view.x;
+const uy = py => (py - H/2)/view.k + view.y;
+
+let fly = null;
+function flyTo(x,y,k,ms){
+  userMoved=true;
+  fly = {x0:view.x,y0:view.y,k0:view.k,x1:x,y1:y,k1:k,t0:performance.now(),ms:ms||700};
+  requestAnimationFrame(tickFly);
+}
+function tickFly(now){
+  if(!fly) return;
+  let t = Math.min(1,(now-fly.t0)/fly.ms);
+  const e = t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  view.x = fly.x0+(fly.x1-fly.x0)*e; view.y = fly.y0+(fly.y1-fly.y0)*e;
+  view.k = fly.k0*Math.pow(fly.k1/fly.k0, e);
+  draw();
+  if(t<1) requestAnimationFrame(tickFly); else fly=null;
+}
+function zoomBy(f, cxp, cyp){
+  userMoved=true;
+  const px = cxp==null?W/2:cxp, py = cyp==null?H/2:cyp;
+  const wx0 = ux(px), wy0 = uy(py);
+  view.k = Math.max(view.k0*0.55, Math.min(view.k0*90, view.k*f));
+  view.x = wx0 - (px - W/2)/view.k; view.y = wy0 - (py - H/2)/view.k;
+  draw();
+}
+
+/* ---------------------------------------------------------- state */
+const state = {
+  eras:new Set(), fams:new Set(), scenes:new Set(), boros:new Set(),
+  precs:new Set(), q:'',
+  ambient:true, hoods:true, heat:false, labels:true, threads:false, motionOnly:false,
+  color:'family', selected:null, selPlace:null, hover:null
+};
+let detailOpen=false;
+const rail = {open:false};
+
+function passes(i){
+  if(state.eras.size && !state.eras.has(i.era)) return false;
+  if(state.fams.size && !state.fams.has(i.fam)) return false;
+  if(state.scenes.size && !state.scenes.has(i.scene)) return false;
+  if(state.boros.size && !state.boros.has(i.boro)) return false;
+  if(state.precs.size && !state.precs.has(i.prec)) return false;
+  if(state.motionOnly && !i.motion) return false;
+  if(state.q && i.search.indexOf(state.q)<0) return false;
+  return true;
+}
+let VIS=[], VIS_LOC=[], VIS_AMB=[], CLUSTERS=[];
+function recompute(){
+  VIS = ITEMS.filter(passes);
+  VIS_LOC = VIS.filter(i => !i.amb);
+  VIS_AMB = VIS.filter(i => i.amb);
+  const m = {};
+  VIS_LOC.forEach(i => { if(i.placeKey && !i.spread) (m[i.placeKey] ||= []).push(i); });
+  CLUSTERS = Object.entries(m).map(([k,list]) => {
+    const pl = PLACES[k];
+    const fc = {}; list.forEach(i => fc[i.fam]=(fc[i.fam]||0)+1);
+    const dom = Object.entries(fc).sort((a,b)=>b[1]-a[1])[0][0];
+    return {key:k, pl, list, n:list.length, wx:pl.wx, wy:pl.wy, dom};
+  }).sort((a,b)=>a.n-b.n);
+  updateStat();
+}
+function colOf(i){
+  if(state.color==='scene') return SCENE_COL[i.scene]||'#5C7080';
+  if(state.color==='era')   return ERA_COL[i.era]||'#5C7080';
+  if(state.color==='boro')  return BORO_COL[i.boro]||'#5C7080';
+  return FAM_COL[i.fam]||'#5C7080';
+}
+function colOfCluster(c){
+  if(state.color==='scene'){ const m={}; c.list.forEach(i=>m[i.scene]=(m[i.scene]||0)+1);
+    return SCENE_COL[Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0]]||'#5C7080'; }
+  if(state.color==='era'){ const m={}; c.list.forEach(i=>m[i.era]=(m[i.era]||0)+1);
+    return ERA_COL[Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0]]||'#5C7080'; }
+  if(state.color==='boro') return BORO_COL[c.pl.boro]||'#5C7080';
+  return FAM_COL[c.dom]||'#5C7080';
+}
+
+/* ---------------------------------------------------------- render */
+const hex2rgba = (h,a) => {
+  const n = parseInt(h.slice(1),16);
+  return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;
+};
+function ringPath(rings, close){
+  ctx.beginPath();
+  for(const r of rings){
+    if(r.length<2) continue;
+    ctx.moveTo(sx(r[0][0]), sy(r[0][1]));
+    for(let j=1;j<r.length;j++) ctx.lineTo(sx(r[j][0]), sy(r[j][1]));
+    if(close!==false) ctx.closePath();
+  }
+}
+// individual pins appear once a place's spiral is wide enough to read
+const SPREAD_DEG = 0.00028;
+const DIFFUSE_KIND = new Set(['borough','line','transit']);
+const isDiffuse = pl => DIFFUSE_KIND.has(pl.kind);
+// a place that stands for a system, not a spot, never fans out into fake pins
+function clusterExplodes(c){
+  if(isDiffuse(c.pl)) return false;
+  return c.n<=1 || SPREAD_DEG*Math.sqrt(c.n)*view.k > 13;
+}
+function clusterR(c){ return Math.min(30, 4.6 + Math.sqrt(c.n)*2.9); }
+
+let raf=null;
+function draw(){ if(raf) return; raf = requestAnimationFrame(paint); }
+function paint(){
+  raf=null;
+  const z = view.k / view.k0;                 // 1 = fit-to-city
+  ctx.clearRect(0,0,W,H);
+
+  // ---- water
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#070A10'); g.addColorStop(1,'#0B1018');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // faint graticule
+  ctx.strokeStyle='rgba(41,98,255,.055)'; ctx.lineWidth=1;
+  const step = z<1.8?0.05:z<5?0.02:0.01;
+  ctx.beginPath();
+  for(let lo=Math.ceil(-74.35/step)*step; lo<-73.6; lo+=step){ const X=sx(P.x(lo)); ctx.moveTo(X,0); ctx.lineTo(X,H); }
+  for(let la=40.45; la<40.95; la+=step){ const Y=sy(P.y(la)); ctx.moveTo(0,Y); ctx.lineTo(W,Y); }
+  ctx.stroke();
+
+  // ---- land
+  ctx.save();
+  ctx.shadowColor='rgba(0,229,255,.28)'; ctx.shadowBlur=30;
+  ctx.fillStyle='#151B26';
+  LAND.forEach(l => { ringPath(l.rings); ctx.fill(); });
+  ctx.restore();
+
+  // ---- neighbourhoods
+  if(state.hoods || state.heat){
+    HOODS.forEach(h => {
+      if(!h.rings.length) return;
+      ringPath(h.rings);
+      if(state.heat){
+        if(h.nl>0){
+          const t = heatT(h.nl);
+          // cold blue -> cyan -> hot pink as density climbs
+          const c = t<.5 ? [41+ (0-41)*(t/.5), 98+(229-98)*(t/.5), 255]
+                         : [0+(255-0)*((t-.5)/.5), 229+(46-229)*((t-.5)/.5), 255+(99-255)*((t-.5)/.5)];
+          ctx.fillStyle = `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${0.16+0.66*t})`;
+          ctx.fill();
+        } else { ctx.fillStyle='rgba(255,255,255,.015)'; ctx.fill(); }
+        if(hoverHood===h){ ctx.fillStyle='rgba(255,255,255,.16)'; ctx.fill(); }
+      } else if(h.park){ ctx.fillStyle='rgba(0,200,83,.055)'; ctx.fill(); }
+      ctx.strokeStyle = state.heat ? 'rgba(240,244,248,.13)' : 'rgba(136,153,170,.10)';
+      ctx.lineWidth = 1; ctx.stroke();
+    });
+  }
+  // ---- borough outline
+  ctx.strokeStyle='rgba(0,229,255,.34)'; ctx.lineWidth = z<2?1.1:1.6;
+  LAND.forEach(l => { ringPath(l.rings); ctx.stroke(); });
+
+  // ---- threads (edges between located pieces)
+  if(state.threads){
+    ctx.globalCompositeOperation='lighter';
+    EDGES.forEach(e=>{
+      const IA=ITEM_BY_ID[e.a.id], IB=ITEM_BY_ID[e.b.id];
+      if(!IA||!IB||IA.wx==null||IB.wx==null) return;
+      if(!passes(IA)||!passes(IB)) return;
+      const soft = IA.amb || IB.amb;          // one end is only an illustrative dot
+      if(soft && !state.ambient) return;
+      const x1=sx(IA.wx),y1=sy(IA.wy),x2=sx(IB.wx),y2=sy(IB.wy);
+      if(Math.abs(x1-x2)<0.5 && Math.abs(y1-y2)<0.5) return;
+      const mx=(x1+x2)/2, my=(y1+y2)/2, dx=x2-x1, dy=y2-y1;
+      const col = EDGE_COL(e.ty);
+      ctx.lineWidth = soft ? 0.8 : 1.5;
+      if(soft) ctx.setLineDash([2,5]);
+      ctx.strokeStyle = hex2rgba(col, soft ? .24 : .62);
+      ctx.beginPath(); ctx.moveTo(x1,y1);
+      ctx.quadraticCurveTo(mx - dy*0.16, my + dx*0.16, x2,y2); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    ctx.globalCompositeOperation='source-over';
+  }
+
+  // ---- ambient (citywide) pieces
+  if(state.ambient && !state.heat){
+    const r = Math.max(0.9, Math.min(2.6, 0.7*z));
+    ctx.globalCompositeOperation='lighter';
+    for(const i of VIS_AMB){
+      const X=sx(i.wx), Y=sy(i.wy);
+      if(X<-20||X>W+20||Y<-20||Y>H+20) continue;
+      ctx.fillStyle = hex2rgba(colOf(i), z>3?0.7:0.5);
+      ctx.beginPath(); ctx.arc(X,Y,r,0,6.2832); ctx.fill();
+    }
+    ctx.globalCompositeOperation='source-over';
+  }
+
+  // ---- located pieces
+  const drawnLabels=[];
+  const pins=[];   // hit targets rebuilt every frame
+  hitPins = pins;
+  if(state.heat) ctx.globalAlpha=0.42;
+  for(const c of CLUSTERS){
+    const X=sx(c.wx), Y=sy(c.wy);
+    const explode = clusterExplodes(c);
+    if(!explode){
+      const R = clusterR(c);
+      if(X<-R-30||X>W+R+30||Y<-R-30||Y>H+R+30) continue;
+      const col = colOfCluster(c);
+      const isSel = state.selPlace===c.key;
+      ctx.beginPath(); ctx.arc(X,Y,R+7,0,6.2832);
+      ctx.fillStyle = hex2rgba(col,.10); ctx.fill();
+      ctx.beginPath(); ctx.arc(X,Y,R,0,6.2832);
+      ctx.fillStyle = hex2rgba(col, isSel?.55:.30); ctx.fill();
+      ctx.lineWidth = isSel?2.2:1.4; ctx.strokeStyle = col;
+      const dif = isDiffuse(c.pl);
+      if(dif) ctx.setLineDash([3,3]);
+      ctx.stroke(); ctx.setLineDash([]);
+      if(dif){ ctx.strokeStyle=hex2rgba(col,.4); ctx.setLineDash([2,4]);
+        ctx.beginPath(); ctx.arc(X,Y,R+5,0,6.2832); ctx.stroke(); ctx.setLineDash([]); }
+      if(R>9){
+        ctx.fillStyle='#fff'; ctx.font=`${Math.min(13,R*0.86)}px Consolas,Menlo,monospace`;
+        ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(c.n, X, Y+0.5);
+      }
+      pins.push({kind:'cluster', c, x:X, y:Y, r:R+4});
+      if(state.labels && (c.n>=4 || z>3.2)) drawnLabels.push({x:X, y:Y+R+11, txt:c.pl.name, col, w:c.n});
+    } else {
+      for(const i of c.list){
+        const X2=sx(i.wx), Y2=sy(i.wy);
+        if(X2<-14||X2>W+14||Y2<-14||Y2>H+14) continue;
+        drawPin(i,X2,Y2,z); pins.push({kind:'piece', i, x:X2, y:Y2, r:9});
+      }
+      if(state.labels && z>1.6) drawnLabels.push({x:X, y:Y-14, txt:c.pl.name, col:colOfCluster(c), w:c.n});
+    }
+  }
+  // borough-spread pieces (known borough, unknown block) render as small hollow pins
+  for(const i of VIS_LOC){
+    if(!i.spread) continue;
+    const X=sx(i.wx), Y=sy(i.wy);
+    if(X<-14||X>W+14||Y<-14||Y>H+14) continue;
+    const col=colOf(i);
+    ctx.beginPath(); ctx.arc(X,Y,3.4,0,6.2832);
+    ctx.strokeStyle=hex2rgba(col,.85); ctx.lineWidth=1.3; ctx.stroke();
+    hitPins.push({kind:'piece', i, x:X, y:Y, r:8});
+  }
+  // every citywide piece is a hit target at every zoom, so nothing on the map is unreachable
+  if(state.ambient && !state.heat){
+    const hr = z>2.2 ? 7 : 5;
+    for(const i of VIS_AMB){
+      const X=sx(i.wx), Y=sy(i.wy);
+      if(X<-8||X>W+8||Y<-8||Y>H+8) continue;
+      hitPins.push({kind:'piece', i, x:X, y:Y, r:hr});
+    }
+  }
+
+  ctx.globalAlpha=1;
+  // ---- hover / selection accents
+  if(state.hover) haloPin(state.hover);
+  if(state.selected){
+    const i=state.selected;
+    if(i.wx!=null){
+      const X=sx(i.wx), Y=sy(i.wy);
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.arc(X,Y,13,0,6.2832); ctx.stroke();
+      ctx.strokeStyle=hex2rgba(colOf(i),.5);
+      ctx.beginPath(); ctx.arc(X,Y,19+3*Math.sin(performance.now()/380),0,6.2832); ctx.stroke();
+      ctx.fillStyle=colOf(i); ctx.beginPath(); ctx.arc(X,Y,4.6,0,6.2832); ctx.fill();
+      const lbl=(i.n!=null?'№ '+i.n+'  ':'')+i.t.toUpperCase();
+      ctx.font='bold 11px Consolas,Menlo,monospace'; ctx.textAlign='left'; ctx.textBaseline='middle';
+      const lw=ctx.measureText(lbl).width; const lx=X+18, ly=Y-18;
+      ctx.fillStyle='rgba(9,11,15,.88)'; ctx.fillRect(lx-6,ly-9,lw+12,18);
+      ctx.strokeStyle=hex2rgba(colOf(i),.9); ctx.lineWidth=1; ctx.strokeRect(lx-6,ly-9,lw+12,18);
+      ctx.fillStyle='#fff'; ctx.fillText(lbl,lx,ly);
+      ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.beginPath(); ctx.moveTo(X+9,Y-9); ctx.lineTo(lx-6,ly+9); ctx.stroke();
+      draw();
+    }
+  }
+
+  // ---- labels
+  if(state.labels){
+    // boroughs
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const bl=[['Manhattan',40.790,-73.966],['Brooklyn',40.646,-73.945],['Queens',40.716,-73.800],
+              ['Bronx',40.858,-73.870],['Staten Island',40.580,-74.152]];
+    ctx.font=`${Math.min(30, 12+7*z)}px Georgia,serif`;
+    bl.forEach(([nm,la,lo])=>{
+      const X=sx(P.x(lo)), Y=sy(P.y(la));
+      ctx.fillStyle=`rgba(240,244,248,${z>4?.10:.22})`;
+      ctx.save(); ctx.translate(X,Y);
+      ctx.fillText(nm.toUpperCase().split('').join(' '), 0, 0); ctx.restore();
+    });
+    // neighbourhood names carry the count in heat mode
+    if(state.heat){
+      HOODS.forEach(h=>{ if(h.nl) drawnLabels.push({x:sx(h.wx), y:sy(h.wy), txt:h.name+'  '+h.nl,
+        col:'rgba(240,244,248,.92)', w:1000+h.nl, box:true}); });
+    }
+    // place labels, de-cluttered
+    ctx.font='10px Consolas,Menlo,monospace';
+    const taken=[];
+    drawnLabels.sort((a,b)=>b.w-a.w).forEach(L=>{
+      if(state.heat && !L.box) return;
+      if(L.x<40||L.x>W-40||L.y<50||L.y>H-40) return;
+      const wpx = ctx.measureText(L.txt).width;
+      const box=[L.x-wpx/2-3, L.y-7, wpx+6, 14];
+      for(const t of taken) if(!(box[0]>t[0]+t[2]||box[0]+box[2]<t[0]||box[1]>t[1]+t[3]||box[1]+box[3]<t[1])) return;
+      taken.push(box);
+      ctx.fillStyle='rgba(9,11,15,.72)'; ctx.fillRect(box[0],box[1],box[2],box[3]);
+      ctx.fillStyle=L.col; ctx.fillText(L.txt.toUpperCase(), L.x, L.y);
+    });
+  }
+  drawScale(z);
+}
+function drawPin(i,X,Y,z){
+  const col=colOf(i), r = i.prec==='site' ? 4.4 : 3.8;
+  ctx.beginPath(); ctx.arc(X,Y,r+3.5,0,6.2832);
+  ctx.fillStyle=hex2rgba(col,.16); ctx.fill();
+  ctx.beginPath(); ctx.arc(X,Y,r,0,6.2832);
+  if(i.inf){ ctx.fillStyle=hex2rgba(col,.45); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.stroke(); }
+  else { ctx.fillStyle=col; ctx.fill(); }
+  if(i.motion){ ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath();
+    ctx.arc(X,Y,r+2.4,0,6.2832); ctx.stroke(); }
+}
+function haloPin(h){
+  const X = h.kind==='cluster'? sx(h.c.wx) : sx(h.i.wx);
+  const Y = h.kind==='cluster'? sy(h.c.wy) : sy(h.i.wy);
+  const R = h.kind==='cluster'? clusterR(h.c)+6 : 10;
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1.3;
+  ctx.beginPath(); ctx.arc(X,Y,R,0,6.2832); ctx.stroke();
+}
+function drawScale(z){
+  // metres per pixel at the view centre
+  const lat = 2*(Math.atan(Math.exp(-view.y*Math.PI/180))-Math.PI/4)*180/Math.PI;
+  const mPerDegLon = 111320*Math.cos(lat*Math.PI/180);
+  const mPerPx = mPerDegLon/view.k;
+  const targets=[100,200,500,1000,2000,5000,10000,20000];
+  let m = targets.find(t => t/mPerPx > 60) || 20000;
+  const px = m/mPerPx;
+  $('#sbBar').style.width = px.toFixed(0)+'px';
+  $('#sbTxt').textContent = m>=1000 ? (m/1000)+' KM' : m+' M';
+}
+let hitPins=[];
+let hoverHood=null;
+function hoodAt(px,py){
+  const wx=ux(px), wy=uy(py);
+  for(const h of HOODS){
+    if(!h.bb) continue;
+    if(wx<h.bb[0]||wx>h.bb[1]||wy<h.bb[2]||wy>h.bb[3]) continue;
+    for(const r of h.rings){
+      let inside=false;
+      for(let i=0,j=r.length-1;i<r.length;j=i++){
+        const xi=r[i][0],yi=r[i][1],xj=r[j][0],yj=r[j][1];
+        if(((yi>wy)!==(yj>wy)) && (wx < (xj-xi)*(wy-yi)/((yj-yi)||1e-12)+xi)) inside=!inside;
+      }
+      if(inside) return h;
+    }
+  }
+  return null;
+}
+
+/* ---------------------------------------------------------- interaction */
+let drag=null, moved=false;
+cv.addEventListener('pointerdown', e => {
+  drag={x:e.clientX, y:e.clientY, vx:view.x, vy:view.y}; moved=false; userMoved=true;
+  cv.classList.add('drag'); cv.setPointerCapture(e.pointerId); fly=null;
+});
+cv.addEventListener('pointermove', e => {
+  if(drag){
+    const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+    if(Math.abs(dx)+Math.abs(dy)>3) moved=true;
+    view.x = drag.vx - dx/view.k; view.y = drag.vy - dy/view.k;
+    hideTip(); draw(); return;
+  }
+  hoverAt(e.clientX, e.clientY);
+});
+cv.addEventListener('pointerup', e => {
+  cv.classList.remove('drag');
+  if(!moved) clickAt(e.clientX, e.clientY);
+  drag=null;
+});
+cv.addEventListener('pointerleave', ()=>{ hideTip(); state.hover=null; draw(); });
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomBy(Math.pow(1.0016, -e.deltaY*(e.deltaMode?16:1)), e.clientX, e.clientY);
+}, {passive:false});
+cv.addEventListener('dblclick', e => { e.preventDefault(); zoomBy(2, e.clientX, e.clientY); });
+
+function pick(px,py){
+  let best=null, bd=1e9;
+  for(let n=hitPins.length-1;n>=0;n--){
+    const h=hitPins[n];
+    const d=Math.hypot(h.x-px, h.y-py);
+    if(d<=h.r && d<bd){ bd=d; best=h; }
+  }
+  return best;
+}
+function hoverAt(px,py){
+  const h=pick(px,py);
+  if(h!==state.hover){ state.hover=h; draw(); }
+  if(h){ hoverHood=null; showTip(h, px, py); return; }
+  if(state.heat){
+    const hh=hoodAt(px,py);
+    if(hh!==hoverHood){ hoverHood=hh; draw(); }
+    if(hh){ showHoodTip(hh,px,py); return; }
+  } else if(hoverHood){ hoverHood=null; draw(); }
+  hideTip();
+}
+function showHoodTip(h,px,py){
+  const list=nbItems[h.key]||[];
+  const loc=list.filter(i=>!i.amb);
+  tip.innerHTML=`<div class="tn">${esc(h.boro.toUpperCase())}</div>
+    <div class="tt">${esc(h.name)}</div>
+    <div class="tm">${h.nl} PLACED PIECE${h.nl===1?'':'S'}${h.nd?` · ${h.nd} DIFFUSE`:''}${h.na?` · ${h.na} CITYWIDE`:''}</div>
+    ${loc.length?`<div class="ts">${esc(loc.slice(0,3).map(i=>i.t).join(' · '))}${loc.length>3?' …':''}</div>`:''}`;
+  tip.style.display='block';
+  const r=tip.getBoundingClientRect();
+  tip.style.left=Math.min(W-r.width-12,Math.max(8,px+16))+'px';
+  tip.style.top=Math.min(H-r.height-12,Math.max(8,py+16))+'px';
+}
+function clickAt(px,py){
+  const h=pick(px,py);
+  if(!h && state.heat){ const hh=hoodAt(px,py); if(hh && hh.nl){ openHood(hh); return; } }
+  if(!h){ if(state.selPlace){ state.selPlace=null; draw(); } return; }
+  if(h.kind==='cluster'){
+    if(h.c.n===1) openPiece(h.c.list[0]);
+    else { state.selPlace=h.c.key; openPlace(h.c); }
+  } else openPiece(h.i);
+}
+const tip=$('#tip');
+function showTip(h,px,py){
+  let html='';
+  if(h.kind==='cluster'){
+    const c=h.c, fams={}; c.list.forEach(i=>fams[i.fam]=(fams[i.fam]||0)+1);
+    const top=Object.entries(fams).sort((a,b)=>b[1]-a[1]).slice(0,3).map(f=>f[0]+' ×'+f[1]).join(' · ');
+    html = `<div class="tn">${c.pl.kind.toUpperCase()} · ${c.pl.boro.toUpperCase()}</div>
+      <div class="tt">${esc(c.pl.name)}</div>
+      <div class="tm">${c.n} PIECE${c.n>1?'S':''} · CLICK TO OPEN</div>
+      <div class="ts">${esc(top)}</div>`;
+  } else {
+    const i=h.i;
+    html = (i.thumb?`<img src="assets/t/${i.thumb}.jpg" alt="">`:'') +
+      `<div class="tn">${i.n!=null?'№ '+i.n:i.id.toUpperCase()} · ${i.fam.toUpperCase()}</div>
+       <div class="tt">${esc(i.t)}</div>
+       <div class="tm">${i.place?esc(i.place.name.toUpperCase()):'CITYWIDE'}${i.nb?' · '+esc(i.nb.name.toUpperCase()):''} · ${i.scene.toUpperCase()}</div>
+       <div class="ts">${esc((i.story||'').slice(0,140))}${(i.story||'').length>140?'…':''}</div>`;
+  }
+  tip.innerHTML=html; tip.style.display='block';
+  const r=tip.getBoundingClientRect();
+  tip.style.left = Math.min(W-r.width-12, Math.max(8, px+16))+'px';
+  tip.style.top  = Math.min(H-r.height-12, Math.max(8, py+16))+'px';
+}
+function hideTip(){ tip.style.display='none'; }
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------------------------------------------------------- detail panel */
+const dBody=$('#dBody');
+function setDetail(open){
+  detailOpen=open; $('#detail').classList.toggle('open',open);
+  if(!open){ state.selected=null; state.selPlace=null; draw(); }
+}
+$('#dClose').onclick=()=>setDetail(false);
+let navList=[], navIdx=-1;
+$('#dPrev').onclick=()=>step(-1); $('#dNext').onclick=()=>step(1);
+function step(d){
+  if(!navList.length) return;
+  navIdx=(navIdx+d+navList.length)%navList.length;
+  openPiece(navList[navIdx], true);
+}
+function openPiece(i, keepList){
+  state.selected=i; state.selPlace=i.placeKey||null;
+  if(!keepList){ navList = i.placeKey ? (placeItems[i.placeKey]||[i]) : VIS; navIdx=navList.indexOf(i); }
+  $('#dKind').textContent='PIECE';
+  const P0=i.place, nb=i.nb;
+  const prec=PREC_LABEL[i.prec];
+  const rel=(edgeIndex[i.id]||[]).map(e=>({it:ITEM_BY_ID[e.o.id], ty:e.ty})).filter(r=>r.it);
+  const near = i.wx!=null ? ITEMS.filter(o=>o!==i && o.wx!=null && !o.amb)
+      .map(o=>({o, d:Math.hypot(o.wx-i.wx,o.wy-i.wy)})).sort((a,b)=>a.d-b.d).slice(0,6) : [];
+  const states=(i.states||[]);
+  dBody.innerHTML = `
+    ${i.thumb?`<img class="shot" id="bigShot" src="assets/t/${i.thumb}.jpg" alt="">`:''}
+    ${states.length>1?`<div class="shots">${states.map((s,k)=>
+        `<img src="assets/t/${s}.jpg" data-s="${s}" class="${k===0?'on':''}" alt="">`).join('')}</div>`:''}
+    <div class="dpad">
+      <div class="dnum">${i.n!=null?'№ '+i.n:i.id.toUpperCase()} · ERA ${romanEra(i.era)} · ${esc(i.fam.toUpperCase())}</div>
+      <div class="dtitle">${esc(i.t)}</div>
+      ${i.story?`<div class="dstory">${esc(i.story)}</div>`:''}
+      <div class="meta">
+        <div class="mrow"><div class="mk">Where</div><div class="mv">
+          ${P0?`<b style="color:${colOf(i)}">${esc(P0.name)}</b><br><em>${esc(P0.kind)} · ${esc(P0.boro)}</em>`
+              :`<b>Citywide</b><br><em>no fixed address in the record</em>`}</div></div>
+        ${nb?`<div class="mrow"><div class="mk">Neighbourhood</div><div class="mv">${esc(nb.name)}
+             <em>· ${esc(nb.boro)}</em></div></div>`:''}
+        <div class="mrow"><div class="mk">Precision</div><div class="mv">
+          <span class="pill" style="color:${i.prec==='site'?'#00E5FF':i.prec==='area'?'#2962FF':i.prec==='borough'?'#FFB300':'#5C7080'}">${prec[0]}</span>
+          ${i.inf?`<span class="pill" style="color:#8899AA">INFERRED</span>`:''}
+          <em>${prec[1]}</em>${i.inf?`<br><em>no address in the record: placed from what the scene shows</em>`:''}${i.src?`<br><em>matched on ${esc(i.src)}</em>`:''}</div></div>
+        <div class="mrow"><div class="mk">Scene</div><div class="mv">
+          <span class="pill" style="color:${SCENE_COL[i.scene]}">${esc(i.scene.toUpperCase())}</span></div></div>
+        ${i.cat?`<div class="mrow"><div class="mk">Category</div><div class="mv">${esc(i.cat)}</div></div>`:''}
+        <div class="mrow"><div class="mk">Era</div><div class="mv">${esc(eraTitle(i.era))}</div></div>
+        <div class="mrow"><div class="mk">States</div><div class="mv">${states.length} rendered state${states.length===1?'':'s'}
+          ${i.motion?`<span class="pill" style="color:#FF2E63">${i.motion.toUpperCase()}</span>`:''}</div></div>
+        ${i.lat!=null?`<div class="mrow"><div class="mk">Coordinates</div><div class="mv mono">
+          ${i.lat.toFixed(5)}, ${i.lon.toFixed(5)}${i.amb?'<br><em>illustrative scatter'+(i.scatterBoro?'. The dot landed in '+esc(i.scatterBoro):'')+'. Not a claim</em>':
+          i.spread?'<br><em>scattered inside the borough</em>':''}</div></div>`:''}
+        <div class="mrow"><div class="mk">ID</div><div class="mv mono">${esc(i.id)}</div></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><a class="btn" href="census.html#n=${esc(i.id)}" style="text-decoration:none">OPEN THE RECORD</a><button class="btn" data-locate="${esc(i.id)}">LOCATE</button></div>
+    </div>
+    ${near.length?`<div class="dsec"><div class="k">NEAREST ON THE MAP</div>
+      ${near.map(x=>miniRow(x.o, fmtDist(x.d))).join('')}</div>`:''}
+    ${rel.length?`<div class="dsec"><div class="k">LINKED IN THE NETWORK (${rel.length})</div>
+      ${rel.slice(0,10).map(r=>miniRow(r.it, EDGE_LABEL(r.ty))).join('')}</div>`:''}
+    ${i.placeKey&&placeItems[i.placeKey].length>1?`<div class="dsec"><div class="k">ALSO AT ${esc(P0.name.toUpperCase())}</div>
+      ${placeItems[i.placeKey].filter(x=>x!==i).slice(0,12).map(x=>miniRow(x,'')).join('')}</div>`:''}
+  `;
+  dBody.scrollTop=0;
+  dBody.querySelectorAll('.shots img').forEach(img=>img.onclick=()=>{
+    dBody.querySelectorAll('.shots img').forEach(o=>o.classList.remove('on'));
+    img.classList.add('on'); const b=$('#bigShot'); if(b) b.src='assets/t/'+img.dataset.s+'.jpg';
+  });
+  dBody.querySelectorAll('[data-locate]').forEach(b=>b.onclick=()=>{ focusItem(i); draw(); });
+  dBody.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{
+    const t=ITEM_BY_ID[b.dataset.go]; if(t){ openPiece(t); focusItem(t); }});
+  setDetail(true);
+  if(i.wx!=null) focusItem(i, true);
+  location.hash = 'p='+i.id;
+  draw();
+}
+function miniRow(x, right){
+  return `<button class="mini" data-go="${esc(x.id)}">
+    ${x.thumb?`<img loading="lazy" src="assets/t/${x.thumb}.jpg" alt="">`:'<img alt="">'}
+    <span style="min-width:0"><span class="mn">${x.n!=null?'№ '+x.n:esc(x.id.toUpperCase())} · ${esc(x.fam.toUpperCase())}</span>
+    <span class="mt">${esc(x.t)}</span></span>
+    <span class="mx">${esc(right||(x.place?x.place.name:'citywide'))}</span></button>`;
+}
+function fmtDist(d){
+  const m = d*111320*Math.cos(40.72*Math.PI/180);
+  return m<950 ? Math.round(m/10)*10+' m' : (m/1000).toFixed(1)+' km';
+}
+function openPlace(c){
+  state.selected=null; state.selPlace=c.key;
+  navList=c.list; navIdx=-1;
+  $('#dKind').textContent='PLACE';
+  const fams={}, eras={}, scenes={};
+  c.list.forEach(i=>{fams[i.fam]=(fams[i.fam]||0)+1; eras[i.era]=(eras[i.era]||0)+1; scenes[i.scene]=(scenes[i.scene]||0)+1;});
+  const bar = o => Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+     `<span class="pill" style="color:${state.color==='scene'?SCENE_COL[k]||'#8899AA':FAM_COL[k]||'#8899AA'}">${esc(k)} ${v}</span>`).join('');
+  const hood = HOODS.find(h=>h.rings.length && pointInHood(c.pl.lon,c.pl.lat,h));
+  dBody.innerHTML=`
+    <div class="dpad">
+      <div class="dnum">${esc(c.pl.kind.toUpperCase())} · ${esc(c.pl.boro.toUpperCase())}</div>
+      <div class="dtitle">${esc(c.pl.name)}</div>
+      <div class="meta">
+        <div class="mrow"><div class="mk">Pieces here</div><div class="mv"><b>${c.n}</b></div></div>
+        ${hood?`<div class="mrow"><div class="mk">Neighbourhood</div><div class="mv">${esc(hood.name)}</div></div>`:''}
+        <div class="mrow"><div class="mk">Coordinates</div><div class="mv mono">${c.pl.lat.toFixed(5)}, ${c.pl.lon.toFixed(5)}</div></div>
+        <div class="mrow"><div class="mk">Families</div><div class="mv">${bar(fams)}</div></div>
+        <div class="mrow"><div class="mk">Scenes</div><div class="mv">${Object.entries(scenes).sort((a,b)=>b[1]-a[1])
+            .map(([k,v])=>`<span class="pill" style="color:${SCENE_COL[k]}">${esc(k)} ${v}</span>`).join('')}</div></div>
+        <div class="mrow"><div class="mk">Eras</div><div class="mv">${Object.entries(eras).sort((a,b)=>a[0]-b[0])
+            .map(([k,v])=>`<span class="pill" style="color:${ERA_COL[k]}">${romanEra(+k)} ×${v}</span>`).join('')}</div></div>
+      </div>
+    </div>
+    <div class="dsec"><div class="k">THE PIECES</div>
+      ${c.list.map(x=>miniRow(x, x.scene)).join('')}</div>`;
+  dBody.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{
+    const t=ITEM_BY_ID[b.dataset.go]; if(t) openPiece(t);});
+  dBody.scrollTop=0; setDetail(true);
+  location.hash='place='+c.key;
+  const tk = Math.max(view.k, view.k0*6);
+  flyTo(c.wx + (detailOpen ? 190/tk : 0), c.wy, tk, 640);
+}
+function openHood(h){
+  const list=(nbItems[h.key]||[]).slice().sort((a,b)=>(a.amb-b.amb)||((a.n??1e9)-(b.n??1e9)));
+  const loc=list.filter(i=>!i.amb), amb=list.filter(i=>i.amb);
+  state.selected=null; state.selPlace=null; navList=loc.length?loc:list; navIdx=-1;
+  $('#dKind').textContent='NEIGHBOURHOOD';
+  const fams={}, scenes={};
+  loc.forEach(i=>{fams[i.fam]=(fams[i.fam]||0)+1; scenes[i.scene]=(scenes[i.scene]||0)+1;});
+  const placesHere={};
+  loc.forEach(i=>{ if(i.place) placesHere[i.place.name]=(placesHere[i.place.name]||0)+1; });
+  dBody.innerHTML=`
+    <div class="dpad">
+      <div class="dnum">NEIGHBOURHOOD · ${esc(h.boro.toUpperCase())}</div>
+      <div class="dtitle">${esc(h.name)}</div>
+      <div class="meta">
+        <div class="mrow"><div class="mk">Placed here</div><div class="mv"><b>${h.nl}</b>
+          <em>· ${(100*h.nl/Math.max(1,maxHoodLoc)).toFixed(0)}% of the busiest neighbourhood</em></div></div>
+        <div class="mrow"><div class="mk">Diffuse here</div><div class="mv">${h.nd}
+          <em>· pinned to a borough, a line or the subway as a system. Not to this ground</em></div></div>
+        <div class="mrow"><div class="mk">Citywide here</div><div class="mv">${h.na}
+          <em>· scattered, not claimed</em></div></div>
+        ${Object.keys(placesHere).length?`<div class="mrow"><div class="mk">Named places</div><div class="mv">
+          ${Object.entries(placesHere).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+            `<span class="pill" style="color:#00E5FF">${esc(k)} ${v}</span>`).join('')}</div></div>`:''}
+        ${Object.keys(fams).length?`<div class="mrow"><div class="mk">Families</div><div class="mv">
+          ${Object.entries(fams).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+            `<span class="pill" style="color:${FAM_COL[k]}">${esc(k)} ${v}</span>`).join('')}</div></div>`:''}
+        ${Object.keys(scenes).length?`<div class="mrow"><div class="mk">Scenes</div><div class="mv">
+          ${Object.entries(scenes).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+            `<span class="pill" style="color:${SCENE_COL[k]}">${esc(k)} ${v}</span>`).join('')}</div></div>`:''}
+      </div>
+    </div>
+    ${loc.length?`<div class="dsec"><div class="k">PLACED IN ${esc(h.name.toUpperCase())}</div>
+      ${loc.map(x=>miniRow(x, x.place?x.place.name:'')).join('')}</div>`:''}
+    ${amb.length?`<div class="dsec"><div class="k">CITYWIDE PIECES SCATTERED HERE (${amb.length})</div>
+      ${amb.slice(0,40).map(x=>miniRow(x, x.scene)).join('')}</div>`:''}`;
+  dBody.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{
+    const t=ITEM_BY_ID[b.dataset.go]; if(t) openPiece(t);});
+  dBody.scrollTop=0; setDetail(true);
+  const tk=Math.max(view.k, view.k0*4);
+  flyTo(h.wx + 190/tk, h.wy, tk, 600);
+}
+function pointInHood(lon,lat,h){
+  for(const r of h.rings){
+    let inside=false;
+    for(let i=0,j=r.length-1;i<r.length;j=i++){
+      const xi=r[i][0], yi=r[i][1], xj=r[j][0], yj=r[j][1];
+      const Y=P.y(lat);
+      if(((yi>Y)!==(yj>Y)) && (lon < (xj-xi)*(Y-yi)/((yj-yi)||1e-12)+xi)) inside=!inside;
+    }
+    if(inside) return true;
+  }
+  return false;
+}
+function focusItem(i, soft){
+  if(i.wx==null) return;
+  const k = soft ? Math.max(view.k, view.k0*(i.amb?3:8)) : view.k0*12;
+  const offset = detailOpen ? (200/k) : 0;
+  flyTo(i.wx + offset, i.wy, k, 640);
+}
+const EDGE_KIND = ty => ty.split(':')[0];
+const EDGE_PAL = {thread:'#FF2E63', set:'#00E5FF', spine:'#FFD54F', monument:'#B14DFF', callback:'#7CFFB2'};
+const EDGE_COL = ty => EDGE_PAL[EDGE_KIND(ty)] || '#8899AA';
+const EDGE_LABEL = ty => { const [k,v]=ty.split(':');
+  return v ? k.toUpperCase()+' · '+v.toUpperCase() : k.toUpperCase(); };
+const romanEra = e => { const x=ERAS.find(o=>o.i===e); return x? x.roman : (['','I','II','III','IV','V','VI','VII'][e]||e); };
+const eraTitle = e => { const x=ERAS.find(o=>o.i===e); return x? `${x.roman} · ${x.title} · ${x.sub}` : 'Era '+e; };
+
+/* ---------------------------------------------------------- filter UI */
+function chip(label, col, count, on, fn){
+  const b=el('button','chip'+(on?' on':''),
+    `${col?`<i style="background:${col}"></i>`:''}${esc(label)}${count!=null?` <b>${count}</b>`:''}`);
+  if(col&&on) b.style.color=col;
+  b.onclick=()=>{ fn(); b.blur(); };
+  return b;
+}
+function buildFilters(){
+  // ERA
+  const er=$('#eraRange'); er.innerHTML='';
+  const allB=el('button','eraB'+(state.eras.size?'':' on'),'ALL');
+  allB.onclick=()=>{ stopEraPlay(); state.eras.clear(); refresh(); }; er.appendChild(allB);
+  ERAS.map(o=>o.i).forEach(e=>{
+    const b=el('button','eraB'+(state.eras.has(e)?' on':''), romanEra(e));
+    b.title=eraTitle(e);
+    b.onclick=()=>{ stopEraPlay();
+      state.eras.has(e)?state.eras.delete(e):state.eras.add(e); refresh(); };
+    er.appendChild(b);
+  });
+  const pb=el('button','eraB'+(eraTimer?' on':''), eraTimer?'■':'▶');
+  pb.title='play the eras in order'; pb.style.flex='0 0 30px';
+  pb.onclick=()=>{ eraTimer ? stopEraPlay() : startEraPlay(); };
+  er.appendChild(pb);
+  // FAMILY
+  const fc=$('#famC'); fc.innerHTML='';
+  FAMS.forEach(f=>{
+    const n=ITEMS.filter(i=>i.fam===f).length;
+    fc.appendChild(chip(f, FAM_COL[f], n, state.fams.has(f), ()=>{
+      state.fams.has(f)?state.fams.delete(f):state.fams.add(f); refresh(); }));
+  });
+  // SCENE
+  const sc=$('#scnC'); sc.innerHTML='';
+  SCENES.forEach(s=>{
+    const n=ITEMS.filter(i=>i.scene===s).length; if(!n) return;
+    sc.appendChild(chip(s, SCENE_COL[s], n, state.scenes.has(s), ()=>{
+      state.scenes.has(s)?state.scenes.delete(s):state.scenes.add(s); refresh(); }));
+  });
+  // BOROUGH
+  const bc=$('#boroC'); bc.innerHTML='';
+  BOROS.forEach(b=>{
+    const n=ITEMS.filter(i=>i.boro===b).length;
+    const cb=chip(b, BORO_COL[b], n, state.boros.has(b), ()=>{
+      state.boros.has(b)?state.boros.delete(b):state.boros.add(b); refresh(); });
+    cb.title='pieces whose record names '+b+'. Citywide pieces are not counted here';
+    bc.appendChild(cb);
+  });
+  const cw=ITEMS.filter(i=>i.boro==='Citywide').length;
+  if(cw) bc.appendChild(chip('Citywide', BORO_COL.Citywide, cw, state.boros.has('Citywide'), ()=>{
+    state.boros.has('Citywide')?state.boros.delete('Citywide'):state.boros.add('Citywide'); refresh(); }));
+  // PRECISION
+  const pc=$('#precC'); pc.innerHTML='';
+  Object.entries(PREC_LABEL).forEach(([k,v])=>{
+    const n=ITEMS.filter(i=>i.prec===k).length;
+    const col = k==='site'?'#00E5FF':k==='area'?'#2962FF':k==='borough'?'#FFB300':'#5C7080';
+    const b=chip(v[0], col, n, state.precs.has(k), ()=>{
+      state.precs.has(k)?state.precs.delete(k):state.precs.add(k); refresh(); });
+    b.title=v[1]; pc.appendChild(b);
+  });
+  // LAYERS
+  const lc=$('#layerC'); lc.innerHTML='';
+  const sws=[
+    ['ambient','Citywide scatter','the 1,168 pieces with no fixed address, sprinkled across the land'],
+    ['hoods','Neighbourhood outlines','262 NYC tabulation areas'],
+    ['heat','Density by neighbourhood','choropleth of located pieces only'],
+    ['threads','Narrative threads','arcs between linked pieces'],
+    ['labels','Labels',''],
+    ['motionOnly','Motion pieces only','pieces that have a GIF or a video']
+  ];
+  sws.forEach(([k,lab,sub])=>{
+    const row=el('div','rowsw',`<div>${lab}${sub?`<small>${sub}</small>`:''}</div>`);
+    const s=el('div','sw'+(state[k]?' on':''));
+    s.onclick=()=>{ state[k]=!state[k]; s.classList.toggle('on',state[k]); refresh(); };
+    row.appendChild(s); lc.appendChild(row);
+  });
+  // COLOUR BY
+  const cc=$('#colorC'); cc.innerHTML='';
+  [['family','FAMILY'],['scene','SCENE'],['era','ERA'],['boro','BOROUGH']].forEach(([k,l])=>{
+    cc.appendChild(chip(l, null, null, state.color===k, ()=>{ state.color=k; refresh(); }));
+  });
+  buildLegend(); buildPlaceIndex();
+}
+let plSort='count';
+function buildPlaceIndex(){
+  const L=$('#plList'); if(!L) return;
+  const rows=CLUSTERS.slice();
+  rows.sort(plSort==='count' ? (a,b)=>b.n-a.n || a.pl.name.localeCompare(b.pl.name)
+                             : (a,b)=>a.pl.name.localeCompare(b.pl.name));
+  $('#plN').textContent = rows.length+' PLACES';
+  const sr=$('#plSortRow'); sr.innerHTML='';
+  [['count','BY COUNT'],['name','A to Z']].forEach(([k,lab])=>
+    sr.appendChild(chip(lab,null,null,plSort===k,()=>{ plSort=k; buildPlaceIndex(); })));
+  L.innerHTML = rows.map(c=>`<button class="mini" data-pl="${esc(c.key)}" style="padding:6px 0">
+      <span style="min-width:0;flex:1">
+        <span class="mn" style="color:${colOfCluster(c)}">${esc(c.pl.kind.toUpperCase())} · ${esc(c.pl.boro.toUpperCase())}</span>
+        <span class="mt">${esc(c.pl.name)}</span></span>
+      <span class="mx">${c.n}</span></button>`).join('');
+  L.querySelectorAll('[data-pl]').forEach(b=>b.onclick=()=>{
+    const c=CLUSTERS.find(x=>x.key===b.dataset.pl);
+    if(c){ if(c.n===1) openPiece(c.list[0]); else openPlace(c); if(window.innerWidth<900) toggleRail(false); }
+  });
+}
+function buildLegend(){
+  const L=$('#legendC'); L.innerHTML='';
+  const src = state.color==='scene' ? SCENES.map(s=>[s,SCENE_COL[s]])
+            : state.color==='era' ? ERAS.map(o=>o.i).map(e=>[romanEra(e)+' · '+((ERAS.find(o=>o.i===e)||{}).title||''),ERA_COL[e]])
+            : state.color==='boro' ? BOROS.map(b=>[b,BORO_COL[b]])
+            : FAMS.map(f=>[f,FAM_COL[f]]);
+  src.forEach(([n,c])=>L.appendChild(el('div',null,`<i style="background:${c}"></i>${esc(n)}`)));
+  L.appendChild(el('div',null,`<i style="border:1px solid #fff;background:transparent"></i>has motion`));
+  L.appendChild(el('div',null,`<i style="border:1.5px solid #8899AA;background:rgba(136,153,170,.4)"></i>inferred from the scene`));
+  L.appendChild(el('div',null,`<i style="border:1px dashed #8899AA;background:transparent"></i>diffuse. A system, not a spot`));
+  if(state.threads){
+    L.appendChild(el('div',null,'<span style="color:#5C7080">threads</span>'));
+    Object.entries(EDGE_PAL).forEach(([k,c])=>
+      L.appendChild(el('div',null,`<i style="background:${c}"></i>${k}`)));
+  }
+  L.appendChild(el('div',null,`<i style="background:#5C7080;opacity:.45"></i>citywide scatter`));
+}
+let eraTimer=null;
+function startEraPlay(){
+  let e = 0;
+  const advance = ()=>{
+    e = e%ERAS.length + 1;
+    state.eras.clear(); state.eras.add(e);
+    const info = ERAS.find(o=>o.i===e);
+    toast('ERA '+romanEra(e)+(info?' · '+info.title.toUpperCase():''));
+    refresh();
+  };
+  advance();
+  eraTimer = setInterval(advance, 2600);
+  buildFilters();
+}
+function stopEraPlay(){ if(eraTimer){ clearInterval(eraTimer); eraTimer=null; buildFilters(); } }
+function refresh(){ recompute(); buildFilters(); draw(); }
+function updateStat(){
+  const loc=VIS_LOC.length, amb=VIS_AMB.length, inf=VIS_LOC.filter(i=>i.inf).length;
+  const places=CLUSTERS.length;
+  const hoods=new Set(VIS_LOC.map(i=>i.nbKey).filter(Boolean)).size;
+  $('#stat').innerHTML =
+    `<b>${VIS.length.toLocaleString()}</b> of ${ITEMS.length.toLocaleString()} pieces shown<br>`+
+    `<span class="hi">${loc.toLocaleString()}</span> placed on the ground · `+
+    `<b>${places}</b> named place${places===1?'':'s'} · <b>${hoods}</b> neighbourhood${hoods===1?'':'s'}<br>`+
+    `<span style="color:#8899AA">${inf.toLocaleString()} of those inferred from the scene</span>`+
+    (amb?` · <span style="color:#5C7080">${amb.toLocaleString()} citywide, scattered</span>`:'');
+  const on=[state.eras.size,state.fams.size,state.scenes.size,state.boros.size,state.precs.size].reduce((a,b)=>a+b,0);
+  $('#eraN').textContent=state.eras.size?state.eras.size+' ON':'';
+  $('#famN').textContent=state.fams.size?state.fams.size+' ON':'';
+  $('#scnN').textContent=state.scenes.size?state.scenes.size+' ON':'';
+  $('#qn').textContent=state.q?VIS.length+' HITS':'';
+  $('#bClear').style.opacity = (on||state.q)?1:.4;
+}
+/* ---------------------------------------------------------- controls */
+function toggleRail(v){ rail.open = v==null?!rail.open:v; $('#rail').classList.toggle('open',rail.open); }
+$('#bRail').onclick=()=>toggleRail();
+$('#bRailX').onclick=()=>toggleRail(false);
+$('#bClear').onclick=()=>{ state.eras.clear();state.fams.clear();state.scenes.clear();
+  state.boros.clear();state.precs.clear();state.q='';$('#q').value='';state.motionOnly=false;refresh(); };
+$('#bHeat').onclick=e=>{ state.heat=!state.heat; e.target.classList.toggle('on',state.heat); refresh(); };
+$('#bThread').onclick=e=>{ state.threads=!state.threads; e.target.classList.toggle('on',state.threads); refresh(); };
+$('#bLabels').onclick=e=>{ state.labels=!state.labels; e.target.classList.toggle('on',state.labels); draw(); };
+$('#bReset').onclick=()=>{ setDetail(false); fitAll(true); userMoved=false; };
+$('#bIn').onclick=()=>zoomBy(1.6); $('#bOut').onclick=()=>zoomBy(1/1.6);
+$('#bDice').onclick=()=>{ const pool=VIS.length?VIS:ITEMS;
+  const i=pool[Math.floor(Math.random()*pool.length)]; openPiece(i); toast('№ '+(i.n??i.id)+' · '+i.t); };
+$('#bHelp').onclick=()=>$('#help').classList.add('open');
+$('#help').onclick=e=>{ if(e.target.id==='help') $('#help').classList.remove('open'); };
+let qT=null;
+$('#q').addEventListener('input', e=>{
+  clearTimeout(qT); qT=setTimeout(()=>{ state.q=e.target.value.trim().toLowerCase(); refresh(); },140);
+});
+$('#q').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && VIS.length){ const t=VIS.find(i=>!i.amb)||VIS[0]; openPiece(t); }
+  e.stopPropagation();
+});
+let toastT=null;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block';
+  clearTimeout(toastT); toastT=setTimeout(()=>t.style.display='none',2200); }
+
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='INPUT') return;
+  const K=e.key.toLowerCase();
+  if(K==='f'){ toggleRail(); }
+  else if(K==='h'){ $('#bHeat').click(); }
+  else if(K==='t'){ $('#bThread').click(); }
+  else if(K==='l'){ $('#bLabels').click(); }
+  else if(K==='r'){ $('#bDice').click(); }
+  else if(K==='p'){ eraTimer?stopEraPlay():startEraPlay(); }
+  else if(K==='c'){ state.ambient=!state.ambient; refresh(); toast('CITYWIDE SCATTER '+(state.ambient?'ON':'OFF')); }
+  else if(K==='0'){ $('#bReset').click(); }
+  else if(K==='+'||K==='='){ zoomBy(1.5); }
+  else if(K==='-'||K==='_'){ zoomBy(1/1.5); }
+  else if(K==='/'){ e.preventDefault(); toggleRail(true); $('#q').focus(); }
+  else if(K==='?'){ $('#bHelp').click(); }
+  else if(K==='escape'){ $('#help').classList.remove('open'); setDetail(false); }
+  else if(e.key==='ArrowRight'){ step(1); }
+  else if(e.key==='ArrowLeft'){ step(-1); }
+  else if('1234567'.includes(K)){ const n=+K;
+    state.eras.has(n)?state.eras.delete(n):state.eras.add(n); refresh(); }
+});
+window.addEventListener('resize', resize);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) resize(); });
+window.addEventListener('hashchange', readHash);
+function readHash(){
+  const h=location.hash.slice(1);
+  if(h.startsWith('p=')){ const i=ITEM_BY_ID[h.slice(2)]; if(i && i!==state.selected) openPiece(i); }
+  else if(h.startsWith('place=')){ const k=h.slice(6); const c=CLUSTERS.find(c=>c.key===k); if(c) openPlace(c); }
+}
+/* ---------------------------------------------------------- help copy */
+$('#helpBody').innerHTML=`
+  <h2>The Atlas</h2>
+  <p>Every piece in NEW YORKERS is read for the place it names. A landmark, a corner, a line, a
+  neighbourhood, and it is pinned there. <b>${GEO.stats.site+GEO.stats.area+GEO.stats.borough}</b> of
+  ${ITEMS.length.toLocaleString()} pieces carry a location in the record. The rest belong to the whole city
+  and are scattered as a faint field across the five boroughs.</p>
+  <table>
+    <tr><td>Site</td><td><b>${GEO.stats.site}</b> pieces pinned to a named address, landmark, bridge, street or corner.</td></tr>
+    <tr><td>Area</td><td><b>${GEO.stats.area}</b> pinned to a neighbourhood, subway line or waterway.</td></tr>
+    <tr><td>Borough</td><td><b>${GEO.stats.borough}</b> where only the borough is known. Scattered inside it.</td></tr>
+    <tr><td>Inferred</td><td><b>${GEO.stats.inferred||0}</b> carry no address in the record and were placed by reading what the scene shows: the trade, the food, the block, the borough cues. Hollow pins. Approximate by design.</td></tr>
+    <tr><td>Citywide</td><td><b>${GEO.stats.citywide}</b> with no fixed address. Their scatter is illustrative, not a claim.</td></tr>
+    <tr><td>Heat map</td><td>The choropleth counts only pieces pinned to real ground. Pieces pinned to a
+      whole borough, a subway line, or the system itself are diffuse by nature and are excluded, so they
+      cannot pile into whichever neighbourhood happens to hold their anchor.</td></tr>
+    <tr><td>Scene</td><td>Every piece is also read for the <i>kind</i> of place it happens in. Subway, stoop,
+      rooftop, bodega, park, waterfront, so the citywide pieces stay legible.</td></tr>
+    <tr><td>Sources</td><td>Basemap: NYC borough boundaries and 2020 Neighborhood Tabulation Areas
+      (NYC Open Data). Placement: a hand-built gazetteer of ${GEO.stats.gazetteer} New York places
+      (${GEO.stats.patterns} name patterns covering landmarks, venues, parks, bridges, streets, subway lines,
+      waterways and every 2020 neighbourhood) matched against each piece's title, story and recorded
+      borough. ${GEO.stats.places} of those places were actually hit.</td></tr>
+  </table>
+  <div class="kb">
+    <div><kbd>drag</kbd><span>pan</span></div>
+    <div><kbd>scroll</kbd><span>zoom</span></div>
+    <div><kbd>click</kbd><span>open a place or a piece</span></div>
+    <div><kbd>/</kbd><span>search</span></div>
+    <div><kbd>F</kbd><span>filters</span></div>
+    <div><kbd>H</kbd><span>heat map</span></div>
+    <div><kbd>T</kbd><span>threads</span></div>
+    <div><kbd>L</kbd><span>labels</span></div>
+    <div><kbd>C</kbd><span>citywide scatter</span></div>
+    <div><kbd>R</kbd><span>random piece</span></div>
+    <div><kbd>1 to 7</kbd><span>toggle eras I to VII (all eras in the filter bar)</span></div>
+    <div><kbd>P</kbd><span>play the eras in order</span></div>
+    <div><kbd>← →</kbd><span>step through the current list</span></div>
+    <div><kbd>0</kbd><span>reset the view</span></div>
+    <div><kbd>Esc</kbd><span>close</span></div>
+  </div>
+  <p style="margin-bottom:0"><a href="census.html">← back to the census</a> · <a href="index.html">home</a> · <a href="counted.html">get counted</a></p>`;
+
+/* ---------------------------------------------------------- boot */
+function boot(){
+  resize(); fitAll(false); recompute(); buildFilters();
+  $('#bLabels').classList.add('on');
+  let n=0; const bar=$('#bootBar');
+  const tick=()=>{ n+=Math.random()*22+8; bar.style.width=Math.min(100,n)+'%';
+    if(n<100) setTimeout(tick,90);
+    else setTimeout(()=>{ $('#boot').classList.add('gone');
+      setTimeout(()=>$('#boot').remove(),800); readHash(); },260); };
+  $('#bootNote').textContent=`${GEO.stats.places} PLACES · ${GEO.stats.neighborhoods} NEIGHBOURHOODS · ${ITEMS.length} PIECES`;
+  tick();
+}
+boot();
+</script>
+</body>
+</html>

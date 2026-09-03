@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEW YORKERS · Get Counted</title>
+<meta name="description" content="Six questions. No wallet. Leave with the New Yorker the city thinks you are. The NEW YORKERS census is open.">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.screen{display:none;min-height:calc(100vh - 70px)}
+.screen.on{display:flex;flex-direction:column}
+/* intro */
+#intro{position:relative;overflow:hidden;justify-content:flex-end}
+#intro .bg{position:absolute;inset:0}
+#intro .bg img{width:100%;height:100%;object-fit:cover;opacity:.5;animation:drift 16s ease-in-out infinite}
+#intro .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.6),rgba(13,13,13,.1) 40%,rgba(13,13,13,.95) 100%)}
+#intro .in{position:relative;padding:120px clamp(20px,5vw,72px) 72px}
+#intro .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--cyan)}
+#intro .btns{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap}
+/* question */
+#quiz{padding:60px clamp(20px,5vw,72px)}
+#quiz .prog{font-family:var(--mono);font-size:11px;letter-spacing:.34em;color:var(--slate);display:flex;justify-content:space-between;align-items:center}
+#quiz .bar{height:2px;background:var(--divider);margin-top:14px}
+#quiz .bar i{display:block;height:100%;background:var(--blue);transition:width .4s}
+#quiz .q{font-size:clamp(28px,4vw,52px);font-weight:800;line-height:1.08;margin-top:40px;max-width:1000px}
+#quiz .ans{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:40px}
+#quiz .ans button{background:var(--card);border:1px solid var(--divider);color:var(--cloud);text-align:left;padding:0;overflow:hidden;transition:border-color .2s,transform .2s}
+#quiz .ans button:hover,#quiz .ans button:focus{border-color:var(--cyan);transform:translateY(-3px);outline:none}
+#quiz .ans img{width:100%;aspect-ratio:16/10;object-fit:cover;opacity:.9}
+#quiz .ans span{display:block;padding:14px 14px 16px;font-size:16px;line-height:1.35;font-weight:700}
+#quiz .ans small{display:block;padding:0 14px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate)}
+#quiz .back{margin-top:30px;background:none;border:none;color:var(--slate);font-family:var(--mono);font-size:11px;letter-spacing:.3em}
+@media (max-width:1000px){#quiz .ans{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){#quiz .ans{grid-template-columns:1fr}#quiz .ans img{aspect-ratio:16/7}}
+/* processing */
+#proc{align-items:center;justify-content:center;text-align:center;gap:24px}
+#proc .eye{width:70px;animation:pulse 1s infinite}
+#proc .t{font-family:var(--mono);font-size:13px;letter-spacing:.4em;color:var(--cyan)}
+/* result */
+#result{display:none}
+#result.on{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 70px)}
+#result .pic{position:relative;min-height:60vh}
+#result .pic img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+#result .txt{padding:clamp(40px,6vw,80px) clamp(20px,5vw,72px);display:flex;flex-direction:column;justify-content:center}
+#result .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.4em;color:var(--cyan)}
+#result .id{font-size:clamp(28px,3.6vw,46px);font-weight:800;line-height:1.1;margin-top:18px}
+#result .plate{margin-top:26px}
+#result .nm{font-size:clamp(24px,2.6vw,34px);font-weight:800;margin-top:8px}
+#result .story{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.6;color:var(--cloud);margin-top:14px}
+#result .social{font-size:15px;color:var(--slate);margin-top:14px;line-height:1.6;border-left:2px solid var(--blue);padding-left:14px}
+#result .acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+#result .acts .btn{padding:14px 22px;font-size:12px}
+#result .meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--slate)}
+#result .meta b{color:var(--cloud);font-weight:400}
+@media (max-width:900px){#result.on{grid-template-columns:1fr}#result .pic{min-height:46vh}}
+/* save */
+#save{padding:60px clamp(20px,5vw,72px);align-items:center}
+#save .in{max-width:560px;width:100%}
+.field{margin-bottom:14px}
+.field label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.24em;color:var(--blue);margin-bottom:6px;text-transform:uppercase}
+.field input,.field select{width:100%;background:var(--card);border:1px solid var(--divider);color:#fff;font-family:var(--sans);font-size:15px;padding:12px 13px;border-radius:2px;outline:none}
+.field input:focus,.field select:focus{border-color:var(--pink)}
+#saveDone{display:none;text-align:center;padding:40px 0}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<section id="intro" class="screen on">
+  <div class="bg" id="introBg"></div><div class="shade"></div>
+  <div class="in">
+    <div class="eyebrow">THE NEW YORKERS CENSUS BUREAU</div>
+    <h1 class="h-xl" style="margin-top:20px">THE CENSUS<br>IS OPEN</h1>
+    <p class="lede" style="margin-top:22px;max-width:760px">Six questions. No wallet. Leave with the New Yorker the city thinks you are.</p>
+    <div class="btns"><button class="btn" id="startBtn">GET COUNTED</button><a class="btn ghost" href="census.html#gallery">BROWSE THE RECORDS</a></div>
+    <div class="mono" style="font-size:11px;letter-spacing:.24em;color:var(--slate);margin-top:28px">FREE · WALLETLESS · TAKES ABOUT A MINUTE · <span id="poolLine"></span></div>
+  </div>
+</section>
+
+<section id="quiz" class="screen">
+  <div class="prog"><span id="progT">QUESTION 1 OF 6</span><span>THE CITY IS LISTENING</span></div>
+  <div class="bar"><i id="progBar" style="width:0"></i></div>
+  <div class="q" id="qText"></div>
+  <div class="ans" id="qAns"></div>
+  <button class="back" id="backBtn">← BACK</button>
+</section>
+
+<section id="proc" class="screen">
+  <img class="eye" src="assets/brand/eye_truecolor.png" alt="">
+  <div class="t">THE CITY IS CHECKING ITS NOTES</div>
+</section>
+
+<section id="result" class="screen">
+  <div class="pic" id="resPic"></div>
+  <div class="txt">
+    <div class="eyebrow">CENSUS MATCH FOUND</div>
+    <div class="id" id="resId"></div>
+    <div class="plate"><span class="n" id="resNum"></span><span class="m" id="resMeta"></span></div>
+    <div class="nm" id="resName"></div>
+    <div class="story" id="resStory"></div>
+    <div class="social" id="resSocial"></div>
+    <div class="meta" id="resGrid"></div>
+    <div class="acts">
+      <button class="btn" id="cardBtn">DOWNLOAD YOUR CARD</button>
+      <button class="btn ghost" id="shareBtn">COPY YOUR LINK</button>
+      <a class="btn ghost" id="lookBtn" href="#">LOOK CLOSER</a>
+      <a class="btn ghost" id="atlasBtn" href="#">ON THE ATLAS</a>
+      <button class="btn pink" id="keepBtn">KEEP YOUR NUMBER</button>
+      <button class="btn ghost" id="againBtn">TAKE IT AGAIN</button>
+    </div>
+  </div>
+</section>
+
+<section id="save" class="screen">
+  <div class="in">
+    <h2 class="h-m">Keep your number. Return when the city calls.</h2>
+    <p class="body" style="margin-top:12px;margin-bottom:26px">The census is the allowlist. Register and your match is held in your name for THE CLAIM. No wallet needed today. Marketing consent is separate and optional.</p>
+    <form id="saveForm">
+      <input type="hidden" name="match" id="matchField">
+      <div class="field"><label>Name or alias</label><input name="name" required autocomplete="name" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input name="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
+      <div class="field"><label>X (Twitter) handle</label><input name="twitter" placeholder="@handle"></div>
+      <div class="field"><label>Discord or Telegram</label><input name="messenger" placeholder="handle"></div>
+      <div class="field"><label>How many pieces would you like to claim?</label>
+        <select name="mint_count" required><option value="" disabled selected>Choose</option><option value="1">1</option><option value="2">2</option><option value="community">Get in touch with MLow: looking for a spot for my community</option></select></div>
+      <div class="field"><label>Partner or community code (optional)</label><input name="partner_code" placeholder="if you were given one"></div>
+      <div class="field" style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="news" id="newsBox" style="width:auto"><label for="newsBox" style="margin:0;color:var(--slate)">Send me The Ledger, the weekly newsletter. Optional.</label></div>
+      <button class="btn pink" type="submit" id="saveSubmit" style="width:100%;margin-top:8px">REGISTER FOR THE CLAIM</button>
+    </form>
+    <div id="saveDone"><img src="assets/brand/eye_truecolor.png" style="width:44px;margin:0 auto" alt=""><div class="h-m" style="margin:14px 0 8px">You are seen.</div><p class="body">Registration received. The city has your name now, in the good way. Your Resident number is issued at the Census Office and by email once the count is posted.</p><p style="margin-top:20px"><a class="btn ghost" href="index.html">BACK TO THE CENSUS</a></p></div>
+  </div>
+</section>
+
+<div id="foot"></div>
+<canvas id="cardCanvas" width="1080" height="1920" style="display:none"></canvas>
+
+<script src="assets/config.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){
+"use strict";
+const {C,S,P,CFG,fmt,thumb,get,era,num,sample,recordUrl,esc,toast}=NY;
+NY.nav("GET COUNTED"); NY.foot();
+const $=s=>document.querySelector(s);
+const show=id=>{document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo({top:0});};
+/* the eligible pool: original characters only (eras II onward), never a cut, with a story where possible */
+const POOL=P.filter(p=>p.e>=2&&p.n!=null);
+$("#poolLine").textContent=num(POOL.length)+" CHARACTERS IN THE POOL";
+$("#introBg").innerHTML=`<img src="${thumb(sample(1,p=>p.e>=2,Math.floor(Date.now()/36e5))[0])}" alt="">`;
+
+const FAMS={Heroes:"reverent",Villains:"sharp",Hustlers:"hungry",Strays:"feral",Underground:"nocturnal",Stoop:"old school",Builders:"structural",Degens:"lit",Transplants:"arrived",Citizens:"civic",Design:"dressed",Places:"grounded"};
+const Q=[
+ {q:"New York gives you a locked door. What happens next?",a:[["Kick it open",{Heroes:3,Hustlers:1}],["Find another entrance",{Hustlers:3,Transplants:1}],["Build a better door",{Builders:3,Citizens:1}],["Wait and watch",{Stoop:3,Underground:1}],["Turn the hallway into a party",{Degens:3,Strays:1}]]},
+ {q:"The train stops between stations. Who are you first?",a:[["The calm voice",{Citizens:3,Heroes:1}],["The person with a plan",{Builders:2,Hustlers:2}],["The one making jokes",{Degens:2,Stoop:1}],["The one taking notes",{Underground:2,Citizens:1,Design:1}],["The one already climbing out",{Strays:3,Heroes:1}]]},
+ {q:"Pick the hour that belongs to you.",a:[["6:12 AM",{Heroes:2,Builders:1},"DAWN SHIFT"],["12:47 PM",{Hustlers:2,Citizens:1},"HIGH NOON"],["7:08 PM",{Stoop:2,Transplants:1},"GOLDEN HOUR"],["11:59 PM",{Degens:2,Villains:1},"LAST CALL"],["3:17 AM",{Underground:3},"WITCHING HOUR"]]},
+ {q:"What deserves protection?",a:[["The stranger",{Heroes:2,Citizens:2}],["The block",{Stoop:3,Places:1}],["The secret",{Underground:2,Villains:1}],["The future",{Builders:2,Transplants:1}],["The night",{Degens:2,Strays:1}]]},
+ {q:"Choose your witness.",a:[["Bodega cat",{Strays:3}],["Window watcher",{Stoop:2,Villains:1}],["Subway conductor",{Citizens:2,Underground:1}],["Rooftop pigeon",{Transplants:2,Strays:1}],["Flower with an eye",{Design:2,Heroes:1}]]},
+ {q:"Which sentence sounds like home?",a:[["Everybody gets back",{Citizens:2,Heroes:1}],["I know a way",{Hustlers:3}],["I was here before the sign",{Stoop:2,Villains:1}],["Nobody owns the night",{Degens:2,Underground:1}],["Something is moving under the street",{Underground:2,Strays:1,Places:1}]]}
+];
+const BOROUGHS=["Manhattan","Brooklyn","Queens","The Bronx","Staten Island"];
+let step=0, answers=[];
+function famPic(fams,seed){ const f=Object.keys(fams).sort((a,b)=>fams[b]-fams[a])[0]; const c=sample(1,p=>p.e>=2&&p.f===f,seed)[0]||sample(1,p=>p.e>=2,seed)[0]; return c; }
+function renderQ(){
+  const q=Q[step];
+  $("#progT").textContent=`QUESTION ${step+1} OF ${Q.length}`; $("#progBar").style.width=((step)/Q.length*100)+"%";
+  $("#qText").textContent=q.q;
+  $("#qAns").innerHTML=q.a.map((a,i)=>{const p=famPic(a[1],step*100+i+17); return `<button data-i="${i}"><img loading="lazy" src="${thumb(p)}" alt=""><span>${esc(a[0])}</span><small>${a[2]?a[2]+" · ":""}${fmt(p)}</small></button>`;}).join("");
+  $("#qAns").querySelectorAll("button").forEach(b=>b.onclick=()=>{answers[step]=+b.dataset.i; step++; if(step<Q.length)renderQ(); else finish();});
+  $("#backBtn").style.visibility=step?"visible":"hidden";
+}
+$("#backBtn").onclick=()=>{if(step>0){step--;renderQ();}};
+$("#startBtn").onclick=()=>{step=0;answers=[];show("quiz");renderQ();};
+$("#againBtn").onclick=()=>{step=0;answers=[];show("quiz");renderQ();};
+
+function score(){
+  const s={}; answers.forEach((ai,qi)=>{const w=Q[qi].a[ai][1]; for(const k in w)s[k]=(s[k]||0)+w[k];});
+  const ranked=Object.keys(s).sort((a,b)=>s[b]-s[a]||a.localeCompare(b));
+  const band=Q[2].a[answers[2]][2];
+  return {ranked,band,s};
+}
+let salt=+(localStorage.getItem("ny_salt")||0); if(!salt){salt=Math.floor(Math.random()*1e9);try{localStorage.setItem("ny_salt",salt);}catch(e){}}
+function match(){
+  const {ranked,band}=score();
+  const key=answers.join("")+":"+salt;
+  let h=2166136261; for(const ch of key){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);} h>>>=0;
+  for(const f of ranked){
+    const pool=POOL.filter(p=>p.f===f&&p.story); if(pool.length){return {p:pool[h%pool.length],f,band};}
+  }
+  const pool=POOL.filter(p=>p.story); return {p:pool[h%pool.length],f:ranked[0],band};
+}
+let current=null;
+function finish(){
+  show("proc");
+  setTimeout(()=>{current=match();renderResult(current);show("result");},900);
+}
+function renderResult(m){
+  const p=m.p, e=era(p), r=NY.rnd(p.n||1);
+  const boro=p.b||BOROUGHS[Math.floor(r()*BOROUGHS.length)];
+  const bandWord={"DAWN SHIFT":"6:12 AM","HIGH NOON":"12:47 PM","GOLDEN HOUR":"7:08 PM","LAST CALL":"11:59 PM","WITCHING HOUR":"3:17 AM"}[m.band]||m.band;
+  $("#resPic").innerHTML=`<img src="${thumb(p)}" alt="${esc(p.t)}">`;
+  const SING={Heroes:"Hero",Villains:"Villain",Hustlers:"Hustler",Strays:"Stray",Builders:"Builder",Degens:"Degen",Transplants:"Transplant",Citizens:"Citizen",Places:"Places",Stoop:"Stoop",Underground:"Underground",Design:"Design",Process:"Process"};
+  const fam=SING[p.f]||p.f||e.title; const art=/^[aeiou]/i.test(bandWord)?"an":"a";
+  $("#resId").textContent=`You are ${art} ${bandWord} ${fam} New Yorker.`;
+  $("#resNum").textContent=fmt(p); $("#resMeta").textContent=`ERA ${e.roman} · ${e.title.toUpperCase()}`;
+  $("#resName").textContent=p.t; $("#resStory").textContent=p.story||"";
+  const first=(p.story||"").split(". ")[0];
+  $("#resSocial").textContent=`The city checked its notes and found you at number ${p.n}. ${first? first+".":""} Get counted at ${CFG.domain||"newyorkers.mlow.xyz"}`;
+  $("#resGrid").innerHTML=[["FAMILY",p.f||e.title],["BOROUGH AFFINITY",boro+" (not proof of residence)"],["TIME BAND",m.band],["SET",p.set||"None"],["STATES",p.st.length>1?p.st.length+" finished states":"Appends over time"],["STANDARD","ERC-7160 dynamic"]].map(([k,v])=>`<div>${k}<br><b>${esc(v)}</b></div>`).join("");
+  $("#lookBtn").href=recordUrl(p); $("#atlasBtn").href="map.html#p="+p.id;
+  $("#matchField").value=`${fmt(p)} · ${p.t} · ${p.f||e.title} · ${m.band}`;
+  try{history.replaceState(null,"",location.pathname+"?n="+p.id);}catch(err){}
+}
+/* deep link to a result */
+(function(){ const n=new URLSearchParams(location.search).get("n"); if(n){const p=get(n); if(p&&p.e>=2){current={p,f:p.f,band:"WITCHING HOUR"};renderResult(current);show("result");}} })();
+
+/* the card: 1080 x 1920 PNG */
+$("#cardBtn").onclick=async()=>{
+  if(!current)return; const p=current.p, e=era(p);
+  const cv=$("#cardCanvas"), cx=cv.getContext("2d");
+  cx.fillStyle="#0D0D0D"; cx.fillRect(0,0,1080,1920);
+  await new Promise(res=>{const im=new Image(); im.onload=()=>{const ar=im.width/im.height; const w=1080, h=w/ar; cx.drawImage(im,0,300,w,h); const g=cx.createLinearGradient(0,300+h-260,0,300+h); g.addColorStop(0,"rgba(13,13,13,0)"); g.addColorStop(1,"rgba(13,13,13,1)"); cx.fillStyle=g; cx.fillRect(0,300+h-260,1080,260); res();}; im.onerror=res; im.src=thumb(p);});
+  cx.fillStyle="#00E5FF"; cx.font="600 26px 'JetBrains Mono', Menlo, monospace"; cx.fillText("CENSUS MATCH FOUND",72,140);
+  cx.fillStyle="#8899AA"; cx.font="26px 'JetBrains Mono', Menlo, monospace"; cx.fillText("BUREAU OF THE SOFT CENSUS · NEW YORKERS BY MLOW",72,190);
+  cx.fillStyle="#F0F4F8"; cx.font="800 84px 'Bodoni Moda', Georgia, serif"; wrap(cx,p.t,72,1100,936,92);
+  cx.fillStyle="#00E5FF"; cx.font="600 34px 'JetBrains Mono', Menlo, monospace"; cx.fillText(fmt(p)+"  ·  ERA "+e.roman,72,1290);
+  cx.fillStyle="#F0F4F8"; cx.font="italic 38px Georgia, serif"; wrap(cx,$("#resId").textContent,72,1370,936,50);
+  cx.fillStyle="#8899AA"; cx.font="italic 30px Georgia, serif"; wrap(cx,p.story||"",72,1500,936,42);
+  cx.fillStyle="#2962FF"; cx.fillRect(72,1740,200,6);
+  cx.fillStyle="#F0F4F8"; cx.font="600 30px 'JetBrains Mono', Menlo, monospace"; cx.fillText("GET COUNTED · "+(CFG.domain||"NEWYORKERS.MLOW.XYZ"),72,1810);
+  cx.fillStyle="#8899AA"; cx.font="22px 'JetBrains Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT PRODUCT",72,1860);
+  const a=document.createElement("a"); a.download=`new-yorkers-${p.n}.png`; a.href=cv.toDataURL("image/png"); a.click(); toast("Card saved. Post it, tag @degens");
+};
+function wrap(cx,text,x,y,maxW,lh){ const words=String(text).split(" "); let line=""; for(const w of words){const t=line?line+" "+w:w; if(cx.measureText(t).width>maxW&&line){cx.fillText(line,x,y);y+=lh;line=w;}else line=t;} if(line)cx.fillText(line,x,y); return y; }
+$("#shareBtn").onclick=async()=>{ try{await navigator.clipboard.writeText(location.href);toast("Link copied");}catch(e){toast(location.href);} };
+$("#keepBtn").onclick=()=>show("save");
+
+/* save = the census is the allowlist */
+$("#saveForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const f=e.target, data=Object.fromEntries(new FormData(f).entries());
+  data._subject="NEW YORKERS Census: "+data.name+" · "+(data.match||"");
+  const btn=$("#saveSubmit"); btn.disabled=true; btn.textContent="SENDING";
+  const done=()=>{f.style.display="none";$("#saveDone").style.display="block";};
+  if(CFG.formspree){
+    try{ const r=await fetch("https://formspree.io/f/"+CFG.formspree,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)}); if(r.ok){done();return;} throw new Error(r.status); }
+    catch(err){ btn.disabled=false; btn.textContent="REGISTER FOR THE CLAIM"; toast("Could not reach the form service. Try again, or email "+(CFG.contactEmail||"")); return; }
+  }
+  const body=encodeURIComponent(`NEW YORKERS Census registration\n\nName: ${data.name}\nEmail: ${data.email}\nX: ${data.twitter||""}\nDiscord/Telegram: ${data.messenger||""}\nClaims: ${data.mint_count}\nPartner code: ${data.partner_code||""}\nMatch: ${data.match||""}\nNewsletter: ${data.news?"yes":"no"}\n`);
+  location.href=`mailto:${CFG.contactEmail}?subject=${encodeURIComponent("NEW YORKERS Census: "+data.name)}&body=${body}`;
+  done();
+});
+})();
+</script>
+</body>
+</html>

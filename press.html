@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEW YORKERS · Press Room</title>
+<meta name="description" content="Press room for NEW YORKERS by MLow: fact sheet, four angles, image sheet, contact.">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+#cover{position:relative;min-height:80vh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+#cover img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+#cover .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.7),rgba(13,13,13,.2) 45%,rgba(13,13,13,.96) 85%)}
+#cover .in{position:relative;padding:120px clamp(20px,5vw,72px) 64px}
+.rule{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid currentColor;padding-bottom:14px;gap:16px;flex-wrap:wrap}
+.rule h2{font-size:clamp(30px,3.6vw,42px);font-weight:800}
+.rule .mono{font-size:10px;letter-spacing:.3em;opacity:.7}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:26px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.facts div{display:flex;justify-content:space-between;border-bottom:1px solid #ccd4dc;font-family:var(--mono);font-size:12px;line-height:2.2;gap:12px}
+.facts b{font-weight:700}
+.angle img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.angle .k{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.4em;color:var(--blue);text-transform:uppercase;margin-top:18px}
+.angle .h{font-size:26px;font-weight:800;margin-top:8px;line-height:1.1}
+.angle p{font-size:14px;line-height:1.62;margin-top:10px}
+.sheet{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.sheet a{color:inherit}
+.sheet img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.sheet .plate{margin-top:7px;font-size:9px;letter-spacing:.22em}
+@media (max-width:900px){.sheet{grid-template-columns:repeat(2,1fr)}}
+.oneline{background:var(--ink);color:var(--cloud);padding:18px 22px;margin-top:22px}
+.contact{font-family:var(--mono);font-size:13px;letter-spacing:.22em;line-height:2.3;border-top:1px solid rgba(240,244,248,.4);padding-top:20px;margin-top:40px}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<section id="cover">
+  <img class="bg" id="coverImg" alt="">
+  <div class="shade"></div>
+  <div class="in">
+    <div class="mono" style="font-size:10px;letter-spacing:.34em">PRESS ROOM · FOR IMMEDIATE USE</div>
+    <div class="kicker" style="color:var(--cyan);margin-top:26px">A living census of the greatest city on earth</div>
+    <h1 class="h-xl" style="margin-top:16px">NEW YORKERS</h1>
+    <div class="lede" style="margin-top:14px;max-width:560px">Every New Yorker gets a portrait. Even the villains.</div>
+    <div class="mono" style="font-size:11px;letter-spacing:.24em;color:var(--slate);margin-top:30px">CONTENTS: FACT SHEET · FOUR ANGLES · IMAGE SHEET · CONTACT</div>
+  </div>
+</section>
+
+<section class="section light wrap" id="facts">
+  <div class="rule"><h2>Fact sheet</h2><span class="mono">NEW YORKERS · BY MLOW</span></div>
+  <div class="two">
+    <div style="font-size:14px;line-height:1.68" id="factCopy"></div>
+    <div>
+      <div class="facts" id="factRows"></div>
+      <div class="oneline"><div class="kicker" style="color:var(--cyan);font-size:10px;letter-spacing:.4em">THE ONE LINE</div><div class="lede" style="font-size:19px;margin-top:8px;line-height:1.45">The city has been watching you your whole life. It turns out it was taking notes, and the notes are beautiful.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section light wrap" style="padding-top:0" id="angles">
+  <div class="rule"><h2>Four angles</h2><span class="mono">PITCH BY DESK</span></div>
+  <div class="two" id="angleGrid"></div>
+</section>
+
+<section class="section wrap" id="images">
+  <div class="rule" style="border-color:var(--divider)"><h2>Image sheet</h2><span class="mono">PRESS USE APPROVED · 2560 PX MASTERS ON REQUEST</span></div>
+  <div class="sheet" id="sheet"></div>
+  <div class="mono" style="font-size:10px;letter-spacing:.24em;color:var(--slate);margin-top:24px;border-top:1px solid var(--divider);padding-top:12px">CREDIT LINE: NEW YORKERS BY MLOW, COURTESY OF THE ARTIST · CLICK ANY IMAGE FOR THE 1000 PX WEB FILE</div>
+</section>
+
+<section class="section blue wrap" id="contact">
+  <div class="h-l" style="font-size:clamp(40px,5.6vw,68px);font-weight:800;max-width:640px">The count is coming. Get counted.</div>
+  <div class="lede" style="margin-top:20px;opacity:.9">Interviews, studio visits, the pin demo and 2560 px masters, on request.</div>
+  <div class="contact" id="contactLines"></div>
+</section>
+
+<div id="foot"></div>
+<script src="assets/config.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){
+"use strict";
+const {C,S,P,CFG,fmt,thumb,get,era,num,recordUrl,esc}=NY;
+NY.nav("PRESS"); NY.foot();
+const $=s=>document.querySelector(s);
+const cover=get(2100)||P[0]; $("#coverImg").src=thumb(cover);
+const fams=[...new Set(P.map(p=>p.f).filter(Boolean))].sort();
+$("#factCopy").innerHTML=`<p>NEW YORKERS by MLow is a living census of New York City: ${num(C.pieces)} characters and counting, from the Subway Samaritan to the Rat King to Midnight itself, painted in a psychedelic style where flowers bloom with human eyes because the city is watching back.</p>
+<p style="margin-top:12px">It has love stories that span five hundred numbers, a mythology with an origin seed sleeping under the subway, a full New York tarot, a portrait of every hour of the day, all fifty nine community boards, and a hidden blue evil eye protecting every frame. ${S.eras.length} eras so far, the latest one still painting.</p>
+<p style="margin-top:12px">It launches in two acts. THE COUNT: the Census Office opens at NFT.NYC, visitors get counted and matched with a character held in their name on a paper Resident Card. THE CLAIM: the chain opens and every hold becomes claimable as a dynamic token on ERC-7160, where the artist appends chapters and collectors pin the state they love.</p>
+<p style="margin-top:12px">The artist will sell 365 works. The rest is the published archive: evidence of curation, never inventory. The promise to never sell them is what makes the 365 worth owning.</p>`;
+$("#factRows").innerHTML=[["ARTIST","MLOW, NYC"],["WORKS PAINTED",num(C.states)],["CHARACTERS IN THE CENSUS",num(C.pieces)],["NUMBERED TO",num(C.maxNum)],["FAMILIES",fams.length],["ERAS",S.eras[S.eras.length-1].roman+" AND COUNTING"],["MONUMENTS",S.milestones.length],["FOR SALE, EVER",'<span style="color:var(--blue)">365</span>'],["TOKEN STANDARD","ERC-7160 DYNAMIC"],["PARTNER","TRANSIENT LABS"],["CHARITY PARTNER","CHAI LIFELINE"],["SITE",CFG.domain||"NEWYORKERS.MLOW.XYZ"]].map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join("");
+const angles=[[1000,"FOR THE ART DESK",`An artist painted ${num(C.states)} works and is selling 365.`,"The largest visible act of curation in the 2026 market. The proof is the archive itself: the story bible, the published prompts, the book. Ask for the studio visit."],
+ [2266,"FOR THE CRYPTO DESK","The collector pins. The artist appends. Nothing is ever deleted.","Dynamic tokens on ERC-7160 with a real appending schedule. Eras are appendable states, sets are quests, monuments are grails. Ask for the pin demo."],
+ [1063,"FOR THE CITY DESK","A census of a city with 8.3 million people and no portrait of them.","All 59 community boards. 26 subway lines. 7 bridges. The crossing guards, the deliveristas, the bodega cats, the villains everyone survives. This is a New York story before it is an art story."],
+ [1467,"FOR THE AI DESK","The open notebook. Every layer shown, nothing hidden.","Prompt blocks V1 through V10.1, model changes across the eras, the refires, the cost ledgers, the cuts. Almost no AI artist will publish what they threw away. This one does."]];
+$("#angleGrid").innerHTML=angles.map(([n,k,h,b])=>{const p=get(n)||P[0];return `<div class="angle"><a href="${recordUrl(p)}"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"></a><div class="k">${k}</div><div class="h">${h}</div><p>${b}</p></div>`;}).join("");
+const sheetNums=[1000,1467,1800,2000,2100,2266,3000,3201,3236,3500,4400,5466];
+$("#sheet").innerHTML=sheetNums.map(n=>get(n)).filter(Boolean).map(p=>`<a href="${thumb(p)}" download="new-yorkers-${p.n}.jpg"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"><div class="plate"><span class="n">NO. ${p.n}</span><span class="m">${esc(p.t.toUpperCase())}</span></div></a>`).join("");
+$("#contactLines").innerHTML=`SITE · ${CFG.domain||"NEWYORKERS.MLOW.XYZ"}<br>ARTIST · MLOW.XYZ · PRINTS · MLOW.NYC<br>X @DEGENS · INSTAGRAM AND TIKTOK @0XMLOW<br>EMAIL · ${(CFG.contactEmail||"").toUpperCase()}`;
+})();
+</script>
+</body>
+</html>

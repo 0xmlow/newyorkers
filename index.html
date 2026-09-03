@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEW YORKERS by MLow · A Living Census of the Greatest City on Earth</title>
+<meta name="description" content="A living census of New York City painted by a city that is watching back. Every New Yorker gets a portrait. Even the villains. Dynamic tokens on ERC-7160. First THE COUNT at NFT.NYC, then THE CLAIM.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEW YORKERS by MLow">
+<meta property="og:description" content="Every New Yorker gets a portrait. Even the villains. Get counted.">
+<meta property="og:image" content="https://new-yorkers.pages.dev/og.jpg">
+<meta property="og:url" content="https://new-yorkers.pages.dev/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="NEW YORKERS by MLow">
+<meta name="twitter:description" content="Every New Yorker gets a portrait. Even the villains. Get counted.">
+<meta name="twitter:image" content="https://new-yorkers.pages.dev/og.jpg">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* masthead */
+#mast{position:relative;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;background:var(--ink)}
+#mast video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+#mast .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.72) 0%,rgba(13,13,13,.15) 45%,rgba(13,13,13,.94) 100%)}
+#mast .inner{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:clamp(40px,6vw,72px);padding-top:120px}
+#mast .eyebrow{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.5em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px}
+#mast .lede{margin-top:18px;max-width:900px;color:var(--cloud)}
+#mast .bar{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:48px;border-top:1px solid rgba(240,244,248,.28);padding-top:24px}
+#mast .cl{font-family:var(--mono);font-size:12px;letter-spacing:.34em;color:var(--slate);text-transform:uppercase}
+#mast .cn{font-family:var(--mono);font-size:clamp(40px,5vw,64px);font-weight:700;letter-spacing:.06em;line-height:1.1}
+#mast .cn .cur{color:var(--blue);animation:pulse 1.2s infinite}
+#mast .cta{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+#mast .dom{font-family:var(--mono);font-size:12px;color:var(--slate);letter-spacing:.2em}
+
+/* thesis */
+#thesis{display:grid;grid-template-columns:1fr 1fr;min-height:720px}
+#thesis .txt{padding:clamp(60px,8vw,110px) clamp(20px,5vw,72px);display:flex;flex-direction:column;justify-content:center}
+#thesis .stats{display:flex;gap:48px;margin-top:56px;font-family:var(--mono);flex-wrap:wrap}
+#thesis .stats b{display:block;font-size:40px;font-weight:700;color:var(--cloud)}
+#thesis .stats b.c{color:var(--cyan)}
+#thesis .stats span{font-size:11px;letter-spacing:.28em;color:var(--slate);text-transform:uppercase;margin-top:6px;display:block}
+#thesis .pic{position:relative;overflow:hidden;min-height:420px}
+#thesis .pic img{width:100%;height:100%;object-fit:cover;animation:drift 14s ease-in-out infinite}
+#thesis .pic .plate{position:absolute;left:0;right:0;bottom:0;padding:20px 32px;background:linear-gradient(0deg,rgba(13,13,13,.85),transparent)}
+@media (max-width:900px){#thesis{grid-template-columns:1fr}}
+
+/* marks */
+#marks .g{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:48px}
+#marks .g>div{border-top:3px solid var(--ink);padding-top:24px}
+#marks .g>div.b{border-color:var(--blue)}
+#marks .g h3{font-size:34px;font-weight:800;display:flex;align-items:center;gap:12px}
+#marks .g h3.b{color:var(--blue)}
+#marks .g p{font-size:17px;line-height:1.6;color:#444;margin-top:12px}
+@media (max-width:900px){#marks .g{grid-template-columns:1fr}}
+
+/* eras */
+.era{display:grid;grid-template-columns:380px 1fr;border-top:1px solid var(--divider);padding:44px clamp(20px,5vw,72px);align-items:center;gap:24px;color:var(--cloud)}
+.era:hover{background:rgba(41,98,255,.05)}
+.era .nm{font-size:clamp(26px,3vw,38px);font-weight:800;margin-top:10px}
+.era .ln{font-style:italic;font-size:18px;color:var(--slate);margin-top:8px;max-width:340px;line-height:1.45;font-family:var(--serif)}
+.era .ims{display:flex;gap:6px;overflow:hidden;justify-content:flex-end}
+.era .ims img{height:170px;width:260px;object-fit:cover;flex:none}
+@media (max-width:1000px){.era{grid-template-columns:1fr}.era .ims{justify-content:flex-start}.era .ims img{height:120px;width:180px}}
+
+/* monuments */
+.mon{position:relative;margin-top:64px;height:78vh;min-height:520px;overflow:hidden;display:block;color:var(--cloud)}
+.mon img{width:100%;height:100%;object-fit:cover}
+.mon .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,13,13,.86) 0%,transparent 60%)}
+.mon .txt{position:absolute;left:clamp(20px,5vw,72px);bottom:64px;max-width:620px}
+.mon .num{font-family:var(--mono);font-size:clamp(56px,7vw,96px);font-weight:700;color:var(--cyan);line-height:1}
+.mon .nm{font-size:clamp(30px,4vw,52px);font-weight:800;line-height:1.05;margin-top:8px}
+.mon .ln{font-style:italic;font-size:20px;opacity:.85;margin-top:14px;line-height:1.5;font-family:var(--serif)}
+#monStrip{display:flex;gap:4px;overflow-x:auto;padding:24px clamp(20px,5vw,72px) 0}
+#monStrip a{flex:none;width:120px}
+#monStrip img{width:120px;height:75px;object-fit:cover;border:1px solid var(--divider)}
+#monStrip .plate{font-size:9px;letter-spacing:.18em;margin-top:6px;display:block}
+
+/* scenes */
+#scenes .g{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:240px;gap:8px;margin-top:56px}
+#scenes .g a{position:relative;overflow:hidden;display:block}
+#scenes .g img{width:100%;height:100%;object-fit:cover}
+#scenes .g .lab{position:absolute;left:0;bottom:0;background:var(--ink);padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--cloud)}
+#scenes .g a.w{grid-column:span 2}
+@media (max-width:820px){#scenes .g{grid-template-columns:repeat(2,1fr);grid-auto-rows:170px}#scenes .g a.w{grid-column:span 2}}
+
+/* now painting */
+#now .head{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end}
+#now .head .hx{font-size:clamp(48px,6vw,72px);font-weight:800;line-height:.98;margin-top:24px}
+#now .grid4 a .plate{margin-top:8px;font-size:10px;letter-spacing:.24em}
+#now .grid4 a .t{font-size:17px;font-weight:700;margin-top:2px;color:var(--ink)}
+@media (max-width:900px){#now .head{grid-template-columns:1fr;gap:24px}}
+
+/* glitch */
+#glitch .g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:56px}
+#glitch img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--divider)}
+@media (max-width:820px){#glitch .g{grid-template-columns:1fr}}
+
+/* 3d */
+#three .box{border:1px solid var(--divider);padding:clamp(24px,5vw,64px);display:grid;grid-template-columns:420px 1fr;gap:56px;align-items:center}
+#three .props{display:flex;gap:8px}
+#three .props div{flex:1;background:var(--card);padding:12px}
+#three .props img{width:100%;aspect-ratio:1/1;object-fit:contain}
+@media (max-width:1000px){#three .box{grid-template-columns:1fr}#three .props{flex-wrap:wrap}#three .props div{flex:1 1 30%}}
+
+/* mechanic */
+#mech .g{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:40px}
+#mech .rows{font-family:var(--mono)}
+#mech .rows div{border-top:1px solid rgba(240,244,248,.4);padding:22px 0;display:flex;justify-content:space-between;font-size:15px;letter-spacing:.14em;gap:16px}
+#mech .rows div:last-of-type{border-bottom:1px solid rgba(240,244,248,.4)}
+#mech .rows span:last-child{opacity:.7;text-align:right}
+#mech .fine{font-family:var(--mono);font-size:13px;letter-spacing:.14em;margin-top:24px;opacity:.8}
+@media (max-width:900px){#mech .g{grid-template-columns:1fr;gap:40px}}
+
+/* notebook */
+#note .g{display:grid;grid-template-columns:1fr 1fr;gap:80px}
+#note .ls{font-family:var(--mono);font-size:14px;line-height:2.1;color:var(--slate);border-left:2px solid var(--divider);padding-left:36px}
+#note .ls b{color:var(--cloud);font-weight:400}
+#note .ls b.c{color:var(--cyan)}
+@media (max-width:900px){#note .g{grid-template-columns:1fr;gap:40px}}
+
+/* dossiers */
+#dos .card{cursor:pointer}
+#dos .tools{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<!-- MASTHEAD -->
+<section id="mast">
+  <video src="assets/launch/first_eye_flower.mp4" autoplay muted loop playsinline poster="og.jpg"></video>
+  <div class="shade"></div>
+  <div class="inner wrap">
+    <div class="eyebrow">A living census of the greatest city on earth</div>
+    <h1 class="h-xl">NEW YORKERS</h1>
+    <div class="lede">The city has been watching you your whole life. It turns out it was taking notes.</div>
+    <div class="bar">
+      <div>
+        <div class="cl" id="countLabel">THE CENSUS · CHARACTERS PAINTED</div>
+        <div class="cn"><span id="countNum">0</span><span class="cur">_</span></div>
+      </div>
+      <div class="cta">
+        <a class="btn" href="counted.html">GET COUNTED</a>
+        <a class="btn ghost" href="census.html">ENTER THE CENSUS</a>
+        <span class="dom" id="domLine"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE WALL -->
+<div class="marq" id="wall"><div class="row a"></div><div class="row b"></div></div>
+
+<!-- THESIS -->
+<section id="thesis">
+  <div class="txt">
+    <div class="kicker">01 · The thesis</div>
+    <h2 class="h-l" style="margin-top:28px">Every New Yorker gets a portrait. Even the villains.</h2>
+    <p class="body" style="margin-top:32px;max-width:560px">A portrait of an entire city, one character at a time, painted by a city that is watching back. The eye flowers are the proof: when a flower with a human iris blooms in a frame, this moment was witnessed, this person mattered, somebody was watching with love.</p>
+    <div class="stats">
+      <div><b id="stWorks">0</b><span>Works painted</span></div>
+      <div><b class="c">365</b><span>Will ever be sold</span></div>
+      <div><b>0</b><span>Sold from the archive</span></div>
+    </div>
+  </div>
+  <a class="pic" id="thesisPic" href="census.html#n=1467"></a>
+</section>
+
+<!-- THREE MARKS -->
+<section id="marks" class="section light wrap">
+  <div class="kicker">02 · The three marks</div>
+  <div class="g">
+    <div><h3>The Eye Flower</h3><p>The city's attention made visible. It blooms wherever a moment is truly witnessed. Its iris is human because the city's eyes are its people.</p></div>
+    <div class="b"><h3 class="b">The Blue Evil Eye</h3><p>Protection. It watches so you can stop watching your back. It never moves and never blinks in stills. It is MLow's sovereign mark.</p></div>
+    <div><h3><img src="assets/brand/blossom_03_black.png" alt="" style="height:30px">The Sigil</h3><p>Community. The Blossom mark appears where people have built something together. The Sigil Writer paints them at 4am and has never been seen.</p></div>
+  </div>
+</section>
+
+<!-- THE ERAS -->
+<section id="eras" class="section" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="kicker">03 · The census in <span id="eraCountWord">fifteen</span> eras</div>
+    <h2 class="h-l" style="margin-top:24px;max-width:900px">The archive is the story. Each era is a chapter.</h2>
+  </div>
+  <div id="eraList" style="margin-top:60px"></div>
+</section>
+
+<!-- MONUMENTS -->
+<section id="mons" class="section" style="padding-bottom:0">
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+    <div>
+      <div class="kicker">04 · The monuments</div>
+      <h2 class="h-l" style="margin-top:20px">Every hundredth number is a monument.</h2>
+    </div>
+    <div class="mono" style="font-size:13px;color:var(--slate);letter-spacing:.2em;text-align:right"><span id="monCount">0</span> GRAILS<br>PRICED AND TREATED ACCORDINGLY</div>
+  </div>
+  <div id="monFeatures"></div>
+  <div id="monStrip"></div>
+</section>
+
+<!-- DOSSIERS -->
+<section id="dos" class="section wrap" style="background:var(--card);margin-top:100px">
+  <div class="kicker">05 · One New Yorker at a time</div>
+  <h2 class="h-l" style="margin-top:20px;max-width:1000px">The census assigns you a character. You do not shop for a New Yorker.</h2>
+  <div class="grid3" id="dosGrid" style="margin-top:64px"></div>
+  <div class="tools">
+    <button class="btn ghost" id="dosShuffle">PULL THREE MORE</button>
+    <a class="btn" href="counted.html">FIND YOUR NEW YORKER</a>
+  </div>
+</section>
+
+<!-- SCENES -->
+<section id="scenes" class="section wrap">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+    <div>
+      <div class="kicker">06 · Scenes across the city</div>
+      <h2 class="h-l" style="margin-top:20px">Five boroughs. Fifty nine districts. All of it painted.</h2>
+    </div>
+    <a class="mono" href="map.html" style="font-size:13px;color:var(--slate);letter-spacing:.2em;text-align:right">THE INTERACTIVE ATLAS<br><span style="color:var(--cyan)">OPEN THE MAP</span></a>
+  </div>
+  <div class="g" id="sceneGrid"></div>
+</section>
+
+<!-- NOW PAINTING -->
+<section id="now" class="section light wrap">
+  <div class="head">
+    <div>
+      <div class="kicker">07 · <span id="nowEraLabel"></span> · Now painting</div>
+      <div class="hx" id="nowTitle"></div>
+    </div>
+    <p class="body" id="nowDesc"></p>
+  </div>
+  <div class="grid4" id="nowA" style="margin-top:56px"></div>
+  <div class="grid4" id="nowB" style="margin-top:32px"></div>
+</section>
+
+<!-- STILL WAITING -->
+<section id="glitch" class="section wrap">
+  <div class="kicker" style="color:var(--pink)">08 · Still Waiting</div>
+  <h2 class="h-l" style="margin-top:20px">The corrupted editions. The signal degrades, the city persists.</h2>
+  <div class="g" id="glitchGrid"></div>
+</section>
+
+<!-- 3D -->
+<section id="three" class="wrap" style="padding-bottom:120px">
+  <div class="box">
+    <div>
+      <div class="kicker">09 · The city in three dimensions</div>
+      <div class="h-m" style="margin-top:18px">The props are real. Printable, spinnable, placeable in your room.</div>
+      <p class="body" style="margin-top:16px;font-size:16px">Twenty street objects modeled from the collection, from the hydrant to the water tower, plus the sticker pins cast as vinyl, enamel and bronze. AR ready.</p>
+    </div>
+    <div class="props">
+      <div><img src="assets/launch/water_tower.png" alt="water tower"></div>
+      <div><img src="assets/launch/hydrant.png" alt="hydrant"></div>
+      <div><img src="assets/launch/fire_escape.png" alt="fire escape"></div>
+      <div><img src="assets/launch/stoop.png" alt="stoop"></div>
+      <div><img src="assets/launch/lamppost.png" alt="lamppost"></div>
+      <div><img src="assets/launch/mailbox.png" alt="mailbox"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MECHANIC -->
+<section id="mech" class="section blue wrap">
+  <div class="kicker" style="color:var(--cloud);opacity:.8">10 · How the city fills</div>
+  <div class="g">
+    <div>
+      <div class="h-l" style="font-size:clamp(36px,5vw,60px);font-weight:800;line-height:1.02">First THE COUNT.<br>Then THE CLAIM.</div>
+      <p class="body" style="margin-top:28px;color:var(--cloud);opacity:.92">The Census Office opens at NFT.NYC. Get counted, and the city matches you with a character and holds it in your name on a paper Resident Card. When the Claim opens, the hold becomes yours onchain.</p>
+      <p style="margin-top:24px"><a class="btn" href="count.html">THE COUNTDOWN</a></p>
+    </div>
+    <div class="rows">
+      <div><span>01 GET COUNTED AT THE OFFICE</span><span>FREE</span></div>
+      <div><span>02 THE CITY MATCHES YOUR CHARACTER</span><span>HELD 24H</span></div>
+      <div><span>03 THE PRICE RISES AS THE CITY FILLS</span><span>THE LADDER</span></div>
+      <div><span>04 THE ARTIST APPENDS, YOU PIN</span><span>ERC-7160</span></div>
+      <div class="fine" style="border:none;padding:0;display:block" id="mechDates"></div>
+      <div class="fine" style="border:none;padding:0;display:block">CHAPTERS ARE ERAS. NOTHING IS EVER DELETED. THE ONE THING THIS COLLECTION WILL NEVER BE IS FINISHED.</div>
+    </div>
+  </div>
+</section>
+
+<!-- OPEN NOTEBOOK -->
+<section id="note" class="section wrap">
+  <div class="g">
+    <div>
+      <div class="kicker">11 · The open notebook</div>
+      <h2 class="h-l" style="margin-top:24px">Every layer shown. Nothing hidden.</h2>
+      <p class="body" style="margin-top:28px">The prompts, the style eras V1 through V10.1, the refires, the cost ledgers, the cuts. Almost no AI artist will publish what they threw away. This one does, because curation is the work. Every record in the census carries its own prompt under FROM THE STUDIO.</p>
+    </div>
+    <div class="ls" id="noteList"></div>
+  </div>
+</section>
+
+<div id="foot"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){
+"use strict";
+const {D,C,S,P,CFG,fmt,thumb,get,era,num,sample,find,recordUrl,esc}=NY;
+NY.nav("HOME"); NY.foot();
+const $=s=>document.querySelector(s);
+const rights = p => p.e>=2;            // eras II onward are original characters
+const withStory = p => rights(p) && p.story;
+$("#domLine").textContent = CFG.domain||"";
+
+/* the count: never estimated. Painted census by default, people counted only when posted. */
+if(CFG.peopleCounted){ $("#countLabel").textContent="THE COUNT · PEOPLE COUNTED"; countTo($("#countNum"), CFG.peopleCounted); }
+else countTo($("#countNum"), C.pieces);
+function countTo(el,target){ if(document.hidden){el.textContent=num(target);return;} const t0=performance.now(), dur=2200; setTimeout(()=>{el.textContent=num(target);},dur+200); (function f(){const k=Math.min(1,(performance.now()-t0)/dur); const v=Math.floor(target*(1-Math.pow(1-k,3))); el.textContent=num(v); if(k<1)requestAnimationFrame(f);})(); }
+$("#stWorks").textContent = num(C.states);
+
+/* the wall */
+(function(){
+  const day=Math.floor(Date.now()/864e5);
+  const a=sample(40,rights,day), b=sample(40,rights,day+7);
+  const row=(el,list)=>{ el.innerHTML=list.concat(list).map(p=>`<a href="${recordUrl(p)}" title="${esc(p.t)}"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"></a>`).join(""); };
+  row($("#wall .a"),a); row($("#wall .b"),b);
+})();
+
+/* thesis picture */
+(function(){ const p=get(1467)||P[0]; $("#thesisPic").innerHTML=`<img src="${thumb(p)}" alt="${esc(p.t)}"><div class="plate"><span><span class="n">${fmt(p)}</span>&nbsp;&nbsp;&nbsp;${esc(p.t.toUpperCase())}</span><span class="m">${esc(era(p).title.toUpperCase())}</span></div>`; $("#thesisPic").href=recordUrl(p); })();
+
+/* eras */
+(function(){
+  const words=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen"];
+  $("#eraCountWord").textContent=words[S.eras.length]||S.eras.length;
+  const wrap=$("#eraList");
+  S.eras.forEach(e=>{
+    const cnt=(S.eraCounts||{})[String(e.i)]||0;
+    const keys=((S.eraSamples||{})[String(e.i)]||[]).slice(0,4);
+    const a=document.createElement("a"); a.className="era"; a.href=`census.html#era=${e.i}`;
+    a.innerHTML=`<div><div class="mono" style="font-size:12px;letter-spacing:.3em;color:var(--cyan)">${e.roman} · ${e.range[0]} TO ${e.range[1]} · ${num(cnt)} PAINTED</div>
+      <div class="nm">${esc(e.title)}</div><div class="ln">${esc(e.sub)}. ${esc(e.desc.split(". ")[0])}.</div></div>
+      <div class="ims">${keys.map(k=>`<img loading="lazy" src="assets/t/${k}.jpg" alt="">`).join("")}</div>`;
+    wrap.appendChild(a);
+  });
+})();
+
+/* monuments */
+(function(){
+  const ms=S.milestones.map(n=>get(n)).filter(Boolean);
+  $("#monCount").textContent=ms.length;
+  const feat=[1000,1800,2000,2266,3000,3500,4400,5466].map(n=>get(n)).filter(Boolean);
+  $("#monFeatures").innerHTML=feat.map(p=>`<a class="mon" href="${recordUrl(p)}"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"><div class="shade"></div>
+    <div class="txt"><div class="num">${p.n}</div><div class="nm">${esc(p.t)}</div><div class="ln">${esc(p.story||era(p).desc)}</div></div></a>`).join("");
+  $("#monStrip").innerHTML=ms.map(p=>`<a href="${recordUrl(p)}" title="${esc(p.t)}"><img loading="lazy" src="${thumb(p)}" alt=""><span class="plate"><span class="n">${p.n}</span></span></a>`).join("");
+})();
+
+/* dossiers */
+function dossiers(seed){
+  const picks=[get(1063),get(1866),get(1077)].filter(Boolean);
+  const list= seed? sample(3,withStory,seed) : picks;
+  $("#dosGrid").innerHTML=list.map(p=>`<a class="card" href="${recordUrl(p)}"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"><div class="cb">
+    <div class="plate"><span class="n">${fmt(p)}</span><span class="m">${esc((p.f||era(p).title).toUpperCase())}${p.b?" · "+esc(p.b.toUpperCase()):""}</span></div>
+    <div class="ct">${esc(p.t)}</div><div class="cs">${esc(p.story||"")}</div></div></a>`).join("");
+}
+dossiers(0);
+let dseed=Math.floor(Math.random()*1e9);
+$("#dosShuffle").onclick=()=>{dseed+=7919;dossiers(dseed);};
+
+/* scenes: real pieces found by title, honest fallback to the city at large */
+(function(){
+  const wants=[["chrysler","MIDTOWN · THE CHRYSLER",1],["coney","BROOKLYN · CONEY ISLAND",0],["katz","LOWER EAST SIDE · KATZ'S",0],["stonewall","WEST VILLAGE · STONEWALL",0],["bed-stuy","BROOKLYN · BED STUY",0],["union square","MANHATTAN · UNION SQUARE",1],["halal","MIDTOWN · THE HALAL CART",0],["subway","UNDERGROUND · THE MTA",0],["wonder wheel","CONEY · THE WONDER WHEEL",0],["citi bike","EVERYWHERE · THE CITI BIKE",0]];
+  const used=new Set();
+  const cells=wants.map(([q,label,w])=>{ let p=P.find(x=>x.t.toLowerCase().includes(q)&&!used.has(x.id)); if(!p)p=sample(1,x=>rights(x)&&!used.has(x.id),q.length*1234)[0]; used.add(p.id); return {p,label,w}; });
+  $("#sceneGrid").innerHTML=cells.map(({p,label,w})=>`<a class="${w?"w":""}" href="${recordUrl(p)}"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"><div class="lab">${label} · ${fmt(p)}</div></a>`).join("");
+})();
+
+/* now painting: the latest era */
+(function(){
+  const e=S.eras[S.eras.length-1];
+  $("#nowEraLabel").textContent="ERA "+e.roman; $("#nowTitle").textContent=e.title.toUpperCase(); $("#nowDesc").textContent=e.desc;
+  const pool=P.filter(p=>p.e===e.i);
+  const heroes=(S.eraHeroes||{})[String(e.i)]||[];
+  const picks=heroes.map(n=>get(n)).filter(Boolean).slice(0,4).concat(sample(8,p=>p.e===e.i&&!heroes.includes(p.n),e.i*31));
+  const card=p=>`<a href="${recordUrl(p)}" style="color:inherit"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}" style="aspect-ratio:16/10;object-fit:cover;width:100%"><div class="plate"><span style="color:var(--blue)">NO. ${p.n}</span><span class="m">${esc((p.set||p.f||"").toUpperCase())}</span></div><div class="t">${esc(p.t)}</div></a>`;
+  $("#nowA").innerHTML=picks.slice(0,4).map(card).join(""); $("#nowB").innerHTML=picks.slice(4,8).map(card).join("");
+})();
+
+/* still waiting */
+(function(){
+  const g=[[1467,"THE FIRST EYE FLOWER"],[1800,"THE ROYAL WEDDING"],[2100,"THE EIGHT MILLION"],[2266,"TO BE CONTINUED"],[3000,"THE FULL BLOOM"],[3100,"THE BALL DROP"]];
+  $("#glitchGrid").innerHTML=g.map(([n,t])=>`<a href="census.html#n=${n}"><img loading="lazy" src="assets/launch/${n}.gif" alt="${t}"><div class="plate" style="margin-top:10px"><span class="n">NO. ${n}</span><span class="m">${t}</span></div></a>`).join("");
+})();
+
+/* mechanic dates + notebook */
+$("#mechDates").innerHTML=`THE COUNT · ${esc(CFG.countLabel||"")}<br>THE CLAIM · ${esc(CFG.claimLabel||"")}${CFG.claimSigned?"":' <span class="unsigned">· recommended date, not yet signed</span>'}`;
+const fams=[...new Set(P.map(p=>p.f).filter(Boolean))].sort();
+$("#noteList").innerHTML=[
+  `<b>${num(C.states)}</b> works painted across ${S.eras.length} eras`,
+  `<b>${num(C.pieces)}</b> characters in the census, numbered to ${num(C.maxNum)}`,
+  `<b>${num(C.stories)}</b> two sentence stories, one per character`,
+  `<b>${fams.length}</b> families, from ${fams[0]} to ${fams[fams.length-1]}`,
+  `<b>${S.milestones.length}</b> monuments at the hundred marks and the closers`,
+  `<b>${C.gifs+C.videos}</b> loops and films in motion`,
+  `<b>${num(C.edges)}</b> connections drawn between characters`,
+  `<b class="c">EVERY</b> prompt block, V1 through V10.1, public`
+].map(s=>`<div>${s}</div>`).join("");
+})();
+</script>
+</body>
+</html>

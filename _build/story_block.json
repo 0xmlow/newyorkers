@@ -1,0 +1,76 @@
+{
+  "oneLine": "Every New Yorker gets a portrait. Even the villains.",
+  "oneBreath": "The city has been watching you your whole life. It turns out it was taking notes, and the notes are beautiful.",
+  "thesis": "Every piece in this collection is about one thing: what it means to be seen in a city of eight million.",
+  "networked": "NEW YORKERS is a networked digital art collection. No piece stands alone: characters return across eras, love stories span five hundred numbers, villains earn their redemptions, and every hour, month, moon and subway line has a portrait that belongs to somebody. The connections are the collection.",
+  "marks": [
+    {"name": "The Eye Flower", "meaning": "The city's attention. It blooms wherever a moment is truly witnessed. Its iris is human because the city's eyes are its people."},
+    {"name": "The Blue Evil Eye", "meaning": "Protection. It watches so you can stop watching your back. It never moves, never blinks in stills. It is MLow's sovereign mark."},
+    {"name": "The Circle Grid Flower Sigil", "meaning": "Community. The Blossom mark. It appears where people have built something together. The Sigil Writer paints them at 4am and has never been seen."}
+  ],
+  "eras": [
+    {"i": 1, "range": [1, 766], "roman": "I", "title": "The Originals", "sub": "The People", "desc": "The founding census. Legends, neighbors, places, villains. The city assembled its cast."},
+    {"i": 2, "range": [767, 816], "roman": "II", "title": "The Eye Flower Era", "sub": "The Awakening", "desc": "The flowers arrive. The city starts visibly watching. Myth enters the frame: the Rat King is crowned, the Trash Mountain rises."},
+    {"i": 3, "range": [817, 966], "roman": "III", "title": "The City Expands", "sub": "The Working City", "desc": "The heroes and lost trades. The city remembers who built it and who keeps it alive at 4am."},
+    {"i": 4, "range": [967, 1166], "roman": "IV", "title": "The Brand Batch", "sub": "The Marks", "desc": "Protection and community arrive as symbols. The evil eye starts watching from every frame. Number 1000, The Subway Samaritan, states the whole thesis: strangers save strangers here."},
+    {"i": 5, "range": [1167, 1466], "roman": "V", "title": "The Masterworks", "sub": "The Feelings", "desc": "Every character gets its own color story and its own decisive moment. The collection learns chiaroscuro and grief and joy: the Oath Ceremony, the Orange Sky, the Angel of the Waters."},
+    {"i": 6, "range": [1467, 1866], "roman": "VI", "title": "The Mythos", "sub": "The Meaning", "desc": "The origin stories, the illusions, the hidden city. The world explains itself. Love arcs pay off. The Rat King marries the Pigeon Queen and the kingdoms of above and below unite."},
+    {"i": 7, "range": [1867, 2266], "roman": "VII", "title": "The Deep City", "sub": "The Time", "desc": "The collection swallows the calendar and the clock: the Hours, the Months, the Moons, the Decades, the Lines, the Tarot. History enters: the Boatlift, the Miracle on the Hudson. The chapter closes with the Curtain Call, and then refuses to close."}
+  ],
+  "lineage": "Seven eras, one bloodline. The Originals built the cast. The Eye Flowers taught the city to watch. The Working City remembered its hands. The Marks made protection visible. The Masterworks gave every face a feeling. The Mythos explained the world. The Deep City swallowed time itself. Each era descends from the one before it, and the characters carry the inheritance forward.",
+  "spine": [
+    {"n": 1468, "title": "The Seed Beneath the City", "text": "Before everything, one glowing seed sleeps below the tunnels. Its roots thread the subway lines. The city grows on top of it and has always felt slightly alive because of it."},
+    {"n": 1467, "title": "The First Eye Flower", "text": "A century ago, a dreamer's tear fell through a subway grate. The seed answered. One impossible flower grew where it landed and looked back at the city."},
+    {"n": 1469, "title": "The Gardener of the First Bloom", "text": "Somebody watered that grate every night in 1926 and told no one. Devotion is the collection's oldest job."},
+    {"n": 1470, "title": "The Spread", "text": "Bees carry iris pollen along the elevated lines. Blooms open when headlights pass. The flower district learns to harvest them. The library saves the seeds. Kids trade them like marbles."},
+    {"n": 1477, "title": "The Protection Economy", "text": "The Talisman Maker births every evil eye in the city from molten blue glass. The factory hangs them like a protective galaxy. The basket dog delivers them."},
+    {"n": 2017, "title": "The Alignment", "text": "One night each May, every eye flower in the city opens at once and looks up. The calendar and the mythos agree."},
+    {"n": 2144, "title": "The Revelation", "text": "The map room's secret drawer opens: every bloom in the city plotted forms one enormous iris around the first grate. The city is not covered in eyes. The city IS an eye."},
+    {"n": 2266, "title": "The Continuation", "text": "The painter touches a blank canvas and a bud pushes up through the wet primer from inside the painting. The collection cannot end, because the city keeps making New Yorkers."}
+  ],
+  "threads": [
+    {"key": "love", "name": "The Love Thread", "desc": "Love in this collection is a route map. A stranger across the platform becomes a poster, a reply, a proposal on the same fire escape, the same booth fifty years later.", "nums": [1151, 1730, 1731, 1253, 1686, 1163, 1627, 1632, 1633]},
+    {"key": "watcher", "name": "The Watcher Lineage", "desc": "The Window Watcher sees everything. The watched become the watchers. The final watcher is the person holding the token.", "nums": [942, 1713, 1507, 2103, 1866]},
+    {"key": "court", "name": "The Court of Two Kingdoms", "desc": "The comedy engine. Above and below, reconciled by marriage and a shared bagel.", "nums": [767, 1481, 1482, 1485, 1800, 2149, 2150, 2153]},
+    {"key": "kindness", "name": "The Kindness Files", "desc": "The proof thread. When someone asks what the collection believes, point here.", "nums": [1000, 1937, 1939, 1940, 1596, 1942]},
+    {"key": "memory", "name": "The Memory Thread", "desc": "Loss, held gently. The city loses things and refuses to lose their meaning.", "nums": [775, 1889, 1894, 2061, 1832, 1438, 1439, 1900]},
+    {"key": "redemption", "name": "The Villain Redemptions", "desc": "Villains here are weather: survived, joked about, occasionally forgiven.", "nums": [806, 1489, 1488, 891, 1494, 1055, 1607, 898, 2155]},
+    {"key": "succession", "name": "The Succession Thread", "desc": "The city renews itself. Nothing ends; it gets handed down.", "nums": [1727, 1961, 1635, 2260, 2148, 2264]}
+  ],
+  "milestones": [1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2265, 2266],
+  "sets": [
+    {"key": "hours", "name": "The Hours", "range": [1977, 2000], "hook": "Own your hour. Everyone has one that belongs to them."},
+    {"key": "months", "name": "The Months", "range": [2001, 2012], "hook": "Own your month. Everyone has a birthday."},
+    {"key": "moons", "name": "The Moons", "range": [2013, 2024], "hook": "Twelve full moons over the city, named the old way."},
+    {"key": "seasons", "name": "The Seasons", "range": [2025, 2028], "hook": "Four New York seasons, none of them subtle."},
+    {"key": "elements", "name": "The Elements", "range": [2029, 2038], "hook": "Steam, steel, glass, brick. The city's periodic table."},
+    {"key": "decades", "name": "The Decades", "range": [2039, 2051], "hook": "The Gilded Dusk to the Twenty Twenties. Time as a neighbor."},
+    {"key": "neverbuilt", "name": "The Never Built City", "range": [2052, 2056], "hook": "The highways, domes and runways the city talked itself out of."},
+    {"key": "lost", "name": "The Lost Buildings", "range": [2057, 2064], "hook": "Dreamland, the Singer Tower, the Crystal Palace. Gone, not forgotten."},
+    {"key": "lines", "name": "The Subway Lines", "range": [2067, 2092], "hook": "Own your line. Everyone has a home line."},
+    {"key": "bridges", "name": "The Bridges", "range": [2093, 2099], "hook": "Seven crossings, seven characters."},
+    {"key": "tarot", "name": "The New York Tarot", "range": [2101, 2122], "hook": "Twenty two cards. The Fool gets on at the airport."}
+  ],
+  "living": {
+    "videos": [
+      {"src": "08_MARKETING/round two epic/18_video_first_eye_flower.mp4", "t": "The First Eye Flower", "n": 1467},
+      {"src": "08_MARKETING/round two epic/19_video_milky_way_blackout.mp4", "t": "The Milky Way Blackout", "n": 1500},
+      {"src": "08_MARKETING/round two epic/20_video_royal_wedding.mp4", "t": "The Royal Wedding", "n": 1800}
+    ],
+    "gifs": [
+      {"src": "08_MARKETING/round two epic/13_drip_reveal_eyeflower.gif", "t": "Drip Reveal"},
+      {"src": "08_MARKETING/round two epic/15_evil_eye_blink.gif", "t": "The Blink"},
+      {"src": "08_MARKETING/round two epic/16_royal_wedding_pan.gif", "t": "Royal Wedding Pan"}
+    ],
+    "note": "The archive holds 88 living loops and 61 films of the characters. The animation library is the collection breathing."
+  },
+  "drop": {
+    "headline": "Drops at NFT NYC, September 2026",
+    "body": "The collection mints as dynamic tokens on Transient Labs ERC-7160 with OpenSea. The artist appends chapters, the collector pins the state they love. Chapters are eras. The sets are quests. The milestones are the grails. The story is the mechanic. A Blossom ecosystem release with charity partner Chai Lifeline.",
+    "census": "The census is numbered to 2266 and counting. Not every number is painted yet. That is the point."
+  },
+  "artist": {
+    "bio": "MLow is Michael Low, a New York City born multidisciplinary digital artist. He trains custom AI models on his own photography, generates at volume, and hand finishes every piece in Photoshop. He calls it digital alchemy. His public art has covered 5,000+ NYC taxi screens with Somo and Art Crush Gallery. He is an Adobe Firefly Creative Partner Ambassador, collected by Cozomo de' Medici, Jack Butcher, Matt Kane and Adam Weitsman, and has raised $250K+ for children's cancer causes through Art Basel Miami auctions. The throughline across every collection is Tripping and Rising.",
+    "angle": "The eye flowers in this art are the fLOWers. They came out of surviving cancer. The artist drew a city of eight million people while getting through the thing that nearly took him out of it. Chai Lifeline, the drop's charity partner, supported him through it."
+  }
+}

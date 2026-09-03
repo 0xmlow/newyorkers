@@ -1,0 +1,7 @@
+· gazetteer: 542 places / 964 patterns
+· precision: {'citywide': 2725, 'borough': 364, 'site': 874, 'area': 1078}
+· wrote /Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/assets/geo.js 995 KB
+· scenes: [('Subway', 645), ('Street', 616), ('Citywide', 606), ('Water', 425), ('Stoop', 399), ('Bodega', 392), ('Interior', 378), ('Park', 364), ('Rooftop', 344), ('Weather', 303), ('Work', 226), ('Night', 203), ('Civic', 140)]
+· top places: [('boro_bronx', 114), ('subway_system', 101), ('boro_queens', 86), ('boro_manhattan', 73), ('boro_brooklyn', 67), ('nb_harlem', 67), ('nb_midtown', 60), ('ny_harbor', 60), ('nb_bushwick', 57), ('coney', 43), ('central_park', 42), ('chinatown_m', 38), ('broadway', 36), ('nb_sunset_park', 34), ('nb_lower_east_side', 32), ('fifth_ave', 32), ('nb_bedford_stuyvesant', 30), ('si_ferry', 28), ('wtc', 26), ('msg', 25)]
+· neighborhoods with located pieces: 115
+· top neighbourhoods: [(191, 'Midtown'), (71, 'Harlem'), (65, 'Central Park'), (60, 'Lower East Side'), (57, 'Bushwick'), (53, 'Flatiron'), (52, 'Financial District'), (51, 'Greenwich Village'), (45, 'Coney Island'), (42, 'SoHo'), (39, 'Bedford-Stuyvesant'), (38, 'Chelsea'), (35, 'Chinatown'), (34, 'Sunset Park')]

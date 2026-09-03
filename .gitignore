@@ -1,0 +1,13 @@
+# generated media: rebuilt by the _build scripts, too large for git
+assets/t/
+assets/glitch/
+assets/atlas/
+assets/mt/
+assets/stickers/
+assets/launch/
+_build/_orphan_thumbs/
+_build/_orphan_atlas/
+_build/*.log
+_build/stories/input_*.json
+archive
+.DS_Store
