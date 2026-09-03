@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/blossom-design-system-76a352ca-5a11-4d31-90d6-6fb940e05072/colors_and_type.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #1a1d24; } a { color: #F0F4F8; } a:hover { color: #00E5FF; }</style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; color: #F0F4F8; padding: 60px; display: flex; flex-direction: column; gap: 56px; width: max-content;">
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.3em; color: #8899AA;">REVEAL CARDS · THE 24-HOUR RELEASE · ONE RESIDENT PER HOUR</div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: #556;">1080 &times; 1350 FEED &middot; POST ON THE HOUR WITH LIVE LOCATION &middot; STORY VARIANT AT END</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(4, 540px); gap: 36px;">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="8">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.24em; color: #8899AA;">HOUR {{ c.hourLabel }} / 24</div>
+        <div style="width: 540px; height: 675px; background: #000; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden;">
+          <div style="padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e2126;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #00E5FF;"></div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.24em; color: #00E5FF;">RELEASED {{ c.time }}</div>
+            </div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #8899AA;">{{ c.coords }}</div>
+          </div>
+          <div style="flex: 1; position: relative; overflow: hidden;">
+            <img src="{{ c.img }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.75) 100%);"></div>
+            <div style="position: absolute; left: 24px; bottom: 20px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 40px; font-weight: 800; line-height: 1.0;">RESIDENT No. {{ c.num }}</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.24em; color: #cdd6df;">{{ c.borough }}</div>
+            </div>
+            <div style="position: absolute; right: 20px; top: 18px; border: 2px solid #F0F4F8; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; padding: 7px 12px; background: rgba(0,0,0,0.45);">1 OF 365</div>
+          </div>
+          <div style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1e2126;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.24em; color: #8899AA;">NEW YORKERS // BY MLOW</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.24em; color: #00E5FF;">{{ url }}</div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; gap: 48px; align-items: flex-start;">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA;">STORY VARIANT · 1080&times;1920 · POST WITH LOCATION STICKER</div>
+      <div style="width: 540px; height: 960px; background: #000; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+        <img src="assets/hero/1077.jpg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,0) 58%, rgba(0,0,0,0.85) 100%);"></div>
+        <div style="position: relative; padding: 34px 30px; display: flex; justify-content: space-between;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.26em; color: #00E5FF;">&#9679; ON THE STREET NOW</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.26em; color: #F0F4F8;">HOUR 09 / 24</div>
+        </div>
+        <div style="position: relative; flex: 1;"></div>
+        <div style="position: relative; padding: 0 30px 40px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="font-size: 56px; font-weight: 800; line-height: 1.0;">FIND THIS<br>NEW YORKER.</div>
+          <div style="font-family: 'Oswald', sans-serif; font-size: 19px; font-weight: 500; color: #cdd6df;">A print is taped somewhere at this location. First to find it keeps it. Photo or it didn&rsquo;t happen.</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.3em; color: #00E5FF;">{{ url }}</div>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 560px; padding-top: 34px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA;">HOW THE 24-HOUR RELEASE RUNS</div>
+      <div style="font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 500; color: #aab6c2; line-height: 1.75; letter-spacing: 0.01em;">One card posts on the hour, every hour, for 24 hours. Each card is a real print taped at a real location, with the live coordinates in the header. The find is logged to that piece&rsquo;s public record with the finder&rsquo;s census number. Swap image, number, hour, time, coordinates, and borough per release; everything else is locked.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;url&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NEWYORKERS.MLOW.XYZ&quot;, &quot;tsType&quot;: &quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const url = this.props.url ?? 'NEWYORKERS.MLOW.XYZ';
+    const data = [
+      ['assets/wall/1001.jpg', '1001', '06:00', '40.7061 N 73.9969 W', 'BROOKLYN BRIDGE, MANHATTAN SIDE'],
+      ['assets/wall/1044.jpg', '1044', '07:00', '40.7527 N 73.9772 W', 'GRAND CENTRAL, MAIN CONCOURSE'],
+      ['assets/wall/1077.jpg', '1077', '08:00', '40.7580 N 73.9855 W', 'TIMES SQUARE, DUFFY STEPS'],
+      ['assets/wall/1110.jpg', '1110', '09:00', '40.7359 N 73.9911 W', 'UNION SQUARE, NORTH PLAZA'],
+      ['assets/wall/2667.jpg', '2667', '10:00', '40.6782 N 73.9442 W', 'BED-STUY, FULTON ST'],
+      ['assets/wall/2744.jpg', '2744', '11:00', '40.5755 N 73.9707 W', 'CONEY ISLAND, BOARDWALK'],
+      ['assets/wall/2830.jpg', '2830', '12:00', '40.8296 N 73.9262 W', 'THE BRONX, 161ST ST'],
+      ['assets/wall/3000.jpg', '3000', '13:00', '40.7282 N 73.7949 W', 'QUEENS, JAMAICA AVE']
+    ];
+    const cards = data.map((d, i) => ({
+      img: d[0], num: d[1], time: d[2] + ' ET', coords: d[3], borough: d[4],
+      hourLabel: String(i + 1).padStart(2, '0')
+    }));
+    return { url, cards };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #0D0D0D; } a { color: #F0F4F8; } a:hover { color: #00E5FF; }</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <section data-label="Title" data-speaker-notes="Ten seconds of silence, then the line. Let the art do the work." style="position: relative; overflow: hidden; background: #0D0D0D; color: #F0F4F8; font-family: 'Bodoni Moda', serif;">
+    <img src="assets/hero/2100.jpg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,13,13,0.6), rgba(13,13,13,0.15) 45%, rgba(13,13,13,0.95) 82%);"></div>
+    <img src="assets/brand/logo_white.png" style="position: absolute; top: 56px; left: 72px; height: 36px;">
+    <div style="position: absolute; top: 62px; right: 72px; font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.34em; color: #8899AA;">PRESS BRIEFING</div>
+    <div style="position: absolute; left: 72px; right: 72px; bottom: 84px;">
+      <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 0.5em; color: #00E5FF; text-transform: uppercase;">A LIVING CENSUS OF THE GREATEST CITY ON EARTH</div>
+      <div style="font-size: 150px; font-weight: 800; line-height: 0.95; margin-top: 18px;">NEW YORKERS</div>
+      <div style="font-style: italic; font-size: 34px; margin-top: 18px;">Every New Yorker gets a portrait. Even the villains.</div>
+    </div>
+  </section>
+
+  <section data-label="The Story" data-speaker-notes="The one paragraph. Slow down on the eye flowers line." style="background: #F0F4F8; color: #0D0D0D; font-family: 'Bodoni Moda', serif; display: grid; grid-template-columns: 1fr 1fr;">
+    <div style="padding: 100px 80px; display: flex; flex-direction: column; justify-content: center;">
+      <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">01 · THE STORY</div>
+      <div style="font-size: 56px; font-weight: 800; line-height: 1.05; margin-top: 28px;">The city is watching back.</div>
+      <div style="font-size: 25px; line-height: 1.6; color: #333; margin-top: 30px;">2,266 characters and counting, from the Subway Samaritan to the Rat King to Midnight itself, painted in a psychedelic style where flowers bloom with human eyes. When a flower with a human iris blooms in a frame, this moment was witnessed. This person mattered.</div>
+    </div>
+    <div style="position: relative; overflow: hidden;">
+      <img src="assets/hero/1467.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 36px; background: linear-gradient(0deg, rgba(13,13,13,0.85), transparent); color: #F0F4F8; font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.3em; display: flex; justify-content: space-between;"><span><span style="color: #00E5FF;">NO. 1467</span>&nbsp;&nbsp;THE FIRST EYE FLOWER</span><span style="color: #8899AA;">MYTHOS</span></div>
+    </div>
+  </section>
+
+  <section data-label="The Scale" data-speaker-notes="The numbers slide. 365 is the headline: scarcity by curation, not by supply." style="background: #0D0D0D; color: #F0F4F8; font-family: 'Bodoni Moda', serif; display: flex; flex-direction: column; padding: 90px 80px; box-sizing: border-box;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">02 · THE SCALE</div>
+    <div style="font-size: 62px; font-weight: 800; margin-top: 24px;">Sell 365. Publish 3,466. Never sell the rest.</div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-top: 70px; flex: 1; align-content: start;">
+      <div style="border-top: 3px solid #F0F4F8; padding-top: 24px;"><div style="font-family: 'JetBrains Mono', monospace; font-size: 84px; font-weight: 700;">3,466</div><div style="font-size: 22px; color: #8899AA; margin-top: 10px;">works painted across ten style eras</div></div>
+      <div style="border-top: 3px solid #F0F4F8; padding-top: 24px;"><div style="font-family: 'JetBrains Mono', monospace; font-size: 84px; font-weight: 700;">2,266</div><div style="font-size: 22px; color: #8899AA; margin-top: 10px;">characters in the founding census</div></div>
+      <div style="border-top: 3px solid #2962FF; padding-top: 24px;"><div style="font-family: 'JetBrains Mono', monospace; font-size: 84px; font-weight: 700; color: #00E5FF;">365</div><div style="font-size: 22px; color: #8899AA; margin-top: 10px;">will ever be sold, one for each day of a year</div></div>
+      <div style="border-top: 3px solid #F0F4F8; padding-top: 24px;"><div style="font-family: 'JetBrains Mono', monospace; font-size: 84px; font-weight: 700;">0</div><div style="font-size: 22px; color: #8899AA; margin-top: 10px;">sold from the published archive, ever</div></div>
+    </div>
+    <div style="font-style: italic; font-size: 28px; color: #8899AA;">The archive is evidence of curation, not inventory.</div>
+  </section>
+
+  <section data-label="The Wall" data-speaker-notes="Just look at it. This is one twentieth of the collection." style="background: #0D0D0D; position: relative; overflow: hidden;">
+    <div style="position: absolute; inset: -20px; display: grid; grid-template-columns: repeat(10, 1fr); grid-auto-rows: 1fr; gap: 4px;">
+      <sc-for list="{{ wall }}" as="w" hint-placeholder-count="10">
+        <img src="assets/wall/{{ w }}.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+      </sc-for>
+    </div>
+    <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #0D0D0D; color: #F0F4F8; padding: 36px 64px; font-family: 'Bodoni Moda', serif; font-size: 44px; font-weight: 800; white-space: nowrap; border: 1px solid #2A3040;">One twentieth of the collection.</div>
+  </section>
+
+  <section data-label="Two Acts" data-speaker-notes="The launch structure. Count then Claim. No dates on the record yet, just the order of operations." style="background: #2962FF; color: #F0F4F8; font-family: 'Bodoni Moda', serif; padding: 90px 80px; box-sizing: border-box; display: flex; flex-direction: column;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.5em; text-transform: uppercase; opacity: 0.8;">03 · THE LAUNCH, IN TWO ACTS</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 70px; margin-top: 50px; flex: 1;">
+      <div style="border-top: 4px solid #F0F4F8; padding-top: 30px;">
+        <div style="font-size: 76px; font-weight: 800;">THE COUNT</div>
+        <div style="font-size: 25px; line-height: 1.55; margin-top: 20px; opacity: 0.92;">The Census Office opens at NFT.NYC. Walk in, get counted, and the city matches you with a character held in your name on a stamped paper Resident Card. Prints, cards, commissions and the book at the counter. Nothing onchain.</div>
+      </div>
+      <div style="border-top: 4px solid #F0F4F8; padding-top: 30px;">
+        <div style="font-size: 76px; font-weight: 800;">THE CLAIM</div>
+        <div style="font-size: 25px; line-height: 1.55; margin-top: 20px; opacity: 0.92;">The chain opens and every hold becomes claimable. Dynamic tokens on ERC-7160 with Transient Labs: the artist appends chapters, the collector pins the state they love. Nothing is ever deleted.</div>
+      </div>
+    </div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 17px; letter-spacing: 0.24em; border-top: 1px solid rgba(240,244,248,0.4); padding-top: 26px;">THE ONE METRIC IS THE COUNT. PUBLISHED WEEKLY. NEVER INFLATED. NEVER ESTIMATED.</div>
+  </section>
+
+  <section data-label="Four Angles" data-speaker-notes="Pick your desk. Each angle has its own proof and its own ask." style="background: #F0F4F8; color: #0D0D0D; font-family: 'Bodoni Moda', serif; padding: 90px 80px; box-sizing: border-box; display: flex; flex-direction: column;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">04 · FOUR ANGLES, PICK YOUR DESK</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 44px 60px; margin-top: 54px; flex: 1; align-content: center;">
+      <div style="border-left: 4px solid #0D0D0D; padding-left: 28px;"><div style="font-size: 36px; font-weight: 800;">Art: the curation story</div><div style="font-size: 21px; color: #444; margin-top: 8px; line-height: 1.5;">An artist made 3,466 works and is selling 365. Ask for the studio visit.</div></div>
+      <div style="border-left: 4px solid #2962FF; padding-left: 28px;"><div style="font-size: 36px; font-weight: 800;">Crypto: the mechanic story</div><div style="font-size: 21px; color: #444; margin-top: 8px; line-height: 1.5;">The collector pins, the artist appends, nothing is deleted. Ask for the pin demo.</div></div>
+      <div style="border-left: 4px solid #0D0D0D; padding-left: 28px;"><div style="font-size: 36px; font-weight: 800;">City: the census story</div><div style="font-size: 21px; color: #444; margin-top: 8px; line-height: 1.5;">A census of a city with 8.3 million people and no portrait of them. All 59 boards painted.</div></div>
+      <div style="border-left: 4px solid #2962FF; padding-left: 28px;"><div style="font-size: 36px; font-weight: 800;">AI: the open notebook</div><div style="font-size: 21px; color: #444; margin-top: 8px; line-height: 1.5;">Every prompt, every cut, every cost ledger, public. Almost nobody publishes what they threw away.</div></div>
+    </div>
+  </section>
+
+  <section data-label="Contact" data-speaker-notes="Close. Offer masters, interviews, the demo. End on the line." style="position: relative; overflow: hidden; background: #0D0D0D; color: #F0F4F8; font-family: 'Bodoni Moda', serif;">
+    <img src="assets/hero/2266.jpg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.42;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(0deg, rgba(13,13,13,0.95) 20%, rgba(13,13,13,0.3));"></div>
+    <div style="position: absolute; left: 80px; right: 80px; bottom: 90px;">
+      <div style="font-size: 92px; font-weight: 800; line-height: 1.0;">The count is coming.<br>Get counted.</div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(240,244,248,0.4); margin-top: 44px; padding-top: 28px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 17px; letter-spacing: 0.22em; line-height: 2;">NEWYORKERS.MLOW.XYZ · MLOW.XYZ · MLOW.NYC<br>X @DEGENS · IG + TIKTOK @0XMLOW</div>
+        <img src="assets/brand/logo_white.png" style="height: 44px;">
+      </div>
+    </div>
+  </section>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { wall: [1001,1003,1005,1007,1009,1011,1014,1017,1020,1023,1025,1028,1032,1035,1038,1041,1044,1047,1050,1053,1056,1059,1062,1065,1068,1071,1074,1077,1080,1083,1086,1089,1092,1095,1098,1101,1104,1107,1110,1113,1116,1119,1122,1125,1128,1131,1134,1137,1140,1143,1467,1500,1800,2000,2100,2200,2266,2667,2672,2679,2684,2689,2695,2700,2705,2711,2716,2722,2729,2737] };
+  }
+}
+</script>
+</body>
+</html>

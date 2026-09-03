@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/blossom-design-system-76a352ca-5a11-4d31-90d6-6fb940e05072/colors_and_type.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #1a1d24; } a { color: #2962FF; } a:hover { color: #00E5FF; }</style>
+</helmet>
+<div style="font-family: Georgia, serif; color: #F0F4F8; padding: 60px; display: flex; flex-direction: column; gap: 48px; width: max-content;">
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.3em; color: #8899AA;">EMAIL SEQUENCE · TO THE COUNTED · ENUMERATION WEEK</div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: #556;">600PX &middot; EMAIL-SAFE GEORGIA/CALIBRI &middot; CLAIM DATE STILL TENTATIVE &mdash; D-0 HOLDS UNTIL SIGNED</div>
+  </div>
+
+  <div style="display: flex; gap: 40px; align-items: flex-start;">
+    <sc-for list="{{ emails }}" as="e" hint-placeholder-count="4">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #00E5FF;">{{ e.day }}</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #8899AA;">SUBJECT: {{ e.subject }}</div>
+        </div>
+        <div style="width: 600px; background: #ffffff; color: #101012; display: flex; flex-direction: column;">
+          <div style="background: #101012; padding: 26px 40px; display: flex; justify-content: space-between; align-items: center;">
+            <img src="assets/brand/logo_white.png" style="height: 22px; object-fit: contain;">
+            <div style="font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.24em; color: #8899AA;">{{ e.tag }}</div>
+          </div>
+          <div style="padding: 44px 40px 20px; display: flex; flex-direction: column; gap: 22px;">
+            <div style="font-family: Georgia, serif; font-size: 34px; font-weight: 700; line-height: 1.1;">{{ e.headline }}</div>
+            <div style="font-family: Calibri, Carlito, Arial, sans-serif; font-size: 17px; line-height: 1.65; color: #333;">{{ e.body }}</div>
+            <sc-if value="{{ e.stat }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top: 2px solid #101012; border-bottom: 2px solid #101012; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                <div style="font-family: Georgia, serif; font-size: 52px; font-weight: 700; color: #2962FF;">{{ e.stat }}</div>
+                <div style="font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.3em; color: #666;">{{ e.statLabel }}</div>
+              </div>
+            </sc-if>
+            <div style="display: flex;">
+              <div style="background: #101012; color: #fff; font-family: Calibri, Carlito, Arial, sans-serif; font-size: 16px; font-weight: 700; padding: 14px 34px; letter-spacing: 0.04em;">{{ e.cta }}</div>
+            </div>
+          </div>
+          <div style="padding: 24px 40px 36px; font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.12em; color: #999; line-height: 1.8;">YOU ARE RECEIVING THIS BECAUSE YOU WERE COUNTED.<br>ART, NOT AN INVESTMENT PRODUCT. NO OUTCOME PROMISED.<br>NEW YORKERS // BY MLOW &middot; UNSUBSCRIBE</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const emails = [
+      { day: 'D-7 · AUG 27', tag: 'No. 001', subject: 'You are counted. Here is your number.', headline: 'You are in the record.',
+        body: 'Your census number is permanent. It is yours whether or not you ever buy anything, and it is written into the public record of the city. You have been matched to one New Yorker. If it is one of the 365, you are entered for it. Nothing to do yet \u2014 just know the count is running.',
+        stat: null, statLabel: null, cta: 'SEE YOUR RESIDENT CARD' },
+      { day: 'D-4 · AUG 30', tag: 'No. 002', subject: 'One thing is hidden in every piece.', headline: 'While you wait, look.',
+        body: 'Every character holds one optical illusion, by design \u2014 all 3,466, including the 3,101 that will never be sold. Find one, submit what you saw, and your census number is written to that piece\u2019s public record. The first correct find on each piece is named there forever.',
+        stat: '3,466', statLabel: 'PIECES IN THE HUNT', cta: 'START LOOKING' },
+      { day: 'D-1 · SEPT 2', tag: 'No. 003', subject: 'The count closes tomorrow night.', headline: 'Last call to count your household.',
+        body: 'Tomorrow at 8pm the count closes and is posted in public: on paper, on the wall, read aloud. Your Resident Card can enumerate one other person, once. If someone in your life should be in the record, tonight is the night. After the Posting, the number is final.',
+        stat: null, statLabel: null, cta: 'COUNT SOMEONE' },
+      { day: 'D-0 · [HOLD]', tag: 'No. 004', subject: 'The count is posted. Check your match.', headline: 'The number is on the wall.',
+        body: '[HOLD UNTIL CLAIM DATE IS SIGNED] The Enumeration is closed and the final count is public. If your match is one of the 365, your claim window is open for 24 hours at a flat price. No race, no gas war \u2014 your eligibility was settled days ago. Unclaimed pieces roll to the waiting list at hour 24.',
+        stat: '365', statLabel: 'AVAILABLE TO CLAIM', cta: 'CHECK YOUR MATCH' }
+    ];
+    return { emails };
+  }
+}
+</script>
+</body>
+</html>

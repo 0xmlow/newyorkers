@@ -1,0 +1,1172 @@
+{
+  "1099": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "a chained bodega bathroom key fits an everyday Bushwick corner store"
+  },
+  "1100": {
+    "place": "nb:Bedford-Stuyvesant",
+    "conf": "inferred",
+    "why": "a spinning barber pole at dusk fits a Bed-Stuy corner block"
+  },
+  "1101": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a deli counter number wheel suits an everyday Ridgewood shop"
+  },
+  "1103": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "3am disco fries under jukebox neon read as a classic Bay Ridge diner"
+  },
+  "1104": {
+    "place": "nb:Midwood",
+    "conf": "inferred",
+    "why": "a chocolate babka with bakery string evokes a Midwood Jewish bakery"
+  },
+  "1105": {
+    "place": "key:chinatown_m",
+    "conf": "inferred",
+    "why": "a char siu pork bun on a bamboo steamer reads as a Chinatown bakery window"
+  },
+  "1106": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "garlic knots on a paper plate fit a Bensonhurst pizzeria counter"
+  },
+  "1107": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "a dark hotel bar with the skyline in the glass suggests Midtown"
+  },
+  "1108": {
+    "place": "nb:East New York",
+    "conf": "inferred",
+    "why": "a row of quarter waters in the cooler is classic East New York bodega"
+  },
+  "1109": {
+    "place": "nb:Middle Village",
+    "conf": "inferred",
+    "why": "a thick Sicilian slice with a crisp corner fits an old school Middle Village pizzeria"
+  },
+  "1111": {
+    "place": "key:arthur_ave",
+    "conf": "inferred",
+    "why": "rainbow cookies stacked like skyscrapers suit an Arthur Avenue Italian bakery"
+  },
+  "1112": {
+    "place": "nb:Borough Park",
+    "conf": "inferred",
+    "why": "golden matzo ball soup suggests a Borough Park Jewish deli"
+  },
+  "1114": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "the extinct charlotte russe dessert nods to old school Bensonhurst candy stores"
+  },
+  "1116": {
+    "place": "nb:Kew Gardens Hills",
+    "conf": "inferred",
+    "why": "a bakery case of rugelach fits a Kew Gardens Hills Jewish bakery"
+  },
+  "1117": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "plastic wrapped roses under fluorescent light suit a Washington Heights bodega"
+  },
+  "1118": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "a Friday fish fry with aunties in aprons fits a Harlem church basement"
+  },
+  "1119": {
+    "place": "nb:Crown Heights",
+    "conf": "inferred",
+    "why": "sidewalk chalk hopscotch fits a lively Crown Heights block"
+  },
+  "1120": {
+    "place": "nb:East Harlem",
+    "conf": "inferred",
+    "why": "a chalked skelly board with bottle caps suits an East Harlem sidewalk game"
+  },
+  "1122": {
+    "place": "nb:Canarsie",
+    "conf": "inferred",
+    "why": "a plastic slipcovered parlor couch fits a Canarsie grandmother's home"
+  },
+  "1123": {
+    "place": "nb:Jamaica",
+    "conf": "inferred",
+    "why": "a foil plate passed over a fence after a cookout suits a Jamaica backyard"
+  },
+  "1124": {
+    "place": "nb:Mott Haven",
+    "conf": "inferred",
+    "why": "a name called down the block for stickball fits a Mott Haven tenement row"
+  },
+  "1125": {
+    "place": "nb:Flatbush",
+    "conf": "inferred",
+    "why": "an extension cord powering a block party DJ table fits a Flatbush street"
+  },
+  "1126": {
+    "place": "nb:Brownsville",
+    "conf": "inferred",
+    "why": "a folding table spades game at golden hour fits a Brownsville block"
+  },
+  "1127": {
+    "place": "nb:East Flatbush",
+    "conf": "inferred",
+    "why": "a stoop braiding chair with beads fits an East Flatbush summer afternoon"
+  },
+  "1128": {
+    "place": "nb:Park Slope",
+    "conf": "inferred",
+    "why": "the first warm Saturday of spring reads well on a Park Slope brownstone block"
+  },
+  "1129": {
+    "place": "nb:Kingsbridge",
+    "conf": "inferred",
+    "why": "a snow day sledding street fits a hilly Kingsbridge block"
+  },
+  "1131": {
+    "place": "key:55_bar",
+    "conf": "inferred",
+    "why": "a basement saxophonist under a red lamp evokes the Village Vanguard"
+  },
+  "1132": {
+    "place": "key:eastern_pkwy",
+    "conf": "inferred",
+    "why": "steel pan Panorama rehearsal points to Eastern Parkway's Carnival corridor"
+  },
+  "1134": {
+    "place": "key:city_hall",
+    "conf": "inferred",
+    "why": "the 1899 newsboy strike centered near City Hall and Park Row"
+  },
+  "1135": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "an iceman climbing tenement stairs fits the Lower East Side's old walkups"
+  },
+  "1136": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "gaslit cobblestone lamplighting suits old Greenwich Village streets"
+  },
+  "1138": {
+    "place": "nb:Financial District",
+    "conf": "inferred",
+    "why": "a 1920s switchboard operator suits a Financial District office tower"
+  },
+  "1139": {
+    "place": "key:rock_center",
+    "conf": "inferred",
+    "why": "riveters on a beam in the clouds evoke the Rockefeller Center construction photos"
+  },
+  "1140": {
+    "place": "key:bowery",
+    "conf": "inferred",
+    "why": "a sign painter gilding shop glass fits the historic Bowery storefronts"
+  },
+  "1141": {
+    "place": "nb:SoHo",
+    "conf": "inferred",
+    "why": "a neon bending workshop fits SoHo's historic sign trade"
+  },
+  "1146": {
+    "place": "key:nyu",
+    "conf": "inferred",
+    "why": "a haunted grad student in a library carrel evokes NYU's Bobst Library"
+  },
+  "1148": {
+    "place": "key:bryant",
+    "conf": "inferred",
+    "why": "Fashion Week tents were historically staged at Bryant Park"
+  },
+  "1149": {
+    "place": "nb:Tribeca",
+    "conf": "inferred",
+    "why": "a film crew taking over a block fits Tribeca's frequent location shoots"
+  },
+  "1152": {
+    "place": "nb:East Williamsburg",
+    "conf": "inferred",
+    "why": "a couch surfing transplant fits a shared East Williamsburg apartment"
+  },
+  "1153": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a sublet nomad moving constantly fits Astoria's revolving rental market"
+  },
+  "1162": {
+    "place": "nb:University Heights",
+    "conf": "inferred",
+    "why": "a monumental outdoor staircase fits University Heights in the Bronx"
+  },
+  "1167": {
+    "place": "nb:Brooklyn Heights",
+    "conf": "inferred",
+    "why": "a centenarian's stoop near a lit bridge suggests Brooklyn Heights"
+  },
+  "1170": {
+    "place": "key:chinatown_m",
+    "conf": "inferred",
+    "why": "a hand pulled noodle window fits a Chinatown noodle shop"
+  },
+  "1171": {
+    "place": "nb:Inwood",
+    "conf": "inferred",
+    "why": "a kid's bodega counter homework fits an Inwood corner store"
+  },
+  "1172": {
+    "place": "key:ditmas",
+    "conf": "inferred",
+    "why": "a block historian recalling trolleys fits Ditmas Park's old streetcar era"
+  },
+  "1173": {
+    "place": "key:city_island",
+    "conf": "inferred",
+    "why": "generations fishing at a pier rail with a hazy skyline suit City Island"
+  },
+  "1174": {
+    "place": "nb:Dyker Heights",
+    "conf": "inferred",
+    "why": "a grape arbor bocce court fits Dyker Heights' Italian gardens"
+  },
+  "1175": {
+    "place": "nb:Sunnyside",
+    "conf": "inferred",
+    "why": "a counterman's regular coffee ritual suits a Sunnyside luncheonette"
+  },
+  "1177": {
+    "place": "nb:Fort Greene",
+    "conf": "inferred",
+    "why": "a whole block photographing prom on the stoop fits Fort Greene brownstones"
+  },
+  "1178": {
+    "place": "key:washington_sq",
+    "conf": "inferred",
+    "why": "a bubble performer with skyline reflections fits Washington Square Park"
+  },
+  "1179": {
+    "place": "key:times_square",
+    "conf": "inferred",
+    "why": "a silver painted living statue fits the Times Square performer scene"
+  },
+  "1180": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "a hilltop meadow kite flyer above the skyline fits Central Park"
+  },
+  "1181": {
+    "place": "nb:Belmont",
+    "conf": "inferred",
+    "why": "a nonna's Sunday sauce kitchen fits Belmont, the Bronx's Little Italy"
+  },
+  "1182": {
+    "place": "nb:East Harlem",
+    "conf": "inferred",
+    "why": "a pernil Sunday with salsa on the radio fits El Barrio / East Harlem"
+  },
+  "1183": {
+    "place": "nb:Gravesend",
+    "conf": "inferred",
+    "why": "the Feast of Seven Fishes fits Gravesend's Italian-American households"
+  },
+  "1185": {
+    "place": "nb:Hunts Point",
+    "conf": "inferred",
+    "why": "a late night cuchifritos window fits Hunts Point's Puerto Rican foodways"
+  },
+  "1187": {
+    "place": "nb:Woodside",
+    "conf": "inferred",
+    "why": "a deli naming a sandwich after a regular fits a Woodside shop"
+  },
+  "1188": {
+    "place": "nb:Chelsea",
+    "conf": "inferred",
+    "why": "gripping iced coffee through snow fits brisk Chelsea sidewalks"
+  },
+  "1189": {
+    "place": "nb:St. Albans",
+    "conf": "inferred",
+    "why": "an elaborate church hat in the front pew fits St. Albans' churches"
+  },
+  "1190": {
+    "place": "nb:Crown Heights",
+    "conf": "inferred",
+    "why": "a fifth night menorah in a brownstone window fits Crown Heights' Lubavitch community"
+  },
+  "1191": {
+    "place": "nb:Richmond Hill",
+    "conf": "inferred",
+    "why": "Diwali rowhouses with diyas fit Richmond Hill's Indo-Caribbean community"
+  },
+  "1192": {
+    "place": "nb:South Jamaica",
+    "conf": "inferred",
+    "why": "a barbershop debate fits a South Jamaica corner shop"
+  },
+  "1193": {
+    "place": "nb:Kensington",
+    "conf": "inferred",
+    "why": "an old world piano teacher's walkup parlor fits quiet Kensington"
+  },
+  "1194": {
+    "place": "nb:Forest Hills",
+    "conf": "inferred",
+    "why": "a competitive PTA bake sale fits a Forest Hills school lobby"
+  },
+  "1195": {
+    "place": "nb:Whitestone",
+    "conf": "inferred",
+    "why": "a little league opening day parade fits a Whitestone shopping strip"
+  },
+  "1196": {
+    "place": "nb:Riverdale",
+    "conf": "inferred",
+    "why": "a retired dancer's diner booth fits a Riverdale luncheonette"
+  },
+  "1198": {
+    "place": "nb:Marine Park",
+    "conf": "inferred",
+    "why": "a coupon binder checkout scene fits a Marine Park supermarket"
+  },
+  "1199": {
+    "place": "key:bryant",
+    "conf": "inferred",
+    "why": "a park rink with string lights evokes the Bryant Park winter rink"
+  },
+  "1200": {
+    "place": "key:foley_sq",
+    "conf": "inferred",
+    "why": "citizenship oath ceremonies are commonly held in the Foley Square courthouses"
+  },
+  "1201": {
+    "place": "key:st_john_divine",
+    "conf": "inferred",
+    "why": "organ practice heard through stone doors fits the Cathedral of St. John the Divine"
+  },
+  "1202": {
+    "place": "nb:Upper West Side",
+    "conf": "inferred",
+    "why": "nocturne notes across a dark airshaft fit dense Upper West Side buildings"
+  },
+  "1203": {
+    "place": "nb:Sunset Park",
+    "conf": "inferred",
+    "why": "a newborn met at the window under water towers fits a Sunset Park walkup"
+  },
+  "1204": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "a home attendant wheeling a resident to his corner fits Corona's tight blocks"
+  },
+  "1205": {
+    "place": "key:union_sq",
+    "conf": "inferred",
+    "why": "a park chess table with MetroCards fits Union Square's chess tables"
+  },
+  "1206": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "a volunteer ambulance storefront station fits Williamsburg's Hatzalah tradition"
+  },
+  "1207": {
+    "place": "key:astoria_pool",
+    "conf": "inferred",
+    "why": "a public pool swim lesson fits the historic Astoria Park Pool"
+  },
+  "1209": {
+    "place": "nb:Highbridge",
+    "conf": "inferred",
+    "why": "a tenant union lobby meeting fits a Highbridge apartment building"
+  },
+  "1210": {
+    "place": "nb:Jackson Heights",
+    "conf": "inferred",
+    "why": "a child translating at a counter fits immigrant-heavy Jackson Heights"
+  },
+  "1211": {
+    "place": "nb:Murray Hill",
+    "conf": "inferred",
+    "why": "a hospital worker's stoop beer suits Murray Hill near Bellevue"
+  },
+  "1212": {
+    "place": "nb:Windsor Terrace",
+    "conf": "inferred",
+    "why": "a 4am stroller loop under streetlights fits quiet Windsor Terrace"
+  },
+  "1213": {
+    "place": "nb:Soundview",
+    "conf": "inferred",
+    "why": "a bookmobile parked at the curb fits Soundview's residential blocks"
+  },
+  "1215": {
+    "place": "key:mott_haven_b",
+    "conf": "stated",
+    "why": "mile twenty of the marathon runs directly through the South Bronx"
+  },
+  "1216": {
+    "place": "nb:Woodhaven",
+    "conf": "inferred",
+    "why": "a street co-naming ceremony fits a tight knit Woodhaven corner"
+  },
+  "1217": {
+    "place": "nb:Prospect Heights",
+    "conf": "inferred",
+    "why": "a first day of school stoop photo fits brownstone Prospect Heights"
+  },
+  "1218": {
+    "place": "nb:Morrisania",
+    "conf": "inferred",
+    "why": "a church basement coat drive fits Morrisania in the Bronx"
+  },
+  "1220": {
+    "place": "nb:Long Island City",
+    "conf": "inferred",
+    "why": "a blacked out intersection directed by a civilian fits Long Island City's wide avenues"
+  },
+  "1221": {
+    "place": "nb:Turtle Bay",
+    "conf": "inferred",
+    "why": "pot banging toward a nearby hospital fits Turtle Bay near NYU Langone"
+  },
+  "1222": {
+    "place": "key:nypl",
+    "conf": "inferred",
+    "why": "a marble hall library card ceremony evokes the New York Public Library"
+  },
+  "1223": {
+    "place": "nb:Elmhurst",
+    "conf": "inferred",
+    "why": "a flooded intersection water main repair fits a busy Elmhurst street"
+  },
+  "1224": {
+    "place": "key:harlem_river",
+    "conf": "inferred",
+    "why": "a tower turning gears to swing a bridge fits the historic Harlem River swing bridges"
+  },
+  "1225": {
+    "place": "nb:Downtown Brooklyn",
+    "conf": "inferred",
+    "why": "a 911 dispatch console with a city view fits the Downtown Brooklyn command center"
+  },
+  "1227": {
+    "place": "nb:Kew Gardens",
+    "conf": "inferred",
+    "why": "a materialized street fair with sock towers fits a Kew Gardens avenue closure"
+  },
+  "1228": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "an evil eye charm table fits Astoria's Greek and Mediterranean shops"
+  },
+  "1229": {
+    "place": "nb:Riverdale",
+    "conf": "inferred",
+    "why": "a card table lemonade stand fits a leafy Riverdale sidewalk"
+  },
+  "1230": {
+    "place": "nb:East Elmhurst",
+    "conf": "inferred",
+    "why": "kids selling water at a red light fit a busy East Elmhurst intersection"
+  },
+  "1231": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "a park caricature artist with a tourist crowd fits Central Park's entrances"
+  },
+  "1232": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "a garlanded pedicab flying through the park fits Central Park's roads at dusk"
+  },
+  "1233": {
+    "place": "key:coney",
+    "conf": "inferred",
+    "why": "a five dollar sunglass table doubling the sunset fits Coney Island's boardwalk vendors"
+  },
+  "1234": {
+    "place": "nb:Ozone Park",
+    "conf": "inferred",
+    "why": "an empanada cooler corner hustle fits Ozone Park's Latin American blocks"
+  },
+  "1235": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "a tamale lady with a dawn shopping cart fits Corona's Mexican community"
+  },
+  "1236": {
+    "place": "key:yankee_stadium",
+    "conf": "inferred",
+    "why": "a peanut vendor's twelve row throw fits a packed Yankee Stadium"
+  },
+  "1237": {
+    "place": "key:prospect_park",
+    "conf": "inferred",
+    "why": "a cotton candy vendor working the park fits Prospect Park's green lawns"
+  },
+  "1238": {
+    "place": "key:little_italy",
+    "conf": "inferred",
+    "why": "a tableside rose vendor at a candlelit dinner fits Little Italy's restaurant row"
+  },
+  "1239": {
+    "place": "key:grand_central",
+    "conf": "inferred",
+    "why": "the 5:48 commuter bar car departs from Grand Central Terminal"
+  },
+  "1240": {
+    "place": "key:brighton",
+    "conf": "inferred",
+    "why": "the dawn casino bus with grandmothers departs from Brighton Beach"
+  },
+  "1242": {
+    "place": "key:brooklyn_bridge",
+    "conf": "inferred",
+    "why": "a river of night cyclists suits crossing the Brooklyn Bridge on a midnight ride"
+  },
+  "1243": {
+    "place": "key:bryant",
+    "conf": "inferred",
+    "why": "the blanket sprint land rush recalls Bryant Park's outdoor movie nights"
+  },
+  "1244": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "rooftop July Fourth fireworks over the river fit Williamsburg's waterfront roofs"
+  },
+  "1247": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "a 6am apartment afterparty fits the East Village's nightlife scene"
+  },
+  "1248": {
+    "place": "nb:Hell's Kitchen",
+    "conf": "inferred",
+    "why": "a 4am diner booth after a night out fits Hell's Kitchen's late night diners"
+  },
+  "1249": {
+    "place": "nb:West Village",
+    "conf": "inferred",
+    "why": "a basement improv stage for a tiny crowd fits West Village comedy basements"
+  },
+  "1250": {
+    "place": "key:williamsburg_bridge",
+    "conf": "inferred",
+    "why": "a sunset run club stretch on a bridge approach fits the Williamsburg Bridge"
+  },
+  "1251": {
+    "place": "nb:Greenpoint",
+    "conf": "inferred",
+    "why": "a contested handball wall turned pickleball court fits Greenpoint's playgrounds"
+  },
+  "1252": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "a warehouse rooftop cinema fits Bushwick's industrial loft scene"
+  },
+  "1253": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a fire escape date with wine in mugs fits Lower East Side tenement architecture"
+  },
+  "1254": {
+    "place": "key:met_museum",
+    "conf": "inferred",
+    "why": "reading every placard beside a marble goddess fits the Met Museum's galleries"
+  },
+  "1255": {
+    "place": "nb:Long Island City",
+    "conf": "inferred",
+    "why": "warehouse open studios fit Long Island City's converted industrial buildings"
+  },
+  "1256": {
+    "place": "nb:SoHo",
+    "conf": "inferred",
+    "why": "a loft life drawing class fits SoHo's old artist lofts"
+  },
+  "1257": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a zine fair of folding tables fits Ridgewood's DIY community halls"
+  },
+  "1258": {
+    "place": "nb:Upper West Side",
+    "conf": "inferred",
+    "why": "a grand apartment estate sale fits Upper West Side's prewar buildings"
+  },
+  "1259": {
+    "place": "nb:Sunset Park",
+    "conf": "inferred",
+    "why": "a midnight pool fence jump fits Sunset Park's public pool"
+  },
+  "1260": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "folding chairs outside a cigar shop fit Bensonhurst's old timers"
+  },
+  "1261": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "a packed apartment fight night fits Washington Heights' tight buildings"
+  },
+  "1262": {
+    "place": "nb:Hell's Kitchen",
+    "conf": "inferred",
+    "why": "a drag brunch fits Hell's Kitchen's brunch scene"
+  },
+  "1263": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "grandmothers at church bingo fit Bay Ridge's parish basements"
+  },
+  "1264": {
+    "place": "key:washington_sq",
+    "conf": "inferred",
+    "why": "a park tarot table under a tree fits Washington Square Park's fortune tellers"
+  },
+  "1266": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "a slackliner between elms in a meadow fits Central Park's Sheep Meadow"
+  },
+  "1267": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "a marble oyster bar happy hour fits Williamsburg's raw bar scene"
+  },
+  "1268": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a candlelit natural wine bar fits the Lower East Side's wine bar scene"
+  },
+  "1270": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "a 4pm rooftop day party fits Williamsburg's rooftop scene"
+  },
+  "1272": {
+    "place": "nb:Sheepshead Bay",
+    "conf": "inferred",
+    "why": "a half day fishing party boat departs from Sheepshead Bay's fleet"
+  },
+  "1274": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a wheel boot on a sedan fits Astoria's tight parking"
+  },
+  "1276": {
+    "place": "nb:Concourse",
+    "conf": "inferred",
+    "why": "an estimated utility bill on a kitchen table fits a Concourse apartment"
+  },
+  "1277": {
+    "place": "nb:Rego Park",
+    "conf": "inferred",
+    "why": "a missed delivery slip taped to a door fits a Rego Park apartment building"
+  },
+  "1278": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "a five story walkup stairwell fits East Village tenement buildings"
+  },
+  "1279": {
+    "place": "nb:Chelsea",
+    "conf": "inferred",
+    "why": "an endless drugstore receipt fits a Chelsea corner pharmacy"
+  },
+  "1282": {
+    "place": "key:times_square",
+    "conf": "inferred",
+    "why": "a gridlocked intersection with honking horns fits Midtown's Times Square congestion"
+  },
+  "1283": {
+    "place": "nb:Morningside Heights",
+    "conf": "inferred",
+    "why": "an icicle hanging over caution tape fits Morningside Heights' prewar buildings"
+  },
+  "1284": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "August humidity draped over a street fits Bushwick's exposed brick blocks"
+  },
+  "1285": {
+    "place": "nb:Riverdale",
+    "conf": "inferred",
+    "why": "a pollen dusted street fits leafy tree lined Riverdale"
+  },
+  "1287": {
+    "place": "nb:Inwood",
+    "conf": "inferred",
+    "why": "a tenant stuck on hold fits an Inwood walkup apartment"
+  },
+  "1288": {
+    "place": "nb:Forest Hills",
+    "conf": "inferred",
+    "why": "a 3am fire alarm evacuation fits a Forest Hills apartment building"
+  },
+  "1289": {
+    "place": "key:42nd_st",
+    "conf": "inferred",
+    "why": "a taxi splashing a pedestrian fits Midtown's 42nd Street puddles"
+  },
+  "1290": {
+    "place": "nb:Sunnyside",
+    "conf": "inferred",
+    "why": "ten thousand hallway nods fit a Sunnyside apartment building corridor"
+  },
+  "1293": {
+    "place": "nb:Middle Village",
+    "conf": "inferred",
+    "why": "a hydrant parking ticket with a bagel run fits a Middle Village street"
+  },
+  "1295": {
+    "place": "nb:Elmhurst",
+    "conf": "inferred",
+    "why": "an SUV blocking the box fits a busy Elmhurst intersection"
+  },
+  "1296": {
+    "place": "nb:Kingsbridge",
+    "conf": "inferred",
+    "why": "black ice claiming morning victims fits a hilly Kingsbridge sidewalk"
+  },
+  "1298": {
+    "place": "nb:Murray Hill",
+    "conf": "inferred",
+    "why": "a packed January gym fits a Murray Hill fitness chain location"
+  },
+  "1299": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a spotted lanternfly stomped underfoot fits Ridgewood's lanternfly hot spot"
+  },
+  "1301": {
+    "place": "key:prospect_park",
+    "conf": "inferred",
+    "why": "ducklings crossing traffic near a park lake fit Prospect Park's edges"
+  },
+  "1302": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "a dozen turtles sunning on a log fit Central Park's Turtle Pond"
+  },
+  "1303": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a cardinal on a snowy fire escape fits an Astoria walkup"
+  },
+  "1304": {
+    "place": "nb:Annadale",
+    "conf": "inferred",
+    "why": "a cicada filled backyard fits suburban Annadale, Staten Island"
+  },
+  "1305": {
+    "place": "nb:East New York",
+    "conf": "inferred",
+    "why": "monarchs resting in a community garden fit East New York's garden plots"
+  },
+  "1306": {
+    "place": "key:williamsburg_bridge",
+    "conf": "inferred",
+    "why": "a dog riding a bike basket fits the Williamsburg Bridge bike lane"
+  },
+  "1307": {
+    "place": "key:prospect_park",
+    "conf": "inferred",
+    "why": "a dog's birthday party fits Prospect Park's dog runs"
+  },
+  "1308": {
+    "place": "key:chinatown_m",
+    "conf": "inferred",
+    "why": "a three legged cat patrolling a bodega threshold fits Chinatown's storefronts"
+  },
+  "1309": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a mantis guarding a fire escape basil plant fits Astoria's window gardens"
+  },
+  "1310": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a mockingbird's greatest hits at 2am fit a quiet Ridgewood streetlamp"
+  },
+  "1311": {
+    "place": "nb:Elmhurst",
+    "conf": "inferred",
+    "why": "a sparrow living in a supermarket fits a big box store in Elmhurst"
+  },
+  "1313": {
+    "place": "key:flushing_meadows",
+    "conf": "inferred",
+    "why": "a zoo escapee peacock fits near the Queens Zoo in Flushing Meadows-Corona Park"
+  },
+  "1315": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "a new puppy meeting the block outside a bodega fits Washington Heights"
+  },
+  "1317": {
+    "place": "nb:Upper West Side",
+    "conf": "inferred",
+    "why": "a red tailed hawk on an AC unit recalls the Upper West Side's famous red tails"
+  },
+  "1319": {
+    "place": "key:prospect_park",
+    "conf": "inferred",
+    "why": "bats over a park pond fit Prospect Park's dusk bat walks"
+  },
+  "1320": {
+    "place": "nb:Fort Greene",
+    "conf": "inferred",
+    "why": "a street of gold ginkgos fits Fort Greene's tree lined blocks"
+  },
+  "1321": {
+    "place": "nb:East New York",
+    "conf": "inferred",
+    "why": "a bee working community garden sunflowers fits East New York's garden plots"
+  },
+  "1323": {
+    "place": "key:third_ave",
+    "conf": "inferred",
+    "why": "a demolished elevated line ghost recalls the old Third Avenue El"
+  },
+  "1326": {
+    "place": "key:subway_system",
+    "conf": "inferred",
+    "why": "the transit lost and found warehouse belongs to the citywide subway system"
+  },
+  "1329": {
+    "place": "key:brooklyn_bridge",
+    "conf": "stated",
+    "why": "a transit strike morning of thousands walking a bridge matches the Brooklyn Bridge walkers"
+  },
+  "1332": {
+    "place": "nb:Brooklyn Heights",
+    "conf": "inferred",
+    "why": "a Brooklyn church basement sheltering freedom seekers evokes Plymouth Church in Brooklyn Heights"
+  },
+  "1337": {
+    "place": "key:times_square",
+    "conf": "stated",
+    "why": "the last public payphone stood near Times Square before its removal"
+  },
+  "1338": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "a million lit windows across facing towers fits dense Midtown high rises"
+  },
+  "1339": {
+    "place": "nb:Park Slope",
+    "conf": "inferred",
+    "why": "a lost mitten placed on a fence spike fits a snowy Park Slope block"
+  },
+  "1340": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "initials pressed in 1974 sidewalk cement fit an old Bensonhurst block"
+  },
+  "1341": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "an old mica flecked sidewalk glittering under a streetlamp fits the East Village"
+  },
+  "1342": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "a balloon rising past a hundred office windows fits Midtown's office towers"
+  },
+  "1343": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "a stripped bike skeleton locked for years fits Bushwick's bike racks"
+  },
+  "1344": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "a hand painted memorial wall with candles fits a Harlem sidewalk shrine"
+  },
+  "1345": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "layered decades of posters fit the East Village's construction walls"
+  },
+  "1346": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a thin square grandma slice fits Ridgewood's old school pizzerias"
+  },
+  "1347": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "the trending vodka slice with a line out the door fits Williamsburg's newer pizzerias"
+  },
+  "1348": {
+    "place": "key:chinatown_m",
+    "conf": "inferred",
+    "why": "a soup dumpling lifted under lantern light fits Chinatown's dumpling houses"
+  },
+  "1349": {
+    "place": "key:atlantic_ave",
+    "conf": "inferred",
+    "why": "a halva block shaved on a scale fits Atlantic Avenue's Middle Eastern shops"
+  },
+  "1350": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "a thick tan diner mug fits a classic Bay Ridge diner counter"
+  },
+  "1351": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "a bodega register shrine of candles and lotto rolls fits Washington Heights corner stores"
+  },
+  "1352": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a pressed tin ceiling in a century old shop fits a Lower East Side barbershop"
+  },
+  "1353": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a rope hauled dumbwaiter fits a Lower East Side tenement"
+  },
+  "1354": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "a worn skeleton key by an old door fits an East Village walkup"
+  },
+  "1355": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a clawfoot tub in a tenement kitchen fits the Lower East Side's railroad apartments"
+  },
+  "1356": {
+    "place": "nb:Hell's Kitchen",
+    "conf": "inferred",
+    "why": "a Murphy bed transforming a studio fits Hell's Kitchen's small apartments"
+  },
+  "1357": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a tenement air shaft of stacked lives fits the Lower East Side"
+  },
+  "1358": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "golden hour fire escape shadows on brick fit Williamsburg's low rise blocks"
+  },
+  "1359": {
+    "place": "nb:Bedford-Stuyvesant",
+    "conf": "inferred",
+    "why": "carved brownstone doors under a stained glass transom fit Bed-Stuy's brownstone rows"
+  },
+  "1360": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "carved keystone faces above doorways fit Harlem's ornamented prewar buildings"
+  },
+  "1361": {
+    "place": "key:mott_haven_b",
+    "conf": "inferred",
+    "why": "a gold nameplate necklace on a stoop fits the South Bronx nameplate jewelry tradition"
+  },
+  "1362": {
+    "place": "nb:East Harlem",
+    "conf": "inferred",
+    "why": "bamboo door knocker earrings at a block party fit El Barrio street style"
+  },
+  "1363": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "a monumental shearling coat commanding a winter corner fits Harlem street style"
+  },
+  "1364": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a sixty year old red vinyl diner booth fits an Astoria luncheonette"
+  },
+  "1365": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "a worn checkerboard pizzeria floor fits a Bensonhurst slice shop"
+  },
+  "1366": {
+    "place": "key:sedgwick",
+    "conf": "inferred",
+    "why": "shell toes and a boombox on a stoop evoke the Sedgwick Avenue hip hop birthplace"
+  },
+  "1367": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a battered corner relay mailbox holding decades of letters fits a Ridgewood corner"
+  },
+  "1368": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "a century old fire alarm box on its post fits Greenwich Village's historic streets"
+  },
+  "1369": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a hubcap sized linzer tart fits Ridgewood's old German bakeries"
+  },
+  "1370": {
+    "place": "key:arthur_ave",
+    "conf": "inferred",
+    "why": "a cheesemaker pulling fresh mozzarella fits an Arthur Avenue latteria"
+  },
+  "1371": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a rotating gyro cone cart fits Astoria's Greek food carts"
+  },
+  "1372": {
+    "place": "nb:Sunnyside",
+    "conf": "inferred",
+    "why": "a deli buttered roll on a dashboard at dawn fits a Sunnyside commuter stop"
+  },
+  "1373": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "titi's coquito bag distributed door to door fits Washington Heights' holiday tradition"
+  },
+  "1374": {
+    "place": "nb:Jackson Heights",
+    "conf": "inferred",
+    "why": "a guava and cheese pastelito fits Jackson Heights' Latin American bakeries"
+  },
+  "1375": {
+    "place": "nb:Elmhurst",
+    "conf": "inferred",
+    "why": "a sun bleached takeout menu board fits an old Elmhurst restaurant"
+  },
+  "1376": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "facing barbershop mirrors creating an infinite corridor fit a classic Harlem barbershop"
+  },
+  "1377": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "a tabletop diner jukebox fits a classic Bay Ridge diner booth"
+  },
+  "1378": {
+    "place": "nb:Woodside",
+    "conf": "inferred",
+    "why": "a bodega claw machine glowing in the window fits a Woodside corner shop"
+  },
+  "1379": {
+    "place": "nb:East Harlem",
+    "conf": "inferred",
+    "why": "a hand built casita in a community garden fits El Barrio's casita tradition"
+  },
+  "1380": {
+    "place": "nb:Bedford-Stuyvesant",
+    "conf": "inferred",
+    "why": "wine in coffee mugs on a stoop fits a quiet Bed-Stuy evening"
+  },
+  "1381": {
+    "place": "key:astoria_pool",
+    "conf": "inferred",
+    "why": "opening day cannonballs fit the historic Astoria Park Pool"
+  },
+  "1382": {
+    "place": "nb:Sunset Park",
+    "conf": "inferred",
+    "why": "a cast iron mushroom sprinkler erupting fits a Sunset Park playground"
+  },
+  "1383": {
+    "place": "nb:Dyker Heights",
+    "conf": "inferred",
+    "why": "a bathtub Madonna shrine in a front yard fits Dyker Heights' Italian-American houses"
+  },
+  "1384": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "a Saturday curbside car repair with cousins fits Corona's driveways and curbs"
+  },
+  "1385": {
+    "place": "nb:Jamaica",
+    "conf": "inferred",
+    "why": "a church youth car wash fundraiser fits a Jamaica church parking lot"
+  },
+  "1386": {
+    "place": "nb:East New York",
+    "conf": "inferred",
+    "why": "a car trunk concert rig shaking puddles fits an East New York block"
+  },
+  "1387": {
+    "place": "nb:Flatbush",
+    "conf": "inferred",
+    "why": "a block flying every Caribbean island's flag fits Flatbush's Caribbean community"
+  },
+  "1388": {
+    "place": "nb:Canarsie",
+    "conf": "inferred",
+    "why": "five big wheels thundering down the sidewalk fit a quiet Canarsie block"
+  },
+  "1389": {
+    "place": "nb:Sunnyside",
+    "conf": "inferred",
+    "why": "the last day of school eruption fits a Sunnyside public school"
+  },
+  "1390": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "a folding chair claiming a shoveled parking spot fits Bensonhurst's street parking"
+  },
+  "1391": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "wrapping a fig tree in tar paper for winter fits Bensonhurst's Italian-American backyards"
+  },
+  "1392": {
+    "place": "nb:Wakefield",
+    "conf": "inferred",
+    "why": "the year's first snow watched by a whole block fits a quiet Wakefield street"
+  },
+  "1394": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "rooftop watchers of heat lightning behind the skyline fit Williamsburg's roof decks"
+  },
+  "1395": {
+    "place": "nb:Flatbush",
+    "conf": "inferred",
+    "why": "criss crossing trolleys naming a ball club point to old Flatbush, home of the Dodgers"
+  },
+  "1400": {
+    "place": "nb:Morrisania",
+    "conf": "inferred",
+    "why": "a park cypher with a b boy freeze fits Morrisania, a Bronx hip hop hub"
+  },
+  "1401": {
+    "place": "key:paradise_garage",
+    "conf": "inferred",
+    "why": "an invitation only loft party inventing dance culture evokes the Paradise Garage"
+  },
+  "1404": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "May Day moving chaos of 1900 fits Greenwich Village's dense rowhouses"
+  },
+  "1405": {
+    "place": "key:apollo",
+    "conf": "inferred",
+    "why": "the giant hook pulling an act off stage recalls the Apollo Theater's amateur nights"
+  },
+  "1406": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "a 1907 nickelodeon parlor fits the Lower East Side's early movie houses"
+  },
+  "1409": {
+    "place": "nb:East Harlem",
+    "conf": "inferred",
+    "why": "a 1970s barrio salsa studio session fits El Barrio's Fania era recording scene"
+  }
+}

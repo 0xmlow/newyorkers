@@ -1,0 +1,1172 @@
+{
+  "1753": {
+    "place": "key:broadway",
+    "conf": "inferred",
+    "why": "a Victorian stage illusion belongs to the Theater District"
+  },
+  "1755": {
+    "place": "key:bowery",
+    "conf": "inferred",
+    "why": "early daguerreotype galleries lined the Bowery"
+  },
+  "1756": {
+    "place": "key:union_sq",
+    "conf": "inferred",
+    "why": "Union Square's old Photographer's Row suits a spirit photographer"
+  },
+  "1757": {
+    "place": "nb:Tribeca",
+    "conf": "inferred",
+    "why": "Barnum era exhibition halls clustered near lower Broadway"
+  },
+  "1758": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "a packed intersection stunt fits Midtown's crowds"
+  },
+  "1759": {
+    "place": "key:canyon_heroes",
+    "conf": "inferred",
+    "why": "ticker tape starting early points to the Canyon of Heroes"
+  },
+  "1761": {
+    "place": "key:coney",
+    "conf": "inferred",
+    "why": "depression era dance marathons were staged at Coney Island halls"
+  },
+  "1765": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "Bushwick's Brewers Row held the borough's lagering caves"
+  },
+  "1770": {
+    "place": "key:herald_sq2",
+    "conf": "inferred",
+    "why": "grand department stores with elevator girls anchor to Herald Square"
+  },
+  "1771": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a 1940s living room radio hour fits an ordinary outer borough home"
+  },
+  "1772": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "a household TV ritual is generic, set in a classic Bay Ridge block"
+  },
+  "1773": {
+    "place": "key:broadway",
+    "conf": "inferred",
+    "why": "old movie palaces clustered in the Theater District"
+  },
+  "1774": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "the ragman's cry belongs to the old peddler streets there"
+  },
+  "1775": {
+    "place": "key:bowery",
+    "conf": "inferred",
+    "why": "1850s theater crowds were the Bowery's own"
+  },
+  "1777": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "office workers hoeing a rooftop garden fits a Midtown tower"
+  },
+  "1782": {
+    "place": "key:transit_museum",
+    "conf": "inferred",
+    "why": "the last checker cab gliding toward the museum names its ending"
+  },
+  "1788": {
+    "place": "nb:Forest Hills",
+    "conf": "inferred",
+    "why": "a one hour photo counter is an ordinary drugstore, set in Queens"
+  },
+  "1789": {
+    "place": "nb:Concourse",
+    "conf": "stated",
+    "why": "the dedication reaches a Bronx window on the Grand Concourse"
+  },
+  "1791": {
+    "place": "key:hudson_yards",
+    "conf": "inferred",
+    "why": "a modern topping out ceremony suits Hudson Yards towers"
+  },
+  "1792": {
+    "place": "nb:Long Island City",
+    "conf": "inferred",
+    "why": "union halls historically clustered in this industrial waterfront"
+  },
+  "1793": {
+    "place": "key:grand_central",
+    "conf": "inferred",
+    "why": "the restored ceiling with cherubs recalls Grand Central's mural"
+  },
+  "1794": {
+    "place": "nb:Financial District",
+    "conf": "inferred",
+    "why": "Trinity Church's bells near Wall Street ring change patterns"
+  },
+  "1797": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "violin making workshops cluster in the Village's old lofts"
+  },
+  "1798": {
+    "place": "nb:Park Slope",
+    "conf": "inferred",
+    "why": "brownstone parish steeples like Park Slope's suit a steeplejack"
+  },
+  "1799": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "tenement rooflines are classic Lower East Side"
+  },
+  "1800": {
+    "place": "key:brooklyn_bridge",
+    "conf": "inferred",
+    "why": "the rat and pigeon court gathers beneath the Brooklyn Bridge"
+  },
+  "1801": {
+    "place": "nb:Jackson Heights",
+    "conf": "inferred",
+    "why": "rooftop kite fighting is a Jackson Heights tradition"
+  },
+  "1804": {
+    "place": "key:lombardi",
+    "conf": "inferred",
+    "why": "the classic pizza fold traces to Lombardi's counter"
+  },
+  "1806": {
+    "place": "key:chinatown_m",
+    "conf": "inferred",
+    "why": "egg tarts are a Chinatown bakery staple"
+  },
+  "1807": {
+    "place": "nb:Bedford-Stuyvesant",
+    "conf": "inferred",
+    "why": "stickball and stoopball with a spaldeen are Bed-Stuy stoop culture"
+  },
+  "1808": {
+    "place": "nb:Mott Haven",
+    "conf": "inferred",
+    "why": "hydrant culture in a South Bronx block passing down the wrench"
+  },
+  "1809": {
+    "place": "nb:Sunset Park",
+    "conf": "inferred",
+    "why": "an ordinary neighbourhood bank branch counter"
+  },
+  "1810": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "a penny dish sits at an ordinary corner store register"
+  },
+  "1811": {
+    "place": "key:coney",
+    "conf": "inferred",
+    "why": "antique fortune scales are Coney Island boardwalk fixtures"
+  },
+  "1812": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "dive bar photo booths are an East Village fixture"
+  },
+  "1813": {
+    "place": "nb:Upper West Side",
+    "conf": "inferred",
+    "why": "prewar medicine cabinets with razor slots are classic there"
+  },
+  "1814": {
+    "place": "nb:Greenpoint",
+    "conf": "inferred",
+    "why": "ice delivery culture suits an old Greenpoint tenement block"
+  },
+  "1815": {
+    "place": "nb:Carroll Gardens",
+    "conf": "inferred",
+    "why": "milk doors survive in old Carroll Gardens rowhouses"
+  },
+  "1816": {
+    "place": "nb:Brooklyn Heights",
+    "conf": "inferred",
+    "why": "1840s stoops with boot scrapers are landmarked in Brooklyn Heights"
+  },
+  "1817": {
+    "place": "nb:SoHo",
+    "conf": "inferred",
+    "why": "structural star bolts are common on SoHo's cast iron facades"
+  },
+  "1818": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "a lit window silhouette is generic, set in an uptown block"
+  },
+  "1819": {
+    "place": "nb:East Harlem",
+    "conf": "inferred",
+    "why": "airshaft clotheslines threading tenements is an East Harlem scene"
+  },
+  "1820": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "an AC drip garden could be any block, set in Astoria"
+  },
+  "1821": {
+    "place": "nb:Long Island City",
+    "conf": "inferred",
+    "why": "cab garages dispatching citywide fares cluster in Long Island City"
+  },
+  "1822": {
+    "place": "nb:Sunnyside",
+    "conf": "inferred",
+    "why": "an ordinary kitchen cabinet ritual, set in Sunnyside"
+  },
+  "1823": {
+    "place": "key:ditmas",
+    "conf": "inferred",
+    "why": "a household drawer ritual, set in a Ditmas Park home"
+  },
+  "1824": {
+    "place": "nb:Elmhurst",
+    "conf": "inferred",
+    "why": "a family fridge gallery, set in an Elmhurst apartment"
+  },
+  "1825": {
+    "place": "nb:Park Slope",
+    "conf": "inferred",
+    "why": "a saved 1994 answering machine tape, set in a Park Slope home"
+  },
+  "1826": {
+    "place": "nb:Flatbush",
+    "conf": "inferred",
+    "why": "a mixtape made at a bedroom radio, set in Flatbush"
+  },
+  "1827": {
+    "place": "nb:Crown Heights",
+    "conf": "inferred",
+    "why": "beeper era courtship on a stoop fits Crown Heights"
+  },
+  "1828": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "durag culture and stoop royalty read as Harlem"
+  },
+  "1829": {
+    "place": "nb:Bedford-Stuyvesant",
+    "conf": "inferred",
+    "why": "paper church fans in a July service are classic Bed-Stuy"
+  },
+  "1831": {
+    "place": "nb:Jamaica",
+    "conf": "inferred",
+    "why": "roll gates rising down a commercial strip, set in Jamaica"
+  },
+  "1833": {
+    "place": "nb:Woodside",
+    "conf": "inferred",
+    "why": "a lamppost flyer culture scene, set in Woodside"
+  },
+  "1834": {
+    "place": "nb:Inwood",
+    "conf": "inferred",
+    "why": "a bodega wall of firsts, set in an Inwood corner store"
+  },
+  "1835": {
+    "place": "nb:Kingsbridge",
+    "conf": "inferred",
+    "why": "a family kitchen doorframe, set in a Kingsbridge apartment"
+  },
+  "1836": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "a grandmother's recipe card kitchen, set in Corona"
+  },
+  "1837": {
+    "place": "nb:Greenpoint",
+    "conf": "inferred",
+    "why": "film set dressing crews cluster around Greenpoint's studios"
+  },
+  "1838": {
+    "place": "nb:Tribeca",
+    "conf": "inferred",
+    "why": "film shoots closing a street for extras are common in Tribeca"
+  },
+  "1839": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "stacked car elevator garages are common in dense Midtown"
+  },
+  "1860": {
+    "place": "nb:Hell's Kitchen",
+    "conf": "stated",
+    "why": "Manhattan's last gas station sits near the West Side highway there"
+  },
+  "1862": {
+    "place": "nb:Riverdale",
+    "conf": "inferred",
+    "why": "an ice glazed residential block, set in leafy Riverdale"
+  },
+  "1863": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "a neighbourhood portrait gallery fits Bushwick's storefront art scene"
+  },
+  "1865": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "a rooftop with the skyline view suits Williamsburg's waterfront"
+  },
+  "1866": {
+    "place": "key:whitney",
+    "conf": "inferred",
+    "why": "a vast portrait gallery reads as a major museum like the Whitney"
+  },
+  "1876": {
+    "place": "key:madison_ave",
+    "conf": "inferred",
+    "why": "the logo's sketch in a taxi lore ties to the Madison Avenue ad world"
+  },
+  "1883": {
+    "place": "key:russ",
+    "conf": "inferred",
+    "why": "a cream cheese shortage crisis suits Russ and Daughters' counter"
+  },
+  "1885": {
+    "place": "key:wall_street",
+    "conf": "inferred",
+    "why": "the economic law pairs pizza with tokens near Wall Street's economists"
+  },
+  "1886": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "pandemic dining sheds were dense in the East Village"
+  },
+  "1892": {
+    "place": "nb:Midtown",
+    "conf": "stated",
+    "why": "the toll gantry marks the congestion zone boundary in Midtown"
+  },
+  "1895": {
+    "place": "nb:Rockaway Beach",
+    "conf": "inferred",
+    "why": "Sandy's flood line and stairwell rebuild evokes the hard hit Rockaways"
+  },
+  "1896": {
+    "place": "nb:Upper West Side",
+    "conf": "stated",
+    "why": "the Manhattan eruv matters most to the Upper West Side's community"
+  },
+  "1899": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "the mix of fur coats and hard hats overheard reads as Midtown"
+  },
+  "1903": {
+    "place": "nb:East New York",
+    "conf": "inferred",
+    "why": "an ordinary bodega health inspection, set in East New York"
+  },
+  "1908": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "the Christmas Bird Count famously sweeps Central Park"
+  },
+  "1909": {
+    "place": "nb:Great Kills",
+    "conf": "stated",
+    "why": "a suburban escaped animal chase fits Staten Island's Great Kills"
+  },
+  "1910": {
+    "place": "key:belt_pkwy",
+    "conf": "inferred",
+    "why": "a runaway bull loose on the Belt Parkway fits real Brooklyn incidents"
+  },
+  "1911": {
+    "place": "key:jfk",
+    "conf": "inferred",
+    "why": "bomb sniffing K9 units retire from posts like JFK Airport"
+  },
+  "1914": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "falconers clear pigeons from Midtown's glass office plazas"
+  },
+  "1919": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "the epiphany cross dive is an Astoria Greek Orthodox tradition"
+  },
+  "1920": {
+    "place": "key:city_island",
+    "conf": "inferred",
+    "why": "the blessing of the fishing fleet is a City Island tradition"
+  },
+  "1921": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "a Good Friday procession past bodegas fits Corona's community"
+  },
+  "1923": {
+    "place": "nb:Borough Park",
+    "conf": "inferred",
+    "why": "sukkahs blooming on fire escapes are a Borough Park Sukkot scene"
+  },
+  "1924": {
+    "place": "nb:Williamsburg",
+    "conf": "inferred",
+    "why": "tashlich at the river rail suits Williamsburg's Hasidic community"
+  },
+  "1926": {
+    "place": "nb:Flushing",
+    "conf": "inferred",
+    "why": "Buddha's birthday lanterns fill Flushing's temple courtyards"
+  },
+  "1927": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "a kinara lit in a brownstone window is a Harlem scene"
+  },
+  "1928": {
+    "place": "key:grand_concourse",
+    "conf": "inferred",
+    "why": "the Dominican Day Parade rolls down the Grand Concourse"
+  },
+  "1929": {
+    "place": "nb:St. Albans",
+    "conf": "inferred",
+    "why": "a Juneteenth cookout in the park fits St. Albans' community"
+  },
+  "1932": {
+    "place": "key:sugar_hill",
+    "conf": "inferred",
+    "why": "Mother's Day brunch flowers moving uptown evoke Sugar Hill's avenues"
+  },
+  "1933": {
+    "place": "nb:Windsor Terrace",
+    "conf": "inferred",
+    "why": "a decades later stoop recreation fits a classic Brooklyn block"
+  },
+  "1934": {
+    "place": "key:bellevue",
+    "conf": "inferred",
+    "why": "a sidewalk serenade under a hospital window suits Bellevue"
+  },
+  "1935": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "an old school diner reunion fits a Bay Ridge diner"
+  },
+  "1936": {
+    "place": "key:prospect_park",
+    "conf": "inferred",
+    "why": "a memorial bench with a chosen view suits Prospect Park"
+  },
+  "1939": {
+    "place": "key:coney",
+    "conf": "inferred",
+    "why": "a rip current rescue chain is a Coney Island beach scene"
+  },
+  "1941": {
+    "place": "nb:Chelsea",
+    "conf": "inferred",
+    "why": "a dropped ring down a sidewalk grate, set in Chelsea"
+  },
+  "1942": {
+    "place": "key:lincoln_center",
+    "conf": "inferred",
+    "why": "a returned violin belongs to a Lincoln Center maestro's story"
+  },
+  "1944": {
+    "place": "nb:Canarsie",
+    "conf": "inferred",
+    "why": "working papers issued outside a neighbourhood school in Canarsie"
+  },
+  "1945": {
+    "place": "nb:Morrisania",
+    "conf": "inferred",
+    "why": "a first paycheck cashed at the corner bodega, set in Morrisania"
+  },
+  "1946": {
+    "place": "nb:Prospect Lefferts Gardens",
+    "conf": "inferred",
+    "why": "a college acceptance scream from a third floor window there"
+  },
+  "1947": {
+    "place": "nb:Sheepshead Bay",
+    "conf": "inferred",
+    "why": "an early bird senior diner crowd fits Sheepshead Bay"
+  },
+  "1948": {
+    "place": "nb:Greenpoint",
+    "conf": "inferred",
+    "why": "a night walk past bridge lights suits Greenpoint's river blocks"
+  },
+  "1949": {
+    "place": "nb:University Heights",
+    "conf": "inferred",
+    "why": "a bodega tab extended on trust, set in University Heights"
+  },
+  "1950": {
+    "place": "nb:Forest Hills",
+    "conf": "inferred",
+    "why": "a weekday matinee alone in a balcony, set in a Forest Hills theater"
+  },
+  "1951": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "the late night radio studio broadcasting to all boroughs sits in Midtown"
+  },
+  "1953": {
+    "place": "key:foley_sq",
+    "conf": "inferred",
+    "why": "night arraignments happen in the Foley Square courthouse"
+  },
+  "1954": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "the classic railroad flat layout is East Village tenement stock"
+  },
+  "1956": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "flex walls dividing bedrooms are common in shared Bushwick apartments"
+  },
+  "1957": {
+    "place": "nb:Fort Greene",
+    "conf": "inferred",
+    "why": "a renovation peeling decades of wallpaper, set in a Fort Greene brownstone"
+  },
+  "1958": {
+    "place": "nb:Middle Village",
+    "conf": "inferred",
+    "why": "an old newspaper found in the wall, set in a Middle Village rowhouse"
+  },
+  "1960": {
+    "place": "nb:Flatbush",
+    "conf": "inferred",
+    "why": "the susu rotating savings circle is a Caribbean tradition in Flatbush"
+  },
+  "1961": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "a generations old shop sign succession, set in Bay Ridge"
+  },
+  "1962": {
+    "place": "nb:Woodhaven",
+    "conf": "inferred",
+    "why": "a folding advice table on the corner, set in Woodhaven"
+  },
+  "1963": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "faded newspaper boxes chained on a corner, set in Astoria"
+  },
+  "1967": {
+    "place": "nb:Bedford-Stuyvesant",
+    "conf": "inferred",
+    "why": "Michtom's candy shop that made the first teddy bear stood on Tompkins Avenue"
+  },
+  "1968": {
+    "place": "nb:Park Slope",
+    "conf": "inferred",
+    "why": "Carrier's 1902 AC breakthrough happened at a Brooklyn plant near Park Slope"
+  },
+  "1969": {
+    "place": "key:grand_central",
+    "conf": "stated",
+    "why": "the forgotten wallet dinner behind the Diners Club card happened near Grand Central"
+  },
+  "1970": {
+    "place": "key:south_st_seaport",
+    "conf": "inferred",
+    "why": "Adams's downtown chicle workshop was near the old seaport waterfront"
+  },
+  "1971": {
+    "place": "nb:Jackson Heights",
+    "conf": "stated",
+    "why": "Scrabble's inventor Alfred Butts worked from his home in Jackson Heights"
+  },
+  "1972": {
+    "place": "nb:Gramercy",
+    "conf": "stated",
+    "why": "Baked Alaska debuted at Delmonico's near Madison Square in Gramercy"
+  },
+  "1973": {
+    "place": "key:empire_state",
+    "conf": "inferred",
+    "why": "the 1894 eggs benedict hotel origin points to the old Waldorf site there"
+  },
+  "1974": {
+    "place": "key:fifth_ave",
+    "conf": "inferred",
+    "why": "the Red Snapper name for the Bloody Mary was coined at the St Regis"
+  },
+  "1975": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "the Reuben's NYC origin claim centers on a Midtown delicatessen"
+  },
+  "1976": {
+    "place": "key:junior_s",
+    "conf": "inferred",
+    "why": "the definitive New York cheesecake slice is Junior's own"
+  },
+  "1977": {
+    "place": "nb:Hell's Kitchen",
+    "conf": "inferred",
+    "why": "1am's after theater diner crowd suits Hell's Kitchen"
+  },
+  "1978": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "2am stoop talks and bodega glow, set in Ridgewood"
+  },
+  "1979": {
+    "place": "nb:Inwood",
+    "conf": "inferred",
+    "why": "3am bakers and night shift nurses trading places, set in Inwood"
+  },
+  "1981": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "5am tamale carts are a Corona morning fixture"
+  },
+  "1982": {
+    "place": "key:dumbo",
+    "conf": "inferred",
+    "why": "6am runners owning the bridges suggests DUMBO's waterfront"
+  },
+  "1983": {
+    "place": "nb:Bayside",
+    "conf": "inferred",
+    "why": "7am school buses and express platforms, set in Bayside"
+  },
+  "1984": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "peak rush hour choreography is Midtown's office towers"
+  },
+  "1985": {
+    "place": "key:wall_street",
+    "conf": "inferred",
+    "why": "the opening bell markets place this at Wall Street"
+  },
+  "1986": {
+    "place": "key:amnh",
+    "conf": "inferred",
+    "why": "school trips at opening time suggest the Natural History Museum"
+  },
+  "1987": {
+    "place": "nb:Kew Gardens",
+    "conf": "inferred",
+    "why": "prep kitchens and playgrounds at late morning, set in Kew Gardens"
+  },
+  "1988": {
+    "place": "key:bryant",
+    "conf": "inferred",
+    "why": "noon food cart lines and plaza lunches fill Bryant Park"
+  },
+  "1989": {
+    "place": "key:washington_sq",
+    "conf": "inferred",
+    "why": "afternoon chess tables at full clock are Washington Square Park's"
+  },
+  "1990": {
+    "place": "nb:Park Slope",
+    "conf": "inferred",
+    "why": "stroller filled cafe shade at naptime is classic Park Slope"
+  },
+  "1991": {
+    "place": "nb:Sunset Park",
+    "conf": "inferred",
+    "why": "school dismissal and bodega candy rush, set in Sunset Park"
+  },
+  "1992": {
+    "place": "nb:Chinatown",
+    "conf": "inferred",
+    "why": "the shift change family meal at back tables fits Chinatown's restaurants"
+  },
+  "1993": {
+    "place": "nb:Financial District",
+    "conf": "inferred",
+    "why": "the evening reverse commute tide surges from the Financial District"
+  },
+  "1994": {
+    "place": "nb:Prospect Heights",
+    "conf": "inferred",
+    "why": "golden hour stoop filling avenues, set in Prospect Heights"
+  },
+  "1995": {
+    "place": "nb:Morningside Heights",
+    "conf": "inferred",
+    "why": "dinner steam rising through airshafts at dusk, set uptown"
+  },
+  "1997": {
+    "place": "nb:Upper West Side",
+    "conf": "inferred",
+    "why": "dog walkers on last patrol under a lit skyline there"
+  },
+  "1998": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "closing kitchens and opening bars define the East Village night"
+  },
+  "1999": {
+    "place": "key:broadway",
+    "conf": "inferred",
+    "why": "curtain call encores at 11pm belong to the Theater District"
+  },
+  "2000": {
+    "place": "key:times_square",
+    "conf": "inferred",
+    "why": "midnight's citywide hinge is best anchored at Times Square"
+  },
+  "2001": {
+    "place": "nb:Murray Hill",
+    "conf": "inferred",
+    "why": "a January cold snap scene, set in Murray Hill"
+  },
+  "2002": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "February's short weeks scene, set in Astoria"
+  },
+  "2003": {
+    "place": "nb:Woodside",
+    "conf": "inferred",
+    "why": "false springs and stoop testing, set in Woodside"
+  },
+  "2004": {
+    "place": "key:bbg",
+    "conf": "inferred",
+    "why": "cherry petals evoke the Brooklyn Botanic Garden's blossoms"
+  },
+  "2005": {
+    "place": "nb:Bushwick",
+    "conf": "inferred",
+    "why": "May's stoop season and hydrant talk, set in Bushwick"
+  },
+  "2006": {
+    "place": "nb:West Village",
+    "conf": "inferred",
+    "why": "June's pride flags point to the West Village"
+  },
+  "2007": {
+    "place": "key:mott_haven_b",
+    "conf": "inferred",
+    "why": "open hydrants and claimed rooftops evoke the South Bronx summer"
+  },
+  "2008": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "August's tar beach rooftops are classic Bensonhurst"
+  },
+  "2009": {
+    "place": "key:columbia",
+    "conf": "inferred",
+    "why": "new sneakers and scholarly light suit Columbia's campus season"
+  },
+  "2010": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "marathoners tapering points to Central Park's finish line"
+  },
+  "2012": {
+    "place": "key:rock_center",
+    "conf": "inferred",
+    "why": "December's tree lots and window lights peak at Rockefeller Center"
+  },
+  "2015": {
+    "place": "key:van_cortlandt_p",
+    "conf": "inferred",
+    "why": "March's worm moon over softening park soil suits Van Cortlandt Park"
+  },
+  "2016": {
+    "place": "key:fort_greene_park",
+    "conf": "inferred",
+    "why": "April's pink moon over flowering trees fits Fort Greene Park"
+  },
+  "2017": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "May's flower moon over community gardens suits the East Village's plots"
+  },
+  "2024": {
+    "place": "key:empire_state",
+    "conf": "inferred",
+    "why": "the cold moon's highest arc crowns the Empire State Building's silhouette"
+  },
+  "2025": {
+    "place": "key:fifth_ave",
+    "conf": "inferred",
+    "why": "spring striding up the avenues is anchored to Fifth Avenue"
+  },
+  "2026": {
+    "place": "key:triboro",
+    "conf": "inferred",
+    "why": "summer lounging across all boroughs centers on the Triborough crossing"
+  },
+  "2027": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "autumn crossing the park in a leaf coat is Central Park itself"
+  },
+  "2029": {
+    "place": "key:lex_ave",
+    "conf": "inferred",
+    "why": "the iconic steam grates rising citywide are epitomized on Lexington Avenue"
+  },
+  "2030": {
+    "place": "key:brooklyn_bridge",
+    "conf": "inferred",
+    "why": "steel as skeleton is best shown at the Brooklyn Bridge"
+  },
+  "2031": {
+    "place": "key:wtc",
+    "conf": "inferred",
+    "why": "a million reflective windows evokes the glass towers around One World Trade"
+  },
+  "2032": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "tenement brick aging through sunsets is the Lower East Side's material"
+  },
+  "2033": {
+    "place": "key:fdr",
+    "conf": "inferred",
+    "why": "the asphalt river metaphor fits the FDR Drive"
+  },
+  "2034": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "sidewalks holding initials and glitter, set in Bay Ridge"
+  },
+  "2036": {
+    "place": "nb:Midtown",
+    "conf": "stated",
+    "why": "Manhattan schist runs deepest under Midtown, letting towers rise tallest"
+  },
+  "2037": {
+    "place": "key:meatpacking",
+    "conf": "inferred",
+    "why": "Belgian block cobblestones surfacing through asphalt define this district"
+  },
+  "2038": {
+    "place": "key:times_square",
+    "conf": "inferred",
+    "why": "neon's pulse made visible is Times Square's own"
+  },
+  "2039": {
+    "place": "key:bowery",
+    "conf": "inferred",
+    "why": "pushcarts and tenements trading shadows with mansions is the Bowery's mix"
+  },
+  "2041": {
+    "place": "nb:Harlem",
+    "conf": "inferred",
+    "why": "1920s speakeasies and jazz sprinting upward evoke Harlem's clubs"
+  },
+  "2042": {
+    "place": "key:bowery",
+    "conf": "inferred",
+    "why": "Depression breadlines were a fixture of the Bowery"
+  },
+  "2044": {
+    "place": "nb:Rego Park",
+    "conf": "inferred",
+    "why": "1950s chrome diners and new towers rising, set in Rego Park"
+  },
+  "2047": {
+    "place": "nb:SoHo",
+    "conf": "inferred",
+    "why": "1980s downtown galleries in old storefronts define SoHo"
+  },
+  "2048": {
+    "place": "key:central_park",
+    "conf": "inferred",
+    "why": "1990s park summers are Central Park's own"
+  },
+  "2049": {
+    "place": "key:wtc",
+    "conf": "inferred",
+    "why": "candles and returning cranes in the 2000s point to Ground Zero"
+  },
+  "2051": {
+    "place": "nb:East Village",
+    "conf": "inferred",
+    "why": "balcony applause and dining sheds define the 2020s East Village"
+  },
+  "2065": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "Washington Irving, who coined Gotham, wrote from Greenwich Village"
+  },
+  "2066": {
+    "place": "key:arthur_ave",
+    "conf": "inferred",
+    "why": "the social club hand wave dismissal is classic Arthur Avenue culture"
+  },
+  "2088": {
+    "place": "key:wtc",
+    "conf": "stated",
+    "why": "the PATH's Manhattan terminus is the World Trade Center Oculus"
+  },
+  "2100": {
+    "place": "key:times_square",
+    "conf": "inferred",
+    "why": "eight million faces filling the frame belong at Times Square's crowds"
+  },
+  "2102": {
+    "place": "key:union_sq",
+    "conf": "inferred",
+    "why": "street performer folding tables cluster at Union Square"
+  },
+  "2104": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "the community garden queen presides over a classic Lower East Side lot"
+  },
+  "2105": {
+    "place": "key:hudson_yards",
+    "conf": "inferred",
+    "why": "the master builder's girder throne overlooks Hudson Yards' rising grid"
+  },
+  "2106": {
+    "place": "key:lombardi",
+    "conf": "inferred",
+    "why": "the pizza hierophant presides at Lombardi's counter"
+  },
+  "2108": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "a yellow cab parting traffic is a Midtown chariot scene"
+  },
+  "2113": {
+    "place": "key:chrysler",
+    "conf": "inferred",
+    "why": "a window washer at the thirtieth story suits the Chrysler Building"
+  },
+  "2114": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "buildings skipping the 13th floor are common in Midtown towers"
+  },
+  "2115": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "the egg cream soda jerk traces to the Lower East Side's fountains"
+  },
+  "2116": {
+    "place": "nb:Washington Heights",
+    "conf": "inferred",
+    "why": "a lease chained rental apartment scene, set in Washington Heights"
+  },
+  "2117": {
+    "place": "nb:SoHo",
+    "conf": "inferred",
+    "why": "iconic wooden water towers cluster on SoHo rooftops"
+  },
+  "2123": {
+    "place": "nb:Chelsea",
+    "conf": "inferred",
+    "why": "an awkward synced pace sidewalk encounter, set in Chelsea"
+  },
+  "2124": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "countdown crossing signals are densest in Midtown"
+  },
+  "2125": {
+    "place": "nb:Financial District",
+    "conf": "inferred",
+    "why": "a lit elevator button pressed again anyway, set in an office lobby"
+  },
+  "2127": {
+    "place": "nb:Murray Hill",
+    "conf": "inferred",
+    "why": "a deli order rehearsed silently in line, set in Murray Hill"
+  },
+  "2128": {
+    "place": "key:subway_system",
+    "conf": "inferred",
+    "why": "standers right walkers left is subway escalator etiquette citywide"
+  },
+  "2129": {
+    "place": "nb:Turtle Bay",
+    "conf": "inferred",
+    "why": "a held door's obligatory jog, set in Turtle Bay"
+  },
+  "2131": {
+    "place": "nb:Midtown",
+    "conf": "inferred",
+    "why": "walking against the rush hour current happens on Midtown sidewalks"
+  },
+  "2132": {
+    "place": "key:subway_system",
+    "conf": "inferred",
+    "why": "reading a stranger's texts over their shoulder is a subway ritual"
+  },
+  "2133": {
+    "place": "nb:Bensonhurst",
+    "conf": "inferred",
+    "why": "the last slice standoff plays out in a neighbourhood pizzeria"
+  },
+  "2134": {
+    "place": "nb:Corona",
+    "conf": "inferred",
+    "why": "pinata filled party stores are common in Corona"
+  },
+  "2135": {
+    "place": "nb:Flatbush",
+    "conf": "inferred",
+    "why": "August uniform shopping rush fits Flatbush's parochial school families"
+  },
+  "2136": {
+    "place": "key:125th_st",
+    "conf": "inferred",
+    "why": "wig shops line 125th Street in Harlem"
+  },
+  "2137": {
+    "place": "nb:Maspeth",
+    "conf": "inferred",
+    "why": "a trophy engraving shop serving the borough's teams, set in Maspeth"
+  },
+  "2138": {
+    "place": "nb:Jamaica",
+    "conf": "inferred",
+    "why": "a glittering 99 cent bazaar, set in Jamaica"
+  },
+  "2139": {
+    "place": "key:subway_system",
+    "conf": "inferred",
+    "why": "the flower ringed grate shrine sits over a subway grate"
+  },
+  "2140": {
+    "place": "key:tompkins",
+    "conf": "inferred",
+    "why": "the mythos flowers blooming through snow line Tompkins Square Park's fence"
+  },
+  "2141": {
+    "place": "nb:Ridgewood",
+    "conf": "inferred",
+    "why": "kids trading eye flower seeds on a stoop, set in Ridgewood"
+  },
+  "2142": {
+    "place": "key:red_hook_b",
+    "conf": "inferred",
+    "why": "a warehouse rooftop meadow of irises fits Red Hook's industrial roofs"
+  },
+  "2143": {
+    "place": "key:botanical",
+    "conf": "inferred",
+    "why": "a botanist's field notebook belongs at the New York Botanical Garden"
+  },
+  "2144": {
+    "place": "key:nypl",
+    "conf": "inferred",
+    "why": "a map room drawer with a living map suits the New York Public Library"
+  },
+  "2145": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "a talisman shop with a line around the block, set in the Village"
+  },
+  "2146": {
+    "place": "key:bronx_zoo",
+    "conf": "inferred",
+    "why": "bees monarchs and a kestrel processing evoke the Bronx Zoo's wildlife"
+  },
+  "2149": {
+    "place": "key:gowanus",
+    "conf": "inferred",
+    "why": "a trash barge gondola honeymoon suits the Gowanus Canal"
+  },
+  "2150": {
+    "place": "key:brooklyn_bridge",
+    "conf": "inferred",
+    "why": "the bridge anchorage christening site is the Brooklyn Bridge's real anchorage"
+  },
+  "2151": {
+    "place": "nb:Lower East Side",
+    "conf": "inferred",
+    "why": "the exiled rat court evacuates from the Lower East Side's alleys"
+  },
+  "2154": {
+    "place": "nb:Upper West Side",
+    "conf": "inferred",
+    "why": "a keystone faced facade revealed after years under scaffolding"
+  },
+  "2155": {
+    "place": "nb:Astoria",
+    "conf": "inferred",
+    "why": "a bedbug all clear certificate taped to an apartment door there"
+  },
+  "2156": {
+    "place": "nb:Jamaica",
+    "conf": "inferred",
+    "why": "hooded dryer gossip rows are a fixture of Jamaica's salons"
+  },
+  "2157": {
+    "place": "key:bellevue",
+    "conf": "inferred",
+    "why": "a maternity ward window scene fits Bellevue Hospital"
+  },
+  "2162": {
+    "place": "nb:Brownsville",
+    "conf": "inferred",
+    "why": "tar beach rooftop summers are a Brownsville tradition"
+  },
+  "2174": {
+    "place": "nb:Greenwich Village",
+    "conf": "inferred",
+    "why": "the 1917 suffrage movement centered in the Village's activist circles"
+  },
+  "2178": {
+    "place": "nb:Forest Hills",
+    "conf": "inferred",
+    "why": "a leafy tree lined neighbourhood anchors the citywide tree census"
+  },
+  "2179": {
+    "place": "nb:Concourse",
+    "conf": "inferred",
+    "why": "the Bronx General Post Office holds landmark WPA murals near the Concourse"
+  },
+  "2180": {
+    "place": "key:astoria_pool",
+    "conf": "inferred",
+    "why": "the grandest of the 1936 WPA pools opened at Astoria"
+  },
+  "2181": {
+    "place": "key:42nd_st",
+    "conf": "inferred",
+    "why": "the 1975 Daily News headline originated from its 42nd Street building"
+  },
+  "2185": {
+    "place": "key:city_hall",
+    "conf": "inferred",
+    "why": "old newsrooms clustered on Newspaper Row near City Hall"
+  },
+  "2187": {
+    "place": "nb:Bay Ridge",
+    "conf": "inferred",
+    "why": "hand set pin bowling alleys were common in Bay Ridge"
+  },
+  "2188": {
+    "place": "key:city_hall",
+    "conf": "inferred",
+    "why": "Open House New York famously opens City Hall's usually closed doors"
+  },
+  "2193": {
+    "place": "key:prospect_park",
+    "conf": "inferred",
+    "why": "Mulchfest tree chipping is held annually at Prospect Park"
+  },
+  "2194": {
+    "place": "nb:Greenpoint",
+    "conf": "stated",
+    "why": "artisan globe making workshops are found among Greenpoint's studios"
+  }
+}

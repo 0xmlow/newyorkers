@@ -1,0 +1,1070 @@
+{
+  "37": {
+    "place": null,
+    "why": "crosswalk and pedestrian tide named with no specific place"
+  },
+  "38": {
+    "place": null,
+    "why": "night shift and lit windows with no named place"
+  },
+  "39": {
+    "place": null,
+    "why": "landlord and notices with no location named"
+  },
+  "40": {
+    "place": "boro:Manhattan",
+    "why": "borough given, only a generic listing and fee described"
+  },
+  "41": {
+    "place": null,
+    "why": "blue light and night street with no place named"
+  },
+  "42": {
+    "place": "boro:Brooklyn",
+    "why": "borough given, only a generic new cafe and block described"
+  },
+  "43": {
+    "place": null,
+    "why": "papers and night city with no location named"
+  },
+  "44": {
+    "place": null,
+    "why": "scaffold and flashlight with no place named"
+  },
+  "46": {
+    "place": null,
+    "why": "corner and hustle with no specific place named"
+  },
+  "48": {
+    "place": null,
+    "why": "an unnamed bridge is not enough to fix a place"
+  },
+  "49": {
+    "place": null,
+    "why": "stoop regular with no named block"
+  },
+  "50": {
+    "place": null,
+    "why": "handoff and ceremony with no location named"
+  },
+  "51": {
+    "place": null,
+    "why": "regular and corner with no named place"
+  },
+  "219": {
+    "place": "boro:Bronx",
+    "why": "the piece is titled The Bronx and borough given"
+  },
+  "233": {
+    "place": "boro:Manhattan",
+    "why": "doormen and status wealth without a named neighbourhood"
+  },
+  "248": {
+    "place": "boro:Queens",
+    "why": "the piece is titled Queens and borough given"
+  },
+  "249": {
+    "place": "boro:Brooklyn",
+    "why": "the piece is titled Brooklyn and borough given"
+  },
+  "255": {
+    "place": "boro:Bronx",
+    "why": "the piece is titled The Bronx and borough given"
+  },
+  "259": {
+    "place": "boro:Manhattan",
+    "why": "Uptown alone is not enough per the rules, borough given"
+  },
+  "360": {
+    "place": "boro:Queens",
+    "why": "the piece is titled Queens and borough given"
+  },
+  "470": {
+    "place": "boro:Brooklyn",
+    "why": "the Brooklyn ferry is named but not a vocabulary key"
+  },
+  "471": {
+    "place": "boro:Manhattan",
+    "why": "the docks are named with no specific vocabulary place"
+  },
+  "475": {
+    "place": "key:lga",
+    "why": "the airport that still curses his name is LaGuardia"
+  },
+  "477": {
+    "place": null,
+    "why": "expressways and beaches described with no single place"
+  },
+  "489": {
+    "place": "boro:Manhattan",
+    "why": "borough given, subjects and frame described with no place"
+  },
+  "491": {
+    "place": "boro:Manhattan",
+    "why": "refuses to leave Manhattan names the borough directly"
+  },
+  "492": {
+    "place": "boro:Manhattan",
+    "why": "borough given, essay and eye described with no place"
+  },
+  "498": {
+    "place": "boro:Manhattan",
+    "why": "bebop and piano described with no named venue"
+  },
+  "499": {
+    "place": "boro:Manhattan",
+    "why": "cool jazz career described with no named venue"
+  },
+  "508": {
+    "place": "boro:Manhattan",
+    "why": "downtown alone is not enough per the rules, borough given"
+  },
+  "526": {
+    "place": "boro:Manhattan",
+    "why": "sewer and block described with no named place"
+  },
+  "532": {
+    "place": "boro:Manhattan",
+    "why": "orphan story set with no named place, borough given"
+  },
+  "533": {
+    "place": null,
+    "why": "West Egg is fictional Long Island, not a city borough"
+  },
+  "535": {
+    "place": null,
+    "why": "country lawyer story has no New York place named"
+  },
+  "538": {
+    "place": null,
+    "why": "the North Jersey empire is outside New York City"
+  },
+  "544": {
+    "place": "boro:Manhattan",
+    "why": "boardroom comeback described with no named place"
+  },
+  "545": {
+    "place": null,
+    "why": "the corner and code described are a fictional Baltimore setting"
+  },
+  "546": {
+    "place": "boro:Manhattan",
+    "why": "a brownstone tenant is described with no named place"
+  },
+  "550": {
+    "place": null,
+    "why": "bodega cat with no named block or shop"
+  },
+  "552": {
+    "place": null,
+    "why": "deli grill sandwich unites every borough with no place"
+  },
+  "554": {
+    "place": null,
+    "why": "cookie eaten citywide with no place named"
+  },
+  "555": {
+    "place": null,
+    "why": "corner slice described with no place named"
+  },
+  "564": {
+    "place": null,
+    "why": "medallion and hail described with no place named"
+  },
+  "565": {
+    "place": null,
+    "why": "bike dock and lane described with no place named"
+  },
+  "566": {
+    "place": null,
+    "why": "ladder and firehouse described with no place named"
+  },
+  "567": {
+    "place": null,
+    "why": "precinct and shield described with no place named"
+  },
+  "568": {
+    "place": null,
+    "why": "plow and route described with no place named"
+  },
+  "597": {
+    "place": "boro:Manhattan",
+    "why": "bar crawl described with no named venue, borough given"
+  },
+  "603": {
+    "place": "boro:Manhattan",
+    "why": "march tradition described with no named street, borough given"
+  },
+  "627": {
+    "place": "boro:Manhattan",
+    "why": "front row fashion world described with no named place"
+  },
+  "629": {
+    "place": "boro:Manhattan",
+    "why": "Vogue years described with no named place"
+  },
+  "630": {
+    "place": "boro:Manhattan",
+    "why": "bicycle street photographer described with no named place"
+  },
+  "632": {
+    "place": "boro:Bronx",
+    "why": "a Bronx kid names the borough directly"
+  },
+  "633": {
+    "place": "boro:Manhattan",
+    "why": "DKNY wardrobe described with no named place"
+  },
+  "642": {
+    "place": "nb:Lower East Side",
+    "why": "Paul's Boutique storefront on the cover was Rivington and Ludlow"
+  },
+  "645": {
+    "place": "boro:Queens",
+    "why": "the crowns Queens handed them early names the borough"
+  },
+  "646": {
+    "place": "boro:Bronx",
+    "why": "borough given, turntable and quick mix described with no place"
+  },
+  "653": {
+    "place": "boro:Bronx",
+    "why": "the Bronx projects names the borough directly"
+  },
+  "654": {
+    "place": null,
+    "why": "firebrand congresswoman described with no place named"
+  },
+  "657": {
+    "place": "boro:Manhattan",
+    "why": "bike lanes and soda ban described with no named place"
+  },
+  "659": {
+    "place": null,
+    "why": "NY-14 spans two boroughs so it does not fix one place"
+  },
+  "661": {
+    "place": "boro:Brooklyn",
+    "why": "never lost the Brooklyn accent names the borough directly"
+  },
+  "663": {
+    "place": "boro:Manhattan",
+    "why": "SVU precinct described with no named place, borough given"
+  },
+  "664": {
+    "place": null,
+    "why": "wall of clues and obsession with no place named"
+  },
+  "732": {
+    "place": null,
+    "why": "title card design text, not a scene with a place"
+  },
+  "768": {
+    "place": null,
+    "why": "an unnamed manhole and open street with no fixed place"
+  },
+  "773": {
+    "place": null,
+    "why": "an unnamed wooden rooftop water tower with no fixed place"
+  },
+  "774": {
+    "place": null,
+    "why": "an unnamed Con Ed street stack with no fixed place"
+  },
+  "777": {
+    "place": null,
+    "why": "water tunnels under the city with no named place"
+  },
+  "779": {
+    "place": null,
+    "why": "a bodega counter at dawn with no named place"
+  },
+  "780": {
+    "place": "nb:Williamsburg",
+    "why": "the viral rainbow bagel is from a Williamsburg bagel shop"
+  },
+  "782": {
+    "place": null,
+    "why": "a fire escape and tenement wall with no named place"
+  },
+  "783": {
+    "place": null,
+    "why": "an open hydrant on an unnamed block"
+  },
+  "785": {
+    "place": null,
+    "why": "a brownstone stoop sale with no named block"
+  },
+  "786": {
+    "place": null,
+    "why": "a blackout block party with no named place"
+  },
+  "787": {
+    "place": null,
+    "why": "a boiler room in an unnamed building"
+  },
+  "788": {
+    "place": null,
+    "why": "an e-bike delivery through unnamed neon streets"
+  },
+  "791": {
+    "place": null,
+    "why": "a pre war apartment with no named place"
+  },
+  "797": {
+    "place": null,
+    "why": "a one bedroom shrine with no named place"
+  },
+  "804": {
+    "place": null,
+    "why": "a co-op board table with no named building"
+  },
+  "805": {
+    "place": null,
+    "why": "a sidewalk shed with no named block"
+  },
+  "806": {
+    "place": null,
+    "why": "a curbside trash mountain with no named block"
+  },
+  "812": {
+    "place": null,
+    "why": "a storefront psychic with no named place"
+  },
+  "814": {
+    "place": null,
+    "why": "a mango cart with no named corner"
+  },
+  "815": {
+    "place": null,
+    "why": "an ice cream truck on an unnamed block"
+  },
+  "816": {
+    "place": null,
+    "why": "a bodega chandelier with no named place"
+  },
+  "817": {
+    "place": null,
+    "why": "a crossing guard at an unnamed intersection"
+  },
+  "818": {
+    "place": null,
+    "why": "a corner laundromat with no named place"
+  },
+  "819": {
+    "place": "boro:Manhattan",
+    "why": "she paints Manhattan on a nail, borough given"
+  },
+  "826": {
+    "place": null,
+    "why": "a kosher deli counter with no named place"
+  },
+  "827": {
+    "place": null,
+    "why": "a Greek diner at 3am with no named place"
+  },
+  "829": {
+    "place": "boro:Bronx",
+    "why": "the Bronx swings names the borough directly"
+  },
+  "831": {
+    "place": "key:nypl",
+    "why": "the Rose Reading Room is the New York Public Library"
+  },
+  "832": {
+    "place": null,
+    "why": "a school bus with no named place"
+  },
+  "833": {
+    "place": null,
+    "why": "a school cafeteria with no named place"
+  },
+  "834": {
+    "place": null,
+    "why": "a closet sized locksmith shop with no named place"
+  },
+  "837": {
+    "place": null,
+    "why": "ambulance doors in neon rain with no named place"
+  },
+  "838": {
+    "place": null,
+    "why": "an ER hallway with no named hospital"
+  },
+  "839": {
+    "place": null,
+    "why": "a 311 switchboard with no named place"
+  },
+  "840": {
+    "place": null,
+    "why": "a Con Ed crew at an unnamed manhole"
+  },
+  "841": {
+    "place": null,
+    "why": "a snow plow on an unnamed avenue"
+  },
+  "847": {
+    "place": null,
+    "why": "a school gymnasium with no named place"
+  },
+  "848": {
+    "place": null,
+    "why": "a firehouse kitchen with no named place"
+  },
+  "850": {
+    "place": "boro:Brooklyn",
+    "why": "a Brooklyn warehouse names the borough directly"
+  },
+  "852": {
+    "place": null,
+    "why": "a taxi at a red light with no named intersection"
+  },
+  "853": {
+    "place": null,
+    "why": "an umbrella vendor on an unnamed corner"
+  },
+  "855": {
+    "place": "boro:Bronx",
+    "why": "a Bronx block names the borough directly"
+  },
+  "859": {
+    "place": null,
+    "why": "a fruit cart on an unnamed corner"
+  },
+  "862": {
+    "place": null,
+    "why": "a bootleg DVD binder on an unnamed street"
+  },
+  "864": {
+    "place": null,
+    "why": "a pawn shop with no named place"
+  },
+  "865": {
+    "place": null,
+    "why": "a sneaker drop line with no named store"
+  },
+  "868": {
+    "place": null,
+    "why": "a brownstone stoop with no named block"
+  },
+  "872": {
+    "place": "boro:Brooklyn",
+    "why": "a Brooklyn rooftop names the borough directly"
+  },
+  "874": {
+    "place": null,
+    "why": "a velvet rope club with no named place"
+  },
+  "875": {
+    "place": null,
+    "why": "a corner dive bar with no named place"
+  },
+  "877": {
+    "place": null,
+    "why": "a basement card room with no named place"
+  },
+  "879": {
+    "place": null,
+    "why": "a track bike in unnamed rush hour traffic"
+  },
+  "880": {
+    "place": null,
+    "why": "a tiny cafe brunch line with no named place"
+  },
+  "882": {
+    "place": null,
+    "why": "a crosswalk between cabs with no named intersection"
+  },
+  "883": {
+    "place": null,
+    "why": "a window seat crossword with no named place"
+  },
+  "886": {
+    "place": null,
+    "why": "a corner streetlamp with no named place"
+  },
+  "888": {
+    "place": null,
+    "why": "a lease renewal under an unnamed door"
+  },
+  "889": {
+    "place": null,
+    "why": "a roommate in an unnamed apartment doorway"
+  },
+  "890": {
+    "place": null,
+    "why": "a rideshare phone screen with no named place"
+  },
+  "891": {
+    "place": "key:subway_system",
+    "why": "a gremlin lounges on ancient subway signal levers freezing trains"
+  },
+  "892": {
+    "place": "key:subway_system",
+    "why": "leaning against the entire subway pole with hand straps"
+  },
+  "893": {
+    "place": null,
+    "why": "a rush hour sidewalk with no named place"
+  },
+  "894": {
+    "place": null,
+    "why": "a basement ghost kitchen with no named place"
+  },
+  "895": {
+    "place": null,
+    "why": "a brownstone with no named block"
+  },
+  "896": {
+    "place": null,
+    "why": "an apartment wall with no named place"
+  },
+  "897": {
+    "place": null,
+    "why": "a wellness store counter with no named place"
+  },
+  "898": {
+    "place": null,
+    "why": "a curbside mattress with no named place"
+  },
+  "899": {
+    "place": null,
+    "why": "a radiator in an unnamed apartment"
+  },
+  "908": {
+    "place": null,
+    "why": "a kitchen glue trap with no named place"
+  },
+  "913": {
+    "place": "boro:Manhattan",
+    "why": "pneumatic mail tubes under 1900s Manhattan, borough given"
+  },
+  "915": {
+    "place": null,
+    "why": "a hidden speakeasy with no named place"
+  },
+  "918": {
+    "place": null,
+    "why": "a midnight curb with no named place"
+  },
+  "920": {
+    "place": null,
+    "why": "a memorial bike on an unnamed signpost"
+  },
+  "921": {
+    "place": null,
+    "why": "a shuttered OTB parlor with no named place"
+  },
+  "924": {
+    "place": null,
+    "why": "a generic manhole cover portrait with no named place"
+  },
+  "925": {
+    "place": null,
+    "why": "a walk signal at an unnamed intersection"
+  },
+  "926": {
+    "place": null,
+    "why": "a bodega awning with no named place"
+  },
+  "928": {
+    "place": "key:subway_system",
+    "why": "the modernist subway map itself as the subject"
+  },
+  "929": {
+    "place": null,
+    "why": "a window unit on an unnamed tenement"
+  },
+  "930": {
+    "place": null,
+    "why": "a roll down gate with no named place"
+  },
+  "931": {
+    "place": null,
+    "why": "a bag caught in an unnamed street tree"
+  },
+  "932": {
+    "place": null,
+    "why": "an everything bagel with no named place"
+  },
+  "933": {
+    "place": null,
+    "why": "a pastrami sandwich with no named place"
+  },
+  "934": {
+    "place": null,
+    "why": "a 1950s automat with no named place"
+  },
+  "935": {
+    "place": "boro:Brooklyn",
+    "why": "no better argument for Brooklyn names the borough directly"
+  },
+  "936": {
+    "place": null,
+    "why": "a tenement airshaft with no named place"
+  },
+  "937": {
+    "place": null,
+    "why": "a sidewalk barber with no named block"
+  },
+  "938": {
+    "place": null,
+    "why": "a church block with no named place"
+  },
+  "939": {
+    "place": null,
+    "why": "a curbside free box with no named block"
+  },
+  "940": {
+    "place": null,
+    "why": "a closed street block party with no named place"
+  },
+  "941": {
+    "place": null,
+    "why": "a residential street with no named place"
+  },
+  "942": {
+    "place": null,
+    "why": "a second floor window with no named block"
+  },
+  "943": {
+    "place": null,
+    "why": "a curb find carried home with no named place"
+  },
+  "944": {
+    "place": null,
+    "why": "a fire escape garden with no named place"
+  },
+  "945": {
+    "place": null,
+    "why": "a stairwell move with no named place"
+  },
+  "949": {
+    "place": null,
+    "why": "a 1940s fountain counter with no named place"
+  },
+  "952": {
+    "place": null,
+    "why": "a terracotta carving workshop with no named place"
+  },
+  "957": {
+    "place": null,
+    "why": "a bus stop in sleet with no named place"
+  },
+  "968": {
+    "place": null,
+    "why": "a cobbler bench with no named place"
+  },
+  "969": {
+    "place": null,
+    "why": "a cheese counter with no named place"
+  },
+  "970": {
+    "place": null,
+    "why": "a deck oven bakery with no named street"
+  },
+  "971": {
+    "place": null,
+    "why": "a bagel bench with no named place"
+  },
+  "972": {
+    "place": null,
+    "why": "a coal oven pizzeria with no named place"
+  },
+  "973": {
+    "place": "key:grand_central",
+    "why": "a grand vaulted tiled oyster hall is the Grand Central Oyster Bar"
+  },
+  "974": {
+    "place": null,
+    "why": "a brass cage elevator with no named building"
+  },
+  "975": {
+    "place": null,
+    "why": "a corner pharmacy with no named place"
+  },
+  "984": {
+    "place": null,
+    "why": "a second floor dance studio with no named block"
+  },
+  "985": {
+    "place": null,
+    "why": "a courtroom gallery with no named place"
+  },
+  "989": {
+    "place": null,
+    "why": "a church basement meeting with no named place"
+  },
+  "990": {
+    "place": null,
+    "why": "a crosstown bus with no named route"
+  },
+  "991": {
+    "place": null,
+    "why": "a brownstone block with no named place"
+  },
+  "992": {
+    "place": null,
+    "why": "a school gym with no named place"
+  },
+  "993": {
+    "place": null,
+    "why": "a hospital desk with no named hospital"
+  },
+  "994": {
+    "place": null,
+    "why": "a night school classroom with no named place"
+  },
+  "995": {
+    "place": null,
+    "why": "a school nurse office with no named place"
+  },
+  "996": {
+    "place": null,
+    "why": "a gym under lights with no named place"
+  },
+  "997": {
+    "place": null,
+    "why": "a community fridge on an unnamed sidewalk"
+  },
+  "998": {
+    "place": null,
+    "why": "a brownstone stoop with no named block"
+  },
+  "999": {
+    "place": null,
+    "why": "a job site gate with no named place"
+  },
+  "1002": {
+    "place": null,
+    "why": "a street sweeper on an unnamed block"
+  },
+  "1003": {
+    "place": null,
+    "why": "a basement doorway with no named place"
+  },
+  "1004": {
+    "place": null,
+    "why": "a fourth floor window with no named block"
+  },
+  "1007": {
+    "place": null,
+    "why": "a wandering knife sharpener truck with no named place"
+  },
+  "1009": {
+    "place": null,
+    "why": "a tree lined block with no named street"
+  },
+  "1010": {
+    "place": null,
+    "why": "a brass coat check window with no named venue"
+  },
+  "1011": {
+    "place": null,
+    "why": "a garage dispatch booth with no named place"
+  },
+  "1012": {
+    "place": null,
+    "why": "a taxi hood medallion with no named place"
+  },
+  "1013": {
+    "place": null,
+    "why": "a botanica interior with no named place"
+  },
+  "1016": {
+    "place": null,
+    "why": "a lobby plant ambush with no named building"
+  },
+  "1020": {
+    "place": null,
+    "why": "a second floor pool hall with no named place"
+  },
+  "1021": {
+    "place": null,
+    "why": "a record shop basement with no named place"
+  },
+  "1024": {
+    "place": null,
+    "why": "a bar at last call with no named place"
+  },
+  "1025": {
+    "place": null,
+    "why": "a basement club open mic with no named place"
+  },
+  "1027": {
+    "place": null,
+    "why": "a double parked car near unnamed neon"
+  },
+  "1028": {
+    "place": null,
+    "why": "an office lobby with no named place"
+  },
+  "1029": {
+    "place": null,
+    "why": "a storefront boxing gym with no named place"
+  },
+  "1032": {
+    "place": "key:subway_system",
+    "why": "a sprint down platform stairs toward closing subway doors"
+  },
+  "1033": {
+    "place": null,
+    "why": "a bodega counter with no named place"
+  },
+  "1034": {
+    "place": null,
+    "why": "a dice game against an unnamed wall"
+  },
+  "1037": {
+    "place": null,
+    "why": "a kitchen floor at 2am with no named place"
+  },
+  "1038": {
+    "place": "key:subway_system",
+    "why": "a rider occupying three subway seats"
+  },
+  "1040": {
+    "place": "key:subway_system",
+    "why": "a subway entrance and station railing during a service change"
+  },
+  "1041": {
+    "place": null,
+    "why": "an envelope on an unnamed doormat"
+  },
+  "1042": {
+    "place": null,
+    "why": "a sidewalk canvasser with no named place"
+  },
+  "1043": {
+    "place": null,
+    "why": "a closing sale store with no named place"
+  },
+  "1044": {
+    "place": null,
+    "why": "a lobby package theft with no named building"
+  },
+  "1045": {
+    "place": null,
+    "why": "a crosswalk button at an unnamed corner"
+  },
+  "1046": {
+    "place": null,
+    "why": "a vacant corner storefront with no named place"
+  },
+  "1047": {
+    "place": null,
+    "why": "a jackhammer crew on an unnamed corner"
+  },
+  "1048": {
+    "place": null,
+    "why": "a sedan under an unnamed streetlamp"
+  },
+  "1049": {
+    "place": null,
+    "why": "an unseen upstairs neighbor with no named place"
+  },
+  "1050": {
+    "place": null,
+    "why": "a garbage truck under unnamed bedroom windows"
+  },
+  "1051": {
+    "place": null,
+    "why": "a crosstown bus with no named route"
+  },
+  "1052": {
+    "place": null,
+    "why": "a ledge nest with no named place"
+  },
+  "1053": {
+    "place": null,
+    "why": "a corner puddle with no named place"
+  },
+  "1054": {
+    "place": null,
+    "why": "a drip between unnamed buildings"
+  },
+  "1055": {
+    "place": null,
+    "why": "a pothole on an unnamed lane"
+  },
+  "1056": {
+    "place": null,
+    "why": "a dumpling counter with no named place"
+  },
+  "1057": {
+    "place": null,
+    "why": "a frozen avenue with no named place"
+  },
+  "1058": {
+    "place": null,
+    "why": "a rush hour corner with no named place"
+  },
+  "1059": {
+    "place": "boro:Staten Island",
+    "why": "wild turkeys hold a hospital lot on Staten Island, borough given"
+  },
+  "1064": {
+    "place": null,
+    "why": "an unnamed bridge tower with no specific bridge named"
+  },
+  "1065": {
+    "place": null,
+    "why": "a cafe table with no named place"
+  },
+  "1070": {
+    "place": "key:subway_system",
+    "why": "kittens huddled between subway rails as the system holds its breath"
+  },
+  "1071": {
+    "place": null,
+    "why": "a parlor window with no named block"
+  },
+  "1072": {
+    "place": "key:subway_system",
+    "why": "the armored subway revenue train through a ghost station"
+  },
+  "1073": {
+    "place": null,
+    "why": "a garbage barge at sea with no fixed place"
+  },
+  "1076": {
+    "place": null,
+    "why": "a school basement door with no named place"
+  },
+  "1077": {
+    "place": null,
+    "why": "a building cornerstone with no named place"
+  },
+  "1083": {
+    "place": null,
+    "why": "a milk crate at a corner store with no named place"
+  },
+  "1084": {
+    "place": null,
+    "why": "a granny cart crossing an unnamed avenue"
+  },
+  "1085": {
+    "place": null,
+    "why": "a boombox on a stoop with no named place"
+  },
+  "1086": {
+    "place": null,
+    "why": "a tenement door lock with no named place"
+  },
+  "1087": {
+    "place": null,
+    "why": "an intercom panel with no named building"
+  },
+  "1088": {
+    "place": null,
+    "why": "a lamppost on an unnamed corner"
+  },
+  "1089": {
+    "place": null,
+    "why": "sidewalk cellar doors with no named place"
+  },
+  "1090": {
+    "place": null,
+    "why": "a lobby standpipe with no named building"
+  },
+  "1091": {
+    "place": "key:fifth_ave",
+    "why": "department store holiday window displays line Fifth Avenue"
+  },
+  "1092": {
+    "place": null,
+    "why": "a pizza box on a stoop with no named place"
+  },
+  "1093": {
+    "place": null,
+    "why": "a takeout pail with no named place"
+  },
+  "1094": {
+    "place": null,
+    "why": "a ghost sign on an unnamed brick wall"
+  },
+  "1096": {
+    "place": "key:subway_system",
+    "why": "the two note subway door chime above closing doors"
+  },
+  "1097": {
+    "place": null,
+    "why": "a corner trash can with no named place"
+  },
+  "1098": {
+    "place": null,
+    "why": "an unnamed sidewalk square"
+  },
+  "1099": {
+    "place": null,
+    "why": "a bodega bathroom key with no named place"
+  },
+  "1100": {
+    "place": null,
+    "why": "a barber pole with no named block"
+  },
+  "1101": {
+    "place": null,
+    "why": "a deli ticket wheel with no named place"
+  },
+  "1102": {
+    "place": "key:53rd_6th",
+    "why": "halal cart white sauce is the signature of 53rd and 6th"
+  },
+  "1103": {
+    "place": null,
+    "why": "a diner plate with no named place"
+  },
+  "1104": {
+    "place": null,
+    "why": "a babka with no named bakery"
+  },
+  "1105": {
+    "place": null,
+    "why": "a pork bun with no named place"
+  },
+  "1106": {
+    "place": null,
+    "why": "garlic knots with no named place"
+  },
+  "1107": {
+    "place": "boro:Manhattan",
+    "why": "the cocktail is named for Manhattan and its skyline"
+  },
+  "1108": {
+    "place": null,
+    "why": "a bodega cooler with no named place"
+  },
+  "1109": {
+    "place": null,
+    "why": "a Sicilian slice with no named place"
+  },
+  "1111": {
+    "place": null,
+    "why": "rainbow cookies with no named bakery"
+  },
+  "1112": {
+    "place": null,
+    "why": "matzo ball soup with no named place"
+  },
+  "1113": {
+    "place": "nb:Lower East Side",
+    "why": "the bialy is the signature bread of the Lower East Side"
+  },
+  "1114": {
+    "place": null,
+    "why": "a charlotte russe with no named place"
+  },
+  "1115": {
+    "place": "key:little_italy",
+    "why": "zeppole under feast lights evokes the Little Italy feast"
+  },
+  "1116": {
+    "place": null,
+    "why": "a bakery case with no named place"
+  },
+  "1117": {
+    "place": null,
+    "why": "bodega roses with no named place"
+  }
+}

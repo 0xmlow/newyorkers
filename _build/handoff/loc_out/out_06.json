@@ -1,0 +1,1070 @@
+{
+  "3060": {
+    "place": "boro:Manhattan",
+    "why": "the M15 bus route runs only in Manhattan"
+  },
+  "3061": {
+    "place": null,
+    "why": "a rooftop with no named block"
+  },
+  "3062": {
+    "place": null,
+    "why": "sidewalks with no named block"
+  },
+  "3064": {
+    "place": null,
+    "why": "a flowered street lamp with no named block"
+  },
+  "3081": {
+    "place": null,
+    "why": "an entire block with no name given"
+  },
+  "3086": {
+    "place": null,
+    "why": "a barbershop with no named block"
+  },
+  "3088": {
+    "place": "key:yankee_stadium",
+    "why": "outside the stadium on the four train that serves it"
+  },
+  "3089": {
+    "place": null,
+    "why": "a laundromat aisle with no named block"
+  },
+  "3092": {
+    "place": null,
+    "why": "a bodega with no named block"
+  },
+  "3093": {
+    "place": "key:garment",
+    "why": "the bin dive happens on West Thirty Fifth Street"
+  },
+  "3095": {
+    "place": "key:53rd_6th",
+    "why": "the halal cart sits near Fifty Third and Sixth"
+  },
+  "3096": {
+    "place": null,
+    "why": "uptown alone does not fix a place"
+  },
+  "3099": {
+    "place": null,
+    "why": "a seamstress studio with no named block"
+  },
+  "3139": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3144": {
+    "place": null,
+    "why": "a corner trash can with no named block"
+  },
+  "3147": {
+    "place": null,
+    "why": "a bodega register with no named block"
+  },
+  "3150": {
+    "place": "boro:Bronx",
+    "why": "a stroller got away on a Bronx hill"
+  },
+  "3151": {
+    "place": null,
+    "why": "a firehouse rig bumper with no named block"
+  },
+  "3154": {
+    "place": null,
+    "why": "a building with no named block"
+  },
+  "3155": {
+    "place": null,
+    "why": "a deli counter with no named block"
+  },
+  "3161": {
+    "place": null,
+    "why": "a bagel counter with no named block"
+  },
+  "3164": {
+    "place": null,
+    "why": "an entire block with no name given"
+  },
+  "3171": {
+    "place": null,
+    "why": "a bodega awning with no named block"
+  },
+  "3176": {
+    "place": null,
+    "why": "same station but no station named"
+  },
+  "3178": {
+    "place": null,
+    "why": "a square of sidewalk with no named block"
+  },
+  "3180": {
+    "place": null,
+    "why": "the Collector out in the rain with no named block"
+  },
+  "3181": {
+    "place": null,
+    "why": "a fifth floor walkup with no named block"
+  },
+  "3183": {
+    "place": null,
+    "why": "a broker office with no named block"
+  },
+  "3184": {
+    "place": null,
+    "why": "a broker desk with no named block"
+  },
+  "3185": {
+    "place": null,
+    "why": "a first shared kitchen with no named block"
+  },
+  "3187": {
+    "place": null,
+    "why": "a tenement apartment with no named block"
+  },
+  "3188": {
+    "place": null,
+    "why": "a tenement airshaft with no named block"
+  },
+  "3189": {
+    "place": null,
+    "why": "a stoop with no named block"
+  },
+  "3193": {
+    "place": null,
+    "why": "an emptied apartment with no named block"
+  },
+  "3194": {
+    "place": null,
+    "why": "a doormat with no named block"
+  },
+  "3196": {
+    "place": "boro:Bronx",
+    "why": "a crew repaints a memorial mural on a Bronx wall"
+  },
+  "3197": {
+    "place": "boro:Brooklyn",
+    "why": "a sidewalk shrine grows against a Brooklyn wall"
+  },
+  "3199": {
+    "place": null,
+    "why": "a designer studio with no named place stated"
+  },
+  "3224": {
+    "place": "key:yankee_stadium",
+    "why": "the white filigree frieze rings the Bronx ballpark"
+  },
+  "3226": {
+    "place": null,
+    "why": "a morning sidewalk with no named block"
+  },
+  "3227": {
+    "place": "boro:Brooklyn",
+    "why": "the first crease appears on a Brooklyn sidewalk"
+  },
+  "3228": {
+    "place": null,
+    "why": "a collector's apartment with no named block"
+  },
+  "3230": {
+    "place": null,
+    "why": "a hallway with no named block"
+  },
+  "3233": {
+    "place": null,
+    "why": "a doorway with no named block"
+  },
+  "3236": {
+    "place": "boro:Queens",
+    "why": "he laces them into a Queens evening"
+  },
+  "3240": {
+    "place": null,
+    "why": "a fruit cart with no named block"
+  },
+  "3242": {
+    "place": "boro:Brooklyn",
+    "why": "the egg cream lesson happens at a Brooklyn luncheonette"
+  },
+  "3250": {
+    "place": null,
+    "why": "a newsstand with no named block"
+  },
+  "3251": {
+    "place": null,
+    "why": "a shoe repair counter with no named block"
+  },
+  "3252": {
+    "place": null,
+    "why": "a hallway at midnight with no named block"
+  },
+  "3254": {
+    "place": null,
+    "why": "a sidewalk shed with no named block"
+  },
+  "3262": {
+    "place": "boro:Bronx",
+    "why": "a coyote trots across a Bronx bridge"
+  },
+  "3265": {
+    "place": "boro:Bronx",
+    "why": "a peacock walks a Bronx sidewalk"
+  },
+  "3266": {
+    "place": null,
+    "why": "a water tower over rooftops with no named block"
+  },
+  "3271": {
+    "place": "key:subway_system",
+    "why": "an express train runs local with no line named"
+  },
+  "3279": {
+    "place": null,
+    "why": "a hardware store doorway with no named block"
+  },
+  "3282": {
+    "place": "boro:Queens",
+    "why": "a marching band rehearses in a Queens parking lot"
+  },
+  "3287": {
+    "place": "boro:Brooklyn",
+    "why": "a man shoots free throws on a Brooklyn court"
+  },
+  "3289": {
+    "place": null,
+    "why": "a public pool with no named block"
+  },
+  "3296": {
+    "place": "nb:Brooklyn Heights",
+    "why": "three generations sled the Pierrepont Playground hill"
+  },
+  "3297": {
+    "place": null,
+    "why": "a block with no name given"
+  },
+  "3299": {
+    "place": "boro:Staten Island",
+    "why": "a runner in a Staten Island hotel bed the night before"
+  },
+  "3309": {
+    "place": null,
+    "why": "a bodega cooler with no named block"
+  },
+  "3313": {
+    "place": null,
+    "why": "a bodega bucket with no named block"
+  },
+  "3315": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3316": {
+    "place": null,
+    "why": "a church basement with no named block"
+  },
+  "3318": {
+    "place": null,
+    "why": "a freight elevator with no named block"
+  },
+  "3319": {
+    "place": null,
+    "why": "a gallery bench with no named block"
+  },
+  "3322": {
+    "place": null,
+    "why": "a gallery room with no named block"
+  },
+  "3324": {
+    "place": "boro:Bronx",
+    "why": "a writer finishes a piece on a Bronx underpass"
+  },
+  "3325": {
+    "place": null,
+    "why": "a wall with no named block"
+  },
+  "3326": {
+    "place": "boro:Queens",
+    "why": "a writer sits on a Queens freight yard fence"
+  },
+  "3329": {
+    "place": null,
+    "why": "a drawing studio with no named block"
+  },
+  "3333": {
+    "place": "boro:Queens",
+    "why": "a background extra gets a line on a Queens set"
+  },
+  "3335": {
+    "place": null,
+    "why": "a Nuyorican style open mic describes a style, not a named venue"
+  },
+  "3336": {
+    "place": "nb:Greenwich Village",
+    "why": "a jazz club in the Village at two in the morning"
+  },
+  "3338": {
+    "place": null,
+    "why": "a warehouse door with no named block"
+  },
+  "3339": {
+    "place": null,
+    "why": "a coat check rail with no named block"
+  },
+  "3340": {
+    "place": null,
+    "why": "a velvet rope door with no named block"
+  },
+  "3341": {
+    "place": null,
+    "why": "a bodega with no named block"
+  },
+  "3345": {
+    "place": null,
+    "why": "a diner with no named block"
+  },
+  "3349": {
+    "place": null,
+    "why": "a late train with no line named"
+  },
+  "3350": {
+    "place": "key:subway_system",
+    "why": "he changes shirts in a subway station bathroom mirror"
+  },
+  "3352": {
+    "place": null,
+    "why": "a tip jar counter with no named block"
+  },
+  "3353": {
+    "place": null,
+    "why": "a street cart with no named block"
+  },
+  "3354": {
+    "place": null,
+    "why": "a lunch cart with no named block"
+  },
+  "3355": {
+    "place": null,
+    "why": "a bodega with no named block"
+  },
+  "3356": {
+    "place": null,
+    "why": "an empty corner shop with no named block"
+  },
+  "3358": {
+    "place": null,
+    "why": "a discount store with no named block"
+  },
+  "3362": {
+    "place": "boro:Bronx",
+    "why": "a phone repair kiosk in a Bronx mall"
+  },
+  "3363": {
+    "place": null,
+    "why": "a watch repair counter with no named block"
+  },
+  "3364": {
+    "place": null,
+    "why": "a tailor's shop with no named block"
+  },
+  "3365": {
+    "place": null,
+    "why": "a dry cleaner with no named block"
+  },
+  "3366": {
+    "place": null,
+    "why": "a seamstress shop with no named block"
+  },
+  "3369": {
+    "place": "key:rock_center",
+    "why": "the Rockefeller Center tree goes on"
+  },
+  "3370": {
+    "place": "boro:Brooklyn",
+    "why": "a great menorah is lit on a Brooklyn avenue"
+  },
+  "3372": {
+    "place": "boro:Queens",
+    "why": "hundreds pray on a Queens park lawn for Eid"
+  },
+  "3381": {
+    "place": null,
+    "why": "a fire escape with no named block"
+  },
+  "3382": {
+    "place": "boro:Bronx",
+    "why": "a delivery rider climbs a Bronx hill in the snow"
+  },
+  "3385": {
+    "place": "boro:Manhattan",
+    "why": "power returns to a dark Lower Manhattan block"
+  },
+  "3390": {
+    "place": "boro:Staten Island",
+    "why": "the brood emerges in a Staten Island backyard"
+  },
+  "3394": {
+    "place": null,
+    "why": "an office door with no named block"
+  },
+  "3397": {
+    "place": "boro:Queens",
+    "why": "boots are mourned on a Queens stoop"
+  },
+  "3398": {
+    "place": "boro:Bronx",
+    "why": "candles are held in a Bronx churchyard"
+  },
+  "3402": {
+    "place": null,
+    "why": "a windshield note with no named block"
+  },
+  "3404": {
+    "place": null,
+    "why": "an animal care center room with no named block"
+  },
+  "3405": {
+    "place": "boro:Bronx",
+    "why": "a stranger catches a toddler off a Bronx stoop rail"
+  },
+  "3407": {
+    "place": "boro:Queens",
+    "why": "a nurse starts compressions on a Queens platform floor"
+  },
+  "3411": {
+    "place": null,
+    "why": "a warming bus with no named block"
+  },
+  "3413": {
+    "place": null,
+    "why": "a hallway wall with no named block"
+  },
+  "3414": {
+    "place": null,
+    "why": "a branch library table with no named block"
+  },
+  "3416": {
+    "place": null,
+    "why": "downtown alone does not fix a place"
+  },
+  "3418": {
+    "place": "key:subway_system",
+    "why": "the girder sits above subway tracks with no line named"
+  },
+  "3419": {
+    "place": "key:subway_system",
+    "why": "a disused tunnel with a rail where the king walks"
+  },
+  "3424": {
+    "place": "boro:Brooklyn",
+    "why": "a father carries the newborn out of a Brooklyn hospital door"
+  },
+  "3426": {
+    "place": null,
+    "why": "a basement boiler with no named block"
+  },
+  "3427": {
+    "place": null,
+    "why": "a community board room with no named block"
+  },
+  "3428": {
+    "place": null,
+    "why": "a school auditorium with no named block"
+  },
+  "3431": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3432": {
+    "place": null,
+    "why": "a bodega notebook with no named block"
+  },
+  "3435": {
+    "place": null,
+    "why": "a corner bar with no named block"
+  },
+  "3436": {
+    "place": null,
+    "why": "a corner bar with no named block"
+  },
+  "3439": {
+    "place": "boro:Queens",
+    "why": "a repast in a Southeast Queens church hall"
+  },
+  "3441": {
+    "place": null,
+    "why": "an index card at home with no named block"
+  },
+  "3442": {
+    "place": null,
+    "why": "a tailor's table with no named block"
+  },
+  "3443": {
+    "place": null,
+    "why": "a brownstone stoop with no named block"
+  },
+  "3445": {
+    "place": null,
+    "why": "a shop counter with no named block"
+  },
+  "3446": {
+    "place": "boro:Queens",
+    "why": "a man on a Queens bus plays a saved voicemail"
+  },
+  "3449": {
+    "place": null,
+    "why": "an apartment with no named block"
+  },
+  "3450": {
+    "place": null,
+    "why": "a building elevator with no named block"
+  },
+  "3452": {
+    "place": null,
+    "why": "a hallway door with no named block"
+  },
+  "3455": {
+    "place": null,
+    "why": "a tar roof with no named block"
+  },
+  "3456": {
+    "place": "boro:Bronx",
+    "why": "a permit is held up in a Bronx kitchen"
+  },
+  "3458": {
+    "place": null,
+    "why": "a closed block with no name given"
+  },
+  "3459": {
+    "place": null,
+    "why": "a block party table with no named block"
+  },
+  "3460": {
+    "place": null,
+    "why": "a block party grill with no named block"
+  },
+  "3461": {
+    "place": null,
+    "why": "a closed street with no name given"
+  },
+  "3462": {
+    "place": null,
+    "why": "a stoop and fire escape with no named block"
+  },
+  "3463": {
+    "place": null,
+    "why": "a closed street with no name given"
+  },
+  "3464": {
+    "place": null,
+    "why": "a street with no name given"
+  },
+  "3465": {
+    "place": null,
+    "why": "a runway show with no named venue"
+  },
+  "3466": {
+    "place": "boro:Manhattan",
+    "why": "a mirrored panel is hoisted onto a Manhattan building face"
+  },
+  "3470": {
+    "place": "boro:Queens",
+    "why": "the crossing signal is at a Queens intersection"
+  },
+  "3471": {
+    "place": "boro:Brooklyn",
+    "why": "a bronze figure stands in a Brooklyn triangle park"
+  },
+  "3479": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3480": {
+    "place": null,
+    "why": "a coffee urn counter with no named block"
+  },
+  "3481": {
+    "place": null,
+    "why": "a lottery terminal counter with no named block"
+  },
+  "3483": {
+    "place": null,
+    "why": "a cooler door with no named block"
+  },
+  "3484": {
+    "place": null,
+    "why": "uptown alone does not fix a place"
+  },
+  "3488": {
+    "place": null,
+    "why": "a corner store with no named block"
+  },
+  "3493": {
+    "place": "key:subway_system",
+    "why": "a shuttered subway entrance newsstand with no line named"
+  },
+  "3503": {
+    "place": "key:subway_system",
+    "why": "a platform countdown clock with no line named"
+  },
+  "3505": {
+    "place": "key:subway_system",
+    "why": "a crowded subway car with straps swaying, no line named"
+  },
+  "3510": {
+    "place": null,
+    "why": "an empty avenue with no name given"
+  },
+  "3513": {
+    "place": "key:subway_system",
+    "why": "a signal tower routes trains at a junction, no line named"
+  },
+  "3519": {
+    "place": "key:subway_system",
+    "why": "a platform speaker during rush hour, no line named"
+  },
+  "3520": {
+    "place": "boro:Queens",
+    "why": "a bus shelter roof stretches in a Queens downpour"
+  },
+  "3521": {
+    "place": "boro:Bronx",
+    "why": "a commuter rail gate holds open at a Bronx mezzanine"
+  },
+  "3523": {
+    "place": "boro:Queens",
+    "why": "the track bed gardens under a Queens elevated line"
+  },
+  "3526": {
+    "place": null,
+    "why": "a hospital basement with no named block"
+  },
+  "3528": {
+    "place": null,
+    "why": "a hardware store lobby with no named block"
+  },
+  "3530": {
+    "place": null,
+    "why": "a sidewalk newspaper box with no named block"
+  },
+  "3531": {
+    "place": null,
+    "why": "a bridge approach with no bridge named"
+  },
+  "3536": {
+    "place": null,
+    "why": "an office lobby with no named block"
+  },
+  "3542": {
+    "place": null,
+    "why": "a restaurant walk in with no named block"
+  },
+  "3549": {
+    "place": "boro:Bronx",
+    "why": "a steam table window on a Bronx avenue"
+  },
+  "3558": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3559": {
+    "place": null,
+    "why": "a church basement with no named block"
+  },
+  "3562": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3564": {
+    "place": null,
+    "why": "a bus shelter with no named block"
+  },
+  "3567": {
+    "place": null,
+    "why": "an arena with no named venue"
+  },
+  "3570": {
+    "place": null,
+    "why": "a rooftop with no named block"
+  },
+  "3571": {
+    "place": null,
+    "why": "a deli counter with no named block"
+  },
+  "3573": {
+    "place": null,
+    "why": "a karaoke room with no named block"
+  },
+  "3574": {
+    "place": null,
+    "why": "a bodega counter with no named block"
+  },
+  "3575": {
+    "place": null,
+    "why": "a bridge with no bridge named"
+  },
+  "3576": {
+    "place": null,
+    "why": "a building basement with no named block"
+  },
+  "3578": {
+    "place": null,
+    "why": "a store counter with no named block"
+  },
+  "3581": {
+    "place": null,
+    "why": "a shelf with no named block"
+  },
+  "3582": {
+    "place": "boro:Queens",
+    "why": "a single screen theatre marquee relights in Queens"
+  },
+  "3583": {
+    "place": "boro:Bronx",
+    "why": "one of the last glass phone booths on a Bronx corner"
+  },
+  "3584": {
+    "place": null,
+    "why": "a construction site screen with no named block"
+  },
+  "3587": {
+    "place": "boro:Bronx",
+    "why": "a broom handle bat on a Bronx street"
+  },
+  "3589": {
+    "place": "boro:Brooklyn",
+    "why": "the last pin wobbles in a Brooklyn alley"
+  },
+  "3590": {
+    "place": null,
+    "why": "a Gleason style gym describes a style, not the actual venue"
+  },
+  "3594": {
+    "place": null,
+    "why": "a stone chess table in an unnamed park"
+  },
+  "3598": {
+    "place": "nb:Randall's Island",
+    "why": "the sprinter runs on the Icahn Stadium track"
+  },
+  "3599": {
+    "place": "boro:Queens",
+    "why": "the trophy case is in a Queens school hallway"
+  },
+  "3604": {
+    "place": null,
+    "why": "a dry cleaner's counter with no named block"
+  },
+  "3608": {
+    "place": "boro:Bronx",
+    "why": "a hydraulic barber chair in a Bronx shop"
+  },
+  "3611": {
+    "place": null,
+    "why": "a basement cobbler's bench with no named block"
+  },
+  "3613": {
+    "place": null,
+    "why": "a thrift store rack with no named block"
+  },
+  "3614": {
+    "place": null,
+    "why": "a tailor's table with no named block"
+  },
+  "3616": {
+    "place": null,
+    "why": "a freezing avenue with no name given"
+  },
+  "3617": {
+    "place": null,
+    "why": "a department store aisle with no named block"
+  },
+  "3620": {
+    "place": null,
+    "why": "a mall kiosk with no named mall"
+  },
+  "3621": {
+    "place": null,
+    "why": "a street table on the avenue with no name given"
+  },
+  "3622": {
+    "place": null,
+    "why": "a sidewalk coat rack with no named block"
+  },
+  "3626": {
+    "place": null,
+    "why": "an art fair booth with no named block"
+  },
+  "3627": {
+    "place": "boro:Bronx",
+    "why": "a can finishes a mural on a Bronx wall"
+  },
+  "3628": {
+    "place": "key:fort_tryon",
+    "why": "the medieval hall with stone arches evokes the Cloisters"
+  },
+  "3629": {
+    "place": null,
+    "why": "a museum loading dock with no museum named"
+  },
+  "3630": {
+    "place": "key:met_museum",
+    "why": "a marble figure sits in a Greek and Roman hall"
+  },
+  "3632": {
+    "place": null,
+    "why": "a bare studio with no named block"
+  },
+  "3634": {
+    "place": "boro:Queens",
+    "why": "a kiln in a Queens ceramics studio"
+  },
+  "3638": {
+    "place": null,
+    "why": "an auction room with no named venue"
+  },
+  "3639": {
+    "place": null,
+    "why": "a museum vitrine with no museum named"
+  },
+  "3641": {
+    "place": null,
+    "why": "a repainted wall with no named block"
+  },
+  "3644": {
+    "place": null,
+    "why": "a newsstand rack with no named block"
+  },
+  "3645": {
+    "place": "boro:Brooklyn",
+    "why": "a card catalogue in a Brooklyn branch library"
+  },
+  "3646": {
+    "place": "key:nypl",
+    "why": "stone lions on the library steps at morning"
+  },
+  "3647": {
+    "place": null,
+    "why": "a library stack with no named branch"
+  },
+  "3648": {
+    "place": null,
+    "why": "a church basement fair with no named block"
+  },
+  "3649": {
+    "place": "nb:Greenwich Village",
+    "why": "a typewriter finishes a letter in a Village apartment"
+  },
+  "3650": {
+    "place": null,
+    "why": "a shuttered store with no named block"
+  },
+  "3653": {
+    "place": "key:nypl",
+    "why": "a brass lamp with a green glass shade in the great reading room"
+  },
+  "3655": {
+    "place": null,
+    "why": "a municipal basement archive with no named block"
+  },
+  "3656": {
+    "place": "key:subway_system",
+    "why": "a stool inside a subway newsstand with no line named"
+  },
+  "3658": {
+    "place": null,
+    "why": "a counter with no named block"
+  },
+  "3659": {
+    "place": "boro:Queens",
+    "why": "a manuscript box sits under a Queens bed"
+  },
+  "3660": {
+    "place": null,
+    "why": "a newspaper press hall with no named block"
+  },
+  "3662": {
+    "place": "boro:Bronx",
+    "why": "turntables cut a routine in a Bronx rec room"
+  },
+  "3668": {
+    "place": "boro:Queens",
+    "why": "an ice cream truck plays for a Queens block at dusk"
+  },
+  "3674": {
+    "place": null,
+    "why": "a rooftop show with no named block"
+  },
+  "3675": {
+    "place": "boro:Brooklyn",
+    "why": "choir robes sway in a Brooklyn church vestry"
+  },
+  "3676": {
+    "place": "boro:Bronx",
+    "why": "a parked Chevy on a Bronx street"
+  },
+  "3677": {
+    "place": null,
+    "why": "a corner store with no named block"
+  },
+  "3680": {
+    "place": "boro:Brooklyn",
+    "why": "a mural photo wall on a Brooklyn sidewalk"
+  },
+  "3682": {
+    "place": null,
+    "why": "a fire escape with no named block"
+  },
+  "3684": {
+    "place": null,
+    "why": "a creator's studio with no named block"
+  },
+  "3685": {
+    "place": null,
+    "why": "a rooftop with no named block"
+  },
+  "3686": {
+    "place": "boro:Queens",
+    "why": "a green screen sits in a Queens apartment"
+  },
+  "3688": {
+    "place": null,
+    "why": "a kitchen with no named block"
+  },
+  "3689": {
+    "place": null,
+    "why": "a bedroom mirror with no named block"
+  },
+  "3692": {
+    "place": null,
+    "why": "the frame spans Queens and Staten Island equally"
+  },
+  "3693": {
+    "place": null,
+    "why": "a forty year old shop with no named block"
+  },
+  "3695": {
+    "place": "boro:Queens",
+    "why": "a ghost kitchen sits in a Queens alley"
+  },
+  "3696": {
+    "place": "boro:Queens",
+    "why": "nine people sit down in a Queens backyard"
+  },
+  "3700": {
+    "place": null,
+    "why": "an allegorical civic hall, not a real place"
+  },
+  "3701": {
+    "place": "boro:Bronx",
+    "why": "a voice assistant in a Bronx apartment kitchen"
+  },
+  "3703": {
+    "place": null,
+    "why": "a dark office with no named block"
+  },
+  "3704": {
+    "place": "nb:Greenwich Village",
+    "why": "a delivery robot waits on a Village sidewalk"
+  },
+  "3706": {
+    "place": "boro:Queens",
+    "why": "a chatbot terminal in a Queens storefront"
+  },
+  "3707": {
+    "place": null,
+    "why": "a lobby crowd with no named block"
+  },
+  "3708": {
+    "place": "boro:Queens",
+    "why": "a processor rack dreams inside a Queens warehouse"
+  },
+  "3710": {
+    "place": "boro:Bronx",
+    "why": "a driverless van halts on a Bronx avenue"
+  },
+  "3711": {
+    "place": null,
+    "why": "an apartment with no named block"
+  },
+  "3714": {
+    "place": null,
+    "why": "a loft with no named block"
+  },
+  "3718": {
+    "place": null,
+    "why": "a corner store bucket with no named block"
+  },
+  "3719": {
+    "place": null,
+    "why": "a rooftop sensor mast with no named block"
+  },
+  "3723": {
+    "place": null,
+    "why": "an ordinary block that is never named"
+  },
+  "3724": {
+    "place": "boro:Bronx",
+    "why": "an awakened server sits in a Bronx basement"
+  },
+  "3727": {
+    "place": "key:wall_street",
+    "why": "eleven hundred people on a trading floor with a closing bell"
+  },
+  "3728": {
+    "place": null,
+    "why": "a bodega doorway with no named block"
+  },
+  "3731": {
+    "place": null,
+    "why": "a store counter with no named block"
+  },
+  "3732": {
+    "place": null,
+    "why": "a bank lobby with no named block"
+  },
+  "3735": {
+    "place": "boro:Bronx",
+    "why": "a coin counter sits in a Bronx bank branch"
+  },
+  "3737": {
+    "place": null,
+    "why": "a counter with no named block"
+  },
+  "3738": {
+    "place": "boro:Bronx",
+    "why": "a check cashing window on a Bronx avenue"
+  },
+  "3739": {
+    "place": null,
+    "why": "a bank branch with no named block"
+  },
+  "3741": {
+    "place": null,
+    "why": "a bodega floor with no named block"
+  },
+  "3742": {
+    "place": null,
+    "why": "a corner store counter with no named block"
+  },
+  "3745": {
+    "place": null,
+    "why": "a supertall elevator with no building named"
+  },
+  "3747": {
+    "place": null,
+    "why": "a church basement with no named block"
+  },
+  "3748": {
+    "place": "key:wall_street",
+    "why": "the closing bell rings early on a trading floor"
+  },
+  "3749": {
+    "place": null,
+    "why": "an empty avenue with no name given"
+  },
+  "3750": {
+    "place": null,
+    "why": "a hospital corridor with no named block"
+  }
+}

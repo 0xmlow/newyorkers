@@ -1,0 +1,1172 @@
+{
+ "3772": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "steam message from mother suits an immigrant family walk up"
+ },
+ "3774": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "warm crowded Bronx kitchen fits the Grand Concourse apartment corridor"
+ },
+ "3775": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "sixth floor walk up and elderly couple fit Sunset Park housing"
+ },
+ "3777": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "tub still in the kitchen is classic Lower East Side tenement life"
+ },
+ "3778": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "fire escape airshaft pots fit an East Village tenement building"
+ },
+ "3779": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "dark living room watching the game fits an Astoria apartment"
+ },
+ "3780": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "airshaft pulley clothesline is classic old Williamsburg tenement life"
+ },
+ "3781": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "heat outage kitchen stove scene fits a Bed-Stuy brownstone building"
+ },
+ "3782": {
+  "place": "nb:Morningside Heights",
+  "conf": "inferred",
+  "why": "crowded bookshelf and a late night reader suit a bookish neighbourhood"
+ },
+ "3783": {
+  "place": "nb:Hell's Kitchen",
+  "conf": "inferred",
+  "why": "windowsill ashtray over an airshaft fits a Hell's Kitchen walk up"
+ },
+ "3784": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "nightstand baby monitor scene fits a quiet Inwood apartment nursery"
+ },
+ "3785": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "kitchen junk drawer forty years deep fits a Ridgewood apartment"
+ },
+ "3786": {
+  "place": "nb:Kensington",
+  "conf": "inferred",
+  "why": "five flight walk up with groceries fits a Kensington tenement"
+ },
+ "3787": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "renovation revealing original moulding fits a Park Slope brownstone"
+ },
+ "3788": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "brass lobby mailboxes fit a Jackson Heights courtyard apartment building"
+ },
+ "3790": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "emptied apartment on moving day fits an ordinary Woodside rental"
+ },
+ "3792": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "Queens corner flooding fits Elmhurst which floods hardest in storms"
+ },
+ "3793": {
+  "place": "key:gwb",
+  "conf": "inferred",
+  "why": "a great cable and towers rising into cloud reads as the GWB"
+ },
+ "3794": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "power substation and high tension lines fit industrial East New York"
+ },
+ "3796": {
+  "place": "key:holland",
+  "conf": "inferred",
+  "why": "a river tunnel with curving tile and orange light is the Holland Tunnel"
+ },
+ "3800": {
+  "place": "boro:Manhattan",
+  "conf": "stated",
+  "why": "the whole Manhattan skyline going dark is named directly in the story"
+ },
+ "3814": {
+  "place": "key:boat_basin",
+  "conf": "stated",
+  "why": "a Manhattan basin with a sailboat is the 79th Street Boat Basin"
+ },
+ "3818": {
+  "place": "key:red_hook_pier",
+  "conf": "inferred",
+  "why": "a Brooklyn pier with a working diver fits the Red Hook waterfront"
+ },
+ "3821": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "a park bench under spring blossom fits Fort Greene Park"
+ },
+ "3822": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a Bronx playground sprinkler scene fits Mott Haven's courts"
+ },
+ "3825": {
+  "place": "key:washington_sq",
+  "conf": "inferred",
+  "why": "a busy double gate dog run reads as the Washington Square dog run"
+ },
+ "3826": {
+  "place": "nb:Middle Village",
+  "conf": "inferred",
+  "why": "a Queens backyard feeder with a fence fits Middle Village houses"
+ },
+ "3836": {
+  "place": "key:prospect_park",
+  "conf": "inferred",
+  "why": "a single snowed bench in an empty park reads as Prospect Park"
+ },
+ "3837": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "a great downtown courthouse with columns is unmistakably Foley Square"
+ },
+ "3838": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a licensing office with rows of chairs fits the Downtown Brooklyn DMV"
+ },
+ "3839": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "a Bronx post office in brass and marble fits the Melrose post office"
+ },
+ "3840": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a school gym polling place fits a residential Bay Ridge election site"
+ },
+ "3842": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "a red enamel firehouse door on a brick street evokes a Tribeca firehouse"
+ },
+ "3844": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a packed housing court corridor fits the Queens courthouse in Jamaica"
+ },
+ "3845": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a chain link schoolyard with painted asphalt games fits Corona"
+ },
+ "3846": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a stone stoop precinct house with green lamps fits historic Harlem"
+ },
+ "3847": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a census form counting the afraid fits an immigrant Sunset Park kitchen"
+ },
+ "3848": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "a cast iron corner alarm box on an avenue fits East Harlem"
+ },
+ "3850": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "a Queens sanitation garage fits the Maspeth district depot"
+ },
+ "3851": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a federal building waiting room fits the immigration offices downtown"
+ },
+ "3852": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a packed folding chair meeting room fits a Flatbush community board"
+ },
+ "3853": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a Bronx bus depot with high windows fits the Kingsbridge depot"
+ },
+ "3854": {
+  "place": "key:verrazzano",
+  "conf": "inferred",
+  "why": "the last human toll booth reads as the removed Verrazzano plaza"
+ },
+ "3855": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a Brooklyn winter church bell fits a Bay Ridge parish"
+ },
+ "3857": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a great avenue menorah lighting fits Crown Heights' public menorah"
+ },
+ "3858": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "a botanica of herbs and statues fits Tremont's Latino storefronts"
+ },
+ "3861": {
+  "place": "nb:Belmont",
+  "conf": "inferred",
+  "why": "a Bronx church nave with a confessional fits Belmont's Italian parish"
+ },
+ "3865": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a church basement meeting that saves lives fits Chelsea's meeting halls"
+ },
+ "3867": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "a candlelit shell reading apartment fits Highbridge's Latino community"
+ },
+ "3870": {
+  "place": "key:bellevue",
+  "conf": "inferred",
+  "why": "a small hospital chapel fits Bellevue's long serving wards"
+ },
+ "3871": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a ground floor Queens window with a deployed son fits Ridgewood"
+ },
+ "3873": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "three generations on a living room floor fit a Flatbush apartment"
+ },
+ "3875": {
+  "place": "nb:Norwood",
+  "conf": "inferred",
+  "why": "a Bronx side table answering machine fits a Norwood apartment"
+ },
+ "3877": {
+  "place": "nb:Rego Park",
+  "conf": "inferred",
+  "why": "a dusty Queens closet camcorder fits a Rego Park apartment"
+ },
+ "3879": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a shoebox on a closet floor fits a Bushwick apartment"
+ },
+ "3880": {
+  "place": "nb:East Flatbush",
+  "conf": "inferred",
+  "why": "a 1978 block party on a bedsheet fits East Flatbush's block culture"
+ },
+ "3881": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a bodega wall of customer photos fits Washington Heights bodega culture"
+ },
+ "3882": {
+  "place": "nb:Great Kills",
+  "conf": "inferred",
+  "why": "an attic yearbook under one small window fits a Great Kills house"
+ },
+ "3883": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a dark apartment glowing with ticket stubs fits a Long Island City loft"
+ },
+ "3884": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a Queens counter recipe box fits a Flushing family kitchen"
+ },
+ "3885": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a boiler room rent ledger fits an old Sunset Park tenement"
+ },
+ "3886": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "handprints and brownstone stoops fit a Bed-Stuy sidewalk block"
+ },
+ "3888": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a barbershop mixtape and mirrors fit a classic Harlem barbershop"
+ },
+ "3889": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a baptism register and sanctuary light fit a Crown Heights parish"
+ },
+ "3890": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "fire escape initials over an airshaft fit an East Village walk up"
+ },
+ "3891": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "an airmail shoebox mapping a journey fits an immigrant Elmhurst home"
+ },
+ "3892": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a closet wall number in old ink fits an ordinary Woodside apartment"
+ },
+ "3893": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a layered corner shop awning fits a busy Jackson Heights avenue"
+ },
+ "3894": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a demolished movie theatre seat fits Flatbush, home of the old Kings"
+ },
+ "3895": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a marathon bib in a hallway fits Woodside along the race route"
+ },
+ "3896": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "a bar napkin sketch that becomes a building fits Williamsburg's bars"
+ },
+ "3897": {
+  "place": "nb:Glendale",
+  "conf": "inferred",
+  "why": "a Queens garage toolbox fits a Glendale family garage"
+ },
+ "3898": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a fiftieth anniversary party video loop fits an Italian Bensonhurst hall"
+ },
+ "3900": {
+  "place": "boro:Manhattan",
+  "conf": "stated",
+  "why": "a cutaway of the whole island bedrock to rooftop names Manhattan"
+ },
+ "3902": {
+  "place": "nb:Hunts Point",
+  "conf": "inferred",
+  "why": "an empty Bronx lot at dawn fits Hunts Point's industrial edges"
+ },
+ "3904": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "carts under an overpass with highway light fit Sunnyside's rail yards"
+ },
+ "3906": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "a wandering payphone on a gold empty avenue fits Morrisania"
+ },
+ "3912": {
+  "place": "nb:Greenpoint",
+  "conf": "inferred",
+  "why": "a stripped ghost bike chained to a pole fits Greenpoint's bike routes"
+ },
+ "3917": {
+  "place": "nb:Morris Park",
+  "conf": "inferred",
+  "why": "a dusty abandoned storefront transmitter fits Morris Park"
+ },
+ "3921": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a construction crane above rooftops fits Long Island City's skyline"
+ },
+ "3924": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a chandelier lit townhouse wing fits an Upper East Side collector"
+ },
+ "3925": {
+  "place": "nb:West Farms",
+  "conf": "inferred",
+  "why": "a Bronx underpass at first train light fits West Farms"
+ },
+ "3927": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a midnight office with a desk lamp fits a Midtown tower"
+ },
+ "3931": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a coat walking a tunnel alone anchors the fictional Court to the subway"
+ },
+ "3933": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a hard white gallery light scene fits Chelsea's gallery row"
+ },
+ "3934": {
+  "place": "nb:Clinton Hill",
+  "conf": "inferred",
+  "why": "a Brooklyn rooftop at blue hour fits Clinton Hill's rooftops"
+ },
+ "3935": {
+  "place": "key:5pointz",
+  "conf": "inferred",
+  "why": "a painter's scaffold climbing the highest wall of his life reads as 5Pointz"
+ },
+ "3936": {
+  "place": "nb:College Point",
+  "conf": "inferred",
+  "why": "a Queens lot under floodlights fits industrial College Point"
+ },
+ "3938": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "a court tailor's fitted coat unveiling fits SoHo's fashion houses"
+ },
+ "3939": {
+  "place": "nb:Longwood",
+  "conf": "inferred",
+  "why": "a Bronx wall with spray paint practice marks fits Longwood"
+ },
+ "3941": {
+  "place": "nb:Woodhaven",
+  "conf": "inferred",
+  "why": "a snowed in avenue bodega fits a quiet Woodhaven block"
+ },
+ "3949": {
+  "place": "key:hudson_yards",
+  "conf": "inferred",
+  "why": "a tower crane holding a beam above the city fits Hudson Yards construction"
+ },
+ "3953": {
+  "place": "nb:Murray Hill",
+  "conf": "inferred",
+  "why": "a hospital bedside machine fits Murray Hill near Bellevue"
+ },
+ "3954": {
+  "place": "nb:Tottenville",
+  "conf": "inferred",
+  "why": "a Staten Island street off any route fits far flung Tottenville"
+ },
+ "3955": {
+  "place": "nb:Kensington",
+  "conf": "inferred",
+  "why": "a quiet gold store counter with a cat fits a Kensington bodega"
+ },
+ "3958": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a train finishing its last run in a cab is the subway system"
+ },
+ "3959": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "a streetlight walking a woman home fits a Brownsville avenue"
+ },
+ "3961": {
+  "place": "nb:Chinatown",
+  "conf": "inferred",
+  "why": "a water tower settling at dawn over rooftops fits Chinatown's skyline"
+ },
+ "3963": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "the last payphone in New York was in fact removed from Midtown"
+ },
+ "3964": {
+  "place": "nb:Ozone Park",
+  "conf": "inferred",
+  "why": "a Queens block bowing to a tired worker fits Ozone Park's row houses"
+ },
+ "3965": {
+  "place": "key:alphabet_city",
+  "conf": "inferred",
+  "why": "a bare fifth floor walkup at dawn fits an Alphabet City building"
+ },
+ "3972": {
+  "place": "nb:Richmond Hill",
+  "conf": "inferred",
+  "why": "a Queens car wash loop fits Richmond Hill's commercial strip"
+ },
+ "3978": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "a school run in pleated uniforms fits a Park Slope private school"
+ },
+ "3981": {
+  "place": "nb:Riverdale",
+  "conf": "inferred",
+  "why": "a Bronx walk up porch light goodbye fits Riverdale"
+ },
+ "3984": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a coupe landing on the same corner in 1955 fits the Garment District"
+ },
+ "3985": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "inferred",
+  "why": "a meter maid and nickel egg creams fit a Sheepshead Bay corner"
+ },
+ "3986": {
+  "place": "nb:Canarsie",
+  "conf": "inferred",
+  "why": "a drag race up a fresh avenue fits Canarsie's real drag strip history"
+ },
+ "3987": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a Bronx rooftop drive in fits Fordham's dense apartment blocks"
+ },
+ "3989": {
+  "place": "nb:South Jamaica",
+  "conf": "inferred",
+  "why": "a Queens used car lot with pennants fits South Jamaica's dealer strip"
+ },
+ "3990": {
+  "place": "nb:Wakefield",
+  "conf": "inferred",
+  "why": "a shut Bronx school on a snow day fits Wakefield's blocks"
+ },
+ "3995": {
+  "place": "key:grand_concourse",
+  "conf": "inferred",
+  "why": "a Bronx pawn shop clock fits the old pawn row on the Grand Concourse"
+ },
+ "4002": {
+  "place": "nb:Mount Hope",
+  "conf": "inferred",
+  "why": "a Bronx church clock running backward fits a Mount Hope parish"
+ },
+ "4006": {
+  "place": "nb:Forest Hills",
+  "conf": "inferred",
+  "why": "a Queens bedside alarm catching the good train fits Forest Hills commuters"
+ },
+ "4023": {
+  "place": "nb:Bedford Park",
+  "conf": "inferred",
+  "why": "a Bronx hospital corridor across thirty years fits Bedford Park's hospitals"
+ },
+ "4029": {
+  "place": "nb:Carroll Gardens",
+  "conf": "inferred",
+  "why": "a Brooklyn firehouse with a decorated chief's photo fits Carroll Gardens"
+ },
+ "4035": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "a Bronx corner lemonade stand with a hydrant fits Soundview"
+ },
+ "4041": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "a church basement recovery meeting fits an Inwood parish hall"
+ },
+ "4043": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a couture fitting for a client who exists Thursdays fits the Garment District"
+ },
+ "4046": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "a head cutter's atelier table fits a SoHo fashion house"
+ },
+ "4047": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a basement button foundry casting from subway tokens fits the Garment District"
+ },
+ "4049": {
+  "place": "key:madison_ave",
+  "conf": "inferred",
+  "why": "an atelier open window seamstress fits Madison Avenue's fashion houses"
+ },
+ "4053": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a cutting table union vote among mannequins fits the Garment District"
+ },
+ "4054": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "an atelier lit at midnight for a postponed gown fits SoHo"
+ },
+ "4055": {
+  "place": "key:madison_ave",
+  "conf": "inferred",
+  "why": "gilt chairs and a dress form waiting room fit Madison Avenue"
+ },
+ "4057": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "an apprentice's first sleeve at two in the morning fits the Garment District"
+ },
+ "4058": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "an anniversary ball chandelier coat check fits the Upper East Side"
+ },
+ "4060": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a bureau of every lost glove in the city fits the Garment District"
+ },
+ "4062": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a pattern drafted from a conductor's whole route anchors to the subway"
+ },
+ "4063": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "a Bronx fire escape perfumer with alembics fits Highbridge"
+ },
+ "4064": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "a founder's final fitting watched from the stairs fits a SoHo house"
+ },
+ "4066": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "the thread ends on a Staten Island porch, which fits St. George"
+ },
+ "4076": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a bespoke bodyguard outside a gallery opening fits Chelsea's gallery row"
+ },
+ "4077": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a shipping heir's townhouse origin fits the Upper East Side"
+ },
+ "4079": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a whisper bid auction house fits Upper East Side auction rooms"
+ },
+ "4088": {
+  "place": "nb:West Village",
+  "conf": "inferred",
+  "why": "an unlisted no sign restaurant fits a hidden West Village address"
+ },
+ "4098": {
+  "place": "nb:Parkchester",
+  "conf": "inferred",
+  "why": "a Bronx eighth grader on school steps fits Parkchester's schools"
+ },
+ "4099": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "a syndicate grail archive fits SoHo's sneaker and streetwear scene"
+ },
+ "4100": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a jacket found on stoops and subway seats citywide anchors to the subway"
+ },
+ "4108": {
+  "place": "nb:Cypress Hills",
+  "conf": "inferred",
+  "why": "a mother working two jobs for a grail fits a Cypress Hills household"
+ },
+ "4113": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "mahjong and a sewing circle unmistakably fit Flushing's Chinese community"
+ },
+ "4114": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a decommissioned Bronx courthouse fits the old Bronx County Courthouse in Concourse"
+ },
+ "4115": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a donated coat drive puffer fits a Harlem community coat drive"
+ },
+ "4123": {
+  "place": "nb:Clinton Hill",
+  "conf": "inferred",
+  "why": "a window height commute over a trumpet player fits brownstone Clinton Hill"
+ },
+ "4125": {
+  "place": "nb:New Dorp",
+  "conf": "inferred",
+  "why": "a Staten Island street lesson fits a residential New Dorp block"
+ },
+ "4126": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a crossing guard's own intersection fits a residential Astoria corner"
+ },
+ "4130": {
+  "place": "nb:Riverdale",
+  "conf": "inferred",
+  "why": "a Bronx route over rooftops fits scenic Riverdale's terrain"
+ },
+ "4132": {
+  "place": "key:fdr",
+  "conf": "inferred",
+  "why": "a hover ambulette threading above gridlock fits the FDR Drive corridor"
+ },
+ "4133": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "an old couple waiting on their own building's roof fits Sunset Park"
+ },
+ "4134": {
+  "place": "key:williamsburg_bridge",
+  "conf": "inferred",
+  "why": "pigeons herding commuters off bridge cables fits the Williamsburg Bridge"
+ },
+ "4140": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "one man walking emptied sidewalks under hover streams fits dense Midtown"
+ },
+ "4141": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "Bronx fire escapes at two in the morning fit Morrisania's tenements"
+ },
+ "4144": {
+  "place": "key:coney",
+  "conf": "inferred",
+  "why": "a claw machine liberation fits Coney Island's arcade culture"
+ },
+ "4145": {
+  "place": "nb:Chinatown",
+  "conf": "inferred",
+  "why": "a dance machine record holder fits Chinatown's arcade halls"
+ },
+ "4146": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a pinball map of the city fits Flushing's arcade strip"
+ },
+ "4147": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "rival crews settling beef on a cabinet fits a Jackson Heights arcade"
+ },
+ "4149": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "a back room of dead screens fits an East Village arcade"
+ },
+ "4150": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a vector Manhattan chase fits the Financial District's narrow streets"
+ },
+ "4151": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a neighborhood light gun champion fits a Bay Ridge arcade"
+ },
+ "4153": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a four in the morning arcade parade fits a Ridgewood arcade"
+ },
+ "4154": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a rhythm game proposal fits a Sunset Park arcade"
+ },
+ "4155": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "a basement of unreleased cabinets fits an Elmhurst arcade"
+ },
+ "4156": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "an air hockey wind tunnel corner fits a Woodside arcade"
+ },
+ "4157": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a change machine confessor fits a Corona arcade"
+ },
+ "4159": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a continue screen angel fits an Astoria arcade"
+ },
+ "4160": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "two linked cabinets merging code fits a Jackson Heights arcade"
+ },
+ "4161": {
+  "place": "nb:Rego Park",
+  "conf": "inferred",
+  "why": "a cosmic carpet star chart fits a Rego Park arcade"
+ },
+ "4162": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a blackout tournament lit by phones fits a Bushwick arcade"
+ },
+ "4163": {
+  "place": "nb:Middle Village",
+  "conf": "inferred",
+  "why": "a prize counter museum from 1989 fits a Middle Village arcade"
+ },
+ "4164": {
+  "place": "nb:Woodhaven",
+  "conf": "inferred",
+  "why": "a father daughter cabinet legacy fits a Woodhaven arcade"
+ },
+ "4165": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "forty years of one arcade rebuilt fits Flushing's arcade district"
+ },
+ "4168": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a season's biggest gala fits an Upper East Side ballroom"
+ },
+ "4169": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a debutante academy with mirrored rows fits the Upper East Side"
+ },
+ "4170": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a Queens seamstress who built her android fits Jackson Heights"
+ },
+ "4171": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "a midnight rooftop runway across six roofs fits Williamsburg"
+ },
+ "4173": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a star debutante's shorted gown fits an Upper East Side ball"
+ },
+ "4174": {
+  "place": "nb:Gramercy",
+  "conf": "inferred",
+  "why": "an escort of honor at a formal debut fits a Gramercy ballroom"
+ },
+ "4175": {
+  "place": "nb:Gramercy",
+  "conf": "inferred",
+  "why": "orchestra androids patching a two century old waltz fit a Gramercy ball"
+ },
+ "4177": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a debutante joining a hotel kitchen line fits a Midtown hotel"
+ },
+ "4179": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a debut portrait camera waiting three hours fits an Upper East Side ball"
+ },
+ "4180": {
+  "place": "nb:Gramercy",
+  "conf": "inferred",
+  "why": "two rival cotillion houses settling supremacy fit a Gramercy ballroom"
+ },
+ "4181": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "eleven grandmothers in eleven languages fit diverse Jackson Heights"
+ },
+ "4182": {
+  "place": "nb:Gramercy",
+  "conf": "inferred",
+  "why": "a failed knee servo mid waltz fits a Gramercy ballroom parquet"
+ },
+ "4183": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a hotel wedding bouquet toss fits a Midtown hotel ballroom"
+ },
+ "4186": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a corporate branded gown descent fits an Upper East Side staircase"
+ },
+ "4187": {
+  "place": "nb:Gramercy",
+  "conf": "inferred",
+  "why": "the season's final ball with a rat king guest fits Gramercy"
+ },
+ "4189": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a Bronx florist wiring corsages fits a Kingsbridge flower shop"
+ },
+ "4191": {
+  "place": "key:met_museum",
+  "conf": "inferred",
+  "why": "debutantes vowing on museum steps at dawn fits the Met's steps"
+ },
+ "4193": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a bodega griddle trading breakfast futures fits a busy Astoria corner"
+ },
+ "4194": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a reversed dairy fridge stocked for the block fits a Bushwick bodega"
+ },
+ "4195": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "philosophers on milk crates arguing lotto fits a Ridgewood corner store"
+ },
+ "4196": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a deli slicer showing block history fits a Sunset Park bodega"
+ },
+ "4197": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a regular's coffee starting itself fits a Woodside corner bodega"
+ },
+ "4198": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "neighbors watching a freezer aurora like television fits Corona"
+ },
+ "4199": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a tab open across generations fits an old Bensonhurst bodega"
+ },
+ "4200": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "the archetypal open all hours bodega fits Washington Heights"
+ },
+ "4201": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "a sandwich tasting like your next favorite food fits an Elmhurst bodega"
+ },
+ "4202": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "the block's can man honored by returning bottles fits East New York"
+ },
+ "4203": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "the bodega cat stocking for tomorrow fits a Ridgewood corner store"
+ },
+ "4204": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a hot food window serving any era fits a Harlem bodega"
+ },
+ "4205": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a quarter water tasting on milk crates fits Bed-Stuy's corner stores"
+ },
+ "4206": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a receipt printing a true fortune fits a Jackson Heights bodega"
+ },
+ "4207": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a stockroom of mourned discontinued snacks fits a Bushwick bodega"
+ },
+ "4208": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "an ATM lending against a stranded student's future fits Inwood"
+ },
+ "4209": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "an awning replaying decades of shelter fits an Astoria storefront"
+ },
+ "4210": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "bucket flowers distributing themselves to mailboxes fits a Sunset Park block"
+ },
+ "4211": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "an overnight clerk splitting his shift with his past self fits Woodside"
+ },
+ "4213": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "the whole block eating Thursday's bread early fits a tight knit Corona block"
+ },
+ "4214": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a register partition full of luminous fish fits a Bushwick bodega"
+ },
+ "4215": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a closing hour that drifts away down the avenue fits Ridgewood"
+ },
+ "4216": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "an annual inventory of trust closes out the bodega set in Washington Heights"
+ },
+ "4219": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a christening where an aunt is the baby fits a Bay Ridge parish"
+ },
+ "4220": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "two kitchens through one doorway in 1998 fits a Bensonhurst home"
+ },
+ "4221": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a daughter taking over her father's bus route fits a Flatbush route"
+ },
+ "4222": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a Bronx courthouse steps wedding photo fits the Concourse courthouse"
+ },
+ "4227": {
+  "place": "key:arthur_ave",
+  "conf": "inferred",
+  "why": "a grandmother fixing the family sauce fits Arthur Avenue's Italian kitchens"
+ },
+ "4228": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a stoop band playing congas across generations fits Crown Heights"
+ },
+ "4229": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "a Bronx family coat passed down sixty years fits Soundview"
+ },
+ "4230": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "an abuela's swept out luck superstition fits Washington Heights"
+ },
+ "4231": {
+  "place": "nb:East Flatbush",
+  "conf": "inferred",
+  "why": "a corner time out returning to forty relatives fits East Flatbush"
+ },
+ "4234": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a grandmother's whistle summoning kids home fits Bed-Stuy's blocks"
+ },
+ "4237": {
+  "place": "key:diamond",
+  "conf": "inferred",
+  "why": "a watch pawned for a hospital bill fits the Diamond District's pawn shops"
+ },
+ "4239": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "a Queens hospice goodbye fits Elmhurst's hospital and hospice care"
+ },
+ "4240": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a family voting on memory around the kitchen table fits Flatbush"
+ },
+ "4241": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a shuttered sixties storefront sign relighting fits old Ridgewood storefronts"
+ },
+ "4244": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a diner malt machine countdown fits an Astoria Greek diner"
+ },
+ "4247": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a senior waitress working the orbital counter fits a Bay Ridge diner"
+ },
+ "4248": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "inferred",
+  "why": "a rotating pie case supply run fits a Sheepshead Bay diner"
+ },
+ "4249": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "a long haul freighter pilot's usual stool fits a Maspeth truck stop diner"
+ },
+ "4250": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a corner jukebox aligning with the stars fits a Ridgewood diner"
+ },
+ "4251": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a nine year old's zero gravity birthday cake fits a Bensonhurst diner"
+ },
+ "4252": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a counter seat reserved for whoever talked someone down fits Woodside"
+ },
+ "4253": {
+  "place": "nb:Douglaston",
+  "conf": "inferred",
+  "why": "a diner going dark for the Perseids fits quiet Douglaston's clear sky"
+ },
+ "4254": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "a dish pit run like mission recovery fits an Elmhurst diner"
+ },
+ "4256": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a four in the morning diner feeding the night shift fits Astoria"
+ }
+}

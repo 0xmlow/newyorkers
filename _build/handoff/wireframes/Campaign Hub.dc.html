@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #0D0D0D; } a { color: #F0F4F8; text-decoration: none; } a:hover { color: #00E5FF; }</style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; color: #F0F4F8; background: #0D0D0D; min-height: 100vh; padding: 80px; box-sizing: border-box;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <img src="assets/brand/logo_white.png" style="height: 32px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; color: #8899AA;">GO TO MARKET · THE FULL DROP</div>
+  </div>
+  <div style="font-size: 76px; font-weight: 800; margin-top: 64px; line-height: 1.0;">NEW YORKERS<br>campaign package</div>
+  <div style="font-style: italic; font-size: 22px; color: #8899AA; margin-top: 18px;">Ten deliverables, one banner. Everything ends at GET COUNTED.</div>
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 64px; margin-top: 64px; max-width: 1200px;">
+    <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+      <a href="{{ it.href }}" style="border-top: 1px solid #2A3040; padding: 26px 0; display: grid; grid-template-columns: 60px 1fr auto; gap: 20px; align-items: baseline;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #00E5FF;">{{ it.no }}</span>
+        <span><span style="font-size: 28px; font-weight: 700; color: #F0F4F8;">{{ it.name }}</span><br><span style="font-size: 15px; color: #8899AA;">{{ it.desc }}</span></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8899AA; letter-spacing: 0.2em;">{{ it.kind }}</span>
+      </a>
+    </sc-for>
+  </div>
+  <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.24em; color: #8899AA; margin-top: 80px; border-top: 1px solid #2A3040; padding-top: 24px;">NEWYORKERS.MLOW.XYZ · MLOW.XYZ · MLOW.NYC · X @DEGENS · IG + TIKTOK @0XMLOW</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { items: [
+      { no: '01', name: 'The Launch Site', desc: 'The flagship. Eras, monuments, dossiers, the Count, the open notebook.', kind: 'WEB', href: 'Launch Site.dc.html' },
+      { no: '02', name: 'Poster · Get Counted', desc: 'The campaign poster, 1620 by 2160.', kind: 'PRINT', href: 'Poster - Get Counted.dc.html' },
+      { no: '03', name: 'One Sheet · The Count', desc: 'The campaign on one letter page.', kind: 'PDF', href: 'One-Sheet - The Count.dc.html' },
+      { no: '04', name: 'Press Kit', desc: 'Fact sheet, four angles, image sheet, contact. Six pages.', kind: 'PDF', href: 'Press Kit.dc.html' },
+      { no: '05', name: 'Deck · Press', desc: 'Seven slides for the press briefing.', kind: 'DECK', href: 'Deck - Press.dc.html' },
+      { no: '06', name: 'Deck · Commercial', desc: 'Eight slides for partners, venues and Block buyers.', kind: 'DECK', href: 'Deck - Commercial.dc.html' },
+      { no: '07', name: 'Social System V3', desc: 'Editorial grade artboards: X, IG, story, square, meme.', kind: 'SOCIAL', href: 'Social System V3.dc.html' },
+      { no: '08', name: 'Drop Page Assets', desc: 'OpenSea banner, featured card, avatar, paste ready description.', kind: 'DROP', href: 'Drop Page Assets.dc.html' },
+      { no: '09', name: 'Emails', desc: 'The announcement and The Ledger weekly newsletter.', kind: 'EMAIL', href: 'Emails.dc.html' },
+      { no: '10', name: 'Census Office Signage', desc: 'Count wall, entry poster, ladder board, anchor card, Resident Card, wall labels.', kind: 'PRINT', href: 'Census Office Signage.dc.html' },
+      { no: '11', name: 'Motion and Trailer', desc: 'Three rendered teasers and the 90 second trailer storyboard.', kind: 'MOTION', href: 'Motion & Trailer.dc.html' },
+      { no: '12', name: 'Title Loop', desc: 'The 12 second animated title loop, export ready.', kind: 'MOTION', href: 'Title Loop.dc.html' }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

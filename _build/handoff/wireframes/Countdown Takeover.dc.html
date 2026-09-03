@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/blossom-design-system-76a352ca-5a11-4d31-90d6-6fb940e05072/colors_and_type.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #000; }
+    a { color: #F0F4F8; } a:hover { color: #00E5FF; }
+    @keyframes ny-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes ny-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+  </style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; background: #000; color: #F0F4F8; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden;">
+  <div style="padding: 26px 48px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e2126;">
+    <img src="assets/brand/logo_white.png" style="height: 30px; object-fit: contain;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div style="width: 9px; height: 9px; border-radius: 50%; background: #00E5FF; animation: ny-pulse 1.6s ease-in-out infinite;"></div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.3em; color: #00E5FF;">ENUMERATION OPEN</div>
+    </div>
+  </div>
+
+  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 44px; padding: 60px 40px; text-align: center;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.44em; color: #8899AA;">THE COUNT CLOSES AND IS POSTED IN PUBLIC IN</div>
+    <div style="display: flex; align-items: baseline; gap: 36px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <div style="font-size: clamp(90px, 13vw, 220px); font-weight: 800; line-height: 0.9; font-variant-numeric: tabular-nums;">{{ dd }}</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.4em; color: #556;">DAYS</div>
+      </div>
+      <div style="font-size: clamp(60px, 8vw, 140px); font-weight: 400; color: #2a2d34; line-height: 0.9;">:</div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <div style="font-size: clamp(90px, 13vw, 220px); font-weight: 800; line-height: 0.9; font-variant-numeric: tabular-nums;">{{ hh }}</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.4em; color: #556;">HOURS</div>
+      </div>
+      <div style="font-size: clamp(60px, 8vw, 140px); font-weight: 400; color: #2a2d34; line-height: 0.9;">:</div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <div style="font-size: clamp(90px, 13vw, 220px); font-weight: 800; line-height: 0.9; font-variant-numeric: tabular-nums;">{{ mm }}</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.4em; color: #556;">MINUTES</div>
+      </div>
+      <div style="font-size: clamp(60px, 8vw, 140px); font-weight: 400; color: #2a2d34; line-height: 0.9;">:</div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <div style="font-size: clamp(90px, 13vw, 220px); font-weight: 800; line-height: 0.9; color: #00E5FF; font-variant-numeric: tabular-nums;">{{ ss }}</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.4em; color: #556;">SECONDS</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 16px; letter-spacing: 0.26em; color: #8899AA;">COUNTED SO FAR</div>
+      <div style="font-size: 58px; font-weight: 800; color: #F0F4F8; font-variant-numeric: tabular-nums;">{{ count }}</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 16px; letter-spacing: 0.26em; color: #8899AA;">FOR 365 CHARACTERS</div>
+    </div>
+    <a href="#" style="text-decoration: none; background: #F0F4F8; color: #000; font-family: 'Bodoni Moda', serif; font-size: 30px; font-weight: 800; padding: 22px 64px; letter-spacing: 0.04em;" style-hover="background: #2962FF; color: #F0F4F8;">GET COUNTED</a>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: #556;">FREE &middot; WALLETLESS &middot; EVERYONE WHO REGISTERS IS COUNTED, PERMANENTLY</div>
+  </div>
+
+  <div style="border-top: 1px solid #1e2126; overflow: hidden; padding: 0;">
+    <div style="display: flex; width: max-content; animation: ny-marquee 40s linear infinite;">
+      <sc-for list="{{ strip }}" as="s" hint-placeholder-count="12">
+        <img src="{{ s }}" style="width: 120px; height: 120px; object-fit: cover; display: block;">
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding: 18px 48px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.24em; color: #556; border-top: 1px solid #1e2126;">
+    <div>THE POSTING &middot; SEPT 3 &middot; ON PAPER, READ ALOUD</div>
+    <div>THE CLAIM &middot; SEPT 4 &middot; 24 HOURS, FLAT PRICE</div>
+    <div>ART, NOT AN INVESTMENT PRODUCT</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;targetDate&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-03T20:00:00-04:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Countdown&quot;}, &quot;baseCount&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 1187, &quot;min&quot;: 0, &quot;max&quot;: 100000, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Countdown&quot;}}">
+class Component extends DCLogic {
+  state = { now: Date.now() };
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ now: Date.now() }), 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const target = new Date(this.props.targetDate ?? '2026-09-03T20:00:00-04:00').getTime();
+    let diff = Math.max(0, target - this.state.now);
+    const dd = Math.floor(diff / 86400000); diff -= dd * 86400000;
+    const hh = Math.floor(diff / 3600000); diff -= hh * 3600000;
+    const mm = Math.floor(diff / 60000); diff -= mm * 60000;
+    const ss = Math.floor(diff / 1000);
+    const pad = n => String(n).padStart(2, '0');
+    const base = this.props.baseCount ?? 1187;
+    const elapsedH = Math.max(0, (this.state.now - new Date('2026-08-24T09:00:00-04:00').getTime()) / 3600000);
+    const count = Math.floor(base + elapsedH * 6.3).toLocaleString('en-US');
+    const imgs = ['1001','1017','1044','1077','1110','1143','2667','2700','2744','2789','2830','3000'].map(n => 'assets/wall/' + n + '.jpg');
+    return { dd: pad(dd), hh: pad(hh), mm: pad(mm), ss: pad(ss), count, strip: [...imgs, ...imgs] };
+  }
+}
+</script>
+</body>
+</html>

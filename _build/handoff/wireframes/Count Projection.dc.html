@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #000; height: 100%; overflow: hidden; } a { color: #F0F4F8; } a:hover { color: #00E5FF; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }</style>
+</helmet>
+<div style="width: 100vw; height: 100vh; background: #000; color: #F0F4F8; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: none; position: relative;">
+  <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 2.2vw; letter-spacing: 0.7em; color: #556677; text-transform: uppercase;">{{ label }}</div>
+  <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 19vw; line-height: 1; letter-spacing: 0.03em; margin-top: 2vh;">{{ countDisplay }}</div>
+  <div style="width: 16vw; height: 0.8vh; background: #2962FF; margin-top: 5vh;"></div>
+  <sc-if value="{{ showUrl }}" hint-placeholder-val="{{ true }}">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.4vw; letter-spacing: 0.5em; color: #556677; margin-top: 5vh;">{{ url }}</div>
+  </sc-if>
+  <div style="position: absolute; bottom: 4vh; right: 4vw; width: 1vw; height: 1vw; border-radius: 50%; background: #FF2E63; animation: blink 2s infinite;"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startCount&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 1204, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 0, &quot;section&quot;: &quot;The Count&quot;}, &quot;autoTick&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;The Count&quot;}, &quot;label&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;PEOPLE COUNTED&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Copy&quot;}, &quot;url&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NEWYORKERS.MLOW.XYZ&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Copy&quot;}, &quot;showUrl&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Copy&quot;}}">
+class Component extends DCLogic {
+  state = { count: null };
+  componentDidMount() {
+    this.setState({ count: this.props.startCount ?? 1204 });
+    this.timer = setInterval(() => {
+      if (this.props.autoTick ?? true) {
+        if (Math.random() < 0.35) this.setState(s => ({ count: s.count + 1 }));
+      }
+    }, 2400);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const c = this.state.count ?? (this.props.startCount ?? 1204);
+    return {
+      countDisplay: c.toLocaleString('en-US'),
+      label: this.props.label ?? 'PEOPLE COUNTED',
+      url: this.props.url ?? 'NEWYORKERS.MLOW.XYZ',
+      showUrl: this.props.showUrl ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

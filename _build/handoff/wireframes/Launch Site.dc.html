@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #0D0D0D; }
+    body { -webkit-font-smoothing: antialiased; }
+    a { color: #F0F4F8; text-decoration: underline; text-underline-offset: 3px; }
+    a:hover { color: #00E5FF; }
+    ::selection { background: #2962FF; color: #F0F4F8; }
+    @keyframes marqueeL { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes marqueeR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+    @keyframes drift { 0%, 100% { transform: scale(1.02) translateY(0); } 50% { transform: scale(1.07) translateY(-12px); } }
+  </style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; color: #F0F4F8; background: #0D0D0D; min-width: 1100px;">
+
+  <!-- MASTHEAD -->
+  <div data-screen-label="Masthead" style="position: relative; height: 100vh; min-height: 780px; overflow: hidden; display: flex; flex-direction: column;">
+    <video src="assets/video/first_eye_flower.mp4" autoPlay muted loop playsInline style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55;"></video>
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,13,13,0.72) 0%, rgba(13,13,13,0.15) 45%, rgba(13,13,13,0.92) 100%);"></div>
+    <div style="position: relative; display: flex; justify-content: space-between; align-items: center; padding: 28px 64px;">
+      <img src="assets/brand/logo_white.png" alt="MLOW" style="height: 34px;">
+      <div style="display: flex; gap: 36px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: #8899AA;">
+        <span>THE CENSUS</span><span>THE ARCHIVE</span><span>THE CLAIM</span><span style="color: #00E5FF;">GET COUNTED</span>
+      </div>
+    </div>
+    <div style="position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 64px 72px;">
+      <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.5em; text-transform: uppercase; color: #00E5FF; margin-bottom: 20px;">A living census of the greatest city on earth</div>
+      <div style="font-size: 128px; font-weight: 800; line-height: 0.94; letter-spacing: -0.01em; max-width: 1400px;">NEW YORKERS</div>
+      <div style="font-style: italic; font-size: 30px; color: #F0F4F8; margin-top: 18px; max-width: 900px; line-height: 1.3;">The city has been watching you your whole life. It turns out it was taking notes.</div>
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 48px; border-top: 1px solid rgba(240,244,248,0.28); padding-top: 24px;">
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.34em; color: #8899AA; text-transform: uppercase;">THE COUNT · PEOPLE COUNTED</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 64px; font-weight: 700; color: #F0F4F8; letter-spacing: 0.06em; line-height: 1.1;">{{ countDisplay }}<span style="color: #2962FF; animation: pulse 1.2s infinite;">_</span></div>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: 0.3em; text-transform: uppercase; background: #F0F4F8; color: #0D0D0D; padding: 18px 40px;">GET COUNTED</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8899AA; letter-spacing: 0.2em;">NEWYORKERS.MLOW.XYZ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WALL MARQUEE -->
+  <div data-screen-label="The Wall" style="padding: 4px 0; border-top: 1px solid #2A3040; border-bottom: 1px solid #2A3040; overflow: hidden;">
+    <div style="display: flex; width: max-content; gap: 4px; animation: marqueeL 90s linear infinite;">
+      <sc-for list="{{ wallRowA }}" as="im">
+        <sc-if value="{{ im }}" hint-placeholder-val="{{ false }}"><img src="{{ im }}" style="height: 150px; display: block;"></sc-if>
+      </sc-for>
+    </div>
+    <div style="display: flex; width: max-content; gap: 4px; margin-top: 4px; animation: marqueeR 110s linear infinite;">
+      <sc-for list="{{ wallRowB }}" as="im">
+        <sc-if value="{{ im }}" hint-placeholder-val="{{ false }}"><img src="{{ im }}" style="height: 150px; display: block;"></sc-if>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- THESIS -->
+  <div data-screen-label="The Thesis" style="display: grid; grid-template-columns: 1fr 1fr; min-height: 720px;">
+    <div style="padding: 110px 72px; display: flex; flex-direction: column; justify-content: center;">
+      <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">01 · THE THESIS</div>
+      <div style="font-size: 62px; font-weight: 700; line-height: 1.04; margin-top: 28px;">Every New Yorker gets a portrait. Even the villains.</div>
+      <div style="font-size: 19px; line-height: 1.65; color: #8899AA; margin-top: 32px; max-width: 560px;">A portrait of an entire city, one character at a time, painted by a city that is watching back. The eye flowers are the proof: when a flower with a human iris blooms in a frame, this moment was witnessed, this person mattered, somebody was watching with love.</div>
+      <div style="display: flex; gap: 48px; margin-top: 56px; font-family: 'JetBrains Mono', monospace;">
+        <div><div style="font-size: 40px; font-weight: 700; color: #F0F4F8;">3,466</div><div style="font-size: 11px; letter-spacing: 0.28em; color: #8899AA; text-transform: uppercase; margin-top: 6px;">Works painted</div></div>
+        <div><div style="font-size: 40px; font-weight: 700; color: #00E5FF;">365</div><div style="font-size: 11px; letter-spacing: 0.28em; color: #8899AA; text-transform: uppercase; margin-top: 6px;">Will ever be sold</div></div>
+        <div><div style="font-size: 40px; font-weight: 700; color: #F0F4F8;">0</div><div style="font-size: 11px; letter-spacing: 0.28em; color: #8899AA; text-transform: uppercase; margin-top: 6px;">Sold from the archive</div></div>
+      </div>
+    </div>
+    <div style="position: relative; overflow: hidden;">
+      <img src="assets/hero/1467.jpg" style="width: 100%; height: 100%; object-fit: cover; animation: drift 14s ease-in-out infinite;">
+      <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 20px 32px; background: linear-gradient(0deg, rgba(13,13,13,0.85), transparent); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; display: flex; justify-content: space-between;">
+        <span><span style="color: #00E5FF;">NO. 1467</span>&nbsp;&nbsp;&nbsp;THE FIRST EYE FLOWER</span><span style="color: #8899AA;">MYTHOS · CITYWIDE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE THREE MARKS -->
+  <div data-screen-label="Three Marks" style="background: #F0F4F8; color: #0D0D0D; padding: 96px 72px;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">02 · THE THREE MARKS</div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 48px;">
+      <div style="border-top: 3px solid #0D0D0D; padding-top: 24px;">
+        <div style="font-size: 34px; font-weight: 800;">The Eye Flower</div>
+        <div style="font-size: 17px; line-height: 1.6; color: #444; margin-top: 12px;">The city's attention made visible. It blooms wherever a moment is truly witnessed. Its iris is human because the city's eyes are its people.</div>
+      </div>
+      <div style="border-top: 3px solid #2962FF; padding-top: 24px;">
+        <div style="font-size: 34px; font-weight: 800; color: #2962FF;">The Blue Evil Eye</div>
+        <div style="font-size: 17px; line-height: 1.6; color: #444; margin-top: 12px;">Protection. It watches so you can stop watching your back. It blinked exactly once, in 1479, and a skeptic became a believer.</div>
+      </div>
+      <div style="border-top: 3px solid #0D0D0D; padding-top: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px;"><img src="assets/brand/blossom_03_black.png" style="height: 30px;"><div style="font-size: 34px; font-weight: 800;">The Sigil</div></div>
+        <div style="font-size: 17px; line-height: 1.6; color: #444; margin-top: 12px;">Community. The Blossom mark appears where people have built something together. The Sigil Writer paints them at 4am and has never been seen.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE SEVEN ERAS -->
+  <div data-screen-label="Seven Eras" style="padding: 110px 72px 60px;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">03 · THE CENSUS IN SEVEN ERAS</div>
+    <div style="font-size: 56px; font-weight: 700; margin-top: 24px; max-width: 900px; line-height: 1.05;">The archive is the story. Each era is a chapter.</div>
+  </div>
+  <sc-for list="{{ eras }}" as="era" hint-placeholder-count="3">
+    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 0; border-top: 1px solid #2A3040; padding: 44px 72px; align-items: center;">
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; color: #00E5FF;">{{ era.numeral }} · {{ era.range }}</div>
+        <div style="font-size: 38px; font-weight: 800; margin-top: 10px;">{{ era.name }}</div>
+        <div style="font-style: italic; font-size: 18px; color: #8899AA; margin-top: 8px; max-width: 300px; line-height: 1.45;">{{ era.line }}</div>
+      </div>
+      <div style="display: flex; gap: 6px; overflow: hidden; justify-content: flex-end;">
+        <sc-for list="{{ era.imgs }}" as="src">
+          <sc-if value="{{ src }}" hint-placeholder-val="{{ false }}"><img src="{{ src }}" style="height: 170px; width: 260px; object-fit: cover; display: block; flex-shrink: 0;"></sc-if>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+
+  <!-- MONUMENTS -->
+  <div data-screen-label="Monuments" style="padding: 120px 0 0;">
+    <div style="padding: 0 72px; display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">04 · THE MONUMENTS</div>
+        <div style="font-size: 56px; font-weight: 700; margin-top: 20px;">Every hundredth number is a monument.</div>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8899AA; letter-spacing: 0.2em; text-align: right;">FOURTEEN GRAILS<br>PRICED AND TREATED ACCORDINGLY</div>
+    </div>
+    <sc-for list="{{ monuments }}" as="m">
+      <div style="position: relative; margin-top: 64px; height: 78vh; min-height: 600px; overflow: hidden;">
+        <sc-if value="{{ m.img }}" hint-placeholder-val="{{ false }}"><img src="{{ m.img }}" style="width: 100%; height: 100%; object-fit: cover;"></sc-if>
+        <div style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,13,13,0.82) 0%, transparent 55%);"></div>
+        <div style="position: absolute; left: 72px; bottom: 64px; max-width: 620px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 96px; font-weight: 700; color: #00E5FF; line-height: 1;">{{ m.num }}</div>
+          <div style="font-size: 52px; font-weight: 800; line-height: 1.05; margin-top: 8px;">{{ m.name }}</div>
+          <div style="font-style: italic; font-size: 20px; color: #F0F4F8; opacity: 0.85; margin-top: 14px; line-height: 1.5;">{{ m.line }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- DOSSIERS -->
+  <div data-screen-label="Dossiers" style="padding: 120px 72px; background: #141820;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">05 · ONE NEW YORKER AT A TIME</div>
+    <div style="font-size: 56px; font-weight: 700; margin-top: 20px; max-width: 1000px;">The census assigns you a character. You do not shop for a New Yorker.</div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 64px;">
+      <sc-for list="{{ dossiers }}" as="d" hint-placeholder-count="3">
+        <div style="background: #0D0D0D; border: 1px solid #2A3040;">
+          <img src="{{ d.img }}" style="width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block;">
+          <div style="padding: 24px 26px 30px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; display: flex; justify-content: space-between;"><span style="color: #00E5FF;">NO. {{ d.num }}</span><span style="color: #8899AA;">{{ d.meta }}</span></div>
+            <div style="font-size: 27px; font-weight: 800; margin-top: 12px;">{{ d.name }}</div>
+            <div style="font-size: 15px; line-height: 1.6; color: #8899AA; margin-top: 10px;">{{ d.desc }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- SCENES ACROSS THE CITY -->
+  <div data-screen-label="Scenes" style="padding: 120px 72px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">06 · SCENES ACROSS THE CITY</div>
+        <div style="font-size: 56px; font-weight: 700; margin-top: 20px;">Five boroughs. Fifty nine districts. All of it painted.</div>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8899AA; letter-spacing: 0.2em; text-align: right;">THE INTERACTIVE MAP<br>LIVES AT THE CENSUS SITE</div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 240px; gap: 8px; margin-top: 56px;">
+      <sc-for list="{{ scenes }}" as="s" hint-placeholder-count="8">
+        <div style="position: relative; overflow: hidden; grid-column: span {{ s.span }};">
+          <img src="assets/art/{{ s.img }}.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+          <div style="position: absolute; left: 0; bottom: 0; background: #0D0D0D; padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: #F0F4F8;">{{ s.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ERA X: THE LOOK -->
+  <div data-screen-label="Era X The Look" style="background: #F0F4F8; color: #0D0D0D; padding: 120px 72px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">07 · ERA X · NOW PAINTING</div>
+        <div style="font-size: 72px; font-weight: 800; line-height: 0.98; margin-top: 24px;">THE LOOK</div>
+      </div>
+      <div style="font-size: 19px; line-height: 1.65; color: #444;">After the Bloom went citywide, the city started dressing for the flowers. Four hundred pieces on self presentation as love, armor and survival: THE HOUSES, THE UNIFORMS, THE LANDMARK CROWNS, THE SOLES.</div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 56px;">
+      <sc-for list="{{ eraxA }}" as="x" hint-placeholder-count="4">
+        <div>
+          <img src="assets/erax/{{ x.num }}.png" style="width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; margin-top: 8px; display: flex; justify-content: space-between;"><span style="color: #2962FF;">NO. {{ x.num }}</span><span style="color: #8899AA;">{{ x.set }}</span></div>
+          <div style="font-size: 17px; font-weight: 700; margin-top: 2px;">{{ x.name }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 32px;">
+      <sc-for list="{{ eraxB }}" as="x" hint-placeholder-count="4">
+        <div>
+          <img src="assets/erax/{{ x.num }}.png" style="width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; margin-top: 8px; display: flex; justify-content: space-between;"><span style="color: #2962FF;">NO. {{ x.num }}</span><span style="color: #8899AA;">{{ x.set }}</span></div>
+          <div style="font-size: 17px; font-weight: 700; margin-top: 2px;">{{ x.name }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- STILL WAITING GLITCH EDITIONS -->
+  <div data-screen-label="Glitch Editions" style="padding: 120px 72px; background: #0D0D0D;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #FF2E63; text-transform: uppercase;">08 · STILL WAITING</div>
+        <div style="font-size: 56px; font-weight: 700; margin-top: 20px;">The corrupted editions. The signal degrades, the city persists.</div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 56px;">
+      <sc-for list="{{ moshes }}" as="g" hint-placeholder-count="3">
+        <div style="position: relative;">
+          <img src="assets/mosh/{{ g.num }}.gif" style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border: 1px solid #2A3040;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 10px; display: flex; justify-content: space-between;"><span style="color: #00E5FF;">NO. {{ g.num }}</span><span style="color: #8899AA;">{{ g.name }}</span></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 3D CITY -->
+  <div data-screen-label="3D City" style="padding: 0 72px 120px; background: #0D0D0D;">
+    <div style="border: 1px solid #2A3040; padding: 64px; display: grid; grid-template-columns: 420px 1fr; gap: 56px; align-items: center;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">09 · THE CITY IN THREE DIMENSIONS</div>
+        <div style="font-size: 40px; font-weight: 800; margin-top: 18px; line-height: 1.08;">The props are real. Printable, spinnable, placeable in your room.</div>
+        <div style="font-size: 16px; line-height: 1.6; color: #8899AA; margin-top: 16px;">Twenty one street objects modeled from the collection, from the hydrant to the water tower. AR ready.</div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <sc-for list="{{ props3d }}" as="p" hint-placeholder-count="6">
+          <div style="flex: 1; background: #141820; padding: 12px;">
+            <img src="assets/3d/{{ p }}.png" style="width: 100%; aspect-ratio: 1 / 1; object-fit: contain; display: block;">
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE MECHANIC -->
+  <div data-screen-label="The Mechanic" style="background: #2962FF; color: #F0F4F8; padding: 120px 72px;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; text-transform: uppercase; opacity: 0.8;">10 · HOW THE CITY FILLS</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 40px;">
+      <div>
+        <div style="font-size: 60px; font-weight: 800; line-height: 1.02;">First THE COUNT.<br>Then THE CLAIM.</div>
+        <div style="font-size: 19px; line-height: 1.65; margin-top: 28px; opacity: 0.92;">The Census Office opens at NFT.NYC. Get counted, and the city matches you with a character and holds it in your name on a paper Resident Card. When the Claim opens, the hold becomes yours onchain.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0; font-family: 'JetBrains Mono', monospace;">
+        <div style="border-top: 1px solid rgba(240,244,248,0.4); padding: 22px 0; display: flex; justify-content: space-between; font-size: 15px; letter-spacing: 0.14em;"><span>01 GET COUNTED AT THE OFFICE</span><span style="opacity: 0.7;">FREE</span></div>
+        <div style="border-top: 1px solid rgba(240,244,248,0.4); padding: 22px 0; display: flex; justify-content: space-between; font-size: 15px; letter-spacing: 0.14em;"><span>02 THE CITY MATCHES YOUR CHARACTER</span><span style="opacity: 0.7;">HELD 24H</span></div>
+        <div style="border-top: 1px solid rgba(240,244,248,0.4); padding: 22px 0; display: flex; justify-content: space-between; font-size: 15px; letter-spacing: 0.14em;"><span>03 THE PRICE RISES AS THE CITY FILLS</span><span style="opacity: 0.7;">THE LADDER</span></div>
+        <div style="border-top: 1px solid rgba(240,244,248,0.4); border-bottom: 1px solid rgba(240,244,248,0.4); padding: 22px 0; display: flex; justify-content: space-between; font-size: 15px; letter-spacing: 0.14em;"><span>04 THE ARTIST APPENDS, YOU PIN</span><span style="opacity: 0.7;">ERC-7160</span></div>
+        <div style="font-size: 13px; letter-spacing: 0.14em; margin-top: 24px; opacity: 0.8;">CHAPTERS ARE ERAS. NOTHING IS EVER DELETED. THE ONE THING THIS COLLECTION WILL NEVER BE IS FINISHED.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPEN NOTEBOOK -->
+  <div data-screen-label="Open Notebook" style="padding: 120px 72px; background: #0D0D0D;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">11 · THE OPEN NOTEBOOK</div>
+        <div style="font-size: 56px; font-weight: 700; margin-top: 24px; line-height: 1.05;">Every layer shown. Nothing hidden.</div>
+        <div style="font-size: 18px; line-height: 1.65; color: #8899AA; margin-top: 28px;">The prompts, the ten style eras, the discarded frames, the cost ledgers, the 802 cuts. Almost no AI artist will publish what they threw away. This one does, because curation is the work.</div>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 2.1; color: #8899AA; border-left: 2px solid #2A3040; padding-left: 36px;">
+        <div><span style="color: #F0F4F8;">3,466</span> works painted across ten style eras</div>
+        <div><span style="color: #F0F4F8;">2,266</span> characters in the founding census</div>
+        <div><span style="color: #F0F4F8;">30,385</span> files in the working archive</div>
+        <div><span style="color: #F0F4F8;">13</span> families, from Builders to Villains</div>
+        <div><span style="color: #F0F4F8;">14</span> monuments at the hundred marks</div>
+        <div><span style="color: #F0F4F8;">802</span> cuts, published, not buried</div>
+        <div><span style="color: #00E5FF;">EVERY</span> prompt block, V1 through V6, public</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div data-screen-label="Footer" style="border-top: 1px solid #2A3040; padding: 72px; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+      <img src="assets/brand/logo_white.png" style="height: 44px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.24em; color: #8899AA; margin-top: 22px; line-height: 2;">NEWYORKERS.MLOW.XYZ · MLOW.XYZ · MLOW.NYC<br>X @DEGENS · IG + TIKTOK @0XMLOW</div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-style: italic; font-size: 24px; max-width: 480px; line-height: 1.4;">The count is coming. Get counted.</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #8899AA; margin-top: 16px; text-transform: uppercase;">NEW YORKERS · A CENSUS BY MLOW · NYC</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;countStart&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 0, &quot;min&quot;: 0, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;The Count&quot;}}">
+class Component extends DCLogic {
+  state = { count: 0 };
+  componentDidMount() {
+    const start = this.props.countStart ?? 0;
+    this.setState({ count: start });
+    this.timer = setInterval(() => {
+      this.setState(s => ({ count: s.count + (Math.random() < 0.6 ? 1 : 0) }));
+    }, 900);
+  }
+  componentWillUnmount() { if (this.timer) clearInterval(this.timer); }
+  renderVals() {
+    const pad = String(this.state.count).padStart(8, '0');
+    const wall = [1001,1003,1005,1007,1009,1011,1014,1017,1020,1023,1025,1028,1032,1035,1038,1041,1044,1047,1050,1053,1056,1059,1062,1065,1068,1071,1074,1077,1080,1083,1086,1089,1092,1095,1098,1101,1104,1107,1110,1113,1116,1119,1122,1125,1128,1131,1134,1137,1140,1143,1467,1500,1800,2000,2100,2200,2266,2667,2672,2679,2684,2689,2695,2700,2705,2711,2716,2722,2729,2737,2744,2753,2760,2769,2779,2786,2789,2794,2800,2805,2812,2821,2830,2840,2852,2861,3000];
+    const half = Math.ceil(wall.length / 2);
+    const rowA = wall.slice(0, half), rowB = wall.slice(half);
+    return {
+      countDisplay: pad.slice(0, 2) + ',' + pad.slice(2, 5) + ',' + pad.slice(5),
+      wallRowA: rowA.concat(rowA).map(n => 'assets/wall/' + n + '.jpg'),
+      wallRowB: rowB.concat(rowB).map(n => 'assets/wall/' + n + '.jpg'),
+      eras: [
+        { numeral: 'I', range: '1 TO 766', name: 'The Originals', line: 'The People. The founding census assembles its cast.', imgs: ['assets/art/fam_citizens.jpg','assets/art/st_busker.jpg','assets/art/sp_marsha.jpg','assets/art/bull.jpg'] },
+        { numeral: 'II', range: '767 TO 816', name: 'The Eye Flower Era', line: 'The Awakening. The flowers arrive and the city starts visibly watching.', imgs: ['assets/art/rat_loop.jpg','assets/art/sp_bodegacat.jpg','assets/art/mz_flaco.jpg','assets/art/st_dream.jpg'] },
+        { numeral: 'III', range: '817 TO 966', name: 'The City Expands', line: 'The Working City. Who built it, and who keeps it alive at 4am.', imgs: ['assets/art/crossing1.jpg','assets/art/cab1.jpg','assets/art/gc1.jpg','assets/art/slice1.jpg'] },
+        { numeral: 'IV', range: '967 TO 1166', name: 'The Brand Batch', line: 'The Marks. The evil eye starts watching from every frame.', imgs: ['assets/wall/1001.jpg','assets/wall/1044.jpg','assets/wall/1077.jpg','assets/wall/1122.jpg'] },
+        { numeral: 'V', range: '1167 TO 1466', name: 'The Masterworks', line: 'The Feelings. Every character gets its own color story and decisive moment.', imgs: ['assets/art/mz_stonewall.jpg','assets/art/mz_coney.jpg','assets/art/mz_chess.jpg','assets/art/mz_bedstuy.jpg'] },
+        { numeral: 'VI', range: '1467 TO 1866', name: 'The Mythos', line: 'The Meaning. The world explains itself and the love arcs pay off.', imgs: ['assets/wall/1467.jpg','assets/wall/1500.jpg','assets/wall/1800.jpg','assets/art/mz_katzs.jpg'] },
+        { numeral: 'VII', range: '1867 TO 2266', name: 'The Deep City', line: 'The Time. The Hours, the Months, the Moons, the Lines, the Tarot.', imgs: ['assets/wall/2000.jpg','assets/wall/2100.jpg','assets/wall/2200.jpg','assets/wall/2266.jpg'] }
+      ],
+      monuments: [
+        { num: 1000, img: 'assets/hero/1000.jpg', name: 'The Subway Samaritan', line: 'A stranger saves a stranger. The whole thesis, stated at number one thousand.' },
+        { num: 1800, img: 'assets/hero/1800.jpg', name: 'The Royal Wedding', line: 'The Rat King marries the Pigeon Queen. Above and below, reconciled by marriage and a shared bagel.' },
+        { num: 2000, img: 'assets/hero/2000.jpg', name: 'Midnight', line: 'The day hinges. The city holds its breath and lets it go.' },
+        { num: 2266, img: 'assets/hero/2266.jpg', name: 'To Be Continued', line: 'A bud pushes up through wet primer from inside the painting. The collection cannot end.' }
+      ],
+      dossiers: [
+        { num: 1063, name: 'The Riverside Goats', meta: 'STRAYS · CITYWIDE', img: 'assets/hero/1063.jpg', desc: 'The city hires goats to eat the poison ivy and the goats hold a summer residency. Riverside Park has never had better reviews.' },
+        { num: 1866, name: 'The Collector', meta: 'UNDERGROUND · RESERVED', img: 'assets/hero/1866.jpg', desc: 'Whoever holds it holds a portrait of themselves holding it. All the portraits look back. Reserved for something special.' },
+        { num: 1077, name: 'The Time Capsule', meta: 'UNDERGROUND · CITYWIDE', img: 'assets/hero/1077.jpg', desc: 'Buried by a class that grew old waiting to open it. The city kept the appointment.' }
+      ],
+      scenes: [
+        { img: 'mz_chrysler', label: 'MIDTOWN · THE CHRYSLER', span: 2 },
+        { img: 'mz_coney', label: 'BROOKLYN · CONEY ISLAND', span: 1 },
+        { img: 'mz_katzs', label: 'LOWER EAST SIDE · KATZS', span: 1 },
+        { img: 'mz_stonewall', label: 'WEST VILLAGE · STONEWALL', span: 1 },
+        { img: 'mz_bedstuy', label: 'BROOKLYN · BED STUY', span: 1 },
+        { img: 'unionsquare', label: 'MANHATTAN · UNION SQUARE', span: 2 },
+        { img: 'mz_halal', label: 'MIDTOWN · THE HALAL CART', span: 1 },
+        { img: 'mz_mta', label: 'UNDERGROUND · THE MTA', span: 1 },
+        { img: 'mz_wonderwheel', label: 'CONEY · THE WONDER WHEEL', span: 1 },
+        { img: 'mz_citibike', label: 'EVERYWHERE · THE CITIBIKE', span: 1 }
+      ],
+      eraxA: [
+        { num: 3067, name: 'The House of Fordham Road', set: 'THE HOUSES' },
+        { num: 3074, name: 'The House of Harlem', set: 'THE HOUSES' },
+        { num: 3149, name: 'The Booth Coat', set: 'THE UNIFORMS' },
+        { num: 3159, name: 'The Courier Bag', set: 'THE UNIFORMS' }
+      ],
+      eraxB: [
+        { num: 3201, name: 'The Chrysler Crown', set: 'LANDMARK CROWNS' },
+        { num: 3225, name: 'The Line Before Sunrise', set: 'THE SOLES' },
+        { num: 3234, name: 'The Sole Surgeon', set: 'THE SOLES' },
+        { num: 3236, name: 'The Pair He Never Wore', set: 'THE SOLES' }
+      ],
+      moshes: [
+        { num: 1467, name: 'THE FIRST EYE FLOWER' },
+        { num: 1800, name: 'THE ROYAL WEDDING' },
+        { num: 2100, name: 'THE EIGHT MILLION' },
+        { num: 2266, name: 'TO BE CONTINUED' },
+        { num: 3000, name: 'THE FULL BLOOM' },
+        { num: 3100, name: 'THE BALL DROP' }
+      ],
+      props3d: ['water_tower','hydrant','fire_escape','stoop','lamppost','mailbox']
+    };
+  }
+}
+</script>
+</body>
+</html>

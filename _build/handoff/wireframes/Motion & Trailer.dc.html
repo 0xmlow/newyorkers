@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #0D0D0D; } a { color: #F0F4F8; } a:hover { color: #00E5FF; }</style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; color: #F0F4F8; background: #0D0D0D; min-width: 1100px; padding: 72px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <img src="assets/brand/logo_white.png" style="height: 30px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.3em; color: #8899AA;">MOTION PACKAGE · TEASERS + THE 90 SECOND TRAILER</div>
+  </div>
+
+  <div style="margin-top: 64px;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">01 · THE TEASERS, RENDERED</div>
+    <div style="font-size: 44px; font-weight: 800; margin-top: 16px;">Three Seedance masters, cut ready.</div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px;">
+      <div>
+        <video src="assets/video/first_eye_flower.mp4" autoPlay muted loop playsInline style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border: 1px solid #2A3040;"></video>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.26em; margin-top: 10px; display: flex; justify-content: space-between;"><span style="color: #00E5FF;">NO. 1467</span><span style="color: #8899AA;">THE FIRST EYE FLOWER</span></div>
+      </div>
+      <div>
+        <video src="assets/video/milky_way_blackout.mp4" autoPlay muted loop playsInline style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border: 1px solid #2A3040;"></video>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.26em; margin-top: 10px; display: flex; justify-content: space-between;"><span style="color: #00E5FF;">NO. 1500</span><span style="color: #8899AA;">THE MILKY WAY BLACKOUT</span></div>
+      </div>
+      <div>
+        <video src="assets/video/royal_wedding.mp4" autoPlay muted loop playsInline style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border: 1px solid #2A3040;"></video>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.26em; margin-top: 10px; display: flex; justify-content: space-between;"><span style="color: #00E5FF;">NO. 1800</span><span style="color: #8899AA;">THE ROYAL WEDDING</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 96px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5em; color: #2962FF; text-transform: uppercase;">02 · THE TRAILER · 90 SECONDS</div>
+        <div style="font-size: 44px; font-weight: 800; margin-top: 16px;">THE COUNT · launch trailer storyboard</div>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8899AA; letter-spacing: 0.2em; text-align: right; line-height: 1.9;">1920 × 1080 · 24 FPS · SOUND ON<br>SEEDANCE RECIPES IN THE ANIMATION GUIDE</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0; margin-top: 40px;">
+      <sc-for list="{{ shots }}" as="s" hint-placeholder-count="4">
+        <div style="display: grid; grid-template-columns: 110px 300px 1fr 320px; gap: 28px; border-top: 1px solid #2A3040; padding: 22px 0; align-items: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #00E5FF; letter-spacing: 0.1em;">{{ s.tc }}</div>
+          <div style="position: relative; overflow: hidden; background: #141820;">
+            <sc-if value="{{ s.img }}" hint-placeholder-val="{{ true }}"><img src="{{ s.img }}" style="width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block;"></sc-if>
+            <sc-if value="{{ s.card }}" hint-placeholder-val="{{ false }}"><div style="width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Bodoni Moda', serif; font-weight: 800; font-size: 19px; line-height: 1.25; padding: 0 20px; box-sizing: border-box; background: {{ s.cardBg }}; color: {{ s.cardFg }};">{{ s.card }}</div></sc-if>
+          </div>
+          <div>
+            <div style="font-size: 21px; font-weight: 700;">{{ s.title }}</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #8899AA; margin-top: 6px;">{{ s.action }}</div>
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: #8899AA; line-height: 1.9;">{{ s.audio }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-top: 1px solid #2A3040; margin-top: 0; padding-top: 28px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.24em; color: #8899AA;">SCORE DIRECTION: SOLO PIANO OVER SUBWAY ROOM TONE, STRINGS ENTER AT 0:40, FULL STOP TO SILENCE AT 1:12, ONE HEARTBEAT, THEN THE CARD.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { shots: [
+      { tc: '0:00', card: 'Black. Room tone.', cardBg: '#0D0D0D', cardFg: '#8899AA', img: '', title: 'Cold open', action: 'Four seconds of black. Subway room tone, a train passing far away.', audio: 'ROOM TONE · NO MUSIC' },
+      { tc: '0:04', img: 'assets/video/first_eye_flower.mp4|poster', card: '', title: 'The tear and the grate', action: 'Seedance master of 1467. The flower opens and looks up into the lens.', audio: 'PIANO ENTERS, SINGLE NOTES' },
+      { tc: '0:12', card: 'THE CITY HAS BEEN WATCHING YOU YOUR WHOLE LIFE.', cardBg: '#0D0D0D', cardFg: '#F0F4F8', img: '', title: 'Title card one', action: 'Type sets in over black, one line at a time, on the piano beats.', audio: 'PIANO · TYPE CLICKS' },
+      { tc: '0:18', img: 'assets/hero/1000.jpg', card: '', title: 'The Kindness Files', action: 'Slow push on 1000, The Subway Samaritan. Caption plate types on.', audio: 'PIANO BUILDS' },
+      { tc: '0:26', img: 'assets/hero/1800.jpg', card: '', title: 'The kingdoms marry', action: 'Ken Burns across the Royal Wedding, confetti drifting in parallax.', audio: 'STRINGS WARM UP UNDER PIANO' },
+      { tc: '0:34', card: 'IT TURNS OUT IT WAS TAKING NOTES.', cardBg: '#0D0D0D', cardFg: '#F0F4F8', img: '', title: 'Title card two', action: 'Second line lands. Hold two beats.', audio: 'STRINGS ENTER FULL' },
+      { tc: '0:40', img: 'assets/hero/2000.jpg', card: '', title: 'The montage begins', action: 'One second per portrait, 24 portraits, hard cuts on the beat: heroes, strays, villains, hours, moons, lines.', audio: 'PERCUSSION: TURNSTILE CLICKS AS HITS' },
+      { tc: '1:04', img: 'assets/erax/3201.png', card: '', title: 'Era X flash', action: 'THE LOOK: four fashion frames, two beats each. The city dresses for the flowers.', audio: 'STRINGS PEAK' },
+      { tc: '1:08', img: 'assets/mosh/2266.gif', card: '', title: 'The signal breaks', action: 'STILL WAITING corruption tears the frame for one second. Cut to silence.', audio: 'GLITCH BURST, THEN SILENCE' },
+      { tc: '1:12', card: 'AND THE NOTES ARE BEAUTIFUL.', cardBg: '#F0F4F8', cardFg: '#0D0D0D', img: '', title: 'The turn', action: 'Light mode card. One heartbeat of silence before it lands.', audio: 'ONE HEARTBEAT' },
+      { tc: '1:16', img: 'assets/hero/2100.jpg', card: '', title: 'The Eight Million', action: 'The widest shot in the collection. Slow pull back, every face distinct.', audio: 'FULL SCORE RETURNS' },
+      { tc: '1:24', card: 'GET COUNTED · NEWYORKERS.MLOW.XYZ', cardBg: '#2962FF', cardFg: '#F0F4F8', img: '', title: 'The card', action: 'Evil eye blinks once above the URL. Logo lockup. Hold to 1:30.', audio: 'SCORE RESOLVES · ROOM TONE OUT' }
+    ].map(s => ({ ...s, img: s.img === 'assets/video/first_eye_flower.mp4|poster' ? 'assets/hero/1467.jpg' : s.img })) };
+  }
+}
+</script>
+</body>
+</html>

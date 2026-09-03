@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #1a1d24; } a { color: #F0F4F8; } a:hover { color: #00E5FF; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }</style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; color: #F0F4F8; padding: 60px; display: flex; flex-direction: column; gap: 60px; width: max-content;">
+  <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.3em; color: #8899AA;">CENSUS OFFICE · SIGNAGE AND PRINT SET</div>
+
+  <div style="display: flex; gap: 60px; align-items: flex-start;">
+    <!-- COUNT WALL DISPLAY -->
+    <div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin-bottom: 12px;">THE COUNT WALL · LIVE SCREEN · 1920 × 1080</div>
+      <div style="width: 1920px; height: 1080px; background: #0D0D0D; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden;">
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.6em; color: #8899AA; text-transform: uppercase;">PEOPLE COUNTED</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 300px; font-weight: 700; color: #F0F4F8; letter-spacing: 0.04em; line-height: 1; margin-top: 30px;">{{ countDisplay }}</div>
+        <div style="width: 320px; height: 8px; background: #2962FF; margin-top: 60px;"></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; letter-spacing: 0.4em; color: #8899AA; margin-top: 44px;">NEVER INFLATED · NEVER ESTIMATED · PUBLISHED AT MIDNIGHT</div>
+        <img src="assets/brand/logo_white.png" style="position: absolute; bottom: 56px; height: 32px;">
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 60px; align-items: flex-start;">
+    <!-- ENTRY POSTER 24x36 -->
+    <div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin-bottom: 12px;">ENTRY POSTER · 24 × 36 IN · 1080 × 1620 PROOF</div>
+      <div style="width: 1080px; height: 1620px; background: #2962FF; color: #F0F4F8; display: flex; flex-direction: column; padding: 80px; box-sizing: border-box; position: relative;">
+        <img src="assets/brand/eye_truecolor.png" style="height: 88px; align-self: flex-start;">
+        <div style="flex: 1;"></div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.5em; text-transform: uppercase;">THE CENSUS OFFICE IS OPEN</div>
+        <div style="font-size: 168px; font-weight: 800; line-height: 0.94; margin-top: 24px;">GET<br>COUNTED</div>
+        <div style="font-style: italic; font-size: 34px; margin-top: 36px; line-height: 1.4;">The city will match you with a character. It takes four minutes. It is free.</div>
+        <div style="border-top: 2px solid rgba(240,244,248,0.5); margin-top: 48px; padding-top: 28px; font-family: 'JetBrains Mono', monospace; font-size: 19px; letter-spacing: 0.24em; line-height: 2;">WALK IN · GET MATCHED · CARRY THE CARD<br><span style="opacity: 0.75;">NEW YORKERS · BY MLOW · NEWYORKERS.MLOW.XYZ</span></div>
+      </div>
+    </div>
+
+    <!-- LADDER BOARD -->
+    <div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin-bottom: 12px;">THE LADDER BOARD · COUNTER SIGN · 1080 × 1620 · NO PRICES UNTIL D06 SIGNS</div>
+      <div style="width: 1080px; height: 1620px; background: #F0F4F8; color: #0D0D0D; display: flex; flex-direction: column; padding: 80px; box-sizing: border-box;">
+        <img src="assets/brand/logo_black.png" style="height: 44px; align-self: flex-start;">
+        <div style="font-size: 84px; font-weight: 800; line-height: 1.0; margin-top: 56px;">The Census Ladder</div>
+        <div style="font-style: italic; font-size: 28px; color: #444; margin-top: 18px;">Every level has a door. The price rises as the city fills.</div>
+        <div style="display: flex; flex-direction: column; margin-top: 56px; flex: 1; font-family: 'JetBrains Mono', monospace;">
+          <div style="border-top: 2px solid #0D0D0D; padding: 30px 0; display: flex; justify-content: space-between; align-items: baseline;"><span style="font-family: 'Bodoni Moda', serif; font-size: 40px; font-weight: 700;">Get counted</span><span style="font-size: 20px; letter-spacing: 0.2em; color: #2962FF;">FREE</span></div>
+          <div style="border-top: 2px solid #0D0D0D; padding: 30px 0; display: flex; justify-content: space-between; align-items: baseline;"><span style="font-family: 'Bodoni Moda', serif; font-size: 40px; font-weight: 700;">The Resident Card</span><span style="font-size: 20px; letter-spacing: 0.2em; color: #444;">AT THE DESK</span></div>
+          <div style="border-top: 2px solid #0D0D0D; padding: 30px 0; display: flex; justify-content: space-between; align-items: baseline;"><span style="font-family: 'Bodoni Moda', serif; font-size: 40px; font-weight: 700;">The Print Counter</span><span style="font-size: 20px; letter-spacing: 0.2em; color: #444;">SIGNED + STAMPED</span></div>
+          <div style="border-top: 2px solid #0D0D0D; padding: 30px 0; display: flex; justify-content: space-between; align-items: baseline;"><span style="font-family: 'Bodoni Moda', serif; font-size: 40px; font-weight: 700;">The Founding 365</span><span style="font-size: 20px; letter-spacing: 0.2em; color: #444;">ASK FOR A MATCH</span></div>
+          <div style="border-top: 2px solid #0D0D0D; border-bottom: 2px solid #0D0D0D; padding: 30px 0; display: flex; justify-content: space-between; align-items: baseline;"><span style="font-family: 'Bodoni Moda', serif; font-size: 40px; font-weight: 700;">The Anchors</span><span style="font-size: 20px; letter-spacing: 0.2em; color: #FF2E63;">11:11 PM NIGHTLY</span></div>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 16px; letter-spacing: 0.22em; color: #444; margin-top: 40px;">CARD PAYMENTS ONLY · NOTHING ONCHAIN TONIGHT · THE CLAIM COMES NEXT</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 60px; align-items: flex-start;">
+    <!-- ANCHOR CEREMONY CARD -->
+    <div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin-bottom: 12px;">ANCHOR CEREMONY CARD · 5 × 7 IN · 750 × 1050</div>
+      <div style="width: 750px; height: 1050px; background: #0D0D0D; color: #F0F4F8; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 70px 60px; box-sizing: border-box; border: 1px solid #2A3040;">
+        <img src="assets/brand/eye_truecolor.png" style="height: 60px;">
+        <div style="flex: 1;"></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 92px; font-weight: 700; color: #00E5FF;">11:11</div>
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0.5em; text-transform: uppercase; margin-top: 18px;">THE ANCHOR CEREMONY</div>
+        <div style="font-style: italic; font-size: 25px; line-height: 1.5; margin-top: 26px; color: #B8C4CE;">One monument each night. The room goes quiet, the piece is unveiled, and the city takes attendance.</div>
+        <div style="flex: 1;"></div>
+        <div style="border-top: 1px solid #2A3040; padding-top: 24px; width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.26em; color: #8899AA; line-height: 2;">ADMISSION: BE COUNTED FIRST<br>NEW YORKERS · BY MLOW</div>
+      </div>
+    </div>
+
+    <!-- RESIDENT CARD FRONT -->
+    <div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin-bottom: 12px;">RESIDENT CARD · FRONT · 5 × 3.5 IN · 1050 × 735</div>
+      <div style="width: 1050px; height: 735px; background: #F0F4F8; color: #0D0D0D; display: flex; box-sizing: border-box; border: 2px solid #0D0D0D; overflow: hidden;">
+        <div style="width: 380px; position: relative;">
+          <img src="assets/hero/1063.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #0D0D0D; color: #F0F4F8; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.2em; padding: 10px 14px;">NO. 1063 · STRAYS</div>
+        </div>
+        <div style="flex: 1; padding: 40px 44px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.4em; text-transform: uppercase;">CENSUS BUREAU OF THE HIDDEN CITY</div>
+            <img src="assets/brand/eye_truecolor.png" style="height: 36px;">
+          </div>
+          <div style="font-size: 44px; font-weight: 800; margin-top: 26px; line-height: 1.05;">The Riverside Goats</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.22em; color: #444; margin-top: 10px;">FAMILY: STRAYS · BOROUGH: MANHATTAN</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; margin-top: 30px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.16em; color: #222;">
+            <div style="border-bottom: 1.5px solid #0D0D0D; padding-bottom: 6px;">RESIDENT NO. ________</div>
+            <div style="border-bottom: 1.5px solid #0D0D0D; padding-bottom: 6px;">COUNTED ON ________</div>
+            <div style="border-bottom: 1.5px solid #0D0D0D; padding-bottom: 6px; grid-column: span 2; padding-top: 14px;">NAME ______________________________</div>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #444;">HELD IN YOUR NAME UNTIL THE CLAIM OPENS<br>SIGNATURE X______________________</div>
+            <div style="width: 84px; height: 84px; border: 2px solid #0D0D0D; display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 2px; padding: 6px; box-sizing: border-box;">
+              <div style="background: #0D0D0D;"></div><div></div><div style="background: #0D0D0D;"></div><div style="background: #0D0D0D;"></div><div></div>
+              <div></div><div style="background: #0D0D0D;"></div><div></div><div style="background: #0D0D0D;"></div><div style="background: #0D0D0D;"></div>
+              <div style="background: #0D0D0D;"></div><div></div><div style="background: #0D0D0D;"></div><div></div><div style="background: #0D0D0D;"></div>
+              <div></div><div style="background: #0D0D0D;"></div><div style="background: #0D0D0D;"></div><div style="background: #0D0D0D;"></div><div></div>
+              <div style="background: #0D0D0D;"></div><div></div><div style="background: #0D0D0D;"></div><div></div><div style="background: #0D0D0D;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin: 40px 0 12px;">RESIDENT CARD · BACK</div>
+      <div style="width: 1050px; height: 735px; background: #0D0D0D; color: #F0F4F8; display: flex; flex-direction: column; padding: 56px 60px; box-sizing: border-box; border: 2px solid #0D0D0D;">
+        <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.44em; color: #00E5FF; text-transform: uppercase;">THE THREE MARKS</div>
+        <div style="display: flex; flex-direction: column; gap: 0; margin-top: 26px; flex: 1;">
+          <div style="border-top: 1px solid #2A3040; padding: 22px 0; display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: baseline;"><span style="font-size: 30px; font-weight: 800;">The Eye Flower</span><span style="font-size: 18px; color: #8899AA; line-height: 1.5;">The city's attention. It blooms wherever a moment is truly witnessed.</span></div>
+          <div style="border-top: 1px solid #2A3040; padding: 22px 0; display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: baseline;"><span style="font-size: 30px; font-weight: 800; color: #2962FF;">The Evil Eye</span><span style="font-size: 18px; color: #8899AA; line-height: 1.5;">Protection. It watches so you can stop watching your back.</span></div>
+          <div style="border-top: 1px solid #2A3040; border-bottom: 1px solid #2A3040; padding: 22px 0; display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: baseline;"><span style="font-size: 30px; font-weight: 800;">The Sigil</span><span style="font-size: 18px; color: #8899AA; line-height: 1.5;">Community. It appears where people have built something together.</span></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.22em; color: #8899AA; line-height: 2;">THIS CARD RECORDS A HOLD, NOT A PURCHASE.<br>CLAIM AT <span style="color: #F0F4F8;">NEWYORKERS.MLOW.XYZ</span> WHEN THE CHAIN OPENS.</div>
+          <div style="width: 120px; height: 120px; background: #F0F4F8; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0D0D0D; letter-spacing: 0.1em; text-align: center;">QR<br>TO THE<br>CLAIM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WALL OF 351 LABEL -->
+  <div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.26em; color: #8899AA; margin-bottom: 12px;">WALL OF 351 · GRID LABEL CARDS · 4 × 2 IN EACH</div>
+    <div style="display: flex; gap: 20px;">
+      <div style="width: 400px; height: 200px; background: #F0F4F8; color: #0D0D0D; border: 2px solid #0D0D0D; padding: 24px 28px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.2em;"><span style="color: #2962FF;">NO. 1000</span><span>HEROES</span></div>
+        <div style="font-size: 27px; font-weight: 800;">The Subway Samaritan</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #444;">MONUMENT · FOUNDING ROSTER · HOLD OPEN</div>
+      </div>
+      <div style="width: 400px; height: 200px; background: #F0F4F8; color: #0D0D0D; border: 2px solid #0D0D0D; padding: 24px 28px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.2em;"><span style="color: #2962FF;">NO. 1467</span><span>MYTHOS</span></div>
+        <div style="font-size: 27px; font-weight: 800;">The First Eye Flower</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #444;">MONUMENT · FOUNDING ROSTER · HOLD OPEN</div>
+      </div>
+      <div style="width: 400px; height: 200px; background: #0D0D0D; color: #F0F4F8; border: 2px solid #0D0D0D; padding: 24px 28px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.2em;"><span style="color: #00E5FF;">NO. 1866</span><span style="color: #8899AA;">UNDERGROUND</span></div>
+        <div style="font-size: 27px; font-weight: 800;">The Collector</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #FF2E63;">RESERVED · NOT FOR SALE · ASK NOBODY</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { count: 0 };
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState(s => ({ count: s.count + (Math.random() < 0.5 ? 1 : 0) })), 1100);
+  }
+  componentWillUnmount() { if (this.timer) clearInterval(this.timer); }
+  renderVals() {
+    const p = String(this.state.count).padStart(6, '0');
+    return { countDisplay: p.slice(0, 3) + ',' + p.slice(3) };
+  }
+}
+</script>
+</body>
+</html>

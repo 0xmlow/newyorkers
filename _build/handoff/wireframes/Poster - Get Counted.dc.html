@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #1a1a1a; }
+    a { color: #F0F4F8; } a:hover { color: #00E5FF; }
+  </style>
+</helmet>
+<div style="width: 1620px; height: 2160px; background: #0D0D0D; color: #F0F4F8; font-family: 'Bodoni Moda', serif; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+  <div style="position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: 1fr; gap: 3px; opacity: 0.34;">
+    <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="12">
+      <img src="assets/wall/{{ t }}.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+    </sc-for>
+  </div>
+  <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,13,13,0.55) 0%, rgba(13,13,13,0.2) 40%, rgba(13,13,13,0.96) 78%);"></div>
+  <div style="position: relative; display: flex; justify-content: space-between; align-items: center; padding: 56px 72px;">
+    <img src="assets/brand/logo_white.png" style="height: 52px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; letter-spacing: 0.34em; color: #F0F4F8;">THE CENSUS BUREAU OF THE HIDDEN CITY</div>
+  </div>
+  <div style="position: relative; flex: 1;"></div>
+  <div style="position: relative; padding: 0 72px 84px;">
+    <div style="font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: 0.5em; color: #00E5FF; text-transform: uppercase;">NEW YORKERS · BY MLOW</div>
+    <div style="font-size: 218px; font-weight: 800; line-height: 0.92; letter-spacing: -0.01em; margin-top: 28px;">GET<br>COUNTED</div>
+    <div style="font-style: italic; font-size: 44px; line-height: 1.35; margin-top: 44px; max-width: 1250px;">The city has been watching you your whole life. It turns out it was taking notes.</div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 2px solid rgba(240,244,248,0.4); margin-top: 60px; padding-top: 36px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: 0.22em; line-height: 1.9; color: #F0F4F8;">3,466 PAINTED · 365 WILL EVER BE SOLD<br><span style="color: #8899AA;">THE COUNT IS COMING · NEWYORKERS.MLOW.XYZ</span></div>
+      <img src="assets/brand/eye_truecolor.png" style="height: 96px;">
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1620, &quot;height&quot;: 2160}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { tiles: [1001,1014,1032,1050,1068,1086,1104,1122,1140,1467,1500,1800,2000,2100,2200,2266,2667,2695,2722,2753,2786,2812,2840,3000,1003,1025,1047,1071,1095,1119,1143,2679,2705,2737,2769,2800,2830,2861,1005,1028,1053,1077] };
+  }
+}
+</script>
+</body>
+</html>

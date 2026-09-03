@@ -1,0 +1,1172 @@
+{
+ "4257": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "classic Greek diner window booth fits Astoria's diner culture"
+ },
+ "4258": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "tip jar drifting onto stoops and bus stops reads as a Queens diner block"
+ },
+ "4259": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "old school counter regulars fit a Bay Ridge diner"
+ },
+ "4260": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "flipping griddle counter scene fits a Sunnyside diner"
+ },
+ "4261": {
+  "place": "nb:Forest Hills",
+  "conf": "inferred",
+  "why": "rooftop diner cat over the EAT sign fits a Forest Hills diner"
+ },
+ "4262": {
+  "place": "key:bqe",
+  "conf": "inferred",
+  "why": "diner under a hover expressway on ramp maps to the BQE corridor"
+ },
+ "4263": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "coffee urn diner scene fits an Elmhurst counter spot"
+ },
+ "4264": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "new waiter at a neighborhood diner fits Ridgewood"
+ },
+ "4266": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "closing time diner scene fits a Jackson Heights counter spot"
+ },
+ "4267": {
+  "place": "nb:Mott Haven",
+  "conf": "stated",
+  "why": "story names the Bronx directly for the retroactive rain"
+ },
+ "4269": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "subway cars in old paint place the fog scene underground"
+ },
+ "4271": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "stoop and hydrant card game scene fits a brownstone stoop block"
+ },
+ "4276": {
+  "place": "nb:Jackson Heights",
+  "conf": "stated",
+  "why": "story names Queens for the clockwork thunderstorm"
+ },
+ "4277": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "quiet drizzle of memories fits a residential Manhattan corner"
+ },
+ "4279": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "rooftop photographers watching the skyline fit Midtown"
+ },
+ "4281": {
+  "place": "nb:Highbridge",
+  "conf": "stated",
+  "why": "story names a Bronx roof for the balloon queue"
+ },
+ "4282": {
+  "place": "key:manhattanhenge",
+  "conf": "stated",
+  "why": "two sunsets and streets grading westward is a direct Manhattanhenge scene"
+ },
+ "4284": {
+  "place": "key:central_park",
+  "conf": "inferred",
+  "why": "sledding hills sorted from hospital ramps point to Central Park's slopes"
+ },
+ "4289": {
+  "place": "nb:Morrisania",
+  "conf": "stated",
+  "why": "story names the Bronx porch where the abuela reads the barometer"
+ },
+ "4291": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "laundry lines applauding on rooftops fits El Barrio's tenement roofs"
+ },
+ "4297": {
+  "place": "key:moma",
+  "conf": "inferred",
+  "why": "museum reflecting pool fits MoMA's sculpture garden pool"
+ },
+ "4303": {
+  "place": "key:chambers_st",
+  "conf": "stated",
+  "why": "municipal archives are housed on Chambers Street"
+ },
+ "4306": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "window to window love notes fit dense tenement blocks"
+ },
+ "4310": {
+  "place": "nb:St. George",
+  "conf": "stated",
+  "why": "story names Staten Island for the watchman's door"
+ },
+ "4315": {
+  "place": "nb:Belmont",
+  "conf": "stated",
+  "why": "story names the Bronx for the menagerie vet's clinic"
+ },
+ "4318": {
+  "place": "key:grand_central",
+  "conf": "inferred",
+  "why": "midnight sleeper berths fit Grand Central's night trains"
+ },
+ "4319": {
+  "place": "key:penn_station",
+  "conf": "inferred",
+  "why": "midnight line conductor collecting fares fits Penn Station"
+ },
+ "4323": {
+  "place": "key:grand_central",
+  "conf": "inferred",
+  "why": "a split flap departure board is a Grand Central hallmark"
+ },
+ "4324": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a track walker's lantern belongs in the subway tunnels"
+ },
+ "4325": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a midnight train crossing into fictional stops still runs the real subway"
+ },
+ "4328": {
+  "place": "key:grand_central",
+  "conf": "inferred",
+  "why": "a ticket con on the midnight line fits Grand Central"
+ },
+ "4329": {
+  "place": "key:line_7",
+  "conf": "inferred",
+  "why": "trackside wildflowers watered by lantern fit an elevated line's right of way"
+ },
+ "4330": {
+  "place": "key:penn_station",
+  "conf": "inferred",
+  "why": "a platform farewell for a departing train fits Penn Station"
+ },
+ "4332": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "story names Manhattan and a train running beneath it"
+ },
+ "4334": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "an elevated berth car above the skyline fits Astoria's elevated tracks"
+ },
+ "4335": {
+  "place": "key:grand_central",
+  "conf": "inferred",
+  "why": "an old return ticket honored on the line fits Grand Central's grandeur"
+ },
+ "4336": {
+  "place": "key:penn_station",
+  "conf": "inferred",
+  "why": "a held departure for a late runner fits Penn Station"
+ },
+ "4337": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "pushcarts between hover lanes fit the historic pushcart streets"
+ },
+ "4341": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "citywide machine holiday scene fits a central Midtown setting"
+ },
+ "4343": {
+  "place": "key:nypl",
+  "conf": "stated",
+  "why": "a new library wing is named directly"
+ },
+ "4347": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a Bronx teenager borrowing couture fits a Fordham household"
+ },
+ "4348": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a unified skyline glow reads best from central Manhattan"
+ },
+ "4351": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "the rocket diner breakfast scene fits the diner set's Queens setting"
+ },
+ "4352": {
+  "place": "key:cross_bronx",
+  "conf": "stated",
+  "why": "the expressway that was built is a direct Cross Bronx Expressway reference"
+ },
+ "4354": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "citywide alarm clock retraining fits a generic Midtown office scene"
+ },
+ "4355": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "a corner granting do overs fits a dense East Village block"
+ },
+ "4356": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "machines publishing a letter citywide fits a central Midtown scene"
+ },
+ "4357": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "a chrono atelier fitting the city is a Garment District scene"
+ },
+ "4358": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "windows harmonizing across the block fits a residential Upper West Side street"
+ },
+ "4359": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a stoop keeping coffee warm fits a Bed-Stuy brownstone"
+ },
+ "4360": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a museum of the transition fits a generic Midtown institution"
+ },
+ "4361": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "a Queens plumber given a key fits a Sunnyside household"
+ },
+ "4365": {
+  "place": "nb:Riverdale",
+  "conf": "inferred",
+  "why": "a Bronx family kitchen scene fits a Riverdale home"
+ },
+ "4366": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a bodega at the center of everything fits Washington Heights bodega culture"
+ },
+ "4370": {
+  "place": "nb:SoHo",
+  "conf": "stated",
+  "why": "cast iron colonnade capitals unmistakably describe SoHo's cast iron district"
+ },
+ "4372": {
+  "place": "key:greene_st",
+  "conf": "stated",
+  "why": "bricked up loft windows over sewing girls describe a SoHo cast iron street"
+ },
+ "4376": {
+  "place": "key:broome_st",
+  "conf": "stated",
+  "why": "a landmarked cast iron facade trucked for restoration describes SoHo"
+ },
+ "4378": {
+  "place": "key:wooster",
+  "conf": "stated",
+  "why": "a faded ghost sign on a brick party wall describes SoHo's cast iron blocks"
+ },
+ "4379": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "a demolition hearing in a municipal chamber is a Foley Square courthouse scene"
+ },
+ "4382": {
+  "place": "key:mercer_st",
+  "conf": "stated",
+  "why": "sawtooth factory skylights describe a SoHo cast iron loft street"
+ },
+ "4387": {
+  "place": "key:crosby",
+  "conf": "stated",
+  "why": "cast iron rosettes blooming at dusk describe a SoHo cast iron street"
+ },
+ "4388": {
+  "place": "nb:SoHo",
+  "conf": "stated",
+  "why": "tenants since 1870 in a loft describe SoHo's cast iron buildings"
+ },
+ "4390": {
+  "place": "key:spring_st",
+  "conf": "stated",
+  "why": "a block sitting up with a coming down cast iron building describes SoHo"
+ },
+ "4391": {
+  "place": "nb:Greenwich Village",
+  "conf": "inferred",
+  "why": "an 1811 grid surveyor walking through buildings fits the pre grid streets near the Village"
+ },
+ "4392": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a gargoyle landing near a hot dog cart fits a busy Midtown sidewalk"
+ },
+ "4395": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a fortieth floor office tower with a gargoyle fits the Financial District"
+ },
+ "4397": {
+  "place": "key:st_john_divine",
+  "conf": "inferred",
+  "why": "chimeras waiting in line evoke the cathedral's stone carving yard"
+ },
+ "4399": {
+  "place": "nb:Morningside Heights",
+  "conf": "inferred",
+  "why": "a sculptor finding a face in weathered stone fits the cathedral's neighborhood"
+ },
+ "4405": {
+  "place": "key:wall_street",
+  "conf": "inferred",
+  "why": "gilded weathervanes dueling over an avenue fit Wall Street's older spires"
+ },
+ "4409": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a winged victory statue stepping down for deli roses fits Beaux Arts Financial District towers"
+ },
+ "4410": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "Justice and Commerce statues holding court describe the Foley Square courthouses"
+ },
+ "4412": {
+  "place": "nb:Flatiron",
+  "conf": "inferred",
+  "why": "terracotta towers being restored fit the Flatiron district's ornamented buildings"
+ },
+ "4414": {
+  "place": "key:st_john_divine",
+  "conf": "inferred",
+  "why": "an apprentice's carving judged by gargoyles evokes the cathedral's stoneyard"
+ },
+ "4415": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "rain gargoyles over a forecourt fit prewar Upper West Side buildings"
+ },
+ "4417": {
+  "place": "key:chrysler",
+  "conf": "stated",
+  "why": "an elevator car in gardenia and machine oil evokes the Chrysler Building's famed cabs"
+ },
+ "4419": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "ziggurat setback terraces are a Midtown Art Deco hallmark"
+ },
+ "4420": {
+  "place": "key:rock_center",
+  "conf": "stated",
+  "why": "a 1934 lobby ceiling mural evokes Rockefeller Center's murals"
+ },
+ "4423": {
+  "place": "key:grand_central",
+  "conf": "inferred",
+  "why": "gold flecked constellations underfoot evoke Grand Central's celestial ceiling"
+ },
+ "4424": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a deco penthouse turned from the skyline fits a Financial District tower"
+ },
+ "4426": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a lobby cigarette girl selling notions fits a Garment District deco building"
+ },
+ "4428": {
+  "place": "key:broadway",
+  "conf": "stated",
+  "why": "bronze theater doors thawing on opening night describe the Theater District"
+ },
+ "4430": {
+  "place": "key:52nd_street",
+  "conf": "inferred",
+  "why": "a hidden 1933 speakeasy behind a frieze fits Swing Street's jazz age buildings"
+ },
+ "4431": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a fortieth floor observation gallery manicure fits a Financial District tower"
+ },
+ "4432": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a sealed incinerator warming apartments fits a prewar Washington Heights building"
+ },
+ "4435": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a basement switchboard connecting tenants fits a Midtown deco tower"
+ },
+ "4437": {
+  "place": "nb:Murray Hill",
+  "conf": "inferred",
+  "why": "an elevator shaft composer scoring rides fits a Murray Hill residential tower"
+ },
+ "4439": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "a lobby powder room mirror fits an Upper West Side deco apartment house"
+ },
+ "4440": {
+  "place": "key:empire_state",
+  "conf": "inferred",
+  "why": "a whistle reaching every borough evokes the city's tallest deco landmark"
+ },
+ "4443": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "an 1885 parlor floor kept furnished fits a Park Slope brownstone"
+ },
+ "4444": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "a bay window filling with ocean fits a Fort Greene brownstone parlor"
+ },
+ "4446": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "children running the dumbwaiter route fits a Bed-Stuy brownstone block"
+ },
+ "4449": {
+  "place": "nb:Clinton Hill",
+  "conf": "inferred",
+  "why": "five brownstones sharing a skylight well choir fits Clinton Hill row houses"
+ },
+ "4450": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a cellar furnace tended by a child fits a Crown Heights brownstone"
+ },
+ "4451": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "thirty years of duets through a shared wall fit a Harlem brownstone"
+ },
+ "4454": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "two facing brownstones writing in ivy fit a leafy Park Slope block"
+ },
+ "4456": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a century of left objects on a parlor mantel fits a Bed-Stuy brownstone"
+ },
+ "4457": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "a stoop wedding with neighbors banked up fits a Fort Greene block"
+ },
+ "4458": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a 1974 basement recording session fits Bed-Stuy's soul and funk history"
+ },
+ "4459": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "unmoored roof ridges sailing over a block fit Park Slope's brownstone rows"
+ },
+ "4460": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a hall mirror in a family brownstone fits a Harlem row house"
+ },
+ "4461": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a midwife sitting with a demolished building fits a Crown Heights block"
+ },
+ "4462": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a block housing a man across fire escapes fits a Bed-Stuy row"
+ },
+ "4463": {
+  "place": "nb:Clinton Hill",
+  "conf": "inferred",
+  "why": "lanterns swung across two roofs in code fit adjoining Clinton Hill brownstones"
+ },
+ "4464": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "a house growing a new room overnight fits a Park Slope brownstone"
+ },
+ "4465": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "houses attending a block association meeting fits a Fort Greene block"
+ },
+ "4484": {
+  "place": "nb:Brooklyn Heights",
+  "conf": "stated",
+  "why": "story names Brooklyn for the platform edge philosophers"
+ },
+ "4489": {
+  "place": "nb:Prospect Heights",
+  "conf": "stated",
+  "why": "story names Brooklyn for the tunnel mouth chorus at an overpass"
+ },
+ "4493": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "a basement of a million buttons is a Garment District scene"
+ },
+ "4494": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "steam presses working overnight describe the Garment District"
+ },
+ "4496": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "an atelier fitting an invisible client describes the Garment District"
+ },
+ "4501": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "a sample sale loft of spiraling racks describes the Garment District"
+ },
+ "4502": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "a family tailor's fitting room chalk marks describe the Garment District"
+ },
+ "4507": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "a seamstress stitching interfacing into jackets describes the Garment District"
+ },
+ "4510": {
+  "place": "nb:Concourse",
+  "conf": "stated",
+  "why": "story names the Bronx for the couture ambulance's church call"
+ },
+ "4511": {
+  "place": "key:garment",
+  "conf": "stated",
+  "why": "a climate vault of unworn couture describes the Garment District"
+ },
+ "4519": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "sneakers thrown over the wire is a Brownsville street legend"
+ },
+ "4521": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a tailor altering the luck of secondhand clothes fits a Harlem shop"
+ },
+ "4524": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "chalk equations on a stoop about durags fit a Bed-Stuy block"
+ },
+ "4526": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "story names Brooklyn for great church hats leaving Sunday service"
+ },
+ "4527": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "a breakdancer's windbreaker on a park fence fits the Bronx's hip hop roots"
+ },
+ "4528": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "gold hoops descending through a family fits a Corona block"
+ },
+ "4529": {
+  "place": "nb:Highbridge",
+  "conf": "stated",
+  "why": "story names the Bronx for the suit lent through an apartment building"
+ },
+ "4530": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a sneakerhead archivist collecting first steps fits a Flatbush block"
+ },
+ "4533": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a neighborhood cobbler whose tickets read like verdicts fits Washington Heights"
+ },
+ "4534": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "puffer coats humming at a bus stop fit an El Barrio corner"
+ },
+ "4535": {
+  "place": "nb:Hunts Point",
+  "conf": "inferred",
+  "why": "a graffiti writer's funeral styling fits the Bronx's graffiti history"
+ },
+ "4537": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a christening gown crossing the street fits Washington Heights family life"
+ },
+ "4538": {
+  "place": "nb:Concourse",
+  "conf": "stated",
+  "why": "story names the Bronx for the fitted cap barometer corner"
+ },
+ "4539": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a decades long communal scarf circling the block fits Harlem"
+ },
+ "4541": {
+  "place": "key:125th_st",
+  "conf": "stated",
+  "why": "the boroughs' best dressed crossing together evokes Harlem's main strip"
+ },
+ "4544": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "a cedar tank keeper's ladder fits SoHo's old loft roofs"
+ },
+ "4545": {
+  "place": "nb:Greenpoint",
+  "conf": "stated",
+  "why": "story names Brooklyn for the printworks tank ringing the hour"
+ },
+ "4547": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a skyline of steaming tanks at first frost fits Chelsea's rooftops"
+ },
+ "4548": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "a hidden rooftop garden fed by a tank fits a Lower East Side building"
+ },
+ "4549": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a new super's rooftop pilgrimage fits a Washington Heights walkup"
+ },
+ "4552": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "a tar roof wedding blessing fits a Williamsburg rooftop"
+ },
+ "4555": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a tower crane courting a cedar tank fits Long Island City's construction skyline"
+ },
+ "4556": {
+  "place": "nb:Greenwich Village",
+  "conf": "inferred",
+  "why": "a tank cap hinging open like an observatory dome fits a Village rooftop"
+ },
+ "4557": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "sparrows nesting between a tower's legs fits an East Village rooftop"
+ },
+ "4558": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "ten thousand tanks releasing rain at once is best seen from central Midtown"
+ },
+ "4559": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "a painter spending a year on one tower fits a Tribeca loft roof"
+ },
+ "4560": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "sleepless neighbors climbing to sit against warm staves fits a Lower East Side roof"
+ },
+ "4562": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "two towers leaning toward joint block parties fit adjoining Williamsburg loft roofs"
+ },
+ "4563": {
+  "place": "nb:Mott Haven",
+  "conf": "stated",
+  "why": "story names the Bronx for the salvaged tank moved to a community garden"
+ },
+ "4593": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a tenth floor scaffold canopy population fits Long Island City's construction boom"
+ },
+ "4595": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a rigger walking pipe thirty stories up fits a Downtown Brooklyn tower site"
+ },
+ "4598": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a coupler tightener walking sheds at night fits a Sunset Park industrial block"
+ },
+ "4599": {
+  "place": "nb:Jackson Heights",
+  "conf": "stated",
+  "why": "story names Queens and petitions in many languages fit Jackson Heights"
+ },
+ "4600": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a scaffold forest walking the avenues at night fits a Harlem streetscape"
+ },
+ "4602": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "wind playing scaffold pipes like an organ fits Chelsea's construction density"
+ },
+ "4604": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "a night concrete pour honoring displaced families fits East Harlem's renewal history"
+ },
+ "4606": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "scaffold ghosting over finished facades fits the Financial District's tower canyon"
+ },
+ "4607": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a wrapped forty story tower glowing like a lantern fits Midtown"
+ },
+ "4608": {
+  "place": "key:hudson_yards",
+  "conf": "inferred",
+  "why": "a topping out beam evergreen fits Hudson Yards' active towers"
+ },
+ "4609": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "two site engineers marrying under a shed fits a Long Island City job site"
+ },
+ "4610": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "an inspector certifying scaffold soul fits an Upper West Side renovation block"
+ },
+ "4611": {
+  "place": "nb:Mott Haven",
+  "conf": "stated",
+  "why": "story names the Bronx for the crossbrace hammock village"
+ },
+ "4612": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a crew's demolition ballet at dawn fits a Bushwick industrial block"
+ },
+ "4613": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a mycelium web threading scaffold bases fits a Bed-Stuy row of sheds"
+ },
+ "4615": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a lantern rounds walker on miles of plank fits an Astoria construction site"
+ },
+ "4619": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a window washer on the one percent sky fits a Midtown supertall"
+ },
+ "4620": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "setback terraces grazing small clouds fit a Tribeca penthouse"
+ },
+ "4625": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a heron on a decommissioned helipad fits a Financial District tower"
+ },
+ "4628": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a ninetieth floor infinity pool fits a Midtown supertall"
+ },
+ "4629": {
+  "place": "key:empire_state",
+  "conf": "inferred",
+  "why": "one antenna mast carrying every message fits the city's iconic broadcast spire"
+ },
+ "4630": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a snow line doorman working the boundary fits an Upper East Side tower"
+ },
+ "4631": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "peregrine falcons nesting on a high ledge fit the Financial District's tall ledges"
+ },
+ "4632": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "unnumbered mechanical floors reading harmonics fit a Midtown office tower"
+ },
+ "4633": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a rent controlled tenant amid luxury weather fits gentrifying Chelsea"
+ },
+ "4635": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "rooftop bees foraging crown lights fit a Midtown high rise"
+ },
+ "4636": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "a nine year old's rooftop forecast fits an Upper West Side building"
+ },
+ "4637": {
+  "place": "nb:Williamsburg",
+  "conf": "stated",
+  "why": "story names Brooklyn for the tower watching the transformer fire smoke"
+ },
+ "4639": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "a walk up's old tar roof kept inside a new crown fits the Upper West Side"
+ },
+ "4640": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "the oldest tower on the row writing a will fits a Financial District block"
+ },
+ "4641": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "story names Manhattan for the private weather merging into one sheet"
+ },
+ "4643": {
+  "place": "key:midtown_tunnel",
+  "conf": "inferred",
+  "why": "sandhogs boring six hundred feet under the river fit a major river tunnel"
+ },
+ "4644": {
+  "place": "nb:Murray Hill",
+  "conf": "stated",
+  "why": "story names Manhattan for the citywide steam main serpent"
+ },
+ "4646": {
+  "place": "nb:Concourse",
+  "conf": "stated",
+  "why": "story names the Bronx for the Ghanaian grocer's root cellar"
+ },
+ "4647": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a pneumatic mail canister still firing nightly fits the old lower Manhattan mail tubes"
+ },
+ "4648": {
+  "place": "nb:Inwood",
+  "conf": "stated",
+  "why": "story names Manhattan and the island's old aquifer fits Inwood's bedrock springs"
+ },
+ "4650": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "an abandoned west side freight tunnel drove road fits Chelsea's old rail line"
+ },
+ "4651": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "foundation crews leaving a worker in the footings fits a Financial District tower site"
+ },
+ "4652": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "a real speakeasy beneath a restored one fits the East Village's speakeasy history"
+ },
+ "4654": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "bricked coal chutes reopened as a mail route fit Lower East Side tenement cellars"
+ },
+ "4655": {
+  "place": "nb:Financial District",
+  "conf": "stated",
+  "why": "an 1760 hand dug well under a skyscraper fits the city's oldest colonial ground"
+ },
+ "4656": {
+  "place": "nb:Morningside Heights",
+  "conf": "inferred",
+  "why": "a mole people's library evokes the Freedom Tunnel near Riverside Park"
+ },
+ "4658": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "voices banked from every grate fit the dense Lower East Side streets"
+ },
+ "4659": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a demolished hotel's footings under a parking lot fit Midtown's turnover of grand hotels"
+ },
+ "4660": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "Manhattan schist is named directly, deepest and most exposed under Midtown"
+ },
+ "4661": {
+  "place": "nb:Park Slope",
+  "conf": "stated",
+  "why": "story names Brooklyn for the school's drained Victorian cistern"
+ },
+ "4662": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "an old post office's dead letter cellar fits the former main post office near City Hall"
+ },
+ "4664": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "the undercroft voting to keep holding the city up fits the Financial District's dense foundations"
+ },
+ "4665": {
+  "place": "nb:Financial District",
+  "conf": "stated",
+  "why": "the colony's first cellar hole names the earliest New Amsterdam settlement"
+ },
+ "4666": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "grates glowing upward at solstice fits a dense East Village block"
+ },
+ "4669": {
+  "place": "key:gwb",
+  "conf": "inferred",
+  "why": "a bridge painter starting over at the far end fits the George Washington Bridge's endless repaint"
+ },
+ "4674": {
+  "place": "key:brooklyn_bridge",
+  "conf": "inferred",
+  "why": "a bicycle ghost peloton fits the Brooklyn Bridge's iconic bike path"
+ },
+ "4675": {
+  "place": "key:verrazzano",
+  "conf": "inferred",
+  "why": "a bridge breathing through long exhales fits the Verrazzano's great span"
+ },
+ "4676": {
+  "place": "key:brooklyn_bridge",
+  "conf": "stated",
+  "why": "the eighteen eighty three fare rate is the Brooklyn Bridge's opening year"
+ },
+ "4677": {
+  "place": "key:verrazzano",
+  "conf": "inferred",
+  "why": "cable spinning wire by wire fits a great suspension bridge's construction history"
+ },
+ "4678": {
+  "place": "key:brooklyn_bridge",
+  "conf": "inferred",
+  "why": "every bridge bell in the city answering centers on the Brooklyn Bridge"
+ },
+ "4679": {
+  "place": "key:manhattan_bridge",
+  "conf": "inferred",
+  "why": "a bridge keeping its tension diary fits the Manhattan Bridge's suspenders"
+ },
+ "4681": {
+  "place": "key:williamsburg_bridge",
+  "conf": "inferred",
+  "why": "an ironworker's rope swing over black river fits the Williamsburg Bridge"
+ },
+ "4682": {
+  "place": "nb:Mott Haven",
+  "conf": "stated",
+  "why": "story names the Bronx and a little bridge over the Bronx Kill"
+ },
+ "4684": {
+  "place": "key:brooklyn_bridge",
+  "conf": "inferred",
+  "why": "thrown white hot rivets sewing spans together fit the Brooklyn Bridge's construction lore"
+ },
+ "4685": {
+  "place": "key:brooklyn_bridge",
+  "conf": "inferred",
+  "why": "letters falling into the anchorage fit the Brooklyn Bridge's Manhattan anchorage"
+ },
+ "4686": {
+  "place": "key:brooklyn_bridge",
+  "conf": "inferred",
+  "why": "a harbor pilot's widow reading tides at the anchorage fits the Brooklyn Bridge"
+ },
+ "4687": {
+  "place": "key:williamsburg_bridge",
+  "conf": "inferred",
+  "why": "wire walkers granted the cables one night fits the Williamsburg Bridge"
+ },
+ "4688": {
+  "place": "key:brooklyn_bridge",
+  "conf": "stated",
+  "why": "story names Manhattan and the anchorage, the Brooklyn Bridge's real archive space"
+ },
+ "4718": {
+  "place": "nb:Greenwich Village",
+  "conf": "inferred",
+  "why": "a puddle embassy on wet avenues fits the Village's low rise streets"
+ },
+ "4719": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "two barbers working back to back through a mirror fit a Harlem barbershop"
+ },
+ "4721": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a bodega cat ruling a convex mirror fits Washington Heights bodega life"
+ },
+ "4722": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a window washer cleaning the city's reflection fits a Midtown tower"
+ },
+ "4727": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a taxi's rearview mirror scene fits a Long Island City cab depot"
+ },
+ "4730": {
+  "place": "nb:Astoria",
+  "conf": "stated",
+  "why": "story names Queens for the parked chrome bumper historians"
+ },
+ "4731": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "a two sided mirror matching unguarded faces fits an East Village shop"
+ },
+ "4732": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "rain falling upward into reflection fits a leafy Park Slope block"
+ },
+ "4734": {
+  "place": "key:bellevue",
+  "conf": "stated",
+  "why": "a four in the morning hospital locker room names Bellevue's night shift"
+ },
+ "4735": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "antique mirror dealers returning old glass home fit Chelsea's antique district"
+ },
+ "4736": {
+  "place": "nb:Mott Haven",
+  "conf": "stated",
+  "why": "story names the Bronx for the disco ball's storage unit"
+ },
+ "4737": {
+  "place": "nb:Lower East Side",
+  "conf": "inferred",
+  "why": "a stroke survivor reading backward signage fits the Lower East Side's varied storefronts"
+ },
+ "4738": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "an interrogation room mirror turning honest fits a precinct near Foley Square"
+ },
+ "4740": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "every reflective surface aligning kindly fits a quiet Upper West Side night"
+ },
+ "4743": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "bedrock shifting under every door fits central Manhattan's schist foundation"
+ },
+ "4744": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "every grotesque climbing down to usher commuters fits the Financial District"
+ },
+ "4745": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "ten thousand tanks filling with light fits a dense Chelsea rooftop view"
+ },
+ "4748": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "buildings dreaming their architects fits Midtown's drafting room towers"
+ },
+ "4754": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a rent party for the whole city names Harlem's historic rent party tradition"
+ },
+ "4756": {
+  "place": "nb:Concourse",
+  "conf": "stated",
+  "why": "story names the Bronx and the Bronx Museum of the Arts on the Grand Concourse"
+ },
+ "4761": {
+  "place": "key:subway_system",
+  "conf": "inferred",
+  "why": "a perfect citywide commute fits the subway carrying everyone at once"
+ },
+ "4762": {
+  "place": "nb:Greenwich Village",
+  "conf": "inferred",
+  "why": "a corner kept ordinary by decree fits a beloved Village corner"
+ },
+ "4764": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "every window reading the same sentence fits a dense Midtown skyline"
+ },
+ "4766": {
+  "place": "nb:SoHo",
+  "conf": "stated",
+  "why": "a cast iron facade holding her own door open names SoHo directly"
+ },
+ "4769": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a man unseen by rendered doors fits a generic dense Midtown street"
+ },
+ "4771": {
+  "place": "nb:Washington Heights",
+  "conf": "stated",
+  "why": "a chopped cheese sandwich names Washington Heights, its documented origin"
+ }
+}

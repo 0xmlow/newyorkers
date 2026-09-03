@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/blossom-design-system-76a352ca-5a11-4d31-90d6-6fb940e05072/colors_and_type.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>html, body { margin: 0; padding: 0; background: #1a1d24; } a { color: #F0F4F8; } a:hover { color: #00E5FF; }</style>
+</helmet>
+<div style="font-family: 'Bodoni Moda', serif; color: #F0F4F8; padding: 60px; display: flex; flex-direction: column; gap: 40px; width: max-content;">
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.3em; color: #8899AA;">CAROUSEL SYSTEM · DOSSIER REVEALS · X + IG</div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em; color: #556;">5 FRAMES PER RESIDENT · 1080&times;1350 · SWIPE ARROW LOCKED BOTTOM-RIGHT · SWAP FIELDS PER RELEASE</div>
+  </div>
+
+  <div style="display: flex; gap: 24px;">
+    <sc-for list="{{ frames }}" as="f" hint-placeholder-count="5">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.24em; color: #8899AA;">{{ f.slot }}</div>
+        <div style="width: 432px; height: 540px; background: {{ f.bg }}; color: {{ f.fg }}; display: flex; flex-direction: column; box-sizing: border-box; position: relative; overflow: hidden;">
+          <sc-if value="{{ f.img }}" hint-placeholder-val="{{ false }}">
+            <img src="{{ f.img }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: {{ f.imgOpacity }};">
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);"></div>
+          </sc-if>
+          <div style="position: relative; padding: 20px 24px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.26em;">
+            <div>{{ f.headerL }}</div>
+            <div style="color: #00E5FF;">{{ f.headerR }}</div>
+          </div>
+          <div style="position: relative; flex: 1; display: flex; flex-direction: column; justify-content: {{ f.justify }}; padding: 0 24px 24px; gap: 14px;">
+            <div style="font-size: {{ f.titleSize }}px; font-weight: 800; line-height: 1.0;">{{ f.title }}</div>
+            <sc-if value="{{ f.body }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.01em; opacity: 0.85;">{{ f.body }}</div>
+            </sc-if>
+            <sc-if value="{{ f.fields }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 0; border-top: 1px solid currentColor;">
+                <sc-for list="{{ f.fields }}" as="row" hint-placeholder-count="4">
+                  <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid currentColor; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.14em;">
+                    <div style="opacity: 0.55;">{{ row.k }}</div>
+                    <div>{{ row.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="position: absolute; right: 20px; bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.2em; opacity: 0.7;">{{ f.pager }} &rarr;</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="max-width: 900px; font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 500; color: #aab6c2; line-height: 1.8;">Cadence: one dossier carousel per day of the Enumeration, posted 12:00 ET. Frame 4&rsquo;s hunt clue is real &mdash; the illusion exists in the piece and the first correct find is written to its public record. Caption template: &ldquo;RESIDENT No. ____ enters the record. [one line on the character] Find what&rsquo;s hidden and you&rsquo;re named in the piece forever. Get counted &rarr; link.&rdquo;</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const paper = '#F4F1EA', ink = '#101012';
+    const frames = [
+      { slot: 'FRAME 1 · COVER', bg: '#000', fg: '#F0F4F8', img: 'assets/hero/1866.jpg', imgOpacity: 1, headerL: 'BUREAU OF THE SOFT CENSUS', headerR: 'DOSSIER', title: 'RESIDENT No. 1866', titleSize: 46, body: null, fields: null, justify: 'flex-end', pager: '1/5' },
+      { slot: 'FRAME 2 · THE RECORD', bg: paper, fg: ink, img: null, imgOpacity: 0, headerL: 'FORM NY-2026 · PAGE 2', headerR: 'ON FILE', title: 'THE RECORD', titleSize: 40, body: null, justify: 'flex-start',
+        fields: [ { k: 'CENSUS No.', v: '1866' }, { k: 'ERA', v: 'THE MYTHOS' }, { k: 'STATUS', v: '1 OF 365' }, { k: 'SET', v: 'THE NEW YORK TAROT' }, { k: 'STATES', v: 'APPENDS OVER TIME' } ], pager: '2/5' },
+      { slot: 'FRAME 3 · THE DETAIL', bg: '#000', fg: '#F0F4F8', img: 'assets/hero/1866.jpg', imgOpacity: 1, headerL: 'DETAIL · 400%', headerR: 'LOOK CLOSER', title: '', titleSize: 40, body: null, fields: null, justify: 'flex-end', pager: '3/5' },
+      { slot: 'FRAME 4 · THE HUNT', bg: '#000', fg: '#F0F4F8', img: null, imgOpacity: 0, headerL: 'PROOF OF LOOKING', headerR: 'OPEN', title: 'ONE THING IS HIDDEN IN THIS PIECE.', titleSize: 34, body: 'Every character holds one optical illusion, by design. Find it, submit what you saw, and your census number is written to this piece\u2019s public record. First correct find is named there forever.', fields: null, justify: 'center', pager: '4/5' },
+      { slot: 'FRAME 5 · CTA', bg: '#2962FF', fg: '#F0F4F8', img: null, imgOpacity: 0, headerL: 'AUG 24 \u2013 SEPT 3', headerR: 'FREE', title: 'GET COUNTED', titleSize: 52, body: 'Ten days. No wallet. Everyone who registers is counted in the artwork, permanently. NEWYORKERS.MLOW.XYZ', fields: null, justify: 'center', pager: '5/5' }
+    ];
+    return { frames };
+  }
+}
+</script>
+</body>
+</html>
