@@ -106,6 +106,19 @@
 #three .props img{width:100%;aspect-ratio:1/1;object-fit:contain}
 @media (max-width:1000px){#three .box{grid-template-columns:1fr}#three .props{flex-wrap:wrap}#three .props div{flex:1 1 30%}}
 
+/* museum */
+#museum .box{border:1px solid var(--divider);background:var(--card);padding:clamp(24px,5vw,64px);display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:start}
+#museum .rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#museum .rooms a{display:block;border:1px solid var(--divider);padding:12px 12px 10px;color:var(--cloud);border-left:3px solid var(--c);transition:border-color .2s,background .2s;background:var(--ink)}
+#museum .rooms a:hover{border-color:var(--c);background:#0a0c12}
+#museum .rooms small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--c);text-transform:uppercase}
+#museum .rooms b{display:block;font-size:15px;font-weight:700;margin-top:4px;line-height:1.15}
+#museum .facts{display:flex;gap:32px;margin-top:28px;flex-wrap:wrap}
+#museum .facts div b{display:block;font-size:34px;font-weight:800;color:var(--cyan)}
+#museum .facts div span{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--slate);text-transform:uppercase}
+@media (max-width:1000px){#museum .box{grid-template-columns:1fr}#museum .rooms{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){#museum .rooms{grid-template-columns:1fr}}
+
 /* mechanic */
 #mech .g{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:40px}
 #mech .rows{font-family:var(--mono)}
@@ -264,9 +277,65 @@
   </div>
 </section>
 
+<!-- MUSEUM -->
+<section id="museum" class="wrap" style="padding-bottom:120px">
+  <div class="box">
+    <div>
+      <div class="kicker">10 · The museum</div>
+      <div class="h-m" style="margin-top:18px">Walk the city as a gallery. Forty one rooms, every New Yorker hung where they were counted, the light following the New York clock.</div>
+      <p class="body" style="margin-top:16px;font-size:16px">A Three.js museum built room by room: the Bowery after hours, the Guggenheim ramp, the Chrysler lobby under its crown, the Vessel, a Bushwick rooftop, the nave of St. John the Divine. Every interior comes with its street and its skyline. Each room hangs the characters the census recorded at that place first, then any era, family or set you choose. The light follows the New York clock and the hang reshuffles daily. Any room exports as a GLB. Click a work and the record opens.</p>
+      <div class="facts"><div><b>41</b><span>rooms</span></div><div><b id="musWorks">0</b><span>works on the walls</span></div><div><b>WASD</b><span>to walk, drag to look</span></div></div>
+      <p style="margin-top:28px"><a class="btn" href="museum.html">ENTER THE MUSEUM</a> <a class="btn ghost" href="museum.html#room=guggenheim" style="margin-left:8px">START ON THE RAMP</a></p>
+    </div>
+    <div class="rooms">
+      <a href="museum.html#room=bowery" style="--c:#79d4e9"><small>LOWER MANHATTAN</small><b>The Bowery</b></a>
+      <a href="museum.html#room=subway" style="--c:#e2ca89"><small>THE SUBWAY</small><b>Below the city</b></a>
+      <a href="museum.html#room=met" style="--c:#dabb96"><small>THE MET ROOF GARDEN</small><b>Above the park</b></a>
+      <a href="museum.html#room=brooklyn" style="--c:#91bacf"><small>BROOKLYN WATERFRONT</small><b>Across the river</b></a>
+      <a href="museum.html#room=times" style="--c:#e477bc"><small>TIMES SQUARE</small><b>Electric crossroads</b></a>
+      <a href="museum.html#room=ferry" style="--c:#f8af72"><small>STATEN ISLAND FERRY</small><b>The harbor crossing</b></a>
+      <a href="museum.html#room=botanical" style="--c:#a4c7a1"><small>NEW YORK BOTANICAL GARDEN</small><b>The living city</b></a>
+      <a href="museum.html#room=penn" style="--c:#bddce7"><small>PENN / MOYNIHAN TRAIN HALL</small><b>Arrivals / departures</b></a>
+      <a href="museum.html#room=grand" style="--c:#b6c5ad"><small>GRAND CENTRAL TERMINAL</small><b>Under the stars</b></a>
+      <a href="museum.html#room=highline" style="--c:#acbf89"><small>THE HIGH LINE</small><b>The city, rewilded</b></a>
+      <a href="museum.html#room=coney" style="--c:#eec092"><small>CONEY ISLAND</small><b>At the edge of it all</b></a>
+      <a href="museum.html#room=bethesda" style="--c:#c4ad83"><small>BETHESDA ARCADE</small><b>The painted threshold</b></a>
+      <a href="museum.html#room=oculus" style="--c:#c6e4ef"><small>THE OCULUS</small><b>White ribs, infinite city</b></a>
+      <a href="museum.html#room=guggenheim" style="--c:#e9debf"><small>THE GUGGENHEIM SPIRAL</small><b>Endless ascent</b></a>
+      <a href="museum.html#room=library" style="--c:#c4a47a"><small>NYPL ROSE READING ROOM</small><b>City of stories</b></a>
+      <a href="museum.html#room=apollo" style="--c:#dc8c86"><small>THE APOLLO</small><b>After the applause</b></a>
+      <a href="museum.html#room=unisphere" style="--c:#a5cfdf"><small>FLUSHING MEADOWS</small><b>The boroughs in orbit</b></a>
+      <a href="museum.html#room=tram" style="--c:#eaa58a"><small>ROOSEVELT ISLAND TRAM</small><b>Suspended New York</b></a>
+      <a href="museum.html#room=cloisters" style="--c:#c5b991"><small>THE CLOISTERS</small><b>The quiet city</b></a>
+      <a href="museum.html#room=navyyard" style="--c:#d4ae78"><small>BROOKLYN NAVY YARD</small><b>The dry dock cathedral</b></a>
+      <a href="museum.html#room=governors" style="--c:#a7c496"><small>GOVERNORS ISLAND HILLS</small><b>The harbor observatory</b></a>
+      <a href="museum.html#room=chrysler" style="--c:#d9c48a"><small>THE CHRYSLER BUILDING</small><b>The crown and the lobby</b></a>
+      <a href="museum.html#room=flatiron" style="--c:#c9b79a"><small>THE FLATIRON</small><b>The prow</b></a>
+      <a href="museum.html#room=bleachers" style="--c:#9fb4d6"><small>THE BRONX BALLPARK</small><b>Bottom of the ninth</b></a>
+      <a href="museum.html#room=deli" style="--c:#e9c46a"><small>THE APPETIZING COUNTER</small><b>Take a number</b></a>
+      <a href="museum.html#room=washington" style="--c:#b9c8a4"><small>WASHINGTON SQUARE</small><b>Under the arch</b></a>
+      <a href="museum.html#room=boathouse" style="--c:#a9c9b0"><small>PROSPECT PARK BOATHOUSE</small><b>The Lullwater</b></a>
+      <a href="museum.html#room=halloffame" style="--c:#c9b08a"><small>HALL OF FAME FOR GREAT AMERICANS</small><b>The colonnade</b></a>
+      <a href="museum.html#room=twa" style="--c:#e07a7a"><small>TWA FLIGHT CENTER</small><b>Departures, 1962</b></a>
+      <a href="museum.html#room=snug" style="--c:#c9c3a4"><small>SNUG HARBOR</small><b>The sailors' rest</b></a>
+      <a href="museum.html#room=wollman" style="--c:#bcd7ea"><small>WOLLMAN RINK</small><b>Ice under the towers</b></a>
+      <a href="museum.html#room=doyers" style="--c:#e05a4a"><small>DOYERS STREET</small><b>The bend</b></a>
+      <a href="museum.html#room=strivers" style="--c:#c98a6a"><small>STRIVERS' ROW</small><b>The parlour floor</b></a>
+      <a href="museum.html#room=rock" style="--c:#8fb3d9"><small>TOP OF THE ROCK</small><b>Seventy floors up</b></a>
+      <a href="museum.html#room=frick" style="--c:#d9cfb0"><small>THE FRICK</small><b>The garden court</b></a>
+      <a href="museum.html#room=seaport" style="--c:#9fb8c4"><small>SOUTH STREET SEAPORT</small><b>The tall ship</b></a>
+      <a href="museum.html#room=vessel" style="--c:#c98a5a"><small>HUDSON YARDS</small><b>The climb</b></a>
+      <a href="museum.html#room=littleisland" style="--c:#a8c4a0"><small>LITTLE ISLAND</small><b>The tulips</b></a>
+      <a href="museum.html#room=cathedral" style="--c:#b8a8c8"><small>ST. JOHN THE DIVINE</small><b>The unfinished nave</b></a>
+      <a href="museum.html#room=queensboro" style="--c:#a0a8d8"><small>QUEENSBORO PLAZA</small><b>The elevated</b></a>
+      <a href="museum.html#room=bushwick" style="--c:#e8a04a"><small>A BUSHWICK ROOFTOP</small><b>The roof</b></a>
+    </div>
+  </div>
+</section>
+
 <!-- MECHANIC -->
 <section id="mech" class="section blue wrap">
-  <div class="kicker" style="color:var(--cloud);opacity:.8">10 · How the city fills</div>
+  <div class="kicker" style="color:var(--cloud);opacity:.8">11 · How the city fills</div>
   <div class="g">
     <div>
       <div class="h-l" style="font-size:clamp(36px,5vw,60px);font-weight:800;line-height:1.02">First THE COUNT.<br>Then THE CLAIM.</div>
@@ -288,7 +357,7 @@
 <section id="note" class="section wrap">
   <div class="g">
     <div>
-      <div class="kicker">11 · The open notebook</div>
+      <div class="kicker">12 · The open notebook</div>
       <h2 class="h-l" style="margin-top:24px">Every layer shown. Nothing hidden.</h2>
       <p class="body" style="margin-top:28px">The prompts, the style eras V1 through V10.1, the refires, the cost ledgers, the cuts. Almost no AI artist will publish what they threw away. This one does, because curation is the work. Every record in the census carries its own prompt under FROM THE STUDIO.</p>
     </div>
@@ -330,7 +399,7 @@ $("#stWorks").textContent = num(C.states);
 
 /* eras */
 (function(){
-  const words=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen"];
+  const words=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"];
   $("#eraCountWord").textContent=words[S.eras.length]||S.eras.length;
   const wrap=$("#eraList");
   S.eras.forEach(e=>{
@@ -392,6 +461,7 @@ $("#dosShuffle").onclick=()=>{dseed+=7919;dossiers(dseed);};
 })();
 
 /* mechanic dates + notebook */
+$("#musWorks").textContent=num(C.pieces);
 $("#mechDates").innerHTML=`THE COUNT · ${esc(CFG.countLabel||"")}<br>THE CLAIM · ${esc(CFG.claimLabel||"")}${CFG.claimSigned?"":' <span class="unsigned">· recommended date, not yet signed</span>'}`;
 const fams=[...new Set(P.map(p=>p.f).filter(Boolean))].sort();
 $("#noteList").innerHTML=[

@@ -1,0 +1,1352 @@
+[
+ {
+  "num": 6367,
+  "name": "The Dispatcher Who Has Not Seen Him Awake Since 2019",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Renata Cruz, 47, Woodside. Lead of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: commanding on the radio, unrecognizably soft off it Wants: one shared Tuesday. Flaw: the night pays double and she has built a life that requires double. Signature: a thermos that is a personality and a jacket that has never been washed. The painting: dawn, coming off shift, she is standing in her own doorway with her coat still on watching her husband sleep, and the sun is coming up behind her in the hallway, a dispatch room. What it carries about 2026: a city that never stops is a city where somebody never sleeps.",
+  "monument": true
+ },
+ {
+  "num": 6368,
+  "name": "The Man in the Bridge Booth",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Ruben Castillo, 59, Inwood. Principal of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: philosophical, chatty to nobody, has thought a great deal in a very small room Wants: a conversation longer than four seconds. Flaw: he has become strange in the booth and knows it. Signature: a booth the size of a phone box and four hundred cars an hour. The painting: in a lit booth at three in the morning, hand out, and no car in either direction as far as the eye can see, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6369,
+  "name": "The Woman Stocking the Aisles at Three",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Adaeze Nwosu, 33, Aba by way of Jamaica. Principal of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: fast, headphones in, has an entire inner life the day shift never sees Wants: the day shift, which pays less. Flaw: she cannot afford the life she is working nights to have. Signature: a pallet jack and an aisle of blank white product faces. The painting: alone in a supermarket aisle at three, every package on the shelves a blank glowing rectangle, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6370,
+  "name": "The Driver Who Owns the Depot's Silence",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Yannick Beaubrun, 48, Jacmel by way of Rosedale. Principal of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: courteous, unhurried, the first person a thousand strangers see each day Wants: to be greeted back. Flaw: he greets everyone and has stopped expecting it. Signature: a bus depot at four thirty and a coffee balanced on a dash. The painting: a depot before dawn, rows of buses, him walking to his with a coffee, the only figure in it, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6371,
+  "name": "The Woman Who Cleans the Offices",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Katarzyna Wozniak, 54, Lodz by way of Greenpoint. Principal of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: private, exacting, has opinions about every person from their desk Wants: to be seen once by somebody who works there. Flaw: she knows them intimately and they do not know her name. Signature: a cart, a floor of empty desks, a city out the window. The painting: alone on a lit office floor at midnight, the whole skyline outside, dusting one framed photograph, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6372,
+  "name": "Siobhan Halloran, a dispatcher who runs a whole borough by radio",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Siobhan Halloran, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: watchful and slow to trust, then completely loyal Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a thermos that is a personality. The painting: in a lit booth with no car in either direction, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6373,
+  "name": "Marvin Bridges, a bridge toll operator in a booth the size of a phone box",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Marvin Bridges, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: sharp, tired, and still the most competent person in the room Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a jacket that has never been washed. The painting: in a supermarket aisle at three with everything blank and glowing, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6374,
+  "name": "Bracha Kravitz, an overnight stocker in an aisle of blank white packages",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Bracha Kravitz, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: stubborn in a way that has been useful exactly twice Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: sunglasses on at seven in the morning. The painting: alone on an office floor with the skyline outside, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6375,
+  "name": "Rinchen Delos-Reyes, a bus depot driver at four thirty in the morning",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Rinchen Delos-Reyes, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: restless, capable, unable to sit still in a good situation Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a booth the size of a phone box. The painting: at a depot before dawn walking to the bus with a coffee, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6376,
+  "name": "Nneka Okonkwo, an office cleaner alone on a lit floor at midnight",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Nneka Okonkwo, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: impatient with everything except the work itself Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a pallet jack in an aisle of blank white packages. The painting: coming off shift in a doorway watching somebody sleep, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6377,
+  "name": "Everton Toussaint, a night security guard doing a route he could walk asleep",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Everton Toussaint, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: quietly furious and immaculately polite about it Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a cleaning cart on a lit office floor. The painting: in a tunnel with a lantern and a train coming somewhere, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6378,
+  "name": "Perla Ocampo, a bakery night shift starting at one",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Perla Ocampo, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: unbothered by things that should bother them Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a lantern in a tunnel. The painting: at the exact moment the sun comes up, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6379,
+  "name": "Farhan Krishnamurthy, a hotel night auditor who sees the city's whole personality",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Farhan Krishnamurthy, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: certain about work and lost about everything else Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a radio desk and a microphone. The painting: at a radio desk talking to people who cannot sleep, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6380,
+  "name": "Akiko Xu, a subway track worker in a tunnel with a lantern",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Akiko Xu, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: proud, and it costs them things it should not Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: keys going back on a hook. The painting: with a thermos that is a personality, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6381,
+  "name": "Zofia Stanescu, a woman who works two overnights and one day job",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Zofia Stanescu, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: observant to the point of discomfort Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a jacket that has never been washed. The painting: in sunglasses at seven in the morning going the other way, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6382,
+  "name": "Souad Nasrallah, a morgue attendant who is unfailingly gentle",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Souad Nasrallah, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: steady, dry, entirely without self pity Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: sunglasses on at seven in the morning. The painting: on an empty avenue with a sweeper and total ownership of it, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6383,
+  "name": "Dominic Feeney, a radio host broadcasting to insomniacs",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Dominic Feeney, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: funny in a register only three people in the city get Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a booth the size of a phone box. The painting: on a crisis line at four saying the right thing, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6384,
+  "name": "Cheryl Devereaux, a fuel truck driver refuelling a sleeping city",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Cheryl Devereaux, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: warm to strangers and guarded with family, which is backwards and they know it Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a pallet jack in an aisle of blank white packages. The painting: washing up in a bathroom at the end of it, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6385,
+  "name": "Tova Feldman, a woman who cleans a school after everybody has gone",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Tova Feldman, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: self deprecating as a defensive system Wants: a door with their own name on it. Flaw: they are so reliable that nobody has ever checked whether they are all right. Signature: a cleaning cart on a lit office floor. The painting: on a train home full of people going to work, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6386,
+  "name": "Bayarmaa Abdrakhmanov, a night court clerk",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Bayarmaa Abdrakhmanov, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: kind first and strategic second, in that order, always Wants: to be the reason somebody else got through it. Flaw: they know exactly what is happening and have decided not to look at it. Signature: a lantern in a tunnel. The painting: putting the keys back on the hook, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6387,
+  "name": "Babatunde Eze, a street sweeper operator with the whole avenue to himself",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Babatunde Eze, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: gentle in a way that reads as weakness until it does not Wants: proof, in writing, that this happened. Flaw: they keep score and pretend they do not. Signature: a radio desk and a microphone. The painting: sleeping while the city is loud, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6388,
+  "name": "Petronella Dorsainvil, a woman who answers a crisis line from two to eight",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Petronella Dorsainvil, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: generous past the point of sense Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: keys going back on a hook. The painting: in a lit booth with no car in either direction, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6389,
+  "name": "Nestor Salgado, a man who turns the lights on for the whole building",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Nestor Salgado, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: romantic about the city and clear eyed about what it costs Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a thermos that is a personality. The painting: in a supermarket aisle at three with everything blank and glowing, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6390,
+  "name": "Lakshmi Hossain, a dispatcher who runs a whole borough by radio",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Lakshmi Hossain, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: watchful and slow to trust, then completely loyal Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: sunglasses on at seven in the morning. The painting: at a depot before dawn walking to the bus with a coffee, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6391,
+  "name": "Feng Baek, a bridge toll operator in a booth the size of a phone box",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Feng Baek, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: sharp, tired, and still the most competent person in the room Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a booth the size of a phone box. The painting: coming off shift in a doorway watching somebody sleep, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6392,
+  "name": "Nadia Horvat, an overnight stocker in an aisle of blank white packages",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Nadia Horvat, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: stubborn in a way that has been useful exactly twice Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a pallet jack in an aisle of blank white packages. The painting: in a tunnel with a lantern and a train coming somewhere, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6393,
+  "name": "Reza Ozturk, a bus depot driver at four thirty in the morning",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Reza Ozturk, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: restless, capable, unable to sit still in a good situation Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a cleaning cart on a lit office floor. The painting: at the exact moment the sun comes up, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6394,
+  "name": "Kathleen Vitale, an office cleaner alone on a lit floor at midnight",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Kathleen Vitale, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: impatient with everything except the work itself Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a lantern in a tunnel. The painting: at a radio desk talking to people who cannot sleep, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6395,
+  "name": "Jermaine Ballard, a night security guard doing a route he could walk asleep",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Jermaine Ballard, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: quietly furious and immaculately polite about it Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a radio desk and a microphone. The painting: with a thermos that is a personality, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6396,
+  "name": "Esti Blum, a bakery night shift starting at one",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Esti Blum, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: unbothered by things that should bother them Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: keys going back on a hook. The painting: in sunglasses at seven in the morning going the other way, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6397,
+  "name": "Tashi Gyaltsen, a hotel night auditor who sees the city's whole personality",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Tashi Gyaltsen, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: certain about work and lost about everything else Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a thermos that is a personality. The painting: on an empty avenue with a sweeper and total ownership of it, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6398,
+  "name": "Abena Mensah, a subway track worker in a tunnel with a lantern",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Abena Mensah, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: proud, and it costs them things it should not Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a jacket that has never been washed. The painting: on a crisis line at four saying the right thing, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6399,
+  "name": "Maureen Blackman, a woman who works two overnights and one day job",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Maureen Blackman, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: observant to the point of discomfort Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a booth the size of a phone box. The painting: washing up in a bathroom at the end of it, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6400,
+  "name": "Milagros Castellanos, a morgue attendant who is unfailingly gentle",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Milagros Castellanos, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: steady, dry, entirely without self pity Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a pallet jack in an aisle of blank white packages. The painting: on a train home full of people going to work, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6401,
+  "name": "Asif Bhandari, a radio host broadcasting to insomniacs",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Asif Bhandari, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: funny in a register only three people in the city get Wants: a door with their own name on it. Flaw: they are so reliable that nobody has ever checked whether they are all right. Signature: a cleaning cart on a lit office floor. The painting: putting the keys back on the hook, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6402,
+  "name": "Min-seo Chow, a fuel truck driver refuelling a sleeping city",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Min-seo Chow, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: warm to strangers and guarded with family, which is backwards and they know it Wants: to be the reason somebody else got through it. Flaw: they know exactly what is happening and have decided not to look at it. Signature: a lantern in a tunnel. The painting: sleeping while the city is loud, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6403,
+  "name": "Vesna Kovalenko, a woman who cleans a school after everybody has gone",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Vesna Kovalenko, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: self deprecating as a defensive system Wants: proof, in writing, that this happened. Flaw: they keep score and pretend they do not. Signature: a radio desk and a microphone. The painting: in a lit booth with no car in either direction, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6404,
+  "name": "Layal Karimi, a night court clerk",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Layal Karimi, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: kind first and strategic second, in that order, always Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: keys going back on a hook. The painting: in a supermarket aisle at three with everything blank and glowing, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6405,
+  "name": "Nunzio Stavrakis, a street sweeper operator with the whole avenue to himself",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Nunzio Stavrakis, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: gentle in a way that reads as weakness until it does not Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a thermos that is a personality. The painting: alone on an office floor with the skyline outside, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6406,
+  "name": "Nikki Starks, a woman who answers a crisis line from two to eight",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Nikki Starks, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: generous past the point of sense Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: a jacket that has never been washed. The painting: at a depot before dawn walking to the bus with a coffee, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6407,
+  "name": "Dov Rosenblatt, a man who turns the lights on for the whole building",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Dov Rosenblatt, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: romantic about the city and clear eyed about what it costs Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: sunglasses on at seven in the morning. The painting: coming off shift in a doorway watching somebody sleep, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6408,
+  "name": "Yangzom Gurung, a dispatcher who runs a whole borough by radio",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Yangzom Gurung, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: watchful and slow to trust, then completely loyal Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a pallet jack in an aisle of blank white packages. The painting: at the exact moment the sun comes up, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6409,
+  "name": "Sekou Sanogo, a bridge toll operator in a booth the size of a phone box",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Sekou Sanogo, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: sharp, tired, and still the most competent person in the room Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a cleaning cart on a lit office floor. The painting: at a radio desk talking to people who cannot sleep, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6410,
+  "name": "Cherry Baptiste, an overnight stocker in an aisle of blank white packages",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Cherry Baptiste, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: stubborn in a way that has been useful exactly twice Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a lantern in a tunnel. The painting: with a thermos that is a personality, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6411,
+  "name": "Efrain Arocho, a bus depot driver at four thirty in the morning",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Efrain Arocho, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: restless, capable, unable to sit still in a good situation Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a radio desk and a microphone. The painting: in sunglasses at seven in the morning going the other way, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6412,
+  "name": "Nusrat Narayanan, an office cleaner alone on a lit floor at midnight",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Nusrat Narayanan, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: impatient with everything except the work itself Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: keys going back on a hook. The painting: on an empty avenue with a sweeper and total ownership of it, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6413,
+  "name": "Dae-ho Nakamura, a night security guard doing a route he could walk asleep",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Dae-ho Nakamura, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: quietly furious and immaculately polite about it Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a thermos that is a personality. The painting: on a crisis line at four saying the right thing, a warehouse aisle at three. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6414,
+  "name": "Halyna Adamczyk, a bakery night shift starting at one",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Halyna Adamczyk, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: unbothered by things that should bother them Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a jacket that has never been washed. The painting: washing up in a bathroom at the end of it, a bus depot. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6415,
+  "name": "Farid Jarrah, a hotel night auditor who sees the city's whole personality",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Farid Jarrah, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: certain about work and lost about everything else Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: sunglasses on at seven in the morning. The painting: on a train home full of people going to work, a dispatch room. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6416,
+  "name": "Peg Marchetti, a subway track worker in a tunnel with a lantern",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Heroes",
+  "set": "The Long Shift",
+  "brief": "Peg Marchetti, None, None. Cast of The Long Shift (house thesis: A city that never stops is a city where somebody never sleeps, and it is never the same people.). Personality: proud, and it costs them things it should not Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a booth the size of a phone box. The painting: putting the keys back on the hook, a bridge booth. What it carries about 2026: A city that never stops is a city where somebody never sleeps, and it is never the same people..",
+  "monument": false
+ },
+ {
+  "num": 6417,
+  "name": "The Last Man Who Speaks It On This Side",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Salvatore Ferrante, 84, Bensonhurst by way of Sicily. Lead of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: courtly, sly, tells the same three stories and they are all good Wants: one person to say a sentence back to him correctly. Flaw: he waited too long to teach it and now teaches it too fast. Signature: a ring worn thin and a tool inherited in 1961 and still in daily use. The painting: at a social club table he is mid sentence teaching a young woman who is not related to him, and she has just said it back correctly, and his face has not caught up yet, a rent controlled apartment. What it carries about 2026: what a life in this city adds up to, and who is left to receive it.",
+  "monument": true
+ },
+ {
+  "num": 6418,
+  "name": "The Woman Sixty One Years on One Block",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Ruth Nightingale, 88, Harlem. Principal of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: regal, funny, remembers everything and deploys it strategically Wants: to die in this apartment. Flaw: everyone who could have helped her stay has already gone. Signature: a window, a chair, and a view she has had since 1965. The painting: in her chair at the window, and the street below shows sixty one years at once in receding layers, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6419,
+  "name": "The Man Teaching a Trade to Somebody Else's Kid",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Ephraim Gutierrez, 70, Ponce by way of Bushwick. Principal of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: patient, exacting, has decided who gets it and the family are not speaking to him Wants: the skill to continue. Flaw: choosing the apprentice cost him his son. Signature: a bench, two sets of hands, a tool from 1961. The painting: two pairs of hands on one tool, his and a young stranger's, and a door behind them slightly open, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6420,
+  "name": "The Woman Who Runs the Social Club",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Odessa Fairweather, 76, Bridgetown by way of Flatbush. Principal of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: imperious, hilarious, has buried more friends than she will discuss Wants: new members under sixty. Flaw: she has made the club so perfect that it cannot change. Signature: a hall of set tables and a photograph wall. The painting: in a hall of perfectly set tables before anyone arrives, and half the chairs will stay empty, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6421,
+  "name": "The Man Closing the Shop After Fifty Years",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Nikos Stavrakis, 79, Kalymnos by way of Astoria. Principal of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: cheerful, matter of fact, refuses to make it a funeral Wants: to hand somebody the keys. Flaw: there is nobody to hand them to and he keeps not saying so. Signature: a shop stripped to the shelves and one key in a hand. The painting: in an emptied shop holding a single key out toward nobody, the shelves behind him blank and clean, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6422,
+  "name": "Simone Ellis, a woman sixty one years on the same block",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Simone Ellis, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: watchful and slow to trust, then completely loyal Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a ring worn thin. The painting: in a chair at a window that has been hers since 1965, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6423,
+  "name": "Shaya Friedlander, a man teaching a trade to somebody else's kid",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Shaya Friedlander, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: sharp, tired, and still the most competent person in the room Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a photograph carried for decades. The painting: with two pairs of hands on one tool, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6424,
+  "name": "Sangay Khaing, a social club president with too many empty chairs",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Sangay Khaing, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: stubborn in a way that has been useful exactly twice Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: a tool inherited in 1961 and still used. The painting: in a hall of perfectly set tables before anyone arrives, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6425,
+  "name": "Halima Diallo, a shopkeeper closing after fifty years",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Halima Diallo, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: restless, capable, unable to sit still in a good situation Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a chair at a window since 1965. The painting: holding a single key out toward nobody, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6426,
+  "name": "Fitzroy Fairweather, the last fluent speaker of a dialect on this side of the ocean",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Fitzroy Fairweather, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: impatient with everything except the work itself Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a box of index cards in one hand. The painting: saying a sentence and having it said back correctly, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6427,
+  "name": "Xiomara Rivas, a woman who cooks a dish nobody else knows how to make",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Xiomara Rivas, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: quietly furious and immaculately polite about it Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a hall of perfectly set tables. The painting: showing somebody the recipe by doing it, not writing it, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6428,
+  "name": "Rajesh Narayanan, a man who has run the same route since 1979",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Rajesh Narayanan, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: unbothered by things that should bother them Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a single key held out toward nobody. The painting: in a photograph wall's worth of a life, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6429,
+  "name": "Noriko Baek, a grandmother raising a second generation of grandchildren",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Noriko Baek, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: certain about work and lost about everything else Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a jacket that is now too big. The painting: at a table with four generations at it, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6430,
+  "name": "Milena Danylchenko, a woman who keeps the recipes written on index cards",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Milena Danylchenko, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: proud, and it costs them things it should not Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: a framed photograph wall of one life. The painting: at a cemetery in Queens on a Sunday, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6431,
+  "name": "Sami Ansari, a man whose union card is framed",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Sami Ansari, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: observant to the point of discomfort Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a photograph carried for decades. The painting: handing over a tool that has been used since 1961, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6432,
+  "name": "Nuala Kilbride, a widow who still sets two places",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Nuala Kilbride, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: steady, dry, entirely without self pity Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a tool inherited in 1961 and still used. The painting: at a stoop teaching a game, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6433,
+  "name": "Andre Whitlock, a barber whose chair his father stood behind",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Andre Whitlock, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: funny in a register only three people in the city get Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a chair at a window since 1965. The painting: putting on a jacket that is now too big, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6434,
+  "name": "Leah Mandelbaum, a woman who has voted in every election since 1962",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Leah Mandelbaum, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: warm to strangers and guarded with family, which is backwards and they know it Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a box of index cards in one hand. The painting: at a kitchen table with a box of index cards, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6435,
+  "name": "Jamyang Thapa, a man who tells the same three stories and they are all good",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Jamyang Thapa, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: self deprecating as a defensive system Wants: a door with their own name on it. Flaw: they are so reliable that nobody has ever checked whether they are all right. Signature: a hall of perfectly set tables. The painting: watching somebody young do it right, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6436,
+  "name": "Zainab Adeyemi, a woman handing over a building she has run for thirty years",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Zainab Adeyemi, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: kind first and strategic second, in that order, always Wants: to be the reason somebody else got through it. Flaw: they know exactly what is happening and have decided not to look at it. Signature: a single key held out toward nobody. The painting: on a last day at work with the crew standing around, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6437,
+  "name": "Dwayne Bridgewater, a man who taught nine hundred kids to swim",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Dwayne Bridgewater, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: gentle in a way that reads as weakness until it does not Wants: proof, in writing, that this happened. Flaw: they keep score and pretend they do not. Signature: a jacket that is now too big. The painting: with a ring worn thin turned once on a finger, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6438,
+  "name": "Yolanda Guzman, a woman who was the first in her family born here",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Yolanda Guzman, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: generous past the point of sense Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a framed photograph wall of one life. The painting: in a chair at a window that has been hers since 1965, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6439,
+  "name": "Anand Mirza, a man giving away his tools one at a time to the right people",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Anand Mirza, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: romantic about the city and clear eyed about what it costs Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a ring worn thin. The painting: with two pairs of hands on one tool, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6440,
+  "name": "Jing Nakamura, a woman sixty one years on the same block",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Jing Nakamura, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: watchful and slow to trust, then completely loyal Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: a tool inherited in 1961 and still used. The painting: holding a single key out toward nobody, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6441,
+  "name": "Grigore Yakovlev, a man teaching a trade to somebody else's kid",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Grigore Yakovlev, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: sharp, tired, and still the most competent person in the room Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a chair at a window since 1965. The painting: saying a sentence and having it said back correctly, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6442,
+  "name": "Bassam Chalabi, a social club president with too many empty chairs",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Bassam Chalabi, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: stubborn in a way that has been useful exactly twice Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a box of index cards in one hand. The painting: showing somebody the recipe by doing it, not writing it, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6443,
+  "name": "Marguerite Castellano, a shopkeeper closing after fifty years",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Marguerite Castellano, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: restless, capable, unable to sit still in a good situation Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a hall of perfectly set tables. The painting: in a photograph wall's worth of a life, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6444,
+  "name": "Otis Odom, the last fluent speaker of a dialect on this side of the ocean",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Otis Odom, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: impatient with everything except the work itself Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a single key held out toward nobody. The painting: at a table with four generations at it, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6445,
+  "name": "Faige Zilberman, a woman who cooks a dish nobody else knows how to make",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Faige Zilberman, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: quietly furious and immaculately polite about it Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a jacket that is now too big. The painting: at a cemetery in Queens on a Sunday, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6446,
+  "name": "Zaw Macaraeg, a man who has run the same route since 1979",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Zaw Macaraeg, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: unbothered by things that should bother them Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: a framed photograph wall of one life. The painting: handing over a tool that has been used since 1961, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6447,
+  "name": "Aissatou Camara, a grandmother raising a second generation of grandchildren",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Aissatou Camara, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: certain about work and lost about everything else Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a ring worn thin. The painting: at a stoop teaching a game, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6448,
+  "name": "Sybil Toussaint, a woman who keeps the recipes written on index cards",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Sybil Toussaint, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: proud, and it costs them things it should not Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a photograph carried for decades. The painting: putting on a jacket that is now too big, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6449,
+  "name": "Ignacio Betancourt, a man whose union card is framed",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Ignacio Betancourt, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: observant to the point of discomfort Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a chair at a window since 1965. The painting: at a kitchen table with a box of index cards, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6450,
+  "name": "Ayesha Mirza, a widow who still sets two places",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Ayesha Mirza, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: steady, dry, entirely without self pity Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a box of index cards in one hand. The painting: watching somebody young do it right, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6451,
+  "name": "Shinji Zhang, a barber whose chair his father stood behind",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Shinji Zhang, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: funny in a register only three people in the city get Wants: a door with their own name on it. Flaw: they are so reliable that nobody has ever checked whether they are all right. Signature: a hall of perfectly set tables. The painting: on a last day at work with the crew standing around, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6452,
+  "name": "Agnieszka Wierzbicki, a woman who has voted in every election since 1962",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Agnieszka Wierzbicki, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: warm to strangers and guarded with family, which is backwards and they know it Wants: to be the reason somebody else got through it. Flaw: they know exactly what is happening and have decided not to look at it. Signature: a single key held out toward nobody. The painting: with a ring worn thin turned once on a finger, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6453,
+  "name": "Nizar Barakat, a man who tells the same three stories and they are all good",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Nizar Barakat, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: self deprecating as a defensive system Wants: proof, in writing, that this happened. Flaw: they keep score and pretend they do not. Signature: a jacket that is now too big. The painting: in a chair at a window that has been hers since 1965, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6454,
+  "name": "Maeve Moran, a woman handing over a building she has run for thirty years",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Maeve Moran, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: kind first and strategic second, in that order, always Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a framed photograph wall of one life. The painting: with two pairs of hands on one tool, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6455,
+  "name": "Darnell Pryor, a man who taught nine hundred kids to swim",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Darnell Pryor, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: gentle in a way that reads as weakness until it does not Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a ring worn thin. The painting: in a hall of perfectly set tables before anyone arrives, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6456,
+  "name": "Malka Rosenblatt, a woman who was the first in her family born here",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Malka Rosenblatt, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: generous past the point of sense Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: a photograph carried for decades. The painting: holding a single key out toward nobody, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6457,
+  "name": "Norbu Wangdu, a man giving away his tools one at a time to the right people",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Norbu Wangdu, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: romantic about the city and clear eyed about what it costs Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a tool inherited in 1961 and still used. The painting: saying a sentence and having it said back correctly, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6458,
+  "name": "Efua Boateng, a woman sixty one years on the same block",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Efua Boateng, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: watchful and slow to trust, then completely loyal Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a box of index cards in one hand. The painting: in a photograph wall's worth of a life, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6459,
+  "name": "Rohan Ambroise, a man teaching a trade to somebody else's kid",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Rohan Ambroise, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: sharp, tired, and still the most competent person in the room Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a hall of perfectly set tables. The painting: at a table with four generations at it, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6460,
+  "name": "Wilfredo Zambrano, a social club president with too many empty chairs",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Wilfredo Zambrano, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: stubborn in a way that has been useful exactly twice Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a single key held out toward nobody. The painting: at a cemetery in Queens on a Sunday, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6461,
+  "name": "Fariha Subramanian, a shopkeeper closing after fifty years",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Fariha Subramanian, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: restless, capable, unable to sit still in a good situation Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a jacket that is now too big. The painting: handing over a tool that has been used since 1961, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6462,
+  "name": "Zhen Kwon, the last fluent speaker of a dialect on this side of the ocean",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Zhen Kwon, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: impatient with everything except the work itself Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: a framed photograph wall of one life. The painting: at a stoop teaching a game, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6463,
+  "name": "Oksana Wozniak, a woman who cooks a dish nobody else knows how to make",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Oksana Wozniak, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: quietly furious and immaculately polite about it Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a ring worn thin. The painting: putting on a jacket that is now too big, a cemetery in Queens. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6464,
+  "name": "Tarek Kaya, a man who has run the same route since 1979",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Tarek Kaya, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: unbothered by things that should bother them Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a photograph carried for decades. The painting: at a kitchen table with a box of index cards, a stoop. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6465,
+  "name": "Bridget Belsky, a grandmother raising a second generation of grandchildren",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Bridget Belsky, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: certain about work and lost about everything else Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a tool inherited in 1961 and still used. The painting: watching somebody young do it right, a rent controlled apartment. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": false
+ },
+ {
+  "num": 6466,
+  "name": "Renita Pratt, a woman who keeps the recipes written on index cards",
+  "era": "XVI THE TWENTY HOUSES",
+  "family": "Stoop",
+  "set": "The Inheritance",
+  "brief": "Renita Pratt, None, None. Cast of The Inheritance (house thesis: What does a life in this city add up to, and who is left to receive it.). Personality: proud, and it costs them things it should not Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a chair at a window since 1965. The painting: on a last day at work with the crew standing around, a social club. What it carries about 2026: What does a life in this city add up to, and who is left to receive it..",
+  "monument": true
+ },
+ {
+  "num": 6467,
+  "name": "The Man Who Has Cut Pastrami By Hand at Katz's Since 1979",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Sol Mazzarino, 68, Ludlow Street, never left. Lead of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: theatrical with strangers, silent with the meat, forty seven years of the same joke Wants: his hands to last two more years. Flaw: he will not train the machine crew because training them is admitting it ends. Signature: a knife worn narrow from sharpening, a paper ticket tucked in a pocket. The painting: behind a long counter under hanging salamis in a hall of formica tables, he has just handed a stranger the free taste off the tip of the knife and is watching their face, a paper ticket in his other hand, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: the recipe is a person, not a document, and people run out.",
+  "monument": true
+ },
+ {
+  "num": 6468,
+  "name": "The Man Who Slices Lox at Russ and Daughters",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Reuben Halpern, 59, Lower East Side. Principal of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: precise, vain about exactly one thing, will not be hurried by anyone Wants: somebody to notice the thinness. Flaw: he judges everyone who asks for it thicker. Signature: a long flexible knife and a hand flat on the fish. The painting: in a narrow white tiled shop, drawing one translucent slice off a side of smoked salmon and holding it up to the window light, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6469,
+  "name": "The Woman Who Runs the Ticket Dispenser",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Estrella Nunez-Paz, 34, Loisaida. Principal of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: unflappable, funny, has heard every attempt to skip the line Wants: one shift where nobody argues about the number. Flaw: she has made herself the wall so nobody else has to be. Signature: a chrome ticket dispenser and a stool she never sits on. The painting: at the door of a crowded pastrami hall handing paper tickets to a queue that goes out onto the sidewalk, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6470,
+  "name": "The Woman Who Bakes the Bialys on Grand Street",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Chana Teitelbaum, 63, Grand Street since 1968. Principal of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: up at three, cheerful about it, contemptuous of anything proofed too fast Wants: the recipe to outlive the block. Flaw: she has never written it down and never will. Signature: a wooden peel and flour to the elbow. The painting: pulling a tray of onion rolls from a coal blackened oven at four in the morning in a shop with a tin ceiling, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6471,
+  "name": "The Man Who Fixes the Slicers",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Ivo Kaczmarek, 57, Greenpoint. Principal of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: courtly, exacting, treats a hundred year old machine as a patient Wants: the old machines kept in service. Flaw: he undercharges every shop that has been open longer than he has. Signature: a rolled tool cloth and a stone for the blade. The painting: in a back room with a slicer opened up on a bench, honing a blade by hand under one lamp, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6472,
+  "name": "Sekou Okonkwo, a counterman at the Houston Street pastrami hall who works the free taste",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Sekou Okonkwo, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: watchful and slow to trust, then completely loyal Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a knife worn narrow from forty years of sharpening. The painting: at the moment the free taste is handed over on the tip of the knife, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6473,
+  "name": "Yvonne Baptiste, a woman who hand slices smoked salmon in a narrow white tiled shop",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Yvonne Baptiste, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: sharp, tired, and still the most competent person in the room Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a paper ticket held in a fist. The painting: holding one translucent slice up to the window light, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6474,
+  "name": "Milagros Sandoval, a carver who has worked the same block since the seventies",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Milagros Sandoval, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: stubborn in a way that has been useful exactly twice Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: white paper folded in one practised motion. The painting: at a counter three deep with people holding paper tickets, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6475,
+  "name": "Rajesh Raghunathan, a man who runs the steam table of brisket and tongue",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Rajesh Raghunathan, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: restless, capable, unable to sit still in a good situation Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a ceiling of hanging salamis. The painting: wrapping in white paper with one practised fold, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6476,
+  "name": "Wei-Lin Chow, a woman who wraps everything in white paper and folds it the same way every time",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Wei-Lin Chow, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: impatient with everything except the work itself Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a chrome ticket dispenser. The painting: at four in the morning with the ovens already going, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6477,
+  "name": "Tomasz Danylchenko, a bialy baker who starts at three in the morning",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Tomasz Danylchenko, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: quietly furious and immaculately polite about it Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a curved glass case of smoked fish. The painting: under a ceiling of hanging salamis, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6478,
+  "name": "Halim Demir, a man who fillets sturgeon behind a curved glass case",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Halim Demir, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: unbothered by things that should bother them Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a wooden peel and flour to the elbow. The painting: explaining to a stranger what to order and being ignored, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6479,
+  "name": "Salvatore Donnelly, a cashier who has taken cash only for forty years",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Salvatore Donnelly, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: certain about work and lost about everything else Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a pickle barrel and wet hands. The painting: at the exact second the lunch rush breaks, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6480,
+  "name": "Shanice Pratt, a woman who makes the whitefish salad by feel and never measures",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Shanice Pratt, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: proud, and it costs them things it should not Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: a cash drawer that has never taken a card. The painting: counting cash into a drawer at closing, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6481,
+  "name": "Yosef Mandelbaum, a busboy who has been called the new kid for eleven years",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Yosef Mandelbaum, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: observant to the point of discomfort Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a paper ticket held in a fist. The painting: teaching a grip to somebody young, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6482,
+  "name": "Tenzin Wangdu, a man who hangs the salamis and knows which are ready",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Tenzin Wangdu, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: steady, dry, entirely without self pity Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: white paper folded in one practised motion. The painting: eating standing up in the back, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6483,
+  "name": "Ngozi Mensah, a woman who sells herring in cream to a shrinking congregation",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Ngozi Mensah, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: funny in a register only three people in the city get Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a ceiling of hanging salamis. The painting: sharpening a blade by hand under one lamp, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6484,
+  "name": "Marcia Toussaint, a slicer mechanic who keeps the hundred year old machines running",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Marcia Toussaint, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: warm to strangers and guarded with family, which is backwards and they know it Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a chrome ticket dispenser. The painting: with a queue out the door and onto the sidewalk, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6485,
+  "name": "Rafael Sandoval, a delivery man who has walked the same eight blocks since 1988",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Rafael Sandoval, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: self deprecating as a defensive system Wants: a door with their own name on it. Flaw: they are so reliable that nobody has ever checked whether they are all right. Signature: a curved glass case of smoked fish. The painting: at a table of formica with a tray and a pickle, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6486,
+  "name": "Priya Raghunathan, a woman who reads the ticket numbers out over the noise",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Priya Raghunathan, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: kind first and strategic second, in that order, always Wants: to be the reason somebody else got through it. Flaw: they know exactly what is happening and have decided not to look at it. Signature: a wooden peel and flour to the elbow. The painting: reaching into a barrel to the elbow, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6487,
+  "name": "Hyun-woo Chow, a man who has eaten the same lunch at this counter since 1974",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Hyun-woo Chow, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: gentle in a way that reads as weakness until it does not Wants: proof, in writing, that this happened. Flaw: they keep score and pretend they do not. Signature: a pickle barrel and wet hands. The painting: locking a shutter on a Sunday night, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6488,
+  "name": "Iryna Danylchenko, a granddaughter learning the counter over a summer",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Iryna Danylchenko, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: generous past the point of sense Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a cash drawer that has never taken a card. The painting: at the moment the free taste is handed over on the tip of the knife, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6489,
+  "name": "Karim Kholghi, a pickle man with barrels and wet hands",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Karim Kholghi, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: romantic about the city and clear eyed about what it costs Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a knife worn narrow from forty years of sharpening. The painting: holding one translucent slice up to the window light, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6490,
+  "name": "Mario Donnelly, a counterman at the Houston Street pastrami hall who works the free taste",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Mario Donnelly, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: watchful and slow to trust, then completely loyal Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: white paper folded in one practised motion. The painting: wrapping in white paper with one practised fold, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6491,
+  "name": "Denise Bridges, a woman who hand slices smoked salmon in a narrow white tiled shop",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Denise Bridges, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: sharp, tired, and still the most competent person in the room Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: a ceiling of hanging salamis. The painting: at four in the morning with the ovens already going, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6492,
+  "name": "Rivka Mandelbaum, a carver who has worked the same block since the seventies",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Rivka Mandelbaum, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: stubborn in a way that has been useful exactly twice Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a chrome ticket dispenser. The painting: under a ceiling of hanging salamis, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6493,
+  "name": "Nurlan Ilagan, a man who runs the steam table of brisket and tongue",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Nurlan Ilagan, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: restless, capable, unable to sit still in a good situation Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a curved glass case of smoked fish. The painting: explaining to a stranger what to order and being ignored, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6494,
+  "name": "Folasade Diallo, a woman who wraps everything in white paper and folds it the same way every time",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Folasade Diallo, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: impatient with everything except the work itself Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a wooden peel and flour to the elbow. The painting: at the exact second the lunch rush breaks, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6495,
+  "name": "Desmond Baptiste, a bialy baker who starts at three in the morning",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Desmond Baptiste, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: quietly furious and immaculately polite about it Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a pickle barrel and wet hands. The painting: counting cash into a drawer at closing, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6496,
+  "name": "Aurelio Almonte, a man who fillets sturgeon behind a curved glass case",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Aurelio Almonte, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: unbothered by things that should bother them Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: a cash drawer that has never taken a card. The painting: teaching a grip to somebody young, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6497,
+  "name": "Anand Mahadevan, a cashier who has taken cash only for forty years",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Anand Mahadevan, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: certain about work and lost about everything else Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a knife worn narrow from forty years of sharpening. The painting: eating standing up in the back, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6498,
+  "name": "Mei Baek, a woman who makes the whitefish salad by feel and never measures",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Mei Baek, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: proud, and it costs them things it should not Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a paper ticket held in a fist. The painting: sharpening a blade by hand under one lamp, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6499,
+  "name": "Sergei Wierzbicki, a busboy who has been called the new kid for eleven years",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Sergei Wierzbicki, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: observant to the point of discomfort Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: a ceiling of hanging salamis. The painting: with a queue out the door and onto the sidewalk, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6500,
+  "name": "Reza Osmani, a man who hangs the salamis and knows which are ready",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Reza Osmani, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: steady, dry, entirely without self pity Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a chrome ticket dispenser. The painting: at a table of formica with a tray and a pickle, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6501,
+  "name": "Bridget Ferrante, a woman who sells herring in cream to a shrinking congregation",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Bridget Ferrante, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: funny in a register only three people in the city get Wants: a door with their own name on it. Flaw: they are so reliable that nobody has ever checked whether they are all right. Signature: a curved glass case of smoked fish. The painting: reaching into a barrel to the elbow, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6502,
+  "name": "Adrienne Ballard, a slicer mechanic who keeps the hundred year old machines running",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Adrienne Ballard, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: warm to strangers and guarded with family, which is backwards and they know it Wants: to be the reason somebody else got through it. Flaw: they know exactly what is happening and have decided not to look at it. Signature: a wooden peel and flour to the elbow. The painting: locking a shutter on a Sunday night, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6503,
+  "name": "Aaron Zilberman, a delivery man who has walked the same eight blocks since 1988",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Aaron Zilberman, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: self deprecating as a defensive system Wants: proof, in writing, that this happened. Flaw: they keep score and pretend they do not. Signature: a pickle barrel and wet hands. The painting: at the moment the free taste is handed over on the tip of the knife, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6504,
+  "name": "Grace Wangdu, a woman who reads the ticket numbers out over the noise",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Grace Wangdu, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: kind first and strategic second, in that order, always Wants: one day off that nobody needs anything from. Flaw: they have made their competence into a hiding place. Signature: a cash drawer that has never taken a card. The painting: holding one translucent slice up to the window light, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6505,
+  "name": "Chidi Okonkwo, a man who has eaten the same lunch at this counter since 1974",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Chidi Okonkwo, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: gentle in a way that reads as weakness until it does not Wants: to get one person out of a situation they cannot get out of alone. Flaw: their pride is load bearing, so it cannot be removed. Signature: a knife worn narrow from forty years of sharpening. The painting: at a counter three deep with people holding paper tickets, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6506,
+  "name": "Camille Fairweather, a granddaughter learning the counter over a summer",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Camille Fairweather, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: generous past the point of sense Wants: to stop having to be the strong one. Flaw: they will not leave, and leaving is the answer. Signature: a paper ticket held in a fist. The painting: wrapping in white paper with one practised fold, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6507,
+  "name": "Cesar Peralta, a pickle man with barrels and wet hands",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Cesar Peralta, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: romantic about the city and clear eyed about what it costs Wants: to finish what they started before the block changes again. Flaw: they mistake endurance for a plan. Signature: white paper folded in one practised motion. The painting: at four in the morning with the ovens already going, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6508,
+  "name": "Farhan Mahadevan, a counterman at the Houston Street pastrami hall who works the free taste",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Farhan Mahadevan, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: watchful and slow to trust, then completely loyal Wants: to go home and mean the same place they meant twenty years ago. Flaw: they are the only one who knows how, and they have never written it down. Signature: a chrome ticket dispenser. The painting: explaining to a stranger what to order and being ignored, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6509,
+  "name": "Soo-jin Nakamura, a woman who hand slices smoked salmon in a narrow white tiled shop",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Soo-jin Nakamura, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: sharp, tired, and still the most competent person in the room Wants: to be paid what the work is actually worth. Flaw: they left, and cannot admit it was the wrong call. Signature: a curved glass case of smoked fish. The painting: at the exact second the lunch rush breaks, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6510,
+  "name": "Katarzyna Wierzbicki, a carver who has worked the same block since the seventies",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Katarzyna Wierzbicki, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: stubborn in a way that has been useful exactly twice Wants: to stay in the neighbourhood they are from. Flaw: they protect people by keeping things from them. Signature: a wooden peel and flour to the elbow. The painting: counting cash into a drawer at closing, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6511,
+  "name": "Farid Haddad, a man who runs the steam table of brisket and tongue",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Farid Haddad, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: restless, capable, unable to sit still in a good situation Wants: to hand the thing they know to somebody younger. Flaw: they forgive too fast and it reads as not caring. Signature: a pickle barrel and wet hands. The painting: teaching a grip to somebody young, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6512,
+  "name": "Nora Halloran, a woman who wraps everything in white paper and folds it the same way every time",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Nora Halloran, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: impatient with everything except the work itself Wants: to be asked, once, how they are doing. Flaw: they are kinder to strangers than to the people at home. Signature: a cash drawer that has never taken a card. The painting: eating standing up in the back, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6513,
+  "name": "Ossie Pratt, a bialy baker who starts at three in the morning",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Ossie Pratt, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: quietly furious and immaculately polite about it Wants: one uninterrupted hour. Flaw: they say yes on instinct and resent it by Thursday. Signature: a knife worn narrow from forty years of sharpening. The painting: sharpening a blade by hand under one lamp, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6514,
+  "name": "Mendel Rosenblatt, a man who fillets sturgeon behind a curved glass case",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Mendel Rosenblatt, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: unbothered by things that should bother them Wants: to be wrong about how this ends. Flaw: they cannot ask for help without framing it as a favour to somebody else. Signature: a paper ticket held in a fist. The painting: with a queue out the door and onto the sidewalk, a Grand Street bakery with a coal blackened oven. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6515,
+  "name": "Aung Sherpa, a cashier who has taken cash only for forty years",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Aung Sherpa, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: certain about work and lost about everything else Wants: to be recognized by somebody who matters to them. Flaw: they have confused being needed with being loved. Signature: white paper folded in one practised motion. The painting: at a table of formica with a tray and a pickle, a Houston Street pastrami hall with a ticket dispenser. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ },
+ {
+  "num": 6516,
+  "name": "Aminata Adeyemi, a woman who makes the whitefish salad by feel and never measures",
+  "era": "XVII THE TEN ROOMS",
+  "family": "Builders",
+  "set": "The Appetizing Counter",
+  "brief": "Aminata Adeyemi, None, None. Cast of The Appetizing Counter (house thesis: A hundred years of the same hand motion, and the motion is the inheritance.). Personality: proud, and it costs them things it should not Wants: to be believed the first time. Flaw: they are waiting for a permission that is never going to be issued. Signature: a ceiling of hanging salamis. The painting: reaching into a barrel to the elbow, a Lower East Side appetizing shop with hand sliced lox. What it carries about 2026: A hundred years of the same hand motion, and the motion is the inheritance..",
+  "monument": false
+ }
+]

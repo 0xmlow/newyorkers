@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NEW YORKERS site data build v4: the whole collection, eras I to XV.
+"""NEW YORKERS site data build v4: the whole collection, eras I to XIX (renumbered 2026-09-04, eras XVIII and XIX added 2026-09-06).
 
 v3 + eras VIII to XV read straight from the SEEDREAM5_* working folders
 (images/ at 2560x1440), stories from the drop sheets (2267-3066) and the
@@ -30,14 +30,16 @@ ARCHIVE_ERAS = {2: "02_THE EYE FLOWER ERA 767-816", 3: "03_THE CITY EXPANDS 817-
 # working folders for the eras that came after the archive was built
 WORK_ERAS = {8: "SEEDREAM5_2267-2666", 9: "SEEDREAM5_2667-3066", 10: "SEEDREAM5_3067-3466",
              11: "SEEDREAM5_3467-3966", 12: "SEEDREAM5_3967-4366", 13: "SEEDREAM5_4367-4766",
-             14: "SEEDREAM5_4767-4966", 15: "SEEDREAM5_4967-5466"}
+             14: "SEEDREAM5_4767-4966", 15: "SEEDREAM5_4967-5466",
+             16: "SEEDREAM5_5491-6490", 17: "SEEDREAM5_6491-6990",
+             18: "SEEDREAM5_6991-7490", 19: "SEEDREAM5_7491-7990"}
 
 ERA_BOUNDS = [(766,1),(816,2),(966,3),(1166,4),(1466,5),(1866,6),(2266,7),(2666,8),(3066,9),
-              (3466,10),(3966,11),(4366,12),(4766,13),(4966,14),(5466,15)]
+              (3466,10),(3966,11),(4366,12),(4766,13),(4966,14),(5466,15),(6490,16),(6990,17),(7490,18),(7990,19)]
 def era_of(num):
     for hi, e in ERA_BOUNDS:
         if num <= hi: return e
-    return 15
+    return ERA_BOUNDS[-1][1]
 
 def tkey(rel):
     return "h" + hashlib.md5(rel.encode()).hexdigest()[:10]
@@ -156,6 +158,25 @@ FAMILY_BY_SET = {
     "FASHION WEEK THAT NEVER ENDS": "Design", "THE ALGORITHM'S CITY": "Villains", "THE GREEN INVASION": "Strays",
     "THE KIDS": "Citizens", "THE ELDERS": "Stoop", "THE CROWD": "Citizens", "THE THRESHOLD": "Transplants",
     "THE CITY DREAMS ITSELF": "Underground",
+    # XVI, the twenty houses (character_bible.json house_name)
+    "THE SEAM": "Builders", "THE LEASE": "Citizens", "THE FEED": "Degens", "THE NIGHT KITCHEN": "Hustlers",
+    "THE CARE": "Heroes", "THE REPAIR": "Builders", "THE PAPERS": "Transplants", "THE WATER": "Places",
+    "RAISED BY FEEDS": "Citizens", "THE HOLD MUSIC": "Villains", "THE CHURCH OF UP ONLY": "Degens",
+    "THE LAST THIRD PLACE": "Stoop", "THE HANDS": "Builders", "THE BODY": "Citizens", "THE PROOF": "Underground",
+    "THE ARRIVAL": "Transplants", "THE LONG SHIFT": "Heroes", "THE INHERITANCE": "Stoop",
+    # XVII, the ten rooms
+    "THE APPETIZING COUNTER": "Builders", "THE RED SAUCE": "Citizens", "THE SLICE": "Hustlers",
+    "THE COUNTER": "Stoop", "THE LIST": "Design", "THE OYSTER AND THE CHOP": "Places",
+    "THE FOUR IN THE MORNING": "Underground", "THE CART AND THE WINDOW": "Hustlers",
+    "THE LAST CALL": "Degens", "THE ROOM WHERE IT HAPPENED": "Process",
+    # XVIII, The MLow Show (crypto art culture in ten houses)
+    "THE GREEN ROOM": "Process", "THE MINT": "Builders", "THE VAULT": "Hustlers", "THE TRASH BLOCK": "Degens",
+    "THE MACHINE STUDIO": "Builders", "THE PAINTER'S FLOOR": "Design", "THE LENS": "Process",
+    "THE DEPTH STAGE": "Design", "THE CHAIN": "Underground", "THE DEGEN FLOOR": "Degens",
+    # XIX, The Trait Layer
+    "THE NINETY SECONDS": "Builders", "THE NUMBER": "Degens", "THE SECOND FACE": "Design", "THE RULE": "Villains",
+    "THE OPEN TAB": "Degens", "THE VANISHING": "Villains", "THE HANGING": "Places", "THE TWELVE WORDS": "Underground",
+    "THE THIRTY HOUR DAY": "Heroes", "THE LONG RECORD": "Stoop",
 }
 
 era_sets = {}      # era -> [(name, lo, hi)]
@@ -181,6 +202,16 @@ for e, d in WORK_ERAS.items():
             try: o = json.loads(line)
             except Exception: continue
             briefs[int(o["num"])] = o
+    # character bible (XVI, XVII): houses are the sets, the moment and place are the studio note
+    bible = {}
+    for c in (load_json(os.path.join(folder, "character_bible.json"), []) or []):
+        bible[int(c["num"])] = c
+    if bible and not sets:
+        houses = {}
+        for num, c in sorted(bible.items()):
+            h = houses.setdefault(c["house_name"], [c["house_name"].title(), num, num])
+            h[1] = min(h[1], num); h[2] = max(h[2], num)
+        sets = [tuple(h) for h in houses.values()]
     # roster sets (X to XIII) -> contiguous ranges per set name
     if not sets:
         cur = None
@@ -197,6 +228,12 @@ for e, d in WORK_ERAS.items():
         m = re.match(r"^(\d+)\s+(.+)\.(png|jpg|jpeg)$", f, re.I)
         if not m: continue
         num = int(m.group(1)); c = roster.get(num, {}); b = briefs.get(num, {})
+        bc = bible.get(num)
+        if bc:
+            mom = (bc.get("moment") or "").strip().rstrip(".")
+            place = (bc.get("place") or "").strip().rstrip(".")
+            frag = mom + ((", " + place) if place and place.lower() not in mom.lower() else "")
+            b = {"name": bc.get("title"), "frag": frag[0].upper() + frag[1:] if frag else ""}
         sname = (c.get("set") or "").strip().title()
         if not sname:
             for nm, lo, hi in sets:
@@ -338,7 +375,7 @@ if __name__ == "__main__":
     # ---------------- sticker pins ----------------
     os.makedirs(STICKER_DIR, exist_ok=True)
     PIN_IDS = ["767","1467","1477","1000","1800","2000","2103","942","1866","550","1500","2266",
-               "2300","3000","3100","3500","4000","4400","4850","5000","5466"]
+               "2300","3000","3100","3500","4000","4400","4850","5000","5466","5491","6490","6491","6990","6991","7490","7491","7990"]
     def pin(src, dst, size=420, ring=(41,98,255)):
         im=Image.open(src).convert("RGB")
         a=np.asarray(im,dtype=np.float32)/255.0
@@ -409,6 +446,14 @@ if __name__ == "__main__":
          "desc": "An augmented layer painted over the real city. The Watchers, new ways to move, the Gadget Bazaar, the Melting Pot Protocols, Viral, the Icons Awake, Mystery and Illusion."},
         {"i": 15, "range": [4967, 5466], "roman": "XV", "title": "The City That Answers Back", "sub": "The Reply",
          "desc": "Infrastructure with opinions. The grid asks for a minute, the traffic light waits, the water main remembers the creek. The city finally answers, and the census closes on The Answer at 5466."},
+        {"i": 16, "range": [5491, 6490], "roman": "XVI", "title": "The Twenty Houses", "sub": "The Work",
+         "desc": "One thousand New Yorkers built as people who can walk out of the frame: a name, a want, a flaw, a signature. Twenty houses of fifty, each a working world with its own thesis. The Seam, the Lease, the Feed, the Care, the Hands, the Inheritance."},
+        {"i": 17, "range": [6491, 6990], "roman": "XVII", "title": "The Ten Rooms", "sub": "The Reservation",
+         "desc": "Five hundred New Yorkers inside the institutions the city is defined by. The appetizing counter, the red sauce room, the slice, the stool, the list, the oyster bar, four in the morning, the cart, last call, and the small badly lit room where the culture got made."},
+        {"i": 18, "range": [6991, 7490], "roman": "XVIII", "title": "The MLow Show", "sub": "The Homage",
+         "desc": "Five hundred New Yorkers from crypto art culture in ten houses, opening with an homage to every guest of The MLow Show. The green room, the mint, the vault, the trash block, the machine studio, the painter's floor, the lens, the depth stage, the chain and the degen floor. The honoree is named in the title and never painted."},
+        {"i": 19, "range": [7491, 7990], "roman": "XIX", "title": "The Trait Layer", "sub": "The Traits",
+         "desc": "Five hundred New Yorkers of the ninety seconds, the number, the second face, the rule, the open tab, the vanishing, the hanging, the twelve words, the thirty hour day and the long record. Each carries one of thirty one painted traits, worn the way the city wears everything: as a fact."},
     ]
     # monuments: the fourteen originals plus every era's hundred marks and closers
     ms = list(story["milestones"])
@@ -447,7 +492,7 @@ if __name__ == "__main__":
     # threads: extend the canon lines with the later era stops that memory records
     for t in story["threads"]:
         add = {"love": [2300, 3423], "redemption": [2666, 3425], "succession": [2269, 3417],
-               "watcher": [3466, 5466], "memory": [3170, 3180], "court": [3175, 3417]}.get(t["key"], [])
+               "watcher": [3466, 5466, 6490, 6990, 7490, 7990], "memory": [3170, 3180], "court": [3175, 3417]}.get(t["key"], [])
         for n in add:
             if str(n) in by_id and n not in t["nums"]: t["nums"].append(n)
     story["oneBreath"] = story.get("oneBreath", "")
@@ -481,7 +526,7 @@ if __name__ == "__main__":
         for a, b in zip(nums, nums[1:]):
             if str(a) in idset and str(b) in idset: edges.append([str(a), str(b), typ])
     for t in story["threads"]: chain(t["nums"], "thread:" + t["key"])
-    chain([1468,1467,1469,1470,1477,2017,2144,2266,2275,2667,3000,3466,3500,3900,5466], "spine")
+    chain([1468,1467,1469,1470,1477,2017,2144,2266,2275,2667,3000,3466,3500,3900,5466,5491,6490,6491,6990,6991,7490,7491,7990], "spine")
     chain(story["milestones"], "monument")
     for s in story["sets"]:
         if s["range"][1] - s["range"][0] <= 60: chain(list(range(s["range"][0], s["range"][1]+1)), "set:" + s["key"])

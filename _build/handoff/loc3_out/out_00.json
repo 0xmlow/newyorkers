@@ -1,0 +1,1252 @@
+{
+ "5491": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5492": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5493": {
+  "place": "nb:Bay Ridge",
+  "conf": "stated",
+  "why": "Yerevan by way of Bay Ridge"
+ },
+ "5494": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5495": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5496": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "converted warehouse floors read as Long Island City loft blocks"
+ },
+ "5497": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5498": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5499": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "converted warehouse floor work sits in Bushwick"
+ },
+ "5500": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5501": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5502": {
+  "place": "nb:East Williamsburg",
+  "conf": "inferred",
+  "why": "annotation floors fill East Williamsburg warehouse buildings"
+ },
+ "5503": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5504": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5505": {
+  "place": "nb:Greenpoint",
+  "conf": "inferred",
+  "why": "converted warehouse floors along the Greenpoint waterfront"
+ },
+ "5506": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5507": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5508": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "warehouse floor work in the Maspeth industrial belt"
+ },
+ "5509": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5510": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5511": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a converted Ridgewood warehouse floor of screens"
+ },
+ "5512": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5513": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5514": {
+  "place": "nb:Brooklyn Navy Yard",
+  "conf": "inferred",
+  "why": "converted Navy Yard floors hold this kind of contract work"
+ },
+ "5515": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5516": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5517": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "warehouse floors under the Sunnyside yards"
+ },
+ "5518": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5519": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5520": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "converted South Bronx warehouse floor"
+ },
+ "5521": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5522": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5523": {
+  "place": "nb:Hunts Point",
+  "conf": "inferred",
+  "why": "warehouse floor work in the Hunts Point industrial blocks"
+ },
+ "5524": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5525": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5526": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a converted Astoria warehouse floor"
+ },
+ "5527": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5528": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5529": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "contract annotation floors in Downtown Brooklyn offices"
+ },
+ "5530": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5531": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5532": {
+  "place": "nb:Glendale",
+  "conf": "inferred",
+  "why": "warehouse floor shift in Glendale"
+ },
+ "5533": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5534": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5535": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "converted East New York warehouse floor"
+ },
+ "5536": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5537": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5538": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a converted warehouse floor in Woodside"
+ },
+ "5539": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "server annexes in Sunset Park"
+ },
+ "5540": {
+  "place": "key:canal_st",
+  "conf": "stated",
+  "why": "cloud offices over Canal Street"
+ },
+ "5541": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5542": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5543": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5544": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a Bronx walkup with one working elevator in Mott Haven"
+ },
+ "5545": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5546": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5547": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5548": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "a Bronx building with one working elevator in Morrisania"
+ },
+ "5549": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5550": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5551": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5552": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "Tremont building, one elevator working"
+ },
+ "5553": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5554": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5555": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5556": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a Fordham building where only one elevator runs"
+ },
+ "5557": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5558": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5559": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5560": {
+  "place": "nb:University Heights",
+  "conf": "inferred",
+  "why": "University Heights building with one working elevator"
+ },
+ "5561": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5562": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5563": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5564": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "a Highbridge building, single working elevator"
+ },
+ "5565": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5566": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5567": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5568": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "Soundview building with one elevator in service"
+ },
+ "5569": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5570": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5571": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5572": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a Grand Concourse building with one working elevator"
+ },
+ "5573": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5574": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5575": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5576": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "Melrose building where one elevator still runs"
+ },
+ "5577": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5578": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5579": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5580": {
+  "place": "nb:Longwood",
+  "conf": "inferred",
+  "why": "a Longwood building with one working elevator"
+ },
+ "5581": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5582": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5583": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5584": {
+  "place": "nb:Norwood",
+  "conf": "inferred",
+  "why": "Norwood building, one elevator working"
+ },
+ "5585": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5586": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5587": {
+  "place": "nb:Coney Island",
+  "conf": "stated",
+  "why": "Coney Island high rises"
+ },
+ "5588": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a Kingsbridge building with one working elevator"
+ },
+ "5589": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick walkups"
+ },
+ "5590": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Corona basements"
+ },
+ "5591": {
+  "place": "nb:Bayside",
+  "conf": "stated",
+  "why": "she is from Bayside, Queens"
+ },
+ "5592": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5593": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "she is from Ridgewood"
+ },
+ "5594": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "painted on a subway platform with strangers filming him"
+ },
+ "5595": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5596": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a windowless moderation room in Long Island City"
+ },
+ "5597": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a ring lit bedroom in an Astoria apartment"
+ },
+ "5598": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5599": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "moderation floor in a Financial District tower"
+ },
+ "5600": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "ring light set up in a Sunnyside bedroom"
+ },
+ "5601": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5602": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "windowless moderation room in Downtown Brooklyn"
+ },
+ "5603": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a Jackson Heights bedroom used as a set"
+ },
+ "5604": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5605": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "moderation room in a Sunset Park office annex"
+ },
+ "5606": {
+  "place": "nb:Forest Hills",
+  "conf": "inferred",
+  "why": "ring lit bedroom in Forest Hills"
+ },
+ "5607": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5608": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "recognized on a train by an entitled stranger"
+ },
+ "5609": {
+  "place": "nb:Rego Park",
+  "conf": "inferred",
+  "why": "a Rego Park bedroom behind the ring light"
+ },
+ "5610": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5611": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a windowless moderation room in Flushing"
+ },
+ "5612": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "ring lit bedroom in a Flatbush apartment"
+ },
+ "5613": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5614": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "moderation queue worked from a Jamaica office"
+ },
+ "5615": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a Crown Heights bedroom doubling as a studio"
+ },
+ "5616": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5617": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "windowless moderation room in Chelsea"
+ },
+ "5618": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "ring lit bedroom in Bay Ridge"
+ },
+ "5619": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5620": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "a Tribeca floor with the moderation queue"
+ },
+ "5621": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "inferred",
+  "why": "a Sheepshead Bay bedroom set"
+ },
+ "5622": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5623": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "recognized on a train by an entitled stranger"
+ },
+ "5624": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "ring lit bedroom uptown in Washington Heights"
+ },
+ "5625": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5626": {
+  "place": "nb:Flatiron",
+  "conf": "inferred",
+  "why": "moderation room in a Flatiron office"
+ },
+ "5627": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "an Inwood bedroom behind the ring light"
+ },
+ "5628": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5629": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "a windowless moderation room in Sunnyside"
+ },
+ "5630": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "ring lit bedroom in Elmhurst"
+ },
+ "5631": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5632": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "moderation shift worked in Woodside"
+ },
+ "5633": {
+  "place": "nb:Middle Village",
+  "conf": "inferred",
+  "why": "a Middle Village bedroom used as a set"
+ },
+ "5634": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5635": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a windowless moderation room in Astoria"
+ },
+ "5636": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "ring lit bedroom in St. George"
+ },
+ "5637": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5638": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "recognized on a train by an entitled stranger"
+ },
+ "5639": {
+  "place": "nb:Midwood",
+  "conf": "inferred",
+  "why": "a Midwood bedroom behind the ring light"
+ },
+ "5640": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown studio floor"
+ },
+ "5641": {
+  "place": "key:queensboro_bridge",
+  "conf": "stated",
+  "why": "stopped at the top of the bridge out of Long Island City"
+ },
+ "5642": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5643": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "Cap-Haitien by way of Flatbush"
+ },
+ "5644": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5645": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5646": {
+  "place": "key:williamsburg_bridge",
+  "conf": "inferred",
+  "why": "the bike lane over the Williamsburg Bridge at two in the morning"
+ },
+ "5647": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5648": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5649": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a halal cart with a midnight line reads as Midtown"
+ },
+ "5650": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5651": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5652": {
+  "place": "key:first_ave",
+  "conf": "inferred",
+  "why": "the First Avenue bike lane after midnight"
+ },
+ "5653": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "the painting is set in a Long Island City kitchen block"
+ },
+ "5654": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "the painting is set in a Harlem takeout window"
+ },
+ "5655": {
+  "place": "key:manhattan_bridge",
+  "conf": "inferred",
+  "why": "the Manhattan Bridge bike lane at two in the morning"
+ },
+ "5656": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5657": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5658": {
+  "place": "key:hunts_point_market",
+  "conf": "stated",
+  "why": "a produce buyer at Hunts Point before dawn"
+ },
+ "5659": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5660": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5661": {
+  "place": "key:eighth_ave",
+  "conf": "inferred",
+  "why": "the Eighth Avenue bike lane on the late run"
+ },
+ "5662": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5663": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5664": {
+  "place": "key:pulaski",
+  "conf": "inferred",
+  "why": "the Pulaski Bridge bike lane at two in the morning"
+ },
+ "5665": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5666": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5667": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a halal cart with a midnight line reads as Midtown"
+ },
+ "5668": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5669": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5670": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "the East Village delivery run after midnight"
+ },
+ "5671": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "the painting is set in a Long Island City kitchen block"
+ },
+ "5672": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "the painting is set in a Harlem takeout window"
+ },
+ "5673": {
+  "place": "key:queensboro_bridge",
+  "conf": "inferred",
+  "why": "the Queensboro Bridge bike lane at two in the morning"
+ },
+ "5674": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5675": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5676": {
+  "place": "key:hunts_point_market",
+  "conf": "stated",
+  "why": "a produce buyer at Hunts Point before dawn"
+ },
+ "5677": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5678": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5679": {
+  "place": "key:second_ave",
+  "conf": "inferred",
+  "why": "the Second Avenue bike lane on the night run"
+ },
+ "5680": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5681": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5682": {
+  "place": "key:kosciuszko",
+  "conf": "inferred",
+  "why": "the Kosciuszko Bridge bike lane at two in the morning"
+ },
+ "5683": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5684": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5685": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a halal cart with a midnight line reads as Midtown"
+ },
+ "5686": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "a Long Island City kitchen block"
+ },
+ "5687": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "a Harlem takeout window"
+ },
+ "5688": {
+  "place": "key:brooklyn_bridge",
+  "conf": "inferred",
+  "why": "the Brooklyn Bridge bike lane at two in the morning"
+ },
+ "5689": {
+  "place": "nb:Long Island City",
+  "conf": "stated",
+  "why": "the painting is set in a Long Island City kitchen block"
+ },
+ "5690": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "the painting is set in a Harlem takeout window"
+ },
+ "5691": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5692": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5693": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "Ponce by way of the Bronx, a South Bronx hospital corridor"
+ },
+ "5694": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5695": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5696": {
+  "place": "key:bellevue",
+  "conf": "inferred",
+  "why": "a hospital corridor at Bellevue"
+ },
+ "5697": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5698": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5699": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "the hospital corridor uptown in Washington Heights"
+ },
+ "5700": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5701": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5702": {
+  "place": "nb:East Flatbush",
+  "conf": "inferred",
+  "why": "a hospital corridor in East Flatbush"
+ },
+ "5703": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5704": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5705": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "the hospital corridor in Sunset Park"
+ },
+ "5706": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5707": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5708": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "a hospital corridor in Elmhurst"
+ },
+ "5709": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5710": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5711": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "the hospital corridor in Jamaica"
+ },
+ "5712": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5713": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5714": {
+  "place": "nb:Morningside Heights",
+  "conf": "inferred",
+  "why": "a hospital corridor in Morningside Heights"
+ },
+ "5715": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5716": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5717": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "the hospital corridor off the Grand Concourse"
+ },
+ "5718": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5719": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5720": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "a hospital corridor in Brownsville"
+ },
+ "5721": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5722": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5723": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "the hospital corridor in St. George"
+ },
+ "5724": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5725": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5726": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a hospital corridor in Astoria"
+ },
+ "5727": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5728": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5729": {
+  "place": "nb:Coney Island",
+  "conf": "inferred",
+  "why": "the hospital corridor in Coney Island"
+ },
+ "5730": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5731": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5732": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a hospital corridor in Bushwick"
+ },
+ "5733": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5734": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5735": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "the hospital corridor in Fordham"
+ },
+ "5736": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5737": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ },
+ "5738": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a hospital corridor in Flushing"
+ },
+ "5739": {
+  "place": "nb:Upper East Side",
+  "conf": "stated",
+  "why": "an Upper East Side apartment at four in the morning"
+ },
+ "5740": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "a Flatbush two family house"
+ }
+}

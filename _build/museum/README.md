@@ -1,0 +1,20 @@
+# The Museum build
+
+Source for `museum.html` and `assets/museum/museum.js`. See `MUSEUM_HANDOFF_2026-09-06.md` at the project root for the full picture.
+
+```bash
+npm install
+npm run check      # tsc
+npm run build      # esbuild -> ../../assets/museum/museum.js
+node build.mjs --watch
+```
+
+- `src/main.ts` app shell
+- `src/kit.ts` architecture kit
+- `src/textures.ts` procedural surfaces
+- `src/data.ts` census access and per room curation
+- `src/rooms/a.ts` to `i.ts` the 41 rooms, five per file; `rooms/index.ts` is the registry, `f.ts` exports the street and block helpers
+- `export_server.py` receives GLB, poster and JSON from `museum.html?export=one|all` on 127.0.0.1:4181 into `MUSEUM EXPORTS/<date>/`
+- `mint_kit.py` builds one mintable folder per room from those exports; `mint_finalize.py` is copied into the kit as `finalize.py`
+
+The bundle is committed to `assets/museum/`; the site never needs node at runtime.

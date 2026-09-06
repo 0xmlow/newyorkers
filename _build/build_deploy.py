@@ -87,7 +87,7 @@ for g in data["story"]["living"]["gifs"]: g["src"] = repath(g["src"])
 print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 
 # ---------- copy site shell + assets ----------
-for page in ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html", "og.jpg"):
+for page in ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html", "museum.html", "og.jpg"):
     if os.path.exists(os.path.join(SITE, page)):
         shutil.copy2(os.path.join(SITE, page), os.path.join(OUT, page))
 for stale in ("gallery.html",):
@@ -119,8 +119,13 @@ with open(os.path.join(OUT, "404.html"), "w") as f:
             '<div><div style="font-size:64px;letter-spacing:.08em;color:#fff">404</div>'
             '<p style="color:#8899AA;max-width:420px;line-height:1.6">This number has not been painted yet. The census keeps going anyway.</p>'
             '<p><a href="/" style="color:#2962FF;text-decoration:none;font-family:Menlo,monospace;font-size:13px;letter-spacing:.2em">ENTER THE CENSUS</a></p></div></body></html>')
-for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch"):
+for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "museum"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
+    if sub == "museum":
+        # the museum bundle changes with every build: always overwrite
+        if os.path.isdir(dst): shutil.rmtree(dst)
+        shutil.copytree(src, dst)
+        continue
     if os.path.isdir(dst):
         # sync-lite: copy missing files only
         for f in os.listdir(src):
@@ -163,6 +168,10 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
   Cache-Control: public, max-age=31536000, immutable
 /assets/glitch/*
   Cache-Control: public, max-age=31536000, immutable
+/assets/museum/props/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/museum/*
+  Cache-Control: public, max-age=3600
 /assets/data.js
   Cache-Control: public, max-age=300
 /assets/geo.js

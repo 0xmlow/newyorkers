@@ -11,3 +11,7 @@ _build/*.log
 _build/stories/input_*.json
 archive
 .DS_Store
+_build/museum/node_modules/
+_build/stories/_preshift_*/
+_build/*.bak_*
+_mintkit

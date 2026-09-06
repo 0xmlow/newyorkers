@@ -1,0 +1,11 @@
+import type { RoomDef } from './types';
+import { bowery, subway } from './a';
+import { met, brooklyn, times, ferry } from './b';
+import { botanical, penn, grand, highline, coney } from './c';
+import { bethesda, oculus, guggenheim, library, apollo } from './d';
+import { unisphere, tram, cloisters, navyyard, governors } from './e';
+import { chrysler, flatiron, bleachers, deli, washington } from './f';
+import { boathouse, halloffame, twa, snug, wollman } from './g';
+import { doyers, strivers, rock, frick, seaport } from './h';
+import { vessel, littleisland, cathedral, queensboro, bushwick } from './i';
+export const ROOMS: RoomDef[] = [bowery, subway, met, brooklyn, times, ferry, botanical, penn, grand, highline, coney, bethesda, oculus, guggenheim, library, apollo, unisphere, tram, cloisters, navyyard, governors, chrysler, flatiron, bleachers, deli, washington, boathouse, halloffame, twa, snug, wollman, doyers, strivers, rock, frick, seaport, vessel, littleisland, cathedral, queensboro, bushwick];

@@ -20,7 +20,7 @@
   const recordUrl = p => `census.html#n=${p.id}`;
   const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
   function nav(active){
-    const links=[["index.html","HOME"],["census.html","THE CENSUS"],["census.html#gallery","THE GALLERY"],["map.html","THE ATLAS"],["count.html","THE COUNT"],["press.html","PRESS"],["counted.html","GET COUNTED","cta"]];
+    const links=[["index.html","HOME"],["census.html","THE CENSUS"],["census.html#gallery","THE GALLERY"],["map.html","THE ATLAS"],["museum.html","THE MUSEUM"],["count.html","THE COUNT"],["press.html","PRESS"],["counted.html","GET COUNTED","cta"]];
     const el=document.getElementById("nav"); if(!el)return;
     el.innerHTML=`<a href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"></a>
       <button class="burger" aria-label="menu">MENU</button>

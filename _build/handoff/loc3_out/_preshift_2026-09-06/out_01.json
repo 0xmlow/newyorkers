@@ -1,0 +1,1252 @@
+{
+ "5717": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "from Sheepshead Bay, standing in the uncovered square metre of his own neighbourhood"
+ },
+ "5718": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "stated",
+  "why": "Oslo by way of Downtown Brooklyn, auditing feeds from home"
+ },
+ "5719": {
+  "place": "nb:Jackson Heights",
+  "conf": "stated",
+  "why": "Guayaquil by way of Jackson Heights, watching his own block"
+ },
+ "5720": {
+  "place": "nb:East Flatbush",
+  "conf": "stated",
+  "why": "from East Flatbush, painting the blind spots on his own streets"
+ },
+ "5721": {
+  "place": "nb:Ozone Park",
+  "conf": "stated",
+  "why": "from Ozone Park, installing cameras on a Queens facade"
+ },
+ "5722": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the house control room under Midtown, on the overnight"
+ },
+ "5723": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5724": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "private security tech wiring a quiet residential block"
+ },
+ "5725": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "bodega with sixteen cameras and one blind corner"
+ },
+ "5726": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5727": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "teenager counting lenses on the walk to school"
+ },
+ "5728": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "dressing to defeat detection downtown"
+ },
+ "5729": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5730": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "school safety agent who knows the children by name"
+ },
+ "5731": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "data broker contractor mapping a Queens neighbourhood"
+ },
+ "5732": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5733": {
+  "place": "nb:Gravesend",
+  "conf": "inferred",
+  "why": "drone hobbyist flying over low Brooklyn rooftops"
+ },
+ "5734": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "landlord putting a camera on every floor"
+ },
+ "5735": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5736": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "found herself in somebody else's footage, all glass lobbies"
+ },
+ "5737": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "transit worker watching four hundred subway platform feeds"
+ },
+ "5738": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "facial recognition contractor with second thoughts in a Midtown office"
+ },
+ "5739": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "grandmother with a doorbell camera and the whole block's business"
+ },
+ "5740": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the house control room under Midtown, on the overnight"
+ },
+ "5741": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5742": {
+  "place": "nb:Riverdale",
+  "conf": "inferred",
+  "why": "security tech installing on a residential Bronx block"
+ },
+ "5743": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "bodega owner with cameras and one blind corner"
+ },
+ "5744": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5745": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "teenager who knows every lens uptown"
+ },
+ "5746": {
+  "place": "nb:Greenpoint",
+  "conf": "inferred",
+  "why": "dressing specifically to defeat detection"
+ },
+ "5747": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5748": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "school safety agent watching children she has known for years"
+ },
+ "5749": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "field contractor mapping a neighbourhood for a data broker"
+ },
+ "5750": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5751": {
+  "place": "nb:Pelham Bay",
+  "conf": "inferred",
+  "why": "drone hobbyist over the Bronx shoreline"
+ },
+ "5752": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "landlord installing entry cameras on every floor"
+ },
+ "5753": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5754": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "found herself in somebody else's footage"
+ },
+ "5755": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "transit worker watching four hundred subway platform feeds"
+ },
+ "5756": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5757": {
+  "place": "nb:St. Albans",
+  "conf": "inferred",
+  "why": "grandmother with a doorbell camera on a Queens block"
+ },
+ "5758": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the house control room under Midtown, on the overnight"
+ },
+ "5759": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "recognition auditor at a wall of glowing blanks"
+ },
+ "5760": {
+  "place": "nb:Forest Hills",
+  "conf": "inferred",
+  "why": "security tech installing on a residential block"
+ },
+ "5761": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "bodega owner with sixteen cameras and one blind corner"
+ },
+ "5762": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5763": {
+  "place": "nb:Canarsie",
+  "conf": "inferred",
+  "why": "teenager who knows every lens on the walk to school"
+ },
+ "5764": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "dressing to defeat detection on her own block"
+ },
+ "5765": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "the painting is set in a control room under Midtown"
+ },
+ "5766": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "school safety agent in a crowded Queens school"
+ },
+ "5767": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the house repair stall on Roosevelt Avenue, Jackson Heights"
+ },
+ "5768": {
+  "place": "nb:Jackson Heights",
+  "conf": "stated",
+  "why": "Medellin by way of Jackson Heights, board under the scope"
+ },
+ "5769": {
+  "place": "nb:Sunnyside",
+  "conf": "stated",
+  "why": "Osaka by way of Sunnyside, cobbler with a laser"
+ },
+ "5770": {
+  "place": "nb:Concourse",
+  "conf": "stated",
+  "why": "Kumasi by way of Concourse, learning on a Bronx bench"
+ },
+ "5771": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "Kharkiv by way of Sheepshead Bay, keeping the elevators alive"
+ },
+ "5772": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5773": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5774": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "cobbler on his second generation of the same shop"
+ },
+ "5775": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5776": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5777": {
+  "place": "key:diamond",
+  "conf": "inferred",
+  "why": "watchmaker with a loupe and a drawer of springs"
+ },
+ "5778": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5779": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5780": {
+  "place": "nb:East Village",
+  "conf": "inferred",
+  "why": "locksmith who can open anything and refuses most of it"
+ },
+ "5781": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5782": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5783": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "mechanic keeping a twenty six year old sedan alive"
+ },
+ "5784": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5785": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5786": {
+  "place": "nb:Borough Park",
+  "conf": "inferred",
+  "why": "tailor rebuilding a suit for a changed body"
+ },
+ "5787": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5788": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5789": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "repairs the machines that repair other machines"
+ },
+ "5790": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5791": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5792": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "cobbler on his second generation of the same shop"
+ },
+ "5793": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5794": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5795": {
+  "place": "nb:Midwood",
+  "conf": "inferred",
+  "why": "watchmaker with a loupe and a drawer of springs"
+ },
+ "5796": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5797": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5798": {
+  "place": "nb:Kensington",
+  "conf": "inferred",
+  "why": "locksmith who can open anything and refuses most"
+ },
+ "5799": {
+  "place": "nb:Hunts Point",
+  "conf": "inferred",
+  "why": "electronics recycler pulling the good parts out"
+ },
+ "5800": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5801": {
+  "place": "nb:Mariners Harbor",
+  "conf": "inferred",
+  "why": "mechanic keeping an old sedan alive"
+ },
+ "5802": {
+  "place": "nb:Pelham Bay",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5803": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5804": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "tailor rebuilding a suit for a man who changed shape"
+ },
+ "5805": {
+  "place": "nb:University Heights",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5806": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5807": {
+  "place": "nb:Brooklyn Navy Yard",
+  "conf": "inferred",
+  "why": "repairs the machines that repair other machines"
+ },
+ "5808": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "phone repair under a microscope on a Bronx strip"
+ },
+ "5809": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5810": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "cobbler on his second generation of the same shop"
+ },
+ "5811": {
+  "place": "nb:Belmont",
+  "conf": "inferred",
+  "why": "a Bronx boiler room, kept inside the borough the painting names"
+ },
+ "5812": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5813": {
+  "place": "nb:Forest Hills",
+  "conf": "inferred",
+  "why": "watchmaker with a loupe and a drawer of springs"
+ },
+ "5814": {
+  "place": "nb:Riverdale",
+  "conf": "inferred",
+  "why": "piano tuner working by memory in four boroughs"
+ },
+ "5815": {
+  "place": "key:roosevelt_ave",
+  "conf": "stated",
+  "why": "the painting is set in a Roosevelt Avenue repair stall"
+ },
+ "5816": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "locksmith who can open anything and refuses most of it"
+ },
+ "5817": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "Cochabamba by way of Corona, translating his mother's hearing"
+ },
+ "5818": {
+  "place": "nb:Woodside",
+  "conf": "stated",
+  "why": "Cebu by way of Woodside, the block's most trusted notary"
+ },
+ "5819": {
+  "place": "nb:Hollis",
+  "conf": "stated",
+  "why": "Onitsha by way of Hollis, year nine of a three year process"
+ },
+ "5820": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "Gaziantep by way of Sheepshead Bay, lawyer who was once the client"
+ },
+ "5821": {
+  "place": "nb:Elmhurst",
+  "conf": "stated",
+  "why": "Lhasa by way of Elmhurst, waiting outside with everyone's coats"
+ },
+ "5822": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the house notary desk in Corona, line down the block"
+ },
+ "5823": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5824": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5825": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "cleans Midtown offices at night, masters degree from home"
+ },
+ "5826": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5827": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5828": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "asylum seeker with a hearing date at Federal Plaza"
+ },
+ "5829": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5830": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5831": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "community organizer who knows every filing deadline"
+ },
+ "5832": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5833": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5834": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "thirty one years here and still cannot vote"
+ },
+ "5835": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5836": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5837": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "runs a savings circle for legal fees"
+ },
+ "5838": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "carrying an unopened decision letter out of Federal Plaza"
+ },
+ "5839": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5840": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "notary who is the block's most trusted person"
+ },
+ "5841": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5842": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5843": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "cleans downtown offices, masters degree from home"
+ },
+ "5844": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5845": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5846": {
+  "place": "nb:Parkchester",
+  "conf": "inferred",
+  "why": "asylum seeker with a hearing date and a good coat"
+ },
+ "5847": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5848": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5849": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "community organizer who knows every deadline"
+ },
+ "5850": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5851": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5852": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "thirty one years here and cannot vote"
+ },
+ "5853": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5854": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5855": {
+  "place": "nb:Morris Park",
+  "conf": "inferred",
+  "why": "runs a savings circle for legal fees"
+ },
+ "5856": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5857": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5858": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "notary who is the block's most trusted person"
+ },
+ "5859": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5860": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5861": {
+  "place": "nb:South Ozone Park",
+  "conf": "inferred",
+  "why": "cleans offices, masters degree from home"
+ },
+ "5862": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5863": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5864": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "asylum seeker with a hearing date and a good coat"
+ },
+ "5865": {
+  "place": "key:foley_sq",
+  "conf": "stated",
+  "why": "the painting is set in a Federal Plaza waiting room"
+ },
+ "5866": {
+  "place": "nb:Corona",
+  "conf": "stated",
+  "why": "the painting is set in a Corona notary desk"
+ },
+ "5867": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "Broad Channel born and staying, marking the new flood line"
+ },
+ "5868": {
+  "place": "key:si_ferry",
+  "conf": "stated",
+  "why": "from Staten Island, a captain reading a changed river"
+ },
+ "5869": {
+  "place": "nb:Canarsie",
+  "conf": "stated",
+  "why": "Ibadan by way of Canarsie, sitting up with the sump pump"
+ },
+ "5870": {
+  "place": "nb:Howard Beach",
+  "conf": "stated",
+  "why": "from Howard Beach, selling the house before they find out"
+ },
+ "5871": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "from Broad Channel, wading her own street at dusk"
+ },
+ "5872": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5873": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "super on the Gowanus edge, pump running eight months a year"
+ },
+ "5874": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5875": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "Red Hook ground floor now storage only"
+ },
+ "5876": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "marine contractor raising a Broad Channel bulkhead by hand"
+ },
+ "5877": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5878": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "oysterman restoring a reef in the harbour"
+ },
+ "5879": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5880": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "runs the Broad Channel block's flood text chain"
+ },
+ "5881": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5882": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5883": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5884": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5885": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5886": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5887": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5888": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5889": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5890": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5891": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5892": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5893": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5894": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5895": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5896": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5897": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5898": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5899": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5900": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5901": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5902": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5903": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "Red Hook girl who has only ever known the flooding"
+ },
+ "5904": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5905": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5906": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5907": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5908": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5909": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5910": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5911": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5912": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5913": {
+  "place": "key:gowanus_canal",
+  "conf": "stated",
+  "why": "the painting is set in a Gowanus edge"
+ },
+ "5914": {
+  "place": "key:ny_harbor",
+  "conf": "stated",
+  "why": "the painting is set in the harbour at slack tide"
+ },
+ "5915": {
+  "place": "key:red_hook_b",
+  "conf": "stated",
+  "why": "the painting is set in Red Hook"
+ },
+ "5916": {
+  "place": "key:cross_bay",
+  "conf": "stated",
+  "why": "the painting is set in Broad Channel"
+ },
+ "5917": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "Crown Heights closet with forty years of block photographs"
+ },
+ "5918": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "Port Harcourt by way of Bed Stuy, recording storefronts"
+ },
+ "5919": {
+  "place": "key:alphabet_city",
+  "conf": "stated",
+  "why": "from Loisaida, remembering the old name of the street"
+ },
+ "5920": {
+  "place": "nb:Washington Heights",
+  "conf": "stated",
+  "why": "from Washington Heights, the archivist who wants it all"
+ },
+ "5921": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "Crown Heights girl learning the closet filing system"
+ },
+ "5922": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the house closet archive in Crown Heights, forty years of boxes"
+ },
+ "5923": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5924": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "oral historian with a bad recorder and perfect questions"
+ },
+ "5925": {
+  "place": "key:nypl",
+  "conf": "inferred",
+  "why": "librarian who saved the local files from the dumpster"
+ },
+ "5926": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5927": {
+  "place": "key:st_marks",
+  "conf": "inferred",
+  "why": "has photographed the same corner every year since 1981"
+ },
+ "5928": {
+  "place": "nb:Greenwich Village",
+  "conf": "inferred",
+  "why": "record shop owner who is the neighbourhood's memory"
+ },
+ "5929": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5930": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "digitizing a language nobody is teaching"
+ },
+ "5931": {
+  "place": "key:5pointz",
+  "conf": "inferred",
+  "why": "graffiti documentarian with thirty thousand slides"
+ },
+ "5932": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5933": {
+  "place": "nb:Chinatown",
+  "conf": "inferred",
+  "why": "kept every menu from a street that is gone"
+ },
+ "5934": {
+  "place": "key:el_barrio",
+  "conf": "inferred",
+  "why": "restoring a mural under three coats of paint"
+ },
+ "5935": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "teenager taught the closet filing system"
+ },
+ "5936": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "bodega owner with a wall of customer photographs"
+ },
+ "5937": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "indexes obituaries by street"
+ },
+ "5938": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5939": {
+  "place": "nb:Brooklyn Navy Yard",
+  "conf": "inferred",
+  "why": "collector of the sound of vanished machines"
+ },
+ "5940": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "forty years of block photographs in a closet"
+ },
+ "5941": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5942": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "oral historian with a bad recorder and perfect questions"
+ },
+ "5943": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "librarian who saved the local files from the dumpster"
+ },
+ "5944": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5945": {
+  "place": "key:125th_st",
+  "conf": "inferred",
+  "why": "has photographed the same corner every year since 1981"
+ },
+ "5946": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "record shop owner who is the neighbourhood's memory"
+ },
+ "5947": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5948": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "digitizing a language nobody is teaching"
+ },
+ "5949": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "graffiti documentarian with thirty thousand slides"
+ },
+ "5950": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5951": {
+  "place": "key:little_italy",
+  "conf": "inferred",
+  "why": "kept every menu from a street that is gone"
+ },
+ "5952": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "restoring a mural under three coats of paint"
+ },
+ "5953": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5954": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "bodega owner with a wall of photographs of customers"
+ },
+ "5955": {
+  "place": "nb:Borough Park",
+  "conf": "inferred",
+  "why": "indexes obituaries by street"
+ },
+ "5956": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5957": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "collector of the sound of vanished machines"
+ },
+ "5958": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "forty years of block photographs in a closet"
+ },
+ "5959": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5960": {
+  "place": "nb:Hunts Point",
+  "conf": "inferred",
+  "why": "oral historian with a bad recorder and perfect questions"
+ },
+ "5961": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "librarian who saved the local files from the dumpster"
+ },
+ "5962": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5963": {
+  "place": "key:roosevelt_ave",
+  "conf": "inferred",
+  "why": "has photographed the same corner every year since 1981"
+ },
+ "5964": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "record shop owner who is the neighbourhood's memory"
+ },
+ "5965": {
+  "place": "nb:Crown Heights",
+  "conf": "stated",
+  "why": "the painting is set in a Crown Heights closet archive"
+ },
+ "5966": {
+  "place": "nb:Kensington",
+  "conf": "inferred",
+  "why": "digitizing a language nobody is teaching"
+ }
+}

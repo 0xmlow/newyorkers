@@ -1,0 +1,1252 @@
+{
+ "5991": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "her origin is Bed Stuy, the bedroom floor of the house"
+ },
+ "5992": {
+  "place": "nb:Jamaica",
+  "conf": "stated",
+  "why": "he is from Jamaica, Queens, schoolyard table out front"
+ },
+ "5993": {
+  "place": "nb:Greenpoint",
+  "conf": "stated",
+  "why": "she is from Greenpoint, winding a watch in the park"
+ },
+ "5994": {
+  "place": "nb:Highbridge",
+  "conf": "stated",
+  "why": "Bamako by way of Highbridge, a stoop full of friends"
+ },
+ "5995": {
+  "place": "nb:East Flatbush",
+  "conf": "stated",
+  "why": "Gonaives by way of East Flatbush, her classroom after the bell"
+ },
+ "6041": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "third generation Bronx, a benefits office on the Concourse"
+ },
+ "6042": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "she is from Ridgewood, on hold at her own kitchen"
+ },
+ "6043": {
+  "place": "nb:Wakefield",
+  "conf": "stated",
+  "why": "Kano by way of Wakefield, a desk buried in folders"
+ },
+ "6044": {
+  "place": "nb:Elmhurst",
+  "conf": "stated",
+  "why": "Barranquilla by way of Elmhurst, reading letters at a kitchen table"
+ },
+ "6045": {
+  "place": "nb:Astoria",
+  "conf": "stated",
+  "why": "he is from Astoria, deep in a records basement"
+ },
+ "6091": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "he is from Sheepshead Bay, at the kitchen table at dawn"
+ },
+ "6092": {
+  "place": "nb:Eastchester",
+  "conf": "inferred",
+  "why": "the Bronx side of the Mount Vernon line, trading at lunch"
+ },
+ "6093": {
+  "place": "nb:Riverdale",
+  "conf": "stated",
+  "why": "Owerri by way of Riverdale, on the platform not looking down"
+ },
+ "6094": {
+  "place": "nb:Borough Park",
+  "conf": "stated",
+  "why": "he is from Borough Park, selling the faith in a rented room"
+ },
+ "6095": {
+  "place": "nb:Bay Ridge",
+  "conf": "stated",
+  "why": "she is from Bay Ridge, one good sofa from a bigger life"
+ },
+ "6141": {
+  "place": "nb:Morrisania",
+  "conf": "stated",
+  "why": "he is from Morrisania, the shop full and the lease letter folded"
+ },
+ "6142": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "San Juan by way of the Bronx, the domino table set at seven"
+ },
+ "6143": {
+  "place": "nb:Woodlawn Cemetery",
+  "conf": "stated",
+  "why": "he is from Woodlawn, last call with one coaster set out"
+ },
+ "6144": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "Busan by way of Sunset Park, his chair at closing time"
+ },
+ "6145": {
+  "place": "nb:Morrisania",
+  "conf": "stated",
+  "why": "she is from Morrisania, in the barbershop doorway"
+ },
+ "6191": {
+  "place": "nb:Greenpoint",
+  "conf": "stated",
+  "why": "second generation Greenpoint, welding forty floors up at dawn"
+ },
+ "6192": {
+  "place": "nb:Highbridge",
+  "conf": "stated",
+  "why": "Bamako by way of Highbridge, a half built scaffold at dawn"
+ },
+ "6193": {
+  "place": "nb:Ozone Park",
+  "conf": "stated",
+  "why": "Enugu by way of Ozone Park, an open panel layered like sediment"
+ },
+ "6194": {
+  "place": "nb:Maspeth",
+  "conf": "stated",
+  "why": "he is from Maspeth, tying off and checking the clip twice"
+ },
+ "6195": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "Puebla by way of Sunset Park, on a plank beside a union crew"
+ },
+ "5996": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the house keeps a Bed Stuy bedroom"
+ },
+ "5997": {
+  "place": "key:nypl",
+  "conf": "inferred",
+  "why": "an after school library, the big one on Fifth"
+ },
+ "5998": {
+  "place": "key:prospect_park",
+  "conf": "inferred",
+  "why": "a park at the hour the light goes gold"
+ },
+ "5999": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Jackson Heights"
+ },
+ "6000": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6001": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "an after school branch library in Fort Greene"
+ },
+ "6002": {
+  "place": "key:tompkins",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Tompkins Square"
+ },
+ "6003": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Elmhurst"
+ },
+ "6004": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6005": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "an after school branch library in Washington Heights"
+ },
+ "6006": {
+  "place": "key:mccarren",
+  "conf": "inferred",
+  "why": "a park at the exact hour, McCarren"
+ },
+ "6007": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Astoria"
+ },
+ "6008": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6009": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "an after school branch library in Kingsbridge"
+ },
+ "6010": {
+  "place": "key:fort_greene_park",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Fort Greene"
+ },
+ "6011": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Corona"
+ },
+ "6012": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6013": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "an after school branch library in St. George"
+ },
+ "6014": {
+  "place": "key:astoria_park",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Astoria"
+ },
+ "6015": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Woodside"
+ },
+ "6016": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6017": {
+  "place": "nb:Midwood",
+  "conf": "inferred",
+  "why": "an after school branch library in Midwood"
+ },
+ "6018": {
+  "place": "key:marcus_garvey",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Marcus Garvey"
+ },
+ "6019": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Flushing"
+ },
+ "6020": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the house keeps a Bed Stuy bedroom"
+ },
+ "6021": {
+  "place": "nb:Port Richmond",
+  "conf": "inferred",
+  "why": "an after school branch library in Port Richmond"
+ },
+ "6022": {
+  "place": "key:morningside_park",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Morningside"
+ },
+ "6023": {
+  "place": "nb:Richmond Hill",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Richmond Hill"
+ },
+ "6024": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6025": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "an after school branch library in Melrose"
+ },
+ "6026": {
+  "place": "key:van_cortlandt_p",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Van Cortlandt"
+ },
+ "6027": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Sunnyside"
+ },
+ "6028": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6029": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "an after school branch library in Brownsville"
+ },
+ "6030": {
+  "place": "key:flushing_meadows",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Flushing Meadows"
+ },
+ "6031": {
+  "place": "nb:Ozone Park",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Ozone Park"
+ },
+ "6032": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6033": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "an after school branch library in Bushwick"
+ },
+ "6034": {
+  "place": "key:riverside",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Riverside"
+ },
+ "6035": {
+  "place": "nb:Far Rockaway",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in Far Rockaway"
+ },
+ "6036": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6037": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "an after school branch library in Inwood"
+ },
+ "6038": {
+  "place": "key:washington_sq",
+  "conf": "inferred",
+  "why": "a park at the exact hour, Washington Square"
+ },
+ "6039": {
+  "place": "nb:South Jamaica",
+  "conf": "inferred",
+  "why": "a Queens schoolyard, placed in South Jamaica"
+ },
+ "6040": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "stated",
+  "why": "the painting is set in a Bed Stuy bedroom"
+ },
+ "6046": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs off Foley Square"
+ },
+ "6047": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "a benefits office counter in Melrose"
+ },
+ "6048": {
+  "place": "key:chambers_st",
+  "conf": "inferred",
+  "why": "a records basement in the Municipal Building on Chambers"
+ },
+ "6049": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in Downtown Brooklyn"
+ },
+ "6050": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "a benefits office counter in East New York"
+ },
+ "6051": {
+  "place": "key:city_hall",
+  "conf": "inferred",
+  "why": "a records basement under the City Hall offices"
+ },
+ "6052": {
+  "place": "nb:Kew Gardens",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in Kew Gardens"
+ },
+ "6053": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a benefits office counter in Jamaica"
+ },
+ "6054": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a records basement under Downtown Brooklyn"
+ },
+ "6055": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs on the Grand Concourse"
+ },
+ "6056": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a benefits office counter in St. George"
+ },
+ "6057": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "a records basement off Foley Square"
+ },
+ "6058": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in St. George"
+ },
+ "6059": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a benefits office counter in Bushwick"
+ },
+ "6060": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a records basement in a downtown agency building"
+ },
+ "6061": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a state hearing room with bad chairs in Midtown"
+ },
+ "6062": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a benefits office counter in Sunset Park"
+ },
+ "6063": {
+  "place": "nb:Kew Gardens",
+  "conf": "inferred",
+  "why": "a records basement at the Queens borough offices"
+ },
+ "6064": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in Jamaica"
+ },
+ "6065": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a benefits office counter in Fordham"
+ },
+ "6066": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a records basement in the Bronx county building"
+ },
+ "6067": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs near Fordham Road"
+ },
+ "6068": {
+  "place": "nb:Coney Island",
+  "conf": "inferred",
+  "why": "a benefits office counter in Coney Island"
+ },
+ "6069": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a records basement at Staten Island borough hall"
+ },
+ "6070": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in a Tribeca agency floor"
+ },
+ "6071": {
+  "place": "nb:Far Rockaway",
+  "conf": "inferred",
+  "why": "a benefits office counter in Far Rockaway"
+ },
+ "6072": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a records basement in a Long Island City annex"
+ },
+ "6073": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs downtown"
+ },
+ "6074": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a benefits office counter in Mott Haven"
+ },
+ "6075": {
+  "place": "key:chambers_st",
+  "conf": "inferred",
+  "why": "a records basement in the Municipal Building on Chambers"
+ },
+ "6076": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs off Foley Square"
+ },
+ "6077": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "a benefits office counter in Brownsville"
+ },
+ "6078": {
+  "place": "key:city_hall",
+  "conf": "inferred",
+  "why": "a records basement under the City Hall offices"
+ },
+ "6079": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in Downtown Brooklyn"
+ },
+ "6080": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a benefits office counter in Corona"
+ },
+ "6081": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a records basement under Downtown Brooklyn"
+ },
+ "6082": {
+  "place": "nb:Kew Gardens",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in Kew Gardens"
+ },
+ "6083": {
+  "place": "nb:Stapleton",
+  "conf": "inferred",
+  "why": "a benefits office counter in Stapleton"
+ },
+ "6084": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "a records basement off Foley Square"
+ },
+ "6085": {
+  "place": "nb:Concourse",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs on the Grand Concourse"
+ },
+ "6086": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a benefits office counter in Flatbush"
+ },
+ "6087": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a records basement in a downtown agency building"
+ },
+ "6088": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a hearing room with bad chairs in St. George"
+ },
+ "6089": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a benefits office counter in Long Island City"
+ },
+ "6090": {
+  "place": "nb:Kew Gardens",
+  "conf": "inferred",
+  "why": "a records basement at the Queens borough offices"
+ },
+ "6096": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown steakhouse table nobody else can afford"
+ },
+ "6097": {
+  "place": "nb:Financial District",
+  "conf": "stated",
+  "why": "a Financial District lobby of marble"
+ },
+ "6098": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the house keeps a Sheepshead Bay kitchen table"
+ },
+ "6099": {
+  "place": "key:park_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse off Park Avenue"
+ },
+ "6100": {
+  "place": "key:wall_street",
+  "conf": "stated",
+  "why": "a Financial District lobby on Wall Street"
+ },
+ "6101": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6102": {
+  "place": "key:lex_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse on Lexington"
+ },
+ "6103": {
+  "place": "key:broad_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Broad Street"
+ },
+ "6104": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "a Sheepshead Bay kitchen table at three in the morning"
+ },
+ "6105": {
+  "place": "key:third_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse on Third Avenue"
+ },
+ "6106": {
+  "place": "key:maiden_lane",
+  "conf": "stated",
+  "why": "a Financial District lobby on Maiden Lane"
+ },
+ "6107": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6108": {
+  "place": "key:57th_st",
+  "conf": "stated",
+  "why": "a Midtown steakhouse on 57th Street"
+ },
+ "6109": {
+  "place": "key:water_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Water Street"
+ },
+ "6110": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "a Sheepshead Bay kitchen table with both phones down"
+ },
+ "6111": {
+  "place": "key:sixth_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse off Sixth Avenue"
+ },
+ "6112": {
+  "place": "key:pearl_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Pearl Street"
+ },
+ "6113": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6114": {
+  "place": "key:herald_sq2",
+  "conf": "stated",
+  "why": "a Midtown steakhouse by Herald Square"
+ },
+ "6115": {
+  "place": "nb:Financial District",
+  "conf": "stated",
+  "why": "a Financial District lobby of marble"
+ },
+ "6116": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "a Sheepshead Bay kitchen table and a chart on the wall"
+ },
+ "6117": {
+  "place": "nb:Turtle Bay",
+  "conf": "stated",
+  "why": "a Midtown steakhouse over in Turtle Bay"
+ },
+ "6118": {
+  "place": "key:wall_street",
+  "conf": "stated",
+  "why": "a Financial District lobby on Wall Street"
+ },
+ "6119": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6120": {
+  "place": "nb:Murray Hill",
+  "conf": "stated",
+  "why": "a Midtown steakhouse down in Murray Hill"
+ },
+ "6121": {
+  "place": "key:broad_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Broad Street"
+ },
+ "6122": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "a Sheepshead Bay kitchen table before the checking"
+ },
+ "6123": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown steakhouse table nobody else can afford"
+ },
+ "6124": {
+  "place": "key:maiden_lane",
+  "conf": "stated",
+  "why": "a Financial District lobby on Maiden Lane"
+ },
+ "6125": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6126": {
+  "place": "key:park_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse off Park Avenue"
+ },
+ "6127": {
+  "place": "key:water_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Water Street"
+ },
+ "6128": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the house keeps a Sheepshead Bay kitchen table"
+ },
+ "6129": {
+  "place": "key:lex_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse on Lexington"
+ },
+ "6130": {
+  "place": "key:pearl_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Pearl Street"
+ },
+ "6131": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6132": {
+  "place": "key:third_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse on Third Avenue"
+ },
+ "6133": {
+  "place": "nb:Financial District",
+  "conf": "stated",
+  "why": "a Financial District lobby of marble"
+ },
+ "6134": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "a Sheepshead Bay kitchen table at three in the morning"
+ },
+ "6135": {
+  "place": "key:57th_st",
+  "conf": "stated",
+  "why": "a Midtown steakhouse on 57th Street"
+ },
+ "6136": {
+  "place": "key:wall_street",
+  "conf": "stated",
+  "why": "a Financial District lobby on Wall Street"
+ },
+ "6137": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "the painting is set in a Sheepshead Bay kitchen table"
+ },
+ "6138": {
+  "place": "key:sixth_ave",
+  "conf": "stated",
+  "why": "a Midtown steakhouse off Sixth Avenue"
+ },
+ "6139": {
+  "place": "key:broad_st",
+  "conf": "stated",
+  "why": "a Financial District lobby on Broad Street"
+ },
+ "6140": {
+  "place": "nb:Sheepshead Bay",
+  "conf": "stated",
+  "why": "a Sheepshead Bay kitchen table with both phones down"
+ },
+ "6146": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the house keeps a Ridgewood bar"
+ },
+ "6147": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the house keeps a Sunset Park laundromat"
+ },
+ "6148": {
+  "place": "key:washington_sq",
+  "conf": "inferred",
+  "why": "a park chess table, Washington Square"
+ },
+ "6149": {
+  "place": "nb:Morrisania",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Morrisania"
+ },
+ "6150": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the painting is set in a Ridgewood bar"
+ },
+ "6151": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the painting is set in a Sunset Park laundromat"
+ },
+ "6152": {
+  "place": "key:tompkins",
+  "conf": "inferred",
+  "why": "a park chess table, Tompkins Square"
+ },
+ "6153": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Tremont"
+ },
+ "6154": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "a Ridgewood bar open at seven in the morning"
+ },
+ "6155": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "a Sunset Park laundromat, machines all stopped"
+ },
+ "6156": {
+  "place": "key:prospect_park",
+  "conf": "inferred",
+  "why": "a park chess table, Prospect Park"
+ },
+ "6157": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a Bronx barbershop near Fordham Road"
+ },
+ "6158": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the painting is set in a Ridgewood bar"
+ },
+ "6159": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the painting is set in a Sunset Park laundromat"
+ },
+ "6160": {
+  "place": "key:columbus_park",
+  "conf": "inferred",
+  "why": "a park chess table, Columbus Park"
+ },
+ "6161": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Mott Haven"
+ },
+ "6162": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "a Ridgewood bar on the last night of the lease"
+ },
+ "6163": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "a Sunset Park laundromat and its plastic chair"
+ },
+ "6164": {
+  "place": "key:union_sq",
+  "conf": "inferred",
+  "why": "a park chess table, Union Square"
+ },
+ "6165": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Soundview"
+ },
+ "6166": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the painting is set in a Ridgewood bar"
+ },
+ "6167": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the painting is set in a Sunset Park laundromat"
+ },
+ "6168": {
+  "place": "key:marcus_garvey",
+  "conf": "inferred",
+  "why": "a park chess table, Marcus Garvey Park"
+ },
+ "6169": {
+  "place": "nb:Belmont",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Belmont"
+ },
+ "6170": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "a Ridgewood bar with one seat kept empty"
+ },
+ "6171": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "a Sunset Park laundromat at closing"
+ },
+ "6172": {
+  "place": "key:mccarren",
+  "conf": "inferred",
+  "why": "a park chess table, McCarren Park"
+ },
+ "6173": {
+  "place": "nb:University Heights",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in University Heights"
+ },
+ "6174": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the painting is set in a Ridgewood bar"
+ },
+ "6175": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the painting is set in a Sunset Park laundromat"
+ },
+ "6176": {
+  "place": "key:fort_greene_park",
+  "conf": "inferred",
+  "why": "a park chess table, Fort Greene Park"
+ },
+ "6177": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Highbridge"
+ },
+ "6178": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "a Ridgewood bar at last call"
+ },
+ "6179": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "a Sunset Park laundromat with the folding tables empty"
+ },
+ "6180": {
+  "place": "key:flushing_meadows",
+  "conf": "inferred",
+  "why": "a park chess table, Flushing Meadows"
+ },
+ "6181": {
+  "place": "nb:Parkchester",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Parkchester"
+ },
+ "6182": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the painting is set in a Ridgewood bar"
+ },
+ "6183": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the painting is set in a Sunset Park laundromat"
+ },
+ "6184": {
+  "place": "key:astoria_park",
+  "conf": "inferred",
+  "why": "a park chess table, Astoria Park"
+ },
+ "6185": {
+  "place": "nb:Melrose",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Melrose"
+ },
+ "6186": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the house keeps a Ridgewood bar"
+ },
+ "6187": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "the house keeps a Sunset Park laundromat"
+ },
+ "6188": {
+  "place": "key:van_cortlandt_p",
+  "conf": "inferred",
+  "why": "a park chess table, Van Cortlandt Park"
+ },
+ "6189": {
+  "place": "nb:Longwood",
+  "conf": "inferred",
+  "why": "a Bronx barbershop in Longwood"
+ },
+ "6190": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "the painting is set in a Ridgewood bar"
+ },
+ "6196": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "a scaffold at dawn on the Upper West Side"
+ },
+ "6197": {
+  "place": "key:hudson_yards",
+  "conf": "inferred",
+  "why": "a supertall top floor over Hudson Yards"
+ },
+ "6198": {
+  "place": "key:second_ave",
+  "conf": "inferred",
+  "why": "a street cut open on Second Avenue"
+ },
+ "6199": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Harlem"
+ },
+ "6200": {
+  "place": "key:57th_st",
+  "conf": "inferred",
+  "why": "a supertall top floor on 57th Street"
+ },
+ "6201": {
+  "place": "key:canal_st",
+  "conf": "inferred",
+  "why": "a street cut open on Canal Street"
+ },
+ "6202": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Chelsea"
+ },
+ "6203": {
+  "place": "key:nypl",
+  "conf": "inferred",
+  "why": "cutting stone to match a block laid in 1911"
+ },
+ "6204": {
+  "place": "key:van_cortlandt_p",
+  "conf": "inferred",
+  "why": "a sandhog at the deep water tunnel shaft"
+ },
+ "6205": {
+  "place": "key:empire_state",
+  "conf": "inferred",
+  "why": "an elevator mechanic on top of a car in an old shaft"
+ },
+ "6206": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a supertall top floor above Midtown"
+ },
+ "6207": {
+  "place": "key:queens_blvd",
+  "conf": "inferred",
+  "why": "a street cut open on Queens Boulevard"
+ },
+ "6208": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Tribeca"
+ },
+ "6209": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "a locksmith for the whole subway system"
+ },
+ "6210": {
+  "place": "key:verrazzano",
+  "conf": "inferred",
+  "why": "a bridge painter who starts again the day he finishes"
+ },
+ "6211": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Astoria"
+ },
+ "6212": {
+  "place": "key:wtc",
+  "conf": "inferred",
+  "why": "a supertall top floor downtown"
+ },
+ "6213": {
+  "place": "key:flatbush_ave",
+  "conf": "inferred",
+  "why": "a street cut open on Flatbush Avenue"
+ },
+ "6214": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Bushwick"
+ },
+ "6215": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a supertall top floor over Long Island City"
+ },
+ "6216": {
+  "place": "key:grand_concourse",
+  "conf": "inferred",
+  "why": "a street cut open on the Grand Concourse"
+ },
+ "6217": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Crown Heights"
+ },
+ "6218": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a supertall top floor over Downtown Brooklyn"
+ },
+ "6219": {
+  "place": "key:atlantic_ave",
+  "conf": "inferred",
+  "why": "a street cut open on Atlantic Avenue"
+ },
+ "6220": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Flushing"
+ },
+ "6221": {
+  "place": "key:st_john_divine",
+  "conf": "inferred",
+  "why": "cutting stone to match a block laid in 1911"
+ },
+ "6222": {
+  "place": "key:central_park",
+  "conf": "inferred",
+  "why": "a sandhog at the water tunnel shaft under the park"
+ },
+ "6223": {
+  "place": "key:chrysler",
+  "conf": "inferred",
+  "why": "an elevator mechanic on top of a car in an old shaft"
+ },
+ "6224": {
+  "place": "key:park_ave",
+  "conf": "inferred",
+  "why": "a supertall top floor on Park Avenue"
+ },
+ "6225": {
+  "place": "key:roosevelt_ave",
+  "conf": "inferred",
+  "why": "a street cut open under the Roosevelt Avenue el"
+ },
+ "6226": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in St. George"
+ },
+ "6227": {
+  "place": "key:subway_system",
+  "conf": "stated",
+  "why": "a locksmith for the whole subway system"
+ },
+ "6228": {
+  "place": "key:whitestone_bridge",
+  "conf": "inferred",
+  "why": "a bridge painter who never gets to the end"
+ },
+ "6229": {
+  "place": "nb:Riverdale",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Riverdale"
+ },
+ "6230": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a supertall top floor in the Financial District"
+ },
+ "6231": {
+  "place": "key:hylan",
+  "conf": "inferred",
+  "why": "a street cut open on Hylan Boulevard"
+ },
+ "6232": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Jackson Heights"
+ },
+ "6233": {
+  "place": "key:hudson_yards",
+  "conf": "inferred",
+  "why": "a supertall top floor over Hudson Yards"
+ },
+ "6234": {
+  "place": "key:jerome_ave",
+  "conf": "inferred",
+  "why": "a street cut open on Jerome Avenue"
+ },
+ "6235": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in Park Slope"
+ },
+ "6236": {
+  "place": "key:57th_st",
+  "conf": "inferred",
+  "why": "a supertall top floor on 57th Street"
+ },
+ "6237": {
+  "place": "key:nostrand",
+  "conf": "inferred",
+  "why": "a street cut open on Nostrand Avenue"
+ },
+ "6238": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "a scaffold at dawn in East Harlem"
+ },
+ "6239": {
+  "place": "key:grand_central",
+  "conf": "inferred",
+  "why": "cutting stone to match a block laid in 1911"
+ },
+ "6240": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a sandhog three hundred feet under Kingsbridge"
+ }
+}

@@ -1,0 +1,1252 @@
+{
+ "6241": {
+  "place": "nb:Sunset Park",
+  "conf": "stated",
+  "why": "nurse from Sunset Park working the clinic and the ER"
+ },
+ "6242": {
+  "place": "nb:Tribeca",
+  "conf": "stated",
+  "why": "she is from Tribeca and buying more years"
+ },
+ "6243": {
+  "place": "nb:East New York",
+  "conf": "stated",
+  "why": "from East New York, eleven years without a dentist"
+ },
+ "6244": {
+  "place": "nb:Richmond Hill",
+  "conf": "stated",
+  "why": "Kochi by way of Richmond Hill, translating her diagnosis"
+ },
+ "6245": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Bushwick paramedic who knows the addresses"
+ },
+ "6246": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a Washington Heights pharmacy line"
+ },
+ "6247": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown longevity clinic"
+ },
+ "6248": {
+  "place": "key:bellevue",
+  "conf": "inferred",
+  "why": "the emergency room at Bellevue"
+ },
+ "6249": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a Bay Ridge pharmacy line"
+ },
+ "6250": {
+  "place": "key:park_ave",
+  "conf": "inferred",
+  "why": "a Park Avenue longevity clinic"
+ },
+ "6251": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a South Bronx emergency room"
+ },
+ "6252": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a Jackson Heights pharmacy counter"
+ },
+ "6253": {
+  "place": "nb:Murray Hill",
+  "conf": "inferred",
+  "why": "a Murray Hill longevity clinic"
+ },
+ "6254": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "the Elmhurst hospital emergency room"
+ },
+ "6255": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "a Brownsville pharmacy line"
+ },
+ "6256": {
+  "place": "key:57th_st",
+  "conf": "inferred",
+  "why": "a 57th Street longevity clinic"
+ },
+ "6257": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a Flatbush emergency room waiting area"
+ },
+ "6258": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a Ridgewood pharmacy line"
+ },
+ "6259": {
+  "place": "nb:Turtle Bay",
+  "conf": "inferred",
+  "why": "a Turtle Bay longevity clinic"
+ },
+ "6260": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a Jamaica hospital emergency room"
+ },
+ "6261": {
+  "place": "nb:Canarsie",
+  "conf": "inferred",
+  "why": "a Canarsie pharmacy line"
+ },
+ "6262": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown longevity clinic"
+ },
+ "6263": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a Harlem emergency room at hour four"
+ },
+ "6264": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "a Tremont pharmacy line"
+ },
+ "6265": {
+  "place": "key:park_ave",
+  "conf": "inferred",
+  "why": "a Park Avenue longevity clinic"
+ },
+ "6266": {
+  "place": "nb:Fordham",
+  "conf": "inferred",
+  "why": "a Fordham emergency room"
+ },
+ "6267": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a St. George pharmacy line"
+ },
+ "6268": {
+  "place": "nb:Murray Hill",
+  "conf": "inferred",
+  "why": "a Murray Hill longevity clinic"
+ },
+ "6269": {
+  "place": "nb:Borough Park",
+  "conf": "inferred",
+  "why": "a Borough Park hospital emergency room"
+ },
+ "6270": {
+  "place": "nb:Midwood",
+  "conf": "inferred",
+  "why": "a Midwood pharmacy line"
+ },
+ "6271": {
+  "place": "key:57th_st",
+  "conf": "inferred",
+  "why": "a 57th Street longevity clinic"
+ },
+ "6272": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "an Astoria emergency room"
+ },
+ "6273": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a Corona pharmacy line"
+ },
+ "6274": {
+  "place": "nb:Turtle Bay",
+  "conf": "inferred",
+  "why": "a Turtle Bay longevity clinic"
+ },
+ "6275": {
+  "place": "nb:Stapleton",
+  "conf": "inferred",
+  "why": "the Staten Island emergency room"
+ },
+ "6276": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "an Inwood pharmacy line"
+ },
+ "6277": {
+  "place": "nb:Midtown",
+  "conf": "stated",
+  "why": "a Midtown longevity clinic"
+ },
+ "6278": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "an East Harlem emergency room"
+ },
+ "6279": {
+  "place": "nb:East Flatbush",
+  "conf": "inferred",
+  "why": "an East Flatbush pharmacy line"
+ },
+ "6280": {
+  "place": "key:park_ave",
+  "conf": "inferred",
+  "why": "a Park Avenue longevity clinic"
+ },
+ "6281": {
+  "place": "nb:Morningside Heights",
+  "conf": "inferred",
+  "why": "a Morningside Heights emergency room"
+ },
+ "6282": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "a Soundview pharmacy line"
+ },
+ "6283": {
+  "place": "nb:Murray Hill",
+  "conf": "inferred",
+  "why": "a Murray Hill longevity clinic"
+ },
+ "6284": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a Sunset Park emergency room"
+ },
+ "6285": {
+  "place": "nb:Woodhaven",
+  "conf": "inferred",
+  "why": "a Woodhaven pharmacy line"
+ },
+ "6286": {
+  "place": "key:57th_st",
+  "conf": "inferred",
+  "why": "a 57th Street longevity clinic"
+ },
+ "6287": {
+  "place": "nb:Morris Park",
+  "conf": "inferred",
+  "why": "a Morris Park emergency room"
+ },
+ "6288": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a Bushwick pharmacy line"
+ },
+ "6289": {
+  "place": "nb:Turtle Bay",
+  "conf": "inferred",
+  "why": "a Turtle Bay longevity clinic"
+ },
+ "6290": {
+  "place": "nb:Coney Island",
+  "conf": "inferred",
+  "why": "the Coney Island hospital emergency room"
+ },
+ "6291": {
+  "place": "nb:Laurelton",
+  "conf": "stated",
+  "why": "he is from Laurelton, Queens"
+ },
+ "6292": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "Lagos by way of Flatbush, she authenticates by smell"
+ },
+ "6293": {
+  "place": "nb:Sunnyside",
+  "conf": "stated",
+  "why": "Bucharest by way of Sunnyside, the notary with the seal"
+ },
+ "6294": {
+  "place": "nb:Astoria",
+  "conf": "stated",
+  "why": "Astoria verification analyst at a desk of panels"
+ },
+ "6295": {
+  "place": "nb:Melrose",
+  "conf": "stated",
+  "why": "Ibadan by way of the Bronx, a church hall in Melrose"
+ },
+ "6296": {
+  "place": "key:foley_sq",
+  "conf": "inferred",
+  "why": "the courts and precinct benches at Foley Square"
+ },
+ "6297": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a Jackson Heights storefront notary desk"
+ },
+ "6298": {
+  "place": "nb:SoHo",
+  "conf": "inferred",
+  "why": "a SoHo authentication room"
+ },
+ "6299": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a Midtown precinct waiting bench"
+ },
+ "6300": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a Sunset Park notary desk"
+ },
+ "6301": {
+  "place": "key:canal_st",
+  "conf": "inferred",
+  "why": "authentication work off Canal Street"
+ },
+ "6302": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a Harlem precinct waiting bench"
+ },
+ "6303": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a Flushing notary desk"
+ },
+ "6304": {
+  "place": "nb:Chelsea",
+  "conf": "inferred",
+  "why": "a Chelsea gallery authentication room"
+ },
+ "6305": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a Bedford-Stuyvesant precinct waiting bench"
+ },
+ "6306": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a Washington Heights notary desk"
+ },
+ "6307": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a Long Island City authentication room"
+ },
+ "6308": {
+  "place": "nb:Brownsville",
+  "conf": "inferred",
+  "why": "a Brownsville precinct waiting bench"
+ },
+ "6309": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a Jamaica Avenue notary desk"
+ },
+ "6310": {
+  "place": "key:diamond",
+  "conf": "inferred",
+  "why": "the Diamond District loupe and verdict"
+ },
+ "6311": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "an Astoria precinct waiting bench"
+ },
+ "6312": {
+  "place": "key:canal_st",
+  "conf": "inferred",
+  "why": "a Canal Street notary and stamp shop"
+ },
+ "6313": {
+  "place": "nb:Tribeca",
+  "conf": "inferred",
+  "why": "a Tribeca authentication room"
+ },
+ "6314": {
+  "place": "nb:Canarsie",
+  "conf": "inferred",
+  "why": "a Canarsie precinct waiting bench"
+ },
+ "6315": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a Bushwick notary desk"
+ },
+ "6316": {
+  "place": "nb:Greenpoint",
+  "conf": "inferred",
+  "why": "a Greenpoint authentication room"
+ },
+ "6317": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "a Tremont precinct waiting bench"
+ },
+ "6318": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a Corona notary desk"
+ },
+ "6319": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a Sunset Park warehouse authentication room"
+ },
+ "6320": {
+  "place": "nb:Coney Island",
+  "conf": "inferred",
+  "why": "a Coney Island precinct waiting bench"
+ },
+ "6321": {
+  "place": "nb:Richmond Hill",
+  "conf": "inferred",
+  "why": "a Richmond Hill notary desk"
+ },
+ "6322": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "a Maspeth authentication room"
+ },
+ "6323": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "an East New York precinct waiting bench"
+ },
+ "6324": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a Bensonhurst notary desk"
+ },
+ "6325": {
+  "place": "key:garment",
+  "conf": "inferred",
+  "why": "a Garment District authentication room"
+ },
+ "6326": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "an Inwood precinct waiting bench"
+ },
+ "6327": {
+  "place": "nb:Brighton Beach",
+  "conf": "inferred",
+  "why": "a Brighton Beach notary desk"
+ },
+ "6328": {
+  "place": "key:madison_ave",
+  "conf": "inferred",
+  "why": "a Madison Avenue authentication room"
+ },
+ "6329": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a Ridgewood precinct waiting bench"
+ },
+ "6330": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a Mott Haven notary desk"
+ },
+ "6331": {
+  "place": "nb:Williamsburg",
+  "conf": "inferred",
+  "why": "a Williamsburg authentication room"
+ },
+ "6332": {
+  "place": "nb:Stapleton",
+  "conf": "inferred",
+  "why": "a Stapleton precinct waiting bench"
+ },
+ "6333": {
+  "place": "nb:St. George",
+  "conf": "inferred",
+  "why": "a St. George notary desk"
+ },
+ "6334": {
+  "place": "key:crosby",
+  "conf": "inferred",
+  "why": "a Crosby Street authentication room"
+ },
+ "6335": {
+  "place": "nb:Soundview",
+  "conf": "inferred",
+  "why": "a Soundview precinct waiting bench"
+ },
+ "6336": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "an Elmhurst notary desk"
+ },
+ "6337": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a Downtown Brooklyn authentication room"
+ },
+ "6338": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a Kingsbridge precinct waiting bench"
+ },
+ "6339": {
+  "place": "nb:East Elmhurst",
+  "conf": "inferred",
+  "why": "an East Elmhurst notary desk"
+ },
+ "6340": {
+  "place": "nb:Financial District",
+  "conf": "inferred",
+  "why": "a Financial District authentication room"
+ },
+ "6341": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "nurse on her third day, arrivals hall at JFK"
+ },
+ "6342": {
+  "place": "nb:Ridgewood",
+  "conf": "stated",
+  "why": "Ohio boy on a mattress in a first Queens apartment"
+ },
+ "6343": {
+  "place": "nb:Elmhurst",
+  "conf": "stated",
+  "why": "Oran by way of a Queens hallway, four bags in Elmhurst"
+ },
+ "6344": {
+  "place": "nb:Brighton Beach",
+  "conf": "stated",
+  "why": "Odesa by way of Brighton Beach"
+ },
+ "6345": {
+  "place": "nb:Far Rockaway",
+  "conf": "stated",
+  "why": "Abuja by way of Far Rockaway, twelve days in"
+ },
+ "6346": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a first empty apartment in Sunset Park"
+ },
+ "6347": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "the arrivals hall at JFK"
+ },
+ "6348": {
+  "place": "nb:Elmhurst",
+  "conf": "inferred",
+  "why": "an Elmhurst hallway with four bags"
+ },
+ "6349": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a first empty apartment in Bushwick"
+ },
+ "6350": {
+  "place": "key:lga",
+  "conf": "inferred",
+  "why": "the arrivals hall at LaGuardia"
+ },
+ "6351": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "a Corona hallway and a key that will not turn"
+ },
+ "6352": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a first empty apartment in Washington Heights"
+ },
+ "6353": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "an arrivals gate at JFK"
+ },
+ "6354": {
+  "place": "nb:Jackson Heights",
+  "conf": "inferred",
+  "why": "a Jackson Heights hallway"
+ },
+ "6355": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a first empty apartment in Mott Haven"
+ },
+ "6356": {
+  "place": "key:twa",
+  "conf": "inferred",
+  "why": "the old TWA arrivals side at JFK"
+ },
+ "6357": {
+  "place": "nb:Woodside",
+  "conf": "inferred",
+  "why": "a Woodside hallway"
+ },
+ "6358": {
+  "place": "nb:Flatbush",
+  "conf": "inferred",
+  "why": "a first empty apartment in Flatbush"
+ },
+ "6359": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "a first job taken inside JFK"
+ },
+ "6360": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "a Sunnyside hallway"
+ },
+ "6361": {
+  "place": "nb:Kensington",
+  "conf": "inferred",
+  "why": "a first empty apartment in Kensington"
+ },
+ "6362": {
+  "place": "key:lga",
+  "conf": "inferred",
+  "why": "an arrivals hall at LaGuardia"
+ },
+ "6363": {
+  "place": "nb:Flushing",
+  "conf": "inferred",
+  "why": "a Flushing hallway"
+ },
+ "6364": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a first empty apartment in Bensonhurst"
+ },
+ "6365": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "the arrivals hall at JFK"
+ },
+ "6366": {
+  "place": "nb:Richmond Hill",
+  "conf": "inferred",
+  "why": "a Richmond Hill hallway"
+ },
+ "6367": {
+  "place": "nb:East Flatbush",
+  "conf": "inferred",
+  "why": "a first empty apartment in East Flatbush"
+ },
+ "6368": {
+  "place": "key:lga",
+  "conf": "inferred",
+  "why": "the arrivals hall at LaGuardia"
+ },
+ "6369": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a Jamaica hallway"
+ },
+ "6370": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a first empty apartment in Crown Heights"
+ },
+ "6371": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "an arrivals gate at JFK"
+ },
+ "6372": {
+  "place": "nb:East Elmhurst",
+  "conf": "inferred",
+  "why": "an East Elmhurst hallway"
+ },
+ "6373": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "a first empty apartment in Inwood"
+ },
+ "6374": {
+  "place": "key:twa",
+  "conf": "inferred",
+  "why": "the old TWA arrivals side at JFK"
+ },
+ "6375": {
+  "place": "nb:Rego Park",
+  "conf": "inferred",
+  "why": "a Rego Park hallway"
+ },
+ "6376": {
+  "place": "nb:Norwood",
+  "conf": "inferred",
+  "why": "a first empty apartment in Norwood"
+ },
+ "6377": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "a first job taken inside JFK"
+ },
+ "6378": {
+  "place": "nb:Ozone Park",
+  "conf": "inferred",
+  "why": "an Ozone Park hallway"
+ },
+ "6379": {
+  "place": "nb:Cypress Hills",
+  "conf": "inferred",
+  "why": "a first empty apartment in Cypress Hills"
+ },
+ "6380": {
+  "place": "key:lga",
+  "conf": "inferred",
+  "why": "an arrivals hall at LaGuardia"
+ },
+ "6381": {
+  "place": "nb:South Ozone Park",
+  "conf": "inferred",
+  "why": "a South Ozone Park hallway"
+ },
+ "6382": {
+  "place": "nb:Stapleton",
+  "conf": "inferred",
+  "why": "a first empty apartment in Stapleton"
+ },
+ "6383": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "the arrivals hall at JFK"
+ },
+ "6384": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a Ridgewood hallway"
+ },
+ "6385": {
+  "place": "nb:Tremont",
+  "conf": "inferred",
+  "why": "a first empty apartment in Tremont"
+ },
+ "6386": {
+  "place": "key:lga",
+  "conf": "inferred",
+  "why": "the arrivals hall at LaGuardia"
+ },
+ "6387": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "an Astoria hallway"
+ },
+ "6388": {
+  "place": "nb:Highbridge",
+  "conf": "inferred",
+  "why": "a first empty apartment in Highbridge"
+ },
+ "6389": {
+  "place": "key:jfk",
+  "conf": "stated",
+  "why": "an arrivals gate at JFK"
+ },
+ "6390": {
+  "place": "nb:Far Rockaway",
+  "conf": "inferred",
+  "why": "a Far Rockaway hallway"
+ },
+ "6391": {
+  "place": "nb:Woodside",
+  "conf": "stated",
+  "why": "Woodside dispatcher coming off the overnight"
+ },
+ "6392": {
+  "place": "nb:Inwood",
+  "conf": "stated",
+  "why": "from Inwood, the man in the lit bridge booth"
+ },
+ "6393": {
+  "place": "nb:Jamaica",
+  "conf": "stated",
+  "why": "Aba by way of Jamaica, stocking aisles at three"
+ },
+ "6394": {
+  "place": "nb:Rosedale",
+  "conf": "stated",
+  "why": "Jacmel by way of Rosedale, depot before dawn"
+ },
+ "6395": {
+  "place": "nb:Greenpoint",
+  "conf": "stated",
+  "why": "Lodz by way of Greenpoint, cleaning offices at midnight"
+ },
+ "6396": {
+  "place": "key:verrazzano",
+  "conf": "inferred",
+  "why": "a toll booth on the Verrazzano at three"
+ },
+ "6397": {
+  "place": "nb:Kensington",
+  "conf": "inferred",
+  "why": "a Kensington supermarket aisle at three"
+ },
+ "6398": {
+  "place": "nb:East New York",
+  "conf": "inferred",
+  "why": "the East New York bus depot before dawn"
+ },
+ "6399": {
+  "place": "nb:Long Island City",
+  "conf": "inferred",
+  "why": "a Long Island City dispatch room"
+ },
+ "6400": {
+  "place": "key:throgs_bridge",
+  "conf": "inferred",
+  "why": "a toll booth on the Throgs Neck Bridge"
+ },
+ "6401": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a Bay Ridge supermarket aisle at three"
+ },
+ "6402": {
+  "place": "nb:Gravesend",
+  "conf": "inferred",
+  "why": "the Ulmer Park bus depot in Gravesend"
+ },
+ "6403": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "a Maspeth dispatch room"
+ },
+ "6404": {
+  "place": "key:whitestone_bridge",
+  "conf": "inferred",
+  "why": "a toll booth on the Whitestone Bridge"
+ },
+ "6405": {
+  "place": "nb:Middle Village",
+  "conf": "inferred",
+  "why": "a Middle Village warehouse aisle at three"
+ },
+ "6406": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "the Sunset Park bus depot"
+ },
+ "6407": {
+  "place": "nb:Downtown Brooklyn",
+  "conf": "inferred",
+  "why": "a Downtown Brooklyn dispatch room"
+ },
+ "6408": {
+  "place": "key:triboro",
+  "conf": "inferred",
+  "why": "a toll booth on the RFK Bridge"
+ },
+ "6409": {
+  "place": "nb:Throgs Neck",
+  "conf": "inferred",
+  "why": "a Throgs Neck supermarket aisle at three"
+ },
+ "6410": {
+  "place": "nb:Maspeth",
+  "conf": "inferred",
+  "why": "the Grand Avenue bus depot in Maspeth"
+ },
+ "6411": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "a Fort Greene dispatch room"
+ },
+ "6412": {
+  "place": "key:marine_pkwy",
+  "conf": "inferred",
+  "why": "a toll booth on the Marine Parkway Bridge"
+ },
+ "6413": {
+  "place": "nb:New Springville",
+  "conf": "inferred",
+  "why": "a New Springville warehouse aisle at three"
+ },
+ "6414": {
+  "place": "nb:Corona",
+  "conf": "inferred",
+  "why": "the Casey Stengel bus depot by Corona"
+ },
+ "6415": {
+  "place": "nb:Midtown",
+  "conf": "inferred",
+  "why": "a Midtown radio desk through the night"
+ },
+ "6416": {
+  "place": "key:goethals",
+  "conf": "inferred",
+  "why": "a toll booth on the Goethals Bridge"
+ },
+ "6417": {
+  "place": "nb:Marine Park",
+  "conf": "inferred",
+  "why": "a Marine Park supermarket aisle at three"
+ },
+ "6418": {
+  "place": "nb:Queens Village",
+  "conf": "inferred",
+  "why": "the Queens Village bus depot"
+ },
+ "6419": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "a Sunnyside dispatch room"
+ },
+ "6420": {
+  "place": "key:outerbridge",
+  "conf": "inferred",
+  "why": "a toll booth at the Outerbridge Crossing"
+ },
+ "6421": {
+  "place": "nb:Whitestone",
+  "conf": "inferred",
+  "why": "a Whitestone supermarket aisle at three"
+ },
+ "6422": {
+  "place": "nb:Far Rockaway",
+  "conf": "inferred",
+  "why": "the Far Rockaway bus depot"
+ },
+ "6423": {
+  "place": "nb:Mott Haven",
+  "conf": "inferred",
+  "why": "a Mott Haven dispatch room"
+ },
+ "6424": {
+  "place": "key:bayonne_bridge",
+  "conf": "inferred",
+  "why": "a toll booth on the Bayonne Bridge"
+ },
+ "6425": {
+  "place": "nb:Bayside",
+  "conf": "inferred",
+  "why": "a Bayside supermarket aisle at three"
+ },
+ "6426": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "the Kingsbridge bus depot"
+ },
+ "6427": {
+  "place": "nb:Jamaica",
+  "conf": "inferred",
+  "why": "a Jamaica dispatch room"
+ },
+ "6428": {
+  "place": "key:cross_bay",
+  "conf": "inferred",
+  "why": "a toll booth on the Cross Bay Bridge road"
+ },
+ "6429": {
+  "place": "nb:Glendale",
+  "conf": "inferred",
+  "why": "a Glendale warehouse aisle at three"
+ },
+ "6430": {
+  "place": "nb:West Farms",
+  "conf": "inferred",
+  "why": "the West Farms bus depot"
+ },
+ "6431": {
+  "place": "key:red_hook_b",
+  "conf": "inferred",
+  "why": "a Red Hook dispatch room"
+ },
+ "6432": {
+  "place": "key:midtown_tunnel",
+  "conf": "inferred",
+  "why": "a lit booth at the Queens Midtown Tunnel"
+ },
+ "6433": {
+  "place": "nb:Howard Beach",
+  "conf": "inferred",
+  "why": "a Howard Beach supermarket aisle at three"
+ },
+ "6434": {
+  "place": "nb:Williamsbridge",
+  "conf": "inferred",
+  "why": "the Gun Hill bus depot in Williamsbridge"
+ },
+ "6435": {
+  "place": "nb:Hell's Kitchen",
+  "conf": "inferred",
+  "why": "a Hell's Kitchen dispatch room"
+ },
+ "6436": {
+  "place": "key:brooklyn_battery",
+  "conf": "inferred",
+  "why": "a lit booth at the Hugh Carey Tunnel"
+ },
+ "6437": {
+  "place": "nb:Pelham Bay",
+  "conf": "inferred",
+  "why": "a Pelham Bay supermarket aisle at three"
+ },
+ "6438": {
+  "place": "nb:Hell's Kitchen",
+  "conf": "inferred",
+  "why": "the Quill bus depot in Hell's Kitchen"
+ },
+ "6439": {
+  "place": "nb:Bushwick",
+  "conf": "inferred",
+  "why": "a Bushwick dispatch room"
+ },
+ "6440": {
+  "place": "key:gwb",
+  "conf": "inferred",
+  "why": "a booth on the George Washington Bridge"
+ },
+ "6441": {
+  "place": "nb:Bensonhurst",
+  "conf": "stated",
+  "why": "Bensonhurst by way of Sicily, last speaker of the dialect"
+ },
+ "6442": {
+  "place": "nb:Harlem",
+  "conf": "stated",
+  "why": "sixty one years on one Harlem block"
+ },
+ "6443": {
+  "place": "nb:Bushwick",
+  "conf": "stated",
+  "why": "Ponce by way of Bushwick, teaching the trade"
+ },
+ "6444": {
+  "place": "nb:Flatbush",
+  "conf": "stated",
+  "why": "Bridgetown by way of Flatbush, she runs the social club"
+ },
+ "6445": {
+  "place": "nb:Astoria",
+  "conf": "stated",
+  "why": "Kalymnos by way of Astoria, closing the shop"
+ },
+ "6446": {
+  "place": "key:arthur_ave",
+  "conf": "inferred",
+  "why": "an Arthur Avenue social club"
+ },
+ "6447": {
+  "place": "nb:Calvary & Mount Zion Cemeteries",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6448": {
+  "place": "nb:Bedford-Stuyvesant",
+  "conf": "inferred",
+  "why": "a Bedford-Stuyvesant stoop"
+ },
+ "6449": {
+  "place": "nb:Upper West Side",
+  "conf": "inferred",
+  "why": "a rent controlled apartment on the Upper West Side"
+ },
+ "6450": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a Bensonhurst social club"
+ },
+ "6451": {
+  "place": "nb:St. John Cemetery",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6452": {
+  "place": "nb:Park Slope",
+  "conf": "inferred",
+  "why": "a Park Slope stoop"
+ },
+ "6453": {
+  "place": "nb:Inwood",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Inwood"
+ },
+ "6454": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "an Astoria social club"
+ },
+ "6455": {
+  "place": "nb:Mount Olivet & All Faiths Cemeteries",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6456": {
+  "place": "nb:Harlem",
+  "conf": "inferred",
+  "why": "a Harlem stoop"
+ },
+ "6457": {
+  "place": "nb:Bensonhurst",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Bensonhurst"
+ },
+ "6458": {
+  "place": "nb:Greenpoint",
+  "conf": "inferred",
+  "why": "a Greenpoint social club"
+ },
+ "6459": {
+  "place": "nb:Mount Hebron & Cedar Grove Cemeteries",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6460": {
+  "place": "nb:Fort Greene",
+  "conf": "inferred",
+  "why": "a Fort Greene stoop"
+ },
+ "6461": {
+  "place": "nb:Astoria",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Astoria"
+ },
+ "6462": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a Ridgewood social club"
+ },
+ "6463": {
+  "place": "nb:Middle Village Cemetery",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6464": {
+  "place": "nb:Crown Heights",
+  "conf": "inferred",
+  "why": "a Crown Heights stoop"
+ },
+ "6465": {
+  "place": "nb:Kingsbridge",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Kingsbridge"
+ },
+ "6466": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a Bay Ridge social club"
+ },
+ "6467": {
+  "place": "nb:Montefiore Cemetery",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6468": {
+  "place": "nb:Clinton Hill",
+  "conf": "inferred",
+  "why": "a Clinton Hill stoop"
+ },
+ "6469": {
+  "place": "nb:Washington Heights",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Washington Heights"
+ },
+ "6470": {
+  "place": "nb:Belmont",
+  "conf": "inferred",
+  "why": "a Belmont social club"
+ },
+ "6471": {
+  "place": "nb:St. Michael's Cemetery",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6472": {
+  "place": "nb:Prospect Heights",
+  "conf": "inferred",
+  "why": "a Prospect Heights stoop"
+ },
+ "6473": {
+  "place": "nb:Ridgewood",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Ridgewood"
+ },
+ "6474": {
+  "place": "nb:Ozone Park",
+  "conf": "inferred",
+  "why": "an Ozone Park social club"
+ },
+ "6475": {
+  "place": "nb:Calvary & Mount Zion Cemeteries",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6476": {
+  "place": "nb:Sunset Park",
+  "conf": "inferred",
+  "why": "a Sunset Park stoop"
+ },
+ "6477": {
+  "place": "nb:Bay Ridge",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Bay Ridge"
+ },
+ "6478": {
+  "place": "nb:Howard Beach",
+  "conf": "inferred",
+  "why": "a Howard Beach social club"
+ },
+ "6479": {
+  "place": "nb:St. John Cemetery",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6480": {
+  "place": "nb:Prospect Lefferts Gardens",
+  "conf": "inferred",
+  "why": "a Prospect Lefferts Gardens stoop"
+ },
+ "6481": {
+  "place": "nb:Upper East Side",
+  "conf": "inferred",
+  "why": "a rent controlled apartment on the Upper East Side"
+ },
+ "6482": {
+  "place": "nb:Carroll Gardens",
+  "conf": "inferred",
+  "why": "a Carroll Gardens social club"
+ },
+ "6483": {
+  "place": "nb:Mount Olivet & All Faiths Cemeteries",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6484": {
+  "place": "nb:Windsor Terrace",
+  "conf": "inferred",
+  "why": "a Windsor Terrace stoop"
+ },
+ "6485": {
+  "place": "nb:Borough Park",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Borough Park"
+ },
+ "6486": {
+  "place": "key:little_italy",
+  "conf": "inferred",
+  "why": "a Little Italy social club"
+ },
+ "6487": {
+  "place": "nb:Mount Hebron & Cedar Grove Cemeteries",
+  "conf": "stated",
+  "why": "a Sunday at a cemetery in Queens"
+ },
+ "6488": {
+  "place": "nb:East Flatbush",
+  "conf": "inferred",
+  "why": "an East Flatbush stoop"
+ },
+ "6489": {
+  "place": "nb:Sunnyside",
+  "conf": "inferred",
+  "why": "a rent controlled apartment in Sunnyside"
+ },
+ "6490": {
+  "place": "nb:East Harlem",
+  "conf": "inferred",
+  "why": "an East Harlem social club"
+ }
+}

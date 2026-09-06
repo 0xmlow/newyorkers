@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>NEW YORKERS · The Museum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=JetBrains+Mono:wght@400;700&family=Oswald:wght@500;600&display=swap">
+<meta name="description" content="The Museum: forty one walkable New York rooms, from the Bowery to the Guggenheim spiral, hung with every New Yorker in the census. Each room shows the people recorded at that place first.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEW YORKERS · The Museum">
+<meta property="og:description" content="Walk the city as a gallery. Forty one rooms, every New Yorker painted, hung where they were counted.">
+<meta property="og:image" content="https://new-yorkers.pages.dev/og.jpg">
+<meta property="og:url" content="https://new-yorkers.pages.dev/museum.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
+<link rel="stylesheet" href="assets/museum/museum.css">
+</head>
+<body>
+<div id="world"></div>
+<div class="vignette"></div>
+
+<!-- enter -->
+<div id="enter">
+  <img class="logo" src="assets/brand/logo_white.png" alt="MLOW">
+  <div class="eyebrow">NEW YORKERS · A CENSUS BY MLOW</div>
+  <h1>THE MUSEUM</h1>
+  <div class="sub">TWENTY ONE ROOMS · THE CITY IS THE GALLERY</div>
+  <p class="breath">Walk the Bowery after hours, ride the tram over the river, climb the Guggenheim ramp. Every room hangs the New Yorkers who were counted there.</p>
+  <div class="census" id="enterCount"></div>
+  <div class="census" id="enterRoom" style="margin-top:-18px"></div>
+  <button id="enterBtn">ENTER THE MUSEUM</button>
+  <div class="links"><a href="index.html">HOME</a><a href="census.html">THE CENSUS</a><a href="map.html">THE ATLAS</a><a href="counted.html">GET COUNTED</a></div>
+  <p id="noGl" hidden>3D is unavailable on this device. The <a href="census.html#gallery">gallery</a> holds the full collection.</p>
+</div>
+
+<!-- hud -->
+<header id="hud">
+  <a class="brand" href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"><span>NEW YORKERS<br><em>THE MUSEUM</em></span></a>
+  <nav>
+    <button id="btnDest"><i></i>EXPLORE NYC <span>41 ROOMS ↗</span></button>
+    <button id="btnHang">THE HANG</button>
+    <button id="btnIndex">INDEX</button>
+    <button id="btnGlb" title="Export this room as a GLB file">GLB ↓</button>
+    <button id="btnFull" aria-label="Fullscreen">⛶</button>
+  </nav>
+</header>
+<section id="label">
+  <p id="roomArea"></p>
+  <h2 id="roomName"></h2>
+  <button id="changeRoom">Change room ↗</button>
+  <div class="rule"></div>
+  <p class="mono" id="roomMood"></p>
+  <p class="mono hang" id="hangLabel"></p>
+  <p class="mono dyn" id="dyn"></p>
+</section>
+<div id="loading">BUILDING</div>
+<div id="debug" class="mono" hidden></div>
+
+<div id="steps"><button id="stepF" aria-label="Walk forward">↑</button><button id="stepB" aria-label="Walk backward">↓</button></div>
+<div id="pad"><button id="padF">▲</button><div><button id="padL">◀</button><button id="padB">▼</button><button id="padR">▶</button></div></div>
+
+<footer id="bar">
+  <div class="row">
+    <div class="hint mono"><i></i><span id="hint"></span></div>
+    <div class="ctl">
+      <button id="btnTour">▶ Guided tour</button>
+      <button id="btnHome">Return to entrance</button>
+    </div>
+  </div>
+  <div id="strip"></div>
+  <div class="row bottom">
+    <div class="mono" id="count"></div>
+    <div class="pager"><button id="pagePrev" aria-label="Previous set">←</button><span id="pageLabel"></span><button id="pageNext" aria-label="Next set">→</button></div>
+  </div>
+</footer>
+
+<!-- panels -->
+<aside id="dest" class="panel wide">
+  <div class="head"><div><div class="kicker">EXPLORE NYC</div><h3>The city is the gallery.</h3><p>Forty one artist built rooms, each with its street and its skyline. Each hangs the New Yorkers recorded at that place first, then the whole census.</p></div><button data-close aria-label="Close">×</button></div>
+  <div class="grid" id="destGrid"></div>
+</aside>
+
+<aside id="hang" class="panel">
+  <div class="head"><div><div class="kicker">THE HANG</div><h3>Choose who is on the walls.</h3></div><button data-close aria-label="Close">×</button></div>
+  <div class="search"><input id="search" placeholder="A number, a name, a neighbourhood" autocomplete="off"><button id="searchGo">FIND</button></div>
+  <div class="chips" id="hangTop"></div>
+  <div class="kicker sm">THE ERAS</div><div class="chips" id="hangEras"></div>
+  <div class="kicker sm">THE FAMILIES</div><div class="chips" id="hangFamilies"></div>
+  <div class="kicker sm">THE SETS</div><div class="chips sets" id="hangSets"></div>
+</aside>
+
+<aside id="index" class="panel wide">
+  <div class="head"><div><div class="kicker" id="indexTitle">INDEX</div><h3>Every work in this hang. <span class="mono" id="indexCount"></span></h3><p>Pick one and the museum walks you to it.</p></div><button data-close aria-label="Close">×</button></div>
+  <div class="igrid" id="indexGrid"></div>
+  <button id="indexMore" class="more">SHOW MORE</button>
+</aside>
+
+<aside id="detail">
+  <button data-close class="x" aria-label="Close">×</button>
+  <img alt="">
+  <div class="body">
+    <div class="plate"><span class="pn" id="dNum"></span><span class="pm">BY MLOW</span></div>
+    <h3 id="dTitle"></h3>
+    <p class="mono meta" id="dMeta"></p>
+    <p class="story" id="dStory"></p>
+    <div class="acts">
+      <button id="dGo">WALK TO IT</button>
+      <button id="dHang">HANG IT HERE</button>
+      <a id="dRecord" href="#">OPEN THE RECORD ↗</a>
+      <a id="dAtlas" href="#">ON THE ATLAS ↗</a>
+    </div>
+  </div>
+</aside>
+
+<script src="assets/config.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/museum/museum.js"></script>
+</body>
+</html>
