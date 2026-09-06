@@ -155,13 +155,6 @@ export const DAY_SEED = Number(DAY.replace(/-/g, '')) || 20260906;
 export const HOUR = params.has('hour') ? Number(params.get('hour')) : NOW.h + NOW.min / 60;
 export const CLOCK = `${String(Math.floor(HOUR)).padStart(2, '0')}:${String(Math.round((HOUR % 1) * 60)).padStart(2, '0')}`;
 
-/* THE TWELVE: the pieces frozen for the launch fortnight, Sept 8 to 21, 2026 (STORYTELLING PLAN 2026-09-06/03_THE_TWELVE.md).
-   The launch hang leads with them in this order and is the default hang while the New York date is inside the window. */
-export const LAUNCH_TWELVE = [548, 891, 942, 767, 1485, 1467, 1151, 2300, 1866, 3000, 3466, 3200];
-export const LAUNCH_WINDOW: [string, string] = ['2026-09-08', '2026-09-21'];
-export const IN_LAUNCH = DAY >= LAUNCH_WINDOW[0] && DAY <= LAUNCH_WINDOW[1];
-export const DEFAULT_HANG: Hang = { mode: IN_LAUNCH ? 'launch' : 'place' };
-
 const orderCache = new Map<string, Piece[]>();
 export function placeHang(roomId: string): Piece[] {
   const hit = orderCache.get(roomId);
@@ -198,15 +191,10 @@ export function placeCount(roomId: string) {
   return P.filter((p) => (p.nb && c.nb.includes(p.nb)) || c.words.test(p.t) || (p.cat && c.cat?.includes(p.cat))).length;
 }
 
-export type Hang = { mode: 'place' | 'launch' | 'era' | 'family' | 'set' | 'all' | 'heroes' | 'search'; key?: string };
+export type Hang = { mode: 'place' | 'era' | 'family' | 'set' | 'all' | 'heroes' | 'search'; key?: string };
 export function hangList(h: Hang, roomId: string): Piece[] {
   switch (h.mode) {
     case 'place': return placeHang(roomId);
-    case 'launch': {
-      const twelve = LAUNCH_TWELVE.map((n) => byNum.get(n)).filter((p): p is Piece => !!p);
-      const lead = new Set(twelve);
-      return twelve.concat(placeHang(roomId).filter((p) => !lead.has(p)));
-    }
     case 'era': return P.filter((p) => p.e === Number(h.key));
     case 'family': return P.filter((p) => p.f === h.key);
     case 'set': return P.filter((p) => p.set === h.key);
@@ -228,7 +216,6 @@ export function hangList(h: Hang, roomId: string): Piece[] {
 export function hangLabel(h: Hang, roomName: string) {
   switch (h.mode) {
     case 'place': return 'THIS PLACE / ' + roomName;
-    case 'launch': return 'THE TWELVE / ' + roomName;
     case 'era': { const e = ERAS[Number(h.key) - 1]; return `ERA ${e.roman} / ${e.title}`; }
     case 'family': return 'FAMILY / ' + h.key;
     case 'set': return 'SET / ' + h.key;

@@ -33,7 +33,7 @@ ONLY = set(x for x in A.rooms.split(",") if x)
 
 def rooms_in_order():
     idx = open(os.path.join(HERE, "src/rooms/index.ts")).read()
-    order = re.findall(r"\b([a-z]+)\b", idx[idx.index("ROOMS"):])
+    order = re.findall(r"\b([a-z0-9]+)\b", idx[idx.index("ROOMS"):])
     defs = {}
     for f in sorted(glob.glob(os.path.join(HERE, "src/rooms/[a-z].ts"))):
         s = open(f).read()
