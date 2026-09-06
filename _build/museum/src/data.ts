@@ -1,5 +1,6 @@
 /* The census data as the museum sees it: window.NY_DATA from assets/data.js. */
 import * as T from 'three';
+import { USED } from './used';
 import { mulberry } from './textures';
 
 export type Piece = {
@@ -51,7 +52,7 @@ export const HEROES = new Set(Object.values(D.story.eraHeroes).flat());
 
 /* Each room hangs the New Yorkers who belong to it first: pieces whose recorded
    neighbourhood, title or story places them there, then the rest of the census. */
-type Cur = { nb: string[]; loc?: RegExp; words: RegExp; fam?: string[]; boro?: string[]; cat?: string[] };
+type Cur = { nb: string[]; loc?: RegExp; words: RegExp; fam?: string[]; boro?: string[]; cat?: string[]; fresh?: boolean };
 const CURATION: Record<string, Cur> = {
   bowery: { nb: ['Lower East Side', 'East Village', 'Chinatown', 'NoHo', 'SoHo', 'Little Italy', 'Two Bridges'], words: /bowery|bodega|fire escape|stoop|tenement|houston|delancey|deli/i, fam: ['Stoop', 'Hustlers'] },
   subway: { nb: ['The Subway'], words: /subway|platform|the train|\bmta\b|turnstile|conductor|straphanger|\bstation\b|tunnel|\bA train|\bL train|\bF train|\b[1-7] train/i, fam: ['Underground'] },
@@ -115,6 +116,26 @@ const CURATION: Record<string, Cur> = {
   domino: { nb: ['Williamsburg', 'South Williamsburg', 'Domino Park', 'East River'], words: /domino|sugar|refinery|williamsburg|waterfront|factory|warehouse|brick|smokestack|crane|syrup|the bridge\b/i, fam: ['Builders', 'Degens'] },
   boatgraveyard: { nb: ['Rossville', 'Arthur Kill', 'Staten Island', 'Tottenville', 'Charleston', 'Fresh Kills'], words: /graveyard|wreck|rust|tugboat|tug\b|hull|marsh|arthur kill|staten|abandoned|ruin|ghost ship|kayak|heron|fog/i, fam: ['Villains', 'Underground'] },
   intrepid: { nb: ["Hell's Kitchen", 'Pier 86', 'Hudson River', 'Midtown West', 'Clinton'], words: /intrepid|carrier|aircraft|jet\b|pilot|shuttle|enterprise|navy|hudson|pier 86|flight deck|concorde|submarine|veteran/i, fam: ['Heroes', 'Builders'] },
+  studio8h: { nb: ['Rockefeller Center', 'Midtown', 'Sixth Avenue'], words: /live from new york|saturday night|studio|sketch|comedian|comedy|television|tv\b|broadcast|late night|monologue|audience|cue card|rockefeller/i, fam: ['Heroes', 'Design'], fresh: true },
+  carnegie: { nb: ['Midtown', '57th Street', 'Midtown West', 'Columbus Circle'], words: /carnegie|concert|symphony|piano|violin|cello|recital|orchestra|conductor|practice|rehearsal|encore|maestro|music hall/i, fam: ['Heroes', 'Process'], fresh: true },
+  vanguard: { nb: ['West Village', 'Greenwich Village', 'Seventh Avenue South', 'Sheridan Square'], words: /vanguard|jazz|saxophone|trumpet|bass|drummer|second set|club|basement|village|coltrane|bebop|trio|quartet|late set/i, fam: ['Underground', 'Heroes'], fresh: true },
+  rucker: { nb: ['Harlem', 'Sugar Hill', 'Washington Heights', 'Polo Grounds', 'Hamilton Heights'], words: /rucker|basketball|hoop|court\b|streetball|crossover|dunk|ball\b|game\b|sneaker|playground|155th|harlem/i, fam: ['Heroes', 'Citizens'], fresh: true },
+  sedgwick: { nb: ['Morris Heights', 'Highbridge', 'The Bronx', 'University Heights', 'Sedgwick'], words: /hip hop|hip-hop|dj\b|turntable|breakbeat|break dance|b-boy|b-girl|rec room|block party|mc\b|rapper|rap\b|boombox|sedgwick|bronx|1973/i, fam: ['Underground', 'Heroes', 'Degens'], fresh: true },
+  balloons: { nb: ['Upper West Side', 'Central Park West', 'Museum of Natural History', 'Lincoln Square'], words: /balloon|thanksgiving|parade|inflat|helium|the night before|natural history|museum|november|float\b|marching band/i, fam: ['Citizens', 'Places'], fresh: true },
+  stonewall: { nb: ['West Village', 'Greenwich Village', 'Sheridan Square', 'Christopher Street'], words: /stonewall|pride|christopher|rainbow|queer|gay|lesbian|trans\b|drag\b|parade|march\b|liberation|village/i, fam: ['Heroes', 'Citizens'], fresh: true },
+  sangennaro: { nb: ['Little Italy', 'Nolita', 'Mulberry Street', 'Chinatown', 'SoHo'], words: /gennaro|feast|festa|mulberry|little italy|zeppole|cannoli|sausage|procession|saint|italian|nonna|festival|carnival lights/i, fam: ['Stoop', 'Citizens'], fresh: true },
+  chelseahotel: { nb: ['Chelsea', 'West 23rd Street', 'Flatiron', 'Midtown South'], words: /chelsea|hotel|room \d+|lobby|poet|painter|songwriter|bohemian|residency|rent|balcony|the chelsea/i, fam: ['Process', 'Design', 'Underground'], fresh: true },
+  strand: { nb: ['Union Square', 'East Village', 'Greenwich Village', 'NoHo', 'Broadway'], words: /strand|book|bookstore|bookshop|paperback|novel|reading|reader|tote|miles of books|library|first edition|shelf|browse/i, fam: ['Process', 'Citizens'], fresh: true },
+  dakota: { nb: ['Upper West Side', 'Central Park West', 'Strawberry Fields', 'Lincoln Square'], words: /dakota|imagine|strawberry fields|72nd|courtyard|doorman|apartment house|mosaic|beatle|lennon|gable|central park west/i, fam: ['Heroes', 'Places'], fresh: true },
+  garden: { nb: ['Midtown', 'Penn Station', 'Chelsea', 'Herald Square', 'Garment District'], words: /garden|knicks|rangers|arena|madison square|courtside|playoff|buzzer|jumbotron|crowd|concert|fight night|hockey|rangers|seventh avenue/i, fam: ['Heroes', 'Citizens'], fresh: true },
+  dendur: { nb: ['Upper East Side', 'Museum Mile', 'Central Park', 'Fifth Avenue'], words: /dendur|temple|egypt|the met\b|museum|sackler|pharaoh|hieroglyph|nile|antiquit|gala|met gala|sandstone/i, fam: ['Design', 'Places'], fresh: true },
+  moma: { nb: ['Midtown', '53rd Street', 'Rockefeller Center', 'Midtown West'], words: /moma|modern|sculpture garden|museum|abstract|canvas|painter|gallery|curator|installation|picasso|warhol|white cube/i, fam: ['Design', 'Process'], fresh: true },
+  whitney: { nb: ['Meatpacking District', 'West Village', 'Chelsea', 'Gansevoort', 'High Line'], words: /whitney|biennial|gansevoort|meatpacking|terrace|american art|museum|gallery|high line|hudson|renzo|sawtooth/i, fam: ['Design', 'Process'], fresh: true },
+  ellis: { nb: ['Ellis Island', 'New York Harbor', 'Liberty Island', 'The Battery', 'Lower Manhattan'], words: /ellis|immigra|arrival|registry|steerage|passage|manifest|old country|the boat|customs|new name|great hall|harbor|harbour/i, fam: ['Transplants', 'Citizens'], fresh: true },
+  marathon: { nb: ['Bay Ridge', 'Fort Wadsworth', 'Staten Island', 'The Verrazzano', 'Sunset Park'], words: /marathon|runner|running|26\.2|verrazzano|verrazano|mile\b|race\b|finish line|start line|first sunday|bib\b|sneaker|jog/i, fam: ['Heroes', 'Citizens'], fresh: true },
+  halloween: { nb: ['Greenwich Village', 'West Village', 'Chelsea', 'Sixth Avenue', 'Flatiron'], words: /halloween|costume|parade|puppet|skeleton|ghost|witch|mask\b|october|pumpkin|monster|vampire|zombie|sixth avenue/i, fam: ['Villains', 'Degens', 'Underground'], fresh: true },
+  easternparkway: { nb: ['Crown Heights', 'Prospect Heights', 'Grand Army Plaza', 'Flatbush', 'Eastern Parkway', 'Park Slope'], words: /carnival|labor day|west indian|caribbean|eastern parkway|grand army|feather|soca|jouvert|j'ouvert|steel pan|flag\b|masquerad|brooklyn museum|library|arch\b/i, fam: ['Citizens', 'Heroes'], fresh: true },
+  manhattanhenge: { nb: ['Midtown East', 'Tudor City', 'Murray Hill', 'Turtle Bay', '42nd Street'], words: /manhattanhenge|sunset|the sun\b|golden hour|42nd|crosstown|grid\b|tudor city|overpass|phone up|solstice|the light\b|dusk|last light/i, fam: ['Design', 'Citizens'], fresh: true },
 };
 
 /* The museum keeps New York time. The hang of the day and the light of the hour
@@ -154,10 +175,12 @@ export function placeHang(roomId: string): Piece[] {
       if (c.cat && p.cat && c.cat.includes(p.cat)) s += 6;
       if (HEROES.has(p.n)) s += 0.75;
     }
-    return { p, s, r: rnd(), d: daily(), i };
+    // fresh rooms send anything already hung elsewhere to the back, so the new walls show New Yorkers the museum has not shown
+    const t = c && c.fresh && USED.has(p.n) ? 1 : 0;
+    return { p, s, r: rnd(), d: daily(), i, t };
   });
   // the recorded New Yorkers of this place lead, reshuffled every New York day; the rest keep a fixed order
-  scored.sort((a, b) => (b.s > 0 ? 1 : 0) - (a.s > 0 ? 1 : 0) || (a.s > 0 && b.s > 0 ? (a.d - b.d) : (b.s - a.s) || (a.r - b.r)));
+  scored.sort((a, b) => a.t - b.t || (b.s > 0 ? 1 : 0) - (a.s > 0 ? 1 : 0) || (a.s > 0 && b.s > 0 ? (a.d - b.d) : (b.s - a.s) || (a.r - b.r)));
   const out = scored.map((x) => x.p);
   orderCache.set(roomId, out);
   return out;

@@ -143,6 +143,10 @@ export const radiocity: RoomDef = {
     const FZ = 10;
     k.box(70, 40, 60, 0, 20, FZ - 30, limestone);
     for (let i = 0; i < 3; i++) k.box(24 - i * 4, 8, 24 - i * 4, 0, 40 + 4 + i * 8, FZ - 40, limestone);
+    for (let x = -34; x <= 34; x += 6) k.box(1.2, 40, 0.8, x, 20, FZ + 0.4, limestone);
+    for (let i = 0; i < 9; i++) { const ch = 'RADIO CITY'[i]; const y = 30 - i * 2.1; k.box(2.6, 2.1, 1.0, -22, y, FZ + 3.6, dark); if (ch !== ' ') { k.sign(ch, 2.2, 1.9, -22, y, FZ + 4.12, '#14090a', '#ff4a4a', 150, 0, { border: false }); k.sign(ch, 2.2, 1.9, -22, y, FZ + 3.08, '#14090a', '#ff4a4a', 150, PI, { border: false }); } }
+    k.mesh(new T.BoxGeometry(0.1, 19, 0.1), neon, -23.32, 20.5, FZ + 3.6); k.mesh(new T.BoxGeometry(0.1, 19, 0.1), neon, -20.68, 20.5, FZ + 3.6);
+    k.point(-22, 22, FZ + 7, 0xff5a4a, 60, 26);
     k.box(40, 3.2, 6, 0, 8.2, FZ + 3, dark);
     for (const [y, m] of [[6.7, neon], [9.7, neon], [8.2, neonB]] as const) k.mesh(new T.BoxGeometry(40.2, 0.08, 6.2), m, 0, y, FZ + 3);
     k.sign('RADIO CITY MUSIC HALL', 30, 2.2, 0, 8.2, FZ + 6.05, '#14090a', '#ff4a4a', 160, 0, { border: true });
@@ -197,7 +201,7 @@ export const radiocity: RoomDef = {
     mounts.push({ position: v(0, stageY + 12, SZ - 14.8), rotation: 0, target: v(0, stageY + 6, SZ + 12), width: 26, height: 14.6, style: 'none', wash: false });
     mounts.push({ position: v(-13, stageY + 4, SZ - 14.7), rotation: 0, target: v(-13, stageY + 3, SZ), width: 6, height: 3.5, style: 'gilt', wash: false });
     mounts.push({ position: v(13, stageY + 4, SZ - 14.7), rotation: 0, target: v(13, stageY + 3, SZ), width: 6, height: 3.5, style: 'gilt', wash: false });
-    return { mounts, spawn: v(0, 3, FZ + 28), look: v(0, 8, FZ), eye: 3, bounds: [-20, 20, SZ + 6, FZ + 32], style: 'gilt', floorY: (x, z) => { void x; if (z < AZ - 7) return -Math.min(18, Math.max(0, (AZ - 8 - z) / 2.6)) * 0.24; return 0; } };
+    return { mounts, spawn: v(-30, 3, FZ + 24), look: v(-6, 10, FZ + 2), eye: 3, bounds: [-34, 20, SZ + 6, FZ + 32], style: 'gilt', floorY: (x, z) => { void x; if (z < AZ - 7) return -Math.min(18, Math.max(0, (AZ - 8 - z) / 2.6)) * 0.24; return 0; } };
   },
 };
 
@@ -228,12 +232,17 @@ export const woolworth: RoomDef = {
     // Broadway, City Hall Park across the street, the tower
     street(k, { w: 22, len: 140, z: 30, x: 0 });
     k.box(90, 0.4, 70, 0, -0.1, 70, k.pbr('wwLawn', X.grass(0x4b6b3a, 55), 0.05));
-    for (let i = 0; i < 16; i++) { const rnd = X.mulberry(49 + i); k.tree(-40 + rnd() * 80, 0, 45 + rnd() * 40, { kind: 'round', h: 5 + rnd() * 3, r: 2.4 + rnd() * 1.4, seed: i }); }
+    for (let i = 0; i < 16; i++) { const rnd = X.mulberry(49 + i); const tx = -40 + rnd() * 80, tz = 45 + rnd() * 40; if (Math.abs(tx) < 14) continue; k.tree(tx, 0, tz, { kind: 'round', h: 5 + rnd() * 3, r: 2.4 + rnd() * 1.4, seed: i }); }
+    k.box(12, 0.3, 70, 0, 0.05, 70, k.pbr('wwPath', X.pavers(0x9a9a94, 57), 0.4));
     blockFront(k, { x: -50, z0: 90, count: 10, face: 1, seed: 106, h: [18, 34] });
     const FZ = 8, TW = 46;
     k.box(TW, 96, 40, 0, 48, FZ - 20, terra);
     for (let i = 0; i < 3; i++) k.box(TW - i * 2, 1.2, 40 - i * 2, 0, 20 + i * 30, FZ - 20, terraS);
+    for (let x = -TW / 2 + 2; x < TW / 2; x += 4) k.box(0.7, 96, 0.5, x, 48, FZ + 0.2, terraS);
+    for (const s of [-1, 1]) k.box(0.7, 96, 40.4, s * (TW / 2 - 0.2), 48, FZ - 20, terraS);
     k.box(26, 120, 26, 0, 96 + 60, FZ - 20, terra);
+    for (let x = -12; x <= 12; x += 3.2) k.box(0.5, 120, 0.4, x, 156, FZ - 20 + 13.1, terraS);
+    for (let i = 0; i < 3; i++) k.moulding([[0, 0], [0.7, 0], [0.8, 0.3], [0.4, 0.5], [0.6, 0.8], [0, 1.0]], 26.4, 0, 120 + i * 30, FZ - 20 + 13.2, terraS, 0);
     k.mesh(new T.ConeGeometry(15, 30, 4), copper, 0, 216 + 15, FZ - 20).rotation.y = PI / 4;
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) { k.box(3, 12, 3, sx * 12, 216 + 6, FZ - 20 + sz * 12, terraS); k.mesh(new T.ConeGeometry(2, 6, 4), copper, sx * 12, 216 + 15, FZ - 20 + sz * 12); }
     k.point(0, 244, FZ - 20, 0xfff0c8, 400, 120);
@@ -275,7 +284,7 @@ export const woolworth: RoomDef = {
     for (let i = 0; i < 5; i++) { const z = LZ - 11.5 + i * 5; for (const s of [-1, 1]) mounts.push({ position: v(s * (AW / 2 - 0.34), 2.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 2.5, z), width: 3.0, height: 1.8, style: 'gilt', wash: true }); }
     for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const x = s * (8 + i * 3); mounts.push({ position: v(x, 2.6, LZ - AW / 2 + 0.34), rotation: 0, target: v(x, 2.5, LZ), width: 2.4, height: 1.5, style: 'gilt', wash: false }); mounts.push({ position: v(x, 2.6, LZ + AW / 2 - 0.34), rotation: PI, target: v(x, 2.5, LZ), width: 2.4, height: 1.5, style: 'gilt', wash: false }); }
     for (const s of [-1, 1]) mounts.push({ position: v(s * 9.05, 6.0, LZ), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 3, LZ), width: 4.6, height: 2.7, style: 'gilt', wash: true });
-    return { mounts, spawn: v(0, 3, FZ + 34), look: v(0, 48, FZ - 20), eye: 3, bounds: [-15, 15, LZ - LEN / 2 + 1, FZ + 40], style: 'gilt' };
+    return { mounts, spawn: v(12, 3, FZ + 88), look: v(0, 70, FZ - 20), eye: 3, bounds: [-24, 24, LZ - LEN / 2 + 1, FZ + 96], style: 'gilt' };
   },
 };
 

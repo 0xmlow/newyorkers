@@ -41,8 +41,10 @@ def rooms_in_order():
             head = m.group(2)
 
             def g(k):
-                mm = re.search(rf"\b{k}: '((?:[^'\\]|\\.)*)'", head)
-                return mm.group(1).replace("\\'", "'") if mm else ""
+                mm = re.search(rf"\b{k}: (?:'((?:[^'\\]|\\.)*)'|\"([^\"]*)\")", head)
+                if not mm:
+                    return ""
+                return (mm.group(1) if mm.group(1) is not None else mm.group(2)).replace("\\'", "'")
 
             d = dict(id=g("id"), name=g("name"), area=g("area"), mood=g("mood"), color=g("color"), description=g("description"), signatures=g("signatures"))
             d["daylit"] = "daylit: false" not in head

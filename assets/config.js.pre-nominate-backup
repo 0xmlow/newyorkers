@@ -5,9 +5,6 @@ window.NY_CONFIG = {
   // (https://formspree.io/f/XXXXXXXX) and paste the XXXXXXXX part here.
   // Until this is set, registrations fall back to a prefilled email draft.
   formspree: "",
-  // Nominate a New Yorker (counted.html#nominate). A second Formspree form so nominations
-  // land in their own queue. Leave empty to reuse the census form id above.
-  formspreeNominate: "",
   // Where the email fallback goes:
   contactEmail: "",
 

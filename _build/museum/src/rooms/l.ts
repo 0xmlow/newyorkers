@@ -314,7 +314,7 @@ export const wavehill: RoomDef = {
     for (let i = 0; i < 6; i++) { const x = -15 + i * 6, z = GZ + 12.6; for (const dx of [-0.7, 0.7]) k.beam(v(x + dx, 0, z + 0.4), v(x, 2.6, z), 0.05, timber, 4); k.beam(v(x, 0, z - 0.7), v(x, 2.6, z), 0.05, timber, 4); mounts.push({ position: v(x, 1.7, z - 0.1), rotation: PI, target: v(x, 2, z - 6), width: 2.4, height: 1.8, style: 'oak', wash: false }); }
     for (let i = 0; i < 3; i++) { const z = CZ - 3 + i * 3; mounts.push({ position: v(CX - 6.6, 1.9, z), rotation: PI / 2, target: v(CX - 14, 2, z), width: 2.4, height: 1.4, style: 'white', wash: false }); k.box(0.12, 1.8, 2.8, CX - 6.5, 1.9, z, white); }
     for (let i = 0; i < 3; i++) { const x = -48 + i * 8; mounts.push({ position: v(x, 1.8, -12.8), rotation: 0, target: v(x, 2, -4), width: 3.2, height: 1.9, style: 'oak', wash: false }); }
-    return { mounts, spawn: v(-6, 3, 30), look: v(0, 6, PZ), eye: 3, bounds: [-70, 60, PZ - 2, 60], style: 'white' };
+    return { mounts, spawn: v(-PL / 2 - 8, 3, PZ + 0.6), look: v(PL / 2, 3.2, PZ + 0.6), eye: 3, bounds: [-70, 60, PZ - 2, 60], style: 'white' };
   },
 };
 
