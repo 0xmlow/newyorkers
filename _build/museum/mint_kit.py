@@ -101,6 +101,11 @@ def main():
         for rel in brand:
             if os.path.exists(os.path.join(SITE, rel)):
                 shutil.copy2(os.path.join(SITE, rel), os.path.join(folder, rel))
+        for rel in info.get("assets", {}).get("images", []):
+            src_img = os.path.join(SITE, rel)
+            if os.path.exists(src_img):
+                os.makedirs(os.path.dirname(os.path.join(folder, rel)), exist_ok=True)
+                shutil.copy2(src_img, os.path.join(folder, rel))
         used = info.get("assets", {})
         prefix = data["counts"].get("atlasPrefix", "d")
         for a in used.get("atlases", []):

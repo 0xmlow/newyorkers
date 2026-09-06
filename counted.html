@@ -159,7 +159,7 @@
   <div class="in">
     <div class="eyebrow">NOMINATE A NEW YORKER</div>
     <h2 class="h-m" style="margin-top:16px">Give us one New York memory. We might turn it into a world.</h2>
-    <p class="body" style="margin-top:14px">One person, one object, one memory. Pick a prompt and tell it in your own words. If the city chooses it, that New Yorker is painted within a day and the painting comes back to you. The nominator is credited. The subject is never tagged.</p>
+    <p class="body" style="margin-top:14px">One person, one object, one memory, from here or from wherever you took New York. Pick a prompt and tell it in your own words. If the city chooses it, that New Yorker is painted within a day and the painting comes back to you. The nominator is credited. The subject is never tagged.</p>
     <p class="mono" style="font-size:10px;letter-spacing:.24em;color:var(--slate);margin:16px 0 28px">ONE PICK A WEEK · A GIFT PIECE, NEVER A SALE PIECE · NO WALLET</p>
     <form id="nomForm" novalidate>
       <div class="field"><label>Your name or alias, the way you want to be credited</label><input name="alias" required maxlength="60" autocomplete="nickname" placeholder="First name, or the name you post under"></div>
@@ -176,6 +176,7 @@
       <div class="field"><label>The memory, in your words</label><textarea name="story" required minlength="40" maxlength="1200" placeholder="Start with the detail you can still see."></textarea><div class="count" id="storyCount">0 / 1200</div></div>
       <div class="field"><label>Dear New York, keep this: one sentence, one object</label><input name="object" maxlength="140" placeholder="The key to the fifth floor walk up on Ludlow"></div>
       <div class="field"><label>The corner, if there is one</label><input name="corner" maxlength="80" placeholder="Ludlow and Rivington, or just the neighbourhood"></div>
+      <div class="field"><label>Where are you now? For the people who left and still carry it</label><input name="city" maxlength="80" autocomplete="address-level2" placeholder="City, country. Leave blank if you are here"></div>
       <div class="field"><label>A photo, if you have one</label><input name="image" type="file" accept="image/*"><div class="hint">A reference for the painting, never published. Under 8 MB. Or paste a link below.</div></div>
       <div class="field"><label>Photo link</label><input name="image_url" type="url" placeholder="https://"></div>
       <div class="perm">
@@ -349,7 +350,7 @@ $("#saveForm").addEventListener("submit",async e=>{
         if(r.ok){done();return;} throw new Error(r.status);
       }catch(err){ btn.disabled=false; btn.textContent=LABEL; toast("Could not reach the form service. Try again, or email "+(CFG.contactEmail||"")); return; }
     }
-    const body=encodeURIComponent(`NEW YORKERS Nomination\n\nAlias: ${data.alias}\nEmail: ${data.email}\nNominee: ${data.nominee}\nPrompt: ${data.prompt}\n\nStory:\n${data.story}\n\nKeep this: ${data.object||""}\nCorner: ${data.corner||""}\nPhoto link: ${data.image_url||""}\n\nOwn story: ${data.own_story}\nMay publish: ${data.permit_publish}\nMay adapt: ${data.permit_adapt}\nLetter from the City: ${data.news}\n`);
+    const body=encodeURIComponent(`NEW YORKERS Nomination\n\nAlias: ${data.alias}\nEmail: ${data.email}\nNominee: ${data.nominee}\nPrompt: ${data.prompt}\n\nStory:\n${data.story}\n\nKeep this: ${data.object||""}\nCorner: ${data.corner||""}\nWhere now: ${data.city||""}\nPhoto link: ${data.image_url||""}\n\nOwn story: ${data.own_story}\nMay publish: ${data.permit_publish}\nMay adapt: ${data.permit_adapt}\nLetter from the City: ${data.news}\n`);
     location.href=`mailto:${CFG.contactEmail}?subject=${encodeURIComponent(data._subject)}&body=${body}`;
     done();
   });

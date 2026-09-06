@@ -64,7 +64,7 @@ export class Kit {
   /* 0 by day, 1 deep in the night, from the New York hour when the room is daylit */
   night = 0;
   /* every external asset a room touched, so a mint kit can copy exactly what it needs */
-  used = { atlases: new Set<number>(), thumbs: new Set<string>(), props: new Set<string>() };
+  used = { atlases: new Set<number>(), thumbs: new Set<string>(), props: new Set<string>(), images: new Set<string>() };
   dusk = 0;
   block(x0: number, x1: number, z0: number, z1: number) {
     this.blocks.push({ x0, x1, z0, z1 });
@@ -320,6 +320,20 @@ export class Kit {
     this.scene.add(o);
     this.dynamic.add(o);
     return o;
+  }
+
+  /* A material carrying an image file (logos, marks, posters). Loads through pending so exports wait for it. */
+  image(url: string, p: { emissive?: number; color?: number; opaque?: boolean; roughness?: number } = {}) {
+    const m = new T.MeshStandardMaterial({ color: p.color ?? 0xffffff, roughness: p.roughness ?? 0.6, metalness: 0, transparent: !p.opaque, alphaTest: p.opaque ? 0 : 0.05, side: T.DoubleSide });
+    const load = new Promise<void>((res) => new T.TextureLoader().load(url, (t) => {
+      t.colorSpace = T.SRGBColorSpace; t.anisotropy = 4;
+      m.map = t;
+      if (p.emissive) { m.emissive = new T.Color(p.emissive); m.emissiveMap = t; m.emissiveIntensity = 1.2; }
+      m.needsUpdate = true; res();
+    }, undefined, () => res()));
+    this.pending.push(load);
+    this.used.images.add(url);
+    return m;
   }
 
   /* ---------- motion helpers (v3) ---------- */

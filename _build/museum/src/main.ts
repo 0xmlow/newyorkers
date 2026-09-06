@@ -483,7 +483,7 @@ async function exportRoom(post?: string | null) {
   $('#loading').textContent = 'EXPORTING ' + def.area;
   const poster = await kit.poster(camera);
   const glb = await kit.exportGLB(Number(params.get('tex') || 1024));
-  const info = { id: def.id, index: state.room + 1, assets: { atlases: [...kit.used.atlases], thumbs: [...kit.used.thumbs], props: [...kit.used.props] }, name: def.name, area: def.area, mood: def.mood, description: def.description, signatures: def.signatures, daylit: def.daylit !== false, day: DAY, hour: HOUR, hang: shown.map((p) => ({ n: p.n, id: p.id, t: p.t })), mounts: build.mounts.length, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, glbBytes: glb.size };
+  const info = { id: def.id, index: state.room + 1, assets: { atlases: [...kit.used.atlases], thumbs: [...kit.used.thumbs], props: [...kit.used.props], images: [...kit.used.images] }, name: def.name, area: def.area, mood: def.mood, description: def.description, signatures: def.signatures, daylit: def.daylit !== false, day: DAY, hour: HOUR, hang: shown.map((p) => ({ n: p.n, id: p.id, t: p.t })), mounts: build.mounts.length, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, glbBytes: glb.size };
   if (post) {
     await send(post, name + '.png', poster);
     await send(post, name + '.glb', glb);
