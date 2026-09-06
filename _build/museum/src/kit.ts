@@ -322,6 +322,68 @@ export class Kit {
     return o;
   }
 
+  /* ---------- motion helpers (v3) ---------- */
+  /* A smooth curve through points: rides, boats, trains, crowds. */
+  spline(points: T.Vector3[], closed = false, tension = 0.5) {
+    return new T.CatmullRomCurve3(points, closed, 'catmullrom', tension);
+  }
+  /* Keep an object moving along a curve forever, nose along the tangent. speed in metres per second, or a function of height for coasters. */
+  rider(obj: T.Object3D, curve: T.Curve<T.Vector3>, speed: number | ((y: number) => number), offset = 0) {
+    const len = curve.getLength();
+    let s = ((offset % len) + len) % len;
+    const tan = new T.Vector3();
+    const step = (_t: number, dt: number) => {
+      const v = typeof speed === 'function' ? speed(obj.position.y) : speed;
+      s = (s + v * Math.min(dt, 0.1) + len) % len;
+      const u = s / len;
+      curve.getPointAt(u, obj.position);
+      curve.getTangentAt(u, tan);
+      obj.lookAt(tan.add(obj.position));
+    };
+    step(0, 0);
+    this.ticks.push(step);
+    return obj;
+  }
+  /* People: instanced capsule figures walking a route in both directions, each with a colour, a height and a stride bob. */
+  crowd(route: T.Vector3[], n: number, p: { seed?: number; speed?: number; spread?: number; scale?: number; colors?: number[]; animate?: boolean; closed?: boolean } = {}) {
+    const { seed = 1, speed = 1.1, spread = 1.2, scale = 1, animate = true, closed = false, colors = [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x4a6a3a, 0x151517, 0xc9a25a, 0x6a4a8a, 0xe6e2da, 0x2b5f6e] } = p;
+    const rnd = X.mulberry(seed);
+    const curve = new T.CatmullRomCurve3(route, closed, 'catmullrom', 0.5);
+    const len = curve.getLength();
+    const body = new T.InstancedMesh(new T.CapsuleGeometry(0.2 * scale, 0.82 * scale, 3, 8), new T.MeshStandardMaterial({ roughness: 0.85 }), n);
+    const head = new T.InstancedMesh(new T.SphereGeometry(0.125 * scale, 10, 8), new T.MeshStandardMaterial({ roughness: 0.7 }), n);
+    const skins = [0xf1d3b5, 0xc8a284, 0x8d5a3b, 0x5a3a26, 0xe9c2a0, 0xa77653];
+    const st = Array.from({ length: n }, () => ({ s: rnd() * len, v: speed * (0.7 + rnd() * 0.6) * (rnd() > 0.5 ? 1 : -1), off: (rnd() - 0.5) * spread, h: 0.88 + rnd() * 0.24 }));
+    const c = new T.Color();
+    for (let i = 0; i < n; i++) { body.setColorAt(i, c.set(colors[Math.floor(rnd() * colors.length)])); head.setColorAt(i, c.set(skins[Math.floor(rnd() * skins.length)])); }
+    body.castShadow = head.castShadow = this.o.quality === 'high';
+    this.add(body); this.add(head);
+    const m = new T.Matrix4(), q = new T.Quaternion(), pos = new T.Vector3(), tan = new T.Vector3(), side = new T.Vector3(), sc = new T.Vector3(), up = new T.Vector3(0, 1, 0), lift = new T.Vector3();
+    const place = (t: number, dt: number) => {
+      for (let i = 0; i < n; i++) {
+        const a = st[i];
+        a.s = (((a.s + a.v * Math.min(dt, 0.1)) % len) + len) % len;
+        const u = a.s / len;
+        curve.getPointAt(u, pos); curve.getTangentAt(u, tan);
+        side.set(-tan.z, 0, tan.x).normalize();
+        pos.addScaledVector(side, a.off);
+        const dir = Math.sign(a.v) || 1;
+        q.setFromAxisAngle(up, Math.atan2(tan.x * dir, tan.z * dir));
+        const bob = 1 + 0.025 * Math.sin(t * 7 + i * 1.3);
+        sc.set(1, a.h * bob, 1);
+        lift.set(0, 0.61 * a.h * scale * bob, 0);
+        m.compose(pos.clone().add(lift), q, sc); body.setMatrixAt(i, m);
+        lift.set(0, (1.22 * a.h * bob + 0.13) * scale, 0);
+        sc.set(1, 1, 1);
+        m.compose(pos.clone().add(lift), q, sc); head.setMatrixAt(i, m);
+      }
+      body.instanceMatrix.needsUpdate = head.instanceMatrix.needsUpdate = true;
+    };
+    place(0, 0);
+    if (animate) this.ticks.push(place);
+    return { body, head };
+  }
+
   /* ---------- world ---------- */
   sky(p: { top: number; horizon: number; ground: number; fog?: number; sun?: { az: number; el: number; color: number; size: number }; stars?: number; haze?: number; env?: number }) {
     if (this.o.dynamic) {

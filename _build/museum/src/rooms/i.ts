@@ -356,7 +356,7 @@ export const queensboro: RoomDef = {
     if (!ctx.reduced) k.ticks.push((t) => { const p = (t * 9) % 260; train7.position.z = -150 + p; const q = (t * 6 + 60) % 260; trainN.position.z = 110 - q; });
     // the river and Manhattan to the west, the bridge, the tower with the crown far off
     k.water({ y: -1.5, color: 0x2e4a60, w: 400, d: 500, x: -220, z: -20, amp: 1.0 });
-    k.skyline({ z: -20, count: 30, spacing: 8, scale: 3.4, base: -1.5, seed: 105, lit: 0.45, glow: 1.3, tint: 0x2a3244, x: -300 });
+    k.skyline({ z: -20, count: 22, spacing: 7, scale: 3.4, base: -1.5, seed: 105, lit: 0.45, glow: 1.3, tint: 0x2a3244, x: -440 });
     for (const z of [-40, -150]) { for (const x of [-140, -128]) k.box(1.2, 44, 1.6, x, 20, z, steel); k.box(14, 1.2, 1.6, -134, 30, z, steel); }
     for (let z = 30; z > -200; z -= 4) { k.box(14, 0.5, 4, -134, 12, z, steel); k.beam(v(-140, 12, z), v(-128, 12, z - 4), 0.07, steel, 4); k.beam(v(-140, 12, z), v(-140, 14 + Math.abs(Math.sin(z * 0.03)) * 10, z), 0.1, steel, 5); }
     // the census as the big billboard on the building facing the platform
