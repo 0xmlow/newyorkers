@@ -30,7 +30,19 @@ class H(http.server.BaseHTTPRequestHandler):
         self.send_response(200); self._cors(); self.send_header("Content-Type", "application/json"); self.end_headers()
         self.wfile.write(json.dumps({"saved": os.path.relpath(path, ROOT), "bytes": n}).encode())
         print(f"saved {name} ({n/1e6:.1f} MB)", flush=True)
+        if name.endswith('.json') and name != 'manifest.json': manifest()
     def log_message(self, *a): pass
+
+def manifest():
+    """Rebuild manifest.json from every room record in the folder, so a chained export needs no client side state."""
+    rooms = []
+    for f in sorted(os.listdir(OUT)):
+        if f.startswith('new-yorkers-museum-') and f.endswith('.json'):
+            try: rooms.append(json.load(open(os.path.join(OUT, f))))
+            except Exception: pass
+    rooms.sort(key=lambda r: r.get('index', 0))
+    with open(os.path.join(OUT, 'manifest.json'), 'w') as f:
+        json.dump({'day': rooms[0].get('day') if rooms else None, 'hour': rooms[0].get('hour') if rooms else None, 'rooms': rooms}, f, indent=1)
 
 if __name__ == "__main__":
     print("export receiver on", PORT, "->", OUT, flush=True)

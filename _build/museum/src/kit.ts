@@ -780,17 +780,34 @@ export class Kit {
     return new Promise((res, rej) => {
       exporter.parse(
         this.scene,
-        (out) => res(new Blob([out as ArrayBuffer], { type: 'model/gltf-binary' })),
+        (out) => (out ? res(new Blob([out as ArrayBuffer], { type: 'model/gltf-binary' })) : rej(new Error('GLTFExporter returned nothing (renderer memory)'))),
         (err) => rej(err),
         { binary: true, onlyVisible: true, maxTextureSize, includeCustomExtensions: false },
       );
     });
   }
   /* The current frame as a PNG. Render, then read back in the same tick. */
-  poster(camera: T.Camera): Promise<Blob> {
-    const r = this.o.renderer;
+  /* Render a poster. A hidden pane can leave the canvas at zero size, so render at 1600 by 900 when the canvas is too small. */
+  async poster(camera: T.Camera): Promise<Blob> {
+    const r = this.o.renderer, el = r.domElement;
+    const w0 = el.width, h0 = el.height, pr = r.getPixelRatio();
+    const cam = camera as T.PerspectiveCamera;
+    const small = w0 < 640 || h0 < 360;
+    if (small) {
+      r.setPixelRatio(1);
+      r.setSize(1600, 900, false);
+      if (cam.isPerspectiveCamera) { cam.aspect = 16 / 9; cam.updateProjectionMatrix(); }
+    }
     r.render(this.scene, camera);
-    return new Promise((res, rej) => r.domElement.toBlob((b) => (b ? res(b) : rej(new Error('no frame'))), 'image/png'));
+    try {
+      return await new Promise<Blob>((res, rej) => el.toBlob((bl) => (bl ? res(bl) : rej(new Error('poster: toBlob returned null'))), 'image/png'));
+    } finally {
+      if (small) {
+        r.setPixelRatio(pr);
+        r.setSize(Math.max(1, w0 / pr), Math.max(1, h0 / pr), false);
+        if (cam.isPerspectiveCamera && h0 > 0) { cam.aspect = w0 / h0; cam.updateProjectionMatrix(); }
+      }
+    }
   }
   dispose() {
     this.live = false;

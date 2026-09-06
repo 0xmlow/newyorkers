@@ -32,6 +32,8 @@ function readHash() {
   const h = new URLSearchParams(location.hash.replace(/^#/, ''));
   const r = ROOMS.findIndex((x) => x.id === (MINT.room || h.get('room')));
   if (r >= 0) state.room = r;
+  // a batch export runs one room per page load so renderer memory starts fresh every time
+  if (params.get('export') === 'all') state.room = Math.min(ROOMS.length - 1, Math.max(0, Number(params.get('from') || 0)));
   const hang = h.get('hang');
   if (hang) {
     const [mode, ...rest] = hang.split(':');
@@ -492,6 +494,24 @@ async function exportRoom(post?: string | null) {
   $('#loading').classList.remove('show');
   return info;
 }
+/* One room per page load: export, then replace the URL with from=i+1 and let the page reload. A failed room is retried once. */
+async function exportChain(post: string, i: number) {
+  let ok = false;
+  try { ok = !!(await exportRoom(post)); } catch (e) { console.error('export failed', ROOMS[i].id, e); $('#loading').classList.remove('show'); }
+  const tries = Number(params.get('retry') || 0);
+  const giveUp = !ok && tries >= 2;
+  if (giveUp) { await send(post, `FAILED-${ROOMS[i].id}.txt`, `export failed three times`); }
+  const next = ok || giveUp ? i + 1 : i;
+  const to = Math.min(ROOMS.length - 1, Number(params.get('to') ?? ROOMS.length - 1));
+  if (next > to) { await send(post, to >= ROOMS.length - 1 ? 'done.txt' : `chunk-${to}.txt`, `${DAY} ${CLOCK} rooms through ${to + 1}`); $('#loading').textContent = 'EXPORT CHUNK COMPLETE'; $('#loading').classList.add('show'); return; }
+  const u = new URL(location.href);
+  u.searchParams.set('from', String(next));
+  if (ok || giveUp) u.searchParams.delete('retry'); else u.searchParams.set('retry', String(tries + 1));
+  u.searchParams.set('v', String(Date.now()));
+  u.hash = '';
+  await wait(400);
+  location.replace(u.toString());
+}
 async function exportAll(post: string) {
   const manifest: unknown[] = [];
   for (let i = 0; i < ROOMS.length; i++) {
@@ -525,7 +545,8 @@ function boot() {
     }
     loadRoom(openN).then(() => {
       const post = params.get('post') || 'http://127.0.0.1:4181/';
-      if (params.get('export') === 'all') exportAll(post);
+      if (params.get('export') === 'all') exportChain(post, state.room);
+      else if (params.get('export') === 'allinone') exportAll(post);
       else if (params.get('export') === 'one') exportRoom(post);
     });
   };

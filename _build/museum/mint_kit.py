@@ -237,7 +237,7 @@ The tokens are dynamic without any contract help because the page reads the cloc
 
 ## Provenance
 
-Built from the NEW YORKERS census site source in `NEW YORKERS SITE/_build/museum`. Rooms are procedural Three.js, textures are generated canvases, props are the enamel GLB set, the works are the census thumbnails and atlases. The GLB is exported with three.js GLTFExporter at 1024 px textures.
+Built from the NEW YORKERS census site source in `NEW YORKERS SITE/_build/museum`. Rooms are procedural Three.js, textures are generated canvases, props are the enamel GLB set, the works are the census thumbnails and atlases. The GLB is exported with three.js GLTFExporter at 1024 px textures, PNG images only. Rooms with repeated seating or piles (the subway, the Met roof, Penn, the High Line, the Bleachers, Little Island) require `EXT_mesh_gpu_instancing`, which Blender 4, three.js, Babylon and glTF Sample Viewer all read.
 """
 
 if __name__ == "__main__":
