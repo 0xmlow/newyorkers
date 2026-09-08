@@ -99,7 +99,7 @@ const permissive = () => {
 
 function stubKit() {
   const k = {
-    blocks: [], keepOut: [], objects: [], extras: [], ticks: [], live: [], clickables: [],
+    blocks: [], keepOut: [], objects: [], solids: [], extras: [], ticks: [], live: [], clickables: [],
     dynamic: new T.Object3D(), scene: new T.Object3D(), mats: {}, pending: [], night: false, dusk: false,
     o: { quality: 'high' },
     used: { atlases: new Set(), thumbs: new Set(), props: new Set(), images: new Set() },
@@ -113,8 +113,19 @@ function stubKit() {
        out of these, so they have to be the real thing, not a stub. */
     spline(points, closed = false, tension = 0.5) { return new T.CatmullRomCurve3(points, closed, 'catmullrom', tension); },
   };
+  /* Boxes are the museum's main solid, and rooms move and turn them after the
+     call returns, so keep the object and read its transform once the room has
+     finished building. That is what lets us ask whether a wall, a fin or a
+     column is standing in a painting. */
+  k.box = (w, h, d, x, y, z) => {
+    const m = permissive();
+    m.position.set(x || 0, y || 0, z || 0);
+    k.objects.push(m);
+    k.solids.push({ w, h, d, o: m });
+    return m;
+  };
   const push = (fn) => (...a) => { const m = permissive(); k.objects.push(m); return fn ? fn(...a) || m : m; };
-  for (const name of ['box', 'mesh', 'cyl', 'sphere', 'rounded', 'beam', 'column', 'arch', 'lathe', 'torus', 'moulding', 'rail', 'tree', 'sign', 'water', 'skyline', 'crowd', 'censusWall', 'blockFront'])
+  for (const name of ['mesh', 'cyl', 'sphere', 'rounded', 'beam', 'column', 'arch', 'lathe', 'torus', 'moulding', 'rail', 'tree', 'sign', 'water', 'skyline', 'crowd', 'censusWall', 'blockFront'])
     if (!k[name]) k[name] = push();
   return new Proxy(k, {
     get(t, key) {
@@ -147,6 +158,40 @@ for (const def of ROOMS) {
   const inKeep = (x, z) => k.keepOut.some((q) => Math.hypot(x - q.x, z - q.z) < q.r);
   const standable = (x, z) => !(x < x0 || x > x1 || z < z0 || z > z1) && !inBlock(x, z) && !inKeep(x, z);
 
+  /* Is a solid standing in the picture? Test the art rectangle's own corners and
+     centre against every box in the room as an oriented box. A wall the work is
+     hung flat against is fine, so ignore anything the art is only grazing: only
+     a solid that reaches more than a quarter of the way into the picture from
+     the front counts. */
+  const inSolid = (px, py, pz, skipY, ignore) => {
+    for (const s of k.solids) {
+      if (ignore && ignore.has(s)) continue;
+      const o = s.o, w = s.w, h = s.h, d = s.d;
+      if (!(w > 0 && h > 0 && d > 0)) continue;
+      if (w > 40 && d > 40) continue;            // floors, plazas and lawns are not obstructions
+      const dx = px - o.position.x, dy = py - o.position.y, dz = pz - o.position.z;
+      if (!skipY && Math.abs(dy) > h / 2) continue;
+      /* World to the box's own axes. Three rotates local (x, z) to world as
+         (x cos + z sin, -x sin + z cos), so the inverse takes the world offset
+         back with cos(rotY) and sin(rotY), not their negatives. */
+      const c = Math.cos(o.rotation.y), sn = Math.sin(o.rotation.y);
+      const lx = dx * c - dz * sn, lz = dx * sn + dz * c;
+      if (Math.abs(lx) < w / 2 && Math.abs(lz) < d / 2) return s;
+    }
+    return null;
+  };
+  /* Every solid that already contains a given point. A room's own shell is a big
+     box the art hangs inside, so it contains the picture and everything else in
+     the room: counting it as an obstruction flags every work in the building. */
+  const containing = (px, py, pz) => {
+    const set = new Set();
+    for (;;) {
+      const hit = inSolid(px, py, pz, false, set);
+      if (!hit) return set;
+      set.add(hit);
+    }
+  };
+
   const bad = [];
   build.mounts.forEach((m, i) => {
     const p = m.position, t = m.target;
@@ -157,7 +202,25 @@ for (const def of ROOMS) {
     const backwards = (t.x - p.x) * Math.sin(m.rotation) + (t.z - p.z) * Math.cos(m.rotation) < 0;
     const rot = backwards ? m.rotation + Math.PI : m.rotation;
     const unreachable = !standable(t.x, t.z);
-    if (!unreachable && !backwards) return;
+    /* Sample the art's own face, a little in front of the plane, and see whether
+       any solid is occupying it. This is the fin, post or column that ends up
+       standing through a picture. */
+    const nx2 = Math.sin(rot), nz2 = Math.cos(rot);
+    const ax = -Math.cos(rot), az = Math.sin(rot);       // along the picture, left to right
+    const halfW = (m.width || 4) / 2, halfH = (m.height || 2.4) / 2;
+    const shell = containing(p.x, p.y, p.z);
+    let obstructed = 0;
+    for (const u of [-0.8, -0.4, 0, 0.4, 0.8]) {
+      for (const vv of [-0.6, 0, 0.6]) {
+        /* 0.45 clears a frame lip and the wall a picture hangs flat against,
+           so what is left is something genuinely standing in front of the art. */
+        const px = p.x + ax * halfW * u + nx2 * 0.45;
+        const pz = p.z + az * halfW * u + nz2 * 0.45;
+        const hit = inSolid(px, p.y + halfH * vv, pz, false, shell);
+        if (hit) { obstructed++; if (process.env.NY_DEBUG === def.id && obstructed === 1) console.error('  hit', def.id, 'mount', i, 'art', [+p.x.toFixed(1), +p.y.toFixed(1), +p.z.toFixed(1)], 'rot', +rot.toFixed(2), 'solid w/h/d', [hit.w, hit.h, hit.d], 'at', [+hit.o.position.x.toFixed(1), +hit.o.position.y.toFixed(1), +hit.o.position.z.toFixed(1)], 'rotY', +hit.o.rotation.y.toFixed(2)); }
+      }
+    }
+    if (!unreachable && !backwards && !obstructed) return;
     /* Mirrors viewpoint() in main.ts exactly. If these drift apart the audit
        stops describing the museum a visitor actually walks. */
     const back = Math.max(3, (m.width || 4) * 0.9);
@@ -166,13 +229,14 @@ for (const def of ROOMS) {
     outer: for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5, back * 3.2])
       for (const a of [0, 0.3, -0.3, 0.6, -0.6, 0.95, -0.95, 1.25, -1.25])
         if (standable(p.x + Math.sin(rot + a) * d, p.z + Math.cos(rot + a) * d)) { rescued = true; break outer; }
-    bad.push({ i, unreachable, backwards, rescued, pos: [+p.x.toFixed(1), +p.y.toFixed(1), +p.z.toFixed(1)], tgt: [+t.x.toFixed(1), +t.z.toFixed(1)] });
+    bad.push({ i, unreachable, backwards, rescued, obstructed, pos: [+p.x.toFixed(1), +p.y.toFixed(1), +p.z.toFixed(1)], tgt: [+t.x.toFixed(1), +t.z.toFixed(1)] });
   });
   rows.push({
     id: def.id, mounts: build.mounts.length,
     unreachable: bad.filter((b) => b.unreachable).length,
     backwards: bad.filter((b) => b.backwards).length,
     rescued: bad.filter((b) => b.rescued).length,
+    obstructed: bad.filter((b) => b.obstructed >= 3).length,
     stuck: bad.filter((b) => !b.rescued).length,
     bounds: build.bounds,
     blocks: k.blocks.map((q) => [q.x0, q.x1, q.z0, q.z1]),
@@ -199,7 +263,7 @@ if (process.argv.includes('--json')) {
   const sum = (f) => ok.reduce((s, r) => s + r[f], 0);
   const stuckRooms = ok.filter((r) => r.stuck).sort((a, b) => b.stuck - a.stuck);
   console.log(`${ok.length} rooms, ${sum('mounts')} mounts`);
-  console.log(`  unreachable ${sum('unreachable')}, backwards ${sum('backwards')}`);
+  console.log(`  unreachable ${sum('unreachable')}, backwards ${sum('backwards')}, obstructed by solids ${sum('obstructed')}`);
   console.log(`  rescued by viewpoint() ${sum('rescued')}, still stuck ${sum('stuck')} in ${stuckRooms.length} rooms`);
   if (errored.length) { console.log(`  rooms that failed to build: ${errored.length}`); for (const e of errored) console.log(`    ${e.id}: ${e.error}`); }
   const list = process.argv.includes('--all') ? ok.filter((r) => r.unreachable || r.backwards) : stuckRooms;

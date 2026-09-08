@@ -235,11 +235,16 @@ export const flatiron: RoomDef = {
     k.skyline({ z: -160, count: 30, spacing: 7, scale: 2.2, base: -2, seed: 45, lit: 0.15, glow: 0.3, tint: 0x7a7e86 });
     // inside the prow: a wedge gallery with the point glazed
     const halfAt = (z: number) => Math.max(0.6, -0.775 - 0.2132 * z);
-    for (let z = -64; z < -8; z += 4) {
+    for (let z = -64; z < -12; z += 4) {
       const h = halfAt(z + 4);   // the narrow end of the slab, so the corridor is never wider than the room
       k.block(h, 14, z, z + 4);
       k.block(-14, -h, z, z + 4);
     }
+    /* The point is where you come in, so it is a vestibule rather than a pinch:
+       the limestone either side stops at 2.6 and the doorway between them is the
+       full width of the nose. */
+    k.block(2.6, 14, -12, -5.6);
+    k.block(-14, -2.6, -12, -5.6);
 
     const wedge = new T.Shape();
     wedge.moveTo(0, 2.6);
@@ -255,8 +260,33 @@ export const flatiron: RoomDef = {
     k.box(0.5, 11, L - 8, 6.9, 5.5, -36, plaster).rotation.y = -0.21;
     k.box(24, 11, 0.6, 0, 5.5, -65, plaster);
     for (const z of [-20, -34, -48]) { k.point(0, 9.5, z, 0xfff3e0, 34, 18); }
-    // a doorway from the plaza into the prow at the wide end, through the avenue wall
-    k.box(6, 0.1, 0.1, 0, 0.05, -65, oak);
+    /* The way in. There was no door here and nothing on the plaza to say the
+       building holds fourteen works, so the prow read as scenery and the whole
+       gallery went unvisited. A lit threshold, a canopy, a sign and a pair of
+       ropes leading to it. */
+    for (const sx of [-1, 1]) {
+      k.box(0.5, 4.2, 0.5, sx * 2.35, 2.1, -6.2, lime);          // jambs
+      k.prop('rope_stanchion', sx * 2.9, 0, -1.6, { height: 1.0, keepOut: 0.4 });
+      k.prop('rope_stanchion', sx * 2.9, 0, 2.2, { height: 1.0, keepOut: 0.4 });
+    }
+    k.box(5.6, 0.7, 0.6, 0, 4.5, -6.2, lime);                    // lintel
+    k.box(4.4, 4.0, 0.12, 0, 2.0, -6.3, k.glass(0x1b2228, 0.5, 0.08));  // the doors themselves
+    for (const sx of [-1, 1]) k.box(0.1, 3.6, 0.06, sx * 0.16, 1.9, -6.22, iron);  // door stiles, so it reads as a way in
+    k.box(6.4, 0.22, 3.2, 0, 4.7, -4.7, lime);                   // canopy over the door
+    for (const sx of [-1, 1]) k.beam(v(sx * 2.9, 4.6, -3.2), v(sx * 2.6, 6.0, -6.0), 0.05, iron, 4);
+    k.box(4.6, 0.06, 2.6, 0, 0.04, -4.4, k.flat(0x2a2a2c, 0.2, 0.9));   // threshold mat
+    k.point(0, 3.4, -5.4, 0xffe6c0, 26, 12);                     // light spilling out of the point
+    k.point(0, 4.2, -1.0, 0xfff0d8, 14, 9);
+    /* The lettering goes on the canopy fascia, where someone walking up to the
+       building actually looks. Above the canopy it was hidden by the canopy. */
+    k.box(6.4, 0.86, 0.12, 0, 4.32, -3.16, lime);
+    k.sign('THE PROW GALLERY', 5.4, 0.42, 0, 4.46, -3.08, 'transparent', '#f0e6d2', 62, 0);
+    k.sign('FOURTEEN NEW YORKERS INSIDE  ·  FREE  ·  WALK IN', 5.8, 0.24, 0, 4.08, -3.08, 'transparent', '#c9b79a', 44, 0);
+    /* And a board out on the plaza, turned at the visitor as they arrive. */
+    const board = k.box(2.2, 2.6, 0.14, -4.6, 1.3, 6.0, lime); board.rotation.y = 0.5;
+    k.sign('ART INSIDE', 1.8, 0.4, -4.53, 1.95, 6.06, 'transparent', '#1c1c1e', 56, 0.5);
+    k.sign('THE PROW GALLERY', 1.9, 0.22, -4.53, 1.5, 6.06, 'transparent', '#4a4a4c', 44, 0.5);
+    k.sign('FOURTEEN WORKS', 1.9, 0.2, -4.53, 1.16, 6.06, 'transparent', '#4a4a4c', 40, 0.5);
     // the works: the two long converging walls, the wide end, plaza screens outside
     const mounts: Mount[] = [];
     /* The two long walls are boxes at x = +/- 6.9, centred z = -36 and turned
@@ -275,7 +305,7 @@ export const flatiron: RoomDef = {
       k.box(4.6, 4.2, 0.4, x, 2.1, z, lime);
       mounts.push({ position: v(x, 2.6, z - 0.22), rotation: PI, target: v(x, 3, z - 5), width: 4.2, height: 2.5, style: 'steel', wash: false });
     }
-    return { mounts, spawn: v(0, 3, 26), look: v(0, 16, -14), eye: 3, bounds: [-30, 30, -64, 30], style: 'white' };
+    return { mounts, spawn: v(0, 3, 22), look: v(0, 4.2, -6), eye: 3, bounds: [-30, 30, -64, 30], style: 'white' };
   },
 };
 

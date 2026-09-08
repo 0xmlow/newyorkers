@@ -77,10 +77,10 @@ export const unisphere: RoomDef = {
     for (let i = 0; i < 16; i++) {
       const t = PI / 2 + ((i + 0.5) / 16) * PI * 2, rr = 25.6;
       const x = C.x + Math.cos(t) * rr, z = C.z + Math.sin(t) * rr;
-      k.box(0.4, 4.4, 6.2, 0, 0, 0, granite).position.set(x, 2.4, z);
+      k.box(6.2, 4.4, 0.4, 0, 0, 0, granite).position.set(x, 2.4, z);
       const last = k.objects[k.objects.length - 1];
       last.rotation.y = -t - PI / 2;
-      k.box(1.0, 0.3, 6.6, 0, 0, 0, granite).position.set(x, 0.15, z);
+      k.box(6.6, 0.3, 1.0, 0, 0, 0, granite).position.set(x, 0.15, z);
       k.objects[k.objects.length - 1].rotation.y = -t - PI / 2;
       mounts.push({ position: v(x - Math.cos(t) * 0.25, 2.8, z - Math.sin(t) * 0.25), rotation: -t - PI / 2, target: v(C.x + Math.cos(t) * R, 3, C.z + Math.sin(t) * R), width: 5.2, height: 3.0, style: 'steel', wash: false });
     }
@@ -92,7 +92,7 @@ export const unisphere: RoomDef = {
       const t = PI / 2 + ((i + 0.5) / 8) * PI * 2, rr = 19;
       const x = C.x + Math.cos(t) * rr, z = C.z + Math.sin(t) * rr;
       mounts.push({ position: v(x, 2.4, z), rotation: -t + PI / 2, target: v(C.x + Math.cos(t) * R, 3, C.z + Math.sin(t) * R), width: 3.6, height: 2.2, style: 'steel', wash: false });
-      k.box(0.3, 3.4, 4.2, 0, 0, 0, granite).position.set(x - Math.cos(t) * 0.2, 1.9, z - Math.sin(t) * 0.2);
+      k.box(4.2, 3.4, 0.3, 0, 0, 0, granite).position.set(x - Math.cos(t) * 0.2, 1.9, z - Math.sin(t) * 0.2);
       k.objects[k.objects.length - 1].rotation.y = -t - PI / 2;
     }
     return { mounts, spawn: path[0].clone(), look: v(path[40].x * 0.6 + C.x * 0.4, 7, path[40].z * 0.6 + C.z * 0.4), eye: 3, bounds: [-40, 40, -70, 14], path, style: 'steel' };
