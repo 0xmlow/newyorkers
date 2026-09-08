@@ -4,6 +4,7 @@ import { Kit } from './kit';
 import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG } from './data';
 import type { Hang, Piece } from './data';
 import { ROOMS } from './rooms';
+import type { Mount } from './kit';
 import type { RoomBuild } from './rooms/types';
 
 const $ = <E extends HTMLElement = HTMLElement>(s: string) => document.querySelector(s) as E;
@@ -32,7 +33,7 @@ let camera: T.PerspectiveCamera;
 let build: RoomBuild | null = null;
 let list: Piece[] = [];
 let shown: Piece[] = [];
-let mountsFilled: T.Group[] = [];
+let mountsFilled: (T.Group | null)[] = [];   // null where a mount was too small to hang, index stays aligned with shown[]
 let frame = 0;
 const atlas = atlasLoader(quality);
 
@@ -130,12 +131,51 @@ function placeOnPath() {
     hi = Math.min(lo + 1, p.length - 1);
   camera.position.lerpVectors(p[lo], p[hi], pathIndex - lo);
 }
+/* Is this a spot a visitor could actually be left standing? constrain() will
+   shove the camera out of a block or a keep out and clamp it to the bounds, so
+   a viewing position inside one of those is a position the visitor can never
+   hold, and the work in front of them is unreachable. */
+function standable(p: T.Vector3) {
+  if (!build || !kit) return false;
+  const [minX, maxX, minZ, maxZ] = build.bounds;
+  if (p.x < minX || p.x > maxX || p.z < minZ || p.z > maxZ) return false;
+  for (const b of kit.blocks) if (p.x > b.x0 && p.x < b.x1 && p.z > b.z0 && p.z < b.z1) return false;
+  for (const k of kit.keepOut) if (Math.hypot(p.x - k.x, p.z - k.z) < k.r) return false;
+  return true;
+}
+
+/* Where to stand to see mount n.
+
+   The hand written target is used whenever it is any good, because it carries
+   the room's intent: an angle the architect chose, a spot on a balcony. But an
+   audit of all 111 rooms found 376 targets sitting inside a block, a keep out
+   or outside the room's own bounds, and 234 works whose face pointed away from
+   the place the visitor was being sent. Rather than leave those unviewable,
+   fall back to the one position that is always right for a picture: straight
+   out in front of it, far enough back to see it, at the first distance that is
+   actually standable. */
+function viewpoint(m: Mount) {
+  const back = Math.max(3, (m.width || 4) * 0.9);
+  const nx = Math.sin(m.rotation), nz = Math.cos(m.rotation);
+  const toTarget = new T.Vector3().subVectors(m.target, m.position);
+  const inFront = toTarget.x * nx + toTarget.z * nz > 0;
+  if (inFront && standable(m.target)) return m.target.clone();
+  for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5]) {
+    const p = new T.Vector3(m.position.x + nx * d, m.target.y, m.position.z + nz * d);
+    if (standable(p)) return p;
+  }
+  /* Nothing in front of it is standable. Keep the authored target rather than
+     inventing a worse one, and let constrain() do what it can. */
+  return m.target.clone();
+}
+
 function focus(n: number) {
   if (!build || !build.mounts[n]) return;
   const m = build.mounts[n];
-  goal = m.target.clone();
+  const stand = viewpoint(m);
+  goal = stand;
   lookGoal = (m.lookAt || m.position).clone();
-  if (build.path) targetPath = nearestPath(goal);
+  if (build.path) targetPath = nearestPath(stand);
   state.active = n;
   paintStrip();
 }

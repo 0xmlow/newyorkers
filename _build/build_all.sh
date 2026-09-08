@@ -11,7 +11,9 @@ if [ "$1" = "--data" ]; then
 fi
 python3 rooms_registry.py
 python3 build_room_thumbs.py
-( cd museum && npm run check >/dev/null && npm run build >/dev/null && echo "museum bundle built" )
+# The hang is assigned before the bundle is built: every New Yorker gets exactly
+# one room, so no piece can hang on two walls. Rerun after data.js changes.
+( cd museum && node assign_hang.mjs | sed "s/^/  /" && npm run check >/dev/null && npm run build >/dev/null && echo "museum bundle built" )
 python3 build_learn.py
 python3 build_faq.py
 python3 build_vault.py

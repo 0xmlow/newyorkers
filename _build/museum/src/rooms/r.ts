@@ -42,7 +42,13 @@ export const metgreathall: RoomDef = {
     for (const side of [-1, 1]) k.box(32, FH, 0.8, side * 19, FH / 2, FZ, lime);
     k.box(6, 10, 0.8, 0, 21, FZ, lime);
     k.moulding([[0, 0], [1.2, 0], [1.3, 0.4], [0.8, 0.6], [1.0, 1.0], [0, 1.2]], FW + 0.4, 0, FH - 0.6, FZ + 0.05, limeD, 0);
-    for (let i = 0; i < 12; i++) k.box(FW + 4, 0.34, 1.6, 0, 0.17 + i * 0.34, FZ + 2 + i * 1.6, lime);
+    /* The entrance stair. These twelve treads used to run the other way: step 0
+       sat at z = FZ + 2, hard against the building, and each one after it was
+       both higher and further out, so the flight climbed away from the door
+       while floorY climbed toward it. You walked up an invisible ramp with the
+       visible steps descending beside you. Highest tread at the top of the
+       plaza now, lowest out at the kerb, which is the way floorY reads it. */
+    for (let i = 0; i < 12; i++) k.box(FW + 4, 0.34, 1.6, 0, 0.17 + i * 0.34, FZ + 19.4 - i * 1.6, lime);
     for (const cx of [-22, -14, 14, 22, -38, 38]) { k.column(cx, 4, FZ + 1.4, 16, 1.1, lime, true); k.prop('corinthian_capital', cx, 20, FZ + 1.4, { height: 2.2 }); }
     for (const s of [-1, 1]) { k.box(14, 6, 3, s * 30, 23, FZ + 1.5, lime); k.box(2.6, 4, 2.6, s * 30, 13, FZ + 2.4, lime); }
     for (const x of [-18, 0, 18]) { k.arch(6, 12, 4, x, 4, FZ + 0.4, limeD, false, 0.82); k.box(5.2, 9.6, 0.2, x, 9.6, FZ + 0.6, k.glass(0xdcecf6, 0.14, 0.04)); }

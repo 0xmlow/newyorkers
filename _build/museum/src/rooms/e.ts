@@ -85,7 +85,11 @@ export const unisphere: RoomDef = {
       mounts.push({ position: v(x - Math.cos(t) * 0.25, 2.8, z - Math.sin(t) * 0.25), rotation: -t - PI / 2, target: v(C.x + Math.cos(t) * R, 3, C.z + Math.sin(t) * R), width: 5.2, height: 3.0, style: 'steel', wash: false });
     }
     for (let i = 0; i < 8; i++) {
-      const t = PI / 2 + ((i + 0.5) / 8) * PI * 2, rr = 17.55;
+      /* The basin rim, outside the globe. At 17.55 this ring sat inside the
+         Unisphere's own 18.2 keep out, so all eight works were embedded in the
+         sculpture: you walked the promenade at radius 22 and saw panels buried
+         in the steel. 19 clears the globe and leaves three metres to the path. */
+      const t = PI / 2 + ((i + 0.5) / 8) * PI * 2, rr = 19;
       const x = C.x + Math.cos(t) * rr, z = C.z + Math.sin(t) * rr;
       mounts.push({ position: v(x, 2.4, z), rotation: -t + PI / 2, target: v(C.x + Math.cos(t) * R, 3, C.z + Math.sin(t) * R), width: 3.6, height: 2.2, style: 'steel', wash: false });
       k.box(0.3, 3.4, 4.2, 0, 0, 0, granite).position.set(x - Math.cos(t) * 0.2, 1.9, z - Math.sin(t) * 0.2);
