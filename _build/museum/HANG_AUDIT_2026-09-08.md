@@ -33,20 +33,23 @@ to see them from.
 | The Unisphere basin rim clears the globe. At radius 17.55 all eight works were inside the sculpture's own 18.2 keep out | `rooms/e.ts` |
 | The Great Hall entrance stair climbs toward the building. Treads used to rise away from it while the walkable floor rose toward it, so you climbed an invisible ramp with the visible steps descending beside you | `rooms/r.ts` |
 | Any mount whose target is unreachable or backwards now falls back to a standable spot in front of the work | `viewpoint()` in `main.ts` |
+| The Navy Yard dry dock is enterable. One block covered x -17.6 to 17.6 and z -64 to 10.6, which is every square metre of the room inside its own bounds: the visitor spawned, was shoved straight back out, and stood in a strip a metre and a half deep with all 21 works behind them. The quay slab already covers the dock, so only the deckhouse and the caisson gate are blocked now | `rooms/e.ts` |
+| Strivers' Row parlour opens to its full depth, and its ten stoop signs face the street instead of the brick | `rooms/h.ts` |
 
 The fallback rescues 376 of the 593 broken mounts. It is a safety net, not a
 substitute for fixing the room.
 
 ## What still needs a hand
 
-These rooms have mounts the fallback cannot rescue, because nothing in front of
-the work is standable. Columns are: mounts, unreachable targets, backwards
-works, and how many are still stuck after the fallback.
+`navyyard` and `strivers`, the two worst in the building, are fixed: both now
+report zero unreachable, zero backwards and zero stuck.
+
+These rooms still have mounts the fallback cannot rescue, because nothing in
+front of the work is standable. Columns are: mounts, unreachable targets,
+backwards works, and how many are still stuck after the fallback.
 
 ```
 room              mounts  unreach  away  stuck
-navyyard              21       21     0     21
-strivers              18        7    10     17
 garden                23       12     0     12
 easternparkway        20        8     8     10
 radiocity             23       12     0      9
@@ -62,9 +65,9 @@ belvedere             20        0     6      6
 balloons              20        0     6      6
 ```
 
-Another 33 rooms have between one and five stuck mounts. `navyyard` is the worst
-in the building: all 21 of its works are inside a block, which is the same fault
-the Flatiron had, and the same shape of fix.
+Another 33 rooms have between one and five stuck mounts. `garden` is now the worst
+left: twelve of its works are inside a block, the same fault the Flatiron and
+the Navy Yard had, and the same shape of fix.
 
 Rooms where every broken mount is rescued by the fallback and the geometry is
 still wrong underneath, worth fixing when there is time: `liberty` (all 25 face

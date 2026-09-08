@@ -321,7 +321,17 @@ export const navyyard: RoomDef = {
     k.box(60, D + 2, 8, 0, -D / 2, ZC + L / 2 + 4, granite);
     for (const x of [-4, -2.6, 2.6, 4]) k.box(0.14, 0.14, L, x, -D + 0.07, ZC, dark);
     for (let z = 6; z > ZC - L / 2; z -= 3) k.box(4, 1.2, 1.2, 0, -D + 0.6, z, timber);
-    k.block(-17.6, 17.6, ZC - L / 2 - 2, ZC + L / 2 + 0.6);
+    /* This used to block the whole dock, x -17.6 to 17.6 and z -64 to 10.6,
+       which is every square metre of the room inside its own bounds. The
+       visitor spawned at z 10, was shoved straight back out to z 10.6, and was
+       left in a strip a metre and a half deep with all twenty one works
+       unreachable behind them. The quay slab already covers the dock, so there
+       is no void to fall into: what has to be blocked is only what stands up
+       out of the yard. */
+    k.block(-3.2, 3.2, -26.2, -17.8);            // the deckhouse on the hull's back
+    k.block(-10.2, 10.2, ZC - L / 2 - 2.2, ZC - L / 2 + 0.2);   // the caisson gate at the river end
+    k.keepOut.push({ x: 17, z: 0, r: 0.7 });     // the bell post
+    for (const z of [-8, -32]) k.keepOut.push({ x: 15.6, z, r: 1.5 });   // the quay benches
     // the hull on the blocks
     const hull = k.mesh(new T.CylinderGeometry(6.5, 6.5, 40, 28, 1, false, 0, PI), rust, 0, -D + 2.4, -30);
     hull.rotation.set(0, 0, PI / 2);

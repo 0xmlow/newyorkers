@@ -178,7 +178,12 @@ export const strivers: RoomDef = {
     const PZ = 40 - 3 * 7.4, PX = HX + 7, PW = 13, PD = 20, PY = 3.2;
     k.blocks.pop();
     k.block(HX - 0.4, HX + 14, PZ + 3.9, 44);
-    k.block(HX - 0.4, HX + 14, -45, PZ - 3.9);
+    /* This cut the parlour off at z = PZ - 3.9 and left only the back seven
+       metres of a twenty metre room standable, so the mantel wall works, the
+       far side walls and the bay window all sent the visitor somewhere they
+       could not stand. The parlour floor runs to PZ - PD + 3.6, and the
+       mantel wall below already blocks the fireplace itself. */
+    k.block(HX - 0.4, HX + 14, -45, PZ - PD + 3.3);
     k.box(PW, 0.3, PD, PX, PY - 0.15, PZ - PD / 2 + 3.6, oak);
     k.box(PW, 0.3, PD, PX, PY + 5.2, PZ - PD / 2 + 3.6, tin);
     k.box(0.4, 5.4, PD, PX + PW / 2, PY + 2.6, PZ - PD / 2 + 3.6, plaster);
@@ -213,9 +218,15 @@ export const strivers: RoomDef = {
     for (const z of [PZ - 1.5, PZ - 4]) mounts.push({ position: v(PX + PW / 2 - 0.24, PY + 3.0, z), rotation: -PI / 2, target: v(PX + 1, PY + 3, z), width: 3.8, height: 2.2, style: 'gilt' });
     for (const z of [PZ - 8.5, PZ - 11.5]) mounts.push({ position: v(PX - PW / 2 + 1.64, PY + 3.0, z), rotation: PI / 2, target: v(PX - 1, PY + 3, z), width: 3.6, height: 2.1, style: 'gilt' });
     mounts.push({ position: v(PX, PY + 3.4, PZ - PD + 3.84), rotation: 0, target: v(PX, PY + 3, PZ - 10), width: 4.4, height: 2.6, style: 'gilt' });
-    for (const x of [PX - 4, PX + 4]) mounts.push({ position: v(x, PY + 3.4, PZ - PD + 3.84), rotation: 0, target: v(x, PY + 3, PZ - 10), width: 3.2, height: 1.9, style: 'gilt' });
+    /* The pair either side of the mantel stand you back a little further than
+       the middle one: at PZ - 10 the right hand target landed inside the
+       piano's own keep out, which is a spot the visitor is pushed out of. */
+    for (const x of [PX - 4, PX + 4]) mounts.push({ position: v(x, PY + 3.4, PZ - PD + 3.84), rotation: 0, target: v(x, PY + 3, PZ - 6.5), width: 3.2, height: 1.9, style: 'gilt' });
     mounts.push({ position: v(PX + PW / 2 - 0.24, PY + 3.0, PZ - 15.5), rotation: -PI / 2, target: v(PX + 1, PY + 3, PZ - 15.5), width: 3.4, height: 2.0, style: 'gilt' });
-    for (let i = 0; i < 11; i++) { if (i === 3) continue; const z = 40 - i * 7.4; mounts.push({ position: v(HX - 0.06, 2.9, z + 1.4 + 0.02), rotation: PI / 2, target: v(HX - 5, 3, z + 1.4), width: 1.5, height: 2.2, style: 'black', wash: false, lookAt: v(HX, 3, z + 1.4) }); }
+    /* Stoop signs on the house fronts. These face the street, which is at
+       lower x, so the normal is -X: at +PI/2 all ten faced into the brick and
+       the visitor on the pavement saw ten backs. */
+    for (let i = 0; i < 11; i++) { if (i === 3) continue; const z = 40 - i * 7.4; mounts.push({ position: v(HX - 0.06, 2.9, z + 1.4 + 0.02), rotation: -PI / 2, target: v(HX - 5, 3, z + 1.4), width: 1.5, height: 2.2, style: 'black', wash: false, lookAt: v(HX, 3, z + 1.4) }); }
     return { mounts, spawn: v(-4, 3, 28), look: v(HX, 5, 10), eye: 3, bounds: [-9, PX + PW / 2, -40, 42], style: 'gilt', floorY: (x, z) => {
       if (x > HX - 0.4 && z > PZ - PD + 3.6 && z < PZ + 3.6) return PY;
       if (x > HX - 3.4 && x <= HX - 0.4 && Math.abs(z - (PZ - 1.6)) < 1.6) return Math.max(0, ((x - (HX - 3.4)) / 3) * PY);
