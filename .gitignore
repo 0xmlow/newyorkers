@@ -15,3 +15,20 @@ _build/museum/node_modules/
 _build/stories/_preshift_*/
 _build/*.bak_*
 _mintkit
+
+# generated pages and feeds: build_seo.py, build_learn.py and page_shell.py
+# rebuild all of these from data.js, and n/ alone is 7,541 files and 88 MB.
+n/
+rooms/
+learn/
+feeds/
+api/
+sitemap.xml
+llms.txt
+llms-full.txt
+assets/museum/rooms/
+
+# the scripts keep timestamped copies beside the file they rewrite
+*.bak-*
+*.pre-*-backup
+*.prerename-backup

@@ -1,0 +1,108 @@
+# NEW YORKERS by MLow. Crawl the site; skip the heavy video folders. Bots and AI agents: read /agents.html and /llms.txt first.
+User-agent: *
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+Disallow: /assets/museum/props/
+
+User-agent: GPTBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Googlebot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Applebot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: CCBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+User-agent: YouBot
+Allow: /
+Disallow: /media/
+Disallow: /assets/glitch/
+
+Sitemap: https://n3wyorkers.com/sitemap.xml

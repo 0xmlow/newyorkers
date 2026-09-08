@@ -46,6 +46,9 @@ P.forEach((p) => byNum.set(p.n, p));
 export const thumb = (p: Piece) => `assets/t/${p.st[0]}.jpg`;
 export const fmt = (p: Piece) => (p.n != null ? 'NO. ' + String(p.n).padStart(4, '0') : 'UNCOUNTED');
 export const era = (p: Piece) => ERAS[p.e - 1];
+const FAM_NAMES: Record<string, { name: string; blurb: string }> = (D.story as unknown as { familyNames?: Record<string, { name: string; blurb: string }> }).familyNames || {};
+/* The stored family value is the stable key; this is the two word name shown to people. */
+export const famName = (f: string) => (FAM_NAMES[f] && FAM_NAMES[f].name) || f || '';
 export const FAMILIES = Array.from(new Set(P.map((p) => p.f))).sort();
 export const SETS = Array.from(new Set(P.map((p) => p.set).filter(Boolean) as string[])).sort();
 export const HEROES = new Set(Object.values(D.story.eraHeroes).flat());

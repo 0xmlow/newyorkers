@@ -4,11 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEW YORKERS · Get Counted</title>
-<meta name="description" content="Six questions. No wallet. Leave with the New Yorker the city thinks you are. The NEW YORKERS census is open.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEW YORKERS · Get Counted">
+<meta property="og:description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, register for the claim, or nominate a New Yorker to be painted.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/counted.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, register for the claim, or nominate a New Yorker to be painted.">
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
 .screen{display:none;min-height:calc(100vh - 70px)}
@@ -85,6 +93,15 @@
 #nomDone{display:none;text-align:center;padding:40px 0}
 .field input:invalid.touched,.field textarea:invalid.touched,.field select:invalid.touched{border-color:var(--pink)}
 </style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/counted">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, which New Yorker are you quiz, NYC personality quiz, nominate a New Yorker">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Get Counted · NEW YORKERS by MLow","url":"https://n3wyorkers.com/counted","isPartOf":{"@id":"https://n3wyorkers.com/#site"}}</script>
+<!-- /seo -->
 </head>
 <body>
 <div id="nav"></div>
@@ -273,7 +290,7 @@ function renderResult(m){
   $("#resNum").textContent=fmt(p); $("#resMeta").textContent=`ERA ${e.roman} · ${e.title.toUpperCase()}`;
   $("#resName").textContent=p.t; $("#resStory").textContent=p.story||"";
   const first=(p.story||"").split(". ")[0];
-  $("#resSocial").textContent=`The city checked its notes and found you at number ${p.n}. ${first? first+".":""} Get counted at ${CFG.domain||"newyorkers.mlow.xyz"}`;
+  $("#resSocial").textContent=`The city checked its notes and found you at number ${p.n}. ${first? first+".":""} Get counted at ${CFG.domain||"mlow.nyc"}`;
   $("#resGrid").innerHTML=[["FAMILY",p.f||e.title],["BOROUGH AFFINITY",boro+" (not proof of residence)"],["TIME BAND",m.band],["SET",p.set||"None"],["STATES",p.st.length>1?p.st.length+" finished states":"Appends over time"],["STANDARD","ERC-7160 dynamic"]].map(([k,v])=>`<div>${k}<br><b>${esc(v)}</b></div>`).join("");
   $("#lookBtn").href=recordUrl(p); $("#atlasBtn").href="map.html#p="+p.id;
   $("#matchField").value=`${fmt(p)} · ${p.t} · ${p.f||e.title} · ${m.band}`;
@@ -291,15 +308,15 @@ $("#cardBtn").onclick=async()=>{
   const cv=$("#cardCanvas"), cx=cv.getContext("2d");
   cx.fillStyle="#0D0D0D"; cx.fillRect(0,0,1080,1920);
   await new Promise(res=>{const im=new Image(); im.onload=()=>{const ar=im.width/im.height; const w=1080, h=w/ar; cx.drawImage(im,0,300,w,h); const g=cx.createLinearGradient(0,300+h-260,0,300+h); g.addColorStop(0,"rgba(13,13,13,0)"); g.addColorStop(1,"rgba(13,13,13,1)"); cx.fillStyle=g; cx.fillRect(0,300+h-260,1080,260); res();}; im.onerror=res; im.src=thumb(p);});
-  cx.fillStyle="#00E5FF"; cx.font="600 26px 'JetBrains Mono', Menlo, monospace"; cx.fillText("CENSUS MATCH FOUND",72,140);
-  cx.fillStyle="#8899AA"; cx.font="26px 'JetBrains Mono', Menlo, monospace"; cx.fillText("BUREAU OF THE SOFT CENSUS · NEW YORKERS BY MLOW",72,190);
-  cx.fillStyle="#F0F4F8"; cx.font="800 84px 'Bodoni Moda', Georgia, serif"; wrap(cx,p.t,72,1100,936,92);
-  cx.fillStyle="#00E5FF"; cx.font="600 34px 'JetBrains Mono', Menlo, monospace"; cx.fillText(fmt(p)+"  ·  ERA "+e.roman,72,1290);
-  cx.fillStyle="#F0F4F8"; cx.font="italic 38px Georgia, serif"; wrap(cx,$("#resId").textContent,72,1370,936,50);
-  cx.fillStyle="#8899AA"; cx.font="italic 30px Georgia, serif"; wrap(cx,p.story||"",72,1500,936,42);
+  cx.fillStyle="#00E5FF"; cx.font="600 26px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("CENSUS MATCH FOUND",72,140);
+  cx.fillStyle="#8899AA"; cx.font="26px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("BUREAU OF THE SOFT CENSUS · NEW YORKERS BY MLOW",72,190);
+  cx.fillStyle="#F0F4F8"; cx.font="800 84px 'Fraunces', Georgia, serif"; wrap(cx,p.t,72,1100,936,92);
+  cx.fillStyle="#00E5FF"; cx.font="600 34px 'IBM Plex Mono', Menlo, monospace"; cx.fillText(fmt(p)+"  ·  ERA "+e.roman,72,1290);
+  cx.fillStyle="#F0F4F8"; cx.font="italic 38px 'Fraunces', Georgia, serif"; wrap(cx,$("#resId").textContent,72,1370,936,50);
+  cx.fillStyle="#8899AA"; cx.font="italic 30px 'Fraunces', Georgia, serif"; wrap(cx,p.story||"",72,1500,936,42);
   cx.fillStyle="#2962FF"; cx.fillRect(72,1740,200,6);
-  cx.fillStyle="#F0F4F8"; cx.font="600 30px 'JetBrains Mono', Menlo, monospace"; cx.fillText("GET COUNTED · "+(CFG.domain||"NEWYORKERS.MLOW.XYZ"),72,1810);
-  cx.fillStyle="#8899AA"; cx.font="22px 'JetBrains Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT PRODUCT",72,1860);
+  cx.fillStyle="#F0F4F8"; cx.font="600 30px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("GET COUNTED · "+(CFG.domain||"MLOW.NYC"),72,1810);
+  cx.fillStyle="#8899AA"; cx.font="22px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT PRODUCT",72,1860);
   const a=document.createElement("a"); a.download=`new-yorkers-${p.n}.png`; a.href=cv.toDataURL("image/png"); a.click(); toast("Card saved. Post it, tag @degens");
 };
 function wrap(cx,text,x,y,maxW,lh){ const words=String(text).split(" "); let line=""; for(const w of words){const t=line?line+" "+w:w; if(cx.measureText(t).width>maxW&&line){cx.fillText(line,x,y);y+=lh;line=w;}else line=t;} if(line)cx.fillText(line,x,y); return y; }
@@ -313,13 +330,16 @@ $("#saveForm").addEventListener("submit",async e=>{
   data._subject="NEW YORKERS Census: "+data.name+" · "+(data.match||"");
   const btn=$("#saveSubmit"); btn.disabled=true; btn.textContent="SENDING";
   const done=()=>{f.style.display="none";$("#saveDone").style.display="block";};
-  if(CFG.formspree){
-    try{ const r=await fetch("https://formspree.io/f/"+CFG.formspree,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)}); if(r.ok){done();return;} throw new Error(r.status); }
-    catch(err){ btn.disabled=false; btn.textContent="REGISTER FOR THE CLAIM"; toast("Could not reach the form service. Try again, or email "+(CFG.contactEmail||"")); return; }
+  try{
+    const r=await fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({kind:"census"},data))});
+    const j=await r.json().catch(()=>({ok:r.ok}));
+    if(j.ok){done();return;}
+    throw new Error(j.error||"rejected");
+  }catch(err){
+    btn.disabled=false; btn.textContent="REGISTER FOR THE CLAIM";
+    toast(err && err.message==="too many, slow down" ? "Too many submissions from here. Wait ten minutes." : "Could not reach the form. Try again, or message @degens on X.");
+    return;
   }
-  const body=encodeURIComponent(`NEW YORKERS Census registration\n\nName: ${data.name}\nEmail: ${data.email}\nX: ${data.twitter||""}\nDiscord/Telegram: ${data.messenger||""}\nClaims: ${data.mint_count}\nPartner code: ${data.partner_code||""}\nMatch: ${data.match||""}\nNewsletter: ${data.news?"yes":"no"}\n`);
-  location.href=`mailto:${CFG.contactEmail}?subject=${encodeURIComponent("NEW YORKERS Census: "+data.name)}&body=${body}`;
-  done();
 });
 /* nominate = one form, one queue, one pick a week */
 (function(){
@@ -340,22 +360,20 @@ $("#saveForm").addEventListener("submit",async e=>{
     data.page=location.href; data.sent=new Date().toISOString();
     data._subject="NEW YORKERS Nomination: "+data.alias+" for "+data.nominee;
     btn.disabled=true; btn.textContent="SENDING";
-    const id=CFG.formspreeNominate||CFG.formspree;
-    if(id){
-      const url="https://formspree.io/f/"+id;
-      try{
-        let r;
-        if(file){ const fd=new FormData(); Object.keys(data).forEach(k=>fd.append(k,data[k])); fd.append("image",file,file.name); r=await fetch(url,{method:"POST",headers:{"Accept":"application/json"},body:fd}); }
-        if(!r||!r.ok){ r=await fetch(url,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)}); }
-        if(r.ok){done();return;} throw new Error(r.status);
-      }catch(err){ btn.disabled=false; btn.textContent=LABEL; toast("Could not reach the form service. Try again, or email "+(CFG.contactEmail||"")); return; }
+    try{
+      const r=await fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({kind:"nomination"},data))});
+      const j=await r.json().catch(()=>({ok:r.ok}));
+      if(j.ok){done();return;}
+      throw new Error(j.error||"rejected");
+    }catch(err){
+      btn.disabled=false; btn.textContent=LABEL;
+      toast("Could not reach the form. Try again, or message @degens on X.");
+      return;
     }
-    const body=encodeURIComponent(`NEW YORKERS Nomination\n\nAlias: ${data.alias}\nEmail: ${data.email}\nNominee: ${data.nominee}\nPrompt: ${data.prompt}\n\nStory:\n${data.story}\n\nKeep this: ${data.object||""}\nCorner: ${data.corner||""}\nWhere now: ${data.city||""}\nPhoto link: ${data.image_url||""}\n\nOwn story: ${data.own_story}\nMay publish: ${data.permit_publish}\nMay adapt: ${data.permit_adapt}\nLetter from the City: ${data.news}\n`);
-    location.href=`mailto:${CFG.contactEmail}?subject=${encodeURIComponent(data._subject)}&body=${body}`;
-    done();
   });
 })();
 })();
 </script>
+<script src="assets/eggs.js" defer></script>
 </body>
 </html>

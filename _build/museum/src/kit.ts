@@ -306,6 +306,83 @@ export class Kit {
     this.extras.push(o);
     return o;
   }
+  /* ---------- the house marks ---------- */
+  /* Every room carries the identity, and it is placed from the room's own
+     spawn and look so no room has to position anything by hand: a plaque
+     standing beside the visitor where they arrive, carrying the MLOW mark, the
+     room name and a Blossom icon, and the eye set into the ground a few paces
+     ahead so it reads in the first frame. Both are clamped inside the room's
+     walkable bounds, so a room with tight geometry cannot push them into a
+     wall. */
+  brand(b: { spawn: T.Vector3; look: T.Vector3; bounds: [number, number, number, number]; floorY?: (x: number, z: number) => number }, roomName: string) {
+    const B = 'assets/brand/';
+    const at = (x: number, z: number) => (b.floorY ? b.floorY(x, z) : 0);
+    const cl = (v: number, lo: number, hi: number) => (lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, v)));
+    const [x0, x1, z0, z1] = b.bounds;
+    const f = new T.Vector3().subVectors(b.look, b.spawn).setY(0);
+    if (f.lengthSq() < 1e-6) f.set(0, 0, -1);
+    f.normalize();
+    const right = new T.Vector3(-f.z, 0, f.x);
+    const facing = Math.atan2(-f.x, -f.z);
+    const out = new T.Vector3(-f.x, 0, -f.z);
+
+    /* the arrival plaque */
+    const px = cl(b.spawn.x + right.x * 1.85 + f.x * 1.15, x0 + 0.7, x1 - 0.7),
+      pz = cl(b.spawn.z + right.z * 1.85 + f.z * 1.15, z0 + 0.7, z1 - 0.7),
+      py = at(px, pz);
+    const ink = this.flat(0x0d0d0d, 0.15, 0.5),
+      post = this.flat(0x2a3040, 0.65, 0.4);
+    this.cyl(0.04, 1.08, px, py + 0.54, pz, post);
+    this.cyl(0.17, 0.05, px, py + 0.03, pz, post);
+    const plate = this.box(1.24, 0.78, 0.05, px, py + 1.46, pz, ink);
+    plate.rotation.y = facing;
+    const face = (d: number) => ({ x: px + out.x * d, z: pz + out.z * d });
+    const lw = 0.86,
+      l1 = face(0.035);
+    const logo = this.mesh(new T.PlaneGeometry(lw, lw / 4.03), this.image(B + 'logo_white.png', { emissive: 0xdfe8f5 }), l1.x, py + 1.66, l1.z);
+    logo.rotation.y = facing;
+    this.extras.push(logo);
+    this.sign(roomName.toUpperCase(), 1.02, 0.115, l1.x, py + 1.45, l1.z, 'transparent', '#8899AA', 72, facing, { double: true });
+    this.sign('NEW YORKERS  ·  A CENSUS BY MLOW  ·  WITH BLOSSOM', 1.06, 0.072, l1.x, py + 1.28, l1.z, 'transparent', '#2962FF', 54, facing, { double: true });
+    const bl = face(0.032);
+    const bloss = this.mesh(new T.PlaneGeometry(0.2, 0.2), this.image(B + 'blossom_03_white.png'), bl.x + right.x * 0.5, py + 1.13, bl.z + right.z * 0.5);
+    bloss.rotation.y = facing;
+    this.extras.push(bloss);
+    this.keepOut.push({ x: px, z: pz, r: 0.5 });
+
+    /* the eye, set into the ground a few paces along the walk */
+    const ex = cl(b.spawn.x + f.x * 3.6, x0 + 1.0, x1 - 1.0),
+      ez = cl(b.spawn.z + f.z * 3.6, z0 + 1.0, z1 - 1.0);
+    const ey = at(ex, ez);
+    const ring = this.mesh(new T.RingGeometry(1.34, 1.5, 64), this.flat(0x2962ff, 0.2, 0.45), ex, ey + 0.014, ez);
+    ring.rotation.x = -Math.PI / 2;
+    const eye = this.mesh(new T.PlaneGeometry(2.3, 2.3), this.image(B + 'eye_truecolor.png', { emissive: 0x2962ff }), ex, ey + 0.02, ez);
+    eye.rotation.set(-Math.PI / 2, 0, -Math.atan2(f.x, f.z));
+    this.extras.push(eye);
+    this.extras.push(ring);
+
+    /* the house banner on the wall behind the visitor, so the mark is in the room and not only underfoot.
+       It sits along the reverse of the opening look vector, which is by construction outside the opening shot,
+       and is dropped whenever that point falls outside the room or the room is too small to carry it. */
+    const wide = x1 - x0, deep = z1 - z0;
+    if (wide > 11 && deep > 11) {
+      const bx = b.spawn.x + out.x * 7.4, bz = b.spawn.z + out.z * 7.4;
+      if (bx > x0 + 0.6 && bx < x1 - 0.6 && bz > z0 + 0.6 && bz < z1 - 0.6) {
+        const by = at(bx, bz) + 3.15;
+        const bLogo = this.mesh(new T.PlaneGeometry(3.2, 3.2 / 4.03), this.image(B + 'logo_white.png', { emissive: 0xdfe8f5 }), bx, by, bz);
+        bLogo.rotation.y = facing + Math.PI;
+        this.extras.push(bLogo);
+        for (const sgn of [-1, 1]) {
+          const fx = bx + right.x * sgn * 2.55, fz = bz + right.z * sgn * 2.55;
+          const fl = this.mesh(new T.PlaneGeometry(0.66, 0.66), this.image(B + (sgn < 0 ? 'blossom_01.png' : 'blossom_05.png')), fx, by - 0.04, fz);
+          fl.rotation.y = facing + Math.PI;
+          this.extras.push(fl);
+        }
+        this.sign('EVERY NEW YORKER GETS A PORTRAIT  ·  EVEN THE VILLAINS', 4.2, 0.24, bx, by - 0.72, bz, 'transparent', '#8899aa', 46, facing + Math.PI, { double: true });
+      }
+    }
+  }
+
   instances(g: T.BufferGeometry, m: T.Material, transforms: T.Matrix4[]) {
     const o = new T.InstancedMesh(g, m, transforms.length);
     transforms.forEach((t, i) => o.setMatrixAt(i, t));
@@ -770,6 +847,7 @@ export class Kit {
       { text: caption[0], color: '#00E5FF', size: 30 },
       { text: caption[1], color: '#F0F4F8', size: 34, font: '700' },
       { text: caption[2], color: '#8899AA', size: 24 },
+      { text: caption[3] || 'NEW YORKERS  ·  BY MLOW', color: '#2962FF', size: 21 },
     ], 1024, 200);
     const plate = new T.Mesh(new T.PlaneGeometry(Math.min(2.6, w * 0.55), Math.min(2.6, w * 0.55) * 0.195), new T.MeshBasicMaterial({ map: cap }));
     plate.position.set(-w / 2 + Math.min(2.6, w * 0.55) / 2, -h / 2 - 0.42, artZ + 0.01);

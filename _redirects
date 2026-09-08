@@ -1,0 +1,21 @@
+# NEW YORKERS · Cloudflare Pages redirects for n3wyorkers.com
+#
+# This site is the census. The Shopify print shop is a separate site at mlow.nyc and did not move.
+# 
+
+# Front doors to the shop. The print shop stays at mlow.nyc with its 3D gallery; this site is the census.
+/prints          https://mlow.nyc                             302
+/shop            https://mlow.nyc                             302
+/buy             https://mlow.nyc                             302
+
+# Short links for the campaign. Keep these stable; they are printed on things.
+# Cloudflare Pages serves pages extensionless and 308s /x.html to /x, so every target here must be
+# extensionless too. Pointing /museum at /museum.html made an infinite redirect loop on the live site.
+# For the same reason there is no /museum, /count, /press, /brand, /agents or /counted rule: Pages
+# already serves those names, and adding a rule would send them straight back into the loop.
+/spin            /museum#room=random                          302
+/atlas           /map                                         302
+/read            /learn                                       302
+/questions       /faq                                         302
+/allowlist       /whitelist                                   302
+/prints-shipping /shipping                                    302

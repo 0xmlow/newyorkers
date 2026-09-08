@@ -1,0 +1,15 @@
+/* TEAM */
+Artist: MLow (Michael Low)
+Site: mlow.xyz, mlow.nyc
+X: @degens
+IG, TikTok: @0xmlow
+Location: New York City
+
+/* THANKS */
+Every New Yorker. Even the villains.
+
+/* SITE */
+Last update: 2026-09-07
+Standards: HTML5, CSS3, Three.js, ERC-7160
+Components: a painted census, an atlas, a museum, a reading room, a slot machine, several easter eggs
+Song: Empire State of Mind, obviously

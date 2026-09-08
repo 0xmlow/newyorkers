@@ -1,13 +1,26 @@
-/* NEW YORKERS · shared helpers for the editorial pages. Needs config.js + data.js first. */
+/* NEW YORKERS · shared helpers for the editorial pages.
+   Needs config.js first, then either data.js (the full census) or counts.js (the light build for article pages).
+   Pages in a subfolder set window.NY_BASE = "../" before this file loads. */
 (function(){
   "use strict";
-  const D = window.NY_DATA, C = D.counts, S = D.story, P = D.pieces, CFG = window.NY_CONFIG || {};
+  const BASE = window.NY_BASE || "";
+  const CFG = window.NY_CONFIG || {};
+  const D = window.NY_DATA || null;
+  const K = window.NY_COUNTS || null;
+  const C = D ? D.counts : (K ? K.counts : {pieces:0});
+  const S = D ? D.story : (K ? {eras:K.eras||[]} : {eras:[]});
+  const P = D ? D.pieces : [];
   const byId = new Map(); P.forEach((p,i)=>byId.set(p.id,i));
   function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   const fmt = p => p.n!=null ? "NO. "+String(p.n).padStart(4,"0") : "UNCOUNTED";
-  const thumb = (p,k)=>`assets/t/${p.st[k||0]}.jpg`;
+  const thumb = (p,k)=>`${BASE}assets/t/${p.st[k||0]}.jpg`;
   const get = id => { const i = byId.get(String(id)); return i===undefined?null:P[i]; };
   const era = p => S.eras[p.e-1];
+  /* Family display names. The stored value on a piece stays the stable key (Heroes, Stoop, ...),
+     and this maps it to the two word name shown to people. Falls back to the key if unmapped. */
+  const FAMN = (S && S.familyNames) || {};
+  const famName = f => (FAMN[f] && FAMN[f].name) || f || "";
+  const famBlurb = f => (FAMN[f] && FAMN[f].blurb) || "";
   const num = n => Number(n).toLocaleString("en-US");
   function sample(n, filter, seed){
     const r = mulberry32(seed||Date.now());
@@ -17,21 +30,49 @@
     return out;
   }
   function find(q){ q=q.toLowerCase(); return P.find(p=>p.t.toLowerCase().includes(q)) || null; }
-  const recordUrl = p => `census.html#n=${p.id}`;
+  const recordUrl = p => `${BASE}census.html#n=${p.id}`;
   const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const NAV = [["index.html","HOME"],["census.html","THE CENSUS"],["map.html","THE ATLAS"],["museum.html","THE MUSEUM"],["learn.html","READ"],["faq.html","FAQ"],["count.html","THE COUNT"],["press.html","PRESS"],["museum.html#room=random","SPIN","spin"],["whitelist.html","ALLOWLIST","spin"],["counted.html","GET COUNTED","cta"]];
   function nav(active){
-    const links=[["index.html","HOME"],["census.html","THE CENSUS"],["census.html#gallery","THE GALLERY"],["map.html","THE ATLAS"],["museum.html","THE MUSEUM"],["count.html","THE COUNT"],["press.html","PRESS"],["counted.html","GET COUNTED","cta"]];
     const el=document.getElementById("nav"); if(!el)return;
-    el.innerHTML=`<a href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"></a>
-      <button class="burger" aria-label="menu">MENU</button>
-      <div class="links">${links.map(([h,t,c])=>`<a href="${h}" class="${c||""}${active===t?" on":""}">${t}</a>`).join("")}</div>`;
-    el.querySelector(".burger").onclick=()=>el.querySelector(".links").classList.toggle("open");
+    el.innerHTML=`<a href="${BASE}index.html" aria-label="NEW YORKERS home"><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"></a>
+      <button class="burger" aria-label="menu" aria-expanded="false">MENU</button>
+      <div class="links">${NAV.map(([h,t,c])=>`<a href="${BASE}${h}" class="${c||""}${active===t?" on":""}"${c==="spin"?' title="Drop into a random room of the museum"':""}>${c==="spin"?"✦ ":""}${t}</a>`).join("")}</div>`;
+    const b=el.querySelector(".burger"); b.onclick=()=>{const open=el.querySelector(".links").classList.toggle("open"); b.setAttribute("aria-expanded",open?"true":"false");};
   }
   function foot(){
     const el=document.getElementById("foot"); if(!el)return;
-    el.innerHTML=`<div><img src="assets/brand/logo_white.png" alt="MLOW"><div class="lines">${CFG.domain||"NEWYORKERS.MLOW.XYZ"} · MLOW.XYZ · MLOW.NYC<br>X @DEGENS · IG + TIKTOK @0XMLOW</div></div>
-      <div class="right"><div class="lede">The count is coming. Get counted.</div><div class="sm">NEW YORKERS · A CENSUS BY MLOW · NYC · ${num(C.pieces)} CHARACTERS AND COUNTING</div></div>`;
+    const dom=(CFG.domain||"MLOW.NYC");
+    el.innerHTML=`<div><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"><div class="lines">${dom} · THE CENSUS<br><a href="${CFG.printsUrl||"https://mlow.xyz/prints"}">MLOW.XYZ/PRINTS</a> · PRINTS AND ORIGINALS<br><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLOW.XYZ</a> · THE ARTIST<br>X @DEGENS · IG + TIKTOK @0XMLOW</div></div>
+      <div class="col"><h5>The census</h5><a href="${BASE}census.html">Every record</a><a href="${BASE}map.html">The atlas</a><a href="${BASE}museum.html">The museum</a><a href="${BASE}museum.html#room=random">Spin a room</a><a href="${BASE}counted.html">Get counted</a><a href="${BASE}counted.html#nominate">Nominate a New Yorker</a><a href="${BASE}whitelist.html">The allowlist</a>${(window.NY_CONFIG && window.NY_CONFIG.loginEnabled) ? `<a href="${BASE}profile.html">Your profile</a>` : ""}</div>
+      <div class="col"><h5>The record</h5><a href="${BASE}faq.html">The FAQ</a><a href="${BASE}learn.html">The reading room</a><a href="${BASE}press.html">Press room</a><a href="${BASE}brand.html">Brand</a><a href="${BASE}count.html">The count</a><a href="${BASE}agents.html">For bots and AI agents</a><a href="${BASE}llms.txt">llms.txt</a></div>
+      <div class="col"><h5>Elsewhere</h5><a href="${CFG.printsUrl||"https://mlow.xyz/prints"}">Prints, at the print shop</a><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLow, the artist</a><a href="https://x.com/degens">X, @degens</a><a href="https://www.instagram.com/0xmlow">Instagram, @0xmlow</a><a href="https://www.tiktok.com/@0xmlow">TikTok, @0xmlow</a></div>
+      <div class="right"><div class="lede">The count is coming. Get counted.</div><div class="sm">NEW YORKERS · A CENSUS BY MLOW · NYC · ${num(C.pieces)} CHARACTERS AND COUNTING<br><span class="ft" title="Art, not an investment product">ART, NOT AN INVESTMENT PRODUCT · <a href="${BASE}pigeon.html" style="opacity:.35" aria-label="the uncounted">·</a></span></div></div>`;
   }
   function toast(msg){let t=document.querySelector(".toast");if(!t){t=document.createElement("div");t.className="toast";document.body.appendChild(t);}t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2600);}
-  window.NY = {D,C,S,P,CFG,fmt,thumb,get,era,num,sample,find,recordUrl,esc,nav,foot,toast,rnd:mulberry32};
+  /* share: Web Share where it exists, else copy, plus an X intent. Every share carries ?ref=share so the flywheel can be counted. */
+  function shareUrl(url){ try{ const u=new URL(url,location.href); if(!u.searchParams.get("ref")) u.searchParams.set("ref","share"); return u.toString(); }catch(e){ return url; } }
+  async function share(o){
+    const url=shareUrl(o.url||location.href), text=o.text||document.title;
+    if(navigator.share){ try{ await navigator.share({title:o.title||document.title,text,url}); return "shared"; }catch(e){ if(e&&e.name==="AbortError") return "cancelled"; } }
+    try{ await navigator.clipboard.writeText(text+" "+url); toast("Link copied. Paste it anywhere."); return "copied"; }catch(e){ toast(url); return "shown"; }
+  }
+  const xIntent = (text,url)=>`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl(url||location.href))}`;
+  function shareRow(el,o){ if(!el)return; el.className="share"; el.innerHTML=`<button type="button" data-a="share">Share</button><button type="button" data-a="copy">Copy link</button><a href="${xIntent(o.text||document.title,o.url)}" target="_blank" rel="noopener">Post on X</a>`;
+    el.querySelector('[data-a="share"]').onclick=()=>share(o); el.querySelector('[data-a="copy"]').onclick=async()=>{ try{ await navigator.clipboard.writeText(shareUrl(o.url||location.href)); toast("Link copied."); }catch(e){ toast(shareUrl(o.url||location.href)); } }; }
+  /* Records a thing you did against your profile, if you have one. Fire and forget: it never
+     blocks the page and it silently does nothing for a logged out visitor. */
+  function track(kind, key, payload){
+    try{
+      fetch((BASE||"/")+"api/event", {method:"POST", credentials:"same-origin",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({kind:kind, key:key, payload:payload||{}})}).catch(function(){});
+    }catch(e){}
+  }
+  /* Remember a referral code for later, so a share that leads to a sign up days afterwards still counts. */
+  try{
+    var _r=new URLSearchParams(location.search).get("ref");
+    if(_r) localStorage.setItem("ny_ref", _r);
+  }catch(e){}
+  window.NY = {D,C,S,P,CFG,BASE,track,fmt,thumb,get,era,famName,famBlurb,num,sample,find,recordUrl,esc,nav,foot,toast,share,shareUrl,xIntent,shareRow,rnd:mulberry32};
 })();

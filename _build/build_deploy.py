@@ -87,15 +87,37 @@ for g in data["story"]["living"]["gifs"]: g["src"] = repath(g["src"])
 print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 
 # ---------- copy site shell + assets ----------
-for page in ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html", "museum.html", "og.jpg"):
+SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
+              "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
+              "whitelist.html", "profile.html", "faq.html", "vault.html", "shipping.html")
+SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
+                           "humans.txt", "_redirects")
+for page in SITE_FILES:
     if os.path.exists(os.path.join(SITE, page)):
         shutil.copy2(os.path.join(SITE, page), os.path.join(OUT, page))
-for stale in ("gallery.html",):
-    if os.path.exists(os.path.join(OUT, stale)): os.remove(os.path.join(OUT, stale))
+# Prune anything the package still carries that this build no longer produces. Without this a page
+# that gets deleted from the site lives on in the package and stays live forever; shop.html did
+# exactly that after the print catalogue was pulled.
+PAGES = SITE_PAGES + ("404.html",)      # one list only: two copies drift and silently delete a page
+for f in os.listdir(OUT):
+    if f.endswith(".html") and f not in PAGES:
+        os.remove(os.path.join(OUT, f)); print("  pruned stale page:", f)
+# Copied verbatim. config.js and data.js are rewritten further down, so they are kept
+# but never copied here. One tuple drives both the copy and the prune: two lists drift,
+# and the drift is silent (an asset stops shipping and every page that needs it breaks).
+COPY_ASSETS = ("three.min.js", "site.css", "site.js", "geo.js", "eggs.js", "counts.js",
+               "rooms.js", "articles.js", "shipping.js", "prints.js", "qrcode.min.js", "sha3.min.js")
+KEEP_ASSETS = set(COPY_ASSETS) | {"config.js", "data.js"}
+_ad = os.path.join(OUT, "assets")
+for f in os.listdir(_ad):
+    if os.path.isfile(os.path.join(_ad, f)) and f not in KEEP_ASSETS:
+        os.remove(os.path.join(_ad, f)); print("  pruned stale asset:", f)
 os.makedirs(os.path.join(OUT, "assets"), exist_ok=True)
-for a in ("three.min.js", "site.css", "site.js", "geo.js"):
-    if os.path.exists(os.path.join(SITE, "assets", a)):
-        shutil.copy2(os.path.join(SITE, "assets", a), os.path.join(OUT, "assets", a))
+for a in COPY_ASSETS:
+    src = os.path.join(SITE, "assets", a)
+    if not os.path.exists(src):
+        raise SystemExit("missing asset the site references: assets/" + a)
+    shutil.copy2(src, os.path.join(OUT, "assets", a))
 
 # public config: preserve the formspree id from the working config, hide curate mode
 cfg_src = open(os.path.join(SITE, "assets", "config.js")).read()
@@ -111,8 +133,11 @@ with open(os.path.join(OUT, "assets", "config.js"), "w") as f:
 if not formspree:
     print("NOTE: formspree id is empty; allowlist falls back to email drafts until it is set in assets/config.js")
 
-with open(os.path.join(OUT, "robots.txt"), "w") as f:
-    f.write("User-agent: *\nAllow: /\n")
+# generated folders (the reading room, the room pages, the record pages, the api): always mirrored whole
+for sub in ("learn", "rooms", "n", "api", "feeds"):
+    src = os.path.join(SITE, sub); dst = os.path.join(OUT, sub)
+    if os.path.isdir(dst): shutil.rmtree(dst)
+    if os.path.isdir(src): shutil.copytree(src, dst)
 with open(os.path.join(OUT, "404.html"), "w") as f:
     f.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NEW YORKERS · Not Found</title></head>'
             '<body style="background:#0D0D0D;color:#F0F4F8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:Georgia,serif;text-align:center">'
@@ -155,8 +180,73 @@ for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "museum
 with open(os.path.join(OUT, "assets", "data.js"), "w") as f:
     f.write("window.NY_DATA = "); json.dump(data, f, separators=(",",":")); f.write(";\n")
 
+# Pages Functions: the form intake endpoint. Lives in _build/api/functions and is copied in whole,
+# so the API deploys with the site and there is no second service to keep alive.
+_fn_src = os.path.join(SITE, "_build", "api", "functions")
+# NOTE: with a wrangler.toml present, Pages expects functions/ BESIDE the config file, not inside
+# pages_build_output_dir. Putting it in site/ ships it as a static asset and every POST returns 405.
+_fn_dst = os.path.join(PKG, "functions")
+if os.path.isdir(_fn_dst): shutil.rmtree(_fn_dst)
+if os.path.isdir(_fn_src):
+    shutil.copytree(_fn_src, _fn_dst)
+    print("functions copied:", sum(len(f) for _, _, f in os.walk(_fn_dst)), "file(s)")
+
+# config.js and prints.js are control files: they carry the Privy App ID and the print switch,
+# their names never change, and Cloudflare pins any browser max-age below four hours to four
+# hours, so _headers alone cannot make a flip land. Version the REFERENCE instead. Every HTML
+# page is served max-age=0 must-revalidate, so a new hash reaches every visitor on the next
+# page load, and the file itself can stay cached for as long as the edge likes.
+import hashlib
+_stamped = 0
+_vers = {}
+# Every asset whose NAME never changes. Cloudflare pins a browser max-age below four hours up
+# to four hours, so a change to any of these can sit invisible in a warm browser. Versioning
+# the reference is the only reliable fix: the HTML always revalidates. A stale site.js is how
+# a hidden footer link stayed visible after the switch was flipped.
+for _asset in tuple(COPY_ASSETS) + ("config.js", "data.js"):
+    _fp = os.path.join(OUT, "assets", _asset)
+    if os.path.exists(_fp):
+        _vers[_asset] = hashlib.sha256(open(_fp, "rb").read()).hexdigest()[:10]
+for _root, _dirs, _files in os.walk(OUT):
+    _dirs[:] = [d for d in _dirs if d not in ("media", "assets")]   # no HTML lives in these
+    for _fn in _files:
+        if not _fn.endswith(".html"): continue
+        _fp = os.path.join(_root, _fn)
+        _s = open(_fp, encoding="utf-8").read(); _o = _s
+        for _asset, _v in _vers.items():
+            _s = re.sub(r'(assets/' + re.escape(_asset) + r')(\?v=[0-9a-f]+)?', r'\1?v=' + _v, _s)
+        if _s != _o:
+            open(_fp, "w", encoding="utf-8").write(_s); _stamped += 1
+print("  control files versioned %s, stamped into %d pages" % (_vers, _stamped))
+
+# A build id, written into every page and to /build.json. While iterating on a bug it is
+# vital to know WHICH build a report came from: a stale tab reports a fixed bug as still
+# broken, and there is no way to tell from the error alone. The page compares the two and
+# says so out loud.
+BUILD_ID = __import__("datetime").datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+with open(os.path.join(OUT, "build.json"), "w") as f:
+    json.dump({"build": BUILD_ID}, f)
+_bstamped = 0
+for _root, _dirs, _files in os.walk(OUT):
+    _dirs[:] = [d for d in _dirs if d not in ("media", "assets")]
+    for _fn in _files:
+        if not _fn.endswith(".html"): continue
+        _fp = os.path.join(_root, _fn)
+        _s = open(_fp, encoding="utf-8").read()
+        if "__BUILD_ID__" not in _s: continue
+        open(_fp, "w", encoding="utf-8").write(_s.replace("__BUILD_ID__", BUILD_ID))
+        _bstamped += 1
+print("  build %s stamped into %d pages" % (BUILD_ID, _bstamped))
+
 with open(os.path.join(OUT, "_headers"), "w") as f:
-    f.write("""/assets/t/*
+    # config.js is the control file: it carries the Privy App ID and the feature switches, and its
+    # name never changes, so a long cache means a flip does not reach returning visitors for hours.
+    # Keep it short and revalidated. prints.js is the same kind of switch.
+    f.write("""/assets/config.js
+  Cache-Control: public, max-age=60, must-revalidate
+/assets/prints.js
+  Cache-Control: public, max-age=300, must-revalidate
+/assets/t/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/atlas/*
   Cache-Control: public, max-age=31536000, immutable
@@ -170,8 +260,28 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
   Cache-Control: public, max-age=31536000, immutable
 /assets/museum/props/*
   Cache-Control: public, max-age=31536000, immutable
+/assets/museum/rooms/*
+  Cache-Control: public, max-age=604800
 /assets/museum/*
   Cache-Control: public, max-age=3600
+/api/*
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+/feeds/*
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+/llms.txt
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+/llms-full.txt
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+/n/*
+  Cache-Control: public, max-age=86400
+/rooms/*
+  Cache-Control: public, max-age=86400
+/learn/*
+  Cache-Control: public, max-age=86400
 /assets/data.js
   Cache-Control: public, max-age=300
 /assets/geo.js

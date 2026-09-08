@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+"""whitelist.html: the allowlist intake form.
+
+Honest by design. The form COLLECTS a wallet address and a stated holding; it does not and cannot
+verify wallet age or balance in the browser. That check happens off chain against a snapshot, and the
+page says so plainly rather than implying the form is the gate. It also captures the referral code
+from ?ref= so a share that leads to a signup can be traced.
+"""
+import os, json
+from page_shell import shell, esc, cfg
+HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
+C = cfg(); URL = C["siteUrl"]
+
+body = f"""
+<section class="wrap" style="padding-top:64px;padding-bottom:12px">
+  <div class="kicker">The allowlist</div>
+  <h1 class="h-xl" style="margin-top:14px;max-width:1000px">Put your name down.</h1>
+  <p class="lede" style="margin-top:20px;max-width:840px;color:var(--slate)">THE CENSUS RELEASE is 6,666 works on OpenSea. This is how you get on the list for it. Nothing here charges you, and nothing here is a guarantee of a spot.</p>
+  <div class="reqs">
+    <div class="kicker" style="font-size:10px;color:var(--acid)">What a wallet needs</div>
+    <ul>
+      <li>At least <b>one month old</b> at the time of the snapshot.</li>
+      <li>Holding more than <b>0.2 ETH</b>, or more than <b>$10,000 in digital art</b>.</li>
+      <li>It must be the wallet you actually mint with.</li>
+    </ul>
+    <p class="fine">Both are checked against the chain after the snapshot, not by this form. Putting an address in does not make it eligible, and we cannot tell you here whether yours qualifies.</p>
+  </div>
+</section>
+
+<section class="wrap" style="padding-bottom:90px">
+  <form id="wl" class="wlform" novalidate>
+    <div class="grid2">
+      <label>Name<span class="req">required</span><input name="name" required autocomplete="name" placeholder="What should MLow call you"></label>
+      <label>Email<span class="req">required</span><input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+    </div>
+    <div class="grid3">
+      <label>X handle<input name="x_handle" placeholder="@degens" autocomplete="off"></label>
+      <label>Discord<input name="discord" placeholder="username" autocomplete="off"></label>
+      <label>Telegram<input name="telegram" placeholder="@username" autocomplete="off"></label>
+    </div>
+    <p class="hint">At least one social is strongly recommended. It is how you get told you are in.</p>
+
+    <label>Ethereum wallet you plan to mint with<span class="req">required</span>
+      <input name="wallet" id="wallet" required spellcheck="false" autocomplete="off" placeholder="0x...">
+      <span class="err" id="walletErr" hidden>That does not look like an Ethereum address. It should start with 0x and be 42 characters.</span>
+    </label>
+
+    <label>How many would you like to mint<span class="req">required</span>
+      <select name="mint_count" required>{"".join(f'<option value="{i}">{i}</option>' for i in range(1, 11))}</select>
+      <span class="hint" style="margin-top:6px">One to ten. Asking for more does not improve your odds.</span>
+    </label>
+
+    <fieldset>
+      <legend>Do you own any MLow work?</legend>
+      <div class="radios">
+        <label class="r"><input type="radio" name="is_collector" value="yes" required> Yes</label>
+        <label class="r"><input type="radio" name="is_collector" value="no"> No, not yet</label>
+      </div>
+      <label id="ownWrap" hidden style="margin-top:12px">Which pieces
+        <textarea name="mlow_owned" rows="3" placeholder="Collection and token numbers if you have them. The Soft Conspiracy, fLOWers, Transdimensional Trippers, Impermanent Loss, Tokenized Garbage, Still Waiting, a 1/1."></textarea>
+      </label>
+    </fieldset>
+
+    <label>Anything else worth knowing
+      <textarea name="notes" rows="3" maxlength="700" placeholder="Communities you are in, grails you hold, why this one. Optional."></textarea>
+    </label>
+
+    <label class="chk"><input type="checkbox" name="attest" required> I confirm the wallet above is mine, is at least a month old, and meets one of the two holding requirements.</label>
+    <label class="chk"><input type="checkbox" name="news"> Send me The Letter, the weekly note from the census. Optional.</label>
+
+    <input type="hidden" name="ref" id="refField">
+    <input type="hidden" name="source" id="sourceField">
+    <input type="hidden" name="submitted_at" id="tsField">
+
+    <button class="btn pink" type="submit" id="wlSubmit" style="width:100%;margin-top:10px">PUT ME ON THE LIST</button>
+    <p class="formmsg" id="wlMsg"></p>
+  </form>
+
+  <div id="wlDone" hidden class="done">
+    <img src="assets/brand/eye_truecolor.png" alt="" style="width:46px">
+    <h3>You are on the list.</h3>
+    <p class="body">Not counted yet, on the list. Eligibility is checked against the chain after the snapshot, and you hear either way by email.</p>
+    <div class="refbox">
+      <div class="kicker" style="font-size:10px">Your share link</div>
+      <p class="body" style="font-size:14px;margin:8px 0 12px">If someone mints because they came through your link, {int(0.05*100)} percent of what they spend comes back to you. Nothing is automatic; it is paid by hand against the tracked link.</p>
+      <input id="refLink" readonly>
+      <div class="share" id="refShare" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>"""
+
+extra_css = """
+.reqs{background:var(--card);border:1px solid var(--divider);border-left:3px solid var(--acid);border-radius:12px;padding:22px 26px;margin-top:26px;max-width:760px}
+.reqs ul{margin:12px 0 0;padding-left:20px}
+.reqs li{font-family:var(--sans);font-size:15.5px;line-height:1.7;color:#c9d2dc}
+.reqs .fine{font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--slate);margin-top:14px;border-top:1px solid var(--divider);padding-top:12px}
+.wlform{max-width:760px;display:flex;flex-direction:column;gap:18px;margin-top:34px}
+.wlform label{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);position:relative}
+.wlform .req{position:absolute;right:0;top:0;color:var(--pink);font-size:9px;letter-spacing:.2em}
+.wlform input,.wlform select,.wlform textarea{background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:15px;padding:13px 14px;border-radius:7px;outline:none;width:100%}
+.wlform input:focus,.wlform select:focus,.wlform textarea:focus{border-color:var(--blue)}
+.wlform textarea{resize:vertical;min-height:80px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.wlform .hint{font-family:var(--sans);font-size:13px;letter-spacing:0;text-transform:none;color:var(--slate);margin-top:-6px}
+.wlform .err{font-family:var(--sans);font-size:13px;letter-spacing:0;text-transform:none;color:var(--pink)}
+.wlform fieldset{border:1px solid var(--divider);border-radius:10px;padding:16px 18px}
+.wlform legend{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);padding:0 8px}
+.radios{display:flex;gap:22px;flex-wrap:wrap}
+.wlform .r,.wlform .chk{flex-direction:row;align-items:flex-start;gap:10px;font-family:var(--sans);font-size:15px;letter-spacing:0;text-transform:none;color:#c9d2dc;line-height:1.5}
+.wlform .r input,.wlform .chk input{width:auto;margin-top:3px}
+.formmsg{font-family:var(--sans);font-size:14px;color:var(--pink);min-height:20px;letter-spacing:0}
+.done{max-width:760px;margin-top:34px;background:var(--card);border:1px solid var(--divider);border-radius:14px;padding:34px}
+.done h3{font-size:30px;font-weight:600;margin:14px 0 10px}
+.refbox{margin-top:26px;border-top:1px solid var(--divider);padding-top:20px}
+.refbox input{width:100%;background:var(--ink);border:1px solid var(--acid);color:var(--acid);font-family:var(--mono);font-size:13px;padding:13px 14px;border-radius:7px}
+"""
+
+script = """
+<script>
+(function(){
+ var $=function(s){return document.querySelector(s)}, CFG=window.NY_CONFIG||{};
+ var q=new URLSearchParams(location.search);
+ $('#refField').value=q.get('ref')||'';
+ $('#sourceField').value=document.referrer||'direct';
+ // show the "which pieces" box only when it is relevant
+ document.querySelectorAll('input[name=is_collector]').forEach(function(r){
+   r.addEventListener('change',function(){ $('#ownWrap').hidden = r.value!=='yes'; });
+ });
+ var W=$('#wallet');
+ function walletOk(v){ return /^0x[a-fA-F0-9]{40}$/.test(v.trim()); }
+ W.addEventListener('blur',function(){ $('#walletErr').hidden = !W.value || walletOk(W.value); });
+ $('#wl').addEventListener('submit',function(e){
+   e.preventDefault();
+   var f=e.target, msg=$('#wlMsg');
+   msg.textContent='';
+   if(!f.checkValidity()){ msg.textContent='Some required fields are still empty.'; f.reportValidity(); return; }
+   if(!walletOk(W.value)){ $('#walletErr').hidden=false; msg.textContent='Check the wallet address.'; W.focus(); return; }
+   $('#tsField').value=new Date().toISOString();
+   var btn=$('#wlSubmit'); btn.disabled=true; btn.textContent='SENDING...';
+   var data=new FormData(f);
+   // Our own endpoint on Cloudflare, storing into D1. No third party, no monthly bill, data you own.
+   // CFG.whitelistEndpoint still overrides it if you ever want to point somewhere else.
+   var url = CFG.whitelistEndpoint || '/api/submit';
+   var payload = {kind:'allowlist'};
+   data.forEach(function(v,k){ payload[k]=v; });
+   fetch(url, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)})
+   .then(function(r){ return r.json().catch(function(){return {ok:r.ok}}); })
+   .then(function(res){
+     if(!res.ok) throw new Error(res.error||'rejected');
+     f.hidden=true; $('#wlDone').hidden=false;
+     var base=location.origin+'/';
+     var code=(data.get('x_handle')||data.get('name')||'friend').toString().replace(/[^A-Za-z0-9_]/g,'').slice(0,20).toLowerCase()||'friend';
+     var link=base+'?ref='+encodeURIComponent(code);
+     $('#refLink').value=link;
+     NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'A painted census of New York City. 7,541 New Yorkers, a walkable museum of 111 rooms, and a release coming.',url:link});
+     $('#refLink').onclick=function(){ this.select(); document.execCommand&&document.execCommand('copy'); NY.toast('Link copied.'); };
+   }).catch(function(e){
+     btn.disabled=false; btn.textContent='PUT ME ON THE LIST';
+     msg.textContent = (e&&e.message==='wallet looks wrong') ? 'Check the wallet address.'
+       : (e&&e.message==='too many, slow down') ? 'Too many submissions from here. Wait ten minutes.'
+       : 'That did not send. Try again, or message @degens on X.';
+   });
+ });
+})();
+</script>"""
+
+page = shell(title="The allowlist · NEW YORKERS by MLow",
+             description="Put your name down for THE CENSUS RELEASE, 6,666 works on OpenSea. Wallet requirements, mint count, and how the referral share works.",
+             body=body, path="whitelist.html", active=None,
+             keywords=["NEW YORKERS allowlist", "NFT whitelist", "MLow mint", "census release allowlist"],
+             extra_css=extra_css, scripts_after=script)
+open(os.path.join(SITE, "whitelist.html"), "w", encoding="utf-8").write(page)
+print("whitelist.html written")

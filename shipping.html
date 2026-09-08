@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shipping, duty and tax · prints by MLow</title>
+<meta name="description" content="Estimate what it costs to ship a print from New York City anywhere in the world, including sales tax, import duty and VAT. An estimate, not a quote.">
+<meta name="keywords" content="art print shipping cost, international art shipping duty, import VAT on art prints, shipping calculator art">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://n3wyorkers.com/shipping">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="Shipping, duty and tax · prints by MLow">
+<meta property="og:description" content="Estimate what it costs to ship a print from New York City anywhere in the world, including sales tax, import duty and VAT. An estimate, not a quote.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/shipping">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="Shipping, duty and tax · prints by MLow">
+<meta name="twitter:description" content="Estimate what it costs to ship a print from New York City anywhere in the world, including sales tax, import duty and VAT. An estimate, not a quote.">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+
+<style>
+.calc{display:grid;grid-template-columns:340px 1fr;gap:34px;align-items:start}
+@media (max-width:860px){.calc{grid-template-columns:1fr}}
+.inputs{display:flex;flex-direction:column;gap:15px}
+.inputs label{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate)}
+.inputs select,.inputs input{background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:15px;padding:13px 14px;border-radius:7px;outline:none;width:100%}
+.inputs select:focus,.inputs input:focus{border-color:var(--blue)}
+.out{background:var(--card);border:1px solid var(--divider);border-radius:14px;padding:26px 28px 28px;min-height:260px}
+.out .row{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--divider);font-family:var(--sans);font-size:15px}
+.out .row span:first-child{color:var(--slate)}
+.out .row b{font-family:var(--mono);font-weight:500;color:var(--cloud)}
+.out .row.tot{border-bottom:none;border-top:2px solid var(--blue);margin-top:8px;padding-top:16px;font-size:19px}
+.out .row.tot b{color:var(--cyan);font-size:22px}
+.out .row.sub b{color:var(--slate)}
+.out h4{font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--blue);margin:20px 0 4px;font-weight:600}
+.out .note{font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--slate);margin-top:16px;border-top:1px solid var(--divider);padding-top:14px}
+.out .warn{color:var(--pink)}
+.disc li{font-family:var(--sans);font-size:15px;line-height:1.65;color:#c9d2dc;margin-bottom:10px}
+.sources li{font-family:var(--sans);font-size:14.5px;line-height:1.55;color:var(--slate);padding:10px 0;border-bottom:1px solid var(--divider);list-style:none}
+.sources li a{color:var(--cloud)}.sources li a:hover{color:var(--cyan)}
+</style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/shipping">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, art print shipping cost, international art shipping duty, import VAT on art prints">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Shipping, duty and tax","url":"https://n3wyorkers.com/shipping","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"An estimator for shipping cost, sales tax and import duty on art prints sent worldwide from New York City."}</script>
+<!-- /seo -->
+</head>
+<body>
+<div id="nav"></div>
+
+<section class="wrap" style="padding-top:64px;padding-bottom:16px">
+  <div class="kicker">Shipping, duty and tax</div>
+  <h1 class="h-xl" style="margin-top:14px;max-width:980px">What it costs to get it to you.</h1>
+  <p class="lede" style="margin-top:20px;max-width:840px;color:var(--slate)">Prints ship from New York City. Pick a size, a format and where you are, and this estimates the carrier cost, the sales tax if you are in the United States, and the import duty and VAT if you are not.</p>
+  <p class="body" style="margin-top:14px;max-width:840px"><b style="color:var(--pink)">This is an estimate, not a quote.</b> The real number is confirmed at checkout. Duty and import VAT are usually collected by the carrier on delivery and are the buyer's responsibility.</p>
+</section>
+
+<section class="wrap" style="padding-bottom:30px">
+  <div class="calc">
+    <div class="inputs">
+      <label>Size<select id="size"><option>8 x 10 in</option><option>8 x 12 in</option><option>10 x 10 in</option><option>16 x 20 in</option><option>16 x 24 in</option><option>20 x 30 in</option><option>30 x 40 in</option><option>36 x 48 in</option><option>40 x 60 in</option><option>48 x 72 in</option></select></label>
+      <label>Format<select id="fmt"><option value="giclee_fine_art_print">Giclee Fine-Art Print</option><option value="canvas_gallery_wrap">Canvas Gallery Wrap</option><option value="wood_print">Wood Print</option><option value="metal_print">MetalPrint</option><option value="acrylic_face_mount">Acrylic Face-Mount</option></select></label>
+      <label>Ships to<select id="zone"><option value="us_near">US domestic, Northeast and Mid Atlantic</option><option value="us_far">US domestic, Midwest, South, Mountain and West Coast</option><option value="ca">Canada</option><option value="mx">Mexico</option><option value="uk">United Kingdom</option><option value="eu">European Union</option><option value="eu_other">Rest of Europe, non EU</option><option value="anz">Australia and New Zealand</option><option value="jp">Japan</option><option value="kr">South Korea</option><option value="sg_hk">Singapore and Hong Kong</option><option value="asia_other">Rest of Asia</option><option value="me_gulf">Middle East and Gulf</option><option value="latam">Latin America and the Caribbean</option><option value="africa">Africa</option></select></label>
+      <label id="stateWrap" hidden>US state<select id="state"></select></label>
+      <label>Price of the piece, USD<input id="value" type="number" min="0" step="10" value="350"></label>
+    </div>
+    <div class="out" id="out"></div>
+  </div>
+</section>
+
+<section class="wrap section" style="padding-top:10px">
+  <div class="article" style="margin:0;max-width:860px">
+    <h2 style="font-size:clamp(22px,2.4vw,30px);font-weight:600">The thing most people get wrong</h2>
+    <p class="body" style="margin-top:12px">Carriers bill the greater of actual weight and <b style="color:var(--cloud)">dimensional weight</b>, which is the size of the box divided by a fixed number. A 40 by 60 inch flat pack weighs about twenty pounds and bills like eighty. Above a certain length plus girth a large package surcharge lands as a flat step, not a slope. Box depth is worth more to the final price than the destination is.</p>
+    <h2 style="font-size:clamp(22px,2.4vw,30px);font-weight:600;margin-top:36px">Why these are not treated as art at the border</h2>
+    <p class="body" style="margin-top:12px">Read this before using any rate below. The favourable duty and reduced VAT treatments that people mean when they say art is duty free live in Harmonized System Chapter 97, headings 9701 to 9706. Heading 9702 covers original engravings, prints and lithographs produced from plates wholly executed by hand by the artist, and it expressly excludes anything produced by a mechanical or photomechanical process. Digitally originated artwork output on an inkjet or dye sublimation printer is a mechanical reproduction, so giclee prints, canvas transfers, wood prints, metal prints and acrylic face mounts of digital work are in practice classified under heading 4911, most often subheading 4911.91 for prin</p>
+    <h2 style="font-size:clamp(22px,2.4vw,30px);font-weight:600;margin-top:36px">The small print, in plain English</h2>
+    <ul class="disc"><li>This is an estimate, not a quote. Nothing on this page is a binding price.</li><li>The final shipping cost is calculated and confirmed at checkout, and the amount you are charged there is the amount that counts.</li><li>Orders ship on delivered at place terms. Any import duty, tax, VAT, GST or customs brokerage fee charged by your country is your responsibility and is not included in the price you pay us.</li><li>The courier will usually collect those charges from you before it hands over the parcel, and it may add its own fee for advancing them.</li><li>Import rules, tariff rates and de minimis thresholds changed several times in the last year and can change again with very little notice.</li><li>Duty and tax treatment depends on how your customs authority classifies the piece, and a printed edition is often not treated the same way as an original work.</li><li>Please check your own country&#x27;s current rules before you order, because we cannot predict what your customs authority will decide.</li><li>We do not give tax or customs advice. If the amounts matter to you, speak to a customs broker or a tax adviser in your own country.</li><li>Sales tax is added only for deliveries to states where we are registered to collect it. If you are elsewhere in the United States, you may owe use tax directly to your own state.</li><li>Oversized, crated and acrylic pieces are quoted individually and the estimate shown for them is the least reliable figure on this page.</li></ul>
+    <h2 style="font-size:clamp(22px,2.4vw,30px);font-weight:600;margin-top:36px">Where these numbers come from</h2>
+    <ul class="sources" style="margin-top:8px"><li><a href="https://www.cbp.gov" target="_blank" rel="noopener">US Customs and Border Protection</a><br>US import requirements, de minimis suspension guidance, entry procedures and CSMS trade messages.</li><li><a href="https://hts.usitc.gov" target="_blank" rel="noopener">Harmonized Tariff Schedule of the United States, US International Trade Commission</a><br>Authoritative US duty rates by heading, including Chapter 49 printed matter and Chapter 97 works of art.</li><li><a href="https://www.federalregister.gov" target="_blank" rel="noopener">Federal Register</a><br>The primary text of the executive orders, proclamations and interim final rules that changed US de minimis and tariff policy in 2025 and 2026.</li><li><a href="https://www.wcoomd.org" target="_blank" rel="noopener">World Customs Organization</a><br>The Harmonized System itself, the explanatory notes that define heading 9702 and heading 4911, and the classification opinions that decide which one a print falls into.</li><li><a href="https://www.trade-tariff.service.gov.uk" target="_blank" rel="noopener">UK Integrated Online Tariff, GOV.UK</a><br>UK duty and VAT treatment by commodity code, including headings 9701 to 9706 and 4911.</li><li><a href="https://www.gov.uk/government/organisations/hm-revenue-customs" target="_blank" rel="noopener">HM Revenue and Customs</a><br>UK import VAT rules, the reduced valuation method that produces the five percent effective rate on works of art, and the conditions for qualifying.</li><li><a href="https://taxation-customs.ec.europa.eu" target="_blank" rel="noopener">European Commission, Taxation and Customs Union</a><br>EU customs tariff, member state VAT rates, the Annex IX definition of works of art, and the 2026 removal of the 150 euro duty relief.</li><li><a href="https://www.cbsa-asfc.gc.ca" target="_blank" rel="noopener">Canada Border Services Agency</a><br>Canadian tariff classification, CUSMA courier de minimis thresholds and GST or HST collection at the border.</li><li><a href="https://www.abf.gov.au" target="_blank" rel="noopener">Australian Border Force</a><br>Australian customs tariff Schedule 3 including Chapter 49 and Chapter 97, and the 1,000 Australian dollar import threshold.</li><li><a href="https://www.ato.gov.au" target="_blank" rel="noopener">Australian Taxation Office</a><br>GST on low value imported goods and the registration obligation for overseas sellers.</li><li><a href="https://www.customs.go.jp/english/" target="_blank" rel="noopener">Japan Customs</a><br>Japanese tariff schedule, consumption tax on imports and the 10,000 yen de minimis.</li><li><a href="https://www.iras.gov.sg" target="_blank" rel="noopener">Inland Revenue Authority of Singapore</a><br>Singapore GST on imports and the overseas vendor registration regime for low value goods.</li><li><a href="https://www.customs.gov.sg" target="_blank" rel="noopener">Singapore Customs</a><br>Confirmation that Singapore levies duty on only four categories of goods, none of which is artwork.</li><li><a href="https://tax.gov.ae" target="_blank" rel="noopener">United Arab Emirates Federal Tax Authority</a><br>UAE VAT on imports and the treatment of goods entering through the Gulf Cooperation Council common tariff.</li><li><a href="https://www.gov.br/receitafederal" target="_blank" rel="noopener">Receita Federal do Brasil</a><br>Brazilian import taxation and the Remessa Conforme programme for cross border ecommerce.</li><li><a href="https://www.cbic.gov.in" target="_blank" rel="noopener">Central Board of Indirect Taxes and Customs, India</a><br>Indian basic customs duty, social welfare surcharge, IGST rates and the exemption notifications for works of art.</li><li><a href="https://www.customs.go.kr/english/" target="_blank" rel="noopener">Korea Customs Service</a><br>Korean de minimis thresholds, the personal customs clearance code requirement and VAT on imports.</li><li><a href="https://www.ups.com" target="_blank" rel="noopener">UPS</a><br>Published rate and service guides, dimensional weight divisors, fuel surcharge tables and accessorial charges.</li><li><a href="https://www.dhl.com" target="_blank" rel="noopener">DHL Express</a><br>Published international express rate cards, remote area surcharge lists and country import guides.</li><li><a href="https://www.fedex.com" target="_blank" rel="noopener">FedEx</a><br>Published rate and surcharge tables and an alternative dimensional weight reference.</li><li><a href="https://taxfoundation.org/data/all/state/sales-tax-rates/" target="_blank" rel="noopener">Tax Foundation</a><br>The state and average local combined sales tax rates used in the us_sales_tax block, updated twice a year.</li><li><a href="https://www.tax.ny.gov" target="_blank" rel="noopener">New York State Department of Taxation and Finance</a><br>New York sales tax registration, the taxability of shipping and handling charges, and exemption certificates.</li><li><a href="https://www.streamlinedsalestax.org" target="_blank" rel="noopener">Streamlined Sales Tax Governing Board</a><br>State by state economic nexus thresholds and registration requirements for remote sellers.</li></ul>
+    <p class="body" style="margin-top:22px;font-size:14px">Model last checked 2026-09-07. Tariff and de minimis rules changed several times in the last year, so if you are reading this long after that date, check your own country's current position.</p>
+  </div>
+</section>
+<div id="foot"></div>
+<script>window.NY_BASE="";</script>
+<script src="assets/config.js"></script>
+<script src="assets/counts.js"></script>
+<script src="assets/site.js"></script>
+<script>NY.nav(null);NY.foot();</script>
+
+<script src="assets/shipping.js"></script>
+<script>
+(function(){
+ var M=window.NY_SHIP, $=function(s){return document.querySelector(s)};
+ var money=function(n){return "$"+(Math.round(n*100)/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})};
+ var ST=M.us_sales_tax.rates||{};
+ $("#state").innerHTML=Object.keys(ST).sort().map(function(k){return '<option value="'+k+'">'+k+'</option>'}).join("");
+ var homeState=(M.us_sales_tax.nexus_default||["NY"])[0];
+ if(ST[homeState]) $("#state").value=homeState;
+ function dims(){
+   var p=$("#size").value.replace(/\s*in$/,'').split("x").map(function(x){return parseFloat(x)});
+   return {w:p[0],h:p[1],area:p[0]*p[1]};
+ }
+ function calc(){
+   var d=dims(), fk=$("#fmt").value, W=M.weights[fk], z=M.zones.filter(function(x){return x.id===$("#zone").value})[0];
+   var val=parseFloat($("#value").value)||0;
+   var actual=W.base_lb + W.lb_per_sqin*d.area + W.packaging_lb;
+   // box: the print plus packing margin, depth by format
+   var depth = fk==="canvas_gallery_wrap"?3.5 : fk==="acrylic_face_mount"?3.0 : fk==="wood_print"?2.5 : fk==="metal_print"?2.0 : 2.0;
+   var bw=d.w+4, bh=d.h+4, div=M.dim_weight.divisor_in_lb_domestic;
+   var dim=(bw*bh*depth)/div;
+   var billed=Math.max(actual,dim);
+   var girth=Math.max(bw,bh)+2*(Math.min(bw,bh)+depth);
+   var ship=z.base_usd + z.per_lb_usd*billed;
+   var fuel=ship*(M.surcharges.fuel_surcharge.rate||M.surcharges.fuel_surcharge.value||0.16);
+   var big=0, bigWhy="";
+   var lps=M.surcharges.large_package_surcharge||{};
+   if(girth >= (lps.threshold_length_plus_girth_in||130)){ big=lps.amount_usd||185; bigWhy="length plus girth "+Math.round(girth)+" in"; }
+   else if((M.surcharges.oversize_or_additional_handling||{}).threshold_longest_side_in && Math.max(bw,bh)>=M.surcharges.oversize_or_additional_handling.threshold_longest_side_in){
+     big=M.surcharges.oversize_or_additional_handling.amount_usd||0; bigWhy="oversize, longest side "+Math.round(Math.max(bw,bh))+" in";
+   }
+   var ins=val*((M.surcharges.insurance_declared_value||{}).rate||0.01);
+   var carrier=ship+fuel+big+ins;
+   var rows=[];
+   rows.push(['Actual weight', actual.toFixed(1)+' lb']);
+   rows.push(['Dimensional weight', dim.toFixed(1)+' lb']);
+   rows.push(['Billed at', '<b>'+billed.toFixed(1)+' lb</b>'+(dim>actual?' (dimensional)':' (actual)')]);
+   var html='<h4>The box</h4>'+rows.map(function(r){return '<div class="row sub"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>'}).join("");
+   html+='<h4>Carrier</h4>';
+   html+='<div class="row"><span>Base and weight, '+z.name+'</span><b>'+money(ship)+'</b></div>';
+   html+='<div class="row"><span>Fuel surcharge</span><b>'+money(fuel)+'</b></div>';
+   if(big) html+='<div class="row"><span class="warn">Large package surcharge, '+bigWhy+'</span><b>'+money(big)+'</b></div>';
+   html+='<div class="row"><span>Insurance on '+money(val)+'</span><b>'+money(ins)+'</b></div>';
+   html+='<div class="row tot"><span>Estimated shipping</span><b>'+money(carrier)+'</b></div>';
+   var isUS = z.countries.indexOf("US")>=0;
+   if(isUS){
+     var st=$("#state").value, rate=ST[st]||0;
+     var nexus=(M.us_sales_tax.nexus_default||["NY"]).indexOf(st)>=0;
+     html+='<h4>US sales tax</h4>';
+     if(nexus) html+='<div class="row"><span>'+st+' at '+(rate*100).toFixed(2)+'%</span><b>'+money(val*rate)+'</b></div>';
+     else html+='<div class="row sub"><span>'+st+' at '+(rate*100).toFixed(2)+'% applies only where the seller is registered</span><b>not collected</b></div>';
+     html+='<div class="row tot"><span>Estimated total on top of the piece</span><b>'+money(carrier+(nexus?val*rate:0))+'</b></div>';
+   } else {
+     var imp=(M.import.countries||[]).filter(function(c){ return (z.countries||[]).some(function(cc){ return (c.country||'').toLowerCase().indexOf((z.name||'').split(',')[0].toLowerCase())>=0; }); })[0];
+     if(!imp) imp=(M.import.countries||[]).filter(function(c){ return z.examples && z.examples.some(function(e){ return c.country===e; }); })[0];
+     html+='<h4>Import, paid by you on delivery</h4>';
+     if(imp){
+       var dutyRate=(imp.duty_rate_print!=null?imp.duty_rate_print:(imp.duty_rate_art||0));
+       // These are digitally printed reproductions, so the PRINT rate applies, not the art rate.
+       // Using vat_or_gst_rate here would quote the Chapter 97 art relief the pieces do not qualify for.
+       var vatRate=(imp.vat_rate_print!=null?imp.vat_rate_print:(imp.vat_or_gst_rate||0));
+       var artRate=(imp.vat_or_gst_rate!=null?imp.vat_or_gst_rate:vatRate);
+       var duty=val*dutyRate;
+       var vat=(val+carrier+duty)*vatRate;
+       html+='<div class="row"><span>Duty on a print, '+imp.country+'</span><b>'+money(duty)+'</b></div>';
+       html+='<div class="row"><span>Import VAT or GST at '+(vatRate*100).toFixed(1)+'%, print rate</span><b>'+money(vat)+'</b></div>';
+       if(artRate<vatRate) html+='<div class="row sub"><span>If it qualified as art it would be '+(artRate*100).toFixed(1)+'%. It does not. See below.</span><b>'+money((val+carrier+duty)*artRate)+'</b></div>';
+       html+='<div class="row tot"><span>Estimated landed total on top of the piece</span><b>'+money(carrier+duty+vat)+'</b></div>';
+       html+='<div class="note">'+(imp.note||"").slice(0,300)+'</div>';
+     } else {
+       html+='<div class="row sub"><span>No modelled rate for this zone</span><b>ask for a quote</b></div>';
+       html+='<div class="row tot"><span>Estimated shipping only</span><b>'+money(carrier)+'</b></div>';
+     }
+   }
+   html+='<div class="note"><b class="warn">Estimate, not a quote.</b> Confirmed at checkout. '+(z.days_min||"")+' to '+(z.days_max||"")+' days in transit once it ships.</div>';
+   $("#out").innerHTML=html;
+   $("#stateWrap").hidden=!isUS;
+ }
+ ["#size","#fmt","#zone","#state","#value"].forEach(function(s){ $(s).addEventListener("input",calc); $(s).addEventListener("change",calc); });
+ calc();
+})();
+</script>
+<script src="assets/eggs.js" defer></script>
+</body>
+</html>

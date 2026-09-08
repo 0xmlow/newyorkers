@@ -4,11 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEW YORKERS · The Count</title>
-<meta name="description" content="First THE COUNT, then THE CLAIM. The countdown to the NEW YORKERS claim, and the live census.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEW YORKERS · The Count">
+<meta property="og:description" content="THE COUNT: the countdown to THE CLAIM, the NEW YORKERS mint, and the live census number. First the count, then the claim.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/count.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="description" content="THE COUNT: the countdown to THE CLAIM, the NEW YORKERS mint, and the live census number. First the count, then the claim.">
 <meta name="theme-color" content="#000000">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
 body{background:#000}
@@ -47,6 +55,15 @@ body.proj .dot{position:fixed;bottom:4vh;right:4vw;width:1vw;height:1vw;border-r
 body.proj #projBox{display:flex;flex-direction:column;align-items:center}
 body.proj .countRow{display:none}
 </style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/count">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, NFT mint countdown, THE CLAIM">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"The Count · NEW YORKERS by MLow","url":"https://n3wyorkers.com/count","isPartOf":{"@id":"https://n3wyorkers.com/#site"}}</script>
+<!-- /seo -->
 </head>
 <body>
 <div id="nav"></div>
@@ -63,7 +80,7 @@ body.proj .countRow{display:none}
       </div>
       <div class="fine" id="claimNote"></div>
     </div>
-    <div class="countRow"><div class="lab" id="cLab">CHARACTERS PAINTED</div><div class="big" id="cNum">0</div><div class="lab">FOR 365 CLAIMS</div></div>
+    <div class="countRow"><div class="lab" id="cLab">CHARACTERS PAINTED</div><div class="big" id="cNum">0</div><div class="lab">6,666 IN THE CENSUS RELEASE</div></div>
     <div id="projBox"><div class="pl" id="pLab">CHARACTERS PAINTED</div><div class="pn" id="pNum">0</div><div class="pb"></div><div class="pu" id="pUrl"></div><div class="dot"></div></div>
     <a class="getBtn" href="counted.html">GET COUNTED</a>
     <div class="fine">FREE · WALLETLESS · EVERYONE WHO REGISTERS IS COUNTED, PERMANENTLY</div>
@@ -94,7 +111,7 @@ tick(); setInterval(tick,1000);
 $("#claimNote").innerHTML=esc(CFG.claimLabel||"")+(CFG.claimSigned?"":' · <span class="unsigned">recommended date, not yet signed</span>');
 const people=CFG.peopleCounted;
 const label=people?"PEOPLE COUNTED":"CHARACTERS PAINTED", value=people||C.pieces;
-$("#cLab").textContent=label; $("#pLab").textContent=label; $("#pUrl").textContent=CFG.domain||"NEWYORKERS.MLOW.XYZ";
+$("#cLab").textContent=label; $("#pLab").textContent=label; $("#pUrl").textContent=CFG.domain||"MLOW.NYC";
 (function count(){ const setF=()=>{$("#cNum").textContent=num(value); $("#pNum").textContent=num(value);}; if(document.hidden){setF();return;} const t0=performance.now(),dur=1800; setTimeout(setF,dur+200); (function f(){const k=Math.min(1,(performance.now()-t0)/dur); const v=Math.floor(value*(1-Math.pow(1-k,3))); $("#cNum").textContent=num(v); $("#pNum").textContent=num(v); if(k<1)requestAnimationFrame(f);})(); })();
 $("#botCount").textContent="THE COUNT · "+(CFG.countLabel||"");
 $("#botClaim").textContent="THE CLAIM · "+(CFG.claimLabel||"");
@@ -102,5 +119,6 @@ const strip=sample(24,p=>p.e>=2,Math.floor(Date.now()/36e5));
 $("#stripRow").innerHTML=strip.concat(strip).map(p=>`<a href="${recordUrl(p)}"><img loading="lazy" src="${thumb(p)}" alt="${esc(p.t)}"></a>`).join("");
 })();
 </script>
+<script src="assets/eggs.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,51 @@
+{
+  "promise": "NEW YORKERS is sold in named releases. Each release is sized and closed before it opens. Nothing is added to a release once it closes, and no New Yorker is ever sold twice. The census is still being painted, so more releases will follow, and every one is announced in advance, the same way.",
+  "promiseShort": "Sold in named releases. Each one closed before it opens, and no New Yorker sold twice.",
+  "expansion": "This is an evolving series. New eras are still being painted, and the city keeps nominating people who are not in it yet. When a release is announced it says exactly what is in it, how many, in what format, on what platform and when. Nothing is ever quietly added to something you already bought into.",
+  "note": "Dates are not signed. Nothing here is on sale yet.",
+  "releases": [
+    {
+      "n": 1,
+      "id": "marks",
+      "name": "THE MARKS",
+      "count": 90,
+      "drawnFrom": "Every painted number divisible by one hundred, plus the closing number of every era. Era I is not included.",
+      "subseries": "The hundred marks and the era closers",
+      "format": "Ones of one",
+      "platform": "SuperRare and Transient Labs",
+      "when": "First. Dates not signed.",
+      "status": "announced",
+      "detail": "Eighteen era closers go to SuperRare as a monthly series. Seventy two hundred marks go to Transient Labs in six waves. Every era painted after this one adds six more marks, and those belong to a later release, never to this one."
+    },
+    {
+      "n": 2,
+      "id": "theones",
+      "name": "THE ONES",
+      "count": 150,
+      "drawnFrom": "Chosen by hand from 6,399 eligible pieces, in fifteen chapters of ten. Era I, Era XVIII, the hundred marks and the era closers are all excluded, and so is every piece already inside THE MARKS.",
+      "subseries": "Fifteen chapters, one wave each",
+      "format": "Ones of one",
+      "platform": "SuperRare",
+      "when": "After the Marks and before the census release. Dates not signed.",
+      "status": "announced",
+      "detail": "The only release in this collection selected by judgement rather than by an arithmetic rule, and the method is published with it. Each chapter is a hang that stands on its own. Borough floors are held on purpose: twelve Staten Island, fifteen Bronx, nineteen Queens, thirty eight Brooklyn. Nothing in this release is ever reopened or topped up, and no piece in it appears in the census release."
+    },
+    {
+      "n": 3,
+      "id": "census",
+      "name": "THE CENSUS RELEASE",
+      "count": 6666,
+      "drawnFrom": "Drawn across eras II to XIX so no era is emptied, with every family, every borough and every set represented, and excluding the hundred and fifty in THE ONES.",
+      "subseries": "The census proper",
+      "format": "Dynamic tokens on ERC-7160. The artist appends states, the collector pins the one that shows.",
+      "platform": "OpenSea",
+      "when": "After THE ONES. Dates not signed.",
+      "status": "announced",
+      "detail": "Era I is excluded because it paints real public figures. Pieces promised back to the people who nominated them are excluded, and so is every piece in THE ONES. Nothing in this release is ever reopened or topped up."
+    }
+  ],
+  "future": {
+    "headline": "More will follow",
+    "body": "The census is not finished and was never meant to be. Eras are still being painted, nominations arrive every week, and one is chosen every Sunday. Work that is not in a named release is not for sale yet, and it is not being held back forever either. It is simply not its turn."
+  }
+}

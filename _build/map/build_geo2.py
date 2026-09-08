@@ -191,7 +191,8 @@ for x in pieces:
     # the curated read of the prompt wins whenever it is more specific than what the regexes found
     ck=resolve_curated(CURATED.get(x['id']))
     inferred=False
-    if ck and (best is None or places[ck]['spec']>=places[best[1]]['spec']):
+    forced=(CURATED.get(x['id']) or {}).get('conf')=='forced'
+    if ck and (best is None or forced or places[ck]['spec']>=places[best[1]]['spec']):
         inferred=(CURATED.get(x['id']) or {}).get('conf')=='inferred'
         best=(99,ck,'inferred from the scene' if inferred else 'the prompt, read by hand'); n_cur+=1
     rec={"id":x['id'],"n":x.get('n'),"sc":scene_of(x.get('t') or '',x.get('story') or '')}
@@ -290,7 +291,7 @@ for x in pieces:
     r=by_rec[x['id']]
     if r.get('p'):
         pl=places[r['p']]; x['loc']=pl['name']; x['prec']=r['prec']
-        if not x.get('b'): x['b']=pl['boro'] if pl['boro']!='Citywide' else ''
+        if not x.get('b') or (CURATED.get(x['id']) or {}).get('conf')=='forced': x['b']=pl['boro'] if pl['boro']!='Citywide' else ''
         x['locsrc']=r.get('src','')
         if r.get('inf'): x['inf']=1
         elif 'inf' in x: del x['inf']

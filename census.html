@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>NEW YORKERS · The Census</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=JetBrains+Mono:wght@400;700&display=swap">
-<meta name="description" content="The interactive census of NEW YORKERS by MLow: every character painted, in five 3D formations, a gallery, a story layer and the loops and films. Dynamic tokens on Transient Labs ERC-7160.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<meta name="description" content="The interactive census: 7,541 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS by MLow">
-<meta property="og:description" content="Every New Yorker gets a portrait. Even the villains. Enter the census.">
-<meta property="og:image" content="https://new-yorkers.pages.dev/og.jpg">
-<meta property="og:url" content="https://new-yorkers.pages.dev/census.html">
+<meta property="og:description" content="The interactive census: 7,541 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/census.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
 <meta name="twitter:title" content="NEW YORKERS by MLow">
 <meta name="twitter:description" content="Every New Yorker gets a portrait. Even the villains. Register for the allowlist.">
-<meta name="twitter:image" content="https://new-yorkers.pages.dev/og.jpg">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg">
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
@@ -24,9 +25,9 @@
 :root{
   --ink:#0D0D0D; --card:#141820; --divider:#2A3040;
   --cloud:#F0F4F8; --slate:#8899AA; --blue:#2962FF; --cyan:#00E5FF; --pink:#FF2E63;
-  --serif:"Bodoni Moda",Georgia,serif;
-  --sans:-apple-system,"Helvetica Neue",Calibri,Arial,sans-serif;
-  --mono:Consolas,Menlo,ui-monospace,monospace;
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"Space Grotesk",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",Menlo,Consolas,ui-monospace,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--cloud);font-family:var(--sans)}
@@ -291,6 +292,15 @@ a{color:var(--blue);text-decoration:none}
   #grid{columns:2 150px}
 }
 </style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/census">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, 3D gallery, NYC character archive, MLow census">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"The Census · NEW YORKERS by MLow","url":"https://n3wyorkers.com/census","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"about":{"@id":"https://n3wyorkers.com/#collection"}}</script>
+<!-- /seo -->
 </head>
 <body>
 <canvas id="gl"></canvas>
@@ -1072,7 +1082,7 @@ function buildStory(){
   B.appendChild(el(`<div class="sec"><h3>THE ARTIST</h3>
     <p class="muted" style="font-size:12.5px">${S.artist.bio}</p>
     <p style="margin-top:10px;border-left:2px solid var(--blue);padding-left:12px;font-family:var(--serif);font-style:italic;font-size:13px">${S.artist.angle}</p>
-    <p style="margin-top:10px"><a href="https://mlow.nyc" target="_blank" rel="noopener">mlow.nyc</a> · <a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p></div>`));
+    <p style="margin-top:10px"><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.xyz/prints" target="_blank" rel="noopener">mlow.xyz/prints</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p></div>`));
 }
 buildStory();
 function closePanels(){$("#storyPanel").classList.remove("open");$("#btnStory").classList.remove("on");}
@@ -1371,7 +1381,7 @@ function renderDetail(p,gi,listArr){
   row("Number",p.n!=null?String(p.n).padStart(4,"0"):"Uncounted");
   row("Era","ERA "+S.eras[p.e-1].roman+" · "+S.eras[p.e-1].title);
   row("Family",p.f);row("Borough",p.b);row("Category",p.cat);
-  if(p.loc)row("Location",`<a href="map.html#p=${p.id}" style="color:var(--cyan)">${p.loc}</a>${p.nb&&p.nb!==p.loc?" · "+p.nb:""}<span style="color:var(--slate)"> · ${p.inf?"inferred from the scene":(p.prec||"")}</span>`);
+  if(p.loc)row("Location",`<a href="map.html#p=${p.id}" style="color:var(--cyan)">${p.loc}</a>${p.nb&&p.nb!==p.loc?" · "+p.nb:""}`);
   else row("Location",`<span style="color:var(--slate)">citywide, no fixed address in the record</span>`);
   row("States",nStates(p)>1?nStates(p)+" finished states":"1 finished state");
   if(hasGlitch(p))row("Glitch edition",(p.gl.fam||"Still Waiting")+(p.gl.tag?" · "+p.gl.tag:"")+" · appendable ERC-7160 state");
@@ -1411,13 +1421,13 @@ $("#aboutBody").innerHTML=`
   <p>${S.artist.bio}</p>
   <p class="angle">${S.artist.angle}</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0">${(D.stickers||[]).slice(0,8).map(s=>`<img src="assets/stickers/${s.f}" title="${s.t}" style="width:64px;height:64px">`).join("")}</div>
-  <p><a href="https://mlow.nyc" target="_blank" rel="noopener">mlow.nyc</a> · <a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
+  <p><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.xyz/prints" target="_blank" rel="noopener">mlow.xyz/prints</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
 $("#btnAbout").onclick=()=>$("#about").classList.add("open");
 
 /* MLOW page */
 $("#mlowBody").innerHTML=`
   <img src="assets/brand/logo_white.png" alt="MLOW" style="height:30px;margin-bottom:8px">
-  <h2>Michael Low. New York City. Tripping and Rising.</h2>
+  <h2>MLow. New York City. Tripping and Rising.</h2>
   <p>MLow is a New York City born multidisciplinary digital artist. He trains custom AI models on his own photography, generates at volume, and hand finishes every piece in Photoshop. He calls the method digital alchemy. The eye flowers that bloom through every collection came out of surviving cancer, and the whole practice carries that throughline: Tripping and Rising.</p>
   <div class="statBand">
     <span class="stat"><b>5,000+</b> NYC taxi screens</span>
@@ -1439,7 +1449,7 @@ $("#mlowBody").innerHTML=`
   <div class="accRow"><span class="ak">The Soft Conspiracy</span><span class="av">A collaboration with painter Andrés Del Vecchio: AI trained on both bodies of work. 5,299 operative dossiers live on Ethereum</span></div>
   <div class="accRow"><span class="ak">NEW YORKERS</span><span class="av">This one. ${C.pieces.toLocaleString()} characters and counting, dropping at NFT NYC September 2026</span></div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin:20px 0">${(D.stickers||[]).slice(0,10).map(s=>`<img src="assets/stickers/${s.f}" title="${s.t}" style="width:58px;height:58px">`).join("")}</div>
-  <p><a href="https://mlow.nyc" target="_blank" rel="noopener">mlow.nyc</a> · <a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
+  <p><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.xyz/prints" target="_blank" rel="noopener">mlow.xyz/prints</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
 $("#btnMlow").onclick=()=>$("#mlow").classList.add("open");
 
 /* allowlist */
@@ -1452,15 +1462,16 @@ $("#allowForm").addEventListener("submit",async e=>{
   data._subject="NEW YORKERS Allowlist: "+data.name;
   const btn=$("#allowSubmit"); btn.disabled=true; btn.textContent="SENDING";
   const done=()=>{f.style.display="none";$("#allowDone").style.display="block";};
-  if(CFG.formspree){
-    try{
-      const r=await fetch("https://formspree.io/f/"+CFG.formspree,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)});
-      if(r.ok){done();return;}
-      throw new Error("form error "+r.status);
-    }catch(err){ btn.disabled=false; btn.textContent="REGISTER FOR THE ALLOWLIST"; toast("Could not reach the form service. Try again, or email "+(CFG.contactEmail||"")); return; }
+  try{
+    const r=await fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({kind:"census"},data))});
+    const j=await r.json().catch(()=>({ok:r.ok}));
+    if(j.ok){done();return;}
+    throw new Error(j.error||"rejected");
+  }catch(err){
+    btn.disabled=false; btn.textContent="REGISTER FOR THE ALLOWLIST";
+    toast("Could not reach the form. Try again, or message @degens on X.");
+    return;
   }
-  const body=encodeURIComponent(`NEW YORKERS Allowlist registration\n\nName: ${data.name}\nEmail: ${data.email}\nX: ${data.twitter||""}\nDiscord/Telegram: ${data.messenger||""}\nMint count: ${data.mint_count}\n`);
-  location.href=`mailto:${CFG.contactEmail}?subject=${encodeURIComponent("NEW YORKERS Allowlist: "+data.name)}&body=${body}`;
   done();
 });
 
@@ -1523,5 +1534,6 @@ window.__game={
 };
 })();
 </script>
+<script src="assets/eggs.js" defer></script>
 </body>
 </html>

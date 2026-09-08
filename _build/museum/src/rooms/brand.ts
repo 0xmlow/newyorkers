@@ -6,7 +6,7 @@ import { v } from '../kit';
 import type { Kit } from '../kit';
 
 const PI = Math.PI;
-export const INK = 0x0d0d0d, CLOUD = 0xf0f4f8, ELECTRIC = 0x2962ff, CYAN = 0x22d3ee, MINT = 0x3dffc0, SKY = 0x7eb8ff;
+export const INK = 0x0d0d0d, CLOUD = 0xf0f4f8, ELECTRIC = 0x2962ff, CYAN = 0x00e5ff, MINT = 0x3dffc0, SKY = 0x7eb8ff;
 
 /* A hanging exhibition banner on two rods: the MLow wordmark on ink, or on cloud. Museums hang these on their facades. */
 export function mlowBanner(k: Kit, x: number, y: number, z: number, rotY: number, w = 4, dark = true) {
@@ -28,7 +28,8 @@ export function blossomFlag(k: Kit, x: number, y: number, z: number, rotY: numbe
   const h = w * 1.5;
   const bg = field === 'ink' ? INK : field === 'electric' ? ELECTRIC : CLOUD;
   const back = k.box(w, h, 0.04, 0, 0, 0, k.flat(bg, 0.05, 0.8)); back.position.set(x, y, z); back.rotation.y = rotY;
-  const file = which === 3 ? (field === 'cloud' ? 'assets/brand/blossom_03_black.png' : 'assets/brand/blossom_03_white.png') : `assets/brand/blossom-0${which}.png`;
+  /* the canonical icon set, both polarities, black on light and white on dark */
+  const file = `assets/brand/blossom_0${which}_${field === 'cloud' ? 'black' : 'white'}.png`;
   const mark = k.mesh(new T.PlaneGeometry(w * 0.62, w * 0.62), k.image(file, { color: field === 'cloud' || which !== 3 ? 0xffffff : 0xffffff }), 0, 0, 0);
   if (which !== 3 && field !== 'cloud') (mark.material as T.MeshStandardMaterial).color.set(0xffffff);
   mark.position.set(x + Math.sin(rotY) * 0.03, y + h * 0.16, z + Math.cos(rotY) * 0.03); mark.rotation.y = rotY;

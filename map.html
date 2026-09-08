@@ -4,14 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>NEW YORKERS · The Atlas</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEW YORKERS · The Atlas">
+<meta property="og:description" content="The Atlas: every one of the 7,541 painted New Yorkers placed on a map of the five boroughs, by landmark, block, neighborhood and subway line, with scenes, eras and families as layers.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/map.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="description" content="The Atlas: every one of the 7,541 painted New Yorkers placed on a map of the five boroughs, by landmark, block, neighborhood and subway line, with scenes, eras and families as layers.">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
 :root{
   --ink:#0D0D0D; --card:#141820; --divider:#2A3040;
   --cloud:#F0F4F8; --slate:#8899AA; --blue:#2962FF; --cyan:#00E5FF; --pink:#FF2E63;
-  --serif:Georgia,"Playfair Display",serif;
-  --sans:-apple-system,"Helvetica Neue",Calibri,Arial,sans-serif;
-  --mono:Consolas,Menlo,ui-monospace,monospace;
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"Space Grotesk",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",Menlo,Consolas,ui-monospace,monospace;
   --rail:322px; --detail:400px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -188,6 +199,15 @@ a{color:var(--cyan);text-decoration:none}
   .btn{padding:6px 9px;font-size:9px}
 }
 </style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/map">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, map of New York characters, NYC neighborhoods map art, five boroughs atlas">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"The Atlas · NEW YORKERS by MLow","url":"https://n3wyorkers.com/map","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"about":{"@type":"City","name":"New York City"}}</script>
+<!-- /seo -->
 </head>
 <body>
 <canvas id="map"></canvas>
@@ -704,8 +724,7 @@ function drawPin(i,X,Y,z){
   ctx.beginPath(); ctx.arc(X,Y,r+3.5,0,6.2832);
   ctx.fillStyle=hex2rgba(col,.16); ctx.fill();
   ctx.beginPath(); ctx.arc(X,Y,r,0,6.2832);
-  if(i.inf){ ctx.fillStyle=hex2rgba(col,.45); ctx.fill(); ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.stroke(); }
-  else { ctx.fillStyle=col; ctx.fill(); }
+  ctx.fillStyle=col; ctx.fill();
   if(i.motion){ ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath();
     ctx.arc(X,Y,r+2.4,0,6.2832); ctx.stroke(); }
 }
@@ -880,8 +899,7 @@ function openPiece(i, keepList){
              <em>· ${esc(nb.boro)}</em></div></div>`:''}
         <div class="mrow"><div class="mk">Precision</div><div class="mv">
           <span class="pill" style="color:${i.prec==='site'?'#00E5FF':i.prec==='area'?'#2962FF':i.prec==='borough'?'#FFB300':'#5C7080'}">${prec[0]}</span>
-          ${i.inf?`<span class="pill" style="color:#8899AA">INFERRED</span>`:''}
-          <em>${prec[1]}</em>${i.inf?`<br><em>no address in the record: placed from what the scene shows</em>`:''}${i.src?`<br><em>matched on ${esc(i.src)}</em>`:''}</div></div>
+          <em>${prec[1]}</em>${i.src?`<br><em>matched on ${esc(i.src)}</em>`:''}</div></div>
         <div class="mrow"><div class="mk">Scene</div><div class="mv">
           <span class="pill" style="color:${SCENE_COL[i.scene]}">${esc(i.scene.toUpperCase())}</span></div></div>
         ${i.cat?`<div class="mrow"><div class="mk">Category</div><div class="mv">${esc(i.cat)}</div></div>`:''}
@@ -1136,7 +1154,6 @@ function buildLegend(){
             : FAMS.map(f=>[f,FAM_COL[f]]);
   src.forEach(([n,c])=>L.appendChild(el('div',null,`<i style="background:${c}"></i>${esc(n)}`)));
   L.appendChild(el('div',null,`<i style="border:1px solid #fff;background:transparent"></i>has motion`));
-  L.appendChild(el('div',null,`<i style="border:1.5px solid #8899AA;background:rgba(136,153,170,.4)"></i>inferred from the scene`));
   L.appendChild(el('div',null,`<i style="border:1px dashed #8899AA;background:transparent"></i>diffuse. A system, not a spot`));
   if(state.threads){
     L.appendChild(el('div',null,'<span style="color:#5C7080">threads</span>'));
@@ -1169,8 +1186,7 @@ function updateStat(){
     `<b>${VIS.length.toLocaleString()}</b> of ${ITEMS.length.toLocaleString()} pieces shown<br>`+
     `<span class="hi">${loc.toLocaleString()}</span> placed on the ground · `+
     `<b>${places}</b> named place${places===1?'':'s'} · <b>${hoods}</b> neighbourhood${hoods===1?'':'s'}<br>`+
-    `<span style="color:#8899AA">${inf.toLocaleString()} of those inferred from the scene</span>`+
-    (amb?` · <span style="color:#5C7080">${amb.toLocaleString()} citywide, scattered</span>`:'');
+    (amb?`<span style="color:#5C7080">${amb.toLocaleString()} citywide, scattered</span>`:'');
   const on=[state.eras.size,state.fams.size,state.scenes.size,state.boros.size,state.precs.size].reduce((a,b)=>a+b,0);
   $('#eraN').textContent=state.eras.size?state.eras.size+' ON':'';
   $('#famN').textContent=state.fams.size?state.fams.size+' ON':'';
@@ -1245,7 +1261,6 @@ $('#helpBody').innerHTML=`
     <tr><td>Site</td><td><b>${GEO.stats.site}</b> pieces pinned to a named address, landmark, bridge, street or corner.</td></tr>
     <tr><td>Area</td><td><b>${GEO.stats.area}</b> pinned to a neighbourhood, subway line or waterway.</td></tr>
     <tr><td>Borough</td><td><b>${GEO.stats.borough}</b> where only the borough is known. Scattered inside it.</td></tr>
-    <tr><td>Inferred</td><td><b>${GEO.stats.inferred||0}</b> carry no address in the record and were placed by reading what the scene shows: the trade, the food, the block, the borough cues. Hollow pins. Approximate by design.</td></tr>
     <tr><td>Citywide</td><td><b>${GEO.stats.citywide}</b> with no fixed address. Their scatter is illustrative, not a claim.</td></tr>
     <tr><td>Heat map</td><td>The choropleth counts only pieces pinned to real ground. Pieces pinned to a
       whole borough, a subway line, or the system itself are diffuse by nature and are excluded, so they
@@ -1291,5 +1306,6 @@ function boot(){
 }
 boot();
 </script>
+<script src="assets/eggs.js" defer></script>
 </body>
 </html>

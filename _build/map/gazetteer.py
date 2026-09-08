@@ -11,7 +11,7 @@ LANDMARKS = [
  ("chrysler","The Chrysler Building","landmark","Manhattan",40.7516,-73.9755,["chrysler building"]),
  ("times_square","Times Square","landmark","Manhattan",40.7580,-73.9855,["times square","crossroads of the world","the ball drop","ball drop","new year's eve ball"]),
  ("rock_center","Rockefeller Center","landmark","Manhattan",40.7587,-73.9787,["rockefeller cent","30 rock","the rink at rock","radio city","rockettes","christmas tree lighting"]),
- ("msg","Madison Square Garden","venue","Manhattan",40.7505,-73.9934,["madison square garden","the garden","msg","knicks","rangers"]),
+ ("msg","Madison Square Garden","venue","Manhattan",40.7505,-73.9934,["madison square garden","msg","knicks","rangers","the world's most famous arena"]),
  ("penn_station","Penn Station","transit","Manhattan",40.7506,-73.9935,["penn station","moynihan"]),
  ("grand_central","Grand Central Terminal","transit","Manhattan",40.7527,-73.9772,["grand central","the whispering gallery","celestial ceiling"]),
  ("port_authority","Port Authority Bus Terminal","transit","Manhattan",40.7570,-73.9903,["port authority"]),

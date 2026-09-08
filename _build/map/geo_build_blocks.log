@@ -1,0 +1,16 @@
+· gazetteer: 698 places / 1490 patterns
+· curated locations: 4872
+· precision: {'area': 4545, 'borough': 327, 'site': 2435, 'citywide': 234} · curated placements used: 4661
+· wrote /Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/assets/geo.js 1585 KB
+· data.js updated with loc/b/prec for 7541 pieces
+· wrote /Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/../00_TRACKING_SPREADSHEETS/NEW_YORKERS_LOCATIONS.csv
+· scenes: [('Citywide', 1410), ('Subway', 811), ('Street', 755), ('Interior', 751), ('Bodega', 615), ('Stoop', 532), ('Water', 502), ('Work', 461), ('Park', 434), ('Rooftop', 372), ('Weather', 367), ('Night', 330), ('Civic', 201)]
+· top places: [('subway_system', 286), ('nb_midtown', 249), ('nb_bushwick', 192), ('nb_harlem', 183), ('nb_lower_east_side', 145), ('nb_sunset_park', 130), ('nb_astoria', 121), ('nb_long_island_city', 117), ('boro_bronx', 116), ('nb_bedford_stuyvesant', 111), ('nb_ridgewood', 110), ('nb_chelsea', 109), ('nb_washington_heights', 106), ('chinatown_m', 94), ('nb_financial_district', 93), ('central_park', 93), ('ny_harbor', 92), ('nb_williamsburg', 89), ('boro_queens', 89), ('nb_corona', 85)]
+· neighborhoods with located pieces: 175
+· top neighbourhoods: [(549, 'Midtown'), (224, 'Lower East Side'), (215, 'Financial District'), (212, 'Harlem'), (194, 'Bushwick'), (165, 'Chelsea'), (162, 'East Village'), (158, 'SoHo'), (155, 'Flatiron'), (150, 'Greenwich Village'), (145, 'Tribeca'), (145, 'Central Park'), (136, 'Carroll Gardens'), (132, 'Bedford-Stuyvesant')]
+GEO EXIT 0
+3103 The Eighth Avenue Morning | loc Eighth Avenue | nb Midtown | b Manhattan | prec site
+3106 The Fifth Avenue Table | loc Fifth Avenue | nb Midtown | b Manhattan | prec site
+3109 The Heights Block | loc 77th Street | nb Upper West Side | b Manhattan | prec site
+3117 The Coney Island Avenue Late Shift | loc Coney Island | nb Coney Island | b Brooklyn | prec site
+3122 The Tompkinsville Chorus | loc Stapleton | nb Stapleton | b Staten Island | prec area

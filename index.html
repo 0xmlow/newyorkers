@@ -4,22 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEW YORKERS by MLow · A Living Census of the Greatest City on Earth</title>
-<meta name="description" content="A living census of New York City painted by a city that is watching back. Every New Yorker gets a portrait. Even the villains. Dynamic tokens on ERC-7160. First THE COUNT at NFT.NYC, then THE CLAIM.">
+<meta name="description" content="A living painted census of New York City by MLow: 7,541 characters across 19 eras, every one with a story and a place on the atlas, a walkable museum of 111 New York rooms, and a sourced reading room. Every New Yorker gets a portrait. Even the villains.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS by MLow">
-<meta property="og:description" content="Every New Yorker gets a portrait. Even the villains. Get counted.">
-<meta property="og:image" content="https://new-yorkers.pages.dev/og.jpg">
-<meta property="og:url" content="https://new-yorkers.pages.dev/">
+<meta property="og:description" content="A living painted census of New York City by MLow: 7,541 characters across 19 eras, every one with a story and a place on the atlas, a walkable museum of 111 New York rooms, and a sourced reading room.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
 <meta name="twitter:title" content="NEW YORKERS by MLow">
 <meta name="twitter:description" content="Every New Yorker gets a portrait. Even the villains. Get counted.">
-<meta name="twitter:image" content="https://new-yorkers.pages.dev/og.jpg">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg">
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
 /* masthead */
@@ -108,11 +109,15 @@
 
 /* museum */
 #museum .box{border:1px solid var(--divider);background:var(--card);padding:clamp(24px,5vw,64px);display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:start}
-#museum .rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-#museum .rooms a{display:block;border:1px solid var(--divider);padding:12px 12px 10px;color:var(--cloud);border-left:3px solid var(--c);transition:border-color .2s,background .2s;background:var(--ink)}
-#museum .rooms a:hover{border-color:var(--c);background:#0a0c12}
-#museum .rooms small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--c);text-transform:uppercase}
-#museum .rooms b{display:block;font-size:15px;font-weight:700;margin-top:4px;line-height:1.15}
+#museum .rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:720px;overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+#museum .rooms a{position:relative;display:block;border:1px solid var(--divider);border-radius:10px;overflow:hidden;color:var(--cloud);aspect-ratio:16/9;background:var(--ink);transition:border-color .2s,transform .25s var(--ease)}
+#museum .rooms a img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);opacity:.92}
+#museum .rooms a:hover{border-color:var(--c);transform:translateY(-2px)}
+#museum .rooms a:hover img{transform:scale(1.06);opacity:1}
+#museum .rooms a span{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 9px;background:linear-gradient(0deg,rgba(13,13,13,.92),transparent)}
+#museum .rooms small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.22em;color:var(--c);text-transform:uppercase;text-shadow:0 1px 8px #000}
+#museum .rooms b{display:block;font-family:var(--sans);font-size:13.5px;font-weight:600;margin-top:2px;line-height:1.15;text-shadow:0 1px 8px #000}
+#museum .spinRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;align-items:center}
 #museum .facts{display:flex;gap:32px;margin-top:28px;flex-wrap:wrap}
 #museum .facts div b{display:block;font-size:34px;font-weight:800;color:var(--cyan)}
 #museum .facts div span{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--slate);text-transform:uppercase}
@@ -135,10 +140,39 @@
 #note .ls b.c{color:var(--cyan)}
 @media (max-width:900px){#note .g{grid-template-columns:1fr;gap:40px}}
 
+/* releases */
+#releases .rels{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:44px}
+@media (max-width:900px){#releases .rels{grid-template-columns:1fr}}
+#releases .rel{background:var(--card);border:1px solid var(--divider);border-left:3px solid var(--blue);border-radius:12px;padding:26px 28px 28px;display:flex;flex-direction:column;gap:10px}
+#releases .rel .top{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--slate)}
+#releases .rel .n{color:var(--cyan)}
+#releases .rel h3{font-size:clamp(24px,2.6vw,34px);font-weight:700;line-height:1.05;letter-spacing:-.01em}
+#releases .rel .count{font-family:var(--mono);font-size:clamp(28px,3.4vw,44px);color:var(--cloud);letter-spacing:.02em;line-height:1}
+#releases .rel .count small{font-family:var(--sans);font-size:13px;letter-spacing:.14em;color:var(--slate);text-transform:uppercase;margin-left:10px}
+#releases .rel dl{display:grid;grid-template-columns:88px 1fr;gap:7px 14px;margin-top:6px}
+#releases .rel dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);padding-top:3px}
+#releases .rel dd{font-family:var(--sans);font-size:14px;line-height:1.55;color:var(--cloud)}
+#releases .rel p.det{font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--slate);border-top:1px solid var(--divider);padding-top:12px;margin-top:4px}
+#releases .relFuture{margin-top:18px;border:1px dashed var(--divider);border-radius:12px;padding:24px 28px;background:rgba(41,98,255,.04)}
+#releases .relFuture h4{font-family:var(--sans);font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+#releases .relFuture p{font-family:var(--sans);font-size:15px;line-height:1.65;color:var(--slate);margin-top:10px;max-width:76ch}
+#releases .relNote{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--pink);margin-top:14px}
+
 /* dossiers */
 #dos .card{cursor:pointer}
 #dos .tools{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
 </style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, get counted, NYC census art project, NFT NYC 2026">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://n3wyorkers.com/#site","name":"NEW YORKERS by MLow","alternateName":"NEW YORKERS","url":"https://n3wyorkers.com/","description":"A living painted census of New York City: 7,541 characters across 19 eras, every one with a story and a place, a walkable museum of 111 New York rooms, and a sourced reading room.","publisher":{"@id":"https://n3wyorkers.com/#org"},"inLanguage":"en-US"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://n3wyorkers.com/#org","name":"NEW YORKERS by MLow","url":"https://n3wyorkers.com/","logo":"https://n3wyorkers.com/assets/brand/eye_truecolor.png","sameAs":["https://mlow.xyz","https://mlow.nyc","https://x.com/degens","https://www.instagram.com/0xmlow","https://www.tiktok.com/@0xmlow"],"founder":{"@type":"Person","name":"MLow","url":"https://mlow.xyz"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Collection","@id":"https://n3wyorkers.com/#collection","name":"NEW YORKERS","creator":{"@type":"Person","name":"MLow"},"url":"https://n3wyorkers.com/census","size":7541,"description":"Every New Yorker gets a portrait. Even the villains. A painted census of New York City as dynamic tokens on ERC-7160.","keywords":"NEW YORKERS, MLow, New York City art, painted census, NFT, ERC-7160, dynamic NFT, NYC portraits, eye flower"}</script>
+<!-- /seo -->
 </head>
 <body>
 <div id="nav"></div>
@@ -173,11 +207,11 @@
   <div class="txt">
     <div class="kicker">01 · The thesis</div>
     <h2 class="h-l" style="margin-top:28px">Every New Yorker gets a portrait. Even the villains.</h2>
-    <p class="body" style="margin-top:32px;max-width:560px">A portrait of an entire city, one character at a time, painted by a city that is watching back. The eye flowers are the proof: when a flower with a human iris blooms in a frame, this moment was witnessed, this person mattered, somebody was watching with love.</p>
+    <p class="body" style="margin-top:32px;max-width:560px">The work has run on more than 5,000 New York City taxis and been shown on the streets of ten cities in ten countries. A portrait of an entire city, one character at a time, painted by a city that is watching back. The eye flowers are the proof: when a flower with a human iris blooms in a frame, this moment was witnessed, this person mattered, somebody was watching with love.</p>
     <div class="stats">
       <div><b id="stWorks">0</b><span>Works painted</span></div>
-      <div><b class="c">365</b><span>Will ever be sold</span></div>
-      <div><b>0</b><span>Sold from the archive</span></div>
+      <div><b class="c">90</b><span>The Marks, ones of one</span></div>
+      <div><b>6,666</b><span>The census release</span></div>
     </div>
   </div>
   <a class="pic" id="thesisPic" href="census.html#n=1467"></a>
@@ -285,127 +319,155 @@
       <div class="h-m" style="margin-top:18px">Walk the city as a gallery. One hundred and eleven rooms, every New Yorker hung where they were counted, the light following the New York clock.</div>
       <p class="body" style="margin-top:16px;font-size:16px">A Three.js museum built room by room: the Bowery after hours, the Guggenheim ramp, the Chrysler lobby under its crown, the Vessel, the Cyclone, the crown of the Statue, Studio 8H, the Met's Great Hall, the whale at Natural History, thirty art museums and institutions across the five boroughs, the nave of St. John the Divine. Every interior comes with its street and its skyline. Each room hangs the characters the census recorded at that place first, then any era, family or set you choose. The light follows the New York clock and the hang reshuffles daily. Any room exports as a GLB. Click a work and the record opens.</p>
       <div class="facts"><div><b>111</b><span>rooms</span></div><div><b id="musWorks">0</b><span>works on the walls</span></div><div><b>WASD</b><span>to walk, drag to look</span></div></div>
-      <p style="margin-top:28px"><a class="btn" href="museum.html">ENTER THE MUSEUM</a> <a class="btn ghost" href="museum.html#room=guggenheim" style="margin-left:8px">START ON THE RAMP</a></p>
+      <div class="spinRow"><a class="btn" href="museum.html">ENTER THE MUSEUM</a><a class="btn ghost" href="museum.html#room=random" id="spinBtn">✦ SPIN A ROOM</a><a class="btn ghost" href="museum.html#room=guggenheim">START ON THE RAMP</a></div>
+      <p class="body" style="margin-top:14px;font-size:13px" id="spinLine">Pull the lever and the city picks your room. Press R inside the museum to pull it again.</p>
     </div>
-    <div class="rooms">
-      <a href="museum.html#room=bowery" style="--c:#79d4e9"><small>LOWER MANHATTAN</small><b>The Bowery</b></a>
-      <a href="museum.html#room=subway" style="--c:#e2ca89"><small>THE SUBWAY</small><b>Below the city</b></a>
-      <a href="museum.html#room=met" style="--c:#dabb96"><small>THE MET ROOF GARDEN</small><b>Above the park</b></a>
-      <a href="museum.html#room=brooklyn" style="--c:#91bacf"><small>BROOKLYN WATERFRONT</small><b>Across the river</b></a>
-      <a href="museum.html#room=times" style="--c:#e477bc"><small>TIMES SQUARE</small><b>Electric crossroads</b></a>
-      <a href="museum.html#room=ferry" style="--c:#f8af72"><small>STATEN ISLAND FERRY</small><b>The harbor crossing</b></a>
-      <a href="museum.html#room=botanical" style="--c:#a4c7a1"><small>NEW YORK BOTANICAL GARDEN</small><b>The living city</b></a>
-      <a href="museum.html#room=penn" style="--c:#bddce7"><small>PENN / MOYNIHAN TRAIN HALL</small><b>Arrivals / departures</b></a>
-      <a href="museum.html#room=grand" style="--c:#b6c5ad"><small>GRAND CENTRAL TERMINAL</small><b>Under the stars</b></a>
-      <a href="museum.html#room=highline" style="--c:#acbf89"><small>THE HIGH LINE</small><b>The city, rewilded</b></a>
-      <a href="museum.html#room=coney" style="--c:#eec092"><small>CONEY ISLAND</small><b>At the edge of it all</b></a>
-      <a href="museum.html#room=bethesda" style="--c:#c4ad83"><small>BETHESDA ARCADE</small><b>The painted threshold</b></a>
-      <a href="museum.html#room=oculus" style="--c:#c6e4ef"><small>THE OCULUS</small><b>White ribs, infinite city</b></a>
-      <a href="museum.html#room=guggenheim" style="--c:#e9debf"><small>THE GUGGENHEIM SPIRAL</small><b>Endless ascent</b></a>
-      <a href="museum.html#room=library" style="--c:#c4a47a"><small>NYPL ROSE READING ROOM</small><b>City of stories</b></a>
-      <a href="museum.html#room=apollo" style="--c:#dc8c86"><small>THE APOLLO</small><b>After the applause</b></a>
-      <a href="museum.html#room=unisphere" style="--c:#a5cfdf"><small>FLUSHING MEADOWS</small><b>The boroughs in orbit</b></a>
-      <a href="museum.html#room=tram" style="--c:#eaa58a"><small>ROOSEVELT ISLAND TRAM</small><b>Suspended New York</b></a>
-      <a href="museum.html#room=cloisters" style="--c:#c5b991"><small>THE CLOISTERS</small><b>The quiet city</b></a>
-      <a href="museum.html#room=navyyard" style="--c:#d4ae78"><small>BROOKLYN NAVY YARD</small><b>The dry dock cathedral</b></a>
-      <a href="museum.html#room=governors" style="--c:#a7c496"><small>GOVERNORS ISLAND HILLS</small><b>The harbor observatory</b></a>
-      <a href="museum.html#room=chrysler" style="--c:#d9c48a"><small>THE CHRYSLER BUILDING</small><b>The crown and the lobby</b></a>
-      <a href="museum.html#room=flatiron" style="--c:#c9b79a"><small>THE FLATIRON</small><b>The prow</b></a>
-      <a href="museum.html#room=bleachers" style="--c:#9fb4d6"><small>THE BRONX BALLPARK</small><b>Bottom of the ninth</b></a>
-      <a href="museum.html#room=deli" style="--c:#e9c46a"><small>THE APPETIZING COUNTER</small><b>Take a number</b></a>
-      <a href="museum.html#room=washington" style="--c:#b9c8a4"><small>WASHINGTON SQUARE</small><b>Under the arch</b></a>
-      <a href="museum.html#room=boathouse" style="--c:#a9c9b0"><small>PROSPECT PARK BOATHOUSE</small><b>The Lullwater</b></a>
-      <a href="museum.html#room=halloffame" style="--c:#c9b08a"><small>HALL OF FAME FOR GREAT AMERICANS</small><b>The colonnade</b></a>
-      <a href="museum.html#room=twa" style="--c:#e07a7a"><small>TWA FLIGHT CENTER</small><b>Departures, 1962</b></a>
-      <a href="museum.html#room=snug" style="--c:#c9c3a4"><small>SNUG HARBOR</small><b>The sailors' rest</b></a>
-      <a href="museum.html#room=wollman" style="--c:#bcd7ea"><small>WOLLMAN RINK</small><b>Ice under the towers</b></a>
-      <a href="museum.html#room=doyers" style="--c:#e05a4a"><small>DOYERS STREET</small><b>The bend</b></a>
-      <a href="museum.html#room=strivers" style="--c:#c98a6a"><small>STRIVERS' ROW</small><b>The parlour floor</b></a>
-      <a href="museum.html#room=rock" style="--c:#8fb3d9"><small>TOP OF THE ROCK</small><b>Seventy floors up</b></a>
-      <a href="museum.html#room=frick" style="--c:#d9cfb0"><small>THE FRICK</small><b>The garden court</b></a>
-      <a href="museum.html#room=seaport" style="--c:#9fb8c4"><small>SOUTH STREET SEAPORT</small><b>The tall ship</b></a>
-      <a href="museum.html#room=vessel" style="--c:#c98a5a"><small>HUDSON YARDS</small><b>The climb</b></a>
-      <a href="museum.html#room=littleisland" style="--c:#a8c4a0"><small>LITTLE ISLAND</small><b>The tulips</b></a>
-      <a href="museum.html#room=cathedral" style="--c:#b8a8c8"><small>ST. JOHN THE DIVINE</small><b>The unfinished nave</b></a>
-      <a href="museum.html#room=queensboro" style="--c:#a0a8d8"><small>QUEENSBORO PLAZA</small><b>The elevated</b></a>
-      <a href="museum.html#room=bushwick" style="--c:#e8a04a"><small>A BUSHWICK ROOFTOP</small><b>The roof</b></a>
-      <a href="museum.html#room=cyclone" style="--c:#f2e6c8"><small>THE CYCLONE</small><b>The ride</b></a>
-      <a href="museum.html#room=brooklynbridge" style="--c:#c9b08a"><small>THE BROOKLYN BRIDGE</small><b>Between the cables</b></a>
-      <a href="museum.html#room=panorama" style="--c:#8ab0c8"><small>THE QUEENS MUSEUM</small><b>The city on a table</b></a>
-      <a href="museum.html#room=liberty" style="--c:#7fb8a8"><small>LIBERTY ISLAND</small><b>The climb to the crown</b></a>
-      <a href="museum.html#room=oysterbar" style="--c:#d8b070"><small>GRAND CENTRAL OYSTER BAR</small><b>Under the tile vaults</b></a>
-      <a href="museum.html#room=morgan" style="--c:#b8864a"><small>THE MORGAN LIBRARY</small><b>Three tiers of books</b></a>
-      <a href="museum.html#room=radiocity" style="--c:#c8963a"><small>RADIO CITY MUSIC HALL</small><b>The great stage</b></a>
-      <a href="museum.html#room=woolworth" style="--c:#d4c48a"><small>THE WOOLWORTH BUILDING</small><b>The cathedral of commerce</b></a>
-      <a href="museum.html#room=wallstreet" style="--c:#9aa8b8"><small>WALL STREET</small><b>The canyon</b></a>
-      <a href="museum.html#room=lincolncenter" style="--c:#e8d8a8"><small>LINCOLN CENTER</small><b>The plaza at eight</b></a>
-      <a href="museum.html#room=belvedere" style="--c:#9ab088"><small>BELVEDERE CASTLE</small><b>The castle on the rock</b></a>
-      <a href="museum.html#room=highbridge" style="--c:#8898b8"><small>THE HIGH BRIDGE</small><b>The aqueduct walk</b></a>
-      <a href="museum.html#room=arthuravenue" style="--c:#c89a5a"><small>ARTHUR AVENUE</small><b>The market hall</b></a>
-      <a href="museum.html#room=wavehill" style="--c:#a8c8a0"><small>WAVE HILL</small><b>The pergola over the river</b></a>
-      <a href="museum.html#room=gantry" style="--c:#e05a5a"><small>GANTRY PLAZA</small><b>The gantries</b></a>
-      <a href="museum.html#room=rockaway" style="--c:#f0c890"><small>ROCKAWAY BEACH</small><b>Surf at the end of the A</b></a>
-      <a href="museum.html#room=greenwood" style="--c:#c8a050"><small>GREEN-WOOD CEMETERY</small><b>The gothic gate</b></a>
-      <a href="museum.html#room=domino" style="--c:#d88a4a"><small>DOMINO PARK</small><b>The refinery</b></a>
-      <a href="museum.html#room=boatgraveyard" style="--c:#7a8a80"><small>THE ARTHUR KILL</small><b>The ships in the marsh</b></a>
-      <a href="museum.html#room=intrepid" style="--c:#8a98a8"><small>THE INTREPID</small><b>The flight deck</b></a>
-      <a href="museum.html#room=studio8h" style="--c:#e8b040"><small>STUDIO 8H</small><b>Live from New York</b></a>
-      <a href="museum.html#room=carnegie" style="--c:#c8a070"><small>CARNEGIE HALL</small><b>The horseshoe</b></a>
-      <a href="museum.html#room=vanguard" style="--c:#c83a3a"><small>THE VILLAGE VANGUARD</small><b>The wedge downstairs</b></a>
-      <a href="museum.html#room=rucker" style="--c:#f08a2a"><small>RUCKER PARK</small><b>The court</b></a>
-      <a href="museum.html#room=sedgwick" style="--c:#e0c030"><small>1520 SEDGWICK AVENUE</small><b>The rec room</b></a>
-      <a href="museum.html#room=balloons" style="--c:#f0a0c0"><small>CENTRAL PARK WEST</small><b>The night before the parade</b></a>
-      <a href="museum.html#room=stonewall" style="--c:#e83a8a"><small>SHERIDAN SQUARE</small><b>Christopher Street</b></a>
-      <a href="museum.html#room=sangennaro" style="--c:#e8503a"><small>THE FEAST OF SAN GENNARO</small><b>The feast on Mulberry</b></a>
-      <a href="museum.html#room=chelseahotel" style="--c:#b8483a"><small>THE CHELSEA HOTEL</small><b>The lobby of the hotel</b></a>
-      <a href="museum.html#room=strand" style="--c:#c83a3a"><small>THE STRAND</small><b>Eighteen miles of books</b></a>
-      <a href="museum.html#room=dakota" style="--c:#c8b090"><small>THE DAKOTA</small><b>The courtyard and the mosaic</b></a>
-      <a href="museum.html#room=garden" style="--c:#f0842a"><small>MADISON SQUARE GARDEN</small><b>The world's most famous arena</b></a>
-      <a href="museum.html#room=dendur" style="--c:#d8c8a0"><small>THE TEMPLE OF DENDUR</small><b>The temple by the window</b></a>
-      <a href="museum.html#room=moma" style="--c:#8ab0a8"><small>THE SCULPTURE GARDEN</small><b>The garden on 54th</b></a>
-      <a href="museum.html#room=whitney" style="--c:#a8c0d0"><small>THE WHITNEY</small><b>The terraces over the High Line</b></a>
-      <a href="museum.html#room=ellis" style="--c:#c8a888"><small>ELLIS ISLAND</small><b>The registry room</b></a>
-      <a href="museum.html#room=marathon" style="--c:#3a8ad8"><small>THE VERRAZZANO</small><b>Mile one</b></a>
-      <a href="museum.html#room=halloween" style="--c:#f08a2a"><small>THE VILLAGE HALLOWEEN PARADE</small><b>Sixth Avenue after dark</b></a>
-      <a href="museum.html#room=easternparkway" style="--c:#f1c531"><small>GRAND ARMY PLAZA</small><b>The parkway on Labor Day</b></a>
-      <a href="museum.html#room=manhattanhenge" style="--c:#ff9a40"><small>MANHATTANHENGE</small><b>The sun down 42nd</b></a>
-      <a href="museum.html#room=metgreathall" style="--c:#d8c8a8"><small>THE MET</small><b>The Great Hall</b></a>
-      <a href="museum.html#room=metamerican" style="--c:#c8d8c8"><small>THE MET</small><b>The Engelhard Court</b></a>
-      <a href="museum.html#room=meteuropean" style="--c:#b8a888"><small>THE MET</small><b>The skylit suite</b></a>
-      <a href="museum.html#room=oceanlife" style="--c:#3a6aa8"><small>NATURAL HISTORY</small><b>Under the whale</b></a>
-      <a href="museum.html#room=rosecenter" style="--c:#8ab8e8"><small>THE ROSE CENTER</small><b>The sphere in the cube</b></a>
-      <a href="museum.html#room=momaatrium" style="--c:#e8e8e4"><small>MOMA</small><b>The atrium</b></a>
-      <a href="museum.html#room=newmuseum" style="--c:#c8ccd0"><small>THE NEW MUSEUM</small><b>The stacked boxes</b></a>
-      <a href="museum.html#room=neuegalerie" style="--c:#d8b060"><small>NEUE GALERIE</small><b>The gold room</b></a>
-      <a href="museum.html#room=cooperhewitt" style="--c:#a8c090"><small>COOPER HEWITT</small><b>The Carnegie garden</b></a>
-      <a href="museum.html#room=breuer" style="--c:#8a8a88"><small>THE BREUER</small><b>The inverted ziggurat</b></a>
-      <a href="museum.html#room=jewishmuseum" style="--c:#b8a8c8"><small>THE JEWISH MUSEUM</small><b>The Warburg mansion</b></a>
-      <a href="museum.html#room=rubin" style="--c:#c86a3a"><small>THE RUBIN</small><b>The spiral stair</b></a>
-      <a href="museum.html#room=theshed" style="--c:#8ab0d0"><small>THE SHED</small><b>The shell rolls out</b></a>
-      <a href="museum.html#room=armory" style="--c:#8a6a4a"><small>PARK AVENUE ARMORY</small><b>The drill hall</b></a>
-      <a href="museum.html#room=customhouse" style="--c:#c8b8a0"><small>THE CUSTOM HOUSE</small><b>The rotunda at Bowling Green</b></a>
-      <a href="museum.html#room=mad" style="--c:#e8e0d0"><small>MUSEUM OF ARTS AND DESIGN</small><b>The lollipop building</b></a>
-      <a href="museum.html#room=hispanicsociety" style="--c:#c8784a"><small>THE HISPANIC SOCIETY</small><b>The terracotta court</b></a>
-      <a href="museum.html#room=studiomuseum" style="--c:#d88a3a"><small>THE STUDIO MUSEUM IN HARLEM</small><b>The new building on 125th</b></a>
-      <a href="museum.html#room=elmuseo" style="--c:#e8a030"><small>EL MUSEO DEL BARRIO</small><b>The courtyard on Fifth</b></a>
-      <a href="museum.html#room=mcny" style="--c:#b8a8a0"><small>MUSEUM OF THE CITY OF NEW YORK</small><b>The city's museum</b></a>
-      <a href="museum.html#room=nyhistorical" style="--c:#c8b898"><small>NEW-YORK HISTORICAL SOCIETY</small><b>The oldest museum in the city</b></a>
-      <a href="museum.html#room=diachelsea" style="--c:#a8a8a0"><small>DIA CHELSEA</small><b>The long light</b></a>
-      <a href="museum.html#room=chelseablock" style="--c:#f4f4f0"><small>WEST 24TH STREET</small><b>Thursday openings on 24th</b></a>
-      <a href="museum.html#room=fotografiska" style="--c:#8a4a5a"><small>FOTOGRAFISKA</small><b>The mission house</b></a>
-      <a href="museum.html#room=ps1" style="--c:#c8a888"><small>MOMA PS1</small><b>The old school</b></a>
-      <a href="museum.html#room=noguchi" style="--c:#8a8a80"><small>THE NOGUCHI MUSEUM</small><b>The stone garden</b></a>
-      <a href="museum.html#room=socrates" style="--c:#7aa07a"><small>SOCRATES SCULPTURE PARK</small><b>Sculpture on the river</b></a>
-      <a href="museum.html#room=brooklynmuseum" style="--c:#c8b8a0"><small>THE BROOKLYN MUSEUM</small><b>The Beaux-Arts Court</b></a>
-      <a href="museum.html#room=pioneerworks" style="--c:#a88a6a"><small>PIONEER WORKS</small><b>The ironworks in Red Hook</b></a>
-      <a href="museum.html#room=bronxmuseum" style="--c:#c8a0b8"><small>THE BRONX MUSEUM OF THE ARTS</small><b>The Concourse museum</b></a>
+    <div class="rooms" id="roomTiles">
+      <a href="museum.html#room=bowery" style="--c:#79d4e9"><img loading="lazy" src="assets/museum/rooms/bowery.jpg" alt="The Bowery"><span><small>LOWER MANHATTAN</small><b>The Bowery</b></span></a>
+      <a href="museum.html#room=subway" style="--c:#e2ca89"><img loading="lazy" src="assets/museum/rooms/subway.jpg" alt="Below the city"><span><small>THE SUBWAY</small><b>Below the city</b></span></a>
+      <a href="museum.html#room=met" style="--c:#dabb96"><img loading="lazy" src="assets/museum/rooms/met.jpg" alt="Above the park"><span><small>THE MET ROOF GARDEN</small><b>Above the park</b></span></a>
+      <a href="museum.html#room=brooklyn" style="--c:#91bacf"><img loading="lazy" src="assets/museum/rooms/brooklyn.jpg" alt="Across the river"><span><small>BROOKLYN WATERFRONT</small><b>Across the river</b></span></a>
+      <a href="museum.html#room=times" style="--c:#e477bc"><img loading="lazy" src="assets/museum/rooms/times.jpg" alt="Electric crossroads"><span><small>TIMES SQUARE</small><b>Electric crossroads</b></span></a>
+      <a href="museum.html#room=ferry" style="--c:#f8af72"><img loading="lazy" src="assets/museum/rooms/ferry.jpg" alt="The harbor crossing"><span><small>STATEN ISLAND FERRY</small><b>The harbor crossing</b></span></a>
+      <a href="museum.html#room=botanical" style="--c:#a4c7a1"><img loading="lazy" src="assets/museum/rooms/botanical.jpg" alt="The living city"><span><small>NEW YORK BOTANICAL GARDEN</small><b>The living city</b></span></a>
+      <a href="museum.html#room=penn" style="--c:#bddce7"><img loading="lazy" src="assets/museum/rooms/penn.jpg" alt="Arrivals / departures"><span><small>PENN / MOYNIHAN TRAIN HALL</small><b>Arrivals / departures</b></span></a>
+      <a href="museum.html#room=grand" style="--c:#b6c5ad"><img loading="lazy" src="assets/museum/rooms/grand.jpg" alt="Under the stars"><span><small>GRAND CENTRAL TERMINAL</small><b>Under the stars</b></span></a>
+      <a href="museum.html#room=highline" style="--c:#acbf89"><img loading="lazy" src="assets/museum/rooms/highline.jpg" alt="The city, rewilded"><span><small>THE HIGH LINE</small><b>The city, rewilded</b></span></a>
+      <a href="museum.html#room=coney" style="--c:#eec092"><img loading="lazy" src="assets/museum/rooms/coney.jpg" alt="At the edge of it all"><span><small>CONEY ISLAND</small><b>At the edge of it all</b></span></a>
+      <a href="museum.html#room=bethesda" style="--c:#c4ad83"><img loading="lazy" src="assets/museum/rooms/bethesda.jpg" alt="The painted threshold"><span><small>BETHESDA ARCADE</small><b>The painted threshold</b></span></a>
+      <a href="museum.html#room=oculus" style="--c:#c6e4ef"><img loading="lazy" src="assets/museum/rooms/oculus.jpg" alt="White ribs, infinite city"><span><small>THE OCULUS</small><b>White ribs, infinite city</b></span></a>
+      <a href="museum.html#room=guggenheim" style="--c:#e9debf"><img loading="lazy" src="assets/museum/rooms/guggenheim.jpg" alt="Endless ascent"><span><small>THE GUGGENHEIM SPIRAL</small><b>Endless ascent</b></span></a>
+      <a href="museum.html#room=library" style="--c:#c4a47a"><img loading="lazy" src="assets/museum/rooms/library.jpg" alt="City of stories"><span><small>NYPL ROSE READING ROOM</small><b>City of stories</b></span></a>
+      <a href="museum.html#room=apollo" style="--c:#dc8c86"><img loading="lazy" src="assets/museum/rooms/apollo.jpg" alt="After the applause"><span><small>THE APOLLO</small><b>After the applause</b></span></a>
+      <a href="museum.html#room=unisphere" style="--c:#a5cfdf"><img loading="lazy" src="assets/museum/rooms/unisphere.jpg" alt="The boroughs in orbit"><span><small>FLUSHING MEADOWS</small><b>The boroughs in orbit</b></span></a>
+      <a href="museum.html#room=tram" style="--c:#eaa58a"><img loading="lazy" src="assets/museum/rooms/tram.jpg" alt="Suspended New York"><span><small>ROOSEVELT ISLAND TRAM</small><b>Suspended New York</b></span></a>
+      <a href="museum.html#room=cloisters" style="--c:#c5b991"><img loading="lazy" src="assets/museum/rooms/cloisters.jpg" alt="The quiet city"><span><small>THE CLOISTERS</small><b>The quiet city</b></span></a>
+      <a href="museum.html#room=navyyard" style="--c:#d4ae78"><img loading="lazy" src="assets/museum/rooms/navyyard.jpg" alt="The dry dock cathedral"><span><small>BROOKLYN NAVY YARD</small><b>The dry dock cathedral</b></span></a>
+      <a href="museum.html#room=governors" style="--c:#a7c496"><img loading="lazy" src="assets/museum/rooms/governors.jpg" alt="The harbor observatory"><span><small>GOVERNORS ISLAND HILLS</small><b>The harbor observatory</b></span></a>
+      <a href="museum.html#room=chrysler" style="--c:#d9c48a"><img loading="lazy" src="assets/museum/rooms/chrysler.jpg" alt="The crown and the lobby"><span><small>THE CHRYSLER BUILDING</small><b>The crown and the lobby</b></span></a>
+      <a href="museum.html#room=flatiron" style="--c:#c9b79a"><img loading="lazy" src="assets/museum/rooms/flatiron.jpg" alt="The prow"><span><small>THE FLATIRON</small><b>The prow</b></span></a>
+      <a href="museum.html#room=bleachers" style="--c:#9fb4d6"><img loading="lazy" src="assets/museum/rooms/bleachers.jpg" alt="Bottom of the ninth"><span><small>THE BRONX BALLPARK</small><b>Bottom of the ninth</b></span></a>
+      <a href="museum.html#room=deli" style="--c:#e9c46a"><img loading="lazy" src="assets/museum/rooms/deli.jpg" alt="Take a number"><span><small>THE APPETIZING COUNTER</small><b>Take a number</b></span></a>
+      <a href="museum.html#room=washington" style="--c:#b9c8a4"><img loading="lazy" src="assets/museum/rooms/washington.jpg" alt="Under the arch"><span><small>WASHINGTON SQUARE</small><b>Under the arch</b></span></a>
+      <a href="museum.html#room=boathouse" style="--c:#a9c9b0"><img loading="lazy" src="assets/museum/rooms/boathouse.jpg" alt="The Lullwater"><span><small>PROSPECT PARK BOATHOUSE</small><b>The Lullwater</b></span></a>
+      <a href="museum.html#room=halloffame" style="--c:#c9b08a"><img loading="lazy" src="assets/museum/rooms/halloffame.jpg" alt="The colonnade"><span><small>HALL OF FAME FOR GREAT AMERICANS</small><b>The colonnade</b></span></a>
+      <a href="museum.html#room=twa" style="--c:#e07a7a"><img loading="lazy" src="assets/museum/rooms/twa.jpg" alt="Departures, 1962"><span><small>TWA FLIGHT CENTER</small><b>Departures, 1962</b></span></a>
+      <a href="museum.html#room=snug" style="--c:#c9c3a4"><img loading="lazy" src="assets/museum/rooms/snug.jpg" alt="The sailors' rest"><span><small>SNUG HARBOR</small><b>The sailors' rest</b></span></a>
+      <a href="museum.html#room=wollman" style="--c:#bcd7ea"><img loading="lazy" src="assets/museum/rooms/wollman.jpg" alt="Ice under the towers"><span><small>WOLLMAN RINK</small><b>Ice under the towers</b></span></a>
+      <a href="museum.html#room=doyers" style="--c:#e05a4a"><img loading="lazy" src="assets/museum/rooms/doyers.jpg" alt="The bend"><span><small>DOYERS STREET</small><b>The bend</b></span></a>
+      <a href="museum.html#room=strivers" style="--c:#c98a6a"><img loading="lazy" src="assets/museum/rooms/strivers.jpg" alt="The parlour floor"><span><small>STRIVERS' ROW</small><b>The parlour floor</b></span></a>
+      <a href="museum.html#room=rock" style="--c:#8fb3d9"><img loading="lazy" src="assets/museum/rooms/rock.jpg" alt="Seventy floors up"><span><small>TOP OF THE ROCK</small><b>Seventy floors up</b></span></a>
+      <a href="museum.html#room=frick" style="--c:#d9cfb0"><img loading="lazy" src="assets/museum/rooms/frick.jpg" alt="The garden court"><span><small>THE FRICK</small><b>The garden court</b></span></a>
+      <a href="museum.html#room=seaport" style="--c:#9fb8c4"><img loading="lazy" src="assets/museum/rooms/seaport.jpg" alt="The tall ship"><span><small>SOUTH STREET SEAPORT</small><b>The tall ship</b></span></a>
+      <a href="museum.html#room=vessel" style="--c:#c98a5a"><img loading="lazy" src="assets/museum/rooms/vessel.jpg" alt="The climb"><span><small>HUDSON YARDS</small><b>The climb</b></span></a>
+      <a href="museum.html#room=littleisland" style="--c:#a8c4a0"><img loading="lazy" src="assets/museum/rooms/littleisland.jpg" alt="The tulips"><span><small>LITTLE ISLAND</small><b>The tulips</b></span></a>
+      <a href="museum.html#room=cathedral" style="--c:#b8a8c8"><img loading="lazy" src="assets/museum/rooms/cathedral.jpg" alt="The unfinished nave"><span><small>ST. JOHN THE DIVINE</small><b>The unfinished nave</b></span></a>
+      <a href="museum.html#room=queensboro" style="--c:#a0a8d8"><img loading="lazy" src="assets/museum/rooms/queensboro.jpg" alt="The elevated"><span><small>QUEENSBORO PLAZA</small><b>The elevated</b></span></a>
+      <a href="museum.html#room=bushwick" style="--c:#e8a04a"><img loading="lazy" src="assets/museum/rooms/bushwick.jpg" alt="The roof"><span><small>A BUSHWICK ROOFTOP</small><b>The roof</b></span></a>
+      <a href="museum.html#room=cyclone" style="--c:#f2e6c8"><img loading="lazy" src="assets/museum/rooms/cyclone.jpg" alt="The ride"><span><small>THE CYCLONE</small><b>The ride</b></span></a>
+      <a href="museum.html#room=brooklynbridge" style="--c:#c9b08a"><img loading="lazy" src="assets/museum/rooms/brooklynbridge.jpg" alt="Between the cables"><span><small>THE BROOKLYN BRIDGE</small><b>Between the cables</b></span></a>
+      <a href="museum.html#room=panorama" style="--c:#8ab0c8"><img loading="lazy" src="assets/museum/rooms/panorama.jpg" alt="The city on a table"><span><small>THE QUEENS MUSEUM</small><b>The city on a table</b></span></a>
+      <a href="museum.html#room=liberty" style="--c:#7fb8a8"><img loading="lazy" src="assets/museum/rooms/liberty.jpg" alt="The climb to the crown"><span><small>LIBERTY ISLAND</small><b>The climb to the crown</b></span></a>
+      <a href="museum.html#room=oysterbar" style="--c:#d8b070"><img loading="lazy" src="assets/museum/rooms/oysterbar.jpg" alt="Under the tile vaults"><span><small>GRAND CENTRAL OYSTER BAR</small><b>Under the tile vaults</b></span></a>
+      <a href="museum.html#room=morgan" style="--c:#b8864a"><img loading="lazy" src="assets/museum/rooms/morgan.jpg" alt="Three tiers of books"><span><small>THE MORGAN LIBRARY</small><b>Three tiers of books</b></span></a>
+      <a href="museum.html#room=radiocity" style="--c:#c8963a"><img loading="lazy" src="assets/museum/rooms/radiocity.jpg" alt="The great stage"><span><small>RADIO CITY MUSIC HALL</small><b>The great stage</b></span></a>
+      <a href="museum.html#room=woolworth" style="--c:#d4c48a"><img loading="lazy" src="assets/museum/rooms/woolworth.jpg" alt="The cathedral of commerce"><span><small>THE WOOLWORTH BUILDING</small><b>The cathedral of commerce</b></span></a>
+      <a href="museum.html#room=wallstreet" style="--c:#9aa8b8"><img loading="lazy" src="assets/museum/rooms/wallstreet.jpg" alt="The canyon"><span><small>WALL STREET</small><b>The canyon</b></span></a>
+      <a href="museum.html#room=lincolncenter" style="--c:#e8d8a8"><img loading="lazy" src="assets/museum/rooms/lincolncenter.jpg" alt="The plaza at eight"><span><small>LINCOLN CENTER</small><b>The plaza at eight</b></span></a>
+      <a href="museum.html#room=belvedere" style="--c:#9ab088"><img loading="lazy" src="assets/museum/rooms/belvedere.jpg" alt="The castle on the rock"><span><small>BELVEDERE CASTLE</small><b>The castle on the rock</b></span></a>
+      <a href="museum.html#room=highbridge" style="--c:#8898b8"><img loading="lazy" src="assets/museum/rooms/highbridge.jpg" alt="The aqueduct walk"><span><small>THE HIGH BRIDGE</small><b>The aqueduct walk</b></span></a>
+      <a href="museum.html#room=arthuravenue" style="--c:#c89a5a"><img loading="lazy" src="assets/museum/rooms/arthuravenue.jpg" alt="The market hall"><span><small>ARTHUR AVENUE</small><b>The market hall</b></span></a>
+      <a href="museum.html#room=wavehill" style="--c:#a8c8a0"><img loading="lazy" src="assets/museum/rooms/wavehill.jpg" alt="The pergola over the river"><span><small>WAVE HILL</small><b>The pergola over the river</b></span></a>
+      <a href="museum.html#room=gantry" style="--c:#e05a5a"><img loading="lazy" src="assets/museum/rooms/gantry.jpg" alt="The gantries"><span><small>GANTRY PLAZA</small><b>The gantries</b></span></a>
+      <a href="museum.html#room=rockaway" style="--c:#f0c890"><img loading="lazy" src="assets/museum/rooms/rockaway.jpg" alt="Surf at the end of the A"><span><small>ROCKAWAY BEACH</small><b>Surf at the end of the A</b></span></a>
+      <a href="museum.html#room=greenwood" style="--c:#c8a050"><img loading="lazy" src="assets/museum/rooms/greenwood.jpg" alt="The gothic gate"><span><small>GREEN-WOOD CEMETERY</small><b>The gothic gate</b></span></a>
+      <a href="museum.html#room=domino" style="--c:#d88a4a"><img loading="lazy" src="assets/museum/rooms/domino.jpg" alt="The refinery"><span><small>DOMINO PARK</small><b>The refinery</b></span></a>
+      <a href="museum.html#room=boatgraveyard" style="--c:#7a8a80"><img loading="lazy" src="assets/museum/rooms/boatgraveyard.jpg" alt="The ships in the marsh"><span><small>THE ARTHUR KILL</small><b>The ships in the marsh</b></span></a>
+      <a href="museum.html#room=intrepid" style="--c:#8a98a8"><img loading="lazy" src="assets/museum/rooms/intrepid.jpg" alt="The flight deck"><span><small>THE INTREPID</small><b>The flight deck</b></span></a>
+      <a href="museum.html#room=studio8h" style="--c:#e8b040"><img loading="lazy" src="assets/museum/rooms/studio8h.jpg" alt="Live from New York"><span><small>STUDIO 8H</small><b>Live from New York</b></span></a>
+      <a href="museum.html#room=carnegie" style="--c:#c8a070"><img loading="lazy" src="assets/museum/rooms/carnegie.jpg" alt="The horseshoe"><span><small>CARNEGIE HALL</small><b>The horseshoe</b></span></a>
+      <a href="museum.html#room=vanguard" style="--c:#c83a3a"><img loading="lazy" src="assets/museum/rooms/vanguard.jpg" alt="The wedge downstairs"><span><small>THE VILLAGE VANGUARD</small><b>The wedge downstairs</b></span></a>
+      <a href="museum.html#room=rucker" style="--c:#f08a2a"><img loading="lazy" src="assets/museum/rooms/rucker.jpg" alt="The court"><span><small>RUCKER PARK</small><b>The court</b></span></a>
+      <a href="museum.html#room=sedgwick" style="--c:#e0c030"><img loading="lazy" src="assets/museum/rooms/sedgwick.jpg" alt="The rec room"><span><small>1520 SEDGWICK AVENUE</small><b>The rec room</b></span></a>
+      <a href="museum.html#room=balloons" style="--c:#f0a0c0"><img loading="lazy" src="assets/museum/rooms/balloons.jpg" alt="The night before the parade"><span><small>CENTRAL PARK WEST</small><b>The night before the parade</b></span></a>
+      <a href="museum.html#room=stonewall" style="--c:#e83a8a"><img loading="lazy" src="assets/museum/rooms/stonewall.jpg" alt="Christopher Street"><span><small>SHERIDAN SQUARE</small><b>Christopher Street</b></span></a>
+      <a href="museum.html#room=sangennaro" style="--c:#e8503a"><img loading="lazy" src="assets/museum/rooms/sangennaro.jpg" alt="The feast on Mulberry"><span><small>THE FEAST OF SAN GENNARO</small><b>The feast on Mulberry</b></span></a>
+      <a href="museum.html#room=chelseahotel" style="--c:#b8483a"><img loading="lazy" src="assets/museum/rooms/chelseahotel.jpg" alt="The lobby of the hotel"><span><small>THE CHELSEA HOTEL</small><b>The lobby of the hotel</b></span></a>
+      <a href="museum.html#room=strand" style="--c:#c83a3a"><img loading="lazy" src="assets/museum/rooms/strand.jpg" alt="Eighteen miles of books"><span><small>THE STRAND</small><b>Eighteen miles of books</b></span></a>
+      <a href="museum.html#room=dakota" style="--c:#c8b090"><img loading="lazy" src="assets/museum/rooms/dakota.jpg" alt="The courtyard and the mosaic"><span><small>THE DAKOTA</small><b>The courtyard and the mosaic</b></span></a>
+      <a href="museum.html#room=garden" style="--c:#f0842a"><img loading="lazy" src="assets/museum/rooms/garden.jpg" alt="The world's most famous arena"><span><small>MADISON SQUARE GARDEN</small><b>The world's most famous arena</b></span></a>
+      <a href="museum.html#room=dendur" style="--c:#d8c8a0"><img loading="lazy" src="assets/museum/rooms/dendur.jpg" alt="The temple by the window"><span><small>THE TEMPLE OF DENDUR</small><b>The temple by the window</b></span></a>
+      <a href="museum.html#room=moma" style="--c:#8ab0a8"><img loading="lazy" src="assets/museum/rooms/moma.jpg" alt="The garden on 54th"><span><small>THE SCULPTURE GARDEN</small><b>The garden on 54th</b></span></a>
+      <a href="museum.html#room=whitney" style="--c:#a8c0d0"><img loading="lazy" src="assets/museum/rooms/whitney.jpg" alt="The terraces over the High Line"><span><small>THE WHITNEY</small><b>The terraces over the High Line</b></span></a>
+      <a href="museum.html#room=ellis" style="--c:#c8a888"><img loading="lazy" src="assets/museum/rooms/ellis.jpg" alt="The registry room"><span><small>ELLIS ISLAND</small><b>The registry room</b></span></a>
+      <a href="museum.html#room=marathon" style="--c:#3a8ad8"><img loading="lazy" src="assets/museum/rooms/marathon.jpg" alt="Mile one"><span><small>THE VERRAZZANO</small><b>Mile one</b></span></a>
+      <a href="museum.html#room=halloween" style="--c:#f08a2a"><img loading="lazy" src="assets/museum/rooms/halloween.jpg" alt="Sixth Avenue after dark"><span><small>THE VILLAGE HALLOWEEN PARADE</small><b>Sixth Avenue after dark</b></span></a>
+      <a href="museum.html#room=easternparkway" style="--c:#f1c531"><img loading="lazy" src="assets/museum/rooms/easternparkway.jpg" alt="The parkway on Labor Day"><span><small>GRAND ARMY PLAZA</small><b>The parkway on Labor Day</b></span></a>
+      <a href="museum.html#room=manhattanhenge" style="--c:#ff9a40"><img loading="lazy" src="assets/museum/rooms/manhattanhenge.jpg" alt="The sun down 42nd"><span><small>MANHATTANHENGE</small><b>The sun down 42nd</b></span></a>
+      <a href="museum.html#room=metgreathall" style="--c:#d8c8a8"><img loading="lazy" src="assets/museum/rooms/metgreathall.jpg" alt="The Great Hall"><span><small>THE MET</small><b>The Great Hall</b></span></a>
+      <a href="museum.html#room=metamerican" style="--c:#c8d8c8"><img loading="lazy" src="assets/museum/rooms/metamerican.jpg" alt="The Engelhard Court"><span><small>THE MET</small><b>The Engelhard Court</b></span></a>
+      <a href="museum.html#room=meteuropean" style="--c:#b8a888"><img loading="lazy" src="assets/museum/rooms/meteuropean.jpg" alt="The skylit suite"><span><small>THE MET</small><b>The skylit suite</b></span></a>
+      <a href="museum.html#room=oceanlife" style="--c:#3a6aa8"><img loading="lazy" src="assets/museum/rooms/oceanlife.jpg" alt="Under the whale"><span><small>NATURAL HISTORY</small><b>Under the whale</b></span></a>
+      <a href="museum.html#room=rosecenter" style="--c:#8ab8e8"><img loading="lazy" src="assets/museum/rooms/rosecenter.jpg" alt="The sphere in the cube"><span><small>THE ROSE CENTER</small><b>The sphere in the cube</b></span></a>
+      <a href="museum.html#room=momaatrium" style="--c:#e8e8e4"><img loading="lazy" src="assets/museum/rooms/momaatrium.jpg" alt="The atrium"><span><small>MOMA</small><b>The atrium</b></span></a>
+      <a href="museum.html#room=newmuseum" style="--c:#c8ccd0"><img loading="lazy" src="assets/museum/rooms/newmuseum.jpg" alt="The stacked boxes"><span><small>THE NEW MUSEUM</small><b>The stacked boxes</b></span></a>
+      <a href="museum.html#room=neuegalerie" style="--c:#d8b060"><img loading="lazy" src="assets/museum/rooms/neuegalerie.jpg" alt="The gold room"><span><small>NEUE GALERIE</small><b>The gold room</b></span></a>
+      <a href="museum.html#room=cooperhewitt" style="--c:#a8c090"><img loading="lazy" src="assets/museum/rooms/cooperhewitt.jpg" alt="The Carnegie garden"><span><small>COOPER HEWITT</small><b>The Carnegie garden</b></span></a>
+      <a href="museum.html#room=breuer" style="--c:#8a8a88"><img loading="lazy" src="assets/museum/rooms/breuer.jpg" alt="The inverted ziggurat"><span><small>THE BREUER</small><b>The inverted ziggurat</b></span></a>
+      <a href="museum.html#room=jewishmuseum" style="--c:#b8a8c8"><img loading="lazy" src="assets/museum/rooms/jewishmuseum.jpg" alt="The Warburg mansion"><span><small>THE JEWISH MUSEUM</small><b>The Warburg mansion</b></span></a>
+      <a href="museum.html#room=rubin" style="--c:#c86a3a"><img loading="lazy" src="assets/museum/rooms/rubin.jpg" alt="The spiral stair"><span><small>THE RUBIN</small><b>The spiral stair</b></span></a>
+      <a href="museum.html#room=theshed" style="--c:#8ab0d0"><img loading="lazy" src="assets/museum/rooms/theshed.jpg" alt="The shell rolls out"><span><small>THE SHED</small><b>The shell rolls out</b></span></a>
+      <a href="museum.html#room=armory" style="--c:#8a6a4a"><img loading="lazy" src="assets/museum/rooms/armory.jpg" alt="The drill hall"><span><small>PARK AVENUE ARMORY</small><b>The drill hall</b></span></a>
+      <a href="museum.html#room=customhouse" style="--c:#c8b8a0"><img loading="lazy" src="assets/museum/rooms/customhouse.jpg" alt="The rotunda at Bowling Green"><span><small>THE CUSTOM HOUSE</small><b>The rotunda at Bowling Green</b></span></a>
+      <a href="museum.html#room=mad" style="--c:#e8e0d0"><img loading="lazy" src="assets/museum/rooms/mad.jpg" alt="The lollipop building"><span><small>MUSEUM OF ARTS AND DESIGN</small><b>The lollipop building</b></span></a>
+      <a href="museum.html#room=hispanicsociety" style="--c:#c8784a"><img loading="lazy" src="assets/museum/rooms/hispanicsociety.jpg" alt="The terracotta court"><span><small>THE HISPANIC SOCIETY</small><b>The terracotta court</b></span></a>
+      <a href="museum.html#room=studiomuseum" style="--c:#d88a3a"><img loading="lazy" src="assets/museum/rooms/studiomuseum.jpg" alt="The new building on 125th"><span><small>THE STUDIO MUSEUM IN HARLEM</small><b>The new building on 125th</b></span></a>
+      <a href="museum.html#room=elmuseo" style="--c:#e8a030"><img loading="lazy" src="assets/museum/rooms/elmuseo.jpg" alt="The courtyard on Fifth"><span><small>EL MUSEO DEL BARRIO</small><b>The courtyard on Fifth</b></span></a>
+      <a href="museum.html#room=mcny" style="--c:#b8a8a0"><img loading="lazy" src="assets/museum/rooms/mcny.jpg" alt="The city's museum"><span><small>MUSEUM OF THE CITY OF NEW YORK</small><b>The city's museum</b></span></a>
+      <a href="museum.html#room=nyhistorical" style="--c:#c8b898"><img loading="lazy" src="assets/museum/rooms/nyhistorical.jpg" alt="The oldest museum in the city"><span><small>NEW-YORK HISTORICAL SOCIETY</small><b>The oldest museum in the city</b></span></a>
+      <a href="museum.html#room=diachelsea" style="--c:#a8a8a0"><img loading="lazy" src="assets/museum/rooms/diachelsea.jpg" alt="The long light"><span><small>DIA CHELSEA</small><b>The long light</b></span></a>
+      <a href="museum.html#room=chelseablock" style="--c:#f4f4f0"><img loading="lazy" src="assets/museum/rooms/chelseablock.jpg" alt="Thursday openings on 24th"><span><small>WEST 24TH STREET</small><b>Thursday openings on 24th</b></span></a>
+      <a href="museum.html#room=fotografiska" style="--c:#8a4a5a"><img loading="lazy" src="assets/museum/rooms/fotografiska.jpg" alt="The mission house"><span><small>FOTOGRAFISKA</small><b>The mission house</b></span></a>
+      <a href="museum.html#room=ps1" style="--c:#c8a888"><img loading="lazy" src="assets/museum/rooms/ps1.jpg" alt="The old school"><span><small>MOMA PS1</small><b>The old school</b></span></a>
+      <a href="museum.html#room=noguchi" style="--c:#8a8a80"><img loading="lazy" src="assets/museum/rooms/noguchi.jpg" alt="The stone garden"><span><small>THE NOGUCHI MUSEUM</small><b>The stone garden</b></span></a>
+      <a href="museum.html#room=socrates" style="--c:#7aa07a"><img loading="lazy" src="assets/museum/rooms/socrates.jpg" alt="Sculpture on the river"><span><small>SOCRATES SCULPTURE PARK</small><b>Sculpture on the river</b></span></a>
+      <a href="museum.html#room=brooklynmuseum" style="--c:#c8b8a0"><img loading="lazy" src="assets/museum/rooms/brooklynmuseum.jpg" alt="The Beaux-Arts Court"><span><small>THE BROOKLYN MUSEUM</small><b>The Beaux-Arts Court</b></span></a>
+      <a href="museum.html#room=pioneerworks" style="--c:#a88a6a"><img loading="lazy" src="assets/museum/rooms/pioneerworks.jpg" alt="The ironworks in Red Hook"><span><small>PIONEER WORKS</small><b>The ironworks in Red Hook</b></span></a>
+      <a href="museum.html#room=bronxmuseum" style="--c:#c8a0b8"><img loading="lazy" src="assets/museum/rooms/bronxmuseum.jpg" alt="The Concourse museum"><span><small>THE BRONX MUSEUM OF THE ARTS</small><b>The Concourse museum</b></span></a>
     </div>
   </div>
 </section>
 
+<!-- THE RELEASES -->
+<section id="releases" class="section wrap">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+    <div>
+      <div class="kicker">11 · The releases</div>
+      <h2 class="h-l" style="margin-top:20px;max-width:900px">Sold in named releases. Each one closed before it opens.</h2>
+      <p class="body" style="margin-top:16px;max-width:760px" id="relPromise"></p>
+    </div>
+    <a class="btn ghost" href="faq.html#s6">HOW THE RELEASE WORKS</a>
+  </div>
+  <div class="rels" id="relGrid"></div>
+  <div class="relFuture" id="relFuture"></div>
+</section>
+
+<!-- THE READING ROOM -->
+<section id="read" class="section light wrap">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+    <div>
+      <div class="kicker">12 · The reading room</div>
+      <h2 class="h-l" style="margin-top:20px;max-width:900px">New York, on the record. Real history, real sources.</h2>
+      <p class="body" style="margin-top:16px;max-width:680px">The census paints the city; the reading room explains it. Short histories of the subway, the bridge, the harbor, the blackout, the birth of hip hop and more, every fact tied to an institution you can check. Every museum room has a history page too.</p>
+    </div>
+    <a class="btn ghost" href="learn.html" style="border-color:#c9d2dc;color:var(--ink)">OPEN THE READING ROOM</a>
+  </div>
+  <div class="grid3" id="readGrid" style="margin-top:48px"></div>
+</section>
+
 <!-- MECHANIC -->
 <section id="mech" class="section blue wrap">
-  <div class="kicker" style="color:var(--cloud);opacity:.8">11 · How the city fills</div>
+  <div class="kicker" style="color:var(--cloud);opacity:.8">13 · How the city fills</div>
   <div class="g">
     <div>
       <div class="h-l" style="font-size:clamp(36px,5vw,60px);font-weight:800;line-height:1.02">First THE COUNT.<br>Then THE CLAIM.</div>
@@ -427,7 +489,7 @@
 <section id="note" class="section wrap">
   <div class="g">
     <div>
-      <div class="kicker">12 · The open notebook</div>
+      <div class="kicker">14 · The open notebook</div>
       <h2 class="h-l" style="margin-top:24px">Every layer shown. Nothing hidden.</h2>
       <p class="body" style="margin-top:28px">The prompts, the style eras V1 through V10.1, the refires, the cost ledgers, the cuts. Almost no AI artist will publish what they threw away. This one does, because curation is the work. Every record in the census carries its own prompt under FROM THE STUDIO.</p>
     </div>
@@ -439,7 +501,10 @@
 
 <script src="assets/config.js"></script>
 <script src="assets/data.js"></script>
+<script src="assets/counts.js"></script>
 <script src="assets/site.js"></script>
+<script src="assets/rooms.js"></script>
+<script src="assets/articles.js"></script>
 <script>
 (function(){
 "use strict";
@@ -551,6 +616,30 @@ $("#noteList").innerHTML=[
   `<b>${num(C.edges)}</b> connections drawn between characters`,
   `<b class="c">EVERY</b> prompt block, V1 through V10.1, public`
 ].map(s=>`<div>${s}</div>`).join("");
+})();
+</script>
+<script src="assets/eggs.js" defer></script>
+<script>
+(function(){ // the releases, from _build/releases.json via counts.js
+  var R=(window.NY_COUNTS&&NY_COUNTS.releases)||null; if(!R) return;
+  document.getElementById("relPromise").textContent=R.promise;
+  document.getElementById("relGrid").innerHTML=R.releases.map(function(r){
+    return '<div class="rel"><div class="top"><span class="n">RELEASE '+String(r.n).padStart(2,"0")+'</span><span>'+r.platform+'</span></div>'
+      +'<h3>'+r.name+'</h3>'
+      +'<div class="count">'+r.count.toLocaleString("en-US")+'<small>'+(r.count===1?"work":"works")+'</small></div>'
+      +'<dl><dt>Drawn from</dt><dd>'+r.drawnFrom+'</dd>'
+      +'<dt>Format</dt><dd>'+r.format+'</dd>'
+      +'<dt>Where</dt><dd>'+r.platform+'</dd>'
+      +'<dt>When</dt><dd>'+r.when+'</dd></dl>'
+      +'<p class="det">'+r.detail+'</p></div>';
+  }).join("");
+  document.getElementById("relFuture").innerHTML='<h4>'+R.future.headline+'</h4><p>'+R.future.body+'</p><p>'+R.expansion+'</p><div class="relNote">'+R.note+'</div>';
+})();
+(function(){ // the reading room cards
+  const A=window.NY_ARTICLES||[]; const g=document.getElementById("readGrid"); if(!g) return;
+  const pick=A.slice().sort(()=>Math.random()-.5).slice(0,6);
+  g.innerHTML=pick.map(a=>`<a class="card" href="learn/${a.slug}.html" style="background:#fff;border-color:#dfe5ec;color:var(--ink)"><img loading="lazy" src="${a.image}" alt=""><div class="cb"><div class="plate"><span class="n">${a.kicker}</span><span class="m">${a.readMinutes} MIN</span></div><div class="ct">${a.title}</div><div class="cs" style="color:#4a5260">${a.summary}</div></div></a>`).join("");
+  if(!pick.length) g.parentElement.style.display="none";
 })();
 </script>
 </body>

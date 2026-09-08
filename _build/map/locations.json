@@ -20577,9 +20577,9 @@
    "why": "the Hudson Street tavern with a poet's corner is the White Horse"
   },
   "6941": {
-   "place": "key:cbgb",
+   "place": "key:apollo",
    "conf": "stated",
-   "why": "the Bowery club with a canopy and low stage is CBGB"
+   "why": "the title names the Apollo, which is on West 125th Street in Harlem, not CBGB (repinned 2026-09-08, was Madison Square Garden)"
   },
   "6942": {
    "place": "key:55_bar",
@@ -24335,6 +24335,96 @@
    "place": "nb:Harlem",
    "conf": "stated",
    "why": "a Harlem apartment hung floor to ceiling"
+  },
+  "3103": {
+   "place": "nb:Sunset Park",
+   "conf": "forced",
+   "why": "the story names Sunset Park; Brooklyn's Eighth Avenue, not Manhattan's; forced over the site level regex read"
+  },
+  "3106": {
+   "place": "nb:Bay Ridge",
+   "conf": "forced",
+   "why": "the story names Bay Ridge at sunset; Brooklyn's Fifth Avenue, not Manhattan's; forced"
+  },
+  "3109": {
+   "place": "nb:Washington Heights",
+   "conf": "forced",
+   "why": "One Hundred Seventy Seventh Street in the story, Washington Heights, not 77th Street; forced"
+  },
+  "3117": {
+   "place": "nb:Midwood",
+   "conf": "forced",
+   "why": "Coney Island Avenue in Midwood, the Little Pakistan stretch, not Coney Island; forced"
+  },
+  "3122": {
+   "place": "nb:Stapleton",
+   "conf": "forced",
+   "why": "Bay Street in Tompkinsville, which sits in the Stapleton NTA; forced so the borough stays Staten Island"
+  },
+  "1410": {
+   "place": "key:central_park",
+   "conf": "stated",
+   "why": "Seneca Village stood in what is now Central Park, roughly West 82nd to West 89th Street (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "2147": {
+   "place": "key:atlantic_tunnel",
+   "conf": "stated",
+   "why": "the prompt names the oldest tunnel under Atlantic Avenue, in Brooklyn (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "4350": {
+   "place": "key:bbg",
+   "conf": "stated",
+   "why": "the prompt names the Brooklyn Botanic Garden (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "4447": {
+   "place": "nb:Fort Greene",
+   "conf": "stated",
+   "why": "the prompt names a Fort Greene brownstone (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "5374": {
+   "place": "nb:East Village",
+   "conf": "stated",
+   "why": "the prompt names the East Village (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "2961": {
+   "place": "key:subway",
+   "conf": "stated",
+   "why": "a subway platform at 3am, no station named (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "830": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "a community garden between two tenements, no neighborhood named (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "2630": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "a community garden waitlist lottery, no neighborhood named (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "2979": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "the M14 crosstown, which runs the length of 14th Street (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "3066": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "the Painter's windowsill, and the Painter moves between eras (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "3429": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "a community garden lot, no neighborhood named (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "4445": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "a garden level kitchen on an unnamed brownstone block (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "4452": {
+   "place": "boro:Manhattan",
+   "conf": "stated",
+   "why": "a below stairs areaway on an unnamed corner (repinned 2026-09-08, was Madison Square Garden)"
   }
  }
 }

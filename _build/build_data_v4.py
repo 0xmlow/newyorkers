@@ -462,6 +462,11 @@ if __name__ == "__main__":
     for e in sorted(era_heroes): extra_m += era_heroes[e]
     for n in extra_m:
         if str(n) in by_id and n not in ms: ms.append(n)
+    # A hundred mark is ALWAYS a monument. Ruled 2026-09-07 after an audit found only 44 of the 74
+    # painted hundred marks carried the tag, so 500, 600, 800, 900, 1100 and the whole 5500 to 6100
+    # run showed no MONUMENT badge on the census.
+    for n in range(100, 8001, 100):
+        if str(n) in by_id and n not in ms: ms.append(n)
     story["milestones"] = sorted(ms)
     # sets from every era
     sets = list(story["sets"])
@@ -503,6 +508,16 @@ if __name__ == "__main__":
     story["eraHeroes"] = {str(e): [n for n in story["milestones"] if story["eras"][e-1]["range"][0] <= n <= story["eras"][e-1]["range"][1]] for e in range(1, NE+1)}
 
     n_states = sum(len(p["st"]) for p in kept)
+    # The 96 Era I works that were painted before the numbering existed are worked into the main
+    # collection on the lowest free numbers (MLow's ruling, 2026-09-07). Their ids stay as they are,
+    # because the story and location files are keyed by id and renaming would orphan them.
+    # Deterministic: sorted by id, filling free numbers from 1 upward, so a rebuild gives the same result.
+    _taken = {p["n"] for p in kept if p.get("n") is not None}
+    _free = (n for n in range(1, 7991) if n not in _taken)
+    for _p in sorted([p for p in kept if p.get("n") is None], key=lambda x: x["id"]):
+        _p["n"] = next(_free)
+    print("  numbered the unnumbered Era I works:", sum(1 for p in kept if p.get("n") is not None), "now carry a number")
+
     counts = {
         "pieces": len(kept), "era1": n_era1, "states": n_states, "eras": NE,
         "maxNum": max(p["n"] for p in kept if p["n"]),
