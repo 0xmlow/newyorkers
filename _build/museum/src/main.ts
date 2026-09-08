@@ -11,6 +11,8 @@ const $ = <E extends HTMLElement = HTMLElement>(s: string) => document.querySele
 type RoomFact = { id: string; fact?: string; year?: string; learn?: string; article?: string; source?: { name: string; url: string } };
 const FACTS: Record<string, RoomFact> = {};
 for (const r of ((window as unknown as { NY_ROOMS?: RoomFact[] }).NY_ROOMS || [])) FACTS[r.id] = r;
+const FIRST_ROOMS = ['metgreathall', 'bowery', 'cloisters'];
+const START_ROOMS = [...FIRST_ROOMS, 'guggenheim', 'grand', 'brooklyn'];
 const roomThumb = (id: string) => `assets/museum/rooms/${id}.jpg`;
 const CFG = (window as unknown as { NY_CONFIG?: Record<string, string> }).NY_CONFIG || {};
 let spinOnEnter = false;
@@ -22,7 +24,7 @@ const quality: 'high' | 'low' = params.get('q') === 'low' || (touch && innerWidt
 const reduced = () => reducedQuery.matches || params.get('motion') === 'off';
 
 type State = { room: number; hang: Hang; page: number; active: number; tour: boolean };
-const state: State = { room: 0, hang: { ...DEFAULT_HANG }, page: 0, active: -1, tour: false };
+const state: State = { room: ROOMS.findIndex(r => r.id === 'metgreathall'), hang: { ...DEFAULT_HANG }, page: 0, active: -1, tour: false };
 let renderer: T.WebGLRenderer | null = null;
 let kit: Kit | null = null;
 let scene: T.Scene | null = null;
@@ -66,7 +68,7 @@ function writeHash() {
 /* ---------- renderer ---------- */
 function makeRenderer() {
   const host = $('#world');
-  const r = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  const r = new T.WebGLRenderer({ antialias: quality === 'high', powerPreference: quality === 'low' ? 'low-power' : 'high-performance' });
   r.setPixelRatio(Math.min(devicePixelRatio, quality === 'high' ? 1.75 : 1.2));
   r.setSize(host.clientWidth, host.clientHeight);
   r.outputColorSpace = T.SRGBColorSpace;
@@ -175,7 +177,10 @@ function bindControls(canvas: HTMLCanvasElement) {
     lastX = 0,
     lastY = 0,
     moved = 0;
+  canvas.tabIndex = 0;
+  canvas.setAttribute('aria-label', 'Walkable gallery. Drag to look, W A S D to walk, J for the next artwork.');
   canvas.addEventListener('pointerdown', (e) => {
+    canvas.focus();
     drag = true;
     lastX = e.clientX;
     lastY = e.clientY;
@@ -222,12 +227,14 @@ function bindControls(canvas: HTMLCanvasElement) {
       closePanels();
       return;
     }
+    if (document.querySelector('.panel.open,#detail.open')) return;
+    if (e.key === 'Enter' && t.closest('button,a,summary')) return;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 'Shift'].includes(e.key)) {
       e.preventDefault();
       keys.add(e.key.toLowerCase());
       goal = null;
     }
-    if (e.key === 'Tab' && build) {
+    if (e.key.toLowerCase() === 'j' && build && !t.closest('button,a,summary') && !document.querySelector('.panel.open,#detail.open')) {
       e.preventDefault();
       focus((state.active + (e.shiftKey ? -1 : 1) + build.mounts.length) % build.mounts.length);
     }
@@ -249,13 +256,30 @@ function bindControls(canvas: HTMLCanvasElement) {
 }
 
 /* ---------- the loop ---------- */
+const TOUR_DWELL = 6.5;
+let tourClock = 0;
 let prev = performance.now();
 function animate(now: number) {
   frame = requestAnimationFrame(animate);
-  if (!renderer || !scene || !build || !kit) return;
+  if (!renderer || !scene || !build || !kit) { prev = now; return; }
+  // Do not gate the draw on document.hidden. requestAnimationFrame is already
+  // paused by the browser in a background tab, and embedded viewers (previews,
+  // in-app webviews) report hidden while still painting, which left the room
+  // pure black. Gate the setInterval tour instead, where it actually matters.
   const dt = Math.min((now - prev) / 1000, 0.05);
   prev = now;
+  if (state.tour && shown.length && !document.querySelector('.panel.open,#detail.open')) {
+    tourClock += dt;
+    if (tourClock >= TOUR_DWELL) { tourClock = 0; focus((state.active + 1) % shown.length); }
+  } else {
+    tourClock = 0;
+  }
   if (goal && lookGoal) {
+    if (reduced()) {
+      camera.position.copy(goal);
+      if (build.path) { pathIndex = targetPath; placeOnPath(); }
+      camera.lookAt(lookGoal);
+    }
     if (build.path) {
       pathIndex += (targetPath - pathIndex) * (1 - Math.exp(-dt * 2.2));
       if (Math.abs(pathIndex - targetPath) < 0.02) pathIndex = targetPath;
@@ -388,18 +412,25 @@ function paintStrip() {
   el.innerHTML = shown.map((p, i) => `<button class="${state.active === i ? 'on' : ''}" data-i="${i}" aria-label="Go to ${esc(p.t)}"><img loading="lazy" src="${thumb(p)}" alt=""><span>${String(p.n).padStart(4, '0')}</span></button>`).join('');
   el.querySelectorAll('button').forEach((b) => (b.onclick = () => focus(Number(b.dataset.i))));
   const on = el.querySelector('button.on') as HTMLElement | null;
-  on?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  if ($('#artTray')?.hasAttribute('open')) on?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduced() ? 'auto' : 'smooth' });
 }
 
+let panelReturn: HTMLElement | null = null;
 function closePanels() {
   document.querySelectorAll('.panel.open').forEach((p) => p.classList.remove('open'));
   $('#detail').classList.remove('open');
   if (!spinning) $('#slot')?.classList.remove('open');
+  panelReturn?.focus(); panelReturn = null;
 }
 function openPanel(id: string) {
   const was = $(id).classList.contains('open');
   closePanels();
-  if (!was) $(id).classList.add('open');
+  if (!was) {
+    panelReturn = document.activeElement as HTMLElement;
+    $(id).classList.add('open');
+    keys.clear(); touchDir.f = touchDir.s = 0;
+    $(id).querySelector<HTMLElement>('input,button')?.focus();
+  }
 }
 
 /* ---------- detail ---------- */
@@ -443,13 +474,25 @@ function buildPanels() {
   $('#destGrid').innerHTML = ROOMS.map((r, i) => `<button data-i="${i}" style="--c:${r.color}"><span class="pic"><img loading="lazy" src="${roomThumb(r.id)}" alt="${esc(r.name)}"><span class="num">${String(i + 1).padStart(2, '0')}</span>${FACTS[r.id]?.year ? `<span class="yr">${esc(FACTS[r.id].year!)}</span>` : ''}</span><span class="txt"><small>${esc(r.area)}</small><strong>${esc(r.name)}</strong><p>${esc(r.description)}</p><em>${esc(r.mood)} · ${placeCount(r.id).toLocaleString('en-US')} recorded here</em></span></button>`).join('');
   $('#destGrid').querySelectorAll('button').forEach((b) => (b.onclick = () => { closePanels(); setRoom(Number(b.dataset.i)); }));
   const q = $('#destSearch') as HTMLInputElement | null;
-  if (q) q.oninput = () => {
-    const v = q.value.trim().toLowerCase();
+  let roomFilter = 'start';
+  const filterRooms = () => {
+    const v = q?.value.trim().toLowerCase() || '';
+    let found = 0;
     $('#destGrid').querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
       const r = ROOMS[Number(b.dataset.i)];
-      b.hidden = !!v && !(r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v);
+      const matches = v ? (r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v) : roomFilter === 'all' || START_ROOMS.includes(r.id);
+      b.hidden = !matches;
+      if (matches) found++;
     });
+    $('#destResult').textContent = found ? `${found} rooms${v ? ' found' : roomFilter === 'start' ? ' to start with' : ' to explore'}` : 'No rooms found. Try a neighborhood or clear your search.';
   };
+  if (q) q.oninput = filterRooms;
+  document.querySelectorAll<HTMLButtonElement>('#destFilters button').forEach(b => b.onclick = () => {
+    roomFilter = b.dataset.filter!;
+    document.querySelectorAll('#destFilters button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    filterRooms();
+  });
+  filterRooms();
   const chip = (h: Hang, label: string, sub = '') => `<button class="chip" data-h="${h.mode}${h.key ? ':' + h.key : ''}"><b>${esc(label)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</button>`;
   $('#hangTop').innerHTML = chip({ mode: 'launch' }, 'THE TWELVE', 'the launch fortnight, Sept 8 to 21, then this place') + chip({ mode: 'place' }, 'This place', 'the New Yorkers recorded at this location') + chip({ mode: 'all' }, 'The whole census', `${C.pieces.toLocaleString('en-US')} works by number`) + chip({ mode: 'heroes' }, 'The heroes', 'the hundred marks and closers');
   $('#hangEras').innerHTML = ERAS.map((e) => chip({ mode: 'era', key: String(e.i) }, `ERA ${e.roman}`, e.title)).join('');
@@ -633,23 +676,37 @@ function spin(auto = false) {
 function boot() {
   const openN = readHash();
   buildPanels();
+  $('#firstRooms').innerHTML = FIRST_ROOMS.map(id => {
+    const r = ROOMS.find(x => x.id === id)!;
+    return `<button data-room="${id}" aria-pressed="${ROOMS[state.room].id === id}"><img src="${roomThumb(id)}" alt=""><strong>${esc(r.name)}</strong><small>${esc(r.mood)}</small></button>`;
+  }).join('');
+  document.querySelectorAll<HTMLButtonElement>('#firstRooms button').forEach(b => b.onclick = () => {
+    state.room = ROOMS.findIndex(r => r.id === b.dataset.room);
+    spinOnEnter = false;
+    $('#enterRoom').textContent = 'FIRST STOP · ' + ROOMS[state.room].area;
+    document.querySelectorAll('#firstRooms button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  });
   $('#enterCount').innerHTML = `<b>${C.pieces.toLocaleString('en-US')}</b> NEW YORKERS · <b>${ROOMS.length}</b> ROOMS · <b>${C.eras}</b> ERAS`;
   $('#enterRoom').textContent = (spinOnEnter ? 'THE CITY WILL PICK YOUR ROOM' : 'FIRST STOP · ' + ROOMS[state.room].area);
   const sub = $('#enterSub'); if (sub) sub.textContent = `${ROOMS.length} ROOMS · THE CITY IS THE GALLERY`;
   if (touch) document.body.classList.add('touch');
   $('#enterBtn').onclick = () => {
-    $('#enter').classList.add('gone');
+    $('#enterBtn').setAttribute('disabled', '');
     if (!renderer) {
       try {
         renderer = makeRenderer();
       } catch {
         $('#noGl').hidden = false;
+        $('#enterBtn').removeAttribute('disabled');
         return;
       }
       bindControls(renderer.domElement);
       frame = requestAnimationFrame(animate);
     }
     loadRoom(openN).then(() => {
+      $('#enter').classList.add('gone');
+      $('#enter').setAttribute('inert', '');
+      $('#btnTour').focus();
       if (spinOnEnter) { spinOnEnter = false; spin(true); }
       const post = params.get('post') || 'http://127.0.0.1:4181/';
       if (params.get('export') === 'all') exportChain(post, state.room);
@@ -677,9 +734,10 @@ function boot() {
   $('#stepB').onclick = () => step(-1);
   $('#changeRoom').onclick = () => openPanel('#dest');
   document.querySelectorAll<HTMLElement>('[data-close]').forEach((b) => (b.onclick = closePanels));
-  setInterval(() => {
-    if (state.tour && shown.length && !$('#detail').classList.contains('open')) focus((state.active + 1) % shown.length);
-  }, 6500);
+  // The tour advances off the render loop, not a timer. requestAnimationFrame
+  // stops in a real background tab, so the tour pauses there on its own, and it
+  // keeps running in embedded viewers that report document.hidden while painting.
+
   addEventListener('hashchange', () => {
     const before = state.room + '|' + state.hang.mode + ':' + state.hang.key + '|' + state.page;
     const n = readHash();

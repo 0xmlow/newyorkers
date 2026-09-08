@@ -374,7 +374,7 @@ export class Kit {
         this.extras.push(bLogo);
         for (const sgn of [-1, 1]) {
           const fx = bx + right.x * sgn * 2.55, fz = bz + right.z * sgn * 2.55;
-          const fl = this.mesh(new T.PlaneGeometry(0.66, 0.66), this.image(B + (sgn < 0 ? 'blossom_01.png' : 'blossom_05.png')), fx, by - 0.04, fz);
+          const fl = this.mesh(new T.PlaneGeometry(0.66, 0.66), this.image(B + (sgn < 0 ? 'blossom_01_white.png' : 'blossom_05_white.png')), fx, by - 0.04, fz);
           fl.rotation.y = facing + Math.PI;
           this.extras.push(fl);
         }
@@ -711,6 +711,12 @@ export class Kit {
       o.rotation.y = p.rotY ?? 0;
       o.traverse((c) => {
         if (c instanceof T.Mesh) {
+          // The cache owns source resources; each room disposes its own copies.
+          c.geometry = c.geometry.clone();
+          c.material = Array.isArray(c.material) ? c.material.map(m => m.clone()) : c.material.clone();
+          for (const material of (Array.isArray(c.material) ? c.material : [c.material])) {
+            for (const value of Object.values(material)) if (value instanceof T.Texture) markShared(value);
+          }
           c.castShadow = c.receiveShadow = this.o.quality === 'high';
           const m = c.material as T.MeshStandardMaterial;
           if (m && 'envMapIntensity' in m) m.envMapIntensity = 1.2;
@@ -827,7 +833,7 @@ export class Kit {
         g.add(bar);
       }
     }
-    const artMat = new T.MeshBasicMaterial({ color: 0x0f1218 });
+    const artMat = new T.MeshBasicMaterial({ color: 0x0f1218, toneMapped: false });
     const art = new T.Mesh(new T.PlaneGeometry(w, h), artMat);
     art.position.z = artZ;
     art.userData.piece = piece;

@@ -1,0 +1,10 @@
+{
+  "asset": "quiet_bench.glb",
+  "objects": 3,
+  "triangles": 1880,
+  "bytes": 98472,
+  "materials": 3,
+  "units": "metres",
+  "authoring": "Blender 5.1 through Blender MCP",
+  "provenance": "Original procedural museum furniture; no downloaded model"
+}

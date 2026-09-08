@@ -37,7 +37,10 @@ export const metgreathall: RoomDef = {
     k.box(120, 0.3, 30, 0, 0.05, 26, k.pbr('metPlaza', X.pavers(0x9a9a94, 119), 0.4));
     for (const x of [-38, 38]) { k.mesh(new T.CylinderGeometry(6, 6.4, 0.8, 32), lime, x, 0.4, 28); k.mesh(new T.CylinderGeometry(5.4, 5.4, 0.3, 32), waterM, x, 0.85, 28); k.keepOut.push({ x, z: 28, r: 6.6 }); const jets: T.Mesh[] = []; for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2; jets.push(k.mesh(new T.CylinderGeometry(0.05, 0.14, 3, 6), waterM, x + Math.cos(a) * 3, 2.4, 28 + Math.sin(a) * 3, true)); } if (!ctx.reduced) k.ticks.push((t) => jets.forEach((j, i) => { j.scale.y = 0.6 + 0.4 * Math.sin(t * 1.4 + i); })); }
     const FZ = 10, FW = 110, FH = 26;
-    k.box(FW, FH, 60, 0, FH / 2, FZ - 30, lime);
+    // Exterior wings enclose the hall without filling its navigable interior.
+    for (const side of [-1, 1]) k.box(20, FH, 60, side * 45, FH / 2, FZ - 30, lime);
+    for (const side of [-1, 1]) k.box(32, FH, 0.8, side * 19, FH / 2, FZ, lime);
+    k.box(6, 10, 0.8, 0, 21, FZ, lime);
     k.moulding([[0, 0], [1.2, 0], [1.3, 0.4], [0.8, 0.6], [1.0, 1.0], [0, 1.2]], FW + 0.4, 0, FH - 0.6, FZ + 0.05, limeD, 0);
     for (let i = 0; i < 12; i++) k.box(FW + 4, 0.34, 1.6, 0, 0.17 + i * 0.34, FZ + 2 + i * 1.6, lime);
     for (const cx of [-22, -14, 14, 22, -38, 38]) { k.column(cx, 4, FZ + 1.4, 16, 1.1, lime, true); k.prop('corinthian_capital', cx, 20, FZ + 1.4, { height: 2.2 }); }
@@ -54,7 +57,9 @@ export const metgreathall: RoomDef = {
     const HW = 70, HD = 30, HH = 22, HZ = FZ - HD / 2 - 1;
     k.box(HW, 0.3, HD, 0, 4.15, HZ, floorM);
     for (const s of [-1, 1]) { k.box(0.8, HH, HD, s * HW / 2, 4 + HH / 2, HZ, lime); k.block(s * HW / 2 - 0.7, s * HW / 2 + 0.7, HZ - HD / 2, HZ + HD / 2); }
-    k.box(HW, HH, 0.8, 0, 4 + HH / 2, HZ - HD / 2, lime);
+    // A real opening onto the stair instead of a solid wall behind the arch.
+    for (const side of [-1, 1]) k.box(27, HH, 0.8, side * 21.5, 4 + HH / 2, HZ - HD / 2, lime);
+    k.box(16, 8, 0.8, 0, 22, HZ - HD / 2, lime);
     k.block(-HW / 2, -3, HZ - HD / 2 - 0.6, HZ - HD / 2 + 0.6); k.block(3, HW / 2, HZ - HD / 2 - 0.6, HZ - HD / 2 + 0.6);
     k.box(HW + 2, 0.6, HD + 2, 0, 4 + HH + 3, HZ, dark);
     for (const dx of [-23, 0, 23]) {
@@ -78,21 +83,26 @@ export const metgreathall: RoomDef = {
     for (const s of [-1, 1]) k.prop('newel_urn', s * 7.4, 4.2, SZ - 1.5, { height: 2.2 });
     k.box(24, 0.4, 14, 0, 13, SZ - 33, marbleS);
     k.box(30, 20, 1, 0, 23, SZ - 40, lime);
-    wordmarkRelief(k, 0, 16, SZ - 39.4, 0, 8);
+    for (const side of [-1, 1]) k.box(0.8, 24, 40, side * 15, 16, SZ - 20, lime);
+    k.box(30, 0.6, 40, 0, 28.3, SZ - 20, plaster);
     k.block(-15, 15, SZ - 40.6, SZ - 39.4);
     k.block(-HW / 2, -7.6, SZ - 40, SZ); k.block(7.6, HW / 2, SZ - 40, SZ);
     k.point(0, 20, SZ - 30, 0xfff4e6, 60, 40);
     for (let i = 0; i < 4; i++) k.prop('rope_stanchion', -9 + i * 6, 4.15, HZ + 12, { height: 1.0 });
-    for (const x of [-30, 30]) for (const dz of [-8, 8]) k.prop('museum_bench', x, 4.15, HZ + dz, { height: 0.58, rotY: PI / 2, keepOut: 1.4 });
-    k.crowd([v(0, 0, 40), v(0, 0, FZ + 14), v(0, 4.15, FZ - 4), v(-10, 4.15, HZ), v(10, 4.15, HZ - 10), v(0, 4.15, SZ - 2)], 44, { seed: 110, speed: 0.5, spread: 3, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517, 0xc9a25a, 0xe6e2da] });
-    k.censusWall({ x: HW / 2 - 0.82, y: 10, z: HZ, rotY: -PI / 2, cols: 40, rows: 8, tile: 0.55, gap: 0.05, start: ctx.wallStart(100, 320), pieces: ctx.all, backing: limeD });
-    // the works: the limestone walls of the Great Hall between the arches, the stair landing, the facade niches
+    for (const x of [-30, 30]) for (const dz of [-8, 8]) k.prop('quiet_bench', x, 4.3, HZ + dz, { height: 0.8, rotY: PI / 2, keepOut: 1.4 });
+    k.crowd([v(0, 0, 40), v(0, 0, FZ + 14), v(0, 4.15, FZ - 4), v(-10, 4.15, HZ), v(10, 4.15, HZ - 10), v(0, 4.15, SZ - 2)], ctx.quality === 'low' ? 8 : 16, { seed: 110, speed: 0.5, spread: 3, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517, 0xc9a25a, 0xe6e2da] });
+    // Hang on unobstructed side walls, between the column lines. Inspection
+    // positions remain inside the room and clear of desks, urns and benches.
     const mounts: Mount[] = [];
-    for (let i = 0; i < 6; i++) { const x = -29 + i * 11.6; if (Math.abs(x - 0) < 4 || Math.abs(x + 23) < 4 || Math.abs(x - 23) < 4) continue; for (const s of [-1, 1]) mounts.push({ position: v(x, 8.4, HZ + s * (HD / 2 - 0.42)), rotation: s > 0 ? PI : 0, target: v(x, 6, HZ), width: 5.2, height: 3.2, style: 'gilt', wash: true }); }
-    for (const s of [-1, 1]) mounts.push({ position: v(-HW / 2 + 0.82, 9, HZ + s * 8), rotation: PI / 2, target: v(-HW / 2 + 12, 6, HZ + s * 8), width: 6, height: 3.6, style: 'gilt', wash: true });
+    for (const side of [-1, 1]) for (const z of [HZ - 7, HZ, HZ + 7]) {
+      mounts.push({ position: v(side * (HW / 2 - 0.85), 8.4, z), rotation: side < 0 ? PI / 2 : -PI / 2,
+        target: v(side * (HW / 2 - 7), 7.15, z), width: 5.2, height: 3.2, style: 'gilt', wash: true });
+    }
     for (let i = 0; i < 3; i++) { const x = -8 + i * 8; mounts.push({ position: v(x, 19.5 + (i === 1 ? 4 : 0), SZ - 39.42), rotation: 0, target: v(x, 14, SZ - 28), width: 5.6, height: 3.4, style: 'gilt', wash: true }); }
     for (let i = 0; i < 4; i++) { const x = -26 + i * 17.3; if (Math.abs(x) < 6) continue; mounts.push({ position: v(x, 10, FZ + 0.42), rotation: 0, target: v(x, 6, FZ + 14), width: 4.6, height: 2.7, style: 'gilt', wash: false }); }
-    return { mounts, spawn: v(0, 3, 40), look: v(0, 14, FZ), eye: 3, bounds: [-HW / 2 + 1, HW / 2 - 1, SZ - 39, 50], style: 'gilt', floorY: (x, z) => { void x; if (z > FZ + 1.5 && z < FZ + 21) return Math.min(4.1, ((FZ + 21 - z) / 19.5) * 4.1); if (z <= FZ + 1.5 && z > SZ - 1) return 4.15; if (z <= SZ - 1 && z > SZ - 27) return 4.15 + Math.min(8.8, ((SZ - 1 - z) / 26) * 8.8); if (z <= SZ - 27) return 13.2; return 0; } };
+    return { mounts, spawn: v(15, 7.15, HZ + 9), look: v(-HW / 2 + 1, 8.4, HZ - 2), eye: 3,
+      /* Stand off-centre and look along the hung wall, so the first frame holds
+         paintings at a narrow phone FOV as well as a wide desktop one. */ bounds: [-HW / 2 + 1, HW / 2 - 1, SZ - 39, 50], style: 'gilt', floorY: (x, z) => { void x; if (z > FZ + 1.5 && z < FZ + 21) return Math.min(4.1, ((FZ + 21 - z) / 19.5) * 4.1); if (z <= FZ + 1.5 && z > SZ - 1) return 4.15; if (z <= SZ - 1 && z > SZ - 27) return 4.15 + Math.min(8.8, ((SZ - 1 - z) / 26) * 8.8); if (z <= SZ - 27) return 13.2; return 0; } };
   },
 };
 

@@ -263,6 +263,7 @@ export const cloisters: RoomDef = {
     for (const [x, z] of [[-13, Cz - 13], [13, Cz + 13]]) k.prop('lantern', x, 0, z, { height: 1.0 });
     k.prop('tree', 13, 0, Cz - 13, { height: 4.2 });
     k.prop('tree', -13, 0, Cz + 13, { height: 4.2 });
+    for (const x of [-9, 9]) k.prop('quiet_bench', x, 0.2, Cz + S + 3, { height: 0.65, keepOut: 1.7 });
     // the chapel wall with the census, the entrance passage
     k.box(2 * S + 12, 12, 1.0, 0, 6, Cz - S - 6.4, stone);
     k.arch(4, 8, 1.2, 0, 0, Cz - S - 6.4, stone, true, 0.7);

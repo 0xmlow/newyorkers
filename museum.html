@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEW YORKERS · The Museum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
-<link rel="stylesheet" href="assets/museum/museum.css">
+<link rel="stylesheet" href="assets/museum/museum.css?v=da754a0e02">
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/museum">
 <meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, walkable 3D museum, Three.js gallery New York, virtual gallery NYC landmarks, Guggenheim virtual tour art">
@@ -35,6 +35,7 @@
 
 <!-- enter -->
 <div id="enter">
+ <a class="museum-back" href="index.html">← NEW YORKERS</a>
   <img class="logo" src="assets/brand/logo_white.png" alt="MLOW">
   <div class="eyebrow">NEW YORKERS · A CENSUS BY MLOW</div>
   <h1>THE MUSEUM</h1>
@@ -42,7 +43,8 @@
   <p class="breath">Walk the Bowery after hours, ride the tram over the river, climb the Guggenheim ramp. Every room hangs the New Yorkers who were counted there.</p>
   <div class="census" id="enterCount"></div>
   <div class="census" id="enterRoom" style="margin-top:-18px"></div>
-  <div class="enterBtns"><button id="enterBtn">ENTER THE MUSEUM</button><button id="enterSpin" class="alt" title="The city picks your room">✦ SPIN ME IN</button></div>
+  <div id="firstRooms" aria-label="Suggested first rooms"></div>
+  <div class="enterBtns"><button id="enterBtn">Walk into this room ↗</button><a class="flat-browse" href="census.html">Browse art without 3D ↗</a></div>
   <div class="links"><a href="index.html">HOME</a><a href="census.html">THE CENSUS</a><a href="map.html">THE ATLAS</a><a href="learn.html">READ</a><a href="counted.html">GET COUNTED</a></div>
   <p id="noGl" hidden>3D is unavailable on this device. The <a href="census.html#gallery">gallery</a> holds the full collection.</p>
 </div>
@@ -51,13 +53,13 @@
 <header id="hud">
   <a class="brand" href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"><span>NEW YORKERS<br><em>THE MUSEUM</em></span></a>
   <nav>
-    <button id="btnDest"><i></i>EXPLORE NYC <span>111 ROOMS ↗</span></button>
-    <button id="btnHang">THE HANG</button>
-    <button id="btnIndex">INDEX</button>
+    <button id="btnDest"><i></i>ROOMS <span>↗</span></button>
+    <button id="btnIndex">ARTWORKS</button><details id="museumTools"><summary>More</summary><div class="tool-menu"><button id="btnHang">Change the artwork</button>
+
     <button id="btnSpin" title="Slot machine: drop into a random room (R)">✦ SPIN</button>
     <button id="btnShare" title="Share this room">SHARE</button>
     <button id="btnGlb" title="Export this room as a GLB file">GLB ↓</button>
-    <button id="btnFull" aria-label="Fullscreen">⛶</button>
+    <button id="btnFull" aria-label="Fullscreen">Fullscreen ⛶</button></div></details>
   </nav>
 </header>
 <section id="label">
@@ -84,7 +86,7 @@
       <button id="btnHome">Return to entrance</button>
     </div>
   </div>
-  <div id="strip"></div>
+  <details id="artTray"><summary>Artworks in this room</summary><div id="strip"></div></details>
   <div class="row bottom">
     <div class="mono" id="count"></div>
     <div class="pager"><button id="pagePrev" aria-label="Previous set">←</button><span id="pageLabel"></span><button id="pageNext" aria-label="Next set">→</button></div>
@@ -93,9 +95,9 @@
 
 <!-- panels -->
 <aside id="dest" class="panel wide">
-  <div class="head"><div><div class="kicker">EXPLORE NYC</div><h3>The city is the gallery.</h3><p>One hundred and eleven artist built rooms, each with its street and its skyline. Each hangs the New Yorkers recorded at that place first, then the whole census.</p></div><button data-close aria-label="Close">×</button></div>
+  <div class="head"><div><div class="kicker">EXPLORE NYC</div><h3>The city is the gallery.</h3><p>Start with a favorite, or search for a place you know.</p></div><button data-close aria-label="Close">×</button></div>
   <div class="search"><input id="destSearch" placeholder="Find a room: a place, a borough, a mood" autocomplete="off"><button type="button" onclick="window.__museum.spin()">✦ SPIN</button></div>
-  <div class="grid" id="destGrid"></div>
+  <div class="dest-filters" id="destFilters"><button data-filter="start" aria-pressed="true">Start here</button><button data-filter="all" aria-pressed="false">All rooms</button></div><p id="destResult" role="status"></p><div class="grid" id="destGrid"></div>
 </aside>
 
 <aside id="hang" class="panel">
@@ -145,7 +147,8 @@
 <script src="assets/config.js"></script>
 <script src="assets/data.js"></script>
 <script src="assets/rooms.js"></script>
-<script src="assets/museum/museum.js?b=1788821945080"></script>
+<script src="assets/museum/museum.js?b=1788901954580"></script>
 <script src="assets/eggs.js" defer></script>
+
 </body>
 </html>

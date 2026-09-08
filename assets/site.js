@@ -32,18 +32,18 @@
   function find(q){ q=q.toLowerCase(); return P.find(p=>p.t.toLowerCase().includes(q)) || null; }
   const recordUrl = p => `${BASE}census.html#n=${p.id}`;
   const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
-  const NAV = [["index.html","HOME"],["census.html","THE CENSUS"],["map.html","THE ATLAS"],["museum.html","THE MUSEUM"],["learn.html","READ"],["faq.html","FAQ"],["count.html","THE COUNT"],["press.html","PRESS"],["museum.html#room=random","SPIN","spin"],["whitelist.html","ALLOWLIST","spin"],["counted.html","GET COUNTED","cta"]];
+  const NAV = [["census.html","ART"],["museum.html","MUSEUM"],["learn.html","STORIES"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
   function nav(active){
     const el=document.getElementById("nav"); if(!el)return;
     el.innerHTML=`<a href="${BASE}index.html" aria-label="NEW YORKERS home"><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"></a>
       <button class="burger" aria-label="menu" aria-expanded="false">MENU</button>
-      <div class="links">${NAV.map(([h,t,c])=>`<a href="${BASE}${h}" class="${c||""}${active===t?" on":""}"${c==="spin"?' title="Drop into a random room of the museum"':""}>${c==="spin"?"✦ ":""}${t}</a>`).join("")}</div>`;
+      <div class="links">${NAV.map(([h,t,c])=>`<a href="${c==="ext"?h:BASE+h}" class="${c||""}${(active===t || ({"THE CENSUS":"ART","THE MUSEUM":"MUSEUM","READ":"STORIES"})[active]===t)?" on":""}"${c==="spin"?' title="Drop into a random room of the museum"':""}>${c==="spin"?"✦ ":""}${t}</a>`).join("")}</div>`;
     const b=el.querySelector(".burger"); b.onclick=()=>{const open=el.querySelector(".links").classList.toggle("open"); b.setAttribute("aria-expanded",open?"true":"false");};
   }
   function foot(){
     const el=document.getElementById("foot"); if(!el)return;
     const dom=(CFG.domain||"MLOW.NYC");
-    el.innerHTML=`<div><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"><div class="lines">${dom} · THE CENSUS<br><a href="${CFG.printsUrl||"https://mlow.xyz/prints"}">MLOW.XYZ/PRINTS</a> · PRINTS AND ORIGINALS<br><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLOW.XYZ</a> · THE ARTIST<br>X @DEGENS · IG + TIKTOK @0XMLOW</div></div>
+    el.innerHTML=`<div><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"><div class="lines">${dom} · THE CENSUS<br><a href="${CFG.printsUrl||"https://mlow.xyz/prints"}">THE PRINT SHOP</a> · PRINTS AND ORIGINALS<br><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLOW.XYZ</a> · THE ARTIST<br>X @DEGENS · IG + TIKTOK @0XMLOW</div></div>
       <div class="col"><h5>The census</h5><a href="${BASE}census.html">Every record</a><a href="${BASE}map.html">The atlas</a><a href="${BASE}museum.html">The museum</a><a href="${BASE}museum.html#room=random">Spin a room</a><a href="${BASE}counted.html">Get counted</a><a href="${BASE}counted.html#nominate">Nominate a New Yorker</a><a href="${BASE}whitelist.html">The allowlist</a>${(window.NY_CONFIG && window.NY_CONFIG.loginEnabled) ? `<a href="${BASE}profile.html">Your profile</a>` : ""}</div>
       <div class="col"><h5>The record</h5><a href="${BASE}faq.html">The FAQ</a><a href="${BASE}learn.html">The reading room</a><a href="${BASE}press.html">Press room</a><a href="${BASE}brand.html">Brand</a><a href="${BASE}count.html">The count</a><a href="${BASE}agents.html">For bots and AI agents</a><a href="${BASE}llms.txt">llms.txt</a></div>
       <div class="col"><h5>Elsewhere</h5><a href="${CFG.printsUrl||"https://mlow.xyz/prints"}">Prints, at the print shop</a><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLow, the artist</a><a href="https://x.com/degens">X, @degens</a><a href="https://www.instagram.com/0xmlow">Instagram, @0xmlow</a><a href="https://www.tiktok.com/@0xmlow">TikTok, @0xmlow</a></div>

@@ -77,6 +77,9 @@
   };
   window.NY_EGG = (n)=>{ const f=EGGS[n]; if(f) f(); return !!f; };
   window.NY_EGGS_FOUND = ()=>[...found];
+  window.NY_EGGS_TOTAL = Object.keys(EGGS).length;
+  /* The hunt is only a loop if you can see how far in you are. */
+  window.NY_EGGS_NAMES = Object.keys(EGGS);
 
   /* typed words */
   const WORDS = Object.keys(EGGS).filter(k=>!["konami","eye"].includes(k));

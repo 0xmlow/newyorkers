@@ -30,7 +30,7 @@ DESTS = [{"g": "The census", "n": "Home", "u": "/"},
          {"g": "The census", "n": "Nominate a New Yorker", "u": "/counted.html#nominate"},
          {"g": "The census", "n": "The count", "u": "/count.html"},
          {"g": "The census", "n": "The reading room", "u": "/learn.html"},
-         {"g": "The census", "n": "Prints", "u": "/shop.html"},
+         {"g": "The census", "n": "Prints", "u": "https://mlow.nyc"},
          {"g": "The census", "n": "Press room", "u": "/press.html"},
          {"g": "The census", "n": "Brand", "u": "/brand.html"}]
 DESTS += [{"g": "A museum room", "n": r["name"] + " · " + r["area"].title(), "u": f"/museum.html#room={r['id']}"} for r in rooms]
