@@ -104,7 +104,10 @@ export const metgreathall: RoomDef = {
       mounts.push({ position: v(side * (HW / 2 - 0.85), 8.4, z), rotation: side < 0 ? PI / 2 : -PI / 2,
         target: v(side * (HW / 2 - 7), 7.15, z), width: 5.2, height: 3.2, style: 'gilt', wash: true });
     }
-    for (let i = 0; i < 3; i++) { const x = -8 + i * 8; mounts.push({ position: v(x, 19.5 + (i === 1 ? 4 : 0), SZ - 39.42), rotation: 0, target: v(x, 14, SZ - 28), width: 5.6, height: 3.4, style: 'gilt', wash: true }); }
+    /* The three over the stair landing. The flight is walled in to |x| < 7.6, so
+       the outer two used to send the visitor straight out through the wall beside
+       the stair. They stand you a little off axis on the steps instead. */
+    for (let i = 0; i < 3; i++) { const x = -8 + i * 8; mounts.push({ position: v(x, 19.5 + (i === 1 ? 4 : 0), SZ - 39.42), rotation: 0, target: v(Math.max(-5.5, Math.min(5.5, x)), 14, SZ - 28), width: 5.6, height: 3.4, style: 'gilt', wash: true }); }
     for (let i = 0; i < 4; i++) { const x = -26 + i * 17.3; if (Math.abs(x) < 6) continue; mounts.push({ position: v(x, 10, FZ + 0.42), rotation: 0, target: v(x, 6, FZ + 14), width: 4.6, height: 2.7, style: 'gilt', wash: false }); }
     return { mounts, spawn: v(15, 7.15, HZ + 9), look: v(-HW / 2 + 1, 8.4, HZ - 2), eye: 3,
       /* Stand off-centre and look along the hung wall, so the first frame holds
