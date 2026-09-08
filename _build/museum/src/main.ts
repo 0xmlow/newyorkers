@@ -160,9 +160,16 @@ function viewpoint(m: Mount) {
   const toTarget = new T.Vector3().subVectors(m.target, m.position);
   const inFront = toTarget.x * nx + toTarget.z * nz > 0;
   if (inFront && standable(m.target)) return m.target.clone();
-  for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5]) {
-    const p = new T.Vector3(m.position.x + nx * d, m.target.y, m.position.z + nz * d);
-    if (standable(p)) return p;
+  /* Search the floor in front of the work: straight out first, then further
+     back, then off to either side. A picture in a corner or on a narrow
+     landing often has nothing directly in front of it but plenty at an angle,
+     and looking at a painting from off to one side is normal. */
+  for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5, back * 3.2]) {
+    for (const a of [0, 0.3, -0.3, 0.6, -0.6, 0.95, -0.95, 1.25, -1.25]) {
+      const ax = Math.sin(m.rotation + a), az = Math.cos(m.rotation + a);
+      const p = new T.Vector3(m.position.x + ax * d, m.target.y, m.position.z + az * d);
+      if (standable(p)) return p;
+    }
   }
   /* Nothing in front of it is standable. Keep the authored target rather than
      inventing a worse one, and let constrain() do what it can. */
@@ -368,6 +375,16 @@ function loadRoom(openN?: string | null): Promise<void> {
     list = hangList(state.hang, def.id);
     const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart };
     build = def.build(kit, ctx);
+    /* A work whose face points away from the place the room sends you to see it
+       from is simply hung backwards: you arrive behind the picture. The target
+       carries the room's intent, so turning the work to face it is the faithful
+       correction, and it costs nothing when the room is already right. An audit
+       of all 111 rooms found 224 of 2,335 works hung this way, twenty of the
+       twenty two in the bleachers and every one of the twenty five at Liberty. */
+    for (const m of build.mounts) {
+      const dx = m.target.x - m.position.x, dz = m.target.z - m.position.z;
+      if (dx * Math.sin(m.rotation) + dz * Math.cos(m.rotation) < 0) m.rotation += Math.PI;
+    }
     kit.brand(build, def.name);
     const n = build.mounts.length;
     const pages = Math.max(1, Math.ceil(list.length / n));

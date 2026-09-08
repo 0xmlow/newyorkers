@@ -262,7 +262,7 @@ export const easternparkway: RoomDef = {
     for (let i = 0; i < 4; i++) { const x = MX - 18 + i * 12; mounts.push({ position: v(x, 4, MZ - 21.66), rotation: PI, target: v(x, 3, MZ - 34), width: 4.6, height: 2.7, style: 'steel', wash: true }); }
     for (const s of [-1, 1]) for (let i = 0; i < 2; i++) { const x = LX + s * (8 + i * 8); mounts.push({ position: v(x, 4, LZ - 14 - 0.36), rotation: PI, target: v(x, 3, LZ - 28), width: 4.4, height: 2.6, style: 'gilt', wash: true }); }
     for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = 50 + i * 40; k.box(0.3, 3.2, 4.6, s * 25, 2.0, z, dark); mounts.push({ position: v(s * (25 - s * 0.18), 2.1, z), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(s * 12, 2, z), width: 4.2, height: 2.5, style: 'black', wash: false }); }
-    return { mounts, spawn: v(-6, 3, 60), look: v(AX, 20, AZ), eye: 3, bounds: [-32, 32, -70, 200], style: 'gilt' };
+    return { mounts, spawn: v(-6, 3, 60), look: v(AX, 20, AZ), eye: 3, /* easternparkway: six works stand out along the parkway at x 52 to 78, well outside the old strip */ bounds: [-84, 84, -70, 200], style: 'gilt' };
   },
 };
 
@@ -335,6 +335,6 @@ export const manhattanhenge: RoomDef = {
     for (let i = 0; i < 3; i++) { const x = 30 + i * 0; const z = -12 + 0.02; mounts.push({ position: v(14 + i * 6, OY + 4.5, z), rotation: 0, target: v(14 + i * 6, OY + 3, 0), width: 4.2, height: 2.5, style: 'steel', wash: false }); void x; }
     for (let i = 0; i < 3; i++) mounts.push({ position: v(14 + i * 6, OY + 4.5, 12 - 0.02), rotation: PI, target: v(14 + i * 6, OY + 3, 0), width: 4.2, height: 2.5, style: 'steel', wash: false });
     for (let i = 0; i < 6; i++) { const x = -40 - i * 30; const s = i % 2 ? 1 : -1; mounts.push({ position: v(x, 8, s * 16.98), rotation: s > 0 ? PI : 0, target: v(x, 4, 0), width: 5.6, height: 3.4, style: 'neon', wash: true }); }
-    return { mounts, spawn: v(18, OY + 3, 0), look: v(-380, 10, 0), eye: 3, bounds: [-6.4, 22.6, -5.2, 5.2], style: 'steel', floorY: () => OY + 0.2 };
+    return { mounts, spawn: v(18, OY + 3, 0), look: v(-380, 10, 0), eye: 3, /* manhattanhenge: six works recede down the avenue to x -190, which is the whole point of the room and was entirely out of reach */ bounds: [-200, 22.6, -5.2, 5.2], style: 'steel', floorY: () => OY + 0.2 };
   },
 };

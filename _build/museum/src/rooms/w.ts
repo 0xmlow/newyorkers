@@ -126,7 +126,7 @@ export const socrates: RoomDef = {
     const mounts: Mount[] = [];
     for (let i = 0; i < 12; i++) { const rnd = X.mulberry(160 + i); const x = -50 + (i % 4) * 26 + (rnd() - 0.5) * 6, z = -45 + Math.floor(i / 4) * 40 + (rnd() - 0.5) * 8; const rot = Math.atan2(40 - x, -z) + (rnd() - 0.5) * 0.6; const f = k.box(5, 3.4, 0.2, x, 2.2, z, steel); f.rotation.y = rot; for (const dx of [-2.3, 2.3]) k.box(0.2, 4.4, 0.2, x + Math.cos(rot) * dx, 2.2, z - Math.sin(rot) * dx, steel); k.keepOut.push({ x, z, r: 2.8 }); mounts.push({ position: v(x + Math.sin(rot) * 0.12, 2.3, z + Math.cos(rot) * 0.12), rotation: rot, target: v(x + Math.sin(rot) * 8, 2.3, z + Math.cos(rot) * 8), width: 4.4, height: 2.7, style: 'steel', wash: false }); }
     for (let i = 0; i < 3; i++) { const z = -44 + i * 4; mounts.push({ position: v(42.9, 2.6, z), rotation: -PI / 2 + PI, target: v(36, 2.4, z), width: 3.2, height: 2.0, style: 'steel', wash: false }); }
-    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = s * (10 + i * 10); k.box(0.2, 3.2, 4.6, 75.8, 2.0, z, steel); mounts.push({ position: v(75.68, 2.1, z), rotation: -PI / 2, target: v(66, 2, z), width: 4.2, height: 2.5, style: 'steel', wash: false }); }
+    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = s * (10 + i * 10); k.box(0.2, 3.2, 4.6, 75.8, 2.0, z, steel); mounts.push({ position: v(75.68, 2.1, z), rotation: -PI / 2, target: v(57, 2, z), width: 4.2, height: 2.5, style: 'steel', wash: false }); }
     return { mounts, spawn: v(70, 3, 0), look: v(-20, 6, 0), eye: 3, bounds: [-70, 76, -68, 68], style: 'steel' };
   },
 };

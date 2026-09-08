@@ -122,7 +122,11 @@ export const garden: RoomDef = {
     for (const s of [-1, 1]) { k.box(4.9, 0.01, 5.8, CX + s * (14 - 2.9), 0.105, CZ, orange).rotation.y = PI / 2; k.torus(1.8, 0.03, CX + s * (14 - 5.8), 0.11, CZ, white, 32).rotation.x = PI / 2; }
     k.torus(1.8, 0.03, CX, 0.11, CZ, white, 32).rotation.x = PI / 2;
     for (const s of [-1, 1]) { const x = CX + s * (14 + 1.2); k.beam(v(x, 0, CZ), v(x, 3.4, CZ), 0.1, steel, 6); k.box(0.05, 1.05, 1.8, x - s * 1.2, 3.05, CZ, k.glass(0xffffff, 0.35, 0.05)); k.torus(0.23, 0.02, x - s * 1.5, 2.55, CZ, orange, 16).rotation.x = PI / 2; }
-    k.block(CX - 15, CX + 15, CZ - 8, CZ + 8);
+    /* The court used to be blocked, which put the twelve courtside works out of
+       reach: they hang on the boards facing in, so the floor is the only place
+       to see them from. Walking out onto the hardwood of the Garden is the
+       whole idea of the room. Only the two hoop stanchions are kept clear. */
+    for (const s of [-1, 1]) k.keepOut.push({ x: CX + s * 15.2, z: CZ, r: 1.2 });
     const seatG = new T.BoxGeometry(0.5, 0.5, 0.5); seatG.translate(0, 0.25, 0);
     const lo: T.Matrix4[] = [], hi: T.Matrix4[] = [];
     for (let r = 0; r < 22; r++) { const rad = 18 + r * 0.9, y = 0.4 + r * 0.5; const n = Math.floor(rad * 6); for (let i = 0; i < n; i++) { const a = (i / n) * PI * 2; if (r > 12 && Math.abs(Math.sin(a)) < 0.06) continue; (r % 2 ? lo : hi).push(new T.Matrix4().compose(v(CX + Math.cos(a) * rad, y, CZ + Math.sin(a) * rad), new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 1, 0), -a + PI / 2), v(1, 1, 1))); } k.mesh(new T.RingGeometry(rad - 0.45, rad + 0.45, 96), conc, CX, y - 0.05, CZ).rotation.x = -PI / 2; }
@@ -201,7 +205,7 @@ export const dendur: RoomDef = {
     // the pool, the platform, the gate and the temple
     k.box(HW - 8, 0.3, 14, 0, 0.1, -HD / 2 + 10, k.flat(0x141416, 0.1, 0.4));
     k.box(HW - 9, 0.16, 13, 0, 0.26, -HD / 2 + 10, water);
-    k.block(-HW / 2 + 4, HW / 2 - 4, -HD / 2 + 3, -HD / 2 + 17);
+    k.block(-HW / 2 + 4, HW / 2 - 4, -HD / 2 + 9, -HD / 2 + 17);
     const PX = 0, PZ = 0;
     k.box(30, 1.2, 22, PX, 0.6, PZ, sandstone);
     k.box(30.4, 0.3, 22.4, PX, 1.3, PZ, k.pbr('tdPlat', X.ashlar(0x8a8478, 219, 3), 0.25));
@@ -225,7 +229,7 @@ export const dendur: RoomDef = {
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { const z = -18 + i * 8; mounts.push({ position: v(s * (HW / 2 - 0.9), 3.8, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * (HW / 2 - 10), 3, z), width: 4.6, height: 2.7, style: 'steel', wash: true }); }
     for (let i = 0; i < 4; i++) { const x = -12 + i * 8; k.box(3.6, 2.4, 0.2, x, 2.4, PZ + 11.5, sandstone); mounts.push({ position: v(x, 2.5, PZ + 11.62), rotation: 0, target: v(x, 2.5, PZ + 20), width: 3.2, height: 1.9, style: 'none', wash: false }); }
-    for (let i = 0; i < 4; i++) { const x = -21 + i * 14; mounts.push({ position: v(x, 4.0, -HD / 2 + 2.6), rotation: 0, target: v(x, 3, -HD / 2 + 12), width: 3.2, height: 4.0, style: 'steel', wash: false }); k.box(0.3, 5, 0.3, x - 1.8, 2.5, -HD / 2 + 2.4, steel); k.box(0.3, 5, 0.3, x + 1.8, 2.5, -HD / 2 + 2.4, steel); }
+    for (let i = 0; i < 4; i++) { const x = -21 + i * 14; mounts.push({ position: v(x, 4.0, -HD / 2 + 2.6), rotation: 0, target: v(x, 3, -HD / 2 + 6), width: 3.2, height: 4.0, style: 'steel', wash: false }); k.box(0.3, 5, 0.3, x - 1.8, 2.5, -HD / 2 + 2.4, steel); k.box(0.3, 5, 0.3, x + 1.8, 2.5, -HD / 2 + 2.4, steel); }
     return { mounts, spawn: v(-10, 3, HD / 2 - 6), look: v(PX, 6, PZ - 10), eye: 3, bounds: [-HW / 2 + 2, HW / 2 - 2, -HD / 2 + 3, HD / 2 - 1], style: 'steel', floorY: (x, z) => (Math.abs(x - PX) < 15 && z > PZ - 11 && z < PZ + 11 ? 1.45 : Math.abs(x - PX) < 15 && z >= PZ + 11 && z < PZ + 14.5 ? Math.max(0, 1.45 - ((z - PZ - 11) / 3.5) * 1.45) : 0) };
   },
 };
