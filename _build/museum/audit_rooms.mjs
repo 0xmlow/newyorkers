@@ -263,7 +263,12 @@ if (process.argv.includes('--json')) {
   const sum = (f) => ok.reduce((s, r) => s + r[f], 0);
   const stuckRooms = ok.filter((r) => r.stuck).sort((a, b) => b.stuck - a.stuck);
   console.log(`${ok.length} rooms, ${sum('mounts')} mounts`);
-  console.log(`  unreachable ${sum('unreachable')}, backwards ${sum('backwards')}, obstructed by solids ${sum('obstructed')}`);
+  console.log(`  unreachable ${sum('unreachable')}, backwards ${sum('backwards')}`);
+  /* Advisory, not a failure. It caught the granite blades standing through every
+     work at Flushing Meadows and the Frick's ten hung facing the stone, but a
+     work on the inner face of a building mass reads the same way to it, so the
+     number needs eyes on the room before it means anything. */
+  console.log(`  works with a solid in the picture (advisory, needs a look) ${sum('obstructed')}`);
   console.log(`  rescued by viewpoint() ${sum('rescued')}, still stuck ${sum('stuck')} in ${stuckRooms.length} rooms`);
   if (errored.length) { console.log(`  rooms that failed to build: ${errored.length}`); for (const e of errored) console.log(`    ${e.id}: ${e.error}`); }
   const list = process.argv.includes('--all') ? ok.filter((r) => r.unreachable || r.backwards) : stuckRooms;
@@ -271,5 +276,5 @@ if (process.argv.includes('--json')) {
     console.log('\nroom                 mounts  unreach  backwards  stuck');
     for (const r of list) console.log(`  ${r.id.padEnd(18)} ${String(r.mounts).padStart(5)} ${String(r.unreachable).padStart(8)} ${String(r.backwards).padStart(10)} ${String(r.stuck).padStart(6)}`);
   }
-  process.exitCode = sum('stuck') ? 1 : 0;
+  process.exitCode = sum('stuck') ? 1 : 0;   // only unreachable works fail a build
 }

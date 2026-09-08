@@ -383,7 +383,11 @@ export const frick: RoomDef = {
     k.sign('FIFTH AVENUE  ·  THE GARDEN COURT', 8, 0.7, MX, 8.4, MZ + CD / 2 + 5.75, '#3a2a1a', '#f4e8c8', 90, PI, { border: true });
     // the works: the two long galleries in gilt, the court's end walls, the avenue front
     const mounts: Mount[] = [];
-    for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { const z = MZ - 14 + i * 7; mounts.push({ position: v(MX + s * (CW / 2 + 3.64), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(MX + s * (CW / 2 + 9), 3, z), width: 4.4, height: 2.6, style: 'gilt' }); }
+    /* These ten hang on the outer walls at MX +/- 14.64 and face inward, but the
+       target was set further out still, at +/- 20, which is behind the wall they
+       are hung on. Every one of them was turned to face the stone. The viewer
+       belongs in the gallery, between the wall and the colonnade. */
+    for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { const z = MZ - 14 + i * 7; mounts.push({ position: v(MX + s * (CW / 2 + 3.64), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(MX + s * (CW / 2 - 3), 3, z), width: 4.4, height: 2.6, style: 'gilt' }); }
     for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const x = MX - 12 + i * 12; mounts.push({ position: v(x, 3.6, MZ - CD / 2 - 5.76), rotation: 0, target: v(x, 3, MZ - CD / 2), width: 4.4, height: 2.6, style: 'gilt' }); break; }
     for (const x of [MX - 20, MX + 20]) mounts.push({ position: v(x, 3.6, MZ + CD / 2 + 5.76), rotation: PI, target: v(x, 3, MZ + CD / 2), width: 4.4, height: 2.6, style: 'gilt' });
     for (const x of [MX - 8, MX + 8]) mounts.push({ position: v(x, 3.6, MZ - CD / 2 - 5.76), rotation: 0, target: v(x, 3, MZ - CD / 2), width: 4.4, height: 2.6, style: 'gilt' });
