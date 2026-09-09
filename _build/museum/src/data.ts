@@ -1,6 +1,7 @@
 /* The census data as the museum sees it: window.NY_DATA from assets/data.js. */
 import * as T from 'three';
 import { USED } from './used';
+import { OWNED, LEADS } from './hang_owned';
 import { mulberry } from './textures';
 
 export type Piece = {
@@ -199,29 +200,32 @@ const orderCache = new Map<string, Piece[]>();
 export function placeHang(roomId: string): Piece[] {
   const hit = orderCache.get(roomId);
   if (hit) return hit;
-  const c = CURATION[roomId];
+  /* Every piece belongs to exactly one room, decided once by assign_hang.mjs and
+     written into hang_owned.ts. A room hangs out of its own list and nothing
+     else, which is what stops the same New Yorker turning up on six walls: the
+     old code scored the whole census per room and let neighbouring rooms take
+     the same top slice. The leading segment is the part the curation actually
+     matched, and it reshuffles every New York day; the tail keeps a fixed
+     order so paging is stable. */
+  const mine = OWNED[roomId];
+  if (mine && mine.length) {
+    const daily = mulberry(DAY_SEED * 31 + roomId.length * 977 + roomId.charCodeAt(1));
+    const lead = mine.slice(0, LEADS[roomId] || 0)
+      .map((n) => ({ n, d: daily() }))
+      .sort((a, b) => a.d - b.d)
+      .map((x) => x.n);
+    const out = lead.concat(mine.slice(LEADS[roomId] || 0))
+      .map((n) => byNum.get(n))
+      .filter((p): p is Piece => !!p);
+    orderCache.set(roomId, out);
+    return out;
+  }
+  /* A room with no entry in the table falls back to the whole census, in a
+     fixed order, so a new room still hangs something while it is being written. */
   const rnd = mulberry(roomId.length * 977 + roomId.charCodeAt(0));
-  const daily = mulberry(DAY_SEED * 31 + roomId.length * 977 + roomId.charCodeAt(1));
-  const scored = P.map((p, i) => {
-    let s = 0;
-    if (c) {
-      if (p.nb && c.nb.includes(p.nb)) s += p.nb === c.nb[0] ? 9 : 6;
-      else if (p.loc && c.nb.includes(p.loc)) s += 5;
-      if (c.words.test(p.t)) s += 5;
-      if (p.story && c.words.test(p.story)) s += 3;
-      if (p.nb && c.words.test(p.nb)) s += 2;
-      if (c.fam && c.fam.includes(p.f)) s += 2;
-      if (c.boro && c.boro.includes(p.b)) s += 1.5;
-      if (c.cat && p.cat && c.cat.includes(p.cat)) s += 6;
-      if (HEROES.has(p.n)) s += 0.75;
-    }
-    // fresh rooms send anything already hung elsewhere to the back, so the new walls show New Yorkers the museum has not shown
-    const t = c && c.fresh && USED.has(p.n) ? 1 : 0;
-    return { p, s, r: rnd(), d: daily(), i, t };
-  });
-  // the recorded New Yorkers of this place lead, reshuffled every New York day; the rest keep a fixed order
-  scored.sort((a, b) => a.t - b.t || (b.s > 0 ? 1 : 0) - (a.s > 0 ? 1 : 0) || (a.s > 0 && b.s > 0 ? (a.d - b.d) : (b.s - a.s) || (a.r - b.r)));
-  const out = scored.map((x) => x.p);
+  const out = P.map((p, i) => ({ p, r: rnd(), i }))
+    .sort((a, b) => a.r - b.r)
+    .map((x) => x.p);
   orderCache.set(roomId, out);
   return out;
 }
@@ -236,9 +240,17 @@ export function hangList(h: Hang, roomId: string): Piece[] {
   switch (h.mode) {
     case 'place': return placeHang(roomId);
     case 'launch': {
-      const twelve = LAUNCH_TWELVE.map((n) => byNum.get(n)).filter((p): p is Piece => !!p);
+      /* The twelve lead the launch fortnight, but only in the room each one
+         belongs to. Putting all twelve at the front of all 111 rooms was the
+         single most visible repeat in the building: the first twelve works a
+         visitor met were the same twelve wherever they went. */
+      const here = placeHang(roomId);
+      const mine = new Set(OWNED[roomId] || []);
+      const twelve = LAUNCH_TWELVE.filter((n) => mine.has(n))
+        .map((n) => byNum.get(n))
+        .filter((p): p is Piece => !!p);
       const lead = new Set(twelve);
-      return twelve.concat(placeHang(roomId).filter((p) => !lead.has(p)));
+      return twelve.concat(here.filter((p) => !lead.has(p)));
     }
     case 'era': return P.filter((p) => p.e === Number(h.key));
     case 'family': return P.filter((p) => p.f === h.key);

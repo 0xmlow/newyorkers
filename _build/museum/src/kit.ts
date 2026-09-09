@@ -30,6 +30,10 @@ export type KitOpts = {
   dynamic: boolean;
 };
 
+/* Set ?audit=1 on the museum URL and every hang reports its own overflow to the console.
+   Turns a 111 room walk into a twenty minute pass. */
+const AUDIT = typeof location !== 'undefined' && /[?&]audit=1/.test(location.search);
+
 const gltf = new GLTFLoader();
 const propCache = new Map<string, Promise<T.Group>>();
 const thumbCache = new Map<string, Promise<T.Texture>>();
@@ -374,7 +378,7 @@ export class Kit {
         this.extras.push(bLogo);
         for (const sgn of [-1, 1]) {
           const fx = bx + right.x * sgn * 2.55, fz = bz + right.z * sgn * 2.55;
-          const fl = this.mesh(new T.PlaneGeometry(0.66, 0.66), this.image(B + (sgn < 0 ? 'blossom_01.png' : 'blossom_05.png')), fx, by - 0.04, fz);
+          const fl = this.mesh(new T.PlaneGeometry(0.66, 0.66), this.image(B + (sgn < 0 ? 'blossom_01_white.png' : 'blossom_05_white.png')), fx, by - 0.04, fz);
           fl.rotation.y = facing + Math.PI;
           this.extras.push(fl);
         }
@@ -711,6 +715,12 @@ export class Kit {
       o.rotation.y = p.rotY ?? 0;
       o.traverse((c) => {
         if (c instanceof T.Mesh) {
+          // The cache owns source resources; each room disposes its own copies.
+          c.geometry = c.geometry.clone();
+          c.material = Array.isArray(c.material) ? c.material.map(m => m.clone()) : c.material.clone();
+          for (const material of (Array.isArray(c.material) ? c.material : [c.material])) {
+            for (const value of Object.values(material)) if (value instanceof T.Texture) markShared(value);
+          }
           c.castShadow = c.receiveShadow = this.o.quality === 'high';
           const m = c.material as T.MeshStandardMaterial;
           if (m && 'envMapIntensity' in m) m.envMapIntensity = 1.2;
@@ -787,8 +797,42 @@ export class Kit {
   /* ---------- hang one work ---------- */
   hang(m: Mount, piece: Piece, style: FrameStyle, index: number, thumbUrl: string, caption: string[]) {
     const ratio = piece.ar || 1.777;
-    const w = Math.min(m.width, m.height * ratio),
-      h = w / ratio;
+    // Fit the whole assembly to the mount, not just the picture. The frame lip, the mat and the
+    // caption plate all live outside the art rectangle, so fitting the art alone pushed frames
+    // past corners and door jambs and pushed caption plates through the floor.
+    const depth = style === 'gilt' ? 0.22 : 0.12;
+    const fullLip = style === 'none' ? 0 : style === 'gilt' ? 0.34 : style === 'oak' ? 0.22 : style === 'neon' ? 0.15 : 0.14;
+    const capDrop = 0.30;                       // gap between the art and the plate
+    // Solve the fit for a given lip and whether the caption is hung. Returns the art size
+    // and the padding it consumed, so the frame and the plate below use the same numbers.
+    const solve = (lp: number, withCap: boolean) => {
+      const pw = lp * 2 + 0.04, ph = lp * 2 + 0.04;
+      const aw = Math.max(0, m.width - pw), ah0 = Math.max(0, m.height - ph);
+      const provW = Math.min(aw, ah0 * ratio);
+      const ch = withCap ? Math.min(2.6, provW * 0.55) * 0.195 + capDrop : 0;
+      const ww = Math.min(aw, Math.max(0, m.height - ph - ch) * ratio);
+      return { w: ww, h: ww / ratio, padW: pw, padH: ph, capH: ch };
+    };
+    // Degrade in order rather than refusing to hang: full assembly, then no caption,
+    // then a thinner frame. A small mount gets a smaller picture, never no picture.
+    let fit = solve(fullLip, true);
+    let hangPlate = true;
+    if (fit.w < 0.45) { fit = solve(fullLip, false); hangPlate = false; }
+    if (fit.w < 0.45) { fit = solve(Math.min(fullLip, 0.05), false); hangPlate = false; }
+    const lip = (fit.padW - 0.04) / 2;
+    const { w, h, padW, padH, capH } = fit;
+    if (!(w > 0.15)) {
+      if (AUDIT) console.warn('[audit] mount too small for any work, skipped', { index, style, mount: [m.width, m.height] });
+      return null;
+    }
+    if (AUDIT && !hangPlate) console.warn('[audit] caption dropped to fit the mount', { index, mount: [m.width, m.height] });
+    if (AUDIT) {
+      const fw = w + padW, fh = h + padH + capH;
+      if (fw > m.width + 1e-3 || fh > m.height + 1e-3)
+        console.warn('[audit] footprint overflows mount', { index, style, mount: [m.width, m.height], footprint: [+fw.toFixed(3), +fh.toFixed(3)] });
+      if (m.position.y - fh / 2 < 0)
+        console.warn('[audit] assembly reaches below the floor', { index, y: m.position.y, height: +fh.toFixed(3) });
+    }
     const g = new T.Group();
     g.position.copy(m.position);
     // face the viewing point: the art plane sits on local +z, so flip any mount whose normal points away from its target
@@ -807,8 +851,6 @@ export class Kit {
       : style === 'neon' ? this.glow(0x00e5ff)
       : null;
     if (frameMat && style !== 'neon') {
-      const depth = style === 'gilt' ? 0.22 : 0.12,
-        lip = style === 'gilt' ? 0.34 : style === 'oak' ? 0.22 : 0.14;
       const frame = new T.Mesh(new T.BoxGeometry(w + lip * 2, h + lip * 2, depth), frameMat);
       frame.castShadow = this.o.quality === 'high';
       g.add(frame);
@@ -827,7 +869,7 @@ export class Kit {
         g.add(bar);
       }
     }
-    const artMat = new T.MeshBasicMaterial({ color: 0x0f1218 });
+    const artMat = new T.MeshBasicMaterial({ color: 0x0f1218, toneMapped: false });
     const art = new T.Mesh(new T.PlaneGeometry(w, h), artMat);
     art.position.z = artZ;
     art.userData.piece = piece;
@@ -849,12 +891,19 @@ export class Kit {
       { text: caption[2], color: '#8899AA', size: 24 },
       { text: caption[3] || 'NEW YORKERS  ·  BY MLOW', color: '#2962FF', size: 21 },
     ], 1024, 200);
-    const plate = new T.Mesh(new T.PlaneGeometry(Math.min(2.6, w * 0.55), Math.min(2.6, w * 0.55) * 0.195), new T.MeshBasicMaterial({ map: cap }));
-    plate.position.set(-w / 2 + Math.min(2.6, w * 0.55) / 2, -h / 2 - 0.42, artZ + 0.01);
-    g.add(plate);
+    const plateW = Math.min(2.6, w * 0.55), plateH = plateW * 0.195;
+    const plateY = -h / 2 - capDrop - plateH / 2;
+    const plate = new T.Mesh(new T.PlaneGeometry(plateW, plateH), new T.MeshBasicMaterial({ map: cap }));
+    plate.position.set(-w / 2 + plateW / 2, plateY, artZ + 0.01);
+    // a plate that would sink into the floor is not hung at all
+    if (hangPlate && m.position.y + plateY - plateH / 2 > 0.10) g.add(plate);
+    else if (AUDIT && hangPlate) console.warn('[audit] caption plate would hit the floor, dropped', { index, y: m.position.y });
     if (m.wash !== false) {
-      const wm = new T.Mesh(new T.PlaneGeometry(w * 1.9, h * 2.4), new T.MeshBasicMaterial({ map: X.pool(), transparent: true, opacity: 0.55, blending: T.AdditiveBlending, depthWrite: false }));
-      wm.position.set(0, h * 0.15, -0.02);
+      // clamped to the mount so the glow cannot bleed onto a neighbour or through a wall,
+      // and centred on the art so the lit area reads where the picture actually is
+      const washW = Math.min(w * 1.9, m.width), washH = Math.min(h * 2.4, m.height);
+      const wm = new T.Mesh(new T.PlaneGeometry(washW, washH), new T.MeshBasicMaterial({ map: X.pool(), transparent: true, opacity: 0.55, blending: T.AdditiveBlending, depthWrite: false }));
+      wm.position.set(0, 0, -0.02);
       wm.renderOrder = 1;
       g.add(wm);
     }

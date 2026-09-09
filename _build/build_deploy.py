@@ -106,7 +106,8 @@ for f in os.listdir(OUT):
 # but never copied here. One tuple drives both the copy and the prune: two lists drift,
 # and the drift is silent (an asset stops shipping and every page that needs it breaks).
 COPY_ASSETS = ("three.min.js", "site.css", "site.js", "geo.js", "eggs.js", "counts.js",
-               "rooms.js", "articles.js", "shipping.js", "prints.js", "qrcode.min.js", "sha3.min.js")
+               "rooms.js", "articles.js", "shipping.js", "prints.js", "qrcode.min.js", "sha3.min.js",
+               "home.css", "flywheel.js", "cast.json")
 KEEP_ASSETS = set(COPY_ASSETS) | {"config.js", "data.js"}
 _ad = os.path.join(OUT, "assets")
 for f in os.listdir(_ad):
@@ -203,6 +204,20 @@ _vers = {}
 # to four hours, so a change to any of these can sit invisible in a warm browser. Versioning
 # the reference is the only reliable fix: the HTML always revalidates. A stale site.js is how
 # a hidden footer link stayed visible after the switch was flipped.
+# cast.json is fetched by flywheel.js, not referenced from any HTML, so the loop below
+# never sees it and the edge would serve a stale census for up to four hours after a
+# rebuild. Stamp its URL inside the script first, so flywheel.js is already final when
+# its own hash is taken and one pass stays consistent.
+_castp = os.path.join(OUT, "assets", "cast.json")
+_flyp = os.path.join(OUT, "assets", "flywheel.js")
+if os.path.exists(_castp) and os.path.exists(_flyp):
+    _cv = hashlib.sha256(open(_castp, "rb").read()).hexdigest()[:10]
+    _fs = open(_flyp, encoding="utf-8").read()
+    _fn2 = re.sub(r'(assets/cast\.json)(\?v=[0-9a-f]+)?', r'\1?v=' + _cv, _fs)
+    if _fn2 != _fs:
+        open(_flyp, "w", encoding="utf-8").write(_fn2)
+    print("  cast.json versioned %s inside flywheel.js" % _cv)
+
 for _asset in tuple(COPY_ASSETS) + ("config.js", "data.js"):
     _fp = os.path.join(OUT, "assets", _asset)
     if os.path.exists(_fp):
@@ -218,6 +233,7 @@ for _root, _dirs, _files in os.walk(OUT):
         if _s != _o:
             open(_fp, "w", encoding="utf-8").write(_s); _stamped += 1
 print("  control files versioned %s, stamped into %d pages" % (_vers, _stamped))
+
 
 # A build id, written into every page and to /build.json. While iterating on a bug it is
 # vital to know WHICH build a report came from: a stale tab reports a fixed bug as still

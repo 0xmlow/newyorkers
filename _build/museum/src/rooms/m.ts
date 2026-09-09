@@ -274,7 +274,11 @@ export const boatgraveyard: RoomDef = {
     for (let i = 0; i < 12; i++) k.box(1.2, 1.2, 0.1, FX - 7.05, 5.2 + 0.12 * 0, FZ - 22 + i * 4, dark);
     k.box(8, 3, 8, FX, 8.5, FZ, white).rotation.z = 0.12;
     k.cyl(0.9, 4, FX, 11.5, FZ - 8, rustD, 1.0, 12);
-    k.keepOut.push({ x: FX, z: FZ, r: 32 });
+    /* The flagship is a 16 by 60 hull, but it carried a 32 metre circular keep
+       out, wider than the wreck itself, which walled off the four works hung on
+       its starboard flank: there was nowhere in sight of them to stand. A
+       rectangle the shape of the hull lets the visitor walk alongside it. */
+    k.block(FX - 9, FX + 9, FZ - 31, FZ + 31);
     for (let i = 0; i < 12; i++) { const w = wrecks[i % wrecks.length]; const h = k.mesh(new T.CapsuleGeometry(0.12, 0.6, 3, 6), heron, w.x + (rnd() - 0.5) * 3, 8.6 + rnd() * 0.4, w.z + (rnd() - 0.5) * 3, true); void h; k.beam(v(h.position.x, h.position.y - 0.5, h.position.z), v(h.position.x, h.position.y - 1.1, h.position.z), 0.02, yellow, 3); k.mesh(new T.ConeGeometry(0.04, 0.4, 4), yellow, h.position.x, h.position.y + 0.35, h.position.z + 0.3).rotation.x = PI / 2; }
     const gulls: T.Mesh[] = [];
     for (let i = 0; i < 8; i++) { const b = k.mesh(new T.ConeGeometry(0.14, 0.6, 4), heron, 0, 14, 0, true); b.rotation.x = PI / 2; gulls.push(b); }
@@ -294,7 +298,7 @@ export const boatgraveyard: RoomDef = {
     const mounts: Mount[] = [];
     for (const w of wrecks) { const near = kp.reduce((b, p) => (Math.hypot(p.x - w.x, p.z - w.z) < Math.hypot(b.x - w.x, b.z - w.z) ? p : b), kp[0]); const a = Math.atan2(near.x - w.x, near.z - w.z); const d = 3.2; mounts.push({ position: v(w.x + Math.sin(a) * d, 6.2, w.z + Math.cos(a) * d), rotation: a, target: v(near.x, 3, near.z), width: 3.0, height: 1.8, style: 'black', wash: false }); }
     for (const [x, z] of [[90, 40], [-100, 0], [30, -90]]) { const near = kp.reduce((b, p) => (Math.hypot(p.x - x, p.z - z) < Math.hypot(b.x - x, b.z - z) ? p : b), kp[0]); const a = Math.atan2(near.x - x, near.z - z); mounts.push({ position: v(x + Math.sin(a) * 6.2, 2.0, z + Math.cos(a) * 6.2), rotation: a, target: v(near.x, 2, near.z), width: 6, height: 3.4, style: 'none', wash: false }); }
-    for (let i = 0; i < 4; i++) mounts.push({ position: v(FX + 7.4, 5.4, FZ - 18 + i * 12), rotation: -PI / 2, target: v(FX + 30, 3, FZ - 18 + i * 12), width: 5, height: 3, style: 'none', wash: false });
+    for (let i = 0; i < 4; i++) mounts.push({ position: v(FX + 7.4, 5.4, FZ - 18 + i * 12), rotation: -PI / 2, target: v(FX + 16, 3, FZ - 18 + i * 12), width: 5, height: 3, style: 'none', wash: false });
     for (let i = 0; i < 3; i++) { const z = 74 + i * 8; k.box(0.16, 2.2, 3.4, 3.2, 1.6, z, wood); mounts.push({ position: v(3.1, 1.7, z), rotation: -PI / 2, target: v(-2, 2, z), width: 3.0, height: 1.8, style: 'black', wash: false }); }
     const path = kp.map((p) => v(p.x, 1.4, p.z));
     return { mounts, spawn: path[0].clone(), look: v(-30, 6, -20), eye: 1.4, bounds: [-120, 120, -140, 100], path, style: 'black' };
@@ -397,7 +401,7 @@ export const intrepid: RoomDef = {
     const mounts: Mount[] = [];
     for (let i = 0; i < 4; i++) { const z = IZ - 10 + i * 6.5; mounts.push({ position: v(IX - 4.05, DY + 4, z), rotation: -PI / 2, target: v(IX - 14, DY + 3, z), width: 4.4, height: 2.6, style: 'steel', wash: false }); }
     for (let i = 0; i < 4; i++) { const z = -100 + i * 20; for (const s of [-1, 1]) { k.box(0.4, 4.4, 5.4, s * (HW / 2 - 1.2), HY + 3.2, z, greyD); mounts.push({ position: v(s * (HW / 2 - 1.36), HY + 3.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, HY + 3, z), width: 4.6, height: 2.7, style: 'steel', wash: false }); } }
-    for (let i = 0; i < 3; i++) { const z = PZ - 12 + i * 12; mounts.push({ position: v(-17.5, DY + 5, z), rotation: PI / 2, target: v(-8, DY + 4, z), width: 5, height: 3, style: 'none', wash: false }); }
+    for (let i = 0; i < 3; i++) { const z = PZ - 12 + i * 12; mounts.push({ position: v(-17.5, DY + 5, z), rotation: PI / 2, target: v(13, DY + 4, z), width: 5, height: 3, style: 'none', wash: false }); }
     for (let i = 0; i < 3; i++) { const z = -HL / 2 + 30 + i * 40; k.box(0.2, 3, 4.6, -HW / 2 - 11.2, DY + 1.8, z, dark); mounts.push({ position: v(-HW / 2 - 11.05, DY + 2, z), rotation: PI / 2, target: v(-8, DY + 2, z), width: 4.2, height: 2.5, style: 'steel', wash: false }); }
     return { mounts, spawn: v(-6, DY + 3, HL / 2 - 70), look: v(IX - 6, DY + 8, IZ - 70), eye: 3, bounds: [-HW / 2 - 12, HW / 2 + 4, -HL / 2 + 1, HL / 2 - 1], style: 'steel', floorY: (x, z) => { if (z > -18) return DY + 0.2; if (z > -44 && Math.abs(x) < 3.4) return DY + 0.2 - ((-18 - z) / 26) * (DY - HY - 0.1); return HY + 0.3; } };
   },

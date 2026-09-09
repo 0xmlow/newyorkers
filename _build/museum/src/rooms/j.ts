@@ -120,7 +120,7 @@ export const cyclone: RoomDef = {
     for (const [x, z] of [[-4, -30], [-4, -50], [30, -60], [30, -40]]) { k.box(0.3, 3, 4.6, x, 1.9, z, timber); mounts.push({ position: v(x + (x < 0 ? -0.2 : 0.2), 2.0, z), rotation: x < 0 ? -PI / 2 : PI / 2, target: v(x < 0 ? -12 : 40, 2, z), width: 4.2, height: 2.5, style: 'white', wash: false }); }
     // the ride as the route: every point sits at a rider's eye above the rail
     const path = pts.map((p) => p.clone().add(v(0, 1.25, 0)));
-    return { mounts, spawn: path[0].clone(), look: v(0, 12, -50), eye: 1.25, bounds: [-40, 40, -100, 30], path, style: 'white' };
+    return { mounts, spawn: path[0].clone(), look: v(0, 12, -50), eye: 1.25, /* cyclone: the six boardwalk works sit at x +/- 60 and z 47, outside the old bounds, so the visitor was fenced off from a third of the room */ bounds: [-64, 64, -100, 44], path, style: 'white' };
   },
 };
 

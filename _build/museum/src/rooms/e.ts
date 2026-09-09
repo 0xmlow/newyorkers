@@ -77,18 +77,22 @@ export const unisphere: RoomDef = {
     for (let i = 0; i < 16; i++) {
       const t = PI / 2 + ((i + 0.5) / 16) * PI * 2, rr = 25.6;
       const x = C.x + Math.cos(t) * rr, z = C.z + Math.sin(t) * rr;
-      k.box(0.4, 4.4, 6.2, 0, 0, 0, granite).position.set(x, 2.4, z);
+      k.box(6.2, 4.4, 0.4, 0, 0, 0, granite).position.set(x, 2.4, z);
       const last = k.objects[k.objects.length - 1];
       last.rotation.y = -t - PI / 2;
-      k.box(1.0, 0.3, 6.6, 0, 0, 0, granite).position.set(x, 0.15, z);
+      k.box(6.6, 0.3, 1.0, 0, 0, 0, granite).position.set(x, 0.15, z);
       k.objects[k.objects.length - 1].rotation.y = -t - PI / 2;
       mounts.push({ position: v(x - Math.cos(t) * 0.25, 2.8, z - Math.sin(t) * 0.25), rotation: -t - PI / 2, target: v(C.x + Math.cos(t) * R, 3, C.z + Math.sin(t) * R), width: 5.2, height: 3.0, style: 'steel', wash: false });
     }
     for (let i = 0; i < 8; i++) {
-      const t = PI / 2 + ((i + 0.5) / 8) * PI * 2, rr = 17.55;
+      /* The basin rim, outside the globe. At 17.55 this ring sat inside the
+         Unisphere's own 18.2 keep out, so all eight works were embedded in the
+         sculpture: you walked the promenade at radius 22 and saw panels buried
+         in the steel. 19 clears the globe and leaves three metres to the path. */
+      const t = PI / 2 + ((i + 0.5) / 8) * PI * 2, rr = 19;
       const x = C.x + Math.cos(t) * rr, z = C.z + Math.sin(t) * rr;
       mounts.push({ position: v(x, 2.4, z), rotation: -t + PI / 2, target: v(C.x + Math.cos(t) * R, 3, C.z + Math.sin(t) * R), width: 3.6, height: 2.2, style: 'steel', wash: false });
-      k.box(0.3, 3.4, 4.2, 0, 0, 0, granite).position.set(x - Math.cos(t) * 0.2, 1.9, z - Math.sin(t) * 0.2);
+      k.box(4.2, 3.4, 0.3, 0, 0, 0, granite).position.set(x - Math.cos(t) * 0.2, 1.9, z - Math.sin(t) * 0.2);
       k.objects[k.objects.length - 1].rotation.y = -t - PI / 2;
     }
     return { mounts, spawn: path[0].clone(), look: v(path[40].x * 0.6 + C.x * 0.4, 7, path[40].z * 0.6 + C.z * 0.4), eye: 3, bounds: [-40, 40, -70, 14], path, style: 'steel' };
@@ -263,6 +267,7 @@ export const cloisters: RoomDef = {
     for (const [x, z] of [[-13, Cz - 13], [13, Cz + 13]]) k.prop('lantern', x, 0, z, { height: 1.0 });
     k.prop('tree', 13, 0, Cz - 13, { height: 4.2 });
     k.prop('tree', -13, 0, Cz + 13, { height: 4.2 });
+    for (const x of [-9, 9]) k.prop('quiet_bench', x, 0.2, Cz + S + 3, { height: 0.65, keepOut: 1.7 });
     // the chapel wall with the census, the entrance passage
     k.box(2 * S + 12, 12, 1.0, 0, 6, Cz - S - 6.4, stone);
     k.arch(4, 8, 1.2, 0, 0, Cz - S - 6.4, stone, true, 0.7);
@@ -316,7 +321,17 @@ export const navyyard: RoomDef = {
     k.box(60, D + 2, 8, 0, -D / 2, ZC + L / 2 + 4, granite);
     for (const x of [-4, -2.6, 2.6, 4]) k.box(0.14, 0.14, L, x, -D + 0.07, ZC, dark);
     for (let z = 6; z > ZC - L / 2; z -= 3) k.box(4, 1.2, 1.2, 0, -D + 0.6, z, timber);
-    k.block(-17.6, 17.6, ZC - L / 2 - 2, ZC + L / 2 + 0.6);
+    /* This used to block the whole dock, x -17.6 to 17.6 and z -64 to 10.6,
+       which is every square metre of the room inside its own bounds. The
+       visitor spawned at z 10, was shoved straight back out to z 10.6, and was
+       left in a strip a metre and a half deep with all twenty one works
+       unreachable behind them. The quay slab already covers the dock, so there
+       is no void to fall into: what has to be blocked is only what stands up
+       out of the yard. */
+    k.block(-3.2, 3.2, -26.2, -17.8);            // the deckhouse on the hull's back
+    k.block(-10.2, 10.2, ZC - L / 2 - 2.2, ZC - L / 2 + 0.2);   // the caisson gate at the river end
+    k.keepOut.push({ x: 17, z: 0, r: 0.7 });     // the bell post
+    for (const z of [-8, -32]) k.keepOut.push({ x: 15.6, z, r: 1.5 });   // the quay benches
     // the hull on the blocks
     const hull = k.mesh(new T.CylinderGeometry(6.5, 6.5, 40, 28, 1, false, 0, PI), rust, 0, -D + 2.4, -30);
     hull.rotation.set(0, 0, PI / 2);

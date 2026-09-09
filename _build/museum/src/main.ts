@@ -1,9 +1,11 @@
 /* NEW YORKERS · THE MUSEUM. One hundred and eleven walkable New York rooms hung with the census. */
 import * as T from 'three';
 import { Kit } from './kit';
+import { Fx } from './fx';
 import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG } from './data';
 import type { Hang, Piece } from './data';
 import { ROOMS } from './rooms';
+import type { Mount } from './kit';
 import type { RoomBuild } from './rooms/types';
 
 const $ = <E extends HTMLElement = HTMLElement>(s: string) => document.querySelector(s) as E;
@@ -11,6 +13,8 @@ const $ = <E extends HTMLElement = HTMLElement>(s: string) => document.querySele
 type RoomFact = { id: string; fact?: string; year?: string; learn?: string; article?: string; source?: { name: string; url: string } };
 const FACTS: Record<string, RoomFact> = {};
 for (const r of ((window as unknown as { NY_ROOMS?: RoomFact[] }).NY_ROOMS || [])) FACTS[r.id] = r;
+const FIRST_ROOMS = ['metgreathall', 'bowery', 'cloisters'];
+const START_ROOMS = [...FIRST_ROOMS, 'guggenheim', 'grand', 'brooklyn'];
 const roomThumb = (id: string) => `assets/museum/rooms/${id}.jpg`;
 const CFG = (window as unknown as { NY_CONFIG?: Record<string, string> }).NY_CONFIG || {};
 let spinOnEnter = false;
@@ -22,15 +26,16 @@ const quality: 'high' | 'low' = params.get('q') === 'low' || (touch && innerWidt
 const reduced = () => reducedQuery.matches || params.get('motion') === 'off';
 
 type State = { room: number; hang: Hang; page: number; active: number; tour: boolean };
-const state: State = { room: 0, hang: { ...DEFAULT_HANG }, page: 0, active: -1, tour: false };
+const state: State = { room: ROOMS.findIndex(r => r.id === 'metgreathall'), hang: { ...DEFAULT_HANG }, page: 0, active: -1, tour: false };
 let renderer: T.WebGLRenderer | null = null;
+let fx: Fx | null = null;
 let kit: Kit | null = null;
 let scene: T.Scene | null = null;
 let camera: T.PerspectiveCamera;
 let build: RoomBuild | null = null;
 let list: Piece[] = [];
 let shown: Piece[] = [];
-let mountsFilled: T.Group[] = [];
+let mountsFilled: (T.Group | null)[] = [];   // null where a mount was too small to hang, index stays aligned with shown[]
 let frame = 0;
 const atlas = atlasLoader(quality);
 
@@ -66,7 +71,7 @@ function writeHash() {
 /* ---------- renderer ---------- */
 function makeRenderer() {
   const host = $('#world');
-  const r = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  const r = new T.WebGLRenderer({ antialias: quality === 'high', powerPreference: quality === 'low' ? 'low-power' : 'high-performance' });
   r.setPixelRatio(Math.min(devicePixelRatio, quality === 'high' ? 1.75 : 1.2));
   r.setSize(host.clientWidth, host.clientHeight);
   r.outputColorSpace = T.SRGBColorSpace;
@@ -77,11 +82,16 @@ function makeRenderer() {
     r.shadowMap.type = T.PCFSoftShadowMap;
   }
   host.appendChild(r.domElement);
-  camera = new T.PerspectiveCamera(62, host.clientWidth / host.clientHeight, 0.1, 1200);
+  /* Near at 0.5 rather than 0.1. The skyline needs the far plane at 1200, and a
+     12,000 to 1 depth range leaves almost no precision in the twenty metres the
+     visitor is actually standing in, which is what the occlusion pass reads. The
+     collision model keeps them further than half a metre from anything anyway. */
+  camera = new T.PerspectiveCamera(62, host.clientWidth / host.clientHeight, 0.5, 1200);
   addEventListener('resize', () => {
     camera.aspect = host.clientWidth / host.clientHeight;
     camera.updateProjectionMatrix();
     r.setSize(host.clientWidth, host.clientHeight);
+    fx?.setSize(host.clientWidth, host.clientHeight);
   });
   return r;
 }
@@ -128,12 +138,58 @@ function placeOnPath() {
     hi = Math.min(lo + 1, p.length - 1);
   camera.position.lerpVectors(p[lo], p[hi], pathIndex - lo);
 }
+/* Is this a spot a visitor could actually be left standing? constrain() will
+   shove the camera out of a block or a keep out and clamp it to the bounds, so
+   a viewing position inside one of those is a position the visitor can never
+   hold, and the work in front of them is unreachable. */
+function standable(p: T.Vector3) {
+  if (!build || !kit) return false;
+  const [minX, maxX, minZ, maxZ] = build.bounds;
+  if (p.x < minX || p.x > maxX || p.z < minZ || p.z > maxZ) return false;
+  for (const b of kit.blocks) if (p.x > b.x0 && p.x < b.x1 && p.z > b.z0 && p.z < b.z1) return false;
+  for (const k of kit.keepOut) if (Math.hypot(p.x - k.x, p.z - k.z) < k.r) return false;
+  return true;
+}
+
+/* Where to stand to see mount n.
+
+   The hand written target is used whenever it is any good, because it carries
+   the room's intent: an angle the architect chose, a spot on a balcony. But an
+   audit of all 111 rooms found 376 targets sitting inside a block, a keep out
+   or outside the room's own bounds, and 234 works whose face pointed away from
+   the place the visitor was being sent. Rather than leave those unviewable,
+   fall back to the one position that is always right for a picture: straight
+   out in front of it, far enough back to see it, at the first distance that is
+   actually standable. */
+function viewpoint(m: Mount) {
+  const back = Math.max(3, (m.width || 4) * 0.9);
+  const nx = Math.sin(m.rotation), nz = Math.cos(m.rotation);
+  const toTarget = new T.Vector3().subVectors(m.target, m.position);
+  const inFront = toTarget.x * nx + toTarget.z * nz > 0;
+  if (inFront && standable(m.target)) return m.target.clone();
+  /* Search the floor in front of the work: straight out first, then further
+     back, then off to either side. A picture in a corner or on a narrow
+     landing often has nothing directly in front of it but plenty at an angle,
+     and looking at a painting from off to one side is normal. */
+  for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5, back * 3.2]) {
+    for (const a of [0, 0.3, -0.3, 0.6, -0.6, 0.95, -0.95, 1.25, -1.25]) {
+      const ax = Math.sin(m.rotation + a), az = Math.cos(m.rotation + a);
+      const p = new T.Vector3(m.position.x + ax * d, m.target.y, m.position.z + az * d);
+      if (standable(p)) return p;
+    }
+  }
+  /* Nothing in front of it is standable. Keep the authored target rather than
+     inventing a worse one, and let constrain() do what it can. */
+  return m.target.clone();
+}
+
 function focus(n: number) {
   if (!build || !build.mounts[n]) return;
   const m = build.mounts[n];
-  goal = m.target.clone();
+  const stand = viewpoint(m);
+  goal = stand;
   lookGoal = (m.lookAt || m.position).clone();
-  if (build.path) targetPath = nearestPath(goal);
+  if (build.path) targetPath = nearestPath(stand);
   state.active = n;
   paintStrip();
 }
@@ -175,7 +231,10 @@ function bindControls(canvas: HTMLCanvasElement) {
     lastX = 0,
     lastY = 0,
     moved = 0;
+  canvas.tabIndex = 0;
+  canvas.setAttribute('aria-label', 'Walkable gallery. Drag to look, W A S D to walk, J for the next artwork.');
   canvas.addEventListener('pointerdown', (e) => {
+    canvas.focus();
     drag = true;
     lastX = e.clientX;
     lastY = e.clientY;
@@ -222,12 +281,14 @@ function bindControls(canvas: HTMLCanvasElement) {
       closePanels();
       return;
     }
+    if (document.querySelector('.panel.open,#detail.open')) return;
+    if (e.key === 'Enter' && t.closest('button,a,summary')) return;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 'Shift'].includes(e.key)) {
       e.preventDefault();
       keys.add(e.key.toLowerCase());
       goal = null;
     }
-    if (e.key === 'Tab' && build) {
+    if (e.key.toLowerCase() === 'j' && build && !t.closest('button,a,summary') && !document.querySelector('.panel.open,#detail.open')) {
       e.preventDefault();
       focus((state.active + (e.shiftKey ? -1 : 1) + build.mounts.length) % build.mounts.length);
     }
@@ -249,13 +310,54 @@ function bindControls(canvas: HTMLCanvasElement) {
 }
 
 /* ---------- the loop ---------- */
+/* The post chain is worth roughly nothing on a fast desktop and could be worth
+   everything on a weak phone, and I could not measure it reliably anywhere. So
+   the museum measures itself: it watches real frame times once the chain is
+   running and drops back to plain rendering if the room cannot hold the budget.
+   Better a museum that looks slightly flatter than one that stutters. */
+const FX_BUDGET_MS = 22;          // below about 45 fps
+const FX_WARMUP_FRAMES = 45;      // shaders compile and textures upload first
+const FX_SAMPLE_FRAMES = 90;
+let fxFrames = 0, fxAcc = 0, fxJudged = false;
+const TOUR_DWELL = 6.5;
+let tourClock = 0;
 let prev = performance.now();
 function animate(now: number) {
   frame = requestAnimationFrame(animate);
-  if (!renderer || !scene || !build || !kit) return;
-  const dt = Math.min((now - prev) / 1000, 0.05);
+  if (!renderer || !scene || !build || !kit) { prev = now; return; }
+  // Do not gate the draw on document.hidden. requestAnimationFrame is already
+  // paused by the browser in a background tab, and embedded viewers (previews,
+  // in-app webviews) report hidden while still painting, which left the room
+  // pure black. Gate the setInterval tour instead, where it actually matters.
+  const raw = now - prev;
+  const dt = Math.min(raw / 1000, 0.05);
   prev = now;
+  if (fx && !fxJudged) {
+    fxFrames++;
+    if (fxFrames > FX_WARMUP_FRAMES) fxAcc += raw;
+    if (fxFrames >= FX_WARMUP_FRAMES + FX_SAMPLE_FRAMES) {
+      const mean = fxAcc / FX_SAMPLE_FRAMES;
+      fxJudged = true;
+      if (mean > FX_BUDGET_MS) {
+        fx = null;
+        console.info(`[museum] post chain off: ${mean.toFixed(1)} ms a frame, over the ${FX_BUDGET_MS} ms budget`);
+      } else {
+        console.info(`[museum] post chain on: ${mean.toFixed(1)} ms a frame`);
+      }
+    }
+  }
+  if (state.tour && shown.length && !document.querySelector('.panel.open,#detail.open')) {
+    tourClock += dt;
+    if (tourClock >= TOUR_DWELL) { tourClock = 0; focus((state.active + 1) % shown.length); }
+  } else {
+    tourClock = 0;
+  }
   if (goal && lookGoal) {
+    if (reduced()) {
+      camera.position.copy(goal);
+      if (build.path) { pathIndex = targetPath; placeOnPath(); }
+      camera.lookAt(lookGoal);
+    }
     if (build.path) {
       pathIndex += (targetPath - pathIndex) * (1 - Math.exp(-dt * 2.2));
       if (Math.abs(pathIndex - targetPath) < 0.02) pathIndex = targetPath;
@@ -286,7 +388,7 @@ function animate(now: number) {
     }
   }
   if (!reduced()) kit.tick(now / 1000, dt);
-  renderer.render(scene, camera);
+  if (fx) fx.render(); else renderer.render(scene, camera);
   if (params.has('debug')) $('#debug').textContent = `calls ${renderer.info.render.calls} · tris ${(renderer.info.render.triangles / 1000).toFixed(0)}k · tex ${renderer.info.memory.textures} · geo ${renderer.info.memory.geometries}`;
 }
 
@@ -304,6 +406,27 @@ function loadRoom(openN?: string | null): Promise<void> {
     list = hangList(state.hang, def.id);
     const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart };
     build = def.build(kit, ctx);
+    /* The post chain outlives the room, so it is built once and repointed at
+       each new scene. High path only, and `?fx=off` turns it off entirely. */
+    if (quality === 'high' && params.get('fx') !== 'off') {
+      const host = $('#world');
+      if (!fx) fx = new Fx(renderer!, scene, camera, host.clientWidth || 1280, host.clientHeight || 720, params.get('fx') || '');
+      else fx.setScene(scene, camera);
+      /* Judge again in the new room, because the next one may be far heavier
+         than the one that passed. Once the chain is off it stays off, so this
+         cannot flap on and off around the budget. */
+      if (fx) { fxFrames = 0; fxAcc = 0; fxJudged = false; }
+    }
+    /* A work whose face points away from the place the room sends you to see it
+       from is simply hung backwards: you arrive behind the picture. The target
+       carries the room's intent, so turning the work to face it is the faithful
+       correction, and it costs nothing when the room is already right. An audit
+       of all 111 rooms found 224 of 2,335 works hung this way, twenty of the
+       twenty two in the bleachers and every one of the twenty five at Liberty. */
+    for (const m of build.mounts) {
+      const dx = m.target.x - m.position.x, dz = m.target.z - m.position.z;
+      if (dx * Math.sin(m.rotation) + dz * Math.cos(m.rotation) < 0) m.rotation += Math.PI;
+    }
     kit.brand(build, def.name);
     const n = build.mounts.length;
     const pages = Math.max(1, Math.ceil(list.length / n));
@@ -388,18 +511,25 @@ function paintStrip() {
   el.innerHTML = shown.map((p, i) => `<button class="${state.active === i ? 'on' : ''}" data-i="${i}" aria-label="Go to ${esc(p.t)}"><img loading="lazy" src="${thumb(p)}" alt=""><span>${String(p.n).padStart(4, '0')}</span></button>`).join('');
   el.querySelectorAll('button').forEach((b) => (b.onclick = () => focus(Number(b.dataset.i))));
   const on = el.querySelector('button.on') as HTMLElement | null;
-  on?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  if ($('#artTray')?.hasAttribute('open')) on?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduced() ? 'auto' : 'smooth' });
 }
 
+let panelReturn: HTMLElement | null = null;
 function closePanels() {
   document.querySelectorAll('.panel.open').forEach((p) => p.classList.remove('open'));
   $('#detail').classList.remove('open');
   if (!spinning) $('#slot')?.classList.remove('open');
+  panelReturn?.focus(); panelReturn = null;
 }
 function openPanel(id: string) {
   const was = $(id).classList.contains('open');
   closePanels();
-  if (!was) $(id).classList.add('open');
+  if (!was) {
+    panelReturn = document.activeElement as HTMLElement;
+    $(id).classList.add('open');
+    keys.clear(); touchDir.f = touchDir.s = 0;
+    $(id).querySelector<HTMLElement>('input,button')?.focus();
+  }
 }
 
 /* ---------- detail ---------- */
@@ -443,13 +573,25 @@ function buildPanels() {
   $('#destGrid').innerHTML = ROOMS.map((r, i) => `<button data-i="${i}" style="--c:${r.color}"><span class="pic"><img loading="lazy" src="${roomThumb(r.id)}" alt="${esc(r.name)}"><span class="num">${String(i + 1).padStart(2, '0')}</span>${FACTS[r.id]?.year ? `<span class="yr">${esc(FACTS[r.id].year!)}</span>` : ''}</span><span class="txt"><small>${esc(r.area)}</small><strong>${esc(r.name)}</strong><p>${esc(r.description)}</p><em>${esc(r.mood)} · ${placeCount(r.id).toLocaleString('en-US')} recorded here</em></span></button>`).join('');
   $('#destGrid').querySelectorAll('button').forEach((b) => (b.onclick = () => { closePanels(); setRoom(Number(b.dataset.i)); }));
   const q = $('#destSearch') as HTMLInputElement | null;
-  if (q) q.oninput = () => {
-    const v = q.value.trim().toLowerCase();
+  let roomFilter = 'start';
+  const filterRooms = () => {
+    const v = q?.value.trim().toLowerCase() || '';
+    let found = 0;
     $('#destGrid').querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
       const r = ROOMS[Number(b.dataset.i)];
-      b.hidden = !!v && !(r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v);
+      const matches = v ? (r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v) : roomFilter === 'all' || START_ROOMS.includes(r.id);
+      b.hidden = !matches;
+      if (matches) found++;
     });
+    $('#destResult').textContent = found ? `${found} rooms${v ? ' found' : roomFilter === 'start' ? ' to start with' : ' to explore'}` : 'No rooms found. Try a neighborhood or clear your search.';
   };
+  if (q) q.oninput = filterRooms;
+  document.querySelectorAll<HTMLButtonElement>('#destFilters button').forEach(b => b.onclick = () => {
+    roomFilter = b.dataset.filter!;
+    document.querySelectorAll('#destFilters button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    filterRooms();
+  });
+  filterRooms();
   const chip = (h: Hang, label: string, sub = '') => `<button class="chip" data-h="${h.mode}${h.key ? ':' + h.key : ''}"><b>${esc(label)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</button>`;
   $('#hangTop').innerHTML = chip({ mode: 'launch' }, 'THE TWELVE', 'the launch fortnight, Sept 8 to 21, then this place') + chip({ mode: 'place' }, 'This place', 'the New Yorkers recorded at this location') + chip({ mode: 'all' }, 'The whole census', `${C.pieces.toLocaleString('en-US')} works by number`) + chip({ mode: 'heroes' }, 'The heroes', 'the hundred marks and closers');
   $('#hangEras').innerHTML = ERAS.map((e) => chip({ mode: 'era', key: String(e.i) }, `ERA ${e.roman}`, e.title)).join('');
@@ -633,23 +775,37 @@ function spin(auto = false) {
 function boot() {
   const openN = readHash();
   buildPanels();
+  $('#firstRooms').innerHTML = FIRST_ROOMS.map(id => {
+    const r = ROOMS.find(x => x.id === id)!;
+    return `<button data-room="${id}" aria-pressed="${ROOMS[state.room].id === id}"><img src="${roomThumb(id)}" alt=""><strong>${esc(r.name)}</strong><small>${esc(r.mood)}</small></button>`;
+  }).join('');
+  document.querySelectorAll<HTMLButtonElement>('#firstRooms button').forEach(b => b.onclick = () => {
+    state.room = ROOMS.findIndex(r => r.id === b.dataset.room);
+    spinOnEnter = false;
+    $('#enterRoom').textContent = 'FIRST STOP · ' + ROOMS[state.room].area;
+    document.querySelectorAll('#firstRooms button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  });
   $('#enterCount').innerHTML = `<b>${C.pieces.toLocaleString('en-US')}</b> NEW YORKERS · <b>${ROOMS.length}</b> ROOMS · <b>${C.eras}</b> ERAS`;
   $('#enterRoom').textContent = (spinOnEnter ? 'THE CITY WILL PICK YOUR ROOM' : 'FIRST STOP · ' + ROOMS[state.room].area);
   const sub = $('#enterSub'); if (sub) sub.textContent = `${ROOMS.length} ROOMS · THE CITY IS THE GALLERY`;
   if (touch) document.body.classList.add('touch');
   $('#enterBtn').onclick = () => {
-    $('#enter').classList.add('gone');
+    $('#enterBtn').setAttribute('disabled', '');
     if (!renderer) {
       try {
         renderer = makeRenderer();
       } catch {
         $('#noGl').hidden = false;
+        $('#enterBtn').removeAttribute('disabled');
         return;
       }
       bindControls(renderer.domElement);
       frame = requestAnimationFrame(animate);
     }
     loadRoom(openN).then(() => {
+      $('#enter').classList.add('gone');
+      $('#enter').setAttribute('inert', '');
+      $('#btnTour').focus();
       if (spinOnEnter) { spinOnEnter = false; spin(true); }
       const post = params.get('post') || 'http://127.0.0.1:4181/';
       if (params.get('export') === 'all') exportChain(post, state.room);
@@ -677,9 +833,10 @@ function boot() {
   $('#stepB').onclick = () => step(-1);
   $('#changeRoom').onclick = () => openPanel('#dest');
   document.querySelectorAll<HTMLElement>('[data-close]').forEach((b) => (b.onclick = closePanels));
-  setInterval(() => {
-    if (state.tour && shown.length && !$('#detail').classList.contains('open')) focus((state.active + 1) % shown.length);
-  }, 6500);
+  // The tour advances off the render loop, not a timer. requestAnimationFrame
+  // stops in a real background tab, so the tour pauses there on its own, and it
+  // keeps running in embedded viewers that report document.hidden while painting.
+
   addEventListener('hashchange', () => {
     const before = state.room + '|' + state.hang.mode + ':' + state.hang.key + '|' + state.page;
     const n = readHash();
@@ -694,5 +851,5 @@ function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
 }
 void frame;
-(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, focus, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
+(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
 boot();

@@ -128,7 +128,9 @@ export const stonewall: RoomDef = {
     const tri = new T.Shape(); tri.moveTo(P[0].x, -P[0].z); tri.lineTo(P[1].x, -P[1].z); tri.lineTo(P[2].x, -P[2].z); tri.closePath();
     const lg = new T.ExtrudeGeometry(tri, { depth: 0.3, bevelEnabled: false }); lg.rotateX(-PI / 2); k.mesh(lg, lawn, 0, 0.02, 0);
     for (let i = 0; i < 3; i++) { const a = P[i], b = P[(i + 1) % 3]; const len = a.distanceTo(b), m = a.clone().lerp(b, 0.5); const f = k.box(0.06, 1.1, len, m.x, 0.55, m.z, iron); f.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); for (let t = 0; t < 1; t += 0.06) { const p = a.clone().lerp(b, t); k.box(0.06, 1.2, 0.06, p.x, 0.6, p.z, iron); } }
-    k.block(2, 26, -42, -10);
+    /* The park used to be sealed, which put the works on its own railings
+       out of reach: they face in, so the lawn is the only floor they can be
+       seen from. */
     const fig = (x: number, z: number, seated: boolean) => { k.box(0.6, seated ? 0.9 : 1.7, 0.4, x, seated ? 0.95 : 1.35, z, white); k.sphere(0.2, x, seated ? 1.6 : 2.4, z, white, 10); if (seated) k.box(0.6, 0.3, 0.9, x, 0.6, z + 0.3, white); };
     k.bench(8, -20, 0.6, wood, iron, 2.0); fig(7.6, -20.4, true); fig(8.6, -20.4, true);
     fig(12, -16, false); fig(12.8, -15.2, false);
@@ -153,7 +155,7 @@ export const stonewall: RoomDef = {
     for (let i = 0; i < 5; i++) { const t = 0.12 + i * 0.19; const p = P[0].clone().lerp(P[1], t); const ang = Math.atan2(P[1].x - P[0].x, P[1].z - P[0].z); mounts.push({ position: v(p.x - Math.cos(ang) * 0.3, 1.6, p.z + Math.sin(ang) * 0.3), rotation: ang - PI / 2, target: v(p.x - Math.cos(ang) * 6, 2, p.z + Math.sin(ang) * 6), width: 2.6, height: 1.6, style: 'white', wash: false }); k.box(2.9, 1.9, 0.1, p.x, 1.6, p.z, white).rotation.y = ang; }
     for (let i = 0; i < 4; i++) { const z = -38 + i * 3; mounts.push({ position: v(2.2, 1.6, z), rotation: -PI / 2, target: v(-3, 2, z), width: 2.4, height: 1.5, style: 'white', wash: false }); k.box(0.1, 1.9, 2.7, 2.05, 1.6, z, white); }
     for (let i = 0; i < 3; i++) { const z = BZ - 12 - i * 5; k.box(0.2, 3, 4.2, -10.7, 2.6, z, dark); mounts.push({ position: v(-10.55, 2.6, z), rotation: PI / 2, target: v(-4, 2.5, z), width: 3.6, height: 2.1, style: 'none', wash: false }); }
-    return { mounts, spawn: v(-8.2, 3, 46), look: v(-1, 4, -20), eye: 3, bounds: [-10, 10, -70, 66], style: 'white' };
+    return { mounts, spawn: v(-8.2, 3, 46), look: v(-1, 4, -20), eye: 3, /* stonewall: three works run east along Christopher Street to x 25 */ bounds: [-10, 32, -70, 66], style: 'white' };
   },
 };
 

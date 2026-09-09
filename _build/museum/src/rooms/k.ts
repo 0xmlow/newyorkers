@@ -197,10 +197,9 @@ export const radiocity: RoomDef = {
     // the works: the foyer, the arch piers on both sides of the fan, the stage screen
     const mounts: Mount[] = [];
     for (let i = 0; i < 4; i++) { const z = FZ - 2 - i * 3.6; for (const s of [-1, 1]) mounts.push({ position: v(s * (GW / 2 - 0.34), 3.8, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 3, z), width: 3.0, height: 1.8, style: 'gilt', wash: true }); }
-    for (let i = 0; i < 6; i++) { const w = 56 - i * 5, z = AZ - 4 - i * 7 - 3.5; const drop = -Math.max(0, (AZ - 8 - z) / 2.6) * 0.24; for (const s of [-1, 1]) mounts.push({ position: v(s * (w / 2 + 1.06), drop + 4.2, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * (w / 2 - 8), drop + 3, z), width: 4.6, height: 2.7, style: 'gilt', wash: true }); }
+    for (let i = 0; i < 6; i++) { const w = 56 - i * 5, z = AZ - 4 - i * 7 - 3.5; const drop = -Math.max(0, (AZ - 8 - z) / 2.6) * 0.24; for (const s of [-1, 1]) mounts.push({ position: v(s * (w / 2 + 1.06), drop + 4.2, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 1.2, drop + 3, z), width: 4.6, height: 2.7, style: 'gilt', wash: true }); }
     mounts.push({ position: v(0, stageY + 12, SZ - 14.8), rotation: 0, target: v(0, stageY + 6, SZ + 12), width: 26, height: 14.6, style: 'none', wash: false });
-    mounts.push({ position: v(-13, stageY + 4, SZ - 14.7), rotation: 0, target: v(-13, stageY + 3, SZ), width: 6, height: 3.5, style: 'gilt', wash: false });
-    mounts.push({ position: v(13, stageY + 4, SZ - 14.7), rotation: 0, target: v(13, stageY + 3, SZ), width: 6, height: 3.5, style: 'gilt', wash: false });
+    for (const x of [-13, 13]) mounts.push({ position: v(x, stageY + 4, SZ - 14.7), rotation: 0, target: v(x < 0 ? -1.2 : 1.2, stageY + 3, SZ + 10), width: 6, height: 3.5, style: 'gilt', wash: false });
     return { mounts, spawn: v(-30, 3, FZ + 24), look: v(-6, 10, FZ + 2), eye: 3, bounds: [-34, 20, SZ + 6, FZ + 32], style: 'gilt', floorY: (x, z) => { void x; if (z < AZ - 7) return -Math.min(18, Math.max(0, (AZ - 8 - z) / 2.6)) * 0.24; return 0; } };
   },
 };
