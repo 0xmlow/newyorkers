@@ -213,3 +213,98 @@ Two decisions are yours and I do not want to assume them:
    reason baking is off the table. If you would trade them for baked light, the
    scope is a different and much larger document, and I would want to argue
    against it first.
+
+---
+
+# Wave 0 and wave 1: results
+
+## Wave 0, measured
+
+The pane I benchmark in renders with `requestAnimationFrame` suspended, so the
+canvas collapses to 1 by 1 and `renderer.info` reports nothing. The way round it
+is to drive `renderer.render()` directly in a loop and force a GPU sync with
+`gl.finish()`, after resizing the drawing buffer to a real size. That measures
+render cost without the vsync scheduler in the way, which is what we want.
+
+Apple M5 Pro, 1920 by 1080 at a 1.75 device pixel ratio, so a 3360 by 1890
+buffer. High path, shadows on:
+
+| room | ms per frame | draw calls | triangles |
+|---|---|---|---|
+| metgreathall | 0.65 | 257 | 242,658 |
+| pioneerworks | 0.62 | 390 | 894,772 |
+| cooperhewitt | 0.61 | 424 | 843,152 |
+| noguchi | 0.57 | 292 | 786,624 |
+| bowery | 0.47 | 309 | 535,320 |
+| socrates | 0.42 | 314 | 674,980 |
+| studio8h | 0.24 | 130 | 11,598 |
+
+**The museum is draw call bound, not fill bound, and not triangle bound.**
+Resolution scaling on one room: 0.62 ms at 640 by 360, 0.58 at 1280 by 720, 0.50
+at 1920 by 1080, and only at 2560 by 1440 does it rise, to 1.31. Cost barely
+tracks geometry either: `studio8h` at 11k triangles costs 0.24 ms and
+`pioneerworks` at 894k costs 0.62.
+
+Against a 16.7 ms frame that is about twenty five times more headroom than the
+museum needs on this machine. The low path halves it again: `pioneerworks` goes
+from 390 calls and 894k triangles to 205 and 412k.
+
+**What this does not tell us.** This is a fast desktop GPU. A mid range Android
+is roughly ten to thirty times slower for this work, which puts it near the
+budget rather than far inside it, and that is exactly why the low path already
+drops shadows and antialiasing. Nobody has measured a phone. That number is
+still the open question.
+
+## Wave 1, shipped behind a self measuring guard
+
+`src/fx.ts`: `EffectComposer` with `GTAOPass`, `UnrealBloomPass` at a high
+threshold so only the practical lights bloom, `SMAAPass` to replace the
+multisampling a composer gives up, and `OutputPass` to apply tone mapping and
+colour space at the end. High path only. `?fx=off` disables it, `?fx=ao`,
+`?fx=depth` and `?fx=normal` show the buffers.
+
+Bundle grew 1,353,270 to 1,466,131 bytes, 8.3 per cent, and no new dependency:
+all of it already ships inside three 0.185.
+
+### Two things I got wrong on the way, both worth recording
+
+**The debug view lied.** `?fx=ao` originally rendered the occlusion buffer
+through the rest of the chain, so bloom and ACES tone mapping turned a buffer of
+values near 1.0 into a white blob with a radial vignette. I read that as "the
+pass is doing nothing" and went looking for a depth precision bug that was not
+there. A debug view has to be the raw buffer, and it is now.
+
+**`thickness` is the parameter that matters, and it is scale dependent.** The
+shader only counts an occluder when the depth difference to the sample is less
+than `thickness`, whose default is 1.0. The defaults assume a unit sized scene;
+this museum is in metres and its rooms are twenty to a hundred across. With a 3
+metre radius and a 1 metre thickness the shader rejects nearly every occluder it
+finds and the buffer comes back blank. Thickness has to be at least the radius.
+Settled on radius 3, thickness 8, distanceExponent 1, scale 2.2, samples 16.
+
+The camera near plane also moved from 0.1 to 0.5. The skyline needs the far
+plane at 1200, and a 12,000 to 1 depth range leaves little precision in the
+twenty metres the visitor occupies. This did not turn out to be the cause of the
+blank buffer, but it is still the right setting for a pass that reads depth.
+
+### The cost, and why there is no number here
+
+**I could not measure the post chain reliably and I am not going to publish a
+figure I do not believe.** Repeating the identical room at the identical size
+with no resize and no room change gave 0.66, 14.73, 2.36, 16.13 and 16.43 ms.
+The plain render path measured stably and repeatably across dozens of runs; the
+multi pass path does not, and the most likely reason is that `gl.finish()` does
+not fence multi target work on this ANGLE and Metal backend, compounded by a
+hidden pane whose compositor is not scheduling normally.
+
+So the museum measures itself instead. Once the chain is running it watches real
+frame times, skips 45 frames of warm up, averages the next 90, and if the mean
+is over 22 ms, roughly 45 fps, it drops back to plain rendering for the rest of
+the session. It re-judges on every room change, because the next room may be far
+heavier than the one that passed, and once off it stays off so it cannot flap.
+It logs the measured figure either way, so the first line in the console on any
+device is the number this document is missing.
+
+That guard is written but **unverified**, because frames do not run in the pane I
+have. Open the museum and read the console: it prints `post chain on` or `post
+chain off` with the milliseconds it measured.

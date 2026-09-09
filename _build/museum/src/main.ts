@@ -1,6 +1,7 @@
 /* NEW YORKERS · THE MUSEUM. One hundred and eleven walkable New York rooms hung with the census. */
 import * as T from 'three';
 import { Kit } from './kit';
+import { Fx } from './fx';
 import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG } from './data';
 import type { Hang, Piece } from './data';
 import { ROOMS } from './rooms';
@@ -27,6 +28,7 @@ const reduced = () => reducedQuery.matches || params.get('motion') === 'off';
 type State = { room: number; hang: Hang; page: number; active: number; tour: boolean };
 const state: State = { room: ROOMS.findIndex(r => r.id === 'metgreathall'), hang: { ...DEFAULT_HANG }, page: 0, active: -1, tour: false };
 let renderer: T.WebGLRenderer | null = null;
+let fx: Fx | null = null;
 let kit: Kit | null = null;
 let scene: T.Scene | null = null;
 let camera: T.PerspectiveCamera;
@@ -80,11 +82,16 @@ function makeRenderer() {
     r.shadowMap.type = T.PCFSoftShadowMap;
   }
   host.appendChild(r.domElement);
-  camera = new T.PerspectiveCamera(62, host.clientWidth / host.clientHeight, 0.1, 1200);
+  /* Near at 0.5 rather than 0.1. The skyline needs the far plane at 1200, and a
+     12,000 to 1 depth range leaves almost no precision in the twenty metres the
+     visitor is actually standing in, which is what the occlusion pass reads. The
+     collision model keeps them further than half a metre from anything anyway. */
+  camera = new T.PerspectiveCamera(62, host.clientWidth / host.clientHeight, 0.5, 1200);
   addEventListener('resize', () => {
     camera.aspect = host.clientWidth / host.clientHeight;
     camera.updateProjectionMatrix();
     r.setSize(host.clientWidth, host.clientHeight);
+    fx?.setSize(host.clientWidth, host.clientHeight);
   });
   return r;
 }
@@ -303,6 +310,15 @@ function bindControls(canvas: HTMLCanvasElement) {
 }
 
 /* ---------- the loop ---------- */
+/* The post chain is worth roughly nothing on a fast desktop and could be worth
+   everything on a weak phone, and I could not measure it reliably anywhere. So
+   the museum measures itself: it watches real frame times once the chain is
+   running and drops back to plain rendering if the room cannot hold the budget.
+   Better a museum that looks slightly flatter than one that stutters. */
+const FX_BUDGET_MS = 22;          // below about 45 fps
+const FX_WARMUP_FRAMES = 45;      // shaders compile and textures upload first
+const FX_SAMPLE_FRAMES = 90;
+let fxFrames = 0, fxAcc = 0, fxJudged = false;
 const TOUR_DWELL = 6.5;
 let tourClock = 0;
 let prev = performance.now();
@@ -313,8 +329,23 @@ function animate(now: number) {
   // paused by the browser in a background tab, and embedded viewers (previews,
   // in-app webviews) report hidden while still painting, which left the room
   // pure black. Gate the setInterval tour instead, where it actually matters.
-  const dt = Math.min((now - prev) / 1000, 0.05);
+  const raw = now - prev;
+  const dt = Math.min(raw / 1000, 0.05);
   prev = now;
+  if (fx && !fxJudged) {
+    fxFrames++;
+    if (fxFrames > FX_WARMUP_FRAMES) fxAcc += raw;
+    if (fxFrames >= FX_WARMUP_FRAMES + FX_SAMPLE_FRAMES) {
+      const mean = fxAcc / FX_SAMPLE_FRAMES;
+      fxJudged = true;
+      if (mean > FX_BUDGET_MS) {
+        fx = null;
+        console.info(`[museum] post chain off: ${mean.toFixed(1)} ms a frame, over the ${FX_BUDGET_MS} ms budget`);
+      } else {
+        console.info(`[museum] post chain on: ${mean.toFixed(1)} ms a frame`);
+      }
+    }
+  }
   if (state.tour && shown.length && !document.querySelector('.panel.open,#detail.open')) {
     tourClock += dt;
     if (tourClock >= TOUR_DWELL) { tourClock = 0; focus((state.active + 1) % shown.length); }
@@ -357,7 +388,7 @@ function animate(now: number) {
     }
   }
   if (!reduced()) kit.tick(now / 1000, dt);
-  renderer.render(scene, camera);
+  if (fx) fx.render(); else renderer.render(scene, camera);
   if (params.has('debug')) $('#debug').textContent = `calls ${renderer.info.render.calls} · tris ${(renderer.info.render.triangles / 1000).toFixed(0)}k · tex ${renderer.info.memory.textures} · geo ${renderer.info.memory.geometries}`;
 }
 
@@ -375,6 +406,17 @@ function loadRoom(openN?: string | null): Promise<void> {
     list = hangList(state.hang, def.id);
     const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart };
     build = def.build(kit, ctx);
+    /* The post chain outlives the room, so it is built once and repointed at
+       each new scene. High path only, and `?fx=off` turns it off entirely. */
+    if (quality === 'high' && params.get('fx') !== 'off') {
+      const host = $('#world');
+      if (!fx) fx = new Fx(renderer!, scene, camera, host.clientWidth || 1280, host.clientHeight || 720, params.get('fx') || '');
+      else fx.setScene(scene, camera);
+      /* Judge again in the new room, because the next one may be far heavier
+         than the one that passed. Once the chain is off it stays off, so this
+         cannot flap on and off around the budget. */
+      if (fx) { fxFrames = 0; fxAcc = 0; fxJudged = false; }
+    }
     /* A work whose face points away from the place the room sends you to see it
        from is simply hung backwards: you arrive behind the picture. The target
        carries the room's intent, so turning the work to face it is the faithful
@@ -809,5 +851,5 @@ function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
 }
 void frame;
-(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, focus, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
+(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
 boot();
