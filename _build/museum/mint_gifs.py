@@ -90,10 +90,22 @@ class Tab:
         url = f"{A.site}/museum.html?auto=1&hour={hour}&day={A.day}&v={int(time.time()*1000)}#room={rid}"
         self.send("Page.navigate", url=url)
         time.sleep(0.8)
-        st = self.js(READY % json.dumps(rid), wait=True)
+        # an empty answer means the page's context was swapped out under the evaluation, not that the room failed:
+        # ask again in the new context before hiding the UI or choosing a view
+        st = None
+        for _ in range(4):
+            st = self.js(READY % json.dumps(rid), wait=True)
+            if st is not None:
+                break
+            time.sleep(1.0)
         self.js(HIDE_UI)
         if A.art_view:
-            v = self.js(ART_VIEW % hung_count(rid))
+            v = None
+            for _ in range(3):
+                v = self.js(ART_VIEW % hung_count(rid))
+                if v:
+                    break
+                time.sleep(1.0)
             if v:
                 self.view = json.loads(v)
                 self.view["arrive"] = self.js(SETTLED, wait=True)
