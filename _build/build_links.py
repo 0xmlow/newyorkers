@@ -36,7 +36,7 @@ DESTS = [{"g": "The census", "n": "Home", "u": "/"},
 DESTS += [{"g": "A museum room", "n": r["name"] + " · " + r["area"].title(), "u": f"/museum.html#room={r['id']}"} for r in rooms]
 DESTS += [{"g": "An article", "n": a["title"], "u": f"/learn/{a['slug']}.html"} for a in articles]
 SHOP_DESTS = [{"g": "A print", "n": i["t"], "u": f"{shop.get('buy','')}/products/{i['h']}", "abs": True} for i in shop.get("items", [])]
-SHOP_DESTS = [{"g": "The shop", "n": "The print shop", "u": shop.get("shop") or "https://mlow.xyz/prints", "abs": True}] + SHOP_DESTS
+SHOP_DESTS = [{"g": "The shop", "n": "The print shop", "u": shop.get("shop") or "https://mlow.nyc", "abs": True}] + SHOP_DESTS
 
 CHANNELS = [("x", "X, a post"), ("instagram", "Instagram, bio or story"), ("tiktok", "TikTok, bio"), ("newsletter", "The Letter, email"),
             ("press", "A press pitch"), ("print", "Something printed, a sticker or a card"), ("qr", "A QR code in the street"),

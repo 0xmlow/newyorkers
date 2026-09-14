@@ -1082,7 +1082,7 @@ function buildStory(){
   B.appendChild(el(`<div class="sec"><h3>THE ARTIST</h3>
     <p class="muted" style="font-size:12.5px">${S.artist.bio}</p>
     <p style="margin-top:10px;border-left:2px solid var(--blue);padding-left:12px;font-family:var(--serif);font-style:italic;font-size:13px">${S.artist.angle}</p>
-    <p style="margin-top:10px"><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.xyz/prints" target="_blank" rel="noopener">mlow.xyz/prints</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p></div>`));
+    <p style="margin-top:10px"><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.nyc" target="_blank" rel="noopener">MLow.nyc</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p></div>`));
 }
 buildStory();
 function closePanels(){$("#storyPanel").classList.remove("open");$("#btnStory").classList.remove("on");}
@@ -1421,7 +1421,7 @@ $("#aboutBody").innerHTML=`
   <p>${S.artist.bio}</p>
   <p class="angle">${S.artist.angle}</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0">${(D.stickers||[]).slice(0,8).map(s=>`<img src="assets/stickers/${s.f}" title="${s.t}" style="width:64px;height:64px">`).join("")}</div>
-  <p><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.xyz/prints" target="_blank" rel="noopener">mlow.xyz/prints</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
+  <p><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.nyc" target="_blank" rel="noopener">MLow.nyc</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
 $("#btnAbout").onclick=()=>$("#about").classList.add("open");
 
 /* MLOW page */
@@ -1449,7 +1449,7 @@ $("#mlowBody").innerHTML=`
   <div class="accRow"><span class="ak">The Soft Conspiracy</span><span class="av">A collaboration with painter Andrés Del Vecchio: AI trained on both bodies of work. 5,299 operative dossiers live on Ethereum</span></div>
   <div class="accRow"><span class="ak">NEW YORKERS</span><span class="av">This one. ${C.pieces.toLocaleString()} characters and counting, dropping at NFT NYC September 2026</span></div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin:20px 0">${(D.stickers||[]).slice(0,10).map(s=>`<img src="assets/stickers/${s.f}" title="${s.t}" style="width:58px;height:58px">`).join("")}</div>
-  <p><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.xyz/prints" target="_blank" rel="noopener">mlow.xyz/prints</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
+  <p><a href="https://mlow.xyz" target="_blank" rel="noopener">mlow.xyz</a> · <a href="https://mlow.nyc" target="_blank" rel="noopener">MLow.nyc</a> · <a href="https://x.com/degens" target="_blank" rel="noopener">@degens</a></p>`;
 $("#btnMlow").onclick=()=>$("#mlow").classList.add("open");
 
 /* allowlist */

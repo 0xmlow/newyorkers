@@ -10,7 +10,7 @@ def cfg():
     s = open(os.path.join(SITE, "assets", "config.js")).read()
     g = lambda k, d="": (re.search(rf'{k}:\s*"([^"]*)"', s) or [None, d])[1]
     return {"domain": g("domain", "MLOW.NYC"), "siteUrl": g("siteUrl", "https://mlow.nyc").rstrip("/"), "contactEmail": g("contactEmail"),
-            "printsUrl": g("printsUrl", "https://mlow.xyz/prints"), "printsHost": g("printsHost", "https://prints.mlow.xyz"), "artistUrl": g("artistUrl", "https://mlow.xyz"),
+            "printsUrl": g("printsUrl", "https://mlow.nyc"), "printsHost": g("printsHost", "https://prints.mlow.xyz"), "artistUrl": g("artistUrl", "https://mlow.xyz"),
             "loginEnabled": re.search(r'loginEnabled:\s*true', s) is not None}
 
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
