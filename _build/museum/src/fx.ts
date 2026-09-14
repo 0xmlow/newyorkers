@@ -40,6 +40,15 @@ export class Fx {
        inside of a corner and the line where a plinth meets the floor without
        smearing shade across a whole wall. */
     this.gtao = new GTAOPass(scene, camera, w, h);
+    /* The pass hides points and lines while it draws its depth and normal buffers, but not sprites,
+       so every landmark glint was stamped into the occlusion as a black square. Hide sprites too;
+       its own restore step brings back whatever it cached. */
+    const g = this.gtao as unknown as { _overrideVisibility: () => void; _visibilityCache: T.Object3D[]; scene: T.Scene };
+    const hideLinesAndPoints = g._overrideVisibility.bind(g);
+    g._overrideVisibility = () => {
+      hideLinesAndPoints();
+      g.scene.traverse((o) => { if ((o as T.Sprite).isSprite && o.visible) { o.visible = false; g._visibilityCache.push(o); } });
+    };
     /* `?fx=ao` renders the occlusion buffer on its own. Worth having: the
        effect is meant to be felt rather than seen, so the only honest way to
        check it is doing anything is to look at it alone. */
