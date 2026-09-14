@@ -6,6 +6,50 @@ import type { RoomDef } from './types';
 import { street, blockFront } from './f';
 const PI = Math.PI;
 
+/* Traffic: every car on the avenue is one instance of a body and one of a cabin, two draw calls for the lot.
+   Lanes run along `axis` at a fixed cross position; dir +1 or -1 picks the direction of travel. */
+function traffic(k: Parameters<RoomDef['build']>[0], lanes: { at: number; dir: number }[], axis: 'x' | 'z', len: number, perLane: number, animate: boolean, seed: number) {
+  const rnd = X.mulberry(seed), n = lanes.length * perLane, blank = () => Array.from({ length: n }, () => new T.Matrix4());
+  const body = k.instances(new T.BoxGeometry(1.9, 0.8, 4.4), k.flat(0xffffff, 0.5, 0.35), blank());
+  const cab = k.instances(new T.BoxGeometry(1.7, 0.62, 2.2), k.flat(0x1a2530, 0.6, 0.15), blank());
+  const wg = new T.CylinderGeometry(0.34, 0.34, 2.02, 12); wg.rotateZ(PI / 2);
+  const wheels = k.instances(wg, k.flat(0x111111, 0.1, 0.8), Array.from({ length: n * 2 }, () => new T.Matrix4()));
+  const cols = [0xf2c21b, 0xf2c21b, 0x1f2a36, 0xd8d8d4, 0x8a1c1c, 0x3a4a5a, 0x5a6a7a, 0xf2c21b];
+  const c = new T.Color(), st = Array.from({ length: n }, (_, i) => ({ lane: lanes[i % lanes.length], s: rnd() * len, v: 5 + rnd() * 4 }));
+  st.forEach((_, i) => body.setColorAt(i, c.set(cols[Math.floor(rnd() * cols.length)])));
+  if (body.instanceColor) body.instanceColor.needsUpdate = true;
+  const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), one = new T.Vector3(1, 1, 1), up = new T.Vector3(0, 1, 0);
+  const place = (_t: number, dt: number) => {
+    st.forEach((a, i) => {
+      a.s = (a.s + a.v * Math.min(dt, 0.1)) % len;
+      const d = (a.s - len / 2) * a.lane.dir;
+      q.setFromAxisAngle(up, axis === 'z' ? (a.lane.dir > 0 ? 0 : PI) : (a.lane.dir > 0 ? PI / 2 : -PI / 2));
+      for (const w of [0, 1]) { const off = (w ? 1.4 : -1.4) * a.lane.dir; if (axis === 'z') p.set(a.lane.at, 0.34, d + off); else p.set(d + off, 0.34, a.lane.at); m.compose(p, q, one); wheels.setMatrixAt(i * 2 + w, m); }
+      if (axis === 'z') p.set(a.lane.at, 0.72, d); else p.set(d, 0.72, a.lane.at);
+      m.compose(p, q, one); body.setMatrixAt(i, m);
+      p.y = 1.42; if (axis === 'z') p.z -= 0.3 * a.lane.dir; else p.x -= 0.3 * a.lane.dir;
+      m.compose(p, q, one); cab.setMatrixAt(i, m);
+    });
+    body.instanceMatrix.needsUpdate = cab.instanceMatrix.needsUpdate = wheels.instanceMatrix.needsUpdate = true;
+  };
+  place(0, 0);
+  if (animate) k.ticks.push(place);
+}
+
+/* Steam off a hot table: translucent puffs rising and spreading, one draw. */
+function steamZ(k: Parameters<RoomDef['build']>[0], pts: T.Vector3[], perPt: number, animate: boolean, seed: number) {
+  const n = pts.length * perPt, rnd = X.mulberry(seed);
+  const o = k.instances(new T.SphereGeometry(0.09, 6, 5), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.22, depthWrite: false }), Array.from({ length: n }, () => new T.Matrix4()));
+  const ph = Array.from({ length: n }, (_, i) => ({ b: pts[i % pts.length], o: rnd(), dx: (rnd() - 0.5) * 0.5, dz: (rnd() - 0.5) * 0.3 }));
+  const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), s = new T.Vector3();
+  const place = (t: number) => {
+    ph.forEach((a, i) => { const u = (t * 0.28 + a.o) % 1, sc = 0.6 + u * 2.2; p.set(a.b.x + a.dx * (1 + u * 3), a.b.y + u * 1.4, a.b.z + a.dz * (1 + u * 3)); s.setScalar(sc * (1 - u * 0.3)); m.compose(p, q, s); o.setMatrixAt(i, m); });
+    o.instanceMatrix.needsUpdate = true;
+  };
+  place(0.5);
+  if (animate) k.ticks.push(place);
+}
+
 /* ---------------- 122 KATZ'S DELICATESSEN ---------------- */
 export const katz: RoomDef = {
   id: 'katz',
@@ -84,14 +128,14 @@ export const katz: RoomDef = {
     k.box(0.06, 3.9, 1.1, FX + 0.05, 2.0, 7.9, glass);
     k.box(0.06, 3.9, 1.1, FX + 0.05, 2.0, 11.1, glass);
     k.sign('PLEASE DON’T LOSE YOUR TICKET', 3.4, 0.5, FX - 0.5, 4.9, 9.5, '#f3ead4', '#7a1a1a', 74, -PI / 2, { border: true });
-    k.box(0.5, 0.6, 0.4, FX - 1.2, 1.35, 12.6, red);
+    const ticketBox = k.box(0.5, 0.6, 0.4, FX - 1.2, 1.35, 12.6, red);
     k.box(0.1, 0.1, 0.5, FX - 1.0, 1.7, 12.6, steel);
     k.keepOut.push({ x: FX - 1.2, z: 12.6, r: 0.5 });
     // salamis in the windows, hung from a steel rail, the famous shipping sign between them
     for (let i = 0; i < 12; i++) { const z = -12.4 + i * 1.05; if (z > -0.9 && z < 0.9) continue; k.cyl(0.16, 1.5 + (i % 3) * 0.25, FX - 0.7, 3.9, z, salami, 0.14, 8); k.beam(v(FX - 0.7, 4.7, z), v(FX - 0.7, 5.3, z), 0.02, steel, 4); }
     for (let i = 0; i < 5; i++) { const z = 1.2 + i * 1.05; k.cyl(0.16, 1.5 + (i % 3) * 0.25, FX - 0.7, 3.9, z, salami, 0.14, 8); k.beam(v(FX - 0.7, 4.7, z), v(FX - 0.7, 5.3, z), 0.02, steel, 4); }
     k.box(0.05, 0.05, D - 4, FX - 0.7, 5.3, -1, steel);
-    k.sign('SEND A SALAMI TO YOUR BOY IN THE ARMY', 6.6, 0.7, FX - 0.42, 5.75, -6.7, '#1f4a3a', '#f3ead4', 66, -PI / 2, { double: true });
+    const armySign = k.sign('SEND A SALAMI TO YOUR BOY IN THE ARMY', 6.6, 0.7, FX - 0.42, 5.75, -6.7, '#1f4a3a', '#f3ead4', 66, -PI / 2, { double: true });
     // the room: terrazzo, tile to the dado, cream plaster above, tin overhead, three fans
     k.box(W, 0.3, D, FX - W / 2, -0.15, 0, floorT);
     k.box(W, 0.3, D, FX - W / 2, H, 0, tin);
@@ -135,7 +179,7 @@ export const katz: RoomDef = {
     const table = (x: number, z: number) => { k.box(1.6, 0.08, 1.1, x, 1.06, z, k.flat(0xf1ece2, 0, 0.5)); k.box(0.09, 1.0, 0.09, x - 0.6, 0.5, z - 0.4, dark); k.box(0.09, 1.0, 0.09, x + 0.6, 0.5, z + 0.4, dark); k.box(0.09, 1.0, 0.09, x - 0.6, 0.5, z + 0.4, dark); k.box(0.09, 1.0, 0.09, x + 0.6, 0.5, z - 0.4, dark); for (const s of [-1, 1]) { k.box(0.6, 0.08, 0.6, x + s * 1.2, 0.62, z, red); k.box(0.6, 0.55, 0.08, x + s * 1.48, 0.95, z, red); } k.keepOut.push({ x, z, r: 1.55 }); };
     for (const x of [-13, -8, -3, 2, 7]) for (const z of [-3.5, 2.5]) table(x, z);
     for (const x of [-13, -8, -3, 2]) table(x, 8.5);
-    k.sign('WHERE HARRY MET SALLY · HOPE YOU HAVE WHAT SHE HAD!', 3.6, 0.55, -5, 4.3, 2.5, '#f6e9c8', '#7a1a1a', 60, 0, { border: true, double: true });
+    const harrySign = k.sign('WHERE HARRY MET SALLY · HOPE YOU HAVE WHAT SHE HAD!', 3.6, 0.55, -5, 4.3, 2.5, '#f6e9c8', '#7a1a1a', 60, 0, { border: true, double: true });
     k.beam(v(-5, 4.58, 2.5), v(-5, H, 2.5), 0.015, steel, 4);
     // the regulars: the photo wall becomes the census, floor to ceiling along the table wall
     k.censusWall({ x: LX + 10, y: 3.35, z: D / 2 - 0.34, rotY: PI, cols: 24, rows: 6, tile: 0.62, gap: 0.05, start: ctx.wallStart(2400, 144), pieces: ctx.all, backing: wood });
@@ -146,6 +190,54 @@ export const katz: RoomDef = {
       k.crowd([v(RX + 10.5, 0, 60), v(RX + 10.5, 0, -60)], 12, { seed: 22, speed: 0.7, spread: 1.6 });
       let hum = 0; k.ticks.push((t) => { hum = 0.86 + 0.14 * Math.sin(t * 9.1) * Math.sin(t * 0.7); (neonTube.material as T.MeshBasicMaterial).opacity = hum; });
     }
+    // the painted sign on the Ludlow side of the building, where the signmaker put exactly what he was told
+    const thatsAll = k.sign('KATZ’S  THAT’S ALL!', 10, 2.0, FX - 5.6, H + 11.2, D / 2 + 0.07, 'transparent', '#f1e6c8', 250, 0);
+    // the carving stations: a pastrami on every board, a stack of slices, and at station 4 a carver's knife at work
+    const crust = k.flat(0x4a1e14, 0, 0.85), pink = k.flat(0xc2605a, 0, 0.6), board = k.flat(0xd9c7a0, 0, 0.8);
+    let curePastrami: T.Mesh | null = null;
+    for (let i = 0; i < 7; i++) {
+      const x = LX + 5 + i * 3.7;
+      k.box(0.9, 0.05, 0.5, x, 1.29, CZ - 0.25, board);
+      const slab = k.box(0.55, 0.22, 0.3, x - 0.1, 1.42, CZ - 0.25, crust);
+      if (i === 3) curePastrami = slab;
+      for (let s = 0; s < 4; s++) k.box(0.02, 0.16, 0.26, x + 0.24 + s * 0.035, 1.39, CZ - 0.25, pink);
+    }
+    const knife = new T.Group(); knife.position.set(LX + 5 + 3 * 3.7 + 0.2, 1.62, CZ - 0.25);
+    const blade = new T.Mesh(new T.BoxGeometry(0.02, 0.07, 0.42), steel); blade.position.z = 0.05; knife.add(blade);
+    const grip = new T.Mesh(new T.BoxGeometry(0.035, 0.05, 0.14), dark); grip.position.z = -0.22; knife.add(grip);
+    k.add(knife);
+    // the table things: a plate of pickles on every table, a mustard bottle, all instanced
+    const tables: [number, number][] = [];
+    for (const x of [-13, -8, -3, 2, 7]) for (const z of [-3.5, 2.5]) tables.push([x, z]);
+    for (const x of [-13, -8, -3, 2]) tables.push([x, 8.5]);
+    const mk = (x: number, y: number, z: number, ry = 0) => new T.Matrix4().compose(v(x, y, z), new T.Quaternion().setFromAxisAngle(v(0, 1, 0), ry), v(1, 1, 1));
+    k.instances(new T.CylinderGeometry(0.17, 0.14, 0.03, 16), cream, tables.map(([x, z]) => mk(x - 0.35, 1.12, z)));
+    const pick: T.Matrix4[] = [];
+    tables.forEach(([x, z], i) => { for (let j = 0; j < 3; j++) { const m = mk(x - 0.4 + j * 0.06, 1.16, z + (j - 1) * 0.05, 0.4 * j + i); m.multiply(new T.Matrix4().makeRotationX(PI / 2)); pick.push(m); } });
+    k.instances(new T.CapsuleGeometry(0.035, 0.12, 2, 6), k.flat(0x4f6a2a, 0, 0.5), pick);
+    k.instances(new T.CylinderGeometry(0.04, 0.045, 0.22, 8), k.flat(0xe0b020, 0, 0.5), tables.map(([x, z]) => mk(x + 0.45, 1.21, z - 0.2)));
+    // the door on Houston swings in and out with the lunch crowd
+    const door = new T.Group(); door.position.set(FX - 0.05, 0, 8.45);
+    const leaf = new T.Mesh(new T.BoxGeometry(0.06, 3.9, 1.5), glass); leaf.position.set(0, 2.0, 0.75); door.add(leaf);
+    const rim = new T.Mesh(new T.BoxGeometry(0.08, 0.2, 1.5), wood); rim.position.set(0, 0.1, 0.75); door.add(rim);
+    const push = new T.Mesh(new T.BoxGeometry(0.1, 0.06, 1.1), k.flat(0xc9a24a, 0.9, 0.3)); push.position.set(-0.08, 1.9, 0.8); door.add(push);
+    k.add(door);
+    // life: Houston Street traffic, steam off the tables, the carvers moving along behind the counter
+    traffic(k, [{ at: RX - 4.6, dir: -1 }, { at: RX - 1.2, dir: 1 }], 'z', 130, 4, !ctx.reduced, 123);
+    steamZ(k, Array.from({ length: 7 }, (_, i) => v(LX + 5 + i * 3.7, 1.25, -D / 2 + 1.4)), 4, !ctx.reduced, 124);
+    if (!ctx.reduced) {
+      k.crowd([v(LX + 4, 0, -11), v(FX - 6, 0, -11)], 6, { seed: 125, speed: 0.18, spread: 0.3, colors: [0xf4f2ec, 0xeeeae0, 0xe8e4da] });
+      k.ticks.push((t) => { const c = t * 5.2; knife.position.x = LX + 5 + 3 * 3.7 + 0.2 + Math.sin(c) * 0.05; knife.position.y = 1.62 - Math.max(0, Math.sin(c + PI / 2)) * 0.08; });
+      k.ticks.push((t) => { const u = (t % 9) / 9, o = u < 0.12 ? u / 0.12 : u < 0.4 ? 1 : u < 0.55 ? 1 - (u - 0.4) / 0.15 : 0; door.rotation.y = -o * o * (3 - 2 * o) * 1.25; });
+    }
+    // landmark eggs
+    const src = { name: 'Katz’s Delicatessen, Our Story', url: 'https://katzsdelicatessen.com/our-story' }, wiki = { name: 'Katz’s Delicatessen, Wikipedia', url: 'https://en.wikipedia.org/wiki/Katz%27s_Delicatessen' };
+    void armySign;
+    k.egg(v(FX - 0.6, 4.3, -6.7), { id: 'army-salami', title: 'A salami for your boy in the army', year: 'World War II', text: 'During World War II the three sons of the owners were all serving in the armed forces. The family kept sending them food from the deli, and the habit became the store’s slogan. It still hangs in the window.', clue: 'Between the hanging salamis there is a message for someone a long way from home.', source: src }, { r: 1.6 });
+    k.egg(ticketBox, { id: 'the-ticket', title: 'Don’t lose your ticket', text: 'At the door everyone is handed a printed, numbered ticket. Each counter adds what you took, and you pay on the way out. Lose it and a surcharge lands on your bill, a rule meant to stop people swapping a big ticket for a small one.', clue: 'The first thing Katz’s gives you is by the door, and you must not lose it.', source: wiki }, { r: 0.8 });
+    k.egg(harrySign, { id: 'harry-met-sally', title: 'Where Harry met Sally', year: '1989', text: 'The famous deli scene in the 1989 film When Harry Met Sally was shot here. The table where Meg Ryan and Billy Crystal sat is marked with a sign hung over it.', clue: 'One table in this room is more famous than all the others. Look for what hangs above it.', source: wiki }, { r: 1.4 });
+    k.egg(thatsAll, { id: 'thats-all', title: 'Katz’s, that’s all', text: 'When a signmaker asked partner Harry Tarowsky what the sign should say, he answered: Katz’s, that’s all. The signmaker painted exactly that, and it is still on the side of the building.', clue: 'Walk up the sidewalk and read the side of the building, high above the corner.', source: wiki }, { r: 3 });
+    if (curePastrami) k.egg(curePastrami, { id: 'thirty-day-cure', title: 'Thirty days in the cure', text: 'Katz’s says its pastrami and corned beef can take up to a full 30 days to cure. Commercial corned beef is often pumped with brine to cure in 36 hours.', clue: 'Watch the knife at the fourth station, and ask how long that meat has been waiting.', source: src }, { r: 0.9 });
     // the hang
     const mounts: Mount[] = [];
     const at = (x: number, y: number, z: number, tx: number, tz: number, w: number, h: number, style: FrameStyle = 'black', wash = false): Mount => ({ position: v(x, y, z), rotation: Math.atan2(tx - x, tz - z), target: v(tx, 3, tz), width: w, height: h, style, wash });
@@ -242,6 +334,34 @@ export const barney: RoomDef = {
       k.crowd([v(1.3, 0, -2.2), v(1.3, 0, -9.2)], 7, { seed: 33, speed: 0.1, spread: 0.45, colors: [0x2a2f3a, 0x6b4f3a, 0xd9cbb0, 0x3c5a7a, 0x8f6a2a] });
       k.crowd([v(-5.7, 0, -3), v(-5.7, 0, -18)], 5, { seed: 34, speed: 0.08, spread: 0.6, colors: [0x2a2f3a, 0x6b4f3a, 0xd9cbb0] });
     }
+    // the avenue: a street sign on the corner post, a bike rack, a litter basket, all static and merged
+    k.cyl(0.05, 3.4, -12.2, 1.7, 6.0, green, 0.05, 8);
+    k.sign('AMSTERDAM AV', 1.6, 0.3, -12.2, 3.25, 6.0, '#1a5a3a', '#f4f4ee', 120, 0, { border: true, double: true });
+    for (const x of [16.5, 17.7, 18.9]) k.torus(0.42, 0.03, x, 0.42, 5.6, iron, 18);
+    k.cyl(0.28, 0.9, -16.5, 0.45, 5.7, k.flat(0x2a4a34, 0.4, 0.6), 0.24, 12);
+    // Amsterdam Avenue runs one way: every lane of traffic goes the same direction
+    traffic(k, [{ at: 8.9, dir: 1 }], 'x', 150, 5, !ctx.reduced, 231);
+    // a cyclist working up the avenue by the curb
+    const bike = new T.Group();
+    for (const dz of [-0.55, 0.55]) { const w = new T.Mesh(new T.TorusGeometry(0.34, 0.035, 6, 18), iron); w.position.set(0, 0.36, dz); w.rotation.y = PI / 2; bike.add(w); }
+    const frame = new T.Mesh(new T.BoxGeometry(0.05, 0.05, 1.1), k.flat(0x2d6fb8, 0.3, 0.5)); frame.position.y = 0.62; bike.add(frame);
+    const rider = new T.Mesh(new T.CapsuleGeometry(0.19, 0.6, 3, 8), k.flat(0x8a2a2a, 0, 0.8)); rider.position.set(0, 1.25, -0.1); rider.rotation.x = 0.35; bike.add(rider);
+    k.add(bike);
+    if (!ctx.reduced) k.rider(bike, k.spline([v(-75, 0, 7.4), v(75, 0, 7.4)]), 4.2, 20); else bike.position.set(-9, 0, 7.4);
+    // pigeons working the sidewalk crumbs in front of the tables
+    const NP = 9, prnd = X.mulberry(232);
+    const pig = k.instances(new T.SphereGeometry(0.11, 8, 6), k.flat(0x7c7f86, 0.1, 0.8), Array.from({ length: NP }, () => new T.Matrix4()));
+    const pst = Array.from({ length: NP }, () => ({ x: -9 + prnd() * 18, z: 5.6 + prnd() * 0.8, o: prnd() * 10, r: prnd() * PI * 2 }));
+    const pm = new T.Matrix4(), pq = new T.Quaternion(), pp = new T.Vector3(), ps = new T.Vector3(1, 0.85, 1.7), yax = new T.Vector3(0, 1, 0);
+    const peck = (t: number) => { pst.forEach((a, i) => { const u = t * 0.9 + a.o, hop = Math.max(0, Math.sin(u * 5)) * 0.06, dir = a.r + Math.sin(u * 0.3) * 1.5; pp.set(a.x + Math.sin(u * 0.21) * 1.2, 0.22 + hop, a.z + Math.cos(u * 0.17) * 0.3); pq.setFromAxisAngle(yax, dir); pm.compose(pp, pq, ps); pig.setMatrixAt(i, pm); }); pig.instanceMatrix.needsUpdate = true; };
+    peck(0); if (!ctx.reduced) k.ticks.push(peck);
+    // landmark eggs: the sign, the store's address, the case, the dining room, the clock
+    const bg = { name: 'Barney Greengrass, Our History', url: 'https://www.barneygreengrass.com/pages/new-history' };
+    k.egg(v(1.8, 4.15, 0.9), { id: 'sturgeon-king', title: 'The Sturgeon King', year: '1938', text: 'The store’s title was coined by James J. Frawley, a state senator and Tammany Hall leader. Barney Greengrass has been the Sturgeon King ever since, and the crown is on the sign.', clue: 'Something royal swings in the doorway draught.', source: bg }, { r: 0.9 });
+    k.egg(v(0, 5.9, 0.9), { id: 'since-1908', title: 'Harlem first, then Amsterdam', year: '1908 and 1929', text: 'Barney Greengrass opened his first store in Harlem, at 113th Street and St. Nicholas Avenue, in 1908. In 1929 he moved it here, to 541 Amsterdam Avenue, where it has stayed.', clue: 'Read the name over the awnings from across the avenue.', source: bg }, { r: 2.2 });
+    k.egg(v(-0.6, 1.7, -6.0), { id: 'sturgeon-for-fdr', title: 'Sturgeon for the President', year: '1939', text: 'For Thanksgiving in 1939 the store shipped an order of smoked sturgeon to President Franklin D. Roosevelt at Warm Springs, Georgia.', clue: 'The fish in the case behind the counter once filled a very important order.', source: bg }, { r: 1.1 });
+    k.egg(v(-5.7, 1.5, -11.0), { id: 'dining-room', title: 'A room to sit down in', year: '1938', text: 'Barney Greengrass began as an appetizing store you carried home from. In 1938 it expanded and opened a restaurant section, and the tables here are where the regulars sit.', clue: 'The part of the store with chairs came later than the counter.', source: bg }, { r: 1.5 });
+    k.egg(v(-7.2, 4.35, -20.0), { id: 'three-generations', title: 'Barney, Moe, Gary', year: '1955 and 1982', text: 'When Barney died in 1955 his son Moe took over, and Moe’s son Gary took the reins in 1982. The James Beard Foundation named it An American Classic in 2006, and the store turned 100 in 2008.', clue: 'The clock on the dining room wall has kept time for more than one generation.', source: bg }, { r: 0.8 });
     // the hang: the regulars where the murals were, the counter room above the shelves, the rear walls
     const mounts: Mount[] = [];
     const at = (x: number, y: number, z: number, tx: number, tz: number, w: number, h: number, style: FrameStyle = 'oak'): Mount => ({ position: v(x, y, z), rotation: Math.atan2(tx - x, tz - z), target: v(tx, 2.3, tz), width: w, height: h, style, wash: false });
