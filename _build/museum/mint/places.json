@@ -1,0 +1,41 @@
+{
+ "_note": "Wings group the rooms by how the museum was built (room source files a to e, f to m, n to q, r to w, x, y). Boroughs were assigned from each room's place; water crossings and islands in the harbor read as The Harbor, the subway and the appetizing counter as Citywide. Edit here, then rerun mint_network.py.",
+ "wings": [
+  {"key": "founding", "name": "The Founding Rooms", "from": 1, "to": 21},
+  {"key": "boroughs", "name": "The Five Boroughs", "from": 22, "to": 61},
+  {"key": "icons", "name": "The Icons", "from": 62, "to": 81},
+  {"key": "institutions", "name": "The Institutions", "from": 82, "to": 111},
+  {"key": "working", "name": "The Working City", "from": 112, "to": 121},
+  {"key": "landmarks", "name": "The Landmarks", "from": 122, "to": 136}
+ ],
+ "borough": {
+  "bowery": "Manhattan", "subway": "Citywide", "met": "Manhattan", "brooklyn": "Brooklyn", "times": "Manhattan",
+  "ferry": "The Harbor", "botanical": "The Bronx", "penn": "Manhattan", "grand": "Manhattan", "highline": "Manhattan",
+  "coney": "Brooklyn", "bethesda": "Manhattan", "oculus": "Manhattan", "guggenheim": "Manhattan", "library": "Manhattan",
+  "apollo": "Manhattan", "unisphere": "Queens", "tram": "Manhattan", "cloisters": "Manhattan", "navyyard": "Brooklyn",
+  "governors": "The Harbor", "chrysler": "Manhattan", "flatiron": "Manhattan", "bleachers": "The Bronx", "deli": "Citywide",
+  "washington": "Manhattan", "boathouse": "Brooklyn", "halloffame": "The Bronx", "twa": "Queens", "snug": "Staten Island",
+  "wollman": "Manhattan", "doyers": "Manhattan", "strivers": "Manhattan", "rock": "Manhattan", "frick": "Manhattan",
+  "seaport": "Manhattan", "vessel": "Manhattan", "littleisland": "Manhattan", "cathedral": "Manhattan", "queensboro": "Queens",
+  "bushwick": "Brooklyn", "cyclone": "Brooklyn", "brooklynbridge": "The Harbor", "panorama": "Queens", "liberty": "The Harbor",
+  "oysterbar": "Manhattan", "morgan": "Manhattan", "radiocity": "Manhattan", "woolworth": "Manhattan", "wallstreet": "Manhattan",
+  "lincolncenter": "Manhattan", "belvedere": "Manhattan", "highbridge": "The Bronx", "arthuravenue": "The Bronx", "wavehill": "The Bronx",
+  "gantry": "Queens", "rockaway": "Queens", "greenwood": "Brooklyn", "domino": "Brooklyn", "boatgraveyard": "Staten Island",
+  "intrepid": "Manhattan", "studio8h": "Manhattan", "carnegie": "Manhattan", "vanguard": "Manhattan", "rucker": "Manhattan",
+  "sedgwick": "The Bronx", "balloons": "Manhattan", "stonewall": "Manhattan", "sangennaro": "Manhattan", "chelseahotel": "Manhattan",
+  "strand": "Manhattan", "dakota": "Manhattan", "garden": "Manhattan", "dendur": "Manhattan", "moma": "Manhattan",
+  "whitney": "Manhattan", "ellis": "The Harbor", "marathon": "Staten Island", "halloween": "Manhattan", "easternparkway": "Brooklyn",
+  "manhattanhenge": "Manhattan", "metgreathall": "Manhattan", "metamerican": "Manhattan", "meteuropean": "Manhattan", "oceanlife": "Manhattan",
+  "rosecenter": "Manhattan", "momaatrium": "Manhattan", "newmuseum": "Manhattan", "neuegalerie": "Manhattan", "cooperhewitt": "Manhattan",
+  "breuer": "Manhattan", "jewishmuseum": "Manhattan", "rubin": "Manhattan", "theshed": "Manhattan", "armory": "Manhattan",
+  "customhouse": "Manhattan", "mad": "Manhattan", "hispanicsociety": "Manhattan", "studiomuseum": "Manhattan", "elmuseo": "Manhattan",
+  "mcny": "Manhattan", "nyhistorical": "Manhattan", "diachelsea": "Manhattan", "chelseablock": "Manhattan", "fotografiska": "Manhattan",
+  "ps1": "Queens", "noguchi": "Queens", "socrates": "Queens", "brooklynmuseum": "Brooklyn", "pioneerworks": "Brooklyn",
+  "bronxmuseum": "The Bronx", "pneumatic": "Manhattan", "garment": "Manhattan", "diamondexchange": "Manhattan", "steamworks": "Manhattan",
+  "newsprint": "Manhattan", "laundry": "Queens", "taxidispatch": "Queens", "flowercold": "Manhattan", "handball": "Manhattan",
+  "saltvault": "Manhattan", "katz": "Manhattan", "barney": "Manhattan", "astorhall": "Manhattan", "jefferson": "Manhattan",
+  "eldridge": "Manhattan", "cityhallrotunda": "Manhattan", "castleclinton": "Manhattan", "greenacre": "Manhattan", "paley": "Manhattan",
+  "stmarksyard": "Manhattan", "kingsfoyer": "Brooklyn", "valencia": "Queens", "essexmarket": "Manhattan", "armstronggarden": "Queens",
+  "hamiltongrange": "Manhattan"
+ }
+}
