@@ -1413,19 +1413,19 @@
   "area": "GREENACRE PARK / EAST 51ST STREET",
   "mood": "Lunch hour under the water",
   "color": "#94b8a0",
-  "description": "East 51st Street, then the vest pocket park between two buildings: honey locusts, movable chairs, the raised terrace under its trellis, and the 25 foot waterfall filling the back wall, the works hung on the ivy.",
-  "signatures": "The 1971 vest pocket park, sixty feet wide, brick and granite, a raised terrace along the east side under a trellis with heaters, honey locusts, a brook along the west wall, and the 25 foot waterfall across the north wall.",
+  "description": "East 51st Street, then the vest pocket park between two buildings: honey locusts, movable chairs, the raised west terrace under its trellis and acrylic domes, the runnel under the rough east wall, and the 25 foot waterfall filling the back, the works hung on the walls.",
+  "signatures": "The 1971 park by Sasaki, Dawson, DeMay, roughly sixty feet by one hundred twenty, a higher terrace along the west side under trellising, acrylic domes and heaters, honey locusts, a runnel along the ashlar east wall, and the 25 foot cascade across the back.",
   "daylit": true,
   "index": 129
  },
  {
   "id": "paley",
-  "name": "Twelve honey locusts",
+  "name": "Seventeen honey locusts",
   "area": "PALEY PARK / EAST 53RD STREET",
   "mood": "Dappled noon",
   "color": "#acc4a1",
-  "description": "Four granite steps up from 53rd Street into the first vest pocket park: twelve honey locusts on a grid, ivy walls, wire chairs and marble tables, and the water wall drowning the traffic, a portrait in every tree bay.",
-  "signatures": "The 1967 park by Zion and Breen, 42 by 100 feet, raised four steps above the sidewalk, twelve honey locusts on a twelve foot grid, ivy on both walls, a twenty foot water wall across the back, wire chairs and marble tables, a kiosk at the entrance.",
+  "description": "Granite steps up from 53rd Street into the original vest pocket park: seventeen honey locusts on a grid, vertical lawns of ivy, Bertoia wire chairs and Saarinen tables, and the water wall drowning the traffic, a portrait in every tree bay.",
+  "signatures": "The 1967 park by Robert Zion of Zion and Breen, a tenth of an acre on the site of the Stork Club, seventeen honey locusts on a grid, English ivy on both side walls, a twenty foot water wall across the back, 20 Saarinen tables and 60 Bertoia chairs, a kiosk at the entrance.",
   "daylit": true,
   "index": 130
  },
@@ -1436,7 +1436,7 @@
   "mood": "East Village, a reading at eight",
   "color": "#bdc5bb",
   "description": "Second Avenue at Tenth Street: the fieldstone church of 1799 under its 1828 steeple, the cast iron portico, the lions, the flat gravestones of the old Stuyvesant farm, then the plain white sanctuary set with folding chairs for the Poetry Project.",
-  "signatures": "The fieldstone body, the Greek Revival steeple, the cast iron portico of 1854, two lions at the steps, the churchyard of flat slabs and the Stuyvesant vault, the iron fence on the avenue, the white sanctuary with folding chairs and a lectern.",
+  "signatures": "The fieldstone body of 1799, the 1828 steeple by Thompson and Town, the cast iron portico of 1856, Borglum's Aspiration and Inspiration, the lions of St. Mark, the flat vault markers, the Stuyvesant vault under the east wall and the Dupuis bust, the Edelman windows, the white sanctuary with folding chairs and a lectern.",
   "daylit": true,
   "index": 131
  },
@@ -1458,7 +1458,7 @@
   "mood": "1929, the clouds are on",
   "color": "#b8a089",
   "description": "John Eberson's atmospheric theatre: the auditorium is a Spanish courtyard at night, tiled roofs and balconies along the walls, a proscenium arch and a red curtain at the end, and over it all a deep blue sky with stars and drifting clouds. The works hang on the courtyard walls.",
-  "signatures": "The 1929 atmospheric auditorium: Spanish and Moorish courtyard facades with balconies, tiled roofs and corner towers, the proscenium arch, the Brenograph cloud machine and the star studded sky ceiling. A 1929 inspired exhibition, not the present congregation's interior.",
+  "signatures": "The 1929 atmospheric auditorium: Spanish and Moorish courtyard facades with balconies, tiled roofs and corner towers, the proscenium arch, the blue plaster sky with its star bulbs and drifting clouds, the Wonder organ, and outside on Jamaica Avenue the Churrigueresque front of yellow brick and glazed terra cotta with its ticket booth and marquee. A 1929 inspired exhibition, not the present congregation's interior.",
   "daylit": false,
   "index": 133
  },
