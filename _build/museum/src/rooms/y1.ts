@@ -102,8 +102,8 @@ function clockFace(k: Kit, ctx: RoomCtx, x: number, y: number, z: number, r: num
 }
 
 /* Gulls: one instanced mesh, each bird on its own stretch of a shared loop, flapping. */
-function gulls(k: Kit, ctx: RoomCtx, route: T.Vector3[], n: number, seed = 7) {
-  const g = new T.BoxGeometry(1.3, 0.04, 0.34), m = new T.MeshStandardMaterial({ color: 0xf2f2ee, roughness: 0.8 });
+function gulls(k: Kit, ctx: RoomCtx, route: T.Vector3[], n: number, seed = 7, color = 0xf2f2ee, size = 1) {
+  const g = new T.BoxGeometry(1.3 * size, 0.04 * size, 0.34 * size), m = new T.MeshStandardMaterial({ color, roughness: 0.8 });
   const curve = k.spline(route, true), len = curve.getLength(), rnd = X.mulberry(seed);
   const st = Array.from({ length: n }, () => ({ s: rnd() * len, v: 3 + rnd() * 3, ph: rnd() * 6, dy: rnd() * 6 }));
   const mesh = new T.InstancedMesh(g, m, n);
@@ -124,8 +124,116 @@ function gulls(k: Kit, ctx: RoomCtx, route: T.Vector3[], n: number, seed = 7) {
     }
     mesh.instanceMatrix.needsUpdate = true;
   };
+  mesh.frustumCulled = false;
   place(0, 0);
   if (!ctx.reduced) k.ticks.push(place);
+}
+
+/* Pigeons on the ground: one instanced mesh, each bird pottering round its own spot, pecking and now and then hopping. */
+function pigeons(k: Kit, ctx: RoomCtx, spots: T.Vector3[], n: number, seed = 5, spread = 2.5) {
+  const body = new T.SphereGeometry(0.13, 8, 6); body.scale(1, 0.85, 1.6);
+  const head = new T.SphereGeometry(0.07, 6, 5); head.translate(0, 0.12, 0.18);
+  const tail = new T.BoxGeometry(0.09, 0.02, 0.16); tail.translate(0, 0.03, -0.25);
+  const g = mergeGeometries([body.toNonIndexed(), head.toNonIndexed(), tail.toNonIndexed()]); g.translate(0, 0.12, 0);
+  const mesh = new T.InstancedMesh(g, new T.MeshStandardMaterial({ roughness: 0.8 }), n);
+  const rnd = X.mulberry(seed), c = new T.Color(), greys = [0x6a6e78, 0x7c808a, 0x5a5e66, 0x8a8e96, 0x4a4640, 0xb8b4ac];
+  const st = Array.from({ length: n }, (_, i) => { const h = spots[i % spots.length]; return { x: h.x + (rnd() - 0.5) * spread, y: h.y, z: h.z + (rnd() - 0.5) * spread, ph: rnd() * 6.28, sp: (0.15 + rnd() * 0.25) * (rnd() > 0.5 ? 1 : -1), r: 0.25 + rnd() * 0.7 }; });
+  for (let i = 0; i < n; i++) mesh.setColorAt(i, c.set(greys[Math.floor(rnd() * greys.length)]));
+  mesh.frustumCulled = false;
+  k.add(mesh);
+  const M = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ'), p = new T.Vector3(), one = new T.Vector3(1, 1, 1);
+  const place = (t: number) => {
+    for (let i = 0; i < n; i++) {
+      const a = st[i], w = a.ph + t * a.sp;
+      const hop = Math.pow(Math.max(0, Math.sin(t * 0.9 + a.ph * 3)), 40) * 0.22;
+      p.set(a.x + Math.cos(w) * a.r, a.y + hop, a.z + Math.sin(w) * a.r);
+      const peck = Math.pow(Math.max(0, Math.sin(t * 4.2 + a.ph)), 6) * 0.7;
+      e.set(peck, a.sp > 0 ? -w : PI - w, 0);
+      q.setFromEuler(e);
+      M.compose(p, q, one);
+      mesh.setMatrixAt(i, M);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+  };
+  place(0);
+  if (!ctx.reduced) k.ticks.push((t) => place(t));
+  return mesh;
+}
+
+/* Traffic: cars, cabs and the odd bus in one instanced mesh, each lane one way at one speed so nobody overtakes. */
+function traffic(k: Kit, ctx: RoomCtx, lanes: { a: T.Vector3; b: T.Vector3; n: number }[], speed = 8, seed = 3) {
+  const body = new T.BoxGeometry(1.9, 0.75, 4.6); body.translate(0, 0.62, 0);
+  const cab = new T.BoxGeometry(1.7, 0.62, 2.4); cab.translate(0, 1.3, -0.25);
+  const g = mergeGeometries([body, cab]);
+  const total = lanes.reduce((s, l) => s + l.n, 0);
+  const mesh = new T.InstancedMesh(g, new T.MeshStandardMaterial({ roughness: 0.45, metalness: 0.35 }), total);
+  const cols = [0xf2c21a, 0xf2c21a, 0xf2c21a, 0x1a1c20, 0xe8e8e4, 0x6a7078, 0x8a1c1c, 0x2a3a5a];
+  const rnd = X.mulberry(seed), c = new T.Color();
+  const cars: { li: number; len: number; s: number; v: number; sc: T.Vector3 }[] = [];
+  lanes.forEach((l, li) => { const len = l.a.distanceTo(l.b), lv = speed * (0.85 + rnd() * 0.3); for (let j = 0; j < l.n; j++) { const bus = rnd() < 0.12; cars.push({ li, len, s: ((j + rnd() * 0.4) * len) / l.n, v: lv, sc: bus ? new T.Vector3(1.3, 1.9, 2.5) : new T.Vector3(1, 1, 1) }); mesh.setColorAt(cars.length - 1, c.set(bus ? 0x2a5aa8 : cols[Math.floor(rnd() * cols.length)])); } });
+  mesh.frustumCulled = false;
+  k.add(mesh);
+  const M = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), d = new T.Vector3(), up = new T.Vector3(0, 1, 0);
+  const place = (_t: number, dt: number) => {
+    cars.forEach((car, i) => {
+      const l = lanes[car.li];
+      car.s = (car.s + car.v * Math.min(dt, 0.1)) % car.len;
+      d.subVectors(l.b, l.a);
+      p.copy(l.a).addScaledVector(d, car.s / car.len);
+      q.setFromAxisAngle(up, Math.atan2(d.x, d.z));
+      M.compose(p, q, car.sc);
+      mesh.setMatrixAt(i, M);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+  };
+  place(0, 0);
+  if (!ctx.reduced) k.ticks.push(place);
+  return mesh;
+}
+
+/* A standing robed figure from static parts, so it merges into the room's draws. Hands are given in the
+   figure's own frame (x to its left, z forward, in units of its height / 3.2). Returns the frame mapper. */
+function figure(k: Kit, x: number, y: number, z: number, h: number, m: T.Material, rotY = 0, hands: [number, number, number][] = [[0.5, 1.6, 0.2], [-0.5, 1.6, 0.2]]) {
+  const s = h / 3.2, c = Math.cos(rotY), sn = Math.sin(rotY);
+  const at = (lx: number, ly: number, lz: number) => v(x + (lx * c + lz * sn) * s, y + ly * s, z + (-lx * sn + lz * c) * s);
+  k.lathe([[0.62, 0], [0.64, 0.12], [0.52, 0.8], [0.44, 1.5], [0.38, 2.0], [0.46, 2.3], [0.42, 2.52], [0.14, 2.66], [0, 2.68]].map(([r, yy]) => [r * s, yy * s]), x, y, z, m, 14);
+  const hd = at(0, 2.9, 0.02);
+  k.sphere(0.21 * s, hd.x, hd.y, hd.z, m, 10);
+  const nk = at(0, 2.66, 0);
+  k.cyl(0.1 * s, 0.2 * s, nk.x, nk.y + 0.06 * s, nk.z, m, 0.1 * s, 8);
+  hands.forEach(([hx, hy, hz], i) => { const sh = at(i ? -0.4 : 0.4, 2.45, 0); const el = at(hx * 0.8 + (i ? -0.1 : 0.1), (hy + 2.45) / 2 - 0.1, hz * 0.5); k.beam(sh, el, 0.09 * s, m, 6); k.beam(el, at(hx, hy, hz), 0.08 * s, m, 6); });
+  return { at, s };
+}
+
+/* A small painted canvas material for murals and portraits. draw() paints it once. */
+function canvasMat(w: number, h: number, draw: (g: CanvasRenderingContext2D, w: number, h: number) => void, glow = 0) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  draw(c.getContext('2d')!, w, h);
+  const t = new T.CanvasTexture(c);
+  t.colorSpace = T.SRGBColorSpace;
+  const m = new T.MeshStandardMaterial({ map: t, roughness: 0.85 });
+  if (glow) { m.emissive = new T.Color(0xffffff); m.emissiveMap = t; m.emissiveIntensity = glow; }
+  return m;
+}
+/* A plane showing one cell of a canvas strip of `cells` pictures side by side. Static, so it merges. */
+function stripPanel(k: Kit, m: T.Material, cell: number, cells: number, w: number, h: number, x: number, y: number, z: number, rotY: number) {
+  const g = new T.PlaneGeometry(w, h), uv = g.attributes.uv as T.BufferAttribute;
+  for (let i = 0; i < uv.count; i++) uv.setX(i, (cell + uv.getX(i)) / cells);
+  const o = k.mesh(g, m, x, y, z);
+  o.rotation.y = rotY;
+  return o;
+}
+
+/* A bell hung from a pivot: returns the group so a tick can swing it. */
+function hungBell(k: Kit, x: number, y: number, z: number, r: number, m: T.Material) {
+  const g = new T.Group();
+  g.position.set(x, y, z);
+  const prof = [[0.05, 0], [0.3, -0.05], [0.42, -0.35], [0.5, -0.8], [0.72, -1.15], [0.78, -1.25], [0.7, -1.25]].map(([a, b]) => new T.Vector2(a * r, b * r));
+  const bell = new T.Mesh(mergeGeometries([new T.LatheGeometry(prof, 16).toNonIndexed(), new T.BoxGeometry(0.12 * r, 0.3 * r, 0.9 * r).translate(0, 0.08 * r, 0).toNonIndexed()]), m);
+  g.add(bell);
+  k.add(g);
+  return g;
 }
 
 /* A park bench from static boxes (merged into the room's slat and iron draws). */
@@ -288,6 +396,89 @@ export const astor: RoomDef = {
     k.crowd([v(-7, 0, FZ + 17), v(-5.5, 1.7, FZ + 9), v(-3, TY, FZ + 2.4), v(3, TY, FZ + 2.4), v(5.5, 1.7, FZ + 9), v(7, 0, FZ + 17)], 16, { seed: 61, speed: 0.3, spread: 2.4, animate: !ctx.reduced });
     k.crowd([v(-70, 0, FZ + 22), v(70, 0, FZ + 22)], 26, { seed: 62, speed: 1.0, spread: 3, animate: !ctx.reduced });
     k.crowd([v(-9, TY, FZ - 9), v(0, TY, FZ - 22), v(9, TY, FZ - 9)], 10, { seed: 63, speed: 0.45, spread: 2.5, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517] });
+    // the Fifth Avenue front in detail: Bartlett's six attic figures and their three plaques
+    const carrara = k.pbr('astorCarrara', X.marble(0xf2efe8, 0xd0cbc0, 448), 0.6, { roughness: 0.5 }),
+      niche = k.flat(0xbdb6aa, 0, 0.85),
+      pool = k.flat(0x6a9aa8, 0.3, 0.1, { transparent: true, opacity: 0.82 });
+    for (const x of [-8.4, 0, 8.4]) { k.box(3.6, 2.8, 0.3, x, TY + 14.6, FZ + 0.72, ashlar); k.box(3.0, 2.2, 0.14, x, TY + 14.6, FZ + 0.9, carrara); for (const dy of [-0.4, 0, 0.4]) k.box(2.2, 0.12, 0.08, x, TY + 14.6 + dy, FZ + 0.99, ashlar); }
+    const poses: [number, number, number][][] = [[[0.5, 1.7, 0.4], [-0.3, 2.1, 0.5]], [[0.2, 2.6, 0.4], [-0.5, 1.5, 0.2]], [[0.35, 1.9, 0.55], [-0.35, 1.9, 0.55]], [[0.35, 1.9, 0.55], [-0.35, 1.9, 0.55]], [[0.5, 1.5, 0.2], [-0.2, 2.6, 0.4]], [[0.3, 2.1, 0.5], [-0.5, 1.7, 0.4]]];
+    [-10.7, -6.1, -2.3, 2.3, 6.1, 10.7].forEach((x, i) => figure(k, x, TY + 11.7, FZ + 1.75, 3.4, carrara, 0, poses[i]));
+    // MacMonnies's fountains in their alcoves either side of the portico: Beauty on Pegasus to the south, Truth on a Sphinx to the north
+    const jetSpots: T.Vector3[] = [];
+    for (const s of [-1, 1]) {
+      const x = s * 16.3, d = -s, zc = FZ + 1.15;
+      k.arch(3.2, 5.0, 0.4, x, TY, FZ + 0.8, ashlar, false, 0.75);
+      k.box(3.2, 5.0, 0.05, x, TY + 2.5, FZ + 0.63, niche);
+      k.mesh(new T.CylinderGeometry(1.5, 1.6, 0.9, 20, 1, false, -PI / 2, PI), carrara, x, TY + 0.45, FZ + 0.62);
+      k.mesh(new T.CylinderGeometry(1.36, 1.36, 0.06, 20, 1, false, -PI / 2, PI), pool, x, TY + 0.86, FZ + 0.62);
+      k.box(2.2, 1.3, 1.0, x, TY + 1.5, FZ + 0.95, carrara);
+      k.moulding([[0, 0], [0.18, 0], [0.24, 0.1], [0.12, 0.2], [0, 0.24]], 2.3, x, TY + 2.15, FZ + 1.45, carrara, PI / 2);
+      if (s < 0) {
+        const b = k.sphere(0.55, x, TY + 2.75, zc, carrara, 14); b.scale.set(1.9, 0.8, 0.9);
+        k.beam(v(x + d * 0.8, TY + 2.9, zc), v(x + d * 1.15, TY + 3.55, zc), 0.22, carrara, 8);
+        const hd = k.sphere(0.24, x + d * 1.35, TY + 3.62, zc, carrara, 10); hd.scale.set(1.6, 0.9, 0.9);
+        for (const w of [-1, 1]) { const wing = k.box(1.5, 0.06, 0.55, x - d * 0.25, TY + 3.45, zc + w * 0.32, carrara); wing.rotation.set(w * 0.35, 0, d * 0.75); }
+      } else {
+        k.box(1.9, 0.62, 0.9, x, TY + 2.45, zc, carrara);
+        k.box(0.9, 0.22, 0.8, x + d * 1.2, TY + 2.25, zc, carrara);
+        k.box(0.5, 0.62, 0.5, x + d * 0.8, TY + 3.05, zc, carrara);
+        const nemes = k.box(0.72, 0.5, 0.2, x + d * 0.72, TY + 2.95, zc, carrara); nemes.rotation.y = PI / 2;
+      }
+      k.lathe([[0.34, 0], [0.38, 0.22], [0.29, 0.72], [0.18, 0.86], [0, 0.88]], x - d * 0.1, TY + 3.0, zc, carrara, 12);
+      k.sphere(0.17, x - d * 0.1, TY + 4.05, zc, carrara, 10);
+      k.beam(v(x - d * 0.1, TY + 3.7, zc + 0.15), v(x + d * 0.45, TY + (s < 0 ? 4.3 : 3.4), zc + 0.35), 0.07, carrara, 6);
+      k.beam(v(x - d * 0.1, TY + 3.1, zc + 0.2), v(x + d * 0.35, TY + 2.6, zc + 0.45), 0.1, carrara, 6);
+      if (s > 0) k.mesh(new T.ConeGeometry(0.12, 0.3, 8), carrara, x - d * 0.1, TY + 3.82, zc + 0.12).rotation.x = PI;
+      k.keepOut.push({ x, z: FZ + 1.3, r: 1.8 });
+      for (const dx of [-0.6, 0, 0.6]) jetSpots.push(v(x + dx, TY + 0.9, FZ + 1.5));
+    }
+    const jets = new T.InstancedMesh(new T.CylinderGeometry(0.03, 0.06, 1, 6), k.glow(0xdff4ff, 0.75), jetSpots.length);
+    k.add(jets);
+    const placeJets = (t: number) => { const M = new T.Matrix4(); jetSpots.forEach((p, i) => { const h = 0.55 + 0.12 * Math.sin(t * 2.6 + i * 1.7); M.makeScale(1, h, 1).setPosition(p.x, p.y + h / 2, p.z); jets.setMatrixAt(i, M); }); jets.instanceMatrix.needsUpdate = true; };
+    placeJets(0);
+    if (!ctx.reduced) k.ticks.push((t) => placeJets(t));
+    // the architects in their niches at the foot of the stairs
+    for (const s of [-1, 1]) {
+      const bn = k.arch(1.3, 2.5, 0.3, s * 15.92, TY + 0.1, FZ - 1.3, wall, false, 0.72); bn.rotation.y = PI / 2;
+      k.box(0.62, 1.1, 0.62, s * 15.45, TY + 0.55, FZ - 1.3, wall);
+      k.lathe([[0.34, 0], [0.36, 0.1], [0.3, 0.34], [0.13, 0.5], [0.1, 0.6], [0, 0.62]], s * 15.45, TY + 1.1, FZ - 1.3, bronze, 12);
+      k.sphere(0.19, s * 15.45, TY + 1.9, FZ - 1.3, bronze, 10);
+      k.keepOut.push({ x: s * 15.4, z: FZ - 1.3, r: 0.55 });
+    }
+    // McGraw Rotunda: Edward Laning's four arched panels above the frames
+    const mural = canvasMat(1024, 256, (g, w, h) => {
+      const cw = w / 4;
+      for (let c = 0; c < 4; c++) {
+        const x0 = c * cw, sky = g.createLinearGradient(0, 0, 0, h);
+        sky.addColorStop(0, ['#8aa6c8', '#6a5a4a', '#a8b4c0', '#7a8aa0'][c]); sky.addColorStop(1, ['#e8cfa0', '#c87a3a', '#d8c8a0', '#c8b890'][c]);
+        g.fillStyle = sky; g.fillRect(x0, 0, cw, h);
+        g.fillStyle = ['#7a5a3a', '#3a2a22', '#5a4a3a', '#4a4a4a'][c];
+        g.beginPath(); g.moveTo(x0, h); g.lineTo(x0 + cw * 0.35, h * 0.35); g.lineTo(x0 + cw * 0.7, h); g.fill();
+        g.fillRect(x0, h * 0.82, cw, h * 0.18);
+        const fig = (fx: number, col: string, hh = 0.5) => { g.fillStyle = col; g.beginPath(); g.moveTo(x0 + fx - 16, h * 0.9); g.lineTo(x0 + fx - 8, h * (0.9 - hh)); g.lineTo(x0 + fx + 8, h * (0.9 - hh)); g.lineTo(x0 + fx + 16, h * 0.9); g.fill(); g.fillStyle = '#d8b090'; g.beginPath(); g.arc(x0 + fx, h * (0.9 - hh) - 10, 10, 0, PI * 2); g.fill(); };
+        if (c === 0) { fig(140, '#a83a2a', 0.55); g.fillStyle = '#9a9a96'; g.fillRect(x0 + 160, h * 0.42, 22, 34); g.fillRect(x0 + 184, h * 0.42, 22, 34); }
+        if (c === 1) { g.fillStyle = '#e8702a'; for (let i = 0; i < 6; i++) g.fillRect(x0 + 150 + i * 16, h * (0.3 + (i % 3) * 0.08), 12, h * 0.5); fig(90, '#5a3a22', 0.45); g.fillStyle = '#6a4a2a'; g.fillRect(x0 + 108, h * 0.62, 50, 8); g.fillStyle = '#f4ecd8'; g.fillRect(x0 + 112, h * 0.58, 34, 5); }
+        if (c === 2) { g.fillStyle = '#2a2420'; g.fillRect(x0 + 40, h * 0.3, 14, h * 0.6); g.fillRect(x0 + 100, h * 0.3, 14, h * 0.6); g.fillRect(x0 + 40, h * 0.3, 74, 12); fig(160, '#2a4a8a', 0.55); fig(215, '#8a2a2a', 0.5); g.fillStyle = '#f4ecd8'; g.fillRect(x0 + 170, h * 0.5, 30, 22); }
+        if (c === 3) { g.fillStyle = '#2a2a2a'; g.fillRect(x0 + 30, h * 0.5, 120, h * 0.4); g.fillStyle = '#8a8a8a'; for (let i = 0; i < 3; i++) { g.beginPath(); g.arc(x0 + 55 + i * 35, h * 0.62, 12, 0, PI * 2); g.fill(); } fig(200, '#3a3a5a', 0.55); g.fillStyle = '#f4ecd8'; g.fillRect(x0 + 60, h * 0.4, 70, 16); }
+        g.strokeStyle = '#c8a860'; g.lineWidth = 8; g.strokeRect(x0 + 4, 4, cw - 8, h - 8);
+      }
+    }, 0.15);
+    for (const s of [-1, 1]) for (const [j, z] of [FZ - 21.8, FZ - 26.8].entries()) {
+      k.box(0.14, 2.45, 4.35, s * 8.99, TY + 6.6, z, wall);
+      stripPanel(k, mural, (s < 0 ? 0 : 2) + j, 4, 4.0, 2.1, s * 8.9, TY + 6.6, z, s < 0 ? PI / 2 : -PI / 2);
+    }
+    // Fifth Avenue runs one way downtown, pigeons work the plaza
+    traffic(k, ctx, [28.5, 32, 35.5, 39].map((z, i) => ({ a: v(75, 0, FZ + z), b: v(-75, 0, FZ + z), n: 4 + (i % 2) })), 9, 461);
+    pigeons(k, ctx, [v(-4, 0, FZ + 19), v(4, 0, FZ + 18.4), v(-15, 0, FZ + 18.2), v(15, 0, FZ + 19.4), v(0, 0, FZ + 21)], 18, 462, 2.6);
+    // landmark eggs
+    const NYPL = { name: 'NYC Landmarks Preservation Commission, LP-2592', url: 'https://s-media.nyc.gov/agencies/lpc/lp/2592.pdf' };
+    k.egg(v(-11, 3.3, FZ + 13.6), { id: 'patience', title: 'Patience, on the south plinth', year: '1911', text: 'Edward Clark Potter designed the lions and the Piccirilli Brothers carved them in Tennessee marble for the 1911 opening. In the 1930s Mayor Fiorello La Guardia named them Patience and Fortitude, the qualities he said New Yorkers would need to get through the Depression.', clue: 'Two stone cats guard the steps. Start with the one on your left.', source: { name: 'Wikipedia, Stephen A. Schwarzman Building', url: 'https://en.wikipedia.org/wiki/Stephen_A._Schwarzman_Building' } }, { r: 2.6 });
+    k.egg(v(11, 3.3, FZ + 13.6), { id: 'fortitude', title: 'Fortitude, and the older names', text: 'Before the mayor\'s names stuck, New Yorkers called the pair Leo Astor and Leo Lenox, after two of the libraries merged to make this one. Later they were Lord Astor and Lady Lenox. Fortitude sits on the north side, to the right of the steps.', clue: 'The other stone cat, on the right, has had more than one name.', source: { name: 'Wikipedia, Patience and Fortitude', url: 'https://en.wikipedia.org/wiki/Patience_and_Fortitude' } }, { r: 2.6 });
+    k.egg(v(-16.3, TY + 3.2, FZ + 1.4), { id: 'beauty-truth', title: 'Beauty and Truth', text: 'Frederick MacMonnies carved the marble figures above the two fountains on the Fifth Avenue front. Beauty rides the winged horse Pegasus on the south side, and Truth sits on a Sphinx on the north.', clue: 'Up on the terrace, listen for water in the alcoves either side of the portico.', source: { name: 'The New York Public Library', url: 'https://www.nypl.org/press/new-york-public-library-restores-fountains-fifth-avenue-facade' } }, { r: 2.0 });
+    k.egg(v(0, TY + 13.4, FZ + 1.9), { id: 'attic', title: 'Six figures on the attic', text: 'Six marble figures by Paul Wayland Bartlett stand on the attic above the columns, each 11 feet tall, flanking three carved plaques. In pairs they stand for History and Philosophy, Romance and Religion, Poetry and Drama.', clue: 'Look high above the columns, where six stand in a row.', source: { name: 'Wikipedia, Stephen A. Schwarzman Building', url: 'https://en.wikipedia.org/wiki/Stephen_A._Schwarzman_Building' } }, { r: 3.2 });
+    k.egg(v(-15.45, TY + 1.8, FZ - 1.3), { id: 'architects', title: 'The architects at the stair', year: '1911', text: 'Busts of the architects stand in niches at the foot of these stairs: Thomas Hastings by Frederick MacMonnies, 1935, and John Carrère by Jo Davidson, 1940. The pair won the 1897 competition, and President Taft dedicated the library on May 23, 1911.', clue: 'At the foot of the marble stairs, two men watch everyone come in.', source: NYPL }, { r: 1.1 });
+    k.egg(v(0, TY + 15.5, FZ - 8), { id: 'first-interior', title: 'The first interior landmark', year: '1974', text: 'Astor Hall, the central stairs and the McGraw Rotunda became New York City\'s first interior landmark in November 1974. The first block of Vermont marble for the building was set in August 1902.', clue: 'Stand under the white vault and look up at the hall itself.', source: NYPL }, { r: 2.2 });
+    k.egg(v(-8.9, TY + 6.6, FZ - 24.3), { id: 'recorded-word', title: 'The Story of the Recorded Word', year: '1938 to 1942', room: 'library', text: 'Edward Laning painted these panels for the McGraw Rotunda as a WPA project from 1938 to 1942: Moses with the tablets, a medieval scribe, Gutenberg showing a proof. The rotunda adjoins the catalog room and the Rose Main Reading Room beyond it.', clue: 'In the rotunda, look above the frames for four painted arches.', source: { name: 'NYPL Research Guides, History of the 42nd Street Library', url: 'https://libguides.nypl.org/sasbhistory/architecture' } }, { r: 3.0 });
     // the works: blind arched bays on the hall walls, above the flights, on the landings, in the rotunda, on the wings
     const mounts: Mount[] = [];
     const bay = (x: number, zc: number, dir: 1 | -1, w: number) => { const a = k.arch(w + 1.3, 6.8, 0.25, x, TY, zc - dir * 0.13, wall, false, 0.7); void a; };
@@ -414,9 +605,19 @@ export const jefferson: RoomDef = {
     for (const x of [-20, -31]) k.point(x, 6.5, -2, 0xffe8d0, 14, 12);
     // the clock tower on the corner, the pyramid roof, the four faces, the stair turret
     const TX = -21.5, TZ = 14, TH = 26;
-    k.box(8, TH, 8, TX, TH / 2, TZ, brick);
+    // the shaft, then the open fire lookout stage between stone piers, then the clock stage
+    k.box(8, 16.6, 8, TX, 8.3, TZ, brick);
+    k.box(8, TH - 20.6, 8, TX, (TH + 20.6) / 2, TZ, brick);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.box(1.5, 4, 1.5, TX + sx * 3.25, 18.6, TZ + sz * 3.25, brick);
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      for (const o of [-0.85, 0.85]) { const px = TX + dx * 3.7 + (dz ? o : 0), pz = TZ + dz * 3.7 + (dx ? o : 0); k.cyl(0.14, 3.2, px, 18.3, pz, stone, 0.14, 8); }
+      const la = k.arcade(5, 1.1, 0.3, 3, 1.5, 1.1, TX + dx * 3.7, 19.5, TZ + dz * 3.7, stone, dx ? PI / 2 : 0, true); void la;
+      k.box(dx ? 0.3 : 5, 0.9, dx ? 5 : 0.3, TX + dx * 3.85, 17.25, TZ + dz * 3.85, stone);
+    }
+    k.box(7.2, 0.2, 7.2, TX, 20.5, TZ, boards);
     for (const y of [2.6, 5.6, 8.6, 12.6, 16.6, 20.6]) k.box(8.2, 0.3, 8.2, TX, y, TZ, stone);
-    for (let i = 0; i < 3; i++) { const y = 11 + i * 3.6; for (const [dx, dz, ry] of [[4.05, 0, PI / 2], [0, 4.05, 0]] as const) { k.plane(0.9, 2.6, TX + dx, y, TZ + dz, pane[(i + 2) % 4], ry); k.box(dx ? 0.1 : 1.2, 2.9, dx ? 1.2 : 0.1, TX + dx * 1.01, y, TZ + dz * 1.01, stone); } }
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.mesh(new T.ConeGeometry(0.34, 2.6, 6), stone, TX + sx * 3.8, TH + 1.3, TZ + sz * 3.8);
+    for (let i = 0; i < 2; i++) { const y = 11 + i * 3.6; for (const [dx, dz, ry] of [[4.05, 0, PI / 2], [0, 4.05, 0]] as const) { k.plane(0.9, 2.6, TX + dx, y, TZ + dz, pane[(i + 2) % 4], ry); k.box(dx ? 0.1 : 1.2, 2.9, dx ? 1.2 : 0.1, TX + dx * 1.01, y, TZ + dz * 1.01, stone); } }
     for (const [dx, dz, ry] of [[4.05, 0, PI / 2], [-4.05, 0, -PI / 2], [0, 4.05, 0], [0, -4.05, PI]] as const) {
       clockFace(k, ctx, TX + dx, 23.2, TZ + dz, 1.5, ry, clockWhite, lead);
       const gg = new T.Shape(); gg.moveTo(-4.1, 0); gg.lineTo(4.1, 0); gg.lineTo(0, 3.2); gg.closePath();
@@ -477,6 +678,34 @@ export const jefferson: RoomDef = {
     // life: the avenue, the readers, the clock
     k.crowd([v(14.5, 0, -70), v(14.5, 0, 48), v(-14.5, 0, 48), v(-14.5, 0, -70)], 30, { seed: 64, speed: 1.0, spread: 2.4, animate: !ctx.reduced, closed: true });
     k.crowd([v(-19.6, 0, -12), v(-19.6, 0, 8), v(-30.6, 0, 8), v(-30.6, 0, -12)], 8, { seed: 65, speed: 0.3, spread: 1.0, animate: !ctx.reduced, closed: true, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517, 0x4a6a3a] });
+    // iron cresting along the ridge and stone finials on the two gables
+    for (let z = Z1 + 0.5; z <= Z0 - 0.5; z += 1.2) k.mesh(new T.ConeGeometry(0.09, 0.7, 4), iron, XC, RIDGE + 0.55, z);
+    for (const z of [Z0, Z1]) { k.cyl(0.22, 1.2, XC, RIDGE + 0.5, z, stone, 0.3, 8); k.mesh(new T.ConeGeometry(0.28, 1.4, 8), stone, XC, RIDGE + 1.8, z); }
+    // the bell in the lookout, striking the hour on the clock above it
+    const bell = hungBell(k, TX, 20.35, TZ, 1.25, brass);
+    k.beam(v(TX - 2.6, 20.35, TZ), v(TX + 2.6, 20.35, TZ), 0.12, timber, 6);
+    if (!ctx.reduced) k.ticks.push((t) => { const since = (((k.o.hour + t / 3600) % 1) + 1) % 1 * 3600, amp = since < 24 ? 0.45 * (1 - since / 24) : 0; bell.rotation.x = amp * Math.sin(t * 3.4); });
+    // Sixth Avenue runs one way uptown; pigeons circle the tower and work the sidewalk; leaves come down in the garden
+    traffic(k, ctx, [-9, -5, -1, 3, 7].map((x, i) => ({ a: v(x, 0, -75), b: v(x, 0, 75), n: 4 + (i % 2) })), 8, 481);
+    gulls(k, ctx, Array.from({ length: 8 }, (_, i) => { const a = (i / 8) * PI * 2; return v(TX + Math.cos(a) * 13, 29 + (i % 2) * 2, TZ + Math.sin(a) * 13); }), 12, 482, 0x80848e, 0.42);
+    pigeons(k, ctx, [v(-14.2, 0, 1), v(-14.4, 0, -9), v(14.6, 0, 20), v(GX0 - 4, 0.15, -27)], 14, 483, 2.2);
+    {
+      const n = 36, leaf = new T.InstancedMesh(new T.PlaneGeometry(0.16, 0.11), k.flat(0xb8862a, 0, 0.9, { side: T.DoubleSide }), n), rs = X.mulberry(484);
+      const st = Array.from({ length: n }, () => ({ x: GX1 + 5 + rs() * (GX0 - GX1 - 10), z: GZ1 + 5 + rs() * (GZ0 - GZ1 - 10), h: 5 + rs() * 3, v: 0.35 + rs() * 0.3, ph: rs() * 6.28 }));
+      leaf.frustumCulled = false;
+      k.add(leaf);
+      const M = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(), p = new T.Vector3(), one = new T.Vector3(1, 1, 1);
+      const place = (t: number) => { st.forEach((a, i) => { const y = a.h - ((t * a.v + a.ph) % a.h); p.set(a.x + Math.sin(t * 0.8 + a.ph) * 0.7, Math.max(0.2, y), a.z + Math.cos(t * 0.6 + a.ph) * 0.5); e.set(t * 2 + a.ph, t * 1.3, a.ph); q.setFromEuler(e); M.compose(p, q, one); leaf.setMatrixAt(i, M); }); leaf.instanceMatrix.needsUpdate = true; };
+      place(0);
+      if (!ctx.reduced) k.ticks.push((t) => place(t));
+    }
+    // landmark eggs
+    const VP = { name: 'Village Preservation', url: 'https://villagepreservation.org/2012/02/01/the-jefferson-market-library-a-striking-landmark-shines-again/' };
+    k.egg(v(TX + 4.15, 23.2, TZ), { id: 'clock', title: 'The clock the Village restarted', year: '1950s', text: 'In the late 1950s Margot Gayle formed the Village Neighborhood Committee to get this clock running again. The courthouse survived, and in 1967 it reopened as a branch of the New York Public Library.', clue: 'Four faces keep New York time up high. The one over Sixth Avenue has a story.', source: VP }, { r: 1.7 });
+    k.egg(v(TX, 19.2, TZ), { id: 'fire-watch', title: 'The fire watch in the tower', year: '1877 to 1945', text: 'The tower went up in 1877 as a fire watchtower as well as a clock. A watchman up here rang the bell to call out firefighters, and the tower kept watch until 1945, when the building became a police academy.', clue: 'Below the clocks, between the stone piers, something waits to ring.', source: { name: 'Village Preservation, Village Firehouses Past and Present', url: 'https://villagepreservation.org/2019/08/13/village-firehouse-architecture-is-hot/' } }, { r: 2.2 });
+    k.egg(v(X0 + 0.7, 3.2, 7.7), { id: 'fifth-most-beautiful', title: 'Fifth most beautiful in America', year: '1877', text: 'Frederick Clarke Withers and Calvert Vaux built this courthouse between 1874 and 1877. In an 1880s poll, their fellow architects voted it the fifth most beautiful building in the United States.', clue: 'The pointed stone doorway on Sixth Avenue leads into an old courthouse.', source: VP }, { r: 1.9 });
+    k.egg(v(-31, 1.3, -35.5), { id: 'garden', title: 'A garden where a jail stood', year: '1975', text: 'This garden grows on the site of the Women\'s House of Detention, an eleven story Art Deco jail demolished in 1973 and 1974. The Jefferson Market Garden was founded here in 1975.', clue: 'Follow the iron fence round to the flowers behind the library.', source: { name: 'Jefferson Market Garden', url: 'https://www.jeffersonmarketgarden.org/history' } }, { r: 2.4 });
+    k.egg(v(-25.3, 1.9, -1.5), { id: 'cavaglieri', title: 'From courtroom to reading room', year: '1967', text: 'Preservation architect Giorgio Cavaglieri turned the old courthouse into this library, which opened in 1967. His conversion won an American Institute of Architects Honor Award in 1968.', clue: 'Sit at a table under the green lamps and read the room.', source: VP }, { r: 1.6 });
     // the works: between the pointed windows inside and out, flanking the great window, above the stacks, the easels in the garden
     const mounts: Mount[] = [];
     for (const z of [-7.75, -1.25]) {
@@ -578,10 +807,11 @@ export const eldridge: RoomDef = {
     k.block(EX - 0.6, EX + 0.6, -10.6, 10.6);
     const vault = k.mesh(new T.CylinderGeometry(10, 10, DEPTH - 1.2, 40, 1, true, 0, PI), stars, (FX + EX) / 2, 9, 0);
     vault.rotation.z = PI / 2;
+    const vaultStars: T.InstancedMesh[] = [];
     { const star = new T.Shape(); for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2 - PI / 2, r = i % 2 ? 0.1 : 0.24; i ? star.lineTo(Math.cos(a) * r, Math.sin(a) * r) : star.moveTo(Math.cos(a) * r, Math.sin(a) * r); } star.closePath();
       const sg = new T.ShapeGeometry(star), mats: T.Matrix4[] = [], q = new T.Quaternion(), up = new T.Vector3(0, 0, 1), nrm = new T.Vector3(), rs = X.mulberry(462);
       for (let row = 0; row < 13; row++) for (let col = 0; col < 19; col++) { const th = ((row + 1) / 14) * PI + (rs() - 0.5) * 0.05, x = FX - 1.6 - col * 1.5 + (rs() - 0.5) * 0.4; nrm.set(0, -Math.sin(th), Math.cos(th)); q.setFromUnitVectors(up, nrm); const sc = 0.8 + rs() * 0.5; mats.push(new T.Matrix4().compose(v(x, 9 + Math.sin(th) * 9.9, -Math.cos(th) * 9.9), q, new T.Vector3(sc, sc, sc))); }
-      k.instances(sg, k.glow(0xffd27a), mats); }
+      vaultStars.push(k.instances(sg, new T.MeshBasicMaterial({ color: 0xffffff }), mats)); }
     for (let i = 0; i <= 8; i++) { const x = FX - 1.0 - i * (DEPTH - 2.0) / 8; k.curve(Array.from({ length: 25 }, (_, j) => { const t = (j / 24) * PI; return v(x, 9 + Math.sin(t) * 9.85, -Math.cos(t) * 9.85); }), 0.16, gilt, 24); }
     // the galleries: slender columns, the parapet fronts that carry the works, the horseshoe arcades above
     const GY = 4.6, cols = Array.from({ length: 8 }, (_, i) => FX - 3 - i * 3.75);
@@ -648,6 +878,62 @@ export const eldridge: RoomDef = {
     // life on the street
     k.crowd([v(6.2, 0, -50), v(6.2, 0, 44), v(-6.2, 0, 44), v(-6.2, 0, -50)], 22, { seed: 66, speed: 0.9, spread: 1.8, animate: !ctx.reduced, closed: true });
     k.crowd([v(FX - 8, 0, 0), v(FX - 24, 0, 0)], 6, { seed: 67, speed: 0.25, spread: 1.4, animate: !ctx.reduced, colors: [0x24262c, 0x151517, 0x3a3a4a, 0x8a3a3a] });
+    // stars of David: on the tower finials and carved into the wooden doors; the side doors closed, the centre one open
+    const hexagram = (r: number) => mergeGeometries([0, PI].map((rot) => { const s = new T.Shape(), hole = new T.Path(); for (let i = 0; i < 3; i++) { const a = rot + (i / 3) * PI * 2 + PI / 2; i ? s.lineTo(Math.cos(a) * r, Math.sin(a) * r) : s.moveTo(Math.cos(a) * r, Math.sin(a) * r); i ? hole.lineTo(Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.62) : hole.moveTo(Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.62); } s.closePath(); hole.closePath(); s.holes.push(hole); return new T.ExtrudeGeometry(s, { depth: 0.05, bevelEnabled: false }); }));
+    for (const s of [-1, 1]) { k.cyl(0.04, 0.8, FX - 0.2, 25.5, s * 8.7, brass, 0.04, 6); for (const ry of [PI / 2, 0]) k.mesh(hexagram(0.55), gold, FX - 0.2, 26.3, s * 8.7).rotation.y = ry; }
+    for (const s of [-1, 1]) {
+      const zc = s * 6;
+      for (const o of [-0.6, 0.6]) { k.box(0.12, 2.72, 1.16, FX + 0.1, 1.36, zc + o, walnut); for (const y of [0.8, 1.95]) k.mesh(hexagram(0.3), gilt, FX + 0.17, y, zc + o).rotation.y = PI / 2; }
+      k.mesh(new T.CircleGeometry(1.2, 20, 0, PI), pane[1], FX + 0.1, 2.73, zc).rotation.y = PI / 2;
+      k.block(FX - 0.6, FX + 0.6, zc - 1.25, zc + 1.25);
+    }
+    for (const s of [-1, 1]) { const leaf = k.box(1.5, 3.1, 0.1, FX - 1.35, 1.55, s * 1.62, walnut); void leaf; for (const y of [0.9, 2.2]) k.mesh(hexagram(0.34), gilt, FX - 1.35, y, s * 1.56).rotation.y = s > 0 ? PI : 0; }
+    // the iron fence between the building and the sidewalk
+    for (const [z0, z1] of [[-10, -1.9], [1.9, 10]]) { k.rail(FX + 0.95, (z0 + z1) / 2, z1 - z0, iron, 1.0, 'z', 1.0); k.block(FX + 0.8, FX + 1.1, z0, z1); }
+    // the floorboards, worn pale where people stood to pray in front of each pew
+    const worn = k.flat(0x9c7c58, 0, 0.95);
+    for (let r = 0; r < 16; r++) for (const s of [-1, 1]) k.plane(0.46, 4.3, FX - 6 - r * 1.15 + 0.56, 0.012, s * 3.95, worn, 0, -PI / 2);
+    // afternoon light through the west rose window, dust turning in it; the painted stars catch the candles
+    {
+      const top = v(FX - 0.9, 13.5, 0), end = v(FX - 16, 0.2, 1.6), len = top.distanceTo(end);
+      const beamM = new T.MeshBasicMaterial({ color: 0xffe2a8, transparent: true, opacity: 0.07, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
+      const beamG = new T.CylinderGeometry(3.0, 4.2, len, 24, 1, true); beamG.translate(0, -len / 2, 0);
+      const beam = new T.Mesh(beamG, beamM);
+      beam.position.copy(top);
+      const aim = (dx: number, dz: number) => { const d = v(end.x + dx, end.y, end.z + dz).sub(top).normalize(); beam.quaternion.setFromUnitVectors(v(0, -1, 0), d); };
+      aim(0, 0);
+      k.add(beam);
+      const sun = (h: number) => T.MathUtils.clamp((h - 11) / 3, 0, 1) * T.MathUtils.clamp((20 - h) / 2, 0, 1);
+      const n = 160, pos = new Float32Array(n * 3), rs = X.mulberry(463), mote = Array.from({ length: n }, () => ({ u: rs(), a: rs() * 6.28, r: Math.sqrt(rs()), s: 0.004 + rs() * 0.01 }));
+      const pg = new T.BufferGeometry(); pg.setAttribute('position', new T.BufferAttribute(pos, 3));
+      const pm = new T.PointsMaterial({ color: 0xfff0c8, size: 0.07, transparent: true, opacity: 0.7, blending: T.AdditiveBlending, depthWrite: false });
+      const motes = new T.Points(pg, pm); motes.frustumCulled = false;
+      k.add(motes);
+      const axis = end.clone().sub(top), side = v(0, 0, 1), up2 = axis.clone().cross(side).normalize();
+      const placeMotes = (t: number) => { mote.forEach((m, i) => { m.u = (m.u + m.s * 0.02) % 1; const rr = (3.0 + 1.2 * m.u) * m.r * 0.8, a = m.a + t * 0.05; const p = top.clone().addScaledVector(axis, m.u).addScaledVector(side, Math.cos(a) * rr).addScaledVector(up2, Math.sin(a) * rr); pos[i * 3] = p.x; pos[i * 3 + 1] = p.y; pos[i * 3 + 2] = p.z; }); pg.attributes.position.needsUpdate = true; };
+      placeMotes(0);
+      const light = (t: number) => { const f = sun(k.o.hour + t / 3600) * (0.8 + 0.2 * Math.sin(t * 0.13) * Math.sin(t * 0.31 + 1)); beamM.opacity = 0.075 * f; pm.opacity = 0.75 * f; beam.visible = motes.visible = f > 0.01; };
+      light(0);
+      const sc = new T.Color(0xffd27a);
+      vaultStars.forEach((m) => { for (let i = 0; i < m.count; i++) m.setColorAt(i, sc); if (m.instanceColor) m.instanceColor.needsUpdate = true; });
+      const ph = Array.from({ length: vaultStars[0]?.count ?? 0 }, () => rs() * 6.28), c = new T.Color();
+      if (!ctx.reduced) k.ticks.push((t) => {
+        aim(Math.sin(t * 0.04) * 1.5, Math.cos(t * 0.05) * 1.2);
+        light(t);
+        placeMotes(t);
+        vaultStars.forEach((m) => { for (let i = 0; i < m.count; i++) { const b = 0.72 + 0.28 * Math.sin(t * (0.8 + (i % 7) * 0.23) + ph[i]); m.setColorAt(i, c.setRGB(1 * b, 0.82 * b, 0.48 * b)); } if (m.instanceColor) m.instanceColor.needsUpdate = true; });
+      });
+    }
+    // pigeons on the Eldridge Street sidewalks
+    pigeons(k, ctx, [v(-6.4, 0, 16), v(6.4, 0, -12), v(-6.2, 0, -26), v(6.3, 0, 26)], 14, 464, 2.0);
+    // landmark eggs
+    const LPC = { name: 'NYC Landmarks Preservation Commission, LP-1107', url: 'https://s-media.nyc.gov/agencies/lpc/lp/1107.pdf' };
+    k.egg(v(FX + 0.8, 13.5, 0), { id: 'rose-window', title: 'The Herter Brothers\' rose window', year: '1887', text: 'Peter and Francis William Herter built this front in 1886 and 1887. Heavy terra cotta cornices make the whole centre bay and its rose window read as one giant horseshoe arch, and stars of David fill the roundels.', clue: 'Look up at the wheel of glass crowning the front.', source: LPC }, { r: 3.2 });
+    k.egg(v(FX + 0.8, 2.2, -6), { id: 'doors', title: 'Built by immigrants, 1887', year: '1887', text: 'Opened in 1887, this was the first synagogue in America purpose built by immigrants from Eastern Europe. Stars of David are carved into its wooden front doors.', clue: 'Before you go in, study the wooden doors.', source: { name: 'Museum at Eldridge Street', url: 'https://www.eldridgestreet.org/history/' } }, { r: 1.6 });
+    k.egg(v(FX - 5.44, 0.35, 3.95), { id: 'floorboards', title: 'Grooves in the floorboards', text: 'The restoration kept the original pine floorboards rather than sanding them smooth. The worn grooves are the imprint of the people who stood and prayed here for decades.', clue: 'Look down in front of the pews, where the wood has gone pale.', source: { name: 'Museum at Eldridge Street, Architectural Restoration', url: 'https://www.eldridgestreet.org/restoration' } }, { r: 1.3 });
+    k.egg(v(FX - 15, 7.6, 0), { id: 'chandeliers', title: 'Brass chandeliers, gas to electric', text: 'The brass chandeliers were made for gas flames. Early in the 1900s they were wired for electricity as the congregation modernised, and they still hang in the sanctuary today.', clue: 'Something overhead sways gently on a long chain.', source: { name: 'Museum at Eldridge Street, Architectural Restoration', url: 'https://www.eldridgestreet.org/restoration' } }, { r: 2.0 });
+    k.egg(v(EX + 1.6, 3.6, 0), { id: 'ark', title: 'The ark on the east wall', text: 'The ark of carved Italian walnut stands on the east wall, the side closest to Jerusalem. Gold stars painted on dark blue walls carry the night sky across the sanctuary.', clue: 'Walk to the far end, where the congregation faces.', source: LPC }, { r: 2.0 });
+    k.egg(v(EX + 0.9, 12.5, 0), { id: 'east-window', title: 'The window of stars', year: '2010', text: 'Artist Kiki Smith and architect Deborah Gans designed the round east window over the ark, installed in 2010: deep blue glass scattered with stars around a Star of David.', clue: 'Face the ark and raise your eyes to the blue.', source: { name: 'Museum at Eldridge Street, Architectural Restoration', url: 'https://www.eldridgestreet.org/restoration' } }, { r: 3.0 });
     // the works: the gallery fronts, gilt, and the side walls under the galleries
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) {
@@ -689,7 +975,7 @@ export const cityhall: RoomDef = {
       glass = k.glass(0xcfe0e8, 0.16, 0.06),
       warm = k.glow(0xffe4b8),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
-      velvet = k.pbr('chVelvet', X.velvet(0x7a2a34), 0.5, { roughness: 0.9 }),
+      velvet = k.pbr('chGovGreen', X.plaster(0x5f7a5c, 505), 0.5, { roughness: 0.85 }),
       jet = k.glow(0xdff4ff);
     const FZ = 0, TY = 2.4, CZ = -12, R = 9, GY = TY + 5.5;
     void FZ;
@@ -753,7 +1039,15 @@ export const cityhall: RoomDef = {
     k.cyl(4.6, 0.8, 0, TY + 29.1, CZ, marble, 4.4, 32);
     k.mesh(new T.SphereGeometry(4.4, 24, 12, 0, PI * 2, 0, PI / 2), k.flat(0xd8d2c4, 0, 0.7), 0, TY + 29.5, CZ);
     k.cyl(1.2, 2.4, 0, TY + 35, CZ, marble, 1.4, 12);
-    k.prop('bronze_figure', 0, TY + 36.2, CZ, { height: 3.4 });
+    // Justice on the cupola: no blindfold, the scale raised in her left hand, the sword in her right
+    const justiceM = k.flat(0xd9d3c4, 0.2, 0.55);
+    const J = figure(k, 0, TY + 36.2, CZ, 3.6, justiceM, 0, [[0.6, 3.3, 0.35], [-0.55, 1.5, 0.35]]);
+    k.beam(J.at(-0.55, 1.55, 0.35), J.at(-0.62, 0.25, 0.55), 0.035 * J.s, justiceM, 5);
+    k.beam(J.at(-0.8, 1.35, 0.38), J.at(-0.3, 1.35, 0.38), 0.03 * J.s, justiceM, 5);
+    const scaleG = new T.Group(); scaleG.position.copy(J.at(0.6, 3.42, 0.35));
+    { const s = J.s, parts: T.BufferGeometry[] = [new T.BoxGeometry(1.1 * s, 0.05 * s, 0.05 * s)]; for (const sx of [-1, 1]) { for (const o of [-0.08, 0.08]) parts.push(new T.CylinderGeometry(0.008 * s, 0.008 * s, 0.55 * s, 4).translate(sx * 0.52 * s + o * s, -0.28 * s, 0)); parts.push(new T.CylinderGeometry(0.2 * s, 0.12 * s, 0.06 * s, 12).translate(sx * 0.52 * s, -0.56 * s, 0)); } scaleG.add(new T.Mesh(mergeGeometries(parts), justiceM)); }
+    k.add(scaleG);
+    if (!ctx.reduced) k.ticks.push((t) => { scaleG.rotation.z = Math.sin(t * 0.7) * 0.07; });
     k.point(0, TY + 12, FZ + 5, 0xfff0d8, 30, 18);
     k.sign('CITY HALL  ·  1812  ·  MANGIN AND McCOMB', 10, 0.7, 0, TY + 6.4, FZ + 3.62, 'transparent', '#5a544a', 80, 0);
     flagpole(k, ctx, -21, 0, FZ + 8, 12, US_FLAG, 3.4);
@@ -824,6 +1118,64 @@ export const cityhall: RoomDef = {
     k.censusWall({ x: 0, y: TY + 3.6, z: CZ - 8.45, rotY: 0, cols: 14, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(600, 56), pieces: ctx.all, backing: dark });
     k.box(9.2, 3.2, 0.3, 0, TY + 3.6, CZ - 8.62, dark);
     for (const x of [-5.6, 5.6]) k.prop('museum_bench', x, TY, CZ, { height: 0.58, rotY: 0, keepOut: 1.2 });
+    // the Governor's Room: a desk Washington used, and a full length portrait on the side wall
+    const walnutM = k.pbr('chWalnut', X.planks(0x4a2e1a, 3, 507, 0.2), 1.6, { roughness: 0.45 }), giltF = k.flat(0xc9a44a, 0.8, 0.3);
+    gBox(0.9, 0.08, 1.9, GR + 1.3, 0, GY + 0.92, walnutM);
+    gBox(0.8, 0.8, 1.8, GR + 1.3, 0, GY + 0.46, walnutM);
+    gBox(0.6, 0.35, 1.2, GR + 1.55, 0, GY + 1.14, walnutM);
+    gBox(0.08, 3.1, 1.9, GR + 0.4, 3.76, GY + 2.6, giltF);
+    const portrait = canvasMat(256, 448, (g, w, h) => {
+      const bg = g.createLinearGradient(0, 0, w, h); bg.addColorStop(0, '#5a4a3a'); bg.addColorStop(1, '#2a2018'); g.fillStyle = bg; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#7a8aa0'; g.fillRect(0, 0, w, h * 0.45); g.fillStyle = '#4a4030'; g.fillRect(0, h * 0.8, w, h * 0.2);
+      g.fillStyle = '#1c2438'; g.beginPath(); g.moveTo(w * 0.36, h * 0.86); g.lineTo(w * 0.4, h * 0.3); g.lineTo(w * 0.6, h * 0.3); g.lineTo(w * 0.66, h * 0.86); g.fill();
+      g.fillStyle = '#e8dcc0'; g.fillRect(w * 0.42, h * 0.66, w * 0.07, h * 0.2); g.fillRect(w * 0.53, h * 0.66, w * 0.07, h * 0.2);
+      g.fillStyle = '#e0c0a0'; g.beginPath(); g.arc(w * 0.5, h * 0.24, w * 0.07, 0, PI * 2); g.fill();
+      g.fillStyle = '#e8e4dc'; g.beginPath(); g.arc(w * 0.5, h * 0.2, w * 0.075, PI, 0); g.fill();
+      g.strokeStyle = '#c9a44a'; g.lineWidth = 10; g.strokeRect(5, 5, w - 10, h - 10);
+    });
+    { const [px, pz] = gAt(GR + 0.4, 3.7); k.plane(1.7, 2.9, px, GY + 2.6, pz, portrait, GA - PI / 2); }
+    // the Mould fountain's gas candelabra, flickering
+    const gasM = new T.MeshBasicMaterial({ color: 0xffd490 });
+    for (const a of [PI / 4, (3 * PI) / 4, (5 * PI) / 4, (7 * PI) / 4]) {
+      const x = Math.cos(a) * 8.6, z = 32 + Math.sin(a) * 8.6;
+      k.lathe([[0.3, 0], [0.3, 0.3], [0.14, 0.5], [0.1, 3.2], [0.18, 3.4], [0, 3.45]], x, 0.15, z, bronze, 10);
+      for (let j = 0; j < 4; j++) { const b = (j / 4) * PI * 2 + a; k.beam(v(x, 3.35, z), v(x + Math.cos(b) * 0.6, 3.7, z + Math.sin(b) * 0.6), 0.04, bronze, 5); k.sphere(0.2, x + Math.cos(b) * 0.6, 3.92, z + Math.sin(b) * 0.6, gasM, 8); }
+      k.sphere(0.24, x, 3.8, z, gasM, 8);
+      k.keepOut.push({ x, z, r: 0.5 });
+    }
+    if (!ctx.reduced) k.ticks.push((t) => { gasM.color.setHSL(0.1, 1, 0.72 + 0.06 * Math.sin(t * 11) * Math.sin(t * 7.3 + 2)); });
+    // Civic Fame on the Municipal Building, gilded, barefoot on her sphere, the five pointed crown held up
+    const gildM = k.pbr('chGilt', X.gilt(0xd8b050), 1, { metalness: 0.85, roughness: 0.3 });
+    const CF = figure(k, 36, 110.9, -74, 6, gildM, 0, [[0.75, 3.5, 0.3], [-0.6, 1.7, 0.3]]);
+    { const c = CF.at(0.75, 3.75, 0.3); k.torus(0.32 * CF.s, 0.05 * CF.s, c.x, c.y, c.z, gildM, 16).rotation.x = PI / 2; for (let i = 0; i < 5; i++) { const a = (i / 5) * PI * 2; k.mesh(new T.ConeGeometry(0.06 * CF.s, 0.3 * CF.s, 5), gildM, c.x + Math.cos(a) * 0.32 * CF.s, c.y + 0.15 * CF.s, c.z + Math.sin(a) * 0.32 * CF.s); } }
+    // Broadway along the west side of the park, and Cass Gilbert's Woolworth Building on it
+    k.box(14, 0.3, 190, -88, -0.14, 20, k.pbr('asphaltS', X.asphalt(0x24282d), 0.11, { roughness: 0.62, metalness: 0.12 }));
+    {
+      const terra = k.pbr('woolTerra', X.windows(506, 0.28, 0xd8ceb4, true), 0.14, { emissive: 0xffffff, emissiveIntensity: 0.8, roughness: 0.6, stretch: 0.42 }),
+        pier = k.flat(0xe2d6bc, 0, 0.7), roof = k.pbr('woolRoof', X.patina(0x6a9a8a), 0.3, { roughness: 0.6, metalness: 0.2 });
+      const WX = -114, WZ = -8, TXW = -107;
+      k.box(34, 72, 30, WX, 35, WZ, terra);
+      for (let i = 0; i < 9; i++) k.box(0.7, 72, 0.7, -96.8, 35, WZ - 13 + i * 3.25, pier);
+      k.box(35, 1.4, 31, WX, 71.2, WZ, pier);
+      k.box(20, 56, 20, TXW, 99, WZ, terra);
+      for (let i = 0; i < 6; i++) { k.box(0.6, 56, 0.6, TXW + 10.2, 99, WZ - 7.5 + i * 3, pier); k.box(0.6, 56, 0.6, TXW - 7.5 + i * 3, 99, WZ + 10.2, pier); }
+      k.box(15, 12, 15, TXW, 133, WZ, terra);
+      for (const [y, hw] of [[127, 10], [139, 7.5]] as const) for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.mesh(new T.ConeGeometry(0.9, 5, 6), pier, TXW + sx * hw, y + 2.5, WZ + sz * hw);
+      const crown = k.mesh(new T.ConeGeometry(10.6, 12, 4), roof, TXW, 145, WZ); crown.rotation.y = PI / 4;
+      k.cyl(1.6, 3, TXW, 152.5, WZ, pier, 1.2, 8); k.mesh(new T.ConeGeometry(1.2, 4, 8), roof, TXW, 156, WZ);
+    }
+    // Broadway runs one way downtown; pigeons in the park, and a flock over it
+    traffic(k, ctx, [-91, -87.5, -84].map((x) => ({ a: v(x, 0, -70), b: v(x, 0, 110), n: 5 })), 8.5, 508);
+    pigeons(k, ctx, [v(-10, 0.15, 24), v(9, 0.15, 40), v(-12, 0.15, 38), v(4, 0.15, 20), v(0, 0.15, 50), v(-6, 0.15, 45)], 22, 509, 2.4);
+    gulls(k, ctx, Array.from({ length: 8 }, (_, i) => { const a = (i / 8) * PI * 2; return v(Math.cos(a) * 24, 16 + (i % 3) * 2, 40 + Math.sin(a) * 18); }), 14, 510, 0x7c808a, 0.45);
+    // landmark eggs
+    k.egg(v(0, TY + 38, CZ), { id: 'justice', title: 'Justice without a blindfold', text: 'Justice on the cupola is sheet copper over a steel frame, and she wears no blindfold: the scale is in her left hand, the sword in her right. She is the building\'s third Justice, after two wooden figures lost to fire and decay.', clue: 'Look to the very top of the cupola.', source: { name: 'Untapped New York, rooftop statues', url: 'https://www.untappedcities.com/rooftop-statues-new-york-city/' } }, { r: 2.4 });
+    k.egg(v(-7.2, TY + 3.2, FZ + 3.9), { id: 'marble-front', title: 'Marble in front, brownstone behind', year: '1812', text: 'The front was first built of Massachusetts marble from Alford, with brownstone on the rear. Pollution and pigeons wore it down, and from 1954 to 1956 the building was reclad in Alabama limestone above a Missouri granite base.', clue: 'Run a hand along the arcade on the front and ask what it is made of.', source: { name: 'Wikipedia, New York City Hall', url: 'https://en.wikipedia.org/wiki/New_York_City_Hall' } }, { r: 1.8 });
+    k.egg(v(Math.sin(0.87) * 8, GY + 0.9, CZ + Math.cos(0.87) * 8), { id: 'lincoln', title: 'Lincoln under the dome', year: '1865', text: 'When Abraham Lincoln lay in state here in April 1865, his coffin rested on the stair landing beneath this dome. Ulysses S. Grant would also lie in state under the rotunda.', clue: 'Climb the curving stair to the landing where both flights arrive.', source: { name: 'Wikipedia, New York City Hall', url: 'https://en.wikipedia.org/wiki/New_York_City_Hall' } }, { r: 1.6 });
+    { const [gx, gz] = gAt(GR + 1.3, 0); k.egg(v(gx, GY + 1.5, gz), { id: 'governors-room', title: 'The Governor\'s Room', year: '1815 to 1816', text: 'Since 1815 and 1816 this has been a reception hall and a museum of the city\'s portraits, John Trumbull among the painters. The desk here was used by George Washington and brought to City Hall in 1844.', clue: 'From the gallery, peer through the barred door at a room of portraits.', source: { name: 'NYC Public Design Commission, Governor\'s Room', url: 'https://www.nyc.gov/site/designcommission/archive/city-hall/governors-room.page' } }, { r: 1.8 }); }
+    k.egg(v(0, 3.0, 32), { id: 'mould-fountain', title: 'The fountain that came home', year: '1871', text: 'Jacob Wrey Mould, later chief architect of the Parks Department, designed this fountain in 1871. It was moved to Crotona Park in the Bronx in 1920, and came back for the park\'s reopening in 2000 with its gas lamps made new.', clue: 'Follow the paths to the water at the heart of the park.', source: { name: 'EverGreene, Jacob Wrey Mould Fountain', url: 'https://evergreene.com/projects/jacob-wrey-mould-fountain-city-hall-park/' } }, { r: 3.0 });
+    k.egg(v(36, 114, -74), { id: 'civic-fame', title: 'Civic Fame and her crown', text: 'Adolph Weinman\'s Civic Fame, gilded copper, stands barefoot on a sphere atop the Municipal Building, built 1909 to 1914. The five pointed crown in her hand stands for the five boroughs.', clue: 'Behind City Hall, the tallest tower wears something gold.', source: { name: 'NYC DCAS, David N. Dinkins Municipal Building', url: 'https://www.nyc.gov/site/dcas/business/dcasmanagedbuildings/david-n-dinkins-manhattan-municipal-building.page' } }, { r: 5 });
+    k.egg(v(-107, 112, -8), { id: 'woolworth', title: 'The cathedral of commerce', year: '1913', room: 'woolworth', text: 'Across Broadway rises Cass Gilbert\'s Woolworth Building, completed in 1913. At 792 feet it was hailed as the cathedral of commerce and stayed the tallest building in the world until 1930.', clue: 'Turn west toward Broadway and look for the tallest crown.', source: { name: 'New York Landmarks Conservancy', url: 'https://nylandmarks.org/explore-ny/the-woolworth-building/' } }, { r: 14 });
     // life: the park, the stairs
     k.crowd([v(-24, 0, 60), v(-14, 0, 40), v(-6, 0, 22), v(6, 0, 22), v(14, 0, 40), v(24, 0, 60)], 30, { seed: 68, speed: 0.6, spread: 3, animate: !ctx.reduced });
     const stairRoute: T.Vector3[] = [v(0, TY, FZ + 1), v(0, TY, CZ + 5)];
@@ -978,6 +1330,62 @@ export const castle: RoomDef = {
     // life on the promenade and in the court
     k.crowd([v(-70, 0, CZ - 34), v(90, 0, CZ - 34)], 26, { seed: 70, speed: 0.9, spread: 2.2, animate: !ctx.reduced });
     k.crowd([v(28, 0, CZ), v(14, 0, CZ + 12), v(-8, 0, CZ + 14), v(-16, 0, CZ), v(-6, 0, CZ - 14), v(12, 0, CZ - 12)], 10, { seed: 71, speed: 0.4, spread: 2.5, animate: !ctx.reduced, closed: true });
+    // Ellis Island to the west: the red brick main building with its four domed towers
+    {
+      const eb = k.pbr('ellisBrick', X.brick(0x9a4a36, 524), 0.28), trim = k.flat(0xd8cfbc, 0, 0.7), dome = k.pbr('patina', X.patina(), 0.4, { roughness: 0.55, metalness: 0.25 }), slateE = k.flat(0x4a4e56, 0, 0.8), darkE = k.flat(0x2a3038, 0.3, 0.4);
+      const EXx = -215, EZ = -25;
+      k.box(80, 2.2, 46, EXx, -0.5, EZ, island);
+      k.box(13, 11, 40, EXx, 6.1, EZ, eb);
+      for (const y of [4, 11.4]) k.box(13.3, 0.45, 40.3, EXx, y, EZ, trim);
+      k.box(12.4, 1.2, 39.4, EXx, 12.2, EZ, slateE);
+      for (const dz of [-4.2, 0, 4.2]) { k.box(0.12, 5, 3, EXx + 6.52, 7.2, EZ + dz, darkE); k.box(0.2, 0.4, 3.4, EXx + 6.6, 9.9, EZ + dz, trim); }
+      for (const y of [6, 9.4]) for (const dz of [-15.5, -12, -8.5, 8.5, 12, 15.5]) k.box(0.12, 2, 1.4, EXx + 6.52, y, EZ + dz, darkE);
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const tx = EXx + sx * 4.8, tz = EZ + sz * 7; k.box(3, 19, 3, tx, 10.1, tz, eb); k.box(3.3, 0.4, 3.3, tx, 19.6, tz, trim); const d = k.sphere(1.7, tx, 20.4, tz, dome, 12); d.scale.y = 1.35; k.cyl(0.3, 1.4, tx, 23, tz, trim, 0.2, 6); }
+    }
+    // Castle Williams on Governors Island, the round red sandstone twin of this fort
+    {
+      const sand = k.pbr('cwSand', X.ashlar(0x9a5a44, 525, 4), 0.25, { roughness: 0.85 }), darkW = k.flat(0x2a2624, 0.2, 0.7), CWX = 118, CWZ = -206;
+      k.cyl(11, 12, CWX, 6.5, CWZ, sand, 11, 32);
+      k.cyl(11.3, 0.6, CWX, 12.8, CWZ, sand, 11.3, 32);
+      for (const y of [3, 6.6, 10.2]) for (let i = 0; i < 26; i++) { const a = (i / 26) * PI * 2; const w = k.box(0.9, 1.4, 0.3, CWX + Math.sin(a) * 11.02, y, CWZ + Math.cos(a) * 11.02, darkW); w.rotation.y = a; }
+    }
+    // cannonballs piled by two of the guns
+    for (const i of [0, 13]) {
+      const a = (i / 20) * PI * 2, px = CX + Math.sin(a) * 18.4 + Math.cos(a) * 1.8, pz = CZ + Math.cos(a) * 18.4 - Math.sin(a) * 1.8;
+      for (let l = 0; l < 3; l++) for (let u = 0; u < 3 - l; u++) for (let w = 0; w < 3 - l; w++) k.sphere(0.16, px + (u - (2 - l) / 2) * 0.33, 0.33 + l * 0.27, pz + (w - (2 - l) / 2) * 0.33, ironG, 8);
+      k.keepOut.push({ x: px, z: pz, r: 0.7 });
+    }
+    // a tug pushing a barge down the harbor, sailboats beating about, pigeons in the court
+    {
+      const tug = new T.Group(), red = new T.MeshStandardMaterial({ color: 0xa8342a, roughness: 0.6 }), wht = new T.MeshStandardMaterial({ color: 0xe8e4dc, roughness: 0.6 }), barge = new T.MeshStandardMaterial({ color: 0x3a3430, roughness: 0.8 });
+      tug.add(new T.Mesh(mergeGeometries([new T.BoxGeometry(4, 2.2, 9).translate(0, 0.6, 0), new T.CylinderGeometry(0.4, 0.4, 2.6, 8).translate(0, 4.6, -2.4)]), red));
+      tug.add(new T.Mesh(mergeGeometries([new T.BoxGeometry(3, 2.2, 3.4).translate(0, 2.8, -0.8), new T.BoxGeometry(2.4, 1.6, 2.4).translate(0, 4.7, -0.4)]), wht));
+      tug.add(new T.Mesh(new T.BoxGeometry(8, 1.8, 22).translate(0, 0.5, 15.8), barge));
+      k.add(tug);
+      if (!ctx.reduced) k.rider(tug, k.spline([v(130, -0.8, CZ - 70), v(-40, -0.8, CZ - 60), v(-170, -0.8, CZ - 95), v(-60, -0.8, CZ - 135), v(90, -0.8, CZ - 125)], true), 2.6, 0);
+      else { tug.position.set(40, -0.8, CZ - 66); tug.rotation.y = -PI / 2; }
+      const col = (g: T.BufferGeometry, c: number) => { const cc = new T.Color(c), n = g.attributes.position.count, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { a[i * 3] = cc.r; a[i * 3 + 1] = cc.g; a[i * 3 + 2] = cc.b; } g.setAttribute('color', new T.BufferAttribute(a, 3)); return g; };
+      const sailS = new T.Shape(); sailS.moveTo(0, 0); sailS.lineTo(0, 7); sailS.lineTo(3.4, 0); sailS.closePath();
+      const sailG = new T.ShapeGeometry(sailS); sailG.rotateY(PI / 2); sailG.translate(0, 1.4, -0.4);
+      const boatG = mergeGeometries([col(new T.BoxGeometry(1.6, 0.8, 5.4).toNonIndexed().translate(0, 0.3, 0), 0xf2f0ea), col(new T.CylinderGeometry(0.05, 0.05, 7.4, 5).toNonIndexed().translate(0, 4.4, 0), 0x6a6e74), col(sailG.toNonIndexed(), 0xf8f6ee)]);
+      const boats = new T.InstancedMesh(boatG, new T.MeshStandardMaterial({ vertexColors: true, roughness: 0.7, side: T.DoubleSide }), 3);
+      boats.frustumCulled = false;
+      k.add(boats);
+      const bs = [{ cx: -70, cz: CZ - 120, rx: 45, rz: 18, w: 0.05, ph: 0 }, { cx: 20, cz: CZ - 150, rx: 35, rz: 22, w: -0.04, ph: 2 }, { cx: -120, cz: CZ - 170, rx: 30, rz: 14, w: 0.06, ph: 4 }];
+      const M = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ'), p = new T.Vector3(), one = new T.Vector3(1, 1, 1);
+      const sail = (t: number) => { bs.forEach((b, i) => { const a = b.ph + t * b.w; p.set(b.cx + Math.cos(a) * b.rx, -0.9 + Math.sin(t * 1.1 + i) * 0.08, b.cz + Math.sin(a) * b.rz); const vx = -Math.sin(a) * b.rx * Math.sign(b.w), vz = Math.cos(a) * b.rz * Math.sign(b.w); e.set(0, Math.atan2(vx, vz), 0.14 + Math.sin(t * 0.7 + i) * 0.04); q.setFromEuler(e); M.compose(p, q, one); boats.setMatrixAt(i, M); }); boats.instanceMatrix.needsUpdate = true; };
+      sail(0);
+      if (!ctx.reduced) k.ticks.push((t) => sail(t));
+    }
+    pigeons(k, ctx, [v(-8, 0.17, CZ + 4), v(6, 0.17, CZ - 6), v(-4, 0.17, CZ - 12), v(13, 0.17, CZ + 2), v(20, 0, CZ - 30)], 16, 526, 2.4);
+    // landmark eggs
+    const NPS = { name: 'National Park Service, Castle Clinton', url: 'https://www.nps.gov/cacl/learn/historyculture/index.htm' };
+    k.egg(v(-260, 14, CZ - 110), { id: 'liberty', title: 'Liberty across the water', year: '1886', room: 'liberty', text: 'The Statue of Liberty was dedicated on October 28, 1886. Her pedestal stands on Fort Wood, part of the same system of harbor forts as Castle Clinton.', clue: 'Out past the seawall, someone is holding up a light.', source: { name: 'National Park Service, Statue of Liberty', url: 'https://www.nps.gov/stli/learn/historyculture/index.htm' } }, { r: 12 });
+    k.egg(v(-215, 9, -25), { id: 'ellis', title: 'Ellis Island, the next door', year: '1892 to 1924', room: 'ellis', text: 'From 1892 to 1924 Ellis Island was America\'s largest and most active immigration station, processing more than 12 million people. It opened two years after Castle Garden, the depot inside these walls, closed in 1890.', clue: 'West across the water, four domed towers stand over a red brick hall.', source: { name: 'National Park Service, Ellis Island', url: 'https://www.nps.gov/elis/learn/historyculture/index.htm' } }, { r: 13 });
+    k.egg(v(118, 7, -206), { id: 'castle-williams', title: 'Castle Williams, the twin fort', year: '1807 to 1811', room: 'governors', text: 'On Governors Island stands Castle Williams, designed by Lt. Col. Jonathan Williams and built from 1807 to 1811. It guarded the harbor alongside this fort, and later served the Army as a prison until 1965.', clue: 'Look across the harbor for another round fort on an island.', source: { name: 'National Park Service, Castle Williams', url: 'https://www.nps.gov/gois/learn/historyculture/castle-williams.htm' } }, { r: 12 });
+    k.egg(v(0, 1.3, CZ + 20.2), { id: 'cannons', title: 'Twenty eight guns', year: '1811', text: 'When the fort was finished in 1811 it was fully armed with 28 cannons. Each could fire a 32 pound cannonball a mile and a half out over the harbor.', clue: 'In the court, one of the guns still points out through its embrasure.', source: NPS }, { r: 1.8 });
+    k.egg(v(24.5, 2.6, CZ), { id: 'castle-garden', title: 'Castle Garden, 1855 to 1890', year: '1855 to 1890', text: 'From August 3, 1855 to April 18, 1890 this fort was Castle Garden, an immigrant landing depot. More than 8 million people entered the United States through it, about two thirds of all immigrants in those years.', clue: 'Walk through the arched gate, the way millions did.', source: NPS }, { r: 2.6 });
+    k.egg(v(-7, 1.4, CZ + 2), { id: 'nightingale', title: 'A concert hall, then an aquarium', year: '1850', room: 'coney', text: 'In 1850 the soprano Jenny Lind, the Swedish Nightingale, made her American debut here. From 1896 the fort was the New York Aquarium, until the aquarium moved to Coney Island in 1941.', clue: 'Stand in the open court and picture the crowds it once held.', source: NPS }, { r: 2.0 });
     // the works: set into the embrasures round the ring, on the ticket booth, flanking the gate outside
     const mounts: Mount[] = [];
     for (const s of segs) {
