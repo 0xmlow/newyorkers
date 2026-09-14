@@ -133,8 +133,8 @@ export const katz: RoomDef = {
     k.sign('KNISHES · HOT DOGS · MATZO BALL SOUP · EGG CREAMS · DR BROWN’S', 12, 0.6, FX - 12, 5.5, -D / 2 + 0.35, '#111111', '#f6e9c8', 36, 0, { border: true });
     // tables and chairs, and the one table everyone asks for
     const table = (x: number, z: number) => { k.box(1.6, 0.08, 1.1, x, 1.06, z, k.flat(0xf1ece2, 0, 0.5)); k.box(0.09, 1.0, 0.09, x - 0.6, 0.5, z - 0.4, dark); k.box(0.09, 1.0, 0.09, x + 0.6, 0.5, z + 0.4, dark); k.box(0.09, 1.0, 0.09, x - 0.6, 0.5, z + 0.4, dark); k.box(0.09, 1.0, 0.09, x + 0.6, 0.5, z - 0.4, dark); for (const s of [-1, 1]) { k.box(0.6, 0.08, 0.6, x + s * 1.2, 0.62, z, red); k.box(0.6, 0.55, 0.08, x + s * 1.48, 0.95, z, red); } k.keepOut.push({ x, z, r: 1.55 }); };
-    for (const x of [-15, -10, -5, 0, 5]) for (const z of [-3.5, 2.5]) table(x, z);
-    for (const x of [-15, -10, -5, 0]) table(x, 8.5);
+    for (const x of [-13, -8, -3, 2, 7]) for (const z of [-3.5, 2.5]) table(x, z);
+    for (const x of [-13, -8, -3, 2]) table(x, 8.5);
     k.sign('WHERE HARRY MET SALLY · HOPE YOU HAVE WHAT SHE HAD!', 3.6, 0.55, -5, 4.3, 2.5, '#f6e9c8', '#7a1a1a', 60, 0, { border: true, double: true });
     k.beam(v(-5, 4.58, 2.5), v(-5, H, 2.5), 0.015, steel, 4);
     // the regulars: the photo wall becomes the census, floor to ceiling along the table wall
@@ -149,7 +149,7 @@ export const katz: RoomDef = {
     // the hang
     const mounts: Mount[] = [];
     const at = (x: number, y: number, z: number, tx: number, tz: number, w: number, h: number, style: FrameStyle = 'black', wash = false): Mount => ({ position: v(x, y, z), rotation: Math.atan2(tx - x, tz - z), target: v(tx, 3, tz), width: w, height: h, style, wash });
-    for (let i = 0; i < 5; i++) { const z = -6 + i * 4.3; mounts.push(at(LX + 0.34, 3.6, z, LX + 5.5, z, 3.4, 2.1, 'oak')); }
+    for (let i = 0; i < 5; i++) { const z = -6 + i * 4.3; mounts.push(at(LX + 0.34, 3.6, z, LX + 4.6, z, 3.4, 2.1, 'oak')); }
     for (const x of [FX - 9, FX - 5]) mounts.push(at(x, 3.7, D / 2 - 0.34, x, D / 2 - 6, 3.2, 2.0, 'oak'));
     for (let i = 0; i < 4; i++) { const x = LX + 6 + i * 6.4; mounts.push(at(x, 4.35, -D / 2 + 0.34, x, CZ + 2.5, 3.0, 1.8, 'black')); }
     for (let i = 0; i < 5; i++) { const x = LX + 5.5 + i * 4.6; mounts.push(at(x, 1.72, CZ + 0.68, x, CZ + 4, 1.7, 0.95, 'none')); }
