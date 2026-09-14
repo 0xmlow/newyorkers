@@ -5,7 +5,7 @@ Screenshot a room from its spawn (or --at x,y,z --yaw deg --pitch deg) in headle
 --port picks the Chrome debugging port (use your own so parallel runs do not collide)."""
 import subprocess, time, os, sys, json, urllib.request, urllib.parse, argparse, tempfile
 ap = argparse.ArgumentParser(); ap.add_argument('room'); ap.add_argument('out'); ap.add_argument('--tag', default=''); ap.add_argument('--port', type=int, default=9333)
-ap.add_argument('--hour', default=''); ap.add_argument('--turn', type=float, default=0); ap.add_argument('--w', type=int, default=1600); ap.add_argument('--h', type=int, default=900); ap.add_argument('--wait', type=float, default=6); ap.add_argument('--at', default=''); ap.add_argument('--eval', default=''); ap.add_argument('--yaw', default=''); ap.add_argument('--pitch', default=''); ap.add_argument('--mobile', action='store_true', help='390 x 844 at 3x with touch, so the page takes its phone path'); ap.add_argument('--landscape', action='store_true', help='with --mobile: the phone on its side, 844 x 390')
+ap.add_argument('--hour', default=''); ap.add_argument('--turn', type=float, default=0); ap.add_argument('--w', type=int, default=1600); ap.add_argument('--h', type=int, default=900); ap.add_argument('--wait', type=float, default=6); ap.add_argument('--at', default=''); ap.add_argument('--eval', default=''); ap.add_argument('--yaw', default=''); ap.add_argument('--pitch', default=''); ap.add_argument('--mobile', action='store_true', help='390 x 844 at 3x with touch, so the page takes its phone path'); ap.add_argument('--landscape', action='store_true', help='with --mobile: the phone on its side, 844 x 390'); ap.add_argument('--egg', default='', help='walk to four metres from this egg id, facing it, before the shot')
 a = ap.parse_args()
 if a.mobile: a.w, a.h = (844, 390) if a.landscape else (390, 844)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -36,6 +36,10 @@ try:
         send('Emulation.setEmitTouchEventsForMouse', enabled=True, configuration='mobile')
     send('Page.navigate', url=url)
     time.sleep(a.wait)
+    if a.egg:
+        js = "(()=>{const m=window.__museum;const e=m.kit&&m.kit.eggs.find(x=>x.data.id==%s);if(!e)return 'no egg';const c=m.camera.position;const d=c.clone().sub(e.center);d.y=0;if(d.lengthSq()<1e-4)d.set(0,0,1);d.normalize();return m.walkTo(e.center.clone().addScaledVector(d,4),e.center)?'walked':'no stand'})()" % json.dumps(a.egg)
+        print('egg', send('Runtime.evaluate', expression=js, returnByValue=True).get('result', {}).get('value'))
+        time.sleep(4)
     if a.turn:
         send('Runtime.evaluate', expression=f"(()=>{{const m=window.__museum;if(!m)return 'no museum';m.camera.rotation.y+={a.turn}*Math.PI/180;return 'turned'}})()", returnByValue=True)
         time.sleep(1.2)
