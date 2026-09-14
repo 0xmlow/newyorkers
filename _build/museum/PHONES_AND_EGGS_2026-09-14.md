@@ -52,3 +52,30 @@ k.egg(objectOrPoint, { id, title, text, clue, year?, source: { name, url }, room
   add `--landscape` for 844 x 390. The report now lists the egg ids that registered.
 - The native iOS Simulator needs `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`
   on this Mac first; until then phone checks are Chrome emulation, not real WebKit.
+
+## The rooms, and what the work turned up
+
+All 25 rooms (112 to 136) now carry 4 to 7 landmark eggs each, 135 in all, every one checked
+against a named source, plus new detail and at least three moving things. Phone draw calls run
+52 to 183. Five builders worked in parallel, one per room file (x1, x2, y1, y2, y3 with z).
+
+Corrections found on the way:
+- Steam: Con Edison was formed in 1936 but acquired the New York Steam Company in 1954. The room
+  fact no longer gives a date (`_build/learn` is gitignored, so that edit lives on disk only).
+- Paley Park has seventeen honey locusts, not twelve. Room 130 is renamed.
+- Greenacre was mirrored against TCLF's plan and now matches it.
+- Kings foyer: the stair lintel moulding ran down the foyer as a black beam because
+  `kit.moulding` extrudes along z at rotY 0. A cornice along a facade needs `±PI/2`.
+- The steamworks stack stood about 80 m underground.
+
+Traps:
+- **The Browser pane pauses rendering while it is hidden.** Matrices go stale and CSS transitions
+  freeze, so a probe there reports objects at the origin and panels half open. Probe in headless
+  Chrome instead: `shot_room.py --eval "<js>"` runs a script after load; `--egg <id>` walks to an
+  egg. `--turn` never worked (the loop rebuilds rotation from its own yaw).
+- The GTAO pass hid points and lines but not sprites, so glints printed black squares on the
+  desktop path. fx.ts now hides sprites too.
+- build_deploy.py copied `assets/museum` whole, shipping every preview bundle build_variant.mjs
+  left behind (47 MB; `museum.a.js` was live). It now ignores `museum.*.js`.
+- One builder's duplicate `const` stopped esbuild for everyone: keep a room file compiling
+  between edits when others share the bundle.
