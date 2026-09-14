@@ -61,7 +61,11 @@ From `NEW YORKERS SITE/` with the dev server running (`python3 _build/serve.py 4
 ```
 python3 _build/museum/mint_export.py --day 2026-09-14 --hour 14
 python3 _build/museum/mint_gifs.py --out "../MUSEUM EXPORTS/2026-09-14 MINT/previews" --skip-done
+python3 _build/museum/mint_gifs.py --out "../MUSEUM EXPORTS/2026-09-14 MINT/previews" --art-view --port-base 9650 \
+  --rooms liberty,oysterbar,morgan,highbridge,domino,boatgraveyard,intrepid,sedgwick
 python3 _build/museum/mint_network.py --day 2026-09-14
 ```
 
-The export takes about ten minutes for every room, the previews about forty, and the network build about fifteen. Rerunning any step skips work that is already done.
+Most previews pan around the room's own opening view. Eight rooms open on a view with no work in it, so their previews start in front of the hung work with the most others in view (`--art-view`). Every capture writes `drift_m` to its `done.json`: the pan turns the camera in place, so anything above 0.000 means the capture walked and must be redone.
+
+The export takes about ten minutes for every room, the previews about forty, and the network build about fifteen. Rerunning any step skips work that is already done; `--reuse-day` recaptures a pan without redoing its nine hours of light.
