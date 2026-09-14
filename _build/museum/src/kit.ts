@@ -52,8 +52,34 @@ export function loadThumb(url: string) {
   return p;
 }
 
+/* A landmark easter egg: a real feature of the real place, hidden in plain sight. Tap it and the
+   museum tells you what it is. `id` is a slug unique within the room; `room` optionally names
+   another museum room the card can walk you to. Every fact carries the source it was checked on. */
+export type EggData = { id: string; title: string; text: string; clue: string; year?: string; source: { name: string; url: string }; room?: string };
+export type Egg = { data: EggData; hit: T.Mesh; glint: T.Sprite | null; found: boolean; target: T.Object3D | null; center: T.Vector3; r?: number };
+let glintTex: T.Texture | null = null;
+function glintTexture() {
+  if (glintTex) return glintTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d')!;
+  const rad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  rad.addColorStop(0, 'rgba(255,255,255,1)');
+  rad.addColorStop(0.18, 'rgba(190,250,255,.85)');
+  rad.addColorStop(0.5, 'rgba(0,229,255,.18)');
+  rad.addColorStop(1, 'rgba(0,229,255,0)');
+  g.fillStyle = rad;
+  g.fillRect(0, 0, 128, 128);
+  g.fillStyle = 'rgba(255,255,255,.9)';
+  for (const [w, h] of [[3, 120], [120, 3]]) g.fillRect(64 - w / 2, 64 - h / 2, w, h);
+  glintTex = markShared(new T.CanvasTexture(c));
+  glintTex.colorSpace = T.SRGBColorSpace;
+  return glintTex;
+}
+
 export class Kit {
   objects: T.Mesh[] = [];
+  eggs: Egg[] = [];
   dynamic = new Set<T.Object3D>();
   clickables: T.Object3D[] = [];
   ticks: ((t: number, dt: number) => void)[] = [];
@@ -385,6 +411,60 @@ export class Kit {
         this.sign('EVERY NEW YORKER GETS A PORTRAIT  ·  EVEN THE VILLAINS', 4.2, 0.24, bx, by - 0.72, bz, 'transparent', '#8899aa', 46, facing + Math.PI, { double: true });
       }
     }
+  }
+
+  /* ---------- landmark eggs ---------- */
+  /* Hide a landmark egg on an object, or at a point. An object is pulled out of the static merge so
+     it keeps its own identity; a point gets an invisible tap target of radius r. Either way the egg
+     is a hidden sphere the tap ray can find (and walls in front of it block), plus a slow glint so a
+     visitor on a phone knows there is something to tap. Place the object before calling this. */
+  egg(target: T.Object3D | T.Vector3, data: EggData, p: { r?: number; glint?: boolean } = {}) {
+    let obj: T.Object3D | null = null;
+    if (target instanceof T.Object3D) {
+      obj = target;
+      const i = this.objects.indexOf(target as T.Mesh);
+      if (i >= 0) { this.objects.splice(i, 1); this.dynamic.add(target); }
+    }
+    const hit = new T.Mesh(new T.SphereGeometry(1, 10, 8), new T.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true }));
+    hit.visible = false;               // the ray still finds it; the renderer and the GLB export do not
+    hit.userData.egg = data;
+    this.scene.add(hit);
+    this.clickables.push(hit);
+    let glint: T.Sprite | null = null;
+    if (p.glint !== false) {
+      glint = new T.Sprite(new T.SpriteMaterial({ map: glintTexture(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0.8 }));
+      glint.renderOrder = 3;
+      this.scene.add(glint);
+    }
+    const e: Egg = { data, hit, glint, found: false, target: obj, center: target instanceof T.Vector3 ? target.clone() : new T.Vector3(), r: p.r };
+    this.eggs.push(e);
+    this.placeEgg(e);
+    return e;
+  }
+  private placeEgg(e: Egg) {
+    let r = e.r ?? 0.8;
+    if (e.target) {
+      e.target.updateMatrixWorld(true);
+      const bb = new T.Box3().setFromObject(e.target);
+      if (!bb.isEmpty()) {
+        bb.getCenter(e.center);
+        r = e.r ?? T.MathUtils.clamp(bb.getSize(new T.Vector3()).length() / 2, 0.5, 3);
+      }
+    }
+    e.hit.position.copy(e.center);
+    e.hit.scale.setScalar(r);
+    e.hit.updateMatrixWorld(true);   // tappable before the first frame renders
+    if (e.glint) {
+      e.glint.position.set(e.center.x, e.center.y + Math.min(r, 1.6) * 0.55 + 0.3, e.center.z);
+      e.glint.scale.setScalar(0.55);
+    }
+  }
+  /* Mark which eggs this visitor has already found; found eggs stop glinting. */
+  markEggs(found: (id: string) => boolean) {
+    for (const e of this.eggs) { e.found = found(e.data.id); if (e.glint) e.glint.visible = !e.found; }
+  }
+  showGlints(on: boolean) {
+    for (const e of this.eggs) if (e.glint) e.glint.visible = on && !e.found;
   }
 
   instances(g: T.BufferGeometry, m: T.Material, transforms: T.Matrix4[]) {
@@ -959,6 +1039,14 @@ export class Kit {
   }
   tick(t: number, dt: number) {
     for (const f of this.ticks) f(t, dt);
+    for (let i = 0; i < this.eggs.length; i++) {
+      const g = this.eggs[i].glint;
+      if (!g || !g.visible) continue;
+      const beat = 0.5 + 0.5 * Math.sin(t * 2.1 + i * 1.7);
+      (g.material as T.SpriteMaterial).opacity = 0.35 + 0.6 * beat;
+      (g.material as T.SpriteMaterial).rotation = t * 0.4 + i;
+      g.scale.setScalar(0.42 + 0.22 * beat);
+    }
   }
   /* Everything that finished loading: thumbs, props, atlases. */
   async settled() {
@@ -1014,17 +1102,20 @@ export class Kit {
   }
   dispose() {
     this.live = false;
+    /* Free every texture slot, not only the colour map. The procedural surfaces keep their canvases
+       in a cache and upload again if the next room reuses them, so this only returns GPU memory;
+       leaving the normal and roughness maps behind stacked up a room's worth per visit on phones. */
+    const free = (m: T.Material) => {
+      for (const val of Object.values(m as unknown as Record<string, unknown>)) if (val instanceof T.Texture && !thumbIsShared(val)) val.dispose();
+      m.dispose();
+    };
     this.scene.traverse((o) => {
       if (o instanceof T.Mesh) {
         o.geometry.dispose();
-        const ms = Array.isArray(o.material) ? o.material : [o.material];
-        for (const m of ms) {
-          const mm = m as T.MeshStandardMaterial;
-          if (mm.map && !thumbIsShared(mm.map)) mm.map.dispose?.();
-          m.dispose();
-        }
-      }
+        for (const m of Array.isArray(o.material) ? o.material : [o.material]) free(m);
+      } else if (o instanceof T.Sprite) free(o.material);
     });
+    this.eggs = [];
     this.rt?.dispose();
     this.pmrem?.dispose();
     this.scene.environment = null;

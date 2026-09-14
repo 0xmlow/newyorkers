@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NEW YORKERS · The Museum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,12 +71,29 @@
   <p class="mono hang" id="hangLabel"></p>
   <p class="mono dyn" id="dyn"></p>
   <p class="fact" id="roomFact" hidden></p>
+  <button id="eggChip" hidden></button>
 </section>
+
+<aside id="eggs" class="panel">
+  <div class="head"><div><div class="kicker">HIDDEN IN THIS ROOM</div><h3>The real New York is in here.</h3><p>Every glint marks a real feature of the real place. Tap one to find out what it is.</p></div><button data-close aria-label="Close">×</button></div>
+  <p id="eggTotal"></p>
+  <div id="eggList"></div>
+</aside>
 <div id="loading">BUILDING</div>
 <div id="debug" class="mono" hidden></div>
 
 <div id="steps"><button id="stepF" aria-label="Walk forward">↑</button><button id="stepB" aria-label="Walk backward">↓</button></div>
-<div id="pad"><button id="padF">▲</button><div><button id="padL">◀</button><button id="padB">▼</button><button id="padR">▶</button></div></div>
+<div id="stick" aria-hidden="true"><i></i></div>
+<div id="lost" hidden><p class="mono">THE PHONE RAN OUT OF GRAPHICS MEMORY</p><p>The room went dark. Rebuild it and carry on walking.</p><button id="lostBtn">Rebuild the room</button></div>
+
+<aside id="egg" aria-live="polite">
+  <button data-close class="x" aria-label="Close">×</button>
+  <div class="kicker" id="eggKick">LANDMARK FOUND</div>
+  <h3 id="eggTitle"></h3>
+  <p class="mono" id="eggYear"></p>
+  <p class="txt" id="eggText"></p>
+  <div class="acts"><button id="eggRoom" hidden></button><button id="eggShare" class="ghost">SHARE</button><a id="eggSource" target="_blank" rel="noopener">SOURCE ↗</a></div>
+</aside>
 
 <footer id="bar">
   <div class="row">

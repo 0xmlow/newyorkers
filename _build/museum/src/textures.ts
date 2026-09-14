@@ -10,6 +10,27 @@ export type Surface = {
 };
 
 const cache = new Map<string, Surface>();
+/* Phones. Every surface is three or four canvases held in the cache for the life of the page,
+   and iOS Safari refuses new canvases once the page holds about 384 MB of them, which reads as a
+   room that never finishes building. On a low quality device surfaces are painted at half size
+   (a quarter of the memory) and the cache keeps only what the current room touched. */
+let scale = 1, trimming = false;
+const touched = new Set<string>();
+export function textureBudget(low: boolean) { scale = low ? 0.5 : 1; trimming = low; }
+export function beginRoom() { touched.clear(); }
+export function trimCache() {
+  if (!trimming) return;
+  for (const [key, s] of cache) {
+    if (touched.has(key)) continue;
+    for (const t of [s.map, s.normalMap, s.roughnessMap, s.emissiveMap]) {
+      if (!t) continue;
+      t.dispose();
+      const c = t.image as HTMLCanvasElement | undefined;
+      if (c && 'width' in c) c.width = c.height = 0;
+    }
+    cache.delete(key);
+  }
+}
 
 export function mulberry(seed: number) {
   let a = seed | 0;
@@ -83,8 +104,10 @@ function paint(
   fn: Painter,
   opts: { normalScale?: number; emissive?: boolean; repeat?: [number, number] } = {},
 ): Surface {
+  touched.add(key);
   const hit = cache.get(key);
   if (hit) return hit;
+  size = Math.max(64, Math.round(size * scale));
   const map = document.createElement('canvas'),
     rough = document.createElement('canvas'),
     norm = document.createElement('canvas'),

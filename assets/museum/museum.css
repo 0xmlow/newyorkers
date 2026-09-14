@@ -221,6 +221,64 @@ body.touch #steps{display:none}
 @media(max-width:700px){#enter{padding:56px 18px 24px;justify-content:flex-start}#enter .logo{width:75px}#enter .eyebrow{font-size:8px}#enter .census{font-size:10px}#firstRooms{gap:7px}#firstRooms strong{font-size:11px;line-height:1.4;padding:8px 3px 3px}#firstRooms small{font-size:8px;padding:0 3px 8px}#enterBtn{padding:14px 25px}#hud{padding:10px}#hud .brand span{display:none}#hud .brand img{width:62px}#hud nav{gap:5px}#hud nav>button{display:block;font-size:10px;padding:10px}#hud #btnDest span{display:none}#label{top:80px;left:18px;max-width:210px}#label h2{font-size:24px}#label #changeRoom{display:none}#bar .hint{display:none}#bar .ctl{width:100%;justify-content:space-between}#bar{padding:24px 16px 12px}#destGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:24px 18px}#steps{display:none}#pad{bottom:126px}.museum-back{left:18px;top:18px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
+/* Phones, September 14 2026: safe areas, a thumb stick, the landmark eggs, landscape. */
+html,body{overscroll-behavior:none}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input{-webkit-user-select:text;user-select:text}
+button,summary,a{touch-action:manipulation}
+#hud{padding-top:max(16px,env(safe-area-inset-top));padding-left:max(clamp(16px,3vw,36px),env(safe-area-inset-left));padding-right:max(clamp(16px,3vw,36px),env(safe-area-inset-right))}
+#label{left:max(clamp(16px,3vw,36px),env(safe-area-inset-left))}
+#bar{padding-bottom:calc(14px + env(safe-area-inset-bottom));padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+#pad{display:none!important}
+#stick{display:none;position:fixed;z-index:16;left:calc(20px + env(safe-area-inset-left));bottom:calc(150px + env(safe-area-inset-bottom));width:118px;height:118px;border-radius:50%;border:1px solid rgba(240,244,248,.26);background:radial-gradient(circle,rgba(13,13,13,.18),rgba(13,13,13,.5));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);touch-action:none}
+#stick i{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:rgba(240,244,248,.82);box-shadow:0 4px 16px rgba(0,0,0,.45);transition:transform .12s ease-out;pointer-events:none}
+#stick.on i{transition:none;background:#d3e9c6}
+#stick:before{content:"WALK";position:absolute;left:0;right:0;top:-18px;text-align:center;font:9px var(--mono);letter-spacing:.3em;color:rgba(240,244,248,.55)}
+body.touch #stick{display:block}
+body.touch #enter:not(.gone)~#stick{display:none}
+#eggChip{pointer-events:auto;margin-top:10px;display:inline-flex;white-space:nowrap;align-items:center;gap:7px;background:rgba(13,13,13,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,229,255,.38);color:var(--cloud);border-radius:999px;padding:7px 12px;font:10px var(--mono);letter-spacing:.18em}
+#eggChip b{color:var(--cyan);font-weight:600}
+#eggChip.pop{animation:eggChipPop .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes eggChipPop{0%{transform:scale(1)}35%{transform:scale(1.18);box-shadow:0 0 26px rgba(0,229,255,.6)}100%{transform:scale(1)}}
+#egg{position:fixed;z-index:47;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));width:min(520px,calc(100vw - 24px));max-height:min(70vh,560px);overflow-y:auto;transform:translate(-50%,calc(100% + 40px));transition:transform .4s cubic-bezier(.2,.8,.2,1);background:rgba(13,17,20,.97);border:1px solid rgba(0,229,255,.34);border-radius:14px;padding:20px 20px 18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#egg.open{transform:translate(-50%,0)}
+#egg .x{position:absolute;right:12px;top:12px;background:none;border:1px solid var(--divider);color:var(--cloud);width:36px;height:36px;border-radius:50%;font-size:18px}
+#egg .kicker{color:var(--cyan);font-size:10px;letter-spacing:.3em;padding-right:44px}
+#egg h3{font-size:clamp(22px,4.6vw,30px);font-weight:800;line-height:1.08;margin:10px 0 6px;padding-right:30px}
+#egg .mono{font-size:10px;letter-spacing:.24em;color:var(--slate);text-transform:uppercase}
+#egg .txt{font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--cloud);margin:12px 0 16px}
+#egg .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#egg .acts button,#egg .acts a{font:11px var(--mono);letter-spacing:.18em;padding:10px 14px;border-radius:999px;border:1px solid var(--blue);background:var(--blue);color:#fff}
+#egg .acts .ghost,#egg .acts a{background:none;border-color:var(--divider);color:var(--cloud)}
+#eggList{display:flex;flex-direction:column;gap:10px}
+#eggList .row{border:1px solid var(--divider);border-radius:10px;padding:14px;background:var(--card)}
+#eggList .row.found{border-color:rgba(0,229,255,.45)}
+#eggList b{display:block;font:700 18px var(--serif);margin-bottom:4px}
+#eggList p{font:13px/1.5 var(--sans);color:var(--slate)}
+#eggList button{margin-top:10px;font:10px var(--mono);letter-spacing:.2em;padding:8px 12px;border-radius:999px;border:1px solid var(--divider);background:none}
+#eggTotal{font:11px var(--mono);letter-spacing:.2em;color:var(--cyan);margin:-10px 0 18px}
+#lost{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:24px;background:rgba(13,13,13,.94)}
+#lost p{font:15px var(--sans);color:var(--slate);max-width:320px}
+#lost .mono{font-size:10px;letter-spacing:.3em;color:var(--pink)}
+#lost button{margin-top:8px;background:var(--blue);color:#fff;border:0;border-radius:999px;padding:14px 26px;font:600 12px var(--sans);letter-spacing:.2em}
+@media(max-width:700px){#stick{bottom:calc(118px + env(safe-area-inset-bottom))}#egg{bottom:calc(10px + env(safe-area-inset-bottom))}}
+/* phones on their side: everything shrinks to the edges so the room gets the middle */
+@media(max-height:500px) and (orientation:landscape){
+  #hud{padding-top:max(8px,env(safe-area-inset-top))}
+  #hud .brand img{height:20px;width:auto}
+  #hud .brand span{display:none}
+  #label{top:52px;max-width:240px}
+  #label h2{font-size:18px;margin:4px 0 6px}
+  #label #changeRoom{display:none}
+  #bar{padding-top:8px;background:none}
+  #bar .hint,#artTray{display:none}
+  #bar .ctl{width:auto;margin-left:auto}
+  #stick{width:100px;height:100px;bottom:calc(14px + env(safe-area-inset-bottom))}
+  #stick i{width:42px;height:42px;margin:-21px 0 0 -21px}
+  #egg{max-height:86vh;width:min(560px,70vw)}
+  .panel{padding-top:max(16px,env(safe-area-inset-top))}
+}
+
 .panel:not(.open),#detail:not(.open),#slot:not(.open){visibility:hidden}.panel.open,#detail.open,#slot.open{visibility:visible}body:has(#enter:not(.gone)) #hud,body:has(#enter:not(.gone)) #bar,body:has(#enter:not(.gone)) #label,body:has(#enter:not(.gone)) #steps{visibility:hidden}
 
 /* Room labels sit over whatever the room is made of. The Great Hall is white

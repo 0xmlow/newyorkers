@@ -342,6 +342,19 @@ export function atlasLoader(quality: 'high' | 'low') {
     return p;
   };
 }
+/* Phones: a downscaled atlas is a 2048 canvas, 16 MB each, and the cache kept every one the visitor
+   ever walked past. After a room is built, drop the sheets it does not use. */
+export function trimAtlases(keep: Set<number>) {
+  for (const [a, p] of atlasCache) {
+    if (keep.has(a)) continue;
+    atlasCache.delete(a);
+    p.then((t) => {
+      t.dispose();
+      const c = t.image as HTMLCanvasElement | undefined;
+      if (c && 'getContext' in c) c.width = c.height = 0;
+    }).catch(() => {});
+  }
+}
 export const perAtlas = C.atlasGrid * C.atlasGrid;
 export const atlasOf = (globalIndex: number) => Math.floor(globalIndex / perAtlas);
 /* First index at or after `from` such that `count` tiles stay inside one atlas. */

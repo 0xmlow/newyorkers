@@ -3,8 +3,10 @@ import { LANDMARK_ROOMS } from './rooms/y';
 import * as T from 'three';
 import { Kit } from './kit';
 import { Fx } from './fx';
-import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG } from './data';
+import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG, trimAtlases } from './data';
 import type { Hang, Piece } from './data';
+import { textureBudget, beginRoom, trimCache } from './textures';
+import type { EggData } from './kit';
 import { ROOMS } from './rooms';
 import { NEW_WORKING_ROOMS } from './rooms/x';
 const newRoomIds = new Set([...NEW_WORKING_ROOMS,...LANDMARK_ROOMS].map(r => r.id));
@@ -86,6 +88,9 @@ function makeRenderer() {
     r.shadowMap.type = T.PCFSoftShadowMap;
   }
   host.appendChild(r.domElement);
+  /* iOS drops the WebGL context when a tab runs out of graphics memory, and the room goes black with
+     no error. Say what happened and offer the one fix that always works. */
+  r.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); $('#lost').hidden = false; });
   /* Near at 0.5 rather than 0.1. The skyline needs the far plane at 1200, and a
      12,000 to 1 depth range leaves almost no precision in the twenty metres the
      visitor is actually standing in, which is what the occlusion pass reads. The
@@ -230,49 +235,106 @@ function step(dir: number) {
   }
 }
 
-function bindControls(canvas: HTMLCanvasElement) {
-  let drag = false,
-    lastX = 0,
-    lastY = 0,
-    moved = 0;
-  canvas.tabIndex = 0;
-  canvas.setAttribute('aria-label', 'Walkable gallery. Drag to look, W A S D to walk, J for the next artwork.');
-  canvas.addEventListener('pointerdown', (e) => {
-    canvas.focus();
-    drag = true;
-    lastX = e.clientX;
-    lastY = e.clientY;
-    moved = 0;
-    canvas.setPointerCapture(e.pointerId);
-  });
-  canvas.addEventListener('pointermove', (e) => {
-    if (!drag) return;
-    const dx = e.clientX - lastX,
-      dy = e.clientY - lastY;
-    moved += Math.abs(dx) + Math.abs(dy);
-    yaw -= dx * 0.0042;
-    pitch = T.MathUtils.clamp(pitch - dy * 0.0032, -0.9, 0.9);
-    lastX = e.clientX;
-    lastY = e.clientY;
-    goal = null;
-  });
-  canvas.addEventListener('pointerup', (e) => {
-    drag = false;
-    if (moved > 7 || !kit) return;
-    const rect = canvas.getBoundingClientRect(),
-      ray = new T.Raycaster();
-    ray.setFromCamera(new T.Vector2(((e.clientX - rect.left) / rect.width) * 2 - 1, (-(e.clientY - rect.top) / rect.height) * 2 + 1), camera);
-    const hit = ray.intersectObjects(kit.clickables, false)[0];
-    if (!hit) return;
-    const u = hit.object.userData;
+/* One tap, three meanings, settled by the first thing the ray meets: a landmark egg, a work, or the
+   floor, which walks you there. Anything else in front (a wall, a counter, a person) swallows the tap,
+   which is what stops an egg on the far side of a wall being found through it. Glass, washes, glints
+   and particles are see through to the ray, as they are to the eye. */
+const ray = new T.Raycaster();
+function tap(x: number, y: number): string {
+  if (!scene || !kit) return 'no room';
+  ray.setFromCamera(new T.Vector2(x, y), camera);
+  ray.far = 240;
+  for (const h of ray.intersectObject(scene, true)) {
+    const o = h.object as T.Mesh;
+    const u = o.userData;
+    if (u.egg) { openEgg(u.egg as EggData); return 'egg ' + (u.egg as EggData).id; }
+    const kind = o as unknown as { isSprite?: boolean; isPoints?: boolean; isLine?: boolean };
+    if (!o.visible || kind.isSprite || kind.isPoints || kind.isLine) continue;
+    const mat = Array.isArray(o.material) ? o.material[0] : o.material;
+    if (!mat || mat.transparent || !mat.visible) continue;
     if (u.piece) {
       if (u.mountIndex != null) state.active = u.mountIndex;
       openDetail(u.piece as Piece);
-    } else if (u.tiles && hit.faceIndex != null) {
-      const gi = u.tiles[Math.floor(hit.faceIndex / 2)];
-      if (P[gi]) openDetail(P[gi]);
+      return 'work';
     }
+    if (u.tiles && h.faceIndex != null) {
+      const gi = u.tiles[Math.floor(h.faceIndex / 2)];
+      if (P[gi]) openDetail(P[gi]);
+      return 'wall tile';
+    }
+    const n = h.face ? h.face.normal.clone().transformDirection(o.matrixWorld) : null;
+    if (n && n.y > 0.7 && h.point.y < camera.position.y - 0.4) return walkTo(h.point) ? 'walk' : 'floor out of reach';
+    return `blocked by ${o.type} at ${h.distance.toFixed(1)} m, normal y ${n ? n.y.toFixed(2) : '?'}`;
+  }
+  return 'nothing';
+}
+/* Walk to a spot. One the visitor could never stand on (inside a counter, past a railing) is pulled
+   back toward them until it is somewhere they can. Returns false when nowhere on the line is. */
+function walkTo(p: T.Vector3, look?: T.Vector3) {
+  if (!build) return false;
+  const dest = new T.Vector3(p.x, 0, p.z);
+  if (build.path) {
+    targetPath = nearestPath(dest);
+    dest.copy(build.path[targetPath]);
+  } else {
+    const from = new T.Vector3(camera.position.x, 0, camera.position.z);
+    for (let i = 0; i < 14 && !standable(dest); i++) dest.lerp(from, 0.18);
+    if (!standable(dest)) return false;
+    dest.y = (build.floorY ? build.floorY(dest.x, dest.z) : 0) + build.eye;
+  }
+  lookGoal = look ? look.clone() : dest.clone().addScaledVector(camera.getWorldDirection(new T.Vector3()), 10);
+  goal = dest;
+  state.tour = false;
+  paintTour();
+  showMarker(p.x, p.y, p.z);
+  return true;
+}
+/* The ring that answers a tap on the floor, so the visitor sees where they are going. */
+let marker: T.Mesh | null = null, markerT = 0;
+function showMarker(x: number, y: number, z: number) {
+  if (!marker) return;
+  marker.position.set(x, y + 0.04, z);
+  marker.visible = true;
+  markerT = 1;
+}
+
+function bindControls(canvas: HTMLCanvasElement) {
+  let lookId = -1,
+    lastX = 0,
+    lastY = 0,
+    moved = 0;
+  const sens = touch ? 1.4 : 1;
+  canvas.tabIndex = 0;
+  canvas.setAttribute('aria-label', 'Walkable gallery. Drag to look, W A S D to walk, J for the next artwork. Tap the floor to walk there, tap a glint to find a landmark.');
+  canvas.addEventListener('pointerdown', (e) => {
+    if (lookId !== -1) return;           // a second finger on the room is ignored, so the view never jumps
+    canvas.focus();
+    lookId = e.pointerId;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    moved = 0;
+    try { canvas.setPointerCapture(e.pointerId); } catch { /* some webviews refuse; the drag still works while the finger stays on the canvas */ }
   });
+  canvas.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== lookId) return;
+    const dx = e.clientX - lastX,
+      dy = e.clientY - lastY;
+    moved += Math.abs(dx) + Math.abs(dy);
+    yaw -= dx * 0.0042 * sens;
+    pitch = T.MathUtils.clamp(pitch - dy * 0.0032 * sens, -0.9, 0.9);
+    lastX = e.clientX;
+    lastY = e.clientY;
+    if (moved > 3) goal = null;
+  });
+  canvas.addEventListener('pointercancel', (e) => { if (e.pointerId === lookId) lookId = -1; });
+  canvas.addEventListener('pointerup', (e) => {
+    if (e.pointerId !== lookId) return;
+    lookId = -1;
+    if (moved > (touch ? 12 : 7)) return;
+    const rect = canvas.getBoundingClientRect();
+    tap(((e.clientX - rect.left) / rect.width) * 2 - 1, (-(e.clientY - rect.top) / rect.height) * 2 + 1);
+  });
+  bindStick();
   canvas.addEventListener('wheel', (e) => {
     if (!build) return;
     e.preventDefault();
@@ -285,14 +347,14 @@ function bindControls(canvas: HTMLCanvasElement) {
       closePanels();
       return;
     }
-    if (document.querySelector('.panel.open,#detail.open')) return;
+    if (document.querySelector('.panel.open,#detail.open,#egg.open')) return;
     if (e.key === 'Enter' && t.closest('button,a,summary')) return;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 'Shift'].includes(e.key)) {
       e.preventDefault();
       keys.add(e.key.toLowerCase());
       goal = null;
     }
-    if (e.key.toLowerCase() === 'j' && build && !t.closest('button,a,summary') && !document.querySelector('.panel.open,#detail.open')) {
+    if (e.key.toLowerCase() === 'j' && build && !t.closest('button,a,summary') && !document.querySelector('.panel.open,#detail.open,#egg.open')) {
       e.preventDefault();
       focus((state.active + (e.shiftKey ? -1 : 1) + build.mounts.length) % build.mounts.length);
     }
@@ -302,15 +364,119 @@ function bindControls(canvas: HTMLCanvasElement) {
   });
   addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
   addEventListener('blur', () => keys.clear());
-  for (const [id, f, s] of [['#padF', 1, 0], ['#padB', -1, 0], ['#padL', 0, -1], ['#padR', 0, 1]] as const) {
-    const el = $(id);
-    const on = () => { touchDir.f = f; touchDir.s = s; goal = null; };
-    const off = () => { touchDir.f = 0; touchDir.s = 0; };
-    el.addEventListener('pointerdown', on);
-    el.addEventListener('pointerup', off);
-    el.addEventListener('pointercancel', off);
-    el.addEventListener('pointerleave', off);
+}
+/* The thumb stick replaces the four button pad. How far you push is how fast you walk, so a small
+   push creeps up to a picture and a full push crosses the room. It owns its own finger, so the other
+   thumb can look around at the same time. */
+function bindStick() {
+  const stick = $('#stick'), knob = stick.querySelector('i') as HTMLElement;
+  const R = 44, dead = 0.14;
+  let id = -1, cx = 0, cy = 0;
+  const move = (e: PointerEvent) => {
+    let dx = e.clientX - cx, dy = e.clientY - cy;
+    const d = Math.hypot(dx, dy);
+    if (d > R) { dx *= R / d; dy *= R / d; }
+    knob.style.transform = `translate(${dx}px,${dy}px)`;
+    const mx = dx / R, my = dy / R;
+    touchDir.s = Math.abs(mx) < dead ? 0 : mx;
+    touchDir.f = Math.abs(my) < dead ? 0 : -my;
+  };
+  stick.addEventListener('pointerdown', (e) => {
+    if (id !== -1) return;
+    e.preventDefault();
+    id = e.pointerId;
+    try { stick.setPointerCapture(e.pointerId); } catch { /* as above */ }
+    const r = stick.getBoundingClientRect();
+    cx = r.left + r.width / 2;
+    cy = r.top + r.height / 2;
+    stick.classList.add('on');
+    goal = null;
+    if (state.tour) { state.tour = false; paintTour(); }
+    move(e);
+  });
+  stick.addEventListener('pointermove', (e) => { if (e.pointerId === id) move(e); });
+  const end = (e: PointerEvent) => {
+    if (e.pointerId !== id) return;
+    id = -1;
+    touchDir.f = touchDir.s = 0;
+    knob.style.transform = '';
+    stick.classList.remove('on');
+  };
+  stick.addEventListener('pointerup', end);
+  stick.addEventListener('pointercancel', end);
+  stick.addEventListener('lostpointercapture', end);
+}
+
+/* ---------- landmark eggs ---------- */
+/* Found eggs live in their own key, apart from the site eggs (ny_eggs), so the site hunt keeps its count. */
+const EGG_KEY = 'ny_landmarks';
+const eggFound = new Set<string>((() => { try { return JSON.parse(localStorage.getItem(EGG_KEY) || '[]') as string[]; } catch { return []; } })());
+const eggKey = (id: string) => ROOMS[state.room].id + ':' + id;
+function openEgg(d: EggData) {
+  const key = eggKey(d.id);
+  const first = !eggFound.has(key);
+  if (first) {
+    eggFound.add(key);
+    try { localStorage.setItem(EGG_KEY, JSON.stringify([...eggFound])); } catch { /* private window: the hunt still works for this visit */ }
   }
+  kit?.markEggs((id) => eggFound.has(eggKey(id)));
+  const n = kit?.eggs.length || 0, got = kit ? kit.eggs.filter((e) => e.found).length : 0;
+  const def = ROOMS[state.room];
+  $('#eggKick').textContent = `${first ? 'LANDMARK FOUND' : 'LANDMARK'} · ${got} OF ${n} IN THIS ROOM`;
+  $('#eggTitle').textContent = d.title;
+  $('#eggYear').textContent = (d.year ? d.year + ' · ' : '') + def.area;
+  $('#eggText').textContent = d.text;
+  const src = $('#eggSource') as HTMLAnchorElement;
+  src.href = d.source.url;
+  src.textContent = 'SOURCE: ' + d.source.name.toUpperCase() + ' ↗';
+  const ri = d.room ? ROOMS.findIndex((r) => r.id === d.room) : -1;
+  const go = $('#eggRoom') as HTMLButtonElement;
+  go.hidden = ri < 0 || ri === state.room || !!MINT.room;
+  if (ri >= 0) { go.textContent = 'WALK TO ' + ROOMS[ri].name.toUpperCase(); go.onclick = () => { closePanels(); setRoom(ri); }; }
+  ($('#eggShare') as HTMLButtonElement).onclick = () => share({ title: `${d.title} · THE MUSEUM`, text: `I found ${d.title} hidden in ${def.name} in THE MUSEUM by MLow. ${n} real New York landmarks hide in this room. Your turn.`, url: roomUrl(state.room) });
+  closePanels();
+  panelReturn = document.activeElement as HTMLElement;
+  $('#egg').classList.add('open');
+  keys.clear(); touchDir.f = touchDir.s = 0;
+  paintEggChip(first);
+  try { document.dispatchEvent(new CustomEvent('ny:landmark', { detail: { key, first, count: eggFound.size } })); } catch { /* old browsers */ }
+}
+function paintEggChip(pop = false) {
+  const chip = $('#eggChip');
+  const n = kit?.eggs.length || 0;
+  chip.hidden = !n;
+  if (!n) return;
+  const got = kit!.eggs.filter((e) => e.found).length;
+  chip.innerHTML = got === n ? `✦ <b>${n}/${n}</b> ALL FOUND` : `✦ <b>${got}/${n}</b> LANDMARKS`;
+  if (pop) { chip.classList.remove('pop'); void chip.offsetWidth; chip.classList.add('pop'); }
+}
+function paintEggList() {
+  if (!kit) return;
+  $('#eggTotal').textContent = `${eggFound.size} FOUND ACROSS THE MUSEUM`;
+  const list = $('#eggList');
+  list.textContent = '';
+  for (const e of kit.eggs) {
+    const row = document.createElement('div');
+    row.className = 'row' + (e.found ? ' found' : '');
+    const b = document.createElement('b');
+    b.textContent = e.found ? e.data.title : 'Not found yet';
+    const p = document.createElement('p');
+    p.textContent = e.found ? (e.data.year ? e.data.year + '. ' : '') + e.data.text : 'Clue: ' + e.data.clue;
+    const btn = document.createElement('button');
+    btn.textContent = e.found ? 'READ IT AGAIN' : 'WALK ME CLOSER';
+    btn.onclick = () => { closePanels(); if (e.found) openEgg(e.data); else guideTo(e); };
+    row.append(b, p, btn);
+    list.appendChild(row);
+  }
+}
+/* A clue that is still too hard: walk the visitor to a few paces short of the egg and turn them to
+   face it. They still have to tap it themselves. */
+function guideTo(e: { center: T.Vector3; r?: number }) {
+  const away = new T.Vector3(camera.position.x - e.center.x, 0, camera.position.z - e.center.z);
+  if (away.lengthSq() < 1e-4) away.set(0, 0, 1);
+  away.normalize();
+  const stand = e.center.clone().addScaledVector(away, 3.5 + Math.min(e.r ?? 1, 2));
+  if (!walkTo(stand, e.center)) { goal = camera.position.clone(); lookGoal = e.center.clone(); }
 }
 
 /* ---------- the loop ---------- */
@@ -323,6 +489,9 @@ const FX_BUDGET_MS = 22;          // below about 45 fps
 const FX_WARMUP_FRAMES = 45;      // shaders compile and textures upload first
 const FX_SAMPLE_FRAMES = 90;
 let fxFrames = 0, fxAcc = 0, fxJudged = false;
+/* The low path measures itself too. A phone that cannot hold about 30 fps at its pixel ratio steps
+   down, twice at most, and never steps back up, so the view cannot pump. */
+let drFrames = 0, drAcc = 0, stall = 0;
 const TOUR_DWELL = 6.5;
 let tourClock = 0;
 let prev = performance.now();
@@ -350,13 +519,28 @@ function animate(now: number) {
       }
     }
   }
-  if (state.tour && shown.length && !document.querySelector('.panel.open,#detail.open')) {
+  if (quality === 'low' && raw < 250) {
+    drFrames++;
+    if (drFrames > 60) drAcc += raw;
+    if (drFrames >= 150) {
+      const mean = drAcc / 90, pr = renderer.getPixelRatio();
+      drFrames = 0; drAcc = 0;
+      if (mean > 30 && pr > 0.8) {
+        const host = $('#world');
+        renderer.setPixelRatio(Math.max(0.75, pr - 0.2));
+        renderer.setSize(host.clientWidth, host.clientHeight);
+        console.info(`[museum] ${mean.toFixed(1)} ms a frame, pixel ratio down to ${renderer.getPixelRatio().toFixed(2)}`);
+      }
+    }
+  }
+  if (state.tour && shown.length && !document.querySelector('.panel.open,#detail.open,#egg.open')) {
     tourClock += dt;
     if (tourClock >= TOUR_DWELL) { tourClock = 0; focus((state.active + 1) % shown.length); }
   } else {
     tourClock = 0;
   }
   if (goal && lookGoal) {
+    const before = camera.position.clone();
     if (reduced()) {
       camera.position.copy(goal);
       if (build.path) { pathIndex = targetPath; placeOnPath(); }
@@ -368,30 +552,42 @@ function animate(now: number) {
       placeOnPath();
     } else camera.position.lerp(goal, 1 - Math.exp(-dt * 3));
     const m = new T.Matrix4().lookAt(camera.position, lookGoal, new T.Vector3(0, 1, 0));
-    camera.quaternion.slerp(new T.Quaternion().setFromRotationMatrix(m), 1 - Math.exp(-dt * 4));
+    const tq = new T.Quaternion().setFromRotationMatrix(m);
+    camera.quaternion.slerp(tq, 1 - Math.exp(-dt * 4));
     const e = new T.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
     yaw = e.y;
     pitch = e.x;
-    if (build.path ? Math.abs(pathIndex - targetPath) < 0.02 : camera.position.distanceTo(goal) < 0.03) goal = null;
     if (!build.path) constrain();
+    /* arrived means there and facing the right way; a walk that a wall has stopped short also ends */
+    const turned = camera.quaternion.angleTo(tq) < 0.01;
+    stall = camera.position.distanceToSquared(before) < 1e-7 ? stall + 1 : 0;
+    if ((turned && (build.path ? Math.abs(pathIndex - targetPath) < 0.02 : camera.position.distanceTo(goal) < 0.03)) || stall > 40) { goal = null; stall = 0; }
   } else {
     camera.rotation.set(pitch, yaw, 0, 'YXZ');
-    const run = keys.has('shift') ? 1.8 : 1;
-    const f = (keys.has('w') || keys.has('arrowup') ? 1 : 0) - (keys.has('s') || keys.has('arrowdown') ? 1 : 0) + touchDir.f;
-    const s = (keys.has('d') || keys.has('arrowright') ? 1 : 0) - (keys.has('a') || keys.has('arrowleft') ? 1 : 0) + touchDir.s;
+    const push = touchDir.f * touchDir.f + touchDir.s * touchDir.s;
+    const run = keys.has('shift') ? 1.8 : push > 0.9 ? 1.3 : 1;
+    const f = T.MathUtils.clamp((keys.has('w') || keys.has('arrowup') ? 1 : 0) - (keys.has('s') || keys.has('arrowdown') ? 1 : 0) + touchDir.f, -1, 1);
+    const s = T.MathUtils.clamp((keys.has('d') || keys.has('arrowright') ? 1 : 0) - (keys.has('a') || keys.has('arrowleft') ? 1 : 0) + touchDir.s, -1, 1);
+    const mag = Math.min(1, Math.hypot(f, s));
     if (build.path) {
       if (f) {
         pathIndex = T.MathUtils.clamp(pathIndex + f * dt * 18 * run, 0, build.path.length - 1);
         placeOnPath();
       }
-    } else if (f || s) {
-      const speed = dt * 7 * run;
+    } else if (mag > 0) {
+      const speed = dt * 7 * run * mag;
       const dir = new T.Vector3(s, 0, -f).normalize().applyAxisAngle(new T.Vector3(0, 1, 0), yaw);
       camera.position.addScaledVector(dir, speed);
       constrain();
     }
   }
   if (!reduced()) kit.tick(now / 1000, dt);
+  if (marker && markerT > 0) {
+    markerT = Math.max(0, markerT - dt * 0.8);
+    (marker.material as T.MeshBasicMaterial).opacity = markerT * 0.85;
+    marker.scale.setScalar(1 + (1 - markerT) * 0.9);
+    if (!markerT) marker.visible = false;
+  }
   if (fx) fx.render(); else renderer.render(scene, camera);
   if (params.has('debug')) $('#debug').textContent = `calls ${renderer.info.render.calls} · tris ${(renderer.info.render.triangles / 1000).toFixed(0)}k · tex ${renderer.info.memory.textures} · geo ${renderer.info.memory.geometries}`;
 }
@@ -409,6 +605,7 @@ function loadRoom(openN?: string | null): Promise<void> {
     kit = new Kit(scene, { renderer: renderer!, quality, reduced: reduced(), atlas, atlasGrid: C.atlasGrid, perAtlas, hour: HOUR, dynamic });
     list = hangList(state.hang, def.id);
     const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart };
+    beginRoom();
     build = def.build(kit, ctx);
     /* The post chain outlives the room, so it is built once and repointed at
        each new scene. High path only, and `?fx=off` turns it off entirely. */
@@ -444,6 +641,15 @@ function loadRoom(openN?: string | null): Promise<void> {
       mountsFilled.push(kit!.hang(m, p, m.style || build!.style, i, thumb(p), cap));
     });
     kit.batch();
+    kit.markEggs((id) => eggFound.has(def.id + ':' + id));
+    marker = new T.Mesh(new T.RingGeometry(0.28, 0.4, 40), new T.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0, depthWrite: false }));
+    marker.rotation.x = -Math.PI / 2;
+    marker.visible = false;
+    marker.renderOrder = 2;
+    scene.add(marker);
+    markerT = 0;
+    /* phones: let go of every surface and atlas sheet this room does not use */
+    if (quality === 'low') { trimCache(); trimAtlases(kit.used.atlases); }
     camera.position.copy(build.spawn);
     camera.lookAt(build.look);
     const e = new T.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
@@ -505,10 +711,11 @@ function paintHud(pages: number) {
   ($('#pagePrev') as HTMLButtonElement).disabled = state.page === 0;
   ($('#pageNext') as HTMLButtonElement).disabled = state.page >= pages - 1;
   $('#hint').textContent = touch
-    ? (build?.path ? 'DRAG TO LOOK · PAD FOLLOWS THE ROUTE · TAP A WORK' : 'DRAG TO LOOK · PAD TO WALK · TAP A WORK')
-    : (build?.path ? 'DRAG TO LOOK · W/S FOLLOW THE ROUTE · CLICK A WORK' : 'DRAG TO LOOK · WASD TO WALK · CLICK A WORK');
+    ? (build?.path ? 'DRAG TO LOOK · STICK FOLLOWS THE ROUTE · TAP A WORK OR A GLINT' : 'DRAG TO LOOK · STICK OR TAP THE FLOOR TO WALK · TAP A GLINT')
+    : (build?.path ? 'DRAG TO LOOK · W/S FOLLOW THE ROUTE · CLICK A WORK OR A GLINT' : 'DRAG TO LOOK · WASD OR CLICK THE FLOOR · CLICK A GLINT');
   $('#count').textContent = `${list.length.toLocaleString('en-US')} WORKS IN THIS HANG · ${C.pieces.toLocaleString('en-US')} IN THE CENSUS`;
   paintStrip();
+  paintEggChip();
   document.title = `NEW YORKERS · The Museum · ${def.area}`;
 }
 function paintStrip() {
@@ -523,6 +730,7 @@ let panelReturn: HTMLElement | null = null;
 function closePanels() {
   document.querySelectorAll('.panel.open').forEach((p) => p.classList.remove('open'));
   $('#detail').classList.remove('open');
+  $('#egg').classList.remove('open');
   if (!spinning) $('#slot')?.classList.remove('open');
   panelReturn?.focus(); panelReturn = null;
 }
@@ -668,8 +876,11 @@ async function exportRoom(post?: string | null) {
   await kit.settled();
   await wait(600);
   $('#loading').textContent = 'EXPORTING ' + def.area;
+  kit.showGlints(false);
+  if (marker) marker.visible = false;
   const poster = await kit.poster(camera);
   const glb = await kit.exportGLB(Number(params.get('tex') || 1024));
+  kit.showGlints(true);
   const info = { id: def.id, index: state.room + 1, assets: { atlases: [...kit.used.atlases], thumbs: [...kit.used.thumbs], props: [...kit.used.props], images: [...kit.used.images] }, name: def.name, area: def.area, mood: def.mood, description: def.description, signatures: def.signatures, daylit: def.daylit !== false, day: DAY, hour: HOUR, hang: shown.map((p) => ({ n: p.n, id: p.id, t: p.t })), mounts: build.mounts.length, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, glbBytes: glb.size };
   if (post) {
     await send(post, name + '.png', poster);
@@ -778,6 +989,7 @@ function spin(auto = false) {
 
 /* ---------- boot ---------- */
 function boot() {
+  textureBudget(quality === 'low');
   const openN = readHash();
   buildPanels();
   $('#firstRooms').innerHTML = FIRST_ROOMS.map(id => {
@@ -792,6 +1004,7 @@ function boot() {
   });
   $('#enterCount').innerHTML = `<b>${C.pieces.toLocaleString('en-US')}</b> NEW YORKERS · <b>${ROOMS.length}</b> ROOMS · <b>${C.eras}</b> ERAS`;
   $('#enterRoom').textContent = (spinOnEnter ? 'THE CITY WILL PICK YOUR ROOM' : 'FIRST STOP · ' + ROOMS[state.room].area);
+  if (eggFound.size) $('#enterCount').innerHTML += ` · <b>${eggFound.size}</b> LANDMARKS FOUND`;
   const sub = $('#enterSub'); if (sub) sub.textContent = `${ROOMS.length} ROOMS · THE CITY IS THE GALLERY`;
   if (touch) document.body.classList.add('touch');
   $('#enterBtn').onclick = () => {
@@ -826,6 +1039,10 @@ function boot() {
   const enterSpin = $('#enterSpin') as HTMLButtonElement | null;
   if (enterSpin) enterSpin.onclick = () => { spinOnEnter = true; $('#enterBtn').click(); };
   $('#btnShare').onclick = shareRoom;
+  $('#eggChip').onclick = () => { openPanel('#eggs'); paintEggList(); };
+  $('#lostBtn').onclick = () => location.reload();
+  if (!document.fullscreenEnabled) $('#btnFull').hidden = true;
+  if (touch) document.addEventListener('gesturestart', (e) => e.preventDefault());
   const slotX = $('#slotClose') as HTMLButtonElement | null;
   if (slotX) slotX.onclick = () => { if (!spinning) $('#slot').classList.remove('open'); };
   $('#btnDest').onclick = () => openPanel('#dest');
@@ -859,5 +1076,5 @@ function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
 }
 void frame;
-(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
+(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
 boot();
