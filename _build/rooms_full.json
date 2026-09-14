@@ -2425,7 +2425,7 @@
   "index": 81,
   "place": "Manhattanhenge",
   "fact": "Manhattanhenge is the twice yearly evening when the setting sun lines up with Manhattan's east west streets. The street grid comes from the Commissioners' Plan of 1811 and is rotated about 29 degrees from true east west, which puts the alignments in late May and mid July rather than at the equinoxes. Neil deGrasse Tyson of the Hayden Planetarium named and popularized the event.",
-  "year": "",
+  "year": "1811",
   "learn": "Twice a year the sunset lines up with the 1811 street grid.",
   "source": {
    "name": "American Museum of Natural History, Hayden Planetarium",
@@ -3104,11 +3104,11 @@
   "index": 104,
   "place": "The Chelsea gallery district, West 24th Street",
   "fact": "This room interprets the gallery blocks of West Chelsea between Tenth and Eleventh Avenues, a district that grew after Dia opened on West 22nd Street in 1987 and SoHo rents pushed dealers north in the 1990s. Gagosian opened its West 24th Street gallery in 1999, and Gladstone and other galleries share the block. The city designated the West Chelsea Historic District in 2008.",
-  "year": "",
+  "year": "2008",
   "learn": "Former garages turned into the city's densest run of galleries.",
   "source": {
-   "name": "NYC Landmarks Preservation Commission",
-   "url": "https://www.nyc.gov/site/lpc/index.page"
+   "name": "NYC Landmarks Preservation Commission, West Chelsea Historic District designation report",
+   "url": "https://s-media.nyc.gov/agencies/lpc/lp/2302.pdf"
   },
   "keywords": [
    "Chelsea galleries",
