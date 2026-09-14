@@ -24373,8 +24373,8 @@
   },
   "4350": {
    "place": "key:bbg",
-   "conf": "stated",
-   "why": "the prompt names the Brooklyn Botanic Garden (repinned 2026-09-08, was Madison Square Garden)"
+   "conf": "forced",
+   "why": "the prompt names the Brooklyn Botanic Garden (repinned 2026-09-08, was Madison Square Garden); forced 2026-09-14 because the Brooklyn Museum entry's 'botanic garden' pattern outranks the park"
   },
   "4447": {
    "place": "nb:Fort Greene",
@@ -24387,7 +24387,7 @@
    "why": "the prompt names the East Village (repinned 2026-09-08, was Madison Square Garden)"
   },
   "2961": {
-   "place": "key:subway",
+   "place": "key:subway_system",
    "conf": "stated",
    "why": "a subway platform at 3am, no station named (repinned 2026-09-08, was Madison Square Garden)"
   },
@@ -24425,6 +24425,36 @@
    "place": "boro:Manhattan",
    "conf": "stated",
    "why": "a below stairs areaway on an unnamed corner (repinned 2026-09-08, was Madison Square Garden)"
+  },
+  "515": {
+   "place": "key:msg",
+   "conf": "stated",
+   "why": "Billy Joel's Garden residency; the Garden here is Madison Square Garden (pinned by hand 2026-09-14 after the loose 'the garden' pattern was retired on 2026-09-08)"
+  },
+  "856": {
+   "place": "key:msg",
+   "conf": "stated",
+   "why": "a scalper outside the Garden under the marquee; Madison Square Garden (pinned by hand 2026-09-14)"
+  },
+  "1068": {
+   "place": "key:msg",
+   "conf": "stated",
+   "why": "the great dog show under the Garden lights is Westminster at Madison Square Garden (pinned by hand 2026-09-14)"
+  },
+  "1762": {
+   "place": "key:msg",
+   "conf": "stated",
+   "why": "the six day bicycle race on the Garden's board track, Madison Square Garden (pinned by hand 2026-09-14)"
+  },
+  "2237": {
+   "place": "key:msg",
+   "conf": "stated",
+   "why": "the top row of the Garden, the cheap seats at Madison Square Garden (pinned by hand 2026-09-14)"
+  },
+  "2525": {
+   "place": "key:msg",
+   "conf": "stated",
+   "why": "the organist above the arena ice with twenty thousand strangers; Madison Square Garden (pinned by hand 2026-09-14)"
   }
  }
 }

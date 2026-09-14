@@ -120,6 +120,19 @@ for a in COPY_ASSETS:
         raise SystemExit("missing asset the site references: assets/" + a)
     shutil.copy2(src, os.path.join(OUT, "assets", a))
 
+# geo.js integrity: every piece's place and neighbourhood key must resolve. A key that does
+# not (a hand repin wrote key:subway on 2026-09-08) throws inside map.html's recompute and the
+# atlas never gets past its boot screen, so the package refuses to build rather than ship it.
+_geo_src = open(os.path.join(SITE, "assets", "geo.js"), encoding="utf-8").read()
+_geo = json.loads(_geo_src[_geo_src.index("=") + 1:].rstrip().rstrip(";"))
+_bad_p = sorted({g["p"] for g in _geo["pieces"] if g.get("p") and g["p"] not in _geo["places"]})
+_bad_nb = sorted({g["nb"] for g in _geo["pieces"] if g.get("nb") and g["nb"] not in _geo["nb"]})
+if _bad_p or _bad_nb:
+    raise SystemExit("geo.js has keys that do not resolve; the atlas would crash. places=%s nb=%s "
+                     "(fix _build/map/locations.json or the gazetteer, then python3 map/build_geo2.py)"
+                     % (_bad_p, _bad_nb))
+print("  geo.js keys resolve: %d places, %d neighbourhoods" % (len(_geo["places"]), len(_geo["nb"])))
+
 # public config: preserve the formspree id from the working config, hide curate mode
 cfg_src = open(os.path.join(SITE, "assets", "config.js")).read()
 m = re.search(r'formspree:\s*"([^"]*)"', cfg_src)

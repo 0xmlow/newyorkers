@@ -327,7 +327,8 @@ const ITEMS = PIECES.map(p => {
   const nb = g.nb ? NB[g.nb] : null;
   return {
     p, id:p.id, n:p.n, t:p.t, fam:p.f, era:p.e, cat:p.cat||'', story:p.story||'',
-    lat:g.lat, lon:g.lon, placeKey:g.p||null, place, nb, nbKey:g.nb||null,
+    // a key that no longer resolves degrades to unplaced instead of crashing recompute
+    lat:g.lat, lon:g.lon, placeKey:place?g.p:null, place, nb, nbKey:nb?g.nb:null,
     prec:g.prec||'citywide', src:g.src||'', scene:g.sc||'Citywide', inf:!!g.inf,
     boro: place ? place.boro : '',           // the borough the record actually claims
     scatterBoro: g.boro || '',                // where an illustrative dot happened to land
@@ -471,11 +472,11 @@ function recompute(){
   const m = {};
   VIS_LOC.forEach(i => { if(i.placeKey && !i.spread) (m[i.placeKey] ||= []).push(i); });
   CLUSTERS = Object.entries(m).map(([k,list]) => {
-    const pl = PLACES[k];
+    const pl = PLACES[k]; if(!pl) return null;
     const fc = {}; list.forEach(i => fc[i.fam]=(fc[i.fam]||0)+1);
     const dom = Object.entries(fc).sort((a,b)=>b[1]-a[1])[0][0];
     return {key:k, pl, list, n:list.length, wx:pl.wx, wy:pl.wy, dom};
-  }).sort((a,b)=>a.n-b.n);
+  }).filter(Boolean).sort((a,b)=>a.n-b.n);
   updateStat();
 }
 function colOf(i){

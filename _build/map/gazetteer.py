@@ -110,6 +110,7 @@ LANDMARKS = [
  ("eastern_pkwy","Eastern Parkway","corridor","Brooklyn",40.6710,-73.9500,["eastern parkway","the west indian day parade","west indian day","j'ouvert","labor day parade"]),
  ("flatbush_ave","Flatbush Avenue","corridor","Brooklyn",40.6500,-73.9580,["flatbush avenue","flatbush ave"]),
  ("atlantic_ave","Atlantic Avenue","corridor","Brooklyn",40.6880,-73.9800,["atlantic avenue","atlantic ave"]),
+ ("atlantic_tunnel","Atlantic Avenue Tunnel","landmark","Brooklyn",40.6883,-73.9945,["atlantic avenue tunnel","tunnel under atlantic avenue","cobble hill tunnel","oldest subway tunnel"]),
  ("bedford_ave","Bedford Avenue","corridor","Brooklyn",40.7150,-73.9570,["bedford avenue","bedford ave"]),
  ("kings_theatre","Kings Theatre","venue","Brooklyn",40.6490,-73.9570,["kings theatre"]),
  ("gowanus","The Gowanus Canal","water","Brooklyn",40.6740,-73.9930,["gowanus"]),
