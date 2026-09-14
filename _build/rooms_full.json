@@ -3336,12 +3336,21 @@
   "signatures": "Radial sorting bays; overhead bent copper tubes; capsule collars; circular postal rotunda. Original speculative interior.",
   "daylit": false,
   "index": 112,
-  "place": "Letters through the void",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The pneumatic post",
+  "fact": "New York's pneumatic tube mail service began on October 15, 1897, and on August 1, 1898 the tubes crossed the Brooklyn Bridge to reach the Brooklyn General Post Office. The first carrier sent through the system held a Bible, a flag and a copy of the Constitution. About 55 miles of cast iron tube linked 23 Manhattan post offices, each carrier holding roughly 500 letters and moving at five carriers a minute. In 1953 Postmaster General Arthur Summerfield cancelled the contract and replaced the tubes with trucks.",
+  "year": "1897",
+  "learn": "For 56 years New York shot its mail through iron tubes under the streets.",
+  "source": {
+   "name": "United States Postal Service, Postal History",
+   "url": "https://about.usps.com/who-we-are/postal-history/pneumatic-tubes.pdf"
+  },
+  "keywords": [
+   "pneumatic tube mail New York",
+   "Brooklyn Bridge mail tubes 1898",
+   "pneumatic post 1897",
+   "New York Mail and Newspaper Transportation Company",
+   "pneumatic tubes 1953"
+  ],
   "article": null,
   "articles": []
  },
@@ -3355,12 +3364,21 @@
   "signatures": "Sawtooth loft roof; overhead garment rails; oversized pattern silhouettes; clear central runway. Fictional atelier.",
   "daylit": true,
   "index": 113,
-  "place": "The pattern cathedral",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The Garment District",
+  "fact": "The Garment District was born from the country's first zoning law, passed on July 25, 1916, which pushed clothing makers off Fifth Avenue into a zone between Ninth Avenue and Broadway from 34th to 42nd Street. The first cooperative garment buildings rose at 494 and 500 Seventh Avenue in 1920. By 1926 the district was the fastest growing construction site in the entire city. In 1987 the city created the Special Garment Center District zoning to protect the manufacturing lofts.",
+  "year": "1920",
+  "learn": "A 1916 zoning fight pushed the needle trades onto Seventh Avenue.",
+  "source": {
+   "name": "Garment District Alliance",
+   "url": "https://garmentdistrict.nyc/history"
+  },
+  "keywords": [
+   "Garment District history",
+   "Seventh Avenue garment lofts",
+   "494 and 500 Seventh Avenue 1920",
+   "1916 zoning law Fifth Avenue",
+   "Special Garment Center District 1987"
+  ],
   "article": null,
   "articles": []
  },
@@ -3374,12 +3392,21 @@
   "signatures": "Octagonal plan; chamfered vault threshold; jeweler loupe rings; faceted ceiling. Original imagined exchange.",
   "daylit": false,
   "index": 114,
-  "place": "Forty-seven facets",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The Diamond District",
+  "fact": "New York's diamond trade began around 1790 on Maiden Lane near the port, where more than 300 jewelry firms filled two blocks by the early 1900s. After the 1929 crash many jewelers moved to Canal Street and the Bowery. In 1923 broker Fenimore Goode began putting up buildings made for the diamond trade on West 47th Street between Fifth and Sixth Avenues, and in the 1940s European Jewish refugees fleeing the Nazis filled them. Today about 90 percent of the diamonds entering the United States pass through the block.",
+  "year": "1923",
+  "learn": "The diamond trade moved uptown from Maiden Lane by way of the Bowery.",
+  "source": {
+   "name": "47th Street Business Improvement District",
+   "url": "https://diamonddistrict.org/history"
+  },
+  "keywords": [
+   "Diamond District 47th Street history",
+   "Maiden Lane jewelers",
+   "Canal Street Bowery diamond trade",
+   "Fenimore Goode 47th Street 1923",
+   "Diamond Dealers Club"
+  ],
   "article": null,
   "articles": []
  },
@@ -3393,12 +3420,21 @@
   "signatures": "Riveted pressure vessels; orange-and-white exhaust stacks; manifold pipes; gauge dials. Fictional infrastructure chamber.",
   "daylit": false,
   "index": 115,
-  "place": "The city exhales",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The steam system",
+  "fact": "Manhattan has been heated by district steam since 1882, when the New York Steam Company began service in Lower Manhattan. Con Edison bought the system in 1936 and still runs it as the largest steam system in the country. Six generating stations push up to 8.5 million pounds of steam an hour through 105 miles of mains, serving more than 1,500 customers from the southern tip of Manhattan to 96th Street. About 60 percent of the steam comes from cogeneration alongside electricity.",
+  "year": "1882",
+  "learn": "Since 1882 Manhattan's radiators have run on steam piped under the street.",
+  "source": {
+   "name": "Con Edison",
+   "url": "https://www.coned.com/en/about-us/media-center/news/2022/03-23/con-edisons-steam-system-will-become-nycs-hottest-new-clean-energy-solution"
+  },
+  "keywords": [
+   "Con Edison steam system",
+   "New York Steam Company 1882",
+   "Manhattan district steam 105 miles",
+   "steam stacks Manhattan",
+   "largest steam system in the country"
+  ],
   "article": null,
   "articles": []
  },
@@ -3412,12 +3448,21 @@
   "signatures": "Paired roller towers; overhead paper webs; ink troughs; long press-bed layout. Imagined newspaper works.",
   "daylit": true,
   "index": 116,
-  "place": "Tomorrow is wet ink",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Newspaper Row",
+  "fact": "In the late 19th century the city's papers crowded onto Park Row facing City Hall. The Tribune Building of 1875, by Richard Morris Hunt at Printing House Square, was among the first with elevators, and the Times built at 41 Park Row in 1889 before leaving for Times Square in 1903. Joseph Pulitzer's World Building at 99 Park Row, by George B. Post, rose 309 feet under a copper dome in 1890 and was the world's tallest building until 1894. It was demolished in 1955 for the Brooklyn Bridge ramps.",
+  "year": "1890",
+  "learn": "Every big paper in the city once printed on one block facing City Hall.",
+  "source": {
+   "name": "6sqft",
+   "url": "https://www.6sqft.com/the-history-of-newspaper-row-on-downtowns-park-row/"
+  },
+  "keywords": [
+   "Newspaper Row Park Row",
+   "World Building 99 Park Row",
+   "Tribune Building 1875 Richard Morris Hunt",
+   "Printing House Square",
+   "Pulitzer Building demolished 1955"
+  ],
   "article": null,
   "articles": []
  },
@@ -3431,12 +3476,21 @@
   "signatures": "Horseshoe machine bank; chrome drum mouths; folding island; fluorescent canopy. Surreal neighborhood laundromat.",
   "daylit": false,
   "index": 117,
-  "place": "Spin cycle for a sleepless city",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The laundromat",
+  "fact": "Before the coin laundromat, New York washed its clothes in Chinese hand laundries, about 5,000 of them by 1933. That year the Board of Aldermen passed a law requiring laundry owners to be citizens, employ fewer than six workers and post a $1,000 bond. The Chinese Hand Laundry Alliance formed in 1933 with 3,000 to 4,000 members to fight it and got the bond cut to $100. Sun's Laundry on the Lower East Side, opened in 1959, closed in August 2020 as one of the city's last hand laundries.",
+  "year": "1933",
+  "learn": "Five thousand hand laundries washed the city before the first coin machine.",
+  "source": {
+   "name": "NBC News",
+   "url": "https://www.nbcnews.com/specials/one-of-new-york-city-last-chinese-hand-laundries-closes/"
+  },
+  "keywords": [
+   "Chinese hand laundry New York",
+   "Chinese Hand Laundry Alliance 1933",
+   "history of the laundromat New York",
+   "Sun's Laundry Lower East Side",
+   "24 hour laundromat Queens"
+  ],
   "article": null,
   "articles": []
  },
@@ -3450,12 +3504,21 @@
   "signatures": "Fan-shaped cab bays; yellow roof-light plinths; radio mast; checker floor tracks. Fictional dispatch depot.",
   "daylit": false,
   "index": 118,
-  "place": "Every light is a fare",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The taxi garage",
+  "fact": "Electric cabs first ran on New York streets in 1894, followed in 1907 by 600 French built gasoline cabs painted red and green. In 1937 Mayor LaGuardia introduced the medallion system and hack licenses, in 1967 a state law made every cab yellow, and in 1971 the Taxi and Limousine Commission replaced the NYPD Hack Bureau. Rising Manhattan rents in the 1970s and 80s pushed the fleet garages to Long Island City, near Midtown, both airports and the expressways. Drivers there work 12 hour shifts that change near five o'clock.",
+  "year": "1937",
+  "learn": "The yellow cab's home base moved to Long Island City when Manhattan rents rose.",
+  "source": {
+   "name": "Brownstoner",
+   "url": "https://www.brownstoner.com/history/where-to-mister/"
+  },
+  "keywords": [
+   "taxi medallion 1937 LaGuardia",
+   "yellow cab law 1967",
+   "taxi garages Long Island City",
+   "Taxi and Limousine Commission 1971",
+   "New York taxi history"
+  ],
   "article": null,
   "articles": []
  },
@@ -3469,12 +3532,21 @@
   "signatures": "Bucket flower banks; insulated door portal; suspended cold-room rails; slatted central aisle. Fictional flower-market interior.",
   "daylit": false,
   "index": 119,
-  "place": "Before the flowers wake",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The Flower District",
+  "fact": "Wholesale cut flower dealers began gathering on West 28th Street in the late 1870s. George E. Bradshaw and John R. Hartman opened one of the first wholesale florist houses in 1891 at 53 West 28th Street, and Guttman and Raynor followed in 1894 at 101 West 28th Street. The trade spread from 23rd Street to 34th Street before settling between 25th and 29th Streets. At its height more than 200 wholesalers and suppliers worked the block, through Easter week 1895 and the snowstorm of January 1908.",
+  "year": "1891",
+  "learn": "The flower wholesalers have held West 28th Street since the 1890s.",
+  "source": {
+   "name": "New York's Historic Floral District",
+   "url": "https://www.flowermuseum.org/our-history"
+  },
+  "keywords": [
+   "Flower District West 28th Street",
+   "New York wholesale flower market history",
+   "Bradshaw and Hartman 1891",
+   "Guttman and Raynor florist 1894",
+   "Chelsea flower district cold rooms"
+  ],
   "article": null,
   "articles": []
  },
@@ -3488,12 +3560,21 @@
   "signatures": "Three-sided court; service lines; high concrete rebound wall; chain-link perimeter. Imaginary neighborhood court.",
   "daylit": true,
   "index": 120,
-  "place": "The fourth wall belongs to us",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The handball court",
+  "fact": "Irish immigrants brought hard handball to New York in the late 19th century, and the city made the one wall game its own. A court is just a wall 20 feet wide and 16 feet high with a short line drawn 16 feet out. NYC Parks held its first citywide tournament in 1948 at Heckscher Playground in Central Park, and the U.S. Handball Association formed in 1951 to fix the rules. In January 2000 the city set out to renovate 1,500 of its 2,052 handball courts.",
+  "year": "1948",
+  "learn": "One wall, one rubber ball and more than 2,000 city courts.",
+  "source": {
+   "name": "NYC Parks",
+   "url": "https://www.nycgovparks.org/parks/barrier-playground/history"
+  },
+  "keywords": [
+   "one wall handball New York",
+   "NYC Parks handball courts 2,052",
+   "Coney Island handball courts",
+   "Heckscher Playground handball tournament 1948",
+   "Handball Haven Barrier Playground"
+  ],
   "article": null,
   "articles": []
  },
@@ -3507,12 +3588,21 @@
   "signatures": "Folded concrete shell; pale granular mound; loading-mouth threshold; perimeter exhibition ring. Original civic fantasy.",
   "daylit": true,
   "index": 121,
-  "place": "Winter stored as a mountain",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "The salt shed",
+  "fact": "The Spring Street Salt Shed was completed in 2015 for the New York City Department of Sanitation at the foot of Canal Street on the Hudson River. Dattner Architects designed it with WXY architecture and urban design as a faceted concrete crystal rising nearly 70 feet, the cast in place concrete serving as both structure and finish. Inside it holds 5,000 tons of road salt. Across Spring Street the Manhattan Districts 1, 2 and 5 Garage houses more than 150 sanitation vehicles and earned LEED Gold.",
+  "year": "2015",
+  "learn": "A concrete salt crystal on the Hudson holds 5,000 tons of winter.",
+  "source": {
+   "name": "urbanNext",
+   "url": "https://urbannext.net/spring-street-salt-shed/"
+  },
+  "keywords": [
+   "Spring Street Salt Shed",
+   "Dattner Architects WXY salt shed",
+   "Department of Sanitation salt shed 2015",
+   "5,000 tons road salt Manhattan",
+   "Manhattan Districts 1 2 5 Garage"
+  ],
   "article": null,
   "articles": []
  },
@@ -3526,12 +3616,22 @@
   "signatures": "Houston storefront; long cutter counter; dense photo wall; suspended signs. Contemporary landmark adaptation, distinct from the earlier generic deli.",
   "daylit": true,
   "index": 122,
-  "place": "Katz’s: The portrait lunch",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Katz's Delicatessen",
+  "fact": "Katz's began in 1888 as Iceland Brothers, a small deli on Ludlow Street run by Morris and Hyman Iceland. Willy Katz joined in 1903 and the name became Iceland and Katz; his cousin Benny bought out the brothers in 1910. Subway construction on Houston Street pushed the deli across the street in the 1930s to 205 East Houston. During World War II the owners' sons served overseas, and the family's care packages became the slogan: Send a salami to your boy in the army.",
+  "year": "1888",
+  "learn": "The Lower East Side deli that started as Iceland Brothers in 1888.",
+  "source": {
+   "name": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Katz%27s_Delicatessen"
+  },
+  "keywords": [
+   "Katz's Delicatessen",
+   "Katz's Deli history",
+   "205 East Houston Street",
+   "send a salami to your boy in the army",
+   "oldest deli in New York",
+   "Lower East Side pastrami"
+  ],
   "article": null,
   "articles": []
  },
@@ -3545,12 +3645,22 @@
   "signatures": "Amsterdam Avenue appetizing storefront; vintage pale dining room; small tables; glass deli case. Enlarged for accessible exhibition circulation.",
   "daylit": true,
   "index": 123,
-  "place": "Barney Greengrass: Sunday regulars",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Barney Greengrass",
+  "fact": "Barney Greengrass opened his appetizing store in Harlem in 1908 and moved it to 541 Amsterdam Avenue in 1929. State senator and Tammany Hall leader James J. Frawley coined the title The Sturgeon King, and in 1939 the store shipped smoked sturgeon to President Franklin D. Roosevelt. A restaurant section opened in 1938. Barney's son Moe took over in 1955 and grandson Gary in 1982, and the store turned 100 in 2008.",
+  "year": "1929",
+  "learn": "A Tammany boss named him the Sturgeon King and the title stuck.",
+  "source": {
+   "name": "Barney Greengrass, Our History",
+   "url": "https://www.barneygreengrass.com/pages/new-history"
+  },
+  "keywords": [
+   "Barney Greengrass",
+   "the Sturgeon King",
+   "541 Amsterdam Avenue",
+   "Upper West Side appetizing store",
+   "Barney Greengrass history",
+   "smoked sturgeon New York"
+  ],
   "article": null,
   "articles": []
  },
@@ -3564,12 +3674,22 @@
   "signatures": "White marble; triple portal rhythm; vaults; patterned gray floor; lateral stair flights. Astor Hall, not the existing Rose Reading Room.",
   "daylit": true,
   "index": 124,
-  "place": "Astor Hall: Citizens in marble",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Astor Hall, New York Public Library",
+  "fact": "Astor Hall is the marble entrance lobby of the New York Public Library at 476 Fifth Avenue, the Stephen A. Schwarzman Building. Carrere and Hastings won the design competition in 1897 and the library opened on May 24, 1911. Busts of both architects stand in niches at the foot of the stairs that flank the hall. In November 1974 Astor Hall, the central stairs and the McGraw Rotunda became New York City's first interior landmark.",
+  "year": "1911",
+  "learn": "The marble lobby that became New York's first interior landmark in 1974.",
+  "source": {
+   "name": "NYC Landmarks Preservation Commission, LP-2592",
+   "url": "https://s-media.nyc.gov/agencies/lpc/lp/2592.pdf"
+  },
+  "keywords": [
+   "Astor Hall",
+   "New York Public Library main branch",
+   "Stephen A. Schwarzman Building",
+   "Carrere and Hastings",
+   "first interior landmark New York",
+   "476 Fifth Avenue"
+  ],
   "article": null,
   "articles": []
  },
@@ -3583,12 +3703,22 @@
   "signatures": "Victorian Gothic red brick; pointed stained glass; timber roof; clock tower. Reading-room adaptation.",
   "daylit": true,
   "index": 125,
-  "place": "Jefferson Market: The clock keeps stories",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Jefferson Market Library",
+  "fact": "The Jefferson Market Courthouse rose at Sixth Avenue and West 10th Street between 1874 and 1877, designed by Calvert Vaux and Frederick Clarke Withers in red brick and limestone. An 1880s poll of architects voted it the fifth most beautiful building in the United States. After the courts left, preservationist Margot Gayle led a Village campaign to save it and restart its four faced clock. Architect Giorgio Cavaglieri converted it into a New York Public Library branch in 1967.",
+  "year": "1967",
+  "learn": "A Victorian Gothic courthouse the Village saved and turned into a library.",
+  "source": {
+   "name": "Village Preservation",
+   "url": "https://villagepreservation.org/2012/02/01/the-jefferson-market-library-a-striking-landmark-shines-again/"
+  },
+  "keywords": [
+   "Jefferson Market Library",
+   "Jefferson Market Courthouse",
+   "Vaux and Withers",
+   "Margot Gayle",
+   "Greenwich Village clock tower",
+   "Giorgio Cavaglieri"
+  ],
   "article": null,
   "articles": []
  },
@@ -3602,12 +3732,22 @@
   "signatures": "1887 sanctuary; upper galleries; slender columns; blue circular east window; stenciled star field. Original abstract glazing, not a copy of the contemporary artwork.",
   "daylit": true,
   "index": 126,
-  "place": "Eldridge Street: An immigrant constellation",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Eldridge Street Synagogue",
+  "fact": "The Eldridge Street Synagogue opened in 1887 at 12 Eldridge Street, the first synagogue in America purpose built by immigrants from Eastern Europe. After the 1924 immigration quotas the congregation shrank, moved into the lower chapel in the 1940s and left the main sanctuary to decay. It was rediscovered in 1986, named a National Historic Landmark in 1996, and restored by December 2007. A stained glass window by Kiki Smith and Deborah Gans was added in 2010.",
+  "year": "1887",
+  "learn": "A grand 1887 sanctuary sealed for decades and rediscovered in 1986.",
+  "source": {
+   "name": "Museum at Eldridge Street",
+   "url": "https://www.eldridgestreet.org/history/"
+  },
+  "keywords": [
+   "Eldridge Street Synagogue",
+   "Museum at Eldridge Street",
+   "12 Eldridge Street",
+   "Kiki Smith window",
+   "Lower East Side synagogue history",
+   "Eastern European Jewish immigrants"
+  ],
   "article": null,
   "articles": []
  },
@@ -3621,12 +3761,22 @@
   "signatures": "Circular rotunda; domed ceiling; upper columns; twin stairs. Adapted clear ground-floor ring.",
   "daylit": true,
   "index": 127,
-  "place": "City Hall: The public portrait",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "New York City Hall Rotunda",
+  "fact": "New York City Hall was completed in 1812 to designs by Joseph Francois Mangin and John McComb Jr. It is one of the oldest continuously used city halls in the nation and still houses its original government functions. The Landmarks Preservation Commission designated the building an individual landmark in 1966 and its central rotunda an interior landmark in 1976. Free tours pass through the rotunda and the Governor's Room.",
+  "year": "1812",
+  "learn": "The 1812 rotunda where New York still governs itself.",
+  "source": {
+   "name": "NYC Public Design Commission",
+   "url": "https://www.nyc.gov/site/designcommission/archive/city-hall/about-city-hall.page"
+  },
+  "keywords": [
+   "New York City Hall rotunda",
+   "City Hall 1812",
+   "Mangin and McComb",
+   "City Hall interior landmark",
+   "Governor's Room City Hall",
+   "City Hall Park Manhattan"
+  ],
   "article": null,
   "articles": []
  },
@@ -3640,12 +3790,22 @@
   "signatures": "Low circular sandstone battery; open courtyard; thick embrasures; entrance tunnel. Present-day open-sky form.",
   "daylit": true,
   "index": 128,
-  "place": "Castle Clinton: Arrivals in the round",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Castle Clinton National Monument",
+  "fact": "Castle Clinton began as the Southwest Battery, built between 1808 and 1811 on rocks off the tip of Manhattan with 28 cannons. Renamed for DeWitt Clinton in 1817, it became the Castle Garden entertainment hall, where Jenny Lind made her American debut in 1850. From August 3, 1855 to April 18, 1890 it served as the nation's first immigrant landing depot, and more than 8 million people entered through it. It housed the New York Aquarium from 1896 to 1941 and reopened as a national monument in 1975.",
+  "year": "1855",
+  "learn": "A harbor fort that welcomed 8 million immigrants before Ellis Island.",
+  "source": {
+   "name": "National Park Service",
+   "url": "https://www.nps.gov/cacl/learn/historyculture/index.htm"
+  },
+  "keywords": [
+   "Castle Clinton",
+   "Castle Garden immigration",
+   "the Battery Manhattan",
+   "Southwest Battery 1811",
+   "New York Aquarium Battery Park",
+   "Castle Clinton National Monument"
+  ],
   "article": null,
   "articles": []
  },
@@ -3659,12 +3819,22 @@
   "signatures": "Rugged waterfall; raised side terrace; pergola canopy; intimate greenery. Terrace flattened along exhibition route.",
   "daylit": true,
   "index": 129,
-  "place": "Greenacre: The waterfall salon",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Greenacre Park",
+  "fact": "Greenacre Park sits at 217 East 51st Street between Second and Third Avenues. Abby Rockefeller Mauze, inspired by Paley Park and the shortage of green space in Midtown, set up the Greenacre Foundation in 1968 to build it. The park officially opened on October 14, 1971. It was designed as an intimate room where the surrounding buildings act as walls and a canopy of leaves as the ceiling, with a waterfall at the back.",
+  "year": "1971",
+  "learn": "A Rockefeller built a waterfall room on East 51st Street in 1971.",
+  "source": {
+   "name": "Greenacre Park",
+   "url": "https://www.greenacrepark.org/history"
+  },
+  "keywords": [
+   "Greenacre Park",
+   "217 East 51st Street",
+   "Abby Rockefeller Mauze",
+   "Midtown pocket park waterfall",
+   "Greenacre Foundation 1968",
+   "vest pocket park New York"
+  ],
   "article": null,
   "articles": []
  },
@@ -3678,12 +3848,22 @@
   "signatures": "Broad waterwall; honey-locust canopy; ivy side walls; movable cafe furniture. Gallery tables and mounts are adaptations.",
   "daylit": true,
   "index": 130,
-  "place": "Paley Park: Twelve quiet witnesses",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Paley Park",
+  "fact": "Paley Park opened in 1967 on East 53rd Street, the original vest pocket park. Robert Zion of Zion and Breen Associates designed it on the site of the former Stork Club. CBS chairman William Paley provided the site and dedicated the park to his father, Samuel Paley. It covers one tenth of an acre, with a 20 foot wall of water at the back and seventeen honey locust trees planted on a grid above movable wire chairs and marble tables.",
+  "year": "1967",
+  "learn": "The Stork Club became a tenth of an acre of falling water.",
+  "source": {
+   "name": "The Cultural Landscape Foundation",
+   "url": "https://www.tclf.org/landscapes/paley-park"
+  },
+  "keywords": [
+   "Paley Park",
+   "East 53rd Street waterfall",
+   "vest pocket park",
+   "Robert Zion",
+   "Stork Club site",
+   "William Paley"
+  ],
   "article": null,
   "articles": []
  },
@@ -3697,12 +3877,22 @@
   "signatures": "Fieldstone body; cast-iron portico; Greek Revival steeple; iron-fenced yard. Exterior exhibition.",
   "daylit": true,
   "index": 131,
-  "place": "St. Mark’s: Poetry in the yard",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "St. Mark's Church in-the-Bowery",
+  "fact": "Peter Stuyvesant built a chapel on his bouwerij farm in 1660 and was buried beneath it. The present fieldstone church at 131 East 10th Street, designed by John McComb Jr., was consecrated on May 9, 1799, and its steeple was added in 1828. The Poetry Project was founded here in 1966 and Danspace Project has been housed here since 1974. A three alarm fire on July 12, 1978 destroyed nine of 23 stained glass windows and part of the roof, and rebuilding took five years.",
+  "year": "1966",
+  "learn": "Stuyvesant's farm chapel became the East Village home of poetry and dance.",
+  "source": {
+   "name": "St. Mark's Church in-the-Bowery",
+   "url": "https://stmarksbowery.org/history"
+  },
+  "keywords": [
+   "St. Mark's Church in-the-Bowery",
+   "Poetry Project 1966",
+   "Peter Stuyvesant grave",
+   "131 East 10th Street",
+   "East Village church 1799",
+   "Danspace Project"
+  ],
   "article": null,
   "articles": []
  },
@@ -3716,12 +3906,22 @@
   "signatures": "Ornate French-inspired foyer; tall mirror bays; gilded moldings; chandeliers. Foyer, distinct from existing stage galleries.",
   "daylit": true,
   "index": 132,
-  "place": "Kings Theatre: Before the curtain",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Kings Theatre",
+  "fact": "The Loew's Kings Theatre opened in Flatbush in 1929 as a movie and live performance house at 1027 Flatbush Avenue in Brooklyn. It struggled as multiplexes drew audiences away and shut its doors in 1977. The building sat dark for decades. After a 95 million dollar restoration the 3,074 seat theater reopened in 2015 in its original glory and now hosts concerts and live performances.",
+  "year": "2015",
+  "learn": "Flatbush's 1929 movie palace sat dark for decades and reopened in 2015.",
+  "source": {
+   "name": "Time Out New York",
+   "url": "https://www.timeout.com/newyork/music/kings-theatre"
+  },
+  "keywords": [
+   "Kings Theatre Brooklyn",
+   "Loew's Kings Theatre",
+   "1027 Flatbush Avenue",
+   "Kings Theatre restoration 2015",
+   "Flatbush movie palace",
+   "Loew's Wonder Theatre"
+  ],
   "article": null,
   "articles": []
  },
@@ -3735,12 +3935,22 @@
   "signatures": "Historic atmospheric auditorium; Spanish-inspired ornamental facades; terracotta detail; sky ceiling. 1929-inspired exhibition, not the present congregation’s interior.",
   "daylit": false,
   "index": 133,
-  "place": "Valencia: A sky inside Jamaica",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Loew's Valencia Theatre",
+  "fact": "The Loew's Valencia at 165-11 Jamaica Avenue in Jamaica, Queens, was built in 1928 and opened in 1929 as the first of the five Loew's Wonder Theatres. Architect John Eberson, inventor of the atmospheric theater, gave it 3,554 seats and a brick and glazed terra cotta facade in the Spanish Baroque manner. It entertained Queens for half a century. Since 1977 it has housed the Tabernacle of Prayer for All People, and the city designated it a landmark on May 25, 1999.",
+  "year": "1929",
+  "learn": "The first Loew's Wonder Theatre now holds a church in Jamaica, Queens.",
+  "source": {
+   "name": "NYC Landmarks Preservation Commission, LP-2036",
+   "url": "https://s-media.nyc.gov/agencies/lpc/lp/2036.pdf"
+  },
+  "keywords": [
+   "Loew's Valencia Theatre",
+   "Tabernacle of Prayer for All People",
+   "165-11 Jamaica Avenue",
+   "John Eberson atmospheric theater",
+   "Loew's Wonder Theatres",
+   "Jamaica Queens movie palace"
+  ],
   "article": null,
   "articles": []
  },
@@ -3754,12 +3964,22 @@
   "signatures": "Modern 2019 market; double-height volume; glazed street edge; vendor islands and mezzanine. Exhibition stalls replace retail contents.",
   "daylit": true,
   "index": 134,
-  "place": "Essex Market: The city at the counter",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Essex Market",
+  "fact": "Mayor Fiorello La Guardia built indoor municipal markets to clear the pushcart peddlers who had crowded Lower East Side streets since the 1880s. The Essex Street Municipal Market opened on January 9, 1940 with four buildings and 475 vendors serving Jewish and Italian immigrant families. After a 1995 consolidation the market operated at 120 Essex Street. In May 2019 the vendors moved across the street into a larger, modern hall at 88 Essex Street, part of the Essex Crossing development.",
+  "year": "1940",
+  "learn": "La Guardia moved the pushcarts indoors in 1940 and the market never left.",
+  "source": {
+   "name": "Essex Market, Our Story",
+   "url": "https://www.essexmarket.nyc/our-story"
+  },
+  "keywords": [
+   "Essex Market",
+   "Essex Street Market 1940",
+   "Essex Crossing",
+   "88 Essex Street",
+   "La Guardia pushcart markets",
+   "Lower East Side market history"
+  ],
   "article": null,
   "articles": []
  },
@@ -3773,12 +3993,22 @@
   "signatures": "Modest Corona brick home; domestic windows; garden; intimate outdoor gathering. Garden exhibition adaptation, no invented house interior.",
   "daylit": true,
   "index": 135,
-  "place": "Louis Armstrong: The garden listens",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Louis Armstrong House Museum",
+  "fact": "Louis and Lucille Armstrong moved into their home on 107th Street in Corona, Queens in 1943 and lived there for nearly 30 years, until Louis's death in 1971. The house is both a National Historic Landmark and a New York City landmark. Its archives opened to researchers in the 1990s and the house opened for guided tours in 2003. Across the street, the 14,000 square foot Louis Armstrong Center opened in 2023 with a 75 seat venue and a garden.",
+  "year": "1943",
+  "learn": "Satchmo lived in a modest Corona house from 1943 until he died.",
+  "source": {
+   "name": "Louis Armstrong House Museum",
+   "url": "https://www.louisarmstronghouse.org/about/"
+  },
+  "keywords": [
+   "Louis Armstrong House Museum",
+   "Louis Armstrong Corona Queens",
+   "34-56 107th Street",
+   "Louis Armstrong Center 2023",
+   "Lucille Armstrong",
+   "Corona Queens landmark"
+  ],
   "article": null,
   "articles": []
  },
@@ -3792,12 +4022,22 @@
   "signatures": "Pale Federal house; symmetrical facade; side porches; park setting. Exterior salon with accessible lawn route.",
   "daylit": true,
   "index": 136,
-  "place": "Hamilton Grange: A house above the city",
-  "fact": "",
-  "year": "",
-  "learn": "",
-  "source": null,
-  "keywords": [],
+  "place": "Hamilton Grange National Memorial",
+  "fact": "Alexander Hamilton commissioned architect John McComb Jr. to build the Grange, his Federal style country house in upper Manhattan, in 1802. He lived there only two years before the 1804 duel with Aaron Burr ended his life. As the city grew around it, the house was moved twice, in 1889 and again in 2008, to keep it standing. It now sits in St. Nicholas Park at 414 West 141st Street and reopened to the public in 2011 as a National Park Service memorial.",
+  "year": "1802",
+  "learn": "Hamilton's country house was rolled twice to survive the city around it.",
+  "source": {
+   "name": "National Park Service",
+   "url": "https://www.nps.gov/hagr/index.htm"
+  },
+  "keywords": [
+   "Hamilton Grange",
+   "Alexander Hamilton house Harlem",
+   "St. Nicholas Park",
+   "414 West 141st Street",
+   "Hamilton Grange move 2008",
+   "John McComb Jr."
+  ],
   "article": null,
   "articles": []
  }
