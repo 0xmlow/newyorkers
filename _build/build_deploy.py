@@ -89,7 +89,7 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 # ---------- copy site shell + assets ----------
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
-              "whitelist.html", "profile.html", "faq.html", "vault.html", "shipping.html")
+              "whitelist.html", "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html")
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
                            "humans.txt", "_redirects")
 for page in SITE_FILES:
