@@ -10,7 +10,7 @@ def rooms_in_order():
     idx = open(os.path.join(SRC, "index.ts")).read()
     # The ROOMS array may spread named lists (...NEW_WORKING_ROOMS) that live in the room files.
     spreads = {}
-    for f in glob.glob(os.path.join(SRC, "[a-z].ts")):
+    for f in glob.glob(os.path.join(SRC, "*.ts")):
         for m in re.finditer(r"export const ([A-Z_]+)\s*=\s*\[([^\]]*)\]", open(f).read()):
             spreads[m.group(1)] = re.findall(r"\b([a-z0-9]+)\b", m.group(2))
     order = []
@@ -18,7 +18,7 @@ def rooms_in_order():
         if tok[0]: order.extend(spreads.get(tok[0], []))
         else: order.append(tok[1])
     defs = {}
-    for f in sorted(glob.glob(os.path.join(SRC, "[a-z].ts"))):
+    for f in sorted(glob.glob(os.path.join(SRC, "*.ts"))):
         s = open(f).read()
         for m in re.finditer(r"export const (\w+)\s*:\s*RoomDef\s*=\s*\{([\s\S]*?)(?:\n\s*|,)build\(", s):
             head = m.group(2)

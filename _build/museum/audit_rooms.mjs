@@ -65,7 +65,7 @@ globalThis.matchMedia = () => ({ matches: false, addEventListener() {} });
 /* ---------- bundle the room definitions for node ---------- */
 /* Both files land beside node_modules so node can resolve three from the bundle. */
 const entry = path.join(here, '.audit_entry.mjs');
-const outfile = path.join(here, '.audit_bundle.mjs');
+const outfile = path.join(here, `.audit_bundle_${process.pid}.mjs`);
 fs.writeFileSync(entry, `export { ROOMS } from ${JSON.stringify(path.join(here, 'src', 'rooms', 'index.ts'))};\n`);
 await esbuild.build({
   entryPoints: [entry], outfile, bundle: true, format: 'esm', platform: 'node',

@@ -812,6 +812,9 @@ function boot() {
       $('#enter').setAttribute('inert', '');
       $('#btnTour').focus();
       if (spinOnEnter) { spinOnEnter = false; spin(true); }
+      // ?at=x,y,z&yaw=deg&pitch=deg: stand the camera somewhere for a review screenshot (debug only)
+      const at = params.get('at');
+      if (at && camera) { const [ax, ay, az] = at.split(',').map(Number); if ([ax, ay, az].every(Number.isFinite)) camera.position.set(ax, ay, az); yaw = (Number(params.get('yaw') || 0) * Math.PI) / 180; pitch = (Number(params.get('pitch') || 0) * Math.PI) / 180; }
       const post = params.get('post') || 'http://127.0.0.1:4181/';
       if (params.get('export') === 'all') exportChain(post, state.room);
       else if (params.get('export') === 'allinone') exportAll(post);
