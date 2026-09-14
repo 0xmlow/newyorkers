@@ -1807,20 +1807,20 @@
   "daylit": true,
   "index": 60,
   "place": "The Arthur Kill boat graveyard, Rossville, Staten Island",
-  "fact": "The Arthur Kill is the tidal strait between Staten Island and New Jersey. A marine scrap yard in Rossville took in decommissioned tugboats, ferries and barges for decades, and many were left to settle in the marsh instead of being broken up. The rusting hulls are visible from the shore and from the water, and kayakers and photographers visit them.",
-  "year": "",
-  "learn": "Tugs and ferries left to rust in the marsh on Staten Island's western shore.",
+  "fact": "The Arthur Kill is the tidal strait between Staten Island and New Jersey. Since the 1930s the marsh off Arthur Kill Road and Rossville Avenue has been a dumping ground for ships: John J. Witte ran the salvage yard and refused the curious public any access, and as many as 400 vessels once lay there. When Witte died in 1980 the yard passed to his son and became the Donjon Marine Company. Between 25 and 40 hulls remain, among them the fireboat Abram S. Hewitt, which helped rescue victims of the General Slocum disaster in 1904.",
+  "year": "1930s",
+  "learn": "Four hundred ships once rotted in a Staten Island marsh; a few dozen remain.",
   "source": {
-   "name": "Wikipedia, Staten Island boat graveyard",
-   "url": "https://en.wikipedia.org/wiki/Staten_Island_boat_graveyard"
+   "name": "Baruch College, NYCdata Hidden Gems",
+   "url": "https://www.baruch.cuny.edu/nycdata/hidden_gems/boat_graveyard.html"
   },
   "keywords": [
    "Staten Island boat graveyard",
    "Arthur Kill ship graveyard",
-   "Rossville boat graveyard",
-   "Witte marine scrap yard",
-   "Arthur Kill kayak",
-   "abandoned ships Staten Island"
+   "Witte Marine scrap yard",
+   "Rossville Staten Island",
+   "Donjon Marine",
+   "Abram S. Hewitt fireboat"
   ],
   "article": null,
   "articles": []
