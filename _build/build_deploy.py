@@ -163,7 +163,9 @@ for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "museum
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
         if os.path.isdir(dst): shutil.rmtree(dst)
-        shutil.copytree(src, dst)
+        # build_variant.mjs writes preview bundles (museum.<tag>.js) beside the real one; they are
+        # gitignored and were never meant to ship, but this copy took them along, 47 MB of them
+        shutil.copytree(src, dst, ignore=shutil.ignore_patterns('museum.*.js'))
         continue
     if os.path.isdir(dst):
         # sync-lite: copy missing files only
