@@ -3477,19 +3477,20 @@
   "daylit": false,
   "index": 117,
   "place": "The laundromat",
-  "fact": "Before the coin laundromat, New York washed its clothes in Chinese hand laundries, about 5,000 of them by 1933. That year the Board of Aldermen passed a law requiring laundry owners to be citizens, employ fewer than six workers and post a $1,000 bond. The Chinese Hand Laundry Alliance formed in 1933 with 3,000 to 4,000 members to fight it and got the bond cut to $100. Sun's Laundry on the Lower East Side, opened in 1959, closed in August 2020 as one of the city's last hand laundries.",
-  "year": "1933",
-  "learn": "Five thousand hand laundries washed the city before the first coin machine.",
+  "fact": "The coin laundromat is a New York institution: the place where a new arrival first pays their own way, and where the night shift folds its clothes at three in the morning. The city licenses every one of them through the Department of Consumer Affairs. In February 2015 there were 2,570 licensed coin operated laundries in the five boroughs, a 10 percent drop from a decade earlier. Rising retail rents from Harlem to SoHo had pushed longtime laundromats out of Manhattan, which counted fewer than 400, into the outer boroughs where costs are lower.",
+  "year": "2015",
+  "learn": "Twenty five hundred coin laundries wash the city, fewer every year.",
   "source": {
-   "name": "NBC News",
-   "url": "https://www.nbcnews.com/specials/one-of-new-york-city-last-chinese-hand-laundries-closes/"
+   "name": "Crain's New York Business",
+   "url": "https://www.crainsnewyork.com/article/20150315/RETAIL_APPAREL/150319908/once-a-fixture-laundromats-disappear"
   },
   "keywords": [
-   "Chinese hand laundry New York",
-   "Chinese Hand Laundry Alliance 1933",
-   "history of the laundromat New York",
-   "Sun's Laundry Lower East Side",
-   "24 hour laundromat Queens"
+   "New York laundromat",
+   "24 hour laundromat Queens",
+   "coin laundry New York City",
+   "licensed laundries NYC",
+   "laundromats disappearing Manhattan",
+   "night shift laundromat"
   ],
   "article": null,
   "articles": []
@@ -3617,20 +3618,20 @@
   "daylit": true,
   "index": 122,
   "place": "Katz's Delicatessen",
-  "fact": "Katz's began in 1888 as Iceland Brothers, a small deli on Ludlow Street run by Morris and Hyman Iceland. Willy Katz joined in 1903 and the name became Iceland and Katz; his cousin Benny bought out the brothers in 1910. Subway construction on Houston Street pushed the deli across the street in the 1930s to 205 East Houston. During World War II the owners' sons served overseas, and the family's care packages became the slogan: Send a salami to your boy in the army.",
+  "fact": "Katz's began in 1888 as Iceland Brothers, a small deli on Ludlow Street on the Lower East Side. Willy Katz arrived in 1903 and the name became Iceland and Katz; his cousin Benny bought out the brothers in 1910 and Harry Tarowsky joined the partnership in April 1917. Subway construction pushed the deli across the street to 205 East Houston, where the present storefront went up between 1946 and 1949. During World War II the owners' care packages to their sons became the slogan: Send a salami to your boy in the army. Martin Dell, his son Alan and son in law Fred Austin bought in on the 100th anniversary in 1988.",
   "year": "1888",
   "learn": "The Lower East Side deli that started as Iceland Brothers in 1888.",
   "source": {
-   "name": "Wikipedia",
-   "url": "https://en.wikipedia.org/wiki/Katz%27s_Delicatessen"
+   "name": "Katz's Delicatessen, Our Story",
+   "url": "https://katzsdelicatessen.com/our-story"
   },
   "keywords": [
    "Katz's Delicatessen",
    "Katz's Deli history",
+   "Iceland Brothers 1888",
    "205 East Houston Street",
    "send a salami to your boy in the army",
-   "oldest deli in New York",
-   "Lower East Side pastrami"
+   "oldest deli in New York"
   ],
   "article": null,
   "articles": []
