@@ -848,7 +848,7 @@ export const kings: RoomDef = {
     for (const z of [5.1, -25.5]) { k.box(26.2, 0.012, 0.5, 0, 0.006, z, redB); k.box(25.2, 0.014, 0.16, 0, 0.007, z - Math.sign(z) * 0.33, blackB); }
     for (const s of [-1, 1]) { k.box(9, 16, 0.6, s * 9.5, 8, Z0, cream); k.block(s * 5, s * 14.3, Z0 - 0.3, Z0 + 0.3); }
     k.box(10.2, 11.8, 0.6, 0, 4.2 + 5.9, Z0, cream);
-    k.moulding([[0, 0], [0.4, 0], [0.5, 0.2], [0.2, 0.4], [0, 0.5]], 10.4, 0, 4.2, Z0 - 0.3, gilt, 0);
+    k.moulding([[0, 0], [0.4, 0], [0.5, 0.2], [0.2, 0.4], [0, 0.5]], 10.4, 0, 4.2, Z0 - 0.3, gilt, PI / 2);   // across the stair opening; at 0 it ran down the foyer as a black beam overhead
     k.box(0.6, 16, Z0 - Z1, -14, 8, (Z0 + Z1) / 2, cream);
     k.box(0.6, 16, 14.1, 14, 8, Z0 - 7.05, cream); k.box(0.6, 16, 22.1, 14, 8, -15.9 - 11.05, cream); k.box(0.6, 7.5, 7.8, 14, 12.25, -12, cream);
     for (const s of [-1, 1]) { k.box(0.7, 1.3, Z0 - Z1, s * 13.95, 0.65, (Z0 + Z1) / 2, redMarble); k.box(0.8, 0.1, Z0 - Z1, s * 13.9, 1.33, (Z0 + Z1) / 2, gilt); }

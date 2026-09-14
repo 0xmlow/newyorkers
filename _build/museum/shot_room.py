@@ -43,6 +43,9 @@ try:
     if a.turn:
         send('Runtime.evaluate', expression=f"(()=>{{const m=window.__museum;if(!m)return 'no museum';m.camera.rotation.y+={a.turn}*Math.PI/180;return 'turned'}})()", returnByValue=True)
         time.sleep(1.2)
+    if a.eval:
+        r = send('Runtime.evaluate', expression=a.eval, returnByValue=True, awaitPromise=True)
+        print('eval', r.get('result', {}).get('value'), r.get('exceptionDetails', {}).get('text', ''))
     info = send('Runtime.evaluate', expression="(()=>{const m=window.__museum;if(!m)return 'no museum';const d=document.querySelector('#debug');return JSON.stringify({room:m.ROOMS[m.state.room].id,stats:d?d.textContent:'',mounts:m.build&&m.build.mounts.length,eggs:m.kit?m.kit.eggs.map(e=>e.data.id):[],touch:document.body.classList.contains('touch')})})()", returnByValue=True).get('result', {}).get('value')
     errs = send('Runtime.evaluate', expression="JSON.stringify((window.__errors||[]).slice(0,5))", returnByValue=True).get('result', {}).get('value')
     import base64

@@ -264,7 +264,8 @@ function tap(x: number, y: number): string {
     }
     const n = h.face ? h.face.normal.clone().transformDirection(o.matrixWorld) : null;
     if (n && n.y > 0.7 && h.point.y < camera.position.y - 0.4) return walkTo(h.point) ? 'walk' : 'floor out of reach';
-    return `blocked by ${o.type} at ${h.distance.toFixed(1)} m, normal y ${n ? n.y.toFixed(2) : '?'}`;
+    const col = (mat as T.MeshBasicMaterial).color ? '#' + (mat as T.MeshBasicMaterial).color.getHexString() : '?';
+    return `blocked by ${o.type} ${o.geometry.type} ${col}${(mat as T.MeshBasicMaterial).map ? ' textured' : ''} at ${h.distance.toFixed(1)} m, point ${h.point.toArray().map((q) => q.toFixed(1)).join(',')}, normal y ${n ? n.y.toFixed(2) : '?'}`;
   }
   return 'nothing';
 }
