@@ -61,6 +61,35 @@ function steam(k: Kit, x: number, y: number, z: number, n: number, animate: bool
   if (animate) k.ticks.push((t) => place(t));
 }
 
+/* Traffic: every car is one instance of a body and one of a cabin, two draw calls for the lot. */
+function traffic3(k: Kit, lanes: { at: number; dir: number }[], axis: 'x' | 'z', len: number, perLane: number, animate: boolean, seed: number, y0 = 0) {
+  const rnd = X.mulberry(seed), n = lanes.length * perLane, blank = () => Array.from({ length: n }, () => new T.Matrix4());
+  const body = k.instances(new T.BoxGeometry(1.9, 0.8, 4.4), k.flat(0xffffff, 0.5, 0.35), blank());
+  const cab = k.instances(new T.BoxGeometry(1.7, 0.62, 2.2), k.flat(0x1a2530, 0.6, 0.15), blank());
+  const wg = new T.CylinderGeometry(0.34, 0.34, 2.02, 12); wg.rotateZ(PI / 2);
+  const wheels = k.instances(wg, k.flat(0x111111, 0.1, 0.8), Array.from({ length: n * 2 }, () => new T.Matrix4()));
+  const cols = [0xf2c21b, 0xf2c21b, 0x1f2a36, 0xd8d8d4, 0x8a1c1c, 0x3a4a5a, 0x5a6a7a, 0xf2c21b];
+  const c = new T.Color(), st = Array.from({ length: n }, (_, i) => ({ lane: lanes[i % lanes.length], s: rnd() * len, v: 5 + rnd() * 4 }));
+  st.forEach((_, i) => body.setColorAt(i, c.set(cols[Math.floor(rnd() * cols.length)])));
+  if (body.instanceColor) body.instanceColor.needsUpdate = true;
+  const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), one = new T.Vector3(1, 1, 1);
+  const place = (_t: number, dt: number) => {
+    st.forEach((a, i) => {
+      a.s = (a.s + a.v * Math.min(dt, 0.1)) % len;
+      const d = (a.s - len / 2) * a.lane.dir;
+      q.setFromAxisAngle(UP, axis === 'z' ? (a.lane.dir > 0 ? 0 : PI) : (a.lane.dir > 0 ? PI / 2 : -PI / 2));
+      for (const w of [0, 1]) { const off = (w ? 1.4 : -1.4) * a.lane.dir; if (axis === 'z') p.set(a.lane.at, y0 + 0.34, d + off); else p.set(d + off, y0 + 0.34, a.lane.at); m.compose(p, q, one); wheels.setMatrixAt(i * 2 + w, m); }
+      if (axis === 'z') p.set(a.lane.at, y0 + 0.72, d); else p.set(d, y0 + 0.72, a.lane.at);
+      m.compose(p, q, one); body.setMatrixAt(i, m);
+      p.y = y0 + 1.42; if (axis === 'z') p.z -= 0.3 * a.lane.dir; else p.x -= 0.3 * a.lane.dir;
+      m.compose(p, q, one); cab.setMatrixAt(i, m);
+    });
+    body.instanceMatrix.needsUpdate = cab.instanceMatrix.needsUpdate = wheels.instanceMatrix.needsUpdate = true;
+  };
+  place(0, 0);
+  if (animate) k.ticks.push(place);
+}
+
 /* A balustrade with a base height, for porches and decks that stand above the ground. */
 function balustrade(k: Kit, x0: number, z0: number, x1: number, z1: number, y0: number, m: T.Material, h = 0.9, pitch = 1.1) {
   const a = v(x0, 0, z0), b = v(x1, 0, z1), n = Math.max(1, Math.round(a.distanceTo(b) / pitch));
@@ -134,7 +163,7 @@ export const essex: RoomDef = {
     k.rail(-13.1, 24, 5, green, 1.0, 'z', 1.0); k.rail(-9.9, 24, 5, green, 1.0, 'z', 1.0); k.rail(-11.5, 21.5, 3.2, green, 1.0, 'x', 1.0);
     k.cyl(0.06, 3.2, -9.9, 1.6, 26.5, green, 0.06, 8); k.sphere(0.22, -9.9, 3.35, 26.5, k.glow(0x4ad07a), 10); k.point(-9.9, 3.3, 26.5, 0x6af09a, 6, 5);
     k.sign('DELANCEY ST  ·  ESSEX ST', 2.6, 0.5, -11.5, 2.3, 26.6, '#1a3a2a', '#f4f2ea', 90, 0, { border: true, double: true });
-    k.sign('F  J  M  Z', 2.0, 0.5, -11.5, 1.8, 26.6, '#1a3a2a', '#f4f2ea', 110, 0, { double: true });
+    const subwaySign = k.sign('F  J  M  Z', 2.0, 0.5, -11.5, 1.8, 26.6, '#1a3a2a', '#f4f2ea', 110, 0, { double: true });
     k.block(-13.2, -9.8, 21.4, 26.6);
     k.crowd([v(-11.6, 0, -60), v(-11.6, 0, 60)], 14, { seed: 156, speed: 1.0, spread: 1.6, animate: an });
     k.crowd([v(11.6, 0, -60), v(11.6, 0, 60)], 16, { seed: 157, speed: 0.9, spread: 1.6, animate: an });
@@ -153,9 +182,9 @@ export const essex: RoomDef = {
     for (const z of [-2.4, 2.4]) k.box(0.26, 3.7, 0.26, FX, 1.85, z, steelD);
     k.box(0.2, 0.16, D, FX, 3.6, 0, steelD); k.box(0.2, 0.5, D, FX, 0.4, 0, steelD); k.box(0.26, 0.3, 5, FX, 3.6, 0, steelD);
     k.box(0.14, 1.5, 11, FX - 0.1, 7.4, 0, black);
-    k.sign('ESSEX MARKET', 9.5, 1.2, FX - 0.2, 7.4, 0, 'transparent', '#f4f2ea', 130, -PI / 2);
+    const bigSign = k.sign('ESSEX MARKET', 9.5, 1.2, FX - 0.2, 7.4, 0, 'transparent', '#f4f2ea', 130, -PI / 2);
     const can = k.box(4.2, 0.14, 12, FX - 2.1, 4.75, 0, steelD); can.rotation.z = 0.08;
-    k.sign('ESSEX MARKET  ·  SINCE 1940  ·  ESSEX CROSSING', 6.5, 0.5, FX - 4.3, 4.4, 0, '#141414', '#f4f2ea', 80, -PI / 2, { border: true });
+    const since1940 = k.sign('ESSEX MARKET  ·  SINCE 1940  ·  ESSEX CROSSING', 6.5, 0.5, FX - 4.3, 4.4, 0, '#141414', '#f4f2ea', 80, -PI / 2, { border: true });
     for (const z of [-5, 5]) k.beam(v(FX - 4, 4.4, z), v(FX - 0.1, 7.0, z), 0.04, steelD, 5);
     // the folded ceiling: alternating tilted plates, a steel beam and a light strip in every valley
     const NP = 10, PW = D / NP;
@@ -262,6 +291,33 @@ export const essex: RoomDef = {
     for (const x of [30, 36]) mounts.push({ position: v(x, 6.6, -D / 2 + 0.26), rotation: 0, target: v(x, 3, -12.5), width: 3.6, height: 2.0, style: 'black', wash: true });
     for (const z of [-16, 16]) for (const x of [20, 30]) k.point(x, 8.8, z, 0xfff0dc, 20, 14);
     k.crowd([v(16, 0, 0), v(22.2, 0, 2), v(22.2, 0, 14), v(29.8, 0, 14), v(29.8, 0, 1), v(37.6, 0, 0), v(37.6, 0, -14), v(22.2, 0, -14), v(22.2, 0, -2)], 16, { seed: 162, speed: 0.5, spread: 1.4, animate: an, closed: true });
+    // a pushcart on the Essex Street sidewalk, the kind of street stall the 1940 market was built to bring indoors
+    const PCX = 10.4, PCZ = -6;
+    k.box(1.2, 0.12, 2.6, PCX, 1.0, PCZ, wood);
+    for (const s of [-1, 1]) { k.box(0.06, 0.3, 2.6, PCX + s * 0.6, 1.2, PCZ, wood); k.torus(0.5, 0.05, PCX + s * 0.66, 0.52, PCZ - 0.5, black, 20).rotation.y = PI / 2; k.box(0.06, 0.95, 0.06, PCX + s * 0.5, 0.48, PCZ + 1.1, dark); k.beam(v(PCX + s * 0.45, 1.05, PCZ + 1.3), v(PCX + s * 0.45, 1.25, PCZ + 2.1), 0.03, dark, 5); }
+    k.beam(v(PCX - 0.66, 0.52, PCZ - 0.5), v(PCX + 0.66, 0.52, PCZ - 0.5), 0.03, steelD, 5);
+    for (let i = 0; i < 26; i++) k.sphere(0.12, PCX - 0.45 + (i % 5) * 0.22, 1.2 + Math.floor(i / 13) * 0.12, PCZ - 1.1 + (Math.floor(i / 5) % 6) * 0.42, [k.flat(0xd83a2a, 0, 0.6), k.flat(0x2f7a3a, 0, 0.6), k.flat(0xf1c531, 0, 0.6)][i % 3], 7);
+    k.cyl(0.03, 1.9, PCX, 2.0, PCZ, steelD, 0.03, 6);
+    k.mesh(new T.ConeGeometry(1.5, 0.6, 12, 1, true), k.flat(0xe9e0c8, 0, 0.8, { side: T.DoubleSide }), PCX, 3.05, PCZ);
+    k.keepOut.push({ x: PCX, z: PCZ, r: 1.5 });
+    // Delancey Street traffic across the north end of the block
+    traffic3(k, [{ at: 34.5, dir: -1 }, { at: 37.5, dir: -1 }, { at: 42.5, dir: 1 }, { at: 45.5, dir: 1 }], 'x', 130, 3, an, 163);
+    // the counter staff behind the fish and butcher counters, working along under the mezzanine
+    k.crowd([v(BX - 7.6, 0, -18.5), v(BX - 7.6, 0, 18.5)], 7, { seed: 164, speed: 0.22, spread: 0.4, animate: an, colors: [0xf4f2ec, 0xe8e4da, 0x2a2f3a] });
+    // a hanging scale at the produce island, still swinging from the last weigh
+    const scale = new T.Group(); scale.position.set(21.2, 4.6, -5.5);
+    const sRod = new T.Mesh(new T.CylinderGeometry(0.012, 0.012, 1.2, 5), steelL); sRod.position.y = -0.6; scale.add(sRod);
+    const sDial = new T.Mesh(new T.CylinderGeometry(0.16, 0.16, 0.08, 16), white); sDial.rotation.x = PI / 2; sDial.position.y = -1.3; scale.add(sDial);
+    const sPan = new T.Mesh(new T.CylinderGeometry(0.3, 0.22, 0.1, 16), steelL); sPan.position.y = -1.9; scale.add(sPan);
+    k.add(scale);
+    if (an) k.ticks.push((t) => { scale.rotation.z = 0.09 * Math.sin(t * 1.6) * (0.6 + 0.4 * Math.sin(t * 0.21)); });
+    // landmark eggs
+    const emSrc = { name: 'Essex Market, Our Story', url: 'https://www.essexmarket.nyc/our-story' };
+    k.egg(v(PCX, 1.6, PCZ), { id: 'pushcarts', title: 'Off the street, under a roof', text: 'The Lower East Side streets were once crowded with pushcart peddlers. Mayor Fiorello La Guardia wanted indoor municipal markets to replace them, and the Essex Street market was one of the results.', clue: 'Before there was a hall, the market had wheels. Look along the sidewalk.', source: emSrc }, { r: 1.6 });
+    k.egg(since1940, { id: 'since-1940', title: 'Opened January 9, 1940', year: '1940', text: 'La Guardia opened the Essex Street Municipal Market on January 9, 1940, with four buildings and 475 vendors. In the 1950s it adapted to serve the Puerto Rican families moving into the neighborhood.', clue: 'The canopy over the door tells you the year. Tap it for the day.', source: emSrc }, { r: 1.6 });
+    k.egg(bigSign, { id: 'since-1818', title: 'A market here since 1818', year: '1818', text: 'Essex Market traces its roots to 1818, when a market house was built on Grand Street between Essex and Ludlow Streets to serve the neighborhood.', clue: 'The biggest letters on the glass are older than they look.', source: emSrc }, { r: 2.2 });
+    k.egg(v(16.1, 16, -8), { id: 'essex-crossing', title: 'The empty lots come back', year: '1967 to 2019', text: 'In 1967 the city leveled 20 acres south of Delancey Street and moved out more than 1,800 families, most of them Puerto Rican. The land sat largely empty for decades. In May 2019 the market moved in here, at 88 Essex Street, as part of Essex Crossing.', clue: 'Look up past the hall at what was built on top of it.', source: { name: 'Essex Crossing, Wikipedia', url: 'https://en.wikipedia.org/wiki/Essex_Crossing' } }, { r: 2 });
+    k.egg(subwaySign, { id: 'delancey-essex', title: 'Under the corner, the trains', year: '1908', text: 'The Delancey Street/Essex Street station sits under this corner. The Essex Street platforms opened on September 16, 1908, and the Sixth Avenue line platforms on January 1, 1936. The F, J, M and Z stop here.', clue: 'A green globe on the corner marks the way down.', source: { name: 'Delancey Street/Essex Street station, Wikipedia', url: 'https://en.wikipedia.org/wiki/Delancey_Street/Essex_Street_station' } }, { r: 1.4 });
     return {
       mounts, spawn: v(-1, 3, 3), look: v(24, 4.2, -1), eye: 3, bounds: [-13.4, BX - 0.6, -D / 2 + 0.6, 60], style: 'black',
       floorY: (x, z) => {
@@ -326,7 +382,17 @@ export const armstrong: RoomDef = {
       k.rail(fx + face * 2.6, z, w - 0.4, iron, 0.9, 'z', 1.2);
     };
     const mats = [brick, tan, siding];
-    for (let i = 0; i < 9; i++) house(-13, -40 + i * 9.5, 1, 8.6, mats[i % 3], 7.2 + (i % 2) * 0.6, i);
+    for (let i = 0; i < 9; i++) if (i !== 4) house(-13, -40 + i * 9.5, 1, 8.6, mats[i % 3], 7.2 + (i % 2) * 0.6, i);
+    // across the street from the house: the Louis Armstrong Center, opened 2023, in the gap where house 4 would stand
+    const laStone = k.pbr('laCenterStone', X.plaster(0xe8e2d4, 211), 0.4, { roughness: 0.7 });
+    k.box(12, 9, 8.6, -19, 4.5, -2, laStone);
+    k.box(12.2, 0.3, 8.8, -19, 9.1, -2, lime);
+    k.box(0.1, 3.4, 7.2, -12.95, 1.9, -2, glass);
+    for (const z of [-5.5, -3.2, -0.8, 1.5]) k.box(0.14, 3.4, 0.1, -12.92, 1.9, z, steelD);
+    for (const y of [5.2, 7.4]) k.box(0.1, 1.5, 7.2, -12.95, y, -2, glass);
+    k.box(1.8, 0.14, 8.2, -12.2, 3.75, -2, steelD);
+    const laCenterSign = k.sign('LOUIS ARMSTRONG CENTER', 5.6, 0.55, -12.86, 4.35, -2, 'transparent', '#2a2016', 110, PI / 2);
+    k.point(-14.5, 2.4, -2, 0xffe2b8, 10, 8);
     for (let i = 0; i < 4; i++) house(13, 8.5 + i * 9.5, -1, 8.6, mats[(i + 1) % 3], 7.2 + (i % 2) * 0.6, i + 9);
     for (let i = 0; i < 3; i++) house(13, -25.5 - i * 9.5, -1, 8.6, mats[(i + 2) % 3], 7.2 + (i % 2) * 0.6, i + 13);
     k.block(-25.2, -12.8, -46, 42); k.block(-10.6, -10.2, -46, 42);
@@ -367,7 +433,7 @@ export const armstrong: RoomDef = {
     k.box(2.4, 0.06, HW, HX - 1.4, 0.16, HZ, pav);
     k.rail(10.6, HZ, HW, iron, 0.9, 'z', 0.8);
     k.block(HX, HX + 14, HZ0, HZ1); k.block(10.4, 10.8, HZ0, HZ1 + 0.1);
-    k.sign('LOUIS ARMSTRONG HOUSE MUSEUM  ·  NATIONAL HISTORIC LANDMARK', 2.6, 0.5, 10.45, 1.5, -5.5, '#3a2a1a', '#f4ecd8', 60, -PI / 2, { border: true });
+    const laLandmark = k.sign('LOUIS ARMSTRONG HOUSE MUSEUM  ·  NATIONAL HISTORIC LANDMARK', 2.6, 0.5, 10.45, 1.5, -5.5, '#3a2a1a', '#f4ecd8', 60, -PI / 2, { border: true });
     k.box(0.06, 1.7, 0.06, 10.55, 0.85, -5.5, iron);
     // the garden lot: lawn, the bluestone patio and path, the fences and the garage wall the census hangs on
     k.box(22.4, 0.28, 24, 21.8, 0.0, -8.25, lawn);
@@ -450,6 +516,50 @@ export const armstrong: RoomDef = {
     k.tree(30.5, 0, 1.4, { h: 7, r: 3.2, seed: 188 });
     k.tree(31.2, 0, -6.2, { h: 4.5, r: 2.0, seed: 189 });
     k.crowd([v(12.2, 0, -11.5), v(16.5, 0, -11), v(21, 0, -9.6), v(26, 0, -14), v(23, 0, -18.6), v(15.8, 0, -14.2)], 6, { seed: 190, speed: 0.35, spread: 0.8, animate: an, closed: true });
+    // a little cascade over the rocks into the pond, with drops falling and rings spreading on the water
+    for (const [dx, dz, h] of [[1.9, -1.7, 1.3], [2.4, -1.2, 0.9], [1.4, -2.1, 0.8]] as [number, number, number][]) { const r = k.box(0.9, h, 0.8, PX + dx, h / 2, PZ + dz, rock); r.rotation.y = dx; }
+    const laDrops = k.instances(new T.SphereGeometry(0.035, 5, 4), k.flat(0xbfe6ee, 0.2, 0.1), Array.from({ length: 24 }, () => new T.Matrix4()));
+    const laRings = k.instances(new T.TorusGeometry(0.3, 0.012, 4, 20), k.flat(0xd8f0f0, 0.1, 0.2), Array.from({ length: 4 }, () => new T.Matrix4()));
+    const laRand = X.mulberry(212), laPh = Array.from({ length: 24 }, () => ({ o: laRand(), dx: (laRand() - 0.5) * 0.4, dz: (laRand() - 0.5) * 0.2 }));
+    const lm = new T.Matrix4(), lq = new T.Quaternion(), lp = new T.Vector3(), ls = new T.Vector3(), lqr = new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), PI / 2);
+    const laWater = (t: number) => {
+      laPh.forEach((a, i) => { const u = (t * 0.9 + a.o) % 1; lp.set(PX + 1.55 + a.dx - u * 0.25, 1.28 - u * u * 1.12, PZ - 1.5 + a.dz); ls.set(1, 1.8, 1); lm.compose(lp, lq, ls); laDrops.setMatrixAt(i, lm); });
+      for (let i = 0; i < 4; i++) { const u = (t * 0.35 + i / 4) % 1; lp.set(PX + 1.2, 0.17 - (u > 0.95 ? 0.2 : 0), PZ - 1.3); ls.setScalar(0.3 + u * 3.2); lm.compose(lp, lqr, ls); laRings.setMatrixAt(i, lm); }
+      laDrops.instanceMatrix.needsUpdate = laRings.instanceMatrix.needsUpdate = true;
+    };
+    laWater(0.3); if (an) k.ticks.push(laWater);
+    // stepping stones across the lawn from the patio toward the bench
+    const laSteps: T.Matrix4[] = [];
+    for (let i = 0; i < 7; i++) laSteps.push(mat4(25.8 + i * 0.3, 0.16, -14.3 - i * 0.45, i, 1, 1, 0.8));
+    k.instances(new T.CylinderGeometry(0.34, 0.36, 0.06, 10), pav, laSteps);
+    // the reel to reel on the patio table, reels turning
+    k.box(0.8, 0.06, 0.6, 15.6, 0.74, -7.2, fence); for (const [dx, dz] of [[-0.35, -0.25], [0.35, -0.25], [-0.35, 0.25], [0.35, 0.25]]) k.box(0.05, 0.7, 0.05, 15.6 + dx, 0.4, -7.2 + dz, fence);
+    k.box(0.56, 0.1, 0.38, 15.6, 0.82, -7.2, k.flat(0x3a3a3c, 0.6, 0.35));
+    k.box(0.4, 0.012, 0.08, 15.6, 0.875, -7.08, steelL);
+    const laReels = new T.Group(); laReels.position.set(15.6, 0.885, -7.25);
+    for (const dx of [-0.14, 0.14]) { const r = new T.Mesh(new T.CylinderGeometry(0.1, 0.1, 0.018, 16), k.flat(0x8a8f96, 0.8, 0.3)); r.position.x = dx; laReels.add(r); }
+    k.add(laReels);
+    if (an) k.ticks.push((t) => { laReels.children.forEach((r) => { r.rotation.y = t * 2.2; }); });
+    k.keepOut.push({ x: 15.6, z: -7.2, r: 0.7 });
+    // birds wheeling over the garden and butterflies at the hydrangeas
+    const laBirdG = new T.PlaneGeometry(0.5, 0.16); laBirdG.rotateX(-PI / 2);
+    const laBirds = k.instances(laBirdG, k.flat(0x1a1a1a, 0, 0.9, { side: T.DoubleSide }), Array.from({ length: 6 }, () => new T.Matrix4()));
+    const laFlyG = new T.PlaneGeometry(0.12, 0.09); laFlyG.rotateX(-PI / 2);
+    const laFlies = k.instances(laFlyG, k.flat(0xf4e6a0, 0, 0.8, { side: T.DoubleSide }), Array.from({ length: 5 }, () => new T.Matrix4()));
+    const laSky = (t: number) => {
+      for (let i = 0; i < 6; i++) { const a = t * 0.22 + i * 1.05, r = 9 + (i % 3) * 2.5; lp.set(22 + Math.cos(a) * r, 13 + Math.sin(a * 1.6 + i) * 1.5, -10 + Math.sin(a) * r); lq.setFromAxisAngle(UP, -a); ls.set(0.6 + 0.5 * Math.abs(Math.sin(t * 8 + i)), 1, 1); lm.compose(lp, lq, ls); laBirds.setMatrixAt(i, lm); }
+      for (let i = 0; i < 5; i++) { const a = t * 0.6 + i * 1.3; lp.set(16 + i * 2.6 + Math.sin(a) * 0.8, 0.95 + Math.abs(Math.sin(a * 2.3)) * 0.5, -5.4 + Math.cos(a * 1.4) * 0.5); lq.setFromAxisAngle(UP, a); ls.set(0.3 + 0.7 * Math.abs(Math.sin(t * 14 + i)), 1, 1); lm.compose(lp, lq, ls); laFlies.setMatrixAt(i, lm); }
+      laBirds.instanceMatrix.needsUpdate = laFlies.instanceMatrix.needsUpdate = true;
+    };
+    laSky(0); if (an) k.ticks.push(laSky);
+    // landmark eggs
+    const laAbout = { name: 'Louis Armstrong House Museum, About', url: 'https://www.louisarmstronghouse.org/about/' };
+    const laTapes = { name: 'Louis Armstrong House Museum, Armstrong’s Final Tapes', url: 'https://virtualexhibits.louisarmstronghouse.org/2021/06/07/armstrongs-personal-recordings-louis-armstrong-final-tapes-part-1/amp/' };
+    k.egg(v(HX - 0.3, 2.5, 1.8), { id: 'house-1943', title: 'Home on 107th Street', year: '1943 to 1971', text: 'Louis and Lucille Armstrong moved into this house on 107th Street in Corona, Queens, in 1943. They lived here for nearly 30 years, until Louis’s death in 1971.', clue: 'Climb the stoop and read the number by the front door.', source: laAbout }, { r: 1.1 });
+    k.egg(laLandmark, { id: 'landmark', title: 'A landmark twice over', year: '1976 and 1988', text: 'The house was named a National Historic Landmark in 1976 and a New York City Landmark in 1988. Lucille Armstrong willed the building and everything in it to the city, for a museum of his career and of jazz.', clue: 'A small sign by the fence says what the nation made of this house.', source: { name: 'New York Landmarks Conservancy', url: 'https://nylandmarks.org/explore-ny/louis-armstrong-house-museum/' } }, { r: 1.2 });
+    k.egg(v(24.5, 1.0, -17.2), { id: 'the-lot-next-door', title: 'The lot next door', year: '1971', text: 'In late May 1971 Louis and Lucille bought an abandoned lot beside the house. He said he would plant trees, bushes and flowers, maybe a small croquet court, then sit out there, enjoy his garden and blow his horn a little.', clue: 'Find the seat he talked about wanting in his own garden.', source: laTapes }, { r: 1.2 });
+    k.egg(v(15.6, 0.95, -7.2), { id: 'home-tapes', title: 'Armstrong’s Personal Recordings', year: '1971', text: 'In his last weeks, from late May 1971, Armstrong recorded nearly 20 tapes at home on his Tandberg decks, a series he called Armstrong’s Personal Recordings. He decorated many of the tape boxes with collages cut from newspapers and magazines.', clue: 'Something on the patio is still turning. Listen closer than the record.', source: laTapes }, { r: 0.8 });
+    k.egg(laCenterSign, { id: 'armstrong-center', title: 'Across the street', year: '2023', text: 'The Louis Armstrong Center opened across 107th Street from the house in 2023, a 14,000 square foot home for the museum’s welcome desk, exhibitions and archive.', clue: 'Turn your back on the garden and look across the street.', source: laAbout }, { r: 2.2 });
     // the works: the south fence, the garage wall, the rear fence, the house walls, the trellis lattice, the front
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const x = 13.2 + i * 3.5; mounts.push({ position: v(x, 2.95, -19.86), rotation: 0, target: v(x, 3, i < 4 ? -14.5 : -16.5), width: 2.6, height: 1.5, style: 'white', wash: false }); }
@@ -530,7 +640,7 @@ export const grange: RoomDef = {
     for (const s of [-1, 1]) k.box(1.0, 1.5, 68, 34.5, 0.75, s * 36.6, wall);
     for (const s of [-1, 1]) { k.box(0.7, 1.9, 0.7, 34.5, 0.95, s * 2.55, stone); k.box(0.86, 0.12, 0.86, 34.5, 1.96, s * 2.55, stone); k.sphere(0.2, 34.5, 2.2, s * 2.55, stone, 10); }
     k.block(33.9, 35.1, -72, -2.2); k.block(33.9, 35.1, 2.2, 72);
-    k.sign('HAMILTON GRANGE NATIONAL MEMORIAL  ·  ST. NICHOLAS PARK', 2.4, 0.5, 36.4, 1.6, 4.2, '#3a2a1a', '#f4ecd8', 54, PI / 2, { border: true, double: true });
+    const hgGate = k.sign('HAMILTON GRANGE NATIONAL MEMORIAL  ·  ST. NICHOLAS PARK', 2.4, 0.5, 36.4, 1.6, 4.2, '#3a2a1a', '#f4ecd8', 54, PI / 2, { border: true, double: true });
     k.box(0.06, 1.8, 0.06, 36.4, 0.9, 4.2, iron);
     k.crowd([v(38.2, 0, -72), v(38.2, 0, 72)], 16, { seed: 210, speed: 0.9, spread: 1.4, animate: an });
     k.crowd([v(58.2, 0, -72), v(58.2, 0, 72)], 10, { seed: 211, speed: 0.9, spread: 1.4, animate: an });
@@ -669,6 +779,40 @@ export const grange: RoomDef = {
     const bm = new T.Matrix4(), bq = new T.Quaternion(), bp = new T.Vector3(), bs = new T.Vector3();
     const fly = (t: number) => { for (let i = 0; i < 7; i++) { const a = t * 0.25 + i * 0.9, r = 14 + (i % 3) * 3; bp.set(-8 + Math.cos(a) * r, 8.5 + 14 + Math.sin(a * 1.7 + i) * 2, 34 + Math.sin(a) * r); bq.setFromAxisAngle(UP, -a); bs.set(0.6 + 0.5 * Math.abs(Math.sin(t * 9 + i)), 1, 1); bm.compose(bp, bq, bs); birds.setMatrixAt(i, bm); } birds.instanceMatrix.needsUpdate = true; };
     fly(0); if (an) k.ticks.push(fly);
+    // St. Nicholas Avenue traffic at the foot of the hill, both ways
+    traffic3(k, [{ at: 44.4, dir: -1 }, { at: 51.6, dir: 1 }], 'z', 150, 5, an, 241);
+    // the flag on its pole in front of the house, its cloth rippling
+    const hgFX = -7, hgFZ = -13, hgFY = H(hgFX, hgFZ);
+    k.lathe([[0.12, 0], [0.08, 0.2], [0.05, 9], [0.03, 9.6]], hgFX, hgFY - 0.1, hgFZ, trim, 10);
+    k.sphere(0.1, hgFX, hgFY + 9.6, hgFZ, gilt, 10);
+    const hgC = document.createElement('canvas'); hgC.width = 256; hgC.height = 136;
+    const hgG = hgC.getContext('2d');
+    if (hgG) { for (let i = 0; i < 13; i++) { hgG.fillStyle = i % 2 ? '#f4f1e8' : '#b22234'; hgG.fillRect(0, (i * 136) / 13, 256, 136 / 13 + 1); } hgG.fillStyle = '#3c3b6e'; hgG.fillRect(0, 0, 102, 73); hgG.fillStyle = '#f4f1e8'; for (let r = 0; r < 5; r++) for (let c = 0; c < 6; c++) hgG.fillRect(8 + c * 16, 7 + r * 14, 3, 3); }
+    const hgTex = new T.CanvasTexture(hgC); hgTex.colorSpace = T.SRGBColorSpace;
+    const hgFlagG = new T.PlaneGeometry(2.4, 1.28, 14, 4); hgFlagG.translate(1.2, 0, 0);
+    const hgFlag = new T.Mesh(hgFlagG, new T.MeshStandardMaterial({ map: hgTex, side: T.DoubleSide, roughness: 0.8 }));
+    hgFlag.position.set(hgFX + 0.05, hgFY + 8.8, hgFZ); k.add(hgFlag);
+    const hgFA = hgFlagG.attributes.position as T.BufferAttribute, hgF0 = Float32Array.from(hgFA.array as Float32Array);
+    const hgWave = (t: number) => { for (let i = 0; i < hgFA.count; i++) { const x = hgF0[i * 3], y = hgF0[i * 3 + 1]; hgFA.setZ(i, Math.sin(x * 2.4 - t * 4.2 + y * 0.6) * 0.14 * (x / 2.4)); } hgFA.needsUpdate = true; hgFlagG.computeVertexNormals(); };
+    hgWave(0); if (an) k.ticks.push(hgWave);
+    // sweet gum leaves drifting down around the ring of thirteen, one instanced mesh
+    const hgLeafG = new T.CircleGeometry(0.16, 5); hgLeafG.rotateX(-PI / 2);
+    const hgLeaves = k.instances(hgLeafG, k.flat(0xc0502a, 0, 0.85, { side: T.DoubleSide }), Array.from({ length: 34 }, () => new T.Matrix4()));
+    const hgR = X.mulberry(242), hgLf = Array.from({ length: 34 }, () => { const a = PI * 0.55 + hgR() * PI * 0.9; return { x: -8 + 16 * Math.cos(a) + (hgR() - 0.5) * 3, z: 34 + 16 * Math.sin(a) + (hgR() - 0.5) * 3, o: hgR(), s: 0.08 + hgR() * 0.06 }; });
+    const hm = new T.Matrix4(), hq = new T.Quaternion(), hp = new T.Vector3(), hs = new T.Vector3(1, 1, 1), he = new T.Euler();
+    const hgFall = (t: number) => { hgLf.forEach((a, i) => { const u = (t * a.s + a.o) % 1, gy = H(a.x, a.z); hp.set(a.x + Math.sin(t * 0.9 + i) * 0.8, gy + 0.1 + (1 - u) * 7.5, a.z + Math.cos(t * 0.7 + i) * 0.6); he.set(Math.sin(t * 2 + i) * 0.9, t + i, Math.cos(t * 1.7 + i) * 0.7); hq.setFromEuler(he); hm.compose(hp, hq, hs); hgLeaves.setMatrixAt(i, hm); }); hgLeaves.instanceMatrix.needsUpdate = true; };
+    hgFall(0.4); if (an) k.ticks.push(hgFall);
+    // chairs on the east piazza, looking out over the park
+    const hgSeats: T.Matrix4[] = [], hgBacks: T.Matrix4[] = [];
+    for (const z of [-9.2, -5.8, 5.8, 9.2]) { hgSeats.push(mat4(-12.1, FL + 0.46, z, PI / 2)); hgBacks.push(mat4(-12.35, FL + 0.9, z, PI / 2)); k.keepOut.push({ x: -12.1, z, r: 0.45 }); }
+    k.instances(new T.BoxGeometry(0.5, 0.06, 0.5), shutter, hgSeats); k.instances(new T.BoxGeometry(0.5, 0.9, 0.05), shutter, hgBacks);
+    // landmark eggs
+    const hgNps = { name: 'National Park Service, Hamilton Grange', url: 'https://www.nps.gov/hagr/learn/historyculture/index.htm' };
+    k.egg(hgGate, { id: 'third-home', title: 'The third address', year: '1889 and 2008', text: 'This is the Grange’s third address, 414 West 141st Street in St. Nicholas Park. A first move in 1889 saved it from the coming street grid. In 2008 it was moved again, into the park, and restored to its original appearance.', clue: 'The sign at the park gate gives an address. The house has had others.', source: { name: 'National Park Service, Hamilton Grange fact sheet', url: 'https://home.nps.gov/npnh/learn/news/fact-sheet-hagr.htm' } }, { r: 1.4 });
+    k.egg(v(-11.3, G + 0.7, 6.5), { id: 'thirty-eight-feet', title: 'Thirty eight feet up', year: '2008', text: 'To reach the park, movers lifted the whole house 38 feet into the air and rolled it out over the stone porch of the church beside it. It took 38 days from leaving its foundation to arriving here, just around the corner.', clue: 'Look at what the house stands on now. It was not always this low.', source: { name: 'National Park Service, A Monumental Move', url: 'https://www.nps.gov/articles/000/a-monumental-move.htm' } }, { r: 1.2 });
+    k.egg(v(X1 + 0.4, FL + 2.6, 0), { id: 'named-for-scotland', title: 'Named for Scotland', year: '1802', text: 'Hamilton had John McComb Jr. design this Federal style country house, completed in 1802 and named The Grange after his father’s ancestral home in Scotland. He enjoyed it for only two years: on July 11, 1804 he was fatally wounded in a duel with Aaron Burr.', clue: 'Climb the steps to the fanlight over the front door.', source: hgNps }, { r: 1.4 });
+    k.egg(v(-24, H(-24, 34) + 4, 34), { id: 'thirteen-sweetgums', title: 'Thirteen sweet gums', text: 'Hamilton planted thirteen sweet gum trees by the house, said to stand for the thirteen original colonies. The last of them died on May 1, 1908. Since the 2008 move, new sweet gums have been planted and cared for just outside his study.', clue: 'Count the trees in the ring on the hill.', source: { name: 'National Park Service, Hamilton’s Sweet Gum Trees', url: 'https://www.nps.gov/articles/000/hamilton-s-sweet-gum-trees.htm' } }, { r: 3 });
+    k.egg(v(-27.4, FL + 1.0, -9.2), { id: 'pianoforte', title: 'Duets in the parlor', text: 'The parlor holds an early pianoforte that Hamilton played to accompany his daughter Angelica in duets. The rest of the furniture was scattered long ago; what stands here was bought from descendants, donated, reproduced or inferred.', clue: 'In the octagonal parlor, find the instrument by the window.', source: { name: 'National Park Service, Hamilton Grange Parlor', url: 'https://www.nps.gov/articles/000/hamilton-grange-parlor.htm' } }, { r: 1.0 });
     const inHouse = (x: number, z: number) => (x > X0 && x < X1 && Math.abs(z) < HZ) || Math.hypot(x + 23, Math.abs(z) - 8) < 6.5 || (x >= X1 && x <= -10.9 && Math.abs(z) < 11.2) || (x >= -36.1 && x <= X0 && Math.abs(z) < 11.2);
     return {
       mounts, spawn: v(27, 3, 6.2), look: v(-20, 12.5, 0), eye: 3, bounds: [-46, 60.6, -72, 72], style: 'gilt',
