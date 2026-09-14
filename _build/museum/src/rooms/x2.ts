@@ -4,6 +4,7 @@
    Each carries its street, its envelope, its machines and its life, then hangs New Yorkers. */
 import * as T from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Kit, type Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
@@ -27,6 +28,66 @@ function cabStatic(k: Kit, x: number, y: number, z: number, ry: number, yellow: 
 /* a matrix for an instance */
 function mat(x: number, y: number, z: number, ry = 0, sx = 1, sy = 1, sz = 1, rx = 0, rz = 0) {
   return new T.Matrix4().compose(v(x, y, z), new T.Quaternion().setFromEuler(new T.Euler(rx, ry, rz)), v(sx, sy, sz));
+}
+/* a part: geometry, material, offset, rotation. Moving machines are merged per material, so a train or a
+   loader costs one draw call per material rather than one per box; still ones go to the kit's static merge. */
+type Part = [T.BufferGeometry, T.Material, number, number, number, number?, number?, number?];
+function merged(parts: Part[]) {
+  const g = new T.Group(), by = new Map<T.Material, T.BufferGeometry[]>();
+  for (const [geo, m, x, y, z, rx = 0, ry = 0, rz = 0] of parts) {
+    const gg = geo.index ? geo.toNonIndexed() : geo;
+    gg.applyMatrix4(mat(x, y, z, ry, 1, 1, 1, rx, rz));
+    if (!by.has(m)) by.set(m, []);
+    by.get(m)!.push(gg);
+  }
+  for (const [m, list] of by) { const geo = mergeGeometries(list); if (geo) g.add(new T.Mesh(geo, m)); }
+  return g;
+}
+function placeParts(k: Kit, parts: Part[], x: number, y: number, z: number, ry = 0) {
+  const base = mat(x, y, z, ry);
+  for (const [geo, m, px, py, pz, rx = 0, pry = 0, rz = 0] of parts) { geo.applyMatrix4(mat(px, py, pz, pry, 1, 1, 1, rx, rz)).applyMatrix4(base); k.mesh(geo, m); }
+}
+/* the yellow cab as parts, wheels included */
+function cabParts(yellow: T.Material, glass: T.Material, dark: T.Material, rubber: T.Material): Part[] {
+  const p: Part[] = [[new T.BoxGeometry(1.9, 0.6, 4.7), yellow, 0, 0.65, 0], [new T.BoxGeometry(1.75, 0.62, 2.6), yellow, 0, 1.24, -0.2], [new T.BoxGeometry(1.78, 0.5, 2.5), glass, 0, 1.22, -0.2], [new T.BoxGeometry(1.95, 0.2, 0.2), dark, 0, 0.45, 2.4], [new T.BoxGeometry(1.95, 0.2, 0.2), dark, 0, 0.45, -2.4], [new T.BoxGeometry(1.7, 0.08, 4.5), dark, 0, 0.32, 0]];
+  for (const [dx, dz] of [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]]) p.push([new T.CylinderGeometry(0.32, 0.32, 0.22, 12), rubber, dx, 0.32, dz, 0, 0, PI / 2]);
+  return p;
+}
+/* a canvas drawn by hand, for the signs the kit's one line sign cannot draw */
+function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  draw(c.getContext('2d')!);
+  const t = new T.CanvasTexture(c);
+  t.colorSpace = T.SRGBColorSpace; t.anisotropy = 4;
+  return t;
+}
+/* a round route bullet, the way the subway draws its lines */
+function bullet(k: Kit, text: string, bg: string, r: number, x: number, y: number, z: number, rotY: number) {
+  const t = canvasTex(256, 256, (g) => { g.fillStyle = bg; g.beginPath(); g.arc(128, 128, 124, 0, PI * 2); g.fill(); g.fillStyle = '#ffffff'; g.font = '700 180px Helvetica Neue, Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 128, 138); });
+  const o = k.mesh(new T.CircleGeometry(r, 32), new T.MeshBasicMaterial({ map: t, transparent: true }), x, y, z, true);
+  o.rotation.y = rotY;
+  return o;
+}
+/* a sign that reads the right way from both sides: one canvas on two planes back to back, one draw call */
+function twoFaced(k: Kit, tex: T.Texture, w: number, h: number, x: number, y: number, z: number, rotY: number) {
+  const m = new T.MeshBasicMaterial({ map: tex, transparent: true });
+  const g = merged([[new T.PlaneGeometry(w, h), m, 0, 0, 0.02], [new T.PlaneGeometry(w, h), m, 0, 0, -0.02, 0, PI, 0]]);
+  g.position.set(x, y, z); g.rotation.y = rotY;
+  k.add(g);
+  return g;
+}
+/* world scaled UVs for a textured box that moves, which the kit's static projection never sees */
+function boxUV(g: T.BufferGeometry, density: number) {
+  const p = g.attributes.position, n = g.attributes.normal, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) {
+    const nx = Math.abs(n.getX(i)), ny = Math.abs(n.getY(i)), nz = Math.abs(n.getZ(i));
+    if (ny >= nx && ny >= nz) uv.setXY(i, p.getX(i) * density, p.getZ(i) * density);
+    else if (nx >= nz) uv.setXY(i, p.getZ(i) * density, p.getY(i) * density);
+    else uv.setXY(i, p.getX(i) * density, p.getY(i) * density);
+  }
+  uv.needsUpdate = true;
+  return g;
 }
 /* a yellow cab from primitives: body, cabin, glass, bumpers, roof light. Wheels are the caller's instances. */
 function cab(k: Kit, yellow: T.Material, glass: T.Material, dark: T.Material, light: T.Material) {
@@ -87,11 +148,17 @@ export const laundry: RoomDef = {
     blockFront(k, { x: 13, z0: -20, count: 5, face: -1, seed: 413, h: [10, 16] });
     for (const s of [-1, 1]) { k.box(9, 6, 7, 17.5, 3, s * 12.5, brick); k.box(0.12, 3.6, 5.6, 13.02, 1.8, s * 12.5, gate); k.moulding([[0, 0], [0.5, 0], [0.55, 0.2], [0.3, 0.4], [0, 0.5]], 7, 12.95, 5.5, s * 12.5, cornice, 0); }
     k.skyline({ z: -140, count: 14, spacing: 8, scale: 1.3, base: -2, seed: 414, lit: 0.3, glow: 0.8, tint: 0x2a3040, rows: 1 });
-    // the el across the avenue
-    for (const z of [-46, -70]) { for (const x of [-6.5, 6.5]) k.cyl(0.45, 8, x, 4, z, steel, 0.45, 10); k.box(2.2, 1.2, 3, 0, 8.4, z, steel); }
-    k.box(1.0, 1.4, 60, -6.5, 9.6, -58, steel); k.box(1.0, 1.4, 60, 6.5, 9.6, -58, steel); k.box(14, 0.5, 60, 0, 10.4, -58, dark);
-    for (let z = -32; z > -86; z -= 2.4) k.box(15, 0.14, 0.35, 0, 10.75, z, iron);
-    for (const s of [-1, 1]) k.box(0.08, 1.1, 60, s * 7.4, 11.3, -58, iron);
+    // the el: the Flushing line carried over Roosevelt Avenue the whole length of the block and on into the night
+    const EL0 = -200, EL1 = 170, ELc = (EL0 + EL1) / 2, ELn = EL1 - EL0;
+    let elCol: T.Mesh | null = null;
+    for (const z of [-190, -166, -142, -118, -94, -70, -46, -22, 12, 36, 60, 84, 108, 132, 156]) {
+      for (const x of [-6.5, 6.5]) { const c = k.cyl(0.45, 8.9, x, 4.45, z, steel, 0.45, 10); if (z === 12 && x > 0) elCol = c; k.box(1.2, 0.3, 1.2, x, 0.15, z, dark); k.keepOut.push({ x, z, r: 0.7 }); }
+      k.box(14.2, 1.0, 0.8, 0, 8.9, z, steel);
+    }
+    k.box(1.0, 1.4, ELn, -6.5, 9.6, ELc, steel); k.box(1.0, 1.4, ELn, 6.5, 9.6, ELc, steel); k.box(14, 0.5, ELn, 0, 10.4, ELc, dark);
+    for (let z = EL1 - 2; z > EL0; z -= 2.4) k.box(15, 0.14, 0.35, 0, 10.75, z, iron);
+    for (const s of [-1, 1]) k.box(0.08, 1.1, ELn, s * 7.4, 11.3, ELc, iron);
+    for (const x of [-3.1, -1.7, 1.7, 3.1]) k.box(0.1, 0.12, ELn, x, 10.88, ELc, chrome);
     for (const z of [26, -26]) for (const s of [-1, 1]) k.lamp(s * 10.5, z, 6.5, iron, 0xffd9a8, 26);
     k.prop('hydrant', -10.6, 0, 8, { height: 1.1, keepOut: 0.5 });
     k.prop('mailbox', 10.7, 0, -14, { height: 1.5, rotY: PI / 2, keepOut: 0.6 });
@@ -147,6 +214,8 @@ export const laundry: RoomDef = {
     k.instances(new T.CircleGeometry(0.255, 18), glass, glassM);
     k.instances(new T.TorusGeometry(0.265, 0.035, 8, 26), chrome, rings);
     k.instances(new T.BoxGeometry(0.6, 0.08, 0.02), dark, panels);
+    const coins: T.Matrix4[] = []; for (const m of machines) coins.push(new T.Matrix4().compose(off(m, 0.24, m.tall ? 0.78 : 0.33, m.d + 0.02), m.q, v(1, 1, 1)));
+    k.instances(new T.BoxGeometry(0.12, 0.09, 0.03), chrome, coins);
     k.block(SX + W - 1.0, SX + W, -D / 2, D / 2);
     for (const s of [-1, 1]) k.block(SX + 2.0, SX + W, s > 0 ? D / 2 - 1.1 : -D / 2, s > 0 ? D / 2 : -D / 2 + 1.1);
     // the drums that are running: paddles and a tumbling load, one instanced mesh each
@@ -199,6 +268,60 @@ export const laundry: RoomDef = {
     { const wm = new T.InstancedMesh(new T.CylinderGeometry(0.32, 0.32, 0.22, 12), dark, 4); [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]].forEach(([dx, dz], i) => wm.setMatrixAt(i, mat(dx, 0.32, dz, 0, 1, 1, 1, 0, PI / 2))); wm.instanceMatrix.needsUpdate = true; taxi.add(wm); }
     k.add(taxi);
     k.rider(taxi, k.spline([v(-4, 0, 62), v(-4, 0, -62), v(-1, 0, -66), v(4, 0, -62), v(4, 0, 62), v(1, 0, 66)], true), 8);
+    // the 7 itself: two trains of five stainless cars, one on each track, their windows lit
+    const carBody = k.flat(0xb8bec4, 0.8, 0.3), carWin = k.glow(0xfff2d6), carDark = k.flat(0x2a2e34, 0.5, 0.6);
+    const train = () => { const parts: Part[] = []; for (let i = 0; i < 5; i++) { const z = (i - 2) * 15.6; parts.push([new T.BoxGeometry(2.7, 3.0, 15.2), carBody, 0, 2.0, z], [new T.BoxGeometry(2.74, 0.62, 13.8), carWin, 0, 2.35, z], [new T.BoxGeometry(2.3, 0.5, 14.6), carDark, 0, 0.3, z]); } return k.add(merged(parts)); };
+    const trains = [train(), train()], runL = ELn - 100;
+    const runTrains = (t: number) => trains.forEach((g, i) => { const u = (t * 11 + i * runL * 0.55) % runL; g.position.set(i ? 2.4 : -2.4, 10.8, i ? EL0 + 50 + u : EL1 - 50 - u); });
+    runTrains(3);
+    if (!ctx.reduced) k.ticks.push((t) => runTrains(t));
+    // the route bullet on the girder, a garden apartment gate across the avenue, the plaza sign at the curb
+    const seven = bullet(k, '7', '#b933ad', 0.55, 5.96, 9.6, 3.2, -PI / 2);
+    const gx = -11.6, gz = -18, hedge = k.flat(0x2f5a32, 0, 0.9);
+    for (const dz of [-1.6, 1.6]) { k.box(0.7, 2.8, 0.7, gx, 1.4, gz + dz, brick); k.box(0.85, 0.2, 0.85, gx, 2.9, gz + dz, cornice); k.keepOut.push({ x: gx, z: gz + dz, r: 0.55 }); }
+    k.curve([v(gx, 2.7, gz - 1.25), v(gx, 3.5, gz), v(gx, 2.7, gz + 1.25)], 0.05, iron, 16);
+    for (const s of [-1, 1]) { const zc = gz + s * 4.4; k.box(0.05, 0.08, 5.0, gx, 1.15, zc, iron); for (let i = 0; i < 13; i++) k.box(0.04, 1.2, 0.04, gx, 0.6, gz + s * (2.0 + i * 0.4), iron); k.box(1.1, 0.8, 5.0, gx - 0.75, 0.4, zc, hedge); k.block(gx - 0.1, gx + 0.1, zc - 2.5, zc + 2.5); }
+    k.tree(-12.3, 0, gz, { h: 5.2, r: 2.2, seed: 415, leaf: 0x3a6a3a }); k.keepOut.push({ x: -12.3, z: gz, r: 0.5 });
+    k.cyl(0.05, 3.9, 9.3, 1.95, -6.4, k.flat(0x1f5a3a, 0.4, 0.5), 0.05, 8); k.keepOut.push({ x: 9.3, z: -6.4, r: 0.35 });
+    const plaza = k.sign('37 RD  ·  DIVERSITY PLAZA', 2.6, 0.36, 9.3, 3.6, -5.0, '#1f6a3a', '#f4f4ee', 64, -PI / 2, { border: true, double: true });
+    // a wall clock over the change machine, stuck near three, its second hand still going
+    const CKX = SX + 1.0, CKY = 2.62, CKZ = -D / 2 + 0.17;
+    const face = k.cyl(0.26, 0.04, CKX, CKY, CKZ, enamel, 0.26, 24); face.rotation.x = PI / 2;
+    k.torus(0.27, 0.025, CKX, CKY, CKZ + 0.01, dark, 32);
+    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; const tk = k.box(0.018, i % 3 ? 0.035 : 0.06, 0.01, CKX + Math.sin(a) * 0.21, CKY + Math.cos(a) * 0.21, CKZ + 0.025, dark); tk.rotation.z = -a; }
+    const hand = (len: number, w: number, a: number, m: T.Material, dyn: boolean) => { const g = new T.BoxGeometry(w, len, 0.008); g.translate(0, len * 0.42, 0); const o = k.mesh(g, m, CKX, CKY, CKZ + (dyn ? 0.04 : 0.032), dyn); o.rotation.z = -a; return o; };
+    hand(0.13, 0.022, PI / 2 + 0.06, dark, false); hand(0.2, 0.014, (7 / 60) * PI * 2, dark, false);
+    const second = hand(0.22, 0.006, 0, k.flat(0xc83a2a, 0, 0.6), true);
+    if (!ctx.reduced) k.ticks.push((t) => { second.rotation.z = -Math.floor(t) * (PI / 30); });
+    // a rolling cart making the rounds of the aisle, a bundle in it and two shirts on its pole
+    const cart = k.add(merged([[new T.BoxGeometry(0.62, 0.6, 0.9), wire, 0, 0.62, 0], [new T.BoxGeometry(0.66, 0.03, 0.94), chrome, 0, 0.93, 0], [new T.BoxGeometry(0.03, 0.9, 0.03), chrome, 0, 1.38, -0.43], [new T.BoxGeometry(0.03, 0.9, 0.03), chrome, 0, 1.38, 0.43], [new T.BoxGeometry(0.03, 0.03, 0.9), chrome, 0, 1.82, 0], [new T.SphereGeometry(0.26, 8, 6), blue, 0, 0.72, 0.1], [new T.BoxGeometry(0.03, 0.55, 0.36), laminate, 0, 1.5, -0.15], [new T.BoxGeometry(0.03, 0.55, 0.36), orange, 0, 1.5, 0.2], ...[[-0.28, -0.4], [0.28, -0.4], [-0.28, 0.4], [0.28, 0.4]].map(([dx, dz]): Part => [new T.CylinderGeometry(0.05, 0.05, 0.04, 8), dark, dx, 0.07, dz, 0, 0, PI / 2])]));
+    if (!ctx.reduced) k.rider(cart, k.spline([v(17, 0, -5.3), v(35, 0, -5.3), v(36.3, 0, 0), v(35, 0, 5.3), v(17, 0, 5.3), v(15.9, 0, 0)], true), 0.55);
+    else cart.position.set(17, 0, -5.3);
+    // the rack of finished orders by the drop off, a wet floor sign, jugs on the folding tables
+    k.box(1.8, 0.03, 0.03, SX + 20.6, 1.75, -7.2, chrome); for (const dx of [-0.9, 0.9]) k.box(0.03, 1.75, 0.03, SX + 20.6 + dx, 0.875, -7.2, chrome);
+    const shirts: T.Matrix4[] = []; for (let i = 0; i < 7; i++) shirts.push(mat(SX + 19.9 + i * 0.22, 1.42, -7.2));
+    const shirtM = k.instances(new T.BoxGeometry(0.03, 0.62, 0.42), k.flat(0xffffff, 0, 0.8), shirts); shirts.forEach((_, i) => shirtM.setColorAt(i, cc.set([0xf0e8d8, 0x2a4aa8, 0x9a2a2a, 0xd8d0c0, 0x3a3a40, 0xe6b23a, 0xf4f4f0][i])));
+    k.keepOut.push({ x: SX + 20.6, z: -7.2, r: 0.9 });
+    for (const s of [-1, 1]) { const p = k.box(0.42, 0.62, 0.02, SX + 4.6, 0.3, -1.0 + s * 0.1, k.flat(0xf2c230, 0, 0.5)); p.rotation.x = s * 0.18; } k.keepOut.push({ x: SX + 4.6, z: -1.0, r: 0.4 });
+    for (const [jx, jz, c] of [[SX + 9.2, 1.9, 0xe0402a], [SX + 8.8, 2.1, 0x2a5ac8], [SX + 17.3, -1.8, 0xf2b52a], [SX + 16.8, -2.0, 0x3aa05a]]) k.cyl(0.09, 0.28, jx, 1.07, jz, k.flat(c, 0, 0.5), 0.1, 10);
+    // dryer exhaust breathing out of the vents above the sign into the cold
+    for (const z of [-6, 6]) k.box(0.3, 0.3, 0.5, SX - 0.15, 6.35, z, chrome);
+    const puffN = 36, puffP = new Float32Array(puffN * 3), puffC = new Float32Array(puffN * 3), puffG = new T.BufferGeometry();
+    puffG.setAttribute('position', new T.BufferAttribute(puffP, 3)); puffG.setAttribute('color', new T.BufferAttribute(puffC, 3)); puffG.boundingSphere = new T.Sphere(v(SX - 1, 8.5, 0), 10);
+    k.add(new T.Points(puffG, new T.PointsMaterial({ size: 1.3, map: X.pool(), vertexColors: true, transparent: true, depthWrite: false, blending: T.AdditiveBlending })));
+    const puff = (t: number) => { for (let i = 0; i < puffN; i++) { const u = (t * 0.2 + i / puffN) % 1, z = i % 2 ? 6 : -6, b = 0.5 * (1 - u) * Math.min(1, u * 6); puffP.set([SX - 0.45 - u * 1.2, 6.4 + u * 4.2, z + Math.sin(t * 0.6 + i) * 0.5 * u], i * 3); puffC.set([b, b, b * 1.06], i * 3); } puffG.attributes.position.needsUpdate = puffG.attributes.color.needsUpdate = true; };
+    puff(1.7);
+    if (!ctx.reduced) k.ticks.push((t) => puff(t));
+    // a souvenir from the end of the line, turning on the drop off counter
+    const globe = k.add(merged([[new T.SphereGeometry(0.15, 14, 10), k.flat(0xc8ccd2, 0.9, 0.25, { wireframe: true }), 0, 0.3, 0], [new T.TorusGeometry(0.21, 0.007, 6, 36), chrome, 0, 0.3, 0, PI / 2 - 0.35, 0, 0.25], [new T.TorusGeometry(0.22, 0.007, 6, 36), chrome, 0, 0.3, 0, PI / 2 + 0.3, 0.9, 0], [new T.TorusGeometry(0.2, 0.007, 6, 36), chrome, 0, 0.3, 0, 0.4, 1.9, 0], [new T.CylinderGeometry(0.015, 0.05, 0.16, 8), chrome, 0, 0.08, 0], [new T.CylinderGeometry(0.12, 0.13, 0.02, 18), dark, 0, 0.01, 0]]));
+    globe.position.set(SX + W - 1.7, 1.05, -D / 2 + 2.2);
+    if (!ctx.reduced) k.ticks.push((t) => { globe.rotation.y = t * 0.3; });
+    // the landmarks this avenue is built on
+    k.egg(elCol ?? v(6.5, 4.45, 12), { id: 'el', title: 'The el over Roosevelt Avenue', year: '1917', text: 'The Flushing line opened on April 21, 1917, running trains from Queensboro Plaza out along Roosevelt Avenue to Alburtis Avenue, today 103rd Street, Corona Plaza. By January 1928 it reached Main Street, Flushing.', clue: 'Look up at the steel that carries the whole avenue on its shoulders.', source: { name: 'nycsubway.org', url: 'https://www.nycsubway.org/wiki/IRT_Flushing_Line' } });
+    k.egg(seven, { id: 'express', title: 'The International Express', year: '1999', text: 'The 7 runs through so many immigrant neighbourhoods that it earned the nickname the International Express. In 1999 the White House designated the line a National Millennium Trail.', clue: 'A purple circle on the girder speaks every language on this avenue.', source: { name: 'QNS', url: 'https://qns.com/2000/01/the-community-of-flushing/' } });
+    k.egg(v(gx, 1.8, gz), { id: 'garden', title: 'The garden apartment', year: '1917', text: 'The Queensboro Corporation coined the term garden apartment in 1917 for its first big Jackson Heights complex, planned around shared gardens. In 1993 the Landmarks Preservation Commission made about 36 blocks of the neighbourhood a historic district, then only the second in Queens.', clue: 'Across the avenue, a gate opens onto green that nobody owns alone.', source: { name: 'Jackson Heights Beautification Group', url: 'https://www.jhbg.org/history-of-jackson-heights' } }, { r: 1.8 });
+    k.egg(plaza, { id: 'plaza', title: 'Diversity Plaza', year: '2012', text: 'In fall 2012 the city closed 37th Road to cars between Broadway and 74th Street and opened an interim plaza, now the public square of Jackson Heights. Rebuilt in permanent materials, it reopened in summer 2018.', clue: 'A green street sign at the curb points to the square everyone shares.', source: { name: 'NYC Street Design Manual', url: 'https://www.nycstreetdesign.info/studies/diversity-plaza' } });
+    k.egg(globe, { id: 'unisphere', title: 'The globe at the end of the line', year: '1964', room: 'unisphere', text: "Out along the 7, in Flushing Meadows Corona Park, stands the Unisphere, the stainless steel Earth commissioned for the 1964 to 1965 World's Fair. It was designated an official city landmark in 1995.", clue: 'Someone left a tiny world on the drop off counter.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/flushing-meadows-corona-park/highlights/12761' } });
     // the hang: enamel panels above the dryers and the washers, the community board over the window, the census as the notice wall
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const x = SX + 3.5 + i * 4.0; mounts.push(M(x, 3.35, s * (D / 2 - 0.2), x, s * 3.0, 3.4, 1.9, 'enamel', true)); }
@@ -265,7 +388,9 @@ export const taxi: RoomDef = {
     for (const [z0, z1] of [[-GD / 2, -15.2], [-8.8, -3.2], [3.2, 8.8], [15.2, GD / 2]]) { const zc = (z0 + z1) / 2, w = z1 - z0; k.box(0.5, H + 1.2, w, GX, (H + 1.2) / 2, zc, brick); k.box(0.56, 1.2, w, GX, 0.6, zc, paint); k.block(GX - 0.3, GX + 0.3, z0, z1); }
     for (const zc of [-12, 0, 12]) { k.box(0.5, H + 1.2 - 5.2, 6.4, GX, 5.2 + (H + 1.2 - 5.2) / 2, zc, brick); k.box(0.7, 0.5, 6.6, GX, 5.35, zc, steel); }
     for (const zc of [-18.6, -6, 6, 18.6]) { k.box(0.2, 1.3, 3.2, GX - 0.2, 7.0, zc, cornice); k.box(0.06, 1.1, 3.0, GX - 0.32, 7.0, zc, glassDark); }
-    k.box(0.16, 5.0, 6.3, GX + 0.1, 2.55, -12, corr); k.block(GX - 0.3, GX + 0.3, -15.2, -8.8);
+    const door = k.mesh(boxUV(new T.BoxGeometry(0.16, 5.0, 6.3), 0.6), corr, GX + 0.1, 2.55, -12, true); k.block(GX - 0.3, GX + 0.3, -15.2, -8.8);
+    // the down door rolls up for a cab now and then, and comes back down
+    if (!ctx.reduced) k.ticks.push((t) => { const c = (t % 30) / 30, o = c < 0.1 ? c / 0.1 : c < 0.45 ? 1 : c < 0.55 ? 1 - (c - 0.45) / 0.1 : 0, s = 1 - 0.8 * o; door.scale.y = s; door.position.y = 5.05 - 2.5 * s; });
     k.moulding([[0, 0], [0.7, 0], [0.8, 0.2], [0.5, 0.35], [0.6, 0.55], [0.25, 0.75], [0, 0.85]], GD + 0.4, GX - 0.05, H + 0.9, 0, cornice, 0);
     k.box(0.3, 1.5, 24, GX - 0.25, H + 2.2, 0, dark);
     k.sign('L.I.C. CAB CORP.  ·  MEDALLION GARAGE  ·  DISPATCH 24 HRS', 22, 1.3, GX - 0.42, H + 2.2, 0, '#141416', '#f2c230', 88, -PI / 2, { border: true });
@@ -298,12 +423,20 @@ export const taxi: RoomDef = {
     // the machines: the lift with a cab up on it, tire stacks, the tool chest, drums of oil
     const cabYellow = yellow;
     const wheels: T.Matrix4[] = [];
-    const park = (x: number, z: number, ry: number, y = 0) => { const lamp = cabStatic(k, x, y, z, ry, cabYellow, glassDark, dark, k.glow(0xfff0c0)); for (const [dx, dz] of [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]]) { const p = v(dx, 0.32 + y, dz).applyAxisAngle(v(0, 1, 0), ry).add(v(x, 0, z)); wheels.push(mat(p.x, p.y, p.z, ry, 1, 1, 1, 0, PI / 2)); } k.keepOut.push({ x, z, r: 2.6 }); return lamp; };
+    const park = (x: number, z: number, ry: number, y = 0) => { const lamp = cabStatic(k, x, y, z, ry, cabYellow, glassDark, dark, new T.MeshBasicMaterial({ color: 0xfff0c0 })); for (const [dx, dz] of [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]]) { const p = v(dx, 0.32 + y, dz).applyAxisAngle(v(0, 1, 0), ry).add(v(x, 0, z)); wheels.push(mat(p.x, p.y, p.z, ry, 1, 1, 1, 0, PI / 2)); } k.keepOut.push({ x, z, r: 2.6 }); return lamp; };
     const parked = [park(bays[1].x - Math.cos(bays[1].th) * 3.4, bays[1].z - Math.sin(bays[1].th) * 3.4, PI / 2 - bays[1].th), park(bays[3].x - 3.4, bays[3].z, PI / 2), park(bays[5].x - Math.cos(bays[5].th) * 3.4, bays[5].z - Math.sin(bays[5].th) * 3.4, PI / 2 - bays[5].th), park(20, 26, 0.1), park(24, 26, -0.1)];
     const LX = 24, LZ = -15;
-    for (const s of [-1, 1]) { k.box(0.5, 3.6, 0.7, LX + s * 1.6, 1.8, LZ, red); k.box(2.2, 0.16, 0.16, LX, 2.0, LZ + s * 0.9, steelL); }
-    k.box(3.6, 0.3, 0.5, LX, 3.5, LZ, red);
-    parked.push(park(LX, LZ, PI / 2, 1.9));
+    for (const s of [-1, 1]) { k.box(0.5, 4.6, 0.6, LX, 2.3, LZ + s * 1.55, red); k.box(0.8, 0.08, 0.9, LX, 0.04, LZ + s * 1.55, dark); }
+    k.box(0.5, 0.3, 3.7, LX, 4.5, LZ, red);
+    // the lift: a cab and its arms going up for the night mechanic, and coming down again
+    const liftLamp = new T.MeshBasicMaterial({ color: 0xfff0c0 });
+    const lift = k.add(merged([...cabParts(cabYellow, glassDark, dark, rubber), [new T.BoxGeometry(0.7, 0.16, 0.22), liftLamp, 0, 1.63, 0.2], ...[-1, 1].flatMap((s): Part[] => [[new T.BoxGeometry(1.05, 0.1, 0.16), steelL, s * 1.02, 0.2, 1.3], [new T.BoxGeometry(1.05, 0.1, 0.16), steelL, s * 1.02, 0.2, -1.3], [new T.BoxGeometry(0.34, 0.6, 0.3), steel, s * 1.55, 0.35, 0]])]));
+    lift.rotation.y = PI / 2;
+    const liftH = (t: number) => { const c = (t % 24) / 24, s = c < 0.18 ? c / 0.18 : c < 0.6 ? 1 : c < 0.78 ? 1 - (c - 0.6) / 0.18 : 0; return 0.1 + 1.8 * s * s * (3 - 2 * s); };
+    lift.position.set(LX, liftH(8), LZ);
+    if (!ctx.reduced) k.ticks.push((t) => { lift.position.y = liftH(t); });
+    k.keepOut.push({ x: LX, z: LZ, r: 2.6 });
+    parked.push(lift.children.find((c) => (c as T.Mesh).material === liftLamp) as T.Mesh<T.BufferGeometry, T.Material>);
     k.instances(new T.CylinderGeometry(0.32, 0.32, 0.22, 12), rubber, wheels);
     const tires: T.Matrix4[] = [];
     for (const [tx, tz, n] of [[30, -19.5, 5], [32, -19.5, 4], [34, -19.5, 6]]) for (let i = 0; i < n; i++) tires.push(mat(tx, 0.18 + i * 0.24, tz, 0, 1, 1, 1, PI / 2));
@@ -334,13 +467,59 @@ export const taxi: RoomDef = {
     // the people: drivers waiting on their cabs, the sidewalk across the boulevard, a cab pulling in
     k.crowd([v(17, 0, -6), v(24, 0, 2), v(31, 0, -12), v(21, 0, -13)], 9, { seed: 427, speed: 0.3, spread: 1.4, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0x151517, 0xc9a25a, 0x2b5f6e] });
     k.crowd([v(-11, 0, 60), v(-11, 0, -60)], 10, { seed: 428, speed: 0.9, spread: 1.6, animate: !ctx.reduced });
-    const mover = cab(k, cabYellow, glassDark, dark, k.glow(0xfff0c0));
+    const mover = cab(k, cabYellow, glassDark, dark, new T.MeshBasicMaterial({ color: 0xfff0c0 }));
     mover.add(new T.InstancedMesh(new T.CylinderGeometry(0.32, 0.32, 0.22, 12), rubber, 4));
     { const wm = mover.children[mover.children.length - 1] as T.InstancedMesh; [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]].forEach(([dx, dz], i) => wm.setMatrixAt(i, mat(dx, 0.32, dz, 0, 1, 1, 1, 0, PI / 2))); wm.instanceMatrix.needsUpdate = true; }
     k.add(mover);
     k.rider(mover, k.spline([v(-2, 0, 78), v(-2, 0, 30), v(3, 0, 19), v(9, 0, 14.5), v(16, 0, 13), v(28, 0, 12), v(41, 0, 7), v(44, 0, -4), v(37, 0, -9), v(26, 0, -5), v(19, 0, 5), v(15, 0, 10.4), v(9, 0, 11.5), v(2, 0, 24), v(-5, 0, 44), v(-5, 0, 96), v(-1, 0, 104), v(-2, 0, 96)], true), 6.5);
     const lamps = [mover.userData.lamp as T.Mesh, ...parked];
     if (!ctx.reduced) k.ticks.push((t) => lamps.forEach((l, i) => { (l.material as T.MeshBasicMaterial).color.set(Math.sin(t * 2.4 + i * 1.9) > 0.2 ? 0xfff0c0 : 0x6a5a30); }));
+    // the medallion on the hood of the cab in bay four
+    const medal = k.box(0.3, 0.02, 0.2, bays[3].x - 1.6, 0.965, bays[3].z, k.flat(0xd8dde2, 0.9, 0.25));
+    // the time clock and card rack on the booth, where every shift starts and ends
+    k.box(0.22, 0.5, 0.36, BX + 2.3, 1.6, BZ + 1.1, k.flat(0xd8d3c4, 0.2, 0.5)); k.box(0.06, 0.8, 0.5, BX + 2.24, 1.7, BZ + 0.3, steelL);
+    k.box(0.02, 0.12, 0.26, BX + 2.42, 1.7, BZ + 1.1, dark);
+    // Gantry Plaza at the end of the boulevard: the waterfront lawn and the Pepsi-Cola sign on its steel grid, lit red over the river
+    const PX = -12, PZ = -87;
+    k.box(44, 1.6, 8, PX, -0.6, PZ + 0.5, k.pbr('txBulk', X.ashlar(0x6a6a66, 425, 2), 0.4)); k.box(40, 0.1, 5, PX, 0.25, PZ + 2, k.pbr('txLawn', X.grass(0x4f7a3a, 429), 0.15));
+    for (let i = 0; i <= 14; i++) k.box(0.18, 14.6, 0.18, PX - 21 + i * 3, 7.3, PZ, steel);
+    for (const y of [0.4, 5.6, 9.8, 14.4]) k.box(42.4, 0.16, 0.16, PX, y, PZ, steel);
+    for (let i = 0; i < 8; i++) k.box(0.5, 6, 0.5, PX - 19.6 + i * 5.6, 3, PZ + 0.5, steelL);
+    const pepsiT = canvasTex(1024, 256, (g) => { g.font = 'italic 700 176px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.shadowColor = '#ff2a1a'; g.shadowBlur = 22; g.strokeStyle = '#ff6a50'; g.lineWidth = 10; g.strokeText('Pepsi=Cola', 512, 136); g.fillStyle = '#e0141c'; g.fillText('Pepsi=Cola', 512, 136); });
+    const pepsi = twoFaced(k, pepsiT, 40, 10, PX, 9.6, PZ, PI);
+    k.point(PX, 9, PZ + 4, 0xff3a2a, 60, 30);
+    // upriver, the Queensboro Bridge striding over the East River on its stone piers
+    const QX = 118, piers = [-92, -148, -186, -246, -290], deckY = 24, qb = k.flat(0x6a7078, 0.6, 0.5), pierStone = k.pbr('txPier', X.ashlar(0x9a9084, 427, 3), 0.25);
+    for (const z of piers) { k.box(16, deckY + 1.4, 7, QX, deckY / 2 - 0.7, z, pierStone); for (const s of [-1, 1]) { k.box(1.4, 24, 1.4, QX + s * 6, deckY + 12, z, qb); k.cyl(0.05, 4, QX + s * 6, deckY + 26, z, qb, 0.8, 8); } k.box(13.4, 1.2, 1.2, QX, deckY + 23, z, qb); }
+    k.box(12.4, 1.4, piers[0] - piers[4], QX, deckY, (piers[0] + piers[4]) / 2, dark);
+    for (const s of [-1, 1]) k.box(0.4, 0.9, piers[0] - piers[4], QX + s * 6, deckY + 1.1, (piers[0] + piers[4]) / 2, qb);
+    for (let i = 0; i < piers.length - 1; i++) {
+      const z0 = piers[i], z1 = piers[i + 1], n = Math.max(4, Math.round(Math.abs(z1 - z0) / 6));
+      const top = (u: number) => deckY + 7 + 16 * Math.abs(2 * u - 1) ** 1.6;
+      for (const s of [-1, 1]) {
+        const x = QX + s * 6;
+        for (let j = 0; j < n; j++) {
+          const u0 = j / n, u1 = (j + 1) / n, za = z0 + (z1 - z0) * u0, zb = z0 + (z1 - z0) * u1;
+          k.beam(v(x, top(u0), za), v(x, top(u1), zb), 0.55, qb, 6);
+          k.beam(v(x, top(u0) - 1.2, za), v(x, top(u1) - 1.2, zb), 0.3, qb, 6);
+          k.beam(v(x, deckY + 0.6, zb), v(x, top(u1), zb), 0.2, qb, 5);
+          k.beam(v(x, deckY + 0.6, j % 2 ? za : zb), v(x, top(j % 2 ? u1 : u0), j % 2 ? zb : za), 0.16, qb, 5);
+        }
+      }
+    }
+    const ramp = k.box(12, 1.2, 46, QX, 12, -70, dark); ramp.rotation.x = Math.atan2(24, 44);
+    // a ferry crossing the river under the bridge
+    const ferry = k.add(merged([[new T.BoxGeometry(6, 1.4, 22), k.flat(0xf2f2ee, 0.1, 0.5), 0, 0.3, 0], [new T.BoxGeometry(5.2, 1.8, 13), k.flat(0xe8ecee, 0.1, 0.4), 0, 1.9, -1], [new T.BoxGeometry(5.3, 0.7, 12.4), glassDark, 0, 2.1, -1], [new T.BoxGeometry(6.05, 0.3, 22.05), k.flat(0x1f5aa8, 0.2, 0.5), 0, 0.7, 0]]));
+    ferry.rotation.y = PI / 2;
+    const runFerry = (t: number) => ferry.position.set(((t * 6) % 480) - 240, -1.2, -168);
+    runFerry(20);
+    if (!ctx.reduced) k.ticks.push((t) => runFerry(t));
+    // the history this garage runs on
+    k.egg(medal, { id: 'medallion', title: 'The medallion', year: '1937', text: "In 1937 Mayor LaGuardia introduced the medallion system and hack licenses. In 1971 the Taxi and Limousine Commission was created out of the NYPD's Hack Bureau, and it still licenses every yellow cab.", clue: 'The license is not in the glovebox: look on the hood of the cab in bay four.', source: { name: 'Brownstoner', url: 'https://www.brownstoner.com/history/where-to-mister/' } });
+    k.egg(parked[3], { id: 'rooflight', title: 'Lit means free', year: '2012', text: 'On November 29, 2012 the TLC simplified the roof light: an illuminated medallion number means the cab is available for a hail, a dark one means it is taken or off duty. The separate off duty light was eliminated.', clue: 'Watch the roofs of the cabs waiting in the side lot.', source: { name: 'NYC TLC, Industry Notice 12-56', url: 'https://www.nyc.gov/assets/tlc/downloads/pdf/archived_industry_notices/industry_notice_12_56.pdf' } });
+    k.egg(v(LX, 2.8, LZ), { id: 'yellow', title: 'Why every cab is yellow', year: '1967', text: 'The first metered taxicabs appeared in New York City in 1907, and by 1913 the city set the fare at 50 cents a mile. All medallion cabs were painted yellow in 1967.', clue: 'The cab going up and down on the lift wears the colour of a rule.', source: { name: 'NYC Department of Records', url: 'https://www.nyc.gov/html/records/html/newsletter/june2012.html' } }, { r: 2.4 });
+    k.egg(pepsi, { id: 'pepsi', title: 'The Pepsi-Cola sign', year: '1940', room: 'gantry', text: 'Built in 1940 on the roof of the Pepsi bottling plant, it was then the longest electric sign in New York State, its letters edged in red neon. It now stands a few feet from its first spot, in Gantry Plaza State Park, a city landmark since 2016.', clue: 'Walk to where the boulevard runs out of land; red script is waiting over the water.', source: { name: 'NYC Landmarks Preservation Commission', url: 'https://s-media.nyc.gov/agencies/lpc/lp/1653.pdf' } });
+    k.egg(v(QX - 6, deckY + 14, -148), { id: 'queensboro', title: 'The Queensboro Bridge', year: '1901 to 1908', room: 'queensboro', text: 'Begun in 1901 and completed in 1908, with Henry Hornbostel as architect, the bridge crosses the East River by way of Roosevelt Island to 59th and 60th Streets in Manhattan. The city designated it a landmark on April 16, 1974.', clue: 'Upriver, steel lace strides over the water on stone legs.', source: { name: 'NYC Landmarks Preservation Commission', url: 'https://s-media.nyc.gov/agencies/lpc/lp/0828.pdf' } }, { r: 7 });
     const mounts: Mount[] = [];
     bays.forEach((b) => mounts.push(M(b.x - Math.cos(b.th) * 0.2, 3.35, b.z - Math.sin(b.th) * 0.2, b.x - Math.cos(b.th) * 7, b.z - Math.sin(b.th) * 7, 5.0, 2.7, 'steel', true)));
     for (const x of [17.5, 24, 30.5, 37]) mounts.push(M(x, 3.5, GD / 2 - 0.24, x, GD / 2 - 6, 4.6, 2.6, 'steel', true));
@@ -417,7 +596,7 @@ export const flowercold: RoomDef = {
     k.sign('RECEIVING  ·  5 AM', 2.2, 0.32, SX - 0.02, 4.9, 11.7, '#0d0d0d', '#f4f0e8', 90, -PI / 2);
     aw(SX, 0, D - 1, awning, -1);
     k.box(0.3, 0.3, D, SX - 0.1, H - 0.15, 0, panel);
-    k.sign('CUT FLOWERS  ·  WHOLESALE  ·  OPEN 5 AM  ·  TO THE TRADE', 13, 0.42, SX - 2.2, 3.15, 0, 'transparent', '#f4f0e8', 70, -PI / 2);
+    const trade = k.sign('CUT FLOWERS  ·  WHOLESALE  ·  OPEN 5 AM  ·  TO THE TRADE', 13, 0.42, SX - 2.2, 3.15, 0, 'transparent', '#f4f0e8', 70, -PI / 2);
     for (let i = 0; i < 3; i++) k.point(SX - 1.6, 3.0, -5 + i * 5, 0xffe0a0, 8, 7);
     // the front: panel wall, a window of flowers, the strip curtain door with its header
     for (const s of [-1, 1]) { const z0 = s > 0 ? 1.7 : -D / 2, z1 = s > 0 ? D / 2 : -1.7, zc = (z0 + z1) / 2, w = z1 - z0; k.box(0.3, H, w, SX, H / 2, zc, panel); k.block(SX - 0.3, SX + 0.3, z0, z1); }
@@ -498,6 +677,50 @@ export const flowercold: RoomDef = {
     k.crowd([v(SX + 3, 0, 3.4), v(SX + 14, 0, 3.6), v(SX + 26, 0, 3.4)], 2, { seed: 453, speed: 0.25, spread: 0.4, animate: !ctx.reduced, colors: [0x24262c, 0x1f5a3a] });
     k.crowd([v(-10.5, 0, 55), v(-10.5, 0, -55)], 6, { seed: 454, speed: 0.75, spread: 1.4, animate: !ctx.reduced });
     k.crowd([v(10.5, 0, 55), v(10.5, 0, 17)], 3, { seed: 455, speed: 0.7, spread: 1.0, animate: !ctx.reduced });
+    // the block's own history: an old enamel blade across the street, and one window up there still playing
+    const gutt = twoFaced(k, X.signText('GUTTMAN & RAYNOR  ·  EST. 1894', 1024, 256, '#1f4a30', '#efe6cc', 92, { border: true }), 3.6, 0.9, -11.1, 5.7, 4, 0);
+    k.box(3.9, 0.05, 0.05, -11.05, 6.2, 4, dark);
+    const tpT = canvasTex(256, 384, (g) => {
+      const gr = g.createLinearGradient(0, 0, 0, 384); gr.addColorStop(0, '#ffd88a'); gr.addColorStop(1, '#d08a3a'); g.fillStyle = gr; g.fillRect(0, 0, 256, 384);
+      g.fillStyle = '#1a1210'; g.fillRect(28, 236, 150, 130); g.fillRect(18, 222, 170, 18);
+      g.fillStyle = '#f4ead0'; g.fillRect(62, 180, 62, 40); g.strokeStyle = '#5a4030'; g.lineWidth = 2; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(66, 186 + i * 7); g.lineTo(120, 186 + i * 7); g.stroke(); }
+      g.fillStyle = '#b8862a'; g.font = '700 30px Georgia, serif'; g.textAlign = 'center'; g.fillText('SHEET MUSIC', 128, 70);
+      g.strokeStyle = '#2a1a10'; g.lineWidth = 10; g.strokeRect(5, 5, 246, 374); g.fillStyle = '#2a1a10'; g.fillRect(0, 150, 256, 8);
+    });
+    const tpMat = new T.MeshBasicMaterial({ map: tpT });
+    const tinpan = k.mesh(new T.PlaneGeometry(1.15, 1.72), tpMat, -12.88, 8.6, -4, true); tinpan.rotation.y = PI / 2;
+    const player = k.add(merged([[new T.BoxGeometry(0.02, 0.5, 0.26), dark, 0, 0, 0], [new T.SphereGeometry(0.11, 10, 8), dark, 0, 0.36, 0]]));
+    player.position.set(-12.86, 8.3, -3.72);
+    const tpL = k.point(-11.8, 8.6, -4, 0xffc070, 8, 7);
+    if (!ctx.reduced) k.ticks.push((t) => { const f = 0.84 + 0.16 * Math.sin(t * 3.1) * Math.sin(t * 7.7); tpMat.color.setScalar(f); tpL.intensity = 8 * f; player.position.y = 8.3 + Math.abs(Math.sin(t * 4.2)) * 0.05; player.rotation.x = Math.sin(t * 2.1) * 0.08; });
+    // down the street, the Empire State Building over the rooftops, its crown lights turning
+    const EX = -30, EZ = -230, esbM = k.pbr('fcEsb', X.windows(456, 0.3, 0x6a7078, true), 0.09, { emissive: 0xffffff, emissiveIntensity: 0.7, roughness: 0.6, stretch: 0.42 });
+    k.box(50, 24, 40, EX, 12, EZ, esbM); k.box(34, 100, 24, EX, 74, EZ, esbM); k.box(26, 10, 18, EX, 129, EZ, esbM); k.box(20, 8, 14, EX, 138, EZ, esbM);
+    const crowns = [0, 1, 2].map((i) => { const m = new T.MeshBasicMaterial({ color: 0xffffff }); const w = [14, 10, 6][i]; k.mesh(new T.BoxGeometry(w, 4, w * 0.72), m, EX, 144 + i * 4.2, EZ, true); return m; });
+    k.cyl(1.2, 14, EX, 161, EZ, k.flat(0xcfd6dc, 0.6, 0.3), 3, 12); k.cyl(0.25, 18, EX, 177, EZ, steel, 0.4, 6);
+    const palettes = [[0xffffff, 0xffffff, 0xffffff], [0xe0302a, 0xffffff, 0x2a5ad8], [0x3ad06a, 0x3ad06a, 0xffffff], [0xff7ab8, 0xff7ab8, 0xffffff], [0xffc040, 0xffffff, 0xffc040]];
+    const lightESB = (t: number) => { const p = palettes[Math.floor(t / 7) % palettes.length]; crowns.forEach((m, i) => m.color.set(p[i])); };
+    lightESB(0);
+    if (!ctx.reduced) k.ticks.push((t) => lightESB(t));
+    // the corner: the street sign pole at Seventh Avenue
+    k.cyl(0.055, 4.3, -9.6, 2.15, -50.5, dark, 0.055, 8);
+    const ave = twoFaced(k, X.signText('7 AV', 512, 128, '#1f6a3a', '#f4f4ee', 84, { border: true }), 1.5, 0.36, -8.85, 4.1, -50.5, 0);
+    twoFaced(k, X.signText('W 28 ST', 512, 128, '#1f6a3a', '#f4f4ee', 76, { border: true }), 1.6, 0.36, -9.6, 3.66, -49.7, PI / 2);
+    // Danish trolleys of potted plants on the sidewalk, and one being pushed from the van to the dock
+    const pot = k.flat(0xb8663a, 0, 0.8), leafA = k.flat(0x3d7a3a, 0, 0.9), leafB = k.flat(0x5a8a3a, 0, 0.85);
+    const trolley = (): Part[] => { const p: Part[] = [[new T.BoxGeometry(0.56, 0.05, 1.35), steel, 0, 0.18, 0]]; for (const dx of [-0.26, 0.26]) for (const dz of [-0.64, 0.64]) p.push([new T.BoxGeometry(0.03, 1.9, 0.03), steel, dx, 1.1, dz]); [0.6, 1.0, 1.4, 1.8].forEach((y, r) => { p.push([new T.BoxGeometry(0.56, 0.02, 1.35), steel, 0, y, 0]); for (let i = 0; i < 4; i++) { const dz = -0.48 + i * 0.32; p.push([new T.CylinderGeometry(0.1, 0.08, 0.16, 8), pot, 0, y + 0.09, dz], [new T.IcosahedronGeometry(0.15, 0), (i + r) % 2 ? leafA : leafB, 0, y + 0.3, dz]); } }); for (const dx of [-0.22, 0.22]) for (const dz of [-0.55, 0.55]) p.push([new T.CylinderGeometry(0.05, 0.05, 0.04, 8), rubber, dx, 0.06, dz, 0, 0, PI / 2]); return p; };
+    for (const z of [-3.6, -10.6]) { placeParts(k, trolley(), 10.9, 0, z); k.keepOut.push({ x: 10.9, z, r: 0.8 }); }
+    const hauler = k.add(merged([...trolley(), [new T.CapsuleGeometry(0.2, 0.8, 3, 8), k.flat(0x1f5a3a, 0, 0.8), 0, 1.0, -1.05], [new T.SphereGeometry(0.12, 10, 8), k.flat(0xc8a284, 0, 0.7), 0, 1.62, -1.05]]));
+    const haul = k.spline([v(5.2, 0, 14.4), v(8.6, 0, 12.4), v(11.8, 0, 11.7)]);
+    const haulAt = (t: number) => { const c = (t * 0.06) % 2, u = c < 1 ? c : 2 - c, s = u * u * (3 - 2 * u), d = c < 1 ? 1 : -1; haul.getPointAt(s, hauler.position); const tg = haul.getTangentAt(s); hauler.rotation.y = Math.atan2(tg.x * d, tg.z * d); };
+    haulAt(7);
+    if (!ctx.reduced) k.ticks.push((t) => haulAt(t));
+    // the history of the block
+    k.egg(trade, { id: 'bradshaw', title: 'The first wholesale houses', year: '1891', text: 'Wholesale cut flower companies began moving to 28th Street in the late 1870s. George E. Bradshaw and John R. Hartman opened one of the very first wholesale florist houses in 1891, at 53 West 28th Street.', clue: 'The trade announces itself in cream letters under the awning.', source: { name: "New York's Historic Floral District", url: 'https://www.flowermuseum.org/our-history' } });
+    k.egg(gutt, { id: 'guttman', title: 'Guttman and Raynor', year: '1894', text: 'Guttman and Raynor, wholesale florists, set up at 101 West 28th Street in 1894. Soon the district counted over 200 wholesalers and suppliers, spread from 23rd Street to 34th Street.', clue: 'Across the street, an old enamel blade still takes orders.', source: { name: "New York's Historic Floral District", url: 'https://www.flowermuseum.org/our-history' } });
+    k.egg(tinpan, { id: 'tinpan', title: 'Tin Pan Alley', year: '1893 to 1910', text: 'From 1893 to 1910 the rowhouses at 47 to 55 West 28th Street were home to sheet music publishers, and the din of their pianos gave the block its nickname. The Landmarks Preservation Commission designated all five on December 10, 2019.', clue: 'One lit window upstairs is louder than the rest.', source: { name: 'CityLand', url: 'https://www.citylandnyc.org/landmarks-approves-tin-pan-alley-designation/' } });
+    k.egg(v(EX, 150, EZ), { id: 'empire', title: 'The Empire State Building', year: '1931', text: 'Six blocks north stands the Empire State Building, 102 stories, opened on May 1, 1931 after one year and 45 days of construction.', clue: 'Look down the street past the awnings for a crown that keeps changing colour.', source: { name: 'Empire State Building', url: 'https://www.esbnyc.com/about/history' } }, { r: 14 });
+    k.egg(ave, { id: 'penn', title: 'The station that made the law', year: '1963', room: 'penn', text: 'A few blocks up Seventh Avenue stood Pennsylvania Station, opened in 1910. Its demolition began on October 28, 1963, and on April 15, 1965 Mayor Robert Wagner signed the Landmarks Law that created the Landmarks Preservation Commission.', clue: 'The street sign on the corner points the way to a famous loss.', source: { name: 'Museum of the City of New York', url: 'https://blog.mcny.org/2012/05/08/penn-station-and-the-rise-of-historic-preservation/' } });
     // the hang: both faces of every fin, the long walls above the racks, the order board at the back
     const mounts: Mount[] = [];
     finsX.forEach((x, i) => { mounts.push(M(x - 0.07, 4.2, 0, x - 5, 0, 4.2, 2.4, 'white', true)); if (i < finsX.length - 1) mounts.push(M(x + 0.07, 4.2, 0, x + 5, 0, 4.2, 2.4, 'white', true)); });
@@ -553,22 +776,25 @@ export const handball: RoomDef = {
     k.prop('utility_pole', 30.5, 0, -18, { height: 9, keepOut: 0.5 });
     // the open hydrant: a jet into the street
     k.prop('hydrant', 9.6, 0, -14, { height: 1.1, keepOut: 0.5 });
-    const dropsN = 90, drops = k.instances(new T.SphereGeometry(0.07, 5, 4), water, Array.from({ length: dropsN }, () => new T.Matrix4()));
-    const dropAt = (i: number, t: number, mm: T.Matrix4) => { const u = ((t * 1.6 + i * 0.011) % 1), s = (i % 7) * 0.04; mm.compose(v(10.0 + u * 9.5, 0.7 + u * 3.6 - u * u * 4.6 + s, -14 + (i % 9 - 4) * 0.05 * u * 4), new T.Quaternion(), v(1, 1, 1)); };
+    // with a spray cap on it: a legal fan of water instead of a gusher
+    const dropsN = 110, drops = k.instances(new T.SphereGeometry(0.06, 5, 4), water, Array.from({ length: dropsN }, () => new T.Matrix4()));
+    const dq = new T.Quaternion(), d1 = v(1, 1, 1);
+    const dropAt = (i: number, t: number, mm: T.Matrix4) => { const u = (t * 1.1 + i * 0.137) % 1, a = (((i * 0.618) % 1) - 0.5) * 1.6, r = 0.2 + u * 3.3; mm.compose(v(9.85 + Math.cos(a) * r, 0.72 + u * 1.7 - u * u * 2.3, -14 + Math.sin(a) * r), dq, d1); };
     { const mm = new T.Matrix4(); for (let i = 0; i < dropsN; i++) { dropAt(i, 0, mm); drops.setMatrixAt(i, mm); } }
     if (!ctx.reduced) { const mm = new T.Matrix4(); k.ticks.push((t) => { for (let i = 0; i < dropsN; i++) { dropAt(i, t, mm); drops.setMatrixAt(i, mm); } drops.instanceMatrix.needsUpdate = true; }); }
-    k.box(4, 0.02, 3, 16, 0.02, -14, k.flat(0x1a2430, 0.3, 0.2, { transparent: true, opacity: 0.6 }));
+    k.box(3.6, 0.02, 4.4, 11.9, 0.02, -14, k.flat(0x1a2430, 0.3, 0.2, { transparent: true, opacity: 0.6 }));
     // the courts: asphalt, three monumental walls, the lines, the gaps closed with fence
     const WX = -16, WW = 12, WH = 9.6, GAP = 1.5;
     k.box(15.2, 0.32, 42, -9.4, -0.14, 0, court);
     const walls = [-(WW + GAP), 0, WW + GAP];
+    let shortLine: T.Mesh | null = null;
     walls.forEach((zc, i) => {
       k.box(0.6, WH, WW, WX, WH / 2, zc, i === 1 ? wallC : wallB);
       k.box(0.64, 1.1, WW, WX, 0.55, zc, i === 1 ? band : red);
       k.box(0.66, 0.08, WW, WX, WH - 0.1, zc, white);
-      k.box(0.06, 0.02, WW, WX + 9.7, 0.19, zc, red);
-      for (const s of [-1, 1]) k.box(13.6, 0.02, 0.06, WX + 7.1, 0.19, zc + s * WW / 2, white);
-      for (let x = WX + 0.5; x < -2; x += 1.7) k.box(0.05, 0.03, 0.05, x, 0.18, zc, white);
+      const sl = k.box(0.12, 0.02, WW, WX + 9.7, 0.035, zc, red); if (i === 1) shortLine = sl;
+      for (const s of [-1, 1]) k.box(13.6, 0.02, 0.06, WX + 7.1, 0.035, zc + s * WW / 2, white);
+      for (let x = WX + 0.5; x < -2; x += 1.7) k.box(0.05, 0.02, 0.05, x, 0.035, zc, white);
     });
     k.box(0.5, WH, 42, WX - 0.6, WH / 2, 0, wallB);
     k.box(1.4, 0.4, 42, WX - 0.2, WH + 0.2, 0, dark);
@@ -583,7 +809,7 @@ export const handball: RoomDef = {
     for (const s of [-1, 1]) k.box(0.06, 0.06, FZ - 1.8, FX, FH, s * (FZ + 1.8) / 2, steel);
     for (const z of [-1.9, 1.9]) k.box(0.12, FH + 0.3, 0.12, FX, FH / 2 + 0.15, z, steel);
     k.box(4.2, 0.12, 0.12, FX, FH + 0.2, 0, steel);
-    k.sign('NYC PARKS  ·  HANDBALL COURTS  ·  DUSK TO DAWN  ·  NO BIKES ON THE COURT', 3.4, 0.5, FX + 0.1, FH + 0.6, 0, '#1f5a3a', '#f4f0e8', 46, PI / 2, { border: true, double: true });
+    const parksSign = k.sign('NYC PARKS  ·  HANDBALL COURTS  ·  DUSK TO DAWN  ·  NO BIKES ON THE COURT', 3.4, 0.5, FX + 0.1, FH + 0.6, 0, '#1f5a3a', '#f4f0e8', 46, PI / 2, { border: true, double: true });
     k.box(0.06, 0.6, 3.6, FX, FH + 0.6, 0, green);
     for (const s of [-1, 1]) { k.beam(v(FX - 0.6, 0, s * (FZ - 0.6)), v(FX - 0.6, 11, s * (FZ - 0.6)), 0.14, steel, 8); k.box(0.5, 0.4, 0.9, FX - 0.9, 10.8, s * (FZ - 0.6), dark); k.box(0.3, 0.2, 0.7, FX - 1.15, 10.7, s * (FZ - 0.6), k.glow(0xfff4e0)); k.spot(FX - 0.9, 10.8, s * (FZ - 0.6), WX + 6, 0, s * 8, 0xfff0d8, 260, 0.75, 0.6, 40); k.keepOut.push({ x: FX - 0.6, z: s * (FZ - 0.6), r: 0.5 }); }
     // the game: a ball between wall and hand, two players, the crowd at the fence, pigeons
@@ -597,6 +823,50 @@ export const handball: RoomDef = {
     const pigeons: T.Mesh[] = [];
     for (let i = 0; i < 7; i++) { const b = k.mesh(new T.ConeGeometry(0.09, 0.4, 4), dark, 0, 8, 0, true); b.rotation.x = PI / 2; pigeons.push(b); }
     if (!ctx.reduced) k.ticks.push((t) => pigeons.forEach((b, i) => { const a = t * 0.45 + i * 0.9, r = 9 + 3 * Math.sin(t * 0.2 + i); b.position.set(2 + Math.cos(a) * r, 7 + 2 * Math.sin(t * 0.8 + i), Math.sin(a) * r * 1.6); b.rotation.y = -a; }));
+    // Allen Street's malls: the planted median NYC Parks keeps, trees, benches, the bike path down the middle
+    k.box(5.4, 0.3, 150, 21, 0, 0, k.flat(0xa8a49a, 0, 0.85)); k.box(5.0, 0.3, 150, 21, 0.02, 0, hex); k.box(1.4, 0.01, 150, 22.5, 0.18, 0, k.flat(0x3a7a4a, 0, 0.8));
+    for (let i = 0; i < 12; i++) if (i !== 9) k.tree(19.7, 0.17, -66 + i * 12, { h: 6, r: 2.4, seed: 490 + i, leaf: 0x4a7a3a });
+    for (const z of [-48, -24, 24, 48]) k.bench(19.6, z, PI / 2, wood, dark);
+    for (const dz of [-1.1, 1.1]) k.box(0.08, 2.2, 0.08, 18.9, 1.2, dz, dark);
+    const malls = k.sign('ALLEN STREET MALLS', 2.4, 0.52, 18.84, 1.9, 0, '#1f5a3a', '#f4f0e8', 76, -PI / 2, { border: true });
+    // up the street on the Houston corner, a red sign for lunch
+    const katzSign = twoFaced(k, X.signText('KATZ’S  ·  DELICATESSEN', 1024, 256, '#a8181c', '#f6e9c8', 104, { border: true }), 5.6, 1.4, 30.6, 14, 62, 0);
+    k.box(6.2, 0.08, 0.08, 30.9, 14.8, 62, dark); k.box(6.2, 0.08, 0.08, 30.9, 13.2, 62, dark); k.point(30.6, 13.2, 60.6, 0xff6a5a, 22, 14);
+    // the tenement row behind the walls: one five storey walk up brought forward, with its cornice and fire escape
+    const tenB = k.pbr('hbTen', X.brick(0x7e4a38, 472), 0.28), tenX = -25.7, tenH = 18.5, tGlass = k.glass(0x9fc4d8, 0.35, 0.08), tWarm = k.glow(0xffd8a0);
+    k.box(0.6, tenH, 7.8, tenX, tenH / 2, 0, tenB);
+    k.box(1.1, 0.9, 8.3, tenX + 0.35, tenH + 0.1, 0, k.flat(0x5e544a, 0.4, 0.6));
+    k.box(0.1, 3.4, 7.6, tenX + 0.36, 1.9, 0, k.flat(0x2a2420, 0.3, 0.6));
+    for (let f = 0; f < 5; f++) {
+      const y = 4.4 + f * 2.9;
+      [-2.6, 0, 2.6].forEach((dz, j) => { k.box(0.06, 1.7, 1.1, tenX + 0.32, y, dz, (f * 3 + j) % 4 === 1 ? tWarm : tGlass); k.box(0.14, 0.12, 1.3, tenX + 0.37, y - 0.92, dz, white); k.box(0.12, 0.2, 1.3, tenX + 0.36, y + 0.95, dz, white); });
+      if (f > 0) { k.box(1.2, 0.06, 5.4, tenX + 0.95, y - 1.05, 0, dark); k.box(0.04, 0.9, 5.4, tenX + 1.53, y - 0.6, 0, dark); if (f < 4) k.beam(v(tenX + 1.15, y - 1.0, -2.3), v(tenX + 1.15, y + 1.85, 2.0), 0.03, dark, 4); }
+    }
+    // the flag over the park, waving
+    const FPX = 7.6, FPZ = 2.6;
+    k.cyl(0.06, 9.2, FPX, 4.6, FPZ, steel, 0.04, 8); k.sphere(0.13, FPX, 9.28, FPZ, k.flat(0xd0a852, 0.8, 0.3), 8); k.keepOut.push({ x: FPX, z: FPZ, r: 0.4 });
+    const flagT = canvasTex(256, 136, (g) => { for (let i = 0; i < 13; i++) { g.fillStyle = i % 2 ? '#f4f0e8' : '#b8262a'; g.fillRect(0, (i * 136) / 13, 256, 136 / 13 + 1); } g.fillStyle = '#2a3a78'; g.fillRect(0, 0, 104, 73); g.fillStyle = '#f4f0e8'; for (let r = 0; r < 9; r++) for (let c = 0; c < (r % 2 ? 5 : 6); c++) { g.beginPath(); g.arc(9 + c * 17 + (r % 2 ? 8.5 : 0), 5 + r * 7.8, 2.2, 0, PI * 2); g.fill(); } });
+    const flagG = new T.PlaneGeometry(2.4, 1.28, 16, 6), fpos = flagG.attributes.position as T.BufferAttribute, fx0 = Float32Array.from(fpos.array as ArrayLike<number>);
+    const flag = k.mesh(flagG, new T.MeshStandardMaterial({ map: flagT, side: T.DoubleSide, roughness: 0.8 }), FPX, 8.3, FPZ - 1.24, true);
+    flag.rotation.y = PI / 2;
+    const wave = (t: number) => { for (let i = 0; i < fpos.count; i++) { const x = fx0[i * 3] + 1.2; fpos.setZ(i, Math.sin(x * 2.6 - t * 5.5) * 0.13 * (x / 2.4) + Math.sin(fx0[i * 3 + 1] * 3 + t * 3) * 0.03 * (x / 2.4)); } fpos.needsUpdate = true; flagG.computeVertexNormals(); };
+    wave(0);
+    if (!ctx.reduced) k.ticks.push((t) => wave(t));
+    // Allen Street traffic both ways around the malls, and a bike on the path down the middle
+    const carGlass = k.glass(0x9fc4d8, 0.35, 0.08), carDark = k.flat(0x1c1f24, 0.4, 0.6), tire = k.flat(0x1a1a1c, 0.1, 0.9);
+    const loop = k.spline([v(16.2, 0, 78), v(16.2, 0, -78), v(21, 0, -86), v(25.8, 0, -78), v(25.8, 0, 78), v(21, 0, 86)], true);
+    const cars = [k.add(merged([...cabParts(k.flat(0xf2c230, 0.2, 0.45), carGlass, carDark, tire), [new T.BoxGeometry(0.7, 0.16, 0.22), k.glow(0xfff0c0), 0, 1.63, 0.2]])), k.add(merged(cabParts(k.flat(0x2a3a5a, 0.5, 0.35), carGlass, carDark, tire)))];
+    cars.forEach((c, i) => { if (!ctx.reduced) k.rider(c, loop, 7 + i * 1.5, i * 160); else c.position.set(i ? 25.8 : 16.2, 0, i ? 30 : -24); });
+    const bike = k.add(merged([[new T.TorusGeometry(0.33, 0.035, 6, 18), carDark, 0, 0.36, 0.52, 0, PI / 2, 0], [new T.TorusGeometry(0.33, 0.035, 6, 18), carDark, 0, 0.36, -0.52, 0, PI / 2, 0], [new T.BoxGeometry(0.05, 0.05, 1.0), k.flat(0x2a8ad8, 0.4, 0.4), 0, 0.62, 0], [new T.BoxGeometry(0.05, 0.4, 0.05), carDark, 0, 0.85, -0.25], [new T.CapsuleGeometry(0.19, 0.55, 3, 8), k.flat(0xc83a2a, 0, 0.8), 0, 1.35, -0.1, 0.35, 0, 0], [new T.SphereGeometry(0.12, 10, 8), k.flat(0x8d5a3b, 0, 0.7), 0, 1.86, 0.1]]));
+    if (!ctx.reduced) k.rider(bike, k.spline([v(22.9, 0.17, 72), v(22.9, 0.17, -72), v(22.5, 0.17, -74), v(22.1, 0.17, -72), v(22.1, 0.17, 72), v(22.5, 0.17, 74)], true), 4.2);
+    else bike.position.set(22.9, 0.17, 10);
+    // the neighbourhood the game grew up in
+    k.egg(shortLine ?? v(WX + 9.7, 0.1, 0), { id: 'shortline', title: 'The short line', text: 'A one wall court is a wall twenty feet wide and sixteen feet high, with the short line drawn sixteen feet out and the service zone behind it. Games are played to twenty one points, best two of three.', clue: 'The most important line on the court is not on the wall.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/barrier-playground/history' } });
+    k.egg(parksSign, { id: 'parks', title: 'Handball comes to the parks', year: '1948', text: 'Irish immigrants brought hard handball to New York in the late 19th century. NYC Parks began sponsoring citywide tournaments in 1948, the first at Heckscher Playground in Central Park, and in 2000 set out to renovate 1,500 of its 2,052 courts.', clue: 'Read the green sign over the gate before you play.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/barrier-playground/history' } });
+    k.egg(v(9.6, 0.6, -14), { id: 'spraycap', title: 'The spray cap', text: 'A hydrant fitted with a City approved spray cap releases only 20 to 25 gallons a minute; an illegally opened one pours out more than 1,000. Any adult 18 or over can request a spray cap free at the local firehouse.', clue: 'Somebody on the sidewalk made summer legal.', source: { name: 'NYC Department of Environmental Protection', url: 'https://www.nyc.gov/site/dep/news/26-018/dep-encourages-safe-hydrant-use-safeguard-water-pressure-during-historic-extreme-heatwave' } }, { r: 0.9 });
+    k.egg(v(tenX + 0.5, 16.6, 0), { id: 'tenement', title: 'The tenements behind the wall', year: '1863', text: "Walk ups like this one line the blocks around Allen Street. One block over, 97 Orchard Street was built in 1863, and with 103 Orchard the Tenement Museum's two buildings were home to more than 15,000 immigrants from over 20 nations.", clue: 'Look over the top of the middle wall at the building with the heavy cornice.', source: { name: 'National Trust for Historic Preservation', url: 'https://savingplaces.org/places/tenement' } }, { r: 2.6 });
+    k.egg(malls, { id: 'malls', title: 'The Allen Street Malls', year: '1929', text: 'The planted median down Allen Street is a park. NYC Parks has maintained the Allen Street Malls since August 1929, in eight sections from East Houston Street to East Broadway. The city named the street for William Henry Allen in 1817.', clue: 'Cross to the trees in the middle of the street.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/allen-mall-one/history' } });
+    k.egg(katzSign, { id: 'katz', title: 'Katz’s on the corner', year: '1888', room: 'katz', text: "Two blocks east, at 205 East Houston Street on the corner of Ludlow, Katz's Delicatessen has been feeding the Lower East Side since 1888.", clue: 'Up the street, a red sign promises lunch.', source: { name: "Katz's Delicatessen", url: 'https://katzsdelicatessen.com/' } });
     // the hang: the civic triptych, one monumental work and two flanking portraits per wall, portraits along the fence
     const mounts: Mount[] = [];
     walls.forEach((zc) => { mounts.push(M(WX + 0.34, 5.6, zc, WX + 9, zc, 7.0, 5.2, 'white', false)); for (const s of [-1, 1]) mounts.push(M(WX + 0.34, 3.3, zc + s * 4.8, WX + 6, zc + s * 4.8, 1.8, 2.0, 'white', false)); });
@@ -660,7 +930,7 @@ export const salt: RoomDef = {
     for (let x = 18.5; x < 56; x += 1.0) fins.push(mat(x, GH / 2 + 1, GZ0 - 0.7, PI / 2));
     k.instances(new T.BoxGeometry(0.12, GH - 3, 0.7), finM, fins);
     k.block(16.8, 56.5, GZ0 - 1, GZ1);
-    k.sign('DSNY  ·  MANHATTAN DISTRICTS 1  2  5  GARAGE', 12, 0.7, 17.2, 5.0, 26, '#1c1f24', '#f0f0ea', 70, -PI / 2, { border: true });
+    const garageSign = k.sign('DSNY  ·  MANHATTAN DISTRICTS 1  2  5  GARAGE', 12, 0.7, 17.2, 5.0, 26, '#1c1f24', '#f0f0ea', 70, -PI / 2, { border: true });
     // the shed: a base of concrete walls with the truck door, and the crystal folded over it
     const BX0 = 17, BX1 = 53, BZ = 17, BH = 6.2;
     k.box(BX1 - BX0, 0.3, 2 * BZ, (BX0 + BX1) / 2, -0.15, 0, floorT);
@@ -670,7 +940,7 @@ export const salt: RoomDef = {
     for (const z of [-4.1, 4.1]) k.box(0.5, 5.3, 0.2, BX0, 2.65, z, steel);
     for (const s of [-1, 1]) { k.box(BX1 - BX0, BH, 0.4, (BX0 + BX1) / 2, BH / 2, s * BZ, base); k.block(BX0, BX1, s > 0 ? BZ - 0.3 : -BZ - 0.3, s > 0 ? BZ + 0.3 : -BZ + 0.3); }
     k.box(0.4, BH, 2 * BZ, BX1, BH / 2, 0, base); k.block(BX1 - 0.3, BX1 + 0.3, -BZ, BZ);
-    k.sign('SPRING STREET SALT SHED  ·  DSNY', 6.4, 0.5, BX0 - 0.22, 5.75, 0, 'transparent', '#f0f0ea', 70, -PI / 2);
+    const shedSign = k.sign('SPRING STREET SALT SHED  ·  DSNY', 6.4, 0.5, BX0 - 0.22, 5.75, 0, 'transparent', '#f0f0ea', 70, -PI / 2);
     const pts: T.Vector3[] = [];
     for (const s of [-1, 1]) {
       pts.push(v(BX0 - 0.6, BH, s * (BZ + 0.6)), v(BX1 + 0.6, BH, s * (BZ + 0.6)), v(35, BH, s * (BZ + 1.2)));
@@ -707,14 +977,18 @@ export const salt: RoomDef = {
     if (!ctx.reduced) k.ticks.push((t) => placeGrains(t));
     for (let i = 0; i < 40; i++) { const r = X.mulberry(482 + i); k.sphere(0.5 + r() * 0.9, CX + Math.cos(r() * PI * 2) * (CR + 0.6 + r() * 1.4), 0.1, CZ + Math.sin(r() * PI * 2) * (CR + 0.6 + r() * 1.4), saltM, 7); }
     const LX = 27, LZ = -13;
-    k.box(2.6, 1.6, 4.6, LX, 1.6, LZ, yellow); k.box(2.2, 1.6, 1.8, LX, 3.2, LZ - 0.4, glassDark); k.box(2.3, 0.15, 1.9, LX, 4.05, LZ - 0.4, yellow);
-    k.box(0.4, 0.4, 3.0, LX, 1.4, LZ + 3.6, yellow); k.box(3.2, 1.3, 1.2, LX, 0.8, LZ + 5.4, steel);
-    for (const [dx, dz] of [[-1.3, 1.4], [1.3, 1.4], [-1.3, -1.4], [1.3, -1.4]]) { const w = k.cyl(0.8, 0.6, LX + dx, 0.8, LZ + dz, rubber, 0.8, 14); w.rotation.z = PI / 2; }
-    k.box(0.5, 0.12, 0.2, LX, 4.2, LZ + 0.6, orange);
-    const beacon = k.mesh(new T.SphereGeometry(0.14, 8, 6), k.glow(0xffa020), LX, 4.32, LZ + 0.6, true);
-    if (!ctx.reduced) k.ticks.push((t) => { beacon.visible = Math.sin(t * 6) > 0; });
-    k.keepOut.push({ x: LX, z: LZ + 1.2, r: 2.8 });
-    for (let i = 0; i < 4; i++) { const x = 30 + i * 4.2; const bl = k.mesh(new T.CylinderGeometry(1.3, 1.3, 3.4, 12, 1, true, 0, PI * 0.5), k.flat(0xf2b230, 0.2, 0.5, { side: T.DoubleSide }), x, 1.7, -BZ + 1.1); bl.rotation.set(0.2, -PI * 0.6, PI / 2); k.keepOut.push({ x, z: -BZ + 1.1, r: 1.5 }); }
+    // the loader: rolls up to the pile, lifts a bucket of salt, backs off, lowers again; its beacon turning
+    const loaderBeacon = new T.MeshBasicMaterial({ color: 0xffa020 });
+    const loader = k.add(merged([[new T.BoxGeometry(2.6, 1.6, 4.6), yellow, 0, 1.6, 0], [new T.BoxGeometry(2.2, 1.6, 1.8), glassDark, 0, 3.2, -0.4], [new T.BoxGeometry(2.3, 0.15, 1.9), yellow, 0, 4.05, -0.4], [new T.BoxGeometry(0.5, 0.12, 0.2), orange, 0, 4.2, 0.6], [new T.SphereGeometry(0.14, 8, 6), loaderBeacon, 0, 4.32, 0.6], ...[[-1.3, 1.4], [1.3, 1.4], [-1.3, -1.4], [1.3, -1.4]].map(([dx, dz]): Part => [new T.CylinderGeometry(0.8, 0.8, 0.6, 14), rubber, dx, 0.8, dz, 0, 0, PI / 2])]));
+    const beaconMesh = loader.children.find((c) => (c as T.Mesh).material === loaderBeacon);
+    const arm = new T.Group(); arm.position.set(0, 1.9, 1.8); loader.add(arm);
+    arm.add(merged([[new T.BoxGeometry(0.4, 0.4, 3.0), yellow, 0, 0, 1.5], [new T.BoxGeometry(3.2, 1.3, 1.2), steel, 0, -0.5, 3.4]]));
+    const loaderAt = (t: number) => { const c = (t % 14) / 14, f = c < 0.25 ? c / 0.25 : c < 0.45 ? 1 : c < 0.7 ? 1 - (c - 0.45) / 0.25 : 0; loader.position.set(LX, 0, LZ + 2.2 * f * f * (3 - 2 * f)); arm.rotation.x = c < 0.3 ? 0.15 + 0.5 * c : c < 0.5 ? 0.3 - 4 * (c - 0.3) : c < 0.9 ? -0.5 : -0.5 + 6.5 * (c - 0.9); };
+    loaderAt(0);
+    if (!ctx.reduced) k.ticks.push((t) => { loaderAt(t); if (beaconMesh) beaconMesh.visible = Math.sin(t * 6) > 0; });
+    k.keepOut.push({ x: LX, z: LZ + 2.3, r: 3.4 });
+    let blade: T.Mesh | null = null;
+    for (let i = 0; i < 4; i++) { const x = 30 + i * 4.2; const bl = k.mesh(new T.CylinderGeometry(1.3, 1.3, 3.4, 12, 1, true, 0, PI * 0.5), k.flat(0xf2b230, 0.2, 0.5, { side: T.DoubleSide }), x, 1.7, -BZ + 1.1); bl.rotation.set(0.2, -PI * 0.6, PI / 2); if (i === 0) blade = bl; k.keepOut.push({ x, z: -BZ + 1.1, r: 1.5 }); }
     k.box(1.2, 1.0, 2.6, 19.2, 0.5, 15.0, orange); k.box(1.2, 1.0, 2.6, 20.6, 0.5, 15.0, orange); k.keepOut.push({ x: 19.9, z: 15.2, r: 1.4 });
     for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; k.point(CX + Math.cos(a) * 15.5, 4.6, CZ + Math.sin(a) * 14.5, 0xffc890, 16, 12); }
     for (const [x, z] of [[26, -8], [46, 8], [36, 12]]) k.point(x, 16, z, 0xdfe8ff, 30, 30);
@@ -736,6 +1010,54 @@ export const salt: RoomDef = {
     k.crowd([v(-18, 0, 90), v(-18, 0, -90)], 12, { seed: 483, speed: 1.6, spread: 1.6, animate: !ctx.reduced });
     k.crowd([v(13.5, 0, 80), v(13.5, 0, -80)], 8, { seed: 484, speed: 0.9, spread: 1.4, animate: !ctx.reduced });
     k.crowd([v(21, 0, -13), v(24, 0, -8), v(22, 0, 2), v(20, 0, 12)], 5, { seed: 485, speed: 0.3, spread: 1.0, animate: !ctx.reduced, colors: [0xf07a20, 0x24262c, 0xf07a20, 0x33477f] });
+    // the spreader's spinner throwing salt behind the truck as it rolls
+    const sprayN = 70, spr = new Float32Array(sprayN * 3), sprG = new T.BufferGeometry();
+    sprG.setAttribute('position', new T.BufferAttribute(spr, 3)); sprG.boundingSphere = new T.Sphere(v(0, 1, -5), 6);
+    truck.add(new T.Points(sprG, new T.PointsMaterial({ color: 0xf4f2ea, size: 0.1 })));
+    const sprayAt = (t: number) => { for (let i = 0; i < sprayN; i++) { const u = (t * 1.8 + i / sprayN) % 1, a = (((i * 0.618) % 1) - 0.5) * 2.6, r = 0.3 + u * 3.2; spr.set([Math.sin(a) * r, Math.max(0.05, 0.9 - u * 1.4), -4.4 - Math.cos(a) * r * 0.6], i * 3); } sprG.attributes.position.needsUpdate = true; };
+    sprayAt(0);
+    if (!ctx.reduced) k.ticks.push((t) => sprayAt(t));
+    // the first snow coming in off the river, over the street and the bikeway
+    const dot = canvasTex(32, 32, (g) => { const r = g.createRadialGradient(16, 16, 0, 16, 16, 16); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 32, 32); });
+    const flakesN = ctx.quality === 'high' ? 2400 : 1100, fl = new Float32Array(flakesN * 3), fr = X.mulberry(486);
+    for (let i = 0; i < flakesN; i++) fl.set([-30 + fr() * 44, fr() * 34, -70 + fr() * 140], i * 3);
+    const flG = new T.BufferGeometry(); flG.setAttribute('position', new T.BufferAttribute(fl, 3)); flG.boundingSphere = new T.Sphere(v(-8, 17, 0), 80);
+    k.add(new T.Points(flG, new T.PointsMaterial({ map: dot, size: 0.16, transparent: true, opacity: 0.9, depthWrite: false })));
+    if (!ctx.reduced) { const sp = Float32Array.from({ length: flakesN }, () => 0.6 + fr() * 0.9); k.ticks.push((t, dt) => { const d = Math.min(dt, 0.1); for (let i = 0; i < flakesN; i++) { let y = fl[i * 3 + 1] - sp[i] * d; if (y < 0) y += 34; fl[i * 3 + 1] = y; fl[i * 3] += Math.sin(t * 0.7 + i) * 0.25 * d; } flG.attributes.position.needsUpdate = true; }); }
+    // the moat of textured glass paving the shed rises out of
+    const moat = k.flat(0xcfe6ee, 0.1, 0.15, { emissive: 0x9fd0e8, emissiveIntensity: 0.45 });
+    for (const [z0, z1] of [[-BZ - 1.4, -4.4], [4.4, BZ + 1.4]]) k.box(1.4, 0.06, z1 - z0, BX0 - 1.0, 0.03, (z0 + z1) / 2, moat);
+    for (const s of [-1, 1]) k.box(BX1 - BX0 + 2.8, 0.06, 1.4, (BX0 + BX1) / 2, 0.03, s * (BZ + 1.0), moat);
+    for (const z of [-7, 7]) for (let i = 0; i < 3; i++) k.cyl(0.02, 0.7, BX0 - 2.2 - i * 0.2, 0.35, z + i * 0.9 * Math.sign(z), orange, 0.2, 10);
+    // a sanitation truck with its plow on, parked on Spring Street between the shed and the garage
+    const TX = 27, TZ = 20.8;
+    k.box(6.2, 2.6, 2.5, TX + 1.2, 1.9, TZ, whiteM); k.box(2.2, 2.2, 2.5, TX - 2.9, 1.8, TZ, whiteM); k.box(0.1, 0.9, 2.3, TX - 4.02, 2.3, TZ, glassDark); k.box(8.6, 0.3, 2.6, TX - 0.2, 0.75, TZ, dark);
+    for (const dx of [-3, 1.2, 3.1]) for (const s of [-1, 1]) { const w = k.cyl(0.5, 0.35, TX + dx, 0.5, TZ + s * 1.1, rubber, 0.5, 12); w.rotation.x = PI / 2; }
+    const plow = k.box(0.2, 1.1, 3.4, TX - 4.9, 0.7, TZ, orange); plow.rotation.y = 0.35;
+    k.block(TX - 5.4, TX + 4.4, TZ - 1.5, TZ + 1.5);
+    // downriver, the Holland Tunnel's ventilation building standing in the Hudson
+    const HX = -52, HZ = -104, ventB = k.pbr('ssVent', X.brick(0xb48a62, 488), 0.28);
+    k.box(26, 3.2, 18, HX, -0.2, HZ, base); k.box(16, 30, 11, HX, 16.4, HZ, ventB); k.box(12, 6, 8, HX, 34.4, HZ, ventB);
+    for (const y of [6, 11, 16, 21, 26]) { k.box(16.12, 1.4, 7, HX, y, HZ, dark); k.box(10, 1.4, 11.12, HX, y, HZ, dark); }
+    for (const dz of [-2, 2]) k.cyl(1.1, 5, HX, 39.9, HZ + dz, steel, 1.3, 12);
+    k.box(14, 1.0, 3.2, -32, 0.4, HZ, base);
+    // upriver, Pier 40 at West Houston Street, ball fields on its roof
+    const P4X = -78, P4Z = 78, pierM = k.pbr('ssPier', X.windows(489, 0.15, 0x5a6470, false), 0.1, { roughness: 0.6, metalness: 0.3, stretch: 0.42 }), turf = k.flat(0x3d7a3a, 0, 0.9);
+    k.box(80, 12, 80, P4X, 4.4, P4Z, pierM); k.box(80.4, 0.4, 80.4, P4X, 10.6, P4Z, dark);
+    for (const dz of [-18, 18]) { k.box(70, 0.1, 32, P4X, 10.85, P4Z + dz, turf); k.box(0.3, 0.02, 32, P4X, 10.91, P4Z + dz, whiteM); k.box(70, 0.02, 0.3, P4X, 10.91, P4Z + dz - 15.8, whiteM); }
+    k.box(16, 1.4, 16, -30, 0.1, P4Z, base);
+    // south down West Street, One World Trade Center over everything
+    const WTX = 40, WTZ = -430;
+    k.box(24, 26, 24, WTX, 13, WTZ, k.flat(0x9fb6cc, 0.7, 0.18));
+    k.mesh(new ConvexGeometry([v(-12, 26, -12), v(12, 26, -12), v(12, 26, 12), v(-12, 26, 12), v(-10.5, 228, 0), v(10.5, 228, 0), v(0, 228, -10.5), v(0, 228, 10.5)]), k.flat(0x9fb6cc, 0.7, 0.19), WTX, 0, WTZ);
+    k.cyl(0.5, 62, WTX, 259, WTZ, steelL, 1.3, 8);
+    // what this corner of the river is built on
+    k.egg(shedSign, { id: 'shed', title: 'A crystal of salt', text: "Dattner Architects designed the shed with WXY for the Department of Sanitation. Its folded concrete, both structure and finish, rises nearly 70 feet out of a moat of textured glass paving and holds 5,000 tons of the city's road salt.", clue: 'The name is written over the truck door.', source: { name: 'Dattner Architects', url: 'https://www.dattner.com/projects/view/spring-street-salt-shed/' } });
+    k.egg(garageSign, { id: 'garage', title: 'The garage in a veil', text: 'Across Spring Street, the Manhattan Districts 1, 2 and 5 Garage holds over 150 sanitation vehicles behind 2,600 perforated aluminum fins that cut glare and hide headlights from the neighbours. A 1.5 acre green roof tops it, and it is certified LEED Gold.', clue: 'Next door, thousands of fins keep a secret from the neighbours.', source: { name: 'Dattner Architects', url: 'https://www.dattner.com/projects/view/manhattan-districts-1-2-5-garage/' } });
+    k.egg(blade ?? v(30, 1.7, -BZ + 1.1), { id: 'spreaders', title: 'Seven hundred spreaders', year: '2026', text: 'Before a snowstorm the Department of Sanitation gets 700 salt spreaders filled and ready to go. For a storm in February 2026 it also enlisted over 1,000 emergency snow shovelers.', clue: 'Walk in past the mountain to the yellow blades resting on the wall.', source: { name: 'NYC Department of Sanitation', url: 'https://www.nyc.gov/site/dsny/news/26-012/dsny-issues-snow-alert-sunday-february-22-2026-6-am' } });
+    k.egg(v(HX + 8.2, 18, HZ), { id: 'holland', title: 'The tower that breathes', year: '1927', text: 'Downriver, the Holland Tunnel opened on November 13, 1927, the first mechanically ventilated underwater vehicular tunnel. Four ventilation buildings, two on each side of the Hudson, hold 84 fans that clear the fumes every 90 seconds. It became a National Historic Landmark in 1993.', clue: 'A brick tower stands in the river, breathing for the cars below.', source: { name: 'Port Authority of NY and NJ', url: 'https://portfolio.panynj.gov/2017/11/13/the-holland-at-90-a-drive-down-memory-lane/' } }, { r: 5 });
+    k.egg(v(P4X + 40.5, 8, P4Z - 20), { id: 'pier40', title: 'Pier 40', year: '1962', text: 'Pier 40 at West Houston Street was built between 1958 and 1962 for the Holland America Line, the largest passenger and freight terminal in the Port of New York at the time. The Hudson River Park Act made it parkland in 1998.', clue: 'Upriver, a pier as big as a neighbourhood plays ball on its roof.', source: { name: 'Village Preservation', url: 'https://villagepreservation.org/2023/11/14/pier-40s-murals-illustrate-local-history/' } }, { r: 6 });
+    k.egg(v(WTX, 150, WTZ + 14), { id: 'wtc', title: 'One World Trade Center', year: '2014', room: 'oculus', text: 'One World Trade Center rises 1,776 feet, a height that recalls the year of independence, and was completed in 2014 as the tallest building in the Western Hemisphere.', clue: 'Look south down West Street for the crystal that outgrew this one.', source: { name: 'SOM', url: 'https://www.som.com/projects/one-world-trade-center/' } }, { r: 16 });
     // the hang: the promenade walls around the mountain, the crew wall as the census
     const mounts: Mount[] = [];
     for (const z of [-10.5, 10.5]) mounts.push(M(BX0 + 0.24, 3.5, z, BX0 + 5, z, 5.0, 2.6, 'steel', true));
