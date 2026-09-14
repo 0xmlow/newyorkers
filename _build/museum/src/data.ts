@@ -58,6 +58,33 @@ export const HEROES = new Set(Object.values(D.story.eraHeroes).flat());
    neighbourhood, title or story places them there, then the rest of the census. */
 type Cur = { nb: string[]; loc?: RegExp; words: RegExp; fam?: string[]; boro?: string[]; cat?: string[]; fresh?: boolean };
 const CURATION: Record<string, Cur> = {
+  katz: { nb: ['Lower East Side'], words: /deli|pastrami|cook|counter|pickle|waiter/i },
+  barney: { nb: ['Upper West Side'], words: /deli|bagel|regular|breakfast|appetizing/i },
+  astorhall: { nb: ['Midtown'], words: /library|book|writer|poet|reader/i },
+  jefferson: { nb: ['Greenwich Village'], words: /book|writer|poet|village/i },
+  eldridge: { nb: ['Lower East Side'], words: /immigrant|synagogue|heritage|family/i },
+  cityhallrotunda: { nb: ['Civic Center'], words: /civic|mayor|citizen|protest|public/i },
+  castleclinton: { nb: ['Battery Park'], words: /harbor|arrival|immigrant|boat/i },
+  greenacre: { nb: ['Midtown'], words: /garden|flower|lunch|quiet/i },
+  paley: { nb: ['Midtown'], words: /garden|tree|coffee|regular/i },
+  stmarksyard: { nb: ['East Village'], words: /poetry|poet|punk|writer/i },
+  kingsfoyer: { nb: ['Flatbush'], words: /theater|cinema|performer|usher/i },
+  valencia: { nb: ['Jamaica'], words: /queens|theater|cinema|dream/i },
+  essexmarket: { nb: ['Lower East Side'], words: /market|vendor|cook|grocer/i },
+  armstronggarden: { nb: ['Corona'], words: /jazz|trumpet|musician|queens/i },
+  hamiltongrange: { nb: ['Hamilton Heights'], words: /harlem|history|neighbor|park/i },
+
+  pneumatic: { nb: ['Civic Center'], words: /letter|mail|postal|messenger|courier|message/i },
+  garment: { nb: ['Garment District'], words: /tailor|seamstress|garment|fashion|fabric|designer/i },
+  diamondexchange: { nb: ['Midtown'], words: /diamond|jewel|gem|dealer|gold|appraiser/i },
+  steamworks: { nb: ['Manhattan'], words: /steam|plumber|pipe|engineer|worker|maintenance/i },
+  newsprint: { nb: ['Civic Center'], words: /newspaper|reporter|journalist|print|editor|newsstand/i },
+  laundry: { nb: ['Queens'], words: /laundry|laundromat|night shift|neighbor|washing/i },
+  taxidispatch: { nb: ['Long Island City'], words: /taxi|cab|driver|dispatch|chauffeur/i },
+  flowercold: { nb: ['Chelsea'], words: /flower|florist|blossom|botanical|petal|garden/i },
+  handball: { nb: ['Lower East Side'], words: /handball|court|player|stoop|neighborhood/i },
+  saltvault: { nb: ['Manhattan'], words: /snow|sanitation|winter|salt|sweeper/i },
+
   bowery: { nb: ['Lower East Side', 'East Village', 'Chinatown', 'NoHo', 'SoHo', 'Little Italy', 'Two Bridges'], words: /bowery|bodega|fire escape|stoop|tenement|houston|delancey|deli/i, fam: ['Stoop', 'Hustlers'] },
   subway: { nb: ['The Subway'], words: /subway|platform|the train|\bmta\b|turnstile|conductor|straphanger|\bstation\b|tunnel|\bA train|\bL train|\bF train|\b[1-7] train/i, fam: ['Underground'] },
   met: { nb: ['Upper East Side', 'Central Park', 'Museum Mile', 'Carnegie Hill'], words: /museum|the met\b|gallery|sculpt|curator|rooftop|roof garden|fifth avenue/i, fam: ['Design', 'Builders'] },

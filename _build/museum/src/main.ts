@@ -1,10 +1,13 @@
 /* NEW YORKERS · THE MUSEUM. One hundred and eleven walkable New York rooms hung with the census. */
+import { LANDMARK_ROOMS } from './rooms/y';
 import * as T from 'three';
 import { Kit } from './kit';
 import { Fx } from './fx';
 import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG } from './data';
 import type { Hang, Piece } from './data';
 import { ROOMS } from './rooms';
+import { NEW_WORKING_ROOMS } from './rooms/x';
+const newRoomIds = new Set([...NEW_WORKING_ROOMS,...LANDMARK_ROOMS].map(r => r.id));
 import type { Mount } from './kit';
 import type { RoomBuild } from './rooms/types';
 
@@ -53,6 +56,7 @@ function readHash() {
   // a batch export runs one room per page load so renderer memory starts fresh every time
   if (params.get('export') === 'all') state.room = Math.min(ROOMS.length - 1, Math.max(0, Number(params.get('from') || 0)));
   const hang = h.get('hang');
+  if (!hang && newRoomIds.has(ROOMS[state.room].id)) state.hang = { mode: 'place' };
   if (hang) {
     const [mode, ...rest] = hang.split(':');
     state.hang = { mode: mode as Hang['mode'], key: rest.join(':') || undefined };
@@ -466,6 +470,7 @@ function loadRoom(openN?: string | null): Promise<void> {
 }
 function setRoom(i: number) {
   state.room = i;
+  if (newRoomIds.has(ROOMS[i].id) && state.hang.mode === 'launch') state.hang = { mode: 'place' };
   state.page = 0;
   state.tour = false;
   return loadRoom();
@@ -570,7 +575,7 @@ function openDetail(p: Piece) {
 
 /* ---------- panels ---------- */
 function buildPanels() {
-  $('#destGrid').innerHTML = ROOMS.map((r, i) => `<button data-i="${i}" style="--c:${r.color}"><span class="pic"><img loading="lazy" src="${roomThumb(r.id)}" alt="${esc(r.name)}"><span class="num">${String(i + 1).padStart(2, '0')}</span>${FACTS[r.id]?.year ? `<span class="yr">${esc(FACTS[r.id].year!)}</span>` : ''}</span><span class="txt"><small>${esc(r.area)}</small><strong>${esc(r.name)}</strong><p>${esc(r.description)}</p><em>${esc(r.mood)} · ${placeCount(r.id).toLocaleString('en-US')} recorded here</em></span></button>`).join('');
+  $('#destGrid').innerHTML = ROOMS.map((r, i) => `<button data-i="${i}" style="--c:${r.color}"><span class="pic"><img loading="lazy" src="${roomThumb(r.id)}" alt="${esc(r.name)}"><span class="num">${String(i + 1).padStart(2, '0')}</span>${FACTS[r.id]?.year ? `<span class="yr">${esc(FACTS[r.id].year!)}</span>` : ''}</span><span class="txt"><small>${esc(r.area)}</small><strong>${esc(r.name)}</strong><p>${esc(r.description)}</p><em>${esc(r.mood)} · ${placeCount(r.id).toLocaleString('en-US')} ${newRoomIds.has(r.id) ? 'thematically matched' : 'recorded here'}</em></span></button>`).join('');
   $('#destGrid').querySelectorAll('button').forEach((b) => (b.onclick = () => { closePanels(); setRoom(Number(b.dataset.i)); }));
   const q = $('#destSearch') as HTMLInputElement | null;
   let roomFilter = 'start';
@@ -579,7 +584,7 @@ function buildPanels() {
     let found = 0;
     $('#destGrid').querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
       const r = ROOMS[Number(b.dataset.i)];
-      const matches = v ? (r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v) : roomFilter === 'all' || START_ROOMS.includes(r.id);
+      const matches = v ? (r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v) : roomFilter === 'all' || (roomFilter === 'landmarks' ? LANDMARK_ROOMS.some(n=>n.id===r.id) : roomFilter === 'new' ? NEW_WORKING_ROOMS.some(n=>n.id===r.id) : START_ROOMS.includes(r.id));
       b.hidden = !matches;
       if (matches) found++;
     });

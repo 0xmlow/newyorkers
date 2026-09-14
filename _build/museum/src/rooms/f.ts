@@ -600,6 +600,17 @@ export const washington: RoomDef = {
     }
     for (const s of [-1, 1]) { mounts.push({ position: v(s * 8.6, 3.2, AZ - 2.65), rotation: PI, target: v(s * 8.6, 3, AZ - 8), width: 4.6, height: 2.7, style: 'white', wash: false }); mounts.push({ position: v(s * 5.65, 3.2, AZ), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 1.2, 3, AZ), width: 3.6, height: 2.2, style: 'white', wash: false }); }
     for (const a of [PI / 4, (3 * PI) / 4, (5 * PI) / 4, (7 * PI) / 4]) { const x = Math.cos(a) * 34, z = -30 + Math.sin(a) * 34; k.box(0.4, 4, 5, 0, 0, 0, granite).position.set(x, 2, z); k.objects[k.objects.length - 1].rotation.y = -a - PI / 2; mounts.push({ position: v(x - Math.cos(a) * 0.25, 2.6, z - Math.sin(a) * 0.25), rotation: -a - PI / 2, target: v(Math.cos(a) * 29, 3, -30 + Math.sin(a) * 29), width: 4.4, height: 2.6, style: 'steel', wash: false }); }
-    return { mounts, spawn: v(0, 3, -8), look: v(0, 9, AZ), eye: 3, bounds: [-58, 58, -95, AZ + 60], style: 'steel' };
+    // Expanded south and west park rooms: additional art stays clear of the arch/fountain axis.
+    for (const sx of [-1, 1]) {
+      k.rail(sx * 53, -34, 102, iron, 1.05, 'z', 2);
+      for (let i = 0; i < 4; i++) {
+        const z = -73 + i * 18, x = sx * 46;
+        const m: Mount = { position: v(x, 3.1, z), rotation: sx < 0 ? PI / 2 : -PI / 2, target: v(sx * 40, 3, z), width: 5.4, height: 3.2, style: 'steel', wash: false };
+        const back = k.box(.3, 4.8, 6.1, x + sx * .2, 2.6, z, iron);
+        void back; mounts.push(m);
+      }
+    }
+    k.sign('THE PARK / THE PEOPLE', 8, .7, 0, 1.1, -84, '#26342c', '#ebe6da', 55);
+    return { mounts, spawn: v(0, 3, 7), look: v(0, 9, AZ), eye: 3, bounds: [-58, 58, -95, AZ + 60], style: 'steel' };
   },
 };

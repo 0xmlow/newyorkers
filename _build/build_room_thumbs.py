@@ -28,6 +28,10 @@ for r in rooms:
             if abs(W / H - 16 / 9) > 0.01:
                 nh = int(W * 9 / 16); top = max(0, (H - nh) // 2); im = im.crop((0, top, W, top + nh))
             im = im.resize((w, w * 9 // 16), Image.LANCZOS)
+        elif os.path.exists(dst):
+            # no poster export yet, but a thumbnail already exists (the 25 rooms of 2026-09-13
+            # came with canvas renders): keep it rather than flattening it to a colour card
+            continue
         else:
             im = Image.new("RGB", (w, w * 9 // 16), r["color"] or "#141820")
             d = ImageDraw.Draw(im); d.rectangle((0, 0, w, w * 9 // 16), outline="#0D0D0D", width=4)
