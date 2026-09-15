@@ -209,7 +209,9 @@ export const domino: RoomDef = {
     k.crowd([v(-110, 0, -18), v(-80, 0, -18), v(-40, 0, -18), v(0, 0, -18), v(2, 0, 10), v(-30, 0, 40), v(-110, 0, 70)], 30, { seed: 61, speed: 0.9, spread: 5, animate: !ctx.reduced });
     k.crowd([v(-60, WY + 0.2, -18), v(-60, WY + 0.2, 30), v(-60, WY + 0.2, 78)], 10, { seed: 62, speed: 0.8, spread: 1.6, animate: !ctx.reduced });
     k.censusWall({ x: RX, y: 4.2, z: RZ + RD / 2 - 0.66, rotY: PI, cols: 30, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(6100, 150), pieces: ctx.all, backing: dark });
-    k.sign('DOMINO  ·  SUGAR  ·  1882', 10, 0.9, RX, RH - 3, RZ - RD / 2 - 0.66, 'transparent', '#f4d8a8', 90, PI);
+    // on the plain brick band between the second and third tiers of arches (tops at 24.8, next tier from 26): the arch frames stand
+    // 0.7 proud of the wall, so a sign up among the top tier lost the letters behind them
+    k.sign('DOMINO  ·  SUGAR  ·  1882', 10, 0.9, RX, 25.4, RZ - RD / 2 - 0.66, 'transparent', '#f4d8a8', 74, PI);
     // the works: the brick piers between the arches inside, the mezzanine edges, the walkway screens, the tank sides
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { const z = RZ - RD / 2 + 10 + i * 10; mounts.push({ position: v(RX + s * (RW / 2 - 0.66), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(RX + s * (RW / 2 - 8), 3, z), width: 4.4, height: 2.6, style: 'steel', wash: true }); }
