@@ -69,6 +69,8 @@ cut_media = set()
 for p in data["cutPieces"]:
     cut_keys.update(p.get("st") or [])
     if p.get("gl"): cut_media.add(p["gl"].get("mp4")); cut_keys.add(p["gl"].get("st"))
+    cut_media.update(m["mp4"] for m in p.get("mv") or [])
+cut_media -= {m["mp4"] for p in data["pieces"] for m in p.get("mv") or []}  # an ensemble clip stays if any public piece is in it
 CUT_THUMBS = {k for k in cut_keys if k and k not in kept_keys}
 CUT_MEDIA = {m for m in cut_media if m}
 print("cut pieces stripped:", len(data["cutPieces"]), [p.get("t") for p in data["cutPieces"]], "| exclusive thumbs:", len(CUT_THUMBS), "| glitch files:", len(CUT_MEDIA))
@@ -158,7 +160,7 @@ with open(os.path.join(OUT, "404.html"), "w") as f:
             '<div><div style="font-size:64px;letter-spacing:.08em;color:#fff">404</div>'
             '<p style="color:#8899AA;max-width:420px;line-height:1.6">This number has not been painted yet. The census keeps going anyway.</p>'
             '<p><a href="/" style="color:#2962FF;text-decoration:none;font-family:Menlo,monospace;font-size:13px;letter-spacing:.2em">ENTER THE CENSUS</a></p></div></body></html>')
-for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "museum"):
+for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "museum"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
@@ -188,7 +190,7 @@ for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "museum
         for k in CUT_THUMBS:
             fp = os.path.join(dst, k + ".jpg")
             if os.path.exists(fp): os.remove(fp); print("  removed cut thumb", k)
-    if sub == "glitch":
+    if sub in ("glitch", "motion"):
         for m in CUT_MEDIA:
             fp = os.path.join(OUT, m)
             if os.path.exists(fp): os.remove(fp); print("  removed cut glitch", m)
@@ -288,6 +290,8 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
 /assets/launch/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/glitch/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/motion/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/museum/props/*
   Cache-Control: public, max-age=31536000, immutable

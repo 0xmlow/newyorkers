@@ -1094,7 +1094,7 @@ const FAMS=[...new Set(P.map(p=>p.f).filter(Boolean))].sort();
 let bf={era:0,fam:null,special:null,states:null,q:"",showCut:false,sort:"num"};
 let curateMode=false;
 const hasGlitch=p=>!!(p.gl&&p.gl.mp4);
-const nVariants=p=>nStates(p)+(hasGlitch(p)?1:0)+((p.g&&p.g.length)||0)+((p.v&&p.v.length)||0);
+const nVariants=p=>nStates(p)+(hasGlitch(p)?1:0)+((p.g&&p.g.length)||0)+((p.v&&p.v.length)||0)+(p.mv||[]).length;
 function browseList(){
   let list=P.map((p,i)=>({p,i}));
   if(bf.showCut||curateMode)list=list.concat(CUTP.map(p=>({p,i:-1})));
@@ -1105,7 +1105,7 @@ function browseList(){
   if(bf.special==="milestones")list=list.filter(o=>o.p.n!=null&&msSet.has(o.p.n));
   else if(bf.special==="states")list=list.filter(o=>nStates(o.p)>1);
   else if(bf.special==="variants")list=list.filter(o=>nVariants(o.p)>1);
-  else if(bf.special==="motion")list=list.filter(o=>(o.p.g&&o.p.g.length)||(o.p.v&&o.p.v.length));
+  else if(bf.special==="motion")list=list.filter(o=>(o.p.g&&o.p.g.length)||(o.p.v&&o.p.v.length)||(o.p.mv&&o.p.mv.length));
   else if(bf.special==="glitch")list=list.filter(o=>hasGlitch(o.p));
   else if(bf.special==="uncounted")list=list.filter(o=>o.p.n==null);
   else if(bf.special&&bf.special.startsWith("set:")){const s=S.sets.find(x=>x.key===bf.special.slice(4));list=list.filter(o=>o.p.n!=null&&o.p.n>=s.range[0]&&o.p.n<=s.range[1]);}
@@ -1182,7 +1182,7 @@ function buildFilters(){
   const f=$("#filters");f.innerHTML="";
   const sec=(title,extra)=>{const d=document.createElement("div");d.className="fsec";d.innerHTML=`<h5>${title}${extra?`<span>${extra}</span>`:""}</h5><div class="fchips"></div>`;f.appendChild(d);return d.querySelector(".fchips");};
   const mk=(wrap,label,on,fn,cls)=>{const b=document.createElement("button");b.className="f-chip"+(cls?" "+cls:"")+(on?" on":"");b.textContent=label;b.onclick=()=>{fn();buildFilters();renderGrid();};wrap.appendChild(b);return b;};
-  const nMulti=countOf(p=>p.st.length>1), nGl=countOf(p=>!!(p.gl&&p.gl.mp4)), nMo=countOf(p=>(p.g&&p.g.length)||(p.v&&p.v.length)), nVar=countOf(p=>p.st.length+(p.gl?1:0)+(p.g||[]).length+(p.v||[]).length>1);
+  const nMulti=countOf(p=>p.st.length>1), nGl=countOf(p=>!!(p.gl&&p.gl.mp4)), nMo=countOf(p=>(p.g&&p.g.length)||(p.v&&p.v.length)||(p.mv&&p.mv.length)), nVar=countOf(p=>p.st.length+(p.gl?1:0)+(p.g||[]).length+(p.v||[]).length+(p.mv||[]).length>1);
   let w=sec("VIEW");
   mk(w,"ALL",!bf.era&&!bf.fam&&!bf.special&&!bf.states,()=>{bf={era:0,fam:null,special:null,states:null,q:bf.q,showCut:bf.showCut,sort:bf.sort};});
   mk(w,`HAS VARIANTS · ${nVar}`,bf.special==="variants",()=>{bf.special=bf.special==="variants"?null:"variants";});
@@ -1274,6 +1274,7 @@ function mediaEntries(p){
   const ents=[];
   for(let k=0;k<nStates(p);k++)ents.push({kind:"state",k,key:p.st[k],label:"STATE "+(k+1),tag:"STATE"});
   if(hasGlitch(p))ents.push({kind:"glitch",src:p.gl.mp4,key:p.gl.st||p.st[0],label:"GLITCH EDITION",tag:"GLITCH",sub:(p.gl.fam||"")+(p.gl.tag?" · "+p.gl.tag:"")});
+  (p.mv||[]).forEach((m,k)=>ents.push({kind:"glitch",src:m.mp4,key:p.st[0],label:"MOTION"+(p.mv.length>1?" "+(k+1):""),tag:"MOTION",sub:m.sec+" second loop"+(m.cast>1?", with "+(m.cast-1)+" more New Yorkers":"")}));
   (p.g||[]).forEach((src,k)=>ents.push({kind:"gif",src,key:p.st[0],label:"LOOP"+(p.g.length>1?" "+(k+1):""),tag:"LOOP"}));
   (p.v||[]).forEach((src,k)=>ents.push({kind:"video",src,key:p.st[0],label:"FILM"+(p.v.length>1?" "+(k+1):""),tag:"FILM"}));
   return ents;
@@ -1385,6 +1386,7 @@ function renderDetail(p,gi,listArr){
   else row("Location",`<span style="color:var(--slate)">citywide, no fixed address in the record</span>`);
   row("States",nStates(p)>1?nStates(p)+" finished states":"1 finished state");
   if(hasGlitch(p))row("Glitch edition",(p.gl.fam||"Still Waiting")+(p.gl.tag?" · "+p.gl.tag:"")+" · appendable ERC-7160 state");
+  if(p.mv&&p.mv.length)row("Motion",p.mv.length+(p.mv.length>1?" moving variants":" moving variant"));
   if(p.g&&p.g.length)row("Loops",p.g.length);
   if(p.v&&p.v.length)row("Films",p.v.length);
   row("Variants",curEnts.length>1?curEnts.length+" in the record, scrub the slider":"");

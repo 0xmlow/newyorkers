@@ -3,106 +3,127 @@ User-agent: *
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 Disallow: /assets/museum/props/
 
 User-agent: GPTBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: ClaudeBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Claude-User
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Claude-SearchBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: anthropic-ai
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Perplexity-User
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Google-Extended
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Googlebot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Bingbot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Applebot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Applebot-Extended
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: CCBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: Amazonbot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: meta-externalagent
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: cohere-ai
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: DuckAssistBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 User-agent: YouBot
 Allow: /
 Disallow: /media/
 Disallow: /assets/glitch/
+Disallow: /assets/motion/
 
 Sitemap: https://n3wyorkers.com/sitemap.xml

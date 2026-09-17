@@ -14,13 +14,14 @@ if dd: warns.append(f"other Double Dutch titled pieces still public (not 802): {
 missing_t=[k for p in P for k in p["st"] if not os.path.exists(os.path.join(PKG,"assets","t",k+".jpg"))]
 missing_gl=[p["gl"]["mp4"] for p in P if p.get("gl") and not os.path.exists(os.path.join(PKG,p["gl"]["mp4"]))]
 missing_glst=[p["gl"]["st"] for p in P if p.get("gl") and p["gl"].get("st") and not os.path.exists(os.path.join(PKG,"assets","t",p["gl"]["st"]+".jpg"))]
+missing_mv=[m["mp4"] for p in P for m in (p.get("mv") or []) if not os.path.exists(os.path.join(PKG,m["mp4"]))]
 missing_media=[m for p in P for m in (p.get("g") or [])+(p.get("v") or []) if not os.path.exists(os.path.join(PKG,m))]
 missing_motion=[m["src"] for m in D["motion"] if not os.path.exists(os.path.join(PKG,m["src"]))]+[m["alt"] for m in D["motion"] if m.get("alt") and not os.path.exists(os.path.join(PKG,m["alt"]))]
 missing_mt=[m["key"] for m in D["motion"] if not os.path.exists(os.path.join(PKG,"assets","mt",m["key"]+".jpg"))]
 missing_live=[v["src"] for v in D["story"]["living"]["videos"]+D["story"]["living"]["gifs"] if not os.path.exists(os.path.join(PKG,v["src"]))]
 missing_atlas=[a for a in range(D["counts"]["atlases"]) if not os.path.exists(os.path.join(PKG,"assets","atlas",f"{D['counts']['atlasPrefix']}{a}.jpg"))]
 missing_stk=[s["f"] for s in D["stickers"] if not os.path.exists(os.path.join(PKG,"assets","stickers",s["f"]))]
-for name,lst in [("thumbs",missing_t),("glitch mp4",missing_gl),("glitch stills",missing_glst),("piece media",missing_media),("motion",missing_motion),("motion posters",missing_mt),("living city",missing_live),("atlases",missing_atlas),("stickers",missing_stk)]:
+for name,lst in [("thumbs",missing_t),("glitch mp4",missing_gl),("glitch stills",missing_glst),("motion variants",missing_mv),("piece media",missing_media),("motion",missing_motion),("motion posters",missing_mt),("living city",missing_live),("atlases",missing_atlas),("stickers",missing_stk)]:
     if lst: probs.append(f"missing {name}: {len(lst)} e.g. {lst[:3]}")
 # orphan thumbs shipped (bloat)
 used=set(k for p in P for k in p["st"])|set(p["gl"]["st"] for p in P if p.get("gl") and p["gl"].get("st"))

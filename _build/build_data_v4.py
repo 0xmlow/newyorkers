@@ -285,6 +285,14 @@ for p in pieces:
         p["gl"] = {"mp4": g["mp4"], "st": g.get("st"), "fam": g.get("fam"), "tag": g.get("tag")}; n_gl += 1
 print("glitch editions attached:", n_gl)
 
+# ---------------- motion variants (Dreamina image to video, 2026-08-14 to 2026-09-08) ----------------
+MV = load_json(os.path.join(BUILD, "motion_variants_index.json"), {}) or {}
+n_mv = 0
+for p in pieces:
+    if MV.get(p["id"]):
+        p["mv"] = MV[p["id"]]; n_mv += 1
+print("motion variants attached:", n_mv, "of", len(MV), "indexed pieces")
+
 # ---------------- curation ----------------
 cur = json.load(open(os.path.join(BUILD, "curation.json")))
 rejected = set(cur.get("rejected", []))

@@ -22,7 +22,7 @@ for p in P:
 num = lambda n: f"{n:,}"
 # Every host this site has ever canonicalised to. The head rewrite below maps all of them to the current
 # siteUrl, so moving the site is a one line config change plus a rebuild.
-OLD_HOSTS = ["https://new-yorkers.pages.dev", "https://newyorkers.mlow.xyz", "https://mlow.nyc", "https://www.mlow.nyc", "https://n3wyorkers.com", "https://www.n3wyorkers.com"]
+OLD_HOSTS = ["https://new-yorkers.pages.dev", "https://newyorkers.mlow.xyz", "https://n3wyorkers.com", "https://www.n3wyorkers.com"]
 ORG = {"@type": "Organization", "@id": URL + "/#org", "name": "NEW YORKERS by MLow", "url": URL + "/", "logo": f"{URL}/assets/brand/eye_truecolor.png", "sameAs": ["https://mlow.xyz", C.get("printsUrl") or "https://mlow.nyc", "https://x.com/degens", "https://www.instagram.com/0xmlow", "https://www.tiktok.com/@0xmlow"], "founder": {"@type": "Person", "name": "MLow", "url": "https://mlow.xyz"}}
 SITE_LD = {"@context": "https://schema.org", "@type": "WebSite", "@id": URL + "/#site", "name": "NEW YORKERS by MLow", "alternateName": "NEW YORKERS", "url": URL + "/", "description": f"A living painted census of New York City: {num(K['pieces'])} characters across {K['eras']} eras, every one with a story and a place, a walkable museum of {len(rooms)} New York rooms, and a sourced reading room.", "publisher": {"@id": URL + "/#org"}, "inLanguage": "en-US"}
 COLLECTION_LD = {"@context": "https://schema.org", "@type": "Collection", "@id": URL + "/#collection", "name": "NEW YORKERS", "creator": {"@type": "Person", "name": "MLow"}, "url": f"{URL}/census", "size": K["pieces"], "description": "Every New Yorker gets a portrait. Even the villains. A painted census of New York City as dynamic tokens on ERC-7160.", "keywords": "NEW YORKERS, MLow, New York City art, painted census, NFT, ERC-7160, dynamic NFT, NYC portraits, eye flower"}
@@ -186,8 +186,8 @@ for u, pr in urls: sm.append(f"<url><loc>{html.escape(pub(u))}</loc><lastmod>{TO
 sm.append("</urlset>")
 open(os.path.join(SITE, "sitemap.xml"), "w").write("\n".join(sm))
 AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "anthropic-ai", "PerplexityBot", "Perplexity-User", "Google-Extended", "Googlebot", "Bingbot", "Applebot", "Applebot-Extended", "CCBot", "Amazonbot", "meta-externalagent", "cohere-ai", "DuckAssistBot", "YouBot"]
-rb = ["# NEW YORKERS by MLow. Crawl the site; skip the heavy video folders. Bots and AI agents: read /agents.html and /llms.txt first.", "User-agent: *", "Allow: /", "Disallow: /media/", "Disallow: /assets/glitch/", "Disallow: /assets/museum/props/", ""]
-for b in AI_BOTS: rb += [f"User-agent: {b}", "Allow: /", "Disallow: /media/", "Disallow: /assets/glitch/", ""]
+rb = ["# NEW YORKERS by MLow. Crawl the site; skip the heavy video folders. Bots and AI agents: read /agents.html and /llms.txt first.", "User-agent: *", "Allow: /", "Disallow: /media/", "Disallow: /assets/glitch/", "Disallow: /assets/motion/", "Disallow: /assets/museum/props/", ""]
+for b in AI_BOTS: rb += [f"User-agent: {b}", "Allow: /", "Disallow: /media/", "Disallow: /assets/glitch/", "Disallow: /assets/motion/", ""]
 rb += [f"Sitemap: {URL}/sitemap.xml", ""]
 open(os.path.join(SITE, "robots.txt"), "w").write("\n".join(rb))
 llm = [f"# NEW YORKERS by MLow", "", f"> A living painted census of New York City by the artist MLow: {num(K['pieces'])} characters across {K['eras']} eras, every one with a story and a place, a walkable 3D museum of {len(rooms)} New York rooms, and a reading room of sourced New York history. Every New Yorker gets a portrait. Even the villains. Dynamic tokens on ERC-7160. The claim (mint) date is recommended for October 8, 2026 and not yet signed.", "",
