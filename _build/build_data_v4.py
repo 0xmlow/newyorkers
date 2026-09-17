@@ -58,7 +58,10 @@ def load_json(p, default=None):
 
 # ---------------- era 1 (archive, subject level) ----------------
 # archive files filed under the wrong subject (curation.json "misfiled"): never a state, gif or loop of anyone
-MISFILED = set((load_json(os.path.join(BUILD, "curation.json"), {}) or {}).get("misfiled", []))
+_cur0 = load_json(os.path.join(BUILD, "curation.json"), {}) or {}
+MISFILED = set(_cur0.get("misfiled", []))
+# an adopted file is misfiled under its old subject but belongs to the new record, motion included
+ADOPTED_SRC = {r: a["id"] for a in _cur0.get("adopted", []) for r in a.get("gifs", []) + a.get("videos", [])}
 era1_index = {}
 for root, dirs, files in os.walk(ERA1):
     for f in files:
@@ -98,6 +101,19 @@ for s in sorted(subjects, key=lambda s: (s["num"] is None, int(s["num"]) if s["n
         "story": nodash(descriptions.get(s["subject_id"], "")),
         "srcs": [("A", rel) for _, rel in states], "g": gifs, "v": vids,
     })
+# adopted: files the archive filed under the wrong subject, given their own record (curation.json "adopted").
+# ids sort after the numbered subjects and after every x### id, so the free number they take is the last one
+# handed out and no other piece's number moves.
+for _a in (load_json(os.path.join(BUILD, "curation.json"), {}) or {}).get("adopted", []):
+    _srcs = [("A", era1_index[os.path.basename(r)]) for r in _a["files"] if os.path.basename(r) in era1_index]
+    if not _srcs: continue
+    pieces.append({
+        "id": _a["id"], "n": None, "t": clean_title(_a["t"]), "f": _a.get("f", ""), "b": _a.get("b", ""),
+        "e": 1, "cat": _a.get("cat", ""), "story": nodash(_a.get("story", "")),
+        "srcs": _srcs, "g": [r for r in _a.get("gifs", []) if os.path.basename(r) in era1_index],
+        "v": [r for r in _a.get("videos", []) if os.path.basename(r) in era1_index],
+    })
+
 n_era1 = len(pieces)
 
 # ---------------- eras 2 to 7 (archive) ----------------
@@ -263,11 +279,12 @@ for i in range(2):
 motion = []
 for key, r in match.items():
     rel = r["rel"]; base = os.path.basename(rel)
-    if rel in MISFILED: continue
+    if rel in MISFILED and rel not in ADOPTED_SRC: continue
     kind = "gif" if rel.lower().endswith(".gif") else "video"
     pid = None
     m = re.match(r"^(\d{1,4})_", base)
-    if m and str(int(m.group(1))) in by_id: pid = str(int(m.group(1)))
+    if rel in ADOPTED_SRC: pid = ADOPTED_SRC[rel]          # the filename still carries the old subject's number
+    elif m and str(int(m.group(1))) in by_id: pid = str(int(m.group(1)))
     elif r["d"] < 0.20 and (r["d2"] - r["d"]) > 0.2: pid = r["best"]
     if pid and pid in by_id:
         p = by_id[pid]

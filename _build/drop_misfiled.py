@@ -7,7 +7,10 @@ Drops the matching state keys, gifs, videos and loop reel entries, then corrects
 import json, os, hashlib
 SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUILD = os.path.join(SITE, "_build")
-MIS = set(json.load(open(os.path.join(BUILD, "curation.json"))).get("misfiled", []))
+_cur = json.load(open(os.path.join(BUILD, "curation.json")))
+# adopted files keep their place on the new record, so they are not dropped
+_kept = {r for a in _cur.get("adopted", []) for r in a["files"] + a.get("gifs", []) + a.get("videos", [])}
+MIS = set(_cur.get("misfiled", [])) - _kept
 
 def key(rel): return "h" + hashlib.md5(rel.encode()).hexdigest()[:10]
 
