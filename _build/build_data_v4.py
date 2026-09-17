@@ -348,6 +348,9 @@ if __name__ == "__main__":
         p["st"] = keys
         del p["srcs"]
     print("duplicate states dropped:", dropped_states)
+    # likeness redos lead their pieces (see attach_likeness_swaps.py)
+    import attach_likeness_swaps as _ls
+    _ls.make_thumbs(); print("likeness swaps:", _ls.apply_swaps(pieces))
     for p in pieces:
         try:
             with Image.open(os.path.join(THUMB_DIR, p["st"][0] + ".jpg")) as im: p["ar"] = round(im.size[0]/im.size[1], 3)

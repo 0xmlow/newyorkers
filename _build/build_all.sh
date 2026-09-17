@@ -10,6 +10,7 @@ if [ "$1" = "--data" ]; then
   python3 map/build_geo2.py
 fi
 python3 attach_motion_variants.py
+python3 attach_likeness_swaps.py
 python3 tidy_motion_reel.py
 python3 link_same_subject.py
 python3 rooms_registry.py
