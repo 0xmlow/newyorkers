@@ -84,6 +84,7 @@ for plist in (data["pieces"],):
 for m in data["motion"]:
     m["src"] = repath(m["src"])
     if m.get("alt"): m["alt"] = repath(m["alt"])
+    for c in m.get("cuts") or []: c["src"] = repath(c["src"])
 for v in data["story"]["living"]["videos"]: v["src"] = repath(v["src"])
 for g in data["story"]["living"]["gifs"]: g["src"] = repath(g["src"])
 print("media packed:", len(packed), "failed:", len(failed), failed[:5])

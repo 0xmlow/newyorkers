@@ -17,7 +17,10 @@ missing_glst=[p["gl"]["st"] for p in P if p.get("gl") and p["gl"].get("st") and 
 missing_mv=[m["mp4"] for p in P for m in (p.get("mv") or []) if not os.path.exists(os.path.join(PKG,m["mp4"]))]
 missing_media=[m for p in P for m in (p.get("g") or [])+(p.get("v") or []) if not os.path.exists(os.path.join(PKG,m))]
 missing_motion=[m["src"] for m in D["motion"] if not os.path.exists(os.path.join(PKG,m["src"]))]+[m["alt"] for m in D["motion"] if m.get("alt") and not os.path.exists(os.path.join(PKG,m["alt"]))]
-missing_mt=[m["key"] for m in D["motion"] if not os.path.exists(os.path.join(PKG,"assets","mt",m["key"]+".jpg"))]
+missing_motion+=[c["src"] for m in D["motion"] for c in (m.get("cuts") or []) if not os.path.exists(os.path.join(PKG,c["src"]))]
+missing_mt=[k for m in D["motion"] for k in [m["key"]]+[c["key"] for c in (m.get("cuts") or [])] if not os.path.exists(os.path.join(PKG,"assets","mt",k+".jpg"))]
+if any("empty-scene" in json.dumps(m) for m in D["motion"]) or any(f.startswith("empty-scene") for f in os.listdir(os.path.join(PKG,"assets","mt"))):
+    probs.append("STILL WAITING clips (empty-scene plates) are in the package; they are a separate collection")
 missing_live=[v["src"] for v in D["story"]["living"]["videos"]+D["story"]["living"]["gifs"] if not os.path.exists(os.path.join(PKG,v["src"]))]
 missing_atlas=[a for a in range(D["counts"]["atlases"]) if not os.path.exists(os.path.join(PKG,"assets","atlas",f"{D['counts']['atlasPrefix']}{a}.jpg"))]
 missing_stk=[s["f"] for s in D["stickers"] if not os.path.exists(os.path.join(PKG,"assets","stickers",s["f"]))]

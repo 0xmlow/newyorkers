@@ -1236,7 +1236,9 @@ function motionCard(m){
   const p=m.pid?P[idToIdx.get(m.pid)]:null;
   const label=p?p.t:(m.t||"Untitled");
   const numTxt=p?fmt(p):"LOOP REEL";
-  const meta=(m.alt?"LOOP + FILM":(m.kind==="gif"?"LOOP":"FILM"))+(m.w?` · ${m.w}×${m.h}`:"")+(p&&p.f?` · ${p.f.toUpperCase()}`:"");
+  const cuts=(m.cuts&&m.cuts.length)?m.cuts:[{src:m.src,kind:m.kind,key:m.key}];
+  const kinds=[...new Set(cuts.map(c=>c.kind==="gif"?"LOOP":"FILM"))].join(" + ");
+  const meta=(cuts.length>1?cuts.length+" CUTS · ":"")+kinds+(m.w?` · ${m.w}×${m.h}`:"")+(p&&p.f?` · ${p.f.toUpperCase()}`:"");
   const cell=document.createElement("div");cell.className="mcell";
   cell.innerHTML=`<div style="width:100%">
       <img src="assets/mt/${m.key}.jpg" alt="" style="width:100%;display:block">
@@ -1244,11 +1246,19 @@ function motionCard(m){
         <div class="plate" style="border-top:none;padding-top:0"><span class="pn">${numTxt}</span><span class="pt">${label.toUpperCase()}</span><span class="pm">${meta}</span></div>
       </div></div>
     <div class="badges" style="position:absolute;top:8px;right:8px"><span class="gbadge">TAP TO PLAY</span></div>`;
+  let cut=0;
+  const play=()=>{
+    const c=cuts[cut], box=cell.querySelector(".mplay");
+    box.innerHTML=mediaHTML(c.src,{controls:c.kind==="video",style:"width:100%;display:block"});
+    const b=cell.querySelector(".badges");
+    b.innerHTML=(cuts.length>1?`<span class="gbadge mnext" style="cursor:pointer">CUT ${cut+1} / ${cuts.length} ›</span> `:"")+(p?`<span class="gbadge">OPEN ${fmt(p)}</span>`:"");
+    const nx=b.querySelector(".mnext"); if(nx)nx.onclick=e=>{e.stopPropagation();cut=(cut+1)%cuts.length;play();};
+  };
   cell.onclick=()=>{
     if(cell.dataset.loaded){ if(p){$("#motion").classList.remove("open");openDetail(idToIdx.get(m.pid));} return; }
     cell.dataset.loaded=1;
-    cell.querySelector("img").outerHTML=mediaHTML(m.src,{controls:m.kind==="video",style:"width:100%;display:block"});
-    cell.querySelector(".badges").innerHTML=p?`<span class="gbadge">OPEN ${fmt(p)}</span>`:"";
+    cell.querySelector("img").outerHTML='<div class="mplay"></div>';
+    play();
   };
   return cell;
 }
