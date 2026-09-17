@@ -1,5 +1,19 @@
 {
   "note": "Final curation rejections for NEW YORKERS. num keys as strings.",
-  "rejected": ["802"],
-  "reasons": {"802": "Cut by MLow 2026-08-12"}
+  "rejected": [
+    "802"
+  ],
+  "reasons": {
+    "802": "Cut by MLow 2026-08-12"
+  },
+  "misfiled": [
+    "01_THE ORIGINALS 001-766/Heroes/Queens/522_Heroes_Queens_Spider-Man_02.png",
+    "01_THE ORIGINALS 001-766/Heroes/Queens/522_Heroes_Queens_Spider-Man_03.png",
+    "01_THE ORIGINALS 001-766/Heroes/Queens/522_Heroes_Queens_Spider-Man_04.png",
+    "01_THE ORIGINALS 001-766/Heroes/Queens/522_Heroes_Queens_Spider-Man_05.png",
+    "01_THE ORIGINALS 001-766/Heroes/Queens/522_Heroes_Queens_Spider-Man_02-522_Heroes_Queens_Spider-Man_03-522_Heroes_Queens_Spider-Man_04-animation.gif"
+  ],
+  "misfiledReasons": {
+    "522": "The Grand Central Oyster Bar waiter was saved as 522 Spider-Man Queens on 2026-07-06 and the archive filed it under Spider-Man. Only _01 (the Queens rooftop) is Spider-Man. Pulled off 522 at MLow's request 2026-09-17; the waiter's real number is unknown."
+  }
 }

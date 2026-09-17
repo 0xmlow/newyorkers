@@ -57,6 +57,8 @@ def load_json(p, default=None):
     except Exception: return default
 
 # ---------------- era 1 (archive, subject level) ----------------
+# archive files filed under the wrong subject (curation.json "misfiled"): never a state, gif or loop of anyone
+MISFILED = set((load_json(os.path.join(BUILD, "curation.json"), {}) or {}).get("misfiled", []))
 era1_index = {}
 for root, dirs, files in os.walk(ERA1):
     for f in files:
@@ -79,7 +81,7 @@ for s in sorted(subjects, key=lambda s: (s["num"] is None, int(s["num"]) if s["n
     for orig in s["files"]:
         for r in by_orig.get(orig, []):
             rel = era1_index.get(r["new_filename"])
-            if rel is None: continue
+            if rel is None or rel in MISFILED: continue
             claimed.append(r)
             if r["media"] == "image": states.append((r["new_filename"], rel))
             elif r["media"] == "gif": gifs.append(rel)
@@ -261,6 +263,7 @@ for i in range(2):
 motion = []
 for key, r in match.items():
     rel = r["rel"]; base = os.path.basename(rel)
+    if rel in MISFILED: continue
     kind = "gif" if rel.lower().endswith(".gif") else "video"
     pid = None
     m = re.match(r"^(\d{1,4})_", base)
