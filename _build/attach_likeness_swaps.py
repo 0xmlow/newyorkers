@@ -3,7 +3,7 @@
 
 likeness_swaps.json maps a piece id to a new master (path under the project root) and the state key it
 replaces. The new image gets its own thumb key, so no URL that Cloudflare caches for a year changes content.
-The replaced state leaves p.st, the new one leads. The 3D field's atlas sheets are repainted for the swapped
+The new one leads and the replaced original follows it as the second state. The 3D field's atlas sheets are repainted for the swapped
 tiles and written under a new prefix for the same cache reason. build_data_v4.py applies the same swaps
 (apply_swaps) so a --data build keeps them. Idempotent."""
 import json, os, hashlib
@@ -28,7 +28,8 @@ def apply_swaps(pieces):
         w = SW.get(p["id"])
         if not w or not p.get("st"): continue
         k = key(w["src"])
-        p["st"] = [k] + [x for x in p["st"] if x not in (k, w["replaces"])]
+        # the original stays on the piece as its second state, so it is still one tap away
+        p["st"] = [k, w["replaces"]] + [x for x in p["st"] if x not in (k, w["replaces"])]
         with Image.open(os.path.join(T, k + ".jpg")) as im: p["ar"] = round(im.size[0] / im.size[1], 3)
         n += 1
     return n
@@ -59,5 +60,6 @@ if __name__ == "__main__":
             sheet.paste(im, (((gi % PER) % GRID) * TILE, ((gi % PER) // GRID) * TILE))
         sheet.save(dst, "JPEG", quality=80, optimize=True)
     C["atlasPrefix"] = new
+    C["states"] = sum(len(p.get("st") or []) for p in data["pieces"])
     open(path, "w").write(head + json.dumps(data, separators=(",", ":")) + ";\n")
     print("likeness swaps applied:", n, "| atlas prefix:", new)
