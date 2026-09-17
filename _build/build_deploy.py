@@ -172,9 +172,12 @@ for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion
         shutil.copytree(src, dst, ignore=shutil.ignore_patterns('museum.*.js'))
         continue
     if os.path.isdir(dst):
-        # sync-lite: copy missing files only
+        # sync-lite: copy missing files, and recopy any file whose size or mtime changed (a rebuilt asset keeps its name)
         for f in os.listdir(src):
-            if not os.path.exists(os.path.join(dst, f)): shutil.copy2(os.path.join(src, f), os.path.join(dst, f))
+            a, b = os.path.join(src, f), os.path.join(dst, f)
+            if os.path.isdir(a): continue
+            if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b) or int(os.path.getmtime(a)) != int(os.path.getmtime(b)):
+                shutil.copy2(a, b)
         # drop stale
         keep = set(os.listdir(src))
         for f in os.listdir(dst):
