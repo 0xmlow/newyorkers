@@ -56,6 +56,7 @@ data = json.loads(d[d.index("=")+1:].rstrip().rstrip(";"))
 
 packed, failed = {}, []
 def repath(rel):
+    if rel.startswith("assets/"): return rel  # already a site asset (packed motion), shipped with its folder
     if rel in packed: return packed[rel]
     p = pack_media(rel)
     if p is None: failed.append(rel); p = rel

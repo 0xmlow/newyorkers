@@ -1,0 +1,19 @@
+{"_note": "Separate pieces that paint the same landmark or scene. Reviewed by eye 2026-09-17 from site and title groups; each list becomes SAME SUBJECT links in the network. Different enough to stay separate pieces.",
+ "clusters": [
+  ["Balto", ["1435","2505"]], ["Execution Rocks Lighthouse", ["2558","2770"]], ["The Wonder Wheel", ["1861","3208","4921"]],
+  ["The Unisphere", ["961","3207","4920"]], ["The Cloisters", ["963","3222"]], ["The Gantries", ["1845","2747"]],
+  ["The Library Lions", ["3205","3843","1912","2510","4753","4922"]], ["Atlas", ["1436","4401"]],
+  ["The Cherry Esplanade", ["1440","2754"]], ["The Dioramas", ["2159","4584"]], ["The Flatiron", ["1449","3203","4918"]],
+  ["Manhattanhenge", ["1161","4282"]], ["North Brother Island", ["1452","2537"]], ["The Oculus", ["966","3212","4487"]],
+  ["The Last Gas Lamp", ["2177","2378"]], ["Rat Rock", ["1841","2366"]], ["The Roosevelt Island Tram", ["1155","3268"]],
+  ["The Brooklyn Bridge Cables", ["3209","4940"]], ["The Cathedral of St. John the Divine", ["1849","4397","4414"]],
+  ["The Chrysler Crown", ["3201","4917"]], ["The Empire State Spire", ["3217","4924"]], ["The Flower District", ["2988","3246"]],
+  ["The Guggenheim", ["3202","4919"]], ["The High Line", ["3829","4931"]], ["The Little Red Lighthouse", ["965","2559"]],
+  ["The Manhattan Bridge", ["2094","3210"]], ["The Temple of Dendur", ["2502","4578"]], ["The Met Steps", ["1166","3200"]],
+  ["The Period Rooms", ["2160","4569"]], ["The Statue of Liberty", ["1850","3219","4928"]], ["The TKTS Steps", ["1442","2523"]],
+  ["The TWA Flight Center", ["1890","4932"]], ["The Verrazzano", ["2093","3220"]], ["The Williamsburgh Clock Tower", ["3992","4016"]],
+  ["The Ball Drop", ["3100","3572","4013"]], ["The Washington Square Arch", ["3206","4925"]],
+  ["The Blackout Block Party", ["786","5395"]], ["The Concert in the Park", ["1871","5415"]], ["The Coyote on the Bridge", ["3262","5318"]],
+  ["The Keystone Faces", ["1360","4403"]], ["The Landlord", ["39","43"]], ["The Sample Sale Stampede", ["1017","5130"]],
+  ["The Snow Day", ["1129","5362"]], ["The Understudy's Night", ["2256","4039"]]
+ ]}

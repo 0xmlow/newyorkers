@@ -27,6 +27,10 @@ for m in data["motion"]:
         flat.append({"key": c["key"], "src": c["src"], "kind": c["kind"], "pid": m.get("pid"), "t": c.get("t") or m["t"], "w": c.get("w"), "h": c.get("h")})
     if m.get("alt") and not m.get("cuts"):
         flat.append({"key": m["key"] + "~alt", "src": m["alt"], "kind": "video", "pid": m.get("pid"), "t": m["t"], "w": m.get("w"), "h": m.get("h"), "poster": m["key"]})
+extra = os.path.join(SITE, "_build", "motion_reel_extra.json")
+if os.path.exists(extra):
+    have = {m["src"] for m in flat}
+    flat += [dict(m) for m in json.load(open(extra)) if m["src"] not in have]
 by_id = {p["id"]: p for p in data["pieces"]}
 for m in flat:
     pid = ATTACH.get(m["t"])

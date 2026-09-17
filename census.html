@@ -493,6 +493,7 @@ EDGES.forEach(([a,b,ty])=>{
   edgeIx.get(a).push({o:b,ty}); edgeIx.get(b).push({o:a,ty});
 });
 const EDGE_LABEL=ty=>{
+  if(ty.startsWith("subject:")) return "SAME SUBJECT";
   if(ty.startsWith("thread:")) return (S.threads.find(t=>t.key===ty.slice(7))||{}).name||"THREAD";
   if(ty.startsWith("set:")) return (S.sets.find(s=>s.key===ty.slice(4))||{}).name||"SET";
   return {spine:"THE SPINE",monument:"MONUMENTS",callback:"CALLBACK"}[ty]||ty;

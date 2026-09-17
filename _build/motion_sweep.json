@@ -1,0 +1,4705 @@
+{
+ "_note": "Motion sweep 2026-09-17: every gif and video on the Mac matched to census stills, reviewed side by side. attach = variant of the piece, reel = standalone in the MOTION reel, hold = edits/products/compilations kept off the site pending MLow, reject = wrong match.",
+ "items": [
+  {
+   "i": 0,
+   "pid": "1600",
+   "title": "The Wire Walk",
+   "score": 0.9999,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-12/14_milestone_flipbook.gif",
+   "dur": 7.92,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 1,
+   "pid": "1100",
+   "title": "The Barber Pole",
+   "score": 0.9998,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/1100.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 2,
+   "pid": "1850",
+   "title": "Minerva's Wave",
+   "score": 0.9998,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_14.mp4",
+   "dur": 9.5,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 3,
+   "pid": "2500",
+   "title": "The Golden Door",
+   "score": 0.9998,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/2500.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 4,
+   "pid": "3515",
+   "title": "The Subway Map Rearranged",
+   "score": 0.9998,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/hour/film/THE_HOUR_FILM_B_x_1080p.mp4",
+   "dur": 15.02,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 5,
+   "pid": "7591",
+   "title": "The Anon With Two Hundred Thousand Followers and a Day Job",
+   "score": 0.9998,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/hour/hour-01.mp4",
+   "dur": 10.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 6,
+   "pid": "x095",
+   "title": "Upscales",
+   "score": 0.9998,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_14.mp4",
+   "dur": 9.5,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 7,
+   "pid": "1483",
+   "title": "The Royal Taster",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take3/census-12.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 8,
+   "pid": "2200",
+   "title": "The Big Apple",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/2200.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 9,
+   "pid": "2300",
+   "title": "The Second Glance Wedding",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-21/12_kenburns_wedding.gif",
+   "dur": 6.3,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 10,
+   "pid": "3000",
+   "title": "The Full Bloom",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/3000.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 11,
+   "pid": "3400",
+   "title": "The Henge",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/3400.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 12,
+   "pid": "3622",
+   "title": "The Runway of the Unhoused",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take3/census-04.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 13,
+   "pid": "4400",
+   "title": "The Night the City Looked Up",
+   "score": 0.9997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/4400.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 14,
+   "pid": "900",
+   "title": "The Park Raccoon",
+   "score": 0.9996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/900.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 15,
+   "pid": "1530",
+   "title": "The Key to the City",
+   "score": 0.9996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take3/census-14.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 16,
+   "pid": "3622",
+   "title": "The Runway of the Unhoused",
+   "score": 0.9996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-04.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 17,
+   "pid": "3695",
+   "title": "The Ghost Kitchen Sign",
+   "score": 0.9996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_06.mp4",
+   "dur": 3.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 18,
+   "pid": "3900",
+   "title": "The City Dreams Itself",
+   "score": 0.9996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/3900.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 19,
+   "pid": "5460",
+   "title": "The Snow That Fell Only on One Building",
+   "score": 0.9996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_05.mp4",
+   "dur": 4.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 20,
+   "pid": "1866",
+   "title": "The Collector",
+   "score": 0.9995,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-10.mp4",
+   "dur": 10.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 21,
+   "pid": "925",
+   "title": "The Walk Signal",
+   "score": 0.9994,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_00.mp4",
+   "dur": 3.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 22,
+   "pid": "2116",
+   "title": "The Devil's Lease",
+   "score": 0.9994,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take3/census-13.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 23,
+   "pid": "4200",
+   "title": "The Bodega at the End of Time",
+   "score": 0.9994,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/4200.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 24,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9993,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-14_112739_7673907535925021966.mp4",
+   "dur": 30.02,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 25,
+   "pid": "4691",
+   "title": "The Choir at Full Voice",
+   "score": 0.9993,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-11.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 26,
+   "pid": "4691",
+   "title": "The Choir at Full Voice",
+   "score": 0.9993,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take3/census-11.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 27,
+   "pid": "6129",
+   "title": "Fitzroy Grandison, a father explaining a liquidation to his kids",
+   "score": 0.9993,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-08.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 28,
+   "pid": "5301",
+   "title": "The Translator That Got the Joke",
+   "score": 0.9992,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_08.mp4",
+   "dur": 3.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 29,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.9992,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-23-8956-SPRAYS PAINT ON THE WALL _M+M_.mp4",
+   "dur": 0.98,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 30,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9992,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m175mnrx443b6ht5btnwana71d8a11zq__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 31,
+   "pid": "1467",
+   "title": "The First Eye Flower",
+   "score": 0.9991,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-12/18_video_first_eye_flower.mp4",
+   "dur": 8.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 32,
+   "pid": "1800",
+   "title": "The Royal Wedding",
+   "score": 0.999,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/1800.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 33,
+   "pid": "1000",
+   "title": "The Subway Samaritan",
+   "score": 0.9989,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-12/12_kenburns_samaritan.gif",
+   "dur": 3.24,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 34,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9989,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17091h2x3fgjdmvcafqgd8rmd8a152x__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 35,
+   "pid": "2929",
+   "title": "The Sheet Cake Escort",
+   "score": 0.9988,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-03.mp4",
+   "dur": 10.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 36,
+   "pid": "1400",
+   "title": "The Cypher",
+   "score": 0.9987,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/1400.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 37,
+   "pid": "3068",
+   "title": "The House of Fulton Street",
+   "score": 0.9986,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3068 The House of Fulton Street.gif",
+   "dur": 1.7,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 38,
+   "pid": "3539",
+   "title": "The Bagel Kettle at Dawn",
+   "score": 0.9985,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-02.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 39,
+   "pid": "4413",
+   "title": "The Balustrade Ballet",
+   "score": 0.9985,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-05.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 40,
+   "pid": "39",
+   "title": "The Landlord",
+   "score": 0.9984,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-13.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 41,
+   "pid": "471",
+   "title": "Herman Melville",
+   "score": 0.9984,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m176vj1y6t6n5ccp08v626cmgh8a2y6m__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 42,
+   "pid": "1800",
+   "title": "The Royal Wedding",
+   "score": 0.9984,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-12/20_video_royal_wedding.mp4",
+   "dur": 8.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 43,
+   "pid": "4413",
+   "title": "The Balustrade Ballet",
+   "score": 0.9984,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_04.mp4",
+   "dur": 4.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 44,
+   "pid": "50",
+   "title": "The Key",
+   "score": 0.9978,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-14.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 45,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9978,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013704_7677094823416925453.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 46,
+   "pid": "548",
+   "title": "Pizza Rat",
+   "score": 0.9976,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-12.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 47,
+   "pid": "3991",
+   "title": "The Last Gullwing Ferry",
+   "score": 0.9976,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3991 The Last Gullwing Ferry.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 48,
+   "pid": "2500",
+   "title": "The Golden Door",
+   "score": 0.9975,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/2500_the_golden_door_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 49,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9974,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_012852_7677092984231431437.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 50,
+   "pid": "3465",
+   "title": "The Last Look",
+   "score": 0.9974,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3465 The Last Look.gif",
+   "dur": 1.3,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 51,
+   "pid": "5427",
+   "title": "The Threshold of the Mosque at Eid",
+   "score": 0.9974,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5427 The Threshold of the Mosque at Eid.gif",
+   "dur": 1.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 52,
+   "pid": "504",
+   "title": "Wu-Tang Clan",
+   "score": 0.9973,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-23-5505- flings records.mp4",
+   "dur": 9.02,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 53,
+   "pid": "664",
+   "title": "Carrie Mathison",
+   "score": 0.9972,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17dked4g34mwvs5ge08mxcr7h8a25h8__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 54,
+   "pid": "4791",
+   "title": "The Blackout Where Everyone Saw Each Other",
+   "score": 0.9972,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4791 The Blackout Where Everyone Saw Each Other.gif",
+   "dur": 1.53,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 55,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9972,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17apbnj8cf67emmkederqtg5n8a0y4c__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 56,
+   "pid": "3264",
+   "title": "The Turkey of the Battery",
+   "score": 0.997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3264 The Turkey of the Battery.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 57,
+   "pid": "4001",
+   "title": "The Sundial in the Shade",
+   "score": 0.997,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4001 The Sundial in the Shade.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 58,
+   "pid": "471",
+   "title": "Herman Melville",
+   "score": 0.9969,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17d70hk7q2pzksde5w8f0b7qd8a3str__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 59,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9969,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013717_7677094961761766670.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 60,
+   "pid": "x012",
+   "title": "The Harlem Chess Players",
+   "score": 0.9969,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m173ccsxap2zgwdq2g1dx0mthn8a277b__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 61,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9968,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013533_7677094466695564557.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 62,
+   "pid": "800",
+   "title": "The Rockaway Surfer",
+   "score": 0.9968,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/800.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 63,
+   "pid": "1500",
+   "title": "The Milky Way Blackout",
+   "score": 0.9968,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-12/19_video_milky_way_blackout.mp4",
+   "dur": 8.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 64,
+   "pid": "666",
+   "title": "Daredevil",
+   "score": 0.9967,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17136pm10qdshf0nkvh8m4j5x8a3qfh__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 65,
+   "pid": "3539",
+   "title": "The Bagel Kettle at Dawn",
+   "score": 0.9967,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_01.mp4",
+   "dur": 3.58,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 66,
+   "pid": "246",
+   "title": "The Bronx",
+   "score": 0.9966,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m171f14vhre7tb4vc17rhgxp3h89nj5j__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 67,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9966,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013647_7677094583662152973.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 68,
+   "pid": "3622",
+   "title": "The Runway of the Unhoused",
+   "score": 0.9966,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_03.mp4",
+   "dur": 3.21,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 69,
+   "pid": "248",
+   "title": "Queens",
+   "score": 0.9965,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m172f1k5fjkkr6wpxpn5daps6n89n7z7__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 70,
+   "pid": "361",
+   "title": "The G Train",
+   "score": 0.9965,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m174aatzgygfhq3vqp1p7rr8g589mb3y__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 71,
+   "pid": "644",
+   "title": "LL Cool J",
+   "score": 0.9965,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m178c7b2cvpmw5xb5xk6cd6azx8a2fvt__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 72,
+   "pid": "4480",
+   "title": "The Skylight Grate Gardens",
+   "score": 0.9965,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4480 The Skylight Grate Gardens.gif",
+   "dur": 1.28,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 73,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9965,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17afpdq9bb440qbbgqmbexkp189mk0j__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 74,
+   "pid": "x017",
+   "title": "A Rockefeller Center Scene",
+   "score": 0.9965,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17bxyzbgpffzyg6kt15zq9a118a2czz__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 75,
+   "pid": "1507",
+   "title": "The Bodega Dome Mirror",
+   "score": 0.9964,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1507 The Bodega Dome Mirror.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 76,
+   "pid": "4891",
+   "title": "The Interfaith Block Association",
+   "score": 0.9964,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4891 The Interfaith Block Association.gif",
+   "dur": 1.7,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 77,
+   "pid": "5465",
+   "title": "The Second City Above the First",
+   "score": 0.9964,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5465 The Second City Above the First.gif",
+   "dur": 1.28,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 78,
+   "pid": "557",
+   "title": "Nathan's Famous",
+   "score": 0.9962,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17a564ywqf6n38fnhpj3qzfv98a2rp1__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 79,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9962,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-GHOST_FEED Troll GHOST_FEED.gif",
+   "dur": 1.7,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 80,
+   "pid": "569",
+   "title": "The MTA Subway",
+   "score": 0.9961,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m178jey57ppfe6965paqwsztdd8a34sb__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 81,
+   "pid": "6129",
+   "title": "Fitzroy Grandison, a father explaining a liquidation to his kids",
+   "score": 0.9961,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_07.mp4",
+   "dur": 3.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 82,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9961,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17e2qbmv30958106qq26ywr4x89nx2s__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 83,
+   "pid": "4597",
+   "title": "The Debris Netting Aurora",
+   "score": 0.996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4597 The Debris Netting Aurora.gif",
+   "dur": 1.62,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 84,
+   "pid": "1483",
+   "title": "The Royal Taster",
+   "score": 0.9959,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_11.mp4",
+   "dur": 2.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 85,
+   "pid": "2061",
+   "title": "Dreamland",
+   "score": 0.9959,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2061 Dreamland.gif",
+   "dur": 1.35,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 86,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9957,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-XCOPY_STROBE Troll XCOPY_STROBE.gif",
+   "dur": 1.54,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 87,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9956,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17c272ep08damqtcx0bkgqpc98a2scj__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 88,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9956,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m1758n6v0wf1bsn8w6ty4j23hn8a3ep5__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 89,
+   "pid": "37",
+   "title": "The Crossing",
+   "score": 0.9955,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/census_take2/census-01.mp4",
+   "dur": 5.04,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 90,
+   "pid": "3217",
+   "title": "The Spire in the Fog",
+   "score": 0.9955,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3217 The Spire in the Fog.gif",
+   "dur": 1.62,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 91,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9955,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17dzd5spk0x27nth60bp89pjn89qwwa__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 92,
+   "pid": "925",
+   "title": "The Walk Signal",
+   "score": 0.9954,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/Census Film New Yorkers MLow.mp4",
+   "dur": 60.0,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 93,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9954,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178rgg18q2e7bdvx0y7bsmfyd89nz2g__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 94,
+   "pid": "41",
+   "title": "The Adversary",
+   "score": 0.9953,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17aar0h0909hm14dsmmqvxhms89m97y__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 95,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9953,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fd9jjd1x5anyajp0kc8362x89m1tn__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 96,
+   "pid": "235",
+   "title": "Bushwick",
+   "score": 0.9952,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-23-4450-LADY WAVES AND THE EYES ON HER CLOTHING ....mp4",
+   "dur": 1.32,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 97,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9951,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178mjepmd6erdcck3bjcg987h89mntt__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 98,
+   "pid": "46",
+   "title": "The Operator",
+   "score": 0.995,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m1735pb9c1s8pvnntkhszsw2wd89mvpt__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 99,
+   "pid": "253",
+   "title": "Rockaway",
+   "score": 0.995,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178yyx4zrycmy9v526rgx3p7s89n8rq__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 100,
+   "pid": "x012",
+   "title": "The Harlem Chess Players",
+   "score": 0.995,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17emj3bj69r3wdkk7vf9n7gsx8a3pvd__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 101,
+   "pid": "484",
+   "title": "Patrick Ewing",
+   "score": 0.9949,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17e8xhj5xp8646pm52sg2bqzs8a2ttd__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 102,
+   "pid": "516",
+   "title": "Alicia Keys",
+   "score": 0.9948,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17c0n5edr9971nsxknng7mxbx8a2f4z__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 103,
+   "pid": "590",
+   "title": "Fearless Girl",
+   "score": 0.9948,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m178vdxzcrwrpavv3kt271p5xs8a27jr__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 104,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9948,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_012928_7677093617848126733.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 105,
+   "pid": "7841",
+   "title": "The Woman Who Has Told Nobody Where It Is",
+   "score": 0.9948,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/7841 The Woman Who Has Told Nobody Where It Is.gif",
+   "dur": 1.36,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 106,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9946,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013520_7677094553412734221.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 107,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9946,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17dp63rbccwvpnq08fpkybt8189mmp1__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 108,
+   "pid": "1488",
+   "title": "The Winter Palace",
+   "score": 0.9945,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1488 The Winter Palace.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 109,
+   "pid": "1489",
+   "title": "The Clean Street Truce",
+   "score": 0.9945,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1489 The Clean Street Truce.gif",
+   "dur": 1.62,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 110,
+   "pid": "x009",
+   "title": "The DSNY Worker",
+   "score": 0.9945,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m179pdm2yp28drvb6tfj0vxhwh89mw86__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 111,
+   "pid": "247",
+   "title": "Chelsea",
+   "score": 0.9944,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17cvk69c1gznese9assg5mrfh89n7c7__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 112,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9943,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17bef9bc6f2xjp3bykjybd79s89m20x__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 113,
+   "pid": "3967",
+   "title": "The Gullwing Arrived at Dawn",
+   "score": 0.9942,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3967 The Gullwing Arrived at Dawn.gif",
+   "dur": 1.36,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 114,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9942,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m1786myepw0qgb5e0a93axse2h89p2f2__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 115,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9941,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m175afcpkrm70j7nm7906yra4589n3xc__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 116,
+   "pid": "48",
+   "title": "The Noise Complaint",
+   "score": 0.994,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m176vztwd8t919jymb2s6eg9wh89qx0n__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 117,
+   "pid": "4192",
+   "title": "The Bodega of Both Nows",
+   "score": 0.994,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4192 The Bodega of Both Nows.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 118,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.994,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17exahfxbrarxcvfcbv4svmzx89mmrg__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 119,
+   "pid": "1632",
+   "title": "The Same Booth",
+   "score": 0.9939,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1632 The Same Booth.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 120,
+   "pid": "4142",
+   "title": "The Arcade That Never Closed",
+   "score": 0.9939,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4142 The Arcade That Never Closed.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 121,
+   "pid": "571",
+   "title": "The Chrysler Building",
+   "score": 0.9938,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17d1bagjrkw5d8zf9d1spy5hh8a26rg__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 122,
+   "pid": "7741",
+   "title": "The Artist Who Did the Work and Never Got Paid",
+   "score": 0.9937,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/7741 The Artist Who Did the Work and Never Got Paid.gif",
+   "dur": 1.5,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 123,
+   "pid": "590",
+   "title": "Fearless Girl",
+   "score": 0.9936,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m174gmjm0h1n4zrf4xgvfgepd58a2cvh__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 124,
+   "pid": "414",
+   "title": "Battery Park",
+   "score": 0.9935,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17frrf83cg7y76krtb7cfg47h89m5n6__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 125,
+   "pid": "4870",
+   "title": "The Botanica of Two Faiths",
+   "score": 0.9935,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4870 The Botanica of Two Faiths.gif",
+   "dur": 1.53,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 126,
+   "pid": "x066",
+   "title": "The Station Agent",
+   "score": 0.9935,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m173qcvvbg96my4ws4egkx15n989nqvc__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 127,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9934,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013900_7677095321402412301.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 128,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9934,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17429z7mx9qyhrd78pgab2fd589mh1e__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 129,
+   "pid": "226",
+   "title": "Lower East Side",
+   "score": 0.9933,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m175h6ewzbzmmx12ewkshxxv8189n9md__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 130,
+   "pid": "487",
+   "title": "Keith Haring",
+   "score": 0.9933,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-23-9376-art explosion.mp4",
+   "dur": 9.02,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 131,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9933,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m1794zfgkx1186ej48cxn8vb5n89m1yv__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 132,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9933,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m174fe4d9pzydqxwznv3b378r189nkd3__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 133,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9932,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m176v0hgygghn2zd63eywmxprx89mtbj__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 134,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9932,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178kg8h5fvkarepctzrrcmw8x89n1xz__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 135,
+   "pid": "474",
+   "title": "Boss Tweed",
+   "score": 0.9931,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m176n3jfgtrpmadytfeypprfv18a32wk__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 136,
+   "pid": "x091",
+   "title": "Contact Sheets",
+   "score": 0.9931,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-23-8764-MAKES HEART WITH HANDS.mp4",
+   "dur": 0.98,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 137,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9928,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17aryk95pb911x3mn3ckpt9dx89mate__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 138,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9928,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17fqk33za2m77gvtkxskcdt0s89pns7__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 139,
+   "pid": "37",
+   "title": "The Crossing",
+   "score": 0.9927,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m179kwj48e0a9qjk6ya2abgmax89qj86__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 140,
+   "pid": "2144",
+   "title": "The City Bloom Map",
+   "score": 0.9927,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2144 The City Bloom Map.gif",
+   "dur": 1.7,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 141,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9927,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m1709h5kta6geexhwskcqfmdd189pw17__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 142,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9927,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17apbr32mhh4m3bpgwe40tep589q2vg__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 143,
+   "pid": "661",
+   "title": "Bernie Sanders",
+   "score": 0.9926,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17e7jwaaved2p9yr6zh1ydn0h8a3wzz__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 144,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9926,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17cz1w1kkyknts04bry1s676189mpsa__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 145,
+   "pid": "348",
+   "title": "Prospect Heights",
+   "score": 0.9924,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m176wxtmhvhwszzqs0nvnpzvx189nbrg__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 146,
+   "pid": "2153",
+   "title": "The Peace of the Platforms",
+   "score": 0.9924,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2153 The Peace of the Platforms.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 147,
+   "pid": "1627",
+   "title": "The L Train Vows",
+   "score": 0.9923,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1627 The L Train Vows.gif",
+   "dur": 1.35,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 148,
+   "pid": "255",
+   "title": "The Bronx",
+   "score": 0.9922,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178f2hqn9q4jm8vsxcrqtmytd89nyz6__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 149,
+   "pid": "1468",
+   "title": "The Seed Beneath the City",
+   "score": 0.9921,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1468 The Seed Beneath the City.gif",
+   "dur": 1.62,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 150,
+   "pid": "1494",
+   "title": "The Signal Problem's Day Off",
+   "score": 0.9921,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1494 The Signal Problem's Day Off.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 151,
+   "pid": "4889",
+   "title": "The Boishakh Cloud",
+   "score": 0.9921,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4889 The Boishakh Cloud.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 152,
+   "pid": "44",
+   "title": "The Security Guard",
+   "score": 0.9919,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m1770e41qywkw8t38cmmkjdkan89n8v5__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 153,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9919,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m174smwymzrbz370ctrsw0ae1589ms64__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 154,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9918,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013511_7677094555354778894.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 155,
+   "pid": "3992",
+   "title": "The Clock Tower Struck Both Ways",
+   "score": 0.9918,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3992 The Clock Tower Struck Both Ways.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 156,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9917,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fe3atepsv2qws16ec97gba989mtsa__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 157,
+   "pid": "526",
+   "title": "Teenage Mutant Ninja Turtles",
+   "score": 0.9916,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m170pew1b3k3s7yqwwgedxnbss8a3wpv__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 158,
+   "pid": "46",
+   "title": "The Operator",
+   "score": 0.9914,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17cgzdmd3x7h2m4ppdy3kgs0589nmgv__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 159,
+   "pid": "51",
+   "title": "The Local",
+   "score": 0.9914,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178rjzhkn7sadz0svyp8fx4b989n951__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 160,
+   "pid": "232",
+   "title": "Bed-Stuy",
+   "score": 0.9914,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17f6zky11jvnqs8y5cvwq50r589nejr__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 161,
+   "pid": "3801",
+   "title": "The Harbour Buoy Rang",
+   "score": 0.9914,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3801 The Harbour Buoy Rang.gif",
+   "dur": 1.36,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 162,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9914,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m179damw6md07acj010ypjsjss89ne1y__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 163,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9913,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m175tbn4th8p0fkccn5vn1n0yx89qfmz__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 164,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9912,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17c5yzjfjky5885p13fb7gwb589mc5z__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 165,
+   "pid": "235",
+   "title": "Bushwick",
+   "score": 0.991,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m173ntr04avs9tveqngn8dzr1589mvar__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 166,
+   "pid": "3514",
+   "title": "The Bike Lane Redrew Itself",
+   "score": 0.991,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3514 The Bike Lane Redrew Itself.gif",
+   "dur": 1.62,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 167,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.991,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17082acp29zz32jzc8qy05epx89mgf0__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 168,
+   "pid": "3537",
+   "title": "The Pizza Oven Knows Sunday",
+   "score": 0.9908,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3537 The Pizza Oven Knows Sunday.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 169,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9908,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m1705eh7xk4ce85xhz6axcnvmd89pb8e__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 170,
+   "pid": "5002",
+   "title": "The Puddle That Goes All the Way Down",
+   "score": 0.9907,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/5002 The Puddle That Goes All the Way Down_MLOW-28202.gif",
+   "dur": 2.3,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 171,
+   "pid": "40",
+   "title": "Broker Fee",
+   "score": 0.9906,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m179xke69tqxkhz0p0rvn3zsex89p8ea__output_0.mp4",
+   "dur": 5.09,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 172,
+   "pid": "1467",
+   "title": "The First Eye Flower",
+   "score": 0.9906,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/1467_first_eye_flower_vhs.gif",
+   "dur": 0.5,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 173,
+   "pid": "4067",
+   "title": "The Cashmere Android Concierge",
+   "score": 0.9906,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4067 The Cashmere Android Concierge.gif",
+   "dur": 1.28,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 174,
+   "pid": "4491",
+   "title": "The Last Stop Lighthouse",
+   "score": 0.9904,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4491 The Last Stop Lighthouse.gif",
+   "dur": 2.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 175,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9904,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m170fsvdkcc60687hzx7c98dxx89n1nv__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 176,
+   "pid": "x047",
+   "title": "The Mutual-Aid Volunteer",
+   "score": 0.9903,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m173aepf14zve4pxa6fqgj9w7589pas9__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 177,
+   "pid": "x028",
+   "title": "The Community Center",
+   "score": 0.9903,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17bzq1ge096vyg4b67r82z4b18a2jpt__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 178,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9902,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17ekvn9qe9jq2ztymv9ejd88589mjjr__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 179,
+   "pid": "228",
+   "title": "Williamsburg",
+   "score": 0.9901,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17be7x8bmfqwthy62rnsdae9589n08x__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 180,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9901,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-DATA_RIOT Troll DATA_RIOT.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 181,
+   "pid": "2700",
+   "title": "The Day Two Cities Met",
+   "score": 0.99,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/2700_the_day_two_cities_met_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 182,
+   "pid": "4471",
+   "title": "The Abandoned Platform Ballroom",
+   "score": 0.99,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4471 The Abandoned Platform Ballroom.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 183,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.99,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17707vjdzqa0drq65k1ghs65n89pvnt__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 184,
+   "pid": "259",
+   "title": "Uptown",
+   "score": 0.9898,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m175rh4t125kfp74h2ge4qqsk589n4qy__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 185,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9897,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_012826_7677093317619846413.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 186,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9897,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-EYE_STORM Troll EYE_STORM.gif",
+   "dur": 1.53,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 187,
+   "pid": "3767",
+   "title": "The Radiator Sang Its Pipe Song",
+   "score": 0.9897,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3767 The Radiator Sang Its Pipe Song.gif",
+   "dur": 1.7,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 188,
+   "pid": "6591",
+   "title": "The Son Who Took Over the Scissors at Di Fara",
+   "score": 0.9897,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/6591 The Son Who Took Over the Scissors at Di Fara.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 189,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9897,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17fbat9jzpk6jfytqjgebtaq989qd0j__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 190,
+   "pid": "243",
+   "title": "The G Train",
+   "score": 0.9895,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m1747y9d6njadrwa4q4g9nzbqh89mqfj__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 191,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9895,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17ftd8r703wafrmmb8qck6k8989ngy9__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 192,
+   "pid": "1713",
+   "title": "The Window Watcher's Wave",
+   "score": 0.9893,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1713 The Window Watcher's Wave.gif",
+   "dur": 1.28,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 193,
+   "pid": "3643",
+   "title": "The Newsprint Reset",
+   "score": 0.9893,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3643 The Newsprint Reset.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 194,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9893,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17e840kawrgetgn2bq2makan18a2pje__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 195,
+   "pid": "252",
+   "title": "Flatbush",
+   "score": 0.9892,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m175j6s4zphheetnqdrdc7rtes89msyv__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 196,
+   "pid": "2060",
+   "title": "The Elephant Hotel",
+   "score": 0.9892,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2060 The Elephant Hotel.gif",
+   "dur": 1.7,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 197,
+   "pid": "x017",
+   "title": "A Rockefeller Center Scene",
+   "score": 0.9892,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m176tx3mkakmpj85fp3p2wsrmx8a3hbw__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 198,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9889,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m177s1c9acnww38n4qyp69ejqx89m2x8__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 199,
+   "pid": "51",
+   "title": "The Local",
+   "score": 0.9887,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17djd0jyg0avzb0pmgckbgv4s89n0pq__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 200,
+   "pid": "3467",
+   "title": "The Traffic Cone That Stood Up",
+   "score": 0.9886,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3467 The Traffic Cone That Stood Up.gif",
+   "dur": 1.53,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 201,
+   "pid": "3488",
+   "title": "The Flower Bucket Out Front",
+   "score": 0.9886,
+   "src": "/Users/degens/Downloads/3488 The Flower Bucket Out Front_MLOW-92887.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 202,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9885,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013742_7677095225738710286.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 203,
+   "pid": "3077",
+   "title": "The House of Hylan Boulevard",
+   "score": 0.9885,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3077 The House of Hylan Boulevard.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 204,
+   "pid": "348",
+   "title": "Prospect Heights",
+   "score": 0.9881,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m174pbq0q4e5v3facsfna2vk3589n2yf__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 205,
+   "pid": "593",
+   "title": "The Phantom of the Opera",
+   "score": 0.9881,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m173spha8h8tmm25b77t6atyy98a2e84__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 206,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9881,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17456h02cbry4k9jg8m7s2x2x89mj7s__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 207,
+   "pid": "2200",
+   "title": "The Big Apple",
+   "score": 0.988,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_05.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 208,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9879,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178370nhm94khngcrbvzeazwd89n7rz__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 209,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9879,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m1700x2xmpyx6d10b0ec9j5rp989n77t__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 210,
+   "pid": "x025",
+   "title": "The Brownstone Stoop",
+   "score": 0.9879,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17efnvcrg8jyedx59fm3zg8098a3nef__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 211,
+   "pid": "1477",
+   "title": "The Talisman Maker",
+   "score": 0.9878,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1477 The Talisman Maker.gif",
+   "dur": 1.53,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 212,
+   "pid": "1633",
+   "title": "The Two Coffees",
+   "score": 0.9878,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1633 The Two Coffees.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 213,
+   "pid": "239",
+   "title": "The D Train",
+   "score": 0.9877,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fapxtat03bn03bn79szn9qx89mw8a__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 214,
+   "pid": "3818",
+   "title": "The Diver Under the Pier",
+   "score": 0.9877,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3818 The Diver Under the Pier.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 215,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9877,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m178qq5sn1xw7b5zxjvygkbbad89nqvd__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 216,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9876,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17eyt1mpp539ygcqjgjhrbjts89n2m3__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 217,
+   "pid": "2500",
+   "title": "The Golden Door",
+   "score": 0.9875,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_06.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 218,
+   "pid": "559",
+   "title": "Shake Shack",
+   "score": 0.9873,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m178hyrsfd6ph69sstxdbnyjnn8a2c4p__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 219,
+   "pid": "3529",
+   "title": "The Laundry Machine Sings Off Balance",
+   "score": 0.9868,
+   "src": "/Users/degens/Downloads/3529 The Laundry Machine Sings Off Balance_MLOW-43429.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 220,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9867,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m173sgjty3ffj7jtsmfbphv59589m2p1__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 221,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9866,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m173my8eeqd00qfdb52g74y05989mm2x__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 222,
+   "pid": "3678",
+   "title": "The Last Note of the Night",
+   "score": 0.9865,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3678 The Last Note of the Night.gif",
+   "dur": 1.26,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 223,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9865,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m175f1ckx07xxp0q8nxdk7p8gh89n3c8__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 224,
+   "pid": "1530",
+   "title": "The Key to the City",
+   "score": 0.986,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_13.mp4",
+   "dur": 2.42,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 225,
+   "pid": "229",
+   "title": "Jamaica",
+   "score": 0.9857,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fmp3p6mmg566emrakcj5j7d89n35d__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 226,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9856,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17c37ty64843nyqzkf2qkwnh589ne0r__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 227,
+   "pid": "x059",
+   "title": "The Public-School Teacher",
+   "score": 0.9856,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17dwmfq3q7tw3shs84xpzmwmh89mh22__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 228,
+   "pid": "241",
+   "title": "Jackson Heights",
+   "score": 0.9855,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17e3ketat1f17kn5kesmj0cg589ncyr__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 229,
+   "pid": "559",
+   "title": "Shake Shack",
+   "score": 0.9854,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m1728sbm34y10f243ksfby51gd8a3r6m__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 230,
+   "pid": "5396",
+   "title": "The Lunar New Year on Mott Street",
+   "score": 0.9854,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5396 The Lunar New Year on Mott Street.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 231,
+   "pid": "2150",
+   "title": "The Adopted Squab",
+   "score": 0.9853,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2150 The Adopted Squab.gif",
+   "dur": 2.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 232,
+   "pid": "6191",
+   "title": "The Welder Forty Floors Up",
+   "score": 0.9853,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/6191 The Welder Forty Floors Up.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 233,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9852,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17022bhwfqrbb6xxx9bbbdak589m694__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 234,
+   "pid": "6941",
+   "title": "The Woman Who Minds the Tree Stump at the Apollo",
+   "score": 0.9846,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/6941 The Woman Who Minds the Tree Stump at the Apollo.gif",
+   "dur": 1.53,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 235,
+   "pid": "2266",
+   "title": "To Be Continued",
+   "score": 0.9843,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/2266_to_be_continued_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 236,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.9841,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m170y3dzyd29hj3z7yn0th23qd8a2257__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 237,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9838,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m174a8qcfpex9y79xnwtq4dw7d89q560__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 238,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9834,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m174s8kkn0ghr410fr9cfbv6mn89mqt2__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 239,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9834,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fjfrs9a1vpbcrcbq1gfd9jh89mp03__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 240,
+   "pid": "5150",
+   "title": "The Keepers",
+   "score": 0.9828,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5150 The Keepers.gif",
+   "dur": 1.35,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 241,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9827,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_013832_7677095164111768846.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 242,
+   "pid": "1865",
+   "title": "The Painter of New Yorkers",
+   "score": 0.9824,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1865 The Painter of New Yorkers.gif",
+   "dur": 1.36,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 243,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9818,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m170bwpxmffnhrdf3j3cq1c01h89q5dt__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 244,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9814,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-MATRIX_RAIN Bridge Troll MATRIX_RAIN.gif",
+   "dur": 3.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 245,
+   "pid": "3076",
+   "title": "The House of Brighton Beach",
+   "score": 0.9811,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3076 The House of Brighton Beach.gif",
+   "dur": 1.3,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 246,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9811,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17f8tvwgb27388f0adggcp68s89nzec__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 247,
+   "pid": "3900",
+   "title": "The City Dreams Itself",
+   "score": 0.9809,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_09.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 248,
+   "pid": "1832",
+   "title": "The Flaco Mural",
+   "score": 0.9805,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1832 The Flaco Mural.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 249,
+   "pid": "240",
+   "title": "Crown Heights",
+   "score": 0.9804,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m171e3gq2x28sqqmy28c4m0h1189my5k__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 250,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9804,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_012724_7677092088109944077.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 251,
+   "pid": "3000",
+   "title": "The Full Bloom",
+   "score": 0.9804,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/3000_the_full_bloom_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 252,
+   "pid": "x059",
+   "title": "The Public-School Teacher",
+   "score": 0.9804,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m174m3eay7gk5ha3k3skwstxf189m2pb__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 253,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9803,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-PETAL_STATIC Bridge Troll PETAL_STATIC.gif",
+   "dur": 3.48,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 254,
+   "pid": "165",
+   "title": "Jackson Heights",
+   "score": 0.98,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m17513bqvjejm69qt0n5sdkbbx89qxpj__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 255,
+   "pid": "3529",
+   "title": "The Laundry Machine Sings Off Balance",
+   "score": 0.9795,
+   "src": "/Users/degens/Downloads/3529 The Laundry Machine Sings Off Balance_MLOW-44490.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 256,
+   "pid": "4400",
+   "title": "The Night the City Looked Up",
+   "score": 0.9789,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_11.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 257,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9785,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m170c8zdartz5wvb0f13szcm2d89mvpm__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 258,
+   "pid": "655",
+   "title": "Ed Koch",
+   "score": 0.9782,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17e2cjwww6brrccxnqzg7kjv58a39zm__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 259,
+   "pid": "2100",
+   "title": "The Eight Million",
+   "score": 0.9782,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/2100_the_eight_million_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 260,
+   "pid": "3071",
+   "title": "The House of Steinway Street",
+   "score": 0.9782,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3071 The House of Steinway Street.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 261,
+   "pid": "3592",
+   "title": "The Soccer Ball Chose Sides",
+   "score": 0.9781,
+   "src": "/Users/degens/Downloads/3592 The Soccer Ball Chose Sides_MLOW-20170.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 262,
+   "pid": "3765",
+   "title": "The Parking Garage Ramp",
+   "score": 0.9781,
+   "src": "/Users/degens/Downloads/3765 The Parking Garage Ramp_MLOW-15882.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 263,
+   "pid": "1485",
+   "title": "The Pigeon Queen",
+   "score": 0.978,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1485 The Pigeon Queen.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 264,
+   "pid": "487",
+   "title": "Keith Haring",
+   "score": 0.9772,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m173dj3aph886kfcdj5jfx29d98a3k53__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 265,
+   "pid": "3638",
+   "title": "The Auction Paddle Fell",
+   "score": 0.9768,
+   "src": "/Users/degens/Downloads/3638 The Auction Paddle Fell_MLOW-96151.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 266,
+   "pid": "39",
+   "title": "The Landlord",
+   "score": 0.9767,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_12.mp4",
+   "dur": 2.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 267,
+   "pid": "3400",
+   "title": "The Henge",
+   "score": 0.9765,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_08.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 268,
+   "pid": "2329",
+   "title": "The Ace of Swipes",
+   "score": 0.9763,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-21/14_arcana_flipbook.gif",
+   "dur": 5.6,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 269,
+   "pid": "3467",
+   "title": "The Traffic Cone That Stood Up",
+   "score": 0.9758,
+   "src": "/Users/degens/Downloads/3467 The Traffic Cone That Stood Up_MLOW-81494.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 270,
+   "pid": "2466",
+   "title": "The Halloween Dog Parade",
+   "score": 0.9755,
+   "src": "/Users/degens/Downloads/dreamina-2026-08-22-2071-halloween dog costume party in the park.....gif",
+   "dur": 10.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 271,
+   "pid": "3901",
+   "title": "The Feral Roomba of Ridgewood",
+   "score": 0.9755,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3901 The Feral Roomba of Ridgewood.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 272,
+   "pid": "365",
+   "title": "Queensboro",
+   "score": 0.975,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fymt9egzdze5r518t3nbprs89n7rc__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 273,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9747,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m173vt0s1ymn7czv1h8ztq12a989nyae__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 274,
+   "pid": "900",
+   "title": "The Park Raccoon",
+   "score": 0.9735,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/THE_MARKS_W1_LIVE_x_1080p.mp4",
+   "dur": 15.02,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 275,
+   "pid": "3069",
+   "title": "The House of Roosevelt Avenue",
+   "score": 0.9734,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3069 The House of Roosevelt Avenue.gif",
+   "dur": 1.35,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 276,
+   "pid": "3529",
+   "title": "The Laundry Machine Sings Off Balance",
+   "score": 0.9734,
+   "src": "/Users/degens/Downloads/3529 The Laundry Machine Sings Off Balance_MLOW-59819.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 277,
+   "pid": "900",
+   "title": "The Park Raccoon",
+   "score": 0.9725,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_01.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 278,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9718,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-CRYSTAL_FREEZE Bridge Troll CRYSTAL_FREEZE.gif",
+   "dur": 2.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 279,
+   "pid": "1100",
+   "title": "The Barber Pole",
+   "score": 0.9718,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_02.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 280,
+   "pid": "4242",
+   "title": "The Diner at the Edge of Orbit",
+   "score": 0.9717,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4242 The Diner at the Edge of Orbit.gif",
+   "dur": 1.36,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 281,
+   "pid": "3067",
+   "title": "The House of Fordham Road",
+   "score": 0.9714,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3067 The House of Fordham Road.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 282,
+   "pid": "531",
+   "title": "Eloise",
+   "score": 0.9711,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m1774kdjwqsqq81a0bsazf32b18a31gt__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 283,
+   "pid": "3529",
+   "title": "The Laundry Machine Sings Off Balance",
+   "score": 0.971,
+   "src": "/Users/degens/Downloads/3529 The Laundry Machine Sings Off Balance_MLOW-29570.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 284,
+   "pid": "1400",
+   "title": "The Cypher",
+   "score": 0.9693,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_03.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 285,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9689,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-DATAMOSH_DRIFT Bridge Troll DATAMOSH_DRIFT.gif",
+   "dur": 2.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 286,
+   "pid": "623",
+   "title": "Tompkins Square Park",
+   "score": 0.9681,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17268dbcar9qem09xh6w7v3r58a25zk__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 287,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9676,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-SIGNAL_COLLAPSE Troll SIGNAL_COLLAPSE.gif",
+   "dur": 1.28,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 288,
+   "pid": "4200",
+   "title": "The Bodega at the End of Time",
+   "score": 0.9673,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_10.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 289,
+   "pid": "3200",
+   "title": "The Steps",
+   "score": 0.9648,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/3200_the_steps_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 290,
+   "pid": "3256",
+   "title": "The Bridge Painter's Ledge",
+   "score": 0.9646,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/N3W YORKERS BY MLOW PART 1/N3W YORKERS BY MLOW PART 1.mp4",
+   "dur": 393.03,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 291,
+   "pid": "4367",
+   "title": "The Facade Undressed at Dawn",
+   "score": 0.9636,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4367 The Facade Undressed at Dawn.gif",
+   "dur": 2.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 292,
+   "pid": "360",
+   "title": "Queens",
+   "score": 0.9632,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/New Yorkers by MLow.gif",
+   "dur": 55.75,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 293,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9625,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-VHS_GRAVE Troll VHS_GRAVE.gif",
+   "dur": 1.9,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 294,
+   "pid": "4016",
+   "title": "The Clock Tower Lighthouse",
+   "score": 0.9596,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4016 The Clock Tower Lighthouse.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 295,
+   "pid": "3592",
+   "title": "The Soccer Ball Chose Sides",
+   "score": 0.9591,
+   "src": "/Users/degens/Downloads/3592 The Soccer Ball Chose Sides_MLOW-26976.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 296,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9588,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_012800_7677093317619797261.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 297,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9574,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m174r83vvv3062dsrxphkqnkmh8a3cba__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 298,
+   "pid": "1800",
+   "title": "The Royal Wedding",
+   "score": 0.9568,
+   "src": "/Users/degens/Downloads/dreamina-2026-08-22-5195-A still painting held on a failing analo....gif",
+   "dur": 10.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 299,
+   "pid": "3661",
+   "title": "The Boombox Chose the Song",
+   "score": 0.9567,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3661 The Boombox Chose the Song.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 300,
+   "pid": "1800",
+   "title": "The Royal Wedding",
+   "score": 0.9566,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_04.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 301,
+   "pid": "3601",
+   "title": "The Sewing Machine Finished It",
+   "score": 0.9566,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3601 The Sewing Machine Finished It.gif",
+   "dur": 1.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 302,
+   "pid": "1467",
+   "title": "The First Eye Flower",
+   "score": 0.9564,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/1467_the_first_eye_flower_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 303,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9551,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-DEEP_SIGNAL Bridge Troll DEEP_SIGNAL.gif",
+   "dur": 2.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 304,
+   "pid": "4912",
+   "title": "The Follower Count Made Visible",
+   "score": 0.9548,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4912 The Follower Count Made Visible.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 305,
+   "pid": "47",
+   "title": "The Eviction",
+   "score": 0.9513,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m171y6pfah2h0ytrqdt02g4pan89qe18__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 306,
+   "pid": "2116",
+   "title": "The Devil's Lease",
+   "score": 0.95,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_12.mp4",
+   "dur": 2.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 307,
+   "pid": "3000",
+   "title": "The Full Bloom",
+   "score": 0.9495,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_07.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 308,
+   "pid": "3482",
+   "title": "The Bodega Cat Cam",
+   "score": 0.9488,
+   "src": "/Users/degens/Downloads/3482 The Bodega Cat Cam_MLOW-58531.gif",
+   "dur": 3.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 309,
+   "pid": "1937",
+   "title": "The Shirt Off His Back",
+   "score": 0.9485,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1937 The Shirt Off His Back.gif",
+   "dur": 1.35,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 310,
+   "pid": "1730",
+   "title": "The Reply",
+   "score": 0.9467,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1730 The Reply.gif",
+   "dur": 1.62,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 311,
+   "pid": "3000",
+   "title": "The Full Bloom",
+   "score": 0.9442,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/hard/3000_the_full_bloom_stillwaiting_hard_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 312,
+   "pid": "800",
+   "title": "The Rockaway Surfer",
+   "score": 0.9403,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/marks_w1/film/seg_00.mp4",
+   "dur": 1.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 313,
+   "pid": "4868",
+   "title": "The Diwali Drone Lamps of Flushing",
+   "score": 0.9395,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4868 The Diwali Drone Lamps of Flushing.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 314,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9391,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_012943_7677093617848143117.mp4",
+   "dur": 10.05,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 315,
+   "pid": "5323",
+   "title": "The Whale in the Narrows",
+   "score": 0.9386,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5323 The Whale in the Narrows.gif",
+   "dur": 1.2,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 316,
+   "pid": "3592",
+   "title": "The Soccer Ball Chose Sides",
+   "score": 0.9381,
+   "src": "/Users/degens/Downloads/3592 The Soccer Ball Chose Sides_MLOW-50252.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 317,
+   "pid": "4589",
+   "title": "The Medieval Hall Snowfall",
+   "score": 0.9377,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4589 The Medieval Hall Snowfall.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 318,
+   "pid": "4292",
+   "title": "The Chrome Retriever",
+   "score": 0.937,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4292 The Chrome Retriever.gif",
+   "dur": 1.3,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 319,
+   "pid": "2275",
+   "title": "The Painter's New Canvas",
+   "score": 0.9357,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2275 The Painter's New Canvas.gif",
+   "dur": 1.68,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 320,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.9347,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-07/run_m178hkbznaqcqp50v1v39hbfms89q93a__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 321,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9342,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-MELTDOWN Bridge Troll MELTDOWN.gif",
+   "dur": 3.48,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 322,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.9331,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/N3W YORKERS BY MLOW PART 1/N3W YORKERS BY MLOW PART 1.gif",
+   "dur": 393.1,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 323,
+   "pid": "4917",
+   "title": "The Chrysler Crown Unscrews",
+   "score": 0.9328,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4917 The Chrysler Crown Unscrews.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 324,
+   "pid": "586",
+   "title": "The Lenape",
+   "score": 0.9318,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m177ae788adjq5df9q6vd8qrfx8a3a9n__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 325,
+   "pid": "3107",
+   "title": "The Richmond Hill Procession",
+   "score": 0.928,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3107 The Richmond Hill Procession.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 326,
+   "pid": "3638",
+   "title": "The Auction Paddle Fell",
+   "score": 0.9259,
+   "src": "/Users/degens/Downloads/3638 The Auction Paddle Fell_MLOW-22630.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 327,
+   "pid": "1470",
+   "title": "The Pollen Route",
+   "score": 0.9252,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1470 The Pollen Route.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 328,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9244,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-LED_BODEGA Bridge Troll LED_BODEGA.gif",
+   "dur": 1.98,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 329,
+   "pid": "1866",
+   "title": "The Collector",
+   "score": 0.9238,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/hard/1866_the_collector_stillwaiting_hard_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 330,
+   "pid": "602",
+   "title": "Lunar New Year",
+   "score": 0.9227,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17780haw4jc07rwxqdeg3h4s98a2aqa__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 331,
+   "pid": "490",
+   "title": "Gordon Parks",
+   "score": 0.9215,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m170xd3mzyyr5mhwf6bgym0nv18a3feq__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 332,
+   "pid": "2300",
+   "title": "The Second Glance Wedding",
+   "score": 0.9212,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/2300_the_second_glance_wedding_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 333,
+   "pid": "600",
+   "title": "The Puerto Rican Day Parade",
+   "score": 0.9208,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17b6hktjckm5zhhs7v1dhka2s8a365s__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 334,
+   "pid": "617",
+   "title": "Flaco the Owl",
+   "score": 0.9203,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17eew4dkktdbs917g4ft0yre98a3f6e__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 335,
+   "pid": "529",
+   "title": "Elmo",
+   "score": 0.9192,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m171jxqcg7e1ccbsprr9019mx18a23gc__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 336,
+   "pid": "5441",
+   "title": "The Door That Is Always Open",
+   "score": 0.9187,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5441 The Door That Is Always Open.gif",
+   "dur": 1.35,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 337,
+   "pid": "646",
+   "title": "Grandmaster Flash",
+   "score": 0.913,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m176w8cy8919vy2qpv32grmjdn8a30cn__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 338,
+   "pid": "3100",
+   "title": "The Ball Drop",
+   "score": 0.9114,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/3100_the_ball_drop_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 339,
+   "pid": "5392",
+   "title": "The West Indian Day Parade at Full Volume",
+   "score": 0.9106,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5392 The West Indian Day Parade at Full Volume.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 340,
+   "pid": "646",
+   "title": "Grandmaster Flash",
+   "score": 0.9078,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17f2pxt7524wbsmyf47fc50n18a2f8v__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 341,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.9069,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-VHS_MIDNIGHT Bridge Troll VHS_MIDNIGHT.gif",
+   "dur": 3.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 342,
+   "pid": "3932",
+   "title": "The Old King and the Old Machine",
+   "score": 0.9052,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3932 The Old King and the Old Machine.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 343,
+   "pid": "599",
+   "title": "The Mermaid Parade",
+   "score": 0.903,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m174s1avamx3e6sbt72mnb5y2h8a2xb2__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 344,
+   "pid": "3078",
+   "title": "The House of the Rockaways",
+   "score": 0.8996,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3078 The House of the Rockaways.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 345,
+   "pid": "3836",
+   "title": "The Last Bench in Winter",
+   "score": 0.8986,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3836 The Last Bench in Winter.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 346,
+   "pid": "3644",
+   "title": "The Magazine Cover Swapped",
+   "score": 0.8941,
+   "src": "/Users/degens/Downloads/3644 The Magazine Cover Swapped_MLOW-19867.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 347,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.8924,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest2/gifs/V2-CRT_EXHUMED Troll CRT_EXHUMED.gif",
+   "dur": 1.6,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 348,
+   "pid": "x093",
+   "title": "Node Exports",
+   "score": 0.8919,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-09-08_040113_7683068121984290062.mp4",
+   "dur": 5.06,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 349,
+   "pid": "770",
+   "title": "The Bridge Troll",
+   "score": 0.8864,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSHED VARIANTS 2026-08-30/_famtest/gifs/FAM-PRISM_DRIFT Bridge Troll PRISM_DRIFT.gif",
+   "dur": 3.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 350,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8852,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/calendar_tag_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 351,
+   "pid": "1800",
+   "title": "The Royal Wedding",
+   "score": 0.8829,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/1800_the_royal_wedding_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 352,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8822,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/ALL IN PODCAST ANALYSIS/mlow-show/pc/site/assets/art/rare-scrilla/08.gif",
+   "dur": 2.0,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 353,
+   "pid": "4692",
+   "title": "The Colossus of the Narrows",
+   "score": 0.8809,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4692 The Colossus of the Narrows.gif",
+   "dur": 1.76,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 354,
+   "pid": "x001",
+   "title": "The Heroic Firefighter",
+   "score": 0.8795,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m1774zthdx4wev4jh05d6e7y6189mrnn__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 355,
+   "pid": "4691",
+   "title": "The Choir at Full Voice",
+   "score": 0.8794,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film_take3/seg_10.mp4",
+   "dur": 3.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 356,
+   "pid": "x001",
+   "title": "The Heroic Firefighter",
+   "score": 0.8787,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17ecrms7z531wf59yz37j1cg589mzad__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 357,
+   "pid": "3964",
+   "title": "The City Said Thank You",
+   "score": 0.8777,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3964 The City Said Thank You.gif",
+   "dur": 1.3,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 358,
+   "pid": "3072",
+   "title": "The House of Flatbush Avenue",
+   "score": 0.8774,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3072 The House of Flatbush Avenue.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 359,
+   "pid": "4706",
+   "title": "The Channel Marker Poet",
+   "score": 0.8763,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4706 The Channel Marker Poet.gif",
+   "dur": 1.65,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 360,
+   "pid": "x001",
+   "title": "The Heroic Firefighter",
+   "score": 0.8763,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17btmxeftwjhxwtmhwab49z0s89m7ew__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 361,
+   "pid": "1866",
+   "title": "The Collector",
+   "score": 0.8759,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/1866_the_collector_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 362,
+   "pid": "633",
+   "title": "Donna Karan",
+   "score": 0.8752,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM WALKTHROUGH 2026-09-12/captures/fix_rock.webm",
+   "dur": null,
+   "decision": "hold",
+   "why": "compilation film"
+  },
+  {
+   "i": 363,
+   "pid": "4270",
+   "title": "The Snow That Fell Upward",
+   "score": 0.8732,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4270 The Snow That Fell Upward.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 364,
+   "pid": "2264",
+   "title": "The Next New Yorker",
+   "score": 0.8712,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2264 The Next New Yorker.gif",
+   "dur": 1.26,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 365,
+   "pid": "4310",
+   "title": "The Watchdog Who Chose the Watchman",
+   "score": 0.8697,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4310 The Watchdog Who Chose the Watchman.gif",
+   "dur": 1.44,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 366,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8669,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/notepad_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 367,
+   "pid": "5391",
+   "title": "The Oldest New Yorker",
+   "score": 0.8662,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/5391 The Oldest New Yorker.gif",
+   "dur": 1.52,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 368,
+   "pid": "3495",
+   "title": "The Bench With a Long Memory",
+   "score": 0.8661,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/3495 The Bench With a Long Memory.gif",
+   "dur": 1.98,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 369,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8638,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM WALKTHROUGH 2026-09-12/captures/day_rock.webm",
+   "dur": null,
+   "decision": "hold",
+   "why": "compilation film"
+  },
+  {
+   "i": 370,
+   "pid": "767",
+   "title": "The Rat King",
+   "score": 0.8632,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/767_rat_king_glitch.gif",
+   "dur": 0.5,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 371,
+   "pid": "x046",
+   "title": "The Transit Spirit",
+   "score": 0.8616,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m173n6nfc2kz9dmfxxryg4gtt189nqv4__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 372,
+   "pid": "x046",
+   "title": "The Transit Spirit",
+   "score": 0.8611,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m175jpa9rynvske9a6x2f1byk989msmt__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 373,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.861,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/124-astorhall/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 374,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8567,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/oven_mitt_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 375,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8562,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/029-twa/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 376,
+   "pid": "7591",
+   "title": "The Anon With Two Hundred Thousand Followers and a Day Job",
+   "score": 0.8553,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEOS 2026-09-08/cuts/new_yorkers_the_art_cuts_gif_2026-09-08.gif",
+   "dur": 15.0,
+   "decision": "hold",
+   "why": "compilation film"
+  },
+  {
+   "i": 377,
+   "pid": "2776",
+   "title": "The Prince's Bay Light",
+   "score": 0.8551,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/2776 The Prince's Bay Light.gif",
+   "dur": 1.8,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 378,
+   "pid": "2000",
+   "title": "Midnight",
+   "score": 0.854,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/2000_midnight_datamosh.gif",
+   "dur": 0.5,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 379,
+   "pid": "6141",
+   "title": "The Barber Who Is the Block's Only Therapist",
+   "score": 0.8506,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/6141 The Barber Who Is the Block's Only Therapist.gif",
+   "dur": 1.26,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 380,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8501,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/029-twa/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 381,
+   "pid": "3592",
+   "title": "The Soccer Ball Chose Sides",
+   "score": 0.8486,
+   "src": "/Users/degens/Downloads/3592 The Soccer Ball Chose Sides_MLOW-62052.gif",
+   "dur": 2.4,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 382,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8486,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/ceramic_grater_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 383,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8473,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/hinge_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 384,
+   "pid": "612",
+   "title": "The NYC Marathon",
+   "score": 0.8446,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/034-rock/daycycle.gif",
+   "dur": 12.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 385,
+   "pid": "547",
+   "title": "Godzilla",
+   "score": 0.8445,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/104-chelseablock/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 386,
+   "pid": "2666",
+   "title": "The Guarantor",
+   "score": 0.8436,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/hard/2666_the_guarantor_stillwaiting_hard_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 387,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8433,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/drip_crest_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 388,
+   "pid": "1468",
+   "title": "The Seed Beneath the City",
+   "score": 0.843,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/019-cloisters/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 389,
+   "pid": "x001",
+   "title": "The Heroic Firefighter",
+   "score": 0.8421,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17dxg9kgf5c2sd3w10ztzz0p189nvbr__output_0.mp4",
+   "dur": 5.05,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 390,
+   "pid": "1467",
+   "title": "The First Eye Flower",
+   "score": 0.8413,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/1467 The First Eye Flower.gif",
+   "dur": 1.89,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 391,
+   "pid": "572",
+   "title": "The Empire State Building",
+   "score": 0.8404,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17efv9awjj0qjcna7p7kg6bvs8a3vbt__output_0.mp4",
+   "dur": 5.06,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 392,
+   "pid": "502",
+   "title": "Jay-Z",
+   "score": 0.8397,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/copy-of-new-yorkers-by-mlow/2026-06/run_m17fbkms93t0dv9wntcsrrmrhs89m2jv__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 393,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8393,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/shelf_bracket_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 394,
+   "pid": "547",
+   "title": "Godzilla",
+   "score": 0.8387,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/104-chelseablock/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 395,
+   "pid": "1467",
+   "title": "The First Eye Flower",
+   "score": 0.8363,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARKETING_EPIC_2026-08-12/13_drip_reveal_eyeflower.gif",
+   "dur": 3.2,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 396,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8326,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/flower_bucket_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 397,
+   "pid": "2666",
+   "title": "The Guarantor",
+   "score": 0.8324,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MOSH_2026-08-22/v1/2666_the_guarantor_stillwaiting_v1_20260822.gif",
+   "dur": 0.58,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 398,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8297,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/box_grater_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 399,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8295,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/crystal_bunny_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 400,
+   "pid": "5071",
+   "title": "The Cathedral That Finished Itself",
+   "score": 0.829,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-27-5024-\u2022 \u2022 The Cedar Forest Mist_ The tall Ceda....mp4",
+   "dur": 12.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 401,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.829,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/036-seaport/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 402,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8287,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/036-seaport/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 403,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8282,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/036-seaport/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 404,
+   "pid": "x027",
+   "title": "The Comedy Club",
+   "score": 0.8278,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/flower_plate_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 405,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8277,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/051-lincolncenter/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 406,
+   "pid": "x027",
+   "title": "The Comedy Club",
+   "score": 0.8273,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/moon_dial_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 407,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.8266,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/118-taxidispatch/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 408,
+   "pid": "1467",
+   "title": "The First Eye Flower",
+   "score": 0.8259,
+   "src": "/Users/degens/Downloads/dreamina-2026-08-22-8898-A still painting on a damaged VHS tape p....gif",
+   "dur": 10.0,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 409,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8259,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/124-astorhall/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 410,
+   "pid": "612",
+   "title": "The NYC Marathon",
+   "score": 0.825,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/034-rock/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 411,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.8236,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/096-customhouse/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 412,
+   "pid": "x027",
+   "title": "The Comedy Club",
+   "score": 0.8225,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/clock_disc_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 413,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8223,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/clock_pendant_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 414,
+   "pid": "1493",
+   "title": "The Voice's Vacation",
+   "score": 0.822,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM WALKTHROUGH 2026-09-12/captures/day_coney.webm",
+   "dur": null,
+   "decision": "hold",
+   "why": "compilation film"
+  },
+  {
+   "i": 415,
+   "pid": "502",
+   "title": "Jay-Z",
+   "score": 0.8203,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m17fdy66jt6ydpcdv5ztazceex8a3093__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 416,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.8198,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/118-taxidispatch/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 417,
+   "pid": "633",
+   "title": "Donna Karan",
+   "score": 0.8188,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/034-rock/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 418,
+   "pid": "930",
+   "title": "The Roll Down Gate",
+   "score": 0.8187,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/Jardin Majorelle_MLow/Jardin Majorelle_MLow.gif",
+   "dur": 173.7,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 419,
+   "pid": "930",
+   "title": "The Roll Down Gate",
+   "score": 0.818,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/Jardin Majorelle_MLow/Jardin Majorelle_MLow.mp4",
+   "dur": 173.67,
+   "decision": "hold",
+   "why": "compilation"
+  },
+  {
+   "i": 420,
+   "pid": "4166",
+   "title": "The Insert Coin Sunrise",
+   "score": 0.818,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SUPERRARE RELEASE 2026-09-08/05_UNLOCKABLES/gifs/4166 The Insert Coin Sunrise.gif",
+   "dur": 1.71,
+   "decision": "attach",
+   "why": "animation of the piece"
+  },
+  {
+   "i": 421,
+   "pid": "1468",
+   "title": "The Seed Beneath the City",
+   "score": 0.8176,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/121-saltvault/daycycle.gif",
+   "dur": 12.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 422,
+   "pid": "x027",
+   "title": "The Comedy Club",
+   "score": 0.8172,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/clock_rosette_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 423,
+   "pid": "2562",
+   "title": "The Meteor Beach",
+   "score": 0.8167,
+   "src": "/Users/degens/Downloads/ToyCar__wrapped-in__soft-horizon-forest-spin.gif",
+   "dur": 3.84,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 424,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.8166,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/090-cooperhewitt/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 425,
+   "pid": "732",
+   "title": "Title Cards (668-766)",
+   "score": 0.8154,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-08-23_014000_7677095321402445069.mp4",
+   "dur": 10.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 426,
+   "pid": "1493",
+   "title": "The Voice's Vacation",
+   "score": 0.814,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/011-coney/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 427,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8139,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/blender_jug_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 428,
+   "pid": "2977",
+   "title": "The Fire Escape Meadow",
+   "score": 0.8138,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/toaster_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 429,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8132,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW_YORKERS_CONTENT_CALENDAR_AUG-SEP-2026/graphics_v2/new_animations_jul13/jul13_REEL_the-lineman_1080x1920.mp4",
+   "dur": 10.08,
+   "decision": "hold",
+   "why": "compilation film"
+  },
+  {
+   "i": 430,
+   "pid": "604",
+   "title": "The Pride Parade",
+   "score": 0.8126,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/v3-of-new-yorkers-by-mlow/2026-07/run_m179kw5fbn214pzkzwygdhhqh18a3qy2__output_0.mp4",
+   "dur": 5.06,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 431,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8126,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEOS 2026-09-08/cuts/new_yorkers_the_art_cuts_sq_2026-09-08.mp4",
+   "dur": 15.0,
+   "decision": "hold",
+   "why": "compilation film"
+  },
+  {
+   "i": 432,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8114,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/ALL IN PODCAST ANALYSIS/mlow-show/pc/site/assets/art/arthemort/02.gif",
+   "dur": 6.2,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 433,
+   "pid": "5784",
+   "title": "Sangay Aung-Thein, a private security tech installing on a residential block",
+   "score": 0.8112,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/bollard_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 434,
+   "pid": "1468",
+   "title": "The Seed Beneath the City",
+   "score": 0.8103,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/019-cloisters/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 435,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.81,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/crystal_flower_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 436,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8099,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/cutting_board_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 437,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.8097,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/054-arthuravenue/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 438,
+   "pid": "2562",
+   "title": "The Meteor Beach",
+   "score": 0.8096,
+   "src": "/Users/degens/Downloads/mlow_delorean_cloud_drip-cathedral-spin2.gif",
+   "dur": 3.84,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 439,
+   "pid": "x094",
+   "title": "Single-Character Studies",
+   "score": 0.808,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/118-taxidispatch/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 440,
+   "pid": "3834",
+   "title": "The Rooftop Farm at Sunrise",
+   "score": 0.8078,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-27-1426-The Limestone Altar_ A natural formation....mp4",
+   "dur": 12.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 441,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8078,
+   "src": "/Users/degens/Desktop/DREAMINA ARCHIVE 2026-08-14 to 2026-09-08/videos/2026-09-08_075154_7683126677362183437.mp4",
+   "dur": 5.06,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 442,
+   "pid": "x027",
+   "title": "The Comedy Club",
+   "score": 0.8076,
+   "src": "/Users/degens/Downloads/dreamina-2026-07-27-6195-_TikTok Time Warp__ Clock faces spinning....mp4",
+   "dur": 12.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 443,
+   "pid": "1493",
+   "title": "The Voice's Vacation",
+   "score": 0.8075,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/011-coney/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 444,
+   "pid": "3900",
+   "title": "The City Dreams Itself",
+   "score": 0.8074,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/pitcher_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 445,
+   "pid": "547",
+   "title": "Godzilla",
+   "score": 0.8073,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/project-1/2026-07/run_m17b34xkh6hw8gs1cbzaek90ds8be8hz__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 446,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8072,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/crystal_butterfly_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 447,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.807,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/029-twa/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 448,
+   "pid": "4615",
+   "title": "The Lantern Rounds",
+   "score": 0.8069,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/sunburst_flower_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 449,
+   "pid": "1866",
+   "title": "The Collector",
+   "score": 0.8068,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/CINEMATIQUE KIT 2026-09-12/renders/film/seg_09.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "cinematique edit"
+  },
+  {
+   "i": 450,
+   "pid": "1468",
+   "title": "The Seed Beneath the City",
+   "score": 0.8062,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/019-cloisters/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 451,
+   "pid": "1456",
+   "title": "The First Light",
+   "score": 0.8061,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/075-moma/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 452,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8058,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/measuring_cup_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 453,
+   "pid": "x090",
+   "title": "Banksy-Style Stencils",
+   "score": 0.8057,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/Banksy stencil graffiti-moshed-07-10-08-58-49-090.mp4",
+   "dur": 4.0,
+   "decision": "reel",
+   "why": "era I bucket or title cards"
+  },
+  {
+   "i": 454,
+   "pid": "6072",
+   "title": "Chen Zhang, a translator for a hearing that is going badly",
+   "score": 0.8056,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/crystal_duck_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 455,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8052,
+   "src": "/Users/degens/Desktop/MLow Degens Desktop Sept 2026/MLow Degens Desktop Sept 2026_Duplicates/ALL IN PODCAST ANALYSIS/mlow-show/pc/site/assets/art/batsoupyum-of-6529-capital/10.gif",
+   "dur": 4.0,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 456,
+   "pid": "x027",
+   "title": "The Comedy Club",
+   "score": 0.8041,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/clamp_block_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 457,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8039,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/ogee_shield_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 458,
+   "pid": "2460",
+   "title": "The Epiphany Dive",
+   "score": 0.8035,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/071-strand/preview.gif",
+   "dur": 8.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 459,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8032,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/ornate_clock_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 460,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8027,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/029-twa/daycycle.gif",
+   "dur": 12.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 461,
+   "pid": "612",
+   "title": "The NYC Marathon",
+   "score": 0.8026,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/011-coney/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 462,
+   "pid": "1456",
+   "title": "The First Light",
+   "score": 0.8026,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/flora-archive/media/project-1/2026-07/run_m17caqb4rhzf6sdewh8cfrbyzh8be6d8__output_0.mp4",
+   "dur": 5.05,
+   "decision": "reject",
+   "why": "wrong match on review"
+  },
+  {
+   "i": 463,
+   "pid": "3834",
+   "title": "The Rooftop Farm at Sunrise",
+   "score": 0.8014,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/103-diachelsea/daycycle.gif",
+   "dur": 12.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 464,
+   "pid": "4699",
+   "title": "The Gantry Crane Elders",
+   "score": 0.8014,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/crystal_heart_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  },
+  {
+   "i": 465,
+   "pid": "547",
+   "title": "Godzilla",
+   "score": 0.8011,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/030-snug/daycycle.gif",
+   "dur": 12.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 466,
+   "pid": "1493",
+   "title": "The Voice's Vacation",
+   "score": 0.801,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/011-coney/daycycle.gif",
+   "dur": 12.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 467,
+   "pid": "x065",
+   "title": "Rooftop Yoga",
+   "score": 0.8006,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/124-astorhall/daycycle.mp4",
+   "dur": 9.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 468,
+   "pid": "1777",
+   "title": "The Victory Garden",
+   "score": 0.8002,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/MUSEUM MINT NETWORK 2026-09-14/tokens/053-highbridge/preview.mp4",
+   "dur": 6.0,
+   "decision": "hold",
+   "why": "museum room token"
+  },
+  {
+   "i": 469,
+   "pid": "2864",
+   "title": "The One Night Flower",
+   "score": 0.8002,
+   "src": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS 3D 2026-08-23/3_STICKER_PROPS/turntable_gif/storage_jar_solid.gif",
+   "dur": 1.68,
+   "decision": "hold",
+   "why": "3D sticker render"
+  }
+ ]
+}

@@ -33,6 +33,10 @@ if __name__ == "__main__":
         if out.startswith("ffmpeg"): continue
         for pid in ids:
             idx.setdefault(pid, []).append({"mp4": out, "sec": r["duration_s"], "cast": len(ids)})
-    json.dump(idx, open(os.path.join(SITE, "_build", "motion_variants_index.json"), "w"))
+    old = os.path.join(SITE, "_build", "motion_variants_index.json")
+    if os.path.exists(old):  # keep what build_motion_sweep.py added
+        for pid, lst in json.load(open(old)).items():
+            idx.setdefault(pid, []).extend(m for m in lst if m.get("sweep"))
+    json.dump(idx, open(old, "w"))
     mb = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT)) / 1e6
     print("motion variants:", len(use), "videos,", len(idx), "pieces,", round(mb), "MB, errors:", len(errs), errs[:3])
