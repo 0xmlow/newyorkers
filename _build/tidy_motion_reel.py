@@ -29,8 +29,10 @@ for m in data["motion"]:
         flat.append({"key": m["key"] + "~alt", "src": m["alt"], "kind": "video", "pid": m.get("pid"), "t": m["t"], "w": m.get("w"), "h": m.get("h"), "poster": m["key"]})
 extra = os.path.join(SITE, "_build", "motion_reel_extra.json")
 if os.path.exists(extra):
+    ex = json.load(open(extra)); wanted = {m["src"] for m in ex}
+    flat = [m for m in flat if not m["src"].startswith("assets/motion/") or m["src"] in wanted]  # sweep clips come only from the current list
     have = {m["src"] for m in flat}
-    flat += [dict(m) for m in json.load(open(extra)) if m["src"] not in have]
+    flat += [dict(m) for m in ex if m["src"] not in have]
 by_id = {p["id"]: p for p in data["pieces"]}
 for m in flat:
     pid = ATTACH.get(m["t"])

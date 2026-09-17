@@ -11,9 +11,12 @@ SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 B = os.path.join(SITE, "_build"); OUT = os.path.join(SITE, "assets", "motion"); MT = os.path.join(SITE, "assets", "mt")
 FF = "/Users/degens/Library/Python/3.9/lib/python/site-packages/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1"
 items = [x for x in json.load(open(os.path.join(B, "motion_sweep.json")))["items"] if x["decision"] in ("attach", "reel") and os.path.exists(x["src"])]
-def key(src): return hashlib.md5(("sweep/" + src).encode()).hexdigest()[:12]
+def key(src, dur=None):
+    # looped short clips get their own name: the first encode of these shipped unlooped under the old name and sits in edge caches as immutable
+    tag = "sweep-loop/" if (dur or 99) < 2.5 else "sweep/"
+    return hashlib.md5((tag + src).encode()).hexdigest()[:12]
 def pack(x):
-    k = key(x["src"]); mp4 = os.path.join(OUT, k + ".mp4")
+    k = key(x["src"], x.get("dur")); mp4 = os.path.join(OUT, k + ".mp4")
     if not os.path.exists(mp4):
         vf = "scale='min(1280,iw)':-2,fps=30" if x["src"].lower().endswith(".gif") else "scale='min(1280,iw)':-2"
         loop = []
