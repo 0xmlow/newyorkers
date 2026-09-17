@@ -30,6 +30,8 @@ def apply_swaps(pieces):
         k = key(w["src"])
         # the original stays on the piece as its second state, so it is still one tap away
         p["st"] = [k, w["replaces"]] + [x for x in p["st"] if x not in (k, w["replaces"])]
+        # the replaced original is the Canal Street knockoff: still in the strip, never the default
+        if w.get("canal"): p["cs"] = {"k": w["replaces"], "name": w["canal"]}
         with Image.open(os.path.join(T, k + ".jpg")) as im: p["ar"] = round(im.size[0] / im.size[1], 3)
         n += 1
     return n

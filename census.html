@@ -219,7 +219,8 @@ a{color:var(--blue);text-decoration:none}
 #vSlider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--cyan);border:2px solid var(--ink);cursor:pointer}
 #vSlider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--cyan);border:2px solid var(--ink);cursor:pointer}
 #vRow b{color:var(--cloud);font-weight:400;min-width:120px;white-space:nowrap}
-#cmpPick{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate)}
+#vLabel{min-width:0;flex:0 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cmpPick{flex-shrink:0;display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate)}
 #cmpPick select{background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--mono);font-size:10px;padding:4px 6px}
 #detail .dmeta{flex:1;max-width:440px;border-left:1px solid var(--divider);padding:26px 26px 60px;overflow-y:auto}
 #detail .dnum{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--cyan)}
@@ -1283,7 +1284,9 @@ let dCtx={list:null,pos:-1};
 let curP=null,curEnts=[],curV=0;
 function mediaEntries(p){
   const ents=[];
-  for(let k=0;k<nStates(p);k++)ents.push({kind:"state",k,key:p.st[k],label:"STATE "+(k+1),tag:"STATE"});
+  const cs=p.cs&&p.st.indexOf(p.cs.k);
+  for(let k=0,n=0;k<nStates(p);k++){if(k===cs)continue;n++;ents.push({kind:"state",k,key:p.st[k],label:"STATE "+n,tag:"STATE"});}
+  if(cs>0)ents.push({kind:"state",k:cs,key:p.cs.k,label:p.cs.name,tag:"CANAL ST",sub:"The knockoff. Same corner, wrong face."});
   if(hasGlitch(p))ents.push({kind:"glitch",src:p.gl.mp4,key:p.gl.st||p.st[0],label:"GLITCH EDITION",tag:"GLITCH",sub:(p.gl.fam||"")+(p.gl.tag?" · "+p.gl.tag:"")});
   (p.mv||[]).forEach((m,k)=>ents.push({kind:"glitch",src:m.mp4,key:p.st[0],label:"MOTION"+(p.mv.length>1?" "+(k+1):""),tag:"MOTION",sub:m.sec+" second loop"+(m.cast>1?", with "+(m.cast-1)+" more New Yorkers":"")}));
   (p.g||[]).forEach((src,k)=>ents.push({kind:"gif",src,key:p.st[0],label:"LOOP"+(p.g.length>1?" "+(k+1):""),tag:"LOOP"}));
