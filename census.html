@@ -1285,8 +1285,10 @@ let curP=null,curEnts=[],curV=0;
 function mediaEntries(p){
   const ents=[];
   const cs=p.cs&&p.st.indexOf(p.cs.k);
-  for(let k=0,n=0;k<nStates(p);k++){if(k===cs)continue;n++;ents.push({kind:"state",k,key:p.st[k],label:"STATE "+n,tag:"STATE"});}
+  const bx=(p.cs&&p.cs.x)||[];
+  for(let k=0,n=0;k<nStates(p);k++){if(k===cs||bx.includes(p.st[k]))continue;n++;ents.push({kind:"state",k,key:p.st[k],label:"STATE "+n,tag:"STATE"});}
   if(cs>0)ents.push({kind:"state",k:cs,key:p.cs.k,label:p.cs.name,tag:"CANAL ST",sub:"The knockoff. Same corner, wrong face."});
+  if(p.cs&&p.cs.x)p.cs.x.forEach((key,i)=>{const k=p.st.indexOf(key);if(k>=0)ents.push({kind:"state",k,key,label:p.cs.name+" · BOOTLEG"+(p.cs.x.length>1?" "+(i+1):""),tag:"CANAL ST",sub:"Bootleg of the bootleg."});});
   if(hasGlitch(p))ents.push({kind:"glitch",src:p.gl.mp4,key:p.gl.st||p.st[0],label:"GLITCH EDITION",tag:"GLITCH",sub:(p.gl.fam||"")+(p.gl.tag?" · "+p.gl.tag:"")});
   (p.mv||[]).forEach((m,k)=>ents.push({kind:"glitch",src:m.mp4,key:p.st[0],label:"MOTION"+(p.mv.length>1?" "+(k+1):""),tag:"MOTION",sub:m.sec+" second loop"+(m.cast>1?", with "+(m.cast-1)+" more New Yorkers":"")}));
   (p.g||[]).forEach((src,k)=>ents.push({kind:"gif",src,key:p.st[0],label:"LOOP"+(p.g.length>1?" "+(k+1):""),tag:"LOOP"}));

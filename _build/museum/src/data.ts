@@ -21,6 +21,8 @@ export type Piece = {
   prec?: string;
   inf?: number;
   gl?: { mp4: string; st: string };
+  /** Canal Street knockoff: the replaced original (k) under a misspelled name, plus bootleg meme takes (x). */
+  cs?: { k: string; name: string; x?: string[] };
 };
 type Era = { i: number; roman: string; title: string; sub: string; desc: string; range: [number, number] };
 type NYData = {

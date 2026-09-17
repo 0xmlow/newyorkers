@@ -755,6 +755,23 @@ function openDetail(p: Piece) {
   $('#dTitle').textContent = p.t;
   $('#dMeta').innerHTML = `ERA ${er?.roman || p.e} · ${esc(er?.title || '')}<br>${esc(famName(p.f).toUpperCase())} · ${esc((p.b || '').toUpperCase())}${p.nb ? ' · ' + esc(p.nb.toUpperCase()) : ''}${p.set ? '<br>SET · ' + esc(p.set.toUpperCase()) : ''}`;
   $('#dStory').textContent = p.story || '';
+  // Canal Street: cycle the real piece, its knockoff, and any bootleg takes; never the default
+  const canal = $('#dCanal') as HTMLButtonElement | null;
+  if (canal) {
+    const cs = p.cs;
+    const views = cs ? [{ key: p.st[0], title: p.t, label: 'CANAL STREET' }, { key: cs.k, title: cs.name, label: 'THE REAL ONE' }, ...(cs.x || []).map((k, i, a) => ({ key: k, title: cs.name + (a.length > 1 ? ' · BOOTLEG ' + (i + 1) : ' · BOOTLEG'), label: 'THE REAL ONE' }))] : [];
+    let vi = 0;
+    canal.hidden = !cs;
+    canal.textContent = 'CANAL STREET';
+    canal.onclick = () => {
+      vi = (vi + 1) % views.length;
+      const v = views[vi];
+      d.querySelector('img')!.setAttribute('src', `assets/t/${v.key}.jpg`);
+      $('#dTitle').textContent = v.title;
+      canal.textContent = vi === views.length - 1 ? 'THE REAL ONE' : 'NEXT KNOCKOFF';
+      if (vi === 0) canal.textContent = 'CANAL STREET';
+    };
+  }
   ($('#dRecord') as HTMLAnchorElement).href = `census.html#n=${p.id}`;
   const dShare = $('#dShare') as HTMLButtonElement | null;
   if (dShare) dShare.onclick = () => share({ title: `${fmt(p)} · ${p.t}`, text: `${fmt(p)} · ${p.t}. ${p.story || ''} NEW YORKERS by MLow, hanging in ${ROOMS[state.room].name}.`, url: `${location.origin}${location.pathname.replace(/museum\.html$/, '')}census.html#n=${p.id}` });

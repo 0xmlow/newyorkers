@@ -18,6 +18,10 @@ def key(rel): return "h" + hashlib.md5(rel.encode()).hexdigest()[:10]
 def make_thumbs():
     for i, w in SW.items():
         dst = os.path.join(T, key(w["src"]) + ".jpg")
+        for b in w.get("bootlegs") or []:
+            bd = os.path.join(T, key(b) + ".jpg")
+            if not os.path.exists(bd):
+                bi = Image.open(os.path.join(ROOT, b)).convert("RGB"); bi.thumbnail((1000, 1000), Image.LANCZOS); bi.save(bd, "JPEG", quality=78, optimize=True)
         if not os.path.exists(dst):
             im = Image.open(os.path.join(ROOT, w["src"])).convert("RGB"); im.thumbnail((1000, 1000), Image.LANCZOS)
             im.save(dst, "JPEG", quality=78, optimize=True)
@@ -31,7 +35,9 @@ def apply_swaps(pieces):
         # the original stays on the piece as its second state, so it is still one tap away
         p["st"] = [k, w["replaces"]] + [x for x in p["st"] if x not in (k, w["replaces"])]
         # the replaced original is the Canal Street knockoff: still in the strip, never the default
-        if w.get("canal"): p["cs"] = {"k": w["replaces"], "name": w["canal"]}
+        bx = [key(b) for b in (w.get("bootlegs") or [])]
+        p["st"] = [x for x in p["st"] if x not in bx] + bx
+        if w.get("canal"): p["cs"] = {"k": w["replaces"], "name": w["canal"], **({"x": bx} if bx else {})}
         with Image.open(os.path.join(T, k + ".jpg")) as im: p["ar"] = round(im.size[0] / im.size[1], 3)
         n += 1
     return n

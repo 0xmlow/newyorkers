@@ -98,6 +98,13 @@ PRINT_JS = """
 """
 
 
+def canal_html(p, base):
+    """Canal Street: the replaced original under a misspelled name, plus any bootleg takes. Shown below the real piece, never instead of it."""
+    cs = p.get("cs")
+    if not cs: return ""
+    keys = [cs["k"]] + list(cs.get("x") or [])
+    tiles = "".join(f'<figure class="cs"><img src="{base}assets/t/{k}.jpg" alt="{esc(cs["name"])}" loading="lazy"><figcaption>{"THE KNOCKOFF" if i == 0 else "BOOTLEG " + str(i)}</figcaption></figure>' for i, k in enumerate(keys))
+    return f'<div class="canal"><div class="kicker" style="font-size:10px">Canal Street</div><h2>{esc(cs["name"])}</h2><p>The knockoff. Same corner, wrong face. The real one is above.</p><div class="csgrid">{tiles}</div></div>'
 ndir = os.path.join(SITE, "n"); os.makedirs(ndir, exist_ok=True)
 for f in glob.glob(os.path.join(ndir, "*.html")): os.remove(f)
 era_of = {e["i"]: e for e in ERAS}
@@ -119,6 +126,7 @@ for k, p in enumerate(byn):
 </div></section>
 <section class="wrap" style="padding-top:32px;padding-bottom:80px"><div class="article" style="max-width:960px;margin:0">
   <img src="{base}{img}" alt="{esc(p['t'])}" style="width:100%;border-radius:12px;border:1px solid var(--divider)">
+  {canal_html(p, base)}
   <div class="orderbox" id="orderbox" hidden>
     <div class="kicker" style="font-size:10px">Order this as a print</div>
     <div class="orow">
@@ -134,7 +142,7 @@ for k, p in enumerate(byn):
   <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:40px;border-top:1px solid var(--divider);padding-top:24px"><a href="{prv['id']}.html" class="btn ghost sm">← NO. {prv['n']:04d}</a><a href="{nxt['id']}.html" class="btn ghost sm">NO. {nxt['n']:04d} →</a></div>
 </div></section>"""
     page = shell(title=f"{n4} · {p['t']} · NEW YORKERS by MLow", description=(p.get("story") or p["t"])[:158], body=body, base=base, path=f"n/{p['id']}.html", active="THE CENSUS", jsonld=ld, image=f"{URL}/{img}", keywords=[x for x in [p["t"], p.get("f"), p.get("b"), p.get("cat"), p.get("loc"), "NEW YORKERS by MLow", "MLow"] if x], noindex=(p["e"] == 1), kind="article",
-                 extra_css=".orderbox{background:var(--card);border:1px solid var(--divider);border-left:3px solid var(--pink);border-radius:12px;padding:22px 24px;margin-top:26px;max-width:720px}.orderbox .orow{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;margin:14px 0 16px}@media (max-width:620px){.orderbox .orow{grid-template-columns:1fr}}.orderbox label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}.orderbox select{background:var(--ink);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:15px;padding:11px 12px;border-radius:7px;outline:none}.orderbox output{font-family:var(--mono);font-size:22px;color:var(--cyan);padding-top:8px;white-space:nowrap}.orderbox .ofine{font-family:var(--sans);font-size:12.5px;line-height:1.6;color:var(--slate);margin-top:14px}.rec td{padding:10px 0;border-bottom:1px solid var(--divider);vertical-align:top}.rec td:first-child{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);width:160px;padding-top:13px}",
+                 extra_css=".canal{margin-top:34px;border:1px dashed var(--divider);border-radius:12px;padding:20px 22px}.canal h2{font-family:var(--serif);font-size:30px;margin:8px 0 4px}.canal p{font-family:var(--sans);font-size:14px;color:var(--slate)}.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px}.cs{margin:0}.cs img{width:100%;border-radius:8px;border:1px solid var(--divider)}.cs figcaption{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--slate);margin-top:6px}.orderbox{background:var(--card);border:1px solid var(--divider);border-left:3px solid var(--pink);border-radius:12px;padding:22px 24px;margin-top:26px;max-width:720px}.orderbox .orow{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;margin:14px 0 16px}@media (max-width:620px){.orderbox .orow{grid-template-columns:1fr}}.orderbox label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}.orderbox select{background:var(--ink);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:15px;padding:11px 12px;border-radius:7px;outline:none}.orderbox output{font-family:var(--mono);font-size:22px;color:var(--cyan);padding-top:8px;white-space:nowrap}.orderbox .ofine{font-family:var(--sans);font-size:12.5px;line-height:1.6;color:var(--slate);margin-top:14px}.rec td{padding:10px 0;border-bottom:1px solid var(--divider);vertical-align:top}.rec td:first-child{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);width:160px;padding-top:13px}",
                  scripts_after=f'<script src="{base}assets/prints.js"></script><script>NY.shareRow(document.getElementById("share"),{{title:{json.dumps(n4 + " · " + p["t"])},text:{json.dumps(n4 + " · " + p["t"] + ". " + (p.get("story") or "") + " NEW YORKERS by MLow.")}}});' + PRINT_JS.replace("__PIECE__", json.dumps(f"NO. {p['n']:04d} " + p["t"])) + '</script>')
     open(os.path.join(ndir, p["id"] + ".html"), "w", encoding="utf-8").write(page)
 print("piece pages", len(byn))
