@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NEW YORKERS · Keystone 111</title>
+<meta name="description" content="KEYSTONE 111: the 111 founding NEW YORKERS, from the Era I leads to the Mythos spine and the threads, hung along one continuous spiral ramp. Drag to travel, click a piece to step up to it, open its record in the census.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NEW YORKERS · Keystone 111">
+<meta property="og:description" content="KEYSTONE 111: the 111 founding NEW YORKERS, from the Era I leads to the Mythos spine and the threads, hung along one continuous spiral ramp. Drag to travel, click a piece to step up to it, open its re">
+<meta property="og:image" content="https://n3wyorkers.com/assets/keystone/1l.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/keystone">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#0D0D0D; --drum:#15181D; --cloud:#F0F4F8; --slate:#8899AA; --blue:#2962FF; --blue-soft:#5C86FF;
+    --line:rgba(240,244,248,.14); --scrim:rgba(13,13,13,.78);
+    --display:"Fraunces", Georgia, "Times New Roman", serif;
+    --mono:"IBM Plex Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    color-scheme:dark;
+  }
+  html,body{height:100%;margin:0;background:var(--ink);color:var(--cloud);overflow:hidden}
+  body{font-family:var(--display);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  *{box-sizing:border-box}
+  #stage{position:fixed;inset:0;background:var(--ink)}
+  .scrim{position:fixed;left:0;right:0;pointer-events:none;z-index:4}
+  .scrim.top{top:0;height:clamp(110px,18vh,170px);background:linear-gradient(rgba(13,13,13,.82),rgba(13,13,13,0))}
+  .scrim.bottom{bottom:0;height:clamp(150px,26vh,240px);background:linear-gradient(rgba(13,13,13,0),rgba(13,13,13,.86))}
+  #c{display:block;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}
+  #c.dragging{cursor:grabbing}
+  #c.hover{cursor:pointer}
+
+  /* HUD */
+  .hud{position:fixed;left:0;right:0;pointer-events:none;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;padding-inline:clamp(16px,3vw,32px)}
+  .hud.top{top:0;padding-block:calc(env(safe-area-inset-top,0px) + clamp(14px,2.5vw,26px)) 0}
+  .hud.bottom{bottom:0;padding-block:0 calc(env(safe-area-inset-bottom,0px) + clamp(14px,2.5vw,24px));align-items:flex-end}
+  .hud > *{pointer-events:auto}
+  .logo{display:block;height:clamp(22px,2.6vw,30px);width:auto;opacity:.95}
+  .mast{text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .mast .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)}
+  .mast .name{font-family:var(--display);font-weight:500;font-size:clamp(17px,2.2vw,22px);letter-spacing:.02em;line-height:1.1}
+  .mast .tag{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(13px,1.5vw,15px);color:var(--slate)}
+
+  .now{display:flex;flex-direction:column;gap:6px;max-width:min(60vw,520px)}
+  .now .count{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--slate);font-variant-numeric:tabular-nums}
+  .now .count b{color:var(--cloud);font-weight:500}
+  .now .title{font-family:var(--display);font-weight:300;font-size:clamp(18px,2.6vw,30px);line-height:1.1;text-wrap:balance;text-shadow:0 2px 18px rgba(13,13,13,.9)}
+  .now .group{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-soft)}
+  .ramp{position:relative;height:2px;width:min(38vw,320px);background:var(--line);margin-top:8px;border-radius:2px;overflow:visible}
+  .ramp i{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--blue);border-radius:2px}
+  .ramp s{position:absolute;top:-3px;width:1px;height:8px;background:var(--slate);opacity:.6}
+
+  .help{display:flex;flex-direction:column;align-items:flex-end;gap:8px;text-align:right}
+  .help .hint{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--slate);line-height:1.7}
+  .help .hint kbd{font:inherit;color:var(--cloud);border:1px solid var(--line);border-radius:4px;padding:0 5px;margin:0 1px}
+  .btn{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:var(--cloud);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;transition:border-color .2s,background .2s}
+  .btn:hover{border-color:var(--cloud)}
+  .btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .load{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--slate);font-variant-numeric:tabular-nums;opacity:1;transition:opacity .6s}
+  .load.done{opacity:0}
+
+  /* Info card */
+  #card{position:fixed;z-index:6;right:clamp(16px,3vw,32px);top:50%;transform:translate(24px,-50%);width:min(380px,calc(100vw - 32px));
+    background:var(--scrim);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:6px;padding:22px 22px 20px;
+    opacity:0;pointer-events:none;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
+  #card.open{opacity:1;pointer-events:auto;transform:translate(0,-50%)}
+  #card .close{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;border:1px solid transparent;background:transparent;color:var(--slate);font:16px/1 var(--mono);cursor:pointer}
+  #card .close:hover{color:var(--cloud);border-color:var(--line)}
+  #card .close:focus-visible{outline:2px solid var(--blue)}
+  #card .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);display:flex;gap:10px;flex-wrap:wrap;padding-right:32px}
+  #card .eyebrow b{color:var(--cloud);font-weight:500}
+  #card h2{font-family:var(--display);font-weight:300;font-size:clamp(22px,2.4vw,28px);line-height:1.12;margin:10px 0 6px;text-wrap:balance}
+  #card .chapter{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-soft);margin-bottom:14px}
+  #card p.story{font-family:var(--display);font-weight:300;font-size:15.5px;line-height:1.5;margin:0 0 16px;color:var(--cloud);max-width:34ch}
+  #card .states{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px}
+  #card .states .n{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin-right:4px}
+  #card .chip{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--cloud)}
+  #card .chip.live{border-color:var(--blue);color:var(--blue-soft)}
+  #card .memorial{font-family:var(--display);font-style:italic;font-weight:300;font-size:13.5px;color:var(--slate);margin:-6px 0 14px}
+  #card .row{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+  #card a.out{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cloud);text-decoration:none;border-bottom:1px solid var(--blue);padding-bottom:2px}
+  #card a.out:hover{color:var(--blue-soft)}
+  #card .nav{display:flex;gap:6px}
+  #card .nav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--cloud);cursor:pointer;font:14px var(--mono)}
+  #card .nav button:hover{border-color:var(--cloud)}
+  #card .nav button:focus-visible{outline:2px solid var(--blue)}
+
+  @media (max-width:720px){
+    .mast .tag{display:none}
+    .mast .eyebrow{font-size:10px;letter-spacing:.12em}
+    .mast .name{font-size:15px}
+    .help .hint{display:none}
+    .now{max-width:calc(100vw - 32px)}
+    #card{right:0;left:0;top:auto;bottom:0;width:auto;transform:translate(0,30px);border-radius:12px 12px 0 0;border-bottom:0;padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);max-height:56vh;overflow:auto}
+    #card.open{transform:translate(0,0)}
+    .hud.bottom.hidden-by-card{opacity:0;pointer-events:none}
+  }
+  .hud.bottom.hidden-by-card .now{opacity:0;transition:opacity .3s}
+  @media (prefers-reduced-motion:reduce){
+    #card{transition:none}
+  }
+</style>
+<!-- seo -->
+<link rel="canonical" href="https://n3wyorkers.com/keystone">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, Keystone 111, founding New Yorkers, 3D spiral gallery, Three.js art gallery">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="alternate" type="application/json" title="census api" href="api/census.json">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","@id":"https://n3wyorkers.com/keystone","name":"Keystone 111 · NEW YORKERS by MLow","url":"https://n3wyorkers.com/keystone","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"The 111 founding NEW YORKERS hung along one continuous spiral ramp."}</script>
+<!-- /seo -->
+</head>
+<body>
+
+<div class="scrim top"></div><div class="scrim bottom"></div>
+<div id="stage"><canvas id="c" tabindex="0" aria-label="Keystone 111 spiral gallery. Use arrow keys to move between pieces and Enter to open one."></canvas></div>
+
+<div class="hud top">
+  <a href="index.html" aria-label="NEW YORKERS home"><img class="logo" alt="MLOW" src="data:image/png;base64,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"></a>
+  <div class="mast">
+    <span class="eyebrow">New Yorkers · Keystone 111</span>
+    <span class="name">THE ONES THAT HOLD</span>
+    <span class="tag">Every New Yorker gets a portrait. These are the 111 the rest of them lean on.</span>
+  </div>
+</div>
+
+<div class="hud bottom" id="hudBottom">
+  <div class="now">
+    <span class="count"><b id="cur">001</b> / 111 · <span id="curNum">№ 1</span></span>
+    <span class="title" id="curTitle">The Bodega Matriarch</span>
+    <span class="group" id="curGroup">Era I, the founding cast · The anchors</span>
+    <div class="ramp" aria-hidden="true"><i id="rampFill"></i><s style="left:30.6%"></s><s style="left:37.8%"></s><s style="left:72.1%"></s></div>
+  </div>
+  <div class="help">
+    <span class="load" id="load">Hanging 0 / 111</span>
+    <span class="hint">Drag to travel the ramp · Scroll to climb<br>Click a piece to step up · <kbd>←</kbd><kbd>→</kbd> next piece</span>
+    <button class="btn" id="tour" type="button">Auto tour: on</button>
+  </div>
+</div>
+
+<aside id="card" aria-live="polite" aria-label="Selected piece">
+  <button class="close" id="close" type="button" aria-label="Close">×</button>
+  <div class="eyebrow"><span>№ <b id="kNum">1</b></span><span>Era <b id="kEra">I</b></span><span id="kWhere">Melrose, Bronx</span></div>
+  <h2 id="kTitle">The Bodega Matriarch</h2>
+  <div class="chapter" id="kChapter">Era I, the founding cast · The anchors</div>
+  <p class="story" id="kStory"></p>
+  <div class="memorial" id="kMemorial" hidden>A memorial. Its new states stay quiet.</div>
+  <div class="states" id="kStates"></div>
+  <div class="row">
+    <a class="out" id="kLink" href="n/x000.html">See it in the census</a>
+    <div class="nav"><button type="button" id="prev" aria-label="Previous piece">←</button><button type="button" id="next" aria-label="Next piece">→</button></div>
+  </div>
+</aside>
+
+<script src="assets/three.min.js"></script>
+<script>
+var K111 = [{"id":1,"n":1,"t":"The Bodega Matriarch","g":"Era I, the founding cast","c":"The anchors","w":"Melrose, Bronx","e":"I","s":"She runs the block from a stool behind the counter. The throne, the neighborhood mother, the eye that misses nothing.","k":["dither","still"],"v":4,"m":false,"ar":1.5,"sid":"x000"},{"id":2,"n":2,"t":"The Heroic Firefighter","g":"Era I, the founding cast","c":"The anchors","w":"Tribeca","e":"I","s":"The gear weighs sixty pounds and he sprints toward the fire in it. The bravest, the turnout coat, the run everyone else runs from.","k":["dither","motion","still"],"v":8,"m":false,"ar":1.5,"sid":"x001"},{"id":3,"n":3,"t":"The Subway Spirit","g":"Era I, the founding cast","c":"The anchors","w":"Citywide","e":"I","s":"The line has a god and he glows in the tunnel dark. The psychedelic ghost, the tunnel deity, the spirit the third rail feeds.","k":["dither","still"],"v":4,"m":false,"ar":1.5,"sid":"x002"},{"id":4,"n":37,"t":"The Crossing","g":"Era I, the founding cast","c":"The anchors","w":"Jackson Heights","e":"I","s":"The light changes and the whole city steps off the curb at once. The crosswalk, the night street, the pedestrian tide the eye-flowers watch over.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"37"},{"id":5,"n":39,"t":"The Landlord","g":"Era I, the founding cast","c":"The anchors","w":"Bedford-Stuyvesant","e":"I","s":"He holds every key and decides who stays the winter. The ring of keys, the notices in the wind, the figure over the block.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"39"},{"id":6,"n":467,"t":"Statue of Liberty","g":"Era I, the founding cast","c":"The city's makers","w":"Manhattan","e":"I","s":"She has faced the harbor since 1886, welcoming every boat. The raised torch, the copper green, the first American face the newcomers saw.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"467"},{"id":7,"n":468,"t":"Alexander Hamilton","g":"Era I, the founding cast","c":"The city's makers","w":"Hamilton Heights, Manhattan","e":"I","s":"He built the Treasury and the credit the country still runs on. The ten-dollar bill, the Grange, the immigrant who wrote the system.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"468"},{"id":8,"n":473,"t":"Nikola Tesla","g":"Era I, the founding cast","c":"The city's makers","w":"Chelsea, Manhattan","e":"I","s":"He lit the century and died owing the hotel. Alternating current, the Wardenclyffe tower, a wireless dream too early to sell.","k":["dither","still"],"v":5,"m":false,"ar":1.7778,"sid":"473"},{"id":9,"n":476,"t":"Jane Jacobs","g":"Era I, the founding cast","c":"The city's makers","w":"Greenwich Village, Manhattan","e":"I","s":"She beat the master builder with a block full of neighbors. The sidewalk ballet, the saved Village, the writer who out-thought Robert Moses.","k":["dither","still"],"v":5,"m":false,"ar":1.7778,"sid":"476"},{"id":10,"n":477,"t":"Robert Moses","g":"Era I, the founding cast","c":"The city's makers","w":"Tremont","e":"I","s":"He never drove yet redrew the city for the car. The expressways, the beaches, the neighborhoods the bulldozer erased.","k":["dither","still"],"v":7,"m":false,"ar":1.7778,"sid":"477"},{"id":11,"n":583,"t":"Ellis Island","g":"Era I, the founding cast","c":"The city's makers","w":"The Battery, NY Harbor","e":"I","s":"Twelve million names entered the country through one hall. The manifest, the great hall, the first American step for half the country's grandparents.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"583"},{"id":12,"n":586,"t":"The Lenape","g":"Era I, the founding cast","c":"The city's makers","w":"Turtle Bay, Manhattan","e":"I","s":"They named the island of hills before anyone bought it. Mannahatta, the original people, the ground the whole city was built on.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"586"},{"id":13,"n":478,"t":"Jackie Robinson","g":"Era I, the founding cast","c":"The icons","w":"Crown Heights, Brooklyn","e":"I","s":"He stole bases and the country's excuse at the same time. Number 42, the Dodgers, a color line that never grew back.","k":["dither","still"],"v":5,"m":false,"ar":1.7778,"sid":"478"},{"id":14,"n":479,"t":"Babe Ruth","g":"Era I, the founding cast","c":"The icons","w":"Concourse, Bronx","e":"I","s":"He pointed at the fence and the ball obeyed. The Sultan of Swat, the called shot, the house he built in the Bronx.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"479"},{"id":15,"n":486,"t":"Jean-Michel Basquiat","g":"Era I, the founding cast","c":"The icons","w":"SoHo, Manhattan","e":"I","s":"He tagged SAMO on downtown walls and ended up on museum ones. The crown, the canvases, the Brooklyn kid the market devoured.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"486"},{"id":16,"n":487,"t":"Keith Haring","g":"Era I, the founding cast","c":"The icons","w":"Manhattan","e":"I","s":"He drew on the subway's black ad squares until the city noticed. The radiant baby, the barking dog, the Pop Shop chalk that never washed off.","k":["dither","motion","still"],"v":8,"m":false,"ar":1.7778,"sid":"487"},{"id":17,"n":488,"t":"Andy Warhol","g":"Era I, the founding cast","c":"The icons","w":"Flatiron, Manhattan","e":"I","s":"He promised everyone fifteen minutes and took the whole century. The Factory, the soup can, the silver wig that watched it all.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"488"},{"id":18,"n":493,"t":"James Baldwin","g":"Era I, the founding cast","c":"The icons","w":"Harlem, Manhattan","e":"I","s":"He left the country to see it clearly and never stopped testifying. The Harlem son, the Paris exile, the witness who warned of the fire next time.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"493"},{"id":19,"n":496,"t":"Duke Ellington","g":"Era I, the founding cast","c":"The icons","w":"Harlem, Manhattan","e":"I","s":"He made the orchestra his instrument and Harlem his key. The Cotton Club, the A train, the maestro who scored an era.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"496"},{"id":20,"n":497,"t":"Billie Holiday","g":"Era I, the founding cast","c":"The icons","w":"Midtown, Manhattan","e":"I","s":"She sang the ache the country tried to silence. Strange Fruit, the gardenia, the voice that carried the whole wound.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"497"},{"id":21,"n":630,"t":"Bill Cunningham","g":"Era I, the founding cast","c":"The icons","w":"Midtown, Manhattan","e":"I","s":"He shot the street, not the celebrity, and outclassed both. The bicycle, the blue jacket, the fashion that walked past him.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"630"},{"id":22,"n":647,"t":"DJ Kool Herc","g":"Era I, the founding cast","c":"Hip hop","w":"Highbridge, Bronx","e":"I","s":"He looped the break and a rec room became year zero. 1520 Sedgwick, the two turntables, the party that started a culture.","k":["dither","still"],"v":4,"m":false,"ar":1.7778,"sid":"647"},{"id":23,"n":501,"t":"The Notorious B.I.G.","g":"Era I, the founding cast","c":"Hip hop","w":"Bedford-Stuyvesant, Brooklyn","e":"I","s":"He rhymed the whole Brooklyn story before he turned twenty-five. Ready to Die, the crown, the king of New York gone too soon.","k":["dither","still"],"v":7,"m":false,"ar":1.7778,"sid":"501"},{"id":24,"n":502,"t":"Jay-Z","g":"Era I, the founding cast","c":"Hip hop","w":"Bedford-Stuyvesant, Brooklyn","e":"I","s":"Marcy projects to the owner's box, no shortcut skipped. The mogul, Roc Nation, the empire he made literal.","k":["dither","still"],"v":5,"m":false,"ar":1.7917,"sid":"502"},{"id":25,"n":504,"t":"Wu-Tang Clan","g":"Era I, the founding cast","c":"Hip hop","w":"Rosebank, Staten Island","e":"I","s":"Nine emcees, one crest, an island they renamed Shaolin. 36 Chambers, Staten Island, the empire that started underground.","k":["dither","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"504"},{"id":26,"n":522,"t":"Spider-Man","g":"Era I, the founding cast","c":"Legends","w":"Forest Hills, Queens","e":"I","s":"The only hero who worries about rent between the rooftops. The Queens kid, the swing, the lesson that power is a debt.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"522"},{"id":27,"n":523,"t":"King Kong","g":"Era I, the founding cast","c":"Legends","w":"Flatiron, Manhattan","e":"I","s":"He climbed the tallest building for love and the planes answered. The giant, the biplanes, the beast the city could not keep.","k":["dither","still"],"v":6,"m":false,"ar":1.7778,"sid":"523"},{"id":28,"n":548,"t":"Pizza Rat","g":"Era I, the founding cast","c":"Legends","w":"Manhattan","e":"I","s":"He dragged a whole slice down the subway stairs and became us. The hustle, the stairs, the most New York animal on record.","k":["dither","still"],"v":5,"m":false,"ar":1.7778,"sid":"548"},{"id":29,"n":550,"t":"Bodega Cat","g":"Era I, the founding cast","c":"Legends","w":"Washington Heights","e":"I","s":"He owns the bodega and lets the humans think they run it. The counter perch, the mouser, the boss the health code ignores.","k":["dither","motion","still"],"v":6,"m":false,"ar":1.7778,"sid":"550"},{"id":30,"n":617,"t":"Flaco the Owl","g":"Era I, the founding cast","c":"Legends","w":"Central Park, Manhattan","e":"I","s":"He broke out of the zoo and hunted Manhattan like he was born to it. The eagle-owl, the escape of 2023, the taste of freedom the city cheered.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"617"},{"id":31,"n":555,"t":"The New York Slice","g":"Era I, the founding cast","c":"The city itself","w":"Greenwich Village","e":"I","s":"Fold it once or announce you just got off the bus. Two bucks, a paper plate, the grease that marks the corner.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"555"},{"id":32,"n":570,"t":"Grand Central Terminal","g":"Era I, the founding cast","c":"The city itself","w":"Midtown, Manhattan","e":"I","s":"Half a million people meet under a backwards painted sky. The brass clock, the whisper gallery, the concourse that swallows the crowd.","k":["dither","motion","still"],"v":6,"m":false,"ar":1.7778,"sid":"570"},{"id":33,"n":573,"t":"The Brooklyn Bridge","g":"Era I, the founding cast","c":"The city itself","w":"Brooklyn / Manhattan","e":"I","s":"It took a family and fourteen years to tie two boroughs together. The Roebling cables, the wooden promenade, the span everyone claims to own.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"573"},{"id":34,"n":580,"t":"Stonewall Inn","g":"Era I, the founding cast","c":"The city itself","w":"West Village, Manhattan","e":"I","s":"A raid on a Village bar started the whole movement. The 1969 riots, the thrown brick, the night that became the first pride.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"580"},{"id":35,"n":1467,"t":"The First Eye Flower","g":"Mythos spine","c":"The spine","w":"Citywide","e":"VI","s":"A flower with a human iris pushes up through a subway grate at dawn. Where a dreamer's tear fell a century ago, a tiny crowned rat witnessing.","k":["dither","glitch","motion","still"],"v":11,"m":false,"ar":1.7778,"sid":"1467"},{"id":36,"n":1468,"t":"The Seed Beneath the City","g":"Mythos spine","c":"The spine","w":"Citywide","e":"VI","s":"One glowing seed sleeps beneath the subway lines and water tunnels. Roots threading every tunnel like veins, the whole skyline resting on its light.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1468"},{"id":37,"n":1469,"t":"The Gardener of the First Bloom","g":"Mythos spine","c":"The spine","w":"Citywide","e":"VI","s":"Every night in 1920s work clothes he waters something through the grate. His shadow on the wall shows a garden in full bloom.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1469"},{"id":38,"n":1470,"t":"The Pollen Route","g":"Mythos spine","c":"The spine","w":"Citywide","e":"VI","s":"Honeybees run the subway map for real, carrying iris pollen between boroughs. Each one trails a thread of light, and eye flowers open where they land.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1470"},{"id":39,"n":1477,"t":"The Talisman Maker","g":"Mythos spine","c":"The spine","w":"Astoria, Queens","e":"VI","s":"She drops molten blue glass into eye after eye, each one blinking once as it cools. Her shelf of charms all watch the door, the source of every evil eye in the city.","k":["dither","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"1477"},{"id":40,"n":2017,"t":"The Flower Moon","g":"Mythos spine","c":"The spine","w":"East Village, Manhattan","e":"VII","s":"May's moon rises and every eye flower in the city opens at once to look up. One night a year the census takes itself.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"2017"},{"id":41,"n":2144,"t":"The City Bloom Map","g":"Mythos spine","c":"The spine","w":"Midtown, Manhattan","e":"VII","s":"The drawer with the eye flower symbol finally opens on a living map, every bloom in the city glowing. The pattern forms an iris around the first grate, and the cartographer sits down slowly.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"2144"},{"id":42,"n":2266,"t":"To Be Continued","g":"Mythos spine","c":"The spine","w":"Bushwick, Brooklyn","e":"VII","s":"The brush touches blank canvas on the rooftop at dawn and one eye flower bud pushes up through the wet primer, from inside the painting. The next characters are waiting in the white, and the eye in the corner is already watching.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"2266"},{"id":43,"n":1151,"t":"The Missed Connection","g":"The threads","c":"Love","w":"Citywide","e":"IV","s":"Their eyes meet across opposite platforms as both trains arrive at once. The doors close on a whole life that almost happened.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"1151"},{"id":44,"n":1730,"t":"The Reply","g":"The threads","c":"Love","w":"Citywide","e":"VI","s":"A hand lettered poster on the same platform where two trains once erased a question. Phone number tabs flutter like hope, and one is already gone.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1730"},{"id":45,"n":1731,"t":"The Second Glance","g":"The threads","c":"Love","w":"Citywide","e":"VI","s":"The same two strangers finally meet on the mezzanine between their platforms, both holding the same poster, both early. The turnstiles applaud softly in clicks while the city pretends it planned this.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1731"},{"id":46,"n":2300,"t":"The Second Glance Wedding","g":"The threads","c":"Love","w":"Brooklyn","e":"VIII","s":"Under the great clock where they first looked twice, the whole love thread assembled, from the Missed Connection to the Same Booth. The mismatched mugs were the toast, and every eye flower in the station opened at once.","k":["dither","glitch","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"2300"},{"id":47,"n":3423,"t":"The Second Glance Anniversary","g":"The threads","c":"Love","w":"Citywide","e":"X","s":"They return to the car where they looked twice and catch someone else doing it. The same line, the same doors, a glance passed forward.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3423"},{"id":48,"n":942,"t":"The Window Watcher","g":"The threads","c":"Watcher","w":"Bay Ridge, Brooklyn","e":"III","s":"From the second floor cushion she tracks every arrival and secret on the block. Elbows planted, lace curtains, the original neighborhood watch.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"942"},{"id":49,"n":1713,"t":"The Window Watcher's Wave","g":"The threads","c":"Watcher","w":"Bedford-Stuyvesant, Brooklyn","e":"VI","s":"The day the block's all seeing grandmother finally waves first, a kid freezes mid dribble at the honor. Her lace curtain lifts like a knight's visor, and the block's whole history smiles.","k":["dither","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"1713"},{"id":50,"n":1866,"t":"The Collector","g":"The threads","c":"Watcher","w":"West Village, Manhattan","e":"VI","s":"In a gallery of a thousand glowing portraits, every New Yorker turns slightly to look back. The small frame under their arm holds this exact scene again, smaller, forever.","k":["dither","glitch","motion","still"],"v":8,"m":false,"ar":1.7778,"sid":"1866"},{"id":51,"n":3466,"t":"The Mirror Faces Out","g":"The threads","c":"Watcher","w":"Manhattan","e":"X","s":"The city built a mirror and every eye in it turned at once. A hoisted panel on a Manhattan face, a crowd below meeting its own gaze.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3466"},{"id":52,"n":5466,"t":"The Answer","g":"The threads","c":"Watcher","w":"Midtown, Manhattan","e":"XV","s":"She is the one who was asked, and she is about to answer. An ordinary corner at dawn, the whole era behind her, a blue eye on her wrist.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"5466"},{"id":53,"n":7990,"t":"Ephraim Blum, a person who tracked one piece through eleven owners","g":"The threads","c":"Watcher","w":"Citywide","e":"XIX","s":"Everything is written down forever, which is the whole promise and the whole problem. Ephraim at a long library table, one piece through eleven owners.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"7990"},{"id":54,"n":767,"t":"The Rat King","g":"The threads","c":"Court of Two Kingdoms","w":"Citywide","e":"II","s":"He runs the tunnels and collects tribute in dollar slices. A crooked crown, a third rail throne, an empire that never sleeps.","k":["dither","glitch","still"],"v":5,"m":false,"ar":1.7778,"sid":"767"},{"id":55,"n":1485,"t":"The Pigeon Queen","g":"The threads","c":"Court of Two Kingdoms","w":"Brooklyn","e":"VI","s":"Iridescent on a bridge cable throne, feathers catching light like an oil slick crown. Squabs and sparrows in attendance, both kingdoms surveyed.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1485"},{"id":56,"n":1800,"t":"The Royal Wedding","g":"The threads","c":"Court of Two Kingdoms","w":"Brooklyn","e":"VI","s":"The Rat King married the Pigeon Queen beneath the bridge at midnight, fireflies for ushers. A bottle cap crown exchanged for an iridescent feather, two kingdoms united above and below.","k":["dither","glitch","motion","still"],"v":8,"m":false,"ar":1.7778,"sid":"1800"},{"id":57,"n":2150,"t":"The Adopted Squab","g":"The threads","c":"Court of Two Kingdoms","w":"Brooklyn","e":"VII","s":"An orphaned squab crowned heir of both kingdoms, christened at the bridge anchorage before rats and pigeons in one congregation. The tiny gray heir sleeps through history.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"2150"},{"id":58,"n":3417,"t":"The Coronation Under Chambers","g":"The threads","c":"Court of Two Kingdoms","w":"Tribeca, Manhattan","e":"X","s":"The Squab is crowned under Chambers Street in a coat cut for him. A bent bottle cap lowered by an elder, the whole Court watching.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3417"},{"id":59,"n":1000,"t":"The Subway Samaritan","g":"The threads","c":"Kindness","w":"Citywide","e":"IV","s":"Headlights bloomed far down the tunnel and a stranger went over the edge to pull him up. A dozen hands reaching, the platform holding its breath, everybody made it.","k":["dither","glitch","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"1000"},{"id":60,"n":1937,"t":"The Shirt Off His Back","g":"The threads","c":"Kindness","w":"Citywide","e":"VII","s":"A rider gives his own shirt and hat to a shivering stranger, dressing him gently. The whole car pretending not to watch, and failing.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1937"},{"id":61,"n":1939,"t":"The Human Chain","g":"The threads","c":"Kindness","w":"Coney Island, Brooklyn","e":"VII","s":"Beachgoers link arms into the rip current, forty strangers becoming one rope. The lifeguard anchoring the shore end, the sea losing the argument.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1939"},{"id":62,"n":1942,"t":"The Violin in the Cab","g":"The threads","c":"Kindness","w":"Upper West Side, Manhattan","e":"VII","s":"A priceless violin left in a taxi, returned by a driver who refused the reward. The maestro playing him one private sonata in the garage, payment accepted.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1942"},{"id":63,"n":775,"t":"The Ghost of Penn Station","g":"The threads","c":"Memory","w":"Manhattan","e":"II","s":"They tore down the greatest room in New York and he never got the memo. A 1910 suit among ghost columns, still waiting on his train.","k":["dither","glitch","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"775"},{"id":64,"n":1894,"t":"The Day the Dodgers Left","g":"The threads","c":"Memory","w":"Crown Heights, Brooklyn","e":"VII","s":"A borough learned its team was gone, kids on the stoop with gloves and nowhere to point them. The stadium lights dark early, a love letter returned unopened.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1894"},{"id":65,"n":2061,"t":"Dreamland","g":"The threads","c":"Memory","w":"Coney Island, Brooklyn","e":"VII","s":"A million bulbs, a white tower doubled in wet sand, a city of plaster palaces. It burned brightest in 1910, the year before the fire took it all.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"2061"},{"id":66,"n":1438,"t":"The Survivor Tree","g":"The threads","c":"Memory","w":"Financial District, Manhattan","e":"V","s":"Pulled broken from the rubble and nursed back, it blooms first every spring. Scarred trunk, new white blossoms, visitors touching the bark gently.","k":["dither","glitch","still"],"v":4,"m":true,"ar":1.7778,"sid":"1438"},{"id":67,"n":1439,"t":"The Tribute in Light","g":"The threads","c":"Memory","w":"Financial District, Manhattan","e":"V","s":"Two beams rise into the September night, visible for sixty miles. Migrating birds spiral in the columns, the harbor keeps silent.","k":["dither","glitch","still"],"v":4,"m":true,"ar":1.7778,"sid":"1439"},{"id":68,"n":1900,"t":"The Boatlift","g":"The threads","c":"Memory","w":"Manhattan","e":"VII","s":"That September morning, every boat in the harbor turned toward the smoke without being asked. Ferries, tugs, fishing boats: half a million people carried off the seawall in nine hours.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1900"},{"id":69,"n":3170,"t":"The Painter's First Wall","g":"The threads","c":"Memory","w":"Bushwick, Brooklyn","e":"X","s":"He turned around and a crowd had assembled behind him. The Painter of New Yorkers, a Bushwick corner, a brass watering can at his feet.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3170"},{"id":70,"n":3180,"t":"The Collector's Coat","g":"The threads","c":"Memory","w":"Washington Heights, Manhattan","e":"X","s":"He finally wore something instead of storing it. The Collector out in the rain, an old coat off the shelf, fear and relief sharing a face.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3180"},{"id":71,"n":806,"t":"The Trash Mountain","g":"The threads","c":"Redemptions","w":"East Village, Manhattan","e":"II","s":"The bags reached critical mass and elected themselves. A deli bag crown, rats saluting, the ripest monument the city ever grew.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"806"},{"id":72,"n":1489,"t":"The Clean Street Truce","g":"The threads","c":"Redemptions","w":"Hunts Point, Bronx","e":"VI","s":"The sweeper truck and the Trash Mountain meet at dawn like two generals. The brushes pause, the Mountain yields one lane with dignity.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1489"},{"id":73,"n":891,"t":"The Signal Problem","g":"The threads","c":"Redemptions","w":"Citywide","e":"III","s":"A gremlin of tangled cable and sparks lounges on levers older than your grandparents. A hundred trains frozen at red, and it is in no hurry at all.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"891"},{"id":74,"n":1055,"t":"The Pothole","g":"The threads","c":"Redemptions","w":"Woodside, Queens","e":"IV","s":"Half a lane wide with a traffic cone sunk in it like a flag on a conquered peak. Taxis swerve, the city files a report, the pothole outlives us all.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"1055"},{"id":75,"n":1607,"t":"The Pothole Crew","g":"The threads","c":"Redemptions","w":"St. George, Staten Island","e":"VI","s":"The night crew fills the monster pothole under work lights, steam rising off fresh blacktop like a healed wound. The cone that sank is retrieved and saluted, the patch smoothed like icing.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1607"},{"id":76,"n":2666,"t":"The Guarantor","g":"The threads","c":"Redemptions","w":"Murray Hill, Manhattan","e":"VIII","s":"The mythical creature who earns eighty times the rent signs with a fountain pen of judgment. The most demanded and least seen of the city's saints, and the devil gets his number.","k":["dither","glitch","still"],"v":5,"m":false,"ar":1.7778,"sid":"2666"},{"id":77,"n":3425,"t":"The Guarantor's Ledger","g":"The threads","c":"Redemptions","w":"Financial District, Manhattan","e":"X","s":"The ledger opens at midnight and the names start coming off it. A Financial District desk, one pen, everyone who ever owed him.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3425"},{"id":78,"n":1727,"t":"The Mango Lady's Daughter","g":"The threads","c":"Succession","w":"Jackson Heights, Queens","e":"VI","s":"The daughter's first solo flower cut draws the mother's nod from the folding chair. Same rainbow umbrella, new music, and the regulars pledge allegiance with exact change.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1727"},{"id":79,"n":2264,"t":"The Next New Yorker","g":"The threads","c":"Succession","w":"Queens","e":"VII","s":"A newborn at a hospital window, a traveler at the arrivals gate, one eye flower seed sprouting in a sidewalk crack. The city's tomorrow signing in at three desks at once.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"2264"},{"id":80,"n":2269,"t":"The Squab's Coronation","g":"The threads","c":"Succession","w":"Citywide","e":"VIII","s":"Crowned with the bent bottle cap on the girder while rats and pigeons kneel together. In the puddle below, the two kingdoms reflect as one, which was the plan all along.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"2269"},{"id":81,"n":1865,"t":"The Painter of New Yorkers","g":"Monuments and the author","c":"The author","w":"Williamsburg, Brooklyn","e":"VI","s":"At dawn on a rooftop the eye flowers bloom off the wet canvas into the real skyline. Every character faintly visible in the clouds, one blue evil eye signed into the corner.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1865"},{"id":82,"n":1200,"t":"The Oath Ceremony","g":"Monuments and the author","c":"Monuments","w":"Tribeca, Manhattan","e":"V","s":"Two hundred right hands raised in the marble hall, tiny flags trembling, tears from every nation on earth. One child sleeps through the most important sentence, already home.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"1200"},{"id":83,"n":1300,"t":"The Orange Sky","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"V","s":"The smoke turned the whole city amber and midtown went quiet. One masked cyclist under a sun reduced to a dim red coin.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"1300"},{"id":84,"n":1500,"t":"The Milky Way Blackout","g":"Monuments and the author","c":"Monuments","w":"Upper West Side, Manhattan","e":"VI","s":"The night the lights failed, the Milky Way came back over Manhattan. Rooftops of neighbors lying back in awe, someone calling the planetarium about the strange stars.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7778,"sid":"1500"},{"id":85,"n":1600,"t":"The Wire Walk","g":"Monuments and the author","c":"Monuments","w":"Financial District, Manhattan","e":"VI","s":"One morning a man in black slippers stepped onto a wire between the towers a quarter mile up, and the whole city looked up as one. Police waited with handcuffs and awe while he lay down to talk with a gull.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"1600"},{"id":86,"n":2000,"t":"Midnight","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"VII","s":"The hinge of everything, yesterday and tomorrow shaking hands on every corner. One baker starting as one dancer finishes, the eye flowers all open at once.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"2000"},{"id":87,"n":2100,"t":"The Eight Million","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"VII","s":"Every face distinct and none repeating, every borough and age and story shoulder to shoulder to the horizon. The census this whole collection has been taking.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"2100"},{"id":88,"n":2265,"t":"The Curtain Call","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"VII","s":"Every name in the census on one impossible stage, the rat king beside the angel, the countdown clock beside the crossing guard, the eight million in the seats. The seventh chapter takes its bow, and the city applauds itself for once.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"2265"},{"id":89,"n":2400,"t":"The Consolidation","g":"Monuments and the author","c":"Monuments","w":"Central Park, Manhattan","e":"VIII","s":"At midnight on January 1, 1898, five cities became one under fireworks and falling snow. Eight million arguments about which borough is best began simultaneously.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"2400"},{"id":90,"n":2500,"t":"The Golden Door","g":"Monuments and the author","c":"Monuments","w":"The Battery, Manhattan","e":"VIII","s":"The great registry hall of 1907, morning shafts through the half moon windows, a thousand arrivals holding hats and each other's hands. Every face carrying somewhere else and arriving anyway.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"2500"},{"id":91,"n":2665,"t":"The Unfinished Block","g":"Monuments and the author","c":"Monuments","w":"Long Island City, Queens","e":"VIII","s":"The crane swings the morning's first beam and the neighborhood gains a floor. In the fresh concrete at the fence line, a green bud, because this collection has never once ended.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"2665"},{"id":92,"n":2700,"t":"The Day Two Cities Met","g":"Monuments and the author","c":"Monuments","w":"Brooklyn","e":"IX","s":"May 24, 1883, and one hundred fifty thousand people walk across the sky. A farm girl grips her father's hand as two cities become one neighborhood.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"2700"},{"id":93,"n":2800,"t":"The Day the War Ended","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"IX","s":"August 14, 1945, Times Square at the second the news breaks, confetti falling like a blizzard while strangers embrace strangers and a sailor spins a nurse. The whole square is one held breath, released.","k":["dither","still"],"v":3,"m":true,"ar":1.7778,"sid":"2800"},{"id":94,"n":3000,"t":"The Full Bloom","g":"Monuments and the author","c":"Monuments","w":"Flatiron, Manhattan","e":"IX","s":"Flower Moon night, the one night every eye flower in the city opens at once, eight million faces on rooftops and fire escapes and stoops all looking up together. From above, the streets form one enormous opening iris, and the city finally sees itself seeing.","k":["dither","glitch","still"],"v":5,"m":false,"ar":1.7778,"sid":"3000"},{"id":95,"n":3066,"t":"The Perennial","g":"Monuments and the author","c":"Monuments","w":"Manhattan","e":"IX","s":"January snow on the Painter's windowsill, and one impossible green bud pushes up through it from the flower box while the mismatched mugs steam on the sill. The garden keeps its promise, and so does he.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3066"},{"id":96,"n":3100,"t":"The Ball Drop","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"X","s":"For ten seconds a million strangers agree on what time it is. Times Square, confetti falling through the towers, every face lifted and lit.","k":["dither","glitch","still"],"v":4,"m":false,"ar":1.7778,"sid":"3100"},{"id":97,"n":3400,"t":"The Henge","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"X","s":"The grid catches the sun and holds it for one evening. Forty Second Street on fire, ten thousand silhouettes standing in the roadway.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3400"},{"id":98,"n":3500,"t":"The First Blink of the Grid","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"XI","s":"At blue hour the whole island opened its eye at once. Ten thousand signals, every window and water tower, one small figure on a roof.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3500"},{"id":99,"n":3700,"t":"The Trial of the Algorithm","g":"Monuments and the author","c":"Monuments","w":"Tribeca, Manhattan","e":"XI","s":"The city built a courtroom of server racks and subway tile and asked one question. Twelve awakened machines in the jury box, a hydrant speaking for the people.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"3700"},{"id":100,"n":3800,"t":"The Blackout That Chose","g":"Monuments and the author","c":"Monuments","w":"Manhattan","e":"XI","s":"Manhattan went dark on purpose and kept only what people needed. Hospital floors, one bodega a block, every stairwell, and stars over the city.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"3800"},{"id":101,"n":3900,"t":"The City Dreams Itself","g":"Monuments and the author","c":"Monuments","w":"Manhattan","e":"XI","s":"At four in the morning New York falls asleep at once and dreams itself. One eye flower opening at the center of the island, bedrock to rooftop in a single cutaway.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"3900"},{"id":102,"n":3966,"t":"The Handoff at First Light","g":"Monuments and the author","c":"Monuments","w":"Brooklyn","e":"XI","s":"Two ranks on the bridge at sunrise, and one small thing crossing between them. Machines on one side, people and rats and pigeons on the other, a child receiving.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"3966"},{"id":103,"n":4200,"t":"The Bodega at the End of Time","g":"Monuments and the author","c":"Monuments","w":"Washington Heights, Manhattan","e":"XII","s":"At the center of every timeline there is one bodega, open. Cat on the counter, all versions of the city visible through the door, travelers meeting as equals.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"4200"},{"id":104,"n":4400,"t":"The Night the City Looked Up","g":"Monuments and the author","c":"Monuments","w":"Manhattan","e":"XIII","s":"Ten thousand stone faces turned at once toward one light over the harbor. A sound like a mountain clearing its throat, and every pedestrian below looked up with them.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"4400"},{"id":105,"n":4700,"t":"The Harbor Stands Up","g":"Monuments and the author","c":"Monuments","w":"Manhattan","e":"XIII","s":"On the night the hundred year storm arrives the harbor stands up. Giants linked arm to arm from the Narrows to Hell Gate, eight million windows burning behind them till morning.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"4700"},{"id":106,"n":4966,"t":"The Watcher Steps Into Frame","g":"Monuments and the author","c":"Monuments","w":"Midtown, Manhattan","e":"XIV","s":"The thing watching this whole collection turns out to be a woman with her keys out. Every borough and machine and impossible thing arranges into an iris, and she is the pupil.","k":["dither","still"],"v":3,"m":false,"ar":1.7775,"sid":"4966"},{"id":107,"n":5465,"t":"The Second City Above the First","g":"Monuments and the author","c":"Monuments","w":"Manhattan","e":"XV","s":"Manhattan sleeps and the dream stands above it, built of light. The elevated lines back, Penn Station whole, one insomniac awake enough to see it.","k":["dither","motion","still"],"v":4,"m":false,"ar":1.7775,"sid":"5465"},{"id":108,"n":5491,"t":"The Woman Who Is the Human in the Loop","g":"Monuments and the author","c":"Monuments","w":"Sunset Park, Brooklyn","e":"XVI","s":"The model is only as awake as Nadia at four in the morning. Eleven badges from eleven contracts, and not one line of the documentation carries her name.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"5491"},{"id":109,"n":6491,"t":"The Man Who Has Cut Pastrami By Hand at Katz's Since 1979","g":"Monuments and the author","c":"Monuments","w":"Lower East Side, Manhattan","e":"XVII","s":"Forty seven years of the same motion, and the motion is the inheritance. At Katz's he hands a stranger the free taste off the tip of the knife.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"6491"},{"id":110,"n":6991,"t":"The Host Who Asks Every Artist for Three Words, for The MLow Show","g":"Monuments and the author","c":"Monuments","w":"Harlem, Manhattan","e":"XVIII","s":"Discoverability is one person asking a better question. Two microphones on a folding table, a ring light, forty unaired minutes on a drive.","k":["dither","still"],"v":3,"m":false,"ar":1.7778,"sid":"6991"},{"id":111,"n":7491,"t":"The Dev Who Has Not Slept in Four Days","g":"Monuments and the author","c":"Monuments","w":"Bushwick, Brooklyn","e":"XIX","s":"A launch is a crowd deciding in ninety seconds whether a year was real. Six monitors of blank glowing color, four days in the same shirt.","k":["dither","motion","still"],"v":5,"m":false,"ar":1.7778,"sid":"7491"}];
+</script>
+<script>
+(function(){
+"use strict";
+if (!window.THREE) { document.getElementById('load').textContent = 'Three.js did not load'; return; }
+var IMG = 'assets/keystone/';
+var N = K111.length;
+var PER_TURN = 14, RISE = 2.7, R = 9.5, FW = 2.9;
+var dA = Math.PI*2/PER_TURN, dY = RISE/PER_TURN;
+var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var canvas = document.getElementById('c');
+var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true, alpha:false, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.setClearColor(0x0d0d0d, 1);
+var maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+var scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0d0d0d, 0.03);
+var camera = new THREE.PerspectiveCamera(58, 1, 0.1, 120);
+
+// ---------- helpers ----------
+function angleAt(u){ return u*dA; }
+function yAt(u){ return u*dY; }
+function posAt(u, r){ var a = angleAt(u); return new THREE.Vector3(Math.sin(a)*r, yAt(u), Math.cos(a)*r); }
+
+// ---------- materials ----------
+var MAT = {
+  wall: new THREE.MeshStandardMaterial({color:0x0c0e12, roughness:.95, metalness:0, side:THREE.BackSide}),
+  ramp: new THREE.MeshStandardMaterial({color:0x8a94a3, roughness:.8, metalness:0, side:THREE.DoubleSide}),
+  rampDark: new THREE.MeshStandardMaterial({color:0x14171c, roughness:.9, metalness:0, side:THREE.DoubleSide}),
+  matte: new THREE.MeshBasicMaterial({color:0xf0f4f8}),
+  placeholder: new THREE.MeshBasicMaterial({color:0x1a1d23}),
+  rail: new THREE.LineBasicMaterial({color:0x2962ff, transparent:true, opacity:.9}),
+  oculus: new THREE.MeshBasicMaterial({color:0xe8f0ff, transparent:true, opacity:.85, side:THREE.DoubleSide}),
+  floor: new THREE.MeshStandardMaterial({color:0x101216, roughness:1, metalness:0})
+};
+
+// ---------- lights ----------
+scene.add(new THREE.HemisphereLight(0xcfd8e6, 0x0d0d0d, 0.42));
+var follow = new THREE.PointLight(0xdfe8ff, 0.55, 30, 2); scene.add(follow);
+var topH = yAt(N+6);
+var oculusLight = new THREE.PointLight(0xe8f0ff, 1.4, 40, 2); oculusLight.position.set(0, topH+1.5, 0); scene.add(oculusLight);
+
+// ---------- drum wall ----------
+var uMin = -6, uMax = N+6;
+var drum = new THREE.Mesh(new THREE.CylinderGeometry(R+0.45, R+0.45, yAt(uMax)-yAt(uMin)+6, 72, 1, true), MAT.wall);
+drum.position.y = (yAt(uMax)+yAt(uMin))/2; scene.add(drum);
+
+// floor + oculus
+var floor = new THREE.Mesh(new THREE.CircleGeometry(R+0.45, 72), MAT.floor); floor.rotation.x = -Math.PI/2; floor.position.y = yAt(uMin)-2.2; scene.add(floor);
+var oculus = new THREE.Mesh(new THREE.RingGeometry(R*0.28, R*0.62, 72), MAT.oculus); oculus.rotation.x = -Math.PI/2; oculus.position.y = topH+2.6; scene.add(oculus);
+var oculusRing = new THREE.Mesh(new THREE.RingGeometry(R*0.66, R*0.68, 72), new THREE.MeshBasicMaterial({color:0x2962ff, transparent:true, opacity:.6, side:THREE.DoubleSide})); oculusRing.rotation.x = -Math.PI/2; oculusRing.position.y = topH+2.55; scene.add(oculusRing);
+
+// ---------- helical ramp (parapet band + lip) ----------
+function ribbon(rInner, rOuter, yOff, steps, mat, vertical){
+  var pos = [], idx = [];
+  for (var i=0;i<=steps;i++){
+    var u = uMin + (uMax-uMin)*i/steps, a = angleAt(u), y = yAt(u)+yOff;
+    if (vertical){ // lip: vertical strip at rInner between yOff and yOff+vertical
+      pos.push(Math.sin(a)*rInner, y, Math.cos(a)*rInner, Math.sin(a)*rInner, y+vertical, Math.cos(a)*rInner);
+    } else {
+      pos.push(Math.sin(a)*rInner, y, Math.cos(a)*rInner, Math.sin(a)*rOuter, y, Math.cos(a)*rOuter);
+    }
+    if (i<steps){ var b=i*2; idx.push(b,b+1,b+2, b+1,b+3,b+2); }
+  }
+  var g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return new THREE.Mesh(g, mat);
+}
+var steps = Math.round((uMax-uMin)*6);
+var walkY = -FW/1.75 - 0.5;          // walking surface sits under the frames
+scene.add(ribbon(R-1.15, R+0.45, walkY, steps, MAT.rampDark));       // deck
+scene.add(ribbon(R-1.15, R-1.15, walkY, steps, MAT.ramp, 0.42));     // parapet lip (inner face)
+scene.add(ribbon(R-1.29, R-1.15, walkY+0.42, steps, MAT.ramp));      // parapet cap
+scene.add(ribbon(R-1.29, R-1.29, walkY, steps, MAT.ramp, 0.42));     // parapet outer face
+// blue rail on the cap
+(function(){
+  var pts=[]; for (var i=0;i<=steps;i++){ var u=uMin+(uMax-uMin)*i/steps; var p=posAt(u,R-1.22); p.y+=walkY+0.44; pts.push(p); }
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), MAT.rail));
+})();
+
+var started = false;
+function start(){
+if (started) return; started = true;
+// ---------- text textures ----------
+function textTexture(text, w, h, px, color, font, align){
+  var cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+  var ctx = cv.getContext('2d'); ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = color; ctx.font = font.replace('PX', px+'px'); ctx.textBaseline='middle'; ctx.textAlign = align||'left';
+  var x = align==='center'? w/2 : 14;
+  ctx.fillText(text, x, h/2);
+  var t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso; t.minFilter = THREE.LinearMipmapLinearFilter;
+  return t;
+}
+var MONO = '500 PX "IBM Plex Mono", Consolas, monospace';
+var SERIF = '300 PX "Fraunces", Georgia, serif';
+
+// ---------- frames ----------
+var frames = [], byMesh = new Map();
+var GROUPS = [];
+K111.forEach(function(d,i){
+  var fh = FW/d.ar;
+  var g = new THREE.Group();
+  var a = angleAt(i);
+  g.position.set(Math.sin(a)*R, yAt(i), Math.cos(a)*R);
+  g.rotation.y = a + Math.PI;
+  var matte = new THREE.Mesh(new THREE.PlaneGeometry(FW+0.09, fh+0.09), MAT.matte.clone());
+  matte.position.z = 0.02;
+  var art = new THREE.Mesh(new THREE.PlaneGeometry(FW, fh), MAT.placeholder.clone());
+  art.position.z = 0.05;
+  g.add(matte); g.add(art);
+  // plaque
+  var plaque = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.2), new THREE.MeshBasicMaterial({map:textTexture('№ '+d.n+'   '+d.t.toUpperCase(), 1536, 128, 54, '#9AA6B5', MONO), transparent:true}));
+  plaque.position.set(-FW/2+1.2, -fh/2-0.2, 0.05);
+  g.add(plaque);
+  scene.add(g);
+  var f = {i:i, d:d, group:g, matte:matte, art:art, loaded:false, loading:false, hi:false, hiLoading:false, fh:fh};
+  frames.push(f); byMesh.set(art, f); byMesh.set(matte, f);
+  if (!GROUPS.length || GROUPS[GROUPS.length-1].g !== d.g) GROUPS.push({g:d.g, start:i, count:0});
+  GROUPS[GROUPS.length-1].count++;
+});
+// group labels on the wall, above the first frame of each group
+GROUPS.forEach(function(gr, gi){
+  var u = gr.start, f0 = frames[gr.start];
+  var t = textTexture(gr.g.toUpperCase()+' · '+gr.count+' PIECES', 2048, 128, 56, '#F0F4F8', MONO);
+  var m = new THREE.Mesh(new THREE.PlaneGeometry(FW*1.15, FW*1.15/16), new THREE.MeshBasicMaterial({map:t, transparent:true}));
+  m.position.set(-FW/2 + FW*1.15/2, f0.fh/2 + 0.3, 0.05);
+  f0.group.add(m);
+});
+
+// ---------- texture loading (nearest-first) ----------
+var loader = new THREE.TextureLoader();
+var loadedCount = 0, inflight = 0;
+var loadEl = document.getElementById('load');
+function prepTex(t){ t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter; return t; }
+function loadNearest(center){
+  while (inflight < 4){
+    var best=null, bd=1e9;
+    for (var i=0;i<N;i++){ var f=frames[i]; if (f.loaded||f.loading) continue; var dd=Math.abs(i-center); if (dd<bd){bd=dd;best=f;} }
+    if (!best) return;
+    best.loading = true; inflight++;
+    (function(f){
+      loader.load(IMG+f.d.id+'s.jpg', function(t){
+        prepTex(t); if (!f.hi){ f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }
+        f.loaded = true; f.loading=false; inflight--; loadedCount++;
+        loadEl.textContent = 'Hanging '+loadedCount+' / '+N; if (loadedCount===N) loadEl.classList.add('done');
+      }, undefined, function(){ f.loading=false; f.loaded=true; inflight--; loadedCount++; });
+    })(best);
+  }
+}
+function loadHi(f){
+  if (f.hi || f.hiLoading) return; f.hiLoading = true;
+  loader.load(IMG+f.d.id+'l.jpg', function(t){ prepTex(t); f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; f.hi = true; f.hiLoading=false; }, undefined, function(){ f.hiLoading=false; });
+}
+
+// ---------- state ----------
+var S = { t:0, tT:0, focus:-1, fx:0, fxT:0, lastInput:performance.now(), tour:!reduced, hover:null, current:-1 };
+var camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), tmp = new THREE.Vector3();
+var narrow = false;
+function resize(){
+  var w = canvas.clientWidth||window.innerWidth, h = canvas.clientHeight||window.innerHeight;
+  renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix(); narrow = w < 720;
+}
+window.addEventListener('resize', resize); resize();
+
+function focusDistance(f){
+  var vh = 2*Math.tan(camera.fov*Math.PI/360);
+  var dV = f.fh/(0.66*vh), dH = FW/(0.8*vh*camera.aspect);
+  return Math.max(dV, dH, 1.6);
+}
+function clampT(v){ return Math.max(-0.4, Math.min(N-0.6, v)); }
+
+// ---------- HUD ----------
+var curEl=document.getElementById('cur'), curNum=document.getElementById('curNum'), curTitle=document.getElementById('curTitle'), curGroup=document.getElementById('curGroup'), rampFill=document.getElementById('rampFill');
+function pad(n){ return (n<10?'00':n<100?'0':'')+n; }
+function setCurrent(i){
+  if (i===S.current) return;
+  if (S.current>=0) frames[S.current].matte.material.color.set(0xf0f4f8);
+  S.current = i; var d = frames[i].d;
+  frames[i].matte.material.color.set(0x2962ff);
+  curEl.textContent = pad(d.id); curNum.textContent = '№ '+d.n; curTitle.textContent = d.t; curGroup.textContent = d.g+' · '+d.c;
+  rampFill.style.width = (i/(N-1)*100)+'%';
+}
+
+// ---------- card ----------
+var card=document.getElementById('card'), hudBottom=document.getElementById('hudBottom');
+function openCard(f){
+  var d=f.d;
+  document.getElementById('kNum').textContent=d.n; document.getElementById('kEra').textContent=d.e; document.getElementById('kWhere').textContent=d.w;
+  document.getElementById('kTitle').textContent=d.t; document.getElementById('kChapter').textContent=d.g+' · '+d.c;
+  document.getElementById('kStory').textContent=d.s;
+  document.getElementById('kMemorial').hidden = !d.m;
+  var st=document.getElementById('kStates'); st.innerHTML='';
+  var n=document.createElement('span'); n.className='n'; n.textContent=d.v+' state'+(d.v===1?'':'s'); st.appendChild(n);
+  ['still','motion','glitch','dither'].forEach(function(k){ var c=document.createElement('span'); c.className='chip'+(d.k.indexOf(k)>=0?' live':''); c.textContent=k==='still'?'painted':k; c.style.opacity=d.k.indexOf(k)>=0?'1':'.35'; st.appendChild(c); });
+  document.getElementById('kLink').href='n/'+d.sid+'.html';
+  card.classList.add('open'); hudBottom.classList.add('hidden-by-card');
+}
+function closeCard(){ card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }
+function focusOn(i){
+  i = Math.max(0, Math.min(N-1, i));
+  S.focus = i; S.fxT = 1; S.tT = i; S.lastInput = performance.now();
+  var f = frames[i]; loadHi(f); openCard(f); setCurrent(i);
+}
+function unfocus(){ if (S.focus<0) return; S.fxT = 0; closeCard(); S.lastInput = performance.now(); }
+document.getElementById('close').addEventListener('click', unfocus);
+document.getElementById('prev').addEventListener('click', function(){ focusOn((S.focus<0?Math.round(S.t):S.focus)-1); });
+document.getElementById('next').addEventListener('click', function(){ focusOn((S.focus<0?Math.round(S.t):S.focus)+1); });
+var tourBtn=document.getElementById('tour');
+function setTour(on){ S.tour=on; tourBtn.textContent='Auto tour: '+(on?'on':'off'); }
+tourBtn.addEventListener('click', function(){ setTour(!S.tour); S.lastInput = performance.now(); });
+setTour(S.tour);
+
+// ---------- input ----------
+var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+var drag = null;
+function pick(x,y){
+  var r = canvas.getBoundingClientRect(); ndc.x = ((x-r.left)/r.width)*2-1; ndc.y = -((y-r.top)/r.height)*2+1;
+  ray.setFromCamera(ndc, camera);
+  var hits = ray.intersectObjects(frames.map(function(f){return f.art;}), false);
+  return hits.length ? byMesh.get(hits[0].object) : null;
+}
+canvas.addEventListener('pointerdown', function(e){
+  canvas.setPointerCapture(e.pointerId);
+  drag = {x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, t:S.tT, moved:false};
+  canvas.classList.add('dragging'); S.lastInput = performance.now();
+});
+canvas.addEventListener('pointermove', function(e){
+  if (drag){
+    var dx = e.clientX-drag.x, dy = e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY;
+    if (Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy) > 6) drag.moved = true;
+    if (drag.moved && S.focus>=0){ S.fxT = 0; closeCard(); S.focus = -1; }
+    var w = canvas.clientWidth||1, h = canvas.clientHeight||1;
+    // horizontal drag walks the ramp (about a third of a turn per screen width); vertical drag climbs whole turns
+    S.tT = clampT(S.tT - dx/w*PER_TURN*0.55 + dy/h*PER_TURN*1.2);
+    S.lastInput = performance.now();
+  } else {
+    var f = pick(e.clientX, e.clientY);
+    if (f !== S.hover){ if (S.hover && S.hover.i!==S.current) S.hover.matte.material.color.set(0xf0f4f8); S.hover = f; if (f && f.i!==S.current) f.matte.material.color.set(0x5c86ff); canvas.classList.toggle('hover', !!f); }
+  }
+});
+function endDrag(e){
+  if (!drag) return;
+  canvas.classList.remove('dragging');
+  var wasClick = !drag.moved; drag = null;
+  if (wasClick){ var f = pick(e.clientX, e.clientY); if (f){ if (S.focus===f.i) unfocus(); else focusOn(f.i); } else if (S.focus>=0) { unfocus(); S.focus=-1; } }
+}
+canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
+canvas.addEventListener('wheel', function(e){
+  e.preventDefault();
+  var d = e.deltaMode===1 ? e.deltaY*16 : e.deltaY;
+  if (S.focus>=0){ S.fxT=0; closeCard(); S.focus=-1; }
+  S.tT = clampT(S.tT + d*0.006); S.lastInput = performance.now();
+}, {passive:false});
+window.addEventListener('keydown', function(e){
+  if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+  var base = S.focus>=0 ? S.focus : Math.round(S.t);
+  if (e.key==='ArrowRight'){ e.preventDefault(); if (S.focus>=0) focusOn(base+1); else { S.tT=clampT(Math.round(S.tT)+1); } }
+  else if (e.key==='ArrowLeft'){ e.preventDefault(); if (S.focus>=0) focusOn(base-1); else { S.tT=clampT(Math.round(S.tT)-1); } }
+  else if (e.key==='ArrowUp'){ e.preventDefault(); S.tT=clampT(S.tT+PER_TURN); }
+  else if (e.key==='ArrowDown'){ e.preventDefault(); S.tT=clampT(S.tT-PER_TURN); }
+  else if (e.key==='Enter' || e.key===' '){ e.preventDefault(); if (S.focus<0) focusOn(Math.round(S.t)); }
+  else if (e.key==='Escape'){ unfocus(); S.focus=-1; }
+  else return;
+  S.lastInput = performance.now();
+});
+
+// ---------- loop ----------
+var last = performance.now(), hidden = false;
+document.addEventListener('visibilitychange', function(){ hidden = document.hidden; last = performance.now(); });
+function frame(now){
+  requestAnimationFrame(frame);
+  if (hidden) return;
+  var dt = Math.min(0.05, (now-last)/1000); last = now;
+  // auto tour after 5s idle
+  if (S.tour && S.focus<0 && now-S.lastInput>5000){
+    S.tT = clampT(S.tT + 0.16*dt);
+    if (S.tT >= N-0.6) { S.tT = -0.4; S.t = -0.4; }
+  } else if (S.focus<0 && !drag && now-S.lastInput>900){
+    // settle on the nearest piece
+    var snap = Math.round(S.tT); S.tT += (Math.max(0,Math.min(N-1,snap))-S.tT)*Math.min(1, 2.2*dt);
+  }
+  var k = reduced ? 1 : 1-Math.exp(-dt*5.5);
+  S.t += (S.tT-S.t)*k;
+  S.fx += (S.fxT-S.fx)*(reduced?1:1-Math.exp(-dt*4));
+  if (S.fx<0.002 && S.fxT===0) { S.fx=0; S.focus = -1; }
+
+  // camera: center of the rotunda at ramp height, looking at the wall; blend toward the focused piece
+  var a = angleAt(S.t), y = yAt(S.t);
+  var lookY = y + (narrow && S.fx>0 ? -0.35*S.fx : 0.05);
+  camPos.set(0, y+0.15, 0);
+  camLook.set(Math.sin(a)*R, lookY, Math.cos(a)*R);
+  if (S.fx>0 && S.focus>=0){
+    var f = frames[S.focus], fa = angleAt(S.focus), fd = focusDistance(f);
+    // on wide screens slide the view right so the piece sits left of the card
+    var side = narrow ? 0 : 0.21 * (2*Math.tan(camera.fov*Math.PI/360)) * fd * camera.aspect;
+    var rx = -Math.cos(fa)*side, rz = Math.sin(fa)*side, fy = yAt(S.focus) + (narrow ? -0.32*f.fh : 0);
+    tmp.set(Math.sin(fa)*(R-fd)+rx, fy, Math.cos(fa)*(R-fd)+rz);
+    camPos.lerp(tmp, S.fx);
+    tmp.set(Math.sin(fa)*R+rx, fy, Math.cos(fa)*R+rz);
+    camLook.lerp(tmp, S.fx);
+  }
+  camera.position.copy(camPos); camera.lookAt(camLook);
+  follow.position.set(camPos.x*0.6, camPos.y+1.2, camPos.z*0.6); follow.intensity = 0.55*(1-0.75*S.fx);
+
+  var cur = Math.max(0, Math.min(N-1, Math.round(S.focus>=0?S.focus:S.t)));
+  setCurrent(cur);
+  loadNearest(S.t);
+  renderer.render(scene, camera);
+}
+last = performance.now();
+requestAnimationFrame(frame);
+}
+// Wait for the two faces the plaques are drawn with, but never for long
+if (document.fonts && document.fonts.load){
+  Promise.all([document.fonts.load('500 20px "IBM Plex Mono"'), document.fonts.load('300 20px "Fraunces"')]).then(start, start);
+  setTimeout(start, 2500);
+} else { start(); }
+})();
+</script>
+
+<script src="assets/eggs.js" defer></script>
+</body>
+</html>
