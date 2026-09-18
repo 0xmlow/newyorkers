@@ -46,7 +46,8 @@
   .mast{text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
   .mast .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)}
   .mast .name{font-family:var(--display);font-weight:500;font-size:clamp(17px,2.2vw,22px);letter-spacing:.02em;line-height:1.1}
-  .mast .tag{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(13px,1.5vw,15px);color:var(--slate)}
+  .mast .tag{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(13px,1.5vw,15px);color:var(--slate);text-shadow:0 2px 14px rgba(13,13,13,.95)}
+  .mast .name{text-shadow:0 2px 14px rgba(13,13,13,.95)}
 
   .now{display:flex;flex-direction:column;gap:6px;max-width:min(60vw,520px)}
   .now .count{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--slate);font-variant-numeric:tabular-nums}
@@ -63,6 +64,8 @@
   .btn{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:var(--cloud);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;transition:border-color .2s,background .2s}
   .btn:hover{border-color:var(--cloud)}
   .btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .btn.on{color:var(--blue-soft);border-color:rgba(41,98,255,.55)}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .load{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--slate);font-variant-numeric:tabular-nums;opacity:1;transition:opacity .6s}
   .load.done{opacity:0}
 
@@ -96,11 +99,26 @@
     .mast .tag{display:none}
     .mast .eyebrow{font-size:10px;letter-spacing:.12em}
     .mast .name{font-size:15px}
+    .logo{height:20px}
     .help .hint{display:none}
-    .now{max-width:calc(100vw - 32px)}
-    #card{right:0;left:0;top:auto;bottom:0;width:auto;transform:translate(0,30px);border-radius:12px 12px 0 0;border-bottom:0;padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);max-height:56vh;overflow:auto}
+    /* the bottom bar stacks: what you are looking at, then the controls across the full width */
+    .hud.bottom{flex-direction:column;align-items:stretch;gap:12px}
+    .now{max-width:none}
+    .now .title{font-size:clamp(19px,5.4vw,24px)}
+    .ramp{width:100%}
+    .help{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+    .load{white-space:nowrap;font-size:10px}
+    .btns{flex:1;justify-content:flex-end;flex-wrap:nowrap}
+    .btn{padding:10px 12px;font-size:10px;letter-spacing:.1em;white-space:nowrap}
+    #card{right:0;left:0;top:auto;bottom:0;width:auto;transform:translate(0,30px);border-radius:12px 12px 0 0;border-bottom:0;padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);max-height:54vh;overflow:auto;-webkit-overflow-scrolling:touch}
     #card.open{transform:translate(0,0)}
+    #card p.story{max-width:none;font-size:15px}
+    #card .nav button{width:40px;height:40px}
     .hud.bottom.hidden-by-card{opacity:0;pointer-events:none}
+  }
+  @media (max-width:400px){
+    .btn{padding:10px 9px;font-size:9px;letter-spacing:.08em}
+    .btns{gap:6px}
   }
   .hud.bottom.hidden-by-card .now{opacity:0;transition:opacity .3s}
   @media (prefers-reduced-motion:reduce){
@@ -136,12 +154,12 @@
     <span class="count"><b id="cur">001</b> / 111 · <span id="curNum">№ 1</span></span>
     <span class="title" id="curTitle">The Bodega Matriarch</span>
     <span class="group" id="curGroup">Era I, the founding cast · The anchors</span>
-    <div class="ramp" aria-hidden="true"><i id="rampFill"></i><s style="left:30.6%"></s><s style="left:37.8%"></s><s style="left:72.1%"></s></div>
+    <div class="ramp" aria-hidden="true"><i id="rampFill"></i></div>
   </div>
   <div class="help">
     <span class="load" id="load">Hanging 0 / 111</span>
     <span class="hint">Drag to travel the ramp · Scroll to climb<br>Click a piece to step up · <kbd>←</kbd><kbd>→</kbd> next piece</span>
-    <button class="btn" id="tour" type="button">Auto tour: on</button>
+    <div class="btns"><button class="btn" id="loopb" type="button" aria-pressed="false">Endless ramp: off</button><button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button></div>
   </div>
 </div>
 
@@ -169,7 +187,19 @@ var K111 = [{"id":1,"n":1,"t":"The Bodega Matriarch","g":"Era I, the founding ca
 if (!window.THREE) { document.getElementById('load').textContent = 'Three.js did not load'; return; }
 var IMG = 'assets/keystone/';
 var N = K111.length;
-var PER_TURN = 14, RISE = 2.7, R = 9.5, FW = 2.9;
+
+// ---------- the rotunda ----------
+// Every piece hangs in the clear band between the parapet cap of its own turn and the underside of
+// the deck one turn above. The band is what sets RISE, not the other way round: when the climb per
+// turn was shorter than the art plus its plaque, the ramp spiralling overhead sliced the top off
+// every tall piece and the parapet cut into the bottom. WALK follows from the band so that the band
+// is centred on the art, which is also the height the camera travels at.
+var PER_TURN = 14, R = 9.5, FW = 2.9;
+var PARAPET = 0.42;                    // parapet height above the deck
+var RISE = 3.7;                        // climb per turn
+var BAND = RISE - PARAPET;             // clear wall per turn: 3.28
+var WALK = -(PARAPET + RISE) / 2;      // deck height relative to the centre of the art: -2.06
+var PLAQUE_H = 0.19, PLAQUE_GAP = 0.14, LABEL_H = 0.19, LABEL_GAP = 0.20;
 var dA = Math.PI*2/PER_TURN, dY = RISE/PER_TURN;
 var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -188,6 +218,7 @@ var camera = new THREE.PerspectiveCamera(58, 1, 0.1, 120);
 function angleAt(u){ return u*dA; }
 function yAt(u){ return u*dY; }
 function posAt(u, r){ var a = angleAt(u); return new THREE.Vector3(Math.sin(a)*r, yAt(u), Math.cos(a)*r); }
+function mod(n, m){ return ((n % m) + m) % m; }
 
 // ---------- materials ----------
 var MAT = {
@@ -207,22 +238,19 @@ var follow = new THREE.PointLight(0xdfe8ff, 0.55, 30, 2); scene.add(follow);
 var topH = yAt(N+6);
 var oculusLight = new THREE.PointLight(0xe8f0ff, 1.4, 40, 2); oculusLight.position.set(0, topH+1.5, 0); scene.add(oculusLight);
 
-// ---------- drum wall ----------
-var uMin = -6, uMax = N+6;
-var drum = new THREE.Mesh(new THREE.CylinderGeometry(R+0.45, R+0.45, yAt(uMax)-yAt(uMin)+6, 72, 1, true), MAT.wall);
-drum.position.y = (yAt(uMax)+yAt(uMin))/2; scene.add(drum);
-
-// floor + oculus
-var floor = new THREE.Mesh(new THREE.CircleGeometry(R+0.45, 72), MAT.floor); floor.rotation.x = -Math.PI/2; floor.position.y = yAt(uMin)-2.2; scene.add(floor);
+// floor + oculus: the two ends of the rotunda. An endless ramp has neither, so they hide.
+var floor = new THREE.Mesh(new THREE.CircleGeometry(R+0.45, 72), MAT.floor); floor.rotation.x = -Math.PI/2; floor.position.y = yAt(-6)-2.2; scene.add(floor);
 var oculus = new THREE.Mesh(new THREE.RingGeometry(R*0.28, R*0.62, 72), MAT.oculus); oculus.rotation.x = -Math.PI/2; oculus.position.y = topH+2.6; scene.add(oculus);
 var oculusRing = new THREE.Mesh(new THREE.RingGeometry(R*0.66, R*0.68, 72), new THREE.MeshBasicMaterial({color:0x2962ff, transparent:true, opacity:.6, side:THREE.DoubleSide})); oculusRing.rotation.x = -Math.PI/2; oculusRing.position.y = topH+2.55; scene.add(oculusRing);
 
-// ---------- helical ramp (parapet band + lip) ----------
-function ribbon(rInner, rOuter, yOff, steps, mat, vertical){
+// ---------- the shell: drum, deck, parapet, rail ----------
+// A helix translated by a whole RISE lands exactly on itself, so in endless mode the whole shell is
+// just slid by whole turns to stay under the camera and the seam can never be seen.
+function ribbon(rInner, rOuter, yOff, uA, uB, steps, mat, vertical){
   var pos = [], idx = [];
   for (var i=0;i<=steps;i++){
-    var u = uMin + (uMax-uMin)*i/steps, a = angleAt(u), y = yAt(u)+yOff;
-    if (vertical){ // lip: vertical strip at rInner between yOff and yOff+vertical
+    var u = uA + (uB-uA)*i/steps, a = angleAt(u), y = yAt(u)+yOff;
+    if (vertical){
       pos.push(Math.sin(a)*rInner, y, Math.cos(a)*rInner, Math.sin(a)*rInner, y+vertical, Math.cos(a)*rInner);
     } else {
       pos.push(Math.sin(a)*rInner, y, Math.cos(a)*rInner, Math.sin(a)*rOuter, y, Math.cos(a)*rOuter);
@@ -234,66 +262,109 @@ function ribbon(rInner, rOuter, yOff, steps, mat, vertical){
   g.setIndex(idx); g.computeVertexNormals();
   return new THREE.Mesh(g, mat);
 }
-var steps = Math.round((uMax-uMin)*6);
-var walkY = -FW/1.75 - 0.5;          // walking surface sits under the frames
-scene.add(ribbon(R-1.15, R+0.45, walkY, steps, MAT.rampDark));       // deck
-scene.add(ribbon(R-1.15, R-1.15, walkY, steps, MAT.ramp, 0.42));     // parapet lip (inner face)
-scene.add(ribbon(R-1.29, R-1.15, walkY+0.42, steps, MAT.ramp));      // parapet cap
-scene.add(ribbon(R-1.29, R-1.29, walkY, steps, MAT.ramp, 0.42));     // parapet outer face
-// blue rail on the cap
-(function(){
-  var pts=[]; for (var i=0;i<=steps;i++){ var u=uMin+(uMax-uMin)*i/steps; var p=posAt(u,R-1.22); p.y+=walkY+0.44; pts.push(p); }
-  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), MAT.rail));
-})();
+var VMAX = 8;                          // fastest throw, in pieces per second
+var FRICTION = 3.4;
+var LOOP = false;
+var shell = null;
+function buildShell(){
+  if (shell){
+    scene.remove(shell);
+    shell.traverse(function(o){ if (o.geometry) o.geometry.dispose(); });
+  }
+  shell = new THREE.Group();
+  var uA, uB, drumH, drumY;
+  if (LOOP){ uA = -3.4*PER_TURN; uB = 3.4*PER_TURN; drumH = RISE*9; drumY = 0; }
+  else { uA = -6; uB = N+6; drumH = yAt(uB)-yAt(uA)+8; drumY = (yAt(uB)+yAt(uA))/2; }
+  var steps = Math.round((uB-uA)*6);
+  var drum = new THREE.Mesh(new THREE.CylinderGeometry(R+0.45, R+0.45, drumH, 72, 1, true), MAT.wall);
+  drum.position.y = drumY; shell.add(drum);
+  shell.add(ribbon(R-1.15, R+0.45, WALK, uA, uB, steps, MAT.rampDark));            // deck
+  shell.add(ribbon(R-1.15, R-1.15, WALK, uA, uB, steps, MAT.ramp, PARAPET));       // parapet, inner face
+  shell.add(ribbon(R-1.29, R-1.15, WALK+PARAPET, uA, uB, steps, MAT.ramp));        // parapet cap
+  shell.add(ribbon(R-1.29, R-1.29, WALK, uA, uB, steps, MAT.ramp, PARAPET));       // parapet, outer face
+  var pts = [];
+  for (var i=0;i<=steps;i++){ var u = uA+(uB-uA)*i/steps; var p = posAt(u, R-1.22); p.y += WALK+PARAPET+0.02; pts.push(p); }
+  shell.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), MAT.rail));
+  scene.add(shell);
+  floor.visible = oculus.visible = oculusRing.visible = oculusLight.visible = !LOOP;
+}
 
 var started = false;
 function start(){
 if (started) return; started = true;
 // ---------- text textures ----------
-function textTexture(text, w, h, px, color, font, align){
+function textTexture(text, w, h, px, color, font, align, fit){
   var cv = document.createElement('canvas'); cv.width=w; cv.height=h;
   var ctx = cv.getContext('2d'); ctx.clearRect(0,0,w,h);
   ctx.fillStyle = color; ctx.font = font.replace('PX', px+'px'); ctx.textBaseline='middle'; ctx.textAlign = align||'left';
+  if (fit){
+    // the longest titles run past the end of the plaque: set them smaller, and cut the very worst
+    var room = w - 48, size = px;
+    while (size > px*0.6 && ctx.measureText(text).width > room){ size -= 2; ctx.font = font.replace('PX', size+'px'); }
+    if (ctx.measureText(text).width > room){
+      var t = text;
+      while (t.length > 6 && ctx.measureText(t+'…').width > room) t = t.slice(0,-1);
+      text = t.replace(/[ ,·]+$/,'') + '…';
+    }
+  }
   var x = align==='center'? w/2 : 14;
   ctx.fillText(text, x, h/2);
   var t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso; t.minFilter = THREE.LinearMipmapLinearFilter;
   return t;
 }
 var MONO = '500 PX "IBM Plex Mono", Consolas, monospace';
-var SERIF = '300 PX "Fraunces", Georgia, serif';
 
 // ---------- frames ----------
+// The art is centred on the spiral height, which is the centre of the clear band and the height the
+// camera rides at, so every piece is level with the eye whatever its shape. The plaque hangs below
+// it and the group label above it, both inside the band.
 var frames = [], byMesh = new Map();
 var GROUPS = [];
 K111.forEach(function(d,i){
   var fh = FW/d.ar;
   var g = new THREE.Group();
-  var a = angleAt(i);
-  g.position.set(Math.sin(a)*R, yAt(i), Math.cos(a)*R);
-  g.rotation.y = a + Math.PI;
   var matte = new THREE.Mesh(new THREE.PlaneGeometry(FW+0.09, fh+0.09), MAT.matte.clone());
   matte.position.z = 0.02;
   var art = new THREE.Mesh(new THREE.PlaneGeometry(FW, fh), MAT.placeholder.clone());
   art.position.z = 0.05;
   g.add(matte); g.add(art);
-  // plaque
-  var plaque = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.2), new THREE.MeshBasicMaterial({map:textTexture('№ '+d.n+'   '+d.t.toUpperCase(), 1536, 128, 54, '#9AA6B5', MONO), transparent:true}));
-  plaque.position.set(-FW/2+1.2, -fh/2-0.2, 0.05);
+  var plaque = new THREE.Mesh(new THREE.PlaneGeometry(FW, PLAQUE_H), new THREE.MeshBasicMaterial({map:textTexture('№ '+d.n+'   '+d.t.toUpperCase(), 1536, 112, 44, '#9AA6B5', MONO, 'center', true), transparent:true}));
+  plaque.position.set(0, -fh/2 - PLAQUE_GAP - PLAQUE_H/2, 0.05);
   g.add(plaque);
   scene.add(g);
-  var f = {i:i, d:d, group:g, matte:matte, art:art, loaded:false, loading:false, hi:false, hiLoading:false, fh:fh};
+  var f = {i:i, d:d, group:g, matte:matte, art:art, loaded:false, loading:false, hi:false, hiLoading:false, fh:fh, u:null};
   frames.push(f); byMesh.set(art, f); byMesh.set(matte, f);
   if (!GROUPS.length || GROUPS[GROUPS.length-1].g !== d.g) GROUPS.push({g:d.g, start:i, count:0});
   GROUPS[GROUPS.length-1].count++;
 });
-// group labels on the wall, above the first frame of each group
-GROUPS.forEach(function(gr, gi){
-  var u = gr.start, f0 = frames[gr.start];
-  var t = textTexture(gr.g.toUpperCase()+' · '+gr.count+' PIECES', 2048, 128, 56, '#F0F4F8', MONO);
-  var m = new THREE.Mesh(new THREE.PlaneGeometry(FW*1.15, FW*1.15/16), new THREE.MeshBasicMaterial({map:t, transparent:true}));
-  m.position.set(-FW/2 + FW*1.15/2, f0.fh/2 + 0.3, 0.05);
+GROUPS.forEach(function(gr){
+  var f0 = frames[gr.start];
+  var t = textTexture(gr.g.toUpperCase()+' · '+gr.count+' PIECES', 2048, 150, 60, '#F0F4F8', MONO, 'center', true);
+  var m = new THREE.Mesh(new THREE.PlaneGeometry(FW, LABEL_H), new THREE.MeshBasicMaterial({map:t, transparent:true}));
+  m.position.set(0, f0.fh/2 + LABEL_GAP + LABEL_H/2, 0.05);
   f0.group.add(m);
 });
+// ticks on the progress rail, one per group, drawn from the data rather than typed in
+var rampEl = document.querySelector('.ramp');
+GROUPS.slice(1).forEach(function(gr){
+  var s = document.createElement('s'); s.style.left = (gr.start/(N-1)*100)+'%'; rampEl.appendChild(s);
+});
+
+// In endless mode each piece is placed in the copy of the ramp nearest the camera, so the collection
+// repeats up and down forever. A piece only ever jumps half the collection away from the camera,
+// which is four turns off, far outside the view.
+function placeFrames(camU){
+  for (var i=0;i<N;i++){
+    var f = frames[i];
+    var u = LOOP ? i + N*Math.round((camU-i)/N) : i;
+    if (u !== f.u){
+      f.u = u;
+      var a = angleAt(u);
+      f.group.position.set(Math.sin(a)*R, yAt(u), Math.cos(a)*R);
+      f.group.rotation.y = a + Math.PI;
+    }
+  }
+}
 
 // ---------- texture loading (nearest-first) ----------
 var loader = new THREE.TextureLoader();
@@ -303,7 +374,7 @@ function prepTex(t){ t.encoding = THREE.sRGBEncoding; t.anisotropy = maxAniso; t
 function loadNearest(center){
   while (inflight < 4){
     var best=null, bd=1e9;
-    for (var i=0;i<N;i++){ var f=frames[i]; if (f.loaded||f.loading) continue; var dd=Math.abs(i-center); if (dd<bd){bd=dd;best=f;} }
+    for (var i=0;i<N;i++){ var f=frames[i]; if (f.loaded||f.loading) continue; var dd=Math.min(Math.abs(i-center), N-Math.abs(i-center)); if (dd<bd){bd=dd;best=f;} }
     if (!best) return;
     best.loading = true; inflight++;
     (function(f){
@@ -321,21 +392,39 @@ function loadHi(f){
 }
 
 // ---------- state ----------
-var S = { t:0, tT:0, focus:-1, fx:0, fxT:0, lastInput:performance.now(), tour:!reduced, hover:null, current:-1 };
+// t is the position along the ramp in pieces. In endless mode it is unbounded and the ramp, the
+// drum and the pieces are all slid to meet it.
+var S = { t:0, tT:0, vel:0, focusF:null, focusU:0, fx:0, fxT:0, lastInput:performance.now(), tour:!reduced, hover:null, current:-1 };
 var camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), tmp = new THREE.Vector3();
 var narrow = false;
 function resize(){
   var w = canvas.clientWidth||window.innerWidth, h = canvas.clientHeight||window.innerHeight;
-  renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix(); narrow = w < 720;
+  narrow = w < 720;
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h;
+  // A phone is a tall slot. A wide lens fits a whole piece across it but leaves the art tiny in a
+  // column of empty wall, so a phone gets a longer lens instead: one piece, nearly the full width.
+  camera.fov = narrow ? 42 : 58;
+  camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', resize); resize();
 
-function focusDistance(f){
-  var vh = 2*Math.tan(camera.fov*Math.PI/360);
-  var dV = f.fh/(0.66*vh), dH = FW/(0.8*vh*camera.aspect);
-  return Math.max(dV, dH, 1.6);
+function vhWorld(){ return 2*Math.tan(camera.fov*Math.PI/360); }
+function hFovTurns(){ return 2*Math.atan(Math.tan(camera.fov*Math.PI/360)*camera.aspect) / (Math.PI*2); }
+// Stepping up to a piece has to leave it clear of the card, which is a panel on the right of a wide
+// screen and a sheet at the foot of a phone. Both are measured rather than guessed, so the piece is
+// framed by whatever room is actually left and never sits behind the reading.
+function focusFit(f){
+  var vh = vhWorld(), vw = window.innerWidth, vp = window.innerHeight;
+  var freeX = narrow ? vw : Math.max(260, vw - card.offsetWidth - 32);
+  var freeY = narrow ? Math.max(200, vp - card.offsetHeight) : vp;
+  var fx = freeX/vw, fy = freeY/vp;
+  var fd = Math.max(f.fh/(0.70*vh*fy), FW/(0.88*vh*camera.aspect*fx), 1.6);
+  return { fd:fd,
+           side: narrow ? 0 : (0.5 - fx/2)*fd*vh*camera.aspect,
+           lift: narrow ? (0.5 - fy/2)*fd*vh : 0 };
 }
-function clampT(v){ return Math.max(-0.4, Math.min(N-0.6, v)); }
+function clampT(v){ return LOOP ? v : Math.max(-0.4, Math.min(N-0.6, v)); }
 
 // ---------- HUD ----------
 var curEl=document.getElementById('cur'), curNum=document.getElementById('curNum'), curTitle=document.getElementById('curTitle'), curGroup=document.getElementById('curGroup'), rampFill=document.getElementById('rampFill');
@@ -364,19 +453,47 @@ function openCard(f){
   card.classList.add('open'); hudBottom.classList.add('hidden-by-card');
 }
 function closeCard(){ card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }
-function focusOn(i){
-  i = Math.max(0, Math.min(N-1, i));
-  S.focus = i; S.fxT = 1; S.tT = i; S.lastInput = performance.now();
-  var f = frames[i]; loadHi(f); openCard(f); setCurrent(i);
+
+// u is a position on the ramp, which in endless mode may be any turn of it. The piece shown there is
+// always the same one, the collection repeating every N.
+function focusAtU(u){
+  u = Math.round(clampT(u));
+  var idx = mod(u, N);
+  S.tT = u; S.vel = 0; S.lastInput = performance.now();
+  placeFrames(u);
+  var f = frames[idx];
+  S.focusF = f; S.focusU = f.u; S.fxT = 1;
+  loadHi(f); openCard(f); setCurrent(idx);
 }
-function unfocus(){ if (S.focus<0) return; S.fxT = 0; closeCard(); S.lastInput = performance.now(); }
+function unfocus(){ if (!S.focusF) return; S.fxT = 0; closeCard(); S.lastInput = performance.now(); }
+function here(){ return S.focusF ? S.focusU : Math.round(S.t); }
+// where the ramp is heading, not where it has got to: held keys have to add up rather than fight the
+// easing that is still catching up with the last press
+function heading(){ return S.focusF ? S.focusU : S.tT; }
 document.getElementById('close').addEventListener('click', unfocus);
-document.getElementById('prev').addEventListener('click', function(){ focusOn((S.focus<0?Math.round(S.t):S.focus)-1); });
-document.getElementById('next').addEventListener('click', function(){ focusOn((S.focus<0?Math.round(S.t):S.focus)+1); });
+document.getElementById('prev').addEventListener('click', function(){ focusAtU(here()-1); });
+document.getElementById('next').addEventListener('click', function(){ focusAtU(here()+1); });
+
 var tourBtn=document.getElementById('tour');
-function setTour(on){ S.tour=on; tourBtn.textContent='Auto tour: '+(on?'on':'off'); }
+function setTour(on){ S.tour=on; tourBtn.textContent='Auto tour: '+(on?'on':'off'); tourBtn.setAttribute('aria-pressed', on?'true':'false'); }
 tourBtn.addEventListener('click', function(){ setTour(!S.tour); S.lastInput = performance.now(); });
 setTour(S.tour);
+
+var loopBtn=document.getElementById('loopb');
+function setLoop(on){
+  LOOP = on;
+  loopBtn.textContent = 'Endless ramp: '+(on?'on':'off');
+  loopBtn.setAttribute('aria-pressed', on?'true':'false');
+  loopBtn.classList.toggle('on', on);
+  unfocus(); S.fx = 0; S.focusF = null; S.vel = 0;
+  if (!on){                      // back to a ramp with two ends: land on the same piece, low down
+    S.tT = S.t = clampT(mod(Math.round(S.tT), N));
+  }
+  buildShell();
+  placeFrames(S.t);
+  S.lastInput = performance.now();
+}
+loopBtn.addEventListener('click', function(){ setLoop(!LOOP); });
 
 // ---------- input ----------
 var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -388,80 +505,106 @@ function pick(x,y){
   return hits.length ? byMesh.get(hits[0].object) : null;
 }
 canvas.addEventListener('pointerdown', function(e){
+  if (drag) return;                                   // a second finger does not fight the first
   canvas.setPointerCapture(e.pointerId);
-  drag = {x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, t:S.tT, moved:false};
+  drag = {id:e.pointerId, x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, moved:false, slop:e.pointerType==='touch'?10:6, hist:[{t:performance.now(), u:S.tT}]};
+  S.vel = 0;
   canvas.classList.add('dragging'); S.lastInput = performance.now();
 });
 canvas.addEventListener('pointermove', function(e){
   if (drag){
+    if (e.pointerId !== drag.id) return;
     var dx = e.clientX-drag.x, dy = e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY;
-    if (Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy) > 6) drag.moved = true;
-    if (drag.moved && S.focus>=0){ S.fxT = 0; closeCard(); S.focus = -1; }
+    if (Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy) > drag.slop) drag.moved = true;
+    if (!drag.moved) return;
+    if (S.focusF) unfocus();
     var w = canvas.clientWidth||1, h = canvas.clientHeight||1;
-    // horizontal drag walks the ramp (about a third of a turn per screen width); vertical drag climbs whole turns
-    S.tT = clampT(S.tT - dx/w*PER_TURN*0.55 + dy/h*PER_TURN*1.2);
-    S.lastInput = performance.now();
+    // The camera stands on the axis of the rotunda, so a sideways drag turns the view by exactly the
+    // angle it sweeps across the screen: the wall tracks the finger one to one. A vertical drag
+    // climbs, a bit over half a turn per screen height, which is how you cover ground.
+    var du = (dx/w)*hFovTurns()*PER_TURN + (dy/h)*PER_TURN*0.6;
+    S.tT = clampT(S.tT + du);
+    // the throw is measured over the last tenth of a second of travel, so one outsized event cannot
+    // fling the ramp across the collection
+    var now = performance.now();
+    drag.hist.push({t:now, u:S.tT});
+    while (drag.hist.length>2 && now-drag.hist[0].t > 110) drag.hist.shift();
+    var h0 = drag.hist[0], span = (now-h0.t)/1000;
+    S.vel = span > 0.012 ? Math.max(-VMAX, Math.min(VMAX, (S.tT-h0.u)/span)) : 0;
+    S.lastInput = now;
   } else {
     var f = pick(e.clientX, e.clientY);
     if (f !== S.hover){ if (S.hover && S.hover.i!==S.current) S.hover.matte.material.color.set(0xf0f4f8); S.hover = f; if (f && f.i!==S.current) f.matte.material.color.set(0x5c86ff); canvas.classList.toggle('hover', !!f); }
   }
 });
 function endDrag(e){
-  if (!drag) return;
+  if (!drag || (e && e.pointerId !== drag.id)) return;
   canvas.classList.remove('dragging');
-  var wasClick = !drag.moved; drag = null;
-  if (wasClick){ var f = pick(e.clientX, e.clientY); if (f){ if (S.focus===f.i) unfocus(); else focusOn(f.i); } else if (S.focus>=0) { unfocus(); S.focus=-1; } }
+  var wasClick = !drag.moved, stale = performance.now() - drag.hist[drag.hist.length-1].t > 90;
+  drag = null;
+  if (wasClick){ S.vel = 0; var f = pick(e.clientX, e.clientY); if (f){ if (S.focusF===f) unfocus(); else focusAtU(f.u); } else unfocus(); }
+  else if (stale) S.vel = 0;                          // let go after holding still: no fling
 }
 canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
 canvas.addEventListener('wheel', function(e){
   e.preventDefault();
-  var d = e.deltaMode===1 ? e.deltaY*16 : e.deltaY;
-  if (S.focus>=0){ S.fxT=0; closeCard(); S.focus=-1; }
+  var d = e.deltaMode===1 ? e.deltaY*16 : (e.deltaMode===2 ? e.deltaY*400 : e.deltaY);
+  if (S.focusF) unfocus();
+  S.vel = 0;
   S.tT = clampT(S.tT + d*0.006); S.lastInput = performance.now();
 }, {passive:false});
 window.addEventListener('keydown', function(e){
   if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
-  var base = S.focus>=0 ? S.focus : Math.round(S.t);
-  if (e.key==='ArrowRight'){ e.preventDefault(); if (S.focus>=0) focusOn(base+1); else { S.tT=clampT(Math.round(S.tT)+1); } }
-  else if (e.key==='ArrowLeft'){ e.preventDefault(); if (S.focus>=0) focusOn(base-1); else { S.tT=clampT(Math.round(S.tT)-1); } }
-  else if (e.key==='ArrowUp'){ e.preventDefault(); S.tT=clampT(S.tT+PER_TURN); }
-  else if (e.key==='ArrowDown'){ e.preventDefault(); S.tT=clampT(S.tT-PER_TURN); }
-  else if (e.key==='Enter' || e.key===' '){ e.preventDefault(); if (S.focus<0) focusOn(Math.round(S.t)); }
-  else if (e.key==='Escape'){ unfocus(); S.focus=-1; }
+  if (e.key==='ArrowRight'){ e.preventDefault(); if (S.focusF) focusAtU(S.focusU+1); else { S.vel=0; S.tT=clampT(Math.round(S.tT)+1); } }
+  else if (e.key==='ArrowLeft'){ e.preventDefault(); if (S.focusF) focusAtU(S.focusU-1); else { S.vel=0; S.tT=clampT(Math.round(S.tT)-1); } }
+  else if (e.key==='ArrowUp'){ e.preventDefault(); unfocus(); S.vel=0; S.tT=clampT(heading()+PER_TURN); }
+  else if (e.key==='ArrowDown'){ e.preventDefault(); unfocus(); S.vel=0; S.tT=clampT(heading()-PER_TURN); }
+  else if (e.key==='Enter' || e.key===' '){ e.preventDefault(); if (!S.focusF) focusAtU(Math.round(S.t)); }
+  else if (e.key==='Escape'){ unfocus(); }
   else return;
   S.lastInput = performance.now();
 });
 
 // ---------- loop ----------
+buildShell(); placeFrames(0);
 var last = performance.now(), hidden = false;
 document.addEventListener('visibilitychange', function(){ hidden = document.hidden; last = performance.now(); });
 function frame(now){
   requestAnimationFrame(frame);
   if (hidden) return;
   var dt = Math.min(0.05, (now-last)/1000); last = now;
-  // auto tour after 5s idle
-  if (S.tour && S.focus<0 && now-S.lastInput>5000){
-    S.tT = clampT(S.tT + 0.16*dt);
-    if (S.tT >= N-0.6) { S.tT = -0.4; S.t = -0.4; }
-  } else if (S.focus<0 && !drag && now-S.lastInput>900){
-    // settle on the nearest piece
-    var snap = Math.round(S.tT); S.tT += (Math.max(0,Math.min(N-1,snap))-S.tT)*Math.min(1, 2.2*dt);
+
+  if (!drag && S.vel){
+    // the throw carries on and dies out. Against a closed end it just stops.
+    var before = S.tT;
+    S.tT = clampT(S.tT + S.vel*dt);
+    if (S.tT === before) S.vel = 0;
+    else { S.vel *= Math.exp(-dt*FRICTION); if (Math.abs(S.vel) < 0.3) S.vel = 0; }
+    if (S.vel) S.lastInput = now;
   }
-  var k = reduced ? 1 : 1-Math.exp(-dt*5.5);
+  if (S.tour && !S.focusF && !drag && !S.vel && now-S.lastInput>5000){
+    S.tT = clampT(S.tT + 0.16*dt);
+    if (!LOOP && S.tT >= N-0.6) { S.tT = -0.4; S.t = -0.4; }
+  } else if (!S.focusF && !drag && !S.vel && now-S.lastInput>420){
+    var snap = Math.round(S.tT); S.tT += (clampT(snap)-S.tT)*Math.min(1, 2.2*dt);
+  }
+  var k = reduced ? 1 : 1-Math.exp(-dt*(drag?18:5.5));
   S.t += (S.tT-S.t)*k;
   S.fx += (S.fxT-S.fx)*(reduced?1:1-Math.exp(-dt*4));
-  if (S.fx<0.002 && S.fxT===0) { S.fx=0; S.focus = -1; }
+  if (S.fx<0.002 && S.fxT===0) { S.fx=0; S.focusF = null; }
 
-  // camera: center of the rotunda at ramp height, looking at the wall; blend toward the focused piece
+  placeFrames(S.t);
+  if (LOOP) shell.position.y = RISE*Math.round(yAt(S.t)/RISE);   // whole turns only: the seam never shows
+
+  // camera: on the axis of the rotunda at the height of the art, looking at the wall; blends in
+  // toward a piece when one is open
   var a = angleAt(S.t), y = yAt(S.t);
-  var lookY = y + (narrow && S.fx>0 ? -0.35*S.fx : 0.05);
-  camPos.set(0, y+0.15, 0);
-  camLook.set(Math.sin(a)*R, lookY, Math.cos(a)*R);
-  if (S.fx>0 && S.focus>=0){
-    var f = frames[S.focus], fa = angleAt(S.focus), fd = focusDistance(f);
-    // on wide screens slide the view right so the piece sits left of the card
-    var side = narrow ? 0 : 0.21 * (2*Math.tan(camera.fov*Math.PI/360)) * fd * camera.aspect;
-    var rx = -Math.cos(fa)*side, rz = Math.sin(fa)*side, fy = yAt(S.focus) + (narrow ? -0.32*f.fh : 0);
+  camPos.set(0, y, 0);
+  camLook.set(Math.sin(a)*R, y, Math.cos(a)*R);
+  if (S.fx>0 && S.focusF){
+    var f = S.focusF, fa = angleAt(S.focusU), fit = focusFit(f), fd = fit.fd;
+    var rx = -Math.cos(fa)*fit.side, rz = Math.sin(fa)*fit.side;
+    var fy = yAt(S.focusU) - fit.lift;
     tmp.set(Math.sin(fa)*(R-fd)+rx, fy, Math.cos(fa)*(R-fd)+rz);
     camPos.lerp(tmp, S.fx);
     tmp.set(Math.sin(fa)*R+rx, fy, Math.cos(fa)*R+rz);
@@ -470,9 +613,8 @@ function frame(now){
   camera.position.copy(camPos); camera.lookAt(camLook);
   follow.position.set(camPos.x*0.6, camPos.y+1.2, camPos.z*0.6); follow.intensity = 0.55*(1-0.75*S.fx);
 
-  var cur = Math.max(0, Math.min(N-1, Math.round(S.focus>=0?S.focus:S.t)));
-  setCurrent(cur);
-  loadNearest(S.t);
+  setCurrent(S.focusF ? S.focusF.i : mod(Math.round(S.t), N));
+  loadNearest(mod(S.t, N));
   renderer.render(scene, camera);
 }
 last = performance.now();
