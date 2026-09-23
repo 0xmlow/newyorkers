@@ -198,8 +198,8 @@ async function paint(){
   $('#refLink').onclick=function(){ this.select(); navigator.clipboard && navigator.clipboard.writeText(link); NY.toast&&NY.toast('Link copied.'); };
 
   $('#allow').innerHTML = d.allowlist
-    ? `<p class="fine" style="margin-top:10px">You are on the list. Submitted ${(d.allowlist.submitted_at||'').slice(0,10)}, asking for ${d.allowlist.mint_count}. Eligibility is checked against the chain after the snapshot.</p>`
-    : '<p class="fine" style="margin-top:10px">Not on the allowlist yet. <a href="/whitelist.html" style="color:var(--cyan)">Put your name down</a>.</p>';
+    ? `<p class="fine" style="margin-top:10px">You put your name down on ${(d.allowlist.submitted_at||'').slice(0,10)}, asking for ${d.allowlist.mint_count}. The allowlist was retired: THE CENSUS RELEASE is open to everyone, so nothing was gated in the end.</p>`
+    : '<p class="fine" style="margin-top:10px">There is no allowlist. THE CENSUS RELEASE is open to everyone, minting now on OpenSea.</p>';
 }
 
 $('#editBtn').onclick = () => { $('#editForm').hidden = !$('#editForm').hidden; };
@@ -466,7 +466,6 @@ LOGIN_OFF_BODY = """
   <p style="margin-top:26px;display:flex;gap:10px;flex-wrap:wrap">
     <a class="btn" href="museum.html#room=random">SPIN A ROOM</a>
     <a class="btn ghost" href="counted.html">GET COUNTED</a>
-    <a class="btn ghost" href="whitelist.html">THE ALLOWLIST</a>
   </p>
 </div></section>
 """

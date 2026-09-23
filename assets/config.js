@@ -17,9 +17,9 @@ window.NY_CONFIG = {
   countLabel: "SEPT 1 TO 3, 2026 · NFT.NYC · THE CENSUS OFFICE",
   // THE CLAIM: the mint. Recommended Thursday Oct 8 2026, 11:11 AM ET (decision N01).
   // Flip claimSigned to true once the date is signed; until then every surface says so.
-  claimDate: "2026-10-08T11:11:00-04:00",
-  claimLabel: "THURSDAY OCT 8, 2026 · 11:11 AM ET",
-  claimSigned: false,
+  claimDate: "2026-09-23T11:11:00-04:00",
+  claimLabel: "WEDNESDAY SEPT 23, 2026 · 11:11 AM ET · MINTING ON OPENSEA",
+  claimSigned: true,
 
   // The public count of people counted. Never estimated, never inflated: leave null
   // until there is a real posted number, and the site shows the painted census instead.

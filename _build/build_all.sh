@@ -27,6 +27,7 @@ python3 build_faq.py
 python3 build_vault.py
 python3 build_shipping.py
 python3 build_whitelist.py
+python3 build_roll.py
 python3 build_profile.py
 python3 build_shop.py || echo "  shop build skipped (storefront unreachable); the last catalog stands"
 python3 build_prints.py   # local: must not be skipped, the buy buttons read it

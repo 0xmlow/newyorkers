@@ -122,7 +122,7 @@ script = """
 (function(){
  var $=function(s){return document.querySelector(s)}, CFG=window.NY_CONFIG||{};
  var q=new URLSearchParams(location.search);
- $('#refField').value=q.get('ref')||'';
+ $('#refField').value=q.get('ref')||(function(){try{return localStorage.getItem('ny_ref')||''}catch(e){return ''}})();
  $('#sourceField').value=document.referrer||'direct';
  // show the "which pieces" box only when it is relevant
  document.querySelectorAll('input[name=is_collector]').forEach(function(r){
@@ -150,10 +150,13 @@ script = """
    .then(function(res){
      if(!res.ok) throw new Error(res.error||'rejected');
      f.hidden=true; $('#wlDone').hidden=false;
-     var base=location.origin+'/';
+     var base=location.origin+'/roll';
      var code=(data.get('x_handle')||data.get('name')||'friend').toString().replace(/[^A-Za-z0-9_]/g,'').slice(0,20).toLowerCase()||'friend';
      var link=base+'?ref='+encodeURIComponent(code);
      $('#refLink').value=link;
+     // The roll credits referrals by a hash code of the wallet, so the link matches the one the roll page gives.
+     var w=(data.get('wallet')||'').toString().trim().toLowerCase();
+     if(window.crypto&&crypto.subtle&&w){ fetch('/api/roll.json?t='+Math.floor(Date.now()/6e5)).then(function(r){return r.json()}).then(function(j){ return crypto.subtle.digest('SHA-256',new TextEncoder().encode(w+(j.salt||'the-roll'))); }).then(function(b){ var h=Array.from(new Uint8Array(b)).map(function(x){return (x<16?'0':'')+x.toString(16)}).join(''); link=base+'?ref='+h.slice(0,10); $('#refLink').value=link; }).catch(function(){}); }
      NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'A painted census of New York City. 7,541 New Yorkers, a walkable museum of 111 rooms, and a release coming.',url:link});
      $('#refLink').onclick=function(){ this.select(); document.execCommand&&document.execCommand('copy'); NY.toast('Link copied.'); };
    }).catch(function(e){

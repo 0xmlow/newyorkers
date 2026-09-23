@@ -1,0 +1,456 @@
+#!/usr/bin/env python3
+"""roll.html: THE ROLL, the wallet checker. Hype engine mechanic 7 (the checker loop).
+
+One page, no backend, no wallet connection, ever. Paste an address and two things come back:
+  A. the status: whether that address filed before the roll closed (a set lookup against the hashed
+     list in api/roll.json, published by roll/make_roll.py; hashes only, never plaintext)
+  B. the reading: a borough, an hour, an archetype and a register from the NEW YORKERS matrix
+     (roll/readings.json), derived from the address, so a screenshot stays true forever.
+The reading is the product. The status is the utility. Every state returns something; no dead ends.
+
+The page is noindex on purpose (mechanic 5, the closed index) and lives in no nav and no sitemap. The
+only way in is the pinned post. It reads api/roll.json at runtime with a ten minute cache buster, so
+flipping the roll from open to results on results day needs no page rebuild and no wait on the edge.
+
+States come from roll.json: open (reading only, points at the list), results (lookup live), closed
+(archive after mint). Missing or unreachable roll.json still gives the reading.
+Part of build_all.sh. Copy lives in ROLL_COPY below so a line can change without touching the script.
+"""
+import json, os, re
+from page_shell import shell, esc, cfg, pub
+HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
+C = cfg(); URL = C["siteUrl"]
+R = json.load(open(os.path.join(HERE, "roll", "readings.json")))
+
+# Everything a visitor reads, in one place. Braces are filled by the page from roll.json.
+ROLL_COPY = {
+    "sub": "Every wallet has a borough. Find yours.",
+    "button": "CHECK",
+    "placeholder": "0x... or name.eth",
+    "invalid": "That does not look like an Ethereum address or an ENS name. An address starts with 0x and runs 42 characters.",
+    "unresolved": "That name did not resolve to an address. Check the spelling, or paste the 0x address.",
+    "resolving": "RESOLVING",
+    "status_pending": "THE ROLL HAS NOT BEEN CALLED",
+    "status_open": "THE ROLL IS OPEN",
+    "status_found": "ON THE ROLL",
+    "status_missed": "NOT ON THE ROLL",
+    "status_closed_found": "ON THE ROLL",
+    "status_closed_missed": "NOT ON THE ROLL",
+    "route_pending": "The roll opens soon. The reading is yours either way.",
+    "route_open": "Filed already? You hear on results day. Not yet? File before the roll closes.",
+    "route_found": "You filed in time. Your window and your cap are in the terms post on results day.",
+    "route_missed": "The roll closed, and the reading still works. The open window on mint day needs no list.",
+    "route_closed": "The census release has minted. The roll is an archive now, and the reading still works.",
+    "file_label": "FILE",
+    "how_kicker": "How to get on the roll",
+    "how": [
+        "Paste the wallet you mint with, or your ENS name. The city assigns you a borough, an hour, an archetype and a register.",
+        "File it. One button. Nothing signed, nothing connects.",
+        "Post your card and bring your block. Every New Yorker who files through your link is yours, and the tally is public."
+    ],
+    "handle_placeholder": "@ your X handle, optional. It is how the tally names you",
+    "post_kicker": "Post your card, then paste the link to the post here. That is the stamp.",
+    "post_placeholder": "https://x.com/you/status/...",
+    "post_button": "STAMP IT",
+    "post_invalid": "That does not look like a link to a post on X.",
+    "status_stamped": "STAMPED",
+    "route_stamped": "Stamped. Your card is on the record. Now bring your block: every wallet that files through your link counts as yours.",
+    "tally_kicker": "THE TALLY",
+    "tally_boroughs": "Boroughs, by filings",
+    "tally_top": "The block captains",
+    "tally_you": "You are NO. {R} on the roll with {S} stamps.",
+    "tally_closed": "The roll is closed. The borough presidents are crowned.",
+    "stamps_line": "{S} STAMPS · NO. {R} · {T}",
+    "file_kicker": "File this wallet on THE ROLL",
+    "file_email": "email, optional. Only if you want to be told",
+    "file_note": "One action. Nothing signed, nothing connects. The roll remembers who brought whom.",
+    "status_filed": "FILED",
+    "route_filed": "This wallet is on the roll. Your link below carries your mark: every New Yorker who files through it is counted as yours.",
+    "referral_line": "The roll counts who you bring. Bringing New Yorkers onto the roll is rewarded on mint day, and the terms post says how.",
+    "brought_line": "You brought {N} onto the roll.",
+    "your_link": "Your link",
+    "long_form": "Want to say how many you would mint, or who you are? The long form is here.",
+    "filing": "FILING",
+    "file_fail": "That did not file. Try again, or message @degens on X.",
+    "plain": [
+        "This checks whether an address filed before the roll closed. Free. Nothing is signed, nothing connects. Paste, do not connect: this page never asks your wallet for anything.",
+        "ENS names resolve here through a public Ethereum node, read only. The reading is always of the address the name points at.",
+        "The reading is a signal, not an allocation. The city assigns you. It does not decide what you mint.",
+        "We will never DM you first.",
+    ],
+    "share": "{B}. {H}. {A}.\n\nChecked my wallet against THE ROLL.\n\n{URL}",
+    "share_filed": "{B}. {H}. {A}.\n\nI am on THE ROLL. @n3wyorkers\n\n{URL}",
+}
+
+body = """
+<section class="wrap roll">
+  <div class="rollhead">
+    <span class="eye"><img src="assets/brand/eye_truecolor.png" alt=""></span>
+    <div class="kicker">NEW YORKERS</div>
+    <h1 class="h-xl">THE ROLL</h1>
+    <p class="lede">__SUB__</p>
+    <p class="clock" id="clock" hidden></p>
+  </div>
+  <div class="how">
+    <div class="kicker">__HOW_KICKER__</div>
+    <ol>__HOW__</ol>
+  </div>
+
+  <form id="rf" class="rollform" novalidate>
+    <input id="addr" placeholder="__PLACEHOLDER__" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Ethereum address">
+    <button class="btn pink" type="submit" id="go">__BUTTON__</button>
+  </form>
+  <p class="quiet" id="quiet" hidden></p>
+
+  <div id="result" hidden>
+    <div class="card" id="card">
+      <div class="status" id="status"></div>
+      <div class="stamps" id="vS" hidden></div>
+      <div class="vals">
+        <div class="v"><div class="lab">Borough</div><div class="val" id="vB"></div></div>
+        <div class="v"><div class="lab">Hour</div><div class="val" id="vH"></div></div>
+        <div class="v"><div class="lab">Archetype</div><div class="val" id="vA"></div></div>
+        <div class="v"><div class="lab">Register</div><div class="val" id="vR"></div></div>
+      </div>
+      <div class="line" id="vL"></div>
+      <div class="foot">
+        <span class="mark"><img src="assets/brand/eye_truecolor.png" alt=""></span>
+        <span class="addr" id="vAddr"></span>
+        <span class="brand">NEW YORKERS by MLow</span>
+      </div>
+    </div>
+    <p class="route" id="route"></p>
+    <form id="ff" class="fileform" hidden novalidate>
+      <div class="kicker">__FILE_KICKER__</div>
+      <input id="handle" placeholder="__HANDLE__" autocomplete="off" maxlength="16">
+      <input id="email" type="email" placeholder="__FILE_EMAIL__" autocomplete="email">
+      <button class="btn pink" type="submit" id="fileBtn">__FILE__</button>
+      <p class="quiet">__FILE_NOTE__</p>
+    </form>
+    <form id="pf" class="fileform post" hidden novalidate>
+      <div class="kicker">__POST_KICKER__</div>
+      <input id="postUrl" placeholder="__POST_PLACEHOLDER__" autocomplete="off" inputmode="url">
+      <button class="btn" type="submit" id="postBtn">__POST_BUTTON__</button>
+    </form>
+    <div id="mine" class="mine" hidden>
+      <div class="kicker">__YOUR_LINK__</div>
+      <input id="myLink" readonly>
+      <p class="quiet" id="refLine"></p>
+    </div>
+    <div class="actions">
+      <a class="btn pink" id="share" href="#" target="_blank" rel="noopener">SHARE ON X</a>
+      <a class="btn" id="file" href="whitelist.html" hidden>__FILE__</a>
+      <button class="btn ghost" type="button" id="copy">COPY</button>
+      <button class="btn ghost" type="button" id="again">ANOTHER WALLET</button>
+    </div>
+    <p class="quiet" id="longform" hidden><a href="whitelist.html" id="longformLink">__LONG_FORM__</a></p>
+  </div>
+
+  <section id="tally" class="tally" hidden>
+    <div class="kicker">__TALLY_KICKER__</div>
+    <p class="you" id="tallyYou" hidden></p>
+    <p class="quiet" id="tallyClosed" hidden>__TALLY_CLOSED__</p>
+    <div class="tgrid">
+      <div><div class="lab">__TALLY_BOROUGHS__</div><div id="tBoro"></div></div>
+      <div><div class="lab">__TALLY_TOP__</div><ol id="tTop"></ol></div>
+    </div>
+    <p class="quiet" id="tallyUpd"></p>
+  </section>
+
+  <div class="plain">
+__PLAIN__
+  </div>
+</section>
+""".replace("__SUB__", esc(ROLL_COPY["sub"])).replace("__PLACEHOLDER__", esc(ROLL_COPY["placeholder"])) \
+   .replace("__BUTTON__", esc(ROLL_COPY["button"])).replace("__FILE__", esc(ROLL_COPY["file_label"])) \
+   .replace("__FILE_KICKER__", esc(ROLL_COPY["file_kicker"])).replace("__FILE_EMAIL__", esc(ROLL_COPY["file_email"])) \
+   .replace("__FILE_NOTE__", esc(ROLL_COPY["file_note"])).replace("__YOUR_LINK__", esc(ROLL_COPY["your_link"])) \
+   .replace("__LONG_FORM__", esc(ROLL_COPY["long_form"])) \
+   .replace("__HOW_KICKER__", esc(ROLL_COPY["how_kicker"])).replace("__HOW__", "".join(f"<li>{esc(x)}</li>" for x in ROLL_COPY["how"])) \
+   .replace("__HANDLE__", esc(ROLL_COPY["handle_placeholder"])).replace("__POST_KICKER__", esc(ROLL_COPY["post_kicker"])) \
+   .replace("__POST_PLACEHOLDER__", esc(ROLL_COPY["post_placeholder"])).replace("__POST_BUTTON__", esc(ROLL_COPY["post_button"])) \
+   .replace("__TALLY_KICKER__", esc(ROLL_COPY["tally_kicker"])).replace("__TALLY_BOROUGHS__", esc(ROLL_COPY["tally_boroughs"])) \
+   .replace("__TALLY_TOP__", esc(ROLL_COPY["tally_top"])).replace("__TALLY_CLOSED__", esc(ROLL_COPY["tally_closed"])) \
+   .replace("__PLAIN__", "\n".join(f"    <p>{esc(p)}</p>" for p in ROLL_COPY["plain"]))
+
+extra_css = """
+.roll{padding-top:64px;padding-bottom:90px;max-width:760px}
+.rollhead{text-align:left}
+.rollhead .eye{display:inline-block;width:44px;height:44px;border-radius:50%;overflow:hidden;margin-bottom:18px}
+.rollhead .eye img{width:100%;height:100%;object-fit:cover;display:block}
+.rollhead .lede{margin-top:16px;color:var(--slate);max-width:620px}
+.clock{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--acid);margin-top:16px}
+.rollform{display:flex;gap:10px;margin-top:34px;max-width:640px}
+.rollform input{flex:1;min-width:0;background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--mono);font-size:15px;padding:14px 16px;border-radius:7px;outline:none}
+.rollform input:focus{border-color:var(--blue)}
+.rollform .btn{white-space:nowrap}
+@media (max-width:520px){.rollform{flex-direction:column}.rollform .btn{width:100%}}
+.quiet{font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--slate);margin-top:12px;max-width:640px}
+#result{margin-top:34px}
+.card{position:relative;width:100%;max-width:460px;aspect-ratio:4/5;background:var(--ink);border:1px solid var(--divider);border-radius:14px;padding:34px 32px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow)}
+.card .status{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--slate)}
+.card .status.on{color:var(--blue)}
+.card .vals{display:grid;grid-template-columns:1fr 1fr;gap:26px 18px}
+.card .lab{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.card .val{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.05;color:#fff;overflow-wrap:anywhere}
+.card .line{font-family:var(--sans);font-size:14px;line-height:1.5;color:#c9d2dc;border-top:1px solid var(--divider);padding-top:16px}
+.card .foot{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--slate)}
+.card .mark{width:26px;height:26px;border-radius:50%;overflow:hidden;opacity:.45;flex:none}
+.card .mark img{width:100%;height:100%;object-fit:cover;display:block}
+.card .addr{flex:1}
+.card .brand{opacity:.7;white-space:nowrap}
+@media (max-width:420px){.card{padding:26px 22px}.card .val{font-size:24px}.card .vals{gap:18px 12px}}
+.route{font-family:var(--sans);font-size:15px;line-height:1.6;color:#c9d2dc;margin-top:22px;max-width:460px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:460px}
+#result [hidden]{display:none!important}
+.fileform{margin-top:22px;max-width:460px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--divider);border-left:3px solid var(--acid);border-radius:12px;padding:18px 20px;background:var(--card)}
+.fileform input{background:var(--ink);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:14px;padding:12px 14px;border-radius:7px;outline:none;width:100%}
+.fileform input:focus{border-color:var(--blue)}
+.fileform .quiet{margin-top:0}
+.mine{margin-top:22px;max-width:460px}
+.mine input{width:100%;background:var(--ink);border:1px solid var(--acid);color:var(--acid);font-family:var(--mono);font-size:13px;padding:12px 14px;border-radius:7px;margin-top:8px}
+.mine .quiet{margin-top:10px}
+#longform{margin-top:18px}#longform a{color:var(--slate)}
+.how{margin-top:28px;max-width:640px;border-top:1px solid var(--divider);padding-top:18px}
+.how ol{margin:12px 0 0;padding-left:22px;font-family:var(--sans);font-size:14.5px;line-height:1.6;color:#c9d2dc}
+.how li{margin-bottom:6px}.how li::marker{font-family:var(--mono);color:var(--acid)}
+.card .stamps{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--acid);margin-top:8px}
+.fileform.post{border-left-color:var(--blue)}
+.tally{margin-top:54px;max-width:760px;border-top:1px solid var(--divider);padding-top:22px}
+.tally .you{font-family:var(--display);font-size:22px;color:#fff;margin:12px 0 0}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:18px}
+@media (max-width:640px){.tgrid{grid-template-columns:1fr}}
+.tally .lab{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--slate);margin-bottom:10px}
+.boro{margin-bottom:10px}.boro .n{display:flex;justify-content:space-between;font-family:var(--sans);font-size:14px;color:#c9d2dc}
+.boro .bar{height:6px;background:var(--card);border-radius:3px;margin-top:5px;overflow:hidden}.boro .bar i{display:block;height:100%;background:var(--acid)}
+#tTop{margin:0;padding:0;list-style:none}#tTop li{display:flex;gap:10px;align-items:baseline;font-family:var(--sans);font-size:14px;color:#c9d2dc;padding:6px 0;border-bottom:1px solid var(--divider)}
+#tTop .r{font-family:var(--mono);font-size:11px;color:var(--slate);width:34px}#tTop .nm{flex:1;color:#fff}#tTop .s{font-family:var(--mono);font-size:11px;color:var(--acid)}#tTop .t{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate)}
+.actions .btn.ghost{background:transparent;border:1px solid var(--divider);color:var(--slate)}
+.plain{margin-top:54px;border-top:1px solid var(--divider);padding-top:22px;max-width:640px}
+.plain p{font-family:var(--sans);font-size:13.5px;line-height:1.65;color:var(--slate);margin:0 0 10px}
+"""
+
+script = """
+<script>
+(function(){
+ var READ = __READINGS__;
+ var COPY = __COPY__;
+ var SITE = __SITE__;
+ var $=function(s){return document.querySelector(s)};
+ var roll=null, rollState='pending', lastReading=null, lastStatus='', lastAddr='';
+ var q=new URLSearchParams(location.search);
+ var ref=q.get('ref')||(function(){try{return localStorage.getItem('ny_ref')||''}catch(e){return ''}})();
+ var filed={}; try{ filed=JSON.parse(localStorage.getItem('ny_roll_filed')||'{}'); }catch(e){}
+ for(var k in filed){ if(typeof filed[k]==='string') filed[k]={at:filed[k]}; }
+ var TALLY=null;
+ function saveFiled(){ try{ localStorage.setItem('ny_roll_filed', JSON.stringify(filed)); }catch(e){} }
+ var lastCode='', lastFound=false;
+ var fileHref='whitelist.html'+(ref?'?ref='+encodeURIComponent(ref):'');
+ $('#file').setAttribute('href', fileHref); $('#longformLink').setAttribute('href', fileHref);
+
+ function et(iso, withTime){
+   if(!iso) return '';
+   var d=new Date(iso); if(isNaN(d)) return '';
+   var o={timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric'};
+   if(withTime){o.hour='numeric';o.minute='2-digit';}
+   return d.toLocaleString('en-US',o).replace(',', '')+(withTime?' ET':'');
+ }
+ function hex(buf){var a=new Uint8Array(buf),s='';for(var i=0;i<a.length;i++){s+=(a[i]<16?'0':'')+a[i].toString(16);}return s;}
+ function sha(s){return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(hex);}
+ function short(a){return a.slice(0,6)+'...'+a.slice(-4);}
+ function valid(a){return /^0x[0-9a-f]{40}$/.test(a);}
+ function isName(a){return /^[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,}$/.test(a) && a.indexOf('..')<0;}
+ var ENS_REG='0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e';
+ var RPCS=['https://ethereum-rpc.publicnode.com','https://eth.drpc.org','https://cloudflare-eth.com'];
+ function hexBytes(h){var u=new Uint8Array(h.length/2);for(var i=0;i<u.length;i++){u[i]=parseInt(h.substr(i*2,2),16);}return u;}
+ function namehash(n){var node='0000000000000000000000000000000000000000000000000000000000000000';if(!n)return node;var L=n.split('.');for(var i=L.length-1;i>=0;i--){node=window.keccak_256(hexBytes(node+window.keccak_256(L[i])));}return node;}
+ function rpc(i, to, data){
+   if(i>=RPCS.length) return Promise.reject(new Error('no rpc'));
+   return fetch(RPCS[i],{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:to,data:data},'latest']})})
+     .then(function(r){return r.json();}).then(function(j){ if(!j||!j.result||typeof j.result!=='string') throw new Error('bad'); return j.result; })
+     .catch(function(){ return rpc(i+1, to, data); });
+ }
+ function resolveName(name){
+   if(!window.keccak_256) return Promise.resolve(null);
+   var node=namehash(name);
+   return rpc(0, ENS_REG, '0x0178b8bf'+node).then(function(res){
+     var resolver='0x'+res.slice(-40);
+     if(/^0x0{40}$/.test(resolver)) return null;
+     return rpc(0, resolver, '0x3b3b57de'+node).then(function(r2){ var a='0x'+r2.slice(-40); return /^0x0{40}$/.test(a)?null:a; });
+   }).catch(function(){ return null; });
+ }
+
+ function reading(h){
+   var b=READ.boroughs[parseInt(h.slice(0,8),16)%READ.boroughs.length];
+   var hi=parseInt(h.slice(8,16),16)%READ.hours.length;
+   var ar=READ.archetypes[parseInt(h.slice(16,24),16)%READ.archetypes.length];
+   var rg=READ.registers[parseInt(h.slice(24,32),16)%READ.registers.length];
+   var band='';
+   for(var k in READ.bands){ if(READ.bands[k].hours.indexOf(hi)>=0){band=READ.bands[k].label;} }
+   return {B:b,H:READ.hours[hi],A:ar.name,R:rg,line:ar.line,band:band};
+ }
+
+ function clock(){
+   var c=$('#clock'); if(!roll){c.hidden=true;return;}
+   var now=Date.now();
+   if(rollState==='open' && roll.closes_at){
+     var ms=new Date(roll.closes_at)-now;
+     if(ms>0){var h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4); var left=(h>=96)?(Math.floor(h/24)+' days'):(h+'h '+(m<10?'0':'')+m+'m'); c.textContent='Open. Closes in '+left+', '+et(roll.closes_at,true); c.hidden=false; return;}
+     c.textContent='Closed.'+(roll.results_at?' Results '+et(roll.results_at,true):''); c.hidden=false; return;
+   }
+   if(rollState==='results'){ c.textContent='Results are live'+(roll.mint_at?'. Mint '+et(roll.mint_at,true):''); c.hidden=false; return; }
+   if(rollState==='closed'){ c.textContent='Archive'; c.hidden=false; return; }
+   c.hidden=true;
+ }
+
+ function loadRoll(){
+   var bust=Math.floor(Date.now()/6e5);
+   return fetch('api/roll.json?t='+bust,{cache:'no-cache'}).then(function(r){ if(!r.ok) throw new Error('no roll'); return r.json(); })
+     .then(function(j){ roll=j; rollState=(j.state==='results'||j.state==='closed')?j.state:'open'; if(j.state==='open' && j.closes_at && new Date(j.closes_at)<Date.now()) rollState='open'; })
+     .catch(function(){ roll=null; rollState='pending'; })
+     .then(clock);
+ }
+
+ function myLink(code){ return SITE+'/roll?ref='+code; }
+ function tallyName(p){ return p.n || ('#'+p.c); }
+ function renderTally(){
+   var el=$('#tally'); if(!TALLY){ el.hidden=true; return; }
+   var max=1; TALLY.boroughs.forEach(function(b){ if(b.n>max) max=b.n; });
+   $('#tBoro').innerHTML=TALLY.boroughs.map(function(b){ return '<div class="boro"><div class="n"><span>'+b.name+'</span><span>'+b.n+'</span></div><div class="bar"><i style="width:'+Math.round(100*b.n/max)+'%"></i></div></div>'; }).join('');
+   $('#tTop').innerHTML=TALLY.top.map(function(p){ return '<li><span class="r">'+p.r+'</span><span class="nm">'+tallyName(p).replace(/</g,'&lt;')+'</span><span class="s">'+p.s+'</span><span class="t">'+p.t+'</span></li>'; }).join('');
+   $('#tallyClosed').hidden=!TALLY.closed;
+   $('#tallyUpd').textContent='Updated '+et(TALLY.updated,true)+(TALLY.count?' · '+TALLY.count+' filed':'');
+   var me=(lastCode&&TALLY.all&&TALLY.all[lastCode])||null;
+   $('#tallyYou').hidden=!me;
+   if(me) $('#tallyYou').textContent=COPY.tally_you.replace('{R}',me[0]).replace('{S}',me[1]);
+   el.hidden=false;
+ }
+ function loadTally(){
+   var bust=Math.floor(Date.now()/6e5);
+   return fetch('api/tally.json?t='+bust,{cache:'no-cache'}).then(function(r){ if(!r.ok) throw new Error('no tally'); return r.json(); })
+     .then(function(j){ TALLY=j; }).catch(function(){ TALLY=null; }).then(renderTally);
+ }
+ function render(addr, rd, found, code){
+   lastReading=rd; lastAddr=addr; lastCode=code||''; lastFound=!!found;
+   var st=$('#status'); st.classList.remove('on');
+   var f=filed[addr]||null, isFiled=!!f, isPosted=!!(f&&f.post);
+   var route='';
+   var open=(rollState==='open'||rollState==='pending');
+   var brought=(roll&&roll.brought&&code&&roll.brought[code])||0;
+   if(open && isFiled){ lastStatus=isPosted?COPY.status_stamped:COPY.status_filed; route=isPosted?COPY.route_stamped:COPY.route_filed; st.classList.add('on'); }
+   else if(rollState==='pending'){ lastStatus=COPY.status_pending; route=COPY.route_pending; }
+   else if(rollState==='open'){ lastStatus=COPY.status_open; route=COPY.route_open; }
+   else if(rollState==='results'){ lastStatus=found?COPY.status_found:COPY.status_missed; route=found?COPY.route_found:COPY.route_missed; if(found) st.classList.add('on'); }
+   else { lastStatus=found?COPY.status_closed_found:COPY.status_closed_missed; route=COPY.route_closed; if(found) st.classList.add('on'); }
+   if(brought) route+=' '+COPY.brought_line.replace('{N}', String(brought));
+   st.textContent=lastStatus;
+   var me=(TALLY&&TALLY.all&&code&&TALLY.all[code])||null;
+   $('#vS').hidden=!me;
+   if(me) $('#vS').textContent=COPY.stamps_line.replace('{S}',me[1]).replace('{R}',me[0]).replace('{T}',me[3]);
+   $('#vB').textContent=rd.B; $('#vH').textContent=rd.H; $('#vA').textContent=rd.A; $('#vR').textContent=rd.R;
+   $('#vL').textContent=rd.line+'. '+rd.band+'.';
+   $('#vAddr').textContent=(rd.name?rd.name+' · ':'')+short(addr);
+   $('#route').textContent=route;
+   $('#file').hidden=true;
+   $('#ff').hidden=!(open && !isFiled);
+   $('#pf').hidden=!(open && isFiled && !isPosted);
+   if(TALLY) renderTally();
+   $('#longform').hidden=!(open && !isFiled);
+   var mine=!!((isFiled || (found && !open)) && code);
+   $('#mine').hidden=!mine;
+   if(mine){ $('#myLink').value=myLink(code); $('#refLine').textContent=(roll&&roll.referral_line)||COPY.referral_line; }
+   var shareUrl=mine?myLink(code):((roll&&roll.share_url)||(open?SITE+'/roll':SITE+'/'));
+   var text=(isFiled?COPY.share_filed:COPY.share).replace('{B}',rd.B).replace('{H}',rd.H).replace('{A}',rd.A).replace('{URL}',shareUrl);
+   $('#share').setAttribute('href','https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
+   $('#result').hidden=false;
+   $('#result').scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ function filingPayload(email, handle, post){
+   return {kind:'allowlist', wallet:lastAddr, email:email||'', x_handle:handle||'', name:(lastReading&&lastReading.name)||'', mint_count:'1', ref:ref, source:'roll',
+           reading:[lastReading.B,lastReading.H,lastReading.A,lastReading.R].join(' / '), post_url:post||'', submitted_at:new Date().toISOString()};
+ }
+ function stamp(e){
+   if(e) e.preventDefault();
+   var f=filed[lastAddr]; if(!f) return;
+   var url=$('#postUrl').value.trim(), btn=$('#postBtn');
+   if(!/^https?:\/\/(x|twitter)\.com\/[A-Za-z0-9_]+\/status\/\d+/.test(url)){ $('#quiet').textContent=COPY.post_invalid; $('#quiet').hidden=false; return; }
+   $('#quiet').hidden=true; btn.disabled=true; btn.textContent=COPY.filing;
+   fetch('/api/submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(filingPayload(f.email, f.handle, url))})
+     .then(function(r){ return r.json().catch(function(){ return {ok:r.ok}; }); })
+     .then(function(res){ if(!res.ok) throw new Error(res.error||'rejected'); f.post=url; saveFiled(); render(lastAddr, lastReading, lastFound, lastCode); })
+     .catch(function(){ $('#quiet').textContent=COPY.file_fail; $('#quiet').hidden=false; })
+     .then(function(){ btn.disabled=false; btn.textContent=COPY.post_button; });
+ }
+ function file(e){
+   if(e) e.preventDefault();
+   if(!lastAddr) return;
+   var btn=$('#fileBtn'), email=$('#email').value.trim(), handle=$('#handle').value.trim().replace(/^@/,'').replace(/[^A-Za-z0-9_]/g,'').slice(0,15);
+   if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ $('#quiet').textContent='That email does not look right. It is optional: clear it or fix it.'; $('#quiet').hidden=false; return; }
+   $('#quiet').hidden=true; btn.disabled=true; btn.textContent=COPY.filing;
+   var payload=filingPayload(email, handle, '');
+   fetch('/api/submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)})
+     .then(function(r){ return r.json().catch(function(){ return {ok:r.ok}; }); })
+     .then(function(res){
+       if(!res.ok) throw new Error(res.error||'rejected');
+       filed[lastAddr]={at:new Date().toISOString(), email:email, handle:handle}; saveFiled();
+       render(lastAddr, lastReading, lastFound, lastCode);
+     })
+     .catch(function(err){ $('#quiet').textContent=(err&&err.message==='too many, slow down')?'Too many filings from here. Wait ten minutes.':COPY.file_fail; $('#quiet').hidden=false; })
+     .then(function(){ btn.disabled=false; btn.textContent=COPY.file_label; });
+ }
+
+ function check(e){
+   if(e) e.preventDefault();
+   var raw=$('#addr').value.trim().toLowerCase().replace(/^@/,'');
+   var quiet=$('#quiet');
+   var name=null;
+   if(!valid(raw) && !isName(raw)){ quiet.textContent=COPY.invalid; quiet.hidden=false; return; }
+   quiet.hidden=true;
+   var btn=$('#go'); btn.disabled=true; var label=btn.textContent;
+   var salt=(roll&&roll.reading_salt)||'the-roll';
+   var addrP;
+   if(valid(raw)){ addrP=Promise.resolve(raw); }
+   else { name=raw; btn.textContent=COPY.resolving; addrP=resolveName(raw); }
+   addrP.then(function(a){
+     if(!a){ quiet.textContent=COPY.unresolved; quiet.hidden=false; return; }
+     a=a.toLowerCase();
+     return Promise.all([sha(a+salt), sha(a+((roll&&roll.salt)||'the-roll'))])
+       .then(function(hs){
+         var rd=reading(hs[0]); rd.name=name;
+         var found=!!((rollState==='results'||rollState==='closed') && roll && roll.entries && roll.entries.indexOf(hs[1])>=0);
+         render(a, rd, found, hs[1].slice(0,10));
+       });
+   })
+   .catch(function(){ quiet.textContent='That did not run. Reload the page and try again.'; quiet.hidden=false; })
+   .then(function(){ btn.disabled=false; btn.textContent=label; });
+ }
+
+ $('#rf').addEventListener('submit', check);
+ $('#ff').addEventListener('submit', file);
+ $('#pf').addEventListener('submit', stamp);
+ // Enter inside the small forms. Implicit submission is not reliable with the site's key listeners, so it is explicit here.
+ ['#handle','#email'].forEach(function(sel){ $(sel).addEventListener('keydown', function(e){ if(e.key==='Enter'||e.keyCode===13){ e.preventDefault(); e.stopPropagation(); file(); } }, true); });
+ $('#postUrl').addEventListener('keydown', function(e){ if(e.key==='Enter'||e.keyCode===13){ e.preventDefault(); e.stopPropagation(); stamp(); } }, true);
+ $('#myLink').addEventListener('click', function(){ this.select(); if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(this.value).then(function(){ if(window.NY&&NY.toast) NY.toast('Link copied.'); }, function(){}); } });
+ $('#addr').addEventListener('keydown', function(e){ if(e.key==='Enter'||e.keyCode===13){ e.preventDefault(); e.stopPropagation(); check(); } }, true);
+ $('#again').addEventListener('click', function(){ $('#result').hidden=true; $('#addr').value=''; $('#email').value=''; $('#addr').focus(); });
+ $('#copy').addEventListener('click', function(){
+   if(!lastReading) return;
+   var t=lastStatus+'\\n'+lastReading.B+'. '+lastReading.H+'. '+lastReading.A+'. '+lastReading.R+'.\\n'+short(lastAddr)+'\\nTHE ROLL, NEW YORKERS by MLow';
+   var done=function(){ $('#copy').textContent='COPIED'; setTimeout(function(){ $('#copy').textContent='COPY'; },1400); };
+   if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done, done); } else { done(); }
+ });
+ if(!(window.crypto&&crypto.subtle)){ $('#quiet').textContent='This browser cannot hash locally. Open the page over https.'; $('#quiet').hidden=false; }
+ loadRoll(); loadTally(); setInterval(clock, 60000);
+})();
+</script>"""
+script = script.replace("__READINGS__", json.dumps(R, ensure_ascii=False, separators=(",", ":"))) \
+               .replace("__COPY__", json.dumps(ROLL_COPY, ensure_ascii=False, separators=(",", ":"))) \
+               .replace("__SITE__", json.dumps(URL))
+
+page = shell(title="THE ROLL · NEW YORKERS by MLow",
+             description="Every wallet has a borough. Paste an address, get a borough, an hour, an archetype and a register from the NEW YORKERS matrix, and find out whether it filed before the roll closed. Nothing is signed.",
+             body=body, path="roll.html", active="THE ROLL", extra_css=extra_css, scripts_after=script, noindex=True,
+             extra_head='<script src="assets/sha3.min.js"></script>')
+open(os.path.join(SITE, "roll.html"), "w", encoding="utf-8").write(page)
+print("roll.html written")

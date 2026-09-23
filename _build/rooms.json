@@ -1494,5 +1494,115 @@
   "signatures": "The 1802 country house moved into St. Nicholas Park in 2008: clapboard painted pale yellow, green shutters, a hipped roof with a balustrade, piazzas on two sides, the twin octagonal rooms with their mirrored doors, the thirteen sweetgum trees, the Manhattan schist outcrop, City College on the ridge behind.",
   "daylit": true,
   "index": 136
+ },
+ {
+  "id": "fultonfish",
+  "name": "Four in the morning",
+  "area": "THE NEW FULTON FISH MARKET / HUNTS POINT",
+  "mood": "Cold store, before dawn",
+  "color": "#7fb2c8",
+  "description": "The hour the city eats by and never sees: a refrigerated hall the length of three blocks, ice going down in mountains, forklifts running the centre aisle with their beacons turning, gulls working the rafters, and the buyers walking the row in headlamps and parkas. The New Yorkers hang on the stall fronts, at the height of a chalked price.",
+  "signatures": "The 400,000 square foot cold hall at Hunts Point, the numbered bays and their roll up doors, stainless display tables banked with crushed ice, waxed boxes stacked to the ceiling, hanging scales, chalkboards, forklift beacons, the truck apron outside, and the gulls that came with the market from South Street.",
+  "daylit": false,
+  "index": 137
+ },
+ {
+  "id": "lunarnewyear",
+  "name": "The lion comes down Mott Street",
+  "area": "CHINATOWN / MOTT STREET",
+  "mood": "Confetti, drums, first day",
+  "color": "#d8342c",
+  "description": "The narrowest parade in New York: a lion at every doorway, a dragon the length of half a block, confetti coming down like weather and not stopping, drums off the brick, lanterns strung overhead, and the whole street shoulder to shoulder in red. The New Yorkers hang on the shutters and the gates, at eye level, where the crowd is.",
+  "signatures": "The Mott Street canyon of five storey tenements with fire escapes, bilingual vertical signs, roll down shutters, red lanterns strung across the roadway, lion dance teams working doorway to doorway, a dragon on poles, drums and cymbals, and confetti ankle deep by afternoon.",
+  "daylit": false,
+  "index": 138
+ },
+ {
+  "id": "enginecompany",
+  "name": "First due",
+  "area": "ENGINE COMPANY 55 / 363 BROOME STREET",
+  "mood": "The bell, then the doors",
+  "color": "#a8231f",
+  "description": "A house that has been answering this corner since 1899: one bay, one rig, a brass pole through the ceiling, gear hanging ready in the order a person puts it on. Every twenty seconds the gong goes, the beacons start turning, and the door rolls up on Broome Street. The New Yorkers hang along the tiled bay walls, watching it happen.",
+  "signatures": "R. H. Robertson's 1899 firehouse: brick and limestone with the company banner carved over a monumental arched apparatus bay, a copper mansard roof, oval windows in garlands, Guastavino glazed tile inside, the brass pole, turnout gear on hooks, the housewatch desk and the gong.",
+  "daylit": true,
+  "index": 139
+ },
+ {
+  "id": "eastriverfourth",
+  "name": "The Fourth over the East River",
+  "area": "BROOKLYN HEIGHTS PROMENADE",
+  "mood": "Nine forty, everybody quiet",
+  "color": "#f0c24a",
+  "description": "A third of a mile of cantilevered walkway over a running expressway, and once a year the best free seat in the city: barges on the black water, the skyline with its lights on, and eighty thousand shells going up in half an hour. The New Yorkers hang along the park wall and the railing, lit red, then green, then gold, then not at all.",
+  "signatures": "The Promenade on its cantilever over the Brooklyn Queens Expressway, the iron railing and the benches, the plane trees, the Brooklyn Bridge to the north, fireboats and barges on the river, the Lower Manhattan skyline across the water, and the crowd standing four deep at the rail.",
+  "daylit": false,
+  "index": 140
+ },
+ {
+  "id": "paradisegarage",
+  "name": "Two in the morning",
+  "area": "THE PARADISE GARAGE / 84 KING STREET",
+  "mood": "Members only, no bar",
+  "color": "#b83aa8",
+  "description": "A parking garage on King Street with a ramp for a lobby, a sprung floor, a sound system built for the room rather than the room for the system, and no liquor licence because nobody needed one. The New Yorkers hang where the light sweeps past them, on the black walls around the floor, and the mirror ball puts the rest of the room on top of them.",
+  "signatures": "The 1924 garage at 84 King Street, the long entrance ramp, the sprung wooden dance floor, Richard Long's custom horns and bass bins, the DJ booth above the floor, a mirror ball, no bar and no alcohol, the fruit and juice by the wall, and the doors that stayed open into the morning.",
+  "daylit": false,
+  "index": 141
+ },
+ {
+  "id": "arthurashe",
+  "name": "The night session",
+  "area": "ARTHUR ASHE STADIUM / FLUSHING MEADOWS",
+  "mood": "Deuce, under the open roof",
+  "color": "#2f6fd6",
+  "description": "The largest tennis stadium in the world at nine at night in the first week of September: the roof open to the sky, twenty three thousand people in the bowl, a plane on its way down to LaGuardia, and two players trading ground strokes on the blue court while the wave goes round. The New Yorkers hang courtside on the wall at the foot of the lower bowl, where the sponsor boards would be, lit by the same lights as the match.",
+  "signatures": "The 1997 bowl by Rossetti with its 23,771 seats, the 2016 retractable roof and its octagonal truss ring, the electric blue court inside the lines and green outside, the net and the chair umpire, line judges and ball kids, the two big screens, the light ring under the roof, and the approach path to LaGuardia overhead.",
+  "daylit": false,
+  "index": 142
+ },
+ {
+  "id": "carousel",
+  "name": "Fifty seven horses",
+  "area": "THE CENTRAL PARK CAROUSEL / MID PARK AT 64TH",
+  "mood": "Three quarter time, all afternoon",
+  "color": "#d84a3a",
+  "description": "A 1908 carousel found in a Coney Island trolley terminal and set down in Central Park in 1951 under an octagon of brick: fifty seven hand carved horses, two chariots, a band organ playing waltzes, and a quarter of a million riders a year. The New Yorkers hang on the six brick walls around the turning platform and outside on the two that face the path, so the horses pass every one of them once a minute.",
+  "signatures": "The brick pavilion with its eight sides, arched entrances and pyramid roof, the turning platform with three rows of jumpers and standers, the poles, the sweeps, the rounding board of bulbs and mirrors, the centre drum with the A. Ruth & Sohn band organ, the ticket booth, and the park path and plane trees around it.",
+  "daylit": true,
+  "index": 143
+ },
+ {
+  "id": "sharks",
+  "name": "Ocean Wonders",
+  "area": "NEW YORK AQUARIUM / CONEY ISLAND",
+  "mood": "Blue, and something circling",
+  "color": "#1f7fc8",
+  "description": "The oldest aquarium in the country, on the boardwalk since 1957, and its biggest room since the hurricane: seven hundred and eighty four thousand gallons behind one long window, a wreck on the sand, sand tigers circling, rays flying over the glass tunnel, and a school of silver that turns as one. The New Yorkers hang on the dark wall opposite the window, lit by the water.",
+  "signatures": "The long acrylic window into Ocean Wonders: Sharks!, the walk through tunnel, the shipwreck and the reef, sand tiger sharks, cownose rays and a bait ball, light rays and caustics on the sand, bubbles from the aerators, and the dark hall with its benches facing the water.",
+  "daylit": false,
+  "index": 144
+ },
+ {
+  "id": "astoriapool",
+  "name": "The finest in the world",
+  "area": "ASTORIA PARK POOL / QUEENS",
+  "mood": "Ninety three degrees, everybody in",
+  "color": "#3ab6cc",
+  "description": "Three hundred and thirty feet of water between two bridges, opened in the summer of 1936 and called the finest in the world by the man who paid for it. Lap swimmers, cannonballs, lifeguards on their chairs, the diving tower that outlived its pool, and Hell Gate to the north. The New Yorkers hang under the colonnade of the bathhouse, out of the sun, facing the water.",
+  "signatures": "The WPA pool of 1936 at 330 by 165 feet, the brick and limestone bathhouse with its central block and colonnade, lane ropes and ladders, lifeguard chairs, the filled in diving pool and its 32 foot three tier concrete platform, the Hell Gate Bridge arch to the north and the RFK Bridge towers to the south, the East River and Manhattan beyond.",
+  "daylit": true,
+  "index": 145
+ },
+ {
+  "id": "rockcenter",
+  "name": "The tree and the rink",
+  "area": "ROCKEFELLER PLAZA / THE RINK",
+  "mood": "December, seven in the evening",
+  "color": "#d8a84a",
+  "description": "The sunken rink at the foot of the Channel Gardens, Prometheus in gold over the fountain, forty flags going round the parapet, skaters below and a Norway spruce above them with fifty thousand lights on it. The New Yorkers hang along the shop fronts of the Channel Gardens, between the wire angels, and down on the rink level either side of the fountain.",
+  "signatures": "The Channel Gardens sloping down from Fifth Avenue between the British Empire Building and La Maison Francaise, the trumpeting wire angels, the sunken rink with its flags and skaters, Paul Manship's gilded Prometheus and the fountain, the Christmas tree with its star, and 30 Rockefeller Plaza rising behind it.",
+  "daylit": false,
+  "index": 146
  }
 ]

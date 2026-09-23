@@ -7,17 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<meta name="description" content="The interactive census: 7,541 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
+<meta name="description" content="The interactive census: 7,542 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS by MLow">
-<meta property="og:description" content="The interactive census: 7,541 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
-<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:description" content="The interactive census: 7,542 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=8429465c33">
 <meta property="og:url" content="https://n3wyorkers.com/census.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
 <meta name="twitter:title" content="NEW YORKERS by MLow">
 <meta name="twitter:description" content="Every New Yorker gets a portrait. Even the villains. Register for the allowlist.">
-<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg?v=8429465c33">
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
@@ -316,7 +316,7 @@ a{color:var(--blue);text-decoration:none}
   <div class="breath">The city has been watching you your whole life. It turns out it was taking notes, and the notes are beautiful.</div>
   <div class="census" id="censusLine"></div>
   <button id="enterBtn">ENTER THE CENSUS</button>
-  <div class="alt">or <a href="#" id="altBrowse">open the gallery</a> · <a href="counted.html" style="color:var(--cyan)">get counted</a> · <a href="#" id="altAllow" style="color:var(--pink)">register for the allowlist</a> · <a href="index.html">home</a></div>
+  <div class="alt">or <a href="#" id="altBrowse">open the gallery</a> · <a href="counted.html" style="color:var(--cyan)">get counted</a> · <a href="index.html">home</a></div>
   <div id="loadNote">LOADING THE CITY</div>
 </div>
 
@@ -334,7 +334,6 @@ a{color:var(--blue);text-decoration:none}
     <button class="chipBtn hideSm" id="btnMlow">MLOW</button>
     <button class="chipBtn" id="btnAbout">THE DROP</button>
     <a class="chipBtn" href="counted.html" style="text-decoration:none;display:inline-block;border-color:var(--cyan);color:var(--cyan)">GET COUNTED</a>
-    <button class="chipBtn pink" id="btnAllow">ALLOWLIST</button>
   </div>
 </div>
 <div class="hud" id="formBar">
@@ -422,7 +421,7 @@ a{color:var(--blue);text-decoration:none}
   <div class="ovHead"><span class="ht">REGISTER FOR THE ALLOWLIST</span><button class="x">×</button></div>
   <div class="ab"><div class="abIn">
     <h2>The census takes names.</h2>
-    <p class="sub">NEW YORKERS by MLow mints as dynamic tokens on Transient Labs ERC-7160 at NFT NYC, September 2026. Register and you are on the list when the doors open.</p>
+    <p class="sub">THE CENSUS RELEASE mints on OpenSea as a standard token. A census New Yorker can then be evolved into a dynamic ERC-7160 New Yorker holding several variants, and the artist keeps adding to it.</p>
     <form id="allowForm">
       <div class="field"><label>Name</label><input name="name" required autocomplete="name" placeholder="Your name"></div>
       <div class="field"><label>Email</label><input name="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
@@ -1410,7 +1409,7 @@ function renderDetail(p,gi,listArr){
   if(p.set&&!st)row("Set",p.set);
   const ths=threadOf.get(p.id);if(ths)row("Threads",ths.map(t=>t.name).join(", "));
   if(p.n!=null&&msSet.has(p.n))row("Status","MONUMENT · one of "+S.milestones.length);
-  row("Token standard","Transient Labs ERC-7160 · dynamic");
+  row("Token standard","OpenSea · evolvable to a dynamic ERC-7160");
   const nw=$("#dNoteWrap");nw.innerHTML="";
   if(p.p){
     const det=document.createElement("details");
@@ -1472,8 +1471,7 @@ $("#btnMlow").onclick=()=>$("#mlow").classList.add("open");
 
 /* allowlist */
 function openAllow(){$("#allow").classList.add("open");}
-$("#btnAllow").onclick=openAllow;
-$("#altAllow").onclick=e=>{e.preventDefault();openAllow();};
+/* THE ROLL was retired unused on 2026-09-23 and its chip and alt link are gone. This modal stays unreachable except through the #allowlist hash. */
 $("#allowForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const f=e.target, data=Object.fromEntries(new FormData(f).entries());
@@ -1553,5 +1551,6 @@ window.__game={
 })();
 </script>
 <script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
 </body>
 </html>

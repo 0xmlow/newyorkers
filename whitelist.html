@@ -12,13 +12,13 @@
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <meta property="og:title" content="The allowlist · NEW YORKERS by MLow">
 <meta property="og:description" content="Put your name down for THE CENSUS RELEASE, 6,666 works on OpenSea. Wallet requirements, mint count, and how the referral share works.">
-<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=8429465c33">
 <meta property="og:url" content="https://n3wyorkers.com/whitelist">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
 <meta name="twitter:title" content="The allowlist · NEW YORKERS by MLow">
 <meta name="twitter:description" content="Put your name down for THE CENSUS RELEASE, 6,666 works on OpenSea. Wallet requirements, mint count, and how the referral share works.">
-<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg?v=8429465c33">
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
@@ -55,15 +55,6 @@
 .refbox{margin-top:26px;border-top:1px solid var(--divider);padding-top:20px}
 .refbox input{width:100%;background:var(--ink);border:1px solid var(--acid);color:var(--acid);font-family:var(--mono);font-size:13px;padding:13px 14px;border-radius:7px}
 </style>
-<!-- seo -->
-<link rel="canonical" href="https://n3wyorkers.com/whitelist">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, NEW YORKERS allowlist, NFT whitelist, MLow mint">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
-<meta property="og:site_name" content="NEW YORKERS by MLow">
-<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
-<link rel="alternate" type="application/json" title="census api" href="api/census.json">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"The allowlist","url":"https://n3wyorkers.com/whitelist","isPartOf":{"@id":"https://n3wyorkers.com/#site"}}</script>
-<!-- /seo -->
 </head>
 <body>
 <div id="nav"></div>
@@ -155,7 +146,7 @@
 (function(){
  var $=function(s){return document.querySelector(s)}, CFG=window.NY_CONFIG||{};
  var q=new URLSearchParams(location.search);
- $('#refField').value=q.get('ref')||'';
+ $('#refField').value=q.get('ref')||(function(){try{return localStorage.getItem('ny_ref')||''}catch(e){return ''}})();
  $('#sourceField').value=document.referrer||'direct';
  // show the "which pieces" box only when it is relevant
  document.querySelectorAll('input[name=is_collector]').forEach(function(r){
@@ -183,10 +174,13 @@
    .then(function(res){
      if(!res.ok) throw new Error(res.error||'rejected');
      f.hidden=true; $('#wlDone').hidden=false;
-     var base=location.origin+'/';
+     var base=location.origin+'/roll';
      var code=(data.get('x_handle')||data.get('name')||'friend').toString().replace(/[^A-Za-z0-9_]/g,'').slice(0,20).toLowerCase()||'friend';
      var link=base+'?ref='+encodeURIComponent(code);
      $('#refLink').value=link;
+     // The roll credits referrals by a hash code of the wallet, so the link matches the one the roll page gives.
+     var w=(data.get('wallet')||'').toString().trim().toLowerCase();
+     if(window.crypto&&crypto.subtle&&w){ fetch('/api/roll.json?t='+Math.floor(Date.now()/6e5)).then(function(r){return r.json()}).then(function(j){ return crypto.subtle.digest('SHA-256',new TextEncoder().encode(w+(j.salt||'the-roll'))); }).then(function(b){ var h=Array.from(new Uint8Array(b)).map(function(x){return (x<16?'0':'')+x.toString(16)}).join(''); link=base+'?ref='+h.slice(0,10); $('#refLink').value=link; }).catch(function(){}); }
      NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'A painted census of New York City. 7,541 New Yorkers, a walkable museum of 111 rooms, and a release coming.',url:link});
      $('#refLink').onclick=function(){ this.select(); document.execCommand&&document.execCommand('copy'); NY.toast('Link copied.'); };
    }).catch(function(e){
@@ -199,5 +193,6 @@
 })();
 </script>
 <script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
 </body>
 </html>

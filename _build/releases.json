@@ -1,8 +1,8 @@
 {
-  "promise": "NEW YORKERS is sold in named releases. Each release is sized and closed before it opens. Nothing is added to a release once it closes, and no New Yorker is ever sold twice. The census is still being painted, so more releases will follow, and every one is announced in advance, the same way.",
-  "promiseShort": "Sold in named releases. Each one closed before it opens, and no New Yorker sold twice.",
+  "promise": "NEW YORKERS is sold in named releases. Nothing is ever added to a release once it closes, and no New Yorker is ever sold twice. Most releases are sized and closed before they open. KEYSTONE is the exception and says so on its face: it is open ended by design, it stands at 111 today, and it grows as new Keystone New Yorkers are painted. The census is still being painted, so more releases will follow, and every one is announced in advance, the same way.",
+  "promiseShort": "Sold in named releases, and no New Yorker sold twice. Most are closed before they open. KEYSTONE is open ended and says so.",
   "expansion": "This is an evolving series. New eras are still being painted, and the city keeps nominating people who are not in it yet. When a release is announced it says exactly what is in it, how many, in what format, on what platform and when. Nothing is ever quietly added to something you already bought into.",
-  "note": "THE ONES chapter one opens Thursday September 10, 11:11 AM ET. THE CENSUS RELEASE mints Tuesday October 6, 11:11 AM ET. Dates and prices below are the artist's published intent and are not final until each release opens.",
+  "note": "KEYSTONE is open now on Transient Labs. THE CENSUS RELEASE is minting now on OpenSea, from Wednesday September 23, 11:11 AM ET until Friday October 23, 11:11 AM ET. Prices below are what each release actually opened at.",
   "releases": [
     {
       "n": 1,
@@ -20,17 +20,23 @@
     },
     {
       "n": 2,
-      "id": "theones",
-      "name": "THE ONES",
-      "count": 150,
-      "drawnFrom": "Chosen by hand from 6,399 eligible pieces, in fifteen chapters of ten. Era I, Era XVIII, the hundred marks and the era closers are all excluded, and so is every piece already inside THE MARKS.",
-      "subseries": "Fifteen chapters, one wave each",
-      "format": "Ones of one",
-      "platform": "SuperRare",
-      "when": "Chapter one opens Thursday September 10. One chapter a month from then on, through and past the census release.",
-      "status": "announced",
-      "detail": "The only release in this collection selected by judgement rather than by an arithmetic rule, and the method is published with it. Chapters run on their own monthly clock and do not gate any other release. Each chapter is a hang that stands on its own. Borough floors are held on purpose: twelve Staten Island, fifteen Bronx, nineteen Queens, thirty eight Brooklyn. Nothing in this release is ever reopened or topped up, and no piece in it appears in the census release. The price ladder for every chapter is published in advance and never moves.",
-      "price": "Chapter one 0.05 ETH. Chapter two 0.08. Chapter three 0.11. The ladder rises and is published before any chapter opens."
+      "id": "keystone",
+      "name": "KEYSTONE",
+      "count": 111,
+      "countIsOpen": true,
+      "countNote": "111 and counting. This release grows as new Keystone New Yorkers are painted.",
+      "replaces": "theones",
+      "drawnFrom": "The founding NEW YORKERS: the Era I leads, the Mythos spine and the threads that hold the census together. The first 111 are the ones the whole city is built on.",
+      "subseries": "The founding New Yorkers",
+      "format": "Dynamic ones of one on Transient Labs ERC-7160TL. The token holds a stack of finished states, the artist appends variants and new art over time, and the owner pins the one that shows.",
+      "platform": "Transient Labs, indexed on SuperRare",
+      "chain": "Ethereum",
+      "contract": "0x2dbfcca230979a91863be63ebce55dd5aae2b5c9",
+      "url": "https://transient.xyz/mint/newyorkers",
+      "when": "Open now.",
+      "status": "open",
+      "detail": "This release replaces THE ONES and merges it in. THE ONES was published as 150 pieces in fifteen monthly chapters on SuperRare with a rising price ladder. That structure is gone. KEYSTONE is one open release on one contract at one price, and it is the only release here that is not sized and closed before it opens. Every piece is unique, one owner each, and because the contract is ERC-7160 the art inside a piece keeps growing after you own it. Nothing already made is ever deleted, and no New Yorker in this release appears in THE CENSUS RELEASE.",
+      "price": "0.069 ETH each. One price, no ladder."
     },
     {
       "n": 3,
@@ -39,12 +45,12 @@
       "count": 6666,
       "drawnFrom": "Drawn across eras II to XIX so no era is emptied, with every family, every borough and every set represented, and excluding the hundred and fifty in THE ONES.",
       "subseries": "The census proper",
-      "format": "Dynamic tokens on ERC-7160. The artist appends states, the collector pins the one that shows.",
+      "format": "THE CENSUS RELEASE mints on OpenSea as a standard token. A census New Yorker can then be evolved into a dynamic ERC-7160 New Yorker holding several variants, and the artist keeps adding to it.",
       "platform": "OpenSea",
-      "when": "Tuesday October 6, 11:11 AM ET.",
+      "when": "Wednesday September 23, 11:11 AM ET, until Friday October 23, 11:11 AM ET.",
       "status": "announced",
       "detail": "Era I is excluded because it paints real public figures. Pieces promised back to the people who nominated them are excluded, and so is every piece in THE ONES. Nothing in this release is ever reopened or topped up.",
-      "price": "$11 flat. Four windows on mint day. Eleven per wallet in the open window."
+      "price": "About $11 a piece, priced in ETH so the dollar figure moves, in one public window that runs thirty days."
     }
   ],
   "future": {

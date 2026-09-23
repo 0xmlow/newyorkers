@@ -76,6 +76,17 @@ const CURATION: Record<string, Cur> = {
   armstronggarden: { nb: ['Corona'], words: /jazz|trumpet|musician|queens/i },
   hamiltongrange: { nb: ['Hamilton Heights'], words: /harlem|history|neighbor|park/i },
 
+  fultonfish: { nb: ['Hunts Point', 'The Bronx'], words: /fish|market|dock|porter|night shift|worker|ice|forklift/i },
+  lunarnewyear: { nb: ['Chinatown'], words: /chinatown|lunar|new year|lion|dragon|parade|firecracker|mott/i },
+  enginecompany: { nb: ['Little Italy', 'Nolita', 'SoHo'], words: /fire|firefighter|engine|ladder|rescue|broome/i },
+  eastriverfourth: { nb: ['Brooklyn Heights', 'DUMBO', 'Brooklyn Bridge Park'], words: /fireworks|fourth of july|promenade|east river|crowd|summer/i },
+  paradisegarage: { nb: ['SoHo', 'Hudson Square', 'West Village'], words: /\bdj\b|dance|club|disco|garage|night|record|party/i },
+  arthurashe: { nb: ['Flushing', 'Flushing Meadows', 'Corona'], words: /tennis|us open|racket|athlete|umpire|stadium|match|serve/i },
+  carousel: { nb: ['Central Park'], words: /carousel|horse|child|kid|ride|park|organ|waltz/i },
+  sharks: { nb: ['Coney Island'], words: /aquarium|shark|fish|ocean|diver|\bsea\b|tank|boardwalk/i },
+  astoriapool: { nb: ['Astoria'], words: /pool|swim|lifeguard|summer|astoria|dive|heat/i },
+  rockcenter: { nb: ['Midtown', 'Rockefeller Center'], words: /skat|christmas|holiday|tree|rockefeller|tourist|\bice\b|december/i },
+
   pneumatic: { nb: ['Civic Center'], words: /letter|mail|postal|messenger|courier|message/i },
   garment: { nb: ['Garment District'], words: /tailor|seamstress|garment|fashion|fabric|designer/i },
   diamondexchange: { nb: ['Midtown'], words: /diamond|jewel|gem|dealer|gold|appraiser/i },

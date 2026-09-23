@@ -42,10 +42,23 @@ def no_dash(s):
     """Brand rule: no em or en dashes in anything public."""
     return str(s).replace("—", ",").replace("–", " to ")
 
+def _ogv():
+    """Content hash of og.jpg, so the share card URL changes whenever the picture does.
+    X caches a card by URL and will happily serve a year old preview otherwise."""
+    import hashlib as _h, os as _o
+    _p = _o.path.join(_o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))), "NEW YORKERS SITE", "og.jpg")
+    if not _o.path.exists(_p):
+        _p = _o.path.join(_o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))), "og.jpg")
+    try:
+        return _h.sha256(open(_p, "rb").read()).hexdigest()[:10]
+    except OSError:
+        return "0"
+
+
 def shell(*, title, description, body, base="", path="", active=None, extra_head="", extra_css="", jsonld=None, image=None, keywords=None, scripts_after="", noindex=False, kind="website"):
     C = cfg()
     url = pub(f"{C['siteUrl']}/{path}".rstrip("/")) if path != "index.html" else C["siteUrl"] + "/"
-    img = image or f"{C['siteUrl']}/og.jpg"
+    img = image or (C["siteUrl"] + "/og.jpg?v=" + _ogv())
     ld = ""
     if jsonld:
         ld = "".join(f'<script type="application/ld+json">{json.dumps(pub_deep(j), ensure_ascii=False, separators=(",", ":"))}</script>\n' for j in (jsonld if isinstance(jsonld, list) else [jsonld]))
@@ -91,6 +104,7 @@ def shell(*, title, description, body, base="", path="", active=None, extra_head
 <script>NY.nav({json.dumps(active)});NY.foot();</script>
 {scripts_after}
 <script src="{base}assets/eggs.js" defer></script>
+<script src="{base}assets/mint.js" defer></script>
 </body>
 </html>
 """)

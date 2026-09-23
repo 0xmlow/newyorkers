@@ -147,6 +147,20 @@
 }
 .room-photo b { font-weight: 400; color: var(--cyan); }
 
+/* ---------- rooms worth the walk ---------- */
+.room-picks { padding: 80px 5vw; background: #101821; border-top: 1px solid var(--divider); }
+.room-selection { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 24px; }
+.room-card img {
+  width: 100%; height: auto; aspect-ratio: 16/10; object-fit: cover;
+  background: var(--card); display: block; border-radius: var(--r);
+  transition: transform .2s var(--ease);
+}
+.room-card:hover img { transform: translateY(-4px); }
+.room-card span { display: flex; flex-direction: column; gap: 7px; padding-top: 16px; }
+.room-card small { font: 10px var(--mono); letter-spacing: .12em; color: var(--cyan); }
+.room-card strong { font: 500 18px var(--serif); }
+.room-card em { font: 400 13px/1.6 var(--sans); font-style: normal; color: var(--slate); }
+
 /* ---------- follow your curiosity ---------- */
 .more-city > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
 .more-city a { border-top: 1px solid var(--divider); padding: 24px 0; display: block; transition: border-color .2s var(--ease); }
@@ -207,6 +221,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .hero-art i { display: none; }
   .art-selection { grid-template-columns: 1fr; }
   .art-card:nth-child(n+3) { display: none; }
+  .room-selection { grid-template-columns: 1fr; }
+  .room-picks { padding: 52px 6vw; }
   .section-top { align-items: start; flex-direction: column; }
   .selection, .meet, .which, .more-city, .hunt { padding: 52px 6vw; }
   .museum-invite { padding: 52px 6vw; gap: 24px; }

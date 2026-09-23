@@ -93,7 +93,7 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 # ---------- copy site shell + assets ----------
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
-              "whitelist.html", "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
+              "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
               "keystone.html")
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
                            "humans.txt", "_redirects")
@@ -112,7 +112,7 @@ for f in os.listdir(OUT):
 # and the drift is silent (an asset stops shipping and every page that needs it breaks).
 COPY_ASSETS = ("three.min.js", "site.css", "site.js", "geo.js", "eggs.js", "counts.js",
                "rooms.js", "articles.js", "shipping.js", "prints.js", "qrcode.min.js", "sha3.min.js",
-               "home.css", "flywheel.js", "cast.json")
+               "home.css", "flywheel.js", "cast.json", "mint.js")
 KEEP_ASSETS = set(COPY_ASSETS) | {"config.js", "data.js"}
 _ad = os.path.join(OUT, "assets")
 for f in os.listdir(_ad):

@@ -23,6 +23,8 @@ const START_ROOMS = [...FIRST_ROOMS, 'guggenheim', 'grand', 'brooklyn'];
 const roomThumb = (id: string) => `assets/museum/rooms/${id}.jpg`;
 const CFG = (window as unknown as { NY_CONFIG?: Record<string, string> }).NY_CONFIG || {};
 let spinOnEnter = false;
+/* the room a #room= link asked for, so the entrance keeps it in view */
+let roomFromHash = '';
 const esc = (s: string) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const reducedQuery = matchMedia('(prefers-reduced-motion: reduce)');
 const touch = matchMedia('(pointer: coarse)').matches;
@@ -53,7 +55,7 @@ function readHash() {
     spinOnEnter = true;
   } else {
     const r = ROOMS.findIndex((x) => x.id === want);
-    if (r >= 0) state.room = r;
+    if (r >= 0) { state.room = r; roomFromHash = ROOMS[r].id; }
   }
   // a batch export runs one room per page load so renderer memory starts fresh every time
   if (params.get('export') === 'all') state.room = Math.min(ROOMS.length - 1, Math.max(0, Number(params.get('from') || 0)));
@@ -1005,14 +1007,22 @@ function spin(auto = false) {
   step();
 }
 
-/* ---------- boot ---------- */
-function boot() {
-  textureBudget(quality === 'low');
-  const openN = readHash();
-  buildPanels();
-  $('#firstRooms').innerHTML = FIRST_ROOMS.map(id => {
+/* ---------- the entrance: three rooms, freshly dealt ---------- */
+function sample<T>(arr: T[], n: number): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a.slice(0, n);
+}
+/* Three rooms picked fresh on every arrival, out of all of them, so the door is
+   never the same door twice. A #room= link keeps its room in the first slot. */
+function dealFirstRooms(keep = '') {
+  const rest = sample(ROOMS.filter(r => r.id !== keep).map(r => r.id), keep ? 2 : 3);
+  const ids = keep ? [keep, ...rest] : rest;
+  if (!keep) state.room = ROOMS.findIndex(r => r.id === ids[0]);
+  const pressed = ROOMS[state.room].id;
+  $('#firstRooms').innerHTML = ids.map(id => {
     const r = ROOMS.find(x => x.id === id)!;
-    return `<button data-room="${id}" aria-pressed="${ROOMS[state.room].id === id}"><img src="${roomThumb(id)}" alt=""><strong>${esc(r.name)}</strong><small>${esc(r.mood)}</small></button>`;
+    return `<button data-room="${id}" aria-pressed="${pressed === id}"><img src="${roomThumb(id)}" alt=""><strong>${esc(r.name)}</strong><small>${esc(r.mood)}</small></button>`;
   }).join('');
   document.querySelectorAll<HTMLButtonElement>('#firstRooms button').forEach(b => b.onclick = () => {
     state.room = ROOMS.findIndex(r => r.id === b.dataset.room);
@@ -1020,6 +1030,17 @@ function boot() {
     $('#enterRoom').textContent = 'FIRST STOP · ' + ROOMS[state.room].area;
     document.querySelectorAll('#firstRooms button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   });
+  if (!spinOnEnter) $('#enterRoom').textContent = 'FIRST STOP · ' + ROOMS[state.room].area;
+}
+
+/* ---------- boot ---------- */
+function boot() {
+  textureBudget(quality === 'low');
+  const openN = readHash();
+  buildPanels();
+  dealFirstRooms(params.get('export') === 'all' ? ROOMS[state.room].id : roomFromHash);  // a batch export keeps the room it was sent to
+  const reroll = $('#firstAgain') as HTMLButtonElement | null;
+  if (reroll) reroll.onclick = () => { roomFromHash = ''; dealFirstRooms(); };
   $('#enterCount').innerHTML = `<b>${C.pieces.toLocaleString('en-US')}</b> NEW YORKERS · <b>${ROOMS.length}</b> ROOMS · <b>${C.eras}</b> ERAS`;
   $('#enterRoom').textContent = (spinOnEnter ? 'THE CITY WILL PICK YOUR ROOM' : 'FIRST STOP · ' + ROOMS[state.room].area);
   if (eggFound.size) $('#enterCount').innerHTML += ` · <b>${eggFound.size}</b> LANDMARKS FOUND`;

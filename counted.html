@@ -7,7 +7,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS · Get Counted">
 <meta property="og:description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, register for the claim, or nominate a New Yorker to be painted.">
-<meta property="og:image" content="https://n3wyorkers.com/og.jpg">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=8429465c33">
 <meta property="og:url" content="https://n3wyorkers.com/counted.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
@@ -155,7 +155,7 @@
 <section id="save" class="screen">
   <div class="in">
     <h2 class="h-m">Keep your number. Return when the city calls.</h2>
-    <p class="body" style="margin-top:12px;margin-bottom:26px">The census is the allowlist. Register and your match is held in your name for THE CLAIM. No wallet needed today. Marketing consent is separate and optional.</p>
+    <p class="body" style="margin-top:12px;margin-bottom:26px">Register and your match is held in your name for THE CLAIM. No wallet needed today. THE CENSUS RELEASE is minting now on OpenSea and it is open to everyone, so there is no list to get on. Marketing consent is separate and optional.</p>
     <form id="saveForm">
       <input type="hidden" name="match" id="matchField">
       <div class="field"><label>Name or alias</label><input name="name" required autocomplete="name" placeholder="Your name"></div>
@@ -210,7 +210,7 @@
     <div class="terms">
       <h3>How a memory is chosen</h3>
       <p>One nomination is picked every Sunday. The New Yorker in it is painted on Monday and posted Tuesday at 11:11 AM with the nominator credited by alias. The subject is never tagged and never named beyond what you wrote.</p>
-      <p>You keep your story and your photo. The painting is a gift: it comes to you as a share card and a Resident Card, it is never sold and never used in an advertisement. If a story or a likeness ever belongs in a product, that is a separate agreement in writing, signed by the person it belongs to.</p>
+      <p>You keep your story and your photo. The painting is a gift: it comes to you as a share card and a Resident Card, it is never sold and never used in an advertisement. If a story or a likeness is ever used commercially, that is a separate agreement in writing, signed by the person it belongs to.</p>
       <p>Photos are references for the painting only and are deleted after the piece is made. To withdraw a story at any time, reply to the email you receive or write to the address in the footer.</p>
     </div>
   </div>
@@ -316,7 +316,7 @@ $("#cardBtn").onclick=async()=>{
   cx.fillStyle="#8899AA"; cx.font="italic 30px 'Fraunces', Georgia, serif"; wrap(cx,p.story||"",72,1500,936,42);
   cx.fillStyle="#2962FF"; cx.fillRect(72,1740,200,6);
   cx.fillStyle="#F0F4F8"; cx.font="600 30px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("GET COUNTED · "+(CFG.domain||"MLOW.NYC"),72,1810);
-  cx.fillStyle="#8899AA"; cx.font="22px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT PRODUCT",72,1860);
+  cx.fillStyle="#8899AA"; cx.font="22px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT",72,1860);
   const a=document.createElement("a"); a.download=`new-yorkers-${p.n}.png`; a.href=cv.toDataURL("image/png"); a.click(); toast("Card saved. Post it, tag @degens");
 };
 function wrap(cx,text,x,y,maxW,lh){ const words=String(text).split(" "); let line=""; for(const w of words){const t=line?line+" "+w:w; if(cx.measureText(t).width>maxW&&line){cx.fillText(line,x,y);y+=lh;line=w;}else line=t;} if(line)cx.fillText(line,x,y); return y; }
@@ -375,5 +375,6 @@ $("#saveForm").addEventListener("submit",async e=>{
 })();
 </script>
 <script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
 </body>
 </html>
