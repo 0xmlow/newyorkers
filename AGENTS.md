@@ -76,6 +76,7 @@ page and looked healthy.
 | Anything about the live site | `../HANDOFF 2026-09-08/00_START_HERE.md` | 243 |
 | The 3D museum | `../HANDOFF 2026-09-08/05_THE_MUSEUM.md` | 180 |
 | Making the museum look better | `_build/museum/PHOTOREALISM_SCOPE_2026-09-08.md` | 300 |
+| Upgrading the earlier rooms to the 2026-09-23 standard | `_build/museum/ROOM_UPGRADE_GUIDE_2026-09-23.md` | 230 |
 | Which agent should do what | `../HANDOFF 2026-09-08/06_AGENT_ROLES.md` | 150 |
 | Build scripts and endpoints | `../HANDOFF 2026-09-08/01_ARCHITECTURE.md` | 107 |
 | Collection, eras, generation | `../HANDOFF.md` | 200 |
