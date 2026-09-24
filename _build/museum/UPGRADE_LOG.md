@@ -144,7 +144,7 @@ dense with small boxes. Budget disk accordingly.
 | 16 `apollo` | 19 mounts, 18 rescued, 18 unreachable | 21 mounts, 0 rescued |
 | 63 `carnegie` | 20 mounts, 16 rescued, 16 unreachable | 18 mounts, 0 rescued |
 
-Museum wide: 407 rescued before this batch, 373 after. Built, not deployed.
+Museum wide: 407 rescued before this batch, 373 after. Deployed as build 20260924-033138.
 
 **apollo.** `corridorMounts` put every viewing spot at x = 9.2 and the seat blocks
 ran wall to wall, so no one could stand where the works were meant to be seen. Now
