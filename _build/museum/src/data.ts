@@ -86,6 +86,12 @@ const CURATION: Record<string, Cur> = {
   sharks: { nb: ['Coney Island'], words: /aquarium|shark|fish|ocean|diver|\bsea\b|tank|boardwalk/i },
   astoriapool: { nb: ['Astoria'], words: /pool|swim|lifeguard|summer|astoria|dive|heat/i },
   rockcenter: { nb: ['Midtown', 'Rockefeller Center'], words: /skat|christmas|holiday|tree|rockefeller|tourist|\bice\b|december/i },
+  empirestate: { nb: ['Midtown', 'Koreatown', 'Murray Hill'], words: /skyscraper|empire|observation|view|skyline|tourist|king kong|wind|height/i },
+  stpatricks: { nb: ['Midtown'], words: /church|cathedral|priest|nun|saint|catholic|prayer|mass|irish|choir|parade/i },
+  dumbo: { nb: ['DUMBO', 'Brooklyn Heights', 'Vinegar Hill'], words: /bridge|cobble|photograph|warehouse|carousel|brooklyn|waterfront|wedding/i },
+  bowbridge: { nb: ['Central Park', 'Upper West Side'], words: /bridge|rowboat|lake|park|swan|duck|romance|proposal|autumn|stroll/i },
+  unassembly: { nb: ['Turtle Bay', 'Midtown East'], words: /diplomat|interpreter|flag|nation|translator|peace|delegate|world|immigrant/i },
+  weitsmanyard: { nb: [], words: /scrap|metal|steel|crane|truck|driver|welder|recycl|junk|iron|machin|worker|forge/i },
 
   pneumatic: { nb: ['Civic Center'], words: /letter|mail|postal|messenger|courier|message/i },
   garment: { nb: ['Garment District'], words: /tailor|seamstress|garment|fashion|fabric|designer/i },
