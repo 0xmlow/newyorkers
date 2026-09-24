@@ -3727,10 +3727,10 @@
   "id": "eldridge",
   "name": "An immigrant constellation",
   "area": "ELDRIDGE STREET SYNAGOGUE",
-  "mood": "Candle light under painted stars",
-  "color": "#819cbd",
-  "description": "A narrow Lower East Side street of tenements, the Moorish facade with its wheel window and horseshoe doors, then the sanctuary: a vault of gold stars on blue, the women's gallery on slender columns, brass chandeliers swaying, the round blue window over the ark.",
-  "signatures": "The 1887 Moorish Revival front with the rose window and horseshoe arches, the barrel vaulted sanctuary painted with stars, the horseshoe arcaded galleries, the central bimah and the ark, the round east window of blue glass and gold stars, the pews.",
+  "mood": "Painted stars, a window of blue glass",
+  "color": "#2f4f9a",
+  "description": "The 1887 front of the Eldridge Street Synagogue on a Lower East Side street of tenements, with its horseshoe arches, twin towers and rose window. Go in by the museum doors in the towers: the New Yorkers hang on the lower level, and a stair climbs from there into the restored sanctuary, where gold stars cover the blue vaults, brass chandeliers hang over the pews and the round east window of 2010 glows above the ark.",
+  "signatures": "The Moorish Revival front by Peter and Francis William Herter with its horseshoe arches, towers and rose window of twelve roundels, the Museum at Eldridge Street on the lower level, the sanctuary with its women's gallery on columns, painted stars on blue vaults, brass chandeliers, the central bimah and the carved walnut ark, the ner tamid, and the 2010 east window by Kiki Smith and Deborah Gans.",
   "daylit": true,
   "index": 126,
   "place": "Eldridge Street Synagogue",
@@ -4589,6 +4589,272 @@
    "Githens and Keally",
    "Jennewein",
    "Thomas Hudson Jones"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "templeemanuel",
+  "name": "Temple Emanu-El",
+  "area": "TEMPLE EMANU-EL / FIFTH AVENUE AT 65TH STREET",
+  "mood": "Late afternoon, a gold arch and one red light",
+  "color": "#b89a5a",
+  "description": "Just inside the bronze doors on Fifth Avenue, under the gallery, with the sanctuary opening ahead: one of the largest synagogue halls in the world, a painted coffered ceiling a hundred feet up, tall windows down both walls and, at the far end, the great arch in gold mosaic round the ark with the eternal light burning in front of it. The New Yorkers hang in the vestibule and in the museum galleries off it, never in the hall; Central Park is across the avenue behind you.",
+  "signatures": "The limestone front on Fifth Avenue with its great recessed arch and arched window over three bronze doors, the vestibule under the gallery, the sanctuary with its coffered ceiling and stained glass, the mosaic arch round the ark, the eternal light, the bimah and the organ pipes, the domed Beth-El Chapel with its Tiffany windows, the Bernard Museum of Judaica, and yellow cabs going down Fifth beside the Central Park wall.",
+  "daylit": false,
+  "index": 156,
+  "place": "Temple Emanu-El, Fifth Avenue at 65th Street",
+  "fact": "Temple Emanu-El at 1 East 65th Street, on the northeast corner with Fifth Avenue, was built from 1928 to 1929 and consecrated in 1930 for the Reform congregation that began on April 6, 1845. It was designed by Robert D. Kohn, working with Charles Butler and Clarence S. Stein, on the former site of the Mrs. William B. Astor House, and replaced the congregation's 1868 Moorish Revival synagogue at 43rd Street and Fifth Avenue, demolished in 1927. Its load bearing masonry walls carry the steel beams of the roof; the hall seats 2,500, more than St. Patrick's Cathedral, making it one of the largest synagogues in the world. The mosaics are by Hildreth Meière, and the building's museum holds more than 650 pieces from the 14th century to the present.",
+  "year": "1930",
+  "learn": "One of the largest synagogues in the world seats 2,500 on Fifth Avenue, opposite Central Park.",
+  "source": {
+   "name": "Temple Emanu-El of New York (1930), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Temple_Emanu-El_of_New_York_(1930)"
+  },
+  "keywords": [
+   "Temple Emanu-El",
+   "Congregation Emanu-El of New York",
+   "1 East 65th Street",
+   "Fifth Avenue synagogue",
+   "Bernard Museum of Judaica",
+   "Hildreth Meière mosaics",
+   "Robert D. Kohn"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "kehilathjeshurun",
+  "name": "Kehilath Jeshurun",
+  "area": "KEHILATH JESHURUN / EAST 85TH STREET",
+  "mood": "A school afternoon on a rowhouse street",
+  "color": "#a8876a",
+  "description": "East 85th Street between Park and Lexington, from the pavement opposite: the 1902 limestone front of Kehilath Jeshurun between brownstones, children from the Ramaz school next door going by in twos, and New Yorkers stood along the kerb on the synagogue side. Through the doors are the lobby and the school corridor, where more of them hang, and the sanctuary with its galleries on columns, forty stained glass windows and the eternal light over the ark.",
+  "signatures": "The limestone front with its round arched windows, pilasters and balustraded roofline, the three doors, the brownstone stoops and street trees of East 85th, the Ramaz lower school next door and its corridor, the lobby, the sanctuary with the U shaped gallery on columns, two tiers of stained glass, a central bimah with a brass rail, the ark under a round window, and the eternal light.",
+  "daylit": true,
+  "index": 157,
+  "place": "Congregation Kehilath Jeshurun, East 85th Street",
+  "fact": "Kehilath Jeshurun, a Modern Orthodox synagogue at 126 East 85th Street, was founded in 1872 as Anshe Jeshurun and built its neoclassical, Romanesque limestone building in 1902. A fire in July 2011, during minor renovations, destroyed nearly half of the sanctuary's forty stained glass windows, which were recreated using historical and forensic analysis; the $21 million rebuild added a two storey, 8,000 square foot education and fitness wing, a central entry shared with the school and an expanded lobby. The Ramaz School, founded in 1937 with the congregation's backing and named from the initials of Rabbi Moses Zevulun Margolies, shares the block.",
+  "year": "1902",
+  "learn": "A 1902 limestone synagogue on a rowhouse street, sharing a front door with the school it founded.",
+  "source": {
+   "name": "Congregation Kehilath Jeshurun, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Congregation_Kehilath_Jeshurun"
+  },
+  "keywords": [
+   "Kehilath Jeshurun",
+   "KJ",
+   "CKJ",
+   "East 85th Street synagogue",
+   "Ramaz School",
+   "Anshe Jeshurun",
+   "2011 fire"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "jewishcenter",
+  "name": "The Jewish Center",
+  "area": "THE JEWISH CENTER / WEST 86TH STREET",
+  "mood": "Shul, school and swimming pool in one tall house",
+  "color": "#8a7a5c",
+  "description": "Inside the doors of the tall Neo-Classical house on West 86th Street that members call the first shul with a pool: New Yorkers on the lobby walls, a grand stair rising straight ahead to the sanctuary, whose eternal light you can see from the door, and a stair on the right going down to the pool, where the lanes are never empty. The social hall opens on the left.",
+  "signatures": "The tall front on West 86th Street with its limestone base, columns and three arched windows under brick storeys, the lobby, the grand stair to the sanctuary foyer, the sanctuary with its women's gallery, coffered ceiling and laylight, the ark and the eternal light, the social hall with its stage, and the swimming pool downstairs with swimmers in the lanes.",
+  "daylit": true,
+  "index": 158,
+  "place": "The Jewish Center, West 86th Street",
+  "fact": "The Jewish Center, a Modern Orthodox synagogue at 131 West 86th Street on the Upper West Side, was founded in 1918 by Jews moving into a neighbourhood then just being built along the new IRT subway line. Its first rabbi was Mordecai Kaplan. The tall Neo-Classical building holds social halls, classrooms, auditoriums and offices besides the main sanctuary, and it was the first synagogue in America built as a cultural, social and recreational home as well as a spiritual one: its members call it the first shul with a pool.",
+  "year": "1918",
+  "learn": "The first shul with a pool: synagogue, school and community house in one tall building on West 86th.",
+  "source": {
+   "name": "Jewish Center (Manhattan), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Jewish_Center_(Manhattan)"
+  },
+  "keywords": [
+   "The Jewish Center",
+   "131 West 86th Street",
+   "shul with a pool",
+   "Upper West Side synagogue",
+   "Mordecai Kaplan",
+   "synagogue center"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "chabad770",
+  "name": "Seven seventy",
+  "area": "770 EASTERN PARKWAY / CROWN HEIGHTS",
+  "mood": "Afternoon on the Parkway, the hall below full",
+  "color": "#9a4a3a",
+  "description": "The red brick house on Eastern Parkway with its three gables, built in 1920 as a doctor's office and bought by Chabad Lubavitch in 1940, now copied in dozens of cities round the world. Across the service road the Parkway malls run under the plane trees with their benches, and down the stair the great study hall is full: students learning in pairs at long tables, the tiered stands along the wall, the lamp lit before the ark. The New Yorkers stand on boards along the sidewalk and hang in the entrance hall and on the stair, never in the hall itself.",
+  "signatures": "The three storey Gothic Revival front of 1920 by Edwin Kline in red brick with stone trim and three gables, the stoop and the pointed arch door, the low building next door over the synagogue, Eastern Parkway by Olmsted and Vaux with its service road, malls, benches and plane trees, the stair down to the study hall with its long tables and benches, the tiered stands, the bimah, the ark and the eternal light, and the shelves of books.",
+  "daylit": true,
+  "index": 159,
+  "place": "770 Eastern Parkway",
+  "fact": "770 Eastern Parkway in Crown Heights was built in 1920 to a design by Edwin Kline in the Collegiate Gothic Revival style and was first a medical office. In 1940 Agudas Chasidei Chabad bought it for the Chabad Lubavitch movement as a home for Rabbi Yosef Yitzchak Schneersohn on his arrival in the United States, and through the 1940s it became the movement's centre: synagogue, yeshiva and offices. The main synagogue is underground, mostly beneath 784 and 788 Eastern Parkway; the first annex was added in 1960, with expansions in the late 1960s and mid 1970s. It serves as a place of daily prayer, a study hall and the hall for farbrengens, and the yeshiva has approximately 1,000 students. Over 55 buildings round the world copy it, mainly its three gables; the first was built in Kfar Chabad, Israel, in 1986.",
+  "year": "1920",
+  "learn": "A doctor's office of 1920 on the world's first parkway became the most copied house front in Jewish life.",
+  "source": {
+   "name": "770 Eastern Parkway, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/770_Eastern_Parkway"
+  },
+  "keywords": [
+   "770 Eastern Parkway",
+   "770",
+   "Chabad Lubavitch World Headquarters",
+   "Crown Heights",
+   "Eastern Parkway",
+   "Olmsted and Vaux"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "ohel",
+  "name": "The Ohel",
+  "area": "THE OHEL / CAMBRIA HEIGHTS",
+  "mood": "A quiet afternoon, candles lit",
+  "color": "#6f6a5e",
+  "description": "The resting place of the sixth and seventh Lubavitcher Rebbes in Montefiore Cemetery, Queens, reached through a house on Francis Lewis Boulevard that has been a visitors center, open day and night, since 1995. Visitors write their notes at the tables, walk the covered path between the headstones, light candles on the shelves of the antechamber and stand at the stone enclosure open to the sky. The New Yorkers hang only in the house and along the covered walk; the enclosure is left as it is.",
+  "signatures": "The visitors center in a two storey house on Francis Lewis Boulevard with its library and writing tables, the glass doors at the back, the covered walk through Montefiore Cemetery, rows of granite headstones behind an iron fence, the antechamber with its shelves of candles, the stone enclosure with its open roof, and traffic on the boulevard.",
+  "daylit": true,
+  "index": 160,
+  "place": "The Ohel, Montefiore Cemetery",
+  "fact": "The Ohel stands in Montefiore Cemetery in Cambria Heights, Queens, at 226-20 Francis Lewis Boulevard near 121st Avenue. Rabbi Yosef Yitzchak Schneersohn was buried in the cemetery in 1950 and Rabbi Menachem Mendel Schneerson beside him in 1994. The graves are enclosed by four walls with an open roof, avoiding the problem of tumas meis for kohanim, and a low wall keeps them at least 320 millimetres away; visitors light candles on shelves in the antechamber. In 1995 Lubavitcher Hasidim bought a house on Francis Lewis Boulevard and made it a visitors center open twenty four hours a day. Notes, kvitlach, arrive by hand, by fax (more than 700 a day) and by e-mail (about 400 a day); they are printed, torn and placed on the graves. About 50,000 people come on Gimmel Tammuz. Montefiore Cemetery was founded in 1908 as the Springfield L. I. Cemetery Society and holds more than 150,000 burials.",
+  "year": "1995",
+  "learn": "A house on a Queens boulevard opens day and night onto a covered walk to a stone enclosure with no roof.",
+  "source": {
+   "name": "Ohel (Chabad), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Ohel_(Chabad)"
+  },
+  "keywords": [
+   "The Ohel",
+   "Ohel Chabad",
+   "Montefiore Cemetery",
+   "Cambria Heights",
+   "Francis Lewis Boulevard",
+   "kvitlach"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "safra",
+  "name": "Jerusalem stone on 63rd",
+  "area": "SAFRA SYNAGOGUE / EAST 63RD STREET",
+  "mood": "Friday afternoon, stone and light",
+  "color": "#c9b89a",
+  "description": "The Edmond J. Safra Synagogue, a Beaux-Arts house of Jerusalem stone on a townhouse block off Fifth Avenue, home since 2003 to a Sephardic congregation. You stand in the stone lobby inside the bronze doors, with the sanctuary open ahead: the reader's platform in the middle of the room, the benches around it, the ark and its lamp at the far end, and daylight falling from the oval in the ceiling. The New Yorkers hang in the lobby and in the social hall beside it, never in the sanctuary.",
+  "signatures": "The Jerusalem stone front with its rusticated base, arched bronze doors and tall arched window, the stone lobby, the sanctuary with the central reader's platform, the benches facing it, the women's gallery on stone columns, the oval skylight in the coffered ceiling, the wooden ark with blank tablets and the eternal light, the social hall, and the brownstones of East 63rd Street across the road.",
+  "daylit": true,
+  "index": 161,
+  "place": "Edmond J. Safra Synagogue, 11 East 63rd Street",
+  "fact": "The Edmond J. Safra Synagogue at 11 East 63rd Street, between Madison and Fifth Avenues, is the home of Congregation Beit Yaakov, an Orthodox congregation of the Sephardi rite. It was designed by the architect Thierry Despont as a work of Beaux-Arts revival, with its facade and its interior both in Jerusalem stone, and bronze doors with a Tree of Life motif by the sculptor Mark Beard. The building was completed in December 2002 and officially inaugurated in October 2003. It stands in the Upper East Side Historic District, so its design needed the approval of the Landmarks Preservation Commission.",
+  "year": "2003",
+  "learn": "A new Beaux-Arts synagogue of Jerusalem stone, finished in 2002 on a townhouse block off Fifth.",
+  "source": {
+   "name": "Edmond J. Safra Synagogue (Manhattan), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Edmond_J._Safra_Synagogue_(Manhattan)"
+  },
+  "keywords": [
+   "Safra Synagogue",
+   "Edmond J. Safra Synagogue",
+   "Congregation Beit Yaakov",
+   "11 East 63rd Street",
+   "Thierry Despont",
+   "Jerusalem stone",
+   "Sephardi"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "shearith",
+  "name": "The oldest congregation",
+  "area": "SHEARITH ISRAEL / CENTRAL PARK WEST",
+  "mood": "Morning on the avenue, candles inside",
+  "color": "#b8a07a",
+  "description": "Congregation Shearith Israel, founded in 1654 and the oldest Jewish congregation in the country, in its fifth home: Arnold Brunner's 1897 temple front on Central Park West, four giant Corinthian columns over a flight of stone steps, the park across the avenue. Inside, the reader's desk faces the ark down the length of a Tiffany room of marble, brass and candle light, and off the lobby the Small Synagogue keeps the colonial furniture of 1730. The New Yorkers hang on boards on the pavement, in the lobby and down the corridor to the parsonage house.",
+  "signatures": "The Neoclassical front with four Corinthian columns, entablature and pediment on a flight of steps, Central Park West with its traffic and the park wall and trees opposite, the lobby, the sanctuary with the reader's desk and its four brass candlesticks facing the ark, the benches along the walls facing each other, the galleries on marble columns, the Tiffany windows, the brass candle chandeliers, the eternal light, and the Small Synagogue in the Georgian style.",
+  "daylit": true,
+  "index": 162,
+  "place": "Congregation Shearith Israel, the Spanish and Portuguese Synagogue, Central Park West at 70th Street",
+  "fact": "Congregation Shearith Israel was established in 1654 in New Amsterdam by Jews who arrived from Dutch Brazil, and is the oldest Jewish congregation in the United States; it was the only Jewish congregation in New York City until 1825. It has worshipped in five buildings: on Mill Street in 1730 and again in 1818, at 60 Crosby Street in 1834, on 19th Street in 1860, and on West 70th Street at Central Park West since 1897. The present Neoclassical building was designed by Arnold Brunner, with interior design and stained glass by Louis Comfort Tiffany, and it was extensively refurbished in 1921.",
+  "year": "1654",
+  "learn": "The oldest Jewish congregation in the country, since 1654, in its fifth home on Central Park West since 1897.",
+  "source": {
+   "name": "Congregation Shearith Israel, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Congregation_Shearith_Israel"
+  },
+  "keywords": [
+   "Shearith Israel",
+   "Spanish and Portuguese Synagogue",
+   "Central Park West",
+   "Arnold Brunner",
+   "Tiffany",
+   "Mill Street Synagogue",
+   "1654"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "parkeast",
+  "name": "Two towers on 67th",
+  "area": "PARK EAST SYNAGOGUE / EAST 67TH STREET",
+  "mood": "Afternoon, school letting out",
+  "color": "#a0603a",
+  "description": "Park East Synagogue, built in 1890 by Schneider and Herter: a Moorish Revival front of red brick and pale stone on East 67th Street, two unequal towers, striped arches over the doors and a rose window between them, with the Park East Day School next door letting out. Inside, galleries on slender columns run round a painted and gilded room lit through coloured glass. The New Yorkers hang on boards on the pavement, in the vestibule, and down the school corridor.",
+  "signatures": "The Moorish Revival front with its asymmetrical towers, the eastern one taller, the striped horseshoe arches over three doors, the rose window, the red brick banded with stone, the domes long gone from the tower tops; inside, the galleries on painted columns and horseshoe arches, the blue and gold ceiling, stained glass, the central reader's platform, pews facing the ark, the eternal light; the Park East Day School next door and East 67th Street.",
+  "daylit": true,
+  "index": 163,
+  "place": "Park East Synagogue, 163 East 67th Street",
+  "fact": "Park East Synagogue at 163 East 67th Street was founded in 1890 by Rabbi Bernard Drachman and Jonas Weil to promote Orthodox Judaism as an alternative to Reform, and its building was completed the same year to designs by Schneider and Herter. The style is Moorish Revival with Byzantine and Romanesque Revival elements: asymmetrical twin towers, the eastern one taller, each once topped by a bulbous dome since removed, and a prominent rose window. It was designated a New York City landmark on January 8, 1980 and listed on the National Register of Historic Places on August 18, 1983. In 2008 Pope Benedict XVI visited the synagogue, the only papal visit to a synagogue in the United States.",
+  "year": "1890",
+  "learn": "An 1890 Moorish Revival front with two unequal towers, a landmark since 1980.",
+  "source": {
+   "name": "Park East Synagogue, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Park_East_Synagogue"
+  },
+  "keywords": [
+   "Park East Synagogue",
+   "163 East 67th Street",
+   "Schneider and Herter",
+   "Moorish Revival",
+   "Park East Day School"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "gramercy",
+  "name": "The locked park",
+  "area": "GRAMERCY PARK",
+  "mood": "Behind the railings, a key away",
+  "color": "#3f5a3a",
+  "description": "The last private park in Manhattan, two acres of gravel paths, planting and old trees behind a locked iron fence, with Edwin Booth on his pedestal in the middle. The New Yorkers hang on the railings facing the street, under the hotel awning and on the fronts of the clubs on Gramercy Park South. Only the houses round the square hold keys, and somewhere on this block one is waiting to be found: find it and the gate opens.",
+  "signatures": "The locked iron fence with its spear points and gates, the gravel paths and planting, Edmond T. Quinn's statue of Edwin Booth, the National Arts Club in the Tilden mansion and The Players on Gramercy Park South, the Gramercy Park Hotel and its awning, 34 and 36 Gramercy Park East, the brownstones with iron porches on the west side, and the key.",
+  "daylit": true,
+  "index": 164,
+  "place": "Gramercy Park",
+  "fact": "Samuel B. Ruggles created Gramercy Park in 1831, about two acres, enclosed by a fence in 1833. Since December 31, 1831 it has been held in common by the owners of the 39 surrounding structures, with two keys allocated to each original lot; in 2012 there were 383 numbered and coded keys, the Medeco locks are changed annually, and the Gramercy Park Hotel holds 12 keys. Edmond T. Quinn's statue of Edwin Booth was dedicated on November 13, 1918. The National Arts Club is at No. 15 Gramercy Park South in the Tilden mansion remodelled by Calvert Vaux, The Players at No. 16. The historic district was designated on September 20, 1966, and the park opens to the public on Christmas Eve.",
+  "year": "1831",
+  "learn": "Manhattan's locked park: two keys to a lot, and the locks change every year.",
+  "source": {
+   "name": "Gramercy Park, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Gramercy_Park"
+  },
+  "keywords": [
+   "Gramercy Park",
+   "Gramercy Park key",
+   "Samuel Ruggles",
+   "Edwin Booth statue",
+   "National Arts Club",
+   "The Players",
+   "Gramercy Park Hotel",
+   "34 Gramercy Park East"
   ],
   "article": null,
   "articles": []

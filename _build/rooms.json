@@ -1378,10 +1378,10 @@
   "id": "eldridge",
   "name": "An immigrant constellation",
   "area": "ELDRIDGE STREET SYNAGOGUE",
-  "mood": "Candle light under painted stars",
-  "color": "#819cbd",
-  "description": "A narrow Lower East Side street of tenements, the Moorish facade with its wheel window and horseshoe doors, then the sanctuary: a vault of gold stars on blue, the women's gallery on slender columns, brass chandeliers swaying, the round blue window over the ark.",
-  "signatures": "The 1887 Moorish Revival front with the rose window and horseshoe arches, the barrel vaulted sanctuary painted with stars, the horseshoe arcaded galleries, the central bimah and the ark, the round east window of blue glass and gold stars, the pews.",
+  "mood": "Painted stars, a window of blue glass",
+  "color": "#2f4f9a",
+  "description": "The 1887 front of the Eldridge Street Synagogue on a Lower East Side street of tenements, with its horseshoe arches, twin towers and rose window. Go in by the museum doors in the towers: the New Yorkers hang on the lower level, and a stair climbs from there into the restored sanctuary, where gold stars cover the blue vaults, brass chandeliers hang over the pews and the round east window of 2010 glows above the ark.",
+  "signatures": "The Moorish Revival front by Peter and Francis William Herter with its horseshoe arches, towers and rose window of twelve roundels, the Museum at Eldridge Street on the lower level, the sanctuary with its women's gallery on columns, painted stars on blue vaults, brass chandeliers, the central bimah and the carved walnut ark, the ner tamid, and the 2010 east window by Kiki Smith and Deborah Gans.",
   "daylit": true,
   "index": 126
  },
@@ -1703,5 +1703,104 @@
   "signatures": "The concave Indiana limestone front following the oval of the plaza, the gray granite base, the two tall pylons with their gilded reliefs, the bronze screen with fifteen gilded panels over the doors, BROOKLYN PUBLIC LIBRARY cut above the entrance, the terrace with its three stairways, lamps and planting beds, the long wings with tall slot windows running down Flatbush Avenue and Eastern Parkway, the lobby in terrazzo and blond oak, and across the plaza the Bailey Fountain and the Soldiers' and Sailors' Arch.",
   "daylit": true,
   "index": 155
+ },
+ {
+  "id": "templeemanuel",
+  "name": "Temple Emanu-El",
+  "area": "TEMPLE EMANU-EL / FIFTH AVENUE AT 65TH STREET",
+  "mood": "Late afternoon, a gold arch and one red light",
+  "color": "#b89a5a",
+  "description": "Just inside the bronze doors on Fifth Avenue, under the gallery, with the sanctuary opening ahead: one of the largest synagogue halls in the world, a painted coffered ceiling a hundred feet up, tall windows down both walls and, at the far end, the great arch in gold mosaic round the ark with the eternal light burning in front of it. The New Yorkers hang in the vestibule and in the museum galleries off it, never in the hall; Central Park is across the avenue behind you.",
+  "signatures": "The limestone front on Fifth Avenue with its great recessed arch and arched window over three bronze doors, the vestibule under the gallery, the sanctuary with its coffered ceiling and stained glass, the mosaic arch round the ark, the eternal light, the bimah and the organ pipes, the domed Beth-El Chapel with its Tiffany windows, the Bernard Museum of Judaica, and yellow cabs going down Fifth beside the Central Park wall.",
+  "daylit": false,
+  "index": 156
+ },
+ {
+  "id": "kehilathjeshurun",
+  "name": "Kehilath Jeshurun",
+  "area": "KEHILATH JESHURUN / EAST 85TH STREET",
+  "mood": "A school afternoon on a rowhouse street",
+  "color": "#a8876a",
+  "description": "East 85th Street between Park and Lexington, from the pavement opposite: the 1902 limestone front of Kehilath Jeshurun between brownstones, children from the Ramaz school next door going by in twos, and New Yorkers stood along the kerb on the synagogue side. Through the doors are the lobby and the school corridor, where more of them hang, and the sanctuary with its galleries on columns, forty stained glass windows and the eternal light over the ark.",
+  "signatures": "The limestone front with its round arched windows, pilasters and balustraded roofline, the three doors, the brownstone stoops and street trees of East 85th, the Ramaz lower school next door and its corridor, the lobby, the sanctuary with the U shaped gallery on columns, two tiers of stained glass, a central bimah with a brass rail, the ark under a round window, and the eternal light.",
+  "daylit": true,
+  "index": 157
+ },
+ {
+  "id": "jewishcenter",
+  "name": "The Jewish Center",
+  "area": "THE JEWISH CENTER / WEST 86TH STREET",
+  "mood": "Shul, school and swimming pool in one tall house",
+  "color": "#8a7a5c",
+  "description": "Inside the doors of the tall Neo-Classical house on West 86th Street that members call the first shul with a pool: New Yorkers on the lobby walls, a grand stair rising straight ahead to the sanctuary, whose eternal light you can see from the door, and a stair on the right going down to the pool, where the lanes are never empty. The social hall opens on the left.",
+  "signatures": "The tall front on West 86th Street with its limestone base, columns and three arched windows under brick storeys, the lobby, the grand stair to the sanctuary foyer, the sanctuary with its women's gallery, coffered ceiling and laylight, the ark and the eternal light, the social hall with its stage, and the swimming pool downstairs with swimmers in the lanes.",
+  "daylit": true,
+  "index": 158
+ },
+ {
+  "id": "chabad770",
+  "name": "Seven seventy",
+  "area": "770 EASTERN PARKWAY / CROWN HEIGHTS",
+  "mood": "Afternoon on the Parkway, the hall below full",
+  "color": "#9a4a3a",
+  "description": "The red brick house on Eastern Parkway with its three gables, built in 1920 as a doctor's office and bought by Chabad Lubavitch in 1940, now copied in dozens of cities round the world. Across the service road the Parkway malls run under the plane trees with their benches, and down the stair the great study hall is full: students learning in pairs at long tables, the tiered stands along the wall, the lamp lit before the ark. The New Yorkers stand on boards along the sidewalk and hang in the entrance hall and on the stair, never in the hall itself.",
+  "signatures": "The three storey Gothic Revival front of 1920 by Edwin Kline in red brick with stone trim and three gables, the stoop and the pointed arch door, the low building next door over the synagogue, Eastern Parkway by Olmsted and Vaux with its service road, malls, benches and plane trees, the stair down to the study hall with its long tables and benches, the tiered stands, the bimah, the ark and the eternal light, and the shelves of books.",
+  "daylit": true,
+  "index": 159
+ },
+ {
+  "id": "ohel",
+  "name": "The Ohel",
+  "area": "THE OHEL / CAMBRIA HEIGHTS",
+  "mood": "A quiet afternoon, candles lit",
+  "color": "#6f6a5e",
+  "description": "The resting place of the sixth and seventh Lubavitcher Rebbes in Montefiore Cemetery, Queens, reached through a house on Francis Lewis Boulevard that has been a visitors center, open day and night, since 1995. Visitors write their notes at the tables, walk the covered path between the headstones, light candles on the shelves of the antechamber and stand at the stone enclosure open to the sky. The New Yorkers hang only in the house and along the covered walk; the enclosure is left as it is.",
+  "signatures": "The visitors center in a two storey house on Francis Lewis Boulevard with its library and writing tables, the glass doors at the back, the covered walk through Montefiore Cemetery, rows of granite headstones behind an iron fence, the antechamber with its shelves of candles, the stone enclosure with its open roof, and traffic on the boulevard.",
+  "daylit": true,
+  "index": 160
+ },
+ {
+  "id": "safra",
+  "name": "Jerusalem stone on 63rd",
+  "area": "SAFRA SYNAGOGUE / EAST 63RD STREET",
+  "mood": "Friday afternoon, stone and light",
+  "color": "#c9b89a",
+  "description": "The Edmond J. Safra Synagogue, a Beaux-Arts house of Jerusalem stone on a townhouse block off Fifth Avenue, home since 2003 to a Sephardic congregation. You stand in the stone lobby inside the bronze doors, with the sanctuary open ahead: the reader's platform in the middle of the room, the benches around it, the ark and its lamp at the far end, and daylight falling from the oval in the ceiling. The New Yorkers hang in the lobby and in the social hall beside it, never in the sanctuary.",
+  "signatures": "The Jerusalem stone front with its rusticated base, arched bronze doors and tall arched window, the stone lobby, the sanctuary with the central reader's platform, the benches facing it, the women's gallery on stone columns, the oval skylight in the coffered ceiling, the wooden ark with blank tablets and the eternal light, the social hall, and the brownstones of East 63rd Street across the road.",
+  "daylit": true,
+  "index": 161
+ },
+ {
+  "id": "shearith",
+  "name": "The oldest congregation",
+  "area": "SHEARITH ISRAEL / CENTRAL PARK WEST",
+  "mood": "Morning on the avenue, candles inside",
+  "color": "#b8a07a",
+  "description": "Congregation Shearith Israel, founded in 1654 and the oldest Jewish congregation in the country, in its fifth home: Arnold Brunner's 1897 temple front on Central Park West, four giant Corinthian columns over a flight of stone steps, the park across the avenue. Inside, the reader's desk faces the ark down the length of a Tiffany room of marble, brass and candle light, and off the lobby the Small Synagogue keeps the colonial furniture of 1730. The New Yorkers hang on boards on the pavement, in the lobby and down the corridor to the parsonage house.",
+  "signatures": "The Neoclassical front with four Corinthian columns, entablature and pediment on a flight of steps, Central Park West with its traffic and the park wall and trees opposite, the lobby, the sanctuary with the reader's desk and its four brass candlesticks facing the ark, the benches along the walls facing each other, the galleries on marble columns, the Tiffany windows, the brass candle chandeliers, the eternal light, and the Small Synagogue in the Georgian style.",
+  "daylit": true,
+  "index": 162
+ },
+ {
+  "id": "parkeast",
+  "name": "Two towers on 67th",
+  "area": "PARK EAST SYNAGOGUE / EAST 67TH STREET",
+  "mood": "Afternoon, school letting out",
+  "color": "#a0603a",
+  "description": "Park East Synagogue, built in 1890 by Schneider and Herter: a Moorish Revival front of red brick and pale stone on East 67th Street, two unequal towers, striped arches over the doors and a rose window between them, with the Park East Day School next door letting out. Inside, galleries on slender columns run round a painted and gilded room lit through coloured glass. The New Yorkers hang on boards on the pavement, in the vestibule, and down the school corridor.",
+  "signatures": "The Moorish Revival front with its asymmetrical towers, the eastern one taller, the striped horseshoe arches over three doors, the rose window, the red brick banded with stone, the domes long gone from the tower tops; inside, the galleries on painted columns and horseshoe arches, the blue and gold ceiling, stained glass, the central reader's platform, pews facing the ark, the eternal light; the Park East Day School next door and East 67th Street.",
+  "daylit": true,
+  "index": 163
+ },
+ {
+  "id": "gramercy",
+  "name": "The locked park",
+  "area": "GRAMERCY PARK",
+  "mood": "Behind the railings, a key away",
+  "color": "#3f5a3a",
+  "description": "The last private park in Manhattan, two acres of gravel paths, planting and old trees behind a locked iron fence, with Edwin Booth on his pedestal in the middle. The New Yorkers hang on the railings facing the street, under the hotel awning and on the fronts of the clubs on Gramercy Park South. Only the houses round the square hold keys, and somewhere on this block one is waiting to be found: find it and the gate opens.",
+  "signatures": "The locked iron fence with its spear points and gates, the gravel paths and planting, Edmond T. Quinn's statue of Edwin Booth, the National Arts Club in the Tilden mansion and The Players on Gramercy Park South, the Gramercy Park Hotel and its awning, 34 and 36 Gramercy Park East, the brownstones with iron porches on the west side, and the key.",
+  "daylit": true,
+  "index": 164
  }
 ]
