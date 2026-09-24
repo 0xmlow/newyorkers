@@ -437,17 +437,17 @@
   "area": "NYPL ROSE READING ROOM",
   "mood": "Quiet afternoon",
   "color": "#c4a47a",
-  "description": "Long oak tables under bronze lamps, book galleries on the walls, and paintings set into the carved ceiling coffers.",
-  "signatures": "Rows of reading tables with bronze lamps, two tier bookcase walls with a gallery, tall arched windows, a gilded coffered ceiling with painted panels.",
+  "description": "Seventy eight feet by two hundred and ninety seven under a painted sky, two halls of oak tables and bronze lamps either side of the delivery desk, two tiers of books with a gallery between them, and the afternoon coming in through the high west windows. You come in from Fifth Avenue, past the lions.",
+  "signatures": "The reading room built to its own plan with the delivery desk in the middle, the long oak tables with their bronze lamps and readers at them, two tiers of bookcases and the gallery, the tall windows, the coffered gilt ceiling with painted skies, the chandeliers, and outside the marble front on Fifth Avenue with Patience and Fortitude on the steps.",
   "daylit": false,
   "index": 15,
   "place": "New York Public Library, Rose Main Reading Room",
-  "fact": "The library's Fifth Avenue building opened on May 23, 1911, designed by Carrere and Hastings. The main reading room is 78 feet wide, 297 feet long and 52 feet high, with painted skies in the ceiling. It was named for the Rose family in 1998 and reopened in 2016 after a two year restoration. The stone lions at the door were named Patience and Fortitude by Mayor La Guardia.",
+  "fact": "The library's Fifth Avenue building opened on May 23, 1911, designed by Carrère and Hastings in the Beaux-Arts style. The main reading room is 78 feet wide, 297 feet long and 52 feet high. It reopened on November 16, 1998 after a restoration, renamed for the children of a benefactor who gave 15 million dollars toward it. In May 2014 a rosette fell from the ceiling; a 12 million dollar restoration secured the rosettes with steel cables and the room reopened on October 5, 2016. The marble lions at the door were named Patience and Fortitude by Mayor La Guardia in the 1930s.",
   "year": "1911",
   "learn": "The reading room is nearly two blocks long under a painted sky.",
   "source": {
-   "name": "The New York Public Library",
-   "url": "https://www.nypl.org"
+   "name": "Stephen A. Schwarzman Building, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Stephen_A._Schwarzman_Building"
   },
   "keywords": [
    "Rose Main Reading Room",
@@ -1624,24 +1624,24 @@
   "area": "ARTHUR AVENUE",
   "mood": "Saturday morning",
   "color": "#c89a5a",
-  "description": "The Belmont street of bakeries and butchers, then the covered retail market: stalls under one roof, hanging provolone and salami, the works over the counters.",
-  "signatures": "The 1940 market hall with its skylit steel roof, the long aisles of stalls, cheeses and sausages hung from rails, crates of produce, cigar rollers by the door, the avenue of awnings outside.",
+  "description": "The Belmont street of bakeries and butchers, awnings down both sides and the produce out on the sidewalk, then the city market the pushcarts moved into: one long brick hall with light coming down the aisles, provolone and salami hanging over the counters, and the works hung over the stalls where the prices would be.",
+  "signatures": "The retail market La Guardia built to bring the pushcarts indoors, its brick front and name over the door, the skylit aisles, the stalls with salami and provolone hung from rails, the slicer at the deli counter, the cigar roller by the door, the avenue of awnings with bread and fruit out front.",
   "daylit": true,
   "index": 54,
   "place": "Arthur Avenue Retail Market, Belmont",
-  "fact": "Arthur Avenue in the Belmont section of the Bronx has been the center of an Italian community since the early 1900s. The Arthur Avenue Retail Market opened in 1940, built by the city under Mayor La Guardia to bring pushcart vendors indoors under one roof. Butchers, cheese makers and bakers still run stalls there. The street is named for President Chester A. Arthur.",
-  "year": "1940",
-  "learn": "La Guardia moved the pushcarts indoors in 1940. The stalls are still there.",
+  "fact": "Arthur Avenue in Belmont has been the heart of the Bronx's Little Italy since a wave of Italian immigrants arrived with the building of the Bronx Zoo and the Jerome Park Reservoir at the turn of the twentieth century. The city built the Arthur Avenue Retail Market under Mayor La Guardia to bring the pushcart vendors off the street and under one roof. The Historic Districts Council dates its opening to October 28, 1941, with 120 stalls; other accounts give 1940. The avenue is named for President Chester A. Arthur, and in 2016 the American Planning Association named it one of America's Greatest Streets.",
+  "year": "1941",
+  "learn": "La Guardia moved the pushcarts indoors. The stalls are still there.",
   "source": {
-   "name": "Bronx County Historical Society",
-   "url": "https://bronxhistoricalsociety.org"
+   "name": "Arthur Avenue Retail Market, Historic Districts Council",
+   "url": "https://6tocelebrate.org/site/arthur-avenue-retail-market/"
   },
   "keywords": [
    "Arthur Avenue",
    "Arthur Avenue Retail Market",
    "Belmont Bronx Little Italy",
-   "Arthur Avenue bakery",
    "Bronx Little Italy",
+   "La Guardia pushcart markets",
    "Arthur Avenue market stalls"
   ],
   "article": "the-bodega",

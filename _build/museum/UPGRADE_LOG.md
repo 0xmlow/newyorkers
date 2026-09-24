@@ -15,7 +15,7 @@ import line. Ids never change: they are URLs, tokens and thumbnails.
 | 24 `bleachers` | 22 mounts, 20 rescued, 20 backwards, 10 obstructed | 16 mounts, 0 rescued |
 | 45 `liberty` | 25 mounts, 25 rescued, 25 backwards | 24 mounts, 0 rescued |
 
-Museum wide: 527 rescued works before this pass, 442 after batch two.
+Museum wide: 527 rescued works before this pass, 442 after batch two, 407 after batch three.
 
 **bleachers.** The visitor now stands on the warning track in right centre with the
 whole bowl in front of them. Built to a ball field's real geometry: home plate at
@@ -83,8 +83,62 @@ stage; 1,200 bulbs, three grades of tree, gulls, a boat, and people on every pat
 7. **A path made of stacked boxes on a hill is a staircase.** Sample the line and lay a
    quad strip on the terrain (`terrainStrip` in `up2.ts`).
 
+## Batch three, 2026-09-23 (`rooms/up3.ts`)
+
+| room | was | now |
+|---|---|---|
+| 54 `arthuravenue` | 22 mounts, 17 rescued, 15 backwards, 7 unreachable | 24 mounts, 0 rescued |
+| 15 `library` | 25 mounts, 18 rescued, 18 unreachable | 24 mounts, 0 rescued |
+
+Museum wide: 442 rescued before this batch, 407 after.
+
+**arthuravenue.** The boards over the stalls hung their pictures facing into the
+board (the rotation signs were swapped), four targets stood inside the market's own
+walls, and the three works on the avenue faced the shopfronts. The room also stopped
+at the door. Now the avenue has awnings and a name on every fascia, fruit and bread
+out on the sidewalk, parked cars at both curbs, traffic both ways, lamps, the corner
+pole and the last pushcart parked outside. The hall is laid out as four islands and
+two end stalls on five skylit aisles, each aisle under a raised glass lantern, with
+salumeria, latticini, pescheria, panetteria and produce counters, swinging salami
+and provolone, a slicer turning, a cigar roller by the door, a coffee bar, and a hand
+truck of crates working the fourth aisle. Sixteen works hang on the stall spines
+over the counters, four over the end stalls, four on the brick front to the street.
+The Manhattan towers are gone; Belmont gets low rooftops. About 95 k triangles.
+
+**library.** `corridorMounts` hung the works inside the bookcases and put every
+viewing spot at x = 6.4, in the middle of the reading tables, which were blocked from
+2.6 to 7.8. Rebuilt to the room's own numbers (78 by 297 feet, 52 high) as two halls
+either side of the delivery desk, with tables pulled in so a five metre side aisle
+runs clear along each wall; the works hang in twenty bays cut into the lower tier of
+shelves plus four on the end walls. The ceiling has gilt beams, ochre coffers and a
+painted sky over each hall with clouds drifting in it; the high west windows let the
+afternoon in as shafts; six chandeliers; about 70 readers who lean over their books
+and sit back to turn a page; a queue at the desk, a librarian with a book truck. The
+east door opens through a marble hall to the Fifth Avenue front, its columns, the
+terrace and Patience and Fortitude on the steps, with the avenue below. About 142 k
+triangles after taking the chair legs, shade bevels and coffer rings down.
+
+Eggs: six each, all new, from sources fetched and checked on 2026-09-23 (Historic
+Districts Council, Turnstile Tours, Wikipedia for Arthur Avenue, Belmont and the
+Schwarzman Building). `_build/learn/room_facts_6.json` replaces both rooms' entries
+from `room_facts_1.json`, which pointed at site homepages. The market's opening date
+is disputed (October 28, 1941 per the HDC, 1940 elsewhere); the egg and the fact say
+so rather than pick one.
+
+## Two more faults, from batch three
+
+8. **`%` on a negative number is negative in JavaScript.** `books[(j + z0) % 3]` with
+   z0 below zero reads `books[-1]`, which is undefined, and three.js draws the mesh in
+   its default white material. Half the bookcases and half the market canopies came
+   out as glowing white slabs. Use `((a % n) + n) % n` (`mod` in `up3.ts`).
+9. **A figure standing inside a solid counter shows only its head**, lying on the top
+   like a dropped ball. Staff behind a counter need a hollow counter or no figure.
+
+Also: both GLBs came out at about 70 MB, not 40; the hall and the reading room are
+dense with small boxes. Budget disk accordingly.
+
 ## Next, in the audit's order
 
-arthuravenue (17 rescued), library (18), apollo (18), carnegie (16), mcny (15),
-dakota (14), snug (13), strivers (13), halloffame (12). Then the facade rooms, then
+apollo (18), carnegie (16), mcny (15), dakota (14), snug (13), strivers (13),
+halloffame (12). Then the facade rooms, then
 the ported corridors 1 to 21.

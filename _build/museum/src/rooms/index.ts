@@ -1,14 +1,15 @@
 import { LANDMARK_ROOMS } from './y';
 import { LIVE_ROOMS } from './v0';
-/* rebuilt rooms: the originals stay in f.ts and j.ts, they are simply not imported */
+/* rebuilt rooms: the originals stay in their own files (f, j, c, i, l, d), they are simply not imported */
 import { bleachers2, liberty2 } from './up1';
 import { littleisland2, highline2 } from './up2';
+import { arthuravenue2, library2 } from './up3';
 import { NEW_WORKING_ROOMS } from './x';
 import type { RoomDef } from './types';
 import { bowery, subway } from './a';
 import { met, brooklyn, times, ferry } from './b';
 import { botanical, penn, grand, coney } from './c';
-import { bethesda, oculus, guggenheim, library, apollo } from './d';
+import { bethesda, oculus, guggenheim, apollo } from './d';
 import { unisphere, tram, cloisters, navyyard, governors } from './e';
 import { chrysler, flatiron, deli, washington } from './f';
 import { boathouse, halloffame, twa, snug, wollman } from './g';
@@ -16,7 +17,7 @@ import { doyers, strivers, rock, frick, seaport } from './h';
 import { vessel, cathedral, queensboro, bushwick } from './i';
 import { cyclone, brooklynbridge, panorama, oysterbar } from './j';
 import { morgan, radiocity, woolworth, wallstreet, lincolncenter } from './k';
-import { belvedere, highbridge, arthuravenue, wavehill, gantry } from './l';
+import { belvedere, highbridge, wavehill, gantry } from './l';
 import { rockaway, greenwood, domino, boatgraveyard, intrepid } from './m';
 import { studio8h, carnegie, vanguard, rucker, sedgwick } from './n';
 import { balloons, stonewall, sangennaro, chelseahotel, strand } from './o';
@@ -28,4 +29,4 @@ import { jewishmuseum, rubin, theshed, armory, customhouse } from './t';
 import { mad, hispanicsociety, studiomuseum, elmuseo, mcny } from './u';
 import { nyhistorical, diachelsea, chelseablock, fotografiska, ps1 } from './v';
 import { noguchi, socrates, brooklynmuseum, pioneerworks, bronxmuseum } from './w';
-export const ROOMS: RoomDef[] = [bowery, subway, met, brooklyn, times, ferry, botanical, penn, grand, highline2, coney, bethesda, oculus, guggenheim, library, apollo, unisphere, tram, cloisters, navyyard, governors, chrysler, flatiron, bleachers2, deli, washington, boathouse, halloffame, twa, snug, wollman, doyers, strivers, rock, frick, seaport, vessel, littleisland2, cathedral, queensboro, bushwick, cyclone, brooklynbridge, panorama, liberty2, oysterbar, morgan, radiocity, woolworth, wallstreet, lincolncenter, belvedere, highbridge, arthuravenue, wavehill, gantry, rockaway, greenwood, domino, boatgraveyard, intrepid, studio8h, carnegie, vanguard, rucker, sedgwick, balloons, stonewall, sangennaro, chelseahotel, strand, dakota, garden, dendur, moma, whitney, ellis, marathon, halloween, easternparkway, manhattanhenge, metgreathall, metamerican, meteuropean, oceanlife, rosecenter, momaatrium, newmuseum, neuegalerie, cooperhewitt, breuer, jewishmuseum, rubin, theshed, armory, customhouse, mad, hispanicsociety, studiomuseum, elmuseo, mcny, nyhistorical, diachelsea, chelseablock, fotografiska, ps1, noguchi, socrates, brooklynmuseum, pioneerworks, bronxmuseum, ...NEW_WORKING_ROOMS, ...LANDMARK_ROOMS, ...LIVE_ROOMS];
+export const ROOMS: RoomDef[] = [bowery, subway, met, brooklyn, times, ferry, botanical, penn, grand, highline2, coney, bethesda, oculus, guggenheim, library2, apollo, unisphere, tram, cloisters, navyyard, governors, chrysler, flatiron, bleachers2, deli, washington, boathouse, halloffame, twa, snug, wollman, doyers, strivers, rock, frick, seaport, vessel, littleisland2, cathedral, queensboro, bushwick, cyclone, brooklynbridge, panorama, liberty2, oysterbar, morgan, radiocity, woolworth, wallstreet, lincolncenter, belvedere, highbridge, arthuravenue2, wavehill, gantry, rockaway, greenwood, domino, boatgraveyard, intrepid, studio8h, carnegie, vanguard, rucker, sedgwick, balloons, stonewall, sangennaro, chelseahotel, strand, dakota, garden, dendur, moma, whitney, ellis, marathon, halloween, easternparkway, manhattanhenge, metgreathall, metamerican, meteuropean, oceanlife, rosecenter, momaatrium, newmuseum, neuegalerie, cooperhewitt, breuer, jewishmuseum, rubin, theshed, armory, customhouse, mad, hispanicsociety, studiomuseum, elmuseo, mcny, nyhistorical, diachelsea, chelseablock, fotografiska, ps1, noguchi, socrates, brooklynmuseum, pioneerworks, bronxmuseum, ...NEW_WORKING_ROOMS, ...LANDMARK_ROOMS, ...LIVE_ROOMS];

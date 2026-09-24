@@ -159,8 +159,8 @@
   "area": "NYPL ROSE READING ROOM",
   "mood": "Quiet afternoon",
   "color": "#c4a47a",
-  "description": "Long oak tables under bronze lamps, book galleries on the walls, and paintings set into the carved ceiling coffers.",
-  "signatures": "Rows of reading tables with bronze lamps, two tier bookcase walls with a gallery, tall arched windows, a gilded coffered ceiling with painted panels.",
+  "description": "Seventy eight feet by two hundred and ninety seven under a painted sky, two halls of oak tables and bronze lamps either side of the delivery desk, two tiers of books with a gallery between them, and the afternoon coming in through the high west windows. You come in from Fifth Avenue, past the lions.",
+  "signatures": "The reading room built to its own plan with the delivery desk in the middle, the long oak tables with their bronze lamps and readers at them, two tiers of bookcases and the gallery, the tall windows, the coffered gilt ceiling with painted skies, the chandeliers, and outside the marble front on Fifth Avenue with Patience and Fortitude on the steps.",
   "daylit": false,
   "index": 15
  },
@@ -588,8 +588,8 @@
   "area": "ARTHUR AVENUE",
   "mood": "Saturday morning",
   "color": "#c89a5a",
-  "description": "The Belmont street of bakeries and butchers, then the covered retail market: stalls under one roof, hanging provolone and salami, the works over the counters.",
-  "signatures": "The 1940 market hall with its skylit steel roof, the long aisles of stalls, cheeses and sausages hung from rails, crates of produce, cigar rollers by the door, the avenue of awnings outside.",
+  "description": "The Belmont street of bakeries and butchers, awnings down both sides and the produce out on the sidewalk, then the city market the pushcarts moved into: one long brick hall with light coming down the aisles, provolone and salami hanging over the counters, and the works hung over the stalls where the prices would be.",
+  "signatures": "The retail market La Guardia built to bring the pushcarts indoors, its brick front and name over the door, the skylit aisles, the stalls with salami and provolone hung from rails, the slicer at the deli counter, the cigar roller by the door, the avenue of awnings with bread and fruit out front.",
   "daylit": true,
   "index": 54
  },

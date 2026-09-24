@@ -39,6 +39,8 @@ bleachers      f.ts  ->  bleachers2      rooms/up1.ts
 liberty        j.ts  ->  liberty2        rooms/up1.ts
 highline       c.ts  ->  highline2       rooms/up2.ts
 littleisland   i.ts  ->  littleisland2   rooms/up2.ts
+arthuravenue   l.ts  ->  arthuravenue2   rooms/up3.ts
+library        d.ts  ->  library2        rooms/up3.ts
 ```
 
 **Ids never change.** They are URLs (`/rooms/<id>`), token identities and thumbnail
@@ -49,7 +51,7 @@ resolves the ROOMS order by matching `\b([a-z0-9]+)\b` against the text of the R
 array. A name like `bleachersV2` matches nothing, the room drops out of `rooms.json`,
 and it disappears from the menu, the sitemap and the mint kit without any error.
 
-Next batch goes in `rooms/up3.ts` with names like `arthuravenue2`.
+Next batch goes in `rooms/up4.ts` with names like `apollo2`.
 
 ## 3. Where everything is
 
@@ -143,8 +145,9 @@ a mirror until metalness comes down; a slab under a pool hides the pool.
 | before this programme | 527 |
 | after batch one | 482 |
 | after batch two | 442 |
+| after batch three (`arthuravenue`, `library`, in `rooms/up3.ts`) | 407 |
 
-Next, in the audit's order: `arthuravenue` (17), `library` (18), `apollo` (18),
+Next, in the audit's order: `apollo` (18),
 `carnegie` (16), `mcny` (15), `dakota` (14), `snug` (13), `strivers` (13),
 `halloffame` (12). Then the facade rooms (most of the institutions 82 to 111, which
 stop at the front door), then the ported corridors 1 to 21.
