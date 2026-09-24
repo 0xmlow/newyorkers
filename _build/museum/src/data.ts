@@ -91,6 +91,9 @@ const CURATION: Record<string, Cur> = {
   dumbo: { nb: ['DUMBO', 'Brooklyn Heights', 'Vinegar Hill'], words: /bridge|cobble|photograph|warehouse|carousel|brooklyn|waterfront|wedding/i },
   bowbridge: { nb: ['Central Park', 'Upper West Side'], words: /bridge|rowboat|lake|park|swan|duck|romance|proposal|autumn|stroll/i },
   unassembly: { nb: ['Turtle Bay', 'Midtown East'], words: /diplomat|interpreter|flag|nation|translator|peace|delegate|world|immigrant/i },
+  palmcourt: { nb: ['Midtown', 'Central Park South'], words: /tea|hotel|plaza|palm|waiter|pianist|eloise|lunch|elegan/i },
+  chelseamarket: { nb: ['Chelsea', 'Meatpacking District'], words: /market|food|baker|cookie|oreo|factory|shop|vendor|lobster/i },
+  brooklyncentral: { nb: ['Prospect Heights', 'Park Slope', 'Grand Army Plaza'], words: /library|book|read|librarian|student|writer|poet|brooklyn/i },
   weitsmanyard: { nb: [], words: /scrap|metal|steel|crane|truck|driver|welder|recycl|junk|iron|machin|worker|forge/i },
 
   pneumatic: { nb: ['Civic Center'], words: /letter|mail|postal|messenger|courier|message/i },
