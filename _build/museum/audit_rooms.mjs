@@ -276,5 +276,5 @@ if (process.argv.includes('--json')) {
     console.log('\nroom                 mounts  unreach  backwards  stuck');
     for (const r of list) console.log(`  ${r.id.padEnd(18)} ${String(r.mounts).padStart(5)} ${String(r.unreachable).padStart(8)} ${String(r.backwards).padStart(10)} ${String(r.stuck).padStart(6)}`);
   }
-  process.exitCode = sum('stuck') ? 1 : 0;   // only unreachable works fail a build
+  process.exitCode = (errored.length || sum('stuck')) ? 1 : 0;   // a room that fails to build, or an unreachable work, fails the build
 }
