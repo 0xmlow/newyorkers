@@ -25,14 +25,18 @@ page = f"museum.{tag}.html" if tag else "museum.html"
 url = f"http://127.0.0.1:4185/{page}?export=all&from={frm}&to={to}&auto=1&post=http://127.0.0.1:4181/&v={int(time.time())}" + (f"&hour={hour}" if hour else "")
 ROOT = "/Users/degens/Desktop/NEW YORKERS BY MLOW"
 OUT = os.path.join(ROOT, "MUSEUM EXPORTS", datetime.date.today().isoformat())
-marker = os.path.join(OUT, 'done.txt' if to >= 145 else f'chunk-{to}.txt')
-if os.path.exists(marker): os.remove(marker)
+# the page writes done.txt after the last room and chunk-<to>.txt otherwise; watch for both
+# rather than guess the room count, which grows (a hard coded 145 once hung this runner)
+markers = [os.path.join(OUT, 'done.txt'), os.path.join(OUT, f'chunk-{to}.txt')]
+for m in markers:
+    if os.path.exists(m): os.remove(m)
 try:
     r = json.load(urllib.request.urlopen(urllib.request.Request(f'{HOST}/json/new?{urllib.parse.quote(url, safe="")}', method='PUT')))
     print('opened', r.get('url'))
     t0 = time.time()
     while time.time() - t0 < 900:
-        if os.path.exists(marker): print('done:', open(marker).read()); break
+        hit = next((m for m in markers if os.path.exists(m)), None)
+        if hit: print('done:', open(hit).read()); break
         time.sleep(2)
     else: print('TIMEOUT')
     print(sorted(f for f in os.listdir(OUT) if f.endswith('.png')))

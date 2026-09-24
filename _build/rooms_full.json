@@ -4501,5 +4501,96 @@
   ],
   "article": null,
   "articles": []
+ },
+ {
+  "id": "palmcourt",
+  "name": "An afternoon at the Plaza",
+  "area": "THE PLAZA / THE PALM COURT",
+  "mood": "Tea under the glass",
+  "color": "#c8b98a",
+  "description": "The Palm Court in the middle of the Plaza, where afternoon tea has been poured under a ceiling of stained glass since 1907. The palms stand in their planters along the trellis, the waiters work the aisle between the white cloths, the piano plays, and through the Fifth Avenue doors the Pulitzer Fountain splashes in Grand Army Plaza. The New Yorkers hang in the gilded bays between the pilasters, under the mirrors, where the room has always hung its finery.",
+  "signatures": "The stained glass laylight with its amber medallion and green garlands, tall palms in planters, cream trellis panels and arched mirrors, the four caryatids on the west wall, Caen stone pilasters over purple Breche Violette marble, the mosaic floor, tea tables with white cloths and cane chairs, waiters in black, a grand piano, and the Pulitzer Fountain and Fifth Avenue through the doors.",
+  "daylit": true,
+  "index": 153,
+  "place": "The Palm Court at the Plaza",
+  "fact": "The Plaza opened on October 1, 1907, with 800 rooms, designed by Henry Janeway Hardenbergh; its main entrance faces the Pulitzer Fountain in the southern part of Grand Army Plaza. The Palm Court's stained glass ceiling was removed in a renovation in the 1940s and restored in the mid 2000s, and four caryatids representing the seasons frame its wall mirrors, over walls of Caen stone and Breche Violette marble and mosaic floors. The exterior became a city landmark on December 9, 1969, and the interior on July 12, 2005.",
+  "year": "1907",
+  "learn": "The Plaza's stained glass ceiling was taken out in the 1940s and put back in the 2000s.",
+  "source": {
+   "name": "The Plaza Hotel, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/The_Plaza_Hotel"
+  },
+  "keywords": [
+   "Palm Court",
+   "The Plaza",
+   "Plaza Hotel",
+   "afternoon tea at the Plaza",
+   "Palm Court stained glass",
+   "Grand Army Plaza",
+   "Pulitzer Fountain"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "chelseamarket",
+  "name": "The biscuit factory",
+  "area": "CHELSEA MARKET / NINTH AVENUE",
+  "mood": "Brick, pipes and lunch",
+  "color": "#9a4a32",
+  "description": "The long concourse of Chelsea Market, cut through the back lots of the old National Biscuit Company bakery where the Oreo was first made in 1912. Water pours from an old pipe into a basin by the Ninth Avenue door, the ducts and pipes run overhead under the iron beams, the stalls are busy and the clock keeps New York time, and at the far end the High Line crosses Tenth Avenue with people walking on it. The New Yorkers hang on the brick piers between the shopfronts.",
+  "signatures": "The long brick concourse from Ninth Avenue to Tenth, riveted iron beams and a timber deck overhead, exposed pipes and a galvanized duct, the waterfall pouring from an old iron pipe into its basin, pendant factory lamps, shopfronts with steel lintels and painted signs, the hanging double faced clock, the lunch crowd, and the High Line and Tenth Avenue through the far doors.",
+  "daylit": true,
+  "index": 154,
+  "place": "Chelsea Market",
+  "fact": "Chelsea Market fills the block bounded by Ninth and Tenth Avenues and 15th and 16th Streets, the former National Biscuit Company factory, formed by a merger of bakeries in 1898, where the Oreo was first developed and produced early in 1912. Irwin Cohen redeveloped it in the 1990s with the architect Jeff Vandeberg, joining the old back lots into a ground floor concourse with entrances on Ninth and Tenth Avenues, finished in April 1997. The High Line passes through the Tenth Avenue side of the building, and in 2018 Alphabet bought the complex for more than 2.4 billion dollars.",
+  "year": "1898",
+  "learn": "The Oreo was first made in the building that is now Chelsea Market, in 1912.",
+  "source": {
+   "name": "Chelsea Market, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Chelsea_Market"
+  },
+  "keywords": [
+   "Chelsea Market",
+   "Nabisco factory",
+   "National Biscuit Company",
+   "Oreo Way",
+   "Chelsea Market waterfall",
+   "High Line Chelsea Market",
+   "Ninth Avenue"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "brooklyncentral",
+  "name": "The golden book",
+  "area": "BROOKLYN PUBLIC LIBRARY / GRAND ARMY PLAZA",
+  "mood": "Afternoon on the library steps",
+  "color": "#c9a24a",
+  "description": "The Central Library of the Brooklyn Public Library at Grand Army Plaza, the limestone building shaped like an open book, seen from the forecourt with its tall bronze entrance screen and its fifteen gilded panels shining in the middle of the curve. People sit on the steps, pigeons work the forecourt, traffic runs round the plaza behind you toward the Arch and the Bailey Fountain. The New Yorkers hang on the granite base of the curved front along the terrace, and inside, on the blond oak of the lobby.",
+  "signatures": "The concave Indiana limestone front following the oval of the plaza, the gray granite base, the two tall pylons with their gilded reliefs, the bronze screen with fifteen gilded panels over the doors, BROOKLYN PUBLIC LIBRARY cut above the entrance, the terrace with its three stairways, lamps and planting beds, the long wings with tall slot windows running down Flatbush Avenue and Eastern Parkway, the lobby in terrazzo and blond oak, and across the plaza the Bailey Fountain and the Soldiers' and Sailors' Arch.",
+  "daylit": true,
+  "index": 155,
+  "place": "Central Library, Brooklyn Public Library, Grand Army Plaza",
+  "fact": "Raymond F. Almirall designed a Beaux-Arts library for the site in 1911; only the Flatbush Avenue wing was built before the design was scrapped, and Alfred Morton Githens and Francis Keally redesigned it in Art Deco in 1935. The building, shaped like an open book seen from the air, opened on February 1, 1941. Its 40 foot bronze entrance screen has fifteen gilded panels of literary characters by Thomas Hudson Jones and C. Paul Jennewein, framed by 50 foot columns with gilded bas-reliefs by Jennewein, set in a concave facade that follows the oval of Grand Army Plaza and faces the Soldiers' and Sailors' Arch. About 350,000 square feet on four storeys, over 1.7 million items. City landmark June 17, 1997; National Register January 11, 2002.",
+  "year": "1941",
+  "learn": "The library at Grand Army Plaza is shaped like an open book, and its gold door is a page of fifteen characters from books.",
+  "source": {
+   "name": "Central Library (Brooklyn Public Library), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Central_Library_(Brooklyn_Public_Library)"
+  },
+  "keywords": [
+   "Brooklyn Public Library",
+   "Central Library",
+   "Grand Army Plaza",
+   "open book building",
+   "gilded entrance screen",
+   "Githens and Keally",
+   "Jennewein",
+   "Thomas Hudson Jones"
+  ],
+  "article": null,
+  "articles": []
  }
 ]

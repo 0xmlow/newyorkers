@@ -1670,5 +1670,38 @@
   "signatures": "The long blue canopy and its banner, the mountain of crushed cars under it, yellow material handlers with orange peel grapples, the infeed conveyor climbing to the Mega Shredder and its steam, blue radial stackers pouring frag into dark cones, the Ferrous Downstream System, green Macks with tipping trailers, a hydraulic tipper, the scale house, rail gondolas, and the ridges of the Southern Tier all round.",
   "daylit": true,
   "index": 152
+ },
+ {
+  "id": "palmcourt",
+  "name": "An afternoon at the Plaza",
+  "area": "THE PLAZA / THE PALM COURT",
+  "mood": "Tea under the glass",
+  "color": "#c8b98a",
+  "description": "The Palm Court in the middle of the Plaza, where afternoon tea has been poured under a ceiling of stained glass since 1907. The palms stand in their planters along the trellis, the waiters work the aisle between the white cloths, the piano plays, and through the Fifth Avenue doors the Pulitzer Fountain splashes in Grand Army Plaza. The New Yorkers hang in the gilded bays between the pilasters, under the mirrors, where the room has always hung its finery.",
+  "signatures": "The stained glass laylight with its amber medallion and green garlands, tall palms in planters, cream trellis panels and arched mirrors, the four caryatids on the west wall, Caen stone pilasters over purple Breche Violette marble, the mosaic floor, tea tables with white cloths and cane chairs, waiters in black, a grand piano, and the Pulitzer Fountain and Fifth Avenue through the doors.",
+  "daylit": true,
+  "index": 153
+ },
+ {
+  "id": "chelseamarket",
+  "name": "The biscuit factory",
+  "area": "CHELSEA MARKET / NINTH AVENUE",
+  "mood": "Brick, pipes and lunch",
+  "color": "#9a4a32",
+  "description": "The long concourse of Chelsea Market, cut through the back lots of the old National Biscuit Company bakery where the Oreo was first made in 1912. Water pours from an old pipe into a basin by the Ninth Avenue door, the ducts and pipes run overhead under the iron beams, the stalls are busy and the clock keeps New York time, and at the far end the High Line crosses Tenth Avenue with people walking on it. The New Yorkers hang on the brick piers between the shopfronts.",
+  "signatures": "The long brick concourse from Ninth Avenue to Tenth, riveted iron beams and a timber deck overhead, exposed pipes and a galvanized duct, the waterfall pouring from an old iron pipe into its basin, pendant factory lamps, shopfronts with steel lintels and painted signs, the hanging double faced clock, the lunch crowd, and the High Line and Tenth Avenue through the far doors.",
+  "daylit": true,
+  "index": 154
+ },
+ {
+  "id": "brooklyncentral",
+  "name": "The golden book",
+  "area": "BROOKLYN PUBLIC LIBRARY / GRAND ARMY PLAZA",
+  "mood": "Afternoon on the library steps",
+  "color": "#c9a24a",
+  "description": "The Central Library of the Brooklyn Public Library at Grand Army Plaza, the limestone building shaped like an open book, seen from the forecourt with its tall bronze entrance screen and its fifteen gilded panels shining in the middle of the curve. People sit on the steps, pigeons work the forecourt, traffic runs round the plaza behind you toward the Arch and the Bailey Fountain. The New Yorkers hang on the granite base of the curved front along the terrace, and inside, on the blond oak of the lobby.",
+  "signatures": "The concave Indiana limestone front following the oval of the plaza, the gray granite base, the two tall pylons with their gilded reliefs, the bronze screen with fifteen gilded panels over the doors, BROOKLYN PUBLIC LIBRARY cut above the entrance, the terrace with its three stairways, lamps and planting beds, the long wings with tall slot windows running down Flatbush Avenue and Eastern Parkway, the lobby in terrazzo and blond oak, and across the plaza the Bailey Fountain and the Soldiers' and Sailors' Arch.",
+  "daylit": true,
+  "index": 155
  }
 ]

@@ -60,6 +60,23 @@ function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => 
   return t;
 }
 const hex = (n: number) => '#' + n.toString(16).padStart(6, '0');
+/* v7: a hung work is five or six meshes and the kit lets every one of them cast into the sun's shadow map.
+   Only the frame's shadow shows on the wall, so once the works are up take the art, mat, inner lip and
+   caption plate out of the shadow pass. Runs on the first ticks after the hang, then stops. */
+function noShadow(...os: T.Object3D[]) {
+  /* the kit switches casting on for every live mesh when it batches, after build returns; pin it off for small things */
+  for (const o of os) Object.defineProperty(o, 'castShadow', { get: () => false, set: () => {}, configurable: true });
+}
+function trimMountShadows(k: K, expect: number) {
+  let tries = 0, done = 0;
+  k.ticks.push(() => {
+    if (done >= expect || tries++ > 600) return;
+    const seen = new Set<T.Object3D>();
+    k.scene.traverse((o) => { if (o.userData?.piece && o.parent && !seen.has(o.parent)) seen.add(o.parent); });
+    for (const g of seen) g.children.forEach((c, i) => { if (i > 0) c.castShadow = false; });
+    done = seen.size;
+  });
+}
 
 /* ---------------- 147 THE EIGHTY SIXTH FLOOR ---------------- */
 export const empirestate2: RoomDef = {
@@ -85,7 +102,7 @@ export const empirestate2: RoomDef = {
     const lime = k.pbr('esLime', X.ashlar(0xcfc3aa, 81, 6), 0.22, { normal: 0.35 }), limeDark = k.pbr('esLime2', X.ashlar(0xa89a82, 82, 4), 0.5),
       deckFloor = k.pbr('esDeck', X.pavers(0x9a8e80, 83), 0.9, { roughness: 0.85 }),
       alu = k.flat(0xd8dade, 0.85, 0.32), steelDark = k.flat(0x2a2d31, 0.7, 0.45), dark = k.flat(0x14171b, 0.3, 0.7),
-      darkGlass = k.flat(0x2a3848, 0.85, 0.12, { emissive: 0xffc890, emissiveIntensity: 0.05 }), brass = k.flat(0xc9a25a, 0.9, 0.3),
+      darkGlass = k.flat(0x4a6078, 0.9, 0.08, { emissive: 0xffc890, emissiveIntensity: 0.22 }), brass = k.flat(0xc9a25a, 0.9, 0.3),
       tar = k.flat(0x3a3836, 0, 0.95), gravel = k.flat(0x6e6a64, 0, 0.95), roofGreen = k.flat(0x4a5a44, 0, 0.95), roofLight = k.flat(0x9a948a, 0, 0.9);
 
     /* ---------- the ground: a painted map of the harbour, true geography, drawn once ---------- */
@@ -341,7 +358,10 @@ export const empirestate2: RoomDef = {
       const head = new T.Mesh(new T.CapsuleGeometry(0.2, 0.34, 3, 10), k.flat(0x5a7e9e, 0.5, 0.4)); head.rotation.x = PI / 2; head.position.set(0, 1.3, 0.05); g.add(head);
       for (const s of [-1, 1]) { const e = new T.Mesh(new T.CylinderGeometry(0.075, 0.09, 0.3, 10), dark); e.rotation.x = PI / 2; e.position.set(s * 0.1, 1.33, 0.36); g.add(e); const l = new T.Mesh(new T.CylinderGeometry(0.06, 0.06, 0.12, 10), steelDark); l.rotation.x = PI / 2; l.position.set(s * 0.1, 1.33, -0.34); g.add(l); }
       const box = new T.Mesh(new T.BoxGeometry(0.26, 0.24, 0.2), k.flat(0x5a7e9e, 0.5, 0.4)); box.position.set(0, 1.0, 0.02); g.add(box);
-      k.add(g); k.keepOut.push({ x, z, r: 0.42 });
+      /* v7: they never move, so bake each part into the static batch instead of eighteen live groups (126 meshes, each drawn three times) */
+      g.updateMatrixWorld(true);
+      for (const c of g.children as T.Mesh[]) k.mesh(c.geometry.clone().applyMatrix4(c.matrixWorld), c.material as T.Material);
+      k.keepOut.push({ x, z, r: 0.42 });
     };
     for (const x of [-12.6, -6.3, -2.1, 2.1, 6.3, 12.6]) { bino(x, -11.25, PI); bino(x, 11.25, 0); }
     for (const z of [-2.2, 2.2, 6.9]) { bino(-14.25, z, -PI / 2); bino(14.25, z, PI / 2); }
@@ -358,9 +378,10 @@ export const empirestate2: RoomDef = {
       k.box(alongX ? 0.06 : 0.1, 3.0, alongX ? 0.1 : 0.06, x + ox2, 2.0, z + oz2, alu);
       for (const y of [3.56, 0.46]) k.box(alongX ? 1.5 : 0.1, 0.12, alongX ? 0.1 : 1.5, x + ox2, y, z + oz2, alu);
     };
-    for (const x of [-10.3, -6.3, -2.1, 2.1, 6.3, 10.3]) win(x, -CD / 2, true, -1);
-    for (const x of [-10.3, -6.3, -2.15, 2.15, 6.3, 10.3]) win(x, CD / 2, true, 1);
-    for (const z of [-6.8, -2.25, 2.25, 6.8]) { win(-CW / 2, z, false, -1); win(CW / 2, z, false, 1); }
+    /* v7: fewer, wider piers of limestone between the windows, so the works on them can be big */
+    for (const x of [-5.35, 0, 5.35]) win(x, -CD / 2, true, -1);
+    for (const x of [-5.85, 5.85]) win(x, CD / 2, true, 1);
+    for (const z of [-7, 0, 7]) { win(-CW / 2, z, false, -1); win(CW / 2, z, false, 1); }
     k.box(CW + 0.2, 0.3, CD + 0.2, 0, 0.15, 0, limeDark);
     /* the lift: brass frame, the car lit inside, the sign over the door */
     k.box(0.25, 3.1, 0.7, -1.3, 1.55, CD / 2, brass); k.box(0.25, 3.1, 0.7, 1.3, 1.55, CD / 2, brass); k.box(2.85, 0.3, 0.7, 0, 3.1, CD / 2, brass);
@@ -518,7 +539,8 @@ export const empirestate2: RoomDef = {
         k.cyl(0.9, 0.08, x, LY + HH - 2.2, 0, brass, 0.9, 16);
         k.point(x, LY + HH - 3.6, 0, 0xffd8a0, 30, 16);
       }
-      for (const x of [-9, 9]) k.point(x, LY + 5.5, 0, 0xffd8a0, 18, 9);
+      /* v7: the west lamp sat a metre off the aluminium relief and burned it white */
+      k.point(-7.4, LY + 5.5, 0, 0xffd8a0, 7, 9); k.point(9, LY + 5.5, 0, 0xffd8a0, 18, 9);
       for (let x = -6; x <= 6; x += 6) for (const s of [-1, 1]) k.box(0.3, 0.9, 0.12, x + 3, LY + 5.2, s * (HZ - 0.08), k.glow(0xb89058));
       /* the west end: the aluminium relief of the building, rays from the spire, the sun behind it, the desk */
       const RX = -HX + 0.05;
@@ -537,7 +559,7 @@ export const empirestate2: RoomDef = {
       }
       k.box(1.2, 1.1, 4.4, RX + 2.6, LY + 0.55, 0, marbleLow); k.box(1.4, 0.08, 4.6, RX + 2.6, LY + 1.14, 0, brass);
       figure(k, RX + 3.6, LY, -0.8, 0x1a2230, { rotY: -PI / 2 });
-      k.point(RX + 4, LY + 6, 0, 0xfff0d8, 10, 9);
+      k.point(RX + 4.5, LY + 6, 0, 0xfff0d8, 5, 9);
       /* the east end: the Fifth Avenue doors under the transom window, light coming in from the street */
       const transom = canvasTex(512, 512, (g) => {
         g.fillStyle = '#ffe8c0'; g.fillRect(0, 0, 512, 512);
@@ -554,19 +576,28 @@ export const empirestate2: RoomDef = {
     }
 
     /* ---------- the works ---------- */
+    /* v7: twelve big works on the limestone round the terrace (the art hung the way ChatGPT's build hung it,
+       large and at eye level, so the first view is the city and the work together), in walking order for the
+       guided tour: the north side from the spawn corner, east, south past the lift, west, then down to the lobby */
     const mounts: Mount[] = [];
-    for (const x of [-8.4, -4.2, 0, 4.2, 8.4]) mounts.push({ position: v(x, 2.0, -CD / 2 - 0.02), rotation: PI, target: v(x, 2.0, -10.3), width: 2.3, height: 1.65, style: 'steel', wash: true });
-    for (const x of [-8.4, -4.2, 4.2, 8.4]) mounts.push({ position: v(x, 2.0, CD / 2 + 0.02), rotation: 0, target: v(x, 2.0, 10.3), width: 2.3, height: 1.65, style: 'steel', wash: true });
-    for (const z of [-4.5, 0, 4.5]) { mounts.push({ position: v(CW / 2 + 0.02, 2.0, z), rotation: PI / 2, target: v(13.2, 2.0, z), width: 2.3, height: 1.65, style: 'steel', wash: true }); mounts.push({ position: v(-CW / 2 - 0.02, 2.0, z), rotation: -PI / 2, target: v(-13.2, 2.0, z), width: 2.3, height: 1.65, style: 'steel', wash: true }); }
-    for (const x of [-6, 0, 6]) mounts.push({ position: v(x, LY + 2.3, -HZ + 0.02), rotation: 0, target: v(x, LY + 2.3, -0.6), width: 2.4, height: 1.7, style: 'gilt', wash: true });
-    for (const x of [-6, 6]) mounts.push({ position: v(x, LY + 2.3, HZ - 0.02), rotation: PI, target: v(x, LY + 2.3, 0.6), width: 2.4, height: 1.7, style: 'gilt', wash: true });
+    const MY = 2.45, dk = (position: T.Vector3, rotation: number, target: T.Vector3, width: number) => mounts.push({ position, rotation, target, width, height: 2.8, style: 'steel', wash: true });
+    for (const x of [-8.0, -2.7, 2.7, 8.0]) dk(v(x, MY, -CD / 2 - 0.02), PI, v(x, MY, -10.9), 3.4);
+    for (const z of [-3.9, 3.9]) dk(v(CW / 2 + 0.02, MY, z), PI / 2, v(13.9, MY, z), 3.4);
+    dk(v(8.4, MY, CD / 2 + 0.02), 0, v(8.4, MY, 10.9), 3.2);
+    /* the tour takes the lift here: the walk from the south terrace to the lobby and back only works through
+       the lift passage, so the lobby comes in the middle of the south side, entered and left on its west half */
+    const lb = (x: number, south: boolean) => mounts.push({ position: v(x, LY + 2.6, south ? HZ - 0.02 : -HZ + 0.02), rotation: south ? PI : 0, target: v(x, LY + 2.6, south ? 0.6 : -0.6), width: 4.0, height: 3.0, style: 'gilt', wash: true });
+    lb(-6, true); lb(6, true); lb(6, false); lb(0, false); lb(-6, false);
+    for (const x of [3.3, -3.3, -8.4]) dk(v(x, MY, CD / 2 + 0.02), 0, v(x, MY, 10.9), 3.2);
+    for (const z of [3.9, -3.9]) dk(v(-CW / 2 - 0.02, MY, z), -PI / 2, v(-13.9, MY, z), 3.4);
+    trimMountShadows(k, mounts.length);
     k.censusWall({ x: 0, y: LY + 6.3, z: -HZ + 0.03, rotY: 0, cols: 30, rows: 4, tile: 0.5, gap: 0.04, start: ctx.wallStart(5100, 120), pieces: ctx.all });
 
     /* ---------- what the building knows ---------- */
     const src = { name: 'Empire State Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Empire_State_Building' };
     k.egg(v(-10.4, 2.0, -11.3), { id: 'chrysler-race', title: 'Four feet taller than the Chrysler', year: '1929', text: 'The plans put an observation deck on the 86th floor roof at 1,050 feet, higher than the Chrysler Building\'s deck on its 71st floor. That made the Empire State only four feet taller than the Chrysler at 1,046, and John Raskob worried Chrysler might hide a rod in its spire and push it up at the last minute, so in December 1929 the plans grew a crown and a mast.', clue: 'Find the steel needle to the north east and stand where you can look it in the eye.', source: src }, { r: 2.6 });
     k.egg(v(0, 40, 0), { id: 'mooring-mast', title: 'A dock for airships', year: '1931', text: 'The mast above the 86th floor is a hollow steel shaft 158 feet tall, fitted with elevators. It was meant as a mooring mast for zeppelins, tied up at the height of a 106th floor, with ticket offices and waiting rooms on the 86th. The plan was dropped when it was clear the winds up here made it impossible.', clue: 'Look straight up at the part of the building that was meant for passengers who never came.', source: src }, { r: 7 });
-    k.egg(v(2.4, 1.6, 9.4), { id: 'run-up', title: 'One thousand five hundred and seventy six steps', year: '1978', text: 'Every year since 1978 the Empire State Building Run-Up races from the street to this deck: 1,050 feet of vertical climb and 1,576 steps.', clue: 'The lift is the easy way up. Stand by its door and count the other way.', source: src }, { r: 2.4 });
+    k.egg(v(0, 2.2, 8.9), { id: 'run-up', title: 'One thousand five hundred and seventy six steps', year: '1978', text: 'Every year since 1978 the Empire State Building Run-Up races from the street to this deck: 1,050 feet of vertical climb and 1,576 steps.', clue: 'The lift is the easy way up. Stand by its door and count the other way.', source: src }, { r: 2.4 });
     k.egg(v(-HX + 1.4, LY + 3.2, 2.6), { id: 'relief', title: 'The building on its own wall', text: 'At the west end of the lobby, behind the desk, is an aluminium relief of the skyscraper as it was first built, without its antenna, with rays running out from the spire and the sun behind it. The lobby ceiling once carried an Art Deco mural of the sky and the machine age, and the lobby was brought back to its first glory in a 2009 renovation that also hung two chandeliers the building was meant to open with.', clue: 'Take the lift down and walk to the end where the building meets itself.', source: src }, { r: 3 });
     k.egg(v(1.0, LY + 2.2, 5.2), { id: '410-days', title: 'Four hundred and ten days', year: '1931', text: 'Construction started on March 17, 1930. The frame was finished on April 11, 1931, twelve days ahead of schedule and 410 days after work began, and the building opened on May 1, 1931. Al Smith drove the last rivet, and it was solid gold.', clue: 'The lift door knows how long it all took to build.', source: src }, { r: 2.4 });
 
@@ -576,9 +607,11 @@ export const empirestate2: RoomDef = {
       return 0;
     };
     /* the core is solid at the deck and holds the lobby below: one set of blocks serves both floors */
-    k.block(-CW / 2, CW / 2, -CD / 2, -HZ); k.block(-CW / 2, -1.2, HZ, CD / 2); k.block(1.2, CW / 2, HZ, CD / 2);
-    k.block(-CW / 2, -HX, -HZ, HZ); k.block(HX, CW / 2, -HZ, HZ);
-    return { mounts, spawn: v(9.4, 3, -9.1), look: v(330, -50, -600), eye: 3, floorY, bounds: [-14.6, 14.6, -11.6, 11.6], style: 'steel' };
+    /* v7: the blocks overlap by a few centimetres; in v4 they met edge to edge, and a walk could slide down the seam
+       through the core wall and drop into the lobby. Now the lift is the only way down. */
+    k.block(-CW / 2, CW / 2, -CD / 2, -HZ + 0.1); k.block(-CW / 2, -1.2, HZ - 0.1, CD / 2); k.block(1.2, CW / 2, HZ - 0.1, CD / 2);
+    k.block(-CW / 2, -HX, -HZ - 0.1, HZ + 0.1); k.block(HX, CW / 2, -HZ - 0.1, HZ + 0.1);
+    return { mounts, spawn: v(-13.1, 3, -10.2), look: v(60, -4, -34), eye: 3, floorY, bounds: [-14.6, 14.6, -11.6, 11.6], style: 'steel' };
   },
 };
 
@@ -781,7 +814,7 @@ export const stpatricks2: RoomDef = {
       const add = (x: number, y0: number, h: number, z: number) => { m.set(x, y0 + h / 2, z); sc.set(1, h, 1); pipes.push(new T.Matrix4().compose(m, q, sc)); };
       for (const s of [-1, 1]) for (let j = 0; j < 9; j++) { const x = s * (3.05 + j * 0.39), h = 9.8 - Math.abs(j - 4) * 0.9; add(x, GY + 0.9, h, Z0 - 0.95); }
       for (let j = 0; j < 15; j++) { const x = -2.35 + j * 0.335, h = 3.6 + 2.2 * Math.sin((j / 14) * PI); add(x, GY + 1.3, h, Z0 - 1.2); }
-      const o = k.instances(new T.CylinderGeometry(0.15, 0.15, 1, 10), pipeM, pipes); void o;
+      noShadow(k.instances(new T.CylinderGeometry(0.15, 0.15, 1, 10), pipeM, pipes));
       k.box(5.4, 0.3, 1.2, 0, GY + 1.2, Z0 - 1.2, oakDark);
     }
     /* the sanctuary: steps, the altar rail, the high altar, the baldachin on four bronze piers */
@@ -821,7 +854,9 @@ export const stpatricks2: RoomDef = {
     }
     /* the east end: a blind arcade, three lancets, the arch through to the Lady Chapel */
     { const g = holedWall(2 * AX + 0.8, APEX + 1, 1.2, [{ kind: 'pointed', cx: 0, y0: 0.9, w: 5.2, h: 13 }, { kind: 'pointed', cx: -3.4, y0: 15.5, w: 2.2, h: 8.5 }, { kind: 'pointed', cx: 0, y0: 15.5, w: 2.4, h: 10 }, { kind: 'pointed', cx: 3.4, y0: 15.5, w: 2.2, h: 8.5 }]); k.mesh(g, stone, 0, 0, ZE - 0.6); }
-    for (const [x, w, h] of [[-3.4, 2.2, 8.5], [0, 2.4, 10], [3.4, 2.2, 8.5]]) k.plane(w, h, x, 15.5 + h / 2, ZE - 0.6, glassMats[(x + 4) % 4 | 0], 0);
+    /* v7: the east lancets are the focal point from the doors, so they burn a little brighter than the rest (past the bloom threshold) */
+    const eastGlass = new T.MeshBasicMaterial({ map: stainedGlass(320, 192, 512, pals[0]), toneMapped: false }); eastGlass.color.setRGB(1.35, 1.25, 1.15);
+    for (const [x, w, h] of [[-3.4, 2.2, 8.5], [0, 2.4, 10], [3.4, 2.2, 8.5]]) k.plane(w, h, x, 15.5 + h / 2, ZE - 0.6, eastGlass, 0);
     { const lc = k.flat(0x3a4058, 0, 0.9); for (const s of [-1, 1]) k.box(0.3, 13, 14, s * 2.9, 6.5, ZE - 8, lc); k.box(6, 0.3, 14, 0, 13, ZE - 8, lc); k.box(6, 13, 0.3, 0, 6.5, ZE - 15.2, lc); k.box(6, 0.3, 14, 0, 0.9, ZE - 8, marbleF); }
     k.plane(4.6, 9, 0, 6, ZE - 14.9, new T.MeshBasicMaterial({ map: stainedGlass(330, 256, 512, [0x2a4aa8, 0x1c3a8a, 0x3a5ac8, 0x8a1a22, 0xd0c090]), color: 0xd8e0f0 }), 0);
     k.point(0, 5, ZE - 6, 0x8aa8ff, 30, 16);
@@ -841,7 +876,7 @@ export const stpatricks2: RoomDef = {
       const pm: T.Matrix4[] = [], em: T.Matrix4[] = [], seats: [number, number][] = [];
       const q = new T.Quaternion(), p = new T.Vector3(), sc = new T.Vector3();
       for (let z = 34; z > -5; z -= 0.98) {
-        for (const [xa, xb] of [[-6.1, -1.45], [1.45, 6.1], [-10.6, -8.1], [8.1, 10.6]]) {
+        for (const [xa, xb] of [[-6.1, -1.45], [1.45, 6.1]]) {
           const len = xb - xa, xc = (xa + xb) / 2;
           p.set(xc, 0, z); sc.set(len, 1, 1); pm.push(new T.Matrix4().compose(p, q, sc));
           for (const xe of [xa, xb]) { p.set(xe, 0, z); em.push(new T.Matrix4().compose(p, q, one)); }
@@ -849,7 +884,7 @@ export const stpatricks2: RoomDef = {
         }
       }
       k.instances(pew, oak, pm); k.instances(end, oakDark, em);
-      for (const [xa, xb] of [[-6.1, -1.45], [1.45, 6.1], [-10.6, -8.1], [8.1, 10.6]]) k.block(xa - 0.1, xb + 0.1, -5.4, 34.4);
+      for (const [xa, xb] of [[-6.1, -1.45], [1.45, 6.1]]) k.block(xa - 0.1, xb + 0.1, -5.4, 34.4);
       /* people in the pews, praying or resting, and a few more standing */
       const rnd = X.mulberry(1879), N = 84, fig = k.instances(figureGeo(0.18, 0.46, 1.0), new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: N }, () => new T.Matrix4()));
       const c = new T.Color(), pal = [0x1c232c, 0x2a2a34, 0x5a3a2a, 0xe8e2d4, 0x2a3f6a, 0x6a2a2a, 0x3a4a3a, 0x8a8a90, 0xc8b8a0];
@@ -873,7 +908,7 @@ export const stpatricks2: RoomDef = {
         lm.push(new T.Matrix4().makeTranslation(x, y, z)); gm.push(new T.Matrix4().makeTranslation(x, y, z));
         k.beam(v(x, y + 0.9, z), v(x, Math.abs(x) > 8 ? 10.8 + av.prof(Math.abs(x) - (NX + 0.45 + (AX - 0.4 - NX - 0.45) / 2)) - 0.2 : SPRING + nv.prof(x) - 0.2, z), 0.025, iron, 4);
       }
-      k.instances(lantern, bronze, lm); k.instances(glowG, k.glow(0xffc070), gm);
+      noShadow(k.instances(lantern, bronze, lm), k.instances(glowG, k.glow(0xffc070), gm));
       for (const z of [35, 21, 7]) for (const x of [-4, 4]) k.point(x, 8.2, z, 0xffc890, 40, 16);
     }
     /* votive candles in racks along the transept walls: red glass, each flame on its own breath */
@@ -896,7 +931,7 @@ export const stpatricks2: RoomDef = {
       }
       const cupM = k.instances(new T.CylinderGeometry(0.05, 0.045, 0.1, 8), new T.MeshBasicMaterial({ color: 0xffffff }), cups);
       const flM = k.instances(new T.ConeGeometry(0.02, 0.08, 5), new T.MeshBasicMaterial({ color: 0xffffff }), flames);
-      cupM.frustumCulled = flM.frustumCulled = false;
+      cupM.frustumCulled = flM.frustumCulled = false; noShadow(cupM, flM);
       const c = new T.Color(), rnd = X.mulberry(5), ph = cups.map(() => rnd() * 6.3);
       const glowFn = (t: number) => {
         for (let i = 0; i < cups.length; i++) {
@@ -919,16 +954,20 @@ export const stpatricks2: RoomDef = {
       g.putImageData(img, 0, 0);
     });
     {
+      /* v7: eleven shafts were eleven materials and eleven draws; now one material and one merged mesh,
+         the per shaft strength carried in the vertex colour (additive, so colour is brightness) */
+      const parts: T.BufferGeometry[] = [], sm = new T.MeshBasicMaterial({ map: shaftTex, color: 0xffe8c0, vertexColors: true, transparent: true, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
       const mk = (from: T.Vector3, to: T.Vector3, w: number, op: number) => {
         const L = from.distanceTo(to), g = new T.PlaneGeometry(w, L); g.rotateY(PI / 2);
-        const m = new T.MeshBasicMaterial({ map: shaftTex, color: 0xffe8c0, transparent: true, opacity: op, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide });
-        const o = k.mesh(g, m, (from.x + to.x) / 2, (from.y + to.y) / 2, (from.z + to.z) / 2, true);
-        o.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), from.clone().sub(to).normalize());
-        shafts.push(o);
+        const o = new T.Object3D(); o.position.set((from.x + to.x) / 2, (from.y + to.y) / 2, (from.z + to.z) / 2);
+        o.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), from.clone().sub(to).normalize()); o.updateMatrix();
+        g.applyMatrix4(o.matrix); g.setAttribute('color', new T.Float32BufferAttribute(new Array(g.attributes.position.count * 3).fill(op), 3));
+        parts.push(g);
       };
       const dir = v(-70, -62, -6).normalize();
       naveBays.forEach((z) => { const from = v(NX, ARC_H + TRI_H + CLR_H / 2, z); const t = (from.y - 1) / -dir.y; mk(from, from.clone().addScaledVector(dir, t), 3.8, 0.22); });
       naveBays.forEach((z, i) => { if (i % 2) return; const from = v(AX, AW_LOW + 4, z); const t = (from.y - 0.2) / -dir.y; mk(from, from.clone().addScaledVector(dir, t), 2.6, 0.16); });
+      shafts.push(k.mesh(mergeGeometries(parts)!, sm, 0, 0, 0, true));
       if (!ctx.reduced) vapour(k, naveBays.map((z) => v(-1, 3, z - 0.3)), 14, { rise: 12, spread: 5, size: 0.025, opacity: 0.5, colour: 0xfff0d0, seed: 17, speed: 0.03, animate: true, additive: true });
     }
     /* the doors open to Fifth Avenue: steps, the street, cabs, Atlas and Rockefeller Center across the way */
@@ -957,22 +996,27 @@ export const stpatricks2: RoomDef = {
         const m = new T.Matrix4();
         const place = (_t: number, dt: number) => { st.forEach((a, i) => { a.s = (a.s + a.v * Math.min(dt, 0.1)) % 120; m.makeTranslation(60 - a.s, -0.1, a.lane); cabs.setMatrixAt(i, m); }); cabs.instanceMatrix.needsUpdate = true; };
         place(0, 0); k.ticks.push(place);
-        k.crowd([v(-50, -0.8, Z0 + 9), v(50, -0.8, Z0 + 9)], 14, { seed: 61, speed: 1.1, spread: 2.5 });
-        k.crowd([v(-50, -0.8, Z0 + 40), v(50, -0.8, Z0 + 40)], 12, { seed: 62, speed: 1.1, spread: 3 });
+        k.crowd([v(-50, -0.8, Z0 + 9), v(50, -0.8, Z0 + 9), v(56, -0.8, Z0 + 24), v(50, -0.8, Z0 + 40), v(-50, -0.8, Z0 + 40), v(-56, -0.8, Z0 + 24)], 26, { seed: 61, speed: 1.1, spread: 2.6, closed: true });
       }
       k.point(0, 6, Z0 - 1.5, 0xfff4e0, 18, 14);
     }
     /* people who came in off the avenue, walking the aisles */
     if (!ctx.reduced) {
-      for (const s of [-1, 1]) k.crowd([v(s * 0.2, 0, 39.5), v(s * 0.2, 0, -5.9), v(s * 12.4, 0, -5.9), v(s * 12.4, 0, 39.5)], 9, { seed: 70 + s, speed: 0.4, spread: 0.9, closed: true, colors: [0x1c232c, 0x2a2a34, 0xe8e2d4, 0x2a3f6a, 0x6a2a2a, 0x3a4a3a, 0x8a8a90, 0xc8b8a0, 0xd82a3a] });
+      k.crowd([v(-0.3, 0, 39.5), v(-0.3, 0, -5.9), v(-9.4, 0, -5.9), v(-9.4, 0, 39.5), v(0.3, 0, 40.2), v(9.4, 0, 39.5), v(9.4, 0, -5.9), v(0.3, 0, -5.9)], 18, { seed: 71, speed: 0.4, spread: 0.9, closed: true, colors: [0x1c232c, 0x2a2a34, 0xe8e2d4, 0x2a3f6a, 0x6a2a2a, 0x3a4a3a, 0x8a8a90, 0xc8b8a0, 0xd82a3a] });
     }
     figure(k, 0, 1.9, ALZ - 1.2, 0xf0ece4, { rotY: 0, h: 0.95 });
 
     /* ---------- the works ---------- */
     const mounts: Mount[] = [];
-    for (const z of naveBays) for (const s of [-1, 1]) mounts.push({ position: v(s * (AX - 0.42), 2.3, z), rotation: s > 0 ? -PI / 2 : PI / 2, target: v(s * 11.3, 2.3, z), width: 2.3, height: 1.65, style: 'gilt', wash: true });
-    for (const s of [-1, 1]) mounts.push({ position: v(s * 10.8, 2.3, Z0 - 0.42), rotation: PI, target: v(s * 10.8, 2.3, 38.4), width: 2.3, height: 1.65, style: 'gilt', wash: true });
-    for (const s of [-1, 1]) for (const z of [-9.9, -18.1]) mounts.push({ position: v(s * (TX - 0.82), 2.4, z), rotation: s > 0 ? -PI / 2 : PI / 2, target: v(s * (TX - 4), 2.4, z), width: 2.3, height: 1.65, style: 'gilt', wash: true });
+    /* v7: the works are big now (the v4 hang fitted a picture under a metre wide into each bay), the outer pews
+       are gone so the side aisles are a clear walk, and the order is a promenade for the guided tour: up the north
+       aisle toward the altar, across both transepts, and back down the south aisle to the doors */
+    const sp = (position: T.Vector3, rotation: number, target: T.Vector3) => mounts.push({ position, rotation, target, width: 3.6, height: 3.0, style: 'gilt', wash: true });
+    for (const z of naveBays) sp(v(-(AX - 0.42), 2.55, z), PI / 2, v(-10.2, 2.55, z));
+    for (const z of [-9.75, -18.25]) sp(v(-(TX - 0.82), 2.6, z), PI / 2, v(-(TX - 4), 2.6, z));
+    for (const z of [-18.25, -9.75]) sp(v(TX - 0.82, 2.6, z), -PI / 2, v(TX - 4, 2.6, z));
+    for (const z of [...naveBays].reverse()) sp(v(AX - 0.42, 2.55, z), -PI / 2, v(10.2, 2.55, z));
+    trimMountShadows(k, mounts.length);
     k.censusWall({ x: -21.5, y: 3.4, z: ZC + 0.42, rotY: 0, cols: 12, rows: 4, tile: 0.42, gap: 0.04, start: ctx.wallStart(5300, 48), pieces: ctx.all, backing: stoneDark });
 
     /* ---------- what the cathedral knows ---------- */
