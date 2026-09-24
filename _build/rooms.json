@@ -1604,5 +1604,71 @@
   "signatures": "The Channel Gardens sloping down from Fifth Avenue between the British Empire Building and La Maison Francaise, the trumpeting wire angels, the sunken rink with its flags and skaters, Paul Manship's gilded Prometheus and the fountain, the Christmas tree with its star, and 30 Rockefeller Plaza rising behind it.",
   "daylit": false,
   "index": 146
+ },
+ {
+  "id": "empirestate",
+  "name": "The eighty sixth floor",
+  "area": "EMPIRE STATE BUILDING / 34TH STREET",
+  "mood": "Golden hour, a thousand and fifty feet up",
+  "color": "#c9a54a",
+  "description": "The open air terrace that wraps the eighty sixth floor, a thousand and fifty feet over Fifth Avenue at golden hour: the steel fence curling in over the parapet, the coin binoculars, the mast climbing to the antenna behind you, and the whole island laid out below, Midtown and the Chrysler to the north, the Hudson on fire to the west, the East River and Queens to the east. The New Yorkers hang on the limestone of the enclosed observatory between its windows, and more hang a lift ride down, in the Art Deco lobby under the gold and aluminium ceiling.",
+  "signatures": "The 86th floor terrace with its limestone parapet and curved steel fence, the coin operated binoculars, the enclosed observatory, the mooring mast with its aluminium fins, the 102nd floor drum and the antenna, the Chrysler Building, One Vanderbilt and Grand Central below it, Hudson Yards, Madison Square Garden, Central Park and Billionaires' Row, One World Trade Center downtown, both rivers with their boats, and the lobby with its ceiling and the aluminium relief of the building.",
+  "daylit": false,
+  "index": 147
+ },
+ {
+  "id": "stpatricks",
+  "name": "The nave on Fifth",
+  "area": "ST. PATRICK'S CATHEDRAL / FIFTH AVENUE",
+  "mood": "Late morning, candles and colour",
+  "color": "#b8864a",
+  "description": "The Gothic Revival nave on Fifth Avenue at eleven in the morning: thirty two white columns, rib vaults a hundred feet up, sun coming through the south clerestory in coloured shafts, the bronze baldachin over the high altar, the rose window and the great organ over the open doors, and a few hundred candles going in the transepts. The New Yorkers hang along the side aisles where the Stations of the Cross would be, under the windows, and at the ends of the transepts.",
+  "signatures": "The nave by James Renwick Jr. with its clustered marble columns and pointed arcades, the triforium and clerestory, the rib vaults with their bosses, the stained glass lancets, the 26 foot rose window by Charles Connick over the Gallery Organ, the bronze baldachin on four piers over the grey white marble high altar, the altar rail, the pews, the hanging lanterns, racks of votive candles, and the bronze doors open to Fifth Avenue with Atlas and Rockefeller Center across the street.",
+  "daylit": false,
+  "index": 148
+ },
+ {
+  "id": "dumbo",
+  "name": "Washington Street",
+  "area": "DUMBO / WASHINGTON STREET",
+  "mood": "Everybody stops for the same picture",
+  "color": "#b0533a",
+  "description": "The corner of Washington and Water in DUMBO, where the old warehouse street runs down to the East River and the Manhattan Bridge tower stands at the end of it with the Empire State Building caught between its legs. Trains rumble across overhead, Jane's Carousel turns in its glass box at the water, and somebody is always in the middle of the cobbles taking the picture. The New Yorkers hang on the brick under the old loading dock canopies, where a gallery in this neighbourhood would hang them.",
+  "signatures": "The Belgian block cobbles with the old Jay Street rails, red brick warehouse lofts with arched windows and steel canopies on both sides, the blue steel Manhattan Bridge tower and its trussed deck, B D N and Q trains crossing, the Empire State Building framed in the gap, Jane's Carousel in its Jean Nouvel pavilion, Brooklyn Bridge Park, the East River, the Brooklyn Bridge to the west and the photographers in the street.",
+  "daylit": true,
+  "index": 149
+ },
+ {
+  "id": "bowbridge",
+  "name": "The bridge over the Lake",
+  "area": "BOW BRIDGE / CENTRAL PARK",
+  "mood": "October, oars in the water",
+  "color": "#6f9a5a",
+  "description": "Bow Bridge on an October afternoon, seen from the east arm of the Lake the way everyone photographs it: the cast iron span in cream, its eight urns, the willows on the banks and the Ramble going gold behind, rowboats from the Loeb Boathouse sliding under the arch, and the twin towers of the San Remo standing over the trees on Central Park West. The New Yorkers hang on painters' easels along the banks and under the boathouse canopy, facing the paths.",
+  "signatures": "Calvert Vaux and Jacob Wrey Mould's 1862 cast iron bridge with its shallow arch, interlocking circle railing and eight planting urns, the Lake and its schist shore, rowboats with rowers, mallards, weeping willows and autumn trees, the Ramble to the north and Cherry Hill to the south, the Loeb Boathouse and its dock, and the San Remo, the Dakota and the Central Park West skyline over the trees.",
+  "daylit": true,
+  "index": 150
+ },
+ {
+  "id": "unassembly",
+  "name": "The gold wall",
+  "area": "UNITED NATIONS / GENERAL ASSEMBLY HALL",
+  "mood": "The General Debate, a speaker at the rostrum",
+  "color": "#d4a93a",
+  "description": "The largest room at the United Nations, on the East River at Turtle Bay: eighteen hundred seats in curving tiers, every member state with six of them, facing the green rostrum and the gold wall with the emblem of the world seen from above the North Pole. Two murals by Fernand Leger face each other across the hall, which this room answers in its own flat colours, and the interpreters work behind glass on both sides. The New Yorkers hang on the wood panels of the side aisles and the back wall, where the delegations walk in.",
+  "signatures": "The gold leaf wall and the UN emblem, the green serpentinite rostrum with the speaker's lectern below the President's desk, the shallow sky blue dome and its ring of lights, the curved tiers of delegate desks with beige and blue chairs, the interpreters' booths in two rows, the two voting boards, and the two Leger murals, orange and grey on the left, blue and yellow on the right.",
+  "daylit": false,
+  "index": 151
+ },
+ {
+  "id": "weitsmanyard",
+  "name": "The yard in Owego",
+  "area": "UPSTATE SHREDDING / OWEGO, NEW YORK",
+  "mood": "Summer noon, the shredder running",
+  "color": "#f0b41c",
+  "description": "Seventeen acres of sandy yard in the Tioga County Industrial Park, in a valley of wooded ridges three hours up from the city: the place a great deal of New York's scrap steel comes to be shredded and sent back out. A gift room for Adam Weitsman, who opened the yard in 1997 and collects MLow. The New Yorkers hang where a yard can carry them: on steel plates bolted to the canopy columns, on plate stood on end in the yard, on the scale house and on the flanks of the parked trailers.",
+  "signatures": "The long blue canopy and its banner, the mountain of crushed cars under it, yellow material handlers with orange peel grapples, the infeed conveyor climbing to the Mega Shredder and its steam, blue radial stackers pouring frag into dark cones, the Ferrous Downstream System, green Macks with tipping trailers, a hydraulic tipper, the scale house, rail gondolas, and the ridges of the Southern Tier all round.",
+  "daylit": true,
+  "index": 152
  }
 ]

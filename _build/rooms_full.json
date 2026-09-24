@@ -4321,5 +4321,185 @@
   ],
   "article": null,
   "articles": []
+ },
+ {
+  "id": "empirestate",
+  "name": "The eighty sixth floor",
+  "area": "EMPIRE STATE BUILDING / 34TH STREET",
+  "mood": "Golden hour, a thousand and fifty feet up",
+  "color": "#c9a54a",
+  "description": "The open air terrace that wraps the eighty sixth floor, a thousand and fifty feet over Fifth Avenue at golden hour: the steel fence curling in over the parapet, the coin binoculars, the mast climbing to the antenna behind you, and the whole island laid out below, Midtown and the Chrysler to the north, the Hudson on fire to the west, the East River and Queens to the east. The New Yorkers hang on the limestone of the enclosed observatory between its windows, and more hang a lift ride down, in the Art Deco lobby under the gold and aluminium ceiling.",
+  "signatures": "The 86th floor terrace with its limestone parapet and curved steel fence, the coin operated binoculars, the enclosed observatory, the mooring mast with its aluminium fins, the 102nd floor drum and the antenna, the Chrysler Building, One Vanderbilt and Grand Central below it, Hudson Yards, Madison Square Garden, Central Park and Billionaires' Row, One World Trade Center downtown, both rivers with their boats, and the lobby with its ceiling and the aluminium relief of the building.",
+  "daylit": false,
+  "index": 147,
+  "place": "Empire State Building, 86th floor observatory",
+  "fact": "The Empire State Building was designed by Shreve, Lamb and Harmon. Construction started on March 17, 1930, the frame was finished on April 11, 1931, twelve days ahead of schedule and 410 days after work began, and the building opened on May 1, 1931. The plans put an observation deck on the 86th floor roof at 1,050 feet, higher than the Chrysler Building's 71st floor deck; the 158 foot steel mast above the 86th floor was meant to moor airships until the winds made that impossible. The 86th floor observatory has an enclosed gallery and an open air terrace, and at the west end of the Fifth Avenue lobby is an aluminum relief of the building as first built, with rays from the spire and the sun behind it.",
+  "year": "1931",
+  "learn": "The deck at 1,050 feet was planned to beat the Chrysler, and the mast above it was built for airships.",
+  "source": {
+   "name": "Empire State Building, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Empire_State_Building"
+  },
+  "keywords": [
+   "Empire State Building",
+   "86th floor observatory",
+   "observation deck",
+   "350 Fifth Avenue",
+   "mooring mast",
+   "Art Deco lobby",
+   "Empire State Building Run-Up"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "stpatricks",
+  "name": "The nave on Fifth",
+  "area": "ST. PATRICK'S CATHEDRAL / FIFTH AVENUE",
+  "mood": "Late morning, candles and colour",
+  "color": "#b8864a",
+  "description": "The Gothic Revival nave on Fifth Avenue at eleven in the morning: thirty two white columns, rib vaults a hundred feet up, sun coming through the south clerestory in coloured shafts, the bronze baldachin over the high altar, the rose window and the great organ over the open doors, and a few hundred candles going in the transepts. The New Yorkers hang along the side aisles where the Stations of the Cross would be, under the windows, and at the ends of the transepts.",
+  "signatures": "The nave by James Renwick Jr. with its clustered marble columns and pointed arcades, the triforium and clerestory, the rib vaults with their bosses, the stained glass lancets, the 26 foot rose window by Charles Connick over the Gallery Organ, the bronze baldachin on four piers over the grey white marble high altar, the altar rail, the pews, the hanging lanterns, racks of votive candles, and the bronze doors open to Fifth Avenue with Atlas and Rockefeller Center across the street.",
+  "daylit": false,
+  "index": 148,
+  "place": "St. Patrick's Cathedral, Fifth Avenue",
+  "fact": "St. Patrick's Cathedral was designed by James Renwick Jr. in the Gothic Revival style. The cornerstone was laid on August 15, 1858, work stopped during the Civil War, and the cathedral was dedicated on May 25, 1879; the spires, 329.5 feet tall, were finished in 1888. It is 332 feet long and 174 feet wide at the transepts. Thirty two white marble columns, five feet across, divide the aisles and rise 35 feet to the arches. The rose window over the Fifth Avenue doors is 26 feet across and was designed by Charles Connick; below it is the Gallery Organ, dedicated in 1930, one of two organs by George Kilgen & Son with more than 9,000 pipes between them. The grey white marble high altar under a bronze baldachin was designed by Charles Maginnis after 1941. It became a National Historic Landmark on December 8, 1976.",
+  "year": "1879",
+  "learn": "Renwick's cathedral took twenty one years to open, and its rose window is 26 feet across.",
+  "source": {
+   "name": "St. Patrick's Cathedral (Manhattan), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/St._Patrick%27s_Cathedral_(Manhattan)"
+  },
+  "keywords": [
+   "St. Patrick's Cathedral",
+   "Fifth Avenue",
+   "James Renwick Jr.",
+   "Gothic Revival",
+   "rose window",
+   "Gallery Organ",
+   "baldachin"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "dumbo",
+  "name": "Washington Street",
+  "area": "DUMBO / WASHINGTON STREET",
+  "mood": "Everybody stops for the same picture",
+  "color": "#b0533a",
+  "description": "The corner of Washington and Water in DUMBO, where the old warehouse street runs down to the East River and the Manhattan Bridge tower stands at the end of it with the Empire State Building caught between its legs. Trains rumble across overhead, Jane's Carousel turns in its glass box at the water, and somebody is always in the middle of the cobbles taking the picture. The New Yorkers hang on the brick under the old loading dock canopies, where a gallery in this neighbourhood would hang them.",
+  "signatures": "The Belgian block cobbles with the old Jay Street rails, red brick warehouse lofts with arched windows and steel canopies on both sides, the blue steel Manhattan Bridge tower and its trussed deck, B D N and Q trains crossing, the Empire State Building framed in the gap, Jane's Carousel in its Jean Nouvel pavilion, Brooklyn Bridge Park, the East River, the Brooklyn Bridge to the west and the photographers in the street.",
+  "daylit": true,
+  "index": 149,
+  "place": "DUMBO, Washington Street and the Manhattan Bridge",
+  "fact": "The acronym DUMBO, Down Under the Manhattan Bridge Overpass, arose in 1978, coined by new residents who believed such an unattractive name would help deter developers. The view of the Manhattan Bridge looking north from the corner of Washington Street and Water Street has become an iconic image. The cardboard box was invented in the Robert Gair building on Washington Street, and the area was long known as Gairsville. The Jay Street Connecting Railroad ran here from around 1904 until 1957. The DUMBO Historic District was listed on the National Register on September 22, 2000, and designated the city's 90th historic district on December 18, 2007. The Manhattan Bridge, designed by Leon Moisseiff, opened on December 31, 1909, with a main span of 1,480 feet, and carries the B, D, N and Q trains. Jane's Carousel, built in 1922 by the Philadelphia Toboggan Company for Idora Park in Youngstown, Ohio, was bought by Jane and David Walentas in 1984 and opened in Brooklyn Bridge Park on September 16, 2011, in a pavilion by Jean Nouvel.",
+  "year": "1978",
+  "learn": "The name was chosen to be ugly on purpose, and the street it named became the most photographed corner in Brooklyn.",
+  "source": {
+   "name": "DUMBO, Brooklyn, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Dumbo,_Brooklyn"
+  },
+  "keywords": [
+   "DUMBO",
+   "Washington Street",
+   "Manhattan Bridge",
+   "Jane's Carousel",
+   "Brooklyn Bridge Park",
+   "Robert Gair",
+   "Jay Street Connecting Railroad",
+   "Belgian block"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "bowbridge",
+  "name": "The bridge over the Lake",
+  "area": "BOW BRIDGE / CENTRAL PARK",
+  "mood": "October, oars in the water",
+  "color": "#6f9a5a",
+  "description": "Bow Bridge on an October afternoon, seen from the east arm of the Lake the way everyone photographs it: the cast iron span in cream, its eight urns, the willows on the banks and the Ramble going gold behind, rowboats from the Loeb Boathouse sliding under the arch, and the twin towers of the San Remo standing over the trees on Central Park West. The New Yorkers hang on painters' easels along the banks and under the boathouse canopy, facing the paths.",
+  "signatures": "Calvert Vaux and Jacob Wrey Mould's 1862 cast iron bridge with its shallow arch, interlocking circle railing and eight planting urns, the Lake and its schist shore, rowboats with rowers, mallards, weeping willows and autumn trees, the Ramble to the north and Cherry Hill to the south, the Loeb Boathouse and its dock, and the San Remo, the Dakota and the Central Park West skyline over the trees.",
+  "daylit": true,
+  "index": 150,
+  "place": "Bow Bridge and the Lake, Central Park",
+  "fact": "Bow Bridge was designed by Calvert Vaux and Jacob Wrey Mould and completed in 1862; the ironwork was made by Janes, Kirtland and Company, the Bronx foundry that also built the dome of the United States Capitol. It is cast iron, 87 feet long with a single 60 foot span, with an interlocking circle banister and eight planting urns, and it is the only one of the park's seven ornamental iron bridges that does not cross a bridle path. It was restored in 1974. The Lake covers 20 acres and was the first feature of the park completed, opening as a skating ground in December 1857. The Loeb Boathouse on its eastern shore was completed in 1954 with money from Carl M. Loeb and rents rowboats. Over the trees stands the San Remo, by Emery Roth, completed in 1930 at 27 stories and 400 feet, its twin towers topped by temples patterned after the Choragic Monument of Lysicrates.",
+  "year": "1862",
+  "learn": "The first thing finished in Central Park was the water, and the iron bridge over it was cast by the foundry that made the Capitol dome.",
+  "source": {
+   "name": "Bow Bridge (Central Park), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Bow_Bridge_(Central_Park)"
+  },
+  "keywords": [
+   "Bow Bridge",
+   "Central Park",
+   "The Lake",
+   "Loeb Boathouse",
+   "rowboats",
+   "The Ramble",
+   "San Remo",
+   "Calvert Vaux"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "unassembly",
+  "name": "The gold wall",
+  "area": "UNITED NATIONS / GENERAL ASSEMBLY HALL",
+  "mood": "The General Debate, a speaker at the rostrum",
+  "color": "#d4a93a",
+  "description": "The largest room at the United Nations, on the East River at Turtle Bay: eighteen hundred seats in curving tiers, every member state with six of them, facing the green rostrum and the gold wall with the emblem of the world seen from above the North Pole. Two murals by Fernand Leger face each other across the hall, which this room answers in its own flat colours, and the interpreters work behind glass on both sides. The New Yorkers hang on the wood panels of the side aisles and the back wall, where the delegations walk in.",
+  "signatures": "The gold leaf wall and the UN emblem, the green serpentinite rostrum with the speaker's lectern below the President's desk, the shallow sky blue dome and its ring of lights, the curved tiers of delegate desks with beige and blue chairs, the interpreters' booths in two rows, the two voting boards, and the two Leger murals, orange and grey on the left, blue and yellow on the right.",
+  "daylit": false,
+  "index": 151,
+  "place": "United Nations General Assembly Hall",
+  "fact": "The General Assembly Building was designed by the United Nations Headquarters Board of Design, which included Wallace Harrison, Oscar Niemeyer and Le Corbusier, and was dedicated on October 10, 1952. The hall is 165 feet long, 115 feet wide and 75 feet tall under a shallow dome, and seats 1,800. Behind the rostrum the UN emblem sits on a gold background; each delegation has six seats, and two murals by Fernand Leger, each 30 feet high, face each other across the hall.",
+  "year": "1952",
+  "learn": "Every nation gets six seats, and the front row is drawn by lot every year.",
+  "source": {
+   "name": "United Nations General Assembly Building, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/United_Nations_General_Assembly_Building"
+  },
+  "keywords": [
+   "United Nations General Assembly Hall",
+   "UN General Assembly",
+   "Turtle Bay",
+   "UN emblem gold wall",
+   "Fernand Leger murals",
+   "First Avenue"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "weitsmanyard",
+  "name": "The yard in Owego",
+  "area": "UPSTATE SHREDDING / OWEGO, NEW YORK",
+  "mood": "Summer noon, the shredder running",
+  "color": "#f0b41c",
+  "description": "Seventeen acres of sandy yard in the Tioga County Industrial Park, in a valley of wooded ridges three hours up from the city: the place a great deal of New York's scrap steel comes to be shredded and sent back out. A gift room for Adam Weitsman, who opened the yard in 1997 and collects MLow. The New Yorkers hang where a yard can carry them: on steel plates bolted to the canopy columns, on plate stood on end in the yard, on the scale house and on the flanks of the parked trailers.",
+  "signatures": "The long blue canopy and its banner, the mountain of crushed cars under it, yellow material handlers with orange peel grapples, the infeed conveyor climbing to the Mega Shredder and its steam, blue radial stackers pouring frag into dark cones, the Ferrous Downstream System, green Macks with tipping trailers, a hydraulic tipper, the scale house, rail gondolas, and the ridges of the Southern Tier all round.",
+  "daylit": true,
+  "index": 152,
+  "place": "Upstate Shredding, Weitsman Recycling, Owego, New York",
+  "fact": "Adam Weitsman opened Upstate Shredding in 1997 on a 17 acre site in the Tioga County Industrial Park in Owego, New York. The company calls itself the East Coast's largest privately held scrap metal processor, runs a 10,000 HP Riverside Engineering Mega Shredder in Owego, and processes 1 million tons of ferrous and 250 million pounds of nonferrous scrap metal a year. It was named the 2016 Platts Global Scrap Company of the Year.",
+  "year": "1997",
+  "learn": "Seventeen acres in the Southern Tier where a million tons of steel a year goes back into the world.",
+  "source": {
+   "name": "Upstate Shredding, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Upstate_Shredding"
+  },
+  "keywords": [
+   "Upstate Shredding",
+   "Weitsman Recycling",
+   "Owego scrap yard",
+   "Tioga County Industrial Park",
+   "Mega Shredder",
+   "Adam Weitsman"
+  ],
+  "article": null,
+  "articles": []
  }
 ]
