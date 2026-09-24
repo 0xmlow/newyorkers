@@ -1,4 +1,4 @@
-/* 137 to 146: the moving rooms, added after the fifteen landmarks. 147 to 152: the places the museum had missed, and the yard in Owego. 147 and 148 now load the merged v7 builds (v4 kept). 153 to 155: ChatGPT's three picks rebuilt. */
+/* 137 to 146: the moving rooms, added after the fifteen landmarks. 147 to 152: the places the museum had missed, and the yard in Owego. 147 and 148 now load the merged v7 builds (v4 kept). 153 to 155: ChatGPT's three picks rebuilt. 156 to 163: eight synagogues and the Ohel; 164: Gramercy Park. */
 import { fultonfish, lunarnewyear, enginecompany } from './v1';
 import { eastriverfourth, paradisegarage } from './v2';
 import { arthurashe, carousel, sharks, astoriapool, rockcenter } from './v3';
@@ -7,4 +7,8 @@ import { palmcourt, chelseamarket } from './v8';
 import { brooklyncentral } from './v9';
 import { dumbo, bowbridge } from './v5';
 import { unassembly, weitsmanyard } from './v6';
-export const LIVE_ROOMS=[fultonfish,lunarnewyear,enginecompany,eastriverfourth,paradisegarage,arthurashe,carousel,sharks,astoriapool,rockcenter,empirestate2,stpatricks2,dumbo,bowbridge,unassembly,weitsmanyard,palmcourt,chelseamarket,brooklyncentral];
+import { templeemanuel, kehilathjeshurun, jewishcenter } from './v10';
+import { chabad770, ohel } from './v11';
+import { safra, shearith, parkeast } from './v12';
+import { gramercy } from './v13';
+export const LIVE_ROOMS=[fultonfish,lunarnewyear,enginecompany,eastriverfourth,paradisegarage,arthurashe,carousel,sharks,astoriapool,rockcenter,empirestate2,stpatricks2,dumbo,bowbridge,unassembly,weitsmanyard,palmcourt,chelseamarket,brooklyncentral,templeemanuel,kehilathjeshurun,jewishcenter,chabad770,ohel,safra,shearith,parkeast,gramercy];
