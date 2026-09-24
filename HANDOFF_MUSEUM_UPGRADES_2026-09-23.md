@@ -63,6 +63,7 @@ Next batch goes in `rooms/up3.ts` with names like `arthuravenue2`.
 | Agent entry point | `NEW YORKERS SITE/AGENTS.md` |
 | Skill source | `SKILL UPDATES 2026-09-23/virtual-architect/` |
 | Posters and GLBs | `MUSEUM EXPORTS/2026-09-23/` |
+| Export runner | `_build/museum/run_export.py` |
 | Deploy | `GO LIVE PACKAGE/deploy.sh` (Cloudflare Pages, project `new-yorkers`) |
 
 ## 4. The loop for one room
@@ -87,7 +88,7 @@ Then export, thumbs, full build, commit:
 ```bash
 df -h /                                      # a room is about 40 MB of GLB; the disk runs tight
 python3 export_server.py 4181 &
-python3 <scratch>/run_export.py <idx> <idx> "" <hour>   # idx is 0 based into ROOMS
+python3 run_export.py <idx> <idx> "" <hour>             # idx is 0 based into ROOMS
 pkill -f "export_server.py 4181"
 python3 ../build_room_thumbs.py
 cd ../.. && ./_build/build_all.sh            # must end "no problems"
@@ -102,8 +103,9 @@ Notes that cost time today:
 - `--at=` needs the equals sign, because a leading minus reads as a flag.
 - Yaw 0 looks down −z, 90 toward −x, 180 toward +z.
 - The site server on `:4185` and the export receiver on `:4181` must both be up.
-- `run_export.py` in the scratchpad takes an hour argument; a daylit room exported at
-  the real clock gets whatever light New York has right now.
+- `_build/museum/run_export.py` takes an hour argument; a daylit room exported at the
+  real clock gets whatever light New York has right now. It needs `_build/serve.py 4185`
+  and `export_server.py 4181` both running.
 
 ## 5. The seven faults, all likely to repeat
 
