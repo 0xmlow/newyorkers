@@ -2156,25 +2156,25 @@
   "area": "THE DAKOTA",
   "mood": "December dusk",
   "color": "#c8b090",
-  "description": "Seventy second and Central Park West: the gabled fortress of an apartment house, the carriage arch into its courtyard, and across the street the round mosaic in the park with its one word, the works on the courtyard walls.",
+  "description": "Seventy second and Central Park West at dusk with the first snow coming down: the gabled fortress of an apartment house, the carriage arch off 72nd Street into its courtyard and its two fountains, and across the avenue the round mosaic in the park with its one word, flowers, and somebody playing. The works hang round the courtyard, in the arch, and on the park wall.",
   "signatures": "The sandstone and brick block with its gables, dormers and iron railings, the deep arched carriage entrance with the sentry box, the square inner courtyard with two fountains, the teardrop park across the avenue with the black and white mosaic ringed with flowers.",
   "daylit": true,
   "index": 72,
   "place": "The Dakota and Strawberry Fields",
-  "fact": "The Dakota at 1 West 72nd Street was completed in 1884 for Edward Clark of the Singer Sewing Machine Company, designed by Henry Janeway Hardenbergh. John Lennon lived there and was shot at its gate on December 8, 1980. Strawberry Fields, the memorial across the street in Central Park with its Imagine mosaic, was dedicated in 1985.",
+  "fact": "The Dakota at 72nd Street and Central Park West was built between 1880 and 1884 to designs by Henry Janeway Hardenbergh for Edward Cabot Clark of the Singer Manufacturing Company. Its main entrance is a double height carriage archway on 72nd Street into the courtyard. It became a city landmark in 1969 and a National Historic Landmark in 1976. John Lennon lived there and was killed at its entrance on December 8, 1980; Strawberry Fields, across the street in Central Park, was dedicated to him on October 9, 1985, around a mosaic that reads Imagine.",
   "year": "1884",
-  "learn": "An 1884 apartment fortress and the mosaic across the street.",
+  "learn": "A carriage could drive through the Dakota's front door into its courtyard.",
   "source": {
-   "name": "Central Park Conservancy",
-   "url": "https://www.centralparknyc.org"
+   "name": "The Dakota, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/The_Dakota"
   },
   "keywords": [
    "The Dakota",
-   "Dakota apartment building",
-   "Strawberry Fields Central Park",
+   "Dakota apartments",
+   "72nd Street Central Park West",
+   "Strawberry Fields",
    "Imagine mosaic",
-   "John Lennon Dakota",
-   "Dakota 72nd Street"
+   "John Lennon Dakota"
   ],
   "article": null,
   "articles": []
@@ -3007,25 +3007,25 @@
   "area": "MUSEUM OF THE CITY OF NEW YORK",
   "mood": "Museum Mile, the top of the mile",
   "color": "#b8a8a0",
-  "description": "The red brick Georgian building at 103rd, the marble rotunda with its twin curving stairs, the timeline gallery, the works telling the city's own story.",
+  "description": "The red brick Georgian building on Fifth at 103rd with Hamilton and Clinton in their niches, the marble rotunda with its twin curving stairs, the timeline gallery with its wall of screens changing, school groups following a guide, and the works hung round the rotunda and down the gallery telling the city's own story.",
   "signatures": "The Colonial Revival red brick and marble front with its portico and cupola, the entrance rotunda with two sweeping marble staircases, the New York at its core gallery with its wall of screens, the terrace on Fifth.",
   "daylit": true,
   "index": 101,
-  "place": "The Museum of the City of New York",
-  "fact": "The Museum of the City of New York was founded in 1923 and first shown at Gracie Mansion. Its Georgian Colonial Revival building on Fifth Avenue at 103rd Street, designed by Joseph H. Freedlander, opened in 1932. The museum collects the city's own history, from Dutch settlement to the present.",
-  "year": "1932",
-  "learn": "The city's own museum, in a Georgian building since 1932.",
+  "place": "Museum of the City of New York",
+  "fact": "Henry Collins Brown founded the Museum of the City of New York in 1923 to preserve and present the history of the city and its people; it began in Gracie Mansion. Its building at 1220 Fifth Avenue, between 103rd and 104th Streets, was designed by Joseph H. Freedlander in red brick with marble trim, built in 1929 and 1930 and dedicated on January 11, 1932. Statues of Alexander Hamilton and DeWitt Clinton by Adolph Alexander Weinman stand in niches facing Central Park. It became a city landmark on January 24, 1967.",
+  "year": "1923",
+  "learn": "The city's own museum started in Gracie Mansion and moved to Fifth in 1932.",
   "source": {
-   "name": "Museum of the City of New York",
-   "url": "https://www.mcny.org"
+   "name": "Museum of the City of New York, Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Museum_of_the_City_of_New_York"
   },
   "keywords": [
    "Museum of the City of New York",
    "MCNY",
+   "1220 Fifth Avenue",
+   "Museum Mile",
    "New York at Its Core",
-   "MCNY 103rd Street",
-   "Museum Mile city museum",
-   "New York City history museum"
+   "MCNY rotunda staircase"
   ],
   "article": "consolidation-1898",
   "articles": [

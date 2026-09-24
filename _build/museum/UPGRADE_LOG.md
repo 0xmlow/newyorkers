@@ -15,7 +15,7 @@ import line. Ids never change: they are URLs, tokens and thumbnails.
 | 24 `bleachers` | 22 mounts, 20 rescued, 20 backwards, 10 obstructed | 16 mounts, 0 rescued |
 | 45 `liberty` | 25 mounts, 25 rescued, 25 backwards | 24 mounts, 0 rescued |
 
-Museum wide: 527 rescued works before this pass, 442 after batch two, 407 after batch three, 373 after batch four.
+Museum wide: 527 rescued works before this pass, 442 after batch two, 407 after batch three, 373 after batch four, 344 after batch five.
 
 **bleachers.** The visitor now stands on the warning track in right centre with the
 whole bowl in front of them. Built to a ball field's real geometry: home plate at
@@ -184,7 +184,49 @@ Eggs: six each from Wikipedia (Apollo Theater, Carnegie Hall), fetched and check
     passes it through), and close any gap between a wall top and the ceiling over a
     stage.
 
+## Batch five, 2026-09-24 (`rooms/up5.ts`)
+
+| room | was | now |
+|---|---|---|
+| 101 `mcny` | 17 mounts, 15 rescued, 11 unreachable, 3 backwards | 18 mounts, 0 rescued |
+| 72 `dakota` | 22 mounts, 14 rescued, 10 unreachable, 4 backwards | 22 mounts, 0 rescued |
+
+Museum wide: 373 rescued before this batch, 344 after. Built, not deployed.
+
+These two are repairs on the originals' own plans, not new plans: the room code was
+copied into `up5.ts` and fixed there, so `u.ts` and `p.ts` are untouched. Said
+plainly because it is a lighter kind of rebuild than batches one to four.
+
+**mcny.** The whole building was one solid 34 by 16 by 40 brick box with the
+rotunda inside it (fault 3), whose south face stood in front of the timeline
+gallery's works; the portico was a solid block through the door; the rotunda had no
+walls of its own, so its works hung on the inside of the box; their targets were
+inside the mezzanine block; four works hung high over a mezzanine nobody can reach;
+the park wall works faced the park; the street ran under the portico stairs. Now the
+building is hollow, the rotunda has its own walls with an opening to the gallery, the
+portico is two piers and a lintel, Hamilton and Clinton stand in niches either side
+of it, the street is moved so the stairs land on the sidewalk, and the works hang
+round the rotunda at floor level, down the gallery and beside the screens. The ten
+screens, which the original laid directly over the census wall, are a band above it
+now and change colour. A class in yellow follows a guide with a flag; traffic on
+Fifth. About 29 k triangles.
+
+**dakota.** The north wing was one solid box straight through the carriage arch and a
+block ran across it, so the courtyard could not be walked into at all; there was no
+72nd Street for the arch to open onto. The wing is now split round the arch with a
+piece over it, the block is split, and 72nd Street runs along the north front with a
+row of houses across it. The courtyard targets moved out of the fountain keep outs,
+the park wall works turned round. The first snow falls, a doorman stands by the
+sentry box, a busker plays at the mosaic with flowers left on it and a few people
+round it, cabs run on Central Park West. The IMAGINE word stood upright: the original
+rotated "the last mesh built", which was not the sign. About 53 k triangles. Not
+improved: the roofline still reads as chimneys, not gables, from the avenue.
+
+Eggs: five for mcny, six for dakota, from Wikipedia (Museum of the City of New York,
+The Dakota, Strawberry Fields), fetched and checked 2026-09-24, in
+`_build/learn/room_facts_8.json`.
+
 ## Next, in the audit's order
 
-mcny (15), dakota (14), snug (13), strivers (13), halloffame (12). Then the facade rooms, then
+snug (13), strivers (13), halloffame (12). Then the facade rooms, then
 the ported corridors 1 to 21.
