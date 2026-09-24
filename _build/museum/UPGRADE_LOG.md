@@ -15,7 +15,7 @@ import line. Ids never change: they are URLs, tokens and thumbnails.
 | 24 `bleachers` | 22 mounts, 20 rescued, 20 backwards, 10 obstructed | 16 mounts, 0 rescued |
 | 45 `liberty` | 25 mounts, 25 rescued, 25 backwards | 24 mounts, 0 rescued |
 
-Museum wide: 527 rescued works, now 482.
+Museum wide: 527 rescued works before this pass, 442 after batch two.
 
 **bleachers.** The visitor now stands on the warning track in right centre with the
 whole bowl in front of them. Built to a ball field's real geometry: home plate at
@@ -36,6 +36,28 @@ band has twenty five openings with a pier between each, so the crown is a place 
 stand and look out of rather than a sealed copper ball. Ferries work the harbour,
 gulls ring the island, and sixteen climbers are always on the stair ahead of you.
 
+## Batch two, 2026-09-23 (`rooms/up2.ts`)
+
+| room | was | now |
+|---|---|---|
+| 10 `highline` | 22 mounts, 20 rescued, 20 unreachable | 20 mounts, 0 rescued |
+| 38 `littleisland` | 20 mounts, 20 rescued, 17 backwards, 3 unreachable | 22 mounts, 0 rescued |
+
+**highline.** Every target was outside the room's own bounds: `corridorMounts` sent
+the viewer to x = 6.45 on a deck that stops at 5.6, so nobody could ever stand where
+the works were meant to be seen from. The line now runs its full length with Oudolf's
+grasses moving in three grades, the rails still in the deck, peel up benches, the
+sundeck chairs, traffic on the avenue below, a crowd strolling both ways, a hotel
+straddling the line at the north end, and the Tenth Avenue Square cut down into the
+deck with a window over the traffic, which is a floor the visitor actually walks down.
+
+**littleisland.** The glass panels along the paths were rotated `ang + PI/2`, which
+puts the picture's back to the path. Rebuilt with the geometry the place actually has:
+132 pots seated under an elliptical lawn with a concrete edge beam, so from the water
+you see what holds the park up; paths and bridges as strips that follow the ground
+instead of stacks of boxes; the Amph with an audience on its tiers and somebody on the
+stage; 1,200 bulbs, three grades of tree, gulls, a boat, and people on every path.
+
 ## Four faults worth carrying into every other room
 
 1. **The mount normal on a circle is `-a - PI/2`, not `PI/2 - a`.** Both rooms had
@@ -51,8 +73,18 @@ gulls ring the island, and sixteen climbers are always on the stair ahead of you
    spectators became two boxes each (24 triangles); it is 323 k now and looks the
    same from anywhere a visitor can stand.
 
+## Three more faults, from batch two
+
+5. **A room's `spawn` y is the eye, not the floor.** `littleisland` spawned at y = 0.9
+   with a floor at 1.1 and an eye height of 3, and the visitor arrived under the park
+   looking up through the lawn. Write `spawn` as floorY + eye.
+6. **A square plane clipped by dropping its outside vertices is a grass cliff.** Build
+   a shape that is the shape: a polar grid over the ellipse, with a skirt for its edge.
+7. **A path made of stacked boxes on a hill is a staircase.** Sample the line and lay a
+   quad strip on the terrain (`terrainStrip` in `up2.ts`).
+
 ## Next, in the audit's order
 
-littleisland (20 rescued), highline (20 unreachable), arthuravenue, library, apollo,
-carnegie, mcny, dakota, snug, strivers, halloffame. Then the facade rooms, then the
-ported corridors 1 to 21.
+arthuravenue (17 rescued), library (18), apollo (18), carnegie (16), mcny (15),
+dakota (14), snug (13), strivers (13), halloffame (12). Then the facade rooms, then
+the ported corridors 1 to 21.
