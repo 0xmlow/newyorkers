@@ -17,8 +17,9 @@ remote**; the deploy is the push). Nothing is half finished.
 2. **The learnings went into the skill.** `virtual-architect` is now v3.4: cookbook v6
    (`references/new-yorkers-museum.md`) plus a new `references/room-upgrade-guide.md`.
    Packaged in `SKILL UPDATES 2026-09-23/` and copied to the root
-   `virtual-architect.skill`. **MLow still has to re-upload that file to claude.ai.**
-   The previous zip is in `_skill_backups_2026-09-23/`.
+   `virtual-architect.skill`. Uploaded to claude.ai on 2026-09-23 as **virtual-architect v2 (current)**, replacing the
+   previous version, which stays in the skill's version history. The previous zip is
+   also in `_skill_backups_2026-09-23/`.
 3. **The upgrade brief was written**:
    `NEW YORKERS SITE/_build/museum/ROOM_UPGRADE_GUIDE_2026-09-23.md`, linked from
    `NEW YORKERS SITE/AGENTS.md`.
@@ -148,7 +149,6 @@ stop at the front door), then the ported corridors 1 to 21.
 
 ## 7. Open, not done
 
-- **The skill zip has not been re-uploaded to claude.ai.** MLow has to do that by hand.
 - The engine work in section 4 of the brief (named sky presets, a neutral ground colour
   in `k.hemi`, more tree species, seated and standing people in the kit, the ambient
   occlusion pass, a bloom clamp, and failing the build on `rescued`) would lift all 146
