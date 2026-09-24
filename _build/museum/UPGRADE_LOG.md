@@ -90,7 +90,7 @@ stage; 1,200 bulbs, three grades of tree, gulls, a boat, and people on every pat
 | 54 `arthuravenue` | 22 mounts, 17 rescued, 15 backwards, 7 unreachable | 24 mounts, 0 rescued |
 | 15 `library` | 25 mounts, 18 rescued, 18 unreachable | 24 mounts, 0 rescued |
 
-Museum wide: 442 rescued before this batch, 407 after.
+Museum wide: 442 rescued before this batch, 407 after. Deployed as build 20260924-025910.
 
 **arthuravenue.** The boards over the stalls hung their pictures facing into the
 board (the rotation signs were swapped), four targets stood inside the market's own
