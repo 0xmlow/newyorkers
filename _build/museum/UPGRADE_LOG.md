@@ -15,7 +15,7 @@ import line. Ids never change: they are URLs, tokens and thumbnails.
 | 24 `bleachers` | 22 mounts, 20 rescued, 20 backwards, 10 obstructed | 16 mounts, 0 rescued |
 | 45 `liberty` | 25 mounts, 25 rescued, 25 backwards | 24 mounts, 0 rescued |
 
-Museum wide: 527 rescued works before this pass, 442 after batch two, 407 after batch three.
+Museum wide: 527 rescued works before this pass, 442 after batch two, 407 after batch three, 373 after batch four.
 
 **bleachers.** The visitor now stands on the warning track in right centre with the
 whole bowl in front of them. Built to a ball field's real geometry: home plate at
@@ -137,8 +137,54 @@ so rather than pick one.
 Also: both GLBs came out at about 70 MB, not 40; the hall and the reading room are
 dense with small boxes. Budget disk accordingly.
 
+## Batch four, 2026-09-24 (`rooms/up4.ts`)
+
+| room | was | now |
+|---|---|---|
+| 16 `apollo` | 19 mounts, 18 rescued, 18 unreachable | 21 mounts, 0 rescued |
+| 63 `carnegie` | 20 mounts, 16 rescued, 16 unreachable | 18 mounts, 0 rescued |
+
+Museum wide: 407 rescued before this batch, 373 after. Built, not deployed.
+
+**apollo.** `corridorMounts` put every viewing spot at x = 9.2 and the seat blocks
+ran wall to wall, so no one could stand where the works were meant to be seen. Now
+the orchestra seats stop at 7.95 and a clear side aisle runs down each wall, with
+six works a side between gilt pilasters. The room starts on 125th Street at night:
+the marquee reading AMATEUR NIGHT with its bulbs chasing, the red APOLLO blade read
+top to bottom, poster cases either side of the doors carrying two works, the Walk of
+Fame plaques in the sidewalk, cabs both ways. The lobby has the Tree of Hope on its
+plinth and the Wall of Fame. The house has two balconies over the orchestra and about
+700 people who sway with the song; a singer works the front of the stage in a follow
+spot that tracks her, with piano, drums and bass behind; three works hang on the back
+wall of the stage. About 83 k triangles.
+
+**carnegie.** The ten box front works aimed at a point inside the stage's keep out,
+four more into the parquet, and the facade was one solid brick box 60 metres a side
+with the hall inside it (fault 3 again), with 57th Street running into the building.
+Now 57th Street runs across the front, the facade is a hollow wall of Roman brick and
+terracotta with three door arches and the studio tower over it, a lobby in cream and
+gold carries two census walls and four works, and the hall is a horseshoe of five
+levels built from the circle: the parquet wall is 24 flat panels on the true tangent
+with a door at the back, four tiers each with a gilt front, box partitions on the
+first two, and about 1,300 people. Eight works hang round the parquet wall under the
+first tier and four down the straight sides, all facing the centre with
+`atan2(-cos a, -sin a)`, with a ring aisle kept clear to stand in; two more flank the
+stage. On stage an orchestra of about 60 sits in five arcs round the conductor: the
+bows move together and the baton beats four. About 100 k triangles.
+
+Eggs: six each from Wikipedia (Apollo Theater, Carnegie Hall), fetched and checked
+2026-09-24, in `_build/learn/room_facts_7.json`, which replaces both rooms' entries.
+
+## One more fault, from batch four
+
+10. **An open cylinder or ring is single sided.** A horseshoe's upper wall, a tier
+    front, a dome seen from underneath: from the inside they cull away and you see
+    straight through them, here to the facade's brick and the sky, and up through a
+    tier into its audience. Give curved shells a `side: T.DoubleSide` material (k.pbr
+    passes it through), and close any gap between a wall top and the ceiling over a
+    stage.
+
 ## Next, in the audit's order
 
-apollo (18), carnegie (16), mcny (15), dakota (14), snug (13), strivers (13),
-halloffame (12). Then the facade rooms, then
+mcny (15), dakota (14), snug (13), strivers (13), halloffame (12). Then the facade rooms, then
 the ported corridors 1 to 21.
