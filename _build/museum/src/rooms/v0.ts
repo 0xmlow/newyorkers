@@ -1,4 +1,4 @@
-/* 137 to 146: the moving rooms, added after the fifteen landmarks. 147 to 152: the places the museum had missed, and the yard in Owego. 147 and 148 now load the merged v7 builds (v4 kept). 153 to 155: ChatGPT's three picks rebuilt. 156 to 163: eight synagogues and the Ohel; 164: Gramercy Park. 161 now loads the merged Safra in v14 (v12 kept). */
+/* 137 to 146: the moving rooms, added after the fifteen landmarks. 147 to 152: the places the museum had missed, and the yard in Owego. 147 and 148 now load the merged v7 builds (v4 kept). 153 to 155: ChatGPT's three picks rebuilt. 156 to 163: eight synagogues and the Ohel; 164: Gramercy Park. 161 now loads the merged Safra in v14 (v12 kept). 165 to 179: fifteen more places, v15 to v22. */
 import { fultonfish, lunarnewyear, enginecompany } from './v1';
 import { eastriverfourth, paradisegarage } from './v2';
 import { arthurashe, carousel, sharks, astoriapool, rockcenter } from './v3';
@@ -12,4 +12,12 @@ import { chabad770, ohel } from './v11';
 import { shearith, parkeast } from './v12';
 import { safra2 } from './v14';
 import { gramercy } from './v13';
-export const LIVE_ROOMS=[fultonfish,lunarnewyear,enginecompany,eastriverfourth,paradisegarage,arthurashe,carousel,sharks,astoriapool,rockcenter,empirestate2,stpatricks2,dumbo,bowbridge,unassembly,weitsmanyard,palmcourt,chelseamarket,brooklyncentral,templeemanuel,kehilathjeshurun,jewishcenter,chabad770,ohel,safra2,shearith,parkeast,gramercy];
+import { cityhallloop, goldvault } from './v15';
+import { unionsquare, bryantpark } from './v16';
+import { lighthouse, fourfreedoms } from './v17';
+import { sealions, delacorte } from './v18';
+import { cherryesplanade, promenade } from './v19';
+import { astorplace, nightmarket } from './v20';
+import { dykerheights, huntspoint } from './v21';
+import { columbuspark } from './v22';
+export const LIVE_ROOMS=[fultonfish,lunarnewyear,enginecompany,eastriverfourth,paradisegarage,arthurashe,carousel,sharks,astoriapool,rockcenter,empirestate2,stpatricks2,dumbo,bowbridge,unassembly,weitsmanyard,palmcourt,chelseamarket,brooklyncentral,templeemanuel,kehilathjeshurun,jewishcenter,chabad770,ohel,safra2,shearith,parkeast,gramercy,cityhallloop,goldvault,unionsquare,bryantpark,lighthouse,fourfreedoms,sealions,delacorte,cherryesplanade,promenade,astorplace,nightmarket,dykerheights,huntspoint,columbuspark];
