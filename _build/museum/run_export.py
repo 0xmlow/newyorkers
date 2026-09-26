@@ -42,3 +42,7 @@ try:
     print(sorted(f for f in os.listdir(OUT) if f.endswith('.png')))
 finally:
     chrome.terminate()
+    # the profile is junk once Chrome is gone; 184 of them once ate 8 GB of the disk
+    try: chrome.wait(timeout=10)
+    except Exception: pass
+    import shutil; shutil.rmtree(prof, ignore_errors=True)

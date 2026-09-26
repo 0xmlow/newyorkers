@@ -134,8 +134,11 @@ class Tab:
     def close(self):
         try:
             self.proc.terminate()
+            self.proc.wait(timeout=10)
         except Exception:
             pass
+        import shutil
+        shutil.rmtree(self.prof, ignore_errors=True)  # the profile is junk once Chrome is gone
 
 
 def capture(tab, r):

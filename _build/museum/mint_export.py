@@ -79,6 +79,9 @@ try:
         time.sleep(3)
 finally:
     chrome.terminate(); srv.shutdown()
+    try: chrome.wait(timeout=10)
+    except Exception: pass
+    import shutil; shutil.rmtree(prof, ignore_errors=True)  # the profile is junk once Chrome is gone
 recs = sorted((json.load(open(os.path.join(OUT, f))) for f in os.listdir(OUT) if f.startswith("new-yorkers-museum-") and f.endswith(".json")), key=lambda r: r["index"])
 json.dump({"day": A.day, "hour": A.hour, "rooms": recs}, open(os.path.join(OUT, "manifest.json"), "w"), indent=1)
 fails = [f for f in os.listdir(OUT) if f.startswith("FAILED-")]

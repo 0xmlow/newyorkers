@@ -591,6 +591,10 @@ function animate(now: number) {
     marker.scale.setScalar(1 + (1 - markerT) * 0.9);
     if (!markerT) marker.visible = false;
   }
+  /* renderer.info resets on every render() call, so read after the composer's last quad it says calls 1, tris 0k.
+     Reset it here once per frame instead; the count then covers the whole frame (shadow, scene and fx passes). */
+  renderer.info.autoReset = false;
+  renderer.info.reset();
   if (fx) fx.render(); else renderer.render(scene, camera);
   if (params.has('debug')) $('#debug').textContent = `calls ${renderer.info.render.calls} · tris ${(renderer.info.render.triangles / 1000).toFixed(0)}k · tex ${renderer.info.memory.textures} · geo ${renderer.info.memory.geometries}`;
 }
