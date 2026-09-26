@@ -94,7 +94,7 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
-              "keystone.html")
+              "keystone.html", "honoraries.html")
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
                            "humans.txt", "_redirects")
 for page in SITE_FILES:
@@ -163,7 +163,7 @@ with open(os.path.join(OUT, "404.html"), "w") as f:
             '<div><div style="font-size:64px;letter-spacing:.08em;color:#fff">404</div>'
             '<p style="color:#8899AA;max-width:420px;line-height:1.6">This number has not been painted yet. The census keeps going anyway.</p>'
             '<p><a href="/" style="color:#2962FF;text-decoration:none;font-family:Menlo,monospace;font-size:13px;letter-spacing:.2em">ENTER THE CENSUS</a></p></div></body></html>')
-for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "museum"):
+for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "museum"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
@@ -300,6 +300,8 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
 /assets/motion/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/keystone/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/honoraries/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/museum/props/*
   Cache-Control: public, max-age=31536000, immutable
