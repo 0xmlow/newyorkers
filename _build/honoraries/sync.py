@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pull the honoraries into the site: one entry per portrait, in the film's chapter order, plus two web images each.
+"""Pull the honoraries into the site: one entry per person, grouped by what they do (roles.json), two web images per painting.
 
 Source of truth for WHO is the roll call film's collector (HONORARIES HYPE FILM 2026-09-26/_engine/collect.py,
 which reads the honoraries folders and the census). Run that first when a wave lands, then this, then
@@ -31,9 +31,20 @@ def save(im, path, q):
     im.save(path, "JPEG", quality=q, optimize=True, progressive=True)
 
 
-entries, keep = [], set()
-for ci, ch in enumerate(TL.CHAPTERS):
-    for p in ch["people"]:
+ROLES = json.load(open(os.path.join(HERE, "roles.json")))  # person key -> category code, edit by hand
+CATS = [("A", "Artists"), ("C", "Collectors and curators"), ("B", "Founders and investors"), ("W", "Writers and media"),
+        ("M", "Music"), ("F", "Film and stage"), ("X", "Fashion"), ("S", "Sport"), ("D", "Food"), ("P", "Politics and civic")]
+missing = [p["key"] for c in TL.CHAPTERS for p in c["people"] if p["key"] not in ROLES]
+assert not missing, f"no category in roles.json for: {missing}"
+
+
+def norm(n):
+    return re.sub(r"[^a-z0-9]+", "", n.lower())
+
+
+people, keep = {}, set()
+for c in TL.CHAPTERS:
+    for p in c["people"]:
         sid = slug(p["key"])
         h = hashlib.sha256(open(p["hero"], "rb").read() + open(p["pfp"], "rb").read()).hexdigest()[:8]
         s_name, l_name = f"{sid}-{h}s.jpg", f"{sid}-{h}l.jpg"
@@ -46,19 +57,25 @@ for ci, ch in enumerate(TL.CHAPTERS):
             im.thumbnail((1280, 1280), Image.LANCZOS)
             save(im, lp, 78)
         W, H = Image.open(lp).size
+        work = dict(title=p["title"] or "", s=s_name, l=l_name, w=W, h=H)
+        if p.get("kind") == "census":
+            work.update(num=p["num"], key=bool(p.get("keystone")), rec=BY_N[p["num"]]["id"])
+        # one card per person: a census piece and a later portrait of the same person share it
+        k = norm(p["disp"])
+        e = people.setdefault(k, dict(id=sid, name=p["disp"], handle="", x="", cat=ROLES[p["key"]], works=[]))
         hd = p["handle"] or ""
-        census = p.get("kind") == "census"
-        e = dict(id=sid, name=p["disp"], handle=hd, x=hd[1:] if HANDLE.match(hd) else "", ch=ci,
-                 title=p["title"] or "", s=s_name, l=l_name, w=W, h=H)
-        if census:
-            e.update(num=p["num"], era="I" if p["group"] == "ERA1" else "XVIII", key=bool(p.get("keystone")),
-                     rec=BY_N[p["num"]]["id"])
-        entries.append(e)
+        if hd and not e["handle"]:
+            e.update(handle=hd, x=hd[1:] if HANDLE.match(hd) else "")
+        # the portrait made for the person leads, the census piece follows
+        if p.get("kind") == "census":
+            e["works"].append(work)
+        else:
+            e["works"].insert(0, work)
+entries = sorted(people.values(), key=lambda e: ([c for c, _ in CATS].index(e["cat"]), norm(re.sub(r"^the ", "", e["name"], flags=re.I))))
 
 for f in os.listdir(OUT):  # images no longer referenced
     if f.endswith(".jpg") and f not in keep:
         os.remove(os.path.join(OUT, f))
-chapters = [dict(num=c["num"], name=c["name"], sub=c["sub"], color=c["color"]) for c in TL.CHAPTERS]
-json.dump(dict(chapters=chapters, people=entries), open(os.path.join(HERE, "honoraries.json"), "w"), indent=0, ensure_ascii=False)
+json.dump(dict(cats=[dict(code=c, name=n) for c, n in CATS], people=entries), open(os.path.join(HERE, "honoraries.json"), "w"), indent=0, ensure_ascii=False)
 mb = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT)) / 1e6
-print(f"honoraries: {len(entries)} portraits in {len(chapters)} chapters, {mb:.0f} MB of images")
+print(f"honoraries: {len(entries)} people, {sum(len(e['works']) for e in entries)} paintings, {mb:.0f} MB of images")

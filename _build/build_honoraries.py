@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""honoraries.html: every real person MLow has painted into NEW YORKERS, in the roll call film's seven chapters.
+"""honoraries.html: every real person MLow has painted into NEW YORKERS, grouped by what they do.
 
 Reads _build/honoraries/honoraries.json (written by _build/honoraries/sync.py, which also fills
 assets/honoraries/). Cards are rendered into the HTML so names and handles are crawlable; the script
@@ -11,17 +11,24 @@ from page_shell import shell, cfg
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.dirname(HERE)
 D = json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))
-CH, PPL = D["chapters"], D["people"]
+CATS, PPL = D["cats"], D["people"]
 N = len(PPL)
+NW = sum(len(p["works"]) for p in PPL)
+CATN = {c["code"]: c["name"] for c in CATS}
 e = lambda s: html.escape(str(s or ""), quote=True)
-ACC = {"PINK": "var(--pink)", "ACID": "var(--acid)", "CYAN": "var(--cyan)", "BLUE": "var(--blue)"}
+ACCS = ["var(--acid)", "var(--pink)", "var(--cyan)", "#FFB020", "#B388FF"]
+ACC = {c["code"]: ACCS[i % len(ACCS)] for i, c in enumerate(CATS)}
+SHORT = {"Collectors and curators": "Collectors", "Founders and investors": "Founders", "Writers and media": "Media",
+         "Film and stage": "Film and stage", "Politics and civic": "Civic"}
 
 
 def tag(p):
-    if "num" in p:
-        no = f" &middot; NO. {p['num']:04d}" if p["handle"] else ""  # without a handle the number is already the second line
-        return f"ERA {p['era']}{no}" + (' <b class="ks">KEYSTONE</b>' if p.get("key") else "")
-    return "HONORARY NEW YORKER"
+    t = e(CATN[p["cat"]].upper())
+    if len(p["works"]) > 1:
+        t += f' &middot; {len(p["works"])} PAINTINGS'
+    if any(w.get("key") for w in p["works"]):
+        t += ' <b class="ks">KEYSTONE</b>'
+    return t
 
 
 def handle(p):
@@ -29,32 +36,35 @@ def handle(p):
         return f'<a class="hd" href="https://x.com/{e(p["x"])}" target="_blank" rel="noopener">{e(p["handle"])}</a>'
     if p["handle"]:
         return f'<span class="hd">{e(p["handle"])}</span>'
-    return f'<span class="hd none">NO. {p["num"]:04d}</span>'
+    return f'<span class="hd none">NEW YORKERS NO. {p["works"][0]["num"]:04d}</span>'
 
 
 def card(i, p):
     q = f'{p["name"]} {p["handle"]}'.lower()
     return (f'<li class="hc" data-i="{i}" data-q="{e(q)}"><button class="ph" type="button" aria-label="Open the portrait of {e(p["name"])}">'
-            f'<img src="assets/honoraries/{p["s"]}" alt="{e(p["name"])}, painted by MLow as a New Yorker" loading="lazy" width="400" height="400"></button>'
+            f'<img src="assets/honoraries/{p["works"][0]["s"]}" alt="{e(p["name"])}, painted by MLow as a New Yorker" loading="lazy" width="400" height="400"></button>'
             f'<div class="bar"></div><h3>{e(p["name"])}</h3>{handle(p)}<div class="tg">{tag(p)}<i class="eye"></i></div></li>')
 
 
-sections, tabs = [], [f'<button class="tab on" data-ch="all">ALL <span>{N}</span></button>']
-for ci, c in enumerate(CH):
-    ppl = [(i, p) for i, p in enumerate(PPL) if p["ch"] == ci]
-    tabs.append(f'<button class="tab" data-ch="{ci}" style="--a:{ACC[c["color"]]}">{e(c["name"].replace("THE ", ""))} <span>{len(ppl)}</span></button>')
-    label = "paintings in the census" if ci == 0 else "honorary New Yorkers"
-    sections.append(f'''<section class="chap" data-ch="{ci}" style="--a:{ACC[c["color"]]}" id="{e(c["name"].lower().replace(" ", "-"))}">
-<header><div class="no">{c["num"]}</div><div><p class="k">ROLL CALL {c["num"]}</p><h2>{e(c["name"].title())}</h2><p class="sub">{e(c["sub"][0].upper() + c["sub"][1:])}. <span>{len(ppl)} {label}.</span></p></div></header>
+sections, tabs = [], [f'<button class="tab on" data-ch="all">EVERYONE <span>{N}</span></button>']
+for c in CATS:
+    ppl = [(i, p) for i, p in enumerate(PPL) if p["cat"] == c["code"]]
+    if not ppl:
+        continue
+    code, name = c["code"], c["name"]
+    tabs.append(f'<button class="tab" data-ch="{code}" style="--a:{ACC[code]}">{e(SHORT.get(name, name).upper())} <span>{len(ppl)}</span></button>')
+    sections.append(f'''<section class="chap" data-ch="{code}" style="--a:{ACC[code]}" id="{e(name.lower().replace(" ", "-"))}">
+<header><div><h2>{e(name)}</h2><p class="sub"><span>{len(ppl)} {"person" if len(ppl) == 1 else "people"}</span></p></div></header>
 <ul class="grid">{"".join(card(i, p) for i, p in ppl)}</ul></section>''')
 
 # two drifting rows of faces for the masthead, one from each end of the list
-row = lambda ps: "".join(f'<img src="assets/honoraries/{p["s"]}" alt="" loading="lazy">' for p in ps)
+row = lambda ps: "".join(f'<img src="assets/honoraries/{p["works"][0]["s"]}" alt="" loading="lazy">' for p in ps)
 pick = PPL[::max(1, N // 64)][:64]
 rowA, rowB = row(pick[:32]), row(pick[32:])
 
-counts = " &middot; ".join(f'{sum(1 for p in PPL if p["ch"] == ci)} {c["name"].replace("THE ", "").title()}' for ci, c in enumerate(CH))
-DATA = json.dumps([{k: p.get(k) for k in ("name", "handle", "x", "title", "l", "w", "h", "ch", "num", "era", "key", "rec")} for p in PPL],
+counts = " &middot; ".join(f'{sum(1 for p in PPL if p["cat"] == c["code"])} {e(SHORT.get(c["name"], c["name"]))}' for c in CATS)
+DATA = json.dumps([{"name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"],
+                    "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
                   ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
 body = f'''<main class="hon">
@@ -63,9 +73,9 @@ body = f'''<main class="hon">
  <div class="mast-in wrap">
   <p class="kicker">NEW YORKERS &middot; THE HONORARIES</p>
   <h1>The Honor&shy;aries.</h1>
-  <p class="lede">Every real person MLow has painted into NEW YORKERS, in one room. The founders and the legends of the first era,
-  the guests of The MLow Show painted as themselves, the first gifts, and the artists, builders and culture makers who make
-  New York what it is. <b>{N} portraits and counting.</b></p>
+  <p class="lede">Every real person MLow has painted into NEW YORKERS, in one room: the artists and collectors of his world,
+  the guests of The MLow Show, and the musicians, athletes, chefs, writers and mayors who make New York what it is.
+  <b>{N} people, {NW} paintings, and counting.</b></p>
   <p class="counts">{counts}</p>
  </div>
 </section>
@@ -82,33 +92,36 @@ body = f'''<main class="hon">
  <button class="x" type="button" aria-label="Close">&times;</button>
  <button class="nv pv" type="button" aria-label="Previous">&#8249;</button><button class="nv nx" type="button" aria-label="Next">&#8250;</button>
  <figure><div class="frame"><img id="lbi" alt=""></div><figcaption>
-  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="t" id="lbt"></p><p id="lbr"></p></figcaption></figure>
+  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p></figcaption></figure>
 </dialog>
-<script>window.HON={DATA};window.HON_CH={json.dumps([c["name"].title() for c in CH])};</script>'''
+<script>window.HON={DATA};window.HON_CAT={json.dumps(CATN)};</script>'''
 
 JS = r'''<script>
 (function(){
-  var H=window.HON, CHN=window.HON_CH, cards=[].slice.call(document.querySelectorAll(".hc")), secs=[].slice.call(document.querySelectorAll(".chap"));
+  var H=window.HON, CATN=window.HON_CAT, cards=[].slice.call(document.querySelectorAll(".hc")), secs=[].slice.call(document.querySelectorAll(".chap"));
   var tabs=[].slice.call(document.querySelectorAll(".tab")), q=document.getElementById("q"), none=document.getElementById("none"), cur="all";
   function apply(){
     var s=(q.value||"").trim().toLowerCase().replace(/^@/,""), shown=0;
-    cards.forEach(function(c){ var ok=(cur==="all"||c.parentNode.parentNode.dataset.ch===cur)&&(!s||c.dataset.q.replace(/@/g,"").indexOf(s)>=0); c.hidden=!ok; if(ok)shown++; });
+    cards.forEach(function(c){ var ok=(cur==="all"||H[+c.dataset.i].cat===cur)&&(!s||c.dataset.q.replace(/@/g,"").indexOf(s)>=0); c.hidden=!ok; if(ok)shown++; });
     secs.forEach(function(x){ x.hidden=!x.querySelector(".hc:not([hidden])"); });
     none.hidden=shown>0;
   }
   tabs.forEach(function(t){ t.onclick=function(){ tabs.forEach(function(u){u.classList.toggle("on",u===t)}); cur=t.dataset.ch; apply();
-    if(cur!=="all"){ var el=document.querySelector('.chap[data-ch="'+cur+'"]'); if(el) window.scrollTo({top:el.getBoundingClientRect().top+scrollY-90,behavior:"smooth"}); } }; });
+    if(cur!=="all"){ var el=document.querySelector('.chap[data-ch="'+cur+'"]'); if(el) window.scrollTo({top:el.getBoundingClientRect().top+scrollY-document.querySelector(".tools").offsetHeight-70,behavior:"smooth"}); } }; });
   q.addEventListener("input",apply);
   var lb=document.getElementById("lb"), idx=0, order=[];
   function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}
-  function show(i){
-    idx=i; var p=H[i], im=document.getElementById("lbi");
-    im.src="assets/honoraries/"+p.l; im.alt=p.name+", painted by MLow"; im.width=p.w; im.height=p.h;
-    document.getElementById("lbk").textContent=(p.num!=null?("ERA "+p.era+" · NO. "+String(p.num).padStart(4,"0")+(p.key?" · KEYSTONE":"")):"HONORARY NEW YORKER")+" · "+CHN[p.ch].toUpperCase();
+  function show(i,wi){
+    idx=i; wi=wi||0; var p=H[i], w=p.works[wi], im=document.getElementById("lbi");
+    im.src="assets/honoraries/"+w.l; im.alt=p.name+", painted by MLow"; im.width=w.w; im.height=w.h;
+    document.getElementById("lbk").textContent=CATN[p.cat].toUpperCase()+(w.num!=null?" · NEW YORKERS NO. "+String(w.num).padStart(4,"0"):"")+(w.key?" · KEYSTONE":"");
     document.getElementById("lbn").textContent=p.name;
+    var wb=document.getElementById("lbw"); wb.innerHTML="";
+    if(p.works.length>1) p.works.forEach(function(x,j){ var b=document.createElement("button"); b.type="button"; b.className=j===wi?"on":""; b.textContent=j===0?"Portrait":"In the census";
+      b.onclick=function(){show(i,j)}; wb.appendChild(b); });
     document.getElementById("lbh").innerHTML=p.x?'<a href="https://x.com/'+esc(p.x)+'" target="_blank" rel="noopener">'+esc(p.handle)+' on X</a>':esc(p.handle||"");
-    document.getElementById("lbt").textContent=p.title?"“"+p.title+"”":"";
-    document.getElementById("lbr").innerHTML=p.rec?'<a class="btn sm" href="n/'+esc(p.rec)+'.html">Open the census record</a>':"";
+    document.getElementById("lbt").textContent=w.title?"“"+w.title+"”":"";
+    document.getElementById("lbr").innerHTML=w.rec?'<a class="btn sm" href="n/'+esc(w.rec)+'.html">Open the census record</a>':"";
   }
   function step(d){ var vis=cards.filter(function(c){return !c.hidden}).map(function(c){return +c.dataset.i}); var k=vis.indexOf(idx); if(k<0)return; show(vis[(k+d+vis.length)%vis.length]); }
   cards.forEach(function(c){ c.querySelector(".ph").onclick=function(){ show(+c.dataset.i); if(lb.showModal) lb.showModal(); else lb.setAttribute("open",""); }; });
@@ -149,6 +162,8 @@ p.none{font-family:var(--sans);color:var(--slate);padding-top:48px;font-size:18p
 p.none a{color:var(--cyan)}
 .chap{padding:72px 0 8px}
 .chap>header{display:flex;gap:28px;align-items:flex-end;margin-bottom:34px;border-bottom:1px solid var(--divider);padding-bottom:26px}
+.works{display:flex;gap:8px;margin:-6px 0 20px}.works button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--divider);background:transparent;color:var(--cloud)}.works button.on{background:var(--cloud);color:var(--ink)}
+.chap h2:before{content:"";display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--a);margin-right:16px;vertical-align:middle;transform:translateY(-4px)}
 .chap .no{font-family:var(--display);font-weight:900;font-size:clamp(84px,11vw,150px);line-height:.8;color:var(--a);opacity:.95}
 .chap .k,.close .k,#lb .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--a,var(--cyan))}
 .chap h2{font-family:var(--display);font-weight:700;font-size:clamp(36px,5vw,64px);line-height:1;margin:8px 0 10px}
@@ -205,12 +220,12 @@ p.none a{color:var(--cyan)}
 
 C = cfg()
 page = shell(title="The Honoraries · NEW YORKERS by MLow",
-             description=f"Every real person MLow has painted into NEW YORKERS: {N} portraits, from the founders of Era I to the guests of The MLow Show, the first gifts, and the artists, builders and culture makers of New York.",
+             description=f"Every real person MLow has painted into NEW YORKERS: {N} people and {NW} paintings, artists, collectors, founders, musicians, athletes, chefs, writers and mayors of New York.",
              body=body, path="honoraries.html", active="HONORARIES", extra_css=CSS, scripts_after=JS,
              keywords=["NEW YORKERS by MLow", "MLow", "honorary New Yorkers", "MLow Show", "NFT artists New York", "painted portraits", "New York crypto art"],
-             image=f'{C["siteUrl"]}/assets/honoraries/{PPL[0]["l"]}',
+             image=f'{C["siteUrl"]}/assets/honoraries/{PPL[0]["works"][0]["l"]}',
              jsonld={"@context": "https://schema.org", "@type": "CollectionPage", "name": "The Honoraries", "url": f'{C["siteUrl"]}/honoraries.html',
                      "description": f"{N} real people painted by MLow as New Yorkers.", "isPartOf": {"@id": C["siteUrl"] + "/#site"},
                      "about": [{"@type": "Person", "name": p["name"], **({"sameAs": f'https://x.com/{p["x"]}'} if p["x"] else {})} for p in PPL]})
 open(os.path.join(SITE, "honoraries.html"), "w", encoding="utf-8").write(page)
-print(f"honoraries.html: {N} portraits, {len(CH)} chapters, {len(page) // 1024} KB")
+print(f"honoraries.html: {N} people, {NW} paintings, {len(page) // 1024} KB")
