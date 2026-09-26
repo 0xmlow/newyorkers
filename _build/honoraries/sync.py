@@ -34,7 +34,7 @@ def save(im, path, q):
 ROLES = json.load(open(os.path.join(HERE, "roles.json")))  # person key -> category code, edit by hand
 CATS = [("A", "Artists"), ("C", "Collectors and curators"), ("B", "Founders and investors"), ("W", "Writers and media"),
         ("M", "Music"), ("F", "Film and stage"), ("X", "Fashion"), ("S", "Sport"), ("D", "Food"), ("P", "Politics and civic")]
-missing = [p["key"] for c in TL.CHAPTERS for p in c["people"] if p["key"] not in ROLES]
+missing = [p["key"] for p in TL.PEOPLE if p["key"] not in ROLES]
 assert not missing, f"no category in roles.json for: {missing}"
 
 
@@ -43,34 +43,41 @@ def norm(n):
 
 
 people, keep = {}, set()
-for c in TL.CHAPTERS:
-    for p in c["people"]:
-        sid = slug(p["key"])
-        h = hashlib.sha256(open(p["hero"], "rb").read() + open(p["pfp"], "rb").read()).hexdigest()[:8]
-        s_name, l_name = f"{sid}-{h}s.jpg", f"{sid}-{h}l.jpg"
-        keep |= {s_name, l_name}
-        sp, lp = os.path.join(OUT, s_name), os.path.join(OUT, l_name)
-        if not os.path.exists(sp):
-            save(Image.open(p["pfp"]).convert("RGB").resize((400, 400), Image.LANCZOS), sp, 80)
-        if not os.path.exists(lp):
-            im = Image.open(p["hero"]).convert("RGB")
-            im.thumbnail((1280, 1280), Image.LANCZOS)
-            save(im, lp, 78)
-        W, H = Image.open(lp).size
-        work = dict(title=p["title"] or "", s=s_name, l=l_name, w=W, h=H)
-        if p.get("kind") == "census":
-            work.update(num=p["num"], key=bool(p.get("keystone")), rec=BY_N[p["num"]]["id"])
-        # one card per person: a census piece and a later portrait of the same person share it
-        k = norm(p["disp"])
-        e = people.setdefault(k, dict(id=sid, name=p["disp"], handle="", x="", cat=ROLES[p["key"]], works=[]))
-        hd = p["handle"] or ""
-        if hd and not e["handle"]:
-            e.update(handle=hd, x=hd[1:] if HANDLE.match(hd) else "")
-        # the portrait made for the person leads, the census piece follows
-        if p.get("kind") == "census":
-            e["works"].append(work)
-        else:
-            e["works"].insert(0, work)
+for p in TL.PEOPLE:  # every painting; the film shows one per person, the page keeps them all
+    sid = slug(p["key"])
+    h = hashlib.sha256(open(p["hero"], "rb").read() + open(p["pfp"], "rb").read()).hexdigest()[:8]
+    s_name, l_name = f"{sid}-{h}s.jpg", f"{sid}-{h}l.jpg"
+    keep |= {s_name, l_name}
+    sp, lp = os.path.join(OUT, s_name), os.path.join(OUT, l_name)
+    if not os.path.exists(sp):
+        save(Image.open(p["pfp"]).convert("RGB").resize((400, 400), Image.LANCZOS), sp, 80)
+    if not os.path.exists(lp):
+        im = Image.open(p["hero"]).convert("RGB")
+        im.thumbnail((1280, 1280), Image.LANCZOS)
+        save(im, lp, 78)
+    W, H = Image.open(lp).size
+    work = dict(title=p["title"] or "", s=s_name, l=l_name, w=W, h=H)
+    if p.get("kind") == "census":
+        work.update(num=p["num"], key=bool(p.get("keystone")), rec=BY_N[p["num"]]["id"])
+    # one card per person: a census piece and a later portrait of the same person share it
+    k = norm(p["disp"])
+    e = people.setdefault(k, dict(id=sid, name=p["disp"], handle="", x="", cat=ROLES[p["key"]], works=[]))
+    hd = p["handle"] or ""
+    if hd and not e["handle"]:
+        e.update(handle=hd, x=hd[1:] if HANDLE.match(hd) else "")
+    # the portrait made for the person leads, the census piece follows
+    if p.get("kind") == "census":
+        e["works"].append(work)
+    else:
+        e["works"].insert(0, work)
+BIOS = json.load(open(os.path.join(HERE, "bios.json"))) if os.path.exists(os.path.join(HERE, "bios.json")) else {}
+INTERVIEWS = json.load(open(os.path.join(HERE, "interviews.json"))) if os.path.exists(os.path.join(HERE, "interviews.json")) else {}
+for k, e in people.items():
+    e["bio"] = BIOS.get(k, "")
+    e["iv"] = INTERVIEWS.get(k, [])
+nobio = [e["name"] for e in people.values() if not e["bio"]]
+if nobio:
+    print(f"  no bio yet for {len(nobio)}: {nobio[:8]}")
 entries = sorted(people.values(), key=lambda e: ([c for c, _ in CATS].index(e["cat"]), norm(re.sub(r"^the ", "", e["name"], flags=re.I))))
 
 for f in os.listdir(OUT):  # images no longer referenced

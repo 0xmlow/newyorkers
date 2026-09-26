@@ -43,7 +43,10 @@ def card(i, p):
     q = f'{p["name"]} {p["handle"]}'.lower()
     return (f'<li class="hc" data-i="{i}" data-q="{e(q)}"><button class="ph" type="button" aria-label="Open the portrait of {e(p["name"])}">'
             f'<img src="assets/honoraries/{p["works"][0]["s"]}" alt="{e(p["name"])}, painted by MLow as a New Yorker" loading="lazy" width="400" height="400"></button>'
-            f'<div class="bar"></div><h3>{e(p["name"])}</h3>{handle(p)}<div class="tg">{tag(p)}<i class="eye"></i></div></li>')
+            f'<div class="bar"></div><h3>{e(p["name"])}</h3>{handle(p)}'
+            + (f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else "")
+            + (f'<a class="iv" href="{e(p["iv"][-1]["url"])}" target="_blank" rel="noopener">Watch the interview</a>' if p.get("iv") else "")
+            + f'<div class="tg">{tag(p)}<i class="eye"></i></div></li>')
 
 
 sections, tabs = [], [f'<button class="tab on" data-ch="all">EVERYONE <span>{N}</span></button>']
@@ -63,7 +66,7 @@ pick = PPL[::max(1, N // 64)][:64]
 rowA, rowB = row(pick[:32]), row(pick[32:])
 
 counts = " &middot; ".join(f'{sum(1 for p in PPL if p["cat"] == c["code"])} {e(SHORT.get(c["name"], c["name"]))}' for c in CATS)
-DATA = json.dumps([{"name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"],
+DATA = json.dumps([{"name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []),
                     "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
                   ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
@@ -92,7 +95,7 @@ body = f'''<main class="hon">
  <button class="x" type="button" aria-label="Close">&times;</button>
  <button class="nv pv" type="button" aria-label="Previous">&#8249;</button><button class="nv nx" type="button" aria-label="Next">&#8250;</button>
  <figure><div class="frame"><img id="lbi" alt=""></div><figcaption>
-  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p></figcaption></figure>
+  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="lbio" id="lbb"></p><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p><div class="ivs" id="lbv"></div></figcaption></figure>
 </dialog>
 <script>window.HON={DATA};window.HON_CAT={json.dumps(CATN)};</script>'''
 
@@ -116,6 +119,10 @@ JS = r'''<script>
     im.src="assets/honoraries/"+w.l; im.alt=p.name+", painted by MLow"; im.width=w.w; im.height=w.h;
     document.getElementById("lbk").textContent=CATN[p.cat].toUpperCase()+(w.num!=null?" · NEW YORKERS NO. "+String(w.num).padStart(4,"0"):"")+(w.key?" · KEYSTONE":"");
     document.getElementById("lbn").textContent=p.name;
+    document.getElementById("lbb").textContent=p.bio||"";
+    var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], lv=document.getElementById("lbv");
+    lv.innerHTML=p.iv.length?'<p class="k">ON THE MLOW SHOW</p>'+p.iv.map(function(v,j){ var d=v.date.split("-");
+      return '<a class="btn sm ghost" href="'+esc(v.url)+'" target="_blank" rel="noopener">'+(p.iv.length>1?"Part "+(j+1)+", ":"")+MO[+d[1]-1]+" "+d[0]+'</a>'; }).join(""):"";
     var wb=document.getElementById("lbw"); wb.innerHTML="";
     if(p.works.length>1) p.works.forEach(function(x,j){ var b=document.createElement("button"); b.type="button"; b.className=j===wi?"on":""; b.textContent=j===0?"Portrait":"In the census";
       b.onclick=function(){show(i,j)}; wb.appendChild(b); });
@@ -162,6 +169,12 @@ p.none{font-family:var(--sans);color:var(--slate);padding-top:48px;font-size:18p
 p.none a{color:var(--cyan)}
 .chap{padding:72px 0 8px}
 .chap>header{display:flex;gap:28px;align-items:flex-end;margin-bottom:34px;border-bottom:1px solid var(--divider);padding-bottom:26px}
+.hc .bio{font-family:var(--sans);font-size:12.5px;line-height:1.45;color:#3A4450;margin-top:8px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.hc .iv{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:var(--ink);color:var(--cloud)}
+.hc .iv:before{content:"";display:inline-block;width:0;height:0;border-left:6px solid var(--pink);border-top:4px solid transparent;border-bottom:4px solid transparent;margin-right:6px}
+.hc .iv:hover{background:var(--pink);color:var(--ink)}
+#lb .lbio{font-family:var(--sans);font-size:17px;line-height:1.55;color:#DDE3EA;margin:14px 0 4px}
+#lb .ivs{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#lb .ivs .k{width:100%;margin-bottom:2px}
 .works{display:flex;gap:8px;margin:-6px 0 20px}.works button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--divider);background:transparent;color:var(--cloud)}.works button.on{background:var(--cloud);color:var(--ink)}
 .chap h2:before{content:"";display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--a);margin-right:16px;vertical-align:middle;transform:translateY(-4px)}
 .chap .no{font-family:var(--display);font-weight:900;font-size:clamp(84px,11vw,150px);line-height:.8;color:var(--a);opacity:.95}
@@ -178,11 +191,12 @@ p.none a{color:var(--cyan)}
 .hc .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
 .hc:hover .ph img{transform:scale(1.05)}
 .hc .bar{height:5px;border-radius:3px;background:var(--a);margin:9px 0 8px}
+.hc{display:flex;flex-direction:column}.hc .tg{margin-top:auto;padding-top:10px}
 .hc h3{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.2;letter-spacing:-.01em}
 .hc .hd{display:block;font-family:var(--mono);font-size:12.5px;color:var(--blue);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hc a.hd:hover{color:var(--pink)}
 .hc .hd.none{color:#7A8794}
-.hc .tg{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#7A8794}
+.hc .tg{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:auto;padding-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#7A8794}
 .hc .ks{color:var(--pink);font-weight:600}
 .eye{flex:none;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#0D0D0D 0 22%,#00E5FF 23% 42%,#F0F4F8 43% 64%,#1A3D99 65%)}
 .close{text-align:center;padding:110px 0 90px}
@@ -212,7 +226,8 @@ p.none a{color:var(--cyan)}
 #lb .nx{right:22px;top:50%}
 #lb .x:hover,#lb .nv:hover{border-color:var(--cyan);color:var(--cyan)}
 @media (max-width:900px){#lb figure{flex-direction:column;gap:18px;padding:70px 0 30px;overflow:auto;max-height:100vh}#lb figcaption{flex:none;width:100%}#lb img{max-height:60vh}#lb h2{font-size:34px}#lb .pv,#lb .nx{top:auto;bottom:22px}}
-@media (max-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}.hc{padding:8px 8px 10px}.hc h3{font-size:14px}.hc .hd{font-size:11px}.hc .tg{font-size:8.5px}
+@media (max-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}.hc{padding:8px 8px 10px}.hc{display:flex;flex-direction:column}.hc .tg{margin-top:auto;padding-top:10px}
+.hc h3{font-size:14px}.hc .hd{font-size:11px}.hc .tg{font-size:8.5px}
  .chap>header{gap:16px}.tools{top:52px;gap:10px;padding-top:10px;padding-bottom:10px}.find input{width:100%;padding:8px 14px}.find{width:100%}
  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * clamp(20px,5vw,72px));padding:0 clamp(20px,5vw,72px);width:calc(100% + 2 * clamp(20px,5vw,72px))}.tabs::-webkit-scrollbar{display:none}.tab{flex:none;padding:8px 12px;font-size:11px}.drift img{width:96px;height:96px}.mast-in{padding-bottom:36px}}
 @media (prefers-reduced-motion:reduce){.drift .row{animation:none}.hc,.hc .ph img{transition:none}}
