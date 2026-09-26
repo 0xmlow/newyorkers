@@ -531,7 +531,7 @@ export const huntspoint: RoomDef = {
       steelD = k.flat(0x2a2e34, 0.7, 0.45), gal = k.flat(0x8a9098, 0.8, 0.35), doorM = k.flat(0x9a9ea2, 0.6, 0.4), doorD = k.flat(0x6a6e72, 0.6, 0.45), bumper = k.flat(0x141416, 0.2, 0.9),
       yellow = k.flat(0xe8c020, 0.2, 0.55), white = k.flat(0xb8bcc0, 0.4, 0.45), reefer = k.flat(0xd0d4d8, 0.5, 0.4), black = k.flat(0x141416, 0.2, 0.8),
       wood = k.pbr('hpWood', X.planks(0x9a7a50, 4, 185), 1.2, { roughness: 0.9 }), card = k.flat(0xb08a5a, 0, 0.95), glassM = k.glass(0xa8c8d8, 0.25, 0.1),
-      cold = k.flat(0xdfeaf4, 0, 0.9, { emissive: 0x9ac0e0, emissiveIntensity: 0.5 }), sodGlow = k.flat(0xffc070, 0, 0.6, { emissive: sodium, emissiveIntensity: 0.8 }),
+      cold = k.flat(0xdfeaf4, 0, 0.9, { emissive: 0x9ac0e0, emissiveIntensity: 0.5 }), sodGlow = k.flat(0x6a4020, 0, 0.7, { emissive: 0xd88a38, emissiveIntensity: 0.55 }),
       amber = k.glow(0xffa020), red = k.glow(0xff3020), lineM = k.flat(0xe8e0b0, 0, 0.8), hiVis = 0xd8e83a;
     const mounts: Mount[] = [], st: FrameStyle = 'steel';
     const blk = (x0: number, x1: number, z0: number, z1: number) => k.block(Math.min(x0, x1), Math.max(x0, x1), Math.min(z0, z1), Math.max(z0, z1));
@@ -571,7 +571,7 @@ export const huntspoint: RoomDef = {
     /* ---- the doors: twenty roll up doors numbered 201 to 220, three of them alive ---- */
     const doors: { x: number; i: number }[] = [];
     for (let i = 0; i < 20; i++) doors.push({ x: X0 + 3.3 + i * 6.6, i });
-    const alive = new Set([5, 10, 15]), backing = 17, noTrailer = new Set([5, 10, 15, 17, 2, 12]);
+    const alive = new Set([5, 10, 15]), backing = 17, noTrailer = new Set([5, 10, 15, 17, 2, 11, 12]);   /* 11 and 12 stay clear: the spawn is between them */
     const rolling: { mesh: T.Mesh; x: number; open: number; light: T.PointLight }[] = [];
     for (const d of doors) {
       const y0 = DY, DW = 3.0, DH = 3.0;
@@ -835,6 +835,6 @@ export const huntspoint: RoomDef = {
     k.egg(v(-38, DY + 1.5, 24), { id: 'hp-rail', title: 'Twenty seven hundred rail cars', text: 'The market is served by rail through the Oak Point Yard, and receives around 2,700 rail cars a year, the rest of the produce arriving by truck.', clue: 'The parked trailers in the yard came by road. Something else comes by rail.', source: srcCoop }, { r: 4 });
     k.egg(v(45.2, DY + 1, DOCK + 1.6), { id: 'hp-merchants', title: 'More than thirty merchants', text: 'The Hunts Point Produce Market spans over a million square feet at 772 Edgewater Road and houses more than thirty produce merchants, in a trade with a history going back more than two hundred years.', clue: 'A pallet on the dock that did not come in with the produce.', source: srcMkt }, { r: 1.8 });
 
-    return { mounts, spawn: v(14, DY + 3, DOCK + 4.4), look: v(-34, 3.2, DOCK + 3.2), eye: 3, floorY, bounds: [X0 + 0.4, X1 - 0.4, DOCK + 0.4, 42], style: 'steel' };
+    return { mounts, spawn: v(13.2, DY + 3, DOCK + 3.6), look: v(-40, 3.0, DOCK + 3.0), eye: 3, floorY, bounds: [X0 + 0.4, X1 - 0.4, DOCK + 0.4, 42], style: 'steel' };
   },
 };
