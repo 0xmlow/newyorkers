@@ -1802,5 +1802,170 @@
   "signatures": "The locked iron fence with its spear points and gates, the gravel paths and planting, Edmond T. Quinn's statue of Edwin Booth, the National Arts Club in the Tilden mansion and The Players on Gramercy Park South, the Gramercy Park Hotel and its awning, 34 and 36 Gramercy Park East, the brownstones with iron porches on the west side, and the key.",
   "daylit": true,
   "index": 164
+ },
+ {
+  "id": "cityhallloop",
+  "name": "The loop under City Hall",
+  "area": "CITY HALL STATION / THE 1904 LOOP",
+  "mood": "A 6 train turning round under 1904",
+  "color": "#7a6a52",
+  "description": "The first station of the first subway, opened in 1904 and closed to passengers at the end of 1945, still the loop every 6 train uses to turn round under City Hall Park. You stand on the curved platform under Guastavino tile vaults with chandeliers hung from their centres and leaded glass skylights letting in a little of the park above, while a train of silver cars comes slowly out of one tunnel mouth and round into the other. The New Yorkers hang on the curved platform wall, in the mezzanine up the stair and in the passage toward the park.",
+  "signatures": "The curved platform on a balloon loop, the twelve Guastavino tile vaults with their green and tan ribs, the chandeliers, the three leaded glass skylights, the tiled station name tablets and the three bronze plaques on the trackside wall, the mezzanine with its oak ticket booth under its own vault, the stair up toward City Hall Park and the iron gate at the top, a 6 train of silver cars with lit windows riding the loop, a tour group on the platform, and a rat on the track bed.",
+  "daylit": false,
+  "index": 165
+ },
+ {
+  "id": "goldvault",
+  "name": "Eighty feet under Liberty Street",
+  "area": "FEDERAL RESERVE GOLD VAULT / LIBERTY STREET",
+  "mood": "Bedrock, steel, and a door that turns",
+  "color": "#c9a648",
+  "description": "The Federal Reserve Bank of New York on Liberty Street, a Florentine palazzo of rusticated limestone and sandstone with wrought iron lanterns at its door, and the strangest basement in the city eighty feet below it, resting on the bedrock of Manhattan. You come in off the street through the banking hall, take the elevator down, and walk the corridor to a steel cylinder that turns to open the way into the cages of stacked bars. The New Yorkers hang in the hall, in the corridor and in the scale room, never on the cages.",
+  "signatures": "The rusticated stone front with its round arched windows and iron grilles, Yellin's iron lanterns at the entrance, the banking hall with its stone piers and iron screen, the elevator that takes you down when you stand in it, the concrete corridor, the ninety ton steel cylinder turning in its frame, the scale room with its great balance, the cages of gold bars behind bars and mesh, the hand cart rolled through by two figures, and Liberty Street traffic with a steam stack outside.",
+  "daylit": false,
+  "index": 166
+ },
+ {
+  "id": "unionsquare",
+  "name": "The Greenmarket and the Metronome",
+  "area": "UNION SQUARE / 14TH STREET",
+  "mood": "Market day, the whole city passing through",
+  "color": "#6a8a4a",
+  "description": "Union Square Park on a market day: white canopy stalls on the north and west plazas, the lawn behind its iron fence under the London planes, the 1932 pavilion at the north end, the equestrian Washington of 1856 at the south end, skaters on the south steps and the subway kiosks beside them. Across 14th Street the Metronome counts the real New York time on fifteen digits, the seconds since midnight on the left and the seconds to midnight on the right. The New Yorkers hang on the stalls, the fence, the pavilion and the boards by the steps.",
+  "signatures": "The fifteen orange digits keeping New York time over the brick wall and its hole, the plain bronze horseman on his granite pedestal, the wide south steps with skaters, the glass subway kiosks, the rows of white market canopies with produce and flowers, the fenced lawn, the columned pavilion, the four pyramid topped towers on the south east corner, and 14th Street traffic.",
+  "daylit": true,
+  "index": 167
+ },
+ {
+  "id": "bryantpark",
+  "name": "The lawn behind the library",
+  "area": "BRYANT PARK / 42ND STREET",
+  "mood": "Lunch hour on the lawn, a film after dark",
+  "color": "#5a8a5a",
+  "description": "Bryant Park on the block behind the New York Public Library, with the stacks under the lawn. Green folding chairs by the hundred on the gravel promenades under the London planes, the granite fountain playing on the upper terrace at the Sixth Avenue end, Le Carrousel turning on the south side, the reading room and the kiosks, ping pong, and the library's long rear elevation over its terrace. After dark the film screen at the west end lights up and the lawn fills with people sitting to watch. The New Yorkers hang on the library's arcade, the kiosk flanks and boards on the fountain terrace.",
+  "signatures": "The green folding chairs everywhere, the sunk lawn between two allées of London planes, the pink granite fountain, Le Carrousel with its fourteen animals, the library's arched rear arcade and terrace, the green kiosks, the reading room under its umbrellas, the ping pong tables, the film screen at the west end, and the sloped face of the Grace Building over 42nd Street.",
+  "daylit": true,
+  "index": 168
+ },
+ {
+  "id": "lighthouse",
+  "name": "The Little Red Lighthouse",
+  "area": "JEFFREY'S HOOK / FORT WASHINGTON PARK",
+  "mood": "Late afternoon under the great gray bridge",
+  "color": "#b83a2a",
+  "description": "Jeffrey's Hook Light, forty feet of red cast iron on a rock in the Hudson at the foot of Fort Washington Park, with the George Washington Bridge crossing the sky above it: the near tower of bare steel lattice rising out of the frame, two decks of traffic, the cables dropping to the far tower on the Palisades side. You stand on the greenway with the river on your left, the railroad behind the trees on your right, and the lighthouse door open. The New Yorkers hang on the seawall, in the picnic shelter, on the fence panels and inside the tower up its stair.",
+  "signatures": "The red conical tower with its white lantern and black roof on the rock at the water, the door on the landward side and the spiral stair inside, the George Washington Bridge tower of open steel lattice with its two crossed braces, the upper and lower decks with their traffic, the four main cables and the suspenders, the far tower small against the Palisades, the Hudson with a tour boat, a tug and barge and a group of kayaks, the greenway and its joggers, the stone seawall and the riprap, the railroad behind the chain link fence and the trees, and the gulls.",
+  "daylit": true,
+  "index": 169
+ },
+ {
+  "id": "fourfreedoms",
+  "name": "A room and a garden",
+  "area": "FOUR FREEDOMS PARK / ROOSEVELT ISLAND",
+  "mood": "Granite, lindens, the river on both sides",
+  "color": "#c8c4b8",
+  "description": "Louis Kahn's memorial to Franklin D. Roosevelt at the southern tip of Roosevelt Island: the wide granite stair, the lawn narrowing between two allées of little leaf lindens to the Room at the point, its granite blocks open to the East River, and the bronze head in its niche as a plain form. The United Nations and Midtown stand across the water to the west, Long Island City to the east, the Queensboro Bridge to the north, and the Smallpox Hospital ruin behind you. The Room holds no art. The New Yorkers hang on the stair walls, on granite panels behind the trees, and inside the ruin as an exhibition in the shell.",
+  "signatures": "The grand granite stair between its walls, the tapering lawn with 120 lindens in four rows, the gravel walks, the low parapets with the river on both sides, the Room of granite blocks with narrow gaps open to the water at the tip, the head of Roosevelt in the niche wall, the plain band where the words are carved, the Gothic Revival ruin of the Smallpox Hospital with its pointed windows and no roof, the United Nations slab and the Midtown towers across the west channel, Long Island City to the east, the Queensboro Bridge, the ferries, a barge and the gulls.",
+  "daylit": true,
+  "index": 170
+ },
+ {
+  "id": "sealions",
+  "name": "The sea lion pool",
+  "area": "CENTRAL PARK ZOO / 64TH STREET",
+  "mood": "Feeding time, and the clock about to play",
+  "color": "#4a7a8a",
+  "description": "The Central Park Zoo as Kevin Roche rebuilt it in 1988: the round sea lion pool in the middle of the garden with its rock island and its glass rim, the brick pergola on its piers all round, the Arsenal of 1851 on the east side, the penguin house in its cold blue light on the west, and the Delacorte Musical Clock on the arch to the Children's Zoo. The sea lions swim their loop and haul out on the rock, a keeper comes to the rail with a bucket at the real feeding hours and a crowd gathers, and on the hour and the half hour by the New York clock the bronze animals turn round the clock while two monkeys strike the bell. The New Yorkers hang on the piers of the pergola facing the pool, on the front of the Arsenal, beside the penguins and on the entrance walls.",
+  "signatures": "The round pool with its rock island and glass rim, four sea lions on their loop and one that comes to the glass when you do, the brick pergola on its piers, the Arsenal's brick front with its half octagonal towers, the penguin house glowing blue, the Delacorte Clock on its brick and limestone arch with the bear, the elephant, the goat, the hippo, the kangaroo and the penguin turning and the two monkeys with the bell, the keeper and the crowd at feeding time, the London planes, and the Fifth Avenue towers over the trees.",
+  "daylit": true,
+  "index": 171
+ },
+ {
+  "id": "delacorte",
+  "name": "Shakespeare in the Park",
+  "area": "THE DELACORTE THEATER / CENTRAL PARK",
+  "mood": "Curtain at eight, the castle lit behind the stage",
+  "color": "#2a3a5a",
+  "description": "The Delacorte Theater on a summer night, the free Shakespeare in the Park of the Public Theater. You stand at the top of the bowl with the house full below you, five players moving between their marks on the open stage, the lights sweeping and changing colour, Turtle Pond black behind the stage with fireflies over it and Belvedere Castle lit on Vista Rock above, a moon over the trees. Before eight the house lights are up and the stage waits; from eight the house goes dark and the play is on. The New Yorkers hang on the theatre's outer wall, in the lobby and on the boards along the ticket line, never on the stage.",
+  "signatures": "The semicircular bowl of seats full to the top, the thrust stage with its wooden set and stair, the lighting towers and their beams, Turtle Pond behind the stage, Belvedere Castle on Vista Rock with its tower and conical cap floodlit, the moon, the fireflies over the water, the laugh that goes through the house, the queue rail and the boards along it, and the wooden slat wall of the rebuilt theatre.",
+  "daylit": false,
+  "index": 172
+ },
+ {
+  "id": "cherryesplanade",
+  "name": "The last week of April",
+  "area": "BROOKLYN BOTANIC GARDEN / FLATBUSH AVENUE",
+  "mood": "Petals on everything",
+  "color": "#e8a8b8",
+  "description": "Brooklyn Botanic Garden at the top of the cherry season: the Cherry Esplanade with its double rows of Kanzan cherries in full pink bloom either side of the long lawn, the Sakura Matsuri crowd picnicking under them, and beside it the Japanese Hill and Pond Garden with its vermilion torii standing in the water, the viewing deck, the shrine on the hill and the koi that come to the rail when you do. The New Yorkers hang on screens inside the Palm House at the head of the lawn, on the back wall of the viewing deck, and on boards between the benches.",
+  "signatures": "Two rows of tall Kanzan cherries each side of the broad lawn with the shorter rows and the scarlet oaks outside them, petals falling and lying pink on the grass, the picnic crowd, the glass and iron Palm House with its barrel roof at the north end, the Japanese Hill and Pond Garden: the pond, the vermilion torii in the water, the wooden viewing deck, the Shinto shrine on its hill, the waterfall, the stone lanterns, the little arched bridge, the koi and the turtles on their rock.",
+  "daylit": true,
+  "index": 173
+ },
+ {
+  "id": "promenade",
+  "name": "The shelf over the expressway",
+  "area": "BROOKLYN HEIGHTS PROMENADE / COLUMBIA HEIGHTS",
+  "mood": "Late afternoon, the harbour going gold",
+  "color": "#5a6a8a",
+  "description": "The Brooklyn Heights Promenade: a third of a mile of hexagonal block pavement and iron railing cantilevered over the two decks of the Brooklyn Queens Expressway, with Brooklyn Bridge Park and the harbour below and all of Lower Manhattan straight across the water. Behind you the gardens and the backs of the Heights houses, beside you the benches, the dog walkers and the kids on scooters, and under your feet the traffic you can hear but only glimpse through the railing. The New Yorkers hang on the garden fences facing the walk, on the walls of the Montague Street entrance and in the pergola at the north end.",
+  "signatures": "The iron railing and the hex block pavement, the benches facing the view, the flower beds and the garden fences with the brownstone and brick backs of the Heights houses above them, the two roadway decks stepping out below the walk with the expressway traffic on them, Furman Street and the lawns and piers of Brooklyn Bridge Park, the harbour with its ferries, Governors Island and the Statue of Liberty far to the south, the Brooklyn Bridge to the north, and the whole of Lower Manhattan with One World Trade across the river.",
+  "daylit": true,
+  "index": 174
+ },
+ {
+  "id": "astorplace",
+  "name": "The cube at Astor Place",
+  "area": "ASTOR PLACE / COOPER SQUARE",
+  "mood": "Push it and it turns",
+  "color": "#3a3a3c",
+  "description": "Astor Place, where the East Village meets NoHo: Tony Rosenthal's black steel cube balanced on one corner in the middle of the plaza, the cast iron subway kiosk beside it, Cooper Union's brownstone Foundation Building across Cooper Square and the slotted steel skin of 41 Cooper Square beyond, skaters going round, students crossing, buses on Fourth Avenue. Walk up to the cube and lean on it: it turns, and slowly comes to rest. The New Yorkers hang under the Foundation Building's arcade, on the plaza face of 41 Cooper Square, in the theatre's poster cases on Lafayette Street and on boards round the plaza.",
+  "signatures": "The Alamo (1967), fifteen feet of Cor-Ten steel on one corner, the 1986 replica IRT kiosk in cast iron and glass, the Foundation Building (1859) with its round arched arcade and five brownstone storeys, 41 Cooper Square (2009) with the slot cut up through its perforated skin, the black glass of 51 Astor Place, the colonnade and the theatre on Lafayette Street, the skaters, the students and the buses.",
+  "daylit": true,
+  "index": 175
+ },
+ {
+  "id": "nightmarket",
+  "name": "The Queens Night Market",
+  "area": "QUEENS NIGHT MARKET / FLUSHING MEADOWS",
+  "mood": "Saturday night, a hundred tents, eighty countries",
+  "color": "#c85a2a",
+  "description": "The Queens Night Market on a Saturday night in Flushing Meadows Corona Park, on the lot beside the New York Hall of Science: a hundred white tents in three lanes under string lights and paper lanterns, grills smoking, thousands of people eating their way from one country to the next, a band on the stage at the far end, the Great Hall's wall of cobalt glass glowing behind it, the rockets of Rocket Park standing in the dark and the Unisphere lit far off across the park. Walk into the crowd at the stage and it cheers. The New Yorkers hang on the tents' end panels, on boards by the entrance, beside the stage and on the Great Hall's wall.",
+  "signatures": "The white pop up tents in their rows, the string lights swaying across the lanes, the country flags, the grill smoke, the lanterns, the stage with its band and its swinging lights, the Great Hall's undulating wall of dark blue glass, the Atlas and Titan rockets of Rocket Park, and the Unisphere lit in the distance.",
+  "daylit": false,
+  "index": 176
+ },
+ {
+  "id": "dykerheights",
+  "name": "The lights of Dyker Heights",
+  "area": "DYKER HEIGHTS / 84TH STREET",
+  "mood": "December, snow, every bulb on the block",
+  "color": "#c8283a",
+  "description": "A block of Dyker Heights in the middle of December, after dark, with snow coming down: detached brick and stone houses on their lawns, every roofline, column, window and tree wrapped in thousands of lights, toy soldiers, nutcrackers, snowmen, angels and reindeer on the lawns, a display that turns, tour buses at the kerb and a crowd on the sidewalk with hot cups. The New Yorkers hang in lit gilt frames on the fences and lawn displays and on the garage doors, facing the sidewalk with everything else.",
+  "signatures": "The two rows of detached houses with their lawns and low iron fences, roof outlines and wrapped columns in white and coloured bulbs, bare trees spiralled in light, the toy soldiers at the gates, the nutcracker that turns, the reindeer that rock, the snowmen and the angels, the turning display, the tour bus that pulls in and lets its crowd out when you stand at the kerb, the snow on the lawns and in the air, and the bridge lights far off to the south.",
+  "daylit": false,
+  "index": 177
+ },
+ {
+  "id": "huntspoint",
+  "name": "Three in the morning at Hunts Point",
+  "area": "HUNTS POINT PRODUCE MARKET / THE BRONX",
+  "mood": "Sodium light, cold air, forklifts",
+  "color": "#3a5a3a",
+  "description": "The Hunts Point Produce Market at three in the morning, the busiest hour of its day: a refrigerated warehouse a third of a mile long with numbered dock doors, trailers backed in with their reefers running, forklifts racing pallets along the dock under sodium light, buyers with hand trucks, a coffee cart, breath in the cold and the Bronx night over the yard. The New Yorkers hang on the dock wall between the doors, in the dispatcher's office, and on a pallet of framed works stacked on the dock as if they came in with the produce.",
+  "signatures": "The long dock under its steel canopy, the numbered roll up doors, the door that rolls up as you reach it and the cold room behind it, the trailers backed to the bumpers with their reefer units, the tractors with their marker lights, the trailer backing in from the yard, six forklifts on the dock with pallets and amber beacons, the stacked cases and open bins of oranges, the buyers with hand trucks, the coffee cart and its steam, the dispatcher's office with its clock on New York time, the far warehouse row and the high mast lights over the yard.",
+  "daylit": false,
+  "index": 178
+ },
+ {
+  "id": "columbuspark",
+  "name": "Columbus Park at seven",
+  "area": "COLUMBUS PARK / CHINATOWN",
+  "mood": "Seven in the morning, everyone already here",
+  "color": "#b8322c",
+  "description": "Columbus Park at seven in the morning, on the ground that was Mulberry Bend: two tai chi groups moving as one on the plaza, crowds of elders three deep round the xiangqi tables under the planes, music under the pavilion of 1897 at the north end, pigeons underfoot, delivery bikes on Mulberry Street and the tenements with their fire escapes catching the first sun. Across Baxter Street to the west, the cleared lot where the Tombs stood until 2024 and the towers of the Criminal Courts Building. The New Yorkers hang on the pavilion's back wall, on the park's iron fence facing in, on the handball wall and on the courts' fence, and a census wall covers the limestone comfort station of 1934.",
+  "signatures": "The raised open air pavilion of 1897 with its wooden roof beams and its new elevator, the paved plaza, the xiangqi tables with concrete stools and their standing crowds, tai chi with red fans, the 1934 limestone comfort station, the turf field with three basketball and three volleyball courts, the playground, the iron picket fence, London planes, the tenements of Mulberry Street with fire escapes and plain coloured shop boards, the Criminal Courts Building, and the hoarding round the site of the Tombs on Baxter Street.",
+  "daylit": true,
+  "index": 179
  }
 ]

@@ -60,7 +60,7 @@ Museum only, from `_build/museum`:
 
 ```
 node assign_hang.mjs        # every piece gets exactly one room. Rerun after data.js changes
-node audit_rooms.mjs        # all 111 rooms headless in ~1s. Non zero exit means a work is unreachable
+node audit_rooms.mjs        # all 179 rooms headless in ~1s. Non zero exit means a work is unreachable
 node audit_rooms.mjs --room=bowery   # one room, mount by mount, with its bounds and blocks
 npm run check && npm run build       # typecheck and bundle
 ```
@@ -78,6 +78,7 @@ page and looked healthy.
 | Making the museum look better | `_build/museum/PHOTOREALISM_SCOPE_2026-09-08.md` | 300 |
 | Upgrading the earlier rooms to the 2026-09-23 standard | `_build/museum/ROOM_UPGRADE_GUIDE_2026-09-23.md` | 230 |
 | Picking up the room upgrade programme mid flight | `HANDOFF_MUSEUM_UPGRADES_2026-09-23.md` | 180 |
+| Adding a batch of new rooms (the brief and builder pattern) | `_build/museum/NEW_ROOMS_165_179_BRIEF.md`, then `HANDOFF_ROOMS_165_179_2026-09-25.md` | 200 |
 | Which agent should do what | `../HANDOFF 2026-09-08/06_AGENT_ROLES.md` | 150 |
 | Build scripts and endpoints | `../HANDOFF 2026-09-08/01_ARCHITECTURE.md` | 107 |
 | Collection, eras, generation | `../HANDOFF.md` | 200 |
