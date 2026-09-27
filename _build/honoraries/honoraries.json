@@ -80,7 +80,14 @@
 {
 "url": "https://x.com/0xmlow/status/1697069697982693861",
 "date": "2023-08-31",
-"title": "MLow X Adamtastic"
+"show": "The MLow Show",
+"label": ""
+},
+{
+"url": "https://x.com/art1stshow/status/1801698252146061547",
+"date": "2024-06-14",
+"show": "MLow on Art1st",
+"label": ""
 }
 ]
 },
@@ -138,9 +145,10 @@
 "bio": "Painter of Sugar Noirism, surreal girls and creatures framed in ornate folk borders. Sweet surface, sharp teeth",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1729943657401246100",
+"url": "https://x.com/0xMLow/status/1729943657401246100",
 "date": "2023-11-29",
-"title": "MLow X All Seeing Seneca Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -182,7 +190,8 @@
 {
 "url": "https://x.com/0xmlow/status/1698874982426648654",
 "date": "2023-09-05",
-"title": "MLow X Amber Vittoria"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -224,7 +233,8 @@
 {
 "url": "https://x.com/0xmlow/status/1657592317048438784",
 "date": "2023-05-14",
-"title": "MLow X Andre Oshea"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -359,7 +369,8 @@
 {
 "url": "https://x.com/0xmlow/status/1709962654096240799",
 "date": "2023-10-05",
-"title": "MLow X Ayla El-Moussa"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -381,9 +392,10 @@
 "bio": "Painter of surreal Pepe the Frog landscapes in glossy seventies airbrush and old master collage. The meme became scenery",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1720246466613031306",
+"url": "https://x.com/0xMLow/status/1720246466613031306",
 "date": "2023-11-03",
-"title": "MLow X Batzdu"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -480,9 +492,10 @@
 "bio": "Artist making dark AI assisted surrealism of veiled figures and bursts of light. Prompting as a language",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1735184772136132701",
+"url": "https://x.com/0xMLow/status/1735184772136132701",
 "date": "2023-12-14",
-"title": "MLow X BLAC Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -610,7 +623,14 @@
 }
 ],
 "bio": "Artist working in de/generative abstraction, with textures that look like carved circuitry. Code with a chisel",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xMLow/status/1704611062958416037",
+"date": "2023-09-20",
+"show": "The MLow Show",
+"label": ""
+}
+]
 },
 {
 "id": "bryan-brinkman",
@@ -620,11 +640,11 @@
 "cat": "A",
 "works": [
 {
-"title": "Cloud Storage",
-"s": "bryan-brinkman-467ce25bs.jpg",
-"l": "bryan-brinkman-467ce25bl.jpg",
-"w": 1280,
-"h": 720
+"title": "The Man Who Keeps the Weather on Strings",
+"s": "bryan-brinkman-1a411b52s.jpg",
+"l": "bryan-brinkman-1a411b52l.jpg",
+"w": 1031,
+"h": 1280
 }
 ],
 "bio": "Emmy winning animator from SNL and the Tonight Show who makes bold candy colored digital pop. One palette, instantly his",
@@ -632,7 +652,14 @@
 {
 "url": "https://x.com/0xmlow/status/1696344600682615272",
 "date": "2023-08-29",
-"title": "MLow X Bryan Brinkman"
+"show": "The MLow Show",
+"label": ""
+},
+{
+"url": "https://x.com/art1stshow/status/1801698252146061547",
+"date": "2024-06-14",
+"show": "MLow on Art1st",
+"label": ""
 }
 ]
 },
@@ -724,7 +751,14 @@
 }
 ],
 "bio": "Artist who uses AI to make renders that read like old master oil paintings of cities and portals. New tools, old light",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xmlow/status/1674214847104311300",
+"date": "2023-06-29",
+"show": "The MLow Show",
+"label": ""
+}
+]
 },
 {
 "id": "chikai-ohazama",
@@ -744,9 +778,10 @@
 "bio": "Collector turned artist who makes cinematic AI assisted stills and dense interior photographs. The collector crossed the room",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1823355171021140240",
+"url": "https://x.com/0xMLow/status/1823355171021140240",
 "date": "2024-08-13",
-"title": "MLow x Chikai Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -788,12 +823,14 @@
 {
 "url": "https://x.com/0xmlow/status/1684428773209280513",
 "date": "2023-07-27",
-"title": "MLow X Coldie Part 1"
+"show": "The MLow Show",
+"label": "Part 1"
 },
 {
 "url": "https://x.com/0xmlow/status/1714826912453799963",
 "date": "2023-10-19",
-"title": "MLow X Coldie Part 2"
+"show": "The MLow Show",
+"label": "Part 2"
 }
 ]
 },
@@ -885,7 +922,14 @@
 }
 ],
 "bio": "Meme artist who draws Pepe in thick black line and grainy color, including the Book of Meme. Crude line, deep lore",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xMLow/status/1768703687260537310",
+"date": "2024-03-15",
+"show": "The MLow Show",
+"label": ""
+}
+]
 },
 {
 "id": "dave-krugman",
@@ -905,9 +949,10 @@
 "bio": "New York street and night photographer who founded the Allships community. Money moves value, people make it",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1823893819013612008",
+"url": "https://x.com/0xMLow/status/1823893819013612008",
 "date": "2024-08-15",
-"title": "MLow X Dave Krugman"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -929,9 +974,10 @@
 "bio": "Performance artist who buries his own head in food, toys and junk for the camera. He calls it resemblage",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1711765628132983024",
+"url": "https://x.com/0xMLow/status/1711765628132983024",
 "date": "2023-10-10",
-"title": "MLow X David Henry Nobody Jr"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1030,7 +1076,8 @@
 {
 "url": "https://x.com/0xmlow/status/1692569374496899230",
 "date": "2023-08-18",
-"title": "MLow X Die With The Most Likes"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1090,7 +1137,8 @@
 {
 "url": "https://x.com/0xmlow/status/1689141348534722560",
 "date": "2023-08-09",
-"title": "MLow X Eclectic Method ♻️"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1315,7 +1363,8 @@
 {
 "url": "https://x.com/0xmlow/status/1696742802632175824",
 "date": "2023-08-30",
-"title": "MLow X Grant Yun"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1355,9 +1404,10 @@
 "bio": "Photographer of grainy, high flash fashion and figure work in hard black and white and saturated violet. Flash as mood",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1737837096029544912",
+"url": "https://x.com/0xMLow/status/1737837096029544912",
 "date": "2023-12-21",
-"title": "MLow X Guido Disalle"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1397,9 +1447,10 @@
 "bio": "Pen plotter pioneer who builds hatched volumes and mountain bands from thousands of fine lines. The machine draws slow",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1820215569125146881",
+"url": "https://x.com/0xMLow/status/1820215569125146881",
 "date": "2024-08-04",
-"title": "M. Low X Hans Dehlinger Interview // Expanded.Art"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1493,9 +1544,10 @@
 "bio": "Founder of Visualize Value and the artist behind Checks and Opepen, working in stark black on white. Less ink, more signal",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1851301871283236985",
+"url": "https://x.com/0xMLow/status/1851301871283236985",
 "date": "2024-10-29",
-"title": "MLow x Jack Butcher Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1519,7 +1571,8 @@
 {
 "url": "https://x.com/0xmlow/status/1704248588568518924",
 "date": "2023-09-19",
-"title": "MLow X Jake Fried"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -1740,7 +1793,14 @@
 }
 ],
 "bio": "Photographer behind Twin Flames, a hundred portraits of twins, and founder of Quantum Art. Two faces, one frame",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/justinaversano/status/1948412890609823819",
+"date": "2025-07-24",
+"show": "MLow on Moments of the Unknown",
+"label": ""
+}
+]
 },
 {
 "id": "justin-bua",
@@ -1981,7 +2041,8 @@
 {
 "url": "https://x.com/0xmlow/status/1699182707488489512",
 "date": "2023-09-05",
-"title": "MLow X Lauren Lee McCarthy"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2037,7 +2098,14 @@
 }
 ],
 "bio": "Film photographer of coastlines, desert roads and musicians in late gold light. The sun did the editing",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xMLow/status/1665961972947472385",
+"date": "2023-06-06",
+"show": "The MLow Show",
+"label": ""
+}
+]
 },
 {
 "id": "lovid-tali-hinkis-and-kyle-lapidus",
@@ -2057,9 +2125,10 @@
 "bio": "An artist duo turning analog video signals into textiles, stitched canvases and mirrored grids. Signal you can touch",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1720128227908231217",
+"url": "https://x.com/0xMLow/status/1720128227908231217",
 "date": "2023-11-02",
-"title": "MLow X Lovid"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2227,7 +2296,8 @@
 {
 "url": "https://x.com/0xmlow/status/1689815270833971201",
 "date": "2023-08-11",
-"title": "MLow X Max Osiris"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2323,7 +2393,8 @@
 {
 "url": "https://x.com/0xmlow/status/1697790262620065853",
 "date": "2023-09-02",
-"title": "MLow X Michael Kutsche"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2379,7 +2450,14 @@
 }
 ],
 "bio": "Conceptual artist making art games and generative work, including The Boys of Summer. The rules are the medium",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xMLow/status/1689025821556539392",
+"date": "2023-08-08",
+"show": "The MLow Show",
+"label": ""
+}
+]
 },
 {
 "id": "molly-crabapple",
@@ -2453,9 +2531,10 @@
 "bio": "Game industry 3D artist who builds neon cyberpunk bars and dioramas as virtual spaces. Built the room, then the crowd",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1702540788276568078",
+"url": "https://x.com/0xMLow/status/1702540788276568078",
 "date": "2023-09-15",
-"title": "MLow X NeonGlitch86"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2531,9 +2610,10 @@
 "bio": "Artist who makes AI assisted toy and action figure renders, including BRAINROT and X Figures. Plastic sheen, clean lineage",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1937258847615238188",
+"url": "https://x.com/0xMLow/status/1937258847615238188",
 "date": "2025-06-23",
-"title": "MLow X Nuclear Samurai"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2553,7 +2633,14 @@
 }
 ],
 "bio": "Artist behind UnBearables, a melting polar bear among toy like pop characters. Cute on top, climate underneath",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xmlow/status/1657411118082453504",
+"date": "2023-05-13",
+"show": "The MLow Show",
+"label": ""
+}
+]
 },
 {
 "id": "osinachi",
@@ -2591,9 +2678,10 @@
 "bio": "Bioengineering PhD who repaints old masters with hooded neon Fiends in place of the saints. Bosch, with the lights on",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1716960112185594142",
+"url": "https://x.com/0xMLow/status/1716960112185594142",
 "date": "2023-10-24",
-"title": "MLow X Other World"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2633,9 +2721,10 @@
 "bio": "Glitch painter who layers graffiti, paint and photography, and built the 404 Catalog for discovery without sales history. The work first, the numbers never",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1712566913564311951",
+"url": "https://x.com/0xMLow/status/1712566913564311951",
 "date": "2023-10-12",
-"title": "MLow X Patrick Amadon"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2675,9 +2764,10 @@
 "bio": "Artist who has spent twenty years building robots that paint with AI. The machine holds the brush",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1719249264600031687",
+"url": "https://x.com/0xMLow/status/1719249264600031687",
 "date": "2023-10-31",
-"title": "MLow X Pindar Van Arman"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2717,9 +2807,10 @@
 "bio": "Collage artist who stitches mountains, deserts and seas under oversized moons, with traits drawn from real satellite data. Campaign discipline, cosmic scale",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1818687526099390923",
+"url": "https://x.com/0xMLow/status/1818687526099390923",
 "date": "2024-07-31",
-"title": "MLow X Post Wook"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2833,7 +2924,8 @@
 {
 "url": "https://x.com/0xmlow/status/1734778471929266528",
 "date": "2023-12-13",
-"title": "MLow X Rebecca Rose"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2891,9 +2983,10 @@
 "bio": "Trash Art pioneer whose founding piece is a 64 gallon wheeled trash toter. Kicked out for garbage, invited back for it",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1725759297382937045",
+"url": "https://x.com/0xMLow/status/1725759297382937045",
 "date": "2023-11-18",
-"title": "MLow X ROBNESS Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -2951,9 +3044,10 @@
 "bio": "Photographer who collages ruined neoclassical halls overgrown with impossible foliage. Ruins, back in bloom",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1760007895247130670",
+"url": "https://x.com/0xMLow/status/1760007895247130670",
 "date": "2024-02-20",
-"title": "MLow X Ryan Koopmans Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3029,9 +3123,10 @@
 "bio": "Former occupational therapist who painted Women and Weapons and built the 3D character Nova. Pin up girls, fully armed",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1713649425694757206",
+"url": "https://x.com/0xMLow/status/1713649425694757206",
 "date": "2023-10-15",
-"title": "MLow X Sara Baumann"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3143,9 +3238,10 @@
 "bio": "Artist who lights virtual 3D models like fashion editorials and cofounded NFT Asia. The model never existed",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1770115354045378871",
+"url": "https://x.com/0xMLow/status/1770115354045378871",
 "date": "2024-03-19",
-"title": "MLow X Shavonne Wong Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3383,9 +3479,10 @@
 "bio": "Painter who layers thick palette knife oils over crypto iconography, including the Bitcoin Angel. Bernini meets the blockchain",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1821244267999944745",
+"url": "https://x.com/0xMLow/status/1821244267999944745",
 "date": "2024-08-07",
-"title": "MLow X Trevor Jones Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3425,9 +3522,10 @@
 "bio": "Makes dense, melting psychedelic faces from tangled rainbow strokes and glitch shards. Portraits pushed to noise",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1722769787955105837",
+"url": "https://x.com/0xMLow/status/1722769787955105837",
 "date": "2023-11-10",
-"title": "MLow X Tustont"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3521,9 +3619,10 @@
 "bio": "Surreal painter and illustrator of masked figures, joined twins, halos and suns in earth tones. Made by hand, on purpose",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1748159577999225081",
+"url": "https://x.com/0xMLow/status/1748159577999225081",
 "date": "2024-01-19",
-"title": "MLow X Victor Mosquera Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3545,9 +3644,10 @@
 "bio": "Artist who fills whole pages edge to edge with hand drawn glyphs, eyes and creatures. No blank space left",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1697353146471956681",
+"url": "https://x.com/0xMLow/status/1697353146471956681",
 "date": "2023-08-31",
-"title": "MLow X Vinnie Hager"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3569,9 +3669,10 @@
 "bio": "A pseudonymous artist making vivid fractal abstraction that looks like exploding liquid glass. Recursion with a wild style",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1710016327312642259",
+"url": "https://x.com/0xMLow/status/1710016327312642259",
 "date": "2023-10-05",
-"title": "MLow X WGMeets"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3757,7 +3858,8 @@
 {
 "url": "https://x.com/0xmlow/status/1690899101779664896",
 "date": "2023-08-14",
-"title": "MLow X AC The Collector, 6529 Capital"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3797,9 +3899,10 @@
 "bio": "A pseudonymous collector of glitch, cartoon satire and moody one of one digital art. The collection is the self portrait",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1802432220310765604",
+"url": "https://x.com/0xMLow/status/1802432220310765604",
 "date": "2024-06-16",
-"title": "MLow x BatSoupYum of 6529 CAPITAL"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -3821,9 +3924,10 @@
 "bio": "Collector whose world runs through a hooded CryptoPunk and The Memes by 6529 cards. The collection is the portrait",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1780353325201821924",
+"url": "https://x.com/0xMLow/status/1780353325201821924",
 "date": "2024-04-16",
-"title": "Interview with Bharat Krymo of 6529 Capital, Part 1"
+"show": "The MLow Show",
+"label": "Part 1"
 }
 ]
 },
@@ -3861,7 +3965,20 @@
 }
 ],
 "bio": "Founded the Museum of Crypto Art to give digital work a home and a history. The archive came before the canon",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/0xMLow/status/1679648371303129088",
+"date": "2023-07-14",
+"show": "The MLow Show",
+"label": ""
+},
+{
+"url": "https://x.com/MuseumofCrypto/status/1712946815580995793",
+"date": "2023-10-13",
+"show": "MLow on MOCA Live",
+"label": ""
+}
+]
 },
 {
 "id": "cozomo-de-medici",
@@ -4313,9 +4430,10 @@
 "bio": "A pseudonymous collector whose first digital artwork was The Protector by Trevor Jones and Jose Delbo. One piece opened the door",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1764133723769876813",
+"url": "https://x.com/0xMLow/status/1764133723769876813",
 "date": "2024-03-03",
-"title": "MLow X OMZ Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -4427,9 +4545,10 @@
 "bio": "The collector behind Artie Galerie, curating warped digital sports collage on Verse. The court, bent into art",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1837266330581446659",
+"url": "https://x.com/0xMLow/status/1837266330581446659",
 "date": "2024-09-20",
-"title": "MLow x Punk7635 (Artie Hands 🖼️💎🙌) of Verse Works +"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -4469,9 +4588,10 @@
 "bio": "Managing partner at Hivemind's digital culture fund, a former credit investor who still writes Solidity. Blue chip means it lasts",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1826264520530022748",
+"url": "https://x.com/0xMLow/status/1826264520530022748",
 "date": "2024-08-21",
-"title": "Interview with Richard Skeet, Managing Partner of @HivemindCap 🖼️"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -4493,9 +4613,10 @@
 "bio": "Founder of Dialectic and collector of Beeple's HUMAN ONE, in Bitcoin since 2012. Scarcity made the screen collectable",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1780275366554124764",
+"url": "https://x.com/0xMLow/status/1780275366554124764",
 "date": "2024-04-16",
-"title": "MLow X Ryan Zurrer Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -4697,9 +4818,10 @@
 "bio": "Former professional poker player who founded Zen Academy and the Zenecas characters. Read the table, then teach it",
 "iv": [
 {
-"url": "https://x.com/0xmlow/status/1749578963616239670",
+"url": "https://x.com/0xMLow/status/1749578963616239670",
 "date": "2024-01-22",
-"title": "MLow X Zeneca Interview"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -5209,7 +5331,8 @@
 {
 "url": "https://x.com/0xmlow/status/1697279219036717149",
 "date": "2023-08-31",
-"title": "MLow X Jordan Lyall, Prohibition + Art Blocks"
+"show": "The MLow Show",
+"label": ""
 }
 ]
 },
@@ -6012,7 +6135,14 @@
 }
 ],
 "bio": "Writer covering the Museum of Crypto Art world of collage and art history remix. Words for the wall",
-"iv": []
+"iv": [
+{
+"url": "https://x.com/MuseumofCrypto/status/1712946815580995793",
+"date": "2023-10-13",
+"show": "MLow on MOCA Live",
+"label": ""
+}
+]
 },
 {
 "id": "roger-dickerman",

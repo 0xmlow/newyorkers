@@ -45,7 +45,7 @@ def card(i, p):
             f'<img src="assets/honoraries/{p["works"][0]["s"]}" alt="{e(p["name"])}, painted by MLow as a New Yorker" loading="lazy" width="400" height="400"></button>'
             f'<div class="bar"></div><h3>{e(p["name"])}</h3>{handle(p)}'
             + (f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else "")
-            + (f'<a class="iv" href="{e(p["iv"][-1]["url"])}" target="_blank" rel="noopener">Watch the interview</a>' if p.get("iv") else "")
+            + (f'<a class="iv" href="{e(p["iv"][-1]["url"])}" target="_blank" rel="noopener">{"Watch the interviews" if len(p["iv"]) > 1 else "Watch the interview"}</a>' if p.get("iv") else "")
             + f'<div class="tg">{tag(p)}<i class="eye"></i></div></li>')
 
 
@@ -121,8 +121,8 @@ JS = r'''<script>
     document.getElementById("lbn").textContent=p.name;
     document.getElementById("lbb").textContent=p.bio||"";
     var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], lv=document.getElementById("lbv");
-    lv.innerHTML=p.iv.length?'<p class="k">ON THE MLOW SHOW</p>'+p.iv.map(function(v,j){ var d=v.date.split("-");
-      return '<a class="btn sm ghost" href="'+esc(v.url)+'" target="_blank" rel="noopener">'+(p.iv.length>1?"Part "+(j+1)+", ":"")+MO[+d[1]-1]+" "+d[0]+'</a>'; }).join(""):"";
+    lv.innerHTML=p.iv.length?'<p class="k">INTERVIEWS</p>'+p.iv.map(function(v){ var d=v.date.split("-");
+      return '<a class="btn sm ghost" href="'+esc(v.url)+'" target="_blank" rel="noopener">'+esc(v.show)+(v.label?", "+esc(v.label):"")+", "+MO[+d[1]-1]+" "+d[0]+'</a>'; }).join(""):"";
     var wb=document.getElementById("lbw"); wb.innerHTML="";
     if(p.works.length>1) p.works.forEach(function(x,j){ var b=document.createElement("button"); b.type="button"; b.className=j===wi?"on":""; b.textContent=j===0?"Portrait":"In the census";
       b.onclick=function(){show(i,j)}; wb.appendChild(b); });
