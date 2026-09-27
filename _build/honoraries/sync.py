@@ -78,7 +78,8 @@ for k, e in people.items():
 nobio = [e["name"] for e in people.values() if not e["bio"]]
 if nobio:
     print(f"  no bio yet for {len(nobio)}: {nobio[:8]}")
-entries = sorted(people.values(), key=lambda e: ([c for c, _ in CATS].index(e["cat"]), norm(re.sub(r"^the ", "", e["name"], flags=re.I))))
+entries = sorted(people.values(), key=lambda e: ([c for c, _ in CATS].index(e["cat"]), e["name"] != "MLow",  # the artist leads his own section
+                                                norm(re.sub(r"^the ", "", e["name"], flags=re.I))))
 
 for f in os.listdir(OUT):  # images no longer referenced
     if f.endswith(".jpg") and f not in keep:

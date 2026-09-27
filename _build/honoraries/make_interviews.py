@@ -76,6 +76,13 @@ for url, show, hosts in CROSSOVERS:
             out.setdefault(k, []).append(dict(url=url, date=when(url), show=show, label=""))
         else:
             unmatched.append(h)
+# MLow's own card: his solo episode and every show where he was the guest
+if match("MLow"):
+    k = match("MLow")
+    out.setdefault(k, []).append(dict(url="https://x.com/0xmlow/status/1722806325455798573", date=when("https://x.com/0xmlow/status/1722806325455798573"),
+                                      show="The MLow Show solo", label=""))
+    for url, show, hosts in CROSSOVERS:
+        out[k].append(dict(url=url, date=when(url), show=show, label=""))
 for v in out.values():
     v.sort(key=lambda x: x["date"])
 json.dump(out, open(os.path.join(HERE, "interviews.json"), "w"), indent=1, ensure_ascii=False)
