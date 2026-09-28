@@ -38,29 +38,21 @@ Don't publish copy that states any of these until they're confirmed.
 | `characters/_TEMPLATE/canon.md` | Copy this for each new character |
 | `cameos/` | STILL WAITING crossover renders (one figure per room) |
 | `metadata/` | Token metadata drafts (after chain/contract are confirmed) |
-| `index.html` | Landing page + X/OG card meta (tweet `https://newyorkers.com/`) |
+| `index.html` | Landing page + X/OG card meta (tweet `https://n3wyorkers.com/`) |
 | `newyorkers_poster_16x9.png` | 1200×675 card image (`twitter:image` / `og:image`) |
 | `assets/` | MLOW logo + evil-eye favicon |
-| `CNAME`, `.nojekyll` | GitHub Pages custom domain; serve files verbatim |
+| `.nojekyll` | Serve files verbatim on GitHub Pages |
 
-## Hosting: GitHub Pages on a custom subdomain
+## Hosting
 
-Served by GitHub Pages (`main` / root) on the domain
-in `CNAME`:
-
-```
-https://newyorkers.com/                            -> index.html (tweet this)
-https://newyorkers.com/newyorkers_poster_16x9.png  -> card image
-```
-
-1. Repo → Settings → Pages → Source: *Deploy from a branch*, `main` / `(root)`.
-   Custom domain should read `newyorkers.com` (it comes from `CNAME`).
-2. DNS at the newyorkers.com registrar (apex domain):
-   - `A` records for `@` → `185.199.108.153`, `185.199.109.153`,
-     `185.199.110.153`, `185.199.111.153`
-   - `CNAME` record `www` → `0xmlow.github.io` (GitHub redirects www to the apex)
-3. Once the records resolve, tick **Enforce HTTPS** in Settings → Pages.
+- **Dev site:** branch `claude/new-repo-new-yorkers-u1iphp` → https://dev.n3wyorkers.com/
+  via GitHub Pages (that branch carries the `CNAME`). DNS: one `CNAME` record,
+  host `dev` → `0xmlow.github.io`.
+- **Live site:** https://n3wyorkers.com/ is already live on its existing host.
+  `main` deliberately has **no `CNAME` file**, so it can't claim that domain.
+  **Do not change the `@` or `www` DNS records**; moving production onto
+  GitHub Pages is a separate, deliberate step.
 
 Optional short link from the MLow artist site, as with bloomrun: Squarespace →
-Settings → Advanced → URL Mappings: `/newyorkers -> https://newyorkers.com/ 301`
+Settings → Advanced → URL Mappings: `/newyorkers -> https://n3wyorkers.com/ 301`
 (gives `mlow.xyz/newyorkers`).
