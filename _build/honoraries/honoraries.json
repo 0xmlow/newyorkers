@@ -4672,6 +4672,24 @@
 "iv": []
 },
 {
+"id": "mr-quack",
+"name": "Crusher",
+"handle": "@cryptocrusher6",
+"x": "cryptocrusher6",
+"cat": "C",
+"works": [
+{
+"title": "Crusher at Oakland Lake",
+"s": "mr-quack-b9f37ab5s.jpg",
+"l": "mr-quack-b9f37ab5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Endless Peonies and New Yorkers, a blue monkey with a duck for a hat. The duck stays on",
+"iv": []
+},
+{
 "id": "cryptocurrents-eth",
 "name": "cryptocurrents.eth",
 "handle": "@tokenizermedia",
@@ -5256,10 +5274,10 @@
 "works": [
 {
 "title": "Long Onions at Federal Hall",
-"s": "j-p-moregainz-a1be4f6fs.jpg",
-"l": "j-p-moregainz-a1be4f6fl.jpg",
+"s": "j-p-moregainz-e1063719s.jpg",
+"l": "j-p-moregainz-e1063719l.jpg",
 "w": 1280,
-"h": 714
+"h": 720
 }
 ],
 "bio": "Investor, collector and saxophonist who holds Punks, Apes and Del Mundos and jokes that he disrespects the Onion Futures Act. The market closes, he keeps playing",
@@ -5605,24 +5623,6 @@
 }
 ],
 "bio": "Collector with forty works on SuperRare, named for the mood slime under the city. Pink, and positively charged",
-"iv": []
-},
-{
-"id": "mr-quack",
-"name": "Mr Quack",
-"handle": "mrquack.eth",
-"x": "",
-"cat": "C",
-"works": [
-{
-"title": "Mr Quack at Oakland Lake",
-"s": "mr-quack-b9f37ab5s.jpg",
-"l": "mr-quack-b9f37ab5l.jpg",
-"w": 1280,
-"h": 714
-}
-],
-"bio": "Collector of Endless Peonies and New Yorkers, a blue monkey with a duck for a hat. Quack",
 "iv": []
 },
 {
