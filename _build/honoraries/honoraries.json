@@ -153,6 +153,24 @@
 "iv": []
 },
 {
+"id": "ai-weiwei",
+"name": "Ai Weiwei",
+"handle": "East Village, 1981 to 1993",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Seeds Under the Arch",
+"s": "ai-weiwei-7cb93d2fs.jpg",
+"l": "ai-weiwei-7cb93d2fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Chinese artist and activist who lived in the East Village from 1981 to 1993 and came back to fence in the Washington Square Arch in 2017. Open hands",
+"iv": []
+},
+{
 "id": "alfred-steiner",
 "name": "Alfred Steiner",
 "handle": "@alfredsteiner",
@@ -416,6 +434,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "banksy",
+"name": "Banksy",
+"handle": "Better Out Than In, 2013",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Sixty Dollars in Central Park",
+"s": "banksy-adb5f911s.jpg",
+"l": "banksy-adb5f911l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Anonymous street artist who spent October 2013 in New York making a piece a day and sold originals for sixty dollars in Central Park. Nobody noticed",
+"iv": []
 },
 {
 "id": "batzdu",
@@ -1097,6 +1133,24 @@
 ]
 },
 {
+"id": "david-hockney",
+"name": "David Hockney",
+"handle": "Parade, Met Opera, 1981",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "The Pool on the Opera Stage",
+"s": "david-hockney-fb3cca54s.jpg",
+"l": "david-hockney-fb3cca54l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bradford born painter who put the swimming pool at the centre of modern art and designed the Met Opera's Parade in 1981. Still drawing, now on an iPad",
+"iv": []
+},
+{
 "id": "deltasauce",
 "name": "DeltaSauce",
 "handle": "@deltasauce",
@@ -1399,6 +1453,24 @@
 }
 ],
 "bio": "Street artist whose round eyed, friendly cartoon ape shows up on walls across New York. A smile on every block",
+"iv": []
+},
+{
+"id": "frank-lloyd-wright",
+"name": "Frank Lloyd Wright",
+"handle": "the Guggenheim, 1959",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "The Spiral on Fifth",
+"s": "frank-lloyd-wright-aa25ec42s.jpg",
+"l": "frank-lloyd-wright-aa25ec42l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "American architect of Fallingwater who lived at the Plaza while he built the Guggenheim spiral on Fifth Avenue. He never saw it open",
 "iv": []
 },
 {
@@ -2288,6 +2360,24 @@
 ]
 },
 {
+"id": "leonardo-da-vinci",
+"name": "Leonardo da Vinci",
+"handle": "Mona Lisa at the Met, 1963",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "The Orb at the Met",
+"s": "leonardo-da-vinci-a30cd208s.jpg",
+"l": "leonardo-da-vinci-a30cd208l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Painter, engineer and inventor whose Mona Lisa drew a million people to the Met in 1963 and whose Salvator Mundi sold at Rockefeller Center. The orb still glows",
+"iv": []
+},
+{
 "id": "leo-villareal",
 "name": "Leo Villareal",
 "handle": "@leovillareal",
@@ -2655,6 +2745,24 @@
 }
 ],
 "bio": "National Geographic photographer known for epic travel images from around the world. The world, one frame at a time",
+"iv": []
+},
+{
+"id": "michelangelo",
+"name": "Michelangelo",
+"handle": "Pieta at the World's Fair, 1964",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "The Pieta Comes to Queens",
+"s": "michelangelo-d7f904b6s.jpg",
+"l": "michelangelo-d7f904b6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Florentine sculptor and painter of the Pieta, the David and the Sistine ceiling, whose Pieta crossed the ocean for the 1964 World's Fair in Queens. Millions filed past",
 "iv": []
 },
 {
@@ -3793,6 +3901,24 @@
 "iv": []
 },
 {
+"id": "takashi-murakami",
+"name": "Takashi Murakami",
+"handle": "Rockefeller Center, 2003",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Flowers at Rockefeller",
+"s": "takashi-murakami-27f1c884s.jpg",
+"l": "takashi-murakami-27f1c884l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Tokyo artist who founded Superflat, filled Rockefeller Center with Mr. DOB in 2003 and carried his smiling flowers onto the blockchain. Every petal grins",
+"iv": []
+},
+{
 "id": "thankyoux",
 "name": "ThankYouX",
 "handle": "@thankyoux",
@@ -4131,6 +4257,24 @@
 }
 ],
 "bio": "Illustrator behind World of Women, bold flat portraits of women in colour. Representation, by the thousand",
+"iv": []
+},
+{
+"id": "yayoi-kusama",
+"name": "Yayoi Kusama",
+"handle": "New York, 1958 to 1973",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Dots Over the Bronx",
+"s": "yayoi-kusama-b5e56998s.jpg",
+"l": "yayoi-kusama-b5e56998l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Japanese artist who spent 1958 to 1973 in New York painting Infinity Nets and staging happenings, then covered the world in dots. The dots won",
 "iv": []
 },
 {
@@ -9767,6 +9911,24 @@
 "iv": []
 },
 {
+"id": "virgil-abloh",
+"name": "Virgil Abloh",
+"handle": "Figures of Speech, Brooklyn Museum",
+"x": "",
+"cat": "X",
+"works": [
+{
+"title": "The Architect in Brooklyn",
+"s": "virgil-abloh-bdca6dbds.jpg",
+"l": "virgil-abloh-bdca6dbdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Designer, architect and DJ who ran Off-White and Louis Vuitton menswear and brought streetwear into the Brooklyn Museum. Figures of speech, made real",
+"iv": []
+},
+{
 "id": "aaron-judge",
 "name": "Aaron Judge",
 "handle": "@thejudge44",
@@ -10203,6 +10365,24 @@
 }
 ],
 "bio": "Liberty guard who helped bring New York its first WNBA title in 2024. Deep range, cold nerve",
+"iv": []
+},
+{
+"id": "serena-and-venus-williams",
+"name": "Serena and Venus Williams",
+"handle": "US Open, Arthur Ashe",
+"x": "",
+"cat": "S",
+"works": [
+{
+"title": "Sisters Under the Lights",
+"s": "serena-and-venus-williams-1769994cs.jpg",
+"l": "serena-and-venus-williams-1769994cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Sisters raised in Compton who won eight US Open singles titles between them and met in the 2001 final, the first women's final in prime time. Two champions, one family",
 "iv": []
 },
 {
