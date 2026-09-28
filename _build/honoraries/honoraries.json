@@ -896,6 +896,24 @@
 "iv": []
 },
 {
+"id": "da-m-aggott-h-nsch",
+"name": "Daïm Aggott-Hönsch",
+"handle": "@DaimAlYad",
+"x": "DaimAlYad",
+"cat": "A",
+"works": [
+{
+"title": "The Inkblot Over the Beaux-Arts Court",
+"s": "da-m-aggott-h-nsch-e16e64afs.jpg",
+"l": "da-m-aggott-h-nsch-e16e64afl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Toronto algorist behind the Art Blocks Cryptoblots, on SuperRare since 2019 and part of the Museum of Crypto Art team. Symmetry, taken seriously",
+"iv": []
+},
+{
 "id": "damjanski",
 "name": "Damjanski",
 "handle": "@damjanski",
@@ -2776,6 +2794,24 @@
 ]
 },
 {
+"id": "orkhan-mammadov",
+"name": "Orkhan Mammadov",
+"handle": "orkhanart.eth",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Carpets Over the Panorama",
+"s": "orkhan-mammadov-3a2a7bdds.jpg",
+"l": "orkhan-mammadov-3a2a7bddl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Azerbaijani new media artist who teaches machines to weave the carpets of his heritage, and who represented Azerbaijan at the Venice Biennale. Old patterns, new looms",
+"iv": []
+},
+{
 "id": "osinachi",
 "name": "Osinachi",
 "handle": "@osinachi",
@@ -3178,6 +3214,24 @@
 "iv": []
 },
 {
+"id": "roses",
+"name": "roses",
+"handle": "roses on SuperRare",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Stoop Light in the Rose Garden",
+"s": "roses-1285595bs.jpg",
+"l": "roses-1285595bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Artist who photographs roses from a family garden in layered double exposures, and collects MLow on the side. Grief, grown into color",
+"iv": []
+},
+{
 "id": "ryan-koopmans",
 "name": "Ryan Koopmans",
 "handle": "@ryankoopmans",
@@ -3351,6 +3405,24 @@
 }
 ],
 "bio": "Design provocateur and sculptor known for surreal furniture and cracked classical statues. Break it to see it",
+"iv": []
+},
+{
+"id": "serc",
+"name": "serc",
+"handle": "@serc1n",
+"x": "serc1n",
+"cat": "A",
+"works": [
+{
+"title": "Normie on the Grand Concourse",
+"s": "serc-c0206699s.jpg",
+"l": "serc-c0206699l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pixel artist behind Normies, fully onchain one bit portraits, and a collector of MLow's work. One pixel at a time",
 "iv": []
 },
 {
@@ -3972,6 +4044,24 @@
 "iv": []
 },
 {
+"id": "0x87aad0e9",
+"name": "0x87aad0e9",
+"handle": "collector wallet",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Exit Strategy in the Palm House",
+"s": "0x87aad0e9-40c241bbs.jpg",
+"l": "0x87aad0e9-40c241bbl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Anonymous wallet that took home an Exit Strategy variant from Impermanent Loss. Known only by the work",
+"iv": []
+},
+{
 "id": "aaron-wright",
 "name": "Aaron Wright",
 "handle": "@awrigh01",
@@ -4033,6 +4123,24 @@
 "iv": []
 },
 {
+"id": "along",
+"name": "Along",
+"handle": "@pengwinpants",
+"x": "pengwinpants",
+"cat": "C",
+"works": [
+{
+"title": "Briefcase Full of Dinosaurs",
+"s": "along-3bb6a7dfs.jpg",
+"l": "along-3bb6a7dfl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Crypto veteran since 2013 who loves data, art, models and games, and runs his own onchain gallery. The briefcase is full of dinosaurs",
+"iv": []
+},
+{
 "id": "batsoupyum",
 "name": "BatSoupYum",
 "handle": "@batsoupyum",
@@ -4081,6 +4189,24 @@
 "label": "Part 1"
 }
 ]
+},
+{
+"id": "clod",
+"name": "clod",
+"handle": "clod on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Stern Deck, Neon Explosion",
+"s": "clod-d06dac88s.jpg",
+"l": "clod-d06dac88l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who kept coming back to Tokenized Garbage, five pieces and counting. Repeat buyers are the whole story",
+"iv": []
 },
 {
 "id": "clownvamp",
@@ -4150,6 +4276,24 @@
 "iv": []
 },
 {
+"id": "cryptocurrents-eth",
+"name": "cryptocurrents.eth",
+"handle": "@tokenizermedia",
+"x": "tokenizermedia",
+"cat": "C",
+"works": [
+{
+"title": "The Goat in the Cloister",
+"s": "cryptocurrents-eth-fc03480bs.jpg",
+"l": "cryptocurrents-eth-fc03480bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Core collector of MLow, from Still Waiting editions to dozens of pieces held off platform, behind Tokenizer Media. Still waiting, still buying",
+"iv": []
+},
+{
 "id": "dannyboyy",
 "name": "Dannyboyy",
 "handle": "@Dannyb0yyy_",
@@ -4201,6 +4345,24 @@
 }
 ],
 "bio": "A collector known for Rug Radio and a wall of profile pictures. The avatar does the talking",
+"iv": []
+},
+{
+"id": "defianceworks",
+"name": "defianceworks",
+"handle": "@defianceworks",
+"x": "defianceworks",
+"cat": "C",
+"works": [
+{
+"title": "Top Hat at the Navy Yard",
+"s": "defianceworks-d2615eebs.jpg",
+"l": "defianceworks-d2615eebl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Tech founder, former quant and cypherpunk who builds with robots and GPUs and collects MLow along the way. Decentralize everything",
 "iv": []
 },
 {
@@ -4258,6 +4420,24 @@
 "iv": []
 },
 {
+"id": "enormo-eth",
+"name": "enormo.eth",
+"handle": "enormo.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Deli Counter on Arthur Avenue",
+"s": "enormo-eth-4bfd12c5s.jpg",
+"l": "enormo-eth-4bfd12c5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who minted ten New Yorkers on the second day of The Census Release. Enormous, as promised",
+"iv": []
+},
+{
 "id": "fanny-lakoubay",
 "name": "Fanny Lakoubay",
 "handle": "@fannylakoubay",
@@ -4273,6 +4453,24 @@
 }
 ],
 "bio": "Digital art advisor and collector who founded LAL Art. Curates the wall before the market finds it",
+"iv": []
+},
+{
+"id": "flyingbeagle",
+"name": "FlyingBeagle",
+"handle": "@FlyingBeagle_",
+"x": "FlyingBeagle_",
+"cat": "C",
+"works": [
+{
+"title": "The Reading Room Keeps Watch",
+"s": "flyingbeagle-97c0f9das.jpg",
+"l": "flyingbeagle-97c0f9dal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Palestinian writer from Gaza living in exile, and a collector of MLow's Impermanent Loss. He keeps writing",
 "iv": []
 },
 {
@@ -4327,6 +4525,42 @@
 }
 ],
 "bio": "Curator and artistic director of the Serpentine Galleries in London. A conversation that never ends",
+"iv": []
+},
+{
+"id": "hhabbdnjd",
+"name": "hhabbdnjd",
+"handle": "hhabbdnjd on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Paper Birds Under the Unisphere",
+"s": "hhabbdnjd-9d4b9a5as.jpg",
+"l": "hhabbdnjd-9d4b9a5al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Anonymous collector who took home a Transdimensional AI piece from MLow and Osiris. No name, just a good eye",
+"iv": []
+},
+{
+"id": "hup2",
+"name": "hup2",
+"handle": "hup2 on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Meditative Melt on South Beach",
+"s": "hup2-51b99039s.jpg",
+"l": "hup2-51b99039l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who locked in Meditative Melt from Time To Lock In. One piece, well chosen",
 "iv": []
 },
 {
@@ -4402,6 +4636,24 @@
 "iv": []
 },
 {
+"id": "kruuul",
+"name": "Kruuul",
+"handle": "@kruuul",
+"x": "kruuul",
+"cat": "C",
+"works": [
+{
+"title": "Daisies at Wave Hill",
+"s": "kruuul-65b99ce7s.jpg",
+"l": "kruuul-65b99ce7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Nature, art and crypto lover who puts family above all and holds The Soft Conspiracy. His punk is the second best version of himself",
+"iv": []
+},
+{
 "id": "lady-phe0nix",
 "name": "Lady Phe0nix",
 "handle": "@yesladypheonix",
@@ -4420,6 +4672,24 @@
 "iv": []
 },
 {
+"id": "laminoplasty",
+"name": "laminoplasty",
+"handle": "laminoplasty.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Summer Duck at Gapstow Bridge",
+"s": "laminoplasty-08d8c251s.jpg",
+"l": "laminoplasty-08d8c251l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pixel duck and collector behind laminoplasty.eth, first buyer of MLow's Supertrash. Freedom from compression",
+"iv": []
+},
+{
 "id": "lanett-bennett-grant",
 "name": "Lanett Bennett Grant",
 "handle": "@musicalnetta",
@@ -4435,6 +4705,42 @@
 }
 ],
 "bio": "A collector whose world runs from a Mask of Luci to clay, red and cobalt BSY pieces. Taste is the medium",
+"iv": []
+},
+{
+"id": "laoda",
+"name": "laoda",
+"handle": "@WhiteGrape19",
+"x": "WhiteGrape19",
+"cat": "C",
+"works": [
+{
+"title": "The Diamond Head in Columbus Park",
+"s": "laoda-8d0f42e0s.jpg",
+"l": "laoda-8d0f42e0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector known as the boss, holding hundreds of works and calling himself the Monkey King. Big collection, bigger title",
+"iv": []
+},
+{
+"id": "leadwithlove-eth",
+"name": "Leadwithlove.eth",
+"handle": "Leadwithlove.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Lead With Love in the Sculpture Garden",
+"s": "leadwithlove-eth-0eec1a0fs.jpg",
+"l": "leadwithlove-eth-0eec1a0fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector of Transdimensional Trippers and The Soft Conspiracy who leads with love and signs with hearts. The name says it all",
 "iv": []
 },
 {
@@ -4492,6 +4798,24 @@
 "iv": []
 },
 {
+"id": "mamajj",
+"name": "mamajj",
+"handle": "mamajj on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Night Office at the Savings Bank",
+"s": "mamajj-cc1dc0bds.jpg",
+"l": "mamajj-cc1dc0bdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who went deep on Tokenized Garbage, three pieces of MLow's trash turned into treasure. Quiet taste, loud conviction",
+"iv": []
+},
+{
 "id": "marc-glimcher",
 "name": "Marc Glimcher",
 "handle": "@marcglimcher",
@@ -4525,6 +4849,24 @@
 }
 ],
 "bio": "Collector who built a fund around digital art. A wall that keeps growing",
+"iv": []
+},
+{
+"id": "max-pretends",
+"name": "Max pretends",
+"handle": "max_pretends on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Blade at the Torii",
+"s": "max-pretends-679623d1s.jpg",
+"l": "max-pretends-679623d1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who won We Disappear at auction, katana on the shoulder. Pretending is a kind of practice",
 "iv": []
 },
 {
@@ -4582,6 +4924,42 @@
 "iv": []
 },
 {
+"id": "ogenterprises-eth",
+"name": "ogenterprises.eth",
+"handle": "ogenterprises on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Was Any of It Real on City Island",
+"s": "ogenterprises-eth-ef8af9a9s.jpg",
+"l": "ogenterprises-eth-ef8af9a9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who won Was Any Of It Real at auction and wears the SuperRare merch to prove it. If you know, you know",
+"iv": []
+},
+{
+"id": "old-ed-hacked",
+"name": "old ed hacked",
+"handle": "ed_old_hacked_account on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Brainmelt at the Reflecting Pool",
+"s": "old-ed-hacked-d35e2bc4s.jpg",
+"l": "old-ed-hacked-d35e2bc4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who made an offer on an Impermanent Loss piece from an account he now calls his old hacked one. The wallet changed, the taste did not",
+"iv": []
+},
+{
 "id": "omz",
 "name": "OMZ",
 "handle": "@omz_nft",
@@ -4605,6 +4983,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "oxjpegs",
+"name": "oxjpegs",
+"handle": "oxjpegs.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Deli Counter on the Boardwalk",
+"s": "oxjpegs-300a1a22s.jpg",
+"l": "oxjpegs-300a1a22l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who minted ten New Yorkers the day The Census Release opened. First in line",
+"iv": []
 },
 {
 "id": "paola-antonelli",
@@ -4676,6 +5072,24 @@
 }
 ],
 "bio": "Operator of FlamingoDAO, one of the early collector groups for digital art. The wall grows as a group",
+"iv": []
+},
+{
+"id": "punk2772-eth",
+"name": "punk2772.eth",
+"handle": "punk2772.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Two Faces on Washington Street",
+"s": "punk2772-eth-4f008244s.jpg",
+"l": "punk2772-eth-4f008244l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Anonymous collector who picked up Two Faced from What's In Your Wallet. The name tells you where to look",
 "iv": []
 },
 {
@@ -4808,6 +5222,24 @@
 "iv": []
 },
 {
+"id": "sam-ai-am",
+"name": "sam_ai_am",
+"handle": "sam_ai_am on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Adventures Imagined Under the Whale",
+"s": "sam-ai-am-399e8933s.jpg",
+"l": "sam-ai-am-399e8933l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Early collector who won Adventures Imagined from MLow's Transmutational AI Paintings. There before most",
+"iv": []
+},
+{
 "id": "seedphrase",
 "name": "Seedphrase",
 "handle": "@seedphrase",
@@ -4823,6 +5255,42 @@
 }
 ],
 "bio": "Collector known in the CryptoPunks world for an alien Punk with a pipe. The rarest face in the room",
+"iv": []
+},
+{
+"id": "shills81-eth",
+"name": "shills81.eth",
+"handle": "shills81.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Topknot in the Noguchi Garden",
+"s": "shills81-eth-58c75c2es.jpg",
+"l": "shills81-eth-58c75c2el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector of The Soft Conspiracy and Transdimensional Trippers who keeps no public profile. The wallet is the bio",
+"iv": []
+},
+{
+"id": "shoreborne",
+"name": "shoreborne",
+"handle": "shoreborne on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Solo Voyage at Valentino Pier",
+"s": "shoreborne-17a43435s.jpg",
+"l": "shoreborne-17a43435l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who sailed in for Solo Voyage from Impermanent Loss, masked and braided. Small collection, sharp pick",
 "iv": []
 },
 {
@@ -4898,6 +5366,42 @@
 "iv": []
 },
 {
+"id": "stowerling",
+"name": "stowerling",
+"handle": "stowerling.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Capitulation at Gantry Plaza",
+"s": "stowerling-4fdbe2a5s.jpg",
+"l": "stowerling-4fdbe2a5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector who came back for a second MLow, Capitulation, right when the market was doing exactly that. Bought the bottom",
+"iv": []
+},
+{
+"id": "suparno67-mob",
+"name": "suparno67_mob",
+"handle": "suparno67_mob on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Escape From Self at Freshkills",
+"s": "suparno67-mob-863bd2f0s.jpg",
+"l": "suparno67-mob-863bd2f0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector with close to ninety works on SuperRare, among them an Impermanent Loss variant from MLow. The collection does the talking",
+"iv": []
+},
+{
 "id": "tina-rivers-ryan",
 "name": "Tina Rivers Ryan",
 "handle": "@tinariversryan",
@@ -4949,6 +5453,42 @@
 }
 ],
 "bio": "Cofounder of the Ross + Kramer gallery and a collector of digital art. The wall moved on chain",
+"iv": []
+},
+{
+"id": "tork-penderloin",
+"name": "Tork Penderloin",
+"handle": "@P8erade4u",
+"x": "P8erade4u",
+"cat": "C",
+"works": [
+{
+"title": "Protect Ya Neck in Park Hill",
+"s": "tork-penderloin-dc9f8efcs.jpg",
+"l": "tork-penderloin-dc9f8efcl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Collector and connector who quotes Big Trouble in Little China and signs off with Protect Ya Neck. Shaolin keeps its own",
+"iv": []
+},
+{
+"id": "twinflames",
+"name": "twinflames",
+"handle": "twinflames.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Leopard in the Gilded Frame",
+"s": "twinflames-63cc6bfas.jpg",
+"l": "twinflames-63cc6bfal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Quiet collector with dozens of works on SuperRare, including an Impermanent Loss variant from MLow. Says little, owns a lot",
 "iv": []
 },
 {
@@ -5481,6 +6021,24 @@
 "iv": []
 },
 {
+"id": "jon-perkins",
+"name": "Jon Perkins",
+"handle": "humanzero.eth",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Breath Mints on Greene Street",
+"s": "jon-perkins-312c6fd2s.jpg",
+"l": "jon-perkins-312c6fd2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cofounder of SuperRare and Rare Protocol, who helped build the room where digital art first found collectors. He still buys the art",
+"iv": []
+},
+{
 "id": "jordan-lyall",
 "name": "Jordan Lyall",
 "handle": "@JordanLyall",
@@ -5794,6 +6352,24 @@
 }
 ],
 "bio": "Venture investor at Galaxy Interactive backing games and digital art. The arcade became the gallery",
+"iv": []
+},
+{
+"id": "scott-kominers",
+"name": "Scott Kominers",
+"handle": "@skominers",
+"x": "skominers",
+"cat": "B",
+"works": [
+{
+"title": "Right Twice a Day at Grand Central",
+"s": "scott-kominers-f3049cd7s.jpg",
+"l": "scott-kominers-f3049cd7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Harvard Business School economist and a16z crypto research partner who designs markets for a living. Proof first, then the art",
 "iv": []
 },
 {
