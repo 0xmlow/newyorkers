@@ -20,13 +20,35 @@ SITE = os.path.dirname(HERE)
 SRC = os.path.join(SITE, "assets", "honoraries")
 OUT = os.path.join(SITE, "assets", "cards")
 FD = os.path.join(HERE, "honoraries", "fonts")
-VERSION = "1"  # bump to redraw every card after a layout change
+VERSION = "2"  # bump to redraw every card after a layout change
 os.makedirs(OUT, exist_ok=True)
 
 D = json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))
 INK, PAPER, CLOUD, SLATE = (13, 13, 13), (244, 241, 234), (240, 244, 248), (136, 153, 170)
 ACCS = [(215, 255, 31), (255, 46, 99), (0, 229, 255), (255, 176, 32), (179, 136, 255)]
 ACC = {c["code"]: ACCS[i % len(ACCS)] for i, c in enumerate(D["cats"])}
+# The N3W YORKERS logo kit, round 3 (the clean vector lockups): ten concepts, each in five colours,
+# v1..v5 = blue, cyan, pink, bronze, purple. The concept rotates across the cards by a hash of the
+# person, so the set reads as a series; the colour follows the category's accent.
+LOGOS = os.path.join(HERE, "honoraries", "logos")
+FILES = {}
+for f in os.listdir(LOGOS):  # 26-bridge-witness-v1.png: the leading number counts files, not concepts
+    m = re.match(r"\d+-(.+)-v(\d)\.png$", f)
+    if m:
+        FILES.setdefault(m[1], {})[int(m[2])] = f
+CONCEPTS = sorted(FILES)
+VAR = {ACCS[0]: 1, ACCS[1]: 3, ACCS[2]: 2, ACCS[3]: 4, ACCS[4]: 5}
+
+
+def logo(p, size):
+    k = int(hashlib.sha256(p["id"].encode()).hexdigest(), 16) % len(CONCEPTS)
+    im = Image.open(os.path.join(LOGOS, FILES[CONCEPTS[k]][VAR[ACC[p["cat"]]]])).convert("RGBA").resize((size, size), Image.LANCZOS)
+    m = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, size - 1, size - 1), size // 12, fill=255)
+    im.putalpha(m)
+    return im
+
+
 TYPE = {"A": "ARTIST", "C": "COLLECTOR", "B": "FOUNDER", "W": "MEDIA", "M": "MUSIC", "F": "FILM AND STAGE",
         "X": "FASHION", "S": "SPORT", "D": "FOOD", "P": "CIVIC"}
 
@@ -168,27 +190,27 @@ def card(p):
 
     # flavour text: the bio
     BY0 = CY + 44
-    BY1 = H - 150
+    BY1 = H - 246
     d.rounded_rectangle((X0 - 8, BY0, X1 + 8, BY1), 14, outline=(42, 48, 64), width=2)
     bio = p.get("bio") or "Painted into NEW YORKERS by MLow, one of the people who make this city what it is."
-    bf = font("SpaceGrotesk.ttf", 38, var="Regular")
-    lines = wrap(d, bio, bf, X1 - X0 - 40, 6)
-    lh = 54
-    y = BY0 + (BY1 - BY0 - lh * len(lines)) // 2 + 38
+    bf = font("SpaceGrotesk.ttf", 34, var="Regular")
+    lines = wrap(d, bio, bf, X1 - X0 - 40, 5)
+    lh = 48
+    y = BY0 + (BY1 - BY0 - lh * len(lines)) // 2 + 34
     for l in lines:
         d.text((X0 + 14, y), l, font=bf, fill=(221, 227, 234), anchor="ls")
         y += lh
 
     # footer: handle, wordmark, site
-    FY = H - 86
+    LS = 188
+    LY = H - B - 22 - LS
+    lg = logo(p, LS)
+    im.paste(lg, (X1 + 8 - LS, LY), lg)
+    FY = LY + LS // 2
     hd = p["handle"] or ""
-    hf = fit(d, hd, "IBMPlexMono-Medium.ttf", 30, 460, 18) if hd else None
     if hd:
-        d.text((X0, FY), hd, font=hf, fill=CLOUD, anchor="lm")
-    wf = font("Fraunces.ttf", 34, var="Black")
-    d.text((X1, FY - 12), "NEW YORKERS", font=wf, fill=CLOUD, anchor="rm")
-    sf = font("IBMPlexMono-Medium.ttf", 18)
-    d.text((X1, FY + 22), "N3WYORKERS.COM", font=sf, fill=SLATE, anchor="rm")
+        d.text((X0, FY - 20), hd, font=fit(d, hd, "IBMPlexMono-Medium.ttf", 28, X1 - X0 - LS - 40, 18), fill=CLOUD, anchor="lm")
+    d.text((X0, FY + (26 if hd else 0)), "N3WYORKERS.COM", font=font("IBMPlexMono-Medium.ttf", 21), fill=SLATE, anchor="lm")
 
     out = Image.new("RGB", (W, H), INK)
     out.paste(im, (0, 0), mask)
@@ -229,9 +251,10 @@ def og(p, c):
         y += int(nf.size * 1.02)
     if p["handle"]:
         d.text((X, y + 18), p["handle"], font=fit(d, p["handle"], "IBMPlexMono-Medium.ttf", 34, MW, 20), fill=(0, 229, 255), anchor="ls")
-    d.text((X, 520), "Painted by MLow into", font=font("SpaceGrotesk.ttf", 28, var="Regular"), fill=(201, 210, 220), anchor="ls")
-    d.text((X, 568), "NEW YORKERS", font=font("Fraunces.ttf", 44, var="Black"), fill=CLOUD, anchor="ls")
-    eye(o, 1200 - 56 - 26, 552, 26)
+    d.text((X, 540), "Painted by MLow", font=font("SpaceGrotesk.ttf", 28, var="Regular"), fill=(201, 210, 220), anchor="ls")
+    d.text((X, 578), "N3WYORKERS.COM", font=font("IBMPlexMono-Medium.ttf", 20), fill=SLATE, anchor="ls")
+    lg = logo(p, 170)
+    o.paste(lg, (1200 - 48 - 170, 630 - 40 - 170), lg)
     return o
 
 

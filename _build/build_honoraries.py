@@ -142,9 +142,13 @@ JS = r'''<script>
      card itself to the share sheet instead, so it lands in the X app attached. */
   var SITE=(window.NY_CONFIG&&NY_CONFIG.siteUrl||"https://n3wyorkers.com").replace(/\/$/,""), blob=null;
   function intent(t,u){ return "https://x.com/intent/tweet?text="+encodeURIComponent(t)+"&url="+encodeURIComponent(u); }
-  function lines(p){ var tag=p.x?"@"+p.x:p.name;
-    return {me:"@degens painted me into NEW YORKERS. Honorary New Yorker, counted.",
-            them:tag+(p.x?" ("+p.name+")":"")+(/ and /.test(p.name)?" are Honorary New Yorkers":" is an Honorary New Yorker")+", painted by @degens into NEW YORKERS."}; }
+  /* Written to the jackbutchertweet rules: colon pivot, no closing period, under fifteen words.
+     Both voices share the second line, so the timeline sees one idea repeated, not two. Keep in step
+     with ME/THEM in the share page builder below. */
+  var TAIL="\n\nNew York counts its people in paint, by @degens";
+  function lines(p){ var who=p.name+(p.x?" (@"+p.x+")":"");
+    return {me:"Honorary New Yorker: counted"+TAIL,
+            them:who+": Honorary New Yorker"+(/ and /.test(p.name)?"s":"")+TAIL}; }
   function card(p){
     var u=SITE+"/h/"+p.id, src="assets/cards/"+p.card, L=lines(p), me=document.getElementById("lbme");
     var ci=document.getElementById("lbci"); ci.href="h/"+p.id+".html"; ci.firstChild.src=src; ci.firstChild.alt="The Honorary card for "+p.name;
@@ -308,8 +312,9 @@ for f in os.listdir(HD):
 for p in PPL:
     cd, w0 = CARDS[p["id"]], p["works"][0]
     u = f'{C["siteUrl"]}/h/{p["id"]}'
-    me = "@degens painted me into NEW YORKERS. Honorary New Yorker, counted."
-    them = (f'@{p["x"]} ({p["name"]})' if p["x"] else p["name"]) + (" are Honorary New Yorkers" if " and " in p["name"] else " is an Honorary New Yorker") + ", painted by @degens into NEW YORKERS."
+    tail = "\n\nNew York counts its people in paint, by @degens"  # same words as lines() in the page JS
+    me = "Honorary New Yorker: counted" + tail
+    them = p["name"] + (f' (@{p["x"]})' if p["x"] else "") + ": Honorary New Yorker" + ("s" if " and " in p["name"] else "") + tail
     hb = f'''<main class="hp" style="--a:{ACC[p["cat"]]}"><div class="wrap">
 <div><img class="cardimg" src="../assets/cards/{cd["card"]}" alt="The Honorary card for {e(p["name"])}, painted by MLow" width="1080" height="1512"></div>
 <div><p class="k">HONORARY NEW YORKER &middot; {e(CATN[p["cat"]].upper())}</p><h1>{e(p["name"])}</h1>

@@ -1,0 +1,1 @@
+Copied from Desktop/MLow Degens Desktop Sept 2026/..._Duplicates/NEW_YORKERS_MARKETING_KIT_2500-2525 2_logos/round-3-svg-50/png, resized to 480. Clean SVG-generated lockups (generate_round3_svg.js), v1..v5 = blue, cyan, pink, bronze, purple.
