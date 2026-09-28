@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Preflight the GO LIVE package: every referenced asset exists, links resolve, copy is clean."""
-import json, os, re, sys, glob
+import json, os, re, sys, glob, hashlib
+# sha256 of the local part of MLow's personal address
+PERSONAL_EMAIL_SHA256 = "866c4769208a4c7cfd918fb1c026cb71cfe8f1842945d17e233fd5271188ffb8"
 PKG="/Users/degens/Desktop/NEW YORKERS BY MLOW/GO LIVE PACKAGE/site"
 probs=[]; warns=[]
 d=open(os.path.join(PKG,"assets","data.js")).read(); D=json.loads(d[d.index("=")+1:].rstrip().rstrip(";"))
@@ -57,7 +59,9 @@ for pg in pages:
     for bad in ("—","–"):
         if bad in h: probs.append(f"{pg}: contains a dash character")
     # MLow asked for his personal address off every public surface; contact goes to @degens on X.
-    if "PERSONAL_EMAIL" in h: probs.append(f"{pg}: exposes the personal email address")
+    # Matched by hash so this public repo does not spell the address out itself.
+    if any(hashlib.sha256(w.lower().encode()).hexdigest() == PERSONAL_EMAIL_SHA256 for w in re.findall(r"[A-Za-z0-9._%+-]+", h)):
+        probs.append(f"{pg}: exposes the personal email address")
     for stale in ("1,841","2,266 characters","3,466","802 cuts"):
         if stale in h: warns.append(f"{pg}: stale number {stale!r}")
     if "<title>" not in h: probs.append(f"{pg}: no title")
