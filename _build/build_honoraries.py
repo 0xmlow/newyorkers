@@ -141,7 +141,7 @@ JS = r'''<script>
      card and unfurls in the timeline. Where the browser can share files (phones), the button hands the
      card itself to the share sheet instead, so it lands in the X app attached. */
   var SITE=(window.NY_CONFIG&&NY_CONFIG.siteUrl||"https://n3wyorkers.com").replace(/\/$/,""), blob=null;
-  function intent(t,u){ return "https://x.com/intent/tweet?text="+encodeURIComponent(t)+"&url="+encodeURIComponent(u); }
+  function intent(t,u){ return "https://x.com/intent/tweet?text="+encodeURIComponent(t+"\n\n"+u); }
   /* Written to the jackbutchertweet rules: colon pivot, no closing period, under fifteen words.
      Both voices share the second line, so the timeline sees one idea repeated, not two. Keep in step
      with ME/THEM in the share page builder below. */
@@ -158,7 +158,7 @@ JS = r'''<script>
     if(navigator.canShare&&matchMedia("(pointer:coarse)").matches){
       fetch(src).then(function(r){return r.blob()}).then(function(b){ var f=new File([b],"honorary-new-yorker-"+p.id+".jpg",{type:"image/jpeg"});
         if(!navigator.canShare({files:[f]})) return; blob=f;
-        me.onclick=function(ev){ if(!blob) return; ev.preventDefault(); navigator.share({files:[blob],text:L.me+" "+u}).catch(function(){}); }; }).catch(function(){});
+        me.onclick=function(ev){ if(!blob) return; ev.preventDefault(); navigator.share({files:[blob],text:L.me+"\n\n"+u}).catch(function(){}); }; }).catch(function(){});
     }
   }
   function step(d){ var vis=cards.filter(function(c){return !c.hidden}).map(function(c){return +c.dataset.i}); var k=vis.indexOf(idx); if(k<0)return; show(vis[(k+d+vis.length)%vis.length]); }
@@ -305,7 +305,7 @@ HJS = r'''<script>
 })();
 </script>'''
 from urllib.parse import quote
-xi = lambda t, u: "https://x.com/intent/tweet?text=" + quote(t, safe="") + "&url=" + quote(u, safe="")
+xi = lambda t, u: "https://x.com/intent/tweet?text=" + quote(t + "\n\n" + u, safe="")  # the site link is the last line
 for f in os.listdir(HD):
     if f.endswith(".html") and f[:-5] not in {p["id"] for p in PPL}:
         os.remove(os.path.join(HD, f))
@@ -321,7 +321,7 @@ for p in PPL:
 {f'<a class="hd" href="https://x.com/{e(p["x"])}" target="_blank" rel="noopener">{e(p["handle"])}</a>' if p["x"] else (f'<p class="hd">{e(p["handle"])}</p>' if p["handle"] else "")}
 {f'<p class="t">&ldquo;{e(w0["title"])}&rdquo;</p>' if w0.get("title") else ""}
 {f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else ""}
-<div class="row"><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + " " + u)}">This is me. Post my card</a>
+<div class="row"><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + chr(10) * 2 + u)}">This is me. Post my card</a>
 <a class="btn ghost" href="{e(xi(them, u))}" target="_blank" rel="noopener">Share on X</a>
 <a class="btn ghost" href="../assets/cards/{cd["card"]}" download="honorary-new-yorker-{p["id"]}.jpg">Save the card</a></div>
 <p class="loop">One of {N} Honorary New Yorkers painted by MLow. <a href="../honoraries.html#{p["id"]}">Meet the rest</a>, or <a href="../counted.html#nominate">nominate someone who belongs here</a>.</p>

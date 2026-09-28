@@ -223,7 +223,7 @@ p.none a{color:var(--cyan)}
      card and unfurls in the timeline. Where the browser can share files (phones), the button hands the
      card itself to the share sheet instead, so it lands in the X app attached. */
   var SITE=(window.NY_CONFIG&&NY_CONFIG.siteUrl||"https://n3wyorkers.com").replace(/\/$/,""), blob=null;
-  function intent(t,u){ return "https://x.com/intent/tweet?text="+encodeURIComponent(t)+"&url="+encodeURIComponent(u); }
+  function intent(t,u){ return "https://x.com/intent/tweet?text="+encodeURIComponent(t+"\n\n"+u); }
   /* Written to the jackbutchertweet rules: colon pivot, no closing period, under fifteen words.
      Both voices share the second line, so the timeline sees one idea repeated, not two. Keep in step
      with ME/THEM in the share page builder below. */
@@ -240,7 +240,7 @@ p.none a{color:var(--cyan)}
     if(navigator.canShare&&matchMedia("(pointer:coarse)").matches){
       fetch(src).then(function(r){return r.blob()}).then(function(b){ var f=new File([b],"honorary-new-yorker-"+p.id+".jpg",{type:"image/jpeg"});
         if(!navigator.canShare({files:[f]})) return; blob=f;
-        me.onclick=function(ev){ if(!blob) return; ev.preventDefault(); navigator.share({files:[blob],text:L.me+" "+u}).catch(function(){}); }; }).catch(function(){});
+        me.onclick=function(ev){ if(!blob) return; ev.preventDefault(); navigator.share({files:[blob],text:L.me+"\n\n"+u}).catch(function(){}); }; }).catch(function(){});
     }
   }
   function step(d){ var vis=cards.filter(function(c){return !c.hidden}).map(function(c){return +c.dataset.i}); var k=vis.indexOf(idx); if(k<0)return; show(vis[(k+d+vis.length)%vis.length]); }
