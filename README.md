@@ -38,7 +38,7 @@ Don't publish copy that states any of these until they're confirmed.
 | `characters/_TEMPLATE/canon.md` | Copy this for each new character |
 | `cameos/` | STILL WAITING crossover renders (one figure per room) |
 | `metadata/` | Token metadata drafts (after chain/contract are confirmed) |
-| `index.html` | Landing page + X/OG card meta (tweet `https://newyorkers.com/`) |
+| `index.html` | Landing page + X/OG card meta (tweet `https://dev.n3wyorkers.com/`) |
 | `newyorkers_poster_16x9.png` | 1200×675 card image (`twitter:image` / `og:image`) |
 | `assets/` | MLOW logo + evil-eye favicon |
 | `CNAME`, `.nojekyll` | GitHub Pages custom domain; serve files verbatim |
