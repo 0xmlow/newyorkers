@@ -43,7 +43,18 @@ Don't publish copy that states any of these until they're confirmed.
 | `assets/` | MLOW logo + evil-eye favicon |
 | `CNAME`, `.nojekyll` | GitHub Pages custom domain; serve files verbatim |
 
-## Hosting: GitHub Pages on a custom subdomain
+## Hosting: GitHub Pages
+
+> **This branch (`claude/new-repo-new-yorkers-u1iphp`) is the dev site at
+> https://dev.n3wyorkers.com/.** `main` is production at https://newyorkers.com/.
+> GitHub Pages serves one branch + one domain per repo, so whichever branch is
+> selected in Settings → Pages is the one that's live.
+
+### Dev DNS (n3wyorkers.com registrar)
+
+`CNAME` record, host `dev` → `0xmlow.github.io`.
+
+### Production
 
 Served by GitHub Pages (`main` / root) on the domain
 in `CNAME`:
