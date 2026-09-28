@@ -38,3 +38,24 @@ Don't publish copy that states any of these until they're confirmed.
 | `characters/_TEMPLATE/canon.md` | Copy this for each new character |
 | `cameos/` | STILL WAITING crossover renders (one figure per room) |
 | `metadata/` | Token metadata drafts (after chain/contract are confirmed) |
+| `index.html` | Landing page + X/OG card meta (tweet `https://newyorkers.mlow.xyz/`) |
+| `newyorkers_poster_16x9.png` | 1200×675 card image (`twitter:image` / `og:image`) |
+| `assets/` | MLOW logo + evil-eye favicon |
+| `CNAME`, `.nojekyll` | GitHub Pages custom domain; serve files verbatim |
+
+## Hosting: GitHub Pages on a custom subdomain
+
+Same setup as bloomrun. Served by GitHub Pages (`main` / root) on the domain
+in `CNAME`:
+
+```
+https://newyorkers.mlow.xyz/                            -> index.html (tweet this)
+https://newyorkers.mlow.xyz/newyorkers_poster_16x9.png  -> card image
+```
+
+1. Repo → Settings → Pages → Source: *Deploy from a branch*, `main` / `(root)`.
+2. DNS (Squarespace): `CNAME` record `newyorkers` → `0xmlow.github.io`.
+3. Once the record resolves, tick **Enforce HTTPS** in Settings → Pages.
+
+Optional short link, as with bloomrun: Squarespace → Settings → Advanced → URL
+Mappings: `/newyorkers -> https://newyorkers.mlow.xyz/ 301`.
