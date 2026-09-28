@@ -6525,6 +6525,24 @@
 "iv": []
 },
 {
+"id": "alexandr-wang",
+"name": "Alexandr Wang",
+"handle": "Chief AI officer of Meta and founder of Scale AI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Bounding Boxes at Grand Central",
+"s": "alexandr-wang-f9dcdc2es.jpg",
+"l": "alexandr-wang-f9dcdc2el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Left MIT at nineteen to found Scale AI, the labeling company behind the data that trains the models, and now leads AI at Meta. Every box drawn by hand",
+"iv": []
+},
+{
 "id": "alex-atallah",
 "name": "Alex Atallah",
 "handle": "@xanderatallah",
@@ -6558,6 +6576,24 @@
 }
 ],
 "bio": "Brooklyn born Reddit cofounder, founder of Seven Seven Six and a digital art collector. The front page, then the wall",
+"iv": []
+},
+{
+"id": "alex-karp",
+"name": "Alex Karp",
+"handle": "Cofounder and CEO of Palantir",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Seeing Stone at the Seagram",
+"s": "alex-karp-e440b8aes.jpg",
+"l": "alex-karp-e440b8ael.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Philosopher with a Frankfurt doctorate who cofounded Palantir and runs it as its outspoken CEO. The stone that sees",
 "iv": []
 },
 {
@@ -6615,6 +6651,24 @@
 "iv": []
 },
 {
+"id": "andy-jassy",
+"name": "Andy Jassy",
+"handle": "CEO of Amazon",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Boxes over Bryant Park",
+"s": "andy-jassy-07802400s.jpg",
+"l": "andy-jassy-07802400l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Built Amazon Web Services from an idea in 2003 into the cloud that runs much of the internet, now Amazon's CEO. The box and the cloud",
+"iv": []
+},
+{
 "id": "anil-dash",
 "name": "Anil Dash",
 "handle": "@anildash",
@@ -6630,6 +6684,42 @@
 }
 ],
 "bio": "Technologist who cocreated Monegraph at Seven on Seven in 2014, an early prototype of the NFT. Proved the idea before the market",
+"iv": []
+},
+{
+"id": "aravind-srinivas",
+"name": "Aravind Srinivas",
+"handle": "CEO and cofounder of Perplexity",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Index Cards at the Morgan",
+"s": "aravind-srinivas-ef8d7461s.jpg",
+"l": "aravind-srinivas-ef8d7461l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Researcher who cofounded Perplexity to answer questions with sources instead of links. Every answer cites its work",
+"iv": []
+},
+{
+"id": "arthur-mensch",
+"name": "Arthur Mensch",
+"handle": "CEO and cofounder of Mistral AI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Mistral on the Brooklyn Bridge",
+"s": "arthur-mensch-a911d9d4s.jpg",
+"l": "arthur-mensch-a911d9d4l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Former DeepMind researcher who cofounded Mistral AI in Paris and made open models a European contender. The wind from the south",
 "iv": []
 },
 {
@@ -6651,6 +6741,96 @@
 "iv": []
 },
 {
+"id": "ben-horowitz",
+"name": "Ben Horowitz",
+"handle": "Cofounder of Andreessen Horowitz",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Records at the Apollo",
+"s": "ben-horowitz-fa509d3bs.jpg",
+"l": "ben-horowitz-fa509d3bl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Andreessen Horowitz after selling Opsware, wrote The Hard Thing About Hard Things and quotes rap lyrics in board meetings. Nothing is easy",
+"iv": []
+},
+{
+"id": "bill-gates",
+"name": "Bill Gates",
+"handle": "Cofounder of Microsoft and the Gates Foundation",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Windows at the General Assembly",
+"s": "bill-gates-0edd8b9cs.jpg",
+"l": "bill-gates-0edd8b9cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Microsoft and put a computer on every desk, then gave his fortune to global health through the Gates Foundation. From windows to vaccines",
+"iv": []
+},
+{
+"id": "brad-gerstner",
+"name": "Brad Gerstner",
+"handle": "Founder of Altimeter Capital",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Altimeter at One World Trade",
+"s": "brad-gerstner-31f814a5s.jpg",
+"l": "brad-gerstner-31f814a5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Founded Altimeter Capital and backs growth companies from Snowflake to Uber, and cohosts BG2. Always reading altitude",
+"iv": []
+},
+{
+"id": "brian-armstrong",
+"name": "Brian Armstrong",
+"handle": "Cofounder and CEO of Coinbase",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Coins Rain on Times Square",
+"s": "brian-armstrong-1c143d8ds.jpg",
+"l": "brian-armstrong-1c143d8dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Former Airbnb engineer who cofounded Coinbase and took it public on the Nasdaq in 2021. Crypto went to Wall Street",
+"iv": []
+},
+{
+"id": "brian-chesky",
+"name": "Brian Chesky",
+"handle": "Cofounder and CEO of Airbnb",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Welcome on a Park Slope Stoop",
+"s": "brian-chesky-7eebae06s.jpg",
+"l": "brian-chesky-7eebae06l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Rented air mattresses in his San Francisco loft to pay rent and turned it into Airbnb. Belong anywhere",
+"iv": []
+},
+{
 "id": "cameron-winklevoss",
 "name": "Cameron Winklevoss",
 "handle": "@cameron",
@@ -6666,6 +6846,24 @@
 }
 ],
 "bio": "Cofounder of Gemini, the company that owns Nifty Gateway. Rowed the river, then built the bank",
+"iv": []
+},
+{
+"id": "chamath-palihapitiya",
+"name": "Chamath Palihapitiya",
+"handle": "Founder of Social Capital and cohost of the All In podcast",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Chips in the Rainbow Room",
+"s": "chamath-palihapitiya-54aa5f65s.jpg",
+"l": "chamath-palihapitiya-54aa5f65l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Grew Facebook's user base, founded Social Capital and cohosts the All In podcast. The bestie with the chips",
 "iv": []
 },
 {
@@ -6705,6 +6903,24 @@
 "iv": []
 },
 {
+"id": "cl-ment-delangue",
+"name": "Clément Delangue",
+"handle": "CEO and cofounder of Hugging Face, based in New York",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Hug in DUMBO",
+"s": "cl-ment-delangue-59b38837s.jpg",
+"l": "cl-ment-delangue-59b38837l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Hugging Face in New York, the home where the world shares open AI models. The emoji became infrastructure",
+"iv": []
+},
+{
 "id": "colby-mugrabi",
 "name": "Colby Mugrabi",
 "handle": "@colbymugrabi",
@@ -6741,6 +6957,42 @@
 "iv": []
 },
 {
+"id": "dario-amodei",
+"name": "Dario Amodei",
+"handle": "CEO and cofounder of Anthropic",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Constitution in the Reading Room",
+"s": "dario-amodei-0d946052s.jpg",
+"l": "dario-amodei-0d946052l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Physicist turned AI researcher who left OpenAI to cofound Anthropic and build Claude around a written constitution. Safety as the product",
+"iv": []
+},
+{
+"id": "david-sacks",
+"name": "David Sacks",
+"handle": "Cofounder of PayPal and Yammer, cohost of the All In podcast",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Studio on Madison Avenue",
+"s": "david-sacks-5c841fa6s.jpg",
+"l": "david-sacks-5c841fa6l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "PayPal founding COO who started Yammer and Craft Ventures and cohosts the All In podcast. Software as a service",
+"iv": []
+},
+{
 "id": "deana-burke",
 "name": "Deana Burke",
 "handle": "@deanaburke",
@@ -6756,6 +7008,24 @@
 }
 ],
 "bio": "Co founder of Boys Club, a community built for women and nonbinary people in crypto. The clubhouse is hot pink",
+"iv": []
+},
+{
+"id": "demis-hassabis",
+"name": "Demis Hassabis",
+"handle": "CEO of Google DeepMind and Nobel laureate",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Fold at the Natural History Museum",
+"s": "demis-hassabis-0ae86e72s.jpg",
+"l": "demis-hassabis-0ae86e72l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Chess prodigy and game designer who founded DeepMind, beat the world at Go and cracked protein folding with AlphaFold. A Nobel for the game of life",
 "iv": []
 },
 {
@@ -6813,6 +7083,96 @@
 "iv": []
 },
 {
+"id": "dylan-field",
+"name": "Dylan Field",
+"handle": "Cofounder and CEO of Figma",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Cursors on the Whitney Terrace",
+"s": "dylan-field-78439f28s.jpg",
+"l": "dylan-field-78439f28l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Dropped out of Brown on a Thiel Fellowship to cofound Figma and put design in the browser. Everyone in the same file",
+"iv": []
+},
+{
+"id": "elon-musk",
+"name": "Elon Musk",
+"handle": "CEO of Tesla and SpaceX",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Starship on the Intrepid",
+"s": "elon-musk-3f4587f1s.jpg",
+"l": "elon-musk-3f4587f1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Runs Tesla and SpaceX, landing rockets and electrifying cars, with Mars as the stated goal. The launch is the point",
+"iv": []
+},
+{
+"id": "eric-schmidt",
+"name": "Eric Schmidt",
+"handle": "Former CEO and chair of Google",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Search Bar in the Great Hall",
+"s": "eric-schmidt-c0d82dads.jpg",
+"l": "eric-schmidt-c0d82dadl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Ran Google from startup to giant as CEO and chair, now a voice on AI and national security. The adult in the garage",
+"iv": []
+},
+{
+"id": "evan-spiegel",
+"name": "Evan Spiegel",
+"handle": "Cofounder and CEO of Snap",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Ghost on the Boardwalk",
+"s": "evan-spiegel-a5cf3579s.jpg",
+"l": "evan-spiegel-a5cf3579l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Snapchat at Stanford and made photos that disappear, then the Spectacles camera glasses. Ten seconds changed social",
+"iv": []
+},
+{
+"id": "fei-fei-li",
+"name": "Fei-Fei Li",
+"handle": "Cofounder of World Labs and creator of ImageNet",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A World Out of the Mosaic at MoMA",
+"s": "fei-fei-li-446b4ab1s.jpg",
+"l": "fei-fei-li-446b4ab1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Built ImageNet, the dataset that taught computers to see, and cofounded World Labs to give AI spatial sense. Vision first",
+"iv": []
+},
+{
 "id": "gareb-shamus",
 "name": "Gareb Shamus",
 "handle": "@gareb",
@@ -6831,6 +7191,24 @@
 "iv": []
 },
 {
+"id": "garry-tan",
+"name": "Garry Tan",
+"handle": "President and CEO of Y Combinator",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Founders in a Flatiron Loft",
+"s": "garry-tan-61298d51s.jpg",
+"l": "garry-tan-61298d51l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Designer and engineer who cofounded Initialized Capital and now leads Y Combinator. Make something people want",
+"iv": []
+},
+{
 "id": "gary-vaynerchuk",
 "name": "Gary Vaynerchuk",
 "handle": "@garyvee",
@@ -6846,6 +7224,24 @@
 }
 ],
 "bio": "Entrepreneur who grew Wine Library, founded VaynerMedia and drew the VeeFriends characters. Doodles turned into a cast",
+"iv": []
+},
+{
+"id": "greg-brockman",
+"name": "Greg Brockman",
+"handle": "President and cofounder of OpenAI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Code Rain in Williamsburg",
+"s": "greg-brockman-6eea0fbbs.jpg",
+"l": "greg-brockman-6eea0fbbl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Stripe's first CTO who cofounded OpenAI and still writes the code that trains the models. The engineer in the room",
 "iv": []
 },
 {
@@ -6903,6 +7299,42 @@
 "iv": []
 },
 {
+"id": "ilya-sutskever",
+"name": "Ilya Sutskever",
+"handle": "Cofounder of Safe Superintelligence and former chief scientist of OpenAI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Network in the Planetarium",
+"s": "ilya-sutskever-0693942bs.jpg",
+"l": "ilya-sutskever-0693942bl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Coauthor of AlexNet and cofounder of OpenAI, now building Safe Superintelligence. The scientist who saw it coming",
+"iv": []
+},
+{
+"id": "jack-dorsey",
+"name": "Jack Dorsey",
+"handle": "Cofounder of Twitter and Block",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Birds in Union Square",
+"s": "jack-dorsey-d4b6c004s.jpg",
+"l": "jack-dorsey-d4b6c004l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Twitter and Square, now Block, and backs bitcoin as money for the internet. Just setting up",
+"iv": []
+},
+{
 "id": "jacob-horne",
 "name": "Jacob Horne",
 "handle": "@js_horne",
@@ -6936,6 +7368,42 @@
 }
 ],
 "bio": "Serial founder building Airstack and Moxie on the Farcaster network. Always the next one",
+"iv": []
+},
+{
+"id": "jeff-bezos",
+"name": "Jeff Bezos",
+"handle": "Founder of Amazon and Blue Origin",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Rocket in the Flatiron",
+"s": "jeff-bezos-cdeace7ds.jpg",
+"l": "jeff-bezos-cdeace7dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Started Amazon selling books from a garage in 1994 and founded Blue Origin to build a road to space. Day one, still",
+"iv": []
+},
+{
+"id": "jensen-huang",
+"name": "Jensen Huang",
+"handle": "Founder and CEO of Nvidia",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Green Light in Times Square",
+"s": "jensen-huang-d56124b6s.jpg",
+"l": "jensen-huang-d56124b6l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Nvidia at a Denny's in 1993 and turned the graphics chip into the engine of modern AI. The jacket never changes",
 "iv": []
 },
 {
@@ -7011,6 +7479,24 @@
 "iv": []
 },
 {
+"id": "jony-ive",
+"name": "Jony Ive",
+"handle": "Designer and founder of LoveFrom",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Cube on Fifth Avenue",
+"s": "jony-ive-d1eae7fbs.jpg",
+"l": "jony-ive-d1eae7fbl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Designed the iMac, iPod and iPhone at Apple, then founded LoveFrom and now shapes new AI devices. The rounded corner is a philosophy",
+"iv": []
+},
+{
 "id": "jordan-lyall",
 "name": "Jordan Lyall",
 "handle": "@JordanLyall",
@@ -7051,6 +7537,24 @@
 }
 ],
 "bio": "Cofounder of Ethereum and founder of Consensys, based in Brooklyn. Built the company around the chain",
+"iv": []
+},
+{
+"id": "josh-kushner",
+"name": "Josh Kushner",
+"handle": "Founder of Thrive Capital, based in New York",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Thriving on Greene Street",
+"s": "josh-kushner-a6914328s.jpg",
+"l": "josh-kushner-a6914328l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "New Yorker who founded Thrive Capital and cofounded Oscar Health, an early backer of Instagram and OpenAI. New York money in the new economy",
 "iv": []
 },
 {
@@ -7126,6 +7630,24 @@
 "iv": []
 },
 {
+"id": "larry-ellison",
+"name": "Larry Ellison",
+"handle": "Cofounder and chair of Oracle",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Wing Sail at Chelsea Piers",
+"s": "larry-ellison-d24a3273s.jpg",
+"l": "larry-ellison-d24a3273l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Oracle in 1977 and built the database business that runs the world's records, and races sailboats on the side. The data never sleeps",
+"iv": []
+},
+{
 "id": "li-jin",
 "name": "Li Jin",
 "handle": "@ljin18",
@@ -7141,6 +7663,42 @@
 }
 ],
 "bio": "Cofounder of Variant who writes about the creator economy and ownership. Creators as owners",
+"iv": []
+},
+{
+"id": "lisa-su",
+"name": "Lisa Su",
+"handle": "Chair and CEO of AMD",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Wafer at the Nasdaq Tower",
+"s": "lisa-su-178b306fs.jpg",
+"l": "lisa-su-178b306fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Engineer who took over a struggling AMD in 2014 and made it a leader in chips for PCs, servers and AI. The comeback was silicon",
+"iv": []
+},
+{
+"id": "marc-andreessen",
+"name": "Marc Andreessen",
+"handle": "Cofounder of Andreessen Horowitz and Netscape",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Ship Wheel at the Navy Yard",
+"s": "marc-andreessen-7e3b416bs.jpg",
+"l": "marc-andreessen-7e3b416bl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Coauthored Mosaic, cofounded Netscape and then Andreessen Horowitz, and wrote that software is eating the world. It did",
 "iv": []
 },
 {
@@ -7162,6 +7720,60 @@
 "iv": []
 },
 {
+"id": "marc-benioff",
+"name": "Marc Benioff",
+"handle": "Chair and CEO of Salesforce",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Cloud over Madison Square",
+"s": "marc-benioff-af73ec81s.jpg",
+"l": "marc-benioff-af73ec81l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Founded Salesforce in a San Francisco apartment and pioneered software sold as a cloud service. No software, just the cloud",
+"iv": []
+},
+{
+"id": "mark-zuckerberg",
+"name": "Mark Zuckerberg",
+"handle": "Founder and CEO of Meta",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Network at Astor Place",
+"s": "mark-zuckerberg-2cc277a0s.jpg",
+"l": "mark-zuckerberg-2cc277a0l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Founded Facebook in a Harvard dorm and built Meta into the network of billions, now betting on glasses and AI. Everyone connected",
+"iv": []
+},
+{
+"id": "masayoshi-son",
+"name": "Masayoshi Son",
+"handle": "Founder and CEO of SoftBank",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Vision at the Armory",
+"s": "masayoshi-son-0595c063s.jpg",
+"l": "masayoshi-son-0595c063l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Founded SoftBank in Tokyo and made some of the biggest bets in tech, from Alibaba to the Vision Fund. The plan runs three hundred years",
+"iv": []
+},
+{
 "id": "meltem-demirors",
 "name": "Meltem Demirors",
 "handle": "@melt_dem",
@@ -7177,6 +7789,24 @@
 }
 ],
 "bio": "Crypto investor and longtime voice in digital asset finance. Old money questions, new money rails",
+"iv": []
+},
+{
+"id": "michael-dell",
+"name": "Michael Dell",
+"handle": "Founder and CEO of Dell Technologies",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Dorm Room on the Columbia Steps",
+"s": "michael-dell-9cf14dc7s.jpg",
+"l": "michael-dell-9cf14dc7l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Started selling computers from his University of Texas dorm room at nineteen and built Dell Technologies. The dorm became a data center",
 "iv": []
 },
 {
@@ -7213,6 +7843,60 @@
 }
 ],
 "bio": "Founder of Galaxy Digital and a CryptoPunk holder. Wall Street, then the punk",
+"iv": []
+},
+{
+"id": "mira-murati",
+"name": "Mira Murati",
+"handle": "Founder of Thinking Machines Lab and former CTO of OpenAI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Thinking Machines at the Oculus",
+"s": "mira-murati-ee5950d6s.jpg",
+"l": "mira-murati-ee5950d6l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Led the teams that shipped ChatGPT and DALL E as OpenAI's CTO, then founded Thinking Machines Lab. The builder behind the launch",
+"iv": []
+},
+{
+"id": "mustafa-suleyman",
+"name": "Mustafa Suleyman",
+"handle": "CEO of Microsoft AI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "A Companion on the Ferry",
+"s": "mustafa-suleyman-968777efs.jpg",
+"l": "mustafa-suleyman-968777efl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded DeepMind in London, then Inflection, and now leads Microsoft AI and its Copilot. An assistant for everyone",
+"iv": []
+},
+{
+"id": "naval-ravikant",
+"name": "Naval Ravikant",
+"handle": "Cofounder of AngelList",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "An Angel in the Conservatory Garden",
+"s": "naval-ravikant-73de0c1fs.jpg",
+"l": "naval-ravikant-73de0c1fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded AngelList and wrote the tweetstorms on wealth and happiness a generation of founders memorized. Seek wealth, not money",
 "iv": []
 },
 {
@@ -7273,6 +7957,60 @@
 "iv": []
 },
 {
+"id": "palmer-luckey",
+"name": "Palmer Luckey",
+"handle": "Founder of Oculus and Anduril",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Headset on Governors Island",
+"s": "palmer-luckey-584ef901s.jpg",
+"l": "palmer-luckey-584ef901l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Built the Oculus Rift in his parents' garage as a teenager, sold it to Facebook, then founded Anduril. The Hawaiian shirt is standard issue",
+"iv": []
+},
+{
+"id": "patrick-collison",
+"name": "Patrick Collison",
+"handle": "Cofounder and CEO of Stripe",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Violet Stripes on Broad Street",
+"s": "patrick-collison-68665bd8s.jpg",
+"l": "patrick-collison-68665bd8l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Irish founder who started Stripe with his brother John and made online payments a few lines of code. The internet's checkout",
+"iv": []
+},
+{
+"id": "peter-thiel",
+"name": "Peter Thiel",
+"handle": "Cofounder of PayPal and Palantir and Founders Fund",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Zero to One at the Morgan",
+"s": "peter-thiel-c5533980s.jpg",
+"l": "peter-thiel-c5533980l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded PayPal and Palantir, wrote the first check into Facebook and argued in Zero to One that the future must be built. Contrarian by design",
+"iv": []
+},
+{
 "id": "rachel-spratt",
 "name": "Rachel Spratt",
 "handle": "@MrsRachelSpratt",
@@ -7309,6 +8047,42 @@
 "iv": []
 },
 {
+"id": "reid-hoffman",
+"name": "Reid Hoffman",
+"handle": "Cofounder of LinkedIn and partner at Greylock",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Network under the Arch",
+"s": "reid-hoffman-40b7c71as.jpg",
+"l": "reid-hoffman-40b7c71al.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "PayPal veteran who cofounded LinkedIn and backs founders at Greylock, and wrote Blitzscaling. The network is the moat",
+"iv": []
+},
+{
+"id": "sam-altman",
+"name": "Sam Altman",
+"handle": "CEO of OpenAI",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Chat Bubbles on the Vessel",
+"s": "sam-altman-902a56ebs.jpg",
+"l": "sam-altman-902a56ebl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Ran Y Combinator, then took OpenAI from a nonprofit lab to the company behind ChatGPT, the fastest adopted app in history. The chat window became a doorway",
+"iv": []
+},
+{
 "id": "sam-englebardt",
 "name": "Sam Englebardt",
 "handle": "@samenglebardt",
@@ -7324,6 +8098,24 @@
 }
 ],
 "bio": "Venture investor at Galaxy Interactive backing games and digital art. The arcade became the gallery",
+"iv": []
+},
+{
+"id": "satya-nadella",
+"name": "Satya Nadella",
+"handle": "Chair and CEO of Microsoft",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Four Windows over the Park",
+"s": "satya-nadella-0d01b3fes.jpg",
+"l": "satya-nadella-0d01b3fel.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Took over Microsoft in 2014 and remade it around the cloud and AI, backing OpenAI early. Culture ate strategy",
 "iv": []
 },
 {
@@ -7381,6 +8173,42 @@
 "iv": []
 },
 {
+"id": "sundar-pichai",
+"name": "Sundar Pichai",
+"handle": "CEO of Google and Alphabet",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Search Bar at Chelsea Market",
+"s": "sundar-pichai-f9e2c691s.jpg",
+"l": "sundar-pichai-f9e2c691l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Grew up in Chennai, led Chrome and Android, and now runs Google and Alphabet through the Gemini era. The search bar still leads",
+"iv": []
+},
+{
+"id": "tim-cook",
+"name": "Tim Cook",
+"handle": "CEO of Apple",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "One Apple in the Glass Cube",
+"s": "tim-cook-fc3c1e05s.jpg",
+"l": "tim-cook-fc3c1e05l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Succeeded Steve Jobs in 2011 and grew Apple into the most valuable company of its decade. Operations as art",
+"iv": []
+},
+{
 "id": "tyler-winklevoss",
 "name": "Tyler Winklevoss",
 "handle": "@tyler",
@@ -7396,6 +8224,24 @@
 }
 ],
 "bio": "Cofounder of Gemini, the company that owns Nifty Gateway. Twin oars, one vault",
+"iv": []
+},
+{
+"id": "vinod-khosla",
+"name": "Vinod Khosla",
+"handle": "Founder of Khosla Ventures and cofounder of Sun Microsystems",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Sunrise at Pier 6",
+"s": "vinod-khosla-dc1bc2fds.jpg",
+"l": "vinod-khosla-dc1bc2fdl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Cofounded Sun Microsystems and founded Khosla Ventures to back bold bets from clean energy to AI. Swing big",
 "iv": []
 },
 {

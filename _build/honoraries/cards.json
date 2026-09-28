@@ -1339,6 +1339,10 @@
 "card": "albert-wenger-24a74d3f.jpg",
 "og": "albert-wenger-24a74d3f-og.jpg"
 },
+"alexandr-wang": {
+"card": "alexandr-wang-05783c3a.jpg",
+"og": "alexandr-wang-05783c3a-og.jpg"
+},
 "alex-atallah": {
 "card": "alex-atallah-a217bfc3.jpg",
 "og": "alex-atallah-a217bfc3-og.jpg"
@@ -1346,6 +1350,10 @@
 "alexis-ohanian": {
 "card": "alexis-ohanian-1bc85603.jpg",
 "og": "alexis-ohanian-1bc85603-og.jpg"
+},
+"alex-karp": {
+"card": "alex-karp-c1c089e2.jpg",
+"og": "alex-karp-c1c089e2-og.jpg"
 },
 "alex-salnikov": {
 "card": "alex-salnikov-b1933717.jpg",
@@ -1359,17 +1367,53 @@
 "card": "amanda-cassatt-52546239.jpg",
 "og": "amanda-cassatt-52546239-og.jpg"
 },
+"andy-jassy": {
+"card": "andy-jassy-a382188e.jpg",
+"og": "andy-jassy-a382188e-og.jpg"
+},
 "anil-dash": {
 "card": "anil-dash-9cf007cd.jpg",
 "og": "anil-dash-9cf007cd-og.jpg"
+},
+"aravind-srinivas": {
+"card": "aravind-srinivas-ba43468d.jpg",
+"og": "aravind-srinivas-ba43468d-og.jpg"
+},
+"arthur-mensch": {
+"card": "arthur-mensch-d98826be.jpg",
+"og": "arthur-mensch-d98826be-og.jpg"
 },
 "austin-robey": {
 "card": "austin-robey-b83104c5.jpg",
 "og": "austin-robey-b83104c5-og.jpg"
 },
+"ben-horowitz": {
+"card": "ben-horowitz-766334bc.jpg",
+"og": "ben-horowitz-766334bc-og.jpg"
+},
+"bill-gates": {
+"card": "bill-gates-80a8d93c.jpg",
+"og": "bill-gates-80a8d93c-og.jpg"
+},
+"brad-gerstner": {
+"card": "brad-gerstner-818b7c4e.jpg",
+"og": "brad-gerstner-818b7c4e-og.jpg"
+},
+"brian-armstrong": {
+"card": "brian-armstrong-b708a958.jpg",
+"og": "brian-armstrong-b708a958-og.jpg"
+},
+"brian-chesky": {
+"card": "brian-chesky-bcaa10a4.jpg",
+"og": "brian-chesky-bcaa10a4-og.jpg"
+},
 "cameron-winklevoss": {
 "card": "cameron-winklevoss-1b548696.jpg",
 "og": "cameron-winklevoss-1b548696-og.jpg"
+},
+"chamath-palihapitiya": {
+"card": "chamath-palihapitiya-2671303d.jpg",
+"og": "chamath-palihapitiya-2671303d-og.jpg"
 },
 "chris-burniske": {
 "card": "chris-burniske-b4e6e3bc.jpg",
@@ -1379,6 +1423,10 @@
 "card": "chris-dixon-2b6845a0.jpg",
 "og": "chris-dixon-2b6845a0-og.jpg"
 },
+"cl-ment-delangue": {
+"card": "cl-ment-delangue-332fd6fc.jpg",
+"og": "cl-ment-delangue-332fd6fc-og.jpg"
+},
 "colby-mugrabi": {
 "card": "colby-mugrabi-b2f027fd.jpg",
 "og": "colby-mugrabi-b2f027fd-og.jpg"
@@ -1387,9 +1435,21 @@
 "card": "dan-romero-27fcafb0.jpg",
 "og": "dan-romero-27fcafb0-og.jpg"
 },
+"dario-amodei": {
+"card": "dario-amodei-235ad4f9.jpg",
+"og": "dario-amodei-235ad4f9-og.jpg"
+},
+"david-sacks": {
+"card": "david-sacks-2d826d12.jpg",
+"og": "david-sacks-2d826d12-og.jpg"
+},
 "deana-burke": {
 "card": "deana-burke-a6e00bfd.jpg",
 "og": "deana-burke-a6e00bfd-og.jpg"
+},
+"demis-hassabis": {
+"card": "demis-hassabis-2e9d0e38.jpg",
+"og": "demis-hassabis-2e9d0e38-og.jpg"
 },
 "devin-finzer": {
 "card": "devin-finzer-ba702345.jpg",
@@ -1403,13 +1463,41 @@
 "card": "duncan-cock-foster-84bbcbf2.jpg",
 "og": "duncan-cock-foster-84bbcbf2-og.jpg"
 },
+"dylan-field": {
+"card": "dylan-field-1ff1894f.jpg",
+"og": "dylan-field-1ff1894f-og.jpg"
+},
+"elon-musk": {
+"card": "elon-musk-532e6a97.jpg",
+"og": "elon-musk-532e6a97-og.jpg"
+},
+"eric-schmidt": {
+"card": "eric-schmidt-2f126926.jpg",
+"og": "eric-schmidt-2f126926-og.jpg"
+},
+"evan-spiegel": {
+"card": "evan-spiegel-929830b6.jpg",
+"og": "evan-spiegel-929830b6-og.jpg"
+},
+"fei-fei-li": {
+"card": "fei-fei-li-d2398341.jpg",
+"og": "fei-fei-li-d2398341-og.jpg"
+},
 "gareb-shamus": {
 "card": "gareb-shamus-4e7b855d.jpg",
 "og": "gareb-shamus-4e7b855d-og.jpg"
 },
+"garry-tan": {
+"card": "garry-tan-14098c15.jpg",
+"og": "garry-tan-14098c15-og.jpg"
+},
 "gary-vaynerchuk": {
 "card": "gary-vaynerchuk-d367489b.jpg",
 "og": "gary-vaynerchuk-d367489b-og.jpg"
+},
+"greg-brockman": {
+"card": "greg-brockman-03b246b6.jpg",
+"og": "greg-brockman-03b246b6-og.jpg"
 },
 "griffin-cock-foster": {
 "card": "griffin-cock-foster-c19d4789.jpg",
@@ -1423,6 +1511,14 @@
 "card": "iain-nash-d26d1c70.jpg",
 "og": "iain-nash-d26d1c70-og.jpg"
 },
+"ilya-sutskever": {
+"card": "ilya-sutskever-23e43f40.jpg",
+"og": "ilya-sutskever-23e43f40-og.jpg"
+},
+"jack-dorsey": {
+"card": "jack-dorsey-b0f13304.jpg",
+"og": "jack-dorsey-b0f13304-og.jpg"
+},
 "jacob-horne": {
 "card": "jacob-horne-cb8ca372.jpg",
 "og": "jacob-horne-cb8ca372-og.jpg"
@@ -1430,6 +1526,14 @@
 "jason-goldberg": {
 "card": "jason-goldberg-1c84f24a.jpg",
 "og": "jason-goldberg-1c84f24a-og.jpg"
+},
+"jeff-bezos": {
+"card": "jeff-bezos-01f50e81.jpg",
+"og": "jeff-bezos-01f50e81-og.jpg"
+},
+"jensen-huang": {
+"card": "jensen-huang-ef316c10.jpg",
+"og": "jensen-huang-ef316c10-og.jpg"
 },
 "jesse-pollak": {
 "card": "jesse-pollak-e2d2eb57.jpg",
@@ -1447,6 +1551,10 @@
 "card": "jon-perkins-da95b498.jpg",
 "og": "jon-perkins-da95b498-og.jpg"
 },
+"jony-ive": {
+"card": "jony-ive-e0ae62c7.jpg",
+"og": "jony-ive-e0ae62c7-og.jpg"
+},
 "jordan-lyall": {
 "card": "jordan-lyall-22511a16.jpg",
 "og": "jordan-lyall-22511a16-og.jpg"
@@ -1454,6 +1562,10 @@
 "joseph-lubin": {
 "card": "joseph-lubin-43dc90de.jpg",
 "og": "joseph-lubin-43dc90de-og.jpg"
+},
+"josh-kushner": {
+"card": "josh-kushner-a11abf41.jpg",
+"og": "josh-kushner-a11abf41-og.jpg"
 },
 "justin-fredericks": {
 "card": "justin-fredericks-91932ad6.jpg",
@@ -1471,17 +1583,45 @@
 "card": "kevin-rose-3cb218d3.jpg",
 "og": "kevin-rose-3cb218d3-og.jpg"
 },
+"larry-ellison": {
+"card": "larry-ellison-de854642.jpg",
+"og": "larry-ellison-de854642-og.jpg"
+},
 "li-jin": {
 "card": "li-jin-a0b935ae.jpg",
 "og": "li-jin-a0b935ae-og.jpg"
+},
+"lisa-su": {
+"card": "lisa-su-a19a3a0c.jpg",
+"og": "lisa-su-a19a3a0c-og.jpg"
+},
+"marc-andreessen": {
+"card": "marc-andreessen-6417a8e4.jpg",
+"og": "marc-andreessen-6417a8e4-og.jpg"
 },
 "marc-beckman": {
 "card": "marc-beckman-06af4679.jpg",
 "og": "marc-beckman-06af4679-og.jpg"
 },
+"marc-benioff": {
+"card": "marc-benioff-8a309dc7.jpg",
+"og": "marc-benioff-8a309dc7-og.jpg"
+},
+"mark-zuckerberg": {
+"card": "mark-zuckerberg-9fe8c4df.jpg",
+"og": "mark-zuckerberg-9fe8c4df-og.jpg"
+},
+"masayoshi-son": {
+"card": "masayoshi-son-afb805d7.jpg",
+"og": "masayoshi-son-afb805d7-og.jpg"
+},
 "meltem-demirors": {
 "card": "meltem-demirors-40ce02c2.jpg",
 "og": "meltem-demirors-40ce02c2-og.jpg"
+},
+"michael-dell": {
+"card": "michael-dell-9cc4e063.jpg",
+"og": "michael-dell-9cc4e063-og.jpg"
 },
 "mike-dudas": {
 "card": "mike-dudas-8bf52a61.jpg",
@@ -1490,6 +1630,18 @@
 "mike-novogratz": {
 "card": "mike-novogratz-6337847b.jpg",
 "og": "mike-novogratz-6337847b-og.jpg"
+},
+"mira-murati": {
+"card": "mira-murati-c63efeb1.jpg",
+"og": "mira-murati-c63efeb1-og.jpg"
+},
+"mustafa-suleyman": {
+"card": "mustafa-suleyman-bb7bbc63.jpg",
+"og": "mustafa-suleyman-bb7bbc63-og.jpg"
+},
+"naval-ravikant": {
+"card": "naval-ravikant-d3774712.jpg",
+"og": "naval-ravikant-d3774712-og.jpg"
 },
 "nick-grossman": {
 "card": "nick-grossman-ed3d727d.jpg",
@@ -1503,6 +1655,18 @@
 "card": "pacman-65dae335.jpg",
 "og": "pacman-65dae335-og.jpg"
 },
+"palmer-luckey": {
+"card": "palmer-luckey-4107edb5.jpg",
+"og": "palmer-luckey-4107edb5-og.jpg"
+},
+"patrick-collison": {
+"card": "patrick-collison-1b72817d.jpg",
+"og": "patrick-collison-1b72817d-og.jpg"
+},
+"peter-thiel": {
+"card": "peter-thiel-74f8632d.jpg",
+"og": "peter-thiel-74f8632d-og.jpg"
+},
 "rachel-spratt": {
 "card": "rachel-spratt-203d7cdb.jpg",
 "og": "rachel-spratt-203d7cdb-og.jpg"
@@ -1511,9 +1675,21 @@
 "card": "randi-zuckerberg-0b4d1d9e.jpg",
 "og": "randi-zuckerberg-0b4d1d9e-og.jpg"
 },
+"reid-hoffman": {
+"card": "reid-hoffman-cffd7855.jpg",
+"og": "reid-hoffman-cffd7855-og.jpg"
+},
+"sam-altman": {
+"card": "sam-altman-cea86c15.jpg",
+"og": "sam-altman-cea86c15-og.jpg"
+},
 "sam-englebardt": {
 "card": "sam-englebardt-e099118f.jpg",
 "og": "sam-englebardt-e099118f-og.jpg"
+},
+"satya-nadella": {
+"card": "satya-nadella-38de70af.jpg",
+"og": "satya-nadella-38de70af-og.jpg"
 },
 "scott-kominers": {
 "card": "scott-kominers-38343367.jpg",
@@ -1527,9 +1703,21 @@
 "card": "spencer-noon-0441c069.jpg",
 "og": "spencer-noon-0441c069-og.jpg"
 },
+"sundar-pichai": {
+"card": "sundar-pichai-6e570b8b.jpg",
+"og": "sundar-pichai-6e570b8b-og.jpg"
+},
+"tim-cook": {
+"card": "tim-cook-453f41f3.jpg",
+"og": "tim-cook-453f41f3-og.jpg"
+},
 "tyler-winklevoss": {
 "card": "tyler-winklevoss-ca938b2b.jpg",
 "og": "tyler-winklevoss-ca938b2b-og.jpg"
+},
+"vinod-khosla": {
+"card": "vinod-khosla-e9805feb.jpg",
+"og": "vinod-khosla-e9805feb-og.jpg"
 },
 "vitalik-buterin": {
 "card": "vitalik-buterin-317c6b60.jpg",
