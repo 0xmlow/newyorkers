@@ -84,8 +84,9 @@ for root,dirs,files in os.walk(PKG):
         sz=os.path.getsize(os.path.join(root,f)); total+=sz; n+=1
         if sz>24*1024*1024: big.append(f)
 print(f"files {n} total {total/1e9:.2f} GB, over 24MB: {big}")
-if n>20000: probs.append("over Cloudflare Pages 20,000 file cap")
-elif n>18500: warns.append(f"{n} files: within 1,500 of the Cloudflare Pages 20,000 file cap")
+# Workers Paid since 2026-09-28: Pages allows 100,000 files per deploy (Free was 20,000)
+if n>100000: probs.append("over Cloudflare Pages 100,000 file cap")
+elif n>90000: warns.append(f"{n} files: within 10,000 of the Cloudflare Pages 100,000 file cap")
 # SEO: every top level page carries a canonical, a description and JSON-LD; the sitemap parses and points inside the package
 for pg in [f for f in os.listdir(PKG) if f.endswith(".html") and f!="404.html"]:
     h=open(os.path.join(PKG,pg)).read()
