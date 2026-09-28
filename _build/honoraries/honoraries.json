@@ -1516,6 +1516,24 @@
 "iv": []
 },
 {
+"id": "houri-naeimi",
+"name": "Houri Naeimi",
+"handle": "@HouriNaeimi",
+"x": "HouriNaeimi",
+"cat": "A",
+"works": [
+{
+"title": "Flowers on Gansevoort",
+"s": "houri-naeimi-77d14565s.jpg",
+"l": "houri-naeimi-77d14565l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Painter whose series The Butchers takes aim at power, money and control with faceless men in tweed. She paints against the knife",
+"iv": []
+},
+{
 "id": "iskra-velitchkova",
 "name": "Iskra Velitchkova",
 "handle": "@iskra_velitchkova",
@@ -1635,6 +1653,24 @@
 }
 ],
 "bio": "Muralist who paints electric multicolor walls and positive graphics across the city. Optimism in spray paint",
+"iv": []
+},
+{
+"id": "jason-o-rourke",
+"name": "Jason O'Rourke",
+"handle": "@jasonophoto",
+"x": "jasonophoto",
+"cat": "A",
+"works": [
+{
+"title": "Monk Seal Monday at Rockaway",
+"s": "jason-o-rourke-a529aff7s.jpg",
+"l": "jason-o-rourke-a529aff7l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "New York photographer, wanderer and 6529 Meme Card artist who shoots waves from inside them. The seal is his Monday",
 "iv": []
 },
 {
@@ -2643,9 +2679,9 @@
 "cat": "A",
 "works": [
 {
-"title": "Saturday Morning Desk",
-"s": "nuclear-samurai-nuke-c685fc4cs.jpg",
-"l": "nuclear-samurai-nuke-c685fc4cl.jpg",
+"title": "Pit to the Chest in Sunnyside",
+"s": "nuclear-samurai-nuke-87013c7cs.jpg",
+"l": "nuclear-samurai-nuke-87013c7cl.jpg",
 "w": 1280,
 "h": 714
 }
@@ -2770,6 +2806,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "paul-reid",
+"name": "Paul Reid",
+"handle": "@Minotaur_Man",
+"x": "Minotaur_Man",
+"cat": "A",
+"works": [
+{
+"title": "The Monster Paints the Gods",
+"s": "paul-reid-f71e83d9s.jpg",
+"l": "paul-reid-f71e83d9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Edinburgh painter who has spent a career drawing and painting gods and monsters in the old master way. The Minotaur is his signature",
+"iv": []
 },
 {
 "id": "peter-burr",
@@ -4258,6 +4312,24 @@
 "iv": []
 },
 {
+"id": "j-p-moregainz",
+"name": "J.P. MoreGainz",
+"handle": "@jp_moregainz",
+"x": "jp_moregainz",
+"cat": "C",
+"works": [
+{
+"title": "Long Onions at Federal Hall",
+"s": "j-p-moregainz-a1be4f6fs.jpg",
+"l": "j-p-moregainz-a1be4f6fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Investor, collector and saxophonist who holds Punks, Apes and Del Mundos and jokes that he disrespects the Onion Futures Act. The market closes, he keeps playing",
+"iv": []
+},
+{
 "id": "julia-kaganskiy",
 "name": "Julia Kaganskiy",
 "handle": "@juliaxgulia",
@@ -4453,6 +4525,24 @@
 }
 ],
 "bio": "Ran the Beeple sale at Christie's, then led CryptoPunks at Yuga Labs. From the gavel to the punks",
+"iv": []
+},
+{
+"id": "og",
+"name": "OG",
+"handle": "@OGtheperson",
+"x": "OGtheperson",
+"cat": "C",
+"works": [
+{
+"title": "Be Cool at the Fountain",
+"s": "og-b82e68d1s.jpg",
+"l": "og-b82e68d1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector behind a pixel self and a glitching skyline, living by one rule: be cool, do cool things, harm no one. Simple enough to be hard",
 "iv": []
 },
 {
