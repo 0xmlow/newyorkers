@@ -2557,6 +2557,24 @@
 ]
 },
 {
+"id": "modest",
+"name": "Modest",
+"handle": "@m0dest___",
+"x": "m0dest___",
+"cat": "A",
+"works": [
+{
+"title": "Someone, No One, City Hall",
+"s": "modest-b449a4d5s.jpg",
+"l": "modest-b449a4d5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Pseudonymous artist of pixel glyphs and dithered video who calls the name an anti ego: someone, but no one. There will be art",
+"iv": []
+},
+{
 "id": "molly-crabapple",
 "name": "Molly Crabapple",
 "handle": "@mollycrabapple",
@@ -2687,6 +2705,24 @@
 }
 ],
 "bio": "Photographer who has taken a self portrait every day since 2000 for Everyday. Thousands of days, one face",
+"iv": []
+},
+{
+"id": "noper",
+"name": "noper",
+"handle": "@bagdelete",
+"x": "bagdelete",
+"cat": "A",
+"works": [
+{
+"title": "The Bull Who Watches Canal Street",
+"s": "noper-adc6ab71s.jpg",
+"l": "noper-adc6ab71l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Video and AI artist whose animals by noper series melts real creatures into prismatic light on walls of old televisions. The bull is watching",
 "iv": []
 },
 {
