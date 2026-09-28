@@ -443,6 +443,24 @@
 ]
 },
 {
+"id": "beantart",
+"name": "beantart",
+"handle": "@beantartETH",
+"x": "beantartETH",
+"cat": "A",
+"works": [
+{
+"title": "Forget Me Not at the Tibetan Garden",
+"s": "beantart-c72d9957s.jpg",
+"l": "beantart-c72d9957l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Figurative artist exploring identity, ritual and transformation where memory meets machine, and a collector of The Soft Conspiracy. Remember this one",
+"iv": []
+},
+{
 "id": "beeple",
 "name": "Beeple",
 "handle": "@beeple",
@@ -804,6 +822,24 @@
 ]
 },
 {
+"id": "chazz-gold",
+"name": "Chazz Gold",
+"handle": "@chazz_gold",
+"x": "chazz_gold",
+"cat": "A",
+"works": [
+{
+"title": "The Chrome Pilgrim at St. John the Divine",
+"s": "chazz-gold-8c3754f9s.jpg",
+"l": "chazz-gold-8c3754f9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Photographer since 1992 turned AI artist of Techno Divine Cybernetic Art, and a collector of MLow. The machine has a soul",
+"iv": []
+},
+{
 "id": "chikai-ohazama",
 "name": "Chikai Ohazama",
 "handle": "@lifeofc",
@@ -929,6 +965,24 @@
 }
 ],
 "bio": "Conceptual artist working with AI to make images that question the system that made them. The prompt is the critique",
+"iv": []
+},
+{
+"id": "dan-fraser",
+"name": "Dan Fraser",
+"handle": "@dan_fraser_",
+"x": "dan_fraser_",
+"cat": "A",
+"works": [
+{
+"title": "Golden Hour at the TWA Lounge",
+"s": "dan-fraser-98713bd6s.jpg",
+"l": "dan-fraser-98713bd6l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Finance executive and dealmaker who makes AI abstract art on the side and holds The Soft Conspiracy. Numbers by day, color by night",
 "iv": []
 },
 {
@@ -1384,6 +1438,24 @@
 "iv": []
 },
 {
+"id": "gary-cartlidge",
+"name": "Gary Cartlidge",
+"handle": "@TroyFitzpatric",
+"x": "TroyFitzpatric",
+"cat": "A",
+"works": [
+{
+"title": "Cognitive Debt on the Gowanus",
+"s": "gary-cartlidge-ad3b5591s.jpg",
+"l": "gary-cartlidge-ad3b5591l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Former street artist turned digital street artist, who still works as a janitor and collects Transdimensional Trippers. The wall moved online",
+"iv": []
+},
+{
 "id": "golan-levin",
 "name": "Golan Levin",
 "handle": "@golan",
@@ -1710,6 +1782,24 @@
 "iv": []
 },
 {
+"id": "jcode",
+"name": "JCode",
+"handle": "@jmurillocode",
+"x": "jmurillocode",
+"cat": "A",
+"works": [
+{
+"title": "The Stone Mask on the Spiral",
+"s": "jcode-5d8e5a0es.jpg",
+"l": "jcode-5d8e5a0el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Generative artist and painter who works in code, algorithms and paint, and holds The Soft Conspiracy. The machine learns to drip",
+"iv": []
+},
+{
 "id": "era1-486",
 "name": "Jean-Michel Basquiat",
 "handle": "",
@@ -1800,6 +1890,42 @@
 }
 ],
 "bio": "Brooklyn photographer who asked out a neighbor across the rooftops by drone during the 2020 lockdown. The whole city watched the date",
+"iv": []
+},
+{
+"id": "jiwa",
+"name": "jiwa",
+"handle": "@dotjiwa",
+"x": "dotjiwa",
+"cat": "A",
+"works": [
+{
+"title": "Red Tide in the Oculus",
+"s": "jiwa-5cc8e727s.jpg",
+"l": "jiwa-5cc8e727l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Code based artist behind NORML, where a network stakes tokens to decide what normal means, and a collector of MLow. Normal is a vote",
+"iv": []
+},
+{
+"id": "j-n",
+"name": "Jæn",
+"handle": "jaen.eth",
+"x": "",
+"cat": "A",
+"works": [
+{
+"title": "Moon Painter at the Intrepid",
+"s": "j-n-aec8b772s.jpg",
+"l": "j-n-aec8b772l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Artist since a first gallery solo show in 2011, on SuperRare since 2020 and in the 6529 Memes, and a collector of The Soft Conspiracy. Shoot for the moon",
 "iv": []
 },
 {
@@ -2708,6 +2834,24 @@
 "iv": []
 },
 {
+"id": "nlv",
+"name": "NLV",
+"handle": "@newlightvisuals",
+"x": "newlightvisuals",
+"cat": "A",
+"works": [
+{
+"title": "The Robot King at Welling Court",
+"s": "nlv-be35e03ds.jpg",
+"l": "nlv-be35e03dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Multidisciplinary artist and aerial ocean photographer who collects The Soft Conspiracy. Long live the wall",
+"iv": []
+},
+{
 "id": "noah-kalina",
 "name": "Noah Kalina",
 "handle": "@noahkalina",
@@ -3017,6 +3161,24 @@
 }
 ],
 "bio": "Artist behind the Uniswap unicorn animation and founder of Shibuya, making glossy 3D dreamscapes. A promo clip became an icon",
+"iv": []
+},
+{
+"id": "quantumspirit",
+"name": "QuantumSpirit",
+"handle": "@JenPanepinto",
+"x": "JenPanepinto",
+"cat": "A",
+"works": [
+{
+"title": "Moon Garden at Bethesda",
+"s": "quantumspirit-b0999486s.jpg",
+"l": "quantumspirit-b0999486l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Visual artist working across photography, animation and AI since 2020, and a collector of The Soft Conspiracy. The garden blooms at night",
 "iv": []
 },
 {
@@ -4062,6 +4224,42 @@
 "iv": []
 },
 {
+"id": "0xrhett-eth",
+"name": "0xrhett.eth",
+"handle": "0xrhett.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Flower Head at the Stone Mill",
+"s": "0xrhett-eth-88c3f384s.jpg",
+"l": "0xrhett-eth-88c3f384l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair of Transdimensional Trippers. The water keeps time",
+"iv": []
+},
+{
+"id": "0xygendebt",
+"name": "0xygendebt",
+"handle": "0xygendebt.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Green Man at Alice Austen",
+"s": "0xygendebt-25d82b8as.jpg",
+"l": "0xygendebt-25d82b8al.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector and bidder who holds three Transdimensional Trippers. Breathe in",
+"iv": []
+},
+{
 "id": "aaron-wright",
 "name": "Aaron Wright",
 "handle": "@awrigh01",
@@ -4077,6 +4275,24 @@
 }
 ],
 "bio": "Founder of FlamingoDAO, one of the early groups to collect digital art together. A vault with many keys",
+"iv": []
+},
+{
+"id": "acekennedy",
+"name": "acekennedy",
+"handle": "acekennedy.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Scream at Hunts Point",
+"s": "acekennedy-fa2529a1s.jpg",
+"l": "acekennedy-fa2529a1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "IT director, gamer and digital collector who holds four Transdimensional Trippers. Loud, and meant",
 "iv": []
 },
 {
@@ -4141,6 +4357,24 @@
 "iv": []
 },
 {
+"id": "based-bashobits-eth",
+"name": "based.bashobits.eth",
+"handle": "based.bashobits.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Gold Ring in the Armory",
+"s": "based-bashobits-eth-1ade6c55s.jpg",
+"l": "based-bashobits-eth-1ade6c55l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector exploring bit by bit, with Transdimensional Trippers in the vault. Based, and building",
+"iv": []
+},
+{
 "id": "batsoupyum",
 "name": "BatSoupYum",
 "handle": "@batsoupyum",
@@ -4189,6 +4423,24 @@
 "label": "Part 1"
 }
 ]
+},
+{
+"id": "cat5-eth",
+"name": "cat5.eth",
+"handle": "cat5.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Pepe in Paradise Under Hell Gate",
+"s": "cat5-eth-c4b0aaabs.jpg",
+"l": "cat5-eth-c4b0aaabl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding eight Based Pepes for Peace on Base. A frog in every port",
+"iv": []
 },
 {
 "id": "clod",
@@ -4312,6 +4564,24 @@
 "iv": []
 },
 {
+"id": "davidfeinstein-eth",
+"name": "davidfeinstein.eth",
+"handle": "davidfeinstein.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Pepe in the Morgan Library",
+"s": "davidfeinstein-eth-fe0adfeas.jpg",
+"l": "davidfeinstein-eth-fe0adfeal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who has been hoarding NFTs since January 2019, with Pepes for Peace and Nervous Breakdowns in the stacks. Early, and still here",
+"iv": []
+},
+{
 "id": "dcinvestor",
 "name": "DCinvestor",
 "handle": "@iamDCinvestor",
@@ -4363,6 +4633,114 @@
 }
 ],
 "bio": "Tech founder, former quant and cypherpunk who builds with robots and GPUs and collects MLow along the way. Decentralize everything",
+"iv": []
+},
+{
+"id": "digger",
+"name": "Digger",
+"handle": "@rektfluf",
+"x": "rektfluf",
+"cat": "C",
+"works": [
+{
+"title": "Digger at Orchard Beach",
+"s": "digger-370be1e7s.jpg",
+"l": "digger-370be1e7l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Art lover digging for treasure across Chimpers, CrypToadz and Transdimensional Trippers. Rekt no more",
+"iv": []
+},
+{
+"id": "dingomick",
+"name": "dingomick",
+"handle": "@mick_dingo",
+"x": "mick_dingo",
+"cat": "C",
+"works": [
+{
+"title": "The Dingo at Dog Beach",
+"s": "dingomick-1f76e53es.jpg",
+"l": "dingomick-1f76e53el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Aussie bloke from Longreach, Queensland who backs crypto art and minted New Yorkers from the other side of the world. G'day, New York",
+"iv": []
+},
+{
+"id": "dj-fathead",
+"name": "DJ FATHEAD",
+"handle": "djfathead.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Sunrise Set in Bushwick",
+"s": "dj-fathead-966bb5c5s.jpg",
+"l": "dj-fathead-966bb5c5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Art collector and NFT hunter always trying to support the space, who believes life is beautiful. Wanted, and worth it",
+"iv": []
+},
+{
+"id": "eddie-wharton",
+"name": "Eddie Wharton",
+"handle": "delegate.eddiewharton.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Data Fireflies at Cornell Tech",
+"s": "eddie-wharton-0dbec1c1s.jpg",
+"l": "eddie-wharton-0dbec1c1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Data artist and founder behind Royal Patron analytics, and a collector of The Soft Conspiracy. The numbers glow at night",
+"iv": []
+},
+{
+"id": "edog",
+"name": "edog",
+"handle": "@eritaqua",
+"x": "eritaqua",
+"cat": "C",
+"works": [
+{
+"title": "Normie in the Hall of Science",
+"s": "edog-650d6b73s.jpg",
+"l": "edog-650d6b73l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who goes by edog, a Normie in 3D glasses holding The Soft Conspiracy. Surprised every time",
+"iv": []
+},
+{
+"id": "edust",
+"name": "edust",
+"handle": "@ledgerdust",
+"x": "ledgerdust",
+"cat": "C",
+"works": [
+{
+"title": "Three Faces at the Moving Image",
+"s": "edust-0a568480s.jpg",
+"l": "edust-0a568480l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Actor and AI storyteller who collects Transdimensional Trippers. Three faces, one story",
 "iv": []
 },
 {
@@ -4474,6 +4852,24 @@
 "iv": []
 },
 {
+"id": "forkingpepe-eth",
+"name": "forkingpepe.eth",
+"handle": "forkingpepe.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Bodega Keeper at Clove Lakes",
+"s": "forkingpepe-eth-09dd6a31s.jpg",
+"l": "forkingpepe-eth-09dd6a31l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who minted New Yorkers in The Census Release. Counted early",
+"iv": []
+},
+{
 "id": "fred-wilson",
 "name": "Fred Wilson",
 "handle": "@fredwilson",
@@ -4492,6 +4888,60 @@
 "iv": []
 },
 {
+"id": "froggoat",
+"name": "froggoat",
+"handle": "froggoat on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Deli Woman on Fordham Road",
+"s": "froggoat-58844965s.jpg",
+"l": "froggoat-58844965l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who minted New Yorkers in The Census Release. Every bodega needs a regular",
+"iv": []
+},
+{
+"id": "garyvaynersuck-eth",
+"name": "garyvaynersuck.eth",
+"handle": "garyvaynersuck.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Monitors in the Scholar's Garden",
+"s": "garyvaynersuck-eth-3b535f05s.jpg",
+"l": "garyvaynersuck-eth-3b535f05l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Transdimensional Trippers with a name that pokes the hustle. Attention, redirected",
+"iv": []
+},
+{
+"id": "gigs777-eth",
+"name": "gigs777.eth",
+"handle": "gigs777.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Spotlight at BAM",
+"s": "gigs777-eth-342afa49s.jpg",
+"l": "gigs777-eth-342afa49l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair of Transdimensional Trippers side by side. Lucky number, lucky pair",
+"iv": []
+},
+{
 "id": "gmoney",
 "name": "gmoney",
 "handle": "@gmoneynft",
@@ -4507,6 +4957,24 @@
 }
 ],
 "bio": "A pseudonymous collector whose orange beanie CryptoPunk became his face, and founder of the fashion label 9dcc. The avatar got dressed",
+"iv": []
+},
+{
+"id": "habwa",
+"name": "habwa",
+"handle": "habwa.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Spiral at Grand Army Plaza",
+"s": "habwa-d79c7118s.jpg",
+"l": "habwa-d79c7118l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who found three Transdimensional Trippers on the secondary market. Hypnotized, happily",
 "iv": []
 },
 {
@@ -4564,6 +5032,42 @@
 "iv": []
 },
 {
+"id": "igorpopov-eth",
+"name": "igorpopov.eth",
+"handle": "igorpopov.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Prayer on the Promenade",
+"s": "igorpopov-eth-12b494cfs.jpg",
+"l": "igorpopov-eth-12b494cfl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair of Transdimensional Trippers. Please, one more green candle",
+"iv": []
+},
+{
+"id": "incept-eth",
+"name": "Incept.eth",
+"handle": "@Inceptionally",
+"x": "Inceptionally",
+"cat": "C",
+"works": [
+{
+"title": "Popcorn at the Kings Theatre",
+"s": "incept-eth-9ebfbd68s.jpg",
+"l": "incept-eth-9ebfbd68l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Narrative believer who runs ArtRank and I Took A Photo, and holds The Soft Conspiracy. The show is always on",
+"iv": []
+},
+{
 "id": "jake-brukhman",
 "name": "Jake Brukhman",
 "handle": "@jbrukh",
@@ -4579,6 +5083,24 @@
 }
 ],
 "bio": "Founder of CoinFund and a collector of generative art. The fund backs the wall",
+"iv": []
+},
+{
+"id": "jared-poz",
+"name": "jared_poz",
+"handle": "jaredpoz.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Portholes in Woodlawn",
+"s": "jared-poz-72c91e9fs.jpg",
+"l": "jared-poz-72c91e9fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Transdimensional Trippers who also keeps Digital Mythology close. Myths, collected",
 "iv": []
 },
 {
@@ -4726,6 +5248,24 @@
 "iv": []
 },
 {
+"id": "lawyered",
+"name": "Lawyered",
+"handle": "@bitgrateful",
+"x": "bitgrateful",
+"cat": "C",
+"works": [
+{
+"title": "Counsel on the Borough Hall Steps",
+"s": "lawyered-ff86308ds.jpg",
+"l": "lawyered-ff86308dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Business lawyer who advises founders on crypto and AI deals, and collects Pepes for Peace and Nervous Breakdowns. Fact, condensed from fiction",
+"iv": []
+},
+{
 "id": "leadwithlove-eth",
 "name": "Leadwithlove.eth",
 "handle": "Leadwithlove.eth",
@@ -4777,6 +5317,24 @@
 }
 ],
 "bio": "Former auction specialist who sold the Salvator Mundi and then founded Particle. One masterpiece, many owners",
+"iv": []
+},
+{
+"id": "madacollects",
+"name": "madacollects",
+"handle": "madacollects.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Moon Piece at Floyd Bennett Field",
+"s": "madacollects-42f4ac94s.jpg",
+"l": "madacollects-42f4ac94l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding four Transdimensional Trippers. The name says it",
 "iv": []
 },
 {
@@ -4888,6 +5446,60 @@
 "iv": []
 },
 {
+"id": "moodslime",
+"name": "moodSlime",
+"handle": "moodslime.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Slime Glow on North Moore Street",
+"s": "moodslime-e9722729s.jpg",
+"l": "moodslime-e9722729l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector with forty works on SuperRare, named for the mood slime under the city. Pink, and positively charged",
+"iv": []
+},
+{
+"id": "mr-quack",
+"name": "Mr Quack",
+"handle": "mrquack.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Mr Quack at Oakland Lake",
+"s": "mr-quack-b9f37ab5s.jpg",
+"l": "mr-quack-b9f37ab5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Endless Peonies and New Yorkers, a blue monkey with a duck for a hat. Quack",
+"iv": []
+},
+{
+"id": "nightshare",
+"name": "Nightshare",
+"handle": "nightshare2.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Queensboro Plaza, 3 AM",
+"s": "nightshare-1e426537s.jpg",
+"l": "nightshare-1e426537l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of The Soft Conspiracy and Transdimensional Trippers who keeps no public bio. The night shift",
+"iv": []
+},
+{
 "id": "noah-davis",
 "name": "Noah Davis",
 "handle": "@noahdavis",
@@ -4903,6 +5515,24 @@
 }
 ],
 "bio": "Ran the Beeple sale at Christie's, then led CryptoPunks at Yuga Labs. From the gavel to the punks",
+"iv": []
+},
+{
+"id": "octoclan",
+"name": "Octoclan",
+"handle": "octoclan.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Medusa at Atlas",
+"s": "octoclan-80624b09s.jpg",
+"l": "octoclan-80624b09l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Based Pepes for Peace and Nervous Breakdowns, crowned in serpents. Heavy is the head",
 "iv": []
 },
 {
@@ -5021,6 +5651,24 @@
 "iv": []
 },
 {
+"id": "parzival13-eth",
+"name": "parzival13.eth",
+"handle": "parzival13.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Footbridge in the Hall of Fame",
+"s": "parzival13-eth-84792ae9s.jpg",
+"l": "parzival13-eth-84792ae9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair of Transdimensional Trippers. A quiet knight",
+"iv": []
+},
+{
 "id": "phil-mohun",
 "name": "Phil Mohun",
 "handle": "@philmohun",
@@ -5036,6 +5684,42 @@
 }
 ],
 "bio": "Founder of the NODE gallery for digital and generative art. A room built for the screen",
+"iv": []
+},
+{
+"id": "pipsq8-eth",
+"name": "pipsq8.eth",
+"handle": "pipsq8.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Fire Halo in the Smallpox Ruins",
+"s": "pipsq8-eth-4b5d3fb2s.jpg",
+"l": "pipsq8-eth-4b5d3fb2l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair of Transdimensional Trippers. Small name, big halo",
+"iv": []
+},
+{
+"id": "pixelflipper",
+"name": "PixelFlipper",
+"handle": "pixelflipper.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Teal Face in High Rock Park",
+"s": "pixelflipper-aedbd2ees.jpg",
+"l": "pixelflipper-aedbd2eel.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who holds a run of five Soft Conspiracy portraits in a row. Flip it, then keep it",
 "iv": []
 },
 {
@@ -5072,6 +5756,24 @@
 }
 ],
 "bio": "Operator of FlamingoDAO, one of the early collector groups for digital art. The wall grows as a group",
+"iv": []
+},
+{
+"id": "pudgypiper",
+"name": "pudgypiper",
+"handle": "pudgypiper.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Bodega Keeper Under the 7",
+"s": "pudgypiper-a0ae2cfbs.jpg",
+"l": "pudgypiper-a0ae2cfbl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who minted New Yorkers on the first day of The Census Release. Counted on day one",
 "iv": []
 },
 {
@@ -5177,6 +5879,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "rofll-eth",
+"name": "rofll.eth",
+"handle": "rofll.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Staircase Over the Harlem River",
+"s": "rofll-eth-b6f9c74as.jpg",
+"l": "rofll-eth-b6f9c74al.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a run of Transdimensional Trippers straight off the mint. Four in a row, no gaps",
+"iv": []
 },
 {
 "id": "ryan-zurrer",
@@ -5330,6 +6050,24 @@
 "iv": []
 },
 {
+"id": "spicycheetos",
+"name": "spicycheetos",
+"handle": "spicycheetos on SuperRare",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Nervous Breakdown at Yankee Stadium",
+"s": "spicycheetos-68285d0bs.jpg",
+"l": "spicycheetos-68285d0bl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding the first two Nervous Breakdowns, the rotating twelve artist chain. Spicy, as advertised",
+"iv": []
+},
+{
 "id": "steve-cohen",
 "name": "Steve Cohen",
 "handle": "@stevenacohen2",
@@ -5399,6 +6137,24 @@
 }
 ],
 "bio": "Collector with close to ninety works on SuperRare, among them an Impermanent Loss variant from MLow. The collection does the talking",
+"iv": []
+},
+{
+"id": "thompsona-eth",
+"name": "thompsona.eth",
+"handle": "thompsona.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Blue Man at Conference House",
+"s": "thompsona-eth-77e2cfa8s.jpg",
+"l": "thompsona-eth-77e2cfa8l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair of Transdimensional Trippers. Blue, and at peace with it",
 "iv": []
 },
 {
@@ -5474,6 +6230,24 @@
 "iv": []
 },
 {
+"id": "tsuka-dragon-eth",
+"name": "tsuka-dragon.eth",
+"handle": "tsuka-dragon.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Dragon Jacket in Sunset Park",
+"s": "tsuka-dragon-eth-e6530b3ds.jpg",
+"l": "tsuka-dragon-eth-e6530b3dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector holding a pair from The Soft Conspiracy. The dragon keeps the keys",
+"iv": []
+},
+{
 "id": "twinflames",
 "name": "twinflames",
 "handle": "twinflames.eth",
@@ -5507,6 +6281,60 @@
 }
 ],
 "bio": "A crypto art collector known for one of the deepest vaults in the field. The name is a painting",
+"iv": []
+},
+{
+"id": "walafortress-eth",
+"name": "walafortress.eth",
+"handle": "walafortress.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Deli Counter at Fort Totten",
+"s": "walafortress-eth-83522c42s.jpg",
+"l": "walafortress-eth-83522c42l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector who minted New Yorkers in The Census Release. A fortress with room for three",
+"iv": []
+},
+{
+"id": "webvr-eth",
+"name": "webvr.eth",
+"handle": "webvr.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Galleon at Snug Harbor",
+"s": "webvr-eth-a97080a1s.jpg",
+"l": "webvr-eth-a97080a1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Transdimensional Trippers and The Soft Conspiracy who signs off gm frens. All hands on deck",
+"iv": []
+},
+{
+"id": "wikisam-eth",
+"name": "wikisam.eth",
+"handle": "wikisam.eth",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Golden Eye Flower in the Library",
+"s": "wikisam-eth-f773c942s.jpg",
+"l": "wikisam-eth-f773c942l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collector of Transdimensional Trippers and The Soft Conspiracy, including its final piece. Reads to the last page",
 "iv": []
 },
 {
@@ -6607,6 +7435,24 @@
 }
 ],
 "bio": "Host of Coffee with Captain, painted by MLow as his Bored Ape on a diner stool. The Captain takes it black",
+"iv": []
+},
+{
+"id": "cryptoforager",
+"name": "CryptoForager",
+"handle": "@CryptoForager81",
+"x": "CryptoForager81",
+"cat": "W",
+"works": [
+{
+"title": "The Mushroom Man in the Ravine",
+"s": "cryptoforager-ce2b6431s.jpg",
+"l": "cryptoforager-ce2b6431l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Editor in chief of RG Media and cofounder of NFT Yearbook, and a collector of The Soft Conspiracy. Forage, collect, repeat",
 "iv": []
 },
 {
