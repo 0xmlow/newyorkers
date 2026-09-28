@@ -153,7 +153,7 @@ if not formspree:
     print("NOTE: formspree id is empty; allowlist falls back to email drafts until it is set in assets/config.js")
 
 # generated folders (the reading room, the room pages, the record pages, the api): always mirrored whole
-for sub in ("learn", "rooms", "n", "api", "feeds"):
+for sub in ("learn", "rooms", "n", "h", "api", "feeds"):
     src = os.path.join(SITE, sub); dst = os.path.join(OUT, sub)
     if os.path.isdir(dst): shutil.rmtree(dst)
     if os.path.isdir(src): shutil.copytree(src, dst)
@@ -163,7 +163,7 @@ with open(os.path.join(OUT, "404.html"), "w") as f:
             '<div><div style="font-size:64px;letter-spacing:.08em;color:#fff">404</div>'
             '<p style="color:#8899AA;max-width:420px;line-height:1.6">This number has not been painted yet. The census keeps going anyway.</p>'
             '<p><a href="/" style="color:#2962FF;text-decoration:none;font-family:Menlo,monospace;font-size:13px;letter-spacing:.2em">ENTER THE CENSUS</a></p></div></body></html>')
-for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "museum"):
+for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "museum"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
@@ -302,6 +302,8 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
 /assets/keystone/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/honoraries/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/cards/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/museum/props/*
   Cache-Control: public, max-age=31536000, immutable

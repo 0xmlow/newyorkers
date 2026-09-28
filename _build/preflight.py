@@ -38,7 +38,7 @@ if ids-gids: probs.append(f"pieces missing from geo: {len(ids-gids)}")
 if gids-ids: warns.append(f"geo has ids not public: {len(gids-ids)}")
 print("geo stats",G["stats"])
 # html pages: links, assets, dashes, stale numbers
-pages=[f for f in os.listdir(PKG) if f.endswith(".html")]+[os.path.join(d,f) for d in ("learn","rooms") if os.path.isdir(os.path.join(PKG,d)) for f in os.listdir(os.path.join(PKG,d)) if f.endswith(".html")]
+pages=[f for f in os.listdir(PKG) if f.endswith(".html")]+[os.path.join(d,f) for d in ("learn","rooms","h") if os.path.isdir(os.path.join(PKG,d)) for f in os.listdir(os.path.join(PKG,d)) if f.endswith(".html")]
 import random
 nd=os.path.join(PKG,"n")
 if os.path.isdir(nd): pages+= [os.path.join("n",f) for f in random.sample(os.listdir(nd), min(40, len(os.listdir(nd))))]
@@ -104,7 +104,7 @@ if shutil.which("node"):
     _type_re = re.compile(r'''type\s*=\s*["']([^"']+)''', re.I)
     _JS_TYPES = ("", "module", "text/javascript", "application/javascript")
     _pages = [os.path.join(PKG, f) for f in os.listdir(PKG) if f.endswith(".html")]
-    for _sub in ("n", "rooms", "learn"):                     # generated in bulk: sample a few
+    for _sub in ("n", "rooms", "learn", "h"):                     # generated in bulk: sample a few
         _pages += sorted(_glob.glob(os.path.join(PKG, _sub, "*.html")))[:3]
     _bad = 0
     for _pg in _pages:

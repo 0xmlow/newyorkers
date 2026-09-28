@@ -8,6 +8,7 @@ assets/stickers/
 assets/launch/
 assets/keystone/
 assets/honoraries/
+assets/cards/
 _build/_orphan_thumbs/
 _build/_orphan_atlas/
 _build/*.log
@@ -22,6 +23,7 @@ _mintkit
 # generated pages and feeds: build_seo.py, build_learn.py and page_shell.py
 # rebuild all of these from data.js, and n/ alone is 7,541 files and 88 MB.
 n/
+h/
 rooms/
 !_build/museum/src/rooms/
 learn/

@@ -15,6 +15,9 @@ CATS, PPL = D["cats"], D["people"]
 N = len(PPL)
 NW = sum(len(p["works"]) for p in PPL)
 CATN = {c["code"]: c["name"] for c in CATS}
+CARDS = json.load(open(os.path.join(HERE, "honoraries", "cards.json")))  # build_honor_cards.py
+missing = [p["id"] for p in PPL if p["id"] not in CARDS]
+assert not missing, f"no card for {missing[:5]}: run build_honor_cards.py"
 e = lambda s: html.escape(str(s or ""), quote=True)
 ACCS = ["var(--acid)", "var(--pink)", "var(--cyan)", "#FFB020", "#B388FF"]
 ACC = {c["code"]: ACCS[i % len(ACCS)] for i, c in enumerate(CATS)}
@@ -66,7 +69,7 @@ pick = PPL[::max(1, N // 64)][:64]
 rowA, rowB = row(pick[:32]), row(pick[32:])
 
 counts = " &middot; ".join(f'{sum(1 for p in PPL if p["cat"] == c["code"])} {e(SHORT.get(c["name"], c["name"]))}' for c in CATS)
-DATA = json.dumps([{"name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []),
+DATA = json.dumps([{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []),
                     "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
                   ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
@@ -95,7 +98,9 @@ body = f'''<main class="hon">
  <button class="x" type="button" aria-label="Close">&times;</button>
  <button class="nv pv" type="button" aria-label="Previous">&#8249;</button><button class="nv nx" type="button" aria-label="Next">&#8250;</button>
  <figure><div class="frame"><img id="lbi" alt=""></div><figcaption>
-  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="lbio" id="lbb"></p><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p><div class="ivs" id="lbv"></div></figcaption></figure>
+  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="lbio" id="lbb"></p><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p><div class="ivs" id="lbv"></div>
+  <div class="tcg" id="lbc"><p class="k">THE HONORARY CARD</p><a class="tcg-card" id="lbci" target="_blank" rel="noopener"><img alt="" loading="lazy"></a>
+   <div class="tcg-btns"><a class="btn sm" id="lbme" target="_blank" rel="noopener">This is me. Post my card</a><a class="btn sm ghost" id="lbx" target="_blank" rel="noopener">Share on X</a><a class="btn sm ghost" id="lbsv" download>Save the card</a></div></div></figcaption></figure>
 </dialog>
 <script>window.HON={DATA};window.HON_CAT={json.dumps(CATN)};</script>'''
 
@@ -128,16 +133,41 @@ JS = r'''<script>
       b.onclick=function(){show(i,j)}; wb.appendChild(b); });
     document.getElementById("lbh").innerHTML=p.x?'<a href="https://x.com/'+esc(p.x)+'" target="_blank" rel="noopener">'+esc(p.handle)+' on X</a>':esc(p.handle||"");
     document.getElementById("lbt").textContent=w.title?"“"+w.title+"”":"";
+    card(p);
+    if(history.replaceState) history.replaceState(null,"","#"+p.id);
     document.getElementById("lbr").innerHTML=w.rec?'<a class="btn sm" href="n/'+esc(w.rec)+'.html">Open the census record</a>':"";
+  }
+  /* The card: X's post intent cannot carry a picture, so the link goes to h/<id>, whose og:image is the
+     card and unfurls in the timeline. Where the browser can share files (phones), the button hands the
+     card itself to the share sheet instead, so it lands in the X app attached. */
+  var SITE=(window.NY_CONFIG&&NY_CONFIG.siteUrl||"https://n3wyorkers.com").replace(/\/$/,""), blob=null;
+  function intent(t,u){ return "https://x.com/intent/tweet?text="+encodeURIComponent(t)+"&url="+encodeURIComponent(u); }
+  function lines(p){ var tag=p.x?"@"+p.x:p.name;
+    return {me:"@degens painted me into NEW YORKERS. Honorary New Yorker, counted.",
+            them:tag+(p.x?" ("+p.name+")":"")+(/ and /.test(p.name)?" are Honorary New Yorkers":" is an Honorary New Yorker")+", painted by @degens into NEW YORKERS."}; }
+  function card(p){
+    var u=SITE+"/h/"+p.id, src="assets/cards/"+p.card, L=lines(p), me=document.getElementById("lbme");
+    var ci=document.getElementById("lbci"); ci.href="h/"+p.id+".html"; ci.firstChild.src=src; ci.firstChild.alt="The Honorary card for "+p.name;
+    me.href=intent(L.me,u); document.getElementById("lbx").href=intent(L.them,u);
+    var sv=document.getElementById("lbsv"); sv.href=src; sv.setAttribute("download","honorary-new-yorker-"+p.id+".jpg");
+    blob=null; me.onclick=null;
+    if(navigator.canShare&&matchMedia("(pointer:coarse)").matches){
+      fetch(src).then(function(r){return r.blob()}).then(function(b){ var f=new File([b],"honorary-new-yorker-"+p.id+".jpg",{type:"image/jpeg"});
+        if(!navigator.canShare({files:[f]})) return; blob=f;
+        me.onclick=function(ev){ if(!blob) return; ev.preventDefault(); navigator.share({files:[blob],text:L.me+" "+u}).catch(function(){}); }; }).catch(function(){});
+    }
   }
   function step(d){ var vis=cards.filter(function(c){return !c.hidden}).map(function(c){return +c.dataset.i}); var k=vis.indexOf(idx); if(k<0)return; show(vis[(k+d+vis.length)%vis.length]); }
   cards.forEach(function(c){ c.querySelector(".ph").onclick=function(){ show(+c.dataset.i); if(lb.showModal) lb.showModal(); else lb.setAttribute("open",""); }; });
   lb.querySelector(".x").onclick=function(){lb.close()};
+  lb.addEventListener("close",function(){ if(history.replaceState) history.replaceState(null,"",location.pathname+location.search); });
   lb.querySelector(".pv").onclick=function(){step(-1)}; lb.querySelector(".nx").onclick=function(){step(1)};
   lb.addEventListener("click",function(ev){ if(ev.target===lb) lb.close(); });
   document.addEventListener("keydown",function(ev){ if(!lb.open)return; if(ev.key==="ArrowRight")step(1); if(ev.key==="ArrowLeft")step(-1); });
   if(window.NY&&NY.shareRow) NY.shareRow(document.getElementById("share"),{text:"Every real person MLow has painted into NEW YORKERS. The Honoraries."});
-  var h=(location.hash||"").slice(1); if(h){ var t=tabs.find(function(x){ var s=document.querySelector('.chap[data-ch="'+x.dataset.ch+'"]'); return s&&s.id===h; }); if(t) t.click(); }
+  var h=(location.hash||"").slice(1), byId=H.findIndex(function(p){return p.id===h});
+  if(byId>=0){ show(byId); if(lb.showModal) lb.showModal(); else lb.setAttribute("open",""); h=""; }
+  if(h){ var t=tabs.find(function(x){ var s=document.querySelector('.chap[data-ch="'+x.dataset.ch+'"]'); return s&&s.id===h; }); if(t) t.click(); }
 })();
 </script>'''
 
@@ -209,6 +239,13 @@ p.none a{color:var(--cyan)}
 .btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
 .btn.sm{padding:10px 16px;font-size:11px}
 #share{display:flex;justify-content:center}
+#lb .tcg{margin-top:26px;padding-top:20px;border-top:1px solid var(--divider)}
+#lb .tcg .k{margin-bottom:12px}
+#lb .tcg-card{display:block;width:132px;float:left;margin:0 16px 8px 0}
+#lb .tcg-card img{max-height:none;width:100%;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s var(--ease)}
+#lb .tcg-card:hover img{transform:rotate(-2deg) scale(1.04)}
+#lb .tcg-btns{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+#lb figcaption{max-height:92vh;overflow:auto}
 #lb{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100vw;height:100vh;color:var(--cloud)}
 #lb::backdrop{background:rgba(8,8,10,.92);backdrop-filter:blur(6px)}
 #lb[open]{display:flex;align-items:center;justify-content:center}
@@ -234,6 +271,62 @@ p.none a{color:var(--cyan)}
 '''
 
 C = cfg()
+
+# One share page per honoree. These exist for X's crawler: og:image is the card on a landscape field,
+# so a posted link unfurls as the card. Humans who follow the link land on the card with the same
+# buttons and a way back into the page. noindex: 566 near identical pages would only dilute search.
+HD = os.path.join(SITE, "h")
+os.makedirs(HD, exist_ok=True)
+HCSS = r'''
+.hp{padding:96px 0 80px}.hp .wrap{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:56px;align-items:center}
+.hp .cardimg{width:100%;height:auto;border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:rotate(-1.5deg)}
+.hp .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--a)}
+.hp h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,6vw,84px);line-height:.95;margin:14px 0 12px}
+.hp .hd{font-family:var(--mono);font-size:16px;color:var(--cyan)}
+.hp .bio{font-family:var(--sans);font-size:18px;line-height:1.6;color:#C9D2DC;margin:22px 0;max-width:560px}
+.hp .t{font-family:var(--display);font-style:italic;font-size:22px;color:#C9D2DC}
+.hp .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.hp .btn{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:13px 20px;border-radius:999px;background:var(--acid);color:var(--ink)}
+.hp .btn:hover{background:var(--cloud);color:var(--ink)}
+.hp .btn.ghost{background:transparent;color:var(--cloud);border:1px solid var(--divider)}.hp .btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.hp .loop{margin-top:40px;padding-top:24px;border-top:1px solid var(--divider);font-family:var(--sans);color:var(--slate)}
+.hp .loop a{color:var(--cyan)}
+@media (max-width:820px){.hp .wrap{grid-template-columns:1fr;gap:32px}.hp .cardimg{max-width:420px;margin:0 auto;display:block}}
+'''
+HJS = r'''<script>
+(function(){ var b=document.getElementById("hme"); if(!b||!navigator.canShare||!matchMedia("(pointer:coarse)").matches) return;
+  var src=b.dataset.card, f=null;
+  fetch(src).then(function(r){return r.blob()}).then(function(x){ var g=new File([x],b.dataset.file,{type:"image/jpeg"}); if(navigator.canShare({files:[g]})) f=g; }).catch(function(){});
+  b.addEventListener("click",function(ev){ if(!f) return; ev.preventDefault(); navigator.share({files:[f],text:b.dataset.text}).catch(function(){}); });
+})();
+</script>'''
+from urllib.parse import quote
+xi = lambda t, u: "https://x.com/intent/tweet?text=" + quote(t, safe="") + "&url=" + quote(u, safe="")
+for f in os.listdir(HD):
+    if f.endswith(".html") and f[:-5] not in {p["id"] for p in PPL}:
+        os.remove(os.path.join(HD, f))
+for p in PPL:
+    cd, w0 = CARDS[p["id"]], p["works"][0]
+    u = f'{C["siteUrl"]}/h/{p["id"]}'
+    me = "@degens painted me into NEW YORKERS. Honorary New Yorker, counted."
+    them = (f'@{p["x"]} ({p["name"]})' if p["x"] else p["name"]) + (" are Honorary New Yorkers" if " and " in p["name"] else " is an Honorary New Yorker") + ", painted by @degens into NEW YORKERS."
+    hb = f'''<main class="hp" style="--a:{ACC[p["cat"]]}"><div class="wrap">
+<div><img class="cardimg" src="../assets/cards/{cd["card"]}" alt="The Honorary card for {e(p["name"])}, painted by MLow" width="1080" height="1512"></div>
+<div><p class="k">HONORARY NEW YORKER &middot; {e(CATN[p["cat"]].upper())}</p><h1>{e(p["name"])}</h1>
+{f'<a class="hd" href="https://x.com/{e(p["x"])}" target="_blank" rel="noopener">{e(p["handle"])}</a>' if p["x"] else (f'<p class="hd">{e(p["handle"])}</p>' if p["handle"] else "")}
+{f'<p class="t">&ldquo;{e(w0["title"])}&rdquo;</p>' if w0.get("title") else ""}
+{f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else ""}
+<div class="row"><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + " " + u)}">This is me. Post my card</a>
+<a class="btn ghost" href="{e(xi(them, u))}" target="_blank" rel="noopener">Share on X</a>
+<a class="btn ghost" href="../assets/cards/{cd["card"]}" download="honorary-new-yorker-{p["id"]}.jpg">Save the card</a></div>
+<p class="loop">One of {N} Honorary New Yorkers painted by MLow. <a href="../honoraries.html#{p["id"]}">Meet the rest</a>, or <a href="../counted.html#nominate">nominate someone who belongs here</a>.</p>
+</div></div></main>'''
+    open(os.path.join(HD, p["id"] + ".html"), "w", encoding="utf-8").write(shell(
+        title=f'{p["name"]}, Honorary New Yorker · NEW YORKERS by MLow',
+        description=(p.get("bio") or f'{p["name"]}, painted by MLow into NEW YORKERS.')[:158],
+        body=hb, base="../", path=f'h/{p["id"]}.html', active="HONORARIES", extra_css=HCSS, scripts_after=HJS,
+        image=f'{C["siteUrl"]}/assets/cards/{cd["og"]}', noindex=True))
+
 page = shell(title="The Honoraries · NEW YORKERS by MLow",
              description=f"Every real person MLow has painted into NEW YORKERS: {N} people and {NW} paintings, artists, collectors, founders, musicians, athletes, chefs, writers and mayors of New York.",
              body=body, path="honoraries.html", active="HONORARIES", extra_css=CSS, scripts_after=JS,
@@ -243,4 +336,5 @@ page = shell(title="The Honoraries · NEW YORKERS by MLow",
                      "description": f"{N} real people painted by MLow as New Yorkers.", "isPartOf": {"@id": C["siteUrl"] + "/#site"},
                      "about": [{"@type": "Person", "name": p["name"], **({"sameAs": f'https://x.com/{p["x"]}'} if p["x"] else {})} for p in PPL]})
 open(os.path.join(SITE, "honoraries.html"), "w", encoding="utf-8").write(page)
+print(f"h/: {len(PPL)} share pages")
 print(f"honoraries.html: {N} people, {NW} paintings, {len(page) // 1024} KB")
