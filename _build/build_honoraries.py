@@ -73,7 +73,15 @@ DATA = json.dumps([{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["na
                     "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
                   ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
+FILM = "assets/film/roll-call"  # the roll call film as HLS, built from the film master by encode_film.sh (gitignored)
 body = f'''<main class="hon">
+<section class="film" aria-label="The Honoraries: the roll call film">
+ <div class="player wrap">
+  <video id="rc" playsinline preload="none" poster="{FILM}/poster.jpg" aria-label="The Honoraries roll call film"></video>
+  <button class="play" id="rcp" type="button" aria-label="Play the roll call film"><i></i><span>WATCH THE ROLL CALL <b>4:32</b></span></button>
+ </div>
+ <p class="cap wrap">Every honoree, one film. Painted by MLow, scored on the beat.</p>
+</section>
 <section class="mast">
  <div class="drift" aria-hidden="true"><div class="row a">{rowA}{rowA}</div><div class="row b">{rowB}{rowB}</div></div>
  <div class="mast-in wrap">
@@ -117,6 +125,20 @@ JS = r'''<script>
   tabs.forEach(function(t){ t.onclick=function(){ tabs.forEach(function(u){u.classList.toggle("on",u===t)}); cur=t.dataset.ch; apply();
     if(cur!=="all"){ var el=document.querySelector('.chap[data-ch="'+cur+'"]'); if(el) window.scrollTo({top:el.getBoundingClientRect().top+scrollY-document.querySelector(".tools").offsetHeight-70,behavior:"smooth"}); } }; });
   q.addEventListener("input",apply);
+  q.addEventListener("search",apply);
+  /* the roll call film: nothing loads until someone presses play. Safari plays HLS itself, everyone else gets hls.js */
+  var rc=document.getElementById("rc"), rcp=document.getElementById("rcp"), SRC="assets/film/roll-call/master.m3u8";
+  function go(){ rcp.hidden=true; rc.controls=true; rc.play().catch(function(){}); }
+  rcp.onclick=function(){
+    if(rc.dataset.on){ go(); return; } rc.dataset.on="1";
+    if(rc.canPlayType("application/vnd.apple.mpegurl")){ rc.src=SRC; go(); return; }
+    var sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js";
+    sc.onload=function(){ if(window.Hls&&Hls.isSupported()){ var hl=new Hls({capLevelToPlayerSize:true}); hl.loadSource(SRC); hl.attachMedia(rc);
+      hl.on(Hls.Events.MANIFEST_PARSED,go); } else { rc.src=SRC; go(); } };
+    sc.onerror=function(){ rc.src=SRC; go(); };
+    document.head.appendChild(sc);
+  };
+  rc.addEventListener("play",function(){ rcp.hidden=true; rc.controls=true; });
   var lb=document.getElementById("lb"), idx=0, order=[];
   function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}
   function show(i,wi){
@@ -177,6 +199,21 @@ JS = r'''<script>
 
 CSS = r'''
 .hon{padding-top:64px}
+/* the hidden attribute must win over the card and section display rules, or search and tabs filter nothing */
+.hc[hidden],.chap[hidden]{display:none!important}
+.film{padding:28px 0 8px}
+.player{position:relative}
+.player video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:18px;border:1px solid var(--divider)}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:16px;padding:16px 26px 16px 18px;border:0;border-radius:999px;
+ background:rgba(13,13,13,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--cloud);cursor:pointer;font-family:var(--mono);font-size:14px;letter-spacing:.16em;box-shadow:0 0 0 1px rgba(240,244,248,.18)}
+.play:hover{background:rgba(13,13,13,.92);box-shadow:0 0 0 2px var(--cyan)}
+.play i{width:52px;height:52px;border-radius:50%;background:var(--cyan);position:relative;flex:none}
+.play i:after{content:"";position:absolute;left:21px;top:16px;border-style:solid;border-width:10px 0 10px 16px;border-color:transparent transparent transparent #0D0D0D}
+.play b{color:var(--cyan);font-weight:600;margin-left:6px}
+.play[hidden]{display:none}
+.play span{white-space:nowrap}
+@media (max-width:640px){.play{padding:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}.play span{display:none}.play i{width:68px;height:68px;box-shadow:0 6px 24px rgba(0,0,0,.5)}.play i:after{left:27px;top:22px;border-width:12px 0 12px 19px}}
+.film .cap{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:#8899AA;text-transform:uppercase;margin-top:12px}
 .mast{position:relative;overflow:hidden;min-height:min(78vh,720px);display:flex;align-items:flex-end;border-bottom:1px solid var(--divider)}
 .drift{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:18px;opacity:.5;transform:rotate(-6deg) scale(1.15)}
 .drift .row{display:flex;gap:18px;width:max-content;animation:hdrift 90s linear infinite}
