@@ -6790,6 +6790,42 @@
 "iv": []
 },
 {
+"id": "kai-cenat",
+"name": "Kai Cenat",
+"handle": "@KaiCenat",
+"x": "KaiCenat",
+"cat": "W",
+"works": [
+{
+"title": "Union Square Went Up",
+"s": "kai-cenat-036a0dc1s.jpg",
+"l": "kai-cenat-036a0dc1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bronx born streamer whose fans once filled Union Square to see him. The biggest room online",
+"iv": []
+},
+{
+"id": "kareem-rahma",
+"name": "Kareem Rahma",
+"handle": "host of Subway Takes",
+"x": "",
+"cat": "W",
+"works": [
+{
+"title": "Your Take, Please",
+"s": "kareem-rahma-53c56c9fs.jpg",
+"l": "kareem-rahma-53c56c9fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Host of Subway Takes, the show that asks strangers for their hottest opinion on the train. The train is listening",
+"iv": []
+},
+{
 "id": "kevin-roose",
 "name": "Kevin Roose",
 "handle": "@kevinroose",
@@ -6941,6 +6977,24 @@
 }
 ],
 "bio": "Founder of Messari, the crypto research and data company. Charts before claims",
+"iv": []
+},
+{
+"id": "stephen-a-smith",
+"name": "Stephen A. Smith",
+"handle": "@stephenasmith",
+"x": "stephenasmith",
+"cat": "W",
+"works": [
+{
+"title": "The Take Under the El",
+"s": "stephen-a-smith-38e7cba6s.jpg",
+"l": "stephen-a-smith-38e7cba6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bronx born sports commentator whose takes run the morning in American sports. It was always getting said",
 "iv": []
 },
 {
@@ -7176,6 +7230,24 @@
 "iv": []
 },
 {
+"id": "cam-ron",
+"name": "Cam'ron",
+"handle": "@Mr_Camron",
+"x": "Mr_Camron",
+"cat": "M",
+"works": [
+{
+"title": "Killa in Pink on Lenox",
+"s": "cam-ron-9064dca3s.jpg",
+"l": "cam-ron-9064dca3l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Harlem rapper, Diplomats founder and the one who made pink a threat. Now the loudest voice in sports talk",
+"iv": []
+},
+{
 "id": "era1-513",
 "name": "Cardi B",
 "handle": "@iamcardib",
@@ -7384,6 +7456,24 @@
 "iv": []
 },
 {
+"id": "fivio-foreign",
+"name": "Fivio Foreign",
+"handle": "@FivioForeign",
+"x": "FivioForeign",
+"cat": "M",
+"works": [
+{
+"title": "Big Drip in East Flatbush",
+"s": "fivio-foreign-fc47674cs.jpg",
+"l": "fivio-foreign-fc47674cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "East Flatbush drill rapper behind Big Drip and a thousand ad libs. Brooklyn's energy in one voice",
+"iv": []
+},
+{
 "id": "french-montana",
 "name": "French Montana",
 "handle": "@frenchmontana",
@@ -7492,6 +7582,24 @@
 }
 ],
 "bio": "Composer who built Holly+, an AI model of her own voice others can use. One voice, a whole choir",
+"iv": []
+},
+{
+"id": "ice-spice",
+"name": "Ice Spice",
+"handle": "@icespice",
+"x": "icespice",
+"cat": "M",
+"works": [
+{
+"title": "Princess of the Concourse",
+"s": "ice-spice-059fdf86s.jpg",
+"l": "ice-spice-059fdf86l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bronx rapper who took drill to the pop charts with a whisper and a stare. The Concourse crowned a princess",
 "iv": []
 },
 {
@@ -8178,6 +8286,24 @@
 "iv": []
 },
 {
+"id": "awkwafina",
+"name": "Awkwafina",
+"handle": "Forest Hills, Queens",
+"x": "",
+"cat": "F",
+"works": [
+{
+"title": "Laughing on the 7",
+"s": "awkwafina-52300f8as.jpg",
+"l": "awkwafina-52300f8al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Forest Hills rapper turned actor who went from YouTube to a Golden Globe. Queens raised it loud",
+"iv": []
+},
+{
 "id": "aziz-ansari",
 "name": "Aziz Ansari",
 "handle": "@azizansari",
@@ -8256,6 +8382,24 @@
 "iv": []
 },
 {
+"id": "julia-fox",
+"name": "Julia Fox",
+"handle": "Lower East Side",
+"x": "",
+"cat": "F",
+"works": [
+{
+"title": "Uncut on the Lower East Side",
+"s": "julia-fox-83d10e10s.jpg",
+"l": "julia-fox-83d10e10l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Downtown actor, artist and author from the Lower East Side. Uncut, always",
+"iv": []
+},
+{
 "id": "era1-514",
 "name": "Lin-Manuel Miranda",
 "handle": "@Lin_Manuel",
@@ -8295,6 +8439,24 @@
 }
 ],
 "bio": "Director who grew up in Little Italy and put it on film in Mean Streets and Taxi Driver. The block was always the lead",
+"iv": []
+},
+{
+"id": "pete-davidson",
+"name": "Pete Davidson",
+"handle": "Staten Island",
+"x": "",
+"cat": "F",
+"works": [
+{
+"title": "Last Ferry to Staten Island",
+"s": "pete-davidson-0d59b96bs.jpg",
+"l": "pete-davidson-0d59b96bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Staten Island comedian who grew up on the ferry and made it to SNL. Home is the other way",
 "iv": []
 },
 {
@@ -8365,6 +8527,24 @@
 }
 ],
 "bio": "Brooklyn filmmaker behind Do the Right Thing and the 40 Acres and a Mule production company. Courtside seat, street level lens",
+"iv": []
+},
+{
+"id": "timoth-e-chalamet",
+"name": "Timothée Chalamet",
+"handle": "tchalamet on IG",
+"x": "",
+"cat": "F",
+"works": [
+{
+"title": "The Kid From Hell's Kitchen",
+"s": "timoth-e-chalamet-c2bedf8as.jpg",
+"l": "timoth-e-chalamet-c2bedf8al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Actor born and raised in Hell's Kitchen, a LaGuardia High kid who became a movie star. This block came first",
 "iv": []
 },
 {
@@ -8684,6 +8864,42 @@
 "iv": []
 },
 {
+"id": "ronnie-fieg",
+"name": "Ronnie Fieg",
+"handle": "@RonnieFieg",
+"x": "RonnieFieg",
+"cat": "X",
+"works": [
+{
+"title": "The Wall of Sneakers",
+"s": "ronnie-fieg-4b733be2s.jpg",
+"l": "ronnie-fieg-4b733be2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Queens born founder of Kith, who learned the sneaker trade on the shop floor at sixteen. The line forms outside",
+"iv": []
+},
+{
+"id": "telfar-clemens",
+"name": "Telfar Clemens",
+"handle": "telfarglobal on IG",
+"x": "",
+"cat": "X",
+"works": [
+{
+"title": "Not for You, for Everyone",
+"s": "telfar-clemens-29c80709s.jpg",
+"l": "telfar-clemens-29c80709l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Queens born designer of the shopping bag the whole city carries. Not for you, for everyone",
+"iv": []
+},
+{
 "id": "era1-634",
 "name": "Vera Wang",
 "handle": "",
@@ -8741,6 +8957,24 @@
 }
 ],
 "bio": "The Yankees slugger who made the home run the center of the game. The Bronx house still carries his name",
+"iv": []
+},
+{
+"id": "breanna-stewart",
+"name": "Breanna Stewart",
+"handle": "@breannastewart",
+"x": "breannastewart",
+"cat": "S",
+"works": [
+{
+"title": "Two Ladies of the Harbor",
+"s": "breanna-stewart-34590e19s.jpg",
+"l": "breanna-stewart-34590e19l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Liberty forward and MVP who came home to New York to win it. Stewie delivered",
 "iv": []
 },
 {
@@ -8808,6 +9042,24 @@
 "iv": []
 },
 {
+"id": "francisco-lindor",
+"name": "Francisco Lindor",
+"handle": "@Lindor12BC",
+"x": "Lindor12BC",
+"cat": "S",
+"works": [
+{
+"title": "Shortstop With the Light On",
+"s": "francisco-lindor-800ab61cs.jpg",
+"l": "francisco-lindor-800ab61cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Mets captain and shortstop who plays with the grin switched on. Queens smiles back",
+"iv": []
+},
+{
 "id": "henrik-lundqvist",
 "name": "Henrik Lundqvist",
 "handle": "@hlundqvist35",
@@ -8823,6 +9075,24 @@
 }
 ],
 "bio": "Rangers goaltender known as The King, who spent his whole NHL career in New York. Fifteen seasons, one crease",
+"iv": []
+},
+{
+"id": "igor-shesterkin",
+"name": "Igor Shesterkin",
+"handle": "Rangers goaltender",
+"x": "",
+"cat": "S",
+"works": [
+{
+"title": "The Mask Pushed Up",
+"s": "igor-shesterkin-d0dff7dcs.jpg",
+"l": "igor-shesterkin-d0dff7dcl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Rangers goaltender whose saves keep the Garden on its feet. The net stays empty",
 "iv": []
 },
 {
@@ -8844,6 +9114,24 @@
 }
 ],
 "bio": "Broke the major league color line with the Brooklyn Dodgers in 1947. Every team now wears his number once a year",
+"iv": []
+},
+{
+"id": "jalen-brunson",
+"name": "Jalen Brunson",
+"handle": "@jalenbrunson1",
+"x": "jalenbrunson1",
+"cat": "S",
+"works": [
+{
+"title": "The Calm at Center Court",
+"s": "jalen-brunson-a64e8caes.jpg",
+"l": "jalen-brunson-a64e8cael.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Knicks captain who turned the Garden back into the loudest room in the city. Cold in the fourth quarter",
 "iv": []
 },
 {
@@ -8886,6 +9174,60 @@
 "iv": []
 },
 {
+"id": "josh-hart",
+"name": "Josh Hart",
+"handle": "@joshhart",
+"x": "joshhart",
+"cat": "S",
+"works": [
+{
+"title": "Every Loose Ball in the Building",
+"s": "josh-hart-de2c90f3s.jpg",
+"l": "josh-hart-de2c90f3l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Knicks forward who lives on loose balls, offensive boards and the dirty work nobody films. Always around the ball",
+"iv": []
+},
+{
+"id": "juan-soto",
+"name": "Juan Soto",
+"handle": "@JuanSoto25_",
+"x": "JuanSoto25_",
+"cat": "S",
+"works": [
+{
+"title": "The Shuffle Under the 7",
+"s": "juan-soto-26c79670s.jpg",
+"l": "juan-soto-26c79670l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Mets outfielder who signed the largest contract in baseball history to play in Queens. The shuffle came to Flushing",
+"iv": []
+},
+{
+"id": "karl-anthony-towns",
+"name": "Karl-Anthony Towns",
+"handle": "@KarlTowns",
+"x": "KarlTowns",
+"cat": "S",
+"works": [
+{
+"title": "A Big Man at the Cage",
+"s": "karl-anthony-towns-2e87dae3s.jpg",
+"l": "karl-anthony-towns-2e87dae3l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Knicks big man from Jersey who shoots like a guard and celebrates like a fan. The Garden got its center",
+"iv": []
+},
+{
 "id": "kevin-durant",
 "name": "Kevin Durant",
 "handle": "@kdtrey5",
@@ -8922,6 +9264,24 @@
 }
 ],
 "bio": "The Yankees first baseman who played 2,130 straight games and called himself the luckiest man on earth. Iron Horse, soft goodbye",
+"iv": []
+},
+{
+"id": "mikal-bridges",
+"name": "Mikal Bridges",
+"handle": "@mikal_bridges",
+"x": "mikal_bridges",
+"cat": "S",
+"works": [
+{
+"title": "Crossing the Manhattan Bridge",
+"s": "mikal-bridges-07915170s.jpg",
+"l": "mikal-bridges-07915170l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Knicks wing and Villanova reunion piece who has never missed a game. Iron man in blue",
 "iv": []
 },
 {
@@ -8979,6 +9339,24 @@
 }
 ],
 "bio": "Mets first baseman nicknamed the Polar Bear, who set the rookie home run record with 53 in 2019. Queens runs cold and hits hard",
+"iv": []
+},
+{
+"id": "sabrina-ionescu",
+"name": "Sabrina Ionescu",
+"handle": "@sabrina_i20",
+"x": "sabrina_i20",
+"cat": "S",
+"works": [
+{
+"title": "Confetti at Barclays",
+"s": "sabrina-ionescu-7a64e3c5s.jpg",
+"l": "sabrina-ionescu-7a64e3c5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Liberty guard who helped bring New York its first WNBA title in 2024. Deep range, cold nerve",
 "iv": []
 },
 {
@@ -9072,6 +9450,42 @@
 }
 ],
 "bio": "Chef behind Lure Fishbar who leads the kitchen at Flyfish Club. Fish first, fuss last",
+"iv": []
+},
+{
+"id": "keith-mcnally",
+"name": "Keith McNally",
+"handle": "Balthazar, Soho",
+"x": "",
+"cat": "D",
+"works": [
+{
+"title": "The Man Behind the Mirror Wall",
+"s": "keith-mcnally-0e3452cds.jpg",
+"l": "keith-mcnally-0e3452cdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Restaurateur behind Balthazar, Minetta Tavern and a generation of downtown rooms. Every table is known",
+"iv": []
+},
+{
+"id": "kwame-onwuachi",
+"name": "Kwame Onwuachi",
+"handle": "Tatiana, Lincoln Center",
+"x": "",
+"cat": "D",
+"works": [
+{
+"title": "Suya at Lincoln Center",
+"s": "kwame-onwuachi-0f772bf8s.jpg",
+"l": "kwame-onwuachi-0f772bf8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bronx raised chef whose Tatiana at Lincoln Center topped the city's restaurant rankings. The Bronx came uptown",
 "iv": []
 },
 {
@@ -9543,6 +9957,24 @@
 }
 ],
 "bio": "Activist of the Stonewall era who cofounded STAR to house homeless trans youth. Fought the street and the movement",
+"iv": []
+},
+{
+"id": "zohran-mamdani",
+"name": "Zohran Mamdani",
+"handle": "@ZohranKMamdani",
+"x": "ZohranKMamdani",
+"cat": "P",
+"works": [
+{
+"title": "Morning at City Hall",
+"s": "zohran-mamdani-74bd1135s.jpg",
+"l": "zohran-mamdani-74bd1135l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Queens assemblyman who ran a street level campaign and became mayor of New York. The city answers back",
 "iv": []
 }
 ]
