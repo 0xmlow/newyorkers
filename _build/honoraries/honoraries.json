@@ -1025,6 +1025,24 @@
 ]
 },
 {
+"id": "deltasauce",
+"name": "DeltaSauce",
+"handle": "@deltasauce",
+"x": "deltasauce",
+"cat": "A",
+"works": [
+{
+"title": "Three in the Morning Spin Cycle",
+"s": "deltasauce-cba23269s.jpg",
+"l": "deltasauce-cba23269l.jpg",
+"w": 1031,
+"h": 1280
+}
+],
+"bio": "Full time artist and wordsmith making liminal art, curating nostalgia one empty room at a time. He collects MLow too",
+"iv": []
+},
+{
 "id": "derrick-adams",
 "name": "Derrick Adams",
 "handle": "@derrickadamsny",
@@ -4147,24 +4165,6 @@
 }
 ],
 "bio": "A collector known for Rug Radio and a wall of profile pictures. The avatar does the talking",
-"iv": []
-},
-{
-"id": "deltasauce",
-"name": "DeltaSauce",
-"handle": "@deltasauce",
-"x": "deltasauce",
-"cat": "C",
-"works": [
-{
-"title": "Three in the Morning Spin Cycle",
-"s": "deltasauce-cba23269s.jpg",
-"l": "deltasauce-cba23269l.jpg",
-"w": 1031,
-"h": 1280
-}
-],
-"bio": "A collector painted by MLow as a marble youth at a laundromat at three in the morning. Patience is a spin cycle",
 "iv": []
 },
 {
