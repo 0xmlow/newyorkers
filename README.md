@@ -46,32 +46,10 @@ Don't publish copy that states any of these until they're confirmed.
 ## Hosting: GitHub Pages
 
 > **This branch (`claude/new-repo-new-yorkers-u1iphp`) is the dev site at
-> https://dev.n3wyorkers.com/.** `main` is production at https://newyorkers.com/.
+> https://dev.n3wyorkers.com/.** https://n3wyorkers.com/ is the live site on its existing host; don't touch its `@`/`www` DNS records.
 > GitHub Pages serves one branch + one domain per repo, so whichever branch is
 > selected in Settings → Pages is the one that's live.
 
 ### Dev DNS (n3wyorkers.com registrar)
 
 `CNAME` record, host `dev` → `0xmlow.github.io`.
-
-### Production
-
-Served by GitHub Pages (`main` / root) on the domain
-in `CNAME`:
-
-```
-https://newyorkers.com/                            -> index.html (tweet this)
-https://newyorkers.com/newyorkers_poster_16x9.png  -> card image
-```
-
-1. Repo → Settings → Pages → Source: *Deploy from a branch*, `main` / `(root)`.
-   Custom domain should read `newyorkers.com` (it comes from `CNAME`).
-2. DNS at the newyorkers.com registrar (apex domain):
-   - `A` records for `@` → `185.199.108.153`, `185.199.109.153`,
-     `185.199.110.153`, `185.199.111.153`
-   - `CNAME` record `www` → `0xmlow.github.io` (GitHub redirects www to the apex)
-3. Once the records resolve, tick **Enforce HTTPS** in Settings → Pages.
-
-Optional short link from the MLow artist site, as with bloomrun: Squarespace →
-Settings → Advanced → URL Mappings: `/newyorkers -> https://newyorkers.com/ 301`
-(gives `mlow.xyz/newyorkers`).
