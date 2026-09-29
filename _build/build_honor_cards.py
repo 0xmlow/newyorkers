@@ -20,31 +20,28 @@ SITE = os.path.dirname(HERE)
 SRC = os.path.join(SITE, "assets", "honoraries")
 OUT = os.path.join(SITE, "assets", "cards")
 FD = os.path.join(HERE, "honoraries", "fonts")
-VERSION = "2"  # bump to redraw every card after a layout change
+VERSION = "3"  # bump to redraw every card after a layout change
 os.makedirs(OUT, exist_ok=True)
 
 D = json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))
 INK, PAPER, CLOUD, SLATE = (13, 13, 13), (244, 241, 234), (240, 244, 248), (136, 153, 170)
 ACCS = [(215, 255, 31), (255, 46, 99), (0, 229, 255), (255, 176, 32), (179, 136, 255)]
 ACC = {c["code"]: ACCS[i % len(ACCS)] for i, c in enumerate(D["cats"])}
-# The N3W YORKERS logo kit, round 3 (the clean vector lockups): ten concepts, each in five colours,
-# v1..v5 = blue, cyan, pink, bronze, purple. The concept rotates across the cards by a hash of the
-# person, so the set reads as a series; the colour follows the category's accent.
-LOGOS = os.path.join(HERE, "honoraries", "logos")
-FILES = {}
-for f in os.listdir(LOGOS):  # 26-bridge-witness-v1.png: the leading number counts files, not concepts
-    m = re.match(r"\d+-(.+)-v(\d)\.png$", f)
-    if m:
-        FILES.setdefault(m[1], {})[int(m[2])] = f
-CONCEPTS = sorted(FILES)
-VAR = {ACCS[0]: 1, ACCS[1]: 3, ACCS[2]: 2, ACCS[3]: 4, ACCS[4]: 5}
+# The N3W YORKERS logos are MLow's own ChatGPT image gen lockups (the 2026-08-25 shortlist), never the
+# round 3 SVG redraw he rejected. honoraries/logos_chatgpt holds ten of them, trimmed and squared onto
+# their own background. The logo rotates across the cards by a hash of the person, so the set reads
+# as a series; a thin rule in the category accent ties the tile to the card.
+LOGOS = os.path.join(HERE, "honoraries", "logos_chatgpt")
+CONCEPTS = sorted(f for f in os.listdir(LOGOS) if f.endswith(".png"))
 
 
 def logo(p, size):
     k = int(hashlib.sha256(p["id"].encode()).hexdigest(), 16) % len(CONCEPTS)
-    im = Image.open(os.path.join(LOGOS, FILES[CONCEPTS[k]][VAR[ACC[p["cat"]]]])).convert("RGBA").resize((size, size), Image.LANCZOS)
+    im = Image.open(os.path.join(LOGOS, CONCEPTS[k])).convert("RGBA").resize((size, size), Image.LANCZOS)
+    r = size // 12
+    ImageDraw.Draw(im).rounded_rectangle((1, 1, size - 2, size - 2), r, outline=ACC[p["cat"]], width=max(3, size // 45))
     m = Image.new("L", (size, size), 0)
-    ImageDraw.Draw(m).rounded_rectangle((0, 0, size - 1, size - 1), size // 12, fill=255)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, size - 1, size - 1), r, fill=255)
     im.putalpha(m)
     return im
 
