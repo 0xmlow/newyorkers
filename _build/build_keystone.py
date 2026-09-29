@@ -89,6 +89,9 @@ for p in k:
 s = s.replace(m.group(1), json.dumps(k, ensure_ascii=False, separators=(",", ":")), 1)
 subs = [
     ("var IMG = 'img/';", "var IMG = 'assets/keystone/';"),
+    # the image names never change and Cloudflare holds them in browsers for at least 4 hours, so every
+    # request carries the render version from keystone_images.py; a re-render reaches everyone at once
+    ("loader.load(IMG+f.d.id+'s.jpg', function(t){", "loader.load(IMG+f.d.id+'s.jpg?v='+IMGV, function(t){"),
     ('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>', '<script src="assets/three.min.js"></script>'),
     ('<a href="https://n3wyorkers.com" target="_blank" rel="noopener" aria-label="NEW YORKERS by MLow">', '<a href="index.html" aria-label="NEW YORKERS home">'),
     ('<a class="out" id="kLink" href="https://n3wyorkers.com/n/1" target="_blank" rel="noopener">', '<a class="out" id="kLink" href="n/x000.html">'),
@@ -136,7 +139,7 @@ subs = [
 // on screen swaps to the 1280, past about 1100 to the 2400, and swaps back down when it recedes, so
 // only the few pieces near the camera hold big textures. The opened piece never drops below 2400
 // (1280 on phones). Checked five times a second, at most two loads in flight, biggest first.
-var TIERS = ['s','m','l'], tierBusy = 0, tierAt = 0, PA = new THREE.Vector3(), PB = new THREE.Vector3();
+var IMGV = '__IMGV__', TIERS = ['s','m','l'], tierBusy = 0, tierAt = 0, PA = new THREE.Vector3(), PB = new THREE.Vector3();
 function setArt(f, t){ if (GL.f === f) { GL.prev = t; return; } f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }
 function screenW(f){
   var w = f.art.geometry.parameters.width/2;
@@ -166,7 +169,7 @@ function tierTick(now){
 }
 function upTier(f, w){
   f.tierLoading = true; tierBusy++;
-  loader.load(IMG+f.d.id+TIERS[w]+'.jpg', function(t){
+  loader.load(IMG+f.d.id+TIERS[w]+'.jpg?v='+IMGV, function(t){
     prepTex(t); tierBusy--; f.tierLoading = false;
     var old = f.hiTex; f.hiTex = t; f.tier = w; setArt(f, t); if (old) old.dispose();
   }, undefined, function(){ tierBusy--; f.tierLoading = false; });
@@ -194,6 +197,7 @@ head = "\n".join([
 ])
 s = re.sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{esc(desc)}">\n' + head, s, count=1)
 
+s = s.replace("__IMGV__", open(os.path.join(IMG_DST, ".v")).read().strip())
 out = os.path.join(SITE, "keystone.html")
 open(out, "w", encoding="utf-8").write(s)
 print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 3} images and {sum(1 for p in k if p.get('gh'))} wall loops in assets/keystone, {os.path.getsize(out) // 1024} KB")

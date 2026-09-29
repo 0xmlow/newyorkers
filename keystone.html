@@ -382,7 +382,7 @@ function loadNearest(center){
     if (!best) return;
     best.loading = true; inflight++;
     (function(f){
-      loader.load(IMG+f.d.id+'s.jpg', function(t){
+      loader.load(IMG+f.d.id+'s.jpg?v='+IMGV, function(t){
         prepTex(t); f.sTex = t; if (!f.tier) setArt(f, t);
         f.loaded = true; f.loading=false; inflight--; loadedCount++;
         loadEl.textContent = 'Hanging '+loadedCount+' / '+N; if (loadedCount===N) loadEl.classList.add('done');
@@ -394,7 +394,7 @@ function loadNearest(center){
 // on screen swaps to the 1280, past about 1100 to the 2400, and swaps back down when it recedes, so
 // only the few pieces near the camera hold big textures. The opened piece never drops below 2400
 // (1280 on phones). Checked five times a second, at most two loads in flight, biggest first.
-var TIERS = ['s','m','l'], tierBusy = 0, tierAt = 0, PA = new THREE.Vector3(), PB = new THREE.Vector3();
+var IMGV = '2', TIERS = ['s','m','l'], tierBusy = 0, tierAt = 0, PA = new THREE.Vector3(), PB = new THREE.Vector3();
 function setArt(f, t){ if (GL.f === f) { GL.prev = t; return; } f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }
 function screenW(f){
   var w = f.art.geometry.parameters.width/2;
@@ -424,7 +424,7 @@ function tierTick(now){
 }
 function upTier(f, w){
   f.tierLoading = true; tierBusy++;
-  loader.load(IMG+f.d.id+TIERS[w]+'.jpg', function(t){
+  loader.load(IMG+f.d.id+TIERS[w]+'.jpg?v='+IMGV, function(t){
     prepTex(t); tierBusy--; f.tierLoading = false;
     var old = f.hiTex; f.hiTex = t; f.tier = w; setArt(f, t); if (old) old.dispose();
   }, undefined, function(){ tierBusy--; f.tierLoading = false; });
