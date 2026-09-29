@@ -300,7 +300,7 @@ print("motion entries:", len(motion))
 GL = load_json(os.path.join(BUILD, "glitch_index.json"), {}) or {}
 n_gl = 0
 for p in pieces:
-    g = GL.get(p["id"])
+    g = GL.get(p["id"]) or (GL.get(str(p.get("n"))) if p["id"].startswith("x") else None)  # NO. 1 to 3 are x000 to x002
     if g and g.get("mp4"):
         p["gl"] = {"mp4": g["mp4"], "st": g.get("st"), "fam": g.get("fam"), "tag": g.get("tag")}; n_gl += 1
 print("glitch editions attached:", n_gl)
