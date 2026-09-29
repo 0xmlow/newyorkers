@@ -1,8 +1,9 @@
 # generated media: rebuilt by the _build scripts, too large for git
 assets/t/
+# The Museum branch force adds the 7,648 thumbnails the museum hangs (assets/t),
+# so the museum runs straight from a checkout. The rest of assets/t stays local.
 assets/glitch/
 assets/motion/
-assets/atlas/
 assets/mt/
 assets/stickers/
 assets/launch/
@@ -27,13 +28,13 @@ n/
 h/
 rooms/
 !_build/museum/src/rooms/
+!assets/museum/rooms/
 learn/
 feeds/
 api/
 sitemap.xml
 llms.txt
 llms-full.txt
-assets/museum/rooms/
 
 # the scripts keep timestamped copies beside the file they rewrite
 *.bak-*
