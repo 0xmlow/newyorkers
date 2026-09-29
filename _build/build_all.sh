@@ -33,6 +33,7 @@ python3 build_profile.py
 python3 build_shop.py || echo "  shop build skipped (storefront unreachable); the last catalog stands"
 python3 build_prints.py   # local: must not be skipped, the buy buttons read it
 python3 build_links.py
+python3 keystone_images.py   # sharp wall images and loops from the mint kit masters; skips what is current
 python3 build_keystone.py
 python3 build_honor_cards.py
 python3 build_honoraries.py

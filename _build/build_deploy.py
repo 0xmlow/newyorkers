@@ -178,7 +178,10 @@ for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion
             a, b = os.path.join(src, f), os.path.join(dst, f)
             if os.path.isdir(a): continue
             if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b) or int(os.path.getmtime(a)) != int(os.path.getmtime(b)):
-                shutil.copy2(a, b)
+                # APFS clone keeps the package from doubling the disk (the Keystone wall loops alone are a GB);
+                # -p keeps the mtime this comparison reads. Plain copy wherever cloning is not possible.
+                if os.path.exists(b): os.remove(b)
+                if subprocess.run(["cp", "-c", "-p", a, b], capture_output=True).returncode != 0: shutil.copy2(a, b)
         # drop stale
         keep = set(os.listdir(src))
         for f in os.listdir(dst):

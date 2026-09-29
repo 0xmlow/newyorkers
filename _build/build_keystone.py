@@ -5,7 +5,8 @@ The design is hand made and lives in _build/keystone/src.html. It was delivered 
 folder (KEYSTONE 111 MARKETING KIT 2026-09-18/06_3D_GALLERY) with its own img/ and a CDN copy of
 Three.js. This script turns that file into a page of the census site:
 
-  - IMG points at assets/keystone/ ({id}s.jpg 640 wide for the wall, {id}l.jpg 1280 wide on open)
+  - IMG points at assets/keystone/, three sizes per piece from the masters (keystone_images.py); the
+    page swaps each piece to the size it fills on screen, so near pieces are sharp and far ones light
   - Three.js comes from assets/three.min.js (the same r128 the museum ships) instead of cdnjs
   - the logo goes home to index.html and "See it in the census" opens the piece's own record page,
     n/<site id>.html. The site keys records by data.js id, not by census number: the three Era I
@@ -13,8 +14,6 @@ Three.js. This script turns that file into a page of the census site:
   - head gets the site's icon, theme colour and Open Graph tags; build_seo.py adds the rest
 
 To take a new design drop: copy the new index.html over _build/keystone/src.html and rerun.
-Images are synced from the marketing kit folder when it is present; when it is not, whatever
-already sits in assets/keystone/ stands, and the build fails only if a file is missing.
 Run before build_seo.py; part of build_all.sh.
 """
 import json, os, re, shutil, sys
@@ -22,7 +21,6 @@ from page_shell import cfg, esc
 
 HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
 SRC = os.path.join(HERE, "keystone", "src.html")
-IMG_SRC = os.path.join(os.path.dirname(SITE), "KEYSTONE 111 MARKETING KIT 2026-09-18", "06_3D_GALLERY", "img")
 IMG_DST = os.path.join(SITE, "assets", "keystone")
 URL = cfg()["siteUrl"]
 
@@ -80,17 +78,12 @@ nogl = [p["n"] for p in k if not p.get("gl")]
 print(f"  glitch loops on the wall: {len(k) - len(nogl)} of {len(k)}" + (f", none for NO. {nogl}" if nogl else ""))
 
 # ---------- images ----------
-if os.path.isdir(IMG_SRC):
-    os.makedirs(IMG_DST, exist_ok=True)
-    copied = 0
-    for f in os.listdir(IMG_SRC):
-        if not f.endswith(".jpg"): continue
-        a, b = os.path.join(IMG_SRC, f), os.path.join(IMG_DST, f)
-        if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b):
-            shutil.copy2(a, b); copied += 1
-    if copied: print(f"  synced {copied} images from the marketing kit")
-lost = [f"{p['id']}{sz}.jpg" for p in k for sz in ("s", "l") if not os.path.exists(os.path.join(IMG_DST, f"{p['id']}{sz}.jpg"))]
-if lost: raise SystemExit(f"keystone: {len(lost)} images missing from assets/keystone, e.g. {lost[:4]}")
+# keystone_images.py renders {id}s/m/l.jpg (640, 1280, 2400) from the mint kit's lead masters and the
+# wall's 1920 glitch loops {id}g.mp4. It runs first in build_all.sh; this only checks they are there.
+lost = [f"{p['id']}{sz}.jpg" for p in k for sz in ("s", "m", "l") if not os.path.exists(os.path.join(IMG_DST, f"{p['id']}{sz}.jpg"))]
+if lost: raise SystemExit(f"keystone: {len(lost)} images missing from assets/keystone, e.g. {lost[:4]}. Run keystone_images.py")
+for p in k:
+    if os.path.exists(os.path.join(IMG_DST, f"{p['id']}g.mp4")): p["gh"] = f"assets/keystone/{p['id']}g.mp4"
 
 # ---------- rewrite the page ----------
 s = s.replace(m.group(1), json.dumps(k, ensure_ascii=False, separators=(",", ":")), 1)
@@ -129,9 +122,57 @@ subs = [
      "  var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'auto';\n"
      "  GL = {f:f, v:v, t:null, prev:f.art.material.map};\n"
      "  v.addEventListener('playing', function(){ if (GL.v !== v || GL.t) return; var t = new THREE.VideoTexture(v); t.encoding = THREE.sRGBEncoding; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; GL.t = t; f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; });\n"
-     "  v.src = f.d.gl; var p = v.play(); if (p && p.catch) p.catch(function(){ if (GL.v === v) glitchOff(); });\n"
+     "  v.src = (!narrow && f.d.gh) ? f.d.gh : f.d.gl; var p = v.play(); if (p && p.catch) p.catch(function(){ if (GL.v === v) glitchOff(); });\n"
      "  var b = document.getElementById('kGl'); if (b) b.setAttribute('aria-pressed','true');\n"
      "}"),
+    # sharpness: every piece swaps between s, m and l by how wide it is on screen right now
+    ("prepTex(t); if (!f.hi){ f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }",
+     "prepTex(t); f.sTex = t; if (!f.tier) setArt(f, t);"),
+    ("""function loadHi(f){
+  if (f.hi || f.hiLoading) return; f.hiLoading = true;
+  loader.load(IMG+f.d.id+'l.jpg', function(t){ prepTex(t); f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; f.hi = true; f.hiLoading=false; }, undefined, function(){ f.hiLoading=false; });
+}""",
+     """// Sharpness by screen size. Every piece hangs at 640 wide; any piece wider than about 560 device pixels
+// on screen swaps to the 1280, past about 1100 to the 2400, and swaps back down when it recedes, so
+// only the few pieces near the camera hold big textures. The opened piece never drops below 2400
+// (1280 on phones). Checked five times a second, at most two loads in flight, biggest first.
+var TIERS = ['s','m','l'], tierBusy = 0, tierAt = 0, PA = new THREE.Vector3(), PB = new THREE.Vector3();
+function setArt(f, t){ if (GL.f === f) { GL.prev = t; return; } f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }
+function screenW(f){
+  var w = f.art.geometry.parameters.width/2;
+  PA.set(-w,0,0).applyMatrix4(f.art.matrixWorld).project(camera);
+  PB.set(w,0,0).applyMatrix4(f.art.matrixWorld).project(camera);
+  if (PA.z > 1 || PB.z > 1) return 0;
+  if ((PA.x > 1.2 && PB.x > 1.2) || (PA.x < -1.2 && PB.x < -1.2) || Math.abs(PA.y) > 1.3) return 0;
+  return Math.abs(PB.x - PA.x) / 2 * renderer.domElement.width;
+}
+function tierTick(now){
+  if (now - tierAt < 200) return; tierAt = now;
+  var up = [];
+  for (var i=0;i<N;i++){
+    var f = frames[i]; if (!f.sTex || f.tierLoading) continue;
+    var px = screenW(f), cur = f.tier || 0;
+    var w = px > 1100 ? 2 : px > 560 ? 1 : 0;
+    if (f === S.focusF) w = Math.max(w, narrow ? 1 : 2);
+    var target = cur;
+    if (w > cur) target = w;
+    else if (w < cur && f !== S.focusF && !(cur === 2 ? px > 850 : px > 420)) target = w;
+    if (target === cur) continue;
+    if (target === 0){ var old = f.hiTex; f.hiTex = null; f.tier = 0; setArt(f, f.sTex); if (old) old.dispose(); }
+    else up.push([px, f, target]);
+  }
+  up.sort(function(a,b){ return b[0]-a[0]; });
+  for (var j=0; j<up.length && tierBusy<2; j++) upTier(up[j][1], up[j][2]);
+}
+function upTier(f, w){
+  f.tierLoading = true; tierBusy++;
+  loader.load(IMG+f.d.id+TIERS[w]+'.jpg', function(t){
+    prepTex(t); tierBusy--; f.tierLoading = false;
+    var old = f.hiTex; f.hiTex = t; f.tier = w; setArt(f, t); if (old) old.dispose();
+  }, undefined, function(){ tierBusy--; f.tierLoading = false; });
+}
+function loadHi(f){ tierAt = 0; }"""),
+    ("  loadNearest(mod(S.t, N));\n  renderer.render(scene, camera);", "  loadNearest(mod(S.t, N));\n  tierTick(now);\n  renderer.render(scene, camera);"),
 ]
 for old, new in subs:
     if s.count(old) != 1: raise SystemExit(f"keystone: expected exactly one match for {old[:60]!r}, found {s.count(old)}. The design changed; update build_keystone.py")
@@ -155,4 +196,4 @@ s = re.sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name=
 
 out = os.path.join(SITE, "keystone.html")
 open(out, "w", encoding="utf-8").write(s)
-print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 2} images in assets/keystone, {os.path.getsize(out) // 1024} KB")
+print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 3} images and {sum(1 for p in k if p.get('gh'))} wall loops in assets/keystone, {os.path.getsize(out) // 1024} KB")
