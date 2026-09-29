@@ -82,8 +82,15 @@ print(f"  glitch loops on the wall: {len(k) - len(nogl)} of {len(k)}" + (f", non
 # wall's 1920 glitch loops {id}g.mp4. It runs first in build_all.sh; this only checks they are there.
 lost = [f"{p['id']}{sz}.jpg" for p in k for sz in ("s", "m", "l") if not os.path.exists(os.path.join(IMG_DST, f"{p['id']}{sz}.jpg"))]
 if lost: raise SystemExit(f"keystone: {len(lost)} images missing from assets/keystone, e.g. {lost[:4]}. Run keystone_images.py")
+STATES = json.load(open(os.path.join(HERE, "keystone_states.json")))
 for p in k:
-    if os.path.exists(os.path.join(IMG_DST, f"{p['id']}g.mp4")): p["gh"] = f"assets/keystone/{p['id']}g.mp4"
+    st_ = STATES.get(str(p["n"]))
+    if not st_: raise SystemExit(f"keystone: no states for NO. {p['n']}. Run keystone_images.py")
+    for x in st_:
+        # phones play the census's lighter 1280 copy of the MOSH LAB glitch
+        if x.get("u") == f"assets/keystone/{p['id']}g.mp4" and p.get("gl"): x["u2"] = p["gl"]
+    p["st"] = st_
+    for key in ("gl", "k", "v"): p.pop(key, None)
 
 # ---------- rewrite the page ----------
 s = s.replace(m.group(1), json.dumps(k, ensure_ascii=False, separators=(",", ":")), 1)
@@ -97,37 +104,88 @@ subs = [
     ('<a class="out" id="kLink" href="https://n3wyorkers.com/n/1" target="_blank" rel="noopener">', '<a class="out" id="kLink" href="n/x000.html">'),
     ("kLink').href='https://n3wyorkers.com/n/'+d.n", "kLink').href='n/'+d.sid+'.html'"),
     ("<title>Keystone 111</title>", "<title>NEW YORKERS · Keystone 111</title>"),
-    # glitch chip: a button that swaps the framed painting for its glitch loop, and back
+    # state buttons: every chip on the card is a button that puts that state in the frame on the wall;
+    # pressing the same chip again steps through that kind's states (motion 2/5)
     ("  #card .chip.live{border-color:var(--blue);color:var(--blue-soft)}\n",
      "  #card .chip.live{border-color:var(--blue);color:var(--blue-soft)}\n"
      "  #card button.chip{background:transparent;cursor:pointer}\n"
      "  #card button.chip:hover{background:rgba(41,98,255,.14)}\n"
      "  #card button.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}\n"
-     "  #card button.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}\n"),
+     "  #card button.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}\n"
+     "  #card .statelbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:-8px 0 16px;min-height:14px}\n"
+     "  #card .statelbl.loading::after{content:' · loading';color:var(--blue-soft)}\n"),
+    ('<div class="states" id="kStates"></div>', '<div class="states" id="kStates"></div>\n  <div class="statelbl" id="kStateLbl" aria-live="polite"></div>'),
     ("  ['still','motion','glitch','dither'].forEach(function(k){ var c=document.createElement('span'); c.className='chip'+(d.k.indexOf(k)>=0?' live':''); c.textContent=k==='still'?'painted':k; c.style.opacity=d.k.indexOf(k)>=0?'1':'.35'; st.appendChild(c); });",
-     "  glitchOff();\n"
-     "  ['still','motion','glitch','dither'].forEach(function(k){ var play=k==='glitch'&&d.gl, c=document.createElement(play?'button':'span'); c.className='chip'+(d.k.indexOf(k)>=0?' live':''); c.textContent=k==='still'?'painted':k; c.style.opacity=d.k.indexOf(k)>=0?'1':'.35';\n"
-     "    if (play){ c.type='button'; c.id='kGl'; c.title='Play the glitch loop on the wall'; c.setAttribute('aria-pressed','false'); c.addEventListener('click',function(){ if (GL.f===f) glitchOff(); else glitchOn(f); }); }\n"
-     "    st.appendChild(c); });"),
+     "  stateOff(); renderChips(f);"),
     ("function closeCard(){ card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }",
-     "function closeCard(){ glitchOff(); card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }\n"
-     "// One glitch plays at a time, on the open piece. The painting's texture is kept and put back on stop.\n"
-     "var GL = {f:null, v:null, t:null, prev:null};\n"
-     "function glitchOff(){\n"
-     "  if (!GL.f) return;\n"
-     "  var m = GL.f.art.material; if (m.map === GL.t) { m.map = GL.prev; m.needsUpdate = true; }\n"
-     "  GL.v.pause(); GL.v.removeAttribute('src'); GL.v.load(); if (GL.t) GL.t.dispose();\n"
-     "  GL = {f:null, v:null, t:null, prev:null};\n"
-     "  var b = document.getElementById('kGl'); if (b) b.setAttribute('aria-pressed','false');\n"
-     "}\n"
-     "function glitchOn(f){\n"
-     "  glitchOff();\n"
-     "  var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'auto';\n"
-     "  GL = {f:f, v:v, t:null, prev:f.art.material.map};\n"
-     "  v.addEventListener('playing', function(){ if (GL.v !== v || GL.t) return; var t = new THREE.VideoTexture(v); t.encoding = THREE.sRGBEncoding; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; GL.t = t; f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; });\n"
-     "  v.src = (!narrow && f.d.gh) ? f.d.gh : f.d.gl; var p = v.play(); if (p && p.catch) p.catch(function(){ if (GL.v === v) glitchOff(); });\n"
-     "  var b = document.getElementById('kGl'); if (b) b.setAttribute('aria-pressed','true');\n"
-     "}"),
+     """function closeCard(){ stateOff(); card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }
+// ---------- states ----------
+// d.st lists every state on the token in mint order: {k: still|motion|glitch|dither, l: label, u: url
+// (null for the lead painting, which is the tiered s/m/l), v: 1 for video, a: aspect}. One state shows at a
+// time, on the open piece, in its own frame. Media of another shape (the square loops) is matted inside the
+// frame rather than stretched. The painting's texture is kept and put back when the state is closed.
+var ST = {f:null, i:0};
+function stateOff(){
+  if (!ST.f) return;
+  var f = ST.f, m = f.art.material;
+  if (ST.t && m.map === ST.t) { m.map = ST.prev; m.needsUpdate = true; }
+  if (ST.v) { ST.v.pause(); ST.v.removeAttribute('src'); ST.v.load(); }
+  if (ST.t) ST.t.dispose();
+  fitArt(f, 0);
+  ST = {f:null, i:0};
+}
+function fitArt(f, a){
+  // contain: the media keeps its shape inside the frame, on an ink backing between the matte and the art
+  var fa = f.d.ar, sx = 1, sy = 1;
+  if (a && Math.abs(a-fa)/fa >= 0.02) { if (a < fa) sx = a/fa; else sy = fa/a; }
+  f.art.scale.set(sx, sy, 1);
+  if (sx < 1 || sy < 1) {
+    if (!f.back) { f.back = new THREE.Mesh(f.art.geometry, new THREE.MeshBasicMaterial({color:0x0d0d0d})); f.back.position.z = 0.035; f.group.add(f.back); }
+    f.back.visible = true;
+  } else if (f.back) f.back.visible = false;
+}
+function showState(f, i){
+  stateOff();
+  if (i) {
+    var s = f.d.st[i], tok = {};
+    ST = {f:f, i:i, t:null, v:null, prev:f.art.material.map, tok:tok};
+    var apply = function(t){
+      if (ST.tok !== tok) { t.dispose(); return; }
+      ST.t = t; f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; fitArt(f, s.a);
+      document.getElementById('kStateLbl').classList.remove('loading');
+    };
+    if (s.v) {
+      var v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline',''); v.preload = 'auto'; ST.v = v;
+      v.addEventListener('playing', function(){ if (ST.tok !== tok || ST.t) return; var t = new THREE.VideoTexture(v); t.encoding = THREE.sRGBEncoding; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; apply(t); });
+      v.src = (narrow && s.u2) ? s.u2 : s.u+'?v='+IMGV;
+      var p = v.play(); if (p && p.catch) p.catch(function(){ if (ST.tok === tok) { stateOff(); renderChips(f); } });
+    } else {
+      loader.load(s.u+'?v='+IMGV, function(t){ prepTex(t); if (s.k === 'dither') t.magFilter = THREE.NearestFilter; apply(t); }, undefined, function(){ if (ST.tok === tok) { stateOff(); renderChips(f); } });
+    }
+  }
+  renderChips(f);
+  if (i) document.getElementById('kStateLbl').classList.add('loading');
+}
+function renderChips(f){
+  var d = f.d, st = document.getElementById('kStates'); st.innerHTML = '';
+  var n = document.createElement('span'); n.className = 'n'; n.textContent = d.st.length+' state'+(d.st.length===1?'':'s'); st.appendChild(n);
+  var curI = ST.f === f ? ST.i : 0, cur = d.st[curI].k;
+  ['still','motion','glitch','dither'].forEach(function(k){
+    var idx = []; d.st.forEach(function(s,j){ if (s.k === k) idx.push(j); });
+    var name = k === 'still' ? 'painted' : k, on = idx.length > 0, pos = idx.indexOf(curI);
+    var c = document.createElement(on ? 'button' : 'span');
+    c.className = 'chip'+(on ? ' live' : ''); c.style.opacity = on ? '1' : '.35';
+    c.textContent = name + (k === cur && idx.length > 1 ? ' '+(pos+1)+'/'+idx.length : (idx.length > 1 ? ' '+idx.length : ''));
+    if (on) {
+      c.type = 'button'; c.setAttribute('aria-pressed', k === cur ? 'true' : 'false');
+      c.title = idx.length > 1 ? 'Show the '+name+' states on the wall. Press again for the next one' : 'Show the '+name+' state on the wall';
+      c.addEventListener('click', function(){ showState(f, k === cur ? idx[(pos+1) % idx.length] : idx[0]); });
+    }
+    st.appendChild(c);
+  });
+  var lb = document.getElementById('kStateLbl'); lb.classList.remove('loading');
+  lb.textContent = d.st[curI].l + ' · state ' + (curI+1) + ' of ' + d.st.length;
+}"""),
     # sharpness: every piece swaps between s, m and l by how wide it is on screen right now
     ("prepTex(t); if (!f.hi){ f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }",
      "prepTex(t); f.sTex = t; if (!f.tier) setArt(f, t);"),
@@ -140,7 +198,7 @@ subs = [
 // only the few pieces near the camera hold big textures. The opened piece never drops below 2400
 // (1280 on phones). Checked five times a second, at most two loads in flight, biggest first.
 var IMGV = '__IMGV__', TIERS = ['s','m','l'], tierBusy = 0, tierAt = 0, PA = new THREE.Vector3(), PB = new THREE.Vector3();
-function setArt(f, t){ if (GL.f === f) { GL.prev = t; return; } f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }
+function setArt(f, t){ if (ST.f === f) { ST.prev = t; if (ST.t) return; } f.art.material.map = t; f.art.material.color.set(0xffffff); f.art.material.needsUpdate = true; }
 function screenW(f){
   var w = f.art.geometry.parameters.width/2;
   PA.set(-w,0,0).applyMatrix4(f.art.matrixWorld).project(camera);
@@ -200,4 +258,4 @@ s = re.sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name=
 s = s.replace("__IMGV__", open(os.path.join(IMG_DST, ".v")).read().strip())
 out = os.path.join(SITE, "keystone.html")
 open(out, "w", encoding="utf-8").write(s)
-print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 3} images and {sum(1 for p in k if p.get('gh'))} wall loops in assets/keystone, {os.path.getsize(out) // 1024} KB")
+print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 3} images and {sum(len(p['st']) for p in k)} states in assets/keystone, {os.path.getsize(out) // 1024} KB")

@@ -82,6 +82,77 @@ def glitch_all(k):
     print(f"keystone glitch loops: {sum(1 for _, d in res if d)} encoded, {len(jobs)} total")
     return {pid for pid, _ in res}
 
+
+# ---------- every state of every token, for the card's state buttons ----------
+# One flat file per state beside the wall images (the deploy packager does not descend into folders):
+#   {id}_{nn}.jpg  extra painted states, 2400 wide like the lead
+#   {id}_{nn}.png  dithers, kept PNG so the pattern survives, nearest-neighbour down to 2560 wide at most
+#   {id}_{nn}.mp4  motion clips and glitch loops, up to 1920 wide, no audio
+# The lead painting is state 1 and uses the tiered s/m/l above. The MOSH LAB glitch reuses {id}g.mp4.
+# Writes keystone_states.json, which build_keystone.py puts on each piece as st.
+import re as _re, subprocess as _sp
+
+def _probe(path):
+    e = _sp.run([FF, "-i", path], capture_output=True, text=True).stderr
+    m = _re.search(r"Video:.*?(\d{2,5})x(\d{2,5})", e)
+    return (int(m.group(1)), int(m.group(2))) if m else None
+
+def _fresh(dst, src): return os.path.exists(dst) and os.path.getmtime(dst) > os.path.getmtime(src)
+
+def state_job(job):
+    pid, st, gsrc = job
+    src, kind, nn = st["source"], st["kind"], st["state"]
+    rec = {"k": kind, "l": st["label"]}
+    if kind == "still" and nn == 1:
+        rec["u"] = None
+        w, h = Image.open(src).size; rec["a"] = round(w / h, 4); return rec
+    if kind == "still":
+        dst = os.path.join(OUT, f"{pid}_{nn:02d}.jpg")
+        im = Image.open(src)
+        if not _fresh(dst, src):
+            im = im.convert("RGB"); ww = min(2400, im.width)
+            if ww < im.width:
+                im = im.resize((ww, round(im.height * ww / im.width)), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=0.6, percent=55, threshold=2))
+            im.save(dst, "JPEG", quality=90, subsampling=0, optimize=True, progressive=True)
+        w, h = Image.open(dst).size
+    elif kind == "dither":
+        dst = os.path.join(OUT, f"{pid}_{nn:02d}.png")
+        if not _fresh(dst, src):
+            im = Image.open(src)
+            if im.width > 2560: im = im.resize((2560, round(im.height * 2560 / im.width)), Image.NEAREST)
+            im.save(dst, "PNG", optimize=True)
+        w, h = Image.open(dst).size
+    else:
+        if kind == "glitch" and src == gsrc and os.path.exists(os.path.join(OUT, f"{pid}g.mp4")):
+            dst = os.path.join(OUT, f"{pid}g.mp4")
+        else:
+            dst = os.path.join(OUT, f"{pid}_{nn:02d}.mp4")
+            if not _fresh(dst, src):
+                r = _sp.run([FF, "-y", "-loglevel", "error", "-i", src, "-vf", "scale='min(1920,iw)':-2:flags=lanczos,format=yuv420p",
+                             "-c:v", "libx264", "-movflags", "+faststart", "-crf", "23" if kind == "glitch" else "21", "-preset", "slow", "-an", dst], capture_output=True)
+                if r.returncode: raise SystemExit(f"keystone state {pid}/{nn}: {r.stderr.decode()[-200:]}")
+        w, h = _probe(dst)
+        rec["v"] = 1
+    rec["u"] = "assets/keystone/" + os.path.basename(dst); rec["a"] = round(w / h, 4)
+    return rec
+
+def states_all(k):
+    tok = {}
+    for d in os.listdir(KIT):
+        tj = os.path.join(KIT, d, "token.json")
+        if os.path.exists(tj):
+            t = json.load(open(tj)); tok[t["census_number"]] = t["states"]
+    jobs, where = [], []
+    for p in k:
+        gsrc = glitch_src(p["n"])
+        for i, st in enumerate(tok[p["n"]]):
+            jobs.append((p["id"], st, gsrc)); where.append((p["n"], i))
+    with ProcessPoolExecutor(4) as ex: recs = list(ex.map(state_job, jobs, chunksize=2))
+    out = {}
+    for (n, i), r in zip(where, recs): out.setdefault(str(n), []).append(r)
+    json.dump(out, open(os.path.join(HERE, "keystone_states.json"), "w"), separators=(",", ":"))
+    print(f"keystone states: {len(recs)} across {len(out)} pieces")
+
 if __name__ == "__main__":
     k = json.loads(sys.argv[1]) if len(sys.argv) > 1 else None
     if k is None:
@@ -93,5 +164,6 @@ if __name__ == "__main__":
     with ProcessPoolExecutor(6) as ex: res = list(ex.map(render, [(p["id"], L[p["n"]]) for p in k]))
     open(os.path.join(OUT, ".v"), "w").write(VERSION)
     glitch_all(k)
+    states_all(k)
     print(f"keystone images: {sum(len(d) for _, d in res)} rendered, {3*len(k) - sum(len(d) for _, d in res)} current")
 
