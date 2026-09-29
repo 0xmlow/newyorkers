@@ -39,7 +39,8 @@ def handle(p):
         return f'<a class="hd" href="https://x.com/{e(p["x"])}" target="_blank" rel="noopener">{e(p["handle"])}</a>'
     if p["handle"]:
         return f'<span class="hd">{e(p["handle"])}</span>'
-    return f'<span class="hd none">NEW YORKERS NO. {p["works"][0]["num"]:04d}</span>'
+    n = p["works"][0].get("num")  # census pieces carry a number; portraits painted later do not
+    return f'<span class="hd none">NEW YORKERS NO. {n:04d}</span>' if n else ""
 
 
 def card(i, p):

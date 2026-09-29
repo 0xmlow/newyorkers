@@ -454,6 +454,24 @@
 "iv": []
 },
 {
+"id": "based-bashobits-eth",
+"name": "based.bashobits.eth",
+"handle": "@MobilitySignal",
+"x": "MobilitySignal",
+"cat": "A",
+"works": [
+{
+"title": "The Gold Ring in the Armory",
+"s": "based-bashobits-eth-1ade6c55s.jpg",
+"l": "based-bashobits-eth-1ade6c55l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Artist and collector working bit by bit, with Transdimensional Trippers in the vault. Based, and building",
+"iv": []
+},
+{
 "id": "batzdu",
 "name": "Batzdu",
 "handle": "@batzdu",
@@ -653,8 +671,8 @@
 {
 "id": "brendan-dawes",
 "name": "Brendan Dawes",
-"handle": "@brendandawes",
-"x": "brendandawes",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -1092,8 +1110,8 @@
 {
 "id": "david-henry-nobody-jr",
 "name": "David Henry Nobody Jr",
-"handle": "davidhenrynobodyjr on IG",
-"x": "",
+"handle": "@davidhenrynobo1",
+"x": "davidhenrynobo1",
 "cat": "A",
 "works": [
 {
@@ -1153,8 +1171,8 @@
 {
 "id": "derrick-adams",
 "name": "Derrick Adams",
-"handle": "@derrickadamsny",
-"x": "derrickadamsny",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -1189,8 +1207,8 @@
 {
 "id": "diana-sinclair",
 "name": "Diana Sinclair",
-"handle": "@itsdianasinclair",
-"x": "",
+"handle": "@dianasinclair",
+"x": "dianasinclair",
 "cat": "A",
 "works": [
 {
@@ -1314,8 +1332,8 @@
 {
 "id": "efdot",
 "name": "Efdot",
-"handle": "@efdot",
-"x": "efdot",
+"handle": "@EfdotStudio",
+"x": "EfdotStudio",
 "cat": "A",
 "works": [
 {
@@ -1350,8 +1368,8 @@
 {
 "id": "emily-xie",
 "name": "Emily Xie",
-"handle": "@emilyxie",
-"x": "emilyxie",
+"handle": "@emilyxxie",
+"x": "emilyxxie",
 "cat": "A",
 "works": [
 {
@@ -1386,8 +1404,8 @@
 {
 "id": "ezra-miller",
 "name": "Ezra Miller",
-"handle": "@ezramiller",
-"x": "ezramiller",
+"handle": "@ezzzrrra",
+"x": "ezzzrrra",
 "cat": "A",
 "works": [
 {
@@ -1422,8 +1440,8 @@
 {
 "id": "frank-ape",
 "name": "Frank Ape",
-"handle": "@frankape",
-"x": "frankape",
+"handle": "@FrankApeWorld",
+"x": "FrankApeWorld",
 "cat": "A",
 "works": [
 {
@@ -1458,8 +1476,8 @@
 {
 "id": "futura",
 "name": "Futura",
-"handle": "@futuradosmil",
-"x": "futuradosmil",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -1734,8 +1752,8 @@
 {
 "id": "ix-shells",
 "name": "Ix Shells",
-"handle": "@ixshells",
-"x": "ixshells",
+"handle": "@ix_shells",
+"x": "ix_shells",
 "cat": "A",
 "works": [
 {
@@ -1913,8 +1931,8 @@
 {
 "id": "jen-stark",
 "name": "Jen Stark",
-"handle": "@jenstark",
-"x": "jenstark",
+"handle": "@Jen_Stark",
+"x": "Jen_Stark",
 "cat": "A",
 "works": [
 {
@@ -1967,8 +1985,8 @@
 {
 "id": "j-n",
 "name": "Jæn",
-"handle": "jaen.eth",
-"x": "",
+"handle": "@jaendotart",
+"x": "jaendotart",
 "cat": "A",
 "works": [
 {
@@ -2057,8 +2075,8 @@
 {
 "id": "julie-pacino",
 "name": "Julie Pacino",
-"handle": "@juliepacino",
-"x": "juliepacino",
+"handle": "@Julie_Pacino",
+"x": "Julie_Pacino",
 "cat": "A",
 "works": [
 {
@@ -2136,8 +2154,8 @@
 {
 "id": "kaws",
 "name": "KAWS",
-"handle": "@kaws",
-"x": "kaws",
+"handle": "kaws on IG",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -2175,8 +2193,8 @@
 {
 "id": "kenny-schachter",
 "name": "Kenny Schachter",
-"handle": "@kennyschachter",
-"x": "kennyschachter",
+"handle": "@kennyschac",
+"x": "kennyschac",
 "cat": "A",
 "works": [
 {
@@ -2193,8 +2211,8 @@
 {
 "id": "kenny-scharf",
 "name": "Kenny Scharf",
-"handle": "@kennyscharf",
-"x": "kennyscharf",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -2362,8 +2380,8 @@
 {
 "id": "leo-villareal",
 "name": "Leo Villareal",
-"handle": "@leovillareal",
-"x": "leovillareal",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -2380,8 +2398,8 @@
 {
 "id": "licia-he",
 "name": "Licia He",
-"handle": "@liciahe",
-"x": "liciahe",
+"handle": "@Licia_He",
+"x": "Licia_He",
 "cat": "A",
 "works": [
 {
@@ -2448,8 +2466,8 @@
 {
 "id": "mad-dog-jones",
 "name": "Mad Dog Jones",
-"handle": "@maddogjones",
-"x": "maddogjones",
+"handle": "@Mad_Dog_Jones",
+"x": "Mad_Dog_Jones",
 "cat": "A",
 "works": [
 {
@@ -2484,8 +2502,8 @@
 {
 "id": "marina-abramovic",
 "name": "Marina Abramovic",
-"handle": "@abramovicm",
-"x": "abramovicm",
+"handle": "@ArtistisPresent",
+"x": "ArtistisPresent",
 "cat": "A",
 "works": [
 {
@@ -2617,8 +2635,8 @@
 {
 "id": "maya-man",
 "name": "Maya Man",
-"handle": "@mayaontheinter",
-"x": "mayaontheinter",
+"handle": "@mayaonthenet",
+"x": "mayaonthenet",
 "cat": "A",
 "works": [
 {
@@ -2847,8 +2865,8 @@
 {
 "id": "nate-mohler",
 "name": "Nate Mohler",
-"handle": "@natemohler",
-"x": "natemohler",
+"handle": "@NateMohlerArt",
+"x": "NateMohlerArt",
 "cat": "A",
 "works": [
 {
@@ -2890,8 +2908,8 @@
 {
 "id": "nicole-ruggiero",
 "name": "Nicole Ruggiero",
-"handle": "@nicoleruggiero",
-"x": "nicoleruggiero",
+"handle": "@_NicoleRuggiero",
+"x": "_NicoleRuggiero",
 "cat": "A",
 "works": [
 {
@@ -3048,8 +3066,8 @@
 {
 "id": "osinachi",
 "name": "Osinachi",
-"handle": "@osinachi",
-"x": "osinachi",
+"handle": "@osinachiart",
+"x": "osinachiart",
 "cat": "A",
 "works": [
 {
@@ -3468,8 +3486,8 @@
 {
 "id": "roses",
 "name": "roses",
-"handle": "roses on SuperRare",
-"x": "",
+"handle": "@0xRoses0x",
+"x": "0xRoses0x",
 "cat": "A",
 "works": [
 {
@@ -3867,8 +3885,8 @@
 {
 "id": "swoon",
 "name": "Swoon",
-"handle": "@swoonhq",
-"x": "swoonhq",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -3921,8 +3939,8 @@
 {
 "id": "tom-sachs",
 "name": "Tom Sachs",
-"handle": "@tomsachs",
-"x": "tomsachs",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -3939,8 +3957,8 @@
 {
 "id": "trevor-andrew",
 "name": "Trevor Andrew",
-"handle": "@trevorandrew",
-"x": "trevorandrew",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -4043,8 +4061,8 @@
 {
 "id": "vanessa-rosa",
 "name": "Vanessa Rosa",
-"handle": "@vanessa_rosa",
-"x": "vanessa_rosa",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -4061,8 +4079,8 @@
 {
 "id": "vhils",
 "name": "Vhils",
-"handle": "@vhils",
-"x": "vhils",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -4079,8 +4097,8 @@
 {
 "id": "victor-maury",
 "name": "Victor Maury",
-"handle": "@victor_maury",
-"x": "victor_maury",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -4316,8 +4334,8 @@
 {
 "id": "zhc",
 "name": "ZHC",
-"handle": "@zhcomicart",
-"x": "zhcomicart",
+"handle": "",
+"x": "",
 "cat": "A",
 "works": [
 {
@@ -4352,8 +4370,8 @@
 {
 "id": "0xrhett-eth",
 "name": "0xrhett.eth",
-"handle": "0xrhett.eth",
-"x": "",
+"handle": "@rhett",
+"x": "rhett",
 "cat": "C",
 "works": [
 {
@@ -4370,8 +4388,8 @@
 {
 "id": "0xygendebt",
 "name": "0xygendebt",
-"handle": "0xygendebt.eth",
-"x": "",
+"handle": "@O2debt",
+"x": "O2debt",
 "cat": "C",
 "works": [
 {
@@ -4483,24 +4501,6 @@
 "iv": []
 },
 {
-"id": "based-bashobits-eth",
-"name": "based.bashobits.eth",
-"handle": "based.bashobits.eth",
-"x": "",
-"cat": "C",
-"works": [
-{
-"title": "The Gold Ring in the Armory",
-"s": "based-bashobits-eth-1ade6c55s.jpg",
-"l": "based-bashobits-eth-1ade6c55l.jpg",
-"w": 1280,
-"h": 714
-}
-],
-"bio": "Collector exploring bit by bit, with Transdimensional Trippers in the vault. Based, and building",
-"iv": []
-},
-{
 "id": "batsoupyum",
 "name": "BatSoupYum",
 "handle": "@batsoupyum",
@@ -4571,8 +4571,8 @@
 {
 "id": "clod",
 "name": "clod",
-"handle": "clod on SuperRare",
-"x": "",
+"handle": "@srclod",
+"x": "srclod",
 "cat": "C",
 "works": [
 {
@@ -4710,8 +4710,8 @@
 {
 "id": "davidfeinstein-eth",
 "name": "davidfeinstein.eth",
-"handle": "davidfeinstein.eth",
-"x": "",
+"handle": "@KingChaim",
+"x": "KingChaim",
 "cat": "C",
 "works": [
 {
@@ -4728,8 +4728,8 @@
 {
 "id": "dcinvestor",
 "name": "DCinvestor",
-"handle": "@iamDCinvestor",
-"x": "iamDCinvestor",
+"handle": "@DCinvestor",
+"x": "DCinvestor",
 "cat": "C",
 "works": [
 {
@@ -4746,8 +4746,8 @@
 {
 "id": "deeze",
 "name": "Deeze",
-"handle": "@deezefi",
-"x": "deezefi",
+"handle": "@DeeZe",
+"x": "DeeZe",
 "cat": "C",
 "works": [
 {
@@ -4890,8 +4890,8 @@
 {
 "id": "ed-zipco",
 "name": "Ed Zipco",
-"handle": "@edzipco",
-"x": "edzipco",
+"handle": "@SuperchiefNFT",
+"x": "SuperchiefNFT",
 "cat": "C",
 "works": [
 {
@@ -5124,8 +5124,8 @@
 {
 "id": "hans-ulrich-obrist",
 "name": "Hans Ulrich Obrist",
-"handle": "@hansulrichobrist",
-"x": "",
+"handle": "@HUObrist",
+"x": "HUObrist",
 "cat": "C",
 "works": [
 {
@@ -5232,8 +5232,8 @@
 {
 "id": "jared-poz",
 "name": "jared_poz",
-"handle": "jaredpoz.eth",
-"x": "",
+"handle": "@jared_poz",
+"x": "jared_poz",
 "cat": "C",
 "works": [
 {
@@ -5412,8 +5412,8 @@
 {
 "id": "leadwithlove-eth",
 "name": "Leadwithlove.eth",
-"handle": "Leadwithlove.eth",
-"x": "",
+"handle": "@rhmattson",
+"x": "rhmattson",
 "cat": "C",
 "works": [
 {
@@ -5466,8 +5466,8 @@
 {
 "id": "madacollects",
 "name": "madacollects",
-"handle": "madacollects.eth",
-"x": "",
+"handle": "@MadaCollects",
+"x": "MadaCollects",
 "cat": "C",
 "works": [
 {
@@ -5592,8 +5592,8 @@
 {
 "id": "moodslime",
 "name": "moodSlime",
-"handle": "moodslime.eth",
-"x": "",
+"handle": "@moodSlime_",
+"x": "moodSlime_",
 "cat": "C",
 "works": [
 {
@@ -5610,8 +5610,8 @@
 {
 "id": "nightshare",
 "name": "Nightshare",
-"handle": "nightshare2.eth",
-"x": "",
+"handle": "@Nightshare",
+"x": "Nightshare",
 "cat": "C",
 "works": [
 {
@@ -5718,8 +5718,8 @@
 {
 "id": "omz",
 "name": "OMZ",
-"handle": "@omz_nft",
-"x": "omz_nft",
+"handle": "@omz__x",
+"x": "omz__x",
 "cat": "C",
 "works": [
 {
@@ -5941,8 +5941,8 @@
 {
 "id": "punk7635-artie-handz",
 "name": "Punk7635",
-"handle": "@punk7635",
-"x": "punk7635",
+"handle": "@artiegalerie",
+"x": "artiegalerie",
 "cat": "C",
 "works": [
 {
@@ -6070,8 +6070,8 @@
 {
 "id": "sam-ai-am",
 "name": "sam_ai_am",
-"handle": "sam_ai_am on SuperRare",
-"x": "",
+"handle": "@sam_ai_am",
+"x": "sam_ai_am",
 "cat": "C",
 "works": [
 {
@@ -6106,8 +6106,8 @@
 {
 "id": "shills81-eth",
 "name": "shills81.eth",
-"handle": "shills81.eth",
-"x": "",
+"handle": "@Shills_81",
+"x": "Shills_81",
 "cat": "C",
 "works": [
 {
@@ -6124,8 +6124,8 @@
 {
 "id": "shoreborne",
 "name": "shoreborne",
-"handle": "shoreborne on SuperRare",
-"x": "",
+"handle": "@shore_borne",
+"x": "shore_borne",
 "cat": "C",
 "works": [
 {
@@ -6178,8 +6178,8 @@
 {
 "id": "spicycheetos",
 "name": "spicycheetos",
-"handle": "spicycheetos on SuperRare",
-"x": "",
+"handle": "@zestycheeto",
+"x": "zestycheeto",
 "cat": "C",
 "works": [
 {
@@ -6250,8 +6250,8 @@
 {
 "id": "suparno67-mob",
 "name": "suparno67_mob",
-"handle": "suparno67_mob on SuperRare",
-"x": "",
+"handle": "@suparno67",
+"x": "suparno67",
 "cat": "C",
 "works": [
 {
@@ -6376,8 +6376,8 @@
 {
 "id": "twinflames",
 "name": "twinflames",
-"handle": "twinflames.eth",
-"x": "",
+"handle": "@justinaversano",
+"x": "justinaversano",
 "cat": "C",
 "works": [
 {
@@ -6430,8 +6430,8 @@
 {
 "id": "webvr-eth",
 "name": "webvr.eth",
-"handle": "webvr.eth",
-"x": "",
+"handle": "@webvr_eth",
+"x": "webvr_eth",
 "cat": "C",
 "works": [
 {
@@ -6527,8 +6527,8 @@
 {
 "id": "alex-atallah",
 "name": "Alex Atallah",
-"handle": "@xanderatallah",
-"x": "xanderatallah",
+"handle": "",
+"x": "",
 "cat": "B",
 "works": [
 {
