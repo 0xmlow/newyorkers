@@ -34,6 +34,10 @@ def save(im, path, q):
 ROLES = json.load(open(os.path.join(HERE, "roles.json")))  # person key -> category code, edit by hand
 CATS = [("A", "Artists"), ("C", "Collectors and curators"), ("B", "Founders and investors"), ("W", "Writers and media"),
         ("M", "Music"), ("F", "Film and stage"), ("X", "Fashion"), ("S", "Sport"), ("D", "Food"), ("P", "Politics and civic")]
+BANNED = json.load(open(os.path.join(HERE, "banned.json")))["people"]  # removed for good, see the file
+_bn = {re.sub(r"[^a-z0-9]+", "", b["name"].lower()) for b in BANNED}; _bh = {b["handle"].lower() for b in BANNED}
+bad = [p["disp"] for p in TL.PEOPLE if re.sub(r"[^a-z0-9]+", "", p["disp"].lower()) in _bn or (p["handle"] or "").lstrip("@").lower() in _bh]
+assert not bad, f"banned people came through the collector: {bad}"
 missing = [p["key"] for p in TL.PEOPLE if p["key"] not in ROLES]
 assert not missing, f"no category in roles.json for: {missing}"
 

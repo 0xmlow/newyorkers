@@ -178,6 +178,17 @@ if "Sitemap:" not in rb: probs.append("robots.txt has no Sitemap line")
 rooms_dir=os.path.join(PKG,"assets","museum","rooms")
 if not os.path.isdir(rooms_dir) or len(os.listdir(rooms_dir))<100: probs.append("museum room thumbnails missing")
 if big: probs.append(f"files over 24MB: {big}")
+# people removed for good (_build/honoraries/banned.json): no page, card, share page or data file may name them
+_ban=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"honoraries","banned.json")))["people"]
+_pat=re.compile("|".join(re.escape(x) for b in _ban for x in (b["handle"].lower(),b["name"].lower())))
+_hits=[]
+for _dp,_dn,_fn in os.walk(PKG):
+    for _f in _fn:
+        if _f.endswith((".html",".js",".json",".txt",".xml",".csv")) or "." not in _f:
+            if _pat.search(re.sub(r"[-_]"," ",open(os.path.join(_dp,_f),errors="ignore").read().lower())) or _pat.search(_f.lower().replace("-"," ")):
+                _hits.append(os.path.relpath(os.path.join(_dp,_f),PKG))
+        elif _pat.search(_f.lower().replace("-"," ")): _hits.append(os.path.relpath(os.path.join(_dp,_f),PKG))
+if _hits: probs.append(f"banned person named in {len(_hits)} files: {_hits[:5]}")
 print("\nPROBLEMS" if probs else "\nno problems"); [print(" !",x) for x in probs]
 print("WARNINGS"); [print(" ~",x) for x in warns]
 sys.exit(1 if probs else 0)

@@ -1,0 +1,6 @@
+{
+ "_why": "People MLow has removed from NEW YORKERS for good. Never paint, list, post, tag, film or card anyone here. The collector drops them, sync.py refuses them, preflight fails the package if a handle or name shows up anywhere in it. Match is on the lowercased handle without @, and on the normalised name.",
+ "people": [
+  {"name": "Blake Kathryn", "handle": "blakekathryn", "banned": "2026-09-28", "by": "MLow"}
+ ]
+}

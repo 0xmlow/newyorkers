@@ -615,24 +615,6 @@
 "iv": []
 },
 {
-"id": "blake-kathryn",
-"name": "Blake Kathryn",
-"handle": "@blakekathryn",
-"x": "blakekathryn",
-"cat": "A",
-"works": [
-{
-"title": "Glass Girl on the Phone",
-"s": "blake-kathryn-51b3a7cds.jpg",
-"l": "blake-kathryn-51b3a7cdl.jpg",
-"w": 1280,
-"h": 720
-}
-],
-"bio": "3D artist who builds iridescent dreamscapes of glass figures and soft light. Rendered, yet dreamed",
-"iv": []
-},
-{
 "id": "bosslogic",
 "name": "Bosslogic",
 "handle": "@Bosslogic",
