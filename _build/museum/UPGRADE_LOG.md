@@ -226,6 +226,32 @@ Eggs: five for mcny, six for dakota, from Wikipedia (Museum of the City of New Y
 The Dakota, Strawberry Fields), fetched and checked 2026-09-24, in
 `_build/learn/room_facts_8.json`.
 
+## Batch six (2026-10-01): liberty3, the real figure, `rooms/up6.ts`
+
+MLow: the statue "looks like shit". It did: liberty2 rebuilt the island and the climb
+but the figure was still code, a lathed cone with an arm, and from the path it read as
+a green traffic cone with a torch. She is now Gravity Jack's "Statue Of Liberty"
+(Sketchfab, CC BY 4.0, ZBrush and Substance, 57 k triangles), downloaded by MLow, with
+the six 2k textures cut to 1k (13 MB to 2 MB) and a stair hole cut in her plinth slab
+in headless Blender: `assets/museum/props/liberty_statue.glb`. Credit plaque on the
+walk up from the dock, as the licence asks.
+
+She is 45.7 units heel to flame (the coded one was 45), so scale 1, rotY -PI/2 to face
+the dock, torch in her right hand. The inside was measured height by height as the
+widest circle inside the shell (the BODY table): about 3 to the shoulders, a pinch at
+the neck, 1.66 in the head. liberty2's helix (4.4 down to 1) would have come through
+her robe, so inside her the stair is now a radius 1.85 spiral round Eiffel's pylon,
+following her measured axis, then a short neck stair to a platform in the head with
+two small works. The pedestal half (stair, 22 works, lobby, wall) is liberty2's
+exactly. Ribs refitted inside the shell; tablet, chains and crown eggs moved onto
+her; torch glow and light on her real flame. 24 mounts, 0 unreachable.
+
+Deployed at MLow's word WITHOUT a visual check: every headless screenshot attempt this
+session lost the Desktop folder permission (Blender, Chrome and a local server each
+tripped it). Unverified: that she sits flush on the pedestal, the stair stays inside
+her, and the glow sits in the flame. Known loss: her crown windows are painted on the
+texture, so the harbour is not visible from the crown.
+
 ## Next, in the audit's order
 
 snug (13), strivers (13), halloffame (12). Then the facade rooms, then
