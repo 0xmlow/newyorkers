@@ -23,7 +23,7 @@ Nothing deployed.
 
 ## The two interactions
 
-- Mosh: any of the 24 works, when the camera is within 4.8 m, in front, facing it,
+- Mosh: any of the 24 works, when the camera is within 6.6 m, in front, facing it,
   and nearly still for 1.5 s. Colour streams use the work's own pixels (thumbnail
   sampled into a 24 by 14 canvas). One InstancedMesh of 720 quads (360 on phones).
 - Find mine: walk to the census desk, a small panel appears. It reads
@@ -68,3 +68,39 @@ overlay for comparable rooms, so the old "under 350" target is not met here eith
   but not committed, because the working tree also holds another session's
   uncommitted Liberty work (`src/rooms/index.ts`, `up6.ts`) that the bundle includes.
   Run `build_all.sh` once both are committed.
+
+## Detail pass, same day (MLow's review)
+
+- **Photo textures** from FLORA in `assets/museum/photos/pennstation/` (1024 JPEG, about
+  1 MB together): coffer on the vault, travertine on the walls, granite retinted toward
+  Milford pink on the front, demolition on the 1963 side, and the marble floor cropped to
+  one clean slab because the border inlay did not meet at the seams. Loaded by
+  `photoMat()` and tiled in world space by the kit's batch. Rejected: the dither floor and
+  dither roof textures (the roof tiles a moon in every cell).
+- **Painted cutout people** replace every capsule crowd: `figures.webp`, one 2048 by 512
+  atlas of ten figures keyed from the green sheets (six 1910 travellers, the mother and
+  child kept as one; four of today's visitors). `cutouts()` draws them all in one call,
+  each quad turned to the camera about its own upright axis in the vertex shader, walkers
+  moved by rewriting one attribute. Rejected: `fig_seated.jpg` (city behind the figures,
+  no clean key) and two of the six modern figures (the bag carrier's head is a ghost in
+  the source, the suited man's head sits on the city band and keys away).
+- **The dither** is now a real ordered dither: `ditherize()` patches materials after
+  lighting with an 8 by 8 Bayer threshold on 2 px dots to navy, bone and the warm accent,
+  eased in along world z from -43 to -53, so the seam fades into the concourse. The art
+  stays painted.
+- **Draw calls**, whole frame overlay, headless, desktop, same views before and after
+  (fx chain off in headless in both): spawn 464 to 382, stair 364 to 289, seam 348 to
+  262, census desk 340 to 262, waiting room 303 to 227, concourse 276 to 204. Triangles
+  fell by about a third. Done by the cutouts (one call for every person), and by turning
+  off shadow casting for everything inside the waiting room and arcade once the works are
+  hung (the roof keeps them in shadow all day).
+- The mosh trigger distance is now 6.6 m, because the museum's own viewpoint stands a
+  visitor up to 5.8 m from the big waiting room works.
+- **Moving camera proof**: `CENSUS HALL 2026-10-01/captures/proof_walk_spawn_to_concourse.mp4`
+  (30 s, walkTo legs from the Seventh Avenue spawn through the turnstiles, a mosh, the
+  seam and into the dithered concourse) and six 8 s promo clips at 1920 by 1080 recorded
+  from the canvas, so no UI: a to f in the same folder.
+
+Still not verified: a human walking it in a real browser, any phone, and frame rate.
+The find mine clip uses a collector whose work hangs here today; the hang reshuffles daily.
+The proof walk grazes the jamb of the west opening on its way into the seam.

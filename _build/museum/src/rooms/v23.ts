@@ -209,6 +209,133 @@ function worldMat(map: T.Texture, density: number, p: Partial<T.MeshStandardMate
   m.userData.density = density;
   return m;
 }
+/* a FLORA photo texture from assets/museum/photos/pennstation, tiled in world space by the kit's batch
+   at `density` tiles per metre (0 keeps the geometry's own UVs). Loads after the room is built. */
+const PHOTOS = 'assets/museum/photos/pennstation/';
+function photoMat(k: K, file: string, density: number, p: Partial<T.MeshStandardMaterialParameters> = {}, repeat?: [number, number]) {
+  const m = new T.MeshStandardMaterial({ roughness: 0.8, metalness: 0, ...p });
+  if (density) m.userData.density = density;
+  if (typeof window === 'undefined') return m;               /* the audit and the checks run in node */
+  const url = PHOTOS + file;
+  k.used.images.add(url);
+  k.pending.push(new Promise<void>((res) => new T.TextureLoader().load(url, (t) => {
+    t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+    if (repeat) t.repeat.set(repeat[0], repeat[1]);
+    m.map = t; m.needsUpdate = true; res();
+  }, undefined, () => res())));
+  return m;
+}
+
+/* ---------------- the dither: a real ordered dither in screen space ----------------
+   Patched into a material's fragment shader after lighting: the lit colour's luminance is
+   thresholded against an 8 by 8 Bayer matrix on 2 px dots, to navy or bone, with the one warm
+   accent where the lit colour is warm and bright. `zone` eases it in along world z, so the
+   concourse is fully dithered and the seam fades into it. One shared set of uniforms. */
+const DITHER_U = { uNavy: { value: new T.Color(NAVY) }, uBone: { value: new T.Color(BONE) }, uWarm: { value: new T.Color(WARM) }, uDot: { value: 2 }, uGain: { value: 2.2 }, uZ: { value: new T.Vector2(-43, -53) } };
+function ditherize<M extends T.Material>(m: M, always = false): M {
+  const prev = m.onBeforeCompile;
+  m.onBeforeCompile = (sh, r) => {
+    prev?.call(m, sh, r);
+    Object.assign(sh.uniforms, DITHER_U);
+    /* world z, written at the very end of main so it also sees a vertex shader that has
+       replaced project_vertex (the cutout people) */
+    const vs = sh.vertexShader.replace('void main() {', 'varying float vDitherZ;\nvoid main() {'), end = vs.lastIndexOf('}');
+    sh.vertexShader = vs.slice(0, end) + `
+      vec4 dWp = vec4(transformed, 1.0);
+      #ifdef USE_INSTANCING
+        dWp = instanceMatrix * dWp;
+      #endif
+      vDitherZ = (modelMatrix * dWp).z;
+    }` + vs.slice(end + 1);
+    sh.fragmentShader = sh.fragmentShader.replace('void main() {', `varying float vDitherZ;
+      uniform vec3 uNavy; uniform vec3 uBone; uniform vec3 uWarm; uniform float uDot; uniform float uGain; uniform vec2 uZ;
+      float bayer2(vec2 a) { a = floor(a); return fract(a.x / 2.0 + a.y * a.y * 0.75); }
+      float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+      float bayer8(vec2 a) { return bayer4(0.5 * a) * 0.25 + bayer2(a); }
+      void main() {`).replace('#include <opaque_fragment>', `#include <opaque_fragment>
+      {
+        float zf = ${always ? '1.0' : 'clamp((uZ.x - vDitherZ) / (uZ.x - uZ.y), 0.0, 1.0)'};
+        if (zf > 0.0) {
+          float th = bayer8(floor(gl_FragCoord.xy / uDot)) + 0.5 / 64.0;
+          vec3 c = gl_FragColor.rgb;
+          float l = clamp(pow(dot(c, vec3(0.2126, 0.7152, 0.0722)) * uGain, 0.55), 0.0, 1.0);
+          vec3 d = l > th ? uBone : uNavy;
+          float warm = step(0.6, (c.r - c.b) / max(c.r, 1e-3)) * step(0.3, l);   /* only a strongly saturated warm: the strip and the lamps */
+          d = mix(d, uWarm, warm * step(th, l));
+          gl_FragColor.rgb = mix(c, d, zf);
+        }
+      }`);
+  };
+  m.customProgramCacheKey = () => 'pennDither' + (always ? 1 : 0) + m.type;
+  return m;
+}
+
+/* ---------------- painted cutout people ----------------
+   One merged geometry of quads, one draw call: each quad is turned to face the camera about
+   its own upright axis in the vertex shader (aCenter, aCorner), so the figures stand like
+   cardboard cutouts in the concepts. The position attribute is the centre, so passes that do
+   not run this shader (shadow, ambient occlusion) see a zero area quad and draw nothing. */
+const FIG = [
+  { id: 'porter', u0: 0.0000, u1: 0.1021, ar: 0.411, h: 1.78 },
+  { id: 'lady', u0: 0.1050, u1: 0.2324, ar: 0.514, h: 1.86 },
+  { id: 'reader', u0: 0.2354, u1: 0.3359, ar: 0.406, h: 1.82 },
+  { id: 'mother', u0: 0.3389, u1: 0.4590, ar: 0.484, h: 1.72 },
+  { id: 'gent', u0: 0.4619, u1: 0.5518, ar: 0.362, h: 1.86 },
+  { id: 'newsboy', u0: 0.5547, u1: 0.6357, ar: 0.327, h: 1.52 },
+  { id: 'coat', u0: 0.6387, u1: 0.7168, ar: 0.315, h: 1.7 },
+  { id: 'hood', u0: 0.7197, u1: 0.7949, ar: 0.303, h: 1.78 },
+  { id: 'elder', u0: 0.7979, u1: 0.8872, ar: 0.360, h: 1.68 },
+  { id: 'red', u0: 0.8901, u1: 0.9517, ar: 0.248, h: 1.7 },
+] as const;
+type Fig = { f: number; x: number; y: number; z: number; route?: T.Vector3[]; speed?: number; s?: number };
+function cutouts(k: K, ctx: C, list: Fig[]) {
+  const n = list.length, V0 = 0.0039, V1 = 0.9961;
+  const pos = new Float32Array(n * 12), cen = new Float32Array(n * 12), cor = new Float32Array(n * 8), uv = new Float32Array(n * 8), idx: number[] = [];
+  list.forEach((p, i) => {
+    const F = FIG[p.f], h = F.h * (p.s ?? 1), w = h * F.ar;
+    const corners = [[-w / 2, 0, F.u0, V0], [w / 2, 0, F.u1, V0], [w / 2, h, F.u1, V1], [-w / 2, h, F.u0, V1]];
+    corners.forEach((c, j) => {
+      const o = i * 4 + j;
+      pos.set([p.x, p.y + h / 2, p.z], o * 3); cen.set([p.x, p.y, p.z], o * 3);
+      cor.set([c[0], c[1]], o * 2); uv.set([c[2], c[3]], o * 2);
+    });
+    idx.push(i * 4, i * 4 + 1, i * 4 + 2, i * 4, i * 4 + 2, i * 4 + 3);
+  });
+  const g = new T.BufferGeometry();
+  g.setAttribute('position', new T.BufferAttribute(pos, 3));
+  const aCen = new T.BufferAttribute(cen, 3); aCen.setUsage(T.DynamicDrawUsage); g.setAttribute('aCenter', aCen);
+  g.setAttribute('aCorner', new T.BufferAttribute(cor, 2)); g.setAttribute('uv', new T.BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  const m = new T.MeshBasicMaterial({ color: 0xf2ece0, alphaTest: 0.5, transparent: true, side: T.DoubleSide });
+  m.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('void main() {', 'attribute vec3 aCenter;\nattribute vec2 aCorner;\nvoid main() {').replace('#include <project_vertex>', `
+      vec3 toCam = cameraPosition - aCenter; toCam.y = 0.0;
+      vec3 side = normalize(vec3(toCam.z, 0.0, -toCam.x) + vec3(1e-5, 0.0, 0.0));
+      transformed = aCenter + side * aCorner.x + vec3(0.0, aCorner.y, 0.0);
+      vec4 mvPosition = viewMatrix * vec4(transformed, 1.0);
+      gl_Position = projectionMatrix * mvPosition;`);
+  };
+  ditherize(m);
+  const o = new T.Mesh(g, m); o.frustumCulled = false; o.castShadow = o.receiveShadow = false; o.renderOrder = 2; k.add(o);
+  if (typeof window !== 'undefined') {
+    k.used.images.add(PHOTOS + 'figures.webp');
+    k.pending.push(new Promise<void>((res) => new T.TextureLoader().load(PHOTOS + 'figures.webp', (t) => { t.colorSpace = T.SRGBColorSpace; t.anisotropy = 4; m.map = t; m.needsUpdate = true; res(); }, undefined, () => res())));
+  }
+  /* walkers go to and fro along their route */
+  const walkers = list.map((p, i) => ({ p, i, d: 0, len: 0 })).filter((w) => w.p.route && w.p.route.length > 1);
+  for (const w of walkers) { let L = 0; for (let j = 1; j < w.p.route!.length; j++) L += w.p.route![j].distanceTo(w.p.route![j - 1]); w.len = L; w.d = (w.i * 7.31) % L; }
+  if (!ctx.reduced && walkers.length) k.ticks.push((_t, dt) => {
+    for (const w of walkers) {
+      w.d = (w.d + (w.p.speed ?? 1.1) * Math.min(dt, 0.1)) % (w.len * 2);
+      let d = w.d > w.len ? w.len * 2 - w.d : w.d; const r = w.p.route!;
+      let x = r[0].x, z = r[0].z, y = r[0].y;
+      for (let j = 1; j < r.length; j++) { const L = r[j].distanceTo(r[j - 1]); if (d <= L) { const t = d / L; x = r[j - 1].x + (r[j].x - r[j - 1].x) * t; y = r[j - 1].y + (r[j].y - r[j - 1].y) * t; z = r[j - 1].z + (r[j].z - r[j - 1].z) * t; break; } d -= L; }
+      for (let j = 0; j < 4; j++) aCen.setXYZ(w.i * 4 + j, x, y, z);
+    }
+    aCen.needsUpdate = true;
+  });
+}
+
 const noise = (x: number, y: number, s: number) => { const n = Math.sin(x * 12.9898 + y * 78.233 + s * 37.719) * 43758.5453; return n - Math.floor(n); };
 const vnoise = (x: number, y: number, s: number) => {
   const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), w = yf * yf * (3 - 2 * yf);
@@ -258,20 +385,20 @@ export const pennstation: RoomDef = {
     const bulbs: { x: number; y: number; z: number }[] = [];
 
     /* ---- materials ---- */
-    const trav = k.pbr('psTrav', X.ashlar(0xd8c6a0, 1801, 4), 0.22, { normal: 0.35, roughness: 0.8 });
-    const travD = k.pbr('psTravD', X.ashlar(0xd8c6a0, 1801, 4), 0.22, { normal: 0.35, roughness: 0.8, side: T.DoubleSide });
+    const trav = photoMat(k, 'travertine.jpg', 0.19, { roughness: 0.78 });
     const travPlain = k.pbr('psTravP', X.plaster(0xd6c49e, 1802), 0.2, { roughness: 0.85 });
-    const travDark = k.pbr('psTravK', X.ashlar(0xb9a47c, 1803, 3), 0.3, { normal: 0.4, roughness: 0.85 });
-    const granite = k.pbr('psGran', X.ashlar(0xc4a294, 1804, 7), 0.13, { normal: 0.25, roughness: 0.7 });
+    const travDark = photoMat(k, 'travertine.jpg', 0.3, { roughness: 0.82, color: 0xc4b498 });
+    const granite = photoMat(k, 'granite.jpg', 0.18, { roughness: 0.75 });
+    const demo = photoMat(k, 'demolition.jpg', 0.22, { roughness: 0.9 });
     const graniteS = k.pbr('psGranS', X.plaster(0xc6a596, 1830), 0.3, { roughness: 0.6 });
-    const graniteDk = k.pbr('psGranK', X.ashlar(0xa98576, 1805, 3), 0.3, { normal: 0.4, roughness: 0.75 });
-    const marbleF = k.pbr('psFloor', X.marble(0xcdbb96, 0x8a7a5e, 1806), 0.16, { roughness: 0.32 });
+    const graniteDk = photoMat(k, 'granite.jpg', 0.3, { roughness: 0.8, color: 0xd8c4bc });
+    const marbleF = photoMat(k, 'marble.jpg', 0.32, { roughness: 0.42 });
     const walk = k.pbr('psWalk', X.pavers(0x9a958a, 1807), 0.5), asph = k.pbr('psAsph', X.asphalt(), 0.3), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8);
     const oak = k.pbr('psOak', X.planks(0x7a5230, 5, 1808), 0.9, { roughness: 0.55 }), oakDk = k.flat(0x3e2616, 0, 0.5);
     const brass = k.flat(0xc8a050, 1, 0.3), bronze = k.flat(0x6e5230, 0.9, 0.4), iron = k.flat(0x1c1c1e, 0.6, 0.5), velvet = k.flat(0x7a1420, 0, 0.75);
     const shopGlass = k.flat(0x2a3038, 0.4, 0.15, { emissive: 0xffd8a0, emissiveIntensity: 0.12 + 0.25 * k.night });
-    const vaultM = new T.MeshStandardMaterial({ map: cofferTex(), roughness: 0.85, side: T.BackSide });
-    vaultM.map!.repeat.set(18, 30);
+    const vaultM = photoMat(k, 'coffer.jpg', 0, { roughness: 0.85, side: T.BackSide, color: 0xf4ead6 }, [7, 12.5]);
+    if (typeof window === 'undefined') { vaultM.map = cofferTex(); }
     const winM = new T.MeshBasicMaterial({ map: lunetteTex(1809), color: new T.Color(0xfff4de).lerp(new T.Color(0x3a4a70), k.night * 0.85), transparent: true, alphaTest: 0.1, side: T.DoubleSide });
     const winEnd = new T.MeshBasicMaterial({ map: lunetteTex(1810, 2), color: new T.Color(0xfff4de).lerp(new T.Color(0x3a4a70), k.night * 0.85), transparent: true, alphaTest: 0.1, side: T.DoubleSide });
 
@@ -287,8 +414,7 @@ export const pennstation: RoomDef = {
     k.skyline({ z: -190, count: 30, spacing: 8, seed: 1813, base: 0, lit: 0.22, x: 0, scale: 1.3 });
     /* Seventh Avenue runs one way, south (toward -x) */
     traffic(k, ctx, { lanes: [{ z: 38.2, dir: -1, n: 5, speed: 8 }, { z: 41.6, dir: -1, n: 4, speed: 9 }, { z: 45, dir: -1, n: 4, speed: 7 }], x0: -64, x1: 64, seed: 1814, y: S });
-    k.crowd([v(-60, S, 33.6), v(60, S, 33.6)], 10, { seed: 1815, spread: 1.8, speed: 1.1, animate: !ctx.reduced });
-    k.crowd([v(-60, S, 50.2), v(60, S, 50.2)], 6, { seed: 1816, spread: 1.4, speed: 1.0, animate: !ctx.reduced });
+
     for (const x of [-30, -12, 12, 30]) { k.cyl(0.09, 5, x, S + 2.5, 35, iron, 0.12, 8); k.sphere(0.28, x, S + 5.1, 35, k.glow(0xffe2b0), 10); if (k.night > 0.4) k.point(x, S + 4.8, 35, 0xffd7a0, 30, 16); k.keepOut.push({ x, z: 35, r: 0.4 }); }
 
     /* the colonnade: unfluted Roman Doric columns in pink granite along the whole Seventh Avenue front */
@@ -466,12 +592,11 @@ export const pennstation: RoomDef = {
       for (let i = 0; i < 6; i++) if (rnd() < 0.3) seated.push({ x: x - 2.2 + i * 0.88, y: 0.36, z: bz, ry: s > 0 ? PI : 0, sit: true });
       k.block(x - 2.8, x + 2.8, bz - 0.45, bz + 0.45);
     }
-    still(k, seated, 1819);
+    void seated;
     k.prop('penn_luggage', -30, 0, -12.4, { height: 1.0, rotY: 0.4, keepOut: 0.8 });
     k.prop('penn_luggage', 31, 0, -12.6, { height: 1.0, rotY: -1.2, keepOut: 0.8 });
     /* travellers crossing the hall, from the stair to the concourse */
-    k.crowd([v(-3, 0, -5), v(-6, 0, -12), v(-4, 0, -20), v(-2, 0, -28)], 9, { seed: 1820, spread: 3, speed: 0.9, animate: !ctx.reduced });
-    k.crowd([v(44, 0, -12), v(16, 0, -12.5), v(-16, 0, -12.5), v(-44, 0, -12)], 8, { seed: 1821, spread: 4, speed: 0.8, animate: !ctx.reduced });
+
     /* the census desk with its open ledger, four standard lamps, stanchions round it */
     const DX = 0, DZ = WC;
     k.prop('penn_census_desk', DX, 0, DZ, { height: 1.25 });
@@ -543,7 +668,7 @@ export const pennstation: RoomDef = {
     k.point(-10, 8, -38, 0xffe0b0, 24, 18);
     /* the north side coming down: a jagged wall, bare steel, broken drums, rubble, open sky */
     const jag = X.mulberry(1822);
-    for (let z = MZ0; z > MZ1; z -= 1.5) { const h = 2 + jag() * (z < -40 ? 7 : 13); k.box(0.9, h, 1.55, MW + 0.45, h / 2, z - 0.75, trav); }
+    for (let z = MZ0; z > MZ1; z -= 1.5) { const h = 2 + jag() * (z < -40 ? 7 : 13); k.box(0.9, h, 1.55, MW + 0.45, h / 2, z - 0.75, demo); }
     k.block(MW - 0.2, MW + 2, MZ1, MZ0);
     const steelM = k.pbr('psSteelRaw', X.steel(0x4a3c34, true, 1823), 0.5, { roughness: 0.75, metalness: 0.4 });
     for (const z of [-31, -37.5, -44]) { k.box(0.5, 18, 0.5, 12, 9, z, steelM); k.box(0.9, 0.12, 0.6, 12, 18, z, steelM); }
@@ -614,6 +739,7 @@ export const pennstation: RoomDef = {
     const steelT = ditherTex(64, (x, y) => ((x % 16 === 8 && y % 16 === 8) ? 0.75 : 0.2 + 0.1 * vnoise(x / 9, y / 9, 7)));
     const brickT = ditherTex(128, (x, y) => ((y % 16 < 2) || ((x + (Math.floor(y / 16) % 2) * 16) % 32 < 2) ? 0.25 : 0.58 + 0.1 * vnoise(x / 12, y / 12, 9)));
     const qFloor = worldMat(floorT, 0.25, { roughness: 0.55 }), qWall = worldMat(wallT, 0.25, { roughness: 0.9 }), qSteel = worldMat(steelT, 0.6, { roughness: 0.6, metalness: 0.3 }), qOuter = worldMat(brickT, 0.18, { roughness: 0.9 });
+    for (const m of [qFloor, qWall, qSteel, qOuter, demo, marbleF, trav, travDark]) ditherize(m);
     k.box(QX * 2, 0.2, QZ0 - QZ1, 0, -0.1, QC, qFloor);
     /* the screen wall between the seam and the concourse, and the outer walls */
     k.mesh(holedWall(QX * 2, 16, 0.8, [{ kind: 'rect', cx: 0, y0: 0, w: MW * 2, h: 14 }]), qOuter, 0, 0, QZ0);
@@ -646,7 +772,7 @@ export const pennstation: RoomDef = {
       g.clearRect(0, 0, 128, 128); g.fillStyle = 'rgba(160,190,220,0.10)'; g.fillRect(0, 0, 128, 128);
       g.fillStyle = '#16203a'; g.fillRect(0, 0, 128, 7); g.fillRect(0, 0, 7, 128); g.fillRect(0, 62, 128, 3); g.fillRect(62, 0, 3, 128);
     }, true);
-    const glassM = new T.MeshBasicMaterial({ map: glassT, color: new T.Color(0xffffff).lerp(new T.Color(0x6a7aa8), k.night), transparent: true, depthWrite: false, side: T.DoubleSide });
+    const glassM = ditherize(new T.MeshBasicMaterial({ map: glassT, color: new T.Color(0xffffff).lerp(new T.Color(0x6a7aa8), k.night), transparent: true, depthWrite: false, side: T.DoubleSide }));
     glassT.repeat.set(16, 22);
     k.mesh(barrelZ(12, QZ0 - QZ1, 36), glassM, 0, 14, QC, true);
     for (const s of [-1, 1]) k.mesh(barrelZ(10, QZ0 - QZ1, 30), glassM, s * 22, 12, QC, true);
@@ -672,9 +798,10 @@ export const pennstation: RoomDef = {
     placeShadow(hour0);
     /* freestanding gallery walls, like platforms, two works a face */
     const GW = [-9, 9], GZ0 = -60, GZ1 = -77;
+    const warmStrip = new T.MeshBasicMaterial({ color: WARM });
     for (const x of GW) {
       k.box(0.5, 5.2, GZ0 - GZ1, x, 2.6, (GZ0 + GZ1) / 2, qWall);
-      k.box(0.7, 0.3, GZ0 - GZ1 + 0.2, x, 0.15, (GZ0 + GZ1) / 2, k.flat(WARM, 0, 0.6, { emissive: WARM, emissiveIntensity: 0.4 }));
+      k.box(0.7, 0.3, GZ0 - GZ1 + 0.2, x, 0.15, (GZ0 + GZ1) / 2, warmStrip);
       k.block(x - 0.45, x + 0.45, GZ1, GZ0);
       for (const z of [-64.4, -72.6]) { hang(mounts, x - 0.27, 2.7, z, -PI / 2, 4.6, 3.6, st, 3.8); hang(mounts, x + 0.27, 2.7, z, PI / 2, 4.6, 3.6, st, 3.8); }
     }
@@ -685,8 +812,7 @@ export const pennstation: RoomDef = {
     /* moonlit: cool lights high in the vaults, a warm one over each gallery wall */
     for (const z of [-60, -84, -104]) k.point(0, 16, z, 0x9fb4e8, 30 + 50 * k.night, 34, 1.4);
     for (const x of GW) k.point(x, 6.5, -68.5, WARM, 18, 12);
-    k.crowd([v(-2, 0, -50), v(-3, 0, -66), v(2, 0, -82), v(0, 0, -106)], 7, { seed: 1825, spread: 3, speed: 0.95, animate: !ctx.reduced, colors: [0x16203a, 0xe9e0c8, 0x16203a, 0x2a3450] });
-    k.crowd([v(-26, 0, -52), v(-26, 0, -106)], 4, { seed: 1826, spread: 2, speed: 0.8, animate: !ctx.reduced, colors: [0x16203a, 0xe9e0c8] });
+
 
     /* the real clock and the real sun: hands, shafts and the glass shadow follow New York time */
     {
@@ -784,7 +910,7 @@ export const pennstation: RoomDef = {
         mounts.forEach((m, i) => {
           if (!arts.has(i)) return;
           const dx = c.position.x - m.position.x, dz = c.position.z - m.position.z, dist = Math.hypot(dx, dz);
-          if (dist > 4.8 || Math.abs(c.position.y - m.position.y) > 4) return;
+          if (dist > 6.6 || Math.abs(c.position.y - m.position.y) > 4) return;
           const nx = Math.sin(m.rotation), nz = Math.cos(m.rotation);
           if ((dx * nx + dz * nz) / dist < 0.45) return;
           if ((-dx * fwd.x - dz * fwd.z) / (dist * Math.hypot(fwd.x, fwd.z) || 1) < 0.72) return;
@@ -883,7 +1009,44 @@ export const pennstation: RoomDef = {
       });
     }
 
+    /* ---- people: painted cutouts, 1910 travellers from the street to the waiting room, today's visitors at the works ---- */
+    {
+      const R = (...p: number[][]) => p.map(([x, y, z]) => v(x, y, z));
+      const F: Fig[] = [
+        { f: 0, x: 0, y: S, z: 0, route: R([-34, S, 30.6], [-8, S, 30.6]), speed: 0.9 },
+        { f: 1, x: 0, y: S, z: 0, route: R([10, S, 32.8], [36, S, 32.8]), speed: 1.0 },
+        { f: 5, x: -14, y: S, z: 31.2 }, { f: 4, x: 13.2, y: S, z: 30.8 }, { f: 2, x: -20.6, y: S, z: 24.4 }, { f: 3, x: 22.4, y: S, z: 25 },
+        { f: 6, x: 0, y: S, z: 0, route: R([-46, S, 52.9], [-6, S, 52.9]), speed: 1.2 }, { f: 7, x: 0, y: S, z: 0, route: R([8, S, 52.9], [46, S, 52.9]), speed: 1.3 },
+        { f: 2, x: -4.4, y: S, z: 14.2 }, { f: 0, x: 0, y: S, z: 0, route: R([2.6, S, 19], [2.6, S, 6.5]), speed: 0.8 },
+        { f: 1, x: 0, y: 0, z: 0, route: R([-2.5, 0, -5.2], [-6, 0, -10], [-5, 0, -20], [-3, 0, -27]), speed: 0.85 },
+        { f: 4, x: 0, y: 0, z: 0, route: R([-42, 0, -9.8], [-6, 0, -9.8], [6, 0, -9.8], [42, 0, -9.8]), speed: 1.0 },
+        { f: 3, x: 0, y: 0, z: 0, route: R([3, 0, -5.4], [14, 0, -13], [40, 0, -15.2]), speed: 0.7 },
+        { f: 5, x: 3.2, y: 0, z: -9.4 }, { f: 2, x: -30.5, y: 0, z: -12.4 + 1.4 }, { f: 0, x: 31, y: 0, z: -14.2 },
+        { f: 8, x: -25.2, y: 0, z: -24.8 }, { f: 6, x: 38.8, y: 0, z: -0.4 }, { f: 9, x: 43.6, y: 0, z: -13.6 }, { f: 7, x: -27.6, y: 0, z: -0.6 },
+        { f: 7, x: -12.4, y: 0, z: -40.4 },
+        { f: 6, x: -13.4, y: 0, z: -65.6 }, { f: 8, x: 13.2, y: 0, z: -71.2 }, { f: 9, x: 4.8, y: 0, z: -73.8 }, { f: 7, x: -4.6, y: 0, z: -63.2 },
+        { f: 6, x: 0, y: 0, z: 0, route: R([-2, 0, -50], [-3, 0, -80], [0, 0, -106]), speed: 0.9 },
+      ];
+      for (const p of F) if (!p.route) k.keepOut.push({ x: p.x, z: p.z, r: 0.4 });
+      cutouts(k, ctx, F);
+    }
     bulbsMesh(k, bulbs);
+    /* the waiting room and the arcade sit in the shadow of their own roof all day, so nothing
+       inside them needs to draw into the sun's shadow map: once the works are hung, turn their
+       shadow casting off. One shadow draw saved per frame, per work, prop and instanced set. */
+    {
+      const inside = new T.Box3(v(-WX, -1, WZ1 - 1), v(WX, SPR - 1, 20.5)), bb = new T.Box3();
+      let done = false;
+      k.ticks.push((t) => {
+        if (done || t < 1.5) return; done = true;
+        k.scene.traverse((o) => {
+          if (!(o instanceof T.Mesh) || !o.castShadow) return;
+          const g = o.geometry; if (o instanceof T.InstancedMesh) o.computeBoundingBox(); else if (!g.boundingBox) g.computeBoundingBox();
+          bb.copy(o instanceof T.InstancedMesh ? o.boundingBox! : g.boundingBox!).applyMatrix4(o.matrixWorld);
+          if (inside.containsBox(bb)) o.castShadow = false;
+        });
+      });
+    }
 
     /* ---- what the hall knows ---- */
     const src = { name: 'Pennsylvania Station (1910 to 1963), Wikipedia', url: 'https://en.wikipedia.org/wiki/Pennsylvania_Station_(1910%E2%80%931963)' };
