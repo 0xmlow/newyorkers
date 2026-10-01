@@ -215,7 +215,15 @@ export const palmcourt: RoomDef = {
     /* ---- the west wall: the four caryatids, two mirrors, the hero bay, the census frieze ---- */
     const FZ = Z0 + 0.4;
     k.box(2 * W, 1.0, 0.14, 0, 0.5, Z0 + 0.07, breche);
-    for (const x of [-5.9, -2.9, 2.9, 5.9]) caryatid(k, x, FZ, caen, gilt);
+    /* 2026-10-01: the figures are the institution kit's caryatid.glb in Caen stone on the
+       same plinth and under the same gilt basket; caryatid() above is the lathe version */
+    const KIT_CARYATIDS = true;
+    for (const x of [-5.9, -2.9, 2.9, 5.9]) {
+      if (!KIT_CARYATIDS) { caryatid(k, x, FZ, caen, gilt); continue; }
+      k.box(1.0, 1.1, 0.8, x, 0.55, FZ, caen); k.box(1.1, 0.12, 0.9, x, 1.12, FZ, gilt);
+      k.prop('caryatid', x, 1.18, FZ, { height: 4.06 }).then((o) => { o?.traverse((c) => { if (c instanceof T.Mesh) c.material = caen; }); });
+      k.box(1.1, 0.24, 0.9, x, 5.36, FZ, caen);
+    }
     k.box(2 * W, 0.3, 0.5, 0, 5.62, Z0 + 0.25, caen);
     k.box(2 * W, 0.12, 0.56, 0, 5.8, Z0 + 0.28, gilt);
     k.box(2 * W, 0.5, 0.3, 0, 7.15, Z0 + 0.15, caen);

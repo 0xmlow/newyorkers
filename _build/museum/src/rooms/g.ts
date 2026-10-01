@@ -87,8 +87,15 @@ export const boathouse: RoomDef = {
     k.box(0.25, 2.4, 0.25, 15.5, 2.0, BZ - BD / 2 - 8, iron);
     // rowboats, swans, the Lullwater bridge
     const boats = [rowboat(k, -6, -0.7, -22, 0.4, hull, oak), rowboat(k, 10, -0.7, -34, -0.8, hull, oak), rowboat(k, -20, -0.7, -44, 1.9, hull, oak), rowboat(k, 4, -0.7, -56, 0.2, hull, oak)];
-    const swans: T.Mesh[] = [];
-    for (let i = 0; i < 6; i++) { const s = k.mesh(new T.SphereGeometry(0.5, 10, 8), white, 14 + i * 3, -0.6, -30 - i * 4, true); s.scale.set(1, 0.7, 1.6); const n = k.mesh(new T.CylinderGeometry(0.06, 0.09, 0.9, 6), white, 14 + i * 3 + 0.5, -0.1, -30 - i * 4 - 0.6, true); n.rotation.x = 0.4; swans.push(s, n); }
+    /* 2026-10-01: the swans are the life kit's swan.glb; the squashed spheres they were are
+       kept below, one flag away */
+    const KIT_SWANS = true;
+    const swans: T.Object3D[] = [];
+    if (KIT_SWANS) {
+      for (let i = 0; i < 6; i++) k.prop('swan', 14 + i * 3, -0.88, -30 - i * 4, { height: 1.15, rotY: 0.6 + i * 1.3 }).then((o) => { if (o) swans.push(o); });
+    } else {
+      for (let i = 0; i < 6; i++) { const s = k.mesh(new T.SphereGeometry(0.5, 10, 8), white, 14 + i * 3, -0.6, -30 - i * 4, true); s.scale.set(1, 0.7, 1.6); const n = k.mesh(new T.CylinderGeometry(0.06, 0.09, 0.9, 6), white, 14 + i * 3 + 0.5, -0.1, -30 - i * 4 - 0.6, true); n.rotation.x = 0.4; swans.push(s, n); }
+    }
     if (!ctx.reduced) k.ticks.push((t) => { boats.forEach((b, i) => { b.position.x += Math.sin(t * 0.2 + i) * 0.004; b.rotation.y += Math.sin(t * 0.13 + i * 2) * 0.0008; b.position.y = -0.7 + Math.sin(t * 0.8 + i) * 0.04; }); swans.forEach((s, i) => { s.position.y += Math.sin(t * 1.1 + i) * 0.001; }); });
     const BRZ = -70;
     k.box(6, 1.2, 44, 34, 3.6, BRZ, stoneB);

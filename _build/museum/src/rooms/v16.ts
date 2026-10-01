@@ -242,7 +242,19 @@ export const unionsquare: RoomDef = {
 
     /* ---- the south end: Washington on his horse, a plain bronze form of 1856 ---- */
     k.box(6.4, 0.5, 5.4, 0, 0.25, 13, granite); k.box(5.2, 3.4, 3.4, 0, 2.2, 13, granite); k.box(5.6, 0.4, 3.8, 0, 4.1, 13, granite);
-    {
+    /* 2026-10-01: the horseman is the institution kit's equestrian.glb, a faceless bronze
+       as this room's rules ask, set on Hunt's granite with the kit's own plinth hidden;
+       the merged box horse below is the old one, one flag away */
+    const KIT_HORSEMAN = false;   // tried 2026-10-01: the kit horse reads as a beetle on stilts; a sculpted model is wanted instead
+    if (KIT_HORSEMAN) k.prop('equestrian', 0, 4.3, 13, { height: 6.4, rotY: -PI / 2 }).then((o) => {
+      if (!o) return;
+      const pb = new T.Box3(); let found = false;
+      o.updateMatrixWorld(true);
+      o.traverse((c) => { if (c instanceof T.Mesh && (c.material as T.Material).name === 'plinthGranite') { pb.expandByObject(c); c.visible = false; found = true; } });
+      if (found) o.position.y -= pb.max.y - 4.3;
+      o.traverse((c) => { if (c instanceof T.Mesh && c.visible) c.material = bronze; });
+    });
+    else {
       const hg = horseGeo(); hg.scale(2.2, 2.2, 2.2);
       const rider = mergeGeometries([
         (() => { const g = new T.CapsuleGeometry(0.42, 1.0, 4, 10); g.translate(0.05, 3.85, 0); return g; })(),
