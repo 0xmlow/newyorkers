@@ -489,7 +489,7 @@
   "area": "LIBERTY ISLAND",
   "mood": "Harbor morning",
   "color": "#7fb8a8",
-  "description": "The eleven pointed star of the old fort, Hunt's pedestal on top of it, and then the spiral inside the copper: up the armature Eiffel built, past the works hung on the inner wall, to the twenty five windows of the crown and the harbour through them. Ferries come and go below all morning and the gulls never land.",
+  "description": "The eleven pointed star of the old fort, Hunt's pedestal on top of it, and then the spiral inside the copper: up the armature Eiffel built, past the works hung on the inner wall, to the room in her head under the seven rays of the crown. Ferries come and go below all morning and the gulls never land.",
   "signatures": "The eleven pointed star of Fort Wood, Richard Morris Hunt's granite pedestal, the green copper robe and the raised right arm with the torch, the seven rayed crown and its twenty five windows, the tablet reading JULY IV MDCCLXXVI held across her body, the broken chains at her feet, Eiffel's iron armature and the helix stair, and the harbour with its ferries and the city beyond.",
   "daylit": true,
   "index": 45
@@ -1967,5 +1967,16 @@
   "signatures": "The raised open air pavilion of 1897 with its wooden roof beams and its new elevator, the paved plaza, the xiangqi tables with concrete stools and their standing crowds, tai chi with red fans, the 1934 limestone comfort station, the turf field with three basketball and three volleyball courts, the playground, the iron picket fence, London planes, the tenements of Mulberry Street with fire escapes and plain coloured shop boards, the Criminal Courts Building, and the hoarding round the site of the Tombs on Baxter Street.",
   "daylit": true,
   "index": 179
+ },
+ {
+  "id": "pennstation",
+  "name": "The hall New York lost",
+  "area": "PENNSYLVANIA STATION, 1910 / THE CENSUS HALL",
+  "mood": "Travertine, steel and glass, and the seam where it came down",
+  "color": "#c9a86a",
+  "description": "The Pennsylvania Station of 1910, the station New York pulled down from October 1963, raised again as the census hall of the New Yorkers. You come in off Seventh Avenue through the Doric colonnade and a row of brass turnstiles, down the arcade and the grand stair into the travertine waiting room under its coffered vault, where light falls through the lunettes on the side the real sun is on. Past the census desk the hall breaks: one side intact, the other half demolished under a swinging ball, and beyond it the steel and glass concourse at night, drawn in dots. Stand still before any work and it comes apart into colour; give your wallet or name at the desk and a light finds yours.",
+  "signatures": "The Seventh Avenue colonnade in pink granite with the clock and the Day and Night groups over the door, two granite eagles, brass turnstiles, the shopping arcade with its newsstand and shoeshine stand, the grand stair, the travertine waiting room with twelve giant columns, a coffered barrel vault, six lunettes and two thermal windows, velvet ropes and oak benches, the marble census desk with its open ledger, the 1963 seam with broken column drums, rubble, bare steel and a wrecking ball, and the dithered steel and glass concourse with freestanding gallery walls and a baggage wagon.",
+  "daylit": true,
+  "index": 180
  }
 ]
