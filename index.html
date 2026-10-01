@@ -76,7 +76,7 @@
  <div class="art-selection"><a class="art-card" href="n/550.html"><img src="assets/t/hf7e2b10e01.jpg" alt="Bodega Cat" loading="lazy" width="640" height="360"><span><small>NO. 0550</small>Bodega Cat</span></a><a class="art-card" href="n/1000.html"><img src="assets/t/h2ae8153e41.jpg" alt="The Subway Samaritan" loading="lazy" width="640" height="360"><span><small>NO. 1000</small>The Subway Samaritan</span></a><a class="art-card" href="n/2000.html"><img src="assets/t/ha3237c8e25.jpg" alt="Midnight" loading="lazy" width="640" height="360"><span><small>NO. 2000</small>Midnight</span></a><a class="art-card" href="n/37.html"><img src="assets/t/h84d9af469d.jpg" alt="The Crossing" loading="lazy" width="640" height="360"><span><small>NO. 0037</small>The Crossing</span></a><a class="art-card" href="n/1800.html"><img src="assets/t/h0e4ee4789f.jpg" alt="The Royal Wedding" loading="lazy" width="640" height="360"><span><small>NO. 1800</small>The Royal Wedding</span></a></div>
 </section>
 
-<section class="museum-invite"><div><p class="eyebrow">THE CITY IS THE GALLERY</p><h2>Take a little<br>walk with us.</h2><p>Enter an artist-built New York, with paintings on the walls and space to wander. Pick a room. Look around. Stay a while.</p><a class="primary" href="museum.html">Choose your first room ↗</a><p class="quiet">No sign-in needed. Guided tours and touch controls included.</p></div><a href="museum.html#room=metgreathall" class="room-photo"><img src="assets/museum/rooms/metgreathall.jpg" alt="The artist-built Great Hall gallery" loading="lazy" width="640" height="360"><span>THE GREAT HALL <b>Walk inside ↗</b></span></a></section>
+<section class="museum-invite"><div><p class="eyebrow">THE CITY IS THE GALLERY</p><h2>Take a little<br>walk with us.</h2><p>Enter an artist-built New York, with paintings on the walls and space to wander. Pick a room. Look around. Stay a while.</p><a class="primary" href="museum.html">Choose your first room ↗</a><p class="quiet">No sign-in needed. Guided tours and touch controls included.</p></div><div class="room-photo hall-film"><div class="hf-frame"><video id="hf" muted loop playsinline preload="none" poster="assets/film/hall-new-york-lost/poster.jpg" aria-label="THE HALL NEW YORK LOST, a film of room 180 by MLow"></video><button class="hf-play" id="hfp" type="button" aria-label="Play the film with sound"><i></i><span>WATCH WITH SOUND <b>1:08</b></span></button></div><a href="museum.html#room=pennstation"><span>THE HALL NEW YORK LOST, ROOM 180 <b>Walk inside ↗</b></span></a></div></section>
 
 <section class="room-picks"><div class="section-top"><div><p class="eyebrow">ROOMS WORTH THE WALK</p><h2>Six doors, wide open.</h2></div><a class="text-link" href="museum.html">All 136 rooms ↗</a></div><div class="room-selection"><a class="room-card" href="museum.html#room=katz"><img src="assets/museum/rooms/katz.jpg" alt="Katz’s Delicatessen, an artist-built room in the museum" loading="lazy" width="640" height="360"><span><small>THE PORTRAIT LUNCH</small><strong>Katz’s Delicatessen</strong><em>Houston and Ludlow, the red sign band and the long cutting counter</em></span></a><a class="room-card" href="museum.html#room=barney"><img src="assets/museum/rooms/barney.jpg" alt="Barney Greengrass, an artist-built room in the museum" loading="lazy" width="640" height="360"><span><small>SUNDAY REGULARS</small><strong>Barney Greengrass</strong><em>The Sturgeon King on Amsterdam Avenue, green awnings and a window table</em></span></a><a class="room-card" href="museum.html#room=kingsfoyer"><img src="assets/museum/rooms/kingsfoyer.jpg" alt="Kings Theatre, an artist-built room in the museum" loading="lazy" width="640" height="360"><span><small>BEFORE THE CURTAIN</small><strong>Kings Theatre</strong><em>Flatbush Avenue under the marquee, through the bronze doors into the grand foyer</em></span></a><a class="room-card" href="museum.html#room=valencia"><img src="assets/museum/rooms/valencia.jpg" alt="Loew’s Valencia, an artist-built room in the museum" loading="lazy" width="640" height="360"><span><small>A SKY INSIDE JAMAICA</small><strong>Loew’s Valencia</strong><em>An atmospheric theatre in Queens where the ceiling is a Spanish night</em></span></a><a class="room-card" href="museum.html#room=vessel"><img src="assets/museum/rooms/vessel.jpg" alt="The Vessel, an artist-built room in the museum" loading="lazy" width="640" height="360"><span><small>THE CLIMB</small><strong>The Vessel</strong><em>Interlocking copper staircases at Hudson Yards, works on every parapet</em></span></a><a class="room-card" href="museum.html#room=grand"><img src="assets/museum/rooms/grand.jpg" alt="Grand Central, an artist-built room in the museum" loading="lazy" width="640" height="360"><span><small>UNDER THE STARS</small><strong>Grand Central</strong><em>The concourse beneath the celestial vault and the brass clock</em></span></a></div></section>
 
@@ -98,6 +98,27 @@
 
 </main><div id="foot"></div>
 <script src="assets/config.js"></script><script src="assets/counts.js"></script><script src="assets/site.js?v=1cc1ea51f3"></script><script>NY.nav('HOME');NY.foot();</script>
+<script>
+/* room 180 film: a silent teaser loops once the invite scrolls into view (not with reduced motion); the button swaps in the full scored film */
+(function(){
+  var v=document.getElementById("hf"), b=document.getElementById("hfp"), D="assets/film/hall-new-york-lost/", SRC=D+"master.m3u8";
+  if(!v||!b) return;
+  var calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!calm&&"IntersectionObserver" in window){
+    new IntersectionObserver(function(es,o){ es.forEach(function(e){ if(e.isIntersecting&&!v.dataset.full){ if(!v.src){ v.src=D+"teaser.mp4"; } v.play().catch(function(){}); } else if(!v.dataset.full){ v.pause(); } }); },{threshold:.35}).observe(v);
+  }
+  function go(){ b.hidden=true; v.controls=true; v.loop=false; v.muted=false; v.currentTime=0; v.play().catch(function(){}); }
+  b.onclick=function(){
+    v.dataset.full="1"; v.pause();
+    if(v.canPlayType("application/vnd.apple.mpegurl")){ v.src=SRC; go(); return; }
+    var sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js";
+    sc.onload=function(){ if(window.Hls&&Hls.isSupported()){ var hl=new Hls({capLevelToPlayerSize:true}); hl.loadSource(SRC); hl.attachMedia(v);
+      hl.on(Hls.Events.MANIFEST_PARSED,go); } else { v.src=SRC; go(); } };
+    sc.onerror=function(){ v.src=SRC; go(); };
+    document.head.appendChild(sc);
+  };
+})();
+</script>
 <script src="assets/flywheel.js" defer></script>
 <script src="assets/eggs.js" defer></script>
 <script src="assets/mint.js" defer></script>

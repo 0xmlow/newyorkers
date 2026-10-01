@@ -146,6 +146,17 @@
   letter-spacing: .12em; text-transform: uppercase; padding-top: 18px; color: var(--slate);
 }
 .room-photo b { font-weight: 400; color: var(--cyan); }
+.hall-film a { display: block; text-decoration: none; }
+.hf-frame { position: relative; border-radius: var(--r); overflow: hidden; background: #0a0b10; }
+.hf-frame video { display: block; width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
+.hf-play {
+  position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(10,11,16,.78); color: #fff; font: 11px var(--mono); letter-spacing: .12em;
+}
+.hf-play i { width: 0; height: 0; border-left: 9px solid #fff; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+.hf-play b { font-weight: 400; color: var(--cyan); margin-left: 6px; }
+.hf-play[hidden] { display: none; }
 
 /* ---------- rooms worth the walk ---------- */
 .room-picks { padding: 80px 5vw; background: #101821; border-top: 1px solid var(--divider); }
