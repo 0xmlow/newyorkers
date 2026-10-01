@@ -1077,7 +1077,7 @@ function boot() {
       else if (params.get('export') === 'one') exportRoom(post);
     });
   };
-  $('#btnGlb').onclick = () => exportRoom(params.get('post'));
+  /* no public GLB button: MLow 2026-10-01, the rooms are his work and are not handed out; ?export= still serves the mint pipeline */
   $('#btnSpin').onclick = () => spin();
   const enterSpin = $('#enterSpin') as HTMLButtonElement | null;
   if (enterSpin) enterSpin.onclick = () => { spinOnEnter = true; $('#enterBtn').click(); };

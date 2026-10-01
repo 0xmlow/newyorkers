@@ -252,6 +252,29 @@ tripped it). Unverified: that she sits flush on the pedestal, the stair stays in
 her, and the glow sits in the flame. Known loss: her crown windows are painted on the
 texture, so the harbour is not visible from the crown.
 
+## Batch seven (2026-10-01): liberty4, out of the crown, `rooms/up7.ts`
+
+MLow on liberty3: let me see out of the crown; the art inside is too small and badly
+hung. The crown windows are the model's own: its base colour paints 25 black slits,
+so `props/liberty_crown_mask.png` (that texture thresholded, 3.7 KB) is the copper's
+alphaMap with alphaTest and the slits are real openings. Behind the crown band the
+sculpt has a second skin, the forehead, 0.27 behind it; 127 of its triangles behind
+the band are zeroed in place in `props/liberty_statue_v2.glb` (same 2 MB). The climb
+ends at eye 68.4, a step back from the band: six or seven windows, harbour and sky
+through them (checked on a preview deploy). The crown lamp is a dim floor light: a
+6 intensity lamp 1.3 from the copper flared the whole view white.
+
+Art: 43 works (was 24). Pedestal 3.4 by 2.1 straight out from the step that sees it,
+every sixty degrees; inside her 1.8 by 1.1, a quarter turn ahead of the step and
+turned to face it (seen whole from about three metres, pylon out of the sightline),
+every third of a turn, ribs pushed out to the copper behind them; two at 1.0 by 0.62
+at the back of the head. The works are landscape: square frames halved them.
+
+Debugging note: `__museum.camera.lookAt` is overridden by the controller next frame;
+use the page's `at=x,y,z&yaw=deg&pitch=deg` params (yaw 180 looks along +z). A
+Cloudflare preview branch (`wrangler pages deploy --branch liberty-preview`) viewed in
+the app browser avoids the local screenshot tools, which drop the Desktop permission.
+
 ## Next, in the audit's order
 
 snug (13), strivers (13), halloffame (12). Then the facade rooms, then
