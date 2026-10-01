@@ -3,7 +3,7 @@ import { LANDMARK_ROOMS } from './rooms/y';
 import * as T from 'three';
 import { Kit } from './kit';
 import { Fx } from './fx';
-import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG, trimAtlases } from './data';
+import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG, trimAtlases, COLLECTOR } from './data';
 import type { Hang, Piece } from './data';
 import { textureBudget, beginRoom, trimCache } from './textures';
 import type { EggData } from './kit';
@@ -45,6 +45,33 @@ let shown: Piece[] = [];
 let mountsFilled: (T.Group | null)[] = [];   // null where a mount was too small to hang, index stays aligned with shown[]
 let frame = 0;
 const atlas = atlasLoader(quality);
+
+/* ---------- a collector's own hang ---------- */
+const short = (a: string) => a.slice(0, 6) + '\u2026' + a.slice(-4);
+/* Resolves hang=collector:<wallet or ENS> against the snapshot the collectors page is built from.
+   Resolves to false when the wallet holds nothing, so the caller can fall back to the room's own hang. */
+async function ensureCollector(key: string): Promise<boolean> {
+  key = key.trim().toLowerCase();
+  if (COLLECTOR.key === key && COLLECTOR.a) return true;
+  try {
+    let a = key;
+    if (!/^0x[0-9a-f]{40}$/.test(key)) {
+      const idx: Record<string, string> = await (await fetch('api/c/index.json')).json();
+      a = Object.keys(idx).find((x) => (idx[x] || '').toLowerCase() === key) || '';
+      if (!a) return false;
+    }
+    const r = await fetch(`api/c/${a}.json`);
+    if (!r.ok) return false;
+    const d = await r.json();
+    COLLECTOR.key = key; COLLECTOR.a = a; COLLECTOR.name = d.ens || short(a); COLLECTOR.tag = d.tag || ''; COLLECTOR.home = d.home || '';
+    COLLECTOR.nums = (d.pieces || []).filter((p: { id?: string; n?: number }) => p.id && p.n).map((p: { n: number }) => p.n);
+    return COLLECTOR.nums.length > 0;
+  } catch { return false; }
+}
+function collectorReady(): Promise<void> {
+  if (state.hang.mode !== 'collector' || !state.hang.key) return Promise.resolve();
+  return ensureCollector(state.hang.key).then((ok) => { if (!ok) state.hang = { mode: 'place' }; });
+}
 
 /* ---------- hash ---------- */
 function readHash() {
@@ -113,7 +140,8 @@ let yaw = 0,
   pathIndex = 0,
   targetPath = 0,
   goal: T.Vector3 | null = null,
-  lookGoal: T.Vector3 | null = null;
+  lookGoal: T.Vector3 | null = null,
+  waypoints: T.Vector3[] = [];
 const keys = new Set<string>();
 const touchDir = { f: 0, s: 0 };
 function constrain() {
@@ -162,6 +190,171 @@ function standable(p: T.Vector3) {
   return true;
 }
 
+/* ---------- getting from here to there ----------
+
+   The tour and a tap on the floor used to walk in a straight line and let
+   constrain() stop them. In any room with an inner wall, a counter or a row of
+   shelves that left the visitor pressed against the wall, facing a work on the
+   other side of it. A headless walk of all 180 rooms (the same lerp, the same
+   constrain) found 649 of 3,658 tour stops ending stuck or looking at a wall,
+   in 105 rooms. So each room now gets a coarse floor grid of the places a
+   visitor can stand, a little clear of every wall, and a walk that cannot go
+   straight is routed round on it. A tight margin, because some rooms open onto
+   the next through a doorway well under a metre wide. */
+const NAV_CELL = 0.2, NAV_MARGIN = 0.08;
+let nav: { x0: number; z0: number; w: number; h: number; free: Uint8Array; reach: Uint8Array } | null = null;
+function roomy(x: number, z: number) {
+  const g = NAV_MARGIN, [minX, maxX, minZ, maxZ] = build!.bounds;
+  if (x < minX + g || x > maxX - g || z < minZ + g || z > maxZ - g) return false;
+  for (const b of kit!.blocks) if (x > b.x0 - g && x < b.x1 + g && z > b.z0 - g && z < b.z1 + g) return false;
+  for (const k of kit!.keepOut) if (Math.hypot(x - k.x, z - k.z) < k.r + g) return false;
+  return true;
+}
+function buildNav() {
+  nav = null;
+  waypoints = [];
+  if (!build || !kit || build.path) return;
+  const [x0, x1, z0, z1] = build.bounds;
+  const w = Math.ceil((x1 - x0) / NAV_CELL) + 1, h = Math.ceil((z1 - z0) / NAV_CELL) + 1;
+  if (w * h > 4e6) return;   // a room this big walks straight, as before
+  const free = new Uint8Array(w * h), reach = new Uint8Array(w * h);
+  /* stamp each obstacle onto the cells it covers rather than test every cell against every obstacle */
+  const g = NAV_MARGIN, C = NAV_CELL;
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    const x = x0 + i * C, z = z0 + j * C;
+    free[j * w + i] = x >= x0 + g && x <= x1 - g && z >= z0 + g && z <= z1 - g ? 1 : 0;
+  }
+  const stamp = (ax: number, bx: number, az: number, bz: number, hit: (x: number, z: number) => boolean) => {
+    const i0 = Math.max(0, Math.floor((ax - x0) / C)), i1 = Math.min(w - 1, Math.ceil((bx - x0) / C));
+    const j0 = Math.max(0, Math.floor((az - z0) / C)), j1 = Math.min(h - 1, Math.ceil((bz - z0) / C));
+    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) if (hit(x0 + i * C, z0 + j * C)) free[j * w + i] = 0;
+  };
+  for (const b of kit.blocks) stamp(b.x0 - g, b.x1 + g, b.z0 - g, b.z1 + g, (x, z) => x > b.x0 - g && x < b.x1 + g && z > b.z0 - g && z < b.z1 + g);
+  for (const k of kit.keepOut) { const r = k.r + g; stamp(k.x - r, k.x + r, k.z - r, k.z + r, (x, z) => Math.hypot(x - k.x, z - k.z) < r); }
+  nav = { x0, z0, w, h, free, reach };
+  /* everywhere a visitor can get to from the door, so the tour never picks a spot they could not walk to */
+  const s0 = navCell(build.spawn);
+  if (s0 >= 0) {
+    const st = [s0];
+    reach[s0] = 1;
+    while (st.length) {
+      const c = st.pop()!, ci = c % w, cj = (c / w) | 0;
+      for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const a = ci + di, b = cj + dj, n = b * w + a;
+        if (a >= 0 && b >= 0 && a < w && b < h && free[n] && !reach[n]) { reach[n] = 1; st.push(n); }
+      }
+    }
+  }
+}
+/* the free cell nearest a point, searching a little way out if the point itself is too close to a wall */
+function navCell(p: { x: number; z: number }) {
+  if (!nav) return -1;
+  const { x0, z0, w, h, free } = nav;
+  const i = T.MathUtils.clamp(Math.round((p.x - x0) / NAV_CELL), 0, w - 1), j = T.MathUtils.clamp(Math.round((p.z - z0) / NAV_CELL), 0, h - 1);
+  if (free[j * w + i]) return j * w + i;
+  let best = -1, bd = Infinity;
+  for (let r = 1; r < 10 && best < 0; r++)
+    for (let dj = -r; dj <= r; dj++)
+      for (let di = -r; di <= r; di++) {
+        const a = i + di, b = j + dj;
+        if (a < 0 || b < 0 || a >= w || b >= h || !free[b * w + a]) continue;
+        const d = di * di + dj * dj;
+        if (d < bd) { bd = d; best = b * w + a; }
+      }
+  return best;
+}
+function reachable(p: T.Vector3) {
+  if (!nav) return true;
+  const c = navCell(p);
+  return c >= 0 && nav.reach[c] === 1;
+}
+function segFree(a: { x: number; z: number }, b: { x: number; z: number }) {
+  const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.1));
+  for (let i = 1; i < n; i++) if (!roomy(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n)) return false;
+  return true;
+}
+/* Can the visitor at `a` see the work at `m`? Only walls count (blocks), and not
+   the wall the work itself hangs on. */
+function sightClear(a: { x: number; z: number }, m: Mount) {
+  const b = m.position, g = 0.35;
+  const host = kit!.blocks.filter((q) => b.x > q.x0 - g && b.x < q.x1 + g && b.z > q.z0 - g && b.z < q.z1 + g);
+  const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.2);
+  for (let i = 1; i < n - 2; i++) {
+    const x = a.x + ((b.x - a.x) * i) / n, z = a.z + ((b.z - a.z) * i) / n;
+    for (const q of kit!.blocks) if (!host.includes(q) && x > q.x0 && x < q.x1 && z > q.z0 && z < q.z1) return false;
+  }
+  return true;
+}
+/* The turns on the way from one spot to another, the last of them being `to`.
+   A straight walk when nothing is in the way, an A* route on the floor grid,
+   pulled taut, when something is. Null when there is no way through. */
+function route(from: T.Vector3, to: T.Vector3): T.Vector3[] | null {
+  if (!nav || segFree(from, to)) return [to];
+  const { x0, z0, w, h, free } = nav;
+  const s0 = navCell(from), g0 = navCell(to);
+  if (s0 < 0 || g0 < 0) return null;
+  const gx = g0 % w, gz = (g0 / w) | 0;
+  const cost = new Float32Array(w * h).fill(Infinity), prev = new Int32Array(w * h).fill(-1), done = new Uint8Array(w * h);
+  const heap: [number, number][] = [];
+  const push = (f: number, n: number) => {
+    heap.push([f, n]);
+    for (let i = heap.length - 1; i; ) { const pa = (i - 1) >> 1; if (heap[pa][0] <= heap[i][0]) break; [heap[pa], heap[i]] = [heap[i], heap[pa]]; i = pa; }
+  };
+  const pop = () => {
+    const top = heap[0], last = heap.pop()!;
+    if (heap.length) {
+      heap[0] = last;
+      for (let i = 0; ; ) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < heap.length && heap[l][0] < heap[m][0]) m = l;
+        if (r < heap.length && heap[r][0] < heap[m][0]) m = r;
+        if (m === i) break;
+        [heap[m], heap[i]] = [heap[i], heap[m]];
+        i = m;
+      }
+    }
+    return top[1];
+  };
+  cost[s0] = 0;
+  push(0, s0);
+  while (heap.length) {
+    const c = pop();
+    if (done[c]) continue;
+    done[c] = 1;
+    if (c === g0) break;
+    const ci = c % w, cj = (c / w) | 0;
+    for (let dj = -1; dj <= 1; dj++)
+      for (let di = -1; di <= 1; di++) {
+        if (!di && !dj) continue;
+        const a = ci + di, b = cj + dj;
+        if (a < 0 || b < 0 || a >= w || b >= h) continue;
+        const n = b * w + a;
+        if (!free[n] || (di && dj && (!free[cj * w + a] || !free[b * w + ci]))) continue;
+        const nc = cost[c] + (di && dj ? Math.SQRT2 : 1);
+        if (nc < cost[n]) { cost[n] = nc; prev[n] = c; push(nc + Math.hypot(a - gx, b - gz), n); }
+      }
+  }
+  if (g0 !== s0 && prev[g0] < 0) return null;
+  const cells: T.Vector3[] = [];
+  for (let c = g0; c !== s0 && c >= 0; c = prev[c]) cells.unshift(new T.Vector3(x0 + (c % w) * NAV_CELL, 0, z0 + ((c / w) | 0) * NAV_CELL));
+  cells.push(to);
+  /* pull the string: keep only the corners a straight line cannot cut */
+  const out: T.Vector3[] = [];
+  let cur: { x: number; z: number } = from;
+  for (let q = 0; q < cells.length; q++) if (q === cells.length - 1 || !segFree(cur, cells[q + 1])) { out.push(cells[q]); cur = cells[q]; }
+  return out;
+}
+/* Set off for `dest`, routed round anything in the way. */
+function setGoal(dest: T.Vector3) {
+  goal = dest;
+  waypoints = [];
+  if (build && !build.path) {
+    const r = route(camera.position, dest);
+    if (r) waypoints = r.slice(0, -1).map((q) => new T.Vector3(q.x, (build!.floorY ? build!.floorY(q.x, q.z) : 0) + build!.eye, q.z));
+  }
+}
+
 /* Where to stand to see mount n.
 
    The hand written target is used whenever it is any good, because it carries
@@ -177,18 +370,22 @@ function viewpoint(m: Mount) {
   const nx = Math.sin(m.rotation), nz = Math.cos(m.rotation);
   const toTarget = new T.Vector3().subVectors(m.target, m.position);
   const inFront = toTarget.x * nx + toTarget.z * nz > 0;
-  if (inFront && standable(m.target)) return m.target.clone();
+  const good = (p: T.Vector3) => standable(p) && reachable(p) && sightClear(p, m);
+  if (inFront && good(m.target)) return m.target.clone();
+  let fallback: T.Vector3 | null = inFront && standable(m.target) ? m.target.clone() : null;
   /* Search the floor in front of the work: straight out first, then further
      back, then off to either side. A picture in a corner or on a narrow
      landing often has nothing directly in front of it but plenty at an angle,
      and looking at a painting from off to one side is normal. */
-  for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5, back * 3.2]) {
-    for (const a of [0, 0.3, -0.3, 0.6, -0.6, 0.95, -0.95, 1.25, -1.25]) {
+  for (const d of [back, back * 1.4, back * 0.7, back * 1.9, back * 2.5, back * 3.2, back * 0.5, back * 4.2]) {
+    for (const a of [0, 0.3, -0.3, 0.6, -0.6, 0.95, -0.95, 1.25, -1.25, 1.45, -1.45]) {
       const ax = Math.sin(m.rotation + a), az = Math.cos(m.rotation + a);
       const p = new T.Vector3(m.position.x + ax * d, m.target.y, m.position.z + az * d);
-      if (standable(p)) return p;
+      if (good(p)) return p;
+      if (!fallback && standable(p)) fallback = p;
     }
   }
+  if (fallback) return fallback;
   /* Nothing in front of it is standable. Keep the authored target rather than
      inventing a worse one, and let constrain() do what it can. */
   return m.target.clone();
@@ -198,7 +395,7 @@ function focus(n: number) {
   if (!build || !build.mounts[n]) return;
   const m = build.mounts[n];
   const stand = viewpoint(m);
-  goal = stand;
+  setGoal(stand);
   lookGoal = (m.lookAt || m.position).clone();
   if (build.path) targetPath = nearestPath(stand);
   state.active = n;
@@ -219,7 +416,7 @@ function nearestPath(p: T.Vector3) {
 }
 function home() {
   if (!build) return;
-  goal = build.spawn.clone();
+  setGoal(build.spawn.clone());
   lookGoal = build.look.clone();
   targetPath = 0;
   state.active = -1;
@@ -286,7 +483,7 @@ function walkTo(p: T.Vector3, look?: T.Vector3) {
     dest.y = (build.floorY ? build.floorY(dest.x, dest.z) : 0) + build.eye;
   }
   lookGoal = look ? look.clone() : dest.clone().addScaledVector(camera.getWorldDirection(new T.Vector3()), 10);
-  goal = dest;
+  setGoal(dest);
   state.tour = false;
   paintTour();
   showMarker(p.x, p.y, p.z);
@@ -537,14 +734,16 @@ function animate(now: number) {
     }
   }
   if (state.tour && shown.length && !document.querySelector('.panel.open,#detail.open,#egg.open')) {
-    tourClock += dt;
-    if (tourClock >= TOUR_DWELL) { tourClock = 0; focus((state.active + 1) % shown.length); }
+    /* the dwell starts when the visitor arrives, so a long walk does not eat the looking */
+    if (!goal) tourClock += dt;
+    if (tourClock >= TOUR_DWELL) { tourClock = 0; focus(nextHung(state.active)); }
   } else {
     tourClock = 0;
   }
   if (goal && lookGoal) {
     const before = camera.position.clone();
     if (reduced()) {
+      waypoints = [];
       camera.position.copy(goal);
       if (build.path) { pathIndex = targetPath; placeOnPath(); }
       camera.lookAt(lookGoal);
@@ -553,8 +752,16 @@ function animate(now: number) {
       pathIndex += (targetPath - pathIndex) * (1 - Math.exp(-dt * 2.2));
       if (Math.abs(pathIndex - targetPath) < 0.02) pathIndex = targetPath;
       placeOnPath();
+    } else if (waypoints.length) {
+      /* walking a route: an even pace from corner to corner, eyes on the way ahead */
+      const w = waypoints[0], d = Math.hypot(w.x - camera.position.x, w.z - camera.position.z);
+      const step = Math.min(d, dt * 3.4);
+      if (d > 1e-4) camera.position.add(new T.Vector3((w.x - camera.position.x) / d * step, 0, (w.z - camera.position.z) / d * step));
+      if (d < 0.15) waypoints.shift();
     } else camera.position.lerp(goal, 1 - Math.exp(-dt * 3));
-    const m = new T.Matrix4().lookAt(camera.position, lookGoal, new T.Vector3(0, 1, 0));
+    const ahead = waypoints.length ? new T.Vector3(waypoints[0].x, camera.position.y, waypoints[0].z) : null;
+    const looking = ahead && ahead.distanceToSquared(camera.position) > 0.04 ? ahead : lookGoal;
+    const m = new T.Matrix4().lookAt(camera.position, looking, new T.Vector3(0, 1, 0));
     const tq = new T.Quaternion().setFromRotationMatrix(m);
     camera.quaternion.slerp(tq, 1 - Math.exp(-dt * 4));
     const e = new T.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
@@ -564,7 +771,7 @@ function animate(now: number) {
     /* arrived means there and facing the right way; a walk that a wall has stopped short also ends */
     const turned = camera.quaternion.angleTo(tq) < 0.01;
     stall = camera.position.distanceToSquared(before) < 1e-7 ? stall + 1 : 0;
-    if ((turned && (build.path ? Math.abs(pathIndex - targetPath) < 0.02 : camera.position.distanceTo(goal) < 0.03)) || stall > 40) { goal = null; stall = 0; }
+    if ((turned && !waypoints.length && (build.path ? Math.abs(pathIndex - targetPath) < 0.02 : camera.position.distanceTo(goal) < 0.03)) || stall > 40) { goal = null; waypoints = []; stall = 0; }
   } else {
     camera.rotation.set(pitch, yaw, 0, 'YXZ');
     const push = touchDir.f * touchDir.f + touchDir.s * touchDir.s;
@@ -635,6 +842,7 @@ function loadRoom(openN?: string | null): Promise<void> {
       const dx = m.target.x - m.position.x, dz = m.target.z - m.position.z;
       if (dx * Math.sin(m.rotation) + dz * Math.cos(m.rotation) < 0) m.rotation += Math.PI;
     }
+    buildNav();
     kit.brand(build, def.name);
     const n = build.mounts.length;
     const pages = Math.max(1, Math.ceil(list.length / n));
@@ -1063,7 +1271,7 @@ function boot() {
       bindControls(renderer.domElement);
       frame = requestAnimationFrame(animate);
     }
-    loadRoom(openN).then(() => {
+    collectorReady().then(() => loadRoom(openN)).then(() => {
       $('#enter').classList.add('gone');
       $('#enter').setAttribute('inert', '');
       $('#btnTour').focus();
@@ -1094,7 +1302,7 @@ function boot() {
   $('#indexMore').onclick = () => paintIndex();
   $('#btnFull').onclick = () => { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.().catch(() => {}); };
   $('#btnHome').onclick = () => { home(); state.tour = false; paintTour(); };
-  $('#btnTour').onclick = () => { state.tour = !state.tour; paintTour(); if (state.tour) focus((state.active + 1) % Math.max(1, shown.length)); };
+  $('#btnTour').onclick = () => { state.tour = !state.tour; paintTour(); if (state.tour) { tourClock = 0; focus(nextHung(state.active)); } };
   $('#pagePrev').onclick = () => setPage(state.page - 1);
   $('#pageNext').onclick = () => setPage(state.page + 1);
   $('#stepF').onclick = () => step(1);
@@ -1109,11 +1317,26 @@ function boot() {
     const before = state.room + '|' + state.hang.mode + ':' + state.hang.key + '|' + state.page;
     const n = readHash();
     const after = state.room + '|' + state.hang.mode + ':' + state.hang.key + '|' + state.page;
-    if (before !== after && renderer) loadRoom(n);
+    if (before !== after && renderer) collectorReady().then(() => loadRoom(n));
+  });
+  // a collector link says whose collection this is before anyone presses enter
+  if (state.hang.mode === 'collector') collectorReady().then(() => {
+    if (state.hang.mode !== 'collector') return;
+    $('#enterRoom').textContent = 'THE COLLECTION OF ' + COLLECTOR.name.toUpperCase() + ' · ' + COLLECTOR.nums.length + ' NEW YORKERS · ' + ROOMS[state.room].area;
   });
   if (MINT.room) { $('#btnDest').hidden = true; $('#changeRoom').hidden = true; document.body.classList.add('minted'); }
   if (params.has('debug')) $('#debug').hidden = false;
   if (params.has('auto')) $('#enterBtn').click();
+}
+/* The next mount along that actually has a work on it. A mount too small to hang
+   stays empty, and the tour used to stop in front of the bare wall. */
+function nextHung(from: number) {
+  const n = Math.max(1, shown.length);
+  for (let k = 1; k <= n; k++) {
+    const i = (from + k + n) % n;
+    if (mountsFilled[i] !== null && build?.mounts[i]) return i;
+  }
+  return (from + 1 + n) % n;
 }
 function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
