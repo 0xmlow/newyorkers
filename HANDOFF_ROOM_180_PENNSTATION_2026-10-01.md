@@ -64,10 +64,9 @@ overlay for comparable rooms, so the old "under 350" target is not met here eith
 - Find mine was exercised once, with mlow.eth, on the rehang path. The "already hung
   here" path and the not on the roll message were not exercised.
 - Real phones, frame rate, and the eggs' glint placement were not checked.
-- `_build/rooms.json`, `assets/museum/museum.js` and `museum.html` were regenerated
-  but not committed, because the working tree also holds another session's
-  uncommitted Liberty work (`src/rooms/index.ts`, `up6.ts`) that the bundle includes.
-  Run `build_all.sh` once both are committed.
+- The bundle, `museum.html` and `_build/rooms.json` were committed later the same day
+  (0f1e86b), once the parallel Liberty work had been committed and the bundle carried
+  nothing uncommitted.
 
 ## Detail pass, same day (MLow's review)
 
