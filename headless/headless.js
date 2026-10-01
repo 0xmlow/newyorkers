@@ -646,16 +646,20 @@ async function main(){
       if(w !== renderW || h !== renderH) allocTargets(w, h);
       uploadSource(img);
 
-      const seed = 'MLOW-NY-' + item.token + '-GLITCH-V2';
+      /* job.seedTag cuts a separate generation without touching the V2 gifts;
+         job.stillOnly skips the GIF (about 20MB each) when only a frame is wanted */
+      const seed = 'MLOW-NY-' + item.token + '-' + (job.seedTag || 'GLITCH-V2');
       const r = applyRecipe(seed, item.family);
       const {family, bonus, frames, delayCs, maxColors, arcPow, brandMode} = r;
 
-      const raw = captureLoopFrames(w, h, frames);
-      const {indexed, palette} = quantizeFrames(raw, w, h, maxColors);
-      const gifBytes = encodeGIF(w, h, indexed, palette, delayCs);
       const base = item.token + ' ' + item.name;
-      fs.writeFileSync(path.join(gifDir, base + '.gif'), Buffer.from(gifBytes));
-      fs.writeFileSync(path.join(stillDir, base + '.png'), stillPNG(w, h, 0.72));
+      if(!job.stillOnly){
+        const raw = captureLoopFrames(w, h, frames);
+        const {indexed, palette} = quantizeFrames(raw, w, h, maxColors);
+        const gifBytes = encodeGIF(w, h, indexed, palette, delayCs);
+        fs.writeFileSync(path.join(gifDir, base + '.gif'), Buffer.from(gifBytes));
+      }
+      fs.writeFileSync(path.join(stillDir, base + '.png'), stillPNG(w, h, item.stillPhase ?? job.stillPhase ?? 0.72));
 
       const rec = {
         token: item.token, name: item.name, seed,
@@ -664,8 +668,8 @@ async function main(){
         fps: +(100/delayCs).toFixed(1), maxColors,
         arc: family.arc || 'burst', arcPow, brandMode,
         src: item.src,
-        gif: 'gifs/' + base + '.gif',
-        still: 'stills/' + base + '.png',
+        gif: job.stillOnly ? null : 'gifs/' + base + '.gif',
+        still: 'stills/' + base + '.png', stillPhase: item.stillPhase ?? job.stillPhase ?? 0.72,
         chain: state.chain.filter(e=>e.on).map(e=>({id:e.id, params:e.params})),
       };
       fs.appendFileSync(manifestPath, JSON.stringify(rec) + '\n');
