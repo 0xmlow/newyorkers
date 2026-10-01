@@ -119,6 +119,7 @@ const CURATION: Record<string, Cur> = {
   dykerheights: { nb: ['Dyker Heights', 'Bensonhurst', 'Bay Ridge'], words: /christmas|lights|holiday|santa|family|italian|decorat|winter|brooklyn|nonna|electrician/i },
   huntspoint: { nb: ['Hunts Point', 'The Bronx', 'Bronx'], words: /market|produce|truck|forklift|warehouse|night shift|worker|driver|fruit|vegetable|bronx|wholesale|loader/i },
   columbuspark: { nb: ['Chinatown', 'Civic Center', 'Two Bridges'], words: /chinatown|chess|xiangqi|mahjong|tai chi|erhu|elder|grandmother|grandfather|park|bench|cantonese/i },
+  pennstation: { nb: ['Penn Station', 'Garment District', 'Midtown South', 'Hudson Yards'], words: /penn station|demoli|wrecking|landmark|lost|vanish|ghost|travertine|waiting room|column|ledger|census|counted|roll call|preserv|1963|1910|eagle|clock/i },
 
   pneumatic: { nb: ['Civic Center'], words: /letter|mail|postal|messenger|courier|message/i },
   garment: { nb: ['Garment District'], words: /tailor|seamstress|garment|fashion|fabric|designer/i },

@@ -7,7 +7,7 @@ import { ROOMS } from './src/rooms';
 import { NEW_WORKING_ROOMS } from './src/rooms/x';
 // Canvas shim supports procedural texture data; this remains a geometry check, not a render test.
 Object.assign(globalThis,{document:{createElement:()=>({width:0,height:0,getContext:()=>{const px:any=new Proxy({createImageData:(w:number,h:number)=>({data:new Uint8ClampedArray(w*h*4)}),getImageData:(_x:number,_y:number,w:number,h:number)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData:()=>{},measureText:()=>({width:100})},{get:(o:any,key)=>key in o?o[key]:(()=>px)});return px;}})}});
-assert.equal(ROOMS.length,179); assert.equal(new Set(ROOMS.map(r=>r.id)).size,179);
+assert.equal(ROOMS.length,180); assert.equal(new Set(ROOMS.map(r=>r.id)).size,180);
 for(const def of NEW_WORKING_ROOMS){
  const scene=new T.Scene();const k=new Kit(scene,{renderer:{} as T.WebGLRenderer,quality:'low',reduced:true,atlas:async()=>new T.Texture(),atlasGrid:1,perAtlas:1,hour:4,dynamic:false});
  const b=def.build(k,{pieces:[],all:[],thumb:()=>'',reduced:true,quality:'low',wallStart:()=>0});
