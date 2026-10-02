@@ -13,7 +13,18 @@
    nowhere else. Rooms left short are topped up from the pieces no room claimed,
    dealt round robin so those cannot collide either.
 
-   Run it whenever data.js or the CURATION table changes:
+   One exception, made on purpose. PINNED hands a room a fixed list before any
+   scoring happens: room 180, pennstation, the 1910 census hall, hangs the
+   KEYSTONE 111, the founding New Yorkers, in ramp order from
+   _build/api/keystone_prints.json. Those 111 belong to pennstation and to no
+   other room, so the one room rule still holds and build_collectors.py still
+   gives every Keystone holder one home. A pinned room is exempt from CAP (111 is
+   more than its share) and takes nothing else, and every pinned piece counts as
+   a lead, so placeHang rotates which Keystone works sit on the 24 big mounts each
+   New York day. This file also writes src/keystone.ts, the same list as a module,
+   so the bundle never fetches it at runtime.
+
+   Run it whenever data.js, the CURATION table or the Keystone list changes:
      node assign_hang.mjs            write src/hang_owned.ts
      node assign_hang.mjs --check    report only, write nothing
 */
@@ -27,6 +38,8 @@ const DATA = path.join(SITE, 'assets', 'data.js');
 const DATA_TS = path.join(here, 'src', 'data.ts');
 const USED_TS = path.join(here, 'src', 'used.ts');
 const OUT = path.join(here, 'src', 'hang_owned.ts');
+const KEYSTONE_JSON = path.join(SITE, '_build', 'api', 'keystone_prints.json');
+const KEYSTONE_TS = path.join(here, 'src', 'keystone.ts');
 
 /* Every room needs enough of its own to fill its walls and page a little. The
    busiest room in the building carries 38 mounts. */
@@ -57,6 +70,25 @@ const ROOM_IDS = Object.keys(CURATION);
 /* ---------- pieces already hung in an exported room ---------- */
 const usedSrc = fs.readFileSync(USED_TS, 'utf8');
 const USED = new Set((usedSrc.match(/\[([\d,\s]+)\]/) || [, ''])[1].split(',').map(Number).filter(Boolean));
+
+/* ---------- pinned rooms ---------- */
+/* The Keystone 111 in ramp order, read from the print kit's list. Every number
+   must be a hangable piece in data.js, or the room would hang a hole. */
+const KS = JSON.parse(fs.readFileSync(KEYSTONE_JSON, 'utf8')).pieces.slice().sort((a, b) => a.pos - b.pos);
+const KEYSTONE = KS.map((q) => q.n);
+const PINNED = { pennstation: KEYSTONE };
+{
+  const hangable = new Set(P.filter((p) => p.n != null && p.st && p.st.length).map((p) => p.n));
+  const pinnedSeen = new Set();
+  for (const [id, nums] of Object.entries(PINNED)) {
+    if (!(id in CURATION)) throw new Error(`pinned room ${id} is not in CURATION`);
+    for (const n of nums) {
+      if (!hangable.has(n)) throw new Error(`pinned piece ${n} for ${id} is not a hangable piece in data.js`);
+      if (pinnedSeen.has(n)) throw new Error(`piece ${n} is pinned twice`);
+      pinnedSeen.add(n);
+    }
+  }
+}
 
 /* ---------- the same score placeHang uses ---------- */
 function score(p, c) {
@@ -102,10 +134,18 @@ offers.sort((a, b) => b[0] - a[0] || a[1] - b[1] || a[2] - b[2]);
 
 const owned = new Map(ROOM_IDS.map((id) => [id, []]));
 const takenBy = new Map();
+/* Pinned pieces are claimed first, so no scored offer can take one elsewhere.
+   They carry a positive score so they count as leads, and the room is marked
+   so it takes nothing more. */
+const pinnedRooms = new Set(Object.keys(PINNED));
+for (const [id, nums] of Object.entries(PINNED)) {
+  for (const n of nums) { owned.get(id).push({ n, s: 1, pin: true }); takenBy.set(n, id); }
+}
 for (const [s, i, r] of offers) {
   const p = P[i];
   if (takenBy.has(p.n)) continue;
   const id = ROOM_IDS[r];
+  if (pinnedRooms.has(id)) continue;
   const list = owned.get(id);
   if (list.length >= CAP) continue;
   list.push({ n: p.n, s });
@@ -123,7 +163,7 @@ for (const p of P) {
 unclaimed.sort((a, b) => a - b);
 let cursor = 0;
 while (cursor < unclaimed.length) {
-  const queue = ROOM_IDS.filter((id) => owned.get(id).length < CAP)
+  const queue = ROOM_IDS.filter((id) => !pinnedRooms.has(id) && owned.get(id).length < CAP)
     .sort((a, b) => owned.get(a).length - owned.get(b).length || (a < b ? -1 : 1));
   if (!queue.length) break;
   for (const id of queue) {
@@ -136,7 +176,7 @@ while (cursor < unclaimed.length) {
 
 /* Strongest first inside a room. placeHang still reshuffles the leads daily, so
    this order decides who is in the running, not who is on which wall. */
-for (const list of owned.values()) list.sort((a, b) => b.s - a.s || a.n - b.n);
+for (const [id, list] of owned) if (!pinnedRooms.has(id)) list.sort((a, b) => b.s - a.s || a.n - b.n);
 
 /* ---------- report ---------- */
 const counts = ROOM_IDS.map((id) => owned.get(id).length);
@@ -151,6 +191,12 @@ console.log(`  matched by curation ${scored - unclaimed.length}, dealt round rob
 console.log(`  per room: min ${sorted[0]}, median ${sorted[sorted.length >> 1]}, max ${sorted[sorted.length - 1]}`);
 console.log(`  rooms under the floor of ${FLOOR}: ${thin.length}${thin.length ? ' (' + thin.slice(0, 8).join(', ') + ')' : ''}`);
 console.log(`  duplicate assignments: ${dupes}`);
+for (const [id, nums] of Object.entries(PINNED)) {
+  const got = owned.get(id).map((o) => o.n);
+  const stray = nums.filter((n) => takenBy.get(n) !== id).length;
+  console.log(`  pinned ${id}: ${got.length} pieces (${nums.length} pinned, ${stray} claimed elsewhere), leads ${owned.get(id).filter((o) => o.s > 0).length}`);
+  if (stray || got.length !== nums.length) throw new Error(`pinned room ${id} does not hold exactly its pinned list`);
+}
 if (dupes) throw new Error('a piece was assigned to two rooms, which is the whole thing this file exists to prevent');
 
 if (process.argv.includes('--check')) process.exit(0);
@@ -176,3 +222,11 @@ ${leads}
 };
 `);
 console.log(`wrote ${path.relative(SITE, OUT)}`);
+fs.writeFileSync(KEYSTONE_TS, `/* Generated by assign_hang.mjs from _build/api/keystone_prints.json. Do not edit by hand.
+
+   THE KEYSTONE 111, the founding New Yorkers, as census numbers in ramp order.
+   Room 180 (pennstation) hangs them on its salon wall and its big mounts; assign_hang
+   pins all of them to that room, so they hang nowhere else in the museum. */
+export const KEYSTONE: number[] = [${KEYSTONE.join(',')}];
+`);
+console.log(`wrote ${path.relative(SITE, KEYSTONE_TS)} (${KEYSTONE.length} numbers)`);
