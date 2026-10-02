@@ -99,10 +99,21 @@ subs = [
     # the image names never change and Cloudflare holds them in browsers for at least 4 hours, so every
     # request carries the render version from keystone_images.py; a re-render reaches everyone at once
     ("loader.load(IMG+f.d.id+'s.jpg', function(t){", "loader.load(IMG+f.d.id+'s.jpg?v='+IMGV, function(t){"),
-    ('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>', '<script src="assets/three.min.js"></script>'),
     ('<a href="https://n3wyorkers.com" target="_blank" rel="noopener" aria-label="NEW YORKERS by MLow">', '<a href="index.html" aria-label="NEW YORKERS home">'),
     ('<a class="out" id="kLink" href="https://n3wyorkers.com/n/1" target="_blank" rel="noopener">', '<a class="out" id="kLink" href="n/x000.html">'),
-    ("kLink').href='https://n3wyorkers.com/n/'+d.n", "kLink').href='n/'+d.sid+'.html'"),
+    # ORDER A PRINT, beside the census link. Every Keystone piece has its own print on mlow.nyc
+    # (keystone_shop.py). While those are drafts (NY_KEYSTONE_PRINTS.status) the link goes to the piece's
+    # record page, whose order block sells it through NEW YORKERS Print with the piece named on the order.
+    # No link at all unless NY_PRINTS is live, the same switch that governs every buy button on the site.
+    ('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>',
+     '<script src="assets/three.min.js"></script>\n<script src="assets/prints.js"></script>\n<script src="assets/keystone_prints.js"></script>'),
+    ('  #card a.out:hover{color:var(--blue-soft)}\n',
+     '  #card a.out:hover{color:var(--blue-soft)}\n  #card a.out + a.out{margin-left:18px}\n'),
+    ('See it in the census</a>', 'See it in the census</a><a class="out" id="kPrint" href="#" target="_blank" rel="noopener" hidden>Order a print</a>'),
+    ("kLink').href='https://n3wyorkers.com/n/'+d.n",
+     "kLink').href='n/'+d.sid+'.html';\n  (function(){ var a=document.getElementById('kPrint'), P=window.NY_PRINTS, K=window.NY_KEYSTONE_PRINTS, kp=K&&K.pieces[String(d.n)];"
+     " if(!P||P.status!=='live'){ a.hidden=true; return; }"
+     " a.href=(K&&K.status==='live'&&kp)?K.shop+'/products/'+kp.handle:'n/'+d.sid+'.html#orderbox'; a.hidden=false; })()"),
     ("<title>Keystone 111</title>", "<title>NEW YORKERS · Keystone 111</title>"),
     # state buttons: every chip on the card is a button that puts that state in the frame on the wall;
     # pressing the same chip again steps through that kind's states (motion 2/5)
@@ -120,7 +131,7 @@ subs = [
     ("function closeCard(){ card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }",
      """function closeCard(){ stateOff(); card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }
 // ---------- states ----------
-// d.st lists every state on the token in mint order: {k: still|motion|glitch|dither, l: label, u: url
+// d.st lists every state on the token in mint order, then the site only ones: {k: still|motion|glitch|dither|poster|card|meme, l: label, u: url
 // (null for the lead painting, which is the tiered s/m/l), v: 1 for video, a: aspect}. One state shows at a
 // time, on the open piece, in its own frame. Media of another shape (the square loops) is matted inside the
 // frame rather than stretched. The painting's texture is kept and put back when the state is closed.
@@ -170,9 +181,10 @@ function renderChips(f){
   var d = f.d, st = document.getElementById('kStates'); st.innerHTML = '';
   var n = document.createElement('span'); n.className = 'n'; n.textContent = d.st.length+' state'+(d.st.length===1?'':'s'); st.appendChild(n);
   var curI = ST.f === f ? ST.i : 0, cur = d.st[curI].k;
-  ['still','motion','glitch','dither'].forEach(function(k){
+  ['still','motion','glitch','dither','poster','card','meme'].forEach(function(k){
     var idx = []; d.st.forEach(function(s,j){ if (s.k === k) idx.push(j); });
     var name = k === 'still' ? 'painted' : k, on = idx.length > 0, pos = idx.indexOf(curI);
+    if (!on && (k === 'poster' || k === 'card' || k === 'meme')) return;   // the ChatGPT kinds only show where a piece has one
     var c = document.createElement(on ? 'button' : 'span');
     c.className = 'chip'+(on ? ' live' : ''); c.style.opacity = on ? '1' : '.35';
     c.textContent = name + (k === cur && idx.length > 1 ? ' '+(pos+1)+'/'+idx.length : (idx.length > 1 ? ' '+idx.length : ''));
