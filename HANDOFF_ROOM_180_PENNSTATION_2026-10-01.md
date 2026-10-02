@@ -103,3 +103,38 @@ overlay for comparable rooms, so the old "under 350" target is not met here eith
 Still not verified: a human walking it in a real browser, any phone, and frame rate.
 The find mine clip uses a collector whose work hangs here today; the hang reshuffles daily.
 The proof walk grazes the jamb of the west opening on its way into the seam.
+
+## The KEYSTONE 111 and ORDER A PRINT (2026-10-02)
+
+MLow approved hanging the founding 111 in this hall. That reverses "Why the normal hang"
+above for the Keystone works only; the 552 minted census works still hang by the normal rule.
+
+- **The pin.** `assign_hang.mjs` has a `PINNED = { pennstation: <Keystone numbers> }` table,
+  read in ramp order from `_build/api/keystone_prints.json` and claimed before any scored
+  offer. A pinned room is exempt from CAP and takes nothing else, so pennstation owns exactly
+  the 111 and they hang in no other room; collector maps follow from `hang_owned.ts` as always.
+  All 111 are leads, so `placeHang` rotates which of them sit on the 24 big mounts every New
+  York day. The script also writes `src/keystone.ts` (the ordered numbers) for the room code.
+  Rerun it if the Keystone list changes. Cost: 75 rooms gave up one to four works, and the
+  smallest room fell from 34 to 24 works (parkeast, 15 mounts).
+- **The salon wall.** The south end wall is the KEYSTONE 111 wall, signed KEYSTONE 111 / THE
+  FOUNDING NEW YORKERS, built last in `v23.ts` by `keystoneWall()`. It leaves out whatever the
+  mounts show on the current page (RoomCtx now carries `page`), so on the normal hang each
+  Keystone work is in the hall once: 87 on the wall plus 24 on mounts, or 96 plus 15 on page 5.
+  Under a collector or search hang it skips only the Keystone works on the mounts. The kit's
+  `censusWall` takes `indices` (any positions in P, any atlas) and `centerLast`.
+- **ORDER A PRINT** in the museum's piece panel, every room. No button unless
+  `NY_PRINTS.status` is live. A Keystone work with a live product in
+  `assets/keystone_prints.js` links to `https://mlow.nyc/products/<handle>`; everything else
+  links to `n/<id>#orderbox`, the record page's size and surface picker. New tab.
+  `museum.html` loads both scripts; `build_deploy.py` copies and hash stamps
+  `keystone_prints.js`, and will refuse to build until that file exists.
+
+Verified headless (shot_room.py, hour 14): wall 87 tiles and mounts 24, no overlap, union is
+the 111; page 3 the same, page 5 is 96 and 15; a search hang gives 108 and 24; 2026-10-03
+hangs different leads from 2026-10-02. The link logic was exercised with a stubbed
+`NY_KEYSTONE_PRINTS` (draft, live, missing) and with `NY_PRINTS` forced to draft.
+
+Not verified: the collector hang on this room after the change (its code path is untouched),
+a real browser or phone, the real `keystone_prints.js` (it did not exist yet), and that the
+n/ order block anchor scrolls into view on the live site.
