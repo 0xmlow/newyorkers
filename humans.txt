@@ -9,7 +9,7 @@ Location: New York City
 Every New Yorker. Even the villains.
 
 /* SITE */
-Last update: 2026-09-29
+Last update: 2026-10-02
 Standards: HTML5, CSS3, Three.js, ERC-7160
 Components: a painted census, an atlas, a museum, a reading room, a slot machine, several easter eggs
 Song: Empire State of Mind, obviously
