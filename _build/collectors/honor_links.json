@@ -1,0 +1,30 @@
+{
+ "adam-weitsman": {
+  "key": "adamweitsman.eth",
+  "name": "adamweitsman.eth",
+  "n": 22,
+  "rank": 5,
+  "of": 137
+ },
+ "dingomick": {
+  "key": "dingomick.eth",
+  "name": "dingomick.eth",
+  "n": 5,
+  "rank": 21,
+  "of": 137
+ },
+ "j-p-moregainz": {
+  "key": "jpmoregainz.eth",
+  "name": "jpmoregainz.eth",
+  "n": 5,
+  "rank": 26,
+  "of": 137
+ },
+ "blac": {
+  "key": "blac.eth",
+  "name": "blac.eth",
+  "n": 3,
+  "rank": 31,
+  "of": 137
+ }
+}
