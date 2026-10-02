@@ -94,7 +94,7 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
-              "keystone.html", "honoraries.html")
+              "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html")
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
                            "humans.txt", "_redirects")
 for page in SITE_FILES:
@@ -111,8 +111,8 @@ for f in os.listdir(OUT):
 # but never copied here. One tuple drives both the copy and the prune: two lists drift,
 # and the drift is silent (an asset stops shipping and every page that needs it breaks).
 COPY_ASSETS = ("three.min.js", "site.css", "site.js", "geo.js", "eggs.js", "counts.js",
-               "rooms.js", "articles.js", "shipping.js", "prints.js", "qrcode.min.js", "sha3.min.js",
-               "home.css", "flywheel.js", "cast.json", "mint.js")
+               "rooms.js", "articles.js", "shipping.js", "prints.js", "keystone_prints.js", "qrcode.min.js", "sha3.min.js",
+               "home.css", "flywheel.js", "cast.json", "mint.js", "collector-card.js")
 KEEP_ASSETS = set(COPY_ASSETS) | {"config.js", "data.js"}
 _ad = os.path.join(OUT, "assets")
 for f in os.listdir(_ad):
@@ -163,7 +163,31 @@ with open(os.path.join(OUT, "404.html"), "w") as f:
             '<div><div style="font-size:64px;letter-spacing:.08em;color:#fff">404</div>'
             '<p style="color:#8899AA;max-width:420px;line-height:1.6">This number has not been painted yet. The census keeps going anyway.</p>'
             '<p><a href="/" style="color:#2962FF;text-decoration:none;font-family:Menlo,monospace;font-size:13px;letter-spacing:.2em">ENTER THE CENSUS</a></p></div></body></html>')
-for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "film", "museum"):
+def sync_dir(src, dst):
+    """sync-lite: copy missing files, recopy any file whose size or mtime changed (a rebuilt asset keeps its name),
+    drop what the source no longer has. Recurses: it used to skip subfolders once the folder existed in the package,
+    so a new assets/film/<name>/ never shipped and a re-encoded film inside an old one never updated."""
+    os.makedirs(dst, exist_ok=True)
+    for f in os.listdir(src):
+        a, b = os.path.join(src, f), os.path.join(dst, f)
+        if os.path.isdir(a):
+            if os.path.exists(b) and not os.path.isdir(b): os.remove(b)
+            sync_dir(a, b)
+            continue
+        if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b) or int(os.path.getmtime(a)) != int(os.path.getmtime(b)):
+            # APFS clone keeps the package from doubling the disk (the Keystone wall loops alone are a GB);
+            # -p keeps the mtime this comparison reads. Plain copy wherever cloning is not possible.
+            if os.path.isdir(b): shutil.rmtree(b)
+            elif os.path.exists(b): os.remove(b)
+            if subprocess.run(["cp", "-c", "-p", a, b], capture_output=True).returncode != 0: shutil.copy2(a, b)
+    keep = set(os.listdir(src))
+    for f in os.listdir(dst):
+        if f not in keep:
+            fp = os.path.join(dst, f)
+            shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
+
+
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "museum", "press"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
@@ -173,24 +197,13 @@ for sub in ("brand", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion
         shutil.copytree(src, dst, ignore=shutil.ignore_patterns('museum.*.js'))
         continue
     if os.path.isdir(dst):
-        # sync-lite: copy missing files, and recopy any file whose size or mtime changed (a rebuilt asset keeps its name)
-        for f in os.listdir(src):
-            a, b = os.path.join(src, f), os.path.join(dst, f)
-            if os.path.isdir(a): continue
-            if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b) or int(os.path.getmtime(a)) != int(os.path.getmtime(b)):
-                # APFS clone keeps the package from doubling the disk (the Keystone wall loops alone are a GB);
-                # -p keeps the mtime this comparison reads. Plain copy wherever cloning is not possible.
-                if os.path.exists(b): os.remove(b)
-                if subprocess.run(["cp", "-c", "-p", a, b], capture_output=True).returncode != 0: shutil.copy2(a, b)
-        # drop stale
-        keep = set(os.listdir(src))
-        for f in os.listdir(dst):
-            if f not in keep: os.remove(os.path.join(dst, f))
+        sync_dir(src, dst)
     else:
         shutil.copytree(src, dst)
     # never ship the cut pieces' own files, nor thumbs no public piece references
     if sub == "t":
         used = set(k for p in data["pieces"] for k in (p.get("st") or [])) | {(p.get("gl") or {}).get("st") for p in data["pieces"] if p.get("gl")}
+        used |= {f["k"] for p in data["pieces"] for f in (p.get("fx") or [])}   # ChatGPT posters, memes, cards (attach_piece_extras.py)
         pruned = 0
         for f in os.listdir(dst):
             if f.endswith(".jpg") and f[:-4] not in used:
@@ -307,6 +320,8 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
 /assets/honoraries/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/cards/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/posters/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/museum/props/*
   Cache-Control: public, max-age=31536000, immutable

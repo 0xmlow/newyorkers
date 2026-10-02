@@ -961,6 +961,21 @@ function openPanel(id: string) {
 }
 
 /* ---------- detail ---------- */
+/* ORDER A PRINT. assets/prints.js (window.NY_PRINTS) is the one switch for prints across the
+   site: unless it says live there is no button, exactly as on the piece pages. A Keystone work
+   whose own product is live (assets/keystone_prints.js, window.NY_KEYSTONE_PRINTS) goes straight
+   to that product at the shop. Every other work, and a Keystone work while its product is still
+   a draft, goes to its own record page's order block, where the size and the surface are chosen
+   and the piece number rides on the cart line. Extensionless, because Pages 308s the .html form. */
+type PrintSwitch = { status?: string; shop?: string; pieces?: Record<string, { handle?: string }> };
+function printHref(p: Piece): string {
+  const w = window as unknown as { NY_PRINTS?: PrintSwitch; NY_KEYSTONE_PRINTS?: PrintSwitch };
+  if (!w.NY_PRINTS || w.NY_PRINTS.status !== 'live' || p.n == null) return '';
+  const ks = w.NY_KEYSTONE_PRINTS;
+  const handle = ks && ks.status === 'live' && ks.pieces ? ks.pieces[String(p.n)]?.handle : '';
+  if (handle) return `${(ks!.shop || 'https://mlow.nyc').replace(/\/+$/, '')}/products/${encodeURIComponent(handle)}`;
+  return `n/${encodeURIComponent(p.id)}#orderbox`;
+}
 function openDetail(p: Piece) {
   const er = era(p);
   const d = $('#detail');
@@ -990,6 +1005,12 @@ function openDetail(p: Piece) {
   const dShare = $('#dShare') as HTMLButtonElement | null;
   if (dShare) dShare.onclick = () => share({ title: `${fmt(p)} · ${p.t}`, text: `${fmt(p)} · ${p.t}. ${p.story || ''} NEW YORKERS by MLow, hanging in ${ROOMS[state.room].name}.`, url: `${location.origin}${location.pathname.replace(/museum\.html$/, '')}census.html#n=${p.id}` });
   ($('#dAtlas') as HTMLAnchorElement).href = `map.html#p=${p.id}`;
+  const dPrint = $('#dPrint') as HTMLAnchorElement | null;
+  if (dPrint) {
+    const href = printHref(p);
+    dPrint.hidden = !href;
+    dPrint.href = href || '#';
+  }
   const i = shown.indexOf(p);
   const go = $('#dGo') as HTMLButtonElement;
   go.hidden = i < 0;
@@ -1342,5 +1363,5 @@ function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
 }
 void frame;
-(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
+(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, openDetail, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
 boot();
