@@ -28,6 +28,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { KEYSTONE } from '../keystone';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -611,8 +612,8 @@ export const pennstation: RoomDef = {
     /* warm interior light; daylight comes through the windows below */
     for (const x of [-32, 0, 32]) k.point(x, 12, WC, 0xffe2b8, 60 + 40 * k.night, 40, 1.6);
     for (const x of [-26.5, 26.5]) for (const z of [WZ0 - 3, WZ1 + 3]) k.point(x, 6.5, z, 0xffe0b0, 14, 12);
-    /* the census wall, salon hung on the south end wall under the thermal window */
-    k.censusWall({ x: -WX + 0.08, y: 6.6, z: WC, rotY: PI / 2, cols: 20, rows: 8, tile: 1.0, gap: 0.08, start: ctx.wallStart(1750, 160), pieces: ctx.all, backing: travDark });
+    /* the KEYSTONE 111 wall, salon hung on the south end wall under the thermal window; built at the
+       end of the room, once the mounts are known (see keystoneWall below) */
     k.block(-WX, -WX + 2.2, WC - 11, WC + 11);
     for (let i = 0; i < 6; i++) { const z = WC - 10 + i * 4; k.lathe([[0.2, 0], [0.05, 0.1], [0.04, 0.9], [0, 1.05]], -WX + 2.2, 0, z, brass, 10); if (i < 5) rope(v(-WX + 2.2, 0.92, z), v(-WX + 2.2, 0.92, z + 4)); }
 
@@ -1061,6 +1062,7 @@ export const pennstation: RoomDef = {
        north end wall, the concourse, the seam and the arcade */
     const zone = (m: Mount) => m.position.z < WZ0 + 0.5 && m.position.z > WZ1 - 0.5 ? (m.position.x > WX - 1 ? 1 : 0) : m.position.z < QZ0 ? 2 : m.position.z < WZ1 ? 3 : 4;
     mounts.sort((a, b) => zone(a) - zone(b) || a.position.x - b.position.x || b.position.z - a.position.z);
+    keystoneWall(k, ctx, mounts.length, -WX, WC, travDark);
     const floorY = (x: number, z: number) => {
       if (z >= SZ0) return S;
       if (z > SZ1 && Math.abs(x) <= SW + 0.6) return S * clamp01((z - SZ1) / (SZ0 - SZ1));
@@ -1069,6 +1071,33 @@ export const pennstation: RoomDef = {
     return { mounts, spawn: v(0, S + 3, 51.2), look: v(0, S + 12.5, 20), eye: 3, floorY, bounds: [-WX + 0.6, WX - 0.6, QZ1 + 0.6, 49.6], style: st };
   },
 };
+
+/* THE KEYSTONE 111 on the south end wall. assign_hang.mjs pins all 111 to this room, so the big
+   mounts hang them too, rotated daily by placeHang. The wall leaves out whatever is on the mounts
+   right now, so no work appears twice in the hall and on the normal hang every Keystone work is
+   here exactly once: on a mount or on the wall. Under any other hang (a collector's, a search) the
+   wall still skips only the Keystone works that hang on the mounts. The grid is chosen for the
+   count, with a short last row centred so it reads as set that way. */
+function keystoneWall(k: K, ctx: Parameters<RoomDef['build']>[1], n: number, wallX: number, zc: number, backing: T.Material) {
+  const at = new Map<number, number>();
+  ctx.all.forEach((p, i) => at.set(p.n, i));
+  const page = Math.min(ctx.page ?? 0, Math.max(0, Math.ceil(ctx.pieces.length / Math.max(1, n)) - 1));   /* main.ts clamps the same way */
+  const onMounts = new Set(ctx.pieces.slice(page * n, page * n + n).map((p) => p.n));
+  const idx = KEYSTONE.filter((num) => !onMounts.has(num) && at.has(num)).map((num) => at.get(num)!);
+  const MAXW = 22, MAXH = 10.4, gap = 0.08, base = 2.3;
+  let best = { cols: 16, rows: 7, tile: 1.2, score: -1e9 };
+  for (let cols = 10; cols <= 20 && idx.length; cols++) {
+    const rows = Math.ceil(idx.length / cols);
+    const tile = Math.min((MAXW + gap) / cols, (MAXH + gap) / rows) - gap;
+    const score = tile - 0.06 * (cols * rows - idx.length);
+    if (score > best.score) best = { cols, rows, tile, score };
+  }
+  const { cols, rows, tile } = best;
+  const H = rows * (tile + gap) - gap;
+  if (idx.length) k.censusWall({ x: wallX + 0.08, y: base + H / 2, z: zc, rotY: PI / 2, cols, rows, tile, gap, start: 0, pieces: ctx.all, indices: idx, centerLast: true, backing });
+  k.sign('KEYSTONE 111', 9, 1.1, wallX + 0.12, base + H + 1.3, zc, 'transparent', '#5a3a30', 96, PI / 2);
+  k.sign('THE FOUNDING NEW YORKERS', 9, 0.42, wallX + 0.12, base + H + 0.52, zc, 'transparent', '#5a3a30', 36, PI / 2);
+}
 
 function bulbsMesh(k: K, bulbs: { x: number; y: number; z: number }[], color = 0xffe2a8, size = 0.09) {
   if (!bulbs.length) return;

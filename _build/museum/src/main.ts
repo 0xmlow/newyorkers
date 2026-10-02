@@ -818,7 +818,7 @@ function loadRoom(openN?: string | null): Promise<void> {
     const dynamic = def.daylit !== false && !params.has('fixed');
     kit = new Kit(scene, { renderer: renderer!, quality, reduced: reduced(), atlas, atlasGrid: C.atlasGrid, perAtlas, hour: HOUR, dynamic });
     list = hangList(state.hang, def.id);
-    const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart };
+    const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart, page: state.page };
     beginRoom();
     build = def.build(kit, ctx);
     /* The post chain outlives the room, so it is built once and repointed at

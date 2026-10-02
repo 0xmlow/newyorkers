@@ -813,23 +813,29 @@ export class Kit {
   }
 
   /* ---------- the census wall: hundreds of New Yorkers from one atlas ---------- */
-  censusWall(p: { x: number; y: number; z: number; rotY: number; cols: number; rows: number; tile: number; gap?: number; start: number; pieces: Piece[]; backing?: T.Material; tilt?: number }) {
-    const { x, y, z, rotY, cols, rows, tile, gap = tile * 0.08, start, pieces, backing, tilt = 0 } = p;
+  /* `indices`, when given, is an explicit list of positions in the whole census (P) to hang in
+     order, from any atlas, instead of a run from `start`; one draw call per atlas touched.
+     `centerLast` centres a short last row, so a count that does not fill the grid reads as
+     set that way rather than as a missing tile. */
+  censusWall(p: { x: number; y: number; z: number; rotY: number; cols: number; rows: number; tile: number; gap?: number; start: number; pieces: Piece[]; backing?: T.Material; tilt?: number; indices?: number[]; centerLast?: boolean }) {
+    const { x, y, z, rotY, cols, rows, tile, gap = tile * 0.08, start, pieces, backing, tilt = 0, indices, centerLast = false } = p;
     const N = this.o.perAtlas,
       G = this.o.atlasGrid;
     const groups = new Map<number, { pos: number[]; uv: number[]; idx: number[] }>();
     const W = cols * (tile + gap) - gap,
       H = rows * (tile + gap) - gap;
-    const total = Math.min(cols * rows, pieces.length - start);
+    const total = Math.min(cols * rows, indices ? indices.length : pieces.length - start);
+    const lastRow = Math.floor((total - 1) / cols), lastCount = total - lastRow * cols;
     for (let k = 0; k < total; k++) {
-      const gi = start + k,
+      const shift = centerLast && Math.floor(k / cols) === lastRow ? ((cols - lastCount) * (tile + gap)) / 2 : 0;
+      const gi = indices ? indices[k] : start + k,
         a = Math.floor(gi / N),
         local = gi % N,
         col = local % G,
         row = Math.floor(local / G);
       const grp = groups.get(a) || { pos: [], uv: [], idx: [] };
       groups.set(a, grp);
-      const cx = -W / 2 + (k % cols) * (tile + gap) + tile / 2,
+      const cx = -W / 2 + shift + (k % cols) * (tile + gap) + tile / 2,
         cy = H / 2 - Math.floor(k / cols) * (tile + gap) - tile / 2,
         h2 = tile / 2;
       const u0 = col / G,

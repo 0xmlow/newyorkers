@@ -21,6 +21,8 @@ export type RoomCtx = {
   reduced: boolean;
   quality: 'high' | 'low';
   wallStart: (from: number, count: number) => number;
+  /** The page of `pieces` the mounts will show (main.ts hangs pieces.slice(page * n, page * n + n)). */
+  page?: number;
 };
 export type RoomDef = {
   id: string;
