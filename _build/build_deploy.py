@@ -94,7 +94,7 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
-              "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html")
+              "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html")
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
                            "humans.txt", "_redirects")
 for page in SITE_FILES:
@@ -187,7 +187,7 @@ def sync_dir(src, dst):
             shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
 
 
-for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "museum", "press", "og"):
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "museum", "press", "og"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
