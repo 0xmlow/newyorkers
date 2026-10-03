@@ -4,7 +4,8 @@ Reads og/cards.json and the masters in og/src/. Writes assets/og/<card>-<hash>.j
 the default card over og.jpg, and sets og:image, twitter:image and their size and alt on every listed page.
 Runs after build_seo.py, because the page builders write the generic og.jpg and this has to land last.
 Idempotent. The file name carries a content hash: X caches a card by URL, so a changed picture needs a new URL.
-Per item pages (n/, h/, rooms/, learn/<slug>) keep their own picture: the piece, the honoree, the room."""
+Piece pages (n/) and room pages (rooms/) take a banner each from the rotation in cards.json. Honoree share pages (h/)
+and reading room articles (learn/) keep their own picture: the honoree's card, the article's room."""
 import hashlib, io, json, os, re, sys
 from PIL import Image
 from page_shell import cfg, esc
@@ -25,7 +26,7 @@ def render(card):
     return b.getvalue()
 
 files = {}
-for card in sorted(set(M["pages"].values()) | {M["default"]}):
+for card in sorted(set(M["pages"].values()) | {M["default"]} | set(M.get("rotation", []))):
     data = render(card); name = f"{card}-{hashlib.sha256(data).hexdigest()[:10]}.jpg"
     files[card] = name
     if not os.path.exists(os.path.join(out, name)): open(os.path.join(out, name), "wb").write(data)
@@ -36,13 +37,10 @@ og = os.path.join(SITE, "og.jpg")
 if not os.path.exists(og) or open(og, "rb").read() != dflt: open(og, "wb").write(dflt)
 
 TAGS = re.compile(r'\s*<meta (?:property="og:image(?::(?:width|height|alt|type))?"|name="twitter:image(?::alt)?") content="[^"]*">')
-n = 0
-for page, card in M["pages"].items():
-    p = os.path.join(SITE, page)
-    if not os.path.exists(p): continue
-    s = open(p, encoding="utf-8").read()
+def apply(path, card):
+    s = open(path, encoding="utf-8").read()
     m = re.search(r'<meta property="og:image" content="[^"]*">', s)
-    if not m: sys.exit(f"{page}: no og:image tag to replace; run build_seo.py first")
+    if not m: sys.exit(f"{os.path.relpath(path, SITE)}: no og:image tag to replace; run build_seo.py first")
     img, alt = f"{URL}/assets/og/{files[card]}", esc(M["alt"][card])
     block = (f'<meta property="og:image" content="{img}">\n<meta property="og:image:type" content="image/jpeg">\n'
              f'<meta property="og:image:width" content="{W}">\n<meta property="og:image:height" content="{H}">\n'
@@ -50,5 +48,20 @@ for page, card in M["pages"].items():
              f'<meta name="twitter:image:alt" content="{alt}">')
     t = s[:m.start()] + "\x00" + s[m.end():]   # mark the first og:image, drop every other image tag, put the block on the mark
     t = TAGS.sub("", t).replace("\x00", block)
-    if t != s: open(p, "w", encoding="utf-8").write(t); n += 1
+    if t != s: open(path, "w", encoding="utf-8").write(t); return 1
+    return 0
+
+n = 0
+for page, card in M["pages"].items():
+    p = os.path.join(SITE, page)
+    if os.path.exists(p): n += apply(p, card)
+rot = M.get("rotation", []); nf = tf = 0
+for folder in M.get("folders", []):
+    d = os.path.join(SITE, folder)
+    for f in sorted(os.listdir(d)) if os.path.isdir(d) else []:
+        if not f.endswith(".html"): continue
+        # a hash, not the position in the folder: adding piece 7543 must not reshuffle every banner after it
+        card = rot[int(hashlib.sha256(f"{folder}/{f}".encode()).hexdigest(), 16) % len(rot)]
+        nf += apply(os.path.join(d, f), card); tf += 1
+print(f"  folders: {nf} pages changed of {tf} in {', '.join(f + '/' for f in M.get('folders', []))}")
 print(f"share cards: {len(files)} cards, {n} pages changed of {len(M['pages'])}, og.jpg = {M['default']}")
