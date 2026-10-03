@@ -1,0 +1,182 @@
+{
+  "_note": "The collector badges. build_collectors.py reads name, icon, color, rule and points from here; the logic for each id lives in the builder. Order here is the order on the badges tab. No dashes in any rule. tags label the artist's and the team's wallets on the board; they are ranked like everyone else.",
+  "points": {
+    "census": 10,
+    "keystone": 50,
+    "per_piece_in_complete_set": 10
+  },
+  "badges": [
+    {
+      "id": "mayor",
+      "name": "The Mayor",
+      "icon": "🗽",
+      "color": "#FFD23F",
+      "points": 0,
+      "rule": "Number one on the board. One at a time, and it can change hands."
+    },
+    {
+      "id": "borough_president",
+      "name": "Borough President",
+      "icon": "🏛️",
+      "color": "#FF6B6B",
+      "points": 300,
+      "rule": "Hold 50 or more New Yorkers."
+    },
+    {
+      "id": "landlord",
+      "name": "Landlord",
+      "icon": "🔑",
+      "color": "#FF9F43",
+      "points": 150,
+      "rule": "Hold 25 or more New Yorkers."
+    },
+    {
+      "id": "block_captain",
+      "name": "Block Captain",
+      "icon": "📣",
+      "color": "#F7B731",
+      "points": 60,
+      "rule": "Hold 11 or more New Yorkers. This release runs on eleven."
+    },
+    {
+      "id": "regular",
+      "name": "Regular",
+      "icon": "☕",
+      "color": "#C8A27A",
+      "points": 20,
+      "rule": "Hold 5 or more New Yorkers. They know your order."
+    },
+    {
+      "id": "counted",
+      "name": "Counted",
+      "icon": "✓",
+      "color": "#9AA5B1",
+      "points": 0,
+      "rule": "Hold at least one New Yorker. You are in the census."
+    },
+    {
+      "id": "five_boroughs",
+      "name": "Five Boroughs",
+      "icon": "🌉",
+      "color": "#4D96FF",
+      "points": 120,
+      "rule": "Hold a New Yorker from Manhattan, Brooklyn, Queens, the Bronx and Staten Island."
+    },
+    {
+      "id": "bridge_and_tunnel",
+      "name": "Bridge and Tunnel",
+      "icon": "🚇",
+      "color": "#6BCB77",
+      "points": 30,
+      "rule": "Hold New Yorkers from three of the five boroughs."
+    },
+    {
+      "id": "whole_family",
+      "name": "The Whole Family",
+      "icon": "👪",
+      "color": "#B983FF",
+      "points": 200,
+      "rule": "Hold one of every family: Citizens, Builders, Degens, Heroes, Villains, Strays and the rest, all thirteen."
+    },
+    {
+      "id": "whole_timeline",
+      "name": "The Whole Timeline",
+      "icon": "⏳",
+      "color": "#00C2A8",
+      "points": 250,
+      "rule": "Hold a New Yorker from every era in THE CENSUS RELEASE."
+    },
+    {
+      "id": "time_traveler",
+      "name": "Time Traveler",
+      "icon": "🕰️",
+      "color": "#38B2AC",
+      "points": 40,
+      "rule": "Hold New Yorkers from five or more eras."
+    },
+    {
+      "id": "set_complete",
+      "name": "Set Complete",
+      "icon": "🏆",
+      "color": "#FFD700",
+      "points": 500,
+      "rule": "Hold every piece of one set in THE CENSUS RELEASE. Each complete set also scores 10 points a piece."
+    },
+    {
+      "id": "set_started",
+      "name": "Started a Set",
+      "icon": "🧩",
+      "color": "#E056FD",
+      "points": 25,
+      "rule": "Hold three or more pieces of the same set."
+    },
+    {
+      "id": "local",
+      "name": "Local",
+      "icon": "📍",
+      "color": "#FF7AA2",
+      "points": 25,
+      "rule": "Hold three or more New Yorkers from the same neighborhood."
+    },
+    {
+      "id": "keystone",
+      "name": "Keystone",
+      "icon": "◆",
+      "color": "#C6FF00",
+      "points": 100,
+      "rule": "Hold a KEYSTONE, one of the founding New Yorkers on Transient Labs."
+    },
+    {
+      "id": "founder",
+      "name": "Founder",
+      "icon": "⭐",
+      "color": "#F9F871",
+      "points": 100,
+      "rule": "Hold a KEYSTONE and a piece of THE CENSUS RELEASE."
+    },
+    {
+      "id": "day_one",
+      "name": "Day One",
+      "icon": "🌅",
+      "color": "#FF8C42",
+      "points": 50,
+      "rule": "Minted THE CENSUS RELEASE on 23 September 2026, the day it opened."
+    },
+    {
+      "id": "first_111",
+      "name": "First 111",
+      "icon": "🎟️",
+      "color": "#FFB4A2",
+      "points": 50,
+      "rule": "Minted one of the first 111 tokens of THE CENSUS RELEASE."
+    },
+    {
+      "id": "lifer",
+      "name": "Lifer",
+      "icon": "🏠",
+      "color": "#90BE6D",
+      "points": 30,
+      "rule": "Minted and never let a single New Yorker go."
+    },
+    {
+      "id": "moving_picture",
+      "name": "Moving Picture",
+      "icon": "🎞️",
+      "color": "#5AC8FA",
+      "points": 20,
+      "rule": "Hold a New Yorker that moves: an animated piece."
+    },
+    {
+      "id": "glitched",
+      "name": "Glitched",
+      "icon": "📺",
+      "color": "#FF2E63",
+      "points": 15,
+      "rule": "Hold a New Yorker that carries a glitch edition."
+    }
+  ],
+  "tags": {
+    "0xa8357ee17cb3ff5a6b9694ddc8fde0ed2ce9d788": "Artist",
+    "0xcc235a9a16fa6cf3fe749a3752af3b4b4aed9d5d": "Team"
+  }
+}

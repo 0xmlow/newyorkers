@@ -1,0 +1,175 @@
+{
+ "_note": "ChatGPT's honorary TCG cards (canonical v4: batch-001-redesign, batch-002, batch-003, Pindar special) replace the drawn card for these people, on MLow's call 2026-09-30. build_honor_cards.py uses the image as the card and builds the X preview from it. The Pindar supervillain variants are held: a fictional villain is not a real honoree's public card.",
+ "people": {
+  "kenny-schachter": {
+   "card": "NYH-001",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/kenny-schachter_NYH-001.png",
+   "from": "batch-001-redesign/fronts/NYH-001-kenny-schachter.png"
+  },
+  "anil-dash": {
+   "card": "NYH-002",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/anil-dash_NYH-002.png",
+   "from": "batch-001-redesign/fronts/NYH-002-anil-dash.png"
+  },
+  "daniel-arsham": {
+   "card": "NYH-003",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/daniel-arsham_NYH-003.png",
+   "from": "batch-001-redesign/fronts/NYH-003-daniel-arsham.png"
+  },
+  "gmoney": {
+   "card": "NYH-004",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/gmoney_NYH-004.png",
+   "from": "batch-001-redesign/fronts/NYH-004-gmoney.png"
+  },
+  "griffin-cock-foster": {
+   "card": "NYH-005",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/griffin-cock-foster_NYH-005.png",
+   "from": "batch-002/fronts/NYH-005-griffin-cock-foster.png"
+  },
+  "duncan-cock-foster": {
+   "card": "NYH-006",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/duncan-cock-foster_NYH-006.png",
+   "from": "batch-002/fronts/NYH-006-duncan-cock-foster.png"
+  },
+  "jeff-koons": {
+   "card": "NYH-007",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/jeff-koons_NYH-007.png",
+   "from": "batch-002/fronts/NYH-007-jeff-koons.png"
+  },
+  "nina-chanel-abney": {
+   "card": "NYH-008",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/nina-chanel-abney_NYH-008.png",
+   "from": "batch-002/fronts/NYH-008-nina-chanel-abney.png"
+  },
+  "pplpleasr": {
+   "card": "NYH-009",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/pplpleasr_NYH-009.png",
+   "from": "batch-003/fronts/NYH-009-pplpleasr.jpg"
+  },
+  "rafael-rozendaal": {
+   "card": "NYH-010",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/rafael-rozendaal_NYH-010.png",
+   "from": "batch-003/fronts/NYH-010-rafael-rozendaal.jpg"
+  },
+  "sarah-meyohas": {
+   "card": "NYH-011",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/sarah-meyohas_NYH-011.png",
+   "from": "batch-003/fronts/NYH-011-sarah-meyohas.jpg"
+  },
+  "tom-sachs": {
+   "card": "NYH-012",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/tom-sachs_NYH-012.png",
+   "from": "batch-003/fronts/NYH-012-tom-sachs.jpg"
+  },
+  "anne-spalter": {
+   "card": "NYH-013",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/anne-spalter_NYH-013.png",
+   "from": "batch-003/fronts/NYH-013-anne-spalter.jpg"
+  },
+  "diana-sinclair": {
+   "card": "NYH-014",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/diana-sinclair_NYH-014.png",
+   "from": "batch-003/fronts/NYH-014-diana-sinclair.jpg"
+  },
+  "justin-aversano": {
+   "card": "NYH-015",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/justin-aversano_NYH-015.png",
+   "from": "batch-003/fronts/NYH-015-justin-aversano.jpg"
+  },
+  "matt-medved": {
+   "card": "NYH-016",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/matt-medved_NYH-016.png",
+   "from": "batch-003/fronts/NYH-016-matt-medved.jpg"
+  },
+  "nicole-ruggiero": {
+   "card": "NYH-017",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/nicole-ruggiero_NYH-017.png",
+   "from": "batch-003/fronts/NYH-017-nicole-ruggiero.jpg"
+  },
+  "sasha-stiles": {
+   "card": "NYH-018",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/sasha-stiles_NYH-018.png",
+   "from": "batch-003/fronts/NYH-018-sasha-stiles.jpg"
+  },
+  "shantell-martin": {
+   "card": "NYH-019",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/shantell-martin_NYH-019.png",
+   "from": "batch-003/fronts/NYH-019-shantell-martin.jpg"
+  },
+  "jimmy-fallon": {
+   "card": "NYH-020",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/jimmy-fallon_NYH-020.png",
+   "from": "batch-003/fronts/NYH-020-jimmy-fallon.jpg"
+  },
+  "john-crain": {
+   "card": "NYH-021",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/john-crain_NYH-021.png",
+   "from": "batch-003/fronts/NYH-021-john-crain.jpg"
+  },
+  "buff-monster": {
+   "card": "NYH-022",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/buff-monster_NYH-022.png",
+   "from": "batch-003/fronts/NYH-022-buff-monster.jpg"
+  },
+  "cameron-winklevoss": {
+   "card": "NYH-023",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/cameron-winklevoss_NYH-023.png",
+   "from": "batch-003/fronts/NYH-023-cameron-winklevoss.jpg"
+  },
+  "tyler-winklevoss": {
+   "card": "NYH-024",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/tyler-winklevoss_NYH-024.png",
+   "from": "batch-003/fronts/NYH-024-tyler-winklevoss.jpg"
+  },
+  "carla-gannis": {
+   "card": "NYH-025",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/carla-gannis_NYH-025.png",
+   "from": "batch-003/fronts/NYH-025-carla-gannis.jpg"
+  },
+  "emily-ratajkowski": {
+   "card": "NYH-026",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/emily-ratajkowski_NYH-026.png",
+   "from": "batch-003/fronts/NYH-026-emily-ratajkowski.jpg"
+  },
+  "fanny-lakoubay": {
+   "card": "NYH-027",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/fanny-lakoubay_NYH-027.png",
+   "from": "batch-003/fronts/NYH-027-fanny-lakoubay.jpg"
+  },
+  "latash": {
+   "card": "NYH-028",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/latash_NYH-028.png",
+   "from": "batch-003/fronts/NYH-028-latash.jpg"
+  },
+  "rachel-rossin": {
+   "card": "NYH-029",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/rachel-rossin_NYH-029.png",
+   "from": "batch-003/fronts/NYH-029-rachel-rossin.jpg"
+  },
+  "ron-english": {
+   "card": "NYH-030",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/ron-english_NYH-030.png",
+   "from": "batch-003/fronts/NYH-030-ron-english.jpg"
+  },
+  "trevor-andrew": {
+   "card": "NYH-031",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/trevor-andrew_NYH-031.png",
+   "from": "batch-003/fronts/NYH-031-trevor-andrew.jpg"
+  },
+  "whisbe": {
+   "card": "NYH-032",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/whisbe_NYH-032.png",
+   "from": "batch-003/fronts/NYH-032-whisbe.jpg"
+  },
+  "zach-lieberman": {
+   "card": "NYH-033",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/zach-lieberman_NYH-033.png",
+   "from": "batch-003/fronts/NYH-033-zach-lieberman.jpg"
+  },
+  "pindar-van-arman": {
+   "card": "NYH-PVA-01",
+   "src": "CHATGPT ART 2026-09-30/honorary_cards/pindar-van-arman_NYH-PVA-01.png",
+   "from": "special-pindar-van-arman/fronts/NYH-PVA-01-pindar-van-arman.png"
+  }
+ }
+}

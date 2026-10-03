@@ -249,3 +249,25 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .fly-options button:hover { transform: none; }
 }
+
+/* THE CITY IS THE ART: the home page film, HLS from assets/film/city-is-the-art (encode_film.sh city) */
+.home-film { padding: 76px 5vw; border-top: 1px solid var(--divider); }
+.home-film .player { position: relative; }
+.home-film video { display: block; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--r2); border: 1px solid var(--divider); }
+.home-film .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 16px;
+  padding: 16px 26px 16px 18px; border: 0; border-radius: 999px; background: rgba(13,13,13,.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: var(--cloud); cursor: pointer; font: 500 14px var(--mono); letter-spacing: .16em; box-shadow: 0 0 0 1px rgba(240,244,248,.18); }
+.home-film .play:hover { background: rgba(13,13,13,.92); box-shadow: 0 0 0 2px var(--cyan); }
+.home-film .play i { width: 52px; height: 52px; border-radius: 50%; background: var(--cyan); position: relative; flex: none; }
+.home-film .play i:after { content: ""; position: absolute; left: 21px; top: 16px; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent #0D0D0D; }
+.home-film .play b { color: var(--cyan); font-weight: 600; margin-left: 6px; }
+.home-film .play span { white-space: nowrap; }
+.home-film .play[hidden] { display: none; }
+.home-film .cap { font: 12px/1.6 var(--mono); letter-spacing: .14em; color: var(--slate); text-transform: uppercase; margin-top: 14px; }
+@media (max-width: 640px) {
+  .home-film { padding: 56px 16px; }
+  .home-film .play { padding: 0; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .home-film .play span { display: none; }
+  .home-film .play i { width: 68px; height: 68px; box-shadow: 0 6px 24px rgba(0,0,0,.5); }
+  .home-film .play i:after { left: 27px; top: 22px; border-width: 12px 0 12px 19px; }
+}

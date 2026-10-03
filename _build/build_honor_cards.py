@@ -255,18 +255,30 @@ def og(p, c):
     return o
 
 
+# ChatGPT's painted TCG cards replace the drawn card for the people who have one (MLow, 2026-09-30).
+# The image is the card as made, sized to 1080x1512 (both are 5:7); the X preview is built from it as usual.
+CG = json.load(open(os.path.join(HERE, "honoraries", "chatgpt_cards.json")))["people"]
+ROOT = os.path.dirname(SITE)
+
+
+def made_card(p):
+    return Image.open(os.path.join(ROOT, CG[p["id"]]["src"])).convert("RGB").resize((W, H), Image.LANCZOS)
+
+
 def main():
     out, keep = {}, set()
+    lost = set(CG) - {p["id"] for p in D["people"]}
+    if lost: raise SystemExit(f"honor cards: ChatGPT cards for people not on the page: {sorted(lost)}")
     for p in D["people"]:
         w0 = p["works"][0]
         sig = json.dumps([VERSION, p["name"], p["handle"], p["cat"], p.get("bio"), w0["l"], w0.get("title"),
-                          [(w.get("num"), w.get("key")) for w in p["works"]]], ensure_ascii=False)
+                          [(w.get("num"), w.get("key")) for w in p["works"]], CG.get(p["id"], {}).get("src")], ensure_ascii=False)
         h = hashlib.sha256(sig.encode()).hexdigest()[:8]
         cn, on = f'{p["id"]}-{h}.jpg', f'{p["id"]}-{h}-og.jpg'
         keep |= {cn, on}
         cp, op = os.path.join(OUT, cn), os.path.join(OUT, on)
         if not (os.path.exists(cp) and os.path.exists(op)):
-            c = card(p)
+            c = made_card(p) if p["id"] in CG else card(p)
             c.save(cp, "JPEG", quality=88, optimize=True, progressive=True)
             og(p, c).save(op, "JPEG", quality=85, optimize=True, progressive=True)
         out[p["id"]] = {"card": cn, "og": on}
@@ -284,7 +296,7 @@ if __name__ == "__main__":
         want = set(sys.argv[1:])
         for p in D["people"]:
             if p["id"] in want:
-                c = card(p)
+                c = made_card(p) if p["id"] in CG else card(p)
                 c.save(os.path.join(os.environ.get("PREVIEW", "/tmp"), f"card-{p['id']}.jpg"), quality=88)
                 og(p, c).save(os.path.join(os.environ.get("PREVIEW", "/tmp"), f"og-{p['id']}.jpg"), quality=85)
                 print("wrote", p["id"])

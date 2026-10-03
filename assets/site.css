@@ -58,6 +58,8 @@ hr.rule{border:none;border-top:1px solid var(--divider);margin:0}
 #nav .links a.spin:hover{background:rgba(0,229,255,.08);border-color:var(--cyan)}
 #nav .links a.cta{color:var(--ink);background:var(--cloud);border-color:var(--cloud);margin-left:6px;font-weight:600}
 #nav .links a.cta:hover{background:var(--blue);border-color:var(--blue);color:var(--cloud)}
+/* nine nav items since COLLECTORS: tighten before the burger takes over, or PRINTS wraps at 1024 */
+@media (max-width:1200px){#nav .links a{padding:9px 10px;letter-spacing:.1em}}
 #nav .burger{display:none;background:none;border:1px solid rgba(240,244,248,.2);color:var(--cloud);font-family:var(--sans);font-size:11px;letter-spacing:.18em;padding:9px 14px;border-radius:999px}
 @media (max-width:980px){
   #nav .links{display:none;position:absolute;left:0;right:0;top:100%;background:rgba(13,13,13,.98);flex-direction:column;align-items:stretch;padding:14px 16px 18px;gap:4px;border-bottom:1px solid var(--divider)}
@@ -76,6 +78,11 @@ hr.rule{border:none;border-top:1px solid var(--divider);margin:0}
 #foot .col h5{font-family:var(--sans);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;font-weight:600}
 #foot .col a{display:block;font-family:var(--sans);font-size:14px;color:var(--cloud);padding:5px 0;opacity:.85}
 #foot .col a:hover{opacity:1;color:var(--cyan)}
+#foot .logostrip{grid-column:1/-1;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:4px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+#foot .logostrip::-webkit-scrollbar{display:none}
+#foot .logostrip a{flex:none;border-radius:12px;overflow:hidden;opacity:.82;transition:opacity .2s,transform .2s}
+#foot .logostrip a:hover{opacity:1;transform:translateY(-2px)}
+#foot .logostrip img{height:72px;width:72px;display:block}
 #foot .right{grid-column:1/-1;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;border-top:1px solid var(--divider);padding-top:24px;align-items:flex-end}
 #foot .right .lede{max-width:520px;font-size:22px;line-height:1.35}
 #foot .right .sm{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;color:var(--slate);text-transform:uppercase;line-height:1.9}
@@ -162,3 +169,8 @@ hr.rule{border:none;border-top:1px solid var(--divider);margin:0}
 .cenrow img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid var(--divider);display:block}
 .cenrow a:hover img{border-color:var(--cyan)}
 @media (max-width:700px){.cenrow{grid-template-columns:repeat(3,1fr)}}
+/* a N3W YORKERS logo beside a page's headline (collectors, my, tv); set by the page from window.NY_LOGOS */
+.herologo{position:absolute;right:clamp(16px,5vw,72px);top:56px;width:clamp(130px,15vw,210px);height:auto;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.45);outline:1px solid rgba(240,244,248,.12)}
+.herologo[hidden]{display:none}
+@media (min-width:861px){:has(> .herologo:not([hidden])) > .lede,:has(> .herologo:not([hidden])) > h1,:has(> .herologo:not([hidden])) > .tvs-lede{max-width:calc(100% - clamp(150px,17vw,240px)) !important}}
+@media (max-width:860px){.herologo{position:static;display:block;width:110px;margin:0 0 18px;border-radius:12px}}
