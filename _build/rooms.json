@@ -1978,5 +1978,16 @@
   "signatures": "The Seventh Avenue colonnade in pink granite with the clock and the Day and Night groups over the door, two granite eagles, brass turnstiles, the shopping arcade with its newsstand and shoeshine stand, the grand stair, the travertine waiting room with twelve giant columns, a coffered barrel vault, six lunettes and two thermal windows, velvet ropes and oak benches, the marble census desk with its open ledger, the 1963 seam with broken column drums, rubble, bare steel and a wrecking ball, and the dithered steel and glass concourse with freestanding gallery walls and a baggage wagon.",
   "daylit": true,
   "index": 180
+ },
+ {
+  "id": "crystalpalace",
+  "name": "The glass house",
+  "area": "NEW YORK CRYSTAL PALACE, 1853 / RESERVOIR SQUARE",
+  "mood": "Iron, glass and coloured light, and the arm that is burning",
+  "color": "#7fb3d9",
+  "description": "The New York Crystal Palace of 1853, the iron and glass hall of the first world's fair in America, which stood where Bryant Park is and burned to the ground in 1858, raised again as a gallery. You come off Sixth Avenue into a Greek cross of glass under a stained glass dome that throws its colours across the floor wherever the real New York sun puts them. Red damask screens down the nave, an iron fountain, a beam engine with its flywheel turning, and in the north arm the evening it burned, the glass melting into signal. Step onto the open platform under the dome and it carries you up into the colour, the rope is cut, and the pawls hold. Stand still before any work and the dome finds it.",
+  "signatures": "Sixth Avenue with gas lamps and carriages, the 315 foot timber Latting Observatory, the battered granite wall of the Croton Distributing Reservoir with people on its promenade, a Greek cross of four glass barrel vaulted arms on cream and blue cast iron columns, upper galleries hung with red drapery, octagonal corner towers with flags, the 100 foot stained glass dome with its lantern, coloured light on the pine floor, the Otis safety platform on its toothed guides, red damask screens, mahogany vitrines, palms in iron urns, a veiled marble figure, the three tier iron fountain, a beam engine and flywheel, a Columbian press, a library globe, and the burning north arm with embers, smoke, falling glass and melting signal.",
+  "daylit": true,
+  "index": 181
  }
 ]
