@@ -227,10 +227,10 @@ for r in rows:
     if not r.get("honor"): continue
     hid = r["honor"]["id"]; n = r["census"] + r["keystone"]; cur = _hl.get(hid)
     if not cur:
-        _hl[hid] = {"key": (r["ens"] or r["a"]).lower(), "name": r["nm"] or r["a"], "n": n, "rank": r["rank"], "of": len(rows), "_top": n, "held": []}
+        _hl[hid] = {"key": (r["ens"] or r["a"]).lower(), "name": r["nm"] or (r["a"][:6] + "\u2026" + r["a"][-4:]), "n": n, "rank": r["rank"], "of": len(rows), "_top": n, "held": []}
     else:
         cur["n"] += n; cur["rank"] = min(cur["rank"], r["rank"])
-        if n > cur["_top"]: cur.update({"key": (r["ens"] or r["a"]).lower(), "name": r["nm"] or r["a"], "_top": n})
+        if n > cur["_top"]: cur.update({"key": (r["ens"] or r["a"]).lower(), "name": r["nm"] or (r["a"][:6] + "\u2026" + r["a"][-4:]), "_top": n})
     # the pieces themselves, so their portrait can hang beside what they own
     _hl[hid]["held"] += [{"th": x["th"], "id": x["id"], "t": x["t"], "k": x["c"] == "keystone"} for x in r["pieces"] if x.get("th")]
 for v in _hl.values():

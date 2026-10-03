@@ -1,0 +1,129 @@
+{
+ "_note": "A collector's home room in the museum, and a display name for a wallet whose ENS name points at it but which never set it as its primary name. Keys are lowercase addresses. A wallet not listed here gets the room where most of its New Yorkers already hang. \"honoree\" links a wallet to its person in honoraries/honoraries.json by id, for when the ENS name carries no X handle; wallets whose ENS com.twitter record matches an honoree handle link on their own.",
+ "0x250dc85178fb6859e9ee02c925d46aab946a55e7": {
+  "room": "weitsmanyard",
+  "name": "adamweitsman.eth",
+  "honoree": "adam-weitsman"
+ },
+ "0x34c2871c3d539c473e40a09158bdff522202e2d5": {
+  "honoree": "metolius-art",
+  "x": "MetoliusArt"
+ },
+ "0x75fe3c7829d36e4a382bd8ef4116841868e7e7bf": {
+  "honoree": "moonzoey"
+ },
+ "0x006818384f5a494d7b40119efc94ee819416d90a": {
+  "honoree": "peng1"
+ },
+ "0xb464ca834796272e08dc6460940b281b046a2cee": {
+  "honoree": "rush-base-eth"
+ },
+ "0x056bf45a910a1713260448fb35b87109b9b9d80b": {
+  "honoree": "0x056b-d80b"
+ },
+ "0x1384e00aa68ba44a5097c0c8fbd13d8f1e453527": {
+  "honoree": "0x1384-3527"
+ },
+ "0x1701b4be3f9f0302f14f5e45f7e707ca23937cf4": {
+  "honoree": "0x1701-7cf4"
+ },
+ "0x181154dacdd2f04756da32093efb79d7dea39eab": {
+  "honoree": "0x1811-9eab"
+ },
+ "0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed": {
+  "honoree": "0x1bc3-32ed"
+ },
+ "0x2bf1838121ee9bfe33a5a3710c666a31d79c1cca": {
+  "honoree": "0x2bf1-1cca"
+ },
+ "0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5": {
+  "honoree": "0x49e2-3ee5"
+ },
+ "0x59186dcb30b6427be31aa46a05368689914dbb1c": {
+  "honoree": "0x5918-bb1c"
+ },
+ "0x5baa54bd0d0a9e9c08ad3f3117feb2ae71e508a3": {
+  "honoree": "0x5baa-08a3"
+ },
+ "0x5e73a7803b03545d34dca700ee37a7fabbe267e0": {
+  "honoree": "0x5e73-67e0"
+ },
+ "0x66283f68de5dd444496df707a5466e59210e0ecd": {
+  "honoree": "0x6628-0ecd"
+ },
+ "0x686adbfcaa75f7491bba9f8d035613671c11b507": {
+  "honoree": "0x686a-b507"
+ },
+ "0x704d9806a33062eccf651558426c5518434db807": {
+  "honoree": "0x704d-b807"
+ },
+ "0x787d1cf054536542abeb09b606ef6a27228c4dc4": {
+  "honoree": "0x787d-4dc4"
+ },
+ "0x91dd6f62a5bb852cd42278d3f3892df0464f26c2": {
+  "honoree": "0x91dd-26c2"
+ },
+ "0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13": {
+  "honoree": "0xa621-fd13"
+ },
+ "0xe04d38edae0297c4057cfe4caea195d913764b50": {
+  "honoree": "0xe04d-4b50"
+ },
+ "0xe53bdb2118585d5b2cd06a117d3a036afa70677a": {
+  "honoree": "0xe53b-677a"
+ },
+ "0xeb6dac11a9939b575690298ac00068c230c29ec2": {
+  "honoree": "0xeb6d-9ec2"
+ },
+ "0xf52493031a40b1ccebb482292fbf6148131d8963": {
+  "honoree": "0xf524-8963"
+ },
+ "0xfbb78ec1225b3e59a009b40825430bd80c6ab160": {
+  "honoree": "0xfbb7-b160"
+ },
+ "0xd341108b067cd308cf8cc7e13fb9982b0cba2f4e": {
+  "honoree": "btdwayne"
+ },
+ "0x61ca4026467215c4110d7a1b2a4c34324bda5374": {
+  "honoree": "carity"
+ },
+ "0x3f416066e0a127d3173439d4a241a476bdf58c6e": {
+  "honoree": "dspur"
+ },
+ "0x45a2c8a418cf0697fcdfd0f99c5ac11580a7cd21": {
+  "honoree": "flyinga-eth"
+ },
+ "0x216f0d1b9bba0eaf58e311a33d5061c36fe11565": {
+  "honoree": "fondazioneaversano"
+ },
+ "0x8d445eee078ff46d7ddc123dac5904fad0acf92e": {
+  "honoree": "jpegzrule-eth"
+ },
+ "0x990f124747d946a083ad3cdea043c34c0687c43c": {
+  "honoree": "leighferreira-eth"
+ },
+ "0x64deecb9f372acf9c388ca9f045cf211a202f329": {
+  "honoree": "martyh3b"
+ },
+ "0xd94ea61f089e6ec2c97c16c33f6f262552b1c270": {
+  "honoree": "mima"
+ },
+ "0x3578bafd8be6fc380047e423d875573294410f57": {
+  "honoree": "p1cky-eth"
+ },
+ "0xfdc75731792b6efcc8c02429f61b9eef536a6f2e": {
+  "honoree": "pred22-eth"
+ },
+ "0xbbb6dde6f9cd5f8ccf19634b1f4aab73950f4922": {
+  "honoree": "rareme"
+ },
+ "0x9379304ddb2d837ce1cbc6ad2d980c37c415d0c1": {
+  "honoree": "self6967"
+ },
+ "0x5fb0058280611b57e7fd96dc4ba3616bd0d29806": {
+  "honoree": "taku0x-eth"
+ },
+ "0x8caadf7c03b1b08c68685b9f156223f311d2eda2": {
+  "honoree": "zag"
+ }
+}

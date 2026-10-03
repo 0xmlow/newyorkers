@@ -2737,6 +2737,24 @@
 "iv": []
 },
 {
+"id": "metolius-art",
+"name": "Metolius Art",
+"handle": "@MetoliusArt",
+"x": "MetoliusArt",
+"cat": "A",
+"works": [
+{
+"title": "The Silhouette at the Studio Museum",
+"s": "metolius-art-cbc09372s.jpg",
+"l": "metolius-art-cbc09372l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Web3 artist. Join and create",
+"iv": []
+},
+{
 "id": "micah-johnson",
 "name": "Micah Johnson",
 "handle": "@Micah_Johnson3",
@@ -2910,6 +2928,24 @@
 }
 ],
 "bio": "Artist and writer who draws reportage in ink and watercolour. Journalism with a brush",
+"iv": []
+},
+{
+"id": "moonzoey",
+"name": "Moonzoey",
+"handle": "@moonzoey_zuu",
+"x": "moonzoey_zuu",
+"cat": "A",
+"works": [
+{
+"title": "The Red Line at the Guggenheim",
+"s": "moonzoey-d0a1ee18s.jpg",
+"l": "moonzoey-d0a1ee18l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Architecture girl, minimalist, AI artist shown in Paris, New York, Chicago, Arizona and Albania. Lines first",
 "iv": []
 },
 {
@@ -3254,6 +3290,24 @@
 "iv": []
 },
 {
+"id": "peng1",
+"name": "Peng1",
+"handle": "@cryptopeng1",
+"x": "cryptopeng1",
+"cat": "A",
+"works": [
+{
+"title": "Broadcast from the Ed Sullivan",
+"s": "peng1-8fc8d335s.jpg",
+"l": "peng1-8fc8d335l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Historian of disruption and developer behind BRKRs, fully on chain. The signal comes through the static",
+"iv": []
+},
+{
 "id": "peter-burr",
 "name": "Peter Burr",
 "handle": "@peterburr",
@@ -3585,6 +3639,24 @@
 }
 ],
 "bio": "Artist who photographs roses from a family garden in layered double exposures, and collects MLow on the side. Grief, grown into color",
+"iv": []
+},
+{
+"id": "rush-base-eth",
+"name": "rush.base.eth",
+"handle": "@RushVarela",
+"x": "RushVarela",
+"cat": "A",
+"works": [
+{
+"title": "Overhead on the High Line",
+"s": "rush-base-eth-fc2f7f68s.jpg",
+"l": "rush-base-eth-fc2f7f68l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Photographer and onchain gun for hire, out of the Golden State. He shoots from above",
 "iv": []
 },
 {
@@ -4454,6 +4526,258 @@
 "iv": []
 },
 {
+"id": "0x056b-d80b",
+"name": "0x056b…d80b",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Fifty Years of Logs",
+"s": "0x056b-d80b-6fb2869fs.jpg",
+"l": "0x056b-d80b-6fb2869fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the super with fifty years of logs",
+"iv": []
+},
+{
+"id": "0x1384-3527",
+"name": "0x1384…3527",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Doorman of the Dakota",
+"s": "0x1384-3527-31fcd140s.jpg",
+"l": "0x1384-3527-31fcd140l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the man at the door in the collection",
+"iv": []
+},
+{
+"id": "0x1701-7cf4",
+"name": "0x1701…7cf4",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Reunion at the Oculus",
+"s": "0x1701-7cf4-79a27afbs.jpg",
+"l": "0x1701-7cf4-79a27afbl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the woman at the reunion",
+"iv": []
+},
+{
+"id": "0x1811-9eab",
+"name": "0x1811…9eab",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Cardwall at Coney Island",
+"s": "0x1811-9eab-ea466c91s.jpg",
+"l": "0x1811-9eab-ea466c91l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a gold coin for a face. The card wall, made flesh",
+"iv": []
+},
+{
+"id": "0x1bc3-32ed",
+"name": "0x1bc3…32ed",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Coat on Chambers Street",
+"s": "0x1bc3-32ed-57dd5adas.jpg",
+"l": "0x1bc3-32ed-57dd5adal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Five Keystone works, no name on the wallet. Painted as the man in the coat",
+"iv": []
+},
+{
+"id": "0x2bf1-1cca",
+"name": "0x2bf1…1cca",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Coat Check at the Rainbow Room",
+"s": "0x2bf1-1cca-6c1cef91s.jpg",
+"l": "0x2bf1-1cca-6c1cef91l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the woman at the coat check",
+"iv": []
+},
+{
+"id": "0x49e2-3ee5",
+"name": "0x49e2…3ee5",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Silence at Fraunces",
+"s": "0x49e2-3ee5-803373e9s.jpg",
+"l": "0x49e2-3ee5-803373e9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Five New Yorkers held in silence. Painted as the man with the flower for a face",
+"iv": []
+},
+{
+"id": "0x5918-bb1c",
+"name": "0x5918…bb1c",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Collector at the Frick",
+"s": "0x5918-bb1c-1c04b18cs.jpg",
+"l": "0x5918-bb1c-1c04b18cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Five Keystone works and nothing said about it. Painted as The Collector, the piece they hold",
+"iv": []
+},
+{
+"id": "0x5baa-08a3",
+"name": "0x5baa…08a3",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "No Meat since 1919",
+"s": "0x5baa-08a3-9e20e2a9s.jpg",
+"l": "0x5baa-08a3-9e20e2a9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the server at the dairy counter",
+"iv": []
+},
+{
+"id": "0x5e73-67e0",
+"name": "0x5e73…67e0",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Forty Machines on Orchard",
+"s": "0x5e73-67e0-8b356645s.jpg",
+"l": "0x5e73-67e0-8b356645l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Fifteen New Yorkers and no name on the wallet. Painted as the repairman in the collection",
+"iv": []
+},
+{
+"id": "0x6628-0ecd",
+"name": "0x6628…0ecd",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Agent at Grand Central",
+"s": "0x6628-0ecd-64622502s.jpg",
+"l": "0x6628-0ecd-64622502l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a marble face. Nobody sees behind the glasses",
+"iv": []
+},
+{
+"id": "0x686a-b507",
+"name": "0x686a…b507",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Every Walkup in Greenpoint",
+"s": "0x686a-b507-2ad606d8s.jpg",
+"l": "0x686a-b507-2ad606d8l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Three New Yorkers, no name. Painted as the rider who knows every walkup",
+"iv": []
+},
+{
+"id": "0x704d-b807",
+"name": "0x704d…b807",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Index Cards in Bed-Stuy",
+"s": "0x704d-b807-f493779ds.jpg",
+"l": "0x704d-b807-f493779dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Three New Yorkers, no name. Painted as the woman who keeps the recipes",
+"iv": []
+},
+{
+"id": "0x787d-4dc4",
+"name": "0x787d…4dc4",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Heart on the Bow Bridge",
+"s": "0x787d-4dc4-287f29fbs.jpg",
+"l": "0x787d-4dc4-287f29fbl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a heart for a head. The doves came with it",
+"iv": []
+},
+{
 "id": "0x87aad0e9",
 "name": "0x87aad0e9",
 "handle": "collector wallet",
@@ -4469,6 +4793,132 @@
 }
 ],
 "bio": "Anonymous wallet that took home an Exit Strategy variant from Impermanent Loss. Known only by the work",
+"iv": []
+},
+{
+"id": "0x91dd-26c2",
+"name": "0x91dd…26c2",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Group Chat in Prospect Park",
+"s": "0x91dd-26c2-0a66a4a9s.jpg",
+"l": "0x91dd-26c2-0a66a4a9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the man who brought the cooler",
+"iv": []
+},
+{
+"id": "0xa621-fd13",
+"name": "0xa621…fd13",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Risen in Green-Wood",
+"s": "0xa621-fd13-b85c4611s.jpg",
+"l": "0xa621-fd13-b85c4611l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Seven New Yorkers and a zombie for a face. The friendliest thing in Green-Wood",
+"iv": []
+},
+{
+"id": "0xe04d-4b50",
+"name": "0xe04d…4b50",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Under the Survivor Tree",
+"s": "0xe04d-4b50-a5a039e7s.jpg",
+"l": "0xe04d-4b50-a5a039e7l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name, one of them The Survivor Tree. Painted beneath it",
+"iv": []
+},
+{
+"id": "0xe53b-677a",
+"name": "0xe53b…677a",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Perfect Volume on Mulberry",
+"s": "0xe53b-677a-45bc1d2es.jpg",
+"l": "0xe53b-677a-45bc1d2el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the stoop speaker at perfect volume",
+"iv": []
+},
+{
+"id": "0xeb6d-9ec2",
+"name": "0xeb6d…9ec2",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Day One at the Public Library",
+"s": "0xeb6d-9ec2-729156das.jpg",
+"l": "0xeb6d-9ec2-729156dal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Ten New Yorkers, no name, no avatar. Painted as the woman who breaks every new tool on the day it ships",
+"iv": []
+},
+{
+"id": "0xf524-8963",
+"name": "0xf524…8963",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Regular at McSorley's",
+"s": "0xf524-8963-cdd71b4cs.jpg",
+"l": "0xf524-8963-cdd71b4cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the dive bar regular",
+"iv": []
+},
+{
+"id": "0xfbb7-b160",
+"name": "0xfbb7…b160",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Teaching on Atlantic Avenue",
+"s": "0xfbb7-b160-fcfb0620s.jpg",
+"l": "0xfbb7-b160-fcfb0620l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers, no name. Painted as the man teaching somebody else's kid a trade",
 "iv": []
 },
 {
@@ -4671,6 +5121,42 @@
 "label": "Part 1"
 }
 ]
+},
+{
+"id": "btdwayne",
+"name": "BTdwayne",
+"handle": "@NFT_Dee",
+"x": "NFT_Dee",
+"cat": "C",
+"works": [
+{
+"title": "Kidstorian at the Bodega",
+"s": "btdwayne-d7113eb4s.jpg",
+"l": "btdwayne-d7113eb4l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Kidstorian, alter egos Tad and HankTenn, ApeChain and the Otherside. Always at the bodega",
+"iv": []
+},
+{
+"id": "carity",
+"name": "carity",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Crowned Skull of St. Marks",
+"s": "carity-0425e3c2s.jpg",
+"l": "carity-0425e3c2l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a crowned skull. That one guy",
+"iv": []
 },
 {
 "id": "cat5-eth",
@@ -4974,6 +5460,24 @@
 "iv": []
 },
 {
+"id": "dspur",
+"name": "dspur",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Two Rounds at Fanelli",
+"s": "dspur-22f8e846s.jpg",
+"l": "dspur-22f8e846l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collects NEW YORKERS by the dozen, twenty eight and counting. The top of the board without ever saying a word",
+"iv": []
+},
+{
 "id": "eddie-wharton",
 "name": "Eddie Wharton",
 "handle": "delegate.eddiewharton.eth",
@@ -5118,6 +5622,24 @@
 "iv": []
 },
 {
+"id": "flyinga-eth",
+"name": "flyinga.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Coffee Order at Russ and Daughters",
+"s": "flyinga-eth-2a7c4475s.jpg",
+"l": "flyinga-eth-2a7c4475l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a wizard who needs his coffee first. Flying in on a cape",
+"iv": []
+},
+{
 "id": "flyingbeagle",
 "name": "FlyingBeagle",
 "handle": "@FlyingBeagle_",
@@ -5133,6 +5655,24 @@
 }
 ],
 "bio": "Palestinian writer from Gaza living in exile, and a collector of MLow's Impermanent Loss. He keeps writing",
+"iv": []
+},
+{
+"id": "fondazioneaversano",
+"name": "fondazioneaversano",
+"handle": "@fndzionaversano",
+"x": "fndzionaversano",
+"cat": "C",
+"works": [
+{
+"title": "Many Arms on Bleecker",
+"s": "fondazioneaversano-0c0e30b4s.jpg",
+"l": "fondazioneaversano-0c0e30b4l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "A nonprofit supporting artists and building community in New York since 2025. Many arms, all of them busy",
 "iv": []
 },
 {
@@ -5388,6 +5928,24 @@
 "iv": []
 },
 {
+"id": "jpegzrule-eth",
+"name": "jpegzrule.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Ink Mountains in Chinatown",
+"s": "jpegzrule-eth-aacf9908s.jpg",
+"l": "jpegzrule-eth-aacf9908l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and an ink mountain for a face. A scholar of the long view",
+"iv": []
+},
+{
 "id": "j-p-moregainz",
 "name": "J.P. MoreGainz",
 "handle": "@jp_moregainz",
@@ -5568,6 +6126,24 @@
 "iv": []
 },
 {
+"id": "leighferreira-eth",
+"name": "leighferreira.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Deadline at the Ace",
+"s": "leighferreira-eth-b91c38f8s.jpg",
+"l": "leighferreira-eth-b91c38f8l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and pink headphones. Always on deadline",
+"iv": []
+},
+{
 "id": "lindsay-howard",
 "name": "Lindsay Howard",
 "handle": "@lindsayhoward",
@@ -5676,6 +6252,24 @@
 "iv": []
 },
 {
+"id": "martyh3b",
+"name": "MartyH3B",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Seltzer Man of Canarsie",
+"s": "martyh3b-5fb7a55fs.jpg",
+"l": "martyh3b-5fb7a55fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers. Painted as the seltzer man",
+"iv": []
+},
+{
 "id": "matt-zhang",
 "name": "Matt Zhang",
 "handle": "@zhang_matt",
@@ -5727,6 +6321,24 @@
 }
 ],
 "bio": "Sotheby's specialist behind Natively Digital, its sales of digital art. The gavel came online",
+"iv": []
+},
+{
+"id": "mima",
+"name": "MiMa",
+"handle": "@MichMast",
+"x": "MichMast",
+"cat": "C",
+"works": [
+{
+"title": "Normie on the Brooklyn Promenade",
+"s": "mima-52f5be40s.jpg",
+"l": "mima-52f5be40l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Dad, entrepreneur and NFT maximalist since 2018, Normie 8043. Quietly confident, humble proud",
 "iv": []
 },
 {
@@ -5899,6 +6511,24 @@
 "iv": []
 },
 {
+"id": "p1cky-eth",
+"name": "p1cky.eth",
+"handle": "@Crip2DaX",
+"x": "Crip2DaX",
+"cat": "C",
+"works": [
+{
+"title": "The Jester in Chelsea",
+"s": "p1cky-eth-c2279774s.jpg",
+"l": "p1cky-eth-c2279774l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "I will know when I know, that is when you will know. A collector with nineteen thousand watching",
+"iv": []
+},
+{
 "id": "paola-antonelli",
 "name": "Paola Antonelli",
 "handle": "@curiousoctopus",
@@ -6007,6 +6637,24 @@
 "iv": []
 },
 {
+"id": "pred22-eth",
+"name": "pred22.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Rush Hour under the Tiles",
+"s": "pred22-eth-8a5fa8dcs.jpg",
+"l": "pred22-eth-8a5fa8dcl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers. Painted as the bartender under the vaulted tile",
+"iv": []
+},
+{
 "id": "priyanka-desai",
 "name": "Priyanka Desai",
 "handle": "@pdesai_",
@@ -6102,6 +6750,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "rareme",
+"name": "rareme",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Remonstrance in Flushing",
+"s": "rareme-ae46b6a5s.jpg",
+"l": "rareme-ae46b6a5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers held under a SuperRare name. Painted at the house where freedom of conscience was argued in 1657",
+"iv": []
 },
 {
 "id": "regina-harsanyi",
@@ -6241,6 +6907,24 @@
 }
 ],
 "bio": "DJ and collector known in the CryptoPunks world for Punk 8348, the only Punk with seven traits. The rarest face in the room",
+"iv": []
+},
+{
+"id": "self6967",
+"name": "Self6967",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Dunes over the Rockaways",
+"s": "self6967-e91ea78fs.jpg",
+"l": "self6967-e91ea78fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Three New Yorkers and a desert for an avatar. The sand finds its way to Queens",
 "iv": []
 },
 {
@@ -6403,6 +7087,24 @@
 }
 ],
 "bio": "Collector with close to ninety works on SuperRare, among them an Impermanent Loss variant from MLow. The collection does the talking",
+"iv": []
+},
+{
+"id": "taku0x-eth",
+"name": "taku0x.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Golden Hour on Smith Street",
+"s": "taku0x-eth-7f66182fs.jpg",
+"l": "taku0x-eth-7f66182fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a golden head. CryptoTaku in Carroll Gardens",
 "iv": []
 },
 {
@@ -6601,6 +7303,24 @@
 }
 ],
 "bio": "Collector of Transdimensional Trippers and The Soft Conspiracy, including its final piece. Reads to the last page",
+"iv": []
+},
+{
+"id": "zag",
+"name": "zag",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Halo over Hell's Kitchen",
+"s": "zag-4a233a8cs.jpg",
+"l": "zag-4a233a8cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a halo slightly bent. Hell's Kitchen after midnight",
 "iv": []
 },
 {
