@@ -10,7 +10,7 @@ likeness redo shows its new likeness. Lanczos down, a light unsharp to undo the 
 chroma so painted edges stay clean. Skips a file that is newer than its master. Used to be synced
 from KEYSTONE 111 MARKETING KIT/06_3D_GALLERY/img (640 and 1280 only), which read soft on 2x screens.
 """
-import json, os, re, sys
+import hashlib, json, os, re, sys
 from concurrent.futures import ProcessPoolExecutor
 from PIL import Image, ImageFilter
 
@@ -85,7 +85,7 @@ def glitch_all(k):
 
 # ---------- every state of every token, for the card's state buttons ----------
 # One flat file per state beside the wall images (the deploy packager does not descend into folders):
-#   {id}_{nn}.jpg  extra painted states, 2400 wide like the lead
+#   {id}_{nn}.jpg  extra painted states and memes, 2400 wide at most like the lead
 #   {id}_{nn}.png  dithers, kept PNG so the pattern survives, nearest-neighbour down to 2560 wide at most
 #   {id}_{nn}.mp4  motion clips and glitch loops, up to 1920 wide, no audio
 # The lead painting is state 1 and uses the tiered s/m/l above. The MOSH LAB glitch reuses {id}g.mp4.
@@ -106,8 +106,8 @@ def state_job(job):
     if kind == "still" and nn == 1:
         rec["u"] = None
         w, h = Image.open(src).size; rec["a"] = round(w / h, 4); return rec
-    if kind == "still":
-        dst = os.path.join(OUT, f"{pid}_{nn:02d}.jpg")
+    if kind in ("still", "meme", "poster", "card"):
+        dst = os.path.join(OUT, st.get("site_file") or f"{pid}_{nn:02d}.jpg")
         im = Image.open(src)
         if not _fresh(dst, src):
             im = im.convert("RGB"); ww = min(2400, im.width)
@@ -142,6 +142,17 @@ def states_all(k):
         tj = os.path.join(KIT, d, "token.json")
         if os.path.exists(tj):
             t = json.load(open(tj)); tok[t["census_number"]] = t["states"]
+    # site only states (the later Canal Street bootlegs, the memes) go after the kit's, numbered on from them
+    EX = os.path.join(HERE, "keystone_extra_states.json"); p_id = {p["n"]: p["id"] for p in k}
+    if os.path.exists(EX):
+        root = os.path.dirname(SITE)
+        for n, xs in json.load(open(EX))["states"].items():
+            base = tok[int(n)]
+            if any(x["source"].endswith(os.path.basename(e["source"])) for e in xs for x in base):
+                raise SystemExit(f"keystone extras: NO. {n} already has one of these in the mint kit, drop it from the extras")
+            tok[int(n)] = base + [{"kind": e["kind"], "label": e["label"], "source": os.path.join(root, e["source"]), "state": len(base) + i + 1,
+                                        # named by source, not position: reordering the extras must never leave a stale file under a reused name
+                                        "site_file": f"{p_id[int(n)]}_x{hashlib.md5(e['source'].encode()).hexdigest()[:8]}.jpg"} for i, e in enumerate(xs)]
     jobs, where = [], []
     for p in k:
         gsrc = glitch_src(p["n"])

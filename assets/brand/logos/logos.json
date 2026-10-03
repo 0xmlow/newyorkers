@@ -1,0 +1,205 @@
+{
+ "_note": "built by _build/brand_logos.py; byline false means the garbled BY MLOW line was cut",
+ "logos": [
+  {
+   "id": 1,
+   "file": "assets/brand/logos/n3w-01.png",
+   "small": "assets/brand/logos/n3w-01-s.jpg",
+   "bg": "#f5f5f5",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 2,
+   "file": "assets/brand/logos/n3w-02.png",
+   "small": "assets/brand/logos/n3w-02-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 3,
+   "file": "assets/brand/logos/n3w-03.png",
+   "small": "assets/brand/logos/n3w-03-s.jpg",
+   "bg": "#f7f7f5",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 4,
+   "file": "assets/brand/logos/n3w-04.png",
+   "small": "assets/brand/logos/n3w-04-s.jpg",
+   "bg": "#f6f6f6",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 5,
+   "file": "assets/brand/logos/n3w-05.png",
+   "small": "assets/brand/logos/n3w-05-s.jpg",
+   "bg": "#f8f8f8",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 6,
+   "file": "assets/brand/logos/n3w-06.png",
+   "small": "assets/brand/logos/n3w-06-s.jpg",
+   "bg": "#fbf9f7",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 7,
+   "file": "assets/brand/logos/n3w-07.png",
+   "small": "assets/brand/logos/n3w-07-s.jpg",
+   "bg": "#f6f4f2",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 8,
+   "file": "assets/brand/logos/n3w-08.png",
+   "small": "assets/brand/logos/n3w-08-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 9,
+   "file": "assets/brand/logos/n3w-09.png",
+   "small": "assets/brand/logos/n3w-09-s.jpg",
+   "bg": "#faf8f6",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 10,
+   "file": "assets/brand/logos/n3w-10.png",
+   "small": "assets/brand/logos/n3w-10-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": true,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 11,
+   "file": "assets/brand/logos/n3w-11.png",
+   "small": "assets/brand/logos/n3w-11-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 12,
+   "file": "assets/brand/logos/n3w-12.png",
+   "small": "assets/brand/logos/n3w-12-s.jpg",
+   "bg": "#f8f7f3",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 13,
+   "file": "assets/brand/logos/n3w-13.png",
+   "small": "assets/brand/logos/n3w-13-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 14,
+   "file": "assets/brand/logos/n3w-14.png",
+   "small": "assets/brand/logos/n3w-14-s.jpg",
+   "bg": "#0d0d0d",
+   "dark": true,
+   "byline": true,
+   "use": true,
+   "clear": "assets/brand/logos/n3w-14-clear.png"
+  },
+  {
+   "id": 15,
+   "file": "assets/brand/logos/n3w-15.png",
+   "small": "assets/brand/logos/n3w-15-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 16,
+   "file": "assets/brand/logos/n3w-16.png",
+   "small": "assets/brand/logos/n3w-16-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": true,
+   "use": false,
+   "clear": null
+  },
+  {
+   "id": 17,
+   "file": "assets/brand/logos/n3w-17.png",
+   "small": "assets/brand/logos/n3w-17-s.jpg",
+   "bg": "#fafafa",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 18,
+   "file": "assets/brand/logos/n3w-18.png",
+   "small": "assets/brand/logos/n3w-18-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 19,
+   "file": "assets/brand/logos/n3w-19.png",
+   "small": "assets/brand/logos/n3w-19-s.jpg",
+   "bg": "#00091a",
+   "dark": true,
+   "byline": false,
+   "use": true,
+   "clear": null
+  },
+  {
+   "id": 20,
+   "file": "assets/brand/logos/n3w-20.png",
+   "small": "assets/brand/logos/n3w-20-s.jpg",
+   "bg": "#fefefe",
+   "dark": false,
+   "byline": false,
+   "use": true,
+   "clear": null
+  }
+ ]
+}

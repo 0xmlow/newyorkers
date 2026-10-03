@@ -16,10 +16,10 @@
   var CENSUS = {
     url:   "https://opensea.io/collection/newyorkers/overview",
     name:  "THE CENSUS RELEASE",
-    /* Priced in ETH, so the dollar figure drifts. It moved from $11.14 to $11.24 inside the first
-       hour of minting. Never print cents here. */
-    meta:  "6,666 · ABOUT $11",
-    metaSm: "ABOUT $11",
+    /* Quote the ETH price, never dollars: the dollar figure drifts with ETH (it moved from $11.14
+       to $11.24 inside the first hour). 0.0042 ETH for the whole window: a raise to 0.01 ETH was written onto the site on 30 September 2026 but the price on the contract never changed, so it was reverted on 1 October. */
+    meta:  "6,666 · 0.0042 ETH",
+    metaSm: "0.0042 ETH",
     cta:   "MINT ON OPENSEA",
     ctaSm:  "OPENSEA",
     open:  Date.parse("2026-09-23T11:11:00-04:00"),

@@ -1,0 +1,683 @@
+{
+ "_note": "Site only states for the Keystone wall, appended after the mint kit's states by keystone_images.py. Not in the mint kit token.json. Sources are relative to the project root. Canal Street bootlegs for 502 and 647 are listed here; the posters, cards and memes come from piece_extras.json (regenerate this from it). Memes for memorials 1438 and 1439 are held.",
+ "states": {
+  "502": [
+   {
+    "kind": "still",
+    "label": "Painted, Canal Street Bootleg",
+    "source": "KEYSTONE SITE EXTRAS 2026-09-30/canal_street/502_bootleg.jpg"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/502_meme-03-502-jay-zzz.png"
+   }
+  ],
+  "647": [
+   {
+    "kind": "still",
+    "label": "Painted, Canal Street Bootleg",
+    "source": "KEYSTONE SITE EXTRAS 2026-09-30/canal_street/647_bootleg.jpg"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/647_key-022.png"
+   }
+  ],
+  "1300": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/1300_61-the-orange-sky.png"
+   }
+  ],
+  "1468": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/1468_11-the-seed-beneath-the-city.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1468_key-036-the-seed-beneath-the-city.png"
+   }
+  ],
+  "1500": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/1500_62-the-milky-way-blackout.png"
+   }
+  ],
+  "1600": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/1600_63-the-wire-walk.png"
+   }
+  ],
+  "2000": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2000_64-midnight.png"
+   }
+  ],
+  "2100": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2100_65-the-eight-million.png"
+   }
+  ],
+  "2265": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2265_66-the-curtain-call.png"
+   }
+  ],
+  "2400": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2400_67-the-consolidation.png"
+   }
+  ],
+  "2500": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2500_68-the-golden-door.png"
+   }
+  ],
+  "2665": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2665_69-the-unfinished-block.png"
+   }
+  ],
+  "2700": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2700_70-the-day-two-cities-met.png"
+   }
+  ],
+  "2": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/2_61-the-heroic-firefighter.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2_key-002.png"
+   }
+  ],
+  "3": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/3_62-the-subway-spirit.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/3_key-003.png"
+   }
+  ],
+  "467": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/467_65-statue-of-liberty.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/467_key-006.png"
+   }
+  ],
+  "473": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/473_66-nikola-tesla.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/473_key-008.png"
+   }
+  ],
+  "476": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/476_67-jane-jacobs.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/476_key-009.png"
+   }
+  ],
+  "486": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/486_68-jean-michel-basquiat.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/486_key-015.png"
+   }
+  ],
+  "487": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/487_69-keith-haring.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/487_key-016.png"
+   }
+  ],
+  "497": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/497_70-billie-holiday.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/497_key-020.png"
+   }
+  ],
+  "767": [
+   {
+    "kind": "poster",
+    "label": "Poster",
+    "source": "CHATGPT ART 2026-09-30/posters/767_04-the-rat-king.png"
+   },
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/767_key-054-the-rat-king.png"
+   }
+  ],
+  "1000": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1000_key-059-the-subway-samaritan.png"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/1000_meme-09-subway-samaritan.png"
+   }
+  ],
+  "1055": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1055_key-074-the-pothole.png"
+   }
+  ],
+  "1151": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1151_key-043-the-missed-connection.png"
+   }
+  ],
+  "1467": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1467_key-035-the-first-eye-flower.png"
+   }
+  ],
+  "1469": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1469_key-037-the-gardener-of-the-first-bloom.png"
+   }
+  ],
+  "1470": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1470_key-038-the-pollen-route.png"
+   }
+  ],
+  "1477": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1477_key-039-the-talisman-maker.png"
+   }
+  ],
+  "1485": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1485_key-055-the-pigeon-queen.png"
+   }
+  ],
+  "1489": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1489_key-072-the-clean-street-truce.png"
+   }
+  ],
+  "1607": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1607_key-075-the-pothole-crew.png"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/1607_meme-02-pothole-crew.png"
+   }
+  ],
+  "1713": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1713_key-049-the-window-watcher-s-wave.png"
+   }
+  ],
+  "1730": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1730_key-044-the-reply.png"
+   }
+  ],
+  "1731": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1731_key-045-the-second-glance.png"
+   }
+  ],
+  "1800": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1800_key-056-the-royal-wedding.png"
+   }
+  ],
+  "1866": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1866_key-050-the-collector.png"
+   }
+  ],
+  "1894": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1894_key-064-the-day-the-dodgers-left.png"
+   }
+  ],
+  "1900": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1900_key-068-the-boatlift.png"
+   }
+  ],
+  "1937": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1937_key-060-the-shirt-off-his-back.png"
+   }
+  ],
+  "1939": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1939_key-061-the-human-chain.png"
+   }
+  ],
+  "1942": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1942_key-062-the-violin-in-the-cab.png"
+   }
+  ],
+  "1": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/1_key-001.png"
+   }
+  ],
+  "2017": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2017_key-040-the-flower-moon.png"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/2017_meme-01-flower-moon.png"
+   }
+  ],
+  "2061": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2061_key-065-dreamland.png"
+   }
+  ],
+  "2144": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2144_key-041-the-city-bloom-map.png"
+   }
+  ],
+  "2150": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2150_key-057-the-adopted-squab.png"
+   }
+  ],
+  "2266": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2266_key-042-to-be-continued.png"
+   }
+  ],
+  "2300": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/2300_key-046-the-second-glance-wedding.png"
+   }
+  ],
+  "3170": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/3170_key-069-the-painter-s-first-wall.png"
+   }
+  ],
+  "3180": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/3180_key-070-the-collector-s-coat.png"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/3180_meme-03-collectors-coat.png"
+   }
+  ],
+  "3417": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/3417_key-058-the-coronation-under-chambers.png"
+   }
+  ],
+  "3423": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/3423_key-047-the-second-glance-anniversary.png"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/3423_meme-06-second-glance-anniversary.png"
+   }
+  ],
+  "3466": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/3466_key-051-the-mirror-faces-out.png"
+   }
+  ],
+  "37": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/37_key-004.png"
+   }
+  ],
+  "39": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/39_key-005.png"
+   }
+  ],
+  "468": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/468_key-007.png"
+   }
+  ],
+  "477": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/477_key-010.png"
+   }
+  ],
+  "478": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/478_key-013.png"
+   }
+  ],
+  "479": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/479_key-014.png"
+   }
+  ],
+  "488": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/488_key-017.png"
+   }
+  ],
+  "493": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/493_key-018.png"
+   }
+  ],
+  "496": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/496_key-019.png"
+   }
+  ],
+  "501": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/501_key-023.png"
+   }
+  ],
+  "504": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/504_key-025.png"
+   }
+  ],
+  "523": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/523_key-027-king-kong.png"
+   }
+  ],
+  "5466": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/5466_key-052-the-answer.png"
+   }
+  ],
+  "548": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/548_key-028-pizza-rat.png"
+   }
+  ],
+  "550": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/550_key-029-bodega-cat.png"
+   }
+  ],
+  "555": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/555_key-031-the-new-york-slice.png"
+   }
+  ],
+  "570": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/570_key-032-grand-central-terminal.png"
+   }
+  ],
+  "573": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/573_key-033-the-brooklyn-bridge.png"
+   }
+  ],
+  "580": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/580_key-034-stonewall-inn.png"
+   }
+  ],
+  "583": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/583_key-011.png"
+   }
+  ],
+  "586": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/586_key-012.png"
+   }
+  ],
+  "617": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/617_key-030-flaco-the-owl.png"
+   }
+  ],
+  "630": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/630_key-021.png"
+   }
+  ],
+  "775": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/775_key-063-the-ghost-of-penn-station.png"
+   },
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/775_meme-10-ghost-of-penn-station.png"
+   }
+  ],
+  "7990": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/7990_key-053-ephraim-blum.png"
+   }
+  ],
+  "806": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/806_key-071-the-trash-mountain.png"
+   }
+  ],
+  "891": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/891_key-073-the-signal-problem.png"
+   }
+  ],
+  "942": [
+   {
+    "kind": "card",
+    "label": "Card, Keystone Legendary",
+    "source": "CHATGPT ART 2026-09-30/cards/942_key-048-the-window-watcher.png"
+   }
+  ],
+  "3425": [
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/3425_meme-07-guarantors-ledger.png"
+   }
+  ],
+  "5491": [
+   {
+    "kind": "meme",
+    "label": "Meme",
+    "source": "CHATGPT ART 2026-09-30/memes/5491_meme-08-human-in-the-loop.png"
+   }
+  ]
+ }
+}
