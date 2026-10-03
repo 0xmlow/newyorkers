@@ -42,6 +42,7 @@ python3 build_keystone.py
 python3 build_bloomrun.py
 # holders first: the honoraries pages link the honorees who collect (collectors/honor_links.json)
 python3 collectors/fetch_chain.py || echo "  chain read skipped (nodes unreachable); the last holder snapshot stands"
+python3 collectors/link_identities.py   # who each wallet is: X handle and honorary, from ENS, the CRM, OpenSea and homes.json
 python3 build_collectors.py     # the collectors leaderboard and badges, from collectors/chain.json
 python3 build_honor_cards.py
 python3 build_honoraries.py

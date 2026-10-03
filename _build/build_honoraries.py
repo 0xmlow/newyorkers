@@ -16,6 +16,16 @@ N = len(PPL)
 NW = sum(len(p["works"]) for p in PPL)
 CATN = {c["code"]: c["name"] for c in CATS}
 CARDS = json.load(open(os.path.join(HERE, "honoraries", "cards.json")))  # build_honor_cards.py
+# honorees who also collect NEW YORKERS, written by build_collectors.py (run before this in build_all.sh)
+_HL = os.path.join(HERE, "collectors", "honor_links.json")
+COL = json.load(open(_HL)) if os.path.exists(_HL) else {}
+def held(c):
+    """the New Yorkers an honoree owns, hung beside their portrait"""
+    if not c.get("held"): return ""
+    li = "".join(f'<a href="../{"n/" + x["id"] + ".html" if x.get("id") else "keystone.html"}" title="{e(x["t"])}"><img src="../{e(x["th"])}" alt="{e(x["t"])}" loading="lazy">{"<i>KEYSTONE</i>" if x["k"] else ""}</a>' for x in c["held"])
+    more = c["n"] - len(c["held"])
+    return f'<div class="heldgrid"><p class="k">IN THEIR COLLECTION</p><div>{li}</div>' + (f'<a class="more" href="../my.html#{e(c["key"])}">and {more} more</a>' if more > 0 else "") + "</div>"
+def col_label(c): return f'Collects {c["n"]} NEW YORKER{"S" if c["n"] != 1 else ""} · No. {c["rank"]} of {c["of"]}' 
 missing = [p["id"] for p in PPL if p["id"] not in CARDS]
 assert not missing, f"no card for {missing[:5]}: run build_honor_cards.py"
 e = lambda s: html.escape(str(s or ""), quote=True)
@@ -50,6 +60,7 @@ def card(i, p):
             f'<div class="bar"></div><h3>{e(p["name"])}</h3>{handle(p)}'
             + (f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else "")
             + (f'<a class="iv" href="{e(p["iv"][-1]["url"])}" target="_blank" rel="noopener">{"Watch the interviews" if len(p["iv"]) > 1 else "Watch the interview"}</a>' if p.get("iv") else "")
+            + (f'<a class="col" href="my.html#{e(COL[p["id"]]["key"])}">{e(col_label(COL[p["id"]]))}</a>' if p["id"] in COL else "")
             + f'<div class="tg">{tag(p)}<i class="eye"></i></div></li>')
 
 
@@ -70,7 +81,7 @@ pick = PPL[::max(1, N // 64)][:64]
 rowA, rowB = row(pick[:32]), row(pick[32:])
 
 counts = " &middot; ".join(f'{sum(1 for p in PPL if p["cat"] == c["code"])} {e(SHORT.get(c["name"], c["name"]))}' for c in CATS)
-DATA = json.dumps([{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []),
+DATA = json.dumps([{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []), "col": COL.get(p["id"]),
                     "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
                   ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
@@ -107,7 +118,7 @@ body = f'''<main class="hon">
  <button class="x" type="button" aria-label="Close">&times;</button>
  <button class="nv pv" type="button" aria-label="Previous">&#8249;</button><button class="nv nx" type="button" aria-label="Next">&#8250;</button>
  <figure><div class="frame"><img id="lbi" alt=""></div><figcaption>
-  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="lbio" id="lbb"></p><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p><div class="ivs" id="lbv"></div>
+  <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="lbio" id="lbb"></p><a class="lbcol" id="lbcol" hidden></a><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p><div class="ivs" id="lbv"></div>
   <div class="tcg" id="lbc"><p class="k">THE HONORARY CARD</p><a class="tcg-card" id="lbci" target="_blank" rel="noopener"><img alt="" loading="lazy"></a>
    <div class="tcg-btns"><a class="btn sm" id="lbme" target="_blank" rel="noopener">This is me. Post my card</a><a class="btn sm ghost" id="lbx" target="_blank" rel="noopener">Share on X</a><a class="btn sm ghost" id="lbsv" download>Save the card</a></div></div></figcaption></figure>
 </dialog>
@@ -148,6 +159,8 @@ JS = r'''<script>
     document.getElementById("lbk").textContent=CATN[p.cat].toUpperCase()+(w.num!=null?" · NEW YORKERS NO. "+String(w.num).padStart(4,"0"):"")+(w.key?" · KEYSTONE":"");
     document.getElementById("lbn").textContent=p.name;
     document.getElementById("lbb").textContent=p.bio||"";
+    var lc=document.getElementById("lbcol"); lc.hidden=!p.col;
+    if(p.col){ lc.href="my.html#"+encodeURIComponent(p.col.key); lc.textContent="Collector · "+p.col.n+" NEW YORKER"+(p.col.n===1?"":"S")+" · No. "+p.col.rank+" of "+p.col.of+" · Open the collection"; }
     var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], lv=document.getElementById("lbv");
     lv.innerHTML=p.iv.length?'<p class="k">INTERVIEWS</p>'+p.iv.map(function(v){ var d=v.date.split("-");
       return '<a class="btn sm ghost" href="'+esc(v.url)+'" target="_blank" rel="noopener">'+esc(v.show)+(v.label?", "+esc(v.label):"")+", "+MO[+d[1]-1]+" "+d[0]+'</a>'; }).join(""):"";
@@ -245,6 +258,10 @@ p.none a{color:var(--cyan)}
 .hc .iv{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:var(--ink);color:var(--cloud)}
 .hc .iv:before{content:"";display:inline-block;width:0;height:0;border-left:6px solid var(--pink);border-top:4px solid transparent;border-bottom:4px solid transparent;margin-right:6px}
 .hc .iv:hover{background:var(--pink);color:var(--ink)}
+.hc .col{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:#D7FF1F;color:#0D0D0D;text-decoration:none}
+.hc .col:hover{background:var(--ink);color:#D7FF1F}
+#lb .lbcol{display:inline-block;margin:6px 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:999px;background:#D7FF1F;color:#0D0D0D;text-decoration:none}
+#lb .lbcol[hidden]{display:none}
 #lb .lbio{font-family:var(--sans);font-size:17px;line-height:1.55;color:#DDE3EA;margin:14px 0 4px}
 #lb .ivs{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#lb .ivs .k{width:100%;margin-bottom:2px}
 .works{display:flex;gap:8px;margin:-6px 0 20px}.works button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--divider);background:transparent;color:var(--cloud)}.works button.on{background:var(--cloud);color:var(--ink)}
@@ -325,6 +342,18 @@ HCSS = r'''
 .hp .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--a)}
 .hp h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,6vw,84px);line-height:.95;margin:14px 0 12px}
 .hp .hd{font-family:var(--mono);font-size:16px;color:var(--cyan)}
+.hp .colbox{display:flex;flex-direction:column;gap:4px;border:1px solid #D7FF1F;border-radius:12px;padding:14px 16px;margin:0 0 22px;max-width:560px;text-decoration:none}
+.hp .colbox .k{color:#D7FF1F;margin:0}
+.hp .colbox b{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--cloud)}
+.hp .colbox span:not(.k){font-family:var(--sans);font-size:14px;line-height:1.5;color:#C9D2DC}
+.hp .colbox:hover{background:rgba(215,255,31,.06)}
+.hp .heldgrid{margin:-8px 0 22px;max-width:560px}.hp .heldgrid .k{color:#D7FF1F;margin:0 0 8px}
+.hp .heldgrid div{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.hp .heldgrid a{position:relative;display:block;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#1a1a1a}
+.hp .heldgrid img{width:100%;height:100%;object-fit:cover;display:block}
+.hp .heldgrid i{position:absolute;left:4px;bottom:4px;font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.1em;background:#D7FF1F;color:#0D0D0D;padding:2px 4px;border-radius:3px}
+.hp .heldgrid .more{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:11px;color:#C9D2DC}
+@media (max-width:520px){.hp .heldgrid div{grid-template-columns:repeat(4,1fr)}}
 .hp .bio{font-family:var(--sans);font-size:18px;line-height:1.6;color:#C9D2DC;margin:22px 0;max-width:560px}
 .hp .t{font-family:var(--display);font-style:italic;font-size:22px;color:#C9D2DC}
 .hp .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
@@ -359,6 +388,8 @@ for p in PPL:
 {f'<a class="hd" href="https://x.com/{e(p["x"])}" target="_blank" rel="noopener">{e(p["handle"])}</a>' if p["x"] else (f'<p class="hd">{e(p["handle"])}</p>' if p["handle"] else "")}
 {f'<p class="t">&ldquo;{e(w0["title"])}&rdquo;</p>' if w0.get("title") else ""}
 {f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else ""}
+{f'<a class="colbox" href="../my.html#{e(COL[p["id"]]["key"])}"><span class="k">ALSO A COLLECTOR</span><b>{e(COL[p["id"]]["name"])}</b><span>{e(col_label(COL[p["id"]]))}. Walk the collection, put it on a TV, see it on a wall.</span></a>' if p["id"] in COL else ""}
+{held(COL[p["id"]]) if p["id"] in COL else ""}
 <div class="row"><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + chr(10) * 2 + u)}">This is me. Post my card</a>
 <a class="btn ghost" href="{e(xi(them, u))}" target="_blank" rel="noopener">Share on X</a>
 <a class="btn ghost" href="../assets/cards/{cd["card"]}" download="honorary-new-yorker-{p["id"]}.jpg">Save the card</a></div>
