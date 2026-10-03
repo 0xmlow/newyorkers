@@ -17,10 +17,11 @@ Live at **https://n3wyorkers.com**
 | **`Museum`** | **The real thing.** The full site source, the build pipeline, the 3D museum engine and every file the museum needs to run from a checkout. Start here. |
 | `main` | This page, plus the original placeholder landing page. `characters/`, `cameos/` and `metadata/` are empty scaffolding from the repository's first day. |
 | `claude/new-repo-new-yorkers-u1iphp` | The dev placeholder served by GitHub Pages at `dev.n3wyorkers.com`. |
+| `mosh-lab` | MOSH LAB, MLow's glitch instrument: 60 WebGL effects, 48 presets, loop perfect GIF and MP4 export with the MLOW mark. Desktop app source, and the same files run online at [n3wyorkers.com/moshlab](https://n3wyorkers.com/moshlab). |
 
 The working source of truth is the artist's local folder `NEW YORKERS SITE/`.
 The `Museum` branch is a copy of its full history (145 commits), pushed
-2026-09-29. When the two differ, the local folder wins, and the branch should
+2026-09-29 and refreshed 2026-10-03. When the two differ, the local folder wins, and the branch should
 be refreshed from it.
 
 ---
