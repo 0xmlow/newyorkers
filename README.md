@@ -4,6 +4,8 @@ MLow's glitch instrument. A PhotoMosh style effect rack rebuilt from scratch as 
 
 Every animation in the engine is periodic, so a GIF's last frame hands off to the first with no seam. Every random decision flows from the seed field, so any look is reproducible forever.
 
+**Play with it online, no install:** [n3wyorkers.com/moshlab](https://n3wyorkers.com/moshlab)
+
 ## Run it
 
 ```bash
