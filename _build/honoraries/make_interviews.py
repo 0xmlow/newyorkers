@@ -18,6 +18,11 @@ CROSSOVERS = [
     ("https://x.com/MuseumofCrypto/status/1712946815580995793", "MLow on MOCA Live", ["Max Cohen", "Colborn Bell"]),
     ("https://x.com/justinaversano/status/1948412890609823819", "MLow on Moments of the Unknown", ["Justin Aversano"]),
 ]
+# Published episodes missing from the mlow.xyz list, given by MLow directly: (post url, guest as on the page)
+EXTRA = [
+    ("https://x.com/degens/status/1856075034516697226", "Alejandro Cartagena"),  # 2026-10-03, MLow
+    ("https://x.com/degens/status/1861260873991626840", "Mario Klingemann"),  # Botto, 2026-10-03, MLow
+]
 SKIP = re.compile(r"journey|davincithreads|hot takes|ogiworlds", re.I)
 
 
@@ -69,6 +74,12 @@ for it in fetch():
     part = re.search(r"Part (\d+)", it["title"])
     out.setdefault(k, []).append(dict(url=it["url"], date=when(it["url"]), show="The MLow Show",
                                       label=("Part " + part.group(1)) if part else ""))
+for url, g in EXTRA:
+    k = match(g)
+    if k and url not in {x["url"] for x in out.get(k, [])}:
+        out.setdefault(k, []).append(dict(url=url, date=when(url), show="The MLow Show", label=""))
+    elif not k:
+        unmatched.append(g)
 for url, show, hosts in CROSSOVERS:
     for h in hosts:
         k = match(h)
