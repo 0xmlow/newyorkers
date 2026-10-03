@@ -2,7 +2,7 @@
 
 Written by `link_identities.py` from 137 holding wallets. 60 have an X handle, 34 are linked to an honorary. Edit `homes.json` to rule on any of these, then rerun.
 
-## Hold 6 or more, no honorary yet
+## Hold 5 or more, no honorary yet
 
 | Pieces | Wallet | X | Where the handle came from |
 |---|---|---|---|
@@ -10,8 +10,12 @@ Written by `link_identities.py` from 137 holding wallets. 60 have an X handle, 3
 | 15 | 0x5e73a7803b03545d34dca700ee37a7fabbe267e0 `0x5e73a7803b03545d34dca700ee37a7fabbe267e0` | none found |  |
 | 10 | 0xeb6dac11a9939b575690298ac00068c230c29ec2 `0xeb6dac11a9939b575690298ac00068c230c29ec2` | none found |  |
 | 7 | 0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13 `0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13` | none found |  |
+| 5 | 0x59186dcb30b6427be31aa46a05368689914dbb1c `0x59186dcb30b6427be31aa46a05368689914dbb1c` | none found |  |
+| 5 | 0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5 `0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5` | none found |  |
+| 5 | Peng1-Deployer `0x006818384f5a494d7b40119efc94ee819416d90a` | @cryptopeng1 | OpenSea profile |
+| 5 | 0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed `0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed` | none found |  |
 
-## Hold 6 or more, already honoraries
+## Hold 5 or more, already honoraries
 
 | Pieces | Wallet | Honoree | How we know |
 |---|---|---|---|
@@ -25,8 +29,11 @@ Written by `link_identities.py` from 137 holding wallets. 60 have an X handle, 3
 | 10 | enormo.eth | enormo-eth | wallet name is theirs |
 | 8 | tork_penderloin | tork-penderloin | X handle (@P8erade4u, SuperRare profile) |
 | 7 | jasonophoto.eth | jason-o-rourke | wallet name is their X handle |
-| 6 | orkhanart.eth | orkhan-mammadov | wallet name is theirs |
 | 6 | dannyb0yyy.eth | dannyboyy | wallet name is their X handle |
+| 6 | orkhanart.eth | orkhan-mammadov | wallet name is theirs |
+| 5 | dingomick.eth | dingomick | X handle (@mick_dingo, ENS record) |
+| 5 | mrquack.eth | mr-quack | X handle (@CryptoCrusher6, OpenSea profile) |
+| 5 | jpmoregainz.eth | j-p-moregainz | X handle (@jp_moregainz, ENS record) |
 
 ## One person, several wallets
 
