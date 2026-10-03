@@ -257,6 +257,27 @@ if os.path.exists(_castp) and os.path.exists(_flyp):
         open(_flyp, "w", encoding="utf-8").write(_fn2)
     print("  cast.json versioned %s inside flywheel.js" % _cv)
 
+# api/c/<wallet>.json is the same kind of trap: my.html, tv.html, wall.html and the museum fetch it,
+# /api/* is max-age 3600 and Cloudflare stretches that to four hours, so a wallet whose honorary was
+# just linked kept downloading its old file and a card with no portrait (Orkhan, 2026-10-03). One
+# hash over every collector file goes on each of those fetch URLs, so a new snapshot lands at once.
+_apic = os.path.join(OUT, "api", "c")
+if os.path.isdir(_apic):
+    _h = hashlib.sha256()
+    for _fn in sorted(os.listdir(_apic)):
+        if _fn.endswith(".json"): _h.update(_fn.encode()); _h.update(open(os.path.join(_apic, _fn), "rb").read())
+    _av = _h.hexdigest()[:10]
+    _targets = [os.path.join(OUT, p) for p in ("my.html", "tv.html", "wall.html", os.path.join("assets", "museum", "museum.js"))]
+    _n = 0
+    for _fp in _targets:
+        if not os.path.exists(_fp): continue
+        _s = open(_fp, encoding="utf-8").read(); _o = _s
+        _s = re.sub(r"(api/c/index\.json)(\?v=[0-9a-f]+)?", r"\1?v=" + _av, _s)
+        _s = re.sub(r"(api/c/'\s*\+[^;\n]*?\+\s*')\.json(\?v=[0-9a-f]+)?'", r"\1.json?v=" + _av + "'", _s)
+        _s = re.sub(r"(api/c/\$\{[^}]+\})\.json(\?v=[0-9a-f]+)?", r"\1.json?v=" + _av, _s)
+        if _s != _o: open(_fp, "w", encoding="utf-8").write(_s); _n += 1
+    print("  collector data versioned %s inside %d files" % (_av, _n))
+
 for _asset in tuple(COPY_ASSETS) + ("config.js", "data.js"):
     _fp = os.path.join(OUT, "assets", _asset)
     if os.path.exists(_fp):
