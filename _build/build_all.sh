@@ -51,6 +51,7 @@ python3 build_tv.py             # tv.html, the living frame: a collector's New Y
 python3 build_wall.py           # wall.html, see it on your wall: a collector's New Yorker framed, in AR on a phone
 python3 build_my.py             # my.html: a collector's own page; reads api/c at runtime, so holders never need it rebuilt
 python3 build_seo.py
+python3 build_og.py             # share cards per page (og/cards.json); after every page builder, or og.jpg wins
 python3 build_deploy.py | tail -4
 python3 preflight.py
 echo

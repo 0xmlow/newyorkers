@@ -31,6 +31,10 @@ for name,lst in [("thumbs",missing_t),("glitch mp4",missing_gl),("glitch stills"
 # orphan thumbs shipped (bloat)
 used=set(k for p in P for k in p["st"])|set(p["gl"]["st"] for p in P if p.get("gl") and p["gl"].get("st"))
 shipped=set(f[:-4] for f in os.listdir(os.path.join(PKG,"assets","t")))
+fx=set(f["k"] for p in P for f in (p.get("fx") or []))   # posters, memes, cards (attach_piece_extras.py)
+missing_fx=[k for k in fx if k not in shipped]
+if missing_fx: probs.append(f"missing piece extras: {len(missing_fx)} e.g. {missing_fx[:3]}")
+used|=fx
 orphans=shipped-used
 if orphans: warns.append(f"{len(orphans)} thumbs shipped that no public piece uses")
 # geo
@@ -67,6 +71,15 @@ for pg in pages:
     if "<title>" not in h: probs.append(f"{pg}: no title")
 for req in ("robots.txt","404.html","_headers","_redirects","og.jpg","assets/config.js","sitemap.xml","llms.txt","llms-full.txt","humans.txt","agents.html","learn.html","brand.html","api/census.json","api/pieces.json","api/rooms.json","feeds/google-merchant.xml","feeds/meta-catalog.csv","feeds/catalog.json","assets/rooms.js","assets/counts.js","assets/eggs.js"):
     if not os.path.exists(os.path.join(PKG,req)): probs.append(f"missing {req}")
+# every page in og/cards.json must carry its own share card, and that card must ship; a page builder
+# run after build_og.py silently puts the generic og.jpg back
+_og=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"og","cards.json")))
+for _pg in _og["pages"]:
+    _f=os.path.join(PKG,_pg)
+    if not os.path.exists(_f): continue
+    _m=re.search(r'<meta property="og:image" content="[^"]*/(assets/og/[^"]+)">',open(_f,encoding="utf-8").read())
+    if not _m: probs.append(f"{_pg}: share card missing, rerun build_og.py")
+    elif not os.path.exists(os.path.join(PKG,_m.group(1))): probs.append(f"{_pg}: share card {_m.group(1)} not in the package")
 cfg=open(os.path.join(PKG,"assets","config.js")).read()
 # Forms post to our own /api/submit backed by D1. The function must actually ship or every form
 # silently fails; it is shipped from GO LIVE PACKAGE/functions, beside wrangler.toml, not inside site/.

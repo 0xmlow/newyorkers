@@ -1,0 +1,42 @@
+{
+  "_note": "Which share card each page shows on X, iMessage, Discord, Slack and the rest. Masters are og/src/<card>.webp, made by MLow 2026-10-03. build_og.py turns them into assets/og/<card>-<hash>.jpg at 1200x630 and writes them into each page. 'default' also becomes og.jpg, the card every page not listed here falls back to.",
+  "default": "skyline-eclipse",
+  "alt": {
+    "skyline-eclipse": "N3W YORKERS by MLow: the Manhattan skyline at night under a gold eclipse, a blue eye flower blooming over the river.",
+    "rat-pizza": "N3W YORKERS by MLow: a subway rat in a gold chain dragging a slice of pepperoni pizza along the platform.",
+    "eye-halo-train": "N3W YORKERS by MLow: a glowing figure with a halo of eye flowers on a subway platform as a train streaks past.",
+    "firefighter": "N3W YORKERS by MLow: a firefighter walking out of the smoke on a Manhattan street at night, the Empire State Building behind.",
+    "bodega-cat": "N3W YORKERS by MLow: a bodega cat in a vest and tie sitting on the counter beside the lottery tickets.",
+    "brooklyn-bridge": "N3W YORKERS by MLow: a lone walker on the Brooklyn Bridge at night under a giant blue eye flower.",
+    "subway-portal": "N3W YORKERS by MLow: a figure on a wet subway platform facing a violet portal beneath a blooming eye flower.",
+    "street-bloom": "N3W YORKERS by MLow: a lone figure on a rainy city street under a towering blue eye flower."
+  },
+  "pages": {
+    "index.html": "skyline-eclipse",
+    "census.html": "firefighter",
+    "museum.html": "subway-portal",
+    "new-rooms.html": "eye-halo-train",
+    "map.html": "brooklyn-bridge",
+    "counted.html": "bodega-cat",
+    "count.html": "rat-pizza",
+    "keystone.html": "street-bloom",
+    "honoraries.html": "firefighter",
+    "collectors.html": "eye-halo-train",
+    "posters.html": "rat-pizza",
+    "links.html": "rat-pizza",
+    "learn.html": "brooklyn-bridge",
+    "faq.html": "bodega-cat",
+    "press.html": "skyline-eclipse",
+    "brand.html": "skyline-eclipse",
+    "vault.html": "subway-portal",
+    "shipping.html": "brooklyn-bridge",
+    "profile.html": "street-bloom",
+    "my.html": "street-bloom",
+    "tv.html": "subway-portal",
+    "wall.html": "eye-halo-train",
+    "agents.html": "skyline-eclipse",
+    "pigeon.html": "rat-pizza",
+    "roll.html": "bodega-cat",
+    "whitelist.html": "bodega-cat"
+  }
+}

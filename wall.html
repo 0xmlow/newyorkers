@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>See it on your wall · NEW YORKERS by MLow</title>
+<meta name="description" content="Pick one of your New Yorkers, choose a size and a frame, and see it at true size on your own wall in AR on your phone. A 3D preview and a to scale room view on desktop.">
+<meta name="keywords" content="NEW YORKERS, MLow, AR, see it on your wall, framed art preview, New York City art">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://n3wyorkers.com/wall">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="See it on your wall · NEW YORKERS by MLow">
+<meta property="og:description" content="Pick one of your New Yorkers, choose a size and a frame, and see it at true size on your own wall in AR on your phone. A 3D preview and a to scale room view on desktop.">
+<meta property="og:image" content="https://n3wyorkers.com/assets/og/eye-halo-train-d24122a00e.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N3W YORKERS by MLow: a glowing figure with a halo of eye flowers on a subway platform as a train streaks past.">
+<meta name="twitter:image" content="https://n3wyorkers.com/assets/og/eye-halo-train-d24122a00e.jpg">
+<meta name="twitter:image:alt" content="N3W YORKERS by MLow: a glowing figure with a halo of eye flowers on a subway platform as a train streaks past.">
+<meta property="og:url" content="https://n3wyorkers.com/wall">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="See it on your wall · NEW YORKERS by MLow">
+<meta name="twitter:description" content="Pick one of your New Yorkers, choose a size and a frame, and see it at true size on your own wall in AR on your phone. A 3D preview and a to scale room view on desktop.">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"See it on your wall","url":"https://n3wyorkers.com/wall","description":"Place a NEW YORKERS painting by MLow on your own wall in augmented reality, at true size and in the frame you choose.","creator":{"@type":"Person","name":"MLow"},"isPartOf":{"@id":"https://n3wyorkers.com/#collection"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"}}</script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
+<script src="assets/qrcode.min.js"></script>
+<style>
+.wlab{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin:20px 0 10px}
+.wfind .wlab{margin-top:0}
+.wrow{display:flex;gap:10px;flex-wrap:wrap}
+.wrow input{flex:1 1 280px;min-width:0;background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--mono);font-size:14px;padding:14px 16px;border-radius:var(--r)}
+.wrow input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.wmsg{min-height:1.4em;margin:10px 0 0;color:var(--slate);font-size:14px}
+.wgrid{display:flex;align-items:flex-start;gap:10px;margin-top:6px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.wgrid button{display:block;flex:0 0 132px;scroll-snap-align:start;background:var(--card);border:1px solid var(--divider);border-radius:10px;padding:0;overflow:hidden;cursor:pointer;text-align:left;color:var(--cloud)}
+.wgrid button[aria-pressed=true]{border-color:var(--acid);box-shadow:0 0 0 1px var(--acid)}
+.wgrid button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.wgrid img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:var(--card2)}
+.wgrid span{display:block;padding:8px 10px 10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+.wgrid span b{display:block;font-family:var(--sans);font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--cloud);font-weight:500;margin-top:3px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.wstage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:start}
+.wview{position:relative;border:1px solid var(--divider);border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#2a2f3a 0%,#14171d 70%)}
+#mv{display:block;width:100%;height:clamp(300px,40vw,580px);--poster-color:transparent;background:transparent}
+.warbtn{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:var(--acid);border-color:var(--acid);color:var(--ink);white-space:nowrap}
+.warbtn:hover{transform:translateX(-50%) translateY(-1px)}
+.wbusy{position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);opacity:0;transition:opacity .2s}
+.wbusy.on{opacity:1}
+.wpiece .wno{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--acid)}
+.wpiece h2{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.15;margin:8px 0 6px}
+.wrec{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+.wchips{display:flex;flex-wrap:wrap;gap:8px}
+.wchip{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:13.5px;padding:9px 13px;border-radius:999px;cursor:pointer}
+.wchip span{font-family:var(--mono);font-size:10px;color:var(--slate)}
+.wchip[aria-pressed=true]{background:var(--cloud);border-color:var(--cloud);color:var(--ink)}
+.wchip[aria-pressed=true] span{color:#56606c}
+.wchip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid rgba(255,255,255,.25)}
+.sw-black{background:#151515}.sw-oak{background:linear-gradient(90deg,#c9a274,#b48a5c,#cfa97c)}.sw-gold{background:linear-gradient(135deg,#f1d27a,#b88a2e,#e8c768)}.sw-none{background:#EDEBE6}
+.wmat{display:flex;align-items:center;gap:9px;margin-top:16px;font-size:14px;color:var(--cloud);cursor:pointer}
+.wmat input{width:18px;height:18px;accent-color:var(--acid)}
+.wmat.off{opacity:.4;cursor:default}
+.wdims{font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--slate);margin:16px 0 0}
+.wdims b{color:var(--cloud);font-weight:500}
+.wnote{margin:14px 0 0;padding:12px 14px;border:1px solid var(--divider);border-radius:var(--r);font-size:14px;color:var(--cloud);background:var(--card)}
+.wqr{display:flex;gap:16px;align-items:center;margin-top:20px;padding:14px;border:1px solid var(--divider);border-radius:12px;background:var(--card)}
+.wqr canvas{width:116px;height:116px;border-radius:6px;background:#fff;flex:none}
+.wqr b{font-family:var(--serif);font-weight:500;font-size:19px}
+.wqr p{margin:6px 0 10px;font-size:13.5px;color:var(--slate);line-height:1.45}
+.wqr .btn{padding:10px 16px;font-size:11px}
+.wsale{margin:18px 0 0;font-size:13px;color:var(--slate)}
+.wroom{border:1px solid var(--divider);border-radius:12px;overflow:hidden;background:#E9E4DA}
+.wroom svg{display:block;width:100%;height:auto}
+@media (max-width:860px){.wstage{grid-template-columns:1fr;gap:18px}.wpiece h2{font-size:23px}#mv{height:clamp(300px,78vw,520px)}}
+@media (max-width:520px){.wgrid{gap:8px}.wgrid button{flex-basis:96px}.wgrid span{display:none}.wqr canvas{width:96px;height:96px}}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<section class="wrap" style="padding-top:64px;padding-bottom:6px">
+  <div class="kicker" style="color:var(--acid)">On your wall</div>
+  <h1 class="h-xl" style="margin-top:14px;max-width:1000px">See it on your wall.</h1>
+  <p class="lede" style="margin-top:16px;max-width:780px">Pick a New Yorker, pick a size, point your phone at a wall. The piece shows up at true size, framed the way you chose, so you can stand back and see how it lives in the room.</p>
+</section>
+
+<section class="wrap" id="wPick" style="padding-top:26px">
+  <form class="wfind" id="wFind" autocomplete="off">
+    <label for="wAddr" class="wlab">Your wallet or ENS</label>
+    <div class="wrow"><input id="wAddr" name="addr" type="text" spellcheck="false" placeholder="0x... or name.eth" autocapitalize="off"><button class="btn" type="submit">Show my New Yorkers</button></div>
+    <p class="wmsg" id="wMsg" role="status"></p>
+  </form>
+  <div class="wgrid" id="wGrid"></div>
+</section>
+
+<section class="wrap" id="wStage" style="padding-top:22px;padding-bottom:20px" hidden>
+  <div class="wstage">
+    <div class="wview">
+      <model-viewer id="mv" ar ar-modes="webxr scene-viewer quick-look" ar-placement="wall" ar-scale="fixed" camera-controls
+        shadow-intensity="0.6" environment-image="neutral" camera-orbit="-12deg 84deg auto" interaction-prompt="none" alt="A framed New Yorker, in 3D">
+        <button slot="ar-button" class="btn warbtn" type="button">See it on your wall</button>
+        <div class="wbusy" id="wBusy" slot="progress-bar">Framing it</div>
+      </model-viewer>
+    </div>
+    <div class="wctl">
+      <div class="wpiece"><div class="wno" id="wNo"></div><h2 id="wT"></h2><a id="wRec" class="wrec" hidden>Open the record</a></div>
+      <div class="wlab">Size, long edge</div>
+      <div class="wchips" id="wSizes"><button type="button" class="wchip" data-size="18" aria-pressed="false">18 in<span>46 cm</span></button><button type="button" class="wchip" data-size="24" aria-pressed="false">24 in<span>61 cm</span></button><button type="button" class="wchip" data-size="36" aria-pressed="false">36 in<span>91 cm</span></button><button type="button" class="wchip" data-size="48" aria-pressed="false">48 in<span>122 cm</span></button><button type="button" class="wchip" data-size="72" aria-pressed="false">72 in<span>183 cm</span></button></div>
+      <div class="wlab">Frame</div>
+      <div class="wchips" id="wFrames"><button type="button" class="wchip" data-frame="black" aria-pressed="false"><i class="sw sw-black"></i>Black gallery frame</button><button type="button" class="wchip" data-frame="oak" aria-pressed="false"><i class="sw sw-oak"></i>White oak</button><button type="button" class="wchip" data-frame="gold" aria-pressed="false"><i class="sw sw-gold"></i>Gold leaf</button><button type="button" class="wchip" data-frame="none" aria-pressed="false"><i class="sw sw-none"></i>No frame, canvas wrap</button></div>
+      <label class="wmat"><input type="checkbox" id="wMat"> White mat</label>
+      <p class="wdims" id="wDims"></p>
+      <p class="wnote" id="wNote" hidden></p>
+      <div class="wqr" id="wQr" hidden>
+        <canvas id="wQrC" width="232" height="232" aria-label="QR code for this exact piece, size and frame"></canvas>
+        <div><b>Open on your phone</b><p>Scan it with your camera. It opens this piece at this size in this frame, ready to put on your wall.</p><button type="button" class="btn ghost" id="wCopy">Copy link</button></div>
+      </div>
+      <p class="wsale">Prints are not on sale here. This page is for seeing, not buying.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="wScale" style="padding-top:18px;padding-bottom:90px" hidden>
+  <div class="wlab">To scale, over an 84 in sofa</div>
+  <div class="wroom" id="wRoom"></div>
+</section>
+
+<div id="foot"></div>
+<script>window.NY_BASE="";</script>
+<script src="assets/config.js"></script>
+<script src="assets/counts.js"></script>
+<script src="assets/site.js"></script>
+<script>NY.nav(null);NY.foot();</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+const B = window.NY_BASE || '', IN = 0.0254, MAXTEX = 2048;
+const $ = (id) => document.getElementById(id);
+const mv = $('mv'), grid = $('wGrid'), msg = $('wMsg');
+const SIZES = [18, 24, 36, 48, 72], FRAMES = ['black', 'oak', 'gold', 'none'];
+const FRAME_NAME = { black: 'black gallery frame', oak: 'white oak frame', gold: 'gold leaf frame', none: 'canvas wrap, no frame' };
+const S = { who: '', pieces: [], piece: null, size: 36, frame: 'black', mat: false, single: false };
+const artCache = new Map();
+let buildSeq = 0, liveUrl = null, staleUrl = null, mvReady = false;
+
+/* ---------- hash: the one source of the page's state ---------- */
+function readHash() {
+  const h = location.hash.slice(1), o = { who: '' };
+  h.split('&').forEach((part) => {
+    if (!part) return;
+    const i = part.indexOf('=');
+    if (i < 0) { o.who = decodeURIComponent(part); return; }
+    o[part.slice(0, i)] = decodeURIComponent(part.slice(i + 1).replace(/\+/g, ' '));
+  });
+  return o;
+}
+function pkey(p) { return (p.c === 'keystone' ? 'k' : '') + p.tok; }
+function writeHash() {
+  const e = encodeURIComponent, parts = [];
+  if (S.single && S.piece) {
+    const p = S.piece;
+    parts.push('n=' + e(p.id || p.n || ''), 'th=' + e(p.th || ''), 'ar=' + (+p.ar || 1).toFixed(3), 't=' + e(p.t || ''));
+    if (p.big) parts.push('big=' + e(p.big));
+  } else if (S.who) {
+    parts.push(e(S.who));
+    if (S.piece) parts.push('p=' + pkey(S.piece));
+  }
+  if (S.piece) { parts.push('size=' + S.size, 'frame=' + S.frame); if (S.mat && S.frame !== 'none') parts.push('mat=1'); }
+  try { history.replaceState(null, '', location.pathname + location.search + (parts.length ? '#' + parts.join('&') : '')); } catch (err) {}
+  drawQr();
+}
+
+/* ---------- collectors ---------- */
+async function getJson(u) { const r = await fetch(u, { cache: 'no-cache' }); if (!r.ok) throw new Error(r.status); return r.json(); }
+async function resolveWho(v) {
+  v = (v || '').trim().toLowerCase();
+  if (/^0x[0-9a-f]{40}$/.test(v)) return v;
+  if (!v) return null;
+  const idx = await getJson(B + 'api/c/index.json');
+  for (const a in idx) if ((idx[a] || '').toLowerCase() === v) return a;
+  return null;
+}
+async function loadCollector(v, want) {
+  msg.textContent = 'Looking you up.';
+  let addr = null, d = null;
+  try { addr = await resolveWho(v); if (addr) d = await getJson(B + 'api/c/' + addr + '.json'); } catch (err) { d = null; }
+  if (!d) { msg.textContent = 'We could not find New Yorkers for ' + v + ' yet. Check the address, or try the 0x wallet instead of the name.'; grid.innerHTML = ''; return; }
+  S.single = false; S.who = d.ens || d.a; S.pieces = (d.pieces || []).filter((p) => p.th || p.big);
+  $('wAddr').value = S.who;
+  const n = S.pieces.length;
+  msg.textContent = n ? (n === 1 ? 'One New Yorker on your wall list. Here it is.' : n + ' New Yorkers. Pick the one you want to see on your wall.') : 'That wallet holds no New Yorkers we can frame yet.';
+  drawGrid();
+  if (!n) return;
+  let p = want ? S.pieces.find((x) => pkey(x) === want || String(x.tok) === want) : null;
+  pick(p || S.pieces[0], !!p);
+}
+function drawGrid() {
+  grid.innerHTML = '';
+  S.pieces.forEach((p) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.dataset.k = pkey(p);
+    b.innerHTML = '<img loading="lazy" decoding="async" alt=""><span></span>';
+    b.querySelector('img').src = p.th ? B + p.th : p.big;
+    const sp = b.querySelector('span');
+    sp.textContent = label(p); const t = document.createElement('b'); t.textContent = p.t || ''; sp.appendChild(t);
+    b.addEventListener('click', () => pick(p, true));
+    grid.appendChild(b);
+  });
+}
+function label(p) {
+  const num = p.n != null ? 'NO. ' + String(p.n).padStart(4, '0') : (p.id ? 'NO. ' + p.id : '');
+  return (p.c === 'keystone' ? 'Keystone ' : '') + num;
+}
+
+/* ---------- choosing ---------- */
+function pick(p, scroll) {
+  S.piece = p;
+  grid.querySelectorAll('button').forEach((b) => {
+    const on = b.dataset.k === pkey(p); b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (on && !scroll) grid.scrollLeft = Math.max(0, b.offsetLeft - grid.offsetLeft - 8);
+  });
+  $('wStage').hidden = false; $('wScale').hidden = false;
+  $('wNo').textContent = label(p) || 'NEW YORKERS';
+  $('wT').textContent = p.t || 'A New Yorker';
+  mv.alt = (p.t || 'A New Yorker') + ', framed, in 3D';
+  const rec = $('wRec');
+  if (p.id) { rec.hidden = false; rec.href = B + 'census.html#n=' + encodeURIComponent(p.id); } else rec.hidden = true;
+  refresh();
+  if (scroll) $('wStage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function setChips() {
+  document.querySelectorAll('#wSizes .wchip').forEach((b) => b.setAttribute('aria-pressed', +b.dataset.size === S.size ? 'true' : 'false'));
+  document.querySelectorAll('#wFrames .wchip').forEach((b) => b.setAttribute('aria-pressed', b.dataset.frame === S.frame ? 'true' : 'false'));
+  const m = $('wMat'); m.checked = S.mat && S.frame !== 'none'; m.disabled = S.frame === 'none';
+  m.parentElement.classList.toggle('off', S.frame === 'none');
+}
+function refresh() { setChips(); if (!S.piece) return; writeHash(); drawDims(); drawRoom(); build(); }
+document.querySelectorAll('#wSizes .wchip').forEach((b) => b.addEventListener('click', () => { S.size = +b.dataset.size; refresh(); }));
+document.querySelectorAll('#wFrames .wchip').forEach((b) => b.addEventListener('click', () => { S.frame = b.dataset.frame; refresh(); }));
+$('wMat').addEventListener('change', (e) => { S.mat = e.target.checked; refresh(); });
+$('wFind').addEventListener('submit', (e) => { e.preventDefault(); const v = $('wAddr').value.trim(); if (v) loadCollector(v, null); });
+
+/* ---------- dimensions, in inches, shared by the 3D build and the 2D room ---------- */
+function dims() {
+  const ar = +S.piece.ar || 1, L = S.size;
+  const w = ar >= 1 ? L : L * ar, h = ar >= 1 ? L / ar : L;
+  const framed = S.frame !== 'none';
+  const Lm = L * IN;
+  const fw = framed ? Math.min(0.06, Math.max(0.025, 0.02 + Lm * 0.022)) / IN : 0;      // face width
+  const fd = framed ? (0.035 + Lm * 0.01) / IN : 1.5;                                    // depth
+  const m = framed && S.mat ? Math.min(0.11, Math.max(0.05, Lm * 0.07)) / IN : 0;        // mat border
+  return { w, h, fw, fd, m, ow: w + 2 * m + 2 * fw, oh: h + 2 * m + 2 * fw, framed };
+}
+const fmt = (x) => { const r = Math.round(x * 10) / 10; return String(r % 1 ? r : Math.round(r)); };
+function drawDims() {
+  const d = dims();
+  let t = '<b>' + fmt(d.w) + ' x ' + fmt(d.h) + ' in</b> image, ' + fmt(d.w * 2.54) + ' x ' + fmt(d.h * 2.54) + ' cm';
+  if (d.framed) t += '<br>About <b>' + fmt(d.ow) + ' x ' + fmt(d.oh) + ' in</b> on the wall in the ' + FRAME_NAME[S.frame] + (d.m ? ' with a white mat' : '');
+  else t += '<br>Stretched as a ' + FRAME_NAME[S.frame] + ', ' + fmt(d.fd) + ' in deep';
+  $('wDims').innerHTML = t;
+}
+
+/* ---------- the artwork image: the IPFS master if it answers in 6 s, else the same origin thumb ---------- */
+function loadImg(src, cors) {
+  return new Promise((res, rej) => {
+    const im = new Image();
+    if (cors) im.crossOrigin = 'anonymous';
+    im.onload = () => res(im); im.onerror = () => rej(new Error('image ' + src));
+    im.src = src;
+  });
+}
+function toCanvas(im) {
+  const k = Math.min(1, MAXTEX / Math.max(im.naturalWidth, im.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+  c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  c.getContext('2d').getImageData(0, 0, 1, 1);     // throws now if tainted, not later inside the exporter
+  return c;
+}
+function getArt(p) {
+  const key = pkey(p) + '|' + (p.big || p.th);
+  if (artCache.has(key)) return artCache.get(key);
+  const thumb = () => p.th ? loadImg(B + p.th, false).then(toCanvas) : Promise.reject(new Error('no image'));
+  let job;
+  if (p.big) {
+    const big = loadImg(p.big, true).then(toCanvas);
+    let timedOut = false;
+    const timer = new Promise((res, rej) => setTimeout(() => { timedOut = true; rej(new Error('slow')); }, 6000));
+    job = Promise.race([big, timer]).catch(() => thumb());
+    // the master arrived after we gave up on it: keep it, and rebuild if this piece is still showing
+    big.then((c) => { if (timedOut) { artCache.set(key, Promise.resolve(c)); if (S.piece === p) build(); } }, () => {});
+  } else job = thumb();
+  artCache.set(key, job);
+  job.catch(() => artCache.delete(key));
+  return job;
+}
+
+/* ---------- materials ---------- */
+function rand(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+const texCache = {};
+function grain(along) {      // white oak: pale straw with darker rays, grain running along the bar
+  if (texCache[along]) return texCache[along];
+  const c = document.createElement('canvas'), long = 1024, short = 128;
+  c.width = along === 'x' ? long : short; c.height = along === 'x' ? short : long;
+  const g = c.getContext('2d'), r = rand(along === 'x' ? 7 : 11);
+  g.fillStyle = '#C7A57B'; g.fillRect(0, 0, c.width, c.height);
+  for (let i = 0; i < 90; i++) {
+    const p = r() * short, wdt = 0.5 + r() * 2.2, a = 0.05 + r() * 0.16;
+    g.fillStyle = r() > 0.5 ? 'rgba(120,84,48,' + a + ')' : 'rgba(236,214,180,' + a + ')';
+    if (along === 'x') g.fillRect(0, p, long, wdt); else g.fillRect(p, 0, wdt, long);
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.userData.mimeType = 'image/jpeg';
+  return (texCache[along] = t);
+}
+function frameMats(kind) {
+  if (kind === 'oak') return {
+    x: new THREE.MeshStandardMaterial({ map: grain('x'), roughness: 0.72, metalness: 0, name: 'oak' }),
+    y: new THREE.MeshStandardMaterial({ map: grain('y'), roughness: 0.72, metalness: 0, name: 'oak' }) };
+  const m = kind === 'gold'
+    ? new THREE.MeshStandardMaterial({ color: 0xC9A24A, roughness: 0.32, metalness: 1, name: 'gold leaf' })
+    : new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.55, metalness: 0, name: 'black frame' });
+  return { x: m, y: m };
+}
+
+/* ---------- the GLB: metres, upright, facing +Z, back at z = 0 ---------- */
+function box(w, h, d, mat, x, y, z, name) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z); m.name = name; return m;
+}
+function makeScene(canvas) {
+  const d = dims(), u = IN;
+  const w = d.w * u, h = d.h * u, fw = d.fw * u, fd = d.fd * u, m = d.m * u;
+  const art = new THREE.CanvasTexture(canvas);
+  art.colorSpace = THREE.SRGBColorSpace; art.userData.mimeType = 'image/jpeg';
+  const face = new THREE.MeshStandardMaterial({ map: art, roughness: 0.85, metalness: 0, name: 'artwork' });
+  const canvasSide = new THREE.MeshStandardMaterial({ color: 0xEDEBE6, roughness: 0.95, metalness: 0, name: 'canvas' });
+  const back = new THREE.MeshStandardMaterial({ color: 0x8C8274, roughness: 1, metalness: 0, name: 'backing' });
+  const root = new THREE.Group(); root.name = 'NEW YORKERS on your wall';
+  if (!d.framed) {
+    // canvas wrap: box faces are +x, -x, +y, -y, +z, -z
+    root.add(box(w, h, fd, [canvasSide, canvasSide, canvasSide, canvasSide, face, back], 0, 0, fd / 2, 'canvas wrap'));
+    return root;
+  }
+  const W = w + 2 * m, H = h + 2 * m, F = frameMats(S.frame);
+  root.add(box(W + 2 * fw, fw, fd, F.x, 0, H / 2 + fw / 2, fd / 2, 'frame top'));
+  root.add(box(W + 2 * fw, fw, fd, F.x, 0, -H / 2 - fw / 2, fd / 2, 'frame bottom'));
+  root.add(box(fw, H, fd, F.y, -W / 2 - fw / 2, 0, fd / 2, 'frame left'));
+  root.add(box(fw, H, fd, F.y, W / 2 + fw / 2, 0, fd / 2, 'frame right'));
+  // a hairline rebate just inside the frame face, so the corners read as joined bars and not one block
+  const lipD = Math.min(0.008, fd * 0.2), lipW = Math.min(0.006, fw * 0.18);
+  const lip = S.frame === 'gold' ? new THREE.MeshStandardMaterial({ color: 0x8E6E2A, roughness: 0.4, metalness: 1, name: 'gold rebate' })
+    : S.frame === 'oak' ? new THREE.MeshStandardMaterial({ color: 0xA98558, roughness: 0.75, metalness: 0, name: 'oak rebate' })
+    : new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.6, metalness: 0, name: 'black rebate' });
+  const zl = fd - lipD / 2 - 0.002;
+  root.add(box(W, lipW, lipD, lip, 0, H / 2 - lipW / 2, zl, 'rebate top'));
+  root.add(box(W, lipW, lipD, lip, 0, -H / 2 + lipW / 2, zl, 'rebate bottom'));
+  root.add(box(lipW, H - 2 * lipW, lipD, lip, -W / 2 + lipW / 2, 0, zl, 'rebate left'));
+  root.add(box(lipW, H - 2 * lipW, lipD, lip, W / 2 - lipW / 2, 0, zl, 'rebate right'));
+  // the print sits a little behind the frame face; the mat on top of it; a board closes the back
+  const zArt = fd - 0.014;
+  root.add(box(w, h, 0.003, [canvasSide, canvasSide, canvasSide, canvasSide, face, back], 0, 0, zArt, 'print'));
+  if (m > 0) {
+    const mat = new THREE.MeshStandardMaterial({ color: 0xF6F4EE, roughness: 0.95, metalness: 0, name: 'mat' });
+    const zm = zArt + 0.003;
+    root.add(box(W, m, 0.003, mat, 0, h / 2 + m / 2, zm, 'mat top'));
+    root.add(box(W, m, 0.003, mat, 0, -h / 2 - m / 2, zm, 'mat bottom'));
+    root.add(box(m, h, 0.003, mat, -w / 2 - m / 2, 0, zm, 'mat left'));
+    root.add(box(m, h, 0.003, mat, w / 2 + m / 2, 0, zm, 'mat right'));
+  }
+  root.add(box(W + 2 * fw, H + 2 * fw, 0.004, back, 0, 0, 0.002, 'backing board'));
+  return root;
+}
+async function build() {
+  if (!S.piece) return;
+  const seq = ++buildSeq, busy = $('wBusy');
+  busy.textContent = 'Framing it'; busy.classList.add('on');
+  let canvas;
+  try { canvas = await getArt(S.piece); }
+  catch (err) { if (seq === buildSeq) { busy.textContent = 'This picture would not load. Try another.'; } return; }
+  if (seq !== buildSeq) return;
+  const scene = new THREE.Scene(); scene.add(makeScene(canvas));
+  let glb;
+  try { glb = await new GLTFExporter().parseAsync(scene, { binary: true, maxTextureSize: MAXTEX }); }
+  catch (err) { console.error(err); if (seq === buildSeq) busy.textContent = 'Could not build the 3D frame on this device.'; return; }
+  scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); });
+  if (seq !== buildSeq) return;
+  const url = URL.createObjectURL(new Blob([glb], { type: 'model/gltf-binary' }));
+  if (staleUrl) URL.revokeObjectURL(staleUrl);
+  staleUrl = liveUrl; liveUrl = url;
+  mv.src = url;
+}
+mv.addEventListener('load', () => {
+  $('wBusy').classList.remove('on');
+  if (staleUrl) { URL.revokeObjectURL(staleUrl); staleUrl = null; }
+  mvReady = true; arState();
+});
+mv.addEventListener('error', (e) => { $('wBusy').textContent = 'The 3D view did not load.'; console.error('model-viewer', e.detail); });
+
+/* ---------- AR, or the phone hand off ---------- */
+const coarse = matchMedia('(pointer:coarse)').matches;
+function arState() {
+  const can = mvReady && mv.canActivateAR, note = $('wNote');
+  $('wQr').hidden = can || coarse;
+  if (can) { note.hidden = true; return; }
+  if (coarse && mvReady) {
+    note.hidden = false;
+    note.textContent = 'This browser cannot open the wall view. On iPhone or iPad, open this page in Safari. On Android, use Chrome with Google Play Services for AR installed.';
+  } else note.hidden = true;
+  drawQr();
+}
+function drawQr() {
+  const c = $('wQrC'); if (!c || $('wQr').hidden) return;
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  if (typeof qrcode !== 'function') { $('wQr').hidden = true; return; }
+  let q;
+  try { q = qrcode(0, 'M'); q.addData(location.href); q.make(); } catch (err) { $('wQr').hidden = true; return; }
+  const n = q.getModuleCount(), px = Math.floor(c.width / (n + 8)), off = Math.floor((c.width - px * n) / 2);
+  g.fillStyle = '#0D0D0D';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) g.fillRect(off + x * px, off + y * px, px, px);
+}
+$('wCopy').addEventListener('click', () => {
+  const done = () => { if (window.NY && NY.toast) NY.toast('Link copied.'); };
+  if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, () => {});
+});
+
+/* ---------- the room, to scale: inches, y up from the floor ---------- */
+function drawRoom() {
+  const d = dims(), SOFA_W = 84, SOFA_H = 33, GAP = 9;
+  const cy = Math.max(57, SOFA_H + GAP + d.oh / 2);
+  const VH = Math.max(104, cy + d.oh / 2 + 14), VW = Math.max(150, d.ow + 56, VH * 1.8);
+  const Y = (y) => VH - y, cx = VW / 2, x0 = cx - d.ow / 2, top = Y(cy + d.oh / 2);
+  const fill = { black: '#151515', oak: '#C3A076', gold: '#C9A24A', none: '#EDEBE6' }[S.frame];
+  const sx = cx - SOFA_W / 2, sofa = '#3E4B57', sofaD = '#33404B';
+  const th = S.piece.th ? B + S.piece.th : (S.piece.big || '');
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  let s = '<svg viewBox="0 0 ' + VW + ' ' + VH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc((S.piece.t || 'The piece') + ' at ' + S.size + ' inches over an 84 inch sofa') + '">';
+  s += '<defs><filter id="wsh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.4" flood-color="#000" flood-opacity=".28"/></filter>';
+  s += '<linearGradient id="wwall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFEBE3"/><stop offset="1" stop-color="#E2DCD0"/></linearGradient></defs>';
+  s += '<rect width="' + VW + '" height="' + VH + '" fill="url(#wwall)"/>';
+  s += '<rect x="0" y="' + Y(4.5) + '" width="' + VW + '" height="4.5" fill="#D6CFC2"/>';
+  // the piece
+  s += '<g filter="url(#wsh)"><rect x="' + x0 + '" y="' + top + '" width="' + d.ow + '" height="' + d.oh + '" fill="' + fill + '"/></g>';
+  if (d.m) s += '<rect x="' + (x0 + d.fw) + '" y="' + (top + d.fw) + '" width="' + (d.w + 2 * d.m) + '" height="' + (d.h + 2 * d.m) + '" fill="#F6F4EE"/>';
+  s += '<image href="' + esc(th) + '" x="' + (x0 + d.fw + d.m) + '" y="' + (top + d.fw + d.m) + '" width="' + d.w + '" height="' + d.h + '" preserveAspectRatio="xMidYMid slice"/>';
+  // the sofa: legs, base, seat, back, arms
+  s += '<g fill="' + sofaD + '"><rect x="' + (sx + 5) + '" y="' + Y(4) + '" width="2" height="4"/><rect x="' + (sx + SOFA_W - 7) + '" y="' + Y(4) + '" width="2" height="4"/></g>';
+  s += '<rect x="' + sx + '" y="' + Y(17) + '" width="' + SOFA_W + '" height="13" rx="2" fill="' + sofa + '"/>';
+  s += '<rect x="' + (sx + 5) + '" y="' + Y(SOFA_H) + '" width="' + (SOFA_W - 10) + '" height="' + (SOFA_H - 16) + '" rx="3" fill="' + sofaD + '"/>';
+  s += '<line x1="' + cx + '" y1="' + Y(SOFA_H - 1) + '" x2="' + cx + '" y2="' + Y(18) + '" stroke="' + sofa + '" stroke-width=".5"/>';
+  s += '<rect x="' + (sx - 1) + '" y="' + Y(25) + '" width="7" height="21" rx="3" fill="' + sofa + '"/><rect x="' + (sx + SOFA_W - 6) + '" y="' + Y(25) + '" width="7" height="21" rx="3" fill="' + sofa + '"/>';
+  // a dimension line over the piece
+  const dy = top - 4;
+  s += '<g stroke="#6B6458" stroke-width=".35"><line x1="' + x0 + '" y1="' + dy + '" x2="' + (x0 + d.ow) + '" y2="' + dy + '"/><line x1="' + x0 + '" y1="' + (dy - 1.2) + '" x2="' + x0 + '" y2="' + (dy + 1.2) + '"/><line x1="' + (x0 + d.ow) + '" y1="' + (dy - 1.2) + '" x2="' + (x0 + d.ow) + '" y2="' + (dy + 1.2) + '"/></g>';
+  s += '<text x="' + cx + '" y="' + (dy - 2) + '" text-anchor="middle" font-size="3.2" fill="#4C463D" style="font-family:var(--mono);letter-spacing:.1em">' + fmt(d.ow) + ' IN</text>';
+  s += '<text x="' + cx + '" y="' + (Y(7.5)) + '" text-anchor="middle" font-size="2.6" fill="#AEB8C2" style="font-family:var(--mono);letter-spacing:.1em">84 IN SOFA</text>';
+  $('wRoom').innerHTML = s + '</svg>';
+}
+
+/* ---------- start ---------- */
+function start() {
+  const o = readHash();
+  if (SIZES.indexOf(+o.size) >= 0) S.size = +o.size;
+  if (FRAMES.indexOf(o.frame) >= 0) S.frame = o.frame;
+  S.mat = o.mat === '1';
+  setChips();
+  if (o.n || o.th) {
+    S.single = true; S.who = ''; S.pieces = [];
+    grid.innerHTML = ''; msg.textContent = 'Have more New Yorkers? Enter your wallet to pick from all of them.';
+    const ar = parseFloat(o.ar);
+    pick({ c: 'census', tok: o.n || 'x', n: /^\d+$/.test(o.n || '') ? +o.n : null, id: o.n || null, t: o.t || '', th: o.th || null, big: /^https:\/\//.test(o.big || '') ? o.big : null, ar: ar > 0 && ar < 20 ? ar : 1 }, false);
+  } else if (o.who) {
+    $('wAddr').value = o.who;
+    loadCollector(o.who, o.p || null);
+  }
+  arState();
+}
+window.addEventListener('hashchange', start);     // replaceState never fires this, so only a typed or pasted hash does
+start();
+</script>
+<script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
+</body>
+</html>
