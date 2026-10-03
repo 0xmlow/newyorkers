@@ -86,6 +86,24 @@
 ]
 },
 {
+"id": "1-crush",
+"name": "#1 crush",
+"handle": "@num1crush",
+"x": "num1crush",
+"cat": "A",
+"works": [
+{
+"title": "Fitting on Canal Street",
+"s": "1-crush-52bf1800s.jpg",
+"l": "1-crush-52bf1800l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "AI art your kids gonna love, on SuperRare, and the hand behind TOADCORE. Wizard hat optional",
+"iv": []
+},
+{
 "id": "aaron-penne",
 "name": "Aaron Penne",
 "handle": "@aaronpenne",
@@ -433,6 +451,24 @@
 }
 ],
 "bio": "One of the first academic digital artists to go on chain, known for kaleidoscopic AI cityscapes. Skylines folded into symmetry",
+"iv": []
+},
+{
+"id": "arthr",
+"name": "Arthr",
+"handle": "@arthr",
+"x": "arthr",
+"cat": "A",
+"works": [
+{
+"title": "Long Note at the Armory",
+"s": "arthr-16bcd1afs.jpg",
+"l": "arthr-16bcd1afl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Audiovisual artist and a Roland artist. From a time long ago",
 "iv": []
 },
 {
@@ -926,6 +962,24 @@
 ]
 },
 {
+"id": "chris-torres",
+"name": "Chris Torres",
+"handle": "@PRguitarman",
+"x": "PRguitarman",
+"cat": "A",
+"works": [
+{
+"title": "Rainbow Over Coney Island",
+"s": "chris-torres-70d57e36s.jpg",
+"l": "chris-torres-70d57e36l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Puerto Rican digital artist and cat lover who made Nyan Cat in 2011. The rainbow is still going",
+"iv": []
+},
+{
 "id": "claire-silver",
 "name": "Claire Silver",
 "handle": "@ClaireSilver12",
@@ -1080,6 +1134,24 @@
 }
 ],
 "bio": "Sculptor of future relics, casting everyday objects in eroded plaster and crystal. The present, excavated",
+"iv": []
+},
+{
+"id": "danil-pan",
+"name": "danil pan",
+"handle": "@pan_danil",
+"x": "pan_danil",
+"cat": "A",
+"works": [
+{
+"title": "Kismet Over the Reservoir",
+"s": "danil-pan-04cdbcdds.jpg",
+"l": "danil-pan-04cdbcddl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Artist sometimes, collector of random things, father of daughters. Elden Ring and Fullmetal Alchemist forever",
 "iv": []
 },
 {
@@ -2949,6 +3021,24 @@
 "iv": []
 },
 {
+"id": "muhju",
+"name": "muhju",
+"handle": "@MuhjuArt",
+"x": "MuhjuArt",
+"cat": "A",
+"works": [
+{
+"title": "Renaissance in the Armor Court",
+"s": "muhju-8bf9716as.jpg",
+"l": "muhju-8bf9716al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Digital fine artist in Switzerland making Renaissance 2.0. Gold, armor and angels",
+"iv": []
+},
+{
 "id": "natalie-amrossi",
 "name": "Natalie Amrossi",
 "handle": "@misshattan",
@@ -3008,6 +3098,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "niamh",
+"name": "Niamh",
+"handle": "@irishnftgal",
+"x": "irishnftgal",
+"cat": "A",
+"works": [
+{
+"title": "Glass at St. Patrick's",
+"s": "niamh-b545127es.jpg",
+"l": "niamh-b545127el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Irish artist, educator and growth marketer who calls herself an AI futurist. Moon and Mars next",
+"iv": []
 },
 {
 "id": "nicole-ruggiero",
@@ -3123,6 +3231,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "oak",
+"name": "Oak",
+"handle": "@Oaknarrow",
+"x": "Oaknarrow",
+"cat": "A",
+"works": [
+{
+"title": "Mixtape Under the Bridge",
+"s": "oak-e5d926eas.jpg",
+"l": "oak-e5d926eal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Collage artist in British Columbia who treats the internet as his junk drawer. He does not ask permission",
+"iv": []
 },
 {
 "id": "olive-allen",
@@ -3897,6 +4023,24 @@
 ]
 },
 {
+"id": "shoneec",
+"name": "shoneec",
+"handle": "@shoneec",
+"x": "shoneec",
+"cat": "A",
+"works": [
+{
+"title": "Ink on the High Line",
+"s": "shoneec-1d4d052as.jpg",
+"l": "shoneec-1d4d052al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Making digital art since 2005 in Bosnia and Herzegovina, and a 6529 meme artist. Do you, make art",
+"iv": []
+},
+{
 "id": "slimesunday",
 "name": "Slimesunday",
 "handle": "@slimesunday",
@@ -4110,6 +4254,24 @@
 }
 ],
 "bio": "Sculptor behind the Rocket Factory and plywood NASA, working from a studio on Centre Street. Duct tape reaches orbit",
+"iv": []
+},
+{
+"id": "totty-eth",
+"name": "totty.eth",
+"handle": "@totdgbtagb",
+"x": "totdgbtagb",
+"cat": "A",
+"works": [
+{
+"title": "Daily on the Bowery",
+"s": "totty-eth-a140de5ds.jpg",
+"l": "totty-eth-a140de5dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Year four of daily art in glitch, dither, distortion and appropriation, after Meta and MIT. Bottom text",
 "iv": []
 },
 {
@@ -5034,6 +5196,24 @@
 }
 ],
 "bio": "Upstate New York scrap metal executive and collector painted with his Bored Ape companion. Steel by day, apes by night",
+"iv": []
+},
+{
+"id": "airstrip-1",
+"name": "Airstrip 1",
+"handle": "@Airstrip__1",
+"x": "Airstrip__1",
+"cat": "C",
+"works": [
+{
+"title": "Statue Bay at Battery Park",
+"s": "airstrip-1-651b7497s.jpg",
+"l": "airstrip-1-651b7497l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Digital art maxi and holder of Punk 4994. 1984 was not supposed to be a blueprint",
 "iv": []
 },
 {
@@ -6378,6 +6558,24 @@
 "iv": []
 },
 {
+"id": "noah-bolanowski",
+"name": "Noah Bolanowski",
+"handle": "@Noahbolanowski",
+"x": "Noahbolanowski",
+"cat": "C",
+"works": [
+{
+"title": "Grayscale at the Oculus",
+"s": "noah-bolanowski-a23752e7s.jpg",
+"l": "noah-bolanowski-a23752e7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Reveling at the intersection of art and technology. Boca Raton and New York",
+"iv": []
+},
+{
 "id": "noah-davis",
 "name": "Noah Davis",
 "handle": "@noahdavis",
@@ -6491,6 +6689,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "ossen",
+"name": "OSSEN",
+"handle": "@osseneth",
+"x": "osseneth",
+"cat": "C",
+"works": [
+{
+"title": "Bronze at the Gate",
+"s": "ossen-86901c2fs.jpg",
+"l": "ossen-86901c2fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "A bronze skeleton for a face and a skull for a bio. Nothing else needed",
+"iv": []
 },
 {
 "id": "oxjpegs",
@@ -7288,6 +7504,24 @@
 "iv": []
 },
 {
+"id": "wes-mcq",
+"name": "Wes McQ",
+"handle": "@WesMcQ",
+"x": "WesMcQ",
+"cat": "C",
+"works": [
+{
+"title": "The Maxi Sits Down",
+"s": "wes-mcq-61a7ddb5s.jpg",
+"l": "wes-mcq-61a7ddb5l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Art maxi and fractional CMO with seven ADDYs, collecting blockchain art since 2020. Fine art too",
+"iv": []
+},
+{
 "id": "wikisam-eth",
 "name": "wikisam.eth",
 "handle": "wikisam.eth",
@@ -7544,6 +7778,24 @@
 }
 ],
 "bio": "Researcher who cofounded Perplexity to answer questions with sources instead of links. Every answer cites its work",
+"iv": []
+},
+{
+"id": "artcrush",
+"name": "Artcrush",
+"handle": "@Artcrush",
+"x": "Artcrush",
+"cat": "B",
+"works": [
+{
+"title": "Art Everywhere",
+"s": "artcrush-89039bf6s.jpg",
+"l": "artcrush-89039bf6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Art everywhere, on more than 25,000 digital billboards across 15 countries and in front of 50 million people. The street is the gallery",
 "iv": []
 },
 {
@@ -8595,6 +8847,24 @@
 }
 ],
 "bio": "Founded SoftBank in Tokyo and made some of the biggest bets in tech, from Alibaba to the Vision Fund. The plan runs three hundred years",
+"iv": []
+},
+{
+"id": "mathieu-france",
+"name": "Mathieu France",
+"handle": "@MathieuFrance",
+"x": "MathieuFrance",
+"cat": "B",
+"works": [
+{
+"title": "Signal Across the River",
+"s": "mathieu-france-35ac432fs.jpg",
+"l": "mathieu-france-35ac432fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Founded Artcrush to put art on more than 25,000 digital billboards in 15 countries. Brussels to Times Square",
 "iv": []
 },
 {
