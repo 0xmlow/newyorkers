@@ -100,7 +100,7 @@
 "h": 720
 }
 ],
-"bio": "Generative artist behind Apparitions and Rapture, known for fine line forms that seem to hover. Code that draws ghosts",
+"bio": "Generative artist behind Apparitions on Art Blocks and Rituals with Boreta, known for fine line forms that seem to hover. Code that draws ghosts",
 "iv": []
 },
 {
@@ -168,6 +168,24 @@
 }
 ],
 "bio": "Chinese artist and activist who lived in the East Village from 1981 to 1993 and came back to fence in the Washington Square Arch in 2017. Open hands",
+"iv": []
+},
+{
+"id": "alejandro-cartagena",
+"name": "Alejandro Cartagena",
+"handle": "@halecar2",
+"x": "halecar2",
+"cat": "A",
+"works": [
+{
+"title": "Carpoolers on West 20th",
+"s": "alejandro-cartagena-941e2499s.jpg",
+"l": "alejandro-cartagena-941e2499l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Photographer of Carpoolers, the overhead shots of workers asleep in Monterrey truck beds, and founder of Fellowship, a home for photography on chain. The lens looks down so the work can look up",
 "iv": []
 },
 {
@@ -701,7 +719,7 @@
 "h": 720
 }
 ],
-"bio": "Street photographer documenting Black life from the Bronx to Chicago. The sidewalk as archive",
+"bio": "Houston born, Chicago based photographer and filmmaker whose portraits center Black women and their stories. Portraits as archive",
 "iv": []
 },
 {
@@ -719,7 +737,7 @@
 "h": 720
 }
 ],
-"bio": "Artist working in de/generative abstraction, with textures that look like carved circuitry. Code with a chisel",
+"bio": "Artist working in de/generative abstraction, building compositions by hand from computer symbols, folders and Photoshop textures. Code aesthetics, carved by hand",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1704611062958416037",
@@ -919,6 +937,24 @@
 "iv": []
 },
 {
+"id": "clownvamp",
+"name": "ClownVamp",
+"handle": "@clownvamp",
+"x": "clownvamp",
+"cat": "A",
+"works": [
+{
+"title": "Clown in the Velvet Theatre",
+"s": "clownvamp-475ed9d6s.jpg",
+"l": "clownvamp-475ed9d6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Conceptual artist who uses AI and narrative to make mischief, and an avid collector of AI art. Machine images, gilded frames",
+"iv": []
+},
+{
 "id": "coldie",
 "name": "Coldie",
 "handle": "@Coldie",
@@ -982,7 +1018,7 @@
 "h": 720
 }
 ],
-"bio": "Toronto algorist behind the Art Blocks Cryptoblots, on SuperRare since 2019 and part of the Museum of Crypto Art team. Symmetry, taken seriously",
+"bio": "Toronto algorist behind the Art Blocks Cryptoblots, whose 2023 gift to the Museum of Crypto Art was the largest in its history. Symmetry, taken seriously",
 "iv": []
 },
 {
@@ -1524,7 +1560,7 @@
 "h": 714
 }
 ],
-"bio": "Former street artist turned digital street artist, who still works as a janitor and collects Transdimensional Trippers. The wall moved online",
+"bio": "Birmingham born former street artist who calls himself a digital street artist and a janitor, and a collector of Transdimensional Trippers. The wall moved online",
 "iv": []
 },
 {
@@ -1543,6 +1579,24 @@
 }
 ],
 "bio": "New York born artist and creative coding pioneer known for interactive generative forms. Software that plays back",
+"iv": []
+},
+{
+"id": "good-vibes-club",
+"name": "Good Vibes Club",
+"handle": "@goodvibesclub",
+"x": "goodvibesclub",
+"cat": "A",
+"works": [
+{
+"title": "Shaka on Lafayette",
+"s": "good-vibes-club-62add650s.jpg",
+"l": "good-vibes-club-62add650l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "A club of 6,969 glossy toy characters sculpted by brothers Chris and Tyler Guyot of the animation studio Toast. Pixar met streetwear and stayed",
 "iv": []
 },
 {
@@ -2622,7 +2676,7 @@
 "h": 720
 }
 ],
-"bio": "A Trash Art originator who paints crude cartoon faces torn by glitch in acid pink. Two clocks, art time and crypto time",
+"bio": "Crypto artist and central figure of the Trash Art movement who paints crude cartoon faces torn by glitch in acid pink. Two clocks, art time and crypto time",
 "iv": [
 {
 "url": "https://x.com/0xmlow/status/1689815270833971201",
@@ -2992,7 +3046,7 @@
 "h": 720
 }
 ],
-"bio": "Video and AI artist whose animals by noper series melts real creatures into prismatic light on walls of old televisions. The bull is watching",
+"bio": "Florida based video and AI artist whose animals by noper series hides an animal form inside shifting landscapes. The bull is watching",
 "iv": []
 },
 {
@@ -3044,6 +3098,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "oona",
+"name": "OONA",
+"handle": "@madebyoona",
+"x": "madebyoona",
+"cat": "A",
+"works": [
+{
+"title": "Lot One at the Met",
+"s": "oona-7c25166es.jpg",
+"l": "oona-7c25166el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Anonymous feminist performance artist asking what a woman artist is worth, from live auctions at the Met to a loaf of bread with a Bitcoin wallet baked inside. The mask stays on",
+"iv": []
 },
 {
 "id": "orkhan-mammadov",
@@ -3225,7 +3297,7 @@
 "h": 720
 }
 ],
-"bio": "Generative artist behind Skulptuur, raymarched black and white forms. Sculpture with no stone",
+"bio": "Generative artist behind Skulptuur, raymarched sculptural forms rendered live in code. Sculpture with no stone",
 "iv": []
 },
 {
@@ -3243,7 +3315,7 @@
 "h": 714
 }
 ],
-"bio": "Collage artist who stitches mountains, deserts and seas under oversized moons, with traits drawn from real satellite data. Campaign discipline, cosmic scale",
+"bio": "Los Angeles collage artist who stitches landscapes from around the globe into surreal scenes under oversized moons. Earthly parts, cosmic scale",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1818687526099390923",
@@ -3286,7 +3358,7 @@
 "h": 714
 }
 ],
-"bio": "Visual artist working across photography, animation and AI since 2020, and a collector of The Soft Conspiracy. The garden blooms at night",
+"bio": "Visual artist working from Polaroid to AI and minting since 2021, and a collector of The Soft Conspiracy. The garden blooms at night",
 "iv": []
 },
 {
@@ -3304,7 +3376,7 @@
 "h": 720
 }
 ],
-"bio": "Painter who dissolves oil into virtual reality and was among the first artists to mint. Paint, then pixels, then both",
+"bio": "Brooklyn painter and self taught programmer who dissolves oil into virtual reality, and first mined Bitcoin in 2009. Paint, then pixels, then both",
 "iv": []
 },
 {
@@ -3419,7 +3491,7 @@
 "h": 720
 }
 ],
-"bio": "Generative artist known as flight404, creator of Meridian on Art Blocks. Landscapes grown in layers",
+"bio": "Generative artist known as flight404, creator of Ancient Courses of Fictional Rivers on Art Blocks. Landscapes grown in layers",
 "iv": []
 },
 {
@@ -3462,7 +3534,7 @@
 "h": 720
 }
 ],
-"bio": "Artist known online as Rocketgirl, painted as her avatar on a Brooklyn roof. Two red lines across the skyline",
+"bio": "Scottish painter working between canvas, digital and AI, known for her signature eye flashes. Eyes that flash back",
 "iv": []
 },
 {
@@ -3879,7 +3951,7 @@
 "h": 720
 }
 ],
-"bio": "Photographer who founded Street Dreams magazine and shoots New York in motion. The city never holds still",
+"bio": "Brooklyn born street photographer who cofounded Street Dreams magazine and shoots New York in motion. The city never holds still",
 "iv": []
 },
 {
@@ -4109,7 +4181,7 @@
 "h": 720
 }
 ],
-"bio": "Artist painting cinematic character concepts and worlds, including The Bond. Every face carries a plot",
+"bio": "French concept artist and illustrator whose work spans League of Legends, Arcane and Magic: The Gathering. Every face carries a plot",
 "iv": []
 },
 {
@@ -4260,6 +4332,24 @@
 "iv": []
 },
 {
+"id": "yatreda",
+"name": "Yatreda",
+"handle": "@yatreda",
+"x": "yatreda",
+"cat": "A",
+"works": [
+{
+"title": "Kings Return to the Navy Yard",
+"s": "yatreda-c14c825es.jpg",
+"l": "yatreda-c14c825el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Ethiopian family art collective restaging the kings, queens and warriors of old Ethiopia in hand sewn dress, the Toledo Museum of Art's 2024 digital artist in residence. History, recast by the family",
+"iv": []
+},
+{
 "id": "yayoi-kusama",
 "name": "Yayoi Kusama",
 "handle": "New York, 1958 to 1973",
@@ -4346,7 +4436,7 @@
 "h": 720
 }
 ],
-"bio": "Comic artist who draws cartoon critters in marker, including the Critters series. Loud markers, soft creatures",
+"bio": "YouTube artist known for custom drawing challenges in paint marker, whose first NFT drop was Critters. Loud markers, soft creatures",
 "iv": []
 },
 {
@@ -4418,7 +4508,7 @@
 "h": 720
 }
 ],
-"bio": "Founder of FlamingoDAO, one of the early groups to collect digital art together. A vault with many keys",
+"bio": "Cofounder of FlamingoDAO, one of the early groups to collect digital art together. A vault with many keys",
 "iv": []
 },
 {
@@ -4454,7 +4544,7 @@
 "h": 720
 }
 ],
-"bio": "Partner at the 6529 Fund who led the acquisition of Ringers #879, the Goose. Strings and pegs, one bird",
+"bio": "Partner at 6529 Capital, whose NFT fund bought Ringers #879, the Goose, at Sotheby's for $6.2 million. Strings and pegs, one bird",
 "iv": [
 {
 "url": "https://x.com/0xmlow/status/1690899101779664896",
@@ -4498,6 +4588,24 @@
 }
 ],
 "bio": "Crypto veteran since 2013 who loves data, art, models and games, and runs his own onchain gallery. The briefcase is full of dinosaurs",
+"iv": []
+},
+{
+"id": "balon",
+"name": "balón",
+"handle": "@balon_art",
+"x": "balon_art",
+"cat": "C",
+"works": [
+{
+"title": "Recording After Hours on West 24th",
+"s": "balon-9268cf1ds.jpg",
+"l": "balon-9268cf1dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Works partnerships at OpenSea, collects digital art and hosts the Provenance podcast, all under CryptoPunk 6360. The cowboy is listening",
 "iv": []
 },
 {
@@ -4587,24 +4695,6 @@
 "iv": []
 },
 {
-"id": "clownvamp",
-"name": "ClownVamp",
-"handle": "@clownvamp",
-"x": "clownvamp",
-"cat": "C",
-"works": [
-{
-"title": "Clown in the Velvet Theatre",
-"s": "clownvamp-475ed9d6s.jpg",
-"l": "clownvamp-475ed9d6l.jpg",
-"w": 1280,
-"h": 720
-}
-],
-"bio": "An AI art curator and collector working with Fellowship on printed and framed AI art. Machine images, gilded frames",
-"iv": []
-},
-{
 "id": "colborn-bell",
 "name": "Colborn Bell",
 "handle": "@co1born",
@@ -4634,6 +4724,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "colby-mugrabi",
+"name": "Colby Mugrabi",
+"handle": "@colbymugrabi",
+"x": "colbymugrabi",
+"cat": "C",
+"works": [
+{
+"title": "Nurses in White",
+"s": "colby-mugrabi-2e06e746s.jpg",
+"l": "colby-mugrabi-2e06e746l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Art collector who moves between the gallery world and couture. Taste as a practice",
+"iv": []
 },
 {
 "id": "cozomo-de-medici",
@@ -4687,6 +4795,24 @@
 }
 ],
 "bio": "Core collector of MLow, from Still Waiting editions to dozens of pieces held off platform, behind Tokenizer Media. Still waiting, still buying",
+"iv": []
+},
+{
+"id": "cryptodickbutts",
+"name": "CryptoDickbutts",
+"handle": "@CryptoDickbutts",
+"x": "CryptoDickbutts",
+"cat": "C",
+"works": [
+{
+"title": "Back Booth at Coney Island",
+"s": "cryptodickbutts-a68c4d23s.jpg",
+"l": "cryptodickbutts-a68c4d23l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "The CC0 pixel meme club born in 2021 and run by its holders instead of a founder. Nobody is in charge and everybody is laughing",
 "iv": []
 },
 {
@@ -5280,7 +5406,7 @@
 "h": 720
 }
 ],
-"bio": "Curator who has worked at Eyebeam, the New York center for art and technology. Kept the lab in the art",
+"bio": "Curator who founded NEW INC at the New Museum and now leads Eyebeam, the New York center for art and technology. Kept the lab in the art",
 "iv": []
 },
 {
@@ -5809,7 +5935,7 @@
 "h": 720
 }
 ],
-"bio": "Founder of the NODE gallery for digital and generative art. A room built for the screen",
+"bio": "Executive director of NODE, the Palo Alto home for digital and generative art. A room built for the screen",
 "iv": []
 },
 {
@@ -5881,7 +6007,7 @@
 "h": 720
 }
 ],
-"bio": "Operator of FlamingoDAO, one of the early collector groups for digital art. The wall grows as a group",
+"bio": "Cofounder of FlamingoDAO with Aaron Wright, one of the early collector groups for digital art. The wall grows as a group",
 "iv": []
 },
 {
@@ -5953,7 +6079,7 @@
 "h": 720
 }
 ],
-"bio": "The collector behind Artie Galerie, curating warped digital sports collage on Verse. The court, bent into art",
+"bio": "Former lawyer turned collector who runs Artie Galerie on Verse. The court, bent into art",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1837266330581446659",
@@ -5996,7 +6122,7 @@
 "h": 720
 }
 ],
-"bio": "Managing partner at Hivemind's digital culture fund, a former credit investor who still writes Solidity. Blue chip means it lasts",
+"bio": "Managing partner at Hivemind, the firm behind a digital culture fund, and a former credit investor who still writes Solidity. Blue chip means it lasts",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1826264520530022748",
@@ -6100,7 +6226,7 @@
 "h": 720
 }
 ],
-"bio": "Collector known in the CryptoPunks world for an alien Punk with a pipe. The rarest face in the room",
+"bio": "DJ and collector known in the CryptoPunks world for Punk 8348, the only Punk with seven traits. The rarest face in the room",
 "iv": []
 },
 {
@@ -6298,7 +6424,7 @@
 "h": 720
 }
 ],
-"bio": "Art historian of digital art who has written for Artforum. The one keeping the record straight",
+"bio": "Art historian and digital art curator who served as editor in chief of Artforum. The one keeping the record straight",
 "iv": []
 },
 {
@@ -6388,7 +6514,7 @@
 "h": 714
 }
 ],
-"bio": "Quiet collector with dozens of works on SuperRare, including an Impermanent Loss variant from MLow. Says little, owns a lot",
+"bio": "Collector account of Justin Aversano, the photographer behind Twin Flames and cofounder of Quantum Art, holding an Impermanent Loss variant from MLow. Every face has a pair",
 "iv": []
 },
 {
@@ -6478,7 +6604,7 @@
 "h": 720
 }
 ],
-"bio": "Former professional poker player who founded Zen Academy and the Zenecas characters. Read the table, then teach it",
+"bio": "Former professional poker player who founded ZenAcademy and its Denizens collection. Read the table, then teach it",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1749578963616239670",
@@ -6503,7 +6629,7 @@
 "h": 720
 }
 ],
-"bio": "Partner at Union Square Ventures who lives with a wall of generative art. The thesis hangs at home",
+"bio": "Partner at Union Square Ventures and author of The World After Capital. Thinking past the next cycle",
 "iv": []
 },
 {
@@ -6701,7 +6827,7 @@
 "h": 714
 }
 ],
-"bio": "Former DeepMind researcher who cofounded Mistral AI in Paris and made open models a European contender. The wind from the south",
+"bio": "Former DeepMind researcher who cofounded Mistral AI in Paris and made open models a European contender. A cold wind from the north",
 "iv": []
 },
 {
@@ -6900,24 +7026,6 @@
 }
 ],
 "bio": "Cofounded Hugging Face in New York, the home where the world shares open AI models. The emoji became infrastructure",
-"iv": []
-},
-{
-"id": "colby-mugrabi",
-"name": "Colby Mugrabi",
-"handle": "@colbymugrabi",
-"x": "colbymugrabi",
-"cat": "B",
-"works": [
-{
-"title": "Nurses in White",
-"s": "colby-mugrabi-2e06e746s.jpg",
-"l": "colby-mugrabi-2e06e746l.jpg",
-"w": 1280,
-"h": 720
-}
-],
-"bio": "Art collector who moves between the gallery world and couture. Taste as a practice",
 "iv": []
 },
 {
@@ -8061,7 +8169,7 @@
 "h": 714
 }
 ],
-"bio": "Ran Y Combinator, then took OpenAI from a nonprofit lab to the company behind ChatGPT, the fastest adopted app in history. The chat window became a doorway",
+"bio": "Ran Y Combinator, then took OpenAI from a nonprofit lab to the company behind ChatGPT, one of the fastest adopted apps in history. The chat window became a doorway",
 "iv": []
 },
 {
@@ -8733,7 +8841,7 @@
 "h": 714
 }
 ],
-"bio": "Writer covering the Museum of Crypto Art world of collage and art history remix. Words for the wall",
+"bio": "Editorial director and lead writer at the Museum of Crypto Art, interviewing the medium's pioneers. Words for the wall",
 "iv": [
 {
 "url": "https://x.com/MuseumofCrypto/status/1712946815580995793",
@@ -8758,7 +8866,7 @@
 "h": 720
 }
 ],
-"bio": "Host of the Artifacts podcast, long interviews with crypto artists. A wall of voices",
+"bio": "Host of NFT Origin Stories, long interviews with crypto artists, and founder of the Artifex project. A wall of voices",
 "iv": []
 },
 {
@@ -9228,7 +9336,7 @@
 "h": 720
 }
 ],
-"bio": "Producer and DJ who made Gang Starr with Guru and shaped New York boom bap. Scratches as signatures",
+"bio": "Producer and DJ who joined Guru in Gang Starr and shaped New York boom bap. Scratches as signatures",
 "iv": []
 },
 {
@@ -9944,7 +10052,7 @@
 "h": 720
 }
 ],
-"bio": "Rapper who performs as a CryptoPunk in a headband. The avatar got a record deal",
+"bio": "Rapper who performs as a CryptoPunk and sold 2,000 copies of his NFT album in about a minute. The avatar sold out",
 "iv": []
 },
 {
@@ -10079,7 +10187,7 @@
 "h": 720
 }
 ],
-"bio": "Haitian born, Brooklyn raised founder of the Fugees who has tokenized his music. The Score, then the chain",
+"bio": "Haitian born, Brooklyn raised Fugees member who later became chief music officer of the artist platform OpenWav. The Score, then the next stage",
 "iv": []
 },
 {
@@ -10214,7 +10322,7 @@
 "h": 720
 }
 ],
-"bio": "Downtown actor, artist and author from the Lower East Side. Uncut, always",
+"bio": "Milan born actor, artist and author who grew up in Yorkville and came of age downtown. Uncut, always",
 "iv": []
 },
 {
@@ -10235,7 +10343,7 @@
 "rec": "514"
 }
 ],
-"bio": "Washington Heights writer and composer behind In the Heights and Hamilton. A founding father, rhymed into a hit",
+"bio": "Upper Manhattan writer and composer, raised in Inwood, behind In the Heights and Hamilton. A founding father, rhymed into a hit",
 "iv": []
 },
 {
@@ -10256,7 +10364,7 @@
 "rec": "517"
 }
 ],
-"bio": "Director who grew up in Little Italy and put it on film in Mean Streets and Taxi Driver. The block was always the lead",
+"bio": "Director who grew up in Little Italy and put New York on film in Mean Streets and Taxi Driver. The block was always the lead",
 "iv": []
 },
 {
@@ -10380,7 +10488,7 @@
 "h": 720
 }
 ],
-"bio": "Tiffany executive behind the jewelled CryptoPunk pendant in Tiffany blue. Pixels, set in stone",
+"bio": "Former Tiffany executive behind the jewelled CryptoPunk pendant in Tiffany blue. Pixels, set in stone",
 "iv": []
 },
 {
@@ -10422,7 +10530,7 @@
 "rec": "627"
 }
 ],
-"bio": "Editor of Vogue who has set the terms of American fashion since 1988. The sunglasses stay on",
+"bio": "Editor who ran American Vogue from 1988 and still steers it as global editorial director. The sunglasses stay on",
 "iv": []
 },
 {
@@ -10696,7 +10804,7 @@
 "h": 720
 }
 ],
-"bio": "Queens born founder of Kith, who learned the sneaker trade on the shop floor at sixteen. The line forms outside",
+"bio": "Queens born founder of Kith, who learned the sneaker trade on the shop floor at David Z from age thirteen. The line forms outside",
 "iv": []
 },
 {
@@ -11174,7 +11282,7 @@
 "h": 720
 }
 ],
-"bio": "Mets first baseman nicknamed the Polar Bear, who set the rookie home run record with 53 in 2019. Queens runs cold and hits hard",
+"bio": "Longtime Mets first baseman nicknamed the Polar Bear, who set the rookie home run record with 53 in 2019. Queens runs cold and hits hard",
 "iv": []
 },
 {
