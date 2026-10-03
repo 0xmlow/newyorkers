@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEW YORKERS by MLow · A Living Census of the Greatest City on Earth</title>
-<meta name="description" content="A living painted census of New York City by MLow: 7,542 characters across 19 eras, every one with a story and a place on the atlas, a walkable museum of 179 New York rooms, and a sourced reading room. Every New Yorker gets a portrait. Even the villains.">
+<meta name="description" content="A living painted census of New York City by MLow: 7,542 characters across 19 eras, every one with a story and a place on the atlas, a walkable museum of 181 New York rooms, and a sourced reading room. Every New Yorker gets a portrait. Even the villains.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS by MLow">
-<meta property="og:description" content="A living painted census of New York City by MLow: 7,542 characters across 19 eras, every one with a story and a place on the atlas, a walkable museum of 179 New York rooms, and a sourced reading room.">
+<meta property="og:description" content="A living painted census of New York City by MLow: 7,542 characters across 19 eras, every one with a story and a place on the atlas, a walkable museum of 181 New York rooms, and a sourced reading room.">
 <meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=8429465c33">
 <meta property="og:url" content="https://n3wyorkers.com/">
 <meta name="twitter:card" content="summary_large_image">
@@ -30,7 +30,7 @@
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
 <link rel="alternate" type="application/json" title="census api" href="api/census.json">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://n3wyorkers.com/#site","name":"NEW YORKERS by MLow","alternateName":"NEW YORKERS","url":"https://n3wyorkers.com/","description":"A living painted census of New York City: 7,542 characters across 19 eras, every one with a story and a place, a walkable museum of 179 New York rooms, and a sourced reading room.","publisher":{"@id":"https://n3wyorkers.com/#org"},"inLanguage":"en-US"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://n3wyorkers.com/#site","name":"NEW YORKERS by MLow","alternateName":"NEW YORKERS","url":"https://n3wyorkers.com/","description":"A living painted census of New York City: 7,542 characters across 19 eras, every one with a story and a place, a walkable museum of 181 New York rooms, and a sourced reading room.","publisher":{"@id":"https://n3wyorkers.com/#org"},"inLanguage":"en-US"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://n3wyorkers.com/#org","name":"NEW YORKERS by MLow","url":"https://n3wyorkers.com/","logo":"https://n3wyorkers.com/assets/brand/eye_truecolor.png","sameAs":["https://mlow.xyz","https://mlow.nyc","https://x.com/degens","https://www.instagram.com/0xmlow","https://www.tiktok.com/@0xmlow"],"founder":{"@type":"Person","name":"MLow","url":"https://mlow.xyz"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Collection","@id":"https://n3wyorkers.com/#collection","name":"NEW YORKERS","creator":{"@type":"Person","name":"MLow"},"url":"https://n3wyorkers.com/census","size":7542,"description":"Every New Yorker gets a portrait. Even the villains. A painted census of New York City as dynamic tokens on ERC-7160.","keywords":"NEW YORKERS, MLow, New York City art, painted census, NFT, ERC-7160, dynamic NFT, NYC portraits, eye flower"}</script>
 <!-- /seo -->
@@ -52,6 +52,15 @@
   <p class="quiet">7,541 painted characters. One artist. Every one has a story.</p>
  </div>
  <a class="hero-art" href="n/1467.html"><img src="assets/t/hfa58958cd9.jpg" alt="The First Eye Flower by MLow" fetchpriority="high" width="1280" height="720"><span>NO. 1467 <b>The First Eye Flower</b><i>Meet this New Yorker ↗</i></span></a>
+</section>
+
+<section class="home-film" aria-label="THE CITY IS THE ART, a film by MLow">
+ <div class="section-top"><div><p class="eyebrow">THE FILM</p><h2>The city is the art.</h2></div><a class="text-link" href="census.html">Meet everyone in it ↗</a></div>
+ <div class="player">
+  <video id="cf" playsinline preload="none" poster="assets/film/city-is-the-art/poster.jpg" aria-label="THE CITY IS THE ART, a film by MLow"></video>
+  <button class="play" id="cfp" type="button" aria-label="Play the film"><i></i><span>WATCH THE FILM <b>1:20</b></span></button>
+ </div>
+ <p class="cap">Dawn to dark across the five boroughs. Census paintings set in motion, scored on the beat. By MLow.</p>
 </section>
 
 <section class="meet">
@@ -99,6 +108,22 @@
 </main><div id="foot"></div>
 <script src="assets/config.js"></script><script src="assets/counts.js"></script><script src="assets/site.js?v=1cc1ea51f3"></script><script>NY.nav('HOME');NY.foot();</script>
 <script>
+/* the film: nothing loads until someone presses play. Safari plays HLS itself, everyone else gets hls.js */
+(function(){
+  var v=document.getElementById("cf"), b=document.getElementById("cfp"), SRC="assets/film/city-is-the-art/master.m3u8";
+  if(!v||!b) return;
+  function go(){ b.hidden=true; v.controls=true; v.play().catch(function(){}); }
+  b.onclick=function(){
+    if(v.dataset.on){ go(); return; } v.dataset.on="1";
+    if(v.canPlayType("application/vnd.apple.mpegurl")){ v.src=SRC; go(); return; }
+    var sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js";
+    sc.onload=function(){ if(window.Hls&&Hls.isSupported()){ var hl=new Hls({capLevelToPlayerSize:true}); hl.loadSource(SRC); hl.attachMedia(v);
+      hl.on(Hls.Events.MANIFEST_PARSED,go); } else { v.src=SRC; go(); } };
+    sc.onerror=function(){ v.src=SRC; go(); };
+    document.head.appendChild(sc);
+  };
+  v.addEventListener("play",function(){ b.hidden=true; v.controls=true; });
+})();
 /* room 180 film: a silent teaser loops once the invite scrolls into view (not with reduced motion); the button swaps in the full scored film */
 (function(){
   var v=document.getElementById("hf"), b=document.getElementById("hfp"), D="assets/film/hall-new-york-lost/", SRC=D+"master.m3u8";

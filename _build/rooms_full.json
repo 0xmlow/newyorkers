@@ -1350,7 +1350,7 @@
   "area": "LIBERTY ISLAND",
   "mood": "Harbor morning",
   "color": "#7fb8a8",
-  "description": "The eleven pointed star of the old fort, Hunt's pedestal on top of it, and then the spiral inside the copper: up the armature Eiffel built, past the works hung on the inner wall, to the twenty five windows of the crown and the harbour through them. Ferries come and go below all morning and the gulls never land.",
+  "description": "The eleven pointed star of the old fort, Hunt's pedestal on top of it, and then the spiral inside the copper: up the armature Eiffel built, past the works hung on the inner wall, to the room in her head under the seven rays of the crown. Ferries come and go below all morning and the gulls never land.",
   "signatures": "The eleven pointed star of Fort Wood, Richard Morris Hunt's granite pedestal, the green copper robe and the raised right arm with the torch, the seven rayed crown and its twenty five windows, the tablet reading JULY IV MDCCLXXVI held across her body, the broken chains at her feet, Eiffel's iron armature and the helix stair, and the harbour with its ferries and the city beyond.",
   "daylit": true,
   "index": 45,
@@ -5353,6 +5353,55 @@
    "Manhattan Detention Complex",
    "Bandits' Roost"
   ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "pennstation",
+  "name": "The hall New York lost",
+  "area": "PENNSYLVANIA STATION, 1910 / THE CENSUS HALL",
+  "mood": "Travertine, steel and glass, and the seam where it came down",
+  "color": "#c9a86a",
+  "description": "The Pennsylvania Station of 1910, the station New York pulled down from October 1963, raised again as the census hall of the New Yorkers. You come in off Seventh Avenue through the Doric colonnade and a row of brass turnstiles, down the arcade and the grand stair into the travertine waiting room under its coffered vault, where light falls through the lunettes on the side the real sun is on. Past the census desk the hall breaks: one side intact, the other half demolished under a swinging ball, and beyond it the steel and glass concourse at night, drawn in dots. Stand still before any work and it comes apart into colour; give your wallet or name at the desk and a light finds yours.",
+  "signatures": "The Seventh Avenue colonnade in pink granite with the clock and the Day and Night groups over the door, two granite eagles, brass turnstiles, the shopping arcade with its newsstand and shoeshine stand, the grand stair, the travertine waiting room with twelve giant columns, a coffered barrel vault, six lunettes and two thermal windows, velvet ropes and oak benches, the marble census desk with its open ledger, the 1963 seam with broken column drums, rubble, bare steel and a wrecking ball, and the dithered steel and glass concourse with freestanding gallery walls and a baggage wagon.",
+  "daylit": true,
+  "index": 180,
+  "place": "Pennsylvania Station (1910), Seventh to Eighth Avenue, 31st to 33rd Streets, Manhattan",
+  "fact": "Designed by McKim, Mead and White and opened to all its trains on November 27, 1910, the station's main waiting room was inspired by the Roman baths of Caracalla, Diocletian and Titus, 314 feet 4 inches long, 108 feet 8 inches wide and 150 feet tall, with lower walls of travertine from the Campagna, the first major American building to use the stone. Demolition of the station house began on October 28, 1963 and was finished in 1966; much of it was dumped in the New Jersey Meadowlands.",
+  "year": "1910",
+  "learn": "The station New York pulled down: a Roman bath for a railroad, and the hall whose loss made the city protect its landmarks.",
+  "source": {
+   "name": "Pennsylvania Station (1910 to 1963), Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Pennsylvania_Station_(1910%E2%80%931963)"
+  },
+  "keywords": [
+   "Penn Station",
+   "McKim, Mead and White",
+   "travertine",
+   "demolition",
+   "1963",
+   "Adolph Weinman",
+   "eagles"
+  ],
+  "article": null,
+  "articles": []
+ },
+ {
+  "id": "crystalpalace",
+  "name": "The glass house",
+  "area": "NEW YORK CRYSTAL PALACE, 1853 / RESERVOIR SQUARE",
+  "mood": "Iron, glass and coloured light, and the arm that is burning",
+  "color": "#7fb3d9",
+  "description": "The New York Crystal Palace of 1853, the iron and glass hall of the first world's fair in America, which stood where Bryant Park is and burned to the ground in 1858, raised again as a gallery. You come off Sixth Avenue into a Greek cross of glass under a stained glass dome that throws its colours across the floor wherever the real New York sun puts them. Red damask screens down the nave, an iron fountain, a beam engine with its flywheel turning, and in the north arm the evening it burned, the glass melting into signal. Step onto the open platform under the dome and it carries you up into the colour, the rope is cut, and the pawls hold. Stand still before any work and the dome finds it.",
+  "signatures": "Sixth Avenue with gas lamps and carriages, the 315 foot timber Latting Observatory, the battered granite wall of the Croton Distributing Reservoir with people on its promenade, a Greek cross of four glass barrel vaulted arms on cream and blue cast iron columns, upper galleries hung with red drapery, octagonal corner towers with flags, the 100 foot stained glass dome with its lantern, coloured light on the pine floor, the Otis safety platform on its toothed guides, red damask screens, mahogany vitrines, palms in iron urns, a veiled marble figure, the three tier iron fountain, a beam engine and flywheel, a Columbian press, a library globe, and the burning north arm with embers, smoke, falling glass and melting signal.",
+  "daylit": true,
+  "index": 181,
+  "place": "The glass house",
+  "fact": "",
+  "year": "",
+  "learn": "",
+  "source": null,
+  "keywords": [],
   "article": null,
   "articles": []
  }
