@@ -120,6 +120,7 @@ const CURATION: Record<string, Cur> = {
   huntspoint: { nb: ['Hunts Point', 'The Bronx', 'Bronx'], words: /market|produce|truck|forklift|warehouse|night shift|worker|driver|fruit|vegetable|bronx|wholesale|loader/i },
   columbuspark: { nb: ['Chinatown', 'Civic Center', 'Two Bridges'], words: /chinatown|chess|xiangqi|mahjong|tai chi|erhu|elder|grandmother|grandfather|park|bench|cantonese/i },
   pennstation: { nb: ['Penn Station', 'Garment District', 'Midtown South', 'Hudson Yards'], words: /penn station|demoli|wrecking|landmark|lost|vanish|ghost|travertine|waiting room|column|ledger|census|counted|roll call|preserv|1963|1910|eagle|clock/i },
+  crystalpalace: { nb: ['Bryant Park', 'Midtown', 'Murray Hill', 'Garment District'], words: /glass|crystal|fair|exhibit|world's fair|inventor|invent|engine|machine|steam|elevator|otis|fountain|palace|1853|1858|fire|burn|ember|gaslight|lantern|showman|barnum|stained|dome|light/i },
 
   pneumatic: { nb: ['Civic Center'], words: /letter|mail|postal|messenger|courier|message/i },
   garment: { nb: ['Garment District'], words: /tailor|seamstress|garment|fashion|fabric|designer/i },
@@ -309,7 +310,10 @@ export function placeCount(roomId: string) {
   return P.filter((p) => (p.nb && c.nb.includes(p.nb)) || c.words.test(p.t) || (p.cat && c.cat?.includes(p.cat))).length;
 }
 
-export type Hang = { mode: 'place' | 'launch' | 'era' | 'family' | 'set' | 'all' | 'heroes' | 'search'; key?: string };
+export type Hang = { mode: 'place' | 'launch' | 'era' | 'family' | 'set' | 'all' | 'heroes' | 'search' | 'collector'; key?: string };
+/* A collector's own New Yorkers, loaded by main.ts from api/c/<wallet>.json before the room is built
+   (hang=collector:<wallet or ENS>). Any room can hang them, so every room is a variation of their gallery. */
+export const COLLECTOR: { key: string; a: string; name: string; tag: string; nums: number[]; home: string } = { key: '', a: '', name: '', tag: '', nums: [], home: '' };
 export function hangList(h: Hang, roomId: string): Piece[] {
   switch (h.mode) {
     case 'place': return placeHang(roomId);
@@ -330,6 +334,7 @@ export function hangList(h: Hang, roomId: string): Piece[] {
     case 'family': return P.filter((p) => p.f === h.key);
     case 'set': return P.filter((p) => p.set === h.key);
     case 'heroes': return P.filter((p) => HEROES.has(p.n));
+    case 'collector': return COLLECTOR.nums.map((n) => byNum.get(n)).filter((p): p is Piece => !!p);
     case 'search': {
       const q = (h.key || '').trim().toLowerCase();
       if (!q) return P;
@@ -352,6 +357,7 @@ export function hangLabel(h: Hang, roomName: string) {
     case 'family': return 'FAMILY / ' + h.key;
     case 'set': return 'SET / ' + h.key;
     case 'heroes': return 'THE HEROES';
+    case 'collector': return 'THE COLLECTION OF ' + (COLLECTOR.name || 'A COLLECTOR').toUpperCase();
     case 'search': return 'SEARCH / ' + (h.key || 'everything');
     default: return 'THE WHOLE CENSUS';
   }
