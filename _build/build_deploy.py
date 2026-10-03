@@ -112,7 +112,7 @@ for f in os.listdir(OUT):
 # and the drift is silent (an asset stops shipping and every page that needs it breaks).
 COPY_ASSETS = ("three.min.js", "site.css", "site.js", "geo.js", "eggs.js", "counts.js",
                "rooms.js", "articles.js", "shipping.js", "prints.js", "keystone_prints.js", "qrcode.min.js", "sha3.min.js",
-               "home.css", "flywheel.js", "cast.json", "mint.js", "collector-card.js")
+               "home.css", "flywheel.js", "cast.json", "mint.js", "collector-card.js", "save.js")
 KEEP_ASSETS = set(COPY_ASSETS) | {"config.js", "data.js"}
 _ad = os.path.join(OUT, "assets")
 for f in os.listdir(_ad):
