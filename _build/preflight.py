@@ -74,7 +74,8 @@ for req in ("robots.txt","404.html","_headers","_redirects","og.jpg","assets/con
 # every page in og/cards.json must carry its own share card, and that card must ship; a page builder
 # run after build_og.py silently puts the generic og.jpg back
 _og=json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"og","cards.json")))
-for _pg in _og["pages"]:
+_ogpages=list(_og["pages"])+[f"{_d}/{_x}" for _d in _og.get("folders",[]) if os.path.isdir(os.path.join(PKG,_d)) for _x in os.listdir(os.path.join(PKG,_d)) if _x.endswith(".html")]
+for _pg in _ogpages:
     _f=os.path.join(PKG,_pg)
     if not os.path.exists(_f): continue
     _m=re.search(r'<meta property="og:image" content="[^"]*/(assets/og/[^"]+)">',open(_f,encoding="utf-8").read())

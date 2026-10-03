@@ -1,5 +1,5 @@
 {
-  "_note": "Which share card each page shows on X, iMessage, Discord, Slack and the rest. Masters are og/src/<card>.webp, made by MLow 2026-10-03. build_og.py turns them into assets/og/<card>-<hash>.jpg at 1200x630 and writes them into each page. 'default' also becomes og.jpg, the card every page not listed here falls back to.",
+  "_note": "Which share card each page shows on X, iMessage, Discord, Slack and the rest. Masters are og/src/<card>.webp, made by MLow 2026-10-03. build_og.py turns them into assets/og/<card>-<hash>.jpg at 1200x630 and writes them into each page. 'default' also becomes og.jpg, the card every page not listed here falls back to. 'folders' lists page folders (piece pages n/, museum rooms rooms/) that take a banner each, picked from 'rotation' by a stable hash of the file name, so neighbours differ and a page keeps its banner from build to build. Their JSON-LD image stays the piece or room, for search.",
   "default": "skyline-eclipse",
   "alt": {
     "skyline-eclipse": "N3W YORKERS by MLow: the Manhattan skyline at night under a gold eclipse, a blue eye flower blooming over the river.",
@@ -38,5 +38,19 @@
     "pigeon.html": "rat-pizza",
     "roll.html": "bodega-cat",
     "whitelist.html": "bodega-cat"
-  }
+  },
+  "rotation": [
+    "skyline-eclipse",
+    "rat-pizza",
+    "eye-halo-train",
+    "firefighter",
+    "bodega-cat",
+    "brooklyn-bridge",
+    "subway-portal",
+    "street-bloom"
+  ],
+  "folders": [
+    "n",
+    "rooms"
+  ]
 }
