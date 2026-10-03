@@ -32,7 +32,7 @@
   function find(q){ q=q.toLowerCase(); return P.find(p=>p.t.toLowerCase().includes(q)) || null; }
   const recordUrl = p => `${BASE}census.html#n=${p.id}`;
   const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
-  const NAV = [["census.html","ART"],["museum.html","MUSEUM"],["keystone.html","KEYSTONE"],["honoraries.html","HONORARIES"],["posters.html","POSTERS"],["collectors.html","COLLECTORS"],["learn.html","STORIES"],["bloomrun.html","BLOOM RUN"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
+  const NAV = [["census.html","ART"],["museum.html","MUSEUM"],["keystone.html","KEYSTONE"],["honoraries.html","HONORARIES"],["posters.html","POSTERS"],["collectors.html","COLLECTORS"],["learn.html","STORIES"],["bloomrun.html","BLOOM RUN"],["moshlab.html","MOSH LAB"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
   function nav(active){
     const el=document.getElementById("nav"); if(!el)return;
     el.innerHTML=`<a href="${BASE}index.html" aria-label="NEW YORKERS home"><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"></a>

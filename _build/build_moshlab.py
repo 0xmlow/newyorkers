@@ -64,7 +64,7 @@ shutil.copy2(os.path.join(HERE, "moshlab", "poster.png"), os.path.join(DST, "pos
 v = hashlib.sha256(b"".join(open(os.path.join(DST, f), "rb").read() for f in FILES + ("poster.png",))).hexdigest()[:10]
 
 # ---------- the page ----------
-desc = ("MOSH LAB, MLow's glitch instrument, free in your browser. Stack 48 WebGL effects on your own image, "
+desc = ("MOSH LAB, MLow's glitch instrument, free in your browser. Stack 60 WebGL effects on your own image, "
         "video or camera, roll a seed, and export a loop perfect GIF, MP4, WebM or PNG. Nothing leaves your machine.")
 extra_css = """
 .ml{max-width:1500px;margin:0 auto;padding:14px 16px 72px;text-align:center}
@@ -83,12 +83,12 @@ extra_css = """
 """
 body = f"""<main class="ml">
   <div class="phone">MOSH LAB is built for a big screen. It runs on a phone, but a laptop is where it sings.</div>
-  <div class="frame"><iframe id="mlFrame" src="assets/moshlab/index.html?v={v}" title="MOSH LAB by MLow" allow="camera; fullscreen; clipboard-write"></iframe></div>
-  <div class="how">Drop an image or a video, or turn on the camera. MOSH rolls a chain, HYPER rolls a wild one, the seed brings any look back.<br><a href="assets/moshlab/index.html?v={v}" target="_blank" rel="noopener">Open full screen</a> &nbsp;·&nbsp; <a href="https://github.com/0xmlow/newyorkers/tree/mosh-lab" target="_blank" rel="noopener">The code</a></div>
+  <div class="frame"><iframe id="mlFrame" src="assets/moshlab/?v={v}" title="MOSH LAB by MLow" allow="camera; fullscreen; clipboard-write"></iframe></div>
+  <div class="how">Drop an image or a video, or turn on the camera. MOSH rolls a chain, HYPER rolls a wild one, the seed brings any look back.<br><a href="assets/moshlab/?v={v}" target="_blank" rel="noopener">Open full screen</a> &nbsp;·&nbsp; <a href="https://github.com/0xmlow/newyorkers/tree/mosh-lab" target="_blank" rel="noopener">The code</a></div>
   <div class="under">
     <div class="eyebrow">A NEW YORKERS instrument by MLow</div>
     <h1>MOSH <em>LAB</em></h1>
-    <p>The glitch instrument behind the NEW YORKERS mosh states, now yours. Forty eight effects in five stages, from geometry to the final scanline. A dither lab with eight algorithms and seven palettes. Every loop closes on itself, every look is reproducible from its seed, and every file you make is rendered right here in your browser. Your images never leave your machine.</p>
+    <p>The glitch instrument behind the NEW YORKERS mosh states, now yours. Sixty effects in five stages, forty eight presets to start from, from geometry to the final scanline. A dither lab with eight algorithms and seven palettes. Every loop closes on itself, every look is reproducible from its seed, and every file you make is rendered right here in your browser and signed with the MLOW mark. Your images never leave your machine.</p>
   </div>
 </main>"""
 
