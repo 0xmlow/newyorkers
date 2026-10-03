@@ -73,6 +73,56 @@ for(const fx of EFFECTS){
   catch(e){ console.error('shader fail: '+fx.id, e.message); }
 }
 const copyProg = makeProgram(`void main(){ gl_FragColor = texture2D(u_tex, v_uv); }`);
+
+/* ---------- export watermark ----------
+   Every export (GIF, PNG, MP4, WebM, batch) carries the white MLOW wordmark bottom right, with a soft
+   dark halo so it reads on bright art too. It is drawn only on the final pass to the canvas while an
+   export runs: the live preview stays clean and feedback effects never see the mark. */
+const wmProg = makeProgram(`
+uniform sampler2D u_wm;
+uniform vec4 u_wmRect;
+float wmA(vec2 q){ return (q.x<0.0||q.x>1.0||q.y<0.0||q.y>1.0) ? 0.0 : texture2D(u_wm, q).a; }
+void main(){
+  vec3 c = texture2D(u_tex, v_uv).rgb;
+  vec2 q = (v_uv - u_wmRect.xy) / u_wmRect.zw;
+  vec2 px = 1.0 / (u_wmRect.zw * u_res);
+  float halo = 0.0;
+  for(int i=0;i<12;i++){
+    float a = float(i)*TAU/12.0;
+    halo = max(halo, wmA(q + vec2(cos(a),sin(a))*px*3.0));
+    halo = max(halo, wmA(q + vec2(cos(a),sin(a))*px*6.0)*0.5);
+  }
+  c = mix(c, c*0.35, halo*0.55);
+  c = mix(c, vec3(1.0), wmA(q)*0.92);
+  gl_FragColor = vec4(c, 1.0);
+}`);
+let wmTex = null, wmAspect = 3;
+let exporting = false;
+(function loadWatermark(){
+  const img = new Image();
+  img.onload = ()=>{
+    // trim the transparent margin so the mark sits exactly where the rect says
+    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+    const d = x.getImageData(0, 0, c.width, c.height).data;
+    let x0=c.width, y0=c.height, x1=0, y1=0;
+    for(let y=0;y<c.height;y++) for(let i=0;i<c.width;i++) if(d[(y*c.width+i)*4+3]>8){ if(i<x0)x0=i; if(i>x1)x1=i; if(y<y0)y0=y; if(y>y1)y1=y; }
+    if(x1<=x0 || y1<=y0) return;
+    const t = document.createElement('canvas'); t.width = x1-x0+1; t.height = y1-y0+1;
+    t.getContext('2d').drawImage(c, x0, y0, t.width, t.height, 0, 0, t.width, t.height);
+    wmAspect = t.width / t.height;
+    wmTex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, wmTex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, t);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  };
+  img.src = BRAND.logoHi || BRAND.logo;
+})();
 const uniformCache = new Map();
 function uloc(prog, name){
   let m = uniformCache.get(prog);
@@ -271,7 +321,16 @@ function render(ph, bypass){
       pp = 1-pp;
     }
   }
-  drawPass(copyProg, src, null);
+  if(exporting && wmTex){
+    const W = renderW, H = renderH, m = Math.min(W, H);
+    const lw = Math.min(0.26*m, 0.2*W), lh = lw / wmAspect, mg = 0.035*m;
+    gl.useProgram(wmProg);
+    gl.uniform2f(uloc(wmProg,'u_res'), W, H);
+    gl.uniform4f(uloc(wmProg,'u_wmRect'), 1 - (mg+lw)/W, mg/H, lw/W, lh/H);
+    gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, wmTex);
+    gl.uniform1i(uloc(wmProg,'u_wm'), 3);
+    drawPass(wmProg, src, null);
+  } else drawPass(copyProg, src, null);
   drawPass(copyProg, src, prevB);
   const t = prevA; prevA = prevB; prevB = t;
 }
@@ -687,6 +746,8 @@ async function captureLoopFrames(w, h, frames){
   const buf = new Uint8Array(w*h*4);
   for(let k=0; k<frames; k++){
     render(k/frames, false);
+    // read the canvas, not the feedback buffer render() bound last: only the canvas carries the watermark
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     const flip = new Uint8ClampedArray(w*h*4);
     for(let y=0; y<h; y++) flip.set(buf.subarray((h-1-y)*w*4, (h-y)*w*4), y*w*4);
@@ -699,6 +760,7 @@ async function captureLoopFrames(w, h, frames){
 async function doExportGIF(){
   if(!srcTex) return;
   const wasPlaying = playing; playing = false;
+  exporting = true;
   const [w,h] = exportDims();
   const fps = +$('exfps').value;
   const frames = Math.max(4, Math.round(state.loopSec*fps));
@@ -715,6 +777,7 @@ async function doExportGIF(){
     console.error(e);
     setProgress(null, 'gif export failed');
   }
+  exporting = false;
   resizePreview();
   refreshSample(true);
   playing = wasPlaying;
@@ -723,12 +786,14 @@ async function doExportGIF(){
 async function doExportPNG(){
   if(!srcTex) return;
   const wasPlaying = playing; playing = false;
+  exporting = true;
   const [w,h] = exportDims();
   allocTargets(w,h);
   refreshSample(true);
   for(let k=0;k<24;k++) render(((phase*24|0)+k)/24 % 1, false);
   render(phase, false);
   await new Promise(res=>{ canvas.toBlob(b=>{ dl(b, baseName()+'.png'); res(); }, 'image/png'); });
+  exporting = false;
   setProgress(null, 'png saved 🖼️');
   resizePreview();
   refreshSample(true);
@@ -757,6 +822,7 @@ async function doExportVideo(kind){
   const [w,h] = exportDims();
   allocTargets(w,h);
   refreshSample(true);
+  exporting = true;
   const stream = canvas.captureStream(fps);
   const rec = new MediaRecorder(stream, {mimeType:mime, videoBitsPerSecond: 14_000_000});
   const chunks = [];
@@ -776,6 +842,7 @@ async function doExportVideo(kind){
   }
   requestAnimationFrame(step);
   await done;
+  exporting = false;
   dl(new Blob(chunks, {type: mime.split(';')[0]}), baseName()+'.'+ext);
   setProgress(null, ext+' saved 🎥');
   resizePreview();

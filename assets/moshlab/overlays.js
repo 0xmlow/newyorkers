@@ -284,6 +284,97 @@ const BUILTIN_PRESETS = [
  {name:'CRYSTAL CITY 💠', loop:2.5, chain:[
    ['crystals',{cells:40,jit:0.9,edge:0.35}], ['prism',{spread:0.4,axis:1,cyc:0}],
    ['sharpen',{amt:1.2}], ['vignette',{amt:0.4}]]},
+ /* 2026-10-03: thirty more, using the twelve new effects */
+ {name:'TUNNEL VISION 🕳️', loop:3, chain:[
+   ['droste',{zoom:2.4,cyc:1,twist:0.2}], ['rgbshift',{amt:0.006,pulse:0.6}],
+   ['glow',{th:0.55,rad:5,amt:0.8}], ['vignette',{amt:0.55}]]},
+ {name:'PIXEL WATERFALL 🧵', loop:3, chain:[
+   ['pixelsort',{th:0.5,len:0.35,dir:0,breath:0.6}], ['glow',{th:0.6,rad:4,amt:0.6}],
+   ['scan',{count:260,amt:0.2,spd:1}]]},
+ {name:'BROKEN WINDOW 🪟', loop:2.4, chain:[
+   ['shatter',{cells:9,amt:0.45,spd:5,esc:0.7}], ['chroma',{amt:0.02,pulse:0.5,barrel:0.1}],
+   ['noise',{amt:0.12,spd:12}], ['vignette',{amt:0.4}]]},
+ {name:'NEON NOIR 💡', loop:3, chain:[
+   ['neon',{str:2.2,cyc:1,bg:0.1}], ['vortex',{amt:0.75,rot:0.2,zoom:0.3,hue:0.3}],
+   ['vignette',{amt:0.6}]]},
+ {name:'RISO ZINE 🖨️', loop:2, chain:[
+   ['adjust',{con:1.3}], ['riso',{a:'#FF2E88',b:'#2962FF',mis:0.008,grain:0.55,spd:4}],
+   ['vignette',{amt:0.2,round:0.3}]]},
+ {name:'TIMES SQUARE OVERLOAD 🗽', loop:2, chain:[
+   ['kaleido',{sides:6,spin:1}], ['strobe',{rate:4,duty:0.2,mode:3}],
+   ['glow',{th:0.5,rad:6,amt:1.1}], ['emojirain',{set:0,dens:0.35,size:0.3,fall:2,amt:0.9}]]},
+ {name:'HYPERSPACE 🚀', loop:2.5, chain:[
+   ['zoomblur',{str:0.3,cx:0.5,cy:0.5,pulse:0.8}], ['chroma',{amt:0.03,pulse:0.8,barrel:0.2}],
+   ['vortex',{amt:0.6,rot:0,zoom:0.8,hue:0.2}], ['adjust',{spin:1,sat:1.4,con:1.15}]]},
+ {name:'TINY PLANET 🌐', loop:4, chain:[
+   ['polar',{mix:1,inv:0,spin:1}], ['glow',{th:0.6,rad:5,amt:0.7}],
+   ['adjust',{sat:1.25,con:1.1}], ['vignette',{amt:0.5,round:1}]]},
+ {name:'BIT ROT 🧨', loop:2, chain:[
+   ['bitrot',{bits:3,rot:0.35,cells:28,spd:12}], ['jpeg',{crush:0.6,block:1}],
+   ['slices',{bands:24,prob:0.3,mag:0.08,spd:8}]]},
+ {name:'HOLOGRAM CARD 🎞️', loop:3, chain:[
+   ['lenticular',{stripes:80,shift:0.015,hue:0.5,cyc:2}], ['prism',{spread:0.6,axis:0.3,cyc:1}],
+   ['sharpen',{amt:1}], ['glow',{th:0.6,rad:4,amt:0.5}]]},
+ {name:'CHANNEL SURF 📡', loop:2.4, chain:[
+   ['chanswap',{mode:4,rate:4,mix:1}], ['badtv',{warp:0.3,jit:0.4,band:0.6,roll:1}],
+   ['scan',{count:240,amt:0.35,spd:1}], ['crt',{curve:0.5,mask:0.5,vig:0.6}]]},
+ {name:'MIDNIGHT EXPRESS 🚇', loop:2, chain:[
+   ['zoomblur',{str:0.18,cx:0.5,cy:0.55,pulse:0.3}], ['duotone',{a:'#050510',b:'#2962FF',mix:0.8}],
+   ['interlace',{shift:0.006,rowh:3,inv:0}], ['scan',{count:200,amt:0.3}], ['vignette',{amt:0.6}]]},
+ {name:'FACE TIME 🙂', loop:2.5, chain:[
+   ['emojimosaic',{cells:34,set:3,bg:1,amt:1}], ['posterize',{levels:6}],
+   ['rgbshift',{amt:0.004,pulse:0.5}]]},
+ {name:'GREEN CODE 💚', loop:3, chain:[
+   ['ascii',{cells:90,col:4,bg:1,amt:1}], ['overlay',{dens:0.4,size:0.35,spd:12,col:4,amt:0.7}],
+   ['glow',{th:0.5,rad:4,amt:0.8}], ['crt',{curve:0.4,mask:0.4,vig:0.5}]]},
+ {name:'GAME OVER 🕹️', loop:2, chain:[
+   ['pixelate',{size:96}], ['dither',{algo:1,pal:2,levels:4,scale:2}],
+   ['bitrot',{bits:2,rot:0.15,cells:20,spd:8}], ['shatter',{cells:6,amt:0.2,spd:4,esc:0.9}]]},
+ {name:'POP ART 🥫', loop:2, chain:[
+   ['posterize',{levels:4}], ['adjust',{sat:2,con:1.3}],
+   ['halftone',{scale:70,ang:0.2,ink:0.9,mix:0.6}], ['chanswap',{mode:4,rate:2,mix:1}]]},
+ {name:'WARHOL WALL 🧱', loop:2, chain:[
+   ['tile',{n:2,mir:0}], ['chanswap',{mode:4,rate:3,mix:1}],
+   ['posterize',{levels:5}], ['adjust',{sat:1.8,con:1.25}], ['halftone',{scale:120,ang:0.1,ink:0.8,mix:0.4}]]},
+ {name:'ACID RAIN ☔', loop:3, chain:[
+   ['ripple',{amp:0.04,rows:120,cyc:2,ramp:0.5}], ['prism',{spread:0.9,axis:0.5,cyc:2}],
+   ['noise',{amt:0.15,col:0.8,spd:16}], ['glow',{th:0.5,rad:5,amt:0.7}]]},
+ {name:'SOLAR FLARE ☀️', loop:2.5, chain:[
+   ['glow',{th:0.35,rad:10,amt:1.6}], ['solarize',{th:0.55,amt:0.7}],
+   ['chroma',{amt:0.025,pulse:0.6,barrel:0.15}], ['zoomblur',{str:0.1,pulse:1}]]},
+ {name:'X RAY 🩻', loop:2.5, chain:[
+   ['invert',{amt:1}], ['edges',{str:0.7,mix:0.5,tint:'#00E5FF'}],
+   ['duotone',{a:'#020814',b:'#BFF6FF',mix:0.7}], ['glow',{th:0.5,rad:5,amt:0.9}], ['scan',{count:300,amt:0.2}]]},
+ {name:'DASHCAM 🚕', loop:3, chain:[
+   ['wobble',{amp:0.2,kx:1,ky:2}], ['vhs',{bleed:0.4,track:0.3,grain:0.35}],
+   ['rgbshift',{amt:0.004,pulse:0.4}], ['camhud',{style:2,col:0,amt:1}], ['vignette',{amt:0.45}]]},
+ {name:'BLOSSOM RISO 🌸', loop:4, chain:[
+   ['riso',{a:'#FF2E88',b:'#00E5FF',mis:0.005,grain:0.45,spd:3}], ['petals',{dens:0.5,size:0.4,fall:1,amt:0.9}],
+   ['stamp',{icon:3,pos:0,size:0.12,tint:3,amt:0.8}]]},
+ {name:'DATAMOSH DELUXE 📼', loop:2.8, chain:[
+   ['mosh',{amt:0.6,cells:24,drift:0.7,spd:14,esc:0.9}], ['blocks',{cells:12,amt:0.5,split:1,spd:12,esc:0.9}],
+   ['vortex',{amt:0.55,rot:0.15,zoom:0.2,hue:0.15}], ['rgbshift',{amt:0.01,pulse:0.8}], ['noise',{amt:0.12,spd:14}]]},
+ {name:'INFINITE MIRROR 🪞', loop:4, chain:[
+   ['mirror',{mode:4}], ['droste',{zoom:2,cyc:1,twist:0}],
+   ['vortex',{amt:0.5,rot:0.3,zoom:0.2,hue:0.25}], ['glow',{th:0.6,rad:5,amt:0.6}]]},
+ {name:'LIQUID CHROME 🪩', loop:3, chain:[
+   ['oil',{rad:4}], ['adjust',{sat:0,con:1.4,bri:1.05}], ['solarize',{th:0.5,amt:0.8}],
+   ['chroma',{amt:0.015,pulse:0.5,barrel:0}], ['sharpen',{amt:1.4}], ['glow',{th:0.7,rad:4,amt:0.7}]]},
+ {name:'COSMIC SWIRL 🌀', loop:4, chain:[
+   ['swirl',{str:0.7,rad:1.1,spin:1}], ['vortex',{amt:0.8,rot:0.5,zoom:0.1,hue:0.4}],
+   ['prism',{spread:0.5,axis:0,cyc:1}], ['vignette',{amt:0.4,round:1}]]},
+ {name:'CRACKED SCREEN 📱', loop:2, chain:[
+   ['shatter',{cells:14,amt:0.25,spd:2,esc:0}], ['interlace',{shift:0.01,rowh:2,inv:1}],
+   ['chanswap',{mode:3,rate:8,mix:0.35}], ['crt',{curve:0.3,mask:0.6,vig:0.5}]]},
+ {name:'LED BILLBOARD 🏙️', loop:2, chain:[
+   ['adjust',{sat:1.5,con:1.2}], ['ledwall',{cells:90,gap:0.3,glow:1.4}],
+   ['chroma',{amt:0.012,pulse:0.4,barrel:0.1}], ['glow',{th:0.4,rad:6,amt:0.9}]]},
+ {name:'XEROX ZINE 📠', loop:1.8, chain:[
+   ['adjust',{con:1.6,sat:0}], ['dither',{algo:4,pal:1,levels:2,scale:2}],
+   ['smear',{th:0.6,len:0.08,ang:0.25}], ['jpeg',{crush:0.4,block:2}], ['noise',{amt:0.15,spd:12}]]},
+ {name:'THE FLOOD 🌊', loop:4, chain:[
+   ['wave',{amp:0.03,freq:6,cyc:1,vert:0}], ['pixelsort',{th:0.45,len:0.3,dir:1,breath:0.7}],
+   ['duotone',{a:'#001A33',b:'#00E5FF',mix:0.7}], ['ghost',{amt:0.6,zoom:-0.2,dx:0,dy:0.3}], ['vignette',{amt:0.5}]]},
 ];
 
 /* unlocked by the 317 egg */
