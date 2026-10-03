@@ -28,7 +28,7 @@ try:
 except ImportError:
     xhandles = None
 ZERO = "0x" + "0" * 40
-HONORARY_AT = 6   # "more than five", MLow 2026-10-03
+HONORARY_AT = 5   # five or more, MLow 2026-10-03
 
 
 def key(s):
