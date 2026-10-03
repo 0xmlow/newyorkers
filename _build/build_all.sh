@@ -40,6 +40,7 @@ python3 sync_keystone_extras.py  # the wall's site only states follow piece_extr
 python3 keystone_images.py   # sharp wall images and loops from the mint kit masters; skips what is current
 python3 build_keystone.py
 python3 build_bloomrun.py
+python3 build_moshlab.py       # MOSH LAB from its own repo (MOSH LAB/moshlab/app) into assets/moshlab
 # holders first: the honoraries pages link the honorees who collect (collectors/honor_links.json)
 python3 collectors/fetch_chain.py || echo "  chain read skipped (nodes unreachable); the last holder snapshot stands"
 python3 collectors/link_identities.py   # who each wallet is: X handle and honorary, from ENS, the CRM, OpenSea and homes.json

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MOSH LAB</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    /* MLow brand palette, canonical from mlow-brand-assets */
+    --ink:#0D0D0D; --card:#141820; --divider:#2A3040;
+    --cloud:#F0F4F8; --slate:#8899AA; --lightblue:#7EB8FF;
+    --blue:#2962FF; --cyan:#00E5FF; --pink:#FF2E63; --acid:#D7FF1F;
+    --mint:#3DFFC0;
+    --bg:var(--ink); --panel:#101319; --txt:var(--cloud); --dim:var(--slate);
+  }
+  body.garden{
+    --bg:var(--cloud); --panel:#FFFFFF; --card:#F0F4F8; --divider:#E2E6EA;
+    --txt:#0D0D0D; --dim:#5A6B7C; --lightblue:#2962FF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:Consolas, "SF Mono", ui-monospace, Menlo, monospace;
+    font-size:12px; overflow:hidden;
+    transition:background .4s;
+  }
+  #app{display:grid; grid-template-columns:302px 1fr 292px; grid-template-rows:58px 1fr; height:100%;}
+  header{
+    /* header stays ink in every theme: the embedded wordmark is the white mark */
+    grid-column:1/4; display:flex; align-items:center; gap:12px; padding:0 16px;
+    border-bottom:1px solid #2A3040; background:#0D0D0D; color:#F0F4F8;
+  }
+  header h1{color:#F0F4F8;}
+  header button{background:#141820; border-color:#2A3040; color:#F0F4F8;}
+  header button.primary{background:#2962FF; border-color:#2962FF;}
+  header button.hot{background:#FF2E63; border-color:#FF2E63;}
+  header input[type=text]{background:#000; color:#00E5FF; border-color:#2A3040;}
+  #logo{height:30px; cursor:pointer; transition:transform .6s;}
+  #logo.spin{transform:rotate(360deg) scale(1.15);}
+  header h1{
+    font-family:Georgia, "Playfair Display", serif; font-weight:700;
+    font-size:17px; letter-spacing:4px; color:var(--txt);
+  }
+  header .sub{color:var(--dim); letter-spacing:2px; font-size:10px;}
+  header .spacer{flex:1;}
+  button{
+    background:var(--card); color:var(--txt); border:1px solid var(--divider);
+    padding:6px 11px; font-family:inherit; font-size:11px; letter-spacing:1px;
+    cursor:pointer; border-radius:4px;
+  }
+  button:hover{border-color:var(--blue); color:var(--lightblue);}
+  button.primary{background:var(--blue); color:#fff; border-color:var(--blue); font-weight:700;}
+  button.primary:hover{background:#3D74FF; color:#fff;}
+  button.hot{background:var(--pink); color:#fff; border-color:var(--pink); font-weight:700;}
+  button.hot:hover{background:#FF5580; color:#fff;}
+  button.ghost-on{background:var(--blue); color:#fff; border-color:var(--blue);}
+  input[type=text]{
+    background:var(--ink); border:1px solid var(--divider); color:var(--cyan);
+    font-family:inherit; font-size:11px; padding:6px 8px; border-radius:4px; width:104px;
+  }
+  body.garden input[type=text]{background:#fff; color:var(--blue);}
+  select{
+    background:var(--ink); border:1px solid var(--divider); color:var(--txt);
+    font-family:inherit; font-size:11px; padding:4px; border-radius:4px; max-width:100%;
+  }
+  body.garden select{background:#fff;}
+  input[type=color]{width:34px; height:20px; border:1px solid var(--divider); background:none; padding:0;}
+  #fxcol{border-right:1px solid var(--divider); background:var(--panel); overflow-y:auto; padding:10px; position:relative;}
+  #sidecol{border-left:1px solid var(--divider); background:var(--panel); overflow-y:auto; padding:12px; position:relative;}
+  .gardenbg{position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .6s; background-repeat:repeat; background-size:130px;}
+  body.garden .gardenbg{opacity:.07;}
+  .colhead{
+    color:var(--dim); font-size:10px; letter-spacing:2px; margin:10px 0 8px;
+    font-family:Georgia, serif;
+  }
+  .fx{
+    background:var(--card); border:1px solid var(--divider); border-radius:5px;
+    margin-bottom:6px; overflow:hidden; position:relative;
+  }
+  .fx.on{border-color:var(--blue);}
+  .fx-head{display:flex; align-items:center; gap:7px; padding:7px 8px;}
+  .fx-head .name{flex:1; letter-spacing:1px; font-size:11px; color:var(--dim); cursor:pointer; white-space:nowrap; overflow:hidden;}
+  .fx.on .fx-head .name{color:var(--lightblue); font-weight:700;}
+  .fx-head .mini{background:none; border:none; color:var(--dim); padding:1px 3px; font-size:11px; cursor:pointer;}
+  .fx-head .mini:hover{color:var(--txt);}
+  .fx-head .mini.locked{color:var(--pink);}
+  .fx-body{padding:2px 10px 10px; border-top:1px solid var(--divider); display:none;}
+  .fx.on .fx-body{display:block;}
+  .prow{display:flex; align-items:center; gap:8px; margin-top:7px;}
+  .prow label{width:66px; color:var(--dim); font-size:10px; flex-shrink:0;}
+  .prow input[type=range]{flex:1; accent-color:var(--blue); height:14px;}
+  .prow .val{width:38px; text-align:right; color:var(--txt); font-size:10px;}
+  .toggle{appearance:none; width:14px; height:14px; border:1px solid var(--divider); border-radius:3px; cursor:pointer; flex-shrink:0; background:var(--ink);}
+  .toggle:checked{background:var(--blue); border-color:var(--blue);}
+  #stage{display:flex; flex-direction:column; overflow:hidden;}
+  #canvaswrap{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at center, #14182022 0%, transparent 70%), var(--bg);
+    position:relative; overflow:hidden;
+  }
+  #gl{max-width:96%; max-height:94%; box-shadow:0 10px 60px rgba(0,0,0,.55); background:#000; border-radius:2px;}
+  #drophint{
+    position:absolute; inset:14px; display:none; align-items:center; justify-content:center;
+    background:rgba(41,98,255,.10); border:2px dashed var(--blue); border-radius:8px;
+    color:var(--lightblue); font-size:16px; letter-spacing:3px; pointer-events:none;
+  }
+  #toast{
+    position:absolute; top:16px; left:50%; transform:translateX(-50%) translateY(-8px);
+    background:var(--card); border:1px solid var(--blue); color:var(--txt);
+    padding:9px 18px; border-radius:6px; letter-spacing:1px; opacity:0; transition:all .3s;
+    pointer-events:none; z-index:50; box-shadow:0 6px 30px rgba(0,0,0,.4);
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  #transport{
+    display:flex; align-items:center; gap:10px; padding:10px 16px;
+    border-top:1px solid var(--divider); background:var(--panel);
+  }
+  #scrub{flex:1; accent-color:var(--pink);}
+  #status{color:var(--dim); font-size:10px; letter-spacing:1px; min-width:190px; text-align:right;}
+  .row{display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap;}
+  .row button{flex:1; white-space:nowrap;}
+  .sideblock{margin-bottom:15px; position:relative;}
+  .presetbtn{display:block; width:100%; text-align:left; margin-bottom:4px;}
+  #filelist{width:100%; margin-top:6px;}
+  .hint{color:var(--dim); font-size:10px; line-height:1.5; margin-top:6px;}
+  #progress{display:none; margin-top:8px; height:6px; background:var(--ink); border:1px solid var(--divider); border-radius:3px; overflow:hidden;}
+  #progressbar{height:100%; width:0%; background:linear-gradient(90deg, var(--blue), var(--cyan));}
+  .badge{
+    display:inline-block; background:var(--acid); color:#0D0D0D; font-size:9px;
+    padding:1px 5px; border-radius:3px; font-weight:700; letter-spacing:1px; margin-left:6px;
+  }
+  #eggline{
+    grid-column:1/4; display:none;
+  }
+  footer-hint{display:block;}
+  .footnote{color:var(--dim); font-size:9px; letter-spacing:1px; margin-top:14px; text-align:center; opacity:.7;}
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--divider); border-radius:4px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <img id="logo" alt="MLOW" title="MLOW">
+    <h1>MOSH LAB</h1><span class="sub" id="subline">GLITCH INSTRUMENT · V2</span>
+    <span class="spacer"></span>
+    <span class="sub">SEED</span>
+    <input type="text" id="seed" spellcheck="false">
+    <button id="reroll" title="new random seed">🎲</button>
+    <button id="moshbtn" class="primary" title="randomize the chain (M)">MOSH 🎛️</button>
+    <button id="hyperbtn" class="hot" title="wilder, deeper randomize (H)">HYPER 🌀</button>
+    <button id="autobtn" title="re-roll automatically every few loops (A)">AUTO ♻️</button>
+    <button id="backbtn" title="undo the last mosh">↩️</button>
+    <button id="clearbtn" title="turn every effect off">CLEAN 🧼</button>
+  </header>
+
+  <div id="fxcol">
+    <div class="gardenbg"></div>
+    <div class="colhead">EFFECT RACK · top runs first · 🔒 survives mosh</div>
+    <div id="fxlist"></div>
+    <div class="footnote">the eye is watching 👁️</div>
+  </div>
+
+  <div id="stage">
+    <div id="canvaswrap">
+      <canvas id="gl"></canvas>
+      <div id="drophint">DROP IMAGES OR VIDEO 🎞️</div>
+      <div id="toast"></div>
+    </div>
+    <div id="transport">
+      <button id="playbtn" title="space">⏸</button>
+      <button id="comparebtn" title="hold to see the original">👁 ORIG</button>
+      <input type="range" id="scrub" min="0" max="1000" value="0">
+      <button id="fsbtn" title="fullscreen canvas (F)">⛶</button>
+      <span id="status">ready</span>
+    </div>
+  </div>
+
+  <div id="sidecol">
+    <div class="gardenbg"></div>
+    <div class="sideblock">
+      <div class="colhead">SOURCE</div>
+      <div class="row">
+        <button id="loadbtn">🖼️ IMAGES</button>
+        <button id="vidbtn">🎬 VIDEO</button>
+        <button id="cambtn">📷 CAM</button>
+      </div>
+      <input type="file" id="file" accept="image/*" multiple style="display:none">
+      <input type="file" id="vfile" accept="video/*" style="display:none">
+      <select id="filelist"></select>
+      <div class="hint">drag and drop works. load a whole set of images and run one chain across all of them.</div>
+    </div>
+
+    <div class="sideblock">
+      <div class="colhead">LOOP</div>
+      <div class="prow"><label>seconds</label><input type="range" id="loopsec" min="0.5" max="8" step="0.1" value="2.5"><span class="val" id="loopsecv">2.5</span></div>
+      <div class="prow"><label>preview px</label><input type="range" id="prevres" min="360" max="2048" step="4" value="1024"><span class="val" id="prevresv">1024</span></div>
+      <div class="prow"><label>auto mosh</label><input type="range" id="autoloops" min="1" max="8" step="1" value="2"><span class="val" id="autoloopsv">2</span></div>
+      <div class="hint" style="margin-top:2px">auto mosh re-rolls every N loops when ♻️ is on.</div>
+    </div>
+
+    <div class="sideblock">
+      <div class="colhead">PRESETS</div>
+      <div id="presets"></div>
+      <div class="row" style="margin-top:8px">
+        <button id="savepreset">💾 SAVE</button>
+        <button id="exportpreset">⬆ JSON</button>
+        <button id="importpreset">⬇ JSON</button>
+      </div>
+      <input type="file" id="presetfile" accept=".json" style="display:none">
+      <div id="userpresets"></div>
+    </div>
+
+    <div class="sideblock">
+      <div class="colhead">SETTINGS</div>
+      <div class="row">
+        <button id="settingsout">📤 SAVE ALL</button>
+        <button id="settingsin">📥 LOAD</button>
+        <button id="settingsreset">🧨 RESET</button>
+      </div>
+      <input type="file" id="settingsfile" accept=".json" style="display:none">
+      <div class="hint">everything autosaves as you work: chain, order, params, seed, loop, export prefs. SAVE ALL writes a portable settings file.</div>
+    </div>
+
+    <div class="sideblock">
+      <div class="colhead">EXPORT</div>
+      <div class="prow"><label>max px</label>
+        <select id="exsize" style="flex:1">
+          <option value="480">480</option>
+          <option value="600" selected>600</option>
+          <option value="720">720</option>
+          <option value="1080">1080</option>
+          <option value="0">source size</option>
+        </select>
+      </div>
+      <div class="prow"><label>gif fps</label><input type="range" id="exfps" min="8" max="30" step="1" value="18"><span class="val" id="exfpsv">18</span></div>
+      <div class="prow"><label>vid loops</label><input type="range" id="exloops" min="1" max="10" step="1" value="3"><span class="val" id="exloopsv">3</span></div>
+      <div class="row" style="margin-top:8px">
+        <button id="expng">PNG</button>
+        <button id="exgif" class="hot">GIF 🔁</button>
+      </div>
+      <div class="row">
+        <button id="exmp4" class="hot">MP4 🎥</button>
+        <button id="exwebm">WEBM</button>
+      </div>
+      <div class="row">
+        <button id="exbatch">📦 BATCH GIF ALL IMAGES</button>
+      </div>
+      <div id="progress"><div id="progressbar"></div></div>
+      <div class="hint">gif renders one perfect loop, last frame hands off to the first. mp4 and webm record N loops of live playback.</div>
+    </div>
+  </div>
+</div>
+
+<script src="brand-assets.js?v=a9f134f40c"></script>
+<script src="effects.js?v=2b7d58edcb"></script>
+<script src="overlays.js?v=2a93bd5ef9"></script>
+<script src="app.js?v=b8ba972bb0"></script>
+</body>
+</html>
