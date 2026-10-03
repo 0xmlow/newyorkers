@@ -155,6 +155,46 @@ void main(){
   gl_FragColor = texture2D(u_tex, mirr(uv));
 }`},
 
+{id:'polar', name:'POLAR 🌐', stage:1, params:[
+  {k:'mix',label:'amount',min:0,max:1,step:0.01,def:1,r:[0.6,1]},
+  {k:'inv',label:'direction',type:'select',options:['to polar','from polar'],def:0},
+  {k:'spin',label:'spin',min:0,max:4,step:1,def:0,int:true,r:[0,1]},
+], frag:`
+uniform float p_mix, p_inv, p_spin;
+void main(){
+  float aspect = u_res.x/u_res.y;
+  vec2 c = v_uv-0.5; c.x *= aspect;
+  vec2 uv;
+  if(p_inv < 0.5){
+    float a = atan(c.y,c.x)/TAU + 0.5 + p_spin*u_t;
+    uv = vec2(fract(a), clamp(length(c)*1.6, 0.0, 1.0));
+  } else {
+    float a = (v_uv.x + p_spin*u_t)*TAU;
+    vec2 q = vec2(cos(a), sin(a))*v_uv.y*0.5;
+    q.x /= aspect;
+    uv = q + 0.5;
+  }
+  gl_FragColor = texture2D(u_tex, mix(v_uv, mirr(uv), p_mix));
+}`},
+
+{id:'droste', name:'DROSTE TUNNEL 🕳️', stage:1, params:[
+  {k:'zoom',label:'zoom',min:1.2,max:6,step:0.01,def:2.5,r:[1.6,4]},
+  {k:'cyc',label:'fly cycles',min:0,max:4,step:1,def:1,int:true,r:[0,2]},
+  {k:'twist',label:'twist',min:-1,max:1,step:0.01,def:0,r:[-0.5,0.5]},
+], frag:`
+uniform float p_zoom, p_cyc, p_twist;
+void main(){
+  float aspect = u_res.x/u_res.y;
+  vec2 c = v_uv-0.5; c.x *= aspect;
+  float r = max(length(c), 1e-4);
+  float a = atan(c.y,c.x);
+  float lz = log(p_zoom);
+  float lr = mod(log(r) - p_cyc*u_t*lz + a*p_twist*lz/TAU, lz) - lz;
+  vec2 q = vec2(cos(a), sin(a))*exp(lr)*1.0;
+  q.x /= aspect;
+  gl_FragColor = texture2D(u_tex, mirr(q*1.0+0.5));
+}`},
+
 /* ============ BREAK (stage 2) ============ */
 
 {id:'pixelate', name:'PIXELATE 🟦', stage:2, params:[
@@ -333,6 +373,72 @@ void main(){
   uv.x += (odd*2.0-1.0)*p_shift*(0.5+0.5*sin(TAU*u_t));
   vec3 c = texture2D(u_tex, fract(uv)).rgb;
   if(p_inv>0.5 && odd>0.5) c = 1.0-c;
+  gl_FragColor = vec4(c,1.0);
+}`},
+
+{id:'pixelsort', name:'PIXEL SORT 🧵', stage:2, params:[
+  {k:'th',label:'threshold',min:0,max:1,step:0.01,def:0.55,r:[0.35,0.75]},
+  {k:'len',label:'length',min:0,max:0.6,step:0.01,def:0.25,r:[0.1,0.4]},
+  {k:'dir',label:'direction',type:'select',options:['down','up','right','left'],def:0},
+  {k:'breath',label:'breathe',min:0,max:1,step:0.01,def:0.4,r:[0,0.8]},
+], frag:`
+uniform float p_th, p_len, p_dir, p_breath;
+void main(){
+  float m = floor(p_dir+0.5);
+  vec2 d = m==0.0 ? vec2(0.0,1.0) : m==1.0 ? vec2(0.0,-1.0) : m==2.0 ? vec2(-1.0,0.0) : vec2(1.0,0.0);
+  float row = m<2.0 ? v_uv.x : v_uv.y;
+  float len = p_len*(1.0 - p_breath*0.5 + p_breath*0.5*sin(TAU*u_t + h2(vec2(floor(row*u_res.x*0.5),3.0))*TAU));
+  vec3 best = texture2D(u_tex, v_uv).rgb; float bl = lum(best);
+  for(int i=1;i<=32;i++){
+    vec2 uv = v_uv + d*len*float(i)/32.0;
+    if(uv.x<0.0||uv.x>1.0||uv.y<0.0||uv.y>1.0) break;
+    vec3 s = texture2D(u_tex, uv).rgb; float l = lum(s);
+    if(l < p_th) break;
+    if(l > bl){ best = s; bl = l; }
+  }
+  gl_FragColor = vec4(best,1.0);
+}`},
+
+{id:'shatter', name:'SHATTER 🪟', stage:2, params:[
+  {k:'cells',label:'shards',min:3,max:40,step:1,def:10,int:true,r:[5,18]},
+  {k:'amt',label:'force',min:0,max:1,step:0.01,def:0.35,r:[0.15,0.6]},
+  {k:'spd',label:'speed',min:1,max:30,step:1,def:6,int:true,r:[2,12]},
+  {k:'esc',label:'escalate',min:0,max:1,step:0.01,def:0,r:[0,0.9]},
+], frag:`
+uniform float p_cells, p_amt, p_spd, p_esc;
+void main(){
+  vec2 g = vec2(p_cells, p_cells*u_res.y/u_res.x);
+  vec2 p = v_uv*g;
+  vec2 id = floor(p); vec2 f = fract(p);
+  float tri = step(f.x, f.y);
+  vec2 sid = id*2.0 + vec2(tri, 0.0);
+  float tt = floor(u_t*p_spd);
+  float force = p_amt*mix(1.0, sin(u_t*3.14159265), p_esc);
+  vec2 off = (vec2(h2(sid+tt), h2(sid+tt+17.0))-0.5)*force*0.15;
+  float rot = (h2(sid+tt+5.0)-0.5)*force*0.6;
+  vec2 cc = (id + (tri>0.5 ? vec2(0.33,0.66) : vec2(0.66,0.33)))/g;
+  vec2 q = v_uv - cc; q = mat2(cos(rot),-sin(rot),sin(rot),cos(rot))*q;
+  vec3 c = texture2D(u_tex, clamp(cc+q+off, 0.0, 1.0)).rgb;
+  float edge = min(min(f.x, f.y), min(1.0-f.x, 1.0-f.y)); edge = min(edge, abs(f.x-f.y)*0.7);
+  c = mix(c, vec3(1.0), (1.0-smoothstep(0.0, 0.03, edge))*force*0.8);
+  gl_FragColor = vec4(c,1.0);
+}`},
+
+{id:'lenticular', name:'LENTICULAR 🎞️', stage:2, params:[
+  {k:'stripes',label:'stripes',min:4,max:200,step:1,def:60,int:true,r:[20,120]},
+  {k:'shift',label:'shift',min:0,max:0.1,step:0.001,def:0.02,r:[0.005,0.05]},
+  {k:'hue',label:'hue split',min:0,max:1,step:0.01,def:0.3,r:[0,0.6]},
+  {k:'cyc',label:'flip cycles',min:0,max:8,step:1,def:2,int:true,r:[1,4]},
+], frag:`
+uniform float p_stripes, p_shift, p_hue, p_cyc;
+void main(){
+  float s = floor(v_uv.x*p_stripes);
+  float side = mod(s, 2.0);
+  float w = 0.5+0.5*sin(TAU*(u_t*p_cyc + side*0.5));
+  vec2 o = vec2(p_shift*(side*2.0-1.0)*w, 0.0);
+  vec3 c = texture2D(u_tex, clamp(v_uv+o, 0.0, 1.0)).rgb;
+  c = hueShift(c, (side*2.0-1.0)*p_hue*w*3.14159);
+  c *= 0.85 + 0.15*smoothstep(0.0, 0.5, abs(fract(v_uv.x*p_stripes)-0.5));
   gl_FragColor = vec4(c,1.0);
 }`},
 
@@ -516,6 +622,60 @@ void main(){
     if(tv < bestVar){ bestVar = tv; best = m; }
   }
   gl_FragColor = vec4(best,1.0);
+}`},
+
+{id:'zoomblur', name:'ZOOM BLUR 💫', stage:3, params:[
+  {k:'str',label:'strength',min:0,max:0.5,step:0.01,def:0.15,r:[0.05,0.3]},
+  {k:'cx',label:'center x',min:0,max:1,step:0.01,def:0.5,r:[0.35,0.65]},
+  {k:'cy',label:'center y',min:0,max:1,step:0.01,def:0.5,r:[0.35,0.65]},
+  {k:'pulse',label:'pulse',min:0,max:1,step:0.01,def:0.5,r:[0,1]},
+], frag:`
+uniform float p_str, p_cx, p_cy, p_pulse;
+void main(){
+  vec2 c = vec2(p_cx,p_cy);
+  float s = p_str*(1.0 - p_pulse + p_pulse*(0.5+0.5*sin(TAU*u_t)));
+  vec3 acc = vec3(0.0);
+  for(int i=0;i<24;i++){
+    float k = float(i)/23.0;
+    acc += texture2D(u_tex, c + (v_uv-c)*(1.0 - s*k)).rgb;
+  }
+  gl_FragColor = vec4(acc/24.0,1.0);
+}`},
+
+{id:'chroma', name:'LENS FRINGE 🔭', stage:3, params:[
+  {k:'amt',label:'amount',min:0,max:0.08,step:0.001,def:0.02,r:[0.008,0.04]},
+  {k:'pulse',label:'pulse',min:0,max:1,step:0.01,def:0.4,r:[0,1]},
+  {k:'barrel',label:'barrel',min:-0.5,max:0.5,step:0.01,def:0.1,r:[-0.2,0.3]},
+], frag:`
+uniform float p_amt, p_pulse, p_barrel;
+void main(){
+  vec2 c = v_uv-0.5;
+  float r2 = dot(c,c);
+  vec2 b = c*(1.0 + p_barrel*r2*2.0);
+  float a = p_amt*(1.0 - p_pulse + p_pulse*(0.5+0.5*sin(TAU*u_t)));
+  float r = texture2D(u_tex, mirr(0.5 + b*(1.0+a*4.0*r2*4.0))).r;
+  float g = texture2D(u_tex, mirr(0.5 + b)).g;
+  float bl = texture2D(u_tex, mirr(0.5 + b*(1.0-a*4.0*r2*4.0))).b;
+  gl_FragColor = vec4(r,g,bl,1.0);
+}`},
+
+{id:'vortex', name:'VORTEX TRAILS 🌌', stage:3, prev:true, params:[
+  {k:'amt',label:'amount',min:0,max:0.97,step:0.01,def:0.7,r:[0.4,0.9]},
+  {k:'rot',label:'rotate',min:-1,max:1,step:0.01,def:0.3,r:[-0.6,0.6]},
+  {k:'zoom',label:'zoom',min:-1,max:1,step:0.01,def:0.3,r:[-0.4,0.6]},
+  {k:'hue',label:'hue drift',min:0,max:1,step:0.01,def:0.2,r:[0,0.5]},
+], frag:`
+uniform float p_amt, p_rot, p_zoom, p_hue;
+void main(){
+  vec3 cur = texture2D(u_tex, v_uv).rgb;
+  float aspect = u_res.x/u_res.y;
+  vec2 c = v_uv-0.5; c.x *= aspect;
+  float a = p_rot*0.05;
+  c = mat2(cos(a),-sin(a),sin(a),cos(a))*c*(1.0 - p_zoom*0.03);
+  c.x /= aspect;
+  vec3 pr = hueShift(texture2D(u_prev, clamp(c+0.5,0.0,1.0)).rgb, p_hue*0.4);
+  vec3 col = mix(cur, max(cur, pr*p_amt), 0.95);
+  gl_FragColor = vec4(col,1.0);
 }`},
 
 /* ============ COLOR (stage 4) ============ */
@@ -754,6 +914,88 @@ void main(){
   else if(m==2.0) f = vec3(0.0);
   else f = hueShift(c, floor(u_t*p_rate)*2.4);
   gl_FragColor = vec4(mix(c, f, on),1.0);
+}`},
+
+{id:'neon', name:'NEON EDGES 💡', stage:4, params:[
+  {k:'str',label:'strength',min:0,max:4,step:0.01,def:2,r:[1,3]},
+  {k:'cyc',label:'hue cycles',min:0,max:4,step:1,def:1,int:true,r:[0,2]},
+  {k:'bg',label:'keep image',min:0,max:1,step:0.01,def:0.15,r:[0,0.4]},
+], frag:`
+uniform float p_str, p_cyc, p_bg;
+void main(){
+  vec2 px = 1.0/u_res;
+  float tl=lum(texture2D(u_tex,v_uv+px*vec2(-1,1)).rgb), t=lum(texture2D(u_tex,v_uv+px*vec2(0,1)).rgb), tr=lum(texture2D(u_tex,v_uv+px*vec2(1,1)).rgb);
+  float l=lum(texture2D(u_tex,v_uv+px*vec2(-1,0)).rgb), r=lum(texture2D(u_tex,v_uv+px*vec2(1,0)).rgb);
+  float bl=lum(texture2D(u_tex,v_uv+px*vec2(-1,-1)).rgb), b=lum(texture2D(u_tex,v_uv+px*vec2(0,-1)).rgb), br=lum(texture2D(u_tex,v_uv+px*vec2(1,-1)).rgb);
+  float gx = -tl-2.0*l-bl+tr+2.0*r+br, gy = tl+2.0*t+tr-bl-2.0*b-br;
+  float e = clamp(length(vec2(gx,gy))*p_str, 0.0, 1.0);
+  vec3 neon = hueShift(vec3(1.0,0.1,0.55), TAU*(p_cyc*u_t + v_uv.y*0.5));
+  vec3 c = texture2D(u_tex, v_uv).rgb*p_bg + neon*e*1.4;
+  gl_FragColor = vec4(c,1.0);
+}`},
+
+{id:'riso', name:'RISOGRAPH 🖨️', stage:4, params:[
+  {k:'a',label:'ink one',type:'color',def:'#FF2E88'},
+  {k:'b',label:'ink two',type:'color',def:'#2962FF'},
+  {k:'mis',label:'misregister',min:0,max:0.03,step:0.001,def:0.006,r:[0.002,0.015]},
+  {k:'grain',label:'grain',min:0,max:1,step:0.01,def:0.5,r:[0.2,0.8]},
+  {k:'spd',label:'jitter speed',min:1,max:30,step:1,def:4,int:true,r:[2,10]},
+], frag:`
+uniform vec3 p_a, p_b;
+uniform float p_mis, p_grain, p_spd;
+void main(){
+  float tt = floor(u_t*p_spd);
+  vec2 oa = (vec2(h2(vec2(tt,1.0)), h2(vec2(tt,2.0)))-0.5)*p_mis;
+  vec2 ob = (vec2(h2(vec2(tt,3.0)), h2(vec2(tt,4.0)))-0.5)*p_mis;
+  float la = 1.0-lum(texture2D(u_tex, clamp(v_uv+oa,0.0,1.0)).rgb);
+  float lb = 1.0-lum(texture2D(u_tex, clamp(v_uv+ob,0.0,1.0)).rgb);
+  float g = h2(floor(v_uv*u_res/1.5)+tt);
+  float da = step(g*p_grain + (1.0-p_grain)*0.5, la*1.1);
+  float db = step(h2(floor(v_uv*u_res/1.5)+tt+9.0)*p_grain + (1.0-p_grain)*0.5, lb*0.9 - la*0.2 + 0.1);
+  vec3 paper = vec3(0.96,0.94,0.9);
+  vec3 c = paper * mix(vec3(1.0), p_a, da*0.95) * mix(vec3(1.0), p_b, db*0.9);
+  gl_FragColor = vec4(c,1.0);
+}`},
+
+{id:'chanswap', name:'CHANNEL SWAP 🎛️', stage:4, params:[
+  {k:'mode',label:'swap',type:'select',options:['rgb to brg','rgb to gbr','rgb to bgr','red only','cycle all'],def:4},
+  {k:'rate',label:'cycle rate',min:1,max:16,step:1,def:3,int:true,r:[1,6]},
+  {k:'mix',label:'mix',min:0,max:1,step:0.01,def:1,r:[0.6,1]},
+], frag:`
+uniform float p_mode, p_rate, p_mix;
+vec3 sw(vec3 c, float m){
+  if(m==0.0) return c.brg;
+  if(m==1.0) return c.gbr;
+  if(m==2.0) return c.bgr;
+  return vec3(c.r, c.r*0.15, c.r*0.25);
+}
+void main(){
+  vec3 c = texture2D(u_tex, v_uv).rgb;
+  float m = floor(p_mode+0.5);
+  if(m==4.0) m = mod(floor(u_t*p_rate), 3.0);
+  gl_FragColor = vec4(mix(c, sw(c,m), p_mix),1.0);
+}`},
+
+{id:'bitrot', name:'BIT ROT 🧨', stage:4, params:[
+  {k:'bits',label:'bits',min:1,max:8,step:1,def:3,int:true,r:[2,5]},
+  {k:'rot',label:'rot',min:0,max:1,step:0.01,def:0.3,r:[0.1,0.6]},
+  {k:'cells',label:'cells',min:4,max:120,step:1,def:30,int:true,r:[12,60]},
+  {k:'spd',label:'speed',min:1,max:30,step:1,def:10,int:true,r:[4,18]},
+], frag:`
+uniform float p_bits, p_rot, p_cells, p_spd;
+void main(){
+  vec3 c = texture2D(u_tex, v_uv).rgb;
+  float lv = pow(2.0, floor(p_bits)) - 1.0;
+  vec3 q = floor(c*lv+0.5)/lv;
+  float tt = floor(u_t*p_spd);
+  vec2 id = floor(v_uv*vec2(p_cells, p_cells*u_res.y/u_res.x));
+  float r = h2(id+tt*13.0);
+  if(r < p_rot){
+    float ch = floor(h2(id+tt+4.0)*3.0);
+    float flip = floor(h2(id+tt+8.0)*lv+0.5)/lv;
+    if(ch==0.0) q.r = fract(q.r+flip); else if(ch==1.0) q.g = fract(q.g+flip); else q.b = fract(q.b+flip);
+  }
+  gl_FragColor = vec4(q,1.0);
 }`},
 
 /* ============ FINISH (stage 5) ============ */

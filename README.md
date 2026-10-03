@@ -1,6 +1,6 @@
 # MOSH LAB 👁️
 
-MLow's glitch instrument. A PhotoMosh style effect rack rebuilt from scratch as a native desktop app: 48 stackable WebGL effects, seeded randomness, loop perfect GIF export, MP4 and WebM capture, webcam and video input, and the full MLOW x Blossom identity baked in.
+MLow's glitch instrument. A PhotoMosh style effect rack rebuilt from scratch as a native desktop app and a web page: 60 stackable WebGL effects, 48 presets, seeded randomness, loop perfect GIF export, MP4 and WebM capture, webcam and video input, and the full MLOW x Blossom identity baked in.
 
 Every animation in the engine is periodic, so a GIF's last frame hands off to the first with no seam. Every random decision flows from the seed field, so any look is reproducible forever.
 
@@ -25,12 +25,12 @@ Output lands in `dist/`. Unsigned by default; set the usual electron-builder sig
 
 ## The rack
 
-48 effects in five stages. The chain runs top to bottom and every effect can be reordered, locked, and tuned.
+60 effects in five stages. The chain runs top to bottom and every effect can be reordered, locked, and tuned.
 
-- **Geometry**: kaleido, mirror, bulge/pinch, swirl, tile, wave warp, ripple scan, wobble
-- **Break**: pixelate, LED wall, slices, glitch blocks, datamosh, melt, JPEG crush, crystals, interlace
-- **Texture**: RGB shift, bad TV, VHS, noise, ghost trails, glow, blur, sharpen, oil paint
-- **Color**: hue/levels, dither lab, posterize, halftone, edges, duotone, heatmap, prism, invert, solarize, deep fry, strobe
+- **Geometry**: kaleido, mirror, bulge/pinch, swirl, tile, wave warp, ripple scan, wobble, polar, Droste tunnel
+- **Break**: pixelate, LED wall, slices, glitch blocks, datamosh, melt, JPEG crush, crystals, interlace, pixel sort, shatter, lenticular
+- **Texture**: RGB shift, bad TV, VHS, noise, ghost trails, glow, blur, sharpen, oil paint, zoom blur, lens fringe, vortex trails
+- **Color**: hue/levels, dither lab, posterize, halftone, edges, duotone, heatmap, prism, invert, solarize, deep fry, strobe, neon edges, risograph, channel swap, bit rot
 - **Finish**: scanlines, CRT, vignette, code overlay, ASCII, emoji mosaic, emoji rain, petal storm, blossom stamp, cam HUD
 
 ### Dither Lab 🧮
@@ -52,6 +52,12 @@ Eight threshold algorithms (Bayer 2x2 / 4x4 / 8x8, interleaved gradient noise, w
 - **PNG**: current frame at export resolution.
 - **Batch GIF**: the same chain across every loaded image, one file each.
 
+Every export carries the white MLOW wordmark bottom right, with a soft dark halo so it reads on bright art. It is drawn only on the final pass while an export runs, so the live preview stays clean and feedback effects never see it.
+
+### Presets
+
+48 built in, from STILL WAITING and SUBWAY GHOST to TUNNEL VISION, TINY PLANET, PIXEL WATERFALL, WARHOL WALL, HYPERSPACE and THE FLOOD. One click loads the chain; MOSH from there to mutate it.
+
 ### Sources
 
 Images (load a whole folder), video files, or the webcam. The chain does not care what it is fed.
@@ -71,7 +77,7 @@ moshlab/
   main.js              Electron shell
   app/
     index.html         layout and brand skin
-    effects.js         the 48 GLSL effect definitions
+    effects.js         the 60 GLSL effect definitions
     overlays.js        canvas drawn layers and the preset bank
     app.js             engine, UI, export, persistence
     brand-assets.js    MLOW logo, eye, and the 7 Blossom icons as data URIs
