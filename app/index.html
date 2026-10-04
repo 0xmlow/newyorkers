@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mark up a New Yorker · NEW YORKERS by MLow</title>
+<meta name="description" content="Draw over any NEW YORKERS painting by MLow with thirteen brushes in NYC moods and the subway line colours, then save it with your handle on it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* The NEW YORKERS tokens and the few site classes the tool uses. On n3wyorkers.com site.css supplies these. */
+:root{--ink:#0D0D0D;--card:#141820;--card2:#1A2030;--divider:#2A3040;--cloud:#F0F4F8;--slate:#8899AA;--blue:#2962FF;--cyan:#00E5FF;--pink:#FF2E63;--acid:#D7FF1F;
+  --display:"Fraunces",Georgia,serif;--serif:"Fraunces",Georgia,serif;--sans:"Space Grotesk",-apple-system,"Helvetica Neue",Arial,sans-serif;--mono:"IBM Plex Mono",Menlo,Consolas,monospace;--r:6px;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:var(--ink);color:var(--cloud);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding-left:16px;padding-right:16px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate)}
+.h-xl{font-family:var(--display);font-weight:500;font-size:clamp(40px,7vw,84px);line-height:1;letter-spacing:-.02em;margin:0}
+.h-lg{font-family:var(--display);font-weight:500;font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0}
+.lede{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2vw,21px);line-height:1.45;color:#cfd6de;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:14px 22px;border-radius:var(--r);border:1px solid var(--cloud);background:var(--cloud);color:var(--ink);cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--cloud);border-color:var(--divider)}
+.btn:hover{transform:translateY(-1px)}
+.mkfoot{padding:28px 16px 40px;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+.mkfoot a{color:var(--cyan)}
+</style>
+<link rel="stylesheet" href="markup.css">
+<script>window.MK_CONFIG = { base: 'https://n3wyorkers.com/', site: 'https://n3wyorkers.com', defaultId: '37' };</script>
+<script src="https://n3wyorkers.com/assets/markup/idx.js" defer></script>
+</head>
+<body>
+<!-- MARKUP BODY START: build_markup.py on the site lifts everything between these two markers into markup.html -->
+<section class="wrap" style="padding-top:64px;padding-bottom:6px">
+  <div class="kicker" style="color:var(--acid)">Mark it up</div>
+  <h1 class="h-xl" style="margin-top:14px;max-width:1000px">Mark up a New Yorker.</h1>
+  <p class="lede" style="margin-top:16px;max-width:780px">Pick any piece in the census and draw on it. Thirteen brushes, the colours of the subway lines, a mood for every hour of the city. Sign it, save it, post it. The painting underneath stays MLow's, the marks are yours.</p>
+</section>
+
+<section class="wrap" style="padding-top:22px">
+  <form class="mkfind" id="mkFind" autocomplete="off">
+    <label for="mkN" class="mklab">Piece number</label>
+    <div class="mkrow">
+      <input id="mkN" name="n" type="text" inputmode="numeric" spellcheck="false" placeholder="37">
+      <button class="btn" type="submit">Load it</button>
+      <button class="btn ghost" type="button" id="mkRand">Random New Yorker</button>
+    </div>
+    <p class="mkmsg" id="mkMsg" role="status"></p>
+  </form>
+</section>
+
+<section class="wrap" style="padding-top:14px">
+  <div class="mkstage" id="mkStage">
+    <canvas id="mkBg" aria-hidden="true"></canvas>
+    <div class="mkframe" id="mkFrame">
+      <canvas id="mkArt" aria-label="The painting"></canvas>
+      <canvas id="mkInk" aria-label="Your drawing over the painting. Draw with a mouse, a pen or a finger."></canvas>
+      <div class="mkcap"><span id="mkNo"></span><b id="mkT"></b><i id="mkBy"></i></div>
+    </div>
+  </div>
+
+  <div class="mktools">
+    <div>
+      <div class="mklab">Mood</div>
+      <div class="mkchips" id="mkMoods"></div>
+      <label class="mkcheck"><input type="checkbox" id="mkWash"> Wash the painting in the mood</label>
+    </div>
+    <div>
+      <div class="mklab">Brush</div>
+      <div class="mkchips" id="mkBrushes"></div>
+      <div class="mklab">Size <span id="mkSzV">1x</span></div>
+      <input type="range" id="mkSz" min="0.5" max="3" step="0.25" value="1" aria-label="Brush size">
+    </div>
+    <div>
+      <div class="mklab">Colour, by subway line</div>
+      <div class="mkswatches" id="mkColors"></div>
+    </div>
+  </div>
+
+  <div class="mklab" style="margin-top:28px"><label for="mkHandle">Sign it: marked up by</label></div>
+  <div class="mksign"><span>@</span><input id="mkHandle" type="text" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourhandle"></div>
+  <p class="mksignnote">Optional. Your handle goes on the strip under the art, beside the NEW YORKERS and MLOW marks. It stays on this device.</p>
+
+  <div class="mkacts">
+    <button class="btn" type="button" id="mkSave">SAVE</button>
+    <button class="btn" type="button" id="mkShare" hidden>SHARE</button>
+    <a class="btn ghost" id="mkX" target="_blank" rel="noopener">POST ON X</a>
+    <button class="btn ghost" type="button" id="mkUndo">UNDO</button>
+    <button class="btn ghost" type="button" id="mkClear">CLEAR</button>
+    <a class="mkrec" id="mkRec">Open the record</a>
+  </div>
+  <p class="mknote">Nothing you draw leaves your device until you save or share it. Your marks do not change the piece, its record or the token.</p>
+</section>
+
+<section class="wrap" style="padding-top:56px;padding-bottom:90px">
+  <div class="kicker">From the museum</div>
+  <h2 class="h-lg" style="margin-top:10px">Six rooms, six facts.</h2>
+  <p class="lede" style="margin-top:10px;max-width:720px">Every room in the museum carries one sourced line of city history. Flip a card to read it, then mark up the New Yorker who hangs there.</p>
+  <div class="mkcards" id="mkCards"></div>
+  <p style="margin-top:18px"><button class="btn ghost" type="button" id="mkShuffle">Shuffle the rooms</button></p>
+</section>
+<!-- MARKUP BODY END -->
+<footer class="mkfoot">NEW YORKERS by MLow · <a href="https://n3wyorkers.com/markup">n3wyorkers.com/markup</a></footer>
+<script src="logos.js"></script>
+<script src="markup.js"></script>
+</body>
+</html>

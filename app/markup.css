@@ -1,0 +1,59 @@
+/* MARK UP A NEW YORKER. Uses the NEW YORKERS tokens (--ink, --card, --acid, --mono...); index.html defines them when the page runs on its own. */
+.mklab{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin:18px 0 10px}
+.mkfind .mklab{margin-top:0}
+.mklab span{color:var(--cloud)}
+.mkrow{display:flex;gap:10px;flex-wrap:wrap}
+.mkrow input{flex:0 1 180px;min-width:0;background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--mono);font-size:14px;padding:14px 16px;border-radius:var(--r)}
+.mkrow input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.mkmsg{min-height:1.4em;margin:10px 0 0;color:var(--slate);font-size:14px}
+.mkstage{position:relative;border:1px solid var(--divider);border-radius:12px;overflow:hidden;padding:clamp(14px,3vw,40px);background:#0D0D0D}
+#mkBg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mkframe{position:relative;max-width:1000px;margin:0 auto;box-shadow:0 18px 50px rgba(0,0,0,.55);background:#000}
+.mkframe canvas{display:block;width:100%;height:auto}
+#mkInk{position:absolute;left:0;top:0;cursor:crosshair;touch-action:none}
+.mkcap{display:flex;gap:12px;align-items:baseline;padding:10px 14px;background:#0D0D0D;border-top:1px solid #1d222b}
+.mkcap span{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--acid);white-space:nowrap}
+.mkcap b{font-family:var(--serif);font-weight:500;font-size:17px;color:var(--cloud);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mktools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:10px}
+.mkchips{display:flex;flex-wrap:wrap;gap:7px}
+.mkchip{background:transparent;border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:13px;padding:8px 12px;border-radius:999px;cursor:pointer}
+.mkchip[aria-pressed=true]{background:var(--cloud);border-color:var(--cloud);color:var(--ink)}
+.mkchip:focus-visible,.mksw:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.mkchip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:0}
+.mkswatches{display:flex;flex-wrap:wrap;gap:8px}
+.mksw{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.mksw[aria-pressed=true]{border-color:var(--cloud);transform:scale(1.08)}
+.mksw.mood{width:auto;padding:0 12px;border-radius:999px;background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:12.5px;font-weight:400}
+.mksw.mood[aria-pressed=true]{border-color:var(--cloud)}
+input[type=range]#mkSz{width:100%;accent-color:var(--acid)}
+.mkcheck{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:14px;color:var(--cloud);cursor:pointer}
+.mkcheck input{width:17px;height:17px;accent-color:var(--acid)}
+.mkacts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:26px}
+.mkrec{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-left:6px}
+.mknote{margin:14px 0 0;font-size:13px;color:var(--slate)}
+.mkcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.mkcard{perspective:1200px;min-height:330px}
+.mkin{position:relative;width:100%;height:100%;min-height:330px;transition:transform .7s var(--ease);transform-style:preserve-3d;cursor:pointer}
+.mkcard.flipped .mkin{transform:rotateY(180deg)}
+.mkface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--card);display:flex;flex-direction:column}
+.mkface img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--card2)}
+.mkface .mkfm{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:6px}
+.mkface small{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate)}
+.mkface h3{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.15;margin:0}
+.mkface .mkhint{margin-top:auto;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--acid)}
+.mkback{transform:rotateY(180deg);padding:20px;gap:10px;justify-content:flex-start}
+.mkback .mky{font-family:var(--display);font-size:46px;line-height:1;font-weight:500}
+.mkback p{margin:0;font-size:16px;line-height:1.5;color:var(--cloud)}
+.mkback .mksrc{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+.mkback .mkgo{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px}
+.mkback .mkgo a,.mkback .mkgo button{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:9px 12px;border-radius:999px;border:1px solid var(--divider);background:transparent;color:var(--cloud);cursor:pointer;text-decoration:none}
+.mkback .mkgo button{background:var(--acid);border-color:var(--acid);color:var(--ink)}
+@media (max-width:900px){.mktools{grid-template-columns:1fr;gap:4px}.mkcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.mkcards{grid-template-columns:1fr}.mksw{width:30px;height:30px}.mkcap b{font-size:15px}}
+@media (prefers-reduced-motion:reduce){.mkin{transition:none}}
+.mkcap i{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);white-space:nowrap}
+.mksign{display:flex;align-items:stretch;max-width:340px;margin-top:2px}
+.mksign span{display:flex;align-items:center;padding:0 12px;background:var(--card2);border:1px solid var(--divider);border-right:0;border-radius:var(--r) 0 0 var(--r);font-family:var(--mono);color:var(--slate)}
+.mksign input{flex:1;min-width:0;background:var(--card);border:1px solid var(--divider);color:var(--cloud);font-family:var(--mono);font-size:14px;padding:12px 14px;border-radius:0 var(--r) var(--r) 0}
+.mksign input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.mksignnote{margin:8px 0 0;font-size:12.5px;color:var(--slate)}
