@@ -2,6 +2,7 @@
 import * as T from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import * as X from './textures';
 import type { Piece } from './data';
@@ -35,6 +36,8 @@ export type KitOpts = {
 const AUDIT = typeof location !== 'undefined' && /[?&]audit=1/.test(location.search);
 
 const gltf = new GLTFLoader();
+/* meshopt compressed sets (room 182 loads a whole baked terminal) need the decoder; plain GLBs are unaffected */
+gltf.setMeshoptDecoder(MeshoptDecoder);
 const propCache = new Map<string, Promise<T.Group>>();
 const thumbCache = new Map<string, Promise<T.Texture>>();
 const texLoader = new T.TextureLoader();
