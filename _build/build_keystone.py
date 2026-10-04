@@ -108,7 +108,11 @@ subs = [
     ('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>',
      '<script src="assets/three.min.js"></script>\n<script src="assets/prints.js"></script>\n<script src="assets/keystone_prints.js"></script>'),
     ('  #card a.out:hover{color:var(--blue-soft)}\n',
-     '  #card a.out:hover{color:var(--blue-soft)}\n  #card a.out + a.out{margin-left:18px}\n'),
+     '  #card a.out:hover{color:var(--blue-soft)}\n  #card a.out + a.out{margin-left:18px}\n'
+     '  #card .ksave{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px}\n'
+     '  #card .ksave button,#card .ksave a{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:9px 14px;border:1px solid var(--blue);color:#fff;background:transparent;cursor:pointer;text-decoration:none}\n'
+     '  #card .ksave button{background:var(--blue)}\n'
+     '  #card #kSaveMsg{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate)}\n'),
     ('See it in the census</a>', 'See it in the census</a><a class="out" id="kPrint" href="#" target="_blank" rel="noopener" hidden>Order a print</a>'),
     ("kLink').href='https://n3wyorkers.com/n/'+d.n",
      "kLink').href='n/'+d.sid+'.html';\n  (function(){ var a=document.getElementById('kPrint'), P=window.NY_PRINTS, K=window.NY_KEYSTONE_PRINTS, kp=K&&K.pieces[String(d.n)];"
@@ -125,7 +129,8 @@ subs = [
      "  #card button.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}\n"
      "  #card .statelbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:-8px 0 16px;min-height:14px}\n"
      "  #card .statelbl.loading::after{content:' · loading';color:var(--blue-soft)}\n"),
-    ('<div class="states" id="kStates"></div>', '<div class="states" id="kStates"></div>\n  <div class="statelbl" id="kStateLbl" aria-live="polite"></div>'),
+    ('<div class="states" id="kStates"></div>', '<div class="states" id="kStates"></div>\n  <div class="statelbl" id="kStateLbl" aria-live="polite"></div>'
+     '\n  ''<div class="ksave"><button type="button" id="kSave">SAVE</button><a id="kX" href="#" target="_blank" rel="noopener">POST ON X</a><span id="kSaveMsg" aria-live="polite"></span></div>'),
     ("  ['still','motion','glitch','dither'].forEach(function(k){ var c=document.createElement('span'); c.className='chip'+(d.k.indexOf(k)>=0?' live':''); c.textContent=k==='still'?'painted':k; c.style.opacity=d.k.indexOf(k)>=0?'1':'.35'; st.appendChild(c); });",
      "  stateOff(); renderChips(f);"),
     ("function closeCard(){ card.classList.remove('open'); hudBottom.classList.remove('hidden-by-card'); }",
@@ -178,6 +183,7 @@ function showState(f, i){
   if (i) document.getElementById('kStateLbl').classList.add('loading');
 }
 function renderChips(f){
+  KS.f = f; KS.x();
   var d = f.d, st = document.getElementById('kStates'); st.innerHTML = '';
   var n = document.createElement('span'); n.className = 'n'; n.textContent = d.st.length+' state'+(d.st.length===1?'':'s'); st.appendChild(n);
   var curI = ST.f === f ? ST.i : 0, cur = d.st[curI].k;
@@ -247,6 +253,36 @@ function upTier(f, w){
 function loadHi(f){ tierAt = 0; }"""),
     ("  loadNearest(mod(S.t, N));\n  renderer.render(scene, camera);", "  loadNearest(mod(S.t, N));\n  tierTick(now);\n  renderer.render(scene, camera);"),
 ]
+# SAVE IT, POST IT on the card (MLow 2026-10-04), inside the page's closure where ST and IMG live: SAVE downloads the state that is on the wall right now,
+# as the real file; a phone that can share files hands it to the share sheet so X gets it attached.
+# POST ON X carries the line and the piece's record page, since X's post intent cannot carry media.
+subs.append(("function loadHi(f){ tierAt = 0; }", """function loadHi(f){ tierAt = 0; }
+var KS = {f:null, x:function(){
+  var f = KS.f; if (!f) return; var d = f.d;
+  document.getElementById('kX').href = 'https://x.com/intent/post?text=' + encodeURIComponent(String(d.t).toUpperCase() + ' NO. ' + d.n + '\\n\\nKEYSTONE, NEW YORKERS by MLow \\ud83d\\uddfd') + '&url=' + encodeURIComponent('__URL__/n/' + d.sid);
+}};
+(function(){
+  var btn = document.getElementById('kSave'), msg = document.getElementById('kSaveMsg');
+  var touch = matchMedia('(pointer:coarse)').matches;
+  var MIME = {jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', gif:'image/gif', mp4:'video/mp4'};
+  function slug(t){ return String(t).replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  btn.addEventListener('click', function(){
+    var f = KS.f; if (!f) return; var d = f.d, i = ST.f === f ? ST.i : 0, s = d.st[i];
+    var url = (s && s.u) ? s.u : IMG + d.id + 'l.jpg';
+    var ext = (url.split('?')[0].split('.').pop() || 'jpg').toLowerCase();
+    var name = 'NEW-YORKERS-KEYSTONE-' + d.n + '-' + slug(d.t) + '-' + slug(s ? s.l : 'painted') + '.' + ext;
+    msg.textContent = 'SAVING'; btn.disabled = true;
+    fetch(url).then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
+      var file = new File([b], name, {type: MIME[ext] || b.type});
+      if (touch && navigator.canShare && navigator.canShare({files:[file]})) {
+        return navigator.share({files:[file], title: d.t}).then(function(){ msg.textContent = ''; }, function(){ msg.textContent = ''; });
+      }
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      msg.textContent = 'SAVED. NOW ATTACH IT TO YOUR POST';
+    }).catch(function(){ msg.textContent = 'COULD NOT SAVE, TRY AGAIN'; }).then(function(){ btn.disabled = false; });
+  });
+})();""".replace("__URL__", URL)))
 for old, new in subs:
     if s.count(old) != 1: raise SystemExit(f"keystone: expected exactly one match for {old[:60]!r}, found {s.count(old)}. The design changed; update build_keystone.py")
     s = s.replace(old, new, 1)

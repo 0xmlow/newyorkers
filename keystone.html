@@ -103,6 +103,10 @@
   #card a.out{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cloud);text-decoration:none;border-bottom:1px solid var(--blue);padding-bottom:2px}
   #card a.out:hover{color:var(--blue-soft)}
   #card a.out + a.out{margin-left:18px}
+  #card .ksave{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px}
+  #card .ksave button,#card .ksave a{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:9px 14px;border:1px solid var(--blue);color:#fff;background:transparent;cursor:pointer;text-decoration:none}
+  #card .ksave button{background:var(--blue)}
+  #card #kSaveMsg{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate)}
   #card .nav{display:flex;gap:6px}
   #card .nav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--cloud);cursor:pointer;font:14px var(--mono)}
   #card .nav button:hover{border-color:var(--cloud)}
@@ -185,6 +189,7 @@
   <div class="memorial" id="kMemorial" hidden>A memorial. Its new states stay quiet.</div>
   <div class="states" id="kStates"></div>
   <div class="statelbl" id="kStateLbl" aria-live="polite"></div>
+  <div class="ksave"><button type="button" id="kSave">SAVE</button><a id="kX" href="#" target="_blank" rel="noopener">POST ON X</a><span id="kSaveMsg" aria-live="polite"></span></div>
   <div class="row">
     <a class="out" id="kLink" href="n/x000.html">See it in the census</a><a class="out" id="kPrint" href="#" target="_blank" rel="noopener" hidden>Order a print</a>
     <div class="nav"><button type="button" id="prev" aria-label="Previous piece">←</button><button type="button" id="next" aria-label="Next piece">→</button></div>
@@ -442,6 +447,32 @@ function upTier(f, w){
   }, undefined, function(){ tierBusy--; f.tierLoading = false; });
 }
 function loadHi(f){ tierAt = 0; }
+var KS = {f:null, x:function(){
+  var f = KS.f; if (!f) return; var d = f.d;
+  document.getElementById('kX').href = 'https://x.com/intent/post?text=' + encodeURIComponent(String(d.t).toUpperCase() + ' NO. ' + d.n + '\n\nKEYSTONE, NEW YORKERS by MLow \ud83d\uddfd') + '&url=' + encodeURIComponent('https://n3wyorkers.com/n/' + d.sid);
+}};
+(function(){
+  var btn = document.getElementById('kSave'), msg = document.getElementById('kSaveMsg');
+  var touch = matchMedia('(pointer:coarse)').matches;
+  var MIME = {jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', gif:'image/gif', mp4:'video/mp4'};
+  function slug(t){ return String(t).replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  btn.addEventListener('click', function(){
+    var f = KS.f; if (!f) return; var d = f.d, i = ST.f === f ? ST.i : 0, s = d.st[i];
+    var url = (s && s.u) ? s.u : IMG + d.id + 'l.jpg';
+    var ext = (url.split('?')[0].split('.').pop() || 'jpg').toLowerCase();
+    var name = 'NEW-YORKERS-KEYSTONE-' + d.n + '-' + slug(d.t) + '-' + slug(s ? s.l : 'painted') + '.' + ext;
+    msg.textContent = 'SAVING'; btn.disabled = true;
+    fetch(url).then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
+      var file = new File([b], name, {type: MIME[ext] || b.type});
+      if (touch && navigator.canShare && navigator.canShare({files:[file]})) {
+        return navigator.share({files:[file], title: d.t}).then(function(){ msg.textContent = ''; }, function(){ msg.textContent = ''; });
+      }
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+      msg.textContent = 'SAVED. NOW ATTACH IT TO YOUR POST';
+    }).catch(function(){ msg.textContent = 'COULD NOT SAVE, TRY AGAIN'; }).then(function(){ btn.disabled = false; });
+  });
+})();
 
 // ---------- state ----------
 // t is the position along the ramp in pieces. In endless mode it is unbounded and the ramp, the
@@ -554,6 +585,7 @@ function showState(f, i){
   if (i) document.getElementById('kStateLbl').classList.add('loading');
 }
 function renderChips(f){
+  KS.f = f; KS.x();
   var d = f.d, st = document.getElementById('kStates'); st.innerHTML = '';
   var n = document.createElement('span'); n.className = 'n'; n.textContent = d.st.length+' state'+(d.st.length===1?'':'s'); st.appendChild(n);
   var curI = ST.f === f ? ST.i : 0, cur = d.st[curI].k;
