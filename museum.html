@@ -24,7 +24,7 @@
 <meta name="theme-color" content="#0D0D0D">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
-<link rel="stylesheet" href="assets/museum/museum.css?v=36db865461">
+<link rel="stylesheet" href="assets/museum/museum.css?v=c379140a3c">
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/museum">
 <meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, walkable 3D museum, Three.js gallery New York, virtual gallery NYC landmarks, Guggenheim virtual tour art">
@@ -61,7 +61,7 @@
   <a class="brand" href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"><span>NEW YORKERS<br><em>THE MUSEUM</em></span></a>
   <nav>
     <button id="btnDest"><i></i>ROOMS <span>↗</span></button>
-    <button id="btnIndex">ARTWORKS</button><details id="museumTools"><summary>More</summary><div class="tool-menu"><button id="btnHang">Change the artwork</button>
+    <button id="btnIndex">ARTWORKS</button><button id="btnSnap" title="Save this view, post it on X (P)">SAVE ◉</button><details id="museumTools"><summary>More</summary><div class="tool-menu"><button id="btnHang">Change the artwork</button>
 
     <button id="btnSpin" title="Slot machine: drop into a random room (R)">✦ SPIN</button>
     <button id="btnShare" title="Share this room">SHARE</button>
@@ -84,6 +84,12 @@
   <div class="head"><div><div class="kicker">HIDDEN IN THIS ROOM</div><h3>The real New York is in here.</h3><p>Every glint marks a real feature of the real place. Tap one to find out what it is.</p></div><button data-close aria-label="Close">×</button></div>
   <p id="eggTotal"></p>
   <div id="eggList"></div>
+</aside>
+<aside id="snap" class="panel">
+  <div class="head"><div><div class="kicker">SAVE IT, POST IT</div><h3 id="snapTitle">This view is yours.</h3><p>Save the picture, then add it to your post on X.</p></div><button data-close aria-label="Close">×</button></div>
+  <img id="snapImg" alt="">
+  <div class="snap-acts"><button id="snapSave">SAVE</button><button id="snapPost">POST ON X</button><button id="snapAgain">TAKE IT AGAIN</button></div>
+  <p class="mono snap-note" id="snapNote"></p>
 </aside>
 <div id="loading">BUILDING</div>
 <div id="debug" class="mono" hidden></div>
@@ -174,7 +180,7 @@
 <script src="assets/rooms.js"></script>
 <script src="assets/prints.js"></script>
 <script src="assets/keystone_prints.js"></script>
-<script src="assets/museum/museum.js?b=1791003002350"></script>
+<script src="assets/museum/museum.js?b=1791074270401"></script>
 <script src="assets/eggs.js" defer></script>
 
 <script src="assets/mint.js" defer></script>
