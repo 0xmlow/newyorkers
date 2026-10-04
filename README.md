@@ -35,6 +35,24 @@ Output lands in `dist/`. Unsigned by default; set the usual electron-builder sig
 - **Color**: hue/levels, dither lab, posterize, halftone, edges, duotone, heatmap, prism, invert, solarize, deep fry, strobe, neon edges, risograph, channel swap, bit rot
 - **Finish**: scanlines, CRT, vignette, code overlay, ASCII, emoji mosaic, emoji rain, petal storm, blossom stamp, cam HUD
 
+### NEW YORKERS 👁️
+
+The NEW YORKERS panel pulls any piece from the census at n3wyorkers.com: by number, by name, at random, your ❤️ faves, or every New Yorker in a wallet (paste a 0x address or a name.eth from the collector list). The paintings load at 1000px straight from the site, so the desktop app needs a connection for this panel; everything else works offline.
+
+### THE MOSH MACHINE 🎰
+
+SPIN (or S) opens the machine. Three reels: WHO (a New Yorker), WHAT (a preset), SEED. Lock any reel to keep it while the others spin; lock WHO on your own piece and pull until it hits. Every pull rolls a rarity, and the rarer the roll the harder it moshes:
+
+| Rarity | Odds | What it does | Chips |
+|---|---|---|---|
+| COMMON | 55% | the preset as it is | 0 |
+| RARE | 25% | the preset plus a mosh on top | +15 |
+| EPIC | 13% | the preset plus a HYPER mosh | +40 |
+| LEGENDARY | 6% | the preset plus HYPER, confetti | +120 |
+| MYTHIC | 1% | THE SIGNATURE plus HYPER, unlocks the 317 preset | +1000 |
+
+A 317 in the piece number or the seed, or a triple in the seed, is a JACKPOT and pays triple. Five rare or better in a row pays a house bonus. A pull costs 10 chips and the house refills you when you are broke: chips are play chips, free, worth nothing and never for sale. DEGEN MODE pulls every five seconds while the window is visible. The last 24 pulls sit in a strip under the reels; click one to bring that exact look back. Exports carry the rarity in the file name, as in `NY4439-The-Powder-Room-Portrait_EPIC_NY-89365.gif`.
+
 ### Dither Lab 🧮
 
 Eight threshold algorithms (Bayer 2x2 / 4x4 / 8x8, interleaved gradient noise, white noise, halftone dot, diagonal lines, checker) crossed with seven palettes (gray levels, 1 bit, Game Boy, 8 bit RGB, Blossom brand, print CMY, original color). GIF export additionally runs Floyd Steinberg error diffusion over a median cut palette.
@@ -81,6 +99,7 @@ moshlab/
     index.html         layout and brand skin
     effects.js         the 60 GLSL effect definitions
     overlays.js        canvas drawn layers and the preset bank
+    casino.js          the NEW YORKERS source and THE MOSH MACHINE
     app.js             engine, UI, export, persistence
     brand-assets.js    MLOW logo, eye, and the 7 Blossom icons as data URIs
   build/               app icons

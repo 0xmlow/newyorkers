@@ -1,8 +1,8 @@
 {
   "name": "moshlab",
   "productName": "MOSH LAB",
-  "version": "2.1.0",
-  "description": "MLow's glitch instrument. A PhotoMosh style effect rack rebuilt as a native app: 60 stackable WebGL effects, 48 presets, seeded randomness, loop perfect GIF export, MP4 and WebM capture, webcam and video input.",
+  "version": "2.2.0",
+  "description": "MLow's glitch instrument. A PhotoMosh style effect rack rebuilt as a native app: 60 stackable WebGL effects, 48 presets, every NEW YORKER as a source, and THE MOSH MACHINE, seeded randomness, loop perfect GIF export, MP4 and WebM capture, webcam and video input.",
   "author": "MLOW",
   "license": "MIT",
   "main": "main.js",
