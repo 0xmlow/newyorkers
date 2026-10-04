@@ -734,7 +734,8 @@ function exportDims(){
 }
 function baseName(){
   const n = srcKind==='image' && images[curImage] ? images[curImage].name.replace(/\.[^.]+$/,'') : 'moshlab';
-  return n + '_' + state.seed.replace(/[^A-Za-z0-9-]/g,'');
+  // casino.js sets state.tag to the last pull's rarity, so a LEGENDARY roll says so in its file name
+  return n + (state.tag ? '_'+state.tag : '') + '_' + state.seed.replace(/[^A-Za-z0-9-]/g,'');
 }
 async function frameSleep(){ return new Promise(r=>setTimeout(r,0)); }
 
@@ -906,6 +907,15 @@ function addImages(files){
     };
     img.src = URL.createObjectURL(f);
   }
+}
+/* add an already loaded image (casino.js uses this for New Yorkers pulled from the census) */
+function addImageEl(name, img, meta){
+  const at = images.findIndex(x=>x.name===name);
+  if(at>=0){ switchToImage(at); return at; }
+  images.push({name, img, meta:meta||null});
+  rebuildFileList();
+  switchToImage(images.length-1);
+  return images.length-1;
 }
 function rebuildFileList(){
   const sel = $('filelist');
@@ -1175,5 +1185,6 @@ if(urlImg){
 }
 requestAnimationFrame(t=>{ lastNow=t; tick(t); });
 
-window.MOSHLAB = {state, mosh, applyPreset, doExportGIF, encodeGIF, quantizeFrames, captureLoopFrames,
-  switchToImage, images, BUILTIN_PRESETS, SIGNATURE_PRESET, egg317, toggleGarden, pickVideoMime, serialize, hydrate};
+window.MOSHLAB = {state, mosh, applyPreset, addImageEl, toast, buildFxList, saveSoon, snapshotChain, restoreSnapshot,
+  current: ()=> (srcKind==='image' && images[curImage]) ? images[curImage] : null, canvas, doExportGIF, encodeGIF, quantizeFrames, captureLoopFrames,
+  switchToImage, images, buildPresetButtons, BUILTIN_PRESETS, SIGNATURE_PRESET, egg317, toggleGarden, pickVideoMime, serialize, hydrate};

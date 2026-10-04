@@ -20,14 +20,14 @@ URL = cfg()["siteUrl"]
 REPO = os.path.join(os.path.dirname(SITE), "MOSH LAB", "moshlab")
 SRC = os.path.join(REPO, "app")
 DST = os.path.join(SITE, "assets", "moshlab")
-FILES = ("index.html", "brand-assets.js", "effects.js", "overlays.js", "app.js")
+FILES = ("index.html", "brand-assets.js", "effects.js", "overlays.js", "app.js", "casino.js")
 
 # ---------- copy and check the instrument ----------
 commit = ""
 if os.path.isdir(SRC):
     os.makedirs(DST, exist_ok=True)
     for f in os.listdir(DST):
-        if f not in FILES and f != "poster.png": os.remove(os.path.join(DST, f))
+        if f not in FILES and f not in ("poster.png", "ny.json"): os.remove(os.path.join(DST, f))
     for f in FILES:
         if not os.path.exists(os.path.join(SRC, f)): raise SystemExit(f"moshlab: {f} missing from {SRC}")
     r = subprocess.run(["git", "-C", REPO, "rev-parse", "--short", "HEAD"], capture_output=True, text=True)
@@ -54,17 +54,30 @@ for f in FILES:
     s = open(os.path.join(DST, f), encoding="utf-8").read()
     for bad in ("—", "–"):
         if bad in s: raise SystemExit(f"moshlab: a dash character is in {f}; the brand rule forbids it")
-    # self contained: it must never reach outside itself (sources are the visitor's own files and camera)
+    # nothing loads from another host: the art comes from this site (casino.js builds its URLs from a base,
+    # which is this origin when served here and n3wyorkers.com in the desktop app)
     stray = re.findall(r"""(?:src|href)\s*=\s*["'](https?://[^"']+)""", s) + re.findall(r"""fetch\(\s*["'`](https?://[^"'`]+)""", s)
     if stray: raise SystemExit(f"moshlab: {f} would load from outside the site: {stray[:3]}")
     if f.endswith(".js"):
         r = subprocess.run(["node", "--check", os.path.join(DST, f)], capture_output=True, text=True)
         if r.returncode: raise SystemExit(f"moshlab: {f} does not parse\n" + r.stderr)
 shutil.copy2(os.path.join(HERE, "moshlab", "poster.png"), os.path.join(DST, "poster.png"))
+
+# ny.json: the census index the New Yorkers panel and the slot machine pull from. One row per public
+# piece, [number, title, first state's thumbnail key, era, family, borough]. The desktop app fetches it
+# from n3wyorkers.com, so it ships with the site and is the only thing the app needs to know the census.
+import json
+_d = open(os.path.join(SITE, "assets", "data.js"), encoding="utf-8").read()
+_d = json.loads(_d[_d.index("{"):_d.rindex("}")+1])
+rows = [[int(p["n"]), p["t"], p["st"][0], int(p.get("e") or 0), p.get("f") or "", p.get("b") or ""] for p in _d["pieces"] if p.get("st")]
+rows.sort()
+with open(os.path.join(DST, "ny.json"), "w", encoding="utf-8") as f:
+    json.dump({"v": 1, "site": URL, "p": rows}, f, ensure_ascii=False, separators=(",", ":"))
+print(f"  moshlab: ny.json {len(rows)} New Yorkers, {os.path.getsize(os.path.join(DST, 'ny.json')) // 1024} KB")
 v = hashlib.sha256(b"".join(open(os.path.join(DST, f), "rb").read() for f in FILES + ("poster.png",))).hexdigest()[:10]
 
 # ---------- the page ----------
-desc = ("MOSH LAB, MLow's glitch instrument, free in your browser. Stack 60 WebGL effects on your own image, "
+desc = ("MOSH LAB, MLow's glitch instrument, free in your browser. Pull any New Yorker from the census, your own or a random one, spin THE MOSH MACHINE, or stack 60 WebGL effects on your own image, "
         "video or camera, roll a seed, and export a loop perfect GIF, MP4, WebM or PNG. Nothing leaves your machine.")
 extra_css = """
 .ml{max-width:1500px;margin:0 auto;padding:14px 16px 72px;text-align:center}
@@ -84,7 +97,7 @@ extra_css = """
 body = f"""<main class="ml">
   <div class="phone">MOSH LAB is built for a big screen. It runs on a phone, but a laptop is where it sings.</div>
   <div class="frame"><iframe id="mlFrame" src="assets/moshlab/?v={v}" title="MOSH LAB by MLow" allow="camera; fullscreen; clipboard-write"></iframe></div>
-  <div class="how">Drop an image or a video, or turn on the camera. MOSH rolls a chain, HYPER rolls a wild one, the seed brings any look back.<br><a href="assets/moshlab/?v={v}" target="_blank" rel="noopener">Open full screen</a> &nbsp;·&nbsp; <a href="https://github.com/0xmlow/newyorkers/tree/mosh-lab" target="_blank" rel="noopener">The code</a></div>
+  <div class="how">Pull a New Yorker, paste your wallet, or drop your own image. Hit SPIN for THE MOSH MACHINE: three reels, five rarities, play chips only.<br><a href="assets/moshlab/?v={v}" target="_blank" rel="noopener">Open full screen</a> &nbsp;·&nbsp; <a href="https://github.com/0xmlow/newyorkers/tree/mosh-lab" target="_blank" rel="noopener">The code</a></div>
   <div class="under">
     <div class="eyebrow">A NEW YORKERS instrument by MLow</div>
     <h1>MOSH <em>LAB</em></h1>
