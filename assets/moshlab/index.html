@@ -97,7 +97,7 @@
   #canvaswrap{
     flex:1; display:flex; align-items:center; justify-content:center;
     background:radial-gradient(ellipse at center, #14182022 0%, transparent 70%), var(--bg);
-    position:relative; overflow:hidden;
+    position:relative; overflow:hidden; container-type:size;
   }
   #gl{max-width:96%; max-height:94%; box-shadow:0 10px 60px rgba(0,0,0,.55); background:#000; border-radius:2px;}
   #drophint{
@@ -135,6 +135,58 @@
   }
   footer-hint{display:block;}
   .footnote{color:var(--dim); font-size:9px; letter-spacing:1px; margin-top:14px; text-align:center; opacity:.7;}
+  /* ---------- the mosh machine ---------- */
+  header button.casino{background:linear-gradient(90deg,#FF2E63,#2962FF); border-color:#FF2E63; font-weight:700;}
+  header button.casino.ghost-on{box-shadow:0 0 0 2px #00E5FF inset;}
+  #casino{display:none; border-bottom:1px solid var(--divider); background:linear-gradient(180deg,#0B0E14,#12081a); padding:10px 14px 8px; color:#F0F4F8;}
+  #casino.open{display:block;}
+  .cz-top{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .cz-top .spacer{flex:1;}
+  .cz-title{font-family:Georgia,serif; font-weight:700; letter-spacing:3px; font-size:13px;}
+  .cz-chips{background:#000; border:1px solid #2A3040; border-radius:999px; padding:3px 10px; color:#00E5FF; font-weight:700; letter-spacing:1px;}
+  .cz-chips.bump{animation:bump .5s;}
+  @keyframes bump{40%{transform:scale(1.25); color:#FF2E63;}}
+  .cz-streak{color:#FF2E63; font-weight:700; letter-spacing:1px;}
+  .cz-top button{padding:4px 9px;}
+  #czdegen.ghost-on{background:#FF2E63; border-color:#FF2E63; color:#fff; animation:pulse 1s infinite;}
+  @keyframes pulse{50%{box-shadow:0 0 18px #FF2E63;}}
+  .cz-reels{display:grid; grid-template-columns:1.4fr 1fr 1fr 86px; gap:8px;}
+  .reel{background:#000; border:1px solid #2A3040; border-radius:8px; padding:6px 8px; overflow:hidden; position:relative;}
+  .reel .rl{display:flex; justify-content:space-between; align-items:center; color:#8899AA; font-size:9px; letter-spacing:2px;}
+  .reel .rlock{background:none; border:none; padding:0 2px; font-size:11px;}
+  .reel.locked{border-color:#FF2E63;}
+  .reel .rv{height:44px; display:flex; align-items:center; gap:8px; font-weight:700; font-size:12px; letter-spacing:1px; color:#F0F4F8; overflow:hidden; white-space:nowrap;}
+  .reel .rv span{overflow:hidden; text-overflow:ellipsis;}
+  .reel .rv img{height:40px; width:40px; object-fit:cover; border-radius:4px; display:none;}
+  .reel.spinning .rv{filter:blur(1.2px); color:#00E5FF;}
+  .reel.landed{animation:land .35s;}
+  @keyframes land{30%{transform:translateY(3px); border-color:#00E5FF;}}
+  #czpull{background:linear-gradient(180deg,#FF2E63,#9a0f36); border:1px solid #FF2E63; color:#fff; font-weight:700; font-size:13px; letter-spacing:2px; border-radius:10px; line-height:1.3;}
+  #czpull span{font-size:22px;}
+  #czpull:active{transform:translateY(3px);}
+  #czpull:disabled{opacity:.5; cursor:wait;}
+  .cz-bottom{display:flex; justify-content:space-between; gap:10px; margin-top:7px; font-size:11px; letter-spacing:1px;}
+  #czmsg{color:#F0F4F8;}
+  #czstats{color:#8899AA;}
+  #czhist{display:flex; gap:5px; margin-top:7px; overflow-x:auto; min-height:0;}
+  #czhist .h{flex:0 0 auto; width:46px; height:46px; border-radius:5px; border:2px solid #2A3040; background-size:cover; background-position:center; cursor:pointer; position:relative;}
+  #czhist .h b{position:absolute; left:0; right:0; bottom:0; font-size:8px; text-align:center; background:rgba(0,0,0,.7); letter-spacing:1px;}
+  .cz-odds{color:#56657a; font-size:9px; letter-spacing:1px; margin-top:6px;}
+  .r-COMMON{color:#AAB6C4 !important; border-color:#AAB6C4 !important;}
+  .r-RARE{color:#00E5FF !important; border-color:#00E5FF !important;}
+  .r-EPIC{color:#B26BFF !important; border-color:#B26BFF !important;}
+  .r-LEGENDARY{color:#FFB020 !important; border-color:#FFB020 !important;}
+  .r-MYTHIC{color:#FF2E63 !important; border-color:#FF2E63 !important;}
+  #rarity{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:40;
+    font-family:Georgia,serif; font-weight:700; font-size:clamp(20px,10cqw,84px); letter-spacing:.12em; opacity:0; text-shadow:0 0 30px currentColor, 0 4px 0 #000;}
+  #rarity.show{animation:rar 1.9s ease-out;}
+  @keyframes rar{0%{opacity:0; transform:scale(.6);} 12%{opacity:1; transform:scale(1.08);} 70%{opacity:1; transform:scale(1);} 100%{opacity:0; transform:scale(1.15);}}
+  #confetti{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:41;}
+  #confetti i{position:absolute; top:-40px; font-style:normal; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(120vh) rotate(720deg);}}
+  #nyhits .hit{display:block; width:100%; text-align:left; margin-bottom:3px; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #nynow a{color:var(--lightblue);}
+  #nyfave.on{color:#FF2E63; border-color:#FF2E63;}
   ::-webkit-scrollbar{width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--divider); border-radius:4px;}
   ::-webkit-scrollbar-track{background:transparent;}
@@ -154,6 +206,7 @@
     <button id="autobtn" title="re-roll automatically every few loops (A)">AUTO ♻️</button>
     <button id="backbtn" title="undo the last mosh">↩️</button>
     <button id="clearbtn" title="turn every effect off">CLEAN 🧼</button>
+    <button id="spinbtn" class="casino" title="the mosh machine (S)">🎰 SPIN</button>
   </header>
 
   <div id="fxcol">
@@ -164,10 +217,32 @@
   </div>
 
   <div id="stage">
+    <div id="casino">
+      <div class="cz-top">
+        <span class="cz-title">🎰 THE MOSH MACHINE</span>
+        <span class="cz-chips" id="czchips">🪙 317</span>
+        <span class="cz-streak" id="czstreak"></span>
+        <span class="spacer"></span>
+        <button id="czsound" title="sound">🔊</button>
+        <button id="czdegen" title="auto pull every few seconds">🤑 DEGEN MODE</button>
+        <button id="czclose" title="hide the machine">✕</button>
+      </div>
+      <div class="cz-reels">
+        <div class="reel" id="r0"><div class="rl">WHO <button class="rlock" data-r="0" title="lock this reel">🔓</button></div><div class="rv"><img id="r0img" alt=""><span id="r0v">a New Yorker</span></div></div>
+        <div class="reel" id="r1"><div class="rl">WHAT <button class="rlock" data-r="1" title="lock this reel">🔓</button></div><div class="rv"><span id="r1v">a preset</span></div></div>
+        <div class="reel" id="r2"><div class="rl">SEED <button class="rlock" data-r="2" title="lock this reel">🔓</button></div><div class="rv"><span id="r2v">a seed</span></div></div>
+        <button id="czpull" title="pull (S)">PULL<br><span>🎰</span></button>
+      </div>
+      <div class="cz-bottom"><span id="czmsg">10 chips a pull. the rarer the roll, the harder it moshes.</span><span id="czstats"></span></div>
+      <div id="czhist"></div>
+      <div class="cz-odds">COMMON 55 · RARE 25 · EPIC 13 · LEGENDARY 6 · MYTHIC 1 &nbsp;|&nbsp; play chips only: free, worthless, never for sale. the art is the prize.</div>
+    </div>
     <div id="canvaswrap">
       <canvas id="gl"></canvas>
       <div id="drophint">DROP IMAGES OR VIDEO 🎞️</div>
       <div id="toast"></div>
+      <div id="rarity"></div>
+      <div id="confetti"></div>
     </div>
     <div id="transport">
       <button id="playbtn" title="space">⏸</button>
@@ -180,6 +255,15 @@
 
   <div id="sidecol">
     <div class="gardenbg"></div>
+    <div class="sideblock" id="nyblock">
+      <div class="colhead">NEW YORKERS 👁️ mosh the census</div>
+      <div class="row"><input id="nyq" type="text" placeholder="number or name" spellcheck="false" style="flex:1;width:auto"><button id="nygo">LOAD</button></div>
+      <div id="nyhits"></div>
+      <div class="row"><button id="nyrand" class="hot">🎲 RANDOM</button><button id="nyfave" title="favorite this one">♡</button><button id="nyfaves">❤️ FAVES</button></div>
+      <div class="row"><input id="nywallet" type="text" placeholder="0x address or name.eth" spellcheck="false" style="flex:1;width:auto"><button id="nymine">MY NYs</button></div>
+      <div id="nynow" class="hint">pull a New Yorker from the census, or the ones in your wallet, and break it.</div>
+    </div>
+
     <div class="sideblock">
       <div class="colhead">SOURCE</div>
       <div class="row">
@@ -257,6 +341,7 @@
 <script src="brand-assets.js?v=12065bf369"></script>
 <script src="effects.js?v=27924cdf39"></script>
 <script src="overlays.js?v=3d5f0ec9fa"></script>
-<script src="app.js?v=4bd64a983c"></script>
+<script src="app.js?v=acf4f4e7a5"></script>
+<script src="casino.js?v=b3a8cf7af1"></script>
 </body>
 </html>
