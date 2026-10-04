@@ -217,6 +217,32 @@ function moshFor(preset, r){
   M.buildFxList(); M.saveSoon();
 }
 
+/* a pull must still show a New Yorker. HYPER at full range can wash a frame to one flat color
+   (a MYTHIC once came out solid red), so after the mosh the machine samples the canvas and, if the
+   frame is nearly flat, re-rolls the seed (same rarity, same preset) up to eight times. */
+const probe = document.createElement('canvas'); probe.width = probe.height = 48;
+const pctx = probe.getContext('2d', {willReadFrequently:true});
+const frame = ()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+function spread(){
+  try{
+    pctx.drawImage(M.canvas, 0, 0, 48, 48);
+    const d = pctx.getImageData(0, 0, 48, 48).data;
+    let s = 0, s2 = 0, n = d.length/4;
+    for(let i=0;i<d.length;i+=4){ const l = (0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2])/255; s += l; s2 += l*l; }
+    const m = s/n; return Math.sqrt(Math.max(0, s2/n - m*m));
+  }catch(e){ return 1; }
+}
+async function legibleMosh(preset, r, seed){
+  let tries = 0, sd = seed;
+  for(;;){
+    M.state.seed = sd; $('seed').value = sd;
+    moshFor(preset, r);
+    await frame();
+    if(spread() > 0.075 || tries >= 8) return sd;
+    tries++; sd = seed + '-' + tries;
+  }
+}
+
 function animateReel(i, ms, frames){
   return new Promise(res=>{
     if(locks[i]){ res(); return; }
@@ -267,11 +293,10 @@ async function pull(){
   setReel(0, who ? 'NO. '+who.n+' · '+who.t : (cur ? cur.name : 'your image'), 'landed r-'+rk);
   if(who){ $('r0img').src = BASE+'assets/t/'+who.k+'.jpg'; $('r0img').style.display = 'block'; }
   setReel(1, preset.name, 'landed r-'+rk);
-  setReel(2, seed, 'landed r-'+rk);
   beep(110, 0.2, 'sawtooth', 0.05);
 
-  M.state.seed = seed; $('seed').value = seed;
-  moshFor(preset, r);
+  const used = await legibleMosh(preset, r, seed);
+  setReel(2, used, 'landed r-'+rk);
   M.state.tag = rk + (jackpot ? '-JACKPOT' : '');
   S.lastPreset = preset.name;
 
@@ -280,7 +305,7 @@ async function pull(){
   if(S.streak && S.streak % 5 === 0){ pay += 100; M.toast('🔥 FIVE IN A ROW · +100 house bonus'); }
   if(r > S.best) S.best = r;
   setChips(S.chips + pay, pay > 0);
-  S.hist.push({n: who ? who.n : null, k: who ? who.k : null, t: who ? who.t : null, preset: preset.name, seed, r: rk, snap: M.snapshotChain()});
+  S.hist.push({n: who ? who.n : null, k: who ? who.k : null, t: who ? who.t : null, preset: preset.name, seed: used, r: rk, snap: M.snapshotChain()});
   S.hist = S.hist.slice(-24);
   renderStats();
 
