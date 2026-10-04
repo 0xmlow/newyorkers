@@ -561,6 +561,7 @@ function bindControls(canvas: HTMLCanvasElement) {
     if (e.key === 'Enter' && state.active >= 0 && shown[state.active] && !$('#detail').classList.contains('open')) openDetail(shown[state.active]);
     if (e.key === 'h' || e.key === 'H') home();
     if (e.key === 'r' || e.key === 'R') spin();
+    if (e.key === 'p' || e.key === 'P') takeSnap();
   });
   addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
   addEventListener('blur', () => keys.clear());
@@ -803,6 +804,8 @@ function animate(now: number) {
   renderer.info.autoReset = false;
   renderer.info.reset();
   if (fx) fx.render(); else renderer.render(scene, camera);
+  /* SNAP reads the canvas in the same task as the draw: without preserveDrawingBuffer the buffer is gone after compositing. */
+  if (snapWant) { snapWant = false; captureSnap(); }
   if (params.has('debug')) $('#debug').textContent = `calls ${renderer.info.render.calls} · tris ${(renderer.info.render.triangles / 1000).toFixed(0)}k · tex ${renderer.info.memory.textures} · geo ${renderer.info.memory.geometries}`;
 }
 
@@ -882,6 +885,7 @@ function loadRoom(openN?: string | null): Promise<void> {
         body: JSON.stringify({ kind: 'room', key: def.id }) }).catch(() => {});
     } catch { /* logged out, or offline: the museum does not care */ }
     $('#loading').classList.remove('show');
+    if (snapOnReady) { snapOnReady = false; setTimeout(takeSnap, 1500); }
     if (openN) {
       const p = P[indexOf.get(openN) ?? -1];
       if (p) openDetail(p);
@@ -1196,6 +1200,68 @@ function shareRoom() {
   share({ title: `${def.name} · THE MUSEUM · NEW YORKERS by MLow`, text: `I am standing in ${def.name} (${def.area}) in THE MUSEUM, ${ROOMS.length} walkable New York rooms hung with ${C.pieces.toLocaleString('en-US')} painted New Yorkers.`, url: roomUrl(state.room) });
 }
 
+/* ---------- SAVE IT, POST IT ---------- */
+/* MLow 2026-10-04: collectors save the view they are standing in and post it on X. X intents cannot carry
+   media, so SAVE hands over the picture and POST ON X carries the words and the link. Inside a minted
+   room token (a marketplace iframe) downloads are usually sandboxed, so SAVE opens the same room on the
+   site with #snap=1, which takes the picture there. */
+let snapWant = false;
+let snapBlob: Blob | null = null;
+let snapOnReady = /(^|[#&])snap=1(&|$)/.test(location.hash);
+const SITE = 'https://n3wyorkers.com';
+const framed = (() => { try { return window.top !== window; } catch { return true; } })();
+function takeSnap() { snapWant = true; }
+function captureSnap() {
+  if (!renderer) return;
+  const src = renderer.domElement;
+  const def = ROOMS[state.room];
+  const k = Math.min(1, 2400 / src.width);
+  const w = Math.round(src.width * k), h = Math.round(src.height * k), bar = Math.max(44, Math.round(w * 0.045));
+  const c = document.createElement('canvas'); c.width = w; c.height = h + bar;
+  const g = c.getContext('2d');
+  if (!g) return;
+  g.drawImage(src, 0, 0, w, h);
+  g.fillStyle = '#0d0d0d'; g.fillRect(0, h, w, bar);
+  const fs = Math.round(bar * 0.36), pad = Math.round(bar * 0.45), mid = h + bar / 2;
+  g.textBaseline = 'middle'; g.fillStyle = '#fff';
+  g.font = `800 ${fs}px "Space Grotesk", system-ui, sans-serif`;
+  g.textAlign = 'left'; g.fillText(def.name.toUpperCase(), pad, mid);
+  g.font = `500 ${Math.round(fs * 0.8)}px "IBM Plex Mono", ui-monospace, monospace`;
+  g.textAlign = 'right'; g.fillText('NEW YORKERS BY MLOW · N3WYORKERS.COM', w - pad, mid);
+  c.toBlob((b) => {
+    if (!b) { flash('TRY AGAIN'); return; }
+    snapBlob = b;
+    const img = $('#snapImg') as HTMLImageElement;
+    if (img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+    img.src = URL.createObjectURL(b);
+    img.alt = def.name + ', THE MUSEUM';
+    $('#snapTitle').textContent = def.name;
+    $('#snapNote').textContent = framed ? 'SAVE opens this room on n3wyorkers.com, where the download works.' : '';
+    if (!$('#snap').classList.contains('open')) openPanel('#snap');
+  }, 'image/png');
+}
+function snapFile() { return `new-yorkers-museum-${ROOMS[state.room].id}.png`; }
+async function snapSave() {
+  if (framed) { window.open(`${SITE}/museum#room=${ROOMS[state.room].id}&snap=1`, '_blank', 'noopener'); return; }
+  if (!snapBlob) return;
+  const file = new File([snapBlob], snapFile(), { type: 'image/png' });
+  const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean; share?: (d: { files: File[]; title?: string }) => Promise<void> };
+  if (touch && nav.canShare?.({ files: [file] }) && nav.share) {
+    try { await nav.share({ files: [file], title: ROOMS[state.room].name }); return; } catch (e) { if ((e as Error).name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(snapBlob); a.download = snapFile();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  flash('SAVED');
+}
+function snapPost() {
+  const def = ROOMS[state.room];
+  const text = `I AM STANDING IN ${def.name.toUpperCase()}\n\nTHE MUSEUM, ${ROOMS.length} walkable New York rooms by MLow 🗽`;
+  const url = `${SITE}/museum#room=${def.id}`;
+  window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'noopener');
+}
+
 /* ---------- the slot machine ---------- */
 let spinning = false;
 function spin(auto = false) {
@@ -1311,6 +1377,10 @@ function boot() {
   const enterSpin = $('#enterSpin') as HTMLButtonElement | null;
   if (enterSpin) enterSpin.onclick = () => { spinOnEnter = true; $('#enterBtn').click(); };
   $('#btnShare').onclick = shareRoom;
+  $('#btnSnap').onclick = takeSnap;
+  $('#snapSave').onclick = () => { snapSave(); };
+  $('#snapPost').onclick = snapPost;
+  $('#snapAgain').onclick = () => { closePanels(); setTimeout(takeSnap, 400); };
   $('#eggChip').onclick = () => { openPanel('#eggs'); paintEggList(); };
   $('#lostBtn').onclick = () => location.reload();
   if (!document.fullscreenEnabled) $('#btnFull').hidden = true;
@@ -1363,5 +1433,5 @@ function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
 }
 void frame;
-(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, openDetail, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, FACTS, ROOMS, DAY, HOUR };
+(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, openDetail, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, takeSnap, FACTS, ROOMS, DAY, HOUR };
 boot();
