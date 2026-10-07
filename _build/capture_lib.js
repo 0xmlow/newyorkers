@@ -1,7 +1,7 @@
 /* in-page capture helpers for stills and the film: deterministic frames, no rAF dependence */
 window.__cap = {
   async boot(w, h) {
-    const g = window.__game; await new Promise(r => { const t = setInterval(() => { if (!document.getElementById('go').disabled) { clearInterval(t); r(); } }, 200); });
+    const g = window.__game; await new Promise(r => { const t = setInterval(() => { if (!document.getElementById('go').disabled && window.__fontsReady) { clearInterval(t); r(); } }, 200); });
     document.getElementById('go').click(); g.state.started = true; window.__pauseLoop = true;
     ['hud', 'taskbar', 'toasts', 'cross', 'aim', 'prompt', 'startmenu'].forEach(i => { const e = document.getElementById(i); if (e) e.style.visibility = 'hidden'; });
     this.size(w, h); g.SCL.range = 9999; return { gl: (() => { const gl = g.renderer.getContext(), e = gl.getExtension('WEBGL_debug_renderer_info'); return e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : 'n/a'; })() };

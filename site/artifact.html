@@ -1,11 +1,12 @@
 <title>MEME ISLAND</title>
 <link rel="icon" href="assets/eye.png">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* MEME ISLAND 98: the interface is a Windows 98 desktop sitting on the island.
    One deliberate look in both themes: grey face, navy to Evil Eye Blue title bars, bevels, Tahoma. */
 :root{
   --face:#c0c0c0; --hi:#ffffff; --lite:#dfdfdf; --shade:#808080; --dark:#0a0a0a;
-  --title1:#000080; --title2:#2962FF; --tint:#ffffe1; --desk:#008080; --ink:#000000; --orange:#FF6B00; --field:#ffffff;
+  --title1:#000080; --title2:#2962FF; --blue2:#2962FF; --tint:#ffffe1; --desk:#008080; --ink:#000000; --orange:#FF6B00; --field:#ffffff;
   --ui:Tahoma,"MS Sans Serif","Microsoft Sans Serif",Geneva,Verdana,sans-serif;
   color-scheme:light;
 }
@@ -28,7 +29,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--desk);color:var(
 button.b{font:11px var(--ui);color:#000;background:var(--face);border:0;min-height:23px;padding:3px 9px;cursor:pointer;box-shadow:inset -1px -1px var(--dark),inset 1px 1px var(--hi),inset -2px -2px var(--shade),inset 2px 2px var(--lite)}
 button.b:active,button.b.on{box-shadow:inset 1px 1px var(--dark),inset -1px -1px var(--hi),inset 2px 2px var(--shade),inset -2px -2px var(--lite);background:repeating-conic-gradient(var(--face) 0 25%,var(--hi) 0 50%) 0 0/2px 2px}
 button.b:focus-visible{outline:1px dotted #000;outline-offset:-5px}
-button.b[disabled]{color:var(--shade);text-shadow:1px 1px var(--hi);cursor:default}
+button.b[disabled]{color:var(--ink);opacity:.5;cursor:default}
 .sunken{background:var(--field);box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade),inset -2px -2px var(--lite),inset 2px 2px var(--dark);padding:3px 5px}
 fieldset{border:0;margin:6px 0 0;padding:10px 7px 7px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade),inset -2px -2px var(--shade),inset 2px 2px var(--hi)}
 legend{padding:0 3px;background:var(--face)}
@@ -39,26 +40,26 @@ legend{padding:0 3px;background:var(--face)}
 #enter img.bb{width:100%;display:block;box-shadow:inset 0 0 0 1px var(--shade)}
 #enter .banner{background:linear-gradient(90deg,var(--title1),var(--title2));padding:8px 10px;display:flex;align-items:center;gap:10px;color:#fff}
 #enter .banner img{height:18px}
-#enter .banner b{font:400 22px Georgia,serif;letter-spacing:.5px}
+#enter .banner b{font:400 30px/1 'Instrument Serif',Georgia,serif;letter-spacing:.01em}
 #enter p{margin:0;line-height:1.5;font-size:12px}
 #enter .btns{display:flex;justify-content:flex-end;gap:6px}
 #go{min-width:96px;font-weight:700}
 #bar{height:18px;padding:2px}
 #bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--title1) 0 9px,transparent 9px 11px);transition:width .2s}
-.small{color:#333;font-size:11px}
+.small{color:var(--ink);font:400 11px/1.5 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em}
 /* the main window */
 #hud{position:fixed;left:12px;top:12px;z-index:10;width:300px;max-width:calc(100vw - 24px);max-height:calc(100vh - 64px);display:flex;flex-direction:column}
 #hud .body{padding:2px 4px 4px;overflow:auto}
 #hud .brand{background:var(--ink);padding:6px 8px;display:flex;align-items:center;justify-content:space-between;margin-top:2px}
 #hud .brand img{height:13px}
-#hud .brand span{color:#fff;font:400 15px Georgia,serif}
-#zone{margin-top:4px;font-weight:700;color:var(--title1);text-transform:uppercase}
+#hud .brand span{color:#fff;font:400 20px/1 'Instrument Serif',Georgia,serif;letter-spacing:.01em}
+#zone{margin-top:4px;font:700 15px/1.2 'Archivo Narrow',var(--ui);letter-spacing:.04em;color:var(--blue2);text-transform:uppercase}
 #stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 6px}
 #stats span{display:flex;justify-content:space-between;gap:4px}
 #stats b{font-weight:700;font-variant-numeric:tabular-nums}
-.clock{line-height:1.5;font-variant-numeric:tabular-nums}
-.clock b{color:var(--title1)}
-.clock .ev{color:#a00000;font-weight:700}
+.clock{font:400 11px/1.6 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.clock b{color:var(--blue2);font-weight:600}
+.clock .ev{color:var(--blue2);font-weight:600}
 #hud .row{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
 #hud .row .b{padding:3px 6px}
 .statusbar{display:flex;gap:2px;margin-top:3px}
@@ -73,7 +74,7 @@ legend{padding:0 3px;background:var(--face)}
 .tray{height:24px;display:flex;align-items:center;gap:8px;padding:0 8px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade);white-space:nowrap;font-variant-numeric:tabular-nums}
 #startmenu{position:fixed;left:2px;bottom:calc(31px + env(safe-area-inset-bottom,0px));z-index:31;display:flex;padding:3px;max-height:calc(100vh - 44px)}
 #startmenu .side{width:24px;background:linear-gradient(0deg,var(--title1),var(--title2));color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font:700 15px var(--ui);padding:6px 0;letter-spacing:.5px}
-#startmenu .side i{font-style:normal;font-weight:400;color:var(--lite)}
+#startmenu .side i{font-style:normal;font-weight:400;color:#fff}
 #startmenu .items{display:flex;flex-direction:column;min-width:200px;overflow:auto}
 #startmenu .items button,#tp button{all:unset;display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;cursor:pointer;font:11px var(--ui);color:#000}
 #startmenu .items button:hover,#tp button:hover,#startmenu .items button:focus-visible{background:var(--title1);color:#fff}
@@ -81,17 +82,17 @@ legend{padding:0 3px;background:var(--face)}
 #startmenu hr{border:0;margin:3px 2px;box-shadow:inset 0 1px var(--shade),inset 0 -1px var(--hi);height:2px}
 #tp{display:flex;flex-direction:column}
 #tp button::before{content:"\25B8";width:16px;text-align:center}
-.sub{font-weight:700;padding:4px 6px 2px;color:var(--shade)}
+.sub{font:600 10px 'IBM Plex Mono',Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:6px 6px 2px;color:var(--blue2)}
 /* crosshair, tooltips, balloons */
 #cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:9;pointer-events:none}
 #cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.35)}
 #cross:before{left:6px;top:0;width:2px;height:14px}#cross:after{top:6px;left:0;height:2px;width:14px}
-#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:var(--tint);border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
-#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:5px 10px;font-weight:700}
+#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:#fff;color:var(--ink);font:400 11px 'IBM Plex Mono',Menlo,monospace;border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:6px 12px;font:700 13px 'Archivo Narrow',var(--ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
 #toasts{position:fixed;right:10px;bottom:calc(40px + env(safe-area-inset-bottom,0px));z-index:32;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none;width:min(340px,calc(100vw - 20px))}
-.toast{background:var(--tint);border:1px solid #000;border-radius:7px;padding:7px 10px 7px 30px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
+.toast{background:#fff;color:var(--ink);font:600 11px/1.45 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em;border:1px solid #000;border-radius:7px;padding:8px 11px 8px 32px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
 .toast:before{content:"i";position:absolute;left:8px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--title1);color:#fff;font:700 10px/14px Georgia,serif;text-align:center}
-.toast.blue:before{background:var(--orange);content:"!"}
+.toast.blue:before{background:var(--ink);content:"!"}
 @keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.toast{animation:none}}
 #help{display:block}
@@ -102,15 +103,15 @@ legend{padding:0 3px;background:var(--face)}
 #modal .art{flex:0 0 42%;display:flex;align-items:flex-start;justify-content:center}
 #modal .art canvas,#modal .art img{width:100%;height:auto;box-shadow:inset 0 0 0 1px var(--shade)}
 #modal .txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
-#modal h2{font:400 20px Georgia,serif;margin:0}
-#modal .meta{line-height:1.6}
+#modal h2{font:400 30px/1.1 'Instrument Serif',Georgia,serif;margin:0;color:var(--ink)}
+#modal .meta{font:400 11px/1.7 'IBM Plex Mono',Menlo,monospace;letter-spacing:.03em;color:var(--ink)}
 #modal .d{font-size:12px;line-height:1.5;-webkit-user-select:text;user-select:text}
-#modal a{color:#0000ee}
+#modal a{color:var(--blue2)}
 #modal .x{display:flex;justify-content:flex-end;margin-top:auto}
 #crash{z-index:60;background:rgba(0,128,128,.35)}
 #crash .win{width:min(460px,100%)}
 #crash .cb{display:flex;gap:12px;padding:12px}
-#crash .stop{flex:0 0 32px;height:32px;border-radius:50%;background:#e00000;color:#fff;font:700 20px/32px var(--ui);text-align:center;box-shadow:inset -2px -2px rgba(0,0,0,.3)}
+#crash .stop{flex:0 0 32px;height:32px;border-radius:50%;background:var(--blue2);color:#fff;font:700 20px/32px var(--ui);text-align:center;box-shadow:inset -2px -2px rgba(0,0,0,.3)}
 #crash pre{white-space:pre-wrap;word-break:break-word;margin:6px 0 0;max-height:160px;overflow:auto;font:11px "Courier New",monospace;-webkit-user-select:text;user-select:text}
 @media (max-width:640px){#modal .mbody{flex-direction:column}#modal .art{flex:none}#hud{width:calc(100vw - 24px);max-height:45vh}#hud .menubar{display:none}.tray #trayWx{display:none}}
 #chat{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);z-index:33;display:none;width:min(440px,calc(100vw - 32px))}
@@ -585,20 +586,51 @@ function collide(p, feet) {
 }
 
 /* ---------------- signs: Abloh owns all text ---------------- */
-function signCanvas(lines, w, h, bg, fg) {
-  const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
-  if (bg) { c.fillStyle = bg; c.fillRect(0, 0, w, h); }
-  const total = lines.reduce((s, l) => s + (l.s || 0.3) * h * 1.18, 0); let y = (h - total) / 2;
-  lines.forEach(l => {
-    const sz = (l.s || 0.3) * h; c.font = `${l.b === false ? '400' : '700'} ${sz}px ${l.f || '"Helvetica Neue",Helvetica,Arial,sans-serif'}`;
-    let fs = sz; while (c.measureText(l.t).width > w * 0.9 && fs > 8) { fs *= 0.92; c.font = `${l.b === false ? '400' : '700'} ${fs}px ${l.f || '"Helvetica Neue",Helvetica,Arial,sans-serif'}`; }
-    c.fillStyle = l.c || fg || '#F0F4F8'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(l.t, w / 2, y + sz * 0.59); y += sz * 1.18;
+/* typography: Archivo Narrow for plaque titles, IBM Plex Mono for the small print, Instrument Serif for the
+   display moments. Text is only ever Evil Eye Blue, Ink or white; the plate decides which of them reads. */
+const TYPE = { title: '"Archivo Narrow","Helvetica Neue",Arial,sans-serif', mono: '"IBM Plex Mono",Menlo,monospace', serif: '"Instrument Serif",Georgia,serif' };
+const TXT = { blue: '#2962FF', ink: '#0D0D0D', white: '#FFFFFF' };
+const lum = hex => { const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex || ''); if (!m) return 0; let h = m[1]; if (h.length === 3) h = h.split('').map(x => x + x).join(''); const v = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+function textColor(c, bg, accent) {
+  const dark = bg ? lum(bg) < 0.45 : true, blueBg = bg && /2962ff/i.test(bg);
+  if (!c) return dark ? TXT.white : TXT.ink;
+  const k = c.toLowerCase();
+  if (k === '#2962ff') return blueBg ? TXT.white : TXT.blue;
+  if (k === '#0d0d0d' || k === '#000' || k === '#000000') return TXT.ink;
+  if (k === '#ffffff' || k === '#fff' || k === '#f0f4f8') return dark ? TXT.white : TXT.ink;
+  if (k === '#ff6b00' || accent) return blueBg ? TXT.white : (bg && /ff6b00|ff7a1a|ffd400/i.test(bg)) ? TXT.ink : TXT.blue;
+  return dark ? TXT.white : TXT.ink; // greys, browns, creams: the plate decides
+}
+const SIGNS = [];
+function signCanvas(lines, w, h, bg, fg, cv) {
+  cv = cv || document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
+  c.clearRect(0, 0, w, h); if (bg) { c.fillStyle = bg; c.fillRect(0, 0, w, h); }
+  const plate = !!bg && h >= 160 && lines.length > 1 && !/2962ff|ff6b00|ffd400|ffffff/i.test(bg);
+  if (plate) { const m = Math.round(h * 0.045); c.strokeStyle = lum(bg) < 0.45 ? 'rgba(255,255,255,0.9)' : TXT.ink; c.lineWidth = Math.max(2, h * 0.006); c.strokeRect(m, m, w - 2 * m, h - 2 * m); }
+  const style = (l, i) => { const serif = /georgia|serif/i.test(l.f || '') && !/courier|mono/i.test(l.f || ''), mono = /courier|mono/i.test(l.f || '') || (l.b === false && !serif) || (i > 0 && !serif && !l.f);
+    return serif ? { fam: TYPE.serif, wt: '400', sp: 0, up: false } : mono ? { fam: TYPE.mono, wt: i > 0 && l.b !== false ? '600' : '400', sp: 0.08, up: true } : { fam: TYPE.title, wt: '700', sp: 0.02, up: true }; };
+  const sized = lines.map((l, i) => { const st = style(l, i); let sz = (l.s || 0.3) * h * (st.fam === TYPE.mono ? 0.86 : st.fam === TYPE.serif ? 1.12 : 1.06); const t = st.up ? l.t.toUpperCase() : l.t;
+    const font = f => `${st.wt} ${f}px ${st.fam}`; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px';
+    while (c.measureText(t).width > w * (plate ? 0.84 : 0.9) && sz > 8) { sz *= 0.94; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px'; }
+    return { l, i, st, t, sz, font: font(sz), lead: st.fam === TYPE.mono ? 1.5 : 1.1 }; });
+  const rule = plate && sized.length > 1 ? h * 0.05 : 0, total = sized.reduce((a, x) => a + x.sz * x.lead, 0) + rule; let y = (h - total) / 2;
+  sized.forEach((x, k) => {
+    c.font = x.font; if ('letterSpacing' in c) c.letterSpacing = (x.st.sp * x.sz) + 'px'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillStyle = textColor(x.l.c || (k === 0 ? fg : null), bg, x.l.c === '#FF6B00'); c.fillText(x.t, w / 2, y + x.sz * x.lead / 2); y += x.sz * x.lead;
+    if (k === 0 && rule) { c.fillStyle = TXT.blue; const rw = Math.min(w * 0.18, 220); c.fillRect((w - rw) / 2, y + rule * 0.25, rw, Math.max(3, h * 0.012)); y += rule; }
   });
   return cv;
 }
 function signTex(lines, w = 1024, h = 512, bg = '#0D0D0D', fg) {
-  const t = new THREE.CanvasTexture(signCanvas(lines, w, h, bg, fg)); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t;
+  const cv = signCanvas(lines, w, h, bg, fg), t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  SIGNS.push({ cv, t, lines, w, h, bg, fg }); return t;
 }
+/* the web fonts arrive after the first draw: redraw every sign once they are in */
+if (document.fonts && document.fonts.load) Promise.all(['700 40px "Archivo Narrow"', '400 40px "IBM Plex Mono"', '600 40px "IBM Plex Mono"', '400 40px "Instrument Serif"'].map(f => document.fonts.load(f))).then(() => {
+  SIGNS.forEach(s => { signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; });
+  try { LHS.cur = -1; MINTSIGN.redraw && MINTSIGN.redraw(); COD.redraw && SKY.t && COD.redraw(SKY.t); WHALE.draw && WHALE.draw(WHALE.on ? 'ONE WHALE' : 'NO WHALES'); } catch (e) { }
+  window.__fontsReady = true;
+}).catch(() => { window.__fontsReady = true; });
 function plane(W, H, mat, x, y, z, ry = 0, rx = 0) {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat); m.position.set(x, y, z); m.rotation.set(rx, ry, 0, 'YXZ'); scene.add(m); return m;
 }
@@ -795,7 +827,7 @@ let vaultDoors = null, vaultSeg = null, lhBeam = null, lhScreen = null, lhScreen
   const hon = new THREE.MeshBasicMaterial({ map: tex('assets/honorary6529.jpg'), toneMapped: false });
   box(5.6, 3.3, 0.12, MAT.gold, x, g0 + 2.75, z - d / 2 + 0.55); plane(5.3, 2.96, hon, x, g0 + 2.75, z - d / 2 + 0.63);
   const honPick = plane(5.3, 2.96, new THREE.MeshBasicMaterial({ visible: false }), x, g0 + 2.75, z - d / 2 + 0.64); honPick.userData.honorary = true; PICK_EXTRA.push(honPick);
-  sign([{ t: 'Cards on the Bridge, for Punk6529', s: 0.22, f: 'Georgia,serif', b: false }, { t: 'NEW YORKERS HONORARY · MLow, 2026', s: 0.13, c: '#9ab' }], x, z - d / 2 + 0.63, 0, 2.6, 0.5, { y: g0 + 0.75, post: false });
+  sign([{ t: 'Cards on the Bridge, for Punk6529', s: 0.22, f: 'Georgia,serif', b: false }, { t: 'NEW YORKERS HONORARY · MLow, 2026', s: 0.13, c: '#2962FF' }], x, z - d / 2 + 0.63, 0, 2.6, 0.5, { y: g0 + 0.75, post: false });
   practical(x, g0 + 4.6, z - 1, 0xfff1d6, 14, 12).userData.alwaysOn = 0.7;
   const vk = G('Not Your Keys').concat(G('Use a Hardware Wallet')); let i = 0; const ch = 1.15;
   const backX = [-6.9, -5.3, -3.7, 3.7, 5.3, 6.9];
@@ -907,7 +939,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
   // GM cards on stakes along the beach, facing the sea and the sunrise
   const gm = G('GM'); gm.forEach((n, i) => { let a = 147 + i * 66 / (gm.length - 1); if (Math.abs(a - 180) < 3.2) a += a < 180 ? -3.2 : 3.2; const [x, z] = P2(a, 124), gg = ground(x, z);
     cyl(0.05, 0.05, 1.3, MAT.wood, x, gg + 0.6, z, 6); hang('meme', n, x, gg + 1.3 + 0.8, z, PI - a * PI / 180, 1.6); post(x, z, 0.3); });
-  const gmT = new THREE.MeshBasicMaterial({ map: signTex([{ t: 'gm', s: 0.8, f: 'Georgia,serif', b: false, c: '#6b4a2a' }], 512, 256, null), transparent: true, depthWrite: false });
+  const gmT = new THREE.MeshBasicMaterial({ map: signTex([{ t: 'gm', s: 0.8, f: 'Georgia,serif', b: false, c: '#0D0D0D' }], 512, 256, null), transparent: true, depthWrite: false });
   plane(10, 5, gmT, 18, ground(18, 126) + 0.04, 126, 0, -PI / 2);
   sign([{ t: Q('GM BEACH'), s: 0.4 }, { t: 'GM IS A RENEWABLE RESOURCE. TYPE IT.', s: 0.14, b: false }], -9, 121, PI, 3.4, 1.4);
   sign([{ t: Q('ARRIVALS'), s: 0.42 }, { t: 'MANHATTAN IS THE SMALL ISLAND OVER THERE.', s: 0.13, b: false }], 2.6, 164, -0.5, 2.4, 1.05, { y: 2.6, post: false });
@@ -1020,7 +1052,7 @@ const BANK = { x: -66, z: 0, door: [-57, 0] };
   box(4, 0.8, d + 1, MAT.bankstone, cx + w / 2 + 2, g + h + 0.3, cz);
   const ped = new THREE.Shape(); ped.moveTo(-d / 2 - 0.5, 0); ped.lineTo(d / 2 + 0.5, 0); ped.lineTo(0, 3.2); ped.closePath();
   const pg = new THREE.ExtrudeGeometry(ped, { depth: 4, bevelEnabled: false }); const pm = new THREE.Mesh(pg, MAT.bankstone); pm.rotation.y = PI / 2; pm.position.set(cx + w / 2, g + h + 0.7, cz); pm.castShadow = true; scene.add(pm);
-  sign([{ t: 'FIRST NATIONAL BANK OF JPGs', s: 0.45, f: 'Georgia,serif', b: false, c: '#3a3a3a' }], cx + w / 2 + 4.02, cz, PI / 2, 14, 0.9, { y: g + h + 0.3, post: false, bg: '#F0EFEA' });
+  sign([{ t: 'FIRST NATIONAL BANK OF JPGs', s: 0.45, f: 'Georgia,serif', b: false, c: '#0D0D0D' }], cx + w / 2 + 4.02, cz, PI / 2, 14, 0.9, { y: g + h + 0.3, post: false, bg: '#F0EFEA' });
   sign([{ t: Q('INSTITUTIONAL ADOPTION'), s: 0.26 }, { t: 'PERSONAL BELONGINGS MISSING. YOUR JPG IS IMPORTANT TO OUR COLLECTION.', s: 0.1, b: false }], cx + w / 2 + 7, cz - 11, PI / 2, 4, 1.5);
   const ids = G("Don't Let"); ids.forEach((n, i) => { if (i < 7) hang('meme', n, cx - w / 2 + 0.36, g + 2.6, cz - 6 + i * 2, PI / 2, 1.7); else hang('meme', n, cx - 5 + (i - 7) * 2, g + 2.6, cz - d / 2 + 0.36, 0, 1.7); });
   // private viewing room: frames only
@@ -1059,7 +1091,7 @@ let crane = null; const openWall = [];
   // OPEN WALL: hoarding with twelve empty frames
   const wx0 = -58, wx1 = -44, wz = -34, wg = ground(-51, wz);
   box(wx1 - wx0 + 1, 5.2, 0.3, MAT.wood, (wx0 + wx1) / 2, wg + 2.6, wz - 0.2, 0, 1.4); wall(wx0 - 0.5, wz - 0.2, wx1 + 0.5, wz - 0.2);
-  const ph = signTex([{ t: Q('YOUR MEME HERE'), s: 0.16 }, { t: 'aim + H, or drop a file', s: 0.08, b: false, c: '#888' }], 512, 512, '#151515');
+  const ph = signTex([{ t: Q('YOUR MEME HERE'), s: 0.16 }, { t: 'aim + H, or drop a file', s: 0.08, b: false, c: '#2962FF' }], 512, 512, '#151515');
   for (let i = 0; i < 12; i++) {
     const x = wx0 + 0.6 + (i % 6) * 2.35, y = wg + 1.45 + Math.floor(i / 6) * 2.35;
     box(2.15, 2.15, 0.08, MAT.ink, x, y, wz - 0.02, 0, 0, false);
@@ -1265,7 +1297,7 @@ const RIDE = { on: false, t: 0, dur: 26, a0: 0 };
   g.userData.tail = tail; g.position.set(26, -6, 160); scene.add(g); WHALE.g = g;
   WHALE.cv = document.createElement('canvas'); WHALE.cv.width = 512; WHALE.cv.height = 256; WHALE.tex = new THREE.CanvasTexture(WHALE.cv); WHALE.tex.encoding = THREE.sRGBEncoding;
   WHALE.sign = plane(2.4, 1.2, new THREE.MeshBasicMaterial({ map: WHALE.tex, toneMapped: false }), 4.6, 2.2, 140, -PI / 2);
-  WHALE.draw = t => { const c = WHALE.cv.getContext('2d'); c.drawImage(signCanvas([{ t: 'WHALE ALERT', s: 0.22, c: '#FF6B00' }, { t, s: 0.3 }], 512, 256, '#0D0D0D'), 0, 0); WHALE.tex.needsUpdate = true; };
+  WHALE.draw = t => { const c = WHALE.cv.getContext('2d'); c.drawImage(signCanvas([{ t: 'WHALE ALERT', s: 0.22, c: '#2962FF' }, { t, s: 0.3 }], 512, 256, '#0D0D0D'), 0, 0); WHALE.tex.needsUpdate = true; };
   WHALE.draw('NO WHALES');
   // touch grass: an orange ring on the open lawn
   const tg = [24, -14], gg = ground(...tg); TOUCH.x = tg[0]; TOUCH.z = tg[1];
@@ -1421,14 +1453,14 @@ const COD = { mesh: null, cv: null, tex: null, redraw: () => { } };
   box(2.6, 3.8, 0.08, MAT.ink, x, g + 2.75, z + 0.02, 0, 0, false);
   COD.cv = document.createElement('canvas'); COD.cv.width = 1024; COD.cv.height = 300; COD.tex = new THREE.CanvasTexture(COD.cv); COD.tex.encoding = THREE.sRGBEncoding;
   plane(2.6, 0.76, new THREE.MeshBasicMaterial({ map: COD.tex, toneMapped: false }), x, g + 5.1, z + 0.02, 0);
-  COD.redraw = t => { const c = COD.cv.getContext('2d'), card = byN[CAL.cod]; c.drawImage(signCanvas([{ t: Q('CARD OF THE DAY'), s: 0.3 }, { t: DAYS[t.wd] + ' · CARD ' + card.n + ' · ' + card.t.toUpperCase(), s: 0.13, c: '#FF6B00' }, { t: 'A NEW ONE EVERY MIDNIGHT IN NEW YORK', s: 0.1, b: false }], 1024, 300, '#0D0D0D'), 0, 0); COD.tex.needsUpdate = true; };
+  COD.redraw = t => { const c = COD.cv.getContext('2d'), card = byN[CAL.cod]; c.drawImage(signCanvas([{ t: Q('CARD OF THE DAY'), s: 0.3 }, { t: DAYS[t.wd] + ' · CARD ' + card.n + ' · ' + card.t.toUpperCase(), s: 0.13, c: '#2962FF' }, { t: 'A NEW ONE EVERY MIDNIGHT IN NEW YORK', s: 0.1, b: false }], 1024, 300, '#0D0D0D'), 0, 0); COD.tex.needsUpdate = true; };
 })();
 /* mint day sign at the factory */
 const MINTSIGN = { redraw: null };
 (function () {
   const x = 5, z = -47.6, g = ground(x, z), cv = document.createElement('canvas'); cv.width = 1024; cv.height = 340; const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
   plane(3.4, 1.13, new THREE.MeshBasicMaterial({ map: t, toneMapped: false }), x, g + 2.4, z, 0); box(3.46, 1.19, 0.04, MAT.ink, x, g + 2.4, z - 0.03, 0, 0, false); cyl(0.06, 0.06, 1.85, MAT.orange, x, g + 0.92, z - 0.05, 8);
-  MINTSIGN.redraw = () => { cv.getContext('2d').drawImage(signCanvas(CAL.mint ? [{ t: Q('MINT DAY'), s: 0.34, c: '#FF6B00' }, { t: 'MONDAY WEDNESDAY FRIDAY. THE BELT RUNS FAST.', s: 0.12 }, { t: 'NEW CARDS DROP ON SEIZE.IO, NOT HERE', s: 0.1, b: false }] : [{ t: Q('NOT A MINT DAY'), s: 0.3 }, { t: 'SEIZE ANYWAY.', s: 0.16, c: '#FF6B00' }, { t: 'MINTS: MONDAY, WEDNESDAY, FRIDAY', s: 0.1, b: false }], 1024, 340, '#0D0D0D'), 0, 0); t.needsUpdate = true; };
+  MINTSIGN.redraw = () => { cv.getContext('2d').drawImage(signCanvas(CAL.mint ? [{ t: Q('MINT DAY'), s: 0.34, c: '#2962FF' }, { t: 'MONDAY WEDNESDAY FRIDAY. THE BELT RUNS FAST.', s: 0.12 }, { t: 'NEW CARDS DROP ON SEIZE.IO, NOT HERE', s: 0.1, b: false }] : [{ t: Q('NOT A MINT DAY'), s: 0.3 }, { t: 'SEIZE ANYWAY.', s: 0.16, c: '#2962FF' }, { t: 'MINTS: MONDAY, WEDNESDAY, FRIDAY', s: 0.1, b: false }], 1024, 340, '#0D0D0D'), 0, 0); t.needsUpdate = true; };
 })();
 
 /* pumpkins for Spooky SZN (October), lit at night */

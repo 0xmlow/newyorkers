@@ -1,0 +1,64 @@
+== stills
+boot {'gl': 'ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)'}
+sculptures loaded 66
+01_arrivals 14.1 s
+02_great_wave 9.1 s
+03_floor_mountain 15.3 s
+04_sculpture_rows 13.0 s
+05_factory_seize 8.8 s
+06_brain 10.9 s
+07_lighthouse 6.3 s
+08_vault 6.2 s
+09_open_metaverse_portal 6.0 s
+10_wagmi_wheel 9.9 s
+11_survive_bunker 4.9 s
+12_survive_row 15.1 s
+13_bank 7.8 s
+14_summer_jpg 12.4 s
+15_census_walk 5.4 s
+16_bodega 8.7 s
+17_gm_beach_dawn 11.2 s
+18_colossus 4.4 s
+19_aerial_golden 8.3 s
+20_aerial_night 22.4 s
+21_fireworks 3.3 s
+22_harbor_fog 9.0 s
+23_rain 4.2 s
+24_snow 15.3 s
+== film
+boot {'gl': 'ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)'}
+sculptures 66
+00 arrivals 300 frames 32s
+01 great wave 270 frames 29s
+02 floor mountain 300 frames 57s
+03 sculpture rows 270 frames 36s
+04 factory 240 frames 28s
+05 brain 270 frames 37s
+06 lighthouse 330 frames 30s
+07 vault 240 frames 28s
+08 open metaverse portal 210 frames 22s
+09 wagmi wheel 300 frames 41s
+10 survive bunker 270 frames 38s
+11 bank 240 frames 25s
+12 summer.jpg 240 frames 34s
+13 census walk 270 frames 27s
+14 bodega 180 frames 28s
+15 gm beach 240 frames 33s
+16 colossus 300 frames 25s
+17 aerial 420 frames 66s
+18 harbour night 270 frames 33s
+wrote /Users/degens/Desktop/NEW YORKERS BY MLOW/MEME ISLAND 2026-10-07/_build/../DELIVERABLES/film/meme_island_film_video.mp4 306859 KB
+wrote /Users/degens/Desktop/NEW YORKERS BY MLOW/MEME ISLAND 2026-10-07/_build/../DELIVERABLES/film/meme_island_film.mp4 311245 KB
+== hype
+score window starts 16 s, cut length 37.1 s
+wrote /Users/degens/Desktop/NEW YORKERS BY MLOW/MEME ISLAND 2026-10-07/_build/../DELIVERABLES/hype/meme_island_hype.mp4 66037 KB
+
+WARNING: loop seam visible (diff 9.5) — fix the loop before exporting; every platform variant inherits the seam.
+== glb
+Traceback (most recent call last):
+  File "/Users/degens/Desktop/NEW YORKERS BY MLOW/MEME ISLAND 2026-10-07/_build/export_glb.py", line 20, in <module>
+    p.eval('__game.SCL.dir = "sculpt"'); print('boot', p.eval('__cap.boot(1280,720)')); print('sculptures', p.eval('__cap.loadAll()', timeout=900))
+  File "/Users/degens/Desktop/NEW YORKERS BY MLOW/MEME ISLAND 2026-10-07/_build/cdp.py", line 45, in eval
+    raise RuntimeError(ex.get('exception', {}).get('description') or ex.get('text'))
+RuntimeError: ReferenceError: __game is not defined
+    at <anonymous>:1:1

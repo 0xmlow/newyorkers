@@ -12,9 +12,18 @@ from cdp import Page
 H = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(H, '..', 'DELIVERABLES', 'film'); os.makedirs(OUT, exist_ok=True)
 W, HH, FPS = 1920, 1080, 30
 FF = 'ffmpeg'
-HELV = lambda s, i=1: ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc', s, index=i)
-GEO = lambda s: ImageFont.truetype('/System/Library/Fonts/Supplemental/Georgia.ttf', s)
-INK, CLOUD, BLUE, ORANGE = (13, 13, 13), (240, 244, 248), (41, 98, 255), (255, 107, 0)
+TT = os.path.join(H, 'cache', 'ttf')
+NARROW = lambda s: ImageFont.truetype(os.path.join(TT, 'ArchivoNarrow-700.ttf'), s)
+MONO = lambda s, w=400: ImageFont.truetype(os.path.join(TT, f'IBMPlexMono-{w}.ttf'), s)
+SERIF = lambda s: ImageFont.truetype(os.path.join(TT, 'InstrumentSerif-400.ttf'), s)
+def tracked(d, xy, text, font, fill, track=0.0, anchor_center=False, width=None):
+    # draw with letter spacing; returns the drawn width
+    x, y = xy; sp = font.size * track; w = sum(d.textlength(ch, font=font) for ch in text) + sp * max(0, len(text) - 1)
+    if anchor_center: x = (width - w) / 2
+    for ch in text: d.text((x, y), ch, font=font, fill=fill); x += d.textlength(ch, font=font) + sp
+    return w
+def twidth(d, text, font, track=0.0): return sum(d.textlength(ch, font=font) for ch in text) + font.size * track * max(0, len(text) - 1)
+INK, WHITE, BLUE = (13, 13, 13), (255, 255, 255), (41, 98, 255)
 D = (2026, 10, 7)
 # rail name, local time, weather, prep js, title, line
 SEGS = [
@@ -47,32 +56,39 @@ EYE = rgba(os.path.join(H, 'cache', 'eye_truecolor.png'), int(HH * 0.07))
 EYE.putalpha(EYE.split()[3].point(lambda a: int(a * 0.35)))
 
 def caption(im, title, line, k):
-    """Abloh plaque, lower left: black plate, white quoted title, orange line. k is 0..1 for the slide in."""
+    """Gallery plaque, lower left: ink plate, white hairline, white condensed caps title, blue rule, blue mono line."""
     if k <= 0: return
-    ft, fl = HELV(54), HELV(24, 0)
-    d0 = ImageDraw.Draw(im); tw = max(d0.textlength(title, font=ft), d0.textlength(line, font=fl)) + 64
-    plate = Image.new('RGBA', (int(tw), 132), INK + (int(225 * k),)); d = ImageDraw.Draw(plate)
-    d.text((32, 20), title, font=ft, fill=(255, 255, 255, int(255 * k))); d.text((32, 88), line, font=fl, fill=ORANGE + (int(255 * k),))
-    x = 72 - int((1 - k) * 40); im.alpha_composite(plate, (x, HH - 132 - 84))
+    ft, fl = NARROW(62), MONO(24, 600); d0 = ImageDraw.Draw(im)
+    tw = int(max(twidth(d0, title, ft, 0.02), twidth(d0, line, fl, 0.1)) + 88)
+    plate = Image.new('RGBA', (tw, 168), INK + (int(232 * k),)); d = ImageDraw.Draw(plate)
+    d.rectangle((7, 7, tw - 8, 160), outline=WHITE + (int(220 * k),), width=2)
+    tracked(d, (44, 22), title, ft, WHITE + (int(255 * k),), 0.02)
+    d.rectangle((44, 98, 44 + 70, 102), fill=BLUE + (int(255 * k),))
+    tracked(d, (44, 116), line, fl, BLUE + (int(255 * k),), 0.1)
+    x = 72 - int((1 - k) * 40); im.alpha_composite(plate, (x, HH - 168 - 72))
 
 def brand(im, t_in_film):
     im.alpha_composite(EYE, (W - EYE.width - int(W * 0.03), HH - EYE.height - int(HH * 0.03)))
-    d = ImageDraw.Draw(im); d.text((72, 56), 'MEME ISLAND', font=HELV(20), fill=(255, 255, 255, 200))
+    d = ImageDraw.Draw(im); tracked(d, (72, 56), 'MEME ISLAND', MONO(18, 600), WHITE + (220,), 0.18)
 
 def title_card(u):
     im = Image.new('RGBA', (W, HH), INK + (255,)); d = ImageDraw.Draw(im)
     a = min(1, u * 2.5) * min(1, (1 - u) * 4)
-    lg = LOGO.copy(); lg.putalpha(lg.split()[3].point(lambda v: int(v * a))); im.alpha_composite(lg, ((W - lg.width) // 2, HH // 2 - 190))
-    f = GEO(150); s = 'MEME ISLAND'; d.text(((W - d.textlength(s, font=f)) / 2, HH // 2 - 90), s, font=f, fill=(255, 255, 255, int(255 * a)))
-    f2 = HELV(26, 0); s2 = '527 MEMES  ·  66 SCULPTURES  ·  ONE ISLAND'; d.text(((W - d.textlength(s2, font=f2)) / 2, HH // 2 + 110), s2, font=f2, fill=CLOUD + (int(230 * a),))
+    lg = LOGO.copy(); lg.putalpha(lg.split()[3].point(lambda v: int(v * a))); im.alpha_composite(lg, ((W - lg.width) // 2, HH // 2 - 210))
+    f = SERIF(190); s = 'MEME ISLAND'; d.text(((W - d.textlength(s, font=f)) / 2, HH // 2 - 120), s, font=f, fill=WHITE + (int(255 * a),))
+    d.rectangle((W // 2 - 50, HH // 2 + 108, W // 2 + 50, HH // 2 + 112), fill=BLUE + (int(255 * a),))
+    tracked(d, (0, HH // 2 + 136), '527 MEMES  ·  66 SCULPTURES  ·  ONE ISLAND', MONO(22, 600), BLUE + (int(255 * a),), 0.14, True, W)
     return im
 
 def end_card(u):
     im = Image.new('RGBA', (W, HH), INK + (255,)); d = ImageDraw.Draw(im); a = min(1, u * 3)
-    lines = [(GEO(120), 'MEME ISLAND', (255, 255, 255), -160), (HELV(28, 0), 'THE MEMES BY 6529  ×  NEW YORKERS BY MLOW', CLOUD, 10), (HELV(24, 0), 'A WALKABLE ISLAND THAT KEEPS NEW YORK TIME', (136, 153, 170), 60), (HELV(34), 'n3wyorkers.com', BLUE, 160)]
-    for i, (f, s, c, dy) in enumerate(lines):
-        k = max(0, min(1, (u - i * 0.08) * 4)); d.text(((W - d.textlength(s, font=f)) / 2, HH // 2 + dy + (1 - k) * 20), s, font=f, fill=c + (int(255 * k * a),))
-    lg = LOGO.copy(); lg.putalpha(lg.split()[3].point(lambda v: int(v * a))); im.alpha_composite(lg, ((W - lg.width) // 2, HH // 2 + 240))
+    k = lambda i: max(0, min(1, (u - i * 0.08) * 4))
+    f = SERIF(160); s = 'MEME ISLAND'; d.text(((W - d.textlength(s, font=f)) / 2, HH // 2 - 250 + (1 - k(0)) * 20), s, font=f, fill=WHITE + (int(255 * k(0) * a),))
+    d.rectangle((W // 2 - 50, HH // 2 - 40, W // 2 + 50, HH // 2 - 36), fill=BLUE + (int(255 * k(1) * a),))
+    tracked(d, (0, HH // 2 - 6 + (1 - k(1)) * 20), 'THE MEMES BY 6529  ×  NEW YORKERS BY MLOW', NARROW(40), WHITE + (int(255 * k(1) * a),), 0.04, True, W)
+    tracked(d, (0, HH // 2 + 58 + (1 - k(2)) * 20), 'A WALKABLE ISLAND THAT KEEPS NEW YORK TIME', MONO(20), WHITE + (int(235 * k(2) * a),), 0.14, True, W)
+    tracked(d, (0, HH // 2 + 128 + (1 - k(3)) * 20), 'n3wyorkers.com', MONO(34, 600), BLUE + (int(255 * k(3) * a),), 0.04, True, W)
+    lg = LOGO.copy(); lg.putalpha(lg.split()[3].point(lambda v: int(v * a * k(4)))); im.alpha_composite(lg, ((W - lg.width) // 2, HH // 2 + 230))
     return im
 
 def main():

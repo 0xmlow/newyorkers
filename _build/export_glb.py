@@ -15,7 +15,12 @@ class Sink(http.server.BaseHTTPRequestHandler):
         self.send_response(200); self._cors(); self.end_headers(); self.wfile.write(b'ok')
     def log_message(self, *a): pass
 srv = http.server.ThreadingHTTPServer(('127.0.0.1', 8749), Sink); threading.Thread(target=srv.serve_forever, daemon=True).start()
-p = Page.open('http://127.0.0.1:4207/index.html?glb=1', 1280, 720); time.sleep(4)
+p = Page.open('http://127.0.0.1:4207/index.html?glb=1', 1280, 720)
+for _ in range(60):
+    time.sleep(1)
+    try:
+        if p.eval('!!window.__game'): break
+    except Exception: pass
 p.eval(open(os.path.join(H, 'capture_lib.js')).read()); p.eval(open(os.path.join(H, 'export_lib.js')).read())
 p.eval('__game.SCL.dir = "sculpt"'); print('boot', p.eval('__cap.boot(1280,720)')); print('sculptures', p.eval('__cap.loadAll()', timeout=900))
 p.eval('__cap.set([2026,10,7,16,0], null, ""); __cap.settle(60)')
