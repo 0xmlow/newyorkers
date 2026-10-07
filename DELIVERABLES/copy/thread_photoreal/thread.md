@@ -1,7 +1,7 @@
 # MEME ISLAND, the photoreal film: X thread
 
 Post from @degens. 22 posts plus a reply. Every post has at least one image; files are numbered in `upload/`
-(`05a`, `05b` are both for post 5, in that order). X allows four images a post. All posts are under 280 characters
+(`06a`, `06b` are both for post 6, in that order). X allows four images a post. All posts are under 280 characters
 and scored with degens-tweet (72 to 78, the ceiling for these types on your history). Links only in the reply.
 
 ---
