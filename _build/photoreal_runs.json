@@ -1,0 +1,106 @@
+{
+ "pilot": {
+  "flux_seg00": "run_m175qk9eknk8vpcpg2jykrh2fh8ft7hh",
+  "kling_o3_seg00": "run_m175a88t5axt51yesqx72r3nd98ft7qc",
+  "lucy_seg00": "run_m179q75nkwdsn8ygf1pqybq7ex8fvqg4",
+  "krea_flux_s00_5s": "92ec3333-5757-4518-ba1e-6cab04402f69"
+ },
+ "flux": {
+  "1": "run_m1706kj60zdt9h5rgbre7py56x8ft02y",
+  "2": "run_m17aqzjbkh8zyqxxrthq1pkc6s8fv34r",
+  "3": "run_m17bvmed1awbe4qm01k511g1698fv13s",
+  "4": "run_m17020wj1h7prj2mg462cb27vx8fteeh",
+  "5": "run_m1781nbew4ny8gm2e58nn5r58s8fvc51",
+  "6": "run_m1777t4g9kaqnbn7ffz06ncgq98ftcb7",
+  "7": "run_m173hcjkqwz87e87wgm8dd8e258ft7m8",
+  "8": "run_m176a4mwqhdgvda20n5szezpph8fvf9y",
+  "9": "run_m1772qw376d8vas77pcs9de3pn8ftntj",
+  "10": "run_m17167yn0t35y9rfsz5b9m45b98ftqyj",
+  "16": "run_m173en3anzzwcwst54nce971zs8ftvjy",
+  "18": "run_m172mkey6rwqkyh4d77r8qwqf58fvgd2"
+ },
+ "spent_usd": {
+  "pilot": 1.802,
+  "flux_1_8": 2.572
+ },
+ "kling": {
+  "1": "run_m175gzbmfjr5m4gffb2xtgfbpd8ft9j6",
+  "2": "run_m177g4tvdp9tjdmj4s8djft2js8fvy0b",
+  "5": "run_m175sdmnxcvg6jfq8v0wk900eh8ftbw5",
+  "6": "run_m174mds3m662qxhp6qc9kvh0qn8fvn39",
+  "7": "run_m171yb3ccq7taa3zd9bs75nh418ftbcz",
+  "8": "run_m17838e7xqas0sdkwwbrw05qmn8ftxpp",
+  "9": "run_m170dfn4h03ckaqzrv1htyk1sh8fvw3g",
+  "10": "run_m17anphmhkfb0ba03s8y17azzx8fvh2g",
+  "16": "run_m1721se3sg7fchzzffpgz8a93s8fv663",
+  "17a": "run_m17a67nhscpv1qwk4nzhr7zrgx8ft9f0",
+  "17b": "run_m17216d8kmfz6smfrw1cyd11ah8fv0dq",
+  "18": "run_m1724775qj6e20hvdas40mxr4s8ftmf2"
+ },
+ "kling_v2": {
+  "0": "run_m17en2x2h3f37jj0msyf2257798fvwfx",
+  "11": "run_m17cp12h6pxr32gfg3p3x5sbhd8ftq3r",
+  "12": "run_m17e8khat06yfcs9s2gdmfbj1s8ftdmg",
+  "15": "run_m172c3kepe4yv0zmw78e8k6cn18fvmjs"
+ },
+ "flux_v2": {
+  "3": "run_m173jjgtrsmbh9a0y7wyvg1zes8fvvz8",
+  "4": "run_m172cdxd3fatwdfxt8061f7p118ft0aj",
+  "13": "run_m1781wh2bnzpsv74kydww9kz1d8fv7w6",
+  "14": "run_m17dhm96enyssrb81xpjjgq1yd8fv771"
+ },
+ "note": "seg 0,3,4,11-15 in photoreal_raw/photoreal_kling from round 1 used clipping rails; v2 runs are the fixed rails",
+ "topaz": {
+  "2": "run_m17cpe6ehcv2ert7wekjp9s5wn8fv14s",
+  "1": "run_m174ckaexh4v5cer0ajypymf1x8ftdn2",
+  "5": "run_m174gyehbsy8pgny4n3kmj1dx58ftdhd",
+  "10": "run_m170bk0ystbdd137nj58xmxv698fvmw5",
+  "16": "run_m17e30w8dbq628dt443j8zw40d8ft3b6",
+  "18": "run_m17css96e03te3necg01eeef1s8ftzaj",
+  "3": "run_m17da2wj2y1kh75142hat0z98s8ftqbn",
+  "4": "run_m178jxch9yc30x4g07d9rfkg4d8ftb9m",
+  "13": "run_m17b06xpxqnq6m75jtvdv0hshn8fvbdc",
+  "14": "run_m170g7e8cm3s6dq47mhx6znpg18fta5h"
+ },
+ "picks": {
+  "0": "kling_v2",
+  "1": "flux",
+  "2": "flux",
+  "3": "flux_v2",
+  "4": "flux_v2",
+  "5": "flux",
+  "6": "kling",
+  "7": "kling",
+  "8": "kling",
+  "9": "kling",
+  "10": "flux",
+  "11": "kling_v2",
+  "12": "kling_v2",
+  "13": "flux_v2",
+  "14": "flux_v2",
+  "15": "kling_v2",
+  "16": "flux",
+  "17": "kling",
+  "18": "flux"
+ },
+ "mmaudio": {
+  "1": "run_m17d2e1vtvpjy4n6cn8xpj1dv18ft1tb",
+  "2": "run_m17esz04qpvrkx0z7138194c6h8fv690",
+  "5": "run_m172tz6rwpkhfjzwges16c9v1s8fvt4y",
+  "7": "run_m179sfdwgwfnv6v4pc69sfyy598ftx2b",
+  "8": "run_m17ejk118q1401f6vzmx8fvzj98fvbxt",
+  "9": "run_m17cskxmye0a95n7sehpgxbv218fvd44",
+  "10": "run_m17acxcn9mp6n6gyajh1hdfgn58fvrq7",
+  "16": "run_m17d2vamf0cdcx6gqn1818a5bs8ftek1",
+  "17a": "run_m172rpt1h7870280msmcv3t9q58ftgbx",
+  "17b": "run_m173j7346cgt86esn86b91rxe58ftqe7",
+  "18": "run_m179zjdmyy4kzen941z7e96vpn8ftgqp",
+  "6": "run_m17b67j187v7m0axp6p19vjgnn8fve4e",
+  "0": "run_m17b6t2qgd5872pxzxbjk6wnmd8fvdmh",
+  "3": "run_m17fdb5j3a62c133t7zxcaaa558ft12q",
+  "4": "run_m17b28x6mysqbnbffm5wapfdyx8ftmm4",
+  "12": "run_m1785g52nj3qb3wqh9v6883cas8ftcvq",
+  "14": "run_m17cdwrt6gn6yyp7vdwdmq3djx8fvads",
+  "15": "run_m1726a8jt77mvy54x14h4c7k158fv49m"
+ }
+}

@@ -4,6 +4,9 @@ stepped at exactly 1/30 s, branded in PIL and piped straight into ffmpeg: nothin
     python3 film.py               # whole film -> DELIVERABLES/film/meme_island_film_video.mp4
     python3 film.py --only 3      # one segment, for checking
     python3 film.py --mux music.mp3
+    python3 film.py --mux music.mp3 --name X --foley DIR    # score plus the per shot sound in DIR/segNN.mp4
+    python3 film.py --assemble DIR [--name X]  # captions, mark, fades and cards over DIR/segNN.mp4 (e.g. the photoreal pass)
+    python3 film.py --clean       # every segment bare (no plaque, no mark, no fades) -> DELIVERABLES/film/clean/segNN.mp4
 """
 import base64, io, json, os, subprocess, sys, time
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
@@ -91,14 +94,20 @@ def end_card(u):
     lg = LOGO.copy(); lg.putalpha(lg.split()[3].point(lambda v: int(v * a * k(4)))); im.alpha_composite(lg, ((W - lg.width) // 2, HH // 2 + 230))
     return im
 
+def seg_encoder(path):
+    return subprocess.Popen([FF, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{HH}', '-r', str(FPS), '-i', '-',
+                             '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', path], stdin=subprocess.PIPE)
+
 def main():
-    only = int(sys.argv[sys.argv.index('--only') + 1]) if '--only' in sys.argv else None
-    name = f'seg{only:02d}' if only is not None else 'meme_island_film_video'
+    clean = '--clean' in sys.argv
+    if clean: os.makedirs(os.path.join(OUT, 'clean'), exist_ok=True)
+    only = [int(x) for x in sys.argv[sys.argv.index('--only') + 1].split(',')] if '--only' in sys.argv else None
+    name = f'seg{only[0]:02d}' if only is not None else 'meme_island_film_video'
     out = os.path.join(OUT, name + '.mp4')
-    enc = subprocess.Popen([FF, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{HH}', '-r', str(FPS), '-i', '-',
+    enc = None if clean else subprocess.Popen([FF, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{HH}', '-r', str(FPS), '-i', '-',
                             '-c:v', 'libx264', '-preset', 'medium', '-crf', '21', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out], stdin=subprocess.PIPE)
     put = lambda im: enc.stdin.write(im.convert('RGB').tobytes())
-    if only is None:
+    if only is None and not clean:
         for f in range(int(TITLE_S * FPS)): put(title_card(f / (TITLE_S * FPS)))
     p = Page.open('http://127.0.0.1:4207/index.html?film=1', W, HH); time.sleep(4)
     p.eval(open(os.path.join(H, 'capture_lib.js')).read()); print('boot', p.eval(f'__cap.boot({W},{HH})')); print('sculptures', p.eval('__cap.loadAll()', timeout=900))
@@ -106,12 +115,17 @@ def main():
     durs = {r['name']: r['dur'] for r in p.eval('__game.TOUR.map(r => ({ name: r.name, dur: r.dur }))')}
     last = None; t_film = TITLE_S
     for si, (rail, when, wx, prep, title, line) in enumerate(SEGS):
-        if only is not None and si != only: continue
+        if only is not None and si not in only: continue
         i = tour.index(rail); dur = durs[rail]; n = int(dur * FPS); t0 = time.time()
         p.eval(f'__cap.set({json.dumps(list(when))}, {json.dumps(wx)}, {json.dumps(prep)})')
         p.eval(f'__cap.railAt({i}, 0); __game.TIME.mode = {json.dumps("lapse" if "lapse" in prep else "fixed")}; __cap.settle(150)')
         if 'FW' in prep: p.eval('__cap.settle(150)')
         p.eval(f'__game.playRail(Object.assign({{}}, __game.TOUR[{i}], {{ done: null }})); __game.RAIL.dur = {dur}')
+        if clean:
+            se = seg_encoder(os.path.join(OUT, 'clean', f'seg{si:02d}.mp4'))
+            for f in range(n):
+                d = p.eval(f'__game.step({1 / FPS}, 1); __cap.grab(0.9)'); se.stdin.write(Image.open(io.BytesIO(base64.b64decode(d.split(',', 1)[1]))).convert('RGB').tobytes())
+            se.stdin.close(); se.wait(); print(f'{si:02d} {rail} clean {n} frames {time.time() - t0:.0f}s', flush=True); continue
         for f in range(n):
             d = p.eval(f'__game.step({1 / FPS}, 1); __cap.grab(0.9)')
             im = Image.open(io.BytesIO(base64.b64decode(d.split(',', 1)[1]))).convert('RGBA')
@@ -121,17 +135,76 @@ def main():
             if f == n - 1: last = im
         t_film += dur; print(f'{si:02d} {rail} {n} frames {time.time() - t0:.0f}s', flush=True)
     p.close()
+    if clean: return
     if only is None:
         for f in range(int(END_S * FPS)): put(end_card(f / (END_S * FPS)))
     enc.stdin.close(); enc.wait(); print('wrote', out, os.path.getsize(out) // 1024, 'KB')
 
-def mux(music, start=0.0):
-    v = os.path.join(OUT, 'meme_island_film_video.mp4'); o = os.path.join(OUT, 'meme_island_film.mp4')
+def read_clip(path, n):
+    """Yield exactly n frames of W x HH: scaled to cover, retimed to the segment's length."""
+    dur = float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path], capture_output=True, text=True).stdout)
+    vf = f'setpts=PTS*{n / FPS / dur:.6f},fps={FPS},scale={W}:{HH}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{HH}'
+    pr = subprocess.Popen([FF, '-v', 'error', '-i', path, '-vf', vf, '-frames:v', str(n), '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], stdout=subprocess.PIPE)
+    k, im = 0, None  # streamed, so a 14 s clip never sits in memory whole
+    while k < n:
+        b = pr.stdout.read(W * HH * 3)
+        if len(b) == W * HH * 3: im = Image.frombytes('RGB', (W, HH), b)
+        yield im; k += 1
+    pr.stdout.close(); pr.wait()
+
+def assemble(src, name):
+    """Same cut as main(), but the pictures come from DIR/segNN.mp4 instead of the live engine."""
+    durs = {SEGS[i][0]: d for i, d in enumerate(SEG_DURS)}
+    out = os.path.join(OUT, name + '_video.mp4')
+    enc = subprocess.Popen([FF, '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{HH}', '-r', str(FPS), '-i', '-',
+                            '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out], stdin=subprocess.PIPE)
+    put = lambda im: enc.stdin.write(im.convert('RGB').tobytes())
+    for f in range(int(TITLE_S * FPS)): put(title_card(f / (TITLE_S * FPS)))
+    last = None; t_film = TITLE_S
+    for si, (rail, when, wx, prep, title, line) in enumerate(SEGS):
+        n = int(durs[rail] * FPS); fs = read_clip(os.path.join(src, f'seg{si:02d}.mp4'), n)
+        for f, fr in enumerate(fs):
+            im = fr.convert('RGBA')
+            if f < FADE and last is not None: im = Image.blend(last, im, (f + 1) / (FADE + 1))
+            u = f / n; k = min(1, max(0, (u - 0.08) * 5)) * min(1, max(0, (0.92 - u) * 6))
+            caption(im, title, line, k); brand(im, t_film + f / FPS); put(im)
+            if f == n - 1: last = im
+        t_film += durs[rail]; print(f'{si:02d} {rail} {n}', flush=True)
+    for f in range(int(END_S * FPS)): put(end_card(f / (END_S * FPS)))
+    enc.stdin.close(); enc.wait(); print('wrote', out, os.path.getsize(out) // 1024, 'KB')
+
+SEG_DURS = [10, 9, 10, 9, 8, 9, 11, 8, 7, 10, 9, 8, 8, 9, 6, 8, 10, 14, 9]
+
+def foley_bed(src, out):
+    """One wav with each DIR/segNN audio laid at its place in the cut (after the title card), half second crossfades, silence where a shot has none."""
+    ins, parts, t = [], [], TITLE_S
+    for si, d in enumerate(SEG_DURS):
+        f = os.path.join(src, f'seg{si:02d}.mp4')
+        has = os.path.exists(f) and 'audio' in subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'stream=codec_type', '-of', 'csv=p=0', f], capture_output=True, text=True).stdout
+        if has:
+            k = len(ins) // 2; ins += ['-i', f]
+            parts.append(f'[{k}:a]aresample=48000,aformat=channel_layouts=stereo,apad,atrim=0:{d + 0.5},afade=t=in:d=0.4,afade=t=out:st={d - 0.1}:d=0.6,adelay={int(t * 1000)}|{int(t * 1000)}[f{k}]')
+        t += d
+    n = len(parts); labels = ''.join(f'[f{k}]' for k in range(n))
+    fc = ';'.join(parts) + f';{labels}amix=inputs={n}:normalize=0,apad,atrim=0:{t + END_S}[o]'
+    subprocess.run([FF, '-v', 'error', '-y', *ins, '-filter_complex', fc, '-map', '[o]', '-ar', '48000', out], check=True)
+
+def mux(music, start=0.0, name='meme_island_film', foley=None):
+    v = os.path.join(OUT, name + '_video.mp4'); o = os.path.join(OUT, name + '.mp4')
     dur = float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', v], capture_output=True, text=True).stdout)
-    subprocess.run([FF, '-v', 'error', '-y', '-i', v, '-ss', str(start), '-i', music, '-filter_complex', f'[1:a]apad,afade=t=in:d=1.5,afade=t=out:st={dur - 6}:d=5.5,volume=0.95[a]',
+    score = f'[1:a]apad,afade=t=in:d=1.5,afade=t=out:st={dur - 6}:d=5.5,volume=0.95'
+    if foley:  # score on top, the island's own sound underneath, ducked while the score swells
+        bed = os.path.join(H, 'cache', name + '_foley.wav'); foley_bed(foley, bed)
+        fc = f'{score}[m];[2:a]volume=0.42,apad[f];[m][f]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.95[a]'
+        extra = ['-i', bed]
+    else: fc, extra = score + '[a]', []
+    subprocess.run([FF, '-v', 'error', '-y', '-i', v, '-ss', str(start), '-i', music, *extra, '-filter_complex', fc,
                     '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-t', str(dur), '-movflags', '+faststart', o], check=True)
     print('wrote', o, os.path.getsize(o) // 1024, 'KB')
 
 if __name__ == '__main__':
-    if '--mux' in sys.argv: mux(sys.argv[sys.argv.index('--mux') + 1], float(sys.argv[sys.argv.index('--start') + 1]) if '--start' in sys.argv else 0.0)
+    nm = sys.argv[sys.argv.index('--name') + 1] if '--name' in sys.argv else 'meme_island_film'
+    if '--assemble' in sys.argv: assemble(sys.argv[sys.argv.index('--assemble') + 1], nm)
+    elif '--mux' in sys.argv: mux(sys.argv[sys.argv.index('--mux') + 1], float(sys.argv[sys.argv.index('--start') + 1]) if '--start' in sys.argv else 0.0, nm,
+                                 sys.argv[sys.argv.index('--foley') + 1] if '--foley' in sys.argv else None)
     else: main()

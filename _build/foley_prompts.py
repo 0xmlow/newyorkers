@@ -1,0 +1,22 @@
+"""Sound for each shot of the photoreal cut, fed to MMAudio v2 on FLORA with the finished clip."""
+FOLEY = {
+ 0: 'drone over open harbor water, wind, waves, distant gulls, a ferry horn far away',
+ 1: 'ocean waves crashing and spraying against a big sculpture, wind, gulls',
+ 2: 'outdoor park in a breeze, distant crowd murmur, birds, footsteps on paper cards',
+ 3: 'sculpture garden on a sunny afternoon, light wind, distant voices, birds',
+ 4: 'big empty factory hall, echoing footsteps, distant machinery hum, pigeons in the rafters',
+ 5: 'inside a soft domed gallery, low warm room tone, quiet heartbeat like hum, footsteps on stone',
+ 6: 'harbor at sunset, waves lapping against steel, gulls, soft wind, a low foghorn far away',
+ 7: 'inside a marble bank vault, heavy door settling, quiet room tone, footsteps echoing on marble',
+ 8: 'midday plaza by the water, low electric hum from a ring, wind, distant gulls',
+ 9: 'a giant ferris wheel turning slowly, creaking steel, carnival crowd far away, evening wind',
+ 10: 'long concrete bunker corridor, fluorescent light buzz, echoing footsteps, dripping water',
+ 11: 'outside a marble bank in the morning, birds, light breeze, footsteps on stone steps',
+ 12: 'sunny lawn by the harbor at noon, wind, children far away, gulls, a flag flapping',
+ 13: 'walking past a long gallery on a morning lawn, footsteps, birds, soft wind',
+ 14: 'inside a New York bodega, fridge hum, fluorescent buzz, a door chime, street noise outside',
+ 15: 'beach at dawn, gentle surf, gulls, soft wind, wet sand',
+ 16: 'waves breaking on a rocky base in the harbor at sunset, wind, gulls',
+ 17: 'helicopter flying high over a harbor, rotor wash, wind, the city far below',
+ 18: 'fireworks bursting over the harbor at night, booms echoing off the water, crowd cheering far away',
+}
