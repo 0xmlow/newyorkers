@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>MEME ISLAND</title>
+<link rel="icon" href="assets/eye.png">
+<style>
+:root{--blue:#2962FF;--ink:#0D0D0D;--cloud:#F0F4F8;--orange:#FF6B00;--sand:#F2DFC0;--mute:rgba(240,244,248,.62)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#0D0D0D;--cloud:#F0F4F8}}
+:root[data-theme="dark"]{--ink:#0D0D0D;--cloud:#F0F4F8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0D0D0D;color:var(--cloud);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;touch-action:none}
+.disp{font-family:Georgia,"Times New Roman",serif}
+#enter{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,rgba(41,98,255,.28),rgba(13,13,13,.96) 60%),#0D0D0D;padding:16px}
+#enter .card{max-width:760px;width:100%;text-align:center}
+#enter img.bb{width:100%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:block}
+#enter img.logo{height:30px;margin:18px auto 8px;display:block;opacity:.95}
+#enter h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(28px,5vw,48px);margin:6px 0 4px;letter-spacing:.5px}
+#enter p{color:var(--mute);line-height:1.5;margin:8px auto 16px;max-width:620px;font-size:15px}
+#go{background:var(--blue);color:#fff;border:0;border-radius:999px;padding:14px 32px;font-size:15px;letter-spacing:2px;font-weight:700;cursor:pointer}
+#go[disabled]{opacity:.5;cursor:wait}
+#bar{height:3px;background:rgba(255,255,255,.12);border-radius:3px;margin:14px auto 0;max-width:320px;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:var(--orange);transition:width .2s}
+.small{font-size:12px;color:var(--mute);letter-spacing:.5px}
+#hud{position:fixed;left:14px;top:14px;z-index:10;background:rgba(13,13,13,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;width:270px;max-width:calc(100vw - 28px)}
+#hud img{height:16px;display:block;margin-bottom:6px}
+#hud .t{font-family:Georgia,serif;font-size:20px}
+#zone{font-size:12px;letter-spacing:1.5px;color:var(--orange);margin-top:3px;text-transform:uppercase}
+#stats{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;font-size:12px}
+#stats b{font-weight:700;color:#fff}
+#hud .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+button.b{background:rgba(255,255,255,.08);color:var(--cloud);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;font-size:11px;letter-spacing:.8px;cursor:pointer}
+button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
+#hudHide{position:fixed;left:14px;top:14px;z-index:11;display:none}
+#tp{position:fixed;right:14px;top:14px;z-index:10;display:flex;flex-direction:column;gap:5px;align-items:flex-end;max-height:calc(100vh - 120px);overflow:auto}
+#tp button{font-size:10px;padding:5px 9px}
+#cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:9;pointer-events:none}
+#cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.85)}
+#cross:before{left:6px;top:0;width:2px;height:14px}#cross:after{top:6px;left:0;height:2px;width:14px}
+#aim{position:fixed;left:50%;top:calc(50% + 22px);transform:translateX(-50%);z-index:9;font-size:12px;background:rgba(13,13,13,.7);padding:5px 10px;border-radius:999px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#prompt{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);z-index:9;background:var(--ink);border:1px solid var(--orange);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;letter-spacing:.8px;display:none}
+#toasts{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(560px,calc(100vw - 32px))}
+.toast{background:rgba(13,13,13,.86);border-left:3px solid var(--orange);padding:9px 14px;border-radius:6px;font-size:13px;letter-spacing:.4px;animation:tin .3s ease;max-width:100%}
+.toast.blue{border-color:var(--blue)}
+@keyframes tin{from{opacity:0;transform:translateY(-8px)}to{opacity:1}}
+#help{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;font-size:11px;color:var(--mute);letter-spacing:.6px;text-align:center;background:rgba(13,13,13,.55);padding:6px 12px;border-radius:999px;max-width:calc(100vw - 28px)}
+#modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:16px}
+#modal .in{background:var(--ink);border:1px solid rgba(255,255,255,.12);border-radius:14px;max-width:820px;width:100%;display:flex;gap:18px;padding:18px;max-height:90vh;overflow:auto}
+#modal .art{flex:0 0 42%;display:flex;align-items:flex-start;justify-content:center}
+#modal .art canvas,#modal .art img{width:100%;height:auto;border-radius:6px;background:#111}
+#modal h2{font-family:Georgia,serif;font-weight:400;margin:0 0 6px;font-size:24px}
+#modal .meta{font-size:12px;color:var(--mute);letter-spacing:.6px;line-height:1.7}
+#modal .d{font-size:14px;line-height:1.55;margin-top:10px}
+#modal a{color:#8fb0ff}
+#modal .x{margin-top:14px}
+@media (max-width:640px){#modal .in{flex-direction:column}#modal .art{flex:none}#hud{width:220px;padding:10px}#stats{font-size:11px}#tp{display:none}#help{display:none}}
+#chat{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);z-index:20;display:none}
+#chat input{width:min(420px,80vw);background:rgba(13,13,13,.9);color:#fff;border:1px solid var(--blue);border-radius:999px;padding:10px 16px;font-size:14px;outline:none}
+#joy{position:fixed;left:24px;bottom:24px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);z-index:12;display:none;touch-action:none}
+#joy i{position:absolute;left:40px;top:40px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.4)}
+#mbtn{position:fixed;right:20px;bottom:24px;z-index:12;display:none;flex-direction:column;gap:8px}
+#mbtn button{width:64px;height:64px;border-radius:50%;font-weight:700}
+#file{display:none}
+#drop{position:fixed;inset:0;z-index:45;border:4px dashed var(--blue);display:none;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:32px;background:rgba(41,98,255,.15);pointer-events:none}
+#flash{position:fixed;inset:0;z-index:35;pointer-events:none;background:#fff;opacity:0;transition:opacity .4s}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="enter"><div class="card">
+  <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
+  <img class="logo" src="assets/logo_white.png" alt="MLOW">
+  <h1>MEME ISLAND</h1>
+  <p>All 527 cards of The Memes by 6529, hung on an island that takes them exactly as seriously as they deserve. A hardware wallet lighthouse, a brain you can walk into, a floor price you can climb, a bank that steals JPGs, and the NEW YORKERS on holiday. There are six keys. There is a vault. Say gm.</p>
+  <button id="go" disabled>LOADING</button>
+  <div id="bar"><i></i></div>
+  <div class="small" style="margin-top:12px">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER to chat</div>
+</div></div>
+<div id="hud">
+  <img src="assets/logo_white.png" alt="MLOW">
+  <div class="t">MEME ISLAND</div>
+  <div id="zone">"ARRIVALS"</div>
+  <div id="stats">
+    <span>KEYS <b id="sKeys">0/6</b></span><span>TDH <b id="sTdh">0</b></span>
+    <span>GM SAID <b id="sGm">0</b></span><span>JPGs SEIZED <b id="sSeized">0</b></span>
+    <span>CARDS SEEN <b id="sSeen">0</b></span><span>HUNG <b id="sHung">0/12</b></span>
+  </div>
+  <div class="row">
+    <button class="b on" data-p="golden">1 GOLDEN</button><button class="b" data-p="day">2 DAY</button><button class="b" data-p="night">3 NIGHT</button>
+  </div>
+  <div class="row">
+    <button class="b" id="aud">SOUND OFF</button><button class="b" id="up">HANG YOUR JPGs</button><button class="b" id="hide">HIDE</button>
+  </div>
+</div>
+<button class="b" id="hudHide">SHOW HUD</button>
+<div id="tp"></div>
+<div id="cross"></div><div id="aim"></div><div id="prompt"></div>
+<div id="toasts"></div>
+<div id="help">WASD · SHIFT · SPACE · E · click a card · ENTER chat · try typing gm</div>
+<div id="chat"><input id="chatIn" maxlength="60" placeholder="say something. gm is a renewable resource."></div>
+<div id="modal"><div class="in"><div class="art" id="mArt"></div><div><h2 id="mT"></h2><div class="meta" id="mMeta"></div><div class="d" id="mD"></div><div class="x"><button class="b" id="mClose">CLOSE</button></div></div></div></div>
+<div id="joy"><i></i></div>
+<div id="mbtn"><button class="b" id="mJump">JUMP</button><button class="b" id="mUse">E</button></div>
+<input type="file" id="file" accept="image/*" multiple>
+<div id="drop">DROP TO HANG</div>
+<div id="flash"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>window.MI_DATA=/*__DATA__*/;</script>
+<script>
+(function(){"use strict";
+/* ================================================================
+   MEME ISLAND  ·  a MLow virtual architecture build, 2026-10-07
+   The Memes by 6529 (527 cards) + NEW YORKERS by MLow
+   Lighting, materials and plates: FLORA (Patina, Nano Banana Pro)
+   Art direction and plaque copy: GPT-6 Astra on FLORA
+   ================================================================ */
+const D = window.MI_DATA, CARDS = D.cards, NYP = D.ny;
+const byN = {}; CARDS.forEach(c => byN[c.n] = c);
+const nyByN = {}; NYP.forEach(p => nyByN[p.n] = p);
+const groups = {}; CARDS.forEach(c => (groups[c.m] || (groups[c.m] = [])).push(c.n));
+const G = name => groups[Object.keys(groups).find(k => k.toLowerCase().startsWith(name.toLowerCase()))] || [];
+const V3 = THREE.Vector3, PI = Math.PI;
+let seed = 6529; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const P2 = (deg, r) => [r * Math.sin(deg * PI / 180), -r * Math.cos(deg * PI / 180)];
+const faceTo = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);
+const isMobile = matchMedia('(pointer:coarse)').matches;
+
+/* ---------------- renderer ---------------- */
+const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 1.75));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('stage').appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(68, innerWidth / innerHeight, 0.1, 3000);
+camera.rotation.order = 'YXZ';
+scene.fog = new THREE.Fog(0xf2c9a0, 140, 760);
+
+/* ---------------- loading + textures ---------------- */
+const LM = new THREE.LoadingManager();
+LM.onProgress = (u, l, t) => { document.querySelector('#bar i').style.width = (100 * l / t) + '%'; };
+LM.onLoad = () => { const g = document.getElementById('go'); g.disabled = false; g.textContent = 'CLICK TO ENTER'; };
+const TL = new THREE.TextureLoader(LM);
+const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+function tex(url, rep, srgb = true) {
+  const t = TL.load(url); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  if (rep) t.repeat.set(rep, rep); if (srgb) t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t;
+}
+
+/* ---------------- MAT: every shared material, defined before use ---------------- */
+function pbr(name, rep, o) {
+  return new THREE.MeshStandardMaterial(Object.assign({ map: tex(`assets/${name}_c.webp`, rep), normalMap: tex(`assets/${name}_n.webp`, rep, false), roughness: 1, metalness: 0 }, o || {}));
+}
+const MAT = {
+  sand: pbr('sand', 1, { roughness: 1 }),
+  grass: pbr('grass', 1, { roughness: 1 }),
+  wood: pbr('wood', 1, { roughness: 0.95 }),
+  stone: pbr('stone', 1, { roughness: 0.92 }),
+  brain: pbr('brain', 1, { roughness: 0.45, side: THREE.DoubleSide }),
+  conc: pbr('conc', 1, { roughness: 1 }),
+  bone: new THREE.MeshStandardMaterial({ color: 0xF0EFEA, roughness: 0.85 }),
+  red: new THREE.MeshStandardMaterial({ color: 0x7B3F32, roughness: 0.9 }),
+  sandstone: new THREE.MeshStandardMaterial({ color: 0xC8A97E, roughness: 0.9 }),
+  orange: new THREE.MeshStandardMaterial({ color: 0xFF6B00, roughness: 0.6 }),
+  ink: new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.55 }),
+  graphite: new THREE.MeshStandardMaterial({ color: 0x24262b, roughness: 0.35, metalness: 0.6 }),
+  steel: new THREE.MeshStandardMaterial({ color: 0xb8bec6, roughness: 0.28, metalness: 0.9 }),
+  gold: new THREE.MeshStandardMaterial({ color: 0xffc23a, roughness: 0.25, metalness: 1, emissive: 0x5a3a00, emissiveIntensity: 0.6 }),
+  crystal: new THREE.MeshStandardMaterial({ color: 0x7FD4FF, roughness: 0.15, metalness: 0.1, emissive: 0x2a7fb0, emissiveIntensity: 0.6, transparent: true, opacity: 0.9 }),
+  glass: new THREE.MeshStandardMaterial({ color: 0xbfe3ff, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.35 }),
+  asphalt: new THREE.MeshStandardMaterial({ color: 0x2b2b2e, roughness: 0.95, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
+  white: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 }),
+  blue: new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5, emissive: 0x0a1e66, emissiveIntensity: 0.5 }),
+  water: new THREE.MeshStandardMaterial({ color: 0x1b8fa6, roughness: 0.12, metalness: 0.15, transparent: true, opacity: 0.93 }),
+  pool: new THREE.MeshStandardMaterial({ color: 0x5fd1e8, roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.8, emissive: 0x0a3a44, emissiveIntensity: 0.4 }),
+  trunk: new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 1 }),
+  leaf: new THREE.MeshStandardMaterial({ color: 0x3f8f3a, roughness: 0.85, side: THREE.DoubleSide }),
+  bulb: new THREE.MeshBasicMaterial({ color: 0xffd9a0 }),
+  beam: new THREE.MeshBasicMaterial({ color: 0xfff1c0, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }),
+  lens: new THREE.MeshBasicMaterial({ color: 0x7fe3ff }),
+  flame: new THREE.MeshBasicMaterial({ color: 0xff8a2a }),
+  laser: new THREE.MeshBasicMaterial({ color: 0xff2a2a, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false })
+};
+[MAT.stone, MAT.conc, MAT.wood].forEach(m => { m.map.repeat.set(1, 1); m.normalMap.repeat.set(1, 1); });
+
+/* world-space UVs on any geometry: texture density in metres, not per face */
+function worldUV(geo, scale, axis) {
+  const p = geo.attributes.position, n = geo.attributes.normal, uv = geo.attributes.uv;
+  for (let i = 0; i < p.count; i++) {
+    const ax = Math.abs(n.getX(i)), ay = Math.abs(n.getY(i)), az = Math.abs(n.getZ(i));
+    let u, v;
+    if (axis === 'y' || (ay >= ax && ay >= az)) { u = p.getX(i); v = p.getZ(i); }
+    else if (ax >= az) { u = p.getZ(i); v = p.getY(i); } else { u = p.getX(i); v = p.getY(i); }
+    uv.setXY(i, u / scale, v / scale);
+  }
+  uv.needsUpdate = true; return geo;
+}
+function box(w, h, d, mat, x, y, z, ry = 0, uvs = 0, shadow = true) {
+  const g = new THREE.BoxGeometry(w, h, d); if (uvs) worldUV(g, uvs);
+  const m = new THREE.Mesh(g, mat); m.position.set(x, y, z); m.rotation.y = ry;
+  m.castShadow = shadow; m.receiveShadow = true; scene.add(m); return m;
+}
+function cyl(rt, rb, h, mat, x, y, z, seg = 24) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mat); m.position.set(x, y, z);
+  m.castShadow = true; m.receiveShadow = true; scene.add(m); return m;
+}
+
+/* ---------------- terrain ---------------- */
+const SHORE = 137.5;
+function ground(x, z) {
+  const r = Math.hypot(x, z);
+  const noise = 0.16 * Math.sin(x * 0.045 + 1.3) * Math.cos(z * 0.052 - 0.4) * smooth(20, 40, r) * (1 - smooth(78, 90, r));
+  if (r < SHORE + 0.5) return 0.6 - 0.7 * smooth(106, SHORE, r) + noise;
+  return -0.1 - (r - SHORE) * 0.06;
+}
+function polarGrid(R0, R1, rs, as, yf, uvScale, wobble) {
+  const pos = [], uv = [], idx = [];
+  for (let i = 0; i <= rs; i++) for (let j = 0; j <= as; j++) {
+    const a = j / as * PI * 2; let r = R0 + (R1 - R0) * Math.pow(i / rs, 0.85);
+    if (wobble && i === rs) r += wobble * (Math.sin(a * 7) * 0.6 + Math.sin(a * 13 + 1) * 0.4);
+    const x = Math.cos(a) * r, z = Math.sin(a) * r; pos.push(x, yf(x, z), z); uv.push(x / uvScale, z / uvScale);
+  }
+  for (let i = 0; i < rs; i++) for (let j = 0; j < as; j++) {
+    const a = i * (as + 1) + j, b = a + as + 1; idx.push(a, a + 1, b, a + 1, b + 1, b);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+const terrain = new THREE.Mesh(polarGrid(0, 190, 70, 160, ground, 7), MAT.sand);
+terrain.receiveShadow = true; scene.add(terrain);
+const lawn = new THREE.Mesh(polarGrid(0, 104, 48, 160, (x, z) => ground(x, z) + 0.035, 5, 3.2), MAT.grass);
+lawn.receiveShadow = true; scene.add(lawn);
+
+/* sea: displaced plane, waves in animate() */
+const seaG = new THREE.PlaneGeometry(2600, 2600, 120, 120); seaG.rotateX(-PI / 2);
+const sea = new THREE.Mesh(seaG, MAT.water); sea.receiveShadow = true; scene.add(sea);
+const seaBase = Float32Array.from(seaG.attributes.position.array);
+const foam = new THREE.Mesh(new THREE.RingGeometry(SHORE - 1.2, SHORE + 2.2, 160, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, depthWrite: false }));
+foam.rotation.x = -PI / 2; foam.position.y = 0.06; scene.add(foam);
+
+/* panorama: one FLORA photograph wrapped twice, mirrored at the folds, Manhattan due south and due north */
+const panoMat = new THREE.MeshBasicMaterial({ map: tex('assets/pano.webp'), side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false });
+panoMat.map.wrapS = THREE.ClampToEdgeWrapping;
+(function () {
+  const R = 1150, segs = 128, H = R * PI * 1344 / 3168, top = 0.58 * H, bot = top - H;
+  const pos = [], uv = [], idx = [];
+  for (let i = 0; i <= segs; i++) {
+    const th = i / segs * PI * 2, t = i / (segs / 2), u = t <= 1 ? t : 2 - t;
+    const x = R * Math.cos(th), z = R * Math.sin(th);
+    pos.push(x, top, z, x, bot, z); uv.push(u, 1, u, 0);
+  }
+  for (let i = 0; i < segs; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, panoMat); m.renderOrder = -10; scene.add(m);
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(R, 64), new THREE.MeshBasicMaterial({ color: 0x8fb6d8, side: THREE.DoubleSide, fog: false, depthWrite: false }));
+  cap.rotation.x = PI / 2; cap.position.y = top - 1; cap.renderOrder = -10; scene.add(cap); panoMat.userData.cap = cap;
+})();
+
+/* ---------------- light ---------------- */
+const hemi = new THREE.HemisphereLight(0xbfd8ff, 0x8a6a48, 0.9); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffb073, 2.4);
+sun.castShadow = true; sun.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
+Object.assign(sun.shadow.camera, { left: -55, right: 55, top: 55, bottom: -55, near: 1, far: 400 });
+sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.04;
+scene.add(sun); scene.add(sun.target);
+const PRESETS = {
+  golden: { sun: 0xffb073, sunI: 2.5, dir: [-0.35, 0.34, 0.87], sky: 0xbfd8ff, gnd: 0x8a6a48, hemiI: 0.95, fog: 0xf2c9a0, near: 140, far: 760, pano: 0xffffff, cap: 0x9ec0dc, card: 1.0, lamps: 0.15, exp: 1.0, sea: 0x1b8fa6 },
+  day: { sun: 0xffffff, sunI: 2.9, dir: [0.25, 0.9, 0.35], sky: 0xd4e8ff, gnd: 0x9a8a6a, hemiI: 1.15, fog: 0xcfe3f2, near: 160, far: 900, pano: 0xffffff, cap: 0xa9cbe6, card: 1.0, lamps: 0, exp: 1.0, sea: 0x1aa0b8 },
+  night: { sun: 0xa8bcff, sunI: 1.1, dir: [0.4, 0.6, -0.5], sky: 0x5070b8, gnd: 0x2a3048, hemiI: 1.25, fog: 0x1c2748, near: 100, far: 560, pano: 0x34407a, cap: 0x101a38, card: 0.86, lamps: 1, exp: 1.15, sea: 0x0d3a5a },
+  dawn: { sun: 0xff7a5a, sunI: 1.4, dir: [-0.2, 0.04, 0.98], sky: 0xffb0c8, gnd: 0x4a3a48, hemiI: 0.8, fog: 0xe7a3a8, near: 110, far: 600, pano: 0xffb6b0, cap: 0x7a6aa0, card: 0.95, lamps: 0.6, exp: 1.05, sea: 0x24708a }
+};
+const COLOR_KEYS = ['sun', 'sky', 'gnd', 'fog', 'pano', 'cap', 'sea'], NUM_KEYS = ['sunI', 'hemiI', 'near', 'far', 'card', 'lamps', 'exp'];
+const L = { dir: new V3() }; COLOR_KEYS.forEach(k => L[k] = new THREE.Color(PRESETS.golden[k])); NUM_KEYS.forEach(k => L[k] = PRESETS.golden[k]); L.dir.set(...PRESETS.golden.dir).normalize();
+let presetName = 'golden', presetTarget = PRESETS.golden, presetBlend = 1;
+function setPreset(name, quiet) {
+  presetName = name; presetTarget = PRESETS[name]; presetBlend = 0;
+  document.querySelectorAll('[data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === name));
+  if (!quiet && name === 'night') toast('NIGHT MODE. THE FLOOR IS STILL THERE. PROBABLY.');
+}
+const tmpC = new THREE.Color();
+function lerpLight(dt, target) {
+  const k = 1 - Math.exp(-dt * 2.2);
+  COLOR_KEYS.forEach(c => L[c].lerp(tmpC.set(target[c]), k));
+  NUM_KEYS.forEach(n => L[n] += (target[n] - L[n]) * k);
+  L.dir.lerp(new V3(...target.dir).normalize(), k).normalize();
+}
+function applyLight() {
+  sun.color.copy(L.sun); sun.intensity = L.sunI; hemi.color.copy(L.sky); hemi.groundColor.copy(L.gnd); hemi.intensity = L.hemiI;
+  scene.fog.color.copy(L.fog); scene.fog.near = L.near; scene.fog.far = L.far; renderer.setClearColor(L.fog);
+  panoMat.color.copy(L.pano); panoMat.userData.cap.material.color.copy(L.cap); MAT.water.color.copy(L.sea);
+  renderer.toneMappingExposure = L.exp;
+  cardMats.forEach(m => m.color.setScalar(L.card));
+  MAT.bulb.color.setRGB(1, 0.85, 0.62).multiplyScalar(0.35 + 0.65 * L.lamps);
+  MAT.beam.opacity = 0.06 + 0.3 * L.lamps;
+  practicals.forEach(p => p.intensity = p.userData.base * L.lamps);
+}
+const practicals = [];
+function practical(x, y, z, color, base = 30, dist = 34) {
+  const l = new THREE.PointLight(color, 0, dist, 2); l.position.set(x, y, z); l.userData.base = base; scene.add(l); practicals.push(l); return l;
+}
+
+/* ---------------- collision + floors ---------------- */
+const SEGS = [], CIRCS = [], PADS = [];
+function wall(x1, z1, x2, z2, y0 = -10, y1 = 80) { const s = { x1, z1, x2, z2, y0, y1, on: true }; SEGS.push(s); return s; }
+function boxWalls(cx, cz, w, d, ry = 0, y0, y1) {
+  const c = Math.cos(ry), s = Math.sin(ry), pts = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([x, z]) => [cx + x * c + z * s, cz - x * s + z * c]);
+  return [0, 1, 2, 3].map(i => wall(pts[i][0], pts[i][1], pts[(i + 1) % 4][0], pts[(i + 1) % 4][1], y0, y1));
+}
+function post(x, z, r, y0 = -10, y1 = 80) { const c = { x, z, r, y0, y1, on: true }; CIRCS.push(c); return c; }
+function ringWalls(cx, cz, r, gapAng, gapHalf, n = 40, y0, y1) {
+  for (let i = 0; i < n; i++) {
+    const a0 = i / n * PI * 2, a1 = (i + 1) / n * PI * 2, am = (a0 + a1) / 2;
+    let d = Math.abs(Math.atan2(Math.sin(am - gapAng), Math.cos(am - gapAng)));
+    if (d < gapHalf) continue;
+    wall(cx + Math.cos(a0) * r, cz + Math.sin(a0) * r, cx + Math.cos(a1) * r, cz + Math.sin(a1) * r, y0, y1);
+  }
+}
+function padRect(x0, x1, z0, z1, y, y0) { PADS.push({ t: 'r', x0, x1, z0, z1, y, y0: y0 === undefined ? -10 : y0 }); }
+function padCirc(x, z, r, y, y0) { PADS.push({ t: 'c', x, z, r, y, y0: y0 === undefined ? -10 : y0 }); }
+let plazaTops = null; const PL = { n: 23, pitch: 1.4 }; PL.half = PL.n * PL.pitch / 2;
+function floorAt(x, z, curY) {
+  let f = -Infinity, block = false; const r = Math.hypot(x, z);
+  if (r < SHORE) f = ground(x, z);
+  const reach = curY + 0.66, head = curY + 1.7;
+  const consider = (top, bottom) => { if (top <= reach) { if (top > f) f = top; } else if (bottom < head) block = true; };
+  for (const p of PADS) {
+    if (p.t === 'r' ? (x >= p.x0 && x <= p.x1 && z >= p.z0 && z <= p.z1) : ((x - p.x) ** 2 + (z - p.z) ** 2 <= p.r * p.r)) consider(p.y, p.y0);
+  }
+  if (plazaTops && Math.abs(x) < PL.half && Math.abs(z) < PL.half) {
+    const i = Math.floor((x + PL.half) / PL.pitch), j = Math.floor((z + PL.half) / PL.pitch); const t = plazaTops[j * PL.n + i];
+    if (t !== undefined) consider(t, -10);
+  }
+  return { f: f === -Infinity ? null : f, block };
+}
+const RAD = 0.36;
+function collide(p, feet) {
+  for (let it = 0; it < 2; it++) {
+    for (const s of SEGS) {
+      if (!s.on || feet + 1.7 < s.y0 || feet > s.y1 - 0.2) continue;
+      const dx = s.x2 - s.x1, dz = s.z2 - s.z1, L2 = dx * dx + dz * dz || 1;
+      const t = clamp(((p.x - s.x1) * dx + (p.z - s.z1) * dz) / L2, 0, 1);
+      const cx = s.x1 + dx * t, cz = s.z1 + dz * t, ex = p.x - cx, ez = p.z - cz, d = Math.hypot(ex, ez);
+      if (d < RAD) { if (d < 1e-5) { p.x += -dz / Math.sqrt(L2) * RAD; p.z += dx / Math.sqrt(L2) * RAD; } else { p.x = cx + ex / d * RAD; p.z = cz + ez / d * RAD; } }
+    }
+    for (const c of CIRCS) {
+      if (!c.on || feet + 1.7 < c.y0 || feet > c.y1 - 0.2) continue;
+      const ex = p.x - c.x, ez = p.z - c.z, d = Math.hypot(ex, ez), R = c.r + RAD;
+      if (d < R && d > 1e-5) { p.x = c.x + ex / d * R; p.z = c.z + ez / d * R; }
+    }
+  }
+}
+
+/* ---------------- signs: Abloh owns all text ---------------- */
+function signCanvas(lines, w, h, bg, fg) {
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
+  if (bg) { c.fillStyle = bg; c.fillRect(0, 0, w, h); }
+  const total = lines.reduce((s, l) => s + (l.s || 0.3) * h * 1.18, 0); let y = (h - total) / 2;
+  lines.forEach(l => {
+    const sz = (l.s || 0.3) * h; c.font = `${l.b === false ? '400' : '700'} ${sz}px ${l.f || '"Helvetica Neue",Helvetica,Arial,sans-serif'}`;
+    let fs = sz; while (c.measureText(l.t).width > w * 0.9 && fs > 8) { fs *= 0.92; c.font = `${l.b === false ? '400' : '700'} ${fs}px ${l.f || '"Helvetica Neue",Helvetica,Arial,sans-serif'}`; }
+    c.fillStyle = l.c || fg || '#F0F4F8'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(l.t, w / 2, y + sz * 0.59); y += sz * 1.18;
+  });
+  return cv;
+}
+function signTex(lines, w = 1024, h = 512, bg = '#0D0D0D', fg) {
+  const t = new THREE.CanvasTexture(signCanvas(lines, w, h, bg, fg)); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t;
+}
+function plane(W, H, mat, x, y, z, ry = 0, rx = 0) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat); m.position.set(x, y, z); m.rotation.set(rx, ry, 0, 'YXZ'); scene.add(m); return m;
+}
+function sign(lines, x, z, ry, W = 3, H = 1.5, opt = {}) {
+  const y0 = opt.y !== undefined ? opt.y : ground(x, z) + (opt.h || 2.1);
+  const mat = new THREE.MeshBasicMaterial({ map: signTex(lines, 1024, Math.round(1024 * H / W), opt.bg || '#0D0D0D', opt.fg), toneMapped: false, side: THREE.DoubleSide });
+  const m = plane(W, H, mat, x, y0, z, ry);
+  if (opt.post !== false && opt.y === undefined) { cyl(0.06, 0.06, y0 - H / 2 - ground(x, z) + 0.1, MAT.orange, x, ground(x, z) + (y0 - H / 2 - ground(x, z)) / 2, z, 8); }
+  return m;
+}
+const Q = t => '"' + t + '"';
+
+/* ---------------- cards: 527 Memes + NEW YORKERS in instanced atlases ---------------- */
+const ATL = [0, 1, 2, 3].map(i => tex(`assets/memes${i}.jpg`)).concat([tex('assets/ny0.jpg')]);
+ATL.forEach(t => { t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; });
+const cardBuf = ATL.map(() => ({ uvr: [], mats: [], ids: [], dirty: false, mesh: null }));
+const frameMats = []; let frameMesh = null, frameDirty = false;
+const cardMats = [], cardMeshes = [];
+const info = (kind, n) => kind === 'ny' ? nyByN[n] : byN[n];
+const QY = ry => new THREE.Quaternion().setFromAxisAngle(new V3(0, 1, 0), ry);
+const ZERO = new THREE.Matrix4().makeScale(0, 0, 0);
+function hangQ(kind, n, pos, quat, h, frame = true) {
+  const I = info(kind, n); if (!I) return null;
+  const a = kind === 'ny' ? 4 : I.uv[0], u = I.uv, w = h * u[5], b = cardBuf[a];
+  b.uvr.push(u[1], 1 - u[4], u[3], 1 - u[2]); b.mats.push(new THREE.Matrix4()); b.ids.push({ kind, n });
+  const H = { a, i: b.ids.length - 1, f: -1, w, h, kind, n, hidden: false };
+  if (frame) { frameMats.push(new THREE.Matrix4()); H.f = frameMats.length - 1; }
+  setHang(H, pos, quat); return H;
+}
+const hang = (kind, n, x, y, z, ry, h, frame = true) => hangQ(kind, n, new V3(x, y, z), QY(ry), h, frame);
+const _n = new V3(), _s = new V3(), _fp = new V3();
+function setHang(H, pos, quat) {
+  H.pos = pos.clone(); H.quat = quat.clone();
+  const b = cardBuf[H.a]; b.mats[H.i].compose(pos, quat, _s.set(H.w, H.h, 1));
+  if (H.f >= 0) { _n.set(0, 0, 1).applyQuaternion(quat); _fp.copy(pos).addScaledVector(_n, -0.045); frameMats[H.f].compose(_fp, quat, _s.set(H.w + 0.16, H.h + 0.16, 0.07)); }
+  if (b.mesh) { b.mesh.setMatrixAt(H.i, H.hidden ? ZERO : b.mats[H.i]); b.dirty = true; if (H.f >= 0) { frameMesh.setMatrixAt(H.f, H.hidden ? ZERO : frameMats[H.f]); frameDirty = true; } }
+}
+function hideHang(H, hide) { H.hidden = hide; setHang(H, H.pos, H.quat); }
+function buildCards() {
+  const pg = new THREE.PlaneGeometry(1, 1);
+  cardBuf.forEach((b, a) => {
+    if (!b.mats.length) return;
+    const g = pg.clone(); g.setAttribute('uvr', new THREE.InstancedBufferAttribute(new Float32Array(b.uvr), 4));
+    const mat = new THREE.MeshBasicMaterial({ map: ATL[a], toneMapped: false });
+    mat.onBeforeCompile = sh => { sh.vertexShader = 'attribute vec4 uvr;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n\tvUv = vec2(mix(uvr.x,uvr.z,uv.x), mix(uvr.y,uvr.w,uv.y));'); };
+    const im = new THREE.InstancedMesh(g, mat, b.mats.length); im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    b.mats.forEach((m, i) => im.setMatrixAt(i, m)); im.frustumCulled = false; im.userData.atlas = a;
+    scene.add(im); b.mesh = im; cardMats.push(mat); cardMeshes.push(im);
+  });
+  frameMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), MAT.ink, frameMats.length);
+  frameMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); frameMats.forEach((m, i) => frameMesh.setMatrixAt(i, m));
+  frameMesh.castShadow = true; frameMesh.receiveShadow = true; frameMesh.frustumCulled = false; scene.add(frameMesh);
+}
+function flushCards() {
+  cardBuf.forEach(b => { if (b.dirty && b.mesh) { b.mesh.instanceMatrix.needsUpdate = true; b.dirty = false; } });
+  if (frameDirty) { frameMesh.instanceMatrix.needsUpdate = true; frameDirty = false; }
+}
+/* crop one card or NY piece out of its atlas onto a canvas (modal, carried JPGs, resident signs) */
+const atlasImg = a => ATL[a].image;
+function cropCanvas(kind, n, maxW = 420) {
+  const I = info(kind, n), a = kind === 'ny' ? 4 : I.uv[0], img = atlasImg(a), u = I.uv;
+  const cv = document.createElement('canvas'); if (!img || !img.width) { cv.width = cv.height = 8; return cv; }
+  const sx = u[1] * img.width, sy = u[2] * img.height, sw = (u[3] - u[1]) * img.width, sh = (u[4] - u[2]) * img.height;
+  const sc = Math.min(1.6, maxW / sw); cv.width = Math.round(sw * sc); cv.height = Math.round(sh * sc);
+  cv.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, cv.width, cv.height); return cv;
+}
+function setPlaneUV(mesh, kind, n, h) {
+  const I = info(kind, n), a = kind === 'ny' ? 4 : I.uv[0], u = I.uv, uv = mesh.geometry.attributes.uv;
+  uv.setXY(0, u[1], 1 - u[2]); uv.setXY(1, u[3], 1 - u[2]); uv.setXY(2, u[1], 1 - u[4]); uv.setXY(3, u[3], 1 - u[4]); uv.needsUpdate = true;
+  mesh.material.map = ATL[a]; mesh.material.needsUpdate = true; if (h) mesh.scale.set(h * u[5], h, 1); return a;
+}
+
+/* ---------------- people ---------------- */
+const PG = { leg: new THREE.CylinderGeometry(0.09, 0.08, 0.86, 8), body: new THREE.CylinderGeometry(0.19, 0.23, 0.72, 10), head: new THREE.SphereGeometry(0.16, 14, 10), arm: new THREE.CylinderGeometry(0.06, 0.055, 0.7, 6) };
+PG.leg.translate(0, -0.43, 0); PG.arm.translate(0, -0.33, 0);
+const matCache = {}; const cm = c => matCache[c] || (matCache[c] = new THREE.MeshStandardMaterial({ color: c, roughness: 0.8 }));
+const SKIN = [0x8d5524, 0xc68642, 0xe0ac69, 0xf1c27d, 0xffdbac, 0x5c3a21, 0xa0704a];
+function person(shirt, pants, skin) {
+  const g = new THREE.Group(), legs = [], arms = [];
+  [-0.11, 0.11].forEach(x => { const p = new THREE.Group(); p.position.set(x, 0.86, 0); const l = new THREE.Mesh(PG.leg, cm(pants)); l.castShadow = true; p.add(l); g.add(p); legs.push(p); });
+  const b = new THREE.Mesh(PG.body, cm(shirt)); b.position.y = 1.22; b.castShadow = true; g.add(b);
+  const h = new THREE.Mesh(PG.head, cm(skin)); h.position.y = 1.74; h.castShadow = true; g.add(h);
+  [-0.27, 0.27].forEach(x => { const p = new THREE.Group(); p.position.set(x, 1.52, 0); p.add(new THREE.Mesh(PG.arm, cm(skin))); g.add(p); arms.push(p); });
+  scene.add(g); return { g, legs, arms, head: h };
+}
+function bubble(text) {
+  const t = signTex([{ t: text, s: 0.5 }], 256, 128, '#FFFFFF', '#0D0D0D');
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, toneMapped: false, depthTest: true })); s.scale.set(0.9, 0.45, 1); return s;
+}
+
+/* ---------------- interactables, zones, keys ---------------- */
+const INTER = [], ZONES = [], KEYS = [];
+const interact = (x, z, r, label, fn, y) => INTER.push({ x, z, r, label, fn, y });
+const zone = (x, z, r, name) => ZONES.push({ x, z, r, name });
+const keyGeo = new THREE.TorusGeometry(0.32, 0.09, 10, 24), keyShaft = new THREE.BoxGeometry(0.12, 0.75, 0.12);
+function keyAt(x, y, z, name) {
+  const g = new THREE.Group(); const r = new THREE.Mesh(keyGeo, MAT.gold); r.position.y = 0.45; g.add(r);
+  const s = new THREE.Mesh(keyShaft, MAT.gold); s.position.y = -0.1; g.add(s);
+  const t = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.12), MAT.gold); t.position.set(0.12, -0.35, 0); g.add(t);
+  g.position.set(x, y + 1.3, z); scene.add(g); const l = practical(x, y + 2, z, 0xffc23a, 6, 9); l.userData.alwaysOn = 2.5;
+  KEYS.push({ g, x, y, z, name, got: false, light: l });
+}
+
+/* ================================================================
+   [SHELL]  THE ISLAND
+   ================================================================ */
+const CARD_H = 1.5;
+const PICK_EXTRA = [];
+const RUG = { x: 0, z: 0, t: 0 }, CAT = { g: null }, TAP = { on: true, stream: null, handle: null };
+const NY_FERRY = NYP.slice(0, 24), NY_CENSUS = NYP.slice(24, 72), NY_BODEGA = NYP.slice(72, 84), NY_RES = NYP.slice(84, 124), NY_FERRY2 = NYP.slice(124, 144);
+
+/* --- 1. THE FLOOR: all 527 cards as a mountain of floor prices at the centre --- */
+(function floorPlaza() {
+  const n = PL.n, pitch = PL.pitch, half = PL.half;
+  const cells = []; for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const x = -half + (i + 0.5) * pitch, z = -half + (j + 0.5) * pitch; cells.push({ i, j, x, z, d: Math.hypot(x, z) + Math.atan2(z, x) * 0.001 }); }
+  cells.sort((a, b) => a.d - b.d);
+  const sorted = CARDS.slice().sort((a, b) => b.fl - a.fl);
+  plazaTops = new Array(n * n); const base = ground(0, 0) - 0.05;
+  const tileG = new THREE.BoxGeometry(1, 1, 1); worldUV(tileG, 1);
+  const tiles = new THREE.InstancedMesh(tileG, MAT.stone, cells.length); let k = 0; const m = new THREE.Matrix4();
+  const rx = new THREE.Quaternion().setFromAxisAngle(new V3(1, 0, 0), -PI / 2);
+  cells.forEach((c, idx) => {
+    const card = sorted[idx]; const h = 0.25 + 4.2 * Math.pow(1 - idx / cells.length, 2.2);
+    m.compose(new V3(c.x, base + h / 2, c.z), new THREE.Quaternion(), new V3(pitch - 0.05, h, pitch - 0.05)); tiles.setMatrixAt(k++, m);
+    plazaTops[c.j * n + c.i] = base + h;
+    if (card) { const I = byN[card.n]; const hh = Math.min(1.22, 1.22 / I.uv[5]); hangQ('meme', card.n, new V3(c.x, base + h + 0.012, c.z), rx, hh, false); }
+  });
+  tiles.castShadow = true; tiles.receiveShadow = true; scene.add(tiles);
+  const top = sorted[0]; keyAt(0, base + 4.45, 0, 'THE SUMMIT');
+  sign([{ t: Q('THE FLOOR'), s: 0.34 }, { t: 'ALL 527 CARDS, STACKED BY FLOOR PRICE', s: 0.13, c: '#FF6B00' }, { t: 'THE FLOOR IS A SOCIAL CONSTRUCT. WATCH YOUR STEP. IT HAS REPRICED.', s: 0.1, b: false }, { t: 'floor prices from the archive snapshot, 2026-07-28. summit: ' + top.t, s: 0.075, b: false, c: '#9aa' }], 0, 20, 0, 6, 2.6, { h: 2.6 });
+  zone(0, 0, 18, 'THE FLOOR');
+})();
+
+/* --- 2. FREESTYLE colonnade: 45 Arsham plinths ringing the floor --- */
+const freestyle = [];
+(function () {
+  const ids = G('Freestyle'), R = 27; const pg = new THREE.BoxGeometry(1.2, 1, 1.2); worldUV(pg, 1);
+  const plinths = new THREE.InstancedMesh(pg, MAT.stone, ids.length); const m = new THREE.Matrix4(); let pk = 0;
+  ids.forEach((n, i) => {
+    const a = (i + 0.5) / ids.length * 360; if (Math.abs(a - 180) < 5) return; const [x, z] = P2(a, R), g = ground(x, z);
+    m.compose(new V3(x, g + 0.5, z), QY(a * PI / 180), new V3(1, 1, 1)); plinths.setMatrixAt(pk++, m); post(x, z, 0.75, -10, g + 1);
+    const ry = PI - a * PI / 180, h = CARD_H; freestyle.push(hang('meme', n, x, g + 1.05 + h / 2, z, ry, h));
+  });
+  plinths.count = pk; plinths.castShadow = plinths.receiveShadow = true; scene.add(plinths);
+  sign([{ t: Q('FREESTYLE'), s: 0.36 }, { t: 'FREESTYLE IS A VALID BUILDING CODE.', s: 0.14, b: false }], 6, 31, 0, 3.2, 1.3);
+})();
+
+/* --- 3. HARDWARE WALLET LIGHTHOUSE + THE VAULT (Not Your Keys, Use a Hardware Wallet, punk6529 honorary) --- */
+const LH = { x: 0, z: -126, w: 16, d: 8, H: 48 };
+let vaultDoors = null, vaultSeg = null, lhBeam = null, lhScreen = null, lhScreenTex = [];
+(function () {
+  const { x, z, w, d, H } = LH; const g0 = 0.9; padRect(x - 14, x + 14, z - 9, z + 12, g0); LH.g = g0;
+  box(30, 0.9, 23, MAT.stone, x, g0 - 0.45, z + 1.5, 0, 2);
+  // lower vault room: walls built from boxes so the inside is a real room
+  const rh = 5.6, t = 0.5;
+  box(w, rh, t, MAT.graphite, x, g0 + rh / 2, z - d / 2 + t / 2);                 // back
+  box(t, rh, d, MAT.graphite, x - w / 2 + t / 2, g0 + rh / 2, z);                 // left
+  box(t, rh, d, MAT.graphite, x + w / 2 - t / 2, g0 + rh / 2, z);                 // right
+  box((w - 4.2) / 2, rh, t, MAT.graphite, x - w / 4 - 1.05, g0 + rh / 2, z + d / 2 - t / 2);
+  box((w - 4.2) / 2, rh, t, MAT.graphite, x + w / 4 + 1.05, g0 + rh / 2, z + d / 2 - t / 2);
+  box(4.2, rh - 3.4, t, MAT.graphite, x, g0 + 3.4 + (rh - 3.4) / 2, z + d / 2 - t / 2);
+  box(w - 1, 0.3, d - 1, MAT.ink, x, g0 + rh - 0.2, z, 0, 0, false);
+  const wy = g0 + H - 1; wall(x - w / 2, z - d / 2, x + w / 2, z - d / 2, -10, wy); wall(x - w / 2, z - d / 2, x - w / 2, z + d / 2, -10, wy); wall(x + w / 2, z - d / 2, x + w / 2, z + d / 2, -10, wy);
+  wall(x - w / 2, z + d / 2, x - 2.1, z + d / 2, -10, wy); wall(x + 2.1, z + d / 2, x + w / 2, z + d / 2, -10, wy);
+  vaultSeg = wall(x - 2.1, z + d / 2, x + 2.1, z + d / 2, -10, wy);
+  // the USB port is the door
+  vaultDoors = [box(2.1, 3.4, 0.35, MAT.steel, x - 1.05, g0 + 1.7, z + d / 2 + 0.05), box(2.1, 3.4, 0.35, MAT.steel, x + 1.05, g0 + 1.7, z + d / 2 + 0.05)];
+  // upper body: rounded hardware wallet shell
+  const sh = new THREE.Shape(); const r = 4, top = H, bot = rh;
+  sh.moveTo(-w / 2, bot); sh.lineTo(w / 2, bot); sh.lineTo(w / 2, top - r); sh.quadraticCurveTo(w / 2, top, w / 2 - r, top); sh.lineTo(-w / 2 + r, top); sh.quadraticCurveTo(-w / 2, top, -w / 2, top - r); sh.closePath();
+  const eg = new THREE.ExtrudeGeometry(sh, { depth: d, bevelEnabled: true, bevelSize: 0.35, bevelThickness: 0.35, bevelSegments: 3, curveSegments: 10 });
+  eg.translate(0, 0, -d / 2); const body = new THREE.Mesh(eg, MAT.graphite); body.position.set(x, g0, z); body.castShadow = body.receiveShadow = true; scene.add(body);
+  // brushed steel swivel cover, slightly off axis (the 3 percent)
+  const cov = box(w + 1.4, 20, 0.5, MAT.steel, x, g0 + 18, z - d / 2 - 0.55); cov.rotation.z = 0.03;
+  cyl(1.6, 1.6, 0.8, MAT.steel, x - w / 2 + 2, g0 + 28.4, z - d / 2 - 0.55).rotation.x = PI / 2;
+  // screen: alternates its messages
+  ['CONFIRM ON DEVICE', 'MEME ISLAND v1', 'THIS LIGHTHOUSE CANNOT RECOVER YOUR PASSWORD', 'SELF CUSTODY. PLEASE USE THE OTHER DOOR.', 'gm'].forEach(s => lhScreenTex.push(signTex([{ t: s, s: s.length > 20 ? 0.16 : 0.3, f: '"Courier New",monospace' }], 1024, 512, '#000000', '#e8f0ff')));
+  lhScreen = plane(11, 5.5, new THREE.MeshBasicMaterial({ map: lhScreenTex[0], toneMapped: false }), x, g0 + 30, z + d / 2 + 0.4);
+  [-1, 1].forEach(s => { const b = cyl(0.9, 0.9, 0.6, MAT.steel, x + s * 4.5, g0 + 22, z + d / 2 + 0.35); b.rotation.x = PI / 2; });
+  sign([{ t: Q('PORT'), s: 0.5 }], x, z + d / 2 + 0.3, 0, 2.4, 0.8, { y: g0 + 4.1, post: false });
+  sign([{ t: Q('NOT YOUR KEYS, NOT YOUR COINS'), s: 0.22 }, { t: 'THE VAULT OPENS FOR SIX KEYS. NONE OF THEM ARE SEED PHRASES.', s: 0.11, b: false, c: '#FF6B00' }], x + 10, z + 9, 0, 5, 1.8);
+  // lantern + rotating beam on the roof
+  const ty = g0 + H; padRect(x - w / 2, x + w / 2, z - d / 2, z + d / 2, ty + 0.3, ty - 0.5);
+  cyl(2.6, 2.6, 0.4, MAT.ink, x, ty + 0.4, z); const lan = cyl(2.2, 2.2, 3.6, MAT.glass, x, ty + 2.4, z); post(x, z, 2.4, ty - 1, ty + 6);
+  cyl(2.6, 1.2, 1.4, MAT.graphite, x, ty + 4.9, z); const bl = new THREE.Mesh(new THREE.SphereGeometry(0.9, 16, 12), MAT.bulb); bl.position.set(x, ty + 2.4, z); scene.add(bl);
+  lhBeam = new THREE.Group(); lhBeam.position.set(x, ty + 2.4, z); scene.add(lhBeam);
+  [0, PI].forEach(a => { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 9, 140, 24, 1, true), MAT.beam); c.rotation.z = PI / 2; c.position.x = 70; const p = new THREE.Group(); p.rotation.y = a; p.add(c); lhBeam.add(p); });
+  practical(x, ty + 2.4, z, 0xfff0c0, 60, 60);
+  // vault interior: punk6529 honorary on the back wall, the keys and wallet cards around it
+  const hon = new THREE.MeshBasicMaterial({ map: tex('assets/honorary6529.jpg'), toneMapped: false });
+  box(5.6, 3.3, 0.12, MAT.gold, x, g0 + 2.75, z - d / 2 + 0.55); plane(5.3, 2.96, hon, x, g0 + 2.75, z - d / 2 + 0.63);
+  const honPick = plane(5.3, 2.96, new THREE.MeshBasicMaterial({ visible: false }), x, g0 + 2.75, z - d / 2 + 0.64); honPick.userData.honorary = true; PICK_EXTRA.push(honPick);
+  sign([{ t: 'Cards on the Bridge, for Punk6529', s: 0.22, f: 'Georgia,serif', b: false }, { t: 'NEW YORKERS HONORARY · MLow, 2026', s: 0.13, c: '#9ab' }], x, z - d / 2 + 0.63, 0, 2.6, 0.5, { y: g0 + 0.75, post: false });
+  practical(x, g0 + 4.6, z - 1, 0xfff1d6, 14, 12).userData.alwaysOn = 0.7;
+  const vk = G('Not Your Keys').concat(G('Use a Hardware Wallet')); let i = 0; const ch = 1.15;
+  const backX = [-6.9, -5.3, -3.7, 3.7, 5.3, 6.9];
+  backX.forEach(bx => [1.35, 2.85, 4.35].forEach(yy => { if (i < vk.length) hang('meme', vk[i++], x + bx, g0 + yy, z - d / 2 + 0.6, 0, ch); }));
+  [-1, 1].forEach(s => [-2.4, -0.9, 0.6, 2.1].forEach(zz => [1.35, 2.85, 4.35].forEach(yy => { if (i < vk.length) hang('meme', vk[i++], x + s * (w / 2 - 0.62), g0 + yy, z + zz, -s * PI / 2, ch); })));
+  zone(x, z + 4, 18, 'THE HARDWARE WALLET LIGHTHOUSE');
+  interact(x, z + d / 2 + 0.8, 2.6, 'E  KNOCK ON THE PORT', () => { if (state.keys >= 6) return; toast(`SELF CUSTODY. PLEASE USE THE OTHER DOOR. KEYS ${state.keys}/6`); chime(220); });
+})();
+
+/* --- 4. SEIZE THE MEMES OF PRODUCTION: the factory and its conveyor --- */
+const conveyor = []; let seizeT = 0, convSpeed = 0.9;
+(function () {
+  const cx = 0, cz = -64, w = 32, d = 28, h = 9, g = ground(cx, cz) + 0.02; padRect(cx - w / 2, cx + w / 2, cz - d / 2, cz + d / 2, g + 0.15);
+  box(w, 0.3, d, MAT.conc, cx, g, cz, 0, 4, false);
+  box(w, h, 0.5, MAT.red, cx, g + h / 2, cz - d / 2, 0, 3); wall(cx - w / 2, cz - d / 2, cx + w / 2, cz - d / 2);
+  [-1, 1].forEach(s => { box(0.5, h, d, MAT.red, cx + s * w / 2, g + h / 2, cz, 0, 3); wall(cx + s * w / 2, cz - d / 2, cx + s * w / 2, cz + d / 2); });
+  [-1, 1].forEach(s => { box(5, h, 0.5, MAT.red, cx + s * (w / 2 - 2.5), g + h / 2, cz + d / 2, 0, 3); wall(cx + s * w / 2, cz + d / 2, cx + s * (w / 2 - 5), cz + d / 2); });
+  box(w, 2.2, 0.5, MAT.red, cx, g + h - 1.1, cz + d / 2, 0, 3);
+  for (let i = 0; i < 6; i++) { const t = box(w / 6 - 0.2, 0.25, d + 1, MAT.conc, cx - w / 2 + (i + 0.5) * w / 6, g + h + 1.3, cz, 0, 4); t.rotation.z = 0.42; }
+  sign([{ t: Q('MEMES OF PRODUCTION'), s: 0.34 }, { t: 'SOME ASSEMBLY REQUIRED. NOW SEIZING SINCE 2022.', s: 0.13, c: '#FF6B00' }], cx, cz + d / 2 + 0.3, 0, 13, 1.9, { y: g + h - 1.1, post: false });
+  // the belt
+  const L2 = 10, R = 3, zc = cz - 2; box(2 * L2, 0.95, 2 * R + 1.4, MAT.ink, cx, g + 0.5, zc, 0); [-1, 1].forEach(s => cyl(R + 0.7, R + 0.7, 0.95, MAT.ink, cx + s * L2, g + 0.5, zc, 32));
+  wall(cx - L2 - R - 0.7, zc - R - 0.7, cx + L2 + R + 0.7, zc - R - 0.7, -10, g + 1); wall(cx - L2 - R - 0.7, zc + R + 0.7, cx + L2 + R + 0.7, zc + R + 0.7, -10, g + 1);
+  wall(cx - L2 - R - 0.7, zc - R - 0.7, cx - L2 - R - 0.7, zc + R + 0.7, -10, g + 1); wall(cx + L2 + R + 0.7, zc - R - 0.7, cx + L2 + R + 0.7, zc + R + 0.7, -10, g + 1);
+  const ids = G('Seize'); const per = 2 * 2 * L2 + 2 * PI * R;
+  ids.forEach((n, i) => conveyor.push({ H: hang('meme', n, cx, g + 1.6, zc, 0, 1.05), s: i / ids.length * per }));
+  conveyor.meta = { cx, zc, L2, R, per, y: g + 1.6 };
+  // the lever
+  const lx = cx + 9, lz = cz + d / 2 - 3; box(1, 1.2, 1, MAT.graphite, lx, g + 0.6, lz); const arm = cyl(0.08, 0.08, 1.6, MAT.orange, lx, g + 1.8, lz); arm.rotation.z = 0.5; post(lx, lz, 0.7);
+  sign([{ t: Q('SEIZE'), s: 0.5 }], lx, lz + 0.55, 0, 1.2, 0.5, { y: g + 1.0, post: false });
+  interact(lx, lz, 2.5, 'E  PULL THE LEVER. SEIZE THE MEANS.', () => seize());
+  practical(cx, g + 7, cz, 0xffb070, 30, 30); zone(cx, cz, 18, 'THE MEME FACTORY');
+})();
+
+/* --- 5. BRAIN: a pink dome you can walk into --- */
+(function () {
+  const cx = 44, cz = -44, r = 14, g = ground(cx, cz) + 0.05; padCirc(cx, cz, r + 2, g + 0.15);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(r + 2, r + 2.4, 0.4, 48), MAT.stone); disc.position.set(cx, g - 0.05, cz); disc.receiveShadow = true; scene.add(disc);
+  const gap = 0.9, toC = Math.atan2(-cz, -cx);
+  const geo = new THREE.SphereGeometry(r, 72, 30, 0, PI * 2 - gap, 0, PI / 2);
+  MAT.brain.map.repeat.set(5, 2.5); MAT.brain.normalMap.repeat.set(5, 2.5);
+  const dome = new THREE.Mesh(geo, MAT.brain); dome.castShadow = dome.receiveShadow = true;
+  const phiC = PI * 2 - gap / 2, a0 = Math.atan2(Math.sin(phiC), -Math.cos(phiC)); dome.rotation.y = a0 - toC; dome.position.set(cx, g + 0.1, cz); scene.add(dome);
+  ringWalls(cx, cz, r, toC, gap / 2 + 0.05, 48);
+  // bench + terminals of overlapping advice
+  cyl(2.2, 2.4, 0.5, MAT.bone, cx, g + 0.35, cz, 32); padCirc(cx, cz, 2.2, g + 0.6);
+  const ids = G('Brain'); ids.forEach((n, i) => { const a = toC + 0.65 + (i / (ids.length - 1)) * (PI * 2 - 1.3); const x = cx + Math.cos(a) * (r - 1.4), z = cz + Math.sin(a) * (r - 1.4); hang('meme', n, x, g + 2.6, z, faceTo(x, z, cx, cz), 2.0); });
+  const advice = ['BUY THE DIP', 'NEVER BUY THE DIP', 'TOUCH GRASS', 'GRASS IS A L2', 'HODL', 'SELL TO YOUR FUTURE SELF', 'DECENTRALIZE EVERYTHING', 'CENTRALIZE THE DECENTRALIZING'];
+  [0, 1, 2, 3].forEach(i => { const a = toC + PI / 2 + i * PI / 3, x = cx + Math.cos(a) * 6, z = cz + Math.sin(a) * 6; const t = cyl(0.35, 0.45, 1.6, MAT.crystal, x, g + 0.8, z, 12); post(x, z, 0.5);
+    interact(x, z, 2, 'E  CONSULT THE TERMINAL', () => { toast(advice[(i * 2 + (state.brain++ % 2)) % advice.length]); if (state.brain > 7) toast('BRAIN OVERCLOCKED. SIT ON THE BENCH.', 'blue'); }); });
+  interact(cx, cz, 3.2, 'E  SIT QUIETLY', () => { state.brain = 0; toast('BRAIN CAPACITY EXCEEDS CURRENT USAGE. THE EXIT IS WHERE YOU CAME IN.', 'blue'); });
+  keyAt(cx, g + 0.6, cz, 'THE BRAIN');
+  const [sx, sz] = [cx + Math.cos(toC) * (r + 3.5), cz + Math.sin(toC) * (r + 3.5)];
+  sign([{ t: Q('BRAIN'), s: 0.45 }, { t: 'PLEASE REMOVE CONVICTION BEFORE ENTERING.', s: 0.13, b: false }], sx + 3, sz, faceTo(sx, sz, 0, 0), 3.2, 1.4);
+  practical(cx, g + 9, cz, 0xff9ad0, 26, 26); zone(cx, cz, r + 3, 'BRAIN');
+})();
+
+/* --- 6. WAGMI: a ferris wheel of cards, and the NGMI exit --- */
+const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim: null };
+(function () {
+  const W = wheel, g = ground(W.cx, W.cz); W.hub = g + 19; padCirc(W.cx, W.cz, 9, g + 0.12);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(9, 9.4, 0.3, 40), MAT.stone); base.position.set(W.cx, g, W.cz); base.receiveShadow = true; scene.add(base);
+  W.rim = new THREE.Group(); W.rim.position.set(W.cx, W.hub, W.cz); scene.add(W.rim);
+  [-0.9, 0.9].forEach(off => { const t = new THREE.Mesh(new THREE.TorusGeometry(W.R, 0.22, 10, 96), MAT.white); t.rotation.y = PI / 2; t.position.x = off; W.rim.add(t); });
+  for (let i = 0; i < 20; i++) { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, W.R * 2, 6), MAT.white); s.rotation.x = i / 20 * PI; W.rim.add(s); }
+  const bulbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.16, 8, 6), MAT.bulb, 96); const m = new THREE.Matrix4();
+  for (let i = 0; i < 96; i++) { const a = i / 96 * PI * 2; m.makeTranslation(i % 2 ? 0.9 : -0.9, Math.sin(a) * W.R, Math.cos(a) * W.R); bulbs.setMatrixAt(i, m); } W.rim.add(bulbs);
+  const hubM = cyl(1.4, 1.4, 2.6, MAT.orange, W.cx, W.hub, W.cz); hubM.rotation.z = PI / 2;
+  [-1, 1].forEach(s => [-1, 1].forEach(t => { const lg = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 21, 10), MAT.white); lg.position.set(W.cx + s * 2.2, g + 9.5, W.cz + t * 5.4); lg.rotation.x = -t * 0.28; lg.rotation.z = s * 0.06; lg.castShadow = true; scene.add(lg); post(W.cx + s * 2.6, W.cz + t * 6.8, 0.45); }));
+  G('WAGMI').forEach((n, i) => W.cards.push({ H: hang('meme', n, W.cx, W.hub, W.cz, -PI / 2, 2.1), a0: i / 40 * PI * 2 }));
+  sign([{ t: Q('WAGMI'), s: 0.42 }, { t: 'PLEASE REMAIN SEATED.', s: 0.14, b: false }], W.cx - 11, 10, -PI / 2, 3.4, 1.4);
+  const ex = W.cx + 6, ez = W.cz + 18; [-1.6, 1.6].forEach(o => { box(0.3, 3.2, 0.3, MAT.orange, ex + o, ground(ex, ez) + 1.6, ez); post(ex + o, ez, 0.25); });
+  sign([{ t: Q('NGMI EXIT'), s: 0.42 }, { t: 'LEADS BACK TO FRIENDS.', s: 0.16, b: false }], ex, ez, PI, 3.4, 1.1, { y: ground(ex, ez) + 3.6, post: false, bg: '#FF6B00' });
+  interact(W.cx - 6, W.cz, 3, 'E  SPIN THE WHEEL', () => { W.speed = W.speed > 0.2 ? 0.06 : 0.6; toast(W.speed > 0.2 ? 'WAGMI. WE ARE ALL GOING. VERY FAST.' : 'WAGMI, AT A RESPONSIBLE PACE.'); });
+  for (let i = 0; i < 4; i++) practical(W.cx - 2, W.hub + Math.sin(i * PI / 2) * 10, Math.cos(i * PI / 2) * 10, 0xffd28a, 22, 26);
+  zone(W.cx, W.cz, 18, 'THE WAGMI WHEEL');
+})();
+
+/* --- 7. SURVIVE: a half buried bunker, Arsham excavation, 105 cards in a salon hang --- */
+(function () {
+  const x0 = 22, x1 = 66, zN = 40.5, zS = 47.5, cz = (zN + zS) / 2, g = ground(44, cz) + 0.02, h = 6.4;
+  padRect(x0 - 2, x1 + 2, zN - 0.5, zS + 0.5, g + 0.1); box(x1 - x0 + 4, 0.25, zS - zN + 1, MAT.conc, (x0 + x1) / 2, g, cz, 0, 4, false);
+  [zN, zS].forEach((zz, k) => { box(x1 - x0, h, 0.6, MAT.conc, (x0 + x1) / 2, g + h / 2, zz + (k ? 0.3 : -0.3), 0, 4); wall(x0, zz, x1, zz); });
+  for (let i = 0; i < 9; i++) { // tilted roof slabs, three of them eroded into crystal
+    const sx = x0 + 2.4 + i * 4.9; if (i === 2 || i === 6) { for (let c = 0; c < 9; c++) { const cr = new THREE.Mesh(new THREE.OctahedronGeometry(0.4 + rnd() * 0.8, 0), MAT.crystal); cr.position.set(sx + (rnd() - 0.5) * 4, g + h + 0.2 + rnd() * 0.8, cz + (rnd() - 0.5) * 6); cr.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3); scene.add(cr); } continue; }
+    const s = box(4.7, 0.5, zS - zN + 1.6, MAT.conc, sx, g + h + 0.3 + i * 0.05, cz, 0, 4); s.rotation.z = 0.05;
+  }
+  const ids = G('Survive'); let k = 0; const per = Math.ceil(ids.length / 6), pitch = (x1 - x0 - 2) / per;
+  [[zN + 0.05, 0], [zS - 0.05, PI]].forEach(([zz, ry]) => [1.4, 3.05, 4.7].forEach(yy => { for (let i = 0; i < per && k < ids.length; i++) hang('meme', ids[k++], x0 + 1 + (i + 0.5) * pitch, g + yy, zz + (ry ? -0.05 : 0.05), ry, 1.42); }));
+  for (let i = 0; i < 5; i++) practical(x0 + 4 + i * 9, g + 5.6, cz, 0xffd9b0, 16, 14);
+  keyAt(x1 - 1.2, g, cz, 'THE BUNKER');
+  // the bear, calcified
+  const bx = 44, bz = 55, bg = ground(bx, bz); const bear = new THREE.Group(); bear.position.set(bx, bg, bz); scene.add(bear);
+  [[0, 1.6, 0, 1.6, 1.2, 2.6], [0, 2.6, 1.6, 0.9, 0.9, 0.9], [-0.7, 0.6, -0.9, 0.35, 0.6, 0.35], [0.7, 0.6, -0.9, 0.35, 0.6, 0.35], [-0.7, 0.6, 0.9, 0.35, 0.6, 0.35], [0.7, 0.6, 0.9, 0.35, 0.6, 0.35]].forEach(([x, y, z, a, b, c]) => { const s = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 14), MAT.stone); s.scale.set(a, b, c); s.position.set(x, y, z); s.castShadow = true; bear.add(s); });
+  for (let c = 0; c < 7; c++) { const cr = new THREE.Mesh(new THREE.OctahedronGeometry(0.35, 0), MAT.crystal); cr.position.set(0.6 + rnd() * 0.5, 1.4 + rnd(), -0.8 + rnd() * 1.6); bear.add(cr); }
+  bear.rotation.y = -0.6; post(bx, bz, 1.8);
+  sign([{ t: Q('SURVIVE'), s: 0.42 }, { t: 'SURVIVE FIRST. REBRAND LATER. THE BEAR IS ALSO DOWN BAD.', s: 0.11, b: false }], x0 - 3, cz, -PI / 2, 3.6, 1.5);
+  zone(44, cz, 24, 'SURVIVE');
+})();
+
+/* --- 8. GM BEACH, the pier, arrivals, the 2030 pathway --- */
+(function () {
+  padRect(-3, 3, 126, 182, 0.55); box(6, 0.4, 56, MAT.wood, 0, 0.35, 154, 0, 1.6);
+  for (let z = 132; z <= 180; z += 6) [-2.8, 2.8].forEach(x => cyl(0.18, 0.18, 2.4, MAT.trunk, x, -0.6, z, 8));
+  // welcome billboard (FLORA, Nano Banana Pro): walk under it, compression then release
+  const bb = new THREE.MeshBasicMaterial({ map: tex('assets/billboard.webp'), toneMapped: false });
+  const by = ground(0, 117) + 4.4 + 4.5; plane(16, 9, bb, 0, by, 117.2, 0); box(16.4, 9.4, 0.3, MAT.wood, 0, by, 117, 0, 1.4);
+  [-7.6, 7.6].forEach(x => { box(0.5, by + 4.5, 0.5, MAT.wood, x, (by + 4.5) / 2 - 0.4, 116.8, 0, 1.4); post(x, 116.8, 0.4); });
+  // GM cards on stakes along the beach, facing the sea and the sunrise
+  const gm = G('GM'); gm.forEach((n, i) => { let a = 147 + i * 66 / (gm.length - 1); if (Math.abs(a - 180) < 3.2) a += a < 180 ? -3.2 : 3.2; const [x, z] = P2(a, 124), gg = ground(x, z);
+    cyl(0.05, 0.05, 1.3, MAT.wood, x, gg + 0.6, z, 6); hang('meme', n, x, gg + 1.3 + 0.8, z, PI - a * PI / 180, 1.6); post(x, z, 0.3); });
+  const gmT = new THREE.MeshBasicMaterial({ map: signTex([{ t: 'gm', s: 0.8, f: 'Georgia,serif', b: false, c: '#6b4a2a' }], 512, 256, null), transparent: true, depthWrite: false });
+  plane(10, 5, gmT, 18, ground(18, 126) + 0.04, 126, 0, -PI / 2);
+  sign([{ t: Q('GM BEACH'), s: 0.4 }, { t: 'GM IS A RENEWABLE RESOURCE. TYPE IT.', s: 0.14, b: false }], -9, 121, PI, 3.4, 1.4);
+  sign([{ t: Q('ARRIVALS'), s: 0.42 }, { t: 'MANHATTAN IS THE SMALL ISLAND OVER THERE.', s: 0.13, b: false }], 4.6, 172, 0, 3, 1.3, { y: 2.8, post: false });
+  // the rug
+  const rugT = signTex([{ t: 'WELCOME', s: 0.32, f: 'Georgia,serif', c: '#ffe2b0' }, { t: 'DO NOT STAND HERE', s: 0.16, c: '#ffe2b0' }], 512, 768, '#8a1f2a');
+  plane(3, 4.5, new THREE.MeshStandardMaterial({ map: rugT, roughness: 1 }), -16, ground(-16, 124) + 0.04, 124, 0, -PI / 2);
+  interact(-16, 124, 1.8, null, null); RUG.x = -16; RUG.z = 124;
+  // 2030 pathway stones and the scaffold at the end
+  const steps = ['2022 · SEIZE THE MEMES', '2023 · SUMMER.JPG', '2024 · NOT YOUR KEYS', '2025 · OPEN METAVERSE', '2026 · YOU ARE HERE', '2027 · ?', '2028 · ??'];
+  steps.forEach((s, i) => { const z = 185.6 + i * 5.2; const st = cyl(1.9, 2.2, 1.2, MAT.stone, 0, -0.1, z, 18); padCirc(0, z, 1.9, 0.5);
+    sign([{ t: s, s: 0.3 }], 0, z + 1.95, 0, 1.8, 0.45, { y: 0.85, post: false }); });
+  const sz = 185.6 + 7 * 5.2; padRect(-2.5, 2.5, sz - 2.5, sz + 2.5, 0.6); box(5, 0.3, 5, MAT.wood, 0, 0.45, sz, 0, 1.4);
+  for (let i = 0; i < 4; i++) { [-2.3, 2.3].forEach(x => [-2.3, 2.3].forEach(zz => cyl(0.06, 0.06, 6, MAT.steel, x, 3, sz + zz, 6))); box(5, 0.08, 0.08, MAT.orange, 0, 1.5 + i * 1.4, sz + 2.3); }
+  sign([{ t: Q('2030'), s: 0.42 }, { t: '2030 IS NOT A LOADING BAR.', s: 0.16, b: false }], 0, sz - 2.3, PI, 2.8, 1.2, { y: 2.4, post: false, bg: '#FF6B00' });
+  keyAt(0, 0.6, sz, 'THE 2030 PATHWAY');
+  zone(0, 124, 20, 'GM BEACH'); zone(0, 158, 12, 'THE PIER'); zone(0, 205, 22, 'THE 2030 PATHWAY');
+})();
+
+/* --- 9. THE CENSUS FERRY: NEW YORKERS on holiday, docked at the pier --- */
+(function () {
+  const fx = 12, fz = 158, L = 34, Wd = 9;
+  const hullMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.55 });
+  const hull = box(Wd, 3.2, L, hullMat, fx, 0.6, fz); boxWalls(fx, fz, Wd, L);
+  box(Wd - 1.2, 3, L - 6, MAT.white, fx, 3.7, fz); box(Wd - 2.6, 2.4, L - 12, MAT.white, fx, 6.4, fz); box(1, 3.4, 1, MAT.ink, fx, 9.2, fz + 4);
+  sign([{ t: 'THE CENSUS FERRY', s: 0.42, f: 'Georgia,serif', b: false }, { t: 'NEW YORKERS by MLow · NOW BOARDING NOBODY', s: 0.16 }], fx - Wd / 2 - 0.02, fz, -PI / 2, 10, 1.4, { y: 1.3, post: false, bg: '#FF7A1A', fg: '#0D0D0D' });
+  let i = 0; const ny = NY_FERRY;
+  [-1, 1].forEach(s => { for (let k = 0; k < 12 && i < ny.length; k++) hang('ny', ny[i++].n, fx + s * (Wd / 2 - 0.55), 3.9, fz - L / 2 + 4.4 + k * 2.27, s * PI / 2, 1.75); });
+  NY_FERRY2.forEach((p, j) => { const s = j < 10 ? -1 : 1, k2 = j % 10; hang('ny', p.n, fx + s * (Wd / 2 - 1.25), 6.5, fz - 10 + k2 * 2.2, s * PI / 2, 1.5); });
+  zone(fx, fz, 18, 'THE CENSUS FERRY');
+})();
+
+/* --- 10. NEW YORKERS: the census walk (a Hadid ribbon) and the 6529 bodega --- */
+(function () {
+  // ribbon wall, one long curve
+  const pts = []; for (let i = 0; i <= 24; i++) { const z = 46 + i * 1.6; pts.push([-11 - 2.2 * Math.sin(i / 24 * PI * 2), z]); }
+  const wh = 6.2; let k = 0; const take = NY_CENSUS;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i], [bx, bz] = pts[i + 1], mx = (ax + bx) / 2, mz = (az + bz) / 2, dx = bx - ax, dz = bz - az, len = Math.hypot(dx, dz);
+    const gg = ground(mx, mz), hh = wh + Math.sin(i / 24 * PI) * 2.4;
+    const seg = box(len + 0.08, hh, 0.5, MAT.bone, mx, gg + hh / 2, mz, Math.atan2(-dz, dx)); wall(ax, az, bx, bz);
+    const nx = dz / len, nz = -dx / len, fr = Math.atan2(nx, nz);
+    [1.6, 3.5].forEach(yy => { if (k < take.length) hang('ny', take[k++].n, mx + nx * 0.33, gg + yy, mz + nz * 0.33, fr, 1.5); });
+  }
+  sign([{ t: Q('THE CENSUS WALK'), s: 0.34 }, { t: 'NEW YORKERS by MLow. MLOW PAINTED THE PEOPLE. THE PEOPLE BUILT THE PLACE.', s: 0.1, b: false }, { t: 'SEED PHRASE NOT INCLUDED IN PORTRAIT.', s: 0.1, c: '#FF6B00' }], -6, 44, PI, 4.6, 1.8);
+  zone(-9, 64, 14, 'THE CENSUS WALK');
+  // bodega
+  const bx = 17, bz = 66, w = 10, d = 14, h = 4.6, g = ground(bx, bz) + 0.02; padRect(bx - w / 2, bx + w / 2, bz - d / 2, bz + d / 2, g + 0.12);
+  box(w, 0.2, d, MAT.conc, bx, g, bz, 0, 2, false);
+  const brick = new THREE.MeshStandardMaterial({ color: 0x8c4a35, roughness: 0.95 });
+  box(0.4, h, d, brick, bx + w / 2, g + h / 2, bz); wall(bx + w / 2, bz - d / 2, bx + w / 2, bz + d / 2);
+  [-1, 1].forEach(s => { box(w, h, 0.4, brick, bx, g + h / 2, bz + s * d / 2); wall(bx - w / 2, bz + s * d / 2, bx + w / 2, bz + s * d / 2); });
+  [-1, 1].forEach(s => { box(0.4, h, 5, brick, bx - w / 2, g + h / 2, bz + s * 4.5); wall(bx - w / 2, bz + s * 2, bx - w / 2, bz + s * 7); });
+  box(0.4, 1.2, 4, brick, bx - w / 2, g + h - 0.6, bz); box(w + 0.4, 0.3, d + 0.4, MAT.ink, bx, g + h + 0.1, bz, 0, 0, false);
+  const awn = box(2.4, 0.15, d, new THREE.MeshStandardMaterial({ color: 0xd93a2a, roughness: 0.8 }), bx - w / 2 - 1.1, g + 3.3, bz); awn.rotation.z = -0.35;
+  sign([{ t: '6529 BODEGA', s: 0.45 }, { t: 'OPEN BEFORE AND AFTER THE CYCLE · ATM · LOTTO · COLD JPGs', s: 0.12 }], bx - w / 2 - 0.25, bz, -PI / 2, 8, 1.2, { y: g + 4.2, post: false, bg: '#FFD400', fg: '#0D0D0D' });
+  box(1.2, 1.1, 5, MAT.wood, bx + 1.6, g + 0.55, bz - 3, 0, 1); boxWalls(bx + 1.6, bz - 3, 1.2, 5, 0, -10, g + 1.1);
+  box(0.5, 2.4, 4, MAT.white, bx + w / 2 - 0.5, g + 1.2, bz + 3, 0);
+  boxWalls(bx + w / 2 - 0.5, bz + 3, 0.5, 4, 0);
+  const tb = NY_BODEGA; tb.forEach((p, i) => { const s = i < 6 ? -1 : 1, j = i % 6; hang('ny', p.n, bx - 3.4 + j * 1.35, g + 2.6, bz + s * (d / 2 - 0.25), s < 0 ? 0 : PI, 1.15); });
+  const clerk = NYP.find(p => /bodega clerk/i.test(p.t)); if (clerk) hang('ny', clerk.n, bx + 3.2, g + 2.4, bz - 3, -PI / 2, 1.6);
+  // the bodega cat
+  const cat = new THREE.Group(); const fur = cm(0xd88a3a); const cb = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 10), fur); cb.scale.set(1, 0.8, 1.5); cb.position.y = 0.26; cat.add(cb);
+  const chd = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 10), fur); chd.position.set(0, 0.52, 0.32); cat.add(chd);
+  [-0.09, 0.09].forEach(x => { const e = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.13, 4), fur); e.position.set(x, 0.72, 0.3); cat.add(e); });
+  cat.position.set(bx + 1.6, g + 1.1, bz - 4.6); cat.rotation.y = -PI / 2; scene.add(cat); CAT.g = cat;
+  interact(bx + 0.6, bz - 4.6, 2, 'E  PET THE BODEGA CAT', () => { toast('mrrp. (gm)'); state.gm++; chime(660); });
+  interact(bx - 1, bz, 3, 'E  ASK THE CLERK ABOUT SWIM LESSONS', () => toast('THE CLERK MINTED BEFORE YOU FINISHED EXPLAINING.'));
+  practical(bx, g + 4, bz, 0xfff4d0, 14, 14).userData.alwaysOn = 0.6;
+  zone(bx, bz, 8, '6529 BODEGA');
+})();
+
+/* --- 11. SUMMER.JPG boardwalk + the TAP fountain --- */
+const SUMMER = { x: -44, z: 43, r: 22 };
+(function () {
+  const x0 = -60, x1 = -28, z0 = 37, z1 = 49, g = ground(-44, 43) + 0.35; padRect(x0, x1, z0, z1, g);
+  const dg = worldUV(new THREE.BoxGeometry(x1 - x0, 0.3, z1 - z0), 2.2); const deck = new THREE.Mesh(dg, MAT.wood); deck.position.set((x0 + x1) / 2, g - 0.15, (z0 + z1) / 2); deck.receiveShadow = true; scene.add(deck);
+  const ids = G('Summer'); ids.forEach((n, i) => { const x = x0 + 1.6 + i * (x1 - x0 - 3.2) / (ids.length - 1); cyl(0.07, 0.07, 1.6, MAT.white, x, g + 0.8, z0 + 0.6, 6); hang('meme', n, x, g + 1.5 + 1.25, z0 + 0.6, 0, 2.5); post(x, z0 + 0.6, 0.3); });
+  // a sticker of perfect sky overhead: summer is a file format
+  const st = new THREE.MeshBasicMaterial({ map: tex('assets/summer.webp'), toneMapped: false, side: THREE.DoubleSide, fog: false });
+  plane(34, 34, st, -44, g + 30, 43, 0, PI / 2);
+  for (let i = 0; i < 5; i++) { const ux = x0 + 4 + i * 6, uz = z1 - 3; cyl(0.05, 0.05, 2.4, MAT.white, ux, g + 1.2, uz, 6); const um = new THREE.Mesh(new THREE.ConeGeometry(1.6, 0.7, 12, 1, true), cm(i % 2 ? 0xff5a8a : 0x2fd0e8)); um.material.side = THREE.DoubleSide; um.position.set(ux, g + 2.5, uz); um.castShadow = true; scene.add(um); post(ux, uz, 0.2); }
+  sign([{ t: Q('SUMMER.JPG'), s: 0.42 }, { t: 'WEATHER UPDATES DISABLED.', s: 0.15, b: false }], x1 + 2.5, 52, PI / 2, 3.2, 1.3);
+  keyAt(x0 + 1.2, g, (z0 + z1) / 2 + 2, 'SUMMER.JPG');
+  zone(-44, 43, 18, 'SUMMER.JPG');
+  // TAP: a giant brass tap pouring into a basin
+  const tx = -36, tz = 66, tg = ground(tx, tz); padCirc(tx, tz, 7.2, tg + 0.1);
+  const basin = new THREE.Mesh(new THREE.CylinderGeometry(5, 5.4, 1, 40, 1, true), MAT.stone); basin.material.side = THREE.DoubleSide; basin.position.set(tx, tg + 0.5, tz); scene.add(basin);
+  const wat = new THREE.Mesh(new THREE.CircleGeometry(4.9, 40), MAT.pool); wat.rotation.x = -PI / 2; wat.position.set(tx, tg + 0.8, tz); scene.add(wat);
+  post(tx, tz, 5.2, -10, tg + 1.1);
+  const brass = new THREE.MeshStandardMaterial({ color: 0xc89b3c, roughness: 0.3, metalness: 1 });
+  cyl(0.5, 0.6, 7, brass, tx, tg + 3.5, tz - 3); const spout = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.45, 12, 24, PI), brass); spout.position.set(tx, tg + 7, tz - 0.8); spout.rotation.y = PI / 2; scene.add(spout);
+  const handle = box(3, 0.3, 0.3, brass, tx, tg + 7.6, tz - 3);
+  const stream = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 6.2, 12, 1, true), MAT.pool); stream.position.set(tx, tg + 3.9, tz + 1.4); scene.add(stream); TAP.stream = stream; TAP.handle = handle;
+  G('TAP').forEach((n, i) => { const a = i / 9 * PI * 2 + 0.3, x = tx + Math.cos(a) * 6.6, z = tz + Math.sin(a) * 6.6; hang('meme', n, x, tg + 1.6, z, faceTo(x, z, tx, tz) + PI, 1.5); });
+  interact(tx, tz - 5.5, 3, 'E  TAP', () => { TAP.on = !TAP.on; toast(TAP.on ? 'TAP WATER. CONCEPTUAL LIQUIDITY.' : 'PLEASE DO NOT STAKE THE FOUNTAIN.'); chime(TAP.on ? 520 : 390); });
+  sign([{ t: Q('TAP'), s: 0.5 }], tx + 6.5, tz - 6, -0.8, 1.6, 0.8);
+  zone(tx, tz, 9, 'TAP');
+})();
+
+/* --- 12. THE FIRST NATIONAL BANK OF JPGs + the Digital Rights Charter monolith --- */
+const BANK = { x: -66, z: 0, door: [-57, 0] };
+(function () {
+  const cx = -66, cz = 0, w = 16, d = 18, h = 10, g = ground(cx, cz) + 0.02; padRect(cx - w / 2, cx + w / 2 + 4, cz - d / 2, cz + d / 2, g + 0.3);
+  box(w + 6, 0.6, d + 2, MAT.bone, cx + 2, g, cz, 0, 0, false);
+  box(0.6, h, d, MAT.bone, cx - w / 2, g + h / 2, cz); wall(cx - w / 2, cz - d / 2, cx - w / 2, cz + d / 2);
+  [-1, 1].forEach(s => { box(w, h, 0.6, MAT.bone, cx, g + h / 2, cz + s * d / 2); wall(cx - w / 2, cz + s * d / 2, cx + w / 2, cz + s * d / 2); });
+  [-1, 1].forEach(s => { box(0.6, h, d / 2 - 2, MAT.bone, cx + w / 2, g + h / 2, cz + s * (d / 4 + 1)); wall(cx + w / 2, cz + s * 2, cx + w / 2, cz + s * d / 2); });
+  box(0.6, h - 4.5, 4, MAT.bone, cx + w / 2, g + 4.5 + (h - 4.5) / 2, cz); box(w + 0.4, 0.5, d + 0.4, MAT.bone, cx, g + h, cz, 0, 0, false);
+  for (let i = 0; i < 6; i++) { const z = cz - 7.5 + i * 3; const c = cyl(0.55, 0.65, h, MAT.bone, cx + w / 2 + 3, g + h / 2, z, 20); post(cx + w / 2 + 3, z, 0.65); }
+  box(4, 0.8, d + 1, MAT.bone, cx + w / 2 + 2, g + h + 0.3, cz);
+  const ped = new THREE.Shape(); ped.moveTo(-d / 2 - 0.5, 0); ped.lineTo(d / 2 + 0.5, 0); ped.lineTo(0, 3.2); ped.closePath();
+  const pg = new THREE.ExtrudeGeometry(ped, { depth: 4, bevelEnabled: false }); const pm = new THREE.Mesh(pg, MAT.bone); pm.rotation.y = PI / 2; pm.position.set(cx + w / 2, g + h + 0.7, cz); pm.castShadow = true; scene.add(pm);
+  sign([{ t: 'FIRST NATIONAL BANK OF JPGs', s: 0.45, f: 'Georgia,serif', b: false, c: '#3a3a3a' }], cx + w / 2 + 4.02, cz, PI / 2, 14, 0.9, { y: g + h + 0.3, post: false, bg: '#F0EFEA' });
+  sign([{ t: Q('INSTITUTIONAL ADOPTION'), s: 0.26 }, { t: 'PERSONAL BELONGINGS MISSING. YOUR JPG IS IMPORTANT TO OUR COLLECTION.', s: 0.1, b: false }], cx + w / 2 + 7, cz - 11, PI / 2, 4, 1.5);
+  const ids = G("Don't Let"); ids.forEach((n, i) => { if (i < 7) hang('meme', n, cx - w / 2 + 0.36, g + 2.6, cz - 6 + i * 2, PI / 2, 1.7); else hang('meme', n, cx - 5 + (i - 7) * 2, g + 2.6, cz - d / 2 + 0.36, 0, 1.7); });
+  // private viewing room: frames only
+  for (let i = 0; i < 5; i++) { box(1.3, 1.9, 0.08, MAT.gold, cx - 5 + i * 2.2, g + 2.6, cz + d / 2 - 0.36, 0, 0, false); box(1.1, 1.7, 0.09, MAT.ink, cx - 5 + i * 2.2, g + 2.6, cz + d / 2 - 0.36, 0, 0, false); }
+  sign([{ t: Q('PRIVATE VIEWING ROOM'), s: 0.3 }, { t: 'FRAMES ONLY. THE IMAGES PROPAGATED ONTO PUBLIC WALLS.', s: 0.12, b: false }], cx - 0.6, cz + d / 2 - 0.4, PI, 4.2, 1, { y: g + 4.6, post: false });
+  keyAt(cx - 5, g + 0.3, cz + 6.5, 'THE BANK');
+  practical(cx, g + 8, cz, 0xfff1d6, 20, 20);
+  zone(cx, cz, 14, 'FIRST NATIONAL BANK OF JPGs');
+  // monolith
+  const mx = -60, mz = -24, mg = ground(mx, mz); box(1.4, 14, 7.5, MAT.ink, mx, mg + 7, mz); boxWalls(mx, mz, 1.4, 7.5);
+  const dr = G('Digital Rights'); dr.forEach((n, i) => { const s = i < 8 ? 1 : -1, j = i % 8; hang('meme', n, mx + s * 0.76, mg + 3 + Math.floor(j / 2) * 2.4, mz - 1.6 + (j % 2) * 3.2, s * PI / 2, 1.9); });
+  sign([{ t: Q('DIGITAL RIGHTS CHARTER'), s: 0.26 }, { t: 'THESE RIGHTS ARE NOT A PREMIUM FEATURE. ACCEPT COOKIES. DECLINE FEUDALISM.', s: 0.1, b: false }], mx + 4, mz + 5.5, PI / 2 - 0.4, 4, 1.4);
+  zone(mx, mz, 7, 'THE DIGITAL RIGHTS CHARTER');
+})();
+
+/* --- 13. BUIDL: never finished, plus the OPEN WALL where visitors hang their own JPGs --- */
+let crane = null; const openWall = [];
+(function () {
+  const x0 = -56, x1 = -40, z0 = -54, z1 = -40, g = ground(-48, -47);
+  const pole = new THREE.CylinderGeometry(0.07, 0.07, 1, 6); const pm = new THREE.InstancedMesh(pole, MAT.steel, 200); let k = 0; const m = new THREE.Matrix4();
+  for (let x = x0; x <= x1 + 0.01; x += 4) for (let z = z0; z <= z1 + 0.01; z += 3.5) { const hh = 4 + ((x - x0) / 4) * 3 + (rnd() < 0.3 ? 2 : 0); m.compose(new V3(x, g + hh / 2, z), new THREE.Quaternion(), new V3(1, hh, 1)); pm.setMatrixAt(k++, m); post(x, z, 0.12); }
+  pm.count = k; pm.castShadow = true; scene.add(pm);
+  [4, 8, 12].forEach((yy, li) => { for (let x = x0; x < x1 - 0.1 - li * 4; x += 4) box(4, 0.12, z1 - z0 + 0.6, MAT.wood, x + 2, g + yy, (z0 + z1) / 2, 0, 1.4); });
+  box(x1 - x0 + 0.4, 0.06, 0.1, MAT.orange, (x0 + x1) / 2, g + 1.2, z1 + 0.2); box(x1 - x0 + 0.4, 0.06, 0.1, MAT.orange, (x0 + x1) / 2, g + 2.2, z1 + 0.2);
+  const ids = G('BUIDL'); ids.forEach((n, i) => { if (i < 16) hang('meme', n, x0 + 1 + (i % 8) * 2, g + 2.6 + Math.floor(i / 8) * 4, z1 + 0.35, 0, 1.6); else { const j = i - 16; hang('meme', n, x1 + 0.35, g + 2.6 + Math.floor(j / 5) * 4, z1 - 1.5 - (j % 5) * 2.6, PI / 2, 1.6); } });
+  wall(x0 - 0.3, z1 + 0.3, x1 + 0.3, z1 + 0.3); wall(x1 + 0.3, z0, x1 + 0.3, z1 + 0.3); wall(x0 - 0.3, z0, x1 + 0.3, z0); wall(x0 - 0.3, z0, x0 - 0.3, z1 + 0.3);
+  sign([{ t: Q('UNFINISHED'), s: 0.44 }, { t: 'BUIDL PERMIT PENDING SINCE GENESIS. COMPLETION WOULD SEND THE WRONG MESSAGE.', s: 0.1, b: false }], x1 + 4, z1 + 3, PI / 4, 3.8, 1.5, { bg: '#FF6B00', fg: '#0D0D0D' });
+  // crane
+  const cxr = -34, czr = -58, cg = ground(cxr, czr); const mast = box(1.2, 26, 1.2, MAT.orange, cxr, cg + 13, czr); post(cxr, czr, 1);
+  crane = new THREE.Group(); crane.position.set(cxr, cg + 26, czr); scene.add(crane);
+  const jib = new THREE.Mesh(new THREE.BoxGeometry(30, 0.9, 0.9), MAT.orange); jib.position.x = 9; jib.castShadow = true; crane.add(jib);
+  const cw = new THREE.Mesh(new THREE.BoxGeometry(3, 2, 2), MAT.conc); cw.position.x = -6; crane.add(cw);
+  const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 10, 4), MAT.ink); cable.position.set(20, -5, 0); crane.add(cable);
+  const pal = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.3, 2.6), MAT.wood); pal.position.set(20, -10.2, 0); crane.add(pal);
+  const pc = signTex([{ t: 'YOUR', s: 0.3 }, { t: 'ROADMAP', s: 0.3 }], 256, 256, '#FF6B00', '#0D0D0D'); const crate = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial({ map: pc })); crate.position.set(20, -9, 0); crane.add(crate);
+  // OPEN WALL: hoarding with twelve empty frames
+  const wx0 = -58, wx1 = -44, wz = -34, wg = ground(-51, wz);
+  box(wx1 - wx0 + 1, 5.2, 0.3, MAT.wood, (wx0 + wx1) / 2, wg + 2.6, wz - 0.2, 0, 1.4); wall(wx0 - 0.5, wz - 0.2, wx1 + 0.5, wz - 0.2);
+  const ph = signTex([{ t: Q('YOUR MEME HERE'), s: 0.16 }, { t: 'aim + H, or drop a file', s: 0.08, b: false, c: '#888' }], 512, 512, '#151515');
+  for (let i = 0; i < 12; i++) {
+    const x = wx0 + 0.6 + (i % 6) * 2.35, y = wg + 1.45 + Math.floor(i / 6) * 2.35;
+    box(2.15, 2.15, 0.08, MAT.ink, x, y, wz - 0.02, 0, 0, false);
+    const art = plane(1.95, 1.95, new THREE.MeshBasicMaterial({ map: ph, toneMapped: false }), x, y, wz + 0.04, 0);
+    art.userData.slot = i; openWall.push({ art, x, y, filled: false, name: '' }); PICK_EXTRA.push(art);
+  }
+  sign([{ t: Q('THE OPEN WALL'), s: 0.34 }, { t: 'HANG YOUR OWN JPGs. THIS FRAME IS NOT THE OWNER.', s: 0.12, b: false }], wx1 + 2.4, wz + 1.6, 0, 3.6, 1.3);
+  zone(-48, -44, 16, 'BUIDL'); zone(-51, -31, 6, 'THE OPEN WALL');
+})();
+
+/* --- 14. OPEN METAVERSE: a ring of cards and a portal that drops you on the lighthouse roof --- */
+const OM = { x: 30, z: -80, portal: null };
+(function () {
+  const { x, z } = OM, g = ground(x, z); padCirc(x, z, 10.5, g + 0.1);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(10.5, 10.8, 0.3, 48), MAT.bone); disc.position.set(x, g - 0.05, z); disc.receiveShadow = true; scene.add(disc);
+  const ids = G('Open Metaverse'); ids.forEach((n, i) => { const a = i / ids.length * PI * 2, cx = x + Math.cos(a) * 9.4, cz = z + Math.sin(a) * 9.4; if (Math.abs(Math.sin(a)) > 0.93 && Math.cos(a) > -2) {} hang('meme', n, cx, g + 1.4, cz, faceTo(cx, cz, x, z), 1.5); });
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.35, 16, 64), MAT.blue); ring.position.set(x, g + 3.8, z); scene.add(ring);
+  const film = new THREE.Mesh(new THREE.CircleGeometry(3.1, 48), new THREE.MeshBasicMaterial({ color: 0x7fb0ff, transparent: true, opacity: 0.35, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })); film.position.copy(ring.position); scene.add(film);
+  OM.portal = { ring, film, y: g + 3.8 }; practical(x, g + 4, z, 0x6a9cff, 30, 22);
+  sign([{ t: Q('OPEN METAVERSE'), s: 0.32 }, { t: 'DOOR SOMEHOW CLOSED. WALK THROUGH THE RING ANYWAY.', s: 0.11, b: false }], x - 8, z + 11.5, PI - 0.6, 3.6, 1.4);
+  zone(x, z, 11, 'OPEN METAVERSE');
+})();
+
+/* --- 15. FREEDOM TO TRANSACT: the freeway loop, 71 billboards, the zero gas toll --- */
+const cars = []; let tollArm = null, tollCD = 0;
+(function () {
+  const road = new THREE.Mesh(new THREE.RingGeometry(96, 104, 180, 1), MAT.asphalt); road.rotation.x = -PI / 2; road.position.y = 0.66; road.receiveShadow = true; scene.add(road);
+  const dash = new THREE.InstancedMesh(new THREE.BoxGeometry(0.25, 0.02, 2.6), MAT.white, 120); const m = new THREE.Matrix4();
+  for (let i = 0; i < 120; i++) { const a = i / 120 * PI * 2; m.compose(new V3(Math.cos(a) * 100, 0.68, Math.sin(a) * 100), QY(-a), new V3(1, 1, 1)); dash.setMatrixAt(i, m); } scene.add(dash);
+  const ids = G('Freedom to Transact'); const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.12, 0.12, 1, 6), MAT.steel, ids.length * 2); let k = 0;
+  ids.forEach((n, i) => { const a = (i + 0.5) / ids.length * 360 + 2.5; if (Math.abs(a - 180) < 3.5 || Math.abs(a - 360) < 3.5 || a < 3.5) return; const [x, z] = P2(a, 107), g = ground(x, z), h = 3.2;
+    const ry = faceTo(x, z, 0, 0), cx = Math.cos(ry), sx = Math.sin(ry); [-0.9, 0.9].forEach(o => { m.compose(new V3(x + o * cx, g + 1.3, z - o * sx), new THREE.Quaternion(), new V3(1, 2.6, 1)); posts.setMatrixAt(k++, m); });
+    hang('meme', n, x, g + 2.6 + h / 2, z, ry, h); post(x, z, 0.4); });
+  posts.count = k; scene.add(posts);
+  // lamps on the inner kerb
+  const lp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.08, 0.1, 6, 6), MAT.graphite, 36), lb = new THREE.InstancedMesh(new THREE.SphereGeometry(0.32, 10, 8), MAT.bulb, 36);
+  for (let i = 0; i < 36; i++) { const a = (i + 0.5) / 36 * 360; const [x, z] = P2(a, 94.5), g = ground(x, z); m.makeTranslation(x, g + 3, z); lp.setMatrixAt(i, m); m.makeTranslation(x, g + 6.1, z); lb.setMatrixAt(i, m); post(x, z, 0.15); if (i % 4 === 0) practical(x, g + 6, z, 0xffd9a0, 18, 22); }
+  scene.add(lp); scene.add(lb);
+  // traffic
+  const cc = [0xff6b00, 0x2962ff, 0xf0efea, 0x111111, 0xffd400, 0x7b3f32];
+  for (let i = 0; i < 9; i++) { const c = new THREE.Group(); const b = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.8, 4), cm(cc[i % cc.length])); b.position.y = 0.75; b.castShadow = true; c.add(b); const t = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 2), MAT.glass); t.position.set(0, 1.4, -0.2); c.add(t); scene.add(c); cars.push({ g: c, a: i / 9 * PI * 2, lane: i % 2 ? 98 : 102, v: (i % 2 ? 1 : -1) * (0.035 + rnd() * 0.02) }); }
+  // toll booth
+  [-5.5, 5.5].forEach(x => { box(2, 3, 3, MAT.white, x, ground(x, 100) + 1.5, 100); boxWalls(x, 100, 2, 3); box(2.4, 0.3, 3.4, MAT.orange, x, ground(x, 100) + 3.15, 100); });
+  tollArm = new THREE.Group(); tollArm.position.set(-4.4, ground(0, 100) + 1.2, 100); scene.add(tollArm);
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(8.6, 0.18, 0.18), MAT.orange); arm.position.x = 4.3; tollArm.add(arm);
+  sign([{ t: Q('ZERO GAS'), s: 0.42 }, { t: 'EMOTIONAL TOLLS APPLY.', s: 0.16, b: false }], 0, 100, PI, 4.6, 1.1, { y: ground(0, 100) + 4.4, post: false });
+  sign([{ t: Q('FREEDOM TO TRANSACT'), s: 0.3 }, { t: 'NOW WITH TRAFFIC.', s: 0.16, b: false }], 9, 93, PI, 3.6, 1.2);
+  zone(0, 100, 7, 'THE ZERO GAS TOLL');
+})();
+
+/* --- 16. THE COLOSSUS OF 6529, in the harbour, back to the island, facing Manhattan --- */
+const colossus = { lenses: null, lasers: [], t: 0 };
+(function () {
+  const vs = 2.4, Wd = 16, Hh = 20, ox = 58, oz = 262, base = 16;
+  const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(26, 1), MAT.stone); rock.scale.set(1.3, 0.45, 1.1); rock.position.set(ox, 2, oz); scene.add(rock);
+  box(28, base, 28, MAT.sandstone, ox, base / 2, oz, Math.atan2(-ox, 180 - oz)); box(30, 1.2, 30, MAT.red, ox, base + 0.6, oz, Math.atan2(-ox, 180 - oz));
+  const COL = { H: 0x3b3e44, h: 0x6d7179, S: 0xc9a27a, s: 0xa07c58, G: 0x101010, L: 0x7fe3ff, M: 0x5a3a2a, w: 0xe8e8e8 };
+  const px = (x, y) => { // the honorary's pixel figure, as voxels
+    if (y >= 14) { if ((x === 6 || x === 9) && y <= 16) return 'w'; return 'H'; }
+    const rows = [[4, 11], [3, 12], [2, 13], [2, 13], [2, 13], [2, 13], [2, 13], [2, 13], [2, 13], [2, 13], [2, 13], [3, 12], [3, 12], [4, 11]];
+    const [a, b] = rows[y]; if (x < a || x > b) return null;
+    if (x >= 5 && x <= 11 && y >= 4 && y <= 12) {
+      if (y === 5 && x <= 11) return 'G';
+      if ((y === 6 || y === 7) && ((x >= 6 && x <= 7) || (x >= 9 && x <= 10))) return 'L';
+      if (y === 6 || y === 7) return 'G';
+      if (y === 10 && x >= 7 && x <= 9) return 'M';
+      if ((y === 8 || y === 9) && x === 8) return 's';
+      return 'S';
+    }
+    return x === a || x === b || y === 0 ? 'H' : 'h';
+  };
+  const vox = [], lens = [];
+  for (let y = 0; y < Hh; y++) for (let x = 0; x < Wd; x++) { const c = px(x, y); if (!c) continue; const depth = y >= 14 ? 8 : 7; for (let zz = 0; zz < depth; zz++) { const front = zz === depth - 1; const col = front ? c : (y >= 14 ? 'H' : (c === 'S' || c === 's' || c === 'M' || c === 'G' || c === 'L') && zz > depth - 3 ? 'S' : 'H'); (front && c === 'L' ? lens : vox).push([x, y, zz, col]); } }
+  // the raised arm and the torch: a hardware wallet with a flame
+  for (let y = -6; y < 15; y++) for (let x = 16; x < 18; x++) for (let zz = 2; zz < 5; zz++) vox.push([x, y, zz, y < 0 ? 'S' : 'H']);
+  const cube = new THREE.BoxGeometry(vs, vs, vs), V = new THREE.InstancedMesh(cube, new THREE.MeshStandardMaterial({ roughness: 0.75 }), vox.length), m = new THREE.Matrix4(), col = new THREE.Color();
+  const face = Math.atan2(0 - ox, 180 - oz); const grp = new THREE.Group(); grp.position.set(ox, base + 1.2, oz); grp.rotation.y = face; scene.add(grp);
+  vox.forEach(([x, y, zz, c], i) => { m.makeTranslation((x - Wd / 2) * vs, (Hh - y) * vs, (zz - 4) * vs); V.setMatrixAt(i, m); V.setColorAt(i, col.setHex(COL[c])); });
+  V.castShadow = true; grp.add(V);
+  const LZ = new THREE.InstancedMesh(cube, MAT.lens, lens.length); lens.forEach(([x, y, zz], i) => { m.makeTranslation((x - Wd / 2) * vs, (Hh - y) * vs, (zz - 4) * vs + 0.1); LZ.setMatrixAt(i, m); }); grp.add(LZ); colossus.lenses = LZ;
+  const torch = new THREE.Mesh(new THREE.BoxGeometry(vs * 2.4, vs * 4.2, vs * 1.2), MAT.graphite); torch.position.set((17 - Wd / 2) * vs, (Hh + 9) * vs, 0.5 * vs); grp.add(torch);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(vs * 1.8, vs * 1.4), new THREE.MeshBasicMaterial({ map: lhScreenTex[4], toneMapped: false })); scr.position.set((17 - Wd / 2) * vs, (Hh + 9.6) * vs, 0.5 * vs + vs * 0.61); grp.add(scr);
+  const fl = new THREE.Mesh(new THREE.ConeGeometry(vs * 1.1, vs * 3, 12), MAT.flame); fl.position.set((17 - Wd / 2) * vs, (Hh + 13) * vs, 0.5 * vs); grp.add(fl); colossus.flame = fl;
+  const fp = new THREE.PointLight(0xff8a2a, 0, 120, 2); fp.position.copy(fl.position); grp.add(fp); fp.userData.base = 80; practicals.push(fp);
+  [-1, 1].forEach(s => { const lz = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 900, 8), MAT.laser); lz.rotation.x = PI / 2 - 0.12; lz.position.set(((s < 0 ? 6.5 : 9.5) - Wd / 2) * vs, (Hh - 6.5) * vs + Math.cos(PI / 2 - 0.12) * 450, 2 * vs + Math.sin(PI / 2 - 0.12) * 450); lz.visible = false; grp.add(lz); colossus.lasers.push(lz); });
+  const back = signTex([{ t: Q('THE COLOSSUS OF 6529'), s: 0.22 }, { t: 'LIBERTY NOW SUPPORTS SELF CUSTODY. TORCH SOLD SEPARATELY.', s: 0.08, b: false }, { t: 'after Cards on the Bridge, for Punk6529, NEW YORKERS honorary by MLow', s: 0.065, b: false, c: '#FF6B00' }], 1024, 512, '#0D0D0D');
+  const bs = new THREE.Mesh(new THREE.PlaneGeometry(20, 10), new THREE.MeshBasicMaterial({ map: back, toneMapped: false })); bs.position.set(ox + Math.sin(face) * 15, base / 2 + 1, oz + Math.cos(face) * 15); bs.rotation.y = face; scene.add(bs);
+  zone(ox, oz, 40, 'THE COLOSSUS OF 6529');
+})();
+
+/* --- 17. SZN markers along the coast --- */
+(function () {
+  const seasons = {}; CARDS.forEach(c => { if (!c.s) return; (seasons[c.s] || (seasons[c.s] = [])).push(c); });
+  Object.keys(seasons).map(Number).sort((a, b) => a - b).forEach((s, i, arr) => {
+    const a = 22 + i * (316 / (arr.length - 1)); if (Math.abs(a - 180) < 6) return; const [x, z] = P2(a, 131), g = ground(x, z), cs = seasons[s];
+    const ob = box(1.1, 4.2, 1.1, MAT.bone, x, g + 2.1, z, -a * PI / 180, 0); post(x, z, 0.8);
+    sign([{ t: 'SZN' + s, s: 0.5 }, { t: cs.length + ' CARDS', s: 0.2, c: '#FF6B00' }], x + Math.sin(a * PI / 180) * 0.56, z - Math.cos(a * PI / 180) * 0.56, PI - a * PI / 180, 1.05, 0.9, { y: g + 3.2, post: false });
+    const artists = new Set(cs.map(c => c.a)).size;
+    interact(x, z, 2.2, `E  READ SZN${s}`, () => toast(`SZN${s}: ${cs.length} CARDS, ${artists} ARTISTS. FIRST: "${cs[0].t}". LAST: "${cs[cs.length - 1].t}".`, 'blue'));
+  });
+})();
+
+/* --- 18. palms, scattered signs, residents, agents --- */
+(function palms() {
+  const N = 70, trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.18, 0.32, 1, 7), MAT.trunk, N), lg = new THREE.ConeGeometry(0.55, 4.2, 4, 1); lg.rotateX(PI / 2); lg.translate(0, 0, 2.1); lg.scale(1, 0.18, 1);
+  const leaves = new THREE.InstancedMesh(lg, MAT.leaf, N * 7); let k = 0, n = 0; const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  let tries = 0; while (n < N && tries++ < 2000) {
+    const a = rnd() * 360, r = 110 + rnd() * 22, [x, z] = P2(a, r);
+    if (Math.abs(x) < 10 || (z < -100 && Math.abs(x) < 18) || (x > 0 && x < 30 && z > 120)) continue;
+    const g = ground(x, z), h = 6 + rnd() * 4, lean = (rnd() - 0.5) * 0.25;
+    q.setFromEuler(e.set(lean, 0, lean * 0.6)); m.compose(new V3(x, g + h / 2, z), q, new V3(1, h, 1)); trunks.setMatrixAt(n, m); post(x, z, 0.35);
+    for (let i = 0; i < 7; i++) { q.setFromEuler(e.set(0.35 + rnd() * 0.35, i / 7 * PI * 2 + rnd() * 0.3, 0, 'YXZ')); m.compose(new V3(x + lean * h * 0.5, g + h, z - lean * h * 0.3), q, new V3(1, 1, 1)); leaves.setMatrixAt(k++, m); }
+    n++;
+  }
+  trunks.count = n; leaves.count = k; trunks.castShadow = leaves.castShadow = true; scene.add(trunks); scene.add(leaves);
+})();
+[['PLEASE DO NOT RIGHT CLICK THE OCEAN.', 30, 128, 0.25], ['YOU ARE EARLY. THE STAIRS ARE NOT HERE.', -20, -20, 0.8], ['TOTAL DAYS HELD. TOTAL NIGHTS AWAKE.', 22, 22, -0.8], ['DECENTRALIZE EVERYTHING. INCLUDING THIS QUEUE.', -22, 22, 0.8], ['ANOTHER HISTORIC FIRST SUNRISE.', 26, 118, 0.2], ['SZN14. STILL LEARNING TO SAY GM.', -40, 120, -0.3], ['THIS IS NOT A ROADMAP. IT IS A ROUNDABOUT.', 74, 62, -2.3]]
+  .forEach(([t, x, z, ry]) => sign([{ t: Q(t), s: 0.2 }], x, z, ry, 3.6, 0.7));
+
+const residents = [], agents = [];
+const RING = []; for (let i = 0; i < 8; i++) RING.push(P2(i * 45 + 22.5, 40));
+const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
+(function () {
+  const shirts = [0xff6b00, 0x2962ff, 0xf0efea, 0x111111, 0xffd400, 0x7b3f32, 0x44aa66, 0xd04a8a, 0x6a6a6a];
+  NY_RES.forEach((p, i) => {
+    const P = person(shirts[i % shirts.length], i % 3 ? 0x2a2f45 : 0x6b5b45, SKIN[i % SKIN.length]);
+    const poleM = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.3, 5), MAT.wood); poleM.position.set(0.3, 2.1, 0); P.g.add(poleM);
+    const sg = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ toneMapped: false, side: THREE.DoubleSide })); setPlaneUV(sg, 'ny', p.n, 1.0); sg.position.set(0.3, 3.3, 0); sg.userData.ny = p.n; P.g.add(sg); PICK_EXTRA.push(sg);
+    const route = i % 5 === 0 ? 'beach' : 'ring', idx = i % 8;
+    const start = route === 'beach' ? BEACH[i % 4] : RING[idx];
+    P.g.position.set(start[0], ground(start[0], start[1]), start[1]);
+    residents.push({ P, n: p.n, route, idx, speed: 1.0 + rnd() * 0.7, pause: rnd() * 3, phase: rnd() * 6, dir: i % 2 ? 1 : -1, bub: null, bubT: 0 });
+  });
+  for (let i = 0; i < 3; i++) {
+    const P = person(0x15161a, 0x15161a, SKIN[(i * 3) % SKIN.length]);
+    const bc = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.3, 0.1), cm(0x3a2a1a)); bc.position.set(0.32, 0.95, 0); P.g.add(bc);
+    const gl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.05), MAT.ink); gl.position.set(0, 1.77, 0.15); P.g.add(gl);
+    const carry = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ toneMapped: false, side: THREE.DoubleSide })); carry.position.set(0, 1.3, 0.35); carry.visible = false; P.g.add(carry);
+    P.g.position.set(BANK.door[0] + 2, ground(-55, 0), i * 2 - 2); scene.add(P.g);
+    agents.push({ P, carry, stolen: null, target: null, mode: 'out', wait: 4 + i * 6, speed: 1.6 });
+  }
+})();
+
+/* ================================================================
+   systems: state, HUD, picking, eggs, audio, hanging
+   ================================================================ */
+const state = { keys: 0, gm: 0, seized: 0, seen: new Set(), hung: 0, tdh: 0, idle: 0, brain: 0, started: false, zone: '', vault: false, eggs: new Set() };
+const $ = id => document.getElementById(id);
+function toast(t, cls) { const d = document.createElement('div'); d.className = 'toast' + (cls ? ' ' + cls : ''); d.textContent = t; $('toasts').appendChild(d); setTimeout(() => d.remove(), 4200); while ($('toasts').children.length > 4) $('toasts').firstChild.remove(); }
+function hud() { $('sKeys').textContent = state.keys + '/6'; $('sGm').textContent = state.gm; $('sSeized').textContent = state.seized; $('sSeen').textContent = state.seen.size + '/527'; $('sHung').textContent = state.hung + '/12'; $('sTdh').textContent = Math.floor(state.tdh); }
+function flash(c = '#fff') { const f = $('flash'); f.style.background = c; f.style.opacity = 0.7; setTimeout(() => f.style.opacity = 0, 120); }
+
+/* teleports */
+const TP = [['ARRIVALS', 0, 176, 0], ['THE FLOOR', 0, 24, 0], ['FACTORY', 0, -40, 0], ['BRAIN', 28, -28, -2.36], ['WAGMI', 36, 0, -1.57], ['SURVIVE', 16, 44, -1.57], ['CENSUS WALK', -2, 52, 3.14], ['BODEGA', 6, 66, -1.57], ['SUMMER.JPG', -44, 54, 3.14], ['BANK', -46, 0, 1.57], ['BUIDL', -40, -26, 0.4], ['OPEN METAVERSE', 30, -66, 0], ['LIGHTHOUSE', 0, -108, 0], ['ZERO GAS TOLL', 0, 110, 0], ['2030 PATHWAY', 0, 180, 3.14]];
+TP.forEach(([n, x, z, yaw]) => { const b = document.createElement('button'); b.className = 'b'; b.textContent = n; b.onclick = e => { e.stopPropagation(); teleport(x, z, yaw); }; $('tp').appendChild(b); });
+
+/* picking */
+const ray = new THREE.Raycaster(); ray.far = 60; const ndc = new THREE.Vector2();
+function pickAt(cx, cy) {
+  ndc.set(cx / innerWidth * 2 - 1, -cy / innerHeight * 2 + 1); ray.setFromCamera(ndc, camera);
+  const hits = ray.intersectObjects(cardMeshes.concat(PICK_EXTRA, [frameMesh]), false);
+  for (const h of hits) {
+    if (h.object === frameMesh) return null;
+    if (h.object.isInstancedMesh) { const id = cardBuf[h.object.userData.atlas].ids[h.instanceId]; if (id && !isHiddenCard(h.object.userData.atlas, h.instanceId)) return Object.assign({ d: h.distance }, id); continue; }
+    if (h.object.userData.ny) return { kind: 'ny', n: h.object.userData.ny, d: h.distance };
+    if (h.object.userData.slot !== undefined) return { kind: 'slot', slot: h.object.userData.slot, d: h.distance };
+    if (h.object.userData.honorary) return { kind: 'honorary', d: h.distance };
+  }
+  return null;
+}
+const hiddenSet = new Set(); const isHiddenCard = (a, i) => hiddenSet.has(a + ':' + i);
+function openCard(p) {
+  if (!p) return; const art = $('mArt'); art.innerHTML = '';
+  if (p.kind === 'meme') {
+    const c = byN[p.n]; state.seen.add(p.n); hud(); art.appendChild(cropCanvas('meme', p.n));
+    $('mT').textContent = c.t; $('mMeta').innerHTML = `THE MEMES BY 6529 · CARD ${c.n} · SZN${c.s}<br>ARTIST: ${esc(c.a)}<br>MEME: ${esc(c.m)}<br>SUPPLY ${c.sup} · FLOOR ${c.fl ? c.fl.toFixed(3) : 'n/a'} ETH · HODL RATE ${c.hodl ? c.hodl.toFixed(2) : 'n/a'}<br><span style="opacity:.6">market figures from the archive snapshot, 2026-07-28, not live</span>`;
+    $('mD').innerHTML = esc(c.d) + `<br><br><a href="https://seize.io/the-memes/${c.n}" target="_blank" rel="noopener">seize.io/the-memes/${c.n}</a>`;
+  } else if (p.kind === 'ny') {
+    const c = nyByN[p.n]; art.appendChild(cropCanvas('ny', p.n, 500));
+    $('mT').textContent = c.t; $('mMeta').innerHTML = `NEW YORKERS by MLow · No. ${c.n} · ERA ${roman(c.e)}<br>${esc(c.f || '')}${c.nb ? ' · ' + esc(c.nb) : ''}`;
+    $('mD').innerHTML = `A New Yorker on holiday on MEME ISLAND.<br><br><a href="https://n3wyorkers.com/n/${c.n}" target="_blank" rel="noopener">n3wyorkers.com/n/${c.n}</a>`;
+  } else if (p.kind === 'honorary') {
+    const im = new Image(); im.src = 'assets/honorary6529.jpg'; art.appendChild(im);
+    $('mT').textContent = 'Cards on the Bridge, for Punk6529'; $('mMeta').innerHTML = 'NEW YORKERS HONORARY · MLow, 2026';
+    $('mD').textContent = 'A pixel figure in a grey hoodie and glasses stands on the Brooklyn Bridge at night holding a fan of glowing cards. The bridge belongs to everyone.';
+  } else return;
+  $('modal').style.display = 'flex'; try { document.exitPointerLock(); } catch (e) { }
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const roman = n => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX'][n] || n;
+$('mClose').onclick = () => $('modal').style.display = 'none';
+$('modal').onclick = e => { if (e.target.id === 'modal') $('modal').style.display = 'none'; };
+
+/* hanging your own JPGs on the OPEN WALL */
+let slotTarget = -1;
+function hangFile(file, slot) {
+  if (!file || !/^image\//.test(file.type)) return;
+  if (slot === undefined || slot < 0) slot = openWall.findIndex(s => !s.filled); if (slot < 0) { toast('THE OPEN WALL IS FULL. AIM AT A FRAME AND PRESS H TO SWAP.'); return; }
+  const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => {
+    const t = new THREE.Texture(im); t.encoding = THREE.sRGBEncoding; t.needsUpdate = true; const S = openWall[slot]; S.art.material = new THREE.MeshBasicMaterial({ map: t, toneMapped: false });
+    const a = im.width / im.height; S.art.scale.set(a >= 1 ? 1 : a, a >= 1 ? 1 / a : 1, 1); if (!S.filled) state.hung++; S.filled = true; S.name = file.name.replace(/\.[^.]+$/, ''); hud(); toast(`HUNG "${S.name.toUpperCase()}". THIS FRAME IS NOT THE OWNER.`, 'blue');
+  }; im.src = fr.result; }; fr.readAsDataURL(file);
+}
+$('file').onchange = e => { const fs = [...e.target.files]; if (slotTarget >= 0 && fs.length === 1) hangFile(fs[0], slotTarget); else fs.forEach(f => hangFile(f)); slotTarget = -1; e.target.value = ''; };
+$('up').onclick = e => { e.stopPropagation(); slotTarget = -1; $('file').click(); };
+addEventListener('dragover', e => { e.preventDefault(); $('drop').style.display = 'flex'; });
+addEventListener('dragleave', e => { if (e.target === document.documentElement || !e.relatedTarget) $('drop').style.display = 'none'; });
+addEventListener('drop', e => { e.preventDefault(); $('drop').style.display = 'none'; [...e.dataTransfer.files].forEach(f => hangFile(f)); });
+
+/* audio: ocean bed + chimes, off by default */
+let AC = null, oceanGain = null;
+function audioOn() {
+  if (!AC) { AC = new (window.AudioContext || window.webkitAudioContext)(); const len = AC.sampleRate * 4, buf = AC.createBuffer(1, len, AC.sampleRate), d = buf.getChannelData(0); let last = 0; for (let i = 0; i < len; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.2; }
+    const src = AC.createBufferSource(); src.buffer = buf; src.loop = true; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 700; oceanGain = AC.createGain(); oceanGain.gain.value = 0;
+    const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 0.12; lg.gain.value = 0.07; lfo.connect(lg); lg.connect(oceanGain.gain); src.connect(lp); lp.connect(oceanGain); oceanGain.connect(AC.destination); src.start(); lfo.start(); }
+  AC.resume(); oceanGain.gain.value = 0.12;
+}
+function chime(f = 523) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; [1, 1.25, 1.5].forEach((m, i) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f * m; g.gain.setValueAtTime(0, AC.currentTime + i * 0.07); g.gain.linearRampToValueAtTime(0.09, AC.currentTime + i * 0.07 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + i * 0.07 + 1.1); o.connect(g); g.connect(AC.destination); o.start(AC.currentTime + i * 0.07); o.stop(AC.currentTime + i * 0.07 + 1.2); }); }
+$('aud').onclick = e => { e.stopPropagation(); const on = $('aud').classList.toggle('on'); $('aud').textContent = on ? 'SOUND ON' : 'SOUND OFF'; if (on) { audioOn(); chime(); } else if (oceanGain) oceanGain.gain.value = 0; };
+document.querySelectorAll('[data-p]').forEach(b => b.onclick = e => { e.stopPropagation(); setPreset(b.dataset.p); });
+$('hide').onclick = e => { e.stopPropagation(); $('hud').style.display = 'none'; $('hudHide').style.display = 'block'; };
+$('hudHide').onclick = e => { e.stopPropagation(); $('hud').style.display = ''; $('hudHide').style.display = 'none'; };
+
+/* ---------------- eggs ---------------- */
+let sunrise = 0, rainT = 0;
+function gm(fromChat) {
+  state.gm++; hud(); sunrise = 7; setPreset('dawn', true); chime(523);
+  toast('ANOTHER HISTORIC FIRST SUNRISE. gm.', 'blue');
+  residents.forEach((r, i) => setTimeout(() => say(r, i % 7 === 0 ? 'gm ser' : i % 11 === 0 ? 'GM' : 'gm'), 300 + i * 140));
+  setTimeout(() => toast('gm (from a tiny boat beyond the harbour)'), 300 + residents.length * 140 + 600);
+  lhScreen.material.map = lhScreenTex[4];
+}
+function say(r, t) { if (r.bub) r.P.g.remove(r.bub); r.bub = bubble(t); r.bub.position.set(0, 2.45, 0); r.P.g.add(r.bub); r.bubT = 4; }
+function seize() {
+  seizeT = 10; convSpeed = 6; state.seized += 73; hud(); flash('#FF6B00'); chime(330);
+  toast('THE MEANS HAVE BEEN SEIZED. 73 CARDS NOW BELONG TO EVERYONE WHO IS STANDING HERE.'); rainT = 10;
+}
+const EGGS = {
+  gm: () => gm(),
+  gn: () => { flash('#2962FF'); toast('WE DON\'T SAY THAT HERE.'); },
+  seize: () => seize(),
+  wagmi: () => { wheel.speed = 0.7; toast('WAGMI. PLEASE REMAIN SEATED.'); setTimeout(() => wheel.speed = 0.06, 9000); },
+  ngmi: () => { teleport(wheel.cx + 6, wheel.cz + 21, PI); toast('NGMI EXIT. IT LEADS BACK TO FRIENDS.'); },
+  '6529': () => { colossus.t = 6.529; flash('#ff2a2a'); toast('THE COLOSSUS HAS NOTICED YOU. 6.529 SECONDS OF EYE CONTACT.'); },
+  tdh: () => toast(`TDH ${Math.floor(state.tdh)}. HOLD STILL TO EARN MORE. MOVING RESETS NOTHING, IT JUST LOOKS BAD.`, 'blue'),
+  wen: () => toast('SOON. (THIS SIGN HAS SAID SOON SINCE GENESIS.)'),
+  fud: () => { toast('A BEAR SHAPED CLOUD CROSSES THE ISLAND. SURVIVE IS TO THE SOUTH EAST.'); },
+  hodl: () => { state.tdh += 100; hud(); toast('+100 TDH FOR SAYING IT OUT LOUD.'); },
+  summer: () => { teleport(-44, 54, PI); toast('IT IS ALWAYS SUMMER.JPG HERE.'); },
+  rug: () => toast('THE RUG IS ON GM BEACH. PLEASE DO NOT STAND ON IT.'),
+  mlow: () => { toast('MLOW PAINTED THE PEOPLE. THE PEOPLE BUILT THE PLACE.', 'blue'); residents.forEach(r => say(r, 'mlow')); },
+  keys: () => toast(`KEYS ${state.keys}/6: ${KEYS.map(k => (k.got ? '■ ' : '□ ') + k.name).join('  ')}`),
+  punk: () => toast('THE COLOSSUS IS IN THE HARBOUR. IT IS WATCHING THE PIER FOR PAPER HANDS.')
+};
+let typed = '';
+function onType(ch) {
+  typed = (typed + ch.toLowerCase()).slice(-10);
+  for (const k in EGGS) if (typed.endsWith(k)) { if (!state.eggs.has(k)) state.eggs.add(k); EGGS[k](); typed = ''; break; }
+}
+const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']; let kon = [];
+let tilt = 0;
+
+/* ---------------- player + controls ---------------- */
+const P = { x: 0, z: 176, y: 0.55, vy: 0, yaw: 0, pitch: -0.04, ground: true, fallFrom: 0 };
+const keys = {}; let locked = false;
+function teleport(x, z, yaw) { P.x = x; P.z = z; const f = floorAt(x, z, 100); P.y = f.f === null ? 0.6 : f.f; P.vy = 0; P.yaw = yaw || 0; P.pitch = -0.04; }
+addEventListener('keydown', e => {
+  if ($('chat').style.display === 'block') return;
+  if (e.key === 'Enter') { $('chat').style.display = 'block'; $('chatIn').focus(); try { document.exitPointerLock(); } catch (er) { } e.preventDefault(); return; }
+  if (e.key === 'Escape') { $('modal').style.display = 'none'; }
+  kon.push(e.key); kon = kon.slice(-10); if (kon.join() === KONAMI.join()) { tilt = tilt ? 0 : 0.0524; toast(tilt ? 'THE ISLAND HAS BEEN MODIFIED BY 3 PERCENT.' : 'BACK TO 100 PERCENT.'); }
+  keys[e.code] = true;
+  if (e.code === 'Digit1') setPreset('golden'); if (e.code === 'Digit2') setPreset('day'); if (e.code === 'Digit3') setPreset('night');
+  if (e.code === 'Space' && P.ground && state.started) { P.vy = 7.6; P.ground = false; P.fallFrom = P.y; e.preventDefault(); }
+  if (e.code === 'KeyE') useNearest();
+  if (e.code === 'KeyH') { const p = pickAt(innerWidth / 2, innerHeight / 2); if (p && p.kind === 'slot') { slotTarget = p.slot; $('file').click(); } }
+  if (e.key.length === 1 && /[a-z0-9]/i.test(e.key)) onType(e.key);
+});
+addEventListener('keyup', e => keys[e.code] = false);
+$('chatIn').addEventListener('keydown', e => {
+  e.stopPropagation(); if (e.key === 'Escape') { $('chat').style.display = 'none'; return; }
+  if (e.key !== 'Enter') return; const v = $('chatIn').value.trim(); $('chatIn').value = ''; $('chat').style.display = 'none'; if (!v) return;
+  const w = v.toLowerCase().replace(/[^a-z0-9 ]/g, ''); let hit = false;
+  for (const k in EGGS) if (w === k || w.split(' ').includes(k)) { EGGS[k](); hit = true; break; }
+  if (!hit) { const near = residents.slice().sort((a, b) => dist2(a) - dist2(b))[0]; const rep = ['ser', 'few understand', 'this is the way', 'have fun staying poor (affectionate)', 'probably nothing', 'zoom out', 'we are so early']; if (near) say(near, rep[Math.floor(Math.random() * rep.length)]); toast('YOU: ' + v); }
+});
+const dist2 = r => (r.P.g.position.x - P.x) ** 2 + (r.P.g.position.z - P.z) ** 2;
+const cv = renderer.domElement; let drag = null;
+cv.addEventListener('pointerdown', e => { if (!state.started) return; drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, id: e.pointerId }; try { cv.setPointerCapture(e.pointerId); } catch (er) { } });
+cv.addEventListener('pointermove', e => { if (locked || !drag || drag.id !== e.pointerId) return; P.yaw -= (e.clientX - drag.x) * 0.0042; P.pitch = clamp(P.pitch - (e.clientY - drag.y) * 0.0042, -1.35, 1.35); drag.x = e.clientX; drag.y = e.clientY; });
+cv.addEventListener('pointerup', e => {
+  if (!drag) return; const moved = Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy); drag = null;
+  if (moved < 6) { const p = locked ? pickAt(innerWidth / 2, innerHeight / 2) : pickAt(e.clientX, e.clientY); if (p && p.kind === 'slot') { slotTarget = p.slot; $('file').click(); } else if (p) openCard(p); else if (!locked && !isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (er) { } } }
+});
+cv.addEventListener('contextmenu', e => { e.preventDefault(); const dir = new V3(0, 0, -1).applyEuler(camera.rotation); if (dir.y < -0.02) { const t = -(camera.position.y) / dir.y, hx = camera.position.x + dir.x * t, hz = camera.position.z + dir.z * t; if (Math.hypot(hx, hz) > SHORE) toast('PLEASE DO NOT RIGHT CLICK THE OCEAN.'); } });
+document.addEventListener('pointerlockchange', () => { locked = document.pointerLockElement === cv; });
+document.addEventListener('mousemove', e => { if (!locked) return; P.yaw -= e.movementX * 0.0022; P.pitch = clamp(P.pitch - e.movementY * 0.0022, -1.35, 1.35); });
+// mobile joystick
+const joy = { x: 0, y: 0, id: null }; if (isMobile) { $('joy').style.display = 'block'; $('mbtn').style.display = 'flex'; }
+$('joy').addEventListener('pointerdown', e => { joy.id = e.pointerId; $('joy').setPointerCapture(e.pointerId); joyMove(e); });
+$('joy').addEventListener('pointermove', e => { if (joy.id === e.pointerId) joyMove(e); });
+$('joy').addEventListener('pointerup', () => { joy.id = null; joy.x = joy.y = 0; $('joy').firstElementChild.style.transform = ''; });
+function joyMove(e) { const r = $('joy').getBoundingClientRect(); let dx = e.clientX - r.left - 60, dy = e.clientY - r.top - 60; const d = Math.hypot(dx, dy); if (d > 44) { dx *= 44 / d; dy *= 44 / d; } joy.x = dx / 44; joy.y = dy / 44; $('joy').firstElementChild.style.transform = `translate(${dx}px,${dy}px)`; }
+$('mJump').onclick = () => { if (P.ground) { P.vy = 7.6; P.ground = false; P.fallFrom = P.y; } };
+$('mUse').onclick = () => useNearest();
+
+let nearest = null;
+function useNearest() { if (nearest && nearest.fn) nearest.fn(); }
+
+function stepPlayer(dt) {
+  let fx = 0, fz = 0;
+  if (keys.KeyW) fz -= 1; if (keys.KeyS) fz += 1; if (keys.KeyA) fx -= 1; if (keys.KeyD) fx += 1;
+  fx += joy.x; fz += joy.y;
+  if (keys.ArrowLeft) P.yaw += 2.6 * dt; if (keys.ArrowRight) P.yaw -= 2.6 * dt;
+  if (keys.ArrowUp) P.pitch = clamp(P.pitch + 1.6 * dt, -1.35, 1.35); if (keys.ArrowDown) P.pitch = clamp(P.pitch - 1.6 * dt, -1.35, 1.35);
+  const len = Math.hypot(fx, fz); const moving = len > 0.05;
+  if (moving) { fx /= Math.max(1, len); fz /= Math.max(1, len); }
+  const spd = (keys.ShiftLeft || keys.ShiftRight ? 8 : 4.4);
+  const s = Math.sin(P.yaw), c = Math.cos(P.yaw);
+  const dx = (fx * c + fz * s) * spd * dt, dz = (-fx * s + fz * c) * spd * dt;
+  const tryMove = (nx, nz) => { const f = floorAt(nx, nz, P.y); if (f.block) return false; if (f.f === null && P.ground) return false; return true; };
+  if (tryMove(P.x + dx, P.z + dz)) { P.x += dx; P.z += dz; } else if (tryMove(P.x + dx, P.z)) P.x += dx; else if (tryMove(P.x, P.z + dz)) P.z += dz;
+  collide(P, P.y);
+  const f = floorAt(P.x, P.z, P.y);
+  if (!P.ground || f.f === null || P.y > f.f + 0.05) {
+    if (P.ground) { P.ground = false; P.fallFrom = P.y; }
+    P.vy -= 22 * dt; P.y += P.vy * dt;
+    if (f.f !== null && P.y <= f.f) { const drop = P.fallFrom - f.f; P.y = f.f; P.vy = 0; P.ground = true; if (drop > 10) toast('PAPER HANDS? NO. PAPER LEGS. (YOU ARE FINE.)'); }
+    if (f.f === null && P.y < -0.4) { toast('NGMI. SWIM LESSONS AVAILABLE AT THE BODEGA.'); flash('#2fd0e8'); teleport(0, 176, PI); }
+  } else { P.y += (f.f - P.y) * Math.min(1, dt * 16); P.vy = 0; }
+  // TDH: diamond hands
+  if (moving) { if (state.idle > 30) toast('PAPER HANDS DETECTED. TDH KEPT ANYWAY.'); state.idle = 0; } else { state.idle += dt; state.tdh += dt; }
+  // rug
+  if (!RUG.t && Math.hypot(P.x - RUG.x, P.z - RUG.z) < 1.6 && P.ground) { RUG.t = 1.2; toast('RUGGED. FLOOR SWEPT. THESIS INTACT.'); flash('#8a1f2a'); }
+  if (RUG.t > 0) { RUG.t -= dt; const m = Math.max(0, RUG.t) * 9 * dt; const nx = P.x - m, nz = P.z + m * 0.4; if (tryMove(nx, nz)) { P.x = nx; P.z = nz; } if (RUG.t <= 0) RUG.t = -6; }
+  if (RUG.t < 0) RUG.t = Math.min(0, RUG.t + dt);
+  // toll
+  if (tollCD > 0) tollCD -= dt;
+  if (Math.abs(P.x) < 4.6 && Math.abs(P.z - 100) < 1 && tollCD <= 0) { tollCD = 6; tollOpen = 3; toast('RECEIPT: BASE FEE 0. PRIORITY FEE 0. VIBES 0. TOTAL GAS 0.0000 ETH. THANK YOU FOR TRANSACTING FREELY.', 'blue'); chime(780); }
+  // OM portal: walking through the ring drops you on the lighthouse roof
+  if (Math.abs(P.z - OM.z) < 0.5 && Math.hypot(P.x - OM.x, P.y + 1.7 - OM.portal.y) < 3.1 && !state.omCD) { state.omCD = 3; teleport(LH.x + 5.5, LH.z, PI); P.y = LH.g + LH.H + 0.3; toast('OM CONTINUITY TEST PASSED. YOU ARE STILL YOU. YOU ARE ALSO ON A LIGHTHOUSE.', 'blue'); flash('#2962FF'); }
+  if (state.omCD) state.omCD = Math.max(0, state.omCD - dt);
+}
+let tollOpen = 0;
+
+/* ---------------- world updates ---------------- */
+const _q = new THREE.Quaternion(), _p = new V3();
+function updateWorld(dt, t) {
+  // sea
+  const pa = seaG.attributes.position.array;
+  for (let i = 0; i < pa.length; i += 3) { const x = seaBase[i], z = seaBase[i + 2]; pa[i + 1] = Math.sin(x * 0.03 + t * 0.9) * 0.18 + Math.cos(z * 0.025 - t * 0.7) * 0.16 + Math.sin((x + z) * 0.08 + t * 1.7) * 0.05; }
+  seaG.attributes.position.needsUpdate = true; foam.material.opacity = 0.25 + 0.15 * Math.sin(t * 1.3);
+  // lighthouse
+  lhBeam.rotation.y = t * 0.6; if (Math.floor(t / 4) !== lhScreen.userData.k) { lhScreen.userData.k = Math.floor(t / 4); if (!sunrise) lhScreen.material.map = lhScreenTex[lhScreen.userData.k % 4]; }
+  // conveyor
+  const C = conveyor.meta, sp = convSpeed * (seizeT > 0 ? 1 : 1);
+  conveyor.forEach(o => { o.s = (o.s + sp * dt) % C.per; let s = o.s, x, z, ry; const L2 = C.L2 * 2;
+    if (s < L2) { x = C.cx - C.L2 + s; z = C.zc + C.R; ry = 0; } else if ((s -= L2) < PI * C.R) { const a = s / C.R; x = C.cx + C.L2 + Math.sin(a) * C.R; z = C.zc + Math.cos(a) * C.R; ry = a; } else if ((s -= PI * C.R) < L2) { x = C.cx + C.L2 - s; z = C.zc - C.R; ry = PI; } else { s -= L2; const a = s / C.R; x = C.cx - C.L2 - Math.sin(a) * C.R; z = C.zc - Math.cos(a) * C.R; ry = PI + a; }
+    setHang(o.H, _p.set(x, C.y, z), _q.setFromAxisAngle(_p2.set(0, 1, 0), ry)); });
+  if (seizeT > 0) { seizeT -= dt; if (seizeT <= 0) convSpeed = 0.9; }
+  // wheel
+  wheel.a += wheel.speed * dt; wheel.rim.rotation.x = wheel.a;
+  wheel.cards.forEach(o => { const a = o.a0 + wheel.a; setHang(o.H, _p.set(wheel.cx - 1.6, wheel.hub - Math.sin(a) * wheel.R - 1.2, wheel.cz + Math.cos(a) * wheel.R), QY(-PI / 2)); });
+  // crane, tap, toll, portal, keys, colossus
+  crane.rotation.y = Math.sin(t * 0.15) * 1.2;
+  TAP.stream.visible = TAP.on; TAP.stream.scale.x = TAP.stream.scale.z = 1 + Math.sin(t * 9) * 0.06;
+  tollOpen = Math.max(0, tollOpen - dt); tollArm.rotation.z += ((tollOpen > 0 ? 1.4 : 0) - tollArm.rotation.z) * Math.min(1, dt * 4);
+  OM.portal.ring.rotation.z = t * 0.3; OM.portal.film.material.opacity = 0.25 + 0.15 * Math.sin(t * 2);
+  KEYS.forEach(k => { if (k.got) return; k.g.rotation.y = t * 1.6; k.g.position.y = k.y + 1.3 + Math.sin(t * 2 + k.x) * 0.15;
+    if (Math.hypot(P.x - k.x, P.z - k.z) < 1.7 && Math.abs(P.y - k.y) < 2.6) { k.got = true; k.g.visible = false; k.light.intensity = 0; k.light.userData.base = 0; k.light.userData.alwaysOn = 0; state.keys++; hud(); chime(880); toast(`KEY FOUND: ${k.name}. ${state.keys}/6. NOT YOUR KEYS? NOW THEY ARE.`, 'blue'); if (state.keys >= 6) openVault(); } });
+  colossus.flame.scale.set(1 + Math.sin(t * 11) * 0.08, 1 + Math.sin(t * 7) * 0.12, 1);
+  if (colossus.t > 0) { colossus.t -= dt; colossus.lasers.forEach(l => { l.visible = colossus.t > 0; l.material.opacity = 0.6 + 0.3 * Math.sin(t * 40); }); }
+  if (vaultOpenT > 0) { vaultOpenT = Math.max(0, vaultOpenT - dt); const k = 1 - vaultOpenT / 2.5; vaultDoors[0].position.x = LH.x - 1.05 - k * 2.2; vaultDoors[1].position.x = LH.x + 1.05 + k * 2.2; }
+  // traffic
+  cars.forEach(c => { c.a += c.v * dt * 3; const x = Math.cos(c.a) * c.lane, z = Math.sin(c.a) * c.lane; c.g.position.set(x, 0, z); c.g.rotation.y = -c.a + (c.v > 0 ? 0 : PI); if (Math.hypot(P.x - x, P.z - z) < 2.2 && P.ground && !state.carCD) { state.carCD = 4; toast('FREEDOM TO TRANSACT. NOW WITH TRAFFIC.'); } });
+  if (state.carCD) state.carCD = Math.max(0, state.carCD - dt);
+  // card rain after a seize
+  if (rainT > 0) rainT -= dt; rainMesh.visible = rainT > 0; if (rainT > 0) { rain.forEach((r, i) => { r.y -= r.v * dt; r.r += dt * r.w; if (r.y < 0) r.y = 30 + Math.random() * 10; _m.compose(_p.set(P.x + r.x, r.y, P.z + r.z), _q.setFromEuler(_e.set(r.r, r.r * 0.7, 0)), _s.set(0.9, 1.3, 1)); rainMesh.setMatrixAt(i, _m); }); rainMesh.instanceMatrix.needsUpdate = true; }
+  // the cat breathes
+  if (CAT.g) CAT.g.scale.y = 1 + Math.sin(t * 2.4) * 0.03;
+}
+const _p2 = new V3(), _m = new THREE.Matrix4(), _e = new THREE.Euler();
+let vaultOpenT = 0;
+function openVault() { if (state.vault) return; state.vault = true; vaultSeg.on = false; vaultOpenT = 2.5; flash('#ffc23a'); toast('SIX KEYS. THE PORT IS OPEN. INSIDE: Cards on the Bridge, for Punk6529.', 'blue'); lhScreen.material.map = lhScreenTex[1]; }
+const rain = []; let rainMesh = null;
+(function () { const g = new THREE.PlaneGeometry(1, 1); rainMesh = new THREE.InstancedMesh(g, new THREE.MeshBasicMaterial({ map: ATL[0], toneMapped: false, side: THREE.DoubleSide }), 140); rainMesh.frustumCulled = false; rainMesh.visible = false;
+  const ids = G('Seize').filter(n => byN[n].uv[0] === 0).slice(0, 40); const uvr = [];
+  for (let i = 0; i < 140; i++) { const u = byN[ids[i % ids.length] || 1].uv; uvr.push(u[1], 1 - u[4], u[3], 1 - u[2]); rain.push({ x: (Math.random() - 0.5) * 40, z: (Math.random() - 0.5) * 40, y: 5 + Math.random() * 30, v: 3 + Math.random() * 4, r: Math.random() * 6, w: 1 + Math.random() * 2 }); }
+  g.setAttribute('uvr', new THREE.InstancedBufferAttribute(new Float32Array(uvr), 4));
+  rainMesh.material.onBeforeCompile = sh => { sh.vertexShader = 'attribute vec4 uvr;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n\tvUv = vec2(mix(uvr.x,uvr.z,uv.x), mix(uvr.y,uvr.w,uv.y));'); };
+  scene.add(rainMesh); })();
+
+/* residents and agents */
+function walkTo(o, tx, tz, spd, dt) {
+  const g = o.g, dx = tx - g.position.x, dz = tz - g.position.z, d = Math.hypot(dx, dz); if (d < 0.3) return true;
+  const st = Math.min(d, spd * dt); g.position.x += dx / d * st; g.position.z += dz / d * st;
+  const yaw = Math.atan2(dx, dz); let dy = yaw - g.rotation.y; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); g.rotation.y += dy * Math.min(1, dt * 6);
+  const f = floorAt(g.position.x, g.position.z, 100); g.position.y = f.f === null ? 0 : f.f; return false;
+}
+function animLegs(o, t, moving) { const s = moving ? Math.sin(t * 7) * 0.5 : 0; o.legs[0].rotation.x = s; o.legs[1].rotation.x = -s; o.arms[0].rotation.x = -s * 0.7; o.arms[1].rotation.x = s * 0.7; }
+function updatePeople(dt, t) {
+  residents.forEach(r => {
+    if (r.bubT > 0) { r.bubT -= dt; if (r.bubT <= 0 && r.bub) { r.P.g.remove(r.bub); r.bub = null; } }
+    if (r.pause > 0) { r.pause -= dt; animLegs(r.P, t, false); return; }
+    const tgt = r.route === 'beach' ? BEACH[r.idx % 4] : RING[(r.idx + 8) % 8];
+    if (walkTo(r.P, tgt[0], tgt[1], r.speed, dt)) { r.idx = (r.idx + r.dir + 8) % 8; if (Math.random() < 0.35) r.pause = 2 + Math.random() * 5; }
+    animLegs(r.P, t + r.phase, true);
+  });
+  agents.forEach(a => {
+    if (a.wait > 0) { a.wait -= dt; animLegs(a.P, t, false); return; }
+    if (a.mode === 'out') {
+      if (!a.target) { const avail = freestyle.filter(h => !h.hidden && !h.claimed); a.target = avail[Math.floor(Math.random() * avail.length)]; if (!a.target) { a.wait = 5; return; } a.target.claimed = true; }
+      const tp = a.target.pos, nx = tp.x * 1.12, nz = tp.z * 1.12;
+      if (walkTo(a.P, nx, nz, a.speed, dt)) { a.stolen = a.target; hideHang(a.stolen, true); hiddenSet.add(a.stolen.a + ':' + a.stolen.i); setPlaneUV(a.carry, 'meme', a.stolen.n, 1.1); a.carry.visible = true; a.mode = 'home'; a.target = null; if (Math.hypot(P.x - nx, P.z - nz) < 30) toast('AN INSTITUTION IS LEAVING WITH A JPG. CATCH IT.'); }
+      animLegs(a.P, t, true);
+    } else {
+      if (walkTo(a.P, BANK.door[0], BANK.door[1], a.speed * 0.9, dt)) { a.mode = 'out'; a.wait = 8; if (a.stolen) { a.stolen.claimed = false; } a.carry.visible = false; a.stolen = null; }
+      animLegs(a.P, t, true);
+      if (a.stolen && Math.hypot(P.x - a.P.g.position.x, P.z - a.P.g.position.z) < 1.8) { hideHang(a.stolen, false); hiddenSet.delete(a.stolen.a + ':' + a.stolen.i); a.stolen.claimed = false; a.stolen = null; a.carry.visible = false; state.seized++; hud(); chime(990); toast('JPG RECLAIMED. DON\'T LET THE INSTITUTIONS STEAL YOUR JPGs.', 'blue'); }
+    }
+  });
+}
+
+/* ---------------- frame ---------------- */
+let last = performance.now(), T = 0, aimT = 0, zoneName = '';
+function frame(dt) {
+  T += dt;
+  if (state.started) stepPlayer(dt);
+  // light: sunrise relay, summer override, presets
+  let target = presetTarget;
+  if (sunrise > 0) { sunrise -= dt; if (sunrise <= 0) setPreset(presetName === 'dawn' ? 'golden' : presetName, true); }
+  const inSummer = Math.hypot(P.x - SUMMER.x, P.z - SUMMER.z) < SUMMER.r;
+  if (inSummer && (presetName === 'night' || presetName === 'dawn')) { target = PRESETS.day; if (!state.summerNote) { state.summerNote = true; toast('SUMMER.JPG. WEATHER UPDATES DISABLED.'); } } else if (!inSummer) state.summerNote = false;
+  lerpLight(dt, target); applyLight();
+  practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
+  updateWorld(dt, T); updatePeople(dt, T); flushCards();
+  // camera
+  const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
+  camera.position.set(P.x, P.y + 1.7 + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
+  // sun shadow follows the visitor on a 4 m grid
+  const sx = Math.round(P.x / 4) * 4, sz = Math.round(P.z / 4) * 4; sun.target.position.set(sx, 0, sz); sun.position.set(sx + L.dir.x * 160, L.dir.y * 160 + 2, sz + L.dir.z * 160);
+  // zone + interact prompt + aim tooltip
+  let zn = 'THE ISLAND'; for (const z of ZONES) if (Math.hypot(P.x - z.x, P.z - z.z) < z.r) { zn = z.name; break; }
+  if (zn !== zoneName) { zoneName = zn; $('zone').textContent = Q(zn); }
+  nearest = null; let nd = 1e9; for (const it of INTER) { if (!it.label) continue; const d = Math.hypot(P.x - it.x, P.z - it.z); if (d < it.r && d < nd) { nd = d; nearest = it; } }
+  $('prompt').style.display = nearest && state.started ? 'block' : 'none'; if (nearest) $('prompt').textContent = nearest.label;
+  aimT -= dt; if (aimT <= 0 && state.started) { aimT = 0.15; const p = pickAt(innerWidth / 2, innerHeight / 2); const a = $('aim');
+    if (p && p.d < 26) { a.style.display = 'block'; a.textContent = p.kind === 'meme' ? `CARD ${p.n} · ${byN[p.n].t} · ${byN[p.n].a}` : p.kind === 'ny' ? `NEW YORKERS No. ${p.n} · ${nyByN[p.n].t}` : p.kind === 'slot' ? (openWall[p.slot].filled ? Q(openWall[p.slot].name) + ' · H TO SWAP' : 'EMPTY FRAME · H TO HANG A JPG') : 'Cards on the Bridge, for Punk6529 · MLow'; if (p.kind === 'meme') { if (!state.seen.has(p.n)) { state.seen.add(p.n); hud(); } } }
+    else a.style.display = 'none'; }
+  if (Math.floor(T) !== frame.sec) { frame.sec = Math.floor(T); hud(); }
+  renderer.render(scene, camera);
+}
+function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; frame(dt); requestAnimationFrame(loop); }
+
+/* ---------------- boot ---------------- */
+buildCards();
+teleport(0, 176, 0); P.pitch = 0.04;
+applyLight();
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 527 CARDS. SIX KEYS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
+requestAnimationFrame(loop);
+hud();
+
+/* test hooks */
+window.__game = { P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, KEYS, EGGS, setPreset, pickAt, openCard, residents, agents, cardBuf, start: () => { $('enter').style.display = 'none'; state.started = true; }, keys, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
+})();
+</script>
+</body>
+</html>
