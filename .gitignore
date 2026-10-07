@@ -4,3 +4,7 @@ _build/shots/
 node_modules/
 site/assets/sculpt_hi/
 site/assets/sculpts_hi.json
+DELIVERABLES/film/*.mp4
+DELIVERABLES/hype/
+DELIVERABLES/glb/*.glb
+DELIVERABLES/film/audio/

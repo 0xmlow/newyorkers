@@ -2036,7 +2036,7 @@ function frame(dt) {
     } catch (e) { }
   }
 }
-function loop(now) { const dt = clamp((now - last) / 1000, 0, 0.05); last = now; frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
+function loop(now) { const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
 
 /* ---------------- boot ---------------- */
 buildCards();

@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MEME ISLAND GLB</title>
+<style>html,body{margin:0;height:100%;background:#0D0D0D;color:#F0F4F8;font:13px Tahoma,Verdana,sans-serif;overflow:hidden}#i{position:fixed;left:12px;top:12px;background:rgba(13,13,13,.7);padding:8px 10px}</style></head><body>
+<div id="i">MEME ISLAND · meme_island.glb · drag to orbit, scroll to zoom · <span id="s">loading</span></div>
+<script src="vendor/three.min.js"></script><script src="vendor/GLTFLoader.js"></script><script src="vendor/DRACOLoader.js"></script><script src="vendor/OrbitControls.js"></script>
+<script>
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.setSize(innerWidth, innerHeight); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; document.body.appendChild(r.domElement);
+const s = new THREE.Scene(), c = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 2, 3000); c.position.set(150, 120, 230);
+s.add(new THREE.HemisphereLight(0xdde8ff, 0x8a6a48, 1.0)); const d = new THREE.DirectionalLight(0xffe2c0, 1.6); d.position.set(-120, 140, 200); s.add(d);
+const o = new THREE.OrbitControls(c, r.domElement); o.target.set(0, 5, 20); o.update();
+const dl = new THREE.DRACOLoader(); dl.setDecoderPath('vendor/draco/'); const l = new THREE.GLTFLoader(); l.setDRACOLoader(dl);
+l.load('meme_island.glb', g => { s.add(g.scene); document.getElementById('s').textContent = 'loaded'; window.__ok = true; }, e => { if (e.total) document.getElementById('s').textContent = Math.round(100 * e.loaded / e.total) + '%'; }, e => { document.getElementById('s').textContent = 'error: ' + e.message; window.__ok = false; });
+addEventListener('resize', () => { c.aspect = innerWidth / innerHeight; c.updateProjectionMatrix(); r.setSize(innerWidth, innerHeight); });
+(function a() { requestAnimationFrame(a); o.update(); r.render(s, c); })();
+</script></body></html>
