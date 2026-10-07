@@ -201,14 +201,14 @@ legend{padding:0 3px;background:var(--face)}
 <script id="crashjs">
 /* an error dialog that loads before anything else, so a crash in any viewer shows itself */
 (function () { var shown = 0; function show(m) { if (shown++ > 2) return; var c = document.getElementById('crash'), p = document.getElementById('crashMsg'); if (!c || !p) return; p.textContent += (p.textContent ? '\n' : '') + m; c.style.display = 'flex'; }
-  window.addEventListener('error', function (e) { show((e.message || 'Error') + (e.filename ? '\n' + e.filename.split('/').pop() + ':' + e.lineno : '')); });
-  window.addEventListener('unhandledrejection', function (e) { var r = e.reason; show('Promise: ' + (r && r.message ? r.message : String(r))); });
+  window.addEventListener('error', function (e) { var f = e.filename || ''; if (/^(chrome|moz|safari)(-web)?-extension:/.test(f) || /ethereum|solana|phantom|metamask/i.test(e.message || '')) return; show((e.message || 'Error') + (e.filename ? '\n' + e.filename.split('/').pop() + ':' + e.lineno : '')); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e.reason; if (r && r.stack && /-extension:/.test(r.stack)) return; show('Promise: ' + (r && r.message ? r.message : String(r))); });
   document.addEventListener('click', function (e) { if (e.target && (e.target.id === 'crashOk' || e.target.id === 'crashX')) document.getElementById('crash').style.display = 'none'; });
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/meshoptimizer@0.18.1/meshopt_decoder.js"></script>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/meshopt_decoder.js"></script>
 <script>window.MI_DATA=/*__DATA__*/;</script>
 <script>
 (function(){"use strict";
