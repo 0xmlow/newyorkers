@@ -2,7 +2,10 @@
 import os
 H = os.path.dirname(os.path.abspath(__file__))
 src = open(os.path.join(H, 'island.html')).read()
-data = open(os.path.join(H, '..', 'site', 'assets', 'data.json')).read()
+import json
+d = json.load(open(os.path.join(H, '..', 'site', 'assets', 'data.json')))
+d['sculpts'] = json.load(open(os.path.join(H, '..', 'site', 'assets', 'sculpts.json')))
+data = json.dumps(d, separators=(',', ':'))
 out = src.replace('/*__DATA__*/', data)
 open(os.path.join(H, '..', 'site', 'index.html'), 'w').write(out)
 print('site/index.html', len(out) // 1024, 'KB')

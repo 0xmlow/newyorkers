@@ -63,6 +63,13 @@ G.teleport(G.TOUCH.x, G.TOUCH.z, 0); K.KeyW=false; G.step(1/30, 330); ok(G.TOUCH
 G.WHALE.t = 11; G.step(1/30, 120); ok(G.WHALE.count >= 1, 'whale surfaced');
 G.DRYER.t = 0; G.teleport(-52, -8.2, 0); G.step(1/60, 2); w.dispatchEvent(new w.KeyboardEvent('keydown', { code: 'KeyE', key: 'e' })); G.step(1/60, 5); ok(G.DRYER.t > 0, 'paper hands dryer fires on E');
 try { G.postcard(); console.log('  ok postcard ran'); } catch (e) { console.log('FAIL postcard', e.message); process.exitCode = 1; }
+// sky and calendar
+{ const u = G.nycUtc(2026, 6, 21, 13, 0); G.setTime(u); G.step(1/60, 3); const el = G.SKY.el; ok(el > 70 && el < 74, 'solstice 13:00 EDT sun elevation ' + el.toFixed(1));
+  ok(G.SKY.t.zone === 'EDT', 'June is EDT'); G.setTime(G.nycUtc(2026, 1, 15, 12, 0)); G.step(1/60, 2); ok(G.SKY.t.zone === 'EST', 'January is EST');
+  G.setTime(G.nycUtc(2026, 10, 7, 23, 30)); G.step(1/60, 120); ok(G.SKY.w.w > 0.9, 'night photo dominates at 23:30'); ok(G.CAL.spooky, 'October is SPOOKY SZN'); ok(G.CAL.ev.includes('MINT DAY'), 'Wed 7 Oct is a mint day');
+  G.setTime(G.nycUtc(2026, 10, 31, 22, 0)); G.step(1/60, 120); ok(G.CAL.fire, 'Oct 31 fireworks day'); G.step(1/60, 240); ok(G.FW.pts.visible, 'fireworks flying');
+  G.setTime(G.nycUtc(2026, 10, 7, 18, 10)); G.step(1/60, 120); console.log('    golden check weights', G.SKY.w.toArray().map(v=>v.toFixed(2)).join(','), 'sun', G.SKY.el.toFixed(1));
+  ok(G.SC.length === 66, 'sculptures placed: ' + G.SC.length); }
 // soak
 G.teleport(0, 60, 0); const t0 = Date.now(); G.step(1 / 60, 900); console.log('PASS soak 900 frames in', Date.now() - t0, 'ms, renders', renders, 'errors', errs);
 const stolen = G.agents.filter(a => a.stolen).length; console.log('  agents carrying JPGs after soak:', stolen);

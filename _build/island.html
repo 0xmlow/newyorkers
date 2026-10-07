@@ -31,6 +31,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0D0D0D;color:var(--cl
 #zone{font-size:12px;letter-spacing:1.5px;color:var(--orange);margin-top:3px;text-transform:uppercase}
 #stats{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;font-size:12px}
 #stats b{font-weight:700;color:#fff}
+.clock{font-size:11px;line-height:1.55;color:var(--mute);margin-top:9px;font-variant-numeric:tabular-nums;letter-spacing:.3px}
+.clock b{color:#fff;font-weight:700}
+.clock .ev{color:var(--orange)}
 #hud .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 button.b{background:rgba(255,255,255,.08);color:var(--cloud);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;font-size:11px;letter-spacing:.8px;cursor:pointer}
 button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
@@ -88,8 +91,9 @@ button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
     <span>GM SAID <b id="sGm">0</b></span><span>JPGs SEIZED <b id="sSeized">0</b></span>
     <span>CARDS SEEN <b id="sSeen">0</b></span><span>HUNG <b id="sHung">0/12</b></span>
   </div>
+  <div id="clock" class="clock"></div>
   <div class="row">
-    <button class="b on" data-p="golden">1 GOLDEN</button><button class="b" data-p="day">2 DAY</button><button class="b" data-p="night">3 NIGHT</button>
+    <button class="b on" data-p="live">L LIVE</button><button class="b" data-p="lapse">T TIME-LAPSE</button><button class="b" data-p="golden">1 GOLDEN</button><button class="b" data-p="day">2 NOON</button><button class="b" data-p="night">3 NIGHT</button><button class="b" id="wxb">Y WEATHER</button>
   </div>
   <div class="row">
     <button class="b" id="aud">SOUND OFF</button><button class="b" id="up">HANG YOUR JPGs</button><button class="b" id="pc">POSTCARD (P)</button><button class="b" id="hide">HIDE</button>
@@ -99,7 +103,7 @@ button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
 <div id="tp"></div>
 <div id="cross"></div><div id="aim"></div><div id="prompt"></div>
 <div id="toasts"></div>
-<div id="help">WASD · SHIFT · SPACE · E · P postcard · click a card · ENTER chat · try typing gm</div>
+<div id="help">WASD · SHIFT · SPACE · E · P postcard · L live · T time-lapse · [ ] hour · , . day · Y weather · ENTER chat · try typing gm</div>
 <div id="chat"><input id="chatIn" maxlength="60" placeholder="say something. gm is a renewable resource."></div>
 <div id="modal"><div class="in"><div class="art" id="mArt"></div><div><h2 id="mT"></h2><div class="meta" id="mMeta"></div><div class="d" id="mD"></div><div class="x"><button class="b" id="mClose">CLOSE</button></div></div></div></div>
 <div id="joy"><i></i></div>
@@ -108,6 +112,8 @@ button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
 <div id="drop">DROP TO HANG</div>
 <div id="flash"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meshoptimizer@0.18.1/meshopt_decoder.js"></script>
 <script>window.MI_DATA=/*__DATA__*/;</script>
 <script>
 (function(){"use strict";
@@ -195,6 +201,12 @@ const MAT = {
   paper: new THREE.MeshStandardMaterial({ color: 0xf6f3ea, roughness: 0.8, side: THREE.DoubleSide })
 };
 MAT.grass.color.set(0xd6dcc4);
+MAT.lime = pbr('lime', 1, { roughness: 0.95 }); MAT.lime.userData.wuv = 2.4; MAT.bankstone = MAT.lime;
+MAT.brick = pbr('brick', 1, { roughness: 0.95 }); MAT.brick.userData.wuv = 1.4;
+MAT.terr = pbr('terr', 1, { roughness: 0.5 });
+MAT.metal = pbr('metal', 1, { roughness: 1, metalness: 0.7 }); MAT.metal.roughnessMap = tex('assets/metal_r.webp', 1, false); [MAT.metal.map, MAT.metal.normalMap, MAT.metal.roughnessMap].forEach(t => t.repeat.set(0.3, 0.3)); MAT.graphite = MAT.metal;
+MAT.road = pbr('asph', 60, { roughness: 1, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+MAT.water.normalMap = tex('assets/ocean_n.webp', 90, false); MAT.water.normalScale.set(0.55, 0.55); MAT.water.roughness = 0.06; MAT.water.metalness = 0.25;
 MAT.brain.color.set(0xead0d2); MAT.brain.roughness = 0.75;
 [MAT.stone, MAT.conc, MAT.wood].forEach(m => { m.map.repeat.set(1, 1); m.normalMap.repeat.set(1, 1); });
 
@@ -211,6 +223,7 @@ function worldUV(geo, scale, axis) {
   uv.needsUpdate = true; return geo;
 }
 function box(w, h, d, mat, x, y, z, ry = 0, uvs = 0, shadow = true) {
+  if (!uvs && mat.userData && mat.userData.wuv) uvs = mat.userData.wuv;
   const g = new THREE.BoxGeometry(w, h, d); if (uvs) worldUV(g, uvs);
   const m = new THREE.Mesh(g, mat); m.position.set(x, y, z); m.rotation.y = ry;
   m.castShadow = shadow; m.receiveShadow = true; scene.add(m); return m;
@@ -255,8 +268,14 @@ const foam = new THREE.Mesh(new THREE.RingGeometry(SHORE - 1.2, SHORE + 2.2, 160
 foam.rotation.x = -PI / 2; foam.position.y = 0.06; scene.add(foam);
 
 /* panorama: one FLORA photograph wrapped twice, mirrored at the folds, Manhattan due south and due north */
-const panoMat = new THREE.MeshBasicMaterial({ map: tex('assets/pano.webp'), side: THREE.DoubleSide, fog: false, depthWrite: false, toneMapped: false });
-panoMat.map.wrapS = THREE.ClampToEdgeWrapping;
+const PANO_TEX = ['pano', 'pano_dawn', 'pano_day', 'pano_night'].map(n => { const t = TL.load(`assets/${n}.webp`); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t; });
+const panoMat = new THREE.ShaderMaterial({
+  uniforms: { t0: { value: PANO_TEX[0] }, t1: { value: PANO_TEX[1] }, t2: { value: PANO_TEX[2] }, t3: { value: PANO_TEX[3] }, w: { value: new THREE.Vector4(1, 0, 0, 0) }, tint: { value: new THREE.Color(1, 1, 1) } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: 'uniform sampler2D t0, t1, t2, t3; uniform vec4 w; uniform vec3 tint; varying vec2 vUv; void main(){ vec3 c = texture2D(t0, vUv).rgb * w.x + texture2D(t1, vUv).rgb * w.y + texture2D(t2, vUv).rgb * w.z + texture2D(t3, vUv).rgb * w.w; gl_FragColor = vec4(c * tint, 1.0); }',
+  side: THREE.DoubleSide, depthWrite: false
+});
+const PANO = { mesh: null, cap: null };
 (function () {
   const R = 1150, segs = 128, H = R * PI * 1344 / 3168, top = 0.58 * H, bot = top - H;
   const pos = [], uv = [], idx = [];
@@ -268,10 +287,10 @@ panoMat.map.wrapS = THREE.ClampToEdgeWrapping;
   }
   for (let i = 0; i < segs; i++) { const a = i * 3; idx.push(a, a + 1, a + 3, a + 1, a + 4, a + 3, a + 2, a, a + 5, a, a + 3, a + 5); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
-  const m = new THREE.Mesh(g, panoMat); m.renderOrder = -10; scene.add(m);
-  const cap = new THREE.Mesh(new THREE.CircleGeometry(R, 64), new THREE.MeshBasicMaterial({ color: 0x8fb6d8, side: THREE.DoubleSide, fog: false, depthWrite: false }));
-  cap.rotation.x = PI / 2; cap.position.y = top + 899; cap.scale.setScalar(0.36); cap.renderOrder = -10; scene.add(cap); panoMat.userData.cap = cap;
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+  const m = new THREE.Mesh(g, panoMat); m.renderOrder = -10; m.frustumCulled = false; scene.add(m); PANO.mesh = m;
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(R, 64), new THREE.MeshBasicMaterial({ color: 0xa7bfce, side: THREE.DoubleSide, fog: false, depthWrite: false, toneMapped: false }));
+  cap.rotation.x = PI / 2; cap.position.y = top + 899; cap.scale.setScalar(0.36); cap.renderOrder = -10; scene.add(cap); PANO.cap = cap;
 })();
 
 /* ---------------- light ---------------- */
@@ -282,40 +301,139 @@ Object.assign(sun.shadow.camera, { left: -55, right: 55, top: 55, bottom: -55, n
 sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.04;
 scene.add(sun); scene.add(sun.target);
 const PRESETS = {
-  golden: { sun: 0xffb073, sunI: 1.55, dir: [-0.35, 0.34, 0.87], sky: 0xbfd8ff, gnd: 0x8a6a48, hemiI: 0.62, fog: 0xf2c9a0, near: 140, far: 760, pano: 0xffffff, cap: 0xa7bfce, card: 1.0, lamps: 0.15, exp: 1.0, sea: 0x1b8fa6 },
-  day: { sun: 0xffffff, sunI: 1.7, dir: [0.25, 0.9, 0.35], sky: 0xd4e8ff, gnd: 0x9a8a6a, hemiI: 0.75, fog: 0xcfe3f2, near: 160, far: 900, pano: 0xffffff, cap: 0xa7bfce, card: 1.0, lamps: 0, exp: 1.0, sea: 0x1aa0b8 },
-  night: { sun: 0xa8bcff, sunI: 0.75, dir: [0.4, 0.6, -0.5], sky: 0x5070b8, gnd: 0x2a3048, hemiI: 0.9, fog: 0x1c2748, near: 100, far: 560, pano: 0x34407a, cap: 0x222a3e, card: 0.86, lamps: 1, exp: 1.15, sea: 0x0d3a5a },
-  dawn: { sun: 0xff7a5a, sunI: 1.0, dir: [-0.2, 0.04, 0.98], sky: 0xffb0c8, gnd: 0x4a3a48, hemiI: 0.8, fog: 0xe7a3a8, near: 110, far: 600, pano: 0xffb6b0, cap: 0x7a8494, card: 0.95, lamps: 0.6, exp: 1.05, sea: 0x24708a }
+  golden: { sun: 0xffb073, sunI: 1.55, dir: [-0.35, 0.34, 0.87], sky: 0xbfd8ff, gnd: 0x8a6a48, hemiI: 0.62, fog: 0xf2c9a0, near: 140, far: 760, pano: 0xffffff, cap: 0xa7bfce, card: 1.0, lamps: 0.1, exp: 1.0, sea: 0x1b8fa6 },
+  day: { sun: 0xffffff, sunI: 1.7, dir: [0.25, 0.9, 0.35], sky: 0xd4e8ff, gnd: 0x9a8a6a, hemiI: 0.75, fog: 0xcfe3f2, near: 160, far: 900, pano: 0xffffff, cap: 0x6fb6e9, card: 1.0, lamps: 0, exp: 1.0, sea: 0x1aa0b8 },
+  night: { sun: 0xa8bcff, sunI: 0.75, dir: [0.4, 0.6, -0.5], sky: 0x5070b8, gnd: 0x2a3048, hemiI: 0.9, fog: 0x1c2748, near: 100, far: 560, pano: 0x34407a, cap: 0x0e1522, card: 0.86, lamps: 1, exp: 1.15, sea: 0x0d3a5a },
+  dawn: { sun: 0xff7a5a, sunI: 1.0, dir: [-0.2, 0.04, 0.98], sky: 0xffb0c8, gnd: 0x4a3a48, hemiI: 0.8, fog: 0xe7a3a8, near: 110, far: 600, pano: 0xffb6b0, cap: 0x4e6baf, card: 0.95, lamps: 0.6, exp: 1.05, sea: 0x24708a }
 };
 const COLOR_KEYS = ['sun', 'sky', 'gnd', 'fog', 'pano', 'cap', 'sea'], NUM_KEYS = ['sunI', 'hemiI', 'near', 'far', 'card', 'lamps', 'exp'];
 const L = { dir: new V3() }; COLOR_KEYS.forEach(k => L[k] = new THREE.Color(PRESETS.golden[k])); NUM_KEYS.forEach(k => L[k] = PRESETS.golden[k]); L.dir.set(...PRESETS.golden.dir).normalize();
-let presetName = 'golden', presetTarget = PRESETS.golden, presetBlend = 1;
-function setPreset(name, quiet) {
-  presetName = name; presetTarget = PRESETS[name]; presetBlend = 0;
-  document.querySelectorAll('[data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === name));
-  if (!quiet && name === 'night') toast('NIGHT MODE. THE FLOOR IS STILL THERE. PROBABLY.');
-}
-const tmpC = new THREE.Color();
-function lerpLight(dt, target) {
-  const k = 1 - Math.exp(-dt * 2.2);
-  COLOR_KEYS.forEach(c => L[c].lerp(tmpC.set(target[c]), k));
-  NUM_KEYS.forEach(n => L[n] += (target[n] - L[n]) * k);
-  L.dir.lerp(new V3(...target.dir).normalize(), k).normalize();
-}
 function applyLight() {
-  sun.color.copy(L.sun); sun.intensity = L.sunI; hemi.color.copy(L.sky); hemi.groundColor.copy(L.gnd); hemi.intensity = L.hemiI;
+  sun.color.copy(L.sun); sun.intensity = L.sunI; hemi.color.copy(L.sky); hemi.groundColor.copy(L.gnd); hemi.intensity = L.hemiI * (ENV.on ? 0.42 : 1);
   scene.fog.color.copy(L.fog); scene.fog.near = L.near; scene.fog.far = L.far; renderer.setClearColor(L.fog);
-  panoMat.color.copy(L.pano); panoMat.userData.cap.material.color.copy(L.cap); MAT.water.color.copy(L.sea);
+  PANO.cap.material.color.copy(L.cap); MAT.water.color.copy(L.sea);
   renderer.toneMappingExposure = L.exp;
   cardMats.forEach(m => m.color.setScalar(L.card));
   MAT.bulb.color.setRGB(1, 0.85, 0.62).multiplyScalar(0.35 + 0.65 * L.lamps);
   MAT.beam.opacity = 0.06 + 0.3 * L.lamps;
   practicals.forEach(p => p.intensity = p.userData.base * L.lamps);
+  if (PUMPKINS.mesh) PUMPKINS.mesh.material.emissiveIntensity = 0.9 * L.lamps;
 }
 const practicals = [];
 function practical(x, y, z, color, base = 30, dist = 34) {
   const l = new THREE.PointLight(color, 0, dist, 2); l.position.set(x, y, z); l.userData.base = base; scene.add(l); practicals.push(l); return l;
 }
+
+/* ---------------- NEW YORK TIME, SUN AND MOON (ported from Marfa Light, src/00-core.js) ----------------
+   The island sits off Liberty Island. Every visitor sees the harbour's real sky for the minute they look:
+   the sun and moon are computed for 40.69 N, 74.04 W, the clock is Eastern with daylight saving. */
+const D2R = PI / 180, R2D = 180 / PI, LAT = 40.6892, LONW = -74.0445, SPHI = Math.sin(LAT * D2R), CPHI = Math.cos(LAT * D2R);
+function daysFromCivil(y, m, d) {
+  y -= (m <= 2) ? 1 : 0; const era = Math.floor(y / 400), yoe = y - era * 400;
+  const doy = Math.floor((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1, doe = yoe * 365 + Math.floor(yoe / 4) - Math.floor(yoe / 100) + doy;
+  return era * 146097 + doe - 719468;
+}
+function civilFromDays(z) {
+  z += 719468; const era = Math.floor(z / 146097), doe = z - era * 146097;
+  const yoe = Math.floor((doe - Math.floor(doe / 1460) + Math.floor(doe / 36524) - Math.floor(doe / 146096)) / 365);
+  const y = yoe + era * 400, doy = doe - (365 * yoe + Math.floor(yoe / 4) - Math.floor(yoe / 100));
+  const mp = Math.floor((5 * doy + 2) / 153), d = doy - Math.floor((153 * mp + 2) / 5) + 1, m = mp + (mp < 10 ? 3 : -9);
+  return [y + (m <= 2 ? 1 : 0), m, d];
+}
+const weekday = days => (((days % 7) + 7) % 7 + 4) % 7; // 0 is Sunday
+function nthSunday(y, m, n) { const d1 = daysFromCivil(y, m, 1); return d1 + ((7 - weekday(d1)) % 7) + 7 * (n - 1); }
+// US Eastern: daylight time from 2:00 on the second Sunday in March to 2:00 on the first Sunday in November
+function nycOffset(utc) { const y = civilFromDays(Math.floor(utc / 86400))[0], s = nthSunday(y, 3, 2) * 86400 + 7 * 3600, e = nthSunday(y, 11, 1) * 86400 + 6 * 3600; return (utc >= s && utc < e) ? -4 : -5; }
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'], DAYS = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+function nycTime(utc) {
+  const off = nycOffset(utc), l = utc + off * 3600, days = Math.floor(l / 86400), sec = l - days * 86400, ymd = civilFromDays(days);
+  return { utc, off, zone: off === -4 ? 'EDT' : 'EST', days, y: ymd[0], mo: ymd[1], d: ymd[2], sec, h: Math.floor(sec / 3600), m: Math.floor(sec / 60) % 60, hours: sec / 3600, wd: weekday(days) };
+}
+function nycUtc(y, mo, d, h, mi) { const g = daysFromCivil(y, mo, d) * 86400 + h * 3600 + mi * 60 + 5 * 3600; return g + (-5 - nycOffset(g)) * 3600; }
+const jdn = utc => utc / 86400 + 2440587.5;
+function lst(utc) { const n = jdn(utc) - 2451545.0, g = (18.697374558 + 24.06570982441908 * n) % 24; return (((g * 15 + LONW) % 360) + 360) % 360 * D2R; }
+function altAz(ra, dec, Lr) { const H = Lr - ra; const el = Math.asin(SPHI * Math.sin(dec) + CPHI * Math.cos(dec) * Math.cos(H)) * R2D; const az = Math.atan2(-Math.sin(H), Math.tan(dec) * CPHI - SPHI * Math.cos(H)) * R2D; return { el, az: (az + 360) % 360 }; }
+function sunPos(utc) {
+  const n = jdn(utc) - 2451545.0, Ls = (280.46 + 0.9856474 * n) % 360, g = ((357.528 + 0.9856003 * n) % 360) * D2R;
+  const lam = (Ls + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g)) * D2R, eps = 23.439 * D2R;
+  return altAz(Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam)), Math.asin(Math.sin(eps) * Math.sin(lam)), lst(utc));
+}
+// the moon, after Paul Schlyter's low precision method
+function moonPos(utc) {
+  const d = jdn(utc) - 2451543.5, N = (125.1228 - 0.0529538083 * d) * D2R, inc = 5.1454 * D2R, w = (318.0634 + 0.1643573223 * d) * D2R, a = 60.2666, e = 0.0549;
+  const M = ((115.3654 + 13.0649929509 * d) % 360) * D2R; let E = M + e * Math.sin(M) * (1 + e * Math.cos(M));
+  for (let k = 0; k < 3; k++) E = E - (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+  const xv = a * (Math.cos(E) - e), yv = a * Math.sqrt(1 - e * e) * Math.sin(E), v = Math.atan2(yv, xv), r = Math.sqrt(xv * xv + yv * yv);
+  const xh = r * (Math.cos(N) * Math.cos(v + w) - Math.sin(N) * Math.sin(v + w) * Math.cos(inc)), yh = r * (Math.sin(N) * Math.cos(v + w) + Math.cos(N) * Math.sin(v + w) * Math.cos(inc)), zh = r * Math.sin(v + w) * Math.sin(inc);
+  let lon = Math.atan2(yh, xh) * R2D, lat = Math.atan2(zh, Math.sqrt(xh * xh + yh * yh)) * R2D;
+  const Ms = (356.0470 + 0.9856002585 * d) % 360, ws = 282.9404 + 4.70935e-5 * d, Lsun = Ms + ws, Mm = M * R2D, Lm = N * R2D + w * R2D + Mm, Dd = Lm - Lsun, F = Lm - N * R2D, s = x => Math.sin(x * D2R);
+  lon += -1.274 * s(Mm - 2 * Dd) + 0.658 * s(2 * Dd) - 0.186 * s(Ms) - 0.059 * s(2 * Mm - 2 * Dd) - 0.057 * s(Mm - 2 * Dd + Ms) + 0.053 * s(Mm + 2 * Dd) + 0.046 * s(2 * Dd - Ms) + 0.041 * s(Mm - Ms) - 0.035 * s(Dd) - 0.031 * s(Mm + Ms) - 0.015 * s(2 * F - 2 * Dd) + 0.011 * s(Mm - 4 * Dd);
+  lat += -0.173 * s(F - 2 * Dd) - 0.055 * s(Mm - F - 2 * Dd) - 0.046 * s(Mm + F - 2 * Dd) + 0.033 * s(F + 2 * Dd) + 0.017 * s(2 * Mm + F);
+  const ecl = (23.4393 - 3.563e-7 * d) * D2R, lo = lon * D2R, la = lat * D2R, xe = Math.cos(la) * Math.cos(lo), ye = Math.cos(la) * Math.sin(lo), ze = Math.sin(la);
+  const y2 = ye * Math.cos(ecl) - ze * Math.sin(ecl), z2 = ye * Math.sin(ecl) + ze * Math.cos(ecl);
+  const p = altAz(Math.atan2(y2, xe), Math.atan2(z2, Math.sqrt(xe * xe + y2 * y2)), lst(utc));
+  const dl = ((lon - Lsun) % 360 + 360) % 360, elong = Math.acos(Math.cos(dl * D2R) * Math.cos(la));
+  p.illum = (1 - Math.cos(elong)) / 2; p.waxing = dl < 180; p.age = dl / 360; return p;
+}
+function moonName(m) { const a = m.age; if (a < 0.03 || a > 0.97) return 'NEW MOON'; if (a < 0.22) return 'WAXING CRESCENT'; if (a < 0.28) return 'FIRST QUARTER'; if (a < 0.47) return 'WAXING GIBBOUS'; if (a < 0.53) return 'FULL MOON'; if (a < 0.72) return 'WANING GIBBOUS'; if (a < 0.78) return 'LAST QUARTER'; return 'WANING CRESCENT'; }
+// +x east, +y up, -z north: the island's own frame
+const dirAzEl = (az, el, out) => (out || new V3()).set(Math.cos(el * D2R) * Math.sin(az * D2R), Math.sin(el * D2R), -Math.cos(el * D2R) * Math.cos(az * D2R));
+const _st = {};
+function sunTimes(t) {
+  if (_st[t.days]) return _st[t.days]; const base = t.days * 86400 - t.off * 3600; let prev = null, rise = null, set = null;
+  for (let m = 0; m <= 1440; m += 5) { const el = sunPos(base + m * 60).el + 0.833; if (prev !== null) { if (prev < 0 && el >= 0) rise = m - 5 + 5 * (-prev / (el - prev)); if (prev >= 0 && el < 0) set = m - 5 + 5 * (prev / (prev - el)); } prev = el; }
+  return (_st[t.days] = { rise: rise === null ? 360 : rise, set: set === null ? 1140 : set });
+}
+const pad2 = n => (n < 10 ? '0' : '') + n, hhmm = mm => pad2(Math.floor(mm / 60) % 24) + ':' + pad2(Math.round(mm) % 60);
+const TIME = { mode: 'live', utc: Date.now() / 1000, shift: 0, gmT: 0, gmPrev: 'live', lastKey: 0 };
+function tickTime(dt) {
+  if (TIME.gmT > 0) { TIME.gmT -= dt; TIME.utc += dt * 900; if (TIME.gmT <= 0) TIME.mode = TIME.gmPrev; return; }
+  if (TIME.mode === 'live') TIME.utc = Date.now() / 1000 + TIME.shift; else if (TIME.mode === 'lapse') TIME.utc += dt * 900; // a day in 96 seconds
+}
+function shiftTime(sec) { if (TIME.mode === 'live') TIME.shift += sec; else TIME.utc += sec; }
+function jumpLocal(min) { const t = nycTime(TIME.utc); TIME.mode = 'fixed'; TIME.utc = nycUtc(t.y, t.mo, t.d, 0, 0) + min * 60; }
+
+/* sky state: four FLORA photographs of one harbour, crossfaded by the sun's real elevation */
+const SKY = { el: 0, az: 0, w: new THREE.Vector4(1, 0, 0, 0), sun: null, moon: null, sunDir: new V3(), moonDir: new V3(), t: null };
+const PCOL = {}; ['golden', 'dawn', 'day', 'night'].forEach(p => { PCOL[p] = {}; COLOR_KEYS.forEach(k => PCOL[p][k] = new THREE.Color(PRESETS[p][k])); });
+const _mix = {}; COLOR_KEYS.forEach(k => _mix[k] = new THREE.Color()); const _grey = new THREE.Color();
+function skyWeights(el) {
+  const day = smooth(7, 26, el), gold = (1 - day) * smooth(-3, 5, el), twi = (1 - day - gold) * smooth(-14, -3, el);
+  return [gold, twi, day, Math.max(0, 1 - day - gold - twi)];
+}
+function updateSky(dt) {
+  const s = sunPos(TIME.utc), m = moonPos(TIME.utc); SKY.sun = s; SKY.moon = m; SKY.el = s.el; SKY.t = nycTime(TIME.utc);
+  let w = skyWeights(s.el);
+  const inSummer = Math.hypot(P.x - SUMMER.x, P.z - SUMMER.z) < SUMMER.r;
+  if (inSummer && w[2] < 0.9) { w = [0, 0, 1, 0]; if (!state.summerNote) { state.summerNote = true; toast('SUMMER.JPG. WEATHER UPDATES DISABLED. IT IS ALWAYS NOON HERE.'); } } else if (!inSummer) state.summerNote = false;
+  const pk = ['golden', 'dawn', 'day', 'night'];
+  COLOR_KEYS.forEach(k => { _mix[k].setRGB(0, 0, 0); pk.forEach((p, i) => { _mix[k].r += PCOL[p][k].r * w[i]; _mix[k].g += PCOL[p][k].g * w[i]; _mix[k].b += PCOL[p][k].b * w[i]; }); });
+  const tgt = {}; NUM_KEYS.forEach(k => tgt[k] = pk.reduce((a, p, i) => a + PRESETS[p][k] * w[i], 0));
+  const wx = WX, fogK = Math.max(wx.fog, wx.wet * 0.55, wx.snow * 0.5), dark = Math.max(wx.wet, wx.snow * 0.6, wx.fog * 0.7);
+  if (inSummer) { tgt.lamps = 0; }
+  // weather: fog closes the harbour, rain dims the sun and lights the lamps early
+  _grey.setScalar(0.62 * (0.25 + 0.75 * (w[2] + w[0] * 0.8 + w[1] * 0.5)));
+  _mix.fog.lerp(_grey, fogK * 0.85); tgt.near = tgt.near * (1 - fogK) + 2 * fogK; tgt.far = tgt.far * (1 - fogK) + 85 * fogK;
+  tgt.sunI *= 1 - 0.6 * dark; tgt.lamps = Math.min(1, tgt.lamps + 0.5 * dark);
+  const k = 1 - Math.exp(-dt * (TIME.gmT > 0 || TIME.mode === 'lapse' ? 12 : 3));
+  COLOR_KEYS.forEach(c => L[c].lerp(_mix[c], k)); NUM_KEYS.forEach(n => L[n] += (tgt[n] - L[n]) * k);
+  panoMat.uniforms.w.value.set(w[0], w[1], w[2], w[3]).lerp(SKY.w, 0); SKY.w.set(w[0], w[1], w[2], w[3]);
+  panoMat.uniforms.tint.value.setScalar(1 - 0.35 * dark).lerp(_grey.setScalar(0.72), fogK * 0.85);
+  // the key light: the sun while it is up, the moon after, never from under the sea
+  dirAzEl(s.az, s.el, SKY.sunDir); dirAzEl(m.az, m.el, SKY.moonDir);
+  const target = s.el > -3 ? dirAzEl(s.az, Math.max(s.el, 7), _p2) : (m.el > 8 ? SKY.moonDir : _p2.set(0.3, 0.85, 0.35).normalize());
+  L.dir.lerp(target, k).normalize();
+  applyLight();
+}
+function setPreset(name, quiet) {
+  const t = nycTime(TIME.utc), st = sunTimes(t);
+  if (name === 'golden') jumpLocal(st.set - 40); else if (name === 'day') jumpLocal(12 * 60 + 30); else if (name === 'night') jumpLocal(23 * 60 + 30); else if (name === 'dawn') jumpLocal(st.rise - 20);
+  else if (name === 'live') { TIME.mode = 'live'; TIME.shift = 0; } else if (name === 'lapse') TIME.mode = TIME.mode === 'lapse' ? 'fixed' : 'lapse';
+  if (TIME.mode !== 'live' && TIME.mode !== 'lapse') TIME.mode = 'fixed';
+  if (!quiet) toast(name === 'live' ? 'LIVE. THE REAL SKY OVER NEW YORK HARBOUR, RIGHT NOW.' : name === 'lapse' ? (TIME.mode === 'lapse' ? 'TIME-LAPSE: A DAY IN 96 SECONDS.' : 'TIME HELD.') : 'JUMPED TO ' + (name === 'day' ? 'NOON' : name.toUpperCase()) + ' TODAY. L FOR LIVE.', 'blue');
+  syncTimeButtons();
+}
+function syncTimeButtons() { document.querySelectorAll('[data-p]').forEach(b => b.classList.toggle('on', b.dataset.p === (TIME.mode === 'live' ? 'live' : TIME.mode === 'lapse' ? 'lapse' : ''))); }
 
 /* ---------------- collision + floors ---------------- */
 const SEGS = [], CIRCS = [], PADS = [];
@@ -503,7 +621,7 @@ const NY_FERRY = NYP.slice(0, 24), NY_CENSUS = NYP.slice(24, 72), NY_BODEGA = NY
   const sorted = CARDS.slice().sort((a, b) => b.fl - a.fl);
   plazaTops = new Array(n * n); const base = ground(0, 0) - 0.05;
   const tileG = new THREE.BoxGeometry(1, 1, 1); worldUV(tileG, 1);
-  const tiles = new THREE.InstancedMesh(tileG, MAT.mineral, cells.length); let k = 0; const m = new THREE.Matrix4();
+  const tiles = new THREE.InstancedMesh(tileG, MAT.terr, cells.length); let k = 0; const m = new THREE.Matrix4();
   const rx = new THREE.Quaternion().setFromAxisAngle(new V3(1, 0, 0), -PI / 2);
   cells.forEach((c, idx) => {
     const card = sorted[idx]; const h = 0.25 + 4.2 * Math.pow(1 - idx / cells.length, 2.2);
@@ -653,7 +771,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
   sign([{ t: Q('WAGMI'), s: 0.42 }, { t: 'PLEASE REMAIN SEATED.', s: 0.14, b: false }], W.cx - 11, 10, -PI / 2, 3.4, 1.4);
   const ex = W.cx + 6, ez = W.cz + 18; [-1.6, 1.6].forEach(o => { box(0.3, 3.2, 0.3, MAT.orange, ex + o, ground(ex, ez) + 1.6, ez); post(ex + o, ez, 0.25); });
   sign([{ t: Q('NGMI EXIT'), s: 0.42 }, { t: 'LEADS BACK TO FRIENDS.', s: 0.16, b: false }], ex, ez, PI, 3.4, 1.1, { y: ground(ex, ez) + 3.6, post: false, bg: '#FF6B00' });
-  interact(W.cx - 6, W.cz, 3, 'E  SPIN THE WHEEL', () => { W.speed = W.speed > 0.2 ? 0.06 : 0.6; toast(W.speed > 0.2 ? 'WAGMI. WE ARE ALL GOING. VERY FAST.' : 'WAGMI, AT A RESPONSIBLE PACE.'); });
+  interact(W.cx - 6, W.cz, 3, 'E  SPIN THE WHEEL', () => { W.speed = W.speed > 0.2 ? wheelBase : 0.6; toast(W.speed > 0.2 ? 'WAGMI. WE ARE ALL GOING. VERY FAST.' : 'WAGMI, AT A RESPONSIBLE PACE.'); });
   for (let i = 0; i < 4; i++) practical(W.cx - 2, W.hub + Math.sin(i * PI / 2) * 10, Math.cos(i * PI / 2) * 10, 0xffd28a, 22, 26);
   zone(W.cx, W.cz, 18, 'THE WAGMI WHEEL');
 })();
@@ -740,7 +858,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
   // bodega
   const bx = 17, bz = 66, w = 10, d = 14, h = 4.6, g = ground(bx, bz) + 0.02; padRect(bx - w / 2, bx + w / 2, bz - d / 2, bz + d / 2, g + 0.12);
   box(w, 0.2, d, MAT.conc, bx, g, bz, 0, 2, false);
-  const brick = new THREE.MeshStandardMaterial({ color: 0x8c4a35, roughness: 0.95 });
+  const brick = MAT.brick;
   box(0.4, h, d, brick, bx + w / 2, g + h / 2, bz); wall(bx + w / 2, bz - d / 2, bx + w / 2, bz + d / 2);
   [-1, 1].forEach(s => { box(w, h, 0.4, brick, bx, g + h / 2, bz + s * d / 2); wall(bx - w / 2, bz + s * d / 2, bx + w / 2, bz + s * d / 2); });
   [-1, 1].forEach(s => { box(0.4, h, 5, brick, bx - w / 2, g + h / 2, bz + s * 4.5); wall(bx - w / 2, bz + s * 2, bx - w / 2, bz + s * 7); });
@@ -873,7 +991,7 @@ const OM = { x: 30, z: -80, portal: null };
 /* --- 15. FREEDOM TO TRANSACT: the freeway loop, 71 billboards, the zero gas toll --- */
 const cars = []; let tollArm = null, tollCD = 0;
 (function () {
-  const road = new THREE.Mesh(new THREE.RingGeometry(96, 104, 180, 1), MAT.asphalt); road.rotation.x = -PI / 2; road.position.y = 0.66; road.receiveShadow = true; scene.add(road);
+  const road = new THREE.Mesh(new THREE.RingGeometry(96, 104, 180, 1), MAT.road); road.rotation.x = -PI / 2; road.position.y = 0.66; road.receiveShadow = true; scene.add(road);
   const dash = new THREE.InstancedMesh(new THREE.BoxGeometry(0.25, 0.02, 2.6), MAT.white, 120); const m = new THREE.Matrix4();
   for (let i = 0; i < 120; i++) { const a = i / 120 * PI * 2; m.compose(new V3(Math.cos(a) * 100, 0.68, Math.sin(a) * 100), QY(-a), new V3(1, 1, 1)); dash.setMatrixAt(i, m); } scene.add(dash);
   const ids = G('Freedom to Transact'); const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.12, 0.12, 1, 6), MAT.steel, ids.length * 2); let k = 0;
@@ -1067,7 +1185,7 @@ const RIDE = { on: false, t: 0, dur: 26, a0: 0 };
   interact(gx, gz, 2.4, 'E  RIDE THE WAGMI WHEEL', () => startRide());
 })();
 function startRide() { if (RIDE.on) return; RIDE.on = true; RIDE.t = 0; wheel.speed = 0.24; toast('WAGMI. PLEASE REMAIN SEATED. ANY MOVE KEY TO GET OFF.', 'blue'); chime(600); }
-function endRide() { RIDE.on = false; wheel.speed = 0.06; teleport(wheel.cx - 9, 6, -PI / 2); }
+function endRide() { RIDE.on = false; wheel.speed = wheelBase; teleport(wheel.cx - 9, 6, -PI / 2); }
 function issueReceipt() {
   const cv = document.createElement('canvas'); cv.width = 600; cv.height = 900; const c = cv.getContext('2d');
   c.fillStyle = '#F6F3EA'; c.fillRect(0, 0, 600, 900); c.fillStyle = '#0D0D0D'; c.textAlign = 'center';
@@ -1106,6 +1224,249 @@ function updateDelights(dt, t) {
 }
 
 /* ================================================================
+   v3: the living island. Weather, calendar, sun and moon discs, sculptures, grass, fireworks, reflections
+   ================================================================ */
+
+/* --- weather: one per day from the date, the way Marfa Light rolls its sky; Y cycles it --- */
+const WEATHERS = ['CLEAR', 'SCATTERED', 'HARBOR FOG', 'RAIN', 'SNOW'];
+const WX = { cur: 'CLEAR', override: null, fog: 0, wet: 0, snow: 0, day: -1 };
+function weatherFor(t) {
+  let h = Math.imul(t.days ^ 0x6529, 2654435761) >>> 0; h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0; const r = (h % 1000) / 1000, winter = t.mo === 12 || t.mo <= 2;
+  if (r < 0.46) return 'CLEAR'; if (r < 0.68) return 'SCATTERED'; if (r < 0.84) return 'HARBOR FOG'; return winter ? 'SNOW' : 'RAIN';
+}
+const precip = (function () {
+  const n = 2400, g = new THREE.BufferGeometry(), pos = new Float32Array(n * 6); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const rain = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xbfd2e6, transparent: true, opacity: 0.45, depthWrite: false }));
+  const sg = new THREE.BufferGeometry(), sp = new Float32Array(n * 3); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  const snow = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.09, transparent: true, opacity: 0.9, depthWrite: false }));
+  rain.frustumCulled = snow.frustumCulled = false; rain.visible = snow.visible = false; scene.add(rain); scene.add(snow);
+  const seed = Array.from({ length: n }, () => [Math.random() * 60 - 30, Math.random() * 30, Math.random() * 60 - 30, 0.6 + Math.random() * 0.8]);
+  return { n, rain, snow, pos, sp, seed };
+})();
+function updateWeather(dt, t) {
+  if (t.days !== WX.day) { WX.day = t.days; if (!WX.override) WX.cur = weatherFor(t); }
+  if (WX.override) WX.cur = WX.override;
+  const k = 1 - Math.exp(-dt * 0.8), c = WX.cur;
+  WX.fog += ((c === 'HARBOR FOG' ? 1 : 0) - WX.fog) * k; WX.wet += ((c === 'RAIN' ? 1 : 0) - WX.wet) * k; WX.snow += ((c === 'SNOW' ? 1 : 0) - WX.snow) * k;
+  const R = precip, cx = P.x, cz = P.z, cy = P.y;
+  R.rain.visible = WX.wet > 0.05; R.snow.visible = WX.snow > 0.05; R.rain.material.opacity = 0.45 * WX.wet; R.snow.material.opacity = 0.9 * WX.snow;
+  if (R.rain.visible || R.snow.visible) for (let i = 0; i < R.n; i++) {
+    const s = R.seed[i]; s[1] -= dt * (R.rain.visible ? 22 * s[3] : 1.3 * s[3]); if (s[1] < -2) s[1] += 32;
+    const x = cx + ((s[0] + (R.snow.visible ? Math.sin(T * 0.7 + i) * 0.6 : 0) + 30) % 60 + 60) % 60 - 30, y = cy + s[1], z = cz + ((s[2] + 30) % 60 + 60) % 60 - 30;
+    if (R.rain.visible) { R.pos[i * 6] = x; R.pos[i * 6 + 1] = y; R.pos[i * 6 + 2] = z; R.pos[i * 6 + 3] = x + 0.05; R.pos[i * 6 + 4] = y + 0.55; R.pos[i * 6 + 5] = z; }
+    if (R.snow.visible) { R.sp[i * 3] = x; R.sp[i * 3 + 1] = y; R.sp[i * 3 + 2] = z; }
+  }
+  if (R.rain.visible) R.rain.geometry.attributes.position.needsUpdate = true; if (R.snow.visible) R.snow.geometry.attributes.position.needsUpdate = true;
+  MAT.water.roughness = 0.06 + 0.25 * WX.wet; MAT.grass.color.copy(SEASON.grass).lerp(_white, WX.snow * 0.75); if (GRASS.mesh) GRASS.mesh.material.color.copy(MAT.grass.color);
+}
+const _white = new THREE.Color(0xffffff);
+
+/* --- the real sun and the real moon, as discs in front of the photographs --- */
+const DISCS = (function () {
+  const sc = document.createElement('canvas'); sc.width = sc.height = 128; const c = sc.getContext('2d');
+  const g = c.createRadialGradient ? c.createRadialGradient(64, 64, 4, 64, 64, 64) : null;
+  if (g) { g.addColorStop(0, 'rgba(255,250,235,1)'); g.addColorStop(0.18, 'rgba(255,236,190,0.95)'); g.addColorStop(0.45, 'rgba(255,190,120,0.25)'); g.addColorStop(1, 'rgba(255,160,90,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); }
+  const sun = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(sc), blending: THREE.AdditiveBlending, depthWrite: false, fog: false, toneMapped: false, transparent: true }));
+  sun.scale.set(120, 120, 1); sun.renderOrder = -9; scene.add(sun);
+  const mc = document.createElement('canvas'); mc.width = mc.height = 128;
+  const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(mc), depthWrite: false, fog: false, toneMapped: false, transparent: true }));
+  moon.scale.set(34, 34, 1); moon.renderOrder = -9; scene.add(moon);
+  return { sun, moon, mc, phaseDay: -1 };
+})();
+function drawMoonPhase(illum, waxing) {
+  const c = DISCS.mc.getContext('2d'); if (!c.getImageData || !c.createImageData) return; const im = c.createImageData(128, 128), k = 1 - 2 * illum;
+  for (let y = 0; y < 128; y++) for (let x = 0; x < 128; x++) {
+    const nx = (x - 64) / 58, ny = (y - 64) / 58, r2 = nx * nx + ny * ny, i = (y * 128 + x) * 4; if (r2 > 1) { im.data[i + 3] = 0; continue; }
+    const edge = k * Math.sqrt(1 - ny * ny), lit = waxing ? nx > edge : nx < -edge, tex = 0.86 + 0.14 * Math.sin(nx * 9 + ny * 5) * Math.cos(ny * 7 - nx * 3);
+    im.data[i] = lit ? 246 * tex : 40; im.data[i + 1] = lit ? 242 * tex : 48; im.data[i + 2] = lit ? 228 * tex : 66; im.data[i + 3] = lit ? 255 : 70; }
+  c.putImageData(im, 0, 0); DISCS.moon.material.map.needsUpdate = true;
+}
+function updateDiscs() {
+  const s = SKY.sun, m = SKY.moon, cp = camera.position, clouded = Math.max(WX.fog, WX.wet, WX.snow);
+  DISCS.sun.position.copy(cp).addScaledVector(SKY.sunDir, 1000); DISCS.sun.visible = s.el > -2 && clouded < 0.6;
+  DISCS.sun.material.opacity = smooth(-2, 3, s.el) * (1 - clouded); DISCS.sun.scale.setScalar(s.el < 12 ? 150 : 110);
+  DISCS.moon.position.copy(cp).addScaledVector(SKY.moonDir, 1000); DISCS.moon.visible = m.el > -1 && clouded < 0.6;
+  DISCS.moon.material.opacity = (0.35 + 0.65 * (1 - smooth(-6, 10, s.el))) * (1 - clouded);
+  if (SKY.t.days !== DISCS.phaseDay) { DISCS.phaseDay = SKY.t.days; drawMoonPhase(m.illum, m.waxing); }
+}
+
+/* --- calendar: what day it is in New York changes the island --- */
+const SEASON = { grass: new THREE.Color(0xd6dcc4) };
+const CAL = { day: -1, hour: -1, ev: [], mint: false, weekend: false, spooky: false, fire: false, gm: false, gn: false, cod: 1 };
+const FIRE_DAYS = { 101: 'NEW YEAR', 103: 'GENESIS BLOCK DAY', 609: 'THE MEMES ANNIVERSARY', 704: 'INDEPENDENCE DAY', 915: 'MERGE DAY', 1031: 'BITCOIN WHITEPAPER DAY', 1231: 'NEW YEAR\'S EVE' };
+const OTHER_DAYS = { 522: 'BITCOIN PIZZA DAY', 214: 'VALENTINE\'S DAY. THE FLOOR LOVES YOU BACK', 401: 'APRIL FOOLS. NOTHING HERE IS SERIOUS ANYWAY', 1225: 'CHRISTMAS' };
+function updateCalendar(t) {
+  if (t.days === CAL.day && t.h === CAL.hour) return; const newDay = t.days !== CAL.day; CAL.day = t.days; CAL.hour = t.h;
+  const md = t.mo * 100 + t.d, ev = [];
+  CAL.mint = [1, 3, 5].includes(t.wd); CAL.weekend = t.wd === 0 || t.wd === 6; CAL.spooky = t.mo === 10; CAL.fire = !!FIRE_DAYS[md];
+  CAL.gm = t.h >= 5 && t.h < 12; CAL.gn = t.h >= 23 || t.h < 5;
+  if (CAL.mint) ev.push('MINT DAY'); if (CAL.weekend) ev.push('WEEKEND. THE WHEEL RUNS FAST'); if (CAL.spooky) ev.push('SPOOKY SZN'); if (FIRE_DAYS[md]) ev.push(FIRE_DAYS[md] + '. FIREWORKS AT DARK'); if (OTHER_DAYS[md]) ev.push(OTHER_DAYS[md]);
+  if (t.mo >= 6 && t.mo <= 8) ev.push('SUMMER.JPG SEASON'); if (CAL.gm) ev.push('GM HOURS'); if (CAL.gn) ev.push('GN HOURS. WE DO NOT SAY THAT HERE');
+  CAL.ev = ev; convBase = CAL.mint ? 2.2 : 0.9; if (seizeT <= 0) convSpeed = convBase; wheelBase = CAL.weekend ? 0.13 : 0.06; if (wheel.speed < 0.2) wheel.speed = wheelBase;
+  PUMPKINS.mesh && (PUMPKINS.mesh.visible = PUMPKINS.stems.visible = CAL.spooky);
+  if (newDay) {
+    // seasons tint the lawn: spring green, high summer, a gold autumn, a tired winter
+    const doy = daysFromCivil(t.y, t.mo, t.d) - daysFromCivil(t.y, 1, 1);
+    SEASON.grass.set(doy < 59 || doy > 340 ? 0xcfcab4 : doy < 140 ? 0xd2e0bc : doy < 245 ? 0xdce6b6 : doy < 300 ? 0xe4d9a8 : 0xdacb9c);
+    CAL.cod = CARDS[(Math.imul(t.days, 7919) >>> 0) % CARDS.length].n; if (COD.mesh) { setPlaneUV(COD.mesh, 'meme', CAL.cod, 3.4); COD.mesh.userData.card = CAL.cod; COD.redraw(t); }
+    MINTSIGN.redraw && MINTSIGN.redraw();
+  }
+}
+let convBase = 0.9, wheelBase = 0.06;
+
+/* card of the day, on an easel at the south end of the floor */
+const COD = { mesh: null, cv: null, tex: null, redraw: () => { } };
+(function () {
+  const x = 9, z = 34, g = ground(x, z); [-1.2, 1.2].forEach(o => { const l = box(0.12, 4.6, 0.12, MAT.wood, x + o, g + 2.2, z - 0.4, 0); l.rotation.x = 0.12; }); box(0.12, 3.6, 0.12, MAT.wood, x, g + 1.8, z - 1.1, 0).rotation.x = -0.35;
+  box(2.6, 0.12, 0.3, MAT.wood, x, g + 0.9, z, 0); post(x, z, 1.1);
+  COD.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ toneMapped: false })); COD.mesh.position.set(x, g + 2.75, z + 0.08); scene.add(COD.mesh); PICK_EXTRA.push(COD.mesh);
+  box(2.6, 3.8, 0.08, MAT.ink, x, g + 2.75, z + 0.02, 0, 0, false);
+  COD.cv = document.createElement('canvas'); COD.cv.width = 1024; COD.cv.height = 300; COD.tex = new THREE.CanvasTexture(COD.cv); COD.tex.encoding = THREE.sRGBEncoding;
+  plane(2.6, 0.76, new THREE.MeshBasicMaterial({ map: COD.tex, toneMapped: false }), x, g + 5.1, z + 0.02, 0);
+  COD.redraw = t => { const c = COD.cv.getContext('2d'), card = byN[CAL.cod]; c.drawImage(signCanvas([{ t: Q('CARD OF THE DAY'), s: 0.3 }, { t: DAYS[t.wd] + ' · CARD ' + card.n + ' · ' + card.t.toUpperCase(), s: 0.13, c: '#FF6B00' }, { t: 'A NEW ONE EVERY MIDNIGHT IN NEW YORK', s: 0.1, b: false }], 1024, 300, '#0D0D0D'), 0, 0); COD.tex.needsUpdate = true; };
+})();
+/* mint day sign at the factory */
+const MINTSIGN = { redraw: null };
+(function () {
+  const x = 5, z = -47.6, g = ground(x, z), cv = document.createElement('canvas'); cv.width = 1024; cv.height = 340; const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  plane(3.4, 1.13, new THREE.MeshBasicMaterial({ map: t, toneMapped: false }), x, g + 2.4, z, 0); box(3.46, 1.19, 0.04, MAT.ink, x, g + 2.4, z - 0.03, 0, 0, false); cyl(0.06, 0.06, 1.85, MAT.orange, x, g + 0.92, z - 0.05, 8);
+  MINTSIGN.redraw = () => { cv.getContext('2d').drawImage(signCanvas(CAL.mint ? [{ t: Q('MINT DAY'), s: 0.34, c: '#FF6B00' }, { t: 'MONDAY WEDNESDAY FRIDAY. THE BELT RUNS FAST.', s: 0.12 }, { t: 'NEW CARDS DROP ON SEIZE.IO, NOT HERE', s: 0.1, b: false }] : [{ t: Q('NOT A MINT DAY'), s: 0.3 }, { t: 'SEIZE ANYWAY.', s: 0.16, c: '#FF6B00' }, { t: 'MINTS: MONDAY, WEDNESDAY, FRIDAY', s: 0.1, b: false }], 1024, 340, '#0D0D0D'), 0, 0); t.needsUpdate = true; };
+})();
+
+/* pumpkins for Spooky SZN (October), lit at night */
+const PUMPKINS = { mesh: null, stems: null };
+(function () {
+  const spots = []; for (let i = 0; i < 45; i += 3) spots.push(P2((i + 0.5) / 45 * 360 + 2, 28.6));
+  for (let i = 0; i < 16; i++) spots.push(P2(150 + i * 4, 119)); [[8, 61], [8, 71], [-6, -116.5], [6, -116.5], [-55, 4], [-55, -4], [20, -48], [-20, -48], [24, 42], [64, 42], [-60, 50], [-28, 50]].forEach(p => spots.push(p));
+  const pm = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.55, emissive: 0xff6a00, emissiveIntensity: 0 });
+  const mesh = new THREE.InstancedMesh(new THREE.SphereGeometry(0.42, 14, 10), pm, spots.length), stems = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.05, 0.07, 0.22, 6), cm(0x4b5b2a), spots.length), m = new THREE.Matrix4();
+  spots.forEach(([x, z], i) => { const g = Math.max(ground(x, z), (floorAt(x, z, 3).f || 0)); const s = 0.8 + rnd() * 0.7; m.compose(new V3(x, g + 0.3 * s, z), QY(rnd() * 6), new V3(s, s * 0.78, s)); mesh.setMatrixAt(i, m); m.compose(new V3(x, g + 0.62 * s, z), new THREE.Quaternion(), new V3(1, 1, 1)); stems.setMatrixAt(i, m); });
+  mesh.castShadow = true; mesh.visible = stems.visible = false; scene.add(mesh); scene.add(stems); PUMPKINS.mesh = mesh; PUMPKINS.stems = stems;
+})();
+
+/* fireworks over the harbour on the days that earn them, and when the vault opens */
+const FW = (function () {
+  const n = 1400, g = new THREE.BufferGeometry(), pos = new Float32Array(n * 3).fill(-9999), col = new Float32Array(n * 3);
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({ size: 2.6, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+  pts.frustumCulled = false; scene.add(pts);
+  return { n, pos, col, pts, v: Array.from({ length: n }, () => [0, 0, 0, 0]), next: 0, cursor: 0, show: 0 };
+})();
+const FW_COLS = [0x2962ff, 0xff6b00, 0xffffff, 0xffd400, 0x7fe3ff, 0xff4fa0].map(h => new THREE.Color(h));
+function updateFireworks(dt) {
+  const active = FW.show > 0 || (CAL.fire && L.lamps > 0.55); if (FW.show > 0) FW.show -= dt;
+  if (active) { FW.next -= dt; if (FW.next <= 0) { FW.next = 0.5 + Math.random() * 1.2; const cx = (Math.random() - 0.5) * 220, cy = 70 + Math.random() * 60, cz = 190 + Math.random() * 120, c = FW_COLS[Math.floor(Math.random() * FW_COLS.length)];
+    for (let k = 0; k < 110; k++) { const i = FW.cursor = (FW.cursor + 1) % FW.n, th = Math.random() * PI * 2, ph = Math.acos(2 * Math.random() - 1), sp = 14 + Math.random() * 10;
+      FW.pos[i * 3] = cx; FW.pos[i * 3 + 1] = cy; FW.pos[i * 3 + 2] = cz; FW.v[i] = [Math.sin(ph) * Math.cos(th) * sp, Math.cos(ph) * sp, Math.sin(ph) * Math.sin(th) * sp, 2.4]; FW.col[i * 3] = c.r; FW.col[i * 3 + 1] = c.g; FW.col[i * 3 + 2] = c.b; }
+    if (AC && oceanGain && oceanGain.gain.value > 0) chime(140 + Math.random() * 60); } }
+  let any = false; for (let i = 0; i < FW.n; i++) { const v = FW.v[i]; if (v[3] <= 0) continue; any = true; v[3] -= dt; v[1] -= 9 * dt; v[0] *= 0.985; v[1] *= 0.985; v[2] *= 0.985;
+    FW.pos[i * 3] += v[0] * dt; FW.pos[i * 3 + 1] += v[1] * dt; FW.pos[i * 3 + 2] += v[2] * dt; if (v[3] <= 0) FW.pos[i * 3 + 1] = -9999; const f = Math.max(0, v[3] / 2.4); FW.col[i * 3] *= 0.995; FW.col[i * 3 + 1] *= 0.995; FW.col[i * 3 + 2] *= 0.995 + 0 * f; }
+  FW.pts.visible = any; if (any) { FW.pts.geometry.attributes.position.needsUpdate = true; FW.pts.geometry.attributes.color.needsUpdate = true; }
+}
+
+/* --- grass: 9,000 tufts that lean in the wind, tinted by season and snow --- */
+const GRASS = { mesh: null, shader: null };
+(function () {
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; const c = cv.getContext('2d');
+  if (c.beginPath && c.quadraticCurveTo) { for (let i = 0; i < 14; i++) { const x = 4 + Math.random() * 56, h = 30 + Math.random() * 32; c.strokeStyle = `rgb(${70 + Math.random() * 40},${110 + Math.random() * 50},${30 + Math.random() * 25})`; c.lineWidth = 2 + Math.random() * 2; c.beginPath(); c.moveTo(x, 64); c.quadraticCurveTo(x + (Math.random() - 0.5) * 10, 64 - h / 2, x + (Math.random() - 0.5) * 18, 64 - h); c.stroke(); } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const g1 = new THREE.PlaneGeometry(0.7, 0.42); g1.translate(0, 0.21, 0); const g2 = g1.clone(); g2.rotateY(PI / 2);
+  const pos = [...g1.attributes.position.array, ...g2.attributes.position.array], uv = [...g1.attributes.uv.array, ...g2.attributes.uv.array], idx = [...g1.index.array, ...Array.from(g2.index.array, i => i + 4)];
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.9, color: 0xd6dcc4 });
+  mat.onBeforeCompile = sh => { sh.uniforms.uTime = { value: 0 }; GRASS.shader = sh; sh.vertexShader = 'uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvec4 ip = instanceMatrix[3];\n\ttransformed.x += sin(uTime * 1.6 + ip.x * 0.31 + ip.z * 0.23) * 0.07 * uv.y;\n\ttransformed.z += cos(uTime * 1.3 + ip.z * 0.27) * 0.04 * uv.y;'); };
+  const N = isMobile ? 4000 : 9000, mesh = new THREE.InstancedMesh(geo, mat, N), m = new THREE.Matrix4(); let k = 0, tries = 0;
+  while (k < N && tries++ < N * 6) {
+    const a = rnd() * PI * 2, r = Math.sqrt(rnd()) * 101, x = Math.cos(a) * r, z = Math.sin(a) * r, g = ground(x, z);
+    if (Math.abs(x) < 17.5 && Math.abs(z) < 17.5) continue; if (r > 36.5 && r < 43.5) continue; if (Math.abs(x) < 3 && Math.abs(z) > 16) continue; if (Math.abs(z) < 3 && Math.abs(x) > 16) continue;
+    const f = floorAt(x, z, 3); if (f.block || (f.f !== null && f.f > g + 0.05)) continue;
+    const s = 0.45 + rnd() * 0.45; m.compose(new V3(x, g, z), QY(rnd() * 6), new V3(s, s * (0.7 + rnd() * 0.5), s)); mesh.setMatrixAt(k++, m);
+  }
+  mesh.count = k; mesh.receiveShadow = true; scene.add(mesh); GRASS.mesh = mesh;
+})();
+
+/* --- MLow's meme sculptures: 20 classics from the MEME MUSEUM and 46 from The Memes by 6529 --- */
+const SC = [];
+(function () {
+  const list = D.sculpts || [], by = {}; list.forEach((s, i) => by[s.key] = s);
+  const at = (key, x, z, ry, o = {}) => { const s = by[key]; if (!s) return; SC.push(Object.assign({ i: SC.length, x, z, ry, scale: 1.5, plinth: true, state: null }, s, o)); };
+  const fc = (x, z) => faceTo(x, z, 0, 0);
+  // the classics, each where it means something
+  at('wave', -30, 152, faceTo(-30, 152, 0, 128), { scale: 2.0, plinth: false, base: -1.6 });
+  at('pepe', -10, 22, 0); at('wojak', 10, 22, 0);
+  at('monalisa', -66, -5, PI / 2, { scale: 1.2 }); at('doge', -48, 10, PI / 2); at('tableflip', -46, -14, PI / 2);
+  at('mj', -13, -54.5, 0, { scale: 1.3 }); at('rick', 9, 108, 0); at('drake', -20, 76, PI / 2);
+  at('grumpy', -7, -116, 0); at('flame', 7, -116, 0, { scale: 1.2 }); at('spongebob', -35, -30, fc(-35, -30)); at('spiderman', 42, -72, faceTo(42, -72, 30, -80), { scale: 1.2 });
+  const gb = P2(67, 49); at('brain', gb[0], gb[1], fc(...gb)); at('pikachu', -21, 42, fc(-21, 42)); at('thisisfine', 44, 63, PI, { scale: 1.3 }); at('sweat', 70, 44, -PI / 2);
+  at('kermit', 8, 58, -PI / 2); at('harold', 5, 80, -PI / 2); at('nyan', 62, 0, 0, { plinth: false, anim: 'orbit', scale: 1.4 });
+  // The Memes by 6529, grouped by the pillar MEME MUSEUM v3 gave them
+  const sec = n => list.filter(s => s.sec === n).map(s => s.key);
+  sec('SEIZE').forEach((k, i) => at(k, [-21, -15, -9, 9, 15, 21][i], -45, 0));
+  sec('GM').forEach((k, i) => { const x = [-28, -20, -12, 12, 20, 28][i]; at(k, x, Math.sqrt(114 * 114 - x * x), 0); });
+  sec('SUMMER').forEach((k, i) => at(k, [-61, -55, -49, -43, -37, -31][i], 55, PI));
+  sec('SURVIVE').forEach((k, i) => at(k, [24, 30, 36, 52, 58, 64][i], 60, PI));
+  sec('FREEDOM').forEach((k, i) => { const p = P2([156, 164, 172, 188, 196, 204][i], 88); at(k, p[0], p[1], fc(...p)); });
+  sec('NETWORK').forEach((k, i) => { const a = (70 + i * 18) * D2R, x = 30 + Math.cos(a) * 13, z = -80 + Math.sin(a) * 13; at(k, x, z, faceTo(x, z, x + (x - 30), z + (z + 80))); });
+  sec('SPRINKLE').forEach((k, i) => { const a = [12, 33, 57, 78, 102, 123, 237, 258, 282, 303][i]; const p = P2(a, 33.5); at(k, p[0], p[1], PI - a * D2R); });
+  // plinths, plaques and collision, built now; the sculptures stream in as you walk
+  const plinthG = new THREE.CylinderGeometry(1.25, 1.35, 0.7, 28), pl = new THREE.InstancedMesh(plinthG, MAT.lime, SC.length), band = new THREE.InstancedMesh(new THREE.CylinderGeometry(1.27, 1.27, 0.08, 28), MAT.gold, SC.length), m = new THREE.Matrix4(); let k = 0;
+  SC.forEach(s => {
+    const g = s.base !== undefined ? s.base : Math.max(ground(s.x, s.z), floorAt(s.x, s.z, 3).f || -5);
+    s.base = s.plinth ? g + 0.7 : g;
+    if (s.plinth) { m.makeTranslation(s.x, g + 0.35, s.z); pl.setMatrixAt(k, m); m.makeTranslation(s.x, g + 0.66, s.z); band.setMatrixAt(k++, m); post(s.x, s.z, 1.35, -10, g + 3);
+      sign([{ t: s.label, s: 0.34 }, { t: s.sub, s: 0.18, c: '#FF6B00' }], s.x + Math.sin(s.ry) * 1.37, s.z + Math.cos(s.ry) * 1.37, s.ry, 1.5, 0.4, { y: g + 0.36, post: false, back: false }); }
+  });
+  pl.count = band.count = k; pl.castShadow = pl.receiveShadow = true; scene.add(pl); scene.add(band);
+  zone(-30, 152, 16, 'THE GREAT WAVE');
+})();
+const gltfLoader = THREE.GLTFLoader ? new THREE.GLTFLoader() : null;
+if (gltfLoader && window.MeshoptDecoder) gltfLoader.setMeshoptDecoder(window.MeshoptDecoder);
+const SCL = { loading: 0, t: 0, done: 0 };
+function updateSculpts(dt) {
+  SC.forEach(s => { if (!s.root) return; if (s.pop < 1) { s.pop = Math.min(1, s.pop + dt * 1.8); const e = 1 - Math.pow(1 - s.pop, 3); s.root.scale.setScalar(0.001 + e); }
+    if (s.anim === 'orbit') { const a = T * 0.25; s.root.position.set(wheel.cx - 4, wheel.hub + Math.sin(a) * 21, wheel.cz + Math.cos(a) * 21); s.root.rotation.set(-a, -PI / 2, 0, 'YXZ'); }
+    if (s.key === 'wave') s.root.position.y = s.base + Math.sin(T * 0.6) * 0.25; });
+  SCL.t -= dt; if (SCL.t > 0 || !gltfLoader) return; SCL.t = 0.35;
+  const near = SC.filter(s => !s.state).sort((a, b) => Math.hypot(P.x - a.x, P.z - a.z) - Math.hypot(P.x - b.x, P.z - b.z));
+  for (const s of near) { if (SCL.loading >= 3) break; if (Math.hypot(P.x - s.x, P.z - s.z) > 140) break; s.state = 'loading'; SCL.loading++;
+    gltfLoader.load('assets/sculpt/' + s.key + '.gltf.json', g => { SCL.loading--; s.state = 'ready'; SCL.done++; placeSculpt(s, g.scene); }, undefined, () => { SCL.loading--; s.state = 'error'; }); }
+}
+function placeSculpt(s, obj) {
+  obj.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(obj), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());
+  const target = s.size * s.scale, k = s.mode === 'm' ? target / Math.max(sz.x, sz.y, sz.z) : target / Math.max(0.001, sz.y);
+  const inner = new THREE.Group(); inner.add(obj); obj.position.set(-c.x, -bb.min.y, -c.z); inner.scale.setScalar(k);
+  const root = new THREE.Group(); root.add(inner); root.position.set(s.x, s.base, s.z); root.rotation.y = s.ry; root.scale.setScalar(0.001); scene.add(root); s.root = root; s.pop = 0;
+  obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; o.userData.sculpt = s.i; PICK_EXTRA.push(o);
+    const ms = Array.isArray(o.material) ? o.material : [o.material]; ms.forEach(mt => { if (mt) { mt.envMapIntensity = 0.75; if (mt.map) mt.map.anisotropy = ANISO; } }); });
+}
+
+/* --- reflections: the sky photographs become the environment map, refreshed as the light moves --- */
+const ENV = { pmrem: null, rt: null, w: null, t: 0, on: false };
+const ENVC = document.createElement('canvas'); ENVC.width = 512; ENVC.height = 256;
+function updateEnv(dt, force) {
+  ENV.t -= dt; if (!force && ENV.t > 0) return; ENV.t = 1.5;
+  const w = SKY.w; if (!force && ENV.w && Math.abs(w.x - ENV.w.x) + Math.abs(w.y - ENV.w.y) + Math.abs(w.z - ENV.w.z) + Math.abs(w.w - ENV.w.w) < 0.05) return;
+  try {
+    // an equirectangular sky from the same four photographs: cap colour above, the blended band at the horizon, sea below
+    const c = ENVC.getContext('2d'); if (!c || !c.drawImage) return; const imgs = PANO_TEX.map(t => t.image); if (imgs.some(i => !i || !i.width)) return;
+    c.globalAlpha = 1; c.fillStyle = '#' + PANO.cap.material.color.getHexString(); c.fillRect(0, 0, 512, 256);
+    const ws = [w.x, w.y, w.z, w.w]; let acc = 0;
+    ws.forEach((wi, i) => { if (wi < 0.01) return; acc += wi; c.globalAlpha = wi / acc; c.drawImage(imgs[i], 0, 0, imgs[i].width, imgs[i].height, 0, 40, 256, 216); c.drawImage(imgs[i], 0, 0, imgs[i].width, imgs[i].height, 512, 40, -256, 216); });
+    c.globalAlpha = 1;
+    if (!ENV.tex) { ENV.tex = new THREE.CanvasTexture(ENVC); ENV.tex.mapping = THREE.EquirectangularReflectionMapping; ENV.tex.encoding = THREE.sRGBEncoding; } else ENV.tex.needsUpdate = true;
+    if (!ENV.pmrem) ENV.pmrem = new THREE.PMREMGenerator(renderer);
+    const rt = ENV.pmrem.fromEquirectangular(ENV.tex); if (ENV.rt) ENV.rt.dispose(); ENV.rt = rt; scene.environment = rt.texture; ENV.on = true; ENV.w = w.clone();
+  } catch (e) { ENV.on = false; scene.environment = null; }
+}
+
+/* --- the HUD clock --- */
+function clockHud() {
+  const t = SKY.t, st = sunTimes(t), m = SKY.moon; if (!t) return;
+  const mode = TIME.gmT > 0 ? 'SUNRISE REPLAY' : TIME.mode === 'live' ? (TIME.shift ? 'LIVE ' + (TIME.shift > 0 ? '+' : '') + Math.round(TIME.shift / 3600) + 'H' : 'LIVE') : TIME.mode === 'lapse' ? 'TIME-LAPSE' : 'HELD';
+  $('clock').innerHTML = `<b>NEW YORK ${pad2(t.h)}:${pad2(t.m)} ${t.zone}</b> · ${DAYS[t.wd].slice(0, 3)} ${t.d} ${MONTHS[t.mo - 1]} · ${mode}<br>SUN ${SKY.el.toFixed(0)}° · RISE ${hhmm(st.rise)} · SET ${hhmm(st.set)}<br>${moonName(m)} ${Math.round(m.illum * 100)}% · ${WX.cur}${WX.override ? ' (Y)' : ''}<br><span class="ev">${CAL.ev.slice(0, 3).join(' · ') || 'AN ORDINARY DAY'}</span>`;
+}
+
+/* ================================================================
    systems: state, HUD, picking, eggs, audio, hanging
    ================================================================ */
 const state = { keys: 0, gm: 0, seized: 0, seen: new Set(), hung: 0, tdh: 0, idle: 0, brain: 0, started: false, zone: '', vault: false, eggs: new Set() };
@@ -1129,6 +1490,8 @@ function pickAt(cx, cy) {
     if (h.object.userData.ny) return { kind: 'ny', n: h.object.userData.ny, d: h.distance };
     if (h.object.userData.slot !== undefined) return { kind: 'slot', slot: h.object.userData.slot, d: h.distance };
     if (h.object.userData.honorary) return { kind: 'honorary', d: h.distance };
+    if (h.object.userData.sculpt !== undefined) return { kind: 'sculpt', i: h.object.userData.sculpt, d: h.distance };
+    if (h.object.userData.card) return { kind: 'meme', n: h.object.userData.card, d: h.distance };
   }
   return null;
 }
@@ -1147,6 +1510,10 @@ function openCard(p) {
     const im = new Image(); im.src = 'assets/honorary6529.jpg'; art.appendChild(im);
     $('mT').textContent = 'Cards on the Bridge, for Punk6529'; $('mMeta').innerHTML = 'NEW YORKERS HONORARY · MLow, 2026';
     $('mD').textContent = 'A pixel figure in a grey hoodie and glasses stands on the Brooklyn Bridge at night holding a fan of glowing cards. The bridge belongs to everyone.';
+  } else if (p.kind === 'sculpt') {
+    const sc = SC[p.i]; if (sc.card && byN[sc.card]) { openCard({ kind: 'meme', n: sc.card }); toast('SCULPTURE BY MLow, AFTER CARD ' + sc.card + '.', 'blue'); return; }
+    $('mT').textContent = sc.label.replace(/"/g, ''); $('mMeta').innerHTML = 'MEME SCULPTURE BY MLow<br>' + esc(sc.sub);
+    $('mD').textContent = sc.set === 'classic' ? 'One of twenty classics from the MEME MUSEUM, now on holiday on the island.' : 'One of 46 sculptures MLow made from The Memes by 6529. This one is still waiting for its card number.';
   } else return;
   $('modal').style.display = 'flex'; try { document.exitPointerLock(); } catch (e) { }
 }
@@ -1182,6 +1549,8 @@ function audioOn() {
 function chime(f = 523) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; [1, 1.25, 1.5].forEach((m, i) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f * m; g.gain.setValueAtTime(0, AC.currentTime + i * 0.07); g.gain.linearRampToValueAtTime(0.09, AC.currentTime + i * 0.07 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + i * 0.07 + 1.1); o.connect(g); g.connect(AC.destination); o.start(AC.currentTime + i * 0.07); o.stop(AC.currentTime + i * 0.07 + 1.2); }); }
 $('aud').onclick = e => { e.stopPropagation(); const on = $('aud').classList.toggle('on'); $('aud').textContent = on ? 'SOUND ON' : 'SOUND OFF'; if (on) { audioOn(); chime(); } else if (oceanGain) oceanGain.gain.value = 0; };
 document.querySelectorAll('[data-p]').forEach(b => b.onclick = e => { e.stopPropagation(); setPreset(b.dataset.p); });
+function cycleWeather() { const i = WX.override ? WEATHERS.indexOf(WX.override) : -1; WX.override = i + 1 >= WEATHERS.length ? null : WEATHERS[i + 1]; if (!WX.override) WX.cur = weatherFor(SKY.t); toast('WEATHER: ' + (WX.override || WX.cur + ' (TODAY\'S REAL ROLL)'), 'blue'); }
+$('wxb').onclick = e => { e.stopPropagation(); cycleWeather(); };
 $('pc').onclick = e => { e.stopPropagation(); postcard(); };
 $('hide').onclick = e => { e.stopPropagation(); $('hud').style.display = 'none'; $('hudHide').style.display = 'block'; };
 $('hudHide').onclick = e => { e.stopPropagation(); $('hud').style.display = ''; $('hudHide').style.display = 'none'; };
@@ -1189,7 +1558,8 @@ $('hudHide').onclick = e => { e.stopPropagation(); $('hud').style.display = ''; 
 /* ---------------- eggs ---------------- */
 let sunrise = 0, rainT = 0;
 function gm(fromChat) {
-  state.gm++; hud(); sunrise = 7; setPreset('dawn', true); chime(523);
+  state.gm++; hud(); chime(523);
+  { const t = nycTime(TIME.utc), st = sunTimes(t); if (TIME.gmT <= 0) TIME.gmPrev = TIME.mode; TIME.mode = 'fixed'; TIME.utc = nycUtc(t.y, t.mo, t.d, 0, 0) + (st.rise - 40) * 60; TIME.gmT = 7; }
   toast('ANOTHER HISTORIC FIRST SUNRISE. gm.', 'blue');
   residents.forEach((r, i) => setTimeout(() => say(r, i % 7 === 0 ? 'gm ser' : i % 11 === 0 ? 'GM' : 'gm'), 300 + i * 140));
   setTimeout(() => toast('gm (from a tiny boat beyond the harbour)'), 300 + residents.length * 140 + 600);
@@ -1204,7 +1574,7 @@ const EGGS = {
   gm: () => gm(),
   gn: () => { flash('#2962FF'); toast('WE DON\'T SAY THAT HERE.'); },
   seize: () => seize(),
-  wagmi: () => { wheel.speed = 0.7; toast('WAGMI. PLEASE REMAIN SEATED.'); setTimeout(() => wheel.speed = 0.06, 9000); },
+  wagmi: () => { wheel.speed = 0.7; toast('WAGMI. PLEASE REMAIN SEATED.'); setTimeout(() => wheel.speed = wheelBase, 9000); },
   ngmi: () => { teleport(wheel.cx + 6, wheel.cz + 21, PI); toast('NGMI EXIT. IT LEADS BACK TO FRIENDS.'); },
   '6529': () => { colossus.t = 6.529; flash('#ff2a2a'); toast('THE COLOSSUS HAS NOTICED YOU. 6.529 SECONDS OF EYE CONTACT.'); },
   tdh: () => toast(`TDH ${Math.floor(state.tdh)}. HOLD STILL TO EARN MORE. MOVING RESETS NOTHING, IT JUST LOOKS BAD.`, 'blue'),
@@ -1235,8 +1605,14 @@ addEventListener('keydown', e => {
   if (e.key === 'Escape') { $('modal').style.display = 'none'; }
   kon.push(e.key); kon = kon.slice(-10); if (kon.join() === KONAMI.join()) { tilt = tilt ? 0 : 0.0524; toast(tilt ? 'THE ISLAND HAS BEEN MODIFIED BY 3 PERCENT.' : 'BACK TO 100 PERCENT.'); }
   keys[e.code] = true;
-  if (e.code === 'Digit1') setPreset('golden'); if (e.code === 'Digit2') setPreset('day'); if (e.code === 'Digit3') setPreset('night');
+  if (e.code === 'Digit1') setPreset('golden'); if (e.code === 'Digit2') setPreset('day'); if (e.code === 'Digit3') setPreset('night'); if (e.code === 'Digit4') setPreset('dawn');
   if (e.code === 'Space' && P.ground && state.started) { P.vy = 7.6; P.ground = false; P.fallFrom = P.y; e.preventDefault(); }
+  const typing = performance.now() - TIME.lastKey < 380; if (e.key.length === 1) TIME.lastKey = performance.now();
+  if (!typing) {
+    if (e.code === 'KeyL') setPreset('live'); if (e.code === 'KeyT') setPreset('lapse'); if (e.code === 'KeyZ') { TIME.mode = TIME.mode === 'fixed' ? 'live' : 'fixed'; toast(TIME.mode === 'fixed' ? 'TIME HELD. Z TO LET IT GO.' : 'LIVE.', 'blue'); }
+    if (e.code === 'KeyY') cycleWeather();
+  }
+  if (e.code === 'BracketLeft') shiftTime(-3600); if (e.code === 'BracketRight') shiftTime(3600); if (e.code === 'Comma') shiftTime(-86400); if (e.code === 'Period') shiftTime(86400);
   if (e.code === 'KeyE') useNearest();
   if (e.code === 'KeyP') postcard();
   if (e.code === 'KeyH') { const p = pickAt(innerWidth / 2, innerHeight / 2); if (p && p.kind === 'slot') { slotTarget = p.slot; $('file').click(); } }
@@ -1317,13 +1693,13 @@ function updateWorld(dt, t) {
   for (let i = 0; i < pa.length; i += 3) { const x = seaBase[i], z = seaBase[i + 2]; pa[i + 1] = Math.sin(x * 0.03 + t * 0.9) * 0.18 + Math.cos(z * 0.025 - t * 0.7) * 0.16 + Math.sin((x + z) * 0.08 + t * 1.7) * 0.05; }
   seaG.attributes.position.needsUpdate = true; foam.material.opacity = 0.25 + 0.15 * Math.sin(t * 1.3);
   // lighthouse
-  lhBeam.rotation.y = t * 0.6; if (!sunrise && !state.vault) LHS.draw(Math.floor(t / 4) % 4);
+  lhBeam.rotation.y = t * 0.6; if (TIME.gmT <= 0 && !state.vault) LHS.draw(Math.floor(t / 4) % 4);
   // conveyor
   const C = conveyor.meta, sp = convSpeed * (seizeT > 0 ? 1 : 1);
   conveyor.forEach(o => { o.s = (o.s + sp * dt) % C.per; let s = o.s, x, z, ry; const L2 = C.L2 * 2;
     if (s < L2) { x = C.cx - C.L2 + s; z = C.zc + C.R; ry = 0; } else if ((s -= L2) < PI * C.R) { const a = s / C.R; x = C.cx + C.L2 + Math.sin(a) * C.R; z = C.zc + Math.cos(a) * C.R; ry = a; } else if ((s -= PI * C.R) < L2) { x = C.cx + C.L2 - s; z = C.zc - C.R; ry = PI; } else { s -= L2; const a = s / C.R; x = C.cx - C.L2 - Math.sin(a) * C.R; z = C.zc - Math.cos(a) * C.R; ry = PI + a; }
     setHang(o.H, _p.set(x, C.y, z), _q.setFromAxisAngle(_p2.set(0, 1, 0), ry)); });
-  if (seizeT > 0) { seizeT -= dt; if (seizeT <= 0) convSpeed = 0.9; }
+  if (seizeT > 0) { seizeT -= dt; if (seizeT <= 0) convSpeed = convBase; }
   // wheel
   wheel.a += wheel.speed * dt; wheel.rim.rotation.x = wheel.a;
   wheel.cards.forEach(o => { const a = o.a0 + wheel.a; setHang(o.H, _p.set(wheel.cx - 1.6, wheel.hub - Math.sin(a) * wheel.R - 1.2, wheel.cz + Math.cos(a) * wheel.R), QY(-PI / 2)); });
@@ -1347,7 +1723,7 @@ function updateWorld(dt, t) {
 }
 const _p2 = new V3(), _m = new THREE.Matrix4(), _e = new THREE.Euler();
 let vaultOpenT = 0;
-function openVault() { if (state.vault) return; state.vault = true; vaultSeg.on = false; vaultOpenT = 2.5; flash('#ffc23a'); toast('SIX KEYS. THE PORT IS OPEN. INSIDE: Cards on the Bridge, for Punk6529.', 'blue'); LHS.draw(5); }
+function openVault() { if (state.vault) return; state.vault = true; vaultSeg.on = false; vaultOpenT = 2.5; FW.show = 45; flash('#ffc23a'); toast('SIX KEYS. THE PORT IS OPEN. INSIDE: Cards on the Bridge, for Punk6529.', 'blue'); LHS.draw(5); }
 const rain = []; let rainMesh = null;
 (function () { const g = new THREE.PlaneGeometry(1, 1); rainMesh = new THREE.InstancedMesh(g, new THREE.MeshBasicMaterial({ map: ATL[0], toneMapped: false, side: THREE.DoubleSide }), 140); rainMesh.frustumCulled = false; rainMesh.visible = false;
   const ids = G('Seize').filter(n => byN[n].uv[0] === 0).slice(0, 40); const uvr = [];
@@ -1367,6 +1743,8 @@ function animLegs(o, t, moving) { const s = moving ? Math.sin(t * 7) * 0.5 : 0; 
 function updatePeople(dt, t) {
   residents.forEach(r => {
     if (r.bubT > 0) { r.bubT -= dt; if (r.bubT <= 0 && r.bub) { r.P.g.remove(r.bub); r.bub = null; } }
+    if (r.greet > 0) r.greet -= dt; else if ((CAL.gm || CAL.gn) && dist2(r) < 16) { r.greet = 25; say(r, CAL.gm ? (Math.random() < 0.2 ? 'gm ser' : 'gm') : (Math.random() < 0.5 ? 'gn' : 'zzz')); }
+    if (CAL.gn && r.n % 3 === 0) { animLegs(r.P, t, false); return; }
     if (r.pause > 0) { r.pause -= dt; animLegs(r.P, t, false); return; }
     const tgt = r.route === 'beach' ? BEACH[r.idx % 4] : RING[(r.idx + 8) % 8];
     if (walkTo(r.P, tgt[0], tgt[1], r.speed, dt)) { r.idx = (r.idx + r.dir + 8) % 8; if (Math.random() < 0.35) r.pause = 2 + Math.random() * 5; }
@@ -1393,12 +1771,10 @@ function frame(dt) {
   T += dt;
   if (state.started && !RIDE.on) stepPlayer(dt);
   if (RIDE.on && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y)) { RIDE.top = false; endRide(); }
-  // light: sunrise relay, summer override, presets
-  let target = presetTarget;
-  if (sunrise > 0) { sunrise -= dt; if (sunrise <= 0) setPreset(presetName === 'dawn' ? 'golden' : presetName, true); }
-  const inSummer = Math.hypot(P.x - SUMMER.x, P.z - SUMMER.z) < SUMMER.r;
-  if (inSummer && (presetName === 'night' || presetName === 'dawn')) { target = PRESETS.day; if (!state.summerNote) { state.summerNote = true; toast('SUMMER.JPG. WEATHER UPDATES DISABLED.'); } } else if (!inSummer) state.summerNote = false;
-  lerpLight(dt, target); applyLight();
+  // light: the real sky over the harbour, then weather and the calendar
+  tickTime(dt); updateSky(dt); updateWeather(dt, SKY.t); updateCalendar(SKY.t); updateDiscs(); updateFireworks(dt); updateSculpts(dt); updateEnv(dt);
+  if (GRASS.shader) GRASS.shader.uniforms.uTime.value = T; MAT.water.normalMap.offset.set(T * 0.004, T * 0.0025);
+  lhBeam.visible = L.lamps > 0.25;
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
   updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); flushCards();
   // camera
@@ -1414,9 +1790,9 @@ function frame(dt) {
   nearest = null; let nd = 1e9; for (const it of INTER) { if (!it.label) continue; const d = Math.hypot(P.x - it.x, P.z - it.z); if (d < it.r && d < nd) { nd = d; nearest = it; } }
   $('prompt').style.display = nearest && state.started ? 'block' : 'none'; if (nearest) $('prompt').textContent = nearest.label;
   aimT -= dt; if (aimT <= 0 && state.started) { aimT = 0.15; const p = pickAt(innerWidth / 2, innerHeight / 2); const a = $('aim');
-    if (p && p.d < 26) { a.style.display = 'block'; a.textContent = p.kind === 'meme' ? `CARD ${p.n} · ${byN[p.n].t} · ${byN[p.n].a}` : p.kind === 'ny' ? `NEW YORKERS No. ${p.n} · ${nyByN[p.n].t}` : p.kind === 'slot' ? (openWall[p.slot].filled ? Q(openWall[p.slot].name) + ' · H TO SWAP' : 'EMPTY FRAME · H TO HANG A JPG') : 'Cards on the Bridge, for Punk6529 · MLow'; if (p.kind === 'meme') { if (!state.seen.has(p.n)) { state.seen.add(p.n); hud(); } } }
+    if (p && p.d < 26) { a.style.display = 'block'; a.textContent = p.kind === 'meme' ? `CARD ${p.n} · ${byN[p.n].t} · ${byN[p.n].a}` : p.kind === 'ny' ? `NEW YORKERS No. ${p.n} · ${nyByN[p.n].t}` : p.kind === 'sculpt' ? `SCULPTURE · ${SC[p.i].label} · ${SC[p.i].sub}` : p.kind === 'slot' ? (openWall[p.slot].filled ? Q(openWall[p.slot].name) + ' · H TO SWAP' : 'EMPTY FRAME · H TO HANG A JPG') : 'Cards on the Bridge, for Punk6529 · MLow'; if (p.kind === 'meme') { if (!state.seen.has(p.n)) { state.seen.add(p.n); hud(); } } }
     else a.style.display = 'none'; }
-  if (Math.floor(T) !== frame.sec) { frame.sec = Math.floor(T); hud(); }
+  if (Math.floor(T) !== frame.sec) { frame.sec = Math.floor(T); hud(); clockHud(); syncTimeButtons(); }
   renderer.render(scene, camera);
 }
 function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; frame(dt); requestAnimationFrame(loop); }
@@ -1424,14 +1800,16 @@ function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now;
 /* ---------------- boot ---------------- */
 buildCards();
 teleport(0, 176, 0); P.pitch = 0.04;
-applyLight();
+updateSky(1); applyLight(); syncTimeButtons();
+// reflections are a finish, not a light source: keep matte surfaces matte
+scene.traverse(o => { const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; ms.forEach(m => { if (m.isMeshStandardMaterial) m.envMapIntensity = m === MAT.water ? 1.0 : m.metalness > 0.5 ? 0.9 : 0.4; }); });
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
 $('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 527 CARDS. SIX KEYS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
 requestAnimationFrame(loop);
 hud();
 
 /* test hooks */
-window.__game = { RIDE, TOUCH, WHALE, DRYER, postcard, issueReceipt, startRide, P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, KEYS, EGGS, setPreset, pickAt, openCard, residents, agents, cardBuf, start: () => { $('enter').style.display = 'none'; state.started = true; }, keys, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
+window.__game = { TIME, SKY, WX, SC, CAL, FW, ENV, setTime: u => { TIME.mode = 'fixed'; TIME.utc = u; }, nycUtc, sunPos, moonPos, RIDE, TOUCH, WHALE, DRYER, postcard, issueReceipt, startRide, P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, KEYS, EGGS, setPreset, pickAt, openCard, residents, agents, cardBuf, start: () => { $('enter').style.display = 'none'; state.started = true; }, keys, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
 })();
 </script>
 </body>
