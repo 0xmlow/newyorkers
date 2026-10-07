@@ -2,3 +2,5 @@ _build/cache/
 _build/shots/
 .DS_Store
 node_modules/
+site/assets/sculpt_hi/
+site/assets/sculpts_hi.json

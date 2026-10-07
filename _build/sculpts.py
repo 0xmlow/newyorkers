@@ -5,7 +5,8 @@ every buffer and image inlined as data URIs, because artifacts do not serve .glb
 import os, re, json, base64, subprocess, sys, ast, shutil
 ARCH = os.path.expanduser('~/Documents/Claude/Projects/ARCHITECT')
 CLI = '/Users/degens/.npm/_npx/425967af1abfabd4/node_modules/.bin/gltf-transform'
-H = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(H, '..', 'site', 'assets', 'sculpt'); os.makedirs(OUT, exist_ok=True)
+H = os.path.dirname(os.path.abspath(__file__)); HI = os.environ.get('HI') == '1'
+OUT = os.path.join(H, '..', 'site', 'assets', 'sculpt_hi' if HI else 'sculpt'); os.makedirs(OUT, exist_ok=True)
 TMP = '/private/tmp/claude-501/-Users-degens-Desktop-NEW-YORKERS-BY-MLOW/b4e94593-1287-4765-8ced-b372243b10d7/scratchpad/glb'; os.makedirs(TMP, exist_ok=True)
 
 def dict_literal(path, name):
@@ -46,11 +47,11 @@ for it in items:
     if not os.path.exists(it['src']): print('MISSING', it['key'], it['src'][-50:]); continue
     if not os.path.exists(dst):
         w = os.path.join(TMP, it['key']); os.makedirs(w, exist_ok=True)
-        r = subprocess.run([CLI, 'optimize', it['src'], f'{w}/o.glb', '--compress', 'meshopt', '--simplify', 'true', '--simplify-ratio', '0.12', '--simplify-error', '0.0008',
-                            '--texture-compress', 'webp', '--texture-size', '1024', '--flatten', 'true', '--join', 'true'], capture_output=True, text=True)
+        r = subprocess.run([CLI, 'optimize', it['src'], f'{w}/o.glb', '--compress', 'meshopt', '--simplify', 'true', '--simplify-ratio', '0.3' if HI else '0.12', '--simplify-error', '0.0003' if HI else '0.0008',
+                            '--texture-compress', 'webp', '--texture-size', '2048' if HI else '1024', '--flatten', 'true', '--join', 'true'], capture_output=True, text=True)
         if r.returncode: print('FAIL optimize', it['key'], r.stderr[-300:]); shutil.rmtree(w, True); continue
         json.dump(glb_to_json(f'{w}/o.glb'), open(dst, 'w'), separators=(',', ':')); shutil.rmtree(w, True)
     m = {k: it.get(k) for k in ('key', 'label', 'sub', 'size', 'mode', 'set', 'card', 'sec')}; m['kb'] = os.path.getsize(dst) // 1024
     manifest.append(m); print('ok', it['key'], m['label'], m['kb'], 'KB', flush=True)
-json.dump(manifest, open(os.path.join(OUT, '..', 'sculpts.json'), 'w'), indent=0)
+json.dump(manifest, open(os.path.join(OUT, '..', 'sculpts_hi.json' if HI else 'sculpts.json'), 'w'), indent=0)
 print('DONE', len(manifest), 'sculptures', sum(m['kb'] for m in manifest) // 1024, 'MB')

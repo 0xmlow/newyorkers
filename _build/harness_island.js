@@ -57,6 +57,8 @@ G.teleport(0, -108, 0); ok(walk(0, -127.5, 2000), 'walk into the vault');
 // eggs
 Object.keys(G.EGGS).forEach(k => { try { G.EGGS[k](); } catch (e) { console.log('FAIL egg', k, e.message); process.exitCode = 1; } }); console.log('  ok eggs fired:', Object.keys(G.EGGS).join(' '));
 ['golden', 'day', 'night', 'dawn'].forEach(p => G.setPreset(p, true));
+// arrow keys walk and turn
+{ G.teleport(0, 60, 0); const z0 = P.z; K.ArrowUp = true; G.step(1/60, 60); K.ArrowUp = false; ok(P.z < z0 - 3, 'arrow up walks forward'); const y0 = P.yaw; K.ArrowLeft = true; G.step(1/60, 30); K.ArrowLeft = false; ok(P.yaw > y0 + 0.5, 'arrow left turns'); }
 // delights
 G.startRide(); ok(G.RIDE.on, 'wheel ride starts'); G.step(1/30, 26*30+10); ok(!G.RIDE.on, 'wheel ride completes and drops you at the gate');
 G.teleport(G.TOUCH.x, G.TOUCH.z, 0); K.KeyW=false; G.step(1/30, 330); ok(G.TOUCH.issued, 'touch grass receipt issued after 10 s still');
