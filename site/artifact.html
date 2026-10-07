@@ -1,109 +1,204 @@
 <title>MEME ISLAND</title>
 <link rel="icon" href="assets/eye.png">
 <style>
-:root{--blue:#2962FF;--ink:#0D0D0D;--cloud:#F0F4F8;--orange:#FF6B00;--sand:#F2DFC0;--mute:rgba(240,244,248,.62)}
-/* single dark look on purpose: an ink HUD over a sunlit WebGL island */
-:root{color-scheme:dark}
+/* MEME ISLAND 98: the interface is a Windows 98 desktop sitting on the island.
+   One deliberate look in both themes: grey face, navy to Evil Eye Blue title bars, bevels, Tahoma. */
+:root{
+  --face:#c0c0c0; --hi:#ffffff; --lite:#dfdfdf; --shade:#808080; --dark:#0a0a0a;
+  --title1:#000080; --title2:#2962FF; --tint:#ffffe1; --desk:#008080; --ink:#000000; --orange:#FF6B00; --field:#ffffff;
+  --ui:Tahoma,"MS Sans Serif","Microsoft Sans Serif",Geneva,Verdana,sans-serif;
+  color-scheme:light;
+}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;overflow:hidden;background:#0D0D0D;color:var(--cloud);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--desk);color:var(--ink);font:11px/1.35 var(--ui);-webkit-user-select:none;user-select:none;-webkit-font-smoothing:none}
 #stage{position:fixed;inset:0}
 #stage canvas{display:block;touch-action:none}
 .disp{font-family:Georgia,"Times New Roman",serif}
-#enter{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,rgba(41,98,255,.28),rgba(13,13,13,.96) 60%),#0D0D0D;padding:16px}
-#enter .card{max-width:760px;width:100%;text-align:center}
-#enter img.bb{width:100%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:block}
-#enter img.logo{height:30px;margin:18px auto 8px;display:block;opacity:.95}
-#enter h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(28px,5vw,48px);margin:6px 0 4px;letter-spacing:.5px}
-#enter p{color:var(--mute);line-height:1.5;margin:8px auto 16px;max-width:620px;font-size:15px}
-#go{background:var(--blue);color:#fff;border:0;border-radius:999px;padding:14px 32px;font-size:15px;letter-spacing:2px;font-weight:700;cursor:pointer}
-#go[disabled]{opacity:.5;cursor:wait}
-#bar{height:3px;background:rgba(255,255,255,.12);border-radius:3px;margin:14px auto 0;max-width:320px;overflow:hidden}
-#bar i{display:block;height:100%;width:0;background:var(--orange);transition:width .2s}
-.small{font-size:12px;color:var(--mute);letter-spacing:.5px}
-#hud{position:fixed;left:14px;top:14px;z-index:10;background:rgba(13,13,13,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;width:270px;max-width:calc(100vw - 28px)}
-#hud img{height:16px;display:block;margin-bottom:6px}
-#hud .t{font-family:Georgia,serif;font-size:20px}
-#zone{font-size:12px;letter-spacing:1.5px;color:var(--orange);margin-top:3px;text-transform:uppercase}
-#stats{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:10px;font-size:12px}
-#stats b{font-weight:700;color:#fff}
-.clock{font-size:11px;line-height:1.55;color:var(--mute);margin-top:9px;font-variant-numeric:tabular-nums;letter-spacing:.3px}
-.clock b{color:#fff;font-weight:700}
-.clock .ev{color:var(--orange)}
-#hud .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-button.b{background:rgba(255,255,255,.08);color:var(--cloud);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;font-size:11px;letter-spacing:.8px;cursor:pointer}
-button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
-#hudHide{position:fixed;left:14px;top:14px;z-index:11;display:none}
-#tp{position:fixed;right:14px;top:14px;z-index:10;display:flex;flex-direction:column;gap:5px;align-items:flex-end;max-height:calc(100vh - 120px);overflow:auto}
-#tp button{font-size:10px;padding:5px 9px}
+/* bevels */
+.win{background:var(--face);box-shadow:inset -1px -1px var(--dark),inset 1px 1px var(--lite),inset -2px -2px var(--shade),inset 2px 2px var(--hi);padding:3px}
+.title{background:linear-gradient(90deg,var(--title1),var(--title2));color:#fff;font-weight:700;height:20px;display:flex;align-items:center;gap:5px;padding:0 2px 0 4px;cursor:default;white-space:nowrap;overflow:hidden}
+.title img{width:14px;height:14px}
+.title span{flex:1;overflow:hidden;text-overflow:ellipsis}
+.tbtns{display:flex;gap:2px}
+.tbtns button{width:16px;height:14px;padding:0;font:700 10px/1 var(--ui);background:var(--face);border:0;color:#000;box-shadow:inset -1px -1px var(--dark),inset 1px 1px var(--hi),inset -2px -2px var(--shade),inset 2px 2px var(--lite);cursor:pointer}
+.tbtns button:active{box-shadow:inset 1px 1px var(--dark),inset -1px -1px var(--hi),inset 2px 2px var(--shade),inset -2px -2px var(--lite)}
+.menubar{display:flex;gap:2px;padding:2px 0}
+.menubar span{padding:1px 6px}
+.menubar span:hover{background:var(--title1);color:#fff}
+button.b{font:11px var(--ui);color:#000;background:var(--face);border:0;min-height:23px;padding:3px 9px;cursor:pointer;box-shadow:inset -1px -1px var(--dark),inset 1px 1px var(--hi),inset -2px -2px var(--shade),inset 2px 2px var(--lite)}
+button.b:active,button.b.on{box-shadow:inset 1px 1px var(--dark),inset -1px -1px var(--hi),inset 2px 2px var(--shade),inset -2px -2px var(--lite);background:repeating-conic-gradient(var(--face) 0 25%,var(--hi) 0 50%) 0 0/2px 2px}
+button.b:focus-visible{outline:1px dotted #000;outline-offset:-5px}
+button.b[disabled]{color:var(--shade);text-shadow:1px 1px var(--hi);cursor:default}
+.sunken{background:var(--field);box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade),inset -2px -2px var(--lite),inset 2px 2px var(--dark);padding:3px 5px}
+fieldset{border:0;margin:6px 0 0;padding:10px 7px 7px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade),inset -2px -2px var(--shade),inset 2px 2px var(--hi)}
+legend{padding:0 3px;background:var(--face)}
+/* setup dialog over the teal desktop */
+#enter{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:var(--desk);padding:16px}
+#enter .win{width:min(640px,100%);max-height:calc(100vh - 32px);overflow:auto}
+#enter .inner{display:flex;flex-direction:column;gap:10px;padding:10px}
+#enter img.bb{width:100%;display:block;box-shadow:inset 0 0 0 1px var(--shade)}
+#enter .banner{background:linear-gradient(90deg,var(--title1),var(--title2));padding:8px 10px;display:flex;align-items:center;gap:10px;color:#fff}
+#enter .banner img{height:18px}
+#enter .banner b{font:400 22px Georgia,serif;letter-spacing:.5px}
+#enter p{margin:0;line-height:1.5;font-size:12px}
+#enter .btns{display:flex;justify-content:flex-end;gap:6px}
+#go{min-width:96px;font-weight:700}
+#bar{height:18px;padding:2px}
+#bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--title1) 0 9px,transparent 9px 11px);transition:width .2s}
+.small{color:#333;font-size:11px}
+/* the main window */
+#hud{position:fixed;left:12px;top:12px;z-index:10;width:300px;max-width:calc(100vw - 24px);max-height:calc(100vh - 64px);display:flex;flex-direction:column}
+#hud .body{padding:2px 4px 4px;overflow:auto}
+#hud .brand{background:var(--ink);padding:6px 8px;display:flex;align-items:center;justify-content:space-between;margin-top:2px}
+#hud .brand img{height:13px}
+#hud .brand span{color:#fff;font:400 15px Georgia,serif}
+#zone{margin-top:4px;font-weight:700;color:var(--title1);text-transform:uppercase}
+#stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 6px}
+#stats span{display:flex;justify-content:space-between;gap:4px}
+#stats b{font-weight:700;font-variant-numeric:tabular-nums}
+.clock{line-height:1.5;font-variant-numeric:tabular-nums}
+.clock b{color:var(--title1)}
+.clock .ev{color:#a00000;font-weight:700}
+#hud .row{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
+#hud .row .b{padding:3px 6px}
+.statusbar{display:flex;gap:2px;margin-top:3px}
+.statusbar span{flex:1;padding:2px 4px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* taskbar, start menu, tray */
+#taskbar{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(30px + env(safe-area-inset-bottom,0px));padding:3px 3px env(safe-area-inset-bottom,0px);background:var(--face);box-shadow:inset 0 1px var(--lite),inset 0 2px var(--hi);display:flex;align-items:flex-start;gap:4px}
+#start{font-weight:700;display:flex;align-items:center;gap:4px;padding:2px 7px;height:24px}
+#start img{width:16px;height:16px}
+#taskbar .tasks{flex:1;display:flex;gap:3px;min-width:0}
+#taskbar .task{max-width:170px;flex:1;text-align:left;height:24px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}
+#taskbar .task img{width:14px;height:14px}
+.tray{height:24px;display:flex;align-items:center;gap:8px;padding:0 8px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade);white-space:nowrap;font-variant-numeric:tabular-nums}
+#startmenu{position:fixed;left:2px;bottom:calc(31px + env(safe-area-inset-bottom,0px));z-index:31;display:flex;padding:3px;max-height:calc(100vh - 44px)}
+#startmenu .side{width:24px;background:linear-gradient(0deg,var(--title1),var(--title2));color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font:700 15px var(--ui);padding:6px 0;letter-spacing:.5px}
+#startmenu .side i{font-style:normal;font-weight:400;color:var(--lite)}
+#startmenu .items{display:flex;flex-direction:column;min-width:200px;overflow:auto}
+#startmenu .items button,#tp button{all:unset;display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;cursor:pointer;font:11px var(--ui);color:#000}
+#startmenu .items button:hover,#tp button:hover,#startmenu .items button:focus-visible{background:var(--title1);color:#fff}
+#startmenu .items .ico{width:16px;text-align:center}
+#startmenu hr{border:0;margin:3px 2px;box-shadow:inset 0 1px var(--shade),inset 0 -1px var(--hi);height:2px}
+#tp{display:flex;flex-direction:column}
+#tp button::before{content:"\25B8";width:16px;text-align:center}
+.sub{font-weight:700;padding:4px 6px 2px;color:var(--shade)}
+/* crosshair, tooltips, balloons */
 #cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:9;pointer-events:none}
-#cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.85)}
+#cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.35)}
 #cross:before{left:6px;top:0;width:2px;height:14px}#cross:after{top:6px;left:0;height:2px;width:14px}
-#aim{position:fixed;left:50%;top:calc(50% + 22px);transform:translateX(-50%);z-index:9;font-size:12px;background:rgba(13,13,13,.7);padding:5px 10px;border-radius:999px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
-#prompt{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);z-index:9;background:var(--ink);border:1px solid var(--orange);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;letter-spacing:.8px;display:none}
-#toasts{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(560px,calc(100vw - 32px))}
-.toast{background:rgba(13,13,13,.86);border-left:3px solid var(--orange);padding:9px 14px;border-radius:6px;font-size:13px;letter-spacing:.4px;animation:tin .3s ease;max-width:100%}
-.toast.blue{border-color:var(--blue)}
-@keyframes tin{from{opacity:0;transform:translateY(-8px)}to{opacity:1}}
-#help{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;font-size:11px;color:var(--mute);letter-spacing:.6px;text-align:center;background:rgba(13,13,13,.55);padding:6px 12px;border-radius:999px;max-width:calc(100vw - 28px)}
-#modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:16px}
-#modal .in{background:var(--ink);border:1px solid rgba(255,255,255,.12);border-radius:14px;max-width:820px;width:100%;display:flex;gap:18px;padding:18px;max-height:90vh;overflow:auto}
+#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:var(--tint);border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:5px 10px;font-weight:700}
+#toasts{position:fixed;right:10px;bottom:calc(40px + env(safe-area-inset-bottom,0px));z-index:32;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none;width:min(340px,calc(100vw - 20px))}
+.toast{background:var(--tint);border:1px solid #000;border-radius:7px;padding:7px 10px 7px 30px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
+.toast:before{content:"i";position:absolute;left:8px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--title1);color:#fff;font:700 10px/14px Georgia,serif;text-align:center}
+.toast.blue:before{background:var(--orange);content:"!"}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+#help{display:block}
+/* dialogs */
+#modal,#crash{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:16px}
+#modal .win{width:min(780px,100%);max-height:calc(100vh - 60px);display:flex;flex-direction:column}
+#modal .mbody{display:flex;gap:12px;padding:10px;overflow:auto}
 #modal .art{flex:0 0 42%;display:flex;align-items:flex-start;justify-content:center}
-#modal .art canvas,#modal .art img{width:100%;height:auto;border-radius:6px;background:#111}
-#modal h2{font-family:Georgia,serif;font-weight:400;margin:0 0 6px;font-size:24px}
-#modal .meta{font-size:12px;color:var(--mute);letter-spacing:.6px;line-height:1.7}
-#modal .d{font-size:14px;line-height:1.55;margin-top:10px}
-#modal a{color:#8fb0ff}
-#modal .x{margin-top:14px}
-@media (max-width:640px){#modal .in{flex-direction:column}#modal .art{flex:none}#hud{width:220px;padding:10px}#stats{font-size:11px}#tp{display:none}#help{display:none}}
-#chat{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);z-index:20;display:none}
-#chat input{width:min(420px,80vw);background:rgba(13,13,13,.9);color:#fff;border:1px solid var(--blue);border-radius:999px;padding:10px 16px;font-size:14px;outline:none}
-#joy{position:fixed;left:24px;bottom:24px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);z-index:12;display:none;touch-action:none}
-#joy i{position:absolute;left:40px;top:40px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.4)}
-#mbtn{position:fixed;right:20px;bottom:24px;z-index:12;display:none;flex-direction:column;gap:8px}
-#mbtn button{width:64px;height:64px;border-radius:50%;font-weight:700}
+#modal .art canvas,#modal .art img{width:100%;height:auto;box-shadow:inset 0 0 0 1px var(--shade)}
+#modal .txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
+#modal h2{font:400 20px Georgia,serif;margin:0}
+#modal .meta{line-height:1.6}
+#modal .d{font-size:12px;line-height:1.5;-webkit-user-select:text;user-select:text}
+#modal a{color:#0000ee}
+#modal .x{display:flex;justify-content:flex-end;margin-top:auto}
+#crash{z-index:60;background:rgba(0,128,128,.35)}
+#crash .win{width:min(460px,100%)}
+#crash .cb{display:flex;gap:12px;padding:12px}
+#crash .stop{flex:0 0 32px;height:32px;border-radius:50%;background:#e00000;color:#fff;font:700 20px/32px var(--ui);text-align:center;box-shadow:inset -2px -2px rgba(0,0,0,.3)}
+#crash pre{white-space:pre-wrap;word-break:break-word;margin:6px 0 0;max-height:160px;overflow:auto;font:11px "Courier New",monospace;-webkit-user-select:text;user-select:text}
+@media (max-width:640px){#modal .mbody{flex-direction:column}#modal .art{flex:none}#hud{width:calc(100vw - 24px);max-height:45vh}#hud .menubar{display:none}.tray #trayWx{display:none}}
+#chat{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);z-index:33;display:none;width:min(440px,calc(100vw - 32px))}
+#chat .cbody{display:flex;gap:6px;padding:8px}
+#chat input{flex:1;min-width:0;font:12px var(--ui);border:0;outline:0;padding:4px 5px;background:var(--field);box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade),inset -2px -2px var(--lite),inset 2px 2px var(--dark)}
+#joy{position:fixed;left:24px;bottom:56px;width:120px;height:120px;border-radius:50%;background:rgba(192,192,192,.35);border:2px solid var(--face);z-index:12;display:none;touch-action:none}
+#joy i{position:absolute;left:40px;top:40px;width:40px;height:40px;border-radius:50%;background:var(--face);box-shadow:inset -1px -1px var(--dark),inset 1px 1px var(--hi)}
+#mbtn{position:fixed;right:16px;bottom:56px;z-index:12;display:none;flex-direction:column;gap:8px}
+#mbtn button{width:64px;height:48px;font-weight:700}
 #file{display:none}
-#drop{position:fixed;inset:0;z-index:45;border:4px dashed var(--blue);display:none;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:32px;background:rgba(41,98,255,.15);pointer-events:none}
+#drop{position:fixed;inset:0;z-index:45;border:4px dashed var(--title1);display:none;align-items:center;justify-content:center;font:700 26px var(--ui);background:rgba(0,0,128,.15);pointer-events:none;color:#fff}
 #flash{position:fixed;inset:0;z-index:35;pointer-events:none;background:#fff;opacity:0;transition:opacity .4s}
 </style>
 <div id="stage"></div>
-<div id="enter"><div class="card">
-  <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
-  <img class="logo" src="assets/logo_white.png" alt="MLOW">
-  <h1>MEME ISLAND</h1>
-  <p>All 527 cards of The Memes by 6529, hung on an island that takes them exactly as seriously as they deserve. A hardware wallet lighthouse, a brain you can walk into, a floor price you can climb, a bank that steals JPGs, and the NEW YORKERS on holiday. There are six keys. There is a vault. Say gm.</p>
-  <button id="go" disabled>LOADING</button>
-  <div id="bar"><i></i></div>
-  <div class="small" style="margin-top:12px">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER to chat</div>
+<div id="enter"><div class="win" role="dialog" aria-labelledby="setupT">
+  <div class="title"><img src="assets/eye.png" alt=""><span id="setupT">MEME ISLAND Setup</span><div class="tbtns"><button tabindex="-1" aria-hidden="true">?</button><button tabindex="-1" aria-hidden="true">&#215;</button></div></div>
+  <div class="inner">
+    <div class="banner"><img src="assets/logo_white.png" alt="MLOW"><b>MEME ISLAND 98</b></div>
+    <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
+    <p>All 527 cards of The Memes by 6529 and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys. There is a vault. Say gm.</p>
+    <div id="bar" class="sunken"><i></i></div>
+    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER chat</div>
+    <div class="btns"><button class="b" id="go" disabled>Loading...</button></div>
+  </div>
 </div></div>
-<div id="hud">
-  <img src="assets/logo_white.png" alt="MLOW">
-  <div class="t">MEME ISLAND</div>
-  <div id="zone">"ARRIVALS"</div>
-  <div id="stats">
-    <span>KEYS <b id="sKeys">0/6</b></span><span>TDH <b id="sTdh">0</b></span>
-    <span>GM SAID <b id="sGm">0</b></span><span>JPGs SEIZED <b id="sSeized">0</b></span>
-    <span>CARDS SEEN <b id="sSeen">0</b></span><span>HUNG <b id="sHung">0/12</b></span>
+<div id="hud" class="win">
+  <div class="title" id="hudTitle"><img src="assets/eye.png" alt=""><span>MEME_ISLAND.exe</span><div class="tbtns"><button id="hide" title="Minimize" aria-label="Minimize">_</button><button tabindex="-1" aria-hidden="true">&#9633;</button><button id="hudX" title="Close" aria-label="Close">&#215;</button></div></div>
+  <div class="menubar"><span>File</span><span>Edit</span><span>View</span><span>Time</span><span>Help</span></div>
+  <div class="body">
+    <div class="brand"><img src="assets/logo_white.png" alt="MLOW"><span>MEME ISLAND</span></div>
+    <div id="zone" class="sunken">"ARRIVALS"</div>
+    <fieldset><legend>Wallet (not connected, never will be)</legend>
+      <div id="stats">
+        <span>Keys <b id="sKeys">0/6</b></span><span>TDH <b id="sTdh">0</b></span>
+        <span>gm said <b id="sGm">0</b></span><span>JPGs seized <b id="sSeized">0</b></span>
+        <span>Cards seen <b id="sSeen">0</b></span><span>JPGs hung <b id="sHung">0/12</b></span>
+      </div>
+    </fieldset>
+    <fieldset><legend>Sky over New York Harbour</legend>
+      <div id="clock" class="clock sunken"></div>
+      <div class="row">
+        <button class="b on" data-p="live">Live</button><button class="b" data-p="lapse">Time-lapse</button><button class="b" data-p="golden">Golden</button><button class="b" data-p="day">Noon</button><button class="b" data-p="night">Night</button><button class="b" id="wxb">Weather</button>
+      </div>
+    </fieldset>
+    <div class="row">
+      <button class="b" id="aud">Sound: off</button><button class="b" id="up">Hang your JPGs...</button><button class="b" id="pc">Postcard</button>
+    </div>
   </div>
-  <div id="clock" class="clock"></div>
-  <div class="row">
-    <button class="b on" data-p="live">L LIVE</button><button class="b" data-p="lapse">T TIME-LAPSE</button><button class="b" data-p="golden">1 GOLDEN</button><button class="b" data-p="day">2 NOON</button><button class="b" data-p="night">3 NIGHT</button><button class="b" id="wxb">Y WEATHER</button>
-  </div>
-  <div class="row">
-    <button class="b" id="aud">SOUND OFF</button><button class="b" id="up">HANG YOUR JPGs</button><button class="b" id="pc">POSTCARD (P)</button><button class="b" id="hide">HIDE</button>
-  </div>
+  <div class="statusbar"><span id="help">L live · T time-lapse · [ ] hour · , . day · Y weather · P postcard · type gm</span></div>
 </div>
-<button class="b" id="hudHide">SHOW HUD</button>
-<div id="tp"></div>
-<div id="cross"></div><div id="aim"></div><div id="prompt"></div>
+<div id="startmenu" class="win" hidden><div class="side">MEME ISLAND <i>98</i></div><div class="items">
+  <div class="sub">Places</div><div id="tp"></div><hr>
+  <button data-s="live"><span class="ico">&#9711;</span>Live New York sky</button>
+  <button data-s="lapse"><span class="ico">&#8635;</span>Time-lapse</button>
+  <button data-s="weather"><span class="ico">&#9729;</span>Weather</button>
+  <button data-s="sound"><span class="ico">&#9835;</span>Sound</button>
+  <button data-s="postcard"><span class="ico">&#9993;</span>Postcard</button>
+  <button data-s="hang"><span class="ico">&#9638;</span>Hang your JPGs...</button><hr>
+  <button data-s="shutdown"><span class="ico">&#9211;</span>Shut Down...</button>
+</div></div>
+<div id="taskbar"><button class="b" id="start" aria-haspopup="true"><img src="assets/eye.png" alt="">Start</button>
+  <div class="tasks"><button class="b task on" id="hudHide"><img src="assets/eye.png" alt="">MEME_ISLAND.exe</button></div>
+  <div class="tray"><span id="trayWx"></span><span id="trayClock">--:--</span></div></div>
+<div id="cross"></div><div id="aim"></div><div id="prompt" class="win"></div>
 <div id="toasts"></div>
-<div id="help">WASD · SHIFT · SPACE · E · P postcard · L live · T time-lapse · [ ] hour · , . day · Y weather · ENTER chat · try typing gm</div>
-<div id="chat"><input id="chatIn" maxlength="60" placeholder="say something. gm is a renewable resource."></div>
-<div id="modal"><div class="in"><div class="art" id="mArt"></div><div><h2 id="mT"></h2><div class="meta" id="mMeta"></div><div class="d" id="mD"></div><div class="x"><button class="b" id="mClose">CLOSE</button></div></div></div></div>
+<div id="chat" class="win"><div class="title"><img src="assets/eye.png" alt=""><span>Say something</span></div><div class="cbody"><input id="chatIn" maxlength="60" placeholder="gm is a renewable resource"></div></div>
+<div id="modal"><div class="win" role="dialog" aria-labelledby="mT">
+  <div class="title"><img src="assets/eye.png" alt=""><span id="mBar">Properties</span><div class="tbtns"><button id="mX" aria-label="Close">&#215;</button></div></div>
+  <div class="mbody"><div class="art" id="mArt"></div><div class="txt"><h2 id="mT"></h2><div class="meta sunken" id="mMeta"></div><div class="d" id="mD"></div><div class="x"><button class="b" id="mClose">OK</button></div></div></div>
+</div></div>
+<div id="crash"><div class="win" role="alertdialog" aria-labelledby="crashT">
+  <div class="title"><span id="crashT">MEME_ISLAND.exe</span><div class="tbtns"><button id="crashX" aria-label="Close">&#215;</button></div></div>
+  <div class="cb"><div class="stop">&#215;</div><div><b>This program has performed an illegal operation and may be shut down.</b><br>If the problem persists, send MLow the details below.<pre id="crashMsg"></pre></div></div>
+  <div class="btns" style="display:flex;justify-content:flex-end;padding:0 10px 10px"><button class="b" id="crashOk">Close</button></div>
+</div></div>
 <div id="joy"><i></i></div>
 <div id="mbtn"><button class="b" id="mJump">JUMP</button><button class="b" id="mUse">E</button></div>
 <input type="file" id="file" accept="image/*" multiple>
 <div id="drop">DROP TO HANG</div>
 <div id="flash"></div>
+<script id="crashjs">
+/* an error dialog that loads before anything else, so a crash in any viewer shows itself */
+(function () { var shown = 0; function show(m) { if (shown++ > 2) return; var c = document.getElementById('crash'), p = document.getElementById('crashMsg'); if (!c || !p) return; p.textContent += (p.textContent ? '\n' : '') + m; c.style.display = 'flex'; }
+  window.addEventListener('error', function (e) { show((e.message || 'Error') + (e.filename ? '\n' + e.filename.split('/').pop() + ':' + e.lineno : '')); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e.reason; show('Promise: ' + (r && r.message ? r.message : String(r))); });
+  document.addEventListener('click', function (e) { if (e.target && (e.target.id === 'crashOk' || e.target.id === 'crashX')) document.getElementById('crash').style.display = 'none'; });
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/meshoptimizer@0.18.1/meshopt_decoder.js"></script>
@@ -146,7 +241,7 @@ scene.fog = new THREE.Fog(0xf2c9a0, 140, 760);
 /* ---------------- loading + textures ---------------- */
 const LM = new THREE.LoadingManager();
 LM.onProgress = (u, l, t) => { document.querySelector('#bar i').style.width = (100 * l / t) + '%'; };
-LM.onLoad = () => { const g = document.getElementById('go'); g.disabled = false; g.textContent = 'CLICK TO ENTER'; };
+LM.onLoad = () => { const g = document.getElementById('go'); g.disabled = false; g.textContent = 'Enter >'; g.focus(); };
 const TL = new THREE.TextureLoader(LM);
 const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 function tex(url, rep, srgb = true) {
@@ -1437,6 +1532,7 @@ function placeSculpt(s, obj) {
 const ENV = { pmrem: null, rt: null, w: null, t: 0, on: false };
 const ENVC = document.createElement('canvas'); ENVC.width = 512; ENVC.height = 256;
 function updateEnv(dt, force) {
+  if (ENV.disabled) return;
   ENV.t -= dt; if (!force && ENV.t > 0) return; ENV.t = 1.5;
   const w = SKY.w; if (!force && ENV.w && Math.abs(w.x - ENV.w.x) + Math.abs(w.y - ENV.w.y) + Math.abs(w.z - ENV.w.z) + Math.abs(w.w - ENV.w.w) < 0.05) return;
   try {
@@ -1448,7 +1544,7 @@ function updateEnv(dt, force) {
     c.globalAlpha = 1;
     if (!ENV.tex) { ENV.tex = new THREE.CanvasTexture(ENVC); ENV.tex.mapping = THREE.EquirectangularReflectionMapping; ENV.tex.encoding = THREE.sRGBEncoding; } else ENV.tex.needsUpdate = true;
     if (!ENV.pmrem) ENV.pmrem = new THREE.PMREMGenerator(renderer);
-    const rt = ENV.pmrem.fromEquirectangular(ENV.tex); if (ENV.rt) ENV.rt.dispose(); ENV.rt = rt; scene.environment = rt.texture; ENV.on = true; ENV.w = w.clone();
+    const rt = ENV.pmrem.fromEquirectangular(ENV.tex); if (ENV.rt) ENV.rt.dispose(); ENV.rt = rt; scene.environment = rt.texture; ENV.on = true; ENV.w = w.clone(); ENV.probe = 3;
   } catch (e) { ENV.on = false; scene.environment = null; }
 }
 
@@ -1456,6 +1552,7 @@ function updateEnv(dt, force) {
 function clockHud() {
   const t = SKY.t, st = sunTimes(t), m = SKY.moon; if (!t) return;
   const mode = TIME.gmT > 0 ? 'SUNRISE REPLAY' : TIME.mode === 'live' ? (TIME.shift ? 'LIVE ' + (TIME.shift > 0 ? '+' : '') + Math.round(TIME.shift / 3600) + 'H' : 'LIVE') : TIME.mode === 'lapse' ? 'TIME-LAPSE' : 'HELD';
+  $('trayClock').textContent = `NYC ${pad2(t.h)}:${pad2(t.m)}`; $('trayWx').textContent = WX.cur.charAt(0) + WX.cur.slice(1).toLowerCase() + (TIME.mode === 'live' ? '' : ' · ' + mode.toLowerCase());
   $('clock').innerHTML = `<b>NEW YORK ${pad2(t.h)}:${pad2(t.m)} ${t.zone}</b> · ${DAYS[t.wd].slice(0, 3)} ${t.d} ${MONTHS[t.mo - 1]} · ${mode}<br>SUN ${SKY.el.toFixed(0)}° · RISE ${hhmm(st.rise)} · SET ${hhmm(st.set)}<br>${moonName(m)} ${Math.round(m.illum * 100)}% · ${WX.cur}${WX.override ? ' (Y)' : ''}<br><span class="ev">${CAL.ev.slice(0, 3).join(' · ') || 'AN ORDINARY DAY'}</span>`;
 }
 
@@ -1470,7 +1567,7 @@ function flash(c = '#fff') { const f = $('flash'); f.style.background = c; f.sty
 
 /* teleports */
 const TP = [['ARRIVALS', 0, 176, 0], ['THE FLOOR', 0, 24, 0], ['FACTORY', 0, -40, 0], ['BRAIN', 28, -28, -2.36], ['WAGMI', 36, 0, -1.57], ['SURVIVE', 16, 44, -1.57], ['CENSUS WALK', -2, 52, 3.14], ['BODEGA', 6, 66, -1.57], ['SUMMER.JPG', -44, 54, 3.14], ['BANK', -46, 0, 1.57], ['BUIDL', -40, -26, 0.4], ['OPEN METAVERSE', 30, -66, 0], ['LIGHTHOUSE', 0, -108, 0], ['ZERO GAS TOLL', 0, 110, 0], ['2030 PATHWAY', 0, 180, 3.14]];
-TP.forEach(([n, x, z, yaw]) => { const b = document.createElement('button'); b.className = 'b'; b.textContent = n; b.onclick = e => { e.stopPropagation(); teleport(x, z, yaw); }; $('tp').appendChild(b); });
+TP.forEach(([n, x, z, yaw]) => { const b = document.createElement('button'); b.textContent = n.charAt(0) + n.slice(1).toLowerCase(); b.onclick = e => { e.stopPropagation(); teleport(x, z, yaw); startMenu(false); }; $('tp').appendChild(b); });
 
 /* picking */
 const ray = new THREE.Raycaster(); ray.far = 60; const ndc = new THREE.Vector2();
@@ -1508,11 +1605,11 @@ function openCard(p) {
     $('mT').textContent = sc.label.replace(/"/g, ''); $('mMeta').innerHTML = 'MEME SCULPTURE BY MLow<br>' + esc(sc.sub);
     $('mD').textContent = sc.set === 'classic' ? 'One of twenty classics from the MEME MUSEUM, now on holiday on the island.' : 'One of 46 sculptures MLow made from The Memes by 6529. This one is still waiting for its card number.';
   } else return;
-  $('modal').style.display = 'flex'; try { document.exitPointerLock(); } catch (e) { }
+  $('mBar').textContent = $('mT').textContent + ' - Properties'; $('modal').style.display = 'flex'; try { document.exitPointerLock(); } catch (e) { }
 }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const roman = n => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX'][n] || n;
-$('mClose').onclick = () => $('modal').style.display = 'none';
+$('mClose').onclick = () => $('modal').style.display = 'none'; $('mX').onclick = () => $('modal').style.display = 'none';
 $('modal').onclick = e => { if (e.target.id === 'modal') $('modal').style.display = 'none'; };
 
 /* hanging your own JPGs on the OPEN WALL */
@@ -1540,13 +1637,26 @@ function audioOn() {
   AC.resume(); oceanGain.gain.value = 0.12;
 }
 function chime(f = 523) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; [1, 1.25, 1.5].forEach((m, i) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f * m; g.gain.setValueAtTime(0, AC.currentTime + i * 0.07); g.gain.linearRampToValueAtTime(0.09, AC.currentTime + i * 0.07 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + i * 0.07 + 1.1); o.connect(g); g.connect(AC.destination); o.start(AC.currentTime + i * 0.07); o.stop(AC.currentTime + i * 0.07 + 1.2); }); }
-$('aud').onclick = e => { e.stopPropagation(); const on = $('aud').classList.toggle('on'); $('aud').textContent = on ? 'SOUND ON' : 'SOUND OFF'; if (on) { audioOn(); chime(); } else if (oceanGain) oceanGain.gain.value = 0; };
+$('aud').onclick = e => { e.stopPropagation(); const on = $('aud').classList.toggle('on'); $('aud').textContent = on ? 'Sound: on' : 'Sound: off'; if (on) { audioOn(); chime(); } else if (oceanGain) oceanGain.gain.value = 0; };
 document.querySelectorAll('[data-p]').forEach(b => b.onclick = e => { e.stopPropagation(); setPreset(b.dataset.p); });
 function cycleWeather() { const i = WX.override ? WEATHERS.indexOf(WX.override) : -1; WX.override = i + 1 >= WEATHERS.length ? null : WEATHERS[i + 1]; if (!WX.override) WX.cur = weatherFor(SKY.t); toast('WEATHER: ' + (WX.override || WX.cur + ' (TODAY\'S REAL ROLL)'), 'blue'); }
 $('wxb').onclick = e => { e.stopPropagation(); cycleWeather(); };
 $('pc').onclick = e => { e.stopPropagation(); postcard(); };
-$('hide').onclick = e => { e.stopPropagation(); $('hud').style.display = 'none'; $('hudHide').style.display = 'block'; };
-$('hudHide').onclick = e => { e.stopPropagation(); $('hud').style.display = ''; $('hudHide').style.display = 'none'; };
+function showHud(on) { $('hud').style.display = on ? '' : 'none'; $('hudHide').classList.toggle('on', on); }
+$('hide').onclick = e => { e.stopPropagation(); showHud(false); };
+$('hudX').onclick = e => { e.stopPropagation(); showHud(false); toast('MEME_ISLAND.exe is still running. It is on the taskbar.'); };
+$('hudHide').onclick = e => { e.stopPropagation(); showHud($('hud').style.display === 'none'); };
+function startMenu(on) { $('startmenu').hidden = !on; $('start').classList.toggle('on', on); }
+$('start').onclick = e => { e.stopPropagation(); startMenu($('startmenu').hidden); };
+document.addEventListener('pointerdown', e => { if (!$('startmenu').hidden && !e.target.closest('#startmenu') && !e.target.closest('#start')) startMenu(false); });
+document.querySelectorAll('#startmenu [data-s]').forEach(b => b.onclick = e => { e.stopPropagation(); startMenu(false); const a = b.dataset.s;
+  if (a === 'live' || a === 'lapse') setPreset(a); else if (a === 'weather') cycleWeather(); else if (a === 'sound') $('aud').click(); else if (a === 'postcard') postcard(); else if (a === 'hang') { slotTarget = -1; $('file').click(); }
+  else if (a === 'shutdown') { flash('#000'); toast('IT IS NOW SAFE TO TURN OFF YOUR BAGS.', 'blue'); } });
+// windows drag by their title bars
+(function () { const h = $('hudTitle'), w = $('hud'); let d = null;
+  h.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; const r = w.getBoundingClientRect(); d = { dx: e.clientX - r.left, dy: e.clientY - r.top }; try { h.setPointerCapture(e.pointerId); } catch (er) { } });
+  h.addEventListener('pointermove', e => { if (!d) return; w.style.left = clamp(e.clientX - d.dx, 0, innerWidth - 80) + 'px'; w.style.top = clamp(e.clientY - d.dy, 0, innerHeight - 60) + 'px'; });
+  h.addEventListener('pointerup', () => d = null); })();
 
 /* ---------------- eggs ---------------- */
 let sunrise = 0, rainT = 0;
@@ -1787,6 +1897,13 @@ function frame(dt) {
     else a.style.display = 'none'; }
   if (Math.floor(T) !== frame.sec) { frame.sec = Math.floor(T); hud(); clockHud(); syncTimeButtons(); }
   renderer.render(scene, camera);
+  // a bad reflection map renders every lit surface pure black on some GPUs: look at the frame, and drop it if so
+  if (ENV.on && ENV.probe > 0 && --ENV.probe === 0) {
+    try { const gl = renderer.getContext(), px = new Uint8Array(4); let dark = 0;
+      [[0.5, 0.2], [0.3, 0.25], [0.7, 0.25], [0.5, 0.35], [0.2, 0.15]].forEach(([x, y]) => { gl.readPixels(Math.floor(gl.drawingBufferWidth * x), Math.floor(gl.drawingBufferHeight * y), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); if (px[0] + px[1] + px[2] < 3) dark++; });
+      if (dark >= 4) { scene.environment = null; ENV.on = false; ENV.disabled = true; if (ENV.rt) ENV.rt.dispose(); console.warn('MEME ISLAND: reflections disabled, this GPU rendered them black'); }
+    } catch (e) { }
+  }
 }
 function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; frame(dt); requestAnimationFrame(loop); }
 

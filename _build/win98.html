@@ -1,0 +1,75 @@
+<div id="stage"></div>
+<div id="enter"><div class="win" role="dialog" aria-labelledby="setupT">
+  <div class="title"><img src="assets/eye.png" alt=""><span id="setupT">MEME ISLAND Setup</span><div class="tbtns"><button tabindex="-1" aria-hidden="true">?</button><button tabindex="-1" aria-hidden="true">&#215;</button></div></div>
+  <div class="inner">
+    <div class="banner"><img src="assets/logo_white.png" alt="MLOW"><b>MEME ISLAND 98</b></div>
+    <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
+    <p>All 527 cards of The Memes by 6529 and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys. There is a vault. Say gm.</p>
+    <div id="bar" class="sunken"><i></i></div>
+    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER chat</div>
+    <div class="btns"><button class="b" id="go" disabled>Loading...</button></div>
+  </div>
+</div></div>
+<div id="hud" class="win">
+  <div class="title" id="hudTitle"><img src="assets/eye.png" alt=""><span>MEME_ISLAND.exe</span><div class="tbtns"><button id="hide" title="Minimize" aria-label="Minimize">_</button><button tabindex="-1" aria-hidden="true">&#9633;</button><button id="hudX" title="Close" aria-label="Close">&#215;</button></div></div>
+  <div class="menubar"><span>File</span><span>Edit</span><span>View</span><span>Time</span><span>Help</span></div>
+  <div class="body">
+    <div class="brand"><img src="assets/logo_white.png" alt="MLOW"><span>MEME ISLAND</span></div>
+    <div id="zone" class="sunken">"ARRIVALS"</div>
+    <fieldset><legend>Wallet (not connected, never will be)</legend>
+      <div id="stats">
+        <span>Keys <b id="sKeys">0/6</b></span><span>TDH <b id="sTdh">0</b></span>
+        <span>gm said <b id="sGm">0</b></span><span>JPGs seized <b id="sSeized">0</b></span>
+        <span>Cards seen <b id="sSeen">0</b></span><span>JPGs hung <b id="sHung">0/12</b></span>
+      </div>
+    </fieldset>
+    <fieldset><legend>Sky over New York Harbour</legend>
+      <div id="clock" class="clock sunken"></div>
+      <div class="row">
+        <button class="b on" data-p="live">Live</button><button class="b" data-p="lapse">Time-lapse</button><button class="b" data-p="golden">Golden</button><button class="b" data-p="day">Noon</button><button class="b" data-p="night">Night</button><button class="b" id="wxb">Weather</button>
+      </div>
+    </fieldset>
+    <div class="row">
+      <button class="b" id="aud">Sound: off</button><button class="b" id="up">Hang your JPGs...</button><button class="b" id="pc">Postcard</button>
+    </div>
+  </div>
+  <div class="statusbar"><span id="help">L live · T time-lapse · [ ] hour · , . day · Y weather · P postcard · type gm</span></div>
+</div>
+<div id="startmenu" class="win" hidden><div class="side">MEME ISLAND <i>98</i></div><div class="items">
+  <div class="sub">Places</div><div id="tp"></div><hr>
+  <button data-s="live"><span class="ico">&#9711;</span>Live New York sky</button>
+  <button data-s="lapse"><span class="ico">&#8635;</span>Time-lapse</button>
+  <button data-s="weather"><span class="ico">&#9729;</span>Weather</button>
+  <button data-s="sound"><span class="ico">&#9835;</span>Sound</button>
+  <button data-s="postcard"><span class="ico">&#9993;</span>Postcard</button>
+  <button data-s="hang"><span class="ico">&#9638;</span>Hang your JPGs...</button><hr>
+  <button data-s="shutdown"><span class="ico">&#9211;</span>Shut Down...</button>
+</div></div>
+<div id="taskbar"><button class="b" id="start" aria-haspopup="true"><img src="assets/eye.png" alt="">Start</button>
+  <div class="tasks"><button class="b task on" id="hudHide"><img src="assets/eye.png" alt="">MEME_ISLAND.exe</button></div>
+  <div class="tray"><span id="trayWx"></span><span id="trayClock">--:--</span></div></div>
+<div id="cross"></div><div id="aim"></div><div id="prompt" class="win"></div>
+<div id="toasts"></div>
+<div id="chat" class="win"><div class="title"><img src="assets/eye.png" alt=""><span>Say something</span></div><div class="cbody"><input id="chatIn" maxlength="60" placeholder="gm is a renewable resource"></div></div>
+<div id="modal"><div class="win" role="dialog" aria-labelledby="mT">
+  <div class="title"><img src="assets/eye.png" alt=""><span id="mBar">Properties</span><div class="tbtns"><button id="mX" aria-label="Close">&#215;</button></div></div>
+  <div class="mbody"><div class="art" id="mArt"></div><div class="txt"><h2 id="mT"></h2><div class="meta sunken" id="mMeta"></div><div class="d" id="mD"></div><div class="x"><button class="b" id="mClose">OK</button></div></div></div>
+</div></div>
+<div id="crash"><div class="win" role="alertdialog" aria-labelledby="crashT">
+  <div class="title"><span id="crashT">MEME_ISLAND.exe</span><div class="tbtns"><button id="crashX" aria-label="Close">&#215;</button></div></div>
+  <div class="cb"><div class="stop">&#215;</div><div><b>This program has performed an illegal operation and may be shut down.</b><br>If the problem persists, send MLow the details below.<pre id="crashMsg"></pre></div></div>
+  <div class="btns" style="display:flex;justify-content:flex-end;padding:0 10px 10px"><button class="b" id="crashOk">Close</button></div>
+</div></div>
+<div id="joy"><i></i></div>
+<div id="mbtn"><button class="b" id="mJump">JUMP</button><button class="b" id="mUse">E</button></div>
+<input type="file" id="file" accept="image/*" multiple>
+<div id="drop">DROP TO HANG</div>
+<div id="flash"></div>
+<script>
+/* an error dialog that loads before anything else, so a crash in any viewer shows itself */
+(function () { var shown = 0; function show(m) { if (shown++ > 2) return; var c = document.getElementById('crash'), p = document.getElementById('crashMsg'); if (!c || !p) return; p.textContent += (p.textContent ? '\n' : '') + m; c.style.display = 'flex'; }
+  window.addEventListener('error', function (e) { show((e.message || 'Error') + (e.filename ? '\n' + e.filename.split('/').pop() + ':' + e.lineno : '')); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e.reason; show('Promise: ' + (r && r.message ? r.message : String(r))); });
+  document.addEventListener('click', function (e) { if (e.target && (e.target.id === 'crashOk' || e.target.id === 'crashX')) document.getElementById('crash').style.display = 'none'; });
+})();
+</script>
