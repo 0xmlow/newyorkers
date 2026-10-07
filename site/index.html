@@ -747,7 +747,7 @@ const freestyle = [];
 /* --- 3. HARDWARE WALLET LIGHTHOUSE + THE VAULT (Not Your Keys, Use a Hardware Wallet, punk6529 honorary) --- */
 const LH = { x: 0, z: -126, w: 16, d: 8, H: 48 };
 const LHS = { msgs: ['CONFIRM ON DEVICE', 'MEME ISLAND v1', 'THIS LIGHTHOUSE CANNOT RECOVER YOUR PASSWORD', 'SELF CUSTODY. PLEASE USE THE OTHER DOOR.', 'gm', 'VAULT OPEN. NOT YOUR KEYS? NOW THEY ARE.'], cur: -1, cv: null, tex: null,
-  draw(i) { if (i === this.cur || !this.cv) return; this.cur = i; const s = this.msgs[i]; const src = signCanvas([{ t: s, s: s.length > 20 ? 0.16 : 0.3, f: '"Courier New",monospace' }], 1024, 512, '#000000', '#e8f0ff'); const c = this.cv.getContext('2d'); c.clearRect(0, 0, 1024, 512); c.drawImage(src, 0, 0); this.tex.needsUpdate = true; } };
+  draw(i) { i = ((i | 0) % this.msgs.length + this.msgs.length) % this.msgs.length; if (i === this.cur || !this.cv) return; this.cur = i; const s = this.msgs[i]; const src = signCanvas([{ t: s, s: s.length > 20 ? 0.16 : 0.3, f: '"Courier New",monospace' }], 1024, 512, '#000000', '#e8f0ff'); const c = this.cv.getContext('2d'); c.clearRect(0, 0, 1024, 512); c.drawImage(src, 0, 0); this.tex.needsUpdate = true; } };
 let vaultDoors = null, vaultSeg = null, lhBeam = null, lhScreen = null, lhScreenTex = [];
 (function () {
   const { x, z, w, d, H } = LH; const g0 = 0.9; padRect(x - 14, x + 14, z - 9, z + 12, g0); LH.g = g0;
@@ -1878,6 +1878,7 @@ function updatePeople(dt, t) {
 /* ---------------- frame ---------------- */
 let last = performance.now(), T = 0, aimT = 0, zoneName = '';
 function frame(dt) {
+  dt = dt > 0 ? Math.min(dt, 0.1) : 0;
   T += dt;
   if (state.started && !RIDE.on) stepPlayer(dt);
   if (RIDE.on && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y)) { RIDE.top = false; endRide(); }
@@ -1912,7 +1913,7 @@ function frame(dt) {
     } catch (e) { }
   }
 }
-function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; frame(dt); requestAnimationFrame(loop); }
+function loop(now) { const dt = clamp((now - last) / 1000, 0, 0.05); last = now; frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
 
 /* ---------------- boot ---------------- */
 buildCards();

@@ -63,6 +63,8 @@ G.teleport(G.TOUCH.x, G.TOUCH.z, 0); K.KeyW=false; G.step(1/30, 330); ok(G.TOUCH
 G.WHALE.t = 11; G.step(1/30, 120); ok(G.WHALE.count >= 1, 'whale surfaced');
 G.DRYER.t = 0; G.teleport(-52, -8.2, 0); G.step(1/60, 2); w.dispatchEvent(new w.KeyboardEvent('keydown', { code: 'KeyE', key: 'e' })); G.step(1/60, 5); ok(G.DRYER.t > 0, 'paper hands dryer fires on E');
 try { G.postcard(); console.log('  ok postcard ran'); } catch (e) { console.log('FAIL postcard', e.message); process.exitCode = 1; }
+// a browser's first rAF timestamp can predate boot: a negative dt must not throw
+try { G.frame(-0.03); G.frame(-0.03); G.frame(0); console.log('  ok negative first frame'); } catch (e) { console.log('FAIL negative first frame', e.message); process.exitCode = 1; }
 // sky and calendar
 { const u = G.nycUtc(2026, 6, 21, 13, 0); G.setTime(u); G.step(1/60, 3); const el = G.SKY.el; ok(el > 70 && el < 74, 'solstice 13:00 EDT sun elevation ' + el.toFixed(1));
   ok(G.SKY.t.zone === 'EDT', 'June is EDT'); G.setTime(G.nycUtc(2026, 1, 15, 12, 0)); G.step(1/60, 2); ok(G.SKY.t.zone === 'EST', 'January is EST');
