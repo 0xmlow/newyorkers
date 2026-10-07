@@ -7,8 +7,8 @@
 <link rel="icon" href="assets/eye.png">
 <style>
 :root{--blue:#2962FF;--ink:#0D0D0D;--cloud:#F0F4F8;--orange:#FF6B00;--sand:#F2DFC0;--mute:rgba(240,244,248,.62)}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#0D0D0D;--cloud:#F0F4F8}}
-:root[data-theme="dark"]{--ink:#0D0D0D;--cloud:#F0F4F8}
+/* single dark look on purpose: an ink HUD over a sunlit WebGL island */
+:root{color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:#0D0D0D;color:var(--cloud);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none}
 #stage{position:fixed;inset:0}
@@ -92,14 +92,14 @@ button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
     <button class="b on" data-p="golden">1 GOLDEN</button><button class="b" data-p="day">2 DAY</button><button class="b" data-p="night">3 NIGHT</button>
   </div>
   <div class="row">
-    <button class="b" id="aud">SOUND OFF</button><button class="b" id="up">HANG YOUR JPGs</button><button class="b" id="hide">HIDE</button>
+    <button class="b" id="aud">SOUND OFF</button><button class="b" id="up">HANG YOUR JPGs</button><button class="b" id="pc">POSTCARD (P)</button><button class="b" id="hide">HIDE</button>
   </div>
 </div>
 <button class="b" id="hudHide">SHOW HUD</button>
 <div id="tp"></div>
 <div id="cross"></div><div id="aim"></div><div id="prompt"></div>
 <div id="toasts"></div>
-<div id="help">WASD · SHIFT · SPACE · E · click a card · ENTER chat · try typing gm</div>
+<div id="help">WASD · SHIFT · SPACE · E · P postcard · click a card · ENTER chat · try typing gm</div>
 <div id="chat"><input id="chatIn" maxlength="60" placeholder="say something. gm is a renewable resource."></div>
 <div id="modal"><div class="in"><div class="art" id="mArt"></div><div><h2 id="mT"></h2><div class="meta" id="mMeta"></div><div class="d" id="mD"></div><div class="x"><button class="b" id="mClose">CLOSE</button></div></div></div></div>
 <div id="joy"><i></i></div>
@@ -131,7 +131,7 @@ const faceTo = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);
 const isMobile = matchMedia('(pointer:coarse)').matches;
 
 /* ---------------- renderer ---------------- */
-const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: 'high-performance' });
+const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: 'high-performance', preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
@@ -187,8 +187,15 @@ const MAT = {
   beam: new THREE.MeshBasicMaterial({ color: 0xfff1c0, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }),
   lens: new THREE.MeshBasicMaterial({ color: 0x7fe3ff }),
   flame: new THREE.MeshBasicMaterial({ color: 0xff8a2a }),
-  laser: new THREE.MeshBasicMaterial({ color: 0xff2a2a, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false })
+  laser: new THREE.MeshBasicMaterial({ color: 0xff2a2a, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }),
+  mineral: new THREE.MeshStandardMaterial({ color: 0xC7C1B5, roughness: 0.95 }),
+  pave: new THREE.MeshStandardMaterial({ color: 0xD8D2C4, roughness: 0.92 }),
+  bankstone: new THREE.MeshStandardMaterial({ color: 0xD3CDC0, roughness: 0.88 }),
+  shrub: new THREE.MeshStandardMaterial({ color: 0x4f6b3a, roughness: 0.9, flatShading: true }),
+  paper: new THREE.MeshStandardMaterial({ color: 0xf6f3ea, roughness: 0.8, side: THREE.DoubleSide })
 };
+MAT.grass.color.set(0xd6dcc4);
+MAT.brain.color.set(0xead0d2); MAT.brain.roughness = 0.75;
 [MAT.stone, MAT.conc, MAT.wood].forEach(m => { m.map.repeat.set(1, 1); m.normalMap.repeat.set(1, 1); });
 
 /* world-space UVs on any geometry: texture density in metres, not per face */
@@ -217,7 +224,7 @@ function cyl(rt, rb, h, mat, x, y, z, seg = 24) {
 const SHORE = 137.5;
 function ground(x, z) {
   const r = Math.hypot(x, z);
-  const noise = 0.16 * Math.sin(x * 0.045 + 1.3) * Math.cos(z * 0.052 - 0.4) * smooth(20, 40, r) * (1 - smooth(78, 90, r));
+  const noise = 0.05 * Math.sin(x * 0.045 + 1.3) * Math.cos(z * 0.052 - 0.4) * smooth(20, 40, r) * (1 - smooth(78, 90, r));
   if (r < SHORE + 0.5) return 0.6 - 0.7 * smooth(106, SHORE, r) + noise;
   return -0.1 - (r - SHORE) * 0.06;
 }
@@ -248,7 +255,7 @@ const foam = new THREE.Mesh(new THREE.RingGeometry(SHORE - 1.2, SHORE + 2.2, 160
 foam.rotation.x = -PI / 2; foam.position.y = 0.06; scene.add(foam);
 
 /* panorama: one FLORA photograph wrapped twice, mirrored at the folds, Manhattan due south and due north */
-const panoMat = new THREE.MeshBasicMaterial({ map: tex('assets/pano.webp'), side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false });
+const panoMat = new THREE.MeshBasicMaterial({ map: tex('assets/pano.webp'), side: THREE.DoubleSide, fog: false, depthWrite: false, toneMapped: false });
 panoMat.map.wrapS = THREE.ClampToEdgeWrapping;
 (function () {
   const R = 1150, segs = 128, H = R * PI * 1344 / 3168, top = 0.58 * H, bot = top - H;
@@ -256,28 +263,29 @@ panoMat.map.wrapS = THREE.ClampToEdgeWrapping;
   for (let i = 0; i <= segs; i++) {
     const th = i / segs * PI * 2, t = i / (segs / 2), u = t <= 1 ? t : 2 - t;
     const x = R * Math.cos(th), z = R * Math.sin(th);
-    pos.push(x, top, z, x, bot, z); uv.push(u, 1, u, 0);
+    const x2 = x * 0.35, z2 = z * 0.35; // a skirt that leans in overhead, stretching the photograph's top row so no seam shows
+    pos.push(x, top, z, x, bot, z, x2, top + 900, z2); uv.push(u, 0.999, u, 0, u, 0.999);
   }
-  for (let i = 0; i < segs; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  for (let i = 0; i < segs; i++) { const a = i * 3; idx.push(a, a + 1, a + 3, a + 1, a + 4, a + 3, a + 2, a, a + 5, a, a + 3, a + 5); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
   const m = new THREE.Mesh(g, panoMat); m.renderOrder = -10; scene.add(m);
   const cap = new THREE.Mesh(new THREE.CircleGeometry(R, 64), new THREE.MeshBasicMaterial({ color: 0x8fb6d8, side: THREE.DoubleSide, fog: false, depthWrite: false }));
-  cap.rotation.x = PI / 2; cap.position.y = top - 1; cap.renderOrder = -10; scene.add(cap); panoMat.userData.cap = cap;
+  cap.rotation.x = PI / 2; cap.position.y = top + 899; cap.scale.setScalar(0.36); cap.renderOrder = -10; scene.add(cap); panoMat.userData.cap = cap;
 })();
 
 /* ---------------- light ---------------- */
 const hemi = new THREE.HemisphereLight(0xbfd8ff, 0x8a6a48, 0.9); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xffb073, 2.4);
+const sun = new THREE.DirectionalLight(0xffb073, 1.55);
 sun.castShadow = true; sun.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
 Object.assign(sun.shadow.camera, { left: -55, right: 55, top: 55, bottom: -55, near: 1, far: 400 });
 sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.04;
 scene.add(sun); scene.add(sun.target);
 const PRESETS = {
-  golden: { sun: 0xffb073, sunI: 2.5, dir: [-0.35, 0.34, 0.87], sky: 0xbfd8ff, gnd: 0x8a6a48, hemiI: 0.95, fog: 0xf2c9a0, near: 140, far: 760, pano: 0xffffff, cap: 0x9ec0dc, card: 1.0, lamps: 0.15, exp: 1.0, sea: 0x1b8fa6 },
-  day: { sun: 0xffffff, sunI: 2.9, dir: [0.25, 0.9, 0.35], sky: 0xd4e8ff, gnd: 0x9a8a6a, hemiI: 1.15, fog: 0xcfe3f2, near: 160, far: 900, pano: 0xffffff, cap: 0xa9cbe6, card: 1.0, lamps: 0, exp: 1.0, sea: 0x1aa0b8 },
-  night: { sun: 0xa8bcff, sunI: 1.1, dir: [0.4, 0.6, -0.5], sky: 0x5070b8, gnd: 0x2a3048, hemiI: 1.25, fog: 0x1c2748, near: 100, far: 560, pano: 0x34407a, cap: 0x101a38, card: 0.86, lamps: 1, exp: 1.15, sea: 0x0d3a5a },
-  dawn: { sun: 0xff7a5a, sunI: 1.4, dir: [-0.2, 0.04, 0.98], sky: 0xffb0c8, gnd: 0x4a3a48, hemiI: 0.8, fog: 0xe7a3a8, near: 110, far: 600, pano: 0xffb6b0, cap: 0x7a6aa0, card: 0.95, lamps: 0.6, exp: 1.05, sea: 0x24708a }
+  golden: { sun: 0xffb073, sunI: 1.55, dir: [-0.35, 0.34, 0.87], sky: 0xbfd8ff, gnd: 0x8a6a48, hemiI: 0.62, fog: 0xf2c9a0, near: 140, far: 760, pano: 0xffffff, cap: 0xa7bfce, card: 1.0, lamps: 0.15, exp: 1.0, sea: 0x1b8fa6 },
+  day: { sun: 0xffffff, sunI: 1.7, dir: [0.25, 0.9, 0.35], sky: 0xd4e8ff, gnd: 0x9a8a6a, hemiI: 0.75, fog: 0xcfe3f2, near: 160, far: 900, pano: 0xffffff, cap: 0xa7bfce, card: 1.0, lamps: 0, exp: 1.0, sea: 0x1aa0b8 },
+  night: { sun: 0xa8bcff, sunI: 0.75, dir: [0.4, 0.6, -0.5], sky: 0x5070b8, gnd: 0x2a3048, hemiI: 0.9, fog: 0x1c2748, near: 100, far: 560, pano: 0x34407a, cap: 0x222a3e, card: 0.86, lamps: 1, exp: 1.15, sea: 0x0d3a5a },
+  dawn: { sun: 0xff7a5a, sunI: 1.0, dir: [-0.2, 0.04, 0.98], sky: 0xffb0c8, gnd: 0x4a3a48, hemiI: 0.8, fog: 0xe7a3a8, near: 110, far: 600, pano: 0xffb6b0, cap: 0x7a8494, card: 0.95, lamps: 0.6, exp: 1.05, sea: 0x24708a }
 };
 const COLOR_KEYS = ['sun', 'sky', 'gnd', 'fog', 'pano', 'cap', 'sea'], NUM_KEYS = ['sunI', 'hemiI', 'near', 'far', 'card', 'lamps', 'exp'];
 const L = { dir: new V3() }; COLOR_KEYS.forEach(k => L[k] = new THREE.Color(PRESETS.golden[k])); NUM_KEYS.forEach(k => L[k] = PRESETS.golden[k]); L.dir.set(...PRESETS.golden.dir).normalize();
@@ -320,8 +328,8 @@ function post(x, z, r, y0 = -10, y1 = 80) { const c = { x, z, r, y0, y1, on: tru
 function ringWalls(cx, cz, r, gapAng, gapHalf, n = 40, y0, y1) {
   for (let i = 0; i < n; i++) {
     const a0 = i / n * PI * 2, a1 = (i + 1) / n * PI * 2, am = (a0 + a1) / 2;
-    let d = Math.abs(Math.atan2(Math.sin(am - gapAng), Math.cos(am - gapAng)));
-    if (d < gapHalf) continue;
+    const gaps = Array.isArray(gapAng) ? gapAng : [gapAng];
+    if (gaps.some(ga => Math.abs(Math.atan2(Math.sin(am - ga), Math.cos(am - ga))) < gapHalf)) continue;
     wall(cx + Math.cos(a0) * r, cz + Math.sin(a0) * r, cx + Math.cos(a1) * r, cz + Math.sin(a1) * r, y0, y1);
   }
 }
@@ -380,8 +388,9 @@ function plane(W, H, mat, x, y, z, ry = 0, rx = 0) {
 }
 function sign(lines, x, z, ry, W = 3, H = 1.5, opt = {}) {
   const y0 = opt.y !== undefined ? opt.y : ground(x, z) + (opt.h || 2.1);
-  const mat = new THREE.MeshBasicMaterial({ map: signTex(lines, 1024, Math.round(1024 * H / W), opt.bg || '#0D0D0D', opt.fg), toneMapped: false, side: THREE.DoubleSide });
+  const mat = new THREE.MeshBasicMaterial({ map: signTex(lines, 1024, Math.round(1024 * H / W), opt.bg || '#0D0D0D', opt.fg), toneMapped: false });
   const m = plane(W, H, mat, x, y0, z, ry);
+  if (opt.back !== false) { const bk = box(W + 0.06, H + 0.06, 0.04, MAT.ink, x - Math.sin(ry) * 0.025, y0, z - Math.cos(ry) * 0.025, ry, 0, false); }
   if (opt.post !== false && opt.y === undefined) { cyl(0.06, 0.06, y0 - H / 2 - ground(x, z) + 0.1, MAT.orange, x, ground(x, z) + (y0 - H / 2 - ground(x, z)) / 2, z, 8); }
   return m;
 }
@@ -494,7 +503,7 @@ const NY_FERRY = NYP.slice(0, 24), NY_CENSUS = NYP.slice(24, 72), NY_BODEGA = NY
   const sorted = CARDS.slice().sort((a, b) => b.fl - a.fl);
   plazaTops = new Array(n * n); const base = ground(0, 0) - 0.05;
   const tileG = new THREE.BoxGeometry(1, 1, 1); worldUV(tileG, 1);
-  const tiles = new THREE.InstancedMesh(tileG, MAT.stone, cells.length); let k = 0; const m = new THREE.Matrix4();
+  const tiles = new THREE.InstancedMesh(tileG, MAT.mineral, cells.length); let k = 0; const m = new THREE.Matrix4();
   const rx = new THREE.Quaternion().setFromAxisAngle(new V3(1, 0, 0), -PI / 2);
   cells.forEach((c, idx) => {
     const card = sorted[idx]; const h = 0.25 + 4.2 * Math.pow(1 - idx / cells.length, 2.2);
@@ -524,6 +533,8 @@ const freestyle = [];
 
 /* --- 3. HARDWARE WALLET LIGHTHOUSE + THE VAULT (Not Your Keys, Use a Hardware Wallet, punk6529 honorary) --- */
 const LH = { x: 0, z: -126, w: 16, d: 8, H: 48 };
+const LHS = { msgs: ['CONFIRM ON DEVICE', 'MEME ISLAND v1', 'THIS LIGHTHOUSE CANNOT RECOVER YOUR PASSWORD', 'SELF CUSTODY. PLEASE USE THE OTHER DOOR.', 'gm', 'VAULT OPEN. NOT YOUR KEYS? NOW THEY ARE.'], cur: -1, cv: null, tex: null,
+  draw(i) { if (i === this.cur || !this.cv) return; this.cur = i; const s = this.msgs[i]; const src = signCanvas([{ t: s, s: s.length > 20 ? 0.16 : 0.3, f: '"Courier New",monospace' }], 1024, 512, '#000000', '#e8f0ff'); const c = this.cv.getContext('2d'); c.clearRect(0, 0, 1024, 512); c.drawImage(src, 0, 0); this.tex.needsUpdate = true; } };
 let vaultDoors = null, vaultSeg = null, lhBeam = null, lhScreen = null, lhScreenTex = [];
 (function () {
   const { x, z, w, d, H } = LH; const g0 = 0.9; padRect(x - 14, x + 14, z - 9, z + 12, g0); LH.g = g0;
@@ -551,8 +562,9 @@ let vaultDoors = null, vaultSeg = null, lhBeam = null, lhScreen = null, lhScreen
   const cov = box(w + 1.4, 20, 0.5, MAT.steel, x, g0 + 18, z - d / 2 - 0.55); cov.rotation.z = 0.03;
   cyl(1.6, 1.6, 0.8, MAT.steel, x - w / 2 + 2, g0 + 28.4, z - d / 2 - 0.55).rotation.x = PI / 2;
   // screen: alternates its messages
-  ['CONFIRM ON DEVICE', 'MEME ISLAND v1', 'THIS LIGHTHOUSE CANNOT RECOVER YOUR PASSWORD', 'SELF CUSTODY. PLEASE USE THE OTHER DOOR.', 'gm'].forEach(s => lhScreenTex.push(signTex([{ t: s, s: s.length > 20 ? 0.16 : 0.3, f: '"Courier New",monospace' }], 1024, 512, '#000000', '#e8f0ff')));
-  lhScreen = plane(11, 5.5, new THREE.MeshBasicMaterial({ map: lhScreenTex[0], toneMapped: false }), x, g0 + 30, z + d / 2 + 0.4);
+  LHS.msgs.forEach(s => lhScreenTex.push(signTex([{ t: s, s: s.length > 20 ? 0.16 : 0.3, f: '"Courier New",monospace' }], 1024, 512, '#000000', '#e8f0ff')));
+  LHS.cv = document.createElement('canvas'); LHS.cv.width = 1024; LHS.cv.height = 512; LHS.tex = new THREE.CanvasTexture(LHS.cv); LHS.tex.encoding = THREE.sRGBEncoding;
+  lhScreen = plane(11, 5.5, new THREE.MeshBasicMaterial({ map: LHS.tex, toneMapped: false }), x, g0 + 30, z + d / 2 + 0.4); LHS.draw(0);
   [-1, 1].forEach(s => { const b = cyl(0.9, 0.9, 0.6, MAT.steel, x + s * 4.5, g0 + 22, z + d / 2 + 0.35); b.rotation.x = PI / 2; });
   sign([{ t: Q('PORT'), s: 0.5 }], x, z + d / 2 + 0.3, 0, 2.4, 0.8, { y: g0 + 4.1, post: false });
   sign([{ t: Q('NOT YOUR KEYS, NOT YOUR COINS'), s: 0.22 }, { t: 'THE VAULT OPENS FOR SIX KEYS. NONE OF THEM ARE SEED PHRASES.', s: 0.11, b: false, c: '#FF6B00' }], x + 10, z + 9, 0, 5, 1.8);
@@ -682,7 +694,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
   const gmT = new THREE.MeshBasicMaterial({ map: signTex([{ t: 'gm', s: 0.8, f: 'Georgia,serif', b: false, c: '#6b4a2a' }], 512, 256, null), transparent: true, depthWrite: false });
   plane(10, 5, gmT, 18, ground(18, 126) + 0.04, 126, 0, -PI / 2);
   sign([{ t: Q('GM BEACH'), s: 0.4 }, { t: 'GM IS A RENEWABLE RESOURCE. TYPE IT.', s: 0.14, b: false }], -9, 121, PI, 3.4, 1.4);
-  sign([{ t: Q('ARRIVALS'), s: 0.42 }, { t: 'MANHATTAN IS THE SMALL ISLAND OVER THERE.', s: 0.13, b: false }], 4.6, 172, 0, 3, 1.3, { y: 2.8, post: false });
+  sign([{ t: Q('ARRIVALS'), s: 0.42 }, { t: 'MANHATTAN IS THE SMALL ISLAND OVER THERE.', s: 0.13, b: false }], 2.6, 164, -0.5, 2.4, 1.05, { y: 2.6, post: false });
   // the rug
   const rugT = signTex([{ t: 'WELCOME', s: 0.32, f: 'Georgia,serif', c: '#ffe2b0' }, { t: 'DO NOT STAND HERE', s: 0.16, c: '#ffe2b0' }], 512, 768, '#8a1f2a');
   plane(3, 4.5, new THREE.MeshStandardMaterial({ map: rugT, roughness: 1 }), -16, ground(-16, 124) + 0.04, 124, 0, -PI / 2);
@@ -783,15 +795,15 @@ const SUMMER = { x: -44, z: 43, r: 22 };
 const BANK = { x: -66, z: 0, door: [-57, 0] };
 (function () {
   const cx = -66, cz = 0, w = 16, d = 18, h = 10, g = ground(cx, cz) + 0.02; padRect(cx - w / 2, cx + w / 2 + 4, cz - d / 2, cz + d / 2, g + 0.3);
-  box(w + 6, 0.6, d + 2, MAT.bone, cx + 2, g, cz, 0, 0, false);
-  box(0.6, h, d, MAT.bone, cx - w / 2, g + h / 2, cz); wall(cx - w / 2, cz - d / 2, cx - w / 2, cz + d / 2);
-  [-1, 1].forEach(s => { box(w, h, 0.6, MAT.bone, cx, g + h / 2, cz + s * d / 2); wall(cx - w / 2, cz + s * d / 2, cx + w / 2, cz + s * d / 2); });
-  [-1, 1].forEach(s => { box(0.6, h, d / 2 - 2, MAT.bone, cx + w / 2, g + h / 2, cz + s * (d / 4 + 1)); wall(cx + w / 2, cz + s * 2, cx + w / 2, cz + s * d / 2); });
-  box(0.6, h - 4.5, 4, MAT.bone, cx + w / 2, g + 4.5 + (h - 4.5) / 2, cz); box(w + 0.4, 0.5, d + 0.4, MAT.bone, cx, g + h, cz, 0, 0, false);
-  for (let i = 0; i < 6; i++) { const z = cz - 7.5 + i * 3; const c = cyl(0.55, 0.65, h, MAT.bone, cx + w / 2 + 3, g + h / 2, z, 20); post(cx + w / 2 + 3, z, 0.65); }
-  box(4, 0.8, d + 1, MAT.bone, cx + w / 2 + 2, g + h + 0.3, cz);
+  box(w + 6, 0.6, d + 2, MAT.bankstone, cx + 2, g, cz, 0, 0, false); [0, 1, 2].forEach(i => box(1.2, 0.15 * (i + 1), d - 2, MAT.bankstone, cx + w / 2 + 6.4 - i * 0.6, g - 0.3 + 0.075 * (i + 1), cz, 0, 0, false)); padRect(cx + w / 2 + 4, cx + w / 2 + 6.8, cz - d / 2 + 1, cz + d / 2 - 1, g + 0.15);
+  box(0.6, h, d, MAT.bankstone, cx - w / 2, g + h / 2, cz); wall(cx - w / 2, cz - d / 2, cx - w / 2, cz + d / 2);
+  [-1, 1].forEach(s => { box(w, h, 0.6, MAT.bankstone, cx, g + h / 2, cz + s * d / 2); wall(cx - w / 2, cz + s * d / 2, cx + w / 2, cz + s * d / 2); });
+  [-1, 1].forEach(s => { box(0.6, h, d / 2 - 2, MAT.bankstone, cx + w / 2, g + h / 2, cz + s * (d / 4 + 1)); wall(cx + w / 2, cz + s * 2, cx + w / 2, cz + s * d / 2); });
+  box(0.6, h - 4.5, 4, MAT.bankstone, cx + w / 2, g + 4.5 + (h - 4.5) / 2, cz); box(w + 0.4, 0.5, d + 0.4, MAT.bankstone, cx, g + h, cz, 0, 0, false);
+  for (let i = 0; i < 6; i++) { const z = cz - 7.5 + i * 3; const c = cyl(0.55, 0.65, h, MAT.bankstone, cx + w / 2 + 3, g + h / 2, z, 20); post(cx + w / 2 + 3, z, 0.65); }
+  box(4, 0.8, d + 1, MAT.bankstone, cx + w / 2 + 2, g + h + 0.3, cz);
   const ped = new THREE.Shape(); ped.moveTo(-d / 2 - 0.5, 0); ped.lineTo(d / 2 + 0.5, 0); ped.lineTo(0, 3.2); ped.closePath();
-  const pg = new THREE.ExtrudeGeometry(ped, { depth: 4, bevelEnabled: false }); const pm = new THREE.Mesh(pg, MAT.bone); pm.rotation.y = PI / 2; pm.position.set(cx + w / 2, g + h + 0.7, cz); pm.castShadow = true; scene.add(pm);
+  const pg = new THREE.ExtrudeGeometry(ped, { depth: 4, bevelEnabled: false }); const pm = new THREE.Mesh(pg, MAT.bankstone); pm.rotation.y = PI / 2; pm.position.set(cx + w / 2, g + h + 0.7, cz); pm.castShadow = true; scene.add(pm);
   sign([{ t: 'FIRST NATIONAL BANK OF JPGs', s: 0.45, f: 'Georgia,serif', b: false, c: '#3a3a3a' }], cx + w / 2 + 4.02, cz, PI / 2, 14, 0.9, { y: g + h + 0.3, post: false, bg: '#F0EFEA' });
   sign([{ t: Q('INSTITUTIONAL ADOPTION'), s: 0.26 }, { t: 'PERSONAL BELONGINGS MISSING. YOUR JPG IS IMPORTANT TO OUR COLLECTION.', s: 0.1, b: false }], cx + w / 2 + 7, cz - 11, PI / 2, 4, 1.5);
   const ids = G("Don't Let"); ids.forEach((n, i) => { if (i < 7) hang('meme', n, cx - w / 2 + 0.36, g + 2.6, cz - 6 + i * 2, PI / 2, 1.7); else hang('meme', n, cx - 5 + (i - 7) * 2, g + 2.6, cz - d / 2 + 0.36, 0, 1.7); });
@@ -847,7 +859,10 @@ const OM = { x: 30, z: -80, portal: null };
 (function () {
   const { x, z } = OM, g = ground(x, z); padCirc(x, z, 10.5, g + 0.1);
   const disc = new THREE.Mesh(new THREE.CylinderGeometry(10.5, 10.8, 0.3, 48), MAT.bone); disc.position.set(x, g - 0.05, z); disc.receiveShadow = true; scene.add(disc);
-  const ids = G('Open Metaverse'); ids.forEach((n, i) => { const a = i / ids.length * PI * 2, cx = x + Math.cos(a) * 9.4, cz = z + Math.sin(a) * 9.4; if (Math.abs(Math.sin(a)) > 0.93 && Math.cos(a) > -2) {} hang('meme', n, cx, g + 1.4, cz, faceTo(cx, cz, x, z), 1.5); });
+  const ids = G('Open Metaverse'), gapH = 0.32, span = PI - 2 * gapH; // two gates on the portal axis, north and south
+  ids.forEach((n, i) => { const half = i < ids.length / 2, j = half ? i : i - Math.ceil(ids.length / 2), cnt = half ? Math.ceil(ids.length / 2) : Math.floor(ids.length / 2);
+    const a = (half ? -PI / 2 : PI / 2) + gapH + (j + 0.5) / cnt * span, cx = x + Math.cos(a) * 9.4, cz = z + Math.sin(a) * 9.4; hang('meme', n, cx, g + 1.4, cz, faceTo(cx, cz, x, z), 1.5); });
+  ringWalls(x, z, 9.4, [PI / 2, -PI / 2], gapH, 48, -10, g + 2.3);
   const ring = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.35, 16, 64), MAT.blue); ring.position.set(x, g + 3.8, z); scene.add(ring);
   const film = new THREE.Mesh(new THREE.CircleGeometry(3.1, 48), new THREE.MeshBasicMaterial({ color: 0x7fb0ff, transparent: true, opacity: 0.35, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })); film.position.copy(ring.position); scene.add(film);
   OM.portal = { ring, film, y: g + 3.8 }; practical(x, g + 4, z, 0x6a9cff, 30, 22);
@@ -975,6 +990,121 @@ const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
   }
 })();
 
+/* --- 19. public realm (Astra fix 1): promenade ring, paths, benches, shrubs, loungers --- */
+(function () {
+  const PY = 0.665;
+  const ring = new THREE.Mesh(new THREE.RingGeometry(37.5, 42.5, 160, 1), MAT.pave); ring.rotation.x = -PI / 2; ring.position.y = PY; ring.receiveShadow = true; scene.add(ring);
+  const edge = new THREE.Mesh(new THREE.RingGeometry(42.5, 42.75, 160, 1), MAT.orange); edge.rotation.x = -PI / 2; edge.position.y = PY + 0.004; scene.add(edge);
+  const seg = (ax, az, bx, bz, w = 3.2) => { const dx = bx - ax, dz = bz - az, len = Math.hypot(dx, dz); const m = new THREE.Mesh(new THREE.BoxGeometry(len, 0.06, w), MAT.pave); m.position.set((ax + bx) / 2, PY - 0.02, (az + bz) / 2); m.rotation.y = Math.atan2(-dz, dx); m.receiveShadow = true; scene.add(m); };
+  seg(0, 16.4, 0, 37.6, 4); seg(0, 42.4, 0, 96, 5); seg(0, 104, 0, 116, 5); seg(0, -16.4, 0, -37.6, 4); seg(0, -42.4, 0, -50, 4);
+  seg(16.4, 0, 37.6, 0, 4); seg(42.4, 0, 53, 0, 4); seg(-16.4, 0, -37.6, 0, 4); seg(-42.4, 0, -55.5, 0, 4);
+  seg(29, -29, 34.5, -34.5, 3.2); seg(29, 29, 21, 43, 3.2); seg(-29, 29, -38, 37, 3.2); seg(-29, -29, -38, -38, 3.2);
+  seg(5, 66, 11.5, 66, 3); seg(23, -77, 29, -70.5, 3); seg(0, -104, 0, -114, 4); seg(-3, 52, -6, 80, 2.6);
+  // benches facing inward on the ring, shrubs in islands along it
+  const bs = new THREE.InstancedMesh(new THREE.BoxGeometry(2.4, 0.12, 0.55), MAT.wood, 18), bb = new THREE.InstancedMesh(new THREE.BoxGeometry(2.4, 0.5, 0.08), MAT.wood, 18), bl = new THREE.InstancedMesh(new THREE.BoxGeometry(0.1, 0.45, 0.5), MAT.graphite, 36);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(); let k = 0;
+  for (let i = 0; i < 18; i++) { const a = (i + 0.5) / 18 * 360; if (Math.abs(((a + 22.5) % 45) - 22.5) < 6) continue; const [x, z] = P2(a, 43.6), ry = faceTo(x, z, 0, 0); q.setFromAxisAngle(new V3(0, 1, 0), ry);
+    m.compose(new V3(x, PY + 0.45, z), q, new V3(1, 1, 1)); bs.setMatrixAt(k, m); m.compose(new V3(x - Math.sin(ry) * 0.25, PY + 0.75, z - Math.cos(ry) * 0.25), q, new V3(1, 1, 1)); bb.setMatrixAt(k, m);
+    [-1, 1].forEach((sd, j) => { m.compose(new V3(x + Math.cos(ry) * sd * 1.05, PY + 0.22, z - Math.sin(ry) * sd * 1.05), q, new V3(1, 1, 1)); bl.setMatrixAt(k * 2 + j, m); }); post(x, z, 0.7, -10, 1.2); k++; }
+  bs.count = bb.count = k; bl.count = k * 2; [bs, bb, bl].forEach(o => { o.castShadow = o.receiveShadow = true; scene.add(o); });
+  const sh = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.7, 0), MAT.shrub, 120); let n = 0;
+  for (let i = 0; i < 12; i++) { const a0 = (i + 0.5) / 12 * 360 + 7; for (let j = 0; j < 10; j++) { const [x, z] = P2(a0 + (rnd() - 0.5) * 9, 46 + rnd() * 4.5); const s = 0.6 + rnd() * 0.9; m.compose(new V3(x, ground(x, z) + s * 0.4, z), q.setFromEuler(new THREE.Euler(rnd(), rnd() * 3, 0)), new V3(s, s * 0.8, s)); sh.setMatrixAt(n++, m); } }
+  sh.count = n; sh.castShadow = true; scene.add(sh);
+  // GM beach loungers, three groups of four
+  const lo = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.12, 2), cm(0xDDD5C7), 12), lb2 = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.9, 0.1), cm(0xDDD5C7), 12); k = 0;
+  [[-26, 127], [12, 128], [28, 124]].forEach(([gx, gz]) => { for (let i = 0; i < 4; i++) { const x = gx + i * 1.2, z = gz, g = ground(x, z); m.compose(new V3(x, g + 0.32, z), q.identity(), new V3(1, 1, 1)); lo.setMatrixAt(k, m); m.compose(new V3(x, g + 0.62, z - 0.9), q.setFromEuler(new THREE.Euler(-0.6, 0, 0)), new V3(1, 1, 1)); lb2.setMatrixAt(k++, m); post(x, z, 0.5, -10, 0.9); } });
+  [lo, lb2].forEach(o => { o.castShadow = true; scene.add(o); });
+})();
+
+/* --- 20. factory process: worktables, crates, an orange route --- */
+(function () {
+  const g = ground(0, -64) + 0.17;
+  [-8, 0, 8].forEach(x => { box(4, 0.9, 1.2, MAT.wood, x, g + 0.45, -55.5, 0, 1.4); boxWalls(x, -55.5, 4, 1.2, 0, -10, g + 0.9); });
+  for (let i = 0; i < 12; i++) { const x = -14 + (i % 4) * 0.9 + (i > 7 ? 26.5 : 0), z = -76 + Math.floor((i % 8) / 4) * 0.9, c = box(0.85, 0.85, 0.85, MAT.wood, x, g + 0.42 + (i % 3 === 0 ? 0.85 : 0), z, rnd() * 0.3, 1); }
+  box(0.4, 0.02, 14, MAT.orange, 11.5, g + 0.01, -64, 0, 0, false); box(23, 0.02, 0.4, MAT.orange, 0, g + 0.01, -57.4, 0, 0, false);
+  sign([{ t: Q('ROUTE'), s: 0.5 }], 11.5, -71.2, 0, 1.2, 0.45, { y: g + 0.03 + 0.3, post: false });
+})();
+
+/* --- 21. bodega stock and bunker rhythm --- */
+(function () {
+  const bx = 17, bz = 66, g = ground(bx, bz) + 0.14; const cols = [0xff6b00, 0x2962ff, 0xffd400, 0xd93a2a, 0x44aa66, 0xffffff];
+  const st = new THREE.InstancedMesh(new THREE.BoxGeometry(0.28, 0.36, 0.22), new THREE.MeshStandardMaterial({ roughness: 0.6 }), 48); const m = new THREE.Matrix4(), c = new THREE.Color(); let k = 0;
+  for (let lvl = 0; lvl < 4; lvl++) for (let i = 0; i < 12; i++) { m.makeTranslation(bx + 4.35, g + 0.35 + lvl * 0.55, bz + 1.2 + i * 0.32); st.setMatrixAt(k, m); st.setColorAt(k++, c.setHex(cols[(i + lvl) % cols.length])); }
+  scene.add(st);
+  const gB = ground(44, 44) + 0.02;
+  for (let x = 25; x < 66; x += 6) { box(0.35, 0.45, 7.6, MAT.conc, x, gB + 6.2, 44, 0, 4, false); const strip = box(0.08, 0.04, 5, MAT.bulb, x + 3, gB + 6.0, 44, 0, 0, false); }
+  [28, 46, 64].forEach(x => sign([{ t: Q('EXIT'), s: 0.55 }], x, 44, -PI / 2, 0.9, 0.35, { y: gB + 5.5, post: false, bg: '#FF6B00', fg: '#0D0D0D', back: false }));
+})();
+
+/* --- 22. delights: whale alert, touch grass receipt, paper hands dryer, wheel ride, postcards --- */
+const WHALE = { g: null, t: 30, count: 0, sign: null, cv: null, tex: null };
+const TOUCH = { x: 0, z: 0, t: 0, done: 0 }, DRYER = { t: 0, parts: [], mesh: null };
+const RIDE = { on: false, t: 0, dur: 26, a0: 0 };
+
+(function () {
+  const g = new THREE.Group(), skin = cm(0x56666A);
+  const body = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), skin); body.scale.set(2.2, 1.6, 7); g.add(body);
+  [-1, 1].forEach(s => { const f = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.2, 1.2), skin); f.position.set(s * 2.4, -0.6, 1.5); f.rotation.z = s * 0.3; g.add(f); });
+  const tail = new THREE.Group(); tail.position.z = -7; g.add(tail); [-1, 1].forEach(s => { const t = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.18, 1.4), skin); t.position.set(s * 1.3, 0, -0.6); t.rotation.y = s * 0.4; tail.add(t); });
+  g.userData.tail = tail; g.position.set(26, -6, 160); scene.add(g); WHALE.g = g;
+  WHALE.cv = document.createElement('canvas'); WHALE.cv.width = 512; WHALE.cv.height = 256; WHALE.tex = new THREE.CanvasTexture(WHALE.cv); WHALE.tex.encoding = THREE.sRGBEncoding;
+  WHALE.sign = plane(2.4, 1.2, new THREE.MeshBasicMaterial({ map: WHALE.tex, toneMapped: false }), 4.6, 2.2, 140, -PI / 2);
+  WHALE.draw = t => { const c = WHALE.cv.getContext('2d'); c.drawImage(signCanvas([{ t: 'WHALE ALERT', s: 0.22, c: '#FF6B00' }, { t, s: 0.3 }], 512, 256, '#0D0D0D'), 0, 0); WHALE.tex.needsUpdate = true; };
+  WHALE.draw('NO WHALES');
+  // touch grass: an orange ring on the open lawn
+  const tg = [24, -14], gg = ground(...tg); TOUCH.x = tg[0]; TOUCH.z = tg[1];
+  const tr = new THREE.Mesh(new THREE.RingGeometry(2.8, 3.05, 64), MAT.orange); tr.rotation.x = -PI / 2; tr.position.set(tg[0], gg + 0.05, tg[1]); scene.add(tr);
+  sign([{ t: Q('TOUCH GRASS HERE'), s: 0.3 }, { t: 'STAND STILL FOR 10 SECONDS. RECEIPT ISSUED.', s: 0.13, b: false }], tg[0] + 3.6, tg[1] - 2.4, -0.9, 2.8, 1.1);
+  // paper hands dryer at the bank
+  const dx = -52, dz = -9.2, dg = ground(dx, dz); box(0.08, 1.4, 0.08, MAT.steel, dx, dg + 0.7, dz); box(0.4, 0.3, 0.3, MAT.steel, dx, dg + 1.55, dz); post(dx, dz, 0.3);
+  sign([{ t: 'DRY YOUR PAPER HANDS', s: 0.3 }], dx, dz + 0.17, 0, 1, 0.24, { y: dg + 1.95, post: false, back: false });
+  const hcv = signCanvas([{ t: '✋', s: 0.8 }], 128, 128, null); const hm = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(hcv), transparent: true, side: THREE.DoubleSide, depthWrite: false });
+  DRYER.mesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.45, 0.45), MAT.paper, 24); DRYER.mesh.visible = false; DRYER.mesh.frustumCulled = false; scene.add(DRYER.mesh); DRYER.x = dx; DRYER.y = dg + 1.5; DRYER.z = dz;
+  interact(dx, dz + 1, 2, 'E  DRY YOUR PAPER HANDS', () => { DRYER.t = 2.2; DRYER.parts = Array.from({ length: 24 }, () => ({ x: 0, y: 0, z: 0, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 3, vz: 1 + Math.random() * 3, r: Math.random() * 6 })); toast('PAPER HANDS DRIED. CONVICTION NOT INCLUDED.'); chime(300); });
+  // wheel boarding gate
+  const gx = wheel.cx - 7, gz = 6; box(0.25, 2.6, 0.25, MAT.orange, gx, ground(gx, gz) + 1.3, gz - 1.2); box(0.25, 2.6, 0.25, MAT.orange, gx, ground(gx, gz) + 1.3, gz + 1.2); box(0.25, 0.25, 2.65, MAT.orange, gx, ground(gx, gz) + 2.6, gz);
+  sign([{ t: Q('BOARDING'), s: 0.42 }, { t: 'E TO RIDE. KEEP HANDS INSIDE THE BULL MARKET.', s: 0.14, b: false }], gx - 0.2, gz + 2.6, -PI / 2, 2.6, 0.9);
+  interact(gx, gz, 2.4, 'E  RIDE THE WAGMI WHEEL', () => startRide());
+})();
+function startRide() { if (RIDE.on) return; RIDE.on = true; RIDE.t = 0; wheel.speed = 0.24; toast('WAGMI. PLEASE REMAIN SEATED. ANY MOVE KEY TO GET OFF.', 'blue'); chime(600); }
+function endRide() { RIDE.on = false; wheel.speed = 0.06; teleport(wheel.cx - 9, 6, -PI / 2); }
+function issueReceipt() {
+  const cv = document.createElement('canvas'); cv.width = 600; cv.height = 900; const c = cv.getContext('2d');
+  c.fillStyle = '#F6F3EA'; c.fillRect(0, 0, 600, 900); c.fillStyle = '#0D0D0D'; c.textAlign = 'center';
+  c.font = '700 34px "Courier New",monospace'; c.fillText('6529 BODEGA', 300, 80); c.font = '400 20px "Courier New",monospace'; c.fillText('MEME ISLAND · OPEN BEFORE AND AFTER THE CYCLE', 300, 116);
+  c.fillText('--------------------------------', 300, 160); c.font = '700 30px "Courier New",monospace'; c.fillText('PROOF OF TOUCHING GRASS', 300, 220);
+  c.font = '400 22px "Courier New",monospace'; c.textAlign = 'left';
+  [['GRASS TOUCHED', '1'], ['SECONDS HELD', '10'], ['GAS USED', '0'], ['WALLET CONNECTED', 'NO'], ['SEED PHRASE ASKED', 'NEVER'], ['TDH AT TIME OF TOUCH', String(Math.floor(state.tdh))], ['GM SAID TODAY', String(state.gm)], ['KEYS HELD', state.keys + '/6']].forEach(([k, v], i) => { c.fillText(k, 60, 290 + i * 46); c.textAlign = 'right'; c.fillText(v, 540, 290 + i * 46); c.textAlign = 'left'; });
+  c.textAlign = 'center'; c.fillText('--------------------------------', 300, 680); c.font = '700 26px "Courier New",monospace'; c.fillText('TOTAL:PRICELESS', 300, 730);
+  c.font = '400 18px "Courier New",monospace'; c.fillText('THIS RECEIPT IS NOT A TOKEN. IT IS A RECEIPT.', 300, 780); c.fillText('MEME ISLAND by MLow', 300, 830);
+  saveCanvas(cv, 'proof-of-touching-grass.png'); toast('PROOF OF TOUCHING GRASS ISSUED.', 'blue'); chime(880);
+}
+function saveCanvas(cv, name) { // downloads are blocked inside artifacts, so show the image to save by hand
+  const art = $('mArt'); art.innerHTML = ''; const im = new Image(); im.src = cv.toDataURL('image/png'); im.alt = name; art.appendChild(im);
+  $('mT').textContent = name.replace(/\.png$/, '').replace(/-/g, ' ').toUpperCase(); $('mMeta').textContent = 'RIGHT CLICK OR LONG PRESS THE IMAGE TO SAVE IT.'; $('mD').textContent = '';
+  $('modal').style.display = 'flex'; try { document.exitPointerLock(); } catch (e) { } }
+function postcard() {
+  frame(0); const src = renderer.domElement, W = 1600, H = Math.round(1600 * src.height / src.width), cv = document.createElement('canvas'); cv.width = W + 80; cv.height = H + 200; const c = cv.getContext('2d');
+  c.fillStyle = '#F2EBDD'; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(src, 40, 40, W, H);
+  c.fillStyle = '#0D0D0D'; c.font = '400 54px Georgia,serif'; c.textAlign = 'left'; c.fillText('Greetings from MEME ISLAND', 40, H + 120);
+  c.font = '700 22px "Helvetica Neue",Helvetica,Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 527 CARDS', 40, H + 168);
+  c.fillStyle = '#0D0D0D'; c.textAlign = 'right'; c.fillText('MLow', W + 40, H + 168);
+  saveCanvas(cv, 'meme-island-postcard.png'); toast('POSTCARD READY. SAVE IT, POST IT, TAG A FRIEND WHO SAYS GN.', 'blue');
+}
+function updateDelights(dt, t) {
+  // whale: surfaces every 90 s beside the ferry
+  WHALE.t -= dt; const W = WHALE.g;
+  if (WHALE.t < 12 && WHALE.t > 0) { const k = 1 - WHALE.t / 12, up = Math.sin(k * PI); W.position.set(26 + k * 12, -6 + up * 6.2, 150 + k * 30); W.rotation.x = -Math.cos(k * PI) * 0.25; W.userData.tail.rotation.x = Math.sin(t * 2) * 0.3;
+    if (!WHALE.on && up > 0.5) { WHALE.on = true; WHALE.count++; WHALE.draw('ONE WHALE'); if (Math.hypot(P.x - 30, P.z - 160) < 90) toast('WHALE ALERT. ONE (1) WHALE HAS ENTERED THE HARBOUR. IT IS NOT SELLING.'); } }
+  else { W.position.y = -12; if (WHALE.on) { WHALE.on = false; WHALE.draw('NO WHALES'); } }
+  if (WHALE.t <= 0) WHALE.t = 90;
+  // touch grass
+  const inRing = Math.hypot(P.x - TOUCH.x, P.z - TOUCH.z) < 2.8;
+  if (inRing && state.idle > 0.2) { TOUCH.t += dt; if (TOUCH.t > 10 && !TOUCH.issued) { TOUCH.issued = true; issueReceipt(); } } else { TOUCH.t = 0; TOUCH.issued = false; }
+  // dryer
+  if (DRYER.t > 0) { DRYER.t -= dt; DRYER.mesh.visible = true; DRYER.parts.forEach((p, i) => { p.vy -= 4 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.r += dt * 4; _m.compose(_p.set(DRYER.x + p.x, DRYER.y + p.y, DRYER.z + p.z), _q.setFromEuler(_e.set(p.r, p.r * 0.6, 0)), _s.set(1, 1, 1)); DRYER.mesh.setMatrixAt(i, _m); }); DRYER.mesh.instanceMatrix.needsUpdate = true; } else if (DRYER.mesh) DRYER.mesh.visible = false;
+}
+
 /* ================================================================
    systems: state, HUD, picking, eggs, audio, hanging
    ================================================================ */
@@ -1052,6 +1182,7 @@ function audioOn() {
 function chime(f = 523) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; [1, 1.25, 1.5].forEach((m, i) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f * m; g.gain.setValueAtTime(0, AC.currentTime + i * 0.07); g.gain.linearRampToValueAtTime(0.09, AC.currentTime + i * 0.07 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + i * 0.07 + 1.1); o.connect(g); g.connect(AC.destination); o.start(AC.currentTime + i * 0.07); o.stop(AC.currentTime + i * 0.07 + 1.2); }); }
 $('aud').onclick = e => { e.stopPropagation(); const on = $('aud').classList.toggle('on'); $('aud').textContent = on ? 'SOUND ON' : 'SOUND OFF'; if (on) { audioOn(); chime(); } else if (oceanGain) oceanGain.gain.value = 0; };
 document.querySelectorAll('[data-p]').forEach(b => b.onclick = e => { e.stopPropagation(); setPreset(b.dataset.p); });
+$('pc').onclick = e => { e.stopPropagation(); postcard(); };
 $('hide').onclick = e => { e.stopPropagation(); $('hud').style.display = 'none'; $('hudHide').style.display = 'block'; };
 $('hudHide').onclick = e => { e.stopPropagation(); $('hud').style.display = ''; $('hudHide').style.display = 'none'; };
 
@@ -1062,7 +1193,7 @@ function gm(fromChat) {
   toast('ANOTHER HISTORIC FIRST SUNRISE. gm.', 'blue');
   residents.forEach((r, i) => setTimeout(() => say(r, i % 7 === 0 ? 'gm ser' : i % 11 === 0 ? 'GM' : 'gm'), 300 + i * 140));
   setTimeout(() => toast('gm (from a tiny boat beyond the harbour)'), 300 + residents.length * 140 + 600);
-  lhScreen.material.map = lhScreenTex[4];
+  LHS.draw(4);
 }
 function say(r, t) { if (r.bub) r.P.g.remove(r.bub); r.bub = bubble(t); r.bub.position.set(0, 2.45, 0); r.P.g.add(r.bub); r.bubT = 4; }
 function seize() {
@@ -1097,7 +1228,7 @@ let tilt = 0;
 /* ---------------- player + controls ---------------- */
 const P = { x: 0, z: 176, y: 0.55, vy: 0, yaw: 0, pitch: -0.04, ground: true, fallFrom: 0 };
 const keys = {}; let locked = false;
-function teleport(x, z, yaw) { P.x = x; P.z = z; const f = floorAt(x, z, 100); P.y = f.f === null ? 0.6 : f.f; P.vy = 0; P.yaw = yaw || 0; P.pitch = -0.04; }
+function teleport(x, z, yaw, cy = 3) { P.x = x; P.z = z; const f = floorAt(x, z, cy); P.y = f.f === null ? 0.6 : f.f; P.vy = 0; P.yaw = yaw || 0; P.pitch = -0.04; }
 addEventListener('keydown', e => {
   if ($('chat').style.display === 'block') return;
   if (e.key === 'Enter') { $('chat').style.display = 'block'; $('chatIn').focus(); try { document.exitPointerLock(); } catch (er) { } e.preventDefault(); return; }
@@ -1107,6 +1238,7 @@ addEventListener('keydown', e => {
   if (e.code === 'Digit1') setPreset('golden'); if (e.code === 'Digit2') setPreset('day'); if (e.code === 'Digit3') setPreset('night');
   if (e.code === 'Space' && P.ground && state.started) { P.vy = 7.6; P.ground = false; P.fallFrom = P.y; e.preventDefault(); }
   if (e.code === 'KeyE') useNearest();
+  if (e.code === 'KeyP') postcard();
   if (e.code === 'KeyH') { const p = pickAt(innerWidth / 2, innerHeight / 2); if (p && p.kind === 'slot') { slotTarget = p.slot; $('file').click(); } }
   if (e.key.length === 1 && /[a-z0-9]/i.test(e.key)) onType(e.key);
 });
@@ -1172,7 +1304,7 @@ function stepPlayer(dt) {
   if (tollCD > 0) tollCD -= dt;
   if (Math.abs(P.x) < 4.6 && Math.abs(P.z - 100) < 1 && tollCD <= 0) { tollCD = 6; tollOpen = 3; toast('RECEIPT: BASE FEE 0. PRIORITY FEE 0. VIBES 0. TOTAL GAS 0.0000 ETH. THANK YOU FOR TRANSACTING FREELY.', 'blue'); chime(780); }
   // OM portal: walking through the ring drops you on the lighthouse roof
-  if (Math.abs(P.z - OM.z) < 0.5 && Math.hypot(P.x - OM.x, P.y + 1.7 - OM.portal.y) < 3.1 && !state.omCD) { state.omCD = 3; teleport(LH.x + 5.5, LH.z, PI); P.y = LH.g + LH.H + 0.3; toast('OM CONTINUITY TEST PASSED. YOU ARE STILL YOU. YOU ARE ALSO ON A LIGHTHOUSE.', 'blue'); flash('#2962FF'); }
+  if (Math.abs(P.z - OM.z) < 0.5 && Math.hypot(P.x - OM.x, P.y + 1.7 - OM.portal.y) < 3.1 && !state.omCD) { state.omCD = 3; teleport(LH.x + 5.5, LH.z, PI, 100); toast('OM CONTINUITY TEST PASSED. YOU ARE STILL YOU. YOU ARE ALSO ON A LIGHTHOUSE.', 'blue'); flash('#2962FF'); }
   if (state.omCD) state.omCD = Math.max(0, state.omCD - dt);
 }
 let tollOpen = 0;
@@ -1185,7 +1317,7 @@ function updateWorld(dt, t) {
   for (let i = 0; i < pa.length; i += 3) { const x = seaBase[i], z = seaBase[i + 2]; pa[i + 1] = Math.sin(x * 0.03 + t * 0.9) * 0.18 + Math.cos(z * 0.025 - t * 0.7) * 0.16 + Math.sin((x + z) * 0.08 + t * 1.7) * 0.05; }
   seaG.attributes.position.needsUpdate = true; foam.material.opacity = 0.25 + 0.15 * Math.sin(t * 1.3);
   // lighthouse
-  lhBeam.rotation.y = t * 0.6; if (Math.floor(t / 4) !== lhScreen.userData.k) { lhScreen.userData.k = Math.floor(t / 4); if (!sunrise) lhScreen.material.map = lhScreenTex[lhScreen.userData.k % 4]; }
+  lhBeam.rotation.y = t * 0.6; if (!sunrise && !state.vault) LHS.draw(Math.floor(t / 4) % 4);
   // conveyor
   const C = conveyor.meta, sp = convSpeed * (seizeT > 0 ? 1 : 1);
   conveyor.forEach(o => { o.s = (o.s + sp * dt) % C.per; let s = o.s, x, z, ry; const L2 = C.L2 * 2;
@@ -1215,7 +1347,7 @@ function updateWorld(dt, t) {
 }
 const _p2 = new V3(), _m = new THREE.Matrix4(), _e = new THREE.Euler();
 let vaultOpenT = 0;
-function openVault() { if (state.vault) return; state.vault = true; vaultSeg.on = false; vaultOpenT = 2.5; flash('#ffc23a'); toast('SIX KEYS. THE PORT IS OPEN. INSIDE: Cards on the Bridge, for Punk6529.', 'blue'); lhScreen.material.map = lhScreenTex[1]; }
+function openVault() { if (state.vault) return; state.vault = true; vaultSeg.on = false; vaultOpenT = 2.5; flash('#ffc23a'); toast('SIX KEYS. THE PORT IS OPEN. INSIDE: Cards on the Bridge, for Punk6529.', 'blue'); LHS.draw(5); }
 const rain = []; let rainMesh = null;
 (function () { const g = new THREE.PlaneGeometry(1, 1); rainMesh = new THREE.InstancedMesh(g, new THREE.MeshBasicMaterial({ map: ATL[0], toneMapped: false, side: THREE.DoubleSide }), 140); rainMesh.frustumCulled = false; rainMesh.visible = false;
   const ids = G('Seize').filter(n => byN[n].uv[0] === 0).slice(0, 40); const uvr = [];
@@ -1259,7 +1391,8 @@ function updatePeople(dt, t) {
 let last = performance.now(), T = 0, aimT = 0, zoneName = '';
 function frame(dt) {
   T += dt;
-  if (state.started) stepPlayer(dt);
+  if (state.started && !RIDE.on) stepPlayer(dt);
+  if (RIDE.on && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y)) { RIDE.top = false; endRide(); }
   // light: sunrise relay, summer override, presets
   let target = presetTarget;
   if (sunrise > 0) { sunrise -= dt; if (sunrise <= 0) setPreset(presetName === 'dawn' ? 'golden' : presetName, true); }
@@ -1267,10 +1400,12 @@ function frame(dt) {
   if (inSummer && (presetName === 'night' || presetName === 'dawn')) { target = PRESETS.day; if (!state.summerNote) { state.summerNote = true; toast('SUMMER.JPG. WEATHER UPDATES DISABLED.'); } } else if (!inSummer) state.summerNote = false;
   lerpLight(dt, target); applyLight();
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
-  updateWorld(dt, T); updatePeople(dt, T); flushCards();
+  updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); flushCards();
   // camera
   const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
+  if (RIDE.on) { RIDE.t += dt; const a = RIDE.a0 + RIDE.t / RIDE.dur * PI * 2; camera.position.set(wheel.cx - 2.6, wheel.hub - Math.sin(a + PI / 2) * wheel.R - 0.6, wheel.cz + Math.cos(a + PI / 2) * wheel.R); P.x = camera.position.x; P.z = camera.position.z;
+    if (RIDE.t > RIDE.dur * 0.48 && !RIDE.top) { RIDE.top = true; toast('STILL EARLY.', 'blue'); } if (RIDE.t >= RIDE.dur) { RIDE.top = false; endRide(); } }
   // sun shadow follows the visitor on a 4 m grid
   const sx = Math.round(P.x / 4) * 4, sz = Math.round(P.z / 4) * 4; sun.target.position.set(sx, 0, sz); sun.position.set(sx + L.dir.x * 160, L.dir.y * 160 + 2, sz + L.dir.z * 160);
   // zone + interact prompt + aim tooltip
@@ -1296,7 +1431,7 @@ requestAnimationFrame(loop);
 hud();
 
 /* test hooks */
-window.__game = { P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, KEYS, EGGS, setPreset, pickAt, openCard, residents, agents, cardBuf, start: () => { $('enter').style.display = 'none'; state.started = true; }, keys, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
+window.__game = { RIDE, TOUCH, WHALE, DRYER, postcard, issueReceipt, startRide, P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, KEYS, EGGS, setPreset, pickAt, openCard, residents, agents, cardBuf, start: () => { $('enter').style.display = 'none'; state.started = true; }, keys, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
 })();
 </script>
 </body>

@@ -7,7 +7,7 @@ const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1
 scripts.forEach(s => acorn.parse(s, { ecmaVersion: 2022 })); console.log('PASS 1 parse', scripts.length, 'scripts');
 const dom = new JSDOM(html.replace(/<script[\s\S]*?<\/script>/g, ''), { pretendToBeVisual: true, runScripts: 'outside-only', url: 'https://local.test/' });
 const w = dom.window; global.window = w; global.document = w.document;
-w.HTMLCanvasElement.prototype.getContext = function (t) { if (t === '2d') return { fillStyle: '', font: '', textAlign: '', textBaseline: '', fillRect() { }, fillText() { }, drawImage() { }, measureText: s => ({ width: String(s).length * 10 }) }; return null; };
+w.HTMLCanvasElement.prototype.getContext = function (t) { if (t === '2d') return { fillStyle: '', font: '', textAlign: '', textBaseline: '', fillRect() { }, fillText() { }, drawImage() { }, clearRect() { }, getImageData: () => ({ data: [0, 0, 0, 255] }), measureText: s => ({ width: String(s).length * 10 }) }; return null; };
 const R = THREE.WebGLRenderer; let renders = 0;
 w.THREE = Object.assign({}, THREE, { WebGLRenderer: function () { return { setPixelRatio() { }, setSize() { }, render() { renders++; }, setClearColor() { }, shadowMap: {}, capabilities: { getMaxAnisotropy: () => 8 }, domElement: w.document.createElement('canvas') }; } });
 w.matchMedia = () => ({ matches: false }); w.requestAnimationFrame = () => 0; w.performance = { now: () => 0 };
@@ -42,9 +42,9 @@ G.teleport(-44, 54, 0); ok(walk(-58.8, 45), 'summer boardwalk to its west end');
 // vault blocked before keys
 G.teleport(0, -108, 0); walk(0, -125, 1500); ok(P.z > -122.4, 'vault port blocked without six keys (z=' + P.z.toFixed(2) + ')');
 // OM portal teleports onto the lighthouse roof, then the fall
-G.teleport(30, -72, 0); walk(30, -80.8, 1500); K.KeyW = true; for (let i = 0; i < 40; i++) G.step(1 / 60); K.KeyW = false; ok(P.y > 40, 'OM portal drops you on the lighthouse roof (y=' + P.y.toFixed(1) + ')');
+G.teleport(30, -72, 0); walk(30, -79.2, 1500); P.yaw = 0; K.KeyW = true; for (let i = 0; i < 30 && P.y < 40; i++) G.step(1 / 60); K.KeyW = false; ok(P.y > 40, 'OM portal drops you on the lighthouse roof (y=' + P.y.toFixed(1) + ')');
 K.KeyW = false; for (let i = 0; i < 60; i++) G.step(1 / 60); ok(P.y > 40, 'standing on the roof');
-P.yaw = Math.PI / 2; K.KeyW = true; for (let i = 0; i < 600; i++) G.step(1 / 60); K.KeyW = false; ok(P.y < 3, 'walked off the roof and landed (y=' + P.y.toFixed(2) + ')');
+P.yaw = -Math.PI / 2; K.KeyW = true; for (let i = 0; i < 600; i++) G.step(1 / 60); K.KeyW = false; ok(P.y < 3, 'walked off the roof and landed (y=' + P.y.toFixed(2) + ')');
 // 2030 stones by jumping
 G.teleport(0, 180, Math.PI); P.yaw = Math.PI; let landed = 0;
 for (let s = 0; s < 8; s++) { K.KeyW = true; K.ShiftLeft = false; for (let i = 0; i < 400 && P.ground; i++) { G.step(1 / 60); const f = G.floorAt(P.x, P.z + 0.5, P.y); if (f.f === null) break; } P.vy = 7.6; P.ground = false; P.fallFrom = P.y; for (let i = 0; i < 120; i++) { G.step(1 / 60); if (P.ground) break; } if (P.ground && P.z > 182) landed++; console.log('    jump', s, 'z', P.z.toFixed(2), 'y', P.y.toFixed(2), 'ground', P.ground); }
@@ -57,6 +57,12 @@ G.teleport(0, -108, 0); ok(walk(0, -127.5, 2000), 'walk into the vault');
 // eggs
 Object.keys(G.EGGS).forEach(k => { try { G.EGGS[k](); } catch (e) { console.log('FAIL egg', k, e.message); process.exitCode = 1; } }); console.log('  ok eggs fired:', Object.keys(G.EGGS).join(' '));
 ['golden', 'day', 'night', 'dawn'].forEach(p => G.setPreset(p, true));
+// delights
+G.startRide(); ok(G.RIDE.on, 'wheel ride starts'); G.step(1/30, 26*30+10); ok(!G.RIDE.on, 'wheel ride completes and drops you at the gate');
+G.teleport(G.TOUCH.x, G.TOUCH.z, 0); K.KeyW=false; G.step(1/30, 330); ok(G.TOUCH.issued, 'touch grass receipt issued after 10 s still');
+G.WHALE.t = 11; G.step(1/30, 120); ok(G.WHALE.count >= 1, 'whale surfaced');
+G.DRYER.t = 0; G.teleport(-52, -8.2, 0); G.step(1/60, 2); w.dispatchEvent(new w.KeyboardEvent('keydown', { code: 'KeyE', key: 'e' })); G.step(1/60, 5); ok(G.DRYER.t > 0, 'paper hands dryer fires on E');
+try { G.postcard(); console.log('  ok postcard ran'); } catch (e) { console.log('FAIL postcard', e.message); process.exitCode = 1; }
 // soak
 G.teleport(0, 60, 0); const t0 = Date.now(); G.step(1 / 60, 900); console.log('PASS soak 900 frames in', Date.now() - t0, 'ms, renders', renders, 'errors', errs);
 const stolen = G.agents.filter(a => a.stolen).length; console.log('  agents carrying JPGs after soak:', stolen);

@@ -1,8 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>MEME ISLAND</title>
 <link rel="icon" href="assets/eye.png">
 <style>
@@ -67,8 +62,6 @@ button.b.on{background:var(--blue);border-color:var(--blue);color:#fff}
 #drop{position:fixed;inset:0;z-index:45;border:4px dashed var(--blue);display:none;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:32px;background:rgba(41,98,255,.15);pointer-events:none}
 #flash{position:fixed;inset:0;z-index:35;pointer-events:none;background:#fff;opacity:0;transition:opacity .4s}
 </style>
-</head>
-<body>
 <div id="stage"></div>
 <div id="enter"><div class="card">
   <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
@@ -1434,5 +1427,3 @@ hud();
 window.__game = { RIDE, TOUCH, WHALE, DRYER, postcard, issueReceipt, startRide, P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, KEYS, EGGS, setPreset, pickAt, openCard, residents, agents, cardBuf, start: () => { $('enter').style.display = 'none'; state.started = true; }, keys, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
 })();
 </script>
-</body>
-</html>
