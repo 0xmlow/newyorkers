@@ -18,6 +18,8 @@ Live at **https://n3wyorkers.com**
 | `main` | This page, plus the original placeholder landing page. `characters/`, `cameos/` and `metadata/` are empty scaffolding from the repository's first day. |
 | `claude/new-repo-new-yorkers-u1iphp` | The dev placeholder served by GitHub Pages at `dev.n3wyorkers.com`. |
 | `mosh-lab` | MOSH LAB, MLow's glitch instrument: 60 WebGL effects, 48 presets, loop perfect GIF and MP4 export with the MLOW mark. Desktop app source, and the same files run online at [n3wyorkers.com/moshlab](https://n3wyorkers.com/moshlab). |
+| `meme-island` | MEME ISLAND, a walkable three.js island for The Memes by 6529 and NEW YORKERS: every one of the 527 meme cards hung by district and by floor price, 66 of MLow's meme sculptures, hidden keys and typed easter eggs, a Windows 98 desktop. Plain HTML, no build step, and the same files run online at [n3wyorkers.com/island](https://n3wyorkers.com/island). |
+| `your-moms-basement` | YOUR MOM'S BASEMENT, a walkable three.js basement under a two family house in Queens: eight rooms and five sub rooms, census paintings on every wall, twenty meme sculptures as trophies, the Rat King's court, forty easter eggs. Plain HTML, no build step, and the same files run online at [n3wyorkers.com/basement](https://n3wyorkers.com/basement). |
 
 The working source of truth is the artist's local folder `NEW YORKERS SITE/`.
 The `Museum` branch is a copy of its full history (145 commits), pushed
