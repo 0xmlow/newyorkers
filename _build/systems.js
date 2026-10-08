@@ -133,7 +133,11 @@ const TOUR = [
   { name: 'the great wave', dur: 7, pos: [[-16, 1.8, -2], [-12.5, 1.9, -4.5]], look: [[-10.4, 1.6, -6.0], [-10.4, 1.8, -6.0]] },
   { name: "the rat king's court", dur: 9, pos: [[9, 1.7, 20.0], [8.2, 1.6, 22.5], [7.0, 1.4, 25.4]], look: [[12, 1.2, 24], [9.5, 0.3, 24], [8.6, 0.9, 27.5]] },
   { name: "mom's second freezer", dur: 8, pos: [[24, 1.7, 21.5], [24, 1.8, 24.0], [23, 1.6, 25.6]], look: [[24, 1.2, 23.5], [24, 1.2, 26.5], [21, 1.5, 22]] },
-  { name: 'the dryer', dur: 5, pos: [[8.3, 1.4, 14.2], [8.3, 1.0, 12.9]], look: [[8.3, 0.5, 11.6], [8.3, 0.5, 11.6]] }
+  { name: 'the dryer', dur: 5, pos: [[8.3, 1.4, 14.2], [8.3, 1.0, 12.9]], look: [[8.3, 0.5, 11.6], [8.3, 0.5, 11.6]] },
+  { name: 'the pegboard', dur: 6, pos: [[0.6, 1.6, 22.6], [-0.3, 1.5, 21.6]], look: [[-1.3, 1.35, 21.4], [-1.3, 1.35, 21.4]] },
+  { name: 'the workbench', dur: 7, pos: [[8.0, 1.6, 14.0], [6.4, 1.5, 15.6]], look: [[4.78, 1.4, 15.6], [4.78, 1.2, 15.8]] },
+  { name: 'the court desk', dur: 7, pos: [[9.6, 1.6, 23.4], [10.8, 1.3, 22.0]], look: [[12.0, 0.8, 21.0], [12.0, 0.8, 21.0]] },
+  { name: 'the sofa', dur: 7, pos: [[-2.6, 1.5, 19.3], [-1.0, 1.3, 19.2]], look: [[0, 0.6, 17.4], [0.4, 0.6, 17.4]] }
 ];
 let tourIdx = -1;
 function nextTour() { tourIdx = (tourIdx + 1) % TOUR.length; const r = TOUR[tourIdx]; if (r.name.includes('freezer') && !W.freezer.open) { W.freezer.open = true; W.freezerLight.intensity = 3; } playRail(Object.assign({}, r, { done: () => { if (tourIdx >= 0) nextTour(); } })); toast('TOUR: ' + Q(r.name.toUpperCase()) + '. ANY MOVE KEY TO GET OFF.', 'blue'); }
@@ -240,7 +244,7 @@ function frame(dt) {
   dt = dt > 0 ? Math.min(dt, 0.1) : 0; T += dt;
   if (state.started && !RIDE.on && !RAIL.on) stepPlayer(dt);
   if (RAIL.on && tourIdx >= 0 && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || keys.ArrowUp || keys.ArrowDown || joy.x || joy.y)) stopTour();
-  updateModels(dt); updateWorld(dt, T); updateDelights(dt); flushCards();
+  updateModels(dt); updateWorld(dt, T); updateDelights(dt); if (typeof v2Tick === 'function' && typeof V2 !== 'undefined') v2Tick(dt, T); flushCards();
   const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.03 : 0;
   camera.position.set(P.x, P.y + 1.7 + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
   if (RIDE.on) { RIDE.t += dt; const a = RIDE.t / RIDE.dur * PI * 2; camera.position.set(W.dryer.x + Math.sin(a) * 0.02, 0.5 + Math.cos(a) * 0.02, W.dryer.z + 0.1); camera.rotation.set(0, 0, a); camera.rotateY(PI); P.x = W.dryer.x; P.z = W.dryer.z + 1.0; if (RIDE.t >= RIDE.dur) endDryer(); }
@@ -262,4 +266,4 @@ addEventListener('resize', () => { if (window.__lockSize) return; camera.aspect 
 setupPost(); hud();
 $('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; setupEnv(); toast("WELCOME TO YOUR MOM'S BASEMENT. 120 NEW YORKERS. 20 TROPHIES. ONE BAGEL. SHE IS UPSTAIRS.", 'blue'); setTimeout(() => toast('TRY TYPING gm. PRESS ENTER FIRST.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
 requestAnimationFrame(loop);
-window.__game = { POST, RAIL, TOUR, playRail, renderFrame, SCL, MODELS, W, RIDE, startDryer, openFreezer, mining, postcard, say, EGGS, P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, PADS, INTER, ZONES, HUNG, pickAt, openCard, cardBuf, keys, setPost: on => { POST.on = on && !!POST.comp; }, start: () => { $('enter').style.display = 'none'; state.started = true; }, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };
+window.__game = { get V2() { return V2; }, POST, RAIL, TOUR, playRail, renderFrame, SCL, MODELS, W, RIDE, startDryer, openFreezer, mining, postcard, say, EGGS, P, state, scene, camera, renderer, teleport, frame, floorAt, collide, SEGS, CIRCS, PADS, INTER, ZONES, HUNG, pickAt, openCard, cardBuf, keys, setPost: on => { POST.on = on && !!POST.comp; }, start: () => { $('enter').style.display = 'none'; state.started = true; }, step: (dt, n) => { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 60); } };

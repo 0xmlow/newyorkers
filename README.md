@@ -20,6 +20,23 @@ WASD walk, SHIFT hurry, SPACE jump, drag or arrows to look, E use, click any pai
 (try gm, hodl at the dryer, cope at the card table, greentext at the TV, mom, touch grass, rent, bagel), C tour, P postcard,
 H at the corkboard to pin a JPG (a posting permit is issued).
 
+## V2, the degen dungeon layer (same day)
+
+MLow's verdict on V1 was "AI slop": sparse, clean, a few props in empty boxes. V2 is `_build/v2.js`, built from
+GPT-6 Astra's design document (`_build/astra_v2.md`): twelve photographic wall panels and a royal portrait
+(Nano Banana Pro), ten keyed decals, 26 CC0 models from Poly Haven (`site/assets/cc0/`, `polyhaven.py`), ten of MLow's
+own stickers turned into 3D on FLORA with Trellis (`site/assets/sticker/`, `sticker3d.py`, masters in
+`DELIVERABLES/stickers_3d/`), 63 NEW YORKERS 3D props, the density schedule per zone (holiday bins, the treadmill coat
+rack, the thermostat, the hot water heater, the slop sink, the sump, the workbench, the paint cans, the exercise
+graveyard, the Peloton, the water cooler, the deli counter, the seltzer pallet, the utility gantry and console, the
+runner, the dais, the throne, the Rat King in his bathrobe, the court desk, the soup tubs), five sub rooms behind doors
+(crawlspace, sub basement, panic room, server closet, wine cellar of seltzer), Astra's lighting per zone and the forty
+eggs (type gm, gn, wagmi, ngmi, hodl, rekt, cope, anon, lurk, greentext, sage, thread, bodega, baconeggandcheese,
+subway, showtime, alternate, hungry, laundry, rent, key, upstairs, mom; press E at RENT, COPIUM, RESET, the freezer
+handle, the basket, the carton, the stamp, the doors; look for three seconds at the portrait, the LIQUIDITY plaque, the
+dryer sock, the MLow seal; stand still in the court or the cold room; 07:00, 17:00 and 23:00 New York time; the 1st and
+the 15th of the month).
+
 ## Files
 
 - `site/index.html` the basement (all code inline, built from `_build/{engine,world,systems}.js` by `_build/build.py`)

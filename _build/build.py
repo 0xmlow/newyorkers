@@ -3,6 +3,8 @@ import os, json, re
 H = os.path.dirname(os.path.abspath(__file__)); S = os.path.join(H, '..', 'site'); A = os.path.join(S, 'assets')
 rd = lambda f: open(os.path.join(H, f)).read()
 d = json.load(open(os.path.join(A, 'data.json'))); d['props'] = json.load(open(os.path.join(A, 'props.json'))); d['sculpts'] = json.load(open(os.path.join(A, 'sculpts.json')))
+d['cc0'] = json.load(open(os.path.join(A, 'cc0.json'))) if os.path.exists(os.path.join(A, 'cc0.json')) else []
+d['stickers'] = json.load(open(os.path.join(A, 'stickers.json'))) if os.path.exists(os.path.join(A, 'stickers.json')) else []
 data = json.dumps(d, separators=(',', ':'))
 crash = """<script id="crashjs">
 (function () { var shown = 0; function show(m) { if (shown++ > 2) return; var c = document.getElementById('crash'), p = document.getElementById('crashMsg'); if (!c || !p) return; p.textContent += (p.textContent ? '\\n' : '') + m; c.style.display = 'flex'; }
@@ -12,7 +14,7 @@ crash = """<script id="crashjs">
 })();
 </script>"""
 vendor = ''.join(f'<script src="vendor/{v}"></script>\n' for v in ['three.min.js', 'GLTFLoader.js', 'meshopt_decoder.js', 'CopyShader.js', 'LuminosityHighPassShader.js', 'GammaCorrectionShader.js', 'EffectComposer.js', 'RenderPass.js', 'ShaderPass.js', 'MaskPass.js', 'UnrealBloomPass.js', 'GLTFExporter.js'])
-js = rd('engine.js') + '\n' + rd('world.js') + '\n' + rd('systems.js')
+js = rd('engine.js') + '\n' + rd('world.js') + '\n' + rd('systems.js') + '\n' + rd('v2.js')
 page = f"""<!doctype html>
 <html lang="en">
 <head>

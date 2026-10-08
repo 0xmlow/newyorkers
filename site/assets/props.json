@@ -150,6 +150,146 @@
 "kb": 772
 },
 {
+"key": "switchplate",
+"label": "Switch plate",
+"kb": 648
+},
+{
+"key": "outlet",
+"label": "Outlet cover",
+"kb": 1007
+},
+{
+"key": "umbrellastand",
+"label": "Umbrella stand",
+"kb": 500
+},
+{
+"key": "trashbin",
+"label": "Trash bin",
+"kb": 1040
+},
+{
+"key": "eggcrate",
+"label": "Egg crate",
+"kb": 644
+},
+{
+"key": "prepbin",
+"label": "Prep bin",
+"kb": 1699
+},
+{
+"key": "palletjack",
+"label": "Pallet jack",
+"kb": 670
+},
+{
+"key": "medcabinet",
+"label": "Medicine cabinet",
+"kb": 560
+},
+{
+"key": "nailbin",
+"label": "Nail bin",
+"kb": 618
+},
+{
+"key": "kibblebin",
+"label": "Kibble bin",
+"kb": 696
+},
+{
+"key": "recyclingbin",
+"label": "Recycling bin",
+"kb": 827
+},
+{
+"key": "breadslicer",
+"label": "Bread slicer",
+"kb": 750
+},
+{
+"key": "awning",
+"label": "Bodega awning",
+"kb": 601
+},
+{
+"key": "cigsign",
+"label": "Cigarette sign",
+"kb": 862
+},
+{
+"key": "lottoboard",
+"label": "Lotto board",
+"kb": 947
+},
+{
+"key": "scratchoff",
+"label": "Scratch off tray",
+"kb": 651
+},
+{
+"key": "coffeelids",
+"label": "Coffee lid stack",
+"kb": 1254
+},
+{
+"key": "exitlamp",
+"label": "Exit lamp",
+"kb": 603
+},
+{
+"key": "grate",
+"label": "Grate",
+"kb": 603
+},
+{
+"key": "standpipe",
+"label": "Standpipe",
+"kb": 647
+},
+{
+"key": "newsbox",
+"label": "Newspaper box",
+"kb": 511
+},
+{
+"key": "cablespool",
+"label": "Cable spool",
+"kb": 848
+},
+{
+"key": "fishslice",
+"label": "Fish slice",
+"kb": 1325
+},
+{
+"key": "oilcan",
+"label": "Oil can",
+"kb": 592
+},
+{
+"key": "poison",
+"label": "Poison bottle",
+"kb": 508
+},
+{
+"key": "crystalpigeon",
+"label": "Crystal pigeon",
+"kb": 1084
+},
+{
+"key": "newspaper",
+"label": "Newspaper",
+"kb": 560
+},
+{
+"key": "shippinglabel",
+"label": "Shipping label",
+"kb": 375
+},
+{
 "key": "toaster",
 "label": "Toaster",
 "kb": 386

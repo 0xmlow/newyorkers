@@ -7,7 +7,7 @@ window.__cap = {
     this.size(w, h); g.SCL.range = 9999; return { gl: (() => { const gl = g.renderer.getContext(), e = gl.getExtension('WEBGL_debug_renderer_info'); return e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : 'n/a'; })() };
   },
   size(w, h) { const g = window.__game; window.__lockSize = true; g.renderer.setPixelRatio(1); g.renderer.setSize(w, h, false); g.camera.aspect = w / h; g.camera.updateProjectionMatrix(); if (g.POST.comp) g.POST.comp.setSize(w, h); },
-  async loadAll() { const g = window.__game; for (let i = 0; i < 400; i++) { g.step(1 / 60, 1); if (g.MODELS.every(s => s.state === 'ready' || s.state === 'error')) break; await new Promise(r => setTimeout(r, 120)); } return g.MODELS.filter(s => s.state === 'ready').length + '/' + g.MODELS.length; },
+  async loadAll() { const g = window.__game; for (let i = 0; i < 1500; i++) { g.step(1 / 60, 1); if (g.MODELS.every(s => s.state === 'ready' || s.state === 'error')) break; await new Promise(r => setTimeout(r, 120)); } return g.MODELS.filter(s => s.state === 'ready').length + '/' + g.MODELS.length; },
   prep(js) { (new Function('g', js))(window.__game); },
   settle(n) { window.__game.step(1 / 60, n || 60); },
   railAt(i, u) { const g = window.__game, r = g.TOUR[i]; g.playRail(Object.assign({}, r, { done: null })); const f = Math.max(1, Math.round(u * r.dur * 60)); g.step(r.dur / Math.max(1, Math.round(r.dur * 60)), f); return r.name; },

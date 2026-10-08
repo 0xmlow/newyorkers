@@ -74,6 +74,7 @@ const MAT = {
   pipe: new THREE.MeshStandardMaterial({ color: 0x9b9c94, roughness: 0.55, metalness: 0.3 }),
   wood: new THREE.MeshStandardMaterial({ color: 0x6b4a2e, roughness: 0.8 }),
   beige: new THREE.MeshStandardMaterial({ color: 0xd9cfae, roughness: 0.7 }),
+  gold: new THREE.MeshStandardMaterial({ color: 0xc9a227, roughness: 0.35, metalness: 0.9 }),
   crystal: new THREE.MeshStandardMaterial({ color: 0x7FD4FF, roughness: 0.15, metalness: 0.1, emissive: 0x1f6f9f, emissiveIntensity: 0.55, transparent: true, opacity: 0.9 }),
   frost: new THREE.MeshStandardMaterial({ color: 0xdfeaf2, roughness: 0.95 }),
   glass: new THREE.MeshStandardMaterial({ color: 0xcfe0ea, roughness: 0.05, metalness: 0.4, transparent: true, opacity: 0.22 }),

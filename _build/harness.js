@@ -24,7 +24,7 @@ ok(walk(0, 28.6, 3000), 'climb the stairs to the door'); ok(P.y > 2.0, 'at the t
 // den, mirror blocked, card room, laundry, court, freezer
 ok(walk(2.6, 18.6) && walk(2.6, 15.5) && walk(0, 14.5), 'into the den, around the couch'); G.teleport(-3.0, 15, Math.PI / 2); walk(-6, 15, 600); ok(P.x > -4.6, 'the mirror is a wall (x=' + P.x.toFixed(2) + ')');
 G.teleport(-3.5, 18.5, 0); ok(walk(-5.2, 18.5) && walk(-8.5, 20.8), 'den to the card room');
-G.teleport(3.5, 13.2, 0); ok(walk(5.3, 13.2) && walk(9.6, 17.2), 'den to the laundry, onto the orange footprints');
+G.teleport(3.5, 13.2, 0); ok(walk(5.3, 13.2) && walk(6.8, 13.4) && walk(9.6, 17.2), 'den to the laundry, onto the orange footprints');
 ok(walk(9, 18.4) && walk(9, 20.5) && walk(7.5, 25.5), 'laundry to the rat court, up to the freezer');
 G.teleport(-2.5, 10.5, 0); ok(walk(-2.5, 2.0, 3000), 'down the infinite hallway to the sawhorse'); walk(-2.5, -5, 600); ok(P.z > 0.8, 'the sawhorse holds (z=' + P.z.toFixed(2) + ')');
 G.teleport(-2.5, 3.0, 0); ok(walk(-5.5, 3.0) && walk(-13.5, -4), 'through the side door into the bagel chamber');
@@ -40,7 +40,7 @@ try { G.mining(); G.postcard(); console.log('  ok mining dialog and postcard ran
 ['ArrowUp'].forEach(() => { G.teleport(0, 15.5, 0); const z0 = P.z; K.ArrowUp = true; G.step(1 / 60, 60); K.ArrowUp = false; ok(P.z < z0 - 2, 'arrow up walks forward'); const y0 = P.yaw; K.ArrowLeft = true; G.step(1 / 60, 30); K.ArrowLeft = false; ok(P.yaw > y0 + 0.5, 'arrow left turns'); });
 try { G.frame(-0.03); G.frame(0); console.log('  ok negative first frame'); } catch (e) { console.log('FAIL negative first frame', e.message); process.exitCode = 1; }
 // every tour rail runs
-for (let i = 0; i < G.TOUR.length; i++) { G.playRail(Object.assign({}, G.TOUR[i], { done: null })); G.step(G.TOUR[i].dur / 60, 62); } ok(!G.RAIL.on, 'all ' + G.TOUR.length + ' tour rails complete');
+for (let i = 0; i < G.TOUR.length; i++) { G.playRail(Object.assign({}, G.TOUR[i], { done: null })); G.step(0.1, Math.ceil(G.TOUR[i].dur / 0.1) + 5); } ok(!G.RAIL.on, 'all ' + G.TOUR.length + ' tour rails complete');
 // every hung work: its viewing spot (1.6 m out along the normal) must be legal floor with no block
 let bad = 0; const badList = []; G.HUNG.forEach(h => { if (h.f < 0) return; if (h.pos.x < -1.3 && h.pos.x > -3.7 && h.pos.z < 11.0) return; const n = new THREE.Vector3(0, 0, 1).applyQuaternion(h.quat); const x = h.pos.x + n.x * 1.6, z = h.pos.z + n.z * 1.6; const f = G.floorAt(x, z, 0); const p = { x, z }; G.collide(p, 0); if (f.f === null || f.block || Math.hypot(p.x - x, p.z - z) > 0.3) { bad++; badList.push([h.n, h.pos.x.toFixed(1), h.pos.y.toFixed(1), h.pos.z.toFixed(1), f.f === null ? 'nofloor' : f.block ? 'block' : 'wall']); } });
 if (badList.length) console.log('   bad spots', JSON.stringify(badList)); ok(bad === 0, 'every painting has a legal viewing spot (' + bad + ' bad)');
