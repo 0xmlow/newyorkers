@@ -13,22 +13,22 @@ FF = 'ffmpeg'; TT = os.path.join(H, 'cache', 'ttf')
 # rail index, title, line (Abloh voice, Astra's plaque lines)
 SEGS = [
   (0, '"THE STAIRS"', 'YOUR MOM\'S BASEMENT. CULTURAL INSTITUTION. SIDE ENTRANCE.'),
-  (1, '"THE WINDOW WELL"', 'THOSE ARE FEET. THAT IS OUTSIDE. NOT RECOMMENDED.'),
-  (2, '"THE TV DEN"', 'THE PLASTIC COUCH. COMFORT IS STILL IN THE PACKAGING.'),
-  (3, '"THE MIRROR"', 'THAT IS NOT THIS ROOM. IT NEVER WAS.'),
+  (13, '"THE PEGBOARD"', 'EVERY WRENCH THE SUPER EVER LOST.'),
+  (16, '"THE PLASTIC COUCH"', 'COMFORT IS STILL IN THE PACKAGING.'),
+  (2, '"THE TV DEN"', 'THE METS ARE TIED. THEY WILL NOT BE TIED FOR LONG.'),
   (4, '"THE CARD ROOM"', 'PROOF OF STAKE. FIVE DOLLAR MINIMUM.'),
+  (14, '"THE WORKBENCH"', 'ONE POLISHED SPOON. NOBODY KNOWS WHY.'),
   (5, '"BOILER AND LAUNDRY"', 'HEAT INCLUDED. PEACE SEPARATE.'),
   (6, '"THE 1998 PC"', 'YOUR WALLET IS NOW ARCHAEOLOGY.'),
   (7, '"THE INFINITE HALLWAY"', 'COZY. FLEXIBLE LAYOUT.'),
   (8, '"THE EVERYTHING BAGEL"', 'EVERYTHING EXCEPT AN EXIT.'),
-  (9, '"THE GREAT WAVE"', 'ONE OF 20 MEME SCULPTURES BY MLOW. IT IS IN THE SCHMEAR.'),
   (10, '"THE RAT KING\'S COURT"', 'LOCAL GOVERNMENT.'),
-  (11, '"MOM\'S SECOND FREEZER"', 'YOU KNOW WHAT YOU DID.'),
-  (12, '"THE DRYER"', 'ANOTHER CYCLE. SAME BAG.'),
+  (15, '"THE COURT DESK"', 'APPROVED BY MOM.'),
+  (11, '"MOM\'S SECOND FREEZER"', 'SOUP. MORE SOUP. EMERGENCY SOUP.'),
 ]
 def clean():
     from cdp import Page
-    LIB = open(os.path.join(H, 'capture_lib.js')).read(); D = os.path.join(OUT, 'clean'); os.makedirs(D, exist_ok=True)
+    LIB = open(os.path.join(H, 'capture_lib.js')).read(); D = os.path.join(OUT, 'clean_v2'); os.makedirs(D, exist_ok=True)
     p = Page.open('http://127.0.0.1:4208/index.html?cap=1', W, HH); time.sleep(4); p.eval(LIB); p.eval('__cap.boot(%d,%d)' % (W, HH)); print('models', p.eval('__cap.loadAll()', timeout=600))
     p.eval('__cap.prep("g.W.freezer.open = true; g.W.freezerLight.intensity = 3; if (g.POST.grade) g.POST.grade.uniforms.uGrain.value = 0;")')
     for k, (ri, title, line) in enumerate(SEGS):
