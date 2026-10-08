@@ -1,0 +1,9 @@
+/* basement additions to the Win98 base */
+#dlg{position:fixed;inset:0;z-index:41;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.18)}
+#dlg .win{width:min(440px,100%)}
+#dlg .inner{padding:10px;font-size:12px;line-height:1.5;display:flex;flex-direction:column;gap:8px}
+#dlg .inner .bar{height:18px;padding:2px;background:var(--field);box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade),inset -2px -2px var(--lite),inset 2px 2px var(--dark)}
+#dlg .inner .bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--title1) 0 9px,transparent 9px 11px);transition:width .4s}
+#cc{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9;display:none;max-width:min(760px,92vw);background:#000;color:#fff;font:700 15px/1.3 "Courier New",monospace;padding:4px 8px;white-space:pre-wrap;text-align:center;pointer-events:none}
+#cc.green{color:#789922}
+#zone{font-size:14px}
