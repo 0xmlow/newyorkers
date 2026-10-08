@@ -1,16 +1,17 @@
 # generated media: rebuilt by the _build scripts, too large for git
 assets/t/
-# The Museum branch force adds the 7,648 thumbnails the museum hangs (assets/t),
-# so the museum runs straight from a checkout. The rest of assets/t stays local.
 assets/glitch/
 assets/motion/
+assets/atlas/
 assets/mt/
 assets/stickers/
 assets/launch/
 assets/keystone/
 assets/honoraries/
+assets/museum/honor/
 assets/cards/
 assets/film/
+assets/collectors/
 _build/_orphan_thumbs/
 _build/_orphan_atlas/
 _build/*.log
@@ -28,13 +29,15 @@ n/
 h/
 rooms/
 !_build/museum/src/rooms/
-!assets/museum/rooms/
+!assets/press/rooms/
 learn/
 feeds/
-api/
+/api/
+# the Pages Functions and schemas in _build/api are code and must be versioned; only the generated root api/ is ignored
 sitemap.xml
 llms.txt
 llms-full.txt
+assets/museum/rooms/
 
 # the scripts keep timestamped copies beside the file they rewrite
 *.bak-*
@@ -45,3 +48,21 @@ llms-full.txt
 museum.*.html
 assets/museum/museum.*.js
 _build/museum/.audit_bundle_*
+assets/posters/
+
+# room share cards, rebuilt by _build/build_room_cards.py from MUSEUM EXPORTS (28 MB)
+assets/og/rooms/
+
+# the press sheet layout and its downscaled pictures, rebuilt by build_press_pdf.py
+_build/press_sheet/
+
+# the full size mosaic is rebuilt by build_mosaic.py; the site ships the four quarters
+_build/mosaic/full.jpg
+
+# the two standalone galleries are copied in whole by _build/build_galleries.py from their own repositories
+# (MEME ISLAND 2026-10-07, YOUR MOMS BASEMENT 2026-10-08; GitHub branches meme-island and your-moms-basement),
+# 180 MB of models and textures; only the share card is versioned here
+assets/island/*
+!assets/island/poster.jpg
+assets/basement/*
+!assets/basement/poster.jpg
