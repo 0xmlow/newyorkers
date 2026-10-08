@@ -94,9 +94,12 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
-              "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html")
+              "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html", "markup.html", "survey.html", "mosaic.html",
+              "states.html", "stop.html", "arcade.html", "island.html", "basement.html")
+# favicon.ico and the touch icon are real files at the root (made from the eye mark with its white corner
+# cropped away); site.webmanifest names them so a phone can pin the site.
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
-                           "humans.txt", "_redirects")
+                           "humans.txt", "_redirects", "favicon.ico", "apple-touch-icon.png", "icon-512.png", "site.webmanifest")
 for page in SITE_FILES:
     if os.path.exists(os.path.join(SITE, page)):
         shutil.copy2(os.path.join(SITE, page), os.path.join(OUT, page))
@@ -156,13 +159,17 @@ if not formspree:
 for sub in ("learn", "rooms", "n", "h", "api", "feeds"):
     src = os.path.join(SITE, sub); dst = os.path.join(OUT, sub)
     if os.path.isdir(dst): shutil.rmtree(dst)
-    if os.path.isdir(src): shutil.copytree(src, dst)
-with open(os.path.join(OUT, "404.html"), "w") as f:
-    f.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NEW YORKERS · Not Found</title></head>'
-            '<body style="background:#0D0D0D;color:#F0F4F8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:Georgia,serif;text-align:center">'
-            '<div><div style="font-size:64px;letter-spacing:.08em;color:#fff">404</div>'
-            '<p style="color:#8899AA;max-width:420px;line-height:1.6">This number has not been painted yet. The census keeps going anyway.</p>'
-            '<p><a href="/" style="color:#2962FF;text-decoration:none;font-family:Menlo,monospace;font-size:13px;letter-spacing:.2em">ENTER THE CENSUS</a></p></div></body></html>')
+    # APFS clones, as sync_dir does: a plain copy of n/ and h/ on every build filled the disk on 2026-10-07
+    if os.path.isdir(src) and subprocess.run(["cp", "-c", "-R", "-p", src, dst], capture_output=True).returncode != 0:
+        if os.path.isdir(dst): shutil.rmtree(dst)
+        shutil.copytree(src, dst)
+# THE ROLL was cancelled (see _redirects). roll/make_roll.py can still write api/roll.json by hand, and the
+# package must never carry a data file for a programme that does not exist.
+_rolljson = os.path.join(OUT, "api", "roll.json")
+if os.path.exists(_rolljson): os.remove(_rolljson); print("  dropped api/roll.json (THE ROLL is cancelled)")
+# The 404 is a designed page (three scenes, one picked at random per visit, art moshed in MOSH LAB),
+# kept as a source file so it can be edited without touching this script. Its media lives in assets/404/.
+shutil.copy2(os.path.join(SITE, "_build", "404", "404.html"), os.path.join(OUT, "404.html"))
 def sync_dir(src, dst):
     """sync-lite: copy missing files, recopy any file whose size or mtime changed (a rebuilt asset keeps its name),
     drop what the source no longer has. Recurses: it used to skip subfolders once the folder existed in the package,
@@ -187,7 +194,7 @@ def sync_dir(src, dst):
             shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
 
 
-for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "museum", "press", "og"):
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
@@ -217,8 +224,17 @@ for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "g
             fp = os.path.join(OUT, m)
             if os.path.exists(fp): os.remove(fp); print("  removed cut glitch", m)
 
+# Finder duplicates ("1004 (1).html"): 321 of them shipped in n/ on 2026-10-07, indexable copies of real pages.
+# They are gitignored in the source but the copies above take whole folders, so sweep the package for them.
+_dupe = re.compile(r" \(\d+\)(\.[^./]+)?$")
+_swept = 0
+for _d, _subs, _fs in os.walk(OUT):
+    for f in _fs:
+        if _dupe.search(f): os.remove(os.path.join(_d, f)); _swept += 1
+if _swept: print("  removed Finder duplicates:", _swept)
+
 with open(os.path.join(OUT, "assets", "data.js"), "w") as f:
-    f.write("window.NY_DATA = "); json.dump(data, f, separators=(",",":")); f.write(";\n")
+    f.write("window.NY_DATA = ");json.dump(data, f, separators=(",",":")); f.write(";\n")
 
 # Pages Functions: the form intake endpoint. Lives in _build/api/functions and is copied in whole,
 # so the API deploys with the site and there is no second service to keep alive.
@@ -318,7 +334,17 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
     # config.js is the control file: it carries the Privy App ID and the feature switches, and its
     # name never changes, so a long cache means a flip does not reach returning visitors for hours.
     # Keep it short and revalidated. prints.js is the same kind of switch.
-    f.write("""/assets/config.js
+    # Security headers on everything. HSTS because the site is https only (Pages redirects http itself,
+    # this stops the first insecure hop on return visits). SAMEORIGIN rather than DENY because the site
+    # frames nothing of its own but should not be framed by anyone else. Permissions-Policy allows the
+    # camera and geolocation to the site itself (wall.html uses the camera for AR; the atlas and the
+    # museum may ask where you are) and denies the microphone outright. No CSP: inline scripts on every
+    # page would need a rewrite first, and a broken CSP is a blank site.
+    f.write("""/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(self), microphone=(), geolocation=(self)
+/assets/config.js
   Cache-Control: public, max-age=60, must-revalidate
 /assets/prints.js
   Cache-Control: public, max-age=300, must-revalidate

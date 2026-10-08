@@ -1,0 +1,317 @@
+[
+{
+"key": "bagelbin",
+"label": "Bagel bin",
+"kb": 773
+},
+{
+"key": "creamcheese",
+"label": "Cream cheese tub",
+"kb": 809
+},
+{
+"key": "catbed",
+"label": "Bodega cat bed",
+"kb": 536
+},
+{
+"key": "lotto",
+"label": "Lottery ticket rack",
+"kb": 498
+},
+{
+"key": "fan",
+"label": "Bodega fan",
+"kb": 987
+},
+{
+"key": "seltzer",
+"label": "Seltzer siphon",
+"kb": 681
+},
+{
+"key": "rat",
+"label": "Rat on rail",
+"kb": 713
+},
+{
+"key": "radiator",
+"label": "Radiator",
+"kb": 679
+},
+{
+"key": "ceilingfan",
+"label": "Ceiling fan",
+"kb": 977
+},
+{
+"key": "floorlamp",
+"label": "Floor lamp",
+"kb": 517
+},
+{
+"key": "steampipe",
+"label": "Steam pipe",
+"kb": 974
+},
+{
+"key": "fusebox",
+"label": "Fuse box",
+"kb": 1009
+},
+{
+"key": "windowfan",
+"label": "Window fan",
+"kb": 1061
+},
+{
+"key": "crystalrat",
+"label": "Crystal rat",
+"kb": 1122
+},
+{
+"key": "crystalroach",
+"label": "Crystal roach",
+"kb": 951
+},
+{
+"key": "urn",
+"label": "Coffee urn",
+"kb": 879
+},
+{
+"key": "beercase",
+"label": "Beer case",
+"kb": 430
+},
+{
+"key": "cooler",
+"label": "Soda cooler",
+"kb": 764
+},
+{
+"key": "milkcrate",
+"label": "Milk crate",
+"kb": 1039
+},
+{
+"key": "freezerdoor",
+"label": "Freezer door",
+"kb": 808
+},
+{
+"key": "payphone",
+"label": "Payphone",
+"kb": 473
+},
+{
+"key": "radio",
+"label": "Radio",
+"kb": 724
+},
+{
+"key": "poolcue",
+"label": "Pool cue",
+"kb": 604
+},
+{
+"key": "dart",
+"label": "Dart",
+"kb": 694
+},
+{
+"key": "hotsauce",
+"label": "Hot sauce shelf",
+"kb": 754
+},
+{
+"key": "newspapers",
+"label": "Newspaper stack",
+"kb": 601
+},
+{
+"key": "headphone",
+"label": "Headphone",
+"kb": 750
+},
+{
+"key": "mic",
+"label": "Microphone",
+"kb": 825
+},
+{
+"key": "tablelamp",
+"label": "Table lamp",
+"kb": 675
+},
+{
+"key": "steamvalve",
+"label": "Steam valve",
+"kb": 772
+},
+{
+"key": "switchplate",
+"label": "Switch plate",
+"kb": 648
+},
+{
+"key": "outlet",
+"label": "Outlet cover",
+"kb": 1007
+},
+{
+"key": "umbrellastand",
+"label": "Umbrella stand",
+"kb": 500
+},
+{
+"key": "trashbin",
+"label": "Trash bin",
+"kb": 1040
+},
+{
+"key": "eggcrate",
+"label": "Egg crate",
+"kb": 644
+},
+{
+"key": "prepbin",
+"label": "Prep bin",
+"kb": 1699
+},
+{
+"key": "palletjack",
+"label": "Pallet jack",
+"kb": 670
+},
+{
+"key": "medcabinet",
+"label": "Medicine cabinet",
+"kb": 560
+},
+{
+"key": "nailbin",
+"label": "Nail bin",
+"kb": 618
+},
+{
+"key": "kibblebin",
+"label": "Kibble bin",
+"kb": 696
+},
+{
+"key": "recyclingbin",
+"label": "Recycling bin",
+"kb": 827
+},
+{
+"key": "breadslicer",
+"label": "Bread slicer",
+"kb": 750
+},
+{
+"key": "awning",
+"label": "Bodega awning",
+"kb": 601
+},
+{
+"key": "cigsign",
+"label": "Cigarette sign",
+"kb": 862
+},
+{
+"key": "lottoboard",
+"label": "Lotto board",
+"kb": 947
+},
+{
+"key": "scratchoff",
+"label": "Scratch off tray",
+"kb": 651
+},
+{
+"key": "coffeelids",
+"label": "Coffee lid stack",
+"kb": 1254
+},
+{
+"key": "exitlamp",
+"label": "Exit lamp",
+"kb": 603
+},
+{
+"key": "grate",
+"label": "Grate",
+"kb": 603
+},
+{
+"key": "standpipe",
+"label": "Standpipe",
+"kb": 647
+},
+{
+"key": "newsbox",
+"label": "Newspaper box",
+"kb": 511
+},
+{
+"key": "cablespool",
+"label": "Cable spool",
+"kb": 848
+},
+{
+"key": "fishslice",
+"label": "Fish slice",
+"kb": 1325
+},
+{
+"key": "oilcan",
+"label": "Oil can",
+"kb": 592
+},
+{
+"key": "poison",
+"label": "Poison bottle",
+"kb": 508
+},
+{
+"key": "crystalpigeon",
+"label": "Crystal pigeon",
+"kb": 1084
+},
+{
+"key": "newspaper",
+"label": "Newspaper",
+"kb": 560
+},
+{
+"key": "shippinglabel",
+"label": "Shipping label",
+"kb": 375
+},
+{
+"key": "toaster",
+"label": "Toaster",
+"kb": 386
+},
+{
+"key": "hourglass",
+"label": "Hourglass",
+"kb": 439
+},
+{
+"key": "mausoleum",
+"label": "Mausoleum",
+"kb": 500
+},
+{
+"key": "potion",
+"label": "Potion bottle",
+"kb": 124
+},
+{
+"key": "eyekey",
+"label": "Eye key",
+"kb": 498
+}
+]

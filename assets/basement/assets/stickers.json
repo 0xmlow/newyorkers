@@ -1,0 +1,52 @@
+[
+{
+"key": "cellar_door",
+"kb": 274,
+"master_kb": 2051
+},
+{
+"key": "coal_chute",
+"kb": 205,
+"master_kb": 1678
+},
+{
+"key": "pickle_barrel",
+"kb": 303,
+"master_kb": 1998
+},
+{
+"key": "fuse_box",
+"kb": 279,
+"master_kb": 1955
+},
+{
+"key": "rent_envelope",
+"kb": 169,
+"master_kb": 1571
+},
+{
+"key": "laundry_bag",
+"kb": 382,
+"master_kb": 2266
+},
+{
+"key": "drying_rack",
+"kb": 176,
+"master_kb": 1498
+},
+{
+"key": "rabbit_ears",
+"kb": 101,
+"master_kb": 1075
+},
+{
+"key": "mop_bucket",
+"kb": 172,
+"master_kb": 1415
+},
+{
+"key": "cheese_wheel",
+"kb": 328,
+"master_kb": 2143
+}
+]
