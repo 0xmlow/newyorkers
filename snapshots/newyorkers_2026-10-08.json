@@ -1,0 +1,957 @@
+{
+ "contract": "0x3386e98e3835d25f20e9a4e2c0bbb9859fedc9c4",
+ "name": "N3W YORKERS // By MLow",
+ "totalSupply": "777",
+ "takenAt": "2026-10-09T00:04:52.925934+00:00",
+ "holders": 158,
+ "rows": [
+  {
+   "wallet": "0xCC235A9A16FA6CF3fE749A3752af3B4b4Aed9d5D",
+   "ens": null,
+   "held": 124,
+   "alloc": 17732017
+  },
+  {
+   "wallet": "0x83EE04581317329Bf87181DF848918952adde719",
+   "ens": "cryptocurrents.eth",
+   "held": 110,
+   "alloc": 15730015
+  },
+  {
+   "wallet": "0xA8357Ee17CB3ff5a6b9694DdC8FdE0ed2cE9d788",
+   "ens": "mlow.eth",
+   "held": 56,
+   "alloc": 8008008
+  },
+  {
+   "wallet": "0x3F416066e0A127D3173439D4a241A476bdF58c6E",
+   "ens": null,
+   "held": 44,
+   "alloc": 6292006
+  },
+  {
+   "wallet": "0xee76f550C3eF5860Cf672D48c00E84aEeA814859",
+   "ens": null,
+   "held": 36,
+   "alloc": 5148005
+  },
+  {
+   "wallet": "0xf5A7f74fEc4E5a48B60A99aAee28396192ba5Bed",
+   "ens": null,
+   "held": 25,
+   "alloc": 3575003
+  },
+  {
+   "wallet": "0x250DC85178fB6859e9eE02c925d46AAb946a55E7",
+   "ens": null,
+   "held": 22,
+   "alloc": 3146003
+  },
+  {
+   "wallet": "0x5E73A7803B03545D34dca700eE37A7faBBE267E0",
+   "ens": null,
+   "held": 15,
+   "alloc": 2145002
+  },
+  {
+   "wallet": "0x61592a6F682bBaBfD743aa7596Ee269E7448212C",
+   "ens": null,
+   "held": 14,
+   "alloc": 2002002
+  },
+  {
+   "wallet": "0x3297A27F6dBAD9C2A6ec06998238BF03164eE552",
+   "ens": "along7.eth",
+   "held": 12,
+   "alloc": 1716001
+  },
+  {
+   "wallet": "0xD6061529471B7C39E71e94834FfF7bd541374529",
+   "ens": "mrelguapo.eth",
+   "held": 11,
+   "alloc": 1573001
+  },
+  {
+   "wallet": "0xeb6dAc11a9939b575690298aC00068C230c29ec2",
+   "ens": null,
+   "held": 10,
+   "alloc": 1430001
+  },
+  {
+   "wallet": "0x52f349EdD4dCB7a3C60bf3066cE9a23962726d25",
+   "ens": "enormo.eth",
+   "held": 10,
+   "alloc": 1430001
+  },
+  {
+   "wallet": "0x9379304Ddb2d837cE1CBC6ad2D980C37C415d0C1",
+   "ens": null,
+   "held": 8,
+   "alloc": 1144001
+  },
+  {
+   "wallet": "0x088FCdDEF7F4a5896167963969479cAAFE8EA148",
+   "ens": null,
+   "held": 8,
+   "alloc": 1144001
+  },
+  {
+   "wallet": "0xb6c4cE4eaE85066f8Fc45093D12444c8B89A6Aa9",
+   "ens": "jasonophoto.eth",
+   "held": 7,
+   "alloc": 1001001
+  },
+  {
+   "wallet": "0xA621164C4Fcfe74e86093Cbfa5fc84ae4991fD13",
+   "ens": null,
+   "held": 7,
+   "alloc": 1001001
+  },
+  {
+   "wallet": "0xe4edc2790F4034e1AE67a6fD7f55039Bb2A295d4",
+   "ens": "dannyb0yyy.eth",
+   "held": 6,
+   "alloc": 858000
+  },
+  {
+   "wallet": "0xd6647Eeec0c8D810C546f2ab8e025D4664d833Ac",
+   "ens": "orkhanart.eth",
+   "held": 6,
+   "alloc": 858000
+  },
+  {
+   "wallet": "0xA397284b93F54Fd13800bA440F10E9790E2A3090",
+   "ens": null,
+   "held": 6,
+   "alloc": 858000
+  },
+  {
+   "wallet": "0xffaF3FE15D8a00183EEB4fAb74DE5965Ff6c099e",
+   "ens": "jpmoregainz.eth",
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0xFc1EeB7402d9a1179D43d6F97a2A907A7262f551",
+   "ens": null,
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0x5fC13C5A541041f8fa12fab492D064435eB8d2F5",
+   "ens": "deltasauce.eth",
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0x49E2164E673B59dB8e7a8C5b185831d7B65A3EE5",
+   "ens": null,
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0x0ef4db30F76bcbD1eE7DDBb056e699B69Dfb8eaE",
+   "ens": "mrquack.eth",
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0x068cFd47ae3E4a96c74b255e02939749434AAfBa",
+   "ens": "dingomick.eth",
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0x006818384F5A494D7B40119Efc94ee819416D90A",
+   "ens": null,
+   "held": 5,
+   "alloc": 715000
+  },
+  {
+   "wallet": "0xfbb78Ec1225b3e59a009b40825430BD80c6ab160",
+   "ens": null,
+   "held": 4,
+   "alloc": 572000
+  },
+  {
+   "wallet": "0x516C22737BAF21E9B968E31C346A80E9822d9379",
+   "ens": null,
+   "held": 4,
+   "alloc": 572000
+  },
+  {
+   "wallet": "0x1ae2010aA2f3B78e70cFbab58b6707eBC537f38e",
+   "ens": null,
+   "held": 4,
+   "alloc": 572000
+  },
+  {
+   "wallet": "0xf34F1C938D08817118E4405da510BEa8cD72c67E",
+   "ens": "based.bashobits.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0xD94Ea61f089E6EC2c97C16c33f6F262552B1C270",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0xaf8c481eB42dEfb31aE67319382624a68e28f5E8",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0xA14BEaa3bcF95D4E13a8aFf1B34aA4468EDb38ba",
+   "ens": "pindar.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x81d5013149fF580f442201EF124cc629D8d3d6E9",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x6C802912A21f3C0382d5286eF1E799fC4da3e7D7",
+   "ens": "blac.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x6B57844FAF88DB2199e90F81D7E250b3F516CC4B",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x686ADBFCAa75f7491bBA9F8d035613671c11B507",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x529F6A9CB4046dFF07c7dA208d88F353D8956A19",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x4dc583548a3407a5c5F6468Ccc964523cB14E9d1",
+   "ens": "sasameyuki.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x48d33D4327fcdD5ef30A287805ca12e48B063a01",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x3E5f46ad03a924D0C1ddc9aA311FDD265bE312dF",
+   "ens": "adamtastic.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x1F687ff00Fa6B0ce7825e9f90Ee4f05b5B8EcEE6",
+   "ens": "pudgypiper.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x1E9b5A63Fc1ebeB6a8302F81Fb244Cb5C46fCEC4",
+   "ens": "walafortress.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x1e8E749b2B578E181Ca01962e9448006772b24a2",
+   "ens": "brinkman.eth",
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0x036f4898290577A19507c1e466412c097fA2FD1C",
+   "ens": null,
+   "held": 3,
+   "alloc": 429000
+  },
+  {
+   "wallet": "0xFdC75731792b6EfCc8C02429f61B9eEF536A6F2e",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xf52493031A40b1ccEbb482292FBf6148131d8963",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xe53bdb2118585d5B2cD06a117d3A036AFA70677a",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xD341108b067cD308cf8cc7e13Fb9982B0CbA2f4E",
+   "ens": "btdwayne.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xca177D4b3E6d4C2778912B47e6aAe49b7c429819",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xbbb6ddE6F9cD5F8ccf19634b1f4aaB73950f4922",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xb464CA834796272E08Dc6460940B281B046a2cEe",
+   "ens": "junglerush.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xa66567EE7111E3c1c8e22646652eF93E4B5C7f6D",
+   "ens": "nuclearsamurai-vault.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x990f124747D946A083AD3cdeA043c34C0687c43c",
+   "ens": "leighferreira.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x91dd6F62A5bB852Cd42278D3f3892dF0464f26C2",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x8D445eEE078ff46D7dDc123dac5904FAd0aCf92E",
+   "ens": "jpegzrule.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x8CAaDF7c03b1B08C68685b9f156223f311D2EdA2",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x787D1cf054536542ABEb09B606EF6a27228C4DC4",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x75FE3C7829D36E4A382bD8ef4116841868E7e7Bf",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x64DEeCB9f372aCf9C388Ca9f045Cf211A202F329",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x61cA4026467215c4110D7a1b2a4c34324bDa5374",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x5Fb0058280611B57E7fd96dc4bA3616bD0d29806",
+   "ens": "taku0x.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x5BAA54bd0D0a9e9C08ad3F3117FEb2aE71e508a3",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x4b3DcC15a8ab43128210fE3327BC830c36a15541",
+   "ens": "leadwithlove.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x45A2c8A418cF0697fcDfd0F99C5Ac11580a7Cd21",
+   "ens": "flyinga.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x40F1Fbb89ba370CF7698eb6540782Ab4744cE4Da",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x3A4a2019296A22E443F54Cb73F1791a8b7708Ee8",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x3578Bafd8bE6FC380047E423D875573294410f57",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x34c2871C3D539C473E40a09158BDff522202E2d5",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x2Bf1838121EE9bFE33a5a3710C666A31d79C1cca",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x2329893756B73fe55BC411506887f40659Fe747b",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x2285Ec40F3618718EDF88A305fDf4b9fE89ba5CE",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x216F0d1b9BBA0eaf58e311A33d5061C36Fe11565",
+   "ens": "fondazioneaversano.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x181154DaCdd2F04756DA32093eFB79D7DEa39eAb",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x1701b4bE3F9F0302F14f5E45F7e707ca23937CF4",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x1384e00aa68Ba44A5097c0c8fBd13D8f1e453527",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x0c635D3853387f17eF991bB18d129b42bAe61149",
+   "ens": "trickortreat.eth",
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0x056bF45a910A1713260448Fb35B87109b9B9d80B",
+   "ens": null,
+   "held": 2,
+   "alloc": 286000
+  },
+  {
+   "wallet": "0xfE99460B27Bd6D4a3e8ADB29bdf038be6684dD77",
+   "ens": "sigmax721.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xFb1bB9d4a4C50457D339A686212A0716EA0adC80",
+   "ens": "muhju.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xfA1D68310bf761264a9295C4bCe48c356eC9922a",
+   "ens": "legacyimages.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xF454e42f07e1A63793a32075DF92F3aCA7B094a2",
+   "ens": "farhad8876.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xF3463130910603726B2D6202e81B365B3870d53F",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xF1Da6E2d387e9DA611dAc8a7FC587Eaa4B010013",
+   "ens": "andrewmitchell.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xF0f2dDa4390ccfA0B5273C3f3401a76A2DE37De3",
+   "ens": "andreas.9dcc.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xF027D2dA8587F8f521110cd090ec254dE1cD4Ce9",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xeC2341565e393f29a608e20AEFBbda3ED11737E7",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xEBE326d8De3413F8132518dcFd45e6cBFf7E5c27",
+   "ens": "newyat.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xe7c78F24FBfc8ef123F8afD68f1188Ba1910d9A2",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xe2F3B74fcbC0567a1BaEE792852D756B9e75Bd07",
+   "ens": "cainenable.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xDfAf4d0CC3F218209Fb51cAF00a396BA93F2697f",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xdd1Df994aF2fb033B4d5325f6A8b7cf8eFf54b4c",
+   "ens": "balon.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xd83CeEB78c3b94EDa193A34C1298847AFC5B89BA",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xd55a1CA7d9843c6c507A1D5521cEcF865eF2b02B",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xd4d3C85017CbCf26ca6C89ab5767227D7777196A",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xd1aa24651c1d623Ea3Aa462b4B1e2FBcEdF6E06a",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xd15d229Fd52240F8030Fa4694294189ED1DfBE4d",
+   "ens": "num1crush.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xd04B2AAFB1EeF38D5004c062adfA46dE964602A2",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xCcf0a1307E5e5Ad04E85d94d7f9D400390F0118a",
+   "ens": "stephensantoro.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xCBB839eEE31117213D834368101f9daC2DcDF20f",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xc68F7BAA74A6A01533961d6C1dCbaA9D1E2Ce37c",
+   "ens": "iliadenisov.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xc1cB91eeb2C85f2915351B18dd57551C7023Da82",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xBD87466C486eb3b86F742bb76Ef575e9DcDC54db",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xBc6B4216DAE81F80fB5B354f71af6bb6bAf9d1e7",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xbbA32A0b9487e9d62C2bB9c9E83B66Da86A4C93a",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xbB86cDfD0ac4593ebc012be31f8806d036B7703a",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xb9019d6473726Bc2178073541463761329930192",
+   "ens": "pipehitter.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xb880Fc160F5E8D210AB30357886Bc80E8ED1689c",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xB37B5E47241D5713F0f1a655cef276AAf8062f48",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xAB3412BcA2ba14aB2B45EEDfb5aD0Ec7Dc3A8891",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xA9E301f32713F28D658E24203b3C453753712500",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xa85aD5e8Be9Ea10d6fAD513230A903678BCE3089",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xA454dafF2609603b169e6290Fe69667705eD11fb",
+   "ens": "darketstormy.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xa44F1C3454d7B0b0cc38F26015537b111F6be568",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0xa00E4ba46907FCbf84b3Ba22c7b5689e6DB827a0",
+   "ens": "jcurve.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x9FFb4D816F72941a997d41909dF08AeA58af93Ee",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x9Fa425E4934f37388b5d85A6405c3Eb068122d89",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x9A487c720929917112D9966b9da2c594851a8d8B",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x998fec265181AdB62180BC6F7a6465609f2d2EDa",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x9847a543f6B29AD61ee3F70B8F638941aaa564ae",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x96499335BffBe9040B28D6e5ff5e64241E5845f1",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x9327B59C7C102A558195Ec37eCB76c57DF9A4ac0",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x8cE1dE121ee39E6539B0e8F52373Fec4eBB1eCB9",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x886258791969e6b0fEff62c0a02be819Dfc1B167",
+   "ens": "mulii.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x840Fc6758F7c9Da99EA87C11a310eF4b21ADDB5c",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x8231ff66A7BBDC14AD89782A51c939BBc4C92784",
+   "ens": "abrahanny.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x821A51cD60d4dBaE3Ae1cc911160A690C14a65eb",
+   "ens": "hizzy.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x8115949804c22E03C95349A67c038c55730A4Ba3",
+   "ens": "12080.ismymooncat.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x7Fc53dfFF734D7cB9f533154344e4d569A34F8E8",
+   "ens": "mariafynsknorup.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x7D8A06d6FFdb39a94C8611134917396c76D5e394",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x7CE30498E564f081cA65A226F44B1751f93a0f82",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x744F7102f2e8E82d5c61004f2Fb5DBD2ca5F1d82",
+   "ens": "jollyelf.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x73d5f1c9Dc0e60034f846B8b22Fa407AD3Be5365",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x7375237dCef733d17409e25dcc4DA5e0F71Ba199",
+   "ens": "mariakitty.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x72B5b0eD0a54010056398a051F8019b3D8a2E3Fb",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x704d9806A33062EcCF651558426C5518434dB807",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x6DcB9897D1e62552D0AdE8EA5ed55df62F94DB68",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x6c168719a32dbb234e62F3Aa1ba0E8cEb4199857",
+   "ens": "punk734.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x6947F763A87E2c0ceB1e0BC7C2f8e0bD96E88eC9",
+   "ens": "staybased.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x68B1124BF9a8116F95406263C12C03435cFAF49F",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x66098F504f2382413f8336F02b75E27a1425adfd",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x5d86E77C2921C577ec0aAD66A78B3FAF8a3B66Af",
+   "ens": "innerlumen.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x58c52a4F3D582a99AF1975Cf58d3695146972D8b",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x55372173689C288552885D897d32f5F706F79aA6",
+   "ens": "vanarman.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x52e50aeaA9c8061042ed48aD03da1aFa9b72bd8D",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x51047Ac8977d0DD35F3E1F35d75DDf81b8989f3D",
+   "ens": "cananapo.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x4d43b234b645972785F11C56bd5bF078AA9468cD",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x47abbA0b5F8b60d97b2F08e44783d0E22CBe3f6f",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x3E0914Fc2B3B67A476142020B7d6990D01aD234e",
+   "ens": "rocketgirlnft.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x38f55F77cE4087e1C3fBF4873FEC69F2A2C2037E",
+   "ens": "eyequeen.eth",
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x2b0CcEff77FFFa423C517Fed72f6aDB488b34233",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x265DcfD15397925880aFa01C5339e917e34c80c9",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x20E08417Fa736d0F9EcAF3090314595CB6ba1368",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x17a32A708888dD58AB0B1053Fc1ca447be01E93A",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x16605a4DF923056D10e3D079989D8D9Ccc02714f",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x16084B5e48bfc3AA64DBAA1df38DcD4fBE50A33f",
+   "ens": null,
+   "held": 1,
+   "alloc": 143000
+  },
+  {
+   "wallet": "0x02Ee7Dbf9931148c78372550393E629678E40304",
+   "ens": "jakefried.eth",
+   "held": 1,
+   "alloc": 143000
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+[
+ {
+  "tournamentId": 1,
+  "file": "T1_double_deuce_v2.jpg",
+  "title": "Double Deuce Takes the Deuce",
+  "run": "run_m17aa8vxrgg359ymncxmcfb1vh8fzedp"
+ },
+ {
+  "tournamentId": 2,
+  "file": "T2_spaced_out_v1.jpg",
+  "title": "Spaced Out, the First Rain",
+  "run": "run_m171kckfmwwjva84sra0b17x6n8fzkhj"
+ },
+ {
+  "tournamentId": 3,
+  "file": "T3_shopper_v2.jpg",
+  "title": "Shopper Behind the False Wall",
+  "run": "run_m1731b33g45v91jpvx1ygyvrxh8fz0f2"
+ },
+ {
+  "tournamentId": 4,
+  "file": "T4_java_v1.jpg",
+  "title": "Java, the Cup Already in His Hand",
+  "run": "run_m174nytnc1jw788g2gxxsz0gm98fztap"
+ },
+ {
+  "tournamentId": 5,
+  "file": "T5_spaced_out_v2.jpg",
+  "title": "Spaced Out Throws the Moon",
+  "run": "run_m178mmf2g0pp79s49sndse8e318fyj0a"
+ },
+ {
+  "tournamentId": 6,
+  "file": "T6_blaze_it_v1.jpg",
+  "title": "Blaze It, Cooked All Night",
+  "run": "run_m172z23ryrxfa95b0tb0fnna518fzavf"
+ }
+]

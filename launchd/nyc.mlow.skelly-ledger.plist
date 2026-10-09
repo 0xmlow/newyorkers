@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- The Seed Ledger every 30 minutes. NOT installed. To arm it:
+     cp launchd/nyc.mlow.skelly-ledger.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/nyc.mlow.skelly-ledger.plist
+     Marble Run's history keeps 200 races, about 13 hours, so a run every 30 minutes never misses one. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>nyc.mlow.skelly-ledger</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string><string>-c</string>
+    <string>cd "/Users/degens/Desktop/NEW YORKERS BY MLOW/MARBLE RUN x NEW YORKERS 2026-10-08" &amp;&amp; /usr/bin/python3 ledger.py &amp;&amp; /usr/bin/python3 champion_queue.py</string>
+  </array>
+  <key>StartInterval</key><integer>1800</integer>
+  <key>StandardOutPath</key><string>/tmp/skelly-ledger.log</string>
+  <key>StandardErrorPath</key><string>/tmp/skelly-ledger.log</string>
+</dict>
+</plist>
