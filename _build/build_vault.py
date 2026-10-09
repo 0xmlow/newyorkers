@@ -105,7 +105,7 @@ script = """
  }
  $('#try').onclick=go;
  $('#key').addEventListener('keydown',function(e){ if(e.key==='Enter') go(); });
- try{ console.log('%%cTHE VAULT','font:700 20px monospace;color:#D7FF1F','\\nThere is nothing in here. Reading the source will confirm it.\\nThere is no hash to crack and no answer to find. That is the joke.'); }catch(e){}
+ try{ console.log('%%cTHE VAULT','font:700 20px monospace;color:#ECC981','\\nThere is nothing in here. Reading the source will confirm it.\\nThere is no hash to crack and no answer to find. That is the joke.'); }catch(e){}
 })();
 </script>""" % (json.dumps(REPLIES), json.dumps({str(k): v for k, v in MILESTONES.items()}))
 

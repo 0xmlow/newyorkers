@@ -5,7 +5,13 @@ import json, os, html
 from page_shell import shell, esc, no_dash, cfg
 HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
 C = cfg(); URL = C["siteUrl"]
-FAQ = json.load(open(os.path.join(HERE, "learn", "faq.json"), encoding="utf-8"))
+# Live numbers: faq.json writes {pieces}, {located} and {rooms}, filled here from counts.js so the answers never go stale.
+_cj = open(os.path.join(SITE, "assets", "counts.js"), encoding="utf-8").read()
+_K = json.loads(_cj[_cj.index("{"):_cj.rindex("}") + 1])
+NUMS = {"pieces": f'{_K["counts"]["pieces"]:,}', "located": f'{_K["counts"]["located"]:,}', "rooms": f'{_K["rooms"]:,}'}
+_raw = open(os.path.join(HERE, "learn", "faq.json"), encoding="utf-8").read()
+for _k, _v in NUMS.items(): _raw = _raw.replace("{" + _k + "}", _v)
+FAQ = json.loads(_raw)
 items = [(s["section"], it) for s in FAQ for it in s["items"]]
 print(f"{len(FAQ)} sections, {len(items)} questions")
 
@@ -53,7 +59,7 @@ extra_css = """
 .faq summary::after{content:"+";font-family:var(--mono);color:var(--cyan);flex:none}
 .faq details[open] summary::after{content:"–"}
 .faq details[open] summary{color:var(--cloud)}
-.faq p{font-family:var(--sans);font-size:16px;line-height:1.72;color:#c9d2dc;margin-top:12px;max-width:70ch}
+.faq p{font-family:var(--sans);font-size:16px;line-height:1.72;color:#CFD3CC;margin-top:12px;max-width:70ch}
 """
 ld = [{"@context": "https://schema.org", "@type": "FAQPage",
        "mainEntity": [{"@type": "Question", "name": it["q"], "acceptedAnswer": {"@type": "Answer", "text": it["a"]}} for _, it in items]}]

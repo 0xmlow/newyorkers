@@ -69,7 +69,7 @@ extra_css = """
 .out h4{font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--blue);margin:20px 0 4px;font-weight:600}
 .out .note{font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--slate);margin-top:16px;border-top:1px solid var(--divider);padding-top:14px}
 .out .warn{color:var(--pink)}
-.disc li{font-family:var(--sans);font-size:15px;line-height:1.65;color:#c9d2dc;margin-bottom:10px}
+.disc li{font-family:var(--sans);font-size:15px;line-height:1.65;color:#CFD3CC;margin-bottom:10px}
 .sources li{font-family:var(--sans);font-size:14.5px;line-height:1.55;color:var(--slate);padding:10px 0;border-bottom:1px solid var(--divider);list-style:none}
 .sources li a{color:var(--cloud)}.sources li a:hover{color:var(--cyan)}
 """

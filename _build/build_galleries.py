@@ -69,7 +69,7 @@ def cover(path, w, h):
     else: nh = round(iw / r); im = im.crop((0, (ih - nh) // 2, iw, (ih - nh) // 2 + nh))
     return im.resize((w, h), Image.LANCZOS)
 
-def tag(im, text, color=(215, 255, 31), fg=(13, 13, 13), xy=(22, 22)):
+def tag(im, text, color=(236,201,129), fg=(8,13,22), xy=(22, 22)):
     d = ImageDraw.Draw(im); f = ImageFont.truetype(FONT, 20); tw = d.textlength(text, font=f)
     d.rounded_rectangle((xy[0], xy[1], xy[0] + tw + 28, xy[1] + 40), 8, fill=color)
     d.text((xy[0] + 14, xy[1] + 20), text, font=f, fill=fg, anchor="lm")
@@ -160,15 +160,15 @@ for G in GALLERIES:
 
     extra_css = """
 .gl{max-width:1500px;margin:0 auto;padding:14px 16px 72px;text-align:center}
-.gl .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;color:#8899AA;text-transform:uppercase}
+.gl .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;color:#8FA7AB;text-transform:uppercase}
 .gl h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(30px,5vw,48px);margin:8px 0 10px;letter-spacing:.02em}
 .gl h1 em{color:#FF2E88;font-style:normal}
 .gl p{color:#AAB6C4;line-height:1.6;max-width:640px;margin:0 auto 18px}
 .gl .frame{width:100%;height:max(620px,calc(100vh - 190px));margin:0 auto;border:1px solid #223;border-radius:16px;overflow:hidden;
-  box-shadow:0 0 60px rgba(41,98,255,.25);background:#0D0D0D}
+  box-shadow:0 0 60px rgba(70,146,194,.25);background:#080D16}
 .gl iframe{width:100%;height:100%;border:0;display:block}
-.gl .how{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#8899AA;margin-top:18px;line-height:1.8}
-.gl .how a{color:#2962FF;text-decoration:none}
+.gl .how{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#8FA7AB;margin-top:18px;line-height:1.8}
+.gl .how a{color:#4692C2;text-decoration:none}
 .gl .under{margin-top:26px}
 .gl .phone{display:none;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#FFD600;margin:0 auto 14px;max-width:520px;line-height:1.7}
 @media (max-width:820px){ .gl .phone{display:block} .gl .frame{height:80vh;min-height:520px} }

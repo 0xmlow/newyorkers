@@ -175,7 +175,7 @@ for i, r in enumerate(merged):
 <section class="wrap" style="padding-top:48px;padding-bottom:80px">
   <div class="article" style="margin:0;max-width:820px">
     <h2 style="font-size:clamp(24px,2.6vw,34px);font-weight:600">{esc(r['place'])}, the history</h2>
-    <p class="body" style="font-size:18px;color:#c9d2dc;margin-top:16px">{esc(r.get('fact') or 'The record for this place is being written.')}</p>
+    <p class="body" style="font-size:18px;color:#CFD3CC;margin-top:16px">{esc(r.get('fact') or 'The record for this place is being written.')}</p>
     {('<p class="mono" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate)">Source · <a href="' + esc(src['url']) + '" target="_blank" rel="noopener" style="color:var(--cyan)">' + esc(src['name']) + ' ↗</a></p>') if src.get('url') else ''}
     <h2 style="font-size:clamp(20px,2vw,26px);font-weight:600;margin-top:40px">What the room is built from</h2>
     <p class="body" style="margin-top:10px">{esc(r['signatures'])} Mood: {esc(r['mood']).lower()}. Everything is procedural geometry with painted surfaces; nothing is a scan or a photograph. The room is an interpretation, and it hangs the New Yorkers the census recorded at this place first.</p>
@@ -187,8 +187,11 @@ for i, r in enumerate(merged):
     </div>
   </div>
 </section>"""
-    page = shell(title=f"{r['name']} · {r['area'].title()} · THE MUSEUM · NEW YORKERS by MLow", description=(r.get("learn") or r["description"])[:158], body=body, base=base, path=f"rooms/{r['id']}.html", active="THE MUSEUM", jsonld=ld, image=f"{URL}/assets/museum/rooms/{r['id']}.jpg", keywords=(r.get("keywords") or []) + ["NEW YORKERS by MLow", "virtual museum New York"],
-                 scripts_after=f'<script>NY.shareRow(document.getElementById("share"),{{title:{json.dumps(r["name"])},text:{json.dumps(r["name"] + " (" + r["area"].title() + "), a room in THE MUSEUM, NEW YORKERS by MLow.")}}});</script>')
+    # ?walk is the link the museum's share buttons hand out: crawlers read this page's card (build_room_cards.py),
+    # a person is sent straight into the room before anything paints. No ?walk, and it stays the history page.
+    walk = f'<script>if(new URLSearchParams(location.search).has("walk")){{document.documentElement.style.visibility="hidden";location.replace("{base}museum.html#room={r["id"]}")}}</script>'
+    page = shell(title=f"{r['name']} · {r['area'].title()} · THE MUSEUM · NEW YORKERS by MLow", description=(r.get("learn") or r["description"])[:158], body=body, base=base, path=f"rooms/{r['id']}.html", active="THE MUSEUM", jsonld=ld, image=f"{URL}/assets/museum/rooms/{r['id']}.jpg", keywords=(r.get("keywords") or []) + ["NEW YORKERS by MLow", "virtual museum New York"], extra_head=walk,
+                 scripts_after=f'<script>NY.shareRow(document.getElementById("share"),{{title:{json.dumps(r["name"])},text:{json.dumps(r["name"] + " (" + r["area"].title() + "), a room in THE MUSEUM, NEW YORKERS by MLow. Walk inside:")},url:location.origin+location.pathname+"?walk"}});</script>')
     open(os.path.join(SITE, "rooms", r["id"] + ".html"), "w", encoding="utf-8").write(page)
 
 # ---------- checks ----------

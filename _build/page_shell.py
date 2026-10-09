@@ -29,7 +29,9 @@ def pub(u):
     site = cfg()["siteUrl"]
     if not u.startswith(site):
         return u                                  # someone else's url, leave it alone
-    return site + "/" if u == site + "/index.html" else u[:-5]
+    # Pages serves a folder's index.html at the folder itself (/api/index.html answers at /api/), so any
+    # index.html becomes its folder, not /api/index.
+    return u[:-len("index.html")] if u.endswith("/index.html") else u[:-5]
 
 def pub_deep(o):
     """Same, applied through a JSON-LD structure."""
@@ -84,9 +86,11 @@ def shell(*, title, description, body, base="", path="", active=None, extra_head
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(description)}">
 <meta name="twitter:image" content="{esc(img)}">
-<meta name="theme-color" content="#0D0D0D">
+<meta name="theme-color" content="#080D16">
+<link rel="icon" href="{base}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="{base}assets/brand/eye_truecolor.png">
-<link rel="apple-touch-icon" href="{base}assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="{base}apple-touch-icon.png">
+<link rel="manifest" href="{base}site.webmanifest">
 <link rel="alternate" type="text/plain" title="llms.txt" href="{base}llms.txt">
 {FONTS}
 <link rel="stylesheet" href="{base}assets/site.css">

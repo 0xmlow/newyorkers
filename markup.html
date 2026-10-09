@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mark up a New Yorker · NEW YORKERS by MLow</title>
+<meta name="description" content="Pick any piece in the NEW YORKERS census and draw on it: thirteen brushes, the colours of the subway lines, a mood for every hour of the city. Sign it with your handle, save it as a PNG and post it on X.">
+<meta name="keywords" content="NEW YORKERS, MLow, draw on art, mark up, drawing tool, New York City art, subway colours">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://n3wyorkers.com/markup">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="Mark up a New Yorker · NEW YORKERS by MLow">
+<meta property="og:description" content="Pick any piece in the NEW YORKERS census and draw on it: thirteen brushes, the colours of the subway lines, a mood for every hour of the city. Sign it with your handle, save it as a PNG and post it on X.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=3cea8e5c64">
+<meta property="og:url" content="https://n3wyorkers.com/markup">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="Mark up a New Yorker · NEW YORKERS by MLow">
+<meta name="twitter:description" content="Pick any piece in the NEW YORKERS census and draw on it: thirteen brushes, the colours of the subway lines, a mood for every hour of the city. Sign it with your handle, save it as a PNG and post it on X.">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg?v=3cea8e5c64">
+<meta name="theme-color" content="#080D16">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Mark up a New Yorker","url":"https://n3wyorkers.com/markup","applicationCategory":"DesignApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Draw over any NEW YORKERS painting by MLow with thirteen brushes in NYC moods, sign it, then save or post the result.","creator":{"@type":"Person","name":"MLow"},"isPartOf":{"@id":"https://n3wyorkers.com/#collection"}}</script>
+<link rel="stylesheet" href="assets/markup/markup.css?v=c0e35ce5c0">
+<script src="assets/markup/idx.js?v=f92cbd682e" defer></script>
+<style></style>
+</head>
+<body>
+<div id="nav"></div>
+<section class="wrap" style="padding-top:64px;padding-bottom:6px">
+  <div class="kicker" style="color:var(--acid)">Mark it up</div>
+  <h1 class="h-xl" style="margin-top:14px;max-width:1000px">Mark up a New Yorker.</h1>
+  <p class="lede" style="margin-top:16px;max-width:780px">Pick any piece in the census and draw on it. Thirteen brushes, the colours of the subway lines, a mood for every hour of the city. Sign it, save it, post it. The painting underneath stays MLow's, the marks are yours.</p>
+</section>
+
+<section class="wrap" style="padding-top:22px">
+  <form class="mkfind" id="mkFind" autocomplete="off">
+    <label for="mkN" class="mklab">Piece number</label>
+    <div class="mkrow">
+      <input id="mkN" name="n" type="text" inputmode="numeric" spellcheck="false" placeholder="37">
+      <button class="btn" type="submit">Load it</button>
+      <button class="btn ghost" type="button" id="mkRand">Random New Yorker</button>
+    </div>
+    <p class="mkmsg" id="mkMsg" role="status"></p>
+  </form>
+</section>
+
+<section class="wrap" style="padding-top:14px">
+  <div class="mkstage" id="mkStage">
+    <canvas id="mkBg" aria-hidden="true"></canvas>
+    <div class="mkframe" id="mkFrame">
+      <canvas id="mkArt" aria-label="The painting"></canvas>
+      <canvas id="mkInk" aria-label="Your drawing over the painting. Draw with a mouse, a pen or a finger."></canvas>
+      <div class="mkcap"><span id="mkNo"></span><b id="mkT"></b><i id="mkBy"></i></div>
+    </div>
+  </div>
+
+  <div class="mktools">
+    <div>
+      <div class="mklab">Mood</div>
+      <div class="mkchips" id="mkMoods"></div>
+      <label class="mkcheck"><input type="checkbox" id="mkWash"> Wash the painting in the mood</label>
+    </div>
+    <div>
+      <div class="mklab">Brush</div>
+      <div class="mkchips" id="mkBrushes"></div>
+      <div class="mklab">Size <span id="mkSzV">1x</span></div>
+      <input type="range" id="mkSz" min="0.5" max="3" step="0.25" value="1" aria-label="Brush size">
+    </div>
+    <div>
+      <div class="mklab">Colour, by subway line</div>
+      <div class="mkswatches" id="mkColors"></div>
+    </div>
+  </div>
+
+  <div class="mklab" style="margin-top:28px"><label for="mkHandle">Sign it: marked up by</label></div>
+  <div class="mksign"><span>@</span><input id="mkHandle" type="text" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourhandle"></div>
+  <p class="mksignnote">Optional. Your handle goes on the strip under the art, beside the NEW YORKERS and MLOW marks. It stays on this device.</p>
+
+  <div class="mkacts">
+    <button class="btn" type="button" id="mkSave">SAVE</button>
+    <button class="btn" type="button" id="mkShare" hidden>SHARE</button>
+    <a class="btn ghost" id="mkX" target="_blank" rel="noopener">POST ON X</a>
+    <button class="btn ghost" type="button" id="mkUndo">UNDO</button>
+    <button class="btn ghost" type="button" id="mkClear">CLEAR</button>
+    <a class="mkrec" id="mkRec">Open the record</a>
+  </div>
+  <p class="mknote">Nothing you draw leaves your device until you save or share it. Your marks do not change the piece, its record or the token.</p>
+</section>
+
+<section class="wrap" style="padding-top:56px;padding-bottom:90px">
+  <div class="kicker">From the museum</div>
+  <h2 class="h-lg" style="margin-top:10px">Six rooms, six facts.</h2>
+  <p class="lede" style="margin-top:10px;max-width:720px">Every room in the museum carries one sourced line of city history. Flip a card to read it, then mark up the New Yorker who hangs there.</p>
+  <div class="mkcards" id="mkCards"></div>
+  <p style="margin-top:18px"><button class="btn ghost" type="button" id="mkShuffle">Shuffle the rooms</button></p>
+</section>
+
+<div id="foot"></div>
+<script>window.NY_BASE="";</script>
+<script src="assets/config.js"></script>
+<script src="assets/counts.js"></script>
+<script src="assets/site.js"></script>
+<script>NY.nav(null);NY.foot();</script>
+<script>window.MK_CONFIG = { base: window.NY_BASE || "", site: "https://n3wyorkers.com", defaultId: "578" };</script>
+<script src="assets/markup/logos.js?v=1c7a312126"></script>
+<script src="assets/markup/markup.js?v=90fe8e7faf"></script>
+<script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
+</body>
+</html>

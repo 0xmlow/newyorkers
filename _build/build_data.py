@@ -182,7 +182,7 @@ if __name__ == "__main__":
         out = os.path.join(ATLAS_DIR, f"a{a}.jpg")
         if os.path.exists(out):
             print("atlas exists", out); continue
-        sheet = Image.new("RGB", (TILE * GRID, TILE * GRID), (13, 13, 13))
+        sheet = Image.new("RGB", (TILE * GRID, TILE * GRID), (8,13,22))
         for i in range(PER):
             gi = a * PER + i
             if gi >= len(pieces): break

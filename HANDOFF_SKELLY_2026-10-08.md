@@ -84,3 +84,30 @@ Two traps: `overflow:hidden` on a section kills `position:sticky` inside it (use
 absolutely positioned canvas with inset:0 stays 300x150 unless given width and height. Checked with headless
 Chrome over CDP at 1440x900 and 390x844 (the preview pane is too small to judge design). All plates passed
 the text gate. Still not deployed; the D1 table and Bryan's yes are still pending.
+
+## 2026-10-09: every holder painted, every race painted (wave 33)
+
+MLow asked for a new piece for every BrinkWorks holder racing their marble, seeded from their race, used as the
+MetroCards, linked to their other honoraries, and new honorees for everyone without one. Plus a piece per race.
+
+- Pass #N holds marble #N (MLow holds pass 044, marble 44 is Dimensional). Identity per wallet from ENS records,
+  OpenSea and the site's own collector links: `MARBLE RUN x NEW YORKERS 2026-10-08/holders/`.
+- 98 contest paintings, Seedream 5 Pro (about $0.18 each): the honoree portrait as reference for the 13 who had
+  one, the holder's avatar for 40, an invented New Yorker for the rest. Scene picked from the seed of the holder's
+  best race. `contest/plan_contestants.py`, outputs in `contest/out/`.
+- 163 race paintings, Seedream 5 Lite (about $0.04): the winner's census rider taking the race, place, hour and
+  celebration from the race seed. `races/plan_races.py`, outputs in `races/out/`.
+- Wave 33 on the honoraries page: `contest/make_wave33.py` builds `HONORARY PFPS 2026-09-14/WAVE 33 2026-10-09
+  SKELLY CUP/` (heroes are hard links, no extra disk), roles C and factual bios for 85 new honorees (four anonymous
+  wallets show as Patron #NNN). The 13 existing honorees get the contest painting as a second work on their card;
+  sync.py now puts kind "skelly" behind the portrait, like a census piece, so their portrait still leads.
+- Chain after any refire: make_wave33.py, collect.py, make_wave33.py again (fills roles for the 13 second keys),
+  honoraries/sync.py, contest/publish_skelly_art.py, build_skelly.py, build_honor_cards.py, build_honoraries.py.
+- THE RIDERS cards now show the holder's painting crop, the marble, the holder, the race seed and result, and link
+  to h/<id>. Burned passes 095 and 099 keep the census rider.
+- THE TAPE (new section 6): all race paintings, chips per tournament, finals full width. 17.9 MB in assets/skelly/races.
+- Warped photos at narrow widths were THE WALL's pasted portraits (fixed height from the img attribute, width
+  shrinking). Now aspect-ratio 16/9 with object-fit cover. A scan of every image on 13 pages at 375 and 768 wide
+  finds no other image drawn at the wrong aspect.
+- MLow abolished the no text, no logos rule on 2026-10-09. Paintings with signage (Yankee Stadium, Domino, the
+  Cyclone) stay as painted.

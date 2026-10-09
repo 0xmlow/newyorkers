@@ -38,6 +38,11 @@ URL = cfg()["siteUrl"]
 
 cast = json.load(open(os.path.join(HERE, "skelly", "cast.json")))["cast"]
 champs = json.load(open(os.path.join(HERE, "skelly", "champions.json")))
+# BrinkWorks holders' contest paintings and one painting per race (MARBLE RUN x NEW YORKERS 2026-10-08/contest/publish_skelly_art.py)
+holders = {int(k): v for k, v in json.load(open(os.path.join(HERE, "skelly", "holders.json"))).items()}
+race_art = json.load(open(os.path.join(HERE, "skelly", "race_art.json")))
+# Bryan's honorary card, by name from cards.json: the hash in the file name changes whenever his card does
+BRYAN_CARD = json.load(open(os.path.join(HERE, "honoraries", "cards.json")))["bryan-brinkman"]["card"]
 PIECES = {p["n"]: p for p in json.load(open(os.path.join(SITE, "api", "pieces.json")))}
 TV = json.load(open(os.path.join(SITE, "assets", "skelly", "ui", "bodega.json")))
 assert len(cast) == 100 and len({c["marbleId"] for c in cast}) == 100, "need one rider per marble"
@@ -80,21 +85,50 @@ wanted = f"""
       <span>Whoever wins tournament {next_t} gets painted and pasted right here. Blow on the final and your seed is folded into the number printed under it, forever.</span></figcaption>
     </figure>"""
 
-cards_html = "".join(f"""<a href="n/{c['piece']}" class="tcard" id="r{c['marbleId']}"><span class="tc-art"><img src="{esc(thumb(c['image']))}" alt="" loading="lazy" width="320" height="180"></span><span class="tc-strip"></span><span class="tc-no">{c['marbleId']:03d}</span><b>{esc(c['marble'])}{(' <i>' + '★' * titles[c['marble']] + '</i>') if c['marble'] in titles else ''}</b><small>{esc(c['title'])}</small></a>"""
-                     for c in sorted(cast, key=lambda c: c["marbleId"]))
+def stars(m):
+    return (' <i>' + '★' * titles[m] + '</i>') if m in titles else ''
+
+def short_res(r):
+    """"Won heat 12, tournament 6" -> "WON HEAT 12 · T6"; "Finished 2 in heat 17, tournament 4" -> "2ND, HEAT 17 · T4"."""
+    import re
+    m = re.match(r"(Won|Finished (\d+) in) (.*), tournament (\d+)$", r)
+    if not m: return r
+    place = "Won" if m.group(1) == "Won" else {"2": "2nd,", "3": "3rd,"}.get(m.group(2), m.group(2) + "th,")
+    return f"{place} {m.group(3)} · T{m.group(4)}"
+
+def card(c):
+    """A MetroCard per marble: the BrinkWorks holder racing it, painted for the cup, linking to their honorary page."""
+    m = c["marbleId"]; h = holders.get(m)
+    if not h:  # burned pass or not painted yet: the census rider holds the card
+        return (f"""<a href="n/{c['piece']}" class="tcard" id="r{m}"><span class="tc-art"><img src="{esc(thumb(c['image']))}" alt="" loading="lazy" width="320" height="180"></span>"""
+                f"""<span class="tc-strip"></span><span class="tc-no">{m:03d}</span><b>{esc(c['marble'])}{stars(c['marble'])}</b><em class="tc-who">No holder</em><small>{esc(c['title'])}</small></a>""")
+    more = f" · +{h['more']} MORE" if h["more"] else ""
+    return (f"""<a href="h/{h['id']}" class="tcard" id="r{m}" title="{esc(h['t'])}"><span class="tc-art"><img src="{esc(h['s'])}" alt="{esc(h['name'])}" loading="lazy" width="400" height="400"></span>"""
+            f"""<span class="tc-strip"></span><span class="tc-no">{m:03d}{more}</span><b>{esc(c['marble'])}{stars(c['marble'])}</b><em class="tc-who">{esc(h['name'])}</em>"""
+            f"""<span class="tc-seed">SEED {h['seed']}</span><small class="res">{esc(short_res(h['res']))}</small></a>""")
+
+cards_html = "".join(card(c) for c in sorted(cast, key=lambda c: c["marbleId"]))
+
+ROUND = {"heats": "HEAT", "semis": "SEMI", "final": "THE FINAL"}
+tape_ts = sorted({a["t"] for a in race_art}, reverse=True)
+tape_chips = "".join(f'<button type="button" data-t="{t}"{" class=on" if i == 0 else ""}>T{t}</button>' for i, t in enumerate(tape_ts)) + '<button type="button" data-t="all">ALL</button>'
+tape_html = "".join(f"""<figure class="tp{' fin' if a['rnd'] == 'final' else ''}" data-t="{a['t']}"{'' if a['t'] == tape_ts[0] else ' hidden'}><a href="{esc(a['f'])}" target="_blank" rel="noopener"><img src="{esc(a['f'])}" alt="{esc(a['title'])}" loading="lazy" width="960" height="540"></a>"""
+                    f"""<figcaption><small>T{a['t']} · {ROUND.get(a['rnd'], a['rnd'].upper())}{'' if a['rnd'] == 'final' else ' ' + str(a['i'])} · {esc(a['boro']).upper()}</small><b>{esc(a['winner'])}</b>"""
+                    f"""<span>{('held by <a href="h/' + esc(holders[a['wid']]['id']) + '">' + esc(holders[a['wid']]['name']) + '</a>') if a['wid'] in holders else 'unheld pass'}{(', ' + format(a['time'], '.2f') + ' s') if a.get('time') else ''}</span><code>SEED {a['seed']}</code></figcaption></figure>"""
+                    for a in race_art)
 
 alive_html = "".join(f"""<a href="#r{c['marbleId']}" class="tile" data-id="{c['marbleId']}" title="{esc(c['marble'])}"><img src="{esc(thumb(c['image']))}" alt="" loading="lazy" width="96" height="54"><span>{esc(c['marble'])}</span></a>"""
                      for c in sorted(cast, key=lambda c: c["marbleId"]))
 
-STOPS = [("board", "THE BOARD", "#ffcc00"), ("tv", "BODEGA TV", "#d9534f"), ("gate", "THE GATE", "#5bc0de"), ("alive", "STILL ALIVE", "#f0ad4e"),
-         ("wall", "THE WALL", "#5cb85c"), ("hall", "HALL OF FAME", "#ede0c8"), ("stoop", "THE STOOP", "#d9534f"), ("engine", "THE ENGINE", "#5bc0de"), ("riders", "THE RIDERS", "#f0ad4e")]
+STOPS = [("board", "THE BOARD", "#ECC981"), ("tv", "BODEGA TV", "#DC6F57"), ("gate", "THE GATE", "#61C9E2"), ("alive", "STILL ALIVE", "#E79650"),
+         ("wall", "THE WALL", "#79B39B"), ("tape", "THE TAPE", "#DC6F57"), ("hall", "HALL OF FAME", "#ede0c8"), ("stoop", "THE STOOP", "#DC6F57"), ("engine", "THE ENGINE", "#61C9E2"), ("riders", "THE RIDERS", "#E79650")]
 line_html = "".join(f'<a href="#{k}" data-k="{k}" style="--c:{c}"><i></i><span>{n}</span></a>' for k, n, c in STOPS)
 
 extra_head = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Rock+Salt&display=swap">\n'
               f'<link rel="preload" as="image" href="{UI}hero.jpg">')
 
 css = """
-:root{--sk-y:#ffcc00;--sk-r:#d9534f;--sk-b:#5bc0de;--sk-o:#f0ad4e;--sk-g:#5cb85c;--sk-c:#ede0c8;--sk-ink:#0b0b0d;--sk-paper:#f3efe4}
+:root{/* lane colours on the paintings' palette (_build/palette_from_art.py); green has no twin in the art, so a sage that sits with it */--sk-y:#ECC981;--sk-r:#DC6F57;--sk-b:#61C9E2;--sk-o:#E79650;--sk-g:#79B39B;--sk-c:#ede0c8;--sk-ink:#080D16;--sk-paper:#EEE6D3}
 body.skelly{background:var(--sk-ink)}
 body.skelly main.wrap{max-width:none;padding:0}
 .sk-grain{position:fixed;inset:-50%;z-index:70;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1.2s steps(6) infinite}
@@ -236,12 +270,12 @@ body.skelly main.wrap{max-width:none;padding:0}
 .fine{font-size:12px;opacity:.7;margin-top:10px;line-height:1.5}
 .scoreboard{background:#050505;border:6px solid #1d1d22;border-radius:8px;padding:16px;box-shadow:inset 0 0 30px rgba(0,0,0,.9),0 30px 60px rgba(0,0,0,.5)}
 .scoreboard h3{font:400 15px Bungee,sans-serif;color:var(--sk-o);margin:0 0 12px;letter-spacing:1px}
-.led{font:600 15px "IBM Plex Mono",monospace;color:#ffb347;text-shadow:0 0 6px rgba(255,160,40,.85),0 0 16px rgba(255,120,0,.35);width:100%;border-collapse:collapse}
+.led{font:600 15px "IBM Plex Mono",monospace;color:#E9A866;text-shadow:0 0 6px rgba(255,160,40,.85),0 0 16px rgba(255,120,0,.35);width:100%;border-collapse:collapse}
 .led td,.led th{padding:5px 4px;border-bottom:1px solid #1a1a1a;text-align:left}
 .led th{font-size:10px;opacity:.6;letter-spacing:1.5px}
 .you{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;text-align:center}
 .you div{background:#0e0e10;border:1px solid #222;border-radius:4px;padding:10px 4px}
-.you b{display:block;font:400 30px/1 Bungee,sans-serif;color:#ffb347;text-shadow:0 0 8px rgba(255,160,40,.7)}
+.you b{display:block;font:400 30px/1 Bungee,sans-serif;color:#E9A866;text-shadow:0 0 8px rgba(255,160,40,.7)}
 .you span{font:700 9px "IBM Plex Mono",monospace;letter-spacing:1px;opacity:.6}
 
 /* ---------- 4 STILL ALIVE: subway tile wall ---------- */
@@ -269,7 +303,7 @@ body.skelly main.wrap{max-width:none;padding:0}
 .paste{flex:none;width:min(560px,82vw);margin:0;background:var(--sk-paper);color:#141414;padding:12px 12px 16px;transform:rotate(var(--r));box-shadow:0 26px 50px rgba(0,0,0,.55);position:relative}
 .paste::before,.paste::after{content:"";position:absolute;width:90px;height:26px;background:rgba(240,230,200,.75);top:-12px;box-shadow:0 2px 4px rgba(0,0,0,.25)}
 .paste::before{left:-20px;transform:rotate(-30deg)}.paste::after{right:-20px;transform:rotate(28deg)}
-.paste img{width:100%;display:block;filter:contrast(1.04) saturate(1.05)}
+.paste img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;filter:contrast(1.04) saturate(1.05)}
 .paste figcaption{display:flex;flex-direction:column;gap:4px;padding-top:10px}
 .paste small{font:700 10px "IBM Plex Mono",monospace;letter-spacing:1.5px;opacity:.6}
 .paste b{font:400 22px/1.05 Bungee,sans-serif}
@@ -282,8 +316,8 @@ body.skelly main.wrap{max-width:none;padding:0}
 
 /* ---------- 6 HALL OF FAME: awning + letterboard ---------- */
 #hall{padding-top:0}
-.awning{height:90px;background:repeating-linear-gradient(90deg,#c0392b 0 70px,#f3efe4 70px 140px);position:relative;box-shadow:0 18px 30px rgba(0,0,0,.5)}
-.awning::after{content:"";position:absolute;left:0;right:0;bottom:-26px;height:26px;background:radial-gradient(circle at 35px 0,#c0392b 34px,transparent 35px) 0 0/140px 26px,radial-gradient(circle at 105px 0,#f3efe4 34px,transparent 35px) 0 0/140px 26px}
+.awning{height:90px;background:repeating-linear-gradient(90deg,#A23231 0 70px,#EEE6D3 70px 140px);position:relative;box-shadow:0 18px 30px rgba(0,0,0,.5)}
+.awning::after{content:"";position:absolute;left:0;right:0;bottom:-26px;height:26px;background:radial-gradient(circle at 35px 0,#A23231 34px,transparent 35px) 0 0/140px 26px,radial-gradient(circle at 105px 0,#EEE6D3 34px,transparent 35px) 0 0/140px 26px}
 .awning span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#111;color:var(--sk-y);font:400 clamp(20px,3vw,34px)/1 Bungee,sans-serif;padding:8px 22px;white-space:nowrap;letter-spacing:2px}
 .letterboard{margin:70px auto 0;max-width:900px;background:#141414;background-image:repeating-linear-gradient(#141414 0 7px,#0a0a0a 7px 9px);border:14px solid #5a3b22;border-radius:6px;padding:26px 30px;box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 0 30px rgba(0,0,0,.8)}
 .lb{width:100%;border-collapse:collapse;font:700 clamp(15px,1.8vw,21px)/1.25 "IBM Plex Mono",monospace;color:#f5f2ea;text-transform:uppercase;letter-spacing:2px}
@@ -324,7 +358,7 @@ body.skelly main.wrap{max-width:none;padding:0}
 
 /* ---------- 9 THE RIDERS: transit cards ---------- */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;margin-top:30px;perspective:900px}
-.tcard{position:relative;display:block;aspect-ratio:1.586;border-radius:10px;overflow:hidden;color:#111;text-decoration:none;background:linear-gradient(135deg,#ffd23f,#f2b705);box-shadow:0 12px 24px rgba(0,0,0,.45);transform-style:preserve-3d;transition:transform .15s ease-out}
+.tcard{position:relative;display:block;aspect-ratio:1.586;border-radius:10px;overflow:hidden;color:#111;text-decoration:none;background:linear-gradient(135deg,#F1D493,#D9AE5F);box-shadow:0 12px 24px rgba(0,0,0,.45);transform-style:preserve-3d;transition:transform .15s ease-out}
 .tc-art{position:absolute;right:0;top:0;bottom:0;width:58%}
 .tc-art img{width:100%;height:100%;object-fit:cover;display:block;clip-path:polygon(18% 0,100% 0,100% 100%,0 100%)}
 .tc-strip{position:absolute;left:0;right:0;bottom:16%;height:13%;background:#111;opacity:.88}
@@ -333,6 +367,27 @@ body.skelly main.wrap{max-width:none;padding:0}
 .tcard b i{display:block;font-style:normal;color:#7b2d26;font-size:12px;margin-top:3px}
 .tcard small{position:absolute;left:10px;right:10px;bottom:3%;font:600 9px/1.2 "Space Grotesk",sans-serif;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tcard::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 48%,transparent 60%);transform:translateX(var(--sx,-100%));transition:transform .2s;pointer-events:none}
+
+.tcard .tc-who{position:absolute;left:10px;width:40%;top:52%;font:700 11px/1.15 "Space Grotesk",sans-serif;font-style:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tc-seed{position:absolute;left:10px;bottom:18.5%;font:700 8px "IBM Plex Mono",monospace;letter-spacing:1px;color:var(--sk-y)}
+.tcard small.res{right:auto;width:40%;font:700 8px/1.2 "IBM Plex Mono",monospace;letter-spacing:.5px;text-transform:uppercase}
+@media (max-width:700px){.tcard b{font-size:11px;top:20px;width:46%;overflow-wrap:anywhere}.tcard .tc-who{font-size:9.5px;top:56%;-webkit-line-clamp:1;width:44%}
+  .tc-no{font-size:8px;top:6px}.tc-seed{font-size:6.5px;letter-spacing:0}.tcard small.res{font-size:7px;width:44%}}
+
+/* ---------- 6 THE TAPE: a painting per race ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.chips button{font:700 12px "IBM Plex Mono",monospace;letter-spacing:1px;padding:9px 14px;border-radius:999px;border:2px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer}
+.chips button.on{background:var(--sk-y);border-color:var(--sk-y);color:#111}
+.tape{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px;margin-top:22px}
+.tp{margin:0;background:var(--sk-paper);color:#111;padding:8px 8px 12px;border-radius:2px;box-shadow:0 14px 28px rgba(0,0,0,.5);transform:rotate(var(--r,0deg));transition:transform .2s}
+.tp:nth-child(3n+1){--r:-.8deg}.tp:nth-child(3n+2){--r:.6deg}.tp:hover{transform:rotate(0) scale(1.02)}
+.tp.fin{grid-column:1/-1;max-width:980px}
+.tp img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.tp figcaption{padding:10px 4px 0}
+.tp small{font:700 10px "IBM Plex Mono",monospace;letter-spacing:1px;opacity:.6}
+.tp b{display:block;font:400 18px/1.1 Bungee,sans-serif;margin:3px 0}
+.tp span{font-size:13px}.tp span a{color:#7b2d26}
+.tp code{display:block;font-size:10px;opacity:.55;margin-top:4px}
 
 /* ---------- foot, splash, confetti ---------- */
 .foot-fine{padding:40px 0 80px;font-size:14px;opacity:.75;line-height:1.6}
@@ -447,6 +502,15 @@ body = f"""
   <div class="pin" id="pin"><div class="stick"><div class="track" id="track">{wanted}{champ_html}</div></div></div>
 </section>
 
+<section class="sec" id="tape">
+  <div class="inner">
+    <div data-rv>{kick("6", "var(--sk-r)", "THE TAPE · EVERY RACE, PAINTED")}<h2 class="sign big">{len(race_art)} RACES.<br><span class="y">{len(race_art)}</span> PAINTINGS.</h2>
+    <p class="lede" style="margin-top:14px">Every race Bryan's engine has run gets a painting of the winner's rider taking it. The race seed picks the corner of the borough, the hour and the celebration, so nobody chose the scene either. Heats are street parties. Finals are monumental.</p></div>
+    <div class="chips" id="tapeChips">{tape_chips}</div>
+    <div class="tape" id="tape-grid">{tape_html}</div>
+  </div>
+</section>
+
 <section class="sec" id="hall">
   <div class="awning"><span>HALL OF FAME · EST. TOURNAMENT 1</span></div>
   <div class="inner"><div class="letterboard" data-rv><table class="lb"><tbody id="skHof"><tr><td>LOADING THE HALL FROM MARBLE RUN...</td></tr></tbody></table></div></div>
@@ -487,7 +551,7 @@ body = f"""
       </div>
     </div>
     <a class="placard" href="h/bryan-brinkman" data-rv>
-      <img src="assets/cards/bryan-brinkman-636923ce.jpg" alt="Bryan Brinkman, painted by MLow" loading="lazy">
+      <img src="assets/cards/{BRYAN_CARD}" alt="Bryan Brinkman, painted by MLow" loading="lazy">
       <div><small>NEW YORKERS HONORARY</small><b>Bryan Brinkman</b><span class="fine" style="opacity:.8">Painted by MLow: NimBuds at the Warehouse. Artist, builder of Marble Run, the engine under every race on this page.</span></div>
     </a>
   </div>
@@ -496,7 +560,7 @@ body = f"""
 <section class="sec" id="riders">
   <div class="inner">
     <div data-rv>{kick("9", "var(--sk-o)", "THE RIDERS · SWIPE IN")}<h2 class="sign big">A HUNDRED<br><span class="y">RIDERS</span></h2>
-    <p class="lede" style="margin-top:14px">Every Marble Run marble keeps the name Bryan gave it. Each one rides with a New Yorker from the census. Stars are titles. Tap a card to meet the rider.</p></div>
+    <p class="lede" style="margin-top:14px">Every Marble Run marble keeps the name Bryan gave it, and every one belongs to whoever holds the matching BrinkWorks pass. Each holder is painted racing their marble, the scene picked by the seed of their best race, and each painting hangs on the honoraries wall. Stars are titles. Tap a card to meet the holder and their other honoraries.</p></div>
     <div class="cards" id="cards">{cards_html}</div>
     <p class="foot-fine">Race data, seeds, courses and the simulation are Bryan Brinkman's <a href="https://marblerun.fun/api" rel="noopener">Marble Run API</a>, read live and verifiable by anyone. SKELLY CUP is a free game: no entry, no stake, no odds, no money paid out. Points and portraits are for glory. Art, not an investment.</p>
   </div>
@@ -512,7 +576,7 @@ js = r"""
 (function(){
   var API = "https://marblerun.fun", B = (window.NY && NY.BASE) || "";
   var BORO = {RED:"Brooklyn", BLUE:"Manhattan", YELLOW:"Queens", GREEN:"Staten Island", CREAM:"The Bronx"};
-  var BCOL = {Brooklyn:"#d9534f", Manhattan:"#5bc0de", Queens:"#f0ad4e", "Staten Island":"#5cb85c", "The Bronx":"#ede0c8"};
+  var BCOL = {Brooklyn:"#DC6F57", Manhattan:"#61C9E2", Queens:"#E79650", "Staten Island":"#79B39B", "The Bronx":"#ede0c8"};
   var ROUND = {heats:"HEAT", semis:"SEMI", final:"THE FINAL"};
   var UI = B + "assets/skelly/ui/", CAP = {RED:"cap-red", BLUE:"cap-blue", YELLOW:"cap-yellow", GREEN:"cap-green", CREAM:"cap-cream"};
   var BCAP = {Brooklyn:"cap-red", Manhattan:"cap-blue", Queens:"cap-yellow", "Staten Island":"cap-green", "The Bronx":"cap-cream"};
@@ -648,7 +712,7 @@ js = r"""
   /* ---------- the finish ---------- */
   var conf = $("skConf"), cx = conf.getContext("2d"), bits = [];
   function confetti(){
-    conf.width = innerWidth; conf.height = innerHeight; var cols = ["#ffcc00", "#d9534f", "#5bc0de", "#f0ad4e", "#5cb85c", "#ede0c8"];
+    conf.width = innerWidth; conf.height = innerHeight; var cols = ["#ECC981", "#DC6F57", "#61C9E2", "#E79650", "#79B39B", "#ede0c8"];
     for (var i = 0; i < 160; i++) bits.push({x: Math.random() * conf.width, y: -20 - Math.random() * conf.height * .5, v: 2 + Math.random() * 4, s: 4 + Math.random() * 6, c: cols[i % 6], w: Math.random() * 6});
     (function fr(){ cx.clearRect(0, 0, conf.width, conf.height); bits = bits.filter(function(b){ return b.y < conf.height + 20; }); bits.forEach(function(b){ b.y += b.v; b.w += .1; cx.fillStyle = b.c; cx.fillRect(b.x + Math.sin(b.w) * 8, b.y, b.s, b.s * .6); }); if (bits.length) requestAnimationFrame(fr); else cx.clearRect(0, 0, conf.width, conf.height); })();
   }
@@ -814,6 +878,13 @@ design_js = r"""
     }, RM ? 0 : 450);
   };
   addEventListener("keydown", function(e){ if (e.key === "Escape" && big) unbig(); });
+
+  /* THE TAPE: one tournament at a time, or all of them */
+  var chips = $("tapeChips");
+  if (chips) chips.addEventListener("click", function(e){ var b = e.target.closest("button"); if (!b) return;
+    chips.querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    document.querySelectorAll("#tape-grid .tp").forEach(function(f){ f.hidden = b.dataset.t !== "all" && f.dataset.t !== b.dataset.t; });
+  });
 
   /* transit card tilt and shine */
   document.querySelectorAll(".tcard").forEach(function(c){

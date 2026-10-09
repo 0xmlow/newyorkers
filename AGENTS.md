@@ -74,6 +74,8 @@ page and looked healthy.
 | If your task is | Read | Lines |
 |---|---|---|
 | Anything about the live site | `../HANDOFF 2026-09-08/00_START_HERE.md` | 243 |
+| The site's colours, buttons, nav and materials (2026-10-09 design pass) | `HANDOFF_DESIGN_2026-10-09.md` | 25 |
+| What changed on 2026-10-07 (mint awareness, arcade, stop, states, posting pipeline, what still needs MLow) | `HANDOFF_2026-10-07.md` | 60 |
 | The 3D museum | `../HANDOFF 2026-09-08/05_THE_MUSEUM.md` | 180 |
 | Making the museum look better | `_build/museum/PHOTOREALISM_SCOPE_2026-09-08.md` | 300 |
 | Upgrading the earlier rooms to the 2026-09-23 standard | `_build/museum/ROOM_UPGRADE_GUIDE_2026-09-23.md` | 230 |

@@ -33,7 +33,7 @@ def save(im, path, q):
 
 ROLES = json.load(open(os.path.join(HERE, "roles.json")))  # person key -> category code, edit by hand
 CATS = [("A", "Artists"), ("C", "Collectors and curators"), ("B", "Founders and investors"), ("W", "Writers and media"),
-        ("M", "Music"), ("F", "Film and stage"), ("X", "Fashion"), ("S", "Sport"), ("D", "Food"), ("P", "Politics and civic")]
+        ("M", "Music"), ("F", "Film and stage"), ("X", "Fashion"), ("S", "Sport"), ("D", "Food"), ("P", "Politics and civic"), ("T", "Traders")]
 BANNED = json.load(open(os.path.join(HERE, "banned.json")))["people"]  # removed for good, see the file
 _bn = {re.sub(r"[^a-z0-9]+", "", b["name"].lower()) for b in BANNED}; _bh = {b["handle"].lower() for b in BANNED}
 bad = [p["disp"] for p in TL.PEOPLE if re.sub(r"[^a-z0-9]+", "", p["disp"].lower()) in _bn or (p["handle"] or "").lstrip("@").lower() in _bh]
@@ -69,8 +69,8 @@ for p in TL.PEOPLE:  # every painting; the film shows one per person, the page k
     hd = p["handle"] or ""
     if hd and not e["handle"]:
         e.update(handle=hd, x=hd[1:] if HANDLE.match(hd) else "")
-    # the portrait made for the person leads, the census piece follows
-    if p.get("kind") == "census":
+    # the portrait made for the person leads; the census piece and the SKELLY CUP painting follow
+    if p.get("kind") in ("census", "skelly"):
         e["works"].append(work)
     else:
         e["works"].insert(0, work)

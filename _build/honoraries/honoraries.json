@@ -39,6 +39,10 @@
 {
 "code": "P",
 "name": "Politics and civic"
+},
+{
+"code": "T",
+"name": "Traders"
 }
 ],
 "people": [
@@ -53,6 +57,13 @@
 "title": "Meter Running at the Met",
 "s": "mlow-6e3226cfs.jpg",
 "l": "mlow-6e3226cfl.jpg",
+"w": 1280,
+"h": 720
+},
+{
+"title": "Chasing Dimensional Past the Unisphere",
+"s": "mlow-33-d003c3e3s.jpg",
+"l": "mlow-33-d003c3e3l.jpg",
 "w": 1280,
 "h": 720
 }
@@ -132,6 +143,13 @@
 "title": "The Empty Chair",
 "s": "adamtastic-adam-levine-965ba1c8s.jpg",
 "l": "adamtastic-adam-levine-965ba1c8l.jpg",
+"w": 1280,
+"h": 720
+},
+{
+"title": "Blowing on Fluffy at the Ferry",
+"s": "adamtastic-5f71a773s.jpg",
+"l": "adamtastic-5f71a773l.jpg",
 "w": 1280,
 "h": 720
 }
@@ -255,6 +273,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "alotta-money",
+"name": "Alotta Money",
+"handle": "@money_alotta",
+"x": "money_alotta",
+"cat": "A",
+"works": [
+{
+"title": "Candles on the Bowery",
+"s": "alotta-money-98cc9feas.jpg",
+"l": "alotta-money-98cc9feal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pioneering French crypto artist and Cryptovoxels builder (Saint Nakamoto with Jivinci) who died in March 2022.",
+"iv": []
 },
 {
 "id": "alpha-centauri-kid",
@@ -436,6 +472,24 @@
 "iv": []
 },
 {
+"id": "anna-ridler",
+"name": "Anna Ridler",
+"handle": "@annaridler",
+"x": "annaridler",
+"cat": "A",
+"works": [
+{
+"title": "Tulips at the Greenmarket",
+"s": "anna-ridler-54724e16s.jpg",
+"l": "anna-ridler-54724e16l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "London artist known for Mosaic Virus and Myriad (Tulips), GAN works that link tulip mania to crypto speculation.",
+"iv": []
+},
+{
 "id": "anne-spalter",
 "name": "Anne Spalter",
 "handle": "@annespalter",
@@ -543,6 +597,13 @@
 "title": "Red Robe, Ring Light",
 "s": "batzdu-90c024e9s.jpg",
 "l": "batzdu-90c024e9l.jpg",
+"w": 1280,
+"h": 720
+},
+{
+"title": "Blowing on Geometric at Orchard Beach",
+"s": "batzdu-33-b7b865d0s.jpg",
+"l": "batzdu-33-b7b865d0l.jpg",
 "w": 1280,
 "h": 720
 }
@@ -712,6 +773,24 @@
 "iv": []
 },
 {
+"id": "botto",
+"name": "Botto",
+"handle": "@bottoproject",
+"x": "bottoproject",
+"cat": "A",
+"works": [
+{
+"title": "The Easel Votes in Chelsea",
+"s": "botto-774fdb43s.jpg",
+"l": "botto-774fdb43l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "A decentralized autonomous AI artist whose works are chosen each week by BottoDAO voters and sold at auction since 2021.",
+"iv": []
+},
+{
 "id": "bradley-theodore",
 "name": "Bradley Theodore",
 "handle": "@bradleytheodore",
@@ -727,6 +806,24 @@
 }
 ],
 "bio": "Painter of skull faced fashion icons in bright color, from street walls to galleries. Style outlives the face",
+"iv": []
+},
+{
+"id": "b-rd-ionson",
+"name": "Bård Ionson",
+"handle": "@BardIonson",
+"x": "BardIonson",
+"cat": "A",
+"works": [
+{
+"title": "Half Life on the Brooklyn Bridge",
+"s": "b-rd-ionson-ef41dd1as.jpg",
+"l": "b-rd-ionson-ef41dd1al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bård Ionson has made generative AI art with GANs, oscilloscopes and glitch since 2018, collected by the Bodleian Library and the Francisco Carolinum. The signal is the portrait.",
 "iv": []
 },
 {
@@ -798,14 +895,21 @@
 "cat": "A",
 "works": [
 {
-"title": "The Man Who Keeps the Weather on Strings",
-"s": "bryan-brinkman-2404a100s.jpg",
-"l": "bryan-brinkman-2404a100l.jpg",
-"w": 960,
-"h": 1280
+"title": "NimBuds at the Warehouse",
+"s": "bryan-brinkman-1313a121s.jpg",
+"l": "bryan-brinkman-1313a121l.jpg",
+"w": 1280,
+"h": 714
+},
+{
+"title": "Chasing Brunk Past Arthur Avenue",
+"s": "bryan-brinkman-33-d9f57fd8s.jpg",
+"l": "bryan-brinkman-33-d9f57fd8l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
-"bio": "Emmy winning animator from SNL and the Tonight Show who makes bold candy colored digital pop. One palette, instantly his",
+"bio": "Emmy winning animator from SNL and the Tonight Show who made NimBuds, the on chain cloud characters. Painted at a Costco upstate with a NimBud chainsaw and a $1.50 hot dog",
 "iv": [
 {
 "url": "https://x.com/0xmlow/status/1696344600682615272",
@@ -982,19 +1086,19 @@
 {
 "id": "claire-silver",
 "name": "Claire Silver",
-"handle": "@ClaireSilver12",
-"x": "ClaireSilver12",
+"handle": "@ClaireSilver",
+"x": "ClaireSilver",
 "cat": "A",
 "works": [
 {
-"title": "Pink in the Cast Iron Light",
-"s": "claire-silver-bebfd215s.jpg",
-"l": "claire-silver-bebfd215l.jpg",
-"w": 1031,
-"h": 1280
+"title": "Three Gowns in the East River",
+"s": "claire-silver-84d4ec02s.jpg",
+"l": "claire-silver-84d4ec02l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
-"bio": "Artist who works with AI as a collaborator, painted here as her avatar in a SoHo loft. The dream sat for the portrait",
+"bio": "Artist who works with AI as a collaborator, painted here as her avatar on a Brooklyn pier. Three of her gowns stand in the river",
 "iv": []
 },
 {
@@ -1023,9 +1127,16 @@
 "cat": "A",
 "works": [
 {
-"title": "Grinning in Stereo",
-"s": "coldie-d3b3ec4cs.jpg",
-"l": "coldie-d3b3ec4cl.jpg",
+"title": "Stepping Out of Stereo",
+"s": "coldie-2d95562bs.jpg",
+"l": "coldie-2d95562bl.jpg",
+"w": 1280,
+"h": 720
+},
+{
+"title": "Blowing on Lenticular at Flushing",
+"s": "coldie-33-0d557941s.jpg",
+"l": "coldie-33-0d557941l.jpg",
 "w": 1280,
 "h": 720
 }
@@ -1266,6 +1377,24 @@
 "iv": []
 },
 {
+"id": "deafbeef",
+"name": "DEAFBEEF",
+"handle": "@_deafbeef",
+"x": "_deafbeef",
+"cat": "A",
+"works": [
+{
+"title": "Pay Phone Song on Canal Street",
+"s": "deafbeef-beb284c3s.jpg",
+"l": "deafbeef-beb284c3l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous Canadian artist who stores code for generative music and animation on chain (Series 0 to 5, Chronophotograph, Glitch Box).",
+"iv": []
+},
+{
 "id": "deltasauce",
 "name": "DeltaSauce",
 "handle": "@deltasauce",
@@ -1273,11 +1402,11 @@
 "cat": "A",
 "works": [
 {
-"title": "Three in the Morning Spin Cycle",
-"s": "deltasauce-cba23269s.jpg",
-"l": "deltasauce-cba23269l.jpg",
-"w": 1031,
-"h": 1280
+"title": "The Window in the River",
+"s": "deltasauce-68ae2f30s.jpg",
+"l": "deltasauce-68ae2f30l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Full time artist and wordsmith making liminal art, curating nostalgia one empty room at a time. He collects MLow too",
@@ -1452,14 +1581,32 @@
 "cat": "A",
 "works": [
 {
-"title": "Faces in the Mural",
-"s": "efdot-46aa8dffs.jpg",
-"l": "efdot-46aa8dffl.jpg",
+"title": "Canal Street, After Dark",
+"s": "efdot-331bb32es.jpg",
+"l": "efdot-331bb32el.jpg",
 "w": 1280,
 "h": 720
 }
 ],
-"bio": "Muralist who paints bold abstract shapes and playful geometry across city walls. Walls as open canvas",
+"bio": "Muralist who paints bold abstract shapes and playful geometry across city walls. Painted on Canal Street at night, his figures filling the wall behind him",
+"iv": []
+},
+{
+"id": "egodead",
+"name": "egodead",
+"handle": "@egodead",
+"x": "egodead",
+"cat": "A",
+"works": [
+{
+"title": "Three Ties Over Orchard Street",
+"s": "egodead-a05d2e2bs.jpg",
+"l": "egodead-a05d2e2bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "egodead is Nishant, a New York painter whose multi eyed men in suits sell as one of ones on SuperRare and through the egodead shop. Three ties, never one.",
 "iv": []
 },
 {
@@ -1908,14 +2055,14 @@
 "cat": "A",
 "works": [
 {
-"title": "Every Box Checked",
-"s": "jack-butcher-436ab167s.jpg",
-"l": "jack-butcher-436ab167l.jpg",
+"title": "Eighty Checks Across the River",
+"s": "jack-butcher-8023803cs.jpg",
+"l": "jack-butcher-8023803cl.jpg",
 "w": 1280,
 "h": 720
 }
 ],
-"bio": "Founder of Visualize Value and the artist behind Checks and Opepen, working in stark black on white. Less ink, more signal",
+"bio": "Founder of Visualize Value and the artist behind Checks and Opepen. Painted on the Williamsburg waterfront while eighty checks light a tower across the river",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1851301871283236985",
@@ -1949,6 +2096,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "jared-tarbell",
+"name": "Jared Tarbell",
+"handle": "@jaredstarbell",
+"x": "jaredstarbell",
+"cat": "A",
+"works": [
+{
+"title": "Map Growing in DUMBO",
+"s": "jared-tarbell-03191a3cs.jpg",
+"l": "jared-tarbell-03191a3cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Generative art pioneer of levitated.net (Substrate, 2003) and co-founder of Etsy, now minting the work on chain.",
+"iv": []
 },
 {
 "id": "jason-naylor",
@@ -2414,6 +2579,24 @@
 "iv": []
 },
 {
+"id": "kim-asendorf",
+"name": "Kim Asendorf",
+"handle": "@kimasendorf",
+"x": "kimasendorf",
+"cat": "A",
+"works": [
+{
+"title": "Pixel Sorting Times Square",
+"s": "kim-asendorf-015f5f51s.jpg",
+"l": "kim-asendorf-015f5f51l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "German generative artist and pioneer of pixel sorting, known for Monogrid, Alternate, Cargo and PXL on chain.",
+"iv": []
+},
+{
 "id": "kjetil-golid",
 "name": "Kjetil Golid",
 "handle": "@kgolid",
@@ -2742,6 +2925,13 @@
 "l": "matt-kane-d3907462l.jpg",
 "w": 1280,
 "h": 720
+},
+{
+"title": "Kneeling With Multitudes at Strivers Row",
+"s": "matt-kane-33-399edabcs.jpg",
+"l": "matt-kane-33-399edabcl.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Painter in code whose Gazers shift with the phases of the moon. The painting keeps time",
@@ -3021,6 +3211,24 @@
 "iv": []
 },
 {
+"id": "mr-richi",
+"name": "Mr Richi",
+"handle": "@Richi0118",
+"x": "Richi0118",
+"cat": "A",
+"works": [
+{
+"title": "The Hype Left, We Didn't",
+"s": "mr-richi-4ab272bbs.jpg",
+"l": "mr-richi-4ab272bbl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Mr Richi has made crypto art since 2021 and founded JPEG Frens, a ten thousand piece hand drawn PFP collection on Ethereum. The tongue stays out.",
+"iv": []
+},
+{
 "id": "muhju",
 "name": "muhju",
 "handle": "@MuhjuArt",
@@ -3054,6 +3262,24 @@
 }
 ],
 "bio": "Photographer known as Misshattan who shoots Manhattan from the open door of a helicopter. The grid, seen from above",
+"iv": []
+},
+{
+"id": "natealex",
+"name": "natealex",
+"handle": "@natealex",
+"x": "natealex",
+"cat": "A",
+"works": [
+{
+"title": "Cleared for the Hudson",
+"s": "natealex-ab26df27s.jpg",
+"l": "natealex-ab26df27l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "natealex is an artist, engineer and collector who created ChainFaces, squigglyWTF and Zeg's Eggs, and flies as CryptoPunk 2909 in a pilot helmet. Cleared for the Hudson.",
 "iv": []
 },
 {
@@ -3220,6 +3446,13 @@
 "l": "nuclear-samurai-nuke-87013c7cl.jpg",
 "w": 1280,
 "h": 714
+},
+{
+"title": "Blowing on Rotten at Prospect Park",
+"s": "nuclear-samurai-0d809852s.jpg",
+"l": "nuclear-samurai-0d809852l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Artist who makes AI assisted toy and action figure renders, including BRAINROT and X Figures. Plastic sheen, clean lineage",
@@ -3291,6 +3524,24 @@
 }
 ],
 "bio": "Anonymous feminist performance artist asking what a woman artist is worth, from live auctions at the Met to a loaf of bread with a Bitcoin wallet baked inside. The mask stays on",
+"iv": []
+},
+{
+"id": "operator",
+"name": "Operator",
+"handle": "@operator_______",
+"x": "operator_______",
+"cat": "A",
+"works": [
+{
+"title": "Slow Choreography at Hudson Yards",
+"s": "operator-527883bes.jpg",
+"l": "operator-527883bel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Berlin and LA based artist duo Ania Catherine (choreographer) and Dejha Ti (HCI technologist), known for Human Unreadable on Art Blocks and immersive performance.",
 "iv": []
 },
 {
@@ -3459,14 +3710,14 @@
 "cat": "A",
 "works": [
 {
-"title": "The Machine Keeps Painting",
-"s": "pindar-van-arman-d4404a61s.jpg",
-"l": "pindar-van-arman-d4404a61l.jpg",
+"title": "The Robot Paints on West 24th",
+"s": "pindar-van-arman-3cf0b19es.jpg",
+"l": "pindar-van-arman-3cf0b19el.jpg",
 "w": 1280,
-"h": 720
+"h": 719
 }
 ],
-"bio": "Artist who has spent twenty years building robots that paint with AI. The machine holds the brush",
+"bio": "Artist who has spent twenty years building robots that paint with AI. Painted on West 24th Street while his robot finishes a portrait behind him",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1719249264600031687",
@@ -3535,6 +3786,24 @@
 }
 ],
 "bio": "Artist behind the Uniswap unicorn animation and founder of Shibuya, making glossy 3D dreamscapes. A promo clip became an icon",
+"iv": []
+},
+{
+"id": "psych",
+"name": "Psych",
+"handle": "@psych_nft",
+"x": "psych_nft",
+"cat": "A",
+"works": [
+{
+"title": "The Dead Walk Sixth Avenue",
+"s": "psych-e322403as.jpg",
+"l": "psych-e322403al.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Psych created Deadfellaz, the ten thousand zombie collection, along with Dead Lucky and gm_dfz. The dead walk Sixth Avenue.",
 "iv": []
 },
 {
@@ -3668,6 +3937,24 @@
 }
 ],
 "bio": "Media artist whose data painting Unsupervised filled the MoMA lobby. The archive learned to dream",
+"iv": []
+},
+{
+"id": "rhea-myers",
+"name": "Rhea Myers",
+"handle": "@rheaplex",
+"x": "rheaplex",
+"cat": "A",
+"works": [
+{
+"title": "Sealed Lot on York Avenue",
+"s": "rhea-myers-c826baa1s.jpg",
+"l": "rhea-myers-c826baa1l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "British Canadian conceptual artist, hacker and writer who made blockchain art from 2011, years before NFTs.",
 "iv": []
 },
 {
@@ -4061,14 +4348,21 @@
 {
 "id": "snowfro",
 "name": "Snowfro",
-"handle": "@artonblocks",
-"x": "artonblocks",
+"handle": "@ArtOnBlockchain",
+"x": "ArtOnBlockchain",
 "cat": "A",
 "works": [
 {
-"title": "Rainbow Over the Tower",
-"s": "snowfro-646e1e8cs.jpg",
-"l": "snowfro-646e1e8cl.jpg",
+"title": "The Squiggle on the Water Tower",
+"s": "snowfro-af5f2df6s.jpg",
+"l": "snowfro-af5f2df6l.jpg",
+"w": 1280,
+"h": 720
+},
+{
+"title": "Blowing on Squiggy at Orchard Beach",
+"s": "snowfro-33-7ed1c0bfs.jpg",
+"l": "snowfro-33-7ed1c0bfl.jpg",
 "w": 1280,
 "h": 720
 }
@@ -4221,6 +4515,24 @@
 "iv": []
 },
 {
+"id": "tana-marie",
+"name": "Tana Marie",
+"handle": "@tanarchyxyz",
+"x": "tanarchyxyz",
+"cat": "A",
+"works": [
+{
+"title": "Hollow on Mott Street",
+"s": "tana-marie-a1185ed6s.jpg",
+"l": "tana-marie-a1185ed6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Tana Marie is a New York dark surrealist illustrator who curates the Nocturne Noir gallery and draws in fine crosshatched ink. The mouths drip.",
+"iv": []
+},
+{
 "id": "thankyoux",
 "name": "ThankYouX",
 "handle": "@thankyoux",
@@ -4239,6 +4551,24 @@
 "iv": []
 },
 {
+"id": "tinoch",
+"name": "tinoch",
+"handle": "@tinoch",
+"x": "tinoch",
+"cat": "A",
+"works": [
+{
+"title": "Loop Hole at Coney Island",
+"s": "tinoch-c7b4fb7fs.jpg",
+"l": "tinoch-c7b4fb7fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "tinoch is a Venezuelan born photographer and digital artist whose phone and selfie culture work is collected on Networked by Visualize Value. The wheel keeps spinning.",
+"iv": []
+},
+{
 "id": "tom-sachs",
 "name": "Tom Sachs",
 "handle": "",
@@ -4254,6 +4584,24 @@
 }
 ],
 "bio": "Sculptor behind the Rocket Factory and plywood NASA, working from a studio on Centre Street. Duct tape reaches orbit",
+"iv": []
+},
+{
+"id": "tormius",
+"name": "tormius",
+"handle": "@tormius",
+"x": "tormius",
+"cat": "A",
+"works": [
+{
+"title": "Altera Natura in the Oculus",
+"s": "tormius-fc4269f1s.jpg",
+"l": "tormius-fc4269f1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "tormius is a Valencia based digital artist making absurdly abstract compositions in the line of Miro and Kandinsky, sold as one of ones on SuperRare. Every shape hides a face.",
 "iv": []
 },
 {
@@ -4551,14 +4899,14 @@
 "cat": "A",
 "works": [
 {
-"title": "Last Train",
-"s": "xcopy-669a2afas.jpg",
-"l": "xcopy-669a2afal.jpg",
-"w": 1031,
-"h": 1280
+"title": "Afterburn Over Wall Street",
+"s": "xcopy-a5fe2d5as.jpg",
+"l": "xcopy-a5fe2d5al.jpg",
+"w": 1280,
+"h": 720
 }
 ],
-"bio": "A pseudonymous artist whose glitched, flickering loops about death and dystopia shaped crypto art. Static on repeat, forever",
+"bio": "A pseudonymous artist whose glitched, flickering loops about death and dystopia shaped crypto art. Painted as his ghost on Wall Street, his burning skull rising behind it",
 "iv": []
 },
 {
@@ -4685,6 +5033,24 @@
 }
 ],
 "bio": "YouTube artist known for custom drawing challenges in paint marker, whose first NFT drop was Critters. Loud markers, soft creatures",
+"iv": []
+},
+{
+"id": "0scoralshellfish",
+"name": "0Scoralshellfish",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Combustion at Prospect Park",
+"s": "0scoralshellfish-bbf20016s.jpg",
+"l": "0scoralshellfish-bbf20016l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #061, so marble 61, Combustion, races in Bryan Brinkman's Marble Run under that wallet. Won heat 9 of tournament 7, race seed 77745948, painted for the SKELLY CUP at the Prospect Park bandshell on a snowy night",
 "iv": []
 },
 {
@@ -5048,6 +5414,24 @@
 "iv": []
 },
 {
+"id": "0xee76-4859",
+"name": "0xee76…4859",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Thirty Six in the Storm Room",
+"s": "0xee76-4859-66a21693s.jpg",
+"l": "0xee76-4859-66a21693l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Thirty six New Yorkers, nearly all minted in one night. Nobody knows who",
+"iv": []
+},
+{
 "id": "0xf524-8963",
 "name": "0xf524…8963",
 "handle": "",
@@ -5117,6 +5501,60 @@
 }
 ],
 "bio": "Collector and bidder who holds three Transdimensional Trippers. Breathe in",
+"iv": []
+},
+{
+"id": "1nfern0",
+"name": "1NFERN0",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Fence That Blooms Back",
+"s": "1nfern0-e32223dds.jpg",
+"l": "1nfern0-e32223ddl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Three New Yorkers and a glitch for a face. The fence blooms where it broke",
+"iv": []
+},
+{
+"id": "22art",
+"name": "22art",
+"handle": "@22ARTeth",
+"x": "22ARTeth",
+"cat": "C",
+"works": [
+{
+"title": "Double Deuce Held High at Prospect Park",
+"s": "22art-e562f6b1s.jpg",
+"l": "22art-e562f6b1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #054, so marble 54, Double Deuce, races in Bryan Brinkman's Marble Run under that wallet. Won heat 11 of tournament 7, race seed 1371120878, painted for the SKELLY CUP at the Prospect Park bandshell at golden hour",
+"iv": []
+},
+{
+"id": "666k",
+"name": "666k",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Chasing Dialer Past Fort Wadsworth",
+"s": "666k-094c87ees.jpg",
+"l": "666k-094c87eel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #075, so marble 75, Dialer, races in Bryan Brinkman's Marble Run under that wallet. Won heat 9 of tournament 4, race seed 2309343447, painted for the SKELLY CUP at the Fort Wadsworth overlook under the Verrazzano at neon midnight",
 "iv": []
 },
 {
@@ -5217,6 +5655,24 @@
 "iv": []
 },
 {
+"id": "aldover",
+"name": "Aldover",
+"handle": "@aldover_eth",
+"x": "aldover_eth",
+"cat": "C",
+"works": [
+{
+"title": "Riding Appreciatoor at Bed-Stuy",
+"s": "aldover-6e9048f2s.jpg",
+"l": "aldover-6e9048f2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #006, so marble 6, Appreciatoor, races in Bryan Brinkman's Marble Run under that wallet. Won heat 4 of tournament 7, race seed 2905148637, painted for the SKELLY CUP at a Bed-Stuy brownstone block at neon midnight",
+"iv": []
+},
+{
 "id": "along",
 "name": "Along",
 "handle": "@pengwinpants",
@@ -5235,6 +5691,96 @@
 "iv": []
 },
 {
+"id": "alpurrt",
+"name": "alpurrt",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Windy at Snug Harbor",
+"s": "alpurrt-c050d920s.jpg",
+"l": "alpurrt-c050d920l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #059, so marble 59, Windy, races in Bryan Brinkman's Marble Run under that wallet. Won heat 6 of tournament 4, race seed 1321497693, painted for the SKELLY CUP at the gardens of Snug Harbor at dawn",
+"iv": []
+},
+{
+"id": "an5",
+"name": "AN5",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Spaced Out Held High at Williamsburg",
+"s": "an5-1f9bd043s.jpg",
+"l": "an5-1f9bd043l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #072, so marble 72, Spaced Out, races in Bryan Brinkman's Marble Run under that wallet. Won heat 6 of tournament 5, race seed 1827557154, painted for the SKELLY CUP at a Williamsburg rooftop at noon in a heat wave",
+"iv": []
+},
+{
+"id": "andrewribt",
+"name": "AndrewRiBT",
+"handle": "@AndrewRiBT",
+"x": "AndrewRiBT",
+"cat": "C",
+"works": [
+{
+"title": "Chasing Toad Past Williamsburg",
+"s": "andrewribt-68831fees.jpg",
+"l": "andrewribt-68831feel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #041, so marble 41, Toad, races in Bryan Brinkman's Marble Run under that wallet. Won heat 1 of tournament 6, race seed 3504171009, painted for the SKELLY CUP at a Williamsburg rooftop at golden hour",
+"iv": []
+},
+{
+"id": "anononoy34",
+"name": "anononoy34",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Moon God at Tottenville",
+"s": "anononoy34-f9a4da71s.jpg",
+"l": "anononoy34-f9a4da71l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #066, so marble 66, Moon God, races in Bryan Brinkman's Marble Run under that wallet. Won heat 14 of tournament 3, race seed 3439575709, painted for the SKELLY CUP at a Tottenville front yard on a snowy night",
+"iv": []
+},
+{
+"id": "arsonic",
+"name": "Arsonic",
+"handle": "@Ars0nic",
+"x": "Ars0nic",
+"cat": "C",
+"works": [
+{
+"title": "Sargent Held High at DUMBO",
+"s": "arsonic-ba445865s.jpg",
+"l": "arsonic-ba445865l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #065, so marble 65, Sargent, races in Bryan Brinkman's Marble Run under that wallet. Won heat 18 of tournament 3, race seed 1415799596, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge at neon midnight",
+"iv": []
+},
+{
 "id": "balon",
 "name": "balón",
 "handle": "@balon_art",
@@ -5247,9 +5793,34 @@
 "l": "balon-9268cf1dl.jpg",
 "w": 1280,
 "h": 714
+},
+{
+"title": "Riding Mulligan at Rockaway",
+"s": "bal-n-cdc033f7s.jpg",
+"l": "bal-n-cdc033f7l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Works partnerships at OpenSea, collects digital art and hosts the Provenance podcast, all under CryptoPunk 6360. The cowboy is listening",
+"iv": []
+},
+{
+"id": "barrydabarbarian",
+"name": "BarryDaBarbarian",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Barbarian at the Bedrock",
+"s": "barrydabarbarian-deba310ds.jpg",
+"l": "barrydabarbarian-deba310dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Two New Yorkers and a flamingo in a pelt. Central Park at first light",
 "iv": []
 },
 {
@@ -5265,6 +5836,13 @@
 "l": "batsoupyum-5ccd5856l.jpg",
 "w": 1280,
 "h": 720
+},
+{
+"title": "Batty, Flicked Across the Concourse",
+"s": "batsoupyum-33-12c90722s.jpg",
+"l": "batsoupyum-33-12c90722l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "A pseudonymous collector of glitch, cartoon satire and moody one of one digital art. The collection is the self portrait",
@@ -5276,6 +5854,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "bearsurvivor",
+"name": "BearSurvivor",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "High Quality, Flicked Across DUMBO",
+"s": "bearsurvivor-784d3165s.jpg",
+"l": "bearsurvivor-784d3165l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #008, so marble 8, High Quality, races in Bryan Brinkman's Marble Run under that wallet. Won heat 3 of tournament 6, race seed 1066723026, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge at golden hour",
+"iv": []
 },
 {
 "id": "bharat-krymo",
@@ -5301,6 +5897,60 @@
 "label": "Part 1"
 }
 ]
+},
+{
+"id": "blocknoob",
+"name": "blocknoob",
+"handle": "@blocknoob_",
+"x": "blocknoob_",
+"cat": "C",
+"works": [
+{
+"title": "Complainoor Held High at Astoria Park",
+"s": "blocknoob-f919a04as.jpg",
+"l": "blocknoob-f919a04al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #068, so marble 68, Complainoor, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 11 of tournament 7, race seed 1371120878, painted for the SKELLY CUP at astoria Park under the Hell Gate Bridge at golden hour",
+"iv": []
+},
+{
+"id": "blondie23lmd007",
+"name": "Blondie23LMD007",
+"handle": "@Blondie23LMD",
+"x": "Blondie23LMD",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Rainbow at Flushing",
+"s": "blondie23lmd007-f20b059bs.jpg",
+"l": "blondie23lmd007-f20b059bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #030, so marble 30, Rainbow, races in Bryan Brinkman's Marble Run under that wallet. Won heat 20 of tournament 3, race seed 2623995714, painted for the SKELLY CUP at main Street in Flushing at noon in a heat wave",
+"iv": []
+},
+{
+"id": "bstags",
+"name": "bstags",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Solo at Washington Square",
+"s": "bstags-a827e28bs.jpg",
+"l": "bstags-a827e28bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #058, so marble 58, Solo, races in Bryan Brinkman's Marble Run under that wallet. Won heat 11 of tournament 6, race seed 2528696622, painted for the SKELLY CUP at under the Washington Square arch on a rainy night, every surface wet and shining",
+"iv": []
 },
 {
 "id": "btdwayne",
@@ -5354,6 +6004,60 @@
 }
 ],
 "bio": "Collector holding eight Based Pepes for Peace on Base. A frog in every port",
+"iv": []
+},
+{
+"id": "chikai",
+"name": "chikai",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Maper at Fordham Road",
+"s": "chikai-b7bf65b8s.jpg",
+"l": "chikai-b7bf65b8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #078, so marble 78, Maper, races in Bryan Brinkman's Marble Run under that wallet. Won heat 9 of tournament 3, race seed 766463509, painted for the SKELLY CUP at a Fordham Road corner on a snowy night",
+"iv": []
+},
+{
+"id": "chris-ostoich",
+"name": "Chris Ostoich",
+"handle": "@chrisostoich",
+"x": "chrisostoich",
+"cat": "C",
+"works": [
+{
+"title": "El Bandito on the Red Steps",
+"s": "chris-ostoich-525823des.jpg",
+"l": "chris-ostoich-525823del.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Chris Ostoich is COO of Transient Labs and a serious collector who carries El Bandito, CryptoPunk 2410. The mask stays on.",
+"iv": []
+},
+{
+"id": "clay",
+"name": "clay",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Molder at St. George",
+"s": "clay-860142b2s.jpg",
+"l": "clay-860142b2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #073, so marble 73, Molder, races in Bryan Brinkman's Marble Run under that wallet. Won semi 2 of tournament 4, race seed 3758817866, painted for the SKELLY CUP at the St",
 "iv": []
 },
 {
@@ -5424,6 +6128,42 @@
 "iv": []
 },
 {
+"id": "colorblock",
+"name": "colorblock_",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blocky Held High at Orchard Beach",
+"s": "colorblock-97cf5c10s.jpg",
+"l": "colorblock-97cf5c10l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #024, so marble 24, Blocky, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 1, race seed 413865033, painted for the SKELLY CUP at orchard Beach at dawn",
+"iv": []
+},
+{
+"id": "conthedon",
+"name": "conthedon",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Detroiter at Astoria Park",
+"s": "conthedon-516219b0s.jpg",
+"l": "conthedon-516219b0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #100, so marble 100, Detroiter, races in Bryan Brinkman's Marble Run under that wallet. Won heat 2 of tournament 6, race seed 793139673, painted for the SKELLY CUP at astoria Park under the Hell Gate Bridge at dawn",
+"iv": []
+},
+{
 "id": "cozomo-de-medici",
 "name": "Cozomo de' Medici",
 "handle": "@CozomoMedici",
@@ -5457,6 +6197,24 @@
 }
 ],
 "bio": "Collector of Endless Peonies and New Yorkers, a blue monkey with a duck for a hat. The duck stays on",
+"iv": []
+},
+{
+"id": "cryptobscure",
+"name": "Cryptobscure",
+"handle": "@Cryptobscure",
+"x": "Cryptobscure",
+"cat": "C",
+"works": [
+{
+"title": "Writing About the Ones That Stick",
+"s": "cryptobscure-9dca06ccs.jpg",
+"l": "cryptobscure-9dca06ccl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Curator of oxjpegs.eth, eleven New Yorkers deep. Collects jpegs and writes about the ones that stick",
 "iv": []
 },
 {
@@ -5550,6 +6308,24 @@
 "iv": []
 },
 {
+"id": "deekaymotion",
+"name": "deekaymotion",
+"handle": "@deekaymotion",
+"x": "deekaymotion",
+"cat": "C",
+"works": [
+{
+"title": "Riding Walker at Fort Wadsworth",
+"s": "deekaymotion-b2ff9254s.jpg",
+"l": "deekaymotion-b2ff9254l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #060, so marble 60, Walker, races in Bryan Brinkman's Marble Run under that wallet. Won heat 18 of tournament 5, race seed 1019478357, painted for the SKELLY CUP at the Fort Wadsworth overlook under the Verrazzano at neon midnight",
+"iv": []
+},
+{
 "id": "deeze",
 "name": "Deeze",
 "handle": "@DeeZe",
@@ -5583,6 +6359,24 @@
 }
 ],
 "bio": "Tech founder, former quant and cypherpunk who builds with robots and GPUs and collects MLow along the way. Decentralize everything",
+"iv": []
+},
+{
+"id": "derekedws",
+"name": "derekedws",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Glitchy, Flicked Across Fort Wadsworth",
+"s": "derekedws-6210fb00s.jpg",
+"l": "derekedws-6210fb00l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #048, so marble 48, Glitchy, races in Bryan Brinkman's Marble Run under that wallet. Won heat 16 of tournament 6, race seed 342684367, painted for the SKELLY CUP at the Fort Wadsworth overlook under the Verrazzano at golden hour",
 "iv": []
 },
 {
@@ -5640,6 +6434,60 @@
 "iv": []
 },
 {
+"id": "doug-dimmadome",
+"name": "Doug Dimmadome",
+"handle": "@DimmadomeCrypto",
+"x": "DimmadomeCrypto",
+"cat": "C",
+"works": [
+{
+"title": "The Hat at Rockefeller Center",
+"s": "doug-dimmadome-2332c4a0s.jpg",
+"l": "doug-dimmadome-2332c4a0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Doug Dimmadome is the anonymous Ethereum collector behind Cave Corp and Cave ArtDAO, playing the cartoon tycoon across several wallets. The hat is the biggest in the room.",
+"iv": []
+},
+{
+"id": "drlumpia",
+"name": "DrLumpia",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Doc at Fort Wadsworth",
+"s": "drlumpia-65e78657s.jpg",
+"l": "drlumpia-65e78657l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #057, so marble 57, Doc, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 2, race seed 3284379642, painted for the SKELLY CUP at the Fort Wadsworth overlook under the Verrazzano on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
+"id": "drwhetfaartz",
+"name": "drwhetfaartz",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Scorreggia Held High at the Ferry",
+"s": "drwhetfaartz-e89df931s.jpg",
+"l": "drwhetfaartz-e89df931l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #040, so marble 40, Scorreggia, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 10 of tournament 2, race seed 512078260, painted for the SKELLY CUP at the deck of the Staten Island Ferry on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
 "id": "dspur",
 "name": "dspur",
 "handle": "",
@@ -5670,6 +6518,13 @@
 "l": "eddie-wharton-0dbec1c1l.jpg",
 "w": 1280,
 "h": 714
+},
+{
+"title": "Riding Babka at Doyers Street",
+"s": "eddie-wharton-33-fd8c8f01s.jpg",
+"l": "eddie-wharton-33-fd8c8f01l.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Data artist and founder behind Royal Patron analytics, and a collector of The Soft Conspiracy. The numbers glow at night",
@@ -5784,6 +6639,42 @@
 "iv": []
 },
 {
+"id": "ericbelair13",
+"name": "ericbelair13",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Fresh Prince at Washington Square",
+"s": "ericbelair13-754ffb1as.jpg",
+"l": "ericbelair13-754ffb1al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #038, so marble 38, Fresh Prince, races in Bryan Brinkman's Marble Run under that wallet. Won heat 19 of tournament 6, race seed 675507122, painted for the SKELLY CUP at under the Washington Square arch at dawn",
+"iv": []
+},
+{
+"id": "ethds",
+"name": "ethds",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Flight Held High at the Ferry",
+"s": "ethds-68c6c8ces.jpg",
+"l": "ethds-68c6c8cel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #039, so marble 39, Flight, races in Bryan Brinkman's Marble Run under that wallet. Won semi 1 of tournament 4, race seed 1727650305, painted for the SKELLY CUP at the deck of the Staten Island Ferry on a snowy night",
+"iv": []
+},
+{
 "id": "fanny-lakoubay",
 "name": "Fanny Lakoubay",
 "handle": "@fannylakoubay",
@@ -5856,6 +6747,24 @@
 "iv": []
 },
 {
+"id": "foretwenty",
+"name": "ForeTwenty",
+"handle": "@foretwenty",
+"x": "foretwenty",
+"cat": "C",
+"works": [
+{
+"title": "Blaze It Held High at the Unisphere",
+"s": "foretwenty-5139e18fs.jpg",
+"l": "foretwenty-5139e18fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #050, so marble 50, Blaze It, races in Bryan Brinkman's Marble Run under that wallet. Won heat 14 of tournament 6, race seed 2540497360, painted for the SKELLY CUP at the Unisphere in Flushing Meadows on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
 "id": "forkingpepe-eth",
 "name": "forkingpepe.eth",
 "handle": "forkingpepe.eth",
@@ -5907,6 +6816,24 @@
 }
 ],
 "bio": "Collector who minted New Yorkers in The Census Release. Every bodega needs a regular",
+"iv": []
+},
+{
+"id": "funghibull",
+"name": "funghibull",
+"handle": "@funghibull",
+"x": "funghibull",
+"cat": "C",
+"works": [
+{
+"title": "Chasing Thrillr Past Yankee Stadium",
+"s": "funghibull-d4ea2adas.jpg",
+"l": "funghibull-d4ea2adal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #025, so marble 25, Thrillr, races in Bryan Brinkman's Marble Run under that wallet. Won heat 19 of tournament 5, race seed 1274944810, painted for the SKELLY CUP at the gates of Yankee Stadium on a rainy night, every surface wet and shining",
 "iv": []
 },
 {
@@ -5964,6 +6891,24 @@
 "iv": []
 },
 {
+"id": "gpunknft",
+"name": "GPunknft",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Red Nose, Flicked Across Coney Island",
+"s": "gpunknft-b6fee577s.jpg",
+"l": "gpunknft-b6fee577l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #087, so marble 87, Red Nose, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 7, race seed 361154180, painted for the SKELLY CUP at the Coney Island boardwalk at noon in a heat wave",
+"iv": []
+},
+{
 "id": "habwa",
 "name": "habwa",
 "handle": "habwa.eth",
@@ -6000,6 +6945,24 @@
 "iv": []
 },
 {
+"id": "headie",
+"name": "headie",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Lindy, Flicked Across DUMBO",
+"s": "headie-d4dddfcds.jpg",
+"l": "headie-d4dddfcdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #037, so marble 37, Lindy, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 8 of tournament 6, race seed 446396956, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge on a snowy night",
+"iv": []
+},
+{
 "id": "hhabbdnjd",
 "name": "hhabbdnjd",
 "handle": "hhabbdnjd on SuperRare",
@@ -6033,6 +6996,24 @@
 }
 ],
 "bio": "Collector who locked in Meditative Melt from Time To Lock In. One piece, well chosen",
+"iv": []
+},
+{
+"id": "icculus-library",
+"name": "icculus_library",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Phishy, Flicked Across DUMBO",
+"s": "icculus-library-9a3ba45es.jpg",
+"l": "icculus-library-9a3ba45el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #020, so marble 20, Phishy, races in Bryan Brinkman's Marble Run under that wallet. Won heat 6 of tournament 7, race seed 3055014206, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge at neon midnight",
 "iv": []
 },
 {
@@ -6090,6 +7071,42 @@
 "iv": []
 },
 {
+"id": "jak-vault",
+"name": "jak_vault",
+"handle": "@jak_vault",
+"x": "jak_vault",
+"cat": "C",
+"works": [
+{
+"title": "Riding Jacked Up at Prospect Park",
+"s": "jak-vault-0dced255s.jpg",
+"l": "jak-vault-0dced255l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #067, so marble 67, Jacked Up, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 2 of tournament 6, race seed 793139673, painted for the SKELLY CUP at the Prospect Park bandshell at dawn",
+"iv": []
+},
+{
+"id": "jamo-the-cat",
+"name": "jamo_the_cat",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Whiskers at Orchard Beach",
+"s": "jamo-the-cat-c73cace6s.jpg",
+"l": "jamo-the-cat-c73cace6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #028, so marble 28, Whiskers, races in Bryan Brinkman's Marble Run under that wallet. Won heat 6 of tournament 1, race seed 726041858, painted for the SKELLY CUP at orchard Beach at golden hour",
+"iv": []
+},
+{
 "id": "jared-poz",
 "name": "jared_poz",
 "handle": "@jared_poz",
@@ -6105,6 +7122,78 @@
 }
 ],
 "bio": "Collector of Transdimensional Trippers who also keeps Digital Mythology close. Myths, collected",
+"iv": []
+},
+{
+"id": "jedi6900",
+"name": "Jedi6900",
+"handle": "@jedi6900",
+"x": "jedi6900",
+"cat": "C",
+"works": [
+{
+"title": "Doomer Held High at Times Square",
+"s": "jedi6900-ed05eb93s.jpg",
+"l": "jedi6900-ed05eb93l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #055, so marble 55, Doomer, races in Bryan Brinkman's Marble Run under that wallet. Won heat 17 of tournament 1, race seed 2824619435, painted for the SKELLY CUP at times Square at three in the morning at golden hour",
+"iv": []
+},
+{
+"id": "jediwolf",
+"name": "Jediwolf",
+"handle": "@Jediwolf",
+"x": "Jediwolf",
+"cat": "C",
+"works": [
+{
+"title": "The Ghost Over West 22nd",
+"s": "jediwolf-20bb816es.jpg",
+"l": "jediwolf-20bb816el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Jediwolf founded UnderTheGAN, an online museum of early AI and GAN art, and collects Klingemann, Helena Sarin, Memo Akten and Robbie Barrat. The ghosts came first.",
+"iv": []
+},
+{
+"id": "johndoe8891",
+"name": "Johndoe8891",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Anon at Snug Harbor",
+"s": "johndoe8891-88c61ce9s.jpg",
+"l": "johndoe8891-88c61ce9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #046, so marble 46, Anon, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 20 of tournament 6, race seed 1975557143, painted for the SKELLY CUP at the gardens of Snug Harbor at noon in a heat wave",
+"iv": []
+},
+{
+"id": "jonathanlittlevault",
+"name": "JonathanLittleVault",
+"handle": "@jonathanlittle",
+"x": "jonathanlittle",
+"cat": "C",
+"works": [
+{
+"title": "Riding Royal Flush at the Ferry",
+"s": "jonathanlittlevault-02b19a96s.jpg",
+"l": "jonathanlittlevault-02b19a96l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #042, so marble 42, Royal Flush, races in Bryan Brinkman's Marble Run under that wallet. Finished 3 in heat 5 of tournament 5, race seed 1132775910, painted for the SKELLY CUP at the deck of the Staten Island Ferry at dawn",
 "iv": []
 },
 {
@@ -6162,6 +7251,60 @@
 "iv": []
 },
 {
+"id": "junebananana",
+"name": "Junebananana",
+"handle": "@junebananana",
+"x": "junebananana",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Peeled Out at Times Square",
+"s": "junebananana-40364588s.jpg",
+"l": "junebananana-40364588l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #082, so marble 82, Peeled Out, races in Bryan Brinkman's Marble Run under that wallet. Won heat 17 of tournament 3, race seed 1600035465, painted for the SKELLY CUP at times Square at three in the morning on a snowy night",
+"iv": []
+},
+{
+"id": "katie-lorrie",
+"name": "katie_lorrie",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Lore-y, Flicked Across the Concourse",
+"s": "katie-lorrie-6fe228f6s.jpg",
+"l": "katie-lorrie-6fe228f6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #004, so marble 4, Lore-y, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 17 of tournament 4, race seed 686759047, painted for the SKELLY CUP at the Grand Concourse at golden hour",
+"iv": []
+},
+{
+"id": "kavedrugman",
+"name": "kavedrugman",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Tunneler, Flicked Across Jackson Heights",
+"s": "kavedrugman-16dca02fs.jpg",
+"l": "kavedrugman-16dca02fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #047, so marble 47, Tunneler, races in Bryan Brinkman's Marble Run under that wallet. Won heat 3 of tournament 4, race seed 1597810866, painted for the SKELLY CUP at the elevated 7 train platform in Jackson Heights at golden hour",
+"iv": []
+},
+{
 "id": "kelani-nichole",
 "name": "Kelani Nichole",
 "handle": "@kelaninichole",
@@ -6177,6 +7320,60 @@
 }
 ],
 "bio": "Founder of TRANSFER, a gallery devoted to digital and networked art. The dark room lets the screens speak",
+"iv": []
+},
+{
+"id": "kompucoma",
+"name": "kompucoma",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Relaxer at Doyers Street",
+"s": "kompucoma-51f30e26s.jpg",
+"l": "kompucoma-51f30e26l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #097, so marble 97, Relaxer, races in Bryan Brinkman's Marble Run under that wallet. Won heat 12 of tournament 7, race seed 371382596, painted for the SKELLY CUP at a Chinatown alley on Doyers Street at neon midnight",
+"iv": []
+},
+{
+"id": "koshercowboy",
+"name": "KosherCowboy",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Cowboy at Rockaway",
+"s": "koshercowboy-0f191fcas.jpg",
+"l": "koshercowboy-0f191fcal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #017, so marble 17, Cowboy, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 11 of tournament 6, race seed 2528696622, painted for the SKELLY CUP at the Rockaway boardwalk on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
+"id": "kregdao",
+"name": "KREGdao",
+"handle": "@KREGdao",
+"x": "KREGdao",
+"cat": "C",
+"works": [
+{
+"title": "Chasing QQLer Past the Ferry",
+"s": "kregdao-64e2c15ds.jpg",
+"l": "kregdao-64e2c15dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #045, so marble 45, QQLer, races in Bryan Brinkman's Marble Run under that wallet. Won heat 16 of tournament 1, race seed 3514636025, painted for the SKELLY CUP at the deck of the Staten Island Ferry at golden hour",
 "iv": []
 },
 {
@@ -6267,6 +7464,24 @@
 }
 ],
 "bio": "Collector known as the boss, holding hundreds of works and calling himself the Monkey King. Big collection, bigger title",
+"iv": []
+},
+{
+"id": "lapsuseth",
+"name": "LapsusEth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Final Lap at Fulton Street",
+"s": "lapsuseth-21e96c3fs.jpg",
+"l": "lapsuseth-21e96c3fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #015, so marble 15, Final Lap, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 19 of tournament 2, race seed 632115984, painted for the SKELLY CUP at the Fulton Street subway platform at noon in a heat wave",
 "iv": []
 },
 {
@@ -6450,6 +7665,24 @@
 "iv": []
 },
 {
+"id": "marypat",
+"name": "MaryPat",
+"handle": "@MaryPatBing",
+"x": "MaryPatBing",
+"cat": "C",
+"works": [
+{
+"title": "BadaBing Held High at Tottenville",
+"s": "marypat-f680f2a1s.jpg",
+"l": "marypat-f680f2a1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #031, so marble 31, BadaBing, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 4, race seed 637113829, painted for the SKELLY CUP at a Tottenville front yard on a snowy night",
+"iv": []
+},
+{
 "id": "matt-zhang",
 "name": "Matt Zhang",
 "handle": "@zhang_matt",
@@ -6468,6 +7701,24 @@
 "iv": []
 },
 {
+"id": "maxkarlan",
+"name": "maxkarlan",
+"handle": "@maxkarlan",
+"x": "maxkarlan",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Baller at Arthur Avenue",
+"s": "maxkarlan-579348c9s.jpg",
+"l": "maxkarlan-579348c9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #052, so marble 52, Baller, races in Bryan Brinkman's Marble Run under that wallet. Won heat 16 of tournament 3, race seed 1321395991, painted for the SKELLY CUP at the Arthur Avenue market at dawn",
+"iv": []
+},
+{
 "id": "max-pretends",
 "name": "Max pretends",
 "handle": "max_pretends on SuperRare",
@@ -6483,6 +7734,42 @@
 }
 ],
 "bio": "Collector who won We Disappear at auction, katana on the shoulder. Pretending is a kind of practice",
+"iv": []
+},
+{
+"id": "meisterdog",
+"name": "MeisterDog",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Bork at Prospect Park",
+"s": "meisterdog-bb6bcce9s.jpg",
+"l": "meisterdog-bb6bcce9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #074, so marble 74, Bork, races in Bryan Brinkman's Marble Run under that wallet. Won semi 1 of tournament 3, race seed 1143370193, painted for the SKELLY CUP at the Prospect Park bandshell at noon in a heat wave",
+"iv": []
+},
+{
+"id": "metamellon",
+"name": "metamellon",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Versal at Arthur Avenue",
+"s": "metamellon-6e3675ebs.jpg",
+"l": "metamellon-6e3675ebl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #085, so marble 85, Versal, races in Bryan Brinkman's Marble Run under that wallet. Won heat 1 of tournament 5, race seed 3946149891, painted for the SKELLY CUP at the Arthur Avenue market at noon in a heat wave",
 "iv": []
 },
 {
@@ -6522,6 +7809,60 @@
 "iv": []
 },
 {
+"id": "mindefy",
+"name": "Mindefy",
+"handle": "@mindefy1",
+"x": "mindefy1",
+"cat": "C",
+"works": [
+{
+"title": "How Strange It Is on the FDR",
+"s": "mindefy-f4cc67a2s.jpg",
+"l": "mindefy-f4cc67a2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Eighteen New Yorkers, all minted in one night. How strange it is to be anything at all",
+"iv": []
+},
+{
+"id": "mistershady",
+"name": "MisterShady",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Marmy at Prospect Park",
+"s": "mistershady-9bb57fd9s.jpg",
+"l": "mistershady-9bb57fd9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #094, so marble 94, Marmy, races in Bryan Brinkman's Marble Run under that wallet. Won heat 7 of tournament 1, race seed 3346923493, painted for the SKELLY CUP at the Prospect Park bandshell on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
+"id": "mjpeg",
+"name": "mjpeg",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Mickey at the Concourse",
+"s": "mjpeg-0de15b78s.jpg",
+"l": "mjpeg-0de15b78l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #091, so marble 91, Mickey, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 4 of tournament 7, race seed 2905148637, painted for the SKELLY CUP at the Grand Concourse at neon midnight",
+"iv": []
+},
+{
 "id": "moodslime",
 "name": "moodSlime",
 "handle": "@moodSlime_",
@@ -6537,6 +7878,114 @@
 }
 ],
 "bio": "Collector with forty works on SuperRare, named for the mood slime under the city. Pink, and positively charged",
+"iv": []
+},
+{
+"id": "mrmerge",
+"name": "MrMerge",
+"handle": "@mr_merge",
+"x": "mr_merge",
+"cat": "C",
+"works": [
+{
+"title": "Geometry Over Gansevoort",
+"s": "mrmerge-672d913fs.jpg",
+"l": "mrmerge-672d913fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "MrMerge is an Ethereum art collector holding Pak's Merge, Lost Poets, Art Blocks, Frank Stella, XCOPY and Refik Anadol. The ember is always lit.",
+"iv": []
+},
+{
+"id": "mrmeridian",
+"name": "MrMeridian",
+"handle": "@Mr_Meridian",
+"x": "Mr_Meridian",
+"cat": "C",
+"works": [
+{
+"title": "Spidey, Flicked Across Washington Square",
+"s": "mrmeridian-91c74d58s.jpg",
+"l": "mrmeridian-91c74d58l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #076, so marble 76, Spidey, races in Bryan Brinkman's Marble Run under that wallet. Won heat 4 of tournament 5, race seed 3132783917, painted for the SKELLY CUP at under the Washington Square arch on a snowy night",
+"iv": []
+},
+{
+"id": "mtnbikeyps",
+"name": "mtnbikeyps",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Geared Up, Flicked Across Jackson Heights",
+"s": "mtnbikeyps-bd7fac8cs.jpg",
+"l": "mtnbikeyps-bd7fac8cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #086, so marble 86, Geared Up, races in Bryan Brinkman's Marble Run under that wallet. Finished 3 in heat 8 of tournament 6, race seed 446396956, painted for the SKELLY CUP at the elevated 7 train platform in Jackson Heights on a snowy night",
+"iv": []
+},
+{
+"id": "newyat",
+"name": "newyat",
+"handle": "@SecretariYat",
+"x": "SecretariYat",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Horsin Around at the Ferry",
+"s": "newyat-8d5b3580s.jpg",
+"l": "newyat-8d5b3580l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #005, so marble 5, Horsin Around, races in Bryan Brinkman's Marble Run under that wallet. Won heat 8 of tournament 5, race seed 178134370, painted for the SKELLY CUP at the deck of the Staten Island Ferry on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
+"id": "nftlaurent",
+"name": "NFTLaurent",
+"handle": "@LaurentNft64534",
+"x": "LaurentNft64534",
+"cat": "C",
+"works": [
+{
+"title": "The Mask in the Arch",
+"s": "nftlaurent-626dbc29s.jpg",
+"l": "nftlaurent-626dbc29l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "NFTLaurent is a French speaking digital art collector deep in Sam Spratt's LUCI world and a patron of m0dest. Here for the art and the friendships.",
+"iv": []
+},
+{
+"id": "nicedayj",
+"name": "nicedayj",
+"handle": "@nicedayJules",
+"x": "nicedayJules",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Feathers at Orchard Beach",
+"s": "nicedayj-0e3c65a7s.jpg",
+"l": "nicedayj-0e3c65a7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #036, so marble 36, Feathers, races in Bryan Brinkman's Marble Run under that wallet. Won heat 20 of tournament 6, race seed 1975557143, painted for the SKELLY CUP at orchard Beach at noon in a heat wave",
 "iv": []
 },
 {
@@ -6594,6 +8043,60 @@
 "iv": []
 },
 {
+"id": "nobadtrips",
+"name": "NoBadTrips",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Acidic at Arthur Avenue",
+"s": "nobadtrips-d03f0e35s.jpg",
+"l": "nobadtrips-d03f0e35l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #070, so marble 70, Acidic, races in Bryan Brinkman's Marble Run under that wallet. Won heat 19 of tournament 3, race seed 2363138186, painted for the SKELLY CUP at the Arthur Avenue market at neon midnight",
+"iv": []
+},
+{
+"id": "nopunk",
+"name": "NoPunk",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With King at Orchard Beach",
+"s": "nopunk-39856668s.jpg",
+"l": "nopunk-39856668l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #043, so marble 43, King, races in Bryan Brinkman's Marble Run under that wallet. Won heat 13 of tournament 7, race seed 4134595943, painted for the SKELLY CUP at orchard Beach at noon in a heat wave",
+"iv": []
+},
+{
+"id": "norcal-guy2",
+"name": "NorCal_Guy2",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Shutter at Fulton Street",
+"s": "norcal-guy2-1fba4ee0s.jpg",
+"l": "norcal-guy2-1fba4ee0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #077, so marble 77, Shutter, races in Bryan Brinkman's Marble Run under that wallet. Won heat 12 of tournament 4, race seed 3623619719, painted for the SKELLY CUP at the Fulton Street subway platform at neon midnight",
+"iv": []
+},
+{
 "id": "octoclan",
 "name": "Octoclan",
 "handle": "octoclan.eth",
@@ -6624,6 +8127,13 @@
 "l": "og-b82e68d1l.jpg",
 "w": 1280,
 "h": 714
+},
+{
+"title": "Kneeling With High T at Bed-Stuy",
+"s": "og-33-d8b5d9aes.jpg",
+"l": "og-33-d8b5d9ael.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Collector behind a pixel self and a glitching skyline, living by one rule: be cool, do cool things, harm no one. Simple enough to be hard",
@@ -6648,6 +8158,24 @@
 "iv": []
 },
 {
+"id": "ojedasbodega",
+"name": "Ojedasbodega",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding Bodega at Washington Square",
+"s": "ojedasbodega-2380981ds.jpg",
+"l": "ojedasbodega-2380981dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #016, so marble 16, Bodega, races in Bryan Brinkman's Marble Run under that wallet. Won heat 10 of tournament 6, race seed 1286564132, painted for the SKELLY CUP at under the Washington Square arch at dawn",
+"iv": []
+},
+{
 "id": "old-ed-hacked",
 "name": "old ed hacked",
 "handle": "ed_old_hacked_account on SuperRare",
@@ -6663,6 +8191,24 @@
 }
 ],
 "bio": "Collector who made an offer on an Impermanent Loss piece from an account he now calls his old hacked one. The wallet changed, the taste did not",
+"iv": []
+},
+{
+"id": "olegs13",
+"name": "olegs13",
+"handle": "@olegs_13",
+"x": "olegs_13",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Boomer at Times Square",
+"s": "olegs13-889e17d9s.jpg",
+"l": "olegs13-889e17d9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #012, so marble 12, Boomer, races in Bryan Brinkman's Marble Run under that wallet. Won heat 3 of tournament 2, race seed 3876678255, painted for the SKELLY CUP at times Square at three in the morning on a snowy night",
 "iv": []
 },
 {
@@ -6691,6 +8237,24 @@
 ]
 },
 {
+"id": "onionthumper",
+"name": "onionthumper",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Chasing Grumpy Past the Ferry",
+"s": "onionthumper-124723cas.jpg",
+"l": "onionthumper-124723cal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #084, so marble 84, Grumpy, races in Bryan Brinkman's Marble Run under that wallet. Won semi 3 of tournament 1, race seed 974565855, painted for the SKELLY CUP at the deck of the Staten Island Ferry on a snowy night",
+"iv": []
+},
+{
 "id": "ossen",
 "name": "OSSEN",
 "handle": "@osseneth",
@@ -6709,21 +8273,21 @@
 "iv": []
 },
 {
-"id": "oxjpegs",
-"name": "oxjpegs",
-"handle": "oxjpegs.eth",
+"id": "outerlumen",
+"name": "outerlumen",
+"handle": "",
 "x": "",
 "cat": "C",
 "works": [
 {
-"title": "The Deli Counter on the Boardwalk",
-"s": "oxjpegs-300a1a22s.jpg",
-"l": "oxjpegs-300a1a22l.jpg",
+"title": "Chasing Survivor Past Jackson Heights",
+"s": "outerlumen-cba73631s.jpg",
+"l": "outerlumen-cba73631l.jpg",
 "w": 1280,
 "h": 720
 }
 ],
-"bio": "Collector who minted ten New Yorkers the day The Census Release opened. First in line",
+"bio": "Holds BrinkWorks pass #064, so marble 64, Survivor, races in Bryan Brinkman's Marble Run under that wallet. Won heat 4 of tournament 6, race seed 2093105121, painted for the SKELLY CUP at the elevated 7 train platform in Jackson Heights at noon in a heat wave",
 "iv": []
 },
 {
@@ -6781,6 +8345,114 @@
 "iv": []
 },
 {
+"id": "patron-001",
+"name": "Patron #001",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Chasing World Peace Past Williamsburg",
+"s": "patron-001-0778491as.jpg",
+"l": "patron-001-0778491al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #001, so marble 1, World Peace, races in Bryan Brinkman's Marble Run under that wallet. Won heat 12 of tournament 6, race seed 1941657799, painted for the SKELLY CUP at a Williamsburg rooftop on a snowy night",
+"iv": []
+},
+{
+"id": "patron-029",
+"name": "Patron #029",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Java at Strivers Row",
+"s": "patron-029-8acee7acs.jpg",
+"l": "patron-029-8acee7acl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #029, so marble 29, Java, races in Bryan Brinkman's Marble Run under that wallet. Won heat 13 of tournament 6, race seed 3004179468, painted for the SKELLY CUP at a Harlem stoop on Strivers Row on a snowy night",
+"iv": []
+},
+{
+"id": "patron-051",
+"name": "Patron #051",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Curatooor at Tottenville",
+"s": "patron-051-9fef9feds.jpg",
+"l": "patron-051-9fef9fedl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #051, so marble 51, Curatooor, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 1 of tournament 7, race seed 3992307029, painted for the SKELLY CUP at a Tottenville front yard at neon midnight",
+"iv": []
+},
+{
+"id": "patron-063",
+"name": "Patron #063",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Mysterio Held High at the Unisphere",
+"s": "patron-063-60fee24as.jpg",
+"l": "patron-063-60fee24al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #063, so marble 63, Mysterio, races in Bryan Brinkman's Marble Run under that wallet. Won heat 20 of tournament 5, race seed 4021934095, painted for the SKELLY CUP at the Unisphere in Flushing Meadows at neon midnight",
+"iv": []
+},
+{
+"id": "peacelandbread",
+"name": "PeaceLandBread",
+"handle": "@xPeaceLandBread",
+"x": "xPeaceLandBread",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Get That Bread at Fulton Street",
+"s": "peacelandbread-3a60d6bfs.jpg",
+"l": "peacelandbread-3a60d6bfl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #014, so marble 14, Get That Bread, races in Bryan Brinkman's Marble Run under that wallet. Won heat 1 of tournament 7, race seed 3992307029, painted for the SKELLY CUP at the Fulton Street subway platform at neon midnight",
+"iv": []
+},
+{
+"id": "perilous",
+"name": "Perilous_",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Insert Coin, Flicked Across Strivers Row",
+"s": "perilous-8140e2d7s.jpg",
+"l": "perilous-8140e2d7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #009, so marble 9, Insert Coin, races in Bryan Brinkman's Marble Run under that wallet. Won semi 4 of tournament 6, race seed 2801909903, painted for the SKELLY CUP at a Harlem stoop on Strivers Row at noon in a heat wave",
+"iv": []
+},
+{
 "id": "phil-mohun",
 "name": "Phil Mohun",
 "handle": "@philmohun",
@@ -6796,6 +8468,42 @@
 }
 ],
 "bio": "Executive director of NODE, the Palo Alto home for digital and generative art. A room built for the screen",
+"iv": []
+},
+{
+"id": "pica-pica",
+"name": "pica_pica",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Curiousity Held High at DUMBO",
+"s": "pica-pica-946b2fa4s.jpg",
+"l": "pica-pica-946b2fa4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #019, so marble 19, Curiousity, races in Bryan Brinkman's Marble Run under that wallet. Won heat 19 of tournament 1, race seed 3371771741, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge on a rainy night, every surface wet and shining",
+"iv": []
+},
+{
+"id": "pinstripedgator",
+"name": "PinstripedGator",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Chomp Held High at Washington Square",
+"s": "pinstripedgator-0c626dfas.jpg",
+"l": "pinstripedgator-0c626dfal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #079, so marble 79, Chomp, races in Bryan Brinkman's Marble Run under that wallet. Won heat 3 of tournament 5, race seed 1000983822, painted for the SKELLY CUP at under the Washington Square arch on a rainy night, every surface wet and shining",
 "iv": []
 },
 {
@@ -6925,6 +8633,24 @@
 "iv": []
 },
 {
+"id": "punk5406-vault",
+"name": "punk5406_vault",
+"handle": "@punk5406",
+"x": "punk5406",
+"cat": "C",
+"works": [
+{
+"title": "Aerys II Held High at the Concourse",
+"s": "punk5406-vault-2bf05751s.jpg",
+"l": "punk5406-vault-2bf05751l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #083, so marble 83, Aerys II, races in Bryan Brinkman's Marble Run under that wallet. Won heat 17 of tournament 5, race seed 3328021297, painted for the SKELLY CUP at the Grand Concourse at golden hour",
+"iv": []
+},
+{
 "id": "punk6529",
 "name": "Punk6529",
 "handle": "@punk6529",
@@ -6968,6 +8694,78 @@
 ]
 },
 {
+"id": "punks-vault",
+"name": "punks_vault",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Party In The Back at Arthur Avenue",
+"s": "punks-vault-52998d6fs.jpg",
+"l": "punks-vault-52998d6fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #023, so marble 23, Party In The Back, races in Bryan Brinkman's Marble Run under that wallet. Won semi 2 of tournament 2, race seed 1369436, painted for the SKELLY CUP at the Arthur Avenue market at neon midnight",
+"iv": []
+},
+{
+"id": "quadzilla",
+"name": "quadzilla",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Roar at Williamsburg",
+"s": "quadzilla-2e54befas.jpg",
+"l": "quadzilla-2e54befal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #035, so marble 35, Roar, races in Bryan Brinkman's Marble Run under that wallet. Finished 3 in heat 19 of tournament 4, race seed 2989498024, painted for the SKELLY CUP at a Williamsburg rooftop at dawn",
+"iv": []
+},
+{
+"id": "rad",
+"name": "rad",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Spicy at Astoria Park",
+"s": "rad-3e91417bs.jpg",
+"l": "rad-3e91417bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #034, so marble 34, Spicy, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 2 of tournament 7, race seed 871065783, painted for the SKELLY CUP at astoria Park under the Hell Gate Bridge at dawn",
+"iv": []
+},
+{
+"id": "raptornews",
+"name": "Raptornews",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Meow Meow at the Concourse",
+"s": "raptornews-4201ff5ds.jpg",
+"l": "raptornews-4201ff5dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #010, so marble 10, Meow Meow, races in Bryan Brinkman's Marble Run under that wallet. Finished 2 in heat 7 of tournament 5, race seed 2217750927, painted for the SKELLY CUP at the Grand Concourse at neon midnight",
+"iv": []
+},
+{
 "id": "rareme",
 "name": "rareme",
 "handle": "",
@@ -6986,6 +8784,24 @@
 "iv": []
 },
 {
+"id": "rciv",
+"name": "RCIV",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Ray Of Light at Orchard Beach",
+"s": "rciv-c5a0e5ccs.jpg",
+"l": "rciv-c5a0e5ccl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #022, so marble 22, Ray Of Light, races in Bryan Brinkman's Marble Run under that wallet. Won heat 2 of tournament 7, race seed 871065783, painted for the SKELLY CUP at orchard Beach at dawn",
+"iv": []
+},
+{
 "id": "regina-harsanyi",
 "name": "Regina Harsanyi",
 "handle": "@reginaharsanyi",
@@ -7001,6 +8817,24 @@
 }
 ],
 "bio": "Media arts curator at the Museum of the Moving Image in Astoria. Old monitors, new art",
+"iv": []
+},
+{
+"id": "rhynot",
+"name": "rhynot",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Riding ETH Saver at the Unisphere",
+"s": "rhynot-61c95944s.jpg",
+"l": "rhynot-61c95944l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #002, so marble 2, ETH Saver, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 5, race seed 1132775910, painted for the SKELLY CUP at the Unisphere in Flushing Meadows at dawn",
 "iv": []
 },
 {
@@ -7108,6 +8942,42 @@
 "iv": []
 },
 {
+"id": "sasameyuki",
+"name": "Sasameyuki",
+"handle": "@donlokathefingr",
+"x": "donlokathefingr",
+"cat": "C",
+"works": [
+{
+"title": "Blind Garden in Brooklyn",
+"s": "sasameyuki-0283b157s.jpg",
+"l": "sasameyuki-0283b157l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Zen, poetry, nature, Japan and New York. Two New Yorkers in the collection",
+"iv": []
+},
+{
+"id": "scottie-p",
+"name": "Scottie P",
+"handle": "@scooter_mcgee",
+"x": "scooter_mcgee",
+"cat": "C",
+"works": [
+{
+"title": "Out Over the River",
+"s": "scottie-p-0d2d7683s.jpg",
+"l": "scottie-p-0d2d7683l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Digital art collector out of Dallas. Go buy art and have fun",
+"iv": []
+},
+{
 "id": "seedphrase",
 "name": "Seedphrase",
 "handle": "@seedphrase",
@@ -7126,6 +8996,24 @@
 "iv": []
 },
 {
+"id": "seekingmeta",
+"name": "SeekingMeta",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Espresso at Snug Harbor",
+"s": "seekingmeta-87aea10es.jpg",
+"l": "seekingmeta-87aea10el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #049, so marble 49, Espresso, races in Bryan Brinkman's Marble Run under that wallet. Won heat 8 of tournament 7, race seed 2134279708, painted for the SKELLY CUP at the gardens of Snug Harbor at neon midnight",
+"iv": []
+},
+{
 "id": "self6967",
 "name": "Self6967",
 "handle": "",
@@ -7141,6 +9029,24 @@
 }
 ],
 "bio": "Three New Yorkers and a desert for an avatar. The sand finds its way to Queens",
+"iv": []
+},
+{
+"id": "shatt-eth",
+"name": "Shatt_Eth",
+"handle": "@Shatt_Eth",
+"x": "Shatt_Eth",
+"cat": "C",
+"works": [
+{
+"title": "Riding Mad Shatter at Astoria Park",
+"s": "shatt-eth-6f42e4bds.jpg",
+"l": "shatt-eth-6f42e4bdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #013, so marble 13, Mad Shatter, races in Bryan Brinkman's Marble Run under that wallet. Won heat 4 of tournament 4, race seed 4232222198, painted for the SKELLY CUP at astoria Park under the Hell Gate Bridge at golden hour",
 "iv": []
 },
 {
@@ -7213,6 +9119,24 @@
 }
 ],
 "bio": "Founder of ARTXCODE, which brings generative art to big walls and screens. Code, at room scale",
+"iv": []
+},
+{
+"id": "sparkitysparkz",
+"name": "sparkitysparkz",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Sparkly at Times Square",
+"s": "sparkitysparkz-2475bb81s.jpg",
+"l": "sparkitysparkz-2475bb81l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #081, so marble 81, Sparkly, races in Bryan Brinkman's Marble Run under that wallet. Won heat 14 of tournament 2, race seed 3635217705, painted for the SKELLY CUP at times Square at three in the morning on a snowy night",
 "iv": []
 },
 {
@@ -7306,6 +9230,24 @@
 "iv": []
 },
 {
+"id": "sweet28feet",
+"name": "Sweet28feet",
+"handle": "@tomsegal",
+"x": "tomsegal",
+"cat": "C",
+"works": [
+{
+"title": "Riding Blue Devil at Fort Wadsworth",
+"s": "sweet28feet-d7dd9f59s.jpg",
+"l": "sweet28feet-d7dd9f59l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #027, so marble 27, Blue Devil, races in Bryan Brinkman's Marble Run under that wallet. Won heat 10 of tournament 7, race seed 3534329617, painted for the SKELLY CUP at the Fort Wadsworth overlook under the Verrazzano at golden hour",
+"iv": []
+},
+{
 "id": "taku0x-eth",
 "name": "taku0x.eth",
 "handle": "",
@@ -7321,6 +9263,78 @@
 }
 ],
 "bio": "Two New Yorkers and a golden head. CryptoTaku in Carroll Gardens",
+"iv": []
+},
+{
+"id": "teamsteggy-vibes",
+"name": "TeamSteggy-VIBES",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Bonsai, Flicked Across Prospect Park",
+"s": "teamsteggy-vibes-c1a4ab7as.jpg",
+"l": "teamsteggy-vibes-c1a4ab7al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #069, so marble 69, Bonsai, races in Bryan Brinkman's Marble Run under that wallet. Won heat 15 of tournament 5, race seed 3161152643, painted for the SKELLY CUP at the Prospect Park bandshell at noon in a heat wave",
+"iv": []
+},
+{
+"id": "tguyot",
+"name": "TGuyot",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Viber at St. George",
+"s": "tguyot-7edf6949s.jpg",
+"l": "tguyot-7edf6949l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #018, so marble 18, Viber, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 6, race seed 490363626, painted for the SKELLY CUP at the St",
+"iv": []
+},
+{
+"id": "thecrustiest",
+"name": "thecrustiest",
+"handle": "@ThecrustiestE",
+"x": "ThecrustiestE",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Crusty at DUMBO",
+"s": "thecrustiest-1521de40s.jpg",
+"l": "thecrustiest-1521de40l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #062, so marble 62, Crusty, races in Bryan Brinkman's Marble Run under that wallet. Won heat 7 of tournament 7, race seed 724679806, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge on a snowy night",
+"iv": []
+},
+{
+"id": "thematthewa",
+"name": "thematthewa",
+"handle": "@thematthewa",
+"x": "thematthewa",
+"cat": "C",
+"works": [
+{
+"title": "Entertainer, Flicked Across DUMBO",
+"s": "thematthewa-0ccbb9b1s.jpg",
+"l": "thematthewa-0ccbb9b1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #096, so marble 96, Entertainer, races in Bryan Brinkman's Marble Run under that wallet. Finished 3 in heat 3 of tournament 4, race seed 1597810866, painted for the SKELLY CUP at the DUMBO cobblestones under the Manhattan Bridge at golden hour",
 "iv": []
 },
 {
@@ -7414,6 +9428,24 @@
 "iv": []
 },
 {
+"id": "tschuuuly",
+"name": "Tschuuuly",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Kneeling With Punky at Fordham Road",
+"s": "tschuuuly-81490776s.jpg",
+"l": "tschuuuly-81490776l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #053, so marble 53, Punky, races in Bryan Brinkman's Marble Run under that wallet. Won heat 19 of tournament 4, race seed 2989498024, painted for the SKELLY CUP at a Fordham Road corner at dawn",
+"iv": []
+},
+{
 "id": "tsuka-dragon-eth",
 "name": "tsuka-dragon.eth",
 "handle": "tsuka-dragon.eth",
@@ -7450,6 +9482,42 @@
 "iv": []
 },
 {
+"id": "underrealm",
+"name": "UnderRealm",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Finished Jacket",
+"s": "underrealm-67cbb5fbs.jpg",
+"l": "underrealm-67cbb5fbl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Four New Yorkers, The House of Harlem among them. Painted as the man in the jacket",
+"iv": []
+},
+{
+"id": "vandy1518",
+"name": "vandy1518",
+"handle": "@vandy1518",
+"x": "vandy1518",
+"cat": "C",
+"works": [
+{
+"title": "Blowing on Coach at Fordham Road",
+"s": "vandy1518-a400b320s.jpg",
+"l": "vandy1518-a400b320l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #080, so marble 80, Coach, races in Bryan Brinkman's Marble Run under that wallet. Won heat 17 of tournament 6, race seed 4211837634, painted for the SKELLY CUP at a Fordham Road corner at noon in a heat wave",
+"iv": []
+},
+{
 "id": "vincent-van-dough",
 "name": "Vincent Van Dough",
 "handle": "@vince_van_dough",
@@ -7483,6 +9551,24 @@
 }
 ],
 "bio": "Collector who minted New Yorkers in The Census Release. A fortress with room for three",
+"iv": []
+},
+{
+"id": "wapshop-gallery",
+"name": "WAPSHOP_Gallery",
+"handle": "@WAPSHOP_ETH",
+"x": "WAPSHOP_ETH",
+"cat": "C",
+"works": [
+{
+"title": "Shopper Held High at Arthur Avenue",
+"s": "wapshop-gallery-9e8bbc99s.jpg",
+"l": "wapshop-gallery-9e8bbc99l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #033, so marble 33, Shopper, races in Bryan Brinkman's Marble Run under that wallet. Won heat 20 of tournament 4, race seed 1680573271, painted for the SKELLY CUP at the Arthur Avenue market at dawn",
 "iv": []
 },
 {
@@ -7540,6 +9626,24 @@
 "iv": []
 },
 {
+"id": "wsavas",
+"name": "wsavas",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Phoenix Held High at Coney Island",
+"s": "wsavas-7b59d20as.jpg",
+"l": "wsavas-7b59d20al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #092, so marble 92, Phoenix, races in Bryan Brinkman's Marble Run under that wallet. Won heat 13 of tournament 1, race seed 1437573655, painted for the SKELLY CUP at the Coney Island boardwalk at neon midnight",
+"iv": []
+},
+{
 "id": "zag",
 "name": "zag",
 "handle": "",
@@ -7581,6 +9685,42 @@
 "label": ""
 }
 ]
+},
+{
+"id": "zenmonkeys",
+"name": "Zenmonkeys",
+"handle": "@zenmonkeys",
+"x": "zenmonkeys",
+"cat": "C",
+"works": [
+{
+"title": "Serenity Held High at St. George",
+"s": "zenmonkeys-4d1afb32s.jpg",
+"l": "zenmonkeys-4d1afb32l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Holds BrinkWorks pass #089, so marble 89, Serenity, races in Bryan Brinkman's Marble Run under that wallet. Won heat 5 of tournament 3, race seed 2026040631, painted for the SKELLY CUP at the St",
+"iv": []
+},
+{
+"id": "adam-back",
+"name": "Adam Back",
+"handle": "@adam3us",
+"x": "adam3us",
+"cat": "B",
+"works": [
+{
+"title": "Signing in a Chinatown Basement",
+"s": "adam-back-d620be9bs.jpg",
+"l": "adam-back-d620be9bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cypherpunk who invented Hashcash, cited in the Bitcoin white paper, and CEO of Blockstream.",
+"iv": []
 },
 {
 "id": "albert-wenger",
@@ -7634,6 +9774,24 @@
 }
 ],
 "bio": "Cofounder of OpenSea, the marketplace where much of digital art first found a home. Built the harbor, not the ships",
+"iv": []
+},
+{
+"id": "alex-gladstein",
+"name": "Alex Gladstein",
+"handle": "@gladstein",
+"x": "gladstein",
+"cat": "B",
+"works": [
+{
+"title": "Handoff Near Union Square",
+"s": "alex-gladstein-f0aba293s.jpg",
+"l": "alex-gladstein-f0aba293l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Chief Strategy Officer of the Human Rights Foundation and author of Check Your Financial Privilege.",
 "iv": []
 },
 {
@@ -7709,6 +9867,24 @@
 "iv": []
 },
 {
+"id": "alon-cohen",
+"name": "Alon Cohen",
+"handle": "@a1lon9",
+"x": "a1lon9",
+"cat": "B",
+"works": [
+{
+"title": "The Pill Rolls Down Fifth",
+"s": "alon-cohen-88bbe44bs.jpg",
+"l": "alon-cohen-88bbe44bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder of Pump.fun, the Solana meme coin launchpad.",
+"iv": []
+},
+{
 "id": "amanda-cassatt",
 "name": "Amanda Cassatt",
 "handle": "@amandacassatt",
@@ -7724,6 +9900,60 @@
 }
 ],
 "bio": "Founder of Serotonin, a marketing studio for the crypto world. Attention as a craft",
+"iv": []
+},
+{
+"id": "anatoly-yakovenko",
+"name": "Anatoly Yakovenko",
+"handle": "@toly",
+"x": "toly",
+"cat": "B",
+"works": [
+{
+"title": "Express Through the Shuttle",
+"s": "anatoly-yakovenko-d1619385s.jpg",
+"l": "anatoly-yakovenko-d1619385l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder of Solana, the engineer who invented proof of history.",
+"iv": []
+},
+{
+"id": "andre-cronje",
+"name": "Andre Cronje",
+"handle": "@AndreCronjeTech",
+"x": "AndreCronjeTech",
+"cat": "B",
+"works": [
+{
+"title": "One Violet Tulip",
+"s": "andre-cronje-d138527fs.jpg",
+"l": "andre-cronje-d138527fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "South African DeFi builder who created yearn.finance and Keep3r, architected Fantom and Sonic, and now runs Flying Tulip.",
+"iv": []
+},
+{
+"id": "andrew-kang",
+"name": "Andrew Kang",
+"handle": "@Rewkang",
+"x": "Rewkang",
+"cat": "B",
+"works": [
+{
+"title": "Robot Walk at Hudson Yards",
+"s": "andrew-kang-70d1d3fds.jpg",
+"l": "andrew-kang-70d1d3fdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cofounder of crypto fund Mechanism Capital and now CEO of RoboStrategy, investing in humanoid robots and physical AI.",
 "iv": []
 },
 {
@@ -7763,6 +9993,24 @@
 "iv": []
 },
 {
+"id": "anthony-di-iorio",
+"name": "Anthony Di Iorio",
+"handle": "@diiorioanthony",
+"x": "diiorioanthony",
+"cat": "B",
+"works": [
+{
+"title": "Espresso on Mulberry Street",
+"s": "anthony-di-iorio-c79d61c4s.jpg",
+"l": "anthony-di-iorio-c79d61c4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Canadian Ethereum co-founder who funded its early days and founded Decentral and the Jaxx wallet.",
+"iv": []
+},
+{
 "id": "aravind-srinivas",
 "name": "Aravind Srinivas",
 "handle": "CEO and cofounder of Perplexity",
@@ -7796,6 +10044,24 @@
 }
 ],
 "bio": "Art everywhere, on more than 25,000 digital billboards across 15 countries and in front of 50 million people. The street is the gallery",
+"iv": []
+},
+{
+"id": "arthur-breitman",
+"name": "Arthur Breitman",
+"handle": "@ArthurB",
+"x": "ArthurB",
+"cat": "B",
+"works": [
+{
+"title": "Chalk on Broad Street",
+"s": "arthur-breitman-f70ab693s.jpg",
+"l": "arthur-breitman-f70ab693l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cofounder of Tezos, the self amending blockchain, former quant at Goldman Sachs and Morgan Stanley.",
 "iv": []
 },
 {
@@ -7835,6 +10101,24 @@
 "iv": []
 },
 {
+"id": "balaji-srinivasan",
+"name": "Balaji Srinivasan",
+"handle": "@balajis",
+"x": "balajis",
+"cat": "B",
+"works": [
+{
+"title": "A Nation on Governors Island",
+"s": "balaji-srinivasan-f68f137ds.jpg",
+"l": "balaji-srinivasan-f68f137dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former Coinbase CTO and a16z partner, author of The Network State and founder of the Network School.",
+"iv": []
+},
+{
 "id": "ben-horowitz",
 "name": "Ben Horowitz",
 "handle": "Cofounder of Andreessen Horowitz",
@@ -7868,6 +10152,24 @@
 }
 ],
 "bio": "Cofounded Microsoft and put a computer on every desk, then gave his fortune to global health through the Gates Foundation. From windows to vaccines",
+"iv": []
+},
+{
+"id": "brad-garlinghouse",
+"name": "Brad Garlinghouse",
+"handle": "@bgarlinghouse",
+"x": "bgarlinghouse",
+"cat": "B",
+"works": [
+{
+"title": "Fist Up at Foley Square",
+"s": "brad-garlinghouse-91038e17s.jpg",
+"l": "brad-garlinghouse-91038e17l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "CEO of Ripple, who led it through the SEC lawsuit; formerly a senior executive at Yahoo and AOL.",
 "iv": []
 },
 {
@@ -7925,6 +10227,24 @@
 "iv": []
 },
 {
+"id": "caitlin-long",
+"name": "Caitlin Long",
+"handle": "@CaitlinLong_",
+"x": "CaitlinLong_",
+"cat": "B",
+"works": [
+{
+"title": "Hat and Key on Wall Street",
+"s": "caitlin-long-a083a91ds.jpg",
+"l": "caitlin-long-a083a91dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Wall Street veteran turned Bitcoin banker, founder of Custodia Bank and architect of Wyoming's digital asset laws.",
+"iv": []
+},
+{
 "id": "cameron-winklevoss",
 "name": "Cameron Winklevoss",
 "handle": "@cameron",
@@ -7943,6 +10263,24 @@
 "iv": []
 },
 {
+"id": "casey-rodarmor",
+"name": "Casey Rodarmor",
+"handle": "@rodarmor",
+"x": "rodarmor",
+"cat": "B",
+"works": [
+{
+"title": "Late Count off Doyers Street",
+"s": "casey-rodarmor-0c6988ees.jpg",
+"l": "casey-rodarmor-0c6988eel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Creator of the Ordinals protocol that inscribes art and data on individual satoshis on Bitcoin; host of the Hell Money podcast.",
+"iv": []
+},
+{
 "id": "chamath-palihapitiya",
 "name": "Chamath Palihapitiya",
 "handle": "Founder of Social Capital and cohost of the All In podcast",
@@ -7958,6 +10296,24 @@
 }
 ],
 "bio": "Grew Facebook's user base, founded Social Capital and cohosts the All In podcast. The bestie with the chips",
+"iv": []
+},
+{
+"id": "charles-hoskinson",
+"name": "Charles Hoskinson",
+"handle": "@IOHK_Charles",
+"x": "IOHK_Charles",
+"cat": "B",
+"works": [
+{
+"title": "Holding Court in Union Square",
+"s": "charles-hoskinson-bda06aa2s.jpg",
+"l": "charles-hoskinson-bda06aa2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Ethereum co-founder and founder of Cardano and IOHK, known for long livestreams and his Wyoming ranch.",
 "iv": []
 },
 {
@@ -7997,6 +10353,24 @@
 "iv": []
 },
 {
+"id": "chris-larsen",
+"name": "Chris Larsen",
+"handle": "@chrislarsensf",
+"x": "chrislarsensf",
+"cat": "B",
+"works": [
+{
+"title": "Ripples at the Seaport",
+"s": "chris-larsen-1558f174s.jpg",
+"l": "chris-larsen-1558f174l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cofounder and executive chairman of Ripple and earlier cofounder of E-Loan and Prosper.",
+"iv": []
+},
+{
 "id": "cl-ment-delangue",
 "name": "Clément Delangue",
 "handle": "CEO and cofounder of Hugging Face, based in New York",
@@ -8012,6 +10386,24 @@
 }
 ],
 "bio": "Cofounded Hugging Face in New York, the home where the world shares open AI models. The emoji became infrastructure",
+"iv": []
+},
+{
+"id": "cory-klippsten",
+"name": "Cory Klippsten",
+"handle": "@coryklippsten",
+"x": "coryklippsten",
+"cat": "B",
+"works": [
+{
+"title": "Golden Hour Over Midtown",
+"s": "cory-klippsten-766d184as.jpg",
+"l": "cory-klippsten-766d184al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder and CEO of Swan Bitcoin, a bitcoin only financial services firm, and a loud critic of altcoins.",
 "iv": []
 },
 {
@@ -8177,6 +10569,24 @@
 "iv": []
 },
 {
+"id": "elizabeth-stark",
+"name": "Elizabeth Stark",
+"handle": "@starkness",
+"x": "starkness",
+"cat": "B",
+"works": [
+{
+"title": "Hot Dog in a Thunderstorm",
+"s": "elizabeth-stark-006e38a5s.jpg",
+"l": "elizabeth-stark-006e38a5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and CEO of Lightning Labs, building Bitcoin's Lightning Network.",
+"iv": []
+},
+{
 "id": "elon-musk",
 "name": "Elon Musk",
 "handle": "CEO of Tesla and SpaceX",
@@ -8195,6 +10605,24 @@
 "iv": []
 },
 {
+"id": "emin-gun-sirer",
+"name": "Emin Gun Sirer",
+"handle": "@el33th4xor",
+"x": "el33th4xor",
+"cat": "B",
+"works": [
+{
+"title": "Avalanche on Roosevelt Island",
+"s": "emin-gun-sirer-a8cc01e1s.jpg",
+"l": "emin-gun-sirer-a8cc01e1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Turkish American computer scientist, former Cornell professor and founder of Ava Labs and the Avalanche blockchain.",
+"iv": []
+},
+{
 "id": "eric-schmidt",
 "name": "Eric Schmidt",
 "handle": "Former CEO and chair of Google",
@@ -8210,6 +10638,42 @@
 }
 ],
 "bio": "Ran Google from startup to giant as CEO and chair, now a voice on AI and national security. The adult in the garage",
+"iv": []
+},
+{
+"id": "eric-wall",
+"name": "Eric Wall",
+"handle": "@ercwl",
+"x": "ercwl",
+"cat": "B",
+"works": [
+{
+"title": "Debating a Pigeon on the Bridge",
+"s": "eric-wall-e6b74a0cs.jpg",
+"l": "eric-wall-e6b74a0cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Swedish crypto researcher and contrarian, formerly at Arcane Assets, co-founder of Taproot Wizards and an early Ordinals champion.",
+"iv": []
+},
+{
+"id": "erik-voorhees",
+"name": "Erik Voorhees",
+"handle": "@ErikVoorhees",
+"x": "ErikVoorhees",
+"cat": "B",
+"works": [
+{
+"title": "Fox Mask at the Arch",
+"s": "erik-voorhees-f8d083fas.jpg",
+"l": "erik-voorhees-f8d083fal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Bitcoin pioneer who founded ShapeShift and now the private AI company Venice.",
 "iv": []
 },
 {
@@ -8246,6 +10710,24 @@
 }
 ],
 "bio": "Built ImageNet, the dataset that taught computers to see, and cofounded World Labs to give AI spatial sense. Vision first",
+"iv": []
+},
+{
+"id": "frank-degods",
+"name": "Frank DeGods",
+"handle": "@frankdegods",
+"x": "frankdegods",
+"cat": "B",
+"works": [
+{
+"title": "Golden Hour on Delancey",
+"s": "frank-degods-b90cfcebs.jpg",
+"l": "frank-degods-b90cfcebl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Rohun Vora, founder of the DeGods and y00ts NFT collections, now a crypto builder and poster.",
 "iv": []
 },
 {
@@ -8303,6 +10785,42 @@
 "iv": []
 },
 {
+"id": "gavin-andresen",
+"name": "Gavin Andresen",
+"handle": "@gavinandresen",
+"x": "gavinandresen",
+"cat": "B",
+"works": [
+{
+"title": "Free Coins Upstairs",
+"s": "gavin-andresen-89107d47s.jpg",
+"l": "gavin-andresen-89107d47l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Satoshi's handpicked successor as lead Bitcoin developer, founder of the Bitcoin Faucet and the Bitcoin Foundation's chief scientist.",
+"iv": []
+},
+{
+"id": "gavin-wood",
+"name": "Gavin Wood",
+"handle": "@gavofyork",
+"x": "gavofyork",
+"cat": "B",
+"works": [
+{
+"title": "Chalk Lines at Grand Central",
+"s": "gavin-wood-0417d154s.jpg",
+"l": "gavin-wood-0417d154l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Ethereum co-founder who wrote the Yellow Paper and Solidity, then founded Polkadot, Kusama and Parity.",
+"iv": []
+},
+{
 "id": "greg-brockman",
 "name": "Greg Brockman",
 "handle": "President and cofounder of OpenAI",
@@ -8321,6 +10839,42 @@
 "iv": []
 },
 {
+"id": "gregory-maxwell",
+"name": "Gregory Maxwell",
+"handle": "",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Down Under 60 Hudson",
+"s": "gregory-maxwell-fd74faffs.jpg",
+"l": "gregory-maxwell-fd74faffl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin Core developer and Blockstream co founder who invented Confidential Transactions and CoinJoin, also an Opus codec author.",
+"iv": []
+},
+{
+"id": "greg-solano",
+"name": "Greg Solano",
+"handle": "@CryptoGarga",
+"x": "CryptoGarga",
+"cat": "B",
+"works": [
+{
+"title": "Booth on the Bowery",
+"s": "greg-solano-3935c86es.jpg",
+"l": "greg-solano-3935c86el.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Co-founder of Yuga Labs and Bored Ape Yacht Club, writer by trade.",
+"iv": []
+},
+{
 "id": "griffin-cock-foster",
 "name": "Griffin Cock Foster",
 "handle": "@griffincfoster",
@@ -8336,6 +10890,42 @@
 }
 ],
 "bio": "Co founder of Nifty Gateway, whose timed drops turned digital art sales into live events. The countdown was the show",
+"iv": []
+},
+{
+"id": "hal-finney",
+"name": "Hal Finney",
+"handle": "@halfin",
+"x": "halfin",
+"cat": "B",
+"works": [
+{
+"title": "Running Through Central Park",
+"s": "hal-finney-ec415734s.jpg",
+"l": "hal-finney-ec415734l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cypherpunk and PGP developer who ran Bitcoin on day one and received the first Bitcoin transaction from Satoshi; died in 2014.",
+"iv": []
+},
+{
+"id": "hasu",
+"name": "Hasu",
+"handle": "@hasufl",
+"x": "hasufl",
+"cat": "B",
+"works": [
+{
+"title": "Napkin Math After Midnight",
+"s": "hasu-d1fd6f46s.jpg",
+"l": "hasu-d1fd6f46l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous researcher and writer on MEV and crypto economics, strategy lead at Flashbots.",
 "iv": []
 },
 {
@@ -8411,6 +11001,24 @@
 "iv": []
 },
 {
+"id": "jack-mallers",
+"name": "Jack Mallers",
+"handle": "@jackmallers",
+"x": "jackmallers",
+"cat": "B",
+"works": [
+{
+"title": "A Slice, Phone Held High",
+"s": "jack-mallers-3655ed44s.jpg",
+"l": "jack-mallers-3655ed44l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder and CEO of Strike, who announced El Salvador's Bitcoin law on stage, and co founder of Twenty One Capital.",
+"iv": []
+},
+{
 "id": "jacob-horne",
 "name": "Jacob Horne",
 "handle": "@js_horne",
@@ -8429,6 +11037,24 @@
 "iv": []
 },
 {
+"id": "jameson-lopp",
+"name": "Jameson Lopp",
+"handle": "@lopp",
+"x": "lopp",
+"cat": "B",
+"works": [
+{
+"title": "Three Boxes Under Liberty Street",
+"s": "jameson-lopp-cf6dd081s.jpg",
+"l": "jameson-lopp-cf6dd081l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin security engineer and Casa co founder, known for multisig self custody and his physical attack tracker.",
+"iv": []
+},
+{
 "id": "jason-goldberg",
 "name": "Jason Goldberg",
 "handle": "@betashop",
@@ -8444,6 +11070,24 @@
 }
 ],
 "bio": "Serial founder building Airstack and Moxie on the Farcaster network. Always the next one",
+"iv": []
+},
+{
+"id": "jed-mccaleb",
+"name": "Jed McCaleb",
+"handle": "@JedMcCaleb",
+"x": "JedMcCaleb",
+"cat": "B",
+"works": [
+{
+"title": "Telescope on Central Park West",
+"s": "jed-mccaleb-b51408ebs.jpg",
+"l": "jed-mccaleb-b51408ebl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder of Mt. Gox, cofounder of Ripple and Stellar, now funding the Vast space station and Astera neuroscience.",
 "iv": []
 },
 {
@@ -8501,6 +11145,24 @@
 "iv": []
 },
 {
+"id": "jesse-powell",
+"name": "Jesse Powell",
+"handle": "@jespow",
+"x": "jespow",
+"cat": "B",
+"works": [
+{
+"title": "Tentacles at the Navy Yard",
+"s": "jesse-powell-f41bbdeas.jpg",
+"l": "jesse-powell-f41bbdeal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Co-founder and chairman of the Kraken exchange, art collector and founder of Verge Arts.",
+"iv": []
+},
+{
 "id": "jesse-walden",
 "name": "Jesse Walden",
 "handle": "@jessewldn",
@@ -8516,6 +11178,24 @@
 }
 ],
 "bio": "Founded the crypto venture firm Variant after co founding Mediachain. Ownership was the thesis",
+"iv": []
+},
+{
+"id": "john-carvalho",
+"name": "John Carvalho",
+"handle": "@BitcoinErrorLog",
+"x": "BitcoinErrorLog",
+"cat": "B",
+"works": [
+{
+"title": "Lightning at the Avenue A Bodega",
+"s": "john-carvalho-83abe62fs.jpg",
+"l": "john-carvalho-83abe62fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "CEO of Synonym, the Tether backed company building the Bitkit wallet and Pubky; a combative Lightning maximalist.",
 "iv": []
 },
 {
@@ -8585,6 +11265,13 @@
 "l": "jordan-lyall-30c91882l.jpg",
 "w": 1280,
 "h": 720
+},
+{
+"title": "Kneeling With Presidente at Washington Square",
+"s": "jordan-lyall-33-54a78e0fs.jpg",
+"l": "jordan-lyall-33-54a78e0fl.jpg",
+"w": 1280,
+"h": 720
 }
 ],
 "bio": "Built Prohibition on Art Blocks Engine and made Heart + Craft with Snowfro. The instructions live on chain, so the work outlives the company",
@@ -8649,6 +11336,42 @@
 }
 ],
 "bio": "The force behind Art House, a gallery that shows art in augmented reality. Frames that float in open air",
+"iv": []
+},
+{
+"id": "kain-warwick",
+"name": "Kain Warwick",
+"handle": "@kaiynne",
+"x": "kaiynne",
+"cat": "B",
+"works": [
+{
+"title": "The Empty Pits",
+"s": "kain-warwick-3b2bfac2s.jpg",
+"l": "kain-warwick-3b2bfac2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Australian founder of Synthetix (formerly Havven) and cofounder of Infinex, a DeFi derivatives pioneer.",
+"iv": []
+},
+{
+"id": "kathleen-breitman",
+"name": "Kathleen Breitman",
+"handle": "@breitwoman",
+"x": "breitwoman",
+"cat": "B",
+"works": [
+{
+"title": "Blue Ledger at the Strand",
+"s": "kathleen-breitman-92eecef5s.jpg",
+"l": "kathleen-breitman-92eecef5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cofounder of Tezos with her husband Arthur, formerly at Bridgewater and R3.",
 "iv": []
 },
 {
@@ -8724,6 +11447,24 @@
 "iv": []
 },
 {
+"id": "laszlo-hanyecz",
+"name": "Laszlo Hanyecz",
+"handle": "",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Two Pies on Carmine Street",
+"s": "laszlo-hanyecz-6efffbffs.jpg",
+"l": "laszlo-hanyecz-6efffbffl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Florida programmer and early Bitcoin developer who made the first real world Bitcoin purchase, two pizzas, now celebrated as Bitcoin Pizza Day.",
+"iv": []
+},
+{
 "id": "li-jin",
 "name": "Li Jin",
 "handle": "@ljin18",
@@ -8757,6 +11498,42 @@
 }
 ],
 "bio": "Engineer who took over a struggling AMD in 2014 and made it a leader in chips for PCs, servers and AI. The comeback was silicon",
+"iv": []
+},
+{
+"id": "luca-netz",
+"name": "Luca Netz",
+"handle": "@LucaNetz",
+"x": "LucaNetz",
+"cat": "B",
+"works": [
+{
+"title": "Penguins in the Toy Store Window",
+"s": "luca-netz-c8f66507s.jpg",
+"l": "luca-netz-c8f66507l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "CEO of Pudgy Penguins and Igloo Inc, who turned an NFT collection into a toy and IP brand.",
+"iv": []
+},
+{
+"id": "luke-dashjr",
+"name": "Luke Dashjr",
+"handle": "@LukeDashjr",
+"x": "LukeDashjr",
+"cat": "B",
+"works": [
+{
+"title": "Scripture in a Bushwick Warehouse",
+"s": "luke-dashjr-e4ce5a53s.jpg",
+"l": "luke-dashjr-e4ce5a53l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Long time Bitcoin Core contributor, maintainer of the Bitcoin Knots node and CTO at OCEAN mining.",
 "iv": []
 },
 {
@@ -8814,6 +11591,24 @@
 "iv": []
 },
 {
+"id": "marek-palatinus",
+"name": "Marek Palatinus",
+"handle": "@slush",
+"x": "slush",
+"cat": "B",
+"works": [
+{
+"title": "Mining Under the Dumplings",
+"s": "marek-palatinus-b617c769s.jpg",
+"l": "marek-palatinus-b617c769l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Czech bitcoin pioneer who created Slush Pool, the first mining pool, and co-founded SatoshiLabs and Trezor.",
+"iv": []
+},
+{
 "id": "mark-zuckerberg",
 "name": "Mark Zuckerberg",
 "handle": "Founder and CEO of Meta",
@@ -8829,6 +11624,24 @@
 }
 ],
 "bio": "Founded Facebook in a Harvard dorm and built Meta into the network of billions, now betting on glasses and AI. Everyone connected",
+"iv": []
+},
+{
+"id": "martti-malmi",
+"name": "Martti Malmi",
+"handle": "@marttimalmi",
+"x": "marttimalmi",
+"cat": "B",
+"works": [
+{
+"title": "Winter Messages in Brooklyn",
+"s": "martti-malmi-717c17f7s.jpg",
+"l": "martti-malmi-717c17f7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Satoshi's first collaborator as 'Sirius', who built bitcoin.org's forum and early code, now building Nostr apps like Iris.",
 "iv": []
 },
 {
@@ -8886,6 +11699,24 @@
 "iv": []
 },
 {
+"id": "mert-mumtaz",
+"name": "Mert Mumtaz",
+"handle": "@mert",
+"x": "mert",
+"cat": "B",
+"works": [
+{
+"title": "Night Shift Above Midtown",
+"s": "mert-mumtaz-0313db19s.jpg",
+"l": "mert-mumtaz-0313db19l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Mert Mumtaz, co-founder and CEO of Helius, the Solana RPC and API company, and one of Solana's loudest posters.",
+"iv": []
+},
+{
 "id": "michael-dell",
 "name": "Michael Dell",
 "handle": "Founder and CEO of Dell Technologies",
@@ -8904,6 +11735,42 @@
 "iv": []
 },
 {
+"id": "michael-hirsch",
+"name": "Michael Hirsch",
+"handle": "@MichaelHirsch",
+"x": "MichaelHirsch",
+"cat": "B",
+"works": [
+{
+"title": "The Mancer on Wall Street",
+"s": "michael-hirsch-92266fbfs.jpg",
+"l": "michael-hirsch-92266fbfl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Michael Hirsch built Facet and the Carve launchpad and now runs Blockhash, maker of Mancer, Slonks and Chain Mancers. The Slopfather.",
+"iv": []
+},
+{
+"id": "michael-saylor",
+"name": "Michael Saylor",
+"handle": "@saylor",
+"x": "saylor",
+"cat": "B",
+"works": [
+{
+"title": "Sworn In at Federal Hall",
+"s": "michael-saylor-26199140s.jpg",
+"l": "michael-saylor-26199140l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder and chairman of Strategy (MicroStrategy), the largest corporate Bitcoin holder.",
+"iv": []
+},
+{
 "id": "mike-dudas",
 "name": "Mike Dudas",
 "handle": "@mdudas",
@@ -8919,6 +11786,24 @@
 }
 ],
 "bio": "Co founded The Block and later the venture firm 6th Man Ventures. Courtside at the new game",
+"iv": []
+},
+{
+"id": "mike-hearn",
+"name": "Mike Hearn",
+"handle": "@octskyward",
+"x": "octskyward",
+"cat": "B",
+"works": [
+{
+"title": "Back Booth at Union Square",
+"s": "mike-hearn-21dffd32s.jpg",
+"l": "mike-hearn-21dffd32l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Early bitcoin core developer and creator of bitcoinj, who left bitcoin in 2016 declaring the experiment failed, then worked on Corda at R3.",
 "iv": []
 },
 {
@@ -8994,6 +11879,24 @@
 "iv": []
 },
 {
+"id": "nic-carter",
+"name": "Nic Carter",
+"handle": "@nic_carter",
+"x": "nic_carter",
+"cat": "B",
+"works": [
+{
+"title": "Essays at Castle Clinton",
+"s": "nic-carter-d0f4868ds.jpg",
+"l": "nic-carter-d0f4868dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder of Castle Island Ventures and Coin Metrics, a sharp Bitcoin writer and essayist.",
+"iv": []
+},
+{
 "id": "nick-grossman",
 "name": "Nick Grossman",
 "handle": "@nickgrossman",
@@ -9009,6 +11912,42 @@
 }
 ],
 "bio": "Partner at Union Square Ventures who builds tools for displaying digital art. The frame decides how art lives",
+"iv": []
+},
+{
+"id": "nick-neuman",
+"name": "Nick Neuman",
+"handle": "",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Three Keys Under Fifth Avenue",
+"s": "nick-neuman-c3af1412s.jpg",
+"l": "nick-neuman-c3af1412l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and CEO of Casa, the bitcoin self custody and multisig company.",
+"iv": []
+},
+{
+"id": "nick-szabo",
+"name": "Nick Szabo",
+"handle": "@NickSzabo4",
+"x": "NickSzabo4",
+"cat": "B",
+"works": [
+{
+"title": "Shell Money at the Museum",
+"s": "nick-szabo-0a0825c6s.jpg",
+"l": "nick-szabo-0a0825c6l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Computer scientist and cryptographer who coined smart contracts and designed Bit Gold, a precursor to Bitcoin.",
 "iv": []
 },
 {
@@ -9030,6 +11969,42 @@
 }
 ],
 "bio": "Inventor who built the alternating current system and dreamed of wireless power at Wardenclyffe. Lit the world, died broke at the New Yorker",
+"iv": []
+},
+{
+"id": "nvk",
+"name": "NVK",
+"handle": "@nvk",
+"x": "nvk",
+"cat": "B",
+"works": [
+{
+"title": "Canal Street Cold Storage",
+"s": "nvk-95c0f5d4s.jpg",
+"l": "nvk-95c0f5d4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and CEO of Coinkite, maker of the COLDCARD bitcoin hardware wallet and OPENDIME.",
+"iv": []
+},
+{
+"id": "obi-nwosu",
+"name": "Obi Nwosu",
+"handle": "@obi",
+"x": "obi",
+"cat": "B",
+"works": [
+{
+"title": "Market Day on 125th Street",
+"s": "obi-nwosu-910277ffs.jpg",
+"l": "obi-nwosu-910277ffl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and CEO of Fedi, building on Fedimint community custody, and earlier co-founder of Coinfloor.",
 "iv": []
 },
 {
@@ -9087,6 +12062,24 @@
 "iv": []
 },
 {
+"id": "pavol-rusnak",
+"name": "Pavol Rusnak",
+"handle": "@pavolrusnak",
+"x": "pavolrusnak",
+"cat": "B",
+"works": [
+{
+"title": "Solder Smoke in Brooklyn",
+"s": "pavol-rusnak-e0b1e69fs.jpg",
+"l": "pavol-rusnak-e0b1e69fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and former CTO of SatoshiLabs and Trezor, open source developer known as stick.",
+"iv": []
+},
+{
 "id": "peter-thiel",
 "name": "Peter Thiel",
 "handle": "Cofounder of PayPal and Palantir and Founders Fund",
@@ -9105,6 +12098,24 @@
 "iv": []
 },
 {
+"id": "pieter-wuille",
+"name": "Pieter Wuille",
+"handle": "@pwuille",
+"x": "pwuille",
+"cat": "B",
+"works": [
+{
+"title": "Curves at the Courant Institute",
+"s": "pieter-wuille-439f0f9cs.jpg",
+"l": "pieter-wuille-439f0f9cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin Core cryptographer behind SegWit, Taproot, Schnorr signatures and libsecp256k1.",
+"iv": []
+},
+{
 "id": "rachel-spratt",
 "name": "Rachel Spratt",
 "handle": "@MrsRachelSpratt",
@@ -9120,6 +12131,24 @@
 }
 ],
 "bio": "Runs the studio behind Sam Spratt's paintings, from Luci's journey to the Monument. Every myth needs a builder",
+"iv": []
+},
+{
+"id": "raj-gokal",
+"name": "Raj Gokal",
+"handle": "@rajgokal",
+"x": "rajgokal",
+"cat": "B",
+"works": [
+{
+"title": "Closing Bell, Big Grin",
+"s": "raj-gokal-52280704s.jpg",
+"l": "raj-gokal-52280704l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and president of Solana, the company builder beside Anatoly.",
 "iv": []
 },
 {
@@ -9159,6 +12188,24 @@
 "iv": []
 },
 {
+"id": "robert-leshner",
+"name": "Robert Leshner",
+"handle": "@rleshner",
+"x": "rleshner",
+"cat": "B",
+"works": [
+{
+"title": "Green Blocks at the Opening Bell",
+"s": "robert-leshner-2ed23500s.jpg",
+"l": "robert-leshner-2ed23500l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder of Compound, the DeFi lending protocol, and now CEO of Superstate, which tokenizes funds onchain.",
+"iv": []
+},
+{
 "id": "sam-altman",
 "name": "Sam Altman",
 "handle": "CEO of OpenAI",
@@ -9192,6 +12239,42 @@
 }
 ],
 "bio": "Venture investor at Galaxy Interactive backing games and digital art. The arcade became the gallery",
+"iv": []
+},
+{
+"id": "santiago-r-santos",
+"name": "Santiago R. Santos",
+"handle": "@santiagoroel",
+"x": "santiagoroel",
+"cat": "B",
+"works": [
+{
+"title": "The Bodega Cat Stays",
+"s": "santiago-r-santos-fcbca7b2s.jpg",
+"l": "santiago-r-santos-fcbca7b2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former ParaFi Capital partner and founder of Inversion, which buys traditional businesses to bring them onchain.",
+"iv": []
+},
+{
+"id": "satoshi-nakamoto",
+"name": "Satoshi Nakamoto",
+"handle": "",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "Genesis on Wall Street",
+"s": "satoshi-nakamoto-d7ea7a4ds.jpg",
+"l": "satoshi-nakamoto-d7ea7a4dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "The pseudonymous inventor of Bitcoin, author of the 2008 white paper and miner of the genesis block.",
 "iv": []
 },
 {
@@ -9231,6 +12314,24 @@
 "iv": []
 },
 {
+"id": "sergey-nazarov",
+"name": "Sergey Nazarov",
+"handle": "@SergeyNazarov",
+"x": "SergeyNazarov",
+"cat": "B",
+"works": [
+{
+"title": "Links Over the Manhattan Bridge",
+"s": "sergey-nazarov-2dd08d5cs.jpg",
+"l": "sergey-nazarov-2dd08d5cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Cofounder of Chainlink, the oracle network that feeds real world data to blockchains.",
+"iv": []
+},
+{
 "id": "seth-goldstein",
 "name": "Seth Goldstein",
 "handle": "@sethgoldstein",
@@ -9249,6 +12350,24 @@
 "iv": []
 },
 {
+"id": "silvio-micali",
+"name": "Silvio Micali",
+"handle": "@silviomicali",
+"x": "silviomicali",
+"cat": "B",
+"works": [
+{
+"title": "Proof in Washington Square",
+"s": "silvio-micali-04933c49s.jpg",
+"l": "silvio-micali-04933c49l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Italian born MIT professor, Turing Award winner, coinventor of zero knowledge proofs and founder of Algorand.",
+"iv": []
+},
+{
 "id": "spencer-noon",
 "name": "Spencer Noon",
 "handle": "@spencernoon",
@@ -9264,6 +12383,24 @@
 }
 ],
 "bio": "Cofounder of the crypto venture firm Variant. Reads the chain like a chart",
+"iv": []
+},
+{
+"id": "stani-kulechov",
+"name": "Stani Kulechov",
+"handle": "@StaniKulechov",
+"x": "StaniKulechov",
+"cat": "B",
+"works": [
+{
+"title": "Ghosts at the Teller Window",
+"s": "stani-kulechov-959c4273s.jpg",
+"l": "stani-kulechov-959c4273l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Finnish founder and CEO of Aave, the largest DeFi lending protocol, and creator of the Lens social protocol.",
 "iv": []
 },
 {
@@ -9300,6 +12437,42 @@
 }
 ],
 "bio": "Succeeded Steve Jobs in 2011 and grew Apple into the most valuable company of its decade. Operations as art",
+"iv": []
+},
+{
+"id": "trace-mayer",
+"name": "Trace Mayer",
+"handle": "@TraceMayer",
+"x": "TraceMayer",
+"cat": "B",
+"works": [
+{
+"title": "Keys at the Federal Reserve",
+"s": "trace-mayer-631c3396s.jpg",
+"l": "trace-mayer-631c3396l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Early Bitcoin investor and host of the Bitcoin Knowledge Podcast, creator of the annual Proof of Keys day.",
+"iv": []
+},
+{
+"id": "transient-labs",
+"name": "Transient Labs",
+"handle": "@TransientLabs",
+"x": "TransientLabs",
+"cat": "B",
+"works": [
+{
+"title": "State of the Art in Bushwick",
+"s": "transient-labs-e2780172s.jpg",
+"l": "transient-labs-e2780172l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Transient Labs runs transient.xyz, the creator platform behind phygital and on chain drops like ThankYouX's STATE OF THE ART. Two triangles, one gap.",
 "iv": []
 },
 {
@@ -9357,6 +12530,60 @@
 "iv": []
 },
 {
+"id": "wences-casares",
+"name": "Wences Casares",
+"handle": "",
+"x": "",
+"cat": "B",
+"works": [
+{
+"title": "The Vault Under Liberty Street",
+"s": "wences-casares-f6f89f9bs.jpg",
+"l": "wences-casares-f6f89f9bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Argentine entrepreneur who founded Xapo and Lemon, credited with orange pilling much of Silicon Valley early on.",
+"iv": []
+},
+{
+"id": "wladimir-van-der-laan",
+"name": "Wladimir van der Laan",
+"handle": "@laanwj",
+"x": "laanwj",
+"cat": "B",
+"works": [
+{
+"title": "Signing at the Library Window",
+"s": "wladimir-van-der-laan-c124f3fes.jpg",
+"l": "wladimir-van-der-laan-c124f3fel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Dutch developer who succeeded Gavin Andresen as Bitcoin Core lead maintainer from 2014 to 2021.",
+"iv": []
+},
+{
+"id": "wylie-aronow",
+"name": "Wylie Aronow",
+"handle": "@GordonGoner",
+"x": "GordonGoner",
+"cat": "B",
+"works": [
+{
+"title": "Laser Eyes on the Intrepid",
+"s": "wylie-aronow-6ad7308fs.jpg",
+"l": "wylie-aronow-6ad7308fl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Co-founder of Yuga Labs and Bored Ape Yacht Club, the creative force behind the ape world.",
+"iv": []
+},
+{
 "id": "yancey-strickler",
 "name": "Yancey Strickler",
 "handle": "@ystrickler",
@@ -9408,6 +12635,24 @@
 }
 ],
 "bio": "Writer and researcher who digs up the earliest NFT projects as history. Archaeology of the recent past",
+"iv": []
+},
+{
+"id": "andreas-antonopoulos",
+"name": "Andreas Antonopoulos",
+"handle": "@aantonop",
+"x": "aantonop",
+"cat": "W",
+"works": [
+{
+"title": "Lecture in a DUMBO Warehouse",
+"s": "andreas-antonopoulos-7d176cb5s.jpg",
+"l": "andreas-antonopoulos-7d176cb5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin educator and author of Mastering Bitcoin and The Internet of Money.",
 "iv": []
 },
 {
@@ -9486,6 +12731,24 @@
 "iv": []
 },
 {
+"id": "benjamin-cowen",
+"name": "Benjamin Cowen",
+"handle": "@benjamincowen",
+"x": "benjamincowen",
+"cat": "W",
+"works": [
+{
+"title": "Chalk on the Planetarium Dome",
+"s": "benjamin-cowen-d8a48edas.jpg",
+"l": "benjamin-cowen-d8a48edal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "PhD engineer and analyst behind Into The Cryptoverse, known for calm log regression and risk metric videos.",
+"iv": []
+},
+{
 "id": "camila-russo",
 "name": "Camila Russo",
 "handle": "@camirusso",
@@ -9522,6 +12785,60 @@
 "iv": []
 },
 {
+"id": "checkmate",
+"name": "Checkmate",
+"handle": "@_Checkmatey_",
+"x": "_Checkmatey_",
+"cat": "W",
+"works": [
+{
+"title": "Reading Tape in Times Square",
+"s": "checkmate-3acf5a2ds.jpg",
+"l": "checkmate-3acf5a2dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin onchain analyst (James Check), formerly lead analyst at Glassnode, founder of Checkonchain.",
+"iv": []
+},
+{
+"id": "cobie-jordan-fish",
+"name": "Cobie",
+"handle": "@cobie",
+"x": "cobie",
+"cat": "W",
+"works": [
+{
+"title": "Fur Coat on the Rooftop",
+"s": "cobie-jordan-fish-fd2381e7s.jpg",
+"l": "cobie-jordan-fish-fd2381e7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "British trader and writer, co-host of UpOnly and founder of Echo, sold to Coinbase.",
+"iv": []
+},
+{
+"id": "coin-bureau-guy-turner",
+"name": "Coin Bureau",
+"handle": "@coinbureau",
+"x": "coinbureau",
+"cat": "W",
+"works": [
+{
+"title": "Tripod in Brooklyn Bridge Park",
+"s": "coin-bureau-guy-turner-79c5bbbcs.jpg",
+"l": "coin-bureau-guy-turner-79c5bbbcl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Guy Turner, co-founder and face of Coin Bureau, one of the largest crypto education channels on YouTube.",
+"iv": []
+},
+{
 "id": "cryptoforager",
 "name": "CryptoForager",
 "handle": "@CryptoForager81",
@@ -9537,6 +12854,24 @@
 }
 ],
 "bio": "Editor in chief of RG Media and cofounder of NFT Yearbook, and a collector of The Soft Conspiracy. Forage, collect, repeat",
+"iv": []
+},
+{
+"id": "dan-held",
+"name": "Dan Held",
+"handle": "@danheld",
+"x": "danheld",
+"cat": "W",
+"works": [
+{
+"title": "Planting the Flag",
+"s": "dan-held-1cf2247cs.jpg",
+"l": "dan-held-1cf2247cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Bitcoin advocate and marketer, former Kraken growth lead, known for Bitcoin history threads.",
 "iv": []
 },
 {
@@ -9558,6 +12893,42 @@
 "iv": []
 },
 {
+"id": "dennis-porter",
+"name": "Dennis Porter",
+"handle": "@Dennis_Porter_",
+"x": "Dennis_Porter_",
+"cat": "W",
+"works": [
+{
+"title": "Hand on the Bill in Albany",
+"s": "dennis-porter-d0db4b1as.jpg",
+"l": "dennis-porter-d0db4b1al.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Co-founder and CEO of Satoshi Action Fund, which lobbies US states on bitcoin mining rights and strategic bitcoin reserves.",
+"iv": []
+},
+{
+"id": "dylan-leclair",
+"name": "Dylan LeClair",
+"handle": "@DylanLeClair_",
+"x": "DylanLeClair_",
+"cat": "W",
+"works": [
+{
+"title": "The Chart Goes Up in Midtown",
+"s": "dylan-leclair-3266d469s.jpg",
+"l": "dylan-leclair-3266d469l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin analyst, formerly head of market research at Bitcoin Magazine and UTXO Management, now Director of Bitcoin Strategy at Metaplanet in Tokyo.",
+"iv": []
+},
+{
 "id": "era1-472",
 "name": "Edgar Allan Poe",
 "handle": "",
@@ -9576,6 +12947,24 @@
 }
 ],
 "bio": "Wrote The Raven and invented the detective story, spending his last years in a Fordham cottage. The nightmare became a genre",
+"iv": []
+},
+{
+"id": "eleanor-terrett",
+"name": "Eleanor Terrett",
+"handle": "@EleanorTerrett",
+"x": "EleanorTerrett",
+"cat": "W",
+"works": [
+{
+"title": "Scoop at Brookfield Place",
+"s": "eleanor-terrett-4169a235s.jpg",
+"l": "eleanor-terrett-4169a235l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Crypto policy journalist, former Fox Business producer famous for breaking SEC and Ripple news, now host of Crypto In America.",
 "iv": []
 },
 {
@@ -9618,6 +13007,42 @@
 "iv": []
 },
 {
+"id": "giacomo-zucco",
+"name": "Giacomo Zucco",
+"handle": "@giacomozucco",
+"x": "giacomozucco",
+"cat": "W",
+"works": [
+{
+"title": "Espresso Seminar on Mulberry",
+"s": "giacomo-zucco-cfa9f4e8s.jpg",
+"l": "giacomo-zucco-cfa9f4e8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Italian bitcoin educator, founder of BHB Network and president of Plan B Network, a loud early voice in the block size wars.",
+"iv": []
+},
+{
+"id": "gigi",
+"name": "Gigi",
+"handle": "@dergigi",
+"x": "dergigi",
+"cat": "W",
+"works": [
+{
+"title": "Lessons for the White Rabbit",
+"s": "gigi-8bf04ea8s.jpg",
+"l": "gigi-8bf04ea8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "German bitcoin and Nostr writer, author of 21 Lessons and Bitcoin is Time, now mostly on Nostr.",
+"iv": []
+},
+{
 "id": "era1-471",
 "name": "Herman Melville",
 "handle": "",
@@ -9636,6 +13061,42 @@
 }
 ],
 "bio": "Wrote Moby-Dick and spent his last working years as a New York customs inspector. The whale surfaced after the man sank",
+"iv": []
+},
+{
+"id": "ignas",
+"name": "Ignas",
+"handle": "@DefiIgnas",
+"x": "DefiIgnas",
+"cat": "W",
+"works": [
+{
+"title": "Penguin in the Reading Room",
+"s": "ignas-209607d9s.jpg",
+"l": "ignas-209607d9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Lithuanian DeFi researcher and writer behind the DeFi Research newsletter and cofounder of Pink Brains.",
+"iv": []
+},
+{
+"id": "ivan-on-tech",
+"name": "Ivan on Tech",
+"handle": "@IvanOnTech",
+"x": "IvanOnTech",
+"cat": "W",
+"works": [
+{
+"title": "Morning Stream at the Coffee Cart",
+"s": "ivan-on-tech-cc67ee28s.jpg",
+"l": "ivan-on-tech-cc67ee28l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Swedish crypto educator and YouTuber behind Ivan on Tech, cofounder of Moralis, known for daily morning crypto livestreams with coffee.",
 "iv": []
 },
 {
@@ -9681,6 +13142,24 @@
 "iv": []
 },
 {
+"id": "jeff-booth",
+"name": "Jeff Booth",
+"handle": "@JeffBooth",
+"x": "JeffBooth",
+"cat": "W",
+"works": [
+{
+"title": "Screens Fading in Times Square",
+"s": "jeff-booth-8b7f9bd9s.jpg",
+"l": "jeff-booth-8b7f9bd9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Canadian entrepreneur and author of The Price of Tomorrow, arguing technology is deflationary and Bitcoin fits it.",
+"iv": []
+},
+{
 "id": "jerry-saltz",
 "name": "Jerry Saltz",
 "handle": "@jerrysaltz",
@@ -9696,6 +13175,24 @@
 }
 ],
 "bio": "Senior art critic for New York magazine and winner of the 2018 Pulitzer Prize for Criticism. The loudest opinion in the room",
+"iv": []
+},
+{
+"id": "jimmy-song",
+"name": "Jimmy Song",
+"handle": "@jimmysong",
+"x": "jimmysong",
+"cat": "W",
+"works": [
+{
+"title": "Class in a Chelsea Loft",
+"s": "jimmy-song-06e2dc3fs.jpg",
+"l": "jimmy-song-06e2dc3fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin Core contributor, educator and author of Programming Bitcoin, famous for his cowboy hat.",
 "iv": []
 },
 {
@@ -9717,6 +13214,24 @@
 }
 ],
 "bio": "Essayist who came to New York young and wrote the leaving down in Goodbye to All That. The cold eye, the warm city",
+"iv": []
+},
+{
+"id": "joe-consorti",
+"name": "Joe Consorti",
+"handle": "@JoeConsorti",
+"x": "JoeConsorti",
+"cat": "W",
+"works": [
+{
+"title": "Window Chart on Wall Street",
+"s": "joe-consorti-b6c1d96es.jpg",
+"l": "joe-consorti-b6c1d96el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin and macro analyst, formerly at Theya, now building Horizon, a home equity to bitcoin product.",
 "iv": []
 },
 {
@@ -9795,6 +13310,24 @@
 "iv": []
 },
 {
+"id": "lark-davis",
+"name": "Lark Davis",
+"handle": "@LarkDavis",
+"x": "LarkDavis",
+"cat": "W",
+"works": [
+{
+"title": "Sunrise on the Bridge Walk",
+"s": "lark-davis-d69a9725s.jpg",
+"l": "lark-davis-d69a9725l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "New Zealand crypto YouTuber and newsletter writer (Wealth Mastery, The Inner Circle) known for altcoin and Bitcoin market videos.",
+"iv": []
+},
+{
 "id": "laura-shin",
 "name": "Laura Shin",
 "handle": "@laurashin",
@@ -9813,6 +13346,60 @@
 "iv": []
 },
 {
+"id": "lyn-alden",
+"name": "Lyn Alden",
+"handle": "@LynAldenContact",
+"x": "LynAldenContact",
+"cat": "W",
+"works": [
+{
+"title": "Notes in the Rose Reading Room",
+"s": "lyn-alden-7a2140a8s.jpg",
+"l": "lyn-alden-7a2140a8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Macro analyst and engineer, author of Broken Money, known for clear writing on money and Bitcoin.",
+"iv": []
+},
+{
+"id": "marty-bent",
+"name": "Marty Bent",
+"handle": "@MartyBent",
+"x": "MartyBent",
+"cat": "W",
+"works": [
+{
+"title": "Trojan Horse in the West Village",
+"s": "marty-bent-eef3844fs.jpg",
+"l": "marty-bent-eef3844fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder of TFTC media and Ten31 fund, host of TFTC and co host of Rabbit Hole Recap.",
+"iv": []
+},
+{
+"id": "matthew-kratter",
+"name": "Matthew Kratter",
+"handle": "@mattkratter",
+"x": "mattkratter",
+"cat": "W",
+"works": [
+{
+"title": "Chalk Talk at Columbia",
+"s": "matthew-kratter-8b75310bs.jpg",
+"l": "matthew-kratter-8b75310bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder of Bitcoin University, a former hedge fund trader who makes plain spoken bitcoin explainer videos.",
+"iv": []
+},
+{
 "id": "matt-medved",
 "name": "Matt Medved",
 "handle": "@mattmedved",
@@ -9828,6 +13415,24 @@
 }
 ],
 "bio": "Co founder of nft now, a media outlet covering digital art and culture. News of a new medium",
+"iv": []
+},
+{
+"id": "matt-odell",
+"name": "Matt Odell",
+"handle": "@ODELL",
+"x": "ODELL",
+"cat": "W",
+"works": [
+{
+"title": "Dispatch from the Stairwell",
+"s": "matt-odell-2f88afffs.jpg",
+"l": "matt-odell-2f88afffl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin privacy advocate, host of Citadel Dispatch and co host of Rabbit Hole Recap, co founder of OpenSats and Ten31.",
 "iv": []
 },
 {
@@ -9854,6 +13459,312 @@
 "label": ""
 }
 ]
+},
+{
+"id": "max-keiser",
+"name": "Max Keiser",
+"handle": "@maxkeiser",
+"x": "maxkeiser",
+"cat": "W",
+"works": [
+{
+"title": "Arms Wide at Federal Hall",
+"s": "max-keiser-7f48e3a1s.jpg",
+"l": "max-keiser-7f48e3a1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former Wall Street trader, host of the Keiser Report and one of the earliest bitcoin evangelists on TV, now senior bitcoin adviser to President Bukele of El Salvador.",
+"iv": []
+},
+{
+"id": "mike-mcglone",
+"name": "Mike McGlone",
+"handle": "@MikeMcGlone11",
+"x": "MikeMcGlone11",
+"cat": "W",
+"works": [
+{
+"title": "Terminal View on Lexington",
+"s": "mike-mcglone-12cea8bds.jpg",
+"l": "mike-mcglone-12cea8bdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Senior commodity strategist at Bloomberg Intelligence, known for long range bitcoin and gold calls.",
+"iv": []
+},
+{
+"id": "miles-deutscher",
+"name": "Miles Deutscher",
+"handle": "@milesdeutscher",
+"x": "milesdeutscher",
+"cat": "W",
+"works": [
+{
+"title": "Voice Note on the High Line",
+"s": "miles-deutscher-96ca6c8bs.jpg",
+"l": "miles-deutscher-96ca6c8bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Australian crypto analyst and creator who now runs AI Edge, covering AI and markets for a large audience.",
+"iv": []
+},
+{
+"id": "mmcrypto-christopher-jaszczynski",
+"name": "MMCrypto",
+"handle": "@MMCrypto",
+"x": "MMCrypto",
+"cat": "W",
+"works": [
+{
+"title": "Back Seat Down Broadway",
+"s": "mmcrypto-christopher-jaszczynski-7c031db3s.jpg",
+"l": "mmcrypto-christopher-jaszczynski-7c031db3l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "German former taxi driver turned crypto trader and YouTuber behind MMCrypto, known for big leveraged Bitcoin calls.",
+"iv": []
+},
+{
+"id": "murad",
+"name": "Murad",
+"handle": "@MustStopMurad",
+"x": "MustStopMurad",
+"cat": "W",
+"works": [
+{
+"title": "Sermon on Wall Street",
+"s": "murad-8219bfabs.jpg",
+"l": "murad-8219bfabl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Murad Mahmudov, crypto investor known for the Memecoin Supercycle thesis and his SPX6900 advocacy.",
+"iv": []
+},
+{
+"id": "natalie-brunell",
+"name": "Natalie Brunell",
+"handle": "@natbrunell",
+"x": "natbrunell",
+"cat": "W",
+"works": [
+{
+"title": "Live from Times Square",
+"s": "natalie-brunell-596f75bfs.jpg",
+"l": "natalie-brunell-596f75bfl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Emmy winning former TV journalist, host of Coin Stories and author of Bitcoin is for Everyone.",
+"iv": []
+},
+{
+"id": "nathaniel-popper",
+"name": "Nathaniel Popper",
+"handle": "@nathanielpopper",
+"x": "nathanielpopper",
+"cat": "W",
+"works": [
+{
+"title": "Late Edition on Eighth Avenue",
+"s": "nathaniel-popper-df62be09s.jpg",
+"l": "nathaniel-popper-df62be09l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Journalist (New York Times, now Bloomberg) and author of Digital Gold, the history of Bitcoin, and The Trolls of Wall Street.",
+"iv": []
+},
+{
+"id": "orangie",
+"name": "Orangie",
+"handle": "@orangie",
+"x": "orangie",
+"cat": "W",
+"works": [
+{
+"title": "Three Monitors Over Williamsburg",
+"s": "orangie-3fe45a21s.jpg",
+"l": "orangie-3fe45a21l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Meme coin trader and YouTuber known for posting his trades on Solana.",
+"iv": []
+},
+{
+"id": "parker-lewis",
+"name": "Parker Lewis",
+"handle": "@parkeralewis",
+"x": "parkeralewis",
+"cat": "W",
+"works": [
+{
+"title": "Gradually at Cooper Union",
+"s": "parker-lewis-f83a8514s.jpg",
+"l": "parker-lewis-f83a8514l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Author of the Gradually, Then Suddenly bitcoin essay series and head of business development at Zaprite, formerly Unchained.",
+"iv": []
+},
+{
+"id": "peter-brandt",
+"name": "Peter Brandt",
+"handle": "@PeterLBrandt",
+"x": "PeterLBrandt",
+"cat": "W",
+"works": [
+{
+"title": "Ruler and Pencil at the Exchange",
+"s": "peter-brandt-71506a10s.jpg",
+"l": "peter-brandt-71506a10l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Market Wizard futures trader for five decades, famous for classical chart analysis and his Bitcoin parabola calls.",
+"iv": []
+},
+{
+"id": "peter-mccormack",
+"name": "Peter McCormack",
+"handle": "@PeterMcCormack",
+"x": "PeterMcCormack",
+"cat": "W",
+"works": [
+{
+"title": "Sideline at Randall's Island",
+"s": "peter-mccormack-2b247c76s.jpg",
+"l": "peter-mccormack-2b247c76l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder of What Bitcoin Did and host of The Peter McCormack Show, owner of Bitcoin funded Real Bedford FC.",
+"iv": []
+},
+{
+"id": "pierre-rochard",
+"name": "Pierre Rochard",
+"handle": "@BitcoinPierre",
+"x": "BitcoinPierre",
+"cat": "W",
+"works": [
+{
+"title": "Loosened Tie After the Close",
+"s": "pierre-rochard-b185cfa2s.jpg",
+"l": "pierre-rochard-b185cfa2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin advocate and CEO of The Bitcoin Bond Company, formerly at Riot Platforms and Kraken, a strategic Bitcoin reserve proponent.",
+"iv": []
+},
+{
+"id": "planb",
+"name": "PlanB",
+"handle": "@100trillionUSD",
+"x": "100trillionUSD",
+"cat": "W",
+"works": [
+{
+"title": "Rainbow Dots on the Slate",
+"s": "planb-aa8c68dbs.jpg",
+"l": "planb-aa8c68dbl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous Dutch former institutional investor who created the Bitcoin stock to flow model.",
+"iv": []
+},
+{
+"id": "preston-pysh",
+"name": "Preston Pysh",
+"handle": "@PrestonPysh",
+"x": "PrestonPysh",
+"cat": "W",
+"works": [
+{
+"title": "Legal Pad on the Exchange Floor",
+"s": "preston-pysh-fdc2faa9s.jpg",
+"l": "preston-pysh-fdc2faa9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder of The Investor's Podcast Network and host of Bitcoin Fundamentals, a West Point graduate and former Army officer turned bitcoin investor and educator.",
+"iv": []
+},
+{
+"id": "raoul-pal",
+"name": "Raoul Pal",
+"handle": "@RaoulGMI",
+"x": "RaoulGMI",
+"cat": "W",
+"works": [
+{
+"title": "Banana at the Charging Bull",
+"s": "raoul-pal-8e8668a1s.jpg",
+"l": "raoul-pal-8e8668a1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former Goldman Sachs macro strategist, founder of Real Vision and Global Macro Investor, coiner of the 'banana zone'.",
+"iv": []
+},
+{
+"id": "rekt-capital",
+"name": "Rekt Capital",
+"handle": "@rektcapital",
+"x": "rektcapital",
+"cat": "W",
+"works": [
+{
+"title": "Thumbs Up at the Furnace",
+"s": "rekt-capital-d46dc597s.jpg",
+"l": "rekt-capital-d46dc597l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous crypto technical analyst known for Bitcoin halving cycle charts and the Rekt Capital newsletter.",
+"iv": []
+},
+{
+"id": "robert-breedlove",
+"name": "Robert Breedlove",
+"handle": "@Breedlove22",
+"x": "Breedlove22",
+"cat": "W",
+"works": [
+{
+"title": "Dawn Reps at Tompkins Square",
+"s": "robert-breedlove-ca418395s.jpg",
+"l": "robert-breedlove-ca418395l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin philosopher and podcaster (What is Money?), known for essays on fiat currency as a parasite and for his men's self mastery courses.",
+"iv": []
 },
 {
 "id": "roger-dickerman",
@@ -9910,6 +13821,96 @@
 "iv": []
 },
 {
+"id": "saifedean-ammous",
+"name": "Saifedean Ammous",
+"handle": "@saifedean",
+"x": "saifedean",
+"cat": "W",
+"works": [
+{
+"title": "Rai Stone on Liberty Street",
+"s": "saifedean-ammous-11a44816s.jpg",
+"l": "saifedean-ammous-11a44816l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Economist and author of The Bitcoin Standard, the bestselling case for Bitcoin as sound money.",
+"iv": []
+},
+{
+"id": "samson-mow",
+"name": "Samson Mow",
+"handle": "@Excellion",
+"x": "Excellion",
+"cat": "W",
+"works": [
+{
+"title": "Walking the UN Plaza",
+"s": "samson-mow-7ff93feds.jpg",
+"l": "samson-mow-7ff93fedl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "CEO of JAN3 and former Blockstream CSO, champion of nation state Bitcoin adoption from El Salvador onward.",
+"iv": []
+},
+{
+"id": "scott-melker",
+"name": "Scott Melker",
+"handle": "@scottmelker",
+"x": "scottmelker",
+"cat": "W",
+"works": [
+{
+"title": "Headset on Federal Hall",
+"s": "scott-melker-8d3a4649s.jpg",
+"l": "scott-melker-8d3a4649l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former DJ turned trader and host of The Wolf Of All Streets podcast and The Daily Wolf on Yahoo Finance.",
+"iv": []
+},
+{
+"id": "stacy-herbert",
+"name": "Stacy Herbert",
+"handle": "@stacyherbert",
+"x": "stacyherbert",
+"cat": "W",
+"works": [
+{
+"title": "Under the Clock at Grand Central",
+"s": "stacy-herbert-ac4a471fs.jpg",
+"l": "stacy-herbert-ac4a471fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-host of the Keiser Report and director of El Salvador's National Bitcoin Office, creator of the CUBO+ bitcoin education program.",
+"iv": []
+},
+{
+"id": "stephan-livera",
+"name": "Stephan Livera",
+"handle": "@stephanlivera",
+"x": "stephanlivera",
+"cat": "W",
+"works": [
+{
+"title": "Booth Above Madison Square Park",
+"s": "stephan-livera-29963243s.jpg",
+"l": "stephan-livera-29963243l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Australian host of the Stephan Livera Podcast, one of Bitcoin's longest running technical interview shows.",
+"iv": []
+},
+{
 "id": "stephen-a-smith",
 "name": "Stephen A. Smith",
 "handle": "@stephenasmith",
@@ -9925,6 +13926,96 @@
 }
 ],
 "bio": "Bronx born sports commentator whose takes run the morning in American sports. It was always getting said",
+"iv": []
+},
+{
+"id": "threadguy",
+"name": "Threadguy",
+"handle": "@notthreadguy",
+"x": "notthreadguy",
+"cat": "W",
+"works": [
+{
+"title": "Night Shift Above Canal",
+"s": "threadguy-8537d490s.jpg",
+"l": "threadguy-8537d490l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Crypto livestreamer and podcaster (TG Podcast, Market Open), running a daily 8:30 a.m. show and building Counterparty TV.",
+"iv": []
+},
+{
+"id": "tom-lee",
+"name": "Tom Lee",
+"handle": "@fundstrat",
+"x": "fundstrat",
+"cat": "W",
+"works": [
+{
+"title": "Pointing from the Balcony",
+"s": "tom-lee-28e83aebs.jpg",
+"l": "tom-lee-28e83aebl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Fundstrat co founder and Wall Street strategist known for bold Bitcoin and S&P calls, now chairman of Ethereum treasury company Bitmine.",
+"iv": []
+},
+{
+"id": "tuur-demeester",
+"name": "Tuur Demeester",
+"handle": "@TuurDemeester",
+"x": "TuurDemeester",
+"cat": "W",
+"works": [
+{
+"title": "A Chart on the Cobblestones",
+"s": "tuur-demeester-0f984da5s.jpg",
+"l": "tuur-demeester-0f984da5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Belgian Bitcoin analyst and Adamant Research founder, known for early Bitcoin market reports and long term cycle charts.",
+"iv": []
+},
+{
+"id": "udi-wertheimer",
+"name": "Udi Wertheimer",
+"handle": "@udiWertheimer",
+"x": "udiWertheimer",
+"cat": "W",
+"works": [
+{
+"title": "Wizard of Washington Square",
+"s": "udi-wertheimer-0cec8307s.jpg",
+"l": "udi-wertheimer-0cec8307l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin troll and builder, co-founder of Taproot Wizards and the Quantum Cats ordinals, longtime critic and needler of bitcoin maximalism.",
+"iv": []
+},
+{
+"id": "vijay-boyapati",
+"name": "Vijay Boyapati",
+"handle": "@real_vijay",
+"x": "real_vijay",
+"cat": "W",
+"works": [
+{
+"title": "Cowrie Shell for the Bull",
+"s": "vijay-boyapati-2b5f9b71s.jpg",
+"l": "vijay-boyapati-2b5f9b71l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former Google engineer and author of The Bullish Case for Bitcoin, the famous essay turned book on money's origins.",
 "iv": []
 },
 {
@@ -9946,6 +14037,78 @@
 }
 ],
 "bio": "Brooklyn poet who wrote Leaves of Grass and rode the ferry into verse. One man, containing multitudes",
+"iv": []
+},
+{
+"id": "william-clemente-iii",
+"name": "William Clemente III",
+"handle": "@WClemente",
+"x": "WClemente",
+"cat": "W",
+"works": [
+{
+"title": "Headphones Over Washington Square",
+"s": "william-clemente-iii-cc7cf198s.jpg",
+"l": "william-clemente-iii-cc7cf198l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Bitcoin on chain analyst who rose to fame as a teenager in 2020 and cofounded Reflexivity Research.",
+"iv": []
+},
+{
+"id": "willy-woo",
+"name": "Willy Woo",
+"handle": "@willywoo",
+"x": "willywoo",
+"cat": "W",
+"works": [
+{
+"title": "Reading the Tower",
+"s": "willy-woo-0c5ef994s.jpg",
+"l": "willy-woo-0c5ef994l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Bitcoin on chain analyst who pioneered metrics like NVT and runs a popular research newsletter.",
+"iv": []
+},
+{
+"id": "yan-pritzker",
+"name": "Yan Pritzker",
+"handle": "@skwp",
+"x": "skwp",
+"cat": "W",
+"works": [
+{
+"title": "Brighton Beach Book Club",
+"s": "yan-pritzker-877153f1s.jpg",
+"l": "yan-pritzker-877153f1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Co-founder and CTO of Swan Bitcoin and author of Inventing Bitcoin; born in the Soviet Union.",
+"iv": []
+},
+{
+"id": "zachxbt",
+"name": "ZachXBT",
+"handle": "@zachxbt",
+"x": "zachxbt",
+"cat": "W",
+"works": [
+{
+"title": "The Corkboard Downtown",
+"s": "zachxbt-d05a0a56s.jpg",
+"l": "zachxbt-d05a0a56l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous on chain investigator who traces hacks and scams.",
 "iv": []
 },
 {
@@ -10401,6 +14564,24 @@
 }
 ],
 "bio": "East Flatbush drill rapper behind Big Drip and a thousand ad libs. Brooklyn's energy in one voice",
+"iv": []
+},
+{
+"id": "flavor-flav",
+"name": "Flavor Flav",
+"handle": "@FlavorFlav",
+"x": "FlavorFlav",
+"cat": "M",
+"works": [
+{
+"title": "The Man Who Wears Time",
+"s": "flavor-flav-a46729a5s.jpg",
+"l": "flavor-flav-a46729a5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Flavor Flav, born William Drayton on Long Island, is the hype man and clock wearer of Public Enemy, the Strong Island group that changed what hip hop could say. The clock still keeps time.",
 "iv": []
 },
 {
@@ -12941,6 +17122,2778 @@
 }
 ],
 "bio": "Queens assemblyman who ran a street level campaign and became mayor of New York. The city answers back",
+"iv": []
+},
+{
+"id": "000000",
+"name": "000000",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Blackout on Wall Street",
+"s": "000000-9e3d2c47s.jpg",
+"l": "000000-9e3d2c47l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xbec001",
+"name": "0xbec001",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Four in the Morning Aisle",
+"s": "0xbec001-d78294f2s.jpg",
+"l": "0xbec001-d78294f2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "0x-darius",
+"name": "0x_darius",
+"handle": "@0x_darius",
+"x": "0x_darius",
+"cat": "T",
+"works": [
+{
+"title": "Blossom Season in Brooklyn",
+"s": "0x-darius-390be68ds.jpg",
+"l": "0x-darius-390be68dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "0xDarius, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xdetweiler",
+"name": "0xdetweiler",
+"handle": "@0xdetweiler",
+"x": "0xdetweiler",
+"cat": "T",
+"works": [
+{
+"title": "Cleaver in the Ramble",
+"s": "0xdetweiler-5cc5a86es.jpg",
+"l": "0xdetweiler-5cc5a86el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Theo, Solana memecoin trader on the fomo 30 day leaderboard, member of Labyrinth Alpha and advisor to crypto projects. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xelyy",
+"name": "0xelyy",
+"handle": "@0xelyy",
+"x": "0xelyy",
+"cat": "T",
+"works": [
+{
+"title": "Astronaut at the Edge",
+"s": "0xelyy-9215e181s.jpg",
+"l": "0xelyy-9215e181l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "0xEly, Solana memecoin trader on the fomo 30 day leaderboard who shares creator fees via fomo and pump.fun referrals. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xfinne",
+"name": "0xfinne",
+"handle": "@0xfinne",
+"x": "0xfinne",
+"cat": "T",
+"works": [
+{
+"title": "Detective Under the Lamp",
+"s": "0xfinne-deb5e541s.jpg",
+"l": "0xfinne-deb5e541l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "finne, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0x-kedegen",
+"name": "0x_kedegen",
+"handle": "@0x_kedegen",
+"x": "0x_kedegen",
+"cat": "T",
+"works": [
+{
+"title": "Bagged at the Bodega",
+"s": "0x-kedegen-fe0bcbb9s.jpg",
+"l": "0x-kedegen-fe0bcbb9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "kedegen, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xlingard",
+"name": "0xlingard",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Rainbow Cat in the Bodega Window",
+"s": "0xlingard-a11830e0s.jpg",
+"l": "0xlingard-a11830e0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xsneakky",
+"name": "0xsneakky",
+"handle": "@0xsneakky",
+"x": "0xsneakky",
+"cat": "T",
+"works": [
+{
+"title": "Doll in the Orchard Street Window",
+"s": "0xsneakky-50f54486s.jpg",
+"l": "0xsneakky-50f54486l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "sneaky, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xsporadic",
+"name": "0xsporadic",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Dumplings on Main Street",
+"s": "0xsporadic-43fe4ae0s.jpg",
+"l": "0xsporadic-43fe4ae0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "0xstanczyk",
+"name": "0xstanczyk",
+"handle": "@0xstanczyk",
+"x": "0xstanczyk",
+"cat": "T",
+"works": [
+{
+"title": "Sulking at the Met Opera",
+"s": "0xstanczyk-8e8d0878s.jpg",
+"l": "0xstanczyk-8e8d0878l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard, posts as a 'jester on chain'. Painted as the avatar",
+"iv": []
+},
+{
+"id": "achilles-bull",
+"name": "achilles_bull",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Shades by the Bull",
+"s": "achilles-bull-b19bea08s.jpg",
+"l": "achilles-bull-b19bea08l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "andrea-tennis",
+"name": "andrea_tennis",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Center Court Regular",
+"s": "andrea-tennis-701a5020s.jpg",
+"l": "andrea-tennis-701a5020l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "anselfang",
+"name": "anselfang",
+"handle": "@anselfang",
+"x": "anselfang",
+"cat": "T",
+"works": [
+{
+"title": "Dragon on a Mott Street Lantern",
+"s": "anselfang-7e8c196fs.jpg",
+"l": "anselfang-7e8c196fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "lonewolf, Chinese speaking crypto, Polymarket and US stock trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "ansem",
+"name": "Ansem",
+"handle": "@blknoiz06",
+"x": "blknoiz06",
+"cat": "T",
+"works": [
+{
+"title": "Pink Hat on the Stoop",
+"s": "ansem-035af5e0s.jpg",
+"l": "ansem-035af5e0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader and caller known for early WIF and BONK calls and huge market influence. Painted as the avatar",
+"iv": []
+},
+{
+"id": "art",
+"name": "Art",
+"handle": "@ArtCryptoz",
+"x": "ArtCryptoz",
+"cat": "T",
+"works": [
+{
+"title": "Snow Squall on Wall Street",
+"s": "art-be0f74f3s.jpg",
+"l": "art-be0f74f3l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Self described memecoin quant who trades Solana meme coins under the name Art. Painted as the avatar",
+"iv": []
+},
+{
+"id": "ataberk",
+"name": "Ataberk",
+"handle": "@ataberk",
+"x": "ataberk",
+"cat": "T",
+"works": [
+{
+"title": "Storm at Federal Hall",
+"s": "ataberk-a6f6ed26s.jpg",
+"l": "ataberk-a6f6ed26l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Ata, linked to TroupeKZ. Painted as the avatar",
+"iv": []
+},
+{
+"id": "beastymcbeast",
+"name": "beastymcbeast",
+"handle": "@beastymcbeast",
+"x": "beastymcbeast",
+"cat": "T",
+"works": [
+{
+"title": "Behind the Counter on Arthur Avenue",
+"s": "beastymcbeast-dbc9f1fas.jpg",
+"l": "beastymcbeast-dbc9f1fal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "beaver",
+"name": "Beaver",
+"handle": "@beaverd",
+"x": "beaverd",
+"cat": "T",
+"works": [
+{
+"title": "Waiting in the Oculus",
+"s": "beaver-ee5c2810s.jpg",
+"l": "beaver-ee5c2810l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "benjitrades",
+"name": "_benjitrades",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Greenway Goggles at Sunset",
+"s": "benjitrades-b1cb593es.jpg",
+"l": "benjitrades-b1cb593el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "bigbabba",
+"name": "bigbabba",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Bodega Cat Office Hours",
+"s": "bigbabba-5c92d5bes.jpg",
+"l": "bigbabba-5c92d5bel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "bigwarzeth",
+"name": "bigwarzeth",
+"handle": "@bigwarzeth",
+"x": "bigwarzeth",
+"cat": "T",
+"works": [
+{
+"title": "Last Car on the 7",
+"s": "bigwarzeth-fbb3bcc8s.jpg",
+"l": "bigwarzeth-fbb3bcc8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "BIGWARZ, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "bihoz",
+"name": "bihoz",
+"handle": "@bihozNFTs",
+"x": "bihozNFTs",
+"cat": "T",
+"works": [
+{
+"title": "Lost and Found at Grand Central",
+"s": "bihoz-74e435fds.jpg",
+"l": "bihoz-74e435fdl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana trader posting as bihoz, finds forgotten funds with fffonchain and Trainers FNF. Painted as the avatar",
+"iv": []
+},
+{
+"id": "bonkguy-unipcs",
+"name": "Bonkguy / Unipcs",
+"handle": "@theunipcs",
+"x": "theunipcs",
+"cat": "T",
+"works": [
+{
+"title": "Boardwalk Bench With the Prize Dog",
+"s": "bonkguy-unipcs-2bb98f9fs.jpg",
+"l": "bonkguy-unipcs-2bb98f9fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous Solana trader famous for an enormous early BONK position, hence Bonk Guy. Painted as the avatar",
+"iv": []
+},
+{
+"id": "boosted",
+"name": "boosted",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Crowned at the Claw Machine",
+"s": "boosted-bf6e7130s.jpg",
+"l": "boosted-bf6e7130l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "brokeszn",
+"name": "brokeszn",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Ringside at Coney",
+"s": "brokeszn-14116258s.jpg",
+"l": "brokeszn-14116258l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "brunowsky",
+"name": "brunowsky",
+"handle": "@brubowsky",
+"x": "brubowsky",
+"cat": "T",
+"works": [
+{
+"title": "Brooding Over Grand Central",
+"s": "brunowsky-d99c7362s.jpg",
+"l": "brunowsky-d99c7362l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "buggyllama",
+"name": "buggyllama",
+"handle": "@buggyllama",
+"x": "buggyllama",
+"cat": "T",
+"works": [
+{
+"title": "Bored on the Q",
+"s": "buggyllama-6ed706abs.jpg",
+"l": "buggyllama-6ed706abl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "buggy, ecom founder by day and Solana memecoin trader by night, on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "bul1ish",
+"name": "bul1ish",
+"handle": "@bul1ish",
+"x": "bul1ish",
+"cat": "T",
+"works": [
+{
+"title": "Planting Season on Avenue B",
+"s": "bul1ish-c7788489s.jpg",
+"l": "bul1ish-c7788489l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "CoolNoodle, onchain trader posting as an underdog providing for his family, on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "bystevenr",
+"name": "bystevenr",
+"handle": "@bystevenr",
+"x": "bystevenr",
+"cat": "T",
+"works": [
+{
+"title": "Selfie at Battery Park",
+"s": "bystevenr-fa6d5b34s.jpg",
+"l": "bystevenr-fa6d5b34l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Steven R, young swing trader and YouTuber (Trading for Toddlers) on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "byszzz",
+"name": "byszzz",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Last Car to Queens",
+"s": "byszzz-d3cf7143s.jpg",
+"l": "byszzz-d3cf7143l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "cap",
+"name": "Cap",
+"handle": "@himothy",
+"x": "himothy",
+"cat": "T",
+"works": [
+{
+"title": "Last Chair Before Sunrise",
+"s": "cap-d4198aeds.jpg",
+"l": "cap-d4198aedl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as cap, runs the caps kitchen Telegram, on the KOL Explorer 30 day realized board. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "carver",
+"name": "carver_",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Rising From the Manhole",
+"s": "carver-c68fce55s.jpg",
+"l": "carver-c68fce55l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "cellar1544720",
+"name": "cellar1544720",
+"handle": "@cellar1544720",
+"x": "cellar1544720",
+"cat": "T",
+"works": [
+{
+"title": "Fur Coat at the Bull",
+"s": "cellar1544720-3e936968s.jpg",
+"l": "cellar1544720-3e936968l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "cented",
+"name": "Cented",
+"handle": "@Cented7",
+"x": "Cented7",
+"cat": "T",
+"works": [
+{
+"title": "The Catch Comes In",
+"s": "cented-2cc2226fs.jpg",
+"l": "cented-2cc2226fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "One of the top Solana meme coin traders, cented the hodler, top of the KOL Explorer 30 day realized board. Painted as the avatar",
+"iv": []
+},
+{
+"id": "ceruleanrange",
+"name": "ceruleanrange",
+"handle": "@ceruleanrange",
+"x": "ceruleanrange",
+"cat": "T",
+"works": [
+{
+"title": "All In After Midnight",
+"s": "ceruleanrange-08ce9a17s.jpg",
+"l": "ceruleanrange-08ce9a17l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard, ALL INU community poster on X. Painted as the avatar",
+"iv": []
+},
+{
+"id": "chairman",
+"name": "Chairman ²",
+"handle": "@Chairman_DN",
+"x": "Chairman_DN",
+"cat": "T",
+"works": [
+{
+"title": "Head of the Table, Woolworth",
+"s": "chairman-9b91edd0s.jpg",
+"l": "chairman-9b91edd0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "chester",
+"name": "chester",
+"handle": "@Chestererer",
+"x": "Chestererer",
+"cat": "T",
+"works": [
+{
+"title": "Rain at Top of the Rock",
+"s": "chester-f7ad208cs.jpg",
+"l": "chester-f7ad208cl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "coachpaui",
+"name": "coachpaui",
+"handle": "@coachpaui",
+"x": "coachpaui",
+"cat": "T",
+"works": [
+{
+"title": "Sunrise Sets on the Piers",
+"s": "coachpaui-e2294796s.jpg",
+"l": "coachpaui-e2294796l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Coach Paul, body transformation coach and ex private chef to NBA and UFC athletes, also on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "coler",
+"name": "Coler",
+"handle": "@ColerCooks",
+"x": "ColerCooks",
+"cat": "T",
+"works": [
+{
+"title": "Closed Deli, Midtown",
+"s": "coler-33016083s.jpg",
+"l": "coler-33016083l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "cooker",
+"name": "Cooker",
+"handle": "@CookerFlips",
+"x": "CookerFlips",
+"cat": "T",
+"works": [
+{
+"title": "Lab Coat on the High Line",
+"s": "cooker-fb5e8e78s.jpg",
+"l": "cooker-fb5e8e78l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Founder of the Pastel Alpha trading group, posting as Cooker. Painted as the avatar",
+"iv": []
+},
+{
+"id": "cosmic358",
+"name": "cosmic358",
+"handle": "@cosmic358",
+"x": "cosmic358",
+"cat": "T",
+"works": [
+{
+"title": "Ring of Fire Over Manhattan",
+"s": "cosmic358-f8526244s.jpg",
+"l": "cosmic358-f8526244l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "358, crypto OG since 2015 and Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "cryptozachla",
+"name": "cryptozachla",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Fanning It on Canal",
+"s": "cryptozachla-a50e0b66s.jpg",
+"l": "cryptozachla-a50e0b66l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "cupsey",
+"name": "Cupsey",
+"handle": "@Cupseyy",
+"x": "Cupseyy",
+"cat": "T",
+"works": [
+{
+"title": "Standing Guard at Fort Hamilton",
+"s": "cupsey-55543461s.jpg",
+"l": "cupsey-55543461l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana meme coin sniper near the top of the Kolscan boards. Painted as the avatar",
+"iv": []
+},
+{
+"id": "dani",
+"name": "Dani",
+"handle": "@DaniWorldwide",
+"x": "DaniWorldwide",
+"cat": "T",
+"works": [
+{
+"title": "Back Turned at the Met",
+"s": "dani-b97b227bs.jpg",
+"l": "dani-b97b227bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "daumen",
+"name": "Daumen",
+"handle": "@daumenxyz",
+"x": "daumenxyz",
+"cat": "T",
+"works": [
+{
+"title": "Rowboat by Bow Bridge",
+"s": "daumen-a0b7c8acs.jpg",
+"l": "daumen-a0b7c8acl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader and YouTube educator posting as Daumen. Painted as the avatar",
+"iv": []
+},
+{
+"id": "decu",
+"name": "decu",
+"handle": "@notdecu",
+"x": "notdecu",
+"cat": "T",
+"works": [
+{
+"title": "Salute from the Roof",
+"s": "decu-a2da1fc8s.jpg",
+"l": "decu-a2da1fc8l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "degenerate-brian",
+"name": "Degenerate Brian",
+"handle": "@Brian_Degens",
+"x": "Brian_Degens",
+"cat": "T",
+"works": [
+{
+"title": "Morning Coffee Over Times Square",
+"s": "degenerate-brian-56e79568s.jpg",
+"l": "degenerate-brian-56e79568l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Full time Solana degen trader who calls himself a bag worker, posting as Degenerate Brian. Painted as the avatar",
+"iv": []
+},
+{
+"id": "donbags",
+"name": "donbags",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Counting Bags on Mulberry",
+"s": "donbags-5088f2c1s.jpg",
+"l": "donbags-5088f2c1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "donnydicey",
+"name": "donnydicey",
+"handle": "@donnydicey",
+"x": "donnydicey",
+"cat": "T",
+"works": [
+{
+"title": "Dice on Mulberry Street",
+"s": "donnydicey-5dab628bs.jpg",
+"l": "donnydicey-5dab628bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Donny, Solana memecoin trader on the fomo 30 day leaderboard, 'Read the tape. Roll the dice.' Painted as the avatar",
+"iv": []
+},
+{
+"id": "dontsleeponme",
+"name": "dontsleeponme",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Asleep on the A Train",
+"s": "dontsleeponme-83b0680ds.jpg",
+"l": "dontsleeponme-83b0680dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "dopaminefeenfr1",
+"name": "dopaminefeenfr1",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Halo Over Times Square",
+"s": "dopaminefeenfr1-a24b66fcs.jpg",
+"l": "dopaminefeenfr1-a24b66fcl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "dreamloaderxo",
+"name": "dreamloaderxo",
+"handle": "@dreamloaderxo",
+"x": "dreamloaderxo",
+"cat": "T",
+"works": [
+{
+"title": "Under the Arches at St. Patrick's",
+"s": "dreamloaderxo-6a4b0819s.jpg",
+"l": "dreamloaderxo-6a4b0819l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "dreamloader, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "dtrainz",
+"name": "dtrainz",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Steam Face at Queensboro Plaza",
+"s": "dtrainz-5363ffa9s.jpg",
+"l": "dtrainz-5363ffa9l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "dylansdegens",
+"name": "dylansdegens",
+"handle": "@dylansdegens",
+"x": "dylansdegens",
+"cat": "T",
+"works": [
+{
+"title": "Flame Hair at Federal Hall",
+"s": "dylansdegens-04325098s.jpg",
+"l": "dylansdegens-04325098l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Dylan.Eth, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "end837",
+"name": "end837",
+"handle": "@end837",
+"x": "end837",
+"cat": "T",
+"works": [
+{
+"title": "Snow Day on Pilgrim Hill",
+"s": "end837-316975a4s.jpg",
+"l": "end837-316975a4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "end, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "escobarpablo",
+"name": "escobarpablo",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Waiting at Carl Schurz Park",
+"s": "escobarpablo-7bb6f5c8s.jpg",
+"l": "escobarpablo-7bb6f5c8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "eth-exy",
+"name": "eth_exy",
+"handle": "@eth_exy",
+"x": "eth_exy",
+"cat": "T",
+"works": [
+{
+"title": "Beanie Cat in the SoHo Window",
+"s": "eth-exy-01340c83s.jpg",
+"l": "eth-exy-01340c83l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Exy, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "eustazz",
+"name": "EustazZ",
+"handle": "@Eustazzeus",
+"x": "Eustazzeus",
+"cat": "T",
+"works": [
+{
+"title": "Bazooka on the Boardwalk",
+"s": "eustazz-9d454d07s.jpg",
+"l": "eustazz-9d454d07l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Greek Solana meme coin trader who says he trades memes for a living, part of GreekFnF. Painted as the avatar",
+"iv": []
+},
+{
+"id": "exacttalltakin",
+"name": "exacttalltakin",
+"handle": "@exacttalltakin",
+"x": "exacttalltakin",
+"cat": "T",
+"works": [
+{
+"title": "Yellow Head, Yellow Cab",
+"s": "exacttalltakin-c6d16939s.jpg",
+"l": "exacttalltakin-c6d16939l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "ExactTallTakin, Solana memecoin trader on the fomo 30 day leaderboard, tied to the gemflow group. Painted as the avatar",
+"iv": []
+},
+{
+"id": "extendedlocalplatypus",
+"name": "extendedlocalplatypus",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Platypus at Gapstow Bridge",
+"s": "extendedlocalplatypus-9c6b1b89s.jpg",
+"l": "extendedlocalplatypus-9c6b1b89l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "fuzzyolivetrout",
+"name": "fuzzyolivetrout",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Pigeon Coop in Bushwick",
+"s": "fuzzyolivetrout-7927fdc0s.jpg",
+"l": "fuzzyolivetrout-7927fdc0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "fxcxc",
+"name": "fxcxc",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Hot Dogs Under the Bridge",
+"s": "fxcxc-c1b06fbes.jpg",
+"l": "fxcxc-c1b06fbel.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "gasp",
+"name": "Gasp",
+"handle": "@oh_gasp",
+"x": "oh_gasp",
+"cat": "T",
+"works": [
+{
+"title": "Halo over the Bridge",
+"s": "gasp-01fb8c0as.jpg",
+"l": "gasp-01fb8c0al.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "generationalfumbler",
+"name": "generationalfumbler",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Snow at the Polo Grounds Gate",
+"s": "generationalfumbler-263d4fa9s.jpg",
+"l": "generationalfumbler-263d4fa9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "giann",
+"name": "Giann",
+"handle": "@Giann2K",
+"x": "Giann2K",
+"cat": "T",
+"works": [
+{
+"title": "Blue Hour, Fourteenth Street",
+"s": "giann-fb346ec4s.jpg",
+"l": "giann-fb346ec4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Giann, bio reads God 1st. Painted as the avatar",
+"iv": []
+},
+{
+"id": "gl-aw-at-paragon",
+"name": "gl_aw_at_paragon",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "The Old Master at Coney",
+"s": "gl-aw-at-paragon-76de9050s.jpg",
+"l": "gl-aw-at-paragon-76de9050l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "gweil0rd",
+"name": "gweil0rd",
+"handle": "@gweil0rd",
+"x": "gweil0rd",
+"cat": "T",
+"works": [
+{
+"title": "Blue Hour, Top of the Rock",
+"s": "gweil0rd-37cfe472s.jpg",
+"l": "gweil0rd-37cfe472l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "h14",
+"name": "h14",
+"handle": "@H14onX",
+"x": "H14onX",
+"cat": "T",
+"works": [
+{
+"title": "Dice Under the Arch",
+"s": "h14-caba989cs.jpg",
+"l": "h14-caba989cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as h14, bio reads scared money don't make money. Painted as the avatar",
+"iv": []
+},
+{
+"id": "hifive-07",
+"name": "hifive_07",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "High Five in the Bronx",
+"s": "hifive-07-d834ed85s.jpg",
+"l": "hifive-07-d834ed85l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "himgajria",
+"name": "himgajria",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Studying the Old Masters",
+"s": "himgajria-f887ae37s.jpg",
+"l": "himgajria-f887ae37l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "johnnybones",
+"name": "johnnybones",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Dumplings and a Laptop",
+"s": "johnnybones-b301427cs.jpg",
+"l": "johnnybones-b301427cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "kadenox",
+"name": "Kadenox",
+"handle": "@kadenox",
+"x": "kadenox",
+"cat": "T",
+"works": [
+{
+"title": "Pixel Walk Through Times Square",
+"s": "kadenox-c240337fs.jpg",
+"l": "kadenox-c240337fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Twitch streamer and Solana meme coin trader who calls himself an attention speculist. Painted as the avatar",
+"iv": []
+},
+{
+"id": "kenobi-wif",
+"name": "kenobi_wif",
+"handle": "@kenobi_wif",
+"x": "kenobi_wif",
+"cat": "T",
+"works": [
+{
+"title": "Wet Paint in Bushwick",
+"s": "kenobi-wif-926f5d63s.jpg",
+"l": "kenobi-wif-926f5d63l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "keraunos",
+"name": "keraunos",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Red Cloak Over Bear Mountain",
+"s": "keraunos-dd195226s.jpg",
+"l": "keraunos-dd195226l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "kv4rl",
+"name": "kv4rl",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Four A.M. in Queens",
+"s": "kv4rl-b2da90a7s.jpg",
+"l": "kv4rl-b2da90a7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "leck",
+"name": "Leck",
+"handle": "@LeckSol",
+"x": "LeckSol",
+"cat": "T",
+"works": [
+{
+"title": "Kimono in the Snow",
+"s": "leck-08c14830s.jpg",
+"l": "leck-08c14830l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana meme coin trader and YouTuber posting as Leck, on the Kolscan daily and KOL Explorer 30 day boards. Painted as the avatar",
+"iv": []
+},
+{
+"id": "leo",
+"name": "leo",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "The Third Lion on Fifth Avenue",
+"s": "leo-aaa43018s.jpg",
+"l": "leo-aaa43018l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "limfork",
+"name": "Limfork",
+"handle": "@Limfork",
+"x": "Limfork",
+"cat": "T",
+"works": [
+{
+"title": "Heart Eyes in Bryant Park",
+"s": "limfork-59fc1d97s.jpg",
+"l": "limfork-59fc1d97l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader and Twitch streamer, born in the trenches, building Terciosfnf. Painted as the avatar",
+"iv": []
+},
+{
+"id": "ljc",
+"name": "LJC",
+"handle": "@OnlyLJC",
+"x": "OnlyLJC",
+"cat": "T",
+"works": [
+{
+"title": "Bad Day at Federal Hall",
+"s": "ljc-5f93c6a2s.jpg",
+"l": "ljc-5f93c6a2l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana trader who says he trades shitters with deep lore and runs the LJC cabals Telegram. Painted as the avatar",
+"iv": []
+},
+{
+"id": "looc",
+"name": "looc",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Ringside at the Garden",
+"s": "looc-d5366b71s.jpg",
+"l": "looc-d5366b71l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "manamoonnft",
+"name": "manamoonnft",
+"handle": "@manamoonnft",
+"x": "manamoonnft",
+"cat": "T",
+"works": [
+{
+"title": "King of the Bryant Park Rink",
+"s": "manamoonnft-9de13ebas.jpg",
+"l": "manamoonnft-9de13ebal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "ManaMoon, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "maxiplaysgames",
+"name": "maxiplaysgames",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Calm in Washington Square",
+"s": "maxiplaysgames-0b1aaf9cs.jpg",
+"l": "maxiplaysgames-0b1aaf9cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "maxpain",
+"name": "maxpain",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Fists Up on Broad Street",
+"s": "maxpain-bf97b862s.jpg",
+"l": "maxpain-bf97b862l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "megga",
+"name": "Megga",
+"handle": "@Megga",
+"x": "Megga",
+"cat": "T",
+"works": [
+{
+"title": "Golden Hour at Coney",
+"s": "megga-81a88782s.jpg",
+"l": "megga-81a88782l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Former FaZe Clan pro Fortnite player turned Solana meme coin trader, one of the biggest names on the Kolscan board. Painted as the avatar",
+"iv": []
+},
+{
+"id": "milito",
+"name": "milito",
+"handle": "@fnmilito",
+"x": "fnmilito",
+"cat": "T",
+"works": [
+{
+"title": "Four in the Morning, Astoria",
+"s": "milito-bf89b6f5s.jpg",
+"l": "milito-bf89b6f5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as milito, bio reads cant rush greatness. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "montymole44",
+"name": "montymole44",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Last Call in Harlem",
+"s": "montymole44-7666765fs.jpg",
+"l": "montymole44-7666765fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "motiyawerey",
+"name": "motiyawerey",
+"handle": "@motiyawerey",
+"x": "motiyawerey",
+"cat": "T",
+"works": [
+{
+"title": "Lunch on the Beam",
+"s": "motiyawerey-b065eb88s.jpg",
+"l": "motiyawerey-b065eb88l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Werey, Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "mrfernando88",
+"name": "mrfernando88",
+"handle": "@mrfernando88",
+"x": "mrfernando88",
+"cat": "T",
+"works": [
+{
+"title": "Pixel Punk, Bottomless Cup",
+"s": "mrfernando88-ca4ca6b1s.jpg",
+"l": "mrfernando88-ca4ca6b1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "MrFernando, BAYC and CryptoPunks holder and Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "mr-frog",
+"name": "Mr. Frog",
+"handle": "@TheMisterFrog",
+"x": "TheMisterFrog",
+"cat": "T",
+"works": [
+{
+"title": "Unimpressed at Turtle Pond",
+"s": "mr-frog-587fc3e1s.jpg",
+"l": "mr-frog-587fc3e1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous Solana meme coin trader high on the Kolscan daily and 30 day boards. Painted as the avatar",
+"iv": []
+},
+{
+"id": "nichequantelsa",
+"name": "nichequantelsa",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Last Dance at the Rainbow Room",
+"s": "nichequantelsa-b0ef304cs.jpg",
+"l": "nichequantelsa-b0ef304cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "nikolas-aura-arc",
+"name": "Nikolas",
+"handle": "@ArcNikolas",
+"x": "ArcNikolas",
+"cat": "T",
+"works": [
+{
+"title": "Lightning in Times Square",
+"s": "nikolas-aura-arc-1428384cs.jpg",
+"l": "nikolas-aura-arc-1428384cl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana token launcher posting as Nikolas, on the Kolscan daily board. Painted as the avatar",
+"iv": []
+},
+{
+"id": "numer0-trench-arc",
+"name": "Numer0",
+"handle": "@Numerooo0",
+"x": "Numerooo0",
+"cat": "T",
+"works": [
+{
+"title": "Summer Sky over the Bridge",
+"s": "numer0-trench-arc-f2bf9bf7s.jpg",
+"l": "numer0-trench-arc-f2bf9bf7l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana meme coin trader posting as numero, three bear markets survived. Painted as the avatar",
+"iv": []
+},
+{
+"id": "nyhrox",
+"name": "Nyhrox",
+"handle": "@nyhrox",
+"x": "nyhrox",
+"cat": "T",
+"works": [
+{
+"title": "Opening Night on West 24th",
+"s": "nyhrox-0fdb8d2fs.jpg",
+"l": "nyhrox-0fdb8d2fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "ogantd",
+"name": "OGAntD",
+"handle": "@0GAntD",
+"x": "0GAntD",
+"cat": "T",
+"works": [
+{
+"title": "Cap on Bow Bridge",
+"s": "ogantd-9af346e8s.jpg",
+"l": "ogantd-9af346e8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "omakaseonly",
+"name": "omakaseonly",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Ten Seats in the West Village",
+"s": "omakaseonly-359b0716s.jpg",
+"l": "omakaseonly-359b0716l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "oscarsproficy",
+"name": "oscarsproficy",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Idling in Greenpoint",
+"s": "oscarsproficy-4e566268s.jpg",
+"l": "oscarsproficy-4e566268l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "outerheavybat",
+"name": "outerheavybat",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Bats Under the Brooklyn Bridge",
+"s": "outerheavybat-b81cce30s.jpg",
+"l": "outerheavybat-b81cce30l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "oznek",
+"name": "oznek",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Blown Down Canal Street",
+"s": "oznek-a53427e4s.jpg",
+"l": "oznek-a53427e4l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "peacefuldestroy",
+"name": "peacefuldestroy",
+"handle": "@peacefuldestroy",
+"x": "peacefuldestroy",
+"cat": "T",
+"works": [
+{
+"title": "Riding the Bull",
+"s": "peacefuldestroy-fdcd16e8s.jpg",
+"l": "peacefuldestroy-fdcd16e8l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader on the Kolscan daily board with an anonymous profile. Painted as the avatar",
+"iv": []
+},
+{
+"id": "plottwisst",
+"name": "plottwisst",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Frozen at the Rink",
+"s": "plottwisst-254efb71s.jpg",
+"l": "plottwisst-254efb71l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "pointfarmcap",
+"name": "pointfarmcap",
+"handle": "@pointfarmcap",
+"x": "pointfarmcap",
+"cat": "T",
+"works": [
+{
+"title": "Harvest at Brooklyn Grange",
+"s": "pointfarmcap-78b4741fs.jpg",
+"l": "pointfarmcap-78b4741fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous points farmer and perp trader on the fomo.family 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "prevaile",
+"name": "prevaile",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Crate Digging on Pier Six",
+"s": "prevaile-a0b29d8ds.jpg",
+"l": "prevaile-a0b29d8dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "pricedin",
+"name": "pricedin",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Foil Blanket on Wall Street",
+"s": "pricedin-a6aa8ed0s.jpg",
+"l": "pricedin-a6aa8ed0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "prometheusx91",
+"name": "prometheusx91",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Worm on the High Line",
+"s": "prometheusx91-1a6cba7fs.jpg",
+"l": "prometheusx91-1a6cba7fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "publix",
+"name": "Publix",
+"handle": "@Publixplayz",
+"x": "Publixplayz",
+"cat": "T",
+"works": [
+{
+"title": "One Button at Hudson Yards",
+"s": "publix-d8070906s.jpg",
+"l": "publix-d8070906l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Miami based Solana meme coin trader on the Kolscan daily board, bio reads be a good person. Painted as the avatar",
+"iv": []
+},
+{
+"id": "putrick",
+"name": "Putrick",
+"handle": "@Putrickk",
+"x": "Putrickk",
+"cat": "T",
+"works": [
+{
+"title": "Moped Down Canal Street",
+"s": "putrick-6e612181s.jpg",
+"l": "putrick-6e612181l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Putrick, bio reads not all at once. Painted as the avatar",
+"iv": []
+},
+{
+"id": "pyro",
+"name": "pyro",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Sparkler on a Bushwick Roof",
+"s": "pyro-4e3c244as.jpg",
+"l": "pyro-4e3c244al.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "rainnen23",
+"name": "rainnen23",
+"handle": "@rainnen23",
+"x": "rainnen23",
+"cat": "T",
+"works": [
+{
+"title": "Owl on the Flatiron",
+"s": "rainnen23-2660f240s.jpg",
+"l": "rainnen23-2660f240l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Rain, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "rambo",
+"name": "rambo",
+"handle": "@goatedondsticks",
+"x": "goatedondsticks",
+"cat": "T",
+"works": [
+{
+"title": "Galaxy Under the Planetarium",
+"s": "rambo-a1f55de6s.jpg",
+"l": "rambo-a1f55de6l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as rambo, bio reads by any means necessary. Painted as the avatar",
+"iv": []
+},
+{
+"id": "raredualjay",
+"name": "raredualjay",
+"handle": "@raredualjay",
+"x": "raredualjay",
+"cat": "T",
+"works": [
+{
+"title": "Courtside at Rucker Park",
+"s": "raredualjay-e056ccf7s.jpg",
+"l": "raredualjay-e056ccf7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "RareDualJay, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "redemptionjizzy",
+"name": "redemptionjizzy",
+"handle": "@redemptionjizzy",
+"x": "redemptionjizzy",
+"cat": "T",
+"works": [
+{
+"title": "Booth Seat at Sardi's",
+"s": "redemptionjizzy-dc05a8efs.jpg",
+"l": "redemptionjizzy-dc05a8efl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "J, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "reljoo",
+"name": "Reljoo",
+"handle": "@Reljoooo",
+"x": "Reljoooo",
+"cat": "T",
+"works": [
+{
+"title": "Big Blade on Canal Street",
+"s": "reljoo-b023fdbfs.jpg",
+"l": "reljoo-b023fdbfl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "resellcalendar",
+"name": "resellcalendar",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "First in Line on Lafayette",
+"s": "resellcalendar-eded7be7s.jpg",
+"l": "resellcalendar-eded7be7l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "rilsio",
+"name": "Rilsio",
+"handle": "@CryptoRilsio",
+"x": "CryptoRilsio",
+"cat": "T",
+"works": [
+{
+"title": "Sheep Suit in the Winter Garden",
+"s": "rilsio-3ddebf31s.jpg",
+"l": "rilsio-3ddebf31l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Rilsio, runs a Telegram and a GMGN referral. Painted as the avatar",
+"iv": []
+},
+{
+"id": "risk",
+"name": "Risk",
+"handle": "@risk100x",
+"x": "risk100x",
+"cat": "T",
+"works": [
+{
+"title": "Ferry with a Polar Bear",
+"s": "risk-7e266ddas.jpg",
+"l": "risk-7e266ddal.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "runningclam",
+"name": "runningclam",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "The Clam Makes a Run",
+"s": "runningclam-29178050s.jpg",
+"l": "runningclam-29178050l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "rzdxbt",
+"name": "rzdxbt",
+"handle": "@rzdxbt",
+"x": "rzdxbt",
+"cat": "T",
+"works": [
+{
+"title": "Hood Up in Long Island City",
+"s": "rzdxbt-4e932b73s.jpg",
+"l": "rzdxbt-4e932b73l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "RZD, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "samsrep",
+"name": "samsrep",
+"handle": "@samsrepx",
+"x": "samsrepx",
+"cat": "T",
+"works": [
+{
+"title": "Window Display on Bleecker",
+"s": "samsrep-877bb746s.jpg",
+"l": "samsrep-877bb746l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "shootingguard",
+"name": "shootingguard",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Rubber Boots at the Cage",
+"s": "shootingguard-dc26b49bs.jpg",
+"l": "shootingguard-dc26b49bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "smokez",
+"name": "Smokez",
+"handle": "@SmokezXBT",
+"x": "SmokezXBT",
+"cat": "T",
+"works": [
+{
+"title": "Cigar Above the Clouds",
+"s": "smokez-78eb372es.jpg",
+"l": "smokez-78eb372el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Smokez, bio reads Him. Painted as the avatar",
+"iv": []
+},
+{
+"id": "spartee",
+"name": "spartee",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Rowing Past Bow Bridge",
+"s": "spartee-dec8f0a9s.jpg",
+"l": "spartee-dec8f0a9l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "spuno",
+"name": "Spuno",
+"handle": "@spunosounds",
+"x": "spunosounds",
+"cat": "T",
+"works": [
+{
+"title": "Blue Man in the Crowd",
+"s": "spuno-ce1c7311s.jpg",
+"l": "spuno-ce1c7311l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "teepanddestroy",
+"name": "teepanddestroy",
+"handle": "@teepanddestroy",
+"x": "teepanddestroy",
+"cat": "T",
+"works": [
+{
+"title": "Arms Crossed on the Platform",
+"s": "teepanddestroy-30154d05s.jpg",
+"l": "teepanddestroy-30154d05l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "tekkerrss",
+"name": "tekkerrss",
+"handle": "@tekkerrss",
+"x": "tekkerrss",
+"cat": "T",
+"works": [
+{
+"title": "Fist Pump on Broad Street",
+"s": "tekkerrss-0e7f691ds.jpg",
+"l": "tekkerrss-0e7f691dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "terpinolene",
+"name": "terpinolene",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Night Watch at the Cloisters",
+"s": "terpinolene-4b346ca1s.jpg",
+"l": "terpinolene-4b346ca1l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "thedazzlenovak",
+"name": "thedazzlenovak",
+"handle": "@thedazzlenovak",
+"x": "thedazzlenovak",
+"cat": "T",
+"works": [
+{
+"title": "Pink Jacket at the Garden",
+"s": "thedazzlenovak-0f80a6fbs.jpg",
+"l": "thedazzlenovak-0f80a6fbl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Brandon, host of the Exit Liquidity show and a Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "themeshri",
+"name": "themeshri",
+"handle": "@themeshri",
+"x": "themeshri",
+"cat": "T",
+"works": [
+{
+"title": "One Eye in the Morgan",
+"s": "themeshri-41b4fd42s.jpg",
+"l": "themeshri-41b4fd42l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Meshri, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "theo",
+"name": "theo",
+"handle": "@theonomix",
+"x": "theonomix",
+"cat": "T",
+"works": [
+{
+"title": "Usher Before Curtain",
+"s": "theo-8452171fs.jpg",
+"l": "theo-8452171fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting memescope calls, on both the Kolscan daily board and the KOL Explorer 30 day realized board. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "theonlyomp",
+"name": "theonlyomp",
+"handle": "@theonlyomp",
+"x": "theonlyomp",
+"cat": "T",
+"works": [
+{
+"title": "Old Timer at Brighton Beach",
+"s": "theonlyomp-6cf8e2a7s.jpg",
+"l": "theonlyomp-6cf8e2a7l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "OMP, Solana memecoin trader and coin caller on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "the-solstice",
+"name": "the__solstice",
+"handle": "@the__solstice",
+"x": "the__solstice",
+"cat": "T",
+"works": [
+{
+"title": "Arms Crossed in Times Square",
+"s": "the-solstice-0fd027a0s.jpg",
+"l": "the-solstice-0fd027a0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Pseudonymous Solana memecoin trader with a large following, ranked on the fomo.family 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "theveeman",
+"name": "theveeman",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Storm on the Chrysler Ledge",
+"s": "theveeman-e3b27234s.jpg",
+"l": "theveeman-e3b27234l.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "til",
+"name": "TIL",
+"handle": "@tilcrypto",
+"x": "tilcrypto",
+"cat": "T",
+"works": [
+{
+"title": "Crayfish on Main Street",
+"s": "til-4c2a51fcs.jpg",
+"l": "til-4c2a51fcl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "tmh",
+"name": "TMH",
+"handle": "@thememeshunterx",
+"x": "thememeshunterx",
+"cat": "T",
+"works": [
+{
+"title": "Hot Dog at 72nd and Broadway",
+"s": "tmh-d6b10e34s.jpg",
+"l": "tmh-d6b10e34l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Meme coin trader posting as The Memes Hunter, partner at Spumpio. Painted as the avatar",
+"iv": []
+},
+{
+"id": "tom",
+"name": "Tom",
+"handle": "@tdmilky",
+"x": "tdmilky",
+"cat": "T",
+"works": [
+{
+"title": "First Batch, Upper West Side",
+"s": "tom-60535c47s.jpg",
+"l": "tom-60535c47l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Irish Solana meme coin trader posting as Tom, in the Irish Cabal group. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "tontheneko",
+"name": "tontheneko",
+"handle": "@tontheneko",
+"x": "tontheneko",
+"cat": "T",
+"works": [
+{
+"title": "Bundled on the Stoop",
+"s": "tontheneko-0508bdbas.jpg",
+"l": "tontheneko-0508bdbal.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "tremendoustoad",
+"name": "tremendoustoad",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "The Toad King of Turtle Pond",
+"s": "tremendoustoad-8155c89es.jpg",
+"l": "tremendoustoad-8155c89el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "trenchman",
+"name": "Trenchman",
+"handle": "@trenchmanjames",
+"x": "trenchmanjames",
+"cat": "T",
+"works": [
+{
+"title": "Down in the Con Ed Trench",
+"s": "trenchman-ed06781es.jpg",
+"l": "trenchman-ed06781el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "trey",
+"name": "Trey",
+"handle": "@treysocial",
+"x": "treysocial",
+"cat": "T",
+"works": [
+{
+"title": "Spin Cycle in Jackson Heights",
+"s": "trey-463e230fs.jpg",
+"l": "trey-463e230fl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. An invented New Yorker stands in",
+"iv": []
+},
+{
+"id": "trunoest",
+"name": "trunoest",
+"handle": "@trunoest",
+"x": "trunoest",
+"cat": "T",
+"works": [
+{
+"title": "Under the 7 on Roosevelt",
+"s": "trunoest-5bc39c5bs.jpg",
+"l": "trunoest-5bc39c5bl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "ultrapara",
+"name": "ultrapara",
+"handle": "@ultrapara",
+"x": "ultrapara",
+"cat": "T",
+"works": [
+{
+"title": "A Slice for the King",
+"s": "ultrapara-d81f1496s.jpg",
+"l": "ultrapara-d81f1496l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard, part of the Hashcats crowd on X. Painted as the avatar",
+"iv": []
+},
+{
+"id": "usronaldcarter",
+"name": "usronaldcarter",
+"handle": "@usronaldcarter",
+"x": "usronaldcarter",
+"cat": "T",
+"works": [
+{
+"title": "Painted Face on Central Park West",
+"s": "usronaldcarter-bb1d3b18s.jpg",
+"l": "usronaldcarter-bb1d3b18l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Ronald Carter, large Solana memecoin trading account on the fomo 30 day leaderboard, 'I invest for entertainment'. Painted as the avatar",
+"iv": []
+},
+{
+"id": "vexrex23",
+"name": "vexrex23",
+"handle": "@vexrex23",
+"x": "vexrex23",
+"cat": "T",
+"works": [
+{
+"title": "The Khan Gets a Hot Dog",
+"s": "vexrex23-c32ccd24s.jpg",
+"l": "vexrex23-c32ccd24l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Ayovex, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "waiterg",
+"name": "WaiterG",
+"handle": "@Waiter1x",
+"x": "Waiter1x",
+"cat": "T",
+"works": [
+{
+"title": "Closing Time in Little Italy",
+"s": "waiterg-cd9489d5s.jpg",
+"l": "waiterg-cd9489d5l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "walta",
+"name": "Walta",
+"handle": "@Walta61",
+"x": "Walta61",
+"cat": "T",
+"works": [
+{
+"title": "Typing on the Rockaway Boardwalk",
+"s": "walta-a254353ds.jpg",
+"l": "walta-a254353dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "washedupwalter",
+"name": "washedupwalter",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "The General at the Planetarium",
+"s": "washedupwalter-8d32d878s.jpg",
+"l": "washedupwalter-8d32d878l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "wealthmaxxer",
+"name": "wealthmaxxer",
+"handle": "",
+"x": "",
+"cat": "T",
+"works": [
+{
+"title": "Swordsman Over the Hudson",
+"s": "wealthmaxxer-114fef6es.jpg",
+"l": "wealthmaxxer-114fef6el.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "wugi",
+"name": "Wugi",
+"handle": "@xWugi_wara",
+"x": "xWugi_wara",
+"cat": "T",
+"works": [
+{
+"title": "Penthouse Over Midtown",
+"s": "wugi-6e38ae45s.jpg",
+"l": "wugi-6e38ae45l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Wugi, runs the Wugi is Pirates Telegram. Painted as the avatar",
+"iv": []
+},
+{
+"id": "xander",
+"name": "xander",
+"handle": "@xandereef",
+"x": "xandereef",
+"cat": "T",
+"works": [
+{
+"title": "Three in the Morning Shift",
+"s": "xander-2d829b4ds.jpg",
+"l": "xander-2d829b4dl.jpg",
+"w": 1280,
+"h": 714
+}
+],
+"bio": "Solana memecoin trader on the Kolscan KOL daily leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "xbtdln",
+"name": "xbtdln",
+"handle": "@xbtdln",
+"x": "xbtdln",
+"cat": "T",
+"works": [
+{
+"title": "Loud Shirt on the Ferry",
+"s": "xbtdln-d74359acs.jpg",
+"l": "xbtdln-d74359acl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "DLN, Baylor alum and Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "yami",
+"name": "Yami",
+"handle": "@YamiPNL",
+"x": "YamiPNL",
+"cat": "T",
+"works": [
+{
+"title": "Rain on Park Avenue",
+"s": "yami-bfe8faf0s.jpg",
+"l": "yami-bfe8faf0l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Solana meme coin trader posting as Yami, bio reads late capitalism quant. Painted as the avatar",
+"iv": []
+},
+{
+"id": "yokai-ryujin",
+"name": "Yokai Ryujin",
+"handle": "@YokaiCapital",
+"x": "YokaiCapital",
+"cat": "T",
+"works": [
+{
+"title": "Bow at Radio City",
+"s": "yokai-ryujin-d0245f18s.jpg",
+"l": "yokai-ryujin-d0245f18l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Runs YokaiCapital, a self styled cross asset fund and research account, building kids.fun and the Shartcoin meme. Painted as the avatar",
+"iv": []
+},
+{
+"id": "yumiebb",
+"name": "yumiebb",
+"handle": "@yumiebb",
+"x": "yumiebb",
+"cat": "T",
+"works": [
+{
+"title": "Blushing in the Kinokuniya Window",
+"s": "yumiebb-a2ef0a62s.jpg",
+"l": "yumiebb-a2ef0a62l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "yumie, Solana memecoin trader on the fomo 30 day leaderboard. Painted as the avatar",
+"iv": []
+},
+{
+"id": "zeri-term",
+"name": "zeri_term",
+"handle": "@zeri_term",
+"x": "zeri_term",
+"cat": "T",
+"works": [
+{
+"title": "Fruit Stand on Mott Street",
+"s": "zeri-term-15a7a67ds.jpg",
+"l": "zeri-term-15a7a67dl.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "zeri_terminal, Solana memecoin trader on the fomo 30 day leaderboard. An invented New Yorker stands in",
 "iv": []
 }
 ]

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Stop · which New Yorkers get off here · NEW YORKERS by MLow</title>
+<meta name="description" content="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
+<meta name="keywords" content="New York subway art, NYC subway stations, New Yorkers near my stop, painted census of New York, NEW YORKERS by MLow">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://n3wyorkers.com/stop">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="Your Stop · which New Yorkers get off here · NEW YORKERS by MLow">
+<meta property="og:description" content="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
+<meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=3cea8e5c64">
+<meta property="og:url" content="https://n3wyorkers.com/stop">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="Your Stop · which New Yorkers get off here · NEW YORKERS by MLow">
+<meta name="twitter:description" content="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
+<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg?v=3cea8e5c64">
+<meta name="theme-color" content="#080D16">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Your Stop · NEW YORKERS by MLow","url":"https://n3wyorkers.com/stop","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"Every painted New Yorker within three blocks of any subway station."}</script>
+
+<style>
+.stop-hero{padding:72px 0 28px}
+.stop-hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,7vw,88px);line-height:.98;letter-spacing:-.02em;margin:14px 0 18px}
+.stop-hero h1 i{font-style:italic;color:var(--cyan)}
+.stop-form{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:26px}
+.stop-form input{flex:1 1 320px;min-width:0;font:500 17px var(--sans);background:var(--card);color:var(--cloud);border:1px solid var(--divider);border-radius:var(--r);padding:16px 18px}
+.stop-form input:focus{outline:none;border-color:var(--cyan)}
+.stop-form .btn{padding:15px 22px}
+.stop-list{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px;max-height:280px;overflow:auto;border:1px solid var(--divider);border-radius:var(--r);background:var(--card)}
+.stop-list:empty{display:none}
+.stop-list li{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;font-family:var(--sans);font-size:15px}
+.stop-list li:hover,.stop-list li.on{background:rgba(97,201,226,.08)}
+.stop-list small{font:11px var(--mono);letter-spacing:.14em;color:var(--slate);margin-left:auto;text-transform:uppercase}
+.bullets{display:inline-flex;gap:4px;flex:0 0 auto}
+.bullets b{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font:700 11px var(--sans);color:#fff}
+.bullets b.y{color:#080D16}
+.stop-result{padding:36px 0 80px}
+.stop-result[hidden]{display:none}
+.stop-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--divider);padding-bottom:20px;margin-bottom:26px}
+.stop-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.6vw,56px);line-height:1;letter-spacing:-.02em;margin:10px 0 8px}
+.stop-head .bullets b{width:30px;height:30px;font-size:14px}
+.stop-head .share{display:flex;gap:8px;flex-wrap:wrap}
+.stop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.stop-grid a{display:block;color:inherit;text-decoration:none;background:var(--card);border:1px solid var(--divider);border-radius:var(--r);overflow:hidden;transition:transform .2s var(--ease),border-color .2s}
+.stop-grid a:hover{transform:translateY(-2px);border-color:var(--cyan)}
+.stop-grid img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#111}
+.stop-grid .c{padding:10px 12px 12px}
+.stop-grid small{display:block;font:10.5px var(--mono);letter-spacing:.16em;color:var(--slate);text-transform:uppercase}
+.stop-grid b{display:block;font-family:var(--serif);font-weight:500;font-size:16px;line-height:1.25;margin-top:4px}
+.stop-grid a.inf img{filter:saturate(.7)}
+.stop-grid a.inf small:after{content:" · placed by scene";color:#55657a}
+.stop-foot{margin-top:28px;font-family:var(--sans);color:var(--slate);font-size:14px;line-height:1.7;max-width:720px}
+.stop-empty{font-family:var(--sans);color:var(--slate);font-size:16px}
+@media (max-width:720px){.stop-grid{grid-template-columns:repeat(2,1fr);gap:10px}.stop-grid b{font-size:14px}}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<main class="wrap">
+  <section class="stop-hero">
+    <p class="kicker">YOUR STOP</p>
+    <h1>Which New Yorkers <i>get off here?</i></h1>
+    <p class="body" style="max-width:680px">Type a subway station. The census shows every painted New Yorker within about three blocks of it, nearest first, with a link into each record. Share your stop.</p>
+    <form class="stop-form" id="stopForm" autocomplete="off">
+      <input id="stopQ" type="search" placeholder="Bedford Av, 125 St, Jamaica Center..." aria-label="Station name" inputmode="search">
+      <button type="button" class="btn ghost" id="stopNear">Nearest to me</button>
+      <button type="button" class="btn ghost" id="stopRandom">Any stop</button>
+    </form>
+    <ul class="stop-list" id="stopList" role="listbox"></ul>
+  </section>
+  <section class="stop-result" id="stopResult" hidden>
+    <div class="stop-head">
+      <div><p class="kicker" id="rKick">STATION</p><h2 id="rName"></h2><div class="bullets" id="rBullets"></div></div>
+      <div><p class="plate" style="margin-bottom:10px"><span class="n" id="rCount"></span><span class="m" id="rRadius"></span></p><div class="share" id="rShare"></div></div>
+    </div>
+    <div class="stop-grid" id="rGrid"></div>
+    <p class="stop-empty" id="rEmpty" hidden>Nothing painted within a mile of this stop yet. The census is still being painted. <a href="counted#nominate" style="color:var(--cyan)">Nominate someone who belongs here.</a></p>
+    <p class="stop-foot">Places come from the atlas: a piece placed at a site or an area reads first; a piece placed by its scene sits at its neighborhood's centre and is marked. Open the <a href="map" style="color:var(--cyan)">atlas</a> for the whole map, or walk the <a href="museum" style="color:var(--cyan)">museum</a>.</p>
+  </section>
+</main>
+
+<div id="foot"></div>
+<script>window.NY_BASE="";</script>
+<script src="assets/config.js"></script>
+<script src="assets/counts.js"></script>
+<script src="assets/site.js"></script>
+<script>NY.nav("STOP");NY.foot();</script>
+
+<script>
+(function(){
+  "use strict";
+  var B = window.NY_BASE || "";
+  var COL = {"1": "#EE352E", "2": "#EE352E", "3": "#EE352E", "4": "#00933C", "5": "#00933C", "6": "#00933C", "7": "#B933AD", "A": "#0039A6", "C": "#0039A6", "E": "#0039A6", "B": "#FF6319", "D": "#FF6319", "F": "#FF6319", "M": "#FF6319", "G": "#6CBE45", "J": "#996633", "Z": "#996633", "L": "#A7A9AC", "N": "#FCCC0A", "Q": "#FCCC0A", "R": "#FCCC0A", "W": "#FCCC0A", "S": "#808183", "SIR": "#0039A6"};
+  var S, NEAR, IDX, cur = null;
+  var q = document.getElementById("stopQ"), list = document.getElementById("stopList");
+  function bullets(routes, big){ return routes.map(function(r){ var c = COL[r] || "#808183"; var y = /^[NQRW]$/.test(r); return '<b style="background:'+c+'" class="'+(y?"y":"")+'">'+r+'</b>'; }).join(""); }
+  function load(){
+    if (S) return Promise.resolve();
+    return Promise.all([fetch(B+"assets/stop/stations.json").then(function(r){return r.json()}), fetch(B+"assets/stop/near.json").then(function(r){return r.json()}), fetch(B+"assets/stop/pieces.json").then(function(r){return r.json()})])
+      .then(function(a){ S = a[0]; NEAR = a[1]; IDX = a[2]; });
+  }
+  function norm(s){ return String(s).toLowerCase().replace(/street/g,"st").replace(/avenue/g,"av").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
+  function matches(v){
+    v = norm(v); if (!v) return [];
+    var toks = v.split(" ");
+    return S.filter(function(s){ var n = norm(s.name+" "+s.boro+" "+s.routes.join(" ")); return toks.every(function(t){ return n.indexOf(t) >= 0; }); }).slice(0, 12);
+  }
+  function paintList(items){
+    list.innerHTML = items.map(function(s, i){ return '<li role="option" data-i="'+s.id+'"><span class="bullets">'+bullets(s.routes)+'</span>'+NY.esc(s.name)+'<small>'+NY.esc(s.boro)+'</small></li>'; }).join("");
+    Array.prototype.forEach.call(list.children, function(li){ li.onclick = function(){ show(li.dataset.i); list.innerHTML = ""; }; });
+  }
+  function show(id, quiet){
+    var s = S.filter(function(x){ return x.id === id; })[0]; if (!s) return;
+    cur = s; q.value = s.name;
+    var n = NEAR[id] || {r: 800, p: []};
+    document.getElementById("rKick").textContent = s.boro.toUpperCase() + " · " + (s.routes.length ? s.routes.join(" ") + " TRAIN" + (s.routes.length > 1 ? "S" : "") : "STATION");
+    document.getElementById("rName").textContent = s.name;
+    document.getElementById("rBullets").innerHTML = bullets(s.routes, true);
+    document.getElementById("rCount").textContent = n.p.length + " NEW YORKER" + (n.p.length === 1 ? "" : "S");
+    document.getElementById("rRadius").textContent = "WITHIN " + (n.r === 400 ? "THREE BLOCKS" : n.r === 800 ? "HALF A MILE" : "A MILE");
+    var grid = document.getElementById("rGrid");
+    grid.innerHTML = n.p.map(function(row){ var p = IDX[row[0]]; if (!p) return ""; var num = p[0] != null ? "NO. " + String(p[0]).padStart(4, "0") : "UNCOUNTED";
+      return '<a href="'+B+'n/'+row[0]+'" class="'+(row[2] ? "inf" : "")+'"><img src="'+B+'assets/t/'+p[2]+'.jpg" alt="'+NY.esc(p[1])+'" loading="lazy" width="320" height="180"><div class="c"><small>'+num+' · '+row[1]+' M</small><b>'+NY.esc(p[1])+'</b></div></a>'; }).join("");
+    document.getElementById("rEmpty").hidden = n.p.length > 0;
+    var url = location.origin + location.pathname.replace(/\.html$/, "") + "#s=" + id;
+    NY.shareRow(document.getElementById("rShare"), {url: url, text: n.p.length + " painted New Yorkers get off at " + s.name + ". Which stop is yours?"});
+    document.getElementById("stopResult").hidden = false;
+    if (!quiet) { history.replaceState(null, "", "#s=" + id); document.getElementById("stopResult").scrollIntoView({behavior: "smooth", block: "start"}); }
+    if (window.NY && NY.hit) NY.hit("stop", s.name);
+  }
+  q.addEventListener("input", function(){ load().then(function(){ paintList(matches(q.value)); }); });
+  q.addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); load().then(function(){ var m = matches(q.value); if (m[0]) { show(m[0].id); list.innerHTML = ""; } }); } });
+  document.getElementById("stopRandom").onclick = function(){ load().then(function(){ var withArt = S.filter(function(s){ return (NEAR[s.id] || {p: []}).p.length >= 6; }); show(withArt[Math.floor(Math.random() * withArt.length)].id); }); };
+  document.getElementById("stopNear").onclick = function(){
+    if (!navigator.geolocation) { NY.toast("No location on this device. Type your stop."); return; }
+    navigator.geolocation.getCurrentPosition(function(pos){ load().then(function(){
+      var la = pos.coords.latitude, lo = pos.coords.longitude, best = null, bd = 1e12;
+      S.forEach(function(s){ var y = (s.lat - la) * 111320, x = (s.lon - lo) * 111320 * Math.cos((la + s.lat) / 2 * Math.PI / 180), d = x * x + y * y; if (d < bd) { bd = d; best = s; } });
+      if (bd > 4e8) { NY.toast("You are not in New York. Type a stop anyway."); }
+      if (best) show(best.id);
+    }); }, function(){ NY.toast("Location was not shared. Type your stop."); }, {timeout: 8000});
+  };
+  var m = location.hash.match(/s=([^&]+)/);
+  if (m) load().then(function(){ show(decodeURIComponent(m[1]), true); });
+})();
+</script>
+
+<script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
+</body>
+</html>

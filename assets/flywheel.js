@@ -18,6 +18,10 @@
   var BASE = (window.NY_CONFIG && window.NY_CONFIG.base) || "";
   var SITE = "https://n3wyorkers.com/";
   var EGG_TOTAL_FALLBACK = 14;
+  /* THE CENSUS RELEASE on OpenSea: a token page per minted New Yorker, and the mint itself. */
+  var KEY_TOKEN = "https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/", KEY_MINT = "https://transient.xyz/mint/newyorkers";
+  var OS_TOKEN = "https://opensea.io/assets/ethereum/0x3386e98e3835d25f20e9a4e2c0bbb9859fedc9c4/";
+  var OS_MINT = "https://opensea.io/collection/newyorkers/overview";
 
   /* ---------- small helpers ---------- */
   var esc = function (s) {
@@ -63,6 +67,18 @@
   }
   var thumbUrl = function (p) { return BASE + "assets/t/" + p.thumb + ".jpg"; };
   var recordUrl = function (p) { return BASE + "n/" + p.n + ".html"; };
+
+  /* ---------- who holds what: api/minted.json (build_mint.py), fetched once, on demand ---------- */
+  var mintedPromise = null;
+  function minted() {
+    if (!mintedPromise) {
+      mintedPromise = fetch(BASE + "api/minted.json?v=" + Math.floor(Date.now() / 9e5)).then(function (r) {
+        if (!r.ok) throw new Error("minted " + r.status);
+        return r.json();
+      }).catch(function (e) { mintedPromise = null; throw e; });
+    }
+    return mintedPromise;
+  }
 
   /* ---------- share ---------- */
   function toast(msg) {
@@ -227,14 +243,106 @@
             '<button type="button" class="fly-btn fly-share">Share this <span aria-hidden="true">↗</span></button>' +
             '<a class="fly-btn ghost" href="' + esc(xIntent(text, url)) + '" target="_blank" rel="noopener">Post on X</a>' +
             '<button type="button" class="fly-btn ghost fly-retake">' + (opts && opts.theirs ? "Find mine" : "Take it again") + '</button>' +
+            '<button type="button" class="fly-btn ghost fly-card">' + (opts && opts.theirs ? "Save their census card" : "Save my census card") + '</button>' +
+            '<span class="fly-mint"></span>' +
           '</div>' +
+          '<p class="fly-mint-line"></p>' +
           '<p class="fly-fine"><a href="' + esc(recordUrl(p)) + '">Read the full record ↗</a></p>' +
         '</div>' +
       '</div>';
     el(".fly-share", node).onclick = function () {
       share({ title: "NEW YORKERS", text: text, url: url });
     };
+    el(".fly-card", node).onclick = function () { bureauCard(p, res, opts && opts.theirs ? "THEY ARE NO. " : "YOU ARE NO. "); };
+    /* The result leads to the chain: an offer on the token when this New Yorker is minted, the mint when
+       it is still in THE CENSUS RELEASE pool, nothing for Era I, which is never sold. */
+    minted().then(function (d) {
+      var slot = el(".fly-mint", node), line = el(".fly-mint-line", node);
+      if (!slot || !line) return;
+      var m = d.census && d.census[String(p.n)], k = d.keystone && d.keystone[String(p.n)];
+      if (m) {
+        slot.innerHTML = '<a class="fly-btn mint" href="' + esc(OS_TOKEN + m.t) + '" target="_blank" rel="noopener">Make an offer on No. ' + pad(p.n) + '</a>';
+      } else if (k) {
+        slot.innerHTML = '<a class="fly-btn mint" href="' + esc(KEY_TOKEN + k.t) + '" target="_blank" rel="noopener">Make an offer on Keystone No. ' + pad(p.n) + '</a>';
+      } else if (d.k111 && d.k111.indexOf(p.n) !== -1) {
+        slot.innerHTML = '<a class="fly-btn mint" href="' + KEY_MINT + '" target="_blank" rel="noopener">Mint a Keystone on Transient</a>';
+        line.textContent = "A founding New Yorker. Dynamic ones of one, 0.069 ETH.";
+      } else if (p.era >= 2 && p.era <= 19) {
+        var inPool = !d.pool || d.pool.indexOf(p.n) !== -1;
+        slot.innerHTML = '<a class="fly-btn mint" href="' + OS_MINT + '" target="_blank" rel="noopener">Mint a New Yorker</a>';
+        line.textContent = inPool ? "Mints are dealt in order, you might get this one." : "This one is not in THE CENSUS RELEASE. Not its turn yet.";
+      }
+    }).catch(function () { /* no chain data, the card stands on its own */ });
     return { url: url, text: text };
+  }
+
+  /* ---------- THE BUREAU CARD: a 1080 x 1350 PNG of the result, drawn here, shared or saved ---------- */
+  function fontOf(fam, fallback) {
+    try { return document.fonts && document.fonts.check('16px "' + fam + '"') ? '"' + fam + '", ' + fallback : fallback; } catch (e) { return fallback; }
+  }
+  function bureauCard(p, res, lead) {
+    var W = 1080, H = 1350, c = document.createElement("canvas"), g = c.getContext("2d");
+    c.width = W; c.height = H;
+    var serif = fontOf("Fraunces", "Georgia, serif"), mono = fontOf("IBM Plex Mono", "Menlo, monospace"),
+        sans = fontOf("Space Grotesk", "Helvetica, Arial, sans-serif");
+    var img = new Image();
+    img.crossOrigin = "anonymous";          /* assets/t is same origin; set anyway so the canvas stays clean */
+    img.onload = function () { draw(img); };
+    img.onerror = function () { draw(null); };
+    img.src = thumbUrl(p);
+    function spaced(t, x, y, sp) { for (var i = 0; i < t.length; i++) { g.fillText(t[i], x, y); x += g.measureText(t[i]).width + sp; } }
+    function wrap(t, x, y, maxW, lh, maxLines) {
+      var words = t.split(" "), line = "", lines = [], i;
+      for (i = 0; i < words.length; i++) {
+        var test = line ? line + " " + words[i] : words[i];
+        if (g.measureText(test).width > maxW && line) { lines.push(line); line = words[i]; } else line = test;
+      }
+      lines.push(line);
+      if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/\s+\S*$/, "") + "..."; }
+      for (i = 0; i < lines.length; i++) g.fillText(lines[i], x, y + i * lh);
+      return lines.length;
+    }
+    function stamp(cx, cy, r) {
+      g.save(); g.translate(cx, cy); g.rotate(-12 * Math.PI / 180);
+      g.strokeStyle = g.fillStyle = "#ECC981"; g.lineWidth = 6;
+      g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.stroke();
+      g.lineWidth = 2; g.beginPath(); g.arc(0, 0, r - 14, 0, Math.PI * 2); g.stroke();
+      g.textAlign = "center"; g.textBaseline = "middle";
+      g.font = "700 44px " + sans; g.fillText("COUNTED", 0, -8);
+      g.font = "500 16px " + mono; g.fillText("NO. " + pad(p.n), 0, 34);
+      g.restore();
+    }
+    function draw(im) {
+      g.fillStyle = "#080D16"; g.fillRect(0, 0, W, H);
+      if (im) {                              /* cover into the top 1080 x 720 */
+        var s = Math.max(W / im.naturalWidth, 720 / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s;
+        g.drawImage(im, (W - w) / 2, (720 - h) / 2, w, h);
+      } else { g.fillStyle = "#0F1A26"; g.fillRect(0, 0, W, 720); }
+      var grd = g.createLinearGradient(0, 580, 0, 720);
+      grd.addColorStop(0, "rgba(8,13,22,0)"); grd.addColorStop(1, "#080D16");
+      g.fillStyle = grd; g.fillRect(0, 580, W, 140);
+      g.textAlign = "left"; g.textBaseline = "alphabetic";
+      g.fillStyle = "#8FA7AB"; g.font = "500 22px " + mono; spaced("NEW YORKERS CENSUS BUREAU", 72, 796, 6);
+      g.fillStyle = "#ECE8DD"; g.font = "700 84px " + sans; g.fillText(lead + pad(p.n), 72, 892);
+      g.font = "500 52px " + serif; var n = wrap(p.title, 72, 970, 700, 60, 3);
+      g.fillStyle = "#8FA7AB"; g.font = "500 22px " + mono;
+      spaced([res.family || p.family, p.borough || "Citywide"].filter(Boolean).join("  ·  ").toUpperCase(), 72, Math.max(1110, 990 + n * 60), 4);
+      g.fillStyle = "#ECC981"; spaced("n3wyorkers.com", 72, 1286, 4);
+      stamp(900, 1176, 120);
+      c.toBlob(function (b) { if (b) deliver(b, "new-yorker-" + pad(p.n) + ".png"); }, "image/png");
+    }
+  }
+  function deliver(blob, name) {
+    var file = null;
+    try { file = new File([blob], name, { type: "image/png" }); } catch (e) {}
+    if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: "NEW YORKERS", text: "I got counted." }).catch(function () {});
+      return;
+    }
+    var a = document.createElement("a"), u = URL.createObjectURL(blob);
+    a.href = u; a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { a.remove(); URL.revokeObjectURL(u); }, 2000);
+    toast("Saved. Your census card is in your downloads.");
   }
 
   function mountQuiz(node) {

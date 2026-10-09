@@ -4,21 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NEW YORKERS · Keystone 111</title>
-<meta name="description" content="KEYSTONE 111: the 111 founding NEW YORKERS, from the Era I leads to the Mythos spine and the threads, hung along one continuous spiral ramp. Drag to travel, click a piece to step up to it, open its record in the census.">
+<meta name="description" content="KEYSTONE 111: the 111 founding NEW YORKERS, hung along one continuous spiral. Drag to travel the ramp, click a piece to step up to it.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS · Keystone 111">
-<meta property="og:description" content="KEYSTONE 111: the 111 founding NEW YORKERS, from the Era I leads to the Mythos spine and the threads, hung along one continuous spiral ramp. Drag to travel, click a piece to step up to it, open its re">
-<meta property="og:image" content="https://n3wyorkers.com/assets/og/street-bloom-1984d2383d.jpg">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="N3W YORKERS by MLow: a lone figure on a rainy city street under a towering blue eye flower.">
-<meta name="twitter:image" content="https://n3wyorkers.com/assets/og/street-bloom-1984d2383d.jpg">
-<meta name="twitter:image:alt" content="N3W YORKERS by MLow: a lone figure on a rainy city street under a towering blue eye flower.">
+<meta property="og:description" content="KEYSTONE 111: the 111 founding NEW YORKERS, hung along one continuous spiral. Drag to travel the ramp, click a piece to step up to it.">
+<meta property="og:image" content="https://n3wyorkers.com/assets/keystone/1l.jpg">
 <meta property="og:url" content="https://n3wyorkers.com/keystone">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
-<meta name="theme-color" content="#0D0D0D">
+<meta name="theme-color" content="#080D16">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,7 +87,7 @@
   #card .chip{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--cloud)}
   #card .chip.live{border-color:var(--blue);color:var(--blue-soft)}
   #card button.chip{background:transparent;cursor:pointer}
-  #card button.chip:hover{background:rgba(41,98,255,.14)}
+  #card button.chip:hover{background:rgba(70,146,194,.14)}
   #card button.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
   #card button.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
   #card .statelbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:-8px 0 16px;min-height:14px}
@@ -141,19 +135,34 @@
   @media (prefers-reduced-motion:reduce){
     #card{transition:none}
   }
+
+  /* ON CHAIN: the ledger of what is minted, plain HTML beside the canvas. Open when there is no script; a HUD button otherwise */
+  #onchain{position:fixed;z-index:7;top:0;right:0;bottom:0;width:min(460px,100vw);background:var(--scrim);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-left:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 24px) 24px calc(env(safe-area-inset-bottom,0px) + 96px);overflow:auto;-webkit-overflow-scrolling:touch;outline:none;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+  .js #onchain:not(.open){transform:translateX(104%);pointer-events:none}
+  #onchain .close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid transparent;background:transparent;color:var(--slate);font:16px/1 var(--mono);cursor:pointer}
+  #onchain .close:hover{color:var(--cloud);border-color:var(--line)}
+  #onchain .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);padding-right:36px}
+  #onchain h2{font-family:var(--display);font-weight:300;font-size:clamp(26px,3vw,34px);line-height:1.05;margin:10px 0 14px}
+  #onchain .big{font-family:var(--display);font-weight:300;font-size:17px;line-height:1.5;margin:0 0 10px;color:var(--cloud)}
+  #onchain .big b{font-weight:500;color:#ECC981}
+  #onchain .note{font-family:var(--mono);font-size:11px;line-height:1.7;letter-spacing:.04em;color:var(--slate);margin:0 0 18px}
+  #onchain .note a{color:var(--cloud)}
+  #onchain .mintk{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;background:#ECC981;color:#080D16;border:1px solid #ECC981;border-radius:999px;padding:13px 22px;text-decoration:none;margin:0 0 24px}
+  #onchain .mintk:hover{background:var(--cloud);border-color:var(--cloud)}
+  #onchain .mintk:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  #onchain h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);font-weight:500;margin:0 0 6px;border-top:1px solid var(--line);padding-top:16px}
+  #onchain ol{list-style:none;margin:0;padding:0}
+  #onchain li a{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);color:var(--cloud);text-decoration:none}
+  #onchain li a:hover b{color:var(--blue-soft)}
+  #onchain li img,#onchain li .ph{width:44px;height:44px;border-radius:6px;object-fit:cover;background:var(--drum);display:block}
+  #onchain li b{display:block;font-family:var(--display);font-weight:400;font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #onchain li i{display:block;font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #onchain li span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate);white-space:nowrap}
+  @media (max-width:720px){#onchain{width:100vw;border-left:0}}
 </style>
-<!-- seo -->
-<link rel="canonical" href="https://n3wyorkers.com/keystone">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, Keystone 111, founding New Yorkers, 3D spiral gallery, Three.js art gallery">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
-<meta property="og:site_name" content="NEW YORKERS by MLow">
-<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
-<link rel="alternate" type="application/json" title="census api" href="api/census.json">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","@id":"https://n3wyorkers.com/keystone","name":"Keystone 111 · NEW YORKERS by MLow","url":"https://n3wyorkers.com/keystone","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"The 111 founding NEW YORKERS hung along one continuous spiral ramp."}</script>
-<!-- /seo -->
 </head>
 <body>
-
+<script>document.documentElement.className+=" js";</script>
 <div class="scrim top"></div><div class="scrim bottom"></div>
 <div id="stage"><canvas id="c" tabindex="0" aria-label="Keystone 111 spiral gallery. Use arrow keys to move between pieces and Enter to open one."></canvas></div>
 
@@ -176,9 +185,21 @@
   <div class="help">
     <span class="load" id="load">Hanging 0 / 111</span>
     <span class="hint">Drag to travel the ramp · Scroll to climb<br>Click a piece to step up · <kbd>←</kbd><kbd>→</kbd> next piece</span>
-    <div class="btns"><button class="btn" id="loopb" type="button" aria-pressed="false">Endless ramp: off</button><button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button></div>
+    <div class="btns"><button class="btn" id="loopb" type="button" aria-pressed="false">Endless ramp: off</button><button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button><button class="btn" id="chainb" type="button" aria-expanded="false" aria-controls="onchain">On chain: 50 of 111</button></div>
   </div>
 </div>
+
+
+<section id="onchain" class="open" tabindex="-1" aria-label="Keystone on chain">
+  <button class="close" id="chainx" type="button" aria-label="Close">×</button>
+  <div class="eyebrow">Keystone · Ethereum · ERC-7160</div>
+  <h2>ON CHAIN</h2>
+  <p class="big"><b>111 painted and counting.</b> <b>50 on chain.</b> <b>10 holders.</b></p>
+  <p class="note">Read off Ethereum on October 8, 2026 at 10:59 PM ET, block 26,151,771. Contract <a href="https://etherscan.io/address/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9" target="_blank" rel="noopener">0x2dbf…b5c9</a> on Transient Labs, 0.069 ETH each, one price and no ladder. Token ids are mint order; 11 were minted before the Keystone release, June 25 to September 6, 2026, and were folded in. Raw data at <a href="api/keystone.json">api/keystone.json</a>.</p>
+  <a class="mintk" href="https://transient.xyz/mint/newyorkers" target="_blank" rel="noopener">Mint a Keystone on Transient</a>
+  <h3>The 50 minted</h3>
+  <ol><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/1" target="_blank" rel="noopener"><img src="assets/collectors/k1.jpg" alt="" loading="lazy"><div><b>THE DOULA</b><i>held by mlow.eth</i></div><span>#1</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/2" target="_blank" rel="noopener"><img src="assets/collectors/k2.jpg" alt="" loading="lazy"><div><b>BROKER FEE</b><i>held by mlow.eth</i></div><span>#2</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/3" target="_blank" rel="noopener"><img src="assets/collectors/k3.jpg" alt="" loading="lazy"><div><b>STORM WATCH</b><i>held by mlow.eth</i></div><span>#3</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/4" target="_blank" rel="noopener"><img src="assets/collectors/k4.jpg" alt="" loading="lazy"><div><b>THE INSPECTOR</b><i>held by mlow.eth</i></div><span>#4</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/5" target="_blank" rel="noopener"><img src="assets/collectors/k5.jpg" alt="" loading="lazy"><div><b>THE CLOSER</b><i>held by mlow.eth</i></div><span>#5</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/6" target="_blank" rel="noopener"><img src="assets/collectors/k6.jpg" alt="" loading="lazy"><div><b>THE CROSSING MOTHER</b><i>held by mlow.eth</i></div><span>#6</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/7" target="_blank" rel="noopener"><img src="assets/collectors/k7.jpg" alt="" loading="lazy"><div><b>THE RENT</b><i>held by mlow.eth</i></div><span>#7</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/8" target="_blank" rel="noopener"><img src="assets/collectors/k8.jpg" alt="" loading="lazy"><div><b>SUMMER IN CONEY ISLAND</b><i>held by mlow.eth</i></div><span>#8</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/9" target="_blank" rel="noopener"><img src="assets/collectors/k9.jpg" alt="" loading="lazy"><div><b>DOG&#x27;S BEST FRIEND</b><i>held by mlow.eth</i></div><span>#9</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/10" target="_blank" rel="noopener"><img src="assets/collectors/k10.jpg" alt="" loading="lazy"><div><b>GLITCH IN THE MATRIX</b><i>held by mlow.eth</i></div><span>#10</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/11" target="_blank" rel="noopener"><img src="assets/collectors/k11.jpg" alt="" loading="lazy"><div><b>ENTER THRU THE SEWER</b><i>held by mlow.eth</i></div><span>#11</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/12" target="_blank" rel="noopener"><img src="assets/t/h9b0b3836d9.jpg" alt="" loading="lazy"><div><b>The Bodega Matriarch #1</b><i>held by mlow.eth</i></div><span>#12</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/13" target="_blank" rel="noopener"><img src="assets/collectors/k13.jpg" alt="" loading="lazy"><div><b>The Heroic Firefighter</b><i>held by mlow.eth</i></div><span>#13</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/14" target="_blank" rel="noopener"><img src="assets/collectors/k14.jpg" alt="" loading="lazy"><div><b>The Subway Spirit</b><i>held by mlow.eth</i></div><span>#14</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/15" target="_blank" rel="noopener"><img src="assets/collectors/k15.jpg" alt="" loading="lazy"><div><b>The Crossing</b><i>held by mlow.eth</i></div><span>#15</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/16" target="_blank" rel="noopener"><img src="assets/collectors/k16.jpg" alt="" loading="lazy"><div><b>The Landlord</b><i>held by mlow.eth</i></div><span>#16</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/17" target="_blank" rel="noopener"><img src="assets/collectors/k17.jpg" alt="" loading="lazy"><div><b>Lady Liberty</b><i>held by mlow.eth</i></div><span>#17</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/18" target="_blank" rel="noopener"><img src="assets/collectors/k18.jpg" alt="" loading="lazy"><div><b>Hamilton</b><i>held by mlow.eth</i></div><span>#18</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/19" target="_blank" rel="noopener"><img src="assets/t/h395dc81be3.jpg" alt="" loading="lazy"><div><b>The Human Chain #1939</b><i>held by 0x2285…a5ce</i></div><span>#19</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/20" target="_blank" rel="noopener"><img src="assets/t/hf213fc2ca7.jpg" alt="" loading="lazy"><div><b>DJ Kool Herc #647</b><i>held by 0x2285…a5ce</i></div><span>#20</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/21" target="_blank" rel="noopener"><img src="assets/t/h4e2c3b9d0b.jpg" alt="" loading="lazy"><div><b>The Boatlift #1900</b><i>held by noper.eth</i></div><span>#21</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/22" target="_blank" rel="noopener"><img src="assets/t/h9b72c8e1b7.jpg" alt="" loading="lazy"><div><b>The Pothole #1055</b><i>held by mlow.eth</i></div><span>#22</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/23" target="_blank" rel="noopener"><img src="assets/t/h5e5cb59d7a.jpg" alt="" loading="lazy"><div><b>The Blackout That Chose #3800</b><i>held by mlow.eth</i></div><span>#23</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/24" target="_blank" rel="noopener"><img src="assets/t/h2a887d42f9.jpg" alt="" loading="lazy"><div><b>The Survivor Tree #1438</b><i>held by 0xe04d…4b50</i></div><span>#24</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/25" target="_blank" rel="noopener"><img src="assets/t/h9bc2d49c77.jpg" alt="" loading="lazy"><div><b>The Clean Street Truce #1489</b><i>held by 0xe04d…4b50</i></div><span>#25</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/26" target="_blank" rel="noopener"><img src="assets/t/haf831e5b0a.jpg" alt="" loading="lazy"><div><b>The Pothole Crew #1607</b><i>held by 0x1bc3…32ed</i></div><span>#26</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/27" target="_blank" rel="noopener"><img src="assets/t/he7ce46f6a3.jpg" alt="" loading="lazy"><div><b>The Coronation Under Chambers #3417</b><i>held by 0x1bc3…32ed</i></div><span>#27</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/28" target="_blank" rel="noopener"><img src="assets/t/h0302615d23.jpg" alt="" loading="lazy"><div><b>The Collector&#x27;s Coat #3180</b><i>held by 0x1bc3…32ed</i></div><span>#28</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/29" target="_blank" rel="noopener"><img src="assets/t/h09789766df.jpg" alt="" loading="lazy"><div><b>The Woman Who Is the Human in the Loop #5491</b><i>held by 0x1bc3…32ed</i></div><span>#29</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/30" target="_blank" rel="noopener"><img src="assets/t/h5f39bbc9f2.jpg" alt="" loading="lazy"><div><b>The Perennial #3066</b><i>held by 0x1bc3…32ed</i></div><span>#30</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/31" target="_blank" rel="noopener"><img src="assets/t/hfe1aa29d90.jpg" alt="" loading="lazy"><div><b>Keith Haring #487</b><i>held by 0x5918…bb1c</i></div><span>#31</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/32" target="_blank" rel="noopener"><img src="assets/t/h9a7c161cde.jpg" alt="" loading="lazy"><div><b>The Collector #1866</b><i>held by 0x5918…bb1c</i></div><span>#32</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/33" target="_blank" rel="noopener"><img src="assets/t/h51b94fcbb8.jpg" alt="" loading="lazy"><div><b>Bill Cunningham #630</b><i>held by 0x5918…bb1c</i></div><span>#33</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/34" target="_blank" rel="noopener"><img src="assets/t/ha3237c8e25.jpg" alt="" loading="lazy"><div><b>Midnight #2000</b><i>held by 0x5918…bb1c</i></div><span>#34</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/35" target="_blank" rel="noopener"><img src="assets/t/h43c16b961d.jpg" alt="" loading="lazy"><div><b>The Signal Problem #891</b><i>held by 0x5918…bb1c</i></div><span>#35</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/36" target="_blank" rel="noopener"><img src="assets/t/hde14b1bba6.jpg" alt="" loading="lazy"><div><b>The Mirror Faces Out #3466</b><i>held by fondazioneaversano.eth</i></div><span>#36</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/37" target="_blank" rel="noopener"><img src="assets/t/hca0628bc29.jpg" alt="" loading="lazy"><div><b>The Orange Sky #1300</b><i>held by mlow.eth</i></div><span>#37</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/38" target="_blank" rel="noopener"><img src="assets/t/h98d454bd9f.jpg" alt="" loading="lazy"><div><b>The Pollen Route #1470</b><i>held by mlow.eth</i></div><span>#38</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/39" target="_blank" rel="noopener"><img src="assets/t/h9beae8f09e.jpg" alt="" loading="lazy"><div><b>The Mango Lady&#x27;s Daughter #1727</b><i>held by mlow.eth</i></div><span>#39</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/40" target="_blank" rel="noopener"><img src="assets/t/hd143c4d814.jpg" alt="" loading="lazy"><div><b>The Man Who Has Cut Pastrami By Hand at Katz&#x27;s Since 1979 #6491</b><i>held by mlow.eth</i></div><span>#40</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/41" target="_blank" rel="noopener"><img src="assets/t/h14bb3cffab.jpg" alt="" loading="lazy"><div><b>The Day Two Cities Met #2700</b><i>held by mlow.eth</i></div><span>#41</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/42" target="_blank" rel="noopener"><img src="assets/t/h6f5cf1cf2d.jpg" alt="" loading="lazy"><div><b>The Answer #5466</b><i>held by mlow.eth</i></div><span>#42</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/43" target="_blank" rel="noopener"><img src="assets/t/h38606cf640.jpg" alt="" loading="lazy"><div><b>The Seed Beneath the City #1468</b><i>held by mlow.eth</i></div><span>#43</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/44" target="_blank" rel="noopener"><img src="assets/t/hf7e2b10e01.jpg" alt="" loading="lazy"><div><b>Bodega Cat #550</b><i>held by mlow.eth</i></div><span>#44</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/45" target="_blank" rel="noopener"><img src="assets/t/h2451e01789.jpg" alt="" loading="lazy"><div><b>The Unfinished Block #2665</b><i>held by cryptocurrents.eth</i></div><span>#45</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/46" target="_blank" rel="noopener"><img src="assets/t/h3c1afe3147.jpg" alt="" loading="lazy"><div><b>Billie Holiday #497</b><i>held by cryptocurrents.eth</i></div><span>#46</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/47" target="_blank" rel="noopener"><img src="assets/t/haa62921bbc.jpg" alt="" loading="lazy"><div><b>The Next New Yorker #2264</b><i>held by cryptocurrents.eth</i></div><span>#47</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/48" target="_blank" rel="noopener"><img src="assets/t/hb03579ae19.jpg" alt="" loading="lazy"><div><b>The Window Watcher&#x27;s Wave #1713</b><i>held by acekennedy.eth</i></div><span>#48</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/49" target="_blank" rel="noopener"><img src="assets/t/hab6fd98711.jpg" alt="" loading="lazy"><div><b>The Lenape #586</b><i>held by acekennedy.eth</i></div><span>#49</span></a></li><li><a href="https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/50" target="_blank" rel="noopener"><img src="assets/t/h1bd9da2dae.jpg" alt="" loading="lazy"><div><b>The Ball Drop #3100</b><i>held by n3wyorkers.eth</i></div><span>#50</span></a></li></ol>
+</section>
 
 <aside id="card" aria-live="polite" aria-label="Selected piece">
   <button class="close" id="close" type="button" aria-label="Close">×</button>
@@ -782,7 +803,16 @@ if (document.fonts && document.fonts.load){
 })();
 </script>
 
-<script src="assets/eggs.js" defer></script>
-<script src="assets/mint.js" defer></script>
+<script>
+(function(){
+  var p=document.getElementById('onchain'), b=document.getElementById('chainb'), x=document.getElementById('chainx');
+  if(!p||!b||!x) return;
+  function set(o){ p.classList.toggle('open',o); p.setAttribute('aria-hidden',o?'false':'true'); b.setAttribute('aria-expanded',o?'true':'false'); b.classList.toggle('on',o); if(o) p.focus(); }
+  set(location.hash==='#onchain');
+  b.addEventListener('click',function(){ set(!p.classList.contains('open')); });
+  x.addEventListener('click',function(){ set(false); b.focus(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&p.classList.contains('open')) set(false); });
+})();
+</script>
 </body>
 </html>

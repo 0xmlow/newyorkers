@@ -4,8 +4,11 @@
 Reads _build/honoraries/honoraries.json (written by _build/honoraries/sync.py, which also fills
 assets/honoraries/). Cards are rendered into the HTML so names and handles are crawlable; the script
 only filters, searches and opens the lightbox. Runs in build_all.sh before build_seo.py.
+The people's data (bios, works, interviews, cards, collector links) is written to assets/honoraries/data.json
+and fetched once, versioned by its content hash, instead of being inlined: the page was 825 KB with it inline.
+Decoration on the cards (the colour bar, the eye) is CSS, not markup, for the same reason.
 """
-import os, json, html
+import os, json, html, hashlib
 from page_shell import shell, cfg
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -53,15 +56,19 @@ def handle(p):
     return f'<span class="hd none">NEW YORKERS NO. {n:04d}</span>' if n else ""
 
 
+def alt(p, w):
+    """What the painting is, in words a search engine can match to the person's name."""
+    return f'{p["name"]}, portrait painted by MLow' + (f': {w["title"]}' if w.get("title") else "")
+
+
 def card(i, p):
-    q = f'{p["name"]} {p["handle"]}'.lower()
-    return (f'<li class="hc" data-i="{i}" data-q="{e(q)}"><button class="ph" type="button" aria-label="Open the portrait of {e(p["name"])}">'
-            f'<img src="assets/honoraries/{p["works"][0]["s"]}" alt="{e(p["name"])}, painted by MLow as a New Yorker" loading="lazy" width="400" height="400"></button>'
-            f'<div class="bar"></div><h3>{e(p["name"])}</h3>{handle(p)}'
+    return (f'<li class="hc" data-i="{i}"><button class="ph" type="button">'
+            f'<img src="assets/honoraries/{p["works"][0]["s"]}" alt="{e(alt(p, p["works"][0]))}" loading="lazy"></button>'
+            f'<h3><a href="h/{p["id"]}.html">{e(p["name"])}</a></h3>{handle(p)}'
             + (f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else "")
             + (f'<a class="iv" href="{e(p["iv"][-1]["url"])}" target="_blank" rel="noopener">{"Watch the interviews" if len(p["iv"]) > 1 else "Watch the interview"}</a>' if p.get("iv") else "")
             + (f'<a class="col" href="my.html#{e(COL[p["id"]]["key"])}">{e(col_label(COL[p["id"]]))}</a>' if p["id"] in COL else "")
-            + f'<div class="tg">{tag(p)}<i class="eye"></i></div></li>')
+            + f'<div class="tg">{tag(p)}</div></li>')
 
 
 sections, tabs = [], [f'<button class="tab on" data-ch="all">EVERYONE <span>{N}</span></button>']
@@ -81,10 +88,15 @@ pick = PPL[::max(1, N // 64)][:64]
 rowA, rowB = row(pick[:32]), row(pick[32:])
 
 counts = " &middot; ".join(f'{sum(1 for p in PPL if p["cat"] == c["code"])} {e(SHORT.get(c["name"], c["name"]))}' for c in CATS)
-DATA = json.dumps([{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []), "col": COL.get(p["id"]),
+DATA = {"people": [{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []), "col": COL.get(p["id"]),
                     "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
-                  ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+        "cats": CATN}
+_DP = os.path.join(SITE, "assets", "honoraries", "data.json")
+open(_DP, "w", encoding="utf-8").write(json.dumps(DATA, ensure_ascii=False, separators=(",", ":")))
+# /assets/honoraries/* is cached hard at the edge and in browsers; the fetch URL carries the file's own hash
+DV = hashlib.sha256(open(_DP, "rb").read()).hexdigest()[:10]
 
+HOF = "assets/film/hall-of-fame"  # THE HONORARIES Hall of Fame film of room 183, encode_film.sh halloffame (gitignored)
 FILM = "assets/film/roll-call"  # the roll call film as HLS, built from the film master by encode_film.sh (gitignored)
 body = f'''<main class="hon">
 <section class="film" aria-label="The Honoraries: the roll call film">
@@ -93,6 +105,16 @@ body = f'''<main class="hon">
   <button class="play" id="rcp" type="button" aria-label="Play the roll call film"><i></i><span>WATCH THE ROLL CALL <b>4:32</b></span></button>
  </div>
  <p class="cap wrap">Every honoree, one film. Painted by MLow, scored on the beat.</p>
+</section>
+<section class="film hof" aria-label="The Hall of Fame, room 183 of the museum">
+ <div class="hof-head wrap"><div><p class="kicker">THE MUSEUM &middot; ROOM 183</p><h2>The Hall of Fame.</h2>
+  <p>Every honorary portrait hangs in one rotunda, a bronze name plate under each. Find your face, then walk in and stand in front of it.</p></div>
+  <a class="btn" href="museum.html#room=honoraries">Walk into the Hall of Fame &#8599;</a></div>
+ <div class="player wrap">
+  <video id="hof" playsinline preload="none" poster="{HOF}/poster.jpg" aria-label="The Hall of Fame, a film of room 183 by MLow"></video>
+  <button class="play" id="hofp" type="button" aria-label="Play the Hall of Fame film"><i></i><span>WATCH THE HALL OF FAME <b>1:04</b></span></button>
+ </div>
+ <p class="cap wrap">Room 183, the honoraries. A film of the room by MLow. <a href="museum.html#room=honoraries">Walk inside &#8599;</a></p>
 </section>
 <section class="mast">
  <div class="drift" aria-hidden="true"><div class="row a">{rowA}{rowA}</div><div class="row b">{rowB}{rowB}</div></div>
@@ -111,7 +133,7 @@ body = f'''<main class="hon">
 <div class="wrap">{"".join(sections)}</div>
 <section class="close wrap"><p class="k">THE COUNT KEEPS GOING</p><h2>Know someone who belongs here?</h2>
  <p>Every New Yorker gets a portrait. Tell MLow who is missing.</p>
- <p class="ctas"><a class="btn" href="counted.html#nominate">Nominate a New Yorker</a><a class="btn ghost" href="census.html">Walk the whole census</a></p>
+ <p class="ctas"><a class="btn" href="counted.html#nominate">Nominate a New Yorker</a><a class="btn ghost" href="museum.html#room=honoraries">Walk the Hall of Fame</a><a class="btn ghost" href="census.html">Walk the whole census</a></p>
  <div id="share"></div></section>
 </main>
 <dialog id="lb" aria-label="Portrait">
@@ -120,17 +142,22 @@ body = f'''<main class="hon">
  <figure><div class="frame"><img id="lbi" alt=""></div><figcaption>
   <p class="k" id="lbk"></p><h2 id="lbn"></h2><p id="lbh"></p><p class="lbio" id="lbb"></p><a class="lbcol" id="lbcol" hidden></a><p class="t" id="lbt"></p><div class="works" id="lbw"></div><p id="lbr"></p><div class="ivs" id="lbv"></div>
   <div class="tcg" id="lbc"><p class="k">THE HONORARY CARD</p><a class="tcg-card" id="lbci" target="_blank" rel="noopener"><img alt="" loading="lazy"></a>
-   <div class="tcg-btns"><a class="btn sm" id="lbme" target="_blank" rel="noopener">This is me. Post my card</a><a class="btn sm ghost" id="lbx" target="_blank" rel="noopener">Share on X</a><a class="btn sm ghost" id="lbsv" download>Save the card</a></div></div></figcaption></figure>
-</dialog>
-<script>window.HON={DATA};window.HON_CAT={json.dumps(CATN)};</script>'''
+   <div class="tcg-btns"><a class="btn sm" id="lbwall">See it on the wall</a><a class="btn sm" id="lbme" target="_blank" rel="noopener">This is me. Post my card</a><a class="btn sm ghost" id="lbx" target="_blank" rel="noopener">Share on X</a><a class="btn sm ghost" id="lbsv" download>Save the card</a></div></div></figcaption></figure>
+</dialog>'''
 
 JS = r'''<script>
 (function(){
-  var H=window.HON, CATN=window.HON_CAT, cards=[].slice.call(document.querySelectorAll(".hc")), secs=[].slice.call(document.querySelectorAll(".chap"));
+  var H=null, CATN=null, cards=[].slice.call(document.querySelectorAll(".hc")), secs=[].slice.call(document.querySelectorAll(".chap"));
   var tabs=[].slice.call(document.querySelectorAll(".tab")), q=document.getElementById("q"), none=document.getElementById("none"), cur="all";
+  /* the search key and the chapter of each card come off the rendered card, so tabs and search never wait for data */
+  cards.forEach(function(c){ var n=c.querySelector("h3"), hd=c.querySelector(".hd"), ch=c.closest(".chap");
+    c.dataset.q=((n?n.textContent:"")+" "+(hd?hd.textContent:"")).toLowerCase(); c.dataset.ch=ch?ch.dataset.ch:""; });
+  /* the people themselves (bios, works, interviews, cards): one fetch, versioned by content. Only the lightbox needs it */
+  var ready=fetch("assets/honoraries/data.json?v=__DV__").then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){ H=j.people; CATN=j.cats; return j; });
+  ready.catch(function(){});
   function apply(){
     var s=(q.value||"").trim().toLowerCase().replace(/^@/,""), shown=0;
-    cards.forEach(function(c){ var ok=(cur==="all"||H[+c.dataset.i].cat===cur)&&(!s||c.dataset.q.replace(/@/g,"").indexOf(s)>=0); c.hidden=!ok; if(ok)shown++; });
+    cards.forEach(function(c){ var ok=(cur==="all"||c.dataset.ch===cur)&&(!s||c.dataset.q.replace(/@/g,"").indexOf(s)>=0); c.hidden=!ok; if(ok)shown++; });
     secs.forEach(function(x){ x.hidden=!x.querySelector(".hc:not([hidden])"); });
     none.hidden=shown>0;
   }
@@ -138,19 +165,23 @@ JS = r'''<script>
     if(cur!=="all"){ var el=document.querySelector('.chap[data-ch="'+cur+'"]'); if(el) window.scrollTo({top:el.getBoundingClientRect().top+scrollY-document.querySelector(".tools").offsetHeight-70,behavior:"smooth"}); } }; });
   q.addEventListener("input",apply);
   q.addEventListener("search",apply);
-  /* the roll call film: nothing loads until someone presses play. Safari plays HLS itself, everyone else gets hls.js */
-  var rc=document.getElementById("rc"), rcp=document.getElementById("rcp"), SRC="assets/film/roll-call/master.m3u8";
-  function go(){ rcp.hidden=true; rc.controls=true; rc.play().catch(function(){}); }
-  rcp.onclick=function(){
-    if(rc.dataset.on){ go(); return; } rc.dataset.on="1";
-    if(rc.canPlayType("application/vnd.apple.mpegurl")){ rc.src=SRC; go(); return; }
-    var sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js";
-    sc.onload=function(){ if(window.Hls&&Hls.isSupported()){ var hl=new Hls({capLevelToPlayerSize:true}); hl.loadSource(SRC); hl.attachMedia(rc);
-      hl.on(Hls.Events.MANIFEST_PARSED,go); } else { rc.src=SRC; go(); } };
-    sc.onerror=function(){ rc.src=SRC; go(); };
-    document.head.appendChild(sc);
-  };
-  rc.addEventListener("play",function(){ rcp.hidden=true; rc.controls=true; });
+  /* the films: nothing loads until someone presses play. Safari plays HLS itself, everyone else gets hls.js */
+  function film(vid,btn,SRC){
+    var rc=document.getElementById(vid), rcp=document.getElementById(btn); if(!rc||!rcp) return;
+    function go(){ rcp.hidden=true; rc.controls=true; rc.play().catch(function(){}); }
+    rcp.onclick=function(){
+      if(rc.dataset.on){ go(); return; } rc.dataset.on="1";
+      if(rc.canPlayType("application/vnd.apple.mpegurl")){ rc.src=SRC; go(); return; }
+      var sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js";
+      sc.onload=function(){ if(window.Hls&&Hls.isSupported()){ var hl=new Hls({capLevelToPlayerSize:true}); hl.loadSource(SRC); hl.attachMedia(rc);
+        hl.on(Hls.Events.MANIFEST_PARSED,go); } else { rc.src=SRC; go(); } };
+      sc.onerror=function(){ rc.src=SRC; go(); };
+      document.head.appendChild(sc);
+    };
+    rc.addEventListener("play",function(){ rcp.hidden=true; rc.controls=true; });
+  }
+  film("rc","rcp","assets/film/roll-call/master.m3u8");
+  film("hof","hofp","assets/film/hall-of-fame/master.m3u8");
   var lb=document.getElementById("lb"), idx=0, order=[];
   function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}
   function show(i,wi){
@@ -183,10 +214,12 @@ JS = r'''<script>
      with ME/THEM in the share page builder below. */
   var TAIL="\n\nNew York counts its people in paint, by @degens";
   function lines(p){ var who=p.name+(p.x?" (@"+p.x+")":"");
-    return {me:"Honorary New Yorker: counted"+TAIL,
+    return {me:"Honorary New Yorker: my face is on the wall"+TAIL,
             them:who+": Honorary New Yorker"+(/ and /.test(p.name)?"s":"")+TAIL}; }
   function card(p){
-    var u=SITE+"/h/"+p.id, src="assets/cards/"+p.card, L=lines(p), me=document.getElementById("lbme");
+    /* ?wall: the card unfurls on X, and whoever taps it lands in room 183 in front of this portrait */
+    var u=SITE+"/h/"+p.id+"?wall", src="assets/cards/"+p.card, L=lines(p), me=document.getElementById("lbme");
+    document.getElementById("lbwall").href="museum.html#room=honoraries&honor="+encodeURIComponent(p.id);
     var ci=document.getElementById("lbci"); ci.href="h/"+p.id+".html"; ci.firstChild.src=src; ci.firstChild.alt="The Honorary card for "+p.name;
     me.href=intent(L.me,u); document.getElementById("lbx").href=intent(L.them,u);
     var sv=document.getElementById("lbsv"); sv.href=src; sv.setAttribute("download","honorary-new-yorker-"+p.id+".jpg");
@@ -198,18 +231,20 @@ JS = r'''<script>
     }
   }
   function step(d){ var vis=cards.filter(function(c){return !c.hidden}).map(function(c){return +c.dataset.i}); var k=vis.indexOf(idx); if(k<0)return; show(vis[(k+d+vis.length)%vis.length]); }
-  cards.forEach(function(c){ c.querySelector(".ph").onclick=function(){ show(+c.dataset.i); if(lb.showModal) lb.showModal(); else lb.setAttribute("open",""); }; });
+  function openLb(){ if(lb.showModal) lb.showModal(); else lb.setAttribute("open",""); }
+  cards.forEach(function(c){ c.querySelector(".ph").onclick=function(){ var i=+c.dataset.i;
+    ready.then(function(){ show(i); openLb(); }).catch(function(){ location.href=c.querySelector("img").src; }); }; });
   lb.querySelector(".x").onclick=function(){lb.close()};
   lb.addEventListener("close",function(){ if(history.replaceState) history.replaceState(null,"",location.pathname+location.search); });
   lb.querySelector(".pv").onclick=function(){step(-1)}; lb.querySelector(".nx").onclick=function(){step(1)};
   lb.addEventListener("click",function(ev){ if(ev.target===lb) lb.close(); });
   document.addEventListener("keydown",function(ev){ if(!lb.open)return; if(ev.key==="ArrowRight")step(1); if(ev.key==="ArrowLeft")step(-1); });
   if(window.NY&&NY.shareRow) NY.shareRow(document.getElementById("share"),{text:"Every real person MLow has painted into NEW YORKERS. The Honoraries."});
-  var h=(location.hash||"").slice(1), byId=H.findIndex(function(p){return p.id===h});
-  if(byId>=0){ show(byId); if(lb.showModal) lb.showModal(); else lb.setAttribute("open",""); h=""; }
-  if(h){ var t=tabs.find(function(x){ var s=document.querySelector('.chap[data-ch="'+x.dataset.ch+'"]'); return s&&s.id===h; }); if(t) t.click(); }
+  var h=(location.hash||"").slice(1);
+  function hashTab(){ var t=tabs.find(function(x){ var s=document.querySelector('.chap[data-ch="'+x.dataset.ch+'"]'); return s&&s.id===h; }); if(t) t.click(); }
+  if(h) ready.then(function(){ var byId=H.findIndex(function(p){return p.id===h}); if(byId>=0){ show(byId); openLb(); } else hashTab(); }).catch(hashTab);
 })();
-</script>'''
+</script>'''.replace("__DV__", DV)
 
 CSS = r'''
 .hon{padding-top:64px}
@@ -219,34 +254,42 @@ CSS = r'''
 .player{position:relative}
 .player video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:18px;border:1px solid var(--divider)}
 .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:16px;padding:16px 26px 16px 18px;border:0;border-radius:999px;
- background:rgba(13,13,13,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--cloud);cursor:pointer;font-family:var(--mono);font-size:14px;letter-spacing:.16em;box-shadow:0 0 0 1px rgba(240,244,248,.18)}
-.play:hover{background:rgba(13,13,13,.92);box-shadow:0 0 0 2px var(--cyan)}
+ background:rgba(8,13,22,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--cloud);cursor:pointer;font-family:var(--mono);font-size:14px;letter-spacing:.16em;box-shadow:0 0 0 1px rgba(236,232,221,.18)}
+.play:hover{background:rgba(8,13,22,.92);box-shadow:0 0 0 2px var(--cyan)}
 .play i{width:52px;height:52px;border-radius:50%;background:var(--cyan);position:relative;flex:none}
-.play i:after{content:"";position:absolute;left:21px;top:16px;border-style:solid;border-width:10px 0 10px 16px;border-color:transparent transparent transparent #0D0D0D}
+.play i:after{content:"";position:absolute;left:21px;top:16px;border-style:solid;border-width:10px 0 10px 16px;border-color:transparent transparent transparent #080D16}
 .play b{color:var(--cyan);font-weight:600;margin-left:6px}
 .play[hidden]{display:none}
 .play span{white-space:nowrap}
 @media (max-width:640px){.play{padding:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}.play span{display:none}.play i{width:68px;height:68px;box-shadow:0 6px 24px rgba(0,0,0,.5)}.play i:after{left:27px;top:22px;border-width:12px 0 12px 19px}}
-.film .cap{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:#8899AA;text-transform:uppercase;margin-top:12px}
+.film .cap{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:#8FA7AB;text-transform:uppercase;margin-top:12px}
+.film .cap a{color:var(--cyan)}
+.hof{padding-top:56px}
+.hof-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:22px}
+.hof-head .kicker{margin:0 0 10px}
+.hof-head h2{font-family:var(--display);font-weight:800;font-size:clamp(40px,6vw,76px);line-height:.95;margin:0 0 12px}
+.hof-head p{color:#CFD3CC;max-width:560px;line-height:1.6}
+.hof-head .btn{flex:none}
+@media (max-width:760px){.hof-head{flex-direction:column;align-items:flex-start}}
 .mast{position:relative;overflow:hidden;min-height:min(78vh,720px);display:flex;align-items:flex-end;border-bottom:1px solid var(--divider)}
 .drift{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:18px;opacity:.5;transform:rotate(-6deg) scale(1.15)}
 .drift .row{display:flex;gap:18px;width:max-content;animation:hdrift 90s linear infinite}
 .drift .row.b{animation-direction:reverse;animation-duration:110s}
-.drift img{width:150px;height:150px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px rgba(240,244,248,.08)}
+.drift img{width:150px;height:150px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px rgba(236,232,221,.08)}
 @keyframes hdrift{to{transform:translateX(-50%)}}
-.mast:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.35) 0%,rgba(13,13,13,.55) 45%,var(--ink) 100%),radial-gradient(ellipse at 20% 80%,rgba(13,13,13,.9),transparent 60%)}
+.mast:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,13,22,.35) 0%,rgba(8,13,22,.55) 45%,var(--ink) 100%),radial-gradient(ellipse at 20% 80%,rgba(8,13,22,.9),transparent 60%)}
 .mast-in{position:relative;z-index:1;padding-bottom:56px;padding-top:120px;max-width:1100px}
 .mast h1{font-family:var(--display);font-weight:800;font-size:clamp(64px,13vw,188px);line-height:.88;letter-spacing:-.02em;margin:18px 0 26px;font-variation-settings:"SOFT" 30,"WONK" 1}
-.mast .lede{font-family:var(--sans);font-size:clamp(17px,1.6vw,21px);line-height:1.6;color:#C9D2DC;max-width:720px}
+.mast .lede{font-family:var(--sans);font-size:clamp(17px,1.6vw,21px);line-height:1.6;color:#CFD3CC;max-width:720px}
 .mast .lede b{color:var(--acid);font-weight:600}
 .mast .counts{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-top:22px;line-height:1.9}
-.tools{position:sticky;top:56px;z-index:20;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:14px;background:rgba(13,13,13,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--divider)}
+.tools{position:sticky;top:56px;z-index:20;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding-top:14px;padding-bottom:14px;background:rgba(8,13,22,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--divider)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
 .tab{--a:var(--cloud);font-family:var(--mono);font-size:12px;letter-spacing:.12em;padding:9px 14px;border-radius:999px;border:1px solid var(--divider);background:transparent;color:var(--cloud);transition:all .2s var(--ease)}
 .tab span{color:var(--slate);margin-left:4px}
 .tab:hover{border-color:var(--a)}
 .tab.on{background:var(--a);border-color:var(--a);color:var(--ink)}
-.tab.on span{color:rgba(13,13,13,.6)}
+.tab.on span{color:rgba(8,13,22,.6)}
 .find input{font-family:var(--sans);font-size:15px;width:min(300px,80vw);padding:10px 16px;border-radius:999px;border:1px solid var(--divider);background:var(--card);color:var(--cloud)}
 .find input:focus{outline:none;border-color:var(--cyan)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -258,9 +301,9 @@ p.none a{color:var(--cyan)}
 .hc .iv{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:var(--ink);color:var(--cloud)}
 .hc .iv:before{content:"";display:inline-block;width:0;height:0;border-left:6px solid var(--pink);border-top:4px solid transparent;border-bottom:4px solid transparent;margin-right:6px}
 .hc .iv:hover{background:var(--pink);color:var(--ink)}
-.hc .col{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:#D7FF1F;color:#0D0D0D;text-decoration:none}
-.hc .col:hover{background:var(--ink);color:#D7FF1F}
-#lb .lbcol{display:inline-block;margin:6px 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:999px;background:#D7FF1F;color:#0D0D0D;text-decoration:none}
+.hc .col{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:#ECC981;color:#080D16;text-decoration:none}
+.hc .col:hover{background:var(--ink);color:#ECC981}
+#lb .lbcol{display:inline-block;margin:6px 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:999px;background:#ECC981;color:#080D16;text-decoration:none}
 #lb .lbcol[hidden]{display:none}
 #lb .lbio{font-family:var(--sans);font-size:17px;line-height:1.55;color:#DDE3EA;margin:14px 0 4px}
 #lb .ivs{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#lb .ivs .k{width:100%;margin-bottom:2px}
@@ -279,15 +322,15 @@ p.none a{color:var(--cyan)}
 .hc .ph{display:block;width:100%;padding:0;border:0;background:#ddd;border-radius:7px;overflow:hidden;aspect-ratio:1}
 .hc .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
 .hc:hover .ph img{transform:scale(1.05)}
-.hc .bar{height:5px;border-radius:3px;background:var(--a);margin:9px 0 8px}
+.hc h3::before{content:"";display:block;height:5px;border-radius:3px;background:var(--a);margin:9px 0 8px}
 .hc{display:flex;flex-direction:column}.hc .tg{margin-top:auto;padding-top:10px}
-.hc h3{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.2;letter-spacing:-.01em}
+.hc h3{font-family:var(--sans);font-weight:700;font-size:16px;line-height:1.2;letter-spacing:-.01em}.hc h3 a{color:inherit;text-decoration:none}.hc h3 a:hover{color:var(--a)}
 .hc .hd{display:block;font-family:var(--mono);font-size:12.5px;color:var(--blue);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hc a.hd:hover{color:var(--pink)}
 .hc .hd.none{color:#7A8794}
 .hc .tg{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:auto;padding-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#7A8794}
 .hc .ks{color:var(--pink);font-weight:600}
-.eye{flex:none;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#0D0D0D 0 22%,#00E5FF 23% 42%,#F0F4F8 43% 64%,#1A3D99 65%)}
+.hc .tg::after{content:"";flex:none;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#080D16 0 22%,#61C9E2 23% 42%,#ECE8DD 43% 64%,#1A3D99 65%)}
 .close{text-align:center;padding:110px 0 90px}
 .close h2{font-family:var(--display);font-weight:700;font-size:clamp(36px,5vw,64px);margin:12px 0}
 .close p{font-family:var(--sans);color:#AEB8C4;font-size:18px}
@@ -315,8 +358,8 @@ p.none a{color:var(--cyan)}
 #lb h2{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;margin:12px 0}
 #lb #lbh{font-family:var(--mono);font-size:15px}
 #lb #lbh a{color:var(--cyan)}
-#lb .t{font-family:var(--display);font-style:italic;font-size:20px;color:#C9D2DC;margin:18px 0 22px;line-height:1.35}
-#lb .x,#lb .nv{position:fixed;border:1px solid var(--divider);background:rgba(20,24,32,.8);color:var(--cloud);border-radius:50%;width:48px;height:48px;font-size:26px;line-height:1;z-index:2}
+#lb .t{font-family:var(--display);font-style:italic;font-size:20px;color:#CFD3CC;margin:18px 0 22px;line-height:1.35}
+#lb .x,#lb .nv{position:fixed;border:1px solid var(--divider);background:rgba(15,26,38,.8);color:var(--cloud);border-radius:50%;width:48px;height:48px;font-size:26px;line-height:1;z-index:2}
 #lb .x{top:22px;right:22px}
 #lb .pv{left:22px;top:50%}
 #lb .nx{right:22px;top:50%}
@@ -333,7 +376,9 @@ C = cfg()
 
 # One share page per honoree. These exist for X's crawler: og:image is the card on a landscape field,
 # so a posted link unfurls as the card. Humans who follow the link land on the card with the same
-# buttons and a way back into the page. noindex: 566 near identical pages would only dilute search.
+# buttons and a way back into the page. Indexed since 2026-10-07 (MLow): each page now leads search with the
+# painting itself, its title, the bio and VisualArtwork JSON-LD naming the person, so they are no longer near
+# identical, and the paintings go in the image sitemap (build_seo.py). og:image stays the card for X.
 HD = os.path.join(SITE, "h")
 os.makedirs(HD, exist_ok=True)
 HCSS = r'''
@@ -342,26 +387,28 @@ HCSS = r'''
 .hp .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--a)}
 .hp h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,6vw,84px);line-height:.95;margin:14px 0 12px}
 .hp .hd{font-family:var(--mono);font-size:16px;color:var(--cyan)}
-.hp .colbox{display:flex;flex-direction:column;gap:4px;border:1px solid #D7FF1F;border-radius:12px;padding:14px 16px;margin:0 0 22px;max-width:560px;text-decoration:none}
-.hp .colbox .k{color:#D7FF1F;margin:0}
+.hp .colbox{display:flex;flex-direction:column;gap:4px;border:1px solid #ECC981;border-radius:12px;padding:14px 16px;margin:0 0 22px;max-width:560px;text-decoration:none}
+.hp .colbox .k{color:#ECC981;margin:0}
 .hp .colbox b{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--cloud)}
-.hp .colbox span:not(.k){font-family:var(--sans);font-size:14px;line-height:1.5;color:#C9D2DC}
-.hp .colbox:hover{background:rgba(215,255,31,.06)}
-.hp .heldgrid{margin:-8px 0 22px;max-width:560px}.hp .heldgrid .k{color:#D7FF1F;margin:0 0 8px}
+.hp .colbox span:not(.k){font-family:var(--sans);font-size:14px;line-height:1.5;color:#CFD3CC}
+.hp .colbox:hover{background:rgba(236,201,129,.06)}
+.hp .heldgrid{margin:-8px 0 22px;max-width:560px}.hp .heldgrid .k{color:#ECC981;margin:0 0 8px}
 .hp .heldgrid div{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
 .hp .heldgrid a{position:relative;display:block;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#1a1a1a}
 .hp .heldgrid img{width:100%;height:100%;object-fit:cover;display:block}
-.hp .heldgrid i{position:absolute;left:4px;bottom:4px;font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.1em;background:#D7FF1F;color:#0D0D0D;padding:2px 4px;border-radius:3px}
-.hp .heldgrid .more{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:11px;color:#C9D2DC}
+.hp .heldgrid i{position:absolute;left:4px;bottom:4px;font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.1em;background:#ECC981;color:#080D16;padding:2px 4px;border-radius:3px}
+.hp .heldgrid .more{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:11px;color:#CFD3CC}
 @media (max-width:520px){.hp .heldgrid div{grid-template-columns:repeat(4,1fr)}}
-.hp .bio{font-family:var(--sans);font-size:18px;line-height:1.6;color:#C9D2DC;margin:22px 0;max-width:560px}
-.hp .t{font-family:var(--display);font-style:italic;font-size:22px;color:#C9D2DC}
+.hp .bio{font-family:var(--sans);font-size:18px;line-height:1.6;color:#CFD3CC;margin:22px 0;max-width:560px}
+.hp .t{font-family:var(--display);font-style:italic;font-size:22px;color:#CFD3CC}
 .hp .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
 .hp .btn{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:13px 20px;border-radius:999px;background:var(--acid);color:var(--ink)}
 .hp .btn:hover{background:var(--cloud);color:var(--ink)}
 .hp .btn.ghost{background:transparent;color:var(--cloud);border:1px solid var(--divider)}.hp .btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
 .hp .loop{margin-top:40px;padding-top:24px;border-top:1px solid var(--divider);font-family:var(--sans);color:var(--slate)}
 .hp .loop a{color:var(--cyan)}
+.hp .paint{display:grid;grid-template-columns:1fr;gap:28px;margin-top:64px;align-items:start}.hp .paint img{width:100%;height:auto;border-radius:14px;display:block}
+.hp .paint figcaption{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--slate);margin-top:10px}
 @media (max-width:820px){.hp .wrap{grid-template-columns:1fr;gap:32px}.hp .cardimg{max-width:420px;margin:0 auto;display:block}}
 '''
 HJS = r'''<script>
@@ -372,15 +419,33 @@ HJS = r'''<script>
 })();
 </script>'''
 from urllib.parse import quote
+MLOW = {"@type": "Person", "name": "MLow", "url": "https://x.com/degens", "sameAs": ["https://x.com/degens", "https://mlow.nyc"]}
+PERSON = lambda p: {"@type": "Person", "name": p["name"], **({"sameAs": f'https://x.com/{p["x"]}'} if p["x"] else {})}
+
+
+def fig(p, w):
+    """The painting itself, full width under the card: the image search should find."""
+    t = f'&ldquo;{e(w["title"])}&rdquo;, ' if w.get("title") else ""
+    return (f'<figure><img src="../assets/honoraries/{w["l"]}" alt="{e(alt(p, w))}" width="{w["w"]}" height="{w["h"]}" loading="lazy">'
+            f'<figcaption>{t}{e(p["name"])}, painted by MLow for NEW YORKERS</figcaption></figure>')
+
+
+def desc(p):
+    """Under 158 characters, the name first, then the bio cut on a word."""
+    d = f'{p["name"]}, painted by MLow as an Honorary New Yorker.' + (f' {p["bio"]}' if p.get("bio") else "")
+    return d if len(d) <= 158 else d[:157].rsplit(" ", 1)[0].rstrip(",.;:") + "."
+
+
 xi = lambda t, u: "https://x.com/intent/tweet?text=" + quote(t + "\n\n" + u, safe="")  # the site link is the last line
 for f in os.listdir(HD):
     if f.endswith(".html") and f[:-5] not in {p["id"] for p in PPL}:
         os.remove(os.path.join(HD, f))
 for p in PPL:
     cd, w0 = CARDS[p["id"]], p["works"][0]
-    u = f'{C["siteUrl"]}/h/{p["id"]}'
+    u = f'{C["siteUrl"]}/h/{p["id"]}?wall'  # posted links walk straight to the portrait in room 183; the card still unfurls
+    wall = f'../museum.html#room=honoraries&honor={p["id"]}'
     tail = "\n\nNew York counts its people in paint, by @degens"  # same words as lines() in the page JS
-    me = "Honorary New Yorker: counted" + tail
+    me = "Honorary New Yorker: my face is on the wall" + tail
     them = p["name"] + (f' (@{p["x"]})' if p["x"] else "") + ": Honorary New Yorker" + ("s" if " and " in p["name"] else "") + tail
     hb = f'''<main class="hp" style="--a:{ACC[p["cat"]]}"><div class="wrap">
 <div><img class="cardimg" src="../assets/cards/{cd["card"]}" alt="The Honorary card for {e(p["name"])}, painted by MLow" width="1080" height="1512"></div>
@@ -390,16 +455,28 @@ for p in PPL:
 {f'<p class="bio">{e(p["bio"])}</p>' if p.get("bio") else ""}
 {f'<a class="colbox" href="../my.html#{e(COL[p["id"]]["key"])}"><span class="k">ALSO A COLLECTOR</span><b>{e(COL[p["id"]]["name"])}</b><span>{e(col_label(COL[p["id"]]))}. Walk the collection, put it on a TV, see it on a wall.</span></a>' if p["id"] in COL else ""}
 {held(COL[p["id"]]) if p["id"] in COL else ""}
-<div class="row"><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + chr(10) * 2 + u)}">This is me. Post my card</a>
+<div class="row"><a class="btn" href="{e(wall)}">See me on the wall &#8599;</a><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + chr(10) * 2 + u)}">This is me. Post my card</a>
 <a class="btn ghost" href="{e(xi(them, u))}" target="_blank" rel="noopener">Share on X</a>
 <a class="btn ghost" href="../assets/cards/{cd["card"]}" download="honorary-new-yorker-{p["id"]}.jpg">Save the card</a></div>
 <p class="loop">One of {N} Honorary New Yorkers painted by MLow. <a href="../honoraries.html#{p["id"]}">Meet the rest</a>, or <a href="../counted.html#nominate">nominate someone who belongs here</a>.</p>
-</div></div></main>'''
+</div></div>
+<section class="paint wrap">{"".join(fig(p, w) for w in p["works"])}</section></main>'''
+    t0 = p["works"][0].get("title")
+    ld = [{"@context": "https://schema.org", "@type": "ProfilePage", "url": f'{C["siteUrl"]}/h/{p["id"]}',
+           "name": f'{p["name"]}, Honorary New Yorker', "isPartOf": {"@id": C["siteUrl"] + "/#site"},
+           "mainEntity": PERSON(p), "primaryImageOfPage": {"@id": f'{C["siteUrl"]}/assets/honoraries/{p["works"][0]["l"]}'}}]
+    ld += [{"@context": "https://schema.org", "@type": "VisualArtwork", "name": w.get("title") or f'{p["name"]}, Honorary New Yorker',
+            "artform": "Painting", "creator": MLOW, "about": PERSON(p), "isPartOf": {"@type": "CreativeWork", "name": "NEW YORKERS by MLow"},
+            "url": f'{C["siteUrl"]}/h/{p["id"]}', "description": f'{p["name"]}, portrait painted by MLow as an Honorary New Yorker.' + (f' {p["bio"].rstrip(".")}.' if p.get("bio") else ""),
+            "image": {"@type": "ImageObject", "@id": f'{C["siteUrl"]}/assets/honoraries/{w["l"]}', "contentUrl": f'{C["siteUrl"]}/assets/honoraries/{w["l"]}',
+                      "width": w["w"], "height": w["h"], "caption": alt(p, w), "creator": MLOW, "creditText": "MLow, NEW YORKERS",
+                      "copyrightNotice": "\u00a9 MLow", "acquireLicensePage": f'{C["siteUrl"]}/press'}} for w in p["works"]]
     open(os.path.join(HD, p["id"] + ".html"), "w", encoding="utf-8").write(shell(
-        title=f'{p["name"]}, Honorary New Yorker · NEW YORKERS by MLow',
-        description=(p.get("bio") or f'{p["name"]}, painted by MLow into NEW YORKERS.')[:158],
+        title=f'{p["name"]}, painted by MLow' + (f': {t0}' if t0 else "") + ' · NEW YORKERS',
+        description=desc(p), jsonld=ld,
         body=hb, base="../", path=f'h/{p["id"]}.html', active="HONORARIES", extra_css=HCSS, scripts_after=HJS,
-        image=f'{C["siteUrl"]}/assets/cards/{cd["og"]}', noindex=True))
+        extra_head=f'<script>if(new URLSearchParams(location.search).has("wall")){{document.documentElement.style.visibility="hidden";location.replace("{wall}")}}</script>',
+        image=f'{C["siteUrl"]}/assets/cards/{cd["og"]}'))
 
 page = shell(title="The Honoraries · NEW YORKERS by MLow",
              description=f"Every real person MLow has painted into NEW YORKERS: {N} people and {NW} paintings, artists, collectors, founders, musicians, athletes, chefs, writers and mayors of New York.",
@@ -411,4 +488,4 @@ page = shell(title="The Honoraries · NEW YORKERS by MLow",
                      "about": [{"@type": "Person", "name": p["name"], **({"sameAs": f'https://x.com/{p["x"]}'} if p["x"] else {})} for p in PPL]})
 open(os.path.join(SITE, "honoraries.html"), "w", encoding="utf-8").write(page)
 print(f"h/: {len(PPL)} share pages")
-print(f"honoraries.html: {N} people, {NW} paintings, {len(page) // 1024} KB")
+print(f"honoraries.html: {N} people, {NW} paintings, {len(page.encode()) // 1024} KB; assets/honoraries/data.json {os.path.getsize(_DP) // 1024} KB, v{DV}")

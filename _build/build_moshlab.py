@@ -81,15 +81,15 @@ desc = ("MOSH LAB, MLow's glitch instrument, free in your browser. Pull any New 
         "video or camera, roll a seed, and export a loop perfect GIF, MP4, WebM or PNG. Nothing leaves your machine.")
 extra_css = """
 .ml{max-width:1500px;margin:0 auto;padding:14px 16px 72px;text-align:center}
-.ml .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;color:#8899AA;text-transform:uppercase}
+.ml .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;color:#8FA7AB;text-transform:uppercase}
 .ml h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(30px,5vw,48px);margin:8px 0 10px;letter-spacing:.02em}
 .ml h1 em{color:#FF2E88}
 .ml p{color:#AAB6C4;line-height:1.6;max-width:600px;margin:0 auto 18px}
 .ml .frame{width:100%;height:max(620px,calc(100vh - 190px));margin:0 auto;border:1px solid #223;border-radius:16px;overflow:hidden;
-  box-shadow:0 0 60px rgba(41,98,255,.25);background:#0D0D0D}
+  box-shadow:0 0 60px rgba(70,146,194,.25);background:#080D16}
 .ml iframe{width:100%;height:100%;border:0;display:block}
-.ml .how{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#8899AA;margin-top:18px;line-height:1.8}
-.ml .how a{color:#2962FF;text-decoration:none}
+.ml .how{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#8FA7AB;margin-top:18px;line-height:1.8}
+.ml .how a{color:#4692C2;text-decoration:none}
 .ml .under{margin-top:26px}
 .ml .phone{display:none;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:#FFD600;margin:0 auto 14px;max-width:520px;line-height:1.7}
 @media (max-width:820px){ .ml .phone{display:block} .ml .frame{height:80vh;min-height:520px} }

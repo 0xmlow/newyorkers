@@ -193,14 +193,14 @@ extra_css = """
 .card .vals{display:grid;grid-template-columns:1fr 1fr;gap:26px 18px}
 .card .lab{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
 .card .val{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.05;color:#fff;overflow-wrap:anywhere}
-.card .line{font-family:var(--sans);font-size:14px;line-height:1.5;color:#c9d2dc;border-top:1px solid var(--divider);padding-top:16px}
+.card .line{font-family:var(--sans);font-size:14px;line-height:1.5;color:#CFD3CC;border-top:1px solid var(--divider);padding-top:16px}
 .card .foot{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--slate)}
 .card .mark{width:26px;height:26px;border-radius:50%;overflow:hidden;opacity:.45;flex:none}
 .card .mark img{width:100%;height:100%;object-fit:cover;display:block}
 .card .addr{flex:1}
 .card .brand{opacity:.7;white-space:nowrap}
 @media (max-width:420px){.card{padding:26px 22px}.card .val{font-size:24px}.card .vals{gap:18px 12px}}
-.route{font-family:var(--sans);font-size:15px;line-height:1.6;color:#c9d2dc;margin-top:22px;max-width:460px}
+.route{font-family:var(--sans);font-size:15px;line-height:1.6;color:#CFD3CC;margin-top:22px;max-width:460px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:460px}
 #result [hidden]{display:none!important}
 .fileform{margin-top:22px;max-width:460px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--divider);border-left:3px solid var(--acid);border-radius:12px;padding:18px 20px;background:var(--card)}
@@ -212,7 +212,7 @@ extra_css = """
 .mine .quiet{margin-top:10px}
 #longform{margin-top:18px}#longform a{color:var(--slate)}
 .how{margin-top:28px;max-width:640px;border-top:1px solid var(--divider);padding-top:18px}
-.how ol{margin:12px 0 0;padding-left:22px;font-family:var(--sans);font-size:14.5px;line-height:1.6;color:#c9d2dc}
+.how ol{margin:12px 0 0;padding-left:22px;font-family:var(--sans);font-size:14.5px;line-height:1.6;color:#CFD3CC}
 .how li{margin-bottom:6px}.how li::marker{font-family:var(--mono);color:var(--acid)}
 .card .stamps{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--acid);margin-top:8px}
 .fileform.post{border-left-color:var(--blue)}
@@ -221,9 +221,9 @@ extra_css = """
 .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:18px}
 @media (max-width:640px){.tgrid{grid-template-columns:1fr}}
 .tally .lab{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--slate);margin-bottom:10px}
-.boro{margin-bottom:10px}.boro .n{display:flex;justify-content:space-between;font-family:var(--sans);font-size:14px;color:#c9d2dc}
+.boro{margin-bottom:10px}.boro .n{display:flex;justify-content:space-between;font-family:var(--sans);font-size:14px;color:#CFD3CC}
 .boro .bar{height:6px;background:var(--card);border-radius:3px;margin-top:5px;overflow:hidden}.boro .bar i{display:block;height:100%;background:var(--acid)}
-#tTop{margin:0;padding:0;list-style:none}#tTop li{display:flex;gap:10px;align-items:baseline;font-family:var(--sans);font-size:14px;color:#c9d2dc;padding:6px 0;border-bottom:1px solid var(--divider)}
+#tTop{margin:0;padding:0;list-style:none}#tTop li{display:flex;gap:10px;align-items:baseline;font-family:var(--sans);font-size:14px;color:#CFD3CC;padding:6px 0;border-bottom:1px solid var(--divider)}
 #tTop .r{font-family:var(--mono);font-size:11px;color:var(--slate);width:34px}#tTop .nm{flex:1;color:#fff}#tTop .s{font-family:var(--mono);font-size:11px;color:var(--acid)}#tTop .t{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--slate)}
 .actions .btn.ghost{background:transparent;border:1px solid var(--divider);color:var(--slate)}
 .plain{margin-top:54px;border-top:1px solid var(--divider);padding-top:22px;max-width:640px}

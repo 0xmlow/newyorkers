@@ -3,6 +3,9 @@
    Pages in a subfolder set window.NY_BASE = "../" before this file loads. */
 (function(){
   "use strict";
+  /* STREET KIT (2026-10-09): the signage fonts behind the line bullets and the footer sign (site.css). Loaded here,
+     after first paint, so no page has to carry them in its head; a page that already links them is left alone. */
+  if(!document.querySelector('link[href*="family=Bungee"]')){ const fl=document.createElement("link"); fl.rel="stylesheet"; fl.href="https://fonts.googleapis.com/css2?family=Bungee&family=Rock+Salt&display=swap"; document.head.appendChild(fl); }
   const BASE = window.NY_BASE || "";
   const CFG = window.NY_CONFIG || {};
   const D = window.NY_DATA || null;
@@ -34,13 +37,26 @@
   const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
   /* Cloudflare Pages serves every page extensionless and 308s /x.html to /x, so every internal href the
      site emits is extensionless: one hop fewer per click and no redirect for Google to index. */
-  const NAV = [["census","ART"],["museum","MUSEUM"],["island","ISLAND"],["basement","BASEMENT"],["map","ATLAS"],["keystone","KEYSTONE"],["honoraries","HONORARIES"],["mosaic","MOSAIC"],["posters","POSTERS"],["collectors","COLLECTORS"],["learn","STORIES"],["arcade","ARCADE"],["bloomrun","BLOOM RUN"],["moshlab","MOSH LAB"],["press","PRESS"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
+  const NAV = [["census","ART"],["museum","MUSEUM"],["island","ISLAND"],["basement","BASEMENT"],["map","ATLAS"],["keystone","KEYSTONE"],["honoraries","HONORARIES"],["mosaic","MOSAIC"],["posters","POSTERS"],["collectors","COLLECTORS"],["learn","STORIES"],["arcade","ARCADE"],["skelly","SKELLY CUP"],["bloomrun","BLOOM RUN"],["moshlab","MOSH LAB"],["press","PRESS"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
   function nav(active){
     const el=document.getElementById("nav"); if(!el)return;
+    /* the main stops stay on one line; the rest ride under MORE. Each stop carries a line colour from the paintings (site.css --l*) */
+    const MORE=new Set(["island","basement","mosaic","posters","learn","bloomrun","moshlab","press"]);
+    const LINE={census:"1",museum:"A",skelly:"N",honoraries:"B",keystone:"7",map:"4",collectors:"J",arcade:"G",island:"A",basement:"J",mosaic:"7",posters:"1",learn:"L",bloomrun:"4",moshlab:"B",press:"L"};
+    const ALIAS={"THE CENSUS":"ART","THE MUSEUM":"MUSEUM","READ":"STORIES","SKELLY":"SKELLY CUP"};
+    const isOn=([h,t])=>active===t||ALIAS[active]===t;
+    const link=n=>{const [h,t,c]=n; return `<a href="${c==="ext"?h:BASE+h}" class="${c||""}${isOn(n)?" on":""}" style="--lc:var(--l${LINE[h]||"N"})"${c==="spin"?' title="Drop into a random room of the museum"':""}>${c==="spin"?"✦ ":""}${t}</a>`;};
+    const main=NAV.filter(n=>!MORE.has(n[0])&&n[2]!=="ext"), more=NAV.filter(n=>MORE.has(n[0])), tail=NAV.filter(n=>n[2]==="ext");
     el.innerHTML=`<a href="${BASE||"./"}" aria-label="NEW YORKERS home"><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"></a>
       <button class="burger" aria-label="menu" aria-expanded="false">MENU</button>
-      <div class="links">${NAV.map(([h,t,c])=>`<a href="${c==="ext"?h:BASE+h}" class="${c||""}${(active===t || ({"THE CENSUS":"ART","THE MUSEUM":"MUSEUM","READ":"STORIES"})[active]===t)?" on":""}"${c==="spin"?' title="Drop into a random room of the museum"':""}>${c==="spin"?"✦ ":""}${t}</a>`).join("")}</div>`;
+      <div class="links">${main.map(link).join("")}<div class="more${more.some(isOn)?" on":""}"><button type="button" class="more-b" aria-expanded="false">MORE<i></i></button><div class="more-p"><small>ALSO ON THE LINE</small>${more.map(link).join("")}</div></div>${tail.map(link).join("")}</div>`;
     const b=el.querySelector(".burger"); b.onclick=()=>{const open=el.querySelector(".links").classList.toggle("open"); b.setAttribute("aria-expanded",open?"true":"false");};
+    /* MORE: a station directory board; opens on click (and hover on desktop), closes on Escape or a click away */
+    const mw=el.querySelector(".more"), mb=el.querySelector(".more-b");
+    const setMore=o=>{mw.classList.toggle("open",o); mb.setAttribute("aria-expanded",o?"true":"false");};
+    mb.onclick=e=>{e.stopPropagation(); setMore(!mw.classList.contains("open"));};
+    document.addEventListener("click",e=>{ if(!mw.contains(e.target)) setMore(false); });
+    document.addEventListener("keydown",e=>{ if(e.key==="Escape") setMore(false); });
   }
   /* MLow's N3W YORKERS logos (assets/brand/logos, built by _build/brand_logos.py from logos.json).
      LOCKUPS carry the full "BY MLOW" line; MARKS had a garbled byline cut off. 16 is never shown. */
@@ -76,6 +92,8 @@
   }
   function foot(){
     const el=document.getElementById("foot"); if(!el)return;
+    /* the rooftops above the footer, a pigeon on the ledge (site.css .roofline). Once per page, never on SKELLY CUP, which has its own street */
+    if(!document.querySelector(".roofline")&&!document.body.classList.contains("skelly")) el.insertAdjacentHTML("beforebegin",'<div class="roofline" aria-hidden="true"><i></i></div>');
     const dom=(CFG.domain||"MLOW.NYC");
     /* Keep exploring (2026-10-06, retention): every page ends on four doors. The room of the day turns over at
        midnight New York time, so a visitor who comes back tomorrow finds a different one. */
@@ -144,5 +162,30 @@
     var _r=new URLSearchParams(location.search).get("ref");
     if(_r) localStorage.setItem("ny_ref", _r);
   }catch(e){}
+  /* TRANSIT KIT touch (site.css): a light that follows the finger across every button and card (--mx, --my),
+     a MetroCard swipe on press, and a handful of painted eye flowers thrown from the spot you clicked. */
+  (function(){
+    const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const SEL = ".btn,.primary,.fly-btn,.share button,.share a,.card,#foot .explore a,.more-b,#nav .links a,.fly-options button";
+    document.addEventListener("pointermove", function(e){
+      const b = e.target.closest && e.target.closest(SEL); if(!b) return;
+      const r = b.getBoundingClientRect();
+      b.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
+      b.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
+    }, {passive:true});
+    if(RM) return;
+    const FLOWER = BASE + "assets/ui/flower.png";
+    document.addEventListener("click", function(e){
+      const b = e.target.closest && e.target.closest(".btn,.primary,.fly-btn,.share button,.share a,#foot .explore a"); if(!b) return;
+      b.classList.remove("swiped"); void b.offsetWidth; b.classList.add("swiped");
+      const n = b.matches(".btn,.primary,.fly-btn") ? 7 : 4;
+      for(let i = 0; i < n; i++){
+        const f = document.createElement("img"); f.src = FLOWER; f.alt = ""; f.className = "ny-pop";
+        const a = Math.PI * 2 * i / n + Math.random() * .6, d = 46 + Math.random() * 46;
+        f.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d - 24}px;--rot:${(Math.random() * 300 - 150) | 0}deg;--s:${.5 + Math.random() * .5}`;
+        document.body.appendChild(f); setTimeout(() => f.remove(), 900);
+      }
+    });
+  })();
   window.NY = {D,C,S,P,CFG,BASE,track,hit,fmt,thumb,get,era,famName,famBlurb,num,sample,find,recordUrl,esc,nav,foot,toast,share,shareUrl,xIntent,shareRow,trail,since,rnd:mulberry32};
 })();
