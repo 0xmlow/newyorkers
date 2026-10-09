@@ -58,3 +58,29 @@ Planning, casting, ledger and portraits live outside the repo in `../MARBLE RUN 
 - Copy holds the line: no odds, no stake, no money out. The only betting words on the page are disclaimers.
 - Verified live on a static preview: a real heat was called and won, the splash, streak and ticker fired.
   /api/skelly and the crowd heat still never ran on Cloudflare.
+
+## 2026-10-09: the block at night (design pass on FLORA)
+
+MLow asked for awwwards grade design with New York and NEW YORKERS woven through. The page is now one Brooklyn
+block at night, every section a real surface painted on FLORA in the NEW YORKERS hand ($1.56, 7 runs, project
+prj_ns765drs0xtf1d940e77ax6tq98fzkt3), cut by `MARBLE RUN x NEW YORKERS 2026-10-08/design/process_design.py`
+into `assets/skelly/ui/` (3.2 MB):
+
+- THE BOARD: a skully board chalked on wet asphalt (hero.jpg). Glass marbles you can drag and flick, with
+  collisions, on a canvas over it. Letters drop in. Marble cursor on desktop.
+- BODEGA TV: Bryan's live race inside the CRT under a sleeping orange cat (bodega.jpg, screen box in
+  bodega.json found by flood fill). WATCH BIG dollies the camera into the screen; Esc or scroll backs out.
+- THE GATE: chalk texture, lanes as painted bottle caps (cap-*.png, one per borough), the board as an LED scoreboard.
+- STILL ALIVE: a subway tile wall with a mosaic station sign.
+- THE WALL: portraits wheatpasted with tape on brick (brick.jpg), pinned and scrolled sideways on desktop.
+- HALL OF FAME: a striped awning over a deli letterboard.
+- THE STOOP: the rules as stoop steps over the brownstone plate (stoop.jpg).
+- THE ENGINE: Bryan's scheme drawn as a subway line with stations, his honorary card as a placard.
+- THE RIDERS: a hundred transit cards with tilt and shine.
+- A subway line scroll map down the right edge, a ticker, film grain, a pigeon walking the footer.
+- Fonts: Bungee and Bungee Shade (signage), Rock Salt (chalk) from Google Fonts, beside the house fonts.
+
+Two traps: `overflow:hidden` on a section kills `position:sticky` inside it (use `overflow:clip`), and an
+absolutely positioned canvas with inset:0 stays 300x150 unless given width and height. Checked with headless
+Chrome over CDP at 1440x900 and 390x844 (the preview pane is too small to judge design). All plates passed
+the text gate. Still not deployed; the D1 table and Bryan's yes are still pending.
