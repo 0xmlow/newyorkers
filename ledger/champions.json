@@ -1,6 +1,78 @@
 {
  "champions": [
   {
+   "tournament_id": 14,
+   "master_seed": 1304893762,
+   "created_at": 1791549262195,
+   "completed_at": 1791555339235,
+   "champion_marble_id": 37,
+   "champion_name": "Lindy",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 13,
+   "master_seed": 316697886,
+   "created_at": 1791542824436,
+   "completed_at": 1791549232122,
+   "champion_marble_id": 50,
+   "champion_name": "Blaze It",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 12,
+   "master_seed": 836638269,
+   "created_at": 1791536238995,
+   "completed_at": 1791542794358,
+   "champion_marble_id": 26,
+   "champion_name": "Lenticular",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 11,
+   "master_seed": 1963669045,
+   "created_at": 1791529945235,
+   "completed_at": 1791536208915,
+   "champion_marble_id": 69,
+   "champion_name": "Bonsai",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 10,
+   "master_seed": 606355623,
+   "created_at": 1791524103795,
+   "completed_at": 1791529915155,
+   "champion_marble_id": 98,
+   "champion_name": "Mulligan",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 9,
+   "master_seed": 601820724,
+   "created_at": 1791518031798,
+   "completed_at": 1791524073717,
+   "champion_marble_id": 66,
+   "champion_name": "Moon God",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 8,
+   "master_seed": 1026823074,
+   "created_at": 1791512029957,
+   "completed_at": 1791518001722,
+   "champion_marble_id": 97,
+   "champion_name": "Relaxer",
+   "champion_name_at_the_time": null
+  },
+  {
+   "tournament_id": 7,
+   "master_seed": 2976589520,
+   "created_at": 1791505773795,
+   "completed_at": 1791511999877,
+   "champion_marble_id": 49,
+   "champion_name": "Espresso",
+   "champion_name_at_the_time": null
+  },
+  {
    "tournament_id": 6,
    "master_seed": 2135855126,
    "created_at": 1791499661398,
@@ -57,6 +129,822 @@
  ],
  "history": [
   {
+   "tournamentId": 14,
+   "masterSeed": 1304893762,
+   "masterSeedHex": "4dc719426b7e064370c6a72018ad7597c71d171d48b858021e64abe2082ab602",
+   "commit": "6251ae5a1bfa7487e85f6e2dcf53e05d6af7b8af52954fc9233910d2efc75b73",
+   "commitSalt": "09ab72af7b0c623ea357bd6c94da6465993b207f3f3c3049e0d08d244a3227c1",
+   "createdAt": 1791549262195,
+   "completedAt": 1791555339235,
+   "champion": {
+    "id": 37,
+    "name": "Lindy",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:0",
+     "roundKey": "heats",
+     "indexInRound": 0,
+     "trackSeed": 136262748,
+     "courseGen": 2,
+     "raceSeed": 207170958,
+     "publicContribution": "a339ac080d1cef0b7c05d8faa5012a4fcf6cfbee4fbff380959fdb996e4b3a50",
+     "rank": 1,
+     "timeSec": 114.76666666670407,
+     "revealedAt": 1791549530675
+    },
+    {
+     "raceKey": "semis:0",
+     "roundKey": "semis",
+     "indexInRound": 0,
+     "trackSeed": 81124785,
+     "courseGen": 2,
+     "raceSeed": 153226610,
+     "publicContribution": "7f765450a0af323c4fb13c6050ce4c887e49370eb78503bd40f8348bbb301c39",
+     "rank": 2,
+     "timeSec": 93.21666666668692,
+     "revealedAt": 1791554320355
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 1849487629,
+     "courseGen": 2,
+     "raceSeed": 3001183825,
+     "publicContribution": "b1e48234d9d530d825757ade1a04ca7ac2854041c2c363d08d0fc98c94244320",
+     "rank": 1,
+     "timeSec": 100.50000000002605,
+     "revealedAt": 1791555333155
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 37,
+     "marbleName": "Lindy",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 100.50000000002605
+    },
+    {
+     "rank": 2,
+     "marbleId": 42,
+     "marbleName": "Royal Flush",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 101.9083333333605
+    },
+    {
+     "rank": 3,
+     "marbleId": 88,
+     "marbleName": "Rotten",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 102.66666666669444
+    },
+    {
+     "rank": 4,
+     "marbleId": 50,
+     "marbleName": "Blaze It",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 105.40000000002995
+    },
+    {
+     "rank": 5,
+     "marbleId": 28,
+     "marbleName": "Whiskers",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 106.6000000000309
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 13,
+   "masterSeed": 316697886,
+   "masterSeedHex": "12e06d1e9ac4c2bef6a4aa40bbf67c2a2e05df622920ec6a9a0a26fcc22ae0ca",
+   "commit": "562ba0c524c7bf4b7ad8d4ba668982c5cb2cbbd0337bab139746f62209456213",
+   "commitSalt": "e7237e723d6308b1ceb3b52c6b6af0098e79305789d8cf7fed9272e22d472bc9",
+   "createdAt": 1791542824436,
+   "completedAt": 1791549232122,
+   "champion": {
+    "id": 50,
+    "name": "Blaze It",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 2,
+   "lifetimeTitles": 2,
+   "path": [
+    {
+     "raceKey": "heats:11",
+     "roundKey": "heats",
+     "indexInRound": 11,
+     "trackSeed": 510222060,
+     "courseGen": 2,
+     "raceSeed": 3207165731,
+     "publicContribution": "fa3c6da23141233166bc3bbe1c0ecedf3f121edbf268fa9e7eb99828fda22a30",
+     "rank": 1,
+     "timeSec": 95.12500000002177,
+     "revealedAt": 1791545884515
+    },
+    {
+     "raceKey": "semis:0",
+     "roundKey": "semis",
+     "indexInRound": 0,
+     "trackSeed": 3075915099,
+     "courseGen": 2,
+     "raceSeed": 1179800372,
+     "publicContribution": "fa702b0e832e10280761bd8375782433f4d711416745d56258830c47bc485722",
+     "rank": 1,
+     "timeSec": 103.87500000002873,
+     "revealedAt": 1791548274595
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 2089643654,
+     "courseGen": 2,
+     "raceSeed": 1293932574,
+     "publicContribution": "3c77a3630db7509bc2c254022a12a696ed37c00dbe092b3a7c5deca8ddd7dfe5",
+     "rank": 1,
+     "timeSec": 101.46666666669348,
+     "revealedAt": 1791549226115
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 50,
+     "marbleName": "Blaze It",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 101.46666666669348
+    },
+    {
+     "rank": 2,
+     "marbleId": 28,
+     "marbleName": "Whiskers",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 102.85833333336126
+    },
+    {
+     "rank": 3,
+     "marbleId": 62,
+     "marbleName": "Crusty",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 103.02500000002806
+    },
+    {
+     "rank": 4,
+     "marbleId": 80,
+     "marbleName": "Coach",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 104.06666666669555
+    },
+    {
+     "rank": 5,
+     "marbleId": 94,
+     "marbleName": "Marmy",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 106.75000000003102
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 12,
+   "masterSeed": 836638269,
+   "masterSeedHex": "31de163d26cd49f2ca633f5be4929ed6e997ceb3486c7537a86f44d1238c9849",
+   "commit": "4a078e998f095c0777417c6dcc39c9b842d117f30e5d9b8abe72e5dd2d5a0c3b",
+   "commitSalt": "c7bde7f281d244316ddd9c0e01ef38ee0154e249a0bbf272de4114e1a6465069",
+   "createdAt": 1791536238995,
+   "completedAt": 1791542794358,
+   "champion": {
+    "id": 26,
+    "name": "Lenticular",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:13",
+     "roundKey": "heats",
+     "indexInRound": 13,
+     "trackSeed": 3095041691,
+     "courseGen": 2,
+     "raceSeed": 3324699740,
+     "publicContribution": "3bb1cf32dfc51925fcf60d268b36423a6058b62a036323e50b3febe628fec454",
+     "rank": 1,
+     "timeSec": 100.82500000002631,
+     "revealedAt": 1791539975235
+    },
+    {
+     "raceKey": "semis:1",
+     "roundKey": "semis",
+     "indexInRound": 1,
+     "trackSeed": 3592081187,
+     "courseGen": 2,
+     "raceSeed": 1966734806,
+     "publicContribution": "666a3dcb3e7cc385949bc43654fc946e2088510af4a0575f9b9443e5822d33dd",
+     "rank": 1,
+     "timeSec": 105.81666666669695,
+     "revealedAt": 1791541931315
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 1132324572,
+     "courseGen": 2,
+     "raceSeed": 2948748055,
+     "publicContribution": "2a6595b953673c16f8b06b37a2e373f387a6750968a462fa19e91dc11b918d0f",
+     "rank": 1,
+     "timeSec": 114.99166666670425,
+     "revealedAt": 1791542788282
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 26,
+     "marbleName": "Lenticular",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 114.99166666670425
+    },
+    {
+     "rank": 2,
+     "marbleId": 27,
+     "marbleName": "Blue Devil",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 116.2333333333719
+    },
+    {
+     "rank": 3,
+     "marbleId": 4,
+     "marbleName": "Lore-y",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 116.83333333337238
+    },
+    {
+     "rank": 4,
+     "marbleId": 65,
+     "marbleName": "Sargent",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 118.77500000004059
+    },
+    {
+     "rank": 5,
+     "marbleId": 85,
+     "marbleName": "Versal",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 120.61666666670872
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 11,
+   "masterSeed": 1963669045,
+   "masterSeedHex": "750b36356d460de6d64d031e2ae7e21bfded6657e0f55495684ec8eac11b0409",
+   "commit": "42a99167bf8793d22dee08791aec26ee6c83a7e4c4cea666fc55d879f9893020",
+   "commitSalt": "f26e7fb0d3c92717692a25e4ef04098f7fe59aa3033cd507db1d0c19a7043d82",
+   "createdAt": 1791529945235,
+   "completedAt": 1791536208915,
+   "champion": {
+    "id": 69,
+    "name": "Bonsai",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:10",
+     "roundKey": "heats",
+     "indexInRound": 10,
+     "trackSeed": 57865639,
+     "courseGen": 2,
+     "raceSeed": 672956926,
+     "publicContribution": "1a9c72cd34b9b803d8ea3c59b4c0d0eba58b69f8bc1387259313870ca93f0751",
+     "rank": 1,
+     "timeSec": 105.94166666669705,
+     "revealedAt": 1791532693635
+    },
+    {
+     "raceKey": "semis:1",
+     "roundKey": "semis",
+     "indexInRound": 1,
+     "trackSeed": 1890513927,
+     "courseGen": 2,
+     "raceSeed": 273696848,
+     "publicContribution": "7a9d252d8042aac0dc00e15bed9235faaed2631d69c862947ddd6288f7c29d80",
+     "rank": 1,
+     "timeSec": 89.80833333335087,
+     "revealedAt": 1791535500755
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 2431633946,
+     "courseGen": 2,
+     "raceSeed": 3905406298,
+     "publicContribution": "62ab6794459454f2e4298cc3b073e2deb7ef9370b54d4da31a3523a007382371",
+     "rank": 1,
+     "timeSec": 89.13333333335034,
+     "revealedAt": 1791536202755
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 69,
+     "marbleName": "Bonsai",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 89.13333333335034
+    },
+    {
+     "rank": 2,
+     "marbleId": 3,
+     "marbleName": "Babka",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 89.85000000001757
+    },
+    {
+     "rank": 3,
+     "marbleId": 76,
+     "marbleName": "Spidey",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 95.50000000002207
+    },
+    {
+     "rank": 4,
+     "marbleId": 44,
+     "marbleName": "Dimensional",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 95.79166666668897
+    },
+    {
+     "rank": 5,
+     "marbleId": 96,
+     "marbleName": "Entertainer",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 109.95000000003357
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 10,
+   "masterSeed": 606355623,
+   "masterSeedHex": "242440a7f368ae31d96b98cf63aa44a5a59c9d899d16990ad4f5a486b2cb224c",
+   "commit": "7be1ed47fc59f45b62f83ac893de6418dfaa69eb9cc8b5db2c1c71a8ed3a3b0c",
+   "commitSalt": "d82c96e861fb7a06420d3ddf04f8967549d7f1ee76559dcd836d5476d9d22469",
+   "createdAt": 1791524103795,
+   "completedAt": 1791529915155,
+   "champion": {
+    "id": 98,
+    "name": "Mulligan",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:3",
+     "roundKey": "heats",
+     "indexInRound": 3,
+     "trackSeed": 1664034850,
+     "courseGen": 2,
+     "raceSeed": 2183532631,
+     "publicContribution": "e7365f62a454c7f575ec132cf6454f645ca72c77e499e3069d7cffb90d30bbbe",
+     "rank": 1,
+     "timeSec": 87.7083333333492,
+     "revealedAt": 1791524955155
+    },
+    {
+     "raceKey": "semis:1",
+     "roundKey": "semis",
+     "indexInRound": 1,
+     "trackSeed": 3927111763,
+     "courseGen": 2,
+     "raceSeed": 1320950316,
+     "publicContribution": "344e72814c581dbe2200288e97f0b4619538b8c70149e8019bfe3f5e3ca11ee3",
+     "rank": 1,
+     "timeSec": 90.99166666668515,
+     "revealedAt": 1791529197637
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 223828934,
+     "courseGen": 2,
+     "raceSeed": 4085125255,
+     "publicContribution": "c739a1cf3619988e49b7455e5fa957a794162291fb26324a2ab03db8d92c4b4c",
+     "rank": 1,
+     "timeSec": 80.47500000001011,
+     "revealedAt": 1791529909075
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 98,
+     "marbleName": "Mulligan",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 80.47500000001011
+    },
+    {
+     "rank": 2,
+     "marbleId": 2,
+     "marbleName": "ETH Saver",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 81.9750000000113
+    },
+    {
+     "rank": 3,
+     "marbleId": 82,
+     "marbleName": "Peeled Out",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 85.39166666668069
+    },
+    {
+     "rank": 4,
+     "marbleId": 7,
+     "marbleName": "Batty",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 85.70833333334761
+    },
+    {
+     "rank": 5,
+     "marbleId": 14,
+     "marbleName": "Get That Bread",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 86.50833333334825
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 9,
+   "masterSeed": 601820724,
+   "masterSeedHex": "23df0e34bafa6fc73a12d60bcdaa3a7d73e54edff7a023ccb95063374f86a7bd",
+   "commit": "84e81b1016fc14adfaf7e3aac498bee9c9a305e13ef4c8682ab69c3558563d58",
+   "commitSalt": "d0132305c6520c6bc0f469af3f8888436a25a17ea42756c08c0ecfaa925bfdc2",
+   "createdAt": 1791518031798,
+   "completedAt": 1791524073717,
+   "champion": {
+    "id": 66,
+    "name": "Moon God",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:0",
+     "roundKey": "heats",
+     "indexInRound": 0,
+     "trackSeed": 249654727,
+     "courseGen": 2,
+     "raceSeed": 2185489444,
+     "publicContribution": "4095ed671513d0a3948d19b795605711c399a1f8e2159bd837e2d1f94875dbc8",
+     "rank": 1,
+     "timeSec": 90.84166666668503,
+     "revealedAt": 1791518239475
+    },
+    {
+     "raceKey": "semis:2",
+     "roundKey": "semis",
+     "indexInRound": 2,
+     "trackSeed": 527561351,
+     "courseGen": 2,
+     "raceSeed": 1614334292,
+     "publicContribution": "c7f47ec91ead45bf1a6ceeb8ec79251d79a80cf8aa974d6ea4d6b172c64a8e04",
+     "rank": 1,
+     "timeSec": 91.9000000000192,
+     "revealedAt": 1791523621794
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 1708309937,
+     "courseGen": 2,
+     "raceSeed": 1480588014,
+     "publicContribution": "d2505567b413a02608d6454bbe872abc216f1a8981d7885d5f93ad9a521ae04a",
+     "rank": 1,
+     "timeSec": 109.03333333336617,
+     "revealedAt": 1791524067714
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 66,
+     "marbleName": "Moon God",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 109.03333333336617
+    },
+    {
+     "rank": 2,
+     "marbleId": 19,
+     "marbleName": "Curiousity",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 111.47500000003478
+    },
+    {
+     "rank": 3,
+     "marbleId": 70,
+     "marbleName": "Acidic",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 112.85000000003588
+    },
+    {
+     "rank": 4,
+     "marbleId": 28,
+     "marbleName": "Whiskers",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 113.49166666670305
+    },
+    {
+     "rank": 5,
+     "marbleId": 4,
+     "marbleName": "Lore-y",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 115.7333333333715
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 8,
+   "masterSeed": 1026823074,
+   "masterSeedHex": "3d3413a24193d4894a8f3f2a21d5cc580d1e6fbb4d8ceaef6c6b3182a07da8e1",
+   "commit": "4a99124f224239e5a7443fafb67c8698d73d62e5f4c7fa4b2a0afa6f85d89922",
+   "commitSalt": "d495a405b72f5fd0adc6766a0cea7769a818bf7dd14af0c6b2436c967a834d1b",
+   "createdAt": 1791512029957,
+   "completedAt": 1791518001722,
+   "champion": {
+    "id": 97,
+    "name": "Relaxer",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:4",
+     "roundKey": "heats",
+     "indexInRound": 4,
+     "trackSeed": 2301590877,
+     "courseGen": 2,
+     "raceSeed": 3990417558,
+     "publicContribution": "3f3b44f3893f885bb270ccc92e1a50c407c56d418585ff1d51a8473b8c17ebc3",
+     "rank": 1,
+     "timeSec": 99.50833333335859,
+     "revealedAt": 1791513245315
+    },
+    {
+     "raceKey": "semis:1",
+     "roundKey": "semis",
+     "indexInRound": 1,
+     "trackSeed": 12674396,
+     "courseGen": 2,
+     "raceSeed": 3560075964,
+     "publicContribution": "1bfaac7fabfaa909059eea5691b32d20c003b3cf2b26d46ecc30d373aee1aa63",
+     "rank": 2,
+     "timeSec": 87.57500000001576,
+     "revealedAt": 1791517228275
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 645680574,
+     "courseGen": 2,
+     "raceSeed": 1057437077,
+     "publicContribution": "7dbc3d024038764a082b69ffab656fb3d1e287910c870ba97a06b7c6276f5b94",
+     "rank": 1,
+     "timeSec": 111.19166666670122,
+     "revealedAt": 1791517995635
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 97,
+     "marbleName": "Relaxer",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 111.19166666670122
+    },
+    {
+     "rank": 2,
+     "marbleId": 70,
+     "marbleName": "Acidic",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 111.68333333336828
+    },
+    {
+     "rank": 3,
+     "marbleId": 63,
+     "marbleName": "Mysterio",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 112.00833333336854
+    },
+    {
+     "rank": 4,
+     "marbleId": 74,
+     "marbleName": "Bork",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 113.5416666667031
+    },
+    {
+     "rank": 5,
+     "marbleId": 94,
+     "marbleName": "Marmy",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 117.40833333337284
+    }
+   ],
+   "racesRun": 25
+  },
+  {
+   "tournamentId": 7,
+   "masterSeed": 2976589520,
+   "masterSeedHex": "b16b26d0fa80ab7b741ca09dfec4030e60aa9fcb493c8e39c21893f9104311ce",
+   "commit": "07266d6d3dee3bdbb3897e75f9a8648c587b17c1d564b3d96d815cd818514961",
+   "commitSalt": "efbc4f84a08c810f3c487c763ee73276785554562ca90bad1ebfc881c0b85ef9",
+   "createdAt": 1791505773795,
+   "completedAt": 1791511999877,
+   "champion": {
+    "id": 49,
+    "name": "Espresso",
+    "nameAtTheTime": null
+   },
+   "titleNumber": 1,
+   "lifetimeTitles": 1,
+   "path": [
+    {
+     "raceKey": "heats:7",
+     "roundKey": "heats",
+     "indexInRound": 7,
+     "trackSeed": 3856950867,
+     "courseGen": 2,
+     "raceSeed": 2134279708,
+     "publicContribution": "53898e01b055ffc6413928b2420fe1c6f75260af10be670286549b8984894ece",
+     "rank": 1,
+     "timeSec": 97.98333333335738,
+     "revealedAt": 1791507876035
+    },
+    {
+     "raceKey": "semis:0",
+     "roundKey": "semis",
+     "indexInRound": 0,
+     "trackSeed": 4084556317,
+     "courseGen": 2,
+     "raceSeed": 3626057664,
+     "publicContribution": "72c3b05bd604bec6e9e8d6d7fc19d7e2e143ff270ffa6352eee206ab1d5fd154",
+     "rank": 1,
+     "timeSec": 91.12500000001859,
+     "revealedAt": 1791511007635
+    },
+    {
+     "raceKey": "final:0",
+     "roundKey": "final",
+     "indexInRound": 0,
+     "trackSeed": 585099569,
+     "courseGen": 2,
+     "raceSeed": 3694420927,
+     "publicContribution": "673d887b76a408e647f9d5981c3ca0eaee9fedb4d0f4be19accf6e8b5ea6c53c",
+     "rank": 1,
+     "timeSec": 108.40833333336568,
+     "revealedAt": 1791511993875
+    }
+   ],
+   "final": [
+    {
+     "rank": 1,
+     "marbleId": 49,
+     "marbleName": "Espresso",
+     "marbleNameAtTheTime": null,
+     "lane": "RED",
+     "color": "#d9534f",
+     "timeSec": 108.40833333336568
+    },
+    {
+     "rank": 2,
+     "marbleId": 80,
+     "marbleName": "Coach",
+     "marbleNameAtTheTime": null,
+     "lane": "BLUE",
+     "color": "#5bc0de",
+     "timeSec": 110.88333333336764
+    },
+    {
+     "rank": 3,
+     "marbleId": 35,
+     "marbleName": "Roar",
+     "marbleNameAtTheTime": null,
+     "lane": "GREEN",
+     "color": "#5cb85c",
+     "timeSec": 111.18333333336788
+    },
+    {
+     "rank": 4,
+     "marbleId": 87,
+     "marbleName": "Red Nose",
+     "marbleNameAtTheTime": null,
+     "lane": "CREAM",
+     "color": "#ede0c8",
+     "timeSec": 112.5000000000356
+    },
+    {
+     "rank": 5,
+     "marbleId": 77,
+     "marbleName": "Shutter",
+     "marbleNameAtTheTime": null,
+     "lane": "YELLOW",
+     "color": "#f0ad4e",
+     "timeSec": 112.85833333336922
+    }
+   ],
+   "racesRun": 25
+  },
+  {
    "tournamentId": 6,
    "masterSeed": 2135855126,
    "masterSeedHex": "7f4e9016579f88f7ace6aee4bd10de586eb8adba5ae70e95b606856a57f51139",
@@ -70,7 +958,7 @@
     "nameAtTheTime": null
    },
    "titleNumber": 1,
-   "lifetimeTitles": 1,
+   "lifetimeTitles": 2,
    "path": [
     {
      "raceKey": "heats:13",
@@ -670,19 +1558,19 @@
   }
  ],
  "coverage": {
-  "completed": 6,
+  "completed": 14,
   "abandoned": 0,
   "running": 1,
   "oldestId": 1,
-  "newestId": 7
+  "newestId": 15
  },
  "gaps": [
   {
-   "tournamentId": 7,
+   "tournamentId": 15,
    "status": "running",
-   "createdAt": 1791505773795,
+   "createdAt": 1791555369315,
    "endedAt": null,
-   "racesDone": 13
+   "racesDone": 1
   }
  ],
  "hasMore": false

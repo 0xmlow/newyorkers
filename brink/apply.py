@@ -1,6 +1,6 @@
 """Recolour every SKELLY CUP painting in place from brink/originals (rerunnable: always starts from the originals).
 Writes into the same inode so the wave 36 hard links in HONORARY PFPS follow."""
-import sys, glob, os
+import sys, glob, os, shutil
 from concurrent.futures import ProcessPoolExecutor
 from PIL import Image
 H = os.path.dirname(os.path.abspath(__file__)); RUN = os.path.dirname(H); sys.path.insert(0, H)
@@ -8,6 +8,8 @@ from recolor import recolor
 
 def run(j):
     src, dst = j
+    if not os.path.exists(src):  # a new painting (Krea, 2026-10-09): keep its untouched original first
+        os.makedirs(os.path.dirname(src), exist_ok=True); shutil.copyfile(dst, src)
     if os.path.getsize(src) == 0: return 0
     im = recolor(Image.open(src))
     with open(dst, "r+b") as fh:

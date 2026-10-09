@@ -36,7 +36,7 @@ for e in plan:
 json.dump(holders, open(f"{SITE}/_build/skelly/holders.json", "w"), indent=0, ensure_ascii=False)
 print(len(holders), "holder cards;", "not on the honoraries page yet:", miss)
 
-rplan = {r["key"]: r for r in json.load(open(f"{RUN}/races/plan.json"))}
+rplan = {r["key"]: r for r in json.load(open(f"{RUN}/races/all.json"))}  # every finished race, not just the unpainted plan
 OUT = f"{SITE}/assets/skelly/races"; os.makedirs(OUT, exist_ok=True)
 art = []
 for key, r in rplan.items():

@@ -14,7 +14,8 @@ RACES = json.load(open(os.path.join(ROOT, 'ledger', 'races.json')))
 DONE = json.load(open(os.path.join(H, 'done.json'))) if os.path.exists(os.path.join(H, 'done.json')) else {}
 
 BORO = {'RED': 'Brooklyn', 'BLUE': 'Manhattan', 'YELLOW': 'Queens', 'GREEN': 'Staten Island', 'CREAM': 'The Bronx'}
-COLOUR = {'RED': 'red', 'BLUE': 'sky blue', 'YELLOW': 'amber yellow', 'GREEN': 'green', 'CREAM': 'cream and pearl'}
+# Bryan Brinkman's four (2026-10-09): pink f2668b, cyan 23c7d9, mint 48d9a4, yellow f2bf27; brink/recolor.py finishes the match
+COLOUR = {'RED': 'hot pink', 'BLUE': 'bright cyan', 'YELLOW': 'sunshine yellow', 'GREEN': 'mint green', 'CREAM': 'cream and pearl'}
 PLACES = {
     'Brooklyn': ['a Coney Island side street under the Cyclone', 'a Crown Heights stoop block', 'the Williamsburg waterfront at the old Domino sugar refinery',
                  'a Bushwick graffiti wall', 'the Brighton Beach boardwalk', 'Atlantic Avenue at a bodega corner'],
@@ -36,19 +37,22 @@ SCALE = {'heats': 'a lively street scene', 'semis': 'a big night, crowds packed 
 plan = []
 for r in RACES:
     key = f"{r['tournamentId']}:{r['raceKey']}"
-    if key in DONE or not r.get('results'): continue
+    if not r.get('results'): continue
     w = r['results'][0]; rider = CAST[w['marbleId']]; seed = r['raceSeed']
     boro = BORO.get(w['lane'], 'Manhattan')
     place = PLACES[boro][seed % 6]; when = TIME[(seed // 6) % 8]; moment = MOMENT[(seed // 48) % 6]
     rnd = r['roundKey']
     prompt = (f"Same painterly hand, palette, main character and eye-flower motifs as the reference image; that character just won a New York marble race. {place[0].upper() + place[1:]} {when}, {SCALE.get(rnd, SCALE['heats'])}. "
               f"{moment[0].upper() + moment[1:]}: a big glass marble swirled {COLOUR.get(w['lane'], 'glass')}, as tall as a person. "
-              f"Five chalk lanes in red, blue, yellow, green and cream across the ground, the {COLOUR.get(w['lane'], '')} lane brightest, bottle caps on the chalk, "
+              f"Five chalk lanes in hot pink, bright cyan, sunshine yellow, mint green and cream across the ground, the {COLOUR.get(w['lane'], '')} lane brightest, bottle caps on the chalk, "
               f"eye-flowers dripping paint. NO letters, words, numbers, logos or writing anywhere.")
     label = {'heats': 'Heat', 'semis': 'Semi', 'final': 'The Final'}.get(rnd, rnd)
     title = f"{w['marbleName']} Takes {label}{'' if rnd == 'final' else ' ' + str(r['indexInRound'] + 1)}, Tournament {r['tournamentId']}"
     plan.append(dict(key=key, tournamentId=r['tournamentId'], raceKey=r['raceKey'], raceSeed=seed, trackSeed=r['trackSeed'], winner=w['marbleName'],
                      winnerId=w['marbleId'], lane=w['lane'], borough=boro, timeSec=w.get('timeSec'), finish=[x['marbleName'] for x in r['results']],
                      rider=rider['piece'], riderTitle=rider['title'], ref=rider['image'], title=title, prompt=prompt))
+# all.json: every finished race (the site publisher reads this); plan.json: only the ones still to paint
+json.dump(plan, open(os.path.join(H, 'all.json'), 'w'), indent=1, ensure_ascii=False)
+plan = [x for x in plan if x['key'] not in DONE and not os.path.exists(os.path.join(H, 'out', x['key'].replace(':', '_') + '.jpg'))]
 json.dump(plan, open(os.path.join(H, 'plan.json'), 'w'), indent=1, ensure_ascii=False)
 print(len(plan), 'races to paint; about $%.2f at $0.042' % (len(plan) * 0.042))

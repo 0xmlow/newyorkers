@@ -13,8 +13,9 @@ before anything ships.
 import json, os
 
 H = os.path.dirname(os.path.abspath(__file__))
-LANE = {"RED": ("red", "Brooklyn"), "BLUE": ("sky blue", "Manhattan"), "YELLOW": ("amber yellow", "Queens"),
-        "GREEN": ("green", "Staten Island"), "CREAM": ("cream and pearl", "The Bronx")}
+# lane colours in Bryan Brinkman's four (2026-10-09); brink/recolor.py finishes the match
+LANE = {"RED": ("hot pink", "Brooklyn"), "BLUE": ("bright cyan", "Manhattan"), "YELLOW": ("sunshine yellow", "Queens"),
+        "GREEN": ("mint green", "Staten Island"), "CREAM": ("cream and pearl", "The Bronx")}
 NO_TEXT = "ABSOLUTELY NO letters, words, numbers or writing anywhere in the image, no logos or brand marks."
 
 def main():
@@ -35,7 +36,7 @@ def main():
                  + (f"Title number {nth} for this marble. " if nth > 1 else "")
                  + f"Set in {boro}, low camera. The rider stands on the left third, mid thigh up, celebrating. "
                  f"A colossal glass marble swirled {colour}, taller than a person, sits in the world like a monument, the champion. "
-                 f"Chalked on the ground: five straight chalk lanes in red, blue, yellow, green and cream, the {win['lane'].lower()} lane brightest. "
+                 f"Chalked on the ground: five straight chalk lanes in hot pink, bright cyan, sunshine yellow, mint green and cream, the {colour} lane brightest. "
                  f"Eye-flowers bloom and drip, a blue evil eye somewhere in the scene. Monumental, cinematic, triumphant. {NO_TEXT}")
         queue.append({'tournamentId': h['tournamentId'], 'marble': h['champion']['name'], 'marbleId': mid, 'titleNumber': nth,
                       'lane': win['lane'], 'borough': boro, 'rider': r['piece'], 'riderTitle': r['title'], 'reference': r['image'],

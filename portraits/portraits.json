@@ -34,5 +34,53 @@
   "file": "T6_blaze_it_v1.jpg",
   "title": "Blaze It, Cooked All Night",
   "run": "run_m172z23ryrxfa95b0tb0fnna518fzavf"
+ },
+ {
+  "tournamentId": 7,
+  "file": "T7_espresso_k1.jpg",
+  "title": "Espresso, Pulled Perfect on the Stoop",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 8,
+  "file": "T8_relaxer_k2.jpg",
+  "title": "Relaxer Dances the Boardwalk",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 9,
+  "file": "T9_moon_god_k1.jpg",
+  "title": "Moon God Brings the Moon to the Bronx",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 10,
+  "file": "T10_mulligan_k1.jpg",
+  "title": "Mulligan Gets the Do Over",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 11,
+  "file": "T11_bonsai_k2.jpg",
+  "title": "Bonsai Waters the Win",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 12,
+  "file": "T12_lenticular_k1.jpg",
+  "title": "Lenticular Sees It Twice",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 13,
+  "file": "T13_blaze_it_k1.jpg",
+  "title": "Blaze It, Smoking Twice",
+  "run": "krea"
+ },
+ {
+  "tournamentId": 14,
+  "file": "T14_lindy_k1.jpg",
+  "title": "Lindy Swings the Pearl",
+  "run": "krea"
  }
 ]

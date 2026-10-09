@@ -1,1 +1,20 @@
-[]
+[
+ {
+  "tournamentId": 14,
+  "marble": "Lindy",
+  "marbleId": 37,
+  "titleNumber": 1,
+  "lane": "CREAM",
+  "borough": "The Bronx",
+  "rider": 1398,
+  "riderTitle": "The Savoy Lindy Hop",
+  "reference": "https://n3wyorkers.com/assets/t/he68a2aec82.jpg",
+  "masterSeed": "4dc719426b7e064370c6a72018ad7597c71d171d48b858021e64abe2082ab602",
+  "model": "is2i-gengateway-seedream-5-pro-is2i",
+  "params": {
+   "aspect_ratio": "16:9",
+   "resolution": "2k"
+  },
+  "prompt": "Paint a new scene in the exact painterly hand, palette and eye-flower motifs of the reference image, with the same character or place as the reference (The Savoy Lindy Hop). Set in The Bronx, low camera. The rider stands on the left third, mid thigh up, celebrating. A colossal glass marble swirled cream and pearl, taller than a person, sits in the world like a monument, the champion. Chalked on the ground: five straight chalk lanes in hot pink, bright cyan, sunshine yellow, mint green and cream, the cream and pearl lane brightest. Eye-flowers bloom and drip, a blue evil eye somewhere in the scene. Monumental, cinematic, triumphant. ABSOLUTELY NO letters, words, numbers or writing anywhere in the image, no logos or brand marks."
+ }
+]
