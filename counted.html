@@ -6,7 +6,7 @@
 <title>NEW YORKERS · Get Counted</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS · Get Counted">
-<meta property="og:description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, register for the claim, or nominate a New Yorker to be painted.">
+<meta property="og:description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, mint THE CENSUS RELEASE on OpenSea, or nominate a New Yorker to be painte">
 <meta property="og:image" content="https://n3wyorkers.com/assets/og/bodega-cat-97c0b9e222.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -14,12 +14,15 @@
 <meta property="og:image:alt" content="N3W YORKERS by MLow: a bodega cat in a vest and tie sitting on the counter beside the lottery tickets.">
 <meta name="twitter:image" content="https://n3wyorkers.com/assets/og/bodega-cat-97c0b9e222.jpg">
 <meta name="twitter:image:alt" content="N3W YORKERS by MLow: a bodega cat in a vest and tie sitting on the counter beside the lottery tickets.">
-<meta property="og:url" content="https://n3wyorkers.com/counted.html">
+<meta property="og:url" content="https://n3wyorkers.com/counted">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
-<meta name="description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, register for the claim, or nominate a New Yorker to be painted.">
-<meta name="theme-color" content="#0D0D0D">
+<meta name="description" content="GET COUNTED: six questions, no wallet, and the city assigns you the New Yorker it thinks you are. Download your Resident card, mint THE CENSUS RELEASE on OpenSea, or nominate a New Yorker to be painted.">
+<meta name="theme-color" content="#080D16">
+<link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -31,7 +34,7 @@
 #intro{position:relative;overflow:hidden;justify-content:flex-end}
 #intro .bg{position:absolute;inset:0}
 #intro .bg img{width:100%;height:100%;object-fit:cover;opacity:.5;animation:drift 16s ease-in-out infinite}
-#intro .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.6),rgba(13,13,13,.1) 40%,rgba(13,13,13,.95) 100%)}
+#intro .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,13,22,.6),rgba(8,13,22,.1) 40%,rgba(8,13,22,.95) 100%)}
 #intro .in{position:relative;padding:120px clamp(20px,5vw,72px) 72px}
 #intro .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--cyan)}
 #intro .btns{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap}
@@ -91,7 +94,7 @@
 .perm{display:grid;gap:12px;margin:22px 0 6px;padding:18px;border:1px solid var(--divider);background:var(--card)}
 .perm .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.24em;color:var(--blue);text-transform:uppercase}
 .chk{display:flex;gap:12px;align-items:flex-start;font-family:var(--serif);font-size:15px;line-height:1.45;color:var(--cloud);cursor:pointer}
-.chk input{width:auto;margin-top:4px;accent-color:#FF2E63;flex:none}
+.chk input{width:auto;margin-top:4px;accent-color:#DC6F57;flex:none}
 .chk.opt{color:var(--slate)}
 .terms{margin-top:40px;padding-top:24px;border-top:1px solid var(--divider)}
 .terms h3{font-size:20px;font-weight:800;margin-bottom:10px}
@@ -101,7 +104,7 @@
 </style>
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/counted">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, which New Yorker are you quiz, NYC personality quiz, nominate a New Yorker">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, which New Yorker are you quiz, NYC personality quiz, nominate a New Yorker">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
@@ -117,8 +120,8 @@
   <div class="in">
     <div class="eyebrow">THE NEW YORKERS CENSUS BUREAU</div>
     <h1 class="h-xl" style="margin-top:20px">THE CENSUS<br>IS OPEN</h1>
-    <p class="lede" style="margin-top:22px;max-width:760px">Six questions. No wallet. Leave with the New Yorker the city thinks you are.</p>
-    <div class="btns"><button class="btn" id="startBtn">GET COUNTED</button><button class="btn ghost" id="nomBtn">NOMINATE A NEW YORKER</button><a class="btn ghost" href="census.html#gallery">BROWSE THE RECORDS</a></div>
+    <p class="lede" style="margin-top:22px;max-width:760px">Six questions. No wallet. Leave with the New Yorker the city thinks you are, out of <span id="nPieces">7,542</span> painted so far. Then go and find them in the museum, on the atlas, or on OpenSea while THE CENSUS RELEASE is minting.</p>
+    <div class="btns"><button class="btn" id="startBtn">GET COUNTED</button><button class="btn ghost" id="nomBtn">NOMINATE A NEW YORKER</button><a class="btn ghost" href="census#gallery">BROWSE THE RECORDS</a></div>
     <div class="mono" style="font-size:11px;letter-spacing:.24em;color:var(--slate);margin-top:28px">FREE · WALLETLESS · TAKES ABOUT A MINUTE · <span id="poolLine"></span></div>
   </div>
 </section>
@@ -151,7 +154,8 @@
       <button class="btn ghost" id="shareBtn">COPY YOUR LINK</button>
       <a class="btn ghost" id="lookBtn" href="#">LOOK CLOSER</a>
       <a class="btn ghost" id="atlasBtn" href="#">ON THE ATLAS</a>
-      <button class="btn pink" id="keepBtn">KEEP YOUR NUMBER</button>
+      <a class="btn pink" href="https://opensea.io/collection/newyorkers/overview" target="_blank" rel="noopener">MINT ON OPENSEA</a>
+      <button class="btn ghost" id="keepBtn">KEEP YOUR NUMBER</button>
       <button class="btn ghost" id="againBtn">TAKE IT AGAIN</button>
       <button class="btn ghost" id="nomBtn2">NOMINATE SOMEONE</button>
     </div>
@@ -160,21 +164,21 @@
 
 <section id="save" class="screen">
   <div class="in">
-    <h2 class="h-m">Keep your number. Return when the city calls.</h2>
-    <p class="body" style="margin-top:12px;margin-bottom:26px">Register and your match is held in your name for THE CLAIM. No wallet needed today. THE CENSUS RELEASE is minting now on OpenSea and it is open to everyone, so there is no list to get on. Marketing consent is separate and optional.</p>
+    <h2 class="h-m">Keep your number. Hear first when the city calls.</h2>
+    <p class="body" style="margin-top:12px;margin-bottom:26px">Leave your name and your match stays on file with it. No wallet needed. THE CENSUS RELEASE is minting now on OpenSea until Friday October 23 at 11:11 AM ET, open to everyone, so there is no list to get on. Register here to hear first when the next release is announced. Marketing consent is separate and optional.</p>
     <form id="saveForm">
       <input type="hidden" name="match" id="matchField">
       <div class="field"><label>Name or alias</label><input name="name" required autocomplete="name" placeholder="Your name"></div>
       <div class="field"><label>Email</label><input name="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
       <div class="field"><label>X (Twitter) handle</label><input name="twitter" placeholder="@handle"></div>
       <div class="field"><label>Discord or Telegram</label><input name="messenger" placeholder="handle"></div>
-      <div class="field"><label>How many pieces would you like to claim?</label>
+      <div class="field"><label>How many New Yorkers would you like in the next release?</label>
         <select name="mint_count" required><option value="" disabled selected>Choose</option><option value="1">1</option><option value="2">2</option><option value="community">Get in touch with MLow: looking for a spot for my community</option></select></div>
       <div class="field"><label>Partner or community code (optional)</label><input name="partner_code" placeholder="if you were given one"></div>
       <div class="field" style="display:flex;gap:10px;align-items:center"><input type="checkbox" name="news" id="newsBox" style="width:auto"><label for="newsBox" style="margin:0;color:var(--slate)">Send me The Ledger, the weekly newsletter. Optional.</label></div>
-      <button class="btn pink" type="submit" id="saveSubmit" style="width:100%;margin-top:8px">REGISTER FOR THE CLAIM</button>
+      <button class="btn pink" type="submit" id="saveSubmit" style="width:100%;margin-top:8px">KEEP MY NUMBER</button>
     </form>
-    <div id="saveDone"><img src="assets/brand/eye_truecolor.png" style="width:44px;margin:0 auto" alt=""><div class="h-m" style="margin:14px 0 8px">You are seen.</div><p class="body">Registration received. The city has your name now, in the good way. Your Resident number is issued at the Census Office and by email once the count is posted.</p><p style="margin-top:20px"><a class="btn ghost" href="index.html">BACK TO THE CENSUS</a></p></div>
+    <div id="saveDone"><img src="assets/brand/eye_truecolor.png" style="width:44px;margin:0 auto" alt=""><div class="h-m" style="margin:14px 0 8px">You are seen.</div><p class="body">Registration received. The city has your name now, in the good way. You will hear first when the next release is announced.</p><p style="margin-top:20px"><a class="btn ghost" href="./">BACK TO THE CENSUS</a></p></div>
   </div>
 </section>
 
@@ -212,7 +216,7 @@
       <button class="btn pink" type="submit" id="nomSubmit" style="width:100%;margin-top:14px">SEND THE MEMORY</button>
       <p class="mono" style="font-size:10px;letter-spacing:.18em;color:var(--slate);margin-top:14px;line-height:1.7">YOU KEEP YOUR STORY. WE ASK ONLY FOR THE PERMISSIONS ABOVE. ANYTHING COMMERCIAL IS A SEPARATE WRITTEN AGREEMENT, NEVER A CHECKBOX.</p>
     </form>
-    <div id="nomDone"><img src="assets/brand/eye_truecolor.png" style="width:44px;margin:0 auto" alt=""><div class="h-m" style="margin:14px 0 8px">You are seen.</div><p class="body">The city has your memory. One story is chosen every Sunday and painted by Monday. If it is yours, the painting comes back to you first.</p><p style="margin-top:20px"><a class="btn ghost" href="census.html#gallery">BROWSE THE RECORDS</a> <button class="btn ghost" id="nomAgain" style="margin-left:8px">SEND ANOTHER</button></p></div>
+    <div id="nomDone"><img src="assets/brand/eye_truecolor.png" style="width:44px;margin:0 auto" alt=""><div class="h-m" style="margin:14px 0 8px">You are seen.</div><p class="body">The city has your memory. One story is chosen every Sunday and painted by Monday. If it is yours, the painting comes back to you first.</p><p style="margin-top:20px"><a class="btn ghost" href="census#gallery">BROWSE THE RECORDS</a> <button class="btn ghost" id="nomAgain" style="margin-left:8px">SEND ANOTHER</button></p></div>
     <div class="terms">
       <h3>How a memory is chosen</h3>
       <p>One nomination is picked every Sunday. The New Yorker in it is painted on Monday and posted Tuesday at 11:11 AM with the nominator credited by alias. The subject is never tagged and never named beyond what you wrote.</p>
@@ -232,7 +236,7 @@
 (function(){
 "use strict";
 const {C,S,P,CFG,fmt,thumb,get,era,num,sample,recordUrl,esc,toast}=NY;
-NY.nav("GET COUNTED"); NY.foot();
+NY.nav("GET COUNTED"); NY.foot(); { const np=document.getElementById("nPieces"); if(np&&C.pieces) np.textContent=num(C.pieces); }
 const $=s=>document.querySelector(s);
 const show=id=>{document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo({top:0});};
 /* the eligible pool: original characters only (eras II onward), never a cut, with a story where possible */
@@ -297,8 +301,8 @@ function renderResult(m){
   $("#resName").textContent=p.t; $("#resStory").textContent=p.story||"";
   const first=(p.story||"").split(". ")[0];
   $("#resSocial").textContent=`The city checked its notes and found you at number ${p.n}. ${first? first+".":""} Get counted at ${CFG.domain||"mlow.nyc"}`;
-  $("#resGrid").innerHTML=[["FAMILY",p.f||e.title],["BOROUGH AFFINITY",boro+" (not proof of residence)"],["TIME BAND",m.band],["SET",p.set||"None"],["STATES",p.st.length>1?p.st.length+" finished states":"Appends over time"],["STANDARD","ERC-7160 dynamic"]].map(([k,v])=>`<div>${k}<br><b>${esc(v)}</b></div>`).join("");
-  $("#lookBtn").href=recordUrl(p); $("#atlasBtn").href="map.html#p="+p.id;
+  $("#resGrid").innerHTML=[["FAMILY",p.f||e.title],["BOROUGH AFFINITY",boro+" (not proof of residence)"],["TIME BAND",m.band],["SET",p.set||"None"],["STATES",p.st.length>1?p.st.length+" finished states":"Appends over time"],["STANDARD","ERC-721, dynamic by metadata"]].map(([k,v])=>`<div>${k}<br><b>${esc(v)}</b></div>`).join("");
+  $("#lookBtn").href=recordUrl(p); $("#atlasBtn").href="map#p="+p.id;
   $("#matchField").value=`${fmt(p)} · ${p.t} · ${p.f||e.title} · ${m.band}`;
   try{history.replaceState(null,"",location.pathname+"?n="+p.id);}catch(err){}
 }
@@ -312,17 +316,17 @@ $("#nomBtn2").onclick=()=>show("nominate");
 $("#cardBtn").onclick=async()=>{
   if(!current)return; const p=current.p, e=era(p);
   const cv=$("#cardCanvas"), cx=cv.getContext("2d");
-  cx.fillStyle="#0D0D0D"; cx.fillRect(0,0,1080,1920);
-  await new Promise(res=>{const im=new Image(); im.onload=()=>{const ar=im.width/im.height; const w=1080, h=w/ar; cx.drawImage(im,0,300,w,h); const g=cx.createLinearGradient(0,300+h-260,0,300+h); g.addColorStop(0,"rgba(13,13,13,0)"); g.addColorStop(1,"rgba(13,13,13,1)"); cx.fillStyle=g; cx.fillRect(0,300+h-260,1080,260); res();}; im.onerror=res; im.src=thumb(p);});
-  cx.fillStyle="#00E5FF"; cx.font="600 26px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("CENSUS MATCH FOUND",72,140);
-  cx.fillStyle="#8899AA"; cx.font="26px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("BUREAU OF THE SOFT CENSUS · NEW YORKERS BY MLOW",72,190);
-  cx.fillStyle="#F0F4F8"; cx.font="800 84px 'Fraunces', Georgia, serif"; wrap(cx,p.t,72,1100,936,92);
-  cx.fillStyle="#00E5FF"; cx.font="600 34px 'IBM Plex Mono', Menlo, monospace"; cx.fillText(fmt(p)+"  ·  ERA "+e.roman,72,1290);
-  cx.fillStyle="#F0F4F8"; cx.font="italic 38px 'Fraunces', Georgia, serif"; wrap(cx,$("#resId").textContent,72,1370,936,50);
-  cx.fillStyle="#8899AA"; cx.font="italic 30px 'Fraunces', Georgia, serif"; wrap(cx,p.story||"",72,1500,936,42);
-  cx.fillStyle="#2962FF"; cx.fillRect(72,1740,200,6);
-  cx.fillStyle="#F0F4F8"; cx.font="600 30px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("GET COUNTED · "+(CFG.domain||"MLOW.NYC"),72,1810);
-  cx.fillStyle="#8899AA"; cx.font="22px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT",72,1860);
+  cx.fillStyle="#080D16"; cx.fillRect(0,0,1080,1920);
+  await new Promise(res=>{const im=new Image(); im.onload=()=>{const ar=im.width/im.height; const w=1080, h=w/ar; cx.drawImage(im,0,300,w,h); const g=cx.createLinearGradient(0,300+h-260,0,300+h); g.addColorStop(0,"rgba(8,13,22,0)"); g.addColorStop(1,"rgba(8,13,22,1)"); cx.fillStyle=g; cx.fillRect(0,300+h-260,1080,260); res();}; im.onerror=res; im.src=thumb(p);});
+  cx.fillStyle="#61C9E2"; cx.font="600 26px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("CENSUS MATCH FOUND",72,140);
+  cx.fillStyle="#8FA7AB"; cx.font="26px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("BUREAU OF THE SOFT CENSUS · NEW YORKERS BY MLOW",72,190);
+  cx.fillStyle="#ECE8DD"; cx.font="800 84px 'Fraunces', Georgia, serif"; wrap(cx,p.t,72,1100,936,92);
+  cx.fillStyle="#61C9E2"; cx.font="600 34px 'IBM Plex Mono', Menlo, monospace"; cx.fillText(fmt(p)+"  ·  ERA "+e.roman,72,1290);
+  cx.fillStyle="#ECE8DD"; cx.font="italic 38px 'Fraunces', Georgia, serif"; wrap(cx,$("#resId").textContent,72,1370,936,50);
+  cx.fillStyle="#8FA7AB"; cx.font="italic 30px 'Fraunces', Georgia, serif"; wrap(cx,p.story||"",72,1500,936,42);
+  cx.fillStyle="#4692C2"; cx.fillRect(72,1740,200,6);
+  cx.fillStyle="#ECE8DD"; cx.font="600 30px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("GET COUNTED · "+(CFG.domain||"MLOW.NYC"),72,1810);
+  cx.fillStyle="#8FA7AB"; cx.font="22px 'IBM Plex Mono', Menlo, monospace"; cx.fillText("ART, NOT AN INVESTMENT",72,1860);
   const a=document.createElement("a"); a.download=`new-yorkers-${p.n}.png`; a.href=cv.toDataURL("image/png"); a.click(); toast("Card saved. Post it, tag @degens");
 };
 function wrap(cx,text,x,y,maxW,lh){ const words=String(text).split(" "); let line=""; for(const w of words){const t=line?line+" "+w:w; if(cx.measureText(t).width>maxW&&line){cx.fillText(line,x,y);y+=lh;line=w;}else line=t;} if(line)cx.fillText(line,x,y); return y; }
@@ -342,7 +346,7 @@ $("#saveForm").addEventListener("submit",async e=>{
     if(j.ok){done();return;}
     throw new Error(j.error||"rejected");
   }catch(err){
-    btn.disabled=false; btn.textContent="REGISTER FOR THE CLAIM";
+    btn.disabled=false; btn.textContent="KEEP MY NUMBER";
     toast(err && err.message==="too many, slow down" ? "Too many submissions from here. Wait ten minutes." : "Could not reach the form. Try again, or message @degens on X.");
     return;
   }

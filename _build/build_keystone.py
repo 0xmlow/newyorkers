@@ -15,8 +15,14 @@ Three.js. This script turns that file into a page of the census site:
 
 To take a new design drop: copy the new index.html over _build/keystone/src.html and rerun.
 Run before build_seo.py; part of build_all.sh.
+
+ON CHAIN (2026-10-07): a static, crawlable panel beside the canvas lists what the Keystone contract
+actually holds, read from _build/collectors/chain.json (collectors/fetch_chain.py): every minted token,
+its name, its holder, an OpenSea link each, and the mint link on Transient Labs. The same data goes to
+api/keystone.json. The panel is plain HTML in the page (open by default without JavaScript, a button in
+the HUD with it), so the words Transient and the mint URL are in the source, not injected.
 """
-import json, os, re, shutil, sys
+import json, os, re, shutil, sys, datetime, collections
 from page_shell import cfg, esc
 
 HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
@@ -92,6 +98,103 @@ for p in k:
     p["st"] = st_
     for key in ("gl", "k", "v"): p.pop(key, None)
 
+# ---------- on chain ----------
+CONTRACT = "0x2dbfcca230979a91863be63ebce55dd5aae2b5c9"
+MINT_URL = "https://transient.xyz/mint/newyorkers"
+ZERO = "0x" + "0" * 40
+ET = datetime.timezone(datetime.timedelta(hours=-4))   # EDT through 1 November
+CH = json.load(open(os.path.join(HERE, "collectors", "chain.json")))
+ENS = {a.lower(): n for a, n in CH.get("ens", {}).items()}
+KM = CH.get("keystone_meta", {})
+owner, minted_at = {}, {}
+for lg in sorted(CH["logs"], key=lambda l: (l["b"], l["i"])):
+    if lg["c"] != "keystone": continue
+    owner[lg["id"]] = lg["to"]
+    if lg["from"] == ZERO: minted_at[lg["id"]] = lg["t"]
+on_chain = sorted(i for i, a in owner.items() if a != ZERO)
+holders = sorted({owner[i] for i in on_chain})
+short = lambda a: a[:6] + "\u2026" + a[-4:]
+def holder_name(a): return ENS.get(a.lower()) or short(a)
+def kthumb(i, name):
+    """a same origin thumbnail: the census thumb when the name carries a census number, else the token's own image fetched by build_collectors.py"""
+    n = int(name.rsplit("#", 1)[1]) if "#" in name and name.rsplit("#", 1)[1].isdigit() else None
+    p = byn.get(n) if n else None
+    if p and p.get("st"): return f"assets/t/{p['st'][0]}.jpg"
+    rel = f"assets/collectors/k{i}.jpg"
+    return rel if os.path.exists(os.path.join(SITE, rel)) else None
+# the first tokens on the contract were minted before the Keystone release (the kit's first token, The Bodega
+# Matriarch, went on chain September 19, 2026) and were folded into it: ten in June and July, one on September 6
+pre = [i for i in on_chain if minted_at.get(i, 0) < datetime.datetime(2026, 9, 15, tzinfo=ET).timestamp()]
+pre_from = datetime.datetime.fromtimestamp(min(minted_at[i] for i in pre), ET).strftime("%B %-d") if pre else ""
+pre_to = datetime.datetime.fromtimestamp(max(minted_at[i] for i in pre), ET).strftime("%B %-d, %Y") if pre else ""
+asof = datetime.datetime.fromtimestamp(CH["fetched"], ET).strftime("%B %-d, %Y at %-I:%M %p ET")
+tokens = []
+for i in on_chain:
+    name = (KM.get(str(i)) or {}).get("name") or f"Keystone #{i}"
+    tokens.append({"id": i, "name": name, "holder": owner[i], "holderName": holder_name(owner[i]), "th": kthumb(i, name),
+                   "opensea": f"https://opensea.io/assets/ethereum/{CONTRACT}/{i}",
+                   "mintedAt": datetime.datetime.fromtimestamp(minted_at[i], ET).isoformat() if i in minted_at else None})
+os.makedirs(os.path.join(SITE, "api"), exist_ok=True)
+json.dump({"asOf": asof, "block": CH["to"], "contract": CONTRACT, "chain": "Ethereum", "standard": "ERC-7160TL",
+           "painted": len(k), "paintedNote": "111 and counting: KEYSTONE is open ended and grows as new Keystone New Yorkers are painted.",
+           "onChain": len(on_chain), "holders": len(holders), "price": "0.069 ETH", "mint": MINT_URL,
+           "foldedIn": {"count": len(pre), "from": pre_from, "to": pre_to, "note": "Minted on the contract before the Keystone release and folded into it. Token ids are mint order."},
+           "tokens": [{k_: v for k_, v in t.items() if k_ != "th"} for t in tokens]},
+          open(os.path.join(SITE, "api", "keystone.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+def tok_li(t):
+    img = f'<img src="{t["th"]}" alt="" loading="lazy">' if t["th"] else '<span class="ph" aria-hidden="true"></span>'
+    return (f'<li><a href="{t["opensea"]}" target="_blank" rel="noopener">{img}<div><b>{esc(t["name"])}</b><i>held by {esc(t["holderName"])}</i></div>'
+            f'<span>#{t["id"]}</span></a></li>')
+ONCHAIN_HTML = f"""
+<section id="onchain" class="open" tabindex="-1" aria-label="Keystone on chain">
+  <button class="close" id="chainx" type="button" aria-label="Close">×</button>
+  <div class="eyebrow">Keystone · Ethereum · ERC-7160</div>
+  <h2>ON CHAIN</h2>
+  <p class="big"><b>{len(k)} painted and counting.</b> <b>{len(on_chain)} on chain.</b> <b>{len(holders)} holders.</b></p>
+  <p class="note">Read off Ethereum on {esc(asof)}, block {CH["to"]:,}. Contract <a href="https://etherscan.io/address/{CONTRACT}" target="_blank" rel="noopener">{CONTRACT[:6]}\u2026{CONTRACT[-4:]}</a> on Transient Labs, 0.069 ETH each, one price and no ladder. Token ids are mint order; {len(pre)} were minted before the Keystone release, {esc(pre_from)} to {esc(pre_to)}, and were folded in. Raw data at <a href="api/keystone.json">api/keystone.json</a>.</p>
+  <a class="mintk" href="{MINT_URL}" target="_blank" rel="noopener">Mint a Keystone on Transient</a>
+  <h3>The {len(on_chain)} minted</h3>
+  <ol>{"".join(tok_li(t) for t in tokens)}</ol>
+</section>
+"""
+ONCHAIN_CSS = """
+  /* ON CHAIN: the ledger of what is minted, plain HTML beside the canvas. Open when there is no script; a HUD button otherwise */
+  #onchain{position:fixed;z-index:7;top:0;right:0;bottom:0;width:min(460px,100vw);background:var(--scrim);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-left:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 24px) 24px calc(env(safe-area-inset-bottom,0px) + 96px);overflow:auto;-webkit-overflow-scrolling:touch;outline:none;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+  .js #onchain:not(.open){transform:translateX(104%);pointer-events:none}
+  #onchain .close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:1px solid transparent;background:transparent;color:var(--slate);font:16px/1 var(--mono);cursor:pointer}
+  #onchain .close:hover{color:var(--cloud);border-color:var(--line)}
+  #onchain .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);padding-right:36px}
+  #onchain h2{font-family:var(--display);font-weight:300;font-size:clamp(26px,3vw,34px);line-height:1.05;margin:10px 0 14px}
+  #onchain .big{font-family:var(--display);font-weight:300;font-size:17px;line-height:1.5;margin:0 0 10px;color:var(--cloud)}
+  #onchain .big b{font-weight:500;color:#ECC981}
+  #onchain .note{font-family:var(--mono);font-size:11px;line-height:1.7;letter-spacing:.04em;color:var(--slate);margin:0 0 18px}
+  #onchain .note a{color:var(--cloud)}
+  #onchain .mintk{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;background:#ECC981;color:#080D16;border:1px solid #ECC981;border-radius:999px;padding:13px 22px;text-decoration:none;margin:0 0 24px}
+  #onchain .mintk:hover{background:var(--cloud);border-color:var(--cloud)}
+  #onchain .mintk:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  #onchain h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);font-weight:500;margin:0 0 6px;border-top:1px solid var(--line);padding-top:16px}
+  #onchain ol{list-style:none;margin:0;padding:0}
+  #onchain li a{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);color:var(--cloud);text-decoration:none}
+  #onchain li a:hover b{color:var(--blue-soft)}
+  #onchain li img,#onchain li .ph{width:44px;height:44px;border-radius:6px;object-fit:cover;background:var(--drum);display:block}
+  #onchain li b{display:block;font-family:var(--display);font-weight:400;font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #onchain li i{display:block;font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #onchain li span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate);white-space:nowrap}
+  @media (max-width:720px){#onchain{width:100vw;border-left:0}}
+"""
+ONCHAIN_JS = """<script>
+(function(){
+  var p=document.getElementById('onchain'), b=document.getElementById('chainb'), x=document.getElementById('chainx');
+  if(!p||!b||!x) return;
+  function set(o){ p.classList.toggle('open',o); p.setAttribute('aria-hidden',o?'false':'true'); b.setAttribute('aria-expanded',o?'true':'false'); b.classList.toggle('on',o); if(o) p.focus(); }
+  set(location.hash==='#onchain');
+  b.addEventListener('click',function(){ set(!p.classList.contains('open')); });
+  x.addEventListener('click',function(){ set(false); b.focus(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&p.classList.contains('open')) set(false); });
+})();
+</script>"""
+print(f"  on chain: {len(on_chain)} Keystone tokens, {len(holders)} holders, {len(pre)} folded in, read {asof}")
+
 # ---------- rewrite the page ----------
 s = s.replace(m.group(1), json.dumps(k, ensure_ascii=False, separators=(",", ":")), 1)
 subs = [
@@ -124,7 +227,7 @@ subs = [
     ("  #card .chip.live{border-color:var(--blue);color:var(--blue-soft)}\n",
      "  #card .chip.live{border-color:var(--blue);color:var(--blue-soft)}\n"
      "  #card button.chip{background:transparent;cursor:pointer}\n"
-     "  #card button.chip:hover{background:rgba(41,98,255,.14)}\n"
+     "  #card button.chip:hover{background:rgba(70,146,194,.14)}\n"
      "  #card button.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}\n"
      "  #card button.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}\n"
      "  #card .statelbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:-8px 0 16px;min-height:14px}\n"
@@ -283,6 +386,16 @@ var KS = {f:null, x:function(){
     }).catch(function(){ msg.textContent = 'COULD NOT SAVE, TRY AGAIN'; }).then(function(){ btn.disabled = false; });
   });
 })();""".replace("__URL__", URL)))
+subs += [
+    ("  @media (prefers-reduced-motion:reduce){\n    #card{transition:none}\n  }\n</style>",
+     "  @media (prefers-reduced-motion:reduce){\n    #card{transition:none}\n  }\n" + ONCHAIN_CSS + "</style>"),
+    # with script the panel starts closed; without it the ledger simply stands beside the canvas
+    ('<body>\n\n<div class="scrim top"></div>', '<body>\n<script>document.documentElement.className+=" js";</script>\n<div class="scrim top"></div>'),
+    ('<button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button></div>',
+     f'<button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button><button class="btn" id="chainb" type="button" aria-expanded="false" aria-controls="onchain">On chain: {len(on_chain)} of {len(k)}</button></div>'),
+    ('<aside id="card" aria-live="polite" aria-label="Selected piece">', ONCHAIN_HTML + '\n<aside id="card" aria-live="polite" aria-label="Selected piece">'),
+    ("\n</body>", "\n" + ONCHAIN_JS + "\n</body>"),
+]
 for old, new in subs:
     if s.count(old) != 1: raise SystemExit(f"keystone: expected exactly one match for {old[:60]!r}, found {s.count(old)}. The design changed; update build_keystone.py")
     s = s.replace(old, new, 1)
@@ -297,7 +410,7 @@ head = "\n".join([
     f'<meta property="og:url" content="{URL}/keystone">',
     '<meta name="twitter:card" content="summary_large_image">',
     '<meta name="twitter:site" content="@degens">',
-    '<meta name="theme-color" content="#0D0D0D">',
+    '<meta name="theme-color" content="#080D16">',
     '<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">',
     '<link rel="apple-touch-icon" href="assets/brand/eye_truecolor.png">',
 ])
@@ -306,4 +419,4 @@ s = re.sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name=
 s = s.replace("__IMGV__", open(os.path.join(IMG_DST, ".v")).read().strip())
 out = os.path.join(SITE, "keystone.html")
 open(out, "w", encoding="utf-8").write(s)
-print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 3} images and {sum(len(p['st']) for p in k)} states in assets/keystone, {os.path.getsize(out) // 1024} KB")
+print(f"keystone.html: {len(k)} pieces on the ramp, {len(k) * 3} images and {sum(len(p['st']) for p in k)} states in assets/keystone, {os.path.getsize(out) // 1024} KB; api/keystone.json written")

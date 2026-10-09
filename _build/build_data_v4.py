@@ -386,7 +386,7 @@ if __name__ == "__main__":
     else:
         for old in glob.glob(os.path.join(ATLAS_DIR, "d*.jpg")): os.remove(old)
         for a in range(n_atlas):
-            sheet = Image.new("RGB", (TILE*GRID,)*2, (13,13,13))
+            sheet = Image.new("RGB", (TILE*GRID,)*2, (8,13,22))
             for i in range(PER):
                 gi = a*PER+i
                 if gi >= len(kept): break
@@ -407,7 +407,7 @@ if __name__ == "__main__":
     os.makedirs(STICKER_DIR, exist_ok=True)
     PIN_IDS = ["767","1467","1477","1000","1800","2000","2103","942","1866","550","1500","2266",
                "2300","3000","3100","3500","4000","4400","4850","5000","5466","5491","6490","6491","6990","6991","7490","7491","7990"]
-    def pin(src, dst, size=420, ring=(41,98,255)):
+    def pin(src, dst, size=420, ring=(70,146,194)):
         im=Image.open(src).convert("RGB")
         a=np.asarray(im,dtype=np.float32)/255.0
         sat=a.max(axis=2)-a.min(axis=2); score=sat*a.max(axis=2)

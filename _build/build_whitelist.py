@@ -15,7 +15,7 @@ body = f"""
 <section class="wrap" style="padding-top:64px;padding-bottom:12px">
   <div class="kicker">The allowlist</div>
   <h1 class="h-xl" style="margin-top:14px;max-width:1000px">Put your name down.</h1>
-  <p class="lede" style="margin-top:20px;max-width:840px;color:var(--slate)">THE CENSUS RELEASE is 6,666 works on OpenSea. This is how you get on the list for it. Nothing here charges you, and nothing here is a guarantee of a spot.</p>
+  <p class="lede" style="margin-top:20px;max-width:840px;color:var(--slate)">THE CENSUS RELEASE is 1,111 works on OpenSea. This is how you get on the list for it. Nothing here charges you, and nothing here is a guarantee of a spot.</p>
   <div class="reqs">
     <div class="kicker" style="font-size:10px;color:var(--acid)">What a wallet needs</div>
     <ul>
@@ -92,7 +92,7 @@ body = f"""
 extra_css = """
 .reqs{background:var(--card);border:1px solid var(--divider);border-left:3px solid var(--acid);border-radius:12px;padding:22px 26px;margin-top:26px;max-width:760px}
 .reqs ul{margin:12px 0 0;padding-left:20px}
-.reqs li{font-family:var(--sans);font-size:15.5px;line-height:1.7;color:#c9d2dc}
+.reqs li{font-family:var(--sans);font-size:15.5px;line-height:1.7;color:#CFD3CC}
 .reqs .fine{font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--slate);margin-top:14px;border-top:1px solid var(--divider);padding-top:12px}
 .wlform{max-width:760px;display:flex;flex-direction:column;gap:18px;margin-top:34px}
 .wlform label{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);position:relative}
@@ -108,7 +108,7 @@ extra_css = """
 .wlform fieldset{border:1px solid var(--divider);border-radius:10px;padding:16px 18px}
 .wlform legend{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);padding:0 8px}
 .radios{display:flex;gap:22px;flex-wrap:wrap}
-.wlform .r,.wlform .chk{flex-direction:row;align-items:flex-start;gap:10px;font-family:var(--sans);font-size:15px;letter-spacing:0;text-transform:none;color:#c9d2dc;line-height:1.5}
+.wlform .r,.wlform .chk{flex-direction:row;align-items:flex-start;gap:10px;font-family:var(--sans);font-size:15px;letter-spacing:0;text-transform:none;color:#CFD3CC;line-height:1.5}
 .wlform .r input,.wlform .chk input{width:auto;margin-top:3px}
 .formmsg{font-family:var(--sans);font-size:14px;color:var(--pink);min-height:20px;letter-spacing:0}
 .done{max-width:760px;margin-top:34px;background:var(--card);border:1px solid var(--divider);border-radius:14px;padding:34px}
@@ -157,7 +157,7 @@ script = """
      // The roll credits referrals by a hash code of the wallet, so the link matches the one the roll page gives.
      var w=(data.get('wallet')||'').toString().trim().toLowerCase();
      if(window.crypto&&crypto.subtle&&w){ fetch('/api/roll.json?t='+Math.floor(Date.now()/6e5)).then(function(r){return r.json()}).then(function(j){ return crypto.subtle.digest('SHA-256',new TextEncoder().encode(w+(j.salt||'the-roll'))); }).then(function(b){ var h=Array.from(new Uint8Array(b)).map(function(x){return (x<16?'0':'')+x.toString(16)}).join(''); link=base+'?ref='+h.slice(0,10); $('#refLink').value=link; }).catch(function(){}); }
-     NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'A painted census of New York City. 7,541 New Yorkers, a walkable museum of 111 rooms, and a release coming.',url:link});
+     NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'A painted census of New York City, a walkable museum of the whole town, and THE CENSUS RELEASE minting now.',url:link});
      $('#refLink').onclick=function(){ this.select(); document.execCommand&&document.execCommand('copy'); NY.toast('Link copied.'); };
    }).catch(function(e){
      btn.disabled=false; btn.textContent='PUT ME ON THE LIST';
@@ -170,7 +170,7 @@ script = """
 </script>"""
 
 page = shell(title="The allowlist · NEW YORKERS by MLow",
-             description="Put your name down for THE CENSUS RELEASE, 6,666 works on OpenSea. Wallet requirements, mint count, and how the referral share works.",
+             description="Put your name down for THE CENSUS RELEASE, 1,111 works on OpenSea. Wallet requirements, mint count, and how the referral share works.",
              body=body, path="whitelist.html", active=None,
              keywords=["NEW YORKERS allowlist", "NFT whitelist", "MLow mint", "census release allowlist"],
              extra_css=extra_css, scripts_after=script)

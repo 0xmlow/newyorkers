@@ -214,7 +214,7 @@ if __name__ == "__main__":
     for a in range(n_atlas):
         out = os.path.join(ATLAS_DIR, f"c{a}.jpg")
         if os.path.exists(out): print("atlas exists", out); continue
-        sheet = Image.new("RGB", (TILE*GRID,)*2, (13,13,13))
+        sheet = Image.new("RGB", (TILE*GRID,)*2, (8,13,22))
         for i in range(PER):
             gi = a*PER+i
             if gi >= len(kept): break
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     # ---------- sticker pins ----------
     os.makedirs(STICKER_DIR, exist_ok=True)
     PIN_IDS = ["767","1467","1477","1000","1800","2000","2103","942","1866","550","1500","2266"]
-    def pin(src, dst, size=420, ring=(41,98,255)):
+    def pin(src, dst, size=420, ring=(70,146,194)):
         im=Image.open(src).convert("RGB")
         a=np.asarray(im,dtype=np.float32)/255.0
         sat=a.max(axis=2)-a.min(axis=2); score=sat*a.max(axis=2)

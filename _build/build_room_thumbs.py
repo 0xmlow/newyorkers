@@ -33,8 +33,8 @@ for r in rooms:
             # came with canvas renders): keep it rather than flattening it to a colour card
             continue
         else:
-            im = Image.new("RGB", (w, w * 9 // 16), r["color"] or "#141820")
-            d = ImageDraw.Draw(im); d.rectangle((0, 0, w, w * 9 // 16), outline="#0D0D0D", width=4)
+            im = Image.new("RGB", (w, w * 9 // 16), r["color"] or "#0F1A26")
+            d = ImageDraw.Draw(im); d.rectangle((0, 0, w, w * 9 // 16), outline="#080D16", width=4)
             if w == 640: flat.append(r["id"])
         im.save(dst, "JPEG", quality=82, optimize=True, progressive=True)
     made += 1

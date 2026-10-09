@@ -23,7 +23,7 @@
   border-radius: var(--r); padding: 16px 24px;
   font: 500 14px/1.4 var(--sans); cursor: pointer; transition: background .2s var(--ease), border-color .2s var(--ease);
 }
-.primary:hover, .fly-btn:hover { background: #1B4FD8; color: #fff; }
+.primary:hover, .fly-btn:hover { background: #3A7FAE; color: #fff; }
 .fly-btn.ghost { background: transparent; color: var(--cloud); border-color: var(--divider); }
 .fly-btn.ghost:hover { background: var(--card); border-color: var(--slate); color: var(--cloud); }
 .text-link {
@@ -120,6 +120,13 @@
 .fly-where { font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--slate); }
 .fly-fine { margin-top: 20px; font: 12px var(--sans); }
 .fly-fine a { color: var(--cyan); text-decoration: underline; text-underline-offset: 4px; }
+/* the result leads to the chain (flywheel.js reads api/minted.json): lime for the mint or the offer */
+.fly-btn.mint { background: var(--acid); color: var(--ink); border-color: var(--acid); }
+.fly-btn.mint:hover { background: #F2D99A; border-color: #F2D99A; color: var(--ink); }
+.fly-mint { display: contents; }
+.fly-mint:empty { display: none; }
+.fly-mint-line { margin-top: 12px; font: 12px/1.5 var(--sans); color: var(--slate); }
+.fly-mint-line:empty { display: none; }
 
 /* ---------- a few faces ---------- */
 .art-selection { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 24px; }
@@ -255,11 +262,11 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .home-film .player { position: relative; }
 .home-film video { display: block; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--r2); border: 1px solid var(--divider); }
 .home-film .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 16px;
-  padding: 16px 26px 16px 18px; border: 0; border-radius: 999px; background: rgba(13,13,13,.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  color: var(--cloud); cursor: pointer; font: 500 14px var(--mono); letter-spacing: .16em; box-shadow: 0 0 0 1px rgba(240,244,248,.18); }
-.home-film .play:hover { background: rgba(13,13,13,.92); box-shadow: 0 0 0 2px var(--cyan); }
+  padding: 16px 26px 16px 18px; border: 0; border-radius: 999px; background: rgba(8,13,22,.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: var(--cloud); cursor: pointer; font: 500 14px var(--mono); letter-spacing: .16em; box-shadow: 0 0 0 1px rgba(236,232,221,.18); }
+.home-film .play:hover { background: rgba(8,13,22,.92); box-shadow: 0 0 0 2px var(--cyan); }
 .home-film .play i { width: 52px; height: 52px; border-radius: 50%; background: var(--cyan); position: relative; flex: none; }
-.home-film .play i:after { content: ""; position: absolute; left: 21px; top: 16px; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent #0D0D0D; }
+.home-film .play i:after { content: ""; position: absolute; left: 21px; top: 16px; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent #080D16; }
 .home-film .play b { color: var(--cyan); font-weight: 600; margin-left: 6px; }
 .home-film .play span { white-space: nowrap; }
 .home-film .play[hidden] { display: none; }
@@ -270,4 +277,180 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .home-film .play span { display: none; }
   .home-film .play i { width: 68px; height: 68px; box-shadow: 0 6px 24px rgba(0,0,0,.5); }
   .home-film .play i:after { left: 27px; top: 22px; border-width: 12px 0 12px 19px; }
+}
+
+/* the New Yorker of the day and welcome back (2026-10-06) */
+/* p.welcome-back, renamed 2026-10-09: as .welcome it also restyled the hero section, which shares the class */
+.welcome-back { font: 14px/1.6 var(--sans); color: var(--slate); margin-top: 18px; }
+.welcome-back[hidden] { display: none; }
+.welcome-back a { color: var(--cyan); }
+.today { padding: 72px 6vw 24px; }
+.today[hidden] { display: none; }
+.today-card { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
+.today-card img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 14px; border: 1px solid var(--divider); }
+.today-card small { font: 11px var(--mono); letter-spacing: .14em; color: var(--slate); }
+.today-card p { font: 17px/1.65 var(--sans); color: #CFD3CC; margin: 14px 0; }
+.today-card .next { font: 12px var(--mono); letter-spacing: .08em; color: var(--acid); }
+@media (max-width: 860px) { .today { padding: 52px 6vw 12px; } .today-card { grid-template-columns: 1fr; gap: 20px; } }
+
+/* NEW ON THE SITE cards carry a picture (assets/home/now-*.jpg, _build/build_home_now.py) */
+.now-on a img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; border: 1px solid var(--divider); margin-bottom: 18px; transition: transform .3s var(--ease); }
+.now-on a:hover img { transform: translateY(-4px); }
+.now-on h3 { margin-top: 12px; }
+
+/* ==========================================================================
+   STREET KIT on the front door (2026-10-09). Each section is a New York surface:
+   the hero is a Lower East Side brick wall at night with the First Eye Flower
+   wheatpasted on it, the quiz sits on dark subway tile under a mosaic plaque,
+   NEW ON THE SITE hangs under a bodega awning, the museum invite is on brick,
+   the hunt is chalk on asphalt. Eyebrows are MTA line bullets (data-l, --lc).
+   Plates and sprites: assets/ui, from SITE DESIGN KIT 2026-10-09/process_kit.py.
+   ========================================================================== */
+
+/* the house grain, front door only */
+.home-edit::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* eyebrows become line bullets: <p class="eyebrow" data-l="7" style="--lc:var(--l7)"> */
+.eyebrow[data-l]{display:inline-flex;align-items:center;gap:12px;color:var(--cloud)}
+.eyebrow[data-l]::before{content:attr(data-l);display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;border-radius:50%;background:var(--lc,var(--l1));color:#fff;font:700 15px/1 var(--bullet);letter-spacing:0}
+.eyebrow[data-l].dk::before{color:#111}
+
+/* buttons: enamel stickers */
+.text-link{text-decoration-thickness:2px}
+.text-link:hover{text-decoration-color:var(--lN);color:var(--cloud)}
+
+/* ---------- the hero: a brick wall on a side street, the First Eye Flower pasted on it ---------- */
+.welcome{position:relative;isolation:isolate;overflow:hidden;overflow:clip;min-height:min(92vh,880px)}
+.welcome::before{content:"";position:absolute;inset:0;z-index:-2;background:url(ui/hero.webp) 70% 50%/cover no-repeat;animation:heroDrift 26s ease-in-out infinite alternate}
+.welcome::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(8,13,22,.94) 0,rgba(8,13,22,.78) 34%,rgba(8,13,22,.18) 64%,rgba(8,13,22,.05)),linear-gradient(180deg,rgba(8,13,22,.4),transparent 22%,transparent 72%,var(--ink))}
+@keyframes heroDrift{from{transform:scale(1.02)}to{transform:scale(1.08) translate(-1%,-1%)}}
+.welcome h1{text-shadow:0 6px 40px rgba(0,0,0,.6)}
+.welcome h1 em{position:relative;display:inline-block}
+.welcome h1 em::after{content:"";position:absolute;right:-.62em;top:-.18em;width:.62em;height:.62em;background:url(ui/pin.png) center/contain no-repeat;transform:rotate(14deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.6));animation:pinIn .7s .35s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes pinIn{from{transform:rotate(40deg) scale(0)}}
+.welcome .chalk-note{font:400 clamp(15px,1.4vw,19px)/1.3 var(--chalk);color:var(--lN);transform:rotate(-4deg);margin:-6px 0 0 4px;max-width:none}
+/* the painting, wheatpasted: paper margin, two strips of tape, a little wind in it */
+.hero-art{background:var(--paper);border:0;border-radius:2px;padding:12px 12px 4px;transform:rotate(1.6deg);box-shadow:0 30px 60px rgba(0,0,0,.6);position:relative;transition:transform .5s var(--ease)}
+.hero-art:hover{transform:rotate(.4deg) translateY(-4px)}
+.hero-art::before,.hero-art::after{content:"";position:absolute;width:96px;height:26px;background:rgba(240,230,200,.78);top:-12px;box-shadow:0 2px 4px rgba(0,0,0,.25);z-index:1}
+.hero-art::before{left:-22px;transform:rotate(-32deg)}.hero-art::after{right:-22px;transform:rotate(30deg)}
+.hero-art img{border-radius:0;filter:contrast(1.04) saturate(1.06)}
+.hero-art>span{color:#5a5650}
+.hero-art b{color:#141414}
+.hero-art i{color:#A23231;font-weight:600}
+.hero-mint{border-top:0;padding-top:16px}
+.hero-mint::before{content:"";position:absolute;left:0;right:0;top:-1px;height:4px;background:#222;border-radius:2px}
+.hero-mint i{height:4px;top:-1px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--lN) 0 14px,#111 14px 16px);z-index:1}
+.hero-mint a{color:var(--lN)}
+/* sprites, hung like stickers; hidden on phones where there is no room */
+.welcome .spr{height:auto;position:absolute;z-index:1;pointer-events:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.55));animation:bob 6s ease-in-out infinite alternate}
+.welcome .spr.tok{width:clamp(54px,5vw,84px);left:41%;bottom:9%;animation-duration:7s}
+.welcome .spr.piz{width:clamp(50px,4.4vw,74px);right:3%;bottom:4%;transform:rotate(-18deg);animation-delay:-3s}
+@keyframes bob{from{translate:0 0;rotate:-4deg}to{translate:0 -12px;rotate:5deg}}
+
+/* ---------- section furniture ---------- */
+.section-top h2{text-wrap:balance}
+
+/* this week: five transit cards, each on its own line */
+.tw-grid a{border-width:2px;--lc:var(--l1);position:relative;overflow:hidden;transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s}
+.tw-grid a:nth-child(2){--lc:var(--l4)}.tw-grid a:nth-child(3){--lc:var(--l7)}.tw-grid a:nth-child(4){--lc:var(--lB)}.tw-grid a:nth-child(5){--lc:var(--lN)}
+.tw-grid a::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:var(--lc)}
+.tw-grid a:hover{border-color:var(--lc);transform:translate(-2px,-3px);box-shadow:5px 6px 0 var(--lc)}
+.tw-grid small{color:var(--cloud);margin-top:4px}
+
+/* the film's play button is a brass token */
+.home-film .play i{background:var(--lN) url(ui/token.png) center/88% no-repeat;box-shadow:0 0 0 3px var(--ink),0 0 0 5px var(--lN)}
+.home-film .play i:after{display:none}
+.home-film .play:hover i{animation:spinTok .9s var(--ease)}
+@keyframes spinTok{to{transform:rotateY(360deg)}}
+.home-film video{border:2px solid var(--divider)}
+
+/* meet a stranger: the dealt card is a print on paper */
+.meet-shell{border-width:2px;box-shadow:8px 8px 0 rgba(0,0,0,.5)}
+.fly-spin-art img{border:8px solid var(--paper);border-radius:2px;box-shadow:0 18px 40px rgba(0,0,0,.45);transform:rotate(-.8deg)}
+
+/* which New Yorker: dark subway tile, a mosaic plaque for the question */
+.which{background:linear-gradient(180deg,rgba(8,13,22,.9),rgba(8,13,22,.8) 40%,rgba(8,13,22,.92)),url(ui/tile.webp) 0 0/263px 218px;border-top:0;box-shadow:inset 0 24px 40px -20px rgba(0,0,0,.8)}
+.which-head h2{display:inline-block;position:relative;padding:20px 28px 22px;background:linear-gradient(180deg,#152536,#0B1622);border:12px solid transparent;border-image:url(ui/mosaic.webp) 40 round;box-shadow:0 22px 50px -10px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06)}
+.which-head p{color:#CFD3CC}
+.fly-options button{position:relative;border:1px solid rgba(236,232,221,.16);background:radial-gradient(200px 90px at var(--mx,50%) var(--my,0%),rgba(236,201,129,.12),transparent 70%),linear-gradient(180deg,#151A22,#0B0E13);border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.fly-options button::before{content:"";position:absolute;left:16px;right:16px;top:6px;height:1px;background:rgba(236,232,221,.35);transition:background .25s}
+.fly-options button:hover::before{background:var(--gold)}
+.fly-options button:hover{border-color:rgba(236,201,129,.6);background:linear-gradient(180deg,#152536,#0B1622);transform:translateY(-3px);box-shadow:inset 0 2px 0 var(--gold),0 20px 36px -16px rgba(0,0,0,.85)}
+.fly-progress{height:6px;background:rgba(255,255,255,.08);border-radius:3px}
+.fly-progress i{height:6px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--lN) 0 14px,#111 14px 16px)}
+.fly-result img{border:8px solid var(--paper);border-radius:2px}
+
+/* NEW ON THE SITE hangs under an awning */
+.now-on{border-top:0;padding-top:0}
+.now-on .awning{margin:0 -5vw 56px}
+.now-on > div > a{position:relative;--lc:var(--l1);border-top:4px solid var(--lc);transition:transform .2s var(--ease)}
+.now-on > div > a:nth-child(8n+2){--lc:var(--l4)}.now-on > div > a:nth-child(8n+3){--lc:var(--l7)}.now-on > div > a:nth-child(8n+4){--lc:var(--lA)}
+.now-on > div > a:nth-child(8n+5){--lc:var(--lB)}.now-on > div > a:nth-child(8n+6){--lc:var(--lG)}.now-on > div > a:nth-child(8n+7){--lc:var(--lJ)}.now-on > div > a:nth-child(8n+8){--lc:var(--lN)}
+.now-on > div > a:hover{border-color:var(--lc);transform:translateY(-4px)}
+.now-on a img{border:6px solid var(--paper);border-radius:2px;box-shadow:0 14px 30px rgba(0,0,0,.4)}
+.now-on a:hover img{transform:translateY(-3px) rotate(-.8deg);box-shadow:8px 10px 0 var(--lc)}
+.now-on small{color:var(--cloud)}
+.now-on span{color:var(--lc)}
+.now-on > div > a:nth-child(8n+8) span,.now-on > div > a:nth-child(8n+6) span{color:var(--lc)}
+
+/* a few faces: wheatpaste prints, each at its own angle */
+.art-card img{border:8px solid var(--paper);border-radius:2px;box-shadow:0 18px 36px rgba(0,0,0,.5);transform:rotate(var(--r,-1deg));transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.art-card:nth-child(2n) img{--r:1.2deg}.art-card:nth-child(3n) img{--r:-.4deg}
+.art-card:hover img{transform:rotate(0) translateY(-6px);box-shadow:0 28px 50px rgba(0,0,0,.6)}
+.art-card small{color:var(--cyan)}
+
+/* the museum invite: on brick */
+.museum-invite{position:relative;isolation:isolate;background:#2a1610 url(ui/brick.webp) center/cover;border-top:0}
+.museum-invite::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(8,13,22,.9) 0,rgba(8,13,22,.72) 45%,rgba(8,13,22,.45)),linear-gradient(var(--ink),transparent 18%,transparent 82%,var(--ink))}
+.hf-frame{border:8px solid var(--paper);border-radius:2px;box-shadow:0 30px 60px rgba(0,0,0,.6)}
+.hf-play{border:2px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:600;box-shadow:3px 3px 0 var(--l1)}
+.hf-play i{border-left-color:var(--ink)}
+.hf-play b{color:var(--l1)}
+.room-photo span{color:var(--cloud)}
+
+/* rooms worth the walk: each label is a station sign */
+.room-picks{border-top:0;background:#0F151D}
+.room-card img{border:2px solid var(--divider);transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.room-card:hover img{border-color:var(--lN);box-shadow:6px 7px 0 var(--lN)}
+.room-card small{align-self:flex-start;background:#111;color:var(--cloud);padding:6px 9px 5px;border-top:2px solid var(--cloud);font-weight:600}
+
+/* follow your curiosity: three lines */
+.more-city:not(.now-on) > div > a{border-top:4px solid var(--lc,var(--l1))}
+.more-city:not(.now-on) > div > a:nth-child(2){--lc:var(--lA)}.more-city:not(.now-on) > div > a:nth-child(3){--lc:var(--lN)}
+.more-city:not(.now-on) > div > a:hover{border-color:var(--lc)}
+.more-city:not(.now-on) span{display:inline-flex;align-items:center;gap:8px;color:var(--cloud)}
+.more-city:not(.now-on) span::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--lc,var(--l1))}
+.more-city:not(.now-on) > div > a:nth-child(2) span::before{background:var(--lA)}
+
+/* the hunt: chalk on asphalt */
+.hunt{position:relative;isolation:isolate;background:#151515 url(ui/chalk.webp) center/cover;border-top:0}
+.hunt::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(var(--ink),rgba(8,13,22,.55) 16%,rgba(8,13,22,.55) 84%,var(--ink))}
+.hunt-copy h2{font:400 clamp(28px,3.4vw,50px)/1.25 var(--chalk) !important;letter-spacing:0 !important;color:#F3EFE4;transform:rotate(-1.5deg)}
+.hunt-copy p{color:#CFD3CC}
+.fly-hunt{background:rgba(10,10,12,.82);border:2px dashed rgba(255,255,255,.35);border-left:6px solid var(--divider);backdrop-filter:blur(3px)}
+.fly-hunt.on{border-left-color:var(--lN)}
+.fly-hunt-count b{font-family:var(--sign);font-weight:400}
+
+/* the artist: a sheet of stickers above the sign off */
+.artist-note .stickers{display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,3vw,34px);margin:0 auto 34px}
+.artist-note .stickers img{height:clamp(54px,7vw,92px);width:auto;filter:drop-shadow(0 10px 12px rgba(0,0,0,.5));transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+.artist-note .stickers img:nth-child(odd){transform:rotate(-7deg)}.artist-note .stickers img:nth-child(even){transform:rotate(6deg)}
+.artist-note .stickers img:hover{transform:translateY(-10px) rotate(0) scale(1.12)}
+.artist-note h2{text-wrap:balance}
+
+/* phones */
+@media (max-width:760px){
+  .welcome{min-height:0;padding-top:56px}
+  .welcome::before{background-image:url(ui/hero-s.webp);background-position:78% 50%}
+  .welcome::after{background:linear-gradient(180deg,rgba(8,13,22,.55),rgba(8,13,22,.86) 40%,rgba(8,13,22,.7) 70%,var(--ink))}
+  .welcome .spr{display:none}
+  .hero-art{transform:rotate(1deg)}
+  .hero-art::before,.hero-art::after{width:70px;height:20px}
+  .now-on .awning{margin:0 -6vw 40px}
+  .which-head h2{padding:10px 14px 12px;border-width:7px}
+  .art-card img{--r:0deg !important}
+}
+@media (prefers-reduced-motion:reduce){
+  .welcome::before,.welcome .spr,.welcome h1 em::after{animation:none !important}
 }

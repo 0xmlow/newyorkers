@@ -135,7 +135,7 @@ script = """
    c.style.display="";
    var n=m.getModuleCount(), quiet=4, px=Math.floor(c.width/(n+quiet*2));
    var off=Math.floor((c.width-px*n)/2);
-   g.fillStyle="#0D0D0D";
+   g.fillStyle="#080D16";
    for(var y=0;y<n;y++) for(var x=0;x<n;x++) if(m.isDark(y,x)) g.fillRect(off+x*px, off+y*px, px, px);
  }
  build();

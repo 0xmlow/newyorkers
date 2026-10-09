@@ -29,7 +29,7 @@ ar = {p["n"]: p.get("ar", 1.5) for p in k111}
 SHOPMAP = {str(p["n"]): {"h": p["handle"], "ar": ar.get(p["n"], 1.5)} for p in K["pieces"]}
 
 ORDER_CSS = """
-  #kOrder{margin:4px 0 18px;padding:14px 14px 12px;border:1px solid var(--line,rgba(255,255,255,.12));border-radius:10px;background:rgba(41,98,255,.06)}
+  #kOrder{margin:4px 0 18px;padding:14px 14px 12px;border:1px solid var(--line,rgba(255,255,255,.12));border-radius:10px;background:rgba(70,146,194,.06)}
   #kOrder label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 5px}
   #kOrder select{width:100%;margin:0 0 10px;padding:9px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.16);background:#0f1320;color:var(--cloud);font:14px/1.2 system-ui,sans-serif}
   #kOrder .orow{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -39,7 +39,7 @@ ORDER_CSS = """
   #kOrder .ofine{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);margin-top:9px;line-height:1.5}
   #kOrder .ofine a{color:var(--blue-soft)}
   #shopbar{position:fixed;z-index:7;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
-  #shopbar a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cloud);text-decoration:none;padding:8px 12px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(13,13,13,.55);backdrop-filter:blur(6px)}
+  #shopbar a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cloud);text-decoration:none;padding:8px 12px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(8,13,22,.55);backdrop-filter:blur(6px)}
   #shopbar a:hover{border-color:var(--blue)}
 """
 

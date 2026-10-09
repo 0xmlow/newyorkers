@@ -24,8 +24,8 @@ VERSION = "3"  # bump to redraw every card after a layout change
 os.makedirs(OUT, exist_ok=True)
 
 D = json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))
-INK, PAPER, CLOUD, SLATE = (13, 13, 13), (244, 241, 234), (240, 244, 248), (136, 153, 170)
-ACCS = [(215, 255, 31), (255, 46, 99), (0, 229, 255), (255, 176, 32), (179, 136, 255)]
+INK, PAPER, CLOUD, SLATE = (8,13,22), (244, 241, 234), (236,232,221), (136, 153, 170)
+ACCS = [(236,201,129), (220,111,87), (97,201,226), (255, 176, 32), (179, 136, 255)]
 ACC = {c["code"]: ACCS[i % len(ACCS)] for i, c in enumerate(D["cats"])}
 # The N3W YORKERS logos are MLow's own ChatGPT image gen lockups (the 2026-08-25 shortlist), never the
 # round 3 SVG redraw he rejected. honoraries/logos_chatgpt holds ten of them, trimmed and squared onto
@@ -47,7 +47,7 @@ def logo(p, size):
 
 
 TYPE = {"A": "ARTIST", "C": "COLLECTOR", "B": "FOUNDER", "W": "MEDIA", "M": "MUSIC", "F": "FILM AND STAGE",
-        "X": "FASHION", "S": "SPORT", "D": "FOOD", "P": "CIVIC"}
+        "X": "FASHION", "S": "SPORT", "D": "FOOD", "P": "CIVIC", "T": "TRADER"}
 
 
 def font(name, size, var=None, axes=None):
@@ -91,7 +91,7 @@ def wrap(draw, text, f, width, lines):
 def eye(im, cx, cy, r):
     """The MLow evil eye, drawn, so the card needs no image asset."""
     d = ImageDraw.Draw(im)
-    for rr, col in ((r, (26, 61, 153)), (r * .64, CLOUD), (r * .42, (0, 229, 255)), (r * .22, INK)):
+    for rr, col in ((r, (26, 61, 153)), (r * .64, CLOUD), (r * .42, (97,201,226)), (r * .22, INK)):
         d.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), fill=col)
 
 
@@ -107,7 +107,7 @@ def holo(w, h):
     """Keystone foil: a diagonal spectrum, the one thing on the card that is not a brand colour."""
     g = Image.new("RGB", (w, h))
     px = g.load()
-    stops = [(255, 46, 99), (255, 176, 32), (215, 255, 31), (0, 229, 255), (179, 136, 255), (255, 46, 99)]
+    stops = [(220,111,87), (255, 176, 32), (236,201,129), (97,201,226), (179, 136, 255), (220,111,87)]
     for y in range(0, h, 2):
         for x in range(0, w, 2):
             t = ((x + y) / (w + h) * 2.0) % 1.0 * (len(stops) - 1)
@@ -181,7 +181,7 @@ def card(p):
     for c in chips:
         tw = d.textlength(c, font=cf)
         hot = c == "KEYSTONE"
-        d.rounded_rectangle((x, CY - 20, x + tw + 32, CY + 20), 20, fill=acc if not hot else (255, 46, 99), outline=None)
+        d.rounded_rectangle((x, CY - 20, x + tw + 32, CY + 20), 20, fill=acc if not hot else (220,111,87), outline=None)
         d.text((x + 16, CY + 1), c, font=cf, fill=INK, anchor="lm")
         x += tw + 44
 
@@ -247,7 +247,7 @@ def og(p, c):
         d.text((X, y), l, font=nf, fill=CLOUD, anchor="ls")
         y += int(nf.size * 1.02)
     if p["handle"]:
-        d.text((X, y + 18), p["handle"], font=fit(d, p["handle"], "IBMPlexMono-Medium.ttf", 34, MW, 20), fill=(0, 229, 255), anchor="ls")
+        d.text((X, y + 18), p["handle"], font=fit(d, p["handle"], "IBMPlexMono-Medium.ttf", 34, MW, 20), fill=(97,201,226), anchor="ls")
     d.text((X, 540), "Painted by MLow", font=font("SpaceGrotesk.ttf", 28, var="Regular"), fill=(201, 210, 220), anchor="ls")
     d.text((X, 578), "N3WYORKERS.COM", font=font("IBMPlexMono-Medium.ttf", 20), fill=SLATE, anchor="ls")
     lg = logo(p, 170)

@@ -417,7 +417,7 @@ function drawQr() {
   let q;
   try { q = qrcode(0, 'M'); q.addData(location.href); q.make(); } catch (err) { $('wQr').hidden = true; return; }
   const n = q.getModuleCount(), px = Math.floor(c.width / (n + 8)), off = Math.floor((c.width - px * n) / 2);
-  g.fillStyle = '#0D0D0D';
+  g.fillStyle = '#080D16';
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) g.fillRect(off + x * px, off + y * px, px, px);
 }
 $('wCopy').addEventListener('click', () => {

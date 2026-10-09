@@ -160,10 +160,10 @@ body.tv-on{overflow:hidden}
 .tvinfo .mono{font-family:var(--mono);font-size:clamp(12px,1.1vw,17px);letter-spacing:.14em;text-transform:uppercase;color:var(--cloud)}
 .tvinfo .dim{color:var(--slate);font-size:12px;margin-top:28px;letter-spacing:.08em;text-transform:none}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
-.chips span{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--c,#8899AA);border-radius:999px;padding:8px 14px;font-family:var(--sans);font-size:clamp(13px,1vw,16px)}
+.chips span{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--c,#8FA7AB);border-radius:999px;padding:8px 14px;font-family:var(--sans);font-size:clamp(13px,1vw,16px)}
 .tvbar{position:absolute;left:50%;top:3vh;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity .4s;pointer-events:none;max-width:calc(100vw - 32px)}
 .tvp.ui .tvbar{opacity:1;pointer-events:auto}
-.tvbar button{background:rgba(13,13,13,.72);color:var(--cloud);border:1px solid rgba(240,244,248,.22);border-radius:999px;padding:9px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.tvbar button{background:rgba(8,13,22,.72);color:var(--cloud);border:1px solid rgba(236,232,221,.22);border-radius:999px;padding:9px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
 .tvbar button:hover{border-color:var(--acid);color:var(--acid)}
 """
 
@@ -278,7 +278,7 @@ function drawQr(text){
   var m;
   try { m = qrcode(0, 'M'); m.addData(text); m.make(); } catch (e) { return; }
   var n = m.getModuleCount(), quiet = 4, px = Math.floor(c.width / (n + quiet * 2)), off = Math.floor((c.width - px * n) / 2), x, y;
-  g.fillStyle = '#0D0D0D';
+  g.fillStyle = '#080D16';
   for (y = 0; y < n; y++) for (x = 0; x < n; x++) if (m.isDark(y, x)) g.fillRect(off + x * px, off + y * px, px, px);
 }
 function refreshShare(){
@@ -521,8 +521,8 @@ function fillInfo(){
   for (i = 0; i < bs.length; i++){
     var b = defs[bs[i]]; if (!b) continue;
     var s = document.createElement('span');
-    s.style.setProperty && s.style.setProperty('--c', b.color || '#8899AA');
-    s.style.borderColor = b.color || '#8899AA';
+    s.style.setProperty && s.style.setProperty('--c', b.color || '#8FA7AB');
+    s.style.borderColor = b.color || '#8FA7AB';
     s.textContent = (b.icon ? b.icon + ' ' : '') + b.name;
     if (b.rule) s.title = b.rule;
     box.appendChild(s);

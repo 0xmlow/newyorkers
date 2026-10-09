@@ -28,6 +28,7 @@ body = """
   <div class="kicker" style="color:var(--acid)">My NEW YORKERS</div>
   <h1 class="h-xl" style="margin-top:14px;max-width:1000px" id="mTitle">Your collection, your city.</h1>
   <p class="lede" style="margin-top:16px;max-width:820px" id="mLede">Paste your wallet or ENS name. Your New Yorkers get their own gallery in the museum, a frame for your TV, a wall in your home and a card with every badge you have earned.</p>
+  <div id="mSince" hidden></div>
   <form class="cfind" id="mForm" autocomplete="off"><input id="mQ" placeholder="Your wallet or ENS name" aria-label="Wallet address or ENS name" spellcheck="false"><button class="btn" type="submit">Open my collection</button></form>
   <p class="cmsg" id="mMsg" role="status"></p>
 </section>
@@ -81,11 +82,11 @@ css = """
 .ctag{display:inline-block;margin-left:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--acid);color:var(--acid);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;vertical-align:middle}
 .mhead{padding-top:6px}
 #mHonor[hidden]{display:none}
-.mhon{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.7fr);gap:22px;align-items:center;border:1px solid var(--acid);border-radius:14px;padding:20px;background:linear-gradient(160deg,#1A2030,#0F1218)}
+.mhon{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.7fr);gap:22px;align-items:center;border:1px solid var(--acid);border-radius:14px;padding:20px;background:linear-gradient(160deg,#152536,#0F1218)}
 .mhon img{width:100%;display:block;border-radius:10px}
 .mhon b{display:block;font-family:var(--serif);font-size:32px;font-weight:500;color:var(--cloud);line-height:1.1}
 .mhont{display:block;font-family:var(--serif);font-style:italic;color:var(--slate);margin-top:6px}
-.mhon p{color:#C9D2DC;font-size:16px;line-height:1.55;margin:12px 0 0}
+.mhon p{color:#CFD3CC;font-size:16px;line-height:1.55;margin:12px 0 0}
 @media (max-width:900px){.mhon{grid-template-columns:1fr 1fr}.mhoncard{display:none}}
 @media (max-width:600px){.mhon{grid-template-columns:1fr}}
 .mstats{display:flex;flex-wrap:wrap;gap:28px;margin-top:6px}
@@ -116,7 +117,7 @@ css = """
 .mrooms span{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 .mrooms a.spin{display:flex;align-items:center;justify-content:center;min-height:170px;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--acid);border-style:dashed}
 .mtwo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.mbig{display:flex;flex-direction:column;gap:8px;border:1px solid var(--divider);border-radius:14px;padding:26px;background:linear-gradient(160deg,#1A2030,#0F1218);text-decoration:none}
+.mbig{display:flex;flex-direction:column;gap:8px;border:1px solid var(--divider);border-radius:14px;padding:26px;background:linear-gradient(160deg,#152536,#0F1218);text-decoration:none}
 .mbig:hover{border-color:var(--acid)}
 .mbig b{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--cloud)}
 .mbig span:not(.mk):not(.btn){color:var(--slate);font-size:14.5px;line-height:1.5}
@@ -173,6 +174,8 @@ function paint(d,q){
   document.title=name+' · My NEW YORKERS';
   if(window.NY_LOGOS){var ml=$('mLogo');ml.src=window.NY_LOGOS.url(window.NY_LOGOS.forKey(key));ml.alt='The N3W YORKERS logo on '+name+'\u2019s card';ml.hidden=false;}
   var t=$('mTitle');t.textContent=name;if(d.tag)t.appendChild(h('span','ctag',d.tag));
+  /* since your last visit: new rooms, new honorees, and this collector's move on the board (site.js NY.since) */
+  if(window.NY&&NY.since) NY.since($('mSince'),{key:'my-'+key,rankKey:key,rank:d.rank,of:d.of});
   $('mLede').textContent=d.census+d.keystone+' New Yorker'+(d.census+d.keystone===1?'':'s')+'. Number '+d.rank+' of '+d.of+' on the collectors board.';
   $('mForm').hidden=true;
   var st=$('mStats');st.innerHTML='';st.appendChild(stat('#'+d.rank,'of '+d.of+' collectors'));st.appendChild(stat(d.pts.toLocaleString(),'points'));st.appendChild(stat(d.census,'census'));if(d.keystone)st.appendChild(stat(d.keystone,'Keystone'));st.appendChild(stat(d.badges.length,'badges'));
