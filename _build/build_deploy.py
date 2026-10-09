@@ -95,7 +95,7 @@ SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.ht
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
               "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html", "markup.html", "survey.html", "mosaic.html",
-              "states.html", "stop.html", "arcade.html", "island.html", "basement.html")
+              "states.html", "stop.html", "arcade.html", "island.html", "basement.html", "skelly.html")
 # favicon.ico and the touch icon are real files at the root (made from the eye mark with its white corner
 # cropped away); site.webmanifest names them so a phone can pin the site.
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
@@ -194,7 +194,7 @@ def sync_dir(src, dst):
             shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
 
 
-for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement"):
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite

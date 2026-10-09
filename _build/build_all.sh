@@ -48,6 +48,7 @@ python3 build_markup.py        # markup.html, draw on any New Yorker (ported fro
 python3 build_arcade.py        # arcade.html + assets/arcade: THE DOOR, THE LAST TRAIN, BODEGA COUNTER with the score bridge
 python3 build_galleries.py     # island.html + basement.html: MEME ISLAND and YOUR MOM'S BASEMENT, whole, from their own repos into assets/island and assets/basement
 python3 build_stop.py          # stop.html, YOUR STOP: the New Yorkers within three blocks of any subway station, from geo.js
+python3 build_skelly.py        # skelly.html, SKELLY CUP: NEW YORKERS riders on Bryan Brinkman's Marble Run, champion portraits, free picks via /api/skelly
 # holders first: the honoraries pages link the honorees who collect (collectors/honor_links.json)
 python3 collectors/fetch_chain.py || echo "  chain read skipped (nodes unreachable); the last holder snapshot stands"
 python3 collectors/link_identities.py   # who each wallet is: X handle and honorary, from ENS, the CRM, OpenSea and homes.json

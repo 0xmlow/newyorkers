@@ -378,7 +378,7 @@ body = f"""
 open(os.path.join(SITE, "pigeon.html"), "w", encoding="utf-8").write(shell(title="NO. 0000 · The Pigeon · NEW YORKERS by MLow", description="The one New Yorker the census will not count.", body=body, path="pigeon.html", noindex=True))
 
 # ---------- sitemap, robots, llms, humans ----------
-urls = [(URL + "/", "1.0"), *[(f"{URL}/{p}", "0.9") for p in ("census.html", "museum.html", "keystone.html", "map.html", "counted.html", "learn.html", "faq.html", "vault.html", "shipping.html", "count.html", "press.html", "brand.html", "agents.html", "new-rooms.html", "honoraries.html", "bloomrun.html", "moshlab.html", "markup.html", "mosaic.html", "posters.html", "collectors.html", "my.html", "states.html", "stop.html", "arcade.html", "wall.html", "survey.html", "island.html", "basement.html")]]
+urls = [(URL + "/", "1.0"), *[(f"{URL}/{p}", "0.9") for p in ("census.html", "museum.html", "keystone.html", "map.html", "counted.html", "learn.html", "faq.html", "vault.html", "shipping.html", "count.html", "press.html", "brand.html", "agents.html", "new-rooms.html", "honoraries.html", "bloomrun.html", "moshlab.html", "markup.html", "mosaic.html", "posters.html", "collectors.html", "my.html", "states.html", "stop.html", "arcade.html", "wall.html", "survey.html", "island.html", "basement.html", "skelly.html")]]
 urls += [(f"{URL}/learn/{a['slug']}.html", "0.8") for a in articles]
 urls += [(f"{URL}/rooms/{r['id']}.html", "0.7") for r in rooms]
 sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">']
