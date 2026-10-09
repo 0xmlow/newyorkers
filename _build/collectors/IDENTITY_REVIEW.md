@@ -25,20 +25,20 @@ Written by `link_identities.py` from 162 holding wallets. 75 have an X handle, 8
 | 10 | 0xeb6dac11a9939b575690298ac00068c230c29ec2 | 0xeb6d-9ec2 | MLow |
 | 8 | Self6967 | self6967 | MLow |
 | 8 | tork_penderloin | tork-penderloin | X handle (@P8erade4u, SuperRare profile) |
-| 7 | 0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13 | 0xa621-fd13 | MLow |
 | 7 | jasonophoto.eth | jason-o-rourke | X handle (@jasonophoto, SuperRare profile) |
+| 7 | 0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13 | 0xa621-fd13 | MLow |
 | 6 | orkhanart.eth | orkhan-mammadov | wallet name is theirs |
 | 6 | dannyb0yyy.eth | dannyboyy | X handle (@Dannyb0yyy_, SuperRare profile) |
-| 5 | Peng1-Deployer | peng1 | MLow |
-| 5 | MathieuArtcrush | mathieu-france | MLow |
-| 5 | jpmoregainz.eth | j-p-moregainz | X handle (@jp_moregainz, ENS record) |
-| 5 | deltasauce.eth | deltasauce | X handle (@deltasauce, SuperRare profile) |
 | 5 | 0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed | 0x1bc3-32ed | MLow |
-| 5 | dingomick.eth | dingomick | X handle (@mick_dingo, ENS record) |
-| 5 | 0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5 | 0x49e2-3ee5 | MLow |
+| 5 | 0x59186dcb30b6427be31aa46a05368689914dbb1c | 0x5918-bb1c | MLow |
+| 5 | MathieuArtcrush | mathieu-france | MLow |
 | 5 | oxjpegs.eth | cryptobscure | MLow |
 | 5 | mrquack.eth | mr-quack | X handle (@CryptoCrusher6, SuperRare profile) |
-| 5 | 0x59186dcb30b6427be31aa46a05368689914dbb1c | 0x5918-bb1c | MLow |
+| 5 | jpmoregainz.eth | j-p-moregainz | X handle (@jp_moregainz, ENS record) |
+| 5 | deltasauce.eth | deltasauce | X handle (@deltasauce, SuperRare profile) |
+| 5 | Peng1-Deployer | peng1 | MLow |
+| 5 | dingomick.eth | dingomick | X handle (@mick_dingo, ENS record) |
+| 5 | 0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5 | 0x49e2-3ee5 | MLow |
 
 ## One person, several wallets
 
