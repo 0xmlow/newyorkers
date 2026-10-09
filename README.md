@@ -11,9 +11,10 @@ SKELLY CUP is a free game: no entry, no stake, no odds, nothing paid out. Points
 - `cast.json`, `_cast/`: a hundred NEW YORKERS census characters, one riding each marble, five lanes as the five boroughs.
 - `ledger/`, `ledger.py`: every race since tournament 1, archived from the API.
 - `portraits/`, `champion_queue.py`, `publish_portraits.py`: a Champion's Portrait for every tournament winner, painted on FLORA.
-- `contest/`: one painting per BrinkWorks pass holder racing their own marble (pass #N holds marble #N), the scene picked from the seed of their best race. `make_wave33.py` turns them into honoraries (wave 33), `publish_skelly_art.py` puts them on the site's MetroCards.
+- `contest/`: one painting per BrinkWorks pass holder racing their own marble (pass #N holds marble #N), the scene picked from the seed of their best race. `make_wave36.py` turns them into honoraries (wave 36), `likeness/` is the pass that matched each painting to the holder's PFP or portrait, `rechain.sh` republishes after any change, `publish_skelly_art.py` puts them on the site's MetroCards.
 - `races/`: one painting per race, the winner's rider taking it; place, hour and celebration chosen by the race seed.
 - `design/`: the FLORA plates behind the page (a Brooklyn block at night).
+- `brink/`: Bryan's palette. Every painting and plate recoloured lane by lane to his four, pink `#f2668b`, cyan `#23c7d9`, mint `#48d9a4` and yellow `#f2bf27`: reds to pink, blues to cyan, greens to mint, yellows to his yellow, with skin, brick and night held.
 - `skelly-cup.html`: the first live prototype.
 
 The site page itself is built by `_build/build_skelly.py` in the NEW YORKERS site repo.

@@ -3,7 +3,7 @@
 THE RIDERS cards: every BrinkWorks holder's contest painting, found on the honoraries page by title, so the card
 shows the same crop as the honoree card and links to h/<id>, where their other honoraries live.
 THE TAPE: one painting per race, scaled to 960 wide into assets/skelly/races/.
-Run after make_wave33.py, collect.py and honoraries/sync.py. Writes _build/skelly/holders.json and race_art.json.
+Run after make_wave36.py, collect.py and honoraries/sync.py. Writes _build/skelly/holders.json and race_art.json.
 """
 import json, os, re
 from PIL import Image
