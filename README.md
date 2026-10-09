@@ -20,10 +20,11 @@ Live at **https://n3wyorkers.com**
 | `mosh-lab` | MOSH LAB, MLow's glitch instrument: 60 WebGL effects, 48 presets, loop perfect GIF and MP4 export with the MLOW mark. Desktop app source, and the same files run online at [n3wyorkers.com/moshlab](https://n3wyorkers.com/moshlab). |
 | `meme-island` | MEME ISLAND, a walkable three.js island for The Memes by 6529 and NEW YORKERS: every one of the 527 meme cards hung by district and by floor price, 66 of MLow's meme sculptures, hidden keys and typed easter eggs, a Windows 98 desktop. Plain HTML, no build step, and the same files run online at [n3wyorkers.com/island](https://n3wyorkers.com/island). |
 | `your-moms-basement` | YOUR MOM'S BASEMENT, a walkable three.js basement under a two family house in Queens: eight rooms and five sub rooms, census paintings on every wall, twenty meme sculptures as trophies, the Rat King's court, forty easter eggs. Plain HTML, no build step, and the same files run online at [n3wyorkers.com/basement](https://n3wyorkers.com/basement). |
+| `skelly-cup` | SKELLY CUP, NEW YORKERS riders on Bryan Brinkman's Marble Run: a hundred census characters riding his hundred marbles, five lanes as the five boroughs, the race ledger, a Champion's Portrait every tournament, a painting of every BrinkWorks holder racing their own marble and of every race, the scene picked by the race seed. A free game, nothing staked. Live at [n3wyorkers.com/skelly](https://n3wyorkers.com/skelly). |
 
 The working source of truth is the artist's local folder `NEW YORKERS SITE/`.
 The `Museum` branch is a copy of its full history (145 commits), pushed
-2026-09-29 and refreshed 2026-10-03. When the two differ, the local folder wins, and the branch should
+2026-09-29 and refreshed 2026-10-09. When the two differ, the local folder wins, and the branch should
 be refreshed from it.
 
 ---
@@ -93,6 +94,7 @@ Every page below is on the `Museum` branch and live at n3wyorkers.com.
 | `map.html` | The Atlas: every New Yorker on a map of the five boroughs |
 | `keystone.html` | KEYSTONE: the founding New Yorkers on one continuous spiral ramp |
 | `honoraries.html` | The Honoraries: 612 real people painted into the census, with a shareable card each |
+| `skelly.html` | SKELLY CUP: call races live on Bryan Brinkman's Marble Run, the tape of every race painted, a MetroCard for every marble's holder |
 | `counted.html` | Get Counted: six questions, no wallet, and the city tells you which New Yorker you are |
 | `roll.html` | THE ROLL: paste a wallet, get a borough, an hour, an archetype and a register |
 | `count.html` | The live census count |
