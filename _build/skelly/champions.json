@@ -63,5 +63,18 @@
   "image": "assets/skelly/champ-T5.jpg",
   "thumb": "assets/skelly/champ-T5-t.jpg",
   "og": "assets/skelly/og-T5.jpg"
+ },
+ {
+  "tournamentId": 6,
+  "title": "Blaze It, Cooked All Night",
+  "marble": "Blaze It",
+  "marbleId": 50,
+  "borough": "Manhattan",
+  "piece": 3553,
+  "rider": "The Jerk Drum Smoked All Night",
+  "seed": "7f4e9016579f88f7ace6aee4bd10de586eb8adba5ae70e95b606856a57f51139",
+  "image": "assets/skelly/champ-T6.jpg",
+  "thumb": "assets/skelly/champ-T6-t.jpg",
+  "og": "assets/skelly/og-T6.jpg"
  }
 ]

@@ -42,3 +42,19 @@ Planning, casting, ledger and portraits live outside the repo in `../MARBLE RUN 
   the 100 riders. No extensionless routing or Functions there.
 - `build_all.sh` and `preflight.py` were not run: the disk had 181 MB free and the package copy would not fit.
 - Portraits passed `00_TOOLS/textgate/gate` (a floor, not proof) and a look at each.
+
+## Later the same night: louder, and Bryan credited everywhere
+
+- Sixth portrait: tournament 6 went to Blaze It (the rusted robot pitmaster), painted first try, $0.175.
+  Seven FLORA runs in all today for the portraits, $1.58.
+- The page now runs a ticker, a gate clock with LAST CALL in the final ten seconds, tournament progress,
+  STILL ALIVE (the hundred shrinking, eliminated riders greyed), crowd heat per lane (`?crowd=` on
+  /api/skelly, counts only), HOT and title tags, a local streak card, finish splashes (YOU CALLED IT with
+  confetti and an X share line that tags @bryanbrinkman, SO CLOSE, REKT, UPSET), a champion splash, the
+  hall of fame from Marble Run, RULES OF THE STOOP, an empty frame for the next portrait, opt in sound.
+- Bryan: a credit pill in the hero, a credit chip on the TV, THE ENGINE IS BRYAN'S section explaining his
+  commit and reveal, beacon and client seed scheme, links to marblerun.fun, the API, the source, his hall of
+  champions, @bryanbrinkman and bryanbrinkman.com, his NEW YORKERS honorary card, and isBasedOn in JSON-LD.
+- Copy holds the line: no odds, no stake, no money out. The only betting words on the page are disclaimers.
+- Verified live on a static preview: a real heat was called and won, the splash, streak and ticker fired.
+  /api/skelly and the crowd heat still never ran on Cloudflare.
