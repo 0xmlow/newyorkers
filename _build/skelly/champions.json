@@ -1,0 +1,67 @@
+[
+ {
+  "tournamentId": 1,
+  "title": "Double Deuce Takes the Deuce",
+  "marble": "Double Deuce",
+  "marbleId": 54,
+  "borough": "Brooklyn",
+  "piece": 1787,
+  "rider": "The Old Deuce",
+  "seed": "821a9cf1d6bee6299435d7ce17fa3971586f14cbdc4e66a2df5c58d12883675e",
+  "image": "assets/skelly/champ-T1.jpg",
+  "thumb": "assets/skelly/champ-T1-t.jpg",
+  "og": "assets/skelly/og-T1.jpg"
+ },
+ {
+  "tournamentId": 2,
+  "title": "Spaced Out, the First Rain",
+  "marble": "Spaced Out",
+  "marbleId": 72,
+  "borough": "Staten Island",
+  "piece": 4257,
+  "rider": "The Astronaut Who Missed Rain",
+  "seed": "d9279e818486a18dd98b269b40327683f73206ed1c04c279c3417ddefd6a945d",
+  "image": "assets/skelly/champ-T2.jpg",
+  "thumb": "assets/skelly/champ-T2-t.jpg",
+  "og": "assets/skelly/og-T2.jpg"
+ },
+ {
+  "tournamentId": 3,
+  "title": "Shopper Behind the False Wall",
+  "marble": "Shopper",
+  "marbleId": 33,
+  "borough": "Manhattan",
+  "piece": 2592,
+  "rider": "The Canal Street Whisper",
+  "seed": "a5723b467320078061a625b6b3dfd72c01205eb2848077167c1866ec35be483c",
+  "image": "assets/skelly/champ-T3.jpg",
+  "thumb": "assets/skelly/champ-T3-t.jpg",
+  "og": "assets/skelly/og-T3.jpg"
+ },
+ {
+  "tournamentId": 4,
+  "title": "Java, the Cup Already in His Hand",
+  "marble": "Java",
+  "marbleId": 29,
+  "borough": "Queens",
+  "piece": 5107,
+  "rider": "The Coffee Cart Man Who Remembers Everyone",
+  "seed": "678644672ec0d36614b046219871dffba9bd0565d281340461ba7918802ec946",
+  "image": "assets/skelly/champ-T4.jpg",
+  "thumb": "assets/skelly/champ-T4-t.jpg",
+  "og": "assets/skelly/og-T4.jpg"
+ },
+ {
+  "tournamentId": 5,
+  "title": "Spaced Out Throws the Moon",
+  "marble": "Spaced Out",
+  "marbleId": 72,
+  "borough": "The Bronx",
+  "piece": 4257,
+  "rider": "The Astronaut Who Missed Rain",
+  "seed": "08f29b4dc8ef348ef771fb19e96d75193cf9d4790e3f592a75eacbddc5dc077f",
+  "image": "assets/skelly/champ-T5.jpg",
+  "thumb": "assets/skelly/champ-T5-t.jpg",
+  "og": "assets/skelly/og-T5.jpg"
+ }
+]

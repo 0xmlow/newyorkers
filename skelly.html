@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SKELLY CUP · NEW YORKERS x Marble Run · NEW YORKERS by MLow</title>
+<meta name="description" content="Bryan Brinkman&#x27;s Marble Run with a hundred painted New Yorkers riding. Five lanes, five boroughs, a champion every hundred minutes. Pick free, blow on the dice, get counted. Not a bet.">
+<meta name="keywords" content="Marble Run, Bryan Brinkman, skelly, NYC street games, provably fair, NEW YORKERS by MLow">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://n3wyorkers.com/skelly">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="SKELLY CUP · NEW YORKERS x Marble Run · NEW YORKERS by MLow">
+<meta property="og:description" content="Bryan Brinkman&#x27;s Marble Run with a hundred painted New Yorkers riding. Five lanes, five boroughs, a champion every hundred minutes. Pick free, blow on the dice, get counted. Not a bet.">
+<meta property="og:image" content="https://n3wyorkers.com/assets/skelly/og-T5.jpg">
+<meta property="og:url" content="https://n3wyorkers.com/skelly">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="SKELLY CUP · NEW YORKERS x Marble Run · NEW YORKERS by MLow">
+<meta name="twitter:description" content="Bryan Brinkman&#x27;s Marble Run with a hundred painted New Yorkers riding. Five lanes, five boroughs, a champion every hundred minutes. Pick free, blow on the dice, get counted. Not a bet.">
+<meta name="twitter:image" content="https://n3wyorkers.com/assets/skelly/og-T5.jpg">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"SKELLY CUP · NEW YORKERS by MLow","url":"https://n3wyorkers.com/skelly","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"NEW YORKERS riders on Bryan Brinkman's Marble Run, with a portrait for every champion."}</script>
+
+<style>
+.sk-hero{padding:28px 0 8px}
+.sk-hero h1{font:900 clamp(44px,9vw,110px)/.85 Fraunces,serif;margin:0;letter-spacing:-2px}
+.sk-hero h1 span{color:#ffcc00}
+.sk-hero p{max-width:680px;color:var(--muted,#9a978e);font-size:17px}
+.sk-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:18px;margin:18px 0}
+@media (max-width:900px){.sk-grid{grid-template-columns:1fr}}
+.sk-tv{position:relative;aspect-ratio:16/10;background:#000;border:6px solid #2b2d33;border-radius:10px;overflow:hidden}
+.sk-tv iframe{width:100%;height:100%;border:0}
+.sk-tv .bug{position:absolute;left:10px;top:8px;font:700 11px "IBM Plex Mono",monospace;background:#ff4d2e;color:#fff;padding:3px 7px;letter-spacing:1px}
+.sk-card{border:1px solid rgba(127,127,127,.25);border-radius:4px;padding:14px;margin-bottom:16px}
+.sk-card h2{font:600 11px/1 "IBM Plex Mono",monospace;letter-spacing:2px;text-transform:uppercase;color:#ffcc00;margin:0 0 12px}
+.sk-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sk-head b{font:900 26px/1 Fraunces,serif}
+.sk-clock{font:600 30px/1 "IBM Plex Mono",monospace;color:#ffcc00}
+.sk-meta{font:12px "IBM Plex Mono",monospace;opacity:.6;margin-top:6px;word-break:break-all}
+.sk-lanes{display:grid;gap:8px;margin-top:12px}
+.sk-lane{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(127,127,127,.3);border-radius:4px;background:transparent;color:inherit;font:inherit;text-align:left;width:100%;cursor:pointer}
+.sk-lane[disabled]{cursor:default}
+.sk-lane.picked{border-color:#ffcc00;background:rgba(255,204,0,.08)}
+.sk-lane.won{border-color:#3ddc84;background:rgba(61,220,132,.1)}
+.sk-rider{position:relative;width:50px;height:50px}
+.sk-rider img{width:50px;height:50px;object-fit:cover;border-radius:3px;display:block}
+.sk-rider i{position:absolute;right:-5px;bottom:-5px;width:22px;height:22px;border-radius:50%;box-shadow:inset -4px -5px 8px rgba(0,0,0,.45),inset 3px 3px 6px rgba(255,255,255,.35)}
+.sk-lane .nm{font-weight:700}.sk-lane small{opacity:.65;font-size:12px;display:block}
+.sk-lane .rk{font:900 20px Fraunces,serif}
+.sk-name{display:flex;gap:8px;margin-top:12px}
+.sk-name input{flex:1;font:inherit;padding:10px;border-radius:4px;border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit}
+.sk-blow{width:100%;margin-top:10px;padding:14px;font:900 22px/1 Fraunces,serif;background:#ffcc00;color:#111;border:0;border-radius:4px;cursor:pointer}
+.sk-blow[disabled]{background:#3a3c42;color:#9a978e;cursor:default}
+.sk-note{font-size:12px;opacity:.65;margin-top:8px}
+.sk-board{width:100%;border-collapse:collapse;font-size:14px}
+.sk-board td,.sk-board th{padding:6px 6px 6px 0;border-bottom:1px solid rgba(127,127,127,.2);text-align:left}
+.sk-board th{font:600 10px "IBM Plex Mono",monospace;letter-spacing:1px;opacity:.6}
+.sk-bars{display:grid;gap:6px}.sk-bar{display:grid;grid-template-columns:110px 1fr 36px;gap:8px;align-items:center;font-size:13px}.sk-bar div{height:10px;border-radius:2px}
+.sk-log{max-height:200px;overflow:auto;font-size:13px}.sk-log p{margin:0 0 6px;opacity:.75}
+.sk-champs{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.sk-champ{margin:0}.sk-champ img{width:100%;height:auto;display:block;border-radius:3px}
+.sk-champ figcaption{display:flex;flex-direction:column;gap:3px;padding-top:8px}
+.sk-champ small{font:600 10px "IBM Plex Mono",monospace;letter-spacing:1.5px;opacity:.6}
+.sk-champ b{font:900 22px/1.05 Fraunces,serif}
+.sk-champ code{font-size:10px;opacity:.5;word-break:break-all}
+.sk-cast{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.sk-r{color:inherit;text-decoration:none}.sk-r img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px;display:block}
+.sk-r b{display:block;margin-top:5px;font-size:14px}.sk-r small{display:block;font-size:11px;opacity:.6;line-height:1.3}
+.sk-fine{font-size:13px;opacity:.7;max-width:760px}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<main class="wrap">
+<section class="sk-hero">
+  <h1>SKELLY <span>CUP</span></h1>
+  <p>Skelly is the New York street game: bottle caps flicked across a chalk board on the asphalt. Bryan Brinkman built the marbles. Five lanes, five boroughs, a hundred painted New Yorkers riding, and a champion every hundred minutes, forever. Pick free, blow on it, get counted.</p>
+</section>
+
+<div class="sk-grid">
+  <section>
+    <div class="sk-tv"><span class="bug">BODEGA TV</span><iframe src="https://marblerun.fun/" title="Marble Run, live" loading="lazy" allow="autoplay"></iframe></div>
+    <div class="sk-card" style="margin-top:16px"><h2>Borough Wars, this tournament</h2><div class="sk-bars" id="skBoros"></div>
+      <div class="sk-note">The lane a marble draws is its borough for that race. Win 5, second 3, third 1.</div></div>
+    <div class="sk-card"><h2>The wire</h2><div class="sk-log" id="skLog"></div></div>
+  </section>
+  <aside>
+    <div class="sk-card">
+      <div class="sk-head"><b id="skTitle">Waiting on the gate</b><span class="sk-clock" id="skClock">--</span></div>
+      <div class="sk-meta" id="skMeta"></div>
+      <div class="sk-lanes" id="skLanes"></div>
+      <div class="sk-name"><input id="skName" maxlength="16" placeholder="Your name on the board" autocomplete="nickname"></div>
+      <button class="sk-blow" id="skBlow" disabled>BLOW ON IT</button>
+      <div class="sk-note">Free. Pick a marble before the gate, then blow on it: 32 random bytes from your phone go into the race seed and are printed in the result forever. Nothing is staked. Not a bet.</div>
+    </div>
+    <div class="sk-card"><h2>The board, this tournament</h2>
+      <table class="sk-board"><thead><tr><th>#</th><th>Name</th><th>Pts</th><th>Winners</th></tr></thead><tbody id="skBoard"><tr><td colspan="4">Loading</td></tr></tbody></table>
+      <div class="sk-note">5 for the winner, 2 for second, 1 when your seed is in the race. Scored from Marble Run's own published results.</div></div>
+  </aside>
+</div>
+
+<section style="margin:40px 0">
+  <h2 class="kicker">THE CHAMPION'S PORTRAITS</h2>
+  <p class="sk-fine">Every tournament champion gets a painting. The rider is the subject, and the master seed Marble Run reveals at the end of the tournament is printed under it, the proof that nobody chose the winner.</p>
+  <div class="sk-champs">
+  <figure class="sk-champ">
+    <a href="assets/skelly/champ-T5.jpg" target="_blank" rel="noopener"><img src="assets/skelly/champ-T5-t.jpg" alt="Spaced Out Throws the Moon" loading="lazy" width="1280" height="720"></a>
+    <figcaption><small>TOURNAMENT 5 · THE BRONX LANE</small><b>Spaced Out Throws the Moon</b>
+    <span>Spaced Out, ridden by <a href="n/4257">The Astronaut Who Missed Rain</a>.</span>
+    <code title="Master seed, revealed by Marble Run when the tournament closed">08f29b4dc8ef348ef771fb19e96d75193cf9d4790e3f592a75eacbddc5dc077f</code></figcaption>
+  </figure>
+  <figure class="sk-champ">
+    <a href="assets/skelly/champ-T4.jpg" target="_blank" rel="noopener"><img src="assets/skelly/champ-T4-t.jpg" alt="Java, the Cup Already in His Hand" loading="lazy" width="1280" height="720"></a>
+    <figcaption><small>TOURNAMENT 4 · QUEENS LANE</small><b>Java, the Cup Already in His Hand</b>
+    <span>Java, ridden by <a href="n/5107">The Coffee Cart Man Who Remembers Everyone</a>.</span>
+    <code title="Master seed, revealed by Marble Run when the tournament closed">678644672ec0d36614b046219871dffba9bd0565d281340461ba7918802ec946</code></figcaption>
+  </figure>
+  <figure class="sk-champ">
+    <a href="assets/skelly/champ-T3.jpg" target="_blank" rel="noopener"><img src="assets/skelly/champ-T3-t.jpg" alt="Shopper Behind the False Wall" loading="lazy" width="1280" height="720"></a>
+    <figcaption><small>TOURNAMENT 3 · MANHATTAN LANE</small><b>Shopper Behind the False Wall</b>
+    <span>Shopper, ridden by <a href="n/2592">The Canal Street Whisper</a>.</span>
+    <code title="Master seed, revealed by Marble Run when the tournament closed">a5723b467320078061a625b6b3dfd72c01205eb2848077167c1866ec35be483c</code></figcaption>
+  </figure>
+  <figure class="sk-champ">
+    <a href="assets/skelly/champ-T2.jpg" target="_blank" rel="noopener"><img src="assets/skelly/champ-T2-t.jpg" alt="Spaced Out, the First Rain" loading="lazy" width="1280" height="720"></a>
+    <figcaption><small>TOURNAMENT 2 · STATEN ISLAND LANE</small><b>Spaced Out, the First Rain</b>
+    <span>Spaced Out, ridden by <a href="n/4257">The Astronaut Who Missed Rain</a>.</span>
+    <code title="Master seed, revealed by Marble Run when the tournament closed">d9279e818486a18dd98b269b40327683f73206ed1c04c279c3417ddefd6a945d</code></figcaption>
+  </figure>
+  <figure class="sk-champ">
+    <a href="assets/skelly/champ-T1.jpg" target="_blank" rel="noopener"><img src="assets/skelly/champ-T1-t.jpg" alt="Double Deuce Takes the Deuce" loading="lazy" width="1280" height="720"></a>
+    <figcaption><small>TOURNAMENT 1 · BROOKLYN LANE</small><b>Double Deuce Takes the Deuce</b>
+    <span>Double Deuce, ridden by <a href="n/1787">The Old Deuce</a>.</span>
+    <code title="Master seed, revealed by Marble Run when the tournament closed">821a9cf1d6bee6299435d7ce17fa3971586f14cbdc4e66a2df5c58d12883675e</code></figcaption>
+  </figure></div>
+</section>
+
+<section style="margin:40px 0">
+  <h2 class="kicker">THE HUNDRED RIDERS</h2>
+  <p class="sk-fine">Every Marble Run marble keeps its name. Each one rides with a New Yorker from the census.</p>
+  <div class="sk-cast"><a href="n/2990" class="sk-r"><img src="assets/t/h5fe584714b.jpg" alt="" loading="lazy" width="320" height="180"><b>World Peace</b><small>The Peace of the Rooftops</small></a><a href="n/7957" class="sk-r"><img src="assets/t/h88fac7db9b.jpg" alt="" loading="lazy" width="320" height="180"><b>ETH Saver</b><small>Tova Rosenblatt, a person who found a lost piece in a dead wallet</small></a><a href="n/1104" class="sk-r"><img src="assets/t/hfbee48eb8c.jpg" alt="" loading="lazy" width="320" height="180"><b>Babka</b><small>The Babka</small></a><a href="n/1172" class="sk-r"><img src="assets/t/h9886884afe.jpg" alt="" loading="lazy" width="320" height="180"><b>Lore-y</b><small>The Block Historian</small></a><a href="n/5258" class="sk-r"><img src="assets/t/h5e27db5e84.jpg" alt="" loading="lazy" width="320" height="180"><b>Horsin Around</b><small>The Horse That Came Back</small></a><a href="n/1866" class="sk-r"><img src="assets/t/h9a7c161cde.jpg" alt="" loading="lazy" width="320" height="180"><b>Appreciatoor</b><small>The Collector</small></a><a href="n/3587" class="sk-r"><img src="assets/t/h124cabffbe.jpg" alt="" loading="lazy" width="320" height="180"><b>Batty</b><small>The Stickball Broom</small></a><a href="n/5268" class="sk-r"><img src="assets/t/habb234f6f5.jpg" alt="" loading="lazy" width="320" height="180"><b>High Quality</b><small>The Tailor Who Dresses the Whole Block</small></a><a href="n/4166" class="sk-r"><img src="assets/t/h7ef369e9e9.jpg" alt="" loading="lazy" width="320" height="180"><b>Insert Coin</b><small>The Insert Coin Sunrise</small></a><a href="n/3955" class="sk-r"><img src="assets/t/h4707644d03.jpg" alt="" loading="lazy" width="320" height="180"><b>Meow Meow</b><small>The Awakened Bodega Cat</small></a><a href="n/7641" class="sk-r"><img src="assets/t/h9e18b20054.jpg" alt="" loading="lazy" width="320" height="180"><b>Squiggy</b><small>The Woman Who Spent Nine Months on One Curve</small></a><a href="n/4590" class="sk-r"><img src="assets/t/h6b3f1ac3c0.jpg" alt="" loading="lazy" width="320" height="180"><b>Boomer</b><small>The Guard&#x27;s Retirement Gift</small></a><a href="n/789" class="sk-r"><img src="assets/t/h1b23019119.jpg" alt="" loading="lazy" width="320" height="180"><b>Mad Shatter</b><small>The Window Washer</small></a><a href="n/6503" class="sk-r"><img src="assets/t/hb895d78a4c.jpg" alt="" loading="lazy" width="320" height="180"><b>Get That Bread</b><small>Sal Donnelly, a cashier who has taken cash only for forty years</small></a><a href="n/1762" class="sk-r"><img src="assets/t/hfddfc8f31e.jpg" alt="" loading="lazy" width="320" height="180"><b>Final Lap</b><small>The Six Day Race</small></a><a href="n/3562" class="sk-r"><img src="assets/t/h8556f39869.jpg" alt="" loading="lazy" width="320" height="180"><b>Bodega</b><small>The Bodega TV Plays the Game</small></a><a href="n/3611" class="sk-r"><img src="assets/t/h46d20b4c3b.jpg" alt="" loading="lazy" width="320" height="180"><b>Cowboy</b><small>The Boot Repair Bench</small></a><a href="n/5120" class="sk-r"><img src="assets/t/h0890ccb00e.jpg" alt="" loading="lazy" width="320" height="180"><b>Viber</b><small>The Subway Dancer Who Takes No Money</small></a><a href="n/5363" class="sk-r"><img src="assets/t/h64d82893bc.jpg" alt="" loading="lazy" width="320" height="180"><b>Curiousity</b><small>The Kid Who Understood the Fire Escape</small></a><a href="n/807" class="sk-r"><img src="assets/t/h2e3d8c64f0.jpg" alt="" loading="lazy" width="320" height="180"><b>Phishy</b><small>The Three Card Monte</small></a><a href="n/1262" class="sk-r"><img src="assets/t/h77621d09bb.jpg" alt="" loading="lazy" width="320" height="180"><b>Brunk</b><small>The Drag Brunch</small></a><a href="n/1136" class="sk-r"><img src="assets/t/hee6c74f9db.jpg" alt="" loading="lazy" width="320" height="180"><b>Ray Of Light</b><small>The Lamplighter</small></a><a href="n/5117" class="sk-r"><img src="assets/t/h65cf32b042.jpg" alt="" loading="lazy" width="320" height="180"><b>Party In The Back</b><small>The Rent Party That Never Ended</small></a><a href="n/2949" class="sk-r"><img src="assets/t/h92c3f30953.jpg" alt="" loading="lazy" width="320" height="180"><b>Blocky</b><small>The Chalk Block</small></a><a href="n/3208" class="sk-r"><img src="assets/t/h1042e08dee.jpg" alt="" loading="lazy" width="320" height="180"><b>Thrillr</b><small>The Wonder Wheel Stall</small></a><a href="n/1751" class="sk-r"><img src="assets/t/h5a5b4ef482.jpg" alt="" loading="lazy" width="320" height="180"><b>Lenticular</b><small>The Stereoscope</small></a><a href="n/1753" class="sk-r"><img src="assets/t/h0101b0026f.jpg" alt="" loading="lazy" width="320" height="180"><b>Blue Devil</b><small>The Pepper&#x27;s Ghost</small></a><a href="n/2395" class="sk-r"><img src="assets/t/h92c4e1ecb7.jpg" alt="" loading="lazy" width="320" height="180"><b>Whiskers</b><small>The Wall Mouse Treaty</small></a><a href="n/5107" class="sk-r"><img src="assets/t/h95e9fc81d9.jpg" alt="" loading="lazy" width="320" height="180"><b>Java</b><small>The Coffee Cart Man Who Remembers Everyone</small></a><a href="n/1111" class="sk-r"><img src="assets/t/he66e1c5fd0.jpg" alt="" loading="lazy" width="320" height="180"><b>Rainbow</b><small>The Rainbow Cookie</small></a><a href="n/2066" class="sk-r"><img src="assets/t/h78031fc503.jpg" alt="" loading="lazy" width="320" height="180"><b>BadaBing</b><small>The Fuhgeddaboudit</small></a><a href="n/804" class="sk-r"><img src="assets/t/h21a573f525.jpg" alt="" loading="lazy" width="320" height="180"><b>Presidente</b><small>The Co-op Board President</small></a><a href="n/2592" class="sk-r"><img src="assets/t/h138ac6cf56.jpg" alt="" loading="lazy" width="320" height="180"><b>Shopper</b><small>The Canal Street Whisper</small></a><a href="n/6865" class="sk-r"><img src="assets/t/hf011f4e202.jpg" alt="" loading="lazy" width="320" height="180"><b>Spicy</b><small>Zhen Hwang, a man whose Midtown halal cart has a line at one in the morning</small></a><a href="n/1912" class="sk-r"><img src="assets/t/h7946bb56ce.jpg" alt="" loading="lazy" width="320" height="180"><b>Roar</b><small>The Lion Bath</small></a><a href="n/3125" class="sk-r"><img src="assets/t/h4f386aa14d.jpg" alt="" loading="lazy" width="320" height="180"><b>Feathers</b><small>The Gold Tooth Pigeon</small></a><a href="n/1398" class="sk-r"><img src="assets/t/he68a2aec82.jpg" alt="" loading="lazy" width="320" height="180"><b>Lindy</b><small>The Savoy Lindy Hop</small></a><a href="n/5269" class="sk-r"><img src="assets/t/hf0a9d998c4.jpg" alt="" loading="lazy" width="320" height="180"><b>Fresh Prince</b><small>The Sneaker That Was Never Released</small></a><a href="n/3982" class="sk-r"><img src="assets/t/hdbd969df68.jpg" alt="" loading="lazy" width="320" height="180"><b>Flight</b><small>The Hudson Hydroplane</small></a><a href="n/822" class="sk-r"><img src="assets/t/h083e4dc3e4.jpg" alt="" loading="lazy" width="320" height="180"><b>Scorreggia</b><small>The Cannoli Nonna</small></a><a href="n/3293" class="sk-r"><img src="assets/t/he35a46316a.jpg" alt="" loading="lazy" width="320" height="180"><b>Toad</b><small>The Model Boat Pond</small></a><a href="n/5161" class="sk-r"><img src="assets/t/h051d1da78a.jpg" alt="" loading="lazy" width="320" height="180"><b>Royal Flush</b><small>The Plumber Who Follows the Water</small></a><a href="n/767" class="sk-r"><img src="assets/t/h42c6bcc085.jpg" alt="" loading="lazy" width="320" height="180"><b>King</b><small>The Rat King</small></a><a href="n/4283" class="sk-r"><img src="assets/t/h3fa9828033.jpg" alt="" loading="lazy" width="320" height="180"><b>Dimensional</b><small>The Puddle Portals of Mott Street</small></a><a href="n/7660" class="sk-r"><img src="assets/t/hbcecb483f0.jpg" alt="" loading="lazy" width="320" height="180"><b>QQLer</b><small>Ayman Sabbagh, a man who refuses to release the seed</small></a><a href="n/7596" class="sk-r"><img src="assets/t/hc82a30d65b.jpg" alt="" loading="lazy" width="320" height="180"><b>Anon</b><small>Marisol Quispe, an anon with two hundred thousand followers and a day job</small></a><a href="n/777" class="sk-r"><img src="assets/t/hf88a27f8d3.jpg" alt="" loading="lazy" width="320" height="180"><b>Tunneler</b><small>The Sandhog</small></a><a href="n/891" class="sk-r"><img src="assets/t/h43c16b961d.jpg" alt="" loading="lazy" width="320" height="180"><b>Glitchy</b><small>The Signal Problem</small></a><a href="n/3540" class="sk-r"><img src="assets/t/h6ddb628e9b.jpg" alt="" loading="lazy" width="320" height="180"><b>Espresso</b><small>The Espresso Machine Pulled Perfect</small></a><a href="n/3553" class="sk-r"><img src="assets/t/hc33664410e.jpg" alt="" loading="lazy" width="320" height="180"><b>Blaze It</b><small>The Jerk Drum Smoked All Night</small></a><a href="n/7820" class="sk-r"><img src="assets/t/h78b7e6eb5a.jpg" alt="" loading="lazy" width="320" height="180"><b>Curatooor</b><small>Toya Danridge, a curator arguing that it belongs on a wall</small></a><a href="n/2548" class="sk-r"><img src="assets/t/he796844768.jpg" alt="" loading="lazy" width="320" height="180"><b>Baller</b><small>The Rucker Legend</small></a><a href="n/799" class="sk-r"><img src="assets/t/h5550a5d49b.jpg" alt="" loading="lazy" width="320" height="180"><b>Punky</b><small>The St. Marks Punk</small></a><a href="n/1787" class="sk-r"><img src="assets/t/h4e545c7797.jpg" alt="" loading="lazy" width="320" height="180"><b>Double Deuce</b><small>The Old Deuce</small></a><a href="n/776" class="sk-r"><img src="assets/t/h81d007a9d8.jpg" alt="" loading="lazy" width="320" height="180"><b>Doomer</b><small>The Subway Preacher</small></a><a href="n/3117" class="sk-r"><img src="assets/t/hbaf39430c9.jpg" alt="" loading="lazy" width="320" height="180"><b>High T</b><small>The Coney Island Avenue Late Shift</small></a><a href="n/838" class="sk-r"><img src="assets/t/hb864fc0103.jpg" alt="" loading="lazy" width="320" height="180"><b>Doc</b><small>The ER Night Nurse</small></a><a href="n/1943" class="sk-r"><img src="assets/t/h9b2972b7a4.jpg" alt="" loading="lazy" width="320" height="180"><b>Solo</b><small>The First Solo Ride</small></a><a href="n/1449" class="sk-r"><img src="assets/t/h83442802f3.jpg" alt="" loading="lazy" width="320" height="180"><b>Windy</b><small>The Flatiron Wind</small></a><a href="n/893" class="sk-r"><img src="assets/t/h2adf6b6775.jpg" alt="" loading="lazy" width="320" height="180"><b>Walker</b><small>The Slow Walkers</small></a><a href="n/848" class="sk-r"><img src="assets/t/h091363a35b.jpg" alt="" loading="lazy" width="320" height="180"><b>Combustion</b><small>The Firehouse Cook</small></a><a href="n/2313" class="sk-r"><img src="assets/t/h3aaab82785.jpg" alt="" loading="lazy" width="320" height="180"><b>Crusty</b><small>The Queen of Slices</small></a><a href="n/812" class="sk-r"><img src="assets/t/hb5ced0e383.jpg" alt="" loading="lazy" width="320" height="180"><b>Mysterio</b><small>The Neon Psychic</small></a><a href="n/1438" class="sk-r"><img src="assets/t/h2a887d42f9.jpg" alt="" loading="lazy" width="320" height="180"><b>Survivor</b><small>The Survivor Tree</small></a><a href="n/1316" class="sk-r"><img src="assets/t/hcfd557fe09.jpg" alt="" loading="lazy" width="320" height="180"><b>Sargent</b><small>The Police Horse</small></a><a href="n/1464" class="sk-r"><img src="assets/t/hcffc97833d.jpg" alt="" loading="lazy" width="320" height="180"><b>Moon God</b><small>The Supermoon</small></a><a href="n/1029" class="sk-r"><img src="assets/t/h88c87f52fa.jpg" alt="" loading="lazy" width="320" height="180"><b>Jacked Up</b><small>The Boxing Gym</small></a><a href="n/5045" class="sk-r"><img src="assets/t/h1e5544c83c.jpg" alt="" loading="lazy" width="320" height="180"><b>Complainoor</b><small>The Borough President of Nowhere</small></a><a href="n/2519" class="sk-r"><img src="assets/t/h00bc4e124e.jpg" alt="" loading="lazy" width="320" height="180"><b>Bonsai</b><small>The Tree Bed Gardener</small></a><a href="n/873" class="sk-r"><img src="assets/t/h904cf17b56.jpg" alt="" loading="lazy" width="320" height="180"><b>Acidic</b><small>The Bushwick Raver</small></a><a href="n/1338" class="sk-r"><img src="assets/t/he7178fb1f3.jpg" alt="" loading="lazy" width="320" height="180"><b>Multitudes</b><small>The Million Windows</small></a><a href="n/4257" class="sk-r"><img src="assets/t/hc1a53cf770.jpg" alt="" loading="lazy" width="320" height="180"><b>Spaced Out</b><small>The Astronaut Who Missed Rain</small></a><a href="n/6743" class="sk-r"><img src="assets/t/h07186061fc.jpg" alt="" loading="lazy" width="320" height="180"><b>Molder</b><small>The Woman Who Numbers the Clay Pipes</small></a><a href="n/2926" class="sk-r"><img src="assets/t/hda76ce6f66.jpg" alt="" loading="lazy" width="320" height="180"><b>Bork</b><small>The Dog Rating Panel</small></a><a href="n/1138" class="sk-r"><img src="assets/t/hd8dd378063.jpg" alt="" loading="lazy" width="320" height="180"><b>Dialer</b><small>The Switchboard Operator</small></a><a href="n/1553" class="sk-r"><img src="assets/t/hda792a30d4.jpg" alt="" loading="lazy" width="320" height="180"><b>Spidey</b><small>The Dawn Web</small></a><a href="n/4797" class="sk-r"><img src="assets/t/h24758a42d2.jpg" alt="" loading="lazy" width="320" height="180"><b>Shutter</b><small>The Man Who Waves at Every Camera</small></a><a href="n/1532" class="sk-r"><img src="assets/t/h1be9ce78a2.jpg" alt="" loading="lazy" width="320" height="180"><b>Maper</b><small>The Map Room</small></a><a href="n/772" class="sk-r"><img src="assets/t/h44724a687f.jpg" alt="" loading="lazy" width="320" height="180"><b>Chomp</b><small>The Pizza Squirrel</small></a><a href="n/990" class="sk-r"><img src="assets/t/h68d41d8dfe.jpg" alt="" loading="lazy" width="320" height="180"><b>Coach</b><small>The Bus Driver</small></a><a href="n/4882" class="sk-r"><img src="assets/t/he50761f57b.jpg" alt="" loading="lazy" width="320" height="180"><b>Sparkly</b><small>The Sequin Constellation of Flatbush</small></a><a href="n/3986" class="sk-r"><img src="assets/t/h99e66fce6a.jpg" alt="" loading="lazy" width="320" height="180"><b>Peeled Out</b><small>The Drag Race Up Futurity Avenue</small></a><a href="n/4450" class="sk-r"><img src="assets/t/hf335117a3b.jpg" alt="" loading="lazy" width="320" height="180"><b>Aerys II</b><small>The Boiler Room Dragon</small></a><a href="n/6596" class="sk-r"><img src="assets/t/h163d0df5d9.jpg" alt="" loading="lazy" width="320" height="180"><b>Grumpy</b><small>Nestor Peralta, an old man who snips basil with scissors over every finished pie</small></a><a href="n/3720" class="sk-r"><img src="assets/t/h98c94a49a5.jpg" alt="" loading="lazy" width="320" height="180"><b>Versal</b><small>The Robot Rode the L</small></a><a href="n/3595" class="sk-r"><img src="assets/t/hd53be31066.jpg" alt="" loading="lazy" width="320" height="180"><b>Geared Up</b><small>The Bike Messenger&#x27;s Frame</small></a><a href="n/3915" class="sk-r"><img src="assets/t/h2750b9d158.jpg" alt="" loading="lazy" width="320" height="180"><b>Red Nose</b><small>The Wandering Christmas Tree</small></a><a href="n/806" class="sk-r"><img src="assets/t/he0213e6eee.jpg" alt="" loading="lazy" width="320" height="180"><b>Rotten</b><small>The Trash Mountain</small></a><a href="n/2109" class="sk-r"><img src="assets/t/hd470fe28aa.jpg" alt="" loading="lazy" width="320" height="180"><b>Serenity</b><small>Strength</small></a><a href="n/1237" class="sk-r"><img src="assets/t/hac12a23e96.jpg" alt="" loading="lazy" width="320" height="180"><b>Fluffy</b><small>The Cotton Candy Man</small></a><a href="n/858" class="sk-r"><img src="assets/t/h62be5d091a.jpg" alt="" loading="lazy" width="320" height="180"><b>Mickey</b><small>The Knockoff Mascot</small></a><a href="n/4432" class="sk-r"><img src="assets/t/haf934e66da.jpg" alt="" loading="lazy" width="320" height="180"><b>Phoenix</b><small>The Incinerator Phoenix</small></a><a href="n/1525" class="sk-r"><img src="assets/t/hb8213d6ecb.jpg" alt="" loading="lazy" width="320" height="180"><b>Geometric</b><small>The Tilted Grid</small></a><a href="n/2703" class="sk-r"><img src="assets/t/he830f0cee5.jpg" alt="" loading="lazy" width="320" height="180"><b>Marmy</b><small>The Black Squirrel</small></a><a href="n/1211" class="sk-r"><img src="assets/t/hd714b7e0ec.jpg" alt="" loading="lazy" width="320" height="180"><b>Burnout</b><small>The Night Shift</small></a><a href="n/2102" class="sk-r"><img src="assets/t/h2b119cad03.jpg" alt="" loading="lazy" width="320" height="180"><b>Entertainer</b><small>The Magician</small></a><a href="n/885" class="sk-r"><img src="assets/t/ha4c14aa58c.jpg" alt="" loading="lazy" width="320" height="180"><b>Relaxer</b><small>The Orchard Beach Salsero</small></a><a href="n/4355" class="sk-r"><img src="assets/t/h70235abb00.jpg" alt="" loading="lazy" width="320" height="180"><b>Mulligan</b><small>The Corner That Grants One Do Over</small></a><a href="n/1279" class="sk-r"><img src="assets/t/h0da55d528e.jpg" alt="" loading="lazy" width="320" height="180"><b>Refunder</b><small>The Endless Receipt</small></a><a href="n/2862" class="sk-r"><img src="assets/t/h97f530d643.jpg" alt="" loading="lazy" width="320" height="180"><b>Detroiter</b><small>The Million Mile Cab</small></a></div>
+</section>
+
+<section style="margin:40px 0 60px">
+  <p class="sk-fine">Race data, seeds and the simulation are Bryan Brinkman's <a href="https://marblerun.fun/api" rel="noopener">Marble Run</a>, read live and verifiable by anyone. SKELLY CUP is a free game: no entry, no stake, no odds. Art, not an investment.</p>
+</section>
+</main>
+
+<div id="foot"></div>
+<script>window.NY_BASE="";</script>
+<script src="assets/config.js"></script>
+<script src="assets/counts.js"></script>
+<script src="assets/site.js"></script>
+<script>NY.nav("SKELLY");NY.foot();</script>
+
+<script>
+(function(){
+  var API = "https://marblerun.fun", B = (window.NY && NY.BASE) || "";
+  var BORO = {RED:"Brooklyn", BLUE:"Manhattan", YELLOW:"Queens", GREEN:"Staten Island", CREAM:"The Bronx"};
+  var BCOL = {Brooklyn:"#d9534f", Manhattan:"#5bc0de", Queens:"#f0ad4e", "Staten Island":"#5cb85c", "The Bronx":"#ede0c8"};
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return (window.NY && NY.esc) ? NY.esc(s) : String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+  var get = function(k, d){ try { var v = localStorage.getItem("skelly:" + k); return v ? JSON.parse(v) : d; } catch(e) { return d; } };
+  var put = function(k, v){ try { localStorage.setItem("skelly:" + k, JSON.stringify(v)); } catch(e) {} };
+  var R = {}, rounds = [], race = null, tid = null, skew = 0, mine = get("mine", {});
+  fetch(B + "assets/skelly/riders.json").then(function(r){ return r.json(); }).then(function(j){ R = j; paint(); }).catch(function(){});
+  $("skName").value = get("name", "");
+  $("skName").addEventListener("change", function(){ put("name", $("skName").value.trim()); });
+
+  function log(h){ var p = document.createElement("p"); p.innerHTML = h; $("skLog").prepend(p); while ($("skLog").children.length > 50) $("skLog").lastChild.remove(); }
+  function key(k){ return tid + ":" + k; }
+  function find(k){ for (var i = 0; i < rounds.length; i++) { var rs = rounds[i].races || []; for (var j = 0; j < rs.length; j++) if (rs[j].key === k) return rs[j]; } return null; }
+
+  function boros(){
+    var b = {Brooklyn:0, Manhattan:0, Queens:0, "Staten Island":0, "The Bronx":0};
+    rounds.forEach(function(rd){ (rd.races || []).forEach(function(r){ (r.result || []).forEach(function(x){ var n = BORO[x.lane]; if (n) b[n] += x.rank === 1 ? 5 : x.rank === 2 ? 3 : x.rank === 3 ? 1 : 0; }); }); });
+    var max = Math.max.apply(null, [1].concat(Object.values(b)));
+    $("skBoros").innerHTML = Object.keys(b).sort(function(x, y){ return b[y] - b[x]; }).map(function(n){ return '<div class="sk-bar"><span>' + n + '</span><div style="width:' + (b[n] / max * 100) + '%;background:' + BCOL[n] + '"></div><span>' + b[n] + '</span></div>'; }).join("");
+  }
+
+  function paint(){
+    if (!race) return;
+    var k = key(race.key), m = mine[k] || {}, open = race.status === "announced";
+    var order = {}; (race.result || []).forEach(function(x){ order[x.marbleId] = x.rank; });
+    $("skTitle").textContent = (race.roundTitle || race.roundKey) + " " + (race.indexInRound + 1);
+    $("skMeta").textContent = "tournament " + tid + " · " + race.key + " · track " + race.trackSeed + (race.raceSeed ? " · race seed " + race.raceSeed : "");
+    $("skLanes").innerHTML = race.roster.map(function(x){
+      var r = R[x.marbleId] || {}, cls = "sk-lane" + (m.pick === x.marbleId ? " picked" : "") + (order[x.marbleId] === 1 ? " won" : "");
+      return '<button class="' + cls + '" data-id="' + x.marbleId + '"' + (open ? "" : " disabled") + '><span class="sk-rider">' + (r.i ? '<img src="' + B + esc(r.i) + '" alt="">' : "") + '<i style="background:' + x.color + '"></i></span>' +
+        '<span><span class="nm">' + esc(x.marbleName) + '</span> <small style="display:inline">for ' + (BORO[x.lane] || x.lane) + '</small><small>' + esc(r.t || "") + '</small></span>' +
+        '<span class="rk">' + (order[x.marbleId] || "") + '</span></button>';
+    }).join("");
+    $("skBlow").disabled = !(open && m.pick != null && !m.seed);
+    $("skBlow").textContent = m.seed ? "BLOWN ON" : "BLOW ON IT";
+  }
+
+  function send(k, m){
+    var name = $("skName").value.trim();
+    if (!/^[A-Za-z0-9._]{2,16}$/.test(name)) { if (window.NY && NY.toast) NY.toast("Add a name for the board: 2 to 16 letters, numbers, dot or underscore."); $("skName").focus(); return; }
+    put("name", name);
+    fetch(B + "api/skelly", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({tournamentId: tid, raceKey: race.key, marbleId: m.pick, name: name, seed: m.seed || null})})
+      .then(function(r){ return r.json(); }).then(function(j){ if (!j.ok && window.NY && NY.toast) NY.toast(j.error || "Pick not saved."); }).catch(function(){});
+  }
+
+  $("skLanes").addEventListener("click", function(e){
+    var b = e.target.closest(".sk-lane"); if (!b || b.disabled || !race || race.status !== "announced") return;
+    var k = key(race.key), m = mine[k] || (mine[k] = {});
+    m.pick = +b.dataset.id; put("mine", mine); paint(); send(k, m);
+    if (window.NY && NY.hit) NY.hit("skelly", "pick");
+  });
+
+  $("skBlow").addEventListener("click", function(){
+    if (!race || race.status !== "announced") return;
+    var k = key(race.key), m = mine[k]; if (!m || m.pick == null) return;
+    var seed = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(32)), function(b){ return b.toString(16).padStart(2, "0"); }).join("");
+    $("skBlow").disabled = true;
+    fetch(API + "/api/race/" + encodeURIComponent(race.key) + "/client-seed", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({seed: seed})})
+      .then(function(r){ return r.json().then(function(j){ return {ok: r.ok, j: j}; }); })
+      .then(function(x){ if (x.ok && x.j.accepted !== false) { m.seed = seed; put("mine", mine); send(k, m); log("<b>You blew on " + race.key + ".</b> " + (x.j.count || "?") + " seeds in."); } else log("Seed not taken. One per connection per race."); paint(); })
+      .catch(function(){ log("Seed did not reach the gate."); paint(); });
+    if (window.NY && NY.hit) NY.hit("skelly", "blow");
+  });
+
+  function board(){
+    if (!tid) return;
+    fetch(B + "api/skelly?t=" + tid).then(function(r){ return r.json(); }).then(function(j){
+      if (!j.ok) { $("skBoard").innerHTML = '<tr><td colspan="4">The board opens soon.</td></tr>'; return; }
+      $("skBoard").innerHTML = j.top.length ? j.top.slice(0, 15).map(function(x, i){ return "<tr><td>" + (i + 1) + "</td><td>" + esc(x.name) + "</td><td>" + x.points + "</td><td>" + x.winners + "</td></tr>"; }).join("") : '<tr><td colspan="4">Nobody on the board yet. Be first.</td></tr>';
+    }).catch(function(){ $("skBoard").innerHTML = '<tr><td colspan="4">The board opens soon.</td></tr>'; });
+  }
+
+  function boot(s){
+    skew = s.serverNow - Date.now(); tid = s.tournament && s.tournament.id; rounds = s.rounds || [];
+    race = s.current && s.current.raceKey ? find(s.current.raceKey) : null;
+    boros(); paint(); board();
+  }
+  function upsert(r){ var f = find(r.key); if (f) { for (var k in r) f[k] = r[k]; return f; } return r; }
+
+  function connect(delay){
+    delay = delay || 1000;
+    var ws = new WebSocket("wss://marblerun.fun/ws");
+    ws.onopen = function(){ delay = 1000; };
+    ws.onclose = function(){ setTimeout(function(){ connect(Math.min(delay * 2, 30000)); }, delay); };
+    ws.onmessage = function(e){
+      var m = JSON.parse(e.data); if (m.serverNow) skew = m.serverNow - Date.now();
+      if (m.type === "snapshot") boot(m);
+      else if (m.type === "round_built") { rounds = rounds.filter(function(r){ return r.key !== m.round.key; }).concat(m.round); }
+      else if (m.type === "race_announced") { m.race.status = "announced"; race = upsert(m.race); log("<b>" + race.key + " at the gate:</b> " + race.roster.map(function(x){ return esc(x.marbleName); }).join(", ")); paint(); }
+      else if (m.type === "race_start") { if (race && race.key === m.raceKey) { race.status = "running"; race.raceSeed = m.raceSeed; var me = (mine[key(m.raceKey)] || {}).seed; log("<b>" + m.raceKey + " is off.</b> " + ((m.clientSeeds || []).length) + " seeds blown in." + (me && (m.clientSeeds || []).indexOf(me) >= 0 ? " Yours is in it." : "")); paint(); } }
+      else if (m.type === "race_result") {
+        var r = find(m.raceKey) || race; if (!r) return; r.status = "done"; r.result = m.result;
+        var w = m.result[0], rr = R[w.marbleId];
+        log("<b>" + esc(w.marbleName) + "</b>" + (rr ? ", ridden by " + esc(rr.t) + "," : "") + " wins " + m.raceKey + " for " + (BORO[w.lane] || w.lane) + ".");
+        boros(); paint(); setTimeout(board, 8000);
+      } else if (m.type === "tournament_complete") {
+        log("<b>" + esc(m.champion.name) + " takes tournament " + tid + ".</b> A new Champion's Portrait is owed.");
+        setTimeout(function(){ fetch(API + "/api/state").then(function(r){ return r.json(); }).then(boot).catch(function(){}); }, 40000);
+      }
+    };
+  }
+  setInterval(function(){
+    if (!race || !race.scheduledStart) return;
+    var t = Math.round((race.scheduledStart - (Date.now() + skew)) / 1000);
+    $("skClock").textContent = race.status === "announced" ? (t > 0 ? "0:" + String(t).padStart(2, "0") : "GATE") : race.status === "running" ? "RACING" : "FINAL";
+  }, 250);
+  connect();
+})();
+</script>
+
+<script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
+</body>
+</html>
