@@ -194,7 +194,7 @@ def sync_dir(src, dst):
             shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
 
 
-for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly"):
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly", "ui"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
