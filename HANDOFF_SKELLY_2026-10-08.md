@@ -85,7 +85,7 @@ absolutely positioned canvas with inset:0 stays 300x150 unless given width and h
 Chrome over CDP at 1440x900 and 390x844 (the preview pane is too small to judge design). All plates passed
 the text gate. Still not deployed; the D1 table and Bryan's yes are still pending.
 
-## 2026-10-09: every holder painted, every race painted (wave 33)
+## 2026-10-09: every holder painted, every race painted (wave 36)
 
 MLow asked for a new piece for every BrinkWorks holder racing their marble, seeded from their race, used as the
 MetroCards, linked to their other honoraries, and new honorees for everyone without one. Plus a piece per race.
@@ -97,11 +97,11 @@ MetroCards, linked to their other honoraries, and new honorees for everyone with
   best race. `contest/plan_contestants.py`, outputs in `contest/out/`.
 - 163 race paintings, Seedream 5 Lite (about $0.04): the winner's census rider taking the race, place, hour and
   celebration from the race seed. `races/plan_races.py`, outputs in `races/out/`.
-- Wave 33 on the honoraries page: `contest/make_wave33.py` builds `HONORARY PFPS 2026-09-14/WAVE 33 2026-10-09
+- Wave 36 (first numbered 33) on the honoraries page: `contest/make_wave36.py` builds `HONORARY PFPS 2026-09-14/WAVE 36 2026-10-09
   SKELLY CUP/` (heroes are hard links, no extra disk), roles C and factual bios for 85 new honorees (four anonymous
   wallets show as Patron #NNN). The 13 existing honorees get the contest painting as a second work on their card;
   sync.py now puts kind "skelly" behind the portrait, like a census piece, so their portrait still leads.
-- Chain after any refire: make_wave33.py, collect.py, make_wave33.py again (fills roles for the 13 second keys),
+- Chain after any refire: make_wave36.py, collect.py, make_wave36.py again (fills roles for the 13 second keys),
   honoraries/sync.py, contest/publish_skelly_art.py, build_skelly.py, build_honor_cards.py, build_honoraries.py.
 - THE RIDERS cards now show the holder's painting crop, the marble, the holder, the race seed and result, and link
   to h/<id>. Burned passes 095 and 099 keep the census rider.
