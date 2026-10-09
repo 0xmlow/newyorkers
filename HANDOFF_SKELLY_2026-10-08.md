@@ -46,7 +46,7 @@ Planning, casting, ledger and portraits live outside the repo in `../MARBLE RUN 
 ## Later the same night: louder, and Bryan credited everywhere
 
 - Sixth portrait: tournament 6 went to Blaze It (the rusted robot pitmaster), painted first try, $0.175.
-  Seven FLORA runs in all today for the portraits, $1.58.
+  Nine FLORA runs in all today for the six portraits, $1.58.
 - The page now runs a ticker, a gate clock with LAST CALL in the final ten seconds, tournament progress,
   STILL ALIVE (the hundred shrinking, eliminated riders greyed), crowd heat per lane (`?crowd=` on
   /api/skelly, counts only), HOT and title tags, a local streak card, finish splashes (YOU CALLED IT with
