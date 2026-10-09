@@ -1,0 +1,3 @@
+{"invented": ["2","4","8","17","18","20","22","34","35","37","38","53","69","70","74","78","81","86","91","94","97"],
+ "avatar_weak": ["24","31","55","57","83"],
+ "note": "OpenSea profile PFPs read 2026-10-09 (os_avatars.json). Skipped: honorees (likeness already checked), paintings that already match, and PFPs that are not a character (text, landscape, object, logo, black square, glitch)."}

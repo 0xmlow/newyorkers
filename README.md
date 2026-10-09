@@ -1,23 +1,33 @@
-# SKELLY CUP · NEW YORKERS on Bryan Brinkman's Marble Run
+# SKELLY CUP, NEW YORKERS x Marble Run
 
-Live at [n3wyorkers.com/skelly](https://n3wyorkers.com/skelly).
+Bryan Brinkman's marblerun.fun, remixed by MLow. Nothing here is live, sent, minted or launched.
 
-Every race, course, seed and frame of physics is **Marble Run by Bryan Brinkman** ([marblerun.fun](https://marblerun.fun), [the free public API](https://marblerun.fun/api)). Bryan built the thing nobody can rig. We painted the riders and drew the chalk.
+| File | What it is |
+|---|---|
+| `PLAN.md` | The idea, the legal line, the free game, the $SKELLY draft. Read first. |
+| `cast.json` | The 100 riders: one census piece per marble, with the reason, holder, and WEAK flags. Source of truth for casting. |
+| `casting.html` | Contact sheet for MLow to cut: KEEP or RECAST per rider, notes, download decisions. Saves in this browser. |
+| `skelly-cup.html` | The game prototype on Bryan's live feed: riders in lanes, boroughs, free picks, BLOW ON IT, points, Borough Wars, hall of fame. |
+| `riders.js` | Generated from cast.json by `python3 build_riders.py`. Rerun after any recast. |
+| `ledger.py` | The Seed Ledger. Archives every race, seed and champion into `ledger/`. Two requests per run. |
+| `snapshot_holders.py` | Holder snapshot for any Ethereum NFT contract, with optional even or weighted token split. |
+| `CHAMPIONS.md` | The original briefs for the first five champions. |
+| `portraits/` | The Champion's Portraits, 2560 masters. `portraits.json` records the chosen file per tournament; `superseded/` holds the rejected first tries (lettering, or a marble that came out small). |
+| `champion_queue.py` | After `ledger.py`, lists champions with no portrait yet and writes the house brief for each to `portraits/queue.json`. |
+| `publish_portraits.py` | Chosen portraits and the casting into the site build (`assets/skelly`, `_build/skelly`). Then `python3 build_skelly.py` in the site's `_build`. |
+| `launchd/` | A plist that runs the ledger and the queue every 30 minutes. Not installed. |
+| `BRYAN.md` | Draft note for MLow to send Bryan. |
+| `_cast/` | Working files: candidate search and the picks list. |
 
-SKELLY CUP is a free game: no entry, no stake, no odds, nothing paid out. Points and portraits are for glory. Art, not an investment.
+## Recast a rider
 
-## What is in here
+Edit `_cast/picks.txt` (marble id | piece number | reason), run `python3 _cast/build_cast.py`, then `python3 build_riders.py`. Both pages pick it up on reload.
 
-- `cast.json`, `_cast/`: a hundred NEW YORKERS census characters, one riding each marble, five lanes as the five boroughs.
-- `ledger/`, `ledger.py`: every race since tournament 1, archived from the API.
-- `portraits/`, `champion_queue.py`, `publish_portraits.py`: a Champion's Portrait for every tournament winner, T1 to T6 painted on FLORA, T7 onward on Krea.
-- `krea_batch.py`: the books for painting owed champions and races on Krea (Seedream 5 Pro and Lite).
-- `contest/`: one painting per BrinkWorks pass holder racing their own marble (pass #N holds marble #N), the scene picked from the seed of their best race. `make_wave36.py` turns them into honoraries (wave 36), `likeness/` is the pass that matched each painting to the holder's PFP or portrait, `rechain.sh` republishes after any change, `publish_skelly_art.py` puts them on the site's MetroCards.
-- `races/`: one painting per race, the winner's rider taking it; place, hour and celebration chosen by the race seed. `races/all.json` catalogues every finished race.
-- `design/`: the FLORA plates behind the page (a Brooklyn block at night).
-- `brink/`: Bryan's palette. Every painting and plate recoloured lane by lane to his four, pink `#f2668b`, cyan `#23c7d9`, mint `#48d9a4` and yellow `#f2bf27`: reds to pink, blues to cyan, greens to mint, yellows to his yellow, with skin, brick and night held.
-- `skelly-cup.html`: the first live prototype.
+## What is waiting on someone
 
-The site page itself is built by `_build/build_skelly.py` in the NEW YORKERS site repo.
-
-By MLow ([@degens](https://x.com/degens)) with Bryan Brinkman ([@bryanbrinkman](https://x.com/bryanbrinkman)).
+- **MLow:** cut the casting in `casting.html`; send `BRYAN.md`.
+- **Bryan:** yes or no on skinning his marbles, on NYC courses, and on any token.
+- **Bryan:** the Brinkworks contract address, so `snapshot_holders.py` can take the 98.
+- **Lawyer:** before any prize pool over $5,000 and before any token exists.
+- **Built 2026-10-08 evening:** the five portraits ($1.40 on FLORA), skelly.html with a shared board (/api/skelly, D1) in the site repo, commit da291fe, not deployed. See `NEW YORKERS SITE/HANDOFF_SKELLY_2026-10-08.md`.
+- **Still not built:** the museum room, MOSH states for the portraits, any token contract (lawyer first).
