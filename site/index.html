@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MEME MUSEUM · the blossom garden and THE 6529 WING · by MLow</title>
+<meta name="description" content="Walk MEME MUSEUM by MLow: a blossom shaped sculpture garden of meme sculptures, a wave pond, and THE 6529 WING, six node rooms around The Vault. Free in your browser.">
+<link rel="icon" href="assets/poster.jpg">
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0D0D0D; font-family: Calibri, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+  canvas { display: block; touch-action: none; }
+  #hud { position: fixed; top: 14px; left: 16px; color: #F0F4F8; z-index: 5; pointer-events: none; }
+  #hud .word { font-family: Georgia, serif; font-weight: bold; font-size: 22px; letter-spacing: 4px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  #hud .word .eye { color: #2962FF; }
+  #hud .sub { font-size: 12px; color: #2962FF; letter-spacing: 2px; margin-top: 2px; font-weight: bold; }
+  #zone { position: fixed; top: 14px; right: 16px; color: #0D0D0D; background: #D7FF1F; padding: 4px 10px; z-index: 5; font-size: 12px; letter-spacing: 3px; pointer-events: none; }
+  #spots { position: fixed; top: 48px; right: 16px; display: flex; flex-direction: column; gap: 4px; z-index: 6; }
+  #spots button { font: 12px Calibri, Arial, sans-serif; letter-spacing: 2px; color: #F0F4F8; background: rgba(13,13,13,.62); border: 1px solid rgba(240,244,248,.25); padding: 6px 10px; cursor: pointer; text-align: right; }
+  #spots button:hover { border-color: #2962FF; }
+  #start { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(13,13,13,.92); color: #F0F4F8; z-index: 10; cursor: pointer; text-align: center; padding: 16px; }
+  #start h1 { font-family: Georgia, serif; letter-spacing: 6px; font-size: clamp(26px, 6vw, 40px); margin: 0 0 10px; }
+  #start h1 span { color: #2962FF; display: block; font-size: .5em; letter-spacing: 4px; margin-top: 8px; }
+  #start p { color: #B8D4FF; font-size: 14px; line-height: 1.6; max-width: 520px; }
+  #start .cta { margin-top: 18px; padding: 12px 28px; border: 1px solid #2962FF; color: #F0F4F8; font-size: 13px; letter-spacing: 3px; }
+  #bar { width: 240px; height: 3px; background: #2A3040; margin-top: 22px; }
+  #bar i { display: block; height: 100%; width: 0%; background: #2962FF; transition: width .2s; }
+  #tip { position: fixed; bottom: 14px; left: 16px; color: #33404f; font-size: 11px; letter-spacing: 1px; z-index: 5; pointer-events: none; }
+  #walk { position: fixed; right: 18px; bottom: 22px; width: 76px; height: 76px; border-radius: 50%; border: 2px solid #2962FF; background: rgba(13,13,13,.55); color: #F0F4F8; font: bold 12px Calibri, Arial, sans-serif; letter-spacing: 2px; z-index: 6; display: none; touch-action: none; }
+  @media (pointer: coarse) { #walk { display: block; } #tip { display: none; } }
+</style>
+</head>
+<body>
+<div id="hud"><div class="word">MLO<span class="eye">&#9673;</span>W</div><div class="sub">MEME MUSEUM · GARDEN + THE 6529 WING</div></div>
+<div id="zone">THE GARDEN</div>
+<div id="spots"><button data-s="gate" type="button">SOUTH GATE</button><button data-s="pond" type="button">THE CAUSEWAY</button><button data-s="vault" type="button">THE 6529 VAULT</button></div>
+<div id="tip">WASD MOVE · MOUSE OR DRAG TO LOOK · SHIFT RUN · 1 GATE · 2 VAULT · ESC RELEASE</div>
+<button id="walk" type="button">WALK</button>
+<div id="start">
+  <h1>MEME MUSEUM<span>BY MLOW</span></h1>
+  <p id="msg">A blossom shaped sculpture garden of meme sculptures around a wave pond, then a causeway north to THE 6529 WING: six node rooms, SEIZE, GM, SUMMER, SURVIVE, FREEDOM and NETWORK, around The Vault. It is a big world, give it a moment.</p>
+  <div class="cta">CLICK TO ENTER</div>
+  <div id="bar"><i id="fill"></i></div>
+</div>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/DRACOLoader.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf6e8d8);
+scene.fog = new THREE.Fog(0xf6e8d8, 140, 520);
+const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 1200);
+camera.position.set(0, 1.7, 168);   // just outside the south gate (blender +Y is three -Z)
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xcfe0ff, 0x3a5b3c, 0.75));
+const sun = new THREE.DirectionalLight(0xffb073, 1.5); sun.position.set(-120, 140, 80); scene.add(sun);
+const rim = new THREE.DirectionalLight(0x88aaff, 0.5); rim.position.set(140, 90, -120); scene.add(rim);
+
+let mixer = null;
+const clock = new THREE.Clock();
+const fill = document.getElementById('fill'), msg = document.getElementById('msg');
+// the walk model is the Blender export put through gltf-transform dedup, prune, resize 512, webp and draco (13 bit positions,
+// 8 bit normals); never simplify it (the colonnade turns square) and never instance it (r128 cannot read that)
+const draco = new THREE.DRACOLoader(); draco.setDecoderPath('vendor/draco/');
+const loader = new THREE.GLTFLoader(); loader.setDRACOLoader(draco);
+loader.load('assets/meme-museum.glb', (g) => {
+  const world = g.scene;
+  world.traverse(o => { if (o.isLight) o.visible = false; });
+  scene.add(world);
+  if (g.animations && g.animations.length) { mixer = new THREE.AnimationMixer(world); g.animations.forEach(cl => mixer.clipAction(cl).play()); }
+  fill.style.width = '100%';
+  msg.textContent = 'The garden is loaded. Walk the blossom, then head north across the causeway to The Vault.';
+  window.__ready = true;
+}, (ev) => { if (ev.total) fill.style.width = (100 * ev.loaded / ev.total).toFixed(0) + '%'; },
+() => { msg.textContent = 'The museum did not load. Refresh to try again.'; });
+
+const start = document.getElementById('start'), zone = document.getElementById('zone');
+let locked = false, entered = false, yaw = 0, pitch = 0;
+const keys = {};
+const SPOTS = { gate: [0, 168, 0], pond: [0, -150, 0], vault: [0, -214, 0] };
+const jump = (s) => { const p = SPOTS[s]; camera.position.set(p[0], 1.7, p[1]); yaw = p[2]; pitch = 0; };
+document.querySelectorAll('#spots button').forEach(b => b.onclick = (e) => { e.stopPropagation(); jump(b.dataset.s); });
+start.addEventListener('click', () => {
+  entered = true; start.style.display = 'none';
+  try { const p = document.body.requestPointerLock && document.body.requestPointerLock(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+});
+document.addEventListener('pointerlockchange', () => { locked = document.pointerLockElement === document.body; });
+document.addEventListener('mousemove', (e) => {
+  if (!locked) return;
+  yaw -= e.movementX * 0.0022; pitch = Math.max(-1.35, Math.min(1.35, pitch - e.movementY * 0.0022));
+});
+// drag to look when the pointer is not locked (inside a page, on a phone)
+let drag = null;
+renderer.domElement.addEventListener('pointerdown', (e) => { if (!locked) drag = { x: e.clientX, y: e.clientY }; });
+addEventListener('pointermove', (e) => { if (!drag) return; yaw -= (e.clientX - drag.x) * 0.005; pitch = Math.max(-1.35, Math.min(1.35, pitch - (e.clientY - drag.y) * 0.004)); drag = { x: e.clientX, y: e.clientY }; });
+addEventListener('pointerup', () => drag = null);
+const walkBtn = document.getElementById('walk');
+walkBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); keys.KeyW = true; });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => walkBtn.addEventListener(t, () => keys.KeyW = false));
+addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'Digit1') jump('gate'); if (e.code === 'Digit2') jump('vault'); });
+addEventListener('keyup', e => keys[e.code] = false);
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+// two precincts joined by a neck: test the union and refuse a step that leaves it
+function inside(x, z) {
+  if (Math.hypot(x / 166, z / 148) <= 0.99) return 'THE GARDEN';
+  if (Math.hypot(x, z + 262) <= 108) return 'THE 6529 WING';
+  if (Math.abs(x) <= 30 && z <= -140 && z >= -200) return 'THE CAUSEWAY';
+  return null;
+}
+function step(dt) {
+  const sp = (keys.ShiftLeft || keys.ShiftRight) ? 24 : 9;
+  const f = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)), r = new THREE.Vector3(-f.z, 0, f.x), v = new THREE.Vector3();
+  if (keys.KeyW || keys.ArrowUp) v.add(f);
+  if (keys.KeyS || keys.ArrowDown) v.sub(f);
+  if (keys.KeyD || keys.ArrowRight) v.add(r);
+  if (keys.KeyA || keys.ArrowLeft) v.sub(r);
+  if (v.lengthSq() > 0) v.normalize().multiplyScalar(sp * dt);
+  const nx = camera.position.x + v.x, nz = camera.position.z + v.z;
+  let z0 = inside(nx, nz);
+  if (z0) { camera.position.x = nx; camera.position.z = nz; }
+  else if (inside(nx, camera.position.z)) { camera.position.x = nx; z0 = inside(nx, camera.position.z); }
+  else if (inside(camera.position.x, nz)) { camera.position.z = nz; z0 = inside(camera.position.x, nz); }
+  if (z0) zone.textContent = z0;
+  camera.position.y = 1.7;
+}
+(function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(0.033, clock.getDelta());
+  if (entered) step(dt);
+  camera.quaternion.setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ'));
+  if (mixer) mixer.update(dt);
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>
