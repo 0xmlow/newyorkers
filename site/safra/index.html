@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EDMOND J. SAFRA SYNAGOGUE × MLOW</title>
+<style>
+:root{--eye-blue:#2962FF;--ink:#0D0D0D;--cloud:#F0F4F8;--slate:#8899AA;--orange:#FF6B00;--bone:#F0EFEA;--gold:#C9A227;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);font-family:Arial,Helvetica,sans-serif}
+#c{display:block;width:100%;height:100%;touch-action:none}
+#enter{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 38%,#1B2A4A 0%,#0A0F1C 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;cursor:pointer;text-align:center;padding:24px}
+#enter img{width:min(300px,64vw);margin-bottom:22px}
+#enter h1{font-family:Georgia,serif;color:var(--cloud);font-size:clamp(20px,3.6vw,34px);letter-spacing:.03em;margin-bottom:8px}
+#enter h1 span{color:var(--gold)}
+#enter h2{font-family:Georgia,serif;color:var(--slate);font-weight:normal;font-size:clamp(13px,1.8vw,16px);letter-spacing:.14em;margin-bottom:18px;text-transform:uppercase}
+#enter p{color:var(--slate);max-width:560px;line-height:1.6;font-size:14px;margin-bottom:18px}
+#enter .cta{font-family:Consolas,monospace;color:var(--ink);background:var(--gold);padding:13px 32px;letter-spacing:.18em;font-size:13px;border-radius:2px}
+#enter .foot{color:#55627A;font-size:11px;margin-top:26px;max-width:520px;line-height:1.5}
+#hud{position:fixed;top:12px;left:12px;z-index:20;background:rgba(13,13,13,.82);border:1px solid rgba(201,162,39,.5);border-radius:6px;padding:11px 15px;color:var(--cloud);min-width:214px;backdrop-filter:blur(4px)}
+#hud img{width:110px;display:block;margin-bottom:7px}
+#hud .zone{font-family:Georgia,serif;font-size:15px;color:var(--gold);margin-bottom:5px}
+#hud .row{font-family:Consolas,monospace;font-size:11px;color:var(--slate);line-height:1.65}
+#hud .row b{color:var(--cloud)}
+#hudToggle{position:fixed;top:12px;left:12px;z-index:21;display:none;background:rgba(13,13,13,.82);border:1px solid rgba(201,162,39,.5);color:var(--cloud);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px}
+#hideHud{cursor:pointer;color:var(--slate);font-size:10px;margin-top:7px;display:inline-block}
+#bar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:96vw}
+#bar button{background:rgba(13,13,13,.85);border:1px solid rgba(240,244,248,.24);color:var(--cloud);font-family:Consolas,monospace;font-size:11px;letter-spacing:.06em;padding:8px 12px;border-radius:4px;cursor:pointer}
+#bar button.active{border-color:var(--gold);color:var(--gold)}
+#bar button.tp{border-color:rgba(41,98,255,.55)}
+#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:15;color:rgba(240,244,248,.8);font-size:16px;pointer-events:none;font-family:Georgia,serif}
+#toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:30;background:var(--gold);color:#1a1400;font-family:Consolas,monospace;font-size:12px;letter-spacing:.05em;padding:9px 18px;border-radius:4px;opacity:0;transition:opacity .35s;pointer-events:none;max-width:90vw;text-align:center}
+#prompt{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:15;color:var(--cloud);font-family:Consolas,monospace;font-size:12px;background:rgba(13,13,13,.72);padding:8px 15px;border-radius:4px;display:none}
+#joy{position:fixed;bottom:24px;left:24px;width:108px;height:108px;border-radius:50%;border:2px solid rgba(240,244,248,.28);background:rgba(13,13,13,.4);z-index:25;display:none;touch-action:none}
+#nub{position:absolute;left:34px;top:34px;width:40px;height:40px;border-radius:50%;background:rgba(201,162,39,.82)}
+@media(pointer:coarse){#joy{display:block}}
+#file{display:none}
+.panel{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:rgba(6,9,16,.78);backdrop-filter:blur(3px);padding:20px}
+.panel .card{background:#0E1420;border:1px solid rgba(201,162,39,.55);border-radius:10px;max-width:560px;width:100%;max-height:86vh;overflow:auto;padding:26px 28px;color:var(--cloud);font-family:Arial,Helvetica,sans-serif}
+.panel h3{font-family:Georgia,serif;color:var(--gold);font-size:22px;margin-bottom:4px}
+.panel .sub{color:var(--slate);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px}
+.panel p{color:#C2CCDA;font-size:13.5px;line-height:1.6;margin-bottom:14px}
+.panel a{color:var(--eye-blue);text-decoration:none;border-bottom:1px solid rgba(41,98,255,.4)}
+.panel .lk{display:block;background:#141C2C;border:1px solid rgba(240,244,248,.14);border-radius:6px;padding:12px 14px;margin-bottom:9px;color:var(--cloud);font-size:13px;text-decoration:none;border-bottom:1px solid rgba(240,244,248,.14)}
+.panel .lk b{color:var(--gold)}
+.panel .lk span{display:block;color:var(--slate);font-size:11px;margin-top:3px}
+.panel input,.panel select{width:100%;background:#0A0F1A;border:1px solid rgba(240,244,248,.2);color:var(--cloud);padding:10px 12px;border-radius:5px;font-size:13px;margin-bottom:10px;font-family:inherit}
+.panel .btn{display:inline-block;background:var(--gold);color:#1a1400;font-family:Consolas,monospace;letter-spacing:.1em;font-size:12px;padding:11px 20px;border:none;border-radius:4px;cursor:pointer;margin-right:8px}
+.panel .btn.ghost{background:transparent;border:1px solid rgba(240,244,248,.3);color:var(--cloud)}
+.panel .x{float:right;color:var(--slate);cursor:pointer;font-size:20px;line-height:1;margin-top:-6px}
+.panel .note{color:#7C879A;font-size:11px;line-height:1.5;margin-top:12px;border-top:1px solid rgba(240,244,248,.1);padding-top:12px}
+#audioPlayer{width:100%;margin-top:10px;display:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="enter">
+  <img src="data:image/png;base64,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" alt="MLOW">
+  <h1>EDMOND J. SAFRA <span>SYNAGOGUE</span></h1>
+  <h2>11 East 63rd Street · New York · × MLOW</h2>
+  <p>A walkable reimagining of Thierry Despont's Jerusalem-stone Sephardic synagogue on the Upper East Side, five stacked worlds rising from a heritage library up through two sanctuaries and a social hall to an open roof garden over Manhattan. Faithful mode: honor the building, insert the art.</p>
+  <div class="cta">CLICK TO ENTER</div>
+  <div class="foot">A fan-made virtual tribute, not affiliated with or endorsed by the synagogue. Sponsorship and Torah-class links point to the real congregation at ejsny.org.</div>
+</div>
+
+<div id="hud">
+  <img src="data:image/png;base64,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" alt="MLOW">
+  <div class="zone" id="zoneName">"ENTRY"</div>
+  <div class="row">Arrow keys move · Shift stride<br>drag / Q+E look · ←→ turn<br><b>E</b> interact · <b>F</b> hang art<br>1/2/3 time · H hide · levels below</div>
+  <span id="hideHud">[ HIDE ]</span>
+</div>
+<button id="hudToggle">"HUD"</button>
+
+<div id="bar">
+  <button data-preset="0" class="active">GOLDEN</button>
+  <button data-preset="1">DAY</button>
+  <button data-preset="2">NIGHT</button>
+  <button class="tp" data-tp="roof">ROOF GARDEN</button>
+  <button class="tp" data-tp="beitmidrash">BEIT MIDRASH</button>
+  <button class="tp" data-tp="sanctuary">↑ SANCTUARY</button>
+  <button class="tp" data-tp="library">ENTER · LIBRARY</button>
+  <button class="tp" data-tp="social">↓ SOCIAL HALL</button>
+  <button id="audioBtn">SOUND: OFF</button>
+</div>
+
+<div id="cross">+</div>
+<div id="toast"></div>
+<div id="prompt"></div>
+<div id="joy"><div id="nub"></div></div>
+<input type="file" id="file" multiple accept="image/*">
+
+<div class="panel" id="panel"><div class="card" id="panelCard"></div></div>
+
+<script src="vendor/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+/* ================= [BRAND] palette ================= */
+var COL={eyeBlue:0x2962FF,ink:0x0D0D0D,cloud:0xF0F4F8,bone:0xF0EFEA,gold:0xC9A227,
+  jstone:0xE7D8BC,jstoneD:0xCDB894,marble:0xF3EFE6,wood:0x6B4A2F,woodD:0x4A3220,
+  bronze:0x8C6A3B,velvet:0x6E1420,velvetB:0x1C2E5A,green:0x3E6B3A,sky:0x1A2233};
+
+/* ================= renderer / scene ================= */
+var canvas=document.getElementById('c');
+var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+if('outputEncoding' in renderer)renderer.outputEncoding=THREE.sRGBEncoding;
+if('toneMapping' in renderer){renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;}
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,0.05,600);
+
+/* ================= procedural texture factories (jsdom-guarded) ================= */
+function mkCanvas(s){var cv=document.createElement('canvas');cv.width=cv.height=s;return cv;}
+function noiseTex(base,spots,spotCol,lines,size){
+  size=size||256;var cv=mkCanvas(size),ctx=cv.getContext('2d');
+  if(ctx){ctx.fillStyle=base;ctx.fillRect(0,0,size,size);
+    for(var i=0;i<spots;i++){var r=2+Math.random()*7;ctx.fillStyle=spotCol;ctx.globalAlpha=0.05+Math.random()*0.16;
+      ctx.beginPath();ctx.arc(Math.random()*size,Math.random()*size,r,0,6.283);ctx.fill();}
+    ctx.globalAlpha=1;
+    if(lines){ctx.strokeStyle='rgba(0,0,0,0.09)';ctx.lineWidth=1;
+      for(var l=0;l<lines;l++){var y=Math.random()*size;ctx.beginPath();ctx.moveTo(0,y);
+        ctx.bezierCurveTo(size*0.3,y+((Math.random()*20)-10),size*0.6,y+((Math.random()*20)-10),size,y);ctx.stroke();}}}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;tx.wrapS=tx.wrapT=THREE.RepeatWrapping;return tx;
+}
+function stripeTex(a,b,n,size){size=size||128;var cv=mkCanvas(size),ctx=cv.getContext('2d');
+  if(ctx){for(var i=0;i<n;i++){ctx.fillStyle=(i%2)?a:b;ctx.fillRect(0,i*size/n,size,size/n);}}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;tx.wrapS=tx.wrapT=THREE.RepeatWrapping;return tx;
+}
+var TX={
+  jstone:noiseTex('#E7D8BC',120,'#B79E74',10,256),
+  jstoneD:noiseTex('#CDB894',110,'#9C8154',9,256),
+  marble:noiseTex('#F3EFE6',60,'#C9C4B4',14,256),
+  wood:noiseTex('#6B4A2F',80,'#4A3220',22,256),
+  woodD:noiseTex('#4A3220',70,'#2E1E12',20,256),
+  velvet:noiseTex('#6E1420',90,'#3E0A10',0,128),
+  parch:noiseTex('#EFE3C4',70,'#CBB98C',6,128),
+  floorstone:noiseTex('#D8C9AE',100,'#B29B72',8,256)
+};
+TX.jstone.repeat.set(3,2);TX.jstoneD.repeat.set(2,2);TX.floorstone.repeat.set(6,6);TX.wood.repeat.set(2,2);
+
+/* ================= [MAT] shared materials, DEFINE BEFORE USE ================= */
+var MAT={
+  jstone:new THREE.MeshStandardMaterial({map:TX.jstone,color:0xEFE3CC,roughness:0.92}),
+  jstoneD:new THREE.MeshStandardMaterial({map:TX.jstoneD,color:0xDCC9A6,roughness:0.94}),
+  floor:new THREE.MeshStandardMaterial({map:TX.floorstone,color:0xE4D6B8,roughness:0.86}),
+  marble:new THREE.MeshStandardMaterial({map:TX.marble,color:0xF6F2EA,roughness:0.5,metalness:0.05}),
+  wood:new THREE.MeshStandardMaterial({map:TX.wood,color:0x7A5638,roughness:0.7}),
+  woodD:new THREE.MeshStandardMaterial({map:TX.woodD,color:0x4A3220,roughness:0.75}),
+  bronze:new THREE.MeshStandardMaterial({color:COL.bronze,roughness:0.35,metalness:0.85}),
+  bronzeD:new THREE.MeshStandardMaterial({color:0x5E4527,roughness:0.45,metalness:0.8}),
+  gold:new THREE.MeshStandardMaterial({color:COL.gold,roughness:0.3,metalness:0.75}),
+  goldE:new THREE.MeshStandardMaterial({color:COL.gold,emissive:0x6b5310,emissiveIntensity:0.4,roughness:0.3,metalness:0.7}),
+  velvet:new THREE.MeshStandardMaterial({map:TX.velvet,color:0x7E1622,roughness:0.95}),
+  velvetB:new THREE.MeshStandardMaterial({color:COL.velvetB,roughness:0.95}),
+  parch:new THREE.MeshStandardMaterial({map:TX.parch,color:0xEFE3C4,roughness:0.9}),
+  glass:new THREE.MeshStandardMaterial({color:0xBFD8E8,roughness:0.08,metalness:0.2,transparent:true,opacity:0.32}),
+  ink:new THREE.MeshStandardMaterial({color:0x161616,roughness:0.6}),
+  brass:new THREE.MeshStandardMaterial({color:0xB08D57,roughness:0.35,metalness:0.7}),
+  frame:new THREE.MeshStandardMaterial({color:0x2a2118,roughness:0.5,metalness:0.3}),
+  canvasEmpty:new THREE.MeshStandardMaterial({color:0xE8E6DF,roughness:0.95}),
+  green:new THREE.MeshStandardMaterial({color:COL.green,roughness:0.95}),
+  greenD:new THREE.MeshStandardMaterial({color:0x2C4E2A,roughness:0.95}),
+  planter:new THREE.MeshStandardMaterial({color:0x8A6A4A,roughness:0.9}),
+  cloth:new THREE.MeshStandardMaterial({color:0xF0EAD8,roughness:0.9}),
+  flame:new THREE.MeshBasicMaterial({color:0xFFCB6B}),
+  crystal:new THREE.MeshStandardMaterial({color:0x7FD4FF,emissive:0x7FD4FF,emissiveIntensity:0.6,roughness:0.25}),
+  agent:new THREE.MeshStandardMaterial({color:0x2A2E36,roughness:0.7}),
+  agentSkin:new THREE.MeshStandardMaterial({color:0xC9A07A,roughness:0.8}),
+  tallit:new THREE.MeshStandardMaterial({color:0xF3F1E8,roughness:0.9}),
+  tzitzit:new THREE.MeshStandardMaterial({color:0xEDEADD,roughness:0.85}),
+  silver:new THREE.MeshStandardMaterial({color:0xD6D8DC,roughness:0.28,metalness:0.92}),
+  silverE:new THREE.MeshStandardMaterial({color:0xE4E7EC,emissive:0x3a3f47,emissiveIntensity:0.25,roughness:0.22,metalness:0.9}),
+  meshBronze:new THREE.MeshStandardMaterial({color:0x9A7B45,roughness:0.5,metalness:0.75,transparent:true,opacity:0.78}),
+  oak:new THREE.MeshStandardMaterial({color:0x8A6234,roughness:0.62,metalness:0.05}),
+  oakD:new THREE.MeshStandardMaterial({color:0x5F4022,roughness:0.66}),
+  ceilWhite:new THREE.MeshStandardMaterial({color:0xF2EEE4,roughness:0.9}),
+  domeWood:new THREE.MeshStandardMaterial({color:0x9C6B3C,roughness:0.66,metalness:0.04}),
+  domeWoodD:new THREE.MeshStandardMaterial({color:0x744B27,roughness:0.7}),
+  leather:new THREE.MeshStandardMaterial({color:0x5B3A28,roughness:0.55,metalness:0.05}),
+  oculus:new THREE.MeshBasicMaterial({color:0xFFF1CE}),
+  brandBlue:new THREE.MeshStandardMaterial({color:COL.eyeBlue,emissive:COL.eyeBlue,emissiveIntensity:0.4,roughness:0.4})
+};
+
+/* ================= [WORLD] state, y-ranged walls + multi-level floors ================= */
+var player={x:0,y:-3.1,z:13,speed:4.2,stride:7.4};/* v5: spawn IN the Heritage Library (the entry floor), grand stair up to the sanctuary is ahead-left, cellar stair down to the social hall ahead-right */
+var yaw=0, pitch=0;
+var keys={};
+var walls=[];
+function addWallY(cx,cz,w,d,y0,y1){walls.push({minX:cx-w/2-0.3,maxX:cx+w/2+0.3,minZ:cz-d/2-0.3,maxZ:cz+d/2+0.3,y0:y0,y1:y1});}
+function addWall(cx,cz,w,d){addWallY(cx,cz,w,d,-99,99);}
+var floors=[];
+function addFloor(minX,maxX,minZ,maxZ,y){floors.push({minX:minX,maxX:maxX,minZ:minZ,maxZ:maxZ,y:y});}
+function addRampZ(minX,maxX,z0,z1,y0,y1){floors.push({minX:Math.min(minX,maxX),maxX:Math.max(minX,maxX),minZ:Math.min(z0,z1),maxZ:Math.max(z0,z1),ramp:1,z0:z0,z1:z1,y0:y0,y1:y1});}
+function addRampX(z0,z1,x0,x1,y0,y1){floors.push({minX:Math.min(x0,x1),maxX:Math.max(x0,x1),minZ:Math.min(z0,z1),maxZ:Math.max(z0,z1),rampx:1,x0:x0,x1:x1,y0:y0,y1:y1});}
+function floorYAt(x,z,feet){
+  var best=-50;
+  for(var i=0;i<floors.length;i++){var f=floors[i];
+    if(x<f.minX||x>f.maxX||z<f.minZ||z>f.maxZ)continue;
+    var y;
+    if(f.ramp)y=f.y0+(f.y1-f.y0)*((z-f.z0)/(f.z1-f.z0));
+    else if(f.rampx)y=f.y0+(f.y1-f.y0)*((x-f.x0)/(f.x1-f.x0));
+    else y=f.y;
+    if(y>best&&y<=feet+0.6)best=y;
+  }
+  return best<-49?feet:best;
+}
+function collides(x,z){
+  var feet=player.y-1.7;
+  for(var i=0;i<walls.length;i++){var b=walls[i];
+    if(x>b.minX&&x<b.maxX&&z>b.minZ&&z<b.maxZ&&feet<b.y1-0.05&&feet+1.65>b.y0)return true;}
+  return false;
+}
+var BOUND={minX:-15,maxX:15,minZ:-20,maxZ:30};
+function tryMove(nx,nz){
+  if(!collides(nx,player.z))player.x=nx;
+  if(!collides(player.x,nz))player.z=nz;
+  player.x=Math.max(BOUND.minX,Math.min(BOUND.maxX,player.x));
+  player.z=Math.max(BOUND.minZ,Math.min(BOUND.maxZ,player.z));
+  player.y=floorYAt(player.x,player.z,player.y-1.7)+1.7;
+}
+
+/* ================= geometry helpers ================= */
+function box(w,h,d,mat,x,y,z,solid,y0,y1){
+  var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);
+  if(solid){if(y0!==undefined)addWallY(x,z,w,d,y0,y1);else addWall(x,z,w,d);}
+  return m;
+}
+function plane(w,d,mat,x,y,z,rx){
+  var m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat);
+  m.rotation.x=rx===undefined?-Math.PI/2:rx;m.position.set(x,y,z);m.receiveShadow=true;scene.add(m);return m;
+}
+function col(r,h,mat,x,y,z){
+  var m=new THREE.Mesh(new THREE.CylinderGeometry(r,r*1.08,h,16),mat);
+  m.position.set(x,y,z);m.castShadow=true;scene.add(m);return m;
+}
+/* switchback stair as a solid ramp + visual steps; returns nothing, registers floor+walls */
+function stairFlight(x,zTop,zBot,yBot,yTop,wdt){
+  addRampZ(x-wdt/2,x+wdt/2,zBot,zTop,yBot,yTop);
+  var steps=Math.max(6,Math.round(Math.abs(yTop-yBot)/0.34));
+  for(var s=0;s<=steps;s++){var t=s/steps;var zz=zBot+(zTop-zBot)*t,yy=yBot+(yTop-yBot)*t;
+    box(wdt,0.12,0.5,MAT.marble,x,yy+0.02,zz,false);}
+}
+
+/* shared runtime arrays (populated by appended builders) */
+var agents=[];
+var frames=[];var hung=0;
+var INTERACT=[];   // {x,y,z,r,label,fn}
+var TICKERS=[];    // fn(dt,time)
+function addInteract(x,y,z,r,label,fn){INTERACT.push({x:x,y:y,z:z,r:r,label:label,fn:fn});}
+
+/* ================= [ART] frames + hanging ================= */
+var artCountEl=null;
+function makePlaque(f,name){
+  var cv=mkCanvas(256);cv.height=96;var ctx=cv.getContext('2d');
+  if(ctx){ctx.fillStyle='#0E1420';ctx.fillRect(0,0,256,96);ctx.strokeStyle='#C9A227';ctx.strokeRect(3,3,250,90);
+    ctx.fillStyle='#F0F4F8';ctx.font='italic 22px Georgia';ctx.textAlign='center';
+    ctx.fillText('"'+name.slice(0,18)+'"',128,42);
+    ctx.fillStyle='#8899AA';ctx.font='13px Consolas,monospace';ctx.fillText('MLOW · 2026',128,70);}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;
+  var p=new THREE.Mesh(new THREE.PlaneGeometry(0.62,0.23),new THREE.MeshBasicMaterial({map:tx}));
+  p.position.set(f.w/2+0.5,-f.h/2+0.08,0.06);f.group.add(p);
+}
+function addFrame(x,y,z,ry,w,h){
+  var g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;
+  var back=new THREE.Mesh(new THREE.BoxGeometry(w+0.22,h+0.22,0.09),MAT.frame);
+  var trim=new THREE.Mesh(new THREE.BoxGeometry(w+0.30,h+0.30,0.05),MAT.gold);trim.position.z=-0.02;
+  var cvs=new THREE.Mesh(new THREE.PlaneGeometry(w,h),MAT.canvasEmpty.clone());cvs.position.z=0.06;
+  g.add(trim);g.add(back);g.add(cvs);scene.add(g);
+  var spot=new THREE.SpotLight(0xFFF2DD,0,16,0.6,0.5,1.6);
+  spot.position.set(x-Math.sin(ry)*2.2,y+2.4,z-Math.cos(ry)*2.2);spot.target=cvs;scene.add(spot);scene.add(spot.target);
+  frames.push({group:g,canvas:cvs,w:w,h:h,filled:false,spot:spot});return frames[frames.length-1];
+}
+function hangImage(img,f,name){
+  var tx=new THREE.Texture(img);tx.needsUpdate=true;
+  var ar=(img.width||1)/(img.height||1),fw=f.w,fh=f.h,sw=fw,sh=fw/ar;if(sh>fh){sh=fh;sw=fh*ar;}
+  f.canvas.scale.set(sw/fw,sh/fh,1);
+  f.canvas.material=new THREE.MeshBasicMaterial({map:tx});
+  if(!f.filled){f.filled=true;hung++;makePlaque(f,name);}
+  f.spot.intensity=1.5;
+  if(artCountEl)artCountEl.textContent=hung+' / '+frames.length;
+  toast('HUNG: "'+name.toUpperCase().slice(0,24)+'"');
+}
+function nextEmpty(){for(var i=0;i<frames.length;i++)if(!frames[i].filled)return frames[i];return frames[hung%(frames.length||1)];}
+function loadFiles(list,target){
+  Array.prototype.forEach.call(list,function(file,i){
+    if(!file.type||file.type.indexOf('image')!==0)return;
+    var rd=new FileReader();
+    rd.onload=function(e){var img=new Image();
+      img.onload=function(){hangImage(img,(i===0&&target)?target:nextEmpty(),file.name.replace(/\.[^.]+$/,''));};
+      img.src=e.target.result;};
+    rd.readAsDataURL(file);});
+}
+var fileInput=document.getElementById('file');var clickTarget=null;
+fileInput.addEventListener('change',function(){loadFiles(fileInput.files,clickTarget);fileInput.value='';});
+document.addEventListener('dragover',function(e){e.preventDefault();});
+document.addEventListener('drop',function(e){e.preventDefault();if(e.dataTransfer)loadFiles(e.dataTransfer.files,null);});
+var ray=new THREE.Raycaster();
+function frameUnderCross(){
+  ray.setFromCamera(new THREE.Vector2(0,0),camera);
+  var meshes=frames.map(function(f){return f.canvas;});
+  var hits=ray.intersectObjects(meshes);
+  if(!hits.length)return null;
+  for(var i=0;i<frames.length;i++)if(frames[i].canvas===hits[0].object)return frames[i];
+  return null;
+}
+
+/* ================= [TIME] presets ================= */
+var sun=new THREE.DirectionalLight(0xFFCF9E,1.15);sun.castShadow=true;
+sun.shadow.camera.left=-28;sun.shadow.camera.right=28;sun.shadow.camera.top=34;sun.shadow.camera.bottom=-24;
+sun.shadow.camera.near=1;sun.shadow.camera.far=120;sun.shadow.mapSize.width=1024;sun.shadow.mapSize.height=1024;sun.shadow.bias=-0.0006;
+sun.position.set(20,34,24);scene.add(sun);
+var hemi=new THREE.HemisphereLight(0xCFE0FF,0x6A5B45,0.72);scene.add(hemi);
+scene.fog=new THREE.Fog(0xE8CBA8,60,220);
+var practicals=[];
+function addPractical(x,y,z,col,dist){var L=new THREE.PointLight(col||0xFFD9A0,0,dist||9,2);L.position.set(x,y,z);scene.add(L);practicals.push(L);return L;}
+var PRESETS=[
+ {sun:0xFFB877,si:1.15,hemi:0.7,fog:0xEAC79E,fogN:55,fogF:230,sky:0xF2C58A,prac:0.35},
+ {sun:0xFFFFFF,si:1.3,hemi:1.05,fog:0xD8E4F0,fogN:70,fogF:260,sky:0xBFD8F0,prac:0.15},
+ {sun:0x3B4A78,si:0.5,hemi:0.7,fog:0x0C1420,fogN:40,fogF:180,sky:0x0A1020,prac:1.6}
+];
+var curPreset=0,lerpT=1,fromP=PRESETS[0],toP=PRESETS[0];
+function setPreset(i){
+  fromP={sun:sun.color.getHex(),si:sun.intensity,hemi:hemi.intensity,fog:scene.fog.color.getHex(),
+    fogN:scene.fog.near,fogF:scene.fog.far,sky:(scene.background&&scene.background.getHex)?scene.background.getHex():PRESETS[curPreset].sky,
+    prac:practicals.length?practicals[0].intensity:0};
+  toP=PRESETS[i];curPreset=i;lerpT=0;
+  var btns=document.querySelectorAll('#bar button[data-preset]');
+  for(var b=0;b<btns.length;b++)btns[b].classList.toggle('active',+btns[b].getAttribute('data-preset')===i);
+}
+scene.background=new THREE.Color(PRESETS[0].sky);
+function lerpHex(a,b,t){return new THREE.Color(a).lerp(new THREE.Color(b),t);}
+function tickPreset(dt){
+  if(lerpT>=1)return;lerpT=Math.min(1,lerpT+dt/2);var t=lerpT;
+  sun.color.copy(lerpHex(fromP.sun,toP.sun,t));
+  sun.intensity=fromP.si+(toP.si-fromP.si)*t;
+  hemi.intensity=fromP.hemi+(toP.hemi-fromP.hemi)*t;
+  scene.fog.color.copy(lerpHex(fromP.fog,toP.fog,t));
+  scene.fog.near=fromP.fogN+(toP.fogN-fromP.fogN)*t;
+  scene.fog.far=fromP.fogF+(toP.fogF-fromP.fogF)*t;
+  scene.background.copy(lerpHex(fromP.sky,toP.sky,t));
+  var pi=fromP.prac+(toP.prac-fromP.prac)*t;_curPI=pi;
+  for(var i=0;i<practicals.length;i++){var L=practicals[i];if(L.visible)L.intensity=pi*(L.userData.boost||1);}
+}
+/* ---- PER-LEVEL LIGHT CULLING ----
+   ~90 PointLights bloat the fragment shader (slow first-compile = "slow to load")
+   and cost every frame. Three.js drops lights with visible=false from the render
+   list, shrinking the compiled light-count. We show only the player's level band
+   ±1 neighbour, so distant floors' lights never enter the shader. A band change
+   triggers one recompile (a brief, infrequent hitch) instead of constant slowness. */
+var _LV=null,_curBand=-999,_curPI=PRESETS[0].prac;
+function _bandOf(y){var b=0;for(var i=0;i<_LV.length;i++){if(_LV[i]<=y+0.6)b=i;}return b;}
+function cullLights(py){
+  if(!_LV){_LV=[LB,L0,MEZZ,L1,L2,L3].sort(function(a,b){return a-b;});
+    for(var k=0;k<practicals.length;k++)practicals[k].userData.band=_bandOf(practicals[k].position.y);}
+  var pb=_bandOf(py);if(pb===_curBand)return;_curBand=pb;
+  for(var j=0;j<practicals.length;j++){var L=practicals[j];var vis=Math.abs(L.userData.band-pb)<=1;
+    if(vis&&!L.visible)L.intensity=_curPI*(L.userData.boost||1);L.visible=vis;}
+}
+
+/* ================= [LIFE] congregant agents ================= */
+function makeCongregant(x,z,y,opts){
+  opts=opts||{};var g=new THREE.Group();g.position.set(x,y||0,z);
+  var coat=opts.coat||MAT.agent;
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.32,1.15,10),coat);body.position.y=0.85;body.castShadow=true;
+  var head=new THREE.Mesh(new THREE.SphereGeometry(0.19,12,10),MAT.agentSkin);head.position.y=1.62;
+  var kippah=new THREE.Mesh(new THREE.SphereGeometry(0.12,10,8,0,6.283,0,1.2),opts.kippah||MAT.velvetB);kippah.position.y=1.73;
+  g.add(body);g.add(head);g.add(kippah);
+  /* every congregant wears a talit with tzitzit (fringes), default on */
+  if(opts.tallit!==false){
+    var t=new THREE.Mesh(new THREE.BoxGeometry(0.56,0.94,0.18),MAT.tallit);t.position.set(0,1.0,0.02);t.castShadow=true;g.add(t);
+    var st=new THREE.Mesh(new THREE.BoxGeometry(0.58,0.94,0.02),stripeMat());st.position.set(0,1.0,0.115);g.add(st);
+    /* tzitzit, four knotted fringe bundles at the corners */
+    var fy=0.55,corners=[[-0.27,0.10],[0.27,0.10],[-0.27,-0.06],[0.27,-0.06]];
+    for(var ci=0;ci<corners.length;ci++){
+      var fr=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.006,0.20,5),MAT.tzitzit);
+      fr.position.set(corners[ci][0],fy,corners[ci][1]);g.add(fr);
+      var knot=new THREE.Mesh(new THREE.SphereGeometry(0.022,6,5),MAT.tzitzit);
+      knot.position.set(corners[ci][0],fy+0.10,corners[ci][1]);g.add(knot);
+    }
+  }
+  scene.add(g);
+  var a={g:g,phase:Math.random()*6.28,sway:opts.sway,path:opts.path,seg:0,t:0,pause:Math.random()*2,hover:false};
+  agents.push(a);return a;
+}
+var _stripeMat=null;
+function stripeMat(){if(!_stripeMat){_stripeMat=new THREE.MeshStandardMaterial({map:stripeTex('#1B2E5A','#F3F1E8',9,64),roughness:0.9});}return _stripeMat;}
+function tickAgents(dt,time){
+  for(var i=0;i<agents.length;i++){var a=agents[i];
+    if(a.path){
+      if(a.pause>0){a.pause-=dt;}
+      else{var p0=a.path[a.seg],p1=a.path[(a.seg+1)%a.path.length];
+        var dx=p1[0]-p0[0],dz=p1[1]-p0[1],len=Math.sqrt(dx*dx+dz*dz)||1;
+        a.t+=dt*0.9/len;
+        if(a.t>=1){a.t=0;a.seg=(a.seg+1)%a.path.length;if(Math.random()<0.4)a.pause=1+Math.random()*2.4;}
+        var x=p0[0]+dx*a.t,z=p0[1]+dz*a.t;a.g.position.x=x;a.g.position.z=z;
+        var target=Math.atan2(dx,dz),curr=a.g.rotation.y,diff=target-curr;
+        while(diff>Math.PI)diff-=6.283;while(diff<-Math.PI)diff+=6.283;
+        a.g.rotation.y=curr+diff*Math.min(1,dt*5);}
+    }
+    if(a.sway){a.g.rotation.x=Math.sin(time*1.6+a.phase)*0.07;}
+  }
+}
+TICKERS.push(tickAgents);
+
+/* ================= [CONTROLS] three-layer look ================= */
+var entered=false;var enterEl=document.getElementById('enter');
+enterEl.addEventListener('click',function(){entered=true;enterEl.style.display='none';
+  if(canvas.requestPointerLock)try{canvas.requestPointerLock();}catch(e){}});
+document.addEventListener('mousemove',function(e){
+  if(document.pointerLockElement===canvas){yaw-=e.movementX*0.0024;pitch-=e.movementY*0.0022;
+    pitch=Math.max(-1.35,Math.min(1.35,pitch));}});
+var dragging=false,lastPX=0,lastPY=0,downX=0,downY=0;
+canvas.addEventListener('pointerdown',function(e){
+  downX=e.clientX;downY=e.clientY;
+  if(document.pointerLockElement===canvas)return;
+  dragging=true;lastPX=e.clientX;lastPY=e.clientY;
+  if(canvas.setPointerCapture)try{canvas.setPointerCapture(e.pointerId);}catch(err){}});
+canvas.addEventListener('pointermove',function(e){
+  if(!dragging)return;yaw-=(e.clientX-lastPX)*0.0038;pitch-=(e.clientY-lastPY)*0.0034;
+  pitch=Math.max(-1.35,Math.min(1.35,pitch));lastPX=e.clientX;lastPY=e.clientY;});
+canvas.addEventListener('pointerup',function(e){
+  dragging=false;
+  if(!entered)return;
+  if(Math.abs(e.clientX-downX)+Math.abs(e.clientY-downY)>8)return;
+  var f=frameUnderCross();if(f){clickTarget=f;fileInput.click();}});
+document.addEventListener('keydown',function(e){
+  keys[e.code]=true;
+  if(e.code==='ArrowUp'||e.code==='ArrowDown'||e.code==='ArrowLeft'||e.code==='ArrowRight'||e.code==='PageUp'||e.code==='PageDown')e.preventDefault();
+  if(e.code==='Digit1')setPreset(0);if(e.code==='Digit2')setPreset(1);if(e.code==='Digit3')setPreset(2);
+  if(e.code==='KeyH')toggleHud();
+  if(e.code==='KeyF'){clickTarget=null;fileInput.click();}
+  if(e.code==='KeyE')doInteract();
+  if(e.code==='KeyP'){e.preventDefault();saveScreenshot();}
+  if(e.code==='Escape')closePanel();});
+document.addEventListener('keyup',function(e){keys[e.code]=false;});
+/* mobile joystick */
+var joy=document.getElementById('joy'),nub=document.getElementById('nub');
+var joyVec={x:0,y:0},joyId=null;
+joy.addEventListener('pointerdown',function(e){joyId=e.pointerId;joy.setPointerCapture&&joy.setPointerCapture(e.pointerId);});
+joy.addEventListener('pointermove',function(e){if(joyId!==e.pointerId)return;
+  var r=joy.getBoundingClientRect();var dx=e.clientX-(r.left+54),dy=e.clientY-(r.top+54);
+  var len=Math.sqrt(dx*dx+dy*dy),max=38;if(len>max){dx*=max/len;dy*=max/len;}
+  nub.style.left=(34+dx)+'px';nub.style.top=(34+dy)+'px';joyVec.x=dx/max;joyVec.y=dy/max;});
+function joyEnd(){joyId=null;joyVec.x=0;joyVec.y=0;nub.style.left='34px';nub.style.top='34px';}
+joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+
+/* zone teleports (vertical) */
+var TP={
+  library:{x:0,z:9,y:-4.8,yaw:Math.PI},
+  sanctuary:{x:0,z:11,y:0,yaw:Math.PI},
+  beitmidrash:{x:0,z:9,y:9.6,yaw:Math.PI},
+  social:{x:0,z:9,y:-9.6,yaw:Math.PI},
+  roof:{x:0,z:8,y:20.8,yaw:Math.PI}
+};
+var tpBtns=document.querySelectorAll('#bar button[data-tp]');
+for(var tb=0;tb<tpBtns.length;tb++){tpBtns[tb].addEventListener('click',function(){
+  var t=TP[this.getAttribute('data-tp')];player.x=t.x;player.z=t.z;player.y=t.y+1.7;yaw=t.yaw;pitch=0;
+  toast('"'+this.textContent.replace(/"/g,'')+'"');});}
+var presetBtns=document.querySelectorAll('#bar button[data-preset]');
+for(var pb=0;pb<presetBtns.length;pb++){presetBtns[pb].addEventListener('click',function(){setPreset(+this.getAttribute('data-preset'));});}
+
+/* ================= [AUDIO] procedural Sephardic melody (Freygish / Ahava-Rabbah mode) ================= */
+var audioOn=false,audioCtx=null,audioGain=null,musicTimer=null,nextNoteTime=0,melStep=0;
+/* Freygish (Phrygian-dominant) on D, the characteristic Middle-Eastern / Jewish liturgical mode */
+var ROOT=293.66;                                   /* D4 */
+function semi(n){return ROOT*Math.pow(2,n/12);}
+/* [semitone offset from D4, beats]; phrase rises with longing then resolves */
+var MELODY=[[7,1],[8,1],[7,2],[5,1],[4,1],[5,2],[4,1],[1,1],[0,3],[0,1],[1,1],[4,1],[5,1],
+            [7,1.5],[8,0.5],[7,1],[5,2],[4,1],[1,1],[0,4]];
+var BEAT=0.46;
+function playTone(freq,t,dur,type,peak){
+  var o=audioCtx.createOscillator();o.type=type||'triangle';o.frequency.setValueAtTime(freq,t);
+  var g=audioCtx.createGain();g.gain.setValueAtTime(0.0001,t);
+  g.gain.linearRampToValueAtTime(peak,t+0.05);
+  g.gain.exponentialRampToValueAtTime(0.0008,t+dur*0.98);
+  o.connect(g);g.connect(audioGain);o.start(t);o.stop(t+dur+0.06);
+}
+function startMusic(){
+  /* two-note drone (root + fifth) under a gentle low-pass, always on */
+  var lp=audioCtx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;lp.connect(audioGain);
+  [semi(-12),semi(-5)].forEach(function(f){var d=audioCtx.createOscillator();d.type='sine';d.frequency.value=f;
+    var dg=audioCtx.createGain();dg.gain.value=0.05;d.connect(dg);dg.connect(lp);d.start();});
+  /* slow filter shimmer on the drone */
+  var lfo=audioCtx.createOscillator();lfo.frequency.value=0.06;var lg=audioCtx.createGain();lg.gain.value=260;
+  lfo.connect(lg);lg.connect(lp.frequency);lfo.start();
+  nextNoteTime=audioCtx.currentTime+0.15;melStep=0;
+  musicTimer=setInterval(function(){
+    if(!audioCtx)return;
+    while(nextNoteTime<audioCtx.currentTime+0.3){
+      var n=MELODY[melStep%MELODY.length];var dur=n[1]*BEAT;
+      playTone(semi(n[0]),nextNoteTime,dur,'triangle',0.16);
+      /* soft harmony a sixth below on longer notes for a fuller, cantorial feel */
+      if(n[1]>=2)playTone(semi(n[0]-8),nextNoteTime,dur,'sine',0.06);
+      nextNoteTime+=dur;melStep++;
+    }
+  },40);
+}
+function toggleAudio(){var btn=document.getElementById('audioBtn');
+  if(!audioOn){try{if(!audioCtx){var AC=window.AudioContext||window.webkitAudioContext;audioCtx=new AC();
+    audioGain=audioCtx.createGain();audioGain.gain.value=0.0;audioGain.connect(audioCtx.destination);startMusic();}
+    if(audioCtx.resume)audioCtx.resume();
+    if(audioGain.gain.setTargetAtTime)audioGain.gain.setTargetAtTime(0.85,audioCtx.currentTime,0.6);else audioGain.gain.value=0.85;
+    audioOn=true;btn.textContent='SOUND: ON';
+    }catch(e){toast('AUDIO UNAVAILABLE');}}
+  else{if(audioGain){if(audioGain.gain.setTargetAtTime)audioGain.gain.setTargetAtTime(0.0,audioCtx.currentTime,0.4);else audioGain.gain.value=0;}audioOn=false;btn.textContent='SOUND: OFF';}}
+document.getElementById('audioBtn').addEventListener('click',toggleAudio);
+
+/* ================= [P] watermarked screenshot ================= */
+function saveScreenshot(){
+  try{
+    renderer.render(scene,camera);                     /* ensure the drawing buffer is current */
+    var gl=renderer.domElement, W=gl.width, H=gl.height;
+    var out=document.createElement('canvas');out.width=W;out.height=H;
+    var c=out.getContext('2d');if(!c){toast('SCREENSHOT UNAVAILABLE');return;}
+    c.drawImage(gl,0,0,W,H);
+    /* ---- bottom banner ---- */
+    var barH=Math.max(70,Math.round(H*0.085));
+    var grad=c.createLinearGradient(0,H-barH*1.9,0,H);
+    grad.addColorStop(0,'rgba(8,11,20,0)');grad.addColorStop(0.5,'rgba(8,11,20,0.66)');grad.addColorStop(1,'rgba(8,11,20,0.92)');
+    c.fillStyle=grad;c.fillRect(0,H-barH*1.9,W,barH*1.9);
+    /* thin gold rule */
+    c.fillStyle='#C9A227';c.fillRect(0,H-barH*1.9,W,2);
+    var midY=H-barH*0.62, pad=Math.round(W*0.028);
+    /* ---- MLow logo badge (blue, evil-eye dot) ---- */
+    var bw=Math.round(barH*1.55), bh=Math.round(barH*0.82), bx=pad, by=midY-bh/2;
+    c.fillStyle='#2962FF';c.fillRect(bx,by,bw,bh);
+    c.fillStyle='#0D1220';c.beginPath();c.arc(bx+bh*0.5,by+bh*0.5,bh*0.26,0,6.2832);c.fill();
+    c.fillStyle='#fff';c.beginPath();c.arc(bx+bh*0.5,by+bh*0.5,bh*0.13,0,6.2832);c.fill();
+    c.fillStyle='#2962FF';c.beginPath();c.arc(bx+bh*0.5,by+bh*0.5,bh*0.055,0,6.2832);c.fill();
+    c.textAlign='left';c.textBaseline='middle';c.fillStyle='#EAF0FF';
+    c.font='italic 700 '+Math.round(bh*0.5)+'px Georgia, serif';c.fillText('MLow',bx+bh*0.92,by+bh*0.52);
+    /* ---- centre title ---- */
+    c.textAlign='center';
+    c.fillStyle='#F1E7C6';c.font='italic 600 '+Math.round(barH*0.46)+'px Georgia, serif';
+    c.fillText('Edmond J. Safra Center',W/2,midY-barH*0.02);
+    c.fillStyle='#C9A227';c.font=''+Math.round(barH*0.2)+'px Consolas, monospace';
+    c.fillText('WALKABLE RECONSTRUCTION · UPPER EAST SIDE · NEW YORK',W/2,midY+barH*0.34);
+    /* ---- right date stamp ---- */
+    c.textAlign='right';c.fillStyle='#8FA3C0';c.font=Math.round(barH*0.22)+'px Consolas, monospace';
+    c.fillText(new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}),W-pad,midY);
+    /* ---- download ---- */
+    var a=document.createElement('a');a.href=out.toDataURL('image/png');
+    a.download='EdmondJSafra_MLow_'+Date.now()+'.png';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    toast('SCREENSHOT SAVED · MLOW × EDMOND J. SAFRA');
+  }catch(err){toast('SCREENSHOT FAILED');}
+}
+
+/* ================= HUD + panel + interaction ================= */
+var toastEl=document.getElementById('toast'),toastTimer=null;
+function toast(msg){toastEl.textContent=msg;toastEl.style.opacity='1';
+  if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){toastEl.style.opacity='0';},2400);}
+var hudEl=document.getElementById('hud'),hudTog=document.getElementById('hudToggle');
+function toggleHud(){var hidden=hudEl.style.display==='none';hudEl.style.display=hidden?'block':'none';hudTog.style.display=hidden?'none':'block';}
+document.getElementById('hideHud').addEventListener('click',toggleHud);hudTog.addEventListener('click',toggleHud);
+artCountEl=document.getElementById('artCount');
+var zoneEl=document.getElementById('zoneName');
+function zoneOf(){
+  var y=player.y;
+  if(y<-6)return'"SOCIAL HALL"';
+  if(y<-2)return'"HERITAGE LIBRARY"';
+  if(y<2.5)return player.z>15?'"VESTIBULE"':'"MAIN SANCTUARY"';
+  if(y<7)return'"WOMEN’S GALLERY"';
+  if(y<12.6)return'"BEIT MIDRASH"';
+  return'"ROOF GARDEN"';
+}
+var panelEl=document.getElementById('panel'),panelCard=document.getElementById('panelCard');
+function openPanel(html){panelCard.innerHTML=html;panelEl.style.display='flex';
+  var x=panelCard.querySelector('.x');if(x)x.addEventListener('click',closePanel);}
+function closePanel(){panelEl.style.display='none';}
+panelEl.addEventListener('click',function(e){if(e.target===panelEl)closePanel();});
+function doInteract(){
+  var best=null,bd=1e9;
+  for(var i=0;i<INTERACT.length;i++){var o=INTERACT[i];
+    var dx=o.x-player.x,dy=o.y-(player.y-1.0),dz=o.z-player.z,dd=dx*dx+dy*dy+dz*dz;
+    if(dd<o.r*o.r&&dd<bd){bd=dd;best=o;}}
+  if(best)best.fn();else toast('NOTHING TO INTERACT WITH HERE');
+}
+var promptEl=document.getElementById('prompt');
+function tickPrompt(){
+  var near=null,bd=1e9;
+  for(var i=0;i<INTERACT.length;i++){var o=INTERACT[i];
+    var dx=o.x-player.x,dy=o.y-(player.y-1.0),dz=o.z-player.z,dd=dx*dx+dy*dy+dz*dz;
+    if(dd<o.r*o.r&&dd<bd){bd=dd;near=o;}}
+  if(near&&panelEl.style.display!=='flex'){promptEl.style.display='block';promptEl.textContent='E · '+near.label;}
+  else promptEl.style.display='none';
+}
+
+/* ================= main loop ================= */
+var clock=new THREE.Clock();
+function step(dt,time){
+  var f=0,s=0;
+  /* ARROW KEYS drive movement, Up/Down = walk, Left/Right = turn */
+  if(keys['ArrowUp']||keys['KeyW'])f+=1;if(keys['ArrowDown']||keys['KeyS'])f-=1;
+  if(keys['KeyA'])s-=1;if(keys['KeyD'])s+=1;
+  f+=-joyVec.y;s+=joyVec.x;
+  var spd=(keys['ShiftLeft']||keys['ShiftRight'])?player.stride:player.speed;
+  if(f||s){var len=Math.sqrt(f*f+s*s);f/=len;s/=len;
+    var nx=player.x+(Math.sin(yaw)*-f+Math.cos(yaw)*s)*spd*dt;
+    var nz=player.z+(Math.cos(yaw)*-f-Math.sin(yaw)*s)*spd*dt;tryMove(nx,nz);}
+  if(keys['ArrowLeft']||keys['KeyQ'])yaw+=3.0*dt;
+  if(keys['ArrowRight'])yaw-=3.0*dt;
+  if(keys['PageUp'])pitch=Math.min(1.35,pitch+2.0*dt);
+  if(keys['PageDown'])pitch=Math.max(-1.35,pitch-2.0*dt);
+  camera.position.set(player.x,player.y,player.z);
+  camera.rotation.order='YXZ';camera.rotation.y=yaw;camera.rotation.x=pitch;
+  cullLights(player.y);
+  tickPreset(dt);
+  for(var i=0;i<TICKERS.length;i++)TICKERS[i](dt,time);
+  zoneEl.textContent=zoneOf();tickPrompt();
+}
+function animate(){requestAnimationFrame(animate);var dt=Math.min(clock.getDelta(),0.1);step(dt,clock.elapsedTime);renderer.render(scene,camera);}
+window.addEventListener('resize',function(){camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+
+/* ================= builders appended below ================= */
+/* ============================================================
+   SHELL, site, façade, five stacked plates, stair core
+   ============================================================ */
+var IX0=-8,IX1=8,IZ0=-14,IZ1=16;                 /* interior footprint */
+var LB=-4.8,L0=0,MEZZ=4.2,L1=9.6,L2=-9.6,L3=20.8;/* level floor heights. v5 REORDER: L2 (Social Hall) dropped BELOW the library to a cellar, you now enter at the library, climb the grand stair UP to the sanctuary, and descend a new stair DOWN to the social hall. Sanctuary is baked at grade (L0=0) so it stays; the library is the garden level, social the cellar. */
+
+function plate(y,mat,x0,x1,z0,z1){
+  addFloor(x0,x1,z0,z1,y);
+  box(x1-x0,0.30,z1-z0,mat,(x0+x1)/2,y-0.15,(z0+z1)/2,false);
+}
+function wallSeg(x,z,w,d,y0,y1,mat){box(w,y1-y0,d,mat||MAT.jstone,x,(y0+y1)/2,z,true,y0,y1);}
+
+/* ---- exterior grade + street ---- */
+plane(90,90,new THREE.MeshStandardMaterial({color:0x6E7378,roughness:0.98}),0,-0.05,20);
+addFloor(-16,16,IZ1,34,0);                        /* walkable sidewalk */
+box(60,0.06,18,new THREE.MeshStandardMaterial({color:0x24262B,roughness:0.96}),0,-0.02,30,false);
+for(var cs=-14;cs<=14;cs+=4)box(0.12,0.16,18,MAT.jstoneD,cs,0.06,30,false); /* road seams */
+plane(60,60,new THREE.MeshBasicMaterial({color:PRESETS[0].sky}),0,60,-40,Math.PI/2); /* faux sky flat far off, harmless */
+
+/* ---- garden-level plate (Heritage Library, the ENTRY floor) with a DOWN-stair well to the cellar ---- */
+var DX0=4.2,DX1=6.8,DZ0=5,DZ1=14;                 /* down-stair well (east side, mirrors the grand stair) */
+plate(LB,MAT.floor,IX0,DX0,IZ0,IZ1);             /* west of the down-well */
+plate(LB,MAT.floor,DX1,IX1,IZ0,IZ1);             /* east of the down-well */
+plate(LB,MAT.floor,DX0,DX1,IZ0,DZ0);             /* south of the down-well */
+plate(LB,MAT.floor,DX0,DX1,DZ1,IZ1);             /* north of the down-well */
+
+/* ---- L0 plate (Main Sanctuary) with grand-stair well cut out ---- */
+var HX0=-7,HX1=-4,HZ0=6,HZ1=15;                   /* stairwell hole */
+plate(L0,MAT.floor,IX0,HX0,IZ0,IZ1);             /* west strip left of hole */
+plate(L0,MAT.floor,HX1,IX1,IZ0,IZ1);             /* everything east of hole */
+plate(L0,MAT.floor,HX0,HX1,IZ0,HZ0);             /* south of hole */
+plate(L0,MAT.floor,HX0,HX1,HZ1,IZ1);             /* north of hole */
+
+/* ---- L1 (Beit Midrash), L2 (Social Hall) plates ---- */
+plate(L1,MAT.floor,IX0,IX1,IZ0,IZ1);
+plate(L2,MAT.wood,IX0,IX1,IZ0,IZ1);
+/* ---- L3 roof deck (Roof Garden) ---- */
+plate(L3,new THREE.MeshStandardMaterial({map:TX.floorstone,color:0xCFC0A2,roughness:0.9}),IX0,IX1,IZ0,IZ1);
+
+/* ---- perimeter shell walls (full height, y-ranged) ---- */
+var WT=L2-1.6,WB=L3+1.3;                          /* wall span top/bottom (L2 cellar is now the lowest level) */
+wallSeg(IX0-0.15,(IZ0+IZ1)/2,0.3,(IZ1-IZ0)+0.3,WT,WB,MAT.jstone); /* west */
+wallSeg(IX1+0.15,(IZ0+IZ1)/2,0.3,(IZ1-IZ0)+0.3,WT,WB,MAT.jstone); /* east */
+wallSeg(0,IZ0-0.15,(IX1-IX0)+0.3,0.3,WT,WB,MAT.jstone);          /* back */
+
+/* ---- FRONT FAÇADE at z=IZ1 with bronze Tree-of-Life doors ---- */
+(function(){
+  var z=IZ1+0.15, DHW=1.9, DHY=2.7;               /* door half-width, head height */
+  /* Jerusalem-stone jambs (full height) */
+  box((IX1-DHW),(WB-WT),0.3,MAT.jstone,-(DHW+IX1)/2,(WT+WB)/2,z,true,WT,WB); /* left jamb */
+  box((IX1-DHW),(WB-WT),0.3,MAT.jstone, (DHW+IX1)/2,(WT+WB)/2,z,true,WT,WB); /* right jamb */
+  box(DHW*2+0.4,(WB-DHY),0.3,MAT.jstone,0,(DHY+WB)/2,z,true,DHY,WB);          /* header/lintel above door */
+  /* carved stone arch surround */
+  var arch=new THREE.Mesh(new THREE.TorusGeometry(DHW+0.28,0.26,10,26,Math.PI),MAT.jstoneD);
+  arch.position.set(0,DHY-0.1,z-0.02);arch.castShadow=true;scene.add(arch);
+  /* bronze double doors, Tree of Life relief on canvas */
+  var dcv=mkCanvas(256);dcv.width=256;dcv.height=384;var dc=dcv.getContext('2d');
+  if(dc){
+    dc.fillStyle='#7A5A30';dc.fillRect(0,0,256,384);
+    dc.strokeStyle='#4A3413';dc.lineWidth=6;dc.strokeRect(6,6,244,372);
+    /* trunk */
+    dc.strokeStyle='#3C2C12';dc.lineWidth=9;dc.beginPath();dc.moveTo(128,360);dc.lineTo(128,150);dc.stroke();
+    /* branches */
+    dc.lineWidth=5;
+    for(var b=0;b<7;b++){var yy=150+b*26,dir=(b%2)?1:-1;
+      dc.beginPath();dc.moveTo(128,yy);dc.quadraticCurveTo(128+dir*60,yy-6,128+dir*92,yy-46);dc.stroke();}
+    /* canopy of leaves */
+    dc.fillStyle='#9C7A44';
+    for(var lf=0;lf<70;lf++){var ang=Math.random()*6.28,rad=30+Math.random()*86;
+      dc.beginPath();dc.arc(128+Math.cos(ang)*rad,120+Math.sin(ang)*rad*0.7,4+Math.random()*4,0,6.28);dc.fill();}
+    /* roots */
+    dc.strokeStyle='#3C2C12';dc.lineWidth=4;
+    for(var r=0;r<5;r++){var d2=(r-2);dc.beginPath();dc.moveTo(128,360);dc.quadraticCurveTo(128+d2*24,372,128+d2*46,382);dc.stroke();}
+  }
+  var dtex=new THREE.Texture(dcv);dtex.needsUpdate=true;
+  var doorMat=new THREE.MeshStandardMaterial({map:dtex,color:0xB98A4E,roughness:0.4,metalness:0.85});
+  var dL=new THREE.Mesh(new THREE.BoxGeometry(DHW-0.05,DHY-0.15,0.14),doorMat);dL.position.set(-DHW/2,(DHY-0.15)/2,z-0.16);dL.castShadow=true;scene.add(dL);
+  var dR=dL.clone();dR.position.x=DHW/2;scene.add(dR);
+  /* bronze pull rings */
+  for(var pr=0;pr<2;pr++){var ring=new THREE.Mesh(new THREE.TorusGeometry(0.12,0.03,8,16),MAT.bronze);
+    ring.position.set((pr?1:-1)*0.35,1.15,z-0.24);scene.add(ring);}
+  /* threshold light */
+  addPractical(0,2.4,IZ1-0.6,0xFFE2B0,7).userData.boost=1.2;
+})();
+/* ============================================================
+   VERTICAL CIRCULATION, grand stair (basement↔sanctuary),
+   women's-gallery mezzanine, decorative atrium ribbon
+   ============================================================ */
+/* ---- GRAND STAIR: Heritage Library up into the Main Sanctuary ---- */
+(function(){
+  addRampZ(HX0,HX1,HZ1,HZ0,L0,LB);                 /* z=15→y0, z=6→-4.5 */
+  var n=15;
+  for(var s=0;s<=n;s++){var t=s/n,zz=HZ1+(HZ0-HZ1)*t,yy=L0+(LB-L0)*t;
+    box(HX1-HX0-0.1,0.12,(HZ1-HZ0)/n+0.16,MAT.marble,(HX0+HX1)/2,yy+0.02,zz,false);}
+  /* east guard wall (blocks the well on the sanctuary level only) */
+  wallSeg(HX1,(HZ0+HZ1)/2,0.14,HZ1-HZ0,L0,L0+1.0,MAT.marble);
+  box(0.14,1.0,HZ1-HZ0,MAT.bronze,HX1,L0+0.5,(HZ0+HZ1)/2,false); /* bronze cap rail visual */
+  /* newel light at stair head */
+  addPractical(HX1-0.2,L0+1.4,HZ1-0.6,0xFFDca0,6).userData.boost=1.1;
+  addPractical((HX0+HX1)/2,LB+1.8,HZ0+1,0xFFE0B4,7).userData.boost=1.2;
+})();
+
+/* ---- CELLAR STAIR: Heritage Library DOWN into the Social Hall ---- */
+(function(){
+  addRampZ(DX0,DX1,DZ1,DZ0,LB,L2);                 /* z=14→LB(-4.8), z=5→L2(-9.6) */
+  var n=16;
+  for(var s=0;s<=n;s++){var t=s/n,zz=DZ1+(DZ0-DZ1)*t,yy=LB+(L2-LB)*t;
+    box(DX1-DX0-0.1,0.12,(DZ1-DZ0)/n+0.16,MAT.marble,(DX0+DX1)/2,yy+0.02,zz,false);}
+  /* west guard wall blocks the well on the library level only (waist-high) */
+  wallSeg(DX0,(DZ0+DZ1)/2,0.14,DZ1-DZ0,LB,LB+1.0,MAT.marble);
+  box(0.14,1.0,DZ1-DZ0,MAT.bronze,DX0,LB+0.5,(DZ0+DZ1)/2,false); /* bronze cap rail visual */
+  /* newel lights top + bottom */
+  addPractical(DX0+0.2,LB+1.4,DZ1-0.6,0xFFDca0,6).userData.boost=1.1;
+  addPractical((DX0+DX1)/2,L2+1.8,DZ0+1,0xFFE0B4,7).userData.boost=1.2;
+})();
+
+/* ---- WOMEN'S GALLERY MEZZANINE (MEZZ), a walkable U wrapping the sanctuary ---- */
+(function(){
+  var railMat=new THREE.MeshStandardMaterial({color:0x8A6A44,roughness:0.6,metalness:0.4});
+  /* FRONT arm (full width, street side) + EAST & WEST connectors down to the side balconies */
+  addFloor(-7.6,7.6,10.4,15.6,MEZZ);plate(MEZZ,MAT.wood,-7.6,7.6,10.4,15.6);
+  addFloor(5.4,7.6,3.6,10.6,MEZZ);plate(MEZZ,MAT.oak,5.4,7.6,3.6,10.6);
+  addFloor(-7.6,-5.4,3.6,10.6,MEZZ);plate(MEZZ,MAT.oak,-7.6,-5.4,3.6,10.6);
+  /* ---- GENTLE STRAIGHT STAIR up the east side: L0 -> MEZZ (climbable ~25° slope) ---- */
+  addRampZ(6.0,7.5,15.3,6.5,L0,MEZZ);
+  var m=22,stepD=(15.3-6.5)/m;
+  for(var s=0;s<=m;s++){var t=s/m,zz=15.3+(6.5-15.3)*t,yy=L0+(MEZZ-L0)*t;
+    box(1.5,0.12,stepD+0.14,MAT.marble,6.75,yy+0.02,zz,false);}
+  wallSeg(7.68,11.0,0.14,9.0,L0,MEZZ+1.0,MAT.jstoneD);        /* outer stair/gallery wall (east) */
+  addPractical(6.75,L0+1.5,14.6,0xFFDca0,6).userData.boost=1.0;
+  addPractical(6.75,MEZZ+1.5,7.4,0xFFDca0,6).userData.boost=1.0;
+  /* ---- INNER BALUSTRADE around the U (overlook the sanctuary safely) ---- */
+  wallSeg(0,10.5,10.8,0.14,MEZZ,MEZZ+1.0,railMat);            /* front inner rail */
+  box(10.9,0.1,0.2,MAT.bronze,0,MEZZ+1.0,10.5,false);
+  wallSeg(5.4,7.3,0.14,6.4,MEZZ,MEZZ+1.0,railMat);            /* east inner rail (z 4..10.6) */
+  wallSeg(-5.4,7.3,0.14,6.4,MEZZ,MEZZ+1.0,railMat);           /* west inner rail */
+  for(var bx=-5.2;bx<=5.2;bx+=0.5){var bal=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,0.9,8),railMat);bal.position.set(bx,MEZZ+0.5,10.5);scene.add(bal);}
+  addPractical(0,MEZZ+1.9,13,0xFFDca0,7);
+  /* signage light + interaction */
+  addInteract(6.75,MEZZ+1.0,7.0,2.4,"WOMEN'S GALLERY, the mezzanine balcony",function(){
+    openPanel('<span class="x">&times;</span><h3>The Women’s Gallery</h3><div class="sub">Mezzanine · ezrat nashim</div>'+
+    '<p>A wrap-around balcony of oak and bronze overlooks the sanctuary and the great ribbed dome. Climb the east stair from the main floor; the gallery runs along the front and down both sides.</p>'+
+    '<p class="note">Faithful-mode reconstruction, the living congregation is at <a href="https://www.ejsny.org/" target="_blank" rel="noopener">ejsny.org</a>.</p>');
+  });
+})();
+
+/* ---- DECORATIVE ATRIUM RIBBON (Hadid), back-west, purely visual ---- */
+(function(){
+  var ribMat=new THREE.MeshStandardMaterial({color:0xF0EFEA,roughness:0.55,metalness:0.15,side:THREE.DoubleSide});
+  var pts=[];for(var i=0;i<=60;i++){var t=i/60,ang=t*Math.PI*2.4,rad=2.1;
+    pts.push(new THREE.Vector3(-5.5+Math.cos(ang)*rad,L0+t*(L3-L0),-11+Math.sin(ang)*rad*0.8));}
+  var curve=new THREE.CatmullRomCurve3(pts);
+  var tube=new THREE.Mesh(new THREE.TubeGeometry(curve,80,0.16,8,false),ribMat);tube.castShadow=true;scene.add(tube);
+  var tube2=new THREE.Mesh(new THREE.TubeGeometry(curve,80,0.05,6,false),MAT.bronze);
+  tube2.position.y=0.9;scene.add(tube2);
+})();
+/* ============================================================
+   MAIN SANCTUARY (L0), Hekhal/Ark, Tevah, Torah, seating
+   ============================================================ */
+/* ---- shared ritual makers ---- */
+function torahScroll(x,y,z,cloth){
+  var g=new THREE.Group();g.position.set(x,y,z);
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,0.62,16),cloth||MAT.velvet);body.castShadow=true;g.add(body);
+  for(var s=-1;s<=1;s+=2){var staff=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.028,0.86,8),MAT.woodD);staff.position.y=s*0.36;g.add(staff);
+    var fin=new THREE.Mesh(new THREE.SphereGeometry(0.05,10,8),MAT.gold);fin.position.y=s*0.79;g.add(fin);
+    /* rimonim bells */
+    var rim=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.075,0.14,8),MAT.gold);rim.position.y=s*0.5;g.add(rim);}
+  var crown=new THREE.Mesh(new THREE.TorusGeometry(0.1,0.028,8,14),MAT.gold);crown.rotation.x=Math.PI/2;crown.position.y=0;g.add(crown);
+  scene.add(g);return g;
+}
+function stainGlass(w,h,x,y,z,ry){
+  var cv=mkCanvas(128);cv.height=192;var c=cv.getContext('2d');
+  if(c){var cols=['#2A4C9B','#8E2230','#1E6B4F','#C9A227','#4A2C6B'];
+    for(var yy=0;yy<192;yy+=24)for(var xx=0;xx<128;xx+=24){c.fillStyle=cols[(xx+yy)%cols.length|0]||cols[Math.floor(Math.random()*5)];
+      c.globalAlpha=0.85;c.beginPath();c.arc(xx+12,yy+12,13,0,6.28);c.fill();}
+    c.globalAlpha=1;c.strokeStyle='#0A0A0A';c.lineWidth=3;
+    for(var g2=0;g2<=128;g2+=24){c.beginPath();c.moveTo(g2,0);c.lineTo(g2,192);c.stroke();}
+    for(var g3=0;g3<=192;g3+=24){c.beginPath();c.moveTo(0,g3);c.lineTo(128,g3);c.stroke();}}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;
+  var m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:tx,transparent:true,opacity:0.92}));
+  m.position.set(x,y,z);m.rotation.y=ry||0;scene.add(m);
+  var arch=new THREE.Mesh(new THREE.CylinderGeometry(w/2,w/2,0.001,20,1,false,0,Math.PI),new THREE.MeshBasicMaterial({map:tx}));
+  addPractical(x-Math.sin(ry||0)*0.6,y,z-Math.cos(ry||0)*0.6,0xBFD4FF,5).userData.boost=0.7;
+  return m;
+}
+/* Hebrew inscription band on a Jerusalem-stone plaque */
+function hebrewBand(text,w,h,x,y,z,ry){
+  var cv=mkCanvas(1024);cv.height=140;var c=cv.getContext('2d');
+  if(c){c.fillStyle='#E7D8BC';c.fillRect(0,0,1024,140);
+    c.fillStyle='#7A5A30';c.fillRect(0,0,1024,6);c.fillRect(0,134,1024,6);
+    c.fillStyle='#3A2A16';c.font='700 74px Georgia, "Times New Roman", serif';c.textAlign='center';c.textBaseline='middle';
+    c.direction='rtl';try{c.fillText(text,512,74);}catch(e){}}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;
+  var m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:tx,roughness:0.9}));
+  m.position.set(x,y,z);m.rotation.y=ry||0;scene.add(m);return m;
+}
+/* Star-of-David front panel texture (for the bimah reading desk) */
+var _starTex=null;
+function starTex(){
+  if(_starTex)return _starTex;
+  var cv=mkCanvas(256),c=cv.getContext('2d');
+  if(c){c.fillStyle='#6B4A2F';c.fillRect(0,0,256,256);
+    c.strokeStyle='#C9A227';c.lineWidth=10;c.lineJoin='round';
+    function tri(up){c.beginPath();var cx=128,cy=128,r=92;
+      for(var i=0;i<3;i++){var ang=(up?-Math.PI/2:Math.PI/2)+i*2.0944;
+        var px=cx+Math.cos(ang)*r,py=cy+Math.sin(ang)*r;i?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();c.stroke();}
+    tri(true);tri(false);}
+  _starTex=new THREE.Texture(cv);_starTex.needsUpdate=true;
+  return new THREE.MeshStandardMaterial({map:_starTex,roughness:0.6});
+}
+(function(){
+  /* ============================================================
+     MAIN SANCTUARY v2, a circular amphitheatre under a radial
+     ribbed WOODEN dome, cylindrical bronze-mesh Hekhal, central
+     bimah with a great silver Sephardic Torah, curved tiered
+     benches and flanking women's galleries.  (Reference-matched.)
+     ============================================================ */
+  var CZ=-2.0;                       /* centre of the round room (z) */
+  /* ---- stone floor medallion under the dome ---- */
+  (function(){
+    for(var ri=0;ri<3;ri++){var rr=6.6-ri*2.1;
+      var disc=new THREE.Mesh(new THREE.CylinderGeometry(rr,rr,0.04,48),ri%2?MAT.jstoneD:MAT.marble);
+      disc.position.set(0,0.021+ri*0.002,CZ);disc.receiveShadow=true;scene.add(disc);}
+  })();
+
+  /* ---- RING COLONNADE (12 stone piers carrying the dome ring) ---- */
+  var RC=6.3, springY=6.0;
+  for(var ci=0;ci<12;ci++){
+    var a=(ci+0.5)/12*6.2832;                 /* offset so no pier blocks the two aisles */
+    var px=Math.cos(a)*RC, pz=CZ+Math.sin(a)*RC;
+    col(0.30,springY,MAT.jstone,px,springY/2,pz);
+    var base=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.48,0.34,16),MAT.jstoneD);base.position.set(px,0.17,pz);scene.add(base);
+    var cap=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.34,0.30,16),MAT.jstoneD);cap.position.set(px,springY-0.15,pz);scene.add(cap);
+    /* wall sconce with cylindrical shade */
+    var sh=new THREE.Mesh(new THREE.CylinderGeometry(0.10,0.13,0.34,12),MAT.parch);sh.position.set(px*0.93,3.0,pz*0.93+ (pz<CZ?0:0));scene.add(sh);
+    var sl=addPractical(px*0.9,3.0,CZ+(pz-CZ)*0.9,0xFFCE86,5);sl.userData.boost=0.8;
+  }
+  /* spring ring beam (bronze) that the dome springs from */
+  var springRing=new THREE.Mesh(new THREE.TorusGeometry(RC,0.14,10,64),MAT.bronze);
+  springRing.rotation.x=Math.PI/2;springRing.position.set(0,springY,CZ);scene.add(springRing);
+  /* stone drum band just below the spring ring, carrying an inscription */
+  var drum=new THREE.Mesh(new THREE.CylinderGeometry(RC+0.15,RC+0.15,0.9,48,1,true),MAT.jstone);
+  drum.position.set(0,springY-0.45,CZ);scene.add(drum);
+
+  /* ---- RADIAL RIBBED WOODEN DOME ---- */
+  (function(){
+    var Rb=RC, H=3.1, apexY=springY+H;          /* apex ~9.1, below L1=9.6 */
+    /* dark under-shell so gaps between ribs read as shadow, plus a warm wood shell */
+    var shell=new THREE.Mesh(new THREE.SphereGeometry(Rb-0.04,40,20,0,6.2832,0,Math.PI/2),
+      new THREE.MeshStandardMaterial({color:0x6E4A28,roughness:0.85,side:THREE.BackSide}));
+    shell.scale.set(1,H/(Rb-0.04),1);shell.position.set(0,springY,CZ);scene.add(shell);
+    var woodShell=new THREE.Mesh(new THREE.SphereGeometry(Rb-0.12,40,20,0,6.2832,0.16,Math.PI/2-0.16),
+      new THREE.MeshStandardMaterial({color:0x93602F,roughness:0.7,side:THREE.BackSide}));
+    woodShell.scale.set(1,H/(Rb-0.12),1);woodShell.position.set(0,springY,CZ);scene.add(woodShell);
+    /* plank helper: a slat spanning p0->p1 */
+    function plank(p0,p1,w,th,mat){
+      var dir=p1.clone().sub(p0),len=dir.length();
+      var m=new THREE.Mesh(new THREE.BoxGeometry(w,th,len),mat);
+      m.position.copy(p0).add(p1).multiplyScalar(0.5);m.lookAt(p1);m.castShadow=true;scene.add(m);return m;
+    }
+    function pt(phi,a){return new THREE.Vector3(Math.cos(a)*Rb*Math.sin(phi),springY+H*Math.cos(phi),CZ+Math.sin(a)*Rb*Math.sin(phi));}
+    var N=28,K=7,phi0=0.16,phi1=Math.PI/2;      /* ribs x segments */
+    for(var i=0;i<N;i++){var a=i/N*6.2832;var mat=(i%2)?MAT.domeWoodD:MAT.domeWood;
+      for(var k=0;k<K;k++){var t0=k/K,t1=(k+1)/K;
+        var ph0=phi0+(phi1-phi0)*t0, ph1=phi0+(phi1-phi0)*t1;
+        plank(pt(ph0,a),pt(ph1,a),0.16,0.13,mat);}
+    }
+    /* two faint hoop rings for the concentric read */
+    [0.55,1.02].forEach(function(ph){var rr=Rb*Math.sin(ph),yy=springY+H*Math.cos(ph);
+      var hoop=new THREE.Mesh(new THREE.TorusGeometry(rr,0.05,8,48),MAT.domeWoodD);
+      hoop.rotation.x=Math.PI/2;hoop.position.set(0,yy,CZ);scene.add(hoop);});
+    /* lit oculus at the crown */
+    var ocR=Rb*Math.sin(phi0)+0.05;
+    var oc=new THREE.Mesh(new THREE.CircleGeometry(ocR,28),MAT.oculus);oc.rotation.x=Math.PI/2;oc.position.set(0,apexY-0.02,CZ);scene.add(oc);
+    var ocRim=new THREE.Mesh(new THREE.TorusGeometry(ocR,0.08,10,28),MAT.gold);ocRim.rotation.x=Math.PI/2;ocRim.position.set(0,apexY,CZ);scene.add(ocRim);
+    var ocL=addPractical(0,apexY-0.6,CZ,0xFFF0CF,14);ocL.userData.boost=1.5;
+    var shaft=new THREE.Mesh(new THREE.CylinderGeometry(ocR*0.9,ocR*2.2,H,24,1,true),
+      new THREE.MeshBasicMaterial({color:0xFFEFC8,transparent:true,opacity:0.09,side:THREE.DoubleSide}));
+    shaft.position.set(0,springY+H*0.5,CZ);scene.add(shaft);
+    /* ---- hanging lantern NER TAMID on a long chain from the crown ---- */
+    var chain=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,apexY-4.6,6),MAT.gold);
+    chain.position.set(0,(apexY+4.6)/2,CZ);scene.add(chain);
+    var lantG=new THREE.Group();lantG.position.set(0,4.5,CZ);
+    var amber=new THREE.MeshStandardMaterial({color:0xFFCF7A,emissive:0xFFB84D,emissiveIntensity:1.4,roughness:0.25,metalness:0.3,transparent:true,opacity:0.85});
+    var glassMat=new THREE.MeshStandardMaterial({color:0xEAF2FF,roughness:0.05,metalness:0.2,transparent:true,opacity:0.28,side:THREE.DoubleSide});
+    /* crown finial */
+    var crownN=new THREE.Mesh(new THREE.ConeGeometry(0.16,0.3,10),MAT.gold);crownN.position.y=0.62;lantG.add(crownN);
+    var suspRing=new THREE.Mesh(new THREE.TorusGeometry(0.10,0.02,8,16),MAT.gold);suspRing.rotation.x=Math.PI/2;suspRing.position.y=0.48;lantG.add(suspRing);
+    /* top & bottom brass hoops of a hexagonal cage */
+    var hoopT=new THREE.Mesh(new THREE.TorusGeometry(0.28,0.025,8,24),MAT.brass);hoopT.rotation.x=Math.PI/2;hoopT.position.y=0.24;lantG.add(hoopT);
+    var hoopB=new THREE.Mesh(new THREE.TorusGeometry(0.30,0.03,8,24),MAT.brass);hoopB.rotation.x=Math.PI/2;hoopB.position.y=-0.24;lantG.add(hoopB);
+    /* central amber vessel + glass housing */
+    var vessel=new THREE.Mesh(new THREE.SphereGeometry(0.17,16,14),amber);lantG.add(vessel);
+    var housing=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.30,0.5,6),glassMat);lantG.add(housing);
+    /* six vertical brass ribs + radiating candelabra arms with little flame-lamps */
+    var flames=[];
+    for(var na=0;na<6;na++){var ang=na/6*6.2832;
+      var rib=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.5,6),MAT.brass);
+      rib.position.set(Math.cos(ang)*0.29,0,Math.sin(ang)*0.29);lantG.add(rib);
+      /* scrolled arm out to a small oil-lamp */
+      var arm=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,0.34,6),MAT.gold);
+      arm.position.set(Math.cos(ang)*0.42,-0.16,Math.sin(ang)*0.42);arm.rotation.z=Math.PI/2;arm.rotation.y=-ang;lantG.add(arm);
+      var cup=new THREE.Mesh(new THREE.SphereGeometry(0.05,10,8,0,6.28,0,1.7),MAT.gold);cup.position.set(Math.cos(ang)*0.56,-0.2,Math.sin(ang)*0.56);lantG.add(cup);
+      var fl=new THREE.Mesh(new THREE.SphereGeometry(0.035,10,8),amber.clone());fl.position.set(Math.cos(ang)*0.56,-0.14,Math.sin(ang)*0.56);lantG.add(fl);flames.push(fl.material);}
+    /* teardrop finial below */
+    var teard=new THREE.Mesh(new THREE.ConeGeometry(0.09,0.26,10),MAT.gold);teard.rotation.x=Math.PI;teard.position.y=-0.42;lantG.add(teard);
+    scene.add(lantG);
+    var nerL=addPractical(0,4.4,CZ,0xFFCE7A,10);nerL.userData.boost=1.6;nerL.userData.ner=true;
+    var nerL2=addPractical(0,4.2,CZ,0xFFB84D,5);nerL2.userData.boost=0.8;
+    TICKERS.push(function(dt,time){var pulse=0.9+Math.sin(time*3)*0.12;var pk=(curPreset===2?1.9:1.0);
+      nerL.intensity=pulse*pk*1.3;nerL2.intensity=pulse*pk*0.7;
+      var e=1.3+Math.sin(time*3)*0.28;amber.emissiveIntensity=e;for(var i=0;i<flames.length;i++)flames[i].emissiveIntensity=1.1+Math.sin(time*4+i)*0.4;
+      lantG.rotation.y=Math.sin(time*0.3)*0.05;});
+  })();
+
+  /* ---- HEKHAL, cylindrical bronze-mesh ark in a stone niche (back) ---- */
+  (function(){
+    var az=-11.3, ay=0.0;
+    /* raised stone platform + steps */
+    box(6.4,0.5,3.0,MAT.marble,0,0.25,az-0.4,true,L0,L0+0.5);
+    for(var st=0;st<3;st++)box(4.4-st*0.7,0.18,0.4,MAT.marble,0,0.09+st*0.17,az+1.7-st*0.34,false);
+    /* stone niche framing the ark */
+    box(5.6,4.6,0.6,MAT.jstoneD,0,2.8,az-0.95,false);
+    for(var cx=-1;cx<=1;cx+=2)col(0.24,4.2,MAT.marble,cx*2.1,2.6,az-0.4);
+    /* the cylindrical bronze-mesh drum (Hekhal) */
+    var drumH=3.2,drumR=1.55;
+    var mesh=new THREE.Mesh(new THREE.CylinderGeometry(drumR,drumR,drumH,40,1,true),MAT.meshBronze);
+    mesh.position.set(0,0.5+drumH/2,az-0.3);scene.add(mesh);
+    /* vertical slats over the drum for the woven-bronze read */
+    for(var sa=0;sa<40;sa+=1){var ang=sa/40*6.2832;
+      var slat=new THREE.Mesh(new THREE.BoxGeometry(0.05,drumH,0.05),MAT.bronze);
+      slat.position.set(Math.cos(ang)*drumR,0.5+drumH/2,az-0.3+Math.sin(ang)*drumR);scene.add(slat);}
+    /* top and bottom bronze rings */
+    for(var yy=0;yy<2;yy++){var rg=new THREE.Mesh(new THREE.TorusGeometry(drumR,0.06,8,44),MAT.bronze);
+      rg.rotation.x=Math.PI/2;rg.position.set(0,0.5+yy*drumH,az-0.3);scene.add(rg);}
+    /* warm interior glow (scrolls within) */
+    var inner=new THREE.Mesh(new THREE.CylinderGeometry(drumR-0.2,drumR-0.2,drumH-0.2,20),new THREE.MeshStandardMaterial({color:0x6E1420,emissive:0x2a0a0c,emissiveIntensity:0.5,roughness:0.9}));
+    inner.position.set(0,0.5+drumH/2,az-0.3);scene.add(inner);
+    addPractical(0,2.2,az+0.4,0xFFD9A0,6).userData.boost=0.9;
+    /* dome-shaped bronze cap */
+    var cap=new THREE.Mesh(new THREE.SphereGeometry(drumR,24,12,0,6.2832,0,Math.PI/2),MAT.bronze);
+    cap.position.set(0,0.5+drumH,az-0.3);scene.add(cap);
+    /* HEBREW inscription band above the niche */
+    hebrewBand('שִׁוִּיתִי יְהוָה לְנֶגְדִּי תָמִיד',5.4,0.7,0,5.15,az-0.9,0);
+    /* LUCHOT (tablets) + crown */
+    for(var tb=-1;tb<=1;tb+=2){var tab=new THREE.Mesh(new THREE.BoxGeometry(0.66,0.95,0.12),MAT.jstone);
+      tab.position.set(tb*0.4,5.9,az-0.8);scene.add(tab);
+      var top=new THREE.Mesh(new THREE.CylinderGeometry(0.33,0.33,0.12,16,1,false,0,Math.PI),MAT.jstone);
+      top.position.set(tb*0.4,6.37,az-0.8);scene.add(top);}
+  })();
+
+  /* ---- CENTRAL BIMAH (Tevah) + the great SILVER Sephardic Torah ---- */
+  (function(){
+    var bz=CZ;
+    box(3.8,0.5,3.8,MAT.marble,0,0.25,bz,true,L0,L0+0.5);          /* round-ish raised bimah */
+    var top=new THREE.Mesh(new THREE.CylinderGeometry(2.1,2.3,0.5,32),MAT.jstoneD);top.position.set(0,0.25,bz);scene.add(top);
+    for(var ts=0;ts<2;ts++)box(4.4-ts*0.6,0.16,0.34,MAT.marble,0,0.08+ts*0.15,bz+2.0+ts*0.32,false);/* steps on entry side */
+    /* brass railing posts around the bimah */
+    for(var a=0;a<12;a++){var ang=a/12*6.2832;var rx=Math.cos(ang)*1.9,rz=bz+Math.sin(ang)*1.9;
+      var post=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.85,8),MAT.brass);post.position.set(rx,0.9,rz);scene.add(post);
+      var ball=new THREE.Mesh(new THREE.SphereGeometry(0.05,8,6),MAT.gold);ball.position.set(rx,1.33,rz);scene.add(ball);}
+    var rail=new THREE.Mesh(new THREE.TorusGeometry(1.9,0.03,8,40),MAT.brass);rail.rotation.x=Math.PI/2;rail.position.set(0,1.3,bz);scene.add(rail);
+    /* reading desk with Star-of-David front panel, facing the ark */
+    var desk=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.1,0.95),MAT.oakD);desk.position.set(0,1.06,bz+0.1);desk.rotation.x=-0.32;scene.add(desk);
+    var runner=new THREE.Mesh(new THREE.PlaneGeometry(1.6,0.95),MAT.velvet);runner.position.set(0,1.12,bz+0.1);runner.rotation.x=-Math.PI/2+0.32;scene.add(runner);
+    var starPanel=new THREE.Mesh(new THREE.PlaneGeometry(0.8,0.8),starTex());starPanel.position.set(0,0.72,bz+0.62);scene.add(starPanel);
+    /* ---- THE GREAT SILVER SEPHARDIC TORAH (tik) standing upright ---- */
+    (function(){
+      var g=new THREE.Group();g.position.set(0,0.5,bz-0.35);
+      var bodyH=1.15,bodyR=0.34;
+      var body=new THREE.Mesh(new THREE.CylinderGeometry(bodyR,bodyR,bodyH,32),MAT.silverE);body.position.y=bodyH/2+0.02;body.castShadow=true;g.add(body);
+      /* embossed hoop bands */
+      for(var b=0;b<4;b++){var hoop=new THREE.Mesh(new THREE.TorusGeometry(bodyR+0.01,0.03,8,32),MAT.silver);
+        hoop.rotation.x=Math.PI/2;hoop.position.y=0.18+b*0.32;g.add(hoop);}
+      /* vertical seam / hinge */
+      var seam=new THREE.Mesh(new THREE.BoxGeometry(0.03,bodyH,0.03),MAT.gold);seam.position.set(bodyR,bodyH/2+0.02,0);g.add(seam);
+      /* domed silver top */
+      var dome=new THREE.Mesh(new THREE.SphereGeometry(bodyR,24,14,0,6.2832,0,Math.PI/2),MAT.silverE);dome.position.y=bodyH+0.02;g.add(dome);
+      /* two rimonim (crown finials) + central crown (keter) */
+      for(var rm=-1;rm<=1;rm+=2){var stk=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.5,8),MAT.silver);stk.position.set(rm*0.18,bodyH+0.32,0);g.add(stk);
+        var bell=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.10,0.16,10),MAT.silver);bell.position.set(rm*0.18,bodyH+0.62,0);g.add(bell);
+        var tip=new THREE.Mesh(new THREE.SphereGeometry(0.05,10,8),MAT.gold);tip.position.set(rm*0.18,bodyH+0.74,0);g.add(tip);
+        /* little bells hanging */
+        for(var bb=0;bb<3;bb++){var bl=new THREE.Mesh(new THREE.SphereGeometry(0.028,8,6),MAT.gold);bl.position.set(rm*0.18+(bb-1)*0.05,bodyH+0.5,0.05);g.add(bl);}}
+      var keter=new THREE.Mesh(new THREE.TorusGeometry(0.12,0.03,8,16),MAT.gold);keter.rotation.x=Math.PI/2;keter.position.y=bodyH+0.3;g.add(keter);
+      for(var kp=0;kp<6;kp++){var ka=kp/6*6.2832;var pk=new THREE.Mesh(new THREE.ConeGeometry(0.02,0.09,6),MAT.gold);pk.position.set(Math.cos(ka)*0.12,bodyH+0.37,Math.sin(ka)*0.12);g.add(pk);}
+      scene.add(g);
+      addPractical(0,2.0,bz-0.35,0xFFF3D6,5).userData.boost=1.0;
+    })();
+    addPractical(0,2.4,bz,0xFFE6B4,6).userData.boost=0.9;
+    addInteract(0,1.2,bz,2.6,'THE TEVAH, reading of the Torah',function(){
+      openPanel('<span class="x">&times;</span><h3>The Tevah</h3><div class="sub">Central reading platform · Sephardic rite</div>'+
+      '<p>In the Sephardic tradition the <b>Tevah</b> stands at the centre of the sanctuary, beneath the great ribbed dome, facing the <b>Hekhal</b>, here a cylinder of woven bronze set in Jerusalem stone. Upon the reading desk stands a <b>silver tik</b>, the rigid case that holds the Torah scroll upright in the Sephardic manner.</p>'+
+      '<p>This week\'s portion is displayed on the <b>"PARSHA"</b> plaque in the Social Hall. To dedicate part of this virtual reconstruction, visit the <b>"DONOR WALL"</b>.</p>'+
+      '<p class="note">Faithful-mode reconstruction. Not a place of actual worship, the living congregation is at <a href="https://www.ejsny.org/" target="_blank" rel="noopener">ejsny.org</a>.</p>');
+    });
+  })();
+
+  /* ---- CURVED TIERED BENCHES (dark leather on light wood), split by two aisles ---- */
+  (function(){
+    var CZc=CZ;
+    function benchArc(r,seatY,aFrom,aTo){
+      var da=0.13;
+      for(var a=aFrom;a<=aTo;a+=da){
+        var x=Math.cos(a)*r, z=CZc+Math.sin(a)*r, ry=a-Math.PI/2;
+        var base=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.46,0.52),MAT.oak);base.position.set(x,seatY-0.23,z);base.rotation.y=ry;base.castShadow=true;scene.add(base);
+        var seat=new THREE.Mesh(new THREE.BoxGeometry(0.78,0.10,0.44),MAT.leather);seat.position.set(x,seatY,z);seat.rotation.y=ry;scene.add(seat);
+        var bk=new THREE.Mesh(new THREE.BoxGeometry(0.78,0.42,0.09),MAT.leather);
+        bk.position.set(x+Math.cos(a)*0.24,seatY+0.28,z+Math.sin(a)*0.24);bk.rotation.y=ry;scene.add(bk);
+        /* carved oak book-rest ledge on the FRONT (ark-facing) edge, confirms orientation */
+        var ledge=new THREE.Mesh(new THREE.BoxGeometry(0.78,0.06,0.12),MAT.oakD);
+        ledge.position.set(x-Math.cos(a)*0.30,seatY-0.02,z-Math.sin(a)*0.30);ledge.rotation.y=ry;scene.add(ledge);
+      }
+    }
+    for(var ri=0;ri<4;ri++){var r=3.3+ri*1.02, sy=0.44+ri*0.30;
+      benchArc(r,sy,-0.35,1.15);   /* right block (through +x, gap at +z aisle ~1.57) */
+      benchArc(r,sy,2.00,3.48);    /* left block (through -x, gap at -z ark aisle ~4.71) */
+    }
+  })();
+
+  /* ---- FLANKING WOMEN'S GALLERIES (left & right balconies at MEZZ) ---- */
+  (function(){
+    for(var sgn=-1;sgn<=1;sgn+=2){
+      var gx=sgn*6.9;
+      addFloor(sgn>0?5.4:-7.4,sgn>0?7.4:-5.4,-8,4,MEZZ);
+      plate(MEZZ,MAT.oak,sgn>0?5.4:-7.4,sgn>0?7.4:-5.4,-8,4);
+      /* balcony front rail facing inward */
+      wallSeg(sgn*5.5,-2,0.14,12,MEZZ,MEZZ+1.0,MAT.oak);
+      var rail=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.1,12),MAT.bronze);rail.position.set(sgn*5.5,MEZZ+1.0,-2);scene.add(rail);
+      for(var bz2=-7;bz2<=3;bz2+=0.5){var bal=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.032,0.9,8),MAT.oak);bal.position.set(sgn*5.5,MEZZ+0.5,bz2);scene.add(bal);}
+      addPractical(sgn*6.4,MEZZ+1.6,-2,0xFFDca0,6);
+    }
+  })();
+
+  /* ---- clerestory stained-glass in the drum ---- */
+  stainGlass(1.5,2.4,IX0+0.25,4.2,-6,Math.PI/2);
+  stainGlass(1.5,2.4,IX0+0.25,4.2, 2,Math.PI/2);
+  stainGlass(1.5,2.4,IX1-0.25,4.2,-6,-Math.PI/2);
+  stainGlass(1.5,2.4,IX1-0.25,4.2, 2,-Math.PI/2);
+})();
+/* ============================================================
+   BASEMENT, Heritage Library, Farhi listening station,
+   one Arsham "excavation" moment
+   ============================================================ */
+/* ---- shared pool of Hebrew spine textures: real Sephardic siddurim & sifrei kodesh ---- */
+var SIDDUR_MATS=(function(){
+  var titles=[
+    {t:'סִדּוּר',s:'תפילת החדש',c:'#6E1420',g:'#E9C46A'},   /* Siddur, Sephardic rite */
+    {t:'סִדּוּר',s:'עוד אבינו חי',c:'#123B6B',g:'#D9B45A'},
+    {t:'תְּהִלִּים',s:'ספר תהלים',c:'#1E6B4F',g:'#EBD8A0'},   /* Tehillim */
+    {t:'חֻמָּשׁ',s:'תורה · חמשה חומשי',c:'#4A2C6B',g:'#E9C46A'},/* Chumash */
+    {t:'תַּנַ״ךְ',s:'מקרא',c:'#7A2A1A',g:'#E0C070'},
+    {t:'זֹהַר',s:'ספר הזוהר',c:'#2A2A2A',g:'#C9A227'},        /* Zohar */
+    {t:'מִשְׁנָה',s:'ששה סדרים',c:'#8B5A2B',g:'#EFE0B0'},
+    {t:'גְּמָרָא',s:'תלמוד בבלי',c:'#3A2410',g:'#D8C48A'},
+    {t:'מַחֲזוֹר',s:'ליום כיפור',c:'#0E1B3A',g:'#E9C46A'},   /* Machzor */
+    {t:'בֶּן אִישׁ חַי',s:'הלכות',c:'#6B1F2A',g:'#E9C46A'}    /* Ben Ish Chai, Sephardic */
+  ];
+  return titles.map(function(o){
+    var cv=mkCanvas(64);cv.width=64;cv.height=256;var c=cv.getContext('2d');
+    if(c){c.fillStyle=o.c;c.fillRect(0,0,64,256);
+      var gd=c.createLinearGradient(0,0,64,0);gd.addColorStop(0,'rgba(255,255,255,0.10)');gd.addColorStop(0.5,'rgba(0,0,0,0)');gd.addColorStop(1,'rgba(0,0,0,0.25)');
+      c.fillStyle=gd;c.fillRect(0,0,64,256);
+      /* gilt bands top & bottom */
+      c.fillStyle=o.g;c.fillRect(6,18,52,3);c.fillRect(6,238,52,3);c.fillRect(6,150,52,2);
+      /* vertical Hebrew title (glyphs stacked) */
+      c.fillStyle=o.g;c.textAlign='center';c.textBaseline='middle';
+      var chars=o.t.replace(/[^֐-׿]/g,'').split('');
+      var startY=64,step=Math.min(30,150/Math.max(chars.length,1));
+      for(var i=0;i<chars.length;i++){c.font='700 26px Georgia, "Times New Roman", serif';c.fillText(chars[i],32,startY+i*step);}
+      c.font='11px Georgia, serif';c.fillStyle='rgba(255,240,200,0.85)';c.fillText('◆',32,205);}
+    var tx=new THREE.Texture(cv);tx.needsUpdate=true;
+    return new THREE.MeshStandardMaterial({map:tx,roughness:0.72,metalness:0.05,color:0xffffff});
+  });
+})();
+function bookshelf(x,z,ry,w){
+  var g=new THREE.Group();g.position.set(x,LB,z);g.rotation.y=ry;
+  var case_=new THREE.Mesh(new THREE.BoxGeometry(w,3.0,0.4),MAT.oakD);case_.position.y=1.5;case_.castShadow=true;g.add(case_);
+  for(var shf=0;shf<5;shf++){var ledge=new THREE.Mesh(new THREE.BoxGeometry(w,0.05,0.42),MAT.oak);ledge.position.set(0,0.4+shf*0.72,0.02);g.add(ledge);}
+  var spineCols=[0x6E1420,0x123B6B,0x1E6B4F,0x4A2C6B,0x7A5A30,0x8B5A2B,0x8E2230];
+  for(var sh=0;sh<4;sh++){for(var bx=-w/2+0.14;bx<w/2-0.1;bx+=0.075+Math.random()*0.03){
+    var h=0.42+Math.random()*0.12;
+    /* ~55% of books are titled Hebrew sifrei kodesh from the shared pool; rest are plain bound volumes */
+    var mat;if(Math.random()<0.55){mat=SIDDUR_MATS[(Math.random()*SIDDUR_MATS.length)|0];}
+    else mat=new THREE.MeshStandardMaterial({color:spineCols[(Math.random()*spineCols.length)|0],roughness:0.8});
+    var bk=new THREE.Mesh(new THREE.BoxGeometry(0.065,h,0.26),mat);
+    bk.position.set(bx,0.45+sh*0.72+h/2,0.06);g.add(bk);}}
+  scene.add(g);
+  addWallY(x,z,Math.abs(Math.cos(ry))*w+Math.abs(Math.sin(ry))*0.4,Math.abs(Math.sin(ry))*w+Math.abs(Math.cos(ry))*0.4,LB,LB+3.0);
+}
+(function(){
+  /* ---- COFFERED WHITE CEILING with recessed downlights (warm oak library) ---- */
+  box(15.8,0.22,30,MAT.ceilWhite,0,-0.34,1,false);                 /* white ceiling field */
+  for(var cbx=-6;cbx<=6;cbx+=3)for(var cbz=-11;cbz<=13;cbz+=3){    /* coffer wells */
+    var well=new THREE.Mesh(new THREE.BoxGeometry(2.5,0.2,2.5),MAT.ceilWhite);well.position.set(cbx,-0.52,cbz);scene.add(well);
+    var beamW=new THREE.Mesh(new THREE.BoxGeometry(2.7,0.14,0.18),MAT.oak);beamW.position.set(cbx,-0.44,cbz-1.35);scene.add(beamW);
+    var recess=new THREE.Mesh(new THREE.CircleGeometry(0.16,16),new THREE.MeshBasicMaterial({color:0xFFF0D2}));recess.rotation.x=Math.PI/2;recess.position.set(cbx,-0.63,cbz);scene.add(recess);
+    /* light only a sparse subset (cbx {-6,0,6} x cbz every 6), 15 lamps, not 45, with wider throw to keep the wash even */
+    if(cbx!==-3&&cbx!==3&&((cbz+11)%6===0))addPractical(cbx,-0.8,cbz,0xFFE8C0,6.5).userData.boost=0.8;
+  }
+  /* oak cross-beams for the coffer grid */
+  for(var gbx=-7.5;gbx<=7.5;gbx+=3){var bm=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.16,26),MAT.oakD);bm.position.set(gbx,-0.46,1);scene.add(bm);}
+  /* ---- OAK WAINSCOT PANELING around the room ---- */
+  for(var ws=-1;ws<=1;ws+=2){var panel=new THREE.Mesh(new THREE.BoxGeometry(0.12,2.0,26),MAT.oak);panel.position.set(ws>0?IX1-0.06:IX0+0.06,LB+1.0,1);scene.add(panel);
+    for(var pz=-11;pz<=13;pz+=1.6){var stile=new THREE.Mesh(new THREE.BoxGeometry(0.14,1.8,0.08),MAT.oakD);stile.position.set(ws>0?IX1-0.12:IX0+0.12,LB+1.0,pz);scene.add(stile);}}
+  var backPanel=new THREE.Mesh(new THREE.BoxGeometry(16,2.0,0.12),MAT.oak);backPanel.position.set(0,LB+1.0,IZ0+0.06);scene.add(backPanel);
+  /* wall of books, both sides + back (oak cases) */
+  for(var z=-11;z<=13;z+=3.1){bookshelf(IX0+0.35,z,0,2.8);bookshelf(IX1-0.35,z,0,2.8);}
+  bookshelf(-4,IZ0+0.35,Math.PI/2,3.0);bookshelf(3.5,IZ0+0.35,Math.PI/2,3.0);
+  /* ---- small BRONZE-MESH ARK with Star-of-David panel (focal, back wall) ---- */
+  (function(){
+    var ax=0,az=IZ0+0.5;
+    box(2.0,3.0,0.5,MAT.oakD,ax,LB+1.5,az,false);                  /* oak surround */
+    var pediment=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,0.4,20,1,false,0,Math.PI),MAT.oakD);pediment.rotation.z=0;pediment.position.set(ax,LB+3.0,az);scene.add(pediment);
+    var meshA=new THREE.Mesh(new THREE.BoxGeometry(1.5,2.3,0.12),MAT.meshBronze);meshA.position.set(ax,LB+1.5,az+0.28);scene.add(meshA);
+    for(var mv=-0.6;mv<=0.6;mv+=0.15){var slat=new THREE.Mesh(new THREE.BoxGeometry(0.04,2.3,0.04),MAT.bronze);slat.position.set(ax+mv,LB+1.5,az+0.32);scene.add(slat);}
+    var star=new THREE.Mesh(new THREE.PlaneGeometry(0.8,0.8),starTex());star.position.set(ax,LB+1.9,az+0.36);scene.add(star);
+    var nt=new THREE.Mesh(new THREE.SphereGeometry(0.1,12,10),new THREE.MeshStandardMaterial({color:0xC9A227,emissive:0xFFB84D,emissiveIntensity:1.2,roughness:0.4}));nt.position.set(ax,LB+3.1,az+0.2);scene.add(nt);
+    addPractical(ax,LB+2.4,az+0.5,0xFFD9A0,5).userData.boost=0.9;
+  })();
+  /* reading tables + chairs + green lamps */
+  function readTable(x,z){var g=new THREE.Group();g.position.set(x,LB,z);
+    var top=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.1,1.1),MAT.wood);top.position.y=0.78;top.castShadow=true;g.add(top);
+    for(var lx=-1;lx<=1;lx+=2)for(var lz=-1;lz<=1;lz+=2){var lg=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.78,0.1),MAT.woodD);lg.position.set(lx*1.0,0.39,lz*0.45);g.add(lg);}
+    var lamp=new THREE.Mesh(new THREE.SphereGeometry(0.16,12,8,0,6.28,0,1.4),new THREE.MeshStandardMaterial({color:0x1E6B4F,emissive:0x2E8B57,emissiveIntensity:0.6,roughness:0.5}));
+    lamp.position.set(0,1.0,0);g.add(lamp);
+    /* open books */
+    for(var bk=-1;bk<=1;bk+=2){var pg=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.05,0.36),MAT.parch);pg.position.set(bk*0.6,0.84,0);pg.rotation.y=bk*0.2;g.add(pg);}
+    scene.add(g);addWallY(x,z,2.4,1.1,LB,LB+0.9);addPractical(x,LB+1.1,z,0x8CFFC0,3.2).userData.boost=0.8;}
+  readTable(-3.4,4);readTable(2.4,4);readTable(-3.4,9);readTable(2.4,9);  /* v5: east tables pulled in to 2.4 to clear the cellar-stair well (x[4.2,6.8]) */
+  /* hearth (Wright anchor) on west wall */
+  box(2.6,2.2,0.5,MAT.jstoneD,IX0+0.4,LB+1.1,-3,false);
+  var fireGlow=new THREE.Mesh(new THREE.PlaneGeometry(1.4,1.0),new THREE.MeshBasicMaterial({color:0xFF7A2A}));
+  fireGlow.position.set(IX0+0.72,LB+0.7,-3);fireGlow.rotation.y=Math.PI/2;scene.add(fireGlow);
+  var hearthL=addPractical(IX0+1.2,LB+0.9,-3,0xFF7A2A,6);hearthL.userData.boost=1.3;
+  TICKERS.push(function(dt,time){hearthL.intensity=0.9+Math.sin(time*7)*0.2+Math.sin(time*13)*0.1;});
+
+  /* ---- RABBI FARHI LISTENING STATION ---- */
+  var lz=12.4,lsx=2.6;   /* v5: x pulled in to 2.6 to clear the cellar-stair well (x[4.2,6.8]) */
+  box(1.4,1.05,0.7,MAT.woodD,lsx,LB+0.52,lz,true,LB,LB+1.05);       /* console */
+  var slope=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.08,0.5),MAT.bronze);slope.position.set(lsx,LB+1.08,lz+0.05);slope.rotation.x=-0.5;scene.add(slope);
+  /* Abloh "LISTEN" tag, safety orange */
+  var tagCv=mkCanvas(256);tagCv.height=64;var tc=tagCv.getContext('2d');
+  if(tc){tc.fillStyle='#FF6B00';tc.fillRect(0,0,256,64);tc.fillStyle='#0D0D0D';tc.font='bold 30px Arial';tc.textAlign='center';tc.fillText('"LISTEN"',128,42);}
+  var tagTx=new THREE.Texture(tagCv);tagTx.needsUpdate=true;
+  var tag=new THREE.Mesh(new THREE.PlaneGeometry(0.7,0.175),new THREE.MeshBasicMaterial({map:tagTx}));tag.position.set(lsx,LB+1.5,lz-0.34);scene.add(tag);
+  var speaker=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,0.5,16),MAT.ink);speaker.position.set(lsx,LB+0.3,lz+0.5);scene.add(speaker);
+  addPractical(lsx,LB+1.6,lz,0xFF9A4A,4).userData.boost=0.7;
+  addInteract(lsx,LB+1.0,lz,2.2,'LISTENING STATION, Rabbi Farhi shiurim',function(){
+    openPanel('<span class="x">&times;</span><h3>Rabbi Shlomo Farhi</h3><div class="sub">Heritage Library · Torah listening station</div>'+
+    '<p>Stream recorded Torah classes (shiurim) from Rabbi Shlomo Farhi of the Edmond J. Safra community. These open the rabbi\'s official pages in a new tab:</p>'+
+    '<a class="lk" href="https://www.torahanytime.com/#/speakers?l=210" target="_blank" rel="noopener"><b>TorahAnytime</b>, full shiur archive<span>torahanytime.com · speaker 210</span></a>'+
+    '<a class="lk" href="https://www.learntorah.com/" target="_blank" rel="noopener"><b>LearnTorah</b>, class recordings<span>learntorah.com</span></a>'+
+    '<p style="margin-top:6px">Or load your own recording to play inside the library:</p>'+
+    '<input type="file" id="farhiFile" accept="audio/*">'+
+    '<audio id="farhiAudio" controls style="width:100%;margin-top:8px"></audio>'+
+    '<p class="note">Links point to the rabbi\'s public pages; MLOW hosts no recordings. Playback of your own file happens locally in your browser.</p>');
+    var fi=document.getElementById('farhiFile'),au=document.getElementById('farhiAudio');
+    if(fi)fi.addEventListener('change',function(){if(fi.files&&fi.files[0]){au.src=URL.createObjectURL(fi.files[0]);au.play&&au.play();toast('NOW PLAYING: "'+fi.files[0].name.slice(0,22).toUpperCase()+'"');}});
+  });
+
+  /* ---- ARSHAM EXCAVATION MOMENT (the one Arsham spice) ---- */
+  var exz=-8;
+  box(1.6,1.0,1.6,new THREE.MeshStandardMaterial({map:TX.jstone,color:0xDAD2C4,roughness:1.0}),-4.5,LB+0.5,exz,true,LB,LB+1.0); /* eroded plinth */
+  /* calcified relic: an old radio, half-dissolved, crystal geode inside */
+  var relic=new THREE.Group();relic.position.set(-4.5,LB+1.35,exz);
+  var rbody=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.5,0.4),new THREE.MeshStandardMaterial({color:0xD8D2C6,roughness:1.0}));relic.add(rbody);
+  var rknob=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.05,10),new THREE.MeshStandardMaterial({color:0xCFC8BA,roughness:1.0}));rknob.rotation.x=Math.PI/2;rknob.position.set(-0.2,0,0.22);relic.add(rknob);
+  for(var g4=0;g4<7;g4++){var cr=new THREE.Mesh(new THREE.ConeGeometry(0.05+Math.random()*0.04,0.16+Math.random()*0.14,6),MAT.crystal);
+    cr.position.set(0.12+Math.random()*0.14,Math.random()*0.18,0.05+Math.random()*0.14);cr.rotation.set(Math.random(),Math.random(),Math.random());relic.add(cr);}
+  scene.add(relic);
+  var exL=addPractical(-4.5,LB+1.7,exz,0x7FD4FF,4);exL.userData.boost=1.0;
+  /* Abloh plaque */
+  var exCv=mkCanvas(256);exCv.height=96;var ec=exCv.getContext('2d');
+  if(ec){ec.fillStyle='#0E1420';ec.fillRect(0,0,256,96);ec.strokeStyle='#7FD4FF';ec.strokeRect(3,3,250,90);
+    ec.fillStyle='#F0F4F8';ec.font='italic 22px Georgia';ec.textAlign='center';ec.fillText('"EXCAVATION"',128,40);
+    ec.fillStyle='#7FD4FF';ec.font='12px Consolas';ec.fillText('RADIO · c.5773 · FUTURE RELIC',128,66);}
+  var exTx=new THREE.Texture(exCv);exTx.needsUpdate=true;
+  var exPl=new THREE.Mesh(new THREE.PlaneGeometry(0.9,0.34),new THREE.MeshBasicMaterial({map:exTx}));exPl.position.set(-4.5,LB+0.5,exz+0.82);scene.add(exPl);
+  addInteract(-4.5,LB+1.2,exz,2.0,'"EXCAVATION", a future relic',function(){
+    openPanel('<span class="x">&times;</span><h3>"EXCAVATION"</h3><div class="sub">Fictional archaeology · after Daniel Arsham</div>'+
+    '<p>A radio used to broadcast the rabbi\'s shiurim, unearthed a thousand years from now, its shell calcified to Jerusalem-stone dust, its circuits blooming into blue calcite crystal.</p>'+
+    '<p>One excavation moment per gallery: the present, remembered as the future will find it.</p>');
+  });
+})();
+/* ---- LIBRARY ENRICHMENT v3: warm Sephardic reading-room dressing ---- */
+(function(){
+  /* hand-knotted Persian rug texture (jsdom-safe: no ellipse) */
+  function rugTex(){
+    var cv=mkCanvas(64);cv.width=256;cv.height=384;var c=cv.getContext('2d');
+    if(c){
+      c.fillStyle='#6E1420';c.fillRect(0,0,256,384);                                  /* burgundy field */
+      c.fillStyle='#14213D';c.fillRect(0,0,256,30);c.fillRect(0,354,256,30);
+      c.fillRect(0,0,26,384);c.fillRect(230,0,26,384);                                 /* navy border */
+      c.strokeStyle='#C9A227';c.lineWidth=4;c.strokeRect(30,34,196,316);               /* gilt inner frame */
+      c.strokeStyle='#E9DFC0';c.lineWidth=2;c.strokeRect(38,42,180,300);
+      c.save();c.translate(128,192);                                                   /* central medallion */
+      c.fillStyle='#14213D';c.save();c.scale(1,1.8);c.beginPath();c.arc(0,0,58,0,6.28);c.fill();c.restore();
+      c.fillStyle='#C9A227';c.save();c.scale(1,1.8);c.beginPath();c.arc(0,0,40,0,6.28);c.fill();c.restore();
+      c.fillStyle='#6E1420';c.save();c.scale(1,1.8);c.beginPath();c.arc(0,0,22,0,6.28);c.fill();c.restore();
+      c.fillStyle='#E9DFC0';c.save();c.scale(1,1.8);c.beginPath();c.arc(0,0,9,0,6.28);c.fill();c.restore();
+      c.restore();
+      c.fillStyle='#C9A227';[[62,92],[194,92],[62,292],[194,292]].forEach(function(p){c.beginPath();c.arc(p[0],p[1],13,0,6.28);c.fill();});
+      c.fillStyle='#E9DFC0';for(var fx=8;fx<256;fx+=8){c.fillRect(fx,2,2,7);c.fillRect(fx,375,2,7);}   /* fringe */
+    }
+    var tx=new THREE.Texture(cv);tx.needsUpdate=true;return tx;
+  }
+  var rugMat=new THREE.MeshStandardMaterial({map:rugTex(),roughness:0.97});
+  var rug=new THREE.Mesh(new THREE.PlaneGeometry(7.4,11),rugMat);rug.rotation.x=-Math.PI/2;rug.position.set(0,LB+0.02,5);scene.add(rug);
+  var rug2=new THREE.Mesh(new THREE.PlaneGeometry(5.2,7.2),rugMat);rug2.rotation.x=-Math.PI/2;rug2.position.set(0,LB+0.02,-7);scene.add(rug2);
+  /* continuous oak pilasters, cornice & brass sconces down both side walls (hide pale stone above the wainscot) */
+  for(var side=-1;side<=1;side+=2){
+    var wx=side>0?IX1-0.2:IX0+0.2;
+    var corn=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.5,26),MAT.oakD);corn.position.set(wx,LB+3.15,1);scene.add(corn);
+    var crown=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.16,26),MAT.oak);crown.position.set(wx,LB+3.45,1);scene.add(crown);
+    var dado=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.14,26),MAT.oak);dado.position.set(wx,LB+2.0,1);scene.add(dado);
+    for(var pz=-11;pz<=13;pz+=3.1){
+      var pil=new THREE.Mesh(new THREE.BoxGeometry(0.26,3.0,0.5),MAT.oak);pil.position.set(wx,LB+1.5,pz+1.55);scene.add(pil);
+      var cap=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.18,0.62),MAT.oakD);cap.position.set(wx,LB+3.0,pz+1.55);scene.add(cap);
+      var arm=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.3,8),MAT.brass);arm.rotation.z=Math.PI/2;arm.position.set(wx-side*0.28,LB+2.35,pz+1.55);scene.add(arm);
+      var shade=new THREE.Mesh(new THREE.SphereGeometry(0.11,10,8),new THREE.MeshStandardMaterial({color:0xFFE3A8,emissive:0xFFC46B,emissiveIntensity:0.95,roughness:0.5}));shade.position.set(wx-side*0.44,LB+2.4,pz+1.55);scene.add(shade);
+      addPractical(wx-side*0.75,LB+2.4,pz+1.55,0xFFD79A,3.6).userData.boost=0.7;
+    }
+  }
+  /* warm uplights washing the stacks */
+  for(var uz=-9;uz<=11;uz+=6){addPractical(IX0+1.1,LB+0.4,uz,0xFFB870,4.5).userData.boost=0.55;addPractical(IX1-1.1,LB+0.4,uz,0xFFB870,4.5).userData.boost=0.55;}
+})();
+/* ============================================================
+   BEIT MIDRASH (L1), second sanctuary + study hall
+   ============================================================ */
+function shelfAt(x,z,ry,w,by){
+  var g=new THREE.Group();g.position.set(x,by,z);g.rotation.y=ry;
+  var case_=new THREE.Mesh(new THREE.BoxGeometry(w,2.6,0.36),MAT.woodD);case_.position.y=1.3;case_.castShadow=true;g.add(case_);
+  var cols=[0x6E1420,0x123B6B,0x1E6B4F,0x4A2C6B,0x7A5A30];
+  for(var sh=0;sh<3;sh++)for(var bx=-w/2+0.14;bx<w/2-0.1;bx+=0.1){var h=0.4+Math.random()*0.1;
+    var bk=new THREE.Mesh(new THREE.BoxGeometry(0.08,h,0.24),new THREE.MeshStandardMaterial({color:cols[(Math.random()*cols.length)|0],roughness:0.8}));
+    bk.position.set(bx,0.4+sh*0.8+h/2,0.05);g.add(bk);}
+  scene.add(g);addWallY(x,z,Math.abs(Math.cos(ry))*w+Math.abs(Math.sin(ry))*0.36,Math.abs(Math.sin(ry))*w+Math.abs(Math.cos(ry))*0.36,by,by+2.6);
+}
+(function(){
+  var Y=L1;
+  /* timber ceiling beams (beit-midrash ceiling, was under the old social slab, now level-relative) */
+  for(var bz=-12;bz<=14;bz+=2.6)box(15.4,0.3,0.34,MAT.woodD,0,L1+5.1,bz,false);
+  /* ---- small ark on the back wall ---- */
+  box(6,0.4,2.4,MAT.marble,0,Y+0.2,-12.4,true,Y,Y+0.4);            /* low bimah before ark */
+  box(2.6,2.6,0.5,MAT.woodD,0,Y+1.7,-13.15,false);
+  var paro=new THREE.Mesh(new THREE.PlaneGeometry(2.1,2.1),new THREE.MeshStandardMaterial({map:TX.velvet,color:0x123B6B,roughness:0.9}));
+  paro.position.set(0,Y+1.7,-12.84);scene.add(paro);
+  var crn=new THREE.Mesh(new THREE.TorusGeometry(0.28,0.05,8,16,Math.PI),MAT.gold);crn.position.set(0,Y+2.5,-12.82);scene.add(crn);
+  for(var dd=-1;dd<=1;dd+=2){var door=new THREE.Mesh(new THREE.BoxGeometry(1.1,2.2,0.07),MAT.bronze);door.position.set(dd*1.5,Y+1.7,-12.6);door.rotation.y=dd*0.7;scene.add(door);}
+  torahScroll(0,Y+1.55,-12.9,MAT.velvet);
+  var ntL=addPractical(0,Y+2.9,-11.8,0xFFCE7A,5);ntL.userData.boost=1.1;
+  var ntLamp=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,10),new THREE.MeshStandardMaterial({color:0xC9A227,emissive:0xFFB84D,emissiveIntensity:1.2,roughness:0.3}));
+  ntLamp.position.set(0,Y+2.9,-11.8);scene.add(ntLamp);
+  /* ---- study tables with shtenders + gemaras ---- */
+  function studyTable(x,z){var g=new THREE.Group();g.position.set(x,Y,z);
+    var top=new THREE.Mesh(new THREE.BoxGeometry(2.8,0.1,1.0),MAT.wood);top.position.y=0.78;top.castShadow=true;g.add(top);
+    for(var lx=-1;lx<=1;lx+=2)for(var lz=-1;lz<=1;lz+=2){var lg=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.78,0.1),MAT.woodD);lg.position.set(lx*1.2,0.39,lz*0.4);g.add(lg);}
+    for(var bk=-1;bk<=1;bk++){var b=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.06,0.32),MAT.parch);b.position.set(bk*0.7,0.84,0);b.rotation.y=bk*0.15;g.add(b);}
+    scene.add(g);addWallY(x,z,2.8,1.0,Y,Y+0.9);addPractical(x,Y+1.5,z,0xFFDca0,4).userData.boost=0.7;}
+  function shtender(x,z){var g=new THREE.Group();g.position.set(x,Y,z);
+    var post=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,1.1,8),MAT.woodD);post.position.y=0.55;g.add(post);
+    var top=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.06,0.36),MAT.wood);top.position.y=1.12;top.rotation.x=-0.4;g.add(top);
+    var bk=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.05,0.28),MAT.parch);bk.position.set(0,1.16,0.02);bk.rotation.x=-0.4;g.add(bk);
+    scene.add(g);}
+  studyTable(-3.2,-2);studyTable(3.2,-2);studyTable(-3.2,3);studyTable(3.2,3);
+  shtender(-1.2,7);shtender(1.2,7);shtender(0,-8);
+  /* ---- bookshelves along both walls ---- */
+  for(var z=-9;z<=11;z+=2.9){shelfAt(IX0+0.32,z,0,2.6,Y);shelfAt(IX1-0.32,z,0,2.6,Y);}
+  /* ---- clerestory glass ---- */
+  stainGlass(1.4,2.2,IX0+0.25,Y+2.6,-4,Math.PI/2);
+  stainGlass(1.4,2.2,IX1-0.25,Y+2.6,-4,-Math.PI/2);
+  stainGlass(1.4,2.2,IX0+0.25,Y+2.6,6,Math.PI/2);
+  stainGlass(1.4,2.2,IX1-0.25,Y+2.6,6,-Math.PI/2);
+  /* pendant lights */
+  for(var cz=-6;cz<=8;cz+=4.6){var pend=new THREE.Mesh(new THREE.SphereGeometry(0.2,12,10),new THREE.MeshStandardMaterial({color:0xC9A227,emissive:0xFFCC66,emissiveIntensity:0.5,roughness:0.4}));
+    pend.position.set(0,Y+3.4,cz);scene.add(pend);addPractical(0,Y+3.2,cz,0xFFD9A0,7).userData.boost=0.9;}
+  addInteract(0,Y+1.2,0,3.0,'BEIT MIDRASH, house of study',function(){
+    openPanel('<span class="x">&times;</span><h3>The Beit Midrash</h3><div class="sub">Second sanctuary · house of study</div>'+
+    '<p>Above the main sanctuary sits the <b>Beit Midrash</b>, the intimate second sanctuary where daily prayer and study continue between services. Its shtenders and long tables hold the Talmud and codes; its ark carries a Torah of its own.</p>'+
+    '<p>Where the sanctuary below is ceremony, this room is the everyday pulse of learning.</p>'+
+    '<p class="note">Recorded shiurim can be heard at the <b>"LISTENING STATION"</b> in the Heritage Library.</p>');
+  });
+})();
+/* ============================================================
+   SOCIAL HALL (L2), kiddush hall, dynamic Parsha stele
+   ============================================================ */
+/* ---- Parsha schedule (embedded fallback; live-refreshed from Hebcal) ---- */
+var PARSHA=[
+ {d:'2026-07-11',n:'Matot-Masei'},{d:'2026-07-18',n:'Devarim'},{d:'2026-07-25',n:"Va'etchanan"},
+ {d:'2026-08-01',n:'Eikev'},{d:'2026-08-08',n:"Re'eh"},{d:'2026-08-15',n:'Shoftim'},
+ {d:'2026-08-22',n:'Ki Teitzei'},{d:'2026-08-29',n:'Ki Tavo'},{d:'2026-09-05',n:'Nitzavim'},
+ {d:'2026-09-19',n:'Vayeilech'},{d:'2026-09-26',n:'Haazinu'}
+];
+var parshaNow={n:PARSHA[0].n,d:PARSHA[0].d,h:''};
+function computeParsha(){
+  var t=new Date();var best=PARSHA[PARSHA.length-1];
+  for(var i=0;i<PARSHA.length;i++){var sd=new Date(PARSHA[i].d+'T23:59:59');
+    if(t<=sd){best=PARSHA[i];break;}}
+  parshaNow={n:best.n,d:best.d,h:parshaNow.h};return parshaNow;
+}
+computeParsha();
+var parshaCanvas=mkCanvas(256);parshaCanvas.width=512;parshaCanvas.height=384;
+var parshaTex=new THREE.Texture(parshaCanvas);parshaTex.needsUpdate=true;
+function drawParsha(){var c=parshaCanvas.getContext('2d');if(!c)return;
+  c.fillStyle='#0E1420';c.fillRect(0,0,512,384);
+  c.strokeStyle='#C9A227';c.lineWidth=5;c.strokeRect(10,10,492,364);
+  c.fillStyle='#C9A227';c.font='20px Consolas,monospace';c.textAlign='center';c.fillText('THIS WEEK’S PARASHA',256,64);
+  c.fillStyle='#F0F4F8';c.font='italic 52px Georgia';
+  var nm=parshaNow.n;if(nm.length>16)c.font='italic 40px Georgia';c.fillText(nm,256,168);
+  if(parshaNow.h){c.font='42px Georgia';c.fillStyle='#E8D9B4';c.fillText(parshaNow.h,256,238);}
+  c.fillStyle='#8899AA';c.font='18px Consolas,monospace';
+  var dd=new Date(parshaNow.d+'T00:00:00');
+  c.fillText('Shabbat · '+dd.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}),256,306);
+  c.fillStyle='#2962FF';c.font='14px Consolas,monospace';c.fillText('EDMOND J. SAFRA × MLOW',256,344);
+  parshaTex.needsUpdate=true;
+}
+drawParsha();
+function refreshParsha(){
+  try{if(typeof fetch!=='function')return;
+    var y=new Date().getFullYear();
+    fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year='+y+'&month=x&ss=on&s=on&geo=none&d=off&leyning=off')
+    .then(function(r){return r.json();}).then(function(j){
+      if(!j||!j.items)return;var t=new Date();var pick=null;
+      for(var i=0;i<j.items.length;i++){var it=j.items[i];if(it.category!=='parashat')continue;
+        var sd=new Date(it.date+'T23:59:59');if(t<=sd){pick=it;break;}}
+      if(pick){parshaNow={n:pick.title.replace(/^Parashat\s+/,''),d:pick.date.slice(0,10),h:pick.hebrew||''};drawParsha();
+        toast('PARASHA UPDATED: "'+parshaNow.n.toUpperCase()+'"');}
+    }).catch(function(){});
+  }catch(e){}
+}
+(function(){
+  var Y=L2;
+  /* social-hall ceiling beams overhead (own ceiling now it's a cellar, was the roof underside) */
+  for(var bz=-12;bz<=14;bz+=2.6)box(15.4,0.3,0.34,MAT.woodD,0,L2+4.7,bz,false);
+  /* round banquet tables + chairs */
+  function roundTable(x,z){var g=new THREE.Group();g.position.set(x,Y,z);
+    var top=new THREE.Mesh(new THREE.CylinderGeometry(1.0,1.0,0.08,24),MAT.cloth);top.position.y=0.76;top.castShadow=true;g.add(top);
+    var skirt=new THREE.Mesh(new THREE.CylinderGeometry(1.0,1.0,0.72,24,1,true),MAT.cloth);skirt.position.y=0.4;g.add(skirt);
+    var stem=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.12,0.72,10),MAT.woodD);stem.position.y=0.38;g.add(stem);
+    /* centerpiece */
+    var vase=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.1,0.24,10),MAT.glass);vase.position.y=0.9;g.add(vase);
+    for(var f=0;f<5;f++){var fl=new THREE.Mesh(new THREE.SphereGeometry(0.05,8,6),MAT.velvet);fl.position.set(Math.cos(f*1.3)*0.1,1.06,Math.sin(f*1.3)*0.1);g.add(fl);}
+    for(var a=0;a<6;a++){var ang=a/6*6.283;var ch=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.5,0.42),MAT.wood);
+      ch.position.set(Math.cos(ang)*1.4,0.35,Math.sin(ang)*1.4);g.add(ch);
+      var bk=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.5,0.06),MAT.wood);bk.position.set(Math.cos(ang)*1.62,0.6,Math.sin(ang)*1.62);bk.rotation.y=-ang;g.add(bk);}
+    scene.add(g);addWallY(x,z,1.6,1.6,Y,Y+0.8);}
+  var tpos=[[-4,-8],[4,-8],[-4,-2],[4,-2],[-4,4],[4,4]];
+  for(var i=0;i<tpos.length;i++)roundTable(tpos[i][0],tpos[i][1]);
+  /* kiddush buffet along east wall */
+  box(0.9,0.95,6,MAT.woodD,IX1-0.7,Y+0.47,4,true,Y,Y+0.95);
+  box(0.94,0.06,6,MAT.marble,IX1-0.7,Y+0.98,4,false);
+  for(var t2=0;t2<4;t2++){var tray=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.05,0.7),MAT.brass);tray.position.set(IX1-0.7,Y+1.02,1+t2*1.6);scene.add(tray);}
+
+  /* ============================================================
+     OURI'S, the bagels-and-lox spread (west side of the hall)
+     ============================================================ */
+  (function(){
+    var ox=IX0+1.3, oz=1.0;
+    /* the deli table with white cloth */
+    box(2.2,0.86,4.4,MAT.woodD,ox,Y+0.43,oz,true,Y,Y+0.86);
+    var cloth=new THREE.Mesh(new THREE.BoxGeometry(2.34,0.05,4.54),MAT.cloth);cloth.position.set(ox,Y+0.89,oz);cloth.castShadow=true;scene.add(cloth);
+    var mats={
+      bagel:new THREE.MeshStandardMaterial({color:0xC69A5A,roughness:0.85}),
+      sesame:new THREE.MeshStandardMaterial({color:0xE8D9B0,roughness:0.8}),
+      lox:new THREE.MeshStandardMaterial({color:0xF08A6E,roughness:0.5,metalness:0.05}),
+      loxD:new THREE.MeshStandardMaterial({color:0xE2704F,roughness:0.5}),
+      cream:new THREE.MeshStandardMaterial({color:0xF6F3E7,roughness:0.6}),
+      oj:new THREE.MeshStandardMaterial({color:0xF7A21A,roughness:0.25,metalness:0.1,transparent:true,opacity:0.9}),
+      platter:new THREE.MeshStandardMaterial({color:0xE8EAEE,roughness:0.3,metalness:0.5}),
+      board:new THREE.MeshStandardMaterial({color:0x6B4A2F,roughness:0.7})
+    };
+    /* --- basket of bagels (stacked tori) --- */
+    var basket=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.42,0.24,20),mats.board);basket.position.set(ox,Y+1.02,oz-1.4);scene.add(basket);
+    var bpos=[[0,0,0.14],[0.22,0.1,0.16],[-0.2,-0.05,0.15],[0.05,0.24,0.15],[-0.15,0.22,0.16],[0.24,-0.16,0.15],[-0.24,-0.2,0.14],[0.02,-0.02,0.34]];
+    for(var b=0;b<bpos.length;b++){var bg=new THREE.Mesh(new THREE.TorusGeometry(0.14,0.06,10,16),b%2?mats.sesame:mats.bagel);
+      bg.position.set(ox+bpos[b][0],Y+1.06+bpos[b][2],oz-1.4+bpos[b][1]);bg.rotation.x=Math.PI/2+Math.random()*0.4;bg.castShadow=true;scene.add(bg);}
+    /* --- platter of lox (folded salmon ribbons) --- */
+    var platter=new THREE.Mesh(new THREE.CylinderGeometry(0.56,0.5,0.05,24),mats.platter);platter.position.set(ox,Y+0.94,oz+0.1);scene.add(platter);
+    for(var l=0;l<10;l++){var ang=l/10*6.2832;var lox=new THREE.Mesh(new THREE.BoxGeometry(0.26,0.03,0.14),l%2?mats.lox:mats.loxD);
+      lox.position.set(ox+Math.cos(ang)*0.26,Y+0.99+Math.random()*0.03,oz+0.1+Math.sin(ang)*0.26);lox.rotation.set(Math.random()*0.4,ang,0.2);scene.add(lox);}
+    /* garnish materials */
+    var gmats={
+      dill:new THREE.MeshStandardMaterial({color:0x3E7D34,roughness:0.85}),
+      lemon:new THREE.MeshStandardMaterial({color:0xF4D23A,roughness:0.4}),
+      lemonFlesh:new THREE.MeshStandardMaterial({color:0xFBE98A,roughness:0.5}),
+      caper:new THREE.MeshStandardMaterial({color:0x4A5B34,roughness:0.7}),
+      onion:new THREE.MeshStandardMaterial({color:0xE9C6E4,roughness:0.5,transparent:true,opacity:0.85}),
+      tomato:new THREE.MeshStandardMaterial({color:0xD83A2A,roughness:0.45}),
+      seed:new THREE.MeshStandardMaterial({color:0x2A2A2A,roughness:0.7})
+    };
+    /* lemon wedges fanned on the platter rim */
+    for(var lw=0;lw<4;lw++){var la=(-0.6+lw*0.35);var wedge=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.05,16,1,false,0,1.05),gmats.lemon);
+      wedge.position.set(ox+Math.cos(la)*0.42,Y+0.99,oz+0.1+Math.sin(la)*0.42);wedge.rotation.set(Math.PI/2,0,la);scene.add(wedge);}
+    /* sprigs of fresh dill + scattered capers over the lox */
+    for(var dl=0;dl<14;dl++){var da=Math.random()*6.28,dr=Math.random()*0.34;
+      var sprig=new THREE.Mesh(new THREE.SphereGeometry(0.018+Math.random()*0.02,6,5),gmats.dill);
+      sprig.position.set(ox+Math.cos(da)*dr,Y+1.02+Math.random()*0.02,oz+0.1+Math.sin(da)*dr);scene.add(sprig);}
+    for(var cp=0;cp<10;cp++){var ca=Math.random()*6.28,cr=Math.random()*0.3;
+      var cap=new THREE.Mesh(new THREE.SphereGeometry(0.012,6,5),gmats.caper);cap.position.set(ox+Math.cos(ca)*cr,Y+1.02,oz+0.1+Math.sin(ca)*cr);scene.add(cap);}
+    /* cream-cheese tub with a schmear knife */
+    var tub=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.14,0.12,16),mats.cream);tub.position.set(ox-0.4,Y+0.97,oz+0.9);scene.add(tub);
+    var schmear=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,0.03,16),mats.cream);schmear.position.set(ox-0.4,Y+1.04,oz+0.9);scene.add(schmear);
+    var knife=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.012,0.03),MAT.silver);knife.position.set(ox-0.26,Y+1.05,oz+0.78);knife.rotation.y=0.5;scene.add(knife);
+    /* ---- HERO: an open sesame bagel, schmeared, stacked with lox, onion, tomato & dill ---- */
+    (function(){
+      var hx=ox+0.05,hz=oz-0.55,hy=Y+0.98;
+      var plate=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.27,0.03,24),mats.platter);plate.position.set(hx,hy,hz);scene.add(plate);
+      /* bottom half-bagel */
+      var half=new THREE.Mesh(new THREE.CylinderGeometry(0.19,0.19,0.06,20),mats.sesame);half.position.set(hx,hy+0.05,hz);scene.add(half);
+      var hole=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.07,14),gmats.dill);hole.position.set(hx,hy+0.05,hz);hole.visible=false;scene.add(hole);
+      /* sesame seeds on the crown */
+      for(var sd=0;sd<26;sd++){var sa=Math.random()*6.28,sr=0.04+Math.random()*0.13;
+        var seed=new THREE.Mesh(new THREE.SphereGeometry(0.006,5,4),gmats.seed);seed.position.set(hx+Math.cos(sa)*sr,hy+0.083,hz+Math.sin(sa)*sr);scene.add(seed);}
+      /* schmear layer */
+      var sm=new THREE.Mesh(new THREE.CylinderGeometry(0.185,0.185,0.02,20),mats.cream);sm.position.set(hx,hy+0.09,hz);scene.add(sm);
+      /* ribbons of lox piled high */
+      for(var rb=0;rb<7;rb++){var ra=rb/7*6.28;var rib=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.02,0.09),rb%2?mats.lox:mats.loxD);
+        rib.position.set(hx+Math.cos(ra)*0.06,hy+0.11+rb*0.006,hz+Math.sin(ra)*0.06);rib.rotation.set(0.2,ra,0.15);scene.add(rib);}
+      /* red onion ring + tomato slice + tomato + dill crown */
+      var ring=new THREE.Mesh(new THREE.TorusGeometry(0.07,0.02,8,16),gmats.onion);ring.rotation.x=Math.PI/2;ring.position.set(hx-0.05,hy+0.14,hz+0.05);scene.add(ring);
+      var toma=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.075,0.02,16),gmats.tomato);toma.position.set(hx+0.07,hy+0.14,hz-0.04);scene.add(toma);
+      for(var dd=0;dd<5;dd++){var dsp=new THREE.Mesh(new THREE.SphereGeometry(0.02,6,5),gmats.dill);dsp.position.set(hx+(Math.random()-0.5)*0.16,hy+0.16,hz+(Math.random()-0.5)*0.16);scene.add(dsp);}
+      addPractical(hx,hy+0.5,hz,0xFFF0D8,3).userData.boost=0.6;
+    })();
+    /* --- orange juice: pitcher + glasses --- */
+    var pitcher=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.11,0.34,16),mats.oj);pitcher.position.set(ox+0.55,Y+1.08,oz+1.3);scene.add(pitcher);
+    var pglass=new THREE.Mesh(new THREE.CylinderGeometry(0.155,0.12,0.36,16,1,true),MAT.glass);pglass.position.set(ox+0.55,Y+1.08,oz+1.3);scene.add(pglass);
+    for(var gcol=0;gcol<3;gcol++)for(var grow=0;grow<2;grow++){
+      var gl=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.04,0.13,12),MAT.glass);gl.position.set(ox+0.15+gcol*0.18,Y+0.97,oz+1.0+grow*0.22);scene.add(gl);
+      var juice=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.036,0.1,12),mats.oj);juice.position.set(ox+0.15+gcol*0.18,Y+0.965,oz+1.0+grow*0.22);scene.add(juice);
+    }
+    /* ============================================================
+       THE "OURI'S" SIGN, black circular badge, cream script
+       (Ouri's · GOURMET MARKET · FRESH SINCE 1976)
+       ============================================================ */
+    function ouriBadge(){
+      var cv=mkCanvas(512),c=cv.getContext('2d');
+      if(c){c.fillStyle='#0D0D0D';c.beginPath();c.arc(256,256,250,0,6.2832);c.fill();
+        c.strokeStyle='#EFE7D2';c.lineWidth=6;c.beginPath();c.arc(256,256,232,0,6.2832);c.stroke();
+        c.lineWidth=2;c.beginPath();c.arc(256,256,214,0,6.2832);c.stroke();
+        /* upper arc text */
+        c.fillStyle='#EFE7D2';c.textAlign='center';c.textBaseline='middle';
+        function arcText(txt,radius,y0,size,flip){c.save();c.translate(256,256);c.font='600 '+size+'px Georgia, serif';
+          var total=txt.length,spread=Math.PI*0.9;
+          for(var i=0;i<total;i++){var frac=total>1?i/(total-1):0.5;var ang=(flip?Math.PI/2:-Math.PI/2)+(frac-0.5)*spread*(flip?-1:1);
+            c.save();c.rotate(ang);c.translate(0,flip?radius:-radius);if(flip)c.rotate(Math.PI);c.fillText(txt[i],0,0);c.restore();}c.restore();}
+        arcText('GOURMET MARKET',196,0,34,false);
+        arcText('FRESH SINCE 1976',196,0,30,true);
+        /* center script wordmark */
+        c.fillStyle='#EFE7D2';c.font='italic 700 132px "Snell Roundhand","Brush Script MT",Georgia,cursive';c.textAlign='center';c.textBaseline='middle';
+        c.fillText("Ouri's",256,246);
+        /* small stars */
+        c.font='24px Georgia';c.fillText('✦',96,256);c.fillText('✦',416,256);}
+      var tx=new THREE.Texture(cv);tx.needsUpdate=true;return tx;
+    }
+    var badgeTx=ouriBadge();
+    /* freestanding sign board with an oak post, set beside the table */
+    var post=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,2.1,10),MAT.oakD);post.position.set(ox+0.1,Y+1.05,oz-2.5);scene.add(post);
+    var board=new THREE.Mesh(new THREE.CircleGeometry(0.66,40),new THREE.MeshBasicMaterial({map:badgeTx}));board.position.set(ox+0.1,Y+2.1,oz-2.44);scene.add(board);
+    var backB=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.7,0.06,40),MAT.oak);backB.rotation.x=Math.PI/2;backB.position.set(ox+0.1,Y+2.1,oz-2.5);scene.add(backB);
+    addPractical(ox+0.4,Y+2.3,oz-2.2,0xFFE8C0,5).userData.boost=0.9;
+    addInteract(ox,Y+1.2,oz,2.8,"OURI'S, bagels, lox & fresh OJ",function(){
+      openPanel('<span class="x">&times;</span><h3>Ouri\'s</h3><div class="sub">Gourmet Market · Fresh since 1976</div>'+
+      '<p>The Kiddush spread after the service: a basket of fresh <b>bagels</b>, a silver platter of <b>lox</b> with cream cheese, and pitchers of cold <b>orange juice</b>, laid out under the Ouri\'s banner in the social hall.</p>'+
+      '<p class="note">A neighbourhood tribute within this fan-made reconstruction. Enjoy responsibly; wash, and remember the blessing.</p>');
+    });
+  })();
+  /* chandeliers */
+  for(var cz=-6;cz<=6;cz+=6){var ring=new THREE.Mesh(new THREE.TorusGeometry(0.8,0.06,8,24),MAT.brass);ring.rotation.x=Math.PI/2;ring.position.set(0,Y+3.6,cz);scene.add(ring);
+    for(var a2=0;a2<12;a2++){var fl2=new THREE.Mesh(new THREE.SphereGeometry(0.05,8,6),MAT.flame);fl2.position.set(0+Math.cos(a2/12*6.28)*0.8,Y+3.7,cz+Math.sin(a2/12*6.28)*0.8);scene.add(fl2);}
+    addPractical(0,Y+3.4,cz,0xFFD9A0,9).userData.boost=1.0;}
+  /* clerestory glass */
+  stainGlass(1.6,2.4,IX0+0.25,Y+2.6,-4,Math.PI/2);
+  stainGlass(1.6,2.4,IX0+0.25,Y+2.6,6,Math.PI/2);
+  /* ---- PARSHA STELE (dynamic) ---- */
+  box(2.2,0.4,1.2,MAT.marble,0,Y+0.2,10,true,Y,Y+0.4);
+  var stele=new THREE.Mesh(new THREE.BoxGeometry(1.9,2.6,0.4),MAT.jstoneD);stele.position.set(0,Y+1.7,10.2);stele.castShadow=true;scene.add(stele);
+  var pPanel=new THREE.Mesh(new THREE.PlaneGeometry(1.7,1.28),new THREE.MeshBasicMaterial({map:parshaTex}));
+  pPanel.position.set(0,Y+1.9,9.99);scene.add(pPanel);
+  addPractical(0,Y+3.0,9,0xFFE6BE,6).userData.boost=1.0;
+  addInteract(0,Y+1.5,9,2.6,'"PARSHA", this week’s Torah portion',function(){
+    var rows='';for(var i=0;i<PARSHA.length;i++){var d=new Date(PARSHA[i].d+'T00:00:00');
+      var cur=PARSHA[i].n===parshaNow.n;
+      rows+='<a class="lk" style="'+(cur?'border-color:#C9A227':'')+'"><b>'+(cur?'▶ ':'')+PARSHA[i].n+'</b><span>Shabbat '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+(cur?' · this week':'')+'</span></a>';}
+    openPanel('<span class="x">&times;</span><h3>"PARSHA"</h3><div class="sub">Weekly Torah reading</div>'+
+    '<p>This week the congregation reads <b>'+parshaNow.n+'</b>'+(parshaNow.h?' ('+parshaNow.h+')':'')+'.</p>'+
+    '<div style="max-height:200px;overflow:auto;margin-bottom:12px">'+rows+'</div>'+
+    '<button class="btn" id="pRefresh">REFRESH FROM HEBCAL</button>'+
+    '<a class="btn ghost" href="https://www.hebcal.com/sedrot/" target="_blank" rel="noopener">FULL CALENDAR</a>'+
+    '<p class="note">Schedule embedded for offline use and refreshed live from the public Hebcal API. Diaspora reading.</p>');
+    var rb=document.getElementById('pRefresh');if(rb)rb.addEventListener('click',refreshParsha);
+  });
+  refreshParsha();
+})();
+/* ============================================================
+   DONOR WALL (Social Hall, back wall), virtual sponsorship
+   ============================================================ */
+(function(){
+  var Y=L2, wz=-12.75;
+  /* stone backing + gilded header */
+  box(13,3.6,0.28,MAT.jstone,0,Y+2.0,-12.95,false);
+  var hCv=mkCanvas(512);hCv.height=96;var hc=hCv.getContext('2d');
+  if(hc){hc.fillStyle='#0E1420';hc.fillRect(0,0,512,96);hc.fillStyle='#C9A227';hc.font='italic 46px Georgia';hc.textAlign='center';
+    hc.fillText('Wall of Honour',256,60);}
+  var hTx=new THREE.Texture(hCv);hTx.needsUpdate=true;
+  var hdr=new THREE.Mesh(new THREE.PlaneGeometry(4.2,0.79),new THREE.MeshBasicMaterial({map:hTx}));hdr.position.set(0,Y+3.55,wz);scene.add(hdr);
+  addPractical(0,Y+3.2,-11.4,0xFFE6BE,8).userData.boost=1.1;
+  addPractical(-3.5,Y+2.4,-11.4,0xFFE0B0,6).userData.boost=0.8;
+  addPractical(3.5,Y+2.4,-11.4,0xFFE0B0,6).userData.boost=0.8;
+
+  var emptyMat=new THREE.MeshStandardMaterial({color:0x1A222E,roughness:0.6,metalness:0.2});
+  var frameMat=new THREE.MeshStandardMaterial({color:0xC9A227,roughness:0.35,metalness:0.7});
+  var slots=[];
+  var xs=[-5,-3,-1,1,3,5],ys=[Y+3.0,Y+2.28,Y+1.56,Y+0.84];
+  for(var r=0;r<ys.length;r++)for(var c=0;c<xs.length;c++){
+    var fr=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.44,0.05),frameMat);fr.position.set(xs[c],ys[r],wz-0.02);scene.add(fr);
+    var pl=new THREE.Mesh(new THREE.PlaneGeometry(0.92,0.36),emptyMat);pl.position.set(xs[c],ys[r],wz+0.02);scene.add(pl);
+    slots.push({mesh:pl,filled:false});
+  }
+  function drawPlaque(name,tier){var cv=mkCanvas(256);cv.height=96;var x=cv.getContext('2d');
+    if(x){x.fillStyle='#12100A';x.fillRect(0,0,256,96);x.strokeStyle='#C9A227';x.lineWidth=3;x.strokeRect(4,4,248,88);
+      x.fillStyle='#F0E8D0';x.font='italic 26px Georgia';x.textAlign='center';
+      var nm=name.slice(0,20);x.fillText(nm,128,44);
+      x.fillStyle='#C9A227';x.font='13px Consolas,monospace';x.fillText((tier||'DEDICATION').toUpperCase(),128,72);}
+    var tx=new THREE.Texture(cv);tx.needsUpdate=true;return new THREE.MeshBasicMaterial({map:tx});
+  }
+  var donors=[];
+  try{var raw=window.localStorage&&localStorage.getItem('safra_donor_wall_v1');if(raw)donors=JSON.parse(raw);}catch(e){}
+  if(!donors.length)donors=[{name:'The MLOW Studio',tier:'Founding Patron'}];
+  function persist(){try{if(window.localStorage)localStorage.setItem('safra_donor_wall_v1',JSON.stringify(donors));}catch(e){}}
+  function render(){for(var i=0;i<slots.length;i++){if(i<donors.length){slots[i].mesh.material=drawPlaque(donors[i].name,donors[i].tier);slots[i].filled=true;}}}
+  render();
+  function engrave(name,tier){if(!name)return;donors.push({name:name,tier:tier});persist();render();
+    toast('ENGRAVED: "'+name.toUpperCase().slice(0,22)+'"');}
+
+  addInteract(0,Y+1.6,-11.4,3.2,'"DONOR WALL", sponsor this reconstruction',function(){
+    openPanel('<span class="x">&times;</span><h3>"DONOR WALL"</h3><div class="sub">Sponsor the virtual reconstruction</div>'+
+    '<p>Dedicate a stone in this virtual synagogue, your name is engraved on the Wall of Honour inside the build. A portion of every real sponsorship supports the living congregation.</p>'+
+    '<input id="dName" placeholder="Name or dedication (e.g. In memory of…)" maxlength="40">'+
+    '<select id="dTier"><option value="Chai Dedication · $54">Chai · $54</option><option value="Patron · $180">Patron · $180</option><option value="Pillar · $500">Pillar · $500</option><option value="Cornerstone · $1,800">Cornerstone · $1,800</option><option value="Dedication">Other / in-kind</option></select>'+
+    '<button class="btn" id="dEngrave">ENGRAVE MY NAME</button>'+
+    '<a class="btn ghost" href="https://www.ejsny.org/" target="_blank" rel="noopener">DONATE AT EJSNY.ORG</a>'+
+    '<p class="note">MLOW does not process payments. Engraving is a virtual dedication stored locally in your browser; real, tax-deductible gifts are made directly to the synagogue at ejsny.org. Not affiliated with or endorsed by the congregation.</p>');
+    var b=document.getElementById('dEngrave');
+    if(b)b.addEventListener('click',function(){var n=document.getElementById('dName').value.trim(),t=document.getElementById('dTier').value;
+      if(!n){toast('ENTER A NAME TO ENGRAVE');return;}engrave(n,t);closePanel();});
+  });
+})();
+/* ============================================================
+   ROOF GARDEN (L3), open deck over Manhattan
+   ============================================================ */
+(function(){
+  var Y=L3;
+  /* parapet on all four edges */
+  wallSeg(IX0-0.1,(IZ0+IZ1)/2,0.3,(IZ1-IZ0),Y,Y+1.1,MAT.jstoneD);
+  wallSeg(IX1+0.1,(IZ0+IZ1)/2,0.3,(IZ1-IZ0),Y,Y+1.1,MAT.jstoneD);
+  wallSeg(0,IZ0-0.1,(IX1-IX0)+0.3,0.3,Y,Y+1.1,MAT.jstoneD);
+  wallSeg(0,IZ1+0.1,(IX1-IX0)+0.3,0.3,Y,Y+1.1,MAT.jstoneD);
+  box((IX1-IX0)+0.6,0.12,0.34,MAT.marble,0,Y+1.15,IZ0-0.1,false); /* coping */
+  /* ---- planter boxes + INSTANCED flora ---- */
+  var planterMat=MAT.planter;
+  var ppos=[[-6,-10],[-6,-4],[-6,2],[6,-10],[6,-4],[6,2],[-6,8],[6,8],[0,-12]];
+  for(var i=0;i<ppos.length;i++){box(2.6,0.6,1.0,planterMat,ppos[i][0],Y+0.3,ppos[i][1],true,Y,Y+0.6);
+    box(2.4,0.1,0.8,MAT.greenD,ppos[i][0],Y+0.62,ppos[i][1],false);}
+  /* shrubs via InstancedMesh */
+  var shrubGeo=new THREE.IcosahedronGeometry(0.34,0);
+  var N=90;var shrubs=new THREE.InstancedMesh(shrubGeo,MAT.green,N);shrubs.castShadow=true;
+  var dummy=new THREE.Object3D(),k=0;
+  for(var p=0;p<ppos.length&&k<N;p++){for(var s=0;s<10&&k<N;s++){
+    dummy.position.set(ppos[p][0]+(Math.random()-0.5)*2.0,Y+0.75+Math.random()*0.3,ppos[p][1]+(Math.random()-0.5)*0.7);
+    var sc=0.7+Math.random()*0.8;dummy.scale.set(sc,sc*1.2,sc);dummy.rotation.y=Math.random()*6.28;dummy.updateMatrix();
+    shrubs.setMatrixAt(k++,dummy.matrix);}}
+  shrubs.count=k;scene.add(shrubs);
+  /* two potted trees */
+  for(var t=-1;t<=1;t+=2){var trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.16,1.6,8),MAT.woodD);trunk.position.set(t*3,Y+0.8,-12);scene.add(trunk);
+    var crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.0,1),MAT.greenD);crown.position.set(t*3,Y+2.0,-12);crown.castShadow=true;scene.add(crown);}
+  /* ---- pergola over a seating lounge ---- */
+  for(var px=-3;px<=3;px+=6)for(var pz=4;pz<=12;pz+=8){var post=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,2.6,8),MAT.wood);post.position.set(px,Y+1.3,pz);post.castShadow=true;scene.add(post);}
+  for(var bz=4;bz<=12;bz+=1.2){var beam=new THREE.Mesh(new THREE.BoxGeometry(6.4,0.1,0.12),MAT.wood);beam.position.set(0,Y+2.6,bz);scene.add(beam);}
+  /* lounge seating */
+  for(var lz=6;lz<=10;lz+=4){box(3.0,0.4,0.9,new THREE.MeshStandardMaterial({color:0xE7DFCF,roughness:0.9}),0,Y+0.2,lz,false);
+    box(3.0,0.5,0.2,new THREE.MeshStandardMaterial({color:0xE7DFCF,roughness:0.9}),0,Y+0.45,lz-0.35,false);}
+  /* ---- reflecting water basin ---- */
+  box(3.2,0.3,1.6,MAT.jstoneD,0,Y+0.15,0,true,Y,Y+0.3);
+  var water=new THREE.Mesh(new THREE.PlaneGeometry(2.9,1.3),new THREE.MeshStandardMaterial({color:0x2A5B7A,roughness:0.08,metalness:0.4,transparent:true,opacity:0.85}));
+  water.rotation.x=-Math.PI/2;water.position.set(0,Y+0.31,0);scene.add(water);
+  /* ---- MLOW brand pavilion (Evil-Eye-Blue moment) ---- */
+  var pav=new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2),MAT.brandBlue);pav.position.set(-5.5,Y+0.6,10);scene.add(pav);
+  var eyeCv=mkCanvas(128);var eg=eyeCv.getContext('2d');
+  if(eg){eg.fillStyle='#2962FF';eg.fillRect(0,0,128,128);eg.fillStyle='#fff';eg.beginPath();eg.arc(64,64,40,0,6.28);eg.fill();
+    eg.fillStyle='#2962FF';eg.beginPath();eg.arc(64,64,24,0,6.28);eg.fill();eg.fillStyle='#0D0D0D';eg.beginPath();eg.arc(64,64,10,0,6.28);eg.fill();}
+  var eyeTx=new THREE.Texture(eyeCv);eyeTx.needsUpdate=true;
+  var eye=new THREE.Mesh(new THREE.PlaneGeometry(0.8,0.8),new THREE.MeshBasicMaterial({map:eyeTx}));eye.position.set(-5.5,Y+0.6,10.61);scene.add(eye);
+  addPractical(-5.5,Y+1.4,10,0x2962FF,5).userData.boost=1.2;
+  /* ---- path lights ---- */
+  for(var gz=-10;gz<=10;gz+=4){for(var gx=-6;gx<=6;gx+=12){var pl=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.6,8),MAT.bronze);pl.position.set(gx,Y+0.3,gz);scene.add(pl);
+    var glow=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,6),MAT.flame);glow.position.set(gx,Y+0.62,gz);scene.add(glow);addPractical(gx,Y+0.7,gz,0xFFDDA0,3.5).userData.boost=0.9;}}
+
+  /* ---- MANHATTAN SKYLINE silhouette (beyond parapet) ---- */
+  var skyMat=new THREE.MeshStandardMaterial({color:0x2A3446,roughness:0.9});
+  var winMat=new THREE.MeshBasicMaterial({color:0xFFE6A8});
+  for(var b=0;b<64;b++){var ang=b/64*6.283,rad=42+Math.random()*30;
+    var bx=Math.cos(ang)*rad,bz=1+Math.sin(ang)*rad;var bh=10+Math.random()*46;var bw=5+Math.random()*8;
+    var bld=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bw),skyMat);bld.position.set(bx,bh/2,bz);scene.add(bld);
+    if(Math.random()<0.5){var win=new THREE.Mesh(new THREE.PlaneGeometry(bw*0.8,bh*0.7),winMat);
+      win.position.set(bx,bh*0.55,bz+bw/2*Math.sign(bz||1)+0.1*Math.sign(bz||1));win.material=new THREE.MeshBasicMaterial({color:0x3A4A66});scene.add(win);}}
+  addInteract(0,Y+1.2,6,3.4,'ROOF GARDEN, over the Upper East Side',function(){
+    openPanel('<span class="x">&times;</span><h3>The Roof Garden</h3><div class="sub">Fifth world · open sky</div>'+
+    '<p>The vertical procession ends here: from the buried library, up through two sanctuaries and the social hall, out onto an open terrace of Jerusalem stone and green over the Manhattan rooftops.</p>'+
+    '<p>Press <b>3</b> for night, the city lights and the garden lanterns come up together.</p>');
+  });
+})();
+/* ============================================================
+   ART CORRIDOR · CONGREGANTS · ATMOSPHERE
+   ============================================================ */
+(function(){
+  /* ---- hangable art frames (F / click to fill) ---- */
+  /* sanctuary side aisles */
+  addFrame(IX0+0.3,1.9,-4,Math.PI/2,1.3,1.7);
+  addFrame(IX0+0.3,1.9, 0,Math.PI/2,1.3,1.7);
+  addFrame(IX0+0.3,1.9, 8,Math.PI/2,1.3,1.7);
+  addFrame(IX1-0.3,1.9,-4,-Math.PI/2,1.3,1.7);
+  addFrame(IX1-0.3,1.9, 0,-Math.PI/2,1.3,1.7);
+  addFrame(IX1-0.3,1.9, 8,-Math.PI/2,1.3,1.7);
+  /* vestibule (either side of the doors) */
+  addFrame(-4.2,1.9,IZ1-0.35,Math.PI,1.1,1.5);
+  addFrame( 4.2,1.9,IZ1-0.35,Math.PI,1.1,1.5);
+  /* social hall gallery wall (west) */
+  addFrame(IX0+0.3,L2+1.9,-8,Math.PI/2,1.2,1.6);
+  addFrame(IX0+0.3,L2+1.9, 0,Math.PI/2,1.2,1.6);
+  addFrame(IX0+0.3,L2+1.9, 8,Math.PI/2,1.2,1.6);
+  if(artCountEl)artCountEl.textContent='0 / '+frames.length;
+
+  /* ---- congregants across the levels ---- */
+  var kip=[MAT.velvetB,new THREE.MeshStandardMaterial({color:0x1B1B1B,roughness:0.8}),new THREE.MeshStandardMaterial({color:0x6E1420,roughness:0.9})];
+  function worshipper(x,z,y,tallit){makeCongregant(x,z,y,{tallit:tallit,sway:true,kippah:kip[(Math.random()*kip.length)|0]});}
+  /* sanctuary, congregation standing in the amphitheatre, facing the central Tevah/ark (CZ=-2) */
+  var _CZ=-2;
+  [[0.15,3.6],[0.55,3.6],[0.95,3.6],[2.20,3.6],[2.60,3.6],[3.05,3.6],
+   [0.10,4.7],[0.60,4.7],[1.05,4.7],[2.30,4.7],[2.85,4.7],[3.30,4.7]].forEach(function(p){
+    worshipper(Math.cos(p[0])*p[1],_CZ+Math.sin(p[0])*p[1],L0,true);});
+  worshipper(1.1,_CZ-0.3,L0,true);     /* reader at the Tevah */
+  /* beit midrash, a few studying (walking paths) */
+  makeCongregant(-3.2,-2,L1,{path:[[-3.2,-2],[-3.2,3],[0,5]],kippah:kip[1]});
+  makeCongregant(3.2,3,L1,{path:[[3.2,3],[3.2,-2],[1,-6]],kippah:kip[0]});
+  worshipper(0,-8,L1,true);
+  /* social hall, mingling */
+  makeCongregant(-4,-2,L2,{path:[[-4,-2],[4,-2],[4,4],[-4,4]],kippah:kip[2]});
+  makeCongregant(4,-8,L2,{path:[[4,-8],[-4,-8],[0,0]],kippah:kip[1]});
+  makeCongregant(2,8,L2,{sway:true,kippah:kip[0]});
+  /* roof, two taking the air */
+  makeCongregant(-2,6,L3,{path:[[-2,6],[2,10],[3,2]],kippah:kip[1]});
+  makeCongregant(3,-4,L3,{sway:true,kippah:kip[2]});
+  /* library, a reader */
+  makeCongregant(-3.4,4,LB,{sway:true,kippah:kip[0]});
+  makeCongregant(3.4,9,LB,{sway:true,kippah:kip[1]});
+
+  /* ---- dust motes drifting in the sanctuary light shaft ---- */
+  var mCount=140,pos=new Float32Array(mCount*3);
+  for(var i=0;i<mCount;i++){pos[i*3]=(Math.random()-0.5)*14;pos[i*3+1]=Math.random()*5.2;pos[i*3+2]=-12+Math.random()*26;}
+  var mg=new THREE.BufferGeometry();mg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  var motes=new THREE.Points(mg,new THREE.PointsMaterial({color:0xFFE9C4,size:0.035,transparent:true,opacity:0.5}));
+  scene.add(motes);
+  TICKERS.push(function(dt,time){motes.rotation.y=time*0.02;var a=mg.attributes.position;
+    for(var i=0;i<mCount;i++){a.array[i*3+1]+=dt*0.12*(0.4+((i%5)/5));if(a.array[i*3+1]>5.4)a.array[i*3+1]=0;}a.needsUpdate=true;});
+})();
+//@@APPEND@@
+/* ============================================================
+   v3 ADDITIONS, fresh orchids everywhere · exterior security
+   detail (two men-in-black) · NYPD radio car at the curb
+   ============================================================ */
+(function(){
+  /* ---------- FRESH FLOWERS: white phalaenopsis orchids (there are always fresh flowers) ---------- */
+  var potMat=new THREE.MeshStandardMaterial({color:0xF3F0E8,roughness:0.35,metalness:0.05});
+  var soilMat=new THREE.MeshStandardMaterial({color:0x33241A,roughness:1.0});
+  var stemMat=new THREE.MeshStandardMaterial({color:0x4C7A3A,roughness:0.7});
+  var leafMat=new THREE.MeshStandardMaterial({color:0x2F6B39,roughness:0.6});
+  var petalW=new THREE.MeshStandardMaterial({color:0xFBF7F2,roughness:0.5});
+  var petalP=new THREE.MeshStandardMaterial({color:0xF3D9EC,roughness:0.5});
+  var lipMat=new THREE.MeshStandardMaterial({color:0xC0347A,roughness:0.5});
+  var cenMat=new THREE.MeshStandardMaterial({color:0xF2C240,roughness:0.5,emissive:0x3A2C00,emissiveIntensity:0.3});
+  var petalGeo=new THREE.SphereGeometry(0.055,8,6),cenGeo=new THREE.SphereGeometry(0.022,8,6);
+  function blossom(parent,px,py,pz,tint){var pm=tint?petalP:petalW;
+    for(var i=0;i<5;i++){var a=i/5*6.2832;var pet=new THREE.Mesh(petalGeo,pm);pet.scale.set(1,0.4,1.5);
+      pet.position.set(px+Math.cos(a)*0.06,py,pz+Math.sin(a)*0.06);pet.rotation.y=a;parent.add(pet);}
+    var lip=new THREE.Mesh(petalGeo,lipMat);lip.scale.set(0.7,0.4,0.7);lip.position.set(px,py,pz);parent.add(lip);
+    var cen=new THREE.Mesh(cenGeo,cenMat);cen.position.set(px,py+0.012,pz);parent.add(cen);}
+  function orchid(x,y,z,s){s=s||1;var g=new THREE.Group();g.position.set(x,y,z);g.scale.set(s,s,s);
+    var pot=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.11,0.22,16),potMat);pot.position.y=0.11;pot.castShadow=true;g.add(pot);
+    var soil=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.04,16),soilMat);soil.position.y=0.22;g.add(soil);
+    for(var lf=0;lf<3;lf++){var la=lf/3*6.28;var leaf=new THREE.Mesh(new THREE.SphereGeometry(0.09,8,6),leafMat);
+      leaf.scale.set(1,0.25,2.0);leaf.position.set(Math.cos(la)*0.08,0.28,Math.sin(la)*0.08);leaf.rotation.y=la;g.add(leaf);}
+    var sprays=1+((Math.random()*2)|0);
+    for(var sp=0;sp<sprays;sp++){var baseA=Math.random()*6.28,lean=0.16+Math.random()*0.1;
+      var stem=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.016,0.7,6),stemMat);
+      stem.position.set(Math.cos(baseA)*lean,0.55,Math.sin(baseA)*lean);stem.rotation.z=Math.cos(baseA)*0.3;stem.rotation.x=Math.sin(baseA)*0.3;g.add(stem);
+      var n=3+((Math.random()*3)|0);
+      for(var b=0;b<n;b++){var t=b/(n-1||1);blossom(g,Math.cos(baseA)*(lean+t*0.14),0.5+t*0.42,Math.sin(baseA)*(lean+t*0.14),sp%2===1);}}
+    scene.add(g);addPractical(x,y+0.9,z,0xFFF6E8,2.6).userData.boost=0.35;return g;}
+  /* library (LB): reading tables + flanking the ark */
+  orchid(-3.4,LB+0.83,4);orchid(3.4,LB+0.83,4);orchid(-3.4,LB+0.83,9);orchid(3.4,LB+0.83,9);
+  orchid(-1.3,LB,IZ0+0.8,1.1);orchid(1.3,LB,IZ0+0.8,1.1);
+  /* sanctuary (L0): around the bimah, at the Hekhal steps, and the vestibule */
+  orchid(-1.7,0.5,-2,1.1);orchid(1.7,0.5,-2,1.1);
+  orchid(-1.5,0.5,-10.0);orchid(1.5,0.5,-10.0);
+  orchid(-4.2,0,IZ1-1.0);orchid(4.2,0,IZ1-1.0);
+  /* beit midrash (L1) */
+  orchid(-3,L1,-11);orchid(3,L1,-11);
+  /* social hall (L2): a spray on every banquet table */
+  var tpos2=[[-4,-8],[4,-8],[-4,-2],[4,-2],[-4,4],[4,4]];
+  for(var ti=0;ti<tpos2.length;ti++)orchid(tpos2[ti][0],L2+0.85,tpos2[ti][1],0.8);
+  /* roof (L3) lounge */
+  orchid(-1.2,L3+0.2,8);orchid(1.2,L3+0.2,8);
+
+  /* ---------- EXTERIOR: two security men in black suits at the doors ---------- */
+  function guard(x,z,rot){
+    var g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot||0;
+    var suit=new THREE.MeshStandardMaterial({color:0x0B0B10,roughness:0.6});
+    var shirt=new THREE.MeshStandardMaterial({color:0xEFEFEF,roughness:0.7});
+    var skin=new THREE.MeshStandardMaterial({color:0xC98A5E,roughness:0.7});
+    var blk=new THREE.MeshStandardMaterial({color:0x050505,roughness:0.35,metalness:0.2});
+    for(var lx=-1;lx<=1;lx+=2){var leg=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.08,0.92,10),suit);leg.position.set(lx*0.1,0.46,0);leg.castShadow=true;g.add(leg);
+      var shoe=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.09,0.3),blk);shoe.position.set(lx*0.1,0.05,0.06);g.add(shoe);}
+    var torso=new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.29,0.86,12),suit);torso.position.y=1.3;torso.castShadow=true;g.add(torso);
+    var vsh=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.42,0.04),shirt);vsh.position.set(0,1.42,0.24);g.add(vsh);
+    var tie=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.36,0.03),blk);tie.position.set(0,1.4,0.26);g.add(tie);
+    for(var ax=-1;ax<=1;ax+=2){var arm=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.075,0.72,10),suit);
+      arm.position.set(ax*0.27,1.3,0.06);arm.rotation.x=0.55;g.add(arm);}
+    var hands=new THREE.Mesh(new THREE.SphereGeometry(0.1,10,8),skin);hands.position.set(0,1.0,0.22);g.add(hands);
+    var head=new THREE.Mesh(new THREE.SphereGeometry(0.15,14,12),skin);head.position.y=1.86;head.castShadow=true;g.add(head);
+    var hair=new THREE.Mesh(new THREE.SphereGeometry(0.156,12,10,0,6.28,0,1.5),blk);hair.position.y=1.9;g.add(hair);
+    var glasses=new THREE.Mesh(new THREE.BoxGeometry(0.27,0.07,0.05),blk);glasses.position.set(0,1.87,0.13);g.add(glasses);
+    var ear=new THREE.Mesh(new THREE.SphereGeometry(0.03,8,6),blk);ear.position.set(0.14,1.85,-0.02);g.add(ear);
+    var coil=new THREE.Mesh(new THREE.CylinderGeometry(0.008,0.008,0.42,6),blk);coil.position.set(0.16,1.62,-0.03);coil.rotation.x=0.2;g.add(coil);
+    scene.add(g);addWallY(x,z,0.7,0.7,0,1.9);return g;}
+  guard(-2.7,17.7,0);guard(2.7,17.7,0);           /* flank the bronze doors, facing the street */
+
+  /* ---------- NYPD radio car at the curb ---------- */
+  function nypdDecal(){var cv=mkCanvas(256);cv.width=256;cv.height=128;var c=cv.getContext('2d');
+    if(c){c.fillStyle='#0E2A57';c.font='900 62px Arial, sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('NYPD',128,44);
+      c.strokeStyle='#0E2A57';c.lineWidth=3;c.strokeRect(70,74,116,40);
+      c.fillStyle='#0E2A57';c.font='700 22px Arial, sans-serif';c.fillText('POLICE',128,95);
+      c.fillStyle='#B01B2E';c.font='12px Arial';c.fillText('C.P.R. · COURTESY PROFESSIONALISM RESPECT',128,122);}
+    var tx=new THREE.Texture(cv);tx.needsUpdate=true;return tx;}
+  function copCar(x,z,rot){
+    var g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot||0;
+    var white=new THREE.MeshStandardMaterial({color:0xF2F4F7,roughness:0.4,metalness:0.2});
+    var navy=new THREE.MeshStandardMaterial({color:0x102A54,roughness:0.5,metalness:0.2});
+    var glass=new THREE.MeshStandardMaterial({color:0x11151C,roughness:0.15,metalness:0.6});
+    var tire=new THREE.MeshStandardMaterial({color:0x0A0A0A,roughness:0.9});
+    var chrome=new THREE.MeshStandardMaterial({color:0xC7CDD6,roughness:0.25,metalness:0.9});
+    var lower=new THREE.Mesh(new THREE.BoxGeometry(4.6,0.72,1.9),white);lower.position.y=0.64;lower.castShadow=true;g.add(lower);
+    var stripe=new THREE.Mesh(new THREE.BoxGeometry(4.62,0.24,1.92),navy);stripe.position.y=0.5;g.add(stripe);
+    var cabin=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.66,1.7),white);cabin.position.set(-0.1,1.22,0);cabin.castShadow=true;g.add(cabin);
+    var wf=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.5,1.5),glass);wf.position.set(1.1,1.22,0);g.add(wf);
+    var wb=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.5,1.5),glass);wb.position.set(-1.3,1.22,0);g.add(wb);
+    for(var sz=-1;sz<=1;sz+=2){var sw=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.5,0.06),glass);sw.position.set(-0.1,1.22,sz*0.86);g.add(sw);
+      var decal=new THREE.Mesh(new THREE.PlaneGeometry(1.8,0.9),new THREE.MeshBasicMaterial({map:nypdDecal(),transparent:true}));
+      decal.position.set(0.2,0.66,sz*0.96);decal.rotation.y=sz>0?0:Math.PI;g.add(decal);}
+    for(var wx=-1;wx<=1;wx+=2)for(var wz=-1;wz<=1;wz+=2){
+      var wh=new THREE.Mesh(new THREE.CylinderGeometry(0.37,0.37,0.28,18),tire);wh.rotation.x=Math.PI/2;wh.position.set(wx*1.5,0.37,wz*0.85);g.add(wh);
+      var hub=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,0.3,10),chrome);hub.rotation.x=Math.PI/2;hub.position.set(wx*1.5,0.37,wz*0.87);g.add(hub);}
+    var barBase=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.16,1.42),new THREE.MeshStandardMaterial({color:0x18181C,roughness:0.5}));barBase.position.set(0,1.62,0);g.add(barBase);
+    var redL=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.14,1.36),new THREE.MeshStandardMaterial({color:0xFF2A18,emissive:0xFF2A18,emissiveIntensity:1.2}));redL.position.set(0.32,1.63,0);g.add(redL);
+    var bluL=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.14,1.36),new THREE.MeshStandardMaterial({color:0x2A66FF,emissive:0x2A66FF,emissiveIntensity:1.2}));bluL.position.set(-0.32,1.63,0);g.add(bluL);
+    scene.add(g);addWallY(x,z,4.6,1.9,0,1.6);
+    var redPL=new THREE.PointLight(0xFF2A18,0,9,2);redPL.position.set(x-1.5,2.1,z);scene.add(redPL);
+    var bluPL=new THREE.PointLight(0x2A66FF,0,9,2);bluPL.position.set(x+1.5,2.1,z);scene.add(bluPL);
+    TICKERS.push(function(dt,time){var f=Math.sin(time*7)>0;
+      redL.material.emissiveIntensity=f?1.5:0.12;bluL.material.emissiveIntensity=f?0.12:1.5;
+      redPL.intensity=f?1.7:0.05;bluPL.intensity=f?0.05:1.7;});
+    return g;}
+  copCar(-7,23,0);                                 /* parked along the curb, west of the entrance */
+})();
+
+animate();
+/* ================= [TEST] harness hooks ================= */
+window.__game={player:player,walls:walls,floors:floors,tryMove:tryMove,collides:collides,floorYAt:floorYAt,
+  setPreset:setPreset,step:step,agents:agents,frames:frames,interact:INTERACT,tickers:TICKERS,
+  doInteract:doInteract,TP:TP,getYaw:function(){return yaw;},setYaw:function(v){yaw=v;},keys:keys,
+  practicals:practicals,cullLights:cullLights};
+})();
+</script>
+</body>
+</html>

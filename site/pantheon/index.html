@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MLOW "PANTHEON": Light As A Tenant</title>
+<!--
+  MLOW GALLERY STARTER TEMPLATE, Phase 1 infrastructure
+  Every new gallery in the series begins as a copy of this file.
+  Systems included (all mandatory per virtual-architect skill):
+    [CONTROLS]  three-layer look (pointer lock / drag / keyboard), WASD+Shift, mobile joystick, zone teleports
+    [WORLD]     collision walls list, >=3.0m doorways, Wright compression->release shell
+    [ART]       batch upload + raycast click-to-hang + drag-drop, auto plaques, spotlights, HUD count
+    [TIME]      3 lerped presets (golden/day/night), night at 2x brightness + practicals
+    [LIFE]      8 patrol-and-pause agents + static figures
+    [AUDIO]     WebAudio ambient bed, off by default
+    [BRAND]     base64 MLOW logos, palette vars, Georgia display, Abloh quoted signage
+    [TEST]      window.__game hooks for the headless harness
+  To build a new gallery: replace the [SHELL] section geometry, keep everything else.
+-->
+<style>
+:root{
+  --eye-blue:#2962FF; --ink:#0D0D0D; --cloud:#F0F4F8; --slate:#8899AA;
+  --orange:#FF6B00; --bone:#F0EFEA;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);font-family:Arial,Helvetica,sans-serif}
+#c{display:block;width:100%;height:100%;touch-action:none}
+/* ---------- enter overlay ---------- */
+#enter{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 40%,#16213E 0%,var(--ink) 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;cursor:pointer;text-align:center;padding:24px}
+#enter img{width:min(340px,70vw);margin-bottom:28px}
+#enter h1{font-family:Georgia,serif;color:var(--cloud);font-size:clamp(22px,4vw,38px);letter-spacing:.04em;margin-bottom:14px}
+#enter h1 span{color:var(--eye-blue)}
+#enter p{color:var(--slate);max-width:520px;line-height:1.5;font-size:15px;margin-bottom:34px}
+#enter .cta{font-family:Consolas,monospace;color:var(--ink);background:var(--eye-blue);padding:14px 34px;
+  letter-spacing:.18em;font-size:14px;border-radius:2px}
+/* ---------- HUD ---------- */
+#hud{position:fixed;top:14px;left:14px;z-index:20;background:rgba(13,13,13,.82);border:1px solid rgba(41,98,255,.45);
+  border-radius:6px;padding:12px 16px;color:var(--cloud);min-width:210px;backdrop-filter:blur(4px)}
+#hud img{width:120px;display:block;margin-bottom:8px}
+#hud .zone{font-family:Georgia,serif;font-size:16px;color:var(--eye-blue);margin-bottom:6px}
+#hud .row{font-family:Consolas,monospace;font-size:11px;color:var(--slate);line-height:1.7}
+#hud .row b{color:var(--cloud)}
+#hudToggle{position:fixed;top:14px;left:14px;z-index:21;display:none;background:rgba(13,13,13,.82);
+  border:1px solid rgba(41,98,255,.45);color:var(--cloud);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px}
+#hideHud{cursor:pointer;color:var(--slate);font-size:10px;margin-top:8px;display:inline-block}
+/* ---------- bottom bar: time + zones + actions ---------- */
+#bar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#bar button{background:rgba(13,13,13,.85);border:1px solid rgba(240,244,248,.25);color:var(--cloud);
+  font-family:Consolas,monospace;font-size:11px;letter-spacing:.08em;padding:9px 14px;border-radius:4px;cursor:pointer}
+#bar button.active{border-color:var(--eye-blue);color:var(--eye-blue)}
+#bar button.tp{border-color:rgba(255,107,0,.5)}
+/* ---------- crosshair / toast / prompt ---------- */
+#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:15;color:rgba(240,244,248,.85);
+  font-size:18px;pointer-events:none;font-family:Georgia,serif}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:30;background:var(--eye-blue);color:#fff;
+  font-family:Consolas,monospace;font-size:12px;letter-spacing:.06em;padding:10px 20px;border-radius:4px;opacity:0;transition:opacity .35s;pointer-events:none}
+#prompt{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:15;color:var(--cloud);
+  font-family:Consolas,monospace;font-size:12px;background:rgba(13,13,13,.7);padding:8px 16px;border-radius:4px;display:none}
+/* ---------- joystick ---------- */
+#joy{position:fixed;bottom:26px;left:26px;width:110px;height:110px;border-radius:50%;border:2px solid rgba(240,244,248,.3);
+  background:rgba(13,13,13,.4);z-index:25;display:none;touch-action:none}
+#nub{position:absolute;left:35px;top:35px;width:40px;height:40px;border-radius:50%;background:rgba(41,98,255,.8)}
+@media(pointer:coarse){#joy{display:block}}
+#file{display:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="enter">
+  <img src="data:image/png;base64,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" alt="MLOW">
+  <h1>"PANTHEON" <span>LIGHT AS A TENANT</span></h1>
+  <p>One perfect volume, one eye to the sky. Cross the piazza, compress through the sixteen-column
+     portico and the bronze doors, then release into the rotunda, where a real sun beam wanders
+     the coffered dome all day. Sand drifts in from an excavation that never happened.
+     Hang your work in the niches where the gods used to stand.</p>
+  <div class="cta">CLICK TO ENTER</div>
+</div>
+
+<div id="hud">
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAB3CAMAAADsHmPoAAAAwFBMVEWjo6NmZmbl5eXl7fAGXdTNzc0S3vfNzc0UIy0HKGINUai1tbUFbnOk4fILUJpgnuANWroAf/8B//9Z4fIAAP8nqNAWnqUim6yNuucMPYYqqNojrcIcw9lj//83hd5cFRVAhtYXP4cVRH0GW8Inpb9Vqv8AAAD+/v4AZuH+/v4EZdp+fn4K2/vq6urh4eHZ2dkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADSWvRMAAAAMHRSTlMXHKDepnH4BggRYVcJ9R3MigIB/QGnElbbNBR4ugLACr5AR36AAwD+rgSvA/3ztZdQk1k+AAASmElEQVR42u2diXriOhJG5Q1kMAQI0OnlLrMpbTnA+7/deAFiW39JZZuYvmn0zXRmEgxYx7WXJKEe41MP8ZiCB+DfYmyTamy3D8CfayTr5ab9u/U62T4Af4Ih46T6mf+vZTW+xlfK5z9+QsCpZfR8Ivq8JXjpLW89rlDGs9lsFYahvowwXM1my0QWejuWg29y0NWDPvu3luCkoCuXsxLsz2JU/55HwTmnXLxyGX82CU5V5NMjUl4P+VVT61tm6BKP+cqewlvQvUBtwC3wVj/DsGS8THj36KGbE8yvnCphXjzlCiBkJvJfY8DBKz0CmfYBfLS8pa+m5iWZ8sxXnm6icdalYg7fqeqr2NYkuPw/hSAXEsxBnEo0byd0c2BMVdT/4vzhOhgXHzwSsI3G61x1Jpwp8WoFnDIBR8wbtkpv/t/ZqiWzDSnWLXEuxDiRjFk+IYFgThecde7FQs3R05GqPoD97oAFvPVegIe6WTIHlQuvNvWyZehVjtjpbwn4GB8y1nfOVIamRvBuGD5b856AX7POs4yV1z0AL0u8PzsPvYrLix16Muit8QTS0GyVBa2q6As46moIU6RA7gFYxipe9cGbX6NzWyzjHjr6xPrOqfLR1Bz7i//50h6Ag66zTHz50QEX2rkH3ssIZw5nC1pC3nRlyEti62j4wVGVX+gBOP/QTiLscLFGA7wuxVe/R0HdRLgQYll64PSDTNjRrB8itrqEquNMqQ/gjsEKYV5GBpx7V/8Ou3hWyM3OLXHcWVVxGKWUG8pyaZEJDmyJDgfgg8zSTho6uD/geJh6frfENsIpfJQ5RjglNPQ5mHXmSOhP7QO4WygsXBp6DMBSyVUv5dxmnBOmQ2I405zUkMUNnbvlHz5X8yGAj13mObUHwaMATnLzm6vYQXz1+Z/c1dp2U1ZuR8kyRyeOBB9pye8F+FXwc8Ip5R+OCLjke4NR6gC9kkqS+cbTa59vbbFiHCcczPB1TvsB7hAKO12sjwcsS776542GXl0qjeBLz/s4SlYr5oxZPBgkDQPcIRR2BcEfDziu5Pd2gGlPK4POUiD7GFG2jhY4SMqGAObraLeL9dGA5Uatfg73rxqDJIwfZ9dsCVucEbgBoyBJqEGAT9yZnjpdrI8GHKvZjfFqmjCWRcfXdmSCRI+rT0MBHzxmO4mjzvDxgJfX+FcTCSrCY7Y+EvorzlpiVg4jnNrdlKjH1fNrWwYPcBD0dLNAgBeMCjh3sLQz8il6N8KyLav6yZDhUG4k2x92ZCscEnW0TzUKsQ5eTYGzAEc9q8LAJkVjApaJw4HWBVwdPr0sFkE5FounJwdjXZlhyZdGqydMlILr9dmso46szSgTcNav4uCZGisQowIuFbRNE4f66cWYoeBlF9Jl4/IdNSaMnUprWdcZSFqTWTB7VtOvTMCmIPocwOC7n6YjApZqqa0CnOMlfITFk7bUJnLrHeLCA3Q6rKk/ZyDp2wFHVredCTg1TanMOICNuxXpiIATGVoNqX6xZNmCJ0pTa4uShmGDzQi7U31WE44MeD2y4kqw+SUYFQegr/LPHg9wESHZxPfJ4eHniC1Odu5JS64RtmhZ4eh3sV8NOwXqFoFrg83n0udkwU9mn8F4gOMt5UHr0rdaOAO415dcT5OPSIhCpVRlh055A3cxxnY1fDzqiRUmYAlMuefKZqUgcSdGlOBcgOkEh1N8z3ceUoRLP2vNNKm2dJRsT5Lf4WpkERr1Sa6KBvGds+MPuFi+Gg/wtgiBNcn3lTksajqUW66OzqgFIcCMeUAkPVJFO/IKfMBR5yQpeKP5iIA3lh4OPl+SMCXCGREoCa6G9k1mJ/pq4fgsLmD0tR05dPBsHrx0NMBkDkt341sR1oQVjpnJLAuiwHBTIrp2wDPBPSQYmRbHyhlgHgpvYSzAMZHj6Mz39fVv0g4vQTc8DJQodQdEUHSQJeShNYNuNmCwOOogrRWHzAz5xYiAVREDm04WyTdYlCOAnhZdN9wwq/6ES2pOK+HvCHaeMuoHOAPu/zwV3eoMuWM9FuBlkcTCTrQ2JmWxeH67jMmzCXlBKWkdo1BJHthf3TM1NFIBREwKE6OiH2Cko/2OGbjcEI0GeFOUgSETI/5dTN7pVj+eF6YZxoBnQEcLFCjhWNaDGtoUDWIJG/LYAylUL8DIntPuO/TvxIiALy6WdjnQNbw1ym3EIelmSV71IFBMDV2kgFHeUDDzlC3PiA8Y6XtLVRg8XIX1HwtwTMZITQUdnHXzZJL/pxpnxs+GkiZ0tGTFLrgxw5zrwt3mK0uQp2w9Cl0Am6YhsGXg4OMwFuA1lYZuCnBwEd+Ca0V3cvnVMysaRs07sIKPhAE8CnOVIeE4eMwg6dBKqXQCLPhVYRQ3ZyNKsIopq1l/7hZnaZ28/fj+pVixIJMvu8nFEk+CpgjD91sBI5ymEa9vx1Tmh0zhVWxz+Hy4gqROgJFQkmlwyhMcCXCiEu1OYQWVvZ287fZ1H/jL7vzrSf2zdyEuW4CyMNTRSNuZuriaC+igpqyUSjQA8JSpOYiaynxEwGvKBIf1KalkdfIjl8Fv+32xuV2S7Jdrpb6c9fSzM1TSegkCJWLFvXDX+ipB5SWGMxwkZb0BA5+ecrME9SyMBxiHSH/W3u25UtA7pf5oMNrsldyVivut5ksHmjLCa3D7J07fDrChlSvmQWuYcoKk9qu6AEYBHuFmkdp8NBuMFyOFLy0D/Pb2Re0NHRtvVGWK62aYSEkjwHA1idm3I0ChQVCtMBEAfHIFSZ0BR7xQOCP9sXEAb2GhochsBXUFXZjZndqjXNSmlOGGkibSWSG3z8I0Z2Yy9yLlzOJd4PbFOgFGcRcskwgyohoHcKK+4hgpbHvQE2LvnHiTVHY4sOroopwhwXJSGCi1jbBAaSyPzEG2rSuSooOR8u4GGIXCsPnOfBCiMQFTPlbdh64yHAm1r0qSe1otEf4zZKejYdW//e3N2axLqTOr5CnUYp6pIYBRZA2a73BWMxsVMCw01NLQQSnAO/UH9R5/qFKEJ/Zchy5KhmteIb5thM3U4HsslKIwUzhT3hGw851UNHCeAB5Lqm0cwBsij1UDXLlY+82Geo/9WYTfL3kJiXrDmlf1b1UMYCk4pWtxLfUL223FQAmGxWzRzsZmMJyajgiYcqJrPtZzmZpUe1uupBThZ0cyCwOe4s0FhT2NJa342pfPOcmUjoAFZJc5DdD16RsLMM4ch00fevJdfbN5arsm4MDs4St+g4r+1M4308bUB5ZslTOZhYOkoYCR6jEahqAen6r7Aw53TROcx8CJDfD3phEOUP8PATg3sIdX60x5qNCQWlNF0mUEQGmgO+DI9baezRO7L+CnhgmeTJZK2gB/KVOZQa0ojG3whtvPXjeRIPFbt9HIztV1NAySVHoDCc5cimEK8l3y/fpfCbC0SfBefXt7cwP+ueL3O9YJmdN8bNnYo22iBQySpmooYGQb2ikalA1JxwS8LYqFLsBFhd8Ra+0nTgnWFGC4hKVGCEhKlE7t6fygYaNPrMJAZ8AidYTCWIn/doBdy/7ANIlWGGQtv2fQBKfDAaNtFf0m4AD1zY+roiVXRUu7ip70VtHUwt2U1ISBkeiyFBwQfrgKuQSciWltpKlpQxt/BqFw+v4OKQik0trlUxNwWvu78G5lg/UoTlbDi67PowAT8Tq/3qkpJ41pKF9iTPTx/RWgaSRqXC1ICVaoKNh4KMDE14bJvzGLADDu+Rma6NCuMGliD5O+VXV/W5ikf5JhEi72nN7/ODdb4w3ps82k/+p+gwpwcWLPqTGAd1Af5lsfTrV3AH+tD2CZ6lf7Z0/hIzJZupnoeLMnOvYg0eFY3eDXJ9I/oYXC1z+auYJTe5gT7V+myget14038H3vcmYDY4n5mONskQcDRlnFZqrybfKDFL7SUzNTlXhTtPXZLMrDrzSRVfLwcwKuig2mRq11ZJVG+C3ZJBYTzCg21NaQ/mKAD58ZMNGShcqFJOD/yaIZvt60g1ujr+XCB+BRAbMK/rkIU9uK7s2C/85e8H8AHg9w2bIDfF69a7fs7IiCoSwt8KTRskNsFhCfW3YegMcDjLfn0M11DdUipP9Cwsnm3DjbarqzJbIegMf0oqmCMGqbNbcVTTZViFQXYMoEX+v9D8AjAl6q/+CenfrKledqWdL33OA2ECdLpc6N7zUBDjTcD+J9hfAD8KiA8RZZ9UCpWFpYpjt2uZOU7GXpKiX5UOcqg7l0BTvRyQPw6ICTchdSlwgvLktHdxWjTdWCt9+d1xc2lhc+hXBPl6uP9QA8rg2OQ8b67/Py0Vxef3xJ/ir0tLf//qNaIjxBy0c1OIIleThZdwC8pLboaC4AX1QrkMql35PJj+rHG1geTK1Mqm3S8QA8JmBqCwdNbOHw1tjBwVzgX1pgFFkn14rjA/C4gKmdZp2bsFQKurUJC5HFqi89ewAe1wYravey9jZKwfOktoNSxbi9jdJLSO6EtnwAvhNgYo2/DkNzo7PnGt5nY5esYqs77dxk5wGYN463AUz60RpvZXjeyRDuZVhsGk1twZL8I1T0oTnAq9FgfAjvssaf/Zt0dNRPxDJluONmpE+kANc3UcoBBzecpi5vgN4huAJWSnrNYbZFemg4t0yHl4FjdZovuM0WDhY3q5mSZvElj8dqFhvhNLkBCc82GPp1jq6zNN1Z22Zt3XUGD9ROCqzu7Zvu1GVDcD2YML3lO9yp0t3CyJtdW++e8YTQF1d/yuojzcChHOYQmXBaAXQVAJxN6y+5FeCt7VQ7PuEuW/qDaZpmzvOTo1Rk9ADds+YTMgUX9m18ty5vQ/5w66JxD+Wgz7Xi2eFgRx+7glcGm0tY3PJnuyvGAb22gyQHAXYeyXZnwFv6VA7NO1ZnoemTtXQIdl/hLWFpTa7jppzOuWXT3yGAHcfe4iNo07EPxiJOli233HEJMXUw1lWAExZghxy4zmJ2HqxkPWF8AGC88XX9i0/VfQGXR9tpy9lJVkscPGnrwXgrKRULsHApOvspkGLQEzIIcBrZFYe4N+DzwRzk6Ss6RxzQeK3nhut4ywIM1wE2ExKp43rPZYI/CDA+xc1uWsYFfK4a2jiF+slMXgWLs/TSp49q6pR3MMWnrq5oe87skZb3UYDt1gEfjDYQcDbNmCO9dL+SB0Rf5DMM9d9Pl/OhyxOiQ+06BVzDfaIVf60/zwVm6eijwwkfANj61cWHSHDXQW4c/X6K6OWEd12O+hnvliOiw5jlYVW3bE1mCacEO7zZ5sYANwVsC4WP1Da0QwD7nmAPr+ZJ6583HXnw9S82X0egdGRYHXvGwX4A3TDAU1pHE77hMMCvB1di/j1Df/kCMdW8M4TwjK2gXSo2SjmAo95h9DDAklQehyzNPgBwh3EFnMThrQFzUlhMFStYEix6h9HDAKONqy/QiLPYRgd8drRuKb8rtYm7OAIWFRuw4gKbjp5/KOAppTzm5GGMowPOtWlJ+EaGWOuV3Hbia4s2TizAFlPoCqMHAqaUR+Cl6pcBnOvTOLwN4CK0Wln35ulYLxDOIKmatXnfMHogYCoIJx/MuwAuZDi8kf9c8E1Ux5FSzREHmfJUABlpRc5E51DA806uw30AF3Y4vJX/3FV+bTr6xBJgWzLLcUr3YMBoXzSb63AnwLnQyZnWt+CbdOdLq9iICZiMtJxO2mDAU3xE0K8GuBC7mb5sbdXX/Ibd4iNn1v7gOeSv5usc+qmAwYA9fPyW96sBLnq0eqtpXTYO6FVs2XapTzLLZxdPqGyYS0MPB4y3/7acOns3wLkQy6qHp6Ou1pXU5+Lb3b2y56KiDoAjQgV4Hw0YhMJz26mz9wNcqOnlSve1vrGSseoNWHQu9HGyYe5M9nDA5kcfPNud3hFwkZhWs1D3SW4sleqNl8pFBR3K27htgFNrHArYfL0tO3NnwEpucz1dR2xT12eHTOtCO8shfLnHVXZNZokRJNjU0bYmo3sDLuVQMqRY16Q3xxtLNWhkKFASzCCJzIYxVIDgaRPrd29tjGz91PsDrlTtsoqKtd21Kv6dxapPboORLwg6NSChhEPUE7Dv+8fa8P2T4z1qF/h+ZPPcUzX1j613nyNPMA8dW1+j2/BteqQo5sYzp7+Vq+aZVMOMr2VWu3WYpWreeoOjL1w+tOqgIz7XSCrGsxC2Tpa9O6vZsqSb/KNvFJ/fPU0bY+p6DBqvdvp1aXtQL5ymA4YrRRSX5GS8rCi/jzDMBXe2jP8qX3TDqW5/w67C5Rn36PUE/LuM7fqaeIyT5OsyH0kcx5eG9nXyCe7xtwZcQk7W63b+cbtZr5Pt57i/3x7wuwTLYiRJEn+qG3sA/uTjAfgB+DH+yeP/2PBBSlD7r3oAAAAASUVORK5CYII=" alt="MLOW">
+  <div class="zone" id="zoneName">"PIAZZA"</div>
+  <div class="row">ART&nbsp;<b id="artCount">0 / 16</b><br>
+  WASD move &middot; Shift stride<br>drag / arrows / Q+E look<br>
+  click frame or drop image to hang<br>1/2/3 time &middot; H hide HUD</div>
+  <span id="hideHud">[ HIDE ]</span>
+</div>
+<button id="hudToggle">"HUD"</button>
+
+<div id="bar">
+  <button data-preset="0" class="active">GOLDEN</button>
+  <button data-preset="1">DAY</button>
+  <button data-preset="2">NIGHT</button>
+  <button class="tp" data-tp="piazza">"PIAZZA"</button>
+  <button class="tp" data-tp="portico">"PORTICO"</button>
+  <button class="tp" data-tp="rotunda">"ROTUNDA"</button>
+  <button class="tp" data-tp="apse">"APSE"</button>
+  <button id="artBtn">+ HANG ART</button>
+  <button id="audioBtn">SOUND: OFF</button>
+</div>
+
+<div id="cross">+</div>
+<div id="toast"></div>
+<div id="prompt"></div>
+<div id="joy"><div id="nub"></div></div>
+<input type="file" id="file" multiple accept="image/*">
+
+<script src="vendor/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+/* ================= [BRAND] palette ================= */
+var COL={eyeBlue:0x2962FF,ink:0x0D0D0D,cloud:0xF0F4F8,bone:0xF0EFEA,red:0x7B3F32,
+         sand:0xC8A97E,calcite:0x7FD4FF,orange:0xFF6B00};
+
+/* ================= renderer / scene ================= */
+var canvas=document.getElementById('c');
+var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled=true;
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(72,window.innerWidth/window.innerHeight,0.1,300);
+
+/* ================= [MAT] shared materials, DEFINE BEFORE USE ================= */
+var MAT={
+  bone:new THREE.MeshStandardMaterial({color:COL.bone,roughness:0.85}),
+  boneDark:new THREE.MeshStandardMaterial({color:0xD8D6CE,roughness:0.9}),
+  red:new THREE.MeshStandardMaterial({color:COL.red,roughness:0.9}),
+  sand:new THREE.MeshStandardMaterial({color:COL.sand,roughness:0.95}),
+  ink:new THREE.MeshStandardMaterial({color:0x1A1A1A,roughness:0.6}),
+  calcite:new THREE.MeshStandardMaterial({color:COL.calcite,emissive:COL.calcite,emissiveIntensity:0.6,roughness:0.3}),
+  orange:new THREE.MeshStandardMaterial({color:COL.orange,roughness:0.7}),
+  frame:new THREE.MeshStandardMaterial({color:0x222222,roughness:0.5}),
+  canvasEmpty:new THREE.MeshStandardMaterial({color:0xE8E6DF,roughness:0.95}),
+  glass:new THREE.MeshStandardMaterial({color:0xBFD8E8,roughness:0.1,metalness:0.2,transparent:true,opacity:0.35}),
+  agent:new THREE.MeshStandardMaterial({color:0x30363E,roughness:0.6}),
+  agentAccent:new THREE.MeshStandardMaterial({color:COL.eyeBlue,emissive:COL.eyeBlue,emissiveIntensity:0.5}),
+  ochre:new THREE.MeshStandardMaterial({color:0xF0E6D2,roughness:0.9}),
+  stone:new THREE.MeshStandardMaterial({color:0xA89880,roughness:0.95}),
+  rock:new THREE.MeshStandardMaterial({color:0x6E655A,roughness:1.0}),
+  water:new THREE.MeshStandardMaterial({color:0x3E7A8C,roughness:0.15,metalness:0.1,transparent:true,opacity:0.85}),
+  foam:new THREE.MeshBasicMaterial({color:0xEAF6FA,transparent:true,opacity:0.75,side:THREE.DoubleSide,depthWrite:false}),
+  mist:new THREE.MeshBasicMaterial({color:0xDDEEF5,transparent:true,opacity:0.3,side:THREE.DoubleSide,depthWrite:false}),
+  leaf:new THREE.MeshStandardMaterial({color:0x3E6B3A,roughness:0.95}),
+  leafDark:new THREE.MeshStandardMaterial({color:0x2C5230,roughness:0.95}),
+  trunk:new THREE.MeshStandardMaterial({color:0x5A4636,roughness:1.0}),
+  fire:new THREE.MeshStandardMaterial({color:0xFF8830,emissive:0xFF6B00,emissiveIntensity:1.2}),
+  bronze:new THREE.MeshStandardMaterial({color:0x7A5C33,metalness:0.75,roughness:0.35}),
+  bronzeDark:new THREE.MeshStandardMaterial({color:0x4E3B22,metalness:0.7,roughness:0.45}),
+  granite:new THREE.MeshStandardMaterial({color:0x8B8378,roughness:0.55}),
+  graniteRed:new THREE.MeshStandardMaterial({color:0x8E5A4A,roughness:0.5}),
+  marble:new THREE.MeshStandardMaterial({color:0xEDEAE2,roughness:0.55}),
+  marbleVein:new THREE.MeshStandardMaterial({color:0xDDD8CC,roughness:0.5}),
+  coffer:new THREE.MeshStandardMaterial({color:0xDCD9CF,roughness:0.8}),
+  domeShell:new THREE.MeshStandardMaterial({color:0xE4E1D6,roughness:0.85,side:THREE.BackSide}),
+  drumIn:new THREE.MeshStandardMaterial({color:0xE9E5DA,roughness:0.8,side:THREE.BackSide}),
+  paving:new THREE.MeshStandardMaterial({color:0xB8A88E,roughness:0.95}),
+  brick:new THREE.MeshStandardMaterial({color:0xA08C72,roughness:0.95}),
+  chrome:new THREE.MeshStandardMaterial({color:0xD8D8E0,metalness:0.7,roughness:0.18}),
+  obsidian:new THREE.MeshStandardMaterial({color:0x101018,metalness:0.4,roughness:0.25}),
+  circuit:new THREE.MeshStandardMaterial({color:0x2962FF,emissive:0x2962FF,emissiveIntensity:0.9}),
+  holo:new THREE.MeshBasicMaterial({color:0x2962FF,transparent:true,opacity:0.35,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide})
+};
+
+/* ================= [WORLD] state ================= */
+/* Pantheon plan (top view, +z = south toward the piazza):
+   rotunda disc r14 centered origin, floor at FLOOR=1.1
+   door passage |x|<1.9 z 12..16.2 -> portico |x|<10.5 z 15..22.6
+   -> 5 steps z 22.6..25.4 down to piazza (y=0) z 25.4..40                */
+var FLOOR=1.1, R=14, DOMEY=FLOOR+11, OCY=FLOOR+24.86;
+var player={x:0,y:1.7,z:37.5,speed:4,stride:7};
+var yaw=0, pitch=0;                // face -z toward the temple across the piazza
+function heightAt(x,z){
+  if(z>25.4)return 0;                       // piazza
+  if(z>22.6)return FLOOR*(25.4-z)/2.8;      // steps ramp
+  return FLOOR;                             // portico + rotunda podium
+}
+var keys={};
+var walls=[];                      // AABB list {minX,maxX,minZ,maxZ}
+function addWall(cx,cz,w,d){walls.push({minX:cx-w/2-0.35,maxX:cx+w/2+0.35,minZ:cz-d/2-0.35,maxZ:cz+d/2+0.35});}
+/* the rotunda wall is circular, model walkable space as a union of regions */
+function inWorld(x,z){
+  if(Math.hypot(x,z)<13.3)return true;                 // rotunda interior
+  if(Math.abs(x)<1.9&&z>12&&z<16.2)return true;        // door passage
+  if(Math.abs(x)<10.5&&z>15&&z<22.6)return true;       // portico
+  if(Math.abs(x)<8&&z>=22.6&&z<=25.4)return true;      // steps
+  if(Math.abs(x)<17&&z>25.4&&z<40)return true;         // piazza forecourt
+  return false;
+}
+function collides(x,z){
+  if(!inWorld(x,z))return true;
+  for(var i=0;i<walls.length;i++){var b=walls[i];
+    if(x>b.minX&&x<b.maxX&&z>b.minZ&&z<b.maxZ)return true;}
+  return false;
+}
+function tryMove(nx,nz){
+  if(!collides(nx,player.z))player.x=nx;
+  if(!collides(player.x,nz))player.z=nz;
+  player.x=Math.max(-16.8,Math.min(16.8,player.x));
+  player.z=Math.max(-13.6,Math.min(39.6,player.z));
+}
+
+/* ================= [SHELL] PANTHEON ======================================
+   Roman sequence, Wright-paced: open piazza -> 5 steps up -> 16-column
+   portico compression -> bronze door slot -> RELEASE into the one perfect
+   volume: drum r14, dome springs at +11, oculus center +24.86. Light is
+   the tenant; a real sun beam walks the coffers all day.               */
+function box(w,h,d,mat,x,y,z,solid){
+  var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);
+  if(solid)addWall(x,z,w,d);
+  return m;
+}
+/* ---- grounds: earth + piazza paving ---- */
+var gEarth=new THREE.Mesh(new THREE.PlaneGeometry(130,130),new THREE.MeshStandardMaterial({color:0x8A8068,roughness:1}));
+gEarth.rotation.x=-Math.PI/2;gEarth.position.set(0,-0.02,4);gEarth.receiveShadow=true;scene.add(gEarth);
+var gPiazza=new THREE.Mesh(new THREE.PlaneGeometry(38,15.4),MAT.paving);
+gPiazza.rotation.x=-Math.PI/2;gPiazza.position.set(0,0.01,32.7);gPiazza.receiveShadow=true;scene.add(gPiazza);
+for(var pj=0;pj<9;pj++){var jn=new THREE.Mesh(new THREE.PlaneGeometry(38,0.08),new THREE.MeshBasicMaterial({color:0x9A8C74}));
+  jn.rotation.x=-Math.PI/2;jn.position.set(0,0.02,26.4+pj*1.6);scene.add(jn);}
+/* ---- rotunda podium disc (heightAt supplies FLOOR) ---- */
+var podium=new THREE.Mesh(new THREE.CylinderGeometry(15.4,15.6,FLOOR,64),MAT.stone);
+podium.position.set(0,FLOOR/2-0.02,0);podium.receiveShadow=true;scene.add(podium);
+/* ---- the drum: interior + brick exterior, door slot at +z ---- */
+var doorHalf=0.15;
+var drumIn=new THREE.Mesh(new THREE.CylinderGeometry(14.15,14.15,11,64,1,true,doorHalf,Math.PI*2-2*doorHalf),MAT.drumIn);
+drumIn.position.set(0,FLOOR+5.5,0);drumIn.receiveShadow=true;scene.add(drumIn);
+var drumOut=new THREE.Mesh(new THREE.CylinderGeometry(14.75,14.75,11,64,1,true,doorHalf,Math.PI*2-2*doorHalf),MAT.brick);
+drumOut.position.set(0,FLOOR+5.5,0);drumOut.castShadow=true;scene.add(drumOut);
+/* relieving-arch courses scored into the exterior brick */
+for(var rc=0;rc<2;rc++){var course=new THREE.Mesh(new THREE.TorusGeometry(14.78,0.09,6,80),MAT.bronzeDark);
+  course.rotation.x=Math.PI/2;course.position.y=FLOOR+3.4+rc*4.2;scene.add(course);}
+/* interior cornice ring at the dome spring */
+var cornice=new THREE.Mesh(new THREE.TorusGeometry(13.9,0.22,8,80),MAT.marbleVein);
+cornice.rotation.x=Math.PI/2;cornice.position.y=DOMEY-0.2;scene.add(cornice);
+/* attic register: 28 blind panels + two string courses */
+for(var ap=0;ap<28;ap++){
+  var apa=ap*(Math.PI*2/28)+Math.PI/28;
+  var pan=new THREE.Mesh(new THREE.BoxGeometry(1.5,1.3,0.12),(ap%2)?MAT.marbleVein:MAT.graniteRed);
+  pan.position.set(13.98*Math.sin(apa),FLOOR+9.9,13.98*Math.cos(apa));
+  pan.rotation.y=apa;scene.add(pan);
+}
+[FLOOR+5.05,FLOOR+9.15].forEach(function(scy){
+  var sc=new THREE.Mesh(new THREE.TorusGeometry(13.95,0.12,6,72),MAT.marbleVein);
+  sc.rotation.x=Math.PI/2;sc.position.y=scy;scene.add(sc);
+});
+/* ---- the dome: coffered interior shell + exterior + oculus rim ---- */
+var phi0=0.1433; // asin(2/14): the oculus opening
+var domeIn=new THREE.Mesh(new THREE.SphereGeometry(14,64,24,0,Math.PI*2,phi0,Math.PI/2-phi0),MAT.domeShell);
+domeIn.position.y=DOMEY;scene.add(domeIn);
+var domeOut=new THREE.Mesh(new THREE.SphereGeometry(14.75,48,20,0,Math.PI*2,phi0,Math.PI/2-phi0),MAT.bone);
+domeOut.position.y=DOMEY;domeOut.castShadow=true;scene.add(domeOut);
+/* exterior step rings at the haunch */
+for(var sr=0;sr<3;sr++){var srm=new THREE.Mesh(new THREE.CylinderGeometry(15.6-sr*0.5,15.6-sr*0.5,0.7,48,1,true),MAT.bone);
+  srm.position.y=FLOOR+10.6+sr*0.75;scene.add(srm);}
+var rim=new THREE.Mesh(new THREE.TorusGeometry(2.0,0.25,10,40),MAT.bronze);
+rim.rotation.x=Math.PI/2;rim.position.y=OCY;scene.add(rim);
+/* ---- 140 coffers: 5 rings x 28, instanced, every one aimed at the dome center ---- */
+var NCOF=140;
+var cofferI=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,0.45),MAT.coffer,NCOF);
+var dummy=new THREE.Object3D();var ci=0;
+for(var ring5=0;ring5<5;ring5++){
+  var phk=0.32+ring5*0.2;
+  var yk=DOMEY+13.6*Math.sin(phk),rh=13.6*Math.cos(phk);
+  var cw=rh*(Math.PI*2/28)*0.62,ch=13.6*0.2*0.66;
+  for(var ck=0;ck<28;ck++){
+    var thc=ck*(Math.PI*2/28)+(ring5%2)*(Math.PI/28);
+    dummy.position.set(rh*Math.sin(thc),yk,rh*Math.cos(thc));
+    dummy.lookAt(0,DOMEY,0);dummy.scale.set(cw,ch,1);dummy.updateMatrix();
+    cofferI.setMatrixAt(ci++,dummy.matrix);
+  }
+}
+scene.add(cofferI);
+/* ---- floor: giallo / pavonazzetto / porfido checker disc, canvas texture ---- */
+var flCv=document.createElement('canvas');flCv.width=2048;flCv.height=2048;
+var flCtx=flCv.getContext('2d');
+if(flCtx){
+  flCtx.fillStyle='#B9A582';flCtx.fillRect(0,0,2048,2048);
+  var CELL=2048/12;
+  for(var fy=0;fy<12;fy++)for(var fx=0;fx<12;fx++){
+    var odd=(fx+fy)%2;
+    var cx=fx*CELL,cy=fy*CELL;
+    flCtx.fillStyle='#8A8378';flCtx.fillRect(cx,cy,CELL,CELL);
+    flCtx.fillStyle=odd?'#EDE8DA':'#B9A582';
+    flCtx.fillRect(cx+6,cy+6,CELL-12,CELL-12);
+    if(odd){
+      flCtx.beginPath();flCtx.arc(cx+CELL/2,cy+CELL/2,CELL*0.30,0,6.283);
+      flCtx.fillStyle='#6E3A30';flCtx.fill();
+      flCtx.strokeStyle='#4E3B22';flCtx.lineWidth=6;flCtx.stroke();
+    }else{
+      flCtx.fillStyle='#5E6E58';
+      flCtx.fillRect(cx+CELL*0.28,cy+CELL*0.28,CELL*0.44,CELL*0.44);
+    }
+  }
+}
+var flTx=new THREE.Texture(flCv);flTx.needsUpdate=true;
+var rotFloor=new THREE.Mesh(new THREE.CircleGeometry(14,64),
+  new THREE.MeshStandardMaterial({map:flTx,roughness:0.4}));
+rotFloor.rotation.x=-Math.PI/2;rotFloor.position.y=FLOOR+0.01;rotFloor.receiveShadow=true;scene.add(rotFloor);
+/* ---- portico: x -10.5..10.5, z 15..22.6, the compression ---- */
+var porFloor=new THREE.Mesh(new THREE.BoxGeometry(21.4,0.5,7.8),MAT.stone);
+porFloor.position.set(0,FLOOR-0.25,18.8);porFloor.receiveShadow=true;scene.add(porFloor);
+/* 16 grey-granite monoliths in 3 rows, each with base + Corinthian-abstract capital */
+var colGeo=new THREE.CylinderGeometry(0.55,0.62,7.4,14);
+var capGeo=new THREE.CylinderGeometry(0.78,0.6,0.5,14);
+var baseGeo=new THREE.CylinderGeometry(0.72,0.78,0.35,14);
+[[2.2,16.4],[4.9,16.4],[7.6,16.4],[10.3,16.4],[-2.2,16.4],[-4.9,16.4],[-7.6,16.4],[-10.3,16.4],
+ [2.2,18.4],[7.6,18.4],[-2.2,18.4],[-7.6,18.4],
+ [2.2,20.4],[7.6,20.4],[-2.2,20.4],[-7.6,20.4]].forEach(function(cc){
+  var col=new THREE.Mesh(colGeo,MAT.granite);col.position.set(cc[0],FLOOR+3.7,cc[1]);col.castShadow=true;scene.add(col);
+  var cap=new THREE.Mesh(capGeo,MAT.marble);cap.position.set(cc[0],FLOOR+7.55,cc[1]);scene.add(cap);
+  var bas=new THREE.Mesh(baseGeo,MAT.marble);bas.position.set(cc[0],FLOOR+0.18,cc[1]);scene.add(bas);
+  addWall(cc[0],cc[1],1.1,1.1);
+});
+/* entablature + the inscription (remixed, of course) */
+box(21.4,1.4,7.8,MAT.marble,0,FLOOR+8.5,18.8,false);
+var insCv=document.createElement('canvas');insCv.width=2048;insCv.height=192;
+var insCtx=insCv.getContext('2d');
+if(insCtx){insCtx.fillStyle='#EDEAE2';insCtx.fillRect(0,0,2048,192);
+  insCtx.fillStyle='#4E3B22';insCtx.font='700 110px Georgia,serif';
+  insCtx.textAlign='center';insCtx.textBaseline='middle';
+  insCtx.fillText('M·LOW·F·COS·TERTIVM·FECIT',1024,96);}
+var insTx=new THREE.Texture(insCv);insTx.needsUpdate=true;
+var ins=new THREE.Mesh(new THREE.PlaneGeometry(16,1.5),new THREE.MeshBasicMaterial({map:insTx}));
+ins.position.set(0,FLOOR+8.5,22.75);scene.add(ins);
+/* pediment (extruded triangle) with a bronze evil-eye ring in the tympanum */
+var pedShape=new THREE.Shape();
+pedShape.moveTo(-10.8,0);pedShape.lineTo(10.8,0);pedShape.lineTo(0,3.2);pedShape.lineTo(-10.8,0);
+var ped=new THREE.Mesh(new THREE.ExtrudeGeometry(pedShape,{depth:1.0,bevelEnabled:false}),MAT.marble);
+ped.position.set(0,FLOOR+9.2,21.9);ped.castShadow=true;scene.add(ped);
+var pedEye=new THREE.Mesh(new THREE.TorusGeometry(0.85,0.16,8,28),MAT.bronzeDark);
+pedEye.position.set(0,FLOOR+10.35,22.95);scene.add(pedEye);
+var pedIris=new THREE.Mesh(new THREE.CircleGeometry(0.4,20),new THREE.MeshStandardMaterial({color:COL.eyeBlue,emissive:COL.eyeBlue,emissiveIntensity:0.35}));
+pedIris.position.set(0,FLOOR+10.35,22.94);scene.add(pedIris);
+/* portico roof slab + coffered ceiling ribs */
+box(21.8,0.4,8.2,MAT.marbleVein,0,FLOOR+9.35,18.8,false);
+for(var pr=0;pr<6;pr++)box(21,0.14,0.3,MAT.bronzeDark,0,FLOOR+8.0,15.6+pr*1.3,false);
+/* ---- bronze doors: tunnel through the drum, leaves ajar ---- */
+box(1.6,9.0,4.2,MAT.marble,-2.75,FLOOR+4.5,14.1,true);
+box(1.6,9.0,4.2,MAT.marble,2.75,FLOOR+4.5,14.1,true);
+box(7.2,4.4,4.2,MAT.marble,0,FLOOR+6.9,14.1,false);        // header mass, 4.7m clear
+var leafGeo=new THREE.BoxGeometry(1.7,4.3,0.14);
+var leafL=new THREE.Mesh(leafGeo,MAT.bronze);
+leafL.position.set(-2.35,FLOOR+2.15,13.7);leafL.rotation.y=-0.62;leafL.castShadow=true;scene.add(leafL);
+addWall(-2.4,13.8,0.5,1.3);
+var leafR=new THREE.Mesh(leafGeo,MAT.bronze);
+leafR.position.set(2.35,FLOOR+2.15,13.7);leafR.rotation.y=0.62;leafR.castShadow=true;scene.add(leafR);
+addWall(2.4,13.8,0.5,1.3);
+/* door studs */
+for(var ds=0;ds<10;ds++){var stud=new THREE.Mesh(new THREE.SphereGeometry(0.06,6,6),MAT.bronzeDark);
+  stud.position.set((ds%2?2.0:-2.0),FLOOR+0.7+Math.floor(ds/2)*0.85,13.35);scene.add(stud);}
+/* ---- 5 steps down to the piazza (visual, heightAt walks the ramp) ---- */
+for(var st=0;st<5;st++)box(16,0.22,0.56,MAT.stone,0,FLOOR-0.11-st*0.22,22.88+st*0.56,false);
+box(1.2,FLOOR,2.8,MAT.stone,-8.2,FLOOR/2,24,true);         // step cheek W
+box(1.2,FLOOR,2.8,MAT.stone,8.2,FLOOR/2,24,true);          // step cheek E
+/* ---- forecourt fountain, offset off the axis (the harness taught us) ---- */
+var basin=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.6,1.0,28),MAT.marble);
+basin.position.set(5.5,0.5,31);basin.castShadow=true;scene.add(basin);addWall(5.5,31,4.4,4.4);
+var waterGeo=new THREE.CircleGeometry(2.1,24);
+var water=new THREE.Mesh(waterGeo,MAT.water);
+water.rotation.x=-Math.PI/2;water.position.set(5.5,1.04,31);scene.add(water);
+var obelisk=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.55,5.5,4),MAT.graniteRed);
+obelisk.position.set(5.5,3.75,31);obelisk.rotation.y=Math.PI/4;obelisk.castShadow=true;scene.add(obelisk);
+var obTip=new THREE.Mesh(new THREE.ConeGeometry(0.16,0.4,4),MAT.bronze);
+obTip.position.set(5.5,6.7,31);obTip.rotation.y=Math.PI/4;scene.add(obTip);
+/* piazza flanking colonnade fragments */
+[[-15.5,27],[-15.5,31],[-15.5,35],[15.5,27],[15.5,31],[15.5,35]].forEach(function(fc){
+  var c=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.46,4.6,10),MAT.marbleVein);
+  c.position.set(fc[0],2.3,fc[1]);c.castShadow=true;scene.add(c);addWall(fc[0],fc[1],0.9,0.9);
+});
+/* ---- 6 niches in the drum: the gods' addresses, re-let to MLow ---- */
+[Math.PI*0.25,Math.PI*0.5,Math.PI*0.75,Math.PI*1.25,Math.PI*1.5,Math.PI*1.75].forEach(function(th){
+  var g=new THREE.Group();g.position.set(13.9*Math.sin(th),0,13.9*Math.cos(th));g.rotation.y=th+Math.PI;scene.add(g);
+  var back=new THREE.Mesh(new THREE.PlaneGeometry(3.4,4.6),MAT.ink);
+  back.position.set(0,FLOOR+2.7,0);g.add(back);
+  var arch=new THREE.Mesh(new THREE.CircleGeometry(1.7,24,0,Math.PI),MAT.ink);
+  arch.position.set(0,FLOOR+5.0,0);g.add(arch);
+  [-2.1,2.1].forEach(function(ox){
+    var c=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.34,4.6,10),MAT.graniteRed);
+    c.position.set(ox,FLOOR+2.3,0.5);g.add(c);
+    var k=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.3,0.55),MAT.marble);
+    k.position.set(ox,FLOOR+4.75,0.5);g.add(k);
+  });
+  var ent=new THREE.Mesh(new THREE.BoxGeometry(5.0,0.5,0.8),MAT.marbleVein);
+  ent.position.set(0,FLOOR+5.15,0.45);g.add(ent);
+});
+/* ---- 8 aedicules between the niches, pediments alternating tri/segmental ---- */
+for(var ak=0;ak<8;ak++){
+  var ath=(22.5+45*ak)*Math.PI/180;
+  var ag=new THREE.Group();ag.position.set(13.75*Math.sin(ath),0,13.75*Math.cos(ath));ag.rotation.y=ath+Math.PI;scene.add(ag);
+  [-0.9,0.9].forEach(function(ox){
+    var p=new THREE.Mesh(new THREE.BoxGeometry(0.34,3.4,0.3),MAT.marble);
+    p.position.set(ox,FLOOR+1.7,0.35);ag.add(p);
+  });
+  var lint=new THREE.Mesh(new THREE.BoxGeometry(2.3,0.3,0.4),MAT.marbleVein);
+  lint.position.set(0,FLOOR+3.55,0.35);ag.add(lint);
+  if(ak%2===0){
+    var tShape=new THREE.Shape();tShape.moveTo(-1.15,0);tShape.lineTo(1.15,0);tShape.lineTo(0,0.7);tShape.lineTo(-1.15,0);
+    var tp=new THREE.Mesh(new THREE.ExtrudeGeometry(tShape,{depth:0.3,bevelEnabled:false}),MAT.marble);
+    tp.position.set(0,FLOOR+3.7,0.2);ag.add(tp);
+  }else{
+    var sp=new THREE.Mesh(new THREE.CircleGeometry(1.15,20,0,Math.PI),MAT.marble);
+    sp.scale.y=0.55;sp.position.set(0,FLOOR+3.7,0.5);ag.add(sp);
+  }
+}
+/* ---- apse (th=PI): the Hadid gesture, nested swoops frame the relic ---- */
+var swoop=new THREE.Mesh(new THREE.TorusGeometry(3.4,0.3,10,40,Math.PI),MAT.bone);
+swoop.position.set(0,FLOOR+0.2,-12.9);scene.add(swoop);
+var swoop2=new THREE.Mesh(new THREE.TorusGeometry(2.6,0.16,8,36,Math.PI),MAT.bone);
+swoop2.position.set(0,FLOOR+0.2,-12.55);scene.add(swoop2);
+box(1.4,1.0,1.4,MAT.ink,0,FLOOR+0.5,-12.4,true);           // relic plinth
+/* the relic: an eroded bust, calcite breaking through, [ARSHAM] moment 1 */
+var relic=new THREE.Mesh(new THREE.SphereGeometry(0.4,16,12),MAT.boneDark);
+relic.position.set(0,FLOOR+1.45,-12.4);relic.castShadow=true;scene.add(relic);
+var relicNeck=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.26,0.5,10),MAT.boneDark);
+relicNeck.position.set(0,FLOOR+1.1,-12.4);scene.add(relicNeck);
+var relicShard=new THREE.Mesh(new THREE.IcosahedronGeometry(0.16,0),MAT.calcite);
+relicShard.position.set(0.22,FLOOR+1.52,-12.18);scene.add(relicShard);
+/* brazier, the fire kept alive since 126 AD, allegedly */
+var brazBowl=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.3,0.5,12),MAT.bronzeDark);
+brazBowl.position.set(2.8,FLOOR+0.95,-11.2);scene.add(brazBowl);
+var brazLeg=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.12,0.75,8),MAT.bronzeDark);
+brazLeg.position.set(2.8,FLOOR+0.4,-11.2);scene.add(brazLeg);addWall(2.8,-11.2,1.0,1.0);
+var fire=new THREE.Mesh(new THREE.ConeGeometry(0.3,0.65,8),MAT.fire);
+fire.position.set(2.8,FLOOR+1.45,-11.2);scene.add(fire);
+var fireLight=new THREE.PointLight(0xFF7B2E,1.1,9,2);fireLight.position.set(2.8,FLOOR+1.8,-11.2);scene.add(fireLight);
+/* ---- Hadid ribbon benches, mirrored east/west, orbiting the beam field ---- */
+[1,-1].forEach(function(s){
+  var bg=new THREE.TorusGeometry(7,0.35,10,44,Math.PI*0.38);
+  bg.rotateZ(s>0?-0.19*Math.PI:Math.PI-0.19*Math.PI);
+  var bench=new THREE.Mesh(bg,MAT.bone);
+  bench.rotation.x=-Math.PI/2;bench.position.y=FLOOR+0.35;bench.castShadow=true;scene.add(bench);
+  addWall(s*5.8,s*4.1,1,1);addWall(s*7,0,1,1);addWall(s*5.8,s*-4.1,1,1);
+});
+/* ---- [ARSHAM] moment 2: the excavation that never happened, sand drift ---- */
+[[-9.5,-8,2.2],[-8.2,-9.2,1.4],[-10.8,-6.8,1.2]].forEach(function(sd){
+  var s=new THREE.Mesh(new THREE.SphereGeometry(sd[2],14,10),MAT.sand);
+  s.position.set(sd[0],FLOOR-sd[2]*0.72,sd[1]);s.scale.y=0.35;s.receiveShadow=true;scene.add(s);
+});
+addWall(-9.5,-8,2.6,2.6);
+var burCol=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,2.6,14),MAT.boneDark);
+burCol.position.set(-9.0,FLOOR+0.4,-8.3);burCol.rotation.z=1.05;burCol.castShadow=true;scene.add(burCol);
+var geo1=new THREE.Mesh(new THREE.IcosahedronGeometry(0.5,0),MAT.calcite);geo1.position.set(-9.9,FLOOR+0.55,-7.4);scene.add(geo1);
+var geo2=new THREE.Mesh(new THREE.IcosahedronGeometry(0.3,0),MAT.calcite);geo2.position.set(-8.6,FLOOR+0.3,-8.9);scene.add(geo2);
+var geo3=new THREE.Mesh(new THREE.IcosahedronGeometry(0.22,0),MAT.calcite);geo3.position.set(-10.5,FLOOR+0.22,-8.5);scene.add(geo3);
+var tongue=new THREE.Mesh(new THREE.CircleGeometry(2.6,20),MAT.sand);
+tongue.rotation.x=-Math.PI/2;tongue.position.set(-7.6,FLOOR+0.02,-6.4);tongue.scale.set(1.6,1,0.8);scene.add(tongue);
+/* ---- flora: cypress spires + laurel, ringing the temple and piazza edge ---- */
+var NT=84;
+var trunkI=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.12,0.2,2.4,6),MAT.trunk,NT);
+var canI=new THREE.InstancedMesh(new THREE.ConeGeometry(0.85,4.6,8),MAT.leafDark,NT);
+var canI2=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1.0,0),MAT.leaf,NT);
+var dummy2=new THREE.Object3D();var placed=0,guard=0;
+while(placed<NT&&guard<9000){
+  guard++;
+  var ta=Math.random()*Math.PI*2, tr=17.5+Math.random()*10;
+  var tx=tr*Math.sin(ta), tz=tr*Math.cos(ta);
+  if(tz>14&&Math.abs(tx)<13)continue;                 // portico approach stays open
+  if(tz>25&&tz<40.5&&Math.abs(tx)<17.5)continue;      // piazza stays open
+  if(tz>42||tz<-30||Math.abs(tx)>30)continue;
+  var s=0.8+Math.random()*0.7;
+  dummy2.position.set(tx,1.2*s,tz);dummy2.scale.set(s,s,s);dummy2.rotation.y=Math.random()*6.28;dummy2.updateMatrix();
+  trunkI.setMatrixAt(placed,dummy2.matrix);
+  dummy2.position.set(tx,(2.4+2.0)*s,tz);dummy2.updateMatrix();
+  canI.setMatrixAt(placed,dummy2.matrix);
+  dummy2.position.set(tx+1.6,1.6*s,tz+1.1);dummy2.scale.set(s*0.85,s*0.85,s*0.85);dummy2.updateMatrix();
+  canI2.setMatrixAt(placed,dummy2.matrix);
+  placed++;
+}
+trunkI.castShadow=true;canI.castShadow=true;
+scene.add(trunkI);scene.add(canI);scene.add(canI2);
+/* [ABLOH] safety-orange annotations */
+box(0.5,0.9,0.5,MAT.orange,-2.5,0.45,27.5,true);          // cone on the piazza axis-adjacent
+box(1.1,1.1,1.1,MAT.orange,-9.2,FLOOR+0.55,20.8,true);    // tagged crate, portico corner
+var strap=new THREE.Mesh(new THREE.BoxGeometry(0.16,1.2,0.02),MAT.orange);
+strap.position.set(7.6,FLOOR+2.2,15.76);scene.add(strap); // cargo strap on a granite monolith
+var ring=new THREE.Mesh(new THREE.TorusGeometry(0.42,0.11,8,20),MAT.orange);
+ring.position.set(3.4,0.45,29.4);ring.rotation.x=-0.5;scene.add(ring); // ring leaning on the basin
+/* ================= [FUTURE-ANCIENT] the machine custodians ================= */
+function plinth(x,z,h,y0){y0=(y0===undefined)?FLOOR:y0;
+  var p=new THREE.Mesh(new THREE.BoxGeometry(1.3,h,1.3),MAT.marbleVein);
+  p.position.set(x,y0+h/2,z);p.castShadow=true;scene.add(p);
+  addWall(x,z,1.3,1.3);return y0+h;}
+/* -- rotunda diagonals, r8 -- */
+/* KOUROS 2049: chrome idol */
+var kY=plinth(5.66,5.66,0.5);
+var kBody=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.4,1.9,12),MAT.chrome);
+kBody.position.set(5.66,kY+0.95,5.66);kBody.castShadow=true;scene.add(kBody);
+var kHead=new THREE.Mesh(new THREE.SphereGeometry(0.33,16,12),MAT.chrome);
+kHead.position.set(5.66,kY+2.15,5.66);kHead.castShadow=true;scene.add(kHead);
+var kVisor=new THREE.Mesh(new THREE.TorusGeometry(0.34,0.04,6,20),MAT.circuit);
+kVisor.position.copy(kHead.position);kVisor.rotation.x=Math.PI/2;scene.add(kVisor);
+/* eroded torso, calcite chest, Arsham x2 (user-authorized density override) */
+var tY=plinth(-5.66,5.66,0.5);
+var torso=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.44,1.7,10),MAT.boneDark);
+torso.position.set(-5.66,tY+0.85,5.66);torso.rotation.z=0.08;torso.castShadow=true;scene.add(torso);
+var chest=new THREE.Mesh(new THREE.IcosahedronGeometry(0.22,0),MAT.calcite);
+chest.position.set(-5.66,tY+1.15,5.9);scene.add(chest);
+/* gyroscope reliquary */
+var gY=plinth(5.66,-5.66,0.6);
+var gyroRings=[];
+[0.85,0.62,0.4].forEach(function(gr,gi){
+  var t=new THREE.Mesh(new THREE.TorusGeometry(gr,0.045,6,32),(gi===1)?MAT.circuit:MAT.bronzeDark);
+  t.position.set(5.66,gY+1.1,-5.66);scene.add(t);gyroRings.push(t);
+});
+/* floating monolith */
+plinth(-5.66,-5.66,0.35);
+var mono=new THREE.Mesh(new THREE.BoxGeometry(0.7,2.1,0.45),MAT.obsidian);
+mono.position.set(-5.66,FLOOR+1.9,-5.66);mono.castShadow=true;scene.add(mono);
+var monoGlow=new THREE.Mesh(new THREE.CircleGeometry(0.75,24),MAT.holo);
+monoGlow.rotation.x=-Math.PI/2;monoGlow.position.set(-5.66,FLOOR+0.42,-5.66);scene.add(monoGlow);
+/* -- piazza west court -- */
+/* colossal fallen head with holo visor */
+var head=new THREE.Mesh(new THREE.SphereGeometry(1.5,20,16),MAT.boneDark);
+head.position.set(-12,0.62,31);head.rotation.z=0.45;head.scale.y=1.15;head.castShadow=true;scene.add(head);
+var nose=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.7,0.4),MAT.boneDark);
+nose.position.set(-11.1,0.9,31);nose.rotation.z=0.45;scene.add(nose);
+var headVisor=new THREE.Mesh(new THREE.PlaneGeometry(1.9,0.5),MAT.holo);
+headVisor.position.set(-10.6,1.35,31);headVisor.rotation.y=Math.PI/2;scene.add(headVisor);
+addWall(-12,31,3.2,3.2);
+/* mirror oracle */
+var oY=plinth(-14.5,35,1.1,0);
+var oracle=new THREE.Mesh(new THREE.SphereGeometry(0.85,20,16),MAT.chrome);
+oracle.position.set(-14.5,oY+0.85,35);oracle.castShadow=true;scene.add(oracle);
+/* glitch column */
+for(var gc=0;gc<5;gc++){
+  var gseg=new THREE.Mesh(new THREE.BoxGeometry(0.85,0.66,0.85),(gc===2)?MAT.circuit:MAT.marbleVein);
+  gseg.position.set(-11+Math.sin(gc*2.1)*0.16,0.33+gc*0.68,36.5+Math.cos(gc*1.7)*0.12);
+  gseg.rotation.y=gc*0.35;gseg.castShadow=true;scene.add(gseg);
+}
+addWall(-11,36.5,1.4,1.4);
+/* fallen column drums */
+[[-14,27.5],[-13.2,26.6]].forEach(function(fd){
+  var d=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,1.1,12),MAT.marbleVein);
+  d.position.set(fd[0],0.5,fd[1]);d.rotation.z=Math.PI/2;d.castShadow=true;scene.add(d);
+});
+addWall(-13.6,27.1,2.6,2.2);
+/* -- piazza east court -- */
+/* satellite stele: granite slab with circuit grooves */
+var stele=new THREE.Group();stele.position.set(15,0,29);stele.rotation.y=-0.35;
+var stSlab=new THREE.Mesh(new THREE.BoxGeometry(1.5,3.4,0.5),MAT.graniteRed);
+stSlab.position.y=1.7;stSlab.castShadow=true;stele.add(stSlab);
+for(var sg=0;sg<4;sg++){
+  var groove=new THREE.Mesh(new THREE.BoxGeometry(0.06,2.6,0.04),MAT.circuit);
+  groove.position.set(-0.45+sg*0.3,1.7,0.26);stele.add(groove);
+}
+scene.add(stele);addWall(15,29,1.9,1.1);
+/* restoration gantry with articulated arm */
+var gantry=new THREE.Group();gantry.position.set(14.9,0,35.2);
+[[-1.5],[1.5]].forEach(function(gp){
+  var post=new THREE.Mesh(new THREE.BoxGeometry(0.25,4.6,0.25),MAT.ink);
+  post.position.set(gp[0],2.3,0);gantry.add(post);
+  addWall(14.9+gp[0],35.2,0.7,0.7);
+});
+var topBeam=new THREE.Mesh(new THREE.BoxGeometry(3.4,0.22,0.3),MAT.orange);
+topBeam.position.y=4.55;gantry.add(topBeam);
+var armRoot=new THREE.Group();armRoot.position.set(0,4.45,0);gantry.add(armRoot);
+var armA=new THREE.Mesh(new THREE.BoxGeometry(0.14,1.5,0.14),MAT.chrome);
+armA.position.y=-0.75;armRoot.add(armA);
+var armB=new THREE.Group();armB.position.y=-1.5;armRoot.add(armB);
+var armA2=new THREE.Mesh(new THREE.BoxGeometry(0.11,1.2,0.11),MAT.chrome);
+armA2.position.y=-0.6;armB.add(armA2);
+var claw=new THREE.Mesh(new THREE.ConeGeometry(0.14,0.3,8),MAT.circuit);
+claw.position.y=-1.25;armB.add(claw);
+var patient=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.46,2.4,12),MAT.boneDark);
+patient.position.y=1.2;gantry.add(patient);addWall(14.9,35.2,1.3,1.3);
+var scanPlane=new THREE.Mesh(new THREE.PlaneGeometry(2.6,0.06),MAT.holo);
+scanPlane.position.y=1.2;gantry.add(scanPlane);
+scene.add(gantry);
+/* -- oculus survey drones -- */
+var drones=new THREE.Group();drones.position.set(0,FLOOR+16,0);
+for(var dr=0;dr<3;dr++){
+  var dg=new THREE.Group();var da=dr*2.09;
+  dg.position.set(5*Math.sin(da),0,5*Math.cos(da));
+  var db=new THREE.Mesh(new THREE.OctahedronGeometry(0.3,0),MAT.bronzeDark);dg.add(db);
+  var de=new THREE.Mesh(new THREE.SphereGeometry(0.09,8,8),MAT.holo);de.position.z=0.26;dg.add(de);
+  var dcone=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.5,6,8,1,true),
+    new THREE.MeshBasicMaterial({color:0x2962FF,transparent:true,opacity:0.12,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
+  dcone.position.y=-3;dg.add(dcone);
+  drones.add(dg);
+}
+scene.add(drones);
+/* -- apse astrolabe -- */
+var astro=new THREE.Group();astro.position.set(0,FLOOR+4.6,-12.4);
+var astroRings=[];
+[[1.3,true],[1.0,false],[0.7,true]].forEach(function(arr){
+  var m=arr[1]?new THREE.MeshBasicMaterial({color:0x2962FF,transparent:true,opacity:0.85}):MAT.bronze;
+  var t=new THREE.Mesh(new THREE.TorusGeometry(arr[0],0.035,6,40),m);
+  astro.add(t);astroRings.push(t);
+});
+var astroCore=new THREE.Mesh(new THREE.IcosahedronGeometry(0.24,0),MAT.calcite);
+astro.add(astroCore);scene.add(astro);
+/* -- floor scan ring, expanding pulse from center -- */
+var scanRing=new THREE.Mesh(new THREE.RingGeometry(0.96,1.0,64),
+  new THREE.MeshBasicMaterial({color:0x2962FF,transparent:true,opacity:0.35,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
+scanRing.rotation.x=-Math.PI/2;scanRing.position.set(0,FLOOR+0.05,0);scene.add(scanRing);
+/* -- dome constellation (night only) -- */
+var conGeo=new THREE.BufferGeometry();var conPos=new Float32Array(260*3);
+for(var cs=0;cs<260;cs++){
+  var cth=Math.random()*Math.PI*2,cph=0.18+Math.random()*1.1;
+  conPos[cs*3]=13.2*Math.cos(cph)*Math.sin(cth);
+  conPos[cs*3+1]=DOMEY+13.2*Math.sin(cph)*0.5-6.6;
+  conPos[cs*3+2]=13.2*Math.cos(cph)*Math.cos(cth);
+}
+conGeo.setAttribute('position',new THREE.BufferAttribute(conPos,3));
+var constel=new THREE.Points(conGeo,new THREE.PointsMaterial({color:0xBFD4FF,size:0.09,transparent:true,opacity:0}));
+scene.add(constel);
+/* -- obelisk glyph orbit + circuit strips -- */
+var glyphs=new THREE.Group();glyphs.position.set(5.5,5.4,31);
+for(var gy=0;gy<6;gy++){
+  var cube=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.14,0.14),MAT.circuit);
+  var ga=gy*Math.PI/3;cube.position.set(1.1*Math.sin(ga),0,1.1*Math.cos(ga));
+  glyphs.add(cube);
+}
+scene.add(glyphs);
+for(var oc2=0;oc2<4;oc2++){
+  var oa=oc2*Math.PI/2+Math.PI/4;
+  var strip=new THREE.Mesh(new THREE.BoxGeometry(0.05,3.6,0.02),MAT.circuit);
+  strip.position.set(5.5+0.34*Math.sin(oa),3.4,31+0.34*Math.cos(oa));
+  strip.rotation.y=oa;scene.add(strip);
+}
+/* -- flower program: 700 instanced blooms in 5 colors -- */
+var NF=700;
+var bloomMat=new THREE.MeshStandardMaterial({color:0xFFFFFF,roughness:0.8});
+var bloomI=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.09,0),bloomMat,NF);
+var stemI=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.015,0.025,0.5,5),MAT.leafDark,NF);
+var FCOL=[new THREE.Color(0xD94F4F),new THREE.Color(0xE8B84B),new THREE.Color(0xB65CC7),new THREE.Color(0xF0EFEA),new THREE.Color(0xE87B4B)];
+function bedSpot(i){
+  var r=Math.random();
+  if(r<0.3){var fa=Math.random()*6.283,fr=2.75+Math.random()*0.75;return[5.5+fr*Math.sin(fa),31+fr*Math.cos(fa)];}
+  if(r<0.6)return[-16.4+Math.random()*1.1,26+Math.random()*13];
+  if(r<0.8)return[15.3+Math.random()*1.2,26+Math.random()*13];
+  return[-14+Math.random()*28,38.1+Math.random()*1.3];
+}
+for(var fi=0;fi<NF;fi++){
+  var fp=bedSpot(fi),fsc=0.7+Math.random()*0.8;
+  dummy2.position.set(fp[0],0.25*fsc,fp[1]);dummy2.scale.set(1,fsc,1);dummy2.rotation.y=0;dummy2.updateMatrix();
+  stemI.setMatrixAt(fi,dummy2.matrix);
+  dummy2.position.set(fp[0],0.5*fsc+0.03,fp[1]);dummy2.scale.set(fsc,fsc,fsc);dummy2.updateMatrix();
+  bloomI.setMatrixAt(fi,dummy2.matrix);
+  bloomI.setColorAt(fi,FCOL[fi%5]);
+}
+scene.add(stemI);scene.add(bloomI);
+/* portico planter pots */
+[[9.5,15.9],[-9.5,15.9]].forEach(function(pp){
+  var pot=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.3,0.6,10),MAT.graniteRed);
+  pot.position.set(pp[0],FLOOR+0.3,pp[1]);pot.castShadow=true;scene.add(pot);
+  var bush=new THREE.Mesh(new THREE.SphereGeometry(0.45,10,8),MAT.leafDark);
+  bush.position.set(pp[0],FLOOR+0.95,pp[1]);scene.add(bush);
+  addWall(pp[0],pp[1],0.9,0.9);
+});
+function signage(txt,x,y,z,ry,w){
+  var cv=document.createElement('canvas');cv.width=512;cv.height=128;
+  var ctx=cv.getContext('2d');
+  if(ctx){ctx.fillStyle='#0D0D0D';ctx.fillRect(0,0,512,128);
+    ctx.fillStyle='#F0F4F8';ctx.font='700 64px Helvetica,Arial';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('“'+txt+'”',256,64);}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;
+  var m=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),
+        new THREE.MeshBasicMaterial({map:tx,transparent:false}));
+  m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);return m;
+}
+signage('PIAZZA',5.5,1.7,33.6,0,2.6);
+signage('NOT A RUIN',0,0.9,25.65,0,3.0);
+signage('PORTICO',0,FLOOR+6.8,16.95,0,2.6);
+signage('ROTUNDA',0,FLOOR+5.6,13.85,Math.PI,2.6);
+signage('DOME',13.55,FLOOR+8.6,0,-Math.PI/2,4.0);
+signage('APSE',0,FLOOR+5.4,-13.75,0,2.4);
+signage('SUN',2.0,FLOOR+0.9,2.0,2.4,1.4);
+signage('ANCIENT FUTURE',-12,2.6,33.2,0,3.0);
+signage('CUSTODIANS ON DUTY',0,2.2,39.3,Math.PI,3.0);
+signage('RESTORATION IN PROGRESS',13.6,2.6,34.4,Math.PI*0.75,3.0);
+signage('THE ORACLE',0,FLOOR+2.9,-12.9,0,1.8);
+
+/* ================= [ART] frames + hanging ================= */
+var frames=[];var hung=0;
+function emptyTex(){var cv=document.createElement('canvas');cv.width=256;cv.height=256;var ctx=cv.getContext('2d');
+  if(ctx){ctx.fillStyle='#1A1A22';ctx.fillRect(0,0,256,256);ctx.strokeStyle='#8899AA';ctx.lineWidth=3;ctx.strokeRect(14,14,228,228);
+  ctx.fillStyle='#8899AA';ctx.font='700 26px Helvetica,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('“HANG ART”',128,118);ctx.font='16px Consolas,monospace';ctx.fillText('CLICK TO UPLOAD',128,152);}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;return tx;}
+function addFrame(x,y,z,ry,w,h){
+  var g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;
+  var back=new THREE.Mesh(new THREE.BoxGeometry(w+0.24,h+0.24,0.08),MAT.frame);
+  var cvs=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:emptyTex()}));
+  cvs.position.z=0.10;g.add(back);g.add(cvs);scene.add(g);
+  var spot=new THREE.SpotLight(0xFFF2DD,1.1,18,0.6,0.5,1.5);
+  spot.position.set(x-Math.sin(ry)*2.5,y+2.6,z-Math.cos(ry)*2.5);
+  spot.target=cvs;scene.add(spot);scene.add(spot.target);
+  frames.push({group:g,canvas:cvs,w:w,h:h,filled:false,spot:spot});
+  return cvs;
+}
+/* rotunda drum wall between niches/aedicules, frames face center (ry = theta+PI) */
+addFrame(9.55,FLOOR+2.6,9.55,3.927,2.4,1.6);
+addFrame(13.5,FLOOR+2.6,0,4.712,2.4,1.6);
+addFrame(9.55,FLOOR+2.6,-9.55,5.497,2.4,1.6);
+addFrame(-9.55,FLOOR+2.6,-9.55,0.785,2.4,1.6);
+addFrame(-13.5,FLOOR+2.6,0,1.571,2.4,1.6);
+addFrame(-9.55,FLOOR+2.6,9.55,2.356,2.4,1.6);
+/* apse flanks */
+addFrame(2.79,FLOOR+2.4,-13.1,6.074,1.6,2.2);
+addFrame(-2.79,FLOOR+2.4,-13.1,0.209,1.6,2.2);
+/* aedicule intercolumns */
+addFrame(5.19,FLOOR+1.9,12.52,3.534,1.1,1.4);
+addFrame(5.19,FLOOR+1.9,-12.52,5.890,1.1,1.4);
+addFrame(-5.19,FLOOR+1.9,-12.52,0.393,1.1,1.4);
+addFrame(-5.19,FLOOR+1.9,12.52,2.749,1.1,1.4);
+/* door reveal interior faces */
+addFrame(4.85,FLOOR+2.2,14.09,0.332,1.8,1.3);
+addFrame(-4.85,FLOOR+2.2,14.09,-0.332,1.8,1.3);
+/* piazza easels */
+addFrame(-6,1.45,29,0.6,1.6,1.2);addWall(-6,29,0.8,0.8);
+addFrame(12,1.45,33,-0.5,1.6,1.2);addWall(12,33,0.8,0.8);
+var artCountEl=document.getElementById('artCount');
+function plaque(f,name){
+  var cv=document.createElement('canvas');cv.width=256;cv.height=96;
+  var ctx=cv.getContext('2d');
+  if(ctx){ctx.fillStyle='#F0F4F8';ctx.fillRect(0,0,256,96);
+    ctx.fillStyle='#0D0D0D';ctx.font='italic 22px Georgia';ctx.textAlign='center';
+    ctx.fillText('“'+name.slice(0,18)+'”',128,40);
+    ctx.fillStyle='#8899AA';ctx.font='14px Consolas,monospace';
+    ctx.fillText('MLOW · 2026',128,68);}
+  var tx=new THREE.Texture(cv);tx.needsUpdate=true;
+  var p=new THREE.Mesh(new THREE.PlaneGeometry(0.7,0.26),new THREE.MeshBasicMaterial({map:tx}));
+  p.position.set(f.w/2+0.55,-f.h/2+0.1,0.05);f.group.add(p);
+}
+function hangImage(img,f,name){
+  var tx=new THREE.Texture(img);tx.needsUpdate=true;
+  var ar=(img.width||1)/(img.height||1),fw=f.w,fh=f.h;
+  var sw=fw,sh=fw/ar;if(sh>fh){sh=fh;sw=fh*ar;}
+  f.canvas.scale.set(sw/fw,sh/fh,1);
+  f.canvas.material=new THREE.MeshBasicMaterial({map:tx});
+  if(!f.filled){f.filled=true;hung++;plaque(f,name);}
+  f.spot.intensity=1.8;
+  artCountEl.textContent=hung+' / '+frames.length;
+  toast('HUNG: “'+name.toUpperCase().slice(0,24)+'”');
+}
+function nextEmpty(){for(var i=0;i<frames.length;i++)if(!frames[i].filled)return frames[i];return frames[hung%frames.length];}
+function loadFiles(list,target){
+  Array.prototype.forEach.call(list,function(file,i){
+    if(!file.type||file.type.indexOf('image')!==0)return;
+    var rd=new FileReader();
+    rd.onload=function(e){var img=new Image();
+      img.onload=function(){hangImage(img,(i===0&&target)?target:nextEmpty(),file.name.replace(/\.[^.]+$/,''));};
+      img.src=e.target.result;};
+    rd.readAsDataURL(file);});
+}
+var fileInput=document.getElementById('file');var clickTarget=null;
+document.getElementById('artBtn').addEventListener('click',function(){clickTarget=null;fileInput.click();});
+fileInput.addEventListener('change',function(){loadFiles(fileInput.files,clickTarget);fileInput.value='';});
+document.addEventListener('dragover',function(e){e.preventDefault();});
+document.addEventListener('drop',function(e){e.preventDefault();if(e.dataTransfer)loadFiles(e.dataTransfer.files,null);});
+/* raycast click-to-hang */
+var ray=new THREE.Raycaster();
+function frameUnderCross(){
+  ray.setFromCamera(new THREE.Vector2(0,0),camera);
+  var meshes=frames.map(function(f){return f.canvas;});
+  var hits=ray.intersectObjects(meshes);
+  if(!hits.length)return null;
+  for(var i=0;i<frames.length;i++)if(frames[i].canvas===hits[0].object)return frames[i];
+  return null;
+}
+
+/* ================= [TIME] presets ================= */
+var sun=new THREE.DirectionalLight(0xFFB073,1.2);sun.castShadow=true;
+sun.shadow.camera.left=-30;sun.shadow.camera.right=30;sun.shadow.camera.top=45;sun.shadow.camera.bottom=-20;
+sun.shadow.mapSize.width=1024;sun.shadow.mapSize.height=1024;
+sun.position.set(-12,20,16);scene.add(sun);
+var hemi=new THREE.HemisphereLight(0xBFD4FF,0x6B7A56,0.75);scene.add(hemi);
+var amb=new THREE.AmbientLight(0xFFEFE0,0.3);scene.add(amb);
+var bounce=new THREE.PointLight(0xFFE8C8,0.85,60,1.6);bounce.position.set(0,FLOOR+13,0);scene.add(bounce);
+scene.fog=new THREE.Fog(0xD8C0A0,60,190);
+var practicals=[];
+var PRACPOS=[ /* rotunda torcheres r12.2 at 22.5+45k deg */
+  [4.67,3.3,11.27],[11.27,3.3,4.67],[11.27,3.3,-4.67],[4.67,3.3,-11.27],
+  [-4.67,3.3,-11.27],[-11.27,3.3,-4.67],[-11.27,3.3,4.67],[-4.67,3.3,11.27],
+  /* brazier + relic uplight + sand geode */ [2.8,2.4,-11.2],[0,1.8,-12.3],[-9.5,1.6,-8],
+  /* portico ceiling */ [-5,7.6,18.5],[5,7.6,18.5],[-5,7.6,21],[5,7.6,21],
+  /* door flanks */ [-3.2,4.2,14.5],[3.2,4.2,14.5],
+  /* fountain */ [5.5,2.0,31],
+  /* piazza lamps */ [-10,2.6,29],[-10,2.6,35],[13,2.6,35],
+  /* steps */ [-7,2.2,24],[7,2.2,24] ];
+/* torchere visuals: bronze pole + flame cone at the first 8 PRACPOS */
+var torchFires=[];
+for(var tf=0;tf<8;tf++){
+  var tpx=PRACPOS[tf][0],tpz=PRACPOS[tf][2];
+  var pole=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.13,2.6,8),MAT.bronzeDark);
+  pole.position.set(tpx,FLOOR+1.3,tpz);scene.add(pole);
+  var bowl=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.14,0.22,10),MAT.bronze);
+  bowl.position.set(tpx,FLOOR+2.68,tpz);scene.add(bowl);
+  var fl=new THREE.Mesh(new THREE.ConeGeometry(0.16,0.5,8),
+    new THREE.MeshBasicMaterial({color:0xFFA340,transparent:true,opacity:0.9}));
+  fl.position.set(tpx,FLOOR+3.0,tpz);scene.add(fl);torchFires.push(fl);
+  addWall(tpx,tpz,0.6,0.6);
+}
+for(var pl=0;pl<PRACPOS.length;pl++){
+  var cool=(pl===9||pl===10);
+  var L=new THREE.PointLight(cool?0x7FD4FF:0xFFD9A0,0,cool?7:9,2);
+  L.position.set(PRACPOS[pl][0],PRACPOS[pl][1],PRACPOS[pl][2]);
+  scene.add(L);practicals.push(L);
+}
+var PRESETS=[
+ {sun:0xFFB073,si:1.25,hemi:0.75,fog:0xD8C0A0,fogN:60,fogF:190,sky:0xEFC08A,prac:0.0},
+ {sun:0xFFFFFF,si:1.35,hemi:1.05,fog:0xCFE0E8,fogN:70,fogF:220,sky:0xBFD8F0,prac:0.0},
+ {sun:0x4A5A88,si:0.5,hemi:0.8,fog:0x0A1420,fogN:55,fogF:170,sky:0x081018,prac:1.6}
+];
+/* ---- THE BEAM: oculus sun shaft, a real tenant that moves ---- */
+var BEAMP=[{off:12.2,col:0xFFD9A0,op:0.15},{off:4.2,col:0xFFF6E6,op:0.11},{off:8.2,col:0xBFD4FF,op:0.09}];
+var beamMat=new THREE.MeshBasicMaterial({color:0xFFD9A0,transparent:true,opacity:0.15,
+  blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+var beamGeo=new THREE.CylinderGeometry(2.0,2.6,1,20,1,true);
+var beam=new THREE.Mesh(beamGeo,beamMat);scene.add(beam);
+var beamGlow=new THREE.Mesh(new THREE.CircleGeometry(2.6,32),
+  new THREE.MeshBasicMaterial({color:0xFFD9A0,transparent:true,opacity:0.22,
+    blending:THREE.AdditiveBlending,depthWrite:false}));
+beamGlow.rotation.x=-Math.PI/2;scene.add(beamGlow);
+var moteGeo=new THREE.BufferGeometry(),motePos=new Float32Array(220*3);
+for(var mp=0;mp<220;mp++){
+  var ang=Math.random()*6.283,rr=Math.sqrt(Math.random())*0.9;
+  motePos[mp*3]=Math.cos(ang)*rr;motePos[mp*3+1]=Math.random()-0.5;motePos[mp*3+2]=Math.sin(ang)*rr;
+}
+moteGeo.setAttribute('position',new THREE.BufferAttribute(motePos,3));
+var motes=new THREE.Points(moteGeo,new THREE.PointsMaterial({color:0xFFF0D0,size:0.06,
+  transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false}));
+beam.add(motes);
+var beamAz=2.4,beamOff=12.2,bx=0,bz=0;
+function tickBeam(dt){
+  beamAz+=dt*0.05;
+  beamOff+=(BEAMP[curPreset].off-beamOff)*Math.min(1,dt*1.5);
+  bx=Math.sin(beamAz)*beamOff;bz=Math.cos(beamAz)*beamOff;
+  var ox=0,oy=OCY,oz=0;
+  var vx=bx-ox,vy=FLOOR-oy,vz=bz-oz;
+  var len=Math.sqrt(vx*vx+vy*vy+vz*vz);
+  beam.position.set((ox+bx)/2,(oy+FLOOR)/2,(oz+bz)/2);
+  beam.scale.set(1,len,1);
+  var q=new THREE.Quaternion();
+  q.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(vx/len,vy/len,vz/len));
+  beam.quaternion.copy(q);
+  beamGlow.position.set(bx,FLOOR+0.03,bz);
+  motes.rotation.y+=dt*0.3;
+}
+var curPreset=0,lerpT=1,fromP=PRESETS[0],toP=PRESETS[0];
+function setPreset(i){
+  fromP={sun:sun.color.getHex(),si:sun.intensity,hemi:hemi.intensity,
+    fog:scene.fog.color.getHex(),fogN:scene.fog.near,fogF:scene.fog.far,
+    sky:(scene.background&&scene.background.getHex)?scene.background.getHex():PRESETS[curPreset].sky,
+    prac:practicals[0].intensity};
+  toP=PRESETS[i];curPreset=i;lerpT=0;
+  beamMat.color.setHex(BEAMP[i].col);beamMat.opacity=BEAMP[i].op;
+  beamGlow.material.color.setHex(BEAMP[i].col);beamGlow.material.opacity=BEAMP[i].op*1.5;
+  var btns=document.querySelectorAll('#bar button[data-preset]');
+  for(var b=0;b<btns.length;b++)btns[b].classList.toggle('active',+btns[b].getAttribute('data-preset')===i);
+}
+scene.background=new THREE.Color(PRESETS[0].sky);
+function lerpHex(a,b,t){
+  var ca=new THREE.Color(a),cb=new THREE.Color(b);return ca.lerp(cb,t);
+}
+function tickPreset(dt){
+  if(lerpT>=1)return;lerpT=Math.min(1,lerpT+dt/2);var t=lerpT;
+  sun.color.copy(lerpHex(fromP.sun,toP.sun,t));
+  sun.intensity=fromP.si+(toP.si-fromP.si)*t;
+  hemi.intensity=fromP.hemi+(toP.hemi-fromP.hemi)*t;
+  scene.fog.color.copy(lerpHex(fromP.fog,toP.fog,t));
+  scene.fog.near=fromP.fogN+(toP.fogN-fromP.fogN)*t;
+  scene.fog.far=fromP.fogF+(toP.fogF-fromP.fogF)*t;
+  scene.background.copy(lerpHex(fromP.sky,toP.sky,t));
+  var pi=fromP.prac+(toP.prac-fromP.prac)*t;
+  for(var i=0;i<practicals.length;i++)practicals[i].intensity=pi;
+}
+
+/* ================= [LIFE] agents ================= */
+var agents=[];
+function makeAgent(pathPts,hover){
+  var g=new THREE.Group();
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.34,1.15,10),MAT.agent);body.position.y=0.85;
+  var head=new THREE.Mesh(new THREE.SphereGeometry(0.24,12,10),MAT.agent);head.position.y=1.62;
+  var eye=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,8),MAT.agentAccent);eye.position.set(0,1.64,0.2);
+  g.add(body);g.add(head);g.add(eye);scene.add(g);
+  agents.push({g:g,path:pathPts,seg:0,t:0,pause:Math.random()*2,phase:Math.random()*6.28,hover:hover});
+}
+makeAgent([[0,10],[7.1,7.1],[10,0],[7.1,-7.1],[0,-10],[-7.1,-7.1],[-10,0],[-7.1,7.1]],false); // circumambulator
+makeAgent([[3,3],[-3,3],[-3,-3],[3,-3]],true);               // beam-chaser spirit
+makeAgent([[7.8,7.8],[11,0],[7.8,-7.8]],false);              // niche viewer
+makeAgent([[-2.5,-10],[2.5,-10]],false);                     // apse guard
+makeAgent([[-8,18.5],[8,18.5]],false);                       // portico pacer
+makeAgent([[-5,24],[5,24]],false);                           // steps greeter
+makeAgent([[-9,28],[9,28],[9,36],[-9,36]],false);            // piazza loop
+makeAgent([[2.5,31],[5.5,28],[8.5,31],[5.5,34]],true);       // fountain spirit
+/* custodian droids, bronze bodies, evil-eye-blue visors, hover discs */
+function makeDroid(pathPts){
+  var g=new THREE.Group();
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.24,0.9,10),MAT.bronzeDark);body.position.y=0.95;
+  var visor=new THREE.Mesh(new THREE.TorusGeometry(0.22,0.05,6,20),new THREE.MeshBasicMaterial({color:0x2962FF}));
+  visor.position.y=1.42;visor.rotation.x=Math.PI/2;
+  var disc=new THREE.Mesh(new THREE.CylinderGeometry(0.34,0.4,0.1,12),MAT.bronzeDark);disc.position.y=0.42;
+  var glow=new THREE.Mesh(new THREE.CircleGeometry(0.42,16),
+    new THREE.MeshBasicMaterial({color:0x2962FF,transparent:true,opacity:0.4,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
+  glow.rotation.x=-Math.PI/2;glow.position.y=0.34;
+  var ant=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.5,5),MAT.chrome);ant.position.y=1.75;
+  g.add(body);g.add(visor);g.add(disc);g.add(glow);g.add(ant);scene.add(g);
+  agents.push({g:g,path:pathPts,seg:0,t:0,pause:Math.random()*2,phase:Math.random()*6.28,hover:true});
+}
+makeDroid([[0,11],[7.78,7.78],[11,0],[7.78,-7.78],[0,-11],[-7.78,-7.78],[-11,0],[-7.78,7.78]]); // rotunda patrol
+makeDroid([[-9.8,28.5],[9.8,28.5],[9.8,36.5],[-9.8,36.5]]);  // piazza patrol
+makeDroid([[-8,20.5],[8,20.5],[0,23.5]]);                    // portico sweep
+/* static figures */
+for(var sf=0;sf<6;sf++){
+  var fg=new THREE.Group();
+  var b2=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.3,1.1,8),MAT.agent);b2.position.y=0.8;
+  var h2=new THREE.Mesh(new THREE.SphereGeometry(0.22,10,8),MAT.agent);h2.position.y=1.55;
+  fg.add(b2);fg.add(h2);
+  var positions=[[6.6,1.2],[-6.6,-1.2],[1.8,-10.4],[10,26.5],[-9,32],[3,25]];
+  fg.position.set(positions[sf][0],heightAt(positions[sf][0],positions[sf][1]),positions[sf][1]);
+  fg.rotation.y=Math.random()*6.28;scene.add(fg);
+}
+function tickAgents(dt,time){
+  for(var i=0;i<agents.length;i++){var a=agents[i];
+    if(a.pause>0){a.pause-=dt;}
+    else{
+      var p0=a.path[a.seg],p1=a.path[(a.seg+1)%a.path.length];
+      var dx=p1[0]-p0[0],dz=p1[1]-p0[1],len=Math.sqrt(dx*dx+dz*dz)||1;
+      a.t+=dt*1.1/len;
+      if(a.t>=1){a.t=0;a.seg=(a.seg+1)%a.path.length;if(Math.random()<0.4)a.pause=1+Math.random()*2.5;}
+      var x=p0[0]+dx*a.t,z=p0[1]+dz*a.t;
+      a.g.position.x=x;a.g.position.z=z;
+      var target=Math.atan2(dx,dz);
+      var cur=a.g.rotation.y,diff=target-cur;
+      while(diff>Math.PI)diff-=6.283;while(diff<-Math.PI)diff+=6.283;
+      a.g.rotation.y=cur+diff*Math.min(1,dt*5);
+    }
+    var gy=heightAt(a.g.position.x,a.g.position.z);
+    a.g.position.y=gy+(a.hover?0.25+Math.sin(time*2+a.phase)*0.12:0);
+  }
+  geo1.rotation.y+=dt*0.2;
+  MAT.calcite.emissiveIntensity=0.5+Math.sin(time*1.4)*0.2;
+}
+/* ================= [WATER] fountain / beam / fire ================= */
+function tickWater(dt,time){
+  var pos=waterGeo.attributes.position;
+  for(var i=0;i<pos.count;i++){
+    var vx=pos.getX(i),vy=pos.getY(i);
+    pos.setZ(i,Math.sin(vx*0.9+time*2.4)*0.05+Math.cos(vy*1.1+time*1.9)*0.04);
+  }
+  pos.needsUpdate=true;
+  tickBeam(dt);
+  beamGlow.material.opacity=BEAMP[curPreset].op*1.5*(0.85+0.15*Math.sin(time*0.9));
+  for(var tfi=0;tfi<torchFires.length;tfi++){
+    torchFires[tfi].scale.y=1+Math.sin(time*10+tfi*1.7)*0.2;
+    torchFires[tfi].material.opacity=0.75+0.2*Math.sin(time*13+tfi*2.3);
+  }
+  fireLight.intensity=1.0+Math.sin(time*9)*0.18+Math.sin(time*23)*0.1;
+  fire.scale.y=1+Math.sin(time*11)*0.15;
+  /* [FUTURE-ANCIENT] machine choreography */
+  gyroRings[0].rotation.x+=dt*0.7;gyroRings[1].rotation.y+=dt*1.1;gyroRings[2].rotation.z+=dt*0.9;
+  mono.position.y=FLOOR+1.9+Math.sin(time*0.8)*0.15;mono.rotation.y+=dt*0.25;
+  drones.rotation.y+=dt*0.22;
+  astro.rotation.y+=dt*0.4;astroRings[0].rotation.x+=dt*0.6;astroRings[2].rotation.z+=dt*0.8;
+  var sc=(time%6)/6;scanRing.scale.set(1+sc*12,1+sc*12,1);scanRing.material.opacity=0.35*(1-sc);
+  glyphs.rotation.y+=dt*0.5;
+  armRoot.rotation.z=Math.sin(time*0.5)*0.35;armB.rotation.z=Math.sin(time*0.7+1)*0.5;
+  scanPlane.position.y=1.2+Math.sin(time*1.3)*1.0;
+  constel.material.opacity+=(((curPreset===2)?0.9:0.0)-constel.material.opacity)*Math.min(1,dt*2);
+}
+
+/* ================= [CONTROLS] three-layer look ================= */
+var entered=false;
+var enterEl=document.getElementById('enter');
+enterEl.addEventListener('click',function(){
+  entered=true;enterEl.style.display='none';
+  if(canvas.requestPointerLock)try{canvas.requestPointerLock();}catch(e){}
+});
+document.addEventListener('mousemove',function(e){
+  if(document.pointerLockElement===canvas){
+    yaw-=e.movementX*0.0024;pitch-=e.movementY*0.0022;
+    pitch=Math.max(-1.35,Math.min(1.35,pitch));
+  }
+});
+/* layer 2: pointer-capture drag */
+var dragging=false,lastPX=0,lastPY=0;
+canvas.addEventListener('pointerdown',function(e){
+  if(document.pointerLockElement===canvas)return;
+  dragging=true;lastPX=e.clientX;lastPY=e.clientY;
+  if(canvas.setPointerCapture)try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+});
+canvas.addEventListener('pointermove',function(e){
+  if(!dragging)return;
+  yaw-=(e.clientX-lastPX)*0.0038;pitch-=(e.clientY-lastPY)*0.0034;
+  pitch=Math.max(-1.35,Math.min(1.35,pitch));
+  lastPX=e.clientX;lastPY=e.clientY;
+});
+canvas.addEventListener('pointerup',function(){dragging=false;});
+/* click-to-hang (suppress after a drag) */
+var downX=0,downY=0;
+canvas.addEventListener('pointerdown',function(e){downX=e.clientX;downY=e.clientY;});
+canvas.addEventListener('pointerup',function(e){
+  if(!entered)return;
+  if(Math.abs(e.clientX-downX)+Math.abs(e.clientY-downY)>8)return;
+  var f=frameUnderCross();
+  if(f){clickTarget=f;fileInput.click();}
+});
+/* layer 3: keyboard */
+document.addEventListener('keydown',function(e){
+  keys[e.code]=true;
+  if(e.code==='Digit1')setPreset(0);
+  if(e.code==='Digit2')setPreset(1);
+  if(e.code==='Digit3')setPreset(2);
+  if(e.code==='KeyH')toggleHud();
+});
+document.addEventListener('keyup',function(e){keys[e.code]=false;});
+/* mobile joystick */
+var joy=document.getElementById('joy'),nub=document.getElementById('nub');
+var joyVec={x:0,y:0},joyId=null;
+joy.addEventListener('pointerdown',function(e){joyId=e.pointerId;joy.setPointerCapture&&joy.setPointerCapture(e.pointerId);});
+joy.addEventListener('pointermove',function(e){
+  if(joyId!==e.pointerId)return;
+  var r=joy.getBoundingClientRect();
+  var dx=e.clientX-(r.left+55),dy=e.clientY-(r.top+55);
+  var len=Math.sqrt(dx*dx+dy*dy),max=38;
+  if(len>max){dx*=max/len;dy*=max/len;}
+  nub.style.left=(35+dx)+'px';nub.style.top=(35+dy)+'px';
+  joyVec.x=dx/max;joyVec.y=dy/max;
+});
+function joyEnd(){joyId=null;joyVec.x=0;joyVec.y=0;nub.style.left='35px';nub.style.top='35px';}
+joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+
+/* zone teleports */
+var TP={piazza:{x:0,z:36,yaw:0},portico:{x:0,z:19,yaw:0},rotunda:{x:0,z:6,yaw:0},apse:{x:0,z:-9,yaw:0}};
+var tpBtns=document.querySelectorAll('#bar button[data-tp]');
+for(var tb=0;tb<tpBtns.length;tb++){
+  tpBtns[tb].addEventListener('click',function(){
+    var t=TP[this.getAttribute('data-tp')];
+    player.x=t.x;player.z=t.z;yaw=t.yaw;pitch=0;
+    toast('“'+this.textContent.replace(/“|”/g,'')+'”');
+  });
+}
+var presetBtns=document.querySelectorAll('#bar button[data-preset]');
+for(var pb=0;pb<presetBtns.length;pb++){
+  presetBtns[pb].addEventListener('click',function(){setPreset(+this.getAttribute('data-preset'));});
+}
+
+/* ================= [AUDIO] ambient bed ================= */
+var audioOn=false,audioCtx=null,audioGain=null;
+function toggleAudio(){
+  var btn=document.getElementById('audioBtn');
+  if(!audioOn){
+    try{
+      if(!audioCtx){
+        var AC=window.AudioContext||window.webkitAudioContext;
+        audioCtx=new AC();
+        var buf=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate);
+        var d=buf.getChannelData(0);var last=0;
+        for(var i=0;i<d.length;i++){var w=Math.random()*2-1;last=(last+0.02*w)/1.02;d[i]=last*3.2;}
+        var src=audioCtx.createBufferSource();src.buffer=buf;src.loop=true;
+        var filt=audioCtx.createBiquadFilter();filt.type='lowpass';filt.frequency.value=420;
+        audioGain=audioCtx.createGain();audioGain.gain.value=0.05;
+        src.connect(filt);filt.connect(audioGain);audioGain.connect(audioCtx.destination);src.start();
+      }
+      if(audioCtx.resume)audioCtx.resume();
+      audioGain.gain.value=0.05;audioOn=true;btn.textContent='SOUND: ON';
+    }catch(e){toast('AUDIO UNAVAILABLE');}
+  }else{if(audioGain)audioGain.gain.value=0;audioOn=false;btn.textContent='SOUND: OFF';}
+}
+document.getElementById('audioBtn').addEventListener('click',toggleAudio);
+
+/* ================= HUD helpers ================= */
+var toastEl=document.getElementById('toast'),toastTimer=null;
+function toast(msg){
+  toastEl.textContent=msg;toastEl.style.opacity='1';
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){toastEl.style.opacity='0';},2200);
+}
+var hudEl=document.getElementById('hud'),hudTog=document.getElementById('hudToggle');
+function toggleHud(){
+  var hidden=hudEl.style.display==='none';
+  hudEl.style.display=hidden?'block':'none';
+  hudTog.style.display=hidden?'none':'block';
+}
+document.getElementById('hideHud').addEventListener('click',toggleHud);
+hudTog.addEventListener('click',toggleHud);
+var zoneEl=document.getElementById('zoneName');
+function zoneOf(){
+  if(Math.hypot(player.x,player.z)<13.4){
+    if(Math.hypot(player.x-bx,player.z-bz)<2.6)return'“SUN”';
+    if(player.z<-9)return'“APSE”';
+    return'“ROTUNDA”';
+  }
+  if(player.z<22.6)return'“PORTICO”';
+  return'“PIAZZA”';
+}
+
+/* ================= main loop ================= */
+var clock=new THREE.Clock();
+function step(dt,time){
+  /* movement */
+  var f=0,s=0;
+  if(keys['KeyW'])f+=1;if(keys['KeyS'])f-=1;
+  if(keys['KeyA'])s-=1;if(keys['KeyD'])s+=1;
+  f+=-joyVec.y;s+=joyVec.x;
+  var spd=(keys['ShiftLeft']||keys['ShiftRight'])?player.stride:player.speed;
+  if(f||s){
+    var len=Math.sqrt(f*f+s*s);f/=len;s/=len;
+    var nx=player.x+(Math.sin(yaw)*-f+Math.cos(yaw)*s)*spd*dt;
+    var nz=player.z+(Math.cos(yaw)*-f-Math.sin(yaw)*s)*spd*dt;
+    tryMove(nx,nz);
+  }
+  if(keys['ArrowLeft']||keys['KeyQ'])yaw+=3.0*dt;
+  if(keys['ArrowRight']||keys['KeyE'])yaw-=3.0*dt;
+  if(keys['ArrowUp'])pitch=Math.min(1.35,pitch+2.0*dt);
+  if(keys['ArrowDown'])pitch=Math.max(-1.35,pitch-2.0*dt);
+  player.y+=((heightAt(player.x,player.z)+1.7)-player.y)*Math.min(1,dt*8);
+  camera.position.set(player.x,player.y,player.z);
+  camera.rotation.order='YXZ';camera.rotation.y=yaw;camera.rotation.x=pitch;
+  tickPreset(dt);tickAgents(dt,time);tickWater(dt,time);
+  zoneEl.textContent=zoneOf();
+}
+function animate(){
+  requestAnimationFrame(animate);
+  var dt=Math.min(clock.getDelta(),0.1);
+  step(dt,clock.elapsedTime);
+  renderer.render(scene,camera);
+}
+window.addEventListener('resize',function(){
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+animate();
+
+/* ================= [TEST] harness hooks ================= */
+window.__game={player:player,walls:walls,tryMove:tryMove,collides:collides,
+  setPreset:setPreset,step:step,agents:agents,frames:frames,
+  getYaw:function(){return yaw;},setYaw:function(v){yaw=v;},keys:keys,heightAt:heightAt};
+})();
+</script>
+</body>
+</html>
