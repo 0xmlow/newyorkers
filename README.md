@@ -18,8 +18,8 @@ the site. Walk it at the link above.
 | `model/barney_greengrass_2026-09-13.glb` | The shop as modelled, untouched |
 | `assets/museum/props/npc_*.glb` | Fourteen of MLow's ON LOCATION characters, standing and walking in the room |
 | `assets/museum/props/barney_bagel.glb` | A bagel and lox plate, Trellis image to 3D from a GPT concept |
-| `assets/museum/props/ph_*.glb` | A cutting board and a croissant, CC0 from Poly Haven (`credits/`) |
-| `assets/museum/barney/` | The 43 merch pieces, dithered, the wallpaper panel, the smoked fish cut outs |
+| `assets/museum/props/ph_*.glb` | A cutting board, a croissant and a cash register, CC0 from Poly Haven (`credits/`) |
+| `assets/museum/barney/` | The 43 merch pieces, dithered, the wallpaper panel, the smoked fish cut outs, the king for the floor illusion |
 | `HANDOFF_BARNEY_2026-10-12.md` | How it was made, what was verified, what was not |
 
 The real layout, from first hand accounts: the deli case on the right as you come in with the chalkboards behind it,

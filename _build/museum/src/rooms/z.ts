@@ -265,6 +265,7 @@ export const katz: RoomDef = {
    material covers: boxes from Blender map 0 to 1 per face, so a floor needs many repeats and a jar needs one.
    It also hides the crude fish boxes in the case, which the photo cut outs replace. */
 const SURF = 'assets/museum/surfaces/';
+const KING_H = 970;   // king_cutout.png is 768 wide; its height is written here by hand after the cut (see barney_art.py's neighbour, the cut in the handoff)
 const surfTex = new Map<string, T.Texture>();
 function surf(file: string, srgb: boolean, rx: number, ry: number) {
   const key = `${file}:${rx}:${ry}`; let t = surfTex.get(key);
@@ -289,11 +290,42 @@ const RETEX: Record<string, { kind: string; rx: number; ry: number; tint?: numbe
   beam: { kind: 'planks', rx: 4, ry: 1, tint: 0xd8cfbd }, clock_w: { kind: 'plaster', rx: 1, ry: 1, tint: 0xf4f1ea },
 };
 const HIDE = new Set(['M_Counter_salmon', 'M_Counter_whitefish', 'fish_2', 'M_Food_lox', 'M_Food_bagel', 'M_Food_latke', 'M_Food_plate_grn']);
+/* The three chalkboards over the case. The model's own boards priced caviar by the ounce and little else; these
+   are the store's real categories at prices a person pays at the counter in 2026, by the quarter pound where
+   the real board sells by the quarter pound. Drawn as chalk on slate, cream for the items, the store's red for
+   the headings. One canvas per board, assigned by the model's material name. */
+const BOARDS: Record<string, { title: string; sub: string; items: [string, string][] }> = {
+  img_chalk_0: { title: 'SMOKED FISH', sub: 'BY THE QUARTER POUND', items: [['Nova Scotia salmon', '18'], ['Scotch salmon', '19'], ['Gaspe salmon', '19'], ['Kippered salmon', '15'], ['Pastrami salmon', '17'], ['Gravlax', '17'], ['Sturgeon', '26'], ['Sable', '17'], ['Whitefish, by the piece', '14'], ['Smoked trout', '13'], ['Belly lox', '15'], ['Baked salmon', '15']] },
+  img_chalk_1: { title: 'APPETIZING', sub: 'HERRING, SALADS, SPREADS', items: [['Matjes herring', '7.50'], ['Schmaltz herring', '7.50'], ['Pickled herring', '6.50'], ['Herring in cream sauce', '7.50'], ['Chopped herring', '9'], ['Whitefish salad', '11'], ['Baked salmon salad', '11'], ['Chopped liver', '9'], ['Egg salad', '6'], ['Cream cheese, plain', '4.50'], ['Vegetable cream cheese', '5'], ['Bagel · bialy · roll', '2.50']] },
+  img_chalk_2: { title: 'SANDWICHES', sub: 'ON A BAGEL, BIALY OR ROLL  ·  OPEN FACE ADD 2.50', items: [['Nova and cream cheese', '21'], ['Sturgeon', '25'], ['Sturgeon and sable', '30'], ['Sable and cream cheese', '23'], ['Triple Decker No. 3', '29.50'], ['Whitefish salad', '17'], ['Chopped liver', '16'], ['Eggs with onions', '14'], ['Eggs with nova', '19'], ['Latkes, two', '9'], ['Cinnamon babka, slice', '6'], ['Fresh squeezed orange juice', '7']] },
+};
+const boardTex = new Map<string, T.CanvasTexture>();
+function board(name: string) {
+  let t = boardTex.get(name); if (t) return t;
+  const b = BOARDS[name], W = 1024, H = 740, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d')!;
+  g.fillStyle = '#1c211e'; g.fillRect(0, 0, W, H);
+  const rnd = X.mulberry(name.length * 7 + 3);                      // chalk dust and wiped ghosts
+  for (let i = 0; i < 1400; i++) { g.fillStyle = `rgba(240,236,220,${0.02 + rnd() * 0.05})`; g.fillRect(rnd() * W, rnd() * H, 2 + rnd() * 5, 1 + rnd() * 2); }
+  g.strokeStyle = '#d9c9a0'; g.lineWidth = 6; g.strokeRect(16, 16, W - 32, H - 32);
+  g.textAlign = 'center'; g.fillStyle = '#e6b84a'; g.font = '700 74px Georgia, serif'; g.fillText(b.title, W / 2, 96);
+  g.fillStyle = '#c9524a'; g.font = '700 26px Helvetica Neue, Arial, sans-serif'; g.fillText(b.sub, W / 2, 136);
+  g.strokeStyle = '#c9524a'; g.lineWidth = 3; g.beginPath(); g.moveTo(80, 156); g.lineTo(W - 80, 156); g.stroke();
+  g.font = '500 33px Helvetica Neue, Arial, sans-serif';
+  b.items.forEach(([n, pr], i) => {
+    const y = 206 + i * 46; g.fillStyle = '#f0ead8'; g.textAlign = 'left'; g.fillText(n, 72, y);
+    g.textAlign = 'right'; g.fillStyle = '#f7e9b8'; g.fillText(pr, W - 72, y);
+    g.strokeStyle = 'rgba(240,234,216,0.25)'; g.lineWidth = 2; g.setLineDash([3, 7]); g.beginPath(); g.moveTo(84 + g.measureText(n).width + 14, y - 8); g.lineTo(W - 84 - g.measureText(pr).width - 10, y - 8); g.stroke(); g.setLineDash([]);
+  });
+  t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; t.flipY = false; boardTex.set(name, t); return t;   // glTF textures map with flipY off, so must this one
+}
 function retex(o: T.Object3D) {
   o.traverse((c) => {
     if (!(c instanceof T.Mesh)) return;
     if (HIDE.has(c.name)) { c.visible = false; return; }
-    const m = c.material as T.MeshStandardMaterial; const r = m && RETEX[m.name];
+    const m = c.material as T.MeshStandardMaterial;
+    if (m && BOARDS[m.name] && typeof document !== 'undefined') { m.map = board(m.name); m.color.set(0xffffff); m.roughness = 0.9; m.needsUpdate = true; return; }
+    const r = m && RETEX[m.name];
     if (!r) return;
     m.map = surf(`${r.kind}_c_s.jpg`, true, r.rx, r.ry);
     m.normalMap = surf(`${r.kind}_n_s.jpg`, false, r.rx, r.ry); m.normalScale.setScalar(r.normal ?? 0.8);
@@ -451,7 +483,7 @@ export const barney: RoomDef = {
     };
     const slots: [number, number, number, number, number, boolean][] = [];   // x, y, z, rotY, width, plate
     for (const x of [-1.3, -0.1, 1.1, 2.3, 3.5, 4.7]) slots.push([x, 2.35, -20.2, 0, 0.95, true]);          // back wall, lower row
-    for (const x of [-1.3, -0.1, 1.1, 4.7]) slots.push([x, 4.15, -20.2, 0, 0.95, true]);                    // back wall, upper row, either side of the logo
+    for (const x of [-1.3, -0.1, 3.5, 4.7]) slots.push([x, 4.15, -20.2, 0, 0.95, true]);                    // back wall, upper row, two either side of the logo (the logo sits at x 1.7, centred on the row and the sign)
     for (const y of [2.4, 4.1]) for (const z of [-11.0, -12.2]) slots.push([8.8, y, z, -PI / 2, 0.95, true]); // right wall past the case
     // behind the case, two tight rows of small frames on the dark panel under the chalkboards, the way the real
     // wall behind the counter is papered with pictures; too tight for plates, the titles are in the pictures
@@ -493,14 +525,51 @@ export const barney: RoomDef = {
     const card = (file: string, w: number, x: number, y: number, z: number, rotY: number, tilt: number) => {
       const o = new T.Mesh(new T.PlaneGeometry(w, w * 0.77), k.image(file, { roughness: 0.7 })); o.position.set(x, y, z); o.rotation.set(-PI / 2 + tilt, 0, rotY, 'ZYX'); k.add(o); return o;
     };
-    k.prop('ph_wooden_cutting_board', 7.35, 1.44, -3.3, { height: 0.04, rotY: PI / 2 });
-    card('assets/museum/barney/food_whitefish.png', 0.9, 7.35, 1.49, -3.3, 0, 0.28);
-    card('assets/museum/barney/food_sturgeon.png', 1.0, 7.35, 1.47, -6.4, 0, 0.28);
-    card('assets/museum/barney/food_sturgeon.png', 0.8, 7.35, 1.47, -8.4, PI, 0.28);
-    for (const [x, z] of [[3.4, -3.3], [3.4, -6.9]]) k.prop('barney_bagel', x, 1.14, z, { height: 0.22, rotY: (x + z) % 2 });
+    k.prop('ph_wooden_cutting_board', 7.35, 1.44, -4.3, { height: 0.04, rotY: PI / 2 });
+    card('assets/museum/barney/food_whitefish.png', 0.9, 7.35, 1.49, -4.3, 0, 0.28);
+    card('assets/museum/barney/food_sturgeon.png', 1.0, 7.35, 1.47, -6.6, 0, 0.28);
+    card('assets/museum/barney/food_sturgeon.png', 0.8, 7.35, 1.47, -8.6, PI, 0.28);
+    // the register at the door end of the case, a Poly Haven CC0 model, with the sign every regular knows
+    k.prop('ph_cash_register', 7.3, 1.43, -3.0, { height: 0.5, rotY: -PI / 2 });
+    k.sign('CASH ONLY', 0.5, 0.2, 6.62, 1.58, -2.55, '#f3ecd6', '#8b1a1a', 120, -PI / 2 + 0.35, { border: true, double: true });
+    k.sign('CASH ONLY', 0.9, 0.34, 8.3, 2.95, -1.0, '#8b1a1a', '#f3ecd6', 120, -PI / 2, { border: true });
+    k.sign('WE DO NOT TAKE CARDS  ·  WE NEVER HAVE', 0.9, 0.12, 8.3, 2.7, -1.0, 'transparent', '#f3ecd6', 48, -PI / 2);
+    // a bagel and lox on every table: the front room, the dining room, the sidewalk
+    const tables: [number, number, number][] = [[3.4, 1.14, -3.3], [3.4, 1.14, -6.9], [5.8, 1.14, -18.45], [2.8, 1.14, -18.45], [-0.2, 1.14, -18.45],
+      [-7.35, 1.16, -5.25], [-7.35, 1.16, -9.0], [-7.35, 1.16, -12.75], [-7.35, 1.16, -16.5], [-4.05, 1.16, -5.25], [-4.05, 1.16, -9.0], [-4.05, 1.16, -12.75], [-4.05, 1.16, -16.5],
+      [-6.2, 1.17, 4.2], [-3.3, 1.17, 4.2], [1.2, 1.17, 4.2], [4.6, 1.17, 4.2], [7.2, 1.17, 4.2]];
+    (ctx.reduced ? tables.slice(0, 4) : tables).forEach(([x, y, z], i) => k.prop('barney_bagel', x + ((i * 7) % 3 - 1) * 0.12, y, z + ((i * 5) % 3 - 1) * 0.1, { height: 0.22, rotY: i * 1.9 }));
     for (let i = 0; i < 4; i++) k.prop('ph_croissant', -1.86, 0.82, -1.6 - i * 0.42, { height: 0.09, rotY: i * 1.3 });
     const dough = k.pbr('bagelS', X.plaster(0xb8762f, 5), 1, { roughness: 0.75 });
     for (let i = 0; i < 8; i++) { const o = k.torus(0.1, 0.045, -1.86, 0.87 + (i % 2) * 0.09, -4.2 - Math.floor(i / 2) * 0.34, dough, 14); o.rotation.x = PI / 2; o.rotation.z = (i % 3) * 0.4; }
+    // three optical illusions. 1: the Sturgeon King painted on the floor of the front room, stretched so that from
+    // the ring just inside the door he stands upright in the aisle. Each vertex of an upright picture is pushed along
+    // the line from the eye to the floor, so the floor carries the picture's perspective from that one spot. The
+    // picture has to be something with an upright identity (a tray of fish lies flat however it is drawn).
+    const eye = v(1.8, 2.3, -1.2);
+    { const h = 1.15, w = h * 768 / KING_H, geo = new T.PlaneGeometry(w, h, 20, 24), pos = geo.attributes.position as T.BufferAttribute, cx = 1.6, cz = -7.2, cy = 0.1 + h / 2;
+      for (let i = 0; i < pos.count; i++) { const px = cx + pos.getX(i), py = cy + pos.getY(i), pz = cz; const sc = (0.012 - eye.y) / (py - eye.y); pos.setXYZ(i, eye.x + (px - eye.x) * sc, 0.012, eye.z + (pz - eye.z) * sc); }
+      geo.computeVertexNormals();
+      const king = new T.Mesh(geo, k.image('assets/museum/barney/king_cutout.png', { roughness: 0.9 })); king.renderOrder = 2; k.add(king);
+      k.torus(0.3, 0.02, eye.x, 0.015, eye.z, k.flat(0xe6b84a, 0.1, 0.5), 24).rotation.x = PI / 2;
+      k.sign('STAND HERE  ·  LOOK DOWN THE ROOM', 0.9, 0.08, eye.x, 0.02, eye.z + 0.42, 'transparent', '#e6b84a', 40, 0).rotation.x = -PI / 2;
+      k.egg(v(eye.x, 1.2, eye.z), { id: 'anamorphic-king', title: 'The king on the floor', year: 'an illusion', text: 'Stand on the gold ring and look down the aisle: the Sturgeon King, painted flat on the terrazzo, stands up in the room. The picture is drawn in the perspective of that one spot, the pavement artist\'s trick. Step off the ring and he lies down again.', clue: 'A gold ring on the floor just inside the door.', source: wk }, { r: 0.7 }); }
+    // 2: the etched mirrors of the dining room, one of them an infinity mirror: stacked glowing frames fading into
+    // the partition, a depth that is not there
+    { const mx = -8.52, my = 2.7, mz = -4.12, mw = 0.62, mh = 0.84, mg = new T.Group(); mg.position.set(mx, my, mz); mg.rotation.y = PI / 2; k.add(mg);   // a shadow box proud of the wall, local +z faces into the room
+      for (const [sx, sy, sw, sh] of [[0, mh / 2 + 0.04, mw + 0.16, 0.08], [0, -mh / 2 - 0.04, mw + 0.16, 0.08], [mw / 2 + 0.04, 0, 0.08, mh], [-mw / 2 - 0.04, 0, 0.08, mh]]) {
+        const slat = new T.Mesh(new T.BoxGeometry(sw, sh, 0.34), walnut); slat.position.set(sx, sy, -0.14); mg.add(slat);   // a hollow box, the rings inside it
+      }
+      const back = new T.Mesh(new T.PlaneGeometry(mw, mh), k.flat(0x05070a, 0, 0.3)); back.position.z = -0.28; mg.add(back);
+      for (let i = 0; i < 9; i++) { const f = 1 - i / 10, ring = new T.Mesh(new T.TorusGeometry(0.5, 0.02, 6, 4), new T.MeshBasicMaterial({ color: new T.Color(0xf7d98a).multiplyScalar(0.35 + 0.65 * f), transparent: true, opacity: 0.97 * f })); ring.scale.set(mw * f * 0.66, mh * f * 0.66, 1); ring.rotation.z = PI / 4; ring.position.z = 0.0 - i * 0.03; mg.add(ring); }
+      k.egg(v(mx + 0.1, my, mz), { id: 'etched-mirror', title: 'The etched mirrors', year: 'the dining room', text: 'Formica tables, vintage linoleum, etched mirrors, white counters: Gary wants the place to work as a time capsule. One of these mirrors goes further back than the room does.', clue: 'The small mirror in the back of the dining room.', source: dt }, { r: 0.9 }); }
+    // 3: cafe wall tiles along the foot of the shelves and the case: the rows are straight, the mortar makes them lean
+    { const c = document.createElement('canvas'); c.width = 512; c.height = 128; const g = c.getContext('2d')!;
+      g.fillStyle = '#8c8c86'; g.fillRect(0, 0, 512, 128);
+      for (let r = 0; r < 4; r++) for (let i = -1; i < 9; i++) { g.fillStyle = (i + r) % 2 ? '#121212' : '#efeae0'; g.fillRect(i * 64 + (r % 2) * 24, r * 32 + 3, 62, 26); }
+      const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      const strip = (x: number, z: number, len: number) => { const tt = t.clone(); tt.needsUpdate = true; tt.repeat.set(len / 1.2, 1); const m = new T.Mesh(new T.PlaneGeometry(len, 0.3), new T.MeshStandardMaterial({ map: tt, roughness: 0.4 })); m.position.set(x, 0.013, z); m.rotation.set(-PI / 2, 0, PI / 2); k.add(m); };
+      strip(-1.45, -5.4, 9.8); strip(5.95, -6.15, 6.9); }
     // the people: MLow's own ON LOCATION characters, standing and walking. Each model's front is along x,
     // so `face` turns it to +z for the rider, which steers along the tangent. They glide with a small bob:
     // the models are not rigged, and the walk is a slow shuffle, the way a queue moves.
@@ -523,7 +592,7 @@ export const barney: RoomDef = {
         k.ticks.push((t) => { o.position.y = Math.abs(Math.sin(t * 5.2 + ph)) * 0.035; o.rotation.z = Math.sin(t * 5.2 + ph) * 0.015; });
       });
     stand(cast.bartender, 7.9, -4.6, PI / 2);          // behind the case, facing the room
-    stand(cast.clerk, 7.9, -1.6, PI / 2);              // at the register
+    stand(cast.clerk, 7.9, -3.4, PI / 2);              // at the register
     stand(cast.actress, -4.6, -6.4, 0.6);              // in the dining room
     if (!ctx.reduced) {                                 // a phone loads three people, a desktop the whole cast
       stand(cast.oscar, 2.6, -8.0, -0.4); stand(cast.felix, 4.2, -7.6, 2.6);   // the Odd Couple at the second table

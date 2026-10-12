@@ -114,3 +114,27 @@ people, and the walls laid out with the store's real signs and eggs. Done in `z.
 Verified: typecheck, bundle, all rooms audit, headless shots at 1 pm from thirteen viewpoints and a phone. Not
 measured: frame rate on a phone with the heavier room (about 2.2 million triangles on a desktop load, 1.3 on a
 phone load); the walkers' feet are 3 cm above the floor at the top of the bob by design.
+
+## Round three, the same evening: prices, the register, bagels everywhere, the logo, three illusions
+
+- **The price boards** are drawn in the room now (`BOARDS` and `board()` in `z.ts`), not the model's images: SMOKED FISH
+  by the quarter pound, APPETIZING (herring, salads, spreads, bagels and bialys), SANDWICHES. The model's boards priced
+  caviar by the ounce; these are prices a person pays at the counter in 2026, the sandwich line anchored on the
+  dossier's known ones (sturgeon 25, sturgeon and sable 30, Triple Decker No. 3 29.50, open face add 2.50). glTF
+  textures map with flipY off, so the canvas texture must too, or the board hangs upside down.
+- **The register** is Poly Haven's CashRegister_01 (CC0, the uncompressed pass from the ON LOCATION kit, since the museum
+  loader has no Draco), on the case at the door end, the clerk behind it, a CASH ONLY tent card on the counter, a red
+  CASH ONLY sign over the register and the TAKE A NUMBER beside it.
+- **A bagel and lox on every table**: eighteen, the five in the front room, the eight in the dining room, the five on the
+  sidewalk, each a copy of the Trellis plate turned a little. Phones get four.
+- **The BG logo** on the back wall moved to model x 1.133 (world 1.7), the centre of the merch wall; the upper row now
+  sits two either side of it. The GLB extras carry a third marker, `logo`.
+- **Three illusions.** The Sturgeon King painted on the front room floor, stretched from the gold ring just inside the
+  door so he stands upright in the aisle from that one spot (`eye` in `z.ts`; the picture is a cut of merch 84,
+  `assets/museum/barney/king_cutout.png`, kept on its red card, which reads as a poster standing in the room). The
+  picture's top must stay under about 1.3 m or its projection runs past the back wall. An infinity mirror in a hollow
+  walnut shadow box on the dining room's left wall between two of the regulars, nine gold frames fading into the wall.
+  Cafe wall tiles along the foot of the shelves and the case. Two eggs for the first two: 17 landmarks.
+- **GitHub**: `barney-greengrass` carries the room; `_build/push_museum_branch.sh` refreshes the public `Museum`
+  snapshot from the working tree through a temporary index (it keeps the atlases the old snapshot shipped, adds every
+  tracked file, drops nothing by hand, and never force pushes).
