@@ -138,3 +138,23 @@ phone load); the walkers' feet are 3 cm above the floor at the top of the bob by
 - **GitHub**: `barney-greengrass` carries the room; `_build/push_museum_branch.sh` refreshes the public `Museum`
   snapshot from the working tree through a temporary index (it keeps the atlases the old snapshot shipped, adds every
   tracked file, drops nothing by hand, and never force pushes).
+
+## Round four, late evening: what the live site was not showing, and the bagel wall
+
+MLow reported the plates, the lox in the case and the register missing on the live site. A headless load of the live
+room found all three in the scene, and two real faults behind what he saw:
+
+- **The case glass was opaque.** The model's `glass` material carries its alpha in the colour factor with no alpha
+  mode, so three.js drew it solid and nothing inside the case could be seen, cards or plates. `GLASSY` in `z.ts` now
+  sets transparent and opacity by material name (glass, glass_cup, curtain).
+- **The Trellis bagel rendered black.** The mesh had positions and UVs but no normals. A normal accessor is now
+  computed into `barney_bagel.glb` from its triangles.
+- The register was there all along. A museum page in a browser is cached for four hours (the Cloudflare floor), so a
+  tab opened earlier in the day keeps the old bundle until a hard refresh.
+
+Added: four plates of lox on the case deck beside the cut outs, plates on the tables grown to 0.3, and **the bagel
+wall**: a walnut rack of eighteen cubbies standing proud of the bakery shelves, each heaped with eleven bagels, four
+kinds (everything, sesame, plain, pumpernickel), every bagel a torus wearing a crust painted on a canvas (`crust()` in
+`z.ts`: golden base, darker bloom, blistered skin, sesame and poppy and onion drawn one by one, a bump from the same
+canvas), one instanced draw call per kind, 198 bagels. Price tags on every cubby, 2.50, the same as the board. The
+rack's back hides the model's dry goods behind it; the goods either side stay.
