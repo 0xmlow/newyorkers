@@ -36,6 +36,6 @@ Snapshot of the site repository as it stands, on top of the previous Museum snap
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>")
 unset GIT_INDEX_FILE
 echo "commit $COMMIT, $(git diff --stat github/Museum $COMMIT | tail -1)"
-git push github "$COMMIT:refs/heads/Museum"
+git push github "${COMMIT}:refs/heads/Museum"   # braces: zsh reads $COMMIT:r as a modifier
 rm -rf "$TMP"
 git ls-remote --heads github Museum
