@@ -1,0 +1,1711 @@
+{
+ "nyb_walking_suitcase": {
+  "src": "nyb_walking_suitcase_cut",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#d8b07a",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "JOE BUCK\nTEXAS TO N3W YORK",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.46,
+    "border": "#ff4fa3"
+   },
+   {
+    "img": "counted",
+    "face": "-Y",
+    "u": 0.78,
+    "v": 0.2,
+    "size": 0.2,
+    "rot": -8
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.14
+   },
+   {
+    "img": "tag_mlow",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.36,
+    "rot": 5
+   }
+  ],
+  "adds": []
+ },
+ "nyb_walking_lamp": {
+  "src": "ph_street_lamp_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a3a30",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_n3w",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.32,
+    "size": 0.42
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "W 58 ST",
+    "bg": "#1e6a3a",
+    "fg": "#ffffff",
+    "eye": false,
+    "border": "#ffffff",
+    "at": [
+     0.5,
+     0.5,
+     0.8
+    ],
+    "face": "-Y",
+    "size": 0.9,
+    "both": true
+   },
+   {
+    "type": "card",
+    "text": "6 AV",
+    "bg": "#1e6a3a",
+    "fg": "#ffffff",
+    "eye": false,
+    "border": "#ffffff",
+    "at": [
+     0.5,
+     0.5,
+     0.86
+    ],
+    "face": "+X",
+    "size": 0.7,
+    "both": true
+   },
+   {
+    "type": "disc",
+    "img": "nazar_die",
+    "size": 0.32,
+    "lift": 0.06,
+    "rim": "#f5c542",
+    "pole": "#f5c542"
+   }
+  ]
+ },
+ "nyb_walking_newsbox": {
+  "src": "ph_utility_box_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.82
+   }
+  ],
+  "stickers": [
+   {
+    "text": "THE DAILY COUNT\nTEN CENTS",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.8,
+    "border": "#f5c542"
+   },
+   {
+    "img": "logo05",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.3
+   },
+   {
+    "img": "tag_mlow_gold",
+    "face": "-X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.36,
+    "rot": -6
+   },
+   {
+    "img": "counted",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.25,
+    "size": 0.4,
+    "rot": 4
+   }
+  ],
+  "adds": []
+ },
+ "nyb_walking_aircon": {
+  "src": "nyb_walking_aircon_cut",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#f4ead2",
+    "k": 0.4
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.7,
+    "size": 0.16
+   },
+   {
+    "img": "label_n3w",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.2,
+    "size": 0.4
+   }
+  ],
+  "adds": []
+ },
+ "nyb_walking_radio": {
+  "src": "ph_cassette_player",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLOW AM\n1969",
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.25,
+    "size": 0.14
+   }
+  ],
+  "adds": []
+ },
+ "nyb_katz_table": {
+  "src": "nyb_katz_table_cut",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#9a2a1e",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "text": "WHERE YOU GOT COUNTED\nTABLE 89",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.55,
+    "border": "#0b1020"
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.2
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.2
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "WHERE YOU GOT COUNTED\nHAVE WHAT SHE HAD",
+    "bg": "#f5c542",
+    "fg": "#a01818",
+    "border": "#a01818",
+    "at": [
+     0.5,
+     0.5,
+     1.25
+    ],
+    "face": "-Y",
+    "size": 0.6,
+    "both": true
+   }
+  ]
+ },
+ "nyb_katz_tableplain": {
+  "src": "nyb_katz_table_cut",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#e8c89a",
+    "k": 0.4
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_katz_chair": {
+  "src": "ph_dining_chair_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#a01818",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.8,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_katz_pickles": {
+  "src": "ph_wine_barrel_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#3f6a2a",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "FULL SOUR\nPICKLES, COUNTED",
+    "bg": "#f4ead2",
+    "fg": "#2a4a1a",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.36,
+    "border": "#2a4a1a"
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower",
+    "size": 0.3,
+    "lift": 0.0
+   }
+  ]
+ },
+ "nyb_katz_frame_a": {
+  "src": "ph_hanging_picture_frame_03",
+  "paint": [],
+  "stickers": [
+   {
+    "img": "logo03",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.26
+   }
+  ],
+  "adds": []
+ },
+ "nyb_katz_frame_b": {
+  "src": "ph_hanging_picture_frame_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#0b1020",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLOW ATE HERE\nAND WAS COUNTED",
+    "bg": "#f4ead2",
+    "fg": "#a01818",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.6
+   }
+  ],
+  "adds": []
+ },
+ "nyb_katz_clock": {
+  "src": "ph_wall_clock",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#ffd84a",
+    "k": 0.3
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.32,
+    "size": 0.07
+   }
+  ],
+  "adds": []
+ },
+ "nyb_feast_saint": {
+  "src": "ph_gothic_statue",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.16
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "SAN ROCCO\nPATRON OF THE COUNTED",
+    "bg": "#f4ead2",
+    "fg": "#8a1a1a",
+    "border": "#f5c542",
+    "at": [
+     0.5,
+     0.0,
+     0.08
+    ],
+    "face": "-Y",
+    "size": 0.9
+   }
+  ]
+ },
+ "nyb_feast_barrel": {
+  "src": "ph_wine_barrel_01",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#c87a4a",
+    "k": 0.4
+   }
+  ],
+  "stickers": [
+   {
+    "text": "VINO DI MULBERRY\nBY MLOW",
+    "bg": "#f4ead2",
+    "fg": "#8a1a1a",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.4,
+    "border": "#2a8a3a"
+   }
+  ],
+  "adds": []
+ },
+ "nyb_feast_crate": {
+  "src": "ph_wooden_crate_01",
+  "paint": [],
+  "stickers": [
+   {
+    "text": "LIMONI\nN3W YORKERS",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.5
+   }
+  ],
+  "adds": []
+ },
+ "nyb_feast_bench": {
+  "src": "ph_painted_wooden_bench",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a7a3a",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "SOCIETA SAN ROCCO\nBY MLOW",
+    "bg": "#f4ead2",
+    "fg": "#8a1a1a",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.78,
+    "size": 0.7
+   }
+  ],
+  "adds": []
+ },
+ "nyb_feast_wine": {
+  "src": "nyb_feast_wine_cut",
+  "paint": [],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.3,
+    "v": 0.35,
+    "size": 0.05
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.35,
+    "size": 0.05
+   }
+  ],
+  "adds": []
+ },
+ "nyb_feast_lantern": {
+  "src": "ph_lantern_chandelier_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.14
+   }
+  ],
+  "adds": []
+ },
+ "nyb_feast_cafe": {
+  "src": "ph_outdoor_table_chair_set_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#c82a2a",
+    "k": 0.55
+   }
+  ],
+  "stickers": [],
+  "adds": []
+ },
+ "nyb_westside_docs": {
+  "src": "ph_rollershutter_door",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#b8c8d8",
+    "k": 0.3
+   }
+  ],
+  "stickers": [
+   {
+    "img": "tag_mlow",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.5,
+    "size": 0.9,
+    "rot": -4
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.2,
+    "size": 0.4
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "DOC'S\nSODA, CANDY, COUNTED",
+    "bg": "#a01818",
+    "fg": "#f5c542",
+    "border": "#f5c542",
+    "at": [
+     0.5,
+     0.0,
+     1.12
+    ],
+    "face": "-Y",
+    "size": 2.9,
+    "both": true,
+    "glow": 1.2
+   }
+  ]
+ },
+ "nyb_westside_crate": {
+  "src": "ph_wooden_crate_02",
+  "paint": [],
+  "stickers": [
+   {
+    "text": "RUMBLE AT TEN\nUNDER THE HIGHWAY",
+    "bg": "#111111",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.6,
+    "eye": false
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.2
+   }
+  ],
+  "adds": []
+ },
+ "nyb_westside_cans": {
+  "src": "ph_spray_paint_bottles",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.3,
+    "v": 0.5,
+    "size": 0.05
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.5,
+    "size": 0.05
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_urn": {
+  "src": "ph_antique_ceramic_vase_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.45
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.16
+   },
+   {
+    "img": "eyeflower_cyan",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.16
+   },
+   {
+    "img": "eyeflower_gold",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.4,
+    "size": 0.12
+   },
+   {
+    "img": "eyeflower_gold",
+    "face": "-X",
+    "u": 0.5,
+    "v": 0.4,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_vase_a": {
+  "src": "ph_ceramic_vase_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.1
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_vase_b": {
+  "src": "ph_ceramic_vase_03",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#22d3ee",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.07
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_vase_c": {
+  "src": "ph_ceramic_vase_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_gold",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_vase_d": {
+  "src": "ph_ceramic_vase_04",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f5c542",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.09
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_sofa": {
+  "src": "ph_Sofa_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#3a4a7a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.3
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_rocker": {
+  "src": "ph_Rockingchair_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#6a2a3a",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.8,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_pillow": {
+  "src": "nyb_loft_pillow_cut",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.2
+   }
+  ],
+  "adds": []
+ },
+ "nyb_loft_lamp": {
+  "src": "ph_hanging_industrial_lamp",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#e8b84a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.18,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_wallst_bull": {
+  "src": "ph_bull_head",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.9
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLOW CAPITAL\nBULLS ONLY",
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.08,
+    "size": 0.38,
+    "border": "#f5c542"
+   }
+  ],
+  "adds": []
+ },
+ "nyb_wallst_chair": {
+  "src": "ph_GreenChair_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#4a1a1e",
+    "k": 0.65
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.75,
+    "size": 0.14
+   }
+  ],
+  "adds": []
+ },
+ "nyb_wallst_quote": {
+  "src": "ph_Television_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#cfc6b0",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W 7542 UP 11\nMLOW 317 UP 317",
+    "bg": "#031203",
+    "fg": "#5aff7a",
+    "face": "-Y",
+    "u": 0.42,
+    "v": 0.55,
+    "size": 0.34,
+    "eye": false,
+    "glow": 1.5
+   }
+  ],
+  "adds": []
+ },
+ "nyb_wallst_desk": {
+  "src": "ph_metal_office_desk",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a2a32",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLOW AND CO.\nCOUNTING IS GOOD",
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.7,
+    "border": "#f5c542"
+   }
+  ],
+  "adds": []
+ },
+ "nyb_pigeons_bench": {
+  "src": "ph_painted_wooden_bench",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a4a32",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "FOR THE PIGEON LADY\nWHO COUNTED EVERY BIRD",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.8,
+    "size": 0.75
+   }
+  ],
+  "adds": []
+ },
+ "nyb_pigeons_seed": {
+  "src": "ph_wicker_basket_01",
+  "paint": [],
+  "stickers": [],
+  "adds": [
+   {
+    "type": "card",
+    "text": "N3W SEED\nFOR BIRDS AND THE COUNTED",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "border": "#ff4fa3",
+    "at": [
+     0.5,
+     -0.02,
+     0.45
+    ],
+    "face": "-Y",
+    "size": 0.45
+   }
+  ]
+ },
+ "nyb_pigeons_lamp": {
+  "src": "ph_street_lamp_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1e2a22",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_n3w",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.4
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_cyan",
+    "size": 0.36,
+    "lift": 0.06,
+    "rim": "#22d3ee",
+    "pole": "#22d3ee"
+   }
+  ]
+ },
+ "nyb_pigeons_planter": {
+  "src": "ph_planter_box_01",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#c8a080",
+    "k": 0.3
+   }
+  ],
+  "stickers": [
+   {
+    "text": "PARK OF THE COUNTED\nKEEP OFF THE PIGEONS",
+    "bg": "#1e4a2a",
+    "fg": "#f4ead2",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.7
+   }
+  ],
+  "adds": []
+ },
+ "nyb_rink_prometheus": {
+  "src": "ph_gothic_statue",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 1.0,
+    "rough": 0.2
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.18
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "PROMETHEUS\nBRINGER OF EYE FLOWERS",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "at": [
+     0.5,
+     0.0,
+     0.06
+    ],
+    "face": "-Y",
+    "size": 0.9
+   }
+  ]
+ },
+ "nyb_rink_gift_a": {
+  "src": "ph_cardboard_box_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#c82a2a",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "text": "TO MLOW\nFROM BUDDY",
+    "bg": "#f4ead2",
+    "fg": "#c82a2a",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3
+   },
+   {
+    "img": "eyeflower_gold",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3
+   }
+  ],
+  "adds": []
+ },
+ "nyb_rink_gift_b": {
+  "src": "ph_cardboard_box_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#22d3ee",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.25
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3
+   }
+  ],
+  "adds": []
+ },
+ "nyb_rink_planter": {
+  "src": "ph_planter_box_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f4ead2",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W GARDENS\nROCKEFELLER OF THE COUNTED",
+    "bg": "#1e4a2a",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.7
+   }
+  ],
+  "adds": []
+ },
+ "nyb_moon_bakery": {
+  "src": "ph_wooden_display_shelves_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#e8d8b8",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.2,
+    "size": 0.2
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "N3W BROS. BAKERY\nBREAD OF THE COUNTED",
+    "bg": "#7a1a1a",
+    "fg": "#f5c542",
+    "border": "#f5c542",
+    "at": [
+     1.0,
+     0.5,
+     1.07
+    ],
+    "face": "+X",
+    "size": 1.4,
+    "both": true
+   }
+  ]
+ },
+ "nyb_moon_lamp": {
+  "src": "ph_street_lamp_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#141414",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_n3w",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.4
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_gold",
+    "size": 0.36,
+    "lift": 0.06,
+    "rim": "#f5c542",
+    "pole": "#f5c542"
+   }
+  ]
+ },
+ "nyb_moon_rock": {
+  "src": "ph_moon_rock_01",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#ffe0a0",
+    "k": 0.35
+   }
+  ],
+  "stickers": [
+   {
+    "text": "LA BELLA LUNA\nA PIECE OF IT",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.14
+   }
+  ],
+  "adds": []
+ },
+ "nyb_moon_wine": {
+  "src": "nyb_feast_wine_cut",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.35
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLOW SPUMANTE",
+    "bg": "#f4ead2",
+    "fg": "#7a1a1a",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.35,
+    "size": 0.12,
+    "eye": false
+   }
+  ],
+  "adds": []
+ },
+ "nyb_pelham_clock": {
+  "src": "ph_wall_clock",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#ffffff",
+    "k": 0.2
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W TRANSIT AUTHORITY\nONE HOUR",
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.27,
+    "size": 0.13,
+    "eye": false
+   }
+  ],
+  "adds": []
+ },
+ "nyb_pelham_wetfloor": {
+  "src": "ph_WetFloorSign_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f5c542",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "text": "CAUTION\nN3W TRANSIT",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.24,
+    "border": "#0b1020"
+   }
+  ],
+  "adds": []
+ },
+ "nyb_pelham_bench": {
+  "src": "ph_modular_street_seating",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#8a5a2a",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "text": "28 ST  DOWNTOWN\nN3W YORKERS ONLY",
+    "bg": "#0b1020",
+    "fg": "#f4ead2",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 1.1
+   }
+  ],
+  "adds": []
+ },
+ "nyb_pelham_light": {
+  "src": "ph_caged_hanging_light",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f5c542",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.4,
+    "size": 0.12
+   }
+  ],
+  "adds": []
+ },
+ "nyb_manhattan_lamp": {
+  "src": "ph_street_lamp_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#0e0e10",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_bymlow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.42
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "SUTTON PL",
+    "bg": "#1e6a3a",
+    "fg": "#ffffff",
+    "eye": false,
+    "border": "#ffffff",
+    "at": [
+     0.5,
+     0.5,
+     0.8
+    ],
+    "face": "-Y",
+    "size": 0.9,
+    "both": true
+   },
+   {
+    "type": "disc",
+    "img": "eyeflower",
+    "size": 0.36,
+    "lift": 0.06,
+    "rim": "#f5c542",
+    "pole": "#f5c542"
+   }
+  ]
+ },
+ "nyb_manhattan_recorder": {
+  "src": "ph_cassette_player",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f4ead2",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "THINGS WORTH\nLIVING FOR",
+    "bg": "#0b1020",
+    "fg": "#f4ead2",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.25,
+    "size": 0.15
+   }
+  ],
+  "adds": []
+ },
+ "nyb_manhattan_bench": {
+  "src": "ph_painted_wooden_bench",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a2a2a",
+    "k": 0.65
+   }
+  ],
+  "stickers": [
+   {
+    "text": "SUTTON PLACE\nSIT UNTIL DAWN",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.78,
+    "size": 0.7
+   }
+  ],
+  "adds": []
+ },
+ "nyb_manhattan_planter": {
+  "src": "ph_planter_box_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#3a3a3a",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "img": "logo12",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.45
+   }
+  ],
+  "adds": []
+ },
+ "nyb_clover_cam": {
+  "src": "ph_Camera_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1a1a1a",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "text": "TAPE 1\nDO NOT TAPE OVER",
+    "bg": "#f4ead2",
+    "fg": "#c81818",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.11
+   },
+   {
+    "img": "neon_mlow",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.1
+   }
+  ],
+  "adds": []
+ },
+ "nyb_clover_barrier": {
+  "src": "ph_concrete_road_barrier",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#e8e0d0",
+    "k": 0.3
+   }
+  ],
+  "stickers": [
+   {
+    "text": "DEPT. OF THE COUNTED\nDO NOT CROSS",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 1.1
+   },
+   {
+    "img": "tag_mlow",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.7,
+    "rot": -5
+   }
+  ],
+  "adds": []
+ },
+ "nyb_clover_crate": {
+  "src": "nyb_clover_crate_cut",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#4a5a2a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W GUARD\nEVAC SUPPLIES",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.5
+   }
+  ],
+  "adds": []
+ },
+ "nyb_clover_box": {
+  "src": "ph_cardboard_box_01",
+  "paint": [],
+  "stickers": [
+   {
+    "text": "GOODBYE ROB\nJAPAN OR BUST",
+    "bg": "#f4ead2",
+    "fg": "#ff4fa3",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.4
+   }
+  ],
+  "adds": []
+ },
+ "nyb_clover_car": {
+  "src": "ph_covered_car",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#b8b8a8",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "text": "TOWED BY THE\nDEPT. OF THE COUNTED",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 2.0
+   },
+   {
+    "text": "TOWED BY THE\nDEPT. OF THE COUNTED",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "-X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 2.0
+   },
+   {
+    "img": "counted",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.9,
+    "rot": 6
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_census": {
+  "src": "ph_book_encyclopedia_set_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "text": "THE CENSUS\nVOL. I  NEVER BURN",
+    "bg": "#7a1a1a",
+    "fg": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.4,
+    "border": "#f5c542"
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_books": {
+  "src": "ph_book_encyclopedia_set_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.08
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_books2": {
+  "src": "ph_book_encyclopedia_set_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.45
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.08
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_chandelier": {
+  "src": "ph_Chandelier_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.4,
+    "size": 0.14
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_clock": {
+  "src": "ph_vintage_grandfather_clock_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#8aa8c8",
+    "k": 0.45
+   }
+  ],
+  "stickers": [
+   {
+    "text": "TIME FROZE HERE\nCOUNTED ANYWAY",
+    "bg": "#f4ead2",
+    "fg": "#1d4ed8",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.36
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_catalog": {
+  "src": "ph_vintage_wooden_drawer_01",
+  "paint": [],
+  "stickers": [
+   {
+    "text": "CARD CATALOG\nTHE COUNTED, A TO Z",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.85,
+    "size": 0.7,
+    "border": "#7a5a2a"
+   }
+  ],
+  "adds": []
+ },
+ "nyb_library_shelf": {
+  "src": "ph_wooden_bookshelf_worn",
+  "paint": [
+   {
+    "op": "tint",
+    "color": "#c89060",
+    "k": 0.3
+   }
+  ],
+  "stickers": [],
+  "adds": [
+   {
+    "type": "card",
+    "text": "N3W PUBLIC LIBRARY\nFICTION AND THE COUNTED",
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "border": "#f5c542",
+    "at": [
+     0.5,
+     0.0,
+     1.04
+    ],
+    "face": "-Y",
+    "size": 1.1,
+    "both": true
+   }
+  ]
+ }
+}

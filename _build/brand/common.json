@@ -1,0 +1,509 @@
+{
+ "nyb_trash_dsny": {
+  "src": "ph_metal_trash_can",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2f6b3a",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_counted_dept",
+    "face": "-Y",
+    "u": 0.22,
+    "v": 0.6,
+    "size": 0.3
+   },
+   {
+    "img": "label_counted_dept",
+    "face": "-Y",
+    "u": 0.78,
+    "v": 0.6,
+    "size": 0.3
+   },
+   {
+    "img": "tag_mlow",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.35,
+    "size": 0.3,
+    "rot": 6
+   }
+  ]
+ },
+ "nyb_hydrant_pink": {
+  "src": "ph_fire_hydrant",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.9
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.55,
+    "size": 0.1
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.55,
+    "size": 0.1
+   }
+  ]
+ },
+ "nyb_hydrant_gold": {
+  "src": "ph_fire_hydrant",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.5,
+    "size": 0.09
+   },
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.5,
+    "size": 0.09
+   }
+  ]
+ },
+ "nyb_payphone": {
+  "src": "ph_korean_public_payphone_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#3a4a5a",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W BELL",
+    "bg": "#1d4ed8",
+    "fg": "#ffffff",
+    "border": "#f5c542",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.88,
+    "size": 0.42
+   },
+   {
+    "text": "CALL MLOW\n317",
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.26,
+    "eye": false
+   },
+   {
+    "img": "tag_mlow_cyan",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3
+   }
+  ]
+ },
+ "nyb_lamp_banner": {
+  "src": "ph_street_lamp_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1f3a2e",
+    "k": 0.6
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "N3W\nYORKERS",
+    "bg": "#ff4fa3",
+    "fg": "#ffffff",
+    "pw": 512,
+    "ph": 1024,
+    "at": [
+     0.62,
+     0.5,
+     0.62
+    ],
+    "size": 0.45,
+    "face": "-Y",
+    "both": true
+   }
+  ]
+ },
+ "nyb_lamp_nazar": {
+  "src": "ph_street_lamp_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1b2433",
+    "k": 0.6
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "nazar_die",
+    "size": 0.16,
+    "lift": 0.02,
+    "rim": "#c9a033"
+   }
+  ]
+ },
+ "nyb_milkcrate_pink": {
+  "src": "ph_plastic_crate_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_property",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3
+   }
+  ]
+ },
+ "nyb_milkcrate_cyan": {
+  "src": "ph_plastic_crate_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#22d3ee",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "img": "label_property",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3
+   }
+  ]
+ },
+ "nyb_barrier": {
+  "src": "ph_concrete_road_barrier",
+  "stickers": [
+   {
+    "text": "N.Y. COUNTED DEPT.\nDO NOT CROSS UNCOUNTED",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 1.2,
+    "pw": 1536
+   },
+   {
+    "img": "tag_mlow",
+    "face": "+Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.8
+   }
+  ]
+ },
+ "nyb_utility_bomb": {
+  "src": "ph_utility_box_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#4a5a52",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "logo11",
+    "face": "-Y",
+    "u": 0.3,
+    "v": 0.7,
+    "size": 0.18,
+    "rot": -8
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.7,
+    "v": 0.75,
+    "size": 0.14
+   },
+   {
+    "img": "tag_mlow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.4,
+    "rot": 4
+   },
+   {
+    "img": "counted",
+    "face": "-Y",
+    "u": 0.4,
+    "v": 0.22,
+    "size": 0.26,
+    "rot": -5
+   },
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.8,
+    "v": 0.25,
+    "size": 0.1
+   }
+  ]
+ },
+ "nyb_aircon": {
+  "src": "ph_exterior_aircon_unit",
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.8,
+    "v": 0.75,
+    "size": 0.12
+   },
+   {
+    "img": "tag_mlow_cyan",
+    "face": "-Y",
+    "u": 0.35,
+    "v": 0.3,
+    "size": 0.25,
+    "rot": -6
+   }
+  ]
+ },
+ "nyb_bench_plaque": {
+  "src": "ph_painted_wooden_bench",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2c5a3c",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "text": "FOR EVERY NEW YORKER\nCOUNTED. MLow",
+    "bg": "#c9a033",
+    "fg": "#2a1a00",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.78,
+    "size": 0.32,
+    "metal": 0.9,
+    "rough": 0.3,
+    "eye": false
+   }
+  ]
+ },
+ "nyb_chainlink": {
+  "src": "ph_modular_chainlink_fence",
+  "stickers": [
+   {
+    "img": "logo05",
+    "face": "-Y",
+    "u": 0.3,
+    "v": 0.6,
+    "size": 0.35,
+    "flat": true
+   },
+   {
+    "img": "tag_n3w",
+    "face": "-Y",
+    "u": 0.7,
+    "v": 0.4,
+    "size": 0.5,
+    "flat": true
+   }
+  ]
+ },
+ "nyb_tv_eye": {
+  "src": "ph_Television_01",
+  "stickers": [
+   {
+    "img": "eyeflower",
+    "face": "-Y",
+    "u": 0.45,
+    "v": 0.55,
+    "size": 0.26,
+    "glow": 1.6
+   }
+  ]
+ },
+ "nyb_register_gold": {
+  "src": "ph_CashRegister_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "logo12",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.12
+   }
+  ]
+ },
+ "nyb_barstool_pink": {
+  "src": "ph_bar_chair_round_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.75
+   }
+  ]
+ },
+ "nyb_coffeecart": {
+  "src": "ph_CoffeeCart_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f5c542",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLOW'S COFFEE\nCOUNTED SINCE 1111",
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "border": "#ff4fa3",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.9
+   }
+  ]
+ },
+ "nyb_suitcase_bomb": {
+  "src": "ph_vintage_suitcase",
+  "stickers": [
+   {
+    "img": "logo01",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.5,
+    "size": 0.14,
+    "rot": 8
+   },
+   {
+    "img": "plate_n3w",
+    "face": "-Y",
+    "u": 0.55,
+    "v": 0.6,
+    "size": 0.16,
+    "rot": -6
+   },
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.8,
+    "v": 0.35,
+    "size": 0.09
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.45,
+    "v": 0.25,
+    "size": 0.09
+   }
+  ]
+ },
+ "nyb_seccam_counted": {
+  "src": "ph_security_camera_01",
+  "stickers": [
+   {
+    "text": "SMILE.\nYOU ARE COUNTED",
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.18
+   }
+  ]
+ },
+ "nyb_extinguisher": {
+  "src": "ph_korean_fire_extinguisher_01",
+  "stickers": [
+   {
+    "text": "IN CASE OF\nFAME, BREAK",
+    "bg": "#ffffff",
+    "fg": "#d0202a",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.14,
+    "eye": false
+   },
+   {
+    "text": "N3W FIRE CO.",
+    "bg": "#d0202a",
+    "fg": "#ffffff",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.07,
+    "size": 0.3,
+    "eye": false
+   }
+  ]
+ },
+ "nyb_aframe_sign": {
+  "src": "ph_standing_chalkboard_01",
+  "stickers": [
+   {
+    "text": "TODAY ONLY\nGET COUNTED\nINSIDE",
+    "bg": "#1a2a22",
+    "fg": "#f4ead2",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.42,
+    "pw": 768,
+    "ph": 640,
+    "eye": false
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.14
+   }
+  ]
+ }
+}

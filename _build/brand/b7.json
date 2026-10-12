@@ -1,0 +1,1677 @@
+{
+ "nyb_miracle_mailcart": {
+  "src": "ph_hand_truck",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W POST OFFICE\nSANTA CLAUS DESK",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.42,
+    "bg": "#1d4ed8",
+    "fg": "#ffffff",
+    "eye": true,
+    "border": "#f5c542"
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.88,
+    "size": 0.16
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_gold",
+    "size": 0.3,
+    "lift": 0.06,
+    "rim": "#f5c542",
+    "pole": "#f5c542"
+   }
+  ]
+ },
+ "nyb_miracle_sack": {
+  "src": "ph_trashbag",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#d8c8a0",
+    "k": 1.0,
+    "dark": "#8a7650",
+    "rough": 0.95,
+    "metal": 0.0,
+    "gamma": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W POST\nTO: SANTA CLAUS\nN3W YORK COURTHOUSE",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.36,
+    "bg": "#e8dcb8",
+    "fg": "#1d3a8a",
+    "eye": false,
+    "pw": 1024,
+    "ph": 384
+   },
+   {
+    "img": "counted_blue",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.26,
+    "rot": -8
+   }
+  ]
+ },
+ "nyb_miracle_juror": {
+  "src": "ph_WoodenChair_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#7a4a22",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "text": "JURY\nN3W COUNTY",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.33,
+    "size": 0.3,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_miracle_counsel": {
+  "src": "ph_WoodenTable_03",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#6a3e1e",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "COUNSEL\nTHE PEOPLE OF N3W YORK",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.86,
+    "size": 0.62,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": true,
+    "border": "#f5c542"
+   },
+   {
+    "img": "tag_mlow_gold",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3,
+    "rot": 4
+   }
+  ]
+ },
+ "nyb_miracle_tree": {
+  "src": "nyb_miracle_src_fir",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1f5a32",
+    "k": 0.45
+   }
+  ],
+  "stickers": [
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.42,
+    "v": 0.55,
+    "size": 0.09
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.6,
+    "v": 0.38,
+    "size": 0.1
+   },
+   {
+    "img": "nazar_die",
+    "face": "-Y",
+    "u": 0.55,
+    "v": 0.75,
+    "size": 0.07
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.09
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_gold",
+    "size": 0.24,
+    "lift": 0.02,
+    "rim": "#f5c542"
+   }
+  ]
+ },
+ "nyb_miracle_portrait": {
+  "src": "ph_hanging_picture_frame_03",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.8,
+    "mat": "frame_03$"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.56,
+    "size": 0.24
+   },
+   {
+    "text": "THE HON. JUDGE, BY MLow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.14,
+    "size": 0.26,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_miracle_clock": {
+  "src": "ph_wall_clock",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#5a3a1e",
+    "k": 0.9,
+    "mat": "wall_clock$"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "tag_n3w",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.32,
+    "size": 0.1
+   }
+  ]
+ },
+ "nyb_miracle_fan": {
+  "src": "ph_ceiling_fan",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.7
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_gold",
+    "size": 0.2,
+    "at": [
+     0.5,
+     0.5,
+     0.0
+    ],
+    "rim": "#f5c542"
+   }
+  ]
+ },
+ "nyb_treebrooklyn_fireescape": {
+  "src": "nyb_treebrooklyn_src_fe",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.7
+   }
+  ],
+  "adds": [
+   {
+    "type": "card",
+    "text": "FRANCIE'S READING ROOM\nN3W TENEMENT CO.",
+    "bg": "#f4ead2",
+    "fg": "#7a1a1a",
+    "border": "#ff4fa3",
+    "at": [
+     0.42,
+     0.0,
+     0.935
+    ],
+    "face": "-Y",
+    "size": 2.6,
+    "both": true,
+    "pw": 1024,
+    "ph": 280
+   },
+   {
+    "type": "card",
+    "img": "eyeflower_die",
+    "at": [
+     0.42,
+     0.0,
+     0.42
+    ],
+    "face": "-Y",
+    "size": 0.9,
+    "both": true
+   }
+  ]
+ },
+ "nyb_treebrooklyn_ashcan": {
+  "src": "nyb_treebrooklyn_src_ashcan",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#8a9098",
+    "k": 0.45
+   }
+  ],
+  "stickers": [
+   {
+    "text": "ASHES ONLY\nN3W SANITATION",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.36,
+    "bg": "#2f6b3a",
+    "fg": "#ffffff",
+    "eye": true,
+    "border": "#ffffff"
+   },
+   {
+    "img": "tag_mlow",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.35,
+    "size": 0.28,
+    "rot": 6
+   }
+  ]
+ },
+ "nyb_treebrooklyn_crate": {
+  "src": "ph_wooden_crate_02",
+  "stickers": [
+   {
+    "text": "WILLIAMSBURG PICKLE WORKS\nBY MLow",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.8,
+    "bg": "#d8c8a0",
+    "fg": "#7a1a1a",
+    "eye": true
+   },
+   {
+    "img": "counted",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3,
+    "rot": -6
+   }
+  ]
+ },
+ "nyb_treebrooklyn_bank": {
+  "src": "ph_can_rusted",
+  "stickers": [
+   {
+    "text": "TIN CAN BANK\nFOR THE LAND",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.11,
+    "bg": "#f4ead2",
+    "fg": "#7a1a1a",
+    "eye": false
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.06
+   }
+  ]
+ },
+ "nyb_treebrooklyn_tub": {
+  "src": "ph_wooden_bucket_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#a87848",
+    "k": 0.4
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MONDAY WASH\nN3W TENEMENT",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.28,
+    "bg": "#f4ead2",
+    "fg": "#1d4ed8",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_treebrooklyn_can": {
+  "src": "ph_watering_can_metal_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.12
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-X",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.12
+   }
+  ]
+ },
+ "nyb_gatsby_spectacles": {
+  "src": "ph_round_spectacles",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.95,
+    "mat": "spectacles$"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower",
+    "face": "-Y",
+    "u": 0.24,
+    "v": 0.55,
+    "size": 0.056
+   },
+   {
+    "img": "eyeflower",
+    "face": "-Y",
+    "u": 0.76,
+    "v": 0.55,
+    "size": 0.056
+   },
+   {
+    "img": "eyeflower",
+    "face": "+Y",
+    "u": 0.24,
+    "v": 0.55,
+    "size": 0.056
+   },
+   {
+    "img": "eyeflower",
+    "face": "+Y",
+    "u": 0.76,
+    "v": 0.55,
+    "size": 0.056
+   }
+  ]
+ },
+ "nyb_gatsby_drum": {
+  "src": "ph_Barrel_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#c8a030",
+    "k": 0.9
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W MOTOR OIL\nVALLEY OF ASHES",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.46,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": true,
+    "border": "#f5c542"
+   },
+   {
+    "img": "tag_mlow",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.4,
+    "size": 0.34,
+    "rot": -5
+   }
+  ]
+ },
+ "nyb_gatsby_gascan": {
+  "src": "ph_metal_jerrycan",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#c8202a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "WILSON'S GARAGE\nGAS BY MLow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.26,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": true
+   }
+  ]
+ },
+ "nyb_gatsby_spade": {
+  "src": "ph_rusted_spade_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#7a746a",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "img": "tag_mlow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.18,
+    "size": 0.12,
+    "rot": 80
+   }
+  ]
+ },
+ "nyb_gatsby_drum2": {
+  "src": "ph_barrel_03",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#6a645a",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "text": "ASHES\nN3W DUMPING CO.",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.46,
+    "bg": "#d8d0c0",
+    "fg": "#3a2a1a",
+    "eye": false
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.22
+   }
+  ]
+ },
+ "nyb_gatsby_pole": {
+  "src": "nyb_gatsby_src_pole",
+  "stickers": [
+   {
+    "text": "N3W BELL\nPOLE 1922",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.33,
+    "size": 0.34,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": false,
+    "pw": 768,
+    "ph": 320
+   },
+   {
+    "img": "tag_mlow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.2,
+    "size": 0.3,
+    "rot": 84
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "nazar",
+    "size": 0.3,
+    "lift": 0.04,
+    "rim": "#f5c542"
+   }
+  ]
+ },
+ "nyb_bigdaddy_bench": {
+  "src": "ph_painted_wooden_bench",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2f6b3a",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "text": "ADOPTED BY MLow\nFOR THE KIDS OF THE MALL",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.78,
+    "size": 0.34,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_bigdaddy_lamp": {
+  "src": "ph_street_lamp_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2f6b3a",
+    "k": 0.6,
+    "mat": "street_lamp_02$"
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "nazar",
+    "size": 0.22,
+    "lift": 0.06,
+    "rim": "#f5c542",
+    "pole": "#f5c542"
+   }
+  ]
+ },
+ "nyb_bigdaddy_cart": {
+  "src": "ph_CoffeeCart_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f5c542",
+    "k": 0.75,
+    "mat": "cart"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W FRANKS\nKETCHUP ON EVERYTHING",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 1.1,
+    "bg": "#c8202a",
+    "fg": "#f5c542",
+    "eye": true,
+    "border": "#ffffff"
+   },
+   {
+    "text": "BY MLow",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.5,
+    "bg": "#0b1020",
+    "fg": "#ffffff",
+    "eye": true,
+    "border": "#f5c542"
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower",
+    "size": 0.5,
+    "lift": 0.25,
+    "rim": "#ff4fa3",
+    "pole": "#c8c8c8"
+   }
+  ]
+ },
+ "nyb_bigdaddy_sign": {
+  "src": "ph_standing_chalkboard_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2f6b3a",
+    "k": 0.85,
+    "mat": "frame"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "NO\nROLLERBLADING\nN3W PARKS",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.7,
+    "bg": "#14281a",
+    "fg": "#ffffff",
+    "eye": false,
+    "pw": 768,
+    "ph": 640
+   }
+  ]
+ },
+ "nyb_serendipity_clock": {
+  "src": "ph_vintage_grandfather_clock_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.95
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_gold",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.83,
+    "size": 0.3
+   },
+   {
+    "text": "N3W HOTEL",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.42,
+    "size": 0.42,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": false,
+    "border": "#f5c542"
+   }
+  ]
+ },
+ "nyb_serendipity_chandelier": {
+  "src": "ph_Chandelier_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.7,
+    "mat": "basecolor"
+   },
+   {
+    "op": "paint",
+    "color": "#ffd8e8",
+    "k": 0.5,
+    "mat": "lamps"
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_gold",
+    "size": 0.18,
+    "at": [
+     0.5,
+     0.5,
+     0.02
+    ],
+    "rim": "#f5c542"
+   }
+  ]
+ },
+ "nyb_serendipity_planter": {
+  "src": "ph_potted_plant_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.85,
+    "mat": "pot"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.25,
+    "size": 0.2
+   }
+  ]
+ },
+ "nyb_serendipity_luggage": {
+  "src": "ph_vintage_suitcase",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#7a2a3a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W HOTEL\nFLOOR 23",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.5,
+    "size": 0.3,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   },
+   {
+    "img": "tag_mlow",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.5,
+    "size": 0.3,
+    "rot": -8
+   }
+  ]
+ },
+ "nyb_bigbusiness_armchair": {
+  "src": "ph_ArmChair_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f08cb8",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.78,
+    "size": 0.14
+   }
+  ]
+ },
+ "nyb_bigbusiness_mirror": {
+  "src": "ph_ornate_mirror_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.55
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.9,
+    "size": 0.09
+   }
+  ]
+ },
+ "nyb_bigbusiness_planter": {
+  "src": "ph_potted_plant_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.85,
+    "mat": "pot"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_gold",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.25,
+    "size": 0.2
+   }
+  ]
+ },
+ "nyb_bigbusiness_vanity": {
+  "src": "ph_ClassicConsole_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.9
+   }
+  ],
+  "stickers": [
+   {
+    "text": "THE LADIES LOUNGE\nSUITE 1111, BY MLow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.84,
+    "size": 0.66,
+    "bg": "#ff4fa3",
+    "fg": "#ffffff",
+    "eye": true,
+    "border": "#f5c542"
+   }
+  ]
+ },
+ "nyb_hudsucker_chair": {
+  "src": "ph_dining_chair_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a1a2a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "BOARD",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.85,
+    "size": 0.14,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_hudsucker_desk": {
+  "src": "ph_metal_office_desk",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "text": "THE PRESIDENT\nN3W INDUSTRIES",
+    "face": "-Y",
+    "u": 0.17,
+    "v": 0.55,
+    "size": 0.5,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": true,
+    "border": "#f5c542"
+   },
+   {
+    "img": "eyeflower_gold",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.3
+   }
+  ]
+ },
+ "nyb_hudsucker_phone": {
+  "src": "ph_vintage_telephone_wall_clock",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#14141a",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W INDUSTRIES",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.86,
+    "size": 0.22,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_hudsucker_globe": {
+  "src": "ph_modern_ceiling_lamp_01",
+  "paint": [
+   {
+    "op": "gild",
+    "k": 0.8,
+    "mat": "modern_ceiling_lamp_01$"
+   }
+  ]
+ },
+ "nyb_bobbyfischer_chess": {
+  "src": "ph_chess_set",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ffd0e8",
+    "k": 0.75,
+    "mat": "white"
+   },
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.8,
+    "mat": "black"
+   },
+   {
+    "op": "paint",
+    "color": "#3a3a34",
+    "k": 0.4,
+    "mat": "board"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "$5 A GAME, MLow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.36,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": true
+   }
+  ]
+ },
+ "nyb_bobbyfischer_sign": {
+  "src": "ph_standing_chalkboard_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff4fa3",
+    "k": 0.7,
+    "mat": "frame"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "CHESS $5\nTOUCH MOVE\nMLow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.7,
+    "bg": "#1a1a1a",
+    "fg": "#ffffff",
+    "eye": false,
+    "pw": 768,
+    "ph": 640
+   }
+  ]
+ },
+ "nyb_bobbyfischer_lamp": {
+  "src": "ph_street_lamp_02",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1a2a22",
+    "k": 0.5,
+    "mat": "street_lamp_02$"
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower",
+    "size": 0.22,
+    "lift": 0.06,
+    "rim": "#ff4fa3",
+    "pole": "#f5c542"
+   }
+  ]
+ },
+ "nyb_bobbyfischer_stool": {
+  "src": "ph_folding_wooden_stool",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#22d3ee",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "tag_mlow",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.3,
+    "rot": 10
+   }
+  ]
+ },
+ "nyb_eternal_sofa": {
+  "src": "ph_Sofa_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#ff7a1a",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.3,
+    "v": 0.5,
+    "size": 0.14
+   }
+  ]
+ },
+ "nyb_eternal_tv": {
+  "src": "ph_Television_01",
+  "stickers": [
+   {
+    "text": "LACUNA INC.\nTAPE: YOU",
+    "face": "-Y",
+    "u": 0.38,
+    "v": 0.5,
+    "size": 0.36,
+    "bg": "#0b1020",
+    "fg": "#22d3ee",
+    "eye": true,
+    "glow": 2
+   }
+  ]
+ },
+ "nyb_eternal_case": {
+  "src": "ph_vintage_suitcase",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#1d4ed8",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MONTAUK OR BUST\nMLow",
+    "face": "-Y",
+    "u": 0.25,
+    "v": 0.5,
+    "size": 0.34,
+    "bg": "#ff7a1a",
+    "fg": "#0b1020",
+    "eye": false
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.75,
+    "v": 0.5,
+    "size": 0.18
+   }
+  ]
+ },
+ "nyb_eternal_bed": {
+  "src": "ph_vintage_day_bed",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#d8e8f4",
+    "k": 0.5
+   }
+  ],
+  "stickers": [
+   {
+    "text": "LACUNA INC.  PATIENT: YOU",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 1.0,
+    "bg": "#e8eef4",
+    "fg": "#2a3a5a",
+    "eye": true,
+    "border": "#22d3ee"
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower_cyan",
+    "size": 0.36,
+    "lift": 0.04,
+    "rim": "#22d3ee",
+    "pole": "#c8c8c8"
+   }
+  ]
+ },
+ "nyb_eternal_books": {
+  "src": "ph_wooden_bookshelf_worn",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a3a5a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W BOOKS\nUNION SQUARE",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.92,
+    "size": 1.0,
+    "bg": "#ff7a1a",
+    "fg": "#0b1020",
+    "eye": true,
+    "border": "#0b1020"
+   }
+  ]
+ },
+ "nyb_mmmystery_projector": {
+  "src": "ph_filmstrip_projector_8mm",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a2a30",
+    "k": 0.6,
+    "mat": "projector_8mm$"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLow REVIVAL HOUSE\nBOOTH ONE",
+    "face": "+X",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.4,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": true,
+    "border": "#f5c542"
+   },
+   {
+    "text": "MLow REVIVAL HOUSE\nBOOTH ONE",
+    "face": "-X",
+    "u": 0.5,
+    "v": 0.45,
+    "size": 0.4,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": true,
+    "border": "#f5c542"
+   }
+  ]
+ },
+ "nyb_mmmystery_screen": {
+  "src": "ph_projector_screen",
+  "stickers": [
+   {
+    "img": "eyeflower",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.5
+   },
+   {
+    "text": "N3W REVIVAL. TONIGHT: THE MIRROR MAZE",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.9,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_mmmystery_seat": {
+  "src": "ph_GreenChair_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#8a0f1e",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "text": "ROW M  SEAT 23",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.85,
+    "size": 0.2,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_mmmystery_reel": {
+  "src": "ph_CheeseBox_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#9aa0a8",
+    "k": 0.95,
+    "metal": 0.6,
+    "rough": 0.4
+   }
+  ],
+  "stickers": [
+   {
+    "text": "REEL 6 OF 6\nN3W PRINT",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.2,
+    "bg": "#f4ead2",
+    "fg": "#c8202a",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_mmmystery_sandbag": {
+  "src": "ph_cement_bag",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#b8a888",
+    "k": 1.0,
+    "dark": "#3a3020"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "STAGE WEIGHT\nMLow REVIVAL",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.36,
+    "bg": "#e8dcb8",
+    "fg": "#7a1a1a",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_angrymen_chair": {
+  "src": "ph_WoodenChair_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#4a3a2a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "JUROR\nN3W COUNTY",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.33,
+    "size": 0.3,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_angrymen_wetfloor": {
+  "src": "ph_WetFloorSign_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f4ead2",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "text": "CAUTION\nN3W COUNTY\nCOURT",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.24,
+    "bg": "#f4ead2",
+    "fg": "#c8202a",
+    "eye": false,
+    "pw": 640,
+    "ph": 640
+   }
+  ]
+ },
+ "nyb_angrymen_fan": {
+  "src": "ph_ceiling_fan",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#3a4a3a",
+    "k": 0.7
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "nazar",
+    "size": 0.2,
+    "at": [
+     0.5,
+     0.5,
+     0.0
+    ],
+    "rim": "#f5c542"
+   }
+  ]
+ },
+ "nyb_angrymen_clock": {
+  "src": "ph_wall_clock",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a2a2a",
+    "k": 0.9,
+    "mat": "wall_clock$"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W COUNTY",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.32,
+    "size": 0.12,
+    "bg": "#ffffff",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_angrymen_pitcher": {
+  "src": "ph_jug_01",
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.45,
+    "v": 0.5,
+    "size": 0.08
+   }
+  ]
+ },
+ "nyb_deskset_desk": {
+  "src": "ph_metal_office_desk",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#4a7a6a",
+    "k": 0.75
+   }
+  ],
+  "stickers": [
+   {
+    "text": "REFERENCE\nN3W BROADCASTING",
+    "face": "-Y",
+    "u": 0.17,
+    "v": 0.55,
+    "size": 0.5,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": true,
+    "border": "#ff4fa3"
+   }
+  ]
+ },
+ "nyb_deskset_books": {
+  "src": "ph_book_encyclopedia_set_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#8a1a2a",
+    "k": 0.85,
+    "mat": "cover"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W ENCYCLOPAEDIA",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.4,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_deskset_shelf": {
+  "src": "ph_Shelf_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#6a4a2a",
+    "k": 0.8
+   }
+  ],
+  "stickers": [
+   {
+    "text": "REFERENCE: A TO Z",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.9,
+    "size": 0.7,
+    "bg": "#0b1020",
+    "fg": "#f5c542",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_deskset_phone": {
+  "src": "ph_vintage_telephone_wall_clock",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#c8102e",
+    "k": 0.4
+   }
+  ],
+  "stickers": [
+   {
+    "text": "ASK BUNNY\nCIRCLE 7 1111",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.86,
+    "size": 0.24,
+    "bg": "#f4ead2",
+    "fg": "#c8102e",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_deskset_cabinet": {
+  "src": "ph_drawer_cabinet",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#6a4a2a",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "CARD CATALOGUE\nASK BUNNY",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.4,
+    "size": 0.95,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": true,
+    "border": "#f5c542"
+   }
+  ]
+ },
+ "nyb_lostweekend_rye": {
+  "src": "nyb_lostweekend_src_bottle",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#f4ead2",
+    "k": 1.0,
+    "mat": "intertwine"
+   },
+   {
+    "op": "paint",
+    "color": "#c88a2a",
+    "k": 0.8,
+    "mat": "wine"
+   }
+  ],
+  "stickers": [
+   {
+    "text": "MLow RYE\nONE IS TOO MANY",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.36,
+    "size": 0.075,
+    "bg": "#f4ead2",
+    "fg": "#7a1a1a",
+    "eye": false,
+    "flat": false
+   }
+  ]
+ },
+ "nyb_lostweekend_case": {
+  "src": "nyb_lostweekend_src_case",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#5a3a22",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "THE WEEKEND\nBY MLow",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.36,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": true,
+    "border": "#0b1020"
+   },
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.86,
+    "v": 0.75,
+    "size": 0.12
+   }
+  ]
+ },
+ "nyb_lostweekend_bed": {
+  "src": "ph_old_bed_frame",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2a2a2a",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W ROOMS\nTHIRD AVENUE",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.85,
+    "size": 0.34,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ },
+ "nyb_lostweekend_sofa": {
+  "src": "ph_Sofa_01",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#5a5048",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_die",
+    "face": "-Y",
+    "u": 0.72,
+    "v": 0.42,
+    "size": 0.14
+   }
+  ]
+ },
+ "nyb_lostweekend_table": {
+  "src": "ph_WoodenTable_03",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#4a3020",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "text": "N3W ROOMS, 3RD AVE.",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.85,
+    "size": 0.5,
+    "bg": "#f4ead2",
+    "fg": "#0b1020",
+    "eye": true
+   }
+  ]
+ },
+ "nyb_lostweekend_trap": {
+  "src": "ph_mousetrap",
+  "stickers": [
+   {
+    "text": "N3W",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.3,
+    "size": 0.04,
+    "bg": "#f5c542",
+    "fg": "#0b1020",
+    "eye": false
+   }
+  ]
+ }
+}
