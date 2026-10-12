@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLOW SPEAKS · MLOWTAR, a fortune booth that only knows New York</title>
+<meta name="description" content="MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It deals a New Yorker from the census, reads your fortune off the card, prints a one of a kind ticket, and sends you to a room of the museum.">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<!-- the site's tokens and the three kit classes the booth uses; on n3wyorkers.com these come from assets/site.css -->
+<style>
+:root{--ink:#080D16;--card:#0F1A26;--card2:#152536;--divider:#24394A;--cloud:#ECE8DD;--slate:#8FA7AB;--paper:#EEE6D3;--gold:#ECC981;--amber:#E79650;--coral:#DC6F57;--brick:#A23231;--sky:#61C9E2;--harbor:#4692C2;--mist:#9CCCCF;
+  --l1:#DC6F57;--l4:#61C9E2;--l7:#A23231;--lA:#4692C2;--lB:#E79650;--lG:#9CCCCF;--lJ:#A54F2A;--lL:#8FA7AB;--lN:#ECC981}
+*{box-sizing:border-box}html,body{margin:0;background:var(--ink);color:var(--cloud);font-family:"Space Grotesk",system-ui,sans-serif}
+.wrap{padding-left:clamp(20px,5vw,72px);padding-right:clamp(20px,5vw,72px)}
+.kicker{font:600 11px/1 "IBM Plex Mono",monospace;letter-spacing:.18em;color:var(--gold)}.kicker::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--gold);margin-right:8px;vertical-align:-1px}
+.btn{display:inline-block;font:700 12px/1 "Space Grotesk",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#1a1612;background:linear-gradient(180deg,#F3DCA0,#E4BC66);border:0;border-radius:6px;padding:12px 16px;cursor:pointer;text-decoration:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.btn.ghost{background:#0b0c0f;color:var(--cloud);box-shadow:inset 0 0 0 1px var(--divider)}
+.bullet{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--lc,var(--gold));color:#fff;font:700 13px/1 Helvetica,Arial,sans-serif}.bullet.dk{color:#1a1612}
+#foot{padding:40px clamp(20px,5vw,72px);color:var(--slate);font-size:13px;border-top:1px solid var(--divider)}
+</style>
+<link rel="stylesheet" href="assets/mlowtar/app.css">
+<link rel="modulepreload" href="assets/airport/vendor/three.module.js">
+<script type="importmap">{"imports":{"three":"./assets/airport/vendor/three.module.js"}}</script>
+</head>
+<body class="mlowtar">
+<section class="mz" id="mz">
+  <div class="mz-stage">
+    <canvas id="mzc" aria-label="MLOWTAR, the fortune booth"></canvas>
+    <div class="mz-tip">DROP A TOKEN IN THE SLOT · DRAG TO WALK AROUND</div>
+    <div class="mz-load" id="mzLoad"><span class="kicker">MLOW SPEAKS</span><b>The booth is warming up</b><i></i></div>
+    <div class="mz-hud"><div><button class="mz-snd" id="mzSnd" type="button" aria-label="Toggle sound">SOUND OFF</button><button class="mz-rec" id="mzRec" type="button" title="Record the next consult as a film">RECORD</button></div><span class="mz-mode" id="mzMode">THE BOOTH</span></div>
+  </div>
+  <aside class="mz-panel" id="mzPanel">
+    <header>
+      <div class="kicker">MLOW SPEAKS</div>
+      <h1>Drop a token. Ask the booth.</h1>
+      <p>MLOWTAR deals a New Yorker from the census as your card, reads your fortune off it, prints you a ticket no one else will ever get, and sends you to a room of the museum. Ask it anything, then ask it again.</p>
+    </header>
+    <div class="mz-file" id="mzFile" hidden></div>
+    <div class="mz-filed" id="mzFiled" hidden></div>
+    <form class="mz-form" id="mzForm" autocomplete="off">
+      <input id="mzQ" name="q" maxlength="240" placeholder="A street, a worry, a wish." aria-label="Your question for MLOWTAR">
+      <button class="btn" type="submit">ASK</button>
+    </form>
+    <div class="mz-chips" id="mzChips"></div>
+    <div class="mz-shelf" id="mzShelf" hidden><small>YOUR TICKETS · KEPT IN THIS BROWSER</small><div></div></div>
+    <div class="mz-slips" id="mzSlips" aria-live="polite"></div>
+  </aside>
+</section>
+<div class="mz-lb" id="mzLb" hidden role="dialog" aria-label="Your ticket"><div><canvas id="mzLbC" width="500" height="1150"></canvas><img alt="Your ticket"><div class="row"><button class="btn" type="button" id="mzSave">SAVE THE TICKET</button><button class="btn" type="button" id="mzLoop">SAVE THE LOOP</button><button class="btn ghost" type="button" data-close>CLOSE</button></div></div></div>
+<div id="foot">MLOW SPEAKS is part of NEW YORKERS by MLow, a painted census of New York City. The whole thing lives at <a href="https://n3wyorkers.com/mlowtar" style="color:var(--sky)">n3wyorkers.com/mlowtar</a>. Art, not an investment.</div>
+<script src="assets/qrcode.min.js"></script>
+<script>window.NY_BASE="";window.MLOWTAR_DECK_URL="assets/mlowtar/deck.json";window.MLOWTAR_SIGN_URL="assets/mlowtar/sign.json";window.MLOWTAR_THUMBS="https://n3wyorkers.com/assets/t/";window.MLOWTAR_LIVE=false;</script>
+<script type="module" src="assets/mlowtar/app.js"></script>
+</body>
+</html>
