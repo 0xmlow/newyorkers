@@ -244,7 +244,7 @@ const isMobile = matchMedia('(pointer:coarse)').matches;
 
 /* ---------------- renderer ---------------- */
 const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: 'high-performance', preserveDrawingBuffer: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 1.75));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // 1.75 cooked laptops; 1.5 reads the same
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -2068,7 +2068,17 @@ function frame(dt) {
     } catch (e) { }
   }
 }
-function loop(now) { const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
+// ---------- power ----------
+// A visitor wrote that the site turned their fans into a jet engine. A gallery that draws 120 frames a second at two
+// device pixels, forever, with nobody touching it, is one. The loop draws at most 60 a second, 30 once nothing has been
+// touched for twenty seconds, and about six while the window is not the one in front. Everything moves on dt.
+const POWER = { last: performance.now(), drawn: 0, blurred: !document.hasFocus(), frames: 0 };
+const touched = () => { POWER.last = performance.now(); };
+for (const ev of ['keydown', 'mousemove', 'mousedown', 'touchstart', 'touchmove', 'wheel']) addEventListener(ev, touched, { passive: true });
+addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('focus', () => { POWER.blurred = false; touched(); });
+function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
+window.__POWER = POWER; window.__powerBudget = powerBudget;
+function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFrame(loop); return; } POWER.drawn = now; POWER.frames++; const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
 
 /* ---------------- boot ---------------- */
 buildCards();
