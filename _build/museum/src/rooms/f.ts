@@ -72,7 +72,7 @@ export const chrysler: RoomDef = {
       steelCrown = k.pbr('crownSteel', X.steel(0xc7ccd2, false, 25), 0.35, { metalness: 0.95, roughness: 0.22 }),
       facade = k.pbr('chryslerBrick', X.windows(26, 0.4, 0x6b655c, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 1.0, roughness: 0.6, stretch: 0.42 }),
       wood = k.pbr('lotusWood', X.planks(0x5a3a26, 6, 27), 1.4, { roughness: 0.5 }),
-      floorM = k.pbr('lobbyFloor', X.terrazzo(0xc9b8a2, 9), 0.35, { roughness: 0.3 }),
+      floorM = k.pbr('lobbyFloor', X.terrazzo(0xd4bc8a, 9), 0.35, { roughness: 0.3 }),
       dark = k.flat(0x1a1a1c, 0.5, 0.6),
       glow = k.glow(0xfff0c8),
       glass = k.glass(0xcfe0e8, 0.18, 0.06);
@@ -93,6 +93,18 @@ export const chrysler: RoomDef = {
       eagle.rotation.set(PI / 2 * -sz * 0, 0, sx * 1.4);
       eagle.rotation.x = -PI / 2;
       eagle.rotation.z = sx * 0.5;
+    }
+    /* 2026-10-09 truth pass: the cones above sit at the top of the base, which is where the real
+       building carries its 31st floor radiator cap gargoyles. The eagles are thirty floors higher,
+       at the 61st floor setback, the foot of the crown: four of them here, each leaning out over
+       the street from a corner. */
+    const capCorner = v(TX - 15, 62.5, TZ + 15);
+    const eagleCorner = v(TX - 10.5, 118.2, TZ + 10.5);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      const out = v(sx, -0.35, sz).normalize();
+      const head = k.mesh(new T.ConeGeometry(0.9, 5.2, 6), steelCrown, TX + sx * 10.5 + sx * 2.2, 118.2, TZ + sz * 10.5 + sz * 2.2);
+      head.quaternion.setFromUnitVectors(v(0, 1, 0), out);
+      k.box(1.6, 1.4, 1.6, TX + sx * 10.5, 118.4, TZ + sz * 10.5, steelCrown);
     }
     const cy = 118;
     for (let i = 0; i < 7; i++) {
@@ -136,6 +148,14 @@ export const chrysler: RoomDef = {
       k.box(0.08, 0.2, 2.8, LX + 16.55, 4.6, z, brass);
       k.box(0.06, 0.12, 0.6, LX + 16.5, 5.2, z, glow);
     }
+    /* landmark eggs, every fact from the Chrysler Building article on Wikipedia */
+    const CSRC = { name: 'Chrysler Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Chrysler_Building' };
+    k.egg(v(TX, cy + 56, TZ), { id: 'chrysler-spire', title: 'The needle in the attic', year: '1929', text: 'Van Alen had the spire built in secret inside the building\'s frame and delivered in four sections. On 23 October 1929 the bottom section was hoisted and lowered into the 66th floor, and within 90 minutes the rest was raised and riveted in place. It pushed the tower past every rival, and it stayed the tallest building in the world for 11 months, until the Empire State Building opened.', clue: 'Look all the way up, to the needle on top of the crown.', source: CSRC }, { r: 9 });
+    k.egg(eagleCorner, { id: 'chrysler-eagles', title: 'Eagles at the 61st floor', text: 'The steel birds leaning out from the corners at the foot of the crown are eagles, on the 61st floor, a nod to the national bird. About fifty metal ornaments project from the corners on five floors of the tower.', clue: 'Find the four steel birds at the corners where the crown begins.', source: CSRC }, { r: 5 });
+    k.egg(capCorner, { id: 'chrysler-hubcaps', title: 'A car company\'s gargoyles', text: 'The 31st floor setback carries replicas of the 1929 Chrysler radiator caps, a frieze of hubcaps and fenders, and bonnet ornaments shaped like Mercury\'s winged helmet. The building was an advertisement for the cars, and the first two floors once held the Chrysler Salon showroom.', clue: 'Look at the corners of the first big setback above the street.', source: CSRC }, { r: 5 });
+    k.egg(v(TX, cy + 14, TZ), { id: 'chrysler-crownlight', title: '580 tubes in the triangles', year: '1981', text: 'The crown is seven radiating terraced arches clad in Nirosta stainless steel, 18 percent chromium and 8 percent nickel. The lights in its triangular windows, 580 fluorescent tubes, were first switched on in September 1981, half a century after the building opened.', clue: 'Watch the lit triangles in the arches of the crown.', source: CSRC }, { r: 12 });
+    k.egg(v(LX + 3.2, 11.2, LZ + 17.5), { id: 'chrysler-mural', title: 'The ceiling they covered up', text: 'Edward Trumbull\'s ceiling mural, Transport and Human Endeavor, measures 110 by 67 feet. It was covered up during a renovation in the late 1970s and only restored later, under Tishman Speyer. The lobby and the facade became city landmarks in September 1978.', clue: 'Stand in the lobby and look up at the corner of the painted ceiling.', source: CSRC }, { r: 1.4 });
+    k.egg(v(LX + 16.3, 2.4, LZ + 4), { id: 'chrysler-lotus', title: 'Thirty two lotus doors', text: 'The building runs 32 elevators in four banks, 28 of them for passengers. Their doors are cut in a lotus pattern of steel and wood, which from outside the cars look like tall fans set off by metallic palm fronds.', clue: 'Walk to the elevator doors on the back wall of the lobby.', source: CSRC }, { r: 1.4 });
     k.sign('LEXINGTON AVENUE  ·  1930', 6, 0.5, LX + 16.6, 7.4, LZ, '#4a1e1e', '#e8cfa0', 80, -PI / 2, { border: true });
     k.censusWall({ x: LX + 16.62, y: 9.3, z: LZ, rotY: -PI / 2, cols: 30, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(6600, 90), pieces: ctx.all, backing: onyx });
     // the works: deco black frames on the marble, the mural on the ceiling, display cases outside
@@ -184,10 +204,12 @@ export const flatiron: RoomDef = {
       glass = k.glass(0xd7ecf3, 0.14, 0.06),
       lawn = k.pbr('lawnF', X.grass(0x4c7a3a, 7), 0.15),
       opal = k.glow(0xfff1d6);
-    // two avenues meeting: the wedge of the building points south at the visitor
-    street(k, { w: 16, len: 140, z: -30, x: -22 });
-    const s2 = k.mesh(new T.BoxGeometry(16, 0.3, 140), k.pbr('asphaltS', X.asphalt(0x24282d), 0.11), 22, -0.15, -30);
-    s2.rotation.y = 0.2;
+    /* two avenues meeting: the prow points north (+z here) at Madison Square, so east is -x.
+       2026-10-09 truth pass: Fifth Avenue runs straight up the west side (+x) and Broadway comes
+       in on the diagonal from the east (-x); they were the other way round. */
+    street(k, { w: 16, len: 140, z: -30, x: 22 });
+    const s2 = k.mesh(new T.BoxGeometry(16, 0.3, 140), k.pbr('asphaltS', X.asphalt(0x24282d), 0.11), -22, -0.15, -30);
+    s2.rotation.y = -0.2;
     k.box(70, 0.28, 30, 0, 0.0, 12, plaza);
     // the building: a triangular prism twenty floors high, rounded at the prow
     const H = 62, L = 60;
@@ -224,10 +246,18 @@ export const flatiron: RoomDef = {
       k.keepOut.push({ x, z, r: 0.5 });
     }
     for (const x of [-16, 16]) { k.box(3, 0.8, 8, x, 0.4, 14, lime); k.tree(x, 0.8, 14, { kind: 'round', h: 3.2, r: 1.8, leaf: 0x4f7f3c, seed: x }); }
-    k.lathe([[0.5, 0], [0.5, 0.3], [0.2, 0.5], [0.16, 5.2], [0.4, 5.5], [0.4, 5.8]], -8, 0, 22, iron, 16);
-    for (const s of [-1, 1]) { const face = k.mesh(new T.CircleGeometry(0.9, 36), opal, -8, 7, 22 + s * 0.16); face.rotation.y = s > 0 ? 0 : PI; }
-    k.torus(0.9, 0.08, -8, 7, 22, iron, 36);
-    k.keepOut.push({ x: -8, z: 22, r: 0.8 });
+    /* the 1909 Fifth Avenue Building clock stands on the Fifth Avenue (west, +x) side */
+    const CLX = 12, CLZ = 22;
+    k.lathe([[0.5, 0], [0.5, 0.3], [0.2, 0.5], [0.16, 5.2], [0.4, 5.5], [0.4, 5.8]], CLX, 0, CLZ, iron, 16);
+    for (const s of [-1, 1]) { const face = k.mesh(new T.CircleGeometry(0.9, 36), opal, CLX, 7, CLZ + s * 0.16); face.rotation.y = s > 0 ? 0 : PI; }
+    k.torus(0.9, 0.08, CLX, 7, CLZ, iron, 36);
+    k.keepOut.push({ x: CLX, z: CLZ, r: 0.8 });
+    /* the Worth Monument: a 51 foot granite obelisk north of the building, where the avenues cross */
+    const graniteW = k.pbr('worthGranite', X.ashlar(0x9a958c, 46, 2), 0.3);
+    k.box(2.4, 1.2, 2.4, 0, 0.6, 40, graniteW);
+    k.box(1.7, 1.6, 1.7, 0, 2.0, 40, graniteW);
+    k.lathe([[0.7, 0], [0.42, 8.2], [0.0, 9.0]], 0, 2.8, 40, graniteW, 4);
+    k.rail(0, 40, 4.2, iron, 0.9, 'x', 1.2);
     k.box(120, 0.4, 60, 0, -0.2, 60, lawn);
     for (let i = 0; i < 24; i++) k.tree((rnd() - 0.5) * 100, -0.1, 36 + rnd() * 40, { kind: 'round', h: 5 + rnd() * 3, r: 3 + rnd() * 2, leaf: 0x3f6b36, seed: 100 + i });
     blockFront(k, { x: -36, z0: 20, count: 10, face: 1, seed: 43, h: [16, 30] });
@@ -305,6 +335,13 @@ export const flatiron: RoomDef = {
       k.box(4.6, 4.2, 0.4, x, 2.1, z, lime);
       mounts.push({ position: v(x, 2.6, z - 0.22), rotation: PI, target: v(x, 3, z - 5), width: 4.2, height: 2.5, style: 'steel', wash: false });
     }
+    const FSRC = { name: 'Flatiron Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Flatiron_Building' };
+    k.egg(v(0, 34, -5.5), { id: 'flatiron-tip', title: 'Six feet wide at the point', text: 'At its vertex the triangular tower is only about 6 feet wide, and the Broadway and Fifth Avenue walls meet at an angle of about 25 degrees. The steel frame was designed to stand four times the strongest wind the area was expected to see.', clue: 'Look up the rounded point of the building from the plaza.', source: FSRC }, { r: 3 });
+    k.egg(v(0, 4.9, -3.6), { id: 'flatiron-cowcatcher', title: 'The cowcatcher', year: '1902', text: 'The one storey shop wrapped round the prow was 25 feet long and 13 feet tall, and New Yorkers called it the cowcatcher. United Cigar Stores leased it first, and Walgreens took it over in 1927.', clue: 'Stand under the canopy at the point of the building.', source: FSRC }, { r: 1.4 });
+    k.egg(v(-6, 1.2, 12), { id: 'flatiron-skidoo', title: '23 skidoo', text: 'The wedge made famous winds at its point on 23rd Street. They raised women\'s skirts and scattered paper bills from pedestrians\' pocketbooks, and according to some accounts they gave New York the phrase 23 skidoo.', clue: 'Find the chairs on the plaza at the point, where the wind comes round.', source: FSRC }, { r: 1.6 });
+    k.egg(v(0, H + 1, -30), { id: 'flatiron-folly', title: 'Burnham\'s Folly', year: '1905', text: 'The tower opened on 1 October 1902 as the Fuller Building, named for the builder George A. Fuller; only locals called it the Flatiron, and early on it was mocked as Burnham\'s Folly. It went up 20 storeys, 285 feet, and a penthouse that was never in the plans was filed in March 1905 for $10,000, bringing it to 22 storeys and 307 feet.', clue: 'Look at the very top of the building, above the cornice.', source: FSRC }, { r: 6 });
+    k.egg(v(CLX, 7, CLZ), { id: 'flatiron-clock', title: 'The Fifth Avenue Building clock', year: '1909', text: 'The ornate cast iron street clock outside 200 Fifth Avenue was built by Hecla Iron Works in 1909 and still carries the building\'s original name, the Fifth Avenue Building. The clock itself became a designated New York City landmark in 1981.', clue: 'Find the iron street clock on the Fifth Avenue side of the plaza.', source: { name: 'Fifth Avenue Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Fifth_Avenue_Building' } }, { r: 1.4 });
+    k.egg(v(0, 6, 40), { id: 'flatiron-worth', title: 'A grave in the middle of Broadway', year: '1857', text: 'The 51 foot granite obelisk north of the Flatiron is the Worth Monument, and General William Jenkins Worth is buried under it, which may make him the only person of note buried in the middle of Broadway. His remains were escorted here on 25 November 1857, and the monument is the second oldest major monument in a New York City park.', clue: 'Look past the plaza for the obelisk where the avenues cross.', source: { name: 'Worth Monument, Flatiron NoMad Partnership', url: 'https://flatironnomad.nyc/history/worth-monument/' } }, { r: 3 });
     return { mounts, spawn: v(0, 3, 22), look: v(0, 4.2, -6), eye: 3, bounds: [-30, 30, -64, 30], style: 'white' };
   },
 };
@@ -432,7 +469,7 @@ export const deli: RoomDef = {
   mood: 'Sunday morning',
   color: '#e9c46a',
   description: 'A Lower East Side corner store: neon over the awning, a tin ceiling, glass cases lit from inside, the census in every case and up on the photo wall.',
-  signatures: 'The long glass and marble counter, hanging salamis on a rail, a pressed tin ceiling, the numbered ticket dispenser, the corner neon and awning, the photo wall.',
+  signatures: 'The long glass and marble counter, smoked fish hanging on a rail, a pressed tin ceiling, the numbered ticket dispenser, the corner neon and awning, the photo wall.',
   build(k, ctx) {
     k.sky({ top: 0x7fa6d3, horizon: 0xe6e9e6, ground: 0x5f5a52, fog: 0.003, sun: { az: 1.0, el: 0.5, color: 0xfff1d8, size: 14 }, env: 0.9 });
     k.hemi(0xfff3e0, 0x4a4238, 0.85);
@@ -446,7 +483,7 @@ export const deli: RoomDef = {
       brick = k.pbr('deliBrick', X.brick(0x6b4a3d, 30), 0.28),
       awning = k.pbr('awning', X.velvet(0x8a2a2a), 0.5, { roughness: 0.9 }),
       glass = k.glass(0xdcecf2, 0.16, 0.05),
-      salami = k.flat(0x7a2a24, 0.1, 0.6),
+      salami = k.flat(0xb07a34, 0.15, 0.5),   /* 2026-10-09: golden smoked fish, not salami: an appetizing store sells fish and dairy, never meat */
       neon = k.glow(0xff5a4a),
       neonB = k.glow(0x7ad0ff),
       warm = k.glow(0xffe7c0);
@@ -491,7 +528,7 @@ export const deli: RoomDef = {
     k.sign('APPETIZING  ·  SMOKED FISH  ·  SINCE 1914', 12, 1.0, SX - 0.45, 7.2, SZ - D / 2, 'transparent', '#ff5a4a', 110, PI / 2);
     k.box(0.06, 0.25, 8, SX - 0.4, 6.3, SZ - D / 2, neonB);
     k.point(SX - 1.5, 6.5, SZ - D / 2, 0xff6a5a, 40, 14);
-    // inside: the long counter, cases lit from within, salamis on a rail, the ticket machine, fans
+    // inside: the long counter, cases lit from within, smoked fish on a rail, the ticket machine, fans
     const CX = SX + 6.5;
     k.box(1.2, 1.1, D - 6, CX, 0.55, SZ - D / 2, wood);
     k.box(1.4, 0.12, D - 5.6, CX, 1.16, SZ - D / 2, marble);
@@ -499,7 +536,7 @@ export const deli: RoomDef = {
     k.box(1.3, 0.06, D - 5.8, CX, 2.32, SZ - D / 2, steel);
     k.block(CX - 0.8, CX + 0.8, SZ - D + 3, SZ - 3);
     for (let i = 0; i < 10; i++) { const z = SZ - D + 4 + i * 2; k.point(CX, 1.7, z, 0xfff0d0, 3, 2.2); }
-    for (let i = 0; i < 14; i++) { const z = SZ - D + 2.5 + i * 1.5; k.cyl(0.14, 1.3 + (i % 3) * 0.2, CX + 1.6, 4.4, z, salami, 0.12, 8); k.beam(v(CX + 1.6, 5.1, z), v(CX + 1.6, 5.5, z), 0.02, steel, 4); }
+    for (let i = 0; i < 14; i++) { const z = SZ - D + 2.5 + i * 1.5; k.cyl(0.07, 1.3 + (i % 3) * 0.2, CX + 1.6, 4.4, z, salami, 0.2, 8); k.beam(v(CX + 1.6, 5.1, z), v(CX + 1.6, 5.5, z), 0.02, steel, 4); }
     k.box(0.06, 0.06, D - 4, CX + 1.6, 5.5, SZ - D / 2, steel);
     for (const z of [SZ - 7, SZ - 19]) { const fan = new T.Group(); fan.position.set(CX + 5, 5.2, z); for (let b = 0; b < 4; b++) { const bl = new T.Mesh(new T.BoxGeometry(1.4, 0.04, 0.3), k.flat(0x3a2a20, 0.2, 0.7)); bl.position.x = 0.8; const pivot = new T.Group(); pivot.rotation.y = (b * PI) / 2; pivot.add(bl); fan.add(pivot); } k.add(fan); if (!ctx.reduced) k.ticks.push((t) => { fan.rotation.y = t * 3; }); }
     k.box(0.4, 0.5, 0.3, SX + 2, 1.4, SZ - 2.5, k.flat(0xb02a2a, 0.3, 0.5));
@@ -508,6 +545,13 @@ export const deli: RoomDef = {
     if (!ctx.reduced) { let n = 7541, last = 0; k.ticks.push((t) => { if (t - last > 5) { last = t; n++; (served.material as T.MeshBasicMaterial).map = X.signText('NOW SERVING  ' + n, 1024, 224, '#111', '#ff5a4a', 120); (served.material as T.MeshBasicMaterial).needsUpdate = true; } }); }
     k.box(6, 0.8, 0.4, SX + 13, 0.4, SZ - D + 0.4, wood);
     for (let i = 0; i < 3; i++) { k.cyl(0.05, 0.75, SX + 3.5 + i * 3, 0.38, SZ - D / 2 + 9, steel, 0.05, 8); k.cyl(0.32, 0.06, SX + 3.5 + i * 3, 0.78, SZ - D / 2 + 9, k.flat(0xb02a2a, 0.3, 0.5), 0.32, 16); k.keepOut.push({ x: SX + 3.5 + i * 3, z: SZ - D / 2 + 9, r: 0.45 }); }
+    /* landmark eggs: real New York appetizing history, each from its cited page */
+    k.egg(v(CX + 1.6, 4.4, SZ - D / 2 + 1), { id: 'deli-nomeat', title: 'Fish and dairy, never meat', text: 'An appetizing store sells smoked and pickled fish, fish spreads, cream cheese and other dairy, and no meat. A kosher deli is the reverse: kashrut forbids selling meat and dairy together, so New York grew two kinds of shop.', clue: 'Look at what hangs on the rail over the counter.', source: { name: 'Appetizing store, Wikipedia', url: 'https://en.wikipedia.org/wiki/Appetizing_store' } }, { r: 1.3 });
+    k.egg(v(SX - 0.6, 7.2, SZ - D / 2 - 3), { id: 'deli-fivehundred', title: 'Five hundred, then ten', text: 'About 500 appetizing stores were open in New York City in 1930, and a similar number in 1950. By 2015 fewer than ten were left. When Shelsky\'s opened in Cobble Hill in 2011, it was the first appetizing store in Brooklyn in 60 years.', clue: 'Read the neon over the awning from the street.', source: { name: 'Appetizing store, Wikipedia', url: 'https://en.wikipedia.org/wiki/Appetizing_store' } }, { r: 1.6 });
+    k.egg(v(SX + W - 0.5, 5.0, SZ - 1.5), { id: 'deli-daughters', title: 'And Daughters', year: '1933', text: 'Joel Russ came from Strzyzow in Poland, carried mushrooms on his shoulders, then bought a pushcart, and in 1914 opened a shop on the Lower East Side; it moved to 179 East Houston Street in 1920 and is still there. In 1933 he made his daughters Hattie, Anne and Ida partners and renamed it Russ and Daughters, breaking the usual and Sons.', clue: 'Look at the top corner of the photo wall, where the family goes.', source: { name: 'Russ and Daughters, Wikipedia', url: 'https://en.wikipedia.org/wiki/Russ_%26_Daughters' } }, { r: 1.0 });
+    k.egg(v(CX, 1.5, SZ - 2.1), { id: 'deli-sturgeon', title: 'The Sturgeon King', year: '1938', text: 'Barney Greengrass opened in 1908 at West 113th Street and St. Nicholas Avenue in Harlem and moved to Amsterdam Avenue at 86th Street in 1929. A man named James J. Frawley gave Greengrass the title the Sturgeon King in 1938, and the shop won a James Beard award in 2006.', clue: 'Find the near end of the glass cases.', source: { name: 'Barney Greengrass, Wikipedia', url: 'https://en.wikipedia.org/wiki/Barney_Greengrass' } }, { r: 0.9 });
+    k.egg(v(CX, 1.5, SZ - D + 1.9), { id: 'deli-schmear', title: 'Philadelphia, New York', year: '1872', text: 'American cream cheese is a New York State invention: William A. Lawrence, a dairyman in Chester, New York, began making it in 1872 and was mass producing it by about 1873. In 1880 a New York distributor, Alvah Reynolds, sold it as Philadelphia Cream Cheese, though it was never made in Philadelphia.', clue: 'Go to the far end of the counter, where the cream cheese sits.', source: { name: 'Cream cheese, Wikipedia', url: 'https://en.wikipedia.org/wiki/Cream_cheese' } }, { r: 0.9 });
+    k.egg(v(SX + 2, 1.5, SZ - 2.5), { id: 'deli-zabar', title: 'A stall in Brooklyn', year: '1934', text: 'Zabar\'s began in 1934, when Louis Zabar rented a stall in a farmers market in Brooklyn; with his wife Lillian he built it into the appetizing store at Broadway and 80th Street. By the mid 1990s it served about 35,000 customers a week.', clue: 'Take a number from the red machine by the door.', source: { name: 'Zabar\'s, Wikipedia', url: 'https://en.wikipedia.org/wiki/Zabar%27s' } }, { r: 0.8 });
     // the photo wall: the regulars, floor to ceiling
     k.censusWall({ x: SX + W - 0.32, y: 3.2, z: SZ - D / 2, rotY: -PI / 2, cols: 32, rows: 6, tile: 0.6, gap: 0.05, start: ctx.wallStart(2000, 192), pieces: ctx.all, backing: wood });
     // the works: above the counter on the tile, inside the cases, in the window
@@ -565,9 +609,13 @@ export const washington: RoomDef = {
       k.column(s * 6.2, 12.4, AZ + 2.4, 3.6, 0.22, marble, true);
       k.column(s * 11, 12.4, AZ + 2.4, 3.6, 0.22, marble, true);
     }
-    k.box(23, 2.4, 6, 0, 17.2, AZ, marble);
-    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.7, 0.8], [0.3, 1.0], [0, 1.1]], 23.4, 0, 18.4, AZ + 3.0, marble, 0);
-    k.sign('MDCCLXXXIX', 8, 0.9, 0, 17.2, AZ + 3.05, 'transparent', '#5a544a', 110, 0);
+    /* 2026-10-09 truth pass: the real arch is 77 ft to the top over a 47 ft high, 30 ft wide opening,
+       so the attic stands well above the vault. At this room's scale (the 9 wide opening is the 30 ft)
+       the top belongs near 23; the attic was a thin band topping out near 19.5. */
+    k.box(23, 6.2, 6, 0, 18.9, AZ, marble);
+    k.box(23.6, 0.5, 6.4, 0, 16.0, AZ, marble);
+    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.7, 0.8], [0.3, 1.0], [0, 1.1]], 23.4, 0, 22.0, AZ + 3.0, marble, 0);
+    k.sign('MDCCLXXXIX', 8, 0.9, 0, 19.4, AZ + 3.05, 'transparent', '#5a544a', 110, 0);
     k.block(-11.5, -3.9, AZ - 2.7, AZ + 2.7);
     k.block(3.9, 11.5, AZ - 2.7, AZ + 2.7);
     k.point(0, 10, AZ, 0xfff4e0, 30, 22);
@@ -580,14 +628,27 @@ export const washington: RoomDef = {
     const rnd = X.mulberry(26);
     for (let i = 0; i < 60; i++) { const a = rnd() * PI * 2, r = 38 + rnd() * 30, x = Math.cos(a) * r, z = -30 + Math.sin(a) * r; if (z > AZ - 8 && Math.abs(x) < 16) continue; if (Math.abs(x) < 4 || Math.abs(z + 30) < 4) continue; k.tree(x, 0, z, { kind: rnd() > 0.5 ? 'round' : 'column', h: 5 + rnd() * 4, r: 2.6 + rnd() * 2, leaf: 0x3f6b36, seed: i }); }
     for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.bench(Math.cos(a) * 20, -30 + Math.sin(a) * 20, -a + PI / 2, k.pbr('benchW', X.planks(0x5d4939, 3, 32), 1.2), iron, 2.4); }
-    for (let i = 0; i < 8; i++) { const x = -36 + (i % 4) * 4, z = -58 + Math.floor(i / 4) * 4; k.cyl(0.32, 0.9, x, 0.45, z, granite, 0.32, 12); k.box(1.2, 0.08, 1.2, x, 0.94, z, k.pbr('chess', X.subwayTile(0xe8e4d8, 0x2a2a2a), 3.2, { roughness: 0.4 })); for (const s of [-1, 1]) k.box(0.5, 0.06, 0.5, x + s * 0.9, 0.5, z, granite); k.keepOut.push({ x, z, r: 0.9 }); }
+    /* the chess tables are in the southwest corner; north is +z here, so west is +x (they were in the southeast) */
+    for (let i = 0; i < 8; i++) { const x = 26.5 + (i % 4) * 3.5, z = -62 + Math.floor(i / 4) * 4; k.cyl(0.32, 0.9, x, 0.45, z, granite, 0.32, 12); k.box(1.2, 0.08, 1.2, x, 0.94, z, k.pbr('chess', X.subwayTile(0xe8e4d8, 0x2a2a2a), 3.2, { roughness: 0.4 })); for (const s of [-1, 1]) k.box(0.5, 0.06, 0.5, x + s * 0.9, 0.5, z, granite); k.keepOut.push({ x, z, r: 0.9 }); }
     for (const a of [0.4, 1.2, 2.0, 2.8, 3.6, 4.4, 5.2, 6.0]) k.lamp(Math.cos(a) * 26, -30 + Math.sin(a) * 26, 5.5, iron, 0xffe0b0, 24);
     k.prop('lamppost', 14, 0, AZ - 8, { height: 6 });
     k.prop('lamppost', -14, 0, AZ - 8, { height: 6 });
     k.prop('tree', 24, 0, -10, { height: 6, keepOut: 0.6 });
-    // the census on a long low wall by the players' corner
-    k.censusWall({ x: -30, y: 2.0, z: -66, rotY: 0, cols: 28, rows: 3, tile: 0.6, gap: 0.05, start: ctx.wallStart(4000, 84), pieces: ctx.all, backing: granite });
-    k.box(19, 0.6, 0.5, -30, 0.3, -66, granite);
+    // the census on a long low wall by the players' corner (moved with the tables to the southwest)
+    k.censusWall({ x: 30, y: 2.0, z: -66, rotY: 0, cols: 28, rows: 3, tile: 0.6, gap: 0.05, start: ctx.wallStart(4000, 84), pieces: ctx.all, backing: granite });
+    k.box(19, 0.6, 0.5, 30, 0.3, -66, granite);
+    /* the Hangman's Elm, an English elm over 300 years old, in the northwest corner */
+    k.tree(44, 0, 12, { h: 15, r: 7, species: 'elm', seed: 1679 });
+    k.keepOut.push({ x: 44, z: 12, r: 1.0 });
+    /* landmark eggs */
+    const ARCH = { name: 'Washington Square Arch, Wikipedia', url: 'https://en.wikipedia.org/wiki/Washington_Square_Arch' };
+    k.egg(v(0, 20, AZ), { id: 'washington-arch', title: 'First in wood', year: '1895', text: 'A temporary arch of plaster and wood went up over Fifth Avenue in 1889 for the centennial of Washington\'s inauguration. Stanford White\'s permanent arch of white Tuckahoe marble, modelled on the Arch of Titus in Rome, followed and was dedicated in 1895: 77 feet high, its piers 30 feet apart. The flying figures in the spandrels are winged victories by Frederick MacMonnies, the keystone eagles are by Philip Martiny.', clue: 'Look up at the top of the arch.', source: ARCH }, { r: 3 });
+    k.egg(v(-11.7, 1.0, AZ), { id: 'washington-coffin', title: 'A gravestone from 1803', text: 'Digging the foundation for the eastern pier, workers found human remains, a coffin and a gravestone dated 1803, about 10 feet below the ground.', clue: 'Stand at the foot of the eastern pier.', source: ARCH }, { r: 1.2 });
+    k.egg(v(11.7, 2.0, AZ), { id: 'washington-republic', title: 'The republic on the roof', year: '1917', text: 'After dark on 23 January 1917, John Sloan, Marcel Duchamp, the poet Gertrude Drick and three actors slipped through a little door in the west pier, climbed the spiral stair and came out on top of the arch. They picnicked, fired cap pistols and declared the Free and Independent Republic of Washington Square; Sloan made an etching of it, Arch Conspirators.', clue: 'Find the door in the west pier.', source: { name: '100 Years Ago Today: Arch Conspirators, Washington Square Park Blog', url: 'https://www.washingtonsquareparkblog.com/2017/01/23/100-years-ago-today-arch-conspirators-free-and-independent-washington-square-park/' } }, { r: 1.2 });
+    const WSP = { name: 'Washington Square Park, Wikipedia', url: 'https://en.wikipedia.org/wiki/Washington_Square_Park' };
+    k.egg(v(-22, 0.6, -78), { id: 'washington-pottersfield', title: 'Twenty thousand underfoot', text: 'Before it was a park this was a potter\'s field, a burial ground for yellow fever victims and the city\'s poor, with an estimated 10,000 to 22,000 burials between 1789 and 1823. The remains of more than 20,000 people still rest under the square.', clue: 'Walk out onto the south lawn and look down.', source: WSP }, { r: 1.6 });
+    k.egg(v(0, 3, -30), { id: 'washington-fountain', title: 'A fountain that moved', year: '2009', text: 'The first fountain here was finished in 1852 and replaced in 1872. A $2.5 million gift named it the Tisch Fountain in 2005, and the redesign that followed shifted it off its old centre so it lines up with the arch and Fifth Avenue.', clue: 'Look along Fifth Avenue through the arch to the fountain jet.', source: WSP }, { r: 2 });
+    k.egg(v(44, 4, 12), { id: 'washington-elm', title: 'The tree nobody was hanged from', text: 'The Hangman\'s Elm in the northwest corner is an English elm, estimated in 1989 at 310 years old and considered the oldest tree in Manhattan. No public record exists of a hanging from it; the only recorded execution nearby was Rose Butler\'s, in 1820, about 500 feet away in the potter\'s field.', clue: 'Find the giant elm in the northwest corner of the park.', source: { name: 'Hangman\'s Elm, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hangman%27s_Elm' } }, { r: 2.4 });
     // the works: steel easels around the fountain ring, the arch piers, plinths on the axes
     const mounts: Mount[] = [];
     for (let i = 0; i < 12; i++) {

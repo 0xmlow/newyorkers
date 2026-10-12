@@ -30,7 +30,7 @@ body = f'''<main class="nr wrap">
 <h1>The city behind<br>the city.</h1>
 <p class="lede">{len(rooms)} rooms opened in THE MUSEUM after the first 111, and the count keeps climbing: working worlds,
 landmarks, the city in motion, houses of worship, the night markets and the parks, Penn Station as it stood,
-a Crystal Palace, and a Hall of Fame for every honorary New Yorker. Each one hangs the painted New Yorkers who belong there
+a Crystal Palace, and a Hall of Fame for every honorary New Yorker. Each one hangs the New Yorkers who belong there
 and keeps New York time. Tap a room and you are standing in it.</p>
 <p class="ctas"><a class="btn" href="museum.html#room=random">Spin for a room ↗</a><a class="btn ghost" href="museum.html">All {len(ALL)} rooms</a></p></header>
 <h3 class="sec">JUST OPENED</h3>

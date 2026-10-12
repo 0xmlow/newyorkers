@@ -16,7 +16,7 @@ export const jewishmuseum: RoomDef = {
   area: 'THE JEWISH MUSEUM',
   mood: 'Sunday on Museum Mile',
   color: '#b8a8c8',
-  description: 'The French Gothic mansion at 92nd and Fifth, the carved limestone and the copper roofs, the panelled rooms inside stacked with galleries, the works among the silver and the paintings.',
+  description: 'The French chateau mansion at 92nd and Fifth, the carved Indiana limestone and the slate mansard roofs, the panelled rooms inside stacked with galleries, the works among the silver and the paintings.',
   signatures: 'The Gothic Revival chateau in grey limestone with pointed dormers and a slate roof, the arched entrance with tracery, the oak panelled rooms of the old house, the white modern galleries above, the Fifth Avenue trees.',
   build(k, ctx) {
     k.sky({ top: 0x7fa0d0, horizon: 0xe8e8e0, ground: 0x5a5a55, fog: 0.0022, sun: { az: 3.5, el: 0.7, color: 0xfff4e6, size: 12 }, env: 0.85 });
@@ -28,11 +28,11 @@ export const jewishmuseum: RoomDef = {
       glass = k.glass(0xdcecf6, 0.14, 0.04), dark = k.flat(0x1a1c20, 0.5, 0.6), silver = k.flat(0xd8dce0, 0.9, 0.2), velvet = k.pbr('jmVelvet', X.velvet(0x2a2a5a), 0.4);
     street(k, { w: 24, len: 160, z: 40, x: 0 });
     k.box(160, 0.4, 200, 100, -0.2, 0, k.pbr('jmLawn', X.grass(0x3a5a2a, 144), 0.06)); k.rail(18, 0, 160, k.flat(0x1a1c20, 0.7, 0.45), 1.0, 'z', 2.4); k.block(17.6, 18.4, -80, 80);
-    const rnd = X.mulberry(92); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'round', h: 8 + rnd() * 6, r: 3 + rnd() * 2, leaf: 0x4a7a3c, seed: i });
+    const rnd = X.mulberry(92); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'round', h: 8 + rnd() * 6, r: 3 + rnd() * 2, leaf: 0x4a7a3c, seed: i, species: i % 3 ? 'elm' : 'oak' });
     const MX = -26, MZ = 0, MW = 28, MD = 34;
     k.box(MW, 20, MD, MX, 10, MZ, lime);
     k.mesh(new T.ConeGeometry(18, 8, 4), slate, MX, 24, MZ).rotation.y = PI / 4;
-    for (let i = 0; i < 4; i++) { const z = MZ - 12 + i * 8; k.box(3, 4, 3, MX + MW / 2 - 1.5, 21.5, z, lime); k.mesh(new T.ConeGeometry(2.2, 3.4, 4), slate, MX + MW / 2 - 1.5, 25.2, z).rotation.y = PI / 4; k.cyl(0.9, 6, MX + MW / 2 + 1.2, 23, z + 4, lime, 0.9, 12); k.mesh(new T.ConeGeometry(1.1, 2.4, 12), copper, MX + MW / 2 + 1.2, 27.2, z + 4); }
+    for (let i = 0; i < 4; i++) { const z = MZ - 12 + i * 8; k.box(3, 4, 3, MX + MW / 2 - 1.5, 21.5, z, lime); k.mesh(new T.ConeGeometry(2.2, 3.4, 4), slate, MX + MW / 2 - 1.5, 25.2, z).rotation.y = PI / 4; k.cyl(0.9, 6, MX + MW / 2 + 1.2, 23, z + 4, lime, 0.9, 12); k.mesh(new T.ConeGeometry(1.1, 2.4, 12), slate, MX + MW / 2 + 1.2, 27.2, z + 4); }
     for (let f = 0; f < 3; f++) for (let i = 0; i < 6; i++) { const y = 4 + f * 5, z = MZ - 12.5 + i * 5; k.arch(1.6, 3.6, 0.5, MX + MW / 2 + 0.05, y - 1.6, z, lime, true, 0.7).rotation.y = PI / 2; k.box(0.06, 3, 1.2, MX + MW / 2 + 0.1, y, z, glass); }
     k.arch(3.2, 5.6, 3, MX + MW / 2 + 1, 0, MZ, lime, true, 0.8).rotation.y = PI / 2;
     k.block(MX + MW / 2 - 0.6, MX + MW / 2 + 2.6, MZ - MD / 2, MZ - 1.8); k.block(MX + MW / 2 - 0.6, MX + MW / 2 + 2.6, MZ + 1.8, MZ + MD / 2);
@@ -61,6 +61,15 @@ export const jewishmuseum: RoomDef = {
     k.crowd([v(-4, 0, 6), v(MX + 8, 0.15, MZ), v(MX + 2, 0.15, MZ + 10), v(MX - 8, 0.15, MZ + 4)], 10, { seed: 124, speed: 0.3, spread: 1.6, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0x8a3a3a, 0xd8d0c0] });
     k.crowd([v(MX - 8, 5.95, MZ - 12), v(MX + 8, 5.95, MZ + 12)], 6, { seed: 125, speed: 0.25, spread: 1.6, animate: !ctx.reduced });
     k.censusWall({ x: MX - IW / 2 + 0.36, y: 8.2, z: MZ, rotY: PI / 2, cols: 30, rows: 4, tile: 0.5, gap: 0.05, start: ctx.wallStart(1700, 120), pieces: ctx.all, backing: dark });
+    void copper;
+    /* the landmark eggs: real details of the Warburg house and the museum it became */
+    const jmW = { name: 'Felix M. Warburg House, Wikipedia', url: 'https://en.wikipedia.org/wiki/Felix_M._Warburg_House' }, jmJ = { name: 'Jewish Museum (Manhattan), Wikipedia', url: 'https://en.wikipedia.org/wiki/Jewish_Museum_(Manhattan)' };
+    k.egg(v(MX + MW / 2 + 3, 2.2, MZ - 5), { id: 'jewishmuseum-same-quarry', title: 'The same quarry', year: '1993', text: 'The house went up in Indiana limestone in 1907 and 1908 to designs by C. P. H. Gilbert. When Kevin Roche added the annex in 1993 he imitated Gilbert\'s style, and the annex was clad with limestone from the quarry that had supplied the original construction.', clue: 'Run your eye along the Fifth Avenue front and try to find where the old house stops.', source: jmW }, { r: 1.6 });
+    k.egg(v(MX + MW / 2 + 0.5, 22, MZ - 4), { id: 'jewishmuseum-schiff', title: 'Too showy for the father in law', text: 'The chateau style was inspired by the Isaac D. Fletcher House on East 79th Street. Frieda Warburg\'s father, the banker Jacob Schiff, thought it overly ostentatious and pushed without success for a palazzo instead.', clue: 'Look up at the dormers and the slate roof.', source: jmW }, { r: 2.4 });
+    k.egg(v(MX + MW / 2 + 0.5, 17, MZ + 8), { id: 'jewishmuseum-squash', title: 'A squash court on the fifth floor', text: 'The house was built with six floors and a basement. The fifth floor held a squash court, a grand pipe organ stood at the rear of the house, and the fourth floor hallway had tracks for wind up toy trains. The 1910 census listed 13 servants.', clue: 'Count the floors up the front to the fifth.', source: jmW }, { r: 2.2 });
+    k.egg(v(MX - 8, 1.6, MZ - 6), { id: 'jewishmuseum-1904', title: 'A gift to a library', year: '1904', text: 'The museum began on January 20, 1904, when Judge Mayer Sulzberger gave ceremonial objects to the Jewish Theological Seminary, where they were kept in the library. Frieda Warburg gave the family mansion to the seminary in January 1944, and the museum opened here in May 1947.', clue: 'Bend over the silver in the vitrine.', source: jmJ }, { r: 1.6 });
+    k.egg(v(MX + 4, 1.4, MZ - ID / 2 + 1.2), { id: 'jewishmuseum-shabbat-lift', title: 'The Shabbat elevator', text: 'The museum installed a Shabbat elevator and became the first and only museum in New York City with one. Admission is free on Saturdays.', clue: 'Find the lift by the south wall.', source: jmJ }, { r: 1.6 });
+    k.egg(v(MX + IW / 2 - 1.6, 7.4, MZ + 4), { id: 'jewishmuseum-primary-structures', title: 'Minimalism\'s first big show', year: '1966', text: 'In the 1950s and 1960s this house was an avant garde stage: it introduced Jasper Johns to the wider public in 1957 and gave Robert Rauschenberg his first museum retrospective in 1963. Primary Structures in 1966 brought Minimalist sculpture to a broad audience, and Software in 1970 explored early digital art.', clue: 'Climb the oak stair to the white galleries.', source: jmJ }, { r: 1.6 });
     // the works: the panelled walls below in gilt, the white galleries above in white frames
     const mounts: Mount[] = [];
     for (let i = 0; i < 4; i++) { const z = MZ - 10 + i * 5.5; mounts.push({ position: v(MX - IW / 2 + 0.38, 2.8, z), rotation: PI / 2, target: v(MX - 4, 2.4, z), width: 3.2, height: 2.2, style: 'gilt', wash: true }); }
@@ -103,8 +112,9 @@ export const rubin: RoomDef = {
     const helix: T.Vector3[] = [];
     for (let i = 0; i <= 300; i++) { const t = i / 300; const a = t * PI * 2 * 4.5; helix.push(v(Math.cos(a) * 3.6, 0.2 + t * 21, CZ + Math.sin(a) * 3.6)); }
     const hs = k.spline(helix, false, 0.5); const hp = hs.getSpacedPoints(600);
-    const treadG = new T.BoxGeometry(2.6, 0.12, 0.34), tm: T.Matrix4[] = []; const tan = new T.Vector3(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
-    for (let i = 0; i < 600; i++) { const p = hp[i]; hs.getTangentAt(i / 600, tan); q.setFromAxisAngle(up, Math.atan2(tan.x, tan.z)); tm.push(new T.Matrix4().compose(p.clone().add(v(0, -0.2, 0)), q, new T.Vector3(1, 1, 1))); }
+    /* Putman's stair has 108 steps (the Rubin's own count), so 108 treads, each about 0.19 m of rise */
+    const NSTEP = 108, sp = hs.getSpacedPoints(NSTEP), treadG = new T.BoxGeometry(2.6, 0.14, 0.98), tm: T.Matrix4[] = []; const tan = new T.Vector3(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+    for (let i = 0; i < NSTEP; i++) { const p = sp[i]; hs.getTangentAt(i / NSTEP, tan); q.setFromAxisAngle(up, Math.atan2(tan.x, tan.z)); tm.push(new T.Matrix4().compose(p.clone().add(v(0, -0.2, 0)), q, new T.Vector3(1, 1, 1))); }
     k.instances(treadG, marble, tm);
     k.curve(hp.filter((_, i) => i % 3 === 0).map((p) => v(p.x * 1.3, p.y + 0.9, CZ + (p.z - CZ) * 1.3)), 0.035, steel, 200);
     k.cyl(0.6, H, 0, H / 2, CZ, steel, 0.6, 24);
@@ -117,6 +127,14 @@ export const rubin: RoomDef = {
     eyeMedallion(k, 0, 0.02, CZ + 8, 1.6);
     k.crowd([v(0, 0, 20), v(0, 0, CZ + 10), v(-8, 0, CZ), v(8, 0, CZ - 6)], 12, { seed: 126, speed: 0.3, spread: 1.6, animate: !ctx.reduced });
     k.censusWall({ x: 0, y: 6.4, z: CZ - R + 0.42, rotY: 0, cols: 20, rows: 3, tile: 0.5, gap: 0.05, start: ctx.wallStart(3100, 60), pieces: ctx.all, backing: dark });
+    /* the landmark eggs: real details of the old Barneys store and the Rubin */
+    const rbR = { name: 'Four facts about the Rubin Museum, Rubin Museum of Art', url: 'https://rubinmuseum.org/four-facts-about-the-rubin-museum' }, rbV = { name: 'Former Barneys begins new life, Village View', url: 'https://villageview.nyc/2024/05/05/former-barneys-begins-new-life/' }, rbW = { name: 'Rubin Museum of Art, Wikipedia', url: 'https://en.wikipedia.org/wiki/Rubin_Museum_of_Art' };
+    k.egg(v(3.6, 1.0, CZ), { id: 'rubin-108-steps', title: 'One hundred and eight steps', text: 'The spiral staircase has 108 steps, a number held sacred in Buddhism: Tibetan Buddhist malas usually have 108 beads, after the 108 volumes of the Kangyur.', clue: 'Count the treads from the bottom of the spiral.', source: rbR }, { r: 1.6 });
+    k.egg(v(0, 11.6, CZ + 3.6), { id: 'rubin-six-realms', title: 'Six floors, six realms', text: 'The building has six floors, and the museum reads them as the six realms of the Buddhist Wheel of Life, in which all beings are trapped: heavenly beings, asuras, hungry ghosts, hell, animals and humans.', clue: 'Stop halfway up the spiral and count the floors above and below.', source: rbR }, { r: 1.6 });
+    k.egg(v(-6, 2.4, CZ + R + 2.6), { id: 'rubin-barneys', title: 'Barneys women\'s store', year: '1986', text: 'Barneys opened a 70,000 square foot women\'s store here in 1986, in a row of six townhouses of about 1915 at 138 to 154 West 17th Street. Andree Putman\'s steel and marble staircase spiralled through its six storey centre.', clue: 'Look at the 17th Street front and picture shop windows.', source: rbV }, { r: 1.6 });
+    k.egg(v(0, 4.2, CZ + R + 2.4), { id: 'rubin-for-sale-sign', title: 'Seen from a car', year: '1998', text: 'Co founder Donald Rubin saw a for sale sign while driving down 17th Street and judged the building ideal for his collection. The old one storey Barneys entrance was enlarged into a three storey, mandala shaped gateway with a triple height void.', clue: 'Stand at the door and look up through the entrance.', source: rbR }, { r: 1.6 });
+    k.egg(v(8, 1.6, 22), { id: 'rubin-seventh-avenue', title: 'Barney\'s first store', year: '1923', text: 'Barney Pressman opened the original Barney\'s men\'s discount store in 1923 in a storefront at 115 Seventh Avenue, round the corner. In 1998 the Rubins paid Barneys $22 million for the whole set of buildings on Seventh Avenue and 17th Street.', clue: 'Walk toward Seventh Avenue at the end of the block.', source: rbV }, { r: 1.6 });
+    k.egg(v(0, 2.0, CZ - R + 1.4), { id: 'rubin-without-walls', title: 'A museum without walls', year: '2024', text: 'The museum opened here on October 2, 2004, built on a collection Donald and Shelley Rubin had been assembling since 1974. It closed the building on October 6, 2024, to become a museum without walls.', clue: 'Read the donor wall at the back of the drum.', source: rbW }, { r: 1.6 });
     // the works: on the drum wall at every floor, facing the void, so the climb passes them all
     const mounts: Mount[] = [];
     for (let f = 0; f < 5; f++) for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + f * 0.4 + 0.3; if (f === 0 && Math.abs(Math.sin(a)) > 0.9 && Math.cos(a) > -0.2 && Math.sin(a) > 0) continue; const x = Math.cos(a) * (R - 0.42), z = CZ + Math.sin(a) * (R - 0.42); mounts.push({ position: v(x, f * 4.2 + 2.4, z), rotation: -a + PI / 2 + PI, target: v(0, f * 4.2 + 2.4, CZ), width: 3.4, height: 2.2, style: f % 2 ? 'gilt' : 'black', wash: true }); }
@@ -135,7 +153,7 @@ export const theshed: RoomDef = {
   mood: 'Opening night at Hudson Yards',
   color: '#8ab0d0',
   description: 'The telescoping shell on its rails rolling out over the plaza to make the McCourt, the pillow skin lit from within, the works inside the hall and up on the gallery levels.',
-  signatures: 'The quilted translucent shell on giant wheels sliding on rails out from the base building, the McCourt hall it encloses, the exposed steel diagrid, the plaza and the Vessel beyond, the High Line spur.',
+  signatures: 'The quilted translucent ETFE shell on six bogies sliding on rails out from the base building, the McCourt hall it encloses, the exposed steel diagrid, the plaza and the Vessel beyond, the High Line spur.',
   daylit: false,
   build(k, ctx) {
     k.sky({ top: 0x14203a, horizon: 0x5a4a60, ground: 0x0e1018, fog: 0.0024, stars: 220, env: 0.65 });
@@ -159,10 +177,12 @@ export const theshed: RoomDef = {
     for (let x = -SW / 2; x <= SW / 2; x += 4) for (let y = 4; y < SH + 2; y += 4) { const pillow = new T.Mesh(new T.SphereGeometry(2.1, 10, 8), skin); pillow.scale.set(1, 1, 0.5); pillow.position.set(x, y, SD / 2 + 0.6); shell.add(pillow); const p2 = pillow.clone(); p2.position.z = -SD / 2 - 0.6; shell.add(p2); }
     for (let i = 0; i < 6; i++) { const y = 4 + i * 6; const beam = new T.Mesh(new T.BoxGeometry(SW + 0.2, 0.5, 0.5), steel); beam.position.set(0, y, SD / 2 + 0.3); shell.add(beam); const beam2 = beam.clone(); beam2.position.z = -SD / 2 - 0.3; shell.add(beam2); }
     for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; const d1 = new T.Mesh(new T.BoxGeometry(0.4, 12, 0.4), steel); d1.position.set(Math.cos(a) * SW / 2 * 0.9, 8 + (i % 2) * 8, Math.sin(a) * SD / 2 * 0.9); d1.rotation.z = 0.7 * (i % 2 ? 1 : -1); shell.add(d1); }
-    for (const sx of [-1, 1]) for (const dz of [-14, -4, 4, 14]) { const wheel = new T.Mesh(new T.CylinderGeometry(1.8, 1.8, 1.0, 20), dark); wheel.rotation.z = PI / 2; wheel.position.set(sx * (SW / 2 + 0.8), 1.8, dz); shell.add(wheel); const bogie = new T.Mesh(new T.BoxGeometry(2.4, 2.4, 6), steel); bogie.position.set(sx * (SW / 2 + 0.8), 3.4, dz); shell.add(bogie); }
+    /* six bogie wheel assemblies, three a side, each wheel six feet tall (ENR) */
+    for (const sx of [-1, 1]) for (const dz of [-14, 0, 14]) { for (const wz of [-1.1, 1.1]) { const wheel = new T.Mesh(new T.CylinderGeometry(0.9, 0.9, 0.8, 20), dark); wheel.rotation.z = PI / 2; wheel.position.set(sx * (SW / 2 + 0.8), 0.9, dz + wz); shell.add(wheel); } const bogie = new T.Mesh(new T.BoxGeometry(2.4, 1.6, 4.4), steel); bogie.position.set(sx * (SW / 2 + 0.8), 2.4, dz); shell.add(bogie); }
     shell.position.set(BX, 0, BZ + BD / 2 + SD / 2 + 4); k.add(shell);
     for (const sx of [-1, 1]) { k.box(0.4, 0.4, 90, BX + sx * (SW / 2 + 0.8), 0.2, BZ + 26, rail); k.box(1.2, 0.2, 90, BX + sx * (SW / 2 + 0.8), 0.05, BZ + 26, dark); }
-    if (!ctx.reduced) k.ticks.push((t) => { shell.position.z = BZ + BD / 2 + SD / 2 + 4 + 8 * Math.sin(t * 0.08); shell.children.forEach((c) => { if ((c as T.Mesh).geometry instanceof T.CylinderGeometry) c.rotation.x = t * 0.2 * Math.cos(t * 0.08) * 0.5; }); });
+    /* the real shell rolls at a quarter mile an hour, about 0.11 m/s: so does this one, the wheels turning with the distance */
+    if (!ctx.reduced) k.ticks.push((t) => { const d = 8 * Math.sin(t * 0.014); shell.position.z = BZ + BD / 2 + SD / 2 + 4 + d; shell.children.forEach((c) => { if ((c as T.Mesh).geometry instanceof T.CylinderGeometry) c.rotation.x = d / 0.9; }); });
     for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; k.point(BX + Math.cos(a) * 14, 14, BZ + BD / 2 + SD / 2 + 4 + Math.sin(a) * 10, 0x6a9aff, 40, 30); }
     // the McCourt floor under the shell: the hall, its stage, the works on the base building's face and on screens
     const HZ = BZ + BD / 2 + SD / 2 + 4;
@@ -179,6 +199,16 @@ export const theshed: RoomDef = {
     k.crowd([v(BX - 16, 0.15, HZ + 12), v(BX - 6, 0.15, HZ + 2), v(BX + 6, 0.15, HZ + 2), v(BX + 16, 0.15, HZ + 12)], 36, { seed: 127, speed: 0.3, spread: 3, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a, 0x33477f, 0xd8d0c0] });
     k.crowd([v(-40, 0, 60), v(0, 0, 50), v(40, 0, 60)], 24, { seed: 128, speed: 0.8, spread: 6, animate: !ctx.reduced });
     k.censusWall({ x: BX, y: 20, z: BZ + BD / 2 + 0.42, rotY: 0, cols: 40, rows: 8, tile: 0.55, gap: 0.05, start: ctx.wallStart(3600, 320), pieces: ctx.all, backing: dark });
+    /* the High Line spur alongside the rails: a planted deck on steel columns */
+    { const LX = -46; k.box(9, 0.7, 120, LX, 5.6, 20, steel); k.box(8.4, 0.3, 120, LX, 6.1, 20, k.pbr('shdHL', X.grass(0x4a5a34, 290), 0.08)); for (const s of [-1, 1]) k.box(0.1, 1.1, 120, LX + s * 4.4, 6.8, 20, rail); for (let z = -36; z <= 76; z += 12) for (const s of [-1, 1]) { k.box(0.5, 5.4, 0.5, LX + s * 3.6, 2.7, z, steel); k.keepOut.push({ x: LX + s * 3.6, z, r: 0.6 }); } }
+    /* the landmark eggs: the engineering of the moving shell */
+    const shE = { name: 'The Shed\'s mobile structure has new level of performance, ENR', url: 'https://enr.com/articles/47532-the-sheds-mobile-structure-has-new-level-of-performance' }, shW = { name: 'The Shed (Hudson Yards), Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Shed_(Hudson_Yards)' };
+    k.egg(v(BX + SW / 2 + 0.8, 1.2, HZ + 22), { id: 'theshed-bogies', title: 'Six wheels, 140 feet', text: 'The shell moves 140 feet on six bogie wheel assemblies, each wheel six feet tall, carried on rails beside the High Line. A rack and pinion drive with 12 to 15 horsepower motors pushes it.', clue: 'Crouch by the rail and follow it to the wheels.', source: shE }, { r: 1.6 });
+    k.egg(v(BX - SW / 2 - 0.8, 1.2, HZ + 30), { id: 'theshed-quarter-mile', title: 'A quarter mile an hour', text: 'At one quarter of a mile per hour it takes five minutes for the shell to roll out. Including setup and disconnecting the systems, turning the plaza into the McCourt takes six hours.', clue: 'Stand on the other rail and watch the shell creep.', source: shE }, { r: 1.6 });
+    k.egg(v(BX, 7, HZ + SD / 2 + 2.4), { id: 'theshed-etfe', title: 'Pillows of air', text: 'The 120 foot tall shell is covered with 43,000 square feet of air filled ETFE panels, some up to 70 feet long, hung on a 4,000 ton exposed steel frame.', clue: 'Look up at the quilted skin of the shell.', source: shE }, { r: 2.2 });
+    k.egg(v(BX - 16, 3, BZ + BD / 2 + 1.2), { id: 'theshed-inch-and-a-half', title: 'An inch and a half', text: 'When the shell rolls home the shell and the fixed building pass one another with a clearance of about one and a half inches. Tolerances at times ran to a thousandth of an inch, and the builders used the fixed building as shoring while they built the shell on top of it.', clue: 'Find where the shell meets the glass of the base building.', source: shE }, { r: 1.6 });
+    k.egg(v(BX, 2.0, HZ - 10), { id: 'theshed-mccourt', title: 'Three thousand in the McCourt', text: 'With the shell rolled out, the McCourt is a 17,000 square foot hall that can seat up to 3,000 when the galleries open onto it, with clear spans of up to 100 feet.', clue: 'Climb onto the stage and look out at the hall.', source: shE }, { r: 1.6 });
+    k.egg(v(BX + 14, 3, BZ + BD / 2 + 1.2), { id: 'theshed-bloomberg', title: 'The Bloomberg Building', year: '2019', text: 'The Shed opened on April 5, 2019. Michael Bloomberg gave $75 million of its predicted $475 million cost, and the building was ceremonially renamed the Bloomberg Building after him.', clue: 'Read the face of the fixed building behind the hall.', source: shW }, { r: 1.6 });
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const x = BX - 15 + i * 6; if (Math.abs(x) < 4) continue; mounts.push({ position: v(x, 4.2, BZ + BD / 2 + 0.42), rotation: 0, target: v(x, 3, HZ), width: 4.6, height: 2.7, style: 'steel', wash: true }); }
     for (const sx of [-1, 1]) for (let i = 0; i < 4; i++) { const z = HZ - 12 + i * 8; const sc = k.box(0.14, 3.2, 4.6, BX + sx * (SW / 2 - 2.2), 2.4, z, dark); void sc; mounts.push({ position: v(BX + sx * (SW / 2 - 2.3), 2.5, z), rotation: sx < 0 ? PI / 2 : -PI / 2, target: v(BX, 2.5, z), width: 4.2, height: 2.5, style: 'steel', wash: false }); }
@@ -194,8 +224,8 @@ export const armory: RoomDef = {
   area: 'PARK AVENUE ARMORY',
   mood: 'An installation at dusk',
   color: '#8a6a4a',
-  description: 'The brick fortress on Park Avenue, the period rooms of the regiment, then the drill hall: fifty five thousand square feet under iron arches, the works standing in the dark like an installation.',
-  signatures: 'The Gothic Revival brick armory with its crenellated towers, the Tiffany and Herter Brothers company rooms, the drill hall\'s wrought iron barrel trusses eighty feet high, the vast wooden floor, the balcony round the hall.',
+  description: 'The brick fortress on Park Avenue, the period rooms of the regiment, then the drill hall: two hundred by three hundred feet under eleven iron arches, the works standing in the dark like an installation.',
+  signatures: 'The Gothic Revival brick armory with its crenellated towers, the Tiffany and Herter Brothers company rooms, the drill hall\'s eleven wrought iron elliptical arches, the roof a hundred feet up, the vast wooden floor, the balcony round the hall.',
   daylit: false,
   build(k, ctx) {
     k.sky({ top: 0x1a2446, horizon: 0x6a5a70, ground: 0x14141a, fog: 0.0024, stars: 200, env: 0.6 });
@@ -206,9 +236,11 @@ export const armory: RoomDef = {
     street(k, { w: 40, len: 160, z: 40, x: 0 });
     k.box(8, 0.5, 160, 0, 0.1, 40, k.pbr('armMall', X.grass(0x3a5a2a, 151), 0.06)); for (let z = -30; z <= 110; z += 14) k.tree(0, 0.4, z, { kind: 'round', h: 5, r: 2, seed: z });
     blockFront(k, { x: -60, z0: 110, count: 12, face: 1, seed: 292, h: [20, 40] });
-    const AW = 60, AD = 80, AX = 0, AZ = -30, AH = 16;
+    const AW = 60, AD = 118, AX = 0, AZ = -49, AH = 16; /* front stays at z 10; the drill hall behind runs the real 300 feet */
     k.box(AW, AH, AD, AX, AH / 2, AZ, brick);
     for (let x = -AW / 2 + 2; x < AW / 2; x += 4) k.box(2, 2, 2.2, AX + x, AH + 1, AZ + AD / 2 - 1, brick);
+    /* the central tower, 100 feet, the tallest of the three on Park Avenue */
+    k.box(10, 14, 8, AX, AH + 7, AZ + AD / 2 - 4, brick); for (let x = -4; x <= 4; x += 2) k.box(1.4, 1.6, 1.4, AX + x, AH + 14.8, AZ + AD / 2 - 0.6, brick);
     for (const sx of [-1, 1]) { k.box(8, 22, 8, AX + sx * (AW / 2 - 4), 11, AZ + AD / 2 - 4, brick); for (let x = -3; x <= 3; x += 2) k.box(1.4, 1.6, 1.4, AX + sx * (AW / 2 - 4) + x, 22.8, AZ + AD / 2 - 1, brick); }
     k.arch(6, 9, 4, AX, 0, AZ + AD / 2, lime, false, 0.85);
     k.block(AX - AW / 2, AX - 3.2, AZ + AD / 2 - 0.6, AZ + AD / 2 + 0.6); k.block(AX + 3.2, AX + AW / 2, AZ + AD / 2 - 0.6, AZ + AD / 2 + 0.6);
@@ -227,17 +259,25 @@ export const armory: RoomDef = {
     k.prop('torchere', AX + 8, 0.15, CZ + 5, { height: 2.6 }); k.prop('torchere', AX - 8, 0.15, CZ + 5, { height: 2.6 });
     for (let i = 0; i < 3; i++) k.point(AX - 6 + i * 6, 5, CZ, 0xffd8a0, 12, 10);
     // the drill hall: the iron trusses, the wooden floor, the balcony, the installation of works standing in the dark
-    const HZ = AZ - 14, HW = AW - 2, HD = AD - 24, HH = 24;
+    const HD = 91, HZ = AZ + AD / 2 - 26 - HD / 2, HW = AW - 2, HH = 24; /* 200 by 300 feet */
     k.box(HW, 0.3, HD, AX, 0.15, HZ, floorW);
     for (const s of [-1, 1]) { k.box(0.6, HH, HD, AX + s * HW / 2, HH / 2, HZ, brick); k.block(AX + s * HW / 2 - 0.6, AX + s * HW / 2 + 0.6, HZ - HD / 2, HZ + HD / 2); }
     k.box(HW, HH, 0.6, AX, HH / 2, HZ - HD / 2, brick); k.block(AX - HW / 2, AX + HW / 2, HZ - HD / 2 - 0.6, HZ - HD / 2 + 0.6);
-    for (let i = 0; i <= 8; i++) { const z = HZ - HD / 2 + i * (HD / 8); const pts: T.Vector3[] = []; for (let j = 0; j <= 20; j++) { const a = (j / 20) * PI; pts.push(v(AX + Math.cos(a) * HW / 2, 8 + Math.sin(a) * (HH - 8), z)); } k.curve(pts, 0.35, iron, 20); const pts2 = pts.map((p) => v(p.x * 0.94, 8 + (p.y - 8) * 0.88, p.z)); k.curve(pts2, 0.25, iron, 20); for (let j = 1; j < 20; j += 2) k.beam(pts[j], pts2[j], 0.08, iron, 4); }
+    for (let i = 0; i <= 10; i++) { const z = HZ - HD / 2 + i * (HD / 10); /* eleven wrought iron arches */ const pts: T.Vector3[] = []; for (let j = 0; j <= 20; j++) { const a = (j / 20) * PI; pts.push(v(AX + Math.cos(a) * HW / 2, 8 + Math.sin(a) * (HH - 8), z)); } k.curve(pts, 0.35, iron, 20); const pts2 = pts.map((p) => v(p.x * 0.94, 8 + (p.y - 8) * 0.88, p.z)); k.curve(pts2, 0.25, iron, 20); for (let j = 1; j < 20; j += 2) k.beam(pts[j], pts2[j], 0.08, iron, 4); }
     for (let j = 0; j <= 20; j += 4) { const a = (j / 20) * PI; k.box(0.3, 0.3, HD, AX + Math.cos(a) * HW / 2, 8 + Math.sin(a) * (HH - 8), HZ, iron); }
     const roofG = new T.CylinderGeometry(HW / 2 + 0.6, HW / 2 + 0.6, HD, 32, 1, true, 0, PI); const roof = k.mesh(roofG, k.pbr('armRoof', X.plaster(0x3a3a40, 153), 0.3, { side: T.BackSide }), AX, 8, HZ); roof.rotation.set(0, 0, PI / 2); roof.rotateX(PI / 2); roof.scale.set(1, (HH - 8) / (HW / 2), 1); void roof;
     for (const s of [-1, 1]) { k.box(4, 0.4, HD, AX + s * (HW / 2 - 2), 7.6, HZ, floorW); k.box(0.06, 1.1, HD, AX + s * (HW / 2 - 4), 8.4, HZ, iron); for (let z = -HD / 2; z <= HD / 2; z += 3) k.box(0.06, 1.1, 0.06, AX + s * (HW / 2 - 4), 8.4, HZ + z, iron); }
     for (let i = 0; i < 14; i++) k.box(3, 0.55, 1.0, AX + HW / 2 - 2, 0.27 + i * 0.55, HZ + HD / 2 - 1 - i * 1.0, iron);
     k.block(AX - HW / 2 + 0.6, AX - HW / 2 + 4, HZ - HD / 2, HZ + HD / 2); k.block(AX + HW / 2 - 4, AX + HW / 2 - 0.6, HZ - HD / 2, HZ + HD / 2 - 15);
     for (let z = -HD / 2 + 6; z < HD / 2; z += 10) k.point(AX, HH - 4, HZ + z, 0xffd8a0, 20, 30);
+    /* the landmark eggs: the Silk Stocking Regiment's armory */
+    const amW = { name: 'Park Avenue Armory, Wikipedia', url: 'https://en.wikipedia.org/wiki/Park_Avenue_Armory' };
+    k.egg(v(AX + 8, 2.2, HZ + 22), { id: 'armory-eleven-arches', title: 'Eleven iron arches', text: 'The drill hall measures 200 by 300 feet, one of the city\'s largest column free rooms when it was finished. Eleven wrought iron elliptical arches, each about 187 feet wide, carry a roof that peaks 100 feet above the floor.', clue: 'Stand in the middle of the hall and count the arches overhead.', source: amW }, { r: 1.8 });
+    k.egg(v(AX - 12, 0.8, HZ - HD / 2 + 5), { id: 'armory-rifle-range', title: 'A range in the basement', text: 'The armory\'s basement held a rifle range 300 feet long. The hall itself was about three times the size of the regiment\'s previous armory.', clue: 'Look down at the floorboards at the far end of the hall.', source: amW }, { r: 1.8 });
+    k.egg(v(AX - 6, 2.0, CZ - 5.4), { id: 'armory-veterans-room', title: 'Tiffany and White', year: '1881', text: 'The Veterans Room and the library were finished in 1881 to designs by Tiffany and Stanford White. Robert A. M. Stern called the Veterans Room perhaps the armory\'s most notable interior.', clue: 'Warm your hands at the fireplace in the company room.', source: amW }, { r: 1.6 });
+    k.egg(v(AX + 7, 2.0, CZ + 4), { id: 'armory-company-rooms', title: 'Twelve company rooms', text: 'Herter Brothers designed the Reception, Board of Officers and Colonel\'s rooms, and the twelve company rooms on the second floor are landmarked. Since 2006 the Park Avenue Armory Conservancy has run the building on a 99 year lease.', clue: 'Look round the panelled room by the torcheres.', source: amW }, { r: 1.6 });
+    k.egg(v(AX - 10, 3, AZ + AD / 2 + 1.2), { id: 'armory-brick-not-granite', title: 'Brick, to save money', year: '1880', text: 'The city approved up to $350,000 but never paid, so the 7th Regiment raised the money itself through donations and bonds, one of the few American armories built and furnished with private funds. It cost $589,438.91, and the builders used brick rather than granite to cut costs.', clue: 'Touch the brick of the Park Avenue front.', source: amW }, { r: 1.6 });
+    k.egg(v(AX, AH + 8, AZ + AD / 2 + 0.2), { id: 'armory-silk-stocking', title: 'The Silk Stocking Regiment', text: 'The 7th Regiment was nicknamed the Silk Stocking Regiment for the wealth of its members. Its armory opened on September 30, 1880, behind a Park Avenue front split by three towers, the central one 100 feet tall.', clue: 'Look up at the middle tower over the door.', source: amW }, { r: 2.2 });
     // the installation: works standing on free walls in a grid on the floor, each lit by one spot from the trusses
     const mounts: Mount[] = [];
     const rnd = X.mulberry(95);
@@ -258,7 +298,7 @@ export const customhouse: RoomDef = {
   mood: 'Harbor light through the skylight',
   color: '#c8b8a0',
   description: 'Bowling Green and the four continents on their pedestals, the granite palace of the old Custom House, then the oval rotunda: a tile dome that floats with no columns, the murals of the harbor, the works in the collector\'s offices.',
-  signatures: 'The Beaux Arts granite front with its giant columns and the four seated continents, the elliptical rotunda with a Guastavino tile dome and skylight, the harbor murals in the dome\'s spandrels, the old collector\'s counters in marble and bronze.',
+  signatures: 'The Beaux Arts granite front with its giant columns and the four seated continents, the elliptical rotunda with a Guastavino tile dome and skylight, the harbor murals in the dome\'s spandrels, the old collector\'s counters in marble and bronze, the twelve seafaring nations on the cornice.',
   build(k, ctx) {
     k.sky({ top: 0x6f9ad8, horizon: 0xeef0ec, ground: 0x6a6a66, fog: 0.0018, sun: { az: 2.6, el: 0.7, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xf2f6ff, 0x5a5a58, 0.9);
@@ -281,13 +321,15 @@ export const customhouse: RoomDef = {
     for (let i = 0; i < 12; i++) k.box(FW + 6, 0.34, 1.6, 0, 0.17 + i * 0.34, FZ + 2 + i * 1.6, granite);
     for (let i = 0; i < 12; i++) { const x = -38.5 + i * 7; k.column(x, 4, FZ + 1.6, 20, 1.2, granite, true); k.prop('corinthian_capital', x, 24, FZ + 1.6, { height: 2.4 }); }
     k.box(FW, 2.4, 5, 0, 26.6, FZ + 1.6, granite);
+    /* the twelve seafaring nations on the cornice, one over each column, eleven feet tall */
+    for (let i = 0; i < 12; i++) k.prop('bronze_figure', -38.5 + i * 7, 27.8, FZ + 2.6, { height: 3.4 });
     for (const x of [-42, -14, 14, 42]) { k.box(5, 3, 5, x, 5.5, FZ + 5, granite); k.prop('bronze_figure', x, 7, FZ + 5, { height: 3.6 }); k.keepOut.push({ x, z: FZ + 5, r: 3.4 }); }
     for (const x of [-28, 0, 28]) { k.arch(4.4, 9, 4, x, 4, FZ + 0.4, granite, false, 0.85); k.box(3.6, 6.6, 0.2, x, 8, FZ + 0.6, glass); }
     k.block(-FW / 2, -2.2, FZ - 0.5, FZ + 1); k.block(2.2, FW / 2, FZ - 0.5, FZ + 1);
     k.sign('CUSTOM HOUSE  ·  1907  ·  THE MUSEUM OF THE AMERICAN INDIAN', 24, 0.9, 0, 29, FZ + 1.4, 'transparent', '#e8dcc0', 70, 0);
     mlowBanner(k, -21, 15, FZ + 2.4, 0, 4.2, true); blossomFlag(k, 21, 15, FZ + 2.4, 0, 3.6, 5, 'electric');
     // the rotunda: an ellipse under a tile dome with a skylight, the murals in the spandrels, the counters
-    const RZ = FZ - 26, RA = 24, RB = 16, RH = 12;
+    const RZ = FZ - 26, RA = 20.5, RB = 13, RH = 12; /* the real ellipse: 135 by 85 feet */
     k.mesh(new T.CylinderGeometry(RA, RA, 0.3, 64), floorT, 0, 4.15, RZ).scale.set(1, 1, RB / RA);
     const wall = k.mesh(new T.CylinderGeometry(RA, RA, RH, 64, 1, true), marble, 0, 4 + RH / 2, RZ); wall.scale.set(1, 1, RB / RA);
     for (let i = 0; i < 64; i++) { const a = (i / 64) * PI * 2; const x = Math.cos(a) * (RA + 0.4), z = RZ + Math.sin(a) * (RB + 0.4); if (Math.abs(a - PI / 2) < 0.14) continue; k.keepOut.push({ x, z, r: 1.2 }); }
@@ -304,11 +346,19 @@ export const customhouse: RoomDef = {
     k.box(24, 0.3, 24, 0, 4.15, FZ - 12, floorT); k.block(-12, -12 + 0.4, FZ - 24, FZ); k.block(12 - 0.4, 12, FZ - 24, FZ);
     k.crowd([v(0, 0, 44), v(0, 0, FZ + 12), v(0, 4.15, FZ - 6), v(-10, 4.15, RZ + 4), v(10, 4.15, RZ - 6)], 30, { seed: 130, speed: 0.4, spread: 3, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517] });
     k.censusWall({ x: -11.66, y: 8, z: FZ - 12, rotY: PI / 2, cols: 24, rows: 6, tile: 0.55, gap: 0.05, start: ctx.wallStart(200, 144), pieces: ctx.all, backing: dark });
+    /* the landmark eggs: Cass Gilbert's custom house */
+    const chW = { name: 'Alexander Hamilton U.S. Custom House, Wikipedia', url: 'https://en.wikipedia.org/wiki/Alexander_Hamilton_U.S._Custom_House' };
+    k.egg(v(-42, 8, FZ + 5), { id: 'customhouse-four-continents', title: 'Asia, America, Europe, Africa', text: 'Daniel Chester French carved the Four Continents in marble, with Adolph Weinman as his associate. From east to west they are Asia, America, Europe and Africa, Asia with a tiger and Africa with a lion, and each group cost $13,500.', clue: 'Start at the east end of the steps and walk the four continents in order.', source: chW }, { r: 2.0 });
+    k.egg(v(0, 29.6, FZ + 2.6), { id: 'customhouse-germania', title: 'Germany became Belgium', year: '1918', text: 'Twelve statues on the cornice personify seafaring nations, each eleven feet tall and weighing twenty tons, from Greece and Rome in the east to the French and British empires in the west. In 1918, after the United States entered the First World War, Albert Jaegers\'s Germania was recarved with Belgian insignia.', clue: 'Look up at the figures standing on the cornice.', source: chW }, { r: 2.4 });
+    k.egg(v(-24.5, 6, FZ + 2.6), { id: 'customhouse-hermes', title: 'Forty four heads of Hermes', text: 'The building carries 44 engaged Corinthian columns, twelve on the Bowling Green front, and every capital carries a carved head of Hermes, the Greek god of commerce. It is the only major custom house in the city that does not face the water.', clue: 'Climb the steps and look up at a capital.', source: chW }, { r: 1.8 });
+    k.egg(v(0, 6.2, RZ), { id: 'customhouse-skylight', title: 'A 140 ton skylight', text: 'The elliptical rotunda measures 85 by 135 feet and rises to the third storey. Its ceiling is built on the Guastavino tile arch system, with a 140 ton oval skylight at the centre.', clue: 'Stand in the middle of the rotunda and look straight up.', source: chW }, { r: 1.8 });
+    { const a = PI / 8 + PI, x = Math.cos(a) * (RA - 1.6), z = RZ + Math.sin(a) * (RB - 1.6); k.egg(v(x, 5.6, z), { id: 'customhouse-marsh', title: 'Reginald Marsh\'s harbour', year: '1937', text: 'Reginald Marsh and eight assistants painted the rotunda murals in fresco secco in 1937 for the Treasury Relief Art Project, finishing by February 1938. The large panels show shipping in the Port of New York, the small ones the explorers.', clue: 'Look up at the paintings round the top of the rotunda wall.', source: chW }, { r: 1.6 }); }
+    k.egg(v(0, 1.4, 66), { id: 'customhouse-fort-amsterdam', title: 'Fort Amsterdam', text: 'The custom house stands on the site of Fort Amsterdam, built by the Dutch West India Company. Bowling Green, just to the north, is the oldest park in New York City.', clue: 'Walk out to the fountain in Bowling Green and turn round.', source: chW }, { r: 1.8 });
     // the works: the rotunda wall between the murals, the lobby walls, the facade bays
     const mounts: Mount[] = [];
     for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; if (Math.abs(a - PI / 2) < 0.2) continue; const x = Math.cos(a) * (RA - 0.5), z = RZ + Math.sin(a) * (RB - 0.5); mounts.push({ position: v(x, 8.2, z), rotation: -a + PI / 2 + PI, target: v(0, 7, RZ), width: 4.4, height: 3.2, style: 'gilt', wash: true }); }
     for (let i = 0; i < 3; i++) { const z = FZ - 6 - i * 6; mounts.push({ position: v(11.66, 7.6, z), rotation: -PI / 2, target: v(0, 6.5, z), width: 4.4, height: 2.6, style: 'gilt', wash: true }); }
     for (const x of [-35, -7, 7, 35]) mounts.push({ position: v(x, 12, FZ + 0.42), rotation: 0, target: v(x, 7, FZ + 16), width: 4.6, height: 3.2, style: 'gilt', wash: false });
-    return { mounts, spawn: v(0, 3, 46), look: v(0, 18, FZ), eye: 3, bounds: [-RA + 1, RA - 1, RZ - RB + 1.5, 54], style: 'gilt', floorY: (x, z) => { void x; if (z > FZ + 1.5 && z < FZ + 21) return Math.min(4.1, ((FZ + 21 - z) / 19.5) * 4.1); if (z <= FZ + 1.5) return 4.15; return 0; } };
+    return { mounts, spawn: v(0, 3, 46), look: v(0, 18, FZ), eye: 3, bounds: [-23, 23, RZ - RB + 1.5, 54], style: 'gilt', floorY: (x, z) => { void x; if (z > FZ + 1.5 && z < FZ + 21) return Math.min(4.1, ((FZ + 21 - z) / 19.5) * 4.1); if (z <= FZ + 1.5) return 4.15; return 0; } };
   },
 };

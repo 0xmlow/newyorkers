@@ -41,11 +41,13 @@ python3 build_links.py
 python3 sync_keystone_extras.py  # the wall's site only states follow piece_extras.json
 python3 keystone_images.py   # sharp wall images and loops from the mint kit masters; skips what is current
 python3 build_keystone.py
+python3 build_marks.py      # THE MARKS: the uncounted and the era closers, release one
 python3 build_states.py        # states.html, Friday State: what is on the tokens and the next four Fridays, from states.json
 python3 build_bloomrun.py
 python3 build_moshlab.py       # MOSH LAB from its own repo (MOSH LAB/moshlab/app) into assets/moshlab
 python3 build_markup.py        # markup.html, draw on any New Yorker (ported from MLow's moodroom); after the hang, it reads hang_owned.ts
-python3 build_arcade.py        # arcade.html + assets/arcade: THE DOOR, THE LAST TRAIN, BODEGA COUNTER with the score bridge
+python3 build_mlowtar.py       # mlowtar.html, MLOWTAR SPEAKS: the fortune booth, the census deck (assets/mlowtar/deck.js) and the matcher the Function shares
+python3 build_arcade.py       # arcade.html + assets/arcade: THE DOOR, THE LAST TRAIN, BODEGA COUNTER with the score bridge
 python3 build_galleries.py     # island.html + basement.html: MEME ISLAND and YOUR MOM'S BASEMENT, whole, from their own repos into assets/island and assets/basement
 python3 build_stop.py          # stop.html, YOUR STOP: the New Yorkers within three blocks of any subway station, from geo.js
 python3 build_skelly.py        # skelly.html, SKELLY CUP: NEW YORKERS riders on Bryan Brinkman's Marble Run, champion portraits, free picks via /api/skelly
@@ -73,4 +75,4 @@ python3 build_og.py             # share cards per page (og/cards.json); after ev
 python3 build_deploy.py | tail -4
 python3 preflight.py
 echo
-echo "Ready. Deploy with:  cd \"$(dirname "$B")/../GO LIVE PACKAGE\" && ./deploy.sh"
+echo "Ready. Deploy (only when MLow asks) with:  \"$B/deploy.sh\""

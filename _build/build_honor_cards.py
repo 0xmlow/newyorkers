@@ -20,7 +20,7 @@ SITE = os.path.dirname(HERE)
 SRC = os.path.join(SITE, "assets", "honoraries")
 OUT = os.path.join(SITE, "assets", "cards")
 FD = os.path.join(HERE, "honoraries", "fonts")
-VERSION = "3"  # bump to redraw every card after a layout change
+VERSION = "4"  # bump to redraw every card after a layout change
 os.makedirs(OUT, exist_ok=True)
 
 D = json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))
@@ -170,7 +170,7 @@ def card(p):
 
     # chips: census number and keystone
     CY = PY0 + 128
-    chips = ["PAINTED BY MLOW"]
+    chips = ["PORTRAIT BY MLOW"]
     nums = [w["num"] for w in p["works"] if w.get("num") is not None]
     if nums:
         chips.append(f"NO. {nums[0]:04d}")
@@ -248,7 +248,7 @@ def og(p, c):
         y += int(nf.size * 1.02)
     if p["handle"]:
         d.text((X, y + 18), p["handle"], font=fit(d, p["handle"], "IBMPlexMono-Medium.ttf", 34, MW, 20), fill=(97,201,226), anchor="ls")
-    d.text((X, 540), "Painted by MLow", font=font("SpaceGrotesk.ttf", 28, var="Regular"), fill=(201, 210, 220), anchor="ls")
+    d.text((X, 540), "Portrait by MLow", font=font("SpaceGrotesk.ttf", 28, var="Regular"), fill=(201, 210, 220), anchor="ls")
     d.text((X, 578), "N3WYORKERS.COM", font=font("IBMPlexMono-Medium.ttf", 20), fill=SLATE, anchor="ls")
     lg = logo(p, 170)
     o.paste(lg, (1200 - 48 - 170, 630 - 40 - 170), lg)

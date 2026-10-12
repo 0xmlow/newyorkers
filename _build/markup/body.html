@@ -1,0 +1,68 @@
+<section class="wrap" style="padding-top:64px;padding-bottom:6px">
+  <div class="kicker" style="color:var(--acid)">Mark it up</div>
+  <h1 class="h-xl" style="margin-top:14px;max-width:1000px">Mark up a New Yorker.</h1>
+  <p class="lede" style="margin-top:16px;max-width:780px">Pick any piece in the census and draw on it. Thirteen brushes, the colours of the subway lines, a mood for every hour of the city. Sign it, save it, post it. The painting underneath stays MLow's, the marks are yours.</p>
+</section>
+
+<section class="wrap" style="padding-top:22px">
+  <form class="mkfind" id="mkFind" autocomplete="off">
+    <label for="mkN" class="mklab">Piece number</label>
+    <div class="mkrow">
+      <input id="mkN" name="n" type="text" inputmode="numeric" spellcheck="false" placeholder="37">
+      <button class="btn" type="submit">Load it</button>
+      <button class="btn ghost" type="button" id="mkRand">Random New Yorker</button>
+    </div>
+    <p class="mkmsg" id="mkMsg" role="status"></p>
+  </form>
+</section>
+
+<section class="wrap" style="padding-top:14px">
+  <div class="mkstage" id="mkStage">
+    <canvas id="mkBg" aria-hidden="true"></canvas>
+    <div class="mkframe" id="mkFrame">
+      <canvas id="mkArt" aria-label="The painting"></canvas>
+      <canvas id="mkInk" aria-label="Your drawing over the painting. Draw with a mouse, a pen or a finger."></canvas>
+      <div class="mkcap"><span id="mkNo"></span><b id="mkT"></b><i id="mkBy"></i></div>
+    </div>
+  </div>
+
+  <div class="mktools">
+    <div>
+      <div class="mklab">Mood</div>
+      <div class="mkchips" id="mkMoods"></div>
+      <label class="mkcheck"><input type="checkbox" id="mkWash"> Wash the painting in the mood</label>
+    </div>
+    <div>
+      <div class="mklab">Brush</div>
+      <div class="mkchips" id="mkBrushes"></div>
+      <div class="mklab">Size <span id="mkSzV">1x</span></div>
+      <input type="range" id="mkSz" min="0.5" max="3" step="0.25" value="1" aria-label="Brush size">
+    </div>
+    <div>
+      <div class="mklab">Colour, by subway line</div>
+      <div class="mkswatches" id="mkColors"></div>
+    </div>
+  </div>
+
+  <div class="mklab" style="margin-top:28px"><label for="mkHandle">Sign it: marked up by</label></div>
+  <div class="mksign"><span>@</span><input id="mkHandle" type="text" maxlength="16" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourhandle"></div>
+  <p class="mksignnote">Optional. Your handle goes on the strip under the art, beside the NEW YORKERS and MLOW marks. It stays on this device.</p>
+
+  <div class="mkacts">
+    <button class="btn" type="button" id="mkSave">SAVE</button>
+    <button class="btn" type="button" id="mkShare" hidden>SHARE</button>
+    <a class="btn ghost" id="mkX" target="_blank" rel="noopener">POST ON X</a>
+    <button class="btn ghost" type="button" id="mkUndo">UNDO</button>
+    <button class="btn ghost" type="button" id="mkClear">CLEAR</button>
+    <a class="mkrec" id="mkRec">Open the record</a>
+  </div>
+  <p class="mknote">Nothing you draw leaves your device until you save or share it. Your marks do not change the piece, its record or the token.</p>
+</section>
+
+<section class="wrap" style="padding-top:56px;padding-bottom:90px">
+  <div class="kicker">From the museum</div>
+  <h2 class="h-lg" style="margin-top:10px">Six rooms, six facts.</h2>
+  <p class="lede" style="margin-top:10px;max-width:720px">Every room in the museum carries one sourced line of city history. Flip a card to read it, then mark up the New Yorker who hangs there.</p>
+  <div class="mkcards" id="mkCards"></div>
+  <p style="margin-top:18px"><button class="btn ghost" type="button" id="mkShuffle">Shuffle the rooms</button></p>
+</section>

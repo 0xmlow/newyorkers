@@ -54,7 +54,18 @@ Run from `_build`:
 ./build_all.sh              # everything: hang assignment, museum bundle, audit, pages, package
 python3 preflight.py        # read only. Must say "no problems"
 python3 build_deploy.py     # writes GO LIVE PACKAGE/site. Does not upload
+./deploy.sh                 # THE deploy command, and only when MLow asks. Uploads the package
 ```
+
+**Deploy only through `_build/deploy.sh`, never a bare `npx wrangler pages deploy`.**
+Several sessions build and deploy from the one `GO LIVE PACKAGE` folder. On
+2026-10-09 one session's build deleted `site/n` while another session's upload
+was reading it, and the package fell to 1 of 7,542 pages. `build_deploy.py` and
+`deploy.sh` now share a lock (`GO LIVE PACKAGE/.lock`, see `_build/package_lock.py`)
+and the second one to start stops at once, naming the holder's pid, session and
+start time. Wait for it; never delete the lock file. `deploy.sh` also refuses to
+upload unless `site/n` holds the source's piece pages and `preflight.py` says
+"no problems", then prints the live `/build.json`.
 
 Museum only, from `_build/museum`:
 
@@ -75,7 +86,11 @@ page and looked healthy.
 |---|---|---|
 | Anything about the live site | `../HANDOFF 2026-09-08/00_START_HERE.md` | 243 |
 | The site's colours, buttons, nav and materials (2026-10-09 design pass) | `HANDOFF_DESIGN_2026-10-09.md` | 25 |
+| The Barney Greengrass room (2026-10-12): the mirrored model, the wallpaper, the dithered merch, where Gary's likeness files live | `HANDOFF_BARNEY_2026-10-12.md` | 70 |
+| Why every gallery throttles its frame rate and pixel ratio (the fan noise complaint, 2026-10-12) | `HANDOFF_POWER_2026-10-12.md` | 45 |
 | What changed on 2026-10-07 (mint awareness, arcade, stop, states, posting pipeline, what still needs MLow) | `HANDOFF_2026-10-07.md` | 60 |
+| The museum upgrade plan after the heroes (trees, surfaces, truth pass, eggs, heroes everywhere) | `_build/museum/UPGRADE_PLAN_2026-10-09.md` | 150 |
+| Hero GLBs in the museum rooms (2026-10-09), and how to add one | `HANDOFF_MUSEUM_HEROES_2026-10-09.md` | 75 |
 | The 3D museum | `../HANDOFF 2026-09-08/05_THE_MUSEUM.md` | 180 |
 | Making the museum look better | `_build/museum/PHOTOREALISM_SCOPE_2026-09-08.md` | 300 |
 | Upgrading the earlier rooms to the 2026-09-23 standard | `_build/museum/ROOM_UPGRADE_GUIDE_2026-09-23.md` | 230 |

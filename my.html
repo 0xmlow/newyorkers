@@ -208,7 +208,7 @@ function paint(d,q){
   var cp=h('button','btn ghost','Copy my link');cp.type='button';cp.onclick=function(){var u=location.origin+location.pathname.replace(/\.html$/,'')+'#'+key;try{navigator.clipboard.writeText(u);cp.textContent='Copied';}catch(e){prompt('Copy this link',u);}};ac.appendChild(cp);
   var ho=d.honor;$('mHonor').hidden=!ho;
   if(ho){$('mHonName').textContent=ho.name;$('mHonTitle').textContent=(ho.handle?ho.handle+'  ':'')+(ho.title?'“'+ho.title+'”':'');$('mHonBio').textContent=ho.bio||'';
-    $('mHonImg').src=B+(ho.img||ho.card);$('mHonImg').alt=ho.name+', painted by MLow';$('mHonImgA').href=B+ho.page;$('mHonPage').href=B+ho.page;
+    $('mHonImg').src=B+(ho.img||ho.card);$('mHonImg').alt=ho.name+', portrait by MLow';$('mHonImgA').href=B+ho.page;$('mHonPage').href=B+ho.page;
     $('mHonCardA').hidden=!ho.card;$('mHonCard').hidden=!ho.card;
     if(ho.card){$('mHonCardImg').src=B+ho.card;$('mHonCardImg').alt='The honorary card for '+ho.name;$('mHonCardA').href=B+ho.card;$('mHonCard').href=B+ho.card;$('mHonCard').setAttribute('download','honorary-new-yorker-'+ho.id+'.jpg');}}
   var hr=RN[d.home]||{name:d.homeName,area:''};

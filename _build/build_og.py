@@ -37,11 +37,11 @@ og = os.path.join(SITE, "og.jpg")
 if not os.path.exists(og) or open(og, "rb").read() != dflt: open(og, "wb").write(dflt)
 
 TAGS = re.compile(r'\s*<meta (?:property="og:image(?::(?:width|height|alt|type))?"|name="twitter:image(?::alt)?") content="[^"]*">')
-def apply(path, card):
+def apply(path, card, own=None):
     s = open(path, encoding="utf-8").read()
     m = re.search(r'<meta property="og:image" content="[^"]*">', s)
     if not m: sys.exit(f"{os.path.relpath(path, SITE)}: no og:image tag to replace; run build_seo.py first")
-    img, alt = f"{URL}/assets/og/{files[card]}", esc(M["alt"][card])
+    img, alt = (f"{URL}/assets/og/{files[card]}", esc(M["alt"][card])) if not own else (f"{URL}/assets/og/rooms/{own['file']}", esc(own['alt']))
     block = (f'<meta property="og:image" content="{img}">\n<meta property="og:image:type" content="image/jpeg">\n'
              f'<meta property="og:image:width" content="{W}">\n<meta property="og:image:height" content="{H}">\n'
              f'<meta property="og:image:alt" content="{alt}">\n<meta name="twitter:image" content="{img}">\n'
@@ -56,12 +56,16 @@ for page, card in M["pages"].items():
     p = os.path.join(SITE, page)
     if os.path.exists(p): n += apply(p, card)
 rot = M.get("rotation", []); nf = tf = 0
+# room pages carry a card of their own room (build_room_cards.py); the rotation only covers a room without one
+RC = os.path.join(HERE, "og", "room_cards.json")
+ROOMCARDS = json.load(open(RC)) if os.path.exists(RC) else {}
 for folder in M.get("folders", []):
     d = os.path.join(SITE, folder)
     for f in sorted(os.listdir(d)) if os.path.isdir(d) else []:
         if not f.endswith(".html"): continue
         # a hash, not the position in the folder: adding piece 7543 must not reshuffle every banner after it
         card = rot[int(hashlib.sha256(f"{folder}/{f}".encode()).hexdigest(), 16) % len(rot)]
-        nf += apply(os.path.join(d, f), card); tf += 1
+        own = ROOMCARDS.get(f[:-5]) if folder == "rooms" else None
+        nf += apply(os.path.join(d, f), card, own); tf += 1
 print(f"  folders: {nf} pages changed of {tf} in {', '.join(f + '/' for f in M.get('folders', []))}")
 print(f"share cards: {len(files)} cards, {n} pages changed of {len(M['pages'])}, og.jpg = {M['default']}")

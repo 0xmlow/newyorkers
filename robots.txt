@@ -1,129 +1,86 @@
-# NEW YORKERS by MLow. Crawl the site; skip the heavy video folders. Bots and AI agents: read /agents.html and /llms.txt first.
+# NEW YORKERS by MLow. Crawl the site, videos included. Bots and AI agents: read /agents.html and /llms.txt first.
 User-agent: *
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
 Disallow: /assets/museum/props/
 
 User-agent: GPTBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: OAI-SearchBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: ChatGPT-User
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: ClaudeBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Claude-User
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Claude-SearchBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: anthropic-ai
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: PerplexityBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Perplexity-User
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Google-Extended
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Googlebot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Bingbot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Applebot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Applebot-Extended
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: CCBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: Amazonbot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: meta-externalagent
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: cohere-ai
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: DuckAssistBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 User-agent: YouBot
 Allow: /
-Disallow: /media/
-Disallow: /assets/glitch/
-Disallow: /assets/motion/
+Disallow: /assets/museum/props/
 
 Sitemap: https://n3wyorkers.com/sitemap.xml

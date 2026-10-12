@@ -5,7 +5,7 @@ Screenshot a room from its spawn (or --at x,y,z --yaw deg --pitch deg) in headle
 --port picks the Chrome debugging port (use your own so parallel runs do not collide)."""
 import subprocess, time, os, sys, json, urllib.request, urllib.parse, argparse, tempfile
 ap = argparse.ArgumentParser(); ap.add_argument('room'); ap.add_argument('out'); ap.add_argument('--tag', default=''); ap.add_argument('--port', type=int, default=9333)
-ap.add_argument('--hour', default=''); ap.add_argument('--turn', type=float, default=0); ap.add_argument('--w', type=int, default=1600); ap.add_argument('--h', type=int, default=900); ap.add_argument('--wait', type=float, default=6); ap.add_argument('--at', default=''); ap.add_argument('--eval', default=''); ap.add_argument('--yaw', default=''); ap.add_argument('--pitch', default=''); ap.add_argument('--mobile', action='store_true', help='390 x 844 at 3x with touch, so the page takes its phone path'); ap.add_argument('--landscape', action='store_true', help='with --mobile: the phone on its side, 844 x 390'); ap.add_argument('--egg', default='', help='walk to four metres from this egg id, facing it, before the shot')
+ap.add_argument('--hour', default=''); ap.add_argument('--turn', type=float, default=0); ap.add_argument('--w', type=int, default=1600); ap.add_argument('--h', type=int, default=900); ap.add_argument('--wait', type=float, default=6); ap.add_argument('--at', default=''); ap.add_argument('--eval', default=''); ap.add_argument('--yaw', default=''); ap.add_argument('--pitch', default=''); ap.add_argument('--mobile', action='store_true', help='390 x 844 at 3x with touch, so the page takes its phone path'); ap.add_argument('--landscape', action='store_true', help='with --mobile: the phone on its side, 844 x 390'); ap.add_argument('--egg', default='', help='walk to four metres from this egg id, facing it, before the shot'); ap.add_argument('--extra', default='', help='more query, e.g. trees=old'); ap.add_argument('--base', default='http://127.0.0.1:4185', help='site origin to shoot')
 a = ap.parse_args()
 if a.mobile: a.w, a.h = (844, 390) if a.landscape else (390, 844)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -18,8 +18,8 @@ for _ in range(80):
     try: urllib.request.urlopen(HOST + "/json/version"); break
     except Exception: time.sleep(0.25)
 page = f"museum.{a.tag}.html" if a.tag else "museum.html"
-extra = (f"&at={a.at}" if a.at else '') + (f"&yaw={a.yaw}" if a.yaw else '') + (f"&pitch={a.pitch}" if a.pitch else '')
-url = f"http://127.0.0.1:4185/{page}?auto=1&debug=1{'&hour=' + a.hour if a.hour else ''}{extra}&v={int(time.time())}#room={a.room}&hang=place"
+extra = (f"&{a.extra}" if a.extra else '') + (f"&at={a.at}" if a.at else '') + (f"&yaw={a.yaw}" if a.yaw else '') + (f"&pitch={a.pitch}" if a.pitch else '')
+url = f"{a.base}/{page}?auto=1&debug=1{'&hour=' + a.hour if a.hour else ''}{extra}&v={int(time.time())}#room={a.room}&hang=place"
 try:
     # open blank, emulate, then navigate: the page reads pointer: coarse and its width at load
     r = json.load(urllib.request.urlopen(urllib.request.Request(f'{HOST}/json/new?about:blank', method='PUT')))

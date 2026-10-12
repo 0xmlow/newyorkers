@@ -1,0 +1,86 @@
+{
+ "brick": {
+  "repeat": 0.7,
+  "rot": 0,
+  "normal": 1.0,
+  "mean": 0.4
+ },
+ "ashlar": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 1.6,
+  "mean": 0.4
+ },
+ "planks": {
+  "repeat": 0.5,
+  "rot": 0,
+  "normal": 0.7,
+  "mean": 0.4
+ },
+ "plaster": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.6,
+  "mean": 0.4
+ },
+ "pavers": {
+  "repeat": 1.2,
+  "rot": 0,
+  "normal": 0.8,
+  "mean": 0.4
+ },
+ "steel": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.5,
+  "mean": 0.4
+ },
+ "concrete": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.7,
+  "mean": 0.4
+ },
+ "grass": {
+  "repeat": 1.5,
+  "rot": 0,
+  "normal": 0.8,
+  "mean": 0.4
+ },
+ "marble": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.4,
+  "mean": 0.4
+ },
+ "asphalt": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.8,
+  "mean": 0.4
+ },
+ "cobble": {
+  "repeat": 0.62,
+  "rot": 0,
+  "normal": 1.0,
+  "mean": 0.4
+ },
+ "patina": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.6,
+  "mean": 0.4
+ },
+ "terrazzo": {
+  "repeat": 1.0,
+  "rot": 0,
+  "normal": 0.7,
+  "mean": 0.4
+ },
+ "boardwalk": {
+  "repeat": 0.5,
+  "rot": 1,
+  "normal": 0.8,
+  "mean": 0.4
+ }
+}

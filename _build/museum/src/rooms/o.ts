@@ -16,14 +16,14 @@ export const balloons: RoomDef = {
   mood: 'Inflation night',
   color: '#f0a0c0',
   description: 'The blocks beside the museum the night before Thanksgiving: giant balloons under their nets, the crews, the crowd shuffling past under the streetlights, the works on the barricade walls.',
-  signatures: 'The Beaux Arts museum front, the side streets closed off, enormous character balloons lying on their sides under cargo nets and sandbags, helium trucks, police barricades, families in coats, bare trees in the park.',
+  signatures: 'The pink granite Roosevelt Memorial front with its four columns and four figures on the parapet, the side streets closed off, enormous character balloons lying on their sides under cargo nets and sandbags, helium trucks, police barricades, families in coats, bare trees in the park.',
   daylit: false,
   build(k, ctx) {
     k.sky({ top: 0x101a34, horizon: 0x4a4a68, ground: 0x0e1018, fog: 0.0024, stars: 220, env: 0.6 });
     k.hemi(0xd8e0ff, 0x1a1418, 0.55);
     k.sun(0xc8d0ff, 0.4, -60, 60, 40, false, 90);
     const asphalt = k.pbr('bnRoad', X.asphalt(0x24282d), 0.11),
-      granite = k.pbr('bnGranite', X.ashlar(0xb8a890, 184, 3), 0.22),
+      granite = k.pbr('bnGranite', X.ashlar(0xc6a090, 184, 3), 0.22), /* Pope's facade is pink granite */
       dark = k.flat(0x1a1c20, 0.5, 0.6),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
       net = k.flat(0xe8e0c0, 0, 0.9, { transparent: true, opacity: 0.35, wireframe: true }),
@@ -41,15 +41,17 @@ export const balloons: RoomDef = {
     for (const z of [-40, 40]) { k.box(80, 0.3, 16, -60, -0.15, z, asphalt); for (const s of [-1, 1]) k.box(80, 0.28, 4, -60, 0, z + s * 10, k.pbr('bnWalk', X.pavers(0x8e8b84, 89), 0.42)); }
     k.box(60, 30, 40, -60, 15, 0, granite);
     for (let i = 0; i < 4; i++) k.column(-31, 0, -9 + i * 6, 14, 1.0, granite, true);
-    k.box(30, 3, 12, -31, 15.5, 0, granite);
-    const ped = new T.Shape(); ped.moveTo(-8, 0); ped.lineTo(8, 0); ped.lineTo(0, 4); ped.closePath();
-    k.mesh(new T.ExtrudeGeometry(ped, { depth: 4, bevelEnabled: false }), granite, -29, 17, 0).rotation.y = PI / 2;
+    k.box(4, 3, 30, -31, 15.5, 0, granite); /* the entablature runs along the front, over the columns */
+    /* no pediment on the Roosevelt Memorial: a parapet, and over each of the four columns a standing figure (Audubon,
+       Boone, Lewis and Clark on the real front), kept generic here */
+    k.box(4, 2.2, 30, -31, 18.1, 0, granite);
+    for (let i = 0; i < 4; i++) { const z = -9 + i * 6; k.box(1.4, 0.4, 1.4, -31, 19.4, z, granite); k.box(0.9, 2.4, 0.7, -31, 20.8, z, granite); k.sphere(0.36, -31, 22.3, z, granite, 10); }
     for (let i = 0; i < 12; i++) k.box(30, 0.34, 1.0, -31 + 3 + i * 0.6, 0.17 + i * 0.34, 0, granite);
     k.block(-95, -25, -22, 22);
-    k.sign('THE MUSEUM  ·  NATURAL HISTORY  ·  BALLOON NIGHT', 12, 0.8, -25, 12.6, 0, 'transparent', '#f4e4b0', 70, PI / 2);
+    k.sign('THE MUSEUM  ·  NATURAL HISTORY  ·  BALLOON NIGHT', 12, 0.8, -28.9, 15.5, 0, 'transparent', '#f4e4b0', 70, PI / 2);
     k.box(160, 0.4, 200, 60 + 40, -0.2, 0, lawn);
     const rnd = X.mulberry(67);
-    for (let i = 0; i < 40; i++) k.tree(30 + rnd() * 100, 0, -90 + rnd() * 180, { kind: 'bare', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i });
+    for (let i = 0; i < 40; i++) k.tree(30 + rnd() * 100, 0, -90 + rnd() * 180, { kind: 'bare', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i, species: 'elm' }); /* American elms line the park side of Central Park West */
     k.rail(18, 0, 200, dark, 1.0, 'z', 2.4);
     k.block(17.6, 18.4, -100, 100);
     for (const z of [-80, -40, 0, 40, 80]) for (const s of [-1, 1]) k.lamp(s * 13.5, z, 6.2, dark, 0xffd9a8, 30);
@@ -78,6 +80,13 @@ export const balloons: RoomDef = {
     k.crowd([v(6, 0, -70), v(6, 0, -30), v(-90, 0, -30), v(-90, 0, 30), v(6, 0, 30), v(6, 0, 70), v(-4, 0, 70), v(-4, 0, -70)], 60, { seed: 71, speed: 0.6, spread: 3, animate: !ctx.reduced, closed: true, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0x151517, 0xc9a25a, 0x6a4a8a, 0xd8d0c0] });
     k.censusWall({ x: -24.66, y: 3.2, z: 0, rotY: PI / 2, cols: 22, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(7800, 88), pieces: ctx.all, backing: dark });
     k.box(0.4, 6, 14, -24.9, 3, 0, dark);
+    const MP = 'https://en.wikipedia.org/wiki/Macy%27s_Thanksgiving_Day_Parade', AM = 'https://en.wikipedia.org/wiki/American_Museum_of_Natural_History';
+    k.egg(set[0], { id: 'balloons-felix', title: 'Felix on sticks', year: '1927', text: 'The first parade, in 1924, had live animals borrowed from the Central Park Zoo. In 1927 the first balloon, a Felix the Cat, replaced them, filled with air and held up on sticks. Macy\'s switched to helium the next year.', clue: 'Find the cat lying on its side under its net.', source: { name: 'Macy\'s Thanksgiving Day Parade, Wikipedia', url: MP } });
+    k.egg(set[1], { id: 'balloons-reward', title: 'Let go on purpose', year: '1928', text: 'In 1928 Tony Sarg released five balloons into the sky with a reward for whoever brought one back: $100, cut to $50 the next year. In 1931 an aviator cut a dragon balloon down in midair for a $25 reward, and a blue hippo was never found. The releases ended in 1932 after a novice pilot nearly crashed chasing one.', clue: 'Look at the dinosaur on 81st Street.', source: { name: 'Macy\'s Thanksgiving Day Parade, Wikipedia', url: MP } });
+    k.egg(v(-86, 2.2, -36), { id: 'balloons-rubber', title: 'Rubber for the war', year: '1942', text: 'The parade did not run from 1942 to 1944, because the rubber and helium were needed for the war effort. It came back in 1945.', clue: 'Find the helium truck at the far end of 77th Street.', source: { name: 'Macy\'s Thanksgiving Day Parade, Wikipedia', url: MP } }, { r: 1.8 });
+    k.egg(v(13.5, 5.6, -40), { id: 'balloons-wind', title: 'The wind law', year: '1997', text: 'After a Cat in the Hat balloon hit a lamppost in 1997 and badly injured a parade goer, the city passed a law: no full size balloons if sustained winds pass 23 mph or gusts pass 35 mph. Each character balloon is handled by 90 people.', clue: 'Look at the lampposts along the avenue.', source: { name: 'Macy\'s Thanksgiving Day Parade, Wikipedia', url: MP } }, { r: 1.4 });
+    k.egg(v(-31, 20.8, 3), { id: 'balloons-explorers', title: 'Four on the parapet', year: '1936', text: 'The museum\'s Central Park West front is the Theodore Roosevelt Memorial by John Russell Pope, pink granite modelled on Roman arches, dedicated in 1936. Figures of Audubon, Boone, Lewis and Clark by James Earle Fraser stand over the four columns, each column 48 feet tall.', clue: 'Look up at the top of the four columns.', source: { name: 'American Museum of Natural History, Wikipedia', url: AM } }, { r: 2.0 });
+    k.egg(v(-20, 1.0, 0), { id: 'balloons-statue', title: 'The statue that left', year: '2022', text: 'Fraser\'s bronze equestrian statue of Roosevelt stood on these steps until January 2022. The museum removed it because of the way it placed a Native American and an African American figure beside him, and lent it to the Theodore Roosevelt Presidential Library in North Dakota.', clue: 'Stand at the foot of the museum steps, where the bronze rider used to be.', source: { name: 'American Museum of Natural History, Wikipedia', url: AM } }, { r: 0.9 });
     // the works: light boxes along the barricade lines on both side streets, the park fence, the museum steps
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const x = -90 + i * 12; for (const [z, rot] of [[-30.8, 0], [30.8, PI]] as const) { k.box(4.6, 3.2, 0.4, x, 2.0, z + (rot ? 0.3 : -0.3), dark); mounts.push({ position: v(x, 2.1, z + (rot ? 0.08 : -0.08)), rotation: rot, target: v(x, 2, rot ? z - 8 : z + 8), width: 4.2, height: 2.5, style: 'black', wash: true }); } }
@@ -95,7 +104,7 @@ export const stonewall: RoomDef = {
   mood: 'The last Sunday in June',
   color: '#e83a8a',
   description: 'The little brick bar with its arched windows, the park across the street with the white figures, the banners on every building, the march coming down Christopher with its floats.',
-  signatures: 'The two storey brick front with arched windows and the neon in the window, the triangular park with its benches and the four white sculptures, rainbow flags on the fire escapes, floats and marchers filling the narrow street, confetti in the air.',
+  signatures: 'The two storey front, brick below and stucco above, the storefront window between two arched doors and the neon in the window, the triangular park with its benches and the four white sculptures, rainbow flags on the fire escapes, floats and marchers filling the narrow street, confetti in the air.',
   build(k, ctx) {
     k.sky({ top: 0x5f94d8, horizon: 0xf0e8e0, ground: 0x6a6660, fog: 0.002, sun: { az: 3.3, el: 0.85, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xf6f6ff, 0x5a5048, 0.95);
@@ -117,12 +126,18 @@ export const stonewall: RoomDef = {
     for (let i = 0; i < 24; i++) { const s = i % 2 ? 1 : -1; const z = 56 - i * 4.6; const x = s * 10.2; for (let c = 0; c < 6; c++) k.box(0.05, 0.16, 1.0, x + s * 0.05, 7.5 - c * 0.16, z, rainbow[c]); }
     const BX = -11, BZ = -4;
     k.box(12, 9, 10, BX - 6, 4.5, BZ, brick);
-    for (const dz of [-3, 0, 3]) { k.arch(1.8, 3.2, 0.4, BX + 0.1, 0.8, BZ + dz, dark, false, 0.8).rotation.y = PI / 2; k.box(0.1, 2.4, 1.4, BX + 0.16, 2.2, BZ + dz, k.glass(0xffe0c0, 0.35, 0.1)); }
-    k.mesh(new T.BoxGeometry(0.06, 0.5, 1.2), neon, BX + 0.2, 2.4, BZ + 3);
+    /* the real front: brick at street level, stucco above, a wide storefront window between two arched entrances,
+       three windows on the second floor (two 1840s stables refaced together in 1930) */
+    const swGlass = k.glass(0xffe0c0, 0.35, 0.1);
+    k.box(0.1, 5.2, 10, BX + 0.05, 6.4, BZ, k.pbr('swStucco', X.plaster(0xd8cfc0, 186), 0.3));
+    for (const dz of [-3.4, 3.4]) { k.arch(1.8, 3.2, 0.4, BX + 0.1, 0.8, BZ + dz, dark, false, 0.8).rotation.y = PI / 2; k.box(0.1, 2.4, 1.4, BX + 0.16, 2.2, BZ + dz, swGlass); }
+    k.box(0.14, 2.4, 4.0, BX + 0.12, 2.0, BZ, dark); k.box(0.1, 2.0, 3.6, BX + 0.18, 2.0, BZ, swGlass);
+    for (const dz of [-3.4, 0, 3.4]) { k.box(0.12, 1.9, 1.3, BX + 0.1, 7.0, BZ + dz, dark); k.box(0.1, 1.6, 1.0, BX + 0.14, 7.0, BZ + dz, swGlass); }
+    k.mesh(new T.BoxGeometry(0.06, 0.5, 1.2), neon, BX + 0.24, 2.4, BZ + 0.6);
     k.sign('STONEWALL INN', 3.6, 0.7, BX + 0.16, 5.2, BZ, '#1a1c20', '#f4f0e8', 70, PI / 2, { border: true });
     k.block(BX - 12.5, BX + 0.4, BZ - 5.5, BZ + 5.5);
     for (let c = 0; c < 6; c++) k.box(0.1, 0.3, 4.2, BX + 0.18, 7.2 - c * 0.3, BZ, rainbow[c]);
-    k.point(BX + 1, 2.6, BZ + 3, 0xff6a8a, 12, 6);
+    k.point(BX + 1, 2.6, BZ + 0.6, 0xff6a8a, 12, 6);
     // the park: a triangle with lawn, benches, the four white figures on their bases
     const P = [v(2, 0, -8), v(28, 0, -40), v(2, 0, -44)];
     const tri = new T.Shape(); tri.moveTo(P[0].x, -P[0].z); tri.lineTo(P[1].x, -P[1].z); tri.lineTo(P[2].x, -P[2].z); tri.closePath();
@@ -134,6 +149,16 @@ export const stonewall: RoomDef = {
     const fig = (x: number, z: number, seated: boolean) => { k.box(0.6, seated ? 0.9 : 1.7, 0.4, x, seated ? 0.95 : 1.35, z, white); k.sphere(0.2, x, seated ? 1.6 : 2.4, z, white, 10); if (seated) k.box(0.6, 0.3, 0.9, x, 0.6, z + 0.3, white); };
     k.bench(8, -20, 0.6, wood, iron, 2.0); fig(7.6, -20.4, true); fig(8.6, -20.4, true);
     fig(12, -16, false); fig(12.8, -15.2, false);
+    /* General Sheridan in bronze (1936) at the point of the park, a generic figure on a granite pedestal */
+    const bronze = k.flat(0x3a4a3c, 0.6, 0.5);
+    k.box(1.4, 1.8, 1.4, 4.6, 0.9, -12.5, k.flat(0x8a8680, 0, 0.8)); k.box(0.7, 1.9, 0.5, 4.6, 2.75, -12.5, bronze); k.sphere(0.22, 4.6, 3.9, -12.5, bronze, 10); k.keepOut.push({ x: 4.6, z: -12.5, r: 1.1 });
+    const SNM = 'https://en.wikipedia.org/wiki/Stonewall_National_Monument', SWI = 'https://en.wikipedia.org/wiki/Stonewall_Inn';
+    k.egg(v(BX + 0.4, 7.0, BZ - 3.4), { id: 'stonewall-stables', title: 'Two stables', year: '1843', text: 'The Stonewall began as two horse stables, No. 51 built in 1843 and No. 53 in 1846. In 1930 the architect William Bayard Willis joined and refaced them, and the third storey of No. 51 came off.', clue: 'Look at the second floor windows over the bar.', source: { name: 'Stonewall Inn, Wikipedia', url: SWI } }, { r: 1.4 });
+    k.egg(v(BX + 0.5, 2.0, BZ + 3.4), { id: 'stonewall-raid', title: 'One twenty in the morning', year: '1969', text: 'The bar opened as a gay bar on March 18, 1967, bought for $3,500 by men tied to the Genovese family, and ran as a members only club because it had no liquor licence. The police raid that started the uprising came at about 1:20 a.m. on June 28, 1969, and the unrest ran until July 3.', clue: 'Stand at the arched door of the bar.', source: { name: 'Stonewall Inn, Wikipedia', url: SWI } }, { r: 1.0 });
+    k.egg(v(BX + 0.5, 5.2, BZ), { id: 'stonewall-register', title: 'One in seventy thousand', year: '1999', text: 'When the site joined the National Register of Historic Places in 1999 it was the first listing, out of more than 70,000 at the time, dedicated only to LGBT history. It became a National Historic Landmark in 2000, a city landmark in 2015 and a national monument on June 24, 2016.', clue: 'Read the sign over the storefront.', source: { name: 'Stonewall National Monument, Wikipedia', url: SNM } }, { r: 1.4 });
+    k.egg(v(8.1, 1.4, -20.4), { id: 'stonewall-segal', title: 'Gay Liberation', year: '1992', text: 'George Segal\'s white figures, two men standing and two women seated on a bench, were placed in the park in 1992. A near identical cast stands at Stanford University.', clue: 'Sit down on the bench with the white figures.', source: { name: 'Stonewall National Monument, Wikipedia', url: SNM } }, { r: 1.4 });
+    k.egg(v(4.6, 3.2, -12.5), { id: 'stonewall-farm', title: 'A tobacco farm and a fire', year: '1835', text: 'The little park was once part of a tobacco farm that Wouter van Twiller worked from 1633 to 1638. The Great Fire of 1835 swept the block, which was then condemned and made a park. The bronze of General Philip Sheridan here dates from 1936.', clue: 'Find the bronze general at the point of the park.', source: { name: 'Stonewall National Monument, Wikipedia', url: SNM } }, { r: 1.4 });
+    k.egg(v(BX + 0.4, 2.4, BZ - 7), { id: 'stonewall-station', title: 'The station changed its name', year: '2024', text: 'The monument\'s visitor centre opened next door at 51 Christopher Street on June 28, 2024, the first official national visitor centre for the LGBTQ+ experience. The same day the Christopher Street Sheridan Square subway station was renamed Christopher Street Stonewall.', clue: 'Look at the door just south of the bar.', source: { name: 'Stonewall National Monument, Wikipedia', url: SNM } }, { r: 1.4 });
     for (let i = 0; i < 6; i++) k.tree(6 + i * 3.4, 0, -14 - i * 4.4, { kind: 'round', h: 5 + (i % 3), r: 2.6, leaf: 0x4a7a3c, seed: i });
     // the march: floats on the street with dancers, marchers on both sides, confetti drifting down
     const floats: T.Group[] = [];
@@ -216,8 +241,10 @@ export const sangennaro: RoomDef = {
     // the procession: the saint on his litter carried down the middle, the band ahead, the crowd all round
     const litter = new T.Group();
     const base = new T.Mesh(new T.BoxGeometry(2.2, 0.4, 2.6), gold); base.position.y = 1.6; litter.add(base);
-    const saint = new T.Mesh(new T.CapsuleGeometry(0.35, 1.4, 4, 10), k.flat(0xf4e8d0, 0, 0.6)); saint.position.y = 2.8; litter.add(saint);
-    const mitre = new T.Mesh(new T.ConeGeometry(0.3, 0.7, 6), gold); mitre.position.y = 3.9; litter.add(mitre);
+    /* the saint is carried as a half figure bust in bishop's robes and mitre, not a full standing statue */
+    const saint = new T.Mesh(new T.CapsuleGeometry(0.5, 0.5, 4, 10), k.flat(0xf4e8d0, 0, 0.6)); saint.position.y = 2.35; litter.add(saint);
+    const head = new T.Mesh(new T.SphereGeometry(0.26, 12, 10), k.flat(0xe8d4b8, 0, 0.6)); head.position.y = 3.25; litter.add(head);
+    const mitre = new T.Mesh(new T.ConeGeometry(0.24, 0.6, 6), gold); mitre.position.y = 3.75; litter.add(mitre);
     for (let i = 0; i < 30; i++) { const rib = new T.Mesh(new T.PlaneGeometry(0.16, 0.7 + (i % 3) * 0.3), k.flat([0x3aa06a, 0xf4f0e8, 0xe83a3a][i % 3], 0, 0.8, { side: T.DoubleSide })); const a = (i / 30) * PI * 2; rib.position.set(Math.cos(a) * 0.7, 2.4 + (i % 4) * 0.25, Math.sin(a) * 0.7); rib.rotation.y = -a; litter.add(rib); }
     for (const dx of [-1.2, 1.2]) for (const dz of [-1.5, 1.5]) { const bearer = new T.Mesh(new T.CapsuleGeometry(0.2, 0.9, 3, 8), k.flat(0xf4f0e8, 0, 0.8)); bearer.position.set(dx, 0.9, dz); litter.add(bearer); const pole = new T.Mesh(new T.BoxGeometry(0.08, 0.08, 3.4), wood); pole.position.set(dx, 1.5, 0); litter.add(pole); }
     k.add(litter);
@@ -230,6 +257,13 @@ export const sangennaro: RoomDef = {
     k.box(0.3, 5, 18, -8.9, 3, 0, dark);
     k.sign('FESTA  ·  SAN GENNARO  ·  MULBERRY STREET', 10, 0.8, 0, 9.2, 78, '#c62828', '#f4f0e8', 90, PI, { border: true });
     k.box(11, 1.0, 0.3, 0, 9.2, 78.2, dark);
+    const FSG = 'https://en.wikipedia.org/wiki/Feast_of_San_Gennaro', MUL = 'https://en.wikipedia.org/wiki/Mulberry_Street_(Manhattan)';
+    k.egg(v(0, 8.4, 77.6), { id: 'sangennaro-1926', title: 'One day became eleven', year: '1926', text: 'Immigrants from Naples first held the feast on Mulberry Street in 1926. It began as a one day religious observance and grew into an eleven day festival.', clue: 'Read the big FESTA sign at the north end.', source: { name: 'Feast of San Gennaro, Wikipedia', url: FSG } }, { r: 1.8 });
+    k.egg(v(0, 3, 70), { id: 'sangennaro-ribbons', title: 'Money on the ribbons', text: 'Donations are pinned to the ribbon streamers that hang from the statue, and the money went to poorer residents of the neighbourhood. The Grand Procession starts at 2 p.m. on the last Saturday, after a Mass at the Church of the Most Precious Blood.', clue: 'Wait under the first arch for the saint to be carried past.', source: { name: 'Feast of San Gennaro, Wikipedia', url: FSG } }, { r: 1.8 });
+    k.egg(v(-6.2, 1.6, 42), { id: 'sangennaro-vesuvius', title: 'The blood and the volcano', year: '1631', text: 'Saint Januarius\'s feast day is September 19, the date of his martyrdom in 305. His blood is said to liquefy three times a year, one of them on December 16, for the day he is believed to have helped end the eruption of Vesuvius in 1631.', clue: 'Find the cannoli stand on the west curb.', source: { name: 'Feast of San Gennaro, Wikipedia', url: FSG } }, { r: 1.0 });
+    k.egg(v(-8.4, 3, 30), { id: 'sangennaro-bend', title: 'Slaughter-house Street', year: '1755', text: 'Mulberry Street is on maps from at least 1755 and is named for the mulberry trees that once lined Mulberry Bend. During the Revolution it was often called Slaughter-house Street, after a slaughterhouse that was cleared away in the summer of 1784.', clue: 'Look at the tenement fronts on the west side.', source: { name: 'Mulberry Street (Manhattan), Wikipedia', url: MUL } }, { r: 1.6 });
+    k.egg(v(0, 7.2, -79), { id: 'sangennaro-church', title: 'A church of their own', text: 'The Church of the Most Precious Blood, at 113 Baxter Street, was built by Italians who were not allowed to worship in the main churches of the area. The procession sets out from its Mass.', clue: 'Look up at the brick wall at the south end of the feast.', source: { name: 'Mulberry Street (Manhattan), Wikipedia', url: MUL } }, { r: 1.0 });
+    k.egg(v(8.4, 3, -36), { id: 'sangennaro-bank', title: 'Bankers of Mulberry Street', year: '1896', text: 'The Italian American Museum is at 155 Mulberry Street, in the building of the old immigrant bank Banca Stabile. In 1896 the New York Times reported that there were more bankers among the Italians than among any other foreigners in the city except the Germans.', clue: 'Look at the tenements on the east side, south of the stands.', source: { name: 'Mulberry Street (Manhattan), Wikipedia', url: MUL } }, { r: 1.6 });
     // the works: hung from the arches on both sides, on the stand backs, on the tenement stoops
     const mounts: Mount[] = [];
     for (let i = 0; i < 12; i++) { const z = 66 - i * 12; const s = i % 2 ? 1 : -1; k.box(0.12, 2.2, 3.0, s * 7.9, 5.6, z, dark); mounts.push({ position: v(s * 7.8, 5.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 3, z), width: 2.6, height: 1.8, style: 'none', wash: false }); k.beam(v(s * 7.9, 6.8, z), v(s * 8.5, 7.6, z), 0.02, steel, 3); }
@@ -247,8 +281,8 @@ export const chelseahotel: RoomDef = {
   area: 'THE CHELSEA HOTEL',
   mood: 'Room rate paid in paintings',
   color: '#b8483a',
-  description: 'Twenty third Street under the iron balconies, the lobby hung floor to ceiling with the art residents left instead of rent, the stair spiralling up twelve floors, the works in every frame.',
-  signatures: 'The red brick front with black iron balconies stacked twelve storeys high, the neon vertical sign, the lobby with its fireplace and salon hang, the famous open stair with iron balusters climbing through the building, the corridors of numbered doors.',
+  description: 'Twenty third Street under the iron balconies, the lobby hung floor to ceiling with the art residents left instead of rent, the stair climbing up through the building, the works in every frame.',
+  signatures: 'The red brick front with white stone bands and flowered iron balconies on floors two to eight, eleven storeys high, the neon vertical sign, the lobby with its fireplace and salon hang, the famous open stair with iron balusters climbing through the building, the corridors of numbered doors.',
   build(k, ctx) {
     k.sky({ top: 0x6f9ad0, horizon: 0xe8e6e0, ground: 0x5a5a55, fog: 0.0022, sun: { az: 3.7, el: 0.7, color: 0xfff4e6, size: 12 }, env: 0.85 });
     k.hemi(0xfff0dc, 0x3a3020, 0.6);
@@ -267,7 +301,10 @@ export const chelseahotel: RoomDef = {
     blockFront(k, { x: -50, z0: 90, count: 10, face: 1, seed: 198, h: [14, 26] });
     const FZ = 8, W = 40, H = 46;
     k.box(W, H, 40, 0, H / 2, FZ - 20, brick);
-    for (let f = 1; f < 12; f++) { const y = 2 + f * 3.8; for (let i = 0; i < 7; i++) { const x = -16 + i * 5.3; k.box(3.2, 0.12, 1.2, x, y, FZ + 0.6, iron); for (let b = -1.4; b <= 1.4; b += 0.28) k.box(0.03, 0.9, 0.03, x + b, y + 0.5, FZ + 1.15, iron); k.box(3.2, 0.04, 0.04, x, y + 0.95, FZ + 1.15, iron); k.box(2.0, 2.6, 0.1, x, y + 1.5, FZ + 0.06, glass); k.box(2.4, 2.9, 0.16, x, y + 1.5, FZ + 0.02, cream); } }
+    /* eleven storeys on the front; the flowered iron balconies run on floors two to eight only; white stone bands */
+    for (let f = 1; f < 11; f++) { const y = 2 + f * 3.8; k.box(W, 0.3, 0.2, 0, y - 0.2, FZ + 0.1, cream); for (let i = 0; i < 7; i++) { const x = -16 + i * 5.3; if (f <= 7) { k.box(3.2, 0.12, 1.2, x, y, FZ + 0.6, iron); for (let b = -1.4; b <= 1.4; b += 0.28) k.box(0.03, 0.9, 0.03, x + b, y + 0.5, FZ + 1.15, iron); k.box(3.2, 0.04, 0.04, x, y + 0.95, FZ + 1.15, iron); } k.box(2.0, 2.6, 0.1, x, y + 1.5, FZ + 0.06, glass); k.box(2.4, 2.9, 0.16, x, y + 1.5, FZ + 0.02, cream); } }
+    const brassP = k.pbr('chlBrass', X.gilt(0xc9a55a), 2, { metalness: 0.85, roughness: 0.35 });
+    for (const sx of [-1, 1]) for (let r = 0; r < 3; r++) k.box(0.7, 0.45, 0.04, sx * 2.9, 1.3 + r * 0.6, FZ + 0.04, brassP);
     k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], W + 0.4, 0, H - 0.5, FZ + 0.05, cream, 0);
     for (let i = 0; i < 12; i++) { const ch = 'HOTEL CHELSEA'[i]; const y = 40 - i * 2.4; k.box(2.2, 2.4, 1.0, -W / 2 - 1.2, y, FZ + 1.2, dark); if (ch !== ' ') { k.sign(ch, 1.8, 2.0, -W / 2 - 1.2, y, FZ + 1.72, '#14090a', '#ff4a4a', 140, 0, { border: false }); } }
     k.mesh(new T.BoxGeometry(0.08, 30, 0.08), neon, -W / 2 - 2.3, 26, FZ + 1.2); k.mesh(new T.BoxGeometry(0.08, 30, 0.08), neon, -W / 2 - 0.1, 26, FZ + 1.2);
@@ -303,6 +340,13 @@ export const chelseahotel: RoomDef = {
     for (let y = 0; y < 60; y += 6) k.point(SX, y + 3, SZ, 0xffe6c0, 8, 8);
     k.censusWall({ x: 0, y: 4.4, z: LZ - LD + 0.34, rotY: 0, cols: 18, rows: 6, tile: 0.5, gap: 0.05, start: ctx.wallStart(6700, 108), pieces: ctx.all, backing: dark });
     k.crowd([v(-6, 0, LZ - 3), v(6, 0, LZ - 20)], 6, { seed: 79, speed: 0.3, spread: 1.6, animate: !ctx.reduced });
+    const HC = 'https://en.wikipedia.org/wiki/Hotel_Chelsea';
+    k.egg(v(2.9, 1.9, FZ + 0.3), { id: 'chelsea-plaques', title: 'The brass plaques', text: 'Brass plaques beside the main entrance remember the people who lived here. The roll of residents runs from Mark Twain and Dylan Thomas to Arthur Miller, Leonard Cohen, Patti Smith and Arthur C. Clarke.', clue: 'Read the brass plaques beside the front door.', source: { name: 'Hotel Chelsea, Wikipedia', url: HC } }, { r: 1.2 });
+    k.egg(v(-16, 2 + 3.8 * 2 + 0.6, FZ + 1.3), { id: 'chelsea-balconies', title: 'Flowers in iron', year: '1986', text: 'The flower ornamented iron balconies on floors two to eight were made by J.B. and J.M. Cornell. In 1986 one of them fell from the facade and injured two people walking below.', clue: 'Look up at the balconies from the sidewalk.', source: { name: 'Hotel Chelsea, Wikipedia', url: HC } }, { r: 1.6 });
+    k.egg(v(14, 12, FZ + 0.6), { id: 'chelsea-tallest', title: 'Three feet of wall', year: '1884', text: 'Philip Hubert\'s building opened in 1884 as one of the first Victorian Gothic buildings in the city and its tallest apartment building, about 180 feet. Its masonry walls are about three feet thick at the base, and it was among the first in the city with duplex and penthouse apartments.', clue: 'Stand back on 23rd Street and take in the whole front.', source: { name: 'Hotel Chelsea, Wikipedia', url: HC } }, { r: 2.0 });
+    k.egg(v(-LW / 2 + 1.3, 2.6, LZ - 11.8), { id: 'chelsea-rent', title: 'Paid in paintings', text: 'The manager Stanley Bard sometimes took a resident\'s paintings in place of unpaid rent and hung them in the lobby, which is how the lobby filled with art.', clue: 'Look at the salon hang on the lobby wall by the fireplace.', source: { name: 'Hotel Chelsea, Wikipedia', url: HC } }, { r: 0.8 });
+    k.egg(v(4, 1.6, LZ - 4), { id: 'chelsea-titanic', title: 'Guests off the Titanic', year: '1912', text: 'After the Titanic sank in 1912, several of the people who survived it were given rooms at the hotel.', clue: 'Ask at the front desk.', source: { name: 'Hotel Chelsea, Wikipedia', url: HC } }, { r: 1.2 });
+    k.egg(v(SX, 2 * 3.8 + 2.6, SZ), { id: 'chelsea-skylight', title: 'The skylight', text: 'The central stair was lit from a skylight on the roof and was meant for guests. Its walls were once lined with photographs of the residents. The skylight was sealed in the early 1950s.', clue: 'Climb the stair and look up the middle of the well.', source: { name: 'Hotel Chelsea, Wikipedia', url: HC } }, { r: 1.6 });
     // the works: a salon hang, floor to ceiling on both lobby walls, the stair well walls at every landing, the street front
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) for (let row = 0; row < 2; row++) { const z = LZ - 4 - i * 5.2; if (s < 0 && i === 1 && row === 0) continue; mounts.push({ position: v(s * (LW / 2 - 0.34), 2.4 + row * 2.9, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 2.5, z), width: 3.6, height: row ? 1.9 : 2.2, style: row ? 'oak' : 'gilt', wash: row === 0 }); }
@@ -344,8 +388,9 @@ export const strand: RoomDef = {
     for (const s of [-1, 1]) k.box(5, 0.28, 140, s * 14.5, 0, 30, k.pbr('stWalk', X.pavers(0x6a6a66, 94), 0.42, { roughness: 0.3 }));
     blockFront(k, { x: 17, z0: 100, count: 10, face: -1, seed: 204, h: [14, 30] });
     const FX = -12, FZ = 8, BW = 34, BD = 40;
-    k.box(BW, 24, BD, FX - BW / 2 + 0.3, 12, FZ - BD / 2, brick);
-    for (let t = 0; t < 4; t++) for (let i = 0; i < 6; i++) { const y = 6 + t * 4.4; k.box(2.4, 3.0, 0.1, FX + 0.06 - 1 + 0, y, FZ - 4 - i * 6, glass).rotation.y = PI / 2; k.box(2.8, 3.4, 0.16, FX - 0.02, y, FZ - 4 - i * 6, k.pbr('stLime', X.ashlar(0xb8ad97, 205, 3), 0.22)).rotation.y = PI / 2; }
+    /* 826 Broadway is an eleven storey steel framed store and loft building (Birkmire, 1902), not six */
+    k.box(BW, 44, BD, FX - BW / 2 + 0.3, 22, FZ - BD / 2, brick);
+    for (let t = 0; t < 9; t++) for (let i = 0; i < 6; i++) { const y = 6 + t * 4.4; k.box(2.4, 3.0, 0.1, FX + 0.06 - 1 + 0, y, FZ - 4 - i * 6, glass).rotation.y = PI / 2; k.box(2.8, 3.4, 0.16, FX - 0.02, y, FZ - 4 - i * 6, k.pbr('stLime', X.ashlar(0xb8ad97, 205, 3), 0.22)).rotation.y = PI / 2; }
     const aw = k.box(3.4, 0.12, 30, FX + 1.7, 3.8, FZ - 16, redA); aw.rotation.z = 0.14;
     for (let dz = -14; dz <= 14; dz += 2) k.box(0.05, 0.5, 0.06, FX + 3.4, 3.3, FZ - 16 + dz, redA);
     k.sign('STRAND  ·  18 MILES OF BOOKS', 8, 0.7, FX + 3.42, 3.3, FZ - 16, '#c62828', '#f4f0e8', 70, PI / 2, { border: false });
@@ -377,6 +422,13 @@ export const strand: RoomDef = {
     k.crowd([v(FX + 3, 0, FZ - 2), v(FX + 3, 0, FZ - 26)], 8, { seed: 81, speed: 0.5, spread: 1, animate: !ctx.reduced });
     k.censusWall({ x: IX - IW / 2 + 0.34, y: 3.4, z: IZ - 2, rotY: PI / 2, cols: 30, rows: 5, tile: 0.5, gap: 0.05, start: ctx.wallStart(200, 150), pieces: ctx.all, backing: dark });
     k.sign('STAFF PICKS  ·  THE NEW YORKERS', 8, 0.6, IX - IW / 2 + 0.34, 5.6, IZ - 2, 'transparent', '#f4f0e8', 70, PI / 2);
+    const SB = 'https://en.wikipedia.org/wiki/Strand_Bookstore', LPC = 'https://home4.nyc.gov/site/lpc/about/pr2019/lpc-designates-7-broadway-buildings-south-ofunion-square-as-individual-landmarks.page';
+    k.egg(v(FX + 1.0, 3, FZ - 30), { id: 'strand-bookrow', title: 'Six hundred dollars and a cot', year: '1927', text: 'Benjamin Bass opened the Strand in 1927 with $300 of his own and $300 borrowed, and slept on a cot in the shop. It stood on Fourth Avenue\'s Book Row, which then had 48 bookstores.', clue: 'Stop at the arched door on Broadway.', source: { name: 'Strand Bookstore, Wikipedia', url: SB } }, { r: 1.2 });
+    k.egg(v(FX + 3.0, 3.9, FZ - 1.5), { id: 'strand-miles', title: 'More than eighteen miles', text: 'The slogan on the awning says eighteen miles of books, but the store now holds more than 23 miles. In the 1990s it held 2.5 million books, with the overflow in a warehouse in Sunset Park, Brooklyn.', clue: 'Look at the north end of the red awning.', source: { name: 'Strand Bookstore, Wikipedia', url: SB } }, { r: 0.9 });
+    k.egg(v(MX + 1, MY + 1.4, MZ + 1), { id: 'strand-ulysses', title: 'The most expensive book in the house', text: 'In the 1990s the oldest book for sale was an edition of Magna Moralia at $4,500, and the most expensive was a copy of James Joyce\'s Ulysses at $38,000.', clue: 'Look in the glass case in the rare book room upstairs.', source: { name: 'Strand Bookstore, Wikipedia', url: SB } }, { r: 1.0 });
+    k.egg(v(FX + 0.8, 16, FZ - 16), { id: 'strand-landmark', title: 'Steel behind the brick', year: '1902', text: 'The building is an eleven storey store and loft building designed by William H. Birkmire and finished in 1902, its steel frame an example of the new skyscraper engineering of its day. The Strand moved in from Book Row in 1956, and the city landmarked the building in 2019 over the owner\'s objection.', clue: 'Stand on Broadway and look up the front.', source: { name: 'LPC designates seven Broadway buildings, NYC Landmarks Preservation Commission', url: LPC } }, { r: 2.0 });
+    k.egg(v(IX, 1.6, IZ - ID / 2 + 3), { id: 'strand-1996', title: 'Buying the building', year: '1996', text: 'Fred Bass took over in 1956, and in 1996 he bought the building for $8.2 million, when the Strand was the largest used bookstore in the world. His daughter Nancy Bass Wyden became sole owner after he died in 2018.', clue: 'Go to the counter at the back of the floor.', source: { name: 'Strand Bookstore, Wikipedia', url: SB } }, { r: 1.2 });
+    k.egg(v(IX - IW / 2 + 5 + 2 * 6.5, 1.3, IZ + 6), { id: 'strand-mcfall', title: 'Forty three years on the floor', year: '2021', text: 'Ben McFall started at the Strand in 1978 and worked there until his death in December 2021, the longest serving bookseller in the store\'s history. The staff have been unionized for more than 35 years.', clue: 'Browse the new arrivals tables in the middle of the floor.', source: { name: 'Strand Bookstore, Wikipedia', url: SB } }, { r: 0.8 });
     // the works: the stack end caps facing the aisles, the back wall, the rare book room, the street front between the windows
     const mounts: Mount[] = [];
     for (let i = 0; i < 5; i++) { const x = IX - IW / 2 + 4 + i * 5.2; mounts.push({ position: v(x, 1.9, IZ - 4 + 7.22), rotation: 0, target: v(x, 2, IZ + 6), width: 1.6, height: 2.2, style: 'oak', wash: false }); mounts.push({ position: v(x, 1.9, IZ - 4 - 7.22), rotation: PI, target: v(x, 2, IZ - 16), width: 1.6, height: 2.2, style: 'oak', wash: false }); }

@@ -41,7 +41,7 @@ def key_map(D):
     for p in D["pieces"]:
         st = p.get("st", [])
         for i, k in enumerate(st):
-            h.setdefault(k, (p["n"], "Painted" if i == 0 else f"State {i + 1} of {len(st)}"))
+            h.setdefault(k, (p["n"], "Original" if i == 0 else f"State {i + 1} of {len(st)}"))
         if p.get("gl"):
             h.setdefault(p["gl"]["st"], (p["n"], "Glitch edition"))
         for f in p.get("fx", []) or []:
@@ -169,7 +169,7 @@ def _v(f):
 
 def write_page(n_pieces, n_cells):
     C = cfg()
-    desc = f"MLow in his cab, made of {n_pieces:,} New Yorkers in {n_cells:,} tiles. Click any tile to open the painting, its story and who holds it."
+    desc = f"MLow in his cab, made of {n_pieces:,} New Yorkers in {n_cells:,} tiles. Click any tile to open the piece, its story and who holds it."
     page = shell(title="THE MOSAIC · NEW YORKERS by MLow", description=desc, path="mosaic.html", active="mosaic",
                  image=C["siteUrl"] + "/assets/mosaic/og.jpg?v=" + _v("og.jpg"),
                  keywords=["NEW YORKERS mosaic", "MLow mosaic", "photomosaic NFT", "interactive NFT", "census of New York"],
@@ -186,7 +186,7 @@ def write_page(n_pieces, n_cells):
 
 def write_nft(js):
     """One file, no dependencies on anything but the open web: three.js, the picture and the data are inline.
-    The live layer and the full size paintings come from n3wyorkers.com when it answers, and the snapshot when it does not."""
+    The live layer and the full size pieces come from n3wyorkers.com when it answers, and the snapshot when it does not."""
     dest = os.path.join(os.path.dirname(SITE), "MOSAIC NFT 2026-10-06")
     os.makedirs(dest, exist_ok=True)
     three = open(os.path.join(SITE, "assets", "three.min.js")).read()

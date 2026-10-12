@@ -4,6 +4,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import * as X from './textures';
 import type { Piece } from './data';
 
@@ -29,6 +30,9 @@ export type KitOpts = {
   perAtlas: number;
   hour: number;
   dynamic: boolean;
+  /* the date (YYYY-MM-DD) for the sun, and whether to follow the clock while the room is open */
+  day?: string;
+  live?: boolean;
 };
 
 /* Set ?audit=1 on the museum URL and every hang reports its own overflow to the console.
@@ -39,6 +43,146 @@ const gltf = new GLTFLoader();
 /* meshopt compressed sets (room 182 loads a whole baked terminal) need the decoder; plain GLBs are unaffected */
 gltf.setMeshoptDecoder(MeshoptDecoder);
 const propCache = new Map<string, Promise<T.Group>>();
+/* The tree kit (2026-10-09): twelve New York species as branching skeletons with photo leaf cards,
+   built by blender/build_tree_kit.py into assets/museum/trees/tree_<species>.glb (two variants, a near
+   and a far version of each). k.tree queues trees; plantSpecies instances them per species. ?trees=old
+   brings back the blob trees. */
+export const TREE_SPECIES = ['plane', 'elm', 'locust', 'oak', 'linden', 'ginkgo', 'maple', 'cherry', 'pear', 'willow', 'pine', 'palm'] as const;
+export type TreeSpecies = (typeof TREE_SPECIES)[number];
+/* a room that names no species gets a New York street mix, chosen by seed so a row stays one kind */
+const STREET_MIX: TreeSpecies[] = ['plane', 'linden', 'plane', 'locust', 'oak', 'plane'];
+const OLD_TREES = typeof location !== 'undefined' && /[?&]trees=old/.test(location.search);
+const treeCache = new Map<string, Promise<T.Group>>();
+/* Photo surfaces (2026-10-09): Poly Haven CC0 sets in assets/museum/surfaces, their colour normalised to
+   a neutral mean so the room's own tint still colours them. k.pbr swaps them in for the procedural
+   painter of the same kind; repeat matches a photo tile to one procedural tile (12 brick courses, 6
+   boards...). ?surfaces=old shows the painted canvases. */
+const PHOTO: Record<string, { repeat: number; rot: number; normal: number; mean: number }> = {"brick": {repeat: 0.7, rot: 0, normal: 1.0, mean: 0.4}, "ashlar": {repeat: 1.0, rot: 0, normal: 1.6, mean: 0.4}, "planks": {repeat: 0.5, rot: 0, normal: 0.7, mean: 0.4}, "plaster": {repeat: 1.0, rot: 0, normal: 0.6, mean: 0.4}, "pavers": {repeat: 1.2, rot: 0, normal: 0.8, mean: 0.4}, "steel": {repeat: 1.0, rot: 0, normal: 0.5, mean: 0.4}, "concrete": {repeat: 1.0, rot: 0, normal: 0.7, mean: 0.4}, "grass": {repeat: 1.5, rot: 0, normal: 0.8, mean: 0.4}, "marble": {repeat: 1.0, rot: 0, normal: 0.4, mean: 0.4}, "asphalt": {repeat: 1.0, rot: 0, normal: 0.8, mean: 0.4}, "cobble": {repeat: 0.62, rot: 0, normal: 1.0, mean: 0.4}, "patina": {repeat: 1.0, rot: 0, normal: 0.6, mean: 0.4}, "terrazzo": {repeat: 1.0, rot: 0, normal: 0.7, mean: 0.4}, "boardwalk": {repeat: 0.5, rot: 1, normal: 0.8, mean: 0.4}};
+/* ---------- New York time (2026-10-09): the real sun over Manhattan, every room ---------- */
+const NYC = { lat: 40.7128, lon: -74.006 };
+/* daylight saving in New York: second Sunday of March to first Sunday of November */
+function nyOffset(y: number, m: number, d: number) {
+  const sunday = (month: number, nth: number) => { const first = new Date(Date.UTC(y, month, 1)).getUTCDay(); return 1 + ((7 - first) % 7) + (nth - 1) * 7; };
+  const t = m * 100 + d, start = 2 * 100 + sunday(2, 2), end = 10 * 100 + sunday(10, 1);
+  return t >= start && t < end ? -4 : -5;
+}
+/* solar elevation and azimuth (degrees, azimuth from north clockwise) for a New York date and local hour (NOAA) */
+export function nycSun(day: string, hour: number) {
+  const [y, mo, d] = day.split('-').map(Number);
+  const m = mo - 1, doy = Math.round((Date.UTC(y, m, d) - Date.UTC(y, 0, 0)) / 864e5);
+  const g = ((2 * Math.PI) / 365) * (doy - 1 + (hour - 12) / 24);
+  const eq = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g) - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+  const decl = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g) + 0.000907 * Math.sin(2 * g) - 0.002697 * Math.cos(3 * g) + 0.00148 * Math.sin(3 * g);
+  const tst = hour * 60 + eq + 4 * NYC.lon - 60 * nyOffset(y, m, d);
+  const ha = ((tst / 4 - 180) * Math.PI) / 180, lat = (NYC.lat * Math.PI) / 180;
+  const cz = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(ha);
+  const zen = Math.acos(Math.max(-1, Math.min(1, cz)));
+  let az = Math.acos(Math.max(-1, Math.min(1, (Math.sin(lat) * Math.cos(zen) - Math.sin(decl)) / (Math.cos(lat) * Math.sin(zen))))) * 180 / Math.PI;
+  az = ha > 0 ? (az + 180) % 360 : (540 - az) % 360;
+  return { el: 90 - (zen * 180) / Math.PI, az };
+}
+/* the New York wall clock now, as a fractional hour */
+export function nyHourNow() {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hourCycle: 'h23', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date());
+  const v = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
+  return v('hour') + v('minute') / 60;
+}
+const sstep = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const hdrLoader = new HDRLoader();
+const hdrCache = new Map<string, Promise<T.DataTexture>>();
+function loadHdr(name: string) {
+  let p = hdrCache.get(name);
+  if (!p) { p = hdrLoader.loadAsync(`assets/museum/hdri/${name}.hdr`) as Promise<T.DataTexture>; hdrCache.set(name, p); }
+  return p;
+}
+/* ---------- MLow cabs (2026-10-09): every yellow cab becomes a real NYC taxi with the MLOW topper ---------- */
+const OLD_CABS = typeof location !== 'undefined' && /[?&]cabs=old/.test(location.search);
+const TAXI_LEN = 4.6;
+/* the five cab types MLow photographed on the street, real lengths in metres (2026-10-09) */
+const TAXIS: { name: string; len: number }[] = [
+  { name: 'h_taxi', len: 4.6 },          // Toyota RAV4 hybrid
+  { name: 'h_taxi_escape', len: 4.6 },   // Ford Escape hybrid
+  { name: 'h_taxi_nv200', len: 4.4 },    // Nissan NV200
+  { name: 'h_taxi_sienna', len: 5.17 },  // Toyota Sienna hybrid
+  { name: 'h_taxi_camry', len: 4.88 },   // Toyota Camry hybrid
+];
+/* topper screens: 12 slots in a 2 x 6 atlas; slot 0 the MLOW mark, the rest MLow's paintings */
+const SCREEN_SLOTS = 12;
+function screenSlot(i: number): [number, number] { return [(i % 2) * 0.5, 1 - (Math.floor(i / 2) + 1) / 6]; }
+function pickScreen(seed: number) { return seed % 5 < 2 ? 0 : 1 + (seed % (SCREEN_SLOTS - 1)); }
+let screenMat: T.MeshBasicMaterial | null = null;
+function topperScreenMaterial() {
+  if (screenMat) return screenMat;
+  const tex = new T.TextureLoader().load('assets/museum/taxi/screens.jpg');
+  tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 8; markShared(tex);
+  const m = new T.MeshBasicMaterial({ map: tex, toneMapped: false });
+  m.onBeforeCompile = (sh) => {
+    sh.vertexShader = 'attribute vec2 aSlot;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n  vMapUv = vec2(uv.x * 0.5 + aSlot.x, uv.y / 6.0 + aSlot.y);');
+  };
+  m.customProgramCacheKey = () => 'topperscreen';
+  m.userData.screen = true;
+  screenMat = m;
+  return m;
+}
+/* a screen mesh with its slot as a plain vertex attribute (single cabs) */
+function slotGeometry(g: T.BufferGeometry, slot: number) {
+  const c = g.clone(), n = c.attributes.position.count, a = new Float32Array(n * 2), [u, v] = screenSlot(slot);
+  for (let i = 0; i < n; i++) { a[i * 2] = u; a[i * 2 + 1] = v; }
+  c.setAttribute('aSlot', new T.BufferAttribute(a, 2));
+  return c;
+}
+function isCabYellow(c: T.Color) {
+  const s = c.clone().convertLinearToSRGB(), hsl = { h: 0, s: 0, l: 0 };
+  s.getHSL(hsl);
+  return hsl.h > 0.1 && hsl.h < 0.17 && hsl.s > 0.55 && hsl.l > 0.3 && hsl.l < 0.7;
+}
+/* a cab sized box in the world: one long horizontal side of 3 to 6.5 m, a short one of 1.3 to 2.6, under 2.4 high */
+function carLike(size: T.Vector3) {
+  const L = Math.max(size.x, size.z), W = Math.min(size.x, size.z);
+  return L > 3 && L < 6.5 && W > 1.2 && W < 2.7 && size.y > 0.4 && size.y < 2.5;
+}
+/* the shader flag that hides one instance of a fleet wherever its room moves it */
+function hideable(im: T.InstancedMesh, hidden: Set<number>) {
+  const n = im.instanceMatrix.count, a = new Float32Array(n);
+  hidden.forEach((i) => (a[i] = 1));
+  im.geometry = im.geometry.clone();
+  im.geometry.setAttribute('aHide', new T.InstancedBufferAttribute(a, 1));
+  const one = (m: T.Material) => {
+    const c = m.clone();
+    c.onBeforeCompile = (sh) => {
+      sh.vertexShader = 'attribute float aHide;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n  if (aHide > 0.5) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);');
+    };
+    c.customProgramCacheKey = () => 'cabhide';
+    return c;
+  };
+  im.material = Array.isArray(im.material) ? im.material.map(one) : one(im.material);
+  /* the shadow pass draws without the flag, so a hidden box would still throw its shadow */
+  im.castShadow = false;
+}
+type SkyP = { top: number; horizon: number; ground: number; fog?: number; sun?: { az: number; el: number; color: number; size: number }; stars?: number; haze?: number; env?: number };
+/* the room checks build rooms in node with a stub document: they keep the painted canvases */
+const OLD_SURF = typeof document === 'undefined' || typeof document.createElementNS !== 'function' || (typeof location !== 'undefined' && /[?&]surfaces=old/.test(location.search));
+const photoTex = new Map<string, T.Texture>();
+function photoTexture(file: string, srgb: boolean, rep: number, rot: number, stretch = 1) {
+  const key = `${file}:${rep}:${rot}:${stretch}`;
+  let t = photoTex.get(key);
+  if (!t) {
+    t = texLoader.load(`assets/museum/surfaces/${file}`);
+    t.wrapS = t.wrapT = T.RepeatWrapping;
+    t.repeat.set(rep, rep * stretch);
+    t.rotation = (rot * Math.PI) / 2;
+    t.anisotropy = 8;
+    if (srgb) t.colorSpace = T.SRGBColorSpace;
+    markShared(t);
+    photoTex.set(key, t);
+  }
+  return t;
+}
+type TreeJob = { x: number; y: number; z: number; h: number; r: number; seed: number; leaf: number; bare: boolean; kind: string };
+const treeWind = { value: 0 };
+/* leaf colours in the rooms were picked for flat blobs; the photo leaves are tinted relative to this green */
+const LEAF_REF = new T.Color(0x3f6b3e);
+const leafRefU = { value: LEAF_REF };
 const thumbCache = new Map<string, Promise<T.Texture>>();
 const texLoader = new T.TextureLoader();
 
@@ -102,7 +246,31 @@ export class Kit {
   block(x0: number, x1: number, z0: number, z1: number) {
     this.blocks.push({ x0, x1, z0, z1 });
   }
-  constructor(public scene: T.Scene, public o: KitOpts) {}
+  /* New York time: the sun's elevation now, whether this room was authored at night, and what to re-time */
+  sunEl = 45;
+  sunAz = 180;
+  authoredNight = false;
+  private timeHour = 12;
+  private skyBase: SkyP | null = null;
+  private skyDome: T.Mesh | null = null;
+  private envName = '';
+  private hemis: { l: T.HemisphereLight; i: number }[] = [];
+  private suns: { l: T.DirectionalLight; color: number; i: number; pos: T.Vector3; auto: boolean }[] = [];
+  private lamps: { l: T.PointLight; i: number }[] = [];
+  private lampMats = new Map<number, T.MeshBasicMaterial>();
+  constructor(public scene: T.Scene, public o: KitOpts) {
+    this.setPhase(o.hour);
+  }
+  /* night 1 under about 9 degrees below the horizon, dusk is the golden band either side of sunrise and sunset */
+  private setPhase(hour: number) {
+    this.timeHour = hour;
+    if (!this.o.dynamic) return;
+    const sun = nycSun(this.o.day ?? new Date().toISOString().slice(0, 10), hour);
+    this.sunEl = sun.el; this.sunAz = sun.az;
+    this.night = 1 - sstep(-9, 1, sun.el);
+    this.dusk = sstep(-7, -1, sun.el) * (1 - sstep(7, 15, sun.el));
+  }
+  private lampOn() { return Math.min(1, this.night * 1.3 + this.dusk * 0.6); }
 
   /* ---------- materials ---------- */
   flat(color: number, metalness = 0, roughness = 0.7, extra: Partial<T.MeshStandardMaterialParameters> = {}) {
@@ -135,8 +303,20 @@ export class Kit {
         ...rest,
       };
       if (s.emissiveMap) params.emissiveMap = s.emissiveMap;
+      const ph = !OLD_SURF && s.kind && !s.emissiveMap ? PHOTO[s.kind] : undefined;
+      if (ph) {
+        const q = this.o.quality === 'high' ? '' : '_s';
+        params.map = photoTexture(`${s.kind}_c${q}.jpg`, true, ph.repeat, ph.rot, stretch);
+        params.normalMap = photoTexture(`${s.kind}_n${q}.jpg`, false, ph.repeat, ph.rot, stretch);
+        params.roughnessMap = photoTexture(`${s.kind}_r${q}.jpg`, false, ph.repeat, ph.rot, stretch);
+        params.normalScale = new T.Vector2(normal * ph.normal, normal * ph.normal);
+        /* the photo's mean is neutral grey at ph.mean (linear): the tint scaled back up gives the room's colour */
+        const tint = new T.Color(s.tint ?? 0x888888).multiplyScalar(1 / ph.mean);
+        if (rest.color !== undefined) tint.multiply(new T.Color(rest.color as T.ColorRepresentation));
+        params.color = tint;
+      }
       m = new T.MeshStandardMaterial(params);
-      if (stretch !== 1) {
+      if (stretch !== 1 && !ph) {
         for (const t of [s.map, s.normalMap, s.roughnessMap, s.emissiveMap])
           if (t) {
             const c = t.clone();
@@ -563,46 +743,123 @@ export class Kit {
   }
 
   /* ---------- world ---------- */
-  sky(p: { top: number; horizon: number; ground: number; fog?: number; sun?: { az: number; el: number; color: number; size: number }; stars?: number; haze?: number; env?: number }) {
-    if (this.o.dynamic) {
-      const h = this.o.hour;
-      const smooth = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-      this.night = Math.max(smooth(18.5, 21.5, h), 1 - smooth(4.5, 7.5, h));
-      this.dusk = Math.max(smooth(16.5, 19, h) * (1 - smooth(19, 21.5, h)), smooth(4.5, 6, h) * (1 - smooth(6, 8, h)));
-      const n = this.night, d = this.dusk;
-      const mixc = (a: number, b: number, t: number) => new T.Color(a).lerp(new T.Color(b), t).getHex();
-      p = { ...p };
-      p.top = mixc(mixc(p.top, 0x9a6f8a, d * 0.5), 0x05070f, n);
-      p.horizon = mixc(mixc(p.horizon, 0xf0a06a, d * 0.55), 0x121a2c, n * 0.9);
-      p.ground = mixc(p.ground, 0x07090e, n * 0.8);
-      p.stars = Math.max(p.stars || 0, Math.round(900 * Math.max(0, n - 0.2)));
-      if (n > 0.55) p.sun = { az: 2.4, el: 0.6, color: 0xdfe8ff, size: 6 };
-      else if (p.sun && d > 0) p.sun = { ...p.sun, color: mixc(p.sun.color, 0xff9a55, d), el: Math.max(0.04, p.sun.el * (1 - d * 0.7)), size: p.sun.size * (1 + d * 0.6) };
-      p.env = (p.env ?? 0.55) * (1 - 0.6 * n);
-      p.fog = (p.fog ?? 0.004) * (1 + 0.6 * n);
-    }
-    const tex = X.skyCanvas(p.top, p.horizon, p.ground, { sun: p.sun, stars: p.stars, haze: p.haze });
-    this.scene.background = new T.Color(p.horizon);
-    this.scene.fog = new T.FogExp2(p.horizon, p.fog ?? 0.004);
+  sky(p: SkyP) {
+    this.skyBase = { ...p };
+    /* a sky painted for night (Dyker Heights, the Vanguard) gets a real day when New York has one */
+    this.authoredNight = this.o.dynamic && new T.Color(p.top).getHSL({ h: 0, s: 0, l: 0 }).l < 0.12;
+    const q = this.skyParams();
+    const tex = X.skyCanvas(q.top, q.horizon, q.ground, { sun: q.sun, stars: q.stars, haze: q.haze });
+    this.scene.background = new T.Color(q.horizon);
+    this.scene.fog = new T.FogExp2(q.horizon, q.fog ?? 0.004);
     const dome = new T.Mesh(new T.SphereGeometry(700, 48, 24), new T.MeshBasicMaterial({ map: tex, side: T.BackSide, fog: false, depthWrite: false }));
     dome.renderOrder = -10;
     this.add(dome);
+    this.skyDome = dome;
     this.pmrem = new T.PMREMGenerator(this.o.renderer);
     this.rt = this.pmrem.fromEquirectangular(tex);
     this.scene.environment = this.rt.texture;
-    this.scene.environmentIntensity = p.env ?? 0.55;
+    this.scene.environmentIntensity = q.env ?? 0.55;
+    if (this.authoredNight && !this.suns.some((s) => s.auto)) this.sun(0xfff1dc, 2.6, 60, 80, 40, true, 90, true);
+    this.useHdri(q.env ?? 0.55);
+    if (this.o.dynamic && this.o.live && !this.o.reduced) {
+      let last = 0;
+      this.ticks.push((t) => { if (t - last < 120) return; last = t; this.retime(nyHourNow()); });
+    }
     return tex;
+  }
+  /* the room's sky at the current New York hour */
+  private skyParams(): SkyP {
+    const p = this.skyBase!;
+    if (!this.o.dynamic) return p;
+    const n = this.night, d = this.dusk;
+    const mixc = (a: number, b: number, t: number) => new T.Color(a).lerp(new T.Color(b), t).getHex();
+    const day: SkyP = this.authoredNight
+      ? { ...p, top: 0x5b8fd6, horizon: 0xcbd9e6, ground: mixc(p.ground, 0x6e7a66, 0.7), stars: 0, env: 0.55, fog: Math.min(p.fog ?? 0.004, 0.005), sun: { az: p.sun?.az ?? 2.3, el: 0.8, color: 0xfff2dc, size: 5 } }
+      : { ...p };
+    const q: SkyP = { ...day };
+    const el = Math.max(0.03, (this.sunEl * Math.PI) / 180);
+    q.top = mixc(mixc(day.top, 0x9a6f8a, d * 0.5), 0x05070f, n);
+    q.horizon = mixc(mixc(day.horizon, 0xf0a06a, d * 0.65), 0x121a2c, n * 0.9);
+    q.ground = mixc(day.ground, 0x07090e, n * 0.8);
+    q.stars = Math.max(day.stars || 0, Math.round(900 * Math.max(0, n - 0.2)));
+    if (n > 0.55) q.sun = { az: 2.4, el: 0.6, color: 0xdfe8ff, size: 6 };
+    else if (q.sun) q.sun = { ...q.sun, el: Math.min(q.sun.el, el), color: mixc(q.sun.color, 0xff9a55, d), size: q.sun.size * (1 + d * 0.6) };
+    q.env = (day.env ?? 0.55) * (1 - 0.6 * n);
+    q.fog = (day.fog ?? 0.004) * (1 + 0.6 * n);
+    if (this.authoredNight && n > 0) {
+      /* deep in the night the room looks the way it was painted */
+      q.top = mixc(q.top, p.top, n); q.horizon = mixc(q.horizon, p.horizon, n); q.ground = mixc(q.ground, p.ground, n);
+      q.stars = Math.max(q.stars ?? 0, Math.round((p.stars ?? 0) * n));
+      q.fog = (q.fog ?? 0.004) * (1 - n) + (p.fog ?? 0.004) * n;
+      q.env = (q.env ?? 0.55) * (1 - n) + (p.env ?? 0.55) * n;
+      if (p.sun && n > 0.55) q.sun = p.sun;
+    }
+    return q;
+  }
+  /* real photographed sky light for reflections: a city by day, a sunset, a city at night (Poly Haven, CC0) */
+  private useHdri(env: number) {
+    const name = this.night > 0.6 ? 'night' : this.dusk > 0.35 ? 'golden' : 'day';
+    const mult = (n: string) => (n === 'night' ? 0.3 : n === 'golden' ? 0.55 : 0.9);
+    if (name === this.envName || typeof window === 'undefined') { if (this.envName) this.scene.environmentIntensity = env * mult(name); return; }
+    this.envName = name;
+    void loadHdr(name).then((hdr) => {
+      if (!this.live || this.envName !== name) return;
+      hdr.mapping = T.EquirectangularReflectionMapping;
+      const rt = this.pmrem!.fromEquirectangular(hdr);
+      this.rt?.dispose();
+      this.rt = rt;
+      this.scene.environment = rt.texture;
+      this.scene.environmentIntensity = env * mult(name);
+    }).catch(() => undefined);
+  }
+  /* follow the clock: lights, sky and reflections move with New York while the room is open */
+  retime(hour: number) {
+    const before = this.night + this.dusk * 2;
+    this.setPhase(hour);
+    this.applyTime();
+    if (this.skyBase && this.skyDome && Math.abs(this.night + this.dusk * 2 - before) > 0.03) {
+      const q = this.skyParams();
+      const m = this.skyDome.material as T.MeshBasicMaterial;
+      m.map?.dispose();
+      m.map = X.skyCanvas(q.top, q.horizon, q.ground, { sun: q.sun, stars: q.stars, haze: q.haze });
+      m.needsUpdate = true;
+      (this.scene.background as T.Color).set(q.horizon);
+      if (this.scene.fog instanceof T.FogExp2) { this.scene.fog.color.set(q.horizon); this.scene.fog.density = q.fog ?? 0.004; }
+      this.useHdri(q.env ?? 0.55);
+    }
+  }
+  /* every light the kit made, set for the current hour */
+  applyTime() {
+    const n = this.night, d = this.dusk;
+    for (const h of this.hemis) h.l.intensity = this.authoredNight ? Math.max(h.i, 1.0) * (1 - n) + h.i * n : h.i * (1 - 0.65 * n);
+    const el = (Math.min(70, Math.max(6, this.sunEl)) * Math.PI) / 180;
+    for (const s of this.suns) {
+      let color = s.color, i = s.i;
+      if (n > 0.55) { color = 0xb8c6ff; i = s.auto ? 0 : i * 0.28; }
+      else if (d > 0) { color = new T.Color(color).lerp(new T.Color(0xff9a55), d).getHex(); i *= 1 - 0.35 * d; }
+      if (this.authoredNight && n <= 0.55) i = Math.max(i, s.auto ? 2.6 : i) * (1 - n);
+      s.l.color.set(color);
+      s.l.intensity = i * (1 - 0.5 * n);
+      if (this.o.dynamic && n <= 0.55) {
+        /* keep the room's compass bearing for the sun, take the height from the real one */
+        const r = s.pos.length(), az = Math.atan2(s.pos.x, s.pos.z);
+        s.l.position.set(Math.sin(az) * Math.cos(el) * r, Math.sin(el) * r, Math.cos(az) * Math.cos(el) * r);
+      } else s.l.position.copy(s.pos);
+    }
+    const on = this.lampOn();
+    for (const lp of this.lamps) lp.l.intensity = lp.i * (0.04 + 0.96 * on);
+    for (const [c, m] of this.lampMats) m.color.set(c).multiplyScalar(0.28 + 0.72 * on);
   }
   hemi(skyColor: number, ground: number, intensity: number) {
     const l = new T.HemisphereLight(skyColor, ground, intensity * (1 - 0.65 * this.night));
     this.add(l);
+    this.hemis.push({ l, i: intensity });
     return l;
   }
-  sun(color: number, intensity: number, x: number, y: number, z: number, shadow = true, span = 60) {
-    if (this.night > 0.55) { color = 0xb8c6ff; intensity = intensity * 0.28; }
-    else if (this.dusk > 0) { color = new T.Color(color).lerp(new T.Color(0xff9a55), this.dusk).getHex(); intensity *= 1 - 0.35 * this.dusk; }
-    const l = new T.DirectionalLight(color, intensity * (1 - 0.5 * this.night));
+  sun(color: number, intensity: number, x: number, y: number, z: number, shadow = true, span = 60, auto = false) {
+    const l = new T.DirectionalLight(color, intensity);
     l.position.set(x, y, z);
+    this.suns.push({ l, color, i: intensity, pos: new T.Vector3(x, y, z), auto });
     l.target.position.set(0, 0, -20);
     this.add(l);
     this.add(l.target);
@@ -688,7 +945,145 @@ export class Kit {
     }
     return o;
   }
-  tree(x: number, y: number, z: number, p: { h?: number; r?: number; kind?: 'round' | 'palm' | 'bare' | 'column'; seed?: number; leaf?: number } = {}) {
+  private treeJobs = new Map<TreeSpecies, TreeJob[]>();
+  tree(x: number, y: number, z: number, p: { h?: number; r?: number; kind?: 'round' | 'palm' | 'bare' | 'column'; seed?: number; leaf?: number; species?: TreeSpecies } = {}) {
+    const { h = 4, r = 1.6, kind = 'round', seed = 1, leaf = 0x3f6b3e } = p;
+    if (OLD_TREES) return this.treeLegacy(x, y, z, p);
+    const sp: TreeSpecies = p.species ?? (kind === 'palm' ? 'palm' : kind === 'column' ? 'linden' : STREET_MIX[Math.abs(Math.round(seed)) % STREET_MIX.length]);
+    let jobs = this.treeJobs.get(sp);
+    if (!jobs) {
+      jobs = [];
+      this.treeJobs.set(sp, jobs);
+      this.pending.push(this.plantSpecies(sp, jobs));
+    }
+    jobs.push({ x, y, z, h, r, seed, leaf, bare: kind === 'bare', kind });
+  }
+  /* Instance one species: every tree of it in the room in a handful of draws. Runs after the build has
+     queued them all (the build is synchronous, the load is not). */
+  private async plantSpecies(sp: TreeSpecies, jobs: TreeJob[]) {
+    let load = treeCache.get(sp);
+    if (!load) {
+      load = new Promise((res, rej) => gltf.load(`assets/museum/trees/tree_${sp}.glb`, (g) => res(g.scene), undefined, rej));
+      treeCache.set(sp, load);
+    }
+    let src: T.Group;
+    try { src = await load; } catch { if (this.live) for (const j of jobs) this.treeLegacy(j.x, j.y, j.z, { h: j.h, r: j.r, kind: j.kind as 'round', seed: j.seed, leaf: j.leaf }); return; }
+    if (!this.live) return;
+    const parts = new Map<string, T.Mesh>();
+    src.traverse((c) => { if (c instanceof T.Mesh) parts.set(c.name, c); });
+    const high = this.o.quality === 'high';
+    const lods = high ? ['hi', 'lo'] : ['lo'];
+    const mats = new Map<T.Material, T.Material>();
+    const matFor = (m: T.Material, leafy: boolean) => {
+      let out = mats.get(m);
+      if (out) return out;
+      const sm = (m as T.MeshStandardMaterial).clone();
+      for (const t of [sm.map, sm.normalMap]) if (t) markShared(t);
+      if (sm.map) sm.map.colorSpace = T.SRGBColorSpace;
+      sm.envMapIntensity = 0.8;
+      if (leafy) {
+        sm.alphaTest = 0.5; sm.transparent = false; sm.side = T.DoubleSide; sm.roughness = 0.75; sm.metalness = 0;
+        sm.onBeforeCompile = (sh) => {
+          sh.uniforms.uWind = treeWind;
+          sh.vertexShader = 'uniform float uWind;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+            float hh = max(position.y, 0.0);
+            vec3 ip = vec3(instanceMatrix[3][0], 0.0, instanceMatrix[3][2]);
+            float ph = ip.x * 0.37 + ip.z * 0.21;
+            transformed.x += sin(uWind * 1.3 + ph + hh * 0.3) * 0.008 * hh + sin(uWind * 4.1 + position.x * 2.3 + position.z) * 0.035;
+            transformed.z += cos(uWind * 1.1 + ph) * 0.006 * hh + cos(uWind * 3.7 + position.z * 2.1) * 0.03;`);
+        };
+        /* instance colour carries the room's leaf colour: greens nudge the photo, other colours (autumn,
+           red, yellow) recolour it by brightness so the leaf detail survives */
+        const prev = sm.onBeforeCompile;
+        sm.onBeforeCompile = (sh, r) => {
+          prev.call(sm, sh, r);
+          sh.uniforms.uLeafRef = leafRefU;
+          sh.fragmentShader = 'uniform vec3 uLeafRef;\n' + sh.fragmentShader.replace('#include <color_fragment>', `
+            #if defined( USE_INSTANCING_COLOR ) || defined( USE_COLOR )
+              vec3 vc = vColor.rgb;
+              float lum = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+              float tl = max(dot(vc, vec3(0.299, 0.587, 0.114)), 0.02);
+              float rl = max(dot(uLeafRef, vec3(0.299, 0.587, 0.114)), 0.02);
+              vec3 recol = vc * (lum / tl) * 1.3;
+              vec3 nudged = diffuseColor.rgb * clamp(mix(vec3(1.0), (vc / tl) / (uLeafRef / rl), 0.5), 0.6, 1.5) * clamp(tl / rl, 0.7, 1.4);
+              float green = clamp((vc.g - max(vc.r, vc.b)) / max(vc.g, 0.02) * 4.0, 0.0, 1.0);
+              diffuseColor.rgb = mix(recol, nudged, green);
+            #endif`);
+        };
+        sm.customProgramCacheKey = () => 'treeleaf';
+      }
+      mats.set(m, sm);
+      return sm;
+    };
+    const rnd = X.mulberry(7 + sp.length);
+    const groups: { near: T.InstancedMesh[]; far: T.InstancedMesh[]; at: T.Matrix4[]; pos: T.Vector3[]; leafy: boolean[] }[] = [];
+    for (let v = 0; v < 2; v++) {
+      const mine = jobs.filter((j, i) => (Math.abs(j.seed * 31 + i * 7 + Math.round(j.x * 3 + j.z * 5)) % 2) === v);
+      if (!mine.length) continue;
+      const hb = parts.get(`v${v}_hi_bark`), hl = parts.get(`v${v}_hi_leaf`);
+      if (!hb) continue;
+      const bb = new T.Box3().setFromBufferAttribute(hb.geometry.attributes.position as T.BufferAttribute);
+      if (hl) bb.union(new T.Box3().setFromBufferAttribute(hl.geometry.attributes.position as T.BufferAttribute));
+      const size = bb.getSize(new T.Vector3()), cx = (bb.min.x + bb.max.x) / 2, cz = (bb.min.z + bb.max.z) / 2;
+      const W = Math.max(size.x, size.z);
+      const at: T.Matrix4[] = [], pos: T.Vector3[] = [], leafy: boolean[] = [];
+      for (const j of mine) {
+        const target = sp === 'palm' ? j.h + j.r * 0.4 : j.h + j.r * 1.3;
+        const sy = target / size.y;
+        const sxz = Math.min(1.3 * sy, Math.max(0.75 * sy, (2.6 * j.r) / W));
+        const m = new T.Matrix4().compose(new T.Vector3(j.x, j.y, j.z), new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 1, 0), rnd() * Math.PI * 2), new T.Vector3(sxz, sy, sxz))
+          .multiply(new T.Matrix4().makeTranslation(-cx, -bb.min.y, -cz));
+        at.push(m); pos.push(new T.Vector3(j.x, j.y + target * 0.5, j.z)); leafy.push(!j.bare);
+      }
+      const g = { near: [] as T.InstancedMesh[], far: [] as T.InstancedMesh[], at, pos, leafy };
+      for (const lod of lods) {
+        for (const part of ['bark', 'leaf']) {
+          const src = parts.get(`v${v}_${lod}_${part}`);
+          if (!src) continue;
+          const im = new T.InstancedMesh(src.geometry, matFor(src.material as T.Material, part === 'leaf'), mine.length);
+          im.castShadow = high && lod === 'hi'; im.receiveShadow = high; im.frustumCulled = false;   // far trees cast no shadow: it doubled their triangles
+          im.userData.leaf = part === 'leaf';
+          if (part === 'leaf') {
+            const c = new T.Color();
+            /* cherry and palm keep their own colour; every other species takes the room's */
+            mine.forEach((j, i) => im.setColorAt(i, sp === 'cherry' || sp === 'palm' ? LEAF_REF : c.set(j.leaf)));
+          }
+          this.scene.add(im); this.dynamic.add(im);
+          (lod === 'hi' ? g.near : g.far).push(im);
+        }
+      }
+      groups.push(g);
+    }
+    /* near trees get the full version, the rest the far one; re-sorted twice a second as the visitor walks */
+    const NEAR = 26, eye = new T.Vector3();
+    let last = -1;
+    const sort = (t: number) => {
+      if (t - last < 0.5 && last >= 0) return;
+      last = t;
+      const cam = typeof window !== 'undefined' ? (window as unknown as { __museum?: { camera?: T.Camera } }).__museum?.camera : undefined;
+      if (cam) eye.copy(cam.position); else eye.set(0, 1.6, 0);
+      for (const g of groups) {
+        const fill = (ims: T.InstancedMesh[], pick: (i: number) => boolean) => {
+          for (const im of ims) {
+            let n = 0;
+            const cols = im.instanceColor ? im.userData.cols ?? (im.userData.cols = Float32Array.from(im.instanceColor.array)) : null;
+            for (let i = 0; i < g.at.length; i++) {
+              if (!pick(i) || (im.userData.leaf && !g.leafy[i])) continue;
+              im.setMatrixAt(n, g.at[i]);
+              if (cols && im.instanceColor) (im.instanceColor.array as Float32Array).set(cols.subarray(i * 3, i * 3 + 3), n * 3);
+              n++;
+            }
+            im.count = n; im.visible = n > 0; im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true;
+          }
+        };
+        const near = (i: number) => g.pos[i].distanceTo(eye) < NEAR;
+        if (g.near.length) { fill(g.near, near); fill(g.far, (i) => !near(i)); } else fill(g.far, () => true);
+      }
+    };
+    sort(0);
+    this.ticks.push((t) => { treeWind.value = t; if (high) sort(t); });
+  }
+  treeLegacy(x: number, y: number, z: number, p: { h?: number; r?: number; kind?: 'round' | 'palm' | 'bare' | 'column'; seed?: number; leaf?: number } = {}) {
     const { h = 4, r = 1.6, kind = 'round', seed = 1, leaf = 0x3f6b3e } = p;
     const rnd = X.mulberry(seed + Math.round(x * 13 + z * 7));
     const bark = this.pbr('bark', X.bark(), 0.7, { roughness: 1 });
@@ -767,8 +1162,11 @@ export class Kit {
   }
   lamp(x: number, z: number, h: number, post: T.Material, color = 0xffd7a0, intensity = 28) {
     this.lathe([[0.2, 0], [0.2, 0.08], [0.1, 0.16], [0.06, h - 0.3], [0.09, h - 0.2], [0.04, h]], x, 0, z, post, 10);
-    this.sphere(0.24, x, h + 0.15, z, this.glow(color), 12);
-    this.point(x, h + 0.1, z, color, intensity, 16);
+    let gm = this.lampMats.get(color);
+    if (!gm) { gm = new T.MeshBasicMaterial({ color }); this.lampMats.set(color, gm); }
+    this.sphere(0.24, x, h + 0.15, z, gm, 12);
+    const l = this.point(x, h + 0.1, z, color, intensity, 16);
+    this.lamps.push({ l, i: intensity });
     this.keepOut.push({ x, z, r: 0.4 });
   }
   plinth(x: number, z: number, w: number, h: number, d: number, m: T.Material) {
@@ -1002,7 +1400,174 @@ export class Kit {
   }
 
   /* ---------- merge and finish ---------- */
+  /* Find every yellow cab the room drew (instanced fleets, single meshes, little groups) once it has
+     moved them into place, hide each, and run a real taxi on the same path. */
+  private cabsLater() {
+    if (OLD_CABS || typeof window === 'undefined') return;
+    let done = false;
+    this.ticks.push((t) => { if (done || t < 0.5) return; done = true; void this.swapCabs(); });
+  }
+  private async swapCabs() {
+    this.scene.updateMatrixWorld(true);
+    const m = new T.Matrix4(), c = new T.Color(), box = new T.Box3(), size = new T.Vector3();
+    const fleets: { im: T.InstancedMesh; idx: number[] }[] = [];
+    const singles: T.Object3D[] = [];
+    const ims: T.InstancedMesh[] = [];
+    this.scene.traverse((o) => {
+      if (o instanceof T.InstancedMesh) { if (o.userData.leaf === undefined && !o.userData.cab) ims.push(o); return; }
+      if (!(o instanceof T.Mesh) || o.userData.cab) return;
+      const mat = o.material as T.MeshStandardMaterial;
+      if (!mat || !mat.color || !isCabYellow(mat.color)) return;
+      const target = o.parent && o.parent !== this.scene && o.parent.type === 'Group' ? o.parent : o;
+      box.setFromObject(target).getSize(size);
+      if (carLike(size) && !singles.includes(target)) singles.push(target);
+    });
+    for (const im of ims) {
+      const mat = im.material as T.MeshStandardMaterial;
+      if (!mat || Array.isArray(mat) || !mat.color) continue;
+      if (!im.geometry.boundingBox) im.geometry.computeBoundingBox();
+      const idx: number[] = [];
+      for (let i = 0; i < im.count; i++) {
+        c.copy(mat.color);
+        if (im.instanceColor) { const ic = new T.Color(); im.getColorAt(i, ic); c.multiply(ic); }
+        if (!isCabYellow(c)) continue;
+        im.getMatrixAt(i, m);
+        box.copy(im.geometry.boundingBox!).applyMatrix4(m).applyMatrix4(im.matrixWorld).getSize(size);
+        if (carLike(size)) idx.push(i);
+      }
+      if (idx.length) fleets.push({ im, idx });
+    }
+    if (!fleets.length && !singles.length) return;
+    const kinds = (await Promise.all(TAXIS.map((k) => this.taxiTemplate(k)))).filter((g): g is T.Group => !!g);
+    if (!kinds.length || !this.live) return;
+    const tmpl = kinds[0];
+    let nth = 0;
+    /* single cabs: the taxi rides inside the cab's own group, the boxes go dark */
+    for (const o of singles) {
+      const lb = new T.Box3();
+      o.updateMatrixWorld(true);
+      const inv = new T.Matrix4().copy(o.matrixWorld).invert();
+      o.traverse((ch) => { if (ch instanceof T.Mesh) { lb.union(new T.Box3().setFromObject(ch).applyMatrix4(inv)); } });
+      const ls = lb.getSize(new T.Vector3()), along = ls.x > ls.z;
+      const pick = nth++;
+      const t = kinds[(pick * 7 + 3) % kinds.length].clone();
+      const slot = pickScreen(pick * 13 + 5);
+      t.traverse((ch) => { if (ch instanceof T.Mesh && ch.userData.screen) ch.geometry = slotGeometry(ch.geometry, slot); });
+      t.userData.cab = true;
+      t.traverse((ch) => { ch.userData.cab = true; });
+      t.scale.setScalar(Math.min(1.1, Math.max(0.85, Math.max(ls.x, ls.z) / TAXI_LEN)));
+      t.rotation.y = along ? Math.PI / 2 : 0;
+      t.position.set((lb.min.x + lb.max.x) / 2, lb.min.y, (lb.min.z + lb.max.z) / 2);
+      o.traverse((ch) => { if (ch instanceof T.Mesh) ch.visible = false; });
+      if (o instanceof T.Mesh) { o.visible = false; t.applyMatrix4(o.matrixWorld); this.add(t); }
+      else o.add(t);
+    }
+    /* fleets: hide the yellow instances (and the cabins and wheels that ride with them), run instanced taxis */
+    for (const f of fleets) {
+      const hidden = new Set(f.idx);
+      const pos0 = new T.Vector3(), pos1 = new T.Vector3();
+      const ridersOf = (other: T.InstancedMesh) => {
+        if (other === f.im || other.count !== f.im.count || other.parent !== f.im.parent) return false;
+        f.im.getMatrixAt(f.idx[0], m); pos0.setFromMatrixPosition(m);
+        other.getMatrixAt(f.idx[0], m); pos1.setFromMatrixPosition(m);
+        return pos0.distanceTo(pos1) < 2.5;
+      };
+      /* the hidden boxes are collapsed every frame after their room places them (a shader flag alone
+         leaves them in the occlusion and shadow passes); parked ones keep their last real place */
+      const riders = [f.im, ...ims.filter(ridersOf)];
+      const zero = new T.Matrix4().makeScale(0, 0, 0), last = new Map<string, T.Matrix4>();
+      const real = (im: T.InstancedMesh, i: number, into: T.Matrix4) => {
+        im.getMatrixAt(i, into);
+        const key = im.uuid + ':' + i;
+        if (Math.abs(into.determinant()) < 1e-12) { const c = last.get(key); if (c) into.copy(c); }
+        else last.set(key, into.clone());
+        return into;
+      };
+      const collapse = () => { for (const im of riders) { for (const i of hidden) im.setMatrixAt(i, zero); im.instanceMatrix.needsUpdate = true; } };
+      void hideable;
+      /* every cab its own type and its own screen: the five types MLow photographed, the mark or a painting */
+      const kindOf = f.idx.map((i, j) => (i * 7 + j * 3 + f.idx.length) % kinds.length);
+      const runs = kinds.map((g, ki) => {
+        const mine = kindOf.map((k, j) => (k === ki ? j : -1)).filter((j) => j >= 0);
+        const r = heroLikeInstances(this, g, Math.max(1, mine.length), mine.map((j) => pickScreen(f.idx[j] * 13 + j * 5 + 1)));
+        if (!mine.length) r.setAt(0, new T.Matrix4().makeScale(0, 0, 0));
+        return { r, slotOf: new Map(mine.map((j, n) => [j, n])) };
+      });
+      const run = { setAt: (j: number, mm: T.Matrix4) => { const k = runs[kindOf[j]]; k.r.setAt(k.slotOf.get(j)!, mm); }, commit: () => runs.forEach((k) => k.r.commit()) };
+      const g = f.im.geometry.boundingBox!, lc = g.getCenter(new T.Vector3()), ls = g.getSize(new T.Vector3());
+      const axis = ls.x > ls.z ? new T.Vector3(1, 0, 0) : new T.Vector3(0, 0, 1);
+      const prev = f.idx.map(() => new T.Vector3()), sign = f.idx.map(() => 1), seen = f.idx.map(() => false);
+      const world = new T.Matrix4(), base = new T.Vector3(), dir = new T.Vector3(), out = new T.Matrix4(), q = new T.Quaternion(), sc = new T.Vector3(), up = new T.Vector3(0, 1, 0);
+      const step = () => {
+        f.idx.forEach((i, j) => {
+          real(f.im, i, m);
+          world.multiplyMatrices(f.im.matrixWorld, m);
+          base.set(lc.x, g.min.y, lc.z).applyMatrix4(world);
+          dir.copy(axis).transformDirection(world); dir.y = 0; dir.normalize();
+          const L = axis.x ? new T.Vector3().setFromMatrixColumn(world, 0).length() * ls.x : new T.Vector3().setFromMatrixColumn(world, 2).length() * ls.z;
+          if (seen[j]) { const v = base.clone().sub(prev[j]); if (v.lengthSq() > 1e-6) sign[j] = v.dot(dir) >= 0 ? 1 : -1; }
+          prev[j].copy(base); seen[j] = true;
+          q.setFromAxisAngle(up, Math.atan2(dir.x * sign[j], dir.z * sign[j]));
+          const s = Math.min(1.1, Math.max(0.85, L / TAXI_LEN)); sc.set(s, s, s);
+          out.compose(base, q, sc);
+          run.setAt(j, out);
+        });
+        run.commit();
+        for (const im of riders) if (im !== f.im) for (const i of hidden) real(im, i, m);
+        collapse();
+      };
+      step();
+      this.ticks.push(step);
+    }
+  }
+  /* the taxi: an NYC hybrid cab (Tripo from MLow's own cab photo) with the MLOW topper on its rails;
+     the topper's two screens show the MLOW mark, then a painting, like the real digital toppers */
+  private taxiTemplates = new Map<string, Promise<T.Group | null>>();
+  /* one cab type (Tripo from MLow's own cab photos, his real yellow and NYC markings baked in) with the
+     roof ad on its rails. The topper sits centred on the roof itself, found from the model's top
+     vertices (an SUV's middle is over the dashboard). Its two screens read their picture from the
+     screens atlas by slot, so each cab carries its own: the MLOW mark or one of his paintings. */
+  private taxiTemplate(kind: { name: string; len: number }): Promise<T.Group | null> {
+    let got = this.taxiTemplates.get(kind.name);
+    if (got) return got;
+    got = Promise.resolve(this.prop(kind.name, 0, -500, 0, { scale: 1 })).then((o) => {
+      if (!o) return null;
+      this.scene.remove(o); this.dynamic.delete(o);
+      o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrixWorld(true);
+      const bb = new T.Box3().setFromObject(o), sz = bb.getSize(new T.Vector3());
+      const s = kind.len / sz.z;
+      o.scale.setScalar(s);
+      o.position.set(-((bb.min.x + bb.max.x) / 2) * s, -bb.min.y * s, -((bb.min.z + bb.max.z) / 2) * s);
+      const g = new T.Group(); g.add(o); g.updateMatrixWorld(true);
+      let top = -1e9;
+      const v = new T.Vector3(), pts: T.Vector3[] = [];
+      g.traverse((c) => {
+        if (!(c instanceof T.Mesh)) return;
+        const pa = c.geometry.attributes.position as T.BufferAttribute;
+        for (let i = 0; i < pa.count; i++) { v.fromBufferAttribute(pa, i).applyMatrix4(c.matrixWorld); pts.push(v.clone()); if (v.y > top) top = v.y; }
+      });
+      const roof = new T.Box3();
+      for (const p of pts) if (p.y > top - 0.14) roof.expandByPoint(p);
+      const rx = (roof.min.x + roof.max.x) / 2, rz = (roof.min.z + roof.max.z) / 2, len = roof.max.z - roof.min.z;
+      const frame = new T.MeshStandardMaterial({ color: 0x2a2d30, metalness: 0.6, roughness: 0.4 });
+      /* a real topper is about 1.2 m long; never longer than 70 percent of this roof */
+      const TL = Math.min(1.2, Math.max(0.8, len * 0.7)), TH = 0.38, TT = 0.18, ty = top + 0.07 + TH / 2;
+      const body = new T.Mesh(new T.BoxGeometry(TT, TH, TL), frame); body.position.set(rx, ty, rz); g.add(body);
+      for (const side of [-1, 1]) {
+        const p = new T.Mesh(new T.PlaneGeometry(TL * 0.95, TH * 0.86), topperScreenMaterial());
+        p.position.set(rx + side * (TT / 2 + 0.003), ty, rz); p.rotation.y = side * Math.PI / 2; p.userData.screen = true; g.add(p);
+      }
+      const legs = new T.Mesh(new T.BoxGeometry(0.07, 0.09, TL * 0.8), frame); legs.position.set(rx, top + 0.035, rz); g.add(legs);
+      g.userData.cab = true;
+      g.userData.len = kind.len;
+      return g;
+    });
+    this.taxiTemplates.set(kind.name, got);
+    return got;
+  }
   batch() {
+    this.applyTime();
+    this.cabsLater();
     const groups = new Map<T.Material, T.Mesh[]>();
     for (const o of this.objects) {
       if (Array.isArray(o.material)) continue;
@@ -1133,6 +1698,33 @@ export class Kit {
 }
 
 const sharedTextures = new WeakSet<T.Texture>();
+/* one template group as instanced parts (same idea as rooms/heroes.ts heroInstances, kept here so the kit owns it) */
+function heroLikeInstances(k: Kit, g: T.Group, n: number, slots?: number[]) {
+  g.updateMatrixWorld(true);
+  const parts: { im: T.InstancedMesh; local: T.Matrix4 }[] = [];
+  g.traverse((c) => {
+    if (c instanceof T.Mesh) {
+      let geo = c.geometry;
+      if (c.userData.screen) {
+        /* each instance reads its own topper screen from the atlas */
+        geo = c.geometry.clone();
+        const a = new Float32Array(n * 2);
+        for (let i = 0; i < n; i++) { const [u, v] = screenSlot(slots?.[i] ?? 0); a[i * 2] = u; a[i * 2 + 1] = v; }
+        geo.setAttribute('aSlot', new T.InstancedBufferAttribute(a, 2));
+      }
+      const im = new T.InstancedMesh(geo, c.material, n);
+      im.castShadow = k.o.quality === 'high'; im.receiveShadow = true; im.frustumCulled = false;
+      im.userData.cab = true;
+      k.scene.add(im); k.dynamic.add(im);
+      parts.push({ im, local: c.matrixWorld.clone() });
+    }
+  });
+  const tmp = new T.Matrix4();
+  return {
+    setAt(i: number, m: T.Matrix4) { for (const p of parts) p.im.setMatrixAt(i, tmp.multiplyMatrices(m, p.local)); },
+    commit() { for (const p of parts) p.im.instanceMatrix.needsUpdate = true; },
+  };
+}
 export function markShared(t: T.Texture) {
   sharedTextures.add(t);
   return t;

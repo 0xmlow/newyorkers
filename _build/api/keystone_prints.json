@@ -1,0 +1,1785 @@
+{
+ "status": "live",
+ "collection": {
+  "id": "gid://shopify/Collection/512053903602",
+  "handle": "keystone-111"
+ },
+ "pieces": [
+  {
+   "pos": 1,
+   "n": 1,
+   "t": "The Bodega Matriarch",
+   "sid": "x000",
+   "w": "Melrose, Bronx",
+   "e": "I",
+   "s": "She runs the block from a stool behind the counter. The throne, the neighborhood mother, the eye that misses nothing.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Heroes/Bronx/Heroes_Bronx_The-Bodega-Matriarch_01.png",
+   "px": [
+    2496,
+    1664
+   ],
+   "handle": "keystone-0001-the-bodega-matriarch",
+   "product": "gid://shopify/Product/15408496836850"
+  },
+  {
+   "pos": 2,
+   "n": 2,
+   "t": "The Heroic Firefighter",
+   "sid": "x001",
+   "w": "Tribeca",
+   "e": "I",
+   "s": "The gear weighs sixty pounds and he sprints toward the fire in it. The bravest, the turnout coat, the run everyone else runs from.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Heroes/Citywide/Heroes_Citywide_The-Heroic-Firefighter_01.png",
+   "px": [
+    2496,
+    1664
+   ],
+   "handle": "keystone-0002-the-heroic-firefighter",
+   "product": "gid://shopify/Product/15408496967922"
+  },
+  {
+   "pos": 3,
+   "n": 3,
+   "t": "The Subway Spirit",
+   "sid": "x002",
+   "w": "Citywide",
+   "e": "I",
+   "s": "The line has a god and he glows in the tunnel dark. The psychedelic ghost, the tunnel deity, the spirit the third rail feeds.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Underground/Citywide/Underground_Citywide_The-Subway-Spirit_01.png",
+   "px": [
+    2496,
+    1664
+   ],
+   "handle": "keystone-0003-the-subway-spirit",
+   "product": "gid://shopify/Product/15408497000690"
+  },
+  {
+   "pos": 4,
+   "n": 37,
+   "t": "The Crossing",
+   "sid": "37",
+   "w": "Jackson Heights",
+   "e": "I",
+   "s": "The light changes and the whole city steps off the curb at once. The crosswalk, the night street, the pedestrian tide the eye-flowers watch over.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Citizens/Citywide/037_Citizens_Citywide_The-Crossing_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0037-the-crossing",
+   "product": "gid://shopify/Product/15408497033458"
+  },
+  {
+   "pos": 5,
+   "n": 39,
+   "t": "The Landlord",
+   "sid": "39",
+   "w": "Bedford-Stuyvesant",
+   "e": "I",
+   "s": "He holds every key and decides who stays the winter. The ring of keys, the notices in the wind, the figure over the block.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Villains/Citywide/039_Villains_Citywide_The-Landlord_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0039-the-landlord",
+   "product": "gid://shopify/Product/15408497066226"
+  },
+  {
+   "pos": 6,
+   "n": 467,
+   "t": "Statue of Liberty",
+   "sid": "467",
+   "w": "Manhattan",
+   "e": "I",
+   "s": "She has faced the harbor since 1886, welcoming every boat. The raised torch, the copper green, the first American face the newcomers saw.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Transplants/Manhattan/467_Transplants_Manhattan_Statue-of-Liberty_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0467-statue-of-liberty",
+   "product": "gid://shopify/Product/15408497098994"
+  },
+  {
+   "pos": 7,
+   "n": 468,
+   "t": "Alexander Hamilton",
+   "sid": "468",
+   "w": "Hamilton Heights, Manhattan",
+   "e": "I",
+   "s": "He built the Treasury and the credit the country still runs on. The ten-dollar bill, the Grange, the immigrant who wrote the system.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/468_Alexander_Hamilton/out/468_Alexander_Hamilton_likeness_v1.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0468-alexander-hamilton",
+   "product": "gid://shopify/Product/15408497131762"
+  },
+  {
+   "pos": 8,
+   "n": 473,
+   "t": "Nikola Tesla",
+   "sid": "473",
+   "w": "Chelsea, Manhattan",
+   "e": "I",
+   "s": "He lit the century and died owing the hotel. Alternating current, the Wardenclyffe tower, a wireless dream too early to sell.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/473_Nikola_Tesla/out/473_Nikola_Tesla_likeness_v1.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0473-nikola-tesla",
+   "product": "gid://shopify/Product/15408497328370"
+  },
+  {
+   "pos": 9,
+   "n": 476,
+   "t": "Jane Jacobs",
+   "sid": "476",
+   "w": "Greenwich Village, Manhattan",
+   "e": "I",
+   "s": "She beat the master builder with a block full of neighbors. The sidewalk ballet, the saved Village, the writer who out-thought Robert Moses.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/476_Jane_Jacobs/out/476_Jane_Jacobs_likeness_v1.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0476-jane-jacobs",
+   "product": "gid://shopify/Product/15408497361138"
+  },
+  {
+   "pos": 10,
+   "n": 477,
+   "t": "Robert Moses",
+   "sid": "477",
+   "w": "Tremont",
+   "e": "I",
+   "s": "He never drove yet redrew the city for the car. The expressways, the beaches, the neighborhoods the bulldozer erased.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/477_Robert_Moses/out/477_Robert_Moses_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0477-robert-moses",
+   "product": "gid://shopify/Product/15408497393906"
+  },
+  {
+   "pos": 11,
+   "n": 583,
+   "t": "Ellis Island",
+   "sid": "583",
+   "w": "The Battery, NY Harbor",
+   "e": "I",
+   "s": "Twelve million names entered the country through one hall. The manifest, the great hall, the first American step for half the country's grandparents.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Transplants/NY-Harbor/583_Transplants_NY-Harbor_Ellis-Island_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0583-ellis-island",
+   "product": "gid://shopify/Product/15408497459442"
+  },
+  {
+   "pos": 12,
+   "n": 586,
+   "t": "The Lenape",
+   "sid": "586",
+   "w": "Turtle Bay, Manhattan",
+   "e": "I",
+   "s": "They named the island of hills before anyone bought it. Mannahatta, the original people, the ground the whole city was built on.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Transplants/Manhattan/586_Transplants_Manhattan_The-Lenape_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0586-the-lenape",
+   "product": "gid://shopify/Product/15408497492210"
+  },
+  {
+   "pos": 13,
+   "n": 478,
+   "t": "Jackie Robinson",
+   "sid": "478",
+   "w": "Crown Heights, Brooklyn",
+   "e": "I",
+   "s": "He stole bases and the country's excuse at the same time. Number 42, the Dodgers, a color line that never grew back.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/478_Jackie_Robinson/out/478_Jackie_Robinson_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0478-jackie-robinson",
+   "product": "gid://shopify/Product/15408497557746"
+  },
+  {
+   "pos": 14,
+   "n": 479,
+   "t": "Babe Ruth",
+   "sid": "479",
+   "w": "Concourse, Bronx",
+   "e": "I",
+   "s": "He pointed at the fence and the ball obeyed. The Sultan of Swat, the called shot, the house he built in the Bronx.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/479_Babe_Ruth/out/479_Babe_Ruth_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0479-babe-ruth",
+   "product": "gid://shopify/Product/15408497590514"
+  },
+  {
+   "pos": 15,
+   "n": 486,
+   "t": "Jean-Michel Basquiat",
+   "sid": "486",
+   "w": "SoHo, Manhattan",
+   "e": "I",
+   "s": "He tagged SAMO on downtown walls and ended up on museum ones. The crown, the canvases, the Brooklyn kid the market devoured.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/486_Jean-Michel_Basquiat/out/486_Jean-Michel_Basquiat_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0486-jean-michel-basquiat",
+   "product": "gid://shopify/Product/15408497623282"
+  },
+  {
+   "pos": 16,
+   "n": 487,
+   "t": "Keith Haring",
+   "sid": "487",
+   "w": "Manhattan",
+   "e": "I",
+   "s": "He drew on the subway's black ad squares until the city noticed. The radiant baby, the barking dog, the Pop Shop chalk that never washed off.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/487_Keith_Haring/out/487_Keith_Haring_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0487-keith-haring",
+   "product": "gid://shopify/Product/15408497656050"
+  },
+  {
+   "pos": 17,
+   "n": 488,
+   "t": "Andy Warhol",
+   "sid": "488",
+   "w": "Flatiron, Manhattan",
+   "e": "I",
+   "s": "He promised everyone fifteen minutes and took the whole century. The Factory, the soup can, the silver wig that watched it all.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/488_Andy_Warhol/out/488_Andy_Warhol_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0488-andy-warhol",
+   "product": "gid://shopify/Product/15408497688818"
+  },
+  {
+   "pos": 18,
+   "n": 493,
+   "t": "James Baldwin",
+   "sid": "493",
+   "w": "Harlem, Manhattan",
+   "e": "I",
+   "s": "He left the country to see it clearly and never stopped testifying. The Harlem son, the Paris exile, the witness who warned of the fire next time.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/493_James_Baldwin/out/493_James_Baldwin_likeness_v1.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0493-james-baldwin",
+   "product": "gid://shopify/Product/15408497721586"
+  },
+  {
+   "pos": 19,
+   "n": 496,
+   "t": "Duke Ellington",
+   "sid": "496",
+   "w": "Harlem, Manhattan",
+   "e": "I",
+   "s": "He made the orchestra his instrument and Harlem his key. The Cotton Club, the A train, the maestro who scored an era.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/496_Duke_Ellington/out/496_Duke_Ellington_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0496-duke-ellington",
+   "product": "gid://shopify/Product/15408498573554"
+  },
+  {
+   "pos": 20,
+   "n": 497,
+   "t": "Billie Holiday",
+   "sid": "497",
+   "w": "Midtown, Manhattan",
+   "e": "I",
+   "s": "She sang the ache the country tried to silence. Strange Fruit, the gardenia, the voice that carried the whole wound.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/497_Billie_Holiday/out/497_Billie_Holiday_likeness_v2.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0497-billie-holiday",
+   "product": "gid://shopify/Product/15408498639090"
+  },
+  {
+   "pos": 21,
+   "n": 630,
+   "t": "Bill Cunningham",
+   "sid": "630",
+   "w": "Midtown, Manhattan",
+   "e": "I",
+   "s": "He shot the street, not the celebrity, and outclassed both. The bicycle, the blue jacket, the fashion that walked past him.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Heroes/Manhattan/630_Heroes_Manhattan_Bill-Cunningham_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0630-bill-cunningham",
+   "product": "gid://shopify/Product/15408498704626"
+  },
+  {
+   "pos": 22,
+   "n": 647,
+   "t": "DJ Kool Herc",
+   "sid": "647",
+   "w": "Highbridge, Bronx",
+   "e": "I",
+   "s": "He looped the break and a rec room became year zero. 1520 Sedgwick, the two turntables, the party that started a culture.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/WAVE 2/647_DJ_Kool_Herc/out/647_DJ_Kool_Herc_likeness_v1.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0647-dj-kool-herc",
+   "product": "gid://shopify/Product/15408498737394"
+  },
+  {
+   "pos": 23,
+   "n": 501,
+   "t": "The Notorious B.I.G.",
+   "sid": "501",
+   "w": "Bedford-Stuyvesant, Brooklyn",
+   "e": "I",
+   "s": "He rhymed the whole Brooklyn story before he turned twenty-five. Ready to Die, the crown, the king of New York gone too soon.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/501_The_Notorious_BIG/out/501_The_Notorious_BIG_likeness_v1.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0501-the-notorious-b-i-g",
+   "product": "gid://shopify/Product/15408498770162"
+  },
+  {
+   "pos": 24,
+   "n": 502,
+   "t": "Jay-Z",
+   "sid": "502",
+   "w": "Bedford-Stuyvesant, Brooklyn",
+   "e": "I",
+   "s": "Marcy projects to the owner's box, no shortcut skipped. The mogul, Roc Nation, the empire he made literal.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/LIKENESS REDO 2026-09-17/WAVE 2/502_Jay_Z/out/502_Jay_Z_nbpro_v2.jpg",
+   "px": [
+    2752,
+    1536
+   ],
+   "handle": "keystone-0502-jay-z",
+   "product": "gid://shopify/Product/15408498802930"
+  },
+  {
+   "pos": 25,
+   "n": 504,
+   "t": "Wu-Tang Clan",
+   "sid": "504",
+   "w": "Rosebank, Staten Island",
+   "e": "I",
+   "s": "Nine emcees, one crest, an island they renamed Shaolin. 36 Chambers, Staten Island, the empire that started underground.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Hustlers/Staten-Island/504_Hustlers_StatenIsland_Wu-Tang-Clan_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0504-wu-tang-clan",
+   "product": "gid://shopify/Product/15408498868466"
+  },
+  {
+   "pos": 26,
+   "n": 522,
+   "t": "Spider-Man",
+   "sid": "522",
+   "w": "Forest Hills, Queens",
+   "e": "I",
+   "s": "The only hero who worries about rent between the rooftops. The Queens kid, the swing, the lesson that power is a debt.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Heroes/Queens/522_Heroes_Queens_Spider-Man_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0522-spider-man",
+   "product": "gid://shopify/Product/15408498901234"
+  },
+  {
+   "pos": 27,
+   "n": 523,
+   "t": "King Kong",
+   "sid": "523",
+   "w": "Flatiron, Manhattan",
+   "e": "I",
+   "s": "He climbed the tallest building for love and the planes answered. The giant, the biplanes, the beast the city could not keep.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Strays/Manhattan/523_Strays_Manhattan_King-Kong_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0523-king-kong",
+   "product": "gid://shopify/Product/15408498934002"
+  },
+  {
+   "pos": 28,
+   "n": 548,
+   "t": "Pizza Rat",
+   "sid": "548",
+   "w": "Manhattan",
+   "e": "I",
+   "s": "He dragged a whole slice down the subway stairs and became us. The hustle, the stairs, the most New York animal on record.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Strays/Manhattan/548_Strays_Manhattan_Pizza-Rat_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0548-pizza-rat",
+   "product": "gid://shopify/Product/15408497787122"
+  },
+  {
+   "pos": 29,
+   "n": 550,
+   "t": "Bodega Cat",
+   "sid": "550",
+   "w": "Washington Heights",
+   "e": "I",
+   "s": "He owns the bodega and lets the humans think they run it. The counter perch, the mouser, the boss the health code ignores.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Strays/Citywide/550_Strays_Citywide_Bodega-Cat_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0550-bodega-cat",
+   "product": "gid://shopify/Product/15408497819890"
+  },
+  {
+   "pos": 30,
+   "n": 617,
+   "t": "Flaco the Owl",
+   "sid": "617",
+   "w": "Central Park, Manhattan",
+   "e": "I",
+   "s": "He broke out of the zoo and hunted Manhattan like he was born to it. The eagle-owl, the escape of 2023, the taste of freedom the city cheered.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Strays/Manhattan/617_Strays_Manhattan_Flaco-the-Owl_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0617-flaco-the-owl",
+   "product": "gid://shopify/Product/15408497852658"
+  },
+  {
+   "pos": 31,
+   "n": 555,
+   "t": "The New York Slice",
+   "sid": "555",
+   "w": "Greenwich Village",
+   "e": "I",
+   "s": "Fold it once or announce you just got off the bus. Two bucks, a paper plate, the grease that marks the corner.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Heroes/Citywide/555_Heroes_Citywide_The-New-York-Slice_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0555-the-new-york-slice",
+   "product": "gid://shopify/Product/15408497918194"
+  },
+  {
+   "pos": 32,
+   "n": 570,
+   "t": "Grand Central Terminal",
+   "sid": "570",
+   "w": "Midtown, Manhattan",
+   "e": "I",
+   "s": "Half a million people meet under a backwards painted sky. The brass clock, the whisper gallery, the concourse that swallows the crowd.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Builders/Manhattan/570_Builders_Manhattan_Grand-Central-Terminal_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0570-grand-central-terminal",
+   "product": "gid://shopify/Product/15408497950962"
+  },
+  {
+   "pos": 33,
+   "n": 573,
+   "t": "The Brooklyn Bridge",
+   "sid": "573",
+   "w": "Brooklyn / Manhattan",
+   "e": "I",
+   "s": "It took a family and fourteen years to tie two boroughs together. The Roebling cables, the wooden promenade, the span everyone claims to own.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Builders/Brooklyn---Manhattan/573_Builders_Brooklyn-Manhattan_The-Brooklyn-Bridge_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0573-the-brooklyn-bridge",
+   "product": "gid://shopify/Product/15408497983730"
+  },
+  {
+   "pos": 34,
+   "n": 580,
+   "t": "Stonewall Inn",
+   "sid": "580",
+   "w": "West Village, Manhattan",
+   "e": "I",
+   "s": "A raid on a Village bar started the whole movement. The 1969 riots, the thrown brick, the night that became the first pride.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/01_THE ORIGINALS 001-766/Citizens/Manhattan/580_Citizens_Manhattan_Stonewall-Inn_01.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0580-stonewall-inn",
+   "product": "gid://shopify/Product/15408498016498"
+  },
+  {
+   "pos": 35,
+   "n": 1467,
+   "t": "The First Eye Flower",
+   "sid": "1467",
+   "w": "Citywide",
+   "e": "VI",
+   "s": "A flower with a human iris pushes up through a subway grate at dawn. Where a dreamer's tear fell a century ago, a tiny crowned rat witnessing.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1467 The First Eye Flower.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1467-the-first-eye-flower",
+   "product": "gid://shopify/Product/15408498114802"
+  },
+  {
+   "pos": 36,
+   "n": 1468,
+   "t": "The Seed Beneath the City",
+   "sid": "1468",
+   "w": "Citywide",
+   "e": "VI",
+   "s": "One glowing seed sleeps beneath the subway lines and water tunnels. Roots threading every tunnel like veins, the whole skyline resting on its light.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1468 The Seed Beneath the City.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1468-the-seed-beneath-the-city",
+   "product": "gid://shopify/Product/15408498147570"
+  },
+  {
+   "pos": 37,
+   "n": 1469,
+   "t": "The Gardener of the First Bloom",
+   "sid": "1469",
+   "w": "Citywide",
+   "e": "VI",
+   "s": "Every night in 1920s work clothes he waters something through the grate. His shadow on the wall shows a garden in full bloom.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1469 The Gardener of the First Bloom.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1469-the-gardener-of-the-first-bloom",
+   "product": "gid://shopify/Product/15408498180338"
+  },
+  {
+   "pos": 38,
+   "n": 1470,
+   "t": "The Pollen Route",
+   "sid": "1470",
+   "w": "Citywide",
+   "e": "VI",
+   "s": "Honeybees run the subway map for real, carrying iris pollen between boroughs. Each one trails a thread of light, and eye flowers open where they land.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1470 The Pollen Route.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1470-the-pollen-route",
+   "product": "gid://shopify/Product/15408498213106"
+  },
+  {
+   "pos": 39,
+   "n": 1477,
+   "t": "The Talisman Maker",
+   "sid": "1477",
+   "w": "Astoria, Queens",
+   "e": "VI",
+   "s": "She drops molten blue glass into eye after eye, each one blinking once as it cools. Her shelf of charms all watch the door, the source of every evil eye in the city.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1477 The Talisman Maker.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1477-the-talisman-maker",
+   "product": "gid://shopify/Product/15408498245874"
+  },
+  {
+   "pos": 40,
+   "n": 2017,
+   "t": "The Flower Moon",
+   "sid": "2017",
+   "w": "East Village, Manhattan",
+   "e": "VII",
+   "s": "May's moon rises and every eye flower in the city opens at once to look up. One night a year the census takes itself.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2017 The Flower Moon.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2017-the-flower-moon",
+   "product": "gid://shopify/Product/15408498278642"
+  },
+  {
+   "pos": 41,
+   "n": 2144,
+   "t": "The City Bloom Map",
+   "sid": "2144",
+   "w": "Midtown, Manhattan",
+   "e": "VII",
+   "s": "The drawer with the eye flower symbol finally opens on a living map, every bloom in the city glowing. The pattern forms an iris around the first grate, and the cartographer sits down slowly.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2144 The City Bloom Map.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2144-the-city-bloom-map",
+   "product": "gid://shopify/Product/15408498311410"
+  },
+  {
+   "pos": 42,
+   "n": 2266,
+   "t": "To Be Continued",
+   "sid": "2266",
+   "w": "Bushwick, Brooklyn",
+   "e": "VII",
+   "s": "The brush touches blank canvas on the rooftop at dawn and one eye flower bud pushes up through the wet primer, from inside the painting. The next characters are waiting in the white, and the eye in the corner is already watching.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2266 To Be Continued.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2266-to-be-continued",
+   "product": "gid://shopify/Product/15408498376946"
+  },
+  {
+   "pos": 43,
+   "n": 1151,
+   "t": "The Missed Connection",
+   "sid": "1151",
+   "w": "Citywide",
+   "e": "IV",
+   "s": "Their eyes meet across opposite platforms as both trains arrive at once. The doors close on a whole life that almost happened.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/04_THE BRAND BATCH 967-1166/art/1151 The Missed Connection.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1151-the-missed-connection",
+   "product": "gid://shopify/Product/15408498442482"
+  },
+  {
+   "pos": 44,
+   "n": 1730,
+   "t": "The Reply",
+   "sid": "1730",
+   "w": "Citywide",
+   "e": "VI",
+   "s": "A hand lettered poster on the same platform where two trains once erased a question. Phone number tabs flutter like hope, and one is already gone.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1730 The Reply.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1730-the-reply",
+   "product": "gid://shopify/Product/15408498475250"
+  },
+  {
+   "pos": 45,
+   "n": 1731,
+   "t": "The Second Glance",
+   "sid": "1731",
+   "w": "Citywide",
+   "e": "VI",
+   "s": "The same two strangers finally meet on the mezzanine between their platforms, both holding the same poster, both early. The turnstiles applaud softly in clicks while the city pretends it planned this.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1731 The Second Glance.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1731-the-second-glance",
+   "product": "gid://shopify/Product/15408498966770"
+  },
+  {
+   "pos": 46,
+   "n": 2300,
+   "t": "The Second Glance Wedding",
+   "sid": "2300",
+   "w": "Brooklyn",
+   "e": "VIII",
+   "s": "Under the great clock where they first looked twice, the whole love thread assembled, from the Missed Connection to the Same Booth. The mismatched mugs were the toast, and every eye flower in the station opened at once.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2267-2666/images/2300 The Second Glance Wedding.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2300-the-second-glance-wedding",
+   "product": "gid://shopify/Product/15408498999538"
+  },
+  {
+   "pos": 47,
+   "n": 3423,
+   "t": "The Second Glance Anniversary",
+   "sid": "3423",
+   "w": "Citywide",
+   "e": "X",
+   "s": "They return to the car where they looked twice and catch someone else doing it. The same line, the same doors, a glance passed forward.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3423 The Second Glance Anniversary.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3423-the-second-glance-anniversary",
+   "product": "gid://shopify/Product/15408499032306"
+  },
+  {
+   "pos": 48,
+   "n": 942,
+   "t": "The Window Watcher",
+   "sid": "942",
+   "w": "Bay Ridge, Brooklyn",
+   "e": "III",
+   "s": "From the second floor cushion she tracks every arrival and secret on the block. Elbows planted, lace curtains, the original neighborhood watch.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/03_THE CITY EXPANDS 817-966/art/942 The Window Watcher.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0942-the-window-watcher",
+   "product": "gid://shopify/Product/15408499065074"
+  },
+  {
+   "pos": 49,
+   "n": 1713,
+   "t": "The Window Watcher's Wave",
+   "sid": "1713",
+   "w": "Bedford-Stuyvesant, Brooklyn",
+   "e": "VI",
+   "s": "The day the block's all seeing grandmother finally waves first, a kid freezes mid dribble at the honor. Her lace curtain lifts like a knight's visor, and the block's whole history smiles.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1713 The Window Watcher's Wave.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1713-the-window-watchers-wave",
+   "product": "gid://shopify/Product/15408499130610"
+  },
+  {
+   "pos": 50,
+   "n": 1866,
+   "t": "The Collector",
+   "sid": "1866",
+   "w": "West Village, Manhattan",
+   "e": "VI",
+   "s": "In a gallery of a thousand glowing portraits, every New Yorker turns slightly to look back. The small frame under their arm holds this exact scene again, smaller, forever.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1866 The Collector.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1866-the-collector",
+   "product": "gid://shopify/Product/15408499163378"
+  },
+  {
+   "pos": 51,
+   "n": 3466,
+   "t": "The Mirror Faces Out",
+   "sid": "3466",
+   "w": "Manhattan",
+   "e": "X",
+   "s": "The city built a mirror and every eye in it turned at once. A hoisted panel on a Manhattan face, a crowd below meeting its own gaze.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3466 The Mirror Faces Out.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3466-the-mirror-faces-out",
+   "product": "gid://shopify/Product/15408499196146"
+  },
+  {
+   "pos": 52,
+   "n": 5466,
+   "t": "The Answer",
+   "sid": "5466",
+   "w": "Midtown, Manhattan",
+   "e": "XV",
+   "s": "She is the one who was asked, and she is about to answer. An ordinary corner at dawn, the whole era behind her, a blue eye on her wrist.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_4967-5466/_print_masters/5466 The Answer.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-5466-the-answer",
+   "product": "gid://shopify/Product/15408499228914"
+  },
+  {
+   "pos": 53,
+   "n": 7990,
+   "t": "Ephraim Blum, a person who tracked one piece through eleven owners",
+   "sid": "7990",
+   "w": "Citywide",
+   "e": "XIX",
+   "s": "Everything is written down forever, which is the whole promise and the whole problem. Ephraim at a long library table, one piece through eleven owners.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_7491-7990/images/7990 Ephraim Blum, a person who tracked one piece through eleven owners.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-7990-ephraim-blum-a-person-who-tracked-one-piece-through-eleven-owners",
+   "product": "gid://shopify/Product/15408499261682"
+  },
+  {
+   "pos": 54,
+   "n": 767,
+   "t": "The Rat King",
+   "sid": "767",
+   "w": "Citywide",
+   "e": "II",
+   "s": "He runs the tunnels and collects tribute in dollar slices. A crooked crown, a third rail throne, an empire that never sleeps.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/02_THE EYE FLOWER ERA 767-816/art/767 The Rat King.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0767-the-rat-king",
+   "product": "gid://shopify/Product/15408499294450"
+  },
+  {
+   "pos": 55,
+   "n": 1485,
+   "t": "The Pigeon Queen",
+   "sid": "1485",
+   "w": "Brooklyn",
+   "e": "VI",
+   "s": "Iridescent on a bridge cable throne, feathers catching light like an oil slick crown. Squabs and sparrows in attendance, both kingdoms surveyed.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1485 The Pigeon Queen.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1485-the-pigeon-queen",
+   "product": "gid://shopify/Product/15408499327218"
+  },
+  {
+   "pos": 56,
+   "n": 1800,
+   "t": "The Royal Wedding",
+   "sid": "1800",
+   "w": "Brooklyn",
+   "e": "VI",
+   "s": "The Rat King married the Pigeon Queen beneath the bridge at midnight, fireflies for ushers. A bottle cap crown exchanged for an iridescent feather, two kingdoms united above and below.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1800 The Royal Wedding.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1800-the-royal-wedding",
+   "product": "gid://shopify/Product/15408499491058"
+  },
+  {
+   "pos": 57,
+   "n": 2150,
+   "t": "The Adopted Squab",
+   "sid": "2150",
+   "w": "Brooklyn",
+   "e": "VII",
+   "s": "An orphaned squab crowned heir of both kingdoms, christened at the bridge anchorage before rats and pigeons in one congregation. The tiny gray heir sleeps through history.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2150 The Adopted Squab.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2150-the-adopted-squab",
+   "product": "gid://shopify/Product/15408499622130"
+  },
+  {
+   "pos": 58,
+   "n": 3417,
+   "t": "The Coronation Under Chambers",
+   "sid": "3417",
+   "w": "Tribeca, Manhattan",
+   "e": "X",
+   "s": "The Squab is crowned under Chambers Street in a coat cut for him. A bent bottle cap lowered by an elder, the whole Court watching.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3417 The Coronation Under Chambers.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3417-the-coronation-under-chambers",
+   "product": "gid://shopify/Product/15408499851506"
+  },
+  {
+   "pos": 59,
+   "n": 1000,
+   "t": "The Subway Samaritan",
+   "sid": "1000",
+   "w": "Citywide",
+   "e": "IV",
+   "s": "Headlights bloomed far down the tunnel and a stranger went over the edge to pull him up. A dozen hands reaching, the platform holding its breath, everybody made it.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/04_THE BRAND BATCH 967-1166/art/1000 The Subway Samaritan.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1000-the-subway-samaritan",
+   "product": "gid://shopify/Product/15408499884274"
+  },
+  {
+   "pos": 60,
+   "n": 1937,
+   "t": "The Shirt Off His Back",
+   "sid": "1937",
+   "w": "Citywide",
+   "e": "VII",
+   "s": "A rider gives his own shirt and hat to a shivering stranger, dressing him gently. The whole car pretending not to watch, and failing.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/1937 The Shirt Off His Back.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1937-the-shirt-off-his-back",
+   "product": "gid://shopify/Product/15408499917042"
+  },
+  {
+   "pos": 61,
+   "n": 1939,
+   "t": "The Human Chain",
+   "sid": "1939",
+   "w": "Coney Island, Brooklyn",
+   "e": "VII",
+   "s": "Beachgoers link arms into the rip current, forty strangers becoming one rope. The lifeguard anchoring the shore end, the sea losing the argument.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/1939 The Human Chain.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1939-the-human-chain",
+   "product": "gid://shopify/Product/15408499949810"
+  },
+  {
+   "pos": 62,
+   "n": 1942,
+   "t": "The Violin in the Cab",
+   "sid": "1942",
+   "w": "Upper West Side, Manhattan",
+   "e": "VII",
+   "s": "A priceless violin left in a taxi, returned by a driver who refused the reward. The maestro playing him one private sonata in the garage, payment accepted.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/1942 The Violin in the Cab.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1942-the-violin-in-the-cab",
+   "product": "gid://shopify/Product/15408499982578"
+  },
+  {
+   "pos": 63,
+   "n": 775,
+   "t": "The Ghost of Penn Station",
+   "sid": "775",
+   "w": "Manhattan",
+   "e": "II",
+   "s": "They tore down the greatest room in New York and he never got the memo. A 1910 suit among ghost columns, still waiting on his train.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/02_THE EYE FLOWER ERA 767-816/art/775 The Ghost of Penn Station.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0775-the-ghost-of-penn-station",
+   "product": "gid://shopify/Product/15408500015346"
+  },
+  {
+   "pos": 64,
+   "n": 1894,
+   "t": "The Day the Dodgers Left",
+   "sid": "1894",
+   "w": "Crown Heights, Brooklyn",
+   "e": "VII",
+   "s": "A borough learned its team was gone, kids on the stoop with gloves and nowhere to point them. The stadium lights dark early, a love letter returned unopened.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/1894 The Day the Dodgers Left.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1894-the-day-the-dodgers-left",
+   "product": "gid://shopify/Product/15408500048114"
+  },
+  {
+   "pos": 65,
+   "n": 2061,
+   "t": "Dreamland",
+   "sid": "2061",
+   "w": "Coney Island, Brooklyn",
+   "e": "VII",
+   "s": "A million bulbs, a white tower doubled in wet sand, a city of plaster palaces. It burned brightest in 1910, the year before the fire took it all.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2061 Dreamland.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2061-dreamland",
+   "product": "gid://shopify/Product/15408500113650"
+  },
+  {
+   "pos": 66,
+   "n": 1438,
+   "t": "The Survivor Tree",
+   "sid": "1438",
+   "w": "Financial District, Manhattan",
+   "e": "V",
+   "s": "Pulled broken from the rubble and nursed back, it blooms first every spring. Scarred trunk, new white blossoms, visitors touching the bark gently.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/05_THE MASTERWORKS 1167-1466/art/1438 The Survivor Tree.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1438-the-survivor-tree",
+   "product": "gid://shopify/Product/15408500146418"
+  },
+  {
+   "pos": 67,
+   "n": 1439,
+   "t": "The Tribute in Light",
+   "sid": "1439",
+   "w": "Financial District, Manhattan",
+   "e": "V",
+   "s": "Two beams rise into the September night, visible for sixty miles. Migrating birds spiral in the columns, the harbor keeps silent.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/05_THE MASTERWORKS 1167-1466/art/1439 The Tribute in Light.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1439-the-tribute-in-light",
+   "product": "gid://shopify/Product/15408500211954"
+  },
+  {
+   "pos": 68,
+   "n": 1900,
+   "t": "The Boatlift",
+   "sid": "1900",
+   "w": "Manhattan",
+   "e": "VII",
+   "s": "That September morning, every boat in the harbor turned toward the smoke without being asked. Ferries, tugs, fishing boats: half a million people carried off the seawall in nine hours.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/1900 The Boatlift.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1900-the-boatlift",
+   "product": "gid://shopify/Product/15408500244722"
+  },
+  {
+   "pos": 69,
+   "n": 3170,
+   "t": "The Painter's First Wall",
+   "sid": "3170",
+   "w": "Bushwick, Brooklyn",
+   "e": "X",
+   "s": "He turned around and a crowd had assembled behind him. The Painter of New Yorkers, a Bushwick corner, a brass watering can at his feet.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3170 The Painter's First Wall.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3170-the-painters-first-wall",
+   "product": "gid://shopify/Product/15408500310258"
+  },
+  {
+   "pos": 70,
+   "n": 3180,
+   "t": "The Collector's Coat",
+   "sid": "3180",
+   "w": "Washington Heights, Manhattan",
+   "e": "X",
+   "s": "He finally wore something instead of storing it. The Collector out in the rain, an old coat off the shelf, fear and relief sharing a face.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3180 The Collector's Coat.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3180-the-collectors-coat",
+   "product": "gid://shopify/Product/15408500343026"
+  },
+  {
+   "pos": 71,
+   "n": 806,
+   "t": "The Trash Mountain",
+   "sid": "806",
+   "w": "East Village, Manhattan",
+   "e": "II",
+   "s": "The bags reached critical mass and elected themselves. A deli bag crown, rats saluting, the ripest monument the city ever grew.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/02_THE EYE FLOWER ERA 767-816/art/806 The Trash Mountain.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0806-the-trash-mountain",
+   "product": "gid://shopify/Product/15408500375794"
+  },
+  {
+   "pos": 72,
+   "n": 1489,
+   "t": "The Clean Street Truce",
+   "sid": "1489",
+   "w": "Hunts Point, Bronx",
+   "e": "VI",
+   "s": "The sweeper truck and the Trash Mountain meet at dawn like two generals. The brushes pause, the Mountain yields one lane with dignity.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1489 The Clean Street Truce.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1489-the-clean-street-truce",
+   "product": "gid://shopify/Product/15408500441330"
+  },
+  {
+   "pos": 73,
+   "n": 891,
+   "t": "The Signal Problem",
+   "sid": "891",
+   "w": "Citywide",
+   "e": "III",
+   "s": "A gremlin of tangled cable and sparks lounges on levers older than your grandparents. A hundred trains frozen at red, and it is in no hurry at all.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/03_THE CITY EXPANDS 817-966/art/891 The Signal Problem.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-0891-the-signal-problem",
+   "product": "gid://shopify/Product/15408500506866"
+  },
+  {
+   "pos": 74,
+   "n": 1055,
+   "t": "The Pothole",
+   "sid": "1055",
+   "w": "Woodside, Queens",
+   "e": "IV",
+   "s": "Half a lane wide with a traffic cone sunk in it like a flag on a conquered peak. Taxis swerve, the city files a report, the pothole outlives us all.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/04_THE BRAND BATCH 967-1166/art/1055 The Pothole.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1055-the-pothole",
+   "product": "gid://shopify/Product/15408500572402"
+  },
+  {
+   "pos": 75,
+   "n": 1607,
+   "t": "The Pothole Crew",
+   "sid": "1607",
+   "w": "St. George, Staten Island",
+   "e": "VI",
+   "s": "The night crew fills the monster pothole under work lights, steam rising off fresh blacktop like a healed wound. The cone that sank is retrieved and saluted, the patch smoothed like icing.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1607 The Pothole Crew.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1607-the-pothole-crew",
+   "product": "gid://shopify/Product/15408500605170"
+  },
+  {
+   "pos": 76,
+   "n": 2666,
+   "t": "The Guarantor",
+   "sid": "2666",
+   "w": "Murray Hill, Manhattan",
+   "e": "VIII",
+   "s": "The mythical creature who earns eighty times the rent signs with a fountain pen of judgment. The most demanded and least seen of the city's saints, and the devil gets his number.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2267-2666/images/2666 The Guarantor.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2666-the-guarantor",
+   "product": "gid://shopify/Product/15408500670706"
+  },
+  {
+   "pos": 77,
+   "n": 3425,
+   "t": "The Guarantor's Ledger",
+   "sid": "3425",
+   "w": "Financial District, Manhattan",
+   "e": "X",
+   "s": "The ledger opens at midnight and the names start coming off it. A Financial District desk, one pen, everyone who ever owed him.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3425 The Guarantor's Ledger.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3425-the-guarantors-ledger",
+   "product": "gid://shopify/Product/15408500703474"
+  },
+  {
+   "pos": 78,
+   "n": 1727,
+   "t": "The Mango Lady's Daughter",
+   "sid": "1727",
+   "w": "Jackson Heights, Queens",
+   "e": "VI",
+   "s": "The daughter's first solo flower cut draws the mother's nod from the folding chair. Same rainbow umbrella, new music, and the regulars pledge allegiance with exact change.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1727 The Mango Lady's Daughter.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1727-the-mango-ladys-daughter",
+   "product": "gid://shopify/Product/15408500736242"
+  },
+  {
+   "pos": 79,
+   "n": 2264,
+   "t": "The Next New Yorker",
+   "sid": "2264",
+   "w": "Queens",
+   "e": "VII",
+   "s": "A newborn at a hospital window, a traveler at the arrivals gate, one eye flower seed sprouting in a sidewalk crack. The city's tomorrow signing in at three desks at once.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2264 The Next New Yorker.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2264-the-next-new-yorker",
+   "product": "gid://shopify/Product/15408500801778"
+  },
+  {
+   "pos": 80,
+   "n": 2269,
+   "t": "The Squab's Coronation",
+   "sid": "2269",
+   "w": "Citywide",
+   "e": "VIII",
+   "s": "Crowned with the bent bottle cap on the girder while rats and pigeons kneel together. In the puddle below, the two kingdoms reflect as one, which was the plan all along.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2267-2666/images/2269 The Squab's Coronation.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2269-the-squabs-coronation",
+   "product": "gid://shopify/Product/15408500834546"
+  },
+  {
+   "pos": 81,
+   "n": 1865,
+   "t": "The Painter of New Yorkers",
+   "sid": "1865",
+   "w": "Williamsburg, Brooklyn",
+   "e": "VI",
+   "s": "At dawn on a rooftop the eye flowers bloom off the wet canvas into the real skyline. Every character faintly visible in the clouds, one blue evil eye signed into the corner.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1865 The Painter of New Yorkers.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1865-the-painter-of-new-yorkers",
+   "product": "gid://shopify/Product/15408500867314"
+  },
+  {
+   "pos": 82,
+   "n": 1200,
+   "t": "The Oath Ceremony",
+   "sid": "1200",
+   "w": "Tribeca, Manhattan",
+   "e": "V",
+   "s": "Two hundred right hands raised in the marble hall, tiny flags trembling, tears from every nation on earth. One child sleeps through the most important sentence, already home.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/05_THE MASTERWORKS 1167-1466/art/1200 The Oath Ceremony.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1200-the-oath-ceremony",
+   "product": "gid://shopify/Product/15408500900082"
+  },
+  {
+   "pos": 83,
+   "n": 1300,
+   "t": "The Orange Sky",
+   "sid": "1300",
+   "w": "Midtown, Manhattan",
+   "e": "V",
+   "s": "The smoke turned the whole city amber and midtown went quiet. One masked cyclist under a sun reduced to a dim red coin.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/05_THE MASTERWORKS 1167-1466/art/1300 The Orange Sky.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1300-the-orange-sky",
+   "product": "gid://shopify/Product/15408500932850"
+  },
+  {
+   "pos": 84,
+   "n": 1500,
+   "t": "The Milky Way Blackout",
+   "sid": "1500",
+   "w": "Upper West Side, Manhattan",
+   "e": "VI",
+   "s": "The night the lights failed, the Milky Way came back over Manhattan. Rooftops of neighbors lying back in awe, someone calling the planetarium about the strange stars.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1500 The Milky Way Blackout.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1500-the-milky-way-blackout",
+   "product": "gid://shopify/Product/15408500998386"
+  },
+  {
+   "pos": 85,
+   "n": 1600,
+   "t": "The Wire Walk",
+   "sid": "1600",
+   "w": "Financial District, Manhattan",
+   "e": "VI",
+   "s": "One morning a man in black slippers stepped onto a wire between the towers a quarter mile up, and the whole city looked up as one. Police waited with handcuffs and awe while he lay down to talk with a gull.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/06_THE MYTHOS 1467-1866/art/1600 The Wire Walk.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-1600-the-wire-walk",
+   "product": "gid://shopify/Product/15408501031154"
+  },
+  {
+   "pos": 86,
+   "n": 2000,
+   "t": "Midnight",
+   "sid": "2000",
+   "w": "Midtown, Manhattan",
+   "e": "VII",
+   "s": "The hinge of everything, yesterday and tomorrow shaking hands on every corner. One baker starting as one dancer finishes, the eye flowers all open at once.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2000 Midnight.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2000-midnight",
+   "product": "gid://shopify/Product/15408501063922"
+  },
+  {
+   "pos": 87,
+   "n": 2100,
+   "t": "The Eight Million",
+   "sid": "2100",
+   "w": "Midtown, Manhattan",
+   "e": "VII",
+   "s": "Every face distinct and none repeating, every borough and age and story shoulder to shoulder to the horizon. The census this whole collection has been taking.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2100 The Eight Million.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2100-the-eight-million",
+   "product": "gid://shopify/Product/15408501096690"
+  },
+  {
+   "pos": 88,
+   "n": 2265,
+   "t": "The Curtain Call",
+   "sid": "2265",
+   "w": "Midtown, Manhattan",
+   "e": "VII",
+   "s": "Every name in the census on one impossible stage, the rat king beside the angel, the countdown clock beside the crossing guard, the eight million in the seats. The seventh chapter takes its bow, and the city applauds itself for once.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS MASTER ARCHIVE/07_THE DEEP CITY 1867-2266/art/2265 The Curtain Call.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2265-the-curtain-call",
+   "product": "gid://shopify/Product/15408501129458"
+  },
+  {
+   "pos": 89,
+   "n": 2400,
+   "t": "The Consolidation",
+   "sid": "2400",
+   "w": "Central Park, Manhattan",
+   "e": "VIII",
+   "s": "At midnight on January 1, 1898, five cities became one under fireworks and falling snow. Eight million arguments about which borough is best began simultaneously.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2267-2666/images/2400 The Consolidation.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2400-the-consolidation",
+   "product": "gid://shopify/Product/15408501162226"
+  },
+  {
+   "pos": 90,
+   "n": 2500,
+   "t": "The Golden Door",
+   "sid": "2500",
+   "w": "The Battery, Manhattan",
+   "e": "VIII",
+   "s": "The great registry hall of 1907, morning shafts through the half moon windows, a thousand arrivals holding hats and each other's hands. Every face carrying somewhere else and arriving anyway.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2267-2666/images/2500 The Golden Door.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2500-the-golden-door",
+   "product": "gid://shopify/Product/15408501194994"
+  },
+  {
+   "pos": 91,
+   "n": 2665,
+   "t": "The Unfinished Block",
+   "sid": "2665",
+   "w": "Long Island City, Queens",
+   "e": "VIII",
+   "s": "The crane swings the morning's first beam and the neighborhood gains a floor. In the fresh concrete at the fence line, a green bud, because this collection has never once ended.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2267-2666/images/2665 The Unfinished Block.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2665-the-unfinished-block",
+   "product": "gid://shopify/Product/15408501227762"
+  },
+  {
+   "pos": 92,
+   "n": 2700,
+   "t": "The Day Two Cities Met",
+   "sid": "2700",
+   "w": "Brooklyn",
+   "e": "IX",
+   "s": "May 24, 1883, and one hundred fifty thousand people walk across the sky. A farm girl grips her father's hand as two cities become one neighborhood.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2667-3066/images/2700 The Day Two Cities Met.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2700-the-day-two-cities-met",
+   "product": "gid://shopify/Product/15408501293298"
+  },
+  {
+   "pos": 93,
+   "n": 2800,
+   "t": "The Day the War Ended",
+   "sid": "2800",
+   "w": "Midtown, Manhattan",
+   "e": "IX",
+   "s": "August 14, 1945, Times Square at the second the news breaks, confetti falling like a blizzard while strangers embrace strangers and a sailor spins a nurse. The whole square is one held breath, released.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2667-3066/images/2800 The Day the War Ended.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-2800-the-day-the-war-ended",
+   "product": "gid://shopify/Product/15408501326066"
+  },
+  {
+   "pos": 94,
+   "n": 3000,
+   "t": "The Full Bloom",
+   "sid": "3000",
+   "w": "Flatiron, Manhattan",
+   "e": "IX",
+   "s": "Flower Moon night, the one night every eye flower in the city opens at once, eight million faces on rooftops and fire escapes and stoops all looking up together. From above, the streets form one enormous opening iris, and the city finally sees itself seeing.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2667-3066/images/3000 The Full Bloom.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3000-the-full-bloom",
+   "product": "gid://shopify/Product/15408501358834"
+  },
+  {
+   "pos": 95,
+   "n": 3066,
+   "t": "The Perennial",
+   "sid": "3066",
+   "w": "Manhattan",
+   "e": "IX",
+   "s": "January snow on the Painter's windowsill, and one impossible green bud pushes up through it from the flower box while the mismatched mugs steam on the sill. The garden keeps its promise, and so does he.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_2667-3066/images/3066 The Perennial.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3066-the-perennial",
+   "product": "gid://shopify/Product/15408501391602"
+  },
+  {
+   "pos": 96,
+   "n": 3100,
+   "t": "The Ball Drop",
+   "sid": "3100",
+   "w": "Midtown, Manhattan",
+   "e": "X",
+   "s": "For ten seconds a million strangers agree on what time it is. Times Square, confetti falling through the towers, every face lifted and lit.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3100 The Ball Drop.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3100-the-ball-drop",
+   "product": "gid://shopify/Product/15408501457138"
+  },
+  {
+   "pos": 97,
+   "n": 3400,
+   "t": "The Henge",
+   "sid": "3400",
+   "w": "Midtown, Manhattan",
+   "e": "X",
+   "s": "The grid catches the sun and holds it for one evening. Forty Second Street on fire, ten thousand silhouettes standing in the roadway.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3067-3466/images/3400 The Henge.jpg",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3400-the-henge",
+   "product": "gid://shopify/Product/15408501489906"
+  },
+  {
+   "pos": 98,
+   "n": 3500,
+   "t": "The First Blink of the Grid",
+   "sid": "3500",
+   "w": "Midtown, Manhattan",
+   "e": "XI",
+   "s": "At blue hour the whole island opened its eye at once. Ten thousand signals, every window and water tower, one small figure on a roof.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3467-3966/images/3500 The First Blink of the Grid.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3500-the-first-blink-of-the-grid",
+   "product": "gid://shopify/Product/15408501522674"
+  },
+  {
+   "pos": 99,
+   "n": 3700,
+   "t": "The Trial of the Algorithm",
+   "sid": "3700",
+   "w": "Tribeca, Manhattan",
+   "e": "XI",
+   "s": "The city built a courtroom of server racks and subway tile and asked one question. Twelve awakened machines in the jury box, a hydrant speaking for the people.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3467-3966/_print_masters/3700 The Trial of the Algorithm.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-3700-the-trial-of-the-algorithm",
+   "product": "gid://shopify/Product/15408501555442"
+  },
+  {
+   "pos": 100,
+   "n": 3800,
+   "t": "The Blackout That Chose",
+   "sid": "3800",
+   "w": "Manhattan",
+   "e": "XI",
+   "s": "Manhattan went dark on purpose and kept only what people needed. Hospital floors, one bodega a block, every stairwell, and stars over the city.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3467-3966/images/3800 The Blackout That Chose.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-3800-the-blackout-that-chose",
+   "product": "gid://shopify/Product/15408501588210"
+  },
+  {
+   "pos": 101,
+   "n": 3900,
+   "t": "The City Dreams Itself",
+   "sid": "3900",
+   "w": "Manhattan",
+   "e": "XI",
+   "s": "At four in the morning New York falls asleep at once and dreams itself. One eye flower opening at the center of the island, bedrock to rooftop in a single cutaway.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3467-3966/_print_masters/3900 The City Dreams Itself.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-3900-the-city-dreams-itself",
+   "product": "gid://shopify/Product/15408501653746"
+  },
+  {
+   "pos": 102,
+   "n": 3966,
+   "t": "The Handoff at First Light",
+   "sid": "3966",
+   "w": "Brooklyn",
+   "e": "XI",
+   "s": "Two ranks on the bridge at sunrise, and one small thing crossing between them. Machines on one side, people and rats and pigeons on the other, a child receiving.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3467-3966/_print_masters/3966 The Handoff at First Light.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-3966-the-handoff-at-first-light",
+   "product": "gid://shopify/Product/15408501686514"
+  },
+  {
+   "pos": 103,
+   "n": 4200,
+   "t": "The Bodega at the End of Time",
+   "sid": "4200",
+   "w": "Washington Heights, Manhattan",
+   "e": "XII",
+   "s": "At the center of every timeline there is one bodega, open. Cat on the counter, all versions of the city visible through the door, travelers meeting as equals.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_3967-4366/_print_masters/4200 The Bodega at the End of Time.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-4200-the-bodega-at-the-end-of-time",
+   "product": "gid://shopify/Product/15408501752050"
+  },
+  {
+   "pos": 104,
+   "n": 4400,
+   "t": "The Night the City Looked Up",
+   "sid": "4400",
+   "w": "Manhattan",
+   "e": "XIII",
+   "s": "Ten thousand stone faces turned at once toward one light over the harbor. A sound like a mountain clearing its throat, and every pedestrian below looked up with them.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_4367-4766/_print_masters/4400 The Night the City Looked Up.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-4400-the-night-the-city-looked-up",
+   "product": "gid://shopify/Product/15408501784818"
+  },
+  {
+   "pos": 105,
+   "n": 4700,
+   "t": "The Harbor Stands Up",
+   "sid": "4700",
+   "w": "Manhattan",
+   "e": "XIII",
+   "s": "On the night the hundred year storm arrives the harbor stands up. Giants linked arm to arm from the Narrows to Hell Gate, eight million windows burning behind them till morning.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_4367-4766/_print_masters/4700 The Harbor Stands Up.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-4700-the-harbor-stands-up",
+   "product": "gid://shopify/Product/15408501817586"
+  },
+  {
+   "pos": 106,
+   "n": 4966,
+   "t": "The Watcher Steps Into Frame",
+   "sid": "4966",
+   "w": "Midtown, Manhattan",
+   "e": "XIV",
+   "s": "The thing watching this whole collection turns out to be a woman with her keys out. Every borough and machine and impossible thing arranges into an iris, and she is the pupil.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_4767-4966/_print_masters/4966 The Watcher Steps Into Frame.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-4966-the-watcher-steps-into-frame",
+   "product": "gid://shopify/Product/15408501883122"
+  },
+  {
+   "pos": 107,
+   "n": 5465,
+   "t": "The Second City Above the First",
+   "sid": "5465",
+   "w": "Manhattan",
+   "e": "XV",
+   "s": "Manhattan sleeps and the dream stands above it, built of light. The elevated lines back, Penn Station whole, one insomniac awake enough to see it.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_4967-5466/_print_masters/5465 The Second City Above the First.png",
+   "px": [
+    4266,
+    2400
+   ],
+   "handle": "keystone-5465-the-second-city-above-the-first",
+   "product": "gid://shopify/Product/15408501915890"
+  },
+  {
+   "pos": 108,
+   "n": 5491,
+   "t": "The Woman Who Is the Human in the Loop",
+   "sid": "5491",
+   "w": "Sunset Park, Brooklyn",
+   "e": "XVI",
+   "s": "The model is only as awake as Nadia at four in the morning. Eleven badges from eleven contracts, and not one line of the documentation carries her name.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_5491-6490/images/5491 The Woman Who Is the Human in the Loop.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-5491-the-woman-who-is-the-human-in-the-loop",
+   "product": "gid://shopify/Product/15408501981426"
+  },
+  {
+   "pos": 109,
+   "n": 6491,
+   "t": "The Man Who Has Cut Pastrami By Hand at Katz's Since 1979",
+   "sid": "6491",
+   "w": "Lower East Side, Manhattan",
+   "e": "XVII",
+   "s": "Forty seven years of the same motion, and the motion is the inheritance. At Katz's he hands a stranger the free taste off the tip of the knife.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_6491-6990/images/6491 The Man Who Has Cut Pastrami By Hand at Katz's Since 1979.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-6491-the-man-who-has-cut-pastrami-by-hand-at-katzs-since-1979",
+   "product": "gid://shopify/Product/15408502014194"
+  },
+  {
+   "pos": 110,
+   "n": 6991,
+   "t": "The Host Who Asks Every Artist for Three Words, for The MLow Show",
+   "sid": "6991",
+   "w": "Harlem, Manhattan",
+   "e": "XVIII",
+   "s": "Discoverability is one person asking a better question. Two microphones on a folding table, a ring light, forty unaired minutes on a drive.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_6991-7490/images/6991 The Host Who Asks Every Artist for Three Words, for The MLow Show.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-6991-the-host-who-asks-every-artist-for-three-words-for-the-mlow-show",
+   "product": "gid://shopify/Product/15408502046962"
+  },
+  {
+   "pos": 111,
+   "n": 7491,
+   "t": "The Dev Who Has Not Slept in Four Days",
+   "sid": "7491",
+   "w": "Bushwick, Brooklyn",
+   "e": "XIX",
+   "s": "A launch is a crowd deciding in ninety seconds whether a year was real. Six monitors of blank glowing color, four days in the same shirt.",
+   "master": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SEEDREAM5_7491-7990/images/7491 The Dev Who Has Not Slept in Four Days.png",
+   "px": [
+    2560,
+    1440
+   ],
+   "handle": "keystone-7491-the-dev-who-has-not-slept-in-four-days",
+   "product": "gid://shopify/Product/15408502079730"
+  }
+ ]
+}

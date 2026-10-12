@@ -85,7 +85,11 @@ export const met: RoomDef = {
     k.plinth(0, -52, 3, 0.9, 3, lime);
     k.prop('hydrant', 0, 0.98, -52, { height: 2.6 });
     k.plinth(0, -26, 3.2, 0.7, 3.2, lime);
-    k.mesh(new T.TorusKnotGeometry(1.1, 0.16, 120, 14), bronze, 0, 2.5, -26);
+    const knot = k.mesh(new T.TorusKnotGeometry(1.1, 0.16, 120, 14), bronze, 0, 2.5, -26);
+    /* eggs: real details of the Iris and B. Gerald Cantor Roof Garden */
+    k.egg(knot, { id: 'met-one-artist-a-summer', title: 'One artist a summer', year: '1998', text: 'Every summer since 1998 the roof garden has hosted a single artist exhibition. Ellsworth Kelly opened the series in 1998, followed by Magdalena Abakanowicz, David Smith and Joel Shapiro, and later Roy Lichtenstein in 2003, Sol LeWitt in 2005, Jeff Koons in 2008 and Huma Bhabha in 2018.', clue: 'Walk round the bronze knot on its plinth in the middle of the terrace.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.6 });
+    k.egg(v(0, 4.2, -36), { id: 'met-big-bambu', title: 'A climbable bamboo forest', year: '2010', text: 'From April to October 2010 the roof held Big Bambu by Doug and Mike Starn, built from 3,200 bamboo poles to about 100 feet long, 50 feet wide and 50 feet high. Visitors could climb through it, as long as they wore rubber soled, closed toe shoes, and the artists built it with a team of twenty rock climbers.', clue: 'Look up into the tree on its plinth halfway down the terrace.', source: { name: 'Big Bambu (artwork), Wikipedia', url: 'https://en.wikipedia.org/wiki/Big_Bamb%C3%BA_(artwork)' } }, { r: 1.8 });
+    k.egg(v(0, 5, -14), { id: 'met-psychobarn', title: 'The Psycho house on the roof', year: '2016', text: 'In 2016 Cornelia Parker became the first woman commissioned to make a new work for the Roof Garden. Transitional Object (PsychoBarn) was a scaled down facade of the house from Hitchcock\'s Psycho, built from a salvaged red barn, a nod to Edward Hopper\'s House by the Railroad, which Hitchcock used as the model for that house.', clue: 'Stand under the water tower on its plinth: another rooftop building once stood on this roof.', source: { name: 'Cornelia Parker, Wikipedia', url: 'https://en.wikipedia.org/wiki/Transitional_Object_(PsychoBarn)' } }, { r: 1.8 });
     // hedges, planters, tables, benches
     for (const s of [-1, 1])
       for (let z = 6; z > ZC - L / 2 + 8; z -= 12.4) {
@@ -110,6 +114,8 @@ export const met: RoomDef = {
     k.box(20, 0.2, 3.2, 0, 4.3, 11, iron);
     for (let x = -9.5; x <= 9.5; x += 0.7) k.box(0.12, 0.3, 3.2, x, 4.55, 11, teak);
     k.censusWall({ x: 0, y: 2.3, z: 12.6, rotY: PI, cols: 30, rows: 3, tile: 0.62, gap: 0.05, start: ctx.wallStart(4500, 90), pieces: ctx.all, backing: lime });
+    k.egg(v(0, 3.8, 10.6), { id: 'met-roof-1987', title: 'The best view in Manhattan', year: '1987', text: 'The Iris and B. Gerald Cantor Roof Garden opened to the public on August 1, 1987, on the roof near the southwestern corner of the museum. Its views of Central Park and the Manhattan skyline have been called the best in Manhattan, and on Friday and Saturday evenings the café and bar drew elevator lines.', clue: 'Stand under the bar pergola at the entrance.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.6 });
+    k.egg(v(0, 5.4, ZC - L / 2 + 5.5), { id: 'met-roof-closed', title: 'Closed for five years', year: '2025', text: 'In 2025 the Met announced that the roof garden would close for five years starting that October. The museum meanwhile has a new Tang Wing for Modern Art set for completion in 2030.', clue: 'Look at the top of the limestone wall at the far end of the terrace.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.8 });
     // the park below and the city beyond
     k.box(300, 0.4, 200, 0, -7, -140, k.pbr('lawn', X.grass(0x4a6a3b), 0.15));
     const canopy: T.Matrix4[] = [];
@@ -186,6 +192,8 @@ export const brooklyn: RoomDef = {
     for (const z of [6, -14, -34, -54]) k.prop('lamppost', 7.4, 0, z, { height: 6.4, keepOut: 0.45 });
     for (const z of [6, -14, -34, -54]) k.point(7.4, 6, z, 0xffd0a0, 26, 15);
     k.prop('buoy', -12.2, 0, -2, { height: 1.9, keepOut: 0.8 });
+    k.egg(v(-6.5, 0.4, 4), { id: 'brooklyn-granite-prospect', title: 'Steps from another bridge', text: 'The Granite Prospect, the stepped seating at Pier 1 of Brooklyn Bridge Park, is made of over 300 pieces of granite, about 2,000 linear feet of it, salvaged from the reconstruction of the Roosevelt Island Bridge. The park now holds many of its free events on those steps.', clue: 'Look down at the granite underfoot on the river side of the promenade.', source: { name: 'Granite Prospect, Brooklyn Bridge Park', url: 'https://www.brooklynbridgepark.org/places-to-see/granite-prospect/' } }, { r: 1.6 });
+    k.egg(v(-10.4, 1.2, ZC - L / 2 + 4.6), { id: 'brooklyn-whitman-rail', title: 'A poem on the railing', year: '1856', text: 'Walt Whitman\'s Crossing Brooklyn Ferry first appeared in the 1856 edition of Leaves of Grass as Sun-Down Poem and took its present title in 1860. An excerpt is inscribed at Fulton Ferry Landing, near where Whitman would have stepped off the boat from Manhattan.', clue: 'Go to the end of the promenade, where the steel screens stop, and look at the river rail.', source: { name: 'Crossing Brooklyn Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Crossing_Brooklyn_Ferry' } }, { r: 1.6 });
     k.prop('life_ring', -13.55, 1.2, -20, { height: 1.0, rotY: PI / 2 });
     k.prop('life_ring', -13.55, 1.2, -48, { height: 1.0, rotY: PI / 2 });
     k.prop('lobster_trap', 8.6, 0, -10, { height: 0.9, rotY: 0.4 });
@@ -212,7 +220,22 @@ export const brooklyn: RoomDef = {
       k.curve(pts, 0.12, steelW, 120);
       for (const tower of [-bx, bx]) for (let dx = -20; dx <= 20; dx += 2.5) k.beam(v(tower, 32, z), v(tower + dx, 9.5, z), 0.025, steelW, 4);
     }
+    // the bridge has four main cables, not two: the inner pair between the roadways and the promenade
+    for (const z of [bz - 0.9, bz + 0.9]) {
+      const pts = [];
+      for (let kk = 0; kk <= 120; kk += 2) {
+        const x = -bx * 2 + kk, y = Math.abs(x) <= bx ? 12 + 20 * (x / bx) ** 2 : 32 - 20 * ((Math.abs(x) - bx) / bx);
+        pts.push(v(x, y, z));
+        if (kk % 4 === 0 && Math.abs(x) < bx * 2 - 2) k.beam(v(x, 9.5, z), v(x, y, z), 0.03, steelW, 5);
+      }
+      k.curve(pts, 0.12, steelW, 120);
+    }
     k.box(128, 0.6, 7, 0, 9, bz, iron);
+    /* eggs: the bridge across the view */
+    k.egg(v(-15, 17.5, bz), { id: 'brooklyn-haigh-wire', title: 'The crooked wire', text: 'Each of the four main cables is 15.75 inches thick and holds 5,282 parallel galvanized steel wires. The contractor J. Lloyd Haigh supplied substandard wire: of eighty rings tested, only five met the standard, so 150 extra wires were added to each cable to make up for it.', clue: 'Follow the main cables as they sag between the towers.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 3 });
+    k.egg(v(bx, 22, bz), { id: 'brooklyn-towers', title: 'Limestone, granite, cement', text: 'Each tower is built of limestone, granite and Rosendale cement and stands 278.25 feet above mean high water. Each holds a pair of Gothic Revival pointed arches that the roadways run through, and the main span between the two towers is 1,595.5 feet.', clue: 'Look at the pointed arches in the tower on the right.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 3 });
+    k.egg(v(-bx, 22, bz), { id: 'brooklyn-opening-day', title: 'Opening day and the stampede', year: '1883', text: 'The New York and Brooklyn Bridge opened on May 24, 1883, and officially Emily Warren Roebling was the first to cross it. Six days later a woman fell on a stairway at the Brooklyn approach and set off a stampede that crushed at least twelve people to death.', clue: 'Look at the tower on the left, the Manhattan side.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 3 });
+    k.egg(v(0, 10.2, bz), { id: 'brooklyn-jumbo', title: 'Twenty one elephants', year: '1884', text: 'On May 17, 1884, P. T. Barnum sent Jumbo at the head of a parade of 21 elephants over the Brooklyn Bridge. The march promoted his circus and helped quiet doubts about whether the bridge was stable.', clue: 'Look at the middle of the deck, halfway between the towers.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 3 });
     for (let x = -62; x < 62; x += 2.5) {
       k.beam(v(x, 8, bz - 3), v(x + 2.5, 9, bz - 3), 0.05, iron, 5);
       k.beam(v(x, 9, bz - 3), v(x + 2.5, 8, bz - 3), 0.05, iron, 5);
@@ -276,11 +299,12 @@ export const times: RoomDef = {
         }
       }
     // TKTS steps, the tower behind and the ball
+    // 27 steps rising 16 feet (4.9 m) above the street, so each riser is about 0.18 m
     for (let kk = 0; kk < 27; kk++) {
-      k.rounded(10, 0.2, 0.62, 0, 0.1 + kk * 0.2, ZC - L / 2 + 12 - kk * 0.6, red, 0.03);
-      k.box(9.8, 0.03, 0.03, 0, 0.19 + kk * 0.2, ZC - L / 2 + 12.3 - kk * 0.6, k.glow(0xff9fb5));
+      k.rounded(10, 0.18, 0.62, 0, 0.09 + kk * 0.18, ZC - L / 2 + 12 - kk * 0.6, red, 0.03);
+      k.box(9.8, 0.03, 0.03, 0, 0.17 + kk * 0.18, ZC - L / 2 + 12.3 - kk * 0.6, k.glow(0xff9fb5));
     }
-    k.box(10, 5.6, 1, 0, 2.8, ZC - L / 2 - 5, red);
+    k.box(10, 4.9, 1, 0, 2.45, ZC - L / 2 - 5, red);
     k.sign('tkts', 3.4, 1.2, 0, 1.7, ZC - L / 2 + 12.4, '#c02e40', '#ffffff', 150, 0);
     k.keepOut.push({ x: 0, z: ZC - L / 2 + 5, r: 9 });
     k.box(14, 40, 10, 0, 20, ZC - L / 2 - 12, facade);
@@ -288,9 +312,18 @@ export const times: RoomDef = {
     k.beam(v(0, 40, ZC - L / 2 - 12), v(0, 52, ZC - L / 2 - 12), 0.12, white, 8);
     k.mesh(new T.IcosahedronGeometry(1.3, 2), k.glow(0xfff6d0), 0, 49.5, ZC - L / 2 - 12);
     k.point(0, 49.5, ZC - L / 2 - 12, 0xffffff, 200, 60);
+    k.egg(v(0, 49.5, ZC - L / 2 - 12), { id: 'times-the-ball', title: 'From 700 pounds to 12,300', year: '1907', text: 'The first ball dropped on December 31, 1907: iron and wood, lit by a hundred incandescent bulbs, weighing 700 pounds. The present ball is 12.5 feet across, weighs over 12,300 pounds and is covered in 5,280 Waterford Crystal panels, and it has stayed on top of One Times Square nearly all year since 2009. The drop was paused for New Year\'s Eve 1942 and 1943 because of wartime lighting rules.', clue: 'Look up at the ball on the mast above the tower.', source: { name: 'Times Square Ball, Wikipedia', url: 'https://en.wikipedia.org/wiki/Times_Square_Ball' } }, { r: 2.6 });
+    k.egg(v(0, 9, ZC - L / 2 - 6.9), { id: 'times-longacre', title: 'Longacre Square', year: '1904', text: 'Until April 8, 1904 this was Longacre Square. It was renamed after The New York Times moved its headquarters into the Times Building, now One Times Square. New Year fireworks there from 1904 to 1906 were stopped by city officials for fear of fire, and the first ball dropped instead at the end of 1907.', clue: 'Look at the foot of the tower behind the red steps.', source: { name: 'Times Square, Wikipedia', url: 'https://en.wikipedia.org/wiki/Times_Square' } }, { r: 2.2 });
+    k.egg(v(0, 34, ZC - L / 2 - 6.9), { id: 'times-empty-tower', title: 'A tower made of billboards', year: '1928', text: 'The Times left its tower in 1913 and the last office tenants moved out in 1996, so the building now earns its keep from the signs on its face, estimated at $23 million a year in 2019. Its news zipper began on November 6, 1928, and the first headline it ran was Herbert Hoover\'s presidential win.', clue: 'Look at the signs high on the tower face.', source: { name: 'One Times Square, Wikipedia', url: 'https://en.wikipedia.org/wiki/One_Times_Square' } }, { r: 2.4 });
     k.sign('NEW YORKERS', 12, 4, 0, 30, ZC - L / 2 - 6.9, '#c33064', '#ffffff', 160, 0);
     k.sign('BY MLOW', 12, 2.2, 0, 26.6, ZC - L / 2 - 6.9, '#2654b9', '#ffffff', 130, 0);
     k.sign('THE CENSUS IS COMING', 12, 1.3, 0, 24.7, ZC - L / 2 - 6.9, '#111925', '#00e5ff', 90, 0);
+    // a plain steel grate on the plaza between 45th and 46th: the sound piece under it has no sign, by the artist's wish
+    k.box(2.4, 0.04, 1.3, -3, 0.02, -24, steel);
+    for (let x = -4.1; x <= -1.9; x += 0.2) k.box(0.05, 0.05, 1.2, x, 0.045, -24, k.flat(0x0a0d12, 0.6, 0.5));
+    k.egg(v(-3, 0.4, -24), { id: 'times-neuhaus-drone', title: 'The hum under the grate', year: '1977', text: 'Under a grate on the pedestrian island between 45th and 46th Streets, Max Neuhaus installed a sound work in 1977 that he described as resembling the after ring of large bells. It was disconnected in 1992 and reinstalled in 2002, and Neuhaus later gave it to the Dia Art Foundation. There is no sign or marking, at his request.', clue: 'Stand on the steel grate in the plaza and listen.', source: { name: 'Times Square (Neuhaus), Wikipedia', url: 'https://en.wikipedia.org/wiki/Times_Square_(Neuhaus)' } }, { r: 1.6 });
+    k.egg(v(3, 1.2, ZC - L / 2 + 12.6), { id: 'times-red-steps', title: 'Twenty seven red steps', year: '2008', text: 'The TKTS booth has sold discount theatre tickets here since June 1973, when it was housed in a rented construction trailer. The present booth opened on October 16, 2008, under an amphitheatre of red glass steps, 27 steps high and 16 feet above the street, lit from below with LEDs.', clue: 'Count the red steps from the bottom.', source: { name: 'TDF\'s new TKTS booth under the red steps, TDF', url: 'https://www.tdf.org/about-us/media-center/tdfs-new-tkts-booth-under-the-red-steps-opening-thursday-october-16-at-3pm-will-bring-discount-theatre-and-dance-tickets-back-the-newly-revitalized-father-duffy-square/' } }, { r: 1.8 });
+    k.egg(v(-11.4, 9.5, -2), { id: 'times-signs-by-law', title: 'Bright lights by law', year: '1987', text: 'Since 1987 the zoning ordinances have required building owners here to put up illuminated signs, and Times Square is the only district in New York City with that rule. The same 1987 rules made large new developments set aside about 5 percent of their space for entertainment uses.', clue: 'Look at the lit billboards on the left hand wall.', source: { name: 'Times Square, Wikipedia', url: 'https://en.wikipedia.org/wiki/Times_Square' } }, { r: 2.4 });
     for (const s of [-1, 1]) for (let z = 8; z > ZC - L / 2 + 14; z -= 7) k.lathe([[0.25, 0], [0.25, 0.18], [0.15, 0.26], [0.15, 0.85], [0.2, 0.92]], s * 6, 0, z, steel, 12);
     for (const s of [-1, 1]) for (const z of [-2, -30]) { k.prop('mailbox', s * 7.6, 0, z, { height: 1.5, rotY: s > 0 ? PI : 0, keepOut: 0.6 }); }
     k.prop('hydrant', -7.4, 0, -16, { height: 1.1, keepOut: 0.5 });
@@ -355,16 +388,24 @@ export const ferry: RoomDef = {
       k.point(s * 8.5, 4, -10, 0xffe4c0, 18, 16);
       k.point(s * 8.5, 4, -36, 0xffe4c0, 18, 16);
     }
-    k.prop('ships_wheel', 0, 1.9, ZC - L / 2 + 4.05, { height: 1.6 });
-    k.plinth(0, ZC - L / 2 + 9, 1.4, 0.9, 1.4, white);
-    k.prop('captains_hat', 0, 0.98, ZC - L / 2 + 9, { height: 0.5 });
-    k.prop('bell', 4, 2.2, ZC - L / 2 + 2, { height: 0.8 });
-    k.box(0.25, 2.2, 0.25, 4, 1.1, ZC - L / 2 + 2, rail);
+    // the bow end of the cabin faces the bow deck: the wheel, the two works and the route board sit on its outer face
+    k.prop('ships_wheel', 0, 1.9, ZC - L / 2 + 3.4, { height: 1.6 });
+    k.plinth(8.6, ZC - L / 2 + 6, 1.4, 0.9, 1.4, white);
+    k.prop('captains_hat', 8.6, 0.98, ZC - L / 2 + 6, { height: 0.5 });
+    k.prop('bell', 7, 2.2, ZC - L / 2 + 2, { height: 0.8 });
+    k.box(0.25, 2.2, 0.25, 7, 1.1, ZC - L / 2 + 2, rail);
     for (const x of [-9, 9]) k.prop('cleat', x, 0, ZC - L / 2 + 1.5, { height: 0.45 });
     k.prop('buoy', -10, 0, ZC - L / 2 + 3, { height: 1.8, keepOut: 0.8 });
     k.rail(0, ZC - L / 2 - 1.2, 22, rail, 1.5, 'x', 1.6);
     k.sign('STATEN ISLAND FERRY', 9, 0.8, 0, 5.2, 12.3, '#d0762a', '#fff3d5', 95, PI, { border: true });
-    k.sign('MANHATTAN  ↔  ST. GEORGE', 6, 0.55, 0, 4.15, ZC - L / 2 + 4.3, '#1a3446', '#fff3d5', 80, 0, { border: true });
+    k.sign('MANHATTAN  ·  ST. GEORGE', 6, 0.55, 0, 4.15, ZC - L / 2 + 3.5, '#1a3446', '#fff3d5', 80, PI, { border: true });
+    /* eggs: real details of the ferry */
+    k.egg(v(0, 5.2, 11.9), { id: 'ferry-free-since-1997', title: 'The nickel, then nothing', year: '1997', text: 'For most of the nineteenth and twentieth centuries the ride cost a nickel, famed as the biggest bargain in New York City. The fare went to 25 cents on August 4, 1975, a round trip to 50 cents in 1990, and in July 1997 the passenger fare was eliminated altogether.', clue: 'Read the name board over the stern.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.6 });
+    k.egg(v(0, 2.2, ZC - L / 2 + 2.9), { id: 'ferry-25-minutes', title: '5.2 miles, all night', text: 'The run between Whitehall Terminal in Manhattan and St. George on Staten Island is 5.2 miles and takes about 25 minutes. The boats run 24 hours a day, seven days a week, and it is the busiest ferry route in the United States.', clue: 'Find the ship\'s wheel on the bow deck.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.4 });
+    k.egg(v(-12.3, 1.7, -40), { id: 'ferry-liberty-side', title: 'The free view of Liberty', text: 'The crossing passes the Statue of Liberty on Liberty Island, Ellis Island, Governors Island and the Verrazzano Narrows Bridge. Ridership peaked at 27.5 million in 1964 and fell to 22 million in 1965, after that bridge opened.', clue: 'Lean on the port rail and look across the water to the statue.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.8 });
+    k.egg(v(7, 2.3, ZC - L / 2 + 2), { id: 'ferry-vanderbilt', title: 'A sixteen year old\'s ferry', year: '1810', text: 'Cornelius Vanderbilt started a ferry service between Staten Island and Manhattan in 1810, when he was 16.', clue: 'Ring the bell on the bow deck.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.4 });
+    k.egg(v(0, 6.6, -5.7), { id: 'ferry-spirit-of-america', title: 'Which boat is this', year: '2006', text: 'The Molinari class boats, the Guy V. Molinari, the Sen. John J. Marchi and the Spirit of America, are 310 feet long and carry up to 4,427 passengers and 30 vehicles, built to recall the classic New York ferryboats. Spirit of America was delivered on September 16, 2005, but did not make its maiden voyage until April 4, 2006. The bigger Barberi class boats carry 6,000.', clue: 'Look up at the wheelhouse windows.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.8 });
+    k.egg(v(0, 11, -22), { id: 'ferry-orange', title: 'Why orange', year: '1926', text: 'The ferries were originally white. In 1926 the colour was changed to a reddish maroon and later to orange, to make the boats easier to see in fog and snow.', clue: 'Look up at the orange funnel.', source: { name: 'The Top 13 Secrets of NYC\'s Staten Island Ferry, Untapped New York', url: 'https://www.untappedcities.com/the-top-13-secrets-of-nycs-staten-island-ferry/' } }, { r: 1.8 });
     // the harbour: Liberty, distant islands, the skyline ahead, buoys
     liberty(k, -64, -3, -120, 1.6);
     for (const [x, z] of [[-40, -60], [50, -90], [30, -40]]) k.prop('buoy', x, -2.9, z, { height: 2.4 });
@@ -374,8 +415,8 @@ export const ferry: RoomDef = {
     k.censusWall({ x: 0, y: 2.6, z: 12.25, rotY: PI, cols: 26, rows: 3, tile: 0.6, gap: 0.05, start: ctx.wallStart(5300, 78), pieces: ctx.all, backing: navy });
     const mounts = corridorMounts({ pairs: 10, x: 4.36, z0: 1, pitch: 6.4, y: 2.5, width: 4.6, height: 2.6, inset: -4.2, style: 'white' });
     for (const m of mounts) m.rotation = m.position.x > 0 ? PI / 2 : -PI / 2;
-    mounts.push({ position: v(-2.4, 2.4, ZC - L / 2 + 4.05), rotation: 0, target: v(-2.4, 3, ZC - L / 2 + 9), width: 3.6, height: 2.4, style: 'white' });
-    mounts.push({ position: v(2.4, 2.4, ZC - L / 2 + 4.05), rotation: 0, target: v(2.4, 3, ZC - L / 2 + 9), width: 3.6, height: 2.4, style: 'white' });
+    mounts.push({ position: v(-2.4, 2.4, ZC - L / 2 + 3.55), rotation: PI, target: v(-2.4, 3, ZC - L / 2 + 1.6), width: 3.6, height: 2.4, style: 'white' });
+    mounts.push({ position: v(2.4, 2.4, ZC - L / 2 + 3.55), rotation: PI, target: v(2.4, 3, ZC - L / 2 + 1.6), width: 3.6, height: 2.4, style: 'white' });
     return { mounts, spawn: v(-8.5, 3, 9), look: v(-6, 3.2, -30), eye: 3, bounds: [-12, 12, ZC - L / 2 + 1, 11], style: 'white' };
   },
 };

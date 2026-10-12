@@ -20,11 +20,15 @@ const FACTS: Record<string, RoomFact> = {};
 for (const r of ((window as unknown as { NY_ROOMS?: RoomFact[] }).NY_ROOMS || [])) FACTS[r.id] = r;
 const FIRST_ROOMS = ['metgreathall', 'bowery', 'cloisters'];
 const START_ROOMS = [...FIRST_ROOMS, 'guggenheim', 'grand', 'brooklyn'];
-const roomThumb = (id: string) => `assets/museum/rooms/${id}.jpg`;
+// versioned: Cloudflare holds images at least 4 hours, so a retaken thumbnail needs a new URL (bump on every retake)
+const THUMB_V = "20261010";
+const roomThumb = (id: string) => `assets/museum/rooms/${id}.jpg?v=${THUMB_V}`;
 const CFG = (window as unknown as { NY_CONFIG?: Record<string, string> }).NY_CONFIG || {};
 let spinOnEnter = false;
 /* the room a #room= link asked for, so the entrance keeps it in view */
 let roomFromHash = '';
+/* #honor=<id>: stand in front of one honorary portrait once room 183 is built (MLow 2026-10-06, your face is on the wall) */
+let honorWant = '';
 const esc = (s: string) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const reducedQuery = matchMedia('(prefers-reduced-motion: reduce)');
 const touch = matchMedia('(pointer: coarse)').matches;
@@ -93,6 +97,7 @@ function readHash() {
     state.hang = { mode: mode as Hang['mode'], key: rest.join(':') || undefined };
   }
   state.page = Math.max(0, Number(h.get('page') || 0) - 1 || 0);
+  honorWant = h.get('honor') || '';
   return h.get('n');
 }
 function writeHash() {
@@ -107,7 +112,7 @@ function writeHash() {
 function makeRenderer() {
   const host = $('#world');
   const r = new T.WebGLRenderer({ antialias: quality === 'high', powerPreference: quality === 'low' ? 'low-power' : 'high-performance' });
-  r.setPixelRatio(Math.min(devicePixelRatio, quality === 'high' ? 1.75 : 1.2));
+  r.setPixelRatio(Math.min(devicePixelRatio, quality === 'high' ? 1.5 : 1.2));   // 1.75 cooked laptops; 1.5 reads the same at a desk
   r.setSize(host.clientWidth, host.clientHeight);
   r.outputColorSpace = T.SRGBColorSpace;
   r.toneMapping = T.ACESFilmicToneMapping;
@@ -456,6 +461,16 @@ function tap(x: number, y: number): string {
       openDetail(u.piece as Piece);
       return 'work';
     }
+    if (u.honorFrames && h.instanceId != null) {
+      /* a frame round an honorary portrait answers for the portrait */
+      const e = (u.honorFrames as (HonorHit | null)[])[h.instanceId];
+      if (e) { openHonor(e); return 'honoree'; }
+    }
+    if (u.honor && h.faceIndex != null) {
+      const e = (u.honor as (HonorHit | null)[])[Math.floor(h.faceIndex / 2)];
+      if (e) { openHonor(e); return 'honoree'; }
+      return 'honoree loading';
+    }
     if (u.tiles && h.faceIndex != null) {
       const gi = u.tiles[Math.floor(h.faceIndex / 2)];
       if (P[gi]) openDetail(P[gi]);
@@ -634,7 +649,7 @@ function openEgg(d: EggData) {
   const go = $('#eggRoom') as HTMLButtonElement;
   go.hidden = ri < 0 || ri === state.room || !!MINT.room;
   if (ri >= 0) { go.textContent = 'WALK TO ' + ROOMS[ri].name.toUpperCase(); go.onclick = () => { closePanels(); setRoom(ri); }; }
-  ($('#eggShare') as HTMLButtonElement).onclick = () => share({ title: `${d.title} · THE MUSEUM`, text: `I found ${d.title} hidden in ${def.name} in THE MUSEUM by MLow. ${n} real New York landmarks hide in this room. Your turn.`, url: roomUrl(state.room) });
+  ($('#eggShare') as HTMLButtonElement).onclick = () => share({ title: `${d.title} · THE MUSEUM`, text: `I found ${d.title} hidden in ${def.name} in THE MUSEUM by MLow. ${n} real New York landmarks hide in this room. Your turn.`, url: roomShareUrl(state.room) });
   closePanels();
   panelReturn = document.activeElement as HTMLElement;
   $('#egg').classList.add('open');
@@ -696,9 +711,20 @@ let drFrames = 0, drAcc = 0, stall = 0;
 const TOUR_DWELL = 6.5;
 let tourClock = 0;
 let prev = performance.now();
+/* Power. A visitor wrote that the site turned their fans into a jet engine. A room that draws 120 frames a second,
+   forever, with nobody touching it, is one. The loop draws at most 60 a second, 30 once nothing has been touched for
+   twenty seconds (the tour and a walk to a goal count as touching), and about six while the window is not the one in
+   front. Everything moves on dt, so only the heat changes. The self measuring below only samples full speed frames. */
+const POWER = { last: performance.now(), drawn: 0, blurred: !document.hasFocus(), frames: 0 };
+const touched = () => { POWER.last = performance.now(); };
+for (const ev of ['keydown', 'pointermove', 'pointerdown', 'touchstart', 'touchmove', 'wheel']) addEventListener(ev, touched, { passive: true });
+addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('focus', () => { POWER.blurred = false; touched(); });
+function powerBudget(): number { if (POWER.blurred) return 160; if (state.tour || goal || performance.now() - POWER.last < 20000) return 15.5; return 32; }
+(window as any).__POWER = POWER;
 function animate(now: number) {
   frame = requestAnimationFrame(animate);
   if (!renderer || !scene || !build || !kit) { prev = now; return; }
+  const budget = powerBudget(); if (now - POWER.drawn < budget) return; POWER.drawn = now; POWER.frames++; const throttled = budget > 16;
   // Do not gate the draw on document.hidden. requestAnimationFrame is already
   // paused by the browser in a background tab, and embedded viewers (previews,
   // in-app webviews) report hidden while still painting, which left the room
@@ -706,7 +732,7 @@ function animate(now: number) {
   const raw = now - prev;
   const dt = Math.min(raw / 1000, 0.05);
   prev = now;
-  if (fx && !fxJudged) {
+  if (fx && !fxJudged && !throttled) {
     fxFrames++;
     if (fxFrames > FX_WARMUP_FRAMES) fxAcc += raw;
     if (fxFrames >= FX_WARMUP_FRAMES + FX_SAMPLE_FRAMES) {
@@ -720,7 +746,7 @@ function animate(now: number) {
       }
     }
   }
-  if (quality === 'low' && raw < 250) {
+  if (quality === 'low' && raw < 250 && !throttled) {
     drFrames++;
     if (drFrames > 60) drAcc += raw;
     if (drFrames >= 150) {
@@ -803,7 +829,7 @@ function animate(now: number) {
      Reset it here once per frame instead; the count then covers the whole frame (shadow, scene and fx passes). */
   renderer.info.autoReset = false;
   renderer.info.reset();
-  if (fx) fx.render(); else renderer.render(scene, camera);
+  if (fx) { fx.setNight(kit ? kit.night : 0); fx.render(); } else renderer.render(scene, camera);
   /* SNAP reads the canvas in the same task as the draw: without preserveDrawingBuffer the buffer is gone after compositing. */
   if (snapWant) { snapWant = false; captureSnap(); }
   if (params.has('debug')) $('#debug').textContent = `calls ${renderer.info.render.calls} · tris ${(renderer.info.render.triangles / 1000).toFixed(0)}k · tex ${renderer.info.memory.textures} · geo ${renderer.info.memory.geometries}`;
@@ -818,8 +844,9 @@ function loadRoom(openN?: string | null): Promise<void> {
     if (kit) kit.dispose();
     kit = null;
     scene = new T.Scene();
-    const dynamic = def.daylit !== false && !params.has('fixed');
-    kit = new Kit(scene, { renderer: renderer!, quality, reduced: reduced(), atlas, atlasGrid: C.atlasGrid, perAtlas, hour: HOUR, dynamic });
+    /* 2026-10-09: every room follows New York time, including the ones painted at night (MLow); ?fixed holds the painted hour */
+    const dynamic = !params.has('fixed');
+    kit = new Kit(scene, { renderer: renderer!, quality, reduced: reduced(), atlas, atlasGrid: C.atlasGrid, perAtlas, hour: HOUR, dynamic, day: DAY, live: !params.has('hour') && !params.has('day') });
     list = hangList(state.hang, def.id);
     const ctx = { pieces: list, all: P, thumb, reduced: reduced(), quality, wallStart, page: state.page };
     beginRoom();
@@ -878,6 +905,8 @@ function loadRoom(openN?: string | null): Promise<void> {
     state.active = -1;
     paintHud(pages);
     writeHash();
+    /* the trail: the site's footer and home page offer this room back next time (site.js NY.trail) */
+    if (!MINT.room) { try { localStorage.setItem('ny_trail_room', JSON.stringify({ id: def.id, name: def.name, at: Date.now() })); } catch { /* private mode */ } }
     /* record the visit against a collector profile, if there is one. Never blocks the room. */
     try {
       fetch('/api/event', { method: 'POST', credentials: 'same-origin',
@@ -890,6 +919,7 @@ function loadRoom(openN?: string | null): Promise<void> {
       const p = P[indexOf.get(openN) ?? -1];
       if (p) openDetail(p);
     }
+    if (honorWant) standAtHonor(honorWant);
     done();
   }, 30));
 }
@@ -925,7 +955,7 @@ function paintHud(pages: number) {
       factEl.innerHTML = `<span>${esc(f.learn || f.fact || '')}</span> <a href="${f.article ? 'learn/' + f.article + '.html' : 'rooms/' + def.id + '.html'}" target="_blank" rel="noopener">THE HISTORY ↗</a>`;
     } else factEl.hidden = true;
   }
-  $('#dyn').textContent = `${DAY} · ${CLOCK} NEW YORK · ${def.daylit === false ? 'FIXED HOUR' : kit && kit.night > 0.5 ? 'NIGHT LIGHT' : kit && kit.dusk > 0.3 ? 'DUSK LIGHT' : 'DAYLIGHT'} · HANG OF THE DAY`;
+  $('#dyn').textContent = `${DAY} · ${CLOCK} NEW YORK · ${params.has('fixed') ? 'FIXED HOUR' : kit && kit.night > 0.5 ? 'NIGHT LIGHT' : kit && kit.dusk > 0.3 ? 'DUSK LIGHT' : 'DAYLIGHT'} · HANG OF THE DAY`;
   $('#pageLabel').innerHTML = `${String(state.page + 1).padStart(2, '0')}<small> / ${String(pages).padStart(2, '0')}</small>`;
   ($('#pagePrev') as HTMLButtonElement).disabled = state.page === 0;
   ($('#pageNext') as HTMLButtonElement).disabled = state.page >= pages - 1;
@@ -1005,7 +1035,11 @@ function openDetail(p: Piece) {
       if (vi === 0) canal.textContent = 'CANAL STREET';
     };
   }
-  ($('#dRecord') as HTMLAnchorElement).href = `census.html#n=${p.id}`;
+  const rec = $('#dRecord') as HTMLAnchorElement;
+  rec.href = `census.html#n=${p.id}`;
+  rec.textContent = 'OPEN THE RECORD ↗';
+  const atl = $('#dAtlas') as HTMLAnchorElement;
+  atl.hidden = false; atl.textContent = 'ON THE ATLAS ↗'; atl.removeAttribute('target');
   const dShare = $('#dShare') as HTMLButtonElement | null;
   if (dShare) dShare.onclick = () => share({ title: `${fmt(p)} · ${p.t}`, text: `${fmt(p)} · ${p.t}. ${p.story || ''} NEW YORKERS by MLow, hanging in ${ROOMS[state.room].name}.`, url: `${location.origin}${location.pathname.replace(/museum\.html$/, '')}census.html#n=${p.id}` });
   ($('#dAtlas') as HTMLAnchorElement).href = `map.html#p=${p.id}`;
@@ -1038,22 +1072,105 @@ function openDetail(p: Piece) {
   d.classList.add('open');
 }
 
+/* ---------- an honorary portrait (room 183, the Hall of Fame) ----------
+   The honoraries are not census pieces: they have no number, no era and no record page, so the
+   room hangs them from its own atlases and a tap on one opens this card instead, with the
+   honoree's page on the site and a walk to the portrait. */
+type HonorHit = { id: string; n: string; h: string; t: string; c: string; l: string; b?: string; cat?: string; at?: T.Vector3; look?: T.Vector3 };
+function openHonor(e: HonorHit) {
+  const d = $('#detail');
+  d.querySelector('img')!.setAttribute('src', `assets/honoraries/${e.l}`);
+  $('#dNum').textContent = 'HONORARY NEW YORKER' + (e.cat ? ' · ' + e.cat.toUpperCase() : '');
+  $('#dTitle').textContent = e.n;
+  $('#dMeta').innerHTML = `${esc(e.t.toUpperCase())}${e.h ? '<br>' + esc(e.h) : ''}`;
+  $('#dStory').textContent = e.b ? e.b + '.' : '';
+  const canal = $('#dCanal') as HTMLButtonElement | null;
+  if (canal) canal.hidden = true;
+  const rec = $('#dRecord') as HTMLAnchorElement;
+  rec.href = `h/${encodeURIComponent(e.id)}`;
+  rec.textContent = 'THE HONOREE ↗';
+  /* the atlas link becomes the honoree's X profile */
+  const x = $('#dAtlas') as HTMLAnchorElement, handle = (e.h || '').replace(/^@/, '');
+  x.hidden = !/^[A-Za-z0-9_]{1,15}$/.test(handle);
+  x.href = `https://x.com/${handle}`; x.target = '_blank'; x.rel = 'noopener'; x.textContent = 'ON X ↗';
+  const dPrint = $('#dPrint') as HTMLAnchorElement | null;
+  if (dPrint) dPrint.hidden = true;
+  ($('#dHang') as HTMLButtonElement).hidden = true;
+  const url = `${location.origin}${location.pathname.replace(/museum(\.html)?$/, '')}h/${encodeURIComponent(e.id)}?wall`;
+  const dShare = $('#dShare') as HTMLButtonElement | null;
+  if (dShare) dShare.onclick = () => share({ title: `${e.n} · ${e.t}`, text: `${e.n}, portrait by MLow, an honorary New Yorker: ${e.t}. Hanging in ${ROOMS[state.room].name}.`, url });
+  const go = $('#dGo') as HTMLButtonElement;
+  go.hidden = !e.at;
+  go.onclick = () => { if (e.at) walkTo(e.at, e.look); d.classList.remove('open'); };
+  d.classList.add('open');
+}
+
+/* Stand in front of one honoree's portrait. Who hangs where arrives with hang.json after the room is
+   built, so this waits for it (up to ten seconds), then puts the camera at the portrait's viewing spot,
+   pulls the full size painting forward and names the honoree. */
+function standAtHonor(id: string) {
+  honorWant = '';
+  const k0 = kit;
+  let tries = 0;
+  const look = () => {
+    if (kit !== k0 || !build) return;
+    const entries = (kit as unknown as { honorEntries?: (HonorHit | null)[] }).honorEntries;
+    const i = entries ? entries.findIndex((e) => e && e.id === id) : -1;
+    if (i < 0 || !entries) { if (++tries < 50) setTimeout(look, 200); return; }
+    const e = entries[i]!;
+    if (!e.at || !e.look) return;
+    (kit as unknown as { honorForce?: Set<number> }).honorForce?.add(i);
+    camera.position.set(e.at.x, (build.floorY ? build.floorY(e.at.x, e.at.z) : 0) + build.eye, e.at.z);
+    camera.lookAt(e.look);
+    const eu = new T.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
+    yaw = eu.y; pitch = eu.x; goal = null; state.tour = false; paintTour();
+    const el = $('#loading');
+    el.textContent = `${e.n.toUpperCase()} · ON THE WALL`; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3200);
+  };
+  look();
+}
+
 /* ---------- panels ---------- */
+/* The walkable galleries that live outside the museum engine, listed in the ROOMS menu beside the rooms.
+   Each opens its own page (island.html, basement.html, night.html, movies.html are built by build_galleries.py). */
+const GALLERIES = [
+  { href: 'movies', name: 'ON LOCATION: New York at the Movies', area: 'A WALKABLE GALLERY · 105 FILM SETS', color: '#ff4fa3', mood: 'Every set hides a trick',
+    description: 'A hundred and five scenes New York gave the movies, rebuilt and recast with New Yorkers: the mirror in Hell\'s Kitchen, the floor piano, the firehouse, the rotunda, the rear window, the Copa kitchen, the crosswalk on Sixth and the top of the world.' },
+  { href: 'night', name: 'THE MARKS: One Night in the City', area: 'A WALKABLE GALLERY · RELEASE ONE', color: '#f5c542', mood: 'Seven rooms, one night',
+    description: 'The avenue at 3 a.m., the Uncounted Deli, Uncounted St station, the census office, an alley off Canal, the theatre and the roof, each opening onto a photograph turned into space. 150 of the uncounted and nine era closers.' },
+  { href: 'basement', name: "YOUR MOM'S BASEMENT", area: 'A WALKABLE GALLERY · QUEENS', color: '#7fd1ff', mood: 'Mom is upstairs. She texts.',
+    description: 'A degen dungeon under a two family house: the den, the card room, the boiler, an infinite hallway, a twelve metre everything bagel and the Rat King\'s court, with New Yorkers on every wall.' },
+  { href: 'airport', name: 'MLOW INTERNATIONAL', area: 'A WALKABLE BUILDING · TERMINAL B BLOSSOM', color: '#00e5ff', mood: 'Baked light, the evil eye from the air',
+    description: 'MLow\'s airport with light baked in Cycles: check in under the logo, a gallery concourse of fLOWers, the gate hub and MLOW AIR on the apron. Room 182 is its museum twin.' },
+  { href: 'spiral', name: 'THE SPIRAL: The SKELLY CUP', area: 'A WALKABLE GALLERY · THE MARBLE RUN', color: '#ffd600', mood: 'One turn of the ramp per tournament',
+    description: 'The SKELLY CUP as a tower you climb: a Guggenheim ramp that is also a marble run, one turn per tournament, with every race painting, the champions, the paddock and the cards on the way up.' },
+  { href: 'momlow', name: 'MoMLOW: The MLow Museum, after MoMA', area: 'A WALKABLE MUSEUM · SIX FLOORS ON 53RD STREET', color: '#ff6b00', mood: 'Admission is free. It always was.',
+    description: 'The real MoMA plan for NEW YORKERS: the atrium open to the skylight with Liberty in it, six floors hung by a curator that learned MLow\'s taste, the glass bridge, the lift, the cabs out front, the sculpture garden, and THE COUNTED, every collected New Yorker on one wall.' },
+  { href: 'island', name: 'MEME ISLAND', area: 'A WALKABLE GALLERY · THE MEMES BY 6529', color: '#ff2e88', mood: 'Sun and moon on New York time',
+    description: 'All 527 meme cards hung by district and by floor price, 144 crypto era New Yorkers, 66 of MLow\'s meme sculptures, hidden keys and a Windows 98 desktop.' },
+];
 function buildPanels() {
   $('#destGrid').innerHTML = ROOMS.map((r, i) => `<button data-i="${i}" style="--c:${r.color}"><span class="pic"><img loading="lazy" src="${roomThumb(r.id)}" alt="${esc(r.name)}"><span class="num">${String(i + 1).padStart(2, '0')}</span>${FACTS[r.id]?.year ? `<span class="yr">${esc(FACTS[r.id].year!)}</span>` : ''}</span><span class="txt"><small>${esc(r.area)}</small><strong>${esc(r.name)}</strong><p>${esc(r.description)}</p><em>${esc(r.mood)} · ${placeCount(r.id).toLocaleString('en-US')} ${newRoomIds.has(r.id) ? 'thematically matched' : 'recorded here'}</em></span></button>`).join('');
-  $('#destGrid').querySelectorAll('button').forEach((b) => (b.onclick = () => { closePanels(); setRoom(Number(b.dataset.i)); }));
+  $('#destGrid').insertAdjacentHTML('afterbegin', GALLERIES.map((g) => `<button data-g="${g.href}" style="--c:${g.color}"><span class="pic"><img loading="lazy" src="assets/${g.href}/poster.jpg" alt="${esc(g.name)}"><span class="num">WALK</span></span><span class="txt"><small>${esc(g.area)}</small><strong>${esc(g.name)}</strong><p>${esc(g.description)}</p><em>${esc(g.mood)} · opens its own page</em></span></button>`).join(''));
+  $('#destGrid').querySelectorAll<HTMLButtonElement>('button').forEach((b) => (b.onclick = () => { if (b.dataset.g) { location.href = b.dataset.g; return; } closePanels(); setRoom(Number(b.dataset.i)); }));
   const q = $('#destSearch') as HTMLInputElement | null;
   let roomFilter = 'start';
   const filterRooms = () => {
     const v = q?.value.trim().toLowerCase() || '';
     let found = 0;
     $('#destGrid').querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
+      if (b.dataset.g) {
+        const g = GALLERIES.find((x) => x.href === b.dataset.g)!;
+        const hit = v ? (g.name + ' ' + g.area + ' ' + g.description + ' ' + g.mood).toLowerCase().includes(v) : roomFilter !== 'landmarks' && roomFilter !== 'new';
+        b.hidden = !hit; if (hit) found++; return;
+      }
       const r = ROOMS[Number(b.dataset.i)];
-      const matches = v ? (r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v) : roomFilter === 'all' || (roomFilter === 'landmarks' ? LANDMARK_ROOMS.some(n=>n.id===r.id) : roomFilter === 'new' ? NEW_WORKING_ROOMS.some(n=>n.id===r.id) : START_ROOMS.includes(r.id));
+      const matches = v ? roomFilter !== 'galleries' && (r.name + ' ' + r.area + ' ' + r.description + ' ' + r.mood).toLowerCase().includes(v) : roomFilter === 'all' || (roomFilter === 'galleries' ? false : roomFilter === 'landmarks' ? LANDMARK_ROOMS.some(n=>n.id===r.id) : roomFilter === 'new' ? NEW_WORKING_ROOMS.some(n=>n.id===r.id) : START_ROOMS.includes(r.id));
       b.hidden = !matches;
       if (matches) found++;
     });
-    $('#destResult').textContent = found ? `${found} rooms${v ? ' found' : roomFilter === 'start' ? ' to start with' : ' to explore'}` : 'No rooms found. Try a neighborhood or clear your search.';
+    $('#destResult').textContent = found ? `${found} ${roomFilter === 'galleries' && !v ? 'walkable galleries' : 'rooms'}${v ? ' found' : roomFilter === 'start' ? ' to start with' : ' to explore'}` : 'No rooms found. Try a neighborhood or clear your search.';
   };
   if (q) q.oninput = filterRooms;
   document.querySelectorAll<HTMLButtonElement>('#destFilters button').forEach(b => b.onclick = () => {
@@ -1195,9 +1312,12 @@ function flash(msg: string) {
   setTimeout(() => el.classList.remove('show'), 1400);
 }
 function roomUrl(i: number) { return `${location.origin}${location.pathname}#room=${ROOMS[i].id}`; }
+/* The link a share hands out: rooms/<id>?walk. X and iMessage read that page's card (a picture of this room);
+   a person who taps it is sent straight into the room by the page itself. A hash link cannot carry a card. */
+function roomShareUrl(i: number) { return `${location.origin}${location.pathname.replace(/museum(\.html)?$/, '')}rooms/${ROOMS[i].id}?walk`; }
 function shareRoom() {
   const def = ROOMS[state.room];
-  share({ title: `${def.name} · THE MUSEUM · NEW YORKERS by MLow`, text: `I am standing in ${def.name} (${def.area}) in THE MUSEUM, ${ROOMS.length} walkable New York rooms hung with ${C.pieces.toLocaleString('en-US')} painted New Yorkers.`, url: roomUrl(state.room) });
+  share({ title: `${def.name} · THE MUSEUM · NEW YORKERS by MLow`, text: `I am standing in ${def.name} (${def.area}) in THE MUSEUM, ${ROOMS.length} walkable New York rooms hung with ${C.pieces.toLocaleString('en-US')} New Yorkers.`, url: roomShareUrl(state.room) });
 }
 
 /* ---------- SAVE IT, POST IT ---------- */
@@ -1258,7 +1378,7 @@ async function snapSave() {
 function snapPost() {
   const def = ROOMS[state.room];
   const text = `I AM STANDING IN ${def.name.toUpperCase()}\n\nTHE MUSEUM, ${ROOMS.length} walkable New York rooms by MLow 🗽`;
-  const url = `${SITE}/museum#room=${def.id}`;
+  const url = `${SITE}/rooms/${def.id}?walk`;  // the room's own card on X, and a tap walks straight in
   window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'noopener');
 }
 
@@ -1300,7 +1420,7 @@ function spin(auto = false) {
     spinning = false;
     ($('#slotGo') as HTMLButtonElement).onclick = () => { slot.classList.remove('open'); setRoom(pick); };
     ($('#slotAgain') as HTMLButtonElement).onclick = () => spin();
-    ($('#slotShare') as HTMLButtonElement).onclick = () => share({ title: `I landed in ${r.name}`, text: `I pulled the lever on THE MUSEUM and landed in ${r.name} (${r.area}). ${ROOMS.length} New York rooms, ${C.pieces.toLocaleString('en-US')} painted New Yorkers. Your turn.`, url: `${location.origin}${location.pathname}#room=random` });
+    ($('#slotShare') as HTMLButtonElement).onclick = () => share({ title: `I landed in ${r.name}`, text: `I pulled the lever on THE MUSEUM and landed in ${r.name} (${r.area}). ${ROOMS.length} New York rooms, ${C.pieces.toLocaleString('en-US')} New Yorkers. Your turn.`, url: `${location.origin}${location.pathname}#room=random` });
     if (auto) setTimeout(() => { if (slot.classList.contains('open') && !spinning) { slot.classList.remove('open'); setRoom(pick); } }, 2600);
   };
   step();
@@ -1337,11 +1457,42 @@ function boot() {
   textureBudget(quality === 'low');
   const openN = readHash();
   buildPanels();
-  dealFirstRooms(params.get('export') === 'all' ? ROOMS[state.room].id : roomFromHash);  // a batch export keeps the room it was sent to
+  /* Welcome back: a plain visit to the museum deals the room this browser was last in first (2026-10-06) */
+  let back = '';
+  if (!roomFromHash && !spinOnEnter && !MINT.room && !params.get('export')) {
+    try { const t = JSON.parse(localStorage.getItem('ny_trail_room') || 'null'); const r = t ? ROOMS.findIndex((x) => x.id === t.id) : -1; if (r >= 0) { state.room = r; back = ROOMS[r].id; } } catch { /* private mode */ }
+  }
+  dealFirstRooms(params.get('export') === 'all' ? ROOMS[state.room].id : roomFromHash || back);  // a batch export keeps the room it was sent to
   const reroll = $('#firstAgain') as HTMLButtonElement | null;
   if (reroll) reroll.onclick = () => { roomFromHash = ''; dealFirstRooms(); };
+  /* The whole list from the door (2026-10-12): every room and every walkable gallery with its thumbnail, and a search,
+     for anyone who does not want to be dealt three. museum#all opens it straight away; the home page links there. */
+  const allGrid = $('#allGrid'), allBox = $('#enterAll'), allBtn = $('#firstAll'), allSearch = $('#allSearch') as HTMLInputElement | null;
+  if (allGrid && allSearch) {
+    allGrid.innerHTML = GALLERIES.map((g) => `<button data-g="${g.href}" style="--c:${g.color}"><img loading="lazy" src="assets/${g.href}/poster.jpg" alt=""><span class="num">WALK</span><strong>${esc(g.name)}</strong><small>${esc(g.area)}</small></button>`).join('')
+      + ROOMS.map((r, i) => `<button data-i="${i}" style="--c:${r.color}"><img loading="lazy" src="${roomThumb(r.id)}" alt=""><span class="num">${String(i + 1).padStart(2, '0')}</span><strong>${esc(r.name)}</strong><small>${esc(r.area)}</small></button>`).join('');
+    allGrid.querySelectorAll<HTMLButtonElement>('button').forEach((b) => (b.onclick = () => {
+      if (b.dataset.g) { location.href = b.dataset.g; return; }
+      state.room = Number(b.dataset.i); spinOnEnter = false; roomFromHash = '';
+      dealFirstRooms(ROOMS[state.room].id); allBox.hidden = true; allBtn.setAttribute('aria-expanded', 'false');
+      ($('#enterBtn') as HTMLButtonElement).click();
+    }));
+    const filterAll = () => {
+      const v = allSearch.value.trim().toLowerCase(); let n = 0;
+      allGrid.querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
+        const g = b.dataset.g ? GALLERIES.find((x) => x.href === b.dataset.g)! : ROOMS[Number(b.dataset.i)];
+        const hit = !v || (g.name + ' ' + g.area + ' ' + g.mood + ' ' + g.description).toLowerCase().includes(v);
+        b.hidden = !hit; if (hit) n++;
+      });
+      $('#allCount').textContent = `${n} OF ${ROOMS.length + GALLERIES.length}`;
+    };
+    allSearch.oninput = filterAll;
+    const showAll = (on: boolean) => { allBox.hidden = !on; allBtn.setAttribute('aria-expanded', String(on)); if (on) { filterAll(); allBox.scrollIntoView({ block: 'start', behavior: 'smooth' }); } };
+    allBtn.onclick = () => showAll(allBox.hidden);
+    if (new URLSearchParams(location.hash.replace(/^#/, '')).has('all')) showAll(true);
+  }
   $('#enterCount').innerHTML = `<b>${C.pieces.toLocaleString('en-US')}</b> NEW YORKERS · <b>${ROOMS.length}</b> ROOMS · <b>${C.eras}</b> ERAS`;
-  $('#enterRoom').textContent = (spinOnEnter ? 'THE CITY WILL PICK YOUR ROOM' : 'FIRST STOP · ' + ROOMS[state.room].area);
+  $('#enterRoom').textContent = (spinOnEnter ? 'THE CITY WILL PICK YOUR ROOM' : back ? 'WELCOME BACK · ' + ROOMS[state.room].name.toUpperCase() : 'FIRST STOP · ' + ROOMS[state.room].area);
   if (eggFound.size) $('#enterCount').innerHTML += ` · <b>${eggFound.size}</b> LANDMARKS FOUND`;
   const sub = $('#enterSub'); if (sub) sub.textContent = `${ROOMS.length} ROOMS · THE CITY IS THE GALLERY`;
   if (touch) document.body.classList.add('touch');
@@ -1418,6 +1569,14 @@ function boot() {
   if (MINT.room) { $('#btnDest').hidden = true; $('#changeRoom').hidden = true; document.body.classList.add('minted'); }
   if (params.has('debug')) $('#debug').hidden = false;
   if (params.has('auto')) $('#enterBtn').click();
+  /* A link to one room goes straight into it (MLow 2026-10-06): someone sent to the honoraries
+     should not be dealt three rooms and asked to choose. ?noauto keeps the old entrance. */
+  else if (roomFromHash && !MINT.room && !params.get('export') && !params.has('noauto')) {
+    for (const sel of ['#firstRooms', '#firstAgain', '#enterSpin', '#enter .breath']) { const el = document.querySelector<HTMLElement>(sel); if (el) el.style.display = 'none'; }
+    $('#enterRoom').textContent = 'OPENING · ' + ROOMS[state.room].name.toUpperCase();
+    $('#enterBtn').textContent = 'Opening ' + ROOMS[state.room].name + '…';
+    $('#enterBtn').click();
+  }
 }
 /* The next mount along that actually has a work on it. A mount too small to hang
    stays empty, and the tour used to stop in front of the bare wall. */
@@ -1433,5 +1592,5 @@ function paintTour() {
   $('#btnTour').textContent = state.tour ? '❚❚ Pause tour' : '▶ Guided tour';
 }
 void frame;
-(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, openDetail, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, takeSnap, FACTS, ROOMS, DAY, HOUR };
+(window as unknown as { __museum: unknown }).__museum = { state, get camera() { return camera; }, get kit() { return kit; }, get build() { return build; }, get renderer() { return renderer; }, get fx() { return fx; }, focus, tap, walkTo, openEgg, openDetail, openHonor, setRoom, setHang, setPage, exportRoom, exportAll, spin, shareRoom, takeSnap, FACTS, ROOMS, DAY, HOUR };
 boot();

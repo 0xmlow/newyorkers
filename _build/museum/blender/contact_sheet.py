@@ -1,4 +1,6 @@
-"""Render every GLB in a folder with Workbench and tile them into one PNG so the kit can be checked at a glance."""
+"""Render every GLB in a folder with Workbench and tile them into one PNG so the kit can be checked at a glance.
+SHEET_COLOR=TEXTURE shows baked textures (AI props) instead of flat material colours.
+The camera sits front right: the export's forward (three.js +Z, Blender -Y) faces it."""
 import bpy, os, sys, math, glob
 from mathutils import Vector
 args = sys.argv[sys.argv.index("--") + 1:]
@@ -18,7 +20,7 @@ for name in names:
     d = size * 1.1; co.location = c + Vector((d * 0.8, -d * 0.9, d * 0.55)); co.rotation_euler = (math.radians(63), 0, math.radians(41.5))
     direction = c - co.location; co.rotation_euler = direction.to_track_quat('-Z', 'Y').to_euler()
     bpy.context.scene.camera = co
-    sc = bpy.context.scene; sc.render.engine = "BLENDER_WORKBENCH"; sc.display.shading.light = "STUDIO"; sc.display.shading.color_type = "MATERIAL"; sc.display.shading.show_shadows = True
+    sc = bpy.context.scene; sc.render.engine = "BLENDER_WORKBENCH"; sc.display.shading.light = "STUDIO"; sc.display.shading.color_type = os.environ.get("SHEET_COLOR", "MATERIAL"); sc.display.shading.show_shadows = True
     sc.render.resolution_x = sc.render.resolution_y = 360; sc.render.film_transparent = False
     sc.world = bpy.data.worlds.new("w"); sc.world.color = (0.86, 0.88, 0.9)
     sc.render.filepath = os.path.join(OUT, name + ".png"); bpy.ops.render.render(write_still=True)

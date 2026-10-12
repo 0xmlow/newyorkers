@@ -18,6 +18,12 @@ MEDIA = os.path.join(OUT, "media")
 FF = "/Users/degens/Library/Python/3.9/lib/python/site-packages/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1"
 GIF_CAP = 18 * 1024 * 1024  # host-safe per-file cap
 
+# Several sessions build and deploy from the one package folder. Hold the package lock for the whole
+# run so a build can never rmtree n/ under someone else's wrangler upload (2026-10-09 18:28).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from package_lock import acquire
+acquire("build_deploy.py")
+
 os.makedirs(MEDIA, exist_ok=True)
 
 def mkey(rel):
@@ -95,7 +101,7 @@ SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.ht
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
               "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html", "markup.html", "survey.html", "mosaic.html",
-              "states.html", "stop.html", "arcade.html", "island.html", "basement.html", "skelly.html")
+              "states.html", "stop.html", "arcade.html", "island.html", "basement.html", "skelly.html", "marks.html", "night.html", "movies.html", "airport.html", "spiral.html", "mlowtar.html", "momlow.html")
 # favicon.ico and the touch icon are real files at the root (made from the eye mark with its white corner
 # cropped away); site.webmanifest names them so a phone can pin the site.
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
@@ -194,7 +200,7 @@ def sync_dir(src, dst):
             shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
 
 
-for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly", "ui"):
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly", "ui", "marks", "night", "movies", "airport", "spiral", "mlowtar", "momlow"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite
@@ -361,6 +367,8 @@ with open(os.path.join(OUT, "_headers"), "w") as f:
 /assets/glitch/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/motion/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/marks/*
   Cache-Control: public, max-age=31536000, immutable
 /assets/keystone/*
   Cache-Control: public, max-age=31536000, immutable

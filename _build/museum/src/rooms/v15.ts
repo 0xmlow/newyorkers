@@ -16,6 +16,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero, standIn, hide } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -356,6 +357,12 @@ export const cityhallloop: RoomDef = {
         if (i === 5) for (const s of [-1, 1]) { const r = new T.Mesh(new T.SphereGeometry(0.1, 8, 6), new T.MeshBasicMaterial({ color: 0xff2a1a })); r.position.set(s * 0.95, 1.45, -L / 2 - 0.02); g.add(r); }
         k.add(g); cars.push(g);
       }
+      /* 2026-10-09: the hero car (a stainless R142 type, Tripo from a GPT Image concept) replaces the four
+         box parts of each car; the head and tail lamps stay. Stretched to the box car's envelope. */
+      void hero(k, 'h_subway_car', { box: [2.9, 3.5, L] }).then((h) => {
+        if (!h) return;
+        cars.forEach((g, i) => { for (let j = 0; j < 4; j++) g.children[j].visible = false; const c = i ? h.clone() : h; c.position.y = 0.15; g.add(c); });
+      });
     }
     const loop = k.spline(Array.from({ length: 36 }, (_, i) => at(RT, (i / 36) * PI * 2, -0.9)), true);
     let trainIn = false;
@@ -569,14 +576,22 @@ export const goldvault: RoomDef = {
     for (let s = 0; s < 2; s++) k.box(5.0 - s * 0.6, 0.15, 1.2 - s * 0.4, 0, 0.075 + s * 0.15, 1.0 - s * 0.2, limeDark);
     for (const s of [-1, 1]) { const d = k.box(0.1, 5.8, 1.7, s * 1.72, 2.9, -0.95, bronze); d.rotation.y = s * 0.1; }
     for (const s of [-1, 1]) {
-      const x = s * 3.6, y = 5.2, z = 0.75;
+      const x = s * 3.6, y = 5.2, z = 0.75, mark = k.objects.length;
       k.bar(v(x - s * 0.6, y - 0.9, 0.1), v(x, y - 0.5, z), 0.1, 0.16, iron);
       for (const dx of [-0.34, 0.34]) for (const dz of [-0.34, 0.34]) k.box(0.05, 1.5, 0.05, x + dx, y + 0.35, z + dz, iron);
       for (const yy of [y - 0.4, y + 1.1]) k.box(0.78, 0.06, 0.78, x, yy, z, iron);
       k.lathe([[0.42, 0], [0.3, 0.25], [0.1, 0.5], [0.03, 0.7]], x, y + 1.12, z, iron, 8);
       k.lathe([[0.36, 0], [0.42, -0.08], [0.1, -0.3]], x, y - 0.42, z, iron, 8);
-      const core = k.mesh(new T.SphereGeometry(0.2, 12, 8), k.glow(0xffd8a0), x, y + 0.35, z, true); void core;
+      const core = k.mesh(new T.SphereGeometry(0.2, 12, 8), k.glow(0xffd8a0), x, y + 0.35, z, true);
       k.point(x, y + 0.3, z + 0.3, 0xffd8a0, 16, 12);
+      /* 2026-10-09: the hero lantern, forged iron and amber glass on its scrolled bracket, wall plate
+         against the facade; the box and lathe lantern above stays only if the GLB fails */
+      const old = standIn(k, mark);
+      void hero(k, 'h_yellin_lantern', { height: 2.7 }).then((h) => {
+        if (!h) return;
+        hide(old); core.visible = false;
+        h.position.set(x, y - 0.95, 0.1 + h.userData.size.z / 2); k.add(h);
+      });
     }
 
     /* ---- the banking hall: marble floor, stone walls and piers, the iron screen, the elevator at the back ---- */

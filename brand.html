@@ -55,7 +55,7 @@
 </style>
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/brand">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, brand kit, MLow logo, brand guidelines">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, art census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, brand kit, MLow logo, brand guidelines">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
@@ -169,7 +169,7 @@
 NY.nav(null); NY.foot();
 NY.shareRow(document.getElementById("share"),{title:"NEW YORKERS brand",text:"The NEW YORKERS by MLow brand kit."});
 const n=NY.num(NY.C.pieces), eras=(window.NY_COUNTS&&NY_COUNTS.eras.length)||19, rooms=(window.NY_COUNTS&&NY_COUNTS.rooms)||111;
-const boiler=`NEW YORKERS by MLow is a living painted census of New York City: ${n} characters and counting across ${eras} eras, every one with a two sentence story and a place on the atlas, painted in a style where flowers bloom with human eyes because the city is watching back. The collection lives on a site with a walkable museum of ${rooms} New York rooms and a reading room of sourced city history, and mints as dynamic tokens on OpenSea and Transient Labs, where the artist appends states and the collector keeps every one. MLow is a New York City born AI generative artist. Every New Yorker gets a portrait. Even the villains.`;
+const boiler=`NEW YORKERS by MLow is a living art census of New York City: ${n} characters and counting across ${eras} eras, every one with a two sentence story and a place on the atlas, painted in a style where flowers bloom with human eyes because the city is watching back. The collection lives on a site with a walkable museum of ${rooms} New York rooms and a reading room of sourced city history, and mints as dynamic tokens on OpenSea and Transient Labs, where the artist appends states and the collector keeps every one. MLow is a New York City born AI generative artist. Every New Yorker gets a portrait. Even the villains.`;
 document.getElementById("boilerText").textContent=boiler;
 document.getElementById("copyBoiler").onclick=async()=>{try{await navigator.clipboard.writeText(boiler);NY.toast("Boilerplate copied.");}catch(e){NY.toast("Select and copy the text.");}};
 </script>

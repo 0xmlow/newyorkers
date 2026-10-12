@@ -66,3 +66,15 @@ assets/island/*
 !assets/island/poster.jpg
 assets/basement/*
 !assets/basement/poster.jpg
+# THE MARKS GALLERY 2026-10-09 (one night in the city), copied in by build_galleries.py
+assets/night/*
+!assets/night/poster.jpg
+# ON LOCATION 2026-10-10 (New York at the movies), copied in by build_galleries.py
+assets/movies/*
+!assets/movies/poster.jpg
+# MLOW INTERNATIONAL WALK 2026-10-09, copied in by build_galleries.py
+assets/airport/*
+!assets/airport/poster.jpg
+# MoMLOW 2026-10-12 (The MLow Museum, after MoMA), copied in by build_galleries.py; GitHub branch momlow
+assets/momlow/*
+!assets/momlow/poster.jpg

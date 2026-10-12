@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- films for @n3wyorkers. DRY RUN as written: it fills _build/post/outbox/ and sends nothing.
+       To arm it, add <string>--post</string> after the script path below and reload the agent. -->
+  <key>Label</key><string>com.n3wyorkers.post.films</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/_build/post/films.py</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/_build/post</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>TZ</key><string>America/New_York</string>
+    <key>PATH</key><string>/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin</string>
+  </dict>
+  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>0</integer></dict>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/_build/post/logs/films.log</string>
+  <key>StandardErrorPath</key><string>/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/_build/post/logs/films.log</string>
+</dict>
+</plist>

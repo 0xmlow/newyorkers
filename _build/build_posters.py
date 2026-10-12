@@ -18,6 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE);
 ART = os.path.join(ROOT, "CHATGPT ART 2026-09-30")
 OUT = os.path.join(SITE, "assets", "posters"); os.makedirs(OUT, exist_ok=True)
 C = cfg(); URL = C["siteUrl"]
+CUT = json.load(open(os.path.join(HERE, "posters_cut.json")))  # curated off the wall, see its notes
 
 
 def render(src, slug):
@@ -42,7 +43,7 @@ sm, lg = render(os.path.join(ART, "street_posters", "LAUNCH-hero-poster.png"), "
 items.append({"k": "street", "s": sm, "l": lg, "t": "The city is watching.", "sub": "The launch poster"})
 for f in sorted(os.listdir(os.path.join(ART, "street_posters"))):
     m = re.match(r"CLASSIC-new-yorkers-poster-(\d+)\.png$", f)
-    if not m: continue
+    if not m or int(m.group(1)) in CUT["street"]: continue
     n = int(m.group(1)); sm, lg = render(os.path.join(ART, "street_posters", f), f"street{n:02d}")
     items.append({"k": "street", "s": sm, "l": lg, "t": heads[n].capitalize() if heads[n].isupper() else heads[n], "sub": f"Street poster {n}"})
 
@@ -52,7 +53,7 @@ seen = set()
 for kind, label in (("poster", "movie"), ("card", "card"), ("meme", "meme")):
     for p in sorted((p for p in DATA["pieces"] if p.get("fx")), key=lambda p: p["n"]):
         for f in p["fx"]:
-            if f["t"] != kind: continue
+            if f["t"] != kind or (kind == "card" and p["id"] in CUT["card_pieces"]): continue
             u = f"assets/t/{f['k']}.jpg"
             items.append({"k": label, "s": u, "l": u, "t": p["t"], "sub": f"NO. {p['n']:04d}" + (", Keystone Legendary" if kind == "card" else ""), "id": p["id"]})
             seen.add(f["k"])
@@ -62,14 +63,18 @@ CG = json.load(open(os.path.join(HERE, "honoraries", "chatgpt_cards.json")))["pe
 CARDS = json.load(open(os.path.join(HERE, "honoraries", "cards.json")))
 PEOPLE = {p["id"]: p for p in json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))["people"]}
 for pid in sorted(CG, key=lambda i: CG[i]["card"]):
-    if pid not in PEOPLE: continue
+    if pid not in PEOPLE or pid in CUT["honorary"]: continue
     u = f"assets/cards/{CARDS[pid]['card']}"
     items.append({"k": "card", "s": u, "l": u, "t": PEOPLE[pid]["name"], "sub": "Honorary New Yorker", "h": pid})
 
 # the top 50 memes: no piece, just the city
-for r in csv.DictReader(open(os.path.join(ART, "memes_top50", "catalog.csv"))):
+for r in (csv.DictReader(open(os.path.join(ART, "memes_top50", "catalog.csv"))) if CUT["memes_top50"] else []):
     sm, lg = render(os.path.join(ART, "memes_top50", r["file"]), "meme" + os.path.splitext(r["file"])[0][:2])
     items.append({"k": "meme", "s": sm, "l": lg, "t": r["line_1"].capitalize(), "sub": r["line_2"].capitalize()})
+
+# the wall reserves each tile's box before its image arrives, so nothing jumps and lazy loading can see where tiles are
+for i in items:
+    with Image.open(os.path.join(SITE, i["s"])) as im: i["w"], i["h"] = im.size
 
 # stale renders out
 keep = {os.path.basename(i[x]) for i in items for x in ("s", "l") if i[x].startswith("assets/posters/")}
@@ -84,7 +89,7 @@ body = f"""
 <section class="wrap" style="padding-top:64px;padding-bottom:8px">
   <div class="kicker" style="color:var(--acid)">Off the wall</div>
   <h1 class="h-xl" style="margin-top:14px;max-width:1000px">Posters, cards and memes.</h1>
-  <p class="lede" style="margin-top:16px;max-width:820px">The census, pasted up. Street posters for the whole city, a movie poster for a New Yorker, a card for a Keystone or an honoree, a meme for when the train is late. Tap any one to open it. The ones made from a painting take you to it.</p>
+  <p class="lede" style="margin-top:16px;max-width:820px">The census, pasted up. Street posters for the whole city, a movie poster for a New Yorker, a card for a Keystone or an honoree, a meme for when the train is late. Tap any one to open it. The ones made from a piece take you to it.</p>
   <div class="ptabs" role="tablist">{"".join(f'<button type="button" role="tab" data-k="{k}" aria-selected="{"true" if k == "all" else "false"}">{esc(t)} <span>{n}</span></button>' for k, t, n in TABS)}</div>
 </section>
 <section class="wrap" style="padding-top:18px;padding-bottom:90px"><div class="pwall" id="pwall"></div></section>
@@ -105,7 +110,7 @@ css = """
 .ptabs button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .pwall{columns:5 220px;column-gap:14px}
 .pwall a{display:block;break-inside:avoid;margin:0 0 14px;border-radius:10px;overflow:hidden;border:1px solid var(--divider);background:var(--card);cursor:zoom-in;text-decoration:none}
-.pwall img{display:block;width:100%;height:auto}
+.pwall img{display:block;width:100%;height:auto;background:#141418}
 .pwall .cap{padding:9px 11px 11px;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
 .pwall .cap b{display:block;font-family:var(--sans);font-size:13px;letter-spacing:0;text-transform:none;color:var(--cloud);font-weight:500;margin-bottom:3px}
 .plb{position:fixed;inset:0;z-index:2147483600;background:rgba(8,8,10,.94);display:flex;align-items:center;justify-content:center;padding:24px 70px}
@@ -128,7 +133,7 @@ function draw(k){
   cur=I.filter(function(x){return k==='all'||x.k===k;}); wall.innerHTML='';
   cur.forEach(function(x,i){
     var a=document.createElement('a'); a.href=B+x.l;
-    a.innerHTML='<img loading="lazy" decoding="async" alt="">'+'<div class="cap"><b></b>'+KIND[x.k]+(x.sub?' · '+x.sub:'')+'</div>';
+    a.innerHTML='<img decoding="async" alt="" width="'+x.w+'" height="'+x.h+'"'+(i<10?' fetchpriority="high"':' loading="lazy"')+'>'+'<div class="cap"><b></b>'+KIND[x.k]+(x.sub?' · '+x.sub:'')+'</div>';
     a.querySelector('img').src=B+x.s; a.querySelector('img').alt=x.t+', '+KIND[x.k].toLowerCase(); a.querySelector('b').textContent=x.t;
     a.addEventListener('click',function(e){e.preventDefault();open(i);}); wall.appendChild(a);
   });
@@ -138,7 +143,7 @@ function open(i){
   document.getElementById('plbImg').src=B+x.l; document.getElementById('plbImg').alt=x.t;
   document.getElementById('plbT').textContent=x.t; document.getElementById('plbS').textContent=KIND[x.k]+(x.sub?' · '+x.sub:'');
   var A=document.getElementById('plbA');
-  if(x.id){A.hidden=false;A.href=B+'census.html#n='+x.id;A.textContent='Open the painting';}
+  if(x.id){A.hidden=false;A.href=B+'census.html#n='+x.id;A.textContent='Open the piece';}
   else if(x.h){A.hidden=false;A.href=B+'h/'+x.h+'.html';A.textContent='The honoree';}
   else A.hidden=true;
   lb.hidden=false; document.body.style.overflow='hidden';

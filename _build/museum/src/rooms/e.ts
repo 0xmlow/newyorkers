@@ -36,32 +36,43 @@ export const unisphere: RoomDef = {
     k.keepOut.push({ x: C.x, z: C.z, r: 18.2 });
     // the globe: meridians, parallels, continents, orbits
     const G = 11, GY = 15;
-    for (let j = -5; j <= 5; j++) { const t = (j * PI) / 12, r = G * Math.cos(t); k.torus(r, 0.07, C.x, GY + G * Math.sin(t), C.z, steel, 72).rotation.x = PI / 2; }
-    for (let j = 0; j < 12; j++) { const ring = k.torus(G, 0.07, C.x, GY, C.z, steel, 72); ring.rotation.y = (j * PI) / 12; }
+    /* the globe leans 23.5 degrees, the tilt of the Earth's axis; every part of it is turned about its centre */
+    const TILT = new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), (23.5 * PI) / 180);
+    const GC = v(C.x, GY, C.z);
+    const tilt = (o: T.Object3D) => { o.position.sub(GC).applyQuaternion(TILT).add(GC); o.quaternion.premultiply(TILT); return o; };
+    for (let j = -5; j <= 5; j++) { const t = (j * PI) / 12, r = G * Math.cos(t); const ring = k.torus(r, 0.07, C.x, GY + G * Math.sin(t), C.z, steel, 72); ring.rotation.x = PI / 2; tilt(ring); }
+    for (let j = 0; j < 12; j++) { const ring = k.torus(G, 0.07, C.x, GY, C.z, steel, 72); ring.rotation.y = (j * PI) / 12; tilt(ring); }
+    const lands: T.Object3D[] = [];
     const rnd = X.mulberry(17);
     for (const [lat, lon, sx, sy] of [[0.7, -1.6, 2.6, 1.6], [0.2, -1.2, 1.2, 1.2], [-0.4, -1.0, 1.1, 2.2], [0.55, 0.15, 1.6, 1.4], [0.75, 1.1, 3.0, 1.4], [-0.15, 0.35, 1.5, 2.4], [-0.7, 2.2, 1.4, 0.9], [-0.05, 1.9, 0.9, 0.7]]) {
-      const pos = v(C.x + Math.cos(lat) * Math.cos(lon) * G, GY + Math.sin(lat) * G, C.z + Math.cos(lat) * Math.sin(lon) * G);
+      const pos = v(C.x + Math.cos(lat) * Math.cos(lon) * G, GY + Math.sin(lat) * G, C.z + Math.cos(lat) * Math.sin(lon) * G).sub(GC).applyQuaternion(TILT).add(GC);
       const g = new T.IcosahedronGeometry(1, 2), pa = g.attributes.position;
       for (let i = 0; i < pa.count; i++) { const s = 0.8 + rnd() * 0.4; pa.setXYZ(i, pa.getX(i) * s, pa.getY(i) * s, pa.getZ(i) * s); }
       g.computeVertexNormals();
       const o = k.mesh(g, steel, pos.x, pos.y, pos.z);
       o.scale.set(sx, sy, 0.16);
       o.lookAt(C.x, GY, C.z);
+      lands.push(o);
     }
-    for (let j = 0; j < 3; j++) { const ring = k.torus(G + 1.8 + j * 0.4, 0.1, C.x, GY, C.z, steel, 96); ring.rotation.x = 0.45 + j * 0.5; ring.rotation.y = j * 0.9; }
+    /* three orbit rings, believed to stand for Gagarin, Glenn and Telstar */
+    const orbits: T.Object3D[] = [];
+    for (let j = 0; j < 3; j++) { const ring = k.torus(G + 1.8 + j * 0.4, 0.1, C.x, GY, C.z, steel, 96); ring.rotation.x = 0.45 + j * 0.5; ring.rotation.y = j * 0.9; orbits.push(ring); }
     k.lathe([[3.2, 0], [3.2, 0.5], [1.4, 0.8], [1.0, 3.2], [0.6, 3.6]], C.x, 0.9, C.z, dark, 24);
     k.beam(v(C.x, 4.4, C.z), v(C.x + 3.5, GY - 8, C.z + 2), 0.25, dark, 8);
     k.beam(v(C.x, 4.4, C.z), v(C.x - 3.5, GY - 8, C.z + 2), 0.25, dark, 8);
     k.beam(v(C.x, 4.4, C.z), v(C.x, GY - 8, C.z - 4), 0.25, dark, 8);
-    for (let j = 0; j < 36; j++) { const t = (j * PI) / 18; k.curve([v(C.x + Math.cos(t) * 15, 0.9, C.z + Math.sin(t) * 15), v(C.x + Math.cos(t) * 12, 4.5, C.z + Math.sin(t) * 12), v(C.x + Math.cos(t) * 9, 1.2, C.z + Math.sin(t) * 9)], 0.04, glow, 12); }
+    /* 48 fountainheads round the pool edge */
+    for (let j = 0; j < 48; j++) { const t = (j * PI) / 24; k.curve([v(C.x + Math.cos(t) * 15, 0.9, C.z + Math.sin(t) * 15), v(C.x + Math.cos(t) * 12, 4.5, C.z + Math.sin(t) * 12), v(C.x + Math.cos(t) * 9, 1.2, C.z + Math.sin(t) * 9)], 0.04, glow, 12); }
     // the park axes, allees of trees, the pavilion towers, the far city
-    for (const a of [0, PI / 2, PI, PI * 1.5]) {
-      k.box(a % PI === 0 ? 6 : 120, 0.1, a % PI === 0 ? 120 : 6, C.x + Math.cos(a) * 60, 0.03, C.z + Math.sin(a) * 60, pav);
+    /* the walks radiate north, northeast, southeast and south from the globe (north is minus z) */
+    for (const a of [PI * 1.5, PI * 1.75, PI / 4, PI / 2]) {
+      k.box(120, 0.1, 6, C.x + Math.cos(a) * 60, 0.03, C.z + Math.sin(a) * 60, pav).rotation.y = -a;
       for (let d = 30; d <= 90; d += 8) for (const s of [-1, 1]) { const x = C.x + Math.cos(a) * d + Math.sin(a) * s * 6, z = C.z + Math.sin(a) * d - Math.cos(a) * s * 6; k.tree(x, 0, z, { kind: 'column', h: 6, r: 2, leaf: 0x3f6b3a, seed: Math.round(d + s) }); }
     }
-    for (const [x, z, h] of [[60, -80, 26], [66, -70, 18], [70, -86, 22]]) { k.cyl(1.6, h as number, x as number, (h as number) / 2, z as number, dark, 1.2, 16); k.cyl(7, 0.8, x as number, h as number, z as number, steel, 7, 24); k.torus(7, 0.25, x as number, (h as number) + 0.5, z as number, dark, 32).rotation.x = PI / 2; }
-    for (let j = 0; j < 16; j++) { const t = (j * PI) / 8; k.beam(v(62, 0, -84), v(62 + Math.cos(t) * 14, 9, -84 + Math.sin(t) * 14), 0.2, dark, 6); }
-    k.torus(14, 0.35, 62, 9, -84, dark, 48).rotation.x = PI / 2;
+    /* the New York State Pavilion stands south of the Unisphere: its towers and the Tent of Tomorrow */
+    for (const [x, z, h] of [[-14, 44, 26], [-8, 54, 18], [-20, 58, 22]]) { k.cyl(1.6, h as number, x as number, (h as number) / 2, z as number, dark, 1.2, 16); k.cyl(7, 0.8, x as number, h as number, z as number, steel, 7, 24); k.torus(7, 0.25, x as number, (h as number) + 0.5, z as number, dark, 32).rotation.x = PI / 2; }
+    for (let j = 0; j < 16; j++) { const t = (j * PI) / 8; k.beam(v(24, 0, 60), v(24 + Math.cos(t) * 14, 9, 60 + Math.sin(t) * 14), 0.2, dark, 6); }
+    k.torus(14, 0.35, 24, 9, 60, dark, 48).rotation.x = PI / 2;
     k.skyline({ z: -260, count: 30, spacing: 9, scale: 1.5, base: -2, seed: 30, lit: 0.1, glow: 0.2, tint: 0x9aa0a8, rows: 1 });
     k.prop('lamppost', C.x + 26, 0, C.z + 4, { height: 6 });
     k.prop('lamppost', C.x - 26, 0, C.z - 4, { height: 6 });
@@ -95,6 +106,14 @@ export const unisphere: RoomDef = {
       k.box(4.2, 3.4, 0.3, 0, 0, 0, granite).position.set(x - Math.cos(t) * 0.2, 1.9, z - Math.sin(t) * 0.2);
       k.objects[k.objects.length - 1].rotation.y = -t - PI / 2;
     }
+    // easter eggs: the tilt, the orbits, the Mohawk light, the lost island, the old foundation, the grass in Antarctica
+    const W = { name: 'Unisphere, Wikipedia', url: 'https://en.wikipedia.org/wiki/Unisphere' };
+    k.egg(v(C.x, GY, C.z), { id: 'unisphere-tilt', title: 'Earth from 4,000 miles', year: '1964', text: 'The Unisphere is tilted at 23.5 degrees, the angle of the Earth\'s own axis. Seen from the edge of the reflecting pool it shows the planet as it would look from about 4,000 miles away. The steel globe is 120 feet across and weighs 700,000 pounds.', clue: 'Stand back on the promenade and look at the lean of the whole globe.', source: W }, { r: 3.0 });
+    k.egg(orbits[1], { id: 'unisphere-orbits', title: 'Three orbits, not twelve', text: 'The three steel rings are believed to trace the orbits of Yuri Gagarin, John Glenn and the Telstar satellite. The first plan had a ring for each of about a dozen satellites, cut to three because it looked better.', clue: 'Follow the rings that loop round the globe.', source: W }, { r: 2.0 });
+    k.egg(lands[0], { id: 'unisphere-kahnawake', title: 'A light for the ironworkers', text: 'At the 1964 fair, lights on the globe marked the world\'s capitals. One more light marks the Kahnawake reserve, placed at the request of the Mohawk ironworkers who wanted their work on the structure honoured.', clue: 'Find North America on the globe and look for the extra light.', source: W }, { r: 2.0 });
+    k.egg(lands[4], { id: 'unisphere-sri-lanka', title: 'Blown off the world', year: '2010', text: 'In the September 2010 tornadoes that hit Brooklyn and Queens, the wind tore the steel landmass for Sri Lanka clean off the globe. It was put back the next year.', clue: 'Look at Asia, down near the tip of India.', source: W }, { r: 2.0 });
+    k.egg(v(C.x, 2.4, C.z), { id: 'unisphere-perisphere-piles', title: 'Standing on the Perisphere', text: 'The globe stands on a 20 foot inverted tripod, over a foundation of 528 creosoted Douglas fir piles first driven for the Perisphere of the 1939 World\'s Fair. About 600 more piles were added.', clue: 'Look at the three legged base under the globe.', source: W }, { r: 2.4 });
+    k.egg(v(C.x, 5.0, C.z - 4.4), { id: 'unisphere-antarctica-grass', title: 'Grass in Antarctica', year: '2009', text: 'Local papers reported in 2009 that grass had started growing inside the steel landmass for Antarctica. Around the pool, 48 pairs of fountainheads were brought back in a $2 million restoration in 2010.', clue: 'Look under the globe, at the very bottom of the world.', source: W }, { r: 2.0 });
     return { mounts, spawn: path[0].clone(), look: v(path[40].x * 0.6 + C.x * 0.4, 7, path[40].z * 0.6 + C.z * 0.4), eye: 3, bounds: [-40, 40, -70, 14], path, style: 'steel' };
   },
 };
@@ -152,6 +171,15 @@ export const tram: RoomDef = {
     for (const dz of [-2.4, 2.4]) k.torus(0.5, 0.12, cx, H + 9.5, -10 + dz, dark, 20);
     for (const x of [cx - 0.35, cx + 0.35]) k.beam(v(x, H + 9.5, 40), v(x, H + 9.5, -260), 0.05, dark, 5);
     k.sign('ROOSEVELT ISLAND', 3, 0.4, cx, H + 3.3, -2.9, '#8e3d3c', '#ffffff', 90, 0);
+    /* the Manhattan towers on the line: one between First and Second Avenues, the tallest at York Avenue.
+       Tapered steel legs either side of the cables, a cross head carrying the sheaves */
+    const towers: T.Object3D[] = [];
+    for (const [tz, top] of [[-62, H + 11], [-108, H + 11]] as const) {
+      for (const s of [-1, 1]) towers.push(k.beam(v(cx + s * 7, H - 30, tz), v(cx + s * 4.2, top, tz), 0.55, steel, 8));
+      k.beam(v(cx - 7, H - 30, tz), v(cx + 4.2, top - 14, tz), 0.18, steel, 6); k.beam(v(cx + 7, H - 30, tz), v(cx - 4.2, top - 14, tz), 0.18, steel, 6);
+      k.box(10, 1.0, 1.6, cx, top + 0.5, tz, steel);
+      for (const dx of [-0.35, 0.35]) k.torus(0.45, 0.1, cx + dx, H + 9.5 + 0.45, tz, dark, 16).rotation.y = PI / 2;
+    }
     // a second cabin riding the cable out over the river
     const far = new T.Group();
     const fb = new T.Mesh(new T.BoxGeometry(5, 3.6, 14), red);
@@ -193,6 +221,14 @@ export const tram: RoomDef = {
       k.box(0.34, 0.2, len + 0.2, -5.2, 4.7, zc, red);
       for (const z of [zc + len / 4, zc - len / 4]) mounts.push({ position: v(-5.02, 2.9, z), rotation: PI / 2, target: v(-1.2, 3, z), width: 4.2, height: 2.4, style: 'steel' });
     }
+    // easter eggs: the temporary tram, the bridge, the tall tower, the long wait, the building that never came, King Kong
+    const W = { name: 'Roosevelt Island Tramway, Wikipedia', url: 'https://en.wikipedia.org/wiki/Roosevelt_Island_Tramway' };
+    k.egg(v(cx, H + 3.3, -2.6), { id: 'tram-temporary', title: 'Only until the subway came', year: '1976', text: 'The tram opened on May 17, 1976, meant as a temporary way across until the subway reached Roosevelt Island. The subway came, and the tram stayed. It carried 1.25 million riders in its first year.', clue: 'Look at the sign on the end of the docked cabin.', source: W }, { r: 1.4 });
+    k.egg(v(-20, H + 4, -40), { id: 'tram-beside-the-bridge', title: 'Hiding beside the bridge', text: 'The tram runs right alongside the Queensboro Bridge, on purpose: keeping the cables next to the bridge was meant partly to stop planes at low altitude from flying into them.', clue: 'Look across at the steel trusses of the bridge running beside the cables.', source: W }, { r: 3.0 });
+    k.egg(towers[3], { id: 'tram-york-tower', title: '250 feet at York Avenue', text: 'The tallest of the line\'s three towers stands at York Avenue, 250 feet above the ground. Even at the lowest point of the ride the cabin floors are 135 feet above the East River, and the whole crossing takes three to four minutes at up to 17 miles an hour.', clue: 'Find the second steel tower out along the cables, at the river\'s edge.', source: W }, { r: 3.0 });
+    k.egg(v(cx, H + 9.5, -40), { id: 'tram-stranded', title: 'Eleven hours over the river', year: '2006', text: 'On April 18, 2006, the tram broke down over the East River, trapping 69 people for up to eleven hours. Rescuers brought them down in cages that hold fourteen passengers each. The 2010 rebuild gave each cabin its own haul cable, so the two now run independently.', clue: 'Follow the cables out past the end of the platform.', source: W }, { r: 2.0 });
+    k.egg(v(0, H + 0.2, -20), { id: 'tram-deck-for-a-tower', title: 'Built to carry a skyscraper', text: 'The concrete deck of the Manhattan terminal was engineered to hold a 32 or 35 story building on top. The building was never put up.', clue: 'Look at the concrete platform under your feet.', source: W }, { r: 1.8 });
+    k.egg(v(cx, H + 8.6, -10), { id: 'tram-kong', title: 'King Kong\'s favourite ride', text: 'The tram has played itself in Nighthawks, Léon: The Professional, Spider-Man and Dark Water. At Universal Studios Florida, the Kongfrontation ride (1990 to 2002) had a model King Kong attacking a model of the Roosevelt Island tram.', clue: 'Look up at the hanger arm above the docked cabin.', source: W }, { r: 1.4 });
     return { mounts, spawn: v(1.2, 3, 9), look: v(-4, 3, -20), eye: 3, bounds: [-10.9, 3.6, -33, 10.5], style: 'steel' };
   },
 };
@@ -218,7 +254,8 @@ export const cloisters: RoomDef = {
       herb = k.flat(0x62803f, 0, 0.95),
       herb2 = k.flat(0x8a9a5c, 0, 0.95),
       dark = k.flat(0x2b2620, 0.3, 0.7),
-      water = k.flat(0x37646a, 0.5, 0.2, { transparent: true, opacity: 0.9 });
+      water = k.flat(0x37646a, 0.5, 0.2, { transparent: true, opacity: 0.9 }),
+      lawn = k.pbr('cuxaLawn', X.grass(0x5a7d3e, 6), 0.2);
     const Cz = -22, S = 15;
     k.box(64, 0.4, 64, 0, -0.2, Cz, walk);
     k.box(2 * S - 6, 0.3, 2 * S - 6, 0, 0.02, Cz, soil);
@@ -247,22 +284,25 @@ export const cloisters: RoomDef = {
       floor.rotation.y = a;
       for (let j = 0; j < 3; j++) { const p = place(-S + 5 + j * 10, S + 5.5); k.point(p.x, 4.6, p.z, 0xfff0d6, 12, 12); }
     }
-    // the garth: quartered beds, paths, fountain, fruit trees, herbs
+    // the garth: crossed paths make four quadrants, each a grass plot with a pruned fruit tree, flowers and herbs at the edges
     for (const s of [-1, 1]) { k.box(2 * S - 6, 0.12, 1.6, 0, 0.1, Cz + s * 0, walk); k.box(1.6, 0.12, 2 * S - 6, s * 0, 0.1, Cz, walk); }
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
       const bx = sx * 6.6, bz = Cz + sz * 6.6;
-      k.box(10, 0.4, 10, bx, 0.2, bz, soil);
+      k.box(10, 0.4, 10, bx, 0.2, bz, lawn);
       k.box(10.4, 0.5, 0.3, bx, 0.25, bz - 5.1, stone);
       k.box(10.4, 0.5, 0.3, bx, 0.25, bz + 5.1, stone);
       k.box(0.3, 0.5, 10.4, bx - 5.1, 0.25, bz, stone);
       k.box(0.3, 0.5, 10.4, bx + 5.1, 0.25, bz, stone);
       const rnd = X.mulberry(sx * 3 + sz * 7 + 40);
-      for (let i = 0; i < 26; i++) k.sphere(0.25 + rnd() * 0.3, bx - 4 + rnd() * 8, 0.55, bz - 4 + rnd() * 8, i % 3 ? herb : herb2, 7);
-      k.tree(bx, 0.3, bz, { kind: 'round', h: 3.6, r: 1.8, leaf: 0x4f7a3c, seed: sx + sz * 2 });
+      for (let i = 0; i < 34; i++) { const e = rnd() * 4, u = -4.3 + rnd() * 8.6, w = (e < 1 ? -1 : e < 2 ? 1 : 0) * 4.3, q = (e >= 2 && e < 3 ? -1 : e >= 3 ? 1 : 0) * 4.3; k.sphere(0.25 + rnd() * 0.3, bx + (w || u), 0.55, bz + (q || (w ? u : 0)), i % 3 ? herb : herb2, 7); }
+      /* the Met keeps a pollarded crabapple in each plot; the kit has no apple, pear is the nearest rosaceous form */
+      k.tree(bx, 0.3, bz, { kind: 'round', h: 3.4, r: 1.7, leaf: 0x4f7a3c, seed: sx + sz * 2, species: 'pear' });
       k.keepOut.push({ x: bx, z: bz, r: 5.6 });
     }
-    k.lathe([[2.0, 0], [2.0, 0.3], [0.5, 0.5], [0.3, 1.4], [1.2, 1.6], [1.2, 1.9], [0.25, 2.0], [0.2, 2.6], [0.5, 2.8]], 0, 0, Cz, pink, 24);
-    k.cyl(1.15, 0.05, 0, 1.7, Cz, water, 1.15, 24);
+    /* the eight sided fountain at the crossing, in the same pink marble as the columns */
+    const fountain = k.lathe([[2.0, 0], [2.0, 0.3], [0.5, 0.5], [0.3, 1.4], [1.2, 1.6], [1.2, 1.9], [0.25, 2.0], [0.2, 2.6], [0.5, 2.8]], 0, 0, Cz, pink, 8);
+    fountain.rotation.y = PI / 8;
+    k.cyl(1.15, 0.05, 0, 1.7, Cz, water, 1.15, 8);
     k.keepOut.push({ x: 0, z: Cz, r: 2.3 });
     for (const [x, z] of [[-13, Cz - 13], [13, Cz + 13]]) k.prop('lantern', x, 0, z, { height: 1.0 });
     k.prop('tree', 13, 0, Cz - 13, { height: 4.2 });
@@ -288,6 +328,14 @@ export const cloisters: RoomDef = {
       }
     }
     for (const s of [-1, 1]) mounts.push({ position: v(s * 6, 3.0, Cz - S - 5.85), rotation: 0, target: v(s * 6, 3, Cz - S + 3), width: 4.4, height: 2.6, style: 'oak', wash: true });
+    // easter eggs: the marble, the price, the fountain, the chapel in crates, the cliffs across the river, the unicorn's tree
+    const W = { name: 'The Cloisters, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Cloisters' };
+    k.egg(v(-7.5, 2.6, Cz + S), { id: 'cloisters-cuxa-marble', title: 'Old stone, new walls', year: '878', text: 'The walls of the Cuxa Cloister are modern, but its capitals and columns are original, cut from pink Languedoc marble from the Pyrenees. They came from the monastery of Saint Michel de Cuxa, founded in 878, which was abandoned in 1791; its roof fell in 1835 and its bell tower in 1839.', clue: 'Look closely at the pink, mottled marble of the paired columns.', source: W }, { r: 1.4 });
+    k.egg(v(0, 3.4, Cz + S + 5.3), { id: 'cloisters-barnard-price', title: 'Bought by the cloister', text: 'The sculptor and collector George Grey Barnard reportedly paid $100,000 for the Cuxa cloister, and $25,000 each for the Trie and Bonnefont buildings. John D. Rockefeller Jr. bought Barnard\'s whole collection for around $700,000 and kept him on as an advisor.', clue: 'Find the bare stretch of wall in the middle of the south walk.', source: W }, { r: 1.6 });
+    k.egg(v(0, 2.6, Cz), { id: 'cloisters-lilies-and-roses', title: 'Eight sides, guessed plants', text: 'An eight sided fountain stands where the two garden walks cross. Nobody can know exactly what grew here in the Middle Ages: the oldest plan of the original monastery describes lilies and roses, and today\'s planting is a best approximation by botanists of the medieval garden.', clue: 'Walk to the fountain at the crossing of the paths and count its sides.', source: W }, { r: 1.8 });
+    k.egg(v(0, 5.0, Cz - S - 5.8), { id: 'cloisters-839-crates', title: 'A chapel in 839 crates', year: '1961', text: 'The museum\'s largest room holds a Romanesque apse from a church at Fuentidueña, near Segovia in Spain, built about 1175 to 1200. Rockefeller acquired it in 1931; it was taken apart into almost 3,300 blocks, shipped to New York in 839 crates, rebuilt in the late 1940s and opened in 1961.', clue: 'Stand in the arch of the chapel wall at the north end.', source: W }, { r: 1.8 });
+    k.egg(v(-S - 5.3, 6.2, Cz), { id: 'cloisters-palisades', title: 'He bought the view', year: '1933', text: 'Rockefeller bought the clifftops of the New Jersey Palisades across the Hudson over several years, and in 1933 gave several hundred acres of them to the Palisades Interstate Park Commission so they would stay free of development.', clue: 'On the west walk, look up at the wall that faces the river.', source: W }, { r: 1.8 });
+    k.egg(v(13, 2.2, Cz - 13), { id: 'cloisters-unicorn-medlar', title: 'The unicorn\'s tree', text: 'The Unicorn Tapestries, woven around 1495 to 1505, were bought by Rockefeller in 1922 for about a million dollars and given to the museum. In the Bonnefont Cloister garden grows a medlar tree of the kind woven into the tapestries.', clue: 'Find the small tree in the corner of the garth.', source: W }, { r: 1.6 });
     return { mounts, spawn: v(0, 3, Cz + S - 2.5), look: v(0, 2.6, Cz), eye: 3, bounds: [-S - 5, S + 5, Cz - S - 5, Cz + S + 6], style: 'oak' };
   },
 };
@@ -313,7 +361,8 @@ export const navyyard: RoomDef = {
       timber = k.pbr('keel', X.planks(0x4a3a2c, 3, 18), 1.0),
       corr = k.pbr('shed', X.steel(0x5a6066, false, 17), 0.8, { metalness: 0.6, roughness: 0.5 }),
       dark = k.flat(0x1a1c20, 0.6, 0.5);
-    const L = 72, ZC = 10 - L / 2, D = 12;
+    /* Dry Dock 1 was built to take a vessel 320 feet long (about 98 m), so the basin runs 100 m from head to caisson */
+    const L = 100, ZC = 10 - L / 2, D = 12;
     // the dock: stepped walls down to the floor, rails and keel blocks
     k.box(60, 0.6, L + 30, 0, -0.3, ZC - 6, quay);
     k.box(18, 0.6, L, 0, -D - 0.3, ZC, granite);
@@ -391,6 +440,15 @@ export const navyyard: RoomDef = {
     for (let i = 0; i < 12; i++) { const z = 8 - i * 6; if (z > 6) continue; mounts.push({ position: v(18.1, 3.4, z), rotation: -PI / 2, target: v(13.6, 3, z), width: 4.8, height: 2.8, style: 'steel' }); }
     for (let i = 0; i < 2; i++) mounts.push({ position: v(-18.1, 3.4, -10 - i * 30), rotation: PI / 2, target: v(-13.6, 3, -10 - i * 30), width: 4.8, height: 2.8, style: 'steel' });
     for (let i = 0; i < 2; i++) k.box(0.4, 6, 8, -18.4, 3, -10 - i * 30, corr);
+    // easter eggs: the engineer, the Maine granite, the arch under the floor, the caisson, the Monitor myth, the prison ships
+    const HDC = { name: 'Dry Dock 1, Historic Districts Council', url: 'https://hdc.org/buildings/dry-dock-1/' };
+    const AIT = { name: 'Brooklyn Navy Yard, Invention and Technology', url: 'https://www.inventionandtech.com/node/85452' };
+    k.egg(v(-12, -4, -10), { id: 'navyyard-mcalpine', title: 'Springs under the dock', year: '1851', text: 'Dry Dock 1, built from 1840 to 1851, was the first permanent dry dock in the area and is still in use. Its engineer, William J. McAlpine, had to beat a failing cofferdam and floods from underground springs, and the walls are faced with some 23,000 yards of granite.', clue: 'Look down the stepped granite walls on the west side.', source: HDC }, { r: 2.0 });
+    k.egg(v(0, -6, ZC + L / 2 - 0.5), { id: 'navyyard-maine-granite', title: 'Floated down from Maine', text: 'The Navy decided in 1841 to build its first dry dock here, New York\'s first too. Great blocks of granite were floated down from Maine and laid on a cement and flagstone foundation, and the job took ten years and three million dollars. It was made to take a ship 320 feet long with a 21 foot draft.', clue: 'Look at the granite head wall at the landward end of the dock.', source: AIT }, { r: 2.2 });
+    k.egg(v(0, -D + 0.4, -60), { id: 'navyyard-inverted-arch', title: 'An arch upside down', text: 'The flat floor of the dock, thirty feet wide, sits on a great inverted arch of stone. The arch pushes back against the water pressure trying to lift the floor from below.', clue: 'Look at the floor of the dock beyond the bow of the hull.', source: HDC }, { r: 2.0 });
+    k.egg(v(0, -4, ZC - L / 2 + 0.6), { id: 'navyyard-caisson', title: 'A gate that sinks', text: 'The caisson across the mouth dates from the 1920s. To flood the dock, water is pumped into the caisson until it sinks and lets the river in; to empty the 610,000 gallon stone tub takes more than two hours. Gulls flock in to eat the fish left stranded on the granite.', clue: 'Walk to the far end and look at the steel gate to the river.', source: AIT }, { r: 2.2 });
+    k.egg(v(6.6, -D + 6.5, -30), { id: 'navyyard-monitor-myth', title: 'Not built here', year: '1862', text: 'Almost anyone at the Navy Yard will tell you the ironclad Monitor was built right here in Dry Dock 1. It was not: the Monitor was built in Greenpoint and only fitted out at the yard.', clue: 'Look at the rusted flank of the hull on the blocks.', source: AIT }, { r: 2.0 });
+    k.egg(v(-14, 2, ZC - L / 2 - 3), { id: 'navyyard-prison-ships', title: 'The prison ships of Wallabout Bay', year: '1783', text: 'During the Revolutionary War the British held American prisoners on ships moored in Wallabout Bay, where the yard now stands. Some 12,000 were said to have died by 1783, remembered by the Prison Ship Martyrs\' Monument in Fort Greene Park. Yard workers later dug up a skeleton thought to be one of them.', clue: 'Stand at the river end of the quay and look out over the water.', source: { name: 'Brooklyn Navy Yard, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Navy_Yard' } }, { r: 2.0 });
     return { mounts, spawn: v(-13, 3, 10), look: v(0, 6, -30), eye: 3, bounds: [-17.2, 17.2, ZC - L / 2 - 1, 12], style: 'steel' };
   },
 };
@@ -439,10 +497,19 @@ export const governors: RoomDef = {
     for (let i = 0; i < 40; i++) { const x = (rnd() - 0.5) * 60, z = -10 - rnd() * 44; if (Math.abs(x - Math.sin(((10 - z) / 58) * PI * 2.2) * 6.5) < 3.5) continue; const s = 0.6 + rnd() * 1.2; k.box(s * 1.6, s, s * 1.2, x, hill(x, z) + s * 0.35, z, granite).rotation.y = rnd() * PI; }
     for (let i = 0; i < 34; i++) { const x = (rnd() - 0.5) * 100, z = -rnd() * 70 + 6; if (Math.abs(x) < 9 && z > -60) continue; k.tree(x, hill(x, z) - 0.1, z, { kind: rnd() > 0.5 ? 'round' : 'column', h: 3 + rnd() * 3, r: 1.4 + rnd() * 1.4, leaf: 0x3f6f38, seed: i }); }
     for (const i of [30, 90, 150]) { const p = path[i]; k.bench(p.x + 2.6, p.z, PI / 2, timber, dark, 2.2); k.bench(p.x + 2.6, p.z, PI / 2, timber, dark, 2.2).position.y = hill(p.x + 2.6, p.z); }
-    const slide: T.Vector3[] = [];
-    for (let i = 0; i <= 30; i++) { const u = i / 30, x = 12 + u * 16, z = -34 + Math.sin(u * PI) * 6 - u * 10; slide.push(v(x, hill(x, z) + 0.5 + (1 - u) * 0.6, z)); }
-    k.curve(slide, 0.55, steel, 40);
-    for (let i = 0; i <= 30; i += 5) { const p = slide[i]; k.beam(v(p.x, hill(p.x, p.z), p.z), v(p.x, p.y, p.z), 0.1, dark, 6); }
+    /* Slide Hill has four slides built into its slope, the longest 57 feet */
+    let slide: T.Vector3[] = [];
+    for (const [dz, len] of [[0, 16], [2.4, 12], [4.8, 9], [-2.4, 7]]) {
+      const sl: T.Vector3[] = [];
+      for (let i = 0; i <= 30; i++) { const u = i / 30, x = 12 + u * len, z = -34 + dz + Math.sin(u * PI) * 6 * (len / 16) - u * 10 * (len / 16); sl.push(v(x, hill(x, z) + 0.5 + (1 - u) * 0.6, z)); }
+      k.curve(sl, 0.55, steel, 40);
+      for (let i = 0; i <= 30; i += 5) { const p = sl[i]; k.beam(v(p.x, hill(p.x, p.z), p.z), v(p.x, p.y, p.z), 0.1, dark, 6); }
+      if (dz === 0) slide = sl;
+    }
+    /* Discovery Hill carries Rachel Whiteread's Cabin: a concrete cast of the inside of a wooden shed */
+    const cabX = 22, cabZ = -20, cabY = hill(cabX, cabZ);
+    const cabin = k.box(3.2, 2.6, 4.2, cabX, cabY + 1.3, cabZ, k.pbr('whitereadConcrete', X.concrete(0xa8a59c, 23), 0.4));
+    k.keepOut.push({ x: cabX, z: cabZ, r: 2.8 });
     // the overlook at the summit: a granite platform and rail, with works as wind screens
     const top = path[195];
     const ty = hill(top.x, top.z);
@@ -481,6 +548,16 @@ export const governors: RoomDef = {
       k.objects[k.objects.length - 1].rotation.y = -a - PI / 2;
       mounts.push({ position: v(x - Math.cos(a) * 0.25, ty + 2.4, z - Math.sin(a) * 0.25), rotation: -a - PI / 2, target: v(top.x, ty + 2.4, top.z), width: 4.0, height: 2.4, style: 'steel', wash: false });
     }
+    // easter eggs: the summit, the old seawall, the slides, the cabin, the made land, the first flight over the water
+    const W = { name: 'Governors Island, Wikipedia', url: 'https://en.wikipedia.org/wiki/Governors_Island' };
+    const BDC = { name: 'The Hills of Governors Island reach completion one year ahead of schedule, BD+C', url: 'https://www.bdcnetwork.com/building-sector-reports/sports-and-recreational-facilities/news/55160345/the-hills-of-governors-island-reach-completion-one-year-ahead-of-schedule' };
+    const ML = { name: 'New Hills to see New York, Metalocus', url: 'https://metalocus.es/en/news/new-hills-see-new-york-completed-governors-island-hills-west8' };
+    k.egg(v(top.x, ty + 2.2, top.z), { id: 'governors-outlook-hill', title: 'Seventy feet of made hill', year: '2016', text: 'The Hills opened in July 2016, a year ahead of schedule. There are four: Grassy Hill at 26 feet, Slide Hill at 36, Discovery Hill at 39 and Outlook Hill, the tallest, at 70 feet. The gaps between them were shaped to hide and then reveal the harbour views.', clue: 'Climb to the round granite overlook at the summit.', source: ML }, { r: 2.0 });
+    { const sp = path[120]; k.egg(v(sp.x - 4.5, hill(sp.x - 4.5, sp.z) + 1.2, sp.z), { id: 'governors-scramble', title: 'Climbing the old seawall', year: '1905', text: 'The Scramble on Outlook Hill is built from granite blocks of the seawall the Army set in the harbour when it expanded the island in 1905.', clue: 'Look for the rough granite blocks scattered on the slope beside the path.', source: BDC }, { r: 2.0 }); }
+    k.egg(slide[3], { id: 'governors-slides', title: 'The longest slide in the city', text: 'Slide Hill has four slides built into its slope. The longest runs 57 feet, the longest slide in New York City.', clue: 'Find the steel chutes running down the east flank.', source: BDC }, { r: 1.8 });
+    k.egg(cabin, { id: 'governors-cabin', title: 'A shed turned inside out', text: 'On Discovery Hill sits Cabin by the British artist Rachel Whiteread: a concrete cast of the inside of a wooden, New England style shed. Bronze casts of discarded objects lie scattered around it in the grass.', clue: 'Look for the grey concrete hut on the hill to the east.', source: ML }, { r: 2.4 });
+    k.egg(v(path[2].x + 2.5, hill(path[2].x + 2.5, path[2].z) + 0.8, path[2].z), { id: 'governors-made-land', title: 'Standing on fill', text: 'About 103 of the island\'s 172 acres are fill, added in the early 1900s to the south of the original island. The Hills stand on that made land, at its southern tip.', clue: 'Look at the ground at the foot of the path, where the climb begins.', source: W }, { r: 1.8 });
+    k.egg(v(-14, 1.2, 14), { id: 'governors-wright-flight', title: 'Over the water', year: '1909', text: 'In October 1909 Wilbur Wright took off from Governors Island, flew over the west side of Manhattan and came back to the island.', clue: 'Stand at the edge of the dock and look across the harbour toward Manhattan.', source: W }, { r: 2.0 });
     return { mounts, spawn: path[0].clone(), look: path[8].clone(), eye: 2.4, bounds: [-60, 60, -70, 22], path, style: 'steel' };
   },
 };

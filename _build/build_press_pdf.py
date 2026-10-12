@@ -76,7 +76,7 @@ footer b{{color:#4692C2}}
 <div class="k" style="margin-top:14px">A living census of the greatest city on earth</div>
 <h1>NEW YORKERS</h1>
 <div class="line">Every New Yorker gets a portrait. Even the villains.</div>
-<p class="body">NEW YORKERS by MLow is a living, painted census of New York City: {num(C["pieces"])} characters and counting, from the Subway Samaritan to the Rat King to Midnight itself, in a psychedelic style where flowers bloom with human eyes because the city is watching back. Every one has a number, a story and a place on the map of the five boroughs, and all of it is free to explore at n3wyorkers.com, along with a walkable museum of {K["rooms"]} New York rooms and a sourced reading room on the city's history.</p>
+<p class="body">NEW YORKERS by MLow is a living art census of New York City: {num(C["pieces"])} characters and counting, from the Subway Samaritan to the Rat King to Midnight itself, in a psychedelic style where flowers bloom with human eyes because the city is watching back. Every one has a number, a story and a place on the map of the five boroughs, and all of it is free to explore at n3wyorkers.com, along with a walkable museum of {K["rooms"]} New York rooms and a sourced reading room on the city's history.</p>
 <p class="body">MLow's work has run on more than 5,000 New York City taxis and in 50 group exhibitions with Art Crush Gallery on public screens across 16 countries in 2026. The collection is sold in named releases, each announced in advance, and no New Yorker is ever sold twice.</p>
 <div class="grid">{"".join(f'<div><span>{a}</span><b>{b}</b></div>' for a, b in facts)}</div>
 <h2>The releases</h2>{rel}

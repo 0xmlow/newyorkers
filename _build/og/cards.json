@@ -34,10 +34,14 @@
     "my.html": "street-bloom",
     "tv.html": "subway-portal",
     "wall.html": "eye-halo-train",
+    "markup.html": "street-bloom",
     "agents.html": "skyline-eclipse",
     "pigeon.html": "rat-pizza",
     "roll.html": "bodega-cat",
-    "whitelist.html": "bodega-cat"
+    "whitelist.html": "bodega-cat",
+    "arcade.html": "rat-pizza",
+    "stop.html": "subway-portal",
+    "states.html": "eye-halo-train"
   },
   "rotation": [
     "skyline-eclipse",

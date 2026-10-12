@@ -111,3 +111,28 @@ MetroCards, linked to their other honoraries, and new honorees for everyone with
   finds no other image drawn at the wrong aspect.
 - MLow abolished the no text, no logos rule on 2026-10-09. Paintings with signage (Yankee Stadium, Domino, the
   Cyclone) stay as painted.
+
+## 2026-10-09: Bryan's colours
+
+MLow sent Bryan Brinkman's four hexes: pink f2668b, cyan 23c7d9, mint 48d9a4, yellow f2bf27. The tournament
+paintings were made with primary skully lanes, so every one of them (98 holder paintings, 163 race paintings, 6
+champion portraits) and the page plates (hero board, chalk, bottle caps, cup, marble, flower) were recoloured
+reds to pink, blues to cyan, greens to mint, yellows to his yellow, with skin, brick, night and greys held.
+Brick, stoop and bodega plates were left alone, since the recolour would turn the brick pink.
+
+- Code and untouched originals: `../MARBLE RUN x NEW YORKERS 2026-10-08/brink/` (`recolor.py`, `apply.py` for
+  the paintings, `apply_ui.py` for the plates, `originals/`). Both scripts always start from `originals/`, so
+  tuning `recolor.py` and rerunning is safe. Contest paintings are rewritten in place, so the wave 36 hard links follow.
+- After a rerun: delete `assets/skelly/races/*.jpg` (the publisher skips existing thumbs), `publish_portraits.py`,
+  `contest/rechain.sh`, then `build_skelly.py`, `build_honor_cards.py`, `build_honoraries.py`.
+- The page tokens in `build_skelly.py` are now his four (`--sk-pd` is a darker pink for text on cream). Awning,
+  LED scoreboard, MetroCards, mosaic sign and links follow them.
+- Not done in Photoshop or Firefly: Photoshop was not connected (the Krea panel showed no app) and Adobe's cloud
+  tools cap out around 20 files a job. The same per colour Hue/Saturation move was done in Python instead.
+
+## THE SPIRAL (2026-10-11): the walkable gallery
+
+`spiral.html`, built from `../SKELLY SPIRAL 2026-10-11/` (its README says what hangs where and how to rebuild) by `build_galleries.py`.
+Every run is one turn of a Guggenheim ramp: 636 race paintings in bracket order, 26 Champion's Portraits on their bays, unpainted races as
+wet tape from the ledger, the paddock of 100 riders and 98 holders, 42 cards in the void, live top turn and gutter race from marblerun.fun.
+After new race paintings or portraits publish: `ledger.py`, then `SKELLY SPIRAL/_build/build_data.py`, then `build_galleries.py`.

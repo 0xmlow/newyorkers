@@ -8,6 +8,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero, standIn, hide } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -241,7 +242,8 @@ export const unionsquare: RoomDef = {
     void digits;
 
     /* ---- the south end: Washington on his horse, a plain bronze form of 1856 ---- */
-    k.box(6.4, 0.5, 5.4, 0, 0.25, 13, granite); k.box(5.2, 3.4, 3.4, 0, 2.2, 13, granite); k.box(5.6, 0.4, 3.8, 0, 4.1, 13, granite);
+    /* 2026-10-09: the pedestal turned to run north south with the horse (it was long across it) */
+    k.box(5.4, 0.5, 6.4, 0, 0.25, 13, granite); k.box(3.4, 3.4, 5.2, 0, 2.2, 13, granite); k.box(3.8, 0.4, 5.6, 0, 4.1, 13, granite);
     /* 2026-10-01: the horseman is the institution kit's equestrian.glb, a faceless bronze
        as this room's rules ask, set on Hunt's granite with the kit's own plinth hidden;
        the merged box horse below is the old one, one flag away */
@@ -255,6 +257,7 @@ export const unionsquare: RoomDef = {
       o.traverse((c) => { if (c instanceof T.Mesh && c.visible) c.material = bronze; });
     });
     else {
+      const mark = k.objects.length;
       const hg = horseGeo(); hg.scale(2.2, 2.2, 2.2);
       const rider = mergeGeometries([
         (() => { const g = new T.CapsuleGeometry(0.42, 1.0, 4, 10); g.translate(0.05, 3.85, 0); return g; })(),
@@ -262,6 +265,13 @@ export const unionsquare: RoomDef = {
         part(0.3, 0.3, 0.3, 0.1, 5.2, 0), part(1.6, 0.16, 0.16, 1.05, 4.2, 0.1, -0.15), part(0.22, 0.9, 0.22, -0.2, 3.1, 0.55, 0.2), part(0.22, 0.9, 0.22, -0.2, 3.1, -0.55, 0.2),
       ])!;
       const statue = k.mesh(mergeGeometries([hg, rider])!, bronze, 0, 4.3, 13); statue.rotation.y = -PI / 2;
+      /* 2026-10-09: the sculpted horseman (hero GLB): a faceless bronze, arm low, walking south on the
+         turned pedestal; the box horse stays only if the GLB fails */
+      const old = standIn(k, mark);
+      void hero(k, 'h_equestrian', { length: 5.2 }).then((h) => {
+        if (!h) return;
+        hide(old); h.position.set(0, 4.3, 13); k.add(h);
+      });
     }
     k.keepOut.push({ x: 0, z: 13, r: 4 });
     k.egg(v(0, 3.5, 13), { id: 'us-washington-1856', title: 'The oldest statue in the parks', year: '1856', text: 'The equestrian George Washington at the south end was modelled by Henry Kirke Brown and unveiled in 1856. He is shown here as a plain bronze form, no face, as the rules of this museum ask.', clue: 'The horseman at the south end has been there longer than any other statue in a city park.', source: { name: 'Union Square, Manhattan, Wikipedia', url: 'https://en.wikipedia.org/wiki/Union_Square,_Manhattan' } }, { r: 3.6 });
@@ -632,11 +642,21 @@ export const bryantpark: RoomDef = {
       const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), hide = new T.Vector3(0.0001, 0.0001, 0.0001);
       hs.forEach((h, i) => { animals.setColorAt(i, c.set(coats[i % coats.length])); riders.setColorAt(i, c.set(coats2[Math.floor(rnd() * coats2.length)])); q.setFromAxisAngle(up, -h.a - PI / 2); p.set(Math.cos(h.a) * h.r, 0.45 + 1.6, Math.sin(h.a) * h.r); m.compose(p, q, one); poles.setMatrixAt(i, m); });
       poles.instanceMatrix.needsUpdate = true; if (animals.instanceColor) animals.instanceColor.needsUpdate = true; if (riders.instanceColor) riders.instanceColor.needsUpdate = true;
+      /* 2026-10-09: the hero horse (carved, cream and gilt, on its own brass pole) replaces the box
+         horses and the plain poles when it loads; the riders stay */
+      const steeds: T.Object3D[] = [];
+      void hero(k, 'h_carousel_horse', { height: 1.95 }).then((g) => {
+        if (!g) return;
+        animals.visible = poles.visible = false;
+        hs.forEach((h, i) => { const c = i ? g.clone() : g; c.rotation.y = -h.a; rig.add(c); steeds.push(c); });
+        place(0);
+      });
       const place = (t: number) => {
         hs.forEach((h, i) => {
           q.setFromAxisAngle(up, -h.a - PI / 2);
           p.set(Math.cos(h.a) * h.r, 0.45 + 0.26 * Math.sin(t * 2.4 + h.ph), Math.sin(h.a) * h.r);
           m.compose(p, q, one); animals.setMatrixAt(i, m);
+          steeds[i]?.position.copy(p);
           p.y += 1.1; m.compose(p, q, h.rider ? one : hide); riders.setMatrixAt(i, m);
         });
         animals.instanceMatrix.needsUpdate = riders.instanceMatrix.needsUpdate = true;

@@ -37,12 +37,12 @@
   const esc = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
   /* Cloudflare Pages serves every page extensionless and 308s /x.html to /x, so every internal href the
      site emits is extensionless: one hop fewer per click and no redirect for Google to index. */
-  const NAV = [["census","ART"],["museum","MUSEUM"],["island","ISLAND"],["basement","BASEMENT"],["map","ATLAS"],["keystone","KEYSTONE"],["honoraries","HONORARIES"],["mosaic","MOSAIC"],["posters","POSTERS"],["collectors","COLLECTORS"],["learn","STORIES"],["arcade","ARCADE"],["skelly","SKELLY CUP"],["bloomrun","BLOOM RUN"],["moshlab","MOSH LAB"],["press","PRESS"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
+  const NAV = [["census","ART"],["museum","MUSEUM"],["island","ISLAND"],["basement","BASEMENT"],["map","ATLAS"],["keystone","KEYSTONE"],["marks","MARKS"],["night","NIGHT"],["mlowtar","MLOWTAR"],["airport","AIRPORT"],["honoraries","HONORARIES"],["mosaic","MOSAIC"],["posters","POSTERS"],["collectors","COLLECTORS"],["learn","STORIES"],["arcade","ARCADE"],["skelly","SKELLY CUP"],["spiral","SPIRAL"],["momlow","MoMLOW"],["bloomrun","BLOOM RUN"],["moshlab","MOSH LAB"],["press","PRESS"],[(window.NY_CONFIG&&window.NY_CONFIG.printsUrl)||"https://mlow.nyc","PRINTS","ext"]];
   function nav(active){
     const el=document.getElementById("nav"); if(!el)return;
     /* the main stops stay on one line; the rest ride under MORE. Each stop carries a line colour from the paintings (site.css --l*) */
-    const MORE=new Set(["island","basement","mosaic","posters","learn","bloomrun","moshlab","press"]);
-    const LINE={census:"1",museum:"A",skelly:"N",honoraries:"B",keystone:"7",map:"4",collectors:"J",arcade:"G",island:"A",basement:"J",mosaic:"7",posters:"1",learn:"L",bloomrun:"4",moshlab:"B",press:"L"};
+    const MORE=new Set(["spiral","momlow","island","basement","night","mlowtar","airport","mosaic","posters","collectors","learn","bloomrun","moshlab","press"]);
+    const LINE={momlow:"E",night:"1",mlowtar:"7",airport:"A",census:"1",museum:"A",skelly:"N",spiral:"N",honoraries:"B",keystone:"7",marks:"1",map:"4",collectors:"J",arcade:"G",island:"A",basement:"J",mosaic:"7",posters:"1",learn:"L",bloomrun:"4",moshlab:"B",press:"L"};
     const ALIAS={"THE CENSUS":"ART","THE MUSEUM":"MUSEUM","READ":"STORIES","SKELLY":"SKELLY CUP"};
     const isOn=([h,t])=>active===t||ALIAS[active]===t;
     const link=n=>{const [h,t,c]=n; return `<a href="${c==="ext"?h:BASE+h}" class="${c||""}${isOn(n)?" on":""}" style="--lc:var(--l${LINE[h]||"N"})"${c==="spin"?' title="Drop into a random room of the museum"':""}>${c==="spin"?"✦ ":""}${t}</a>`;};
@@ -108,7 +108,7 @@
       ["collectors","THE BOARD","Who holds the city"]];
     const explore=`<nav class="explore" aria-label="Keep exploring"><h5>Keep exploring</h5><div>${doors.map(d=>`<a href="${BASE}${d[0]}"><small>${d[1]}</small><b>${esc(d[2])}</b><i>↗</i></a>`).join("")}</div></nav>`;
     el.innerHTML=explore+`<div><img src="${BASE}assets/brand/logo_white.png" alt="MLOW"><div class="lines">${dom} · THE CENSUS<br><a href="${CFG.printsUrl||"https://mlow.nyc"}">THE PRINT SHOP</a> · PRINTS AND ORIGINALS<br><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLOW.XYZ</a> · THE ARTIST<br>X @DEGENS · IG + TIKTOK @0XMLOW</div></div>
-      <div class="col"><h5>The census</h5><a href="${BASE}census">Every record</a><a href="${BASE}map">The atlas</a><a href="${BASE}museum">The museum</a><a href="${BASE}museum#room=random">Spin a room</a><a href="${BASE}island">MEME ISLAND</a><a href="${BASE}basement">YOUR MOM'S BASEMENT</a><a href="${BASE}keystone">Keystone 111</a><a href="${BASE}honoraries">The honoraries</a><a href="${BASE}posters">Posters, cards, memes</a><a href="${BASE}collectors">Collectors</a><a href="${BASE}mosaic">The mosaic</a><a href="${BASE}stop">Your stop</a><a href="${BASE}states">Friday State</a><a href="${BASE}my">My NEW YORKERS</a><a href="${BASE}arcade">The Arcade</a><a href="${BASE}skelly">Skelly Cup</a><a href="${BASE}bloomrun">Bloom Run</a><a href="${BASE}moshlab">MOSH LAB</a><a href="${BASE}markup">Mark up a New Yorker</a><a href="${BASE}counted">Get counted</a><a href="${BASE}counted#nominate">Nominate a New Yorker</a>${(window.NY_CONFIG && window.NY_CONFIG.loginEnabled) ? `<a href="${BASE}profile">Your profile</a>` : ""}</div>
+      <div class="col"><h5>The census</h5><a href="${BASE}census">Every record</a><a href="${BASE}map">The atlas</a><a href="${BASE}museum">The museum</a><a href="${BASE}museum#room=random">Spin a room</a><a href="${BASE}island">MEME ISLAND</a><a href="${BASE}basement">YOUR MOM'S BASEMENT</a><a href="${BASE}airport">MLOW INTERNATIONAL</a><a href="${BASE}keystone">Keystone 111</a><a href="${BASE}marks">THE MARKS</a><a href="${BASE}night">THE MARKS: one night</a><a href="${BASE}honoraries">The honoraries</a><a href="${BASE}posters">Posters, cards, memes</a><a href="${BASE}collectors">Collectors</a><a href="${BASE}mosaic">The mosaic</a><a href="${BASE}stop">Your stop</a><a href="${BASE}states">Friday State</a><a href="${BASE}my">My NEW YORKERS</a><a href="${BASE}arcade">The Arcade</a><a href="${BASE}skelly">Skelly Cup</a><a href="${BASE}spiral">THE SPIRAL</a><a href="${BASE}momlow">MoMLOW</a><a href="${BASE}bloomrun">Bloom Run</a><a href="${BASE}moshlab">MOSH LAB</a><a href="${BASE}markup">Mark up a New Yorker</a><a href="${BASE}mlowtar">MLOWTAR SPEAKS</a><a href="${BASE}counted">Get counted</a><a href="${BASE}counted#nominate">Nominate a New Yorker</a>${(window.NY_CONFIG && window.NY_CONFIG.loginEnabled) ? `<a href="${BASE}profile">Your profile</a>` : ""}</div>
       <div class="col"><h5>The record</h5><a href="${BASE}faq">The FAQ</a><a href="${BASE}learn">The reading room</a><a href="${BASE}press">Press room</a><a href="${BASE}brand">Brand</a><a href="${BASE}count">The count</a><a href="${BASE}agents">For bots and AI agents</a><a href="${BASE}llms.txt">llms.txt</a></div>
       <div class="col"><h5>Elsewhere</h5><a href="${CFG.printsUrl||"https://mlow.nyc"}">Prints, at the print shop</a><a href="${CFG.artistUrl||"https://mlow.xyz"}">MLow, the artist</a><a href="https://x.com/degens">X, @degens</a><a href="https://www.instagram.com/0xmlow">Instagram, @0xmlow</a><a href="https://www.tiktok.com/@0xmlow">TikTok, @0xmlow</a></div>
       <div class="logostrip" aria-label="N3W YORKERS logos by MLow">${[...LOCKUPS,...MARKS].sort((a,b)=>a-b).map(n=>`<a href="${BASE}brand#logos"><img src="${logoUrl(n,true)}" alt="N3W YORKERS logo ${n}" loading="lazy" decoding="async" width="72" height="72"></a>`).join("")}</div>
@@ -188,4 +188,14 @@
     });
   })();
   window.NY = {D,C,S,P,CFG,BASE,track,hit,fmt,thumb,get,era,famName,famBlurb,num,sample,find,recordUrl,esc,nav,foot,toast,share,shareUrl,xIntent,shareRow,trail,since,rnd:mulberry32};
+})();
+
+// Power: the hero drift, the sprites, the pigeon and the marquees pause while the hero is off screen or the window is
+// not in front (body.still). A visitor's fans went full jet engine on a page with no WebGL at all; this is why.
+(function () {
+  var body = document.body, hero = document.querySelector('.welcome'), seen = true, front = document.hasFocus();
+  var set = function () { body.classList.toggle('still', !seen || !front || document.hidden); };
+  if (hero && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { seen = es[0].isIntersecting; set(); }, { threshold: 0.05 }).observe(hero);
+  addEventListener('blur', function () { front = false; set(); }); addEventListener('focus', function () { front = true; set(); });
+  document.addEventListener('visibilitychange', set); set();
 })();

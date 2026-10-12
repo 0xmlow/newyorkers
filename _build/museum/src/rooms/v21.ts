@@ -11,6 +11,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero, heroInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -749,6 +750,15 @@ export const huntspoint: RoomDef = {
       const fl = Array.from({ length: NF }, (_, i) => ({ x: X0 + 8 + rnd() * (X1 - X0 - 16), z: i % 2 ? DOCK + 1.9 : DOCK + 4.4, dir: rnd() < 0.5 ? 1 : -1, v: 3.2 + rnd() * 2.2, x0: X0 + 4 + rnd() * 20, x1: X1 - 4 - rnd() * 20, loaded: rnd() < 0.7, ph: rnd() * 6 }));
       const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), sc = new T.Vector3();
       let busy = 1, lastSec = -1;
+      /* 2026-10-09: the hero forklift (yellow, black mast and cage) as instanced parts on the same matrices;
+         it replaces the box bodies, masts and wheels when it loads; drivers, loads and beacons stay */
+      let fk: ReturnType<typeof heroInstances> | null = null;
+      void hero(k, 'h_forklift', { height: 2.45 }).then((g) => {
+        if (!g) return;
+        fk = heroInstances(k, g, NF);
+        bodies.visible = masts.visible = wheels.visible = false;
+        place(0, 0);
+      });
       const place = (t: number, dt: number) => {
         const d = Math.min(dt, 0.1), ts = Math.floor(t);
         if (ts !== lastSec) { lastSec = ts; const { h } = nyClock(); busy = h >= 21 || h < 9 ? 1 : 0.4; }   /* the market works the night; by day it thins */
@@ -758,10 +768,12 @@ export const huntspoint: RoomDef = {
           const yaw = a.dir > 0 ? PI / 2 : -PI / 2;
           q.setFromAxisAngle(up, yaw); p.set(a.x, DY, a.z); m.compose(p, q, one);
           bodies.setMatrixAt(i, m); masts.setMatrixAt(i, m); wheels.setMatrixAt(i, m); drivers.setMatrixAt(i, m);
+          fk?.setAt(i, m);
           m.compose(p, q, a.loaded ? one : hide); loads.setMatrixAt(i, m);
           const on = Math.sin(t * 6 + a.ph) > 0.2; p.set(a.x, DY + 2.55, a.z - Math.cos(yaw) * 0.25); m.compose(p, q, on ? one : hide); beacons.setMatrixAt(i, m);
         });
         for (const o of [bodies, masts, wheels, loads, drivers, beacons]) o.instanceMatrix.needsUpdate = true;
+        fk?.commit();
       };
       place(0, 0);
       if (!ctx.reduced) k.ticks.push(place);

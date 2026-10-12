@@ -136,7 +136,7 @@ for i in on_chain:
                    "mintedAt": datetime.datetime.fromtimestamp(minted_at[i], ET).isoformat() if i in minted_at else None})
 os.makedirs(os.path.join(SITE, "api"), exist_ok=True)
 json.dump({"asOf": asof, "block": CH["to"], "contract": CONTRACT, "chain": "Ethereum", "standard": "ERC-7160TL",
-           "painted": len(k), "paintedNote": "111 and counting: KEYSTONE is open ended and grows as new Keystone New Yorkers are painted.",
+           "painted": len(k), "paintedNote": "111 and counting: KEYSTONE is open ended and grows as new Keystone New Yorkers are made.",
            "onChain": len(on_chain), "holders": len(holders), "price": "0.069 ETH", "mint": MINT_URL,
            "foldedIn": {"count": len(pre), "from": pre_from, "to": pre_to, "note": "Minted on the contract before the Keystone release and folded into it. Token ids are mint order."},
            "tokens": [{k_: v for k_, v in t.items() if k_ != "th"} for t in tokens]},
@@ -150,7 +150,7 @@ ONCHAIN_HTML = f"""
   <button class="close" id="chainx" type="button" aria-label="Close">×</button>
   <div class="eyebrow">Keystone · Ethereum · ERC-7160</div>
   <h2>ON CHAIN</h2>
-  <p class="big"><b>{len(k)} painted and counting.</b> <b>{len(on_chain)} on chain.</b> <b>{len(holders)} holders.</b></p>
+  <p class="big"><b>{len(k)} made and counting.</b> <b>{len(on_chain)} on chain.</b> <b>{len(holders)} holders.</b></p>
   <p class="note">Read off Ethereum on {esc(asof)}, block {CH["to"]:,}. Contract <a href="https://etherscan.io/address/{CONTRACT}" target="_blank" rel="noopener">{CONTRACT[:6]}\u2026{CONTRACT[-4:]}</a> on Transient Labs, 0.069 ETH each, one price and no ladder. Token ids are mint order; {len(pre)} were minted before the Keystone release, {esc(pre_from)} to {esc(pre_to)}, and were folded in. Raw data at <a href="api/keystone.json">api/keystone.json</a>.</p>
   <a class="mintk" href="{MINT_URL}" target="_blank" rel="noopener">Mint a Keystone on Transient</a>
   <h3>The {len(on_chain)} minted</h3>

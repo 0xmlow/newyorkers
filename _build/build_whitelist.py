@@ -157,7 +157,7 @@ script = """
      // The roll credits referrals by a hash code of the wallet, so the link matches the one the roll page gives.
      var w=(data.get('wallet')||'').toString().trim().toLowerCase();
      if(window.crypto&&crypto.subtle&&w){ fetch('/api/roll.json?t='+Math.floor(Date.now()/6e5)).then(function(r){return r.json()}).then(function(j){ return crypto.subtle.digest('SHA-256',new TextEncoder().encode(w+(j.salt||'the-roll'))); }).then(function(b){ var h=Array.from(new Uint8Array(b)).map(function(x){return (x<16?'0':'')+x.toString(16)}).join(''); link=base+'?ref='+h.slice(0,10); $('#refLink').value=link; }).catch(function(){}); }
-     NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'A painted census of New York City, a walkable museum of the whole town, and THE CENSUS RELEASE minting now.',url:link});
+     NY.shareRow($('#refShare'),{title:'NEW YORKERS by MLow',text:'An art census of New York City, a walkable museum of the whole town, and THE CENSUS RELEASE minting now.',url:link});
      $('#refLink').onclick=function(){ this.select(); document.execCommand&&document.execCommand('copy'); NY.toast('Link copied.'); };
    }).catch(function(e){
      btn.disabled=false; btn.textContent='PUT ME ON THE LIST';

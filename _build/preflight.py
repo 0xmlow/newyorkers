@@ -203,6 +203,10 @@ for _dp,_dn,_fn in os.walk(PKG):
                 _hits.append(os.path.relpath(os.path.join(_dp,_f),PKG))
         elif _pat.search(_f.lower().replace("-"," ")): _hits.append(os.path.relpath(os.path.join(_dp,_f),PKG))
 if _hits: probs.append(f"banned person named in {len(_hits)} files: {_hits[:5]}")
+# no two New Yorkers share a name (MLow 2026-10-08, after two Everton Charlemagnes were minted); unique_names.py owns the rule
+import subprocess as _sp
+_un=_sp.run([sys.executable,os.path.join(os.path.dirname(os.path.abspath(__file__)),"unique_names.py"),"check"],capture_output=True,text=True)
+if _un.returncode!=0: probs.append("repeated names: "+(_un.stdout.strip().splitlines() or ["?"])[-1])
 print("\nPROBLEMS" if probs else "\nno problems"); [print(" !",x) for x in probs]
 print("WARNINGS"); [print(" ~",x) for x in warns]
 sys.exit(1 if probs else 0)

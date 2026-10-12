@@ -1,0 +1,11 @@
+{
+  "_note": "THIS WEEK IN NEW YORKERS, the editorial heartbeat on the home page. Hand edited, one edition a week. Five slots, each a link. Dates are the artist's published intent.",
+  "edition": "October 6 to 12, 2026",
+  "slots": [
+    {"k": "SEE", "t": "The Mosaic", "s": "MLow in his cab, made of 9,216 New Yorkers. Every tile clickable, minted tiles lit from the chain.", "h": "mosaic"},
+    {"k": "PLAY", "t": "The Arcade", "s": "Three games. The day's top score on each gets a New Yorker, read off the board at midnight.", "h": "arcade"},
+    {"k": "WALK", "t": "Room 183, the Hall of Fame", "s": "Every honorary portrait in one rotunda, a bronze name plate under each. Find your face.", "h": "museum#room=honoraries"},
+    {"k": "FIND", "t": "Your Stop", "s": "Type your subway station. See the New Yorkers painted within three blocks of it.", "h": "stop"},
+    {"k": "NEXT", "t": "Friday State, October 9", "s": "A new state lands on a tranche of census tokens every Friday. The schedule is public now.", "h": "states"}
+  ]
+}

@@ -1,5 +1,9325 @@
 [
 {
+"f": "assets/skelly/races/T27-heats-1.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 1,
+"title": "Windy Takes Heat 1, Tournament 27",
+"winner": "Windy",
+"wid": 59,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1848411502,
+"time": 85.25000000001391,
+"finish": [
+"Windy",
+"Thrillr",
+"Survivor",
+"Final Lap",
+"Appreciatoor"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-2.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 2,
+"title": "Viber Takes Heat 2, Tournament 27",
+"winner": "Viber",
+"wid": 18,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3699243030,
+"time": 97.2166666666901,
+"finish": [
+"Viber",
+"Spidey",
+"World Peace",
+"Fluffy",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-3.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 3,
+"title": "Marmy Takes Heat 3, Tournament 27",
+"winner": "Marmy",
+"wid": 94,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 654212986,
+"time": 110.80000000003425,
+"finish": [
+"Marmy",
+"Aerys II",
+"Peeled Out",
+"Dimensional",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-4.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 4,
+"title": "Babka Takes Heat 4, Tournament 27",
+"winner": "Babka",
+"wid": 3,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2678699367,
+"time": 91.4000000000188,
+"finish": [
+"Babka",
+"Espresso",
+"Bodega",
+"Baller",
+"Party In The Back"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-5.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 5,
+"title": "Doc Takes Heat 5, Tournament 27",
+"winner": "Doc",
+"wid": 57,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3961077698,
+"time": 97.52500000002368,
+"finish": [
+"Doc",
+"Squiggy",
+"Versal",
+"Glitchy",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-6.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 6,
+"title": "Moon God Takes Heat 6, Tournament 27",
+"winner": "Moon God",
+"wid": 66,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1308855066,
+"time": 105.33333333336323,
+"finish": [
+"Moon God",
+"Bork",
+"Phoenix",
+"King",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-7.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 7,
+"title": "Geometric Takes Heat 7, Tournament 27",
+"winner": "Geometric",
+"wid": 93,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1493404131,
+"time": 100.39166666669263,
+"finish": [
+"Geometric",
+"Crusty",
+"Whiskers",
+"Sparkly",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-8.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 8,
+"title": "ETH Saver Takes Heat 8, Tournament 27",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1790515662,
+"time": 112.21666666670204,
+"finish": [
+"ETH Saver",
+"Combustion",
+"Maper",
+"Anon",
+"Refunder"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-9.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 9,
+"title": "Lore-y Takes Heat 9, Tournament 27",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3090715496,
+"time": 99.86666666669221,
+"finish": [
+"Lore-y",
+"Relaxer",
+"Brunk",
+"Burnout",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-10.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 10,
+"title": "Blocky Takes Heat 10, Tournament 27",
+"winner": "Blocky",
+"wid": 24,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3599882784,
+"time": 92.05833333335266,
+"finish": [
+"Blocky",
+"Bonsai",
+"Punky",
+"Acidic",
+"Mysterio"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-11.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 11,
+"title": "Mad Shatter Takes Heat 11, Tournament 27",
+"winner": "Mad Shatter",
+"wid": 13,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1935729057,
+"time": 104.79166666669613,
+"finish": [
+"Mad Shatter",
+"Meow Meow",
+"Molder",
+"Mulligan",
+"Jacked Up"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-12.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 12,
+"title": "Spaced Out Takes Heat 12, Tournament 27",
+"winner": "Spaced Out",
+"wid": 72,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2016975085,
+"time": 84.74166666668017,
+"finish": [
+"Spaced Out",
+"Batty",
+"Shopper",
+"Tunneler",
+"Fresh Prince"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-13.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 13,
+"title": "Get That Bread Takes Heat 13, Tournament 27",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 883152779,
+"time": 84.29166666667982,
+"finish": [
+"Get That Bread",
+"Walker",
+"Java",
+"Horsin Around",
+"QQLer"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-14.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 14,
+"title": "Roar Takes Heat 14, Tournament 27",
+"winner": "Roar",
+"wid": 35,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1837667215,
+"time": 85.47500000001409,
+"finish": [
+"Roar",
+"Presidente",
+"Royal Flush",
+"Dialer",
+"Grumpy"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-15.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 15,
+"title": "High T Takes Heat 15, Tournament 27",
+"winner": "High T",
+"wid": 56,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 889602563,
+"time": 97.45000000002362,
+"finish": [
+"High T",
+"Coach",
+"Lenticular",
+"Detroiter",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-16.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 16,
+"title": "BadaBing Takes Heat 16, Tournament 27",
+"winner": "BadaBing",
+"wid": 31,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4085673727,
+"time": 106.9333333333645,
+"finish": [
+"BadaBing",
+"Feathers",
+"Sargent",
+"Serenity",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T27-heats-17.jpg",
+"t": 27,
+"rnd": "heats",
+"i": 17,
+"title": "Insert Coin Takes Heat 17, Tournament 27",
+"winner": "Insert Coin",
+"wid": 9,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1883098315,
+"time": 99.23333333335837,
+"finish": [
+"Insert Coin",
+"Rotten",
+"Spicy",
+"Chomp",
+"Flight"
+]
+},
+{
+"f": "assets/skelly/races/T26-final-1.jpg",
+"t": 26,
+"rnd": "final",
+"i": 1,
+"title": "Phishy Takes The Final, Tournament 26",
+"winner": "Phishy",
+"wid": 20,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1078474403,
+"time": 80.25833333334327,
+"finish": [
+"Phishy",
+"Babka",
+"Punky",
+"Presidente",
+"Geometric"
+]
+},
+{
+"f": "assets/skelly/races/T26-semis-1.jpg",
+"t": 26,
+"rnd": "semis",
+"i": 1,
+"title": "Punky Takes Semi 1, Tournament 26",
+"winner": "Punky",
+"wid": 53,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 627288013,
+"time": 94.12500000002098,
+"finish": [
+"Punky",
+"Complainoor",
+"Phoenix",
+"Tunneler",
+"Boomer"
+]
+},
+{
+"f": "assets/skelly/races/T26-semis-2.jpg",
+"t": 26,
+"rnd": "semis",
+"i": 2,
+"title": "Phishy Takes Semi 2, Tournament 26",
+"winner": "Phishy",
+"wid": 20,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1510839422,
+"time": 83.02500000001214,
+"finish": [
+"Phishy",
+"Presidente",
+"Flight",
+"Grumpy",
+"Ray Of Light"
+]
+},
+{
+"f": "assets/skelly/races/T26-semis-3.jpg",
+"t": 26,
+"rnd": "semis",
+"i": 3,
+"title": "Babka Takes Semi 3, Tournament 26",
+"winner": "Babka",
+"wid": 3,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3043241519,
+"time": 97.85833333335728,
+"finish": [
+"Babka",
+"Toad",
+"Acidic",
+"Bodega",
+"Molder"
+]
+},
+{
+"f": "assets/skelly/races/T26-semis-4.jpg",
+"t": 26,
+"rnd": "semis",
+"i": 4,
+"title": "Geometric Takes Semi 4, Tournament 26",
+"winner": "Geometric",
+"wid": 93,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2183755223,
+"time": 94.05833333335426,
+"finish": [
+"Geometric",
+"Mulligan",
+"Refunder",
+"Dialer",
+"Appreciatoor"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-1.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 1,
+"title": "Ray Of Light Takes Heat 1, Tournament 26",
+"winner": "Ray Of Light",
+"wid": 22,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1031264803,
+"time": 105.77500000003025,
+"finish": [
+"Ray Of Light",
+"Blaze It",
+"Jacked Up",
+"Bonsai",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-2.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 2,
+"title": "Toad Takes Heat 2, Tournament 26",
+"winner": "Toad",
+"wid": 41,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3526355231,
+"time": 94.54166666668797,
+"finish": [
+"Toad",
+"ETH Saver",
+"Roar",
+"Blue Devil",
+"High T"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-3.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 3,
+"title": "Phishy Takes Heat 3, Tournament 26",
+"winner": "Phishy",
+"wid": 20,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 135031971,
+"time": 112.35833333336882,
+"finish": [
+"Phishy",
+"Party In The Back",
+"Thrillr",
+"Espresso",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-4.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 4,
+"title": "Tunneler Takes Heat 4, Tournament 26",
+"winner": "Tunneler",
+"wid": 47,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 881758219,
+"time": 98.06666666669078,
+"finish": [
+"Tunneler",
+"Rotten",
+"Cowboy",
+"Peeled Out",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-5.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 5,
+"title": "Grumpy Takes Heat 5, Tournament 26",
+"winner": "Grumpy",
+"wid": 84,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3067169412,
+"time": 104.66666666669603,
+"finish": [
+"Grumpy",
+"Entertainer",
+"Glitchy",
+"QQLer",
+"Red Nose"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-6.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 6,
+"title": "Boomer Takes Heat 6, Tournament 26",
+"winner": "Boomer",
+"wid": 12,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2581192998,
+"time": 98.81666666669138,
+"finish": [
+"Boomer",
+"Multitudes",
+"Sargent",
+"Doomer",
+"Spaced Out"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-7.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 7,
+"title": "Bodega Takes Heat 7, Tournament 26",
+"winner": "Bodega",
+"wid": 16,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2953975443,
+"time": 105.60000000003011,
+"finish": [
+"Bodega",
+"Crusty",
+"Coach",
+"Rainbow",
+"Walker"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-8.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 8,
+"title": "Babka Takes Heat 8, Tournament 26",
+"winner": "Babka",
+"wid": 3,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2410059843,
+"time": 103.7000000000286,
+"finish": [
+"Babka",
+"Geared Up",
+"Feathers",
+"Meow Meow",
+"Mysterio"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-9.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 9,
+"title": "Flight Takes Heat 9, Tournament 26",
+"winner": "Flight",
+"wid": 39,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3305372646,
+"time": 95.55000000002211,
+"finish": [
+"Flight",
+"Brunk",
+"Shopper",
+"Spicy",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-10.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 10,
+"title": "Dialer Takes Heat 10, Tournament 26",
+"winner": "Dialer",
+"wid": 75,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1948915273,
+"time": 82.91666666667872,
+"finish": [
+"Dialer",
+"Windy",
+"Double Deuce",
+"Viber",
+"Relaxer"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-11.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 11,
+"title": "Appreciatoor Takes Heat 11, Tournament 26",
+"winner": "Appreciatoor",
+"wid": 6,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3274686375,
+"time": 108.6000000000325,
+"finish": [
+"Appreciatoor",
+"Lindy",
+"Batty",
+"Bork",
+"Mad Shatter"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-12.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 12,
+"title": "Acidic Takes Heat 12, Tournament 26",
+"winner": "Acidic",
+"wid": 70,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 470360738,
+"time": 81.28333333334409,
+"finish": [
+"Acidic",
+"High Quality",
+"Survivor",
+"Marmy",
+"Curiousity"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-13.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 13,
+"title": "Punky Takes Heat 13, Tournament 26",
+"winner": "Punky",
+"wid": 53,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3947773805,
+"time": 95.05833333335505,
+"finish": [
+"Punky",
+"Lenticular",
+"Horsin Around",
+"Lore-y",
+"Chomp"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-14.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 14,
+"title": "Complainoor Takes Heat 14, Tournament 26",
+"winner": "Complainoor",
+"wid": 68,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2069693619,
+"time": 96.39166666668945,
+"finish": [
+"Complainoor",
+"King",
+"Anon",
+"Royal Flush",
+"Baller"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-15.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 15,
+"title": "Phoenix Takes Heat 15, Tournament 26",
+"winner": "Phoenix",
+"wid": 92,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 30117194,
+"time": 101.15000000002657,
+"finish": [
+"Phoenix",
+"Squiggy",
+"Blocky",
+"Whiskers",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-16.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 16,
+"title": "Presidente Takes Heat 16, Tournament 26",
+"winner": "Presidente",
+"wid": 32,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3530185942,
+"time": 84.6833333333468,
+"finish": [
+"Presidente",
+"Java",
+"Sparkly",
+"Combustion",
+"Spidey"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-17.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 17,
+"title": "Geometric Takes Heat 17, Tournament 26",
+"winner": "Geometric",
+"wid": 93,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1215405287,
+"time": 99.72500000002543,
+"finish": [
+"Geometric",
+"Get That Bread",
+"Fluffy",
+"Detroiter",
+"BadaBing"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-18.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 18,
+"title": "Mulligan Takes Heat 18, Tournament 26",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1378161394,
+"time": 107.10833333336464,
+"finish": [
+"Mulligan",
+"Final Lap",
+"Solo",
+"Insert Coin",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-19.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 19,
+"title": "Molder Takes Heat 19, Tournament 26",
+"winner": "Molder",
+"wid": 73,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3248523483,
+"time": 103.22500000002822,
+"finish": [
+"Molder",
+"Serenity",
+"World Peace",
+"Burnout",
+"Fresh Prince"
+]
+},
+{
+"f": "assets/skelly/races/T26-heats-20.jpg",
+"t": 26,
+"rnd": "heats",
+"i": 20,
+"title": "Refunder Takes Heat 20, Tournament 26",
+"winner": "Refunder",
+"wid": 99,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3748375605,
+"time": 84.32500000001318,
+"finish": [
+"Refunder",
+"Dimensional",
+"Doc",
+"Moon God",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T25-final-1.jpg",
+"t": 25,
+"rnd": "final",
+"i": 1,
+"title": "Meow Meow Takes The Final, Tournament 25",
+"winner": "Meow Meow",
+"wid": 10,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2867141214,
+"time": 85.61666666668087,
+"finish": [
+"Meow Meow",
+"Bonsai",
+"Detroiter",
+"Dimensional",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T25-semis-1.jpg",
+"t": 25,
+"rnd": "semis",
+"i": 1,
+"title": "Geared Up Takes Semi 1, Tournament 25",
+"winner": "Geared Up",
+"wid": 86,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2277306696,
+"time": 113.36666666670295,
+"finish": [
+"Geared Up",
+"Mulligan",
+"Marmy",
+"Blocky",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T25-semis-2.jpg",
+"t": 25,
+"rnd": "semis",
+"i": 2,
+"title": "Bonsai Takes Semi 2, Tournament 25",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1325310031,
+"time": 106.75000000003102,
+"finish": [
+"Bonsai",
+"Detroiter",
+"Doc",
+"Shopper",
+"Baller"
+]
+},
+{
+"f": "assets/skelly/races/T25-semis-3.jpg",
+"t": 25,
+"rnd": "semis",
+"i": 3,
+"title": "Meow Meow Takes Semi 3, Tournament 25",
+"winner": "Meow Meow",
+"wid": 10,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3235660047,
+"time": 116.21666666670522,
+"finish": [
+"Meow Meow",
+"Versal",
+"King",
+"ETH Saver",
+"Java"
+]
+},
+{
+"f": "assets/skelly/races/T25-semis-4.jpg",
+"t": 25,
+"rnd": "semis",
+"i": 4,
+"title": "Dimensional Takes Semi 4, Tournament 25",
+"winner": "Dimensional",
+"wid": 44,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 266329910,
+"time": 115.05000000003763,
+"finish": [
+"Dimensional",
+"Multitudes",
+"Grumpy",
+"Bork",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-1.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 1,
+"title": "Doc Takes Heat 1, Tournament 25",
+"winner": "Doc",
+"wid": 57,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 525783095,
+"time": 97.65000000002378,
+"finish": [
+"Doc",
+"Mysterio",
+"Red Nose",
+"Presidente",
+"Insert Coin"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-2.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 2,
+"title": "Geared Up Takes Heat 2, Tournament 25",
+"winner": "Geared Up",
+"wid": 86,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 763707744,
+"time": 107.4750000000316,
+"finish": [
+"Geared Up",
+"Burnout",
+"Rotten",
+"Punky",
+"Coach"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-3.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 3,
+"title": "King Takes Heat 3, Tournament 25",
+"winner": "King",
+"wid": 43,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1174644673,
+"time": 83.20000000001228,
+"finish": [
+"King",
+"Acidic",
+"Whiskers",
+"Ray Of Light",
+"Viber"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-4.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 4,
+"title": "Grumpy Takes Heat 4, Tournament 25",
+"winner": "Grumpy",
+"wid": 84,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3888361396,
+"time": 90.67500000001823,
+"finish": [
+"Grumpy",
+"Relaxer",
+"Windy",
+"Squiggy",
+"Flight"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-5.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 5,
+"title": "Versal Takes Heat 5, Tournament 25",
+"winner": "Versal",
+"wid": 85,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1208894255,
+"time": 84.70000000001347,
+"finish": [
+"Versal",
+"Peeled Out",
+"Mad Shatter",
+"Fresh Prince",
+"Doomer"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-6.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 6,
+"title": "Java Takes Heat 6, Tournament 25",
+"winner": "Java",
+"wid": 29,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3053690570,
+"time": 81.16666666667733,
+"finish": [
+"Java",
+"Anon",
+"Cowboy",
+"Curiousity",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-7.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 7,
+"title": "Multitudes Takes Heat 7, Tournament 25",
+"winner": "Multitudes",
+"wid": 71,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3823642691,
+"time": 87.53333333334906,
+"finish": [
+"Multitudes",
+"High Quality",
+"Roar",
+"Brunk",
+"Party In The Back"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-8.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 8,
+"title": "Bork Takes Heat 8, Tournament 25",
+"winner": "Bork",
+"wid": 74,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2128318433,
+"time": 100.15000000002577,
+"finish": [
+"Bork",
+"Spicy",
+"Complainoor",
+"Lore-y",
+"Lenticular"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-9.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 9,
+"title": "Marmy Takes Heat 9, Tournament 25",
+"winner": "Marmy",
+"wid": 94,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3677865192,
+"time": 108.23333333336554,
+"finish": [
+"Marmy",
+"Geometric",
+"Moon God",
+"Espresso",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-10.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 10,
+"title": "Shopper Takes Heat 10, Tournament 25",
+"winner": "Shopper",
+"wid": 33,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2884813888,
+"time": 91.41666666668549,
+"finish": [
+"Shopper",
+"Appreciatoor",
+"Tunneler",
+"Royal Flush",
+"High T"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-11.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 11,
+"title": "Bonsai Takes Heat 11, Tournament 25",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 718751490,
+"time": 83.3083333333457,
+"finish": [
+"Bonsai",
+"Jacked Up",
+"World Peace",
+"Thrillr",
+"Feathers"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-12.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 12,
+"title": "Meow Meow Takes Heat 12, Tournament 25",
+"winner": "Meow Meow",
+"wid": 10,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3502528102,
+"time": 109.77500000003343,
+"finish": [
+"Meow Meow",
+"Bodega",
+"Entertainer",
+"Dialer",
+"Rainbow"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-13.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 13,
+"title": "Blocky Takes Heat 13, Tournament 25",
+"winner": "Blocky",
+"wid": 24,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 717315260,
+"time": 93.01666666668676,
+"finish": [
+"Blocky",
+"QQLer",
+"Scorreggia",
+"Phishy",
+"Molder"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-14.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 14,
+"title": "ETH Saver Takes Heat 14, Tournament 25",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2232030680,
+"time": 84.15833333334638,
+"finish": [
+"ETH Saver",
+"Boomer",
+"Horsin Around",
+"Crusty",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-15.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 15,
+"title": "Aerys II Takes Heat 15, Tournament 25",
+"winner": "Aerys II",
+"wid": 83,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1231570758,
+"time": 95.39166666668865,
+"finish": [
+"Aerys II",
+"Phoenix",
+"Walker",
+"Mickey",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-16.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 16,
+"title": "Mulligan Takes Heat 16, Tournament 25",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2783239119,
+"time": 91.00000000001849,
+"finish": [
+"Mulligan",
+"Spaced Out",
+"Lindy",
+"Toad",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-17.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 17,
+"title": "Dimensional Takes Heat 17, Tournament 25",
+"winner": "Dimensional",
+"wid": 44,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2029294865,
+"time": 112.48333333336892,
+"finish": [
+"Dimensional",
+"Chomp",
+"Spidey",
+"Double Deuce",
+"Blue Devil"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-18.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 18,
+"title": "Baller Takes Heat 18, Tournament 25",
+"winner": "Baller",
+"wid": 52,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 902288760,
+"time": 111.55833333336818,
+"finish": [
+"Baller",
+"Combustion",
+"Refunder",
+"Sargent",
+"Fluffy"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-19.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 19,
+"title": "Detroiter Takes Heat 19, Tournament 25",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1026506313,
+"time": 84.30000000001316,
+"finish": [
+"Detroiter",
+"BadaBing",
+"Survivor",
+"Serenity",
+"Babka"
+]
+},
+{
+"f": "assets/skelly/races/T25-heats-20.jpg",
+"t": 25,
+"rnd": "heats",
+"i": 20,
+"title": "Final Lap Takes Heat 20, Tournament 25",
+"winner": "Final Lap",
+"wid": 15,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1978450205,
+"time": 86.10000000001459,
+"finish": [
+"Final Lap",
+"Sparkly",
+"Glitchy",
+"Maper",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T24-final-1.jpg",
+"t": 24,
+"rnd": "final",
+"i": 1,
+"title": "Spidey Takes The Final, Tournament 24",
+"winner": "Spidey",
+"wid": 76,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 17642912,
+"time": 109.21666666669965,
+"finish": [
+"Spidey",
+"Blue Devil",
+"Bork",
+"High T",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T24-semis-1.jpg",
+"t": 24,
+"rnd": "semis",
+"i": 1,
+"title": "Spidey Takes Semi 1, Tournament 24",
+"winner": "Spidey",
+"wid": 76,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1904306938,
+"time": 100.15000000002577,
+"finish": [
+"Spidey",
+"Coach",
+"Bodega",
+"Maper",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T24-semis-2.jpg",
+"t": 24,
+"rnd": "semis",
+"i": 2,
+"title": "Bork Takes Semi 2, Tournament 24",
+"winner": "Bork",
+"wid": 74,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2765691531,
+"time": 108.8500000000327,
+"finish": [
+"Bork",
+"Sparkly",
+"Mickey",
+"Versal",
+"Double Deuce"
+]
+},
+{
+"f": "assets/skelly/races/T24-semis-3.jpg",
+"t": 24,
+"rnd": "semis",
+"i": 3,
+"title": "Get That Bread Takes Semi 3, Tournament 24",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3448184782,
+"time": 82.6833333333452,
+"finish": [
+"Get That Bread",
+"High T",
+"Insert Coin",
+"Feathers",
+"Fluffy"
+]
+},
+{
+"f": "assets/skelly/races/T24-semis-4.jpg",
+"t": 24,
+"rnd": "semis",
+"i": 4,
+"title": "Blue Devil Takes Semi 4, Tournament 24",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 906469242,
+"time": 87.43333333334898,
+"finish": [
+"Blue Devil",
+"Espresso",
+"Anon",
+"Ray Of Light",
+"Chomp"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-1.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 1,
+"title": "Spidey Takes Heat 1, Tournament 24",
+"winner": "Spidey",
+"wid": 76,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3778795666,
+"time": 106.84166666669776,
+"finish": [
+"Spidey",
+"Fresh Prince",
+"Babka",
+"Lindy",
+"Detroiter"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-2.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 2,
+"title": "Chomp Takes Heat 2, Tournament 24",
+"winner": "Chomp",
+"wid": 79,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2480733057,
+"time": 82.67500000001186,
+"finish": [
+"Chomp",
+"Crusty",
+"Curiousity",
+"Scorreggia",
+"Presidente"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-3.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 3,
+"title": "Coach Takes Heat 3, Tournament 24",
+"winner": "Coach",
+"wid": 80,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2759393569,
+"time": 84.88333333334695,
+"finish": [
+"Coach",
+"Viber",
+"Refunder",
+"Burnout",
+"Squiggy"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-4.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 4,
+"title": "Mickey Takes Heat 4, Tournament 24",
+"winner": "Mickey",
+"wid": 91,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3271221431,
+"time": 112.02500000003522,
+"finish": [
+"Mickey",
+"Multitudes",
+"Java",
+"World Peace",
+"Shopper"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-5.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 5,
+"title": "High T Takes Heat 5, Tournament 24",
+"winner": "High T",
+"wid": 56,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3497359994,
+"time": 114.23333333337031,
+"finish": [
+"High T",
+"Baller",
+"Flight",
+"ETH Saver",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-6.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 6,
+"title": "Sparkly Takes Heat 6, Tournament 24",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1425540961,
+"time": 110.23333333336713,
+"finish": [
+"Sparkly",
+"Toad",
+"Windy",
+"Geometric",
+"Survivor"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-7.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 7,
+"title": "Bodega Takes Heat 7, Tournament 24",
+"winner": "Bodega",
+"wid": 16,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1643499713,
+"time": 97.1333333333567,
+"finish": [
+"Bodega",
+"Moon God",
+"Peeled Out",
+"Glitchy",
+"Horsin Around"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-8.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 8,
+"title": "Ray Of Light Takes Heat 8, Tournament 24",
+"winner": "Ray Of Light",
+"wid": 22,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3174589159,
+"time": 106.53333333336418,
+"finish": [
+"Ray Of Light",
+"Walker",
+"Spicy",
+"Roar",
+"Marmy"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-9.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 9,
+"title": "Versal Takes Heat 9, Tournament 24",
+"winner": "Versal",
+"wid": 85,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1955683441,
+"time": 104.73333333336275,
+"finish": [
+"Versal",
+"Thrillr",
+"Acidic",
+"Grumpy",
+"Doc"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-10.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 10,
+"title": "Blue Devil Takes Heat 10, Tournament 24",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3643043313,
+"time": 100.15833333335911,
+"finish": [
+"Blue Devil",
+"Whiskers",
+"Red Nose",
+"Tunneler",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-11.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 11,
+"title": "Get That Bread Takes Heat 11, Tournament 24",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1941698756,
+"time": 95.38333333335531,
+"finish": [
+"Get That Bread",
+"Phoenix",
+"Party In The Back",
+"Doomer",
+"Phishy"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-12.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 12,
+"title": "Anon Takes Heat 12, Tournament 24",
+"winner": "Anon",
+"wid": 46,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1856095129,
+"time": 93.97500000002086,
+"finish": [
+"Anon",
+"QQLer",
+"High Quality",
+"Combustion",
+"Jacked Up"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-13.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 13,
+"title": "Maper Takes Heat 13, Tournament 24",
+"winner": "Maper",
+"wid": 78,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1212536908,
+"time": 111.24166666670126,
+"finish": [
+"Maper",
+"Dialer",
+"Rotten",
+"Blocky",
+"Appreciatoor"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-14.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 14,
+"title": "Final Lap Takes Heat 14, Tournament 24",
+"winner": "Final Lap",
+"wid": 15,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3950408357,
+"time": 94.97500000002165,
+"finish": [
+"Final Lap",
+"Boomer",
+"Dimensional",
+"BadaBing",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-15.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 15,
+"title": "Fluffy Takes Heat 15, Tournament 24",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3499778080,
+"time": 91.80833333335246,
+"finish": [
+"Fluffy",
+"Rainbow",
+"Batty",
+"Lenticular",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-16.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 16,
+"title": "Espresso Takes Heat 16, Tournament 24",
+"winner": "Espresso",
+"wid": 49,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3521445396,
+"time": 104.30000000002907,
+"finish": [
+"Espresso",
+"Royal Flush",
+"Mysterio",
+"Molder",
+"Mulligan"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-17.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 17,
+"title": "Insert Coin Takes Heat 17, Tournament 24",
+"winner": "Insert Coin",
+"wid": 9,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3210469441,
+"time": 101.04166666669315,
+"finish": [
+"Insert Coin",
+"King",
+"Spaced Out",
+"Serenity",
+"Mad Shatter"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-18.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 18,
+"title": "Bork Takes Heat 18, Tournament 24",
+"winner": "Bork",
+"wid": 74,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3800981486,
+"time": 99.63333333335869,
+"finish": [
+"Bork",
+"Complainoor",
+"Punky",
+"Relaxer",
+"Sargent"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-19.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 19,
+"title": "Double Deuce Takes Heat 19, Tournament 24",
+"winner": "Double Deuce",
+"wid": 54,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1919849889,
+"time": 108.28333333336558,
+"finish": [
+"Double Deuce",
+"Entertainer",
+"Bonsai",
+"Meow Meow",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T24-heats-20.jpg",
+"t": 24,
+"rnd": "heats",
+"i": 20,
+"title": "Feathers Takes Heat 20, Tournament 24",
+"winner": "Feathers",
+"wid": 36,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 369538587,
+"time": 104.47500000002921,
+"finish": [
+"Feathers",
+"Lore-y",
+"Curatooor",
+"Brunk",
+"Cowboy"
+]
+},
+{
+"f": "assets/skelly/races/T23-final-1.jpg",
+"t": 23,
+"rnd": "final",
+"i": 1,
+"title": "Jacked Up Takes The Final, Tournament 23",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2337760978,
+"time": 105.8083333333636,
+"finish": [
+"Jacked Up",
+"Mickey",
+"Spaced Out",
+"Burnout",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T23-semis-1.jpg",
+"t": 23,
+"rnd": "semis",
+"i": 1,
+"title": "Jacked Up Takes Semi 1, Tournament 23",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 4176086954,
+"time": 99.20000000002501,
+"finish": [
+"Jacked Up",
+"Get That Bread",
+"King",
+"Doomer",
+"Sargent"
+]
+},
+{
+"f": "assets/skelly/races/T23-semis-2.jpg",
+"t": 23,
+"rnd": "semis",
+"i": 2,
+"title": "Burnout Takes Semi 2, Tournament 23",
+"winner": "Burnout",
+"wid": 95,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3521825598,
+"time": 89.74166666668415,
+"finish": [
+"Burnout",
+"Royal Flush",
+"Marmy",
+"Grumpy",
+"Boomer"
+]
+},
+{
+"f": "assets/skelly/races/T23-semis-3.jpg",
+"t": 23,
+"rnd": "semis",
+"i": 3,
+"title": "Mickey Takes Semi 3, Tournament 23",
+"winner": "Mickey",
+"wid": 91,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 805849084,
+"time": 96.19166666668929,
+"finish": [
+"Mickey",
+"Cowboy",
+"Baller",
+"Ray Of Light",
+"Relaxer"
+]
+},
+{
+"f": "assets/skelly/races/T23-semis-4.jpg",
+"t": 23,
+"rnd": "semis",
+"i": 4,
+"title": "Aerys II Takes Semi 4, Tournament 23",
+"winner": "Aerys II",
+"wid": 83,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1159288354,
+"time": 84.57500000001338,
+"finish": [
+"Aerys II",
+"Spaced Out",
+"Fluffy",
+"Bonsai",
+"High T"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-1.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 1,
+"title": "Aerys II Takes Heat 1, Tournament 23",
+"winner": "Aerys II",
+"wid": 83,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2654928064,
+"time": 80.48333333334345,
+"finish": [
+"Aerys II",
+"Espresso",
+"Anon",
+"Versal",
+"Spidey"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-2.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 2,
+"title": "Sargent Takes Heat 2, Tournament 23",
+"winner": "Sargent",
+"wid": 65,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3768648692,
+"time": 90.35833333335131,
+"finish": [
+"Sargent",
+"Punky",
+"Flight",
+"Geometric",
+"Acidic"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-3.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 3,
+"title": "Boomer Takes Heat 3, Tournament 23",
+"winner": "Boomer",
+"wid": 12,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3609777638,
+"time": 84.7666666666802,
+"finish": [
+"Boomer",
+"Blue Devil",
+"World Peace",
+"Brunk",
+"Lore-y"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-4.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 4,
+"title": "Doomer Takes Heat 4, Tournament 23",
+"winner": "Doomer",
+"wid": 55,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3982977653,
+"time": 83.75000000001272,
+"finish": [
+"Doomer",
+"Curiousity",
+"Serenity",
+"Mulligan",
+"Mysterio"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-5.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 5,
+"title": "Mickey Takes Heat 5, Tournament 23",
+"winner": "Mickey",
+"wid": 91,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1445845052,
+"time": 105.75833333336357,
+"finish": [
+"Mickey",
+"Rotten",
+"Dialer",
+"Appreciatoor",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-6.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 6,
+"title": "Bonsai Takes Heat 6, Tournament 23",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1745979851,
+"time": 101.58333333336024,
+"finish": [
+"Bonsai",
+"Windy",
+"Java",
+"Thrillr",
+"Tunneler"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-7.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 7,
+"title": "King Takes Heat 7, Tournament 23",
+"winner": "King",
+"wid": 43,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1055087508,
+"time": 91.87500000001918,
+"finish": [
+"King",
+"Lindy",
+"Presidente",
+"Horsin Around",
+"Bork"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-8.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 8,
+"title": "Royal Flush Takes Heat 8, Tournament 23",
+"winner": "Royal Flush",
+"wid": 42,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2337799808,
+"time": 99.40000000002517,
+"finish": [
+"Royal Flush",
+"Bodega",
+"Complainoor",
+"Toad",
+"Peeled Out"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-9.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 9,
+"title": "Relaxer Takes Heat 9, Tournament 23",
+"winner": "Relaxer",
+"wid": 97,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 4045123731,
+"time": 90.61666666668485,
+"finish": [
+"Relaxer",
+"Sparkly",
+"Feathers",
+"Phoenix",
+"Shopper"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-10.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 10,
+"title": "Marmy Takes Heat 10, Tournament 23",
+"winner": "Marmy",
+"wid": 94,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3646598400,
+"time": 100.08333333335905,
+"finish": [
+"Marmy",
+"Final Lap",
+"Meow Meow",
+"Coach",
+"Detroiter"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-11.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 11,
+"title": "Fluffy Takes Heat 11, Tournament 23",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1660007344,
+"time": 85.45000000001407,
+"finish": [
+"Fluffy",
+"Refunder",
+"Whiskers",
+"Blaze It",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-12.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 12,
+"title": "Spaced Out Takes Heat 12, Tournament 23",
+"winner": "Spaced Out",
+"wid": 72,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1356715008,
+"time": 93.82500000002074,
+"finish": [
+"Spaced Out",
+"Curatooor",
+"Molder",
+"Red Nose",
+"Doc"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-13.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 13,
+"title": "Cowboy Takes Heat 13, Tournament 23",
+"winner": "Cowboy",
+"wid": 17,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3861482144,
+"time": 104.62500000002933,
+"finish": [
+"Cowboy",
+"Glitchy",
+"Scorreggia",
+"Double Deuce",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-14.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 14,
+"title": "Baller Takes Heat 14, Tournament 23",
+"winner": "Baller",
+"wid": 52,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 481348514,
+"time": 105.55000000003007,
+"finish": [
+"Baller",
+"Multitudes",
+"BadaBing",
+"Batty",
+"Viber"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-15.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 15,
+"title": "Ray Of Light Takes Heat 15, Tournament 23",
+"winner": "Ray Of Light",
+"wid": 22,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 891602045,
+"time": 108.09166666669876,
+"finish": [
+"Ray Of Light",
+"Blocky",
+"Squiggy",
+"Babka",
+"QQLer"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-16.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 16,
+"title": "Burnout Takes Heat 16, Tournament 23",
+"winner": "Burnout",
+"wid": 95,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2117814053,
+"time": 99.75000000002545,
+"finish": [
+"Burnout",
+"Geared Up",
+"Phishy",
+"Roar",
+"Survivor"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-17.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 17,
+"title": "Get That Bread Takes Heat 17, Tournament 23",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2107101043,
+"time": 91.12500000001859,
+"finish": [
+"Get That Bread",
+"Shutter",
+"ETH Saver",
+"Chomp",
+"Spicy"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-18.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 18,
+"title": "Jacked Up Takes Heat 18, Tournament 23",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2760297287,
+"time": 99.40833333335851,
+"finish": [
+"Jacked Up",
+"Lenticular",
+"Moon God",
+"Combustion",
+"Dimensional"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-19.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 19,
+"title": "High T Takes Heat 19, Tournament 23",
+"winner": "High T",
+"wid": 56,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3076446398,
+"time": 91.25833333335203,
+"finish": [
+"High T",
+"Party In The Back",
+"Fresh Prince",
+"Rainbow",
+"High Quality"
+]
+},
+{
+"f": "assets/skelly/races/T23-heats-20.jpg",
+"t": 23,
+"rnd": "heats",
+"i": 20,
+"title": "Grumpy Takes Heat 20, Tournament 23",
+"winner": "Grumpy",
+"wid": 84,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3675367545,
+"time": 91.62500000001899,
+"finish": [
+"Grumpy",
+"Mad Shatter",
+"Insert Coin",
+"Crusty",
+"Walker"
+]
+},
+{
+"f": "assets/skelly/races/T22-final-1.jpg",
+"t": 22,
+"rnd": "final",
+"i": 1,
+"title": "Versal Takes The Final, Tournament 22",
+"winner": "Versal",
+"wid": 85,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1238131506,
+"time": 107.1000000000313,
+"finish": [
+"Versal",
+"Shopper",
+"Spicy",
+"Insert Coin",
+"Detroiter"
+]
+},
+{
+"f": "assets/skelly/races/T22-semis-1.jpg",
+"t": 22,
+"rnd": "semis",
+"i": 1,
+"title": "Detroiter Takes Semi 1, Tournament 22",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2116200208,
+"time": 106.40833333336408,
+"finish": [
+"Detroiter",
+"Crusty",
+"Doc",
+"Thrillr",
+"Royal Flush"
+]
+},
+{
+"f": "assets/skelly/races/T22-semis-2.jpg",
+"t": 22,
+"rnd": "semis",
+"i": 2,
+"title": "Versal Takes Semi 2, Tournament 22",
+"winner": "Versal",
+"wid": 85,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 4133019699,
+"time": 110.17500000003375,
+"finish": [
+"Versal",
+"Fluffy",
+"Meow Meow",
+"Solo",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T22-semis-3.jpg",
+"t": 22,
+"rnd": "semis",
+"i": 3,
+"title": "Insert Coin Takes Semi 3, Tournament 22",
+"winner": "Insert Coin",
+"wid": 9,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3502356432,
+"time": 100.00000000002565,
+"finish": [
+"Insert Coin",
+"Shopper",
+"Boomer",
+"Baller",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T22-semis-4.jpg",
+"t": 22,
+"rnd": "semis",
+"i": 4,
+"title": "Spicy Takes Semi 4, Tournament 22",
+"winner": "Spicy",
+"wid": 34,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2476419352,
+"time": 107.75000000003182,
+"finish": [
+"Spicy",
+"Anon",
+"Chomp",
+"Get That Bread",
+"Moon God"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-1.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 1,
+"title": "Get That Bread Takes Heat 1, Tournament 22",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3411953308,
+"time": 85.64166666668089,
+"finish": [
+"Get That Bread",
+"Blocky",
+"Phishy",
+"Dimensional",
+"Fresh Prince"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-2.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 2,
+"title": "Shopper Takes Heat 2, Tournament 22",
+"winner": "Shopper",
+"wid": 33,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1549880754,
+"time": 90.21666666668453,
+"finish": [
+"Shopper",
+"Espresso",
+"Sargent",
+"Lenticular",
+"Rainbow"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-3.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 3,
+"title": "Crusty Takes Heat 3, Tournament 22",
+"winner": "Crusty",
+"wid": 62,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4238407157,
+"time": 81.90000000001125,
+"finish": [
+"Crusty",
+"Horsin Around",
+"Spidey",
+"High T",
+"Mysterio"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-4.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 4,
+"title": "Chomp Takes Heat 4, Tournament 22",
+"winner": "Chomp",
+"wid": 79,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4221689324,
+"time": 103.3250000000283,
+"finish": [
+"Chomp",
+"Complainoor",
+"Geometric",
+"Mad Shatter",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-5.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 5,
+"title": "Solo Takes Heat 5, Tournament 22",
+"winner": "Solo",
+"wid": 58,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 817145479,
+"time": 84.91666666668031,
+"finish": [
+"Solo",
+"Geared Up",
+"Rotten",
+"Windy",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-6.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 6,
+"title": "Meow Meow Takes Heat 6, Tournament 22",
+"winner": "Meow Meow",
+"wid": 10,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3818619772,
+"time": 88.99166666668356,
+"finish": [
+"Meow Meow",
+"Acidic",
+"ETH Saver",
+"Roar",
+"Double Deuce"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-7.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 7,
+"title": "Versal Takes Heat 7, Tournament 22",
+"winner": "Versal",
+"wid": 85,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3170994031,
+"time": 84.05000000001296,
+"finish": [
+"Versal",
+"Feathers",
+"Mickey",
+"Scorreggia",
+"World Peace"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-8.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 8,
+"title": "Thrillr Takes Heat 8, Tournament 22",
+"winner": "Thrillr",
+"wid": 25,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1036709356,
+"time": 90.55833333335147,
+"finish": [
+"Thrillr",
+"Batty",
+"Curatooor",
+"High Quality",
+"Combustion"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-9.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 9,
+"title": "Baller Takes Heat 9, Tournament 22",
+"winner": "Baller",
+"wid": 52,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3972568807,
+"time": 92.00000000001928,
+"finish": [
+"Baller",
+"QQLer",
+"Viber",
+"Glitchy",
+"Babka"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-10.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 10,
+"title": "Detroiter Takes Heat 10, Tournament 22",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3642488611,
+"time": 97.0500000000233,
+"finish": [
+"Detroiter",
+"Burnout",
+"Curiousity",
+"Doomer",
+"Mulligan"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-11.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 11,
+"title": "Royal Flush Takes Heat 11, Tournament 22",
+"winner": "Royal Flush",
+"wid": 42,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 4000739734,
+"time": 113.15833333336946,
+"finish": [
+"Royal Flush",
+"Jacked Up",
+"Tunneler",
+"Punky",
+"Serenity"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-12.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 12,
+"title": "Brunk Takes Heat 12, Tournament 22",
+"winner": "Brunk",
+"wid": 21,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2467702914,
+"time": 87.98333333334942,
+"finish": [
+"Brunk",
+"Refunder",
+"Appreciatoor",
+"Bodega",
+"Peeled Out"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-13.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 13,
+"title": "Boomer Takes Heat 13, Tournament 22",
+"winner": "Boomer",
+"wid": 12,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1590918696,
+"time": 108.7666666666993,
+"finish": [
+"Boomer",
+"Squiggy",
+"Marmy",
+"Grumpy",
+"Presidente"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-14.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 14,
+"title": "Spicy Takes Heat 14, Tournament 22",
+"winner": "Spicy",
+"wid": 34,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3770983325,
+"time": 96.01666666668915,
+"finish": [
+"Spicy",
+"Spaced Out",
+"Sparkly",
+"Java",
+"Bonsai"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-15.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 15,
+"title": "Fluffy Takes Heat 15, Tournament 22",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1373907851,
+"time": 109.36666666669977,
+"finish": [
+"Fluffy",
+"Relaxer",
+"Cowboy",
+"King",
+"Blue Devil"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-16.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 16,
+"title": "Insert Coin Takes Heat 16, Tournament 22",
+"winner": "Insert Coin",
+"wid": 9,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3318875414,
+"time": 92.61666666668644,
+"finish": [
+"Insert Coin",
+"Entertainer",
+"Ray Of Light",
+"Blaze It",
+"BadaBing"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-17.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 17,
+"title": "Anon Takes Heat 17, Tournament 22",
+"winner": "Anon",
+"wid": 46,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2040798924,
+"time": 89.94166666668431,
+"finish": [
+"Anon",
+"Walker",
+"Aerys II",
+"Red Nose",
+"Dialer"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-18.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 18,
+"title": "Doc Takes Heat 18, Tournament 22",
+"winner": "Doc",
+"wid": 57,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3422281746,
+"time": 96.02500000002249,
+"finish": [
+"Doc",
+"Whiskers",
+"Flight",
+"Bork",
+"Coach"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-19.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 19,
+"title": "Maper Takes Heat 19, Tournament 22",
+"winner": "Maper",
+"wid": 78,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3241116945,
+"time": 101.05833333335983,
+"finish": [
+"Maper",
+"Molder",
+"Final Lap",
+"Phoenix",
+"Survivor"
+]
+},
+{
+"f": "assets/skelly/races/T22-heats-20.jpg",
+"t": 22,
+"rnd": "heats",
+"i": 20,
+"title": "Moon God Takes Heat 20, Tournament 22",
+"winner": "Moon God",
+"wid": 66,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 515172611,
+"time": 110.67500000003415,
+"finish": [
+"Moon God",
+"Toad",
+"Lindy",
+"Lore-y",
+"Party In The Back"
+]
+},
+{
+"f": "assets/skelly/races/T21-final-1.jpg",
+"t": 21,
+"rnd": "final",
+"i": 1,
+"title": "Babka Takes The Final, Tournament 21",
+"winner": "Babka",
+"wid": 3,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 4052879727,
+"time": 96.50000000002287,
+"finish": [
+"Babka",
+"Thrillr",
+"Mysterio",
+"Versal",
+"Glitchy"
+]
+},
+{
+"f": "assets/skelly/races/T21-semis-1.jpg",
+"t": 21,
+"rnd": "semis",
+"i": 1,
+"title": "Babka Takes Semi 1, Tournament 21",
+"winner": "Babka",
+"wid": 3,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4271675044,
+"time": 93.59166666668722,
+"finish": [
+"Babka",
+"Jacked Up",
+"Sparkly",
+"Walker",
+"Detroiter"
+]
+},
+{
+"f": "assets/skelly/races/T21-semis-2.jpg",
+"t": 21,
+"rnd": "semis",
+"i": 2,
+"title": "Glitchy Takes Semi 2, Tournament 21",
+"winner": "Glitchy",
+"wid": 48,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3885278145,
+"time": 100.36666666669261,
+"finish": [
+"Glitchy",
+"Dialer",
+"Java",
+"Blue Devil",
+"Spicy"
+]
+},
+{
+"f": "assets/skelly/races/T21-semis-3.jpg",
+"t": 21,
+"rnd": "semis",
+"i": 3,
+"title": "Mysterio Takes Semi 3, Tournament 21",
+"winner": "Mysterio",
+"wid": 63,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2748155744,
+"time": 98.86666666669142,
+"finish": [
+"Mysterio",
+"Blocky",
+"Complainoor",
+"Refunder",
+"Party In The Back"
+]
+},
+{
+"f": "assets/skelly/races/T21-semis-4.jpg",
+"t": 21,
+"rnd": "semis",
+"i": 4,
+"title": "Versal Takes Semi 4, Tournament 21",
+"winner": "Versal",
+"wid": 85,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 261182729,
+"time": 84.19166666667974,
+"finish": [
+"Versal",
+"Thrillr",
+"Anon",
+"Marmy",
+"Squiggy"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-1.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 1,
+"title": "Versal Takes Heat 1, Tournament 21",
+"winner": "Versal",
+"wid": 85,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 739777788,
+"time": 82.63333333334516,
+"finish": [
+"Versal",
+"Survivor",
+"Spaced Out",
+"QQLer",
+"Viber"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-2.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 2,
+"title": "Complainoor Takes Heat 2, Tournament 21",
+"winner": "Complainoor",
+"wid": 68,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 669751870,
+"time": 87.90000000001602,
+"finish": [
+"Complainoor",
+"Lore-y",
+"Meow Meow",
+"Sargent",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-3.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 3,
+"title": "Detroiter Takes Heat 3, Tournament 21",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3227184775,
+"time": 106.46666666669746,
+"finish": [
+"Detroiter",
+"Bork",
+"Entertainer",
+"Combustion",
+"Ray Of Light"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-4.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 4,
+"title": "Jacked Up Takes Heat 4, Tournament 21",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2151377503,
+"time": 103.37500000002834,
+"finish": [
+"Jacked Up",
+"Boomer",
+"Mickey",
+"BadaBing",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-5.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 5,
+"title": "Babka Takes Heat 5, Tournament 21",
+"winner": "Babka",
+"wid": 3,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 60130545,
+"time": 95.79166666668897,
+"finish": [
+"Babka",
+"Geometric",
+"Flight",
+"King",
+"Peeled Out"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-6.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 6,
+"title": "Mysterio Takes Heat 6, Tournament 21",
+"winner": "Mysterio",
+"wid": 63,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2217366287,
+"time": 88.40000000001642,
+"finish": [
+"Mysterio",
+"Toad",
+"Phishy",
+"Baller",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-7.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 7,
+"title": "Blocky Takes Heat 7, Tournament 21",
+"winner": "Blocky",
+"wid": 24,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 803706439,
+"time": 92.25000000001948,
+"finish": [
+"Blocky",
+"Blaze It",
+"Appreciatoor",
+"Cowboy",
+"Bonsai"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-8.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 8,
+"title": "Marmy Takes Heat 8, Tournament 21",
+"winner": "Marmy",
+"wid": 94,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3932986250,
+"time": 87.11666666668206,
+"finish": [
+"Marmy",
+"Aerys II",
+"Get That Bread",
+"Fresh Prince",
+"Bodega"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-9.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 9,
+"title": "Walker Takes Heat 9, Tournament 21",
+"winner": "Walker",
+"wid": 60,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2074665733,
+"time": 110.35833333336723,
+"finish": [
+"Walker",
+"Acidic",
+"Royal Flush",
+"Doc",
+"Tunneler"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-10.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 10,
+"title": "Java Takes Heat 10, Tournament 21",
+"winner": "Java",
+"wid": 29,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 914470891,
+"time": 96.5500000000229,
+"finish": [
+"Java",
+"Serenity",
+"Lenticular",
+"Crusty",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-11.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 11,
+"title": "Glitchy Takes Heat 11, Tournament 21",
+"winner": "Glitchy",
+"wid": 48,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3748284768,
+"time": 79.7833333333429,
+"finish": [
+"Glitchy",
+"Spidey",
+"Insert Coin",
+"Molder",
+"Mulligan"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-12.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 12,
+"title": "Anon Takes Heat 12, Tournament 21",
+"winner": "Anon",
+"wid": 46,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2827279302,
+"time": 84.69166666668013,
+"finish": [
+"Anon",
+"Burnout",
+"Final Lap",
+"Windy",
+"Rotten"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-13.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 13,
+"title": "Squiggy Takes Heat 13, Tournament 21",
+"winner": "Squiggy",
+"wid": 11,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3223014821,
+"time": 82.58333333334512,
+"finish": [
+"Squiggy",
+"Curatooor",
+"Feathers",
+"Maper",
+"Lindy"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-14.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 14,
+"title": "Party In The Back Takes Heat 14, Tournament 21",
+"winner": "Party In The Back",
+"wid": 23,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1562806174,
+"time": 95.87500000002237,
+"finish": [
+"Party In The Back",
+"Whiskers",
+"Mad Shatter",
+"World Peace",
+"ETH Saver"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-15.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 15,
+"title": "Blue Devil Takes Heat 15, Tournament 21",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 4290677977,
+"time": 87.05833333334868,
+"finish": [
+"Blue Devil",
+"Grumpy",
+"Shopper",
+"Red Nose",
+"Phoenix"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-16.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 16,
+"title": "Spicy Takes Heat 16, Tournament 21",
+"winner": "Spicy",
+"wid": 34,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3519242775,
+"time": 89.32500000001716,
+"finish": [
+"Spicy",
+"Doomer",
+"Roar",
+"Espresso",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-17.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 17,
+"title": "Sparkly Takes Heat 17, Tournament 21",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 478419868,
+"time": 84.21666666667976,
+"finish": [
+"Sparkly",
+"Rainbow",
+"Relaxer",
+"Fluffy",
+"Dimensional"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-18.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 18,
+"title": "Thrillr Takes Heat 18, Tournament 21",
+"winner": "Thrillr",
+"wid": 25,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1264311316,
+"time": 118.83333333337397,
+"finish": [
+"Thrillr",
+"Horsin Around",
+"High T",
+"High Quality",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-19.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 19,
+"title": "Dialer Takes Heat 19, Tournament 21",
+"winner": "Dialer",
+"wid": 75,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 418677482,
+"time": 106.40000000003074,
+"finish": [
+"Dialer",
+"Coach",
+"Chomp",
+"Double Deuce",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T21-heats-20.jpg",
+"t": 21,
+"rnd": "heats",
+"i": 20,
+"title": "Refunder Takes Heat 20, Tournament 21",
+"winner": "Refunder",
+"wid": 99,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2715901202,
+"time": 85.93333333334779,
+"finish": [
+"Refunder",
+"Moon God",
+"Curiousity",
+"Multitudes",
+"Presidente"
+]
+},
+{
+"f": "assets/skelly/races/T20-final-1.jpg",
+"t": 20,
+"rnd": "final",
+"i": 1,
+"title": "Viber Takes The Final, Tournament 20",
+"winner": "Viber",
+"wid": 18,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1795700293,
+"time": 113.55000000003643,
+"finish": [
+"Viber",
+"Squiggy",
+"Jacked Up",
+"Phoenix",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T20-semis-1.jpg",
+"t": 20,
+"rnd": "semis",
+"i": 1,
+"title": "Phoenix Takes Semi 1, Tournament 20",
+"winner": "Phoenix",
+"wid": 92,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1740754331,
+"time": 91.27500000001871,
+"finish": [
+"Phoenix",
+"Jacked Up",
+"Entertainer",
+"Sargent",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T20-semis-2.jpg",
+"t": 20,
+"rnd": "semis",
+"i": 2,
+"title": "Punky Takes Semi 2, Tournament 20",
+"winner": "Punky",
+"wid": 53,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1369007838,
+"time": 99.01666666669153,
+"finish": [
+"Punky",
+"Anon",
+"QQLer",
+"Doc",
+"Shopper"
+]
+},
+{
+"f": "assets/skelly/races/T20-semis-3.jpg",
+"t": 20,
+"rnd": "semis",
+"i": 3,
+"title": "Viber Takes Semi 3, Tournament 20",
+"winner": "Viber",
+"wid": 18,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3979617316,
+"time": 93.6083333333539,
+"finish": [
+"Viber",
+"Mulligan",
+"Detroiter",
+"Boomer",
+"Lore-y"
+]
+},
+{
+"f": "assets/skelly/races/T20-semis-4.jpg",
+"t": 20,
+"rnd": "semis",
+"i": 4,
+"title": "Squiggy Takes Semi 4, Tournament 20",
+"winner": "Squiggy",
+"wid": 11,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1099222664,
+"time": 112.96666666670264,
+"finish": [
+"Squiggy",
+"Crusty",
+"Shutter",
+"BadaBing",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-1.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 1,
+"title": "Shutter Takes Heat 1, Tournament 20",
+"winner": "Shutter",
+"wid": 77,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1620715827,
+"time": 93.39166666668706,
+"finish": [
+"Shutter",
+"Java",
+"ETH Saver",
+"Dialer",
+"King"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-2.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 2,
+"title": "Sargent Takes Heat 2, Tournament 20",
+"winner": "Sargent",
+"wid": 65,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1775659385,
+"time": 92.12500000001938,
+"finish": [
+"Sargent",
+"Party In The Back",
+"Get That Bread",
+"Double Deuce",
+"High Quality"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-3.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 3,
+"title": "Jacked Up Takes Heat 3, Tournament 20",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3215372312,
+"time": 90.38333333335133,
+"finish": [
+"Jacked Up",
+"Rainbow",
+"Tunneler",
+"Bork",
+"Marmy"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-4.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 4,
+"title": "Detroiter Takes Heat 4, Tournament 20",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 218442241,
+"time": 109.45000000003317,
+"finish": [
+"Detroiter",
+"Lindy",
+"Survivor",
+"Fluffy",
+"Rotten"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-5.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 5,
+"title": "Punky Takes Heat 5, Tournament 20",
+"winner": "Punky",
+"wid": 53,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1950588500,
+"time": 85.29166666668061,
+"finish": [
+"Punky",
+"Roar",
+"Royal Flush",
+"Refunder",
+"Whiskers"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-6.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 6,
+"title": "Lore-y Takes Heat 6, Tournament 20",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2126095906,
+"time": 88.17500000001624,
+"finish": [
+"Lore-y",
+"Spaced Out",
+"Sparkly",
+"Blue Devil",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-7.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 7,
+"title": "QQLer Takes Heat 7, Tournament 20",
+"winner": "QQLer",
+"wid": 45,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2755966410,
+"time": 99.28333333335841,
+"finish": [
+"QQLer",
+"Horsin Around",
+"Blocky",
+"Acidic",
+"Windy"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-8.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 8,
+"title": "BadaBing Takes Heat 8, Tournament 20",
+"winner": "BadaBing",
+"wid": 31,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 951739999,
+"time": 97.82500000002392,
+"finish": [
+"BadaBing",
+"Chomp",
+"Walker",
+"Cowboy",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-9.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 9,
+"title": "Curatooor Takes Heat 9, Tournament 20",
+"winner": "Curatooor",
+"wid": 51,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3291818084,
+"time": 97.57500000002372,
+"finish": [
+"Curatooor",
+"Fresh Prince",
+"Glitchy",
+"Ray Of Light",
+"Red Nose"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-10.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 10,
+"title": "Boomer Takes Heat 10, Tournament 20",
+"winner": "Boomer",
+"wid": 12,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 593295859,
+"time": 94.00000000002088,
+"finish": [
+"Boomer",
+"Lenticular",
+"Combustion",
+"Geared Up",
+"Bonsai"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-11.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 11,
+"title": "Phoenix Takes Heat 11, Tournament 20",
+"winner": "Phoenix",
+"wid": 92,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2649873960,
+"time": 92.4000000000196,
+"finish": [
+"Phoenix",
+"Bodega",
+"Serenity",
+"Solo",
+"High T"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-12.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 12,
+"title": "Scorreggia Takes Heat 12, Tournament 20",
+"winner": "Scorreggia",
+"wid": 40,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3592758936,
+"time": 99.05833333335823,
+"finish": [
+"Scorreggia",
+"Geometric",
+"Curiousity",
+"Doomer",
+"Baller"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-13.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 13,
+"title": "Shopper Takes Heat 13, Tournament 20",
+"winner": "Shopper",
+"wid": 33,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 572132717,
+"time": 101.4083333333601,
+"finish": [
+"Shopper",
+"Phishy",
+"Mickey",
+"Peeled Out",
+"Espresso"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-14.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 14,
+"title": "Squiggy Takes Heat 14, Tournament 20",
+"winner": "Squiggy",
+"wid": 11,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2045168208,
+"time": 104.68333333336271,
+"finish": [
+"Squiggy",
+"Burnout",
+"Spidey",
+"Grumpy",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-15.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 15,
+"title": "Doc Takes Heat 15, Tournament 20",
+"winner": "Doc",
+"wid": 57,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 984643920,
+"time": 108.60833333336583,
+"finish": [
+"Doc",
+"Complainoor",
+"Flight",
+"Spicy",
+"Dimensional"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-16.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 16,
+"title": "Viber Takes Heat 16, Tournament 20",
+"winner": "Viber",
+"wid": 18,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3218747459,
+"time": 101.72500000002702,
+"finish": [
+"Viber",
+"Batty",
+"Presidente",
+"Appreciatoor",
+"Babka"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-17.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 17,
+"title": "Mulligan Takes Heat 17, Tournament 20",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1715459389,
+"time": 86.31666666668143,
+"finish": [
+"Mulligan",
+"Moon God",
+"World Peace",
+"Molder",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-18.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 18,
+"title": "Crusty Takes Heat 18, Tournament 20",
+"winner": "Crusty",
+"wid": 62,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 4054728931,
+"time": 112.59166666670234,
+"finish": [
+"Crusty",
+"Meow Meow",
+"Coach",
+"Feathers",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-19.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 19,
+"title": "Anon Takes Heat 19, Tournament 20",
+"winner": "Anon",
+"wid": 46,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1965305346,
+"time": 88.93333333335018,
+"finish": [
+"Anon",
+"Mad Shatter",
+"Aerys II",
+"Relaxer",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T20-heats-20.jpg",
+"t": 20,
+"rnd": "heats",
+"i": 20,
+"title": "Entertainer Takes Heat 20, Tournament 20",
+"winner": "Entertainer",
+"wid": 96,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1409924962,
+"time": 91.4833333333522,
+"finish": [
+"Entertainer",
+"Mysterio",
+"Insert Coin",
+"Thrillr",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T19-final-1.jpg",
+"t": 19,
+"rnd": "final",
+"i": 1,
+"title": "Dialer Takes The Final, Tournament 19",
+"winner": "Dialer",
+"wid": 75,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3275744228,
+"time": 103.16666666669484,
+"finish": [
+"Dialer",
+"Windy",
+"Cowboy",
+"Versal",
+"Fresh Prince"
+]
+},
+{
+"f": "assets/skelly/races/T19-semis-1.jpg",
+"t": 19,
+"rnd": "semis",
+"i": 1,
+"title": "Cowboy Takes Semi 1, Tournament 19",
+"winner": "Cowboy",
+"wid": 17,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1032123793,
+"time": 108.7250000000326,
+"finish": [
+"Cowboy",
+"Multitudes",
+"King",
+"Sargent",
+"Coach"
+]
+},
+{
+"f": "assets/skelly/races/T19-semis-2.jpg",
+"t": 19,
+"rnd": "semis",
+"i": 2,
+"title": "Fresh Prince Takes Semi 2, Tournament 19",
+"winner": "Fresh Prince",
+"wid": 38,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3574860920,
+"time": 109.71666666670005,
+"finish": [
+"Fresh Prince",
+"Ray Of Light",
+"Mysterio",
+"Jacked Up",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T19-semis-3.jpg",
+"t": 19,
+"rnd": "semis",
+"i": 3,
+"title": "Dialer Takes Semi 3, Tournament 19",
+"winner": "Dialer",
+"wid": 75,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1554852740,
+"time": 91.51666666668557,
+"finish": [
+"Dialer",
+"Windy",
+"Party In The Back",
+"Acidic",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T19-semis-4.jpg",
+"t": 19,
+"rnd": "semis",
+"i": 4,
+"title": "Versal Takes Semi 4, Tournament 19",
+"winner": "Versal",
+"wid": 85,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 257299267,
+"time": 104.76666666669611,
+"finish": [
+"Versal",
+"Flight",
+"Walker",
+"Blocky",
+"Lore-y"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-1.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 1,
+"title": "Toad Takes Heat 1, Tournament 19",
+"winner": "Toad",
+"wid": 41,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 284488855,
+"time": 97.86666666669062,
+"finish": [
+"Toad",
+"Phishy",
+"Lenticular",
+"Squiggy",
+"Babka"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-2.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 2,
+"title": "Fresh Prince Takes Heat 2, Tournament 19",
+"winner": "Fresh Prince",
+"wid": 38,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1306075888,
+"time": 99.95000000002561,
+"finish": [
+"Fresh Prince",
+"Horsin Around",
+"Blaze It",
+"Spaced Out",
+"Mad Shatter"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-3.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 3,
+"title": "Coach Takes Heat 3, Tournament 19",
+"winner": "Coach",
+"wid": 80,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 340249384,
+"time": 96.19166666668929,
+"finish": [
+"Coach",
+"QQLer",
+"Tunneler",
+"Anon",
+"Glitchy"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-4.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 4,
+"title": "Acidic Takes Heat 4, Tournament 19",
+"winner": "Acidic",
+"wid": 70,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2308364657,
+"time": 84.52500000001334,
+"finish": [
+"Acidic",
+"Curiousity",
+"Spidey",
+"Shutter",
+"Complainoor"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-5.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 5,
+"title": "Cowboy Takes Heat 5, Tournament 19",
+"winner": "Cowboy",
+"wid": 17,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 324939514,
+"time": 99.1333333333583,
+"finish": [
+"Cowboy",
+"Batty",
+"Red Nose",
+"Geometric",
+"Blue Devil"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-6.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 6,
+"title": "Lore-y Takes Heat 6, Tournament 19",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2544083178,
+"time": 111.61666666670156,
+"finish": [
+"Lore-y",
+"Baller",
+"Burnout",
+"Sparkly",
+"World Peace"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-7.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 7,
+"title": "Sargent Takes Heat 7, Tournament 19",
+"winner": "Sargent",
+"wid": 65,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2387424135,
+"time": 94.86666666668823,
+"finish": [
+"Sargent",
+"Dimensional",
+"Maper",
+"Presidente",
+"Boomer"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-8.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 8,
+"title": "King Takes Heat 8, Tournament 19",
+"winner": "King",
+"wid": 43,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3635743253,
+"time": 103.02500000002806,
+"finish": [
+"King",
+"Rotten",
+"Moon God",
+"Brunk",
+"Rainbow"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-9.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 9,
+"title": "Multitudes Takes Heat 9, Tournament 19",
+"winner": "Multitudes",
+"wid": 71,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2191137861,
+"time": 90.93333333335177,
+"finish": [
+"Multitudes",
+"ETH Saver",
+"Chomp",
+"Refunder",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-10.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 10,
+"title": "Walker Takes Heat 10, Tournament 19",
+"winner": "Walker",
+"wid": 60,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1774046059,
+"time": 111.11666666670116,
+"finish": [
+"Walker",
+"Bork",
+"Java",
+"Shopper",
+"Viber"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-11.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 11,
+"title": "Mickey Takes Heat 11, Tournament 19",
+"winner": "Mickey",
+"wid": 91,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4196585992,
+"time": 109.34166666669975,
+"finish": [
+"Mickey",
+"Detroiter",
+"High T",
+"Roar",
+"Lindy"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-12.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 12,
+"title": "Versal Takes Heat 12, Tournament 19",
+"winner": "Versal",
+"wid": 85,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2311637043,
+"time": 98.02500000002408,
+"finish": [
+"Versal",
+"Bonsai",
+"BadaBing",
+"Meow Meow",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-13.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 13,
+"title": "Jacked Up Takes Heat 13, Tournament 19",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2722161076,
+"time": 93.0250000000201,
+"finish": [
+"Jacked Up",
+"Mulligan",
+"Doc",
+"Geared Up",
+"Grumpy"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-14.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 14,
+"title": "Windy Takes Heat 14, Tournament 19",
+"winner": "Windy",
+"wid": 59,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1823694664,
+"time": 116.15833333337184,
+"finish": [
+"Windy",
+"Espresso",
+"Whiskers",
+"Combustion",
+"Relaxer"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-15.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 15,
+"title": "Blocky Takes Heat 15, Tournament 19",
+"winner": "Blocky",
+"wid": 24,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 842291346,
+"time": 87.90000000001602,
+"finish": [
+"Blocky",
+"Peeled Out",
+"Solo",
+"Fluffy",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-16.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 16,
+"title": "Dialer Takes Heat 16, Tournament 19",
+"winner": "Dialer",
+"wid": 75,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2147204725,
+"time": 106.07500000003049,
+"finish": [
+"Dialer",
+"Curatooor",
+"Feathers",
+"Thrillr",
+"Double Deuce"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-17.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 17,
+"title": "Flight Takes Heat 17, Tournament 19",
+"winner": "Flight",
+"wid": 39,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4061552906,
+"time": 101.97500000002722,
+"finish": [
+"Flight",
+"Aerys II",
+"High Quality",
+"Doomer",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-18.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 18,
+"title": "Ray Of Light Takes Heat 18, Tournament 19",
+"winner": "Ray Of Light",
+"wid": 22,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1779836160,
+"time": 92.7333333333532,
+"finish": [
+"Ray Of Light",
+"Spicy",
+"Appreciatoor",
+"Insert Coin",
+"Bodega"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-19.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 19,
+"title": "Party In The Back Takes Heat 19, Tournament 19",
+"winner": "Party In The Back",
+"wid": 23,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2030517971,
+"time": 91.9416666666859,
+"finish": [
+"Party In The Back",
+"Crusty",
+"Phoenix",
+"Marmy",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T19-heats-20.jpg",
+"t": 19,
+"rnd": "heats",
+"i": 20,
+"title": "Mysterio Takes Heat 20, Tournament 19",
+"winner": "Mysterio",
+"wid": 63,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1134839550,
+"time": 91.27500000001871,
+"finish": [
+"Mysterio",
+"Royal Flush",
+"Serenity",
+"Survivor",
+"Molder"
+]
+},
+{
+"f": "assets/skelly/races/T18-final-1.jpg",
+"t": 18,
+"rnd": "final",
+"i": 1,
+"title": "Sparkly Takes The Final, Tournament 18",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2297288643,
+"time": 92.84166666668662,
+"finish": [
+"Sparkly",
+"Mad Shatter",
+"Phishy",
+"Detroiter",
+"Bonsai"
+]
+},
+{
+"f": "assets/skelly/races/T18-semis-1.jpg",
+"t": 18,
+"rnd": "semis",
+"i": 1,
+"title": "Bonsai Takes Semi 1, Tournament 18",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 372954787,
+"time": 84.96666666668035,
+"finish": [
+"Bonsai",
+"Mad Shatter",
+"Doomer",
+"High Quality",
+"Blue Devil"
+]
+},
+{
+"f": "assets/skelly/races/T18-semis-2.jpg",
+"t": 18,
+"rnd": "semis",
+"i": 2,
+"title": "Phishy Takes Semi 2, Tournament 18",
+"winner": "Phishy",
+"wid": 20,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4130775713,
+"time": 87.14166666668208,
+"finish": [
+"Phishy",
+"Windy",
+"Get That Bread",
+"Entertainer",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T18-semis-3.jpg",
+"t": 18,
+"rnd": "semis",
+"i": 3,
+"title": "Sparkly Takes Semi 3, Tournament 18",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3053336339,
+"time": 107.48333333336494,
+"finish": [
+"Sparkly",
+"Rotten",
+"Red Nose",
+"Curiousity",
+"Dimensional"
+]
+},
+{
+"f": "assets/skelly/races/T18-semis-4.jpg",
+"t": 18,
+"rnd": "semis",
+"i": 4,
+"title": "Detroiter Takes Semi 4, Tournament 18",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2187780526,
+"time": 92.75833333335322,
+"finish": [
+"Detroiter",
+"Moon God",
+"Babka",
+"Rainbow",
+"Double Deuce"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-1.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 1,
+"title": "Moon God Takes Heat 1, Tournament 18",
+"winner": "Moon God",
+"wid": 66,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1019583922,
+"time": 100.27500000002587,
+"finish": [
+"Moon God",
+"Baller",
+"Chomp",
+"Curatooor",
+"King"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-2.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 2,
+"title": "Mickey Takes Heat 2, Tournament 18",
+"winner": "Mickey",
+"wid": 91,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2197589705,
+"time": 109.34166666669975,
+"finish": [
+"Mickey",
+"Acidic",
+"Burnout",
+"Combustion",
+"Cowboy"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-3.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 3,
+"title": "Phishy Takes Heat 3, Tournament 18",
+"winner": "Phishy",
+"wid": 20,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2032457305,
+"time": 90.93333333335177,
+"finish": [
+"Phishy",
+"Crusty",
+"Feathers",
+"Tunneler",
+"Refunder"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-4.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 4,
+"title": "Curiousity Takes Heat 4, Tournament 18",
+"winner": "Curiousity",
+"wid": 19,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1857861886,
+"time": 105.12500000002973,
+"finish": [
+"Curiousity",
+"Maper",
+"High T",
+"Solo",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-5.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 5,
+"title": "Entertainer Takes Heat 5, Tournament 18",
+"winner": "Entertainer",
+"wid": 96,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3887427597,
+"time": 112.55000000003564,
+"finish": [
+"Entertainer",
+"Whiskers",
+"Mysterio",
+"Appreciatoor",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-6.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 6,
+"title": "Dimensional Takes Heat 6, Tournament 18",
+"winner": "Dimensional",
+"wid": 44,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2354246400,
+"time": 80.65000000001025,
+"finish": [
+"Dimensional",
+"Scorreggia",
+"Lenticular",
+"Grumpy",
+"Sargent"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-7.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 7,
+"title": "Blue Devil Takes Heat 7, Tournament 18",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1020562746,
+"time": 92.80833333335326,
+"finish": [
+"Blue Devil",
+"Espresso",
+"Flight",
+"Final Lap",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-8.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 8,
+"title": "Windy Takes Heat 8, Tournament 18",
+"winner": "Windy",
+"wid": 59,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1155520663,
+"time": 95.29166666668857,
+"finish": [
+"Windy",
+"Spidey",
+"Anon",
+"Spaced Out",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-9.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 9,
+"title": "High Quality Takes Heat 9, Tournament 18",
+"winner": "High Quality",
+"wid": 8,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1991764096,
+"time": 87.01666666668199,
+"finish": [
+"High Quality",
+"Geometric",
+"Doc",
+"Royal Flush",
+"Lore-y"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-10.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 10,
+"title": "Bonsai Takes Heat 10, Tournament 18",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 95597342,
+"time": 109.74166666670007,
+"finish": [
+"Bonsai",
+"Aerys II",
+"Squiggy",
+"Presidente",
+"Roar"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-11.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 11,
+"title": "Rotten Takes Heat 11, Tournament 18",
+"winner": "Rotten",
+"wid": 88,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2082805600,
+"time": 86.74166666668177,
+"finish": [
+"Rotten",
+"Thrillr",
+"Java",
+"Horsin Around",
+"Ray Of Light"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-12.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 12,
+"title": "Sparkly Takes Heat 12, Tournament 18",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3832515406,
+"time": 88.70000000001666,
+"finish": [
+"Sparkly",
+"Glitchy",
+"Jacked Up",
+"Boomer",
+"Lindy"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-13.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 13,
+"title": "Get That Bread Takes Heat 13, Tournament 18",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2215755847,
+"time": 110.57500000003407,
+"finish": [
+"Get That Bread",
+"Blocky",
+"Walker",
+"QQLer",
+"Relaxer"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-14.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 14,
+"title": "Detroiter Takes Heat 14, Tournament 18",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1672525557,
+"time": 99.79166666669215,
+"finish": [
+"Detroiter",
+"Bork",
+"Bodega",
+"Party In The Back",
+"Coach"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-15.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 15,
+"title": "Rainbow Takes Heat 15, Tournament 18",
+"winner": "Rainbow",
+"wid": 30,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 791069533,
+"time": 99.20833333335835,
+"finish": [
+"Rainbow",
+"BadaBing",
+"Peeled Out",
+"Dialer",
+"Serenity"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-16.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 16,
+"title": "Red Nose Takes Heat 16, Tournament 18",
+"winner": "Red Nose",
+"wid": 87,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4202777652,
+"time": 93.00000000002008,
+"finish": [
+"Red Nose",
+"Viber",
+"World Peace",
+"Insert Coin",
+"ETH Saver"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-17.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 17,
+"title": "Mad Shatter Takes Heat 17, Tournament 18",
+"winner": "Mad Shatter",
+"wid": 13,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2824272927,
+"time": 83.98333333334624,
+"finish": [
+"Mad Shatter",
+"Phoenix",
+"Complainoor",
+"Survivor",
+"Marmy"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-18.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 18,
+"title": "Doomer Takes Heat 18, Tournament 18",
+"winner": "Doomer",
+"wid": 55,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3337271474,
+"time": 111.45000000003476,
+"finish": [
+"Doomer",
+"Mulligan",
+"Fresh Prince",
+"Fluffy",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-19.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 19,
+"title": "Double Deuce Takes Heat 19, Tournament 18",
+"winner": "Double Deuce",
+"wid": 54,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1564603919,
+"time": 99.27500000002507,
+"finish": [
+"Double Deuce",
+"Meow Meow",
+"Punky",
+"Spicy",
+"Molder"
+]
+},
+{
+"f": "assets/skelly/races/T18-heats-20.jpg",
+"t": 18,
+"rnd": "heats",
+"i": 20,
+"title": "Babka Takes Heat 20, Tournament 18",
+"winner": "Babka",
+"wid": 3,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2575809337,
+"time": 97.79166666669056,
+"finish": [
+"Babka",
+"Versal",
+"Shutter",
+"Shopper",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T17-final-1.jpg",
+"t": 17,
+"rnd": "final",
+"i": 1,
+"title": "Chomp Takes The Final, Tournament 17",
+"winner": "Chomp",
+"wid": 79,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2087731874,
+"time": 93.0666666666868,
+"finish": [
+"Chomp",
+"Windy",
+"Fluffy",
+"Combustion",
+"ETH Saver"
+]
+},
+{
+"f": "assets/skelly/races/T17-semis-1.jpg",
+"t": 17,
+"rnd": "semis",
+"i": 1,
+"title": "Chomp Takes Semi 1, Tournament 17",
+"winner": "Chomp",
+"wid": 79,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2729450128,
+"time": 91.64166666668567,
+"finish": [
+"Chomp",
+"Combustion",
+"Burnout",
+"World Peace",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T17-semis-2.jpg",
+"t": 17,
+"rnd": "semis",
+"i": 2,
+"title": "ETH Saver Takes Semi 2, Tournament 17",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2189797283,
+"time": 110.08333333336701,
+"finish": [
+"ETH Saver",
+"Phishy",
+"Crusty",
+"Dialer",
+"Doc"
+]
+},
+{
+"f": "assets/skelly/races/T17-semis-3.jpg",
+"t": 17,
+"rnd": "semis",
+"i": 3,
+"title": "Windy Takes Semi 3, Tournament 17",
+"winner": "Windy",
+"wid": 59,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 243598144,
+"time": 108.7666666666993,
+"finish": [
+"Windy",
+"Phoenix",
+"Espresso",
+"Get That Bread",
+"Relaxer"
+]
+},
+{
+"f": "assets/skelly/races/T17-semis-4.jpg",
+"t": 17,
+"rnd": "semis",
+"i": 4,
+"title": "Fluffy Takes Semi 4, Tournament 17",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1012047775,
+"time": 104.22500000002901,
+"finish": [
+"Fluffy",
+"Toad",
+"Sargent",
+"Double Deuce",
+"King"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-1.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 1,
+"title": "Phoenix Takes Heat 1, Tournament 17",
+"winner": "Phoenix",
+"wid": 92,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 766838995,
+"time": 85.1000000000138,
+"finish": [
+"Phoenix",
+"Bonsai",
+"Solo",
+"Doomer",
+"Blocky"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-2.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 2,
+"title": "Combustion Takes Heat 2, Tournament 17",
+"winner": "Combustion",
+"wid": 61,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3006184553,
+"time": 109.21666666669965,
+"finish": [
+"Combustion",
+"Sparkly",
+"Royal Flush",
+"Baller",
+"Survivor"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-3.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 3,
+"title": "Chomp Takes Heat 3, Tournament 17",
+"winner": "Chomp",
+"wid": 79,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3731771126,
+"time": 82.08333333334473,
+"finish": [
+"Chomp",
+"Peeled Out",
+"Shopper",
+"Tunneler",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-4.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 4,
+"title": "ETH Saver Takes Heat 4, Tournament 17",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 4252639146,
+"time": 103.71666666669528,
+"finish": [
+"ETH Saver",
+"Blue Devil",
+"Molder",
+"Whiskers",
+"Bodega"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-5.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 5,
+"title": "Relaxer Takes Heat 5, Tournament 17",
+"winner": "Relaxer",
+"wid": 97,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2641545942,
+"time": 106.82500000003108,
+"finish": [
+"Relaxer",
+"Multitudes",
+"Babka",
+"Ray Of Light",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-6.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 6,
+"title": "Get That Bread Takes Heat 6, Tournament 17",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1200363881,
+"time": 87.81666666668262,
+"finish": [
+"Get That Bread",
+"Party In The Back",
+"High T",
+"Anon",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-7.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 7,
+"title": "Double Deuce Takes Heat 7, Tournament 17",
+"winner": "Double Deuce",
+"wid": 54,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 255714798,
+"time": 98.31666666669098,
+"finish": [
+"Double Deuce",
+"Versal",
+"Thrillr",
+"QQLer",
+"Acidic"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-8.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 8,
+"title": "Espresso Takes Heat 8, Tournament 17",
+"winner": "Espresso",
+"wid": 49,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3351337758,
+"time": 88.36666666668306,
+"finish": [
+"Espresso",
+"Lenticular",
+"Appreciatoor",
+"Mysterio",
+"Spidey"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-9.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 9,
+"title": "Toad Takes Heat 9, Tournament 17",
+"winner": "Toad",
+"wid": 41,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1025008193,
+"time": 101.6166666666936,
+"finish": [
+"Toad",
+"Rotten",
+"Glitchy",
+"Refunder",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-10.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 10,
+"title": "Doc Takes Heat 10, Tournament 17",
+"winner": "Doc",
+"wid": 57,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4113345942,
+"time": 94.93333333335495,
+"finish": [
+"Doc",
+"Fresh Prince",
+"Brunk",
+"Serenity",
+"Boomer"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-11.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 11,
+"title": "Fluffy Takes Heat 11, Tournament 17",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3468645182,
+"time": 90.02500000001771,
+"finish": [
+"Fluffy",
+"Spaced Out",
+"Viber",
+"Mad Shatter",
+"Complainoor"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-12.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 12,
+"title": "Burnout Takes Heat 12, Tournament 17",
+"winner": "Burnout",
+"wid": 95,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1067086062,
+"time": 98.03333333335742,
+"finish": [
+"Burnout",
+"Meow Meow",
+"Batty",
+"Grumpy",
+"Walker"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-13.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 13,
+"title": "Sargent Takes Heat 13, Tournament 17",
+"winner": "Sargent",
+"wid": 65,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2020110050,
+"time": 98.2583333333576,
+"finish": [
+"Sargent",
+"Geometric",
+"Java",
+"Roar",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-14.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 14,
+"title": "Punky Takes Heat 14, Tournament 17",
+"winner": "Punky",
+"wid": 53,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2277403564,
+"time": 105.80000000003027,
+"finish": [
+"Punky",
+"Marmy",
+"Cowboy",
+"BadaBing",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-15.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 15,
+"title": "King Takes Heat 15, Tournament 17",
+"winner": "King",
+"wid": 43,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1249253620,
+"time": 86.03333333334787,
+"finish": [
+"King",
+"Lore-y",
+"Horsin Around",
+"Bork",
+"Moon God"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-16.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 16,
+"title": "Crusty Takes Heat 16, Tournament 17",
+"winner": "Crusty",
+"wid": 62,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2953940885,
+"time": 94.93333333335495,
+"finish": [
+"Crusty",
+"Presidente",
+"Curatooor",
+"Dimensional",
+"Lindy"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-17.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 17,
+"title": "Phishy Takes Heat 17, Tournament 17",
+"winner": "Phishy",
+"wid": 20,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1643892296,
+"time": 89.44166666668391,
+"finish": [
+"Phishy",
+"Detroiter",
+"Geared Up",
+"Feathers",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-18.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 18,
+"title": "Dialer Takes Heat 18, Tournament 17",
+"winner": "Dialer",
+"wid": 75,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 488498019,
+"time": 92.70833333335318,
+"finish": [
+"Dialer",
+"Rainbow",
+"Red Nose",
+"Insert Coin",
+"Mulligan"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-19.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 19,
+"title": "World Peace Takes Heat 19, Tournament 17",
+"winner": "World Peace",
+"wid": 1,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1828263922,
+"time": 96.65000000002298,
+"finish": [
+"World Peace",
+"Curiousity",
+"Flight",
+"Jacked Up",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T17-heats-20.jpg",
+"t": 17,
+"rnd": "heats",
+"i": 20,
+"title": "Windy Takes Heat 20, Tournament 17",
+"winner": "Windy",
+"wid": 59,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1213562671,
+"time": 103.93333333336211,
+"finish": [
+"Windy",
+"High Quality",
+"Coach",
+"Spicy",
+"Squiggy"
+]
+},
+{
+"f": "assets/skelly/races/T16-final-1.jpg",
+"t": 16,
+"rnd": "final",
+"i": 1,
+"title": "Double Deuce Takes The Final, Tournament 16",
+"winner": "Double Deuce",
+"wid": 54,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3365343398,
+"time": 115.84166666670492,
+"finish": [
+"Double Deuce",
+"Refunder",
+"Tunneler",
+"Moon God",
+"Squiggy"
+]
+},
+{
+"f": "assets/skelly/races/T16-semis-1.jpg",
+"t": 16,
+"rnd": "semis",
+"i": 1,
+"title": "Squiggy Takes Semi 1, Tournament 16",
+"winner": "Squiggy",
+"wid": 11,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3701243607,
+"time": 86.625000000015,
+"finish": [
+"Squiggy",
+"Sparkly",
+"Scorreggia",
+"Anon",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T16-semis-2.jpg",
+"t": 16,
+"rnd": "semis",
+"i": 2,
+"title": "Double Deuce Takes Semi 2, Tournament 16",
+"winner": "Double Deuce",
+"wid": 54,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 328165260,
+"time": 110.90833333336766,
+"finish": [
+"Double Deuce",
+"Burnout",
+"Punky",
+"Mysterio",
+"Meow Meow"
+]
+},
+{
+"f": "assets/skelly/races/T16-semis-3.jpg",
+"t": 16,
+"rnd": "semis",
+"i": 3,
+"title": "Refunder Takes Semi 3, Tournament 16",
+"winner": "Refunder",
+"wid": 99,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2290501504,
+"time": 83.75000000001272,
+"finish": [
+"Refunder",
+"Tunneler",
+"Shutter",
+"BadaBing",
+"Bodega"
+]
+},
+{
+"f": "assets/skelly/races/T16-semis-4.jpg",
+"t": 16,
+"rnd": "semis",
+"i": 4,
+"title": "Moon God Takes Semi 4, Tournament 16",
+"winner": "Moon God",
+"wid": 66,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1737576173,
+"time": 104.25000000002903,
+"finish": [
+"Moon God",
+"Dimensional",
+"Mickey",
+"Curiousity",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-8.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 8,
+"title": "Scorreggia Takes Heat 8, Tournament 16",
+"winner": "Scorreggia",
+"wid": 40,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1506247176,
+"time": 105.70833333336353,
+"finish": [
+"Scorreggia",
+"Dialer",
+"Royal Flush",
+"Marmy",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-9.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 9,
+"title": "Tunneler Takes Heat 9, Tournament 16",
+"winner": "Tunneler",
+"wid": 47,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 4077367217,
+"time": 91.12500000001859,
+"finish": [
+"Tunneler",
+"Spidey",
+"Combustion",
+"Thrillr",
+"Bork"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-10.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 10,
+"title": "Punky Takes Heat 10, Tournament 16",
+"winner": "Punky",
+"wid": 53,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2749805591,
+"time": 93.53333333335384,
+"finish": [
+"Punky",
+"Viber",
+"Spaced Out",
+"Chomp",
+"Mulligan"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-11.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 11,
+"title": "Burnout Takes Heat 11, Tournament 16",
+"winner": "Burnout",
+"wid": 95,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3342212512,
+"time": 109.76666666670009,
+"finish": [
+"Burnout",
+"Shopper",
+"Survivor",
+"Detroiter",
+"Glitchy"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-12.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 12,
+"title": "Squiggy Takes Heat 12, Tournament 16",
+"winner": "Squiggy",
+"wid": 11,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3111882687,
+"time": 101.30833333336003,
+"finish": [
+"Squiggy",
+"Feathers",
+"Presidente",
+"ETH Saver",
+"Windy"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-13.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 13,
+"title": "Anon Takes Heat 13, Tournament 16",
+"winner": "Anon",
+"wid": 46,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2926808002,
+"time": 104.62500000002933,
+"finish": [
+"Anon",
+"Lindy",
+"Geometric",
+"QQLer",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-14.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 14,
+"title": "Curiousity Takes Heat 14, Tournament 16",
+"winner": "Curiousity",
+"wid": 19,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1962063556,
+"time": 88.82500000001676,
+"finish": [
+"Curiousity",
+"Grumpy",
+"Spicy",
+"Brunk",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-15.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 15,
+"title": "Shutter Takes Heat 15, Tournament 16",
+"winner": "Shutter",
+"wid": 77,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 13047656,
+"time": 110.63333333336745,
+"finish": [
+"Shutter",
+"Mad Shatter",
+"Insert Coin",
+"Party In The Back",
+"Lore-y"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-16.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 16,
+"title": "BadaBing Takes Heat 16, Tournament 16",
+"winner": "BadaBing",
+"wid": 31,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 671083056,
+"time": 108.03333333336538,
+"finish": [
+"BadaBing",
+"Sargent",
+"Blue Devil",
+"Acidic",
+"Red Nose"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-17.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 17,
+"title": "Refunder Takes Heat 17, Tournament 16",
+"winner": "Refunder",
+"wid": 99,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1650996936,
+"time": 118.63333333337381,
+"finish": [
+"Refunder",
+"Boomer",
+"Multitudes",
+"Phoenix",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-18.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 18,
+"title": "Dimensional Takes Heat 18, Tournament 16",
+"winner": "Dimensional",
+"wid": 44,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 585843584,
+"time": 84.17500000001306,
+"finish": [
+"Dimensional",
+"Horsin Around",
+"Crusty",
+"Ray Of Light",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-19.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 19,
+"title": "Mickey Takes Heat 19, Tournament 16",
+"winner": "Mickey",
+"wid": 91,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 376393070,
+"time": 99.65833333335871,
+"finish": [
+"Mickey",
+"Rotten",
+"Appreciatoor",
+"Babka",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T16-heats-20.jpg",
+"t": 16,
+"rnd": "heats",
+"i": 20,
+"title": "Meow Meow Takes Heat 20, Tournament 16",
+"winner": "Meow Meow",
+"wid": 10,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2877165721,
+"time": 101.28333333336,
+"finish": [
+"Meow Meow",
+"World Peace",
+"Fluffy",
+"Walker",
+"Doc"
+]
+},
+{
+"f": "assets/skelly/races/T15-heats-1.jpg",
+"t": 15,
+"rnd": "heats",
+"i": 1,
+"title": "Coach Takes Heat 1, Tournament 15",
+"winner": "Coach",
+"wid": 80,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2674633439,
+"time": 91.7333333333524,
+"finish": [
+"Coach",
+"QQLer",
+"Multitudes",
+"Doomer",
+"Lindy"
+]
+},
+{
+"f": "assets/skelly/races/T14-final-1.jpg",
+"t": 14,
+"rnd": "final",
+"i": 1,
+"title": "Lindy Takes The Final, Tournament 14",
+"winner": "Lindy",
+"wid": 37,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3001183825,
+"time": 100.50000000002605,
+"finish": [
+"Lindy",
+"Royal Flush",
+"Rotten",
+"Blaze It",
+"Whiskers"
+]
+},
+{
+"f": "assets/skelly/races/T14-semis-1.jpg",
+"t": 14,
+"rnd": "semis",
+"i": 1,
+"title": "Royal Flush Takes Semi 1, Tournament 14",
+"winner": "Royal Flush",
+"wid": 42,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 153226610,
+"time": 89.64166666668407,
+"finish": [
+"Royal Flush",
+"Lindy",
+"Moon God",
+"High T",
+"Sargent"
+]
+},
+{
+"f": "assets/skelly/races/T14-semis-2.jpg",
+"t": 14,
+"rnd": "semis",
+"i": 2,
+"title": "Whiskers Takes Semi 2, Tournament 14",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3544230914,
+"time": 111.20000000003456,
+"finish": [
+"Whiskers",
+"Phoenix",
+"Blocky",
+"Fluffy",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T14-semis-3.jpg",
+"t": 14,
+"rnd": "semis",
+"i": 3,
+"title": "Rotten Takes Semi 3, Tournament 14",
+"winner": "Rotten",
+"wid": 88,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 120942163,
+"time": 95.34166666668861,
+"finish": [
+"Rotten",
+"Espresso",
+"Curiousity",
+"Chomp",
+"Doomer"
+]
+},
+{
+"f": "assets/skelly/races/T14-semis-4.jpg",
+"t": 14,
+"rnd": "semis",
+"i": 4,
+"title": "Blaze It Takes Semi 4, Tournament 14",
+"winner": "Blaze It",
+"wid": 50,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3986642838,
+"time": 101.06666666669317,
+"finish": [
+"Blaze It",
+"Combustion",
+"Babka",
+"Java",
+"Flight"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-1.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 1,
+"title": "Lindy Takes Heat 1, Tournament 14",
+"winner": "Lindy",
+"wid": 37,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 207170958,
+"time": 114.76666666670407,
+"finish": [
+"Lindy",
+"Maper",
+"Tunneler",
+"Marmy",
+"Thrillr"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-2.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 2,
+"title": "Espresso Takes Heat 2, Tournament 14",
+"winner": "Espresso",
+"wid": 49,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 672390315,
+"time": 86.10000000001459,
+"finish": [
+"Espresso",
+"ETH Saver",
+"Meow Meow",
+"Shutter",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-3.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 3,
+"title": "Whiskers Takes Heat 3, Tournament 14",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4114480955,
+"time": 80.84166666667707,
+"finish": [
+"Whiskers",
+"BadaBing",
+"Complainoor",
+"Grumpy",
+"Bodega"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-4.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 4,
+"title": "Moon God Takes Heat 4, Tournament 14",
+"winner": "Moon God",
+"wid": 66,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2815787821,
+"time": 85.77500000001433,
+"finish": [
+"Moon God",
+"Boomer",
+"Baller",
+"Dimensional",
+"Presidente"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-5.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 5,
+"title": "Blocky Takes Heat 5, Tournament 14",
+"winner": "Blocky",
+"wid": 24,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3405341171,
+"time": 88.85000000001678,
+"finish": [
+"Blocky",
+"Spicy",
+"Geometric",
+"Mulligan",
+"Survivor"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-6.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 6,
+"title": "Flight Takes Heat 6, Tournament 14",
+"winner": "Flight",
+"wid": 39,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1210940524,
+"time": 99.50833333335859,
+"finish": [
+"Flight",
+"Coach",
+"Shopper",
+"Detroiter",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-7.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 7,
+"title": "Babka Takes Heat 7, Tournament 14",
+"winner": "Babka",
+"wid": 3,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3333403516,
+"time": 101.2416666666933,
+"finish": [
+"Babka",
+"Versal",
+"Burnout",
+"Anon",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-8.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 8,
+"title": "Rotten Takes Heat 8, Tournament 14",
+"winner": "Rotten",
+"wid": 88,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 428620325,
+"time": 89.40833333335055,
+"finish": [
+"Rotten",
+"Horsin Around",
+"King",
+"Cowboy",
+"Feathers"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-9.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 9,
+"title": "Blaze It Takes Heat 9, Tournament 14",
+"winner": "Blaze It",
+"wid": 50,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2230369972,
+"time": 92.13333333335272,
+"finish": [
+"Blaze It",
+"Blue Devil",
+"Red Nose",
+"Walker",
+"Squiggy"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-10.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 10,
+"title": "Curiousity Takes Heat 10, Tournament 14",
+"winner": "Curiousity",
+"wid": 19,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2648194694,
+"time": 85.90833333334777,
+"finish": [
+"Curiousity",
+"World Peace",
+"Appreciatoor",
+"Mad Shatter",
+"Molder"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-11.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 11,
+"title": "Sargent Takes Heat 11, Tournament 14",
+"winner": "Sargent",
+"wid": 65,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 282095654,
+"time": 84.50833333334666,
+"finish": [
+"Sargent",
+"Windy",
+"Jacked Up",
+"Mickey",
+"Acidic"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-12.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 12,
+"title": "Phoenix Takes Heat 12, Tournament 14",
+"winner": "Phoenix",
+"wid": 92,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 354180357,
+"time": 96.60833333335628,
+"finish": [
+"Phoenix",
+"Viber",
+"Crusty",
+"Doc",
+"Rainbow"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-13.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 13,
+"title": "Fluffy Takes Heat 13, Tournament 14",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1640034983,
+"time": 95.30000000002191,
+"finish": [
+"Fluffy",
+"Lenticular",
+"Glitchy",
+"Refunder",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-14.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 14,
+"title": "Doomer Takes Heat 14, Tournament 14",
+"winner": "Doomer",
+"wid": 55,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 428153488,
+"time": 108.20833333336552,
+"finish": [
+"Doomer",
+"QQLer",
+"Final Lap",
+"Relaxer",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-15.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 15,
+"title": "Royal Flush Takes Heat 15, Tournament 14",
+"winner": "Royal Flush",
+"wid": 42,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1716061374,
+"time": 113.75833333336993,
+"finish": [
+"Royal Flush",
+"Geared Up",
+"Mysterio",
+"Insert Coin",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-16.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 16,
+"title": "Combustion Takes Heat 16, Tournament 14",
+"winner": "Combustion",
+"wid": 61,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 335189353,
+"time": 90.31666666668461,
+"finish": [
+"Combustion",
+"Double Deuce",
+"Party In The Back",
+"Bork",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-17.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 17,
+"title": "Punky Takes Heat 17, Tournament 14",
+"winner": "Punky",
+"wid": 53,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3218934984,
+"time": 91.46666666668553,
+"finish": [
+"Punky",
+"Dialer",
+"Get That Bread",
+"Fresh Prince",
+"Peeled Out"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-18.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 18,
+"title": "High T Takes Heat 18, Tournament 14",
+"winner": "High T",
+"wid": 56,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2092819118,
+"time": 106.6000000000309,
+"finish": [
+"High T",
+"High Quality",
+"Bonsai",
+"Spidey",
+"Sparkly"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-19.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 19,
+"title": "Chomp Takes Heat 19, Tournament 14",
+"winner": "Chomp",
+"wid": 79,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4066282193,
+"time": 91.95000000001924,
+"finish": [
+"Chomp",
+"Lore-y",
+"Roar",
+"Serenity",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T14-heats-20.jpg",
+"t": 14,
+"rnd": "heats",
+"i": 20,
+"title": "Java Takes Heat 20, Tournament 14",
+"winner": "Java",
+"wid": 29,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 86047838,
+"time": 93.1500000000202,
+"finish": [
+"Java",
+"Phishy",
+"Spaced Out",
+"Brunk",
+"Ray Of Light"
+]
+},
+{
+"f": "assets/skelly/races/T13-final-1.jpg",
+"t": 13,
+"rnd": "final",
+"i": 1,
+"title": "Blaze It Takes The Final, Tournament 13",
+"winner": "Blaze It",
+"wid": 50,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1293932574,
+"time": 101.46666666669348,
+"finish": [
+"Blaze It",
+"Whiskers",
+"Crusty",
+"Coach",
+"Marmy"
+]
+},
+{
+"f": "assets/skelly/races/T13-semis-1.jpg",
+"t": 13,
+"rnd": "semis",
+"i": 1,
+"title": "Blaze It Takes Semi 1, Tournament 13",
+"winner": "Blaze It",
+"wid": 50,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1179800372,
+"time": 103.87500000002873,
+"finish": [
+"Blaze It",
+"Party In The Back",
+"Mysterio",
+"Presidente",
+"ETH Saver"
+]
+},
+{
+"f": "assets/skelly/races/T13-semis-2.jpg",
+"t": 13,
+"rnd": "semis",
+"i": 2,
+"title": "Coach Takes Semi 2, Tournament 13",
+"winner": "Coach",
+"wid": 80,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 166007889,
+"time": 94.20000000002103,
+"finish": [
+"Coach",
+"Rainbow",
+"Java",
+"Detroiter",
+"Grumpy"
+]
+},
+{
+"f": "assets/skelly/races/T13-semis-3.jpg",
+"t": 13,
+"rnd": "semis",
+"i": 3,
+"title": "Crusty Takes Semi 3, Tournament 13",
+"winner": "Crusty",
+"wid": 62,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 4283815319,
+"time": 84.15000000001304,
+"finish": [
+"Crusty",
+"Marmy",
+"High Quality",
+"Curatooor",
+"Jacked Up"
+]
+},
+{
+"f": "assets/skelly/races/T13-semis-4.jpg",
+"t": 13,
+"rnd": "semis",
+"i": 4,
+"title": "Whiskers Takes Semi 4, Tournament 13",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 154686577,
+"time": 97.70833333335716,
+"finish": [
+"Whiskers",
+"Bonsai",
+"Bork",
+"Fluffy",
+"Lenticular"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-1.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 1,
+"title": "Curatooor Takes Heat 1, Tournament 13",
+"winner": "Curatooor",
+"wid": 51,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2125375607,
+"time": 106.77500000003104,
+"finish": [
+"Curatooor",
+"Lore-y",
+"Geometric",
+"Geared Up",
+"Rotten"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-2.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 2,
+"title": "Jacked Up Takes Heat 2, Tournament 13",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3458412313,
+"time": 94.6500000000214,
+"finish": [
+"Jacked Up",
+"Lindy",
+"Viber",
+"Babka",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-3.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 3,
+"title": "Marmy Takes Heat 3, Tournament 13",
+"winner": "Marmy",
+"wid": 94,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3385370179,
+"time": 98.80833333335804,
+"finish": [
+"Marmy",
+"Dimensional",
+"Bodega",
+"Combustion",
+"Royal Flush"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-4.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 4,
+"title": "Whiskers Takes Heat 4, Tournament 13",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2403305760,
+"time": 84.82500000001357,
+"finish": [
+"Whiskers",
+"Blue Devil",
+"Survivor",
+"Shutter",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-5.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 5,
+"title": "Bonsai Takes Heat 5, Tournament 13",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3373541551,
+"time": 93.1916666666869,
+"finish": [
+"Bonsai",
+"Curiousity",
+"Entertainer",
+"Relaxer",
+"Phishy"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-6.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 6,
+"title": "Rainbow Takes Heat 6, Tournament 13",
+"winner": "Rainbow",
+"wid": 30,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2018419431,
+"time": 102.08333333336064,
+"finish": [
+"Rainbow",
+"Punky",
+"Espresso",
+"Roar",
+"Windy"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-7.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 7,
+"title": "Coach Takes Heat 7, Tournament 13",
+"winner": "Coach",
+"wid": 80,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1835531873,
+"time": 108.95000000003277,
+"finish": [
+"Coach",
+"Blocky",
+"Red Nose",
+"Appreciatoor",
+"Spidey"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-8.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 8,
+"title": "Presidente Takes Heat 8, Tournament 13",
+"winner": "Presidente",
+"wid": 32,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2871746352,
+"time": 115.47500000003797,
+"finish": [
+"Presidente",
+"Sparkly",
+"Serenity",
+"Squiggy",
+"BadaBing"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-9.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 9,
+"title": "Party In The Back Takes Heat 9, Tournament 13",
+"winner": "Party In The Back",
+"wid": 23,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3788849405,
+"time": 90.99166666668515,
+"finish": [
+"Party In The Back",
+"Mad Shatter",
+"Refunder",
+"Solo",
+"Moon God"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-10.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 10,
+"title": "Fluffy Takes Heat 10, Tournament 13",
+"winner": "Fluffy",
+"wid": 90,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 696593397,
+"time": 93.0250000000201,
+"finish": [
+"Fluffy",
+"QQLer",
+"Complainoor",
+"Brunk",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-11.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 11,
+"title": "High Quality Takes Heat 11, Tournament 13",
+"winner": "High Quality",
+"wid": 8,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1938185838,
+"time": 86.15833333334797,
+"finish": [
+"High Quality",
+"Aerys II",
+"Fresh Prince",
+"Horsin Around",
+"Burnout"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-12.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 12,
+"title": "Blaze It Takes Heat 12, Tournament 13",
+"winner": "Blaze It",
+"wid": 50,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3207165731,
+"time": 95.12500000002177,
+"finish": [
+"Blaze It",
+"High T",
+"Walker",
+"Boomer",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-13.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 13,
+"title": "Lenticular Takes Heat 13, Tournament 13",
+"winner": "Lenticular",
+"wid": 26,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3058720335,
+"time": 100.95833333335975,
+"finish": [
+"Lenticular",
+"Anon",
+"Mulligan",
+"Phoenix",
+"Chomp"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-14.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 14,
+"title": "Grumpy Takes Heat 14, Tournament 13",
+"winner": "Grumpy",
+"wid": 84,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2356716091,
+"time": 96.00000000002247,
+"finish": [
+"Grumpy",
+"Insert Coin",
+"Flight",
+"Glitchy",
+"Doomer"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-15.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 15,
+"title": "ETH Saver Takes Heat 15, Tournament 13",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3419567599,
+"time": 101.2416666666933,
+"finish": [
+"ETH Saver",
+"King",
+"Sargent",
+"Double Deuce",
+"Meow Meow"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-16.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 16,
+"title": "Bork Takes Heat 16, Tournament 13",
+"winner": "Bork",
+"wid": 74,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3664214409,
+"time": 103.8666666666954,
+"finish": [
+"Bork",
+"Molder",
+"World Peace",
+"Acidic",
+"Tunneler"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-17.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 17,
+"title": "Java Takes Heat 17, Tournament 13",
+"winner": "Java",
+"wid": 29,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 344585178,
+"time": 96.49166666668953,
+"finish": [
+"Java",
+"Peeled Out",
+"Shopper",
+"Dialer",
+"Spicy"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-18.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 18,
+"title": "Mysterio Takes Heat 18, Tournament 13",
+"winner": "Mysterio",
+"wid": 63,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1052305683,
+"time": 84.8916666666803,
+"finish": [
+"Mysterio",
+"Ray Of Light",
+"Doc",
+"Thrillr",
+"Cowboy"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-19.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 19,
+"title": "Detroiter Takes Heat 19, Tournament 13",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3492151988,
+"time": 92.08333333335268,
+"finish": [
+"Detroiter",
+"Baller",
+"Toad",
+"Mickey",
+"Spaced Out"
+]
+},
+{
+"f": "assets/skelly/races/T13-heats-20.jpg",
+"t": 13,
+"rnd": "heats",
+"i": 20,
+"title": "Crusty Takes Heat 20, Tournament 13",
+"winner": "Crusty",
+"wid": 62,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1282829680,
+"time": 93.30000000002032,
+"finish": [
+"Crusty",
+"Multitudes",
+"Scorreggia",
+"Get That Bread",
+"Feathers"
+]
+},
+{
+"f": "assets/skelly/races/T12-final-1.jpg",
+"t": 12,
+"rnd": "final",
+"i": 1,
+"title": "Lenticular Takes The Final, Tournament 12",
+"winner": "Lenticular",
+"wid": 26,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2948748055,
+"time": 114.99166666670425,
+"finish": [
+"Lenticular",
+"Blue Devil",
+"Lore-y",
+"Sargent",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T12-semis-1.jpg",
+"t": 12,
+"rnd": "semis",
+"i": 1,
+"title": "Sargent Takes Semi 1, Tournament 12",
+"winner": "Sargent",
+"wid": 65,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 683120903,
+"time": 110.63333333336745,
+"finish": [
+"Sargent",
+"Espresso",
+"Baller",
+"Aerys II",
+"Phishy"
+]
+},
+{
+"f": "assets/skelly/races/T12-semis-2.jpg",
+"t": 12,
+"rnd": "semis",
+"i": 2,
+"title": "Lenticular Takes Semi 2, Tournament 12",
+"winner": "Lenticular",
+"wid": 26,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1966734806,
+"time": 105.81666666669695,
+"finish": [
+"Lenticular",
+"Final Lap",
+"High T",
+"Mickey",
+"Boomer"
+]
+},
+{
+"f": "assets/skelly/races/T12-semis-3.jpg",
+"t": 12,
+"rnd": "semis",
+"i": 3,
+"title": "Versal Takes Semi 3, Tournament 12",
+"winner": "Versal",
+"wid": 85,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 970662707,
+"time": 92.39166666668626,
+"finish": [
+"Versal",
+"Lore-y",
+"Anon",
+"High Quality",
+"Refunder"
+]
+},
+{
+"f": "assets/skelly/races/T12-semis-4.jpg",
+"t": 12,
+"rnd": "semis",
+"i": 4,
+"title": "Blue Devil Takes Semi 4, Tournament 12",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1615716144,
+"time": 110.00000000003361,
+"finish": [
+"Blue Devil",
+"Viber",
+"Red Nose",
+"Sparkly",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-1.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 1,
+"title": "Refunder Takes Heat 1, Tournament 12",
+"winner": "Refunder",
+"wid": 99,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2623402926,
+"time": 117.00000000003918,
+"finish": [
+"Refunder",
+"Roar",
+"Horsin Around",
+"Batty",
+"Crusty"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-2.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 2,
+"title": "Mickey Takes Heat 2, Tournament 12",
+"winner": "Mickey",
+"wid": 91,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1437339344,
+"time": 108.09166666669876,
+"finish": [
+"Mickey",
+"Spicy",
+"Cowboy",
+"Chomp",
+"Doomer"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-3.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 3,
+"title": "Viber Takes Heat 3, Tournament 12",
+"winner": "Viber",
+"wid": 18,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2800333550,
+"time": 105.33333333336323,
+"finish": [
+"Viber",
+"Brunk",
+"Thrillr",
+"Glitchy",
+"Molder"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-4.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 4,
+"title": "Aerys II Takes Heat 4, Tournament 12",
+"winner": "Aerys II",
+"wid": 83,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1090540479,
+"time": 93.80833333335406,
+"finish": [
+"Aerys II",
+"Mulligan",
+"Shopper",
+"Mysterio",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-5.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 5,
+"title": "Final Lap Takes Heat 5, Tournament 12",
+"winner": "Final Lap",
+"wid": 15,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2073356350,
+"time": 107.975000000032,
+"finish": [
+"Final Lap",
+"Complainoor",
+"Dimensional",
+"Combustion",
+"World Peace"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-6.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 6,
+"title": "Baller Takes Heat 6, Tournament 12",
+"winner": "Baller",
+"wid": 52,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 749923329,
+"time": 109.09166666669955,
+"finish": [
+"Baller",
+"Royal Flush",
+"BadaBing",
+"Dialer",
+"Serenity"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-7.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 7,
+"title": "Phishy Takes Heat 7, Tournament 12",
+"winner": "Phishy",
+"wid": 20,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1088924074,
+"time": 85.52500000001413,
+"finish": [
+"Phishy",
+"Peeled Out",
+"Maper",
+"Bonsai",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-8.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 8,
+"title": "Scorreggia Takes Heat 8, Tournament 12",
+"winner": "Scorreggia",
+"wid": 40,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3438894916,
+"time": 104.80000000002947,
+"finish": [
+"Scorreggia",
+"ETH Saver",
+"King",
+"Spidey",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-9.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 9,
+"title": "Anon Takes Heat 9, Tournament 12",
+"winner": "Anon",
+"wid": 46,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 99185766,
+"time": 107.16666666669802,
+"finish": [
+"Anon",
+"Spaced Out",
+"Ray Of Light",
+"Relaxer",
+"Geometric"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-10.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 10,
+"title": "Sargent Takes Heat 10, Tournament 12",
+"winner": "Sargent",
+"wid": 65,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1388834798,
+"time": 84.91666666668031,
+"finish": [
+"Sargent",
+"Solo",
+"Toad",
+"Flight",
+"Walker"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-11.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 11,
+"title": "High Quality Takes Heat 11, Tournament 12",
+"winner": "High Quality",
+"wid": 8,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2454415690,
+"time": 82.23333333334485,
+"finish": [
+"High Quality",
+"Lindy",
+"Bork",
+"Marmy",
+"Meow Meow"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-12.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 12,
+"title": "Espresso Takes Heat 12, Tournament 12",
+"winner": "Espresso",
+"wid": 49,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1145543001,
+"time": 95.85833333335569,
+"finish": [
+"Espresso",
+"Rainbow",
+"Java",
+"Coach",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-13.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 13,
+"title": "Red Nose Takes Heat 13, Tournament 12",
+"winner": "Red Nose",
+"wid": 87,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3961849430,
+"time": 116.18333333337186,
+"finish": [
+"Red Nose",
+"Presidente",
+"Feathers",
+"Geared Up",
+"Doc"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-14.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 14,
+"title": "Lenticular Takes Heat 14, Tournament 12",
+"winner": "Lenticular",
+"wid": 26,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3324699740,
+"time": 100.82500000002631,
+"finish": [
+"Lenticular",
+"Fresh Prince",
+"Rotten",
+"QQLer",
+"Phoenix"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-15.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 15,
+"title": "Lore-y Takes Heat 15, Tournament 12",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3181543099,
+"time": 109.47500000003319,
+"finish": [
+"Lore-y",
+"Windy",
+"Double Deuce",
+"Babka",
+"Grumpy"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-16.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 16,
+"title": "Boomer Takes Heat 16, Tournament 12",
+"winner": "Boomer",
+"wid": 12,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1943944819,
+"time": 87.15000000001542,
+"finish": [
+"Boomer",
+"Bodega",
+"Entertainer",
+"Blaze It",
+"Appreciatoor"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-17.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 17,
+"title": "Sparkly Takes Heat 17, Tournament 12",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2142197191,
+"time": 92.95000000002004,
+"finish": [
+"Sparkly",
+"Jacked Up",
+"Shutter",
+"Party In The Back",
+"Tunneler"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-18.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 18,
+"title": "Versal Takes Heat 18, Tournament 12",
+"winner": "Versal",
+"wid": 85,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2376562072,
+"time": 108.00833333336536,
+"finish": [
+"Versal",
+"Insert Coin",
+"Mad Shatter",
+"Survivor",
+"Fluffy"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-19.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 19,
+"title": "Blue Devil Takes Heat 19, Tournament 12",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2941168550,
+"time": 85.15000000001383,
+"finish": [
+"Blue Devil",
+"Moon God",
+"Whiskers",
+"Acidic",
+"Blocky"
+]
+},
+{
+"f": "assets/skelly/races/T12-heats-20.jpg",
+"t": 12,
+"rnd": "heats",
+"i": 20,
+"title": "High T Takes Heat 20, Tournament 12",
+"winner": "High T",
+"wid": 56,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2984069366,
+"time": 91.61666666668565,
+"finish": [
+"High T",
+"Squiggy",
+"Curiousity",
+"Detroiter",
+"Burnout"
+]
+},
+{
+"f": "assets/skelly/races/T11-final-1.jpg",
+"t": 11,
+"rnd": "final",
+"i": 1,
+"title": "Bonsai Takes The Final, Tournament 11",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3905406298,
+"time": 89.13333333335034,
+"finish": [
+"Bonsai",
+"Babka",
+"Spidey",
+"Dimensional",
+"Entertainer"
+]
+},
+{
+"f": "assets/skelly/races/T11-semis-1.jpg",
+"t": 11,
+"rnd": "semis",
+"i": 1,
+"title": "Entertainer Takes Semi 1, Tournament 11",
+"winner": "Entertainer",
+"wid": 96,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 14543708,
+"time": 106.07500000003049,
+"finish": [
+"Entertainer",
+"Fresh Prince",
+"Peeled Out",
+"Presidente",
+"Detroiter"
+]
+},
+{
+"f": "assets/skelly/races/T11-semis-2.jpg",
+"t": 11,
+"rnd": "semis",
+"i": 2,
+"title": "Bonsai Takes Semi 2, Tournament 11",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 273696848,
+"time": 89.80833333335087,
+"finish": [
+"Bonsai",
+"Roar",
+"Mulligan",
+"Viber",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T11-semis-3.jpg",
+"t": 11,
+"rnd": "semis",
+"i": 3,
+"title": "Babka Takes Semi 3, Tournament 11",
+"winner": "Babka",
+"wid": 3,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3455245505,
+"time": 86.32500000001477,
+"finish": [
+"Babka",
+"Dimensional",
+"Relaxer",
+"Blue Devil",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T11-semis-4.jpg",
+"t": 11,
+"rnd": "semis",
+"i": 4,
+"title": "Spidey Takes Semi 4, Tournament 11",
+"winner": "Spidey",
+"wid": 76,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 699742982,
+"time": 98.40833333335772,
+"finish": [
+"Spidey",
+"Espresso",
+"Appreciatoor",
+"High T",
+"BadaBing"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-1.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 1,
+"title": "Espresso Takes Heat 1, Tournament 11",
+"winner": "Espresso",
+"wid": 49,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1624528354,
+"time": 84.44166666667994,
+"finish": [
+"Espresso",
+"High Quality",
+"Batty",
+"World Peace",
+"Shopper"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-2.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 2,
+"title": "Spidey Takes Heat 2, Tournament 11",
+"winner": "Spidey",
+"wid": 76,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 4258986299,
+"time": 100.18333333335913,
+"finish": [
+"Spidey",
+"Feathers",
+"Geared Up",
+"Doomer",
+"Ray Of Light"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-3.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 3,
+"title": "Dimensional Takes Heat 3, Tournament 11",
+"winner": "Dimensional",
+"wid": 44,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3866130434,
+"time": 93.79166666668738,
+"finish": [
+"Dimensional",
+"Spaced Out",
+"King",
+"Refunder",
+"Spicy"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-4.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 4,
+"title": "Blue Devil Takes Heat 4, Tournament 11",
+"winner": "Blue Devil",
+"wid": 27,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2463155635,
+"time": 106.58333333336422,
+"finish": [
+"Blue Devil",
+"Meow Meow",
+"Acidic",
+"Mysterio",
+"Phishy"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-5.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 5,
+"title": "Relaxer Takes Heat 5, Tournament 11",
+"winner": "Relaxer",
+"wid": 97,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 943946291,
+"time": 93.6500000000206,
+"finish": [
+"Relaxer",
+"Molder",
+"QQLer",
+"Red Nose",
+"Flight"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-6.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 6,
+"title": "Detroiter Takes Heat 6, Tournament 11",
+"winner": "Detroiter",
+"wid": 100,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1075698419,
+"time": 108.79166666669931,
+"finish": [
+"Detroiter",
+"Blaze It",
+"Get That Bread",
+"Complainoor",
+"Blocky"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-7.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 7,
+"title": "Mulligan Takes Heat 7, Tournament 11",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1971534966,
+"time": 87.3750000000156,
+"finish": [
+"Mulligan",
+"Maper",
+"Combustion",
+"Bodega",
+"Rainbow"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-8.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 8,
+"title": "Viber Takes Heat 8, Tournament 11",
+"winner": "Viber",
+"wid": 18,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1989612048,
+"time": 82.433333333345,
+"finish": [
+"Viber",
+"Phoenix",
+"Curiousity",
+"Royal Flush",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-9.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 9,
+"title": "Fresh Prince Takes Heat 9, Tournament 11",
+"winner": "Fresh Prince",
+"wid": 38,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1574459623,
+"time": 92.15833333335274,
+"finish": [
+"Fresh Prince",
+"Final Lap",
+"Crusty",
+"Serenity",
+"Thrillr"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-10.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 10,
+"title": "Roar Takes Heat 10, Tournament 11",
+"winner": "Roar",
+"wid": 35,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1244314189,
+"time": 107.45833333336492,
+"finish": [
+"Roar",
+"Dialer",
+"Anon",
+"Marmy",
+"ETH Saver"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-11.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 11,
+"title": "Bonsai Takes Heat 11, Tournament 11",
+"winner": "Bonsai",
+"wid": 69,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 672956926,
+"time": 105.94166666669705,
+"finish": [
+"Bonsai",
+"Lore-y",
+"Cowboy",
+"Doc",
+"Party In The Back"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-12.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 12,
+"title": "High T Takes Heat 12, Tournament 11",
+"winner": "High T",
+"wid": 56,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3335245336,
+"time": 101.95833333336054,
+"finish": [
+"High T",
+"Windy",
+"Squiggy",
+"Tunneler",
+"Fluffy"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-13.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 13,
+"title": "BadaBing Takes Heat 13, Tournament 11",
+"winner": "BadaBing",
+"wid": 31,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4193893867,
+"time": 99.0083333333582,
+"finish": [
+"BadaBing",
+"Java",
+"Coach",
+"Punky",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-14.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 14,
+"title": "Presidente Takes Heat 14, Tournament 11",
+"winner": "Presidente",
+"wid": 32,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1256808105,
+"time": 115.6500000000381,
+"finish": [
+"Presidente",
+"Lindy",
+"Lenticular",
+"Curatooor",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-15.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 15,
+"title": "Appreciatoor Takes Heat 15, Tournament 11",
+"winner": "Appreciatoor",
+"wid": 6,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3403862455,
+"time": 102.2416666666941,
+"finish": [
+"Appreciatoor",
+"Glitchy",
+"Versal",
+"Survivor",
+"Burnout"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-16.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 16,
+"title": "Scorreggia Takes Heat 16, Tournament 11",
+"winner": "Scorreggia",
+"wid": 40,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 947532855,
+"time": 89.78333333335085,
+"finish": [
+"Scorreggia",
+"Walker",
+"Baller",
+"Whiskers",
+"Geometric"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-17.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 17,
+"title": "Babka Takes Heat 17, Tournament 11",
+"winner": "Babka",
+"wid": 3,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1529462265,
+"time": 110.51666666670069,
+"finish": [
+"Babka",
+"Double Deuce",
+"Insert Coin",
+"Moon God",
+"Sparkly"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-18.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 18,
+"title": "Peeled Out Takes Heat 18, Tournament 11",
+"winner": "Peeled Out",
+"wid": 82,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1257164913,
+"time": 84.90000000001363,
+"finish": [
+"Peeled Out",
+"Jacked Up",
+"Mad Shatter",
+"Boomer",
+"Bork"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-19.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 19,
+"title": "Mickey Takes Heat 19, Tournament 11",
+"winner": "Mickey",
+"wid": 91,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2214180737,
+"time": 109.62500000003331,
+"finish": [
+"Mickey",
+"Toad",
+"Grumpy",
+"Horsin Around",
+"Chomp"
+]
+},
+{
+"f": "assets/skelly/races/T11-heats-20.jpg",
+"t": 11,
+"rnd": "heats",
+"i": 20,
+"title": "Entertainer Takes Heat 20, Tournament 11",
+"winner": "Entertainer",
+"wid": 96,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2938032702,
+"time": 116.16666666670518,
+"finish": [
+"Entertainer",
+"Sargent",
+"Rotten",
+"Aerys II",
+"Multitudes"
+]
+},
+{
+"f": "assets/skelly/races/T10-final-1.jpg",
+"t": 10,
+"rnd": "final",
+"i": 1,
+"title": "Mulligan Takes The Final, Tournament 10",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4085125255,
+"time": 80.47500000001011,
+"finish": [
+"Mulligan",
+"ETH Saver",
+"Peeled Out",
+"Batty",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T10-semis-1.jpg",
+"t": 10,
+"rnd": "semis",
+"i": 1,
+"title": "Batty Takes Semi 1, Tournament 10",
+"winner": "Batty",
+"wid": 7,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 439584958,
+"time": 91.06666666668521,
+"finish": [
+"Batty",
+"Spaced Out",
+"Babka",
+"Espresso",
+"Curatooor"
+]
+},
+{
+"f": "assets/skelly/races/T10-semis-2.jpg",
+"t": 10,
+"rnd": "semis",
+"i": 2,
+"title": "Mulligan Takes Semi 2, Tournament 10",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1320950316,
+"time": 90.99166666668515,
+"finish": [
+"Mulligan",
+"Peeled Out",
+"Geometric",
+"High Quality",
+"Tunneler"
+]
+},
+{
+"f": "assets/skelly/races/T10-semis-3.jpg",
+"t": 10,
+"rnd": "semis",
+"i": 3,
+"title": "Get That Bread Takes Semi 3, Tournament 10",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 526142286,
+"time": 98.341666666691,
+"finish": [
+"Get That Bread",
+"Whiskers",
+"Toad",
+"Acidic",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T10-semis-4.jpg",
+"t": 10,
+"rnd": "semis",
+"i": 4,
+"title": "ETH Saver Takes Semi 4, Tournament 10",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1254404305,
+"time": 113.0833333333694,
+"finish": [
+"ETH Saver",
+"Refunder",
+"Dimensional",
+"Rotten",
+"Sparkly"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-1.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 1,
+"title": "Curatooor Takes Heat 1, Tournament 10",
+"winner": "Curatooor",
+"wid": 51,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4214216717,
+"time": 82.12500000001143,
+"finish": [
+"Curatooor",
+"Grumpy",
+"Doomer",
+"Serenity",
+"Thrillr"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-2.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 2,
+"title": "Refunder Takes Heat 2, Tournament 10",
+"winner": "Refunder",
+"wid": 99,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 323429376,
+"time": 92.75833333335322,
+"finish": [
+"Refunder",
+"QQLer",
+"Phishy",
+"Crusty",
+"Horsin Around"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-3.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 3,
+"title": "Babka Takes Heat 3, Tournament 10",
+"winner": "Babka",
+"wid": 3,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1474271510,
+"time": 88.77500000001672,
+"finish": [
+"Babka",
+"Relaxer",
+"Spidey",
+"Final Lap",
+"BadaBing"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-4.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 4,
+"title": "Mulligan Takes Heat 4, Tournament 10",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2183532631,
+"time": 87.7083333333492,
+"finish": [
+"Mulligan",
+"Phoenix",
+"Shutter",
+"Molder",
+"Mickey"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-5.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 5,
+"title": "Peeled Out Takes Heat 5, Tournament 10",
+"winner": "Peeled Out",
+"wid": 82,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2201104702,
+"time": 94.84166666668821,
+"finish": [
+"Peeled Out",
+"Punky",
+"Entertainer",
+"Bonsai",
+"Blue Devil"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-6.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 6,
+"title": "Spaced Out Takes Heat 6, Tournament 10",
+"winner": "Spaced Out",
+"wid": 72,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2086995662,
+"time": 111.40000000003472,
+"finish": [
+"Spaced Out",
+"Blocky",
+"Bodega",
+"Curiousity",
+"Glitchy"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-7.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 7,
+"title": "Get That Bread Takes Heat 7, Tournament 10",
+"winner": "Get That Bread",
+"wid": 14,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 666305970,
+"time": 99.0916666666916,
+"finish": [
+"Get That Bread",
+"World Peace",
+"Boomer",
+"Bork",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-8.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 8,
+"title": "High Quality Takes Heat 8, Tournament 10",
+"winner": "High Quality",
+"wid": 8,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4197267112,
+"time": 87.80000000001594,
+"finish": [
+"High Quality",
+"Jacked Up",
+"High T",
+"Complainoor",
+"Presidente"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-9.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 9,
+"title": "Sparkly Takes Heat 9, Tournament 10",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2153432881,
+"time": 92.41666666668628,
+"finish": [
+"Sparkly",
+"Doc",
+"Rainbow",
+"Fluffy",
+"Cowboy"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-10.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 10,
+"title": "Acidic Takes Heat 10, Tournament 10",
+"winner": "Acidic",
+"wid": 70,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2313904579,
+"time": 86.27500000001473,
+"finish": [
+"Acidic",
+"Blaze It",
+"Viber",
+"Dialer",
+"Spicy"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-11.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 11,
+"title": "Espresso Takes Heat 11, Tournament 10",
+"winner": "Espresso",
+"wid": 49,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2654179566,
+"time": 110.32500000003387,
+"finish": [
+"Espresso",
+"Combustion",
+"Ray Of Light",
+"Mad Shatter",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-12.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 12,
+"title": "Tunneler Takes Heat 12, Tournament 10",
+"winner": "Tunneler",
+"wid": 47,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 607950052,
+"time": 103.7416666666953,
+"finish": [
+"Tunneler",
+"Flight",
+"Insert Coin",
+"Java",
+"Detroiter"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-13.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 13,
+"title": "Toad Takes Heat 13, Tournament 10",
+"winner": "Toad",
+"wid": 41,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4090680922,
+"time": 103.48333333336176,
+"finish": [
+"Toad",
+"Marmy",
+"Windy",
+"Walker",
+"Lenticular"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-14.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 14,
+"title": "ETH Saver Takes Heat 14, Tournament 10",
+"winner": "ETH Saver",
+"wid": 2,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2135405637,
+"time": 88.38333333334974,
+"finish": [
+"ETH Saver",
+"Meow Meow",
+"Multitudes",
+"Moon God",
+"Appreciatoor"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-15.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 15,
+"title": "Versal Takes Heat 15, Tournament 10",
+"winner": "Versal",
+"wid": 85,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1403104716,
+"time": 89.76666666668417,
+"finish": [
+"Versal",
+"Lore-y",
+"Survivor",
+"Sargent",
+"Roar"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-16.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 16,
+"title": "Batty Takes Heat 16, Tournament 10",
+"winner": "Batty",
+"wid": 7,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 425360418,
+"time": 101.43333333336012,
+"finish": [
+"Batty",
+"Aerys II",
+"Geared Up",
+"Fresh Prince",
+"Coach"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-17.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 17,
+"title": "Whiskers Takes Heat 17, Tournament 10",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1357481403,
+"time": 87.00833333334865,
+"finish": [
+"Whiskers",
+"Red Nose",
+"Royal Flush",
+"Chomp",
+"Baller"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-18.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 18,
+"title": "Dimensional Takes Heat 18, Tournament 10",
+"winner": "Dimensional",
+"wid": 44,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1740512876,
+"time": 101.94166666669386,
+"finish": [
+"Dimensional",
+"Mysterio",
+"Burnout",
+"Anon",
+"Maper"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-19.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 19,
+"title": "Geometric Takes Heat 19, Tournament 10",
+"winner": "Geometric",
+"wid": 93,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2388545196,
+"time": 87.22500000001548,
+"finish": [
+"Geometric",
+"Squiggy",
+"Party In The Back",
+"Feathers",
+"Double Deuce"
+]
+},
+{
+"f": "assets/skelly/races/T10-heats-20.jpg",
+"t": 10,
+"rnd": "heats",
+"i": 20,
+"title": "Rotten Takes Heat 20, Tournament 10",
+"winner": "Rotten",
+"wid": 88,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1911206235,
+"time": 89.10833333335032,
+"finish": [
+"Rotten",
+"King",
+"Lindy",
+"Brunk",
+"Shopper"
+]
+},
+{
+"f": "assets/skelly/races/T9-final-1.jpg",
+"t": 9,
+"rnd": "final",
+"i": 1,
+"title": "Moon God Takes The Final, Tournament 9",
+"winner": "Moon God",
+"wid": 66,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1480588014,
+"time": 109.03333333336617,
+"finish": [
+"Moon God",
+"Curiousity",
+"Acidic",
+"Whiskers",
+"Lore-y"
+]
+},
+{
+"f": "assets/skelly/races/T9-semis-1.jpg",
+"t": 9,
+"rnd": "semis",
+"i": 1,
+"title": "Whiskers Takes Semi 1, Tournament 9",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3091655680,
+"time": 93.45833333335378,
+"finish": [
+"Whiskers",
+"Curatooor",
+"Squiggy",
+"Jacked Up",
+"Insert Coin"
+]
+},
+{
+"f": "assets/skelly/races/T9-semis-2.jpg",
+"t": 9,
+"rnd": "semis",
+"i": 2,
+"title": "Curiousity Takes Semi 2, Tournament 9",
+"winner": "Curiousity",
+"wid": 19,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1642538056,
+"time": 87.19166666668212,
+"finish": [
+"Curiousity",
+"Acidic",
+"Mulligan",
+"Marmy",
+"Doc"
+]
+},
+{
+"f": "assets/skelly/races/T9-semis-3.jpg",
+"t": 9,
+"rnd": "semis",
+"i": 3,
+"title": "Moon God Takes Semi 3, Tournament 9",
+"winner": "Moon God",
+"wid": 66,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1614334292,
+"time": 91.9000000000192,
+"finish": [
+"Moon God",
+"Versal",
+"Baller",
+"Blocky",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T9-semis-4.jpg",
+"t": 9,
+"rnd": "semis",
+"i": 4,
+"title": "Lore-y Takes Semi 4, Tournament 9",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3235387029,
+"time": 104.70833333336273,
+"finish": [
+"Lore-y",
+"Grumpy",
+"Blaze It",
+"Espresso",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-1.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 1,
+"title": "Moon God Takes Heat 1, Tournament 9",
+"winner": "Moon God",
+"wid": 66,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2185489444,
+"time": 90.84166666668503,
+"finish": [
+"Moon God",
+"Ray Of Light",
+"Detroiter",
+"Survivor",
+"Royal Flush"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-2.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 2,
+"title": "Insert Coin Takes Heat 2, Tournament 9",
+"winner": "Insert Coin",
+"wid": 9,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3374493650,
+"time": 99.75000000002545,
+"finish": [
+"Insert Coin",
+"Chomp",
+"Maper",
+"Dialer",
+"Aerys II"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-3.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 3,
+"title": "Curatooor Takes Heat 3, Tournament 9",
+"winner": "Curatooor",
+"wid": 51,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 503176045,
+"time": 106.86666666669778,
+"finish": [
+"Curatooor",
+"ETH Saver",
+"Geometric",
+"Spaced Out",
+"Punky"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-4.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 4,
+"title": "Geared Up Takes Heat 4, Tournament 9",
+"winner": "Geared Up",
+"wid": 86,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 373121351,
+"time": 85.74166666668097,
+"finish": [
+"Geared Up",
+"Coach",
+"Anon",
+"Sparkly",
+"Bodega"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-5.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 5,
+"title": "Lore-y Takes Heat 5, Tournament 9",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1484787669,
+"time": 103.9500000000288,
+"finish": [
+"Lore-y",
+"Final Lap",
+"Party In The Back",
+"BadaBing",
+"Dimensional"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-6.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 6,
+"title": "Blocky Takes Heat 6, Tournament 9",
+"winner": "Blocky",
+"wid": 24,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 4071175292,
+"time": 102.0333333333606,
+"finish": [
+"Blocky",
+"High T",
+"Peeled Out",
+"Refunder",
+"Thrillr"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-7.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 7,
+"title": "Grumpy Takes Heat 7, Tournament 9",
+"winner": "Grumpy",
+"wid": 84,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1301789947,
+"time": 112.94166666670262,
+"finish": [
+"Grumpy",
+"Tunneler",
+"Viber",
+"Bork",
+"Glitchy"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-8.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 8,
+"title": "Blaze It Takes Heat 8, Tournament 9",
+"winner": "Blaze It",
+"wid": 50,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1868541978,
+"time": 121.51666666670944,
+"finish": [
+"Blaze It",
+"Appreciatoor",
+"Lenticular",
+"Shutter",
+"Walker"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-9.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 9,
+"title": "Whiskers Takes Heat 9, Tournament 9",
+"winner": "Whiskers",
+"wid": 28,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 4215124248,
+"time": 109.44166666669983,
+"finish": [
+"Whiskers",
+"Feathers",
+"Roar",
+"Rotten",
+"Complainoor"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-10.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 10,
+"title": "Baller Takes Heat 10, Tournament 9",
+"winner": "Baller",
+"wid": 52,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2529148828,
+"time": 98.62500000002456,
+"finish": [
+"Baller",
+"Get That Bread",
+"Java",
+"Windy",
+"Fresh Prince"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-11.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 11,
+"title": "Espresso Takes Heat 11, Tournament 9",
+"winner": "Espresso",
+"wid": 49,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 3997101554,
+"time": 86.80833333334849,
+"finish": [
+"Espresso",
+"Bonsai",
+"Combustion",
+"Presidente",
+"Phishy"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-12.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 12,
+"title": "Jacked Up Takes Heat 12, Tournament 9",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1543859511,
+"time": 88.50833333334984,
+"finish": [
+"Jacked Up",
+"Shopper",
+"High Quality",
+"Mad Shatter",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-13.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 13,
+"title": "Marmy Takes Heat 13, Tournament 9",
+"winner": "Marmy",
+"wid": 94,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1155181293,
+"time": 108.9333333333661,
+"finish": [
+"Marmy",
+"Scorreggia",
+"Boomer",
+"King",
+"Doomer"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-14.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 14,
+"title": "Brunk Takes Heat 14, Tournament 9",
+"winner": "Brunk",
+"wid": 21,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 181666020,
+"time": 90.17500000001783,
+"finish": [
+"Brunk",
+"Burnout",
+"Double Deuce",
+"Entertainer",
+"Relaxer"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-15.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 15,
+"title": "Versal Takes Heat 15, Tournament 9",
+"winner": "Versal",
+"wid": 85,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 190563290,
+"time": 89.59166666668403,
+"finish": [
+"Versal",
+"Mickey",
+"Fluffy",
+"Phoenix",
+"Spicy"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-16.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 16,
+"title": "Curiousity Takes Heat 16, Tournament 9",
+"winner": "Curiousity",
+"wid": 19,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 2448042583,
+"time": 89.24166666668376,
+"finish": [
+"Curiousity",
+"Mysterio",
+"Cowboy",
+"Crusty",
+"Solo"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-17.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 17,
+"title": "Doc Takes Heat 17, Tournament 9",
+"winner": "Doc",
+"wid": 57,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 92348714,
+"time": 108.1833333333655,
+"finish": [
+"Doc",
+"Multitudes",
+"Red Nose",
+"World Peace",
+"QQLer"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-18.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 18,
+"title": "Mulligan Takes Heat 18, Tournament 9",
+"winner": "Mulligan",
+"wid": 98,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1881254509,
+"time": 94.86666666668823,
+"finish": [
+"Mulligan",
+"Meow Meow",
+"Blue Devil",
+"Horsin Around",
+"Spidey"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-19.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 19,
+"title": "Squiggy Takes Heat 19, Tournament 9",
+"winner": "Squiggy",
+"wid": 11,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 1464284962,
+"time": 75.63333333333959,
+"finish": [
+"Squiggy",
+"Lindy",
+"Sargent",
+"Molder",
+"Flight"
+]
+},
+{
+"f": "assets/skelly/races/T9-heats-20.jpg",
+"t": 9,
+"rnd": "heats",
+"i": 20,
+"title": "Acidic Takes Heat 20, Tournament 9",
+"winner": "Acidic",
+"wid": 70,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1153852550,
+"time": 106.35833333336404,
+"finish": [
+"Acidic",
+"Serenity",
+"Rainbow",
+"Babka",
+"Toad"
+]
+},
+{
+"f": "assets/skelly/races/T8-final-1.jpg",
+"t": 8,
+"rnd": "final",
+"i": 1,
+"title": "Relaxer Takes The Final, Tournament 8",
+"winner": "Relaxer",
+"wid": 97,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1057437077,
+"time": 111.19166666670122,
+"finish": [
+"Relaxer",
+"Acidic",
+"Mysterio",
+"Bork",
+"Marmy"
+]
+},
+{
+"f": "assets/skelly/races/T8-semis-1.jpg",
+"t": 8,
+"rnd": "semis",
+"i": 1,
+"title": "Mysterio Takes Semi 1, Tournament 8",
+"winner": "Mysterio",
+"wid": 63,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1995026205,
+"time": 91.85000000001916,
+"finish": [
+"Mysterio",
+"Lore-y",
+"Rotten",
+"Sparkly",
+"Java"
+]
+},
+{
+"f": "assets/skelly/races/T8-semis-2.jpg",
+"t": 8,
+"rnd": "semis",
+"i": 2,
+"title": "Bork Takes Semi 2, Tournament 8",
+"winner": "Bork",
+"wid": 74,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3560075964,
+"time": 86.23333333334803,
+"finish": [
+"Bork",
+"Relaxer",
+"Serenity",
+"Appreciatoor",
+"World Peace"
+]
+},
+{
+"f": "assets/skelly/races/T8-semis-3.jpg",
+"t": 8,
+"rnd": "semis",
+"i": 3,
+"title": "Acidic Takes Semi 3, Tournament 8",
+"winner": "Acidic",
+"wid": 70,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 1045383011,
+"time": 92.93333333335336,
+"finish": [
+"Acidic",
+"Spicy",
+"Shopper",
+"Shutter",
+"Espresso"
+]
+},
+{
+"f": "assets/skelly/races/T8-semis-4.jpg",
+"t": 8,
+"rnd": "semis",
+"i": 4,
+"title": "Marmy Takes Semi 4, Tournament 8",
+"winner": "Marmy",
+"wid": 94,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 1702541470,
+"time": 89.8333333333509,
+"finish": [
+"Marmy",
+"Crusty",
+"Mickey",
+"Baller",
+"Sargent"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-1.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 1,
+"title": "World Peace Takes Heat 1, Tournament 8",
+"winner": "World Peace",
+"wid": 1,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3840964542,
+"time": 84.6833333333468,
+"finish": [
+"World Peace",
+"High T",
+"Glitchy",
+"Babka",
+"Fresh Prince"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-2.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 2,
+"title": "Marmy Takes Heat 2, Tournament 8",
+"winner": "Marmy",
+"wid": 94,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3523594964,
+"time": 89.51666666668397,
+"finish": [
+"Marmy",
+"Whiskers",
+"Roar",
+"Walker",
+"Geared Up"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-3.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 3,
+"title": "Lore-y Takes Heat 3, Tournament 8",
+"winner": "Lore-y",
+"wid": 4,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 201693541,
+"time": 95.15000000002179,
+"finish": [
+"Lore-y",
+"Boomer",
+"Toad",
+"Batty",
+"Spaced Out"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-4.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 4,
+"title": "Espresso Takes Heat 4, Tournament 8",
+"winner": "Espresso",
+"wid": 49,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 1842919822,
+"time": 105.34166666669657,
+"finish": [
+"Espresso",
+"King",
+"Combustion",
+"ETH Saver",
+"Moon God"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-5.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 5,
+"title": "Relaxer Takes Heat 5, Tournament 8",
+"winner": "Relaxer",
+"wid": 97,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3990417558,
+"time": 99.50833333335859,
+"finish": [
+"Relaxer",
+"Tunneler",
+"Chomp",
+"Refunder",
+"Double Deuce"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-6.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 6,
+"title": "Mysterio Takes Heat 6, Tournament 8",
+"winner": "Mysterio",
+"wid": 63,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3666081880,
+"time": 98.70833333335796,
+"finish": [
+"Mysterio",
+"Squiggy",
+"Spidey",
+"Molder",
+"Grumpy"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-7.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 7,
+"title": "Shutter Takes Heat 7, Tournament 8",
+"winner": "Shutter",
+"wid": 77,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3175617650,
+"time": 90.15833333335115,
+"finish": [
+"Shutter",
+"Lindy",
+"Feathers",
+"QQLer",
+"Versal"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-8.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 8,
+"title": "Rotten Takes Heat 8, Tournament 8",
+"winner": "Rotten",
+"wid": 88,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2717876254,
+"time": 95.34166666668861,
+"finish": [
+"Rotten",
+"High Quality",
+"Mad Shatter",
+"Lenticular",
+"Royal Flush"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-9.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 9,
+"title": "Baller Takes Heat 9, Tournament 8",
+"winner": "Baller",
+"wid": 52,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4263782885,
+"time": 89.15833333335036,
+"finish": [
+"Baller",
+"Windy",
+"Thrillr",
+"Curatooor",
+"Bonsai"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-10.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 10,
+"title": "Appreciatoor Takes Heat 10, Tournament 8",
+"winner": "Appreciatoor",
+"wid": 6,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 4241390065,
+"time": 102.73333333336116,
+"finish": [
+"Appreciatoor",
+"Doc",
+"Dimensional",
+"Dialer",
+"Blue Devil"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-11.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 11,
+"title": "Crusty Takes Heat 11, Tournament 8",
+"winner": "Crusty",
+"wid": 62,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 4032234774,
+"time": 110.52500000003403,
+"finish": [
+"Crusty",
+"Ray Of Light",
+"Party In The Back",
+"Phishy",
+"Complainoor"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-12.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 12,
+"title": "Bork Takes Heat 12, Tournament 8",
+"winner": "Bork",
+"wid": 74,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 2141687151,
+"time": 99.68333333335873,
+"finish": [
+"Bork",
+"Doomer",
+"Insert Coin",
+"Coach",
+"Presidente"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-13.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 13,
+"title": "Sparkly Takes Heat 13, Tournament 8",
+"winner": "Sparkly",
+"wid": 81,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 3452163388,
+"time": 102.87500000002794,
+"finish": [
+"Sparkly",
+"Entertainer",
+"Viber",
+"Curiousity",
+"Scorreggia"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-14.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 14,
+"title": "Acidic Takes Heat 14, Tournament 8",
+"winner": "Acidic",
+"wid": 70,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 4222764110,
+"time": 90.05833333335107,
+"finish": [
+"Acidic",
+"Detroiter",
+"Horsin Around",
+"Geometric",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-15.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 15,
+"title": "Mickey Takes Heat 15, Tournament 8",
+"winner": "Mickey",
+"wid": 91,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 376375551,
+"time": 99.59166666669199,
+"finish": [
+"Mickey",
+"Jacked Up",
+"Punky",
+"Meow Meow",
+"Brunk"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-16.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 16,
+"title": "Serenity Takes Heat 16, Tournament 8",
+"winner": "Serenity",
+"wid": 89,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2535826469,
+"time": 109.80000000003345,
+"finish": [
+"Serenity",
+"Bodega",
+"Mulligan",
+"Burnout",
+"Phoenix"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-17.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 17,
+"title": "Shopper Takes Heat 17, Tournament 8",
+"winner": "Shopper",
+"wid": 33,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 1272329360,
+"time": 98.75000000002466,
+"finish": [
+"Shopper",
+"Anon",
+"Final Lap",
+"Peeled Out",
+"Get That Bread"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-18.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 18,
+"title": "Java Takes Heat 18, Tournament 8",
+"winner": "Java",
+"wid": 29,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 637081368,
+"time": 89.92500000001763,
+"finish": [
+"Java",
+"Cowboy",
+"Aerys II",
+"Multitudes",
+"Blocky"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-19.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 19,
+"title": "Spicy Takes Heat 19, Tournament 8",
+"winner": "Spicy",
+"wid": 34,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2661274757,
+"time": 83.75833333334606,
+"finish": [
+"Spicy",
+"Solo",
+"Fluffy",
+"BadaBing",
+"Survivor"
+]
+},
+{
+"f": "assets/skelly/races/T8-heats-20.jpg",
+"t": 8,
+"rnd": "heats",
+"i": 20,
+"title": "Sargent Takes Heat 20, Tournament 8",
+"winner": "Sargent",
+"wid": 65,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 173949125,
+"time": 96.90000000002318,
+"finish": [
+"Sargent",
+"Maper",
+"Rainbow",
+"Red Nose",
+"Flight"
+]
+},
+{
+"f": "assets/skelly/races/T7-final-1.jpg",
+"t": 7,
+"rnd": "final",
+"i": 1,
+"title": "Espresso Takes The Final, Tournament 7",
+"winner": "Espresso",
+"wid": 49,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3694420927,
+"time": 108.40833333336568,
+"finish": [
+"Espresso",
+"Coach",
+"Roar",
+"Red Nose",
+"Shutter"
+]
+},
+{
+"f": "assets/skelly/races/T7-semis-1.jpg",
+"t": 7,
+"rnd": "semis",
+"i": 1,
+"title": "Espresso Takes Semi 1, Tournament 7",
+"winner": "Espresso",
+"wid": 49,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 3626057664,
+"time": 91.12500000001859,
+"finish": [
+"Espresso",
+"Refunder",
+"Double Deuce",
+"Appreciatoor",
+"Combustion"
+]
+},
+{
+"f": "assets/skelly/races/T7-semis-2.jpg",
+"t": 7,
+"rnd": "semis",
+"i": 2,
+"title": "Roar Takes Semi 2, Tournament 7",
+"winner": "Roar",
+"wid": 35,
+"lane": "BLUE",
+"boro": "Manhattan",
+"seed": 3626899971,
+"time": 107.12500000003132,
+"finish": [
+"Roar",
+"Phishy",
+"Get That Bread",
+"Royal Flush",
+"Jacked Up"
+]
+},
+{
+"f": "assets/skelly/races/T7-semis-3.jpg",
+"t": 7,
+"rnd": "semis",
+"i": 3,
+"title": "Coach Takes Semi 3, Tournament 7",
+"winner": "Coach",
+"wid": 80,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 2572575961,
+"time": 89.78333333335085,
+"finish": [
+"Coach",
+"Shutter",
+"Crusty",
+"King",
+"Rotten"
+]
+},
+{
+"f": "assets/skelly/races/T7-semis-4.jpg",
+"t": 7,
+"rnd": "semis",
+"i": 4,
+"title": "Red Nose Takes Semi 4, Tournament 7",
+"winner": "Red Nose",
+"wid": 87,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2272017018,
+"time": 97.72500000002384,
+"finish": [
+"Red Nose",
+"Ray Of Light",
+"Molder",
+"Blue Devil",
+"Relaxer"
+]
+},
+{
 "f": "assets/skelly/races/T7-heats-1.jpg",
 "t": 7,
 "rnd": "heats",
@@ -257,6 +9577,146 @@
 "Sargent",
 "Detroiter",
 "Lindy"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-14.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 14,
+"title": "Molder Takes Heat 14, Tournament 7",
+"winner": "Molder",
+"wid": 73,
+"lane": "YELLOW",
+"boro": "Queens",
+"seed": 2067211497,
+"time": 111.35000000003468,
+"finish": [
+"Molder",
+"Viber",
+"High Quality",
+"Moon God",
+"Final Lap"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-15.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 15,
+"title": "Roar Takes Heat 15, Tournament 7",
+"winner": "Roar",
+"wid": 35,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 514102350,
+"time": 108.81666666669933,
+"finish": [
+"Roar",
+"World Peace",
+"Punky",
+"Fluffy",
+"Blaze It"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-16.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 16,
+"title": "Coach Takes Heat 16, Tournament 7",
+"winner": "Coach",
+"wid": 80,
+"lane": "CREAM",
+"boro": "The Bronx",
+"seed": 368779761,
+"time": 91.05833333335187,
+"finish": [
+"Coach",
+"Lore-y",
+"Toad",
+"Dimensional",
+"Curiousity"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-17.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 17,
+"title": "Royal Flush Takes Heat 17, Tournament 7",
+"winner": "Royal Flush",
+"wid": 42,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 207369885,
+"time": 88.30833333334968,
+"finish": [
+"Royal Flush",
+"Maper",
+"Lenticular",
+"Peeled Out",
+"Batty"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-18.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 18,
+"title": "Shutter Takes Heat 18, Tournament 7",
+"winner": "Shutter",
+"wid": 77,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 2303682792,
+"time": 91.24166666668535,
+"finish": [
+"Shutter",
+"Tunneler",
+"Meow Meow",
+"ETH Saver",
+"Doomer"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-19.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 19,
+"title": "Refunder Takes Heat 19, Tournament 7",
+"winner": "Refunder",
+"wid": 99,
+"lane": "RED",
+"boro": "Brooklyn",
+"seed": 3504903157,
+"time": 91.96666666668592,
+"finish": [
+"Refunder",
+"Geared Up",
+"Aerys II",
+"Scorreggia",
+"Mad Shatter"
+]
+},
+{
+"f": "assets/skelly/races/T7-heats-20.jpg",
+"t": 7,
+"rnd": "heats",
+"i": 20,
+"title": "Jacked Up Takes Heat 20, Tournament 7",
+"winner": "Jacked Up",
+"wid": 67,
+"lane": "GREEN",
+"boro": "Staten Island",
+"seed": 649800765,
+"time": 86.05000000001455,
+"finish": [
+"Jacked Up",
+"Survivor",
+"Flight",
+"Baller",
+"Java"
 ]
 },
 {

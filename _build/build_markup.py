@@ -88,7 +88,7 @@ page = shell(title="Mark up a New Yorker · NEW YORKERS by MLow",
              keywords=["NEW YORKERS", "MLow", "draw on art", "mark up", "drawing tool", "New York City art", "subway colours"],
              jsonld={"@context": "https://schema.org", "@type": "WebApplication", "name": "Mark up a New Yorker", "url": URL + "/markup.html",
                      "applicationCategory": "DesignApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-                     "description": "Draw over any NEW YORKERS painting by MLow with thirteen brushes in NYC moods, sign it, then save or post the result.",
+                     "description": "Draw over any NEW YORKERS piece by MLow with thirteen brushes in NYC moods, sign it, then save or post the result.",
                      "creator": {"@type": "Person", "name": "MLow"}, "isPartOf": {"@id": URL + "/#collection"}})
 open(os.path.join(SITE, "markup.html"), "w", encoding="utf-8").write(page)
 print(f"markup.html: written from MARKUP {commit or '(last copy)'}, {len(idx)} pieces indexed, {len(cards)} room cards, default NO. {default_id}")

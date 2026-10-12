@@ -1,0 +1,49 @@
+{
+ "made": "2026-10-08 15:22",
+ "supply": 771,
+ "supply_source": "chain",
+ "named_pieces": 2134,
+ "distinct_before": 2134,
+ "renames": [
+  {
+   "n": 5577,
+   "tok": 6449,
+   "minted": false,
+   "holder": "",
+   "old_first": "Rosario",
+   "new_first": "Norbu",
+   "sur": "Gurung",
+   "old": "Rosario Gurung, a landlord's son who has started to understand the ledger",
+   "new": "Norbu Gurung, a landlord's son who has started to understand the ledger",
+   "gender_fixed": true,
+   "keeps": null
+  },
+  {
+   "n": 5821,
+   "tok": 4802,
+   "minted": false,
+   "holder": "",
+   "old_first": "Yosef",
+   "new_first": "Rochel",
+   "sur": "Halpern",
+   "old": "Yosef Halpern, an appliance repair woman fighting a sealed unit",
+   "new": "Rochel Halpern, an appliance repair woman fighting a sealed unit",
+   "gender_fixed": true,
+   "keeps": null
+  },
+  {
+   "n": 5839,
+   "tok": 5166,
+   "minted": false,
+   "holder": "",
+   "old_first": "Tomasz",
+   "new_first": "Agnieszka",
+   "sur": "Stanescu",
+   "old": "Tomasz Stanescu, an appliance repair woman fighting a sealed unit",
+   "new": "Agnieszka Stanescu, an appliance repair woman fighting a sealed unit",
+   "gender_fixed": true,
+   "keeps": null
+  }
+ ],
+ "applied": true
+}

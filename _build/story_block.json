@@ -394,7 +394,7 @@
  },
  "drop": {
   "headline": "Released in named editions. THE MARKS on SuperRare and Transient Labs, then THE CENSUS RELEASE on OpenSea about two weeks later. Dates not signed.",
-  "body": "The collection mints as dynamic tokens on Transient Labs ERC-7160 with OpenSea. The artist appends chapters, the collector pins the state they love. Chapters are eras. The sets are quests. The milestones are the grails. The story is the mechanic. NEW YORKERS is sold in named releases. Each release is sized and closed before it opens. Nothing is added to a release once it closes, and no New Yorker is ever sold twice. The census is still being painted, so more releases will follow, and every one is announced in advance, the same way.",
+  "body": "The collection mints as dynamic tokens, ERC-721 on OpenSea with the states stacked in each token, and ERC-7160 on Transient Labs. The artist appends chapters, the collector pins the state they love. Chapters are eras. The sets are quests. The milestones are the grails. The story is the mechanic. NEW YORKERS is sold in named releases. Each release is sized and closed before it opens. Nothing is added to a release once it closes, and no New Yorker is ever sold twice. The census is still being painted, so more releases will follow, and every one is announced in advance, the same way.",
   "census": "The census is numbered to 2266 and counting. Not every number is painted yet. That is the point."
  },
  "artist": {

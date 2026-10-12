@@ -17,7 +17,7 @@ export const cyclone: RoomDef = {
   mood: 'Boardwalk summer',
   color: '#f2e6c8',
   description: 'The wooden coaster at Coney Island, the station, the lift hill, the first drop, and the works along the queue and the boardwalk. Press W to take the ride.',
-  signatures: 'The white timber lattice, the lift hill and the plunging first drop, the low station under its roof, the boardwalk, the beach and the tall parachute tower beyond.',
+  signatures: 'The white steel lattice under a wooden track, the 75 foot lift hill with its red CYCLONE letters and the 58 degree first drop, the low station under its roof, the boardwalk, the beach and the tall parachute tower beyond.',
   build(k, ctx) {
     k.sky({ top: 0x5f9ad8, horizon: 0xeef0ec, ground: 0x8a8478, fog: 0.0018, sun: { az: 3.4, el: 0.95, color: 0xfff6e6, size: 12 }, env: 1.0 });
     k.hemi(0xeef4ff, 0x6a6458, 1.0);
@@ -44,12 +44,15 @@ export const cyclone: RoomDef = {
     for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.beam(v(-120 + Math.cos(a) * 4, 0, -30 + Math.sin(a) * 4), v(-120 + Math.cos(a) * 1.2, 76, -30 + Math.sin(a) * 1.2), 0.12, red, 4); }
     for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.beam(v(-120, 76, -30), v(-120 + Math.cos(a) * 14, 70, -30 + Math.sin(a) * 14), 0.1, red, 4); }
     k.torus(14, 0.12, -120, 70, -30, red, 32).rotation.x = PI / 2;
-    const wheel = k.torus(22, 0.5, 130, 26, -20, steel, 48);
-    for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2; k.beam(v(130, 26, -20), v(130, 26 + Math.sin(a) * 22, -20 + Math.cos(a) * 22), 0.12, steel, 4); k.box(1.6, 1.8, 1.6, 130, 26 + Math.sin(a) * 22, -20 + Math.cos(a) * 22, i % 2 ? red : yellow); }
-    for (const s of [-1, 1]) k.beam(v(130 + s * 4, 0, -20 - 12), v(130, 26, -20), 0.4, steel, 6);
+    // the Wonder Wheel stands west of the Cyclone on West 12th Street (it was drawn east of it): 150 ft, 24 cars, 8 white fixed, 16 swinging, blue legs
+    const WX = -80, WZ = -10;
+    const wheel = k.torus(22, 0.5, WX, 26, WZ, steel, 48);
+    const wwBlue = k.flat(0x2a5aa8, 0.3, 0.5), wwWhite = k.flat(0xf2f0ea, 0.1, 0.6);
+    for (let i = 0; i < 24; i++) { const a = (i / 24) * PI * 2; k.beam(v(WX, 26, WZ), v(WX, 26 + Math.sin(a) * 22, WZ + Math.cos(a) * 22), 0.12, steel, 4); k.box(1.6, 1.8, 1.6, WX, 26 + Math.sin(a) * 22, WZ + Math.cos(a) * 22, i % 3 === 0 ? wwWhite : i % 3 === 1 ? red : yellow); }
+    for (const s of [-1, 1]) k.beam(v(WX, 0, WZ + s * 12), v(WX, 26, WZ), 0.4, wwBlue, 6);
     void wheel;
     // the track: a closed spline, lift hill along the far side, the drop, the return hills
-    const P = [v(0, 3, 0), v(0, 3.4, -14), v(0, 27, -64), v(0, 6, -82), v(10, 4.5, -92), v(22, 11, -88), v(27, 5, -70), v(24, 15, -50), v(19, 4.5, -32), v(22, 12, -14), v(15, 4, 4), v(8, 6.5, 12), v(0, 3, 8)];
+    const P = [v(0, 3, 0), v(0, 3.4, -14), v(0, 23, -64), v(0, 6, -82), v(10, 4.5, -92), v(22, 11, -88), v(27, 5, -70), v(24, 15, -50), v(19, 4.5, -32), v(22, 12, -14), v(15, 4, 4), v(8, 6.5, 12), v(0, 3, 8)];
     const curve = k.spline(P, true, 0.45);
     const N = 520, pts = curve.getSpacedPoints(N);
     k.curve(pts, 0.14, rail, N, true);
@@ -87,13 +90,13 @@ export const cyclone: RoomDef = {
       const car = new T.Group();
       const bodyM = new T.Mesh(new T.BoxGeometry(1.7, 0.7, 2.6), c % 2 ? red : k.flat(0x1e56b4, 0.1, 0.5)); bodyM.position.y = 0.35; car.add(bodyM);
       const nose = new T.Mesh(new T.BoxGeometry(1.4, 0.4, 0.6), yellow); nose.position.set(0, 0.5, 1.5); car.add(nose);
-      for (const dz of [-0.6, 0.5]) { const seat = new T.Mesh(new T.BoxGeometry(1.5, 0.5, 0.5), dark); seat.position.set(0, 0.95, dz - 0.3); car.add(seat); }
+      for (const dz of [-0.9, -0.3, 0.3, 0.9]) { const seat = new T.Mesh(new T.BoxGeometry(1.5, 0.45, 0.36), dark); seat.position.set(0, 0.9, dz); car.add(seat); }
       car.position.z = -c * 2.9;
       train.add(car);
     }
     k.add(train);
     train.traverse((o) => { if (o instanceof T.Mesh) o.castShadow = ctx.quality === 'high'; });
-    if (!ctx.reduced) k.rider(train, curve, (y) => (y > 20 && train.position.z < -40 ? 5 : Math.max(5, Math.sqrt(2 * 9.8 * Math.max(0.5, 28 - y)) * 0.75)), 6);
+    if (!ctx.reduced) k.rider(train, curve, (y) => (Math.abs(train.position.x) < 1.5 && train.position.z < -12 && train.position.z > -63 ? 4 : Math.max(5, Math.sqrt(2 * 9.8 * Math.max(0.5, 24 - y)) * 0.75)), 6);
     // the station: a low shed over the loading straight, queue rails, the sign
     k.box(12, 0.3, 22, 0, 2.45, 0, board);
     for (const x of [-5.6, 5.6]) for (const z of [-10, -3, 4, 10]) k.box(0.3, 7.2, 0.3, x, 6.1, z, timber);
@@ -112,10 +115,20 @@ export const cyclone: RoomDef = {
     k.crowd([v(-100, 0.3, 40), v(-40, 0.3, 39), v(0, 0.3, 41), v(50, 0.3, 39), v(100, 0.3, 40)], 40, { seed: 43, speed: 1.1, spread: 6, animate: !ctx.reduced });
     k.prop('hydrant', -14, 0, 20, { height: 1.1 });
     k.prop('life_ring', 3, 1.7, 46.4, { height: 0.9 });
+    // the red CYCLONE letters on the east and west sides of the lift hill crest
+    k.sign('CYCLONE', 9, 2.4, 1.9, 25.4, -60, '#1a1c20', '#ff3a2a', 140, PI / 2, { border: false });
+    k.sign('CYCLONE', 9, 2.4, -1.9, 25.4, -60, '#1a1c20', '#ff3a2a', 140, -PI / 2, { border: false });
+    // eggs: the documented oddities of the ride
+    k.egg(v(0, 24.6, -62), { id: 'cyclone-crest', title: 'Seventy five feet, not eighty five', year: '1927', text: 'The lift hill is 75 feet high. The often quoted 85 feet is measured to the top of the CYCLONE sign above it, ten feet higher than the track. The first drop falls at 58.1 degrees and was cut by 5 feet in 1939.', clue: 'Ride to the crest of the lift hill and read the red letters.', source: { name: 'Coney Island Cyclone, Wikipedia', url: 'https://en.wikipedia.org/wiki/Coney_Island_Cyclone' } }, { r: 1.6 });
+    k.egg(v(-1.3, 3.0, -32), { id: 'cyclone-steel', title: 'A wooden coaster on steel', text: 'The Cyclone runs on a wooden track, but the white structure under it is steel: vertical I beams, tie bars and diagonal bracing joined by riveted plates. Coaster databases class it as a hybrid for that reason.', clue: 'Look at the white bents under the lift hill.', source: { name: 'Coney Island Cyclone, Wikipedia', url: 'https://en.wikipedia.org/wiki/Coney_Island_Cyclone' } }, { r: 1.6 });
+    k.egg(v(4, 3.6, 6), { id: 'cyclone-franco', title: 'The man who found his voice', year: '1948', text: 'In 1948, by several accounts, a coal miner named Emilio Franco who could not speak screamed on the first drop. Back at the station he said I feel sick, then fainted when he realised he had spoken.', clue: 'Wait on the station platform where the trains come back in.', source: { name: 'Coney Island Cyclone, Wikipedia', url: 'https://en.wikipedia.org/wiki/Coney_Island_Cyclone' } }, { r: 1.6 });
+    k.egg(v(6, 6, -88), { id: 'cyclone-lindbergh', title: 'Better than flying', year: '1929', text: 'Charles Lindbergh is said to have ridden the Cyclone two years after it opened and called it greater than flying an airplane at top speed. The ride reaches about 60 miles an hour at the bottom of the first drop.', clue: 'Find the low turn at the bottom of the first drop.', source: { name: 'Coney Island Cyclone, Wikipedia', url: 'https://en.wikipedia.org/wiki/Coney_Island_Cyclone' } }, { r: 1.8 });
+    k.egg(v(0, 11.2, 12.4), { id: 'cyclone-quarter', title: 'Twenty five cents', year: '1927', text: 'The Cyclone opened on 26 June 1927 at Surf Avenue and West 10th Street and cost 25 cents a ride, 35 cents on Sundays. The city bought it for $1.2 million in 1969, and in 1975 a rider named Michael Boodley took 1,001 rides in a row over 45 hours.', clue: 'Look up at the CYCLONE sign over the station entrance.', source: { name: 'Coney Island Cyclone, Wikipedia', url: 'https://en.wikipedia.org/wiki/Coney_Island_Cyclone' } }, { r: 1.6 });
+    k.egg(v(WX, 26, WZ), { id: 'cyclone-wonderwheel', title: 'The wheel with sliding cars', year: '1920', text: 'The Wonder Wheel opened on Memorial Day 1920 on West 12th Street, just north of the boardwalk. It stands 150 feet high with 24 cars: eight white cars fixed to the rim and sixteen that swing and slide inward on curved tracks.', clue: 'Look west along the boardwalk at the big wheel.', source: { name: 'Wonder Wheel, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wonder_Wheel' } }, { r: 3 });
     // the works: the station's platform wall, the queue fence panels, the boardwalk billboards, the lattice bases
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const z = -9 + i * 3.6; mounts.push({ position: v(5.78, 4.4, z), rotation: -PI / 2, target: v(1, 4, z), width: 3.0, height: 1.8, style: 'white', wash: false }); k.box(0.1, 2.2, 3.3, 5.9, 4.4, z, timberD); }
-    for (let i = 0; i < 6; i++) { const z = -8 + i * 3.6; k.box(0.14, 2.4, 3.2, 17.7, 1.6, z, timberD); mounts.push({ position: v(17.6, 1.7, z), rotation: PI / 2, target: v(12, 2, z), width: 2.8, height: 1.7, style: 'white', wash: false }); }
+    for (let i = 0; i < 6; i++) { const z = -8 + i * 3.6; k.box(0.14, 2.4, 3.2, 17.7, 1.6, z, timberD); mounts.push({ position: v(17.6, 1.7, z), rotation: -PI / 2, target: v(13.2, 2, z), width: 2.8, height: 1.7, style: 'white', wash: false }); }
     for (let i = 0; i < 6; i++) { const x = -60 + i * 24; k.box(5, 3.4, 0.4, x, 3.4, 47.3, dark); for (const dx of [-2.2, 2.2]) k.box(0.2, 5, 0.2, x + dx, 2.5, 47.3, dark); mounts.push({ position: v(x, 3.5, 47.05), rotation: PI, target: v(x, 3, 40), width: 4.6, height: 2.7, style: 'black', wash: false }); }
     for (const [x, z] of [[-4, -30], [-4, -50], [30, -60], [30, -40]]) { k.box(0.3, 3, 4.6, x, 1.9, z, timber); mounts.push({ position: v(x + (x < 0 ? -0.2 : 0.2), 2.0, z), rotation: x < 0 ? -PI / 2 : PI / 2, target: v(x < 0 ? -12 : 40, 2, z), width: 4.2, height: 2.5, style: 'white', wash: false }); }
     // the ride as the route: every point sits at a rider's eye above the rail
@@ -145,7 +158,7 @@ export const brooklynbridge: RoomDef = {
       glass = k.glass(0x9fc4d8, 0.35, 0.08),
       warm = k.glow(0xffd8a0);
     const TZ = [-70, 210];    // the two towers along z; the visitor works the Manhattan half
-    const DECK = 0, ROAD = -3.6, RIVER = -38;
+    const DECK = 0, ROAD = -5.5, RIVER = -38;   // the promenade runs 18 ft (5.5 m) above the roadways; 127 ft clearance over the river
     // river, both shores, the skylines, the other bridges far
     k.water({ y: RIVER, color: 0x30506a, w: 600, d: 700, z: 70, amp: 1.2 });
     k.skyline({ z: -190, count: 40, spacing: 8, scale: 4.8, base: RIVER, seed: 109, lit: 0.45, glow: 1.2, tint: 0x3a4250, spires: true });
@@ -156,10 +169,14 @@ export const brooklynbridge: RoomDef = {
     // the towers: two piers each with a pointed arch pair, the cornice, the saddles
     for (const tz of TZ) {
       for (const s of [-1, 1]) k.box(10, 84, 14, s * 12, RIVER + 42, tz, granite);
-      k.box(34, 14, 14, 0, RIVER + 84 - 7, tz, granite);
+      k.box(34, 18, 14, 0, RIVER + 84 - 9, tz, granite);
       k.box(36, 2, 16, 0, RIVER + 85, tz, granite);
-      k.box(34, 4, 14, 0, DECK - 6, tz, granite);
-      for (const s of [-1, 1]) { k.arch(9, 22, 14, s * 7 + s * -1.5 * 0, DECK + 0, tz, granite, true, 0.8); }
+      k.box(34, 4, 14, 0, ROAD - 2.5, tz, granite);
+      // a pair of Gothic pointed arches, 117 ft (35.7 m) tall from the roadway and 33.75 ft (10.3 m) wide
+      for (const s of [-1, 1]) { k.arch(10.3, 35.7, 14, s * 6.4, ROAD, tz, granite, true, 0.8); }
+      // the flagpole on each tower top
+      k.beam(v(0, RIVER + 85.5, tz), v(0, RIVER + 95, tz), 0.12, iron, 6);
+      k.box(0.06, 1.6, 2.6, 0, RIVER + 94.1, tz + 1.4, k.flat(0xb22234, 0, 0.8));
       k.box(2.4, 84, 14, 0, RIVER + 42, tz, granite);
       for (const s of [-1, 1]) k.box(4, 3, 4, s * 12, RIVER + 87, tz, iron);
       k.block(-17, -7, tz - 7.2, tz + 7.2);
@@ -169,7 +186,7 @@ export const brooklynbridge: RoomDef = {
     // the deck: two roadways at ROAD, the promenade raised on its trusses between them
     for (const s of [-1, 1]) { k.box(11, 0.6, 400, s * 9.5, ROAD - 0.3, 70, asphalt); for (const dx of [-0.14, 0.14]) k.box(0.1, 0.012, 380, s * 9.5 + dx, ROAD + 0.01, 70, k.flat(0xe6a626, 0, 0.6)); }
     k.box(6.4, 0.3, 400, 0, DECK - 0.15, 70, plank);
-    for (let z = -140; z <= 280; z += 4) { k.box(6.6, 0.3, 0.3, 0, DECK - 0.45, z, iron); k.box(0.24, 3.6, 0.24, -3.4, ROAD + 1.8, z, iron); k.box(0.24, 3.6, 0.24, 3.4, ROAD + 1.8, z, iron); }
+    for (let z = -140; z <= 280; z += 4) { k.box(6.6, 0.3, 0.3, 0, DECK - 0.45, z, iron); k.box(0.24, -ROAD, 0.24, -3.4, ROAD / 2, z, iron); k.box(0.24, -ROAD, 0.24, 3.4, ROAD / 2, z, iron); }
     for (const s of [-1, 1]) { k.rail(s * 3.1, 70, 400, iron, 1.05, 'z', 2); k.box(0.06, 0.06, 400, s * 3.1, DECK + 0.6, 70, iron); }
     k.box(50, 1.4, 400, 0, ROAD - 1.3, 70, k.pbr('bbTruss', X.steel(0x2e3236, true, 86), 0.5, { metalness: 0.7 }));
     k.box(6.4, 0.02, 400, 0, RIVER + 0.3, 70, k.flat(0x1a1a1a, 0, 1));
@@ -197,6 +214,13 @@ export const brooklynbridge: RoomDef = {
     for (const z of [-40, 60, 160]) { const boat = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(6, 2.2, 22), k.flat(0xe6e2da, 0.2, 0.6)); hull.position.y = 1; boat.add(hull); const cab = new T.Mesh(new T.BoxGeometry(4, 2.4, 8), k.flat(0xd84a2a, 0.2, 0.6)); cab.position.set(0, 3.2, 0); boat.add(cab); k.add(boat); if (!ctx.reduced) k.rider(boat, k.spline([v(-120, RIVER + 0.3, z), v(0, RIVER + 0.3, z + 40), v(120, RIVER + 0.3, z), v(0, RIVER + 0.3, z - 40)], true), 3.2, z); }
     k.censusWall({ x: -3.22, y: 1.6, z: -30, rotY: PI / 2, cols: 40, rows: 2, tile: 0.55, gap: 0.05, start: ctx.wallStart(3000, 80), pieces: ctx.all, backing: iron });
     k.sign('BROOKLYN BRIDGE  ·  1883', 8, 0.8, 0, DECK + 5.4, TZ[0] + 7.3, '#2a2622', '#e8dcc0', 80, 0, { border: true });
+    // eggs
+    k.egg(v(8.5, 4.2, 70), { id: 'brooklynbridge-wire', title: 'The crooked wire', year: '1877', text: 'The contractor J. Lloyd Haigh supplied inferior wire for the cables: of 80 rings tested, only five met the standard. Because the bad wire was already spun in, 150 extra wires were added to each cable, leaving the bridge about four times as strong as needed instead of six to eight.', clue: 'Look at the main cable where it dips lowest beside the walk, midway between the towers.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 1.8 });
+    k.egg(v(0, 2.4, TZ[0] + 7.6), { id: 'brooklynbridge-caisson', title: 'The bends, named here', year: '1872', text: 'The towers stand on caissons sunk into the riverbed, and the men who dug in them came up sick. The project physician Andrew Smith named it caisson disease and treated 110 cases between January and May 1872. The chief engineer, Washington Roebling, was paralysed by it.', clue: 'Stand at the foot of the Manhattan tower, between the two arches.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 1.6 });
+    k.egg(v(0, RIVER + 94, TZ[0]), { id: 'brooklynbridge-whiteflags', title: 'The white flags', year: '2014', text: 'On 22 July 2014 the American flags on top of both towers were found swapped for bleached white flags. Two Berlin artists later claimed it, saying the flags celebrated the beauty of public space.', clue: 'Look up at the flagpole on top of the Manhattan tower.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 2.4 });
+    k.egg(v(0, 1.4, 186), { id: 'brooklynbridge-stampede', title: 'Six days after opening', year: '1883', text: 'The bridge opened on 24 May 1883. On 30 May a woman fell down a stairway at the Brooklyn approach, and the rumour that the bridge was collapsing set off a stampede that killed at least twelve people.', clue: 'Walk toward the Brooklyn tower until the planks run out.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 1.6 });
+    k.egg(v(-1.6, 1.2, 120), { id: 'brooklynbridge-jumbo', title: 'Twenty one elephants', year: '1884', text: 'On 17 May 1884 Jumbo the elephant led a parade of 21 elephants across the bridge, a show by P. T. Barnum that also answered anyone still doubting it would hold.', clue: 'Look along the planks past the middle of the span.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 1.6 });
+    k.egg(v(0, 1.2, -156), { id: 'brooklynbridge-vaults', title: 'Wine under the anchorage', year: '1876', text: 'From 1876 the city rented out the vaults inside the Manhattan anchorage to pay for upkeep, and they were used to store wine at a steady 60 degrees. During the 1950s rebuilding a fallout shelter was built beneath the Manhattan approach and stocked for a nuclear attack.', clue: 'Walk to the Manhattan end of the promenade, over the anchorage.', source: { name: 'Brooklyn Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Bridge' } }, { r: 1.6 });
     // the works: the Manhattan tower's arch piers on both faces, lamp banners along the walk, rail panels
     const mounts: Mount[] = [];
     for (const dz of [-7.3, 7.3]) for (const x of [-12, 12]) mounts.push({ position: v(x, 3.6, TZ[0] + dz + (dz > 0 ? 0.02 : -0.02)), rotation: dz > 0 ? 0 : PI, target: v(x * 0.4, 3, TZ[0] + dz * 2), width: 4.2, height: 2.5, style: 'steel', wash: false });
@@ -279,6 +303,21 @@ export const panorama: RoomDef = {
     const cityGlow = k.instances(new T.BoxGeometry(0.22, 1, 0.22), glowCity, glows);
     for (const [x, z, h] of [[0.6, 1.2, 3.6], [-0.4, 8.2, 3.4], [1.2, -0.6, 2.8], [0.2, 2.4, 2.9]]) k.box(0.3, h, 0.3, x, TY + 0.2 + h / 2, z, bldg);
     for (const [x0, z0, x1, z1] of [[0.8, 7.6, 3.6, 8.2], [1.2, 6.2, 3.8, 6.6], [1.8, 0.6, 3.4, 1.4], [-2.4, -6, -5, -6.4], [1.9, -3.4, 3.2, -3.6]]) k.beam(v(x0, TY + 0.4, z0), v(x1, TY + 0.4, z1), 0.04, steel, 3);
+    // the Twin Towers are still on the model at the tip of Manhattan
+    for (const dx of [-0.2, 0.2]) k.box(0.26, 3.3, 0.26, -1.2 + dx, TY + 0.2 + 1.65, 7.4 + dx * 0.5, bldg);
+    // the model planes at LaGuardia, guided along a long wire
+    const LGA = v(7, TY + 0.28, -8.3), LGB = v(10.5, TY + 3.2, -12.6);
+    k.beam(LGA, LGB, 0.008, steel, 3);
+    const plane = new T.Group();
+    { const fus = new T.Mesh(new T.BoxGeometry(0.06, 0.06, 0.42), bldg); plane.add(fus); const wing = new T.Mesh(new T.BoxGeometry(0.44, 0.015, 0.1), bldg); plane.add(wing); const tail = new T.Mesh(new T.BoxGeometry(0.16, 0.08, 0.05), bldg); tail.position.set(0, 0.04, -0.18); plane.add(tail); }
+    plane.position.copy(LGA); plane.lookAt(LGB); k.add(plane);
+    if (!ctx.reduced) k.ticks.push((t) => { const u = (Math.sin(t * 0.35) + 1) / 2; plane.position.lerpVectors(LGA, LGB, u); });
+    k.egg(LGA.clone().lerp(LGB, 0.5), { id: 'panorama-laguardia', title: 'Planes on wires', year: '1964', text: 'Tiny model airplanes take off from and land at the model LaGuardia Airport, guided mechanically by long wires. The Panorama was built for the 1964 World\'s Fair by Lester Associates, a team of 100 people in West Nyack who worked on it for three years.', clue: 'Find the airport on the north shore of Queens and watch the wire.', source: { name: 'Panorama of the City of New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Panorama_of_the_City_of_New_York' } }, { r: 2.4 });
+    k.egg(v(-1.2, TY + 2.4, 7.4), { id: 'panorama-twins', title: 'Still standing here', text: 'The original Twin Towers remain on the model even though new buildings stand on the site today. The museum has left the destroyed structures in place until construction there is complete.', clue: 'Look at the tip of Lower Manhattan.', source: { name: 'Panorama of the City of New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Panorama_of_the_City_of_New_York' } }, { r: 1.4 });
+    k.egg(v(0, TY + 0.4, -TD / 2 - 1.2), { id: 'panorama-scale', title: 'One inch, one hundred feet', text: 'The model is at a scale of one inch to 100 feet and covers 9,335 square feet. It is made of 273 sections, each four by ten feet, of Formica board and polyurethane foam.', clue: 'Stand at the north edge of the table and look at the seams.', source: { name: 'Panorama of the City of New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Panorama_of_the_City_of_New_York' } }, { r: 1.6 });
+    k.egg(v(16, TY + 0.4, TD / 2 + 0.6), { id: 'panorama-rockaway', title: 'The missing peninsula', text: 'The Far Rockaway section of Queens was never installed, for lack of space. Everything else built before 1992 in all five boroughs is on the table.', clue: 'Look at the south east corner of the table, past Brooklyn and Queens.', source: { name: 'Panorama of the City of New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Panorama_of_the_City_of_New_York' } }, { r: 1.6 });
+    k.egg(v(-(TW / 2 + 4.5), 2.4 + 1.4, -6), { id: 'panorama-helicopter', title: 'A helicopter ride for a dime', year: '1964', text: 'At the World\'s Fair visitors paid 10 cents for a nine minute simulated helicopter ride around the model in mechanical cars. The cars were taken out before the museum reopened in 1994, and the walkway took their place.', clue: 'Walk the raised ring along the west side of the model.', source: { name: 'Panorama of the City of New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Panorama_of_the_City_of_New_York' } }, { r: 1.6 });
+    k.egg(v(1.2, TY + 3.2, -0.6), { id: 'panorama-adopt', title: 'Adopt a building', year: '2009', text: 'Lester Associates were hired back to update the model for the 1992 reopening and changed more than 60,000 structures, taking it from 835,000 to about 895,000 buildings. Since 2009 people can pay for an accurate scale model of a newer building to be added.', clue: 'Look among the Midtown towers for the newer ones.', source: { name: 'Panorama of the City of New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Panorama_of_the_City_of_New_York' } }, { r: 1.4 });
     const pinLight = k.point(0, 5, 0, 0xfff0d0, 40, 30);
     const modelLights = [k.point(-10, 6, -6, 0xfff0d0, 25, 22), k.point(10, 6, 6, 0xfff0d0, 25, 22)];
     // the dusk cycle: every ninety seconds the hall goes from day to night and the model's windows come on
@@ -297,8 +336,8 @@ export const panorama: RoomDef = {
     const mounts: Mount[] = [];
     for (let i = 0; i < 5; i++) { const x = -24 + i * 12; mounts.push({ position: v(x, RY + 4.4, -HD / 2 + 0.34), rotation: 0, target: v(x, RY + 3, -HD / 2 + 8), width: 5.2, height: 3.0, style: 'black', wash: true }); }
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = -15 + i * 10; mounts.push({ position: v(s * (HW / 2 - 0.34), RY + 4.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * (HW / 2 - 8), RY + 3, z), width: 5.2, height: 3.0, style: 'black', wash: true }); }
-    for (let i = 0; i < 5; i++) { const x = -20 + i * 10; k.box(2.8, 1.7, 0.1, x, RY + 1.9, R0z + 0.3, dark); mounts.push({ position: v(x, RY + 1.9, R0z + 0.24), rotation: PI, target: v(x, RY + 2, R0z + 3), width: 2.6, height: 1.5, style: 'steel', wash: false }); }
-    for (const s of [-1, 1]) for (let i = 0; i < 2; i++) { const z = -8 + i * 16; k.box(0.1, 1.7, 2.8, s * (R0x + 0.3), RY + 1.9, z, dark); mounts.push({ position: v(s * (R0x + 0.24), RY + 1.9, z), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(s * (R0x + 3), RY + 2, z), width: 2.6, height: 1.5, style: 'steel', wash: false }); }
+    for (let i = 0; i < 5; i++) { const x = -20 + i * 10; k.box(2.8, 1.7, 0.1, x, RY + 1.9, R0z + 0.3, dark); mounts.push({ position: v(x, RY + 1.9, R0z + 0.37), rotation: 0, target: v(x, RY + 2, R0z + 3), width: 2.6, height: 1.5, style: 'steel', wash: false }); }
+    for (const s of [-1, 1]) for (let i = 0; i < 2; i++) { const z = -8 + i * 16; k.box(0.1, 1.7, 2.8, s * (R0x + 0.3), RY + 1.9, z, dark); mounts.push({ position: v(s * (R0x + 0.37), RY + 1.9, z), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(s * (R0x + 3), RY + 2, z), width: 2.6, height: 1.5, style: 'steel', wash: false }); }
     k.censusWall({ x: 0, y: RY + 4.6, z: -HD / 2 + 0.34, rotY: 0, cols: 12, rows: 3, tile: 0.6, gap: 0.05, start: ctx.wallStart(1200, 36), pieces: ctx.all, backing: dark });
     k.sign('THE PANORAMA OF THE CITY OF NEW YORK  ·  1964', 14, 0.8, 0, RY + 7.4, -HD / 2 + 0.34, 'transparent', '#e8dcc0', 70, 0);
     return { mounts, spawn: v(5, 3, HD / 2 - 1.6), look: v(0, 2, -6), eye: 3, bounds: [-HW / 2 + 1, HW / 2 - 1, -HD / 2 + 1, HD / 2 + 30], style: 'black', floorY: (x, z) => { const r = ramp(x, z); if (r >= 0) return r; if (onRing(x, z)) return RY; return 0; } };
@@ -463,6 +502,13 @@ export const oysterbar: RoomDef = {
     k.crowd([v(0, 0, 22), v(0, 0, 4), v(-6, 0, -6), v(-14, 0, -8), v(-20, 0, -20), v(-8, 0, -30), v(8, 0, -30), v(20, 0, -20)], 16, { seed: 46, speed: 0.5, spread: 1.2, animate: !ctx.reduced });
     k.censusWall({ x: 0, y: 3.6, z: -D + 0.34, rotY: 0, cols: 24, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(4600, 96), pieces: ctx.all, backing: dark });
     k.sign('TODAY  ·  BLUEPOINTS  ·  WELLFLEETS  ·  KUMAMOTOS  ·  PAN ROAST  ·  CHOWDER', 16, 0.7, 0, 6.2, -D + 0.34, '#1a1a1c', '#f4e8c8', 60, 0, { border: true });
+    // eggs
+    k.egg(v(-4.8, 3.6, 1.2), { id: 'oysterbar-whisper', title: 'Whisper into the corner', text: 'The tiled arches under the pedestrian bridge make a whispering gallery on the landing: a person in one corner can hear someone speaking softly in the diagonally opposite corner. The underside of the bridge is covered in Guastavino tile.', clue: 'Stand in a corner of the crossing at the foot of the ramp and face the wall.', source: { name: 'Grand Central Terminal, Wikipedia', url: 'https://en.wikipedia.org/wiki/Grand_Central_Terminal' } }, { r: 1.6 });
+    k.egg(v(0, 5.2, -0.3), { id: 'oysterbar-eve', title: 'Dinner the night before', year: '1913', text: 'The restaurant opened as the Grand Central Terminal Restaurant. The day before the terminal opened on 2 February 1913, it served a dinner for the architects Warren and Wetmore and 100 guests.', clue: 'Look at the neon over the entrance.', source: { name: 'Grand Central Oyster Bar, Wikipedia', url: 'https://en.wikipedia.org/wiki/Grand_Central_Oyster_Bar_%26_Restaurant' } }, { r: 1.6 });
+    k.egg(v(-5.5, 6.4, -16.5), { id: 'oysterbar-fire', title: 'The vaults that held', year: '1997', text: 'A fire in 1997 delaminated thousands of the ceiling tiles, but the structure of the Guastavino vaults was not compromised. The vaults are thin layered tile, lightweight, fireproof and able to carry heavy loads.', clue: 'Look up into the vault over the left hand counter.', source: { name: 'Palaces for the People: Guastavino and the Art of Structural Tile, The Magazine Antiques', url: 'https://www.themagazineantiques.com/article/palaces-for-the-people/' } }, { r: 1.8 });
+    k.egg(v(5.5, 6.4, -5.5), { id: 'oysterbar-onetile', title: 'One tile, a dozen vaults', text: 'Only one type of tile is used across the ceiling, which gives the dozen vaults their even finish. More than two hundred Guastavino tile spaces survive across the five boroughs.', clue: 'Count the vaults from the entrance.', source: { name: 'Palaces for the People: Guastavino and the Art of Structural Tile, The Magazine Antiques', url: 'https://www.themagazineantiques.com/article/palaces-for-the-people/' } }, { r: 1.8 });
+    k.egg(v(11, 1.6, -14.4), { id: 'oysterbar-owners', title: 'Owned by the staff', year: '1999', text: 'Jerome Brody sold the Oyster Bar to its employees in 1999. Managers joined an employee stock ownership plan, and the staff are represented by UNITE HERE Local 100.', clue: 'Sit at the right hand counter and look across it.', source: { name: 'Grand Central Oyster Bar, Wikipedia', url: 'https://en.wikipedia.org/wiki/Grand_Central_Oyster_Bar_%26_Restaurant' } }, { r: 1.6 });
+    k.egg(v(0, 6.2, -D + 0.6), { id: 'oysterbar-varieties', title: 'Twenty to thirty a day', text: 'The restaurant is split into three parts: the main dining room, the counters with individual seats, and the Saloon with its long bar. It serves anywhere between 20 and 30 varieties of oyster on any given day.', clue: 'Read the board on the back wall.', source: { name: 'A New York Mainstay, Resident', url: 'https://resident.com/food-and-drink/2014/08/05/a-new-york-mainstay' } }, { r: 1.8 });
     // the works: between the arches on both long walls, the ramp walls, over the counters on the piers
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = -5.5 - i * 11; mounts.push({ position: v(s * (W / 2 - 0.34), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * (W / 2 - 8), 3, z), width: 4.4, height: 2.6, style: 'gilt', wash: true }); }

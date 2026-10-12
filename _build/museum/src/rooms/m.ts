@@ -66,6 +66,13 @@ export const rockaway: RoomDef = {
     if (!ctx.reduced) k.ticks.push((t) => { train.position.x = -300 + ((t * 9) % 620); });
     for (let i = 0; i < 20; i++) { const x = -200 + i * 21 + (i % 2) * 4; k.box(8, 4.5, 8, x, 2.25, 62, [k.flat(0xe6e2da, 0, 0.8), k.flat(0xb8d0e0, 0, 0.8), k.flat(0xe8c8a0, 0, 0.8)][i % 3]); k.mesh(new T.ConeGeometry(6.4, 2.6, 4), k.flat(0x4a4a48, 0, 0.9), x, 5.8, 62).rotation.y = PI / 4; }
     k.skyline({ z: -600, count: 20, spacing: 14, scale: 1.0, base: -0.6, seed: 145, lit: 0.1, glow: 0.2, tint: 0xa8a8b0, rows: 1 });
+    const RW = 'https://en.wikipedia.org/wiki/Rockaway_Boardwalk', RN = 'Rockaway Boardwalk, Wikipedia';
+    k.egg(v(40, 0.6, -6.8), { id: 'rockaway-sandy', title: 'Rebuilt in concrete', year: '2017', text: 'Hurricane Sandy destroyed much of the wooden boardwalk on October 29, 2012, worst between Beach 80th and 106th Streets. It was rebuilt in concrete for $274 million and finished in May 2017, on piles 30 feet apart driven up to 27 feet into the ground, with a sand retaining wall running underneath.', clue: 'Look over the ocean side rail of the boardwalk.', source: { name: RN, url: RW } }, { r: 1.6 });
+    k.egg(v(-82, 0.9, 4.4), { id: 'rockaway-benches', title: 'The old boards', text: 'The modular benches on the new concrete boardwalk are made with wood saved from the old boardwalk that Sandy wrecked. Most of the boardwalk is 40 feet wide, with bump outs of 5 to 15 feet where there are stairs, ramps or benches.', clue: 'Sit on a bench under one of the shade shelters.', source: { name: RN, url: RW } }, { r: 1.4 });
+    k.egg(v(0, 0.4, -150), { id: 'rockaway-surf', title: 'The only legal surf', text: 'The only beaches in New York City where surfing is legal are both on Rockaway Beach: Beach 67th to 69th Streets and Beach 87th to 92nd Streets.', clue: 'Watch the surfers waiting out past the break.', source: { name: RN, url: RW } }, { r: 3 });
+    k.egg(v(-70, 3.1, -80), { id: 'rockaway-lifeguards', title: 'Half the city\'s lifeguards', year: '2005', text: 'In 2005, 500 of the city\'s 1,000 beach lifeguards worked at Rockaway Beach. In the 1950s its lifeguard force of 258 was one of the largest in the world.', clue: 'Find a numbered lifeguard chair on the sand.', source: { name: RN, url: RW } }, { r: 1.6 });
+    k.egg(v(60, 3.4, 7.2), { id: 'rockaway-ramones', title: 'The song', year: '1977', text: 'The Ramones song Rockaway Beach of 1977 was inspired by this beach. It was the band\'s highest charting single, reaching number 66 on the Billboard Hot 100.', clue: 'Look up at the sign over the clam shack.', source: { name: RN, url: RW } }, { r: 1.6 });
+    k.egg(v(0, 0.3, -12), { id: 'rockaway-1923', title: 'The first city boards', year: '1923', text: 'The first city owned stretch of boardwalk opened in Rockaway Park in May 1923: 31 feet wide, 4,500 feet long, built for $133,000. Robert Moses later demolished more than 700 buildings to clear land for the Shore Front Parkway, which opened in 1939.', clue: 'Walk down the steps from the boardwalk to the sand.', source: { name: RN, url: RW } }, { r: 1.6 });
     k.censusWall({ x: 0, y: 2.8, z: 13.6, rotY: PI, cols: 30, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(3300, 90), pieces: ctx.all, backing: dark });
     k.box(18, 5, 0.4, 0, 2.6, 13.8, white);
     // the works: the shack fronts, the shelter posts, panels on the dune fence line, the lifeguard chair backs
@@ -111,7 +118,7 @@ export const greenwood: RoomDef = {
     // the gate: three spired brownstone gothic, two arched carriage ways, the parakeet nests in the spires
     const GZ = 0;
     k.box(34, 8, 8, 0, 4, GZ, brown);
-    for (const x of [-12, 0, 12]) { k.box(5, 14, 6, x, 7, GZ, brown); k.mesh(new T.ConeGeometry(3.2, x === 0 ? 14 : 9, 4), brown, x, 14 + (x === 0 ? 7 : 4.5), GZ).rotation.y = PI / 4; for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + PI / 4; k.mesh(new T.ConeGeometry(0.6, 2.4, 4), brown, x + Math.cos(a) * 2.2, 15, GZ + Math.sin(a) * 2.2); } }
+    for (const x of [-12, 0, 12]) { k.box(5, 14, 6, x, 7, GZ, brown); k.mesh(new T.ConeGeometry(3.2, x === 0 ? 18 : 9, 4), brown, x, 14 + (x === 0 ? 9 : 4.5), GZ).rotation.y = PI / 4; for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + PI / 4; k.mesh(new T.ConeGeometry(0.6, 2.4, 4), brown, x + Math.cos(a) * 2.2, 15, GZ + Math.sin(a) * 2.2); } }
     for (const x of [-6, 6]) { k.arch(5, 6.5, 8, x, 0, GZ, brown, true, 0.85); }
     k.block(-17, -8.6, GZ - 4, GZ + 4); k.block(-3.4, 3.4, GZ - 4, GZ + 4); k.block(8.6, 17, GZ - 4, GZ + 4);
     for (const x of [-12, 12]) for (let i = 0; i < 3; i++) { const a = (i / 3) * PI * 2; k.mesh(new T.SphereGeometry(0.8, 8, 6), twig, x + Math.cos(a) * 2.6, 13 + i * 0.6, GZ + Math.sin(a) * 2.6).scale.set(1, 0.7, 1); for (let j = 0; j < 3; j++) k.sphere(0.1, x + Math.cos(a) * 2.6 + (rnd() - 0.5) * 1.2, 13.8 + i * 0.6, GZ + Math.sin(a) * 2.6 + (rnd() - 0.5), greenP, 5); }
@@ -131,10 +138,34 @@ export const greenwood: RoomDef = {
     for (let i = 0; i < 8; i++) { const x = (rnd() - 0.5) * 160, z = -30 - rnd() * 140; const y = H(x, z); k.box(1.2, 1.2, 1.2, x, y + 0.6, z, granite); k.mesh(new T.ConeGeometry(0.5, 1.6, 8), marble, x, y + 2.0, z); k.sphere(0.36, x, y + 3.0, z, marble, 8); k.keepOut.push({ x, z, r: 1.2 }); }
     const vaults: [number, number, number][] = [];
     for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2 + 0.3; const x = Math.cos(a) * (40 + (i % 3) * 20), z = -90 + Math.sin(a) * (40 + (i % 3) * 20); const y = H(x, z); const rot = Math.atan2(-x, -(z + 90)); k.box(5, 4.2, 5, x, y + 2.1, z, granite).rotation.y = rot; k.mesh(new T.ConeGeometry(3.8, 1.6, 4), granite, x, y + 5.0, z).rotation.y = rot + PI / 4; for (const s of [-1, 1]) { const c = k.column(0, 0, 0, 3.6, 0.3, granite, true); c.position.set(x + Math.cos(rot) * s * 1.8 + Math.sin(rot) * 2.6, y, z - Math.sin(rot) * s * 1.8 + Math.cos(rot) * 2.6); } k.keepOut.push({ x, z, r: 3.4 }); vaults.push([x, z, rot]); }
-    for (let i = 0; i < 60; i++) { const x = (rnd() - 0.5) * 230, z = -12 - rnd() * 210; if (dp.some((p) => Math.hypot(p.x - x, p.z - z) < 5)) continue; k.tree(x, H(x, z) - 0.2, z, { kind: rnd() > 0.5 ? 'round' : 'bare', h: 6 + rnd() * 7, r: 3 + rnd() * 3, leaf: [0xc88a3a, 0xb8602a, 0xe8b040, 0x6a8a3a][Math.floor(rnd() * 4)], seed: i }); }
+    for (let i = 0; i < 60; i++) { const x = (rnd() - 0.5) * 230, z = -12 - rnd() * 210; if (dp.some((p) => Math.hypot(p.x - x, p.z - z) < 5)) continue; k.tree(x, H(x, z) - 0.2, z, { kind: rnd() > 0.5 ? 'round' : 'bare', h: 6 + rnd() * 7, r: 3 + rnd() * 3, leaf: [0xc88a3a, 0xb8602a, 0xe8b040, 0x6a8a3a][Math.floor(rnd() * 4)], seed: i, species: (['oak', 'maple', 'elm', 'ginkgo', 'linden', 'oak'] as const)[i % 6] }); }
     // the harbor from the high ground
     k.water({ y: -12, color: 0x30506a, w: 800, d: 300, z: -420, amp: 1 });
     k.skyline({ z: -520, count: 40, spacing: 9, scale: 3.6, base: -12, seed: 149, lit: 0.2, glow: 0.4, tint: 0x7a8494, rows: 1, spires: true });
+    // the clock in the central tower, both faces
+    const clock = k.mesh(new T.CylinderGeometry(1.5, 1.5, 6.3, 24), marble, 0, 11.5, GZ); clock.rotation.x = PI / 2;
+    for (const s of [-1, 1]) { k.box(0.12, 1.1, 0.06, 0, 11.9, GZ + s * 3.2, iron); k.box(0.8, 0.12, 0.06, 0.35, 11.5, GZ + s * 3.2, iron); }
+    // Battle Hill: the Altar to Liberty with Minerva, raising her arm toward the harbor
+    const MX = 10, MZ = -150, MY = H(MX, MZ);
+    k.box(3.4, 1.0, 2.2, MX, MY + 0.5, MZ, granite); k.box(2.4, 2.4, 1.6, MX, MY + 2.2, MZ, granite);
+    k.cyl(0.45, 2.4, MX, MY + 4.6, MZ, bronze, 0.6, 10); k.sphere(0.32, MX, MY + 6.1, MZ, bronze, 8);
+    k.beam(v(MX + 0.3, MY + 5.5, MZ), v(MX + 0.5, MY + 7.0, MZ - 0.6), 0.1, bronze, 5);
+    k.keepOut.push({ x: MX, z: MZ, r: 2.2 });
+    // Charlotte Canda's gothic monument beside the drive
+    const cp = dp[44]; const CNX = cp.x + 6, CNZ = cp.z, CNY = H(CNX, CNZ);
+    k.box(2.6, 1.0, 2.6, CNX, CNY + 0.5, CNZ, marble); k.box(1.8, 2.4, 1.8, CNX, CNY + 2.2, CNZ, marble);
+    for (const [dx, dz] of [[-0.9, -0.9], [0.9, -0.9], [-0.9, 0.9], [0.9, 0.9]]) k.mesh(new T.ConeGeometry(0.25, 1.6, 4), marble, CNX + dx, CNY + 4.2, CNZ + dz);
+    const canda = k.mesh(new T.ConeGeometry(0.9, 3.2, 4), marble, CNX, CNY + 5, CNZ); canda.rotation.y = PI / 4;
+    k.keepOut.push({ x: CNX, z: CNZ, r: 1.8 });
+    const GW = 'https://en.wikipedia.org/wiki/Green-Wood_Cemetery', GN = 'Green-Wood Cemetery, Wikipedia';
+    k.egg(v(12, 13.5, GZ), { id: 'greenwood-parakeets', title: 'Parrots in the spires', text: 'Wild monk parakeets nest in the spires of the main gate. They most likely escaped from their shipping containers in transit and have lived here ever since.', clue: 'Look up at the twig nests in the side spires of the gate.', source: { name: GN, url: GW } }, { r: 2 });
+    k.egg(clock, { id: 'greenwood-gate', title: 'Upjohn\'s gate', year: '1861', text: 'The Gothic Revival gate was designed by Richard Upjohn and built from 1861 to 1863, with the entrance opening in 1862. The sculpted panels are by John M. Moffitt, and the clock tower rises 100 or 106 feet, depending on the source.', clue: 'Look up at the clock in the middle tower.', source: { name: GN, url: GW } }, { r: 1.8 });
+    k.egg(v(0, 9.2, GZ + 4.4), { id: 'greenwood-niagara', title: 'Second only to Niagara', year: '1860', text: 'In the early 1860s more than 500,000 people a year came to Green-Wood, a crowd second in New York State only to Niagara Falls. The cemetery was incorporated on April 18, 1838 and covers 478 acres, with about 570,000 interments as of 2024.', clue: 'Read the name over the gate.', source: { name: GN, url: GW } }, { r: 1.8 });
+    k.egg(v(MX, MY + 5, MZ), { id: 'greenwood-minerva', title: 'Minerva faces Liberty', year: '1919', text: 'Battle Hill, about 216 feet up, is the highest point in Brooklyn, and a skirmish of the Battle of Long Island was fought here on August 27, 1776. In 1919 Frederick Ruckstull\'s Altar to Liberty: Minerva was put up at the top, facing the Statue of Liberty across the harbor.', clue: 'Climb to the highest ground and find the bronze figure facing the water.', source: { name: GN, url: GW } }, { r: 2 });
+    k.egg(canda, { id: 'greenwood-canda', title: 'She designed it herself', text: 'Charlotte Canda, a 17 year old debutante, designed the Gothic monument that bears her name. Around it, the hills of monuments sit on glacial moraine, mostly the Harbor Hill Moraine, which also left the cemetery its ponds.', clue: 'Find the white gothic monument with the pinnacles beside the drive.', source: { name: GN, url: GW } }, { r: 1.8 });
+    { const gp = dp[90]; const gx = gp.x - 4, gz = gp.z;
+      k.box(0.9, 0.1, 2.4, gx, H(gx, gz) + 0.04, gz, k.flat(0x4a3a2a, 0, 1));
+      k.egg(v(gx, H(gx, gz) + 0.5, gz), { id: 'greenwood-gravediggers', title: 'Four hours, by hand', text: 'Gravediggers at Green-Wood must pass a 40 day trial period, and must be able to dig a grave 3 by 8 by 5 feet by hand within four hours.', clue: 'Find the freshly turned earth beside the drive.', source: { name: GN, url: GW } }, { r: 1.6 }); }
     k.censusWall({ x: 0, y: 4.2, z: GZ - 4.1, rotY: PI, cols: 26, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(3800, 78), pieces: ctx.all, backing: iron });
     k.crowd(dp.filter((_, i) => i % 20 === 0).map((p) => v(p.x + 1.5, H(p.x, p.z), p.z)), 12, { seed: 60, speed: 0.6, spread: 1.4, animate: !ctx.reduced, colors: [0x24262c, 0x151517, 0x8a3a3a, 0x3a1a2a] });
     // the works: the vault doors (bronze framed), the gate's inner arcade, along the drive on granite stands
@@ -189,14 +220,18 @@ export const domino: RoomDef = {
     k.block(RX - RW / 2 - 0.6, RX - 3.2, RZ - RD / 2 - 0.6, RZ - RD / 2 + 0.6); k.block(RX + 3.2, RX + RW / 2 + 0.6, RZ - RD / 2 - 0.6, RZ - RD / 2 + 0.6);
     for (const s of [-1, 1]) k.block(RX + s * RW / 2 - 0.6, RX + s * RW / 2 + 0.6, RZ - RD / 2, RZ + RD / 2);
     k.block(RX - RW / 2, RX + RW / 2, RZ + RD / 2 - 0.6, RZ + RD / 2 + 0.6);
-    k.cyl(3.2, 60, RX + RW / 2 + 8, 30, RZ + RD / 2 - 6, brick, 3.8, 24);
+    // the coal fired chimney, 155 ft, its top widened in curved brick in the 1920s
+    const CHX = RX + RW / 2 + 8, CHZ = RZ + RD / 2 - 6;
+    k.cyl(3.2, 44, CHX, 22, CHZ, brick, 3.8, 24);
+    const chTop = k.mesh(new T.CylinderGeometry(3.7, 3.2, 3.2, 24), brickD, CHX, 45.6, CHZ);
     k.box(RW - 4, 0.4, RD - 4, RX, 0.2, RZ, k.pbr('domFloor', X.concrete(0x9a948a, 75), 0.3));
     // the glass vault within: a barrel of glass and steel ribs, set back from the brick, rising above the parapet
-    for (let j = 0; j < 16; j++) { const a0 = (j / 16) * PI, a1 = ((j + 1) / 16) * PI, am = (a0 + a1) / 2, r = RW / 2 - 6; const seg = k.box(2 * r * Math.sin((a1 - a0) / 2) + 0.05, 0.1, RD - 10, RX + Math.cos(am) * r, 14 + Math.sin(am) * r, RZ, glass); seg.rotation.z = am + PI / 2; }
-    for (let i = 0; i <= 12; i++) { const z = RZ - RD / 2 + 5 + i * ((RD - 10) / 12); const pts: T.Vector3[] = []; for (let j = 0; j <= 16; j++) { const a = (j / 16) * PI; pts.push(v(RX + Math.cos(a) * (RW / 2 - 6), 14 + Math.sin(a) * (RW / 2 - 6), z)); } k.curve(pts, 0.14, steel, 16); }
-    for (let j = 0; j <= 16; j += 2) { const a = (j / 16) * PI; k.box(0.16, 0.16, RD - 10, RX + Math.cos(a) * (RW / 2 - 6), 14 + Math.sin(a) * (RW / 2 - 6), RZ, steel); }
-    for (const s of [-1, 1]) { k.box(0.8, 14, RD - 10, RX + s * (RW / 2 - 6), 7, RZ, steel); k.block(RX + s * (RW / 2 - 6) - 0.5, RX + s * (RW / 2 - 6) + 0.5, RZ - RD / 2 + 5, RZ + RD / 2 - 5); }
-    for (let f = 1; f < 4; f++) { for (const s of [-1, 1]) k.box(6, 0.3, RD - 10, RX + s * (RW / 2 - 9), f * 4.5, RZ, deck); }
+    const VB = 28;
+    for (let j = 0; j < 16; j++) { const a0 = (j / 16) * PI, a1 = ((j + 1) / 16) * PI, am = (a0 + a1) / 2, r = RW / 2 - 6; const seg = k.box(2 * r * Math.sin((a1 - a0) / 2) + 0.05, 0.1, RD - 10, RX + Math.cos(am) * r, VB + Math.sin(am) * r, RZ, glass); seg.rotation.z = am + PI / 2; }
+    for (let i = 0; i <= 12; i++) { const z = RZ - RD / 2 + 5 + i * ((RD - 10) / 12); const pts: T.Vector3[] = []; for (let j = 0; j <= 16; j++) { const a = (j / 16) * PI; pts.push(v(RX + Math.cos(a) * (RW / 2 - 6), VB + Math.sin(a) * (RW / 2 - 6), z)); } k.curve(pts, 0.14, steel, 16); }
+    for (let j = 0; j <= 16; j += 2) { const a = (j / 16) * PI; k.box(0.16, 0.16, RD - 10, RX + Math.cos(a) * (RW / 2 - 6), VB + Math.sin(a) * (RW / 2 - 6), RZ, steel); }
+    for (const s of [-1, 1]) { k.box(0.8, 6, RD - 10, RX + s * (RW / 2 - 6), 3, RZ, steel); k.box(0.3, VB - 6, RD - 10, RX + s * (RW / 2 - 6), 6 + (VB - 6) / 2, RZ, glass); for (let y = 9; y <= VB; y += 4.5) k.box(0.5, 0.3, RD - 10, RX + s * (RW / 2 - 6), y, RZ, steel); k.block(RX + s * (RW / 2 - 6) - 0.5, RX + s * (RW / 2 - 6) + 0.5, RZ - RD / 2 + 5, RZ + RD / 2 - 5); }
+    for (let f = 1; f < 6; f++) { for (const s of [-1, 1]) k.box(6, 0.3, RD - 10, RX + s * (RW / 2 - 9), f * 4.5, RZ, deck); }
     for (let i = 0; i < 6; i++) k.point(RX, 12, RZ - 25 + i * 10, 0xffe0b8, 30, 20);
     // the park: the elevated walkway on the old crane rails, the syrup tanks, the gantry cranes, the lawn
     const WY = 6;
@@ -208,6 +243,13 @@ export const domino: RoomDef = {
     for (const z of [-4, 64]) { for (const s of [-1, 1]) k.box(1.2, 18, 1.2, -76 + s * 6, 9, z, teal); k.box(30, 1.6, 1.4, -70, 18, z, teal); k.box(1.4, 1.6, 6, -60, 18, z, teal); k.beam(v(-60, 17, z), v(-60, 12, z), 0.06, dark, 3); k.box(1.6, 1.2, 1.6, -60, 11.4, z, dark); }
     k.crowd([v(-110, 0, -18), v(-80, 0, -18), v(-40, 0, -18), v(0, 0, -18), v(2, 0, 10), v(-30, 0, 40), v(-110, 0, 70)], 30, { seed: 61, speed: 0.9, spread: 5, animate: !ctx.reduced });
     k.crowd([v(-60, WY + 0.2, -18), v(-60, WY + 0.2, 30), v(-60, WY + 0.2, 78)], 10, { seed: 62, speed: 0.8, spread: 1.6, animate: !ctx.reduced });
+    const DW = 'https://en.wikipedia.org/wiki/Domino_Sugar_Refinery', DN = 'Domino Sugar Refinery, Wikipedia';
+    k.egg(chTop, { id: 'domino-chimney', title: 'The coal chimney', text: 'The refinery burned coal and needed a 155 foot chimney. In the 1920s the top of it was enlarged with curved brick. The filter house beside it rises 13 storeys, 155 feet including the chimney.', clue: 'Look up to the top of the great brick chimney.', source: { name: DN, url: DW } }, { r: 3 });
+    k.egg(v(RX, 25.9, RZ - RD / 2 - 0.8), { id: 'domino-three-quarters', title: 'Three quarters of the nation\'s sugar', year: '1881', text: 'By 1870 Williamsburg produced most of the sugar used in the United States. By 1881 the Havemeyer refinery alone processed about three fourths of all the refined sugar in the country. At its peak in 1919 it employed 4,500 people.', clue: 'Read the lettering high on the river front.', source: { name: DN, url: DW } }, { r: 2 });
+    k.egg(v(RX, 4, RZ - RD / 2 - 1), { id: 'domino-fireproof', title: 'Too fireproof to insure', year: '1917', text: 'The rebuilt refinery was thought so fireproof that its owners did not insure it. In 1917 an explosion of ignited sugar dust killed between six and twelve workers, and more than 15,000 people gathered to watch the plant burn.', clue: 'Stand under the great arched doorway.', source: { name: DN, url: DW } }, { r: 1.8 });
+    k.egg(v(RX - RW / 2 + 0.9, 13, RZ - 15), { id: 'domino-walls', title: 'Four foot walls', year: '1883', text: 'The refinery was rebuilt after a fire on January 8, 1882, and finished by July 1883 for $7 million. Its brick walls are 4 feet thick on the lower storeys and 2 feet thick higher up, around a block 250 by 150 feet and 10 storeys tall.', clue: 'Look at the depth of the window reveals inside the brick shell.', source: { name: DN, url: DW } }, { r: 2 });
+    k.egg(v(RX, VB + 6, RZ), { id: 'domino-vault', title: 'A building inside a building', year: '2023', text: 'The Refinery reopened on September 27, 2023, converted to offices by Vishaan Chakrabarti of Practice for Architecture and Urbanism. A new glass structure with a barrel vault stands inside the landmarked brick shell, which the Landmarks Preservation Commission designated in 2007.', clue: 'Look up into the glass vault.', source: { name: DN, url: DW } }, { r: 3 });
+    k.egg(v(-112, 0.6, 0), { id: 'domino-water', title: 'Two percent of Brooklyn\'s water', year: '1903', text: 'In 1903 the refinery alone was estimated to use two percent of Brooklyn\'s water supply. Domino Park opened along the river in June 2018 with pieces of the old factory machinery set into it.', clue: 'Walk to the river edge of the park.', source: { name: DN, url: DW } }, { r: 1.8 });
     k.censusWall({ x: RX, y: 4.2, z: RZ + RD / 2 - 0.66, rotY: PI, cols: 30, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(6100, 150), pieces: ctx.all, backing: dark });
     // on the plain brick band between the second and third tiers of arches (tops at 24.8, next tier from 26): the arch frames stand
     // 0.7 proud of the wall, so a sign up among the top tier lost the letters behind them
@@ -215,7 +257,7 @@ export const domino: RoomDef = {
     // the works: the brick piers between the arches inside, the mezzanine edges, the walkway screens, the tank sides
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { const z = RZ - RD / 2 + 10 + i * 10; mounts.push({ position: v(RX + s * (RW / 2 - 0.66), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(RX + s * (RW / 2 - 8), 3, z), width: 4.4, height: 2.6, style: 'steel', wash: true }); }
-    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = RZ - 20 + i * 20; mounts.push({ position: v(RX + s * (RW / 2 - 6.42), 3.2, z), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(RX, 3, z), width: 3.6, height: 2.1, style: 'steel', wash: false }); }
+    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = RZ - 20 + i * 20; mounts.push({ position: v(RX + s * (RW / 2 - 6.42), 3.2, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(RX, 3, z), width: 3.6, height: 2.1, style: 'steel', wash: false }); }
     for (let i = 0; i < 4; i++) { const z = 0 + i * 20; k.box(0.16, 2.2, 3.4, -62.2, WY + 1.6, z, teal); mounts.push({ position: v(-62.1, WY + 1.7, z), rotation: PI / 2, target: v(-56, WY + 2, z), width: 3.0, height: 1.8, style: 'steel', wash: false }); }
     for (const [x, z] of [[-90, 10], [-90, 30], [-90, 50]]) mounts.push({ position: v(x + 3.66, 4.6, z), rotation: PI / 2, target: v(x + 12, 4, z), width: 3.2, height: 3.2, style: 'none', wash: false, lookAt: v(x + 3.66, 4.6, z) });
     return { mounts, spawn: v(RX - 6, 3, RZ - RD / 2 - 44), look: v(RX, 18, RZ), eye: 3, bounds: [-118, RX + RW / 2 - 1, RZ - RD / 2 - 50, RZ + RD / 2 - 1], style: 'steel', floorY: (x, z) => { if (Math.abs(x + 60) < 2 && z > -20 && z < 82) return WY + 0.2; if (Math.abs(x + 60) < 2 && z >= 82 && z < 98) return Math.max(0, WY - ((z - 82) / 16) * WY); return 0; } };
@@ -295,12 +337,22 @@ export const boatgraveyard: RoomDef = {
     k.prop('lobster_trap', 6, 0.1, 62, { height: 0.6 });
     k.prop('life_ring', 2, 1.4, 66, { height: 0.9 });
     k.box(8, 0.4, 10, 0, 0.2, 66, wood); k.box(6, 0.3, 30, 0, 0.15, 84, wood);
+    // a long narrow grey navy hull among the tugs, a submarine chaser of the kind PC-1264 was
+    const pcg = new T.Group(); pcg.position.set(84, -0.6, -24); pcg.rotation.set(0.04, 0.5, -0.1);
+    { const navy = k.flat(0x6a6e70, 0.3, 0.8); const hb = new T.Mesh(new T.BoxGeometry(5.6, 3, 40), navy); hb.position.y = 1.2; pcg.add(hb); const bw = new T.Mesh(new T.ConeGeometry(2.8, 8, 4, 1), navy); bw.rotation.x = PI / 2; bw.rotation.y = PI / 4; bw.position.set(0, 1.2, 24); bw.scale.set(1, 1, 0.6); pcg.add(bw); const br = new T.Mesh(new T.BoxGeometry(3.4, 3, 6), navy); br.position.set(0, 4.2, 6); pcg.add(br); const ms = new T.Mesh(new T.CylinderGeometry(0.15, 0.15, 7, 6), rustD); ms.position.set(0, 8, 4); pcg.add(ms); }
+    k.add(pcg); k.keepOut.push({ x: 84, z: -24, r: 12 });
+    const BW = 'https://en.wikipedia.org/wiki/Arthur_Kill_ship_graveyard', BN = 'Arthur Kill ship graveyard, Wikipedia';
+    k.egg(v(0, 1.2, 70), { id: 'boatgraveyard-witte', title: 'Witte\'s yard', year: '1930', text: 'The graveyard is a working marine scrapyard in Rossville, founded in the 1930s by John J. Witte, who ran it until his death in 1980. It is also called the Witte Marine Scrap Yard and the Tugboat Graveyard, and its official name since 2014 is the Donjon Iron and Metal Scrap Processing Facility.', clue: 'Look around the wooden dock where the route begins.', source: { name: BN, url: BW } }, { r: 1.8 });
+    k.egg(wrecks[1].g, { id: 'boatgraveyard-count', title: 'Down from four hundred', text: 'About 100 boats and ships still lie here, down from a high of about 400. Most are cargo ships and tugboats from every decade of the twentieth century, left in the mud and shallows until they are cut up or salvaged. Some have called it an accidental marine museum.', clue: 'Paddle up to a rusted tug and count the hulls around it.', source: { name: BN, url: BW } }, { r: 3 });
+    k.egg(pcg, { id: 'boatgraveyard-pc1264', title: 'The sub chaser', text: 'Among the historic vessels brought here was USS PC-1264, a submarine chaser and the first US Navy ship of World War II with a predominantly African American crew.', clue: 'Look for the long narrow grey hull, unlike the tugs.', source: { name: BN, url: BW } }, { r: 4 });
+    k.egg(wrecks[0].g, { id: 'boatgraveyard-hewitt', title: 'The Slocum fireboat', year: '1904', text: 'The yard also took in the Fire Department fireboat Abram S. Hewitt, which served as the floating command post at the sinking of the General Slocum in 1904, a disaster that killed more than a thousand people.', clue: 'Find the first wreck you pass on the kayak route.', source: { name: BN, url: BW } }, { r: 3 });
+    k.egg(v(FX, 11, FZ), { id: 'boatgraveyard-salt', title: 'On location', year: '2010', text: 'Scenes of the 2010 thriller Salt were filmed in the yard, and the documentary Graves of Arthur Kill was shot here in 2012. The site is posted with no trespassing signs, but marine historians, photographers and artists still find their way in.', clue: 'Look at the big white hulk listing at the far end.', source: { name: BN, url: BW } }, { r: 3 });
     k.censusWall({ x: FX - 7.1, y: 5.4, z: FZ, rotY: PI / 2, cols: 26, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(4000, 78), pieces: ctx.all, backing: dark });
     // the works: on the wheelhouses facing the route, on the barge sides, the ferry's flank
     const mounts: Mount[] = [];
     for (const w of wrecks) { const near = kp.reduce((b, p) => (Math.hypot(p.x - w.x, p.z - w.z) < Math.hypot(b.x - w.x, b.z - w.z) ? p : b), kp[0]); const a = Math.atan2(near.x - w.x, near.z - w.z); const d = 3.2; mounts.push({ position: v(w.x + Math.sin(a) * d, 6.2, w.z + Math.cos(a) * d), rotation: a, target: v(near.x, 3, near.z), width: 3.0, height: 1.8, style: 'black', wash: false }); }
     for (const [x, z] of [[90, 40], [-100, 0], [30, -90]]) { const near = kp.reduce((b, p) => (Math.hypot(p.x - x, p.z - z) < Math.hypot(b.x - x, b.z - z) ? p : b), kp[0]); const a = Math.atan2(near.x - x, near.z - z); mounts.push({ position: v(x + Math.sin(a) * 6.2, 2.0, z + Math.cos(a) * 6.2), rotation: a, target: v(near.x, 2, near.z), width: 6, height: 3.4, style: 'none', wash: false }); }
-    for (let i = 0; i < 4; i++) mounts.push({ position: v(FX + 7.4, 5.4, FZ - 18 + i * 12), rotation: -PI / 2, target: v(FX + 16, 3, FZ - 18 + i * 12), width: 5, height: 3, style: 'none', wash: false });
+    for (let i = 0; i < 4; i++) mounts.push({ position: v(FX + 7.4, 5.4, FZ - 18 + i * 12), rotation: PI / 2, target: v(FX + 16, 3, FZ - 18 + i * 12), width: 5, height: 3, style: 'none', wash: false });
     for (let i = 0; i < 3; i++) { const z = 74 + i * 8; k.box(0.16, 2.2, 3.4, 3.2, 1.6, z, wood); mounts.push({ position: v(3.1, 1.7, z), rotation: -PI / 2, target: v(-2, 2, z), width: 3.0, height: 1.8, style: 'black', wash: false }); }
     const path = kp.map((p) => v(p.x, 1.4, p.z));
     return { mounts, spawn: path[0].clone(), look: v(-30, 6, -20), eye: 1.4, bounds: [-120, 120, -140, 100], path, style: 'black' };
@@ -331,13 +383,30 @@ export const intrepid: RoomDef = {
       jetD = k.flat(0x3a4048, 0.6, 0.5),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
       pier = k.pbr('pierConc', X.concrete(0x9a9a94, 78), 0.3);
-    // the river, the pier, the West Side behind, New Jersey across
-    k.water({ y: -8, color: 0x2e4a5c, w: 700, d: 500, x: -100, z: 0, amp: 1.2 });
-    k.box(40, 8, 300, 60, -4, 0, pier);
-    k.box(400, 0.4, 40, 60, -7.8, 170, pier);
-    street(k, { w: 30, len: 300, z: 0, x: 110 });
-    blockFront(k, { x: 130, z0: 140, count: 20, face: -1, seed: 162, h: [16, 40] });
-    k.skyline({ z: 0, count: 20, spacing: 9, scale: 2.4, base: -8, seed: 163, lit: 0.2, glow: 0.4, tint: 0x7a8494, rows: 1, x: -540 });
+    // the river, Pier 86 running out from the shore along the ship, the West Side behind the stern, New Jersey across
+    // (the bow points out into the Hudson, west, along -z; Twelfth Avenue and the city lie off the stern at +z)
+    k.water({ y: -8, color: 0x2e4a5c, w: 900, d: 760, x: 0, z: -220, amp: 1.2 });
+    k.box(40, 8, 310, 60, -4, 5, pier);
+    k.box(900, 8, 240, 0, -4, 280, pier);
+    { const asph = k.pbr('asphaltS', X.asphalt(0x24282d), 0.11, { roughness: 0.62, metalness: 0.12 });
+      k.box(900, 0.3, 30, 0, 0.05, 205, asph); for (const dz of [-0.14, 0.14]) k.box(880, 0.012, 0.09, 0, 0.21, 205 + dz, yellow); }
+    k.skyline({ z: 275, count: 30, spacing: 8, scale: 2.6, base: 0, seed: 162, lit: 0.25, glow: 0.5, tint: 0x6a5a50, rows: 2 });
+    k.skyline({ z: -620, count: 40, spacing: 9, scale: 2.4, base: -8, seed: 163, lit: 0.2, glow: 0.4, tint: 0x7a8494, rows: 1 });
+    // Concorde G-BOAD on the pier, and the submarine Growler on the north side of the pier
+    const concorde = new T.Group(); concorde.position.set(60, 0, 40); concorde.rotation.y = PI;
+    { const cw = k.flat(0xf2f2ee, 0.2, 0.5); const fu = new T.Mesh(new T.CylinderGeometry(1.45, 1.3, 52, 14), cw); fu.rotation.x = PI / 2; fu.position.y = 4.2; concorde.add(fu);
+      const no = new T.Mesh(new T.ConeGeometry(1.45, 8, 14), cw); no.rotation.x = PI / 2; no.position.set(0, 4.0, 30); no.rotation.z = 0; concorde.add(no);
+      const dl = new T.Shape(); dl.moveTo(0, 10); dl.quadraticCurveTo(4, -2, 12.8, -18); dl.lineTo(12.8, -22); dl.lineTo(0, -22); dl.closePath();
+      for (const sg of [-1, 1]) { const w = new T.Mesh(new T.ExtrudeGeometry(dl, { depth: 0.25, bevelEnabled: false }), cw); w.rotation.x = PI / 2; w.scale.x = sg; w.position.set(0, 3.2, 0); concorde.add(w); }
+      const fin = new T.Mesh(new T.BoxGeometry(0.25, 8, 8), cw); fin.position.set(0, 8.5, -22); fin.rotation.x = -0.3; concorde.add(fin);
+      for (const sg of [-1, 1]) { const nac = new T.Mesh(new T.BoxGeometry(2.4, 1.4, 10), k.flat(0xb8b8b4, 0.4, 0.5)); nac.position.set(sg * 4.5, 2.4, -15); concorde.add(nac); }
+      for (const [dx, dz] of [[0, 18], [-4, -10], [4, -10]]) { const gr = new T.Mesh(new T.BoxGeometry(0.3, 2.4, 0.3), dark); gr.position.set(dx, 1.2, dz); concorde.add(gr); } }
+    k.add(concorde);
+    const growler = new T.Group(); growler.position.set(86, -8, -40);
+    { const sub = k.flat(0x1e2226, 0.3, 0.7); const hb = new T.Mesh(new T.CylinderGeometry(2.8, 2.8, 86, 16), sub); hb.rotation.x = PI / 2; hb.position.y = 1.6; growler.add(hb); for (const sg of [-1, 1]) { const end = new T.Mesh(new T.SphereGeometry(2.8, 12, 8), sub); end.scale.z = 2.2; end.position.set(0, 1.6, sg * 43); growler.add(end); }
+      const sail = new T.Mesh(new T.BoxGeometry(2, 5, 9), sub); sail.position.set(0, 6.4, 6); growler.add(sail);
+      const hangarG = new T.Mesh(new T.CylinderGeometry(2.6, 2.6, 14, 14), sub); hangarG.rotation.x = PI / 2; hangarG.position.set(0, 4.4, 30); growler.add(hangarG); }
+    k.add(growler);
     // the ship: hull, the flight deck with its angled extension, the island, the hangar deck open at the sides
     const HL = 260, HW = 28, DY = 12, HULLY = -8;
     k.box(HW, DY - HULLY, HL, 0, (DY + HULLY) / 2 - 1.6, 0, grey);
@@ -397,6 +466,15 @@ export const intrepid: RoomDef = {
     k.block(-HW / 2 + 1, HW / 2 - 1, -111, -109);
     k.crowd([v(-8, DY + 0.2, -120), v(-6, DY + 0.2, -40), v(-8, DY + 0.2, 40), v(-6, DY + 0.2, 90)], 30, { seed: 63, speed: 0.9, spread: 4, animate: !ctx.reduced });
     k.crowd([v(0, HY + 0.3, -104), v(2, HY + 0.3, -75), v(0, HY + 0.3, -46)], 12, { seed: 64, speed: 0.8, spread: 3, animate: !ctx.reduced });
+    // the kamikaze plaque set into the flight deck
+    const plaque = k.box(1.2, 0.06, 0.8, -2, DY + 0.24, 40, k.flat(0x8a6a3a, 0.8, 0.35));
+    const IW = 'https://en.wikipedia.org/wiki/Intrepid_Museum', IN = 'Intrepid Museum, Wikipedia';
+    k.egg(plaque, { id: 'intrepid-kamikaze', title: 'The plaque in the deck', year: '1944', text: 'A plaque on the flight deck marks the spot where a kamikaze attack in 1944 killed 22 members of the crew. The carrier was towed to Pier 86 in June 1982 and opened as a museum on August 3, 1982, the second American carrier to become one, after the Yorktown.', clue: 'Look down at the brass plaque set into the flight deck.', source: { name: IN, url: IW } }, { r: 1.4 });
+    k.egg(v(-4, DY + 6, PZ), { id: 'intrepid-enterprise', title: 'The shuttle that came by barge', year: '2012', text: 'The space shuttle Enterprise was flown to JFK in April 2012, brought up the river by barge in June and put on display on July 19, 2012. Three months later Hurricane Sandy damaged it, and the Space Shuttle Pavilion did not reopen until July 2013.', clue: 'Walk aft into the pavilion and look up at the shuttle.', source: { name: IN, url: IW } }, { r: 3 });
+    k.egg(v(14, DY + 1.2, HL / 2 - 6), { id: 'intrepid-stuck', title: 'Stuck in the mud', year: '2006', text: 'When the museum closed for a refit in 2006, the first attempt to tow the ship to dry dock on November 6 failed: its propellers were stuck in the Hudson mud. Tugboats finally pulled it free on December 5, 2006, after the Navy and the Army Corps of Engineers had spent $3 million.', clue: 'Go to the stern rail and look down at the water.', source: { name: IN, url: IW } }, { r: 1.8 });
+    k.egg(concorde, { id: 'intrepid-concorde', title: 'The record Concorde', year: '2003', text: 'The Concorde on the pier is G-BOAD, a former British Airways aircraft that arrived in November 2003. Of the 20 Concordes built, it flew the most hours, 23,397.', clue: 'Look across to the white delta winged airliner on the pier.', source: { name: IN, url: IW } }, { r: 5 });
+    k.egg(growler, { id: 'intrepid-growler', title: 'Twenty at a time', year: '1989', text: 'The submarine Growler, a Grayback class boat that carried nuclear Regulus missiles, was towed here in late 1988 and opened in May 1989. It holds only about twenty visitors at once, and anyone under forty inches tall cannot go in.', clue: 'Look past the pier for the black submarine.', source: { name: IN, url: IW } }, { r: 5 });
+    k.egg(v(-8, DY + 1.6, -60), { id: 'intrepid-stadium', title: 'A stadium on the deck', year: '1998', text: 'For the 1998 Goodwill Games the flight deck was turned into a stadium with 3,300 seats. After September 11, 2001, the museum served as temporary field headquarters for the FBI.', clue: 'Stand in the open middle of the flight deck.', source: { name: IN, url: IW } }, { r: 1.8 });
     k.censusWall({ x: -HW / 2 + 1.2, y: HY + 4.2, z: -70, rotY: PI / 2, cols: 40, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(7200, 200), pieces: ctx.all, backing: dark });
     k.box(0.6, 8, 24, -HW / 2 + 1.0, HY + 4, -70, greyD);
     // the works: the island's port face, the hangar deck bays on both sides, the pavilion wall, the deck edge screens
