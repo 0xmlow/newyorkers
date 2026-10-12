@@ -7,7 +7,7 @@ style with the drips). The ticket presses a few of them onto every slip, so this
 fortune can use, shrinks each to 320 px, quantises it so the whole drawer stays small, and writes:
 
   assets/mlowtar/stickers/<id>.png
-  assets/mlowtar/stickers.json     [[id, name, set, [themes]], ...]
+  assets/mlowtar/stickers.json     [[id, name, set, [themes], family], ...]   family: "prop" (the blue delft objects) or "eye" (the Open Eye Flower objects)
 
 Themes are the oracle's (match.js THEMES): a food question pulls bodega and bakery stickers, a train question
 pulls the subway and taxi sets, and so on; "any" sets go on every ticket. Idempotent: existing files are kept,
@@ -73,7 +73,19 @@ SETS = {
     "Open Eye Flower night garden specimens": ["night", "art"],
     "Open Eye Flower harbor blooms": ["wander", "future"],
     "sovereign Open Eye Flower crowns and botanical regalia": ["fame", "money", "any"],
+    # the second family: the Open Eye Flower objects, MLow's motif grown into things
+    "Open Eye Flower artifacts, cosmic taxi objects and living city map fragments": ["move", "wander", "any"],
+    "finale heirlooms, watcher artifacts, thresholds and impossible keys": ["future", "lost", "any"],
+    "Open Eye Flower deli counter mutations": ["food", "any"],
+    "Open Eye Flower taxi relics": ["move", "luck"],
+    "Open Eye Flower rooftop specimens": ["home", "night", "any"],
+    "Open Eye Flower sewer botanicals": ["lost", "city"],
+    "Open Eye Flower anatomical studies": ["health", "art", "any"],
+    "Open Eye Flower roots wrapped around city hardware": ["city", "home", "any"],
+    "Open Eye Flower portal mechanisms": ["future", "luck", "any"],
+    "Open Eye Flower neon and electrical devices": ["night", "fame", "any"],
 }
+EYE = re.compile(r"Open Eye Flower|eye flower|finale heirlooms|Evil Eye", re.I)
 BRAND = re.compile(r"^(Evil Eye clean sticker|MLow logo black clean sticker|Blossom \d+ signature clean sticker)")
 
 def main():
@@ -102,7 +114,7 @@ def main():
                 im.thumbnail((SIZE, SIZE), Image.LANCZOS)
                 q = im.quantize(colors=200, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
                 q.save(dst, optimize=True); n_new += 1
-            rows.append([it["id"], it["name"], base, themes])
+            rows.append([it["id"], it["name"], base, themes, "eye" if EYE.search(base) or EYE.search(it["name"]) else "prop"])
     json.dump(rows, open(IDX, "w"), separators=(",", ":"))
     total = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT) if f.endswith(".png"))
     print(f"  mlowtar stickers: {len(rows)} in the drawer ({n_new} new), {total // 1024} KB on disk")

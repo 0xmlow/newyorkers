@@ -153,14 +153,17 @@ export function recordLoop(src, seconds, seed, fps) {
   });
 }
 /* ---------- stickers ---------- */
-async function pickStickers(r, theme, n) {
+/* two families share the drawer: the blue delft props and the Open Eye Flower objects. A ticket leads with one
+   and answers with the other, so the hero and its company come from different registers. */
+async function pickStickers(r, theme, n, lead) {
   const all = await loadDrawer(); if (!all || !all.length) return [];
-  const want = all.filter(s => s[3].includes(theme)), any = all.filter(s => s[3].includes("any")), brand = all.filter(s => s[3].includes("brand"));
-  const pool = (want.length >= 6 ? want : want.concat(any)).slice(); const out = [];
-  while (out.length < n && pool.length) { const i = Math.floor(r() * pool.length); out.push(pool.splice(i, 1)[0]); }
-  if (r() < 0.6 && brand.length) out.push(brand[Math.floor(r() * brand.length)]);
+  const fam = f => all.filter(s => (s[4] || "prop") === f), byTheme = list => { const want = list.filter(s => s[3].includes(theme)), any = list.filter(s => s[3].includes("any")); return (want.length >= 4 ? want : want.concat(any)).slice(); };
+  const first = byTheme(fam(lead)), second = byTheme(fam(lead === "eye" ? "prop" : "eye")), out = [];
+  const draw = pool => { if (!pool.length) return null; const i = Math.floor(r() * pool.length); return pool.splice(i, 1)[0]; };
+  const h = draw(first); if (h) out.push(h);                                   // the hero from the lead family
+  while (out.length < n) { const s = draw(out.length % 2 ? first : second) || draw(second) || draw(first); if (!s) break; out.push(s); }
   const imgs = await Promise.all(out.map(s => img(BASE + "assets/mlowtar/stickers/" + s[0] + ".png")));
-  return out.map((s, i) => ({ meta: s, im: imgs[i] })).filter(s => s.im);
+  return out.map((s, i) => ({ meta: s, im: imgs[i], family: s[4] || "prop" })).filter(s => s.im);
 }
 function stamp(c, im, x, y, size, rot, shadow) {
   const ar = im.width / im.height, w = ar >= 1 ? size : size * ar, h = ar >= 1 ? size / ar : size;
@@ -208,7 +211,7 @@ function overprint(c, r, P, x, y, w, h, shape) {       // a flat colour form in 
 async function artPanel(c, r, res, P, x0, y0, S) {
   const theme = res.theme || "wander"; G._paper = P.bg; const glyphs = GLYPH_BY_THEME[theme] || GLYPH_BY_THEME.wander, train = res.lucky && res.lucky.train;
   const u = S / 6, cx = k => x0 + k * u, cy = k => y0 + k * u;          // the armature
-  const st = await pickStickers(r, theme, 5), hero = st[0], rest = st.slice(1);
+  const lead = r() < 0.5 ? "prop" : "eye", st = await pickStickers(r, theme, 5, lead), hero = st[0], rest = st.slice(1);
   const layout = (u => u < 0.16 ? "poster" : u < 0.32 ? "window" : u < 0.44 ? "grid" : u < 0.58 ? "diagonal" : u < 0.68 ? "stack" : u < 0.76 ? "orbit" : u < 0.88 ? "split" : "cutpaper")(r());   // weighted toward the richer layouts
   const dark = P.name === "night", inkA = a => dark ? `rgba(236,232,221,${a})` : `rgba(20,18,16,${a})`;
   c.save(); c.beginPath(); c.rect(x0, y0, S, S); c.clip();

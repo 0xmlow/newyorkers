@@ -38,7 +38,7 @@ from the live site.
   five arrangements. The paper wears the site's transit kit: the enamel station sign, the platform edge,
   the mosaic eye frieze, a MetroCard for the lucky strip, one of the N3W YORKERS lockups, the bodega awning
   at the tear. Tickets are kept on a shelf in your browser and save as a 2x PNG. No date is printed.
-- **The sticker drawer** (`assets/mlowtar/stickers/`, 395 files) is cut by `_build/mlowtar_stickers.py` from
+- **The sticker drawer** (`assets/mlowtar/stickers/`, 467 files in two families, the blue delft props and the Open Eye Flower objects) is cut by `_build/mlowtar_stickers.py` from
   the two thousand object stickers MLow made for NEW YORKERS, chosen by what a fortune is about.
 
 ## The third pass (same day)
