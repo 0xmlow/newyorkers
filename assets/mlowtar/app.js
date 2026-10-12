@@ -189,7 +189,7 @@ function glyphShapes(g) {
 function buildWord(sign, word, width, y, z, depth, mat, track) {
   /* lay the glyphs out by advance, then centre the whole word on its ink (its first and last outline), not its
      advances, so the side bearings of the M and the S do not push it off centre; the space is narrowed */
-  const G = sign.glyphs, adv = ch => ch === " " ? Math.round((G[" "] ? G[" "].adv : 500) * 0.62) : (G[ch] ? G[ch].adv : 600);
+  const G = sign.glyphs, adv = ch => ch === " " ? Math.round((G[" "] ? G[" "].adv : 500) * 0.95) : (G[ch] ? G[ch].adv : 600);
   const ink = g => { let a = Infinity, b = -Infinity; for (const c of g.contours) for (const p of c) { if (p[0] < a) a = p[0]; if (p[0] > b) b = p[0]; } return [a, b]; };
   let pen = 0, first = null, last = 0; const place = [];
   for (const ch of word) { const g = G[ch]; if (g && g.contours.length) { const [a, b] = ink(g); if (first == null) first = pen + a; last = pen + b; place.push([ch, pen]); } pen += adv(ch) + (track || 0); }
@@ -204,7 +204,7 @@ function buildWord(sign, word, width, y, z, depth, mat, track) {
 async function buildLetters() {
   const sign = await fetch(BASE + (window.MLOWTAR_SIGN_URL || "assets/mlowtar/sign.json")).then(r => r.json());
   const zf = ARCH.z0 + ARCH.depth + 0.002, brassLit = new THREE.MeshStandardMaterial({ color: 0xe6bd62, metalness: 0.92, roughness: 0.22, envMapIntensity: 1.5, emissive: 0x3a2500, emissiveIntensity: 0.35 });
-  const main = buildWord(sign, "MLOW SPEAKS", 0.30, 0.9415, zf, 0.011, brassLit, 24);
+  const main = buildWord(sign, "MLOW SPEAKS", 0.305, 0.9375, zf, 0.011, brassLit, 30);
   scene.add(main); return { main, brassLit };
 }
 const crown = (() => {
@@ -225,8 +225,9 @@ const crown = (() => {
     const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.008, 40), [gold, new THREE.MeshStandardMaterial({ map: t, roughness: 0.35, metalness: 0.1, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.25 }), gold]);
     disc.rotation.x = Math.PI / 2; disc.position.set(0, ARCH.y0 + 0.004, ARCH.z0 + ARCH.depth + 0.024); disc.castShadow = true; scene.add(disc); });
   texLoader.load(BASE + "assets/mlowtar/plaque.jpg", t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-    const pl = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.093, 0.006), [gold, gold, gold, gold, new THREE.MeshStandardMaterial({ map: t, roughness: 0.3, metalness: 0.05, envMapIntensity: 0.6 }), gold]);
-    pl.position.set(0, 0.125, 0.193); pl.castShadow = true; scene.add(pl); });
+    // measured straight on (2026-10-12): the lower door's inner panel is about 0.37 wide by 0.165 tall, centred at y 0.153
+    const pl = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.11, 0.006), [gold, gold, gold, gold, new THREE.MeshStandardMaterial({ map: t, roughness: 0.3, metalness: 0.05, envMapIntensity: 0.6 }), gold]);
+    pl.position.set(0.005, 0.153, 0.193); pl.castShadow = true; scene.add(pl); });
   return { mesh, face, sign: sc };
 })();
 
@@ -268,33 +269,33 @@ glass.position.set(0, 0.59, 0.178); glass.renderOrder = 2; scene.add(glass);
 const lamp = new THREE.PointLight(0xfff0d2, 1.3, 0.55, 1.4); lamp.position.set(0, 0.83, 0.03); scene.add(lamp);
 const fill = new THREE.PointLight(0xdfe9ff, 0.7, 0.5, 1.6); fill.position.set(0.02, 0.62, 0.16); scene.add(fill);
 
-/* ---------- the screens: three monitors on the wall behind the booth, cycling MLow's New Yorkers ---------- */
-const screens = (() => {
-  const list = [], mon = new THREE.MeshStandardMaterial({ color: 0x14181d, roughness: 0.6, metalness: 0.3 });
-  const spots = [[-0.74, 0.62, -0.62, 0.34], [-0.74, 1.08, -0.62, 0.34], [-0.74, 1.54, -0.62, 0.34], [0.78, 0.9, -0.62, 0.42], [0.78, 1.46, -0.62, 0.42]];
-  for (const [x, y, z, w] of spots) {
-    const c = document.createElement("canvas"); c.width = 512; c.height = 512; const cx = c.getContext("2d"); cx.fillStyle = "#06090f"; cx.fillRect(0, 0, 512, 512);
-    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-    const face = new THREE.Mesh(new THREE.PlaneGeometry(w, w), new THREE.MeshStandardMaterial({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.9, roughness: 0.35, metalness: 0 }));
-    const box = new THREE.Mesh(new THREE.BoxGeometry(w + 0.05, w + 0.05, 0.08), mon); box.position.set(x, y, z - 0.045); box.castShadow = true; scene.add(box);
-    face.position.set(x, y, z); scene.add(face); face.rotation.y = x < 0 ? 0.22 : -0.22; box.rotation.y = face.rotation.y;
-    const glow = new THREE.PointLight(0x4a8cff, 0.6, 0.9, 1.6); glow.position.set(x, y, z + 0.18); scene.add(glow);
-    list.push({ c, cx, tex, glow, next: Math.random() * 4, im: null, flash: 0 });
+/* ---------- the hang: MLow's New Yorkers framed on the brick behind the booth, a salon hang either side ---------- */
+const hang = (() => {
+  const frames = [], goldM = new THREE.MeshStandardMaterial({ color: 0xd2a853, metalness: 0.9, roughness: 0.3, envMapIntensity: 1.1 }), matM = new THREE.MeshStandardMaterial({ color: 0xe8e2d4, roughness: 0.9 });
+  // two groups of four, landscape 16:9 (the census is painted wide), aligned on a grid with even gaps
+  const W0 = 0.34, H0 = W0 / 1.776, GAP = 0.06, z = -0.6;
+  const cols = [[-0.86, -0.45], [0.45, 0.86]], rows = [1.3, 1.3 - H0 - GAP, 1.3 - 2 * (H0 + GAP)];
+  for (const group of cols) for (const x of group) for (const y of rows) {
+    const c = document.createElement("canvas"); c.width = 512; c.height = 288; const cx = c.getContext("2d"); cx.fillStyle = "#0F1A26"; cx.fillRect(0, 0, 512, 288);
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const art = new THREE.Mesh(new THREE.PlaneGeometry(W0, H0), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.75, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.22 }));
+    const mat = new THREE.Mesh(new THREE.BoxGeometry(W0 + 0.05, H0 + 0.05, 0.012), matM), frame = new THREE.Mesh(new THREE.BoxGeometry(W0 + 0.085, H0 + 0.085, 0.03), goldM);
+    frame.position.set(x, y, z - 0.012); mat.position.set(x, y, z + 0.004); art.position.set(x, y, z + 0.012); frame.castShadow = true; scene.add(frame, mat, art);
+    frames.push({ c, cx, tex, next: 0.2 + frames.length * 0.35, im: null, fade: 0, old: null });
   }
-  return list;
+  for (const [x, y] of [[-0.65, 1.9], [0.65, 1.9]]) { const pl = new THREE.SpotLight(0xffe2b6, 7, 2.4, 0.7, 0.6, 1.4); pl.position.set(x, y, z + 0.55); pl.target.position.set(x, 1.0, z); scene.add(pl, pl.target); }
+  return frames;
 })();
-const screenImg = url => new Promise(res => { const i = new Image(); i.crossOrigin = "anonymous"; i.onload = () => res(i); i.onerror = () => res(null); i.src = url; });
-function tickScreens(t, dt) {
-  for (const s of screens) {
-    s.next -= dt; s.flash = Math.max(0, s.flash - dt * 3);
-    if (s.next <= 0 && DECK.length) { s.next = 5 + Math.random() * 6; const row = DECK[Math.floor(Math.random() * DECK.length)];
-      screenImg(THUMBS + row[6] + ".jpg").then(im => { if (im) { s.im = im; s.title = row[1]; s.id = row[0]; s.flash = 1; } }); }
-    const x = s.cx; x.fillStyle = "#06090f"; x.fillRect(0, 0, 512, 512);
-    if (s.im) { const sq = Math.min(s.im.width, s.im.height); const j = s.flash > 0 ? (Math.random() - 0.5) * 40 * s.flash : 0; x.drawImage(s.im, (s.im.width - sq) / 2, (s.im.height - sq) / 2, sq, sq, j, 0, 512, 512);
-      if (s.flash > 0.2) for (let k = 0; k < 6; k++) { const yy = Math.random() * 512, hh = 6 + Math.random() * 30; x.drawImage(s.c, 0, yy, 512, hh, (Math.random() - 0.5) * 60 * s.flash, yy, 512, hh); }
-      x.fillStyle = "rgba(8,13,22,.72)"; x.fillRect(0, 440, 512, 72); x.fillStyle = "#ECC981"; x.font = "700 20px 'IBM Plex Mono', monospace"; x.fillText("No. " + (s.id || ""), 18, 470); x.fillStyle = "#ECE8DD"; x.font = "500 20px 'Space Grotesk', sans-serif"; x.fillText(String(s.title || "").slice(0, 34), 18, 498); }
-    x.fillStyle = "rgba(0,0,0,.22)"; for (let yy = (Math.floor(t * 50) % 4); yy < 512; yy += 4) x.fillRect(0, yy, 512, 1);
-    s.tex.needsUpdate = true; s.glow.intensity = 0.45 + 0.25 * Math.sin(t * 7 + s.next) + s.flash;
+const hangImg = url => new Promise(res => { const i = new Image(); i.crossOrigin = "anonymous"; i.onload = () => res(i); i.onerror = () => res(null); i.src = url; });
+function drawCover(cx, im, w, h) { const ar = im.width / im.height, t = w / h; let sw = im.width, sh = im.height, sx = 0, sy = 0; if (ar > t) { sw = im.height * t; sx = (im.width - sw) / 2; } else { sh = im.width / t; sy = (im.height - sh) / 2; } cx.drawImage(im, sx, sy, sw, sh, 0, 0, w, h); }
+function tickHang(t, dt) {
+  for (const f of hang) {
+    f.next -= dt;
+    if (f.next <= 0 && DECK.length) { f.next = 18 + Math.random() * 14; const row = DECK[Math.floor(Math.random() * DECK.length)];
+      hangImg(THUMBS + row[6] + ".jpg").then(im => { if (im) { f.old = f.im; f.im = im; f.fade = 1; f.title = row[1]; } }); }
+    if (f.fade > 0 || f.dirty) { const cx = f.cx; cx.globalAlpha = 1; if (f.old) drawCover(cx, f.old, 512, 288); else { cx.fillStyle = "#0F1A26"; cx.fillRect(0, 0, 512, 288); }
+      if (f.im) { cx.globalAlpha = 1 - f.fade; drawCover(cx, f.im, 512, 288); cx.globalAlpha = 1; }
+      f.fade = Math.max(0, f.fade - dt * 0.8); f.tex.needsUpdate = true; f.dirty = f.fade > 0; }
   }
 }
 /* ---------- the token and the ticket ---------- */
@@ -456,6 +457,7 @@ function knock() { const c = actx(); if (!c || snd.muted) return; const t = c.cu
 const state = { speak: 0, lean: 0, flash: 0, busy: false, live: false, voice: false, history: [], asked: 0 };
 let letters = null;
 const clock = new THREE.Clock(); let hidden = document.hidden;
+window.__mz = { camera, look, orbit, scene };
 document.addEventListener("visibilitychange", () => { hidden = document.hidden; if (!hidden) clock.getDelta(); });
 function frame() {
   requestAnimationFrame(frame); if (hidden) return;
@@ -480,7 +482,7 @@ function frame() {
   bulbs.speed = state.busy ? 3.2 : 1; tickBulbs(t);
   if (boothMesh && !reduced) { boothMesh.position.x = state.busy ? Math.sin(t * 60) * 0.0012 : 0; boothMesh.position.z = state.busy ? Math.cos(t * 47) * 0.0012 : 0; }
   if (dust.geometry.attributes.position) { const a = dust.geometry.attributes.position, sp = dust.userData.sp; for (let i = 0; i < sp.length; i++) { let yy = a.getY(i) + dt * 0.03 * sp[i]; if (yy > 1.7) yy = 0; a.setY(i, yy); a.setX(i, a.getX(i) + Math.sin(t * 0.5 + i) * dt * 0.01); } a.needsUpdate = true; }
-  tickToken(t, dt); tickTicket(t, dt); if (Math.floor(t * 30) !== Math.floor((t - dt) * 30)) tickScreens(t, 1 / 30);
+  tickToken(t, dt); tickTicket(t, dt); tickHang(t, dt);
   renderer.render(scene, camera);
   if (film.rec) filmFrame(t);
 }
@@ -517,7 +519,7 @@ const LIVE = window.MLOWTAR_LIVE === true;
 const SHELF_KEY = "ny_mlowtar_tickets";
 function shelfRead() { try { return JSON.parse(localStorage.getItem(SHELF_KEY) || "[]"); } catch (e) { return []; } }
 function shelfKeep(res) {
-  const slim = { q: res.question, seed: res.seed, mode: res.mode, theme: res.theme, greet: res.greet, reading: res.reading, omen: res.omen, closer: res.closer, card: res.card, room: res.room && { id: res.room.id, name: res.room.name, area: res.room.area, image: res.room.image, why: res.room.why }, lucky: res.lucky, at: Date.now() };
+  const slim = { q: res.question, question: res.question, seed: res.seed, serial: res.serial, of: res.of, mode: res.mode, theme: res.theme, greet: res.greet, reading: res.reading, omen: res.omen, closer: res.closer, card: res.card, room: res.room && { id: res.room.id, name: res.room.name, area: res.room.area, image: res.room.image, why: res.room.why }, lucky: res.lucky, at: Date.now() };
   const list = shelfRead().filter(t => t.seed !== res.seed); list.unshift(slim); while (list.length > 24) list.pop();
   try { localStorage.setItem(SHELF_KEY, JSON.stringify(list)); } catch (e) {}
   try { if (window.NY && NY.track) NY.track("ticket", String(res.seed), { q: res.question, card: res.card && res.card.id, room: res.room && res.room.id, train: res.lucky && res.lucky.train }); } catch (e) {}
@@ -528,7 +530,7 @@ async function paintShelf() {
   if (!shelfEl) return; const list = shelfRead(); shelfEl.hidden = !list.length; if (!list.length) return;
   const row = shelfEl.querySelector("div"); row.innerHTML = "";
   for (const t of list) {
-    const b = document.createElement("button"); b.type = "button"; b.title = t.q || "a ticket"; b.innerHTML = `<i></i><small>No. ${esc(t.card ? t.card.id : "")}</small>`;
+    const b = document.createElement("button"); b.type = "button"; b.title = t.q || "a ticket"; b.innerHTML = `<i></i><small>${t.serial ? "TICKET " + esc(String(t.serial).padStart(4, "0")) : "No. " + esc(t.card ? t.card.id : "")}</small>`;
     b.onclick = async () => { const cv = await renderTicket(t, { scale: 1 }); ticket.canvas = cv; ticket.res = t; openLightbox(); };
     row.appendChild(b);
     renderTicket(t, { scale: 0.18 }).then(cv => { b.querySelector("i").style.backgroundImage = `url(${cv.toDataURL("image/jpeg", 0.7)})`; }).catch(() => {});
@@ -609,6 +611,9 @@ async function consult(q) {
   const seed = seedOverride != null ? seedOverride : makeSeed(q, Math.floor(Date.now() / 60000) ^ (state.asked++ * 7919));
   await Promise.all([roomsReady, loadDeck()]);
   const theatre = sleep(2600);
+  const serialP = (async () => { try { const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 3500);
+    const r = await fetch(BASE + "api/serial", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ seed }), signal: ctl.signal }); clearTimeout(to);
+    const j = r.ok ? await r.json() : null; return j && j.ok ? j : null; } catch (e) { return null; } })();
   const live = (seedOverride != null || !LIVE) ? null : await askLive(q);
   await theatre;
   let res;
@@ -621,6 +626,7 @@ async function consult(q) {
     state.live = true;
   } else { res = read(q, seed, DECK, ROOMS, { file: fileNow() }); state.live = false; }
   res.question = q; film.captions = []; film.res = null;
+  const ser = await serialP; if (ser) { res.serial = ser.n; res.of = ser.of; res.index = ser.index; }
   state.history.push({ role: "user", content: q });
   state.history.push({ role: "assistant", content: [res.greet].concat(res.reading, [res.omen, res.room ? `I sent them to ${res.room.name}.` : ""]).join(" ").slice(0, 900) });
   if (state.history.length > 12) state.history.splice(0, state.history.length - 12);
@@ -633,7 +639,7 @@ async function consult(q) {
     ticket.mesh.visible = true; ticket.mesh.position.copy(ticket.home); ticket.t = 0; return cv;
   }).catch(() => null);
   slip.classList.remove("busy");
-  slip.querySelector(".slip-mode").textContent = res.mode === "live" ? "LIVE" : "THE BOOTH";
+  slip.querySelector(".slip-mode").textContent = res.serial ? "TICKET " + String(res.serial).padStart(4, "0") + (res.of ? " OF 10,000" : "") : "UNNUMBERED";
   slip.querySelector(".slip-mode").classList.toggle("live", res.mode === "live");
   const greet = slip.querySelector(".greet"); await type(greet, res.greet, 14);
   if (res.fileLine) { const p = document.createElement("p"); p.className = "say file"; slip.appendChild(p); await type(p, res.fileLine, 11); }

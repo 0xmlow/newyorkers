@@ -57,6 +57,21 @@ of the card slot, names a room of the museum to go stand in, and talks back when
   shelf in localStorage (`ny_mlowtar_tickets`, last 24, the slim reading, re-rendered on demand) and sent to
   the collector profile as an `event` of kind `ticket` when one exists; `hit.js` also accepts `ticket`.
   og.jpg is a capture of the blue booth mid consult.
+- **Fourth pass (MLow: no API, pre generate, a questionnaire, blue receipts, paper, logos, QR, stickers
+  back, glitch, record, screens, red team package).** The page no longer calls the Function unless
+  `window.MLOWTAR_LIVE` is true (the builder writes false). `oracle.js` is the whole machine: a five
+  question FILE (borough, hour, order, train, carrying) in the manner of the home quiz, kept in
+  `ny_mlowtar_file`, read into every slip (file line, hour greeting, carrying or order aside, borough leaning
+  the card and the room, train as the lucky train). `_build/mlowtar_fortunes.mjs` runs the same engine in
+  Node and wrote 10,000 readings to `../MLOWTAR HANDOFF 2026-10-12/fortunes_10000.jsonl`, all distinct.
+  Five screens on the wall behind the booth cycle census thumbs with scanlines. RECORD films the next
+  consult (1080 x 1920, MediaRecorder on a composite canvas, the synth routed through a master gain into a
+  MediaStreamDestination; the voice cannot be captured by any browser). Receipts: six blue palettes
+  (mlow-brand-assets), MLOW mark on the enamel band, N3W YORKERS lockup at the foot, ambientCG Paper001
+  (CC0) multiplied on top (`assets/mlowtar/paper.jpg`), a real QR (the site's vendored `qrcode.min.js`)
+  to the replay link, eight sticker arrangements including grid, coin and Bayer dither; the lightbox runs
+  `glitchFrame` and SAVE THE LOOP records four seconds. The plaque is `plaque.jpg`, the lockup cropped to
+  its bbox on cream. The red team package is `../MLOWTAR HANDOFF 2026-10-12/` (README_REDTEAM.md).
 - Not done, by choice: Art Blocks style onchain randomness. The seed is `hash(question + minute)`, which is
   what a shared link replays; when MLow wants it onchain the ticket renderer is already deterministic from one
   integer.
