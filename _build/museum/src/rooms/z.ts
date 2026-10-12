@@ -289,6 +289,7 @@ const RETEX: Record<string, { kind: string; rx: number; ry: number; tint?: numbe
   cloth: { kind: 'plaster', rx: 2, ry: 2, tint: 0xf2eee6, rough: 0.9 }, chair_grn: { kind: 'patina', rx: 1, ry: 1, tint: 0x24513a, rough: 0.45, normal: 0.3 },
   beam: { kind: 'planks', rx: 4, ry: 1, tint: 0xd8cfbd }, clock_w: { kind: 'plaster', rx: 1, ry: 1, tint: 0xf4f1ea },
 };
+const GLASSY: Record<string, number> = { glass: 0.22, glass_cup: 0.3, curtain: 0.7 };
 const HIDE = new Set(['M_Counter_salmon', 'M_Counter_whitefish', 'fish_2', 'M_Food_lox', 'M_Food_bagel', 'M_Food_latke', 'M_Food_plate_grn']);
 /* The three chalkboards over the case. The model's own boards priced caviar by the ounce and little else; these
    are the store's real categories at prices a person pays at the counter in 2026, by the quarter pound where
@@ -324,6 +325,9 @@ function retex(o: T.Object3D) {
     if (!(c instanceof T.Mesh)) return;
     if (HIDE.has(c.name)) { c.visible = false; return; }
     const m = c.material as T.MeshStandardMaterial;
+    // the model's glass carries its alpha in the colour factor without an alpha mode, so three draws it solid: the
+    // case front was an opaque slab and nothing inside it could be seen
+    if (m && GLASSY[m.name] !== undefined) { m.transparent = true; m.opacity = GLASSY[m.name]; m.depthWrite = false; m.needsUpdate = true; return; }
     if (m && BOARDS[m.name] && typeof document !== 'undefined') { m.map = board(m.name); m.color.set(0xffffff); m.roughness = 0.9; m.needsUpdate = true; return; }
     const r = m && RETEX[m.name];
     if (!r) return;
@@ -538,10 +542,50 @@ export const barney: RoomDef = {
     const tables: [number, number, number][] = [[3.4, 1.14, -3.3], [3.4, 1.14, -6.9], [5.8, 1.14, -18.45], [2.8, 1.14, -18.45], [-0.2, 1.14, -18.45],
       [-7.35, 1.16, -5.25], [-7.35, 1.16, -9.0], [-7.35, 1.16, -12.75], [-7.35, 1.16, -16.5], [-4.05, 1.16, -5.25], [-4.05, 1.16, -9.0], [-4.05, 1.16, -12.75], [-4.05, 1.16, -16.5],
       [-6.2, 1.17, 4.2], [-3.3, 1.17, 4.2], [1.2, 1.17, 4.2], [4.6, 1.17, 4.2], [7.2, 1.17, 4.2]];
-    (ctx.reduced ? tables.slice(0, 4) : tables).forEach(([x, y, z], i) => k.prop('barney_bagel', x + ((i * 7) % 3 - 1) * 0.12, y, z + ((i * 5) % 3 - 1) * 0.1, { height: 0.22, rotY: i * 1.9 }));
+    (ctx.reduced ? tables.slice(0, 4) : tables).forEach(([x, y, z], i) => k.prop('barney_bagel', x + ((i * 7) % 3 - 1) * 0.12, y, z + ((i * 5) % 3 - 1) * 0.1, { height: 0.3, rotY: i * 1.9 }));
+    // the lox in the case: plates of it along the deck, the way the real case is a row of trays
+    for (const [z, r] of [[-3.6, 0.4], [-5.4, 2.1], [-7.4, 3.6], [-9.0, 1.1]]) k.prop('barney_bagel', 7.4, 1.46, z, { height: 0.26, rotY: r });
     for (let i = 0; i < 4; i++) k.prop('ph_croissant', -1.86, 0.82, -1.6 - i * 0.42, { height: 0.09, rotY: i * 1.3 });
-    const dough = k.pbr('bagelS', X.plaster(0xb8762f, 5), 1, { roughness: 0.75 });
-    for (let i = 0; i < 8; i++) { const o = k.torus(0.1, 0.045, -1.86, 0.87 + (i % 2) * 0.09, -4.2 - Math.floor(i / 2) * 0.34, dough, 14); o.rotation.x = PI / 2; o.rotation.z = (i % 3) * 0.4; }
+    // the bagel wall: a rack of cubbies on the bakery side, every one heaped with bagels. Each bagel is a torus wearing
+    // a baked crust painted here (golden brown with a darker bloom, the blistered skin, sesame and poppy on the
+    // everything ones), all of them one instanced draw call with a bump from the same canvas.
+    const crust = (seeds: 'everything' | 'sesame' | 'plain' | 'pumpernickel') => {
+      const c = document.createElement('canvas'); c.width = 512; c.height = 256; const g = c.getContext('2d')!; const rnd = X.mulberry(seeds.length * 31);
+      const base = seeds === 'pumpernickel' ? '#4a2c1a' : '#c98a3f'; g.fillStyle = base; g.fillRect(0, 0, 512, 256);
+      for (let i = 0; i < 900; i++) { const r = 4 + rnd() * 22, a = 0.05 + rnd() * 0.18; g.fillStyle = rnd() > 0.5 ? `rgba(120,60,20,${a})` : `rgba(240,200,120,${a * 0.8})`; g.beginPath(); g.ellipse(rnd() * 512, rnd() * 256, r, r * (0.5 + rnd()), rnd() * 3, 0, PI * 2); g.fill(); }
+      g.fillStyle = 'rgba(90,40,15,0.35)'; g.fillRect(0, 150, 512, 106);                         // the darker, flatter underside
+      if (seeds === 'everything' || seeds === 'sesame') for (let i = 0; i < (seeds === 'everything' ? 420 : 300); i++) {
+        const x = rnd() * 512, y = rnd() * 150, t = rnd(); g.save(); g.translate(x, y); g.rotate(rnd() * PI);
+        if (seeds === 'everything' && t < 0.3) { g.fillStyle = '#1a1420'; g.beginPath(); g.ellipse(0, 0, 2.2, 1.6, 0, 0, PI * 2); g.fill(); }     // poppy
+        else if (seeds === 'everything' && t < 0.42) { g.fillStyle = '#e9e2cc'; g.fillRect(-4, -1.2, 8, 2.4); }                                    // onion flake
+        else { g.fillStyle = '#f3e7c3'; g.beginPath(); g.ellipse(0, 0, 3.4, 2.1, 0, 0, PI * 2); g.fill(); g.fillStyle = 'rgba(0,0,0,0.25)'; g.beginPath(); g.ellipse(1, 0.6, 2.4, 1.3, 0, 0, PI * 2); g.fill(); }   // sesame
+        g.restore();
+      }
+      const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 4;
+      const b = new T.CanvasTexture(c); b.wrapS = b.wrapT = T.RepeatWrapping;
+      return new T.MeshStandardMaterial({ map: t, bumpMap: b, bumpScale: 0.004, roughness: 0.72, metalness: 0 });
+    };
+    const bagelGeo = new T.TorusGeometry(0.085, 0.04, 10, 22);
+    const kinds: ('everything' | 'sesame' | 'plain' | 'pumpernickel')[] = ['everything', 'sesame', 'plain', 'pumpernickel'];
+    const rackX = -1.18, rackZ0 = -5.6, cubby = 0.6, rows = 3, cols = 6;                        // the rack stands proud of the shelves, its back hiding the goods behind it
+    for (let r = 0; r <= rows; r++) k.box(0.5, 0.03, cols * cubby + 0.03, rackX - 0.25, 1.12 + r * cubby, rackZ0 - cols * cubby / 2, walnut);
+    for (let cc = 0; cc <= cols; cc++) k.box(0.5, rows * cubby, 0.03, rackX - 0.25, 1.12 + rows * cubby / 2, rackZ0 - cc * cubby, walnut);
+    k.box(0.03, rows * cubby, cols * cubby, rackX - 0.5, 1.12 + rows * cubby / 2, rackZ0 - cols * cubby / 2, walnut);
+    const brnd = X.mulberry(77), perKind: T.Matrix4[][] = [[], [], [], []], bm = new T.Matrix4(), bq = new T.Quaternion(), bp = new T.Vector3(), bs = new T.Vector3(1, 1, 1), be = new T.Euler();
+    for (let r = 0; r < rows; r++) for (let cc = 0; cc < cols; cc++) {
+      const kind = (r * cols + cc) % 4, cz = rackZ0 - cc * cubby - cubby / 2, cy = 1.12 + r * cubby + 0.03;
+      for (let i = 0; i < 11; i++) {                                                             // a heap: two layers lying flat, a few leaning at the front
+        const layer = i < 5 ? 0 : i < 9 ? 1 : 2, lean = layer === 2;
+        bp.set(rackX - 0.26 + (brnd() - 0.5) * 0.14 + (lean ? 0.1 : 0), cy + 0.04 + layer * 0.07 + (lean ? 0.06 : 0), cz + (brnd() - 0.5) * (lean ? 0.3 : 0.36));
+        be.set(lean ? PI / 2 - 0.5 + (brnd() - 0.5) * 0.3 : PI / 2 + (brnd() - 0.5) * 0.25, 0, brnd() * PI * 2);
+        bq.setFromEuler(be); bm.compose(bp, bq, bs); perKind[kind].push(bm.clone());
+      }
+    }
+    perKind.forEach((ms, i) => { const im = new T.InstancedMesh(bagelGeo, crust(kinds[i]), ms.length); ms.forEach((m, j) => im.setMatrixAt(j, m)); im.castShadow = im.receiveShadow = true; k.add(im); });
+    k.sign('BAGELS  ·  BIALYS  ·  BAKED HERE EVERY MORNING', 3.3, 0.22, rackX - 0.02, 1.12 + rows * cubby + 0.2, rackZ0 - cols * cubby / 2, '#1a4a30', '#f3ecd6', 70, PI / 2, { border: true });
+    for (let cc = 0; cc < cols; cc++) k.sign(['EVERYTHING', 'SESAME', 'PLAIN', 'PUMPERNICKEL'][cc % 4] + '  2.50', cubby - 0.08, 0.07, rackX + 0.005, 1.12 + 0.05, rackZ0 - cc * cubby - cubby / 2, '#f3ecd6', '#8b1a1a', 44, PI / 2);
+    for (let cc = 0; cc < cols; cc++) k.keepOut.push({ x: rackX - 0.2, z: rackZ0 - cc * cubby - cubby / 2, r: 0.5 });
+    k.block(-2.3, rackX + 0.05, rackZ0 - cols * cubby - 0.05, rackZ0 + 0.05);
     // three optical illusions. 1: the Sturgeon King painted on the floor of the front room, stretched so that from
     // the ring just inside the door he stands upright in the aisle. Each vertex of an upright picture is pushed along
     // the line from the eye to the floor, so the floor carries the picture's perspective from that one spot. The
