@@ -1,0 +1,31 @@
+{
+  "_note": "MLow's taste, as the curator reads it. Edit freely and rerun build_data.py. Signals: his own census mints, the Keystone picks, the home page faces, the pieces he made posters and cards for, plus the words below. Weights are log odds added to the learned model; 1.0 is a strong like.",
+  "likes": {
+    "bodega": 1.2, "deli": 0.8, "taxi": 1.2, "cab": 1.0, "checker": 0.6, "subway": 1.0, "train": 0.6, "platform": 0.5, "pigeon": 1.0, "rat": 0.9,
+    "neon": 0.9, "night": 0.7, "3 a.m.": 0.6, "rain": 0.5, "steam": 0.6, "stoop": 0.8, "fire escape": 0.8, "water tower": 0.9, "scaffold": 0.4,
+    "eye flower": 1.0, "eye": 0.4, "watching": 0.5, "bagel": 0.8, "pizza": 0.7, "slice": 0.5, "hot dog": 0.6, "coffee": 0.4, "coney": 0.8,
+    "cyclone": 0.6, "boardwalk": 0.5, "ferry": 0.6, "harbor": 0.4, "bridge": 0.5, "skyline": 0.5, "rooftop": 0.6, "doorman": 0.6, "super": 0.4,
+    "hustle": 0.6, "hustler": 0.6, "degen": 0.7, "grail": 0.5, "mint": 0.3, "wall street": 0.4, "trader": 0.4, "graffiti": 0.6, "wheatpaste": 0.5,
+    "halal": 0.5, "cart": 0.4, "yankee": 0.4, "knicks": 0.5, "garden": 0.3, "basketball": 0.4, "dj": 0.4, "block party": 0.6, "stickball": 0.5,
+    "grandmother": 0.5, "matriarch": 0.6, "mom": 0.3, "cat": 0.6, "dog": 0.4, "crowd": 0.4, "parade": 0.4, "stands": 0.3
+  },
+  "dislikes": {
+    "abstract": -0.6, "blur": -0.8, "fog": -0.2, "empty": -0.3, "quiet": -0.2, "generic": -0.8
+  },
+  "families": {"Degens": 0.6, "Hustlers": 0.5, "Underground": 0.5, "Citizens": 0.3, "Stoop": 0.4, "Villains": 0.3, "Places": 0.2, "Heroes": 0.2},
+  "themes": [
+    {"key": "theme_night", "name": "The Night Shift", "why": "The city after midnight: neon, steam, the people who keep it open.",
+     "words": ["night", "3 a.m.", "neon", "midnight", "late", "shift", "after hours", "dark", "lamp", "glow", "bar", "diner", "24 hours", "closing"]},
+    {"key": "theme_transit", "name": "Transit", "why": "Cabs, trains, the ferry, the platform: the city moving.",
+     "words": ["taxi", "cab", "subway", "train", "platform", "ferry", "bus", "bike", "commute", "tunnel", "track", "station", "turnstile", "transit", "traffic", "bridge"]},
+    {"key": "theme_food", "name": "The Counter", "why": "What New York eats, and who hands it over.",
+     "words": ["bodega", "deli", "bagel", "pizza", "slice", "coffee", "hot dog", "halal", "counter", "sandwich", "diner", "cart", "oyster", "dumpling", "knish", "pastrami", "cook", "kitchen", "chef", "bakery", "market"]},
+    {"key": "theme_watchers", "name": "The City Is Watching", "why": "Eye flowers, windows, doormen, pigeons: everything that keeps an eye on you.",
+     "words": ["eye", "eye flower", "watching", "watch", "window", "doorman", "pigeon", "guard", "lookout", "mirror", "camera", "sees", "stare", "gaze", "surveillance", "witness"]},
+    {"key": "theme_hustle", "name": "The Hustle", "why": "Degens, traders, dealers and the people who make it here anyway.",
+     "words": ["hustle", "hustler", "degen", "trader", "deal", "grail", "mint", "flip", "wall street", "broker", "scheme", "cash", "crypto", "nft", "wallet", "pump", "ape", "bag"]},
+    {"key": "theme_faces", "name": "Faces", "why": "The portraits the curator thinks MLow would stop in front of.",
+     "words": ["portrait", "face", "grin", "smile", "eyes", "stare", "matriarch", "grandmother", "kid", "old man", "woman", "man", "him", "her", "look", "expression"]}
+  ],
+  "quality": {"min_sharpness_percentile": 12, "min_contrast": 28, "max_dark_fraction": 0.62}
+}
