@@ -86,22 +86,28 @@ export function pickRoom(rooms, text, theme, card, seed) {
 }
 
 /* The card. Words in the question that match a New Yorker's title, family, neighborhood or hook pull them
- * forward; otherwise the census is shuffled by the seed and the top card is dealt. */
+ * forward; the whole deck is scored and the card is dealt, seeded, from the top tier rather than the single
+ * best hit, so the same question deals a different New Yorker every time (there are thousands). With no
+ * words to match the deck is simply shuffled by the seed. */
 export function pickCard(deck, text, seed, exclude) {
   const toks = tokens(text), r = rng(seed);
   if (!deck.length) return null;
   const ex = new Set(exclude || []);
   if (toks.length) {
-    let best = null, bs = 0;
-    // sample a seeded window of the deck so every ask is cheap and still different
-    const start = Math.floor(r() * deck.length), n = Math.min(deck.length, 2600);
-    for (let k = 0; k < n; k++) {
-      const row = deck[(start + k) % deck.length]; if (ex.has(row[0])) continue;
+    const hits = [];
+    for (const row of deck) {
+      if (ex.has(row[0])) continue;
       const hay = (row[1] + " " + row[2] + " " + row[4] + " " + row[7]).toLowerCase(); let s = 0;
       for (const w of toks) if (hay.includes(w)) s += w.length > 5 ? 3 : 2;
-      if (s > bs) { bs = s; best = row; }
+      if (s >= 2) hits.push([s, row]);
     }
-    if (best && bs >= 2) return best;
+    if (hits.length) {
+      hits.sort((a, b) => b[0] - a[0]);
+      const top = hits[0][0], tier = hits.filter(h => h[0] >= top - 2);           // the best hits and the near misses
+      const pool = tier.length >= 12 ? tier : hits.slice(0, Math.min(hits.length, Math.max(12, Math.ceil(hits.length * 0.25))));
+      while (pool.length < 12) { const row = deck[Math.floor(r() * deck.length)]; if (!ex.has(row[0]) && !pool.some(h => h[1] === row)) pool.push([0, row]); }   // a thin match never pins one card
+      return pool[Math.floor(r() * pool.length)][1];
+    }
   }
   for (let i = 0; i < 20; i++) { const row = deck[Math.floor(r() * deck.length)]; if (!ex.has(row[0])) return row; }
   return deck[0];
