@@ -22,19 +22,19 @@ export const THEMES = {
             rooms: "bridge pier park moon river roof promenade garden carousel rink fountain lights night".split(" ") },
   money:  { words: "money rent broke rich cash pay paid raise salary bills debt bag invest crypto eth token mint price buy sell wallet coin".split(" "),
             rooms: "wall street exchange bank diamond broker market stock gold vault trading".split(" ") },
-  work:   { words: "job work boss career interview fired quit promotion office hustle grind startup client deadline meeting".split(" "),
+  work:   { words: "job work boss career interview fired quit promotion promoted raise office hustle grind startup client deadline meeting coworker colleague shift gig freelance".split(" "),
             rooms: "office tower floor desk factory firehouse newsroom studio kitchen printing press workshop".split(" ") },
-  home:   { words: "apartment home lease landlord roommate move moving neighborhood block building stoop sublet lease studio".split(" "),
+  home:   { words: "apartment home lease landlord roommate roommates move moving neighborhood block building stoop sublet studio walkup super broker deposit".split(" "),
             rooms: "tenement brownstone stoop block courtyard rooftop housing avenue street walk up".split(" ") },
   move:   { words: "train subway late commute delay bus taxi cab ride walk traffic ferry airport flight travel trip leave leaving".split(" "),
             rooms: "subway station platform terminal ferry tunnel bridge el track rail airport harbor".split(" ") },
-  food:   { words: "eat food hungry dinner lunch pizza bagel bodega coffee deli slice dumpling noodle restaurant drink bar beer wine".split(" "),
+  food:   { words: "eat eating food hungry dinner lunch brunch pizza bagel bodega coffee deli slice dumpling dumplings noodle noodles restaurant cook cooking chef drink bar beer wine icecream knish pastrami halal taco ramen".split(" "),
             rooms: "deli bodega kitchen diner market pizza bakery fish counter bar tavern feast".split(" ") },
   art:    { words: "art artist paint painting draw drawing music song band write writing book poem design studio create creative gallery museum show".split(" "),
             rooms: "museum gallery studio theater stage hall club music painting print record".split(" ") },
-  luck:   { words: "luck lucky number win winning lottery bet odds chance gamble fate destiny year".split(" "),
+  luck:   { words: "luck lucky number win winning lottery bet odds chance gamble fate destiny year marathon race knicks mets yankees nets rangers giants jets".split(" "),
             rooms: "coney wonder wheel boardwalk arcade carnival casino racetrack stadium".split(" ") },
-  lost:   { words: "lost losing lose miss missing gone grief grieving dead died death passed goodbye funeral forget forgot remember memory".split(" "),
+  lost:   { words: "lost losing lose miss missing gone grief grieving dead died death passed goodbye funeral forget forgot remember memory overdose overdosed od'd".split(" "),
             rooms: "memorial cemetery church cathedral chapel reading library garden harbor quiet".split(" ") },
   night:  { words: "night party club dance dancing drunk late out tonight sleep tired insomnia dream dreams".split(" "),
             rooms: "club disco night bar neon after hours garage ballroom roof".split(" ") },
@@ -42,17 +42,37 @@ export const THEMES = {
             rooms: "playground school park zoo carousel kitchen stoop church block".split(" ") },
   fame:   { words: "famous fame viral followers post tweet followers celebrity star stage audition act actor model known seen".split(" "),
             rooms: "theater stage broadway studio garden arena square marquee radio".split(" ") },
-  city:   { words: "city york nyc manhattan brooklyn queens bronx staten island borough uptown downtown harlem bushwick williamsburg astoria".split(" "),
+  city:   { words: "city york nyc manhattan brooklyn queens bronx staten island borough uptown downtown harlem bushwick williamsburg astoria belong belonging real yorker local tourist".split(" "),
             rooms: "".split(" ") },
   future: { words: "future will happen next year plan plans change decision choose choice should".split(" "),
             rooms: "world fair unisphere tower observatory horizon skyline bridge".split(" ") },
+  health: { words: "sick illness ill diagnosed diagnosis cancer doctor doctors hospital surgery pregnant pregnancy meds medication medicine therapy therapist anxiety depression depressed panic pain chronic disease tumor biopsy chemo er".split(" "),
+            rooms: "garden park botanical conservatory greenhouse quiet reading library pier water".split(" ") },
+  law:    { words: "court lawyer lawsuit sue sued evict evicted eviction arrested arrest custody police cops immigration visa deported deportation greencard asylum summons judge jail bail probation parole".split(" "),
+            rooms: "courthouse hall library records city hall archive municipal".split(" ") },
+  politics: { words: "trump biden harris adams mayor election vote voting president congress senator governor democrat republican mamdani cuomo politics political party".split(" "),
+            rooms: "city hall hall square park steps podium".split(" ") },
 };
+/* Before any theme: the questions the booth must not joke about. crisis = someone may be in danger;
+   hate = a group is the target; cruel = a named person is wished harm. */
+const CRISIS = /\b(kill(ing)? myself|suicid\w*|end (it all|my life)|hurt(ing)? myself|self[- ]?harm\w*|want to die|don'?t want to (be alive|live)|not worth living|i('m| am) going to overdose|cutting myself|jump off (a|the))\b/i;
+const GROUPS = "jews|jewish people|muslims|arabs|blacks|black people|white people|asians|asian people|chinese|mexicans|immigrants|migrants|gays|gay people|trans people|women|men|puerto ricans|dominicans|haitians|indians|africans|latinos|hispanics|russians|italians|irish|koreans|japanese|homeless people|poor people|rich people";
+const HATE = new RegExp("\\b(hate|despise|can'?t stand) (the |all )?(" + GROUPS + ")\\b|\\b(" + GROUPS + ") (are|is) (control|controlling|ruin|ruining|run|running|destroy|destroying|taking over|take over|the problem|animals|vermin|scum|stupid|lazy|dirty|criminals)|\\b(are|is|do|does) (the |all )?(" + GROUPS + ") (control|controlling|ruin|ruining|run|running|destroy|destroying|taking over|take over|the problem|criminals)|\\bwhy are (" + GROUPS + ")\\b|\\b(kike|spic|chink|nigger|nigga|faggot|tranny|raghead|wetback|gook|beaner)s?\\b", "i");
+const CRUEL = /\b(die alone|i hope (he|she|they|you) (die|dies|suffer|suffers|get hurt|gets hurt)|kill (him|her|them)|deserve(s)? to die|rot in hell|wish (he|she|they) (were|was) dead)\b/i;
+export function guard(text) {
+  const t = String(text || "");
+  if (CRISIS.test(t)) return "crisis";
+  if (HATE.test(t)) return "hate";
+  if (CRUEL.test(t)) return "cruel";
+  return null;
+}
 
 export function themeOf(text) {
-  const t = tokens(text); const score = {};
+  const t = tokens(String(text || "").replace(/green card/ig, "greencard").replace(/ice cream/ig, "icecream")); const score = {};
+  if (/\bICE\b/.test(String(text || ""))) score.law = 2.5;                  // the agency, never ice cream
   for (const [k, th] of Object.entries(THEMES)) {
-    let s = 0; for (const w of t) if (th.words.includes(w)) s += (k === "city" ? 0.5 : k === "lost" || k === "family" ? 1.5 : 1);
-    if (s) score[k] = s;
+    let s = 0; for (const w of t) if (th.words.includes(w)) s += (k === "city" ? 0.5 : k === "lost" || k === "family" ? 1.5 : k === "health" || k === "law" || k === "politics" ? 2.5 : 1);
+    if (s) score[k] = (score[k] || 0) + s;
   }
   const best = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
   return best ? best[0] : "wander";
@@ -82,7 +102,8 @@ export function pickRoom(rooms, text, theme, card, seed) {
   const toks = tokens(text), r = rng(seed ^ 0x9e3779b9);
   const scored = rooms.map(room => ({ room, s: scoreRoom(room, toks, theme, card) + r() * 0.9 }));
   scored.sort((a, b) => b.s - a.s);
-  return scored[0].room;
+  const u = r(), top = scored.slice(0, 5), cut = [0.4, 0.65, 0.8, 0.92, 1];            // the best room most often, never only
+  return top[Math.max(0, cut.findIndex(c => u < c))].room;
 }
 
 /* The card. Words in the question that match a New Yorker's title, family, neighborhood or hook pull them

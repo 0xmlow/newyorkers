@@ -626,20 +626,21 @@ async function consult(q) {
     state.live = true;
   } else { res = read(q, seed, DECK, ROOMS, { file: fileNow() }); state.live = false; }
   res.question = q; film.captions = []; film.res = null;
-  const ser = await serialP; if (ser) { res.serial = ser.n; res.of = ser.of; res.index = ser.index; }
+  const ser = res.careful ? null : await serialP; if (ser) { res.serial = ser.n; res.of = ser.of; res.index = ser.index; }
   state.history.push({ role: "user", content: q });
   state.history.push({ role: "assistant", content: [res.greet].concat(res.reading, [res.omen, res.room ? `I sent them to ${res.room.name}.` : ""]).join(" ").slice(0, 900) });
   if (state.history.length > 12) state.history.splice(0, state.history.length - 12);
   // the reveal: the booth lights up, speaks, and the printer starts on the ticket
-  humOff(); chime(); state.flash = 1; state.speak = 1; state.busy = false; setMode(state.live ? "live" : "booth");
+  humOff(); if (!res.careful) { chime(); state.flash = 1; } state.speak = 1; state.busy = false; setMode(state.live ? "live" : "booth");
   speak(script(res).join(". "));
-  const printing = renderTicket(res, { scale: 1 }).then(cv => {
+  const printing = res.careful ? Promise.resolve(null) : renderTicket(res, { scale: 1 }).then(cv => {
     ticket.canvas = cv; ticket.res = res; const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8;
     if (ticket.mat.map) ticket.mat.map.dispose(); ticket.mat.map = tx; ticket.mat.emissiveMap = tx; ticket.mat.needsUpdate = true;
     ticket.mesh.visible = true; ticket.mesh.position.copy(ticket.home); ticket.t = 0; return cv;
   }).catch(() => null);
   slip.classList.remove("busy");
-  slip.querySelector(".slip-mode").textContent = res.serial ? "TICKET " + String(res.serial).padStart(4, "0") + (res.of ? " OF 10,000" : "") : "UNNUMBERED";
+  slip.querySelector(".slip-mode").textContent = res.careful ? "THE BOOTH" : res.serial ? "TICKET " + String(res.serial).padStart(4, "0") + (res.of ? " OF 10,000" : "") : "UNNUMBERED";
+  if (res.careful === "crisis") slip.classList.add("care");
   slip.querySelector(".slip-mode").classList.toggle("live", res.mode === "live");
   const greet = slip.querySelector(".greet"); await type(greet, res.greet, 14);
   if (res.fileLine) { const p = document.createElement("p"); p.className = "say file"; slip.appendChild(p); await type(p, res.fileLine, 11); }
@@ -657,9 +658,14 @@ async function consult(q) {
     a.innerHTML = `<i class="btn">ENTER THE ROOM</i><div><small>THE ROOM FOR YOU</small><b>${esc(res.room.name)}</b><span>${esc(res.room.area || "")}${res.room.why ? " · " + esc(res.room.why) : ""}</span></div>`;
     slip.appendChild(a);
   }
-  const lk = document.createElement("div"); lk.className = "slip-lucky";
-  lk.innerHTML = `<span class="bullet dk" style="--lc:var(--l${esc(res.lucky.train)})">${esc(res.lucky.train)}</span><span>LUCKY TRAIN</span><b>No. ${esc(res.lucky.number)}</b><span>LUCKY NUMBER</span>`;
-  slip.appendChild(lk);
+  if (!res.careful) {
+    const lk = document.createElement("div"); lk.className = "slip-lucky";
+    lk.innerHTML = `<span class="bullet dk" style="--lc:var(--l${esc(res.lucky.train)})">${esc(res.lucky.train)}</span><span>LUCKY TRAIN</span><b>No. ${esc(res.lucky.number)}</b><span>LUCKY NUMBER</span>`;
+    slip.appendChild(lk);
+  } else if (res.careful === "crisis") {
+    const a = document.createElement("a"); a.className = "slip-room"; a.href = "tel:988"; a.style.background = "var(--harbor)";
+    a.innerHTML = `<i class="btn">CALL OR TEXT 988</i><div><small>IN THE US, ANY HOUR</small><b>A person answers.</b><span>Outside the US, your local line is one search away.</span></div>`; slip.appendChild(a);
+  }
   const cl = document.createElement("p"); cl.className = "say closer"; slip.appendChild(cl); await type(cl, res.closer, 12);
   // the ticket, in the slip too
   const cv = await printing;
@@ -670,7 +676,7 @@ async function consult(q) {
     const save = document.createElement("button"); save.type = "button"; save.className = "btn"; save.textContent = "SAVE THE TICKET"; save.onclick = () => saveTicket(res);
     row.appendChild(save); tk.appendChild(im); tk.appendChild(row); slip.appendChild(tk);
   }
-  shelfKeep(res);
+  if (!res.careful) shelfKeep(res);
   if (filming) {
     await sleep(1500); const holder = document.createElement("div"); holder.className = "slip-film"; slip.appendChild(holder); recBtn && (recBtn.textContent = "RECORD");
     film.onDone = blob => { const v = document.createElement("video"); v.src = URL.createObjectURL(blob); v.controls = true; v.playsInline = true; v.muted = true; holder.appendChild(v);

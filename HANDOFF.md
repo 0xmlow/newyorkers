@@ -72,6 +72,24 @@ of the card slot, names a room of the museum to go stand in, and talks back when
   to the replay link, eight sticker arrangements including grid, coin and Bayer dither; the lightbox runs
   `glitchFrame` and SAVE THE LOOP records four seconds. The plaque is `plaque.jpg`, the lockup cropped to
   its bbox on cream. The red team package is `../MLOWTAR HANDOFF 2026-10-12/` (README_REDTEAM.md).
+- **Fifth pass (receipt reset, the hang, plaque, numbering).** The New Yorker on the receipt is the whole
+  painting at its own aspect (max 400 tall) above its number and title; the slip is 1000 x 2720 and flows
+  (MetroCard at content + 128, footer after). All text goes through `setFont(c, font, spacing)` for
+  tracking. The MLOW mark is the word in the header. The art panel is 780 wide with calmer grounds and
+  stickers kept out of the seal and tag corners. Twelve framed New Yorkers hang behind the booth (`hang` in
+  app.js: two groups of 2 x 3, 16:9, gold frame, mat, picture lights, one changes every 18 to 32 s). The
+  plaque was measured straight on (debug hook `window.__mz` lets a headless run set the camera): the lower
+  door's inner panel is about 0.37 x 0.165 world, centred at y 0.153, so the plaque is 0.26 x 0.11 at
+  (0.005, 0.153). `/api/serial` numbers receipts out of 10,000 from a D1 counter and a fixed shuffle
+  (`schema_mlowtar.sql`; the table was created through `wrangler d1 execute --command`, the `--file` import
+  endpoint is refused by this account's token). Without the counter the slip prints UNNUMBERED.
+- **Sixth pass (red team).** `guard()` in match.js runs before any theme: crisis (self harm) prints a
+  short slip with 988 and no card, ticket, number or lucky strip (`careful()` in oracle.js, `slip.care` in
+  the page with a tel:988 door); hate toward a group and cruelty toward a person get short refusals in
+  character. New gentle themes: health, law, politics, with omens that give no advice and point to a
+  person. Banks grew (families 4, boroughs 4 to 5, omens 8 a theme, 20 closers, 12 file lines), the aside
+  is 55 percent, the card quote stops at a full sentence, the room is dealt from the top five. Findings and
+  the before/after table: `../MLOWTAR HANDOFF 2026-10-12/REDTEAM_NOTES.md`.
 - Not done, by choice: Art Blocks style onchain randomness. The seed is `hash(question + minute)`, which is
   what a shared link replays; when MLow wants it onchain the ticket renderer is already deterministic from one
   integer.
