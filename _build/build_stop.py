@@ -149,7 +149,7 @@ body = f"""
   <section class="stop-hero">
     <p class="kicker">YOUR STOP</p>
     <h1>Which New Yorkers <i>get off here?</i></h1>
-    <p class="body" style="max-width:680px">Type a subway station. The census shows every painted New Yorker within about three blocks of it, nearest first, with a link into each record. Share your stop.</p>
+    <p class="body" style="max-width:680px">Type a subway station. The census shows every New Yorker within about three blocks of it, nearest first, with a link into each record. Share your stop.</p>
     <form class="stop-form" id="stopForm" autocomplete="off">
       <input id="stopQ" type="search" placeholder="Bedford Av, 125 St, Jamaica Center..." aria-label="Station name" inputmode="search">
       <button type="button" class="btn ghost" id="stopNear">Nearest to me</button>
@@ -163,7 +163,7 @@ body = f"""
       <div><p class="plate" style="margin-bottom:10px"><span class="n" id="rCount"></span><span class="m" id="rRadius"></span></p><div class="share" id="rShare"></div></div>
     </div>
     <div class="stop-grid" id="rGrid"></div>
-    <p class="stop-empty" id="rEmpty" hidden>Nothing painted within a mile of this stop yet. The census is still being painted. <a href="counted#nominate" style="color:var(--cyan)">Nominate someone who belongs here.</a></p>
+    <p class="stop-empty" id="rEmpty" hidden>No New Yorkers within a mile of this stop yet. The census is still being made. <a href="counted#nominate" style="color:var(--cyan)">Nominate someone who belongs here.</a></p>
     <p class="stop-foot">Places come from the atlas: a piece placed at a site or an area reads first; a piece placed by its scene sits at its neighborhood's centre and is marked. Open the <a href="map" style="color:var(--cyan)">atlas</a> for the whole map, or walk the <a href="museum" style="color:var(--cyan)">museum</a>.</p>
   </section>
 </main>
@@ -207,7 +207,7 @@ js = """
       return '<a href="'+B+'n/'+row[0]+'" class="'+(row[2] ? "inf" : "")+'"><img src="'+B+'assets/t/'+p[2]+'.jpg" alt="'+NY.esc(p[1])+'" loading="lazy" width="320" height="180"><div class="c"><small>'+num+' · '+row[1]+' M</small><b>'+NY.esc(p[1])+'</b></div></a>'; }).join("");
     document.getElementById("rEmpty").hidden = n.p.length > 0;
     var url = location.origin + location.pathname.replace(/\\.html$/, "") + "#s=" + id;
-    NY.shareRow(document.getElementById("rShare"), {url: url, text: n.p.length + " painted New Yorkers get off at " + s.name + ". Which stop is yours?"});
+    NY.shareRow(document.getElementById("rShare"), {url: url, text: n.p.length + " New Yorkers get off at " + s.name + ". Which stop is yours?"});
     document.getElementById("stopResult").hidden = false;
     if (!quiet) { history.replaceState(null, "", "#s=" + id); document.getElementById("stopResult").scrollIntoView({behavior: "smooth", block: "start"}); }
     if (window.NY && NY.hit) NY.hit("stop", s.name);
@@ -231,10 +231,10 @@ js = """
 """ % json.dumps(LINE_COLORS)
 
 page = shell(title="Your Stop · which New Yorkers get off here · NEW YORKERS by MLow",
-             description="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.",
+             description="Type a subway station and see every New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.",
              body=body, path="stop.html", active="STOP", extra_css=css, scripts_after=js,
-             keywords=["New York subway art", "NYC subway stations", "New Yorkers near my stop", "painted census of New York", "NEW YORKERS by MLow"],
+             keywords=["New York subway art", "NYC subway stations", "New Yorkers near my stop", "art census of New York", "NEW YORKERS by MLow"],
              jsonld=[{"@context": "https://schema.org", "@type": "WebPage", "name": "Your Stop · NEW YORKERS by MLow", "url": f"{URL}/stop", "isPartOf": {"@id": URL + "/#site"},
-                      "description": "Every painted New Yorker within three blocks of any subway station."}])
+                      "description": "Every New Yorker within three blocks of any subway station."}])
 open(os.path.join(SITE, "stop.html"), "w", encoding="utf-8").write(page)
 print("wrote stop.html")

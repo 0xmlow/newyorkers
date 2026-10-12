@@ -12,6 +12,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -279,6 +280,15 @@ export const sealions: RoomDef = {
         /* penguin, drums */ mergeGeometries([new T.CapsuleGeometry(0.18, 0.4, 3, 8).translate(0, 0.5, 0), new T.SphereGeometry(0.13, 8, 6).translate(0, 0.9, 0), part(0.05, 0.3, 0.16, 0.2, 0.55, 0, -0.6), part(0.05, 0.3, 0.16, -0.2, 0.55, 0, 0.6), new T.CylinderGeometry(0.16, 0.16, 0.2, 12).translate(0, 0.4, 0.34)])!,
       ];
       animals.forEach((g, i) => { const a = (i / 6) * PI * 2, r = 1.95; const o = new T.Mesh(g, i % 2 ? bronzeL : bronze); o.position.set(Math.sin(a) * r, 0, Math.cos(a) * r); o.rotation.y = a + PI / 2; ring.add(o); });
+      /* 2026-10-09: Spadini's six as sculpted bronzes (hero GLBs), each replacing its box stand in when it loads */
+      ['bear', 'elephant', 'goat', 'hippo', 'kangaroo', 'penguin'].forEach((n, i) => {
+        void hero(k, 'h_clock_' + n, { height: 1.35 }).then((h) => {
+          if (!h) return;
+          const old = ring.children[i];
+          h.position.copy(old.position); h.rotation.y = old.rotation.y;
+          old.visible = false; ring.add(h);
+        });
+      });
       const plate = new T.Mesh(new T.CylinderGeometry(2.5, 2.5, 0.16, 32), gold); plate.position.y = -0.08; ring.add(plate);
       const rail = new T.Mesh(new T.TorusGeometry(2.5, 0.03, 6, 48), gold); rail.rotation.x = PI / 2; rail.position.y = 0.55; ring.add(rail);
     }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLOW SPEAKS · MLOWTAR, a fortune booth that only knows New York · NEW YORKERS by MLow</title>
+<meta name="description" content="MLOW SPEAKS: MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It deals a New Yorker from the census, reads your fortune off the card, prints you a one of a kind generative ticket, and sends you to a room of the museum.">
+<meta name="keywords" content="MLOWTAR, fortune teller booth, Zoltar, NEW YORKERS, MLow, New York fortune, virtual museum, three.js">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://n3wyorkers.com/mlowtar">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="MLOW SPEAKS · MLOWTAR, a fortune booth that only knows New York · NEW YORKERS by MLow">
+<meta property="og:description" content="MLOW SPEAKS: MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It deals a New Yorker from the census, reads your fortune off the card, prints you a one of a kind generative ticket, and sends you to a room of the museum.">
+<meta property="og:image" content="https://n3wyorkers.com/assets/mlowtar/og.jpg?v=02ed8cf1a3">
+<meta property="og:url" content="https://n3wyorkers.com/mlowtar">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="MLOW SPEAKS · MLOWTAR, a fortune booth that only knows New York · NEW YORKERS by MLow">
+<meta name="twitter:description" content="MLOW SPEAKS: MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It deals a New Yorker from the census, reads your fortune off the card, prints you a one of a kind generative ticket, and sends you to a room of the museum.">
+<meta name="twitter:image" content="https://n3wyorkers.com/assets/mlowtar/og.jpg?v=02ed8cf1a3">
+<meta name="theme-color" content="#080D16">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"MLOWTAR SPEAKS","url":"https://n3wyorkers.com/mlowtar","description":"MLOW SPEAKS: MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It deals a New Yorker from the census, reads your fortune off the card, prints you a one of a kind generative ticket, and sends you to a room of the museum.","applicationCategory":"EntertainmentApplication","operatingSystem":"Any","browserRequirements":"WebGL","image":"https://n3wyorkers.com/assets/mlowtar/og.jpg","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"creator":{"@type":"Person","name":"MLow","url":"https://mlow.xyz"},"isPartOf":{"@type":"CreativeWork","name":"NEW YORKERS by MLow","url":"https://n3wyorkers.com/"}}</script>
+<link rel="stylesheet" href="assets/mlowtar/app.css?v=1af484fdab">
+<link rel="modulepreload" href="assets/airport/vendor/three.module.js?v=0a3368c165">
+<script type="importmap">{"imports":{"three":"./assets/airport/vendor/three.module.js?v=0a3368c165","./assets/mlowtar/oracle.js":"./assets/mlowtar/oracle.js?v=fc87c20317","./assets/mlowtar/match.js":"./assets/mlowtar/match.js?v=6db80d4a70","./assets/mlowtar/ticket.js":"./assets/mlowtar/ticket.js?v=71fdcc7e56"}}</script>
+<style></style>
+</head>
+<body>
+<div id="nav"></div>
+<section class="mz" id="mz">
+  <div class="mz-stage">
+    <canvas id="mzc" aria-label="MLOWTAR, the fortune booth"></canvas>
+    <div class="mz-tip">DROP A TOKEN IN THE SLOT · DRAG TO WALK AROUND</div>
+    <div class="mz-load" id="mzLoad"><span class="kicker">MLOWTAR SPEAKS</span><b>The booth is warming up</b><i></i></div>
+    <div class="mz-hud"><div><button class="mz-snd" id="mzSnd" type="button" aria-label="Toggle sound">SOUND OFF</button><button class="mz-rec" id="mzRec" type="button" title="Record the next consult as a film">RECORD</button></div><span class="mz-mode" id="mzMode">THE BOOTH</span></div>
+  </div>
+  <aside class="mz-panel" id="mzPanel">
+    <header>
+      <div class="kicker">MLOW SPEAKS</div>
+      <h1>Drop a token. Ask the booth.</h1>
+      <p>MLOWTAR deals a New Yorker from the census as your card, reads your fortune off it, prints you a ticket no one else will ever get, and sends you to a room of the museum. Ask it anything, then ask it again.</p>
+    </header>
+    <div class="mz-file" id="mzFile" hidden></div>
+    <div class="mz-filed" id="mzFiled" hidden></div>
+    <form class="mz-form" id="mzForm" autocomplete="off">
+      <input id="mzQ" name="q" maxlength="240" placeholder="A street, a worry, a wish." aria-label="Your question for MLOWTAR">
+      <button class="btn" type="submit">ASK</button>
+    </form>
+    <div class="mz-chips" id="mzChips"></div>
+    <div class="mz-shelf" id="mzShelf" hidden><small>YOUR TICKETS · KEPT IN THIS BROWSER</small><div></div></div>
+    <div class="mz-slips" id="mzSlips" aria-live="polite"></div>
+  </aside>
+</section>
+<div class="mz-lb" id="mzLb" hidden role="dialog" aria-label="Your ticket"><div><canvas id="mzLbC" width="500" height="1150"></canvas><img alt="Your ticket"><div class="row"><button class="btn" type="button" id="mzSave">SAVE THE TICKET</button><button class="btn" type="button" id="mzLoop">SAVE THE LOOP</button><button class="btn ghost" type="button" data-close>CLOSE</button></div></div></div>
+<section class="wrap mz-about">
+  <div>
+    <div class="kicker">WHAT IT IS</div>
+    <h2>A fortune booth that only knows New York.</h2>
+    <p>MLOWTAR was built as a prop for <a href="movies">ON LOCATION</a>, the walkable movie sets. It kept talking after the shoot. Answer five quick questions for the file (where the city keeps you, your hour, your order, your train, what you're carrying), then drop a token in the slot and the booth deals one of the New Yorkers in the census as your card, reads the fortune off the family, the borough and the block, and names the room of the museum you should go stand in next.</p>
+    <p>Every consult prints a ticket: a generative piece drawn from your question, made of three systems MLow keeps around the studio. The bloom grid, the seal, the torn edge and the barcode come from his Memories renderers. The one bit glyphs (forty of them: a bagel, a slice, a manhole, a subway bullet, a water tower, the nazar, a pretzel, a dirty water dog, a cab, a fire escape, the Con Ed stack, a rat, the ferry, the DON'T WALK hand, the Wonder Wheel, the Unisphere, Liberty's crown, the Grand Central clock stopped at eleven eleven) are drawn in the Visualize Value idiom. The objects pressed on top are the New York stickers he made with ChatGPT, arranged fresh every time. Save it. No two are alike.</p>
+  </div>
+  <div>
+    <div class="kicker">HOW IT WORKS</div>
+    <h2>The booth writes its own slips.</h2>
+    <p>No server, no model, no key: the reading is assembled in your browser from the file, the question and the card, out of banks written for the booth (ten thousand pre generated readings were checked and no two matched). The same question with the same file at the same minute gives the same slip, so a shared link replays. Hit RECORD before you ask and the booth films the whole consult as a vertical clip you can post.</p>
+    <p>Your tickets stay on a shelf in your browser (the last twenty four), and on your collector profile when you have one. Save any of them as a full size PNG. Nothing you type leaves your browser unless you share the link.</p>
+  </div>
+  <div>
+    <div class="kicker">THE SMALL PRINT</div>
+    <h2>Art, not an investment.</h2>
+    <p>MLOWTAR gives no financial, legal or medical advice, and it is wrong about the weather on purpose. The New Yorkers it deals are real pieces in the census; follow the card to meet them, follow the room to walk it.</p>
+    <p><a href="museum">The museum</a> · <a href="census">The census</a> · <a href="counted">Get counted</a></p>
+  </div>
+</section>
+<div id="foot"></div>
+<script>window.NY_BASE="";</script>
+<script src="assets/config.js"></script>
+<script src="assets/counts.js"></script>
+<script src="assets/site.js"></script>
+<script>NY.nav("MLOWTAR");NY.foot();</script>
+<script src="assets/qrcode.min.js"></script>
+<script>window.MLOWTAR_DECK_URL="assets/mlowtar/deck.json?v=a2408e7e06";window.MLOWTAR_SIGN_URL="assets/mlowtar/sign.json?v=0be51afa23";window.MLOWTAR_LIVE=false;document.body.classList.add("mlowtar");</script>
+<script type="module" src="assets/mlowtar/app.js?v=ca33dae833"></script>
+<script src="assets/eggs.js" defer></script>
+<script src="assets/mint.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+{
+ "generated": "2026-10-07T01:35:28-04:00",
+ "films": 18,
+ "folders_listed": [
+  "HYPE FILM EVERYTHING 2026-10-06",
+  "HONORARIES HYPE FILM 2026-10-05",
+  "HYPE VIDEO GLASS HOUSE 2026-10-03",
+  "HYPE FILM ALIVE 2026-10-03",
+  "DREAMINA HYPE FILM 2026-10-01",
+  "ZERO 10 JOB 2026-10-01/SHITCORN FILM",
+  "REVEAL HYPE FILM 2026-09-30",
+  "HONORARIES HYPE FILM 2026-09-26",
+  "SHOWREEL FILMS 2026-09-25",
+  "HYPE VIDEOS 2026-09-24 HOUSES OF PRAYER",
+  "HYPE VIDEO WEITSMAN YARD 2026-09-24",
+  "HYPE VIDEOS 2026-09-23",
+  "HYPE VIDEOS 2026-09-08"
+ ],
+ "queue": [
+  {
+   "folder": "HYPE FILM EVERYTHING 2026-10-06",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE FILM EVERYTHING 2026-10-06/NEW YORKERS EVERYTHING 16x9 X.mp4",
+   "size_mb": 88.5,
+   "duration_s": 60.0,
+   "caption": "NEW YORKERS EVERYTHING. Everything built for the census in one film: the plates, the states, the museum, the atlas, the honoraries and the arcade.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com",
+   "status": "ready",
+   "notes": [],
+   "day": 1
+  },
+  {
+   "folder": "HYPE FILM EVERYTHING 2026-10-06",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE FILM EVERYTHING 2026-10-06/V2/NEW YORKERS EVERYTHING V2 3min master.mp4",
+   "size_mb": 513.5,
+   "duration_s": 180.0,
+   "caption": "I PUT MY ART ON 5,000+ NYC TAXIS. THEN I PAINTED THE CITY\n\n████ 183 rooms. Thousands of characters. One minute. NEW YORKERS 🗽",
+   "caption_source": "CAPTIONS.md",
+   "link": "https://n3wyorkers.com",
+   "status": "manual",
+   "notes": [
+    "513 MB is over the 512 MB X cap; post the X cut or re-encode",
+    "180 s is over 140 s; needs X Premium"
+   ],
+   "day": 2
+  },
+  {
+   "folder": "HYPE FILM EVERYTHING 2026-10-06",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE FILM EVERYTHING 2026-10-06/V2/NEW YORKERS EVERYTHING V2 60s master.mp4",
+   "size_mb": 266.5,
+   "duration_s": 60.0,
+   "caption": "I PUT MY ART ON 5,000+ NYC TAXIS. THEN I PAINTED THE CITY\n\n████ 183 rooms. Thousands of characters. One minute. NEW YORKERS 🗽",
+   "caption_source": "CAPTIONS.md",
+   "link": "https://n3wyorkers.com",
+   "status": "ready",
+   "notes": [],
+   "day": 3
+  },
+  {
+   "folder": "HONORARIES HYPE FILM 2026-10-05",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HONORARIES HYPE FILM 2026-10-05/THE HONORARIES 16x9 X.mp4",
+   "size_mb": 88.7,
+   "duration_s": 64.3,
+   "caption": "THE HONORARIES. Every honorary New Yorker now hangs in one hall, room 183, and the walk is free.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 4
+  },
+  {
+   "folder": "HYPE VIDEO GLASS HOUSE 2026-10-03",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEO GLASS HOUSE 2026-10-03/THE GLASS HOUSE 16x9 X.mp4",
+   "size_mb": 50.3,
+   "duration_s": 37.5,
+   "caption": "THE GLASS HOUSE. The Crystal Palace of 1853 rebuilt as a gallery, and Otis cuts the rope at the top.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 5
+  },
+  {
+   "folder": "HYPE FILM ALIVE 2026-10-03",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE FILM ALIVE 2026-10-03/NEW YORKERS NOW IN MOTION (X).mp4",
+   "size_mb": 102.1,
+   "duration_s": 62.5,
+   "caption": "NEW YORKERS NOW IN MOTION. Every New Yorker now has more than one state: painted, moshed, looped, dithered and in motion.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/census",
+   "status": "ready",
+   "notes": [],
+   "day": 6
+  },
+  {
+   "folder": "DREAMINA HYPE FILM 2026-10-01",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/DREAMINA HYPE FILM 2026-10-01/NEW YORKERS THE CITY IS THE ART.mp4",
+   "size_mb": 153.2,
+   "duration_s": 80.0,
+   "caption": "NEW YORKERS THE CITY IS THE ART. Two hundred and thirty glitch loops of New York in eighty seconds.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com",
+   "status": "ready",
+   "notes": [],
+   "day": 7
+  },
+  {
+   "folder": "ZERO 10 JOB 2026-10-01/SHITCORN FILM",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/ZERO 10 JOB 2026-10-01/SHITCORN FILM/SHITCORN ART HEIST AT ZERO10 ART BASEL MIAMI 16x9.mp4",
+   "size_mb": 134.5,
+   "duration_s": 72.5,
+   "caption": "SHITCORN ART HEIST AT ZERO10 ART BASEL MIAMI. The honorees pull a banana heist at Zero 10 in Miami and nobody gets caught.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/honoraries",
+   "status": "ready",
+   "notes": [],
+   "day": 8
+  },
+  {
+   "folder": "REVEAL HYPE FILM 2026-09-30",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/REVEAL HYPE FILM 2026-09-30/NEW YORKERS REVEALED.mp4",
+   "size_mb": 175.1,
+   "duration_s": 91.2,
+   "caption": "NEW YORKERS REVEALED. The census revealed collector by collector, what is on chain and what is still to come.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/collectors",
+   "status": "ready",
+   "notes": [],
+   "day": 9
+  },
+  {
+   "folder": "HONORARIES HYPE FILM 2026-09-26",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HONORARIES HYPE FILM 2026-09-26/NEW YORKERS THE HONORARIES ROLL CALL (for X).mp4",
+   "size_mb": 360.5,
+   "duration_s": 272.0,
+   "caption": "NEW YORKERS THE HONORARIES ROLL CALL. Every honorary New Yorker by name and handle, all of them painted by MLow.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/honoraries",
+   "status": "ready",
+   "notes": [
+    "272 s is over 140 s; needs X Premium"
+   ],
+   "day": 10
+  },
+  {
+   "folder": "SHOWREEL FILMS 2026-09-25",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SHOWREEL FILMS 2026-09-25/NEW YORKERS REEL 01 COUNT ME IN.mp4",
+   "size_mb": 175.7,
+   "duration_s": 90.0,
+   "caption": "NEW YORKERS REEL 01 COUNT ME IN. Ninety seconds of the painted census with a score built from real instruments.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com",
+   "status": "ready",
+   "notes": [],
+   "day": 11
+  },
+  {
+   "folder": "SHOWREEL FILMS 2026-09-25",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SHOWREEL FILMS 2026-09-25/NEW YORKERS REEL 02 NEXT STOP.mp4",
+   "size_mb": 219.4,
+   "duration_s": 90.0,
+   "caption": "NEW YORKERS REEL 02 NEXT STOP. Ninety seconds of the painted census with a score built from real instruments.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com",
+   "status": "ready",
+   "notes": [],
+   "day": 12
+  },
+  {
+   "folder": "SHOWREEL FILMS 2026-09-25",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/SHOWREEL FILMS 2026-09-25/NEW YORKERS REEL 03 WATCHING BACK.mp4",
+   "size_mb": 175.4,
+   "duration_s": 90.0,
+   "caption": "NEW YORKERS REEL 03 WATCHING BACK. Ninety seconds of the painted census with a score built from real instruments.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com",
+   "status": "ready",
+   "notes": [],
+   "day": 13
+  },
+  {
+   "folder": "HYPE VIDEOS 2026-09-24 HOUSES OF PRAYER",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEOS 2026-09-24 HOUSES OF PRAYER/cuts/houses_of_prayer_16x9_1080p.mp4",
+   "size_mb": 42.9,
+   "duration_s": 45.6,
+   "caption": "HOUSES OF PRAYER. Eight synagogues and the Ohel, walked in one take.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 14
+  },
+  {
+   "folder": "HYPE VIDEO WEITSMAN YARD 2026-09-24",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEO WEITSMAN YARD 2026-09-24/the_yard_in_owego_16x9.mp4",
+   "size_mb": 156.6,
+   "duration_s": 84.4,
+   "caption": "THE YARD IN OWEGO. Room 152, the yard in Owego, eighty four seconds of scrap and paint.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 15
+  },
+  {
+   "folder": "HYPE VIDEOS 2026-09-23",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEOS 2026-09-23/cuts/twenty_new_rooms_16x9_1080p.mp4",
+   "size_mb": 59.3,
+   "duration_s": 56.1,
+   "caption": "TWENTY NEW ROOMS. Twenty new rooms in THE MUSEUM, from the City Hall rotunda to the rink.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 16
+  },
+  {
+   "folder": "HYPE VIDEOS 2026-09-08",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEOS 2026-09-08/cuts/new_yorkers_the_art_cuts_16x9_2026-09-08.mp4",
+   "size_mb": 43.0,
+   "duration_s": 15.0,
+   "caption": "NEW YORKERS THE ART CUTS. Fifteen seconds inside THE MUSEUM, every wall hung with New Yorkers.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 17
+  },
+  {
+   "folder": "HYPE VIDEOS 2026-09-08",
+   "file": "/Users/degens/Desktop/NEW YORKERS BY MLOW/HYPE VIDEOS 2026-09-08/cuts/new_yorkers_the_rooms_cuts_16x9_2026-09-08.mp4",
+   "size_mb": 29.4,
+   "duration_s": 15.0,
+   "caption": "NEW YORKERS THE ROOMS CUTS. Fifteen seconds inside THE MUSEUM, every wall hung with New Yorkers.",
+   "caption_source": "fallback",
+   "link": "https://n3wyorkers.com/museum",
+   "status": "ready",
+   "notes": [],
+   "day": 18
+  }
+ ]
+}

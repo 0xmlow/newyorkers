@@ -1,0 +1,44 @@
+{
+  "_note": "Friday State: the schedule of states appended to NEW YORKERS tokens. Edit this file, not build_states.py. No dashes anywhere. Dates are the artist's published intent and can move; nothing already on a token is ever removed.",
+  "title": "Friday State",
+  "kicker": "THE CENSUS GROWS ON FRIDAYS",
+  "lede": "A NEW YORKER on a token is a stack of finished states, and the stack grows. New states land on Fridays. This page is the schedule.",
+  "intent": "Dates are the artist's published intent and can move. Nothing already on a token is ever removed.",
+  "appended": {
+    "title": "Already appended",
+    "intro": "What is on the tokens today. On THE CENSUS RELEASE the states live in each token's metadata and viewer: click the art to step through them. On KEYSTONE they are ERC-7160 states the holder pins.",
+    "states": [
+      {"name": "MOSH", "release": "THE CENSUS RELEASE", "range": "Tokens 1 to 1000", "what": "A MOSH LAB glitch still of the piece, the same seed every time, so each token's glitch is its own."},
+      {"name": "MOSH LOOP", "release": "THE CENSUS RELEASE", "range": "Tokens 1 to 1000", "what": "The same glitch as a loop, 1280 wide, sitting between MOSH and DITHER in the stack."},
+      {"name": "DITHER", "release": "THE CENSUS RELEASE", "range": "Tokens 1 to 1000", "what": "The piece as an ordered dither, dark and blue pieces in one ramp, the rest in another."},
+      {"name": "PIXEL", "release": "THE CENSUS RELEASE", "range": "Tokens 1 to 1000", "what": "The 256 pixel portrait from the on chain pixel census, scaled up crisp, before DITHER in the stack."},
+      {"name": "ANIMATED", "release": "THE CENSUS RELEASE", "range": "192 tokens among 1 to 197, plus 300, 600 and 696", "what": "The piece really moves: a five second loop with the VHS inside, first frame equal to last, so it never stops."},
+      {"name": "VHS GLITCH", "release": "THE CENSUS RELEASE", "range": "223 tokens", "what": "The first motion pass, the frozen glitch clips, kept as a state of their own."},
+      {"name": "PAINTED, MOTION, GLITCH, DITHER", "release": "KEYSTONE", "range": "All 111", "what": "Every Keystone carries its still, a motion state, its MOSH LAB glitch loop and two dithers: 660 states across the 111."}
+    ],
+    "note": "States are pre rendered to token 1000 so a New Yorker minted today arrives with its stack. Tokens 1001 to 1111 carry the still alone until their batch is rendered."
+  },
+  "fridays": {
+    "title": "The next four Fridays",
+    "cards": [
+      {"date": "2026-10-09", "label": "Friday October 9", "state": "ANIMATED", "release": "THE CENSUS RELEASE", "tranche": "808 census tokens queued, newest minted first", "line": "The piece itself moves: a five second loop with the VHS inside, first frame equal to last, so it never stops."},
+      {"date": "2026-10-16", "label": "Friday October 16", "state": "BOOTLEG", "release": "KEYSTONE", "tranche": "13 Keystone tokens", "line": "The Canal Street bootlegs: the knockoff of each New Yorker the city would sell off a folding table, appended as a state of its own."},
+      {"date": "2026-10-23", "label": "Friday October 23", "state": "CARD", "release": "KEYSTONE", "tranche": "Every Keystone with one", "line": "The census closes at 11:11 AM ET, and the trading cards, movie posters and memes that only lived on the site go onto the tokens."},
+      {"date": "2026-10-30", "label": "Friday October 30", "state": "THE CATCH UP", "release": "THE CENSUS RELEASE", "tranche": "Every census token minted after 1000", "line": "Everyone counted in the last week gets the full stack: MOSH, MOSH LOOP, DITHER and PIXEL."}
+    ]
+  },
+  "pinning": {
+    "title": "How pinning works",
+    "lines": [
+      "A Keystone is an ERC-7160 token on Transient Labs: one token, a stack of finished states, and the artist can append to the stack after you own it.",
+      "The holder pins the state that shows, from their own wallet on transient.xyz, and can move the pin any time; a state is never taken off the stack.",
+      "Census New Yorkers mint on OpenSea as ERC-721 tokens that are dynamic by metadata: the stack of states lives in each token and its own viewer, so the same Fridays reach them."
+    ],
+    "links": [
+      {"t": "Mint a Keystone on Transient", "u": "https://transient.xyz/mint/newyorkers", "primary": true},
+      {"t": "THE CENSUS RELEASE on OpenSea", "u": "https://opensea.io/collection/newyorkers"},
+      {"t": "Who holds what", "u": "collectors.html"},
+      {"t": "Walk the Keystone ramp", "u": "keystone.html"}
+    ]
+  }
+}

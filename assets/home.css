@@ -321,7 +321,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 
 /* ---------- the hero: a brick wall on a side street, the First Eye Flower pasted on it ---------- */
 .welcome{position:relative;isolation:isolate;overflow:hidden;overflow:clip;min-height:min(92vh,880px)}
-.welcome::before{content:"";position:absolute;inset:0;z-index:-2;background:url(ui/hero.webp) 70% 50%/cover no-repeat;animation:heroDrift 26s ease-in-out infinite alternate}
+/* the drift runs twice and settles: a full screen image scaling forever under a blurred nav kept a visitor's fans at jet engine; it also pauses while the hero is off screen or the tab is in the background (body.still, site.js) */
+.welcome::before{content:"";position:absolute;inset:0;z-index:-2;background:url(ui/hero.webp) 70% 50%/cover no-repeat;animation:heroDrift 26s ease-in-out 2 alternate;will-change:transform}
+body.still .welcome::before,body.still .welcome .spr,body.still .roofline i,body.still .marq .row{animation-play-state:paused}
 .welcome::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(8,13,22,.94) 0,rgba(8,13,22,.78) 34%,rgba(8,13,22,.18) 64%,rgba(8,13,22,.05)),linear-gradient(180deg,rgba(8,13,22,.4),transparent 22%,transparent 72%,var(--ink))}
 @keyframes heroDrift{from{transform:scale(1.02)}to{transform:scale(1.08) translate(-1%,-1%)}}
 .welcome h1{text-shadow:0 6px 40px rgba(0,0,0,.6)}
@@ -454,3 +456,16 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 @media (prefers-reduced-motion:reduce){
   .welcome::before,.welcome .spr,.welcome h1 em::after{animation:none !important}
 }
+
+/* THE WALKABLE GALLERIES (2026-10-12): every walkable place in one row of doors, so nobody has to find them one by one */
+.walks{padding:80px 5vw;border-top:1px solid var(--divider)}
+.walk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px 22px}
+.walk-card{display:block;--lc:var(--l1);border-top:4px solid var(--lc);padding-top:16px;transition:transform .2s var(--ease)}.walk-card:hover{transform:translateY(-4px)}
+.walk-card:nth-child(7n+2){--lc:var(--l4)}.walk-card:nth-child(7n+3){--lc:var(--l7)}.walk-card:nth-child(7n+4){--lc:var(--lA)}.walk-card:nth-child(7n+5){--lc:var(--lB)}.walk-card:nth-child(7n+6){--lc:var(--lG)}.walk-card:nth-child(7n+7){--lc:var(--lJ)}
+.walk-card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:2px;border:6px solid var(--paper);box-shadow:0 14px 30px rgba(0,0,0,.4);display:block}
+.walk-card span{display:flex;flex-direction:column;gap:6px;padding-top:16px}
+.walk-card small{font:10px var(--mono);letter-spacing:.12em;color:var(--cyan)}.walk-card small b{font-weight:400}
+.walk-card strong{font:500 20px var(--serif)}.walk-card em{font:400 13px/1.6 var(--sans);font-style:normal;color:var(--slate)}
+.museum-invite .all-rooms{display:inline-block;margin-left:18px}
+@media(max-width:1000px){.walk-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.walks{padding:52px 6vw}.walk-grid{grid-template-columns:1fr;gap:22px}.museum-invite .all-rooms{display:block;margin:12px 0 0}}

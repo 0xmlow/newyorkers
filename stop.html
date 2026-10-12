@@ -4,21 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your Stop · which New Yorkers get off here · NEW YORKERS by MLow</title>
-<meta name="description" content="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
-<meta name="keywords" content="New York subway art, NYC subway stations, New Yorkers near my stop, painted census of New York, NEW YORKERS by MLow">
+<meta name="description" content="Type a subway station and see every New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
+<meta name="keywords" content="New York subway art, NYC subway stations, New Yorkers near my stop, art census of New York, NEW YORKERS by MLow">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="https://n3wyorkers.com/stop">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <meta property="og:title" content="Your Stop · which New Yorkers get off here · NEW YORKERS by MLow">
-<meta property="og:description" content="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
-<meta property="og:image" content="https://n3wyorkers.com/og.jpg?v=3cea8e5c64">
+<meta property="og:description" content="Type a subway station and see every New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
+<meta property="og:image" content="https://n3wyorkers.com/assets/og/subway-portal-22663acad1.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="N3W YORKERS by MLow: a figure on a wet subway platform facing a violet portal beneath a blooming eye flower.">
+<meta name="twitter:image" content="https://n3wyorkers.com/assets/og/subway-portal-22663acad1.jpg">
+<meta name="twitter:image:alt" content="N3W YORKERS by MLow: a figure on a wet subway platform facing a violet portal beneath a blooming eye flower.">
 <meta property="og:url" content="https://n3wyorkers.com/stop">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
 <meta name="twitter:title" content="Your Stop · which New Yorkers get off here · NEW YORKERS by MLow">
-<meta name="twitter:description" content="Type a subway station and see every painted New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
-<meta name="twitter:image" content="https://n3wyorkers.com/og.jpg?v=3cea8e5c64">
+<meta name="twitter:description" content="Type a subway station and see every New Yorker within three blocks of it. 496 stops, 7,000 placed pieces, one census. Share your stop.">
 <meta name="theme-color" content="#080D16">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
@@ -29,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="assets/site.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Your Stop · NEW YORKERS by MLow","url":"https://n3wyorkers.com/stop","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"Every painted New Yorker within three blocks of any subway station."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Your Stop · NEW YORKERS by MLow","url":"https://n3wyorkers.com/stop","isPartOf":{"@id":"https://n3wyorkers.com/#site"},"description":"Every New Yorker within three blocks of any subway station."}</script>
 
 <style>
 .stop-hero{padding:72px 0 28px}
@@ -74,7 +79,7 @@
   <section class="stop-hero">
     <p class="kicker">YOUR STOP</p>
     <h1>Which New Yorkers <i>get off here?</i></h1>
-    <p class="body" style="max-width:680px">Type a subway station. The census shows every painted New Yorker within about three blocks of it, nearest first, with a link into each record. Share your stop.</p>
+    <p class="body" style="max-width:680px">Type a subway station. The census shows every New Yorker within about three blocks of it, nearest first, with a link into each record. Share your stop.</p>
     <form class="stop-form" id="stopForm" autocomplete="off">
       <input id="stopQ" type="search" placeholder="Bedford Av, 125 St, Jamaica Center..." aria-label="Station name" inputmode="search">
       <button type="button" class="btn ghost" id="stopNear">Nearest to me</button>
@@ -88,7 +93,7 @@
       <div><p class="plate" style="margin-bottom:10px"><span class="n" id="rCount"></span><span class="m" id="rRadius"></span></p><div class="share" id="rShare"></div></div>
     </div>
     <div class="stop-grid" id="rGrid"></div>
-    <p class="stop-empty" id="rEmpty" hidden>Nothing painted within a mile of this stop yet. The census is still being painted. <a href="counted#nominate" style="color:var(--cyan)">Nominate someone who belongs here.</a></p>
+    <p class="stop-empty" id="rEmpty" hidden>No New Yorkers within a mile of this stop yet. The census is still being made. <a href="counted#nominate" style="color:var(--cyan)">Nominate someone who belongs here.</a></p>
     <p class="stop-foot">Places come from the atlas: a piece placed at a site or an area reads first; a piece placed by its scene sits at its neighborhood's centre and is marked. Open the <a href="map" style="color:var(--cyan)">atlas</a> for the whole map, or walk the <a href="museum" style="color:var(--cyan)">museum</a>.</p>
   </section>
 </main>
@@ -137,7 +142,7 @@
       return '<a href="'+B+'n/'+row[0]+'" class="'+(row[2] ? "inf" : "")+'"><img src="'+B+'assets/t/'+p[2]+'.jpg" alt="'+NY.esc(p[1])+'" loading="lazy" width="320" height="180"><div class="c"><small>'+num+' · '+row[1]+' M</small><b>'+NY.esc(p[1])+'</b></div></a>'; }).join("");
     document.getElementById("rEmpty").hidden = n.p.length > 0;
     var url = location.origin + location.pathname.replace(/\.html$/, "") + "#s=" + id;
-    NY.shareRow(document.getElementById("rShare"), {url: url, text: n.p.length + " painted New Yorkers get off at " + s.name + ". Which stop is yours?"});
+    NY.shareRow(document.getElementById("rShare"), {url: url, text: n.p.length + " New Yorkers get off at " + s.name + ". Which stop is yours?"});
     document.getElementById("stopResult").hidden = false;
     if (!quiet) { history.replaceState(null, "", "#s=" + id); document.getElementById("stopResult").scrollIntoView({behavior: "smooth", block: "start"}); }
     if (window.NY && NY.hit) NY.hit("stop", s.name);

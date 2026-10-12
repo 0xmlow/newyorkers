@@ -83,6 +83,18 @@ export const doyers: RoomDef = {
     k.prop('hydrant', 5.4, 0, 8, { height: 1.1, keepOut: 0.5 });
     k.prop('mailbox', -5.4, 0, -4, { height: 1.5, rotY: PI / 2, keepOut: 0.6 });
     k.prop('lantern', 5.2, 0, -12, { height: 1.0 });
+    /* the real signs: the green street sign at the Pell Street end, the tea parlour on the first leg near the bend */
+    k.sign('DOYERS ST', 2.2, 0.4, 4.2, 4.2, 13, '#1f6a3a', '#ffffff', 90, -PI / 2, { border: true });
+    k.sign('南華茶室  NOM WAH TEA PARLOR', 4.4, 0.8, 3.9, 5.2, -12, '#b0261f', '#ffe08a', 90, -PI / 2, { border: true });
+    /* the arcade door on the inside of the bend: a dark steel door and a lit transom over the stair down */
+    k.box(0.12, 2.3, 1.4, -3.96, 1.15, -15.5, iron); k.box(0.1, 0.35, 1.4, -3.95, 2.5, -15.5, warm);
+    /* easter eggs: the real lane */
+    k.egg(v(3.6, 3.6, 13), { id: 'doyers-name', title: 'A distiller\'s lane', year: '1791', text: 'The street is named for Hendrik Doyers, an 18th century Dutch immigrant who bought property facing the Bowery in 1791. He ran a distillery at 6 Doyers and the Plough and Harrow tavern near the Bowery corner. The lane bends because it follows the old route of a stream, and the whole thing is only about 200 feet long.', clue: 'Look up at the green street sign where the lane begins.', source: { name: 'Doyers Street, Wikipedia', url: 'https://en.wikipedia.org/wiki/Doyers_Street' } }, { r: 1.6 });
+    k.egg(v(0, 2.2, -18), { id: 'doyers-bloody-angle', title: 'The Bloody Angle', year: '1994', text: 'Early in the twentieth century the bend became known as the Bloody Angle, or Murder Alley, for the tong killings that went on into the 1930s. Hatchets were used so often that they gave the language the term hatchet man. In 1994 law enforcement officials said more people had died violently here than at any other intersection in the United States.', clue: 'Stand right on the elbow of the lane, where you cannot see either end.', source: { name: 'Doyers Street, Wikipedia', url: 'https://en.wikipedia.org/wiki/Doyers_Street' } }, { r: 1.6 });
+    k.egg(v(3.2, 4.6, -12), { id: 'doyers-nom-wah', title: 'Since 1920', year: '1920', text: 'Nom Wah Tea Parlor opened in 1920 at 15 Doyers and moved next door to 13 Doyers in 1968, and it is called the oldest continuously running restaurant in Manhattan\'s Chinatown. Ed and May Choy ran it mostly as a bakery from the 1940s; their nephew Wally Tang started there at sixteen in 1950 and bought it in 1976. His nephew Wilson Tang, a former investment banker, took over in 2010 and swapped the carts for made to order dim sum.', clue: 'Find the red tea parlour sign just before the bend.', source: { name: 'Nom Wah Tea Parlor, Wikipedia', url: 'https://en.wikipedia.org/wiki/Nom_Wah_Tea_Parlor' } }, { r: 1.6 });
+    k.egg(v(-3.4, 0.9, -15.5), { id: 'doyers-tunnel', title: 'The way out underground', year: '1909', text: 'A tunnel ran from the Chinese theater on Doyers to a boardinghouse on Chatham Square. In 1909 the actor Ah Foon, who had taunted a rival gang from the stage, was walked out through it after a show; he reached his apartment safely but was shot on the landing that night. The passage later became an underground arcade of feng shui shops, employment and travel agencies, and one entrance is still in the middle of the street.', clue: 'Look low on the inside of the bend for a door that goes down.', source: { name: 'The Doyers Street Tunnel in Chinatown, Untapped Cities', url: 'https://untappedcities.com/2012/11/26/the-doyers-street-tunnel-in-chinatown-the-bloody-angle/' } }, { r: 1.6 });
+    k.egg(v(0, 6.2, 2), { id: 'doyers-lanterns', title: 'Light Up Chinatown', year: '2021', text: 'In September 2021 lanterns were strung over the lane as part of the Light Up Chinatown initiative, alongside a tribute mural to the photographer Corky Lee. The same year the pavement itself was painted with Rice Terraces, a 4,800 square foot mural by Dasic Fernández. In 2017 the street had been made pedestrian only by day for a one month pilot.', clue: 'Look up at the strings of red lanterns over the first leg.', source: { name: 'Doyers Street, Wikipedia', url: 'https://en.wikipedia.org/wiki/Doyers_Street' } }, { r: 1.6 });
+    k.egg(v(-23.8, 2.4, -38.2), { id: 'doyers-theater', title: 'The first Chinese theater', year: '1893', text: 'From 1893 to 1911, 5 to 7 Doyers held the city\'s first Chinese language theater, later turned into a rescue mission for the homeless. In 1903 it staged a fundraiser for the Jewish victims of the Kishinev massacre. In 1905 a shooting in the packed house, which held about 400 people, killed three.', clue: 'Walk on past the banquet hall toward the Bowery end of the lane.', source: { name: 'Doyers Street, Wikipedia', url: 'https://en.wikipedia.org/wiki/Doyers_Street' } }, { r: 1.6 });
     // the banquet hall upstairs: a stair from the lane into a long room over the bend
     const HX = -14, HZ = -30, HW = 18, HD = 22, HY = 4.6;
     for (let i = 0; i < 14; i++) k.box(2.4, 0.33, 0.9, -6, 0.16 + i * 0.33, -18 - i * 0.9, wood);
@@ -131,7 +143,7 @@ export const strivers: RoomDef = {
   mood: 'Sunday in Harlem',
   color: '#c98a6a',
   description: 'A block of Harlem row houses, and inside one of them the parlour floor: pocket doors, a piano, the census in gilt on the walls.',
-  signatures: 'The unbroken row of brownstones and buff brick with high stoops, the tree lined block, the parlour with its bay window, marble mantel, pocket doors and pressed tin ceiling.',
+  signatures: 'The unbroken row of yellow brick with white limestone trim and stoops, the alley gate that says walk your horses, the tree lined block, the parlour with its bay window, marble mantel, pocket doors and pressed tin ceiling.',
   build(k, ctx) {
     k.sky({ top: 0x7fa8d6, horizon: 0xeae7de, ground: 0x5f5a52, fog: 0.0028, sun: { az: 1.4, el: 0.55, color: 0xfff1d8, size: 14 }, env: 0.85 });
     k.hemi(0xfff4e6, 0x4a4238, 0.85);
@@ -153,12 +165,16 @@ export const strivers: RoomDef = {
     street(k, { w: 16, len: 120, z: -10 });
     const rnd = X.mulberry(33);
     for (let i = 0; i < 12; i++) { const x = 12.5 + 0, z = 40 - i * 7; void x; k.tree(-12.4, 0, z + 3, { kind: 'round', h: 6 + rnd() * 3, r: 3 + rnd(), leaf: 0x3f6b36, seed: i }); }
-    for (let i = 0; i < 6; i++) k.tree(12.6, 0, 34 - i * 12, { kind: 'round', h: 6 + rnd() * 3, r: 3 + rnd(), leaf: 0x3f6b36, seed: 30 + i });
-    // the row: eleven houses, alternating brownstone and buff, every one with a stoop and a bay
+    /* the near side trees stood at x = 12.6, inside the house fronts (which start at HX = 12.4); they belong at the kerb */
+    for (let i = 0; i < 6; i++) k.tree(8.8, 0, 34 - i * 12, { kind: 'round', h: 6 + rnd() * 3, r: 3 + rnd(), leaf: 0x3f6b36, seed: 30 + i });
+    /* the row: eleven houses, every one with a stoop and a bay. Each block face of the real district is one architect's
+       uniform row, so this is the north side of West 138th, Bruce Price and Clarence Luce: yellow brick with white
+       limestone trim, not the old brownstone and buff alternation. */
     const HX = 12.4;
     for (let i = 0; i < 11; i++) {
-      const z = 40 - i * 7.4, m = i % 3 === 1 ? buff : brown, h = 16 + (i % 2) * 1.2;
+      const z = 40 - i * 7.4, m = buff, h = 16 + (i % 2) * 1.2;
       k.box(14, h, 7.2, HX + 7, h / 2, z, m);
+      k.box(0.12, 0.3, 7.2, HX - 0.04, 7.8, z, cornice); k.box(0.12, 0.3, 7.2, HX - 0.04, 11.0, z, cornice);
       k.moulding([[0, 0], [0.8, 0], [0.9, 0.25], [0.6, 0.45], [0.7, 0.7], [0.3, 0.9], [0, 1.0]], 7.4, HX - 0.05, h - 0.6, z, cornice, 0);
       for (let f = 0; f < 3; f++) { const y = 6.2 + f * 3.2; for (const dz of [-2.4, 0, 2.4]) { k.box(0.2, 2.2, 1.3, HX - 0.06, y, z + dz, cornice); k.box(0.05, 1.9, 1.05, HX + 0.06, y, z + dz, rnd() > 0.6 ? warm : glass); } }
       k.box(1.4, 3.2, 2.4, HX - 0.7, 4.6, z + 1.4, m);
@@ -170,6 +186,15 @@ export const strivers: RoomDef = {
     }
     k.block(HX - 0.4, HX + 14, -45, 44);
     blockFront(k, { x: -12.4, z0: 40, count: 11, face: 1, seed: 53, h: [14, 18] });
+    /* the alley gate past the end of the row: two piers, an iron gate, and the words cast on them */
+    for (const z of [44.3, 47.5]) k.box(0.7, 2.8, 0.7, HX + 0.35, 1.4, z, cornice);
+    for (let z = 44.9; z < 47.1; z += 0.22) k.box(0.05, 2.0, 0.05, HX + 0.35, 1.0, z, iron);
+    k.box(0.08, 0.08, 2.6, HX + 0.35, 1.95, 45.9, iron);
+    k.sign('PRIVATE ROAD  ·  WALK YOUR HORSES', 3.8, 0.42, HX - 0.05, 3.05, 45.9, '#e8e0cc', '#2a2a2a', 70, -PI / 2, { border: true });
+    /* easter eggs: the real block */
+    k.egg(v(HX - 0.4, 1.8, 45.9), { id: 'strivers-horses', title: 'Walk your horses', text: 'The houses were built back to back around shared rear courtyards, with alleys behind them, a rarity in Manhattan. The alleys let horses be stabled and supplies delivered out of sight of the parlours. The gate posts still carry the words Private Road, Walk Your Horses; today the back is used almost entirely for parking.', clue: 'Walk to the north end of the row and read the gate posts.', source: { name: 'History of Streets: Strivers\' Row, Untapped Cities', url: 'https://untappedcities.com/2012/12/20/history-of-streets-strivers-row/' } }, { r: 1.6 });
+    k.egg(v(HX - 1.2, 8.6, 25.2), { id: 'strivers-three-architects', title: 'Three architects, one block', year: '1891', text: 'The developer David H. King Jr. built the King Model Houses in 1891 to 1893 and gave each row to a different architect. James Brown Lord did red brick and brownstone on the south side of West 138th, Bruce Price and Clarence Luce did yellow brick with white limestone on the north side of 138th and the south side of 139th, and Stanford White of McKim, Mead and White did dark brick and brownstone on the north side of 139th.', clue: 'Look up at the yellow brick and the limestone bands of the row.', source: { name: 'St. Nicholas Historic District, Wikipedia', url: 'https://en.wikipedia.org/wiki/St._Nicholas_Historic_District' } }, { r: 1.6 });
+    k.egg(v(9.4, 5.2, 4), { id: 'strivers-landmark', title: 'Landmarked in 1967', year: '1967', text: 'The block is the St. Nicholas Historic District: both sides of West 138th and West 139th Streets between Adam Clayton Powell Jr. Boulevard and Frederick Douglass Boulevard, 9.9 acres in all. The city made it a landmark on March 16, 1967, and it joined the National Register of Historic Places in 1975. Only the outsides are protected, so the interiors can still be renovated.', clue: 'Find the street lamp in front of the middle of the row.', source: { name: 'St. Nicholas Historic District, Wikipedia', url: 'https://en.wikipedia.org/wiki/St._Nicholas_Historic_District' } }, { r: 1.6 });
     k.prop('hydrant', 9.6, 0, 20, { height: 1.1, keepOut: 0.5 });
     k.prop('mailbox', -9.8, 0, 6, { height: 1.5, rotY: PI / 2, keepOut: 0.6 });
     for (const z of [30, 4, -22]) for (const s of [-1, 1]) k.lamp(s * 9.4, z, 6, iron, 0xffd9a8, 26);
@@ -212,6 +237,9 @@ export const strivers: RoomDef = {
     k.keepOut.push({ x: PX - 2.6, z: PZ - 12, r: 1.6 });
     for (const z of [PZ - 2, PZ - 12]) { k.point(PX, PY + 4.6, z, 0xffe0b8, 24, 12); for (let j = 0; j < 8; j++) { const a = (j / 8) * PI * 2; k.sphere(0.07, PX + Math.cos(a) * 0.6, PY + 4.4, z + Math.sin(a) * 0.6, k.glow(0xfff0d0), 6); } }
     k.censusWall({ x: PX + PW / 2 - 0.22, y: PY + 2.9, z: PZ - 13, rotY: -PI / 2, cols: 12, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(1100, 48), pieces: ctx.all, backing: oak });
+    k.egg(v(HX - 0.9, PY + 1.6, PZ - 1.6), { id: 'strivers-empty', title: 'Empty for twenty years', year: '1919', text: 'King sold very few houses, and in 1895 the Equitable Life Assurance Society, which had financed the project, foreclosed on almost all of them. The houses sat empty until 1919 to 1920, when they were at last made available to African Americans, for $8,000 each.', clue: 'Stand in the front door at the top of the stoop.', source: { name: 'St. Nicholas Historic District, Wikipedia', url: 'https://en.wikipedia.org/wiki/St._Nicholas_Historic_District' } }, { r: 1.6 });
+    k.egg(v(PX + 2.6, PY + 1.4, PZ - 10), { id: 'strivers-piano', title: 'Who lived on the row', text: 'The residents of these two blocks included Eubie Blake, W. C. Handy, Fletcher Henderson, Bill Bojangles Robinson, the boxer Harry Wills, the surgeon Louis T. Wright and Adam Clayton Powell Jr.', clue: 'Lift the lid of the piano in the parlour.', source: { name: 'St. Nicholas Historic District, Wikipedia', url: 'https://en.wikipedia.org/wiki/St._Nicholas_Historic_District' } }, { r: 1.6 });
+    k.egg(v(PX, PY + 1.0, PZ - PD + 4.2), { id: 'strivers-plumbing', title: 'Indoor plumbing', year: '1893', text: 'Each house is about 18 to 22 feet wide and 50 feet deep, and they cost about $1.5 million to build. They were sold on modern comforts, among them indoor plumbing, still a new and sought after amenity when the rows went up. The row turns up in songs too, in Earl Hines\'s Topsy Turvy and Cab Calloway\'s The Ghost of Smokey Joe.', clue: 'Warm your hands at the marble mantel.', source: { name: 'History of Streets: Strivers\' Row, Untapped Cities', url: 'https://untappedcities.com/2012/12/20/history-of-streets-strivers-row/' } }, { r: 1.6 });
     // the works: gilt on the parlour walls, the front room, and along the block as stoop signs
     const mounts: Mount[] = [];
     for (let i = 0; i < 4; i++) { const z = PZ - 1 - i * 1.3 * 0 - i * 1.2; void z; }
@@ -258,10 +286,19 @@ export const rock: RoomDef = {
     for (const [y, z, w, d] of decks) {
       k.box(w, 1.6, d, 0, y - 0.8, z, lime);
       k.box(w - 1, 0.2, d - 1, 0, y + 0.1, z, pav);
-      for (const s of [-1, 1]) { k.box(0.12, 2.6, d - 1, s * (w / 2 - 0.4), y + 1.4, z, glass); k.box(0.12, 0.1, d - 1, s * (w / 2 - 0.4), y + 2.7, z, steel); for (let zz = z - d / 2 + 0.5; zz <= z + d / 2; zz += 3) k.box(0.4, 2.8, 0.4, s * (w / 2 - 0.4), y + 1.4, zz, lime); }
-      k.box(w - 1, 2.6, 0.12, 0, y + 1.4, z - d / 2 + 0.4, glass);
-      k.box(w - 1, 0.1, 0.12, 0, y + 2.7, z - d / 2 + 0.4, steel);
-      for (let xx = -w / 2 + 0.9; xx <= w / 2 - 0.5; xx += 3) k.box(0.4, 2.8, 0.4, xx, y + 1.4, z - d / 2 + 0.4, lime);
+      /* The 67th and 69th floor terraces have the 8.5 foot frameless glass parapet. The 70th floor roof is the one
+         level with no glass at all, open to the sky over a low limestone parapet, so the top deck gets stone only. */
+      if (y < 15) {
+        for (const s of [-1, 1]) { k.box(0.12, 2.6, d - 1, s * (w / 2 - 0.4), y + 1.4, z, glass); k.box(0.12, 0.1, d - 1, s * (w / 2 - 0.4), y + 2.7, z, steel); for (let zz = z - d / 2 + 0.5; zz <= z + d / 2; zz += 3) k.box(0.4, 2.8, 0.4, s * (w / 2 - 0.4), y + 1.4, zz, lime); }
+        k.box(w - 1, 2.6, 0.12, 0, y + 1.4, z - d / 2 + 0.4, glass);
+        k.box(w - 1, 0.1, 0.12, 0, y + 2.7, z - d / 2 + 0.4, steel);
+        for (let xx = -w / 2 + 0.9; xx <= w / 2 - 0.5; xx += 3) k.box(0.4, 2.8, 0.4, xx, y + 1.4, z - d / 2 + 0.4, lime);
+      } else {
+        for (const s of [-1, 1]) k.box(0.4, 1.1, d - 1, s * (w / 2 - 0.4), y + 0.65, z, lime);
+        k.box(w - 1, 1.1, 0.4, 0, y + 0.65, z - d / 2 + 0.4, lime);
+        /* two limestone screens carry the pair of works that used to hang on the glass */
+        for (const xx of [-5, 5]) k.box(3.8, 2.6, 0.3, xx, y + 1.4, z - d / 2 + 0.25, lime);
+      }
       k.block(-w / 2, w / 2, z - d / 2 - 1, z - d / 2 + 0.6);
       k.block(-w / 2 - 1, -w / 2 + 0.6, z - d / 2, z + d / 2);
       k.block(w / 2 - 0.6, w / 2 + 1, z - d / 2, z + d / 2);
@@ -296,6 +333,16 @@ export const rock: RoomDef = {
     k.prop('lantern', -14, 0.2, 6, { height: 0.9 });
     k.censusWall({ x: 0, y: 3.2, z: -9.35, rotY: 0, cols: 26, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(2500, 78), pieces: ctx.all, backing: lime });
     k.sign('TOP OF THE ROCK  ·  SEVENTY FLOORS', 8, 0.7, 0, 5.4, -9.35, '#2a2a30', '#f4efe0', 80, 0, { border: true });
+    /* the spherical beacon on the 70th floor roof */
+    k.cyl(0.35, 1.0, 0, 15.6, -24.6, steel, 0.45, 12); k.sphere(0.55, 0, 16.6, -24.6, k.glow(0xe8f0ff), 20); k.point(0, 16.8, -24.6, 0xdfe8ff, 6, 8); k.keepOut.push({ x: 0, z: -24.6, r: 0.9 });
+    /* easter eggs */
+    const W30 = { name: '30 Rockefeller Plaza, Wikipedia', url: 'https://en.wikipedia.org/wiki/30_Rockefeller_Plaza' };
+    k.egg(v(0, 4.6, -9.1), { id: 'rock-sixty-six', title: 'Seventy floors, nearly', text: 'The tower itself has 66 stories. The famous figure of 70 comes from what the encyclopedia calls a hyperbolic press release by Merle Crowell, the complex\'s publicist while it was going up. The decks are still sold as the 67th, 69th and 70th floors, about 850 feet above the street.', clue: 'Read the sign over the census wall, then count again.', source: W30 }, { r: 1.6 });
+    k.egg(v(-8, 1.6, 9.2), { id: 'rock-glass', title: 'Frameless', year: '2005', text: 'The deck closed in 1986 and reopened in 2005 as Top of the Rock after a renovation by Gabellini Sheppard Associates. That is when the 8.5 foot parapet of frameless safety glass went in around the terraces. By 2011 it drew about 2.5 million visitors a year.', clue: 'Put your hand on the glass at the north edge, facing the park.', source: W30 }, { r: 1.6 });
+    k.egg(v(-6, 1.2, -2), { id: 'rock-ocean-liner', title: 'Deck chairs in the sky', year: '1933', text: 'The observation deck first opened in July 1933, with terraces on the 67th, 69th and 70th floors. It was decorated in the style of an ocean liner, with slatted chairs, and the original deck measured 190 by 21 feet.', clue: 'Sit on the bench on the lower terrace.', source: W30 }, { r: 1.6 });
+    k.egg(v(12, 1.6, -6), { id: 'rock-freight', title: 'Up the freight shafts', text: 'Visitors come in by their own entrance on 50th Street and ride two elevators converted from freight elevator shafts to the 67th floor. There a double height indoor observatory leads by escalator to the 69th.', clue: 'Stand at the foot of the stair that climbs to the next terrace.', source: W30 }, { r: 1.6 });
+    k.egg(v(8, 9.4, -14), { id: 'rock-lunch', title: 'Lunch on the 69th floor', year: '1932', text: 'The photograph Lunch Atop a Skyscraper was taken on September 20, 1932, while the 69th floor was under construction, as part of a publicity stunt for the RCA Building. The 69th floor now has the Beam, a ride themed on the photo that seats seven and turns 12 feet above the terrace. The tower topped out six days after the picture, on September 26, with an American flag.', clue: 'Climb to the middle terrace, the 69th floor, and stand at its glass.', source: W30 }, { r: 1.6 });
+    k.egg(v(0, 17.6, -24.6), { id: 'rock-beacon', title: 'A beacon and a starry floor', text: 'The 70th floor roof is the one level with no glass. It carries a spherical rooftop beacon and floor tiles laid in a celestial pattern, and, as of 2024, a rotating Skylift ride as well.', clue: 'Climb to the top terrace and find the glowing sphere.', source: W30 }, { r: 1.6 });
     // the works: glass mounted panels on the deck edges facing in, on the piers, on the upper terraces
     const mounts: Mount[] = [];
     for (let i = 0; i < 8; i++) { const x = -14 + i * 4; mounts.push({ position: v(x, 1.6, 9.45), rotation: PI, target: v(x, 3, 5), width: 3.4, height: 2.0, style: 'steel', wash: false }); }
@@ -357,11 +404,17 @@ export const frick: RoomDef = {
     for (let x = -CW / 2 - 2; x <= CW / 2 + 2; x += 2.8) k.box(0.14, 0.3, CD + 8, CX + x, 14.3, CZ, iron);
     for (let z = -CD / 2 - 2; z <= CD / 2 + 2; z += 2.8) k.box(CW + 8, 0.3, 0.14, CX, 14.3, CZ + z, iron);
     k.box(MW, 0.4, MD, MX, -0.05, MZ, floorM);
-    k.mesh(new T.CylinderGeometry(3.6, 3.8, 0.7, 40), marble, CX, 0.35, CZ);
-    k.mesh(new T.CylinderGeometry(3.2, 3.2, 0.7, 40), water, CX, 0.4, CZ);
-    k.lathe([[0.9, 0], [0.6, 0.4], [0.3, 1.2], [1.2, 1.4], [1.2, 1.6], [0.2, 1.8], [0.2, 2.6]], CX, 0.7, CZ, marble, 24);
-    k.keepOut.push({ x: CX, z: CZ, r: 4.2 });
-    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2; k.mesh(new T.CylinderGeometry(0.03, 0.08, 2, 6), k.glow(0xdff4ff), CX + Math.cos(a) * 0.9, 2.6, CZ + Math.sin(a) * 0.9, true).rotation.z = Math.cos(a) * 0.3; }
+    /* The real fountain is a pool that runs the length of the court, with a tiered set of basins and a finial in the
+       middle, all St. Genevieve marble, and two small bronze frogs at the ends spraying toward the centre. It was a
+       round basin here. */
+    const PL = 16, PWd = 3.2;
+    k.box(PWd + 0.6, 0.5, PL + 0.6, CX, 0.25, CZ, marble);
+    k.box(PWd, 0.5, PL, CX, 0.3, CZ, water);
+    k.lathe([[0.9, 0], [0.6, 0.4], [0.3, 1.2], [1.2, 1.4], [1.2, 1.6], [0.2, 1.8], [0.2, 2.6]], CX, 0.55, CZ, marble, 24);
+    const frogM = k.flat(0x4a5a3a, 0.7, 0.45);
+    for (const s of [-1, 1]) { const fz = CZ + s * (PL / 2 - 0.5); k.sphere(0.22, CX, 0.62, fz, frogM, 10); k.sphere(0.12, CX, 0.78, fz - s * 0.16, frogM, 8); k.mesh(new T.CylinderGeometry(0.02, 0.05, PL / 2 - 1.4, 5), k.glow(0xdff4ff), CX, 1.2, CZ + s * (PL / 4), true).rotation.x = PI / 2 + s * 0.08; }
+    for (let z = -PL / 2 + 1.5; z <= PL / 2 - 1.5; z += 2.6) k.keepOut.push({ x: CX, z: CZ + z, r: 2.0 });
+    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2; k.mesh(new T.CylinderGeometry(0.03, 0.08, 2, 6), k.glow(0xdff4ff), CX + Math.cos(a) * 0.9, 2.45, CZ + Math.sin(a) * 0.9, true).rotation.z = Math.cos(a) * 0.3; }
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = CZ - 9 + i * 6; for (const d of [-0.9, 0.9]) k.column(CX + s * (CW / 2 + 1.2), 0.1, z + d, 12.6, 0.44, marble, true); }
     for (let i = 0; i < 3; i++) { const x = CX - 6 + i * 6; for (const d of [-0.9, 0.9]) { k.column(x + d, 0.1, CZ - CD / 2 - 1.2, 12.6, 0.44, marble, true); k.column(x + d, 0.1, CZ + CD / 2 + 1.2, 12.6, 0.44, marble, true); } }
     for (const s of [-1, 1]) k.box(1.2, 1.4, CD + 2.4, CX + s * (CW / 2 + 1.2), 13.3, CZ, marble);
@@ -381,6 +434,14 @@ export const frick: RoomDef = {
     k.point(CX, 12, CZ, 0xffffff, 60, 30);
     k.censusWall({ x: MX, y: 4.6, z: MZ + CD / 2 + 5.75, rotY: PI, cols: 26, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(3000, 104), pieces: ctx.all, backing: panel });
     k.sign('FIFTH AVENUE  ·  THE GARDEN COURT', 8, 0.7, MX, 8.4, MZ + CD / 2 + 5.75, '#3a2a1a', '#f4e8c8', 90, PI, { border: true });
+    /* easter eggs */
+    const WF = { name: 'The Frick Collection, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Frick_Collection' };
+    k.egg(v(CX, 0.9, CZ + 7.5), { id: 'frick-frogs', title: 'Two bronze frogs', text: 'The pool runs the length of the court, with a tiered set of basins and a finial in the middle, all carved from St. Genevieve marble from Missouri. At the ends, two small bronze frogs spray toward the centre. The fountain ran without a break from the 1930s until the renovation began in 2020.', clue: 'Crouch at the end of the long pool and look for the frog.', source: { name: 'Garden Court Fountain Conservation, EverGreene', url: 'https://evergreene.com/projects/garden-court-fountain-conservation/' } }, { r: 1.6 });
+    k.egg(v(CX - CW / 2 - 1.2, 4.2, CZ - 3), { id: 'frick-carriage-court', title: 'Once the driveway', year: '1932', text: 'This was an open courtyard of the Frick house, the carriage court. To turn the mansion into a museum, John Russell Pope proposed clearing it and enclosing it under glass as a garden court with palms, plants and a sunken pool and fountain, and the idea seems to have won him the commission in March 1932. Hastings\'s old porte cochere was moved to become the museum\'s doorway.', clue: 'Stand among the paired columns and look up at the glass roof.', source: { name: 'The Frick Collection at 75: The Garden Court, The Frick Collection', url: 'https://www.frick.org/exhibitions/past/2010/75th/garden_court' } }, { r: 1.6 });
+    k.egg(v(MX, 6.6, MZ + CD / 2 + 5.6), { id: 'frick-bequest', title: 'A house left to the public', year: '1919', text: 'Henry Clay Frick died in 1919 at 69 and left the house as a public museum for his art collection. The collection held 635 pieces of art and decoration when he died; by 2025 it had about 1,800.', clue: 'Read the sign over the census wall at the end of the court.', source: WF }, { r: 1.6 });
+    k.egg(v(MX + CW / 2 + 2.6, 0.4, MZ + CD / 2 + 4), { id: 'frick-bowling', title: 'A bowling alley downstairs', text: 'The mansion has a bowling alley in the basement. Before the Frick Art Reference Library got its own building, the alley was used to store the library\'s collection.', clue: 'Look down at the floor in the far corner of the east gallery, as if you could see through it.', source: WF }, { r: 1.6 });
+    k.egg(v(MX - MW / 2 - 0.6, 3.6, MZ + 12), { id: 'frick-reopened', title: 'Reopened in 2025', year: '2025', text: 'Annabelle Selldorf\'s plan to expand and renovate the museum was announced in April 2018 and approved by the Landmarks Preservation Commission that June. The Frick reopened on April 17, 2025, and that June it opened its first restaurant, Westmoreland.', clue: 'Stand at the front door under its pediment.', source: WF }, { r: 1.6 });
+    k.egg(v(-19, 2.8, 10), { id: 'frick-hastings', title: '1 East 70th Street', year: '1914', text: 'Thomas Hastings of Carrere and Hastings designed the house at 1 East 70th Street, completed in 1914, with a facade of Indiana limestone. The lawn in front of it is mostly closed to the public. The garden on 70th Street came later, with the 1977 annex, designed by the British landscape architect Russell Page.', clue: 'Walk up to the iron fence along the avenue and look at the limestone house.', source: WF }, { r: 1.6 });
     // the works: the two long galleries in gilt, the court's end walls, the avenue front
     const mounts: Mount[] = [];
     /* These ten hang on the outer walls at MX +/- 14.64 and face inward, but the
@@ -435,10 +496,14 @@ export const seaport: RoomDef = {
     k.prop('bell', 4.4, 1.8, -2, { height: 0.9 });
     k.box(0.25, 1.8, 0.25, 4.4, 0.9, -2, iron);
     // the row: brick counting houses with granite piers, shopfronts on the ground floor
+    /* The Fulton Street buildings are four storeys (2 Fulton has six) of plain red Flemish bond brick under one slate
+       roof, "the only file of slant-roof warehouses still intact in New York City". They were 14 to 18 m with flat tops. */
+    const slate = k.flat(0x4a4e56, 0.1, 0.72);
     for (let i = 0; i < 7; i++) {
-      const z = 14 - i * 10, h = 14 + (i % 3) * 2;
+      const z = 14 - i * 10, h = i === 0 ? 18.4 : 13.6;
       k.box(12, h, 9.6, -26, h / 2, z, brick);
       k.box(12.4, 0.6, 9.8, -26, h, z, granite);
+      { const g = new T.CylinderGeometry(1, 1, 9.8, 3); g.rotateX(-PI / 2); const r = k.mesh(g, slate, -26, h + 1.3, z); r.scale.set(7.2, 2, 1); }
       for (let dz = -3.6; dz <= 3.6; dz += 2.4) { k.box(0.6, 3.6, 0.5, -20, 1.8, z + dz, granite); }
       k.box(0.1, 3.4, 8.4, -19.85, 1.9, z, glass);
       for (let y = 6; y < h - 1; y += 2.8) for (const dz of [-3, 0, 3]) { k.box(0.2, 2, 1.3, -19.94, y, z + dz, granite); k.box(0.05, 1.7, 1.05, -19.86, y, z + dz, (i + Math.round(y)) % 3 === 0 ? warm : glass); }
@@ -448,6 +513,12 @@ export const seaport: RoomDef = {
     for (const z of [8, -18, -44]) k.lamp(-15, z, 6, iron, 0xffd9a8, 26);
     k.prop('lamppost', 2, 0, -46, { height: 6 });
     k.sign('SCHERMERHORN ROW  ·  1812', 6, 0.6, -19.8, 4.4, -16, '#2a3a48', '#f4efe0', 80, PI / 2, { border: true });
+    /* easter eggs */
+    const WS = { name: 'Schermerhorn Row, Wikipedia', url: 'https://en.wikipedia.org/wiki/Schermerhorn_Row' }, WW = { name: 'Wavertree (ship), Wikipedia', url: 'https://en.wikipedia.org/wiki/Wavertree_(ship)' };
+    k.egg(v(-19.6, 5.6, -16), { id: 'seaport-saved', title: 'Nearly an office tower', year: '1968', text: 'Schermerhorn Row is about twenty buildings on Fulton, Front, John and South Streets, the Fulton Street ones from 1811 to 1812, named for the developer Peter Schermerhorn. A developer once wanted the block replaced by an office building, and the South Street Seaport Museum spent millions on legal fees to save it. The city made the buildings landmarks on October 29, 1968.', clue: 'Read the Schermerhorn Row sign on the brick front.', source: WS }, { r: 1.6 });
+    k.egg(v(-20.2, 15.5, 4), { id: 'seaport-slant-roofs', title: 'The last slant roofs', year: '1812', text: 'The Fulton Street buildings were built nearly identical, four storeys of plain red brick in Flemish bond under one shared slate roof. The New York Times called them the only file of slant roof warehouses still intact in New York City. The museum\'s curator compared their scale to City Hall\'s.', clue: 'Look up at the slate roofs above the row.', source: WS }, { r: 1.6 });
+    k.egg(v(-18.6, 0.4, -6), { id: 'seaport-landfill', title: 'Built on the river', text: 'Before the colony, this ground was under the East River, and the shoreline ran along Water and Pearl Streets, about three blocks inland. The block stands on land filled in between Burling Slip and Beekman Slip, and the shore did not reach South Street until the 1810s. The original wooden plank footings are kept soaked in salt water so they do not rot.', clue: 'Look down at the cobbles where the row meets the street.', source: WS }, { r: 1.6 });
+    k.egg(v(16, 0.9, -14), { id: 'seaport-fish-market', title: 'Across Fulton Street', year: '1816', text: 'Ferry service from here to Brooklyn began in 1814, and the Fulton Market opened across Fulton Street in 1816, the forerunner of the Fulton Fish Market. Sweet\'s Seafood House stayed in the row for over a century. Hotel rooms on the block were once under 100 square feet, with no heat, lighting or bathrooms.', clue: 'Find the lobster trap on the pier.', source: WS }, { r: 1.6 });
     // the ship: hull, deck, three masts with yards, rigging, furled sails
     const SX = 28, SZ = -34, SL = 70;
     const h = k.mesh(new T.SphereGeometry(1, 24, 12, 0, PI * 2, PI / 2, PI / 2), hull, SX, 1.8, SZ);
@@ -491,6 +562,8 @@ export const seaport: RoomDef = {
     k.block(SX - 7, SX + 7, SZ - SL / 2 - 1, SZ - SL / 2 + 3);
     k.block(SX - 7, SX + 7, SZ + SL / 2 - 3, SZ + SL / 2 + 1);
     k.keepOut.push({ x: SX, z: SZ - 24, r: 6 });
+    k.egg(v(SX, 4.0, SZ + 12), { id: 'seaport-wavertree', title: 'Wrought iron', year: '1885', text: 'The museum\'s tall ship Wavertree was built in Southampton in 1885 as Southgate, one of the last large sailing ships built of wrought iron, and is called the largest wrought iron sailing vessel afloat. She carried jute between eastern India and Scotland, then tramped cargo anywhere in the world.', clue: 'Walk up the gangway onto the deck.', source: WW }, { r: 1.6 });
+    k.egg(v(SX + 1.2, 4.2, SZ), { id: 'seaport-cape-horn', title: 'Dismasted off Cape Horn', year: '1910', text: 'In 1910 Wavertree was dismasted off Cape Horn and barely reached the Falklands. Instead of re-rigging her, her owners sold her as a floating warehouse at Punta Arenas, and from 1947 she was a sand barge in Buenos Aires. An American found her there in 1967, the Seaport Museum bought her in 1968, and a $13 million restoration on Staten Island brought her back in 2016.', clue: 'Stand at the foot of the mainmast.', source: WW }, { r: 1.6 });
     for (const mz of [SZ - 20, SZ, SZ + 20]) k.keepOut.push({ x: SX, z: mz, r: 0.9 });
     // the bridge over the rooftops, the far shore
     for (const x of [-60, 20]) { for (const dz of [-2, 2]) k.arch(4, 18, 3, x, 6, -140 + dz, granite, true, 0.7); k.box(12, 0.9, 6, x, 30, -140, granite); }

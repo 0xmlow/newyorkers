@@ -15,7 +15,7 @@ export const morgan: RoomDef = {
   area: 'THE MORGAN LIBRARY',
   mood: 'Reading lamp afternoon',
   color: '#b8864a',
-  description: 'Madison Avenue, the marble palazzo, then the East Room: three storeys of walnut bookcases with two walkable balconies, the painted ceiling, the works between the tiers.',
+  description: 'East 36th Street off Madison Avenue, the marble palazzo, then the East Room: three storeys of walnut bookcases with two walkable balconies, the painted ceiling, the works between the tiers.',
   signatures: 'The McKim palazzo of dry laid marble, the East Room of triple tiered inlaid walnut bookcases behind bronze grilles, the narrow balconies, the tapestry over the fireplace, the lunettes and the painted ceiling.',
   build(k, ctx) {
     k.sky({ top: 0x7fa0d0, horizon: 0xe8e8e0, ground: 0x5a5a55, fog: 0.0022, sun: { az: 3.9, el: 0.7, color: 0xfff4e6, size: 12 }, env: 0.8 });
@@ -41,7 +41,9 @@ export const morgan: RoomDef = {
     k.arch(4.4, 6.4, 5.2, 0, 0, FZ - 2.2, marble, false, 0.85);
     for (const s of [-1, 1]) { k.column(s * 3.6, 0.1, FZ + 0.6, 6.2, 0.5, marble, true); k.column(s * 5.2, 0.1, FZ + 0.6, 6.2, 0.5, marble, true); }
     k.box(RW + 24, 1.4, 6, 0, 7.4, FZ + 0.5, marble);
-    for (const s of [-1, 1]) { k.box(1.2, 1.8, 1.2, s * 4.4, 0.9, FZ + 4, marble); k.mesh(new T.SphereGeometry(0.8, 12, 8), bronze, s * 4.4, 2.4, FZ + 4); k.mesh(new T.SphereGeometry(0.5, 10, 6), bronze, s * 4.4, 3.4, FZ + 4.6); }
+    // Edward Clark Potter's two marble lionesses flank the steps (they were bronze balls here), couchant on their plinths
+    const lionesses: T.Object3D[] = [];
+    for (const s of [-1, 1]) { k.box(1.2, 1.8, 1.8, s * 4.4, 0.9, FZ + 4, marble); const body = k.box(0.9, 0.7, 1.6, s * 4.4, 2.15, FZ + 3.9, marble); lionesses.push(body); k.box(0.7, 0.75, 0.6, s * 4.4, 2.5, FZ + 4.7, marble); k.box(0.9, 0.18, 0.5, s * 4.4, 1.89, FZ + 4.85, marble); }
     k.block(-RW / 2 - 12, -2.2, FZ - 0.5, FZ + 0.5); k.block(2.2, RW / 2 + 12, FZ - 0.5, FZ + 0.5);
     for (let i = 0; i < 4; i++) k.box(RW + 4, 0.16, 1.0, 0, 0.08 + i * 0.16, FZ + 1.4 + i * 1.0, marble);
     // the East Room: floor, three tiers of cases on three walls, balconies at 4 and 8 with bronze rails, the fireplace wall
@@ -92,10 +94,17 @@ export const morgan: RoomDef = {
     for (const x of [-3.4, 3.4]) { k.box(3.6, 0.1, 1.6, x, 0.9, -6, walnutL); for (const dx of [-1.6, 1.6]) k.box(0.12, 0.85, 1.4, x + dx, 0.45, -6, walnut); k.keepOut.push({ x, z: -6, r: 2.0 }); for (const dx of [-1, 1]) { k.cyl(0.03, 0.5, x + dx, 1.2, -6, bronze, 0.03, 6); k.cyl(0.22, 0.2, x + dx, 1.5, -6, k.glow(0x7fd48a), 0.16, 12); k.point(x + dx, 1.4, -6, 0xc8ffc0, 6, 4); } }
     for (let i = 0; i < 3; i++) { const z = Z0 - 6 - i * 9; k.mesh(new T.SphereGeometry(4.2, 24, 10, 0, PI * 2, 0, PI / 2), plaster, 0, RH - 0.2, z).scale.set(1.6, 0.5, 1); k.point(0, RH - 2.4, z, 0xfff0dc, 26, 16); }
     k.censusWall({ x: 0, y: 9.8, z: Z1 + 0.2, rotY: 0, cols: 20, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(1500, 60), pieces: ctx.all, backing: walnut });
+    // eggs
+    k.egg(v(-8, 4, FZ + 0.2), { id: 'morgan-drylaid', title: 'Marble without mortar', year: '1906', text: 'McKim built the library of Tennessee marble blocks laid dry, without mortar, an uncommon method that added $50,000 to the cost. Morgan had asked him for a gem.', clue: 'Look closely at the joints in the front wall.', source: { name: 'Morgan Library & Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum' } }, { r: 1.8 });
+    k.egg(lionesses[0], { id: 'morgan-lionesses', title: 'The lionesses', text: 'Two lionesses by the sculptor Edward Clark Potter flank the steps to the main entrance. The entrance itself is a Palladian arch, a 14 foot opening between two 9 foot ones, with two Ionic columns on each side.', clue: 'Look at the plinths either side of the steps.', source: { name: 'Morgan Library & Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum' } }, { r: 1.4 });
+    k.egg(v(0, 2.6, FZ - 1.6), { id: 'morgan-doors', title: 'Doors from Florence', text: 'Inside the portico hang 16th century bronze doors imported from Florence, in the manner of Ghiberti\'s Baptistery doors, each leaf with five bronze panels.', clue: 'Stop in the portico before you go in.', source: { name: 'Morgan Library & Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum' } }, { r: 1.6 });
+    k.egg(v(RW / 2 - 0.9 - BW / 2, 2.2, Z0 - 4), { id: 'morgan-stair', title: 'The stair behind the books', text: 'Some of the East Room bookcases swing out to reveal a stairway to the upper tiers and a secret compartment. The cases were lined with asbestos and glazed; the glazing was replaced with acrylic in 2010.', clue: 'Find the way up to the first balcony.', source: { name: 'Morgan Library & Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum' } }, { r: 1.6 });
+    k.egg(v(0, 1.4, Z1 + 1.4), { id: 'morgan-avarice', title: 'The Triumph of Avarice', text: 'The fireplace in the East Room is 15th century work imported from Italy, and the tapestry above it shows the Triumph of Avarice.', clue: 'Warm your hands at the fireplace on the far wall.', source: { name: 'Morgan Library & Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum' } }, { r: 1.6 });
+    k.egg(v(0, RH - 1.2, Z0 - 15), { id: 'morgan-zodiac', title: 'The signs overhead', text: 'H. Siddons Mowbray designed eighteen lunettes and spandrels for the ceiling, modelled on Pinturicchio. Signs of the zodiac fill the spandrels, and two of them show the changing seasons.', clue: 'Climb to the top balcony and look up.', source: { name: 'Morgan Library & Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum' } }, { r: 2 });
     // the works: between the tiers on the case walls (hung on the balcony fronts), the fireplace tapestry, over the door
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = Z0 - 5 - i * 6; mounts.push({ position: v(s * (RW / 2 - 0.9 - BW - 0.12), 5.0, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 3, z), width: 4.0, height: 1.2, style: 'gilt', wash: false }); mounts.push({ position: v(s * (RW / 2 - 0.9 - BW - 0.12), 9.0, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 6, z), width: 4.0, height: 1.2, style: 'gilt', wash: false }); }
-    for (const x of [-6, 6]) mounts.push({ position: v(x, 5.0, Z1 + 0.9 + BW + 0.12), rotation: PI, target: v(x, 3, Z1 + 10), width: 4.0, height: 1.2, style: 'gilt', wash: false });
+    for (const x of [-6, 6]) mounts.push({ position: v(x, 5.0, Z1 + 0.9 + BW + 0.12), rotation: 0, target: v(x, 3, Z1 + 10), width: 4.0, height: 1.2, style: 'gilt', wash: false });
     mounts.push({ position: v(0, 6.8, Z1 + 0.42), rotation: 0, target: v(0, 4, Z1 + 10), width: 4.4, height: 3.2, style: 'gilt', wash: true });
     mounts.push({ position: v(0, 5.4, Z0 - 0.2), rotation: PI, target: v(0, 3, Z0 - 8), width: 3.6, height: 2.1, style: 'gilt', wash: true });
     for (const s of [-1, 1]) mounts.push({ position: v(s * 6, 5.4, Z0 - 0.2), rotation: PI, target: v(s * 6, 3, Z0 - 8), width: 3.6, height: 2.1, style: 'gilt', wash: true });
@@ -144,8 +153,8 @@ export const radiocity: RoomDef = {
     k.box(70, 40, 60, 0, 20, FZ - 30, limestone);
     for (let i = 0; i < 3; i++) k.box(24 - i * 4, 8, 24 - i * 4, 0, 40 + 4 + i * 8, FZ - 40, limestone);
     for (let x = -34; x <= 34; x += 6) k.box(1.2, 40, 0.8, x, 20, FZ + 0.4, limestone);
-    for (let i = 0; i < 9; i++) { const ch = 'RADIO CITY'[i]; const y = 30 - i * 2.1; k.box(2.6, 2.1, 1.0, -22, y, FZ + 3.6, dark); if (ch !== ' ') { k.sign(ch, 2.2, 1.9, -22, y, FZ + 4.12, '#14090a', '#ff4a4a', 150, 0, { border: false }); k.sign(ch, 2.2, 1.9, -22, y, FZ + 3.08, '#14090a', '#ff4a4a', 150, PI, { border: false }); } }
-    k.mesh(new T.BoxGeometry(0.1, 19, 0.1), neon, -23.32, 20.5, FZ + 3.6); k.mesh(new T.BoxGeometry(0.1, 19, 0.1), neon, -20.68, 20.5, FZ + 3.6);
+    for (let i = 0; i < 10; i++) { const ch = 'RADIO CITY'[i]; const y = 30.5 - i * 2.1; k.box(2.6, 2.1, 1.0, -22, y, FZ + 3.6, dark); if (ch !== ' ') { k.sign(ch, 2.2, 1.9, -22, y, FZ + 4.12, '#14090a', '#ff4a4a', 150, 0, { border: false }); k.sign(ch, 2.2, 1.9, -22, y, FZ + 3.08, '#14090a', '#ff4a4a', 150, PI, { border: false }); } }
+    k.mesh(new T.BoxGeometry(0.1, 21.2, 0.1), neon, -23.32, 21.05, FZ + 3.6); k.mesh(new T.BoxGeometry(0.1, 21.2, 0.1), neon, -20.68, 21.05, FZ + 3.6);
     k.point(-22, 22, FZ + 7, 0xff5a4a, 60, 26);
     k.box(40, 3.2, 6, 0, 8.2, FZ + 3, dark);
     for (const [y, m] of [[6.7, neon], [9.7, neon], [8.2, neonB]] as const) k.mesh(new T.BoxGeometry(40.2, 0.08, 6.2), m, 0, y, FZ + 3);
@@ -167,10 +176,10 @@ export const radiocity: RoomDef = {
     // the auditorium: the fan of arches stepping down to the stage, the seats, the stage and the gold curtain
     const AZ = FZ - GD, arches = 8;
     for (let i = 0; i < arches; i++) {
-      const w = 56 - i * 5, h = 26 - i * 2.2, z = AZ - 4 - i * 7;
+      const w = 56 - i * 3.7, h = 26 - i * 1.2, z = AZ - 4 - i * 7;   // eight bands closing on a proscenium about 100 ft wide and 60 ft high
       const a = k.mesh(new T.TorusGeometry(w / 2, 1.3, 8, 40, PI), i % 2 ? plasterA : plasterB, 0, 0, z);
       a.scale.set(1, h / (w / 2), 1);
-      for (const s of [-1, 1]) k.box(2.4, 2, 7, s * (w / 2 + 0.2), 1, z - 3.5, i % 2 ? plasterA : plasterB);
+      for (const s of [-1, 1]) k.box(2.4, 2, 7, s * (w / 2 - 0.6), 1, z - 3.5, i % 2 ? plasterA : plasterB);
       k.box(w + 2, 0.8, 7, 0, h + 0.4, z - 3.5, dark);
       for (const s of [-1, 1]) { k.box(0.4, h, 7, s * (w / 2 + 1.3), h / 2, z - 3.5, dark); k.block(s * (w / 2 + 1.1), s * (w / 2 + 1.5), z - 7, z); }
       k.point(0, h - 3, z - 3.5, 0xffc890, 60, 40);
@@ -185,19 +194,26 @@ export const radiocity: RoomDef = {
     k.block(-19, -1.8, SZ + 8, AZ - 7); k.block(1.8, 19, SZ + 8, AZ - 7);
     const stageY = -18 * 0.24 - 0.5 + 1.4;
     k.box(44, 1.6, 20, 0, stageY - 0.8, SZ - 6, stage);
-    k.mesh(new T.CylinderGeometry(6, 6, 0.4, 32), stage, 0, stageY + 0.2, SZ + 2);
-    k.box(46, 24, 1.0, 0, stageY + 12, SZ - 16, curtain);
-    for (let x = -22; x <= 22; x += 2) k.box(0.8, 24, 1.2, x, stageY + 12, SZ - 15.8, curtain);
+    const turntable = k.mesh(new T.CylinderGeometry(7.6, 7.6, 0.4, 40), stage, 0, stageY + 0.2, SZ - 6);   // the 50 ft turntable at the centre of the stage
+    k.box(34.2, 23.8, 1.0, 0, stageY + 11.9, SZ - 16, curtain);   // the gold curtain, 112 ft wide by 78 ft tall
+    for (let x = -17; x <= 17; x += 2) k.box(0.8, 24, 1.2, x, stageY + 12, SZ - 15.8, curtain);
     for (let i = 0; i < 9; i++) k.spot(-16 + i * 4, stageY + 22, SZ + 4, -16 + i * 4, stageY, SZ - 8, 0xfff0d8, 200, 0.4, 0.6, 40);
     for (const s of [-1, 1]) k.box(4, 9, 2, s * 22, stageY + 4.5, SZ - 4, gold);
     // the show: the curated works cycle on a great screen over the stage, and a sunrise wash climbs the arches
     const show = k.mesh(new T.PlaneGeometry(26, 14.6), new T.MeshBasicMaterial({ color: 0x111111 }), 0, stageY + 12, SZ - 14.9);
     void show;
     if (!ctx.reduced) { const glows: T.PointLight[] = []; k.scene.traverse((o) => { if (o instanceof T.PointLight && o.position.z < AZ && o.position.z > SZ - 1) glows.push(o); }); k.ticks.push((t) => glows.forEach((l, i) => { l.intensity = 40 + 30 * Math.sin(t * 0.6 + i * 0.5); })); }
+    // eggs
+    k.egg(v(0, 22, AZ - 18), { id: 'radiocity-sunset', title: 'A sunset from a ship', text: 'The ceiling is eight telescoping plaster bands, each overlapping the next by two feet at 30 foot intervals, closing on a proscenium meant to look like a setting sun. Roxy Rothafel reportedly came up with the sunset while sailing home from Europe. Grilles in the bands hide air conditioning, speakers and organ pipes.', clue: 'Stand in the aisle and look up the bands toward the stage.', source: { name: 'Radio City Music Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Radio_City_Music_Hall' } }, { r: 2.4 });
+    k.egg(turntable, { id: 'radiocity-hydraulics', title: 'Guarded in wartime', text: 'Peter Clark designed the stage, 144 by 66.5 feet, with a 50 foot turntable and three 70 foot sections that rise and sink, built by Otis. Radio City lore says the Navy used the same hydraulics on aircraft carriers in the Second World War and government agents guarded the basement.', clue: 'Look at the round turntable in the middle of the stage.', source: { name: 'Radio City Music Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Radio_City_Music_Hall' } }, { r: 2.4 });
+    k.egg(v(22, stageY + 4.5, SZ - 4), { id: 'radiocity-wurlitzer', title: 'The biggest Wurlitzer', text: 'The Mighty Wurlitzer here is the largest the company ever built, with 58 ranks and 4,178 pipes. It plays from twin four manual consoles on either side of the stage, so two organists can play at once.', clue: 'Look at the gold console at the right hand side of the stage.', source: { name: 'Radio City Music Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Radio_City_Music_Hall' } }, { r: 2 });
+    k.egg(v(-GW / 2 + 1.6, 1.6, FZ - GD + 1.6), { id: 'radiocity-eve', title: 'The nudes Roxy hid', year: '1932', text: 'Three aluminium nude sculptures were planned, but Roxy Rothafel thought nudes wrong for a family hall, and only Robert Laurent\'s Goose Girl was on show on opening night. Gwen Lux\'s Eve stands in the south west corner of the grand foyer.', clue: 'Find the far left corner of the foyer.', source: { name: 'Radio City Music Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Radio_City_Music_Hall' } }, { r: 1.6 });
+    k.egg(v(0, -2, AZ - 30), { id: 'radiocity-seats', title: 'The largest auditorium', year: '1932', text: 'The hall opened on 27 December 1932 with 5,960 seats, about 3,500 of them on the orchestra floor, the largest auditorium in the world at the time. There are only four aisles and no crossover aisle.', clue: 'Walk down the centre aisle.', source: { name: 'Radio City Music Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Radio_City_Music_Hall' } }, { r: 2 });
+    k.egg(v(-22, 20, FZ + 4.4), { id: 'radiocity-signs', title: 'Ninety feet of name', text: 'Three vertical signs, each 90 feet tall, carry the name, and the marquee wraps the corner of Sixth Avenue and 50th Street. Inside, no two of the restrooms and lounges were given the same design.', clue: 'Look up the vertical sign by the marquee.', source: { name: 'Radio City Music Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Radio_City_Music_Hall' } }, { r: 2.4 });
     // the works: the foyer, the arch piers on both sides of the fan, the stage screen
     const mounts: Mount[] = [];
     for (let i = 0; i < 4; i++) { const z = FZ - 2 - i * 3.6; for (const s of [-1, 1]) mounts.push({ position: v(s * (GW / 2 - 0.34), 3.8, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 3, z), width: 3.0, height: 1.8, style: 'gilt', wash: true }); }
-    for (let i = 0; i < 6; i++) { const w = 56 - i * 5, z = AZ - 4 - i * 7 - 3.5; const drop = -Math.max(0, (AZ - 8 - z) / 2.6) * 0.24; for (const s of [-1, 1]) mounts.push({ position: v(s * (w / 2 + 1.06), drop + 4.2, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 1.2, drop + 3, z), width: 4.6, height: 2.7, style: 'gilt', wash: true }); }
+    for (let i = 0; i < 6; i++) { const w = 56 - i * 3.7, z = AZ - 4 - i * 7 - 3.5; const drop = -Math.max(0, (AZ - 8 - z) / 2.6) * 0.24; for (const s of [-1, 1]) mounts.push({ position: v(s * (w / 2 + 1.06), drop + 4.2, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 1.2, drop + 3, z), width: 4.6, height: 2.7, style: 'gilt', wash: true }); }
     mounts.push({ position: v(0, stageY + 12, SZ - 14.8), rotation: 0, target: v(0, stageY + 6, SZ + 12), width: 26, height: 14.6, style: 'none', wash: false });
     for (const x of [-13, 13]) mounts.push({ position: v(x, stageY + 4, SZ - 14.7), rotation: 0, target: v(x < 0 ? -1.2 : 1.2, stageY + 3, SZ + 10), width: 6, height: 3.5, style: 'gilt', wash: false });
     return { mounts, spawn: v(-30, 3, FZ + 24), look: v(-6, 10, FZ + 2), eye: 3, bounds: [-34, 20, SZ + 6, FZ + 32], style: 'gilt', floorY: (x, z) => { void x; if (z < AZ - 7) return -Math.min(18, Math.max(0, (AZ - 8 - z) / 2.6)) * 0.24; return 0; } };
@@ -212,7 +228,7 @@ export const woolworth: RoomDef = {
   mood: 'Gothic gold',
   color: '#d4c48a',
   description: 'Broadway under the terracotta tower, then the cruciform lobby: gold mosaic vaults, marble, the gothic grilles, the works in the arcade bays.',
-  signatures: 'The 792 foot terracotta gothic tower with its green copper crown, the cross shaped lobby with a barrel vault of Byzantine glass mosaic, veined marble walls, bronze gothic tracery, the mezzanine murals.',
+  signatures: 'The 792 foot terracotta gothic tower with its green copper crown, the cross shaped lobby of two barrel vaulted arms under glass mosaic and a dome at the crossing, veined Skyros marble walls, bronze gothic tracery, the mezzanine murals.',
   build(k, ctx) {
     k.sky({ top: 0x6f9ad0, horizon: 0xe6e8e4, ground: 0x5a5a55, fog: 0.0022, sun: { az: 3.6, el: 0.75, color: 0xfff4e6, size: 12 }, env: 0.85 });
     k.hemi(0xfff0dc, 0x3a3020, 0.55);
@@ -278,6 +294,13 @@ export const woolworth: RoomDef = {
     k.censusWall({ x: 0, y: 3.6, z: LZ - LEN / 2 + 0.36, rotY: 0, cols: 12, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(4900, 60), pieces: ctx.all, backing: mosaicF });
     k.sign('THE MUSEUM  ·  WOOLWORTH  ·  1913', 8, 0.7, 0, 6.8, LZ - LEN / 2 + 0.36, 'transparent', '#f0e0b0', 70, 0);
     for (const s of [-1, 1]) k.box(0.8, 0.8, 0.8, s * 4, 0.4, LZ + 8, marble), k.prop('lantern', s * 4, 0.8, LZ + 8, { height: 1.1 });
+    // eggs
+    k.egg(v(0, 236, FZ - 20), { id: 'woolworth-wilson', title: 'Lit from Washington', year: '1913', text: 'The building opened on 24 April 1913. At 7:30 that evening President Woodrow Wilson pressed a button in Washington and the lights came on. At 792 feet it was the tallest building in the world until 40 Wall Street and the Chrysler Building went up in 1929 and 1930.', clue: 'Look up at the green crown from City Hall Park.', source: { name: 'Woolworth Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Woolworth_Building' } }, { r: 6 });
+    k.egg(v(AW / 2 - 0.4, 6.4, LZ - 9), { id: 'woolworth-grotesques', title: 'The builders in the brackets', text: 'Twelve plaster brackets in the lobby carry grotesques of the people behind the building: Cass Gilbert holding a model of it, the engineer Gunvald Aus measuring a girder, and Frank Woolworth holding nickels and dimes.', clue: 'Look up where the arcade walls meet the vault.', source: { name: 'Woolworth Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Woolworth_Building' } }, { r: 1.6 });
+    k.egg(v(-12, 7.2, LZ), { id: 'woolworth-murals', title: 'Labor and Commerce', text: 'C. Paul Jennewein\'s ceiling murals Labor and Commerce sit above the mezzanine where it crosses the north and south wings of the lobby.', clue: 'Look above the mezzanine in the cross arms.', source: { name: 'Woolworth Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Woolworth_Building' } }, { r: 2 });
+    k.egg(v(0, 0.6, LZ + 4), { id: 'woolworth-pool', title: 'A pool under the lobby', text: 'The basement holds an unused bank vault, a restaurant, a barbershop and a private pool 15 by 55 feet, restored in the mid 2010s. A subway entrance to Park Place station closed after the September 11 attacks.', clue: 'Stand at the crossing and look down.', source: { name: 'Woolworth Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Woolworth_Building' } }, { r: 1.6 });
+    k.egg(v(0, 6.8, LZ - LEN / 2 + 0.8), { id: 'woolworth-cadman', title: 'Not his cathedral', year: '1916', text: 'The nickname Cathedral of Commerce comes from the Reverend S. Parkes Cadman, in a 1916 booklet. Cass Gilbert disliked the religious comparison.', clue: 'Read the sign at the far end of the lobby.', source: { name: 'Woolworth Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Woolworth_Building' } }, { r: 1.6 });
+    k.egg(v(0, AH + 3.6, LZ), { id: 'woolworth-dome', title: 'A dome from Ravenna', text: 'The two barrel vaulted arms of the lobby cross under a dome whose pendentives may be modelled on the Mausoleum of Galla Placidia. The walls are veined marble from Skyros in Greece, and the ceilings are glass mosaic in blue, green and gold with red accents.', clue: 'Stand at the crossing and look straight up.', source: { name: 'Woolworth Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Woolworth_Building' } }, { r: 2 });
     // the works: the arcade bays of the long arm between the grilles, the cross arms, the mezzanine fronts
     const mounts: Mount[] = [];
     for (let i = 0; i < 5; i++) { const z = LZ - 11.5 + i * 5; for (const s of [-1, 1]) mounts.push({ position: v(s * (AW / 2 - 0.34), 2.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 2.5, z), width: 3.0, height: 1.8, style: 'gilt', wash: true }); }
@@ -295,7 +318,7 @@ export const wallstreet: RoomDef = {
   mood: 'Opening bell',
   color: '#9aa8b8',
   description: 'The narrow canyon at Broad Street, the Doric steps of Federal Hall, the exchange front with its columns and the giant banner, the crowd at the bell, the works in the canyon.',
-  signatures: 'The stone canyon of Wall and Broad, the Greek Revival Federal Hall with its steps and statue plinth, the six Corinthian columns and pediment of the exchange with a banner between them, the flags, the crowds, the cobbles.',
+  signatures: 'The stone canyon of Wall and Broad, the Greek Revival Federal Hall with its eighteen steps and statue plinth, the six fluted columns and pediment of the exchange facing Broad Street with a banner on them, 23 Wall Street on the corner, the flags, the crowds, the cobbles.',
   build(k, ctx) {
     k.sky({ top: 0x5f8fc8, horizon: 0xe4e6e2, ground: 0x4a4a48, fog: 0.0022, sun: { az: 2.6, el: 0.65, color: 0xfff4e6, size: 12 }, env: 0.9 });
     k.hemi(0xe8f0ff, 0x3a3a38, 0.8);
@@ -321,7 +344,7 @@ export const wallstreet: RoomDef = {
     const HX = -16, HZ = -12;
     k.box(30, 22, 26, HX, 11, HZ - 13, lime);
     k.box(30, 1.6, 26, HX, 22.8, HZ - 13, lime);
-    for (let i = 0; i < 12; i++) k.box(26, 0.34, 1.2, HX, 0.17 + i * 0.34, HZ + 4.2 - i * 0.55, lime);
+    for (let i = 0; i < 18; i++) k.box(26, 0.233, 0.8, HX, 0.117 + i * 0.233, HZ + 4.2 - i * 0.367, granite);   // 18 granite steps up to the portico
     k.box(30, 4.2, 6, HX, 6.2, HZ - 2.5, lime);
     for (let i = 0; i < 8; i++) k.column(HX - 12 + i * 3.4, 4.2, HZ - 1.5, 12.4, 0.9, lime, true);
     k.box(30, 1.8, 6, HX, 17.5, HZ - 1.5, lime);
@@ -333,22 +356,33 @@ export const wallstreet: RoomDef = {
     k.keepOut.push({ x: HX, z: HZ + 0.5, r: 2.2 });
     k.block(HX - 15, HX + 15, HZ - 26, HZ - 3);
     k.sign('FEDERAL HALL  ·  1842', 10, 0.8, HX, 16.8, HZ + 1.6, 'transparent', '#5a5040', 80, 0);
-    // the exchange: six columns and a pediment on the south west corner, the banner as the census
-    const EX = -30, EZ = 10;
-    k.box(34, 30, 26, EX, 15, EZ + 13, lime);
-    k.box(38, 2, 30, EX, 31, EZ + 13, lime);
-    for (let i = 0; i < 6; i++) k.column(EX - 12 + i * 4.8, 4.5, EZ + 1.5, 16, 1.0, lime, true);
-    k.box(34, 4.5, 6, EX, 2.25, EZ + 2.5, granite);
-    k.box(34, 2.6, 6, EX, 21.8, EZ + 1.5, lime);
+    // the exchange at 18 Broad Street: its six column front faces EAST onto Broad Street (it faced Wall Street here), raised on a podium, the banner hung on the colonnade
+    const EX = -28, EZ = 29, EF = -12;   // body centre x, centre of the Broad Street front along z, the face line
+    k.box(26, 30, 34, EX - 1, 15, EZ, lime);
+    k.box(30, 2, 38, EX, 31, EZ, lime);
+    k.box(4, 4.5, 34, EF - 2, 2.25, EZ, granite);
+    for (let i = 0; i < 6; i++) k.column(EF - 2, 4.5, EZ - 12 + i * 4.8, 16, 1.0, lime, true);
+    for (const dz of [-16, 16]) k.box(4, 16, 2, EF - 2, 12.5, EZ + dz, lime);
+    k.box(4, 2.6, 34, EF - 2, 21.8, EZ, lime);
     const ped2 = new T.Shape(); ped2.moveTo(-17, 0); ped2.lineTo(17, 0); ped2.lineTo(0, 6); ped2.closePath();
-    k.mesh(new T.ExtrudeGeometry(ped2, { depth: 6, bevelEnabled: false }), lime, EX, 23.1, EZ - 1.5);
-    k.block(EX - 17, EX + 17, EZ - 0.5, EZ + 26);
-    k.censusWall({ x: EX, y: 12.6, z: EZ - 1.7, rotY: PI, cols: 22, rows: 10, tile: 0.55, gap: 0.05, start: ctx.wallStart(5000, 220), pieces: ctx.all, backing: navy });
-    for (const [s, m] of [[-1, redF], [0, white], [1, navy]] as const) { k.beam(v(EX + s * 10, 24, EZ - 2), v(EX + s * 10 + 2, 30, EZ - 5), 0.12, dark, 4); k.box(3, 2, 0.1, EX + s * 10 + 2.6, 29, EZ - 5.2, m); }
+    k.mesh(new T.ExtrudeGeometry(ped2, { depth: 5, bevelEnabled: false }), lime, EF - 4.5, 23.1, EZ).rotation.y = PI / 2;
+    k.block(EX - 14.5, EF + 0.2, EZ - 17.5, EZ + 17.5);
+    k.censusWall({ x: EF + 0.3, y: 12.6, z: EZ, rotY: PI / 2, cols: 22, rows: 10, tile: 0.55, gap: 0.05, start: ctx.wallStart(5000, 220), pieces: ctx.all, backing: navy });
+    for (const [s, m] of [[-1, redF], [0, white], [1, navy]] as const) { k.beam(v(EF, 24, EZ + s * 10), v(EF + 3, 30, EZ + s * 10 + 0.5), 0.12, dark, 4); k.box(0.1, 2, 3, EF + 3.2, 29, EZ + s * 10 + 2.1, m); }
+    // 23 Wall Street, the House of Morgan, four storeys on the south east corner of Wall and Broad
+    const morganHouse = k.box(24, 26, 26, 21, 13, 25, lime);
+    k.block(9, 33, 12, 38);
+    // eggs
+    k.egg(v(9.3, 3.2, 15), { id: 'wallstreet-bombing', title: 'The divots at the corner', year: '1920', text: 'At 12:01 on 16 September 1920 a horse drawn wagon packed with about 100 pounds of dynamite and 500 pounds of iron sash weights blew up across from 23 Wall Street, killing 38 people. It was never solved, and shrapnel divots are still in the stone.', clue: 'Run your eye over the stone of the low corner building across Broad Street.', source: { name: 'Wall Street bombing, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wall_Street_bombing' } }, { r: 1.6 });
+    k.egg(v(32, 8, 11.7), { id: 'wallstreet-noname', title: 'No name needed', year: '1914', text: 'The House of Morgan at 23 Wall Street opened in 1914, four storeys and about 85 feet tall on the south east corner of Wall and Broad. No name plaque was ever put over its door; the bank was too well known to need one.', clue: 'Look above the door of the corner building for a name that is not there.', source: { name: '23 Wall Street, Wikipedia', url: 'https://en.wikipedia.org/wiki/23_Wall_Street' } }, { r: 1.6 });
+    k.egg(v(EF - 2, 25, EZ), { id: 'wallstreet-pediment', title: 'Integrity, in sheet metal', year: '1936', text: 'The pediment over the six columns of the exchange was designed by John Quincy Adams Ward and Paul Wayland Bartlett, with a female figure of integrity at its centre. The marble figures were replaced in 1936 with lead coated sheet metal carvings.', clue: 'Look up into the pediment over the exchange columns.', source: { name: 'New York Stock Exchange Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_York_Stock_Exchange_Building' } }, { r: 2.4 });
+    k.egg(v(EF + 0.6, 3, EZ - 14), { id: 'wallstreet-floor', title: 'Behind the columns', year: '1903', text: 'George B. Post\'s exchange at 18 Broad Street was finished in 1903. Behind the colonnade the main trading floor covers 15,000 square feet under a 30 by 30 foot skylight.', clue: 'Walk down Broad Street to the foot of the exchange.', source: { name: 'New York Stock Exchange Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_York_Stock_Exchange_Building' } }, { r: 1.6 });
+    k.egg(v(HX, 10.6, HZ + 0.5), { id: 'wallstreet-wrongbuilding', title: 'Not the balcony', year: '1789', text: 'Washington took the oath on 30 April 1789 on the balcony of the original Federal Hall, demolished in 1812, not this building. Inside the rotunda a stone slab marks where he once stood, and a piece of the original balcony railing and floor is on display.', clue: 'Climb the steps to the empty plinth.', source: { name: 'Federal Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Federal_Hall' } }, { r: 1.6 });
+    k.egg(v(HX + 8, 1.4, HZ + 3.4), { id: 'wallstreet-customhouse', title: 'Built for the customs', year: '1842', text: 'The building opened in 1842 as the Custom House for the Port of New York, designed by Town and Davis in Tuckahoe marble from Westchester. Eighteen granite steps lead up to a rotunda 60 feet across, and a 1994 guide called it the Parthenon of public buildings in the city.', clue: 'Count the steps up to the portico.', source: { name: 'Federal Hall, Wikipedia', url: 'https://en.wikipedia.org/wiki/Federal_Hall' } }, { r: 1.6 });
     // the crowd at the bell, the barriers, the bull's plinth by the subway stair, the works
     k.crowd([v(-60, 0, -6), v(-30, 0, -5), v(0, 0, -6), v(30, 0, -5), v(60, 0, -6)], 40, { seed: 50, speed: 1.0, spread: 4, animate: !ctx.reduced });
-    k.crowd([v(EX - 14, 0, EZ - 4), v(EX, 0, EZ - 3), v(EX + 14, 0, EZ - 4), v(EX + 14, 0, 6), v(0, 0, 5), v(0, 0, 40)], 30, { seed: 51, speed: 0.6, spread: 3, animate: !ctx.reduced });
-    for (let i = 0; i < 8; i++) { k.box(2.2, 1.0, 0.06, EX - 10 + i * 3, 0.55, EZ - 6, dark); for (const dx of [-1.05, 1.05]) k.box(0.06, 1.05, 0.06, EX - 10 + i * 3 + dx, 0.52, EZ - 6, dark); }
+    k.crowd([v(-6.5, 0, 44), v(-6, 0, 29), v(-6.5, 0, 15), v(-4, 0, 6), v(0, 0, 5), v(0, 0, 40)], 30, { seed: 51, speed: 0.6, spread: 3, animate: !ctx.reduced });
+    for (let i = 0; i < 8; i++) { k.box(0.06, 1.0, 2.2, -9.6, 0.55, EZ - 10.5 + i * 3, dark); for (const dz of [-1.05, 1.05]) k.box(0.06, 1.05, 0.06, -9.6, 0.52, EZ - 10.5 + i * 3 + dz, dark); }
     k.prop('mailbox', 30, 0, -8.6, { height: 1.5 });
     k.prop('hydrant', -50, 0, 8.6, { height: 1.1 });
     for (const x of [-70, -40, 40, 70]) for (const s of [-1, 1]) k.lamp(x, s * 8.8, 6, dark, 0xffe6c8, 20);
@@ -358,7 +392,7 @@ export const wallstreet: RoomDef = {
     for (let i = 0; i < 4; i++) { const z = 18 + i * 10; for (const s of [-1, 1]) { k.box(0.3, 3.4, 4.6, s * 8.6, 3.2, z, dark); mounts.push({ position: v(s * 8.4, 3.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 3, z), width: 4.2, height: 2.5, style: 'steel', wash: false }); } }
     for (let i = 0; i < 3; i++) { const x = HX - 9 + i * 9; mounts.push({ position: v(x, 9.4, HZ - 5.9), rotation: 0, target: v(x, 8, HZ + 6), width: 2.6, height: 3.4, style: 'gilt', wash: true }); }
     k.block(HX - 15, HX + 15, HZ - 6.5, HZ - 5.5);
-    return { mounts, spawn: v(20, 3, 2), look: v(EX, 14, EZ), eye: 3, bounds: [-90, 90, -10, 60], style: 'steel', floorY: (x, z) => { if (Math.abs(x - HX) < 13 && z < HZ + 4.8 && z > HZ - 2.4) return Math.min(4.2, Math.max(0, (HZ + 4.8 - z) / 6.6 * 4.2)); if (Math.abs(x - HX) < 15 && z <= HZ - 2.4 && z > HZ - 5.5) return 4.2; return 0; } };
+    return { mounts, spawn: v(20, 3, 2), look: v(EF, 14, EZ), eye: 3, bounds: [-90, 90, -10, 60], style: 'steel', floorY: (x, z) => { if (Math.abs(x - HX) < 13 && z < HZ + 4.8 && z > HZ - 2.4) return Math.min(4.2, Math.max(0, (HZ + 4.8 - z) / 6.6 * 4.2)); if (Math.abs(x - HX) < 15 && z <= HZ - 2.4 && z > HZ - 5.5) return 4.2; return 0; } };
   },
 };
 
@@ -391,14 +425,15 @@ export const lincolncenter: RoomDef = {
     blockFront(k, { x: 12, z0: 130, count: 8, face: -1, seed: 112, h: [16, 30] });
     blockFront(k, { x: -12, z0: 130, count: 8, face: 1, seed: 113, h: [16, 30] });
     k.skyline({ z: -160, count: 26, spacing: 10, scale: 3.6, base: -1, seed: 115, lit: 0.45, glow: 1.2, tint: 0x2c3444, rows: 1 });
-    k.mesh(new T.CylinderGeometry(9, 9.4, 0.9, 48), travD, 0, 0.45, 0);
-    k.mesh(new T.CylinderGeometry(8.4, 8.4, 0.3, 48), waterM, 0, 0.95, 0);
-    k.keepOut.push({ x: 0, z: 0, r: 9.6 });
+    // Revson Fountain: 38 ft (11.6 m) across, its jets in three concentric rings
+    const basin = k.mesh(new T.CylinderGeometry(5.8, 6.1, 0.9, 48), travD, 0, 0.45, 0);
+    k.mesh(new T.CylinderGeometry(5.3, 5.3, 0.3, 48), waterM, 0, 0.95, 0);
+    k.keepOut.push({ x: 0, z: 0, r: 6.4 });
     const jets: T.Mesh[] = [];
-    for (let i = 0; i < 24; i++) { const a = (i / 24) * PI * 2, r = 2 + (i % 3) * 2.2; const j = k.mesh(new T.CylinderGeometry(0.05, 0.14, 4, 6), waterM, Math.cos(a) * r, 3, Math.sin(a) * r, true); jets.push(j); }
+    for (let i = 0; i < 24; i++) { const a = (i / 24) * PI * 2, r = 1.4 + (i % 3) * 1.4; const j = k.mesh(new T.CylinderGeometry(0.05, 0.14, 4, 6), waterM, Math.cos(a) * r, 3, Math.sin(a) * r, true); jets.push(j); }
     const core = k.mesh(new T.CylinderGeometry(0.2, 0.5, 9, 8), waterM, 0, 5.4, 0, true); jets.push(core);
     if (!ctx.reduced) k.ticks.push((t) => jets.forEach((j, i) => { const s = 0.6 + 0.4 * Math.sin(t * 1.4 + i * 0.6); j.scale.y = s; j.position.y = (i === jets.length - 1 ? 4.5 : 2) * s + 1; }));
-    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.point(Math.cos(a) * 8, 1.6, Math.sin(a) * 8, 0xffe8c8, 6, 6); }
+    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.point(Math.cos(a) * 5, 1.6, Math.sin(a) * 5, 0xffe8c8, 6, 6); }
     // the opera house: five glass arches in a travertine frame, the lobby behind with the red stair and the two murals
     const OZ = -40, OW = 60, OH = 28;
     k.box(OW + 10, OH + 4, 40, 0, (OH + 4) / 2, OZ - 20, travD);
@@ -422,6 +457,12 @@ export const lincolncenter: RoomDef = {
     k.crowd([v(12, 0, 30), v(16, 0, 8), v(12, 0, -14), v(4, 0, -30), v(12, 0, -39.5)], 30, { seed: 53, speed: 0.7, spread: 5, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a, 0x33477f] });
     k.censusWall({ x: 0, y: 6.2, z: OZ - 29.6, rotY: 0, cols: 30, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(1800, 150), pieces: ctx.all, backing: gold });
     k.sign('THE MUSEUM  ·  OPENING NIGHT  ·  THE NEW YORKERS', 16, 0.8, 0, 10.4, OZ - 29.6, 'transparent', '#f4e4b0', 70, 0);
+    // eggs
+    k.egg(basin, { id: 'lincolncenter-fountain', title: 'Three rings of jets', year: '2009', text: 'Philip Johnson\'s fountain was dedicated in 1964, 38 feet across. WET rebuilt it for 2009 with 353 jets in three concentric rings, 272 lights and 24 pumps that can throw water 60 feet up. It plays a part in The Producers and Moonstruck.', clue: 'Walk to the rim of the fountain in the middle of the plaza.', source: { name: 'Revson Fountain, Wikipedia', url: 'https://en.wikipedia.org/wiki/Revson_Fountain' } }, { r: 2.4 });
+    k.egg(v(-7.6, 2.2, OZ - 27.5), { id: 'lincolncenter-chagall', title: 'Murals as collateral', text: 'Marc Chagall\'s two lobby murals are each about 30 by 36 feet: The Triumph of Music on the south wall and The Sources of Music on the north. In 2009 the Met\'s board decided to put them up as collateral for a long term loan.', clue: 'Look at the great walls either side of the lobby.', source: { name: 'Metropolitan Opera House (Lincoln Center), Wikipedia', url: 'https://en.wikipedia.org/wiki/Metropolitan_Opera_House_(Lincoln_Center)' } }, { r: 2 });
+    k.egg(v(14, OH - 6, OZ - 10), { id: 'lincolncenter-chandeliers', title: 'A thank you from Vienna', text: 'The crystal chandeliers, eleven in the lobby and 21 in the auditorium, were designed by Hans Harald Rath of Lobmeyr in Vienna and given by Austria in thanks for American help under the Marshall Plan. Twelve of the auditorium ones are winched up to the ceiling before each performance.', clue: 'Watch the starburst chandeliers behind the glass.', source: { name: 'Metropolitan Opera House (Lincoln Center), Wikipedia', url: 'https://en.wikipedia.org/wiki/Metropolitan_Opera_House_(Lincoln_Center)' } }, { r: 2.4 });
+    k.egg(v(0, 12, OZ + 0.8), { id: 'lincolncenter-arches', title: 'Five arches, ninety six feet', year: '1966', text: 'Wallace Harrison\'s opera house opened on 16 September 1966. Its east front of white travertine is five concrete arches rising 96 feet above the plaza. Inside, over 4,000 square feet of gold leaf covers the petal shaped ceiling above roughly 3,800 seats.', clue: 'Stand in front of the middle arch and look up.', source: { name: 'Metropolitan Opera House (Lincoln Center), Wikipedia', url: 'https://en.wikipedia.org/wiki/Metropolitan_Opera_House_(Lincoln_Center)' } }, { r: 2.4 });
+    k.egg(v(-31.6, 6, -6), { id: 'lincolncenter-statetheater', title: 'Built for the World\'s Fair', year: '1964', text: 'The theatre on the south side of the plaza opened on 23 April 1964 as the New York State Theater, paid for by the state as part of its showing at the 1964 to 1965 World\'s Fair. Philip Johnson and John Burgee designed it. It took David H. Koch\'s name in 2008 after a $100 million pledge.', clue: 'Look at the colonnade on the left as you face the opera house.', source: { name: 'David H. Koch Theater, Wikipedia', url: 'https://en.wikipedia.org/wiki/David_H._Koch_Theater' } }, { r: 2 });
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) mounts.push({ position: v(s * 8.05, 9, OZ - 16), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 8, OZ - 16), width: 20, height: 11, style: 'none', wash: true });
     for (let i = 0; i < 5; i++) { const x = -24 + i * 12; mounts.push({ position: v(x, 4.4, OZ - 29.6), rotation: 0, target: v(x, 3, OZ - 14), width: 5, height: 3, style: 'gilt', wash: true }); }

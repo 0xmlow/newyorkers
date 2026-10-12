@@ -194,7 +194,7 @@ async function paint(){
   const link = location.origin + '/?ref=' + d.referrals.code;
   $('#refLink').value = link;
   $('#refStats').textContent = d.referrals.signups + ' ' + (d.referrals.signups===1?'person has':'people have') + ' signed in through your link.';
-  if(window.NY && NY.shareRow) NY.shareRow($('#refShare'), {title:'NEW YORKERS by MLow', text:'A painted census of New York City. Come get counted.', url:link});
+  if(window.NY && NY.shareRow) NY.shareRow($('#refShare'), {title:'NEW YORKERS by MLow', text:'An art census of New York City. Come get counted.', url:link});
   $('#refLink').onclick=function(){ this.select(); navigator.clipboard && navigator.clipboard.writeText(link); NY.toast&&NY.toast('Link copied.'); };
 
   $('#allow').innerHTML = d.allowlist

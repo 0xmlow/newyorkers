@@ -67,7 +67,7 @@ for i, a in enumerate(articles):
         return (f'<figure class="cenfig"><a href="../n/{p["id"]}.html">'
                 f'<img loading="lazy" src="../assets/t/{p["st"][0]}.jpg" alt="{esc(p["t"])}"></a>'
                 f'<figcaption><span class="n">NO. {p["n"]:04d}</span> {esc(p["t"])}'
-                f'{" · " + esc(where) if where else ""}<em>From the census, painted at this place.</em>'
+                f'{" · " + esc(where) if where else ""}<em>From the census, set at this place.</em>'
                 f'</figcaption></figure>')
     body_html, pi = [], 0
     for b in a["body"]:
@@ -148,8 +148,8 @@ body = f"""
   <div class="grid3" id="roomGrid" style="margin-top:28px">{room_cards}</div>
 </section>"""
 extra_css = ".light .card{background:#fff;border-color:#dfe5ec;color:var(--ink)}.light .card .cs{color:#4a5260}.light .card:hover{border-color:var(--blue)}.rc img{aspect-ratio:16/9}"
-ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": "The Reading Room · NEW YORKERS by MLow", "description": "Sourced histories of New York City places, tied to the painted census and its walkable museum.", "url": f"{URL}/learn", "hasPart": [{"@type": "Article", "name": a["title"], "url": f"{URL}/learn/{a['slug']}.html"} for a in articles]}]
-page = shell(title="The Reading Room · New York history, sourced · NEW YORKERS by MLow", description=f"{len(articles)} short sourced histories of New York City and {len(merged)} place records, tied to the painted census and its {len(rooms)} room museum.", body=body, path="learn.html", active="READ", jsonld=ld, keywords=["New York City history", "NYC history articles", "New York landmarks history", "history of the subway", "Brooklyn Bridge history", "Ellis Island history", "New York museums", "NEW YORKERS by MLow"], extra_css=extra_css,
+ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": "The Reading Room · NEW YORKERS by MLow", "description": "Sourced histories of New York City places, tied to the art census and its walkable museum.", "url": f"{URL}/learn", "hasPart": [{"@type": "Article", "name": a["title"], "url": f"{URL}/learn/{a['slug']}.html"} for a in articles]}]
+page = shell(title="The Reading Room · New York history, sourced · NEW YORKERS by MLow", description=f"{len(articles)} short sourced histories of New York City and {len(merged)} place records, tied to the art census and its {len(rooms)} room museum.", body=body, path="learn.html", active="READ", jsonld=ld, keywords=["New York City history", "NYC history articles", "New York landmarks history", "history of the subway", "Brooklyn Bridge history", "Ellis Island history", "New York museums", "NEW YORKERS by MLow"], extra_css=extra_css,
              scripts_after='<script>NY.shareRow(document.getElementById("share"),{title:"The Reading Room",text:"New York, on the record. The reading room of NEW YORKERS by MLow."});const rf=document.getElementById("roomFilter"),rg=document.getElementById("roomGrid");rf.oninput=()=>{const v=rf.value.trim().toLowerCase();rg.querySelectorAll("a").forEach(a=>{a.hidden=!!v&&!a.textContent.toLowerCase().includes(v)})};</script>')
 open(os.path.join(SITE, "learn.html"), "w", encoding="utf-8").write(page)
 

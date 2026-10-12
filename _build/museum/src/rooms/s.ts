@@ -34,10 +34,13 @@ export const momaatrium: RoomDef = {
     for (let x = -34; x <= 34; x += 4) k.box(0.3, 24, 0.3, x, 12, FZ + 0.1, black);
     k.box(70, 0.6, 30, 0, 24, FZ - 15, black);
     k.box(10, 4, 0.2, 0, 2, FZ, glass); k.block(-35, -3, FZ - 0.4, FZ + 0.4); k.block(3, 35, FZ - 0.4, FZ + 0.4);
-    k.box(40, 6, 2, 0, 27, FZ - 1, black); k.sign('MOMA', 6, 3, 0, 27, FZ + 0.05, '#0e0e10', '#f4f4f2', 200, 0);
+    k.box(40, 6, 2, 0, 27, FZ - 1, black); k.sign('MoMA', 6, 3, 0, 27, FZ + 0.05, '#0e0e10', '#f4f4f2', 200, 0);
     mlowBanner(k, -18, 12, FZ + 0.6, 0, 3.6, false); blossomFlag(k, 18, 12, FZ + 0.6, 0, 3.0, 1, 'cloud');
     k.box(40, 0.3, 14, 0, 0.15, FZ - 7, floorT);
     for (let i = 0; i < 4; i++) k.prop('rope_stanchion', -6 + i * 4, 0.15, FZ - 4, { height: 1.0 });
+    k.egg(v(-10, 1.6, FZ + 1.6), { id: 'momaatrium-1939', title: 'Rockefeller land', year: '1939', text: 'MoMA\'s International Style building by Philip L. Goodwin and Edward Durell Stone opened on 10 May 1939 on land given by John D. Rockefeller Jr., who did not care for the museum himself. Taniguchi\'s expansion restored that building\'s white marble facade and its canopy.', clue: 'Stop on the 53rd Street pavement in front of the glass.', source: { name: 'Museum of Modern Art, Wikipedia', url: 'https://en.wikipedia.org/wiki/Museum_of_Modern_Art' } }, { r: 1.6 });
+    k.egg(v(-9, 1.4, FZ - 4), { id: 'momaatrium-fridays', title: 'Friday nights', text: 'New York State residents get into MoMA free every Friday from 5:30 to 8:30 in the evening, under the Uniqlo Friday Nights program.', clue: 'Look at the rope line in the lobby.', source: { name: 'Museum of Modern Art, Wikipedia', url: 'https://en.wikipedia.org/wiki/Museum_of_Modern_Art' } }, { r: 1.4 });
+    k.egg(v(15, 1.6, FZ - 10), { id: 'momaatrium-garden', title: 'The garden came first', year: '1953', text: 'The sculpture garden behind the lobby opened in 1939, laid out by Alfred H. Barr Jr. and the curator John McAndrew. Philip Johnson redesigned it in 1953 as the Abby Aldrich Rockefeller Sculpture Garden, and Taniguchi treated it as the core of the museum, with views into it from every building around it.', clue: 'Walk to the far east end of the lobby, toward the garden.', source: { name: 'AD Classics: The Museum of Modern Art, ArchDaily', url: 'https://www.archdaily.com/430903/ad-classics-the-museum-of-modern-art' } }, { r: 1.6 });
     // the atrium: a white shaft with cut through balconies at four levels, glass bridges, the stair, the mobile
     const AX = 0, AZ = FZ - 14 - 22, AW = 40, AD = 44, AH = 34;
     k.box(AW, 0.3, AD, AX, 0.15, AZ, floorT);
@@ -52,6 +55,8 @@ export const momaatrium: RoomDef = {
     k.prop('mobile', AX, 20, AZ, { height: 8 }).then((o) => { if (o && !ctx.reduced) k.ticks.push((t) => { o.rotation.y = t * 0.08; o.children.forEach((c, i) => { c.rotation.y = Math.sin(t * 0.3 + i) * 0.4; }); }); });
     for (let i = 0; i < 6; i++) k.point(AX + (i % 2 ? 10 : -10), 26, AZ - 15 + i * 6, 0xffffff, 40, 26);
     eyeMedallion(k, AX, 0.16, AZ + AD / 2 - 6, 2.4);
+    k.egg(v(AX, 1.6, AZ - 4), { id: 'momaatrium-110', title: 'A hundred and ten feet of white', year: '2004', text: 'Yoshio Taniguchi\'s atrium rises 110 feet, with openings cut in its walls so visitors in the galleries can look into it. His expansion reopened the museum on 20 November 2004; the whole project cost $858 million, the Midtown renovation alone $425 million.', clue: 'Stand in the middle of the atrium floor and look straight up.', source: { name: 'AD Classics: The Museum of Modern Art, ArchDaily', url: 'https://www.archdaily.com/430903/ad-classics-the-museum-of-modern-art' } }, { r: 1.8 });
+    k.egg(v(AX + AW / 2 - 6.4, 2.2, AZ + AD / 2 - 7), { id: 'momaatrium-2019', title: 'Bigger again', year: '2019', text: 'MoMA expanded again with Diller Scofidio + Renfro and Gensler and reopened on 21 October 2019, adding 47,000 square feet of gallery space and bringing the museum to 708,000 square feet in all.', clue: 'Start up the stair on the east side of the atrium.', source: { name: 'Museum of Modern Art, Wikipedia', url: 'https://en.wikipedia.org/wiki/Museum_of_Modern_Art' } }, { r: 1.4 });
     donorWall(k, AX, 4.6, AZ - AD / 2 + 0.42, 0, 12, true);
     for (const x of [-10, 10]) k.prop('museum_bench', AX + x, 0.15, AZ, { height: 0.58, keepOut: 1.4 });
     k.prop('bronze_figure', AX - 8, 0.15, AZ - 12, { height: 3.2, keepOut: 1.4 }); k.prop('noguchi_stone_2', AX + 8, 0.15, AZ + 10, { height: 2.6, keepOut: 1.6 });
@@ -94,7 +99,11 @@ export const newmuseum: RoomDef = {
     const boxes: [number, number, number, number][] = [[22, 8, 0, 0], [20, 6, 1.6, -1], [22, 7, -1.4, 1.2], [18, 6, 2.6, -1.6], [20, 7, -1.2, 1.4], [16, 6, 2.2, -0.6], [14, 5, 0.4, 1.8]];
     let y = 0;
     boxes.forEach(([w, h, dx, dz], i) => { k.box(w, h, w, BX + dx, y + h / 2, BZ + dz, i === 0 ? white : mesh); if (i > 0) k.box(w - 4, 0.4, 3, BX + dx - w / 2 + (i % 2 ? w - 2 : 2), y + 0.2, BZ + dz + w / 2 - 1.5 + 0.2, glass); y += h; });
-    k.box(3, 6, 3, BX + 8, y + 3, BZ - 6, green);
+    /* the roof plant box in the same mesh; the green belongs inside, in the elevator cabs */
+    k.box(3, 6, 3, BX + 8, y + 3, BZ - 6, mesh);
+    k.egg(v(BX, 1.8, BZ + 12.6), { id: 'newmuseum-stack', title: 'Seven boxes, no columns', year: '2007', text: 'SANAA stacked seven boxes of different proportions round a central core and pushed them off centre, leaving zoning floor area unused. Where a box overhangs the one below, the shift makes room for a skylight. Steel trusses carry the loads, so the galleries need no columns, and the whole thing wears two layers of industrial aluminium mesh.', clue: 'Stand on the Bowery and look up at how each box slides off the one below.', source: { name: 'The New Museum, Arch Journey', url: 'https://archjourney.org/projects/the-new-museum/' } }, { r: 1.8 });
+    k.egg(v(BX + 13.5, 1.6, BZ + 13), { id: 'newmuseum-tucker', title: 'From Fifth Avenue to the Bowery', year: '1977', text: 'The independent curator Marcia Tucker founded the New Museum in 1977 in the New School\'s Graduate Center at 65 Fifth Avenue; in 1983 it moved to the Astor Building at 583 Broadway in SoHo. It sold the SoHo home for $18 million, bought this Bowery site for $5 million, and opened the building here on 1 December 2007.', clue: 'Walk along the Bowery to the south edge of the building.', source: { name: 'New Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_Museum' } }, { r: 1.6 });
+    k.egg(v(BX + 16, 1.6, BZ + 18), { id: 'newmuseum-oma', title: 'The neighbour next door', year: '2026', text: 'In 2008 the museum bought the building next door at 231 Bowery, and in 2017 it hired OMA, where Shohei Shigematsu and Rem Koolhaas designed an addition meant to double the exhibition space. The museum closed in March 2024 for the work and reopened on 21 March 2026.', clue: 'Look at the lot just south of the stack.', source: { name: 'New Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_Museum' } }, { r: 1.6 });
     k.box(4.4, 5.2, 0.2, BX - 4, 2.6, BZ + 11.02, glass); k.block(BX - 11, BX - 6.3, BZ + 10.6, BZ + 11.4); k.block(BX - 1.7, BX + 11, BZ + 10.6, BZ + 11.4);
     k.sign('NEW MUSEUM', 8, 1.6, BX + 2, 6.5, BZ + 11.04, 'transparent', '#0d0d0d', 120, 0);
     mlowBanner(k, BX - 8, 12, BZ + 11.3, 0, 3.0, true);
@@ -106,6 +115,10 @@ export const newmuseum: RoomDef = {
     k.box(GW, 14, 0.4, BX, 7, BZ - GD / 2, white); k.block(BX - GW / 2, BX + GW / 2, BZ - GD / 2 - 0.4, BZ - GD / 2 + 0.4);
     k.box(GW, 14, 0.4, BX, 7, BZ + GD / 2, white); k.block(BX - GW / 2, BX - 1.8, BZ + GD / 2 - 0.4, BZ + GD / 2 + 0.4); k.block(BX + 1.8, BX + GW / 2, BZ + GD / 2 - 0.4, BZ + GD / 2 + 0.4);
     k.box(GW, 0.4, GD, BX, 14, BZ, dark);
+    /* the elevator by the entrance, its doors open on the cab's green */
+    k.box(2.4, 3.0, 0.12, BX + 6, 1.65, BZ + GD / 2 - 0.28, green); k.box(3.0, 3.4, 0.08, BX + 6, 1.85, BZ + GD / 2 - 0.24, steel);
+    k.egg(v(BX + 6, 1.8, BZ + GD / 2 - 0.9), { id: 'newmuseum-green', title: 'Tree frog green', text: 'Inside this pale, plain building, the elevator cabs are a tart tree frog green, as a Brooklyn Rail critic put it, like glimpsing the innards of the organism. The galleries around them have poured concrete floors, white walls and bare fluorescent light.', clue: 'Find the elevator beside the entrance and look inside.', source: { name: 'Kazuyo Sejima and Ryue Nishizawa, SANAA, The Brooklyn Rail', url: 'https://brooklynrail.org/2008/02/artseen/kazuyo-sejima-and-ryue-nishizawa-sanaa/' } }, { r: 1.3 });
+    k.egg(v(BX - GW / 2 + 1.3, 2.2, BZ + GD / 2 - 5), { id: 'newmuseum-stair', title: 'The narrow stair', text: 'Between the third and fourth floors runs a long, very narrow staircase, with stubby fluorescent tubes sticking out of its wall.', clue: 'Climb the narrow stair along the west wall.', source: { name: 'Kazuyo Sejima and Ryue Nishizawa, SANAA, The Brooklyn Rail', url: 'https://brooklynrail.org/2008/02/artseen/kazuyo-sejima-and-ryue-nishizawa-sanaa/' } }, { r: 1.3 });
     k.mesh(new T.PlaneGeometry(3, GD - 2), k.glow(0xffffff, 0.9), BX + 6, 13.8, BZ).rotation.x = PI / 2;
     for (let z = -8; z <= 8; z += 8) k.point(BX + 6, 11, BZ + z, 0xffffff, 26, 16);
     for (let i = 0; i < 20; i++) k.box(2.4, 0.35, 0.9, BX - GW / 2 + 1.3, 0.17 + i * 0.35, BZ + GD / 2 - 1 - i * 0.9, floorC);
@@ -151,9 +164,15 @@ export const neuegalerie: RoomDef = {
     street(k, { w: 24, len: 160, z: 40, x: 0 });
     k.box(160, 0.4, 200, 100, -0.2, 0, k.pbr('ngLawn', X.grass(0x3a5a2a, 136), 0.06));
     k.rail(18, 0, 160, k.flat(0x1a1c20, 0.7, 0.45), 1.0, 'z', 2.4); k.block(17.6, 18.4, -80, 80);
-    const rnd = X.mulberry(89); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'bare', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i });
+    const rnd = X.mulberry(89); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'bare', species: i % 3 === 2 ? 'oak' : 'elm', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i });
     const MX = -26, MZ = 0, MW = 26, MD = 30;
-    k.box(MW, 22, MD, MX, 11, MZ, lime);
+    /* Carrere and Hastings, 1914: red brick with limestone trim under a slate mansard with dormers */
+    const brickR = k.pbr('ngBrick', X.brick(0x8a4636, 289), 0.28), slate = k.pbr('ngSlate', X.steel(0x3e4248, false, 290), 0.4, { roughness: 0.7 });
+    k.box(MW, 22, MD, MX, 11, MZ, brickR);
+    k.box(MW - 1.4, 3.4, MD - 1.4, MX, 23.7, MZ, slate); k.box(MW - 3.2, 0.3, MD - 3.2, MX, 25.5, MZ, slate);
+    for (let i = 0; i < 5; i++) { const z = MZ - 10 + i * 5; k.box(1.0, 2.0, 1.6, MX + MW / 2 - 0.4, 23.6, z, cream); k.box(0.06, 1.4, 1.1, MX + MW / 2 + 0.12, 23.5, z, glass); }
+    k.egg(v(MX + MW / 2 + 1.2, 1.6, MZ - 8), { id: 'neuegalerie-vosges', title: 'A Paris square on Fifth Avenue', year: '1914', text: 'Carrere and Hastings, the architects of the New York Public Library, finished this house in 1914 for the industrialist William Starr Miller and modelled it on the seventeenth century Place des Vosges in Paris. Red brick with limestone trim under a slate mansard, it cost about $150,000, and it is one of the few Gilded Age mansions left on Fifth Avenue.', clue: 'Stand on the Fifth Avenue pavement and look up at the slate roof and its dormers.', source: { name: '1048 Fifth Avenue, Neue Galerie', url: 'https://neuegalerie.org/learn/building' } }, { r: 1.6 });
+    k.egg(v(MX + MW / 2 + 2.6, 1.6, MZ + 3.2), { id: 'neuegalerie-cottage', title: 'The gardener\'s cottage', year: '1944', text: 'After her husband died in 1942, Grace Vanderbilt had to give up the family palace at 640 Fifth Avenue and moved here once Miller\'s widow died in 1944. She called the house the gardener\'s cottage, and is said to have described herself as all alone in it, with 18 servants. She lived here until she died in 1953.', clue: 'Stop under the iron and glass canopy at the door.', source: { name: 'The story of a Fifth Avenue mansion scorned by its second owner, Ephemeral New York', url: 'https://www.goodreads.com/author_blog_posts/23264630-the-story-of-a-fifth-avenue-mansion-scorned-by-its-second-owner-as-a-ga' } }, { r: 1.4 });
     k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], MD + 0.4, MX + MW / 2 + 0.05, 21.5, MZ, lime, PI / 2);
     for (let f = 0; f < 4; f++) for (let i = 0; i < 5; i++) { const y = 4 + f * 4.6, z = MZ - 10 + i * 5; k.box(0.16, 3.0, 1.8, MX + MW / 2 + 0.02, y, z, cream); k.box(0.06, 2.6, 1.5, MX + MW / 2 + 0.1, y, z, glass); if (f === 1) { k.box(0.6, 0.06, 2.2, MX + MW / 2 + 0.4, y - 1.5, z, bronze); for (let b = -1; b <= 1; b += 0.25) k.box(0.03, 0.7, 0.03, MX + MW / 2 + 0.7, y - 1.15, z + b, bronze); } }
     k.box(3.6, 0.1, 5, MX + MW / 2 + 1.8, 4.2, MZ, glass); for (const dz of [-2.4, 2.4]) k.beam(v(MX + MW / 2 + 0.2, 6, MZ + dz), v(MX + MW / 2 + 3.6, 4.3, MZ + dz), 0.04, bronze, 4);
@@ -177,10 +196,12 @@ export const neuegalerie: RoomDef = {
     k.mesh(new T.CylinderGeometry(4.4, 4.4, 5.6, 32, 1, true), k.flat(0x000000, 0, 1, { transparent: true, opacity: 0 }), SX, 8.2, SZ);
     k.block(SX - 4.6, SX + 4.6, SZ - 4.6, SZ - 3.6);
     k.point(SX, 5, SZ, 0xffe6c0, 20, 12);
+    k.egg(v(SX, 2.2, SZ), { id: 'neuegalerie-yivo', title: 'From YIVO to the Neue', year: '2001', text: 'After Grace Vanderbilt, the YIVO Institute for Jewish Research took over the house in 1955. Serge Sabarsky and Ronald Lauder bought it in 1994, Annabelle Selldorf converted it into a museum, and the Neue Galerie opened here on 16 November 2001.', clue: 'Stand in the well of the spiral stair and look up.', source: { name: 'William Starr Miller House, Wikipedia', url: 'https://en.wikipedia.org/wiki/William_Starr_Miller_House' } }, { r: 1.4 });
     const CX = MX - 5, CZ = MZ - 7;
     for (let i = 0; i < 6; i++) { const x = CX - 6 + (i % 3) * 5, z = CZ - 3 + Math.floor(i / 3) * 5; k.cyl(0.05, 0.72, x, 0.36, z, bronze, 0.05, 8); k.cyl(0.42, 0.04, x, 0.75, z, marble, 0.42, 16); k.keepOut.push({ x, z, r: 0.7 }); for (let c = 0; c < 3; c++) { const a = (c / 3) * PI * 2; k.box(0.4, 0.45, 0.4, x + Math.cos(a) * 0.7, 0.23, z + Math.sin(a) * 0.7, wood); k.torus(0.2, 0.02, x + Math.cos(a) * 0.85, 0.75, z + Math.sin(a) * 0.85, wood, 12); } }
     k.box(4, 1.1, 1.0, CX + 4, 0.55, CZ - 7, wood); k.box(4.2, 0.1, 1.2, CX + 4, 1.12, CZ - 7, marble); k.box(3.6, 0.6, 0.8, CX + 4, 1.5, CZ - 7, glass); k.block(CX + 1.8, CX + 6.2, CZ - 7.7, CZ - 6.3);
     for (let i = 0; i < 6; i++) k.cyl(0.14, 0.12, CX + 2.6 + i * 0.5, 1.24, CZ - 7, [k.flat(0x8a4a2a, 0, 0.6), k.flat(0xe8d0a0, 0, 0.6), k.flat(0xd83a6a, 0, 0.6)][i % 3], 0.14, 12);
+    k.egg(v(CX + 4, 1.7, CZ - 6.2), { id: 'neuegalerie-sabarsky', title: 'Cafe Sabarsky', text: 'The cafe is named for Serge Sabarsky, who dreamed up the museum with Ronald Lauder and died in 1996 before it opened. It is modelled on the cafes of Vienna, with lighting by Josef Hoffmann, furniture by Adolf Loos and banquettes covered in a 1912 Otto Wagner fabric.', clue: 'Look at the cake counter in the cafe.', source: { name: 'Neue Galerie New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Neue_Galerie_New_York' } }, { r: 1.4 });
     eyeMedallion(k, MX + 3, 0.16, MZ, 1.6);
     donorWall(k, MX, 3.6, MZ - ID / 2 + 0.22, 0, 8, true);
     for (let i = 0; i < 3; i++) k.point(MX - 6 + i * 6, 4.6, MZ - 4, 0xffe6c0, 12, 10);
@@ -193,6 +214,7 @@ export const neuegalerie: RoomDef = {
     for (const [x, z] of [[MX - 6, MZ + 2], [MX + 5, MZ - 4]]) { k.box(2.2, 0.5, 0.9, x, UY + 0.4, z, velvet); k.box(2.2, 0.7, 0.3, x, UY + 0.85, z - 0.3, velvet); k.keepOut.push({ x, z, r: 1.4 }); }
     for (let i = 0; i < 4; i++) k.point(MX - 6 + i * 4, UY + 4, MZ - 6 + (i % 2) * 8, 0xffe6c0, 12, 10);
     k.point(MX, UY + 3, MZ - ID / 2 + 3, 0xffd890, 30, 12);
+    k.egg(v(MX + 6.5, UY + 1.7, MZ - ID / 2 + 1.4), { id: 'neuegalerie-adele', title: 'The golden portrait', year: '2006', text: 'In 2006 Ronald Lauder bought Gustav Klimt\'s Portrait of Adele Bloch-Bauer I from Maria Altmann for the Neue Galerie. Lauder said only that he paid more than $104.2 million; the press reported $135 million, which would have made it the most expensive painting ever sold at the time.', clue: 'Find the gold wall at the end of the upstairs salon.', source: { name: 'Neue Galerie New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Neue_Galerie_New_York' } }, { r: 1.4 });
     k.crowd([v(MX + 10, 0.15, MZ + 4), v(MX - 2, 0.15, MZ - 2), v(MX - 8, 0.15, MZ - 8)], 8, { seed: 119, speed: 0.25, spread: 1.4, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0x8a3a3a] });
     k.crowd([v(MX - 8, UY + 0.15, MZ + 8), v(MX + 6, UY + 0.15, MZ - 8)], 6, { seed: 120, speed: 0.2, spread: 1.4, animate: !ctx.reduced });
     k.censusWall({ x: MX - IW / 2 + 0.36, y: 2.6, z: MZ + 2, rotY: PI / 2, cols: 20, rows: 4, tile: 0.5, gap: 0.05, start: ctx.wallStart(1900, 80), pieces: ctx.all, backing: dark });
@@ -238,6 +260,7 @@ export const cooperhewitt: RoomDef = {
     k.box(6, 5, 3, MX, 2.5, MZ + MD / 2 + 1.5, lime); k.arch(2.6, 4, 3, MX, 0, MZ + MD / 2 + 1.5, lime, false, 0.85);
     k.block(MX - MW / 2, MX - 1.5, MZ + MD / 2 - 0.4, MZ + MD / 2 + 3.2); k.block(MX + 1.5, MX + MW / 2, MZ + MD / 2 - 0.4, MZ + MD / 2 + 3.2);
     k.sign('COOPER HEWITT  ·  DESIGN', 6, 0.6, MX, 6.2, MZ + MD / 2 + 3.06, 'transparent', '#3a3020', 70, 0);
+    k.egg(v(MX + 2.6, 1.6, MZ + MD / 2 + 4), { id: 'cooperhewitt-modest', title: 'The plainest house in New York', year: '1902', text: 'Andrew Carnegie told his architects, Babb, Cook and Willard, that he wanted the most modest, plainest and most roomy house in New York. They gave him at least 64 rooms over three basements and four storeys, and the Carnegies moved in on 12 December 1902. The Smithsonian opened its design museum here on 7 October 1976.', clue: 'Stop at the front door.', source: { name: 'Andrew Carnegie Mansion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Andrew_Carnegie_Mansion' } }, { r: 1.4 });
     mlowBanner(k, MX - 10, 10, MZ + MD / 2 + 0.6, 0, 3.0, true); blossomFlag(k, MX + 10, 10, MZ + MD / 2 + 0.6, 0, 2.6, 5, 'electric');
     // the conservatory on the garden side, the terrace, the pergola
     const CX = MX + MW / 2 + 6, CZ = MZ + 4;
@@ -247,8 +270,10 @@ export const cooperhewitt: RoomDef = {
     for (let i = 0; i <= 6; i++) { k.box(0.16, 6, 0.16, CX - 6 + i * 2, 3, CZ - 7, bronze); k.box(0.16, 6, 0.16, CX - 6 + i * 2, 3, CZ + 7, bronze); k.box(12.2, 0.16, 0.16, CX, 6 + i * 0.5, CZ - 7 + i * 2.33, bronze); }
     const roof = k.mesh(new T.CylinderGeometry(6, 6, 14, 16, 1, true, 0, PI), glass, CX, 6, CZ); roof.rotation.set(0, 0, PI / 2); roof.rotateX(PI / 2); void roof;
     for (let i = 0; i < 8; i++) { const x = CX - 4 + (i % 4) * 2.6, z = CZ - 4 + Math.floor(i / 4) * 8; k.prop('palm_urn', x, 0.15, z, { height: 2.4 + (i % 3) * 0.4, keepOut: 1.0 }); }
+    k.egg(v(CX, 1.6, CZ), { id: 'cooperhewitt-conservatory', title: 'Room for six hundred', text: 'The metal and glass conservatory, now named the Barbara Riley Levin Conservatory, could hold 600 guests.', clue: 'Walk into the glass conservatory among the palms.', source: { name: 'Andrew Carnegie Mansion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Andrew_Carnegie_Mansion' } }, { r: 1.4 });
     k.box(30, 0.3, 12, MX + 2, 0.05, MZ - MD / 2 - 7, gravel);
     const PZ = MZ - MD / 2 - 12;
+    k.egg(v(MX + 12, 1.4, MZ - MD / 2 - 7), { id: 'cooperhewitt-garden', title: 'The terrace he cancelled', text: 'The mansion sits on a 1.2 acre site with its garden on the southern half, planted at first with about 30 mature trees. The early plans wrapped a terrace round the whole house, but Carnegie had it taken out when the building was nearly finished.', clue: 'Walk out onto the gravel behind the house.', source: { name: 'Andrew Carnegie Mansion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Andrew_Carnegie_Mansion' } }, { r: 1.6 });
     for (let i = 0; i <= 6; i++) { const x = MX - 12 + i * 4.6; for (const dz of [-2, 2]) { k.box(0.5, 3.2, 0.5, x, 1.6, PZ + dz, white); k.keepOut.push({ x, z: PZ + dz, r: 0.5 }); } k.box(0.24, 0.24, 5.2, x, 3.4, PZ, timber); }
     k.box(28.6, 0.24, 0.3, MX + 2, 3.4, PZ - 2, timber); k.box(28.6, 0.24, 0.3, MX + 2, 3.4, PZ + 2, timber);
     for (let x = MX - 11.5; x < MX + 15; x += 0.9) k.box(0.14, 0.2, 5.6, x, 3.6, PZ, timber);
@@ -263,7 +288,10 @@ export const cooperhewitt: RoomDef = {
     for (const s of [-1, 1]) { k.box(0.3, 7, HD, MX + s * (HW / 2 - 0.2), 3.5, MZ, oak); k.block(MX + s * (HW / 2 - 0.6), MX + s * (HW / 2 + 0.6), MZ - HD / 2, MZ + HD / 2); }
     k.box(HW, 7, 0.3, MX, 3.5, MZ - HD / 2 + 0.2, oak); k.block(MX - HW / 2, MX + HW / 2, MZ - HD / 2 - 0.6, MZ - HD / 2 + 0.6);
     k.box(HW, 0.4, HD, MX, 7.2, MZ, k.pbr('chCeiling', X.plaster(0xd8d0c0, 140), 0.4));
-    for (let i = 0; i < 12; i++) { const h = 2.4 + Math.abs(5.5 - i) * 0.3; k.cyl(0.1, h, MX - 5.5 + i * 1.0, 3.6 + h / 2, MZ - HD / 2 + 0.6, k.flat(0xb8a878, 0.8, 0.35), 0.09, 10); }
+    /* Carnegie's 3,000 pipe organ played here until 1946 and left the house in 1974, so the wall where it stood is bare oak now */
+    k.egg(v(MX - 6, 4.4, MZ - HD / 2 + 0.9), { id: 'cooperhewitt-organ', title: 'The organ that left', year: '1974', text: 'The house had a 3,000 pipe Aeolian-Skinner organ, played until 1946, the year Louise Carnegie died here. In 1974 it was moved out to Roslyn Harbor on Long Island.', clue: 'Look at the bare oak at the far end of the great hall.', source: { name: 'Andrew Carnegie Mansion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Andrew_Carnegie_Mansion' } }, { r: 1.4 });
+    k.egg(v(MX + 4, 1.8, MZ + 2), { id: 'cooperhewitt-steel', title: 'A house like an ocean liner', text: 'The mansion was among the first houses in New York built on a steel frame, and it had a private Otis elevator, five electric elevators from the start. Its heating plant was big enough for an ocean liner, and its air cooling system was among the first in any private house in the country.', clue: 'Stand in the middle of the great hall.', source: { name: 'Andrew Carnegie Mansion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Andrew_Carnegie_Mansion' } }, { r: 1.6 });
+    k.egg(v(MX - HW / 2 + 1.8, 1.4, MZ + HD / 2 - 2.6), { id: 'cooperhewitt-stair', title: 'Scottish oak', text: 'The grand staircase of the house was made of imported Scottish oak. The mansion has been a National Historic Landmark since 13 November 1966 and a New York City landmark since 17 February 1974.', clue: 'Put a hand on the carved stair at the side of the hall.', source: { name: 'Andrew Carnegie Mansion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Andrew_Carnegie_Mansion' } }, { r: 1.3 });
     for (let i = 0; i < 16; i++) k.box(3, 0.4, 1.0, MX - HW / 2 + 1.8, 0.2 + i * 0.4, MZ + HD / 2 - 2 - i * 1.0, oak);
     for (let i = 0; i < 16; i++) k.box(0.06, 0.9, 0.06, MX - HW / 2 + 3.4, 0.9 + i * 0.4, MZ + HD / 2 - 2 - i * 1.0, oak);
     k.box(HW, 0.4, 5, MX, 6.6, MZ - HD / 2 + 2.5, oak);
@@ -308,12 +336,19 @@ export const breuer: RoomDef = {
     const BX = 0, BZ = -6, BW = 34;
     k.box(BW + 12, 0.4, 24, BX, -4.2, BZ + 16, blue);
     for (const s of [-1, 1]) k.box(0.6, 4, 24, BX + s * (BW / 2 + 6), -2, BZ + 16, conc);
+    k.egg(v(BX, 1.6, BZ + 16), { id: 'breuer-moat', title: 'A moat for sculpture', text: 'The sunken areaway along Madison Avenue, sometimes called the moat, was meant for sculpture, and a canopied concrete bridge carries visitors over it into the lobby.', clue: 'Stop halfway across the bridge and look down.', source: { name: 'Breuer Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Breuer_Building' } }, { r: 1.4 });
     k.box(6, 0.5, 14, BX, 0, BZ + 16, conc); k.rail(BX - 2.8, BZ + 16, 14, dark, 1.0, 'z', 2); k.rail(BX + 2.8, BZ + 16, 14, dark, 1.0, 'z', 2);
     k.block(-BW / 2 - 6, -3.2, BZ + 9, BZ + 24); k.block(3.2, BW / 2 + 6, BZ + 9, BZ + 24);
     k.prop('bronze_figure', BX - 10, -4, BZ + 16, { height: 3.4 }); k.prop('noguchi_stone_1', BX + 10, -4, BZ + 18, { height: 2.6 }); k.prop('mobile', BX + 8, 2, BZ + 12, { height: 4 });
     const tiers: [number, number, number][] = [[BW, 8, 0], [BW + 6, 6, 8], [BW + 12, 6, 14], [BW + 18, 6, 20]];
-    tiers.forEach(([w, h, y], i) => { k.box(w, h, 30 + i * 4, BX, y + h / 2, BZ - 6 - i * 2, granite); if (i > 0) k.box(w + 0.4, 0.5, 30 + i * 4 + 0.4, BX, y + 0.25, BZ - 6 - i * 2, dark); });
-    const tw = k.box(6, 3, 0.4, BX + 8, 24, BZ + 14, glass); tw.rotation.x = -0.4; k.box(6.4, 3.4, 0.3, BX + 8, 24, BZ + 13.7, conc).rotation.x = -0.4;
+    /* each storey steps out over the moat toward Madison, the inverted ziggurat (the front faces used
+       to stay flush at one plane, so nothing overhung the street) */
+    const front = (i: number) => BZ + 9 + i * 2.5;
+    tiers.forEach(([w, h, y], i) => { const d = 30 + i * 4, cz = front(i) - d / 2; k.box(w, h, d, BX, y + h / 2, cz, granite); if (i > 0) k.box(w + 0.4, 0.5, d + 0.4, BX, y + 0.25, cz, dark); });
+    /* the one big trapezoid window on the Madison front, turned toward the north instead of tipped at the sky */
+    const tw = k.box(6, 3, 0.4, BX + 8, 24, front(3) + 0.2, glass); tw.rotation.y = -0.4; k.box(6.4, 3.4, 0.3, BX + 8, 24, front(3) + 0.1, conc).rotation.y = -0.4;
+    k.egg(tw, { id: 'breuer-window', title: 'Turned from the sun', text: 'The trapezoid windows are angled 20 to 25 degrees away from the sun. The Madison Avenue front has just one, oversized and turned north, and the 75th Street side has six, all tilted west.', clue: 'Find the one angled window high on the Madison Avenue front.', source: { name: 'Breuer Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Breuer_Building' } }, { r: 2.4 });
+    k.egg(v(BX - 9, 1.6, BZ + 25), { id: 'breuer-granite', title: 'Fifteen hundred slabs', year: '1966', text: 'The concrete building is faced with 1,500 slabs of variegated grey granite, mostly dark with white veins, each weighing 500 to 600 pounds. Above the ground floor each gallery level steps out farther than the one below, which is why people call it an inverted ziggurat.', clue: 'Stand at the edge of the moat and look up at the overhangs.', source: { name: 'Breuer Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Breuer_Building' } }, { r: 1.6 });
     k.box(8, 5, 0.3, BX, 2.5, BZ + 9.2, glass); k.block(-BW / 2, -3.2, BZ + 8.8, BZ + 9.6); k.block(3.2, BW / 2, BZ + 8.8, BZ + 9.6);
     k.sign('THE BREUER  ·  1966', 6, 0.6, BX, 6.6, BZ + 9.05, 'transparent', '#f0ece4', 70, 0);
     mlowBanner(k, BX - 12, 4.2, BZ + 9.4, 0, 2.8, true); blossomFlag(k, BX + 12, 4.2, BZ + 9.4, 0, 2.4, 1, 'ink');
@@ -332,6 +367,9 @@ export const breuer: RoomDef = {
     k.block(BX - GW / 2 - 3, BX + GW / 2 + 3, BZ - 8 + GD / 2 + 2.6, BZ - 8 + GD / 2 + 3.4); k.block(BX - GW / 2 - 3, BX + GW / 2 + 3, BZ - 8 - GD / 2 - 3.4, BZ - 8 - GD / 2 - 2.6);
     for (let i = 0; i < 28; i++) k.box(3, 0.5, 1.0, BX - GW / 2 + 1.8, 0.25 + i * 0.5, BZ + 6 - i * 0.9, conc);
     k.block(BX - GW / 2 + 0.3, BX - GW / 2 + 3.3, BZ - 20, BZ + 6.6);
+    k.egg(v(BX - GW / 2 + 1.8, 1.6, BZ + 4.5), { id: 'breuer-stair', title: 'The spiral the city refused', text: 'The main stair runs at the south end of the building from the basement to the fifth floor, with bush hammered concrete walls, terrazzo treads and bronze and wood rails. Breuer had proposed a spiral staircase in the middle of the building, and the city rejected it.', clue: 'Start up the concrete stair.', source: { name: 'Breuer Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Breuer_Building' } }, { r: 1.3 });
+    k.egg(v(BX + 6, 1.6, BZ - 4), { id: 'breuer-rebel', title: 'Against skyscrapers and brownstones', year: '1966', text: 'Marcel Breuer and Hamilton P. Smith designed the building as the Whitney Museum\'s third home, and it officially opened in September 1966. Breuer told Newsweek that year: maybe I built it to rebel against skyscrapers and brownstones. The bulbs in the lobby\'s round ceiling lights were bare.', clue: 'Stand in the lobby under the grid of round lights.', source: { name: 'Breuer Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Breuer_Building' } }, { r: 1.6 });
+    k.egg(v(BX + 10, GY + 1.8, BZ - 18), { id: 'breuer-tenants', title: 'Three museums and an auction house', year: '2025', text: 'After the Whitney left, the Met ran the building as the Met Breuer from 2016 to 2020, and the Frick showed its collection here as Frick Madison from March 2021 to March 2024. Sotheby\'s agreed to buy it in 2023 for about $100 million and opened its headquarters here on 8 November 2025, months after the city made the exterior, lobby and main stair a landmark.', clue: 'Walk to the far corner of the big fourth floor gallery.', source: { name: 'Breuer Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Breuer_Building' } }, { r: 1.6 });
     for (const [x, z] of [[BX - 6, BZ - 14], [BX + 6, BZ - 2]]) { k.box(0.4, 5, 8, x, GY + 2.5, z, white); k.block(x - 0.4, x + 0.4, z - 4, z + 4); }
     k.prop('vitrine', BX, GY + 0.2, BZ - 8, { height: 1.7, keepOut: 1.2 }); k.prop('museum_bench', BX + 10, GY + 0.2, BZ - 12, { height: 0.58, keepOut: 1.4 });
     donorWall(k, BX, 3.6, BZ - 20 + 0.42, 0, 9, false);

@@ -17,7 +17,7 @@ export const studio8h: RoomDef = {
   mood: 'Eleven thirty Saturday',
   color: '#e8b040',
   description: 'The lobby of the tower on the plaza, the elevator up, then the studio: the home base stage, the band stand, the cameras, the bleachers, the cue cards, the works on every set wall.',
-  signatures: 'The art deco lobby with its dark marble and gold leaf ceiling, the studio floor with its brick home base arch and the musical guest stage, the boom cameras and the applause sign, the steep audience bleachers, the cue card easel.',
+  signatures: 'The art deco lobby with its grey Champlain marble and the sepia Sert mural on the ceiling, the studio floor with its brick home base arch and the musical guest stage, the boom cameras and the applause sign, the steep audience bleachers, the cue card easel.',
   daylit: false,
   build(k, ctx) {
     k.sky({ top: 0x0e1424, horizon: 0x2a2a44, ground: 0x0a0a10, fog: 0.004, stars: 160, env: 0.5 });
@@ -29,7 +29,8 @@ export const studio8h: RoomDef = {
       black = k.flat(0x0a0a0c, 0.3, 0.8),
       wood = k.pbr('shWood', X.planks(0x6a4a30, 5, 165), 1.0),
       red = k.pbr('shSeats', X.velvet(0x8a1a22), 0.4, { roughness: 0.95 }),
-      marble = k.pbr('shMarble', X.marble(0x3a2e2a, 0x8a6a4a, 13), 0.4, { roughness: 0.3 }),
+      marble = k.pbr('shMarble', X.marble(0x56585a, 0x9a9890, 13), 0.4, { roughness: 0.3 }),
+      sert = k.pbr('shSert', X.plaster(0x9a7a56, 168), 0.3, { roughness: 0.8 }),
       gold = k.pbr('shGold', X.gilt(0xd0a852), 2, { metalness: 0.85, roughness: 0.3 }),
       glow = k.glow(0xffe0b0),
       neon = k.glow(0xff4a3a),
@@ -42,7 +43,8 @@ export const studio8h: RoomDef = {
     for (let x = -36; x <= 36; x += 6) k.box(1.0, 200, 0.6, x, 100, LZ + 0.2, k.pbr('shLime', X.ashlar(0xb8ad97, 167, 3), 0.22));
     k.box(LW, 0.3, LD, 0, 0.15, LZ - LD / 2, marble);
     for (const s of [-1, 1]) { k.box(0.6, 10, LD, s * LW / 2, 5, LZ - LD / 2, marble); k.block(s * LW / 2 - 0.5, s * LW / 2 + 0.5, LZ - LD, LZ); }
-    k.box(LW, 0.4, LD, 0, 10, LZ - LD / 2, gold);
+    /* the ceiling: Sert's 1941 sepia mural, painted plaster, not gold leaf */
+    k.box(LW, 0.4, LD, 0, 10, LZ - LD / 2, sert);
     for (const x of [-9, 0, 9]) { k.box(3, 5, 0.4, x, 2.5, LZ - LD + 0.3, gold); k.box(2.2, 4.4, 0.1, x, 2.5, LZ - LD + 0.05, dark); k.point(x, 6, LZ - LD + 3, 0xffe6c0, 20, 12); }
     k.block(-LW / 2, LW / 2, LZ - LD - 0.5, LZ - LD + 0.5);
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) k.point(s * 8, 8, LZ - 3 - i * 6, 0xffe0b0, 18, 12);
@@ -88,6 +90,15 @@ export const studio8h: RoomDef = {
     k.sign('LIVE FROM NEW YORK', 1.3, 0.5, 8.45, 2.0, HZ + 9.03, '#f4f0e8', '#14090a', 40, PI, { border: false });
     k.censusWall({ x: -SW / 2 + 0.34, y: 4.4, z: SZ - SD / 2, rotY: PI / 2, cols: 30, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(7400, 150), pieces: ctx.all, backing: dark });
     k.crowd([v(-13, 4.4, BZ + 10), v(0, 4.4, BZ + 10), v(13, 4.4, BZ + 10)], 8, { seed: 62, speed: 0.15, spread: 1, animate: !ctx.reduced });
+    /* Lee Lawrie's Wisdom over the entrance, and the eggs */
+    k.sign('WISDOM AND KNOWLEDGE SHALL BE THE STABILITY OF THY TIMES', 16, 0.6, 0, 11.2, LZ + 0.75, '#1a1a1a', '#d8c08a', 60, 0, { border: false });
+    const W8 = 'https://en.wikipedia.org/wiki/Studio_8H', SNL = 'https://en.wikipedia.org/wiki/Saturday_Night_Live', RCA = 'https://en.wikipedia.org/wiki/30_Rockefeller_Plaza';
+    k.egg(v(0, 10.6, LZ + 0.9), { id: 'studio8h-wisdom', title: 'A voice from the clouds', year: '1933', text: 'The three arches of the main entrance carry Lee Lawrie\'s carving Wisdom, A Voice from the Clouds, with Sound to the left and Light to the right. The frieze quotes Isaiah 33:6: Wisdom and Knowledge shall be the stability of thy times.', clue: 'Look up over the entrance before you walk in.', source: { name: '30 Rockefeller Plaza, Wikipedia', url: RCA } }, { r: 1.6 });
+    k.egg(v(0, 8.6, LZ - LD / 2), { id: 'studio8h-rivera', title: 'The mural that was destroyed', year: '1934', text: 'Diego Rivera\'s Man at the Crossroads was painted for this lobby and destroyed in 1934 over its communist imagery. Josep Maria Sert\'s American Progress, 50 by 17 feet, took its place in 1937, and in 1941 a sixth Sert mural, 100 by 50 feet, went onto the ceiling.', clue: 'Stand in the middle of the lobby and look at the ceiling.', source: { name: '30 Rockefeller Plaza, Wikipedia', url: RCA } }, { r: 1.8 });
+    k.egg(v(0, 7, SZ - SD / 2), { id: 'studio8h-radio', title: 'The biggest radio studio on earth', year: '1933', text: 'Studio 8H was built in 1933 as the largest radio studio in the world, 132 by 78 feet and three storeys tall, big enough for a full orchestra. It was converted for television in 1950, mainly for the live Kraft Television Theatre.', clue: 'Look up at the lighting grid in the middle of the studio.', source: { name: 'Studio 8H, Wikipedia', url: W8 } }, { r: 1.8 });
+    k.egg(v(-16, 1.6, HZ + 2), { id: 'studio8h-toscanini', title: 'Toscanini\'s room', year: '1937', text: 'In 1937 the studio became the home of Arturo Toscanini\'s NBC Symphony Orchestra. Samuel Barber\'s Adagio for Strings was first performed from this room.', clue: 'Find the band stand to the left of home base.', source: { name: 'Studio 8H, Wikipedia', url: W8 } }, { r: 1.0 });
+    k.egg(v(HX, 2.4, HZ - 1.6), { id: 'studio8h-premiere', title: 'NBC\'s Saturday Night', year: '1975', text: 'The show premiered here on October 11, 1975, hosted by George Carlin, under the title NBC\'s Saturday Night. The studio, which had housed NBC\'s election and moon landing coverage, was revamped for the premiere at a cost of $250,000. In 1976 three episodes moved to NBC\'s Brooklyn studios because NBC News needed 8H for election night.', clue: 'Stand under the brick arch of home base.', source: { name: 'Saturday Night Live, Wikipedia', url: SNL } }, { r: 1.6 });
+    k.egg(v(8.45, 2.0, HZ + 9.2), { id: 'studio8h-1129', title: 'Eleven twenty nine and thirty seconds', text: 'The show starts at 11:29:30 p.m. Eastern, not on the half hour. Before it, at 8:00 p.m., the cast plays the whole show to a different live audience as a dress rehearsal.', clue: 'Read the cue card on the easel by the cameras.', source: { name: 'Saturday Night Live, Wikipedia', url: SNL } }, { r: 1.4 });
     // the works: the set walls (home base flanks, the band and guest stage backdrops), the studio side walls, the lobby
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) mounts.push({ position: v(HX + s * 5.5, 5.2, HZ - 2.45), rotation: 0, target: v(HX + s * 4, 3, HZ + 8), width: 2.4, height: 2.6, style: 'black', wash: true });
@@ -218,8 +229,10 @@ export const vanguard: RoomDef = {
     k.sign('VILLAGE VANGUARD', 4.6, 0.7, AX + 0.06, 5.4, AZ, '#b8202a', '#f4f0e8', 70, PI / 2, { border: true });
     k.point(AX + 2, 3.2, AZ, 0xff8a6a, 16, 8);
     // the stair down: a straight flight from the sidewalk into the ground, walled in red
-    const SY = -5.2, STEPS = 16;
+    /* fifteen steps down, the count every guide gives for the Vanguard stair */
+    const SY = -5.2, STEPS = 15;
     for (let i = 0; i < STEPS; i++) k.box(1.6, 0.34, 0.7, AX + 1.2, -0.17 - i * (5.2 / STEPS) * 1, AZ - 1 - i * 0.7, wood);
+    k.box(1.6, 0.3, 3.4, AX + 1.2, SY - 0.15, AZ - 12.3, wood);
     for (const s of [-1, 1]) k.box(0.3, 8, 13, AX + 1.2 + s * 1.0, -2, AZ - 6.5, redW);
     k.box(2.3, 0.3, 13, AX + 1.2, 2.6, AZ - 6.5, dark);
     k.block(AX - 0.2, AX + 0.1, AZ - 14, AZ + 0.5); k.block(AX + 2.3, AX + 2.6, AZ - 14, AZ + 0.5);
@@ -245,6 +258,13 @@ export const vanguard: RoomDef = {
     k.point(AX - 2, SY + 3, AZ - 32, 0xff9a70, 10, 10);
     k.crowd([v(AX + 1.2, SY, AZ - 16), v(AX + 4, SY, AZ - 26), v(AX + 8, SY, AZ - 34)], 4, { seed: 64, speed: 0.2, spread: 1, animate: !ctx.reduced, colors: [0x151517, 0x24262c] });
     k.censusWall({ x: AX + 1.2, y: 1.6, z: AZ - 13.8, rotY: 0, cols: 6, rows: 3, tile: 0.4, gap: 0.04, start: ctx.wallStart(6400, 18), pieces: ctx.all, backing: dark });
+    const VW = 'https://en.wikipedia.org/wiki/Village_Vanguard';
+    k.egg(v(AX + 1.2, 0.8, AZ + 0.3), { id: 'vanguard-stairs', title: 'A staircase and a chute', text: 'You reach the room by walking fifteen steps down what Steinway\'s writer called a cross between a staircase and a chute. The room officially seats one hundred twenty three people.', clue: 'Count the steps on the way down.', source: { name: 'Village Vanguard, Steinway and Sons', url: 'https://www.steinway.com/news/features/village-vanguard' } }, { r: 0.8 });
+    k.egg(v(AX + 1.2, SY + 3.0, AZ - 15), { id: 'vanguard-triangle', title: 'The Golden Triangle', year: '1935', text: 'Max Gordon moved here from Charles Street after being refused a cabaret licence, into a speakeasy basement called the Golden Triangle, shaped like an isosceles triangle. He wanted two johns, two exits, and rent under $100 a month. The club opened on February 22, 1935, with poetry and folk music; jazz took top billing only in 1957.', clue: 'Stand at the foot of the stair and look at the shape of the room.', source: { name: 'Village Vanguard, Wikipedia', url: VW } }, { r: 0.8 });
+    k.egg(v(AX + 1, SY + 1.4, AZ - 38), { id: 'vanguard-monk', title: 'Nobody came', year: '1948', text: 'Thelonious Monk opened at the Vanguard on September 14, 1948, and by the club\'s own history nobody came.', clue: 'Find the piano on the stand.', source: { name: 'Village Vanguard, Wikipedia', url: VW } }, { r: 0.8 });
+    k.egg(v(AX + 5, SY + 1.2, AZ - 38), { id: 'vanguard-live', title: 'Live at the Village Vanguard', year: '1957', text: 'Sonny Rollins cut three LPs here on November 3, 1957. In 1961 John Coltrane recorded 22 songs over four nights, released as five titles, and Bill Evans recorded his trio the same year. Blue Note\'s Bruce Lundvall said the words Live at the Village Vanguard on a cover help a record sell.', clue: 'Look at the drum kit on the stand.', source: { name: 'Village Vanguard, Wikipedia', url: VW } }, { r: 0.8 });
+    k.egg(v(AX + 3, SY + 2.15, AZ - 36), { id: 'vanguard-monday', title: 'Monday nights', year: '1966', text: 'The Thad Jones and Mel Lewis Orchestra played its first night at the club on Monday, February 7, 1966, and the tape of it came out as the album Opening Night. That evening began a fifty year tradition of Monday nights for the big band, which later became the Mel Lewis Jazz Orchestra and then the Vanguard Jazz Orchestra.', clue: 'Look at the microphone at the front of the stand.', source: { name: 'Opening Night (album), Wikipedia', url: 'https://en.wikipedia.org/wiki/Opening_Night_(album)' } }, { r: 0.5 });
+    k.egg(v(AX + 2, 3.0, AZ), { id: 'vanguard-lorraine', title: 'Closed for one day', year: '1989', text: 'Max Gordon died on May 11, 1989. His wife Lorraine Gordon closed the club for one day, reopened it the next, and ran it until her death on June 9, 2018, at 95.', clue: 'Look under the awning on Seventh Avenue South.', source: { name: 'Village Vanguard, Wikipedia', url: VW } }, { r: 1.2 });
     // the works: along both long red walls where the photographs hang, small and close, plus the back wall and the stair
     const mounts: Mount[] = [];
     for (const [a, b, sgn] of [[P0, P1, 1], [P0, P2, -1]] as const) { const ang = Math.atan2(b.x - a.x, b.z - a.z); const nx = Math.cos(ang) * sgn, nz = -Math.sin(ang) * sgn; for (let i = 0; i < 7; i++) { const t = 0.12 + i * 0.13; const p = a.clone().lerp(b, t); mounts.push({ position: v(p.x + nx * 0.22, SY + 1.7, p.z + nz * 0.22), rotation: ang + (sgn > 0 ? PI / 2 : -PI / 2), target: v(p.x + nx * 4, SY + 1.5, p.z + nz * 4), width: 1.3, height: 1.0, style: 'black', wash: false }); } }
@@ -312,6 +332,13 @@ export const rucker: RoomDef = {
     k.censusWall({ x: -FX - 0.36, y: 2.4, z: 0, rotY: PI / 2, cols: 40, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(7600, 160), pieces: ctx.all, backing: dark });
     k.box(0.3, 5, 24, -FX - 0.6, 2.5, 0, dark);
     k.sign('RUCKER PARK  ·  155TH  ·  THE GAME IS TONIGHT', 8, 0.7, 0, 4.6, FZ + 0.08, 'transparent', '#f4f0e8', 70, PI);
+    const RW = 'https://en.wikipedia.org/wiki/Rucker_Park';
+    k.egg(v(0, 3.4, -FZ - 0.4), { id: 'rucker-holcombe', title: 'Mr. Rucker\'s tournament', year: '1950', text: 'Holcombe Rucker, a teacher and city playground director, started what is believed to be New York City\'s first annual summer basketball tournament in 1950, to keep kids off the street. He helped his players win more than 700 athletic scholarships. He died in 1965, and the park was renamed for him in 1974.', clue: 'Look over the gate as you walk onto the court.', source: { name: 'Rucker Park, Wikipedia', url: RW } }, { r: 1.6 });
+    k.egg(v(-14, 3, FZ + 3), { id: 'rucker-ps156', title: 'Under Coogan\'s Bluff', year: '1956', text: 'The court opened in 1956 as the P.S. 156 Playground, next to the school and just east of where the Polo Grounds stood, at the foot of Coogan\'s Bluff. Before that the land belonged to the 8th Avenue Railroad Company.', clue: 'Look past the far fence toward the towers.', source: { name: 'Rucker Park, Wikipedia', url: RW } }, { r: 1.8 });
+    k.egg(v(0, 1.2, 0), { id: 'rucker-wilt', title: 'Wilt came first', year: '1957', text: 'Wilt Chamberlain first played here in 1957, one of the first professional stars to do it. In the late 1960s and early 1970s Kareem Abdul-Jabbar, Julius Erving and Nate Archibald played the summer league, and Erving made his early name dazzling the crowds on this court.', clue: 'Stand in the centre circle.', source: { name: 'Rucker Park, Wikipedia', url: RW } }, { r: 1.4 });
+    k.egg(v(0, 1.4, FZ + 6.6), { id: 'rucker-ebc', title: 'The Entertainers Basketball Classic', year: '1982', text: 'After a quiet 1970s, Greg Marius brought the park back in 1982 with the Entertainers Basketball Classic. Fat Joe and Jay-Z each ran a team in it. In 2017 the court was renamed Greg Marius Court.', clue: 'Climb into the bleachers on the far sideline.', source: { name: 'Rucker Park, Wikipedia', url: RW } }, { r: 1.8 });
+    k.egg(v(0, 3.05, CL / 2), { id: 'rucker-2021', title: 'New glass, new court', year: '2021', text: 'The park had $520,000 of renovations between August and October 2021, paid for partly by the National Basketball Players Association. In 2025 it was named a National Commemorative Site.', clue: 'Look at the backboard at the far end.', source: { name: 'Rucker Park, Wikipedia', url: RW } }, { r: 0.7 });
+    k.egg(v(-FX - 0.5, 2.4, -6), { id: 'rucker-legends', title: 'Legends with no NBA card', text: 'Some of the biggest names on this court never played in the NBA or the ABA at all. Earl Manigault, Joe Hammond and Pee Wee Kirkland made their names here.', clue: 'Read the census wall along the fence.', source: { name: 'Rucker Park, Wikipedia', url: RW } }, { r: 1.6 });
     // the works: banners hung on the fence inside the court on the far side and both ends, the light tower bases
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const z = -15 + i * 6; mounts.push({ position: v(FX - 0.12, 2.2, z), rotation: -PI / 2, target: v(0, 2, z), width: 3.4, height: 2.0, style: 'steel', wash: false }); }
@@ -329,8 +356,8 @@ export const sedgwick: RoomDef = {
   area: '1520 SEDGWICK AVENUE',
   mood: 'August 1973',
   color: '#e0c030',
-  description: 'The tower over the Cross Bronx, the block party on the plaza, then the rec room downstairs: two turntables and a mixer, the speakers, the break, the works on the cinderblock.',
-  signatures: 'The brown brick tower at the top of the hill, the highway trench below, the lobby and the community room with its drop ceiling and cinderblock, two turntables on a folding table, a wall of speakers, a crowd in a circle around the floor.',
+  description: 'The eighteen storey building over the Cross Bronx, the block party on the plaza, then the rec room downstairs: two turntables and a mixer, the speakers, the break, the works on the cinderblock.',
+  signatures: 'The brown brick eighteen storey building at the top of the hill, the highway trench below, the lobby and the community room with its drop ceiling and cinderblock, two turntables on a folding table, a wall of speakers, a crowd in a circle around the floor.',
   daylit: false,
   build(k, ctx) {
     k.sky({ top: 0x1a1a40, horizon: 0x8a5a60, ground: 0x0e0e12, fog: 0.0026, stars: 180, env: 0.6 });
@@ -352,7 +379,8 @@ export const sedgwick: RoomDef = {
       towers = k.pbr('sdTowers', X.windows(182, 0.5, 0x6a5a48, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 1.0, stretch: 0.42 });
     // the hill: the tower, the plaza in front, the highway trench with traffic below, the Bronx beyond
     k.box(120, 0.4, 60, 0, -0.2, 10, pave);
-    k.box(60, 100, 30, 0, 50, -25, towers);
+    /* eighteen floors, about 56 m, not a thirty storey slab */
+    k.box(60, 56, 30, 0, 28, -25, towers);
     k.box(62, 4, 32, 0, 2, -25, brick);
     for (let i = 0; i < 3; i++) k.box(1.6, 3.6, 0.2, -6 + i * 6, 1.8, -9.8, k.glass(0xffe0b0, 0.3, 0.1));
     k.arch(3, 3.6, 2, 0, 0, -10, brick, false, 0.85);
@@ -403,6 +431,13 @@ export const sedgwick: RoomDef = {
     k.crowd([v(-8, RY, RZ - 2), v(-8, RY, RZ - 10), v(0, RY, RZ - 8), v(8, RY, RZ - 10), v(8, RY, RZ - 2)], 22, { seed: 70, speed: 0.3, spread: 1.6, animate: !ctx.reduced, closed: true, colors: [0xf08a2a, 0xf1c531, 0x3a8ab0, 0xd83a6a, 0x24262c, 0xf4f0e8, 0x8a3ad8] });
     k.censusWall({ x: RX + RW / 2 - 0.42, y: RY + 1.6, z: RZ - 6, rotY: -PI / 2, cols: 30, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(7700, 120), pieces: ctx.all, backing: dark });
     k.sign('SEDGWICK AVE  ·  REC ROOM  ·  BACK TO SCHOOL JAM', 8, 0.6, RX, RY + 2.7, RZ + 3.78, 'transparent', '#f4e4b0', 70, PI);
+    const SW8 = 'https://en.wikipedia.org/wiki/1520_Sedgwick_Avenue';
+    k.egg(v(TX, RY + 1.3, TZ), { id: 'sedgwick-party', title: 'Twenty five cents for the girls', year: '1973', text: 'On August 11, 1973, Cindy Campbell threw a back to school party in this building\'s recreation room, with her brother DJ Kool Herc on the turntables. She rented the room for $25 and charged 25 cents for women and 50 cents for men.', clue: 'Find the two turntables on the folding table.', source: { name: '1520 Sedgwick Avenue, Wikipedia', url: SW8 } }, { r: 1.4 });
+    k.egg(v(-3, RY + 1.4, RZ - 14.4), { id: 'sedgwick-break', title: 'Two copies of the same record', year: '1973', text: 'Herc played two copies of the same record on two turntables, stretching the breakbeat at the start or in the middle of a song. At the same party Coke La Rock showed off his rapping.', clue: 'Stand in front of the speaker wall.', source: { name: '1520 Sedgwick Avenue, Wikipedia', url: SW8 } }, { r: 1.0 });
+    k.egg(v(0, 4.4, -9.4), { id: 'sedgwick-building', title: 'One hundred two apartments', year: '1967', text: 'The building was completed in 1967: eighteen floors, 102 apartments, on the Cross Bronx Expressway in Morris Heights. It was a Mitchell Lama building, rent regulated for working families.', clue: 'Look at the number over the front door.', source: { name: '1520 Sedgwick Avenue, Wikipedia', url: SW8 } }, { r: 1.4 });
+    k.egg(v(-2, RY + 1.6, RZ - 6), { id: 'sedgwick-claims', title: 'Everybody was there', text: 'The list of people who attended the party, or falsely claimed to, includes Grandmaster Flash, Afrika Bambaataa and KRS-One. Historians also note that hip hop grew up in several places in the 1970s; this room is one pivotal site, not the only birthplace.', clue: 'Join the circle on the rec room floor.', source: { name: '1520 Sedgwick Avenue, Wikipedia', url: SW8 } }, { r: 1.2 });
+    k.egg(v(-10, 1.2, -18), { id: 'sedgwick-bethlehem', title: 'The Bethlehem of hip hop', year: '2007', text: 'On July 5, 2007, the New York State Office of Parks, Recreation and Historic Preservation recognized the building as the birthplace of hip hop. That year the owners moved to take it out of Mitchell Lama, and Herc, at a rally to save it, called it the Bethlehem of hip hop culture.', clue: 'Stop at the top of the stair down to the rec room.', source: { name: '1520 Sedgwick Avenue, Wikipedia', url: SW8 } }, { r: 1.4 });
+    k.egg(v(14, 1.2, 6), { id: 'sedgwick-auction', title: 'Nobody else bid', year: '2011', text: 'After a 2008 sale meant to turn it market rate, the building declined. On November 7, 2011, Workforce Housing Advisors took title at a foreclosure auction where no one else bid, and residents who came to watch reportedly wept with joy.', clue: 'Find the mailbox on the plaza.', source: { name: '1520 Sedgwick Avenue, Wikipedia', url: SW8 } }, { r: 1.4 });
     // the works: the cinderblock walls of the rec room, taped up like flyers, the lobby, the plaza fence
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const z = RZ - 14 + i * 3; mounts.push({ position: v(RX - RW / 2 + 0.22, RY + 1.7, z), rotation: PI / 2, target: v(RX, RY + 1.5, z), width: 2.4, height: 1.5, style: 'none', wash: false }); }

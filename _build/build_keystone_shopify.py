@@ -10,7 +10,7 @@ whole page wrapped in raw so Liquid never reads the JavaScript):
   - video states get crossOrigin anonymous, or WebGL refuses a cross origin VideoTexture
   - the site's print switch scripts and the mint bar are dropped; the card's Order a print opens a panel
     that reads the piece's listing (/products/<handle>.js), offers size and surface with the sizes turned
-    to the painting's orientation and the exact fits marked, and adds the variant to the real cart with
+    to the piece's orientation and the exact fits marked, and adds the variant to the real cart with
     Orientation and Fit as line item properties for the lab. A cart pill reads /cart.js.
 
 Handles and aspect ratios come from _build/api/keystone_prints.json and the K111 list in the page.
@@ -50,8 +50,8 @@ ORDER_JS = r"""
 var KSHOP = __SHOPMAP__, SHOP = location.origin;
 function ksMoney(c){ return '$'+(c/100).toLocaleString('en-US',{maximumFractionDigits:0}); }
 function ksCart(){ fetch(SHOP+'/cart.js',{headers:{Accept:'application/json'}}).then(function(r){return r.json();}).then(function(c){ var a=document.getElementById('cartPill'); if(a) a.textContent='Cart · '+c.item_count; }).catch(function(){}); }
-/* "8 x 10 in" turned to the painting: a landscape painting is offered 10 x 8. Exact when the print's
-   proportions match the painting's to within 3 percent; otherwise the whole image is printed with a
+/* "8 x 10 in" turned to the piece: a landscape piece is offered 10 x 8. Exact when the print's
+   proportions match the piece's to within 3 percent; otherwise the whole image is printed with a
    border, never cropped. */
 function ksSize(v, ar){ var m=(v||'').match(/(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)/i); if(!m) return {label:v, exact:false};
   var a=+m[1], b=+m[2], lo=Math.min(a,b), hi=Math.max(a,b), land=ar>1.03, port=ar<0.97;
@@ -78,7 +78,7 @@ function ksOrder(d){
     function upd(){ var v=cur(), exact=!!sz.selectedOptions[0].getAttribute('data-exact');
       document.getElementById('oPrice').textContent=v?ksMoney(v.price):'-';
       document.getElementById('oAdd').disabled=!(v&&v.available);
-      document.getElementById('oFine').innerHTML=(exact?'Prints edge to edge, nothing cropped.':'Not the painting’s proportions: printed whole with a border, never cropped.')+' Made to order, signed by MLow. <a href="'+SHOP+'/products/'+kp.h+'" target="_top">Full listing</a>'; }
+      document.getElementById('oFine').innerHTML=(exact?'Prints edge to edge, nothing cropped.':'Not the piece’s proportions: printed whole with a border, never cropped.')+' Made to order, signed by MLow. <a href="'+SHOP+'/products/'+kp.h+'" target="_top">Full listing</a>'; }
     sz.onchange=fm.onchange=upd; upd();
     document.getElementById('oAdd').onclick=function(){ var v=cur(), b=this; if(!v) return; b.disabled=true; b.textContent='Adding…';
       var exact=!!sz.selectedOptions[0].getAttribute('data-exact');

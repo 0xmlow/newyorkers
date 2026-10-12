@@ -1,6 +1,6 @@
 # Who the collectors are
 
-Written by `link_identities.py` from 162 holding wallets. 75 have an X handle, 88 are linked to an honorary. Edit `homes.json` to rule on any of these, then rerun.
+Written by `link_identities.py` from 163 holding wallets. 77 have an X handle, 90 are linked to an honorary. Edit `homes.json` to rule on any of these, then rerun.
 
 ## Hold 5 or more, no honorary yet
 
@@ -19,26 +19,27 @@ Written by `link_identities.py` from 162 holding wallets. 75 have an X handle, 8
 | 22 | adamweitsman.eth | adam-weitsman | MLow |
 | 16 | acekennedy.eth | acekennedy | wallet name is theirs |
 | 15 | 0x5e73a7803b03545d34dca700ee37a7fabbe267e0 | 0x5e73-67e0 | MLow |
-| 11 | along7.eth | along | X handle (@pengwinpants, SuperRare profile) |
 | 11 | mrelguapo.eth | og | X handle (@OGtheperson, SuperRare profile) |
+| 11 | along7.eth | along | X handle (@pengwinpants, SuperRare profile) |
 | 10 | enormo.eth | enormo-eth | wallet name is theirs |
 | 10 | 0xeb6dac11a9939b575690298ac00068c230c29ec2 | 0xeb6d-9ec2 | MLow |
-| 8 | Self6967 | self6967 | MLow |
 | 8 | tork_penderloin | tork-penderloin | X handle (@P8erade4u, SuperRare profile) |
+| 8 | Self6967 | self6967 | MLow |
+| 7 | deltasauce.eth | deltasauce | X handle (@deltasauce, SuperRare profile) |
 | 7 | jasonophoto.eth | jason-o-rourke | X handle (@jasonophoto, SuperRare profile) |
 | 7 | 0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13 | 0xa621-fd13 | MLow |
 | 6 | orkhanart.eth | orkhan-mammadov | wallet name is theirs |
 | 6 | dannyb0yyy.eth | dannyboyy | X handle (@Dannyb0yyy_, SuperRare profile) |
-| 5 | 0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed | 0x1bc3-32ed | MLow |
-| 5 | 0x59186dcb30b6427be31aa46a05368689914dbb1c | 0x5918-bb1c | MLow |
 | 5 | MathieuArtcrush | mathieu-france | MLow |
+| 5 | Peng1-Deployer | peng1 | MLow |
 | 5 | oxjpegs.eth | cryptobscure | MLow |
 | 5 | mrquack.eth | mr-quack | X handle (@CryptoCrusher6, SuperRare profile) |
-| 5 | jpmoregainz.eth | j-p-moregainz | X handle (@jp_moregainz, ENS record) |
-| 5 | deltasauce.eth | deltasauce | X handle (@deltasauce, SuperRare profile) |
-| 5 | Peng1-Deployer | peng1 | MLow |
-| 5 | dingomick.eth | dingomick | X handle (@mick_dingo, ENS record) |
 | 5 | 0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5 | 0x49e2-3ee5 | MLow |
+| 5 | 0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed | 0x1bc3-32ed | MLow |
+| 5 | dingomick.eth | dingomick | X handle (@mick_dingo, ENS record) |
+| 5 | cb3452er | mima | MLow |
+| 5 | 0x59186dcb30b6427be31aa46a05368689914dbb1c | 0x5918-bb1c | MLow |
+| 5 | jpmoregainz.eth | j-p-moregainz | X handle (@jp_moregainz, ENS record) |
 
 ## One person, several wallets
 
@@ -73,6 +74,7 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 10 | 0xeb6dac11a9939b575690298ac00068c230c29ec2 |  |  | 0xeb6d-9ec2 |
 | 8 | tork_penderloin | @P8erade4u | SuperRare profile | tork-penderloin |
 | 8 | Self6967 |  |  | self6967 |
+| 7 | deltasauce.eth | @deltasauce | SuperRare profile | deltasauce |
 | 7 | 0xa621164c4fcfe74e86093cbfa5fc84ae4991fd13 |  |  | 0xa621-fd13 |
 | 7 | jasonophoto.eth | @jasonophoto | SuperRare profile | jason-o-rourke |
 | 6 | orkhanart.eth | @orkhan_art | ENS record | orkhan-mammadov |
@@ -83,13 +85,14 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 5 | 0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed |  |  | 0x1bc3-32ed |
 | 5 | 0x49e2164e673b59db8e7a8c5b185831d7b65a3ee5 |  |  | 0x49e2-3ee5 |
 | 5 | 0x59186dcb30b6427be31aa46a05368689914dbb1c |  |  | 0x5918-bb1c |
-| 5 | deltasauce.eth | @deltasauce | SuperRare profile | deltasauce |
 | 5 | oxjpegs.eth | @Cryptobscure | honoraries page | cryptobscure |
+| 5 | cb3452er | @MichMast | SuperRare profile | mima |
 | 5 | MathieuArtcrush | @MathieuFrance | honoraries page | mathieu-france |
 | 5 | jpmoregainz.eth | @jp_moregainz | ENS record | j-p-moregainz |
 | 4 | forkingpepe.eth |  |  | forkingpepe-eth |
 | 4 | m0dest | @m0dest___ | SuperRare profile | modest |
 | 4 | UnderRealm |  |  | underrealm |
+| 4 | punk734.eth | @punk734 | honoraries page | punk734 |
 | 4 | 0xfbb78ec1225b3e59a009b40825430bd80c6ab160 |  |  | 0xfbb7-b160 |
 | 3 | froggoat |  |  | froggoat |
 | 3 | brinkman.eth | @bryanbrinkman | SuperRare profile | bryan-brinkman |
@@ -97,6 +100,7 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 3 | pudgypiper.eth | @PudgyPiper | SuperRare profile | pudgypiper |
 | 3 | fondazioneaversano.eth | @fndzionaversano | SuperRare profile | fondazioneaversano |
 | 3 | adamtastic.eth | @adamtastic | SuperRare profile | adamtastic-adam-levine |
+| 3 | 0x40f1fbb89ba370cf7698eb6540782ab4744ce4da |  |  |  |
 | 3 | ScottieP7776 | @scooter_mcgee | honoraries page | scottie-p |
 | 3 | sasameyuki.eth | @donlokathefingr | SuperRare profile | sasameyuki |
 | 3 | 1NFERN0 |  |  | 1nfern0 |
@@ -106,7 +110,6 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 3 | 0x81d5013149ff580f442201ef124cc629d8d3d6e9 |  |  |  |
 | 3 | pindar.eth | @VanArman | SuperRare profile | pindar-van-arman |
 | 3 | chazzgold.eth | @chazz_gold | SuperRare profile | chazz-gold |
-| 3 | cb3452er | @MichMast | SuperRare profile | mima |
 | 3 | based.bashobits.eth | @MobilitySignal | MLow | based-bashobits-eth |
 | 2 | 0x056bf45a910a1713260448fb35b87109b9b9d80b |  |  | 0x056b-d80b |
 | 2 | trickortreat.eth |  |  |  |
@@ -118,7 +121,6 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 2 | metolius | @MetoliusArt | MLow | metolius-art |
 | 2 | p1ckyasso | @Crip2DaX | SuperRare profile | p1cky-eth |
 | 2 | 0x3a4a2019296a22e443f54cb73f1791a8b7708ee8 |  |  |  |
-| 2 | 0x40f1fbb89ba370cf7698eb6540782ab4744ce4da |  |  |  |
 | 2 | flyinga.eth |  |  | flyinga-eth |
 | 2 | leadwithlove.eth | @rhmattson | MLow | leadwithlove-eth |
 | 2 | 0x5baa54bd0d0a9e9c08ad3f3117feb2ae71e508a3 |  |  | 0x5baa-08a3 |
@@ -131,6 +133,7 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 2 | jpegzrule.eth |  |  | jpegzrule-eth |
 | 2 | 0x91dd6f62a5bb852cd42278d3f3892df0464f26c2 |  |  | 0x91dd-26c2 |
 | 2 | leighferreira.eth | @leighleighsf | SuperRare profile | leighferreira-eth |
+| 2 | stunnifer.eth |  |  |  |
 | 2 | nuclearsamurai-vault.eth | @NuclearSamurai | SuperRare profile | nuclear-samurai-nuke |
 | 2 | junglerush.eth | @RushVarela | SuperRare profile | rush-base-eth |
 | 2 | rareme |  |  | rareme |
@@ -140,6 +143,7 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 2 | 0xe53bdb2118585d5b2cd06a117d3a036afa70677a |  |  | 0xe53b-677a |
 | 2 | 0xf52493031a40b1ccebb482292fbf6148131d8963 |  |  | 0xf524-8963 |
 | 2 | pred22.eth |  |  | pred22-eth |
+| 1 | webvr.eth | @webvr_eth | MLow | webvr-eth |
 | 1 | jakefried.eth | @jakejfried | honoraries page | jake-fried |
 | 1 | noper.eth | @bagdelete | SuperRare profile | noper |
 | 1 | 0x16084b5e48bfc3aa64dbaa1df38dcd4fbe50a33f |  |  |  |
@@ -160,7 +164,6 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 1 | 0x66098f504f2382413f8336f02b75e27a1425adfd |  |  |  |
 | 1 | 0x68b1124bf9a8116f95406263c12c03435cfaf49f |  |  |  |
 | 1 | staybased.eth | @ForgivenVeteran | SuperRare profile |  |
-| 1 | punk734.eth |  |  |  |
 | 1 | 0x6dcb9897d1e62552d0ade8ea5ed55df62f94db68 |  |  |  |
 | 1 | 0x704d9806a33062eccf651558426c5518434db807 |  |  | 0x704d-b807 |
 | 1 | PLNFT3 |  |  |  |
@@ -182,7 +185,6 @@ The first one wins. Put the right one in homes.json as "x" to overrule.
 | 1 | Swats2000 |  |  |  |
 | 1 | 0x9a487c720929917112d9966b9da2c594851a8d8b |  |  |  |
 | 1 | 0x9fa425e4934f37388b5d85a6405c3eb068122d89 |  |  |  |
-| 1 | stunnifer.eth |  |  |  |
 | 1 | jcurve.eth | @0xjcurve | ENS record |  |
 | 1 | 0xa44f1c3454d7b0b0cc38f26015537b111f6be568 |  |  |  |
 | 1 | darketstormy.eth | @darketstormy | SuperRare profile |  |

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which New Yorker goes onchain? · NEW YORKERS by MLow</title>
+<meta name="description" content="MLow is exploring fully onchain pixel versions of every minted New Yorker. Four renders, one vote. Tell him which one should live on Ethereum forever.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://n3wyorkers.com/survey">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEW YORKERS by MLow">
+<meta property="og:title" content="Which New Yorker goes onchain?">
+<meta property="og:description" content="Four pixel renders, one vote. Help MLow pick the version of NEW YORKERS that lives on Ethereum forever.">
+<meta property="og:image" content="https://n3wyorkers.com/assets/onchain/og-survey.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Bodega Matriarch rendered four ways as pixel art, labelled A, B, C and D.">
+<meta property="og:url" content="https://n3wyorkers.com/survey">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@degens">
+<meta name="twitter:title" content="Which New Yorker goes onchain?">
+<meta name="twitter:description" content="Four pixel renders, one vote. Help MLow pick the version of NEW YORKERS that lives on Ethereum forever.">
+<meta name="twitter:image" content="https://n3wyorkers.com/assets/onchain/og-survey.jpg">
+<meta name="theme-color" content="#0B0F17">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","@id":"https://n3wyorkers.com/survey","name":"Which New Yorker goes onchain?","url":"https://n3wyorkers.com/survey","description":"MLow is exploring fully onchain pixel versions of every minted New Yorker. Four renders, one vote. Tell him which one should live on Ethereum forever.","image":"https://n3wyorkers.com/assets/onchain/og-survey.jpg","author":{"@type":"Person","name":"MLow"},"isPartOf":{"@id":"https://n3wyorkers.com/#site"}}</script>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* A night street ballot: one piece at a time, four equal tiles, the original kept small above as the reference. */
+:root{--ground:#0b0f17;--panel:#121826;--line:#243047;--ink:#e8e6df;--mute:#8d97ab;--eye:#ff6fae;--tide:#5ec8d8;--good:#7fd6a2;
+--display:"Fraunces",Georgia,serif;--body:"Space Grotesk",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font:16px/1.55 var(--body)}
+a{color:var(--tide)}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:18px;padding-block:22px 80px;display:grid;gap:34px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.top a{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);text-decoration:none}
+h1{font:600 clamp(32px,6vw,58px)/1.02 var(--display);margin:0;letter-spacing:-.015em;text-wrap:balance}
+h2{font:600 clamp(22px,3.4vw,30px)/1.15 var(--display);margin:0;text-wrap:balance}
+.lede{color:var(--mute);max-width:62ch;margin:12px 0 0;font-size:17px}
+.label{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:14px;min-width:0}
+legend{padding:0;display:grid;gap:6px;margin-bottom:14px;width:100%}
+.piece-head{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:18px;align-items:end}
+@media (max-width:640px){.piece-head{grid-template-columns:1fr}}
+.ref{display:grid;gap:6px}
+.ref img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line);display:block}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.tiles{grid-template-columns:1fr}}
+.tile{position:relative;display:block;cursor:pointer;border:2px solid var(--line);border-radius:6px;overflow:hidden;background:#000}
+.tile input{position:absolute;opacity:0;pointer-events:none}
+.tile canvas{display:block;width:100%;aspect-ratio:16/9}
+.tile .l{position:absolute;top:8px;left:8px;background:var(--ground);color:var(--eye);font:700 18px var(--body);width:34px;height:34px;display:grid;place-items:center;border-radius:4px}
+.tile .zoom{position:absolute;top:8px;right:8px;background:#0b0f17cc;color:var(--ink);border:1px solid var(--line);font:12px var(--mono);padding:4px 8px;border-radius:4px;cursor:zoom-in}
+.tile:has(input:checked){border-color:var(--eye);box-shadow:0 0 0 3px color-mix(in srgb,var(--eye) 25%,transparent)}
+.tile:has(input:focus-visible){outline:2px solid var(--tide);outline-offset:3px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0}
+.opt span{display:block;border:1px solid var(--line);border-radius:999px;padding:9px 15px;cursor:pointer;font-size:15px}
+.opt input:checked+span{border-color:var(--eye);background:color-mix(in srgb,var(--eye) 14%,transparent)}
+.opt input:focus-visible+span{outline:2px solid var(--tide);outline-offset:2px}
+.q{display:grid;gap:12px;border-top:1px solid var(--line);padding-top:22px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.fields label{display:grid;gap:6px}
+input[type=text],textarea{background:var(--panel);border:1px solid var(--line);color:var(--ink);font:15px var(--body);padding:11px 12px;border-radius:5px;width:100%}
+textarea{min-height:96px;resize:vertical}
+input[type=text]:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--tide);outline-offset:2px}
+.send{background:var(--eye);color:#140910;border:0;font:700 17px var(--body);padding:15px 26px;border-radius:6px;cursor:pointer;justify-self:start}
+.send:disabled{opacity:.5;cursor:wait}
+.note{color:var(--mute);font-size:14px;margin:0;max-width:66ch}
+.err{color:#ff8a8a}
+.done{display:grid;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px}
+.reveal{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.reveal div{border-top:2px solid var(--line);padding-top:10px;display:grid;gap:4px}
+.reveal b{font:700 20px var(--body);color:var(--eye)}
+.reveal span{font:13px var(--mono);color:var(--mute)}
+.share{display:inline-block;background:var(--ink);color:var(--ground);font:700 15px var(--body);padding:12px 18px;border-radius:6px;text-decoration:none;justify-self:start}
+.lb{position:fixed;inset:0;background:#05070bf5;z-index:9;display:grid;place-items:center;padding:16px;overflow:auto}
+.lb canvas{image-rendering:pixelated;max-width:none}
+.lb button{position:fixed;top:14px;right:14px;background:var(--ground);border:1px solid var(--line);color:var(--ink);font:14px var(--mono);padding:8px 14px;border-radius:4px;cursor:pointer}
+footer{color:var(--mute);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="/">NEW YORKERS by MLow</a><span class="label">Survey</span></div>
+  <header>
+    <div class="label">Fully onchain · Ethereum · exploring</div>
+    <h1>Which New Yorker goes onchain?</h1>
+    <p class="lede">MLow is exploring a version of every minted New Yorker that lives entirely on Ethereum: the pixels written into the chain, no server, no IPFS, nothing to go dark. Every pixel costs gas, so the art has to be rebuilt as pixel art. Here are four ways to do it. Pick the one you would want to own forever.</p>
+    <p class="note" style="margin-top:12px">Tap a picture to vote for it. Tap the magnifier to see the true pixels. The image above each set is the original, for reference. Nothing here is decided, and nothing is for sale.</p>
+  </header>
+
+  <form id="survey" novalidate>
+    <div style="display:grid;gap:44px" id="pieces"></div>
+
+    <section class="q" style="margin-top:44px">
+      <h2>Overall, which look is the most NEW YORKERS?</h2>
+      <div class="opts" data-q="overall">
+        <label class="opt"><input type="radio" name="overall" value="A"><span>A</span></label>
+        <label class="opt"><input type="radio" name="overall" value="B"><span>B</span></label>
+        <label class="opt"><input type="radio" name="overall" value="C"><span>C</span></label>
+        <label class="opt"><input type="radio" name="overall" value="D"><span>D</span></label>
+      </div>
+    </section>
+
+    <section class="q">
+      <h2>What matters more to you?</h2>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="priority" value="painting"><span>As close to the original as possible</span></label>
+        <label class="opt"><input type="radio" name="priority" value="pixel"><span>A strong pixel art look of its own</span></label>
+        <label class="opt"><input type="radio" name="priority" value="both"><span>Both equally</span></label>
+      </div>
+    </section>
+
+    <section class="q">
+      <h2>If your New Yorker had a fully onchain twin, would you claim it?</h2>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="claim" value="yes"><span>Yes</span></label>
+        <label class="opt"><input type="radio" name="claim" value="maybe"><span>Maybe</span></label>
+        <label class="opt"><input type="radio" name="claim" value="no"><span>No</span></label>
+        <label class="opt"><input type="radio" name="claim" value="none"><span>I do not hold one yet</span></label>
+      </div>
+    </section>
+
+    <section class="q">
+      <h2>What would you pay in gas to write yours onchain?</h2>
+      <p class="note">At today's gas a single piece costs well under a dollar. Gas moves, so this is about what feels right.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="gas" value="under1"><span>Under $1</span></label>
+        <label class="opt"><input type="radio" name="gas" value="5"><span>Up to $5</span></label>
+        <label class="opt"><input type="radio" name="gas" value="20"><span>Up to $20</span></label>
+        <label class="opt"><input type="radio" name="gas" value="gift"><span>I would want it gifted</span></label>
+      </div>
+    </section>
+
+    <section class="q">
+      <h2>What should an onchain New Yorker be able to do?</h2>
+      <p class="note">Pick as many as you like.</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="powers" value="glitch"><span>Glitch states made by the contract itself</span></label>
+        <label class="opt"><input type="checkbox" name="powers" value="palettes"><span>Night and day palettes</span></label>
+        <label class="opt"><input type="checkbox" name="powers" value="edit"><span>Let me edit pixels, like Normies</span></label>
+        <label class="opt"><input type="checkbox" name="powers" value="builders"><span>Open for other builders and games to read</span></label>
+        <label class="opt"><input type="checkbox" name="powers" value="still"><span>Nothing. Sit there forever, untouched</span></label>
+      </div>
+    </section>
+
+    <section class="q">
+      <h2>Which do you hold?</h2>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="holds" value="census"><span>THE CENSUS RELEASE</span></label>
+        <label class="opt"><input type="radio" name="holds" value="keystone"><span>KEYSTONE</span></label>
+        <label class="opt"><input type="radio" name="holds" value="both"><span>Both</span></label>
+        <label class="opt"><input type="radio" name="holds" value="neither"><span>Neither yet</span></label>
+      </div>
+    </section>
+
+    <section class="q">
+      <h2>Who is answering?</h2>
+      <p class="note">Optional. A handle lets MLow thank you and follow up. Your wallet is only used to see which pieces you hold.</p>
+      <div class="fields">
+        <label for="handle"><span class="label">X handle</span><input type="text" id="handle" name="handle" placeholder="@yourname" maxlength="40" autocomplete="off"></label>
+        <label for="wallet"><span class="label">Wallet or ENS</span><input type="text" id="wallet" name="wallet_or_ens" placeholder="0x… or name.eth" maxlength="80" autocomplete="off"></label>
+      </div>
+      <label for="notes" style="display:grid;gap:6px"><span class="label">Anything else</span><textarea id="notes" name="notes" maxlength="1500" placeholder="What would make an onchain New Yorker worth claiming?"></textarea></label>
+      <input type="text" name="_trap" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    </section>
+
+    <section class="q">
+      <button class="send" id="send" type="submit">Send my vote</button>
+      <p class="note" id="status" role="status"></p>
+    </section>
+  </form>
+
+  <section class="done" id="done" hidden>
+    <h2>Counted. Thank you.</h2>
+    <p class="note">Here is what you were looking at. Every option keeps one palette made for that one piece.</p>
+    <div class="reveal">
+      <div><b>A</b>First pass<span>192 × 108 pixels, 16 colours, random dither. About 8.6 KB.</span></div>
+      <div><b>B</b>Flat 256<span>256 × 144 pixels, 32 colours, no dither, sharpened. About 16 KB.</span></div>
+      <div><b>C</b>Crisp 256<span>256 × 144 pixels, 32 colours, light ordered dither, sharpened. About 21 KB.</span></div>
+      <div><b>D</b>Crisp 320<span>320 × 180 pixels, 32 colours, light ordered dither, sharpened. About 33 KB.</span></div>
+    </div>
+    <a class="share" id="share" href="https://x.com/intent/post" target="_blank" rel="noopener">Post your pick on X</a>
+  </section>
+
+  <footer>NEW YORKERS by MLow. Art, not an investment. This survey explores an idea; it promises nothing and sells nothing.</footer>
+</div>
+
+<div class="lb" id="lb" hidden><button type="button" id="lbClose">Close</button><canvas id="lbCanvas"></canvas></div>
+
+<script>
+(function(){
+  var PIECES = [
+    {slug:"matriarch", name:"The Bodega Matriarch", where:"KEYSTONE"},
+    {slug:"firstsale", name:"The First Sale", where:"THE CENSUS RELEASE"},
+    {slug:"bodegacat", name:"Bodega Cat", where:"KEYSTONE"},
+    {slug:"mixtape",   name:"The Mixtape", where:"THE CENSUS RELEASE"}
+  ];
+  var LETTERS = ["A","B","C","D"];
+  var base = "assets/onchain/";
+  var host = document.getElementById("pieces");
+  var imgs = {};
+
+  PIECES.forEach(function(p, i){
+    var fs = document.createElement("fieldset");
+    var h = '<legend class="piece-head"><div style="display:grid;gap:6px"><span class="label">Piece ' + (i+1) + ' of 4 · ' + p.where + '</span>' +
+            '<h2>' + p.name + '</h2><span class="note">Which one would you want living onchain?</span></div>' +
+            '<div class="ref"><img src="' + base + p.slug + '_orig.jpg" alt="' + p.name + ', the original" loading="lazy"><span class="label">The original</span></div></legend>' +
+            '<div class="tiles">';
+    LETTERS.forEach(function(L){
+      h += '<label class="tile"><input type="radio" name="pick_' + p.slug + '" value="' + L + '">' +
+           '<canvas data-src="' + base + p.slug + '_' + L + '.png" aria-label="Option ' + L + ' for ' + p.name + '"></canvas>' +
+           '<span class="l">' + L + '</span><button type="button" class="zoom" data-src="' + base + p.slug + '_' + L + '.png" aria-label="See option ' + L + ' at true pixels">🔍</button></label>';
+    });
+    fs.innerHTML = h + '</div>';
+    host.appendChild(fs);
+  });
+
+  function load(src){
+    if (!imgs[src]) imgs[src] = new Promise(function(res){ var im = new Image(); im.onload = function(){ res(im); }; im.src = src; });
+    return imgs[src];
+  }
+  // Equal tiles, even pixels: upscale by a whole number past the tile, then one smooth step down.
+  function paint(cv){
+    load(cv.dataset.src).then(function(im){
+      var dpr = window.devicePixelRatio || 1;
+      var W = Math.max(1, Math.round(cv.clientWidth * dpr)), H = Math.round(W * 9 / 16);
+      var k = Math.ceil(W / im.width);
+      var big = document.createElement("canvas"); big.width = im.width * k; big.height = im.height * k;
+      var bx = big.getContext("2d"); bx.imageSmoothingEnabled = false; bx.drawImage(im, 0, 0, big.width, big.height);
+      cv.width = W; cv.height = H;
+      var x = cv.getContext("2d"); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
+      x.drawImage(big, 0, 0, W, H);
+    });
+  }
+  var all = function(){ document.querySelectorAll(".tile canvas").forEach(paint); };
+  all();
+  var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(all, 150); });
+
+  // True pixels: a whole number scale that fits the screen.
+  var lb = document.getElementById("lb"), lbc = document.getElementById("lbCanvas");
+  document.addEventListener("click", function(e){
+    var z = e.target.closest(".zoom"); if (!z) return;
+    e.preventDefault(); e.stopPropagation();
+    load(z.dataset.src).then(function(im){
+      var dpr = window.devicePixelRatio || 1;
+      var s = Math.max(1, Math.floor(Math.min(window.innerWidth * 0.94 * dpr / im.width, window.innerHeight * 0.86 * dpr / im.height)));
+      lbc.width = im.width * s; lbc.height = im.height * s;
+      var x = lbc.getContext("2d"); x.imageSmoothingEnabled = false; x.drawImage(im, 0, 0, lbc.width, lbc.height);
+      lbc.style.width = (lbc.width / dpr) + "px";
+      lb.hidden = false;
+    });
+  });
+  function closeLb(){ lb.hidden = true; }
+  document.getElementById("lbClose").addEventListener("click", closeLb);
+  lb.addEventListener("click", function(e){ if (e.target === lb) closeLb(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeLb(); });
+
+  var form = document.getElementById("survey"), status = document.getElementById("status"), send = document.getElementById("send");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var fd = new FormData(form), picks = {}, missing = 0;
+    PIECES.forEach(function(p){ var v = fd.get("pick_" + p.slug); picks[p.slug] = v || ""; if (!v) missing++; });
+    if (missing === PIECES.length && !fd.get("overall")) {
+      status.className = "note err"; status.textContent = "Pick at least one render before you send."; return;
+    }
+    var payload = {
+      kind: "survey", survey: "onchain-2026-10",
+      picks: picks, overall: fd.get("overall") || "", priority: fd.get("priority") || "",
+      claim: fd.get("claim") || "", gas: fd.get("gas") || "", powers: fd.getAll("powers"),
+      holds: fd.get("holds") || "", name: (fd.get("handle") || "").trim().replace(/^@/, "").slice(0, 40),
+      wallet_or_ens: (fd.get("wallet_or_ens") || "").trim().slice(0, 80), notes: (fd.get("notes") || "").trim().slice(0, 1500),
+      source: document.referrer.slice(0, 200), _trap: fd.get("_trap") || ""
+    };
+    var m = location.search.match(/[?&]ref=([\w.-]{1,40})/); if (m) payload.ref = m[1];
+    send.disabled = true; status.className = "note"; status.textContent = "Sending…";
+    fetch("/api/submit", {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(payload)})
+      .then(function(r){ return r.json().catch(function(){ return {ok:false, error:"server error"}; }); })
+      .then(function(j){
+        if (!j.ok) throw new Error(j.error || "server error");
+        var fav = payload.overall || picks.matriarch || "C";
+        var text = "I voted " + fav + " for the onchain NEW YORKERS by @degens. Which one would you put on Ethereum forever?\n\nn3wyorkers.com/survey";
+        document.getElementById("share").href = "https://x.com/intent/post?text=" + encodeURIComponent(text);
+        form.hidden = true; document.getElementById("done").hidden = false;
+        document.getElementById("done").scrollIntoView({behavior:"smooth", block:"start"});
+      })
+      .catch(function(err){
+        send.disabled = false; status.className = "note err";
+        status.textContent = (err.message === "too many, slow down") ? "That is a lot of votes from one place. Try again in ten minutes." : "That did not go through (" + err.message + "). Please try again.";
+      });
+  });
+})();
+</script>
+</body>
+</html>

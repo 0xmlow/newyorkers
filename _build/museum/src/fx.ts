@@ -81,6 +81,13 @@ export class Fx {
 
   /* The scene is rebuilt for every room, so both passes that hold a reference
      to it have to be told. Cheaper than rebuilding the whole chain per room. */
+  /* 2026-10-09: at night every lit window crosses the threshold and the bloom fogs the city orange;
+     it fades to a fifth by full night so the night reads dark and lit, not hazy */
+  setNight(n: number) {
+    if (!this.bloom) return;
+    this.bloom.strength = 0.28 * (1 - 0.8 * n);
+    this.bloom.radius = 0.5 - 0.25 * n;
+  }
   setScene(scene: T.Scene, camera: T.PerspectiveCamera) {
     this.renderPass.scene = scene;
     this.renderPass.camera = camera;

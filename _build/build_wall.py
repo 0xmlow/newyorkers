@@ -485,7 +485,7 @@ page = shell(title="See it on your wall · NEW YORKERS by MLow",
              body=body, path="wall.html", active=None, extra_head=head, extra_css=css, scripts_after=js,
              keywords=["NEW YORKERS", "MLow", "AR", "see it on your wall", "framed art preview", "New York City art"],
              jsonld={"@context": "https://schema.org", "@type": "WebPage", "name": "See it on your wall", "url": URL + "/wall.html",
-                     "description": "Place a NEW YORKERS painting by MLow on your own wall in augmented reality, at true size and in the frame you choose.",
+                     "description": "Place a NEW YORKERS piece by MLow on your own wall in augmented reality, at true size and in the frame you choose.",
                      "creator": {"@type": "Person", "name": "MLow"}, "isPartOf": {"@id": URL + "/#collection"}})
 open(os.path.join(SITE, "wall.html"), "w", encoding="utf-8").write(page)
 print("wall.html: written")

@@ -6,7 +6,7 @@
 <title>NEW YORKERS · The Count</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS · The Count">
-<meta property="og:description" content="THE COUNT: the countdown to THE CLAIM, the NEW YORKERS mint, and the live census number. First the count, then the claim.">
+<meta property="og:description" content="THE COUNT: THE CENSUS RELEASE is minting now on OpenSea. The clock to the close, and the live census number.">
 <meta property="og:image" content="https://n3wyorkers.com/assets/og/rat-pizza-a5b66cabc1.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -14,12 +14,15 @@
 <meta property="og:image:alt" content="N3W YORKERS by MLow: a subway rat in a gold chain dragging a slice of pepperoni pizza along the platform.">
 <meta name="twitter:image" content="https://n3wyorkers.com/assets/og/rat-pizza-a5b66cabc1.jpg">
 <meta name="twitter:image:alt" content="N3W YORKERS by MLow: a subway rat in a gold chain dragging a slice of pepperoni pizza along the platform.">
-<meta property="og:url" content="https://n3wyorkers.com/count.html">
+<meta property="og:url" content="https://n3wyorkers.com/count">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@degens">
-<meta name="description" content="THE COUNT: the countdown to THE CLAIM, the NEW YORKERS mint, and the live census number. First the count, then the claim.">
+<meta name="description" content="THE COUNT: THE CENSUS RELEASE is minting now on OpenSea. The clock to the close, and the live census number.">
 <meta name="theme-color" content="#000000">
+<link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -63,7 +66,7 @@ body.proj .countRow{display:none}
 </style>
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/count">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT ERC-7160, New York NFT collection 2026, virtual museum of New York, New York City history, NFT mint countdown, THE CLAIM">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, art census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, NEW YORKERS mint, THE CENSUS RELEASE, THE CLAIM">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
@@ -74,10 +77,10 @@ body.proj .countRow{display:none}
 <body>
 <div id="nav"></div>
 <div id="page">
-  <div id="top"><a href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"></a><div class="live"><i></i><span id="liveLabel">ENUMERATION OPEN</span></div></div>
+  <div id="top"><a href="index.html"><img src="assets/brand/logo_white.png" alt="MLOW"></a><div class="live"><i></i><span id="liveLabel">MINTING NOW</span></div></div>
   <div id="mid">
     <div id="clockWrap" style="display:flex;flex-direction:column;align-items:center;gap:44px">
-      <div class="lab" id="clockLabel">THE CLAIM OPENS IN</div>
+      <div class="lab" id="clockLabel">THE CENSUS RELEASE CLOSES IN</div>
       <div id="clock">
         <div class="u"><div class="d" id="dd">00</div><div class="l">DAYS</div></div><div class="c">:</div>
         <div class="u"><div class="d" id="hh">00</div><div class="l">HOURS</div></div><div class="c">:</div>
@@ -86,9 +89,9 @@ body.proj .countRow{display:none}
       </div>
       <div class="fine" id="claimNote"></div>
     </div>
-    <div class="countRow"><div class="lab" id="cLab">CHARACTERS PAINTED</div><div class="big" id="cNum">0</div><div class="lab">6,666 IN THE CENSUS RELEASE</div></div>
+    <div class="countRow"><div class="lab" id="cLab">CHARACTERS PAINTED</div><div class="big" id="cNum">0</div><div class="lab">1,111 IN THE CENSUS RELEASE</div></div>
     <div id="projBox"><div class="pl" id="pLab">CHARACTERS PAINTED</div><div class="pn" id="pNum">0</div><div class="pb"></div><div class="pu" id="pUrl"></div><div class="dot"></div></div>
-    <a class="getBtn" href="counted.html">GET COUNTED</a>
+    <a class="getBtn" id="mintBtn" href="https://opensea.io/collection/newyorkers/overview" rel="noopener">MINT ON OPENSEA</a> <a class="getBtn" href="counted.html" style="background:transparent;color:inherit;border:1px solid currentColor">GET COUNTED</a>
     <div class="fine">FREE · WALLETLESS · EVERYONE WHO REGISTERS IS COUNTED, PERMANENTLY</div>
   </div>
   <div id="strip"><div class="row" id="stripRow"></div></div>
@@ -105,16 +108,18 @@ const $=s=>document.querySelector(s);
 const q=new URLSearchParams(location.search);
 const proj=q.get("mode")==="projection";
 if(proj)document.body.classList.add("proj"); else NY.nav("THE COUNT");
-const target=new Date(CFG.claimDate||"2026-10-08T11:11:00-04:00").getTime();
+const open=Date.now()>=new Date(CFG.claimDate).getTime();
+const target=new Date(open?(CFG.closeDate||"2026-10-23T11:11:00-04:00"):CFG.claimDate).getTime();
+if(!open){ $("#clockLabel").textContent="THE CLAIM OPENS IN"; $("#liveLabel").textContent="ENUMERATION OPEN"; }
 const pad=n=>String(n).padStart(2,"0");
 function tick(){
   let diff=target-Date.now();
-  if(diff<=0){ $("#clockLabel").textContent="THE CLAIM IS OPEN"; diff=0; $("#liveLabel").textContent="THE CLAIM IS OPEN"; }
+  if(diff<=0){ diff=0; const t=open?"THE CENSUS RELEASE HAS CLOSED":"THE CLAIM IS OPEN"; $("#clockLabel").textContent=t; $("#liveLabel").textContent=t; if(open){ const m=$("#mintBtn"); if(m) m.remove(); } }
   const dd=Math.floor(diff/864e5); diff-=dd*864e5; const hh=Math.floor(diff/36e5); diff-=hh*36e5; const mm=Math.floor(diff/6e4); diff-=mm*6e4; const ss=Math.floor(diff/1e3);
   $("#dd").textContent=pad(dd);$("#hh").textContent=pad(hh);$("#mm").textContent=pad(mm);$("#ss").textContent=pad(ss);
 }
 tick(); setInterval(tick,1000);
-$("#claimNote").innerHTML=esc(CFG.claimLabel||"")+(CFG.claimSigned?"":' · <span class="unsigned">recommended date, not yet signed</span>');
+$("#claimNote").innerHTML=esc((open?CFG.closeLabel:CFG.claimLabel)||"")+(CFG.claimSigned?"":' · <span class="unsigned">recommended date, not yet signed</span>');
 const people=CFG.peopleCounted;
 const label=people?"PEOPLE COUNTED":"CHARACTERS PAINTED", value=people||C.pieces;
 $("#cLab").textContent=label; $("#pLab").textContent=label; $("#pUrl").textContent=CFG.domain||"MLOW.NYC";

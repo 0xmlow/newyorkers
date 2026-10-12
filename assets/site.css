@@ -49,7 +49,7 @@ button{font-family:inherit;cursor:pointer}
 hr.rule{border:none;border-top:1px solid var(--divider);margin:0}
 
 /* nav */
-#nav{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:14px clamp(16px,4vw,56px);background:rgba(8,13,22,.72);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid rgba(236,232,221,.08)}
+#nav{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:14px clamp(16px,4vw,56px);background:rgba(8,13,22,.78);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);border-bottom:1px solid rgba(236,232,221,.08)}
 #nav>a img{height:28px}
 #nav .links{display:flex;align-items:center;gap:4px;font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;flex-wrap:wrap;justify-content:flex-end}
 #nav .links a{color:var(--slate);padding:9px 14px;border-radius:999px;border:1px solid transparent;transition:all .2s var(--ease);line-height:1;white-space:nowrap}

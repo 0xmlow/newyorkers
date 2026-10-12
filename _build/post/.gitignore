@@ -1,0 +1,4 @@
+# logs and outbox are runtime output
+outbox/
+logs/
+state.json

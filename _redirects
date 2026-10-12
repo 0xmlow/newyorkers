@@ -30,3 +30,17 @@
 /roll.html       /census                                      302
 /check           /census                                      302
 /prints-shipping /shipping                                    302
+
+# Every token viewer minted so far prints its fallback as "N3WYORKERS.COM/N/<number>" in capitals,
+# and collectors type it exactly as shown. Pages paths are case sensitive (/ATLAS 404s while /atlas
+# redirects, tested 2026-10-06), so /N/6110 was a 404. This catches the capital form without any
+# risk of matching /n/ itself and looping.
+/N/*             /n/:splat                                    301
+
+# 2026-10-10: MLow took the walks outside New York off the site (built and live for one night, so the links went out).
+# The Safra walk duplicated museum room 161, which already merges his July ARCHITECT build. Branches stay on GitHub.
+/fallingwater    /museum                 302
+/pantheon        /museum                 302
+/szeged          /museum                 302
+/mememuseum      /museum                 302
+/safra           /museum#room=safra      302

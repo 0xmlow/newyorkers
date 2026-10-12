@@ -43,6 +43,9 @@ export const mad: RoomDef = {
     k.box(TW, TH, TW, TX, TH / 2, TZ, terra);
     const slot = [[6, 2], [9, 6], [9, 12], [4, 12], [4, 18], [10, 18], [10, 26], [2, 26], [2, 34]];
     for (let i = 0; i < slot.length - 1; i++) { const [x0, y0] = slot[i], [x1, y1] = slot[i + 1]; const w = Math.abs(x1 - x0) + 1.4, h = Math.abs(y1 - y0) + 1.4; k.box(w, h, 0.3, TX + (x0 + x1) / 2, (y0 + y1) / 2, TZ + TW / 2 + 0.05, glass); }
+    /* the band of windows the board added near the top: an H on the Columbus Circle face, an I on the Eighth Avenue face */
+    for (const dx of [-8, -2]) k.box(1.0, 7, 0.3, TX + dx, 33, TZ + TW / 2 + 0.05, glass); k.box(6, 1.0, 0.3, TX - 5, 33, TZ + TW / 2 + 0.05, glass);
+    k.box(0.3, 7, 1.0, TX - TW / 2 - 0.05, 33, TZ, glass); for (const dy of [-3.5, 3.5]) k.box(0.3, 1.0, 4, TX - TW / 2 - 0.05, 33 + dy, TZ, glass);
     k.box(8, 5, 0.3, TX - 6, 2.5, TZ + TW / 2 + 0.05, glass); k.block(TX - TW / 2, TX - 8.2, TZ + TW / 2 - 0.5, TZ + TW / 2 + 0.5); k.block(TX - 3.8, TX + TW / 2, TZ + TW / 2 - 0.5, TZ + TW / 2 + 0.5);
     k.sign('MUSEUM OF ARTS AND DESIGN', 8, 0.7, TX, 7, TZ + TW / 2 + 0.06, 'transparent', '#1a1c20', 70, 0);
     mlowBanner(k, TX + 8, 14, TZ + TW / 2 + 0.4, 0, 3.0, false); blossomFlag(k, TX - 9, 12, TZ + TW / 2 + 0.4, 0, 2.4, 3, 'cloud');
@@ -57,6 +60,14 @@ export const mad: RoomDef = {
     donorWall(k, TX, 3.6, TZ - GW / 2 + 0.36, 0, 9, true);
     k.crowd([v(-4, 0, 30), v(TX - 8, 0, TZ + 20), v(TX - 4, 0.15, TZ + 6), v(TX + 4, 0.15, TZ - 6)], 16, { seed: 131, speed: 0.4, spread: 2, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a] });
     k.censusWall({ x: TX - GW / 2 + 0.36, y: 9.2, z: TZ, rotY: PI / 2, cols: 30, rows: 5, tile: 0.5, gap: 0.05, start: ctx.wallStart(5700, 150), pieces: ctx.all, backing: dark });
+    /* the landmark eggs: the lollipop building and what became of it */
+    const mdW = { name: '2 Columbus Circle, Wikipedia', url: 'https://en.wikipedia.org/wiki/2_Columbus_Circle' };
+    k.egg(v(TX + 4, 2.2, TZ + TW / 2 + 1.2), { id: 'mad-lollipops', title: 'A palazzo on lollypops', year: '1964', text: 'Edward Durell Stone\'s Gallery of Modern Art opened here on March 21, 1964, in white Vermont marble over a loggia of 27 concrete columns eight feet tall. Ada Louise Huxtable called it a die cut Venetian palazzo on lollypops, and the nickname stuck.', clue: 'Stand at the foot of the tower where the columns used to be.', source: mdW }, { r: 1.6 });
+    k.egg(v(TX - 5, 33, TZ + TW / 2 + 0.8), { id: 'mad-hi', title: 'The building says HI', text: 'Brad Cloepfil wanted no extra windows near the top, but the museum\'s board and director added a band of them against his wishes. They form an H on the Columbus Circle side and an I on the Eighth Avenue side, so from the northwest the building appears to spell HI.', clue: 'Look up at the windows near the top of the tower, then walk round the corner.', source: mdW }, { r: 2.4 });
+    k.egg(v(TX + 9, 3, TZ + TW / 2 + 0.8), { id: 'mad-stippled', title: 'Panels that sparkle', year: '2008', text: 'The 2008 skin is made of terracotta panels four inches thick, separated by deep grooves. The white panels are stippled, which makes them sparkle in sunlight and seem to change colour through the day.', clue: 'Put your face close to the white cladding beside the door.', source: mdW }, { r: 1.6 });
+    k.egg(v(TX - 10, 1.8, TZ + TW / 2 + 5), { id: 'mad-shame-cam', title: 'The shame cam', text: 'Preservationists fought the recladding in court, Landmark West filing its eighth legal challenge as work began and streaming the construction on a shame cam. The director joked that the controversy gave the museum $5 million of free advertising.', clue: 'Look for a camera\'s eye view of the tower from the pavement.', source: mdW }, { r: 1.6 });
+    k.egg(v(-6, 1.4, 14), { id: 'mad-taxi', title: 'The taxi drivers\' favourite', text: 'Tom Wolfe defended the original building and called it a jewel. He reported that Stone insisted every taxi driver in New York would call it his favourite building.', clue: 'Watch the yellow cabs swing round the circle.', source: mdW }, { r: 1.6 });
+    k.egg(v(TX + 8, TH - 6, TZ + TW / 2 + 0.6), { id: 'mad-gauguin-room', title: 'The Gauguin Room', text: 'The ninth floor of Stone\'s building held the Gauguin Room, a 52 seat Polynesian restaurant. It reopened in December 2009 as Robert, with 138 seats, reachable without entering the museum.', clue: 'Look to the top floors facing the circle.', source: mdW }, { r: 2.0 });
     // the works: the white walls on each level, the slot side gets the small ones between the window pieces
     const mounts: Mount[] = [];
     for (let f = 0; f < 3; f++) { const y = f * 6 + 3.2; for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = TZ - 7 + i * 7; if (s > 0 && f < 2 && z > TZ) continue; mounts.push({ position: v(TX + s * (GW / 2 - 0.36), y, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(TX, y - 0.6, z), width: 4.4, height: 2.6, style: 'white', wash: true }); } for (const x of [-7, 0, 7]) mounts.push({ position: v(TX + x, y, TZ - GW / 2 + 0.36), rotation: 0, target: v(TX + x, y - 0.6, TZ), width: 4.4, height: 2.6, style: 'white', wash: true }); }
@@ -72,7 +83,7 @@ export const hispanicsociety: RoomDef = {
   mood: 'Audubon Terrace, afternoon',
   color: '#c8784a',
   description: 'The Beaux Arts terrace on Broadway at 155th, the bronze horseman, then the two storey court in red terracotta with its arcaded gallery, the works among the Spanish painters.',
-  signatures: 'The plaza of white limestone institutions with the bronze equestrian at its centre, the main court lined in ornate red Spanish Renaissance terracotta with an arcaded upper gallery, the skylight, the Sorolla room of vision of Spain.',
+  signatures: 'The plaza of white limestone institutions with the bronze El Cid at its centre, four warriors at his pedestal, the two flagpoles and their pool, the main court lined in ornate red Spanish Renaissance terracotta with an arcaded upper gallery, the skylight, the Sorolla room of vision of Spain.',
   build(k, ctx) {
     k.sky({ top: 0x6f9ad8, horizon: 0xeef0ec, ground: 0x6a6a66, fog: 0.002, sun: { az: 3.6, el: 0.7, color: 0xfff4e6, size: 12 }, env: 0.95 });
     k.hemi(0xfff0dc, 0x4a4038, 0.8);
@@ -86,7 +97,10 @@ export const hispanicsociety: RoomDef = {
     k.box(60, 0.3, 50, 0, 0.05, 15, k.pbr('hsPlaza', X.pavers(0xb8b0a0, 162), 0.4));
     for (const s of [-1, 1]) { k.box(20, 14, 50, s * 40, 7, 15, lime); for (let i = 0; i < 5; i++) k.column(s * 30.5, 0, -5 + i * 10, 10, 0.8, lime, true); k.box(20, 2, 52, s * 40, 15, 15, lime); k.block(s * 40 - 10, s * 40 + 10, -10, 40); }
     k.prop('equestrian', 0, 0.15, 22, { height: 6, rotY: PI, keepOut: 3 }); k.box(4, 2.4, 6, 0, 1.2, 22, lime);
-    k.prop('bronze_figure', -10, 0.15, 30, { height: 2.8, keepOut: 1.2 }); k.prop('bronze_figure', 10, 0.15, 30, { height: 2.8, keepOut: 1.2 });
+    /* El Cid's pedestal carries four bronze warriors at its corners; the flags of Spain and the United States on bronze based poles joined by a reflecting pool */
+    for (const [dx, dz] of [[-2.3, -3.3], [2.3, -3.3], [-2.3, 3.3], [2.3, 3.3]]) k.prop('bronze_figure', dx, 0.15, 22 + dz, { height: 1.7, keepOut: 0.7 });
+    for (const sx of [-1, 1]) { k.cyl(0.7, 1.2, sx * 9, 0.75, 34, bronze, 0.9, 16); k.cyl(0.12, 16, sx * 9, 9.3, 34, steel, 0.08, 8); k.keepOut.push({ x: sx * 9, z: 34, r: 1.1 }); }
+    k.box(15, 0.1, 1.6, 0, 0.26, 34, k.flat(0x6a8aa8, 0.3, 0.15)); k.box(15.4, 0.3, 2.0, 0, 0.15, 34, lime); k.block(-7.7, 7.7, 33, 35);
     const FZ = -10, FW = 40;
     k.box(FW, 18, 34, 0, 9, FZ - 17, lime);
     for (let i = 0; i < 6; i++) { k.column(-15 + i * 6, 0.1, FZ + 1.2, 10, 0.9, lime, true); k.prop('ionic_capital', -15 + i * 6, 10.2, FZ + 1.2, { height: 1.4 }); }
@@ -114,6 +128,14 @@ export const hispanicsociety: RoomDef = {
     k.prop('vitrine', 0, 0.15, CZ - 4, { height: 1.7, keepOut: 1.2 });
     k.crowd([v(0, 0, 40), v(-6, 0, 10), v(0, 0.15, CZ + 8), v(-8, 0.15, CZ - 4), v(8, 0.15, CZ - 8)], 16, { seed: 132, speed: 0.4, spread: 2, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a, 0xc9a25a] });
     k.censusWall({ x: -CW / 2 + 0.36, y: 10.6, z: CZ, rotY: PI / 2, cols: 30, rows: 4, tile: 0.5, gap: 0.05, start: ctx.wallStart(2400, 120), pieces: ctx.all, backing: dark });
+    /* the landmark eggs: Audubon Terrace and Archer Huntington's society */
+    const hsW = { name: 'Hispanic Society of America, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hispanic_Society_of_America' }, hsA = { name: 'Audubon Terrace, Wikipedia', url: 'https://en.wikipedia.org/wiki/Audubon_Terrace' };
+    k.egg(v(0, 4.2, 25.4), { id: 'hispanicsociety-el-cid', title: 'El Cid, twice', year: '1927', text: 'Anna Hyatt Huntington\'s bronze El Cid of 1927 stands in front of the society\'s library, a replica of a similar statue she made for Seville. Four bronze warriors sit at the corners of the pedestal.', clue: 'Walk round the horseman and count the warriors at his feet.', source: hsA }, { r: 2.0 });
+    k.egg(v(-16, 1.4, 34), { id: 'hispanicsociety-minniesland', title: 'Audubon\'s farm', text: 'The terrace stands on part of John James Audubon\'s estate, Minniesland, named for his wife Lucy, who was called Minnie. It covered 30 to 40 acres.', clue: 'Stand at the Broadway end of the terrace and imagine fields.', source: hsA }, { r: 1.6 });
+    k.egg(v(0, 2.6, FZ + 1.0), { id: 'hispanicsociety-doors', title: 'Doors from Cairo, then ten years', year: '1939', text: 'The main doorway first held a pair of bronze doors from a mosque in Cairo. They were replaced by double doors designed by Berthold Nebel, finished in 1939 after ten years of work. The entrance stair is flanked by lions by Anna Hyatt Huntington.', clue: 'Look closely at the door before you go in.', source: hsW }, { r: 1.6 });
+    k.egg(v(-8, 1.4, CZ + 5), { id: 'hispanicsociety-court', title: 'A Spanish patio', text: 'The main court measures 98 by 40 feet and rises 35 feet. It is modelled on the patio of a Spanish house, its upper gallery carried on terracotta pillars.', clue: 'Stand in the court and look up at the gallery.', source: hsW }, { r: 1.6 });
+    k.egg(v(0, 1.6, CZ - 4), { id: 'hispanicsociety-23-paintings', title: 'Twenty three paintings', year: '1904', text: 'Archer M. Huntington founded the society in 1904 with only 23 paintings, most of them insignificant, and his mother Arabella bought the two most expensive. Despite its name it has never worked as a learned society, and under his trust admission has always been free.', clue: 'Lean over the vitrine in the middle of the court.', source: hsW }, { r: 1.6 });
+    k.egg(v(0, 2.2, CZ - CD / 2 + 1.2), { id: 'hispanicsociety-sorolla', title: 'Two hundred feet of Spain', year: '1911', text: 'Archer Huntington commissioned Joaquin Sorolla in 1911 for fourteen huge paintings, which together run more than 200 linear feet round their own room.', clue: 'Go to the back of the court, toward the Sorolla room.', source: hsW }, { r: 1.6 });
     // the works: the court walls at ground level in gilt between the terracotta pilasters, the upper gallery bays
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = CZ - 9 + i * 6; mounts.push({ position: v(s * (CW / 2 - 0.36), 3.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 2.8, z), width: 4.2, height: 2.6, style: 'gilt', wash: true }); }
@@ -171,6 +193,14 @@ export const studiomuseum: RoomDef = {
     k.crowd([v(BX - 10, 0.15, BZ + 10), v(BX + 4, 0.15, BZ), v(BX - 8, 0.15, BZ - 10)], 12, { seed: 134, speed: 0.3, spread: 2, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0xf08a2a] });
     k.crowd([v(BX - 12, 1.2, BZ + BD / 2 + 3), v(BX + 12, 1.8, BZ + BD / 2 + 4.6)], 12, { seed: 135, speed: 0.05, spread: 1.4, animate: !ctx.reduced });
     k.censusWall({ x: BX - GW / 2 + 0.22, y: 5.6, z: BZ + 4, rotY: PI / 2, cols: 30, rows: 6, tile: 0.55, gap: 0.05, start: ctx.wallStart(2000, 180), pieces: ctx.all, backing: dark });
+    /* the landmark eggs: the Studio Museum, from a loft to its own building */
+    const smW = { name: 'Studio Museum in Harlem, Wikipedia', url: 'https://en.wikipedia.org/wiki/Studio_Museum_in_Harlem' };
+    k.egg(v(BX + 6, 1.8, BZ + BD / 2 + 3.4), { id: 'studiomuseum-stoop', title: 'An upside down stoop', year: '2025', text: 'The new building is organised round a feature like an inverted staircase, a nod to the stoops of the houses nearby. Its front is glass and grey precast concrete.', clue: 'Sit on the steps that face the street.', source: smW }, { r: 1.6 });
+    k.egg(v(BX, 35, BZ + 6.6), { id: 'studiomuseum-seven-storeys', title: 'Seven storeys on 125th', year: '2025', text: 'The new building opened on November 15, 2025, at a cost of $160 million. It is seven storeys high, with five storeys of exhibition space covering 82,000 square feet and a roof terrace on top.', clue: 'Look up past the stepped frames to the roof terrace.', source: smW }, { r: 2.4 });
+    k.egg(v(20, 1.4, 23), { id: 'studiomuseum-loft', title: 'A rented loft', year: '1968', text: 'The museum opened in 1968 in a rented loft at 2033 Fifth Avenue, at 125th Street, and moved to its present site at 144 West 125th Street in 1982.', clue: 'Walk east along 125th toward Fifth Avenue.', source: smW }, { r: 1.6 });
+    k.egg(v(BX + 6, 2.0, BZ - 4), { id: 'studiomuseum-tom-lloyd', title: 'The first show was light', year: '1968', text: 'The first exhibition, in September 1968, showed Tom Lloyd\'s light works, and the 2025 reopening returned to his work.', clue: 'Stand in the tall gallery and look at the light.', source: smW }, { r: 1.6 });
+    k.egg(v(BX - 6, 7.4, BZ - GD / 2 + 3), { id: 'studiomuseum-residency', title: 'The studio in the name', text: 'Every year the museum gives an eleven month studio residency to three emerging artists, who must work in the studio at least 20 hours a week. The programme has supported more than one hundred artists.', clue: 'Climb to the mezzanine where the studios would be.', source: smW }, { r: 1.6 });
+    k.egg(v(-10, 1.2, 15), { id: 'studiomuseum-ringgold', title: 'The old building in mosaic', text: 'A mosaic by Faith Ringgold in the nearby 125th Street subway station depicts the museum\'s previous building.', clue: 'Head for the subway steps on the avenue.', source: smW }, { r: 1.6 });
     // the works: the tall gallery walls, the free wall, the mezzanine, the street facing bleacher wall
     const mounts: Mount[] = [];
     for (let i = 0; i < 3; i++) { const z = BZ - 8 + i * 8; mounts.push({ position: v(BX + GW / 2 - 0.22, 3.6, z), rotation: -PI / 2, target: v(BX, 3, z), width: 4.6, height: 2.7, style: 'white', wash: true }); }
@@ -189,7 +219,7 @@ export const elmuseo: RoomDef = {
   area: 'EL MUSEO DEL BARRIO',
   mood: 'Three Kings Day',
   color: '#e8a030',
-  description: 'Fifth Avenue at 104th, the Heckscher building\'s courtyard with its fountain and the bandstand, the galleries behind their arches, the parade of camels and kings passing on the avenue, the works in colour.',
+  description: 'Fifth Avenue at 104th, the Heckscher building\'s courtyard with its fountain and the bandstand, the galleries behind their arches, the Three Kings Day parade of camels and kings, the works in colour.',
   signatures: 'The red brick and limestone building with its arcaded ground floor, the courtyard with a fountain and palms, the ornate theater doors, the Three Kings Day parade with puppets, camels and the paper crowns, the park across the avenue.',
   build(k, ctx) {
     k.sky({ top: 0x6f9ad8, horizon: 0xeef0ec, ground: 0x6a6a66, fog: 0.002, sun: { az: 3.2, el: 0.6, color: 0xfff6e8, size: 12 }, env: 1.0 });
@@ -200,7 +230,7 @@ export const elmuseo: RoomDef = {
       pinkW = k.pbr('emPink', X.plaster(0xd85a7a, 168), 0.4, { roughness: 0.9 }), yellowW = k.pbr('emYellow', X.plaster(0xe8b040, 169), 0.4, { roughness: 0.9 }), tealW = k.pbr('emTeal', X.plaster(0x2a8a8a, 170), 0.4, { roughness: 0.9 }), white = k.flat(0xf4f0e8, 0, 0.7);
     street(k, { w: 24, len: 160, z: 40, x: 0 });
     k.box(160, 0.4, 200, 100, -0.2, 0, k.pbr('emLawn', X.grass(0x4a6a3a, 171), 0.06)); k.rail(18, 0, 160, dark, 1.0, 'z', 2.4); k.block(17.6, 18.4, -80, 80);
-    const rnd = X.mulberry(100); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'bare', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i });
+    const rnd = X.mulberry(100); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'bare', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i, species: i % 3 ? 'elm' : 'oak' });
     // the building around its courtyard: arcaded ground floor, the theater doors, the fountain, palms
     const BX = -34, BZ = 0, BW = 44, CW = 20;
     for (const [x, z, w, d] of [[BX, BZ - BW / 2 + 6, BW, 12], [BX - BW / 2 + 6, BZ, 12, BW - 24], [BX, BZ + BW / 2 - 6, BW, 12]]) k.box(w, 18, d, x, 9, z, brick);
@@ -211,6 +241,8 @@ export const elmuseo: RoomDef = {
     k.sign('EL MUSEO DEL BARRIO', 8, 0.8, BX + BW / 2 + 0.06, 6.4, BZ, 'transparent', '#3a3020', 80, PI / 2);
     mlowBanner(k, BX + BW / 2 + 0.5, 12, BZ - 12, PI / 2, 3.0, true); blossomFlag(k, BX + BW / 2 + 0.5, 12, BZ + 12, PI / 2, 2.6, 5, 'electric');
     k.box(CW, 0.3, CW, BX, 0.15, BZ, floorT);
+    /* since 2009 the old open courtyard is roofed in glass as the lobby, cafe and performance space */
+    k.box(CW + 0.8, 0.2, CW + 0.8, BX, 8.1, BZ, glass); for (let x = -CW / 2; x <= CW / 2; x += 2.5) k.box(0.12, 0.3, CW + 0.8, BX + x, 8.3, BZ, dark);
     k.mesh(new T.CylinderGeometry(3, 3.2, 0.8, 32), lime, BX, 0.4, BZ); k.mesh(new T.CylinderGeometry(2.6, 2.6, 0.2, 32), waterM, BX, 0.85, BZ); k.keepOut.push({ x: BX, z: BZ, r: 3.4 });
     const j = k.mesh(new T.CylinderGeometry(0.08, 0.2, 3, 6), waterM, BX, 2.2, BZ, true); if (!ctx.reduced) k.ticks.push((t) => { j.scale.y = 0.7 + 0.3 * Math.sin(t * 1.6); });
     for (const [x, z] of [[BX - 7, BZ - 7], [BX + 7, BZ - 7], [BX - 7, BZ + 7], [BX + 7, BZ + 7]]) k.prop('palm_urn', x, 0.15, z, { height: 3.6, keepOut: 1.2 });
@@ -230,6 +262,14 @@ export const elmuseo: RoomDef = {
     for (let i = 0; i < 20; i++) { const x = -60 + rnd() * 100, z = -70 + rnd() * 140; if (Math.abs(x) < 14 || (x < BX + BW / 2 + 2 && x > BX - BW / 2 - 2)) continue; void x; void z; }
     k.crowd([v(BX + 4, 0.15, BZ + 6), v(BX - 6, 0.15, BZ - 6), v(BX + 6, 0.15, BZ - 6)], 10, { seed: 138, speed: 0.3, spread: 1.6, animate: !ctx.reduced, colors: [0xf08a2a, 0xf1c531, 0x24262c, 0xf4f0e8] });
     k.censusWall({ x: BX - CW / 2 + 0.22, y: 4.4, z: BZ, rotY: PI / 2, cols: 24, rows: 5, tile: 0.5, gap: 0.05, start: ctx.wallStart(3200, 120), pieces: ctx.all, backing: dark });
+    /* the landmark eggs: El Museo, its children's theatre and its parade */
+    const emW = { name: 'El Museo del Barrio, Wikipedia', url: 'https://en.wikipedia.org/wiki/El_Museo_del_Barrio' }, emC = { name: 'Museo del Barrio restores its historic children\'s theater, Commercial Observer', url: 'https://commercialobserver.com/2020/02/museo-del-barrio-restores-its-historic-childrens-theater/' }, emA = { name: 'The 47th annual Three Kings Day Parade warmed hearts in frigid weather, amNY', url: 'https://www.amny.com/latino/the-47th-annual-three-kings-day-parade-warmed-hearts-in-frigid-weather' };
+    k.egg(v(BX + BW / 2 + 2, 2.0, BZ + 6), { id: 'elmuseo-classroom', title: 'It began in a classroom', year: '1969', text: 'The artist and teacher Raphael Montanez Ortiz founded El Museo in 1969 in a public school classroom in East Harlem. It ran from storefronts on Third and Lexington Avenues until 1976, moved into this building in 1977, and joined Museum Mile when the mile launched in 1978.', clue: 'Read the name over the arcade on Fifth.', source: emW }, { r: 1.6 });
+    k.egg(v(BX, 2.4, BZ - CW / 2 + 1.4), { id: 'elmuseo-teatro', title: 'A theatre built for children', year: '1922', text: 'The Heckscher Foundation, set up to serve children, built the theatre here as part of its headquarters in 1922. The 600 seat hall has 30 foot murals of fairy tales including Little Red Riding Hood and Cinderella.', clue: 'Stand at the gilded theatre doors.', source: emC }, { r: 1.6 });
+    k.egg(v(BX + 5, 3.2, BZ - CW / 2 + 1.2), { id: 'elmuseo-chandeliers', title: 'Castles in storage', text: 'During the restoration a set of original chandeliers shaped like fairytale castles turned up after 20 years in storage, and they now hang on either side of the stage. El Museo set aside a little under $5 million for the work.', clue: 'Look beside the theatre doors and think of the stage behind them.', source: emC }, { r: 1.6 });
+    k.egg(v(BX + 4, 1.6, BZ + 4.2), { id: 'elmuseo-glass-courtyard', title: 'The courtyard got a roof', year: '2009', text: 'The 2009 expansion, led by the local architects Gruzen Samton, turned the open courtyard into a glass lobby, cafe and performance space.', clue: 'Stand by the fountain and look up at the glass.', source: emW }, { r: 1.6 });
+    k.egg(v(BX - 6, 2.0, BZ + 8), { id: 'elmuseo-santos', title: 'Eight hundred years', text: 'The permanent collection holds over 6,500 pieces spanning more than 800 years, from Taino artifacts to carved santos de palo and vejigante masks. El Museo calls itself the oldest museum in the country dedicated to Latino art.', clue: 'Look along the pink wall of the courtyard.', source: emW }, { r: 1.6 });
+    k.egg(v(0, 2.4, 10), { id: 'elmuseo-camels', title: 'Sergeant, Joe and Sandman', year: '2024', text: 'El Museo has honoured Three Kings Day since 1977. For the 47th parade in January 2024 three live camels named Sergeant, Joe and Sandman came from a zoo in Goshen, Connecticut, and the parade ran along Park Avenue from 106th to 115th Street.', clue: 'Wait in the middle of the avenue for the kings to ride past.', source: emA }, { r: 2.4 });
     // the works: the coloured courtyard walls in white frames, the arcade piers on the avenue, the theater flank
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = BZ - 6 + i * 6; mounts.push({ position: v(BX + s * (CW / 2 - 0.22), 3.4, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(BX, 3, z), width: 4.2, height: 2.6, style: 'white', wash: true }); }

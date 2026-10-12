@@ -1,0 +1,13 @@
+{
+  "why": "Curated off the posters wall 2026-10-03 on MLow's call that a few were weak. Only the wall: piece pages and honoree pages keep their extras. Delete an entry to put it back, then rerun build_posters.py.",
+  "memes_top50": false,
+  "street": [69],
+  "card_pieces": ["767", "775", "806", "891", "942", "1000", "1055", "1151", "1485", "1489", "1607", "1713", "1730", "1731", "1800", "1866", "1894", "1900", "1937", "1939", "1942", "2061", "2150", "2266", "2300", "3170", "3180", "3417", "3423", "3466", "5466", "7990"],
+  "honorary": ["kenny-schachter", "anil-dash", "daniel-arsham", "gmoney", "griffin-cock-foster", "duncan-cock-foster", "jeff-koons", "nina-chanel-abney", "pindar-van-arman"],
+  "notes": {
+    "memes_top50": "the 50 meme pack: stock caption boxes, STONKS, BONK, PANIK, mixed case misspellings. Set true to bring the pack back.",
+    "street": "69, the Verrazzano line, is set too small to read at wall size.",
+    "card_pieces": "the plain frame Keystone cards from batches 002 and 003: flat template, tiny type, next to the ornate cards they read as unfinished.",
+    "honorary": "the nine plain frame honorary cards, same template problem."
+  }
+}

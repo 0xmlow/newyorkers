@@ -7,10 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<meta name="description" content="The interactive census: 7,542 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
+<meta name="description" content="The interactive census: 7,542 New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS by MLow">
-<meta property="og:description" content="The interactive census: 7,542 painted New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
+<meta property="og:description" content="The interactive census: 7,542 New Yorkers in five 3D formations, a gallery with filters, a story for every record, loops, films and the Still Waiting glitch editions.">
 <meta property="og:image" content="https://n3wyorkers.com/assets/og/firefighter-aa21162c35.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -302,7 +302,7 @@ a{color:var(--blue);text-decoration:none}
 </style>
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/census">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, 3D gallery, NYC character archive, MLow census">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, art census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, 3D gallery, NYC character archive, MLow census">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
@@ -989,7 +989,7 @@ function buildStory(){
     <p class="muted" style="margin-top:10px">${S.oneBreath}</p></div>`));
   B.appendChild(el(`<div class="sec"><h3>THE NETWORK</h3>
     <p>${S.networked}</p>
-    <p class="muted" style="margin-top:8px">How the numbering works: there is one census, and every character has a number in it. The count currently runs to ${C.maxNum}. The chapters below are ranges of that one census, painted in order, each with its own job.</p>
+    <p class="muted" style="margin-top:8px">How the numbering works: there is one census, and every character has a number in it. The count currently runs to ${C.maxNum}. The chapters below are ranges of that one census, made in order, each with its own job.</p>
     <button class="chipBtn" style="margin-top:12px" onclick="__game.applyForm('network',false)">VIEW THE NETWORK</button></div>`));
   // the lineage visual: one census, its chapters. data.js story.lineage (from _build/story_block.json) still opens "Seven eras"; nineteen is the fact, so it is corrected at render until the block is fixed
   {
@@ -1004,7 +1004,7 @@ function buildStory(){
         <span style="font-family:var(--display,Georgia);font-family:Georgia;font-size:20px;color:#fff;min-width:34px">${e.roman}</span>
         <span style="flex:1;min-width:0">
           <div style="font-family:var(--serif);font-size:13px;color:#fff">${e.title}</div>
-          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--cyan)">NO. ${e.range[0]} TO ${e.range[1]} · ${cnt} PAINTED</div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--cyan)">NO. ${e.range[0]} TO ${e.range[1]} · ${cnt} MADE</div>
           <div style="display:flex;gap:3px;margin-top:5px">${samples.map(k=>`<img src="assets/t/${k}.jpg" style="width:15%;aspect-ratio:16/10;object-fit:cover;border:1px solid var(--divider)">`).join("")}</div>
         </span></div>`);
       rowEl.style.cursor="pointer";
@@ -1021,7 +1021,7 @@ function buildStory(){
   const eras=el(`<div class="sec"><h3>THE ${numWord(NE).toUpperCase()} CHAPTERS</h3></div>`);
   S.eras.forEach(e=>{
     const cnt=(S.eraCounts||{})[String(e.i)]||0;
-    const btn=el(`<button class="listItem"><span class="num">${e.roman}</span><span class="grow"><span class="name">${e.title} · ${e.sub}</span><div class="sub">Numbers ${e.range[0]} to ${e.range[1]} · ${cnt} painted. ${e.desc}</div></span></button>`);
+    const btn=el(`<button class="listItem"><span class="num">${e.roman}</span><span class="grow"><span class="name">${e.title} · ${e.sub}</span><div class="sub">Numbers ${e.range[0]} to ${e.range[1]} · ${cnt} made. ${e.desc}</div></span></button>`);
     btn.onclick=()=>{if(curForm!=="wall")applyForm("wall",false);
       const ids=new Set(P.filter(p=>p.e===e.i).map(p=>p.id));
       applyFocus({type:"era",label:"CHAPTER "+e.roman+" · "+e.title,desc:e.desc,ids});
@@ -1473,7 +1473,7 @@ function renderDetail(p,gi,listArr){
       if(T.m){const who=T.m.o||(T.m.x?"@"+T.m.x:(T.m.a?T.m.a.slice(0,6)+"…"+T.m.a.slice(-4):"a collector"));row("Token",`<a href="${os}" target="_blank" rel="noopener" ${cy}>#${T.tok}</a> · minted, held by ${who}`);}
       else row("Token",`#${T.tok} · THE CENSUS RELEASE, <a href="${TOK.url||"https://opensea.io/collection/newyorkers/overview"}" target="_blank" rel="noopener" ${cy}>not yet minted</a>`);
       if(T.s.length>1)row("Format",`ERC-721 on OpenSea, dynamic by metadata. The states stack in the token's own viewer and the artist <a href="states" ${cy}>appends on Fridays</a>.`);
-      else row("Format",`ERC-721 on OpenSea, dynamic by metadata. The painting alone today, its stack <a href="states" ${cy}>lands in a Friday batch</a>.`);
+      else row("Format",`ERC-721 on OpenSea, dynamic by metadata. The still alone today, its stack <a href="states" ${cy}>lands in a Friday batch</a>.`);
     }else row("Token","Not in THE CENSUS RELEASE. Not its turn yet.");
   }
   const nw=$("#dNoteWrap");nw.innerHTML="";
@@ -1495,7 +1495,7 @@ $("#dNext").onclick=()=>detailStep(1);
 $("#aboutBody").innerHTML=`
   <img class="abLogo" src="assets/brand/logo_white.png" alt="MLOW">
   <h2>${S.oneLine}</h2>
-  <p>NEW YORKERS by MLow is a networked digital art collection: a living census of the greatest city on earth, painted in a psychedelic style where flowers bloom with human eyes because the city is watching back. ${S.networked}</p>
+  <p>NEW YORKERS by MLow is a networked digital art collection: a living census of the greatest city on earth, rendered in a psychedelic style where flowers bloom with human eyes because the city is watching back. ${S.networked}</p>
   <h2 style="color:var(--pink)">${S.drop.headline}</h2>
   <p>${S.drop.body}</p>
   <p class="muted">${S.drop.census}</p>

@@ -3,6 +3,9 @@
 import * as T from 'three';
 
 export type Surface = {
+  /* which painter made it and with what tint: kit.pbr swaps in a photo set of the same kind (2026-10-09) */
+  kind?: string;
+  tint?: number;
   map: T.CanvasTexture;
   normalMap?: T.CanvasTexture;
   roughnessMap?: T.CanvasTexture;
@@ -16,6 +19,8 @@ const cache = new Map<string, Surface>();
    (a quarter of the memory) and the cache keeps only what the current room touched. */
 let scale = 1, trimming = false;
 const touched = new Set<string>();
+/* set by each painter on entry, read by paint() when it creates the surface */
+let lastKind = '', lastTint = 0;
 export function textureBudget(low: boolean) { scale = low ? 0.5 : 1; trimming = low; }
 export function beginRoom() { touched.clear(); }
 export function trimCache() {
@@ -175,6 +180,8 @@ function paint(
     return t;
   };
   const out: Surface = {
+    kind: lastKind || undefined,
+    tint: lastTint,
     map: wrap(map, true),
     normalMap: wrap(norm, false),
     roughnessMap: wrap(rough, false),
@@ -187,6 +194,7 @@ function paint(
 /* ---------- the surfaces ---------- */
 
 export function brick(tint = 0x6b4034, seed = 1) {
+  lastKind = 'brick'; lastTint = tint;
   const base = hex(tint);
   return paint(`brick${tint}${seed}`, 512, (u, v) => {
     const rows = 12,
@@ -214,6 +222,7 @@ export function brick(tint = 0x6b4034, seed = 1) {
 }
 
 export function ashlar(tint = 0xb8ad97, seed = 2, courses = 5) {
+  lastKind = 'ashlar'; lastTint = tint;
   const base = hex(tint);
   return paint(`ashlar${tint}${seed}${courses}`, 512, (u, v) => {
     const rows = courses,
@@ -239,6 +248,7 @@ export function ashlar(tint = 0xb8ad97, seed = 2, courses = 5) {
 }
 
 export function subwayTile(tint = 0xe8e6da, grout = 0x3a3d3a) {
+  lastKind = '';
   const base = hex(tint),
     g = hex(grout);
   return paint(`tile${tint}${grout}`, 512, (u, v) => {
@@ -262,6 +272,7 @@ export function subwayTile(tint = 0xe8e6da, grout = 0x3a3d3a) {
 }
 
 export function terrazzo(tint = 0xd9d3c4, seed = 3) {
+  lastKind = 'terrazzo'; lastTint = tint;
   const base = hex(tint),
     chips: RGB[] = [
       [70, 70, 74],
@@ -289,6 +300,7 @@ export function terrazzo(tint = 0xd9d3c4, seed = 3) {
 }
 
 export function marble(tint = 0xe6e2da, vein = 0x8d8a80, seed = 4) {
+  lastKind = 'marble'; lastTint = tint;
   const base = hex(tint),
     vc = hex(vein);
   return paint(`marble${tint}${vein}${seed}`, 512, (u, v) => {
@@ -306,6 +318,7 @@ export function marble(tint = 0xe6e2da, vein = 0x8d8a80, seed = 4) {
 }
 
 export function planks(tint = 0x7d5b3d, boards = 6, seed = 5, gapDark = 0.35) {
+  lastKind = 'planks'; lastTint = tint;
   const base = hex(tint);
   return paint(`planks${tint}${boards}${seed}`, 512, (u, v) => {
     const b = Math.floor(u * boards),
@@ -325,6 +338,7 @@ export function planks(tint = 0x7d5b3d, boards = 6, seed = 5, gapDark = 0.35) {
 }
 
 export function boardwalk(tint = 0x8a6a48) {
+  lastKind = 'boardwalk'; lastTint = tint;
   const base = hex(tint);
   return paint(`boardwalk${tint}`, 512, (u, v) => {
     const boards = 10;
@@ -345,6 +359,7 @@ export function boardwalk(tint = 0x8a6a48) {
 }
 
 export function steel(tint = 0x3a444c, rivets = true, seed = 6) {
+  lastKind = 'steel'; lastTint = tint;
   const base = hex(tint);
   return paint(`steel${tint}${rivets}${seed}`, 512, (u, v) => {
     const scratch = Math.pow(fbm(u * 3, v * 60 + seed, 3, noise2), 3);
@@ -372,6 +387,7 @@ export function steel(tint = 0x3a444c, rivets = true, seed = 6) {
 }
 
 export function concrete(tint = 0x9c9a92, seed = 7) {
+  lastKind = 'concrete'; lastTint = tint;
   const base = hex(tint);
   return paint(`concrete${tint}${seed}`, 512, (u, v) => {
     const a = fbm(u * 12 + seed, v * 12, 4),
@@ -383,6 +399,7 @@ export function concrete(tint = 0x9c9a92, seed = 7) {
 }
 
 export function pavers(tint = 0x8f8b82, seed = 8) {
+  lastKind = 'pavers'; lastTint = tint;
   const base = hex(tint);
   return paint(`pavers${tint}${seed}`, 512, (u, v) => {
     const n = 6;
@@ -400,6 +417,7 @@ export function pavers(tint = 0x8f8b82, seed = 8) {
 }
 
 export function cobble(tint = 0x6f6c68, seed = 9) {
+  lastKind = 'cobble'; lastTint = tint;
   const base = hex(tint);
   return paint(`cobble${tint}${seed}`, 512, (u, v) => {
     const n = 8;
@@ -417,6 +435,7 @@ export function cobble(tint = 0x6f6c68, seed = 9) {
 }
 
 export function asphalt(tint = 0x24282d) {
+  lastKind = 'asphalt'; lastTint = tint;
   const base = hex(tint);
   return paint(`asphalt${tint}`, 512, (u, v) => {
     const g = fbm(u * 90, v * 90, 3, noise2),
@@ -428,6 +447,7 @@ export function asphalt(tint = 0x24282d) {
 }
 
 export function velvet(tint = 0x7a1f2b) {
+  lastKind = '';
   const base = hex(tint);
   return paint(`velvet${tint}`, 256, (u, v) => {
     const fold = Math.sin(u * Math.PI * 12) * 0.5 + 0.5,
@@ -438,6 +458,7 @@ export function velvet(tint = 0x7a1f2b) {
 }
 
 export function patina(tint = 0x5f9a8c) {
+  lastKind = 'patina'; lastTint = tint;
   const base = hex(tint);
   return paint(`patina${tint}`, 512, (u, v) => {
     const a = fbm(u * 6, v * 6, 4),
@@ -449,6 +470,7 @@ export function patina(tint = 0x5f9a8c) {
 }
 
 export function gilt(tint = 0xd0a852) {
+  lastKind = '';
   const base = hex(tint);
   return paint(`gilt${tint}`, 256, (u, v) => {
     const g = fbm(u * 20, v * 20, 3),
@@ -459,6 +481,7 @@ export function gilt(tint = 0xd0a852) {
 }
 
 export function carpet(tint = 0x3b2540, accent = 0xc79a4a) {
+  lastKind = '';
   const base = hex(tint),
     ac = hex(accent);
   return paint(`carpet${tint}${accent}`, 512, (u, v) => {
@@ -474,6 +497,7 @@ export function carpet(tint = 0x3b2540, accent = 0xc79a4a) {
 /* Encaustic ceiling tile: the Bethesda arcade's patterned field, drawn as a
    rosette repeat rather than a photograph of the real Minton tiles. */
 export function minton() {
+  lastKind = '';
   return paint('minton', 512, (u, v) => {
     const cu = (u * 2) % 1,
       cv = (v * 2) % 1,
@@ -501,6 +525,7 @@ export function minton() {
 }
 
 export function grass(tint = 0x4b6b3a, seed = 10) {
+  lastKind = 'grass'; lastTint = tint;
   const base = hex(tint);
   return paint(`grass${tint}${seed}`, 512, (u, v) => {
     const a = fbm(u * 8 + seed, v * 8, 4),
@@ -513,6 +538,7 @@ export function grass(tint = 0x4b6b3a, seed = 10) {
 }
 
 export function bark(tint = 0x5a4634) {
+  lastKind = '';
   const base = hex(tint);
   return paint(`bark${tint}`, 256, (u, v) => {
     const g = fbm(u * 24, v * 4, 4, noise2);
@@ -522,6 +548,7 @@ export function bark(tint = 0x5a4634) {
 }
 
 export function plaster(tint = 0xe4ded2, seed = 11) {
+  lastKind = 'plaster'; lastTint = tint;
   const base = hex(tint);
   return paint(`plaster${tint}${seed}`, 512, (u, v) => {
     const a = fbm(u * 10 + seed, v * 10, 4),
@@ -532,6 +559,7 @@ export function plaster(tint = 0xe4ded2, seed = 11) {
 }
 
 export function stars(density = 0.0016, seed = 12) {
+  lastKind = '';
   return paint(`stars${density}${seed}`, 1024, (u, v) => {
     const cell = 64;
     const cx = Math.floor(u * cell),
@@ -549,6 +577,7 @@ export function stars(density = 0.0016, seed = 12) {
 /* Building facades for the skylines. The emissive channel carries the lit
    windows so towers glow at night without extra lights. */
 export function windows(seed = 13, lit = 0.35, tint = 0x2a3542, warm = true) {
+  lastKind = '';
   const base = hex(tint);
   return paint(`windows${seed}${lit}${tint}${warm}`, 256, (u, v) => {
     const cols = 6,

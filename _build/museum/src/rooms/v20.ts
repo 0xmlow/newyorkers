@@ -10,6 +10,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero, standIn, hide } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -244,6 +245,7 @@ export const astorplace: RoomDef = {
     const KX = 6, KZ = -3, KW = 4.0, KL = 6.7;
     k.box(KW + 0.5, 0.12, KL + 0.5, KX, 0.06, KZ, granite);
     k.box(KW - 0.5, 0.06, KL - 0.5, KX, 0.14, KZ, black);
+    const kMark = k.objects.length;
     for (const sx of [-1, 0, 1]) for (const sz of [-1, 0, 1]) if (sx || sz) k.box(0.16, 3.1, 0.16, KX + sx * (KW / 2 - 0.08), 1.55, KZ + sz * (KL / 2 - 0.08), iron);
     for (const sx of [-1, 1]) { k.box(0.08, 0.9, KL, KX + sx * (KW / 2), 0.57, KZ, iron); k.plane(KL, 1.9, KX + sx * (KW / 2), 2.05, KZ, glassM, sx * PI / 2); for (let i = -2; i <= 2; i++) k.box(0.05, 1.9, 0.05, KX + sx * (KW / 2), 2.05, KZ + i * 1.34, iron); }
     k.box(KW, 0.9, 0.08, KX, 0.57, KZ - KL / 2, iron); k.plane(KW, 1.9, KX, 2.05, KZ - KL / 2, glassM, PI);
@@ -255,8 +257,22 @@ export const astorplace: RoomDef = {
     const lampBall = k.mesh(new T.SphereGeometry(0.28, 14, 10), k.glow(0xffe0a8), KX, 5.95, KZ, true);
     const lampL = k.point(KX, 5.9, KZ, 0xffd9a0, 4 + 30 * k.night, 18);
     if (!ctx.reduced) k.ticks.push((t) => { const f = 0.92 + 0.08 * Math.sin(t * 7.3) * Math.sin(t * 2.1); lampL.intensity = (4 + 30 * k.night) * f; lampBall.scale.setScalar(0.96 + 0.06 * f); });
-    k.sign('ASTOR PLACE', 2.4, 0.3, KX - KW / 2 - 0.32, 3.28, KZ, 'transparent', '#d8c890', 60, -PI / 2);
-    k.sign('ASTOR PLACE', 2.4, 0.3, KX + KW / 2 + 0.32, 3.28, KZ, 'transparent', '#d8c890', 60, PI / 2);
+    const kSigns = [
+      k.sign('ASTOR PLACE', 2.4, 0.3, KX - KW / 2 - 0.32, 3.28, KZ, 'transparent', '#d8c890', 60, -PI / 2),
+      k.sign('ASTOR PLACE', 2.4, 0.3, KX + KW / 2 + 0.32, 3.28, KZ, 'transparent', '#d8c890', 60, PI / 2),
+    ];
+    /* 2026-10-09: the hero kiosk (cast iron, glass, the green copper bell roof and its globe) replaces the
+       built one, open side to the plaza (+z) like the old one. Its model came out tall and narrow, so it
+       is fitted to a lower, wider envelope nearer the real kiosk; the lamp's light keeps flickering. */
+    {
+      const old = standIn(k, kMark);
+      void hero(k, 'h_irt_kiosk', { box: [3.8, 6.1, 5.6] }).then((h) => {
+        if (!h) return;
+        hide(old); lampBall.visible = false;
+        h.position.set(KX, 0.12, KZ); k.add(h);
+        kSigns.forEach((sg, i) => { sg.position.x = KX + (i ? 1 : -1) * (h.userData.size.x / 2 + 0.04); });
+      });
+    }
     k.block(KX - KW / 2 - 0.35, KX + KW / 2 + 0.35, KZ - KL / 2 - 0.35, KZ + KL / 2 + 0.35);
 
     /* ---- the Foundation Building: brownstone, five storeys over a round arched arcade, x 18 to 48 ---- */

@@ -136,7 +136,7 @@
     function paint(list) {
       current = list[Math.floor(Math.random() * list.length)];
       img.src = thumbUrl(current);
-      img.alt = current.title + ", number " + current.n + ", painted by MLow";
+      img.alt = current.title + ", number " + current.n + ", by MLow";
       link.href = open.href = recordUrl(current);
       name.textContent = current.title;
       where.textContent = [current.family, current.borough || "Citywide", current.place].filter(Boolean).join(" · ");
@@ -233,7 +233,7 @@
     var text = 'I am No. ' + pad(p.n) + ', ' + shortTitle(p.title) + '. Which New Yorker are you?';
     node.innerHTML =
       '<div class="fly-result">' +
-        '<figure><a href="' + esc(recordUrl(p)) + '"><img src="' + esc(thumbUrl(p)) + '" width="640" height="360" alt="' + esc(p.title) + ', number ' + p.n + ', painted by MLow"></a></figure>' +
+        '<figure><a href="' + esc(recordUrl(p)) + '"><img src="' + esc(thumbUrl(p)) + '" width="640" height="360" alt="' + esc(p.title) + ', number ' + p.n + ', by MLow"></a></figure>' +
         '<div class="fly-result-copy">' +
           '<p class="fly-kicker">' + (opts && opts.theirs ? "THEY ARE" : "YOU ARE") + ' NO. ' + pad(p.n) + '</p>' +
           '<h3>' + esc(p.title) + '</h3>' +

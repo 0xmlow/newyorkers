@@ -38,7 +38,7 @@ if not os.path.exists(TRAITS):
     snap = {}
     for i in range(1, 6667):
         d = json.load(open(os.path.join(KIT_META, f"{i}.json")))
-        a = {want[x["trait_type"]]: x["value"] for x in d["attributes"] if x["trait_type"] in want}
+        a = {want[x["trait_type"]]: x["value"] for x in d["attributes"] if x["trait_type"] in want and x["value"] != "NONE"}  # the kit writes NONE for a missing SET or NEIGHBORHOOD
         a["anim"] = a.get("anim") == "YES"; a["gl"] = a.get("gl") == "YES"; a["t"] = d["name"].rsplit(" #", 1)[0]; a["img"] = d["image"].replace("ipfs://", "")
         snap[str(i)] = a
     json.dump(snap, open(TRAITS, "w"), ensure_ascii=False, separators=(",", ":"))
@@ -489,7 +489,7 @@ function row(r){
   return w;
 }
 function fill(bd,r){
-  if(r.honor){var ho=r.honor,hb=h('a','chon');hb.href=BASE+ho.page;var hi=h('img');hi.loading='lazy';hi.src=BASE+(ho.img||ho.card);hi.alt=ho.name+', painted by MLow';hb.appendChild(hi);
+  if(r.honor){var ho=r.honor,hb=h('a','chon');hb.href=BASE+ho.page;var hi=h('img');hi.loading='lazy';hi.src=BASE+(ho.img||ho.card);hi.alt=ho.name+', portrait by MLow';hb.appendChild(hi);
     var ht=h('div');ht.appendChild(h('span',null,'Honorary New Yorker'));ht.appendChild(h('b',null,ho.name));if(ho.bio)ht.appendChild(h('p',null,ho.bio));hb.appendChild(ht);bd.appendChild(hb);}
   var ea=h('div','cearn');r.badges.forEach(function(id){var s=h('span');s.appendChild(badge(id));s.appendChild(document.createTextNode(BD[id].name));ea.appendChild(s);});bd.appendChild(ea);
   var pg=h('div','cprog');

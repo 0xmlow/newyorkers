@@ -6,6 +6,10 @@ engine (`_build/museum/src/rooms/v15.ts` to `v22.ts`) with the Blender life kit
 gull, dog, nutcracker). This file lists the assets that would lift each room
 further, with copy ready prompts for the three ways to make them.
 
+**Done 2026-10-09:** the hero objects for 165, 166, 167, 168, 169, 170, 171, 174, 175 and 178 are
+in (`h_*.glb`), see `HANDOFF_MUSEUM_HEROES_2026-10-09.md`. Still open from this list: the cherry tree
+(173, the engine tree stays), the kayak (169), and the Blender kit items.
+
 ## How assets enter a room
 
 | Lane | Tool | Output | Where it goes | Rule |

@@ -11,6 +11,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -271,7 +272,10 @@ export const cherryesplanade: RoomDef = {
 
     /* ---- the Cherry Esplanade: two rows of tall Kanzan each side, a shorter row outside, the oaks outside that ---- */
     const canopies: { x: number; y: number; z: number; s: number; ph: number; c: number }[] = [];
+    /* 2026-10-09: the Kanzan come from the tree kit (photo blossom cards); the trunks and blossom cloud below stay behind the flag */
+    const KIT_CHERRY = true;
     const cherryTrunk = (x: number, z: number, h: number, r: number) => {
+      if (KIT_CHERRY) { k.tree(x, 0, z, { h: h * 0.8, r: h * 0.36, species: 'cherry', seed: Math.round(x * 7 + z * 3) }); k.keepOut.push({ x, z, r: r + 0.35 }); return; }
       k.lathe([[r * 1.5, 0], [r, h * 0.15], [r * 0.7, h * 0.75], [r * 0.4, h]], x, 0, z, bark, 9);
       for (let b = 0; b < 4; b++) { const a = (b / 4) * PI * 2 + rnd(); k.beam(v(x, h * 0.72, z), v(x + Math.cos(a) * h * 0.42, h + 0.9, z + Math.sin(a) * h * 0.42), r * 0.32, darkWood, 5); }
       k.keepOut.push({ x, z, r: r + 0.35 });
@@ -286,6 +290,7 @@ export const cherryesplanade: RoomDef = {
       for (let i = 0; i < 10; i++) { const z = -36 + i * 7.4, x = s * 31; k.tree(x, 0, z, { h: 9, r: 3.6, seed: 1731 + i, leaf: 0x3a6a34 }); k.keepOut.push({ x, z, r: 0.7 }); }
     }
     /* the canopies: one instanced blossom cloud, swaying, coloured by instance */
+    if (KIT_CHERRY) canopies.length = 0;
     const NC = canopies.length;
     const canopy = k.instances(new T.IcosahedronGeometry(1, 1), new T.MeshStandardMaterial({ roughness: 0.95 }), Array.from({ length: NC }, () => new T.Matrix4()));
     canopy.frustumCulled = false;
@@ -649,6 +654,7 @@ export const promenade: RoomDef = {
     }
     /* ferries on the harbour, gulls over the piers */
     if (!ctx.reduced) {
+      const boats: T.Group[] = [];
       for (let i = 0; i < 3; i++) {
         const g = new T.Group();
         const h = new T.Mesh(new T.BoxGeometry(8, 3.2, 26), i ? hull : hullD); h.position.y = 1.2; g.add(h);
@@ -658,7 +664,10 @@ export const promenade: RoomDef = {
         k.add(g);
         const route = k.spline([v(-40 - i * 30, W + 0.4, -150), v(-200 - i * 20, W + 0.4, -240), v(-320, W + 0.4, -420), v(-120, W + 0.4, -480), v(120 + i * 30, W + 0.4, -330), v(80, W + 0.4, -170)], true);
         k.rider(g, route, 6 + i * 1.5, i * 160);
+        boats.push(g);
       }
+      /* 2026-10-09: the hero ferry (a white and navy catamaran) replaces the box ferries when it loads */
+      void hero(k, 'h_ferry', { length: 26 }).then((h) => { if (!h) return; boats.forEach((g, i) => { for (const x of g.children) x.visible = false; const c = i ? h.clone() : h; c.position.y = -0.6; g.add(c); }); });
     }
     gulls(k, ctx, -20, -90, 22, { r0: 30, r1: 90, y0: 4, y1: 28, seed: 1750 });
     /* the walk's own life: strollers, a dog walker on a loop, three kids on scooters, and gulls on the railing that lift off when you come close */

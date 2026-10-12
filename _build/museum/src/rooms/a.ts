@@ -166,6 +166,14 @@ export const bowery: RoomDef = {
     // wheatpaste census walls on the last block
     const start = ctx.wallStart(1200, 40);
     for (const s of [-1, 1]) k.censusWall({ x: s * 9.72, y: 3.5, z: -62, rotY: s < 0 ? PI / 2 : -PI / 2, cols: 10, rows: 4, tile: 0.78, start: start + (s > 0 ? 40 : 0), pieces: ctx.all, backing: k.flat(0x0e1116, 0, 0.9) });
+    /* easter eggs: real Bowery history, placed at the thing each one is about */
+    const bw = { name: 'Bowery, Wikipedia', url: 'https://en.wikipedia.org/wiki/Bowery' };
+    k.egg(v(5.4, 4.6, 6.2), { id: 'bowery-bouwerij', title: 'The farm road', year: '1667', text: 'The name comes from bouwerie, later bouwerij, an old Dutch word for farm: the Dutch called the path the Bouwerie road, and Petrus Stuyvesant, the last Dutch governor of New Amsterdam, retired to his Bowery farm in 1667. It is the oldest thoroughfare on Manhattan Island, older than European settlement, because it began as a Lenape footpath.', clue: 'Read the green street sign at the corner.', source: bw }, { r: 1.6 });
+    k.egg(v(0, 7.6, -6), { id: 'bowery-third-avenue-el', title: 'Under the El', year: '1955', text: 'From 1878 to 1955 the Third Avenue El ran above the Bowery. The girders over this street are its ghost.', clue: 'Stand in the middle of the street and look up at the steel.', source: bw }, { r: 1.8 });
+    k.egg(v(-9.6, 3.2, 4), { id: 'bowery-mural', title: 'The wall at Houston', year: '1982', text: 'The wall at Houston Street and the Bowery was a graffiti spot in the early 1980s, and Keith Haring painted a large mural on it in 1982. Goldman Properties bought it in 1984 and ran advertisements there, then from 2008 Jeffrey Deitch commissioned murals by artists including Shepard Fairey, Os Gemeos and Kenny Scharf, until the owners paused new murals in May 2022.', clue: 'Look at the corner wall nearest the Houston Street sign.', source: { name: 'Bowery Mural, Wikipedia', url: 'https://en.wikipedia.org/wiki/Bowery_Mural' } }, { r: 1.6 });
+    k.egg(v(9.6, 1.4, -22), { id: 'bowery-cbgb', title: '315 Bowery', year: '1973', text: 'CBGB opened at 315 Bowery on December 10, 1973. CBGB and OMFUG stood for Country, Bluegrass, Blues and Other Music For Uplifting Gourmandizers, and it closed on October 15, 2006, with Patti Smith playing until just after 1 a.m. Its last awning went to the lobby of the Rock and Roll Hall of Fame in Cleveland.', clue: 'Find the storefront with the iron columns on the right hand side.', source: { name: 'CBGB, Wikipedia', url: 'https://en.wikipedia.org/wiki/CBGB' } }, { r: 1.6 });
+    k.egg(v(-9.6, 1.4, -30), { id: 'bowery-mission', title: 'The mission', year: '1880', text: 'The Bowery Mission was founded in 1880 at 36 Bowery by the Reverend Albert Gleason Ruliffson, and in 1909 it moved up the street to 227 and 229 Bowery. A few doors away, at 235, the New Museum opened almost a century later.', clue: 'Look at the storefront doors halfway down the left hand side.', source: bw }, { r: 1.6 });
+    k.egg(v(9.6, 1.4, -46), { id: 'bowery-new-museum', title: 'A stack of white boxes', year: '2007', text: 'On December 1, 2007 the New Museum opened its $50 million building at 235 Bowery: a seven story stack of white boxes by the Tokyo firm Sejima and Nishizawa, SANAA. Putting white boxes on the Bowery was a response to the gentrification of the neighbourhood. Its expansion next door at 231 Bowery, designed by OMA, opened on March 21, 2026.', clue: 'Walk toward the far end of the right hand side and look up.', source: { name: 'New Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_Museum' } }, { r: 1.6 });
     const mounts = corridorMounts({ pairs: 10, x: 9.8, z0: 2, pitch: 6, y: 3.6, width: 5.4, height: 3.1, inset: 4.6, style: 'black' });
     mounts.push({ position: v(0, 12.5, -69.9), rotation: 0, target: v(0, 3, -50), width: 22, height: 12.4, style: 'none', wash: false });
     return { mounts, spawn: v(0, 3, 12), look: v(0, 3.5, -30), eye: 3, bounds: [-8.4, 8.4, -66, 13], style: 'black' };
@@ -180,16 +188,17 @@ export const subway: RoomDef = {
   area: 'THE SUBWAY',
   mood: 'Last train',
   color: '#e2ca89',
-  description: 'White tile vaults, riveted columns, a silver train at the platform and the yellow edge.',
-  signatures: 'Glazed tile vaults, mosaic name plaques, riveted I columns, the tactile platform edge.',
+  description: 'Broadway, Lafayette Street on the IND Sixth Avenue Line: white tile with a blue band, blue I beam columns, a silver train at the platform and the yellow edge.',
+  signatures: 'White glazed tile with a blue trim line on a black border, black name plates with white lettering, blue riveted I beam columns, the third rail, the tactile platform edge.',
   build(k, ctx) {
     k.sky({ top: 0x0a0d10, horizon: 0x11161a, ground: 0x0a0d10, fog: 0.012, env: 0.3 });
     k.hemi(0xdfe9df, 0x1a1a14, 0.75);
     const tile = k.pbr('tile', X.subwayTile(0xe9e6d8, 0x3b3f3b), 0.55, { roughness: 0.25 }),
-      tileGreen = k.pbr('tileG', X.subwayTile(0x2f6c62, 0x1a2e2a), 0.55, { roughness: 0.25 }),
+      tileBand = k.pbr('tileIndBlue', X.subwayTile(0x2b4f96, 0x16244a), 0.55, { roughness: 0.25 }),
+      tileBlack = k.flat(0x0d0e10, 0, 0.35),
       floor = k.pbr('platform', X.concrete(0x8a8a82, 2), 0.35, { roughness: 0.75 }),
       ceiling = k.pbr('ceil', X.concrete(0x5d615e, 5), 0.5),
-      steelG = k.pbr('colG', X.steel(0x1f5a4f, true), 0.9, { metalness: 0.6, roughness: 0.4 }),
+      steelG = k.pbr('colIndBlue', X.steel(0x274c86, true), 0.9, { metalness: 0.6, roughness: 0.4 }),
       iron = k.flat(0x22272b, 0.75, 0.45),
       silver = k.pbr('car', X.steel(0x9aa5ab, false), 0.35, { metalness: 0.9, roughness: 0.3 }),
       trackBed = k.pbr('ballast', X.cobble(0x3a3a3a, 3), 0.9, { roughness: 1 }),
@@ -210,10 +219,18 @@ export const subway: RoomDef = {
     k.box(0.6, 12, L, 9.3, 5.5, ZC, tile);
     k.box(0.6, 12, L, -15.3, 5.5, ZC, tile);
     k.box(25, 0.6, L, -3, 0.3, ZC + L, tile);
+    /* IND colour code: white tile, a blue trim line on a black border (the 1936 band was blue on white) */
     for (const x of [9, -15]) {
-      k.box(0.08, 0.8, L, x + (x > 0 ? -0.05 : 0.05), 6.1, ZC, tileGreen);
-      k.box(0.08, 0.4, L, x + (x > 0 ? -0.05 : 0.05), 1.0, ZC, tileGreen);
+      const sx = x > 0 ? -1 : 1;
+      k.box(0.08, 0.8, L, x + sx * 0.05, 6.1, ZC, tileBlack);
+      k.box(0.08, 0.56, L, x + sx * 0.08, 6.1, ZC, tileBand);
+      k.box(0.08, 0.4, L, x + sx * 0.05, 1.0, ZC, tileBlack);
+      k.box(0.08, 0.26, L, x + sx * 0.08, 1.0, ZC, tileBand);
     }
+    /* the third rail, on the far side of the track from the platform: 625 volts */
+    k.box(0.12, 0.14, L, -12.85, -1.25, ZC, iron);
+    k.box(0.55, 0.05, L, -12.9, -1.0, ZC, k.flat(0x4a3a2a, 0, 0.9));
+    for (let z = ZC - L / 2 + 1; z < ZC + L / 2; z += 3) k.box(0.06, 0.3, 0.06, -12.62, -1.1, z, iron);
     // vaulted ceiling with tile ribs and concrete beams
     const vaultPts = (z: number) => Array.from({ length: 25 }, (_, i) => { const t = (i / 24) * PI; return v(-3 + Math.cos(t) * 12.3, 8.2 + Math.sin(t) * 3.4, z); });
     const vault = new T.BufferGeometry(), vp: number[] = [], vi: number[] = [];
@@ -248,8 +265,11 @@ export const subway: RoomDef = {
     }
     // mosaic name plaques and a long mosaic band of New Yorkers
     for (let z = 2; z > ZC - L / 2 + 6; z -= 12) {
-      k.sign('BROADWAY  LAFAYETTE', 4.6, 0.62, 8.96, 5.35, z, '#e7e0c6', '#1f4a48', 70, -PI / 2, { border: true });
-      k.sign('BROADWAY  LAFAYETTE', 4.6, 0.62, -14.96, 5.35, z, '#e7e0c6', '#1f4a48', 70, PI / 2, { border: true });
+      k.sign('BROADWAY-LAFAYETTE ST', 4.6, 0.62, 8.96, 5.35, z, '#0b0c0e', '#ffffff', 70, -PI / 2, { border: true });
+      k.sign('BROADWAY-LAFAYETTE ST', 4.6, 0.62, -14.96, 5.35, z, '#0b0c0e', '#ffffff', 70, PI / 2, { border: true });
+      /* the small white on black BROADWAY captions set into the lower trim line */
+      k.sign('BROADWAY', 0.9, 0.24, 8.9, 1.0, z - 6, '#0b0c0e', '#ffffff', 60, -PI / 2);
+      k.sign('BROADWAY', 0.9, 0.24, -14.9, 1.0, z - 6, '#0b0c0e', '#ffffff', 60, PI / 2);
     }
     const start = ctx.wallStart(3200, 96);
     k.censusWall({ x: 8.96, y: 7.05, z: -22, rotY: -PI / 2, cols: 48, rows: 2, tile: 0.52, gap: 0.05, start, pieces: ctx.all, backing: k.flat(0x141a1c, 0, 0.9) });
@@ -320,6 +340,14 @@ export const subway: RoomDef = {
     for (let i = 0; i < 14; i++) k.box(5, 0.32, 0.9, 4, 0.16 + i * 0.32, ZC - L / 2 + 1.5 - i * 0.9 + 14, floor);
     k.box(0.1, 1.1, 13, 1.45, 3.0, ZC - L / 2 + 8, iron);
     k.keepOut.push({ x: 4, z: ZC - L / 2 + 8, r: 5 });
+    /* easter eggs: real details of Broadway, Lafayette Street */
+    const stn = { name: 'Broadway, Lafayette Street station, Wikipedia', url: 'https://en.wikipedia.org/wiki/Broadway%E2%80%93Lafayette_Street_station' };
+    k.egg(v(8.5, 5.35, -10), { id: 'subway-1936', title: 'New Year\'s Day, 1936', year: '1936', text: 'The IND station at Broadway and Lafayette Street opened on January 1, 1936, as one of the first four stations on the Houston, Essex Street Line. It is an express stop with four tracks and two island platforms, and the D and F stop here at all times.', clue: 'Read the black name plate on the wall.', source: stn }, { r: 1.6 });
+    k.egg(v(8.5, 6.1, -22), { id: 'subway-blue-band', title: 'Colour coded for the trip home', year: '1936', text: 'The station opened with white tile and a blue tile band, later renovated into a blue trim line on a black border with small BROADWAY captions in white on black. The IND coloured its stations so travelers heading away from Lower Manhattan could tell where they were, which is why the neighbouring stops wear different colours.', clue: 'Follow the blue line along the top of the tile wall.', source: stn }, { r: 1.6 });
+    k.egg(v(-8.2, 0.3, 7), { id: 'subway-third-rail', title: '625 volts, under a board', text: 'The subway\'s contact rail, the third rail, needs 625 volts to run the trains. The running rails beside it sit at 4 feet 8 and a half inches apart, the same gauge as most major American railroads, and the system\'s 842 miles of track would reach from New York to Chicago if laid end to end.', clue: 'Look down past the yellow edge at the rail with a board over it.', source: { name: 'Subway FAQ: Facts and Figures, nycsubway.org', url: 'https://nycsubway.org/wiki/Subway_FAQ:_Facts_and_Figures' } }, { r: 1.6 });
+    k.egg(v(-8.0, 1.2, -60), { id: 'subway-bumper-blocks', title: 'The express to nowhere', year: '1967', text: 'Before 1967 the two express tracks through this station ran on to Second Avenue and ended at bumper blocks east of that station. When the Chrystie Street connection opened in November 1967 they were turned south toward Grand Street, and the old storage track became the northbound M track.', clue: 'Walk to the far end of the platform and look down the tunnel.', source: stn }, { r: 1.6 });
+    k.egg(v(1.5, 5.4, 11), { id: 'subway-uptown-transfer', title: 'A block north and another fare', year: '2012', text: 'A free transfer from here to the southbound 6 at Bleecker Street opened on May 19, 1957, and the station history calls the link purely coincidental. Riders bound for the uptown 6 had to leave, walk a block north and pay again until the uptown transfer fully opened on September 25, 2012.', clue: 'Stand under the red EXIT sign.', source: stn }, { r: 1.6 });
+    k.egg(v(4, 2.4, -52.5), { id: 'subway-signal', title: 'Signal, downstairs', year: '1998', text: 'The station\'s artwork is Signal by Mel Chin, from 1998: stainless steel and glass sculptures with lights on the lower mezzanine, plus ceramic tiles on the platform and mezzanine walls. The Seneca artist Peter Jemison worked on it with him and made a mosaic of figures from the Six Nations of the Haudenosaunee confederacy.', clue: 'Go to the foot of the stairs up to the mezzanine.', source: stn }, { r: 1.6 });
     const mounts = corridorMounts({ pairs: 10, x: 9.0, z0: 1, pitch: 6.2, y: 3.5, width: 5, height: 2.9, inset: 4.5, style: 'steel' });
     for (let i = 0; i < 20; i++) {
       if (i % 2 === 0) continue;

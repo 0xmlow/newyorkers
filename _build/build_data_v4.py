@@ -474,7 +474,7 @@ if __name__ == "__main__":
         {"i": 13, "range": [4367, 4766], "roman": "XIII", "title": "The Deep City", "sub": "The Strata",
          "desc": "Cast iron facades step down from their buildings. The buried, structural, stacked New York comes forward with its ghosts and its craft."},
         {"i": 14, "range": [4767, 4966], "roman": "XIV", "title": "The Second Skin", "sub": "The Layer",
-         "desc": "An augmented layer painted over the real city. The Watchers, new ways to move, the Gadget Bazaar, the Melting Pot Protocols, Viral, the Icons Awake, Mystery and Illusion."},
+         "desc": "An augmented layer laid over the real city. The Watchers, new ways to move, the Gadget Bazaar, the Melting Pot Protocols, Viral, the Icons Awake, Mystery and Illusion."},
         {"i": 15, "range": [4967, 5466], "roman": "XV", "title": "The City That Answers Back", "sub": "The Reply",
          "desc": "Infrastructure with opinions. The grid asks for a minute, the traffic light waits, the water main remembers the creek. The city finally answers, and the census closes on The Answer at 5466."},
         {"i": 16, "range": [5491, 6490], "roman": "XVI", "title": "The Twenty Houses", "sub": "The Work",
@@ -482,9 +482,9 @@ if __name__ == "__main__":
         {"i": 17, "range": [6491, 6990], "roman": "XVII", "title": "The Ten Rooms", "sub": "The Reservation",
          "desc": "Five hundred New Yorkers inside the institutions the city is defined by. The appetizing counter, the red sauce room, the slice, the stool, the list, the oyster bar, four in the morning, the cart, last call, and the small badly lit room where the culture got made."},
         {"i": 18, "range": [6991, 7490], "roman": "XVIII", "title": "The MLow Show", "sub": "The Homage",
-         "desc": "Five hundred New Yorkers from crypto art culture in ten houses, opening with an homage to every guest of The MLow Show. The green room, the mint, the vault, the trash block, the machine studio, the painter's floor, the lens, the depth stage, the chain and the degen floor. The honoree is named in the title and never painted."},
+         "desc": "Five hundred New Yorkers from crypto art culture in ten houses, opening with an homage to every guest of The MLow Show. The green room, the mint, the vault, the trash block, the machine studio, the painter's floor, the lens, the depth stage, the chain and the degen floor. The honoree is named in the title and never pictured."},
         {"i": 19, "range": [7491, 7990], "roman": "XIX", "title": "The Trait Layer", "sub": "The Traits",
-         "desc": "Five hundred New Yorkers of the ninety seconds, the number, the second face, the rule, the open tab, the vanishing, the hanging, the twelve words, the thirty hour day and the long record. Each carries one of thirty one painted traits, worn the way the city wears everything: as a fact."},
+         "desc": "Five hundred New Yorkers of the ninety seconds, the number, the second face, the rule, the open tab, the vanishing, the hanging, the twelve words, the thirty hour day and the long record. Each carries one of thirty one rendered traits, worn the way the city wears everything: as a fact."},
     ]
     # monuments: the fourteen originals plus every era's hundred marks and closers
     ms = list(story["milestones"])
@@ -509,7 +509,7 @@ if __name__ == "__main__":
         ("scents", "Scents of New York", 2867, 2878, "Twelve smells you would know blindfolded."),
         ("games", "Street Games", 2901, 2912, "Skelly, stoopball, double dutch. The sidewalk as a board."),
         ("houses", "The Houses", 3067, 3078, "Invented borough ateliers. Fordham Road to Flatbush Avenue, dressing the block."),
-        ("diaspora", "The Diaspora Blocks", 3101, 3124, "Twenty four real immigrant enclaves, painted as fashion."),
+        ("diaspora", "The Diaspora Blocks", 3101, 3124, "Twenty four real immigrant enclaves, pictured as fashion."),
         ("uniforms", "The Uniforms", 3149, 3160, "The booth coat, the courier bag, the work clothes as couture."),
         ("crowns", "The Landmark Crowns", 3201, 3224, "The skyline worn on the head."),
         ("soles", "The Soles", 3225, 3236, "Sneaker culture. The line before sunrise, the pair he never wore."),
@@ -532,7 +532,7 @@ if __name__ == "__main__":
         for n in add:
             if str(n) in by_id and n not in t["nums"]: t["nums"].append(n)
     story["oneBreath"] = story.get("oneBreath", "")
-    story["drop"]["census"] = f"The census is numbered to {max(p['n'] for p in kept if p['n'])} and counting. Not every number is painted yet. That is the point."
+    story["drop"]["census"] = f"The census is numbered to {max(p['n'] for p in kept if p['n'])} and counting. Not every number is filled yet. That is the point."
     NE = len(story["eras"])
     story["eraSamples"] = {str(e): [p["st"][0] for p in kept if p["e"]==e][:5] for e in range(1, NE+1)}
     story["eraCounts"] = {str(e): sum(1 for p in kept if p["e"]==e) for e in range(1, NE+1)}

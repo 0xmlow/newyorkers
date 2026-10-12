@@ -27,7 +27,6 @@ export const belvedere: RoomDef = {
       pathM = k.pbr('bvPath', X.cobble(0xa39a86, 59), 1.1),
       rock = k.pbr('bvRock', X.ashlar(0x8a847a, 118, 1), 0.12, { roughness: 0.95 }),
       iron = k.flat(0x1f242a, 0.7, 0.45),
-      copper = k.pbr('bvCopper', X.patina(0x5f9a8c), 0.6, { roughness: 0.6, metalness: 0.3 }),
       wood = k.pbr('bvStage', X.planks(0x6a5a45, 6, 119), 1.0);
     // the park: lawn, the rock outcrop the castle stands on, the pond, the lawn beyond, the west side towers
     k.box(300, 0.4, 300, 0, -0.2, 0, lawn);
@@ -39,7 +38,7 @@ export const belvedere: RoomDef = {
     k.skyline({ z: -250, count: 30, spacing: 10, scale: 2.6, base: -1, seed: 120, lit: 0.25, glow: 0.5, tint: 0x8a7a6e, rows: 1, spires: true });
     for (const x of [-40, 60]) { for (const s of [-1, 1]) k.box(10, 40, 10, x + s * 9, 20, -250, k.pbr('bvTwin', X.windows(121, 0.3, 0x9a8a7a, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.4, stretch: 0.42 })); k.box(28, 26, 12, x, 13, -250, k.pbr('bvTwin', X.windows(121, 0.3, 0x9a8a7a, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.4, stretch: 0.42 })); }
     const rnd = X.mulberry(52);
-    for (let i = 0; i < 70; i++) { const a = rnd() * PI * 2, r = 40 + rnd() * 100; const x = Math.cos(a) * r, z = 8 + Math.sin(a) * r; if (z < -20 && z > -64 && Math.abs(x - 4) < 38) continue; if (z < -70) continue; if (Math.hypot(x, z - 40) < 18 || (Math.abs(x - 7) < 7 && z > 10 && z < 44)) continue; k.tree(x, 0, z, { kind: rnd() > 0.7 ? 'column' : 'round', h: 5 + rnd() * 5, r: 2.4 + rnd() * 2.2, leaf: [0x6a8a3a, 0xc88a3a, 0xb8602a, 0x8a7a2a][Math.floor(rnd() * 4)], seed: i }); }
+    for (let i = 0; i < 70; i++) { const a = rnd() * PI * 2, r = 40 + rnd() * 100; const x = Math.cos(a) * r, z = 8 + Math.sin(a) * r; if (z < -20 && z > -64 && Math.abs(x - 4) < 38) continue; if (z < -70) continue; if (Math.hypot(x, z - 40) < 18 || (Math.abs(x - 7) < 7 && z > 10 && z < 44)) continue; k.tree(x, 0, z, { kind: rnd() > 0.7 ? 'column' : 'round', h: 5 + rnd() * 5, r: 2.4 + rnd() * 2.2, leaf: [0x6a8a3a, 0xc88a3a, 0xb8602a, 0x8a7a2a][Math.floor(rnd() * 4)], seed: i, species: (['elm', 'oak', 'maple', 'oak', 'elm', 'linden'] as const)[i % 6] }); }
     // the Delacorte: a ring of seats and a stage by the pond
     for (let i = 0; i < 6; i++) k.mesh(new T.RingGeometry(12 + i * 2, 13.6 + i * 2, 40, 1, PI * 1.15, PI * 0.7), wood, -30, 0.3 + i * 0.6, -40).rotation.x = -PI / 2;
     k.mesh(new T.CylinderGeometry(10, 10, 0.6, 32), wood, -30, 0.3, -40);
@@ -47,9 +46,17 @@ export const belvedere: RoomDef = {
     const CY = RY, CX = 0, CZ = 12;
     k.box(12, 8, 10, CX, CY + 4, CZ, schist);
     k.box(13, 0.6, 11, CX, CY + 8.2, CZ, granite);
-    k.cyl(3.4, 16, CX - 7, CY + 8, CZ - 2, schist, 3.4, 12);
-    k.mesh(new T.ConeGeometry(3.9, 4.5, 12), copper, CX - 7, CY + 18.2, CZ - 2);
-    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.box(0.7, 0.9, 0.7, CX - 7 + Math.cos(a) * 3.3, CY + 16.4, CZ - 2 + Math.sin(a) * 3.3, granite); }
+    // the tower stands at the east end (the planned western tower was never built), on the north corner over the pond
+    const TWX = CX + 7, TWZ = CZ - 6;
+    k.cyl(3.4, 16, TWX, CY + 8, TWZ, schist, 3.4, 12);
+    k.mesh(new T.ConeGeometry(3.9, 4.5, 12), k.pbr('bvSlate', X.ashlar(0x4a4e58, 131, 4), 0.3, { roughness: 0.7 }), TWX, CY + 18.2, TWZ);
+    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.box(0.7, 0.9, 0.7, TWX + Math.cos(a) * 3.3, CY + 16.4, TWZ + Math.sin(a) * 3.3, granite); }
+    k.block(TWX - 3.3, TWX + 3.3, TWZ - 3.3, TWZ + 2.6);
+    // the weather instruments on the tower: a mast with the flag, the wind vane and the cup anemometer
+    k.cyl(0.07, 5, TWX, CY + 22.9, TWZ, iron, 0.07, 6);
+    const vane = k.box(1.4, 0.35, 0.05, TWX + 0.6, CY + 24.6, TWZ, iron);
+    for (let i = 0; i < 3; i++) { const a = (i / 3) * PI * 2; k.box(0.5, 0.04, 0.04, TWX + Math.cos(a) * 0.25, CY + 25.3, TWZ + Math.sin(a) * 0.25, iron).rotation.y = -a; }
+    k.box(1.6, 0.9, 0.03, TWX + 0.85, CY + 23.4, TWZ, k.flat(0xe8e4dc, 0, 0.8));
     for (const s of [-1, 1]) for (let i = 0; i < 6; i++) k.box(0.8, 0.8, 0.8, CX + s * 6.2, CY + 8.8, CZ - 4.5 + i * 1.8, granite);
     k.arch(2.4, 4, 1.2, CX, CY, CZ - 5, granite, true, 0.8);
     k.arch(2.4, 4, 1.2, CX + 6, CY, CZ, granite, true, 0.8).rotation.y = PI / 2;
@@ -79,6 +86,18 @@ export const belvedere: RoomDef = {
     const turtles: T.Mesh[] = [];
     for (let i = 0; i < 8; i++) { const t = k.mesh(new T.SphereGeometry(0.35, 8, 6), k.flat(0x3a4a2a, 0, 0.9), -10 + i * 4, 0.35, -36 + (i % 3) * 5, true); t.scale.y = 0.4; turtles.push(t); }
     if (!ctx.reduced) k.ticks.push((t) => turtles.forEach((m, i) => { m.position.x += Math.sin(t * 0.3 + i) * 0.004; m.position.z += Math.cos(t * 0.2 + i) * 0.004; }));
+    // the open painted wood pavilion on the west, built in place of the western tower Tammany cut in 1870
+    { const PX = LX + 3, PZ = CZ + 1.5;
+      for (const [dx, dz] of [[-2, -2], [2, -2], [-2, 2], [2, 2]]) { k.box(0.22, 3, 0.22, PX + dx, LY + 1.5, PZ + dz, wood); k.keepOut.push({ x: PX + dx, z: PZ + dz, r: 0.3 }); }
+      for (const dz of [-2, 2]) k.box(4.4, 0.25, 0.25, PX, LY + 2.9, PZ + dz, wood);
+      for (const dx of [-2, 2]) k.box(0.25, 0.25, 4.4, PX + dx, LY + 2.9, PZ, wood);
+      k.mesh(new T.ConeGeometry(3.6, 1.8, 4), k.pbr('bvSlate', X.ashlar(0x4a4e58, 131, 4), 0.3, { roughness: 0.7 }), PX, LY + 3.95, PZ).rotation.y = PI / 4;
+      k.egg(v(PX, LY + 2.4, PZ), { id: 'belvedere-west-tower', title: 'The tower that was never built', year: '1870', text: 'The 1867 plans gave the castle two turreted stone towers, a larger one at the east end and a smaller one at the west. Under Tammany Hall the plan was cut back in November 1870 to save money, the western tower was never built, and the lookout was finished as an open painted wood pavilion. Its two half timbered pavilions rotted away before 1900 and were rebuilt in the 1980s.', clue: 'Stand under the wooden pavilion on the lower terrace.', source: { name: 'Belvedere Castle, Wikipedia', url: 'https://en.wikipedia.org/wiki/Belvedere_Castle' } }, { r: 1.6 }); }
+    k.egg(v(CX, CY + 4.4, CZ - 5.4), { id: 'belvedere-cockatrice', title: 'The cockatrice over the door', text: 'Jacob Wrey Mould, the architect who designed the castle with Calvert Vaux, put a bronze cockatrice into the transom over one of its doorways. The name Belvedere is Italian for beautiful view.', clue: 'Look up at the top of the arched door onto the terrace.', source: { name: 'Belvedere Castle, Wikipedia', url: 'https://en.wikipedia.org/wiki/Belvedere_Castle' } }, { r: 1.4 });
+    k.egg(vane, { id: 'belvedere-anemometer', title: 'The park\'s official wind', year: '1919', text: 'The castle has been Central Park\'s official weather station since 1919. The wind vane and anemometer on the main tower still record the official wind speed and direction for the park. Temperature and rainfall are measured mostly from equipment in a fenced area just south of the building.', clue: 'Look to the top of the tower, above the cone.', source: { name: 'Belvedere Castle, Central Park Conservancy', url: 'https://www.centralparknyc.org/locations/belvedere-castle' } }, { r: 2.2 });
+    k.egg(v(CX - 3, CY + 3.6, CZ - 5.4), { id: 'belvedere-no-windows', title: 'A castle with no windows', text: 'The castle was built as an open air lookout, with no windows or doors at all. In 1919 the U.S. Weather Bureau turned it into a weather station and added the windows, doors and offices. After the bureau left in the 1960s it fell into disrepair until the Conservancy restored it in 1983.', clue: 'Find the glazed windows beside the terrace door.', source: { name: 'Belvedere Castle, Central Park Conservancy', url: 'https://www.centralparknyc.org/locations/belvedere-castle' } }, { r: 1.4 });
+    k.egg(v(4, 0.8, -30), { id: 'belvedere-turtle-pond', title: 'Released pets', year: '1987', text: 'The pond under the castle was called Belvedere Lake until it was renamed Turtle Pond in 1987. It sits where the old Croton Aqueduct receiving reservoir of 1842 once was. Most of the park\'s turtles live here, and many of them are former pets released into the park.', clue: 'Look down from the parapet at the turtles in the pond.', source: { name: 'Turtle Pond, Wikipedia', url: 'https://en.wikipedia.org/wiki/Turtle_Pond_(Central_Park)' } }, { r: 3 });
+    k.egg(v(CX + 11, 3.5, CZ + 16), { id: 'belvedere-vista-rock', title: 'The fire tower before it', text: 'The castle caps Vista Rock, a 130 foot outcrop of schist and the second highest natural point in the park, after Summit Rock near 83rd Street. A fire tower run by the Croton Aqueduct board already stood on the rock and was demolished to make room for the castle. The sunken transverse road was tunneled through the same rock.', clue: 'Touch the bare rock beside the steps on the way up.', source: { name: 'Belvedere Castle, Wikipedia', url: 'https://en.wikipedia.org/wiki/Belvedere_Castle' } }, { r: 1.8 });
     k.censusWall({ x: CX, y: CY + 2.6, z: CZ + 5.2, rotY: PI, cols: 16, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(200, 48), pieces: ctx.all, backing: iron });
     k.sign('BELVEDERE  ·  1869  ·  THE WEATHER STATION', 8, 0.6, CX, CY + 4.8, CZ + 5.2, 'transparent', '#e8e0c8', 70, PI);
     // the works: the parapet screens on the upper terrace, the lower terrace, the castle walls, the lawn path
@@ -123,50 +142,72 @@ export const highbridge: RoomDef = {
       asphalt = k.pbr('hbRoad', X.asphalt(0x2a2d31), 0.11),
       warm = k.glow(0xffd8a0);
     const DY = 36, RIVER = 0;
-    // the valley: the river, the highway on the Manhattan side, the two banks rising, the Bronx flats
-    k.water({ y: RIVER, color: 0x24405a, w: 80, d: 500, x: 0, z: 0, amp: 0.8 });
-    k.box(24, 0.4, 500, -52, 0.2, 0, asphalt);
-    k.box(60, 0.4, 500, 70, 0.2, 0, lawn);
-    for (let i = 0; i < 10; i++) k.box(40 - i * 3, 4, 500, -80 - i * 2, 2 + i * 4, 0, k.pbr('hbCliff', X.ashlar(0x5a5650, 126, 1), 0.12, { roughness: 0.95 }));
-    k.box(60, 0.4, 500, -130, DY + 2, 0, lawn);
-    k.skyline({ z: 0, count: 16, spacing: 8, scale: 2.0, base: DY + 1, seed: 127, lit: 0.45, glow: 1.1, tint: 0x3a3a48, rows: 1, x: -300 });
-    k.skyline({ z: 0, count: 16, spacing: 10, scale: 1.4, base: 0, seed: 128, lit: 0.4, glow: 0.9, tint: 0x4a4048, rows: 1, x: 270 });
+    /* The bridge runs along z: Manhattan (the bluff and the water tower) at -z, the Bronx at +z. The river, the
+       Harlem River Drive, the Metro-North tracks, the Deegan and Sedgwick Avenue all run across it, along x. */
+    const ZM = -120, ZB = 200, deckLen = ZB - ZM, ZC = (ZM + ZB) / 2;
+    // the valley: the river under the steel arch, the Drive on the Manhattan shore, the cliff up to the bluff
+    k.water({ y: RIVER, color: 0x24405a, w: 600, d: 100, x: 0, z: -10, amp: 0.8 });
+    k.box(600, 0.4, 20, 0, 0.25, -70, asphalt);
+    const cliff = k.pbr('hbCliff', X.ashlar(0x5a5650, 126, 1), 0.12, { roughness: 0.95 });
+    for (let i = 0; i < 9; i++) { const z0 = -80 - i * 4, z1 = -220; k.box(600, 4, z0 - z1, 0, 2 + i * 4, (z0 + z1) / 2, cliff); }
+    k.box(600, 0.4, 104, 0, DY - 0.15, -168, lawn);
+    // the Bronx flats: the Hudson Line tracks, the Major Deegan, Sedgwick Avenue
+    k.box(600, 0.4, 200, 0, 0.2, 140, lawn);
+    k.box(600, 0.3, 12, 0, 0.3, 50, k.flat(0x4a443e, 0, 0.95));
+    for (const z of [47, 48.5, 51.5, 53]) k.box(600, 0.15, 0.12, 0, 0.5, z, iron);
+    k.box(600, 0.4, 24, 0, 0.3, 68, asphalt);
+    k.box(600, 0.4, 10, 0, 0.3, 122, asphalt);
+    k.skyline({ z: -260, count: 22, spacing: 10, scale: 2.0, base: DY, seed: 127, lit: 0.45, glow: 1.1, tint: 0x3a3a48, rows: 1 });
+    k.skyline({ z: 300, count: 22, spacing: 10, scale: 1.4, base: 0, seed: 128, lit: 0.4, glow: 0.9, tint: 0x4a4048, rows: 1 });
     const cars: T.Mesh[] = [];
-    for (let i = 0; i < 20; i++) { const c = k.mesh(new T.BoxGeometry(1.8, 1.3, 4.2), k.flat([0xd8d0c0, 0x1a1a1a, 0xc62828][i % 3], 0.4, 0.4), -52 + (i % 2 ? 4 : -4), 1.0, -200 + i * 21, true); c.userData.d = i % 2 ? 1 : -1; cars.push(c); const l = new T.Mesh(new T.BoxGeometry(1.4, 0.2, 0.1), warm); l.position.set(0, 0, c.userData.d * 2.1); c.add(l); }
-    if (!ctx.reduced) k.ticks.push((_t, dt) => cars.forEach((c) => { c.position.z += c.userData.d * 16 * Math.min(dt, 0.1); if (c.position.z > 250) c.position.z = -250; if (c.position.z < -250) c.position.z = 250; }));
-    // the bridge: masonry arches from the Bronx bank, the steel arch across the river, the deck on top
-    const deckLen = 240;
-    k.box(9, 2.4, deckLen, 0, DY - 1.2, 0, stone);
-    k.box(6.4, 0.2, deckLen, 0, DY + 0.1, 0, pave);
-    for (const s of [-1, 1]) { k.box(1.3, 1.2, deckLen, s * 3.85, DY + 0.6, 0, brickW); k.rail(s * 3.2, 0, deckLen, iron, 1.1, 'z', 2.4); }
-    k.block(-4.6, -3.1, -deckLen / 2, deckLen / 2); k.block(3.1, 4.6, -deckLen / 2, deckLen / 2);
-    for (let z = -100; z <= 100; z += 40) for (const s of [-1, 1]) k.lamp(s * 2.7, z, 3.6, iron, 0xffd9a8, 22);
-    for (let i = 0; i < 8; i++) { const z = 40 + i * 24; k.box(9, DY - 2, 5, 0, (DY - 2) / 2, z, stone); k.arch(15, 30, 9, 0, 0, z + 12, stone, false, 0.55).rotation.y = PI / 2; }
+    for (let i = 0; i < 20; i++) { const hrd = i < 8, d = i % 2 ? 1 : -1; const c = k.mesh(new T.BoxGeometry(4.2, 1.3, 1.8), k.flat([0xd8d0c0, 0x1a1a1a, 0xc62828][i % 3], 0.4, 0.4), -280 + i * 29, 1.1, (hrd ? -70 : 68) + d * 4, true); c.userData.d = d; cars.push(c); const l = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 1.4), warm); l.position.set(d * 2.1, 0, 0); c.add(l); }
+    if (!ctx.reduced) k.ticks.push((_t, dt) => cars.forEach((c) => { c.position.x += c.userData.d * 16 * Math.min(dt, 0.1); if (c.position.x > 300) c.position.x = -300; if (c.position.x < -300) c.position.x = 300; }));
+    // the bridge deck: herringbone brick walk, brick and granite parapets, iron rails, Victorian lamps
+    k.box(9, 2.4, deckLen, 0, DY - 1.2, ZC, stone);
+    k.box(6.4, 0.2, deckLen, 0, DY + 0.1, ZC, pave);
+    for (const s of [-1, 1]) { k.box(1.3, 1.2, deckLen, s * 3.85, DY + 0.6, ZC, brickW); k.box(1.4, 0.16, deckLen, s * 3.85, DY + 1.28, ZC, stone); k.rail(s * 3.2, ZC, deckLen, iron, 1.1, 'z', 2.4); }
+    k.block(-4.6, -3.1, ZM, ZB); k.block(3.1, 4.6, ZM, ZB);
+    for (let z = -100; z <= 180; z += 40) for (const s of [-1, 1]) k.lamp(s * 2.7, z, 3.6, iron, 0xffd9a8, 22);
+    // the steel arch of 1928 over the river, on two big piers
     const arcPts: T.Vector3[] = []; for (let i = 0; i <= 24; i++) { const t = i / 24; arcPts.push(v(0, RIVER + 4 + Math.sin(t * PI) * (DY - 10), -60 + t * 100)); }
     for (const s of [-1, 1]) { k.curve(arcPts.map((p) => v(p.x + s * 4, p.y, p.z)), 0.6, steel, 24); for (let i = 1; i < 24; i++) k.beam(arcPts[i].clone().setX(s * 4), v(s * 4, DY - 2.4, arcPts[i].z), 0.14, steel, 4); }
     for (let i = 0; i <= 24; i += 2) k.beam(arcPts[i].clone().setX(-4), arcPts[i].clone().setX(4), 0.14, steel, 4);
     for (const z of [-62, 42]) k.box(12, DY - 2, 8, 0, (DY - 2) / 2, z, stone);
-    for (let i = 0; i < 3; i++) { const z = -80 - i * 24; k.box(9, DY - 2, 5, 0, (DY - 2) / 2, z, stone); k.arch(15, 30, 9, 0, 0, z - 12, stone, false, 0.55).rotation.y = PI / 2; }
-    // the water tower on the Manhattan bluff and the Bronx approach with its steps
-    const TX = -120, TZ = -20;
-    k.mesh(new T.CylinderGeometry(4.6, 5.2, 48, 8), stone, TX, DY + 2 + 24, TZ);
-    k.mesh(new T.CylinderGeometry(5.6, 4.6, 4, 8), stone, TX, DY + 2 + 50, TZ);
-    k.mesh(new T.ConeGeometry(5.8, 6, 8), k.pbr('hbCopper', X.patina(0x5f9a8c), 0.6), TX, DY + 2 + 55, TZ);
-    for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; k.box(0.6, 2.2, 0.3, TX + Math.cos(a) * 4.9, DY + 2 + 44, TZ + Math.sin(a) * 4.9, warm).rotation.y = -a; }
-    k.point(TX, DY + 2 + 46, TZ, 0xffd8a0, 120, 60);
-    k.box(24, 0.4, 40, -114, DY + 0.05, 0, pave);
-    k.block(-130, -104, -21, -19);
-    for (let i = 0; i < 12; i++) k.box(6, 0.34, 1.0, 118 + i * 0.4, DY - 0.17 - i * 0.34, i * -0.9, stone);
-    k.box(30, 0.4, 30, 130, DY - 4.2 + 0.05, -10, pave);
-    k.crowd([v(-0.6, DY, -110), v(0.6, DY, -40), v(-0.6, DY, 30), v(0.6, DY, 110)], 22, { seed: 53, speed: 1.0, spread: 2.4, animate: !ctx.reduced });
+    // the surviving 1848 masonry arches: one on the Manhattan side over the Drive, ten on the Bronx side
+    const SP = (ZB - 46) / 10;
+    for (let j = 1; j <= 10; j++) { const z = 46 + j * SP; if (j < 10) k.box(9, DY - 2, 3.6, 0, (DY - 2) / 2, z, stone); k.arch(SP - 4.2, 29.7, 9, -4.5, 0, z - SP / 2, stone, false, 0.62).rotation.y = PI / 2; }
+    k.arch(12, 29.7, 9, -4.5, 0, -74, stone, false, 0.62).rotation.y = PI / 2;
+    k.box(9, DY - 2, 4, 0, (DY - 2) / 2, -84, stone);
+    // the Bronx end: steps down to a landing on the abutment
+    for (let i = 0; i < 12; i++) k.box(6, 0.34, 0.5, 0, DY - 0.17 - i * 0.34, ZB + 0.25 + i * 0.5, stone);
+    k.box(30, DY - 4, 22, 0, (DY - 4) / 2, ZB + 17, stone);
+    k.box(30, 0.4, 22, 0, DY - 4 + 0.05, ZB + 17, pave);
+    // the water tower on the Manhattan bluff, at the bridge end, and its plaza
+    const TX = -16, TZ = -142;
+    k.mesh(new T.CylinderGeometry(4.6, 5.2, 48, 8), stone, TX, DY + 24, TZ);
+    k.mesh(new T.CylinderGeometry(5.6, 4.6, 4, 8), stone, TX, DY + 50, TZ);
+    const towerCap = k.mesh(new T.ConeGeometry(5.8, 6, 8), k.pbr('hbCopper', X.patina(0x5f9a8c), 0.6), TX, DY + 55, TZ);
+    for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; k.box(0.6, 2.2, 0.3, TX + Math.cos(a) * 4.9, DY + 44, TZ + Math.sin(a) * 4.9, warm).rotation.y = -a; }
+    k.point(TX, DY + 46, TZ, 0xffd8a0, 120, 60);
+    k.box(40, 0.4, 40, TX, DY + 0.05, TZ, pave);
+    k.box(10, 0.4, 4, -2, DY + 0.05, ZM - 1.5, pave);
+    k.block(TX - 5.3, TX + 5.3, TZ - 5.3, TZ + 5.3);
+    k.crowd([v(-0.6, DY, -110), v(0.6, DY, -20), v(-0.6, DY, 80), v(0.6, DY, 190)], 24, { seed: 53, speed: 1.0, spread: 2.4, animate: !ctx.reduced });
     k.censusWall({ x: -3.22, y: DY + 1.9, z: -20, rotY: PI / 2, cols: 30, rows: 2, tile: 0.55, gap: 0.05, start: ctx.wallStart(1300, 60), pieces: ctx.all, backing: iron });
-    k.sign('HIGH BRIDGE  ·  1848  ·  THE CROTON AQUEDUCT', 8, 0.6, 0, DY + 2.6, 121.5, '#1a1c22', '#e8dcc0', 70, PI, { border: true });
+    k.sign('HIGH BRIDGE  ·  1848  ·  THE CROTON AQUEDUCT', 8, 0.6, 0, DY + 2.6, ZB + 1.5, '#1a1c22', '#e8dcc0', 70, PI, { border: true });
+    // the eggs
+    k.egg(v(0, DY + 2.2, ZB - 2), { id: 'highbridge-oldest', title: 'The oldest bridge in the city', year: '1848', text: 'Water first flowed across the High Bridge on May 30, 1848, carrying the Croton Aqueduct into Manhattan. It is the oldest surviving major bridge in New York City, and is sometimes cited as the oldest bridge of any kind. It cost $963,427.80.', clue: 'Look up at the sign at the Bronx end of the walk.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 1.8 });
+    k.egg(v(7, DY - 1, -10), { id: 'highbridge-steel-arch', title: 'Five arches gone', year: '1928', text: 'The stone piers standing in the river were a hazard to boats, so the five mid river arches were taken out and replaced by a single steel arch, which began carrying water on April 15, 1928. The original bridge had 15 stone arches. None of the river piers remain.', clue: 'Lean over the parapet in the middle of the river and look down at the steel.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 2.4 });
+    k.egg(v(-2.6, DY + 0.6, 60), { id: 'highbridge-pipes', title: 'A walk on a water main', year: '1864', text: 'The walkway, finished in 1864, was an incidental feature: the bridge was built first to carry water. Two original pipes of about 33 to 36 inches ran inside it, and a third wrought iron tube about 90 inches across was added in 1861 and 1862. The water stopped for good in 1958.', clue: 'Look at the brick paving under your feet: the pipes run beneath it.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 1.6 });
+    k.egg(v(-3.85, DY + 1.6, 46 + SP * 2.5), { id: 'highbridge-hundred-feet', title: 'One hundred feet, by law', year: '1839', text: 'A state law passed in May 1839 ruled out a low bridge: the aqueduct had to cross the Harlem River on a bridge at least 100 feet high, or go through a tunnel under it. The deck stands about 140 feet above the river.', clue: 'Find the parapet above the tall stone arches on the Bronx side.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 1.8 });
+    k.egg(towerCap, { id: 'highbridge-water-tower', title: 'The flush toilet tower', year: '1872', text: 'The 200 foot octagonal water tower was designed by John B. Jervis and built from 1866 to 1872. Water was pumped up to a 47,000 gallon tank to raise the pressure, needed as flush toilets became more common. It left service in 1949, was damaged by arson in 1984, and was later restored.', clue: 'Look up at the top of the tower on the Manhattan bluff.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 4 });
+    k.egg(v(2.6, DY + 1.2, -40), { id: 'highbridge-circle-line', title: 'Closed for forty years', year: '2015', text: 'By around 1960, debris thrown from the bridge had injured four passengers on Circle Line tour boats passing underneath. The walk closed in the early 1970s and stayed shut until June 9, 2015. At the reopening it was called the only bridge for walkers alone linking Manhattan to the mainland.', clue: 'Stop at the railing above the river channel.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 1.6 });
     // the works: panels on the parapets along the walk, on the tower plaza, at the Bronx landing
     const mounts: Mount[] = [];
     for (let i = 0; i < 12; i++) { const z = -100 + i * 18; const s = i % 2 ? 1 : -1; k.box(0.16, 2.0, 3.0, s * 3.4, DY + 1.9, z, iron); mounts.push({ position: v(s * 3.3, DY + 2.0, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, DY + 2, z), width: 2.8, height: 1.7, style: 'steel', wash: false }); }
-    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2; const x = TX + Math.cos(a) * 9, z = TZ + Math.sin(a) * 9; k.box(0.2, 3, 3.6, x, DY + 1.8, z, iron).rotation.y = -a + PI / 2; mounts.push({ position: v(x - Math.cos(a) * 0.14, DY + 2.0, z - Math.sin(a) * 0.14), rotation: -a + PI / 2, target: v(TX + Math.cos(a) * 3, DY + 2, TZ + Math.sin(a) * 3), width: 3.2, height: 1.9, style: 'steel', wash: false }); }
-    for (let i = 0; i < 4; i++) { const x = 118 + i * 6; k.box(3.6, 2.6, 0.2, x + 2, DY - 4 + 1.7, 4.8, iron); mounts.push({ position: v(x + 2, DY - 4 + 1.8, 4.68), rotation: PI, target: v(x + 2, DY - 2, -4), width: 3.2, height: 1.9, style: 'steel', wash: false }); }
-    return { mounts, spawn: v(0, DY + 3, 100), look: v(TX, DY + 30, TZ), eye: 3, bounds: [-132, 140, -124, 124], style: 'steel', floorY: (x, z) => { if (Math.abs(x) < 4.6 && Math.abs(z) < deckLen / 2) return DY; if (x < -104 && x > -130 && Math.abs(z) < 20) return DY; if (x >= 118 && x < 124 && z > -12 && z < 2) return DY - Math.min(4, ((x - 118) / 6) * 4); if (x >= 124) return DY - 4; return DY; } };
+    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2; const x = TX + Math.cos(a) * 9, z = TZ + Math.sin(a) * 9; k.box(0.2, 3, 3.6, x, DY + 1.8, z, iron).rotation.y = -a + PI / 2; mounts.push({ position: v(x - Math.cos(a) * 0.14, DY + 2.0, z - Math.sin(a) * 0.14), rotation: -a + PI / 2, target: v(TX + Math.cos(a) * 15, DY + 2, TZ + Math.sin(a) * 15), width: 3.2, height: 1.9, style: 'steel', wash: false }); }
+    for (let i = 0; i < 4; i++) { const x = -9 + i * 6; k.box(3.6, 2.6, 0.2, x, DY - 4 + 1.7, ZB + 27.6, iron); mounts.push({ position: v(x, DY - 4 + 1.8, ZB + 27.48), rotation: PI, target: v(x, DY - 2, ZB + 20), width: 3.2, height: 1.9, style: 'steel', wash: false }); }
+    return { mounts, spawn: v(0, DY + 3, ZB - 20), look: v(TX, DY + 30, TZ), eye: 3, bounds: [-37, 16, -163, ZB + 28], style: 'steel', floorY: (x, z) => { if (z >= ZB && z < ZB + 6 && Math.abs(x) < 3.2) return DY - Math.min(4, ((z - ZB) / 6) * 4); if (z >= ZB + 6) return DY - 4; return DY; } };
   },
 };
 
@@ -277,9 +318,9 @@ export const wavehill: RoomDef = {
     for (let i = 0; i < 20; i++) k.box(30, 90 + (i % 3) * 8, 30, -300 + i * 31, 6 + (i % 3) * 4, -530 + (i % 2) * 14, cliff);
     k.box(600, 3, 80, 0, 50, -540, k.pbr('whWoods', X.grass(0x2a4a2a, 66), 0.05));
     const rnd = X.mulberry(55);
-    for (let i = 0; i < 50; i++) { const x = (rnd() - 0.5) * 220, z = 20 + rnd() * 80; if (Math.abs(x) < 26 && z < 60) continue; k.tree(x, 0, z, { kind: rnd() > 0.6 ? 'column' : 'round', h: 6 + rnd() * 6, r: 2.8 + rnd() * 2.6, leaf: [0x4a7a3a, 0x6a8a3a, 0xb8702a][Math.floor(rnd() * 3)], seed: i }); }
-    for (let i = 0; i < 12; i++) { const x = -110 + i * 20; k.tree(x, -6, -74, { kind: 'round', h: 5 + rnd() * 3, r: 3 + rnd() * 2, leaf: 0x3a6a2a, seed: 100 + i }); }
-    // the terrace and the pergola along its edge: stone piers, timber beams, wisteria
+    for (let i = 0; i < 50; i++) { const x = (rnd() - 0.5) * 220, z = 20 + rnd() * 80; if (Math.abs(x) < 26 && z < 60) continue; k.tree(x, 0, z, { kind: rnd() > 0.6 ? 'column' : 'round', h: 6 + rnd() * 6, r: 2.8 + rnd() * 2.6, leaf: [0x4a7a3a, 0x6a8a3a, 0xb8702a][Math.floor(rnd() * 3)], seed: i, species: (['oak', 'elm', 'maple', 'linden', 'oak', 'pine'] as const)[i % 6] }); }
+    for (let i = 0; i < 12; i++) { const x = -110 + i * 20; k.tree(x, -6, -74, { kind: 'round', h: 5 + rnd() * 3, r: 3 + rnd() * 2, leaf: 0x3a6a2a, seed: 100 + i, species: i % 2 ? 'oak' : 'maple' }); }
+    // the terrace and the pergola along its edge: stone piers, timber beams, climbing vines and hanging flowers
     const PZ = -60, PL = 60;
     k.box(PL + 10, 0.6, 10, 0, 0.3, PZ + 2, gravel);
     k.box(PL + 10, 1.4, 0.8, 0, 0.7, PZ - 3, stone);
@@ -287,7 +328,7 @@ export const wavehill: RoomDef = {
     for (let i = 0; i <= 10; i++) { const x = -PL / 2 + i * (PL / 10); for (const dz of [0, 5]) { k.box(0.9, 3.4, 0.9, x, 2.0, PZ - 2 + dz, stone); k.keepOut.push({ x, z: PZ - 2 + dz, r: 0.7 }); } k.box(0.3, 0.3, 6.4, x, 3.9, PZ + 0.5, timber); }
     k.box(PL + 1, 0.3, 0.4, 0, 3.9, PZ - 2, timber); k.box(PL + 1, 0.3, 0.4, 0, 3.9, PZ + 3, timber);
     for (let x = -PL / 2 + 0.6; x < PL / 2; x += 1.2) k.box(0.16, 0.24, 7, x, 4.15, PZ + 0.5, timber);
-    for (let i = 0; i < 40; i++) { const x = -PL / 2 + rnd() * PL, z = PZ - 2 + rnd() * 6; k.mesh(new T.SphereGeometry(0.6 + rnd() * 0.5, 7, 5), k.flat(0x4a7a3a, 0, 0.9), x, 4.6 + rnd() * 0.5, z); if (rnd() > 0.5) k.mesh(new T.SphereGeometry(0.25, 6, 4), bloom[3], x, 3.6 + rnd() * 0.6, z); }
+    for (let i = 0; i < 40; i++) { const x = -PL / 2 + rnd() * PL, z = PZ - 2 + rnd() * 6; k.mesh(new T.SphereGeometry(0.6 + rnd() * 0.5, 7, 5), k.flat(0x4a7a3a, 0, 0.9), x, 4.6 + rnd() * 0.5, z); if (rnd() > 0.5) k.mesh(new T.SphereGeometry(0.25, 6, 4), bloom[i % 5], x, 3.6 + rnd() * 0.6, z); }
     for (const x of [-20, 0, 20]) k.bench(x, PZ + 1.2, 0, timber, iron, 2.2);
     // the flower garden inside a rustic fence, the conservatory, the fieldstone house
     const GZ = -20;
@@ -306,13 +347,21 @@ export const wavehill: RoomDef = {
     for (let i = 0; i < 4; i++) { k.box(1.2, 1.8, 0.2, -48 + i * 5.3, 3.2, -12.9, k.glass(0xffe0b0, 0.3, 0.1)); k.box(1.2, 1.8, 0.2, -48 + i * 5.3, 6.0, -12.9, k.glass(0xffe0b0, 0.3, 0.1)); }
     k.block(-52, -28, -27, -13);
     k.box(6, 0.3, 40, -40, 0.05, 6, gravel);
+    // the great American elm on the lawn, older than the estate
+    k.tree(14, 0, 14, { h: 17, r: 8, species: 'elm', seed: 211 });
+    k.egg(v(14, 6, 14), { id: 'wavehill-elm', title: 'Older than the estate', year: '1985', text: 'An American elm on the grounds predates the development of the estate itself. It was named a Great Tree of New York City in 1985. Dutch elm disease severely reduced the species in the twentieth century.', clue: 'Find the biggest tree on the lawn and look up into it.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 3 });
+    k.egg(v(-40, 6, -12.6), { id: 'wavehill-tenants', title: 'Roosevelt, Twain, Toscanini', year: '1901', text: 'The fieldstone house was built in 1843 by the lawyer William Lewis Morris. Theodore Roosevelt\'s family rented it for the summers of 1870 and 1871, Mark Twain leased it from 1901 to 1903, and the conductor Arturo Toscanini lived here from 1942 to 1945. From 1950 to 1956 it housed the chief members of the British delegation to the United Nations.', clue: 'Look at the upper windows of the stone house.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 2 });
+    k.egg(v(-52.2, 3, -20), { id: 'wavehill-armor-hall', title: 'A hall built for armor', text: 'The ichthyologist Bashford Dean, who leased the house, built Armor Hall, a stone addition he used as a private museum. Today paid concerts are held in Armor Hall on some Sunday afternoons.', clue: 'Walk round to the far end wall of the house.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 2 });
+    k.egg(v(-28, 0.6, 12), { id: 'wavehill-bowling', title: 'Bowling under the lawn', year: '1910', text: 'George Walbridge Perkins, a partner of J.P. Morgan, bought Wave Hill in 1903. In 1910 he added an underground recreation building with a bowling alley. His family deeded the estate to the city in 1960, and it was called Perkins Garden until 1987.', clue: 'Stand on the lawn south of the house and look at the ground.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 1.8 });
+    k.egg(v(CX, 4, CZ), { id: 'wavehill-conservatory', title: 'Greenhouses since Huxley', text: 'The publisher William Henry Appleton, who owned the house from 1866 to 1903, added greenhouses and gardens, and Thomas Henry Huxley, who helped bring Darwin\'s theory of evolution to public attention, visited in those years. Today the Marco Polo Stufano Conservatory holds the Palm House, the Tropical House and a Cactus and Succulent House with more than 1,100 container grown plants.', clue: 'Look up into the glass of the conservatory.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 2.4 });
+    k.egg(v(0, 1.1, GZ + 11), { id: 'wavehill-flower-garden', title: 'Once a rose garden', year: '1969', text: 'The Flower Garden, enclosed by a rustic cedar fence, was a formal rose garden until a transformation began in 1969. It was remade in the Arts and Crafts style popular in the late nineteenth and early twentieth centuries, with each bed given its own subtle colour theme and a symmetry best seen from above.', clue: 'Look at the rustic fence around the flower beds.', source: { name: 'Flower Garden, Wave Hill', url: 'https://www.wavehill.org/discover/gardens/flower-garden' } }, { r: 1.6 });
     k.censusWall({ x: -40, y: 3.0, z: -12.7, rotY: 0, cols: 16, rows: 2, tile: 0.55, gap: 0.05, start: ctx.wallStart(1000, 32), pieces: ctx.all, backing: iron });
     k.crowd([v(-40, 0, 24), v(-30, 0, -4), v(-10, 0, -8), v(10, 0, -8), v(20, 0, -34), v(0, 0, -57), v(-24, 0, -57)], 14, { seed: 56, speed: 0.6, spread: 2, animate: !ctx.reduced });
     // the works: between the pergola piers facing the terrace, in the garden on easels, the conservatory, the house wall
     const mounts: Mount[] = [];
     for (let i = 0; i < 10; i++) { const x = -PL / 2 + PL / 20 + i * (PL / 10); mounts.push({ position: v(x, 2.0, PZ - 2.6), rotation: 0, target: v(x, 2, PZ + 4), width: 2.8, height: 1.7, style: 'white', wash: false }); k.box(3.2, 2.2, 0.16, x, 2.0, PZ - 2.7, white); }
     for (let i = 0; i < 6; i++) { const x = -15 + i * 6, z = GZ + 12.6; for (const dx of [-0.7, 0.7]) k.beam(v(x + dx, 0, z + 0.4), v(x, 2.6, z), 0.05, timber, 4); k.beam(v(x, 0, z - 0.7), v(x, 2.6, z), 0.05, timber, 4); mounts.push({ position: v(x, 1.7, z - 0.1), rotation: PI, target: v(x, 2, z - 6), width: 2.4, height: 1.8, style: 'oak', wash: false }); }
-    for (let i = 0; i < 3; i++) { const z = CZ - 3 + i * 3; mounts.push({ position: v(CX - 6.6, 1.9, z), rotation: PI / 2, target: v(CX - 14, 2, z), width: 2.4, height: 1.4, style: 'white', wash: false }); k.box(0.12, 1.8, 2.8, CX - 6.5, 1.9, z, white); }
+    for (let i = 0; i < 3; i++) { const z = CZ - 3 + i * 3; mounts.push({ position: v(CX - 6.6, 1.9, z), rotation: -PI / 2, target: v(CX - 10.5, 2, z), width: 2.4, height: 1.4, style: 'white', wash: false }); k.box(0.12, 1.8, 2.8, CX - 6.5, 1.9, z, white); }
     for (let i = 0; i < 3; i++) { const x = -48 + i * 8; mounts.push({ position: v(x, 1.8, -12.8), rotation: 0, target: v(x, 2, -4), width: 3.2, height: 1.9, style: 'oak', wash: false }); }
     return { mounts, spawn: v(-PL / 2 - 8, 3, PZ + 0.6), look: v(PL / 2, 3.2, PZ + 0.6), eye: 3, bounds: [-70, 60, PZ - 2, 60], style: 'white' };
   },
@@ -368,7 +417,7 @@ export const gantry: RoomDef = {
     for (let y = 4; y < 20; y += 4) k.box(28, 0.3, 0.3, SX, y, SZ, iron);
     const bottle = k.mesh(new T.BoxGeometry(24, 6, 0.3), dark, SX, 15, SZ - 0.2);
     void bottle;
-    k.sign('LONG ISLAND CITY', 22, 4, SX, 15, SZ - 0.4, '#141416', '#ff4a4a', 200, PI, { border: true });
+    k.sign('Pepsi-Cola', 22, 4, SX, 15, SZ - 0.4, '#141416', '#ff4a4a', 200, PI, { border: true });
     const tubes: T.Mesh[] = [];
     for (let i = 0; i < 3; i++) tubes.push(k.mesh(new T.BoxGeometry(24.4, 0.14, 0.14), neon, SX, 12.4 + i * 2.6, SZ - 0.5, true));
     const signLight = k.point(SX, 15, SZ - 6, 0xff4a4a, 120, 50);
@@ -377,6 +426,15 @@ export const gantry: RoomDef = {
     const ferry = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(8, 3, 26), k.flat(0xe6e2da, 0.2, 0.6)); hull.position.y = 1.2; ferry.add(hull); const cab = new T.Mesh(new T.BoxGeometry(6, 3, 16), k.flat(0x2b4a8a, 0.2, 0.6)); cab.position.y = 4; ferry.add(cab); for (let i = -6; i <= 6; i += 2) { const w = new T.Mesh(new T.PlaneGeometry(1.4, 1), warm); w.position.set(3.05, 4, i); w.rotation.y = PI / 2; ferry.add(w); } k.add(ferry);
     if (!ctx.reduced) k.rider(ferry, k.spline([v(-200, -1.2, -100), v(0, -1.2, -80), v(200, -1.2, -110), v(0, -1.2, -140)], true), 5, 0);
     k.crowd([v(-100, 0, -4), v(-40, 0, -6), v(0, 0, -4), v(50, 0, -6), v(100, 0, -4)], 30, { seed: 57, speed: 0.9, spread: 5, animate: !ctx.reduced });
+    // the fish cleaning table on the fishing pier
+    const fishTable = k.box(0.8, 0.9, 1.8, 62.4, 0.95, -61, steel);
+    const W = 'https://en.wikipedia.org/wiki/Gantry_Plaza_State_Park', WN = 'Gantry Plaza State Park, Wikipedia';
+    k.egg(v(-30, 18, -14), { id: 'gantry-transfer-bridges', title: 'Railcars on barges', year: '1925', text: 'The gantries lifted and lowered contained apron transfer bridges, built in 1925 to the James B. French patent. Freight railcars rolled off the Long Island Rail Road onto car floats, barges that carried them across the river between Queens and Manhattan.', clue: 'Look up into the frame of the first gantry.', source: { name: WN, url: W } }, { r: 3 });
+    k.egg(v(SX, 15, SZ - 1), { id: 'gantry-pepsi-sign', title: 'Moved off the roof', year: '1939', text: 'The neon sign is 120 feet long and 60 feet high, made in 1939 by the General Outdoor Advertising Company and rebuilt in 1993 by Artkraft Strauss. It stood on top of the Pepsi bottling plant until it was moved into the park in 2009, and became a city landmark on April 12, 2016.', clue: 'Look at the red neon on its steel frame.', source: { name: WN, url: W } }, { r: 3.5 });
+    k.egg(v(-20, 1.6, -86.4), { id: 'gantry-final-scenes', title: 'Two final scenes', year: '2005', text: 'Two films from 2005 end here. The last scene of Munich was shot on the park with the pier and the sign in view, and The Interpreter used the same spot for its closing goodbye. The park also turns up in The Olsen Gang in a Fix of 1969.', clue: 'Walk to the end of the longest pier and turn round.', source: { name: WN, url: W } }, { r: 2 });
+    k.egg(fishTable, { id: 'gantry-fishing-pier', title: 'The cleaning table', text: 'Of the park\'s four piers, one is a fishing pier with its own fish cleaning table. Fishing and crabbing are allowed at pier 4, under state conservation rules, and the park runs a program called Fishing at the Gantries.', clue: 'Find the steel table out on the pier with the lounge chairs.', source: { name: 'Gantry Plaza State Park, New York State Parks', url: 'https://parks.ny.gov/parks/gantryplaza/details.aspx' } }, { r: 1.4 });
+    k.egg(v(-30, 0.6, 0), { id: 'gantry-freight-branch', title: 'The buried railroad', text: 'The car floats served Long Island industry through the Long Island Rail Road\'s North Shore Freight Branch. It ran below street level along the south side of 48th Avenue, now part of Hunter\'s Point Park, and was filled in during the early 2000s.', clue: 'Stand on the esplanade at the land end of the first gantry.', source: { name: WN, url: W } }, { r: 1.6 });
+    k.egg(v(46, 1.2, 14), { id: 'gantry-bottling-plant', title: 'A bottling plant before', year: '1998', text: 'The park opened in May 1998 on a former dockyard and manufacturing area, designed by the landscape architects Thomas Balsley and Lee Weintraub with the architect Richard Sullivan. Its northern section was part of a PepsiCo bottling plant that closed in 1999. In 2014 it had 905,450 visitors.', clue: 'Walk to the north end of the esplanade, under the sign.', source: { name: WN, url: W } }, { r: 1.6 });
     k.censusWall({ x: 0, y: 3.4, z: 12.34, rotY: PI, cols: 40, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(7000, 160), pieces: ctx.all, backing: dark });
     k.box(24, 7, 0.6, 0, 3.5, 12.6, dark);
     for (const x of [-9, 9]) k.point(x, 5, 9, 0xffe0b0, 20, 14);

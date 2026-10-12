@@ -38,7 +38,9 @@ export const boathouse: RoomDef = {
   build(k, ctx) {
     k.sky({ top: 0x6f9fd2, horizon: 0xe9ebe2, ground: 0x4f6a48, fog: 0.003, sun: { az: 4.2, el: 0.5, color: 0xffe9c8, size: 16 }, haze: 0.2, env: 0.9 });
     k.hemi(0xf1f6ff, 0x3f5a38, 0.9);
-    k.sun(0xffe6c4, 2.3, -40, 50, 10, true, 80);
+    /* the real boathouse faces west over the Lullwater, sited for the sunset: the loggia here faces -z,
+       so the late sun comes from -z and lights the arches (2026-10-09; it came from the side) */
+    k.sun(0xffe6c4, 2.3, -15, 45, -45, true, 80);
     const terra = k.pbr('boathouseTerra', X.plaster(0xf0e9dc, 21), 0.4, { roughness: 0.65 }),
       lime = k.pbr('boathouseBase', X.ashlar(0xd8d0bd, 22, 3), 0.25),
       tileRoof = k.pbr('greenTile', X.boardwalk(0x5e7a5a), 0.5, { roughness: 0.6 }),
@@ -106,6 +108,15 @@ export const boathouse: RoomDef = {
     // the census in the boathouse's back room
     k.censusWall({ x: 0, y: 4.2, z: BZ + BD / 2 - 0.32, rotY: PI, cols: 30, rows: 4, tile: 0.62, gap: 0.05, start: ctx.wallStart(1400, 120), pieces: ctx.all, backing: oak });
     k.sign('PROSPECT PARK  ·  THE BOATHOUSE  ·  1905', 9, 0.7, 0, 7.6, BZ + BD / 2 - 0.32, '#3a5a48', '#f4efe0', 80, PI, { border: true });
+    /* landmark eggs */
+    const BSRC = { name: 'Building of the Day: Prospect Park Boathouse, Brownstoner', url: 'https://www.brownstoner.com/architecture/building-of-the-day-prospect-park-boathouse' };
+    const PPSRC = { name: 'Prospect Park (Brooklyn), Wikipedia', url: 'https://en.wikipedia.org/wiki/Prospect_Park_(Brooklyn)' };
+    k.egg(v(-BW / 2 + BW / 5, 3.5, BZ - BD / 2 - 0.6), { id: 'boathouse-sansovino', title: 'A Venetian library in terracotta', year: '1905', text: 'Helmle and Huberty based the design on the first floor of Jacopo Sansovino\'s Library of St. Mark in Venice, much simplified. The Venetian original is stone; this one is clad in gleaming white terracotta, which is why it glows in the sun.', clue: 'Put a hand on a pier of the arcade facing the water.', source: BSRC }, { r: 0.9 });
+    k.egg(v(0, 1.6, BZ - BD / 2 - 9.2), { id: 'boathouse-sunset', title: 'Turned to face the sunset', text: 'The 1905 boathouse replaced one from 1876 that stood on piers and faced south. The new one faces west across the water, placed to catch the sunsets.', clue: 'Stand at the middle of the terrace rail and face the lake.', source: BSRC }, { r: 0.8 });
+    k.egg(v(0, 7.6, BZ + BD / 2 - 0.6), { id: 'boathouse-48hours', title: 'Forty eight hours', year: '1964', text: 'In September 1964 the Parks Department was within forty eight hours of demolishing the boathouse. It survived, and pressure from the young historic preservation movement helped put it on the National Register of Historic Places in 1972.', clue: 'Read the sign over the census on the back wall.', source: { name: 'Prospect Park Boathouse, Wikipedia', url: 'https://en.wikipedia.org/wiki/Prospect_Park_Boathouse' } }, { r: 1.0 });
+    k.egg(v(-BW / 2 + 0.6, 6.2, BZ + 1), { id: 'boathouse-audubon', title: 'The first urban Audubon', year: '2000', text: 'In 2000 the National Audubon Society signed a lease on the boathouse, making it the site of the nation\'s first urban Audubon center. Birders have recorded 298 species in Prospect Park over the years, 11 of them not seen in any other city park.', clue: 'Look high on the inside of the loggia\'s end wall.', source: PPSRC }, { r: 0.8 });
+    k.egg(v(-12, 0.8, BZ - BD / 2 - 21.5), { id: 'boathouse-lake', title: 'Brooklyn\'s only lake', year: '1867', text: 'The water is all man made: one watercourse that runs through the park and empties into the 60 acre Prospect Lake, Brooklyn\'s only lake. It flows under the Lullwater and Terrace bridges on the way; Olmsted and Vaux laid it out for the park, which opened in 1867.', clue: 'Walk to the end of the dock.', source: PPSRC }, { r: 1.4 });
+    k.egg(v(20, -0.3, -38), { id: 'boathouse-launch', title: 'The electric launch', text: 'Early in the 20th century an electric launch took day trippers round the lake. The park now runs the Independence, a replica of that original electric boat.', clue: 'Look out past the rowboats to where the swans are.', source: PPSRC }, { r: 2.6 });
     // the works: inside the loggia, on the terrace screens, along the dock
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (const z of [BZ - 3.4, BZ + 2.4]) mounts.push({ position: v(s * (BW / 2 - 0.32), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * (BW / 2 - 5), 3, z), width: 4.4, height: 2.6, style: 'oak' });
@@ -168,7 +179,15 @@ export const halloffame: RoomDef = {
       k.objects[k.objects.length - 1].rotation.y = -tm + PI / 2;
     }
     k.mesh(new T.RingGeometry(R - 4.4, R + 4.4, 96, 1, 0, PI), lime, 0, 10.6, CZ).rotation.x = -PI / 2;
-    k.mesh(new T.RingGeometry(R - 4.6, R + 4.6, 96, 1, 0, PI), copper, 0, 11.2, CZ).rotation.x = -PI / 2;
+    /* the loggia roof is red Spanish tile, not copper (2026-10-09 truth pass); the copper is the library dome */
+    k.mesh(new T.RingGeometry(R - 4.6, R + 4.6, 96, 1, 0, PI), k.flat(0x9a4632, 0, 0.75), 0, 11.2, CZ).rotation.x = -PI / 2;
+    /* Samuel Yellin's iron gates at the two ends, with their inscriptions. The loggia opens west over
+       the river (-z), so north is +x. */
+    for (const [gx, words] of [[R, 'ENTER WITH JOY THAT THOSE WITHIN HAVE LIVED'], [-R, 'TAKE COUNSEL HERE OF BEAUTY, WISDOM, POWER']] as [number, string][]) {
+      k.box(7.4, 0.5, 0.25, gx, 8.3, CZ + 0.3, iron);
+      for (let j = 0; j < 9; j++) k.box(0.06, 1.0, 0.06, gx - 3.2 + j * 0.8, 7.6, CZ + 0.3, iron);
+      k.sign(words, 7.2, 0.4, gx, 8.9, CZ + 0.45, '#2a2620', '#e8dcc0', 46, 0);
+    }
     for (let i = 0; i < 12; i++) { const t = ((i + 0.5) / 12) * PI; k.point(Math.cos(t) * R, 8, CZ - Math.sin(t) * R, 0xfff0d8, 14, 14); }
     // the library at the centre: a rotunda with a green dome and a portico
     k.cyl(15, 12, 0, 6, CZ + 8, brick, 15, 48);
@@ -191,6 +210,15 @@ export const halloffame: RoomDef = {
       k.keepOut.push({ x, z, r: 0.9 });
       mounts.push({ position: v(x + Math.cos(t) * -0.12, 3.0, z + Math.sin(t) * 0.12), rotation: -t + PI / 2, target: v(Math.cos(t) * (R - 1), 3, CZ - Math.sin(t) * (R - 1)), width: 3.8, height: 2.2, style: 'none', wash: false });
     }
+    /* landmark eggs */
+    const HSRC = { name: 'Hall of Fame for Great Americans, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hall_of_Fame_for_Great_Americans' };
+    const ped = (i: number, y: number) => { const t = ((i + 0.5) / 24) * PI; return v(Math.cos(t) * (R + 2.7), y, CZ - Math.sin(t) * (R + 2.7)); };
+    k.egg(v(R, 8.6, CZ + 0.4), { id: 'halloffame-first', title: 'The first hall of fame', year: '1901', text: 'This was the first hall of fame in the United States, designed by Stanford White and dedicated on 30 May 1901. Helen Gould gave $100,000 for it in March 1900; by the end of that year the cost had nearly doubled to $200,000. Samuel Yellin made the iron gates at either end.', clue: 'Read the inscription over the north gate.', source: HSRC }, { r: 1.4 });
+    k.egg(v(0, 1.2, CZ - R - 4.9), { id: 'halloffame-wall', title: 'A retaining wall in disguise', text: 'The site falls away steeply to the west, and the 630 foot loggia partly hides the retaining wall that holds up the library above it. It was built as 500 feet, with a 130 foot annex added later, and its parapets are Massachusetts granite, its columns and pedestals Indiana limestone, its ceiling Guastavino tile.', clue: 'Look over the parapet at the outside of the curve.', source: HSRC }, { r: 1.2 });
+    k.egg(ped(5, 0.8), { id: 'halloffame-missing', title: 'Four who never got a bust', text: 'The hall has places for 102 bronze busts of its 102 honorees, but as of 2017 only 96 were there. Louis Brandeis, Clara Barton, Luther Burbank and Andrew Carnegie were elected and never sculpted, for lack of money. The last honorees were elected in 1976.', clue: 'Look at the foot of the pedestals, where the names would be.', source: HSRC }, { r: 0.7 });
+    k.egg(ped(18, 0.8), { id: 'halloffame-lafayette', title: 'The one foreigner', text: 'The Marquis de Lafayette\'s is the only bust here of a man who was not a citizen, though he was given honorary American citizenship. In 1918 the whole colonnade was turned into a barracks with beds for 600 soldiers.', clue: 'Check the foot of a pedestal on the south side of the curve.', source: HSRC }, { r: 0.7 });
+    k.egg(v(-R, 8.6, CZ + 0.4), { id: 'halloffame-tiffany', title: 'Plaques by Tiffany', text: 'Louis Comfort Tiffany designed the honorees\' plaques, each about 13 inches tall and 7 feet wide. The south gate is lettered Take counsel here of Beauty, Wisdom, Power.', clue: 'Read the inscription over the south gate.', source: HSRC }, { r: 1.4 });
+    k.egg(v(0, 22, CZ + 8), { id: 'halloffame-gould', title: 'The dome over the library', year: '1900', text: 'The Gould Memorial Library at the centre has a dome of copper tiles over a coffered plaster dome, and a round reading room ringed by 16 green Connemara marble columns and lit by Tiffany glass. Helen Gould paid for it in her father Jay Gould\'s memory, at first anonymously. It has been in films including A Beautiful Mind.', clue: 'Look up at the copper dome.', source: { name: 'Gould Memorial Library, Wikipedia', url: 'https://en.wikipedia.org/wiki/Gould_Memorial_Library' } }, { r: 8 });
     // benches, lamps, the inscription band, the census in the rotunda vestibule
     for (let i = 0; i < 6; i++) { const t = ((i + 0.5) / 6) * PI; k.bench(Math.cos(t) * (R - 8), CZ - Math.sin(t) * (R - 8), -t - PI / 2, k.pbr('benchH', X.planks(0x5d4939, 3, 36), 1.2), iron, 2.4); }
     for (const t of [0.2, 1.0, 2.1, 2.9]) k.lamp(Math.cos(t) * (R + 7), CZ - Math.sin(t) * (R + 7), 5.5, iron, 0xffe0b0, 22);
@@ -269,10 +297,26 @@ export const twa: RoomDef = {
     fus.rotation.set(PI / 2, 0, 0.3);
     k.mesh(new T.SphereGeometry(3.4, 20, 12), white, px - Math.sin(0.3) * 26, 6, pz + Math.cos(0.3) * 26);
     k.mesh(new T.ConeGeometry(3.4, 10, 20), white, px + Math.sin(0.3) * 31, 6.8, pz - Math.cos(0.3) * 31).rotation.set(-PI / 2 + 0.15, 0, 0.3);
-    for (const s of [-1, 1]) { const wing = k.mesh(new T.BoxGeometry(34, 0.8, 8), white, px + s * 17 * Math.cos(0.3), 4.6, pz + s * 17 * Math.sin(0.3)); wing.rotation.y = -0.3 - s * 0.35; wing.rotation.z = s * 0.06; const eng = k.mesh(new T.CylinderGeometry(1.6, 1.6, 6, 16), steel, px + s * 10 * Math.cos(0.3), 3.6, pz + s * 10 * Math.sin(0.3) - 4); eng.rotation.set(PI / 2, 0, 0.3); }
-    k.mesh(new T.BoxGeometry(0.6, 10, 8), redSolid, px + Math.sin(0.3) * 24, 11, pz - Math.cos(0.3) * 24).rotation.y = 0.3;
+    /* 2026-10-09 truth pass: the plane at the TWA terminal today is Connie, a preserved Lockheed
+       L-1649 Starliner, so the airliner is now a Starliner: straight wings, four engine nacelles,
+       a triple tail. It was a swept wing twin jet. */
+    for (const s of [-1, 1]) {
+      const wing = k.mesh(new T.BoxGeometry(34, 0.8, 7), white, px + s * 17 * Math.cos(0.3), 4.6, pz + s * 17 * Math.sin(0.3)); wing.rotation.y = -0.3 - s * 0.06; wing.rotation.z = s * 0.06;
+      for (const e of [7, 13]) { const eng = k.mesh(new T.CylinderGeometry(0.95, 0.8, 5, 14), steel, px + s * e * Math.cos(0.3) - Math.sin(0.3) * 2.4, 4.2, pz + s * e * Math.sin(0.3) + Math.cos(0.3) * 2.4); eng.rotation.set(PI / 2, 0, 0.3); }
+    }
+    const tailX = px + Math.sin(0.3) * 24, tailZ = pz - Math.cos(0.3) * 24;
+    k.mesh(new T.BoxGeometry(18, 0.4, 3.4), white, tailX, 8.6, tailZ).rotation.y = -0.3;
+    for (const o of [-9, 0, 9]) k.mesh(new T.BoxGeometry(0.5, o === 0 ? 5.2 : 4.6, 4.4), redSolid, tailX + o * Math.cos(0.3), 10.6, tailZ + o * Math.sin(0.3)).rotation.y = 0.3;
     k.box(52, 0.5, 1.2, px, 0.25, pz + 30, redSolid);
     for (let i = 0; i < 4; i++) k.cyl(0.9, 1.2, px - 12 + i * 8, 0.6, pz + 8, dark, 0.9, 12);
+    /* landmark eggs */
+    const TSRC = { name: 'TWA Flight Center, Wikipedia', url: 'https://en.wikipedia.org/wiki/TWA_Flight_Center' };
+    k.egg(v(0, 14, -34), { id: 'twa-grapefruit', title: 'The grapefruit at breakfast', text: 'The roof is a thin concrete shell in four parts, carried on four Y shaped piers; it weighs 6,000 short tons and covers about an acre and a half. The final model for it may have been inspired by Eero Saarinen pressing down on the middle of a grapefruit at breakfast.', clue: 'Look up at the crown of the concrete shell.', source: TSRC }, { r: 4 });
+    k.egg(v(0, 0.6, -30), { id: 'twa-opening', title: 'He never saw it open', year: '1962', text: 'Saarinen died in 1961. Passengers began using the unfinished terminal on 19 March 1962 and it was dedicated on 28 May 1962. Almost 58 million ceramic tiles line its walls and floors.', clue: 'Step down into the red sunken lounge.', source: TSRC }, { r: 1.6 });
+    k.egg(v(0, 8.4, -11.3), { id: 'twa-solari', title: 'Made in Udine', text: 'The departures board is a split flap display made in Italy by Solari di Udine. It showed the flights when the terminal opened, and it was fully restored when the building became a hotel.', clue: 'Read the departures board over the lounge.', source: { name: 'TWA Hotel, Wikipedia', url: 'https://en.wikipedia.org/wiki/TWA_Hotel' } }, { r: 0.8 });
+    k.egg(v(-30, 5.6, -55), { id: 'twa-tubes', title: 'The red tubes', text: 'The two flight tubes are covered passageways about 232 and 272 feet long, carpeted in red, that carried passengers from the main building out to the gates.', clue: 'Find the mouth of a flight tube at the back of the hall.', source: TSRC }, { r: 1.0 });
+    k.egg(v(px, 6, pz), { id: 'twa-connie', title: 'Connie', text: 'The plane parked at the TWA Hotel is a preserved Lockheed L-1649 Starliner, fitted out inside as a cocktail lounge named Connie. The hotel opened on 15 May 2019 with 512 rooms and an infinity pool on the roof.', clue: 'Look out at the airliner on the apron.', source: { name: 'TWA Hotel, Wikipedia', url: 'https://en.wikipedia.org/wiki/TWA_Hotel' } }, { r: 8 });
+    k.egg(v(0, 5, -8.4), { id: 'twa-landmark', title: 'Last flight, 2001', year: '1994', text: 'New York City made the terminal\'s headhouse a landmark, inside and out, in 1994. TWA sold its assets in October 2001 and American Airlines ran its last flights from here that December.', clue: 'Look at the glass wall where you walk in.', source: TSRC }, { r: 1.2 });
     // the works: around the drum's wall, the pit rim, the tube mouths
     const mounts: Mount[] = [];
     for (let i = 0; i < 12; i++) {
@@ -322,12 +366,12 @@ export const snug: RoomDef = {
     k.water({ y: -1.5, color: 0x3a5468, w: 400, d: 200, z: 170, amp: 0.8 });
     k.skyline({ z: 240, count: 22, spacing: 10, scale: 1.4, base: -2, seed: 92, lit: 0.1, glow: 0.2, tint: 0x8a8e96, rows: 1 });
     // five temple fronts in a row
-    const temple = (x: number, w: number, d: number, main: boolean) => {
+    const temple = (x: number, w: number, d: number, main: boolean, cols?: number) => {
       const z = -6;
       k.box(w + 2, 1.2, d + 4, x, 0.6, z - d / 2, lime);
       k.box(w, 10, d, x, 6, z - d / 2 - 2, plaster);
       k.block(x - w / 2 - 0.3, x + w / 2 + 0.3, z - d - 2.3, z - 1.7);
-      const n = Math.round(w / 3.2);
+      const n = cols ? cols - 1 : Math.round(w / 3.2);
       for (let i = 0; i <= n; i++) k.column(x - w / 2 + (w / n) * i, 1.2, z + 1.4, 9, 0.5, lime, true);
       k.box(w + 1.6, 1.4, 5, x, 10.9, z - 0.6, lime);
       k.mesh(new T.ConeGeometry((w + 1.6) / 2 / Math.cos(PI / 6) * 0.87, 3.4, 3), lime, x, 13.4, z - 0.6).rotation.y = PI / 6;
@@ -337,7 +381,8 @@ export const snug: RoomDef = {
     };
     temple(-46, 16, 24, false);
     temple(-24, 18, 26, false);
-    const main = temple(0, 24, 34, true);
+    /* Building C, Lafever's 1833 centre building, has eight columns under its pediment (it had nine) */
+    const main = temple(0, 24, 34, true, 8);
     temple(24, 18, 26, false);
     temple(46, 16, 24, false);
     // inside the main hall: a coffered ceiling, the census on the end wall, works on both long walls
@@ -381,6 +426,15 @@ export const snug: RoomDef = {
     for (let i = 0; i < 4; i++) k.tree(-14 + i * 10, 0, GZ - 26, { kind: 'round', h: 3.4, r: 1.9, leaf: 0x5a8a3a, seed: 200 + i });
     k.prop('lantern', -6, 1.0, GZ - 8, { height: 1.0 });
     k.prop('lantern', PX, 0.6, PZ + 4.2, { height: 1.0 });
+    /* landmark eggs */
+    const SSRC = { name: 'Snug Harbor Cultural Center, Wikipedia', url: 'https://en.wikipedia.org/wiki/Snug_Harbor_Cultural_Center' };
+    k.egg(v(MX, 8.4, MZ - MD + 0.6), { id: 'snug-randall', title: 'Worn out sailors', year: '1801', text: 'Captain Robert Richard Randall died in 1801 and left his country manor for aged, decrepit and worn out sailors, a home he called Sailors\' Snug Harbor. Augustus Saint-Gaudens made a bronze statue of him, cast in 1884; the original was moved to Sea Level, North Carolina, in the 1980s and a replica stands here.', clue: 'Read the name over the census at the end of the hall.', source: SSRC }, { r: 0.9 });
+    k.egg(v(0, 12.6, -3.8), { id: 'snug-buildingc', title: 'Thirty seven sailors', year: '1833', text: 'The centre temple, Building C, was finished in August 1833 and first housed 37 retired sailors. It is Minard Lafever\'s oldest surviving work, though he left the job abruptly and Samuel Thomson and Son finished it. Eight columns carry its pediment.', clue: 'Count the columns of the middle temple.', source: SSRC }, { r: 1.4 });
+    k.egg(v(-24, 12.6, -3.8), { id: 'snug-landmarks', title: 'Among the first twenty', year: '1965', text: 'The five temple fronts, Buildings A to E, were built between 1831 and 1880. On 14 October 1965 they and the chapel were designated New York City landmarks, six of the city\'s first 20.', clue: 'Look at the pediment of the next temple along.', source: SSRC }, { r: 1.4 });
+    k.egg(v(10, 8, 40), { id: 'snug-killvankull', title: 'On the Kill Van Kull', text: 'The campus sits on the Kill Van Kull, the strait along Staten Island\'s North Shore. It covers 83 acres today, cut down from the original 130, and a Greek Revival iron fence of 1842 runs round the property.', clue: 'Walk out to the flagpole and look toward the water.', source: SSRC }, { r: 1.4 });
+    const GSRC = { name: 'New York Chinese Scholar\'s Garden, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_York_Chinese_Scholar%27s_Garden' };
+    k.egg(v(0, 3.3, GZ), { id: 'snug-suzhou', title: 'Built by forty from Suzhou', year: '1999', text: 'The Chinese Scholar\'s Garden was built by a team of 40 Chinese artists and artisans from Suzhou, with its materials shipped to Staten Island in the spring of 1998. It opened in June 1999. Frances Paulo Huber had seen the need for an authentic Chinese garden in 1984.', clue: 'Look at the top of the moon gate.', source: GSRC }, { r: 0.7 });
+    k.egg(v(12, 2.4, GZ - 15), { id: 'snug-bones', title: 'The bones of the earth', text: 'The garden holds three ponds and a waterfall, two pavilions, and walls placed to frame each view. Its rocks are called the bones of the earth.', clue: 'Find the rockery by the pond.', source: GSRC }, { r: 1.4 });
     // the works: the main hall's long walls, between the portico columns, in the pavilion
     const mounts: Mount[] = [];
     for (let i = 0; i < 5; i++) { const z = MZ - 5 - i * 5.6; for (const s of [-1, 1]) mounts.push({ position: v(MX + s * (MW / 2 - 0.34), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(MX + s * (MW / 2 - 5.5), 3, z), width: 4.4, height: 2.6, style: 'gilt' }); }
@@ -444,7 +498,8 @@ export const wollman: RoomDef = {
     k.add(flakes);
     if (!ctx.reduced) k.ticks.push((t, dt) => { const a = pg.attributes.position as T.BufferAttribute; for (let i = 0; i < NPTS; i++) { let y = a.getY(i) - dt * (1.2 + (i % 3) * 0.5); if (y < 0) y = 40; a.setY(i, y); a.setX(i, a.getX(i) + Math.sin(t + i) * dt * 0.3); } a.needsUpdate = true; });
     // the outcrops, bare trees under snow, lamps, the towers of Midtown over the trees
-    for (let i = 0; i < 10; i++) { const a = rnd() * PI * 2, r = 40 + rnd() * 20, x = Math.cos(a) * r, z = -30 + Math.sin(a) * r * 0.7; if (z > 0) continue; const s = 3 + rnd() * 4; k.box(s * 2, s, s * 1.4, x, s * 0.4, z, rock).rotation.y = rnd() * PI; k.box(s * 2.1, 0.2, s * 1.5, x, s * 0.9, z, snow).rotation.y = k.objects[k.objects.length - 1].rotation.y; }
+    const crops: T.Vector3[] = [];
+    for (let i = 0; i < 10; i++) { const a = rnd() * PI * 2, r = 40 + rnd() * 20, x = Math.cos(a) * r, z = -30 + Math.sin(a) * r * 0.7; if (z > 0) continue; const s = 3 + rnd() * 4; k.box(s * 2, s, s * 1.4, x, s * 0.4, z, rock).rotation.y = rnd() * PI; k.box(s * 2.1, 0.2, s * 1.5, x, s * 0.9, z, snow).rotation.y = k.objects[k.objects.length - 1].rotation.y; crops.push(v(x, s * 0.9, z)); }
     for (let i = 0; i < 40; i++) { const a = rnd() * PI * 2, r = 34 + rnd() * 30, x = Math.cos(a) * r, z = -30 + Math.sin(a) * r * 0.8; if (z > 2 && Math.abs(x) < 40) continue; k.tree(x, 0, z, { kind: 'bare', h: 5 + rnd() * 4, r: 3 + rnd() * 2, seed: i }); }
     for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2; k.lamp(Math.cos(a) * (RX + 5), -30 + Math.sin(a) * (RZ + 5), 5.5, iron, 0xffe0b0, 26); }
     k.skyline({ z: 70, count: 30, spacing: 6.5, scale: 2.4, base: -2, seed: 93, lit: 0.55, glow: 1.6, tint: 0x232a3a });
@@ -457,6 +512,15 @@ export const wollman: RoomDef = {
     k.prop('bell', 12, 1.6, 8, { height: 0.8 });
     k.box(0.25, 1.6, 0.25, 12, 0.8, 8, iron);
     k.censusWall({ x: 0, y: 2.6, z: 19.2, rotY: 0, cols: 22, rows: 3, tile: 0.6, gap: 0.05, start: ctx.wallStart(3300, 66), pieces: ctx.all, backing: timber });
+    /* landmark eggs */
+    const WSRC = { name: 'Wollman Rink, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wollman_Rink' };
+    const CPSRC = { name: 'Central Park, Wikipedia', url: 'https://en.wikipedia.org/wiki/Central_Park' };
+    k.egg(v(11.3, 3.6, 8.6), { id: 'wollman-gift', title: 'Kate Wollman\'s $600,000', year: '1950', text: 'The rink opened on 21 December 1950. Kate Wollman gave $600,000 to build it.', clue: 'Look at the corner of the rental house front.', source: WSRC }, { r: 0.6 });
+    k.egg(v(RX + 0.6, 1.4, -30), { id: 'wollman-pond', title: 'Skating on the Pond', text: 'The rink was made from the western part of the Pond, in the park\'s southeast corner. All of Central Park\'s eight lakes and ponds are artificial, made by damming natural seeps and flows. Pickleball courts went in at the rink in 2023 and became permanent the next year.', clue: 'Go to the far end of the boards.', source: CPSRC }, { r: 0.8 });
+    k.egg(v(-RX - 0.6, 1.4, -30), { id: 'wollman-buckle', title: 'The floor that buckled', year: '1986', text: 'The rink closed in the winter of 1980 after its concrete floor buckled. A city plan to swap the old brine cooling for Freon was dropped in May 1986 in favour of brine in plastic pipes, and the rebuilt rink, which had been reckoned at two years\' work, was finished two months early and $750,000 under the estimate.', clue: 'Find the boards at the west end of the ice.', source: WSRC }, { r: 0.8 });
+    k.egg(v(-12, 1.2, 6), { id: 'wollman-films', title: 'A movie rink', text: 'The rink has played itself in Love Story (1970), Carnal Knowledge (1971), Home Alone 2: Lost in New York (1992), The Devil\'s Own (1997), Serendipity (2001), Night at the Museum (2006), Limitless and Mr. Popper\'s Penguins (both 2011).', clue: 'Stand by the lantern on the terrace and watch the skaters.', source: WSRC }, { r: 0.8 });
+    k.egg(v(12, 1.6, 8), { id: 'wollman-summer', title: 'An amusement park in summer', text: 'From 2003 to 2019 the rink became Victorian Gardens every summer, a seasonal amusement park for children open from late May to September.', clue: 'Ring the bell by the rental house.', source: WSRC }, { r: 0.8 });
+    if (crops.length) k.egg(crops[0], { id: 'wollman-schist', title: 'The bedrock shows', text: 'The grey outcrops all over Central Park are Manhattan schist and Hartland schist, metamorphosed sedimentary rock exposed in outcrops across the park.', clue: 'Find a snowy outcrop of grey rock beyond the rink.', source: CPSRC }, { r: 3 });
     // the works: on the boards facing the ice, on the rental house, on the terrace
     const mounts: Mount[] = [];
     for (let i = 0; i < 16; i++) {

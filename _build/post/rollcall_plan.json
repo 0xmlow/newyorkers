@@ -1,0 +1,4848 @@
+{
+ "generated": "2026-10-07T01:35:28-04:00",
+ "wave_size": 40,
+ "gap_seconds": 90,
+ "people": 453,
+ "days": 12,
+ "order": "holders by pieces held, then artists, then the rest by category; each group by id",
+ "style": "handle-first",
+ "skipped": {
+  "no_handle": {
+   "count": 215,
+   "ids": [
+    "ai-weiwei",
+    "era1-488",
+    "banksy",
+    "era1-630",
+    "brendan-dawes",
+    "david-hockney",
+    "derrick-adams",
+    "era1-489",
+    "frank-lloyd-wright",
+    "futura",
+    "era1-490",
+    "iskra-velitchkova",
+    "era1-486",
+    "kaws",
+    "era1-487",
+    "kenny-scharf",
+    "leonardo-da-vinci",
+    "leo-villareal",
+    "marjan-moghaddam",
+    "michelangelo",
+    "orkhan-mammadov",
+    "swoon",
+    "takashi-murakami",
+    "tom-sachs",
+    "trevor-andrew",
+    "vanessa-rosa",
+    "vhils",
+    "victor-maury",
+    "yayoi-kusama",
+    "zhc",
+    "0x056b-d80b",
+    "0x1384-3527",
+    "0x1701-7cf4",
+    "0x1811-9eab",
+    "0x1bc3-32ed",
+    "0x2bf1-1cca",
+    "0x49e2-3ee5",
+    "0x5918-bb1c",
+    "0x5baa-08a3",
+    "0x5e73-67e0",
+    "0x6628-0ecd",
+    "0x686a-b507",
+    "0x704d-b807",
+    "0x787d-4dc4",
+    "0x87aad0e9",
+    "0x91dd-26c2",
+    "0xa621-fd13",
+    "0xe04d-4b50",
+    "0xe53b-677a",
+    "0xeb6d-9ec2",
+    "0xee76-4859",
+    "0xf524-8963",
+    "0xfbb7-b160",
+    "1nfern0",
+    "acekennedy",
+    "barrydabarbarian",
+    "cat5-eth",
+    "dj-fathead",
+    "dspur",
+    "eddie-wharton",
+    "enormo-eth",
+    "flyinga-eth",
+    "forkingpepe-eth",
+    "froggoat",
+    "garyvaynersuck-eth",
+    "gigs777-eth",
+    "habwa",
+    "hhabbdnjd",
+    "hup2",
+    "igorpopov-eth",
+    "jpegzrule-eth",
+    "laminoplasty",
+    "leighferreira-eth",
+    "mamajj",
+    "martyh3b",
+    "max-pretends",
+    "octoclan",
+    "ogenterprises-eth",
+    "old-ed-hacked",
+    "parzival13-eth",
+    "pipsq8-eth",
+    "pixelflipper",
+    "pred22-eth",
+    "pudgypiper",
+    "punk2772-eth",
+    "rareme",
+    "rofll-eth",
+    "self6967",
+    "stowerling",
+    "taku0x-eth",
+    "thompsona-eth",
+    "tsuka-dragon-eth",
+    "underrealm",
+    "walafortress-eth",
+    "wikisam-eth",
+    "zag",
+    "alexandr-wang",
+    "alex-atallah",
+    "alex-karp",
+    "andy-jassy",
+    "aravind-srinivas",
+    "arthur-mensch",
+    "ben-horowitz",
+    "bill-gates",
+    "brad-gerstner",
+    "brian-armstrong",
+    "brian-chesky",
+    "chamath-palihapitiya",
+    "cl-ment-delangue",
+    "dario-amodei",
+    "david-sacks",
+    "demis-hassabis",
+    "dylan-field",
+    "elon-musk",
+    "eric-schmidt",
+    "evan-spiegel",
+    "fei-fei-li",
+    "garry-tan",
+    "greg-brockman",
+    "ilya-sutskever",
+    "jack-dorsey",
+    "jeff-bezos",
+    "jensen-huang",
+    "jon-perkins",
+    "jony-ive",
+    "josh-kushner",
+    "larry-ellison",
+    "lisa-su",
+    "marc-andreessen",
+    "marc-benioff",
+    "mark-zuckerberg",
+    "masayoshi-son",
+    "michael-dell",
+    "mira-murati",
+    "mustafa-suleyman",
+    "naval-ravikant",
+    "era1-473",
+    "palmer-luckey",
+    "patrick-collison",
+    "peter-thiel",
+    "reid-hoffman",
+    "sam-altman",
+    "satya-nadella",
+    "sundar-pichai",
+    "tim-cook",
+    "vinod-khosla",
+    "era1-650",
+    "era1-472",
+    "era1-491",
+    "era1-471",
+    "era1-493",
+    "era1-476",
+    "era1-492",
+    "kareem-rahma",
+    "era1-495",
+    "era1-470",
+    "era1-494",
+    "era1-640",
+    "era1-497",
+    "era1-509",
+    "era1-647",
+    "era1-496",
+    "era1-500",
+    "era1-646",
+    "era1-505",
+    "era1-508",
+    "era1-499",
+    "era1-501",
+    "era1-507",
+    "era1-637",
+    "era1-645",
+    "era1-498",
+    "era1-636",
+    "era1-519",
+    "awkwafina",
+    "era1-662",
+    "julia-fox",
+    "era1-517",
+    "pete-davidson",
+    "era1-518",
+    "timoth-e-chalamet",
+    "alexandre-arnault",
+    "era1-629",
+    "era1-627",
+    "era1-633",
+    "era1-635",
+    "era1-628",
+    "telfar-clemens",
+    "era1-634",
+    "virgil-abloh",
+    "era1-479",
+    "igor-shesterkin",
+    "era1-478",
+    "era1-481",
+    "era1-480",
+    "era1-484",
+    "serena-and-venus-williams",
+    "era1-482",
+    "josh-capon",
+    "keith-mcnally",
+    "kwame-onwuachi",
+    "era1-469",
+    "era1-468",
+    "era1-654",
+    "era1-474",
+    "era1-656",
+    "era1-655",
+    "era1-475",
+    "era1-649",
+    "era1-588",
+    "era1-477",
+    "era1-652",
+    "era1-651",
+    "era1-653",
+    "era1-648"
+   ]
+  },
+  "held": {
+   "count": 12,
+   "ids": [
+    "mlow",
+    "damjanski",
+    "eclectic-method-jonny-wilson",
+    "gremplin",
+    "katsu",
+    "pak",
+    "rachel-sz-woods",
+    "ryan-seslow",
+    "adam-weitsman",
+    "dcinvestor",
+    "dom-hofmann",
+    "ryan-selkis"
+   ]
+  },
+  "banned": {
+   "count": 0,
+   "ids": []
+  },
+  "no_card": {
+   "count": 0,
+   "ids": []
+  }
+ },
+ "waves": [
+  {
+   "day": 1,
+   "posts": [
+    {
+     "handle": "@tokenizermedia",
+     "id": "cryptocurrents-eth",
+     "name": "cryptocurrents.eth",
+     "cat": "C",
+     "holder": true,
+     "text": "@tokenizermedia your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cryptocurrents-eth",
+     "image": "assets/cards/cryptocurrents-eth-6488bb91.jpg",
+     "link": "https://n3wyorkers.com/h/cryptocurrents-eth"
+    },
+    {
+     "handle": "@mindefy1",
+     "id": "mindefy",
+     "name": "Mindefy",
+     "cat": "C",
+     "holder": true,
+     "text": "@mindefy1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mindefy",
+     "image": "assets/cards/mindefy-9c987316.jpg",
+     "link": "https://n3wyorkers.com/h/mindefy"
+    },
+    {
+     "handle": "@pengwinpants",
+     "id": "along",
+     "name": "Along",
+     "cat": "C",
+     "holder": true,
+     "text": "@pengwinpants your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/along",
+     "image": "assets/cards/along-632b7205.jpg",
+     "link": "https://n3wyorkers.com/h/along"
+    },
+    {
+     "handle": "@OGtheperson",
+     "id": "og",
+     "name": "OG",
+     "cat": "C",
+     "holder": true,
+     "text": "@OGtheperson your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/og",
+     "image": "assets/cards/og-db94b342.jpg",
+     "link": "https://n3wyorkers.com/h/og"
+    },
+    {
+     "handle": "@P8erade4u",
+     "id": "tork-penderloin",
+     "name": "Tork Penderloin",
+     "cat": "C",
+     "holder": true,
+     "text": "@P8erade4u your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tork-penderloin",
+     "image": "assets/cards/tork-penderloin-f6e553b9.jpg",
+     "link": "https://n3wyorkers.com/h/tork-penderloin"
+    },
+    {
+     "handle": "@jasonophoto",
+     "id": "jason-o-rourke",
+     "name": "Jason O'Rourke",
+     "cat": "A",
+     "holder": true,
+     "text": "@jasonophoto your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jason-o-rourke",
+     "image": "assets/cards/jason-o-rourke-73975a99.jpg",
+     "link": "https://n3wyorkers.com/h/jason-o-rourke"
+    },
+    {
+     "handle": "@Cryptobscure",
+     "id": "cryptobscure",
+     "name": "Cryptobscure",
+     "cat": "C",
+     "holder": true,
+     "text": "@Cryptobscure your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cryptobscure",
+     "image": "assets/cards/cryptobscure-f5e88882.jpg",
+     "link": "https://n3wyorkers.com/h/cryptobscure"
+    },
+    {
+     "handle": "@Dannyb0yyy_",
+     "id": "dannyboyy",
+     "name": "Dannyboyy",
+     "cat": "C",
+     "holder": true,
+     "text": "@Dannyb0yyy_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dannyboyy",
+     "image": "assets/cards/dannyboyy-4fd76fa6.jpg",
+     "link": "https://n3wyorkers.com/h/dannyboyy"
+    },
+    {
+     "handle": "@mick_dingo",
+     "id": "dingomick",
+     "name": "dingomick",
+     "cat": "C",
+     "holder": true,
+     "text": "@mick_dingo your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dingomick",
+     "image": "assets/cards/dingomick-0cc1afbb.jpg",
+     "link": "https://n3wyorkers.com/h/dingomick"
+    },
+    {
+     "handle": "@jp_moregainz",
+     "id": "j-p-moregainz",
+     "name": "J.P. MoreGainz",
+     "cat": "C",
+     "holder": true,
+     "text": "@jp_moregainz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/j-p-moregainz",
+     "image": "assets/cards/j-p-moregainz-c34dce84.jpg",
+     "link": "https://n3wyorkers.com/h/j-p-moregainz"
+    },
+    {
+     "handle": "@MathieuFrance",
+     "id": "mathieu-france",
+     "name": "Mathieu France",
+     "cat": "B",
+     "holder": true,
+     "text": "@MathieuFrance your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mathieu-france",
+     "image": "assets/cards/mathieu-france-8c0efb1e.jpg",
+     "link": "https://n3wyorkers.com/h/mathieu-france"
+    },
+    {
+     "handle": "@cryptocrusher6",
+     "id": "mr-quack",
+     "name": "Crusher",
+     "cat": "C",
+     "holder": true,
+     "text": "@cryptocrusher6 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mr-quack",
+     "image": "assets/cards/mr-quack-5b3e203f.jpg",
+     "link": "https://n3wyorkers.com/h/mr-quack"
+    },
+    {
+     "handle": "@cryptopeng1",
+     "id": "peng1",
+     "name": "Peng1",
+     "cat": "A",
+     "holder": true,
+     "text": "@cryptopeng1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/peng1",
+     "image": "assets/cards/peng1-ca7f444a.jpg",
+     "link": "https://n3wyorkers.com/h/peng1"
+    },
+    {
+     "handle": "@deltasauce",
+     "id": "deltasauce",
+     "name": "DeltaSauce",
+     "cat": "A",
+     "holder": true,
+     "text": "@deltasauce your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/deltasauce",
+     "image": "assets/cards/deltasauce-d1000970.jpg",
+     "link": "https://n3wyorkers.com/h/deltasauce"
+    },
+    {
+     "handle": "@m0dest___",
+     "id": "modest",
+     "name": "Modest",
+     "cat": "A",
+     "holder": true,
+     "text": "@m0dest___ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/modest",
+     "image": "assets/cards/modest-ea2093e2.jpg",
+     "link": "https://n3wyorkers.com/h/modest"
+    },
+    {
+     "handle": "@MobilitySignal",
+     "id": "based-bashobits-eth",
+     "name": "based.bashobits.eth",
+     "cat": "A",
+     "holder": true,
+     "text": "@MobilitySignal your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/based-bashobits-eth",
+     "image": "assets/cards/based-bashobits-eth-56ca4ae6.jpg",
+     "link": "https://n3wyorkers.com/h/based-bashobits-eth"
+    },
+    {
+     "handle": "@blac_ai",
+     "id": "blac",
+     "name": "BLAC",
+     "cat": "A",
+     "holder": true,
+     "text": "@blac_ai your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/blac",
+     "image": "assets/cards/blac-ce5077bb.jpg",
+     "link": "https://n3wyorkers.com/h/blac"
+    },
+    {
+     "handle": "@bryanbrinkman",
+     "id": "bryan-brinkman",
+     "name": "Bryan Brinkman",
+     "cat": "A",
+     "holder": true,
+     "text": "@bryanbrinkman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/bryan-brinkman",
+     "image": "assets/cards/bryan-brinkman-7f7141a1.jpg",
+     "link": "https://n3wyorkers.com/h/bryan-brinkman"
+    },
+    {
+     "handle": "@chazz_gold",
+     "id": "chazz-gold",
+     "name": "Chazz Gold",
+     "cat": "A",
+     "holder": true,
+     "text": "@chazz_gold your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/chazz-gold",
+     "image": "assets/cards/chazz-gold-4f388571.jpg",
+     "link": "https://n3wyorkers.com/h/chazz-gold"
+    },
+    {
+     "handle": "@fndzionaversano",
+     "id": "fondazioneaversano",
+     "name": "fondazioneaversano",
+     "cat": "C",
+     "holder": true,
+     "text": "@fndzionaversano your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/fondazioneaversano",
+     "image": "assets/cards/fondazioneaversano-c2e2565c.jpg",
+     "link": "https://n3wyorkers.com/h/fondazioneaversano"
+    },
+    {
+     "handle": "@MichMast",
+     "id": "mima",
+     "name": "MiMa",
+     "cat": "C",
+     "holder": true,
+     "text": "@MichMast your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mima",
+     "image": "assets/cards/mima-5283965d.jpg",
+     "link": "https://n3wyorkers.com/h/mima"
+    },
+    {
+     "handle": "@vanarman",
+     "id": "pindar-van-arman",
+     "name": "Pindar Van Arman",
+     "cat": "A",
+     "holder": true,
+     "text": "@vanarman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/pindar-van-arman",
+     "image": "assets/cards/pindar-van-arman-bae3cd7c.jpg",
+     "link": "https://n3wyorkers.com/h/pindar-van-arman"
+    },
+    {
+     "handle": "@Adamtastic",
+     "id": "adamtastic-adam-levine",
+     "name": "Adamtastic",
+     "cat": "A",
+     "holder": true,
+     "text": "@Adamtastic your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/adamtastic-adam-levine",
+     "image": "assets/cards/adamtastic-adam-levine-010c6c63.jpg",
+     "link": "https://n3wyorkers.com/h/adamtastic-adam-levine"
+    },
+    {
+     "handle": "@NFT_Dee",
+     "id": "btdwayne",
+     "name": "BTdwayne",
+     "cat": "C",
+     "holder": true,
+     "text": "@NFT_Dee your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/btdwayne",
+     "image": "assets/cards/btdwayne-8fecb729.jpg",
+     "link": "https://n3wyorkers.com/h/btdwayne"
+    },
+    {
+     "handle": "@AdamCarity",
+     "id": "carity",
+     "name": "carity",
+     "cat": "C",
+     "holder": true,
+     "text": "@AdamCarity your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/carity",
+     "image": "assets/cards/carity-c9b3506e.jpg",
+     "link": "https://n3wyorkers.com/h/carity"
+    },
+    {
+     "handle": "@WhiteGrape19",
+     "id": "laoda",
+     "name": "laoda",
+     "cat": "C",
+     "holder": true,
+     "text": "@WhiteGrape19 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/laoda",
+     "image": "assets/cards/laoda-f7515692.jpg",
+     "link": "https://n3wyorkers.com/h/laoda"
+    },
+    {
+     "handle": "@MetoliusArt",
+     "id": "metolius-art",
+     "name": "Metolius Art",
+     "cat": "A",
+     "holder": true,
+     "text": "@MetoliusArt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/metolius-art",
+     "image": "assets/cards/metolius-art-d7e88be9.jpg",
+     "link": "https://n3wyorkers.com/h/metolius-art"
+    },
+    {
+     "handle": "@moonzoey_zuu",
+     "id": "moonzoey",
+     "name": "Moonzoey",
+     "cat": "A",
+     "holder": true,
+     "text": "@moonzoey_zuu your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/moonzoey",
+     "image": "assets/cards/moonzoey-3d92965b.jpg",
+     "link": "https://n3wyorkers.com/h/moonzoey"
+    },
+    {
+     "handle": "@NuclearSamurai",
+     "id": "nuclear-samurai-nuke",
+     "name": "Nuclear Samurai",
+     "cat": "A",
+     "holder": true,
+     "text": "@NuclearSamurai your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nuclear-samurai-nuke",
+     "image": "assets/cards/nuclear-samurai-nuke-db68ad10.jpg",
+     "link": "https://n3wyorkers.com/h/nuclear-samurai-nuke"
+    },
+    {
+     "handle": "@Crip2DaX",
+     "id": "p1cky-eth",
+     "name": "p1cky.eth",
+     "cat": "C",
+     "holder": true,
+     "text": "@Crip2DaX your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/p1cky-eth",
+     "image": "assets/cards/p1cky-eth-7831562d.jpg",
+     "link": "https://n3wyorkers.com/h/p1cky-eth"
+    },
+    {
+     "handle": "@JenPanepinto",
+     "id": "quantumspirit",
+     "name": "QuantumSpirit",
+     "cat": "A",
+     "holder": true,
+     "text": "@JenPanepinto your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/quantumspirit",
+     "image": "assets/cards/quantumspirit-f86cf6d5.jpg",
+     "link": "https://n3wyorkers.com/h/quantumspirit"
+    },
+    {
+     "handle": "@RushVarela",
+     "id": "rush-base-eth",
+     "name": "rush.base.eth",
+     "cat": "A",
+     "holder": true,
+     "text": "@RushVarela your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rush-base-eth",
+     "image": "assets/cards/rush-base-eth-23e8284a.jpg",
+     "link": "https://n3wyorkers.com/h/rush-base-eth"
+    },
+    {
+     "handle": "@donlokathefingr",
+     "id": "sasameyuki",
+     "name": "Sasameyuki",
+     "cat": "C",
+     "holder": true,
+     "text": "@donlokathefingr your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sasameyuki",
+     "image": "assets/cards/sasameyuki-bb479c8f.jpg",
+     "link": "https://n3wyorkers.com/h/sasameyuki"
+    },
+    {
+     "handle": "@scooter_mcgee",
+     "id": "scottie-p",
+     "name": "Scottie P",
+     "cat": "C",
+     "holder": true,
+     "text": "@scooter_mcgee your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/scottie-p",
+     "image": "assets/cards/scottie-p-79bafe50.jpg",
+     "link": "https://n3wyorkers.com/h/scottie-p"
+    },
+    {
+     "handle": "@balon_art",
+     "id": "balon",
+     "name": "balón",
+     "cat": "C",
+     "holder": true,
+     "text": "@balon_art your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/balon",
+     "image": "assets/cards/balon-6bbd38ee.jpg",
+     "link": "https://n3wyorkers.com/h/balon"
+    },
+    {
+     "handle": "@BrutalS81",
+     "id": "brutal-eth-marco-bonaf",
+     "name": "Brutal.Eth",
+     "cat": "A",
+     "holder": true,
+     "text": "@BrutalS81 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/brutal-eth-marco-bonaf",
+     "image": "assets/cards/brutal-eth-marco-bonaf-7618d288.jpg",
+     "link": "https://n3wyorkers.com/h/brutal-eth-marco-bonaf"
+    },
+    {
+     "handle": "@HouriNaeimi",
+     "id": "houri-naeimi",
+     "name": "Houri Naeimi",
+     "cat": "A",
+     "holder": true,
+     "text": "@HouriNaeimi your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/houri-naeimi",
+     "image": "assets/cards/houri-naeimi-78a3dabb.jpg",
+     "link": "https://n3wyorkers.com/h/houri-naeimi"
+    },
+    {
+     "handle": "@rhmattson",
+     "id": "leadwithlove-eth",
+     "name": "Leadwithlove.eth",
+     "cat": "C",
+     "holder": true,
+     "text": "@rhmattson your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/leadwithlove-eth",
+     "image": "assets/cards/leadwithlove-eth-5cb47eae.jpg",
+     "link": "https://n3wyorkers.com/h/leadwithlove-eth"
+    },
+    {
+     "handle": "@bagdelete",
+     "id": "noper",
+     "name": "noper",
+     "cat": "A",
+     "holder": true,
+     "text": "@bagdelete your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/noper",
+     "image": "assets/cards/noper-c5e47735.jpg",
+     "link": "https://n3wyorkers.com/h/noper"
+    },
+    {
+     "handle": "@num1crush",
+     "id": "1-crush",
+     "name": "#1 crush",
+     "cat": "A",
+     "holder": false,
+     "text": "@num1crush your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/1-crush",
+     "image": "assets/cards/1-crush-abcf1240.jpg",
+     "link": "https://n3wyorkers.com/h/1-crush"
+    }
+   ]
+  },
+  {
+   "day": 2,
+   "posts": [
+    {
+     "handle": "@aaronpenne",
+     "id": "aaron-penne",
+     "name": "Aaron Penne",
+     "cat": "A",
+     "holder": false,
+     "text": "@aaronpenne your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/aaron-penne",
+     "image": "assets/cards/aaron-penne-93279c7b.jpg",
+     "link": "https://n3wyorkers.com/h/aaron-penne"
+    },
+    {
+     "handle": "@wheresaddie",
+     "id": "addie-wagenknecht",
+     "name": "Addie Wagenknecht",
+     "cat": "A",
+     "holder": false,
+     "text": "@wheresaddie your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/addie-wagenknecht",
+     "image": "assets/cards/addie-wagenknecht-b105e885.jpg",
+     "link": "https://n3wyorkers.com/h/addie-wagenknecht"
+    },
+    {
+     "handle": "@halecar2",
+     "id": "alejandro-cartagena",
+     "name": "Alejandro Cartagena",
+     "cat": "A",
+     "holder": false,
+     "text": "@halecar2 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/alejandro-cartagena",
+     "image": "assets/cards/alejandro-cartagena-2dfd1f5c.jpg",
+     "link": "https://n3wyorkers.com/h/alejandro-cartagena"
+    },
+    {
+     "handle": "@alfredsteiner",
+     "id": "alfred-steiner",
+     "name": "Alfred Steiner",
+     "cat": "A",
+     "holder": false,
+     "text": "@alfredsteiner your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/alfred-steiner",
+     "image": "assets/cards/alfred-steiner-45c33715.jpg",
+     "link": "https://n3wyorkers.com/h/alfred-steiner"
+    },
+    {
+     "handle": "@allseeingseneca",
+     "id": "all-seeing-seneca",
+     "name": "All Seeing Seneca",
+     "cat": "A",
+     "holder": false,
+     "text": "@allseeingseneca your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/all-seeing-seneca",
+     "image": "assets/cards/all-seeing-seneca-02175fcb.jpg",
+     "link": "https://n3wyorkers.com/h/all-seeing-seneca"
+    },
+    {
+     "handle": "@lphaCentauriKid",
+     "id": "alpha-centauri-kid",
+     "name": "Alpha Centauri Kid",
+     "cat": "A",
+     "holder": false,
+     "text": "@lphaCentauriKid your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/alpha-centauri-kid",
+     "image": "assets/cards/alpha-centauri-kid-946601c4.jpg",
+     "link": "https://n3wyorkers.com/h/alpha-centauri-kid"
+    },
+    {
+     "handle": "@amber_vittoria",
+     "id": "amber-vittoria",
+     "name": "Amber Vittoria",
+     "cat": "A",
+     "holder": false,
+     "text": "@amber_vittoria your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/amber-vittoria",
+     "image": "assets/cards/amber-vittoria-7737c6f1.jpg",
+     "link": "https://n3wyorkers.com/h/amber-vittoria"
+    },
+    {
+     "handle": "@amritpaldesign",
+     "id": "amrit-pal",
+     "name": "Amrit Pal",
+     "cat": "A",
+     "holder": false,
+     "text": "@amritpaldesign your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/amrit-pal",
+     "image": "assets/cards/amrit-pal-d8c8d2db.jpg",
+     "link": "https://n3wyorkers.com/h/amrit-pal"
+    },
+    {
+     "handle": "@andresdelvecc",
+     "id": "andr-s-del-vecchio",
+     "name": "Andrés Del Vecchio",
+     "cat": "A",
+     "holder": false,
+     "text": "@andresdelvecc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/andr-s-del-vecchio",
+     "image": "assets/cards/andr-s-del-vecchio-57b3a9c5.jpg",
+     "link": "https://n3wyorkers.com/h/andr-s-del-vecchio"
+    },
+    {
+     "handle": "@reisingerandres",
+     "id": "andr-s-reisinger",
+     "name": "Andrés Reisinger",
+     "cat": "A",
+     "holder": false,
+     "text": "@reisingerandres your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/andr-s-reisinger",
+     "image": "assets/cards/andr-s-reisinger-72e2a19a.jpg",
+     "link": "https://n3wyorkers.com/h/andr-s-reisinger"
+    },
+    {
+     "handle": "@andreoshea",
+     "id": "andre-oshea",
+     "name": "Andre Oshea",
+     "cat": "A",
+     "holder": false,
+     "text": "@andreoshea your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/andre-oshea",
+     "image": "assets/cards/andre-oshea-0ee09d50.jpg",
+     "link": "https://n3wyorkers.com/h/andre-oshea"
+    },
+    {
+     "handle": "@a1111ac011d0",
+     "id": "anna-condo",
+     "name": "Anna Condo",
+     "cat": "A",
+     "holder": false,
+     "text": "@a1111ac011d0 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/anna-condo",
+     "image": "assets/cards/anna-condo-cfb5cff3.jpg",
+     "link": "https://n3wyorkers.com/h/anna-condo"
+    },
+    {
+     "handle": "@annaluciacodes",
+     "id": "anna-lucia",
+     "name": "Anna Lucia",
+     "cat": "A",
+     "holder": false,
+     "text": "@annaluciacodes your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/anna-lucia",
+     "image": "assets/cards/anna-lucia-660806d8.jpg",
+     "link": "https://n3wyorkers.com/h/anna-lucia"
+    },
+    {
+     "handle": "@annespalter",
+     "id": "anne-spalter",
+     "name": "Anne Spalter",
+     "cat": "A",
+     "holder": false,
+     "text": "@annespalter your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/anne-spalter",
+     "image": "assets/cards/anne-spalter-e90a3e57.jpg",
+     "link": "https://n3wyorkers.com/h/anne-spalter"
+    },
+    {
+     "handle": "@arthr",
+     "id": "arthr",
+     "name": "Arthr",
+     "cat": "A",
+     "holder": false,
+     "text": "@arthr your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/arthr",
+     "image": "assets/cards/arthr-7775b708.jpg",
+     "link": "https://n3wyorkers.com/h/arthr"
+    },
+    {
+     "handle": "@aylaelmoussa",
+     "id": "ayla-el-moussa",
+     "name": "Ayla El-Moussa",
+     "cat": "A",
+     "holder": false,
+     "text": "@aylaelmoussa your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ayla-el-moussa",
+     "image": "assets/cards/ayla-el-moussa-2c7b31a0.jpg",
+     "link": "https://n3wyorkers.com/h/ayla-el-moussa"
+    },
+    {
+     "handle": "@batzdu",
+     "id": "batzdu",
+     "name": "Batzdu",
+     "cat": "A",
+     "holder": false,
+     "text": "@batzdu your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/batzdu",
+     "image": "assets/cards/batzdu-53fba6d8.jpg",
+     "link": "https://n3wyorkers.com/h/batzdu"
+    },
+    {
+     "handle": "@beantartETH",
+     "id": "beantart",
+     "name": "beantart",
+     "cat": "A",
+     "holder": false,
+     "text": "@beantartETH your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/beantart",
+     "image": "assets/cards/beantart-7cee1f48.jpg",
+     "link": "https://n3wyorkers.com/h/beantart"
+    },
+    {
+     "handle": "@beeple",
+     "id": "beeple",
+     "name": "Beeple",
+     "cat": "A",
+     "holder": false,
+     "text": "@beeple your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/beeple",
+     "image": "assets/cards/beeple-a2dbbdc2.jpg",
+     "link": "https://n3wyorkers.com/h/beeple"
+    },
+    {
+     "handle": "@bendotk",
+     "id": "ben-kovach",
+     "name": "Ben Kovach",
+     "cat": "A",
+     "holder": false,
+     "text": "@bendotk your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ben-kovach",
+     "image": "assets/cards/ben-kovach-b88bc54e.jpg",
+     "link": "https://n3wyorkers.com/h/ben-kovach"
+    },
+    {
+     "handle": "@betty_nft",
+     "id": "betty",
+     "name": "Betty",
+     "cat": "A",
+     "holder": false,
+     "text": "@betty_nft your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/betty",
+     "image": "assets/cards/betty-92aaf04b.jpg",
+     "link": "https://n3wyorkers.com/h/betty"
+    },
+    {
+     "handle": "@blakejamieson",
+     "id": "blake-jamieson",
+     "name": "Blake Jamieson",
+     "cat": "A",
+     "holder": false,
+     "text": "@blakejamieson your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/blake-jamieson",
+     "image": "assets/cards/blake-jamieson-fa1f96a6.jpg",
+     "link": "https://n3wyorkers.com/h/blake-jamieson"
+    },
+    {
+     "handle": "@Bosslogic",
+     "id": "bosslogic",
+     "name": "Bosslogic",
+     "cat": "A",
+     "holder": false,
+     "text": "@Bosslogic your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/bosslogic",
+     "image": "assets/cards/bosslogic-b054264b.jpg",
+     "link": "https://n3wyorkers.com/h/bosslogic"
+    },
+    {
+     "handle": "@bradleytheodore",
+     "id": "bradley-theodore",
+     "name": "Bradley Theodore",
+     "cat": "A",
+     "holder": false,
+     "text": "@bradleytheodore your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/bradley-theodore",
+     "image": "assets/cards/bradley-theodore-65018a65.jpg",
+     "link": "https://n3wyorkers.com/h/bradley-theodore"
+    },
+    {
+     "handle": "@bpierre_photo",
+     "id": "brittany-pierre",
+     "name": "Brittany Pierre",
+     "cat": "A",
+     "holder": false,
+     "text": "@bpierre_photo your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/brittany-pierre",
+     "image": "assets/cards/brittany-pierre-77469911.jpg",
+     "link": "https://n3wyorkers.com/h/brittany-pierre"
+    },
+    {
+     "handle": "@buffmonster",
+     "id": "buff-monster",
+     "name": "Buff Monster",
+     "cat": "A",
+     "holder": false,
+     "text": "@buffmonster your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/buff-monster",
+     "image": "assets/cards/buff-monster-cd61f831.jpg",
+     "link": "https://n3wyorkers.com/h/buff-monster"
+    },
+    {
+     "handle": "@carlagannis",
+     "id": "carla-gannis",
+     "name": "Carla Gannis",
+     "cat": "A",
+     "holder": false,
+     "text": "@carlagannis your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/carla-gannis",
+     "image": "assets/cards/carla-gannis-4c237024.jpg",
+     "link": "https://n3wyorkers.com/h/carla-gannis"
+    },
+    {
+     "handle": "@reas",
+     "id": "casey-reas",
+     "name": "Casey Reas",
+     "cat": "A",
+     "holder": false,
+     "text": "@reas your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/casey-reas",
+     "image": "assets/cards/casey-reas-adf8c4e4.jpg",
+     "link": "https://n3wyorkers.com/h/casey-reas"
+    },
+    {
+     "handle": "@cathsimard",
+     "id": "cath-simard",
+     "name": "Cath Simard",
+     "cat": "A",
+     "holder": false,
+     "text": "@cathsimard your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cath-simard",
+     "image": "assets/cards/cath-simard-43d8ee30.jpg",
+     "link": "https://n3wyorkers.com/h/cath-simard"
+    },
+    {
+     "handle": "@HODLFrance",
+     "id": "charlesai",
+     "name": "CharlesAI",
+     "cat": "A",
+     "holder": false,
+     "text": "@HODLFrance your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/charlesai",
+     "image": "assets/cards/charlesai-ded1815a.jpg",
+     "link": "https://n3wyorkers.com/h/charlesai"
+    },
+    {
+     "handle": "@lifeofc",
+     "id": "chikai-ohazama",
+     "name": "Chikai Ohazama",
+     "cat": "A",
+     "holder": false,
+     "text": "@lifeofc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/chikai-ohazama",
+     "image": "assets/cards/chikai-ohazama-2dc92d19.jpg",
+     "link": "https://n3wyorkers.com/h/chikai-ohazama"
+    },
+    {
+     "handle": "@PRguitarman",
+     "id": "chris-torres",
+     "name": "Chris Torres",
+     "cat": "A",
+     "holder": false,
+     "text": "@PRguitarman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/chris-torres",
+     "image": "assets/cards/chris-torres-115b8348.jpg",
+     "link": "https://n3wyorkers.com/h/chris-torres"
+    },
+    {
+     "handle": "@ClaireSilver12",
+     "id": "claire-silver",
+     "name": "Claire Silver",
+     "cat": "A",
+     "holder": false,
+     "text": "@ClaireSilver12 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/claire-silver",
+     "image": "assets/cards/claire-silver-cb4d9e0f.jpg",
+     "link": "https://n3wyorkers.com/h/claire-silver"
+    },
+    {
+     "handle": "@clownvamp",
+     "id": "clownvamp",
+     "name": "ClownVamp",
+     "cat": "A",
+     "holder": false,
+     "text": "@clownvamp your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/clownvamp",
+     "image": "assets/cards/clownvamp-0ef17b72.jpg",
+     "link": "https://n3wyorkers.com/h/clownvamp"
+    },
+    {
+     "handle": "@Coldie",
+     "id": "coldie",
+     "name": "Coldie",
+     "cat": "A",
+     "holder": false,
+     "text": "@Coldie your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/coldie",
+     "image": "assets/cards/coldie-66e2a65c.jpg",
+     "link": "https://n3wyorkers.com/h/coldie"
+    },
+    {
+     "handle": "@coryvanlew",
+     "id": "cory-van-lew",
+     "name": "Cory Van Lew",
+     "cat": "A",
+     "holder": false,
+     "text": "@coryvanlew your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cory-van-lew",
+     "image": "assets/cards/cory-van-lew-12b2d9e4.jpg",
+     "link": "https://n3wyorkers.com/h/cory-van-lew"
+    },
+    {
+     "handle": "@DaimAlYad",
+     "id": "da-m-aggott-h-nsch",
+     "name": "Daïm Aggott-Hönsch",
+     "cat": "A",
+     "holder": false,
+     "text": "@DaimAlYad your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/da-m-aggott-h-nsch",
+     "image": "assets/cards/da-m-aggott-h-nsch-5ce26759.jpg",
+     "link": "https://n3wyorkers.com/h/da-m-aggott-h-nsch"
+    },
+    {
+     "handle": "@dan_fraser_",
+     "id": "dan-fraser",
+     "name": "Dan Fraser",
+     "cat": "A",
+     "holder": false,
+     "text": "@dan_fraser_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dan-fraser",
+     "image": "assets/cards/dan-fraser-45003363.jpg",
+     "link": "https://n3wyorkers.com/h/dan-fraser"
+    },
+    {
+     "handle": "@danielarsham",
+     "id": "daniel-arsham",
+     "name": "Daniel Arsham",
+     "cat": "A",
+     "holder": false,
+     "text": "@danielarsham your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/daniel-arsham",
+     "image": "assets/cards/daniel-arsham-60f90d52.jpg",
+     "link": "https://n3wyorkers.com/h/daniel-arsham"
+    },
+    {
+     "handle": "@pan_danil",
+     "id": "danil-pan",
+     "name": "danil pan",
+     "cat": "A",
+     "holder": false,
+     "text": "@pan_danil your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/danil-pan",
+     "image": "assets/cards/danil-pan-4b7e3b5a.jpg",
+     "link": "https://n3wyorkers.com/h/danil-pan"
+    }
+   ]
+  },
+  {
+   "day": 3,
+   "posts": [
+    {
+     "handle": "@dannycole",
+     "id": "danny-cole",
+     "name": "Danny Cole",
+     "cat": "A",
+     "holder": false,
+     "text": "@dannycole your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/danny-cole",
+     "image": "assets/cards/danny-cole-b281dc3d.jpg",
+     "link": "https://n3wyorkers.com/h/danny-cole"
+    },
+    {
+     "handle": "@Darkfarms1",
+     "id": "darkfarms",
+     "name": "Darkfarms",
+     "cat": "A",
+     "holder": false,
+     "text": "@Darkfarms1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/darkfarms",
+     "image": "assets/cards/darkfarms-a15fea83.jpg",
+     "link": "https://n3wyorkers.com/h/darkfarms"
+    },
+    {
+     "handle": "@dave_krugman",
+     "id": "dave-krugman",
+     "name": "Dave Krugman",
+     "cat": "A",
+     "holder": false,
+     "text": "@dave_krugman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dave-krugman",
+     "image": "assets/cards/dave-krugman-7006b521.jpg",
+     "link": "https://n3wyorkers.com/h/dave-krugman"
+    },
+    {
+     "handle": "@davidhenrynobo1",
+     "id": "david-henry-nobody-jr",
+     "name": "David Henry Nobody Jr",
+     "cat": "A",
+     "holder": false,
+     "text": "@davidhenrynobo1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/david-henry-nobody-jr",
+     "image": "assets/cards/david-henry-nobody-jr-b907b889.jpg",
+     "link": "https://n3wyorkers.com/h/david-henry-nobody-jr"
+    },
+    {
+     "handle": "@deslucrece",
+     "id": "des-lucr-ce",
+     "name": "Des Lucréce",
+     "cat": "A",
+     "holder": false,
+     "text": "@deslucrece your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/des-lucr-ce",
+     "image": "assets/cards/des-lucr-ce-2b11e051.jpg",
+     "link": "https://n3wyorkers.com/h/des-lucr-ce"
+    },
+    {
+     "handle": "@dianasinclair",
+     "id": "diana-sinclair",
+     "name": "Diana Sinclair",
+     "cat": "A",
+     "holder": false,
+     "text": "@dianasinclair your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/diana-sinclair",
+     "image": "assets/cards/diana-sinclair-6f2ec7f8.jpg",
+     "link": "https://n3wyorkers.com/h/diana-sinclair"
+    },
+    {
+     "handle": "@toadswiback",
+     "id": "die-with-the-most-likes",
+     "name": "Die With The Most Likes",
+     "cat": "A",
+     "holder": false,
+     "text": "@toadswiback your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/die-with-the-most-likes",
+     "image": "assets/cards/die-with-the-most-likes-3db05dab.jpg",
+     "link": "https://n3wyorkers.com/h/die-with-the-most-likes"
+    },
+    {
+     "handle": "@dmitricherniak",
+     "id": "dmitri-cherniak",
+     "name": "Dmitri Cherniak",
+     "cat": "A",
+     "holder": false,
+     "text": "@dmitricherniak your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dmitri-cherniak",
+     "image": "assets/cards/dmitri-cherniak-bbf7b030.jpg",
+     "link": "https://n3wyorkers.com/h/dmitri-cherniak"
+    },
+    {
+     "handle": "@driftershoots",
+     "id": "driftershoots",
+     "name": "Driftershoots",
+     "cat": "A",
+     "holder": false,
+     "text": "@driftershoots your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/driftershoots",
+     "image": "assets/cards/driftershoots-26378e54.jpg",
+     "link": "https://n3wyorkers.com/h/driftershoots"
+    },
+    {
+     "handle": "@EfdotStudio",
+     "id": "efdot",
+     "name": "Efdot",
+     "cat": "A",
+     "holder": false,
+     "text": "@EfdotStudio your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/efdot",
+     "image": "assets/cards/efdot-53880a3b.jpg",
+     "link": "https://n3wyorkers.com/h/efdot"
+    },
+    {
+     "handle": "@swopes",
+     "id": "elise-swopes",
+     "name": "Elise Swopes",
+     "cat": "A",
+     "holder": false,
+     "text": "@swopes your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/elise-swopes",
+     "image": "assets/cards/elise-swopes-15dc6fbb.jpg",
+     "link": "https://n3wyorkers.com/h/elise-swopes"
+    },
+    {
+     "handle": "@emilyxxie",
+     "id": "emily-xie",
+     "name": "Emily Xie",
+     "cat": "A",
+     "holder": false,
+     "text": "@emilyxxie your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/emily-xie",
+     "image": "assets/cards/emily-xie-d49038f5.jpg",
+     "link": "https://n3wyorkers.com/h/emily-xie"
+    },
+    {
+     "handle": "@emoneelarussa",
+     "id": "emonee-larussa",
+     "name": "Emonee LaRussa",
+     "cat": "A",
+     "holder": false,
+     "text": "@emoneelarussa your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/emonee-larussa",
+     "image": "assets/cards/emonee-larussa-74228e50.jpg",
+     "link": "https://n3wyorkers.com/h/emonee-larussa"
+    },
+    {
+     "handle": "@ezzzrrra",
+     "id": "ezra-miller",
+     "name": "Ezra Miller",
+     "cat": "A",
+     "holder": false,
+     "text": "@ezzzrrra your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ezra-miller",
+     "image": "assets/cards/ezra-miller-1067567e.jpg",
+     "link": "https://n3wyorkers.com/h/ezra-miller"
+    },
+    {
+     "handle": "@fewocious",
+     "id": "fewocious",
+     "name": "FEWOCiOUS",
+     "cat": "A",
+     "holder": false,
+     "text": "@fewocious your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/fewocious",
+     "image": "assets/cards/fewocious-9a04a3ed.jpg",
+     "link": "https://n3wyorkers.com/h/fewocious"
+    },
+    {
+     "handle": "@FrankApeWorld",
+     "id": "frank-ape",
+     "name": "Frank Ape",
+     "cat": "A",
+     "holder": false,
+     "text": "@FrankApeWorld your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/frank-ape",
+     "image": "assets/cards/frank-ape-f4c391d9.jpg",
+     "link": "https://n3wyorkers.com/h/frank-ape"
+    },
+    {
+     "handle": "@fvckrender",
+     "id": "fvckrender",
+     "name": "Fvckrender",
+     "cat": "A",
+     "holder": false,
+     "text": "@fvckrender your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/fvckrender",
+     "image": "assets/cards/fvckrender-a2d65fce.jpg",
+     "link": "https://n3wyorkers.com/h/fvckrender"
+    },
+    {
+     "handle": "@TroyFitzpatric",
+     "id": "gary-cartlidge",
+     "name": "Gary Cartlidge",
+     "cat": "A",
+     "holder": false,
+     "text": "@TroyFitzpatric your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/gary-cartlidge",
+     "image": "assets/cards/gary-cartlidge-773de1fa.jpg",
+     "link": "https://n3wyorkers.com/h/gary-cartlidge"
+    },
+    {
+     "handle": "@golan",
+     "id": "golan-levin",
+     "name": "Golan Levin",
+     "cat": "A",
+     "holder": false,
+     "text": "@golan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/golan-levin",
+     "image": "assets/cards/golan-levin-d2c7f732.jpg",
+     "link": "https://n3wyorkers.com/h/golan-levin"
+    },
+    {
+     "handle": "@goodvibesclub",
+     "id": "good-vibes-club",
+     "name": "Good Vibes Club",
+     "cat": "A",
+     "holder": false,
+     "text": "@goodvibesclub your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/good-vibes-club",
+     "image": "assets/cards/good-vibes-club-5fc68ef7.jpg",
+     "link": "https://n3wyorkers.com/h/good-vibes-club"
+    },
+    {
+     "handle": "@GrantYun2",
+     "id": "grant-yun-grant-riven-yun",
+     "name": "Grant Yun",
+     "cat": "A",
+     "holder": false,
+     "text": "@GrantYun2 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/grant-yun-grant-riven-yun",
+     "image": "assets/cards/grant-yun-grant-riven-yun-2b6fd1f5.jpg",
+     "link": "https://n3wyorkers.com/h/grant-yun-grant-riven-yun"
+    },
+    {
+     "handle": "@GuidoDisalle",
+     "id": "guido-di-salle",
+     "name": "Guido Di Salle",
+     "cat": "A",
+     "holder": false,
+     "text": "@GuidoDisalle your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/guido-di-salle",
+     "image": "assets/cards/guido-di-salle-a8ae8b01.jpg",
+     "link": "https://n3wyorkers.com/h/guido-di-salle"
+    },
+    {
+     "handle": "@hackatao",
+     "id": "hackatao",
+     "name": "Hackatao",
+     "cat": "A",
+     "holder": false,
+     "text": "@hackatao your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/hackatao",
+     "image": "assets/cards/hackatao-5286f72d.jpg",
+     "link": "https://n3wyorkers.com/h/hackatao"
+    },
+    {
+     "handle": "@hansdehlinger",
+     "id": "hans-dehlinger",
+     "name": "Hans Dehlinger",
+     "cat": "A",
+     "holder": false,
+     "text": "@hansdehlinger your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/hans-dehlinger",
+     "image": "assets/cards/hans-dehlinger-83645d99.jpg",
+     "link": "https://n3wyorkers.com/h/hans-dehlinger"
+    },
+    {
+     "handle": "@neuralbricolage",
+     "id": "helena-sarin",
+     "name": "Helena Sarin",
+     "cat": "A",
+     "holder": false,
+     "text": "@neuralbricolage your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/helena-sarin",
+     "image": "assets/cards/helena-sarin-ee514246.jpg",
+     "link": "https://n3wyorkers.com/h/helena-sarin"
+    },
+    {
+     "handle": "@ivonatau",
+     "id": "ivona-tau",
+     "name": "Ivona Tau",
+     "cat": "A",
+     "holder": false,
+     "text": "@ivonatau your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ivona-tau",
+     "image": "assets/cards/ivona-tau-48c644ff.jpg",
+     "link": "https://n3wyorkers.com/h/ivona-tau"
+    },
+    {
+     "handle": "@ix_shells",
+     "id": "ix-shells",
+     "name": "Ix Shells",
+     "cat": "A",
+     "holder": false,
+     "text": "@ix_shells your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ix-shells",
+     "image": "assets/cards/ix-shells-1974bbf2.jpg",
+     "link": "https://n3wyorkers.com/h/ix-shells"
+    },
+    {
+     "handle": "@jaendotart",
+     "id": "j-n",
+     "name": "Jæn",
+     "cat": "A",
+     "holder": false,
+     "text": "@jaendotart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/j-n",
+     "image": "assets/cards/j-n-32170472.jpg",
+     "link": "https://n3wyorkers.com/h/j-n"
+    },
+    {
+     "handle": "@jackbutcher",
+     "id": "jack-butcher",
+     "name": "Jack Butcher",
+     "cat": "A",
+     "holder": false,
+     "text": "@jackbutcher your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jack-butcher",
+     "image": "assets/cards/jack-butcher-cdc596e1.jpg",
+     "link": "https://n3wyorkers.com/h/jack-butcher"
+    },
+    {
+     "handle": "@jakejfried",
+     "id": "jake-fried",
+     "name": "Jake Fried",
+     "cat": "A",
+     "holder": false,
+     "text": "@jakejfried your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jake-fried",
+     "image": "assets/cards/jake-fried-58a78941.jpg",
+     "link": "https://n3wyorkers.com/h/jake-fried"
+    },
+    {
+     "handle": "@jasonnaylornyc",
+     "id": "jason-naylor",
+     "name": "Jason Naylor",
+     "cat": "A",
+     "holder": false,
+     "text": "@jasonnaylornyc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jason-naylor",
+     "image": "assets/cards/jason-naylor-68783ded.jpg",
+     "link": "https://n3wyorkers.com/h/jason-naylor"
+    },
+    {
+     "handle": "@jmurillocode",
+     "id": "jcode",
+     "name": "JCode",
+     "cat": "A",
+     "holder": false,
+     "text": "@jmurillocode your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jcode",
+     "image": "assets/cards/jcode-91072668.jpg",
+     "link": "https://n3wyorkers.com/h/jcode"
+    },
+    {
+     "handle": "@jeffgdavis",
+     "id": "jeff-davis",
+     "name": "Jeff Davis",
+     "cat": "A",
+     "holder": false,
+     "text": "@jeffgdavis your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jeff-davis",
+     "image": "assets/cards/jeff-davis-92919169.jpg",
+     "link": "https://n3wyorkers.com/h/jeff-davis"
+    },
+    {
+     "handle": "@jeffkoons",
+     "id": "jeff-koons",
+     "name": "Jeff Koons",
+     "cat": "A",
+     "holder": false,
+     "text": "@jeffkoons your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jeff-koons",
+     "image": "assets/cards/jeff-koons-887ebf72.jpg",
+     "link": "https://n3wyorkers.com/h/jeff-koons"
+    },
+    {
+     "handle": "@Jen_Stark",
+     "id": "jen-stark",
+     "name": "Jen Stark",
+     "cat": "A",
+     "holder": false,
+     "text": "@Jen_Stark your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jen-stark",
+     "image": "assets/cards/jen-stark-cdefcfe8.jpg",
+     "link": "https://n3wyorkers.com/h/jen-stark"
+    },
+    {
+     "handle": "@jerm_cohen",
+     "id": "jeremy-cohen",
+     "name": "Jeremy Cohen",
+     "cat": "A",
+     "holder": false,
+     "text": "@jerm_cohen your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jeremy-cohen",
+     "image": "assets/cards/jeremy-cohen-6681b72d.jpg",
+     "link": "https://n3wyorkers.com/h/jeremy-cohen"
+    },
+    {
+     "handle": "@dotjiwa",
+     "id": "jiwa",
+     "name": "jiwa",
+     "cat": "A",
+     "holder": false,
+     "text": "@dotjiwa your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jiwa",
+     "image": "assets/cards/jiwa-9c7aa3e0.jpg",
+     "link": "https://n3wyorkers.com/h/jiwa"
+    },
+    {
+     "handle": "@pents90",
+     "id": "john-watkinson",
+     "name": "John Watkinson",
+     "cat": "A",
+     "holder": false,
+     "text": "@pents90 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/john-watkinson",
+     "image": "assets/cards/john-watkinson-6bd79f6c.jpg",
+     "link": "https://n3wyorkers.com/h/john-watkinson"
+    },
+    {
+     "handle": "@jonburgerman",
+     "id": "jon-burgerman",
+     "name": "Jon Burgerman",
+     "cat": "A",
+     "holder": false,
+     "text": "@jonburgerman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jon-burgerman",
+     "image": "assets/cards/jon-burgerman-3fcd717a.jpg",
+     "link": "https://n3wyorkers.com/h/jon-burgerman"
+    },
+    {
+     "handle": "@joshuadavis",
+     "id": "joshua-davis",
+     "name": "Joshua Davis",
+     "cat": "A",
+     "holder": false,
+     "text": "@joshuadavis your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/joshua-davis",
+     "image": "assets/cards/joshua-davis-d631dab3.jpg",
+     "link": "https://n3wyorkers.com/h/joshua-davis"
+    }
+   ]
+  },
+  {
+   "day": 4,
+   "posts": [
+    {
+     "handle": "@josiebellini",
+     "id": "josie-bellini",
+     "name": "Josie Bellini",
+     "cat": "A",
+     "holder": false,
+     "text": "@josiebellini your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/josie-bellini",
+     "image": "assets/cards/josie-bellini-1887cf45.jpg",
+     "link": "https://n3wyorkers.com/h/josie-bellini"
+    },
+    {
+     "handle": "@Julie_Pacino",
+     "id": "julie-pacino",
+     "name": "Julie Pacino",
+     "cat": "A",
+     "holder": false,
+     "text": "@Julie_Pacino your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/julie-pacino",
+     "image": "assets/cards/julie-pacino-19895e06.jpg",
+     "link": "https://n3wyorkers.com/h/julie-pacino"
+    },
+    {
+     "handle": "@justinaversano",
+     "id": "justin-aversano",
+     "name": "Justin Aversano",
+     "cat": "A",
+     "holder": false,
+     "text": "@justinaversano your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/justin-aversano",
+     "image": "assets/cards/justin-aversano-2a549f4c.jpg",
+     "link": "https://n3wyorkers.com/h/justin-aversano"
+    },
+    {
+     "handle": "@justinbua",
+     "id": "justin-bua",
+     "name": "Justin BUA",
+     "cat": "A",
+     "holder": false,
+     "text": "@justinbua your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/justin-bua",
+     "image": "assets/cards/justin-bua-1f7db7ab.jpg",
+     "link": "https://n3wyorkers.com/h/justin-bua"
+    },
+    {
+     "handle": "@kennyschac",
+     "id": "kenny-schachter",
+     "name": "Kenny Schachter",
+     "cat": "A",
+     "holder": false,
+     "text": "@kennyschac your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kenny-schachter",
+     "image": "assets/cards/kenny-schachter-93a2c58f.jpg",
+     "link": "https://n3wyorkers.com/h/kenny-schachter"
+    },
+    {
+     "handle": "@kevinabosch",
+     "id": "kevin-abosch",
+     "name": "Kevin Abosch",
+     "cat": "A",
+     "holder": false,
+     "text": "@kevinabosch your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kevin-abosch",
+     "image": "assets/cards/kevin-abosch-5c76567e.jpg",
+     "link": "https://n3wyorkers.com/h/kevin-abosch"
+    },
+    {
+     "handle": "@mccoyspace",
+     "id": "kevin-mccoy",
+     "name": "Kevin McCoy",
+     "cat": "A",
+     "holder": false,
+     "text": "@mccoyspace your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kevin-mccoy",
+     "image": "assets/cards/kevin-mccoy-d14237fc.jpg",
+     "link": "https://n3wyorkers.com/h/kevin-mccoy"
+    },
+    {
+     "handle": "@killianmoore_",
+     "id": "killian-moore",
+     "name": "Killian Moore",
+     "cat": "A",
+     "holder": false,
+     "text": "@killianmoore_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/killian-moore",
+     "image": "assets/cards/killian-moore-f9bf1e51.jpg",
+     "link": "https://n3wyorkers.com/h/killian-moore"
+    },
+    {
+     "handle": "@kgolid",
+     "id": "kjetil-golid",
+     "name": "Kjetil Golid",
+     "cat": "A",
+     "holder": false,
+     "text": "@kgolid your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kjetil-golid",
+     "image": "assets/cards/kjetil-golid-87fae04c.jpg",
+     "link": "https://n3wyorkers.com/h/kjetil-golid"
+    },
+    {
+     "handle": "@krista_kim",
+     "id": "krista-kim",
+     "name": "Krista Kim",
+     "cat": "A",
+     "holder": false,
+     "text": "@krista_kim your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/krista-kim",
+     "image": "assets/cards/krista-kim-e2d19aa7.jpg",
+     "link": "https://n3wyorkers.com/h/krista-kim"
+    },
+    {
+     "handle": "@laolunyc",
+     "id": "laolu-senbanjo",
+     "name": "Laolu Senbanjo",
+     "cat": "A",
+     "holder": false,
+     "text": "@laolunyc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/laolu-senbanjo",
+     "image": "assets/cards/laolu-senbanjo-800025e4.jpg",
+     "link": "https://n3wyorkers.com/h/laolu-senbanjo"
+    },
+    {
+     "handle": "@laurenleemack",
+     "id": "lauren-lee-mccarthy",
+     "name": "Lauren Lee McCarthy",
+     "cat": "A",
+     "holder": false,
+     "text": "@laurenleemack your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lauren-lee-mccarthy",
+     "image": "assets/cards/lauren-lee-mccarthy-cfade401.jpg",
+     "link": "https://n3wyorkers.com/h/lauren-lee-mccarthy"
+    },
+    {
+     "handle": "@Licia_He",
+     "id": "licia-he",
+     "name": "Licia He",
+     "cat": "A",
+     "holder": false,
+     "text": "@Licia_He your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/licia-he",
+     "image": "assets/cards/licia-he-d4184a8c.jpg",
+     "link": "https://n3wyorkers.com/h/licia-he"
+    },
+    {
+     "handle": "@LindseyByrnes",
+     "id": "lindsey-byrnes",
+     "name": "Lindsey Byrnes",
+     "cat": "A",
+     "holder": false,
+     "text": "@LindseyByrnes your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lindsey-byrnes",
+     "image": "assets/cards/lindsey-byrnes-7dd06b9c.jpg",
+     "link": "https://n3wyorkers.com/h/lindsey-byrnes"
+    },
+    {
+     "handle": "@lovidlovid",
+     "id": "lovid-tali-hinkis-and-kyle-lapidus",
+     "name": "LoVid",
+     "cat": "A",
+     "holder": false,
+     "text": "@lovidlovid your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lovid-tali-hinkis-and-kyle-lapidus",
+     "image": "assets/cards/lovid-tali-hinkis-and-kyle-lapidus-bf452c27.jpg",
+     "link": "https://n3wyorkers.com/h/lovid-tali-hinkis-and-kyle-lapidus"
+    },
+    {
+     "handle": "@Mad_Dog_Jones",
+     "id": "mad-dog-jones",
+     "name": "Mad Dog Jones",
+     "cat": "A",
+     "holder": false,
+     "text": "@Mad_Dog_Jones your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mad-dog-jones",
+     "image": "assets/cards/mad-dog-jones-bfcce9ff.jpg",
+     "link": "https://n3wyorkers.com/h/mad-dog-jones"
+    },
+    {
+     "handle": "@marcobrambilla",
+     "id": "marco-brambilla",
+     "name": "Marco Brambilla",
+     "cat": "A",
+     "holder": false,
+     "text": "@marcobrambilla your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/marco-brambilla",
+     "image": "assets/cards/marco-brambilla-de3eb4e9.jpg",
+     "link": "https://n3wyorkers.com/h/marco-brambilla"
+    },
+    {
+     "handle": "@ArtistisPresent",
+     "id": "marina-abramovic",
+     "name": "Marina Abramovic",
+     "cat": "A",
+     "holder": false,
+     "text": "@ArtistisPresent your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/marina-abramovic",
+     "image": "assets/cards/marina-abramovic-e1611c26.jpg",
+     "link": "https://n3wyorkers.com/h/marina-abramovic"
+    },
+    {
+     "handle": "@quasimondo",
+     "id": "mario-klingemann",
+     "name": "Mario Klingemann",
+     "cat": "A",
+     "holder": false,
+     "text": "@quasimondo your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mario-klingemann",
+     "image": "assets/cards/mario-klingemann-2931dfc9.jpg",
+     "link": "https://n3wyorkers.com/h/mario-klingemann"
+    },
+    {
+     "handle": "@mattdesl",
+     "id": "matt-deslauriers",
+     "name": "Matt DesLauriers",
+     "cat": "A",
+     "holder": false,
+     "text": "@mattdesl your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/matt-deslauriers",
+     "image": "assets/cards/matt-deslauriers-2e1fcbdf.jpg",
+     "link": "https://n3wyorkers.com/h/matt-deslauriers"
+    },
+    {
+     "handle": "@matthall2000",
+     "id": "matt-hall",
+     "name": "Matt Hall",
+     "cat": "A",
+     "holder": false,
+     "text": "@matthall2000 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/matt-hall",
+     "image": "assets/cards/matt-hall-6070e3be.jpg",
+     "link": "https://n3wyorkers.com/h/matt-hall"
+    },
+    {
+     "handle": "@mattkaneartist",
+     "id": "matt-kane",
+     "name": "Matt Kane",
+     "cat": "A",
+     "holder": false,
+     "text": "@mattkaneartist your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/matt-kane",
+     "image": "assets/cards/matt-kane-8d1bc582.jpg",
+     "link": "https://n3wyorkers.com/h/matt-kane"
+    },
+    {
+     "handle": "@maxOSIRISart",
+     "id": "max-osiris",
+     "name": "Max Osiris",
+     "cat": "A",
+     "holder": false,
+     "text": "@maxOSIRISart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/max-osiris",
+     "image": "assets/cards/max-osiris-9d92e567.jpg",
+     "link": "https://n3wyorkers.com/h/max-osiris"
+    },
+    {
+     "handle": "@mayaonthenet",
+     "id": "maya-man",
+     "name": "Maya Man",
+     "cat": "A",
+     "holder": false,
+     "text": "@mayaonthenet your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/maya-man",
+     "image": "assets/cards/maya-man-f5b0ae66.jpg",
+     "link": "https://n3wyorkers.com/h/maya-man"
+    },
+    {
+     "handle": "@mwiederrecht",
+     "id": "melissa-wiederrecht",
+     "name": "Melissa Wiederrecht",
+     "cat": "A",
+     "holder": false,
+     "text": "@mwiederrecht your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/melissa-wiederrecht",
+     "image": "assets/cards/melissa-wiederrecht-e7054839.jpg",
+     "link": "https://n3wyorkers.com/h/melissa-wiederrecht"
+    },
+    {
+     "handle": "@Micah_Johnson3",
+     "id": "micah-johnson",
+     "name": "Micah Johnson",
+     "cat": "A",
+     "holder": false,
+     "text": "@Micah_Johnson3 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/micah-johnson",
+     "image": "assets/cards/micah-johnson-6f63fc3d.jpg",
+     "link": "https://n3wyorkers.com/h/micah-johnson"
+    },
+    {
+     "handle": "@mpkoz",
+     "id": "michael-kozlowski",
+     "name": "Michael Kozlowski",
+     "cat": "A",
+     "holder": false,
+     "text": "@mpkoz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/michael-kozlowski",
+     "image": "assets/cards/michael-kozlowski-374821f4.jpg",
+     "link": "https://n3wyorkers.com/h/michael-kozlowski"
+    },
+    {
+     "handle": "@michaelkutsche",
+     "id": "michael-kutsche",
+     "name": "Michael Kutsche",
+     "cat": "A",
+     "holder": false,
+     "text": "@michaelkutsche your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/michael-kutsche",
+     "image": "assets/cards/michael-kutsche-e82a8d03.jpg",
+     "link": "https://n3wyorkers.com/h/michael-kutsche"
+    },
+    {
+     "handle": "@yamashitaphoto",
+     "id": "michael-yamashita",
+     "name": "Michael Yamashita",
+     "cat": "A",
+     "holder": false,
+     "text": "@yamashitaphoto your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/michael-yamashita",
+     "image": "assets/cards/michael-yamashita-cb8e536c.jpg",
+     "link": "https://n3wyorkers.com/h/michael-yamashita"
+    },
+    {
+     "handle": "@thistimeitsmimi",
+     "id": "mimi-onuoha",
+     "name": "Mimi Onuoha",
+     "cat": "A",
+     "holder": false,
+     "text": "@thistimeitsmimi your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mimi-onuoha",
+     "image": "assets/cards/mimi-onuoha-0f81d407.jpg",
+     "link": "https://n3wyorkers.com/h/mimi-onuoha"
+    },
+    {
+     "handle": "@mitchellfchan",
+     "id": "mitchell-f-chan",
+     "name": "Mitchell F Chan",
+     "cat": "A",
+     "holder": false,
+     "text": "@mitchellfchan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mitchell-f-chan",
+     "image": "assets/cards/mitchell-f-chan-96278fbe.jpg",
+     "link": "https://n3wyorkers.com/h/mitchell-f-chan"
+    },
+    {
+     "handle": "@mollycrabapple",
+     "id": "molly-crabapple",
+     "name": "Molly Crabapple",
+     "cat": "A",
+     "holder": false,
+     "text": "@mollycrabapple your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/molly-crabapple",
+     "image": "assets/cards/molly-crabapple-ab0adb79.jpg",
+     "link": "https://n3wyorkers.com/h/molly-crabapple"
+    },
+    {
+     "handle": "@MuhjuArt",
+     "id": "muhju",
+     "name": "muhju",
+     "cat": "A",
+     "holder": false,
+     "text": "@MuhjuArt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/muhju",
+     "image": "assets/cards/muhju-35a0eb02.jpg",
+     "link": "https://n3wyorkers.com/h/muhju"
+    },
+    {
+     "handle": "@misshattan",
+     "id": "natalie-amrossi",
+     "name": "Natalie Amrossi",
+     "cat": "A",
+     "holder": false,
+     "text": "@misshattan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/natalie-amrossi",
+     "image": "assets/cards/natalie-amrossi-68f51999.jpg",
+     "link": "https://n3wyorkers.com/h/natalie-amrossi"
+    },
+    {
+     "handle": "@NateMohlerArt",
+     "id": "nate-mohler",
+     "name": "Nate Mohler",
+     "cat": "A",
+     "holder": false,
+     "text": "@NateMohlerArt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nate-mohler",
+     "image": "assets/cards/nate-mohler-ab4b5b39.jpg",
+     "link": "https://n3wyorkers.com/h/nate-mohler"
+    },
+    {
+     "handle": "@neonglitch86",
+     "id": "neonglitch86",
+     "name": "NeonGlitch86",
+     "cat": "A",
+     "holder": false,
+     "text": "@neonglitch86 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/neonglitch86",
+     "image": "assets/cards/neonglitch86-4c1a0676.jpg",
+     "link": "https://n3wyorkers.com/h/neonglitch86"
+    },
+    {
+     "handle": "@irishnftgal",
+     "id": "niamh",
+     "name": "Niamh",
+     "cat": "A",
+     "holder": false,
+     "text": "@irishnftgal your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/niamh",
+     "image": "assets/cards/niamh-40bb18fe.jpg",
+     "link": "https://n3wyorkers.com/h/niamh"
+    },
+    {
+     "handle": "@_NicoleRuggiero",
+     "id": "nicole-ruggiero",
+     "name": "Nicole Ruggiero",
+     "cat": "A",
+     "holder": false,
+     "text": "@_NicoleRuggiero your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nicole-ruggiero",
+     "image": "assets/cards/nicole-ruggiero-5731da67.jpg",
+     "link": "https://n3wyorkers.com/h/nicole-ruggiero"
+    },
+    {
+     "handle": "@ninachanel",
+     "id": "nina-chanel-abney",
+     "name": "Nina Chanel Abney",
+     "cat": "A",
+     "holder": false,
+     "text": "@ninachanel your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nina-chanel-abney",
+     "image": "assets/cards/nina-chanel-abney-9f80a35a.jpg",
+     "link": "https://n3wyorkers.com/h/nina-chanel-abney"
+    },
+    {
+     "handle": "@newlightvisuals",
+     "id": "nlv",
+     "name": "NLV",
+     "cat": "A",
+     "holder": false,
+     "text": "@newlightvisuals your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nlv",
+     "image": "assets/cards/nlv-dd5ffe60.jpg",
+     "link": "https://n3wyorkers.com/h/nlv"
+    }
+   ]
+  },
+  {
+   "day": 5,
+   "posts": [
+    {
+     "handle": "@noahkalina",
+     "id": "noah-kalina",
+     "name": "Noah Kalina",
+     "cat": "A",
+     "holder": false,
+     "text": "@noahkalina your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/noah-kalina",
+     "image": "assets/cards/noah-kalina-e650fc52.jpg",
+     "link": "https://n3wyorkers.com/h/noah-kalina"
+    },
+    {
+     "handle": "@Oaknarrow",
+     "id": "oak",
+     "name": "Oak",
+     "cat": "A",
+     "holder": false,
+     "text": "@Oaknarrow your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/oak",
+     "image": "assets/cards/oak-841be8b2.jpg",
+     "link": "https://n3wyorkers.com/h/oak"
+    },
+    {
+     "handle": "@IamOliveAllen",
+     "id": "olive-allen",
+     "name": "Olive Allen",
+     "cat": "A",
+     "holder": false,
+     "text": "@IamOliveAllen your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/olive-allen",
+     "image": "assets/cards/olive-allen-cf0841ae.jpg",
+     "link": "https://n3wyorkers.com/h/olive-allen"
+    },
+    {
+     "handle": "@madebyoona",
+     "id": "oona",
+     "name": "OONA",
+     "cat": "A",
+     "holder": false,
+     "text": "@madebyoona your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/oona",
+     "image": "assets/cards/oona-7dd5e874.jpg",
+     "link": "https://n3wyorkers.com/h/oona"
+    },
+    {
+     "handle": "@osinachiart",
+     "id": "osinachi",
+     "name": "Osinachi",
+     "cat": "A",
+     "holder": false,
+     "text": "@osinachiart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/osinachi",
+     "image": "assets/cards/osinachi-36192743.jpg",
+     "link": "https://n3wyorkers.com/h/osinachi"
+    },
+    {
+     "handle": "@otherworld_xx",
+     "id": "other-world",
+     "name": "Other World",
+     "cat": "A",
+     "holder": false,
+     "text": "@otherworld_xx your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/other-world",
+     "image": "assets/cards/other-world-28d3ed98.jpg",
+     "link": "https://n3wyorkers.com/h/other-world"
+    },
+    {
+     "handle": "@amadon",
+     "id": "patrick-amadon",
+     "name": "Patrick Amadon",
+     "cat": "A",
+     "holder": false,
+     "text": "@amadon your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/patrick-amadon",
+     "image": "assets/cards/patrick-amadon-00169f87.jpg",
+     "link": "https://n3wyorkers.com/h/patrick-amadon"
+    },
+    {
+     "handle": "@Minotaur_Man",
+     "id": "paul-reid",
+     "name": "Paul Reid",
+     "cat": "A",
+     "holder": false,
+     "text": "@Minotaur_Man your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/paul-reid",
+     "image": "assets/cards/paul-reid-cde52be7.jpg",
+     "link": "https://n3wyorkers.com/h/paul-reid"
+    },
+    {
+     "handle": "@peterburr",
+     "id": "peter-burr",
+     "name": "Peter Burr",
+     "cat": "A",
+     "holder": false,
+     "text": "@peterburr your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/peter-burr",
+     "image": "assets/cards/peter-burr-47103efa.jpg",
+     "link": "https://n3wyorkers.com/h/peter-burr"
+    },
+    {
+     "handle": "@piterpasma",
+     "id": "piter-pasma",
+     "name": "Piter Pasma",
+     "cat": "A",
+     "holder": false,
+     "text": "@piterpasma your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/piter-pasma",
+     "image": "assets/cards/piter-pasma-11a141a6.jpg",
+     "link": "https://n3wyorkers.com/h/piter-pasma"
+    },
+    {
+     "handle": "@POSTWOOK",
+     "id": "post-wook-natasha-chomko",
+     "name": "Post Wook",
+     "cat": "A",
+     "holder": false,
+     "text": "@POSTWOOK your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/post-wook-natasha-chomko",
+     "image": "assets/cards/post-wook-natasha-chomko-391d0918.jpg",
+     "link": "https://n3wyorkers.com/h/post-wook-natasha-chomko"
+    },
+    {
+     "handle": "@pplpleasr1",
+     "id": "pplpleasr",
+     "name": "pplpleasr",
+     "cat": "A",
+     "holder": false,
+     "text": "@pplpleasr1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/pplpleasr",
+     "image": "assets/cards/pplpleasr-619dcb4e.jpg",
+     "link": "https://n3wyorkers.com/h/pplpleasr"
+    },
+    {
+     "handle": "@rachelrossin",
+     "id": "rachel-rossin",
+     "name": "Rachel Rossin",
+     "cat": "A",
+     "holder": false,
+     "text": "@rachelrossin your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rachel-rossin",
+     "image": "assets/cards/rachel-rossin-dd6d52d0.jpg",
+     "link": "https://n3wyorkers.com/h/rachel-rossin"
+    },
+    {
+     "handle": "@newrafael",
+     "id": "rafael-rozendaal",
+     "name": "Rafael Rozendaal",
+     "cat": "A",
+     "holder": false,
+     "text": "@newrafael your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rafael-rozendaal",
+     "image": "assets/cards/rafael-rozendaal-42e921be.jpg",
+     "link": "https://n3wyorkers.com/h/rafael-rozendaal"
+    },
+    {
+     "handle": "@raven50mm",
+     "id": "raven-trammell",
+     "name": "Raven Trammell",
+     "cat": "A",
+     "holder": false,
+     "text": "@raven50mm your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/raven-trammell",
+     "image": "assets/cards/raven-trammell-46ceeaf2.jpg",
+     "link": "https://n3wyorkers.com/h/raven-trammell"
+    },
+    {
+     "handle": "@RebeccaRose",
+     "id": "rebecca-rose",
+     "name": "Rebecca Rose",
+     "cat": "A",
+     "holder": false,
+     "text": "@RebeccaRose your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rebecca-rose",
+     "image": "assets/cards/rebecca-rose-a519ff42.jpg",
+     "link": "https://n3wyorkers.com/h/rebecca-rose"
+    },
+    {
+     "handle": "@refikanadol",
+     "id": "refik-anadol",
+     "name": "Refik Anadol",
+     "cat": "A",
+     "holder": false,
+     "text": "@refikanadol your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/refik-anadol",
+     "image": "assets/cards/refik-anadol-98400da3.jpg",
+     "link": "https://n3wyorkers.com/h/refik-anadol"
+    },
+    {
+     "handle": "@flight404",
+     "id": "robert-hodgin",
+     "name": "Robert Hodgin",
+     "cat": "A",
+     "holder": false,
+     "text": "@flight404 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/robert-hodgin",
+     "image": "assets/cards/robert-hodgin-fffcc228.jpg",
+     "link": "https://n3wyorkers.com/h/robert-hodgin"
+    },
+    {
+     "handle": "@ROBNESSOFFICIAL",
+     "id": "robness",
+     "name": "ROBNESS",
+     "cat": "A",
+     "holder": false,
+     "text": "@ROBNESSOFFICIAL your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/robness",
+     "image": "assets/cards/robness-fe925cb7.jpg",
+     "link": "https://n3wyorkers.com/h/robness"
+    },
+    {
+     "handle": "@rocketgirlART",
+     "id": "rocketgirl",
+     "name": "Rocketgirl",
+     "cat": "A",
+     "holder": false,
+     "text": "@rocketgirlART your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rocketgirl",
+     "image": "assets/cards/rocketgirl-6eb2892d.jpg",
+     "link": "https://n3wyorkers.com/h/rocketgirl"
+    },
+    {
+     "handle": "@ronenglishart",
+     "id": "ron-english",
+     "name": "Ron English",
+     "cat": "A",
+     "holder": false,
+     "text": "@ronenglishart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ron-english",
+     "image": "assets/cards/ron-english-bffef500.jpg",
+     "link": "https://n3wyorkers.com/h/ron-english"
+    },
+    {
+     "handle": "@0xRoses0x",
+     "id": "roses",
+     "name": "roses",
+     "cat": "A",
+     "holder": false,
+     "text": "@0xRoses0x your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/roses",
+     "image": "assets/cards/roses-de898afd.jpg",
+     "link": "https://n3wyorkers.com/h/roses"
+    },
+    {
+     "handle": "@ryankoopmans",
+     "id": "ryan-koopmans",
+     "name": "Ryan Koopmans",
+     "cat": "A",
+     "holder": false,
+     "text": "@ryankoopmans your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ryan-koopmans",
+     "image": "assets/cards/ryan-koopmans-c6169a19.jpg",
+     "link": "https://n3wyorkers.com/h/ryan-koopmans"
+    },
+    {
+     "handle": "@samrolfes",
+     "id": "sam-rolfes",
+     "name": "Sam Rolfes",
+     "cat": "A",
+     "holder": false,
+     "text": "@samrolfes your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sam-rolfes",
+     "image": "assets/cards/sam-rolfes-a4f5919c.jpg",
+     "link": "https://n3wyorkers.com/h/sam-rolfes"
+    },
+    {
+     "handle": "@SamSpratt",
+     "id": "sam-spratt",
+     "name": "Sam Spratt",
+     "cat": "A",
+     "holder": false,
+     "text": "@SamSpratt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sam-spratt",
+     "image": "assets/cards/sam-spratt-036cbc43.jpg",
+     "link": "https://n3wyorkers.com/h/sam-spratt"
+    },
+    {
+     "handle": "@SaraSBaumann",
+     "id": "sara-baumann",
+     "name": "Sara Baumann",
+     "cat": "A",
+     "holder": false,
+     "text": "@SaraSBaumann your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sara-baumann",
+     "image": "assets/cards/sara-baumann-5d3af92c.jpg",
+     "link": "https://n3wyorkers.com/h/sara-baumann"
+    },
+    {
+     "handle": "@sarahmeyohas",
+     "id": "sarah-meyohas",
+     "name": "Sarah Meyohas",
+     "cat": "A",
+     "holder": false,
+     "text": "@sarahmeyohas your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sarah-meyohas",
+     "image": "assets/cards/sarah-meyohas-3b3e6d3f.jpg",
+     "link": "https://n3wyorkers.com/h/sarah-meyohas"
+    },
+    {
+     "handle": "@thesarahshow",
+     "id": "sarah-zucker",
+     "name": "Sarah Zucker",
+     "cat": "A",
+     "holder": false,
+     "text": "@thesarahshow your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sarah-zucker",
+     "image": "assets/cards/sarah-zucker-f7c69531.jpg",
+     "link": "https://n3wyorkers.com/h/sarah-zucker"
+    },
+    {
+     "handle": "@sashastiles",
+     "id": "sasha-stiles",
+     "name": "Sasha Stiles",
+     "cat": "A",
+     "holder": false,
+     "text": "@sashastiles your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sasha-stiles",
+     "image": "assets/cards/sasha-stiles-8c65beef.jpg",
+     "link": "https://n3wyorkers.com/h/sasha-stiles"
+    },
+    {
+     "handle": "@sebastianstudio",
+     "id": "sebastian-errazuriz",
+     "name": "Sebastian Errazuriz",
+     "cat": "A",
+     "holder": false,
+     "text": "@sebastianstudio your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sebastian-errazuriz",
+     "image": "assets/cards/sebastian-errazuriz-4c420d55.jpg",
+     "link": "https://n3wyorkers.com/h/sebastian-errazuriz"
+    },
+    {
+     "handle": "@serc1n",
+     "id": "serc",
+     "name": "serc",
+     "cat": "A",
+     "holder": false,
+     "text": "@serc1n your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/serc",
+     "image": "assets/cards/serc-7f34c0b0.jpg",
+     "link": "https://n3wyorkers.com/h/serc"
+    },
+    {
+     "handle": "@shantell_martin",
+     "id": "shantell-martin",
+     "name": "Shantell Martin",
+     "cat": "A",
+     "holder": false,
+     "text": "@shantell_martin your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/shantell-martin",
+     "image": "assets/cards/shantell-martin-9db30f22.jpg",
+     "link": "https://n3wyorkers.com/h/shantell-martin"
+    },
+    {
+     "handle": "@shavonnewong_",
+     "id": "shavonne-wong",
+     "name": "Shavonne Wong",
+     "cat": "A",
+     "holder": false,
+     "text": "@shavonnewong_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/shavonne-wong",
+     "image": "assets/cards/shavonne-wong-9612fd96.jpg",
+     "link": "https://n3wyorkers.com/h/shavonne-wong"
+    },
+    {
+     "handle": "@shoneec",
+     "id": "shoneec",
+     "name": "shoneec",
+     "cat": "A",
+     "holder": false,
+     "text": "@shoneec your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/shoneec",
+     "image": "assets/cards/shoneec-82d2fec3.jpg",
+     "link": "https://n3wyorkers.com/h/shoneec"
+    },
+    {
+     "handle": "@slimesunday",
+     "id": "slimesunday",
+     "name": "Slimesunday",
+     "cat": "A",
+     "holder": false,
+     "text": "@slimesunday your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/slimesunday",
+     "image": "assets/cards/slimesunday-5c638efd.jpg",
+     "link": "https://n3wyorkers.com/h/slimesunday"
+    },
+    {
+     "handle": "@snowyunxuefu",
+     "id": "snow-yunxue-fu",
+     "name": "Snow Yunxue Fu",
+     "cat": "A",
+     "holder": false,
+     "text": "@snowyunxuefu your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/snow-yunxue-fu",
+     "image": "assets/cards/snow-yunxue-fu-1090fab5.jpg",
+     "link": "https://n3wyorkers.com/h/snow-yunxue-fu"
+    },
+    {
+     "handle": "@artonblocks",
+     "id": "snowfro",
+     "name": "Snowfro",
+     "cat": "A",
+     "holder": false,
+     "text": "@artonblocks your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/snowfro",
+     "image": "assets/cards/snowfro-596cf9d8.jpg",
+     "link": "https://n3wyorkers.com/h/snowfro"
+    },
+    {
+     "handle": "@soficrespo91",
+     "id": "sofia-crespo",
+     "name": "Sofia Crespo",
+     "cat": "A",
+     "holder": false,
+     "text": "@soficrespo91 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sofia-crespo",
+     "image": "assets/cards/sofia-crespo-26a7fb1e.jpg",
+     "link": "https://n3wyorkers.com/h/sofia-crespo"
+    },
+    {
+     "handle": "@sophiekahn",
+     "id": "sophie-kahn",
+     "name": "Sophie Kahn",
+     "cat": "A",
+     "holder": false,
+     "text": "@sophiekahn your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sophie-kahn",
+     "image": "assets/cards/sophie-kahn-e0b8efb8.jpg",
+     "link": "https://n3wyorkers.com/h/sophie-kahn"
+    },
+    {
+     "handle": "@sougwen",
+     "id": "sougwen-chung",
+     "name": "Sougwen Chung",
+     "cat": "A",
+     "holder": false,
+     "text": "@sougwen your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sougwen-chung",
+     "image": "assets/cards/sougwen-chung-10e02753.jpg",
+     "link": "https://n3wyorkers.com/h/sougwen-chung"
+    }
+   ]
+  },
+  {
+   "day": 6,
+   "posts": [
+    {
+     "handle": "@steviepxyz",
+     "id": "steve-pikelny",
+     "name": "Steve Pikelny",
+     "cat": "A",
+     "holder": false,
+     "text": "@steviepxyz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/steve-pikelny",
+     "image": "assets/cards/steve-pikelny-139ecd43.jpg",
+     "link": "https://n3wyorkers.com/h/steve-pikelny"
+    },
+    {
+     "handle": "@stevesweatpants",
+     "id": "steve-sweatpants",
+     "name": "Steve Sweatpants",
+     "cat": "A",
+     "holder": false,
+     "text": "@stevesweatpants your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/steve-sweatpants",
+     "image": "assets/cards/steve-sweatpants-2385c5a3.jpg",
+     "link": "https://n3wyorkers.com/h/steve-sweatpants"
+    },
+    {
+     "handle": "@thankyoux",
+     "id": "thankyoux",
+     "name": "ThankYouX",
+     "cat": "A",
+     "holder": false,
+     "text": "@thankyoux your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/thankyoux",
+     "image": "assets/cards/thankyoux-9592f7f3.jpg",
+     "link": "https://n3wyorkers.com/h/thankyoux"
+    },
+    {
+     "handle": "@totdgbtagb",
+     "id": "totty-eth",
+     "name": "totty.eth",
+     "cat": "A",
+     "holder": false,
+     "text": "@totdgbtagb your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/totty-eth",
+     "image": "assets/cards/totty-eth-5a823e83.jpg",
+     "link": "https://n3wyorkers.com/h/totty-eth"
+    },
+    {
+     "handle": "@trevorjonesart",
+     "id": "trevor-jones",
+     "name": "Trevor Jones",
+     "cat": "A",
+     "holder": false,
+     "text": "@trevorjonesart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/trevor-jones",
+     "image": "assets/cards/trevor-jones-a4547b7c.jpg",
+     "link": "https://n3wyorkers.com/h/trevor-jones"
+    },
+    {
+     "handle": "@tristaneaton",
+     "id": "tristan-eaton",
+     "name": "Tristan Eaton",
+     "cat": "A",
+     "holder": false,
+     "text": "@tristaneaton your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tristan-eaton",
+     "image": "assets/cards/tristan-eaton-3bcbea0d.jpg",
+     "link": "https://n3wyorkers.com/h/tristan-eaton"
+    },
+    {
+     "handle": "@tustont",
+     "id": "tustont",
+     "name": "Tustont",
+     "cat": "A",
+     "holder": false,
+     "text": "@tustont your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tustont",
+     "image": "assets/cards/tustont-3f615d4b.jpg",
+     "link": "https://n3wyorkers.com/h/tustont"
+    },
+    {
+     "handle": "@tylerxhobbs",
+     "id": "tyler-hobbs",
+     "name": "Tyler Hobbs",
+     "cat": "A",
+     "holder": false,
+     "text": "@tylerxhobbs your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tyler-hobbs",
+     "image": "assets/cards/tyler-hobbs-b82bd36b.jpg",
+     "link": "https://n3wyorkers.com/h/tyler-hobbs"
+    },
+    {
+     "handle": "@victormosquerar",
+     "id": "victor-mosquera",
+     "name": "Victor Mosquera",
+     "cat": "A",
+     "holder": false,
+     "text": "@victormosquerar your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/victor-mosquera",
+     "image": "assets/cards/victor-mosquera-13b6da35.jpg",
+     "link": "https://n3wyorkers.com/h/victor-mosquera"
+    },
+    {
+     "handle": "@VinnieHager",
+     "id": "vinnie-hager",
+     "name": "Vinnie Hager",
+     "cat": "A",
+     "holder": false,
+     "text": "@VinnieHager your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/vinnie-hager",
+     "image": "assets/cards/vinnie-hager-c5c651a1.jpg",
+     "link": "https://n3wyorkers.com/h/vinnie-hager"
+    },
+    {
+     "handle": "@WGMeets",
+     "id": "wgmeets",
+     "name": "WGMeets",
+     "cat": "A",
+     "holder": false,
+     "text": "@WGMeets your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/wgmeets",
+     "image": "assets/cards/wgmeets-c6fa7e9d.jpg",
+     "link": "https://n3wyorkers.com/h/wgmeets"
+    },
+    {
+     "handle": "@whisbe",
+     "id": "whisbe",
+     "name": "WhIsBe",
+     "cat": "A",
+     "holder": false,
+     "text": "@whisbe your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/whisbe",
+     "image": "assets/cards/whisbe-2e5bb59a.jpg",
+     "link": "https://n3wyorkers.com/h/whisbe"
+    },
+    {
+     "handle": "@williamapan",
+     "id": "william-mapan",
+     "name": "William Mapan",
+     "cat": "A",
+     "holder": false,
+     "text": "@williamapan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/william-mapan",
+     "image": "assets/cards/william-mapan-c21ab3fc.jpg",
+     "link": "https://n3wyorkers.com/h/william-mapan"
+    },
+    {
+     "handle": "@XCOPYART",
+     "id": "xcopy",
+     "name": "XCOPY",
+     "cat": "A",
+     "holder": false,
+     "text": "@XCOPYART your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/xcopy",
+     "image": "assets/cards/xcopy-d5a9e9e2.jpg",
+     "link": "https://n3wyorkers.com/h/xcopy"
+    },
+    {
+     "handle": "@ykarkai",
+     "id": "yam-karkai",
+     "name": "Yam Karkai",
+     "cat": "A",
+     "holder": false,
+     "text": "@ykarkai your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/yam-karkai",
+     "image": "assets/cards/yam-karkai-e5cc9ff1.jpg",
+     "link": "https://n3wyorkers.com/h/yam-karkai"
+    },
+    {
+     "handle": "@yatreda",
+     "id": "yatreda",
+     "name": "Yatreda",
+     "cat": "A",
+     "holder": false,
+     "text": "@yatreda your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/yatreda",
+     "image": "assets/cards/yatreda-b1d9f813.jpg",
+     "link": "https://n3wyorkers.com/h/yatreda"
+    },
+    {
+     "handle": "@sodeoka",
+     "id": "yoshi-sodeoka",
+     "name": "Yoshi Sodeoka",
+     "cat": "A",
+     "holder": false,
+     "text": "@sodeoka your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/yoshi-sodeoka",
+     "image": "assets/cards/yoshi-sodeoka-45e2ed60.jpg",
+     "link": "https://n3wyorkers.com/h/yoshi-sodeoka"
+    },
+    {
+     "handle": "@zachlieberman",
+     "id": "zach-lieberman",
+     "name": "Zach Lieberman",
+     "cat": "A",
+     "holder": false,
+     "text": "@zachlieberman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/zach-lieberman",
+     "image": "assets/cards/zach-lieberman-56ce242c.jpg",
+     "link": "https://n3wyorkers.com/h/zach-lieberman"
+    },
+    {
+     "handle": "@zancan",
+     "id": "zancan",
+     "name": "Zancan",
+     "cat": "A",
+     "holder": false,
+     "text": "@zancan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/zancan",
+     "image": "assets/cards/zancan-39b04daf.jpg",
+     "link": "https://n3wyorkers.com/h/zancan"
+    },
+    {
+     "handle": "@rhett",
+     "id": "0xrhett-eth",
+     "name": "0xrhett.eth",
+     "cat": "C",
+     "holder": false,
+     "text": "@rhett your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/0xrhett-eth",
+     "image": "assets/cards/0xrhett-eth-d5a670a7.jpg",
+     "link": "https://n3wyorkers.com/h/0xrhett-eth"
+    },
+    {
+     "handle": "@O2debt",
+     "id": "0xygendebt",
+     "name": "0xygendebt",
+     "cat": "C",
+     "holder": false,
+     "text": "@O2debt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/0xygendebt",
+     "image": "assets/cards/0xygendebt-54a4a9eb.jpg",
+     "link": "https://n3wyorkers.com/h/0xygendebt"
+    },
+    {
+     "handle": "@awrigh01",
+     "id": "aaron-wright",
+     "name": "Aaron Wright",
+     "cat": "C",
+     "holder": false,
+     "text": "@awrigh01 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/aaron-wright",
+     "image": "assets/cards/aaron-wright-8d0e3dc5.jpg",
+     "link": "https://n3wyorkers.com/h/aaron-wright"
+    },
+    {
+     "handle": "@ACthecollector",
+     "id": "ac-the-collector",
+     "name": "AC The Collector",
+     "cat": "C",
+     "holder": false,
+     "text": "@ACthecollector your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ac-the-collector",
+     "image": "assets/cards/ac-the-collector-52086205.jpg",
+     "link": "https://n3wyorkers.com/h/ac-the-collector"
+    },
+    {
+     "handle": "@Airstrip__1",
+     "id": "airstrip-1",
+     "name": "Airstrip 1",
+     "cat": "C",
+     "holder": false,
+     "text": "@Airstrip__1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/airstrip-1",
+     "image": "assets/cards/airstrip-1-6bbc753a.jpg",
+     "link": "https://n3wyorkers.com/h/airstrip-1"
+    },
+    {
+     "handle": "@batsoupyum",
+     "id": "batsoupyum",
+     "name": "BatSoupYum",
+     "cat": "C",
+     "holder": false,
+     "text": "@batsoupyum your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/batsoupyum",
+     "image": "assets/cards/batsoupyum-ca20e17c.jpg",
+     "link": "https://n3wyorkers.com/h/batsoupyum"
+    },
+    {
+     "handle": "@krybharat",
+     "id": "bharat-krymo",
+     "name": "Bharat Krymo",
+     "cat": "C",
+     "holder": false,
+     "text": "@krybharat your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/bharat-krymo",
+     "image": "assets/cards/bharat-krymo-9d3e146b.jpg",
+     "link": "https://n3wyorkers.com/h/bharat-krymo"
+    },
+    {
+     "handle": "@srclod",
+     "id": "clod",
+     "name": "clod",
+     "cat": "C",
+     "holder": false,
+     "text": "@srclod your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/clod",
+     "image": "assets/cards/clod-c00e20c9.jpg",
+     "link": "https://n3wyorkers.com/h/clod"
+    },
+    {
+     "handle": "@co1born",
+     "id": "colborn-bell",
+     "name": "Colborn Bell",
+     "cat": "C",
+     "holder": false,
+     "text": "@co1born your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/colborn-bell",
+     "image": "assets/cards/colborn-bell-4ce75e23.jpg",
+     "link": "https://n3wyorkers.com/h/colborn-bell"
+    },
+    {
+     "handle": "@colbymugrabi",
+     "id": "colby-mugrabi",
+     "name": "Colby Mugrabi",
+     "cat": "C",
+     "holder": false,
+     "text": "@colbymugrabi your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/colby-mugrabi",
+     "image": "assets/cards/colby-mugrabi-b2d434d8.jpg",
+     "link": "https://n3wyorkers.com/h/colby-mugrabi"
+    },
+    {
+     "handle": "@CozomoMedici",
+     "id": "cozomo-de-medici",
+     "name": "Cozomo de' Medici",
+     "cat": "C",
+     "holder": false,
+     "text": "@CozomoMedici your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cozomo-de-medici",
+     "image": "assets/cards/cozomo-de-medici-12ee4d80.jpg",
+     "link": "https://n3wyorkers.com/h/cozomo-de-medici"
+    },
+    {
+     "handle": "@CryptoDickbutts",
+     "id": "cryptodickbutts",
+     "name": "CryptoDickbutts",
+     "cat": "C",
+     "holder": false,
+     "text": "@CryptoDickbutts your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cryptodickbutts",
+     "image": "assets/cards/cryptodickbutts-797664db.jpg",
+     "link": "https://n3wyorkers.com/h/cryptodickbutts"
+    },
+    {
+     "handle": "@KingChaim",
+     "id": "davidfeinstein-eth",
+     "name": "davidfeinstein.eth",
+     "cat": "C",
+     "holder": false,
+     "text": "@KingChaim your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/davidfeinstein-eth",
+     "image": "assets/cards/davidfeinstein-eth-4cbff05e.jpg",
+     "link": "https://n3wyorkers.com/h/davidfeinstein-eth"
+    },
+    {
+     "handle": "@DeeZe",
+     "id": "deeze",
+     "name": "Deeze",
+     "cat": "C",
+     "holder": false,
+     "text": "@DeeZe your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/deeze",
+     "image": "assets/cards/deeze-da39e85d.jpg",
+     "link": "https://n3wyorkers.com/h/deeze"
+    },
+    {
+     "handle": "@defianceworks",
+     "id": "defianceworks",
+     "name": "defianceworks",
+     "cat": "C",
+     "holder": false,
+     "text": "@defianceworks your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/defianceworks",
+     "image": "assets/cards/defianceworks-19cb1473.jpg",
+     "link": "https://n3wyorkers.com/h/defianceworks"
+    },
+    {
+     "handle": "@rektfluf",
+     "id": "digger",
+     "name": "Digger",
+     "cat": "C",
+     "holder": false,
+     "text": "@rektfluf your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/digger",
+     "image": "assets/cards/digger-a9894681.jpg",
+     "link": "https://n3wyorkers.com/h/digger"
+    },
+    {
+     "handle": "@SuperchiefNFT",
+     "id": "ed-zipco",
+     "name": "Ed Zipco",
+     "cat": "C",
+     "holder": false,
+     "text": "@SuperchiefNFT your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ed-zipco",
+     "image": "assets/cards/ed-zipco-3b9e5152.jpg",
+     "link": "https://n3wyorkers.com/h/ed-zipco"
+    },
+    {
+     "handle": "@eritaqua",
+     "id": "edog",
+     "name": "edog",
+     "cat": "C",
+     "holder": false,
+     "text": "@eritaqua your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/edog",
+     "image": "assets/cards/edog-90400f6f.jpg",
+     "link": "https://n3wyorkers.com/h/edog"
+    },
+    {
+     "handle": "@ledgerdust",
+     "id": "edust",
+     "name": "edust",
+     "cat": "C",
+     "holder": false,
+     "text": "@ledgerdust your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/edust",
+     "image": "assets/cards/edust-697bbd93.jpg",
+     "link": "https://n3wyorkers.com/h/edust"
+    },
+    {
+     "handle": "@elenazavelev",
+     "id": "elena-zavelev",
+     "name": "Elena Zavelev",
+     "cat": "C",
+     "holder": false,
+     "text": "@elenazavelev your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/elena-zavelev",
+     "image": "assets/cards/elena-zavelev-277314de.jpg",
+     "link": "https://n3wyorkers.com/h/elena-zavelev"
+    },
+    {
+     "handle": "@breezyart",
+     "id": "eleonora-brizi",
+     "name": "Eleonora Brizi",
+     "cat": "C",
+     "holder": false,
+     "text": "@breezyart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/eleonora-brizi",
+     "image": "assets/cards/eleonora-brizi-bbb46c90.jpg",
+     "link": "https://n3wyorkers.com/h/eleonora-brizi"
+    }
+   ]
+  },
+  {
+   "day": 7,
+   "posts": [
+    {
+     "handle": "@fannylakoubay",
+     "id": "fanny-lakoubay",
+     "name": "Fanny Lakoubay",
+     "cat": "C",
+     "holder": false,
+     "text": "@fannylakoubay your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/fanny-lakoubay",
+     "image": "assets/cards/fanny-lakoubay-959902ce.jpg",
+     "link": "https://n3wyorkers.com/h/fanny-lakoubay"
+    },
+    {
+     "handle": "@FlyingBeagle_",
+     "id": "flyingbeagle",
+     "name": "FlyingBeagle",
+     "cat": "C",
+     "holder": false,
+     "text": "@FlyingBeagle_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/flyingbeagle",
+     "image": "assets/cards/flyingbeagle-597a4354.jpg",
+     "link": "https://n3wyorkers.com/h/flyingbeagle"
+    },
+    {
+     "handle": "@fredwilson",
+     "id": "fred-wilson",
+     "name": "Fred Wilson",
+     "cat": "C",
+     "holder": false,
+     "text": "@fredwilson your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/fred-wilson",
+     "image": "assets/cards/fred-wilson-805fac0f.jpg",
+     "link": "https://n3wyorkers.com/h/fred-wilson"
+    },
+    {
+     "handle": "@gmoneynft",
+     "id": "gmoney",
+     "name": "gmoney",
+     "cat": "C",
+     "holder": false,
+     "text": "@gmoneynft your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/gmoney",
+     "image": "assets/cards/gmoney-8dd1408f.jpg",
+     "link": "https://n3wyorkers.com/h/gmoney"
+    },
+    {
+     "handle": "@HUObrist",
+     "id": "hans-ulrich-obrist",
+     "name": "Hans Ulrich Obrist",
+     "cat": "C",
+     "holder": false,
+     "text": "@HUObrist your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/hans-ulrich-obrist",
+     "image": "assets/cards/hans-ulrich-obrist-ff0e5d7a.jpg",
+     "link": "https://n3wyorkers.com/h/hans-ulrich-obrist"
+    },
+    {
+     "handle": "@Inceptionally",
+     "id": "incept-eth",
+     "name": "Incept.eth",
+     "cat": "C",
+     "holder": false,
+     "text": "@Inceptionally your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/incept-eth",
+     "image": "assets/cards/incept-eth-174beec1.jpg",
+     "link": "https://n3wyorkers.com/h/incept-eth"
+    },
+    {
+     "handle": "@jbrukh",
+     "id": "jake-brukhman",
+     "name": "Jake Brukhman",
+     "cat": "C",
+     "holder": false,
+     "text": "@jbrukh your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jake-brukhman",
+     "image": "assets/cards/jake-brukhman-531d2ad5.jpg",
+     "link": "https://n3wyorkers.com/h/jake-brukhman"
+    },
+    {
+     "handle": "@jared_poz",
+     "id": "jared-poz",
+     "name": "jared_poz",
+     "cat": "C",
+     "holder": false,
+     "text": "@jared_poz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jared-poz",
+     "image": "assets/cards/jared-poz-5fe41f3b.jpg",
+     "link": "https://n3wyorkers.com/h/jared-poz"
+    },
+    {
+     "handle": "@juliaxgulia",
+     "id": "julia-kaganskiy",
+     "name": "Julia Kaganskiy",
+     "cat": "C",
+     "holder": false,
+     "text": "@juliaxgulia your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/julia-kaganskiy",
+     "image": "assets/cards/julia-kaganskiy-5a834ef4.jpg",
+     "link": "https://n3wyorkers.com/h/julia-kaganskiy"
+    },
+    {
+     "handle": "@kelaninichole",
+     "id": "kelani-nichole",
+     "name": "Kelani Nichole",
+     "cat": "C",
+     "holder": false,
+     "text": "@kelaninichole your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kelani-nichole",
+     "image": "assets/cards/kelani-nichole-3174c930.jpg",
+     "link": "https://n3wyorkers.com/h/kelani-nichole"
+    },
+    {
+     "handle": "@kruuul",
+     "id": "kruuul",
+     "name": "Kruuul",
+     "cat": "C",
+     "holder": false,
+     "text": "@kruuul your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kruuul",
+     "image": "assets/cards/kruuul-e5532f46.jpg",
+     "link": "https://n3wyorkers.com/h/kruuul"
+    },
+    {
+     "handle": "@yesladypheonix",
+     "id": "lady-phe0nix",
+     "name": "Lady Phe0nix",
+     "cat": "C",
+     "holder": false,
+     "text": "@yesladypheonix your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lady-phe0nix",
+     "image": "assets/cards/lady-phe0nix-91c819bf.jpg",
+     "link": "https://n3wyorkers.com/h/lady-phe0nix"
+    },
+    {
+     "handle": "@musicalnetta",
+     "id": "lanett-bennett-grant",
+     "name": "Lanett Bennett Grant",
+     "cat": "C",
+     "holder": false,
+     "text": "@musicalnetta your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lanett-bennett-grant",
+     "image": "assets/cards/lanett-bennett-grant-300b409d.jpg",
+     "link": "https://n3wyorkers.com/h/lanett-bennett-grant"
+    },
+    {
+     "handle": "@bitgrateful",
+     "id": "lawyered",
+     "name": "Lawyered",
+     "cat": "C",
+     "holder": false,
+     "text": "@bitgrateful your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lawyered",
+     "image": "assets/cards/lawyered-6f5e4ef5.jpg",
+     "link": "https://n3wyorkers.com/h/lawyered"
+    },
+    {
+     "handle": "@lindsayhoward",
+     "id": "lindsay-howard",
+     "name": "Lindsay Howard",
+     "cat": "C",
+     "holder": false,
+     "text": "@lindsayhoward your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/lindsay-howard",
+     "image": "assets/cards/lindsay-howard-fdd15c66.jpg",
+     "link": "https://n3wyorkers.com/h/lindsay-howard"
+    },
+    {
+     "handle": "@loicgouzer",
+     "id": "loic-gouzer",
+     "name": "Loic Gouzer",
+     "cat": "C",
+     "holder": false,
+     "text": "@loicgouzer your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/loic-gouzer",
+     "image": "assets/cards/loic-gouzer-a765106d.jpg",
+     "link": "https://n3wyorkers.com/h/loic-gouzer"
+    },
+    {
+     "handle": "@MadaCollects",
+     "id": "madacollects",
+     "name": "madacollects",
+     "cat": "C",
+     "holder": false,
+     "text": "@MadaCollects your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/madacollects",
+     "image": "assets/cards/madacollects-6790165a.jpg",
+     "link": "https://n3wyorkers.com/h/madacollects"
+    },
+    {
+     "handle": "@magdasawon",
+     "id": "magda-sawon",
+     "name": "Magda Sawon",
+     "cat": "C",
+     "holder": false,
+     "text": "@magdasawon your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/magda-sawon",
+     "image": "assets/cards/magda-sawon-890a527f.jpg",
+     "link": "https://n3wyorkers.com/h/magda-sawon"
+    },
+    {
+     "handle": "@marcglimcher",
+     "id": "marc-glimcher",
+     "name": "Marc Glimcher",
+     "cat": "C",
+     "holder": false,
+     "text": "@marcglimcher your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/marc-glimcher",
+     "image": "assets/cards/marc-glimcher-a510dcaf.jpg",
+     "link": "https://n3wyorkers.com/h/marc-glimcher"
+    },
+    {
+     "handle": "@zhang_matt",
+     "id": "matt-zhang",
+     "name": "Matt Zhang",
+     "cat": "C",
+     "holder": false,
+     "text": "@zhang_matt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/matt-zhang",
+     "image": "assets/cards/matt-zhang-1b9ed136.jpg",
+     "link": "https://n3wyorkers.com/h/matt-zhang"
+    },
+    {
+     "handle": "@michaelbouhanna",
+     "id": "michael-bouhanna",
+     "name": "Michael Bouhanna",
+     "cat": "C",
+     "holder": false,
+     "text": "@michaelbouhanna your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/michael-bouhanna",
+     "image": "assets/cards/michael-bouhanna-09f11ab8.jpg",
+     "link": "https://n3wyorkers.com/h/michael-bouhanna"
+    },
+    {
+     "handle": "@moodSlime_",
+     "id": "moodslime",
+     "name": "moodSlime",
+     "cat": "C",
+     "holder": false,
+     "text": "@moodSlime_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/moodslime",
+     "image": "assets/cards/moodslime-1448b649.jpg",
+     "link": "https://n3wyorkers.com/h/moodslime"
+    },
+    {
+     "handle": "@Nightshare",
+     "id": "nightshare",
+     "name": "Nightshare",
+     "cat": "C",
+     "holder": false,
+     "text": "@Nightshare your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nightshare",
+     "image": "assets/cards/nightshare-9fb2208f.jpg",
+     "link": "https://n3wyorkers.com/h/nightshare"
+    },
+    {
+     "handle": "@Noahbolanowski",
+     "id": "noah-bolanowski",
+     "name": "Noah Bolanowski",
+     "cat": "C",
+     "holder": false,
+     "text": "@Noahbolanowski your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/noah-bolanowski",
+     "image": "assets/cards/noah-bolanowski-bb0789a2.jpg",
+     "link": "https://n3wyorkers.com/h/noah-bolanowski"
+    },
+    {
+     "handle": "@noahdavis",
+     "id": "noah-davis",
+     "name": "Noah Davis",
+     "cat": "C",
+     "holder": false,
+     "text": "@noahdavis your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/noah-davis",
+     "image": "assets/cards/noah-davis-5b008205.jpg",
+     "link": "https://n3wyorkers.com/h/noah-davis"
+    },
+    {
+     "handle": "@omz__x",
+     "id": "omz",
+     "name": "OMZ",
+     "cat": "C",
+     "holder": false,
+     "text": "@omz__x your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/omz",
+     "image": "assets/cards/omz-d6233c5f.jpg",
+     "link": "https://n3wyorkers.com/h/omz"
+    },
+    {
+     "handle": "@osseneth",
+     "id": "ossen",
+     "name": "OSSEN",
+     "cat": "C",
+     "holder": false,
+     "text": "@osseneth your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ossen",
+     "image": "assets/cards/ossen-4782a869.jpg",
+     "link": "https://n3wyorkers.com/h/ossen"
+    },
+    {
+     "handle": "@curiousoctopus",
+     "id": "paola-antonelli",
+     "name": "Paola Antonelli",
+     "cat": "C",
+     "holder": false,
+     "text": "@curiousoctopus your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/paola-antonelli",
+     "image": "assets/cards/paola-antonelli-88462e90.jpg",
+     "link": "https://n3wyorkers.com/h/paola-antonelli"
+    },
+    {
+     "handle": "@philmohun",
+     "id": "phil-mohun",
+     "name": "Phil Mohun",
+     "cat": "C",
+     "holder": false,
+     "text": "@philmohun your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/phil-mohun",
+     "image": "assets/cards/phil-mohun-cf24c431.jpg",
+     "link": "https://n3wyorkers.com/h/phil-mohun"
+    },
+    {
+     "handle": "@pranksy",
+     "id": "pranksy",
+     "name": "Pranksy",
+     "cat": "C",
+     "holder": false,
+     "text": "@pranksy your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/pranksy",
+     "image": "assets/cards/pranksy-c2f84c73.jpg",
+     "link": "https://n3wyorkers.com/h/pranksy"
+    },
+    {
+     "handle": "@pdesai_",
+     "id": "priyanka-desai",
+     "name": "Priyanka Desai",
+     "cat": "C",
+     "holder": false,
+     "text": "@pdesai_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/priyanka-desai",
+     "image": "assets/cards/priyanka-desai-036077b7.jpg",
+     "link": "https://n3wyorkers.com/h/priyanka-desai"
+    },
+    {
+     "handle": "@punk6529",
+     "id": "punk6529",
+     "name": "Punk6529",
+     "cat": "C",
+     "holder": false,
+     "text": "@punk6529 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/punk6529",
+     "image": "assets/cards/punk6529-689f392f.jpg",
+     "link": "https://n3wyorkers.com/h/punk6529"
+    },
+    {
+     "handle": "@artiegalerie",
+     "id": "punk7635-artie-handz",
+     "name": "Punk7635",
+     "cat": "C",
+     "holder": false,
+     "text": "@artiegalerie your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/punk7635-artie-handz",
+     "image": "assets/cards/punk7635-artie-handz-aaccc001.jpg",
+     "link": "https://n3wyorkers.com/h/punk7635-artie-handz"
+    },
+    {
+     "handle": "@reginaharsanyi",
+     "id": "regina-harsanyi",
+     "name": "Regina Harsanyi",
+     "cat": "C",
+     "holder": false,
+     "text": "@reginaharsanyi your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/regina-harsanyi",
+     "image": "assets/cards/regina-harsanyi-592eb0ea.jpg",
+     "link": "https://n3wyorkers.com/h/regina-harsanyi"
+    },
+    {
+     "handle": "@0x00RS",
+     "id": "richard-skeet",
+     "name": "Richard Skeet",
+     "cat": "C",
+     "holder": false,
+     "text": "@0x00RS your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/richard-skeet",
+     "image": "assets/cards/richard-skeet-61ff734c.jpg",
+     "link": "https://n3wyorkers.com/h/richard-skeet"
+    },
+    {
+     "handle": "@kukulabanze",
+     "id": "ryan-zurrer",
+     "name": "Ryan Zurrer",
+     "cat": "C",
+     "holder": false,
+     "text": "@kukulabanze your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ryan-zurrer",
+     "image": "assets/cards/ryan-zurrer-d9516f58.jpg",
+     "link": "https://n3wyorkers.com/h/ryan-zurrer"
+    },
+    {
+     "handle": "@salomeasega",
+     "id": "salome-asega",
+     "name": "Salome Asega",
+     "cat": "C",
+     "holder": false,
+     "text": "@salomeasega your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/salome-asega",
+     "image": "assets/cards/salome-asega-7cde065b.jpg",
+     "link": "https://n3wyorkers.com/h/salome-asega"
+    },
+    {
+     "handle": "@sam_ai_am",
+     "id": "sam-ai-am",
+     "name": "sam_ai_am",
+     "cat": "C",
+     "holder": false,
+     "text": "@sam_ai_am your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sam-ai-am",
+     "image": "assets/cards/sam-ai-am-0648a772.jpg",
+     "link": "https://n3wyorkers.com/h/sam-ai-am"
+    },
+    {
+     "handle": "@seedphrase",
+     "id": "seedphrase",
+     "name": "Seedphrase",
+     "cat": "C",
+     "holder": false,
+     "text": "@seedphrase your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/seedphrase",
+     "image": "assets/cards/seedphrase-7b0505f6.jpg",
+     "link": "https://n3wyorkers.com/h/seedphrase"
+    },
+    {
+     "handle": "@Shills_81",
+     "id": "shills81-eth",
+     "name": "shills81.eth",
+     "cat": "C",
+     "holder": false,
+     "text": "@Shills_81 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/shills81-eth",
+     "image": "assets/cards/shills81-eth-88b8ac11.jpg",
+     "link": "https://n3wyorkers.com/h/shills81-eth"
+    }
+   ]
+  },
+  {
+   "day": 8,
+   "posts": [
+    {
+     "handle": "@shore_borne",
+     "id": "shoreborne",
+     "name": "shoreborne",
+     "cat": "C",
+     "holder": false,
+     "text": "@shore_borne your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/shoreborne",
+     "image": "assets/cards/shoreborne-22ea8ea3.jpg",
+     "link": "https://n3wyorkers.com/h/shoreborne"
+    },
+    {
+     "handle": "@simondepury",
+     "id": "simon-de-pury",
+     "name": "Simon de Pury",
+     "cat": "C",
+     "holder": false,
+     "text": "@simondepury your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/simon-de-pury",
+     "image": "assets/cards/simon-de-pury-ccf95c1a.jpg",
+     "link": "https://n3wyorkers.com/h/simon-de-pury"
+    },
+    {
+     "handle": "@sofiagarcia_io",
+     "id": "sofia-garcia",
+     "name": "Sofia Garcia",
+     "cat": "C",
+     "holder": false,
+     "text": "@sofiagarcia_io your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sofia-garcia",
+     "image": "assets/cards/sofia-garcia-f41bf91c.jpg",
+     "link": "https://n3wyorkers.com/h/sofia-garcia"
+    },
+    {
+     "handle": "@zestycheeto",
+     "id": "spicycheetos",
+     "name": "spicycheetos",
+     "cat": "C",
+     "holder": false,
+     "text": "@zestycheeto your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/spicycheetos",
+     "image": "assets/cards/spicycheetos-54e2847c.jpg",
+     "link": "https://n3wyorkers.com/h/spicycheetos"
+    },
+    {
+     "handle": "@stevenacohen2",
+     "id": "steve-cohen",
+     "name": "Steve Cohen",
+     "cat": "C",
+     "holder": false,
+     "text": "@stevenacohen2 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/steve-cohen",
+     "image": "assets/cards/steve-cohen-c4bdb0b1.jpg",
+     "link": "https://n3wyorkers.com/h/steve-cohen"
+    },
+    {
+     "handle": "@bitforms",
+     "id": "steven-sacks",
+     "name": "Steven Sacks",
+     "cat": "C",
+     "holder": false,
+     "text": "@bitforms your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/steven-sacks",
+     "image": "assets/cards/steven-sacks-c3a3bf93.jpg",
+     "link": "https://n3wyorkers.com/h/steven-sacks"
+    },
+    {
+     "handle": "@suparno67",
+     "id": "suparno67-mob",
+     "name": "suparno67_mob",
+     "cat": "C",
+     "holder": false,
+     "text": "@suparno67 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/suparno67-mob",
+     "image": "assets/cards/suparno67-mob-c77f4d00.jpg",
+     "link": "https://n3wyorkers.com/h/suparno67-mob"
+    },
+    {
+     "handle": "@tinariversryan",
+     "id": "tina-rivers-ryan",
+     "name": "Tina Rivers Ryan",
+     "cat": "C",
+     "holder": false,
+     "text": "@tinariversryan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tina-rivers-ryan",
+     "image": "assets/cards/tina-rivers-ryan-07ce83fa.jpg",
+     "link": "https://n3wyorkers.com/h/tina-rivers-ryan"
+    },
+    {
+     "handle": "@toadyhawk",
+     "id": "toady-hawk",
+     "name": "Toady Hawk",
+     "cat": "C",
+     "holder": false,
+     "text": "@toadyhawk your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/toady-hawk",
+     "image": "assets/cards/toady-hawk-46eee140.jpg",
+     "link": "https://n3wyorkers.com/h/toady-hawk"
+    },
+    {
+     "handle": "@toddkramer1",
+     "id": "todd-kramer",
+     "name": "Todd Kramer",
+     "cat": "C",
+     "holder": false,
+     "text": "@toddkramer1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/todd-kramer",
+     "image": "assets/cards/todd-kramer-ef0bb4c6.jpg",
+     "link": "https://n3wyorkers.com/h/todd-kramer"
+    },
+    {
+     "handle": "@justinaversano",
+     "id": "twinflames",
+     "name": "twinflames",
+     "cat": "C",
+     "holder": false,
+     "text": "@justinaversano your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/twinflames",
+     "image": "assets/cards/twinflames-5acf5305.jpg",
+     "link": "https://n3wyorkers.com/h/twinflames"
+    },
+    {
+     "handle": "@vince_van_dough",
+     "id": "vincent-van-dough",
+     "name": "Vincent Van Dough",
+     "cat": "C",
+     "holder": false,
+     "text": "@vince_van_dough your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/vincent-van-dough",
+     "image": "assets/cards/vincent-van-dough-540d8cab.jpg",
+     "link": "https://n3wyorkers.com/h/vincent-van-dough"
+    },
+    {
+     "handle": "@webvr_eth",
+     "id": "webvr-eth",
+     "name": "webvr.eth",
+     "cat": "C",
+     "holder": false,
+     "text": "@webvr_eth your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/webvr-eth",
+     "image": "assets/cards/webvr-eth-99629297.jpg",
+     "link": "https://n3wyorkers.com/h/webvr-eth"
+    },
+    {
+     "handle": "@WesMcQ",
+     "id": "wes-mcq",
+     "name": "Wes McQ",
+     "cat": "C",
+     "holder": false,
+     "text": "@WesMcQ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/wes-mcq",
+     "image": "assets/cards/wes-mcq-a07c9a32.jpg",
+     "link": "https://n3wyorkers.com/h/wes-mcq"
+    },
+    {
+     "handle": "@zeneca",
+     "id": "zeneca",
+     "name": "Zeneca",
+     "cat": "C",
+     "holder": false,
+     "text": "@zeneca your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/zeneca",
+     "image": "assets/cards/zeneca-6245f971.jpg",
+     "link": "https://n3wyorkers.com/h/zeneca"
+    },
+    {
+     "handle": "@albertwenger",
+     "id": "albert-wenger",
+     "name": "Albert Wenger",
+     "cat": "B",
+     "holder": false,
+     "text": "@albertwenger your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/albert-wenger",
+     "image": "assets/cards/albert-wenger-6ad72a38.jpg",
+     "link": "https://n3wyorkers.com/h/albert-wenger"
+    },
+    {
+     "handle": "@salnikov",
+     "id": "alex-salnikov",
+     "name": "Alex Salnikov",
+     "cat": "B",
+     "holder": false,
+     "text": "@salnikov your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/alex-salnikov",
+     "image": "assets/cards/alex-salnikov-e71a09bb.jpg",
+     "link": "https://n3wyorkers.com/h/alex-salnikov"
+    },
+    {
+     "handle": "@ajt",
+     "id": "alex-taub",
+     "name": "Alex Taub",
+     "cat": "B",
+     "holder": false,
+     "text": "@ajt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/alex-taub",
+     "image": "assets/cards/alex-taub-cb51cef8.jpg",
+     "link": "https://n3wyorkers.com/h/alex-taub"
+    },
+    {
+     "handle": "@alexisohanian",
+     "id": "alexis-ohanian",
+     "name": "Alexis Ohanian",
+     "cat": "B",
+     "holder": false,
+     "text": "@alexisohanian your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/alexis-ohanian",
+     "image": "assets/cards/alexis-ohanian-8aa1a6d3.jpg",
+     "link": "https://n3wyorkers.com/h/alexis-ohanian"
+    },
+    {
+     "handle": "@amandacassatt",
+     "id": "amanda-cassatt",
+     "name": "Amanda Cassatt",
+     "cat": "B",
+     "holder": false,
+     "text": "@amandacassatt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/amanda-cassatt",
+     "image": "assets/cards/amanda-cassatt-2423aa9a.jpg",
+     "link": "https://n3wyorkers.com/h/amanda-cassatt"
+    },
+    {
+     "handle": "@anildash",
+     "id": "anil-dash",
+     "name": "Anil Dash",
+     "cat": "B",
+     "holder": false,
+     "text": "@anildash your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/anil-dash",
+     "image": "assets/cards/anil-dash-0c5fe955.jpg",
+     "link": "https://n3wyorkers.com/h/anil-dash"
+    },
+    {
+     "handle": "@Artcrush",
+     "id": "artcrush",
+     "name": "Artcrush",
+     "cat": "B",
+     "holder": false,
+     "text": "@Artcrush your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/artcrush",
+     "image": "assets/cards/artcrush-607dfc8b.jpg",
+     "link": "https://n3wyorkers.com/h/artcrush"
+    },
+    {
+     "handle": "@austinrobey_",
+     "id": "austin-robey",
+     "name": "Austin Robey",
+     "cat": "B",
+     "holder": false,
+     "text": "@austinrobey_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/austin-robey",
+     "image": "assets/cards/austin-robey-90d3e452.jpg",
+     "link": "https://n3wyorkers.com/h/austin-robey"
+    },
+    {
+     "handle": "@cameron",
+     "id": "cameron-winklevoss",
+     "name": "Cameron Winklevoss",
+     "cat": "B",
+     "holder": false,
+     "text": "@cameron your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cameron-winklevoss",
+     "image": "assets/cards/cameron-winklevoss-cbb0b76f.jpg",
+     "link": "https://n3wyorkers.com/h/cameron-winklevoss"
+    },
+    {
+     "handle": "@cburniske",
+     "id": "chris-burniske",
+     "name": "Chris Burniske",
+     "cat": "B",
+     "holder": false,
+     "text": "@cburniske your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/chris-burniske",
+     "image": "assets/cards/chris-burniske-a3c07723.jpg",
+     "link": "https://n3wyorkers.com/h/chris-burniske"
+    },
+    {
+     "handle": "@cdixon",
+     "id": "chris-dixon",
+     "name": "Chris Dixon",
+     "cat": "B",
+     "holder": false,
+     "text": "@cdixon your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/chris-dixon",
+     "image": "assets/cards/chris-dixon-499809d5.jpg",
+     "link": "https://n3wyorkers.com/h/chris-dixon"
+    },
+    {
+     "handle": "@dwr",
+     "id": "dan-romero",
+     "name": "Dan Romero",
+     "cat": "B",
+     "holder": false,
+     "text": "@dwr your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dan-romero",
+     "image": "assets/cards/dan-romero-1cdfd41d.jpg",
+     "link": "https://n3wyorkers.com/h/dan-romero"
+    },
+    {
+     "handle": "@deanaburke",
+     "id": "deana-burke",
+     "name": "Deana Burke",
+     "cat": "B",
+     "holder": false,
+     "text": "@deanaburke your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/deana-burke",
+     "image": "assets/cards/deana-burke-77567535.jpg",
+     "link": "https://n3wyorkers.com/h/deana-burke"
+    },
+    {
+     "handle": "@dfinzer",
+     "id": "devin-finzer",
+     "name": "Devin Finzer",
+     "cat": "B",
+     "holder": false,
+     "text": "@dfinzer your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/devin-finzer",
+     "image": "assets/cards/devin-finzer-524dc778.jpg",
+     "link": "https://n3wyorkers.com/h/devin-finzer"
+    },
+    {
+     "handle": "@duncancfoster",
+     "id": "duncan-cock-foster",
+     "name": "Duncan Cock Foster",
+     "cat": "B",
+     "holder": false,
+     "text": "@duncancfoster your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/duncan-cock-foster",
+     "image": "assets/cards/duncan-cock-foster-557c5255.jpg",
+     "link": "https://n3wyorkers.com/h/duncan-cock-foster"
+    },
+    {
+     "handle": "@gareb",
+     "id": "gareb-shamus",
+     "name": "Gareb Shamus",
+     "cat": "B",
+     "holder": false,
+     "text": "@gareb your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/gareb-shamus",
+     "image": "assets/cards/gareb-shamus-40cbd914.jpg",
+     "link": "https://n3wyorkers.com/h/gareb-shamus"
+    },
+    {
+     "handle": "@garyvee",
+     "id": "gary-vaynerchuk",
+     "name": "Gary Vaynerchuk",
+     "cat": "B",
+     "holder": false,
+     "text": "@garyvee your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/gary-vaynerchuk",
+     "image": "assets/cards/gary-vaynerchuk-599e5e32.jpg",
+     "link": "https://n3wyorkers.com/h/gary-vaynerchuk"
+    },
+    {
+     "handle": "@griffincfoster",
+     "id": "griffin-cock-foster",
+     "name": "Griffin Cock Foster",
+     "cat": "B",
+     "holder": false,
+     "text": "@griffincfoster your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/griffin-cock-foster",
+     "image": "assets/cards/griffin-cock-foster-1a9ff009.jpg",
+     "link": "https://n3wyorkers.com/h/griffin-cock-foster"
+    },
+    {
+     "handle": "@haydenzadams",
+     "id": "hayden-adams",
+     "name": "Hayden Adams",
+     "cat": "B",
+     "holder": false,
+     "text": "@haydenzadams your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/hayden-adams",
+     "image": "assets/cards/hayden-adams-dcb5c33e.jpg",
+     "link": "https://n3wyorkers.com/h/hayden-adams"
+    },
+    {
+     "handle": "@isiain",
+     "id": "iain-nash",
+     "name": "Iain Nash",
+     "cat": "B",
+     "holder": false,
+     "text": "@isiain your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/iain-nash",
+     "image": "assets/cards/iain-nash-8ee355e0.jpg",
+     "link": "https://n3wyorkers.com/h/iain-nash"
+    },
+    {
+     "handle": "@js_horne",
+     "id": "jacob-horne",
+     "name": "Jacob Horne",
+     "cat": "B",
+     "holder": false,
+     "text": "@js_horne your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jacob-horne",
+     "image": "assets/cards/jacob-horne-f3f9386a.jpg",
+     "link": "https://n3wyorkers.com/h/jacob-horne"
+    },
+    {
+     "handle": "@betashop",
+     "id": "jason-goldberg",
+     "name": "Jason Goldberg",
+     "cat": "B",
+     "holder": false,
+     "text": "@betashop your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jason-goldberg",
+     "image": "assets/cards/jason-goldberg-ce3b1df1.jpg",
+     "link": "https://n3wyorkers.com/h/jason-goldberg"
+    },
+    {
+     "handle": "@jessepollak",
+     "id": "jesse-pollak",
+     "name": "Jesse Pollak",
+     "cat": "B",
+     "holder": false,
+     "text": "@jessepollak your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jesse-pollak",
+     "image": "assets/cards/jesse-pollak-6ceff530.jpg",
+     "link": "https://n3wyorkers.com/h/jesse-pollak"
+    },
+    {
+     "handle": "@jessewldn",
+     "id": "jesse-walden",
+     "name": "Jesse Walden",
+     "cat": "B",
+     "holder": false,
+     "text": "@jessewldn your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jesse-walden",
+     "image": "assets/cards/jesse-walden-efd1ede7.jpg",
+     "link": "https://n3wyorkers.com/h/jesse-walden"
+    },
+    {
+     "handle": "@johncrain",
+     "id": "john-crain",
+     "name": "John Crain",
+     "cat": "B",
+     "holder": false,
+     "text": "@johncrain your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/john-crain",
+     "image": "assets/cards/john-crain-c664b221.jpg",
+     "link": "https://n3wyorkers.com/h/john-crain"
+    }
+   ]
+  },
+  {
+   "day": 9,
+   "posts": [
+    {
+     "handle": "@JordanLyall",
+     "id": "jordan-lyall",
+     "name": "Jordan Lyall",
+     "cat": "B",
+     "holder": false,
+     "text": "@JordanLyall your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jordan-lyall",
+     "image": "assets/cards/jordan-lyall-d801cfc4.jpg",
+     "link": "https://n3wyorkers.com/h/jordan-lyall"
+    },
+    {
+     "handle": "@ethereumjoseph",
+     "id": "joseph-lubin",
+     "name": "Joseph Lubin",
+     "cat": "B",
+     "holder": false,
+     "text": "@ethereumjoseph your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/joseph-lubin",
+     "image": "assets/cards/joseph-lubin-88e756d1.jpg",
+     "link": "https://n3wyorkers.com/h/joseph-lubin"
+    },
+    {
+     "handle": "@justfred_ar",
+     "id": "justin-fredericks",
+     "name": "Justin Fredericks",
+     "cat": "B",
+     "holder": false,
+     "text": "@justfred_ar your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/justin-fredericks",
+     "image": "assets/cards/justin-fredericks-02b70c0f.jpg",
+     "link": "https://n3wyorkers.com/h/justin-fredericks"
+    },
+    {
+     "handle": "@kayvz",
+     "id": "kayvon-tehranian",
+     "name": "Kayvon Tehranian",
+     "cat": "B",
+     "holder": false,
+     "text": "@kayvz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kayvon-tehranian",
+     "image": "assets/cards/kayvon-tehranian-5017f81c.jpg",
+     "link": "https://n3wyorkers.com/h/kayvon-tehranian"
+    },
+    {
+     "handle": "@keithgrossman",
+     "id": "keith-grossman",
+     "name": "Keith Grossman",
+     "cat": "B",
+     "holder": false,
+     "text": "@keithgrossman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/keith-grossman",
+     "image": "assets/cards/keith-grossman-cf0ad4a5.jpg",
+     "link": "https://n3wyorkers.com/h/keith-grossman"
+    },
+    {
+     "handle": "@kevinrose",
+     "id": "kevin-rose",
+     "name": "Kevin Rose",
+     "cat": "B",
+     "holder": false,
+     "text": "@kevinrose your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kevin-rose",
+     "image": "assets/cards/kevin-rose-3a44a8c6.jpg",
+     "link": "https://n3wyorkers.com/h/kevin-rose"
+    },
+    {
+     "handle": "@ljin18",
+     "id": "li-jin",
+     "name": "Li Jin",
+     "cat": "B",
+     "holder": false,
+     "text": "@ljin18 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/li-jin",
+     "image": "assets/cards/li-jin-91e7bd08.jpg",
+     "link": "https://n3wyorkers.com/h/li-jin"
+    },
+    {
+     "handle": "@marcbeckman",
+     "id": "marc-beckman",
+     "name": "Marc Beckman",
+     "cat": "B",
+     "holder": false,
+     "text": "@marcbeckman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/marc-beckman",
+     "image": "assets/cards/marc-beckman-c7df0244.jpg",
+     "link": "https://n3wyorkers.com/h/marc-beckman"
+    },
+    {
+     "handle": "@melt_dem",
+     "id": "meltem-demirors",
+     "name": "Meltem Demirors",
+     "cat": "B",
+     "holder": false,
+     "text": "@melt_dem your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/meltem-demirors",
+     "image": "assets/cards/meltem-demirors-df2ca1e6.jpg",
+     "link": "https://n3wyorkers.com/h/meltem-demirors"
+    },
+    {
+     "handle": "@mdudas",
+     "id": "mike-dudas",
+     "name": "Mike Dudas",
+     "cat": "B",
+     "holder": false,
+     "text": "@mdudas your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mike-dudas",
+     "image": "assets/cards/mike-dudas-ed7e8fd2.jpg",
+     "link": "https://n3wyorkers.com/h/mike-dudas"
+    },
+    {
+     "handle": "@novogratz",
+     "id": "mike-novogratz",
+     "name": "Mike Novogratz",
+     "cat": "B",
+     "holder": false,
+     "text": "@novogratz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mike-novogratz",
+     "image": "assets/cards/mike-novogratz-34538027.jpg",
+     "link": "https://n3wyorkers.com/h/mike-novogratz"
+    },
+    {
+     "handle": "@nickgrossman",
+     "id": "nick-grossman",
+     "name": "Nick Grossman",
+     "cat": "B",
+     "holder": false,
+     "text": "@nickgrossman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/nick-grossman",
+     "image": "assets/cards/nick-grossman-b682cb3b.jpg",
+     "link": "https://n3wyorkers.com/h/nick-grossman"
+    },
+    {
+     "handle": "@pacmanblur",
+     "id": "pacman",
+     "name": "Pacman",
+     "cat": "B",
+     "holder": false,
+     "text": "@pacmanblur your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/pacman",
+     "image": "assets/cards/pacman-bbf81959.jpg",
+     "link": "https://n3wyorkers.com/h/pacman"
+    },
+    {
+     "handle": "@MrsRachelSpratt",
+     "id": "rachel-spratt",
+     "name": "Rachel Spratt",
+     "cat": "B",
+     "holder": false,
+     "text": "@MrsRachelSpratt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rachel-spratt",
+     "image": "assets/cards/rachel-spratt-dd919a1b.jpg",
+     "link": "https://n3wyorkers.com/h/rachel-spratt"
+    },
+    {
+     "handle": "@randizuckerberg",
+     "id": "randi-zuckerberg",
+     "name": "Randi Zuckerberg",
+     "cat": "B",
+     "holder": false,
+     "text": "@randizuckerberg your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/randi-zuckerberg",
+     "image": "assets/cards/randi-zuckerberg-ab019b6f.jpg",
+     "link": "https://n3wyorkers.com/h/randi-zuckerberg"
+    },
+    {
+     "handle": "@samenglebardt",
+     "id": "sam-englebardt",
+     "name": "Sam Englebardt",
+     "cat": "B",
+     "holder": false,
+     "text": "@samenglebardt your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sam-englebardt",
+     "image": "assets/cards/sam-englebardt-17fa690b.jpg",
+     "link": "https://n3wyorkers.com/h/sam-englebardt"
+    },
+    {
+     "handle": "@skominers",
+     "id": "scott-kominers",
+     "name": "Scott Kominers",
+     "cat": "B",
+     "holder": false,
+     "text": "@skominers your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/scott-kominers",
+     "image": "assets/cards/scott-kominers-b8c8b979.jpg",
+     "link": "https://n3wyorkers.com/h/scott-kominers"
+    },
+    {
+     "handle": "@sethgoldstein",
+     "id": "seth-goldstein",
+     "name": "Seth Goldstein",
+     "cat": "B",
+     "holder": false,
+     "text": "@sethgoldstein your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/seth-goldstein",
+     "image": "assets/cards/seth-goldstein-a46ba9db.jpg",
+     "link": "https://n3wyorkers.com/h/seth-goldstein"
+    },
+    {
+     "handle": "@spencernoon",
+     "id": "spencer-noon",
+     "name": "Spencer Noon",
+     "cat": "B",
+     "holder": false,
+     "text": "@spencernoon your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/spencer-noon",
+     "image": "assets/cards/spencer-noon-407bae1f.jpg",
+     "link": "https://n3wyorkers.com/h/spencer-noon"
+    },
+    {
+     "handle": "@tyler",
+     "id": "tyler-winklevoss",
+     "name": "Tyler Winklevoss",
+     "cat": "B",
+     "holder": false,
+     "text": "@tyler your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tyler-winklevoss",
+     "image": "assets/cards/tyler-winklevoss-c56328ec.jpg",
+     "link": "https://n3wyorkers.com/h/tyler-winklevoss"
+    },
+    {
+     "handle": "@VitalikButerin",
+     "id": "vitalik-buterin",
+     "name": "Vitalik Buterin",
+     "cat": "B",
+     "holder": false,
+     "text": "@VitalikButerin your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/vitalik-buterin",
+     "image": "assets/cards/vitalik-buterin-a8f6e2ed.jpg",
+     "link": "https://n3wyorkers.com/h/vitalik-buterin"
+    },
+    {
+     "handle": "@ystrickler",
+     "id": "yancey-strickler",
+     "name": "Yancey Strickler",
+     "cat": "B",
+     "holder": false,
+     "text": "@ystrickler your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/yancey-strickler",
+     "image": "assets/cards/yancey-strickler-80b69070.jpg",
+     "link": "https://n3wyorkers.com/h/yancey-strickler"
+    },
+    {
+     "handle": "@metaversal_",
+     "id": "yossi-hasson",
+     "name": "Yossi Hasson",
+     "cat": "B",
+     "holder": false,
+     "text": "@metaversal_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/yossi-hasson",
+     "image": "assets/cards/yossi-hasson-bce3c411.jpg",
+     "link": "https://n3wyorkers.com/h/yossi-hasson"
+    },
+    {
+     "handle": "@adamamcbride",
+     "id": "adam-mcbride",
+     "name": "Adam McBride",
+     "cat": "W",
+     "holder": false,
+     "text": "@adamamcbride your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/adam-mcbride",
+     "image": "assets/cards/adam-mcbride-e95de852.jpg",
+     "link": "https://n3wyorkers.com/h/adam-mcbride"
+    },
+    {
+     "handle": "@AndrewSteinwold",
+     "id": "andrew-steinwold",
+     "name": "Andrew Steinwold",
+     "cat": "W",
+     "holder": false,
+     "text": "@AndrewSteinwold your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/andrew-steinwold",
+     "image": "assets/cards/andrew-steinwold-b5d6d34e.jpg",
+     "link": "https://n3wyorkers.com/h/andrew-steinwold"
+    },
+    {
+     "handle": "@andr3w",
+     "id": "andrew-wang",
+     "name": "Andrew Wang",
+     "cat": "W",
+     "holder": false,
+     "text": "@andr3w your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/andrew-wang",
+     "image": "assets/cards/andrew-wang-cad7c907.jpg",
+     "link": "https://n3wyorkers.com/h/andrew-wang"
+    },
+    {
+     "handle": "@apompliano",
+     "id": "anthony-pompliano",
+     "name": "Anthony Pompliano",
+     "cat": "W",
+     "holder": false,
+     "text": "@apompliano your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/anthony-pompliano",
+     "image": "assets/cards/anthony-pompliano-ccf041a8.jpg",
+     "link": "https://n3wyorkers.com/h/anthony-pompliano"
+    },
+    {
+     "handle": "@camirusso",
+     "id": "camila-russo",
+     "name": "Camila Russo",
+     "cat": "W",
+     "holder": false,
+     "text": "@camirusso your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/camila-russo",
+     "image": "assets/cards/camila-russo-66660ee3.jpg",
+     "link": "https://n3wyorkers.com/h/camila-russo"
+    },
+    {
+     "handle": "@ChrisJourdan",
+     "id": "captain-zwingli",
+     "name": "Captain Zwingli",
+     "cat": "W",
+     "holder": false,
+     "text": "@ChrisJourdan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/captain-zwingli",
+     "image": "assets/cards/captain-zwingli-7527a1c3.jpg",
+     "link": "https://n3wyorkers.com/h/captain-zwingli"
+    },
+    {
+     "handle": "@CryptoForager81",
+     "id": "cryptoforager",
+     "name": "CryptoForager",
+     "cat": "W",
+     "holder": false,
+     "text": "@CryptoForager81 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cryptoforager",
+     "image": "assets/cards/cryptoforager-10757966.jpg",
+     "link": "https://n3wyorkers.com/h/cryptoforager"
+    },
+    {
+     "handle": "@TrustlessState",
+     "id": "david-hoffman",
+     "name": "David Hoffman",
+     "cat": "W",
+     "holder": false,
+     "text": "@TrustlessState your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/david-hoffman",
+     "image": "assets/cards/david-hoffman-26eab711.jpg",
+     "link": "https://n3wyorkers.com/h/david-hoffman"
+    },
+    {
+     "handle": "@farokh",
+     "id": "farokh",
+     "name": "Farokh",
+     "cat": "W",
+     "holder": false,
+     "text": "@farokh your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/farokh",
+     "image": "assets/cards/farokh-4a00ceb0.jpg",
+     "link": "https://n3wyorkers.com/h/farokh"
+    },
+    {
+     "handle": "@jerrysaltz",
+     "id": "jerry-saltz",
+     "name": "Jerry Saltz",
+     "cat": "W",
+     "holder": false,
+     "text": "@jerrysaltz your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jerry-saltz",
+     "image": "assets/cards/jerry-saltz-3bc9d472.jpg",
+     "link": "https://n3wyorkers.com/h/jerry-saltz"
+    },
+    {
+     "handle": "@KaiCenat",
+     "id": "kai-cenat",
+     "name": "Kai Cenat",
+     "cat": "W",
+     "holder": false,
+     "text": "@KaiCenat your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kai-cenat",
+     "image": "assets/cards/kai-cenat-8e101515.jpg",
+     "link": "https://n3wyorkers.com/h/kai-cenat"
+    },
+    {
+     "handle": "@kevinroose",
+     "id": "kevin-roose",
+     "name": "Kevin Roose",
+     "cat": "W",
+     "holder": false,
+     "text": "@kevinroose your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kevin-roose",
+     "image": "assets/cards/kevin-roose-0daaf7a5.jpg",
+     "link": "https://n3wyorkers.com/h/kevin-roose"
+    },
+    {
+     "handle": "@laurashin",
+     "id": "laura-shin",
+     "name": "Laura Shin",
+     "cat": "W",
+     "holder": false,
+     "text": "@laurashin your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/laura-shin",
+     "image": "assets/cards/laura-shin-4a23a872.jpg",
+     "link": "https://n3wyorkers.com/h/laura-shin"
+    },
+    {
+     "handle": "@mattmedved",
+     "id": "matt-medved",
+     "name": "Matt Medved",
+     "cat": "W",
+     "holder": false,
+     "text": "@mattmedved your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/matt-medved",
+     "image": "assets/cards/matt-medved-f6c4b4ae.jpg",
+     "link": "https://n3wyorkers.com/h/matt-medved"
+    },
+    {
+     "handle": "@CohentheWriter",
+     "id": "max-cohen",
+     "name": "Max Cohen",
+     "cat": "W",
+     "holder": false,
+     "text": "@CohentheWriter your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/max-cohen",
+     "image": "assets/cards/max-cohen-3dc7e8d6.jpg",
+     "link": "https://n3wyorkers.com/h/max-cohen"
+    },
+    {
+     "handle": "@rogerdickerman",
+     "id": "roger-dickerman",
+     "name": "Roger Dickerman",
+     "cat": "W",
+     "holder": false,
+     "text": "@rogerdickerman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/roger-dickerman",
+     "image": "assets/cards/roger-dickerman-475f01b8.jpg",
+     "link": "https://n3wyorkers.com/h/roger-dickerman"
+    },
+    {
+     "handle": "@RyanSAdams",
+     "id": "ryan-sean-adams",
+     "name": "Ryan Sean Adams",
+     "cat": "W",
+     "holder": false,
+     "text": "@RyanSAdams your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ryan-sean-adams",
+     "image": "assets/cards/ryan-sean-adams-4fdab60a.jpg",
+     "link": "https://n3wyorkers.com/h/ryan-sean-adams"
+    }
+   ]
+  },
+  {
+   "day": 10,
+   "posts": [
+    {
+     "handle": "@stephenasmith",
+     "id": "stephen-a-smith",
+     "name": "Stephen A. Smith",
+     "cat": "W",
+     "holder": false,
+     "text": "@stephenasmith your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/stephen-a-smith",
+     "image": "assets/cards/stephen-a-smith-62c2a501.jpg",
+     "link": "https://n3wyorkers.com/h/stephen-a-smith"
+    },
+    {
+     "handle": "@3LAU",
+     "id": "3lau",
+     "name": "3LAU",
+     "cat": "M",
+     "holder": false,
+     "text": "@3LAU your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/3lau",
+     "image": "assets/cards/3lau-1207d121.jpg",
+     "link": "https://n3wyorkers.com/h/3lau"
+    },
+    {
+     "handle": "@blackdave",
+     "id": "black-dave",
+     "name": "Black Dave",
+     "cat": "M",
+     "holder": false,
+     "text": "@blackdave your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/black-dave",
+     "image": "assets/cards/black-dave-cfa43232.jpg",
+     "link": "https://n3wyorkers.com/h/black-dave"
+    },
+    {
+     "handle": "@Mr_Camron",
+     "id": "cam-ron",
+     "name": "Cam'ron",
+     "cat": "M",
+     "holder": false,
+     "text": "@Mr_Camron your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cam-ron",
+     "image": "assets/cards/cam-ron-e7ea6709.jpg",
+     "link": "https://n3wyorkers.com/h/cam-ron"
+    },
+    {
+     "handle": "@cooopahtroopa",
+     "id": "cooper-turley",
+     "name": "Cooper Turley",
+     "cat": "M",
+     "holder": false,
+     "text": "@cooopahtroopa your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/cooper-turley",
+     "image": "assets/cards/cooper-turley-b642b188.jpg",
+     "link": "https://n3wyorkers.com/h/cooper-turley"
+    },
+    {
+     "handle": "@imdanielallan",
+     "id": "daniel-allan",
+     "name": "Daniel Allan",
+     "cat": "M",
+     "holder": false,
+     "text": "@imdanielallan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/daniel-allan",
+     "image": "assets/cards/daniel-allan-2e35c3d0.jpg",
+     "link": "https://n3wyorkers.com/h/daniel-allan"
+    },
+    {
+     "handle": "@realdjpremier",
+     "id": "dj-premier",
+     "name": "DJ Premier",
+     "cat": "M",
+     "holder": false,
+     "text": "@realdjpremier your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dj-premier",
+     "image": "assets/cards/dj-premier-ee27591a.jpg",
+     "link": "https://n3wyorkers.com/h/dj-premier"
+    },
+    {
+     "handle": "@sc",
+     "id": "era1-502",
+     "name": "Jay-Z",
+     "cat": "M",
+     "holder": false,
+     "text": "@sc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-502",
+     "image": "assets/cards/era1-502-094af47e.jpg",
+     "link": "https://n3wyorkers.com/h/era1-502"
+    },
+    {
+     "handle": "@nas",
+     "id": "era1-503",
+     "name": "Nas",
+     "cat": "M",
+     "holder": false,
+     "text": "@nas your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-503",
+     "image": "assets/cards/era1-503-807c70d1.jpg",
+     "link": "https://n3wyorkers.com/h/era1-503"
+    },
+    {
+     "handle": "@wutangclan",
+     "id": "era1-504",
+     "name": "Wu-Tang Clan",
+     "cat": "M",
+     "holder": false,
+     "text": "@wutangclan your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-504",
+     "image": "assets/cards/era1-504-6f754bc8.jpg",
+     "link": "https://n3wyorkers.com/h/era1-504"
+    },
+    {
+     "handle": "@blondieofficial",
+     "id": "era1-506",
+     "name": "Debbie Harry",
+     "cat": "M",
+     "holder": false,
+     "text": "@blondieofficial your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-506",
+     "image": "assets/cards/era1-506-f38e5419.jpg",
+     "link": "https://n3wyorkers.com/h/era1-506"
+    },
+    {
+     "handle": "@madonna",
+     "id": "era1-510",
+     "name": "Madonna",
+     "cat": "M",
+     "holder": false,
+     "text": "@madonna your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-510",
+     "image": "assets/cards/era1-510-8a132d20.jpg",
+     "link": "https://n3wyorkers.com/h/era1-510"
+    },
+    {
+     "handle": "@cyndilauper",
+     "id": "era1-511",
+     "name": "Cyndi Lauper",
+     "cat": "M",
+     "holder": false,
+     "text": "@cyndilauper your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-511",
+     "image": "assets/cards/era1-511-5fc68019.jpg",
+     "link": "https://n3wyorkers.com/h/era1-511"
+    },
+    {
+     "handle": "@ladygaga",
+     "id": "era1-512",
+     "name": "Lady Gaga",
+     "cat": "M",
+     "holder": false,
+     "text": "@ladygaga your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-512",
+     "image": "assets/cards/era1-512-6df15689.jpg",
+     "link": "https://n3wyorkers.com/h/era1-512"
+    },
+    {
+     "handle": "@iamcardib",
+     "id": "era1-513",
+     "name": "Cardi B",
+     "cat": "M",
+     "holder": false,
+     "text": "@iamcardib your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-513",
+     "image": "assets/cards/era1-513-f2d077b4.jpg",
+     "link": "https://n3wyorkers.com/h/era1-513"
+    },
+    {
+     "handle": "@billyjoel",
+     "id": "era1-515",
+     "name": "Billy Joel",
+     "cat": "M",
+     "holder": false,
+     "text": "@billyjoel your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-515",
+     "image": "assets/cards/era1-515-a8045505.jpg",
+     "link": "https://n3wyorkers.com/h/era1-515"
+    },
+    {
+     "handle": "@aliciakeys",
+     "id": "era1-516",
+     "name": "Alicia Keys",
+     "cat": "M",
+     "holder": false,
+     "text": "@aliciakeys your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-516",
+     "image": "assets/cards/era1-516-808c0c52.jpg",
+     "link": "https://n3wyorkers.com/h/era1-516"
+    },
+    {
+     "handle": "@BarbraStreisand",
+     "id": "era1-520",
+     "name": "Barbra Streisand",
+     "cat": "M",
+     "holder": false,
+     "text": "@BarbraStreisand your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-520",
+     "image": "assets/cards/era1-520-acf0cf67.jpg",
+     "link": "https://n3wyorkers.com/h/era1-520"
+    },
+    {
+     "handle": "@asvpxrocky",
+     "id": "era1-638",
+     "name": "A$AP Rocky",
+     "cat": "M",
+     "holder": false,
+     "text": "@asvpxrocky your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-638",
+     "image": "assets/cards/era1-638-0203c3bb.jpg",
+     "link": "https://n3wyorkers.com/h/era1-638"
+    },
+    {
+     "handle": "@NICKIMINAJ",
+     "id": "era1-639",
+     "name": "Nicki Minaj",
+     "cat": "M",
+     "holder": false,
+     "text": "@NICKIMINAJ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-639",
+     "image": "assets/cards/era1-639-c2a32cc0.jpg",
+     "link": "https://n3wyorkers.com/h/era1-639"
+    },
+    {
+     "handle": "@joeyBADASS",
+     "id": "era1-641",
+     "name": "Joey Bada$$",
+     "cat": "M",
+     "holder": false,
+     "text": "@joeyBADASS your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-641",
+     "image": "assets/cards/era1-641-2ff9f4a7.jpg",
+     "link": "https://n3wyorkers.com/h/era1-641"
+    },
+    {
+     "handle": "@beastieboys",
+     "id": "era1-642",
+     "name": "Beastie Boys",
+     "cat": "M",
+     "holder": false,
+     "text": "@beastieboys your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-642",
+     "image": "assets/cards/era1-642-67c9c1c5.jpg",
+     "link": "https://n3wyorkers.com/h/era1-642"
+    },
+    {
+     "handle": "@rundmc",
+     "id": "era1-643",
+     "name": "Run-DMC",
+     "cat": "M",
+     "holder": false,
+     "text": "@rundmc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-643",
+     "image": "assets/cards/era1-643-15ddca1e.jpg",
+     "link": "https://n3wyorkers.com/h/era1-643"
+    },
+    {
+     "handle": "@llcoolj",
+     "id": "era1-644",
+     "name": "LL Cool J",
+     "cat": "M",
+     "holder": false,
+     "text": "@llcoolj your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-644",
+     "image": "assets/cards/era1-644-3371f49a.jpg",
+     "link": "https://n3wyorkers.com/h/era1-644"
+    },
+    {
+     "handle": "@FivioForeign",
+     "id": "fivio-foreign",
+     "name": "Fivio Foreign",
+     "cat": "M",
+     "holder": false,
+     "text": "@FivioForeign your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/fivio-foreign",
+     "image": "assets/cards/fivio-foreign-7c91070a.jpg",
+     "link": "https://n3wyorkers.com/h/fivio-foreign"
+    },
+    {
+     "handle": "@frenchmontana",
+     "id": "french-montana",
+     "name": "French Montana",
+     "cat": "M",
+     "holder": false,
+     "text": "@frenchmontana your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/french-montana",
+     "image": "assets/cards/french-montana-7eb16142.jpg",
+     "link": "https://n3wyorkers.com/h/french-montana"
+    },
+    {
+     "handle": "@ghostfacekillah",
+     "id": "ghostface-killah",
+     "name": "Ghostface Killah",
+     "cat": "M",
+     "holder": false,
+     "text": "@ghostfacekillah your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ghostface-killah",
+     "image": "assets/cards/ghostface-killah-31ff474c.jpg",
+     "link": "https://n3wyorkers.com/h/ghostface-killah"
+    },
+    {
+     "handle": "@gramatik",
+     "id": "gramatik",
+     "name": "Gramatik",
+     "cat": "M",
+     "holder": false,
+     "text": "@gramatik your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/gramatik",
+     "image": "assets/cards/gramatik-81967f56.jpg",
+     "link": "https://n3wyorkers.com/h/gramatik"
+    },
+    {
+     "handle": "@haleekmaul",
+     "id": "haleek-maul",
+     "name": "Haleek Maul",
+     "cat": "M",
+     "holder": false,
+     "text": "@haleekmaul your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/haleek-maul",
+     "image": "assets/cards/haleek-maul-b67dd895.jpg",
+     "link": "https://n3wyorkers.com/h/haleek-maul"
+    },
+    {
+     "handle": "@hollyherndon",
+     "id": "holly-herndon",
+     "name": "Holly Herndon",
+     "cat": "M",
+     "holder": false,
+     "text": "@hollyherndon your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/holly-herndon",
+     "image": "assets/cards/holly-herndon-563a642e.jpg",
+     "link": "https://n3wyorkers.com/h/holly-herndon"
+    },
+    {
+     "handle": "@icespice",
+     "id": "ice-spice",
+     "name": "Ice Spice",
+     "cat": "M",
+     "holder": false,
+     "text": "@icespice your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ice-spice",
+     "image": "assets/cards/ice-spice-f8d3f448.jpg",
+     "link": "https://n3wyorkers.com/h/ice-spice"
+    },
+    {
+     "handle": "@illadaproducer",
+     "id": "illa-da-producer",
+     "name": "Illa da Producer",
+     "cat": "M",
+     "holder": false,
+     "text": "@illadaproducer your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/illa-da-producer",
+     "image": "assets/cards/illa-da-producer-53a27ed2.jpg",
+     "link": "https://n3wyorkers.com/h/illa-da-producer"
+    },
+    {
+     "handle": "@illmind",
+     "id": "illmind",
+     "name": "Illmind",
+     "cat": "M",
+     "holder": false,
+     "text": "@illmind your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/illmind",
+     "image": "assets/cards/illmind-acc37cd9.jpg",
+     "link": "https://n3wyorkers.com/h/illmind"
+    },
+    {
+     "handle": "@lcdsoundsystem",
+     "id": "james-murphy",
+     "name": "James Murphy",
+     "cat": "M",
+     "holder": false,
+     "text": "@lcdsoundsystem your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/james-murphy",
+     "image": "assets/cards/james-murphy-b08a9091.jpg",
+     "link": "https://n3wyorkers.com/h/james-murphy"
+    },
+    {
+     "handle": "@songadaymann",
+     "id": "jonathan-mann",
+     "name": "Jonathan Mann",
+     "cat": "M",
+     "holder": false,
+     "text": "@songadaymann your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jonathan-mann",
+     "image": "assets/cards/jonathan-mann-39854f40.jpg",
+     "link": "https://n3wyorkers.com/h/jonathan-mann"
+    },
+    {
+     "handle": "@callmelatasha",
+     "id": "latash",
+     "name": "Latashá",
+     "cat": "M",
+     "holder": false,
+     "text": "@callmelatasha your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/latash",
+     "image": "assets/cards/latash-763ffe16.jpg",
+     "link": "https://n3wyorkers.com/h/latash"
+    },
+    {
+     "handle": "@methodman",
+     "id": "method-man",
+     "name": "Method Man",
+     "cat": "M",
+     "holder": false,
+     "text": "@methodman your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/method-man",
+     "image": "assets/cards/method-man-2b0dccbd.jpg",
+     "link": "https://n3wyorkers.com/h/method-man"
+    },
+    {
+     "handle": "@themikecasey",
+     "id": "mike-casey",
+     "name": "Mike Casey",
+     "cat": "M",
+     "holder": false,
+     "text": "@themikecasey your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mike-casey",
+     "image": "assets/cards/mike-casey-ab522056.jpg",
+     "link": "https://n3wyorkers.com/h/mike-casey"
+    },
+    {
+     "handle": "@questlove",
+     "id": "questlove",
+     "name": "Questlove",
+     "cat": "M",
+     "holder": false,
+     "text": "@questlove your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/questlove",
+     "image": "assets/cards/questlove-0030e672.jpg",
+     "link": "https://n3wyorkers.com/h/questlove"
+    },
+    {
+     "handle": "@RAC",
+     "id": "rac",
+     "name": "RAC",
+     "cat": "M",
+     "holder": false,
+     "text": "@RAC your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rac",
+     "image": "assets/cards/rac-b073c514.jpg",
+     "link": "https://n3wyorkers.com/h/rac"
+    }
+   ]
+  },
+  {
+   "day": 11,
+   "posts": [
+    {
+     "handle": "@rza",
+     "id": "rza",
+     "name": "RZA",
+     "cat": "M",
+     "holder": false,
+     "text": "@rza your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/rza",
+     "image": "assets/cards/rza-479593c1.jpg",
+     "link": "https://n3wyorkers.com/h/rza"
+    },
+    {
+     "handle": "@spottiewifi",
+     "id": "spottie-wifi",
+     "name": "Spottie WiFi",
+     "cat": "M",
+     "holder": false,
+     "text": "@spottiewifi your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/spottie-wifi",
+     "image": "assets/cards/spottie-wifi-15170c80.jpg",
+     "link": "https://n3wyorkers.com/h/spottie-wifi"
+    },
+    {
+     "handle": "@steveaoki",
+     "id": "steve-aoki",
+     "name": "Steve Aoki",
+     "cat": "M",
+     "holder": false,
+     "text": "@steveaoki your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/steve-aoki",
+     "image": "assets/cards/steve-aoki-35c109af.jpg",
+     "link": "https://n3wyorkers.com/h/steve-aoki"
+    },
+    {
+     "handle": "@therealstylesp",
+     "id": "styles-p",
+     "name": "Styles P",
+     "cat": "M",
+     "holder": false,
+     "text": "@therealstylesp your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/styles-p",
+     "image": "assets/cards/styles-p-878dafea.jpg",
+     "link": "https://n3wyorkers.com/h/styles-p"
+    },
+    {
+     "handle": "@verite",
+     "id": "v-rit",
+     "name": "Vérité",
+     "cat": "M",
+     "holder": false,
+     "text": "@verite your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/v-rit",
+     "image": "assets/cards/v-rit-3fecbd9d.jpg",
+     "link": "https://n3wyorkers.com/h/v-rit"
+    },
+    {
+     "handle": "@wyclef",
+     "id": "wyclef-jean",
+     "name": "Wyclef Jean",
+     "cat": "M",
+     "holder": false,
+     "text": "@wyclef your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/wyclef-jean",
+     "image": "assets/cards/wyclef-jean-45cf03d8.jpg",
+     "link": "https://n3wyorkers.com/h/wyclef-jean"
+    },
+    {
+     "handle": "@azizansari",
+     "id": "aziz-ansari",
+     "name": "Aziz Ansari",
+     "cat": "F",
+     "holder": false,
+     "text": "@azizansari your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/aziz-ansari",
+     "image": "assets/cards/aziz-ansari-dc1f96e3.jpg",
+     "link": "https://n3wyorkers.com/h/aziz-ansari"
+    },
+    {
+     "handle": "@spikelee",
+     "id": "era1-485",
+     "name": "Spike Lee",
+     "cat": "F",
+     "holder": false,
+     "text": "@spikelee your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-485",
+     "image": "assets/cards/era1-485-87864d61.jpg",
+     "link": "https://n3wyorkers.com/h/era1-485"
+    },
+    {
+     "handle": "@Lin_Manuel",
+     "id": "era1-514",
+     "name": "Lin-Manuel Miranda",
+     "cat": "F",
+     "holder": false,
+     "text": "@Lin_Manuel your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-514",
+     "image": "assets/cards/era1-514-efe27e88.jpg",
+     "link": "https://n3wyorkers.com/h/era1-514"
+    },
+    {
+     "handle": "@SJP",
+     "id": "era1-521",
+     "name": "Sarah Jessica Parker",
+     "cat": "F",
+     "holder": false,
+     "text": "@SJP your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-521",
+     "image": "assets/cards/era1-521-cb64d0af.jpg",
+     "link": "https://n3wyorkers.com/h/era1-521"
+    },
+    {
+     "handle": "@JerrySeinfeld",
+     "id": "era1-541",
+     "name": "Jerry Seinfeld",
+     "cat": "F",
+     "holder": false,
+     "text": "@JerrySeinfeld your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-541",
+     "image": "assets/cards/era1-541-dba5859b.jpg",
+     "link": "https://n3wyorkers.com/h/era1-541"
+    },
+    {
+     "handle": "@jimmyfallon",
+     "id": "jimmy-fallon",
+     "name": "Jimmy Fallon",
+     "cat": "F",
+     "holder": false,
+     "text": "@jimmyfallon your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jimmy-fallon",
+     "image": "assets/cards/jimmy-fallon-f751fb9c.jpg",
+     "link": "https://n3wyorkers.com/h/jimmy-fallon"
+    },
+    {
+     "handle": "@bellahadid",
+     "id": "bella-hadid",
+     "name": "Bella Hadid",
+     "cat": "X",
+     "holder": false,
+     "text": "@bellahadid your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/bella-hadid",
+     "image": "assets/cards/bella-hadid-e6110abe.jpg",
+     "link": "https://n3wyorkers.com/h/bella-hadid"
+    },
+    {
+     "handle": "@dvf",
+     "id": "diane-von-furstenberg",
+     "name": "Diane von Furstenberg",
+     "cat": "X",
+     "holder": false,
+     "text": "@dvf your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/diane-von-furstenberg",
+     "image": "assets/cards/diane-von-furstenberg-02b9389d.jpg",
+     "link": "https://n3wyorkers.com/h/diane-von-furstenberg"
+    },
+    {
+     "handle": "@emrata",
+     "id": "emily-ratajkowski",
+     "name": "Emily Ratajkowski",
+     "cat": "X",
+     "holder": false,
+     "text": "@emrata your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/emily-ratajkowski",
+     "image": "assets/cards/emily-ratajkowski-ef90b7a6.jpg",
+     "link": "https://n3wyorkers.com/h/emily-ratajkowski"
+    },
+    {
+     "handle": "@dapperdanharlem",
+     "id": "era1-631",
+     "name": "Dapper Dan",
+     "cat": "X",
+     "holder": false,
+     "text": "@dapperdanharlem your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-631",
+     "image": "assets/cards/era1-631-dae5e9f3.jpg",
+     "link": "https://n3wyorkers.com/h/era1-631"
+    },
+    {
+     "handle": "@ralphlauren",
+     "id": "era1-632",
+     "name": "Ralph Lauren",
+     "cat": "X",
+     "holder": false,
+     "text": "@ralphlauren your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-632",
+     "image": "assets/cards/era1-632-0e827c5e.jpg",
+     "link": "https://n3wyorkers.com/h/era1-632"
+    },
+    {
+     "handle": "@jasonwu",
+     "id": "jason-wu",
+     "name": "Jason Wu",
+     "cat": "X",
+     "holder": false,
+     "text": "@jasonwu your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jason-wu",
+     "image": "assets/cards/jason-wu-6ce27129.jpg",
+     "link": "https://n3wyorkers.com/h/jason-wu"
+    },
+    {
+     "handle": "@jeffstaple",
+     "id": "jeff-staple",
+     "name": "Jeff Staple",
+     "cat": "X",
+     "holder": false,
+     "text": "@jeffstaple your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jeff-staple",
+     "image": "assets/cards/jeff-staple-68cb2128.jpg",
+     "link": "https://n3wyorkers.com/h/jeff-staple"
+    },
+    {
+     "handle": "@karliekloss",
+     "id": "karlie-kloss",
+     "name": "Karlie Kloss",
+     "cat": "X",
+     "holder": false,
+     "text": "@karliekloss your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/karlie-kloss",
+     "image": "assets/cards/karlie-kloss-86c3a4b6.jpg",
+     "link": "https://n3wyorkers.com/h/karlie-kloss"
+    },
+    {
+     "handle": "@marcjacobs",
+     "id": "marc-jacobs",
+     "name": "Marc Jacobs",
+     "cat": "X",
+     "holder": false,
+     "text": "@marcjacobs your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/marc-jacobs",
+     "image": "assets/cards/marc-jacobs-01938e2e.jpg",
+     "link": "https://n3wyorkers.com/h/marc-jacobs"
+    },
+    {
+     "handle": "@michaelkors",
+     "id": "michael-kors",
+     "name": "Michael Kors",
+     "cat": "X",
+     "holder": false,
+     "text": "@michaelkors your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/michael-kors",
+     "image": "assets/cards/michael-kors-92bed9d8.jpg",
+     "link": "https://n3wyorkers.com/h/michael-kors"
+    },
+    {
+     "handle": "@RonnieFieg",
+     "id": "ronnie-fieg",
+     "name": "Ronnie Fieg",
+     "cat": "X",
+     "holder": false,
+     "text": "@RonnieFieg your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/ronnie-fieg",
+     "image": "assets/cards/ronnie-fieg-e0aeeeba.jpg",
+     "link": "https://n3wyorkers.com/h/ronnie-fieg"
+    },
+    {
+     "handle": "@thejudge44",
+     "id": "aaron-judge",
+     "name": "Aaron Judge",
+     "cat": "S",
+     "holder": false,
+     "text": "@thejudge44 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/aaron-judge",
+     "image": "assets/cards/aaron-judge-d4124fc0.jpg",
+     "link": "https://n3wyorkers.com/h/aaron-judge"
+    },
+    {
+     "handle": "@breannastewart",
+     "id": "breanna-stewart",
+     "name": "Breanna Stewart",
+     "cat": "S",
+     "holder": false,
+     "text": "@breannastewart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/breanna-stewart",
+     "image": "assets/cards/breanna-stewart-b7950a02.jpg",
+     "link": "https://n3wyorkers.com/h/breanna-stewart"
+    },
+    {
+     "handle": "@carmeloanthony",
+     "id": "carmelo-anthony",
+     "name": "Carmelo Anthony",
+     "cat": "S",
+     "holder": false,
+     "text": "@carmeloanthony your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/carmelo-anthony",
+     "image": "assets/cards/carmelo-anthony-67854687.jpg",
+     "link": "https://n3wyorkers.com/h/carmelo-anthony"
+    },
+    {
+     "handle": "@elimanning",
+     "id": "eli-manning",
+     "name": "Eli Manning",
+     "cat": "S",
+     "holder": false,
+     "text": "@elimanning your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/eli-manning",
+     "image": "assets/cards/eli-manning-010ea933.jpg",
+     "link": "https://n3wyorkers.com/h/eli-manning"
+    },
+    {
+     "handle": "@derekjeter",
+     "id": "era1-483",
+     "name": "Derek Jeter",
+     "cat": "S",
+     "holder": false,
+     "text": "@derekjeter your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-483",
+     "image": "assets/cards/era1-483-d700ac1c.jpg",
+     "link": "https://n3wyorkers.com/h/era1-483"
+    },
+    {
+     "handle": "@Lindor12BC",
+     "id": "francisco-lindor",
+     "name": "Francisco Lindor",
+     "cat": "S",
+     "holder": false,
+     "text": "@Lindor12BC your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/francisco-lindor",
+     "image": "assets/cards/francisco-lindor-27de95bd.jpg",
+     "link": "https://n3wyorkers.com/h/francisco-lindor"
+    },
+    {
+     "handle": "@hlundqvist35",
+     "id": "henrik-lundqvist",
+     "name": "Henrik Lundqvist",
+     "cat": "S",
+     "holder": false,
+     "text": "@hlundqvist35 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/henrik-lundqvist",
+     "image": "assets/cards/henrik-lundqvist-3c32126d.jpg",
+     "link": "https://n3wyorkers.com/h/henrik-lundqvist"
+    },
+    {
+     "handle": "@jalenbrunson1",
+     "id": "jalen-brunson",
+     "name": "Jalen Brunson",
+     "cat": "S",
+     "holder": false,
+     "text": "@jalenbrunson1 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jalen-brunson",
+     "image": "assets/cards/jalen-brunson-b041a827.jpg",
+     "link": "https://n3wyorkers.com/h/jalen-brunson"
+    },
+    {
+     "handle": "@jlin7",
+     "id": "jeremy-lin",
+     "name": "Jeremy Lin",
+     "cat": "S",
+     "holder": false,
+     "text": "@jlin7 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/jeremy-lin",
+     "image": "assets/cards/jeremy-lin-ce14298e.jpg",
+     "link": "https://n3wyorkers.com/h/jeremy-lin"
+    },
+    {
+     "handle": "@joshhart",
+     "id": "josh-hart",
+     "name": "Josh Hart",
+     "cat": "S",
+     "holder": false,
+     "text": "@joshhart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/josh-hart",
+     "image": "assets/cards/josh-hart-1060914e.jpg",
+     "link": "https://n3wyorkers.com/h/josh-hart"
+    },
+    {
+     "handle": "@JuanSoto25_",
+     "id": "juan-soto",
+     "name": "Juan Soto",
+     "cat": "S",
+     "holder": false,
+     "text": "@JuanSoto25_ your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/juan-soto",
+     "image": "assets/cards/juan-soto-ce167b65.jpg",
+     "link": "https://n3wyorkers.com/h/juan-soto"
+    },
+    {
+     "handle": "@KarlTowns",
+     "id": "karl-anthony-towns",
+     "name": "Karl-Anthony Towns",
+     "cat": "S",
+     "holder": false,
+     "text": "@KarlTowns your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/karl-anthony-towns",
+     "image": "assets/cards/karl-anthony-towns-549c2a08.jpg",
+     "link": "https://n3wyorkers.com/h/karl-anthony-towns"
+    },
+    {
+     "handle": "@kdtrey5",
+     "id": "kevin-durant",
+     "name": "Kevin Durant",
+     "cat": "S",
+     "holder": false,
+     "text": "@kdtrey5 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/kevin-durant",
+     "image": "assets/cards/kevin-durant-499d8cad.jpg",
+     "link": "https://n3wyorkers.com/h/kevin-durant"
+    },
+    {
+     "handle": "@mikal_bridges",
+     "id": "mikal-bridges",
+     "name": "Mikal Bridges",
+     "cat": "S",
+     "holder": false,
+     "text": "@mikal_bridges your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/mikal-bridges",
+     "image": "assets/cards/mikal-bridges-a0d8f699.jpg",
+     "link": "https://n3wyorkers.com/h/mikal-bridges"
+    },
+    {
+     "handle": "@obj",
+     "id": "odell-beckham-jr",
+     "name": "Odell Beckham Jr.",
+     "cat": "S",
+     "holder": false,
+     "text": "@obj your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/odell-beckham-jr",
+     "image": "assets/cards/odell-beckham-jr-83766922.jpg",
+     "link": "https://n3wyorkers.com/h/odell-beckham-jr"
+    },
+    {
+     "handle": "@pete_alonso20",
+     "id": "pete-alonso",
+     "name": "Pete Alonso",
+     "cat": "S",
+     "holder": false,
+     "text": "@pete_alonso20 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/pete-alonso",
+     "image": "assets/cards/pete-alonso-9dfc0e85.jpg",
+     "link": "https://n3wyorkers.com/h/pete-alonso"
+    },
+    {
+     "handle": "@sabrina_i20",
+     "id": "sabrina-ionescu",
+     "name": "Sabrina Ionescu",
+     "cat": "S",
+     "holder": false,
+     "text": "@sabrina_i20 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sabrina-ionescu",
+     "image": "assets/cards/sabrina-ionescu-1e87f68d.jpg",
+     "link": "https://n3wyorkers.com/h/sabrina-ionescu"
+    }
+   ]
+  },
+  {
+   "day": 12,
+   "posts": [
+    {
+     "handle": "@sdinwiddie_25",
+     "id": "spencer-dinwiddie",
+     "name": "Spencer Dinwiddie",
+     "cat": "S",
+     "holder": false,
+     "text": "@sdinwiddie_25 your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/spencer-dinwiddie",
+     "image": "assets/cards/spencer-dinwiddie-f6dbce75.jpg",
+     "link": "https://n3wyorkers.com/h/spencer-dinwiddie"
+    },
+    {
+     "handle": "@s10bird",
+     "id": "sue-bird",
+     "name": "Sue Bird",
+     "cat": "S",
+     "holder": false,
+     "text": "@s10bird your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/sue-bird",
+     "image": "assets/cards/sue-bird-45f912b8.jpg",
+     "link": "https://n3wyorkers.com/h/sue-bird"
+    },
+    {
+     "handle": "@dominiqueansel",
+     "id": "dominique-ansel",
+     "name": "Dominique Ansel",
+     "cat": "D",
+     "holder": false,
+     "text": "@dominiqueansel your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/dominique-ansel",
+     "image": "assets/cards/dominique-ansel-fd0c75b7.jpg",
+     "link": "https://n3wyorkers.com/h/dominique-ansel"
+    },
+    {
+     "handle": "@marcuscooks",
+     "id": "marcus-samuelsson",
+     "name": "Marcus Samuelsson",
+     "cat": "D",
+     "holder": false,
+     "text": "@marcuscooks your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/marcus-samuelsson",
+     "image": "assets/cards/marcus-samuelsson-80c0e4e0.jpg",
+     "link": "https://n3wyorkers.com/h/marcus-samuelsson"
+    },
+    {
+     "handle": "@marthastewart",
+     "id": "martha-stewart",
+     "name": "Martha Stewart",
+     "cat": "D",
+     "holder": false,
+     "text": "@marthastewart your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/martha-stewart",
+     "image": "assets/cards/martha-stewart-51a3f27c.jpg",
+     "link": "https://n3wyorkers.com/h/martha-stewart"
+    },
+    {
+     "handle": "@tomcolicchio",
+     "id": "tom-colicchio",
+     "name": "Tom Colicchio",
+     "cat": "D",
+     "holder": false,
+     "text": "@tomcolicchio your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/tom-colicchio",
+     "image": "assets/cards/tom-colicchio-2c8c0477.jpg",
+     "link": "https://n3wyorkers.com/h/tom-colicchio"
+    },
+    {
+     "handle": "@andrewyang",
+     "id": "andrew-yang",
+     "name": "Andrew Yang",
+     "cat": "P",
+     "holder": false,
+     "text": "@andrewyang your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/andrew-yang",
+     "image": "assets/cards/andrew-yang-7236a454.jpg",
+     "link": "https://n3wyorkers.com/h/andrew-yang"
+    },
+    {
+     "handle": "@MikeBloomberg",
+     "id": "era1-657",
+     "name": "Michael Bloomberg",
+     "cat": "P",
+     "holder": false,
+     "text": "@MikeBloomberg your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-657",
+     "image": "assets/cards/era1-657-950b93d5.jpg",
+     "link": "https://n3wyorkers.com/h/era1-657"
+    },
+    {
+     "handle": "@ericadamsfornyc",
+     "id": "era1-658",
+     "name": "Eric Adams",
+     "cat": "P",
+     "holder": false,
+     "text": "@ericadamsfornyc your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-658",
+     "image": "assets/cards/era1-658-28cba8f1.jpg",
+     "link": "https://n3wyorkers.com/h/era1-658"
+    },
+    {
+     "handle": "@AOC",
+     "id": "era1-659",
+     "name": "Alexandria Ocasio-Cortez",
+     "cat": "P",
+     "holder": false,
+     "text": "@AOC your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-659",
+     "image": "assets/cards/era1-659-33ce1f30.jpg",
+     "link": "https://n3wyorkers.com/h/era1-659"
+    },
+    {
+     "handle": "@realDonaldTrump",
+     "id": "era1-660",
+     "name": "Donald Trump",
+     "cat": "P",
+     "holder": false,
+     "text": "@realDonaldTrump your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-660",
+     "image": "assets/cards/era1-660-d2a4bc38.jpg",
+     "link": "https://n3wyorkers.com/h/era1-660"
+    },
+    {
+     "handle": "@BernieSanders",
+     "id": "era1-661",
+     "name": "Bernie Sanders",
+     "cat": "P",
+     "holder": false,
+     "text": "@BernieSanders your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/era1-661",
+     "image": "assets/cards/era1-661-05214f11.jpg",
+     "link": "https://n3wyorkers.com/h/era1-661"
+    },
+    {
+     "handle": "@ZohranKMamdani",
+     "id": "zohran-mamdani",
+     "name": "Zohran Mamdani",
+     "cat": "P",
+     "holder": false,
+     "text": "@ZohranKMamdani your face is on the wall in room 183.\nPainted by MLow, hung in the Hall of Fame.\n\nn3wyorkers.com/h/zohran-mamdani",
+     "image": "assets/cards/zohran-mamdani-b3e06d6c.jpg",
+     "link": "https://n3wyorkers.com/h/zohran-mamdani"
+    }
+   ]
+  }
+ ]
+}

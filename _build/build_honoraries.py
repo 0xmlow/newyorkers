@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""honoraries.html: every real person MLow has painted into NEW YORKERS, grouped by what they do.
+"""honoraries.html: every real person MLow has brought into NEW YORKERS, grouped by what they do.
 
 Reads _build/honoraries/honoraries.json (written by _build/honoraries/sync.py, which also fills
 assets/honoraries/). Cards are rendered into the HTML so names and handles are crawlable; the script
@@ -41,7 +41,7 @@ SHORT = {"Collectors and curators": "Collectors", "Founders and investors": "Fou
 def tag(p):
     t = e(CATN[p["cat"]].upper())
     if len(p["works"]) > 1:
-        t += f' &middot; {len(p["works"])} PAINTINGS'
+        t += f' &middot; {len(p["works"])} PORTRAITS'
     if any(w.get("key") for w in p["works"]):
         t += ' <b class="ks">KEYSTONE</b>'
     return t
@@ -58,7 +58,7 @@ def handle(p):
 
 def alt(p, w):
     """What the painting is, in words a search engine can match to the person's name."""
-    return f'{p["name"]}, portrait painted by MLow' + (f': {w["title"]}' if w.get("title") else "")
+    return f'{p["name"]}, portrait by MLow' + (f': {w["title"]}' if w.get("title") else "")
 
 
 def card(i, p):
@@ -104,7 +104,7 @@ body = f'''<main class="hon">
   <video id="rc" playsinline preload="none" poster="{FILM}/poster.jpg" aria-label="The Honoraries roll call film"></video>
   <button class="play" id="rcp" type="button" aria-label="Play the roll call film"><i></i><span>WATCH THE ROLL CALL <b>4:32</b></span></button>
  </div>
- <p class="cap wrap">Every honoree, one film. Painted by MLow, scored on the beat.</p>
+ <p class="cap wrap">Every honoree, one film. Portraits by MLow, scored on the beat.</p>
 </section>
 <section class="film hof" aria-label="The Hall of Fame, room 183 of the museum">
  <div class="hof-head wrap"><div><p class="kicker">THE MUSEUM &middot; ROOM 183</p><h2>The Hall of Fame.</h2>
@@ -121,9 +121,9 @@ body = f'''<main class="hon">
  <div class="mast-in wrap">
   <p class="kicker">NEW YORKERS &middot; THE HONORARIES</p>
   <h1>The Honor&shy;aries.</h1>
-  <p class="lede">Every real person MLow has painted into NEW YORKERS, in one room: the artists and collectors of his world,
+  <p class="lede">Every real person MLow has brought into NEW YORKERS, in one room: the artists and collectors of his world,
   the guests of The MLow Show, and the musicians, athletes, chefs, writers and mayors who make New York what it is.
-  <b>{N} people, {NW} paintings, and counting.</b></p>
+  <b>{N} people, {NW} portraits, and counting.</b></p>
   <p class="counts">{counts}</p>
  </div>
 </section>
@@ -186,7 +186,7 @@ JS = r'''<script>
   function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}
   function show(i,wi){
     idx=i; wi=wi||0; var p=H[i], w=p.works[wi], im=document.getElementById("lbi");
-    im.src="assets/honoraries/"+w.l; im.alt=p.name+", painted by MLow"; im.width=w.w; im.height=w.h;
+    im.src="assets/honoraries/"+w.l; im.alt=p.name+", portrait by MLow"; im.width=w.w; im.height=w.h;
     document.getElementById("lbk").textContent=CATN[p.cat].toUpperCase()+(w.num!=null?" · NEW YORKERS NO. "+String(w.num).padStart(4,"0"):"")+(w.key?" · KEYSTONE":"");
     document.getElementById("lbn").textContent=p.name;
     document.getElementById("lbb").textContent=p.bio||"";
@@ -239,7 +239,7 @@ JS = r'''<script>
   lb.querySelector(".pv").onclick=function(){step(-1)}; lb.querySelector(".nx").onclick=function(){step(1)};
   lb.addEventListener("click",function(ev){ if(ev.target===lb) lb.close(); });
   document.addEventListener("keydown",function(ev){ if(!lb.open)return; if(ev.key==="ArrowRight")step(1); if(ev.key==="ArrowLeft")step(-1); });
-  if(window.NY&&NY.shareRow) NY.shareRow(document.getElementById("share"),{text:"Every real person MLow has painted into NEW YORKERS. The Honoraries."});
+  if(window.NY&&NY.shareRow) NY.shareRow(document.getElementById("share"),{text:"Every real person MLow has brought into NEW YORKERS. The Honoraries."});
   var h=(location.hash||"").slice(1);
   function hashTab(){ var t=tabs.find(function(x){ var s=document.querySelector('.chap[data-ch="'+x.dataset.ch+'"]'); return s&&s.id===h; }); if(t) t.click(); }
   if(h) ready.then(function(){ var byId=H.findIndex(function(p){return p.id===h}); if(byId>=0){ show(byId); openLb(); } else hashTab(); }).catch(hashTab);
@@ -427,12 +427,12 @@ def fig(p, w):
     """The painting itself, full width under the card: the image search should find."""
     t = f'&ldquo;{e(w["title"])}&rdquo;, ' if w.get("title") else ""
     return (f'<figure><img src="../assets/honoraries/{w["l"]}" alt="{e(alt(p, w))}" width="{w["w"]}" height="{w["h"]}" loading="lazy">'
-            f'<figcaption>{t}{e(p["name"])}, painted by MLow for NEW YORKERS</figcaption></figure>')
+            f'<figcaption>{t}{e(p["name"])}, portrait by MLow for NEW YORKERS</figcaption></figure>')
 
 
 def desc(p):
     """Under 158 characters, the name first, then the bio cut on a word."""
-    d = f'{p["name"]}, painted by MLow as an Honorary New Yorker.' + (f' {p["bio"]}' if p.get("bio") else "")
+    d = f'{p["name"]}, portrait by MLow, an Honorary New Yorker.' + (f' {p["bio"]}' if p.get("bio") else "")
     return d if len(d) <= 158 else d[:157].rsplit(" ", 1)[0].rstrip(",.;:") + "."
 
 
@@ -448,7 +448,7 @@ for p in PPL:
     me = "Honorary New Yorker: my face is on the wall" + tail
     them = p["name"] + (f' (@{p["x"]})' if p["x"] else "") + ": Honorary New Yorker" + ("s" if " and " in p["name"] else "") + tail
     hb = f'''<main class="hp" style="--a:{ACC[p["cat"]]}"><div class="wrap">
-<div><img class="cardimg" src="../assets/cards/{cd["card"]}" alt="The Honorary card for {e(p["name"])}, painted by MLow" width="1080" height="1512"></div>
+<div><img class="cardimg" src="../assets/cards/{cd["card"]}" alt="The Honorary card for {e(p["name"])}, portrait by MLow" width="1080" height="1512"></div>
 <div><p class="k">HONORARY NEW YORKER &middot; {e(CATN[p["cat"]].upper())}</p><h1>{e(p["name"])}</h1>
 {f'<a class="hd" href="https://x.com/{e(p["x"])}" target="_blank" rel="noopener">{e(p["handle"])}</a>' if p["x"] else (f'<p class="hd">{e(p["handle"])}</p>' if p["handle"] else "")}
 {f'<p class="t">&ldquo;{e(w0["title"])}&rdquo;</p>' if w0.get("title") else ""}
@@ -458,7 +458,7 @@ for p in PPL:
 <div class="row"><a class="btn" href="{e(wall)}">See me on the wall &#8599;</a><a class="btn" id="hme" href="{e(xi(me, u))}" target="_blank" rel="noopener" data-card="../assets/cards/{cd["card"]}" data-file="honorary-new-yorker-{p["id"]}.jpg" data-text="{e(me + chr(10) * 2 + u)}">This is me. Post my card</a>
 <a class="btn ghost" href="{e(xi(them, u))}" target="_blank" rel="noopener">Share on X</a>
 <a class="btn ghost" href="../assets/cards/{cd["card"]}" download="honorary-new-yorker-{p["id"]}.jpg">Save the card</a></div>
-<p class="loop">One of {N} Honorary New Yorkers painted by MLow. <a href="../honoraries.html#{p["id"]}">Meet the rest</a>, or <a href="../counted.html#nominate">nominate someone who belongs here</a>.</p>
+<p class="loop">One of {N} Honorary New Yorkers, portraits by MLow. <a href="../honoraries.html#{p["id"]}">Meet the rest</a>, or <a href="../counted.html#nominate">nominate someone who belongs here</a>.</p>
 </div></div>
 <section class="paint wrap">{"".join(fig(p, w) for w in p["works"])}</section></main>'''
     t0 = p["works"][0].get("title")
@@ -466,26 +466,26 @@ for p in PPL:
            "name": f'{p["name"]}, Honorary New Yorker', "isPartOf": {"@id": C["siteUrl"] + "/#site"},
            "mainEntity": PERSON(p), "primaryImageOfPage": {"@id": f'{C["siteUrl"]}/assets/honoraries/{p["works"][0]["l"]}'}}]
     ld += [{"@context": "https://schema.org", "@type": "VisualArtwork", "name": w.get("title") or f'{p["name"]}, Honorary New Yorker',
-            "artform": "Painting", "creator": MLOW, "about": PERSON(p), "isPartOf": {"@type": "CreativeWork", "name": "NEW YORKERS by MLow"},
-            "url": f'{C["siteUrl"]}/h/{p["id"]}', "description": f'{p["name"]}, portrait painted by MLow as an Honorary New Yorker.' + (f' {p["bio"].rstrip(".")}.' if p.get("bio") else ""),
+            "artform": "Portrait", "creator": MLOW, "about": PERSON(p), "isPartOf": {"@type": "CreativeWork", "name": "NEW YORKERS by MLow"},
+            "url": f'{C["siteUrl"]}/h/{p["id"]}', "description": f'{p["name"]}, portrait by MLow as an Honorary New Yorker.' + (f' {p["bio"].rstrip(".")}.' if p.get("bio") else ""),
             "image": {"@type": "ImageObject", "@id": f'{C["siteUrl"]}/assets/honoraries/{w["l"]}', "contentUrl": f'{C["siteUrl"]}/assets/honoraries/{w["l"]}',
                       "width": w["w"], "height": w["h"], "caption": alt(p, w), "creator": MLOW, "creditText": "MLow, NEW YORKERS",
                       "copyrightNotice": "\u00a9 MLow", "acquireLicensePage": f'{C["siteUrl"]}/press'}} for w in p["works"]]
     open(os.path.join(HD, p["id"] + ".html"), "w", encoding="utf-8").write(shell(
-        title=f'{p["name"]}, painted by MLow' + (f': {t0}' if t0 else "") + ' · NEW YORKERS',
+        title=f'{p["name"]}, portrait by MLow' + (f': {t0}' if t0 else "") + ' · NEW YORKERS',
         description=desc(p), jsonld=ld,
         body=hb, base="../", path=f'h/{p["id"]}.html', active="HONORARIES", extra_css=HCSS, scripts_after=HJS,
         extra_head=f'<script>if(new URLSearchParams(location.search).has("wall")){{document.documentElement.style.visibility="hidden";location.replace("{wall}")}}</script>',
         image=f'{C["siteUrl"]}/assets/cards/{cd["og"]}'))
 
 page = shell(title="The Honoraries · NEW YORKERS by MLow",
-             description=f"Every real person MLow has painted into NEW YORKERS: {N} people and {NW} paintings, artists, collectors, founders, musicians, athletes, chefs, writers and mayors of New York.",
+             description=f"Every real person MLow has brought into NEW YORKERS: {N} people and {NW} portraits, artists, collectors, founders, musicians, athletes, chefs, writers and mayors of New York.",
              body=body, path="honoraries.html", active="HONORARIES", extra_css=CSS, scripts_after=JS,
-             keywords=["NEW YORKERS by MLow", "MLow", "honorary New Yorkers", "MLow Show", "NFT artists New York", "painted portraits", "New York crypto art"],
+             keywords=["NEW YORKERS by MLow", "MLow", "honorary New Yorkers", "MLow Show", "NFT artists New York", "honorary portraits", "New York crypto art"],
              image=f'{C["siteUrl"]}/assets/honoraries/{PPL[0]["works"][0]["l"]}',
              jsonld={"@context": "https://schema.org", "@type": "CollectionPage", "name": "The Honoraries", "url": f'{C["siteUrl"]}/honoraries.html',
-                     "description": f"{N} real people painted by MLow as New Yorkers.", "isPartOf": {"@id": C["siteUrl"] + "/#site"},
+                     "description": f"{N} real people in portraits by MLow as New Yorkers.", "isPartOf": {"@id": C["siteUrl"] + "/#site"},
                      "about": [{"@type": "Person", "name": p["name"], **({"sameAs": f'https://x.com/{p["x"]}'} if p["x"] else {})} for p in PPL]})
 open(os.path.join(SITE, "honoraries.html"), "w", encoding="utf-8").write(page)
 print(f"h/: {len(PPL)} share pages")
-print(f"honoraries.html: {N} people, {NW} paintings, {len(page.encode()) // 1024} KB; assets/honoraries/data.json {os.path.getsize(_DP) // 1024} KB, v{DV}")
+print(f"honoraries.html: {N} people, {NW} portraits, {len(page.encode()) // 1024} KB; assets/honoraries/data.json {os.path.getsize(_DP) // 1024} KB, v{DV}")

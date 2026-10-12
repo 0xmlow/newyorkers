@@ -1,0 +1,39 @@
+# Honorees the roll call must not tag. One name, id or handle per line; # starts a comment.
+# Matched loosely (letters and digits only, case ignored) against the honoree's id, name and X handle.
+# Sources: the memory notes on the honorary waves. Delete a line to release the person.
+
+# MLow's own entry. It is his wall.
+MLow
+
+# Likeness rejected or pending his verdict
+Adam Weitsman            # PFP rejected 2026-09-14, "nothing like Adam"; wave 21 redo R3 verdict pending
+Rachel Sz Woods          # identity unconfirmed in the wave 10 audit
+
+# The thirteen holds from HONORARIES 300 (2026-09-25), waiting on his call
+Lucien Smith             # obituaries dated 2026-09-07; a memorial is his decision
+Lars Wander
+Alida Sun
+Emily Edelman
+Nat Sarkissian
+Mark Sabb
+Gary Greengrass          # no X account; also held for the Barney Greengrass collaboration
+Connie Bakshi
+Faith Holland            # X suspended
+Rich Lord
+Jak the Folks
+TJO
+Hanksy                   # persona retired 2022
+
+# Flagged by the likeness audit and never redone (wave 10). Tagging someone with a weak likeness is a risk;
+# release any of these once MLow has looked at the card.
+Gremplin
+Pak
+Damjanski
+Katsu
+Dom Hofmann
+Ryan Seslow
+Eclectic Method
+
+# Dead or missing handles noted in the 300 list
+DCinvestor
+Ryan Selkis

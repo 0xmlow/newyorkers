@@ -10,6 +10,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { hero } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -379,6 +380,8 @@ export const lighthouse: RoomDef = {
       const tug = new T.Group();
       { const h = new T.Mesh(new T.BoxGeometry(5, 2.4, 12), hullD); h.position.y = 0.5; tug.add(h); const c = new T.Mesh(new T.BoxGeometry(3.4, 2.6, 4), k.flat(0xc83a2a, 0.2, 0.6)); c.position.set(0, 2.8, 1); tug.add(c); const s = new T.Mesh(new T.CylinderGeometry(0.4, 0.45, 2.4, 8), black); s.position.set(0, 4.8, -0.5); tug.add(s); const b = new T.Mesh(new T.BoxGeometry(11, 2.2, 40), rust); b.position.set(0, 0.3, 30); tug.add(b); const l = new T.Mesh(new T.BoxGeometry(9, 1.2, 36), k.flat(0x3a3a3a, 0, 1)); l.position.set(0, 1.6, 30); tug.add(l); }
       k.add(tug); k.rider(tug, k.spline([v(-150, -0.6, 300), v(-170, -0.6, 0), v(-190, -0.6, -300), v(-260, -0.6, -520), v(-360, -0.6, -300), v(-340, -0.6, 200), v(-260, -0.6, 400)], true), 2.6, 200);
+      /* 2026-10-09: the hero tug (black hull, red house, rope fender) replaces the three box parts; the barge stays */
+      void hero(k, 'h_tug', { length: 14 }).then((h) => { if (!h) return; for (let j = 0; j < 3; j++) tug.children[j].visible = false; h.position.y = -1.0; tug.add(h); });
       const kay = new T.Group();
       { const rnd = X.mulberry(1698); for (let i = 0; i < 5; i++) { const x = (i - 2) * 2.4 + (rnd() - 0.5), z = (rnd() - 0.5) * 4; const hull = new T.Mesh(new T.CapsuleGeometry(0.34, 2.8, 3, 8).rotateX(PI / 2), k.flat([0xf0c020, 0xe03a2a, 0x2a70d0, 0x30a060, 0xf07020][i], 0.1, 0.6)); hull.position.set(x, -0.1, z); hull.scale.set(1, 0.55, 1); kay.add(hull); const body = new T.Mesh(figureGeo(0.17, 0.4, 0.86), k.flat([0x2a2a34, 0xe8e2d4, 0x1a3a5a, 0x8a2a2a, 0x3a5a3a][i], 0, 0.9)); body.position.set(x, -0.05, z); kay.add(body); const paddle = new T.Mesh(new T.BoxGeometry(2.4, 0.05, 0.16), k.flat(0xe8e6e0, 0, 0.6)); paddle.position.set(x, 0.7, z); paddle.userData.ph = rnd() * 6; kay.add(paddle); } }
       k.add(kay); k.rider(kay, k.spline([v(-30, 0, 60), v(-26, 0, 0), v(-40, 0, -70), v(-90, 0, -110), v(-130, 0, -40), v(-100, 0, 50), v(-60, 0, 90)], true), 1.3, 0);
@@ -502,7 +505,11 @@ export const fourfreedoms: RoomDef = {
     /* ---- the allées: 120 little leaf lindens in four rows, one instanced trunk and one instanced crown that sways ---- */
     const trees: { x: number; z: number; ph: number; s: number }[] = [];
     { const rnd = X.mulberry(185); for (let j = 0; j < 30; j++) { const z = 16 - j * 3.86, hw = hwL(z); for (const s of [-1, 1]) for (const off of [2.6, 6.6]) trees.push({ x: s * (hw + off), z, ph: rnd() * 6.3, s: 0.9 + rnd() * 0.2 }); } }
-    {
+    /* 2026-10-09: the lindens come from the tree kit (real branches and leaves, instanced, swaying);
+       the old instanced trunk and sphere crown stay behind the flag */
+    const KIT_TREES = true;
+    if (KIT_TREES) { for (const [n, t] of trees.entries()) { k.tree(t.x, PY, t.z, { h: 4.4 * t.s, r: 2.0 * t.s, species: 'linden', seed: 185 + n }); k.keepOut.push({ x: t.x, z: t.z, r: 0.55 }); } }
+    else {
       const trunkG = new T.CylinderGeometry(0.13, 0.2, 5.2, 7); trunkG.translate(0, 2.6, 0);
       k.instances(trunkG, k.pbr('ffBark', X.bark(0x4e4234), 0.7, { roughness: 1 }), trees.map((t) => new T.Matrix4().compose(v(t.x, PY, t.z), new T.Quaternion(), v(t.s, t.s, t.s))));
       const crownG = new T.SphereGeometry(1, 9, 7); crownG.scale(2.0, 2.7, 2.0); crownG.translate(0, 2.7, 0);
@@ -588,9 +595,12 @@ export const fourfreedoms: RoomDef = {
       const ferry = (stripe: number) => { const g = new T.Group(); const h = new T.Mesh(new T.BoxGeometry(7, 2.6, 26), hullW); h.position.y = 0.6; g.add(h); const b = new T.Mesh(new T.BoxGeometry(7.2, 0.6, 26), k.flat(stripe, 0.2, 0.6)); b.position.y = 1.9; g.add(b); const c = new T.Mesh(new T.BoxGeometry(6.2, 2.6, 18), hullW); c.position.set(0, 3.2, 0); g.add(c); const w = new T.Mesh(new T.BoxGeometry(6.3, 1.0, 17), k.flat(0x2a3640, 0.3, 0.2)); w.position.set(0, 3.2, 0); g.add(w); const t = new T.Mesh(new T.BoxGeometry(4, 1.4, 6), hullW); t.position.set(0, 5.2, 2); g.add(t); return g; };
       const f1 = ferry(0x2a70d0); k.add(f1); k.rider(f1, k.spline([v(-140, -0.3, 380), v(-150, -0.3, 60), v(-130, -0.3, -160), v(-100, -0.3, -330), v(-60, -0.3, -420), v(-30, -0.3, -330), v(-60, -0.3, -140), v(-90, -0.3, 120), v(-100, -0.3, 380)], true), 6, 0);
       const f2 = ferry(0xe8a020); k.add(f2); k.rider(f2, k.spline([v(120, -0.3, -400), v(110, -0.3, -160), v(130, -0.3, 80), v(150, -0.3, 380), v(190, -0.3, 200), v(170, -0.3, -100), v(150, -0.3, -400)], true), 5, 300);
+      /* 2026-10-09: the hero ferry (a white and navy catamaran) replaces both box ferries when it loads */
+      void hero(k, 'h_ferry', { length: 26 }).then((h) => { if (!h) return; [f1, f2].forEach((f, i) => { for (const x of f.children) x.visible = false; const c = i ? h.clone() : h; c.position.y = -0.8; f.add(c); }); });
       const tug = new T.Group();
       { const h = new T.Mesh(new T.BoxGeometry(5, 2.4, 12), hullD); h.position.y = 0.5; tug.add(h); const c = new T.Mesh(new T.BoxGeometry(3.4, 2.6, 4), k.flat(0xc83a2a, 0.2, 0.6)); c.position.set(0, 2.8, 1); tug.add(c); const b = new T.Mesh(new T.BoxGeometry(11, 2.2, 40), rust); b.position.set(0, 0.3, 30); tug.add(b); const l = new T.Mesh(new T.BoxGeometry(9, 1.2, 36), k.flat(0x3a3a3a, 0, 1)); l.position.set(0, 1.6, 30); tug.add(l); }
       k.add(tug); k.rider(tug, k.spline([v(-190, -0.6, -440), v(-200, -0.6, 0), v(-200, -0.6, 400), v(-230, -0.6, 500), v(-235, -0.6, 0), v(-230, -0.6, -460)], true), 2.4, 100);
+      void hero(k, 'h_tug', { length: 14 }).then((h) => { if (!h) return; for (let j = 0; j < 2; j++) tug.children[j].visible = false; h.position.y = -1.0; tug.add(h); });
     }
     {
       const rest: { x: number; y: number; z: number }[] = [];

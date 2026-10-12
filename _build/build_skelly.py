@@ -73,16 +73,16 @@ TILT = [-2.2, 1.6, -1.1, 2.4, -1.8, 1.2, -2.6, 1.9]
 champ_html = "".join(f"""
     <figure class="paste{' fresh' if ch is latest else ''}" style="--r:{TILT[i % len(TILT)]}deg">
       <a href="{esc(ch['image'])}" target="_blank" rel="noopener"><img src="{esc(ch['thumb'])}" alt="{esc(ch['title'])}" loading="lazy" width="640" height="360"></a>
-      <figcaption><small>TOURNAMENT {ch['tournamentId']} · {esc(ch['borough']).upper()} LANE{' · FRESH PAINT' if ch is latest else ''}</small><b>{esc(ch['title'])}</b>
+      <figcaption><small>TOURNAMENT {ch['tournamentId']} · {esc(ch['borough']).upper()} LANE{' · JUST PASTED' if ch is latest else ''}</small><b>{esc(ch['title'])}</b>
       <span>{esc(ch['marble'])}, ridden by <a href="n/{ch['piece']}">{esc(ch['rider'])}</a>.</span>
       <code title="Master seed, revealed by Marble Run when the tournament closed">SEED {esc(ch['seed'][:32])}<br>{esc(ch['seed'][32:])}</code></figcaption>
     </figure>""" for i, ch in enumerate(sorted(champs, key=lambda c: -c["tournamentId"])))
 
 wanted = f"""
     <figure class="paste wanted" style="--r:1.4deg">
-      <div class="wframe"><span>?</span><em>UNPAINTED</em></div>
+      <div class="wframe"><span>?</span><em>NEXT UP</em></div>
       <figcaption><small>TOURNAMENT {next_t} · RUNNING NOW</small><b>Wanted: one champion.</b>
-      <span>Whoever wins tournament {next_t} gets painted and pasted right here. Blow on the final and your seed is folded into the number printed under it, forever.</span></figcaption>
+      <span>Whoever wins tournament {next_t} gets a portrait pasted right here. Blow on the final and your seed is folded into the number printed under it, forever.</span></figcaption>
     </figure>"""
 
 def stars(m):
@@ -120,15 +120,15 @@ tape_html = "".join(f"""<figure class="tp{' fin' if a['rnd'] == 'final' else ''}
 alive_html = "".join(f"""<a href="#r{c['marbleId']}" class="tile" data-id="{c['marbleId']}" title="{esc(c['marble'])}"><img src="{esc(thumb(c['image']))}" alt="" loading="lazy" width="96" height="54"><span>{esc(c['marble'])}</span></a>"""
                      for c in sorted(cast, key=lambda c: c["marbleId"]))
 
-STOPS = [("board", "THE BOARD", "#ECC981"), ("tv", "BODEGA TV", "#DC6F57"), ("gate", "THE GATE", "#61C9E2"), ("alive", "STILL ALIVE", "#E79650"),
-         ("wall", "THE WALL", "#79B39B"), ("tape", "THE TAPE", "#DC6F57"), ("hall", "HALL OF FAME", "#ede0c8"), ("stoop", "THE STOOP", "#DC6F57"), ("engine", "THE ENGINE", "#61C9E2"), ("riders", "THE RIDERS", "#E79650")]
+STOPS = [("board", "THE BOARD", "#F2BF27"), ("tv", "BODEGA TV", "#F2668B"), ("gate", "THE GATE", "#23C7D9"), ("alive", "STILL ALIVE", "#F2BF27"),
+         ("wall", "THE WALL", "#48D9A4"), ("tape", "THE TAPE", "#F2668B"), ("hall", "HALL OF FAME", "#ede0c8"), ("stoop", "THE STOOP", "#F2668B"), ("engine", "THE ENGINE", "#23C7D9"), ("riders", "THE RIDERS", "#F2BF27")]
 line_html = "".join(f'<a href="#{k}" data-k="{k}" style="--c:{c}"><i></i><span>{n}</span></a>' for k, n, c in STOPS)
 
 extra_head = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Rock+Salt&display=swap">\n'
               f'<link rel="preload" as="image" href="{UI}hero.jpg">')
 
 css = """
-:root{/* lane colours on the paintings' palette (_build/palette_from_art.py); green has no twin in the art, so a sage that sits with it */--sk-y:#ECC981;--sk-r:#DC6F57;--sk-b:#61C9E2;--sk-o:#E79650;--sk-g:#79B39B;--sk-c:#ede0c8;--sk-ink:#080D16;--sk-paper:#EEE6D3}
+:root{/* Bryan Brinkman's four (MLow 2026-10-09): pink, cyan, mint, yellow. The portraits and frames were recoloured to the same lanes (MARBLE RUN x NEW YORKERS/brink) */--sk-y:#F2BF27;--sk-r:#F2668B;--sk-b:#23C7D9;--sk-o:#F2BF27;--sk-g:#48D9A4;--sk-c:#ede0c8;--sk-pd:#C23A62;--sk-ink:#080D16;--sk-paper:#EEE6D3}
 body.skelly{background:var(--sk-ink)}
 body.skelly main.wrap{max-width:none;padding:0}
 .sk-grain{position:fixed;inset:-50%;z-index:70;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1.2s steps(6) infinite}
@@ -142,6 +142,7 @@ body.skelly main.wrap{max-width:none;padding:0}
 .sign{font-family:Bungee,"Space Grotesk",sans-serif;font-weight:400;letter-spacing:.5px;line-height:.95;margin:0}
 .chalk{font-family:"Rock Salt",cursive;font-weight:400}
 .kick{font:600 11px/1 "IBM Plex Mono",monospace;letter-spacing:3px;text-transform:uppercase;color:var(--sk-y);display:flex;align-items:center;gap:10px;margin-bottom:16px}
+#alive .kick{color:var(--sk-pd)}#alive .kick i{color:#fff}
 .kick i{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;font:900 12px/1 "Space Grotesk",sans-serif;color:#111;font-style:normal}
 .lede{font:500 clamp(17px,1.6vw,21px)/1.5 "Space Grotesk",sans-serif;max-width:720px;opacity:.86}
 [data-rv]{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
@@ -249,8 +250,8 @@ body.skelly main.wrap{max-width:none;padding:0}
 .lane{position:relative;overflow:hidden;display:grid;grid-template-columns:62px 78px 1fr auto;align-items:center;gap:14px;padding:10px 14px 10px 10px;border:2px dashed rgba(255,255,255,.35);border-radius:6px;background:rgba(8,8,10,.62);color:inherit;font:inherit;text-align:left;width:100%;cursor:pointer;backdrop-filter:blur(3px);transition:transform .2s,border-color .2s,background .2s}
 .lane:hover:not([disabled]){transform:translateX(6px);border-color:var(--sk-y)}
 .lane[disabled]{cursor:default}
-.lane.picked{border:2px solid var(--sk-y);background:rgba(255,204,0,.12)}
-.lane.won{border:2px solid var(--sk-g);background:rgba(92,184,92,.16)}
+.lane.picked{border:2px solid var(--sk-y);background:rgba(242,191,39,.14)}
+.lane.won{border:2px solid var(--sk-g);background:rgba(72,217,164,.18)}
 .lane .cap{width:62px;height:62px;transition:transform .5s}
 .lane:hover .cap,.lane.picked .cap{transform:rotate(-30deg) scale(1.08)}
 .lane .art{width:78px;height:56px;border-radius:3px;object-fit:cover}
@@ -270,17 +271,17 @@ body.skelly main.wrap{max-width:none;padding:0}
 .fine{font-size:12px;opacity:.7;margin-top:10px;line-height:1.5}
 .scoreboard{background:#050505;border:6px solid #1d1d22;border-radius:8px;padding:16px;box-shadow:inset 0 0 30px rgba(0,0,0,.9),0 30px 60px rgba(0,0,0,.5)}
 .scoreboard h3{font:400 15px Bungee,sans-serif;color:var(--sk-o);margin:0 0 12px;letter-spacing:1px}
-.led{font:600 15px "IBM Plex Mono",monospace;color:#E9A866;text-shadow:0 0 6px rgba(255,160,40,.85),0 0 16px rgba(255,120,0,.35);width:100%;border-collapse:collapse}
+.led{font:600 15px "IBM Plex Mono",monospace;color:#F2BF27;text-shadow:0 0 6px rgba(242,191,39,.85),0 0 16px rgba(242,102,139,.35);width:100%;border-collapse:collapse}
 .led td,.led th{padding:5px 4px;border-bottom:1px solid #1a1a1a;text-align:left}
 .led th{font-size:10px;opacity:.6;letter-spacing:1.5px}
 .you{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;text-align:center}
 .you div{background:#0e0e10;border:1px solid #222;border-radius:4px;padding:10px 4px}
-.you b{display:block;font:400 30px/1 Bungee,sans-serif;color:#E9A866;text-shadow:0 0 8px rgba(255,160,40,.7)}
+.you b{display:block;font:400 30px/1 Bungee,sans-serif;color:#F2BF27;text-shadow:0 0 8px rgba(242,191,39,.7)}
 .you span{font:700 9px "IBM Plex Mono",monospace;letter-spacing:1px;opacity:.6}
 
 /* ---------- 4 STILL ALIVE: subway tile wall ---------- */
 #alive{background-color:#e9e6dc;color:#111;background-image:linear-gradient(rgba(0,0,0,.09) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.09) 2px,transparent 2px);background-size:64px 32px}
-.mosaic{display:inline-block;padding:14px 26px;background:#1c3f2f;border:10px solid transparent;border-image:repeating-linear-gradient(45deg,#c9a24a 0 10px,#7b2d26 10px 20px,#e9e6dc 20px 30px) 10;color:#e9e6dc;font:400 clamp(36px,6vw,86px)/1 "Bungee Shade",Bungee,sans-serif;letter-spacing:2px}
+.mosaic{display:inline-block;padding:14px 26px;background:#0E4F5A;border:10px solid transparent;border-image:repeating-linear-gradient(45deg,#F2BF27 0 10px,#C23A62 10px 20px,#e9e6dc 20px 30px) 10;color:#e9e6dc;font:400 clamp(36px,6vw,86px)/1 "Bungee Shade",Bungee,sans-serif;letter-spacing:2px}
 #alive .lede{opacity:1;color:#222;margin-top:18px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px;margin-top:26px}
 .tile{position:relative;display:block;background:#fff;border:2px solid #cfcabd;padding:4px;color:#111;text-decoration:none;transition:opacity .5s,filter .5s,transform .25s}
@@ -307,17 +308,17 @@ body.skelly main.wrap{max-width:none;padding:0}
 .paste figcaption{display:flex;flex-direction:column;gap:4px;padding-top:10px}
 .paste small{font:700 10px "IBM Plex Mono",monospace;letter-spacing:1.5px;opacity:.6}
 .paste b{font:400 22px/1.05 Bungee,sans-serif}
-.paste span{font-size:14px}.paste span a{color:#7b2d26}
+.paste span{font-size:14px}.paste span a{color:#C23A62}
 .paste code{font-size:9px;opacity:.5;word-break:break-all;line-height:1.4}
 .paste.fresh{box-shadow:0 0 0 4px var(--sk-y),0 26px 50px rgba(0,0,0,.55)}
-.wframe{aspect-ratio:16/9;border:4px dashed #b19a5a;display:flex;flex-direction:column;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,#efe8d4 0 14px,#e6dcc0 14px 28px)}
-.wframe span{font:400 120px/1 Bungee,sans-serif;color:#7b2d26}
+.wframe{aspect-ratio:16/9;border:4px dashed #F2668B;display:flex;flex-direction:column;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,#F0ACB3 0 14px,#93D8D6 14px 28px,#A3E0BE 28px 42px,#F0D586 42px 56px)}/* Bryan's four, tinted toward the paper */
+.wframe span{font:400 120px/1 Bungee,sans-serif;color:#C23A62}
 .wframe em{font:700 12px "IBM Plex Mono",monospace;letter-spacing:4px;font-style:normal;opacity:.7}
 
 /* ---------- 6 HALL OF FAME: awning + letterboard ---------- */
 #hall{padding-top:0}
-.awning{height:90px;background:repeating-linear-gradient(90deg,#A23231 0 70px,#EEE6D3 70px 140px);position:relative;box-shadow:0 18px 30px rgba(0,0,0,.5)}
-.awning::after{content:"";position:absolute;left:0;right:0;bottom:-26px;height:26px;background:radial-gradient(circle at 35px 0,#A23231 34px,transparent 35px) 0 0/140px 26px,radial-gradient(circle at 105px 0,#EEE6D3 34px,transparent 35px) 0 0/140px 26px}
+.awning{height:90px;background:repeating-linear-gradient(90deg,#F2668B 0 70px,#EEE6D3 70px 140px);position:relative;box-shadow:0 18px 30px rgba(0,0,0,.5)}
+.awning::after{content:"";position:absolute;left:0;right:0;bottom:-26px;height:26px;background:radial-gradient(circle at 35px 0,#F2668B 34px,transparent 35px) 0 0/140px 26px,radial-gradient(circle at 105px 0,#EEE6D3 34px,transparent 35px) 0 0/140px 26px}
 .awning span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#111;color:var(--sk-y);font:400 clamp(20px,3vw,34px)/1 Bungee,sans-serif;padding:8px 22px;white-space:nowrap;letter-spacing:2px}
 .letterboard{margin:70px auto 0;max-width:900px;background:#141414;background-image:repeating-linear-gradient(#141414 0 7px,#0a0a0a 7px 9px);border:14px solid #5a3b22;border-radius:6px;padding:26px 30px;box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 0 30px rgba(0,0,0,.8)}
 .lb{width:100%;border-collapse:collapse;font:700 clamp(15px,1.8vw,21px)/1.25 "IBM Plex Mono",monospace;color:#f5f2ea;text-transform:uppercase;letter-spacing:2px}
@@ -358,13 +359,13 @@ body.skelly main.wrap{max-width:none;padding:0}
 
 /* ---------- 9 THE RIDERS: transit cards ---------- */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;margin-top:30px;perspective:900px}
-.tcard{position:relative;display:block;aspect-ratio:1.586;border-radius:10px;overflow:hidden;color:#111;text-decoration:none;background:linear-gradient(135deg,#F1D493,#D9AE5F);box-shadow:0 12px 24px rgba(0,0,0,.45);transform-style:preserve-3d;transition:transform .15s ease-out}
+.tcard{position:relative;display:block;aspect-ratio:1.586;border-radius:10px;overflow:hidden;color:#111;text-decoration:none;background:linear-gradient(135deg,#F7D35E,#F2BF27);box-shadow:0 12px 24px rgba(0,0,0,.45);transform-style:preserve-3d;transition:transform .15s ease-out}
 .tc-art{position:absolute;right:0;top:0;bottom:0;width:58%}
 .tc-art img{width:100%;height:100%;object-fit:cover;display:block;clip-path:polygon(18% 0,100% 0,100% 100%,0 100%)}
 .tc-strip{position:absolute;left:0;right:0;bottom:16%;height:13%;background:#111;opacity:.88}
 .tc-no{position:absolute;left:10px;top:8px;font:700 10px "IBM Plex Mono",monospace;letter-spacing:1px}
 .tcard b{position:absolute;left:10px;top:24px;width:44%;font:400 15px/1 Bungee,sans-serif}
-.tcard b i{display:block;font-style:normal;color:#7b2d26;font-size:12px;margin-top:3px}
+.tcard b i{display:block;font-style:normal;color:#C23A62;font-size:12px;margin-top:3px}
 .tcard small{position:absolute;left:10px;right:10px;bottom:3%;font:600 9px/1.2 "Space Grotesk",sans-serif;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tcard::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 48%,transparent 60%);transform:translateX(var(--sx,-100%));transition:transform .2s;pointer-events:none}
 
@@ -386,7 +387,7 @@ body.skelly main.wrap{max-width:none;padding:0}
 .tp figcaption{padding:10px 4px 0}
 .tp small{font:700 10px "IBM Plex Mono",monospace;letter-spacing:1px;opacity:.6}
 .tp b{display:block;font:400 18px/1.1 Bungee,sans-serif;margin:3px 0}
-.tp span{font-size:13px}.tp span a{color:#7b2d26}
+.tp span{font-size:13px}.tp span a{color:#C23A62}
 .tp code{display:block;font-size:10px;opacity:.55;margin-top:4px}
 
 /* ---------- foot, splash, confetti ---------- */
@@ -414,7 +415,7 @@ body = f"""
 <div class="sk-grain" aria-hidden="true"></div>
 <div class="sk-cursor" id="skCur" aria-hidden="true"></div>
 <nav class="sk-line" aria-label="Sections">{line_html}</nav>
-<div class="sk-tick" aria-hidden="true"><div id="skTick"><span>SKELLY CUP IS LIVE</span><span>100 MARBLES · 5 BOROUGHS · A CHAMPION EVERY 100 MINUTES · FOREVER</span><span>ENGINE BY BRYAN BRINKMAN · MARBLERUN.FUN</span><span>EVERY CHAMPION GETS PAINTED</span><span>FREE TO PLAY · NOTHING STAKED · NOT A BET</span></div></div>
+<div class="sk-tick" aria-hidden="true"><div id="skTick"><span>SKELLY CUP IS LIVE</span><span>100 MARBLES · 5 BOROUGHS · A CHAMPION EVERY 100 MINUTES · FOREVER</span><span>ENGINE BY BRYAN BRINKMAN · MARBLERUN.FUN</span><span>EVERY CHAMPION GETS A PORTRAIT</span><span>FREE TO PLAY · NOTHING STAKED · NOT A BET</span></div></div>
 <main class="wrap">
 
 <section class="sec" id="board">
@@ -426,7 +427,7 @@ body = f"""
     <h1 class="hero-t" aria-label="SKELLY CUP"><span class="w">SKELLY</span> <span class="w y">CUP</span></h1>
     <div class="hero-row">
       <div>
-        <p class="hero-dek">A hundred marbles. <em>A hundred painted New Yorkers</em> riding them. Five lanes, five boroughs, a race every four minutes, a champion every hundred, <em>forever</em>. Every champion gets painted.</p>
+        <p class="hero-dek">A hundred marbles. <em>A hundred New Yorkers</em> riding them. Five lanes, five boroughs, a race every four minutes, a champion every hundred, <em>forever</em>. Every champion gets a portrait.</p>
         <a class="cred" href="https://marblerun.fun" target="_blank" rel="noopener"><img src="{UI}marble.png" alt="">THE ENGINE: <b>MARBLE RUN</b> BY BRYAN BRINKMAN ↗</a>
       </div>
       <div class="gatebox" id="skGate"><small id="skGateLbl">NEXT GATE</small><strong id="skClock">--</strong></div>
@@ -436,7 +437,7 @@ body = f"""
       <div><b id="stR">0/25</b><span>RACES RUN</span></div>
       <div><b id="stA">100</b><span>STILL ALIVE</span></div>
       <div><b id="stS">0</b><span>SEEDS BLOWN</span></div>
-      <div><b id="stC">{len(champs)}</b><span>CHAMPIONS PAINTED</span></div>
+      <div><b id="stC">{len(champs)}</b><span>CHAMPION PORTRAITS</span></div>
     </div>
     <div class="prog"><i id="skProg" style="width:0"></i></div>
   </div>
@@ -490,22 +491,23 @@ body = f"""
 
 <section class="sec" id="alive">
   <div class="inner">
-    <div data-rv>{kick("4", "var(--sk-o)", "STILL ALIVE · NEXT STOP, THE FINAL")}<h2 class="mosaic" id="aliveN">100 ALIVE</h2>
+    <div data-rv>{kick("4", "var(--sk-pd)", "STILL ALIVE · NEXT STOP, THE FINAL")}<h2 class="mosaic" id="aliveN">100 ALIVE</h2>
     <p class="lede">Heat winners go through. Everybody else goes home until the next tournament. Watch the wall fade from a hundred to five to one. When they're gone, they're gone.</p></div>
     <div class="tiles" id="skAlive">{alive_html}</div>
   </div>
 </section>
 
 <section class="sec" id="wall">
-  <div class="inner" data-rv>{kick("5", "var(--sk-g)", "THE WALL · CHAMPION'S PORTRAITS")}<h2 class="sign big">EVERY CHAMPION<br>GETS <span class="y">PAINTED</span></h2>
-    <p class="lede" style="margin-top:14px">Pasted up on the brick, rider as the subject, and under each one the master seed Bryan's engine reveals when the tournament closes: proof nobody chose the winner. Not us, not Bryan, not you.</p></div>
+  <div class="inner" data-rv>{kick("5", "var(--sk-g)", "THE WALL · CHAMPION'S PORTRAITS")}<h2 class="sign big">EVERY CHAMPION<br>GETS A <span class="y">PORTRAIT</span></h2>
+    <p class="lede" style="margin-top:14px">Pasted up on the brick, rider as the subject, and under each one the master seed Bryan's engine reveals when the tournament closes: proof nobody chose the winner. Not us, not Bryan, not you.</p>
+    <p style="margin-top:16px"><a class="btn" href="spiral">WALK THE SPIRAL</a> <span class="lede" style="font-size:14px">Every run as one turn of a marble run tower: every race painting in bracket order, every champion on its bay, live.</span></p></div>
   <div class="pin" id="pin"><div class="stick"><div class="track" id="track">{wanted}{champ_html}</div></div></div>
 </section>
 
 <section class="sec" id="tape">
   <div class="inner">
-    <div data-rv>{kick("6", "var(--sk-r)", "THE TAPE · EVERY RACE, PAINTED")}<h2 class="sign big">{len(race_art)} RACES.<br><span class="y">{len(race_art)}</span> PAINTINGS.</h2>
-    <p class="lede" style="margin-top:14px">Every race Bryan's engine has run gets a painting of the winner's rider taking it. The race seed picks the corner of the borough, the hour and the celebration, so nobody chose the scene either. Heats are street parties. Finals are monumental.</p></div>
+    <div data-rv>{kick("6", "var(--sk-r)", "THE TAPE · EVERY RACE, ONE FRAME")}<h2 class="sign big">{len(race_art)} RACES.<br><span class="y">{len(race_art)}</span> FRAMES.</h2>
+    <p class="lede" style="margin-top:14px">Every race Bryan's engine has run gets a frame of the winner's rider taking it. The race seed picks the corner of the borough, the hour and the celebration, so nobody chose the scene either. Heats are street parties. Finals are monumental.</p></div>
     <div class="chips" id="tapeChips">{tape_chips}</div>
     <div class="tape" id="tape-grid">{tape_html}</div>
   </div>
@@ -524,7 +526,7 @@ body = f"""
       <li style="--i:3" data-rv><b>Call it.</b><span>One lane, before the gate. After the gate the server says no. Nobody calls a race they already saw.</span></li>
       <li style="--i:2" data-rv><b>Blow on it.</b><span>Your phone sends 32 random bytes into the race seed. If they show up in Bryan's published seeds, you get a point and a receipt forever.</span></li>
       <li style="--i:1" data-rv><b>Ride the streak.</b><span>Winners stack. Seconds count. The board resets every tournament, your best streak never does.</span></li>
-      <li style="--i:0" data-rv><b>Get painted.</b><span>Champions get portraits. Ride with them to the end and blow on the final.</span></li>
+      <li style="--i:0" data-rv><b>Get a portrait.</b><span>Champions get portraits. Ride with them to the end and blow on the final.</span></li>
     </ol>
   </div>
 </section>
@@ -534,7 +536,7 @@ body = f"""
   <div class="inner enggrid">
     <div>
       <div data-rv>{kick("8", "var(--sk-b)", "THE ENGINE · MARBLE RUN BY BRYAN BRINKMAN")}<h2 class="sign big">THE ENGINE<br>IS <span class="y">BRYAN'S</span></h2>
-      <p class="lede" style="margin-top:14px">Every marble, every course, every frame of physics here is Marble Run by Bryan Brinkman. We painted the riders and drew the chalk. Bryan built the thing nobody can rig, and opened it to everyone with a free public API.</p></div>
+      <p class="lede" style="margin-top:14px">Every marble, every course, every frame of physics here is Marble Run by Bryan Brinkman. MLow made the riders and drew the chalk. Bryan built the thing nobody can rig, and opened it to everyone with a free public API.</p></div>
       <div class="map">
         <div class="stn" data-rv><b>Two numbers decide a race.</b><span>A track seed builds the course, a race seed drives the physics. Same two numbers, same finish, on any machine. The sim is open source.</span></div>
         <div class="stn" data-rv><b>The house seed locks first.</b><span>Each tournament commits a 256 bit master seed by publishing only its hash, <code>sha256(seed ‖ salt)</code>. It is revealed at the end and anyone can check it.</span></div>
@@ -551,8 +553,8 @@ body = f"""
       </div>
     </div>
     <a class="placard" href="h/bryan-brinkman" data-rv>
-      <img src="assets/cards/{BRYAN_CARD}" alt="Bryan Brinkman, painted by MLow" loading="lazy">
-      <div><small>NEW YORKERS HONORARY</small><b>Bryan Brinkman</b><span class="fine" style="opacity:.8">Painted by MLow: NimBuds at the Warehouse. Artist, builder of Marble Run, the engine under every race on this page.</span></div>
+      <img src="assets/cards/{BRYAN_CARD}" alt="Bryan Brinkman, portrait by MLow" loading="lazy">
+      <div><small>NEW YORKERS HONORARY</small><b>Bryan Brinkman</b><span class="fine" style="opacity:.8">Portrait by MLow: NimBuds at the Warehouse. Artist, builder of Marble Run, the engine under every race on this page.</span></div>
     </a>
   </div>
 </section>
@@ -560,7 +562,7 @@ body = f"""
 <section class="sec" id="riders">
   <div class="inner">
     <div data-rv>{kick("9", "var(--sk-o)", "THE RIDERS · SWIPE IN")}<h2 class="sign big">A HUNDRED<br><span class="y">RIDERS</span></h2>
-    <p class="lede" style="margin-top:14px">Every Marble Run marble keeps the name Bryan gave it, and every one belongs to whoever holds the matching BrinkWorks pass. Each holder is painted racing their marble, the scene picked by the seed of their best race, and each painting hangs on the honoraries wall. Stars are titles. Tap a card to meet the holder and their other honoraries.</p></div>
+    <p class="lede" style="margin-top:14px">Every Marble Run marble keeps the name Bryan gave it, and every one belongs to whoever holds the matching BrinkWorks pass. Each holder gets a portrait racing their marble, the scene picked by the seed of their best race, and each portrait hangs on the honoraries wall. Stars are titles. Tap a card to meet the holder and their other honoraries.</p></div>
     <div class="cards" id="cards">{cards_html}</div>
     <p class="foot-fine">Race data, seeds, courses and the simulation are Bryan Brinkman's <a href="https://marblerun.fun/api" rel="noopener">Marble Run API</a>, read live and verifiable by anyone. SKELLY CUP is a free game: no entry, no stake, no odds, no money paid out. Points and portraits are for glory. Art, not an investment.</p>
   </div>
@@ -576,7 +578,7 @@ js = r"""
 (function(){
   var API = "https://marblerun.fun", B = (window.NY && NY.BASE) || "";
   var BORO = {RED:"Brooklyn", BLUE:"Manhattan", YELLOW:"Queens", GREEN:"Staten Island", CREAM:"The Bronx"};
-  var BCOL = {Brooklyn:"#DC6F57", Manhattan:"#61C9E2", Queens:"#E79650", "Staten Island":"#79B39B", "The Bronx":"#ede0c8"};
+  var BCOL = {Brooklyn:"#F2668B", Manhattan:"#23C7D9", Queens:"#F2BF27", "Staten Island":"#48D9A4", "The Bronx":"#ede0c8"};
   var ROUND = {heats:"HEAT", semis:"SEMI", final:"THE FINAL"};
   var UI = B + "assets/skelly/ui/", CAP = {RED:"cap-red", BLUE:"cap-blue", YELLOW:"cap-yellow", GREEN:"cap-green", CREAM:"cap-cream"};
   var BCAP = {Brooklyn:"cap-red", Manhattan:"cap-blue", Queens:"cap-yellow", "Staten Island":"cap-green", "The Bronx":"cap-cream"};
@@ -712,7 +714,7 @@ js = r"""
   /* ---------- the finish ---------- */
   var conf = $("skConf"), cx = conf.getContext("2d"), bits = [];
   function confetti(){
-    conf.width = innerWidth; conf.height = innerHeight; var cols = ["#ECC981", "#DC6F57", "#61C9E2", "#E79650", "#79B39B", "#ede0c8"];
+    conf.width = innerWidth; conf.height = innerHeight; var cols = ["#F2BF27", "#F2668B", "#23C7D9", "#F2BF27", "#48D9A4", "#ede0c8"];
     for (var i = 0; i < 160; i++) bits.push({x: Math.random() * conf.width, y: -20 - Math.random() * conf.height * .5, v: 2 + Math.random() * 4, s: 4 + Math.random() * 6, c: cols[i % 6], w: Math.random() * 6});
     (function fr(){ cx.clearRect(0, 0, conf.width, conf.height); bits = bits.filter(function(b){ return b.y < conf.height + 20; }); bits.forEach(function(b){ b.y += b.v; b.w += .1; cx.fillStyle = b.c; cx.fillRect(b.x + Math.sin(b.w) * 8, b.y, b.s, b.s * .6); }); if (bits.length) requestAnimationFrame(fr); else cx.clearRect(0, 0, conf.width, conf.height); })();
   }
@@ -787,9 +789,9 @@ js = r"""
       else if (m.type === "tournament_complete") {
         var c = R[m.champion.id] || {};
         log("<b>👑 " + esc(m.champion.name) + " TAKES TOURNAMENT " + tid + ".</b> Master seed " + esc((m.masterSeedHex || "").slice(0, 16)) + "... revealed. A new Champion's Portrait is owed.");
-        tick("👑 " + esc(m.champion.name).toUpperCase() + " IS CHAMPION OF TOURNAMENT " + tid + " · THE PORTRAIT GETS PAINTED");
+        tick("👑 " + esc(m.champion.name).toUpperCase() + " IS CHAMPION OF TOURNAMENT " + tid + " · A PORTRAIT IS ON THE WAY");
         confetti();
-        splash({img: c.i ? B + c.i : "", h: "👑 " + m.champion.name.toUpperCase(), p: "Champion of tournament " + tid + (c.t ? ", ridden by " + esc(c.t) : "") + ". This one gets painted. Master seed " + esc((m.masterSeedHex || "").slice(0, 12)) + "... A new tournament drops in thirty seconds. A hundred marbles. Zero eliminated.", share: m.champion.name + " just won tournament " + tid + " of SKELLY CUP 👑 and gets a portrait. Marble Run by @bryanbrinkman, riders by @degens", hold: 15000});
+        splash({img: c.i ? B + c.i : "", h: "👑 " + m.champion.name.toUpperCase(), p: "Champion of tournament " + tid + (c.t ? ", ridden by " + esc(c.t) : "") + ". This one gets a portrait. Master seed " + esc((m.masterSeedHex || "").slice(0, 12)) + "... A new tournament drops in thirty seconds. A hundred marbles. Zero eliminated.", share: m.champion.name + " just won tournament " + tid + " of SKELLY CUP 👑 and gets a portrait. Marble Run by @bryanbrinkman, riders by @degens", hold: 15000});
         fetch(API + "/api/hall-of-fame").then(function(x){ return x.json(); }).then(hof).catch(function(){});
         setTimeout(function(){ fetch(API + "/api/state").then(function(x){ return x.json(); }).then(boot).catch(function(){}); }, 40000);
       }
@@ -933,7 +935,7 @@ design_js = r"""
 
 og = latest and latest["og"]
 page = shell(title="SKELLY CUP · 100 marbles, 5 boroughs, a champion every 100 minutes · NEW YORKERS by MLow",
-             description="Bryan Brinkman's Marble Run with a hundred painted New Yorkers riding. A race every four minutes, a champion every hundred, and every champion gets painted. Call it free, blow on the seed, ride the streak. Not a bet.",
+             description="Bryan Brinkman's Marble Run with a hundred New Yorkers riding. A race every four minutes, a champion every hundred, and every champion gets a portrait. Call it free, blow on the seed, ride the streak. Not a bet.",
              body=body, path="skelly.html", active="SKELLY", extra_css=css, scripts_after=js + design_js, extra_head=extra_head,
              image=(URL + "/" + og) if og else None,
              keywords=["Marble Run", "Bryan Brinkman", "marble racing", "skelly", "NYC street games", "provably fair", "NEW YORKERS by MLow"],

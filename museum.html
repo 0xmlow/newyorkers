@@ -7,10 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<meta name="description" content="THE MUSEUM: 183 walkable 3D rooms of New York, from the Bowery to the Guggenheim ramp to the crown of the Statue, hung with 7,542 painted New Yorkers. The light follows the New York clock. Spin the slot machine for a random room.">
+<meta name="description" content="THE MUSEUM: 183 walkable 3D rooms of New York, from the Bowery to the Guggenheim ramp to the crown of the Statue, hung with 7,542 New Yorkers. The light follows the New York clock. Spin the slot machine for a random room.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NEW YORKERS · The Museum">
-<meta property="og:description" content="THE MUSEUM: 183 walkable 3D rooms of New York, from the Bowery to the Guggenheim ramp to the crown of the Statue, hung with 7,542 painted New Yorkers. The light follows the New York clock. Spin the sl">
+<meta property="og:description" content="THE MUSEUM: 183 walkable 3D rooms of New York, from the Bowery to the Guggenheim ramp to the crown of the Statue, hung with 7,542 New Yorkers. The light follows the New York clock. Spin the slot machi">
 <meta property="og:image" content="https://n3wyorkers.com/assets/og/subway-portal-22663acad1.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -26,10 +26,10 @@
 <link rel="icon" type="image/png" href="assets/brand/eye_truecolor.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
-<link rel="stylesheet" href="assets/museum/museum.css?v=c379140a3c">
+<link rel="stylesheet" href="assets/museum/museum.css?v=840773012d">
 <!-- seo -->
 <link rel="canonical" href="https://n3wyorkers.com/museum">
-<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, painted census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, walkable 3D museum, Three.js gallery New York, virtual gallery NYC landmarks, Guggenheim virtual tour art">
+<meta name="keywords" content="NEW YORKERS by MLow, MLow, New York City art, art census of New York, NYC portraits, dynamic NFT, New York NFT collection 2026, virtual museum of New York, New York City history, walkable 3D museum, Three.js gallery New York, virtual gallery NYC landmarks, Guggenheim virtual tour art">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:site_name" content="NEW YORKERS by MLow">
 <link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
@@ -52,7 +52,8 @@
   <div class="census" id="enterCount"></div>
   <div class="census" id="enterRoom" style="margin-top:-18px"></div>
   <div id="firstRooms" aria-label="Three rooms to start with"></div>
-  <button id="firstAgain" type="button">DEAL ME THREE MORE ROOMS</button>
+  <div class="firstMore"><button id="firstAgain" type="button">DEAL ME THREE MORE ROOMS</button><button id="firstAll" type="button" aria-expanded="false" aria-controls="enterAll">SEE EVERY ROOM AND GALLERY</button></div>
+  <div id="enterAll" hidden><div class="all-head"><input id="allSearch" placeholder="Find a room: a place, a borough, a mood" autocomplete="off"><span class="mono" id="allCount"></span></div><div id="allGrid"></div></div>
   <div class="enterBtns"><button id="enterBtn">Walk into this room ↗</button><button id="enterSpin" type="button">✦ SPIN FOR A ROOM</button><a class="flat-browse" href="census">Browse art without 3D ↗</a></div>
   <div class="links"><a href="./">HOME</a><a href="census">THE CENSUS</a><a href="map">THE ATLAS</a><a href="learn">READ</a><a href="counted">GET COUNTED</a></div>
   <p id="noGl" hidden>3D is unavailable on this device. The <a href="census#gallery">gallery</a> holds the full collection.</p>
@@ -128,7 +129,7 @@
 <aside id="dest" class="panel wide">
   <div class="head"><div><div class="kicker">EXPLORE NYC</div><h3>The city is the gallery.</h3><p>Start with a favorite, or search for a place you know. <a href="new-rooms" class="newrooms">See the 25 new rooms ↗</a></p></div><button data-close aria-label="Close">×</button></div>
   <div class="search"><input id="destSearch" placeholder="Find a room: a place, a borough, a mood" autocomplete="off"><button type="button" onclick="window.__museum.spin()">✦ SPIN</button></div>
-  <div class="dest-filters" id="destFilters"><button data-filter="start" aria-pressed="true">Start here</button><button data-filter="landmarks" aria-pressed="false">15 landmarks</button><button data-filter="new" aria-pressed="false">10 new rooms</button><button data-filter="all" aria-pressed="false">All rooms</button></div><p id="destResult" role="status"></p><div class="grid" id="destGrid"></div>
+  <div class="dest-filters" id="destFilters"><button data-filter="start" aria-pressed="true">Start here</button><button data-filter="landmarks" aria-pressed="false">15 landmarks</button><button data-filter="new" aria-pressed="false">10 new rooms</button><button data-filter="all" aria-pressed="false">All rooms</button><button data-filter="galleries" aria-pressed="false">Walkable galleries</button></div><p id="destResult" role="status"></p><div class="grid" id="destGrid"></div>
 </aside>
 
 <aside id="hang" class="panel">
@@ -182,7 +183,7 @@
 <script src="assets/rooms.js"></script>
 <script src="assets/prints.js"></script>
 <script src="assets/keystone_prints.js"></script>
-<script src="assets/museum/museum.js?b=1791518426540"></script>
+<script src="assets/museum/museum.js?b=1791843460446"></script>
 <script src="assets/eggs.js" defer></script>
 
 <script src="assets/mint.js" defer></script>
