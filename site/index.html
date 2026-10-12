@@ -86,8 +86,9 @@ body.riding #rideHud{display:block}
 <div class="hud" id="cross"></div>
 <div class="hud" id="prompt"></div>
 <div class="hud" id="toast"></div>
-<div class="hud" id="help">WASD walk · SHIFT stride · drag or arrows to look · double click for mouse look, ESC to free it · E or click a work · R ride the gutter · T runs · L live feed · 1 2 3 light · M sound · type words</div>
+<div class="hud" id="help">G games · WASD walk · SHIFT stride · drag or arrows to look · double click for mouse look, ESC to free it · E or click a work · R ride the gutter · T runs · L live feed · 1 2 3 light · M sound · type words</div>
 <div class="hud" id="bar">
+  <button class="b" data-a="games" style="--c:var(--mint)">Games</button>
   <button class="b" data-a="runs" style="--c:var(--pink)">Runs</button>
   <button class="b" data-a="ride" style="--c:var(--sun)">Ride</button>
   <button class="b" data-a="feed" style="--c:var(--mint)">Live feed</button>
@@ -115,6 +116,15 @@ body.riding #rideHud{display:block}
 
 <script src="vendor/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/CopyShader.js"></script>
+<script src="vendor/LuminosityHighPassShader.js"></script>
+<script src="vendor/GammaCorrectionShader.js"></script>
+<script src="vendor/EffectComposer.js"></script>
+<script src="vendor/RenderPass.js"></script>
+<script src="vendor/ShaderPass.js"></script>
+<script src="vendor/MaskPass.js"></script>
+<script src="vendor/UnrealBloomPass.js"></script>
+<script src="assets/games.js"></script>
 <script>
 (function(){
 "use strict";
@@ -202,6 +212,28 @@ var oculusLight = new THREE.PointLight(0xfff1d6, 1.2, 120, 1.6); scene.add(oculu
 var practical = []; for (var p0 = 0; p0 < 5; p0++) { var pl = new THREE.PointLight(0xffe2c0, 0.9, 18, 2); scene.add(pl); practical.push(pl); }
 var champSpot = new THREE.SpotLight(0xffffff, 2.2, 22, 0.55, 0.6, 1.5); scene.add(champSpot, champSpot.target);
 
+/* image based light: a soft sky with a bright ring overhead, so marbles, chrome and terrazzo reflect something */
+function buildEnv(){
+  try {
+    var pm = new THREE.PMREMGenerator(renderer), es = new THREE.Scene(), g = new THREE.SphereGeometry(50, 32, 16), pos = g.attributes.position, col = [];
+    for (var i = 0; i < pos.count; i++) { var y = pos.getY(i) / 50, t = Math.max(0, y); var c = y > 0 ? [.62 + .5 * t, .62 + .46 * t, .64 + .36 * t] : [.22 + .3 * (1 + y), .2 + .28 * (1 + y), .2 + .26 * (1 + y)]; col.push(c[0], c[1], c[2]); }
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    es.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.BackSide})));
+    var ring = new THREE.Mesh(new THREE.TorusGeometry(22, 2.5, 8, 48), new THREE.MeshBasicMaterial({color: new THREE.Color(4, 3.7, 3.2)})); ring.rotation.x = Math.PI / 2; ring.position.y = 26; es.add(ring);
+    var disc = new THREE.Mesh(new THREE.CircleGeometry(9, 32), new THREE.MeshBasicMaterial({color: new THREE.Color(5, 5, 4.8)})); disc.rotation.x = Math.PI / 2; disc.position.y = 45; es.add(disc);
+    scene.environment = pm.fromScene(es, .035).texture; pm.dispose();
+  } catch (e) {}
+}
+var composer = null, bloom = null;
+function buildFX(){
+  if (MOBILE || Q.get("fx") === "0" || !THREE.EffectComposer || !THREE.UnrealBloomPass || !THREE.GammaCorrectionShader) return;
+  try {
+    composer = new THREE.EffectComposer(renderer); composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(innerWidth, innerHeight);
+    composer.addPass(new THREE.RenderPass(scene, camera));
+    bloom = new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .38, .55, .9); composer.addPass(bloom);
+    composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
+  } catch (e) { composer = null; }
+}
 function srgb(t){ t.encoding = THREE.sRGBEncoding; t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); return t; }
 var loadedImgs = {};
 function loadImg(url, cb){
@@ -239,6 +271,10 @@ function panel(gb, cx, cy, cz, nx, nz, w, h, uv, col){
   var hw = w / 2, hh = h / 2;
   gb.quad([cx - rx*hw, cy - hh, cz - rz*hw], [cx + rx*hw, cy - hh, cz + rz*hw], [cx + rx*hw, cy + hh, cz + rz*hw], [cx - rx*hw, cy + hh, cz - rz*hw], uv, col);
 }
+function uvScale(g, sx, sy){ var uv = g.attributes.uv; for (var i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * sx, uv.getY(i) * (sy == null ? sx : sy)); uv.needsUpdate = true; return g; }
+function boxM(w, h, d){ // a box whose UVs are in metres on every face, so tiled materials keep their scale
+  var g = new THREE.BoxGeometry(w, h, d), uv = g.attributes.uv, f = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
+  for (var i = 0; i < uv.count; i++) { var q = f[Math.floor(i / 4)]; uv.setXY(i, uv.getX(i) * q[0], uv.getY(i) * q[1]); } return g; }
 function hex3(h){ return [((h >> 16) & 255) / 255, ((h >> 8) & 255) / 255, (h & 255) / 255]; }
 
 /* helical ribbon: f(th) returns [r1, y1, r2, y2] */
@@ -289,45 +325,93 @@ function groundTexture(){
 }
 
 var MAT = {};
+// Poly Haven CC0 sets, 1k: colour (sRGB), GL normal and roughness (linear), repeated in metres
+var TEXC = {};
+function pbr(key, rep, o){
+  o = o || {}; var mk = function(slot, enc){ var k = key + slot + rep[0] + "x" + rep[1]; if (TEXC[k]) return TEXC[k];
+    var t = new THREE.Texture(); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); if (enc) t.encoding = THREE.sRGBEncoding;
+    loadImg("assets/tex/" + (slot === "d" && o.d ? o.d : key + "_" + slot) + ".jpg", function(im){ if (im) { t.image = im; t.needsUpdate = true; } });
+    return (TEXC[k] = t); };
+  var p = {normalMap: mk("n"), roughnessMap: mk("r"), roughness: o.rough == null ? 1 : o.rough, color: o.color == null ? 0xffffff : o.color, side: THREE.DoubleSide, vertexColors: !!o.vc,
+           normalScale: new THREE.Vector2(o.ns || 1, o.ns || 1), envMapIntensity: (o.env == null ? .35 : o.env) * .6, metalness: o.metal || 0};
+  if (!o.noMap) p.map = mk("d", true);
+  return new THREE.MeshStandardMaterial(p);
+}
 function makeMaterials(){
-  MAT.bone = new THREE.MeshStandardMaterial({color: 0xe8e6e0, roughness: .86, side: THREE.DoubleSide});
-  MAT.under = new THREE.MeshStandardMaterial({color: 0xd4cfc6, roughness: .9, side: THREE.DoubleSide});
-  MAT.wall = new THREE.MeshStandardMaterial({color: 0xe2ded4, roughness: .92, side: THREE.DoubleSide});
-  MAT.landing = new THREE.MeshStandardMaterial({color: 0xbdb7ad, roughness: .7, side: THREE.DoubleSide});
-  MAT.ramp = new THREE.MeshStandardMaterial({map: rampTexture(), roughness: .8, side: THREE.DoubleSide});
-  MAT.parTop = new THREE.MeshStandardMaterial({map: parTopTexture(), roughness: .35, metalness: .2, side: THREE.DoubleSide});
+  MAT.bone = pbr("wall", [1, 1], {noMap: true, color: 0xeeebe4, ns: .6, vc: false});
+  MAT.under = pbr("wall", [1, 1], {noMap: true, color: 0xe4e0d8, ns: .5, vc: true});
+  MAT.wall = pbr("wall", [1, 1], {noMap: true, color: 0xf1eee8, ns: .7, vc: true});
+  MAT.parapet = pbr("wall", [1, 1], {noMap: true, color: 0xf3f1ec, ns: .5, vc: true, rough: .9});
+  MAT.landing = pbr("ramp", [.5, .5], {d: "terrazzo_d", rough: .55, ns: .5, env: .9});
+  MAT.ramp = pbr("ramp", [.5, .5], {d: "terrazzo_d", rough: .5, ns: .55, vc: true, env: .9});
+  MAT.chrome = new THREE.MeshStandardMaterial({color: 0xdfe3ea, metalness: 1, roughness: .16, side: THREE.DoubleSide, envMapIntensity: 1.3});
+  MAT.brass = new THREE.MeshStandardMaterial({color: 0xc8a25a, metalness: 1, roughness: .3, envMapIntensity: 1.1});
   MAT.cove = new THREE.MeshBasicMaterial({color: 0xffe9c8, side: THREE.DoubleSide});
-  MAT.facade = new THREE.MeshStandardMaterial({color: 0xf4f2ec, roughness: .7, side: THREE.DoubleSide});
-  MAT.glassBand = new THREE.MeshStandardMaterial({color: 0x1b2230, roughness: .15, metalness: .6, emissive: 0xffb36b, emissiveIntensity: .0, side: THREE.DoubleSide});
-  var gt = groundTexture(); gt.repeat.set(60, 60);
-  MAT.ground = new THREE.MeshStandardMaterial({map: gt, roughness: .95});
-  MAT.asphalt = new THREE.MeshStandardMaterial({color: 0x26262b, roughness: .9});
-  MAT.ink = new THREE.MeshStandardMaterial({color: 0x101014, roughness: .6});
+  MAT.downlight = new THREE.MeshBasicMaterial({color: 0xfff1dc, side: THREE.DoubleSide});
+  MAT.facade = pbr("facade", [.35, .35], {noMap: true, color: 0xf3f0e9, ns: .9, rough: .75});
+  MAT.glassBand = new THREE.MeshStandardMaterial({color: 0x1b2230, roughness: .08, metalness: .8, emissive: 0xffb36b, emissiveIntensity: .0, side: THREE.DoubleSide, envMapIntensity: 1.4});
+  MAT.ground = pbr("plaza", [1 / 3, 1 / 3], {rough: .95, color: 0xd8d4cc});
+  MAT.voidFloor = pbr("void", [.4, .4], {rough: .45, color: 0xb9b6b2, env: 1});
+  MAT.asphalt = pbr("street", [.25, .25], {rough: 1, color: 0x9a9a9a});
+  MAT.paddockFloor = pbr("paddock", [.3, .3], {rough: .6, color: 0xcfcac2, env: .8});
+  MAT.brickPBR = pbr("brick", [.5, .5], {rough: .95, color: 0xc89a86});
+  MAT.ink = new THREE.MeshStandardMaterial({color: 0x101014, roughness: .45, envMapIntensity: .8});
   MAT.vc = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
   MAT.vcLit = new THREE.MeshStandardMaterial({vertexColors: true, roughness: .55, side: THREE.DoubleSide});
   MAT.far = new THREE.MeshBasicMaterial({color: 0x2a2a33, side: THREE.DoubleSide});
-  MAT.glassFloor = new THREE.MeshPhysicalMaterial({color: 0xbfe6ff, roughness: .05, metalness: 0, transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false});
+  MAT.glassFloor = new THREE.MeshPhysicalMaterial({color: 0xbfe6ff, roughness: .02, metalness: 0, transparent: true, opacity: .14, side: THREE.DoubleSide, depthWrite: false, envMapIntensity: 1.5});
   MAT.lane = {}; LANES.forEach(function(L){
-    MAT.lane[L] = new THREE.MeshPhysicalMaterial({color: LANE[L].c, roughness: .06, metalness: 0, clearcoat: 1, clearcoatRoughness: .05, transparent: true, opacity: .72, emissive: LANE[L].c, emissiveIntensity: .18});
+    MAT.lane[L] = new THREE.MeshPhysicalMaterial({color: LANE[L].c, roughness: .04, metalness: 0, clearcoat: 1, clearcoatRoughness: .03, transparent: true, opacity: .78, emissive: LANE[L].c, emissiveIntensity: .12, envMapIntensity: 1.6});
   });
   MAT.swirl = {}; LANES.forEach(function(L){ MAT.swirl[L] = new THREE.MeshBasicMaterial({color: LANE[L].c}); });
+  // chalk for the five lanes inlaid in the ramp: a dry, broken stroke, alpha only, tinted per lane
+  var ch = canvasTex(512, 64), x = ch.x, r = rng(5); x.clearRect(0, 0, 512, 64);
+  for (var k = 0; k < 2600; k++) { x.fillStyle = "rgba(255,255,255," + (.25 + r() * .6) + ")"; x.fillRect(r() * 512, 8 + r() * 48, 1 + r() * 3, 1 + r() * 2); }
+  ch.t.wrapS = THREE.RepeatWrapping; ch.t.needsUpdate = true;
+  MAT.chalk = {}; LANES.forEach(function(L){ MAT.chalk[L] = new THREE.MeshBasicMaterial({map: ch.t, color: LANE[L].c, transparent: true, opacity: .62, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, side: THREE.DoubleSide}); });
 }
+/* a profile swept along the helix: prof = [[r, dy], ...], cols = an AO value per profile point (baked occlusion) */
+function sweep(prof, th0, th1, perRad, uR, cols){
+  var n = Math.max(2, Math.ceil((th1 - th0) * perRad)), m = prof.length, pos = [], uv = [], col = [], idx = [], L = [0];
+  for (var j = 1; j < m; j++) L.push(L[j - 1] + Math.hypot(prof[j][0] - prof[j - 1][0], prof[j][1] - prof[j - 1][1]));
+  for (var k = 0; k <= n; k++) {
+    var th = th0 + (th1 - th0) * k / n, a = A0 + th, cs = Math.cos(a), sn = Math.sin(a), y = yAt(th);
+    for (j = 0; j < m; j++) { pos.push(prof[j][0] * cs, y + prof[j][1], prof[j][0] * sn); uv.push(th * uR, L[j]); var c = cols ? cols[j] : 1; col.push(c, c, c); }
+    if (k < n) for (j = 0; j < m - 1; j++) { var o = k * m + j; idx.push(o, o + m, o + 1, o + 1, o + m, o + m + 1); }
+  }
+  var g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2)); g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx); g.computeVertexNormals(); g.computeBoundingSphere(); return g;
+}
+var PARW = .34, GUT_C = RI + .17, GUT_RAD = .09;
 
 /* ---------- the tower ---------- */
 var tower = new THREE.Group(); scene.add(tower);
 var turnObjs = []; // per turn: {frames mesh, near assets}
 function buildTower(){
   NT = TOURS.length; TH_END = TAU * NT; Y_TOP = yAt(TH_END);
-  var pr = 12; // segments per radian
-  // ramp floor, underside, parapet, gutter top, outer wall, cove light
-  tower.add(new THREE.Mesh(ribbon(function(t){ return [RI, yAt(t), RO, yAt(t)]; }, 0, TH_END, pr, (RI + RO) / 2 / 4, true), MAT.ramp));
-  tower.add(new THREE.Mesh(ribbon(function(t){ return [RI, yAt(t) - SLAB, RO, yAt(t) - SLAB]; }, 0, TH_END, pr, 1), MAT.under));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RI, y - SLAB, RI, y + PAR]; }, GATE, TH_END, pr, 1), MAT.bone));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RI + .26, y, RI + .26, y + PAR]; }, GATE, TH_END, pr, 1), MAT.bone));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t) + PAR; return [RI, y, RI + .26, y]; }, GATE, TH_END, pr, RI / 2), MAT.parTop));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RO, y, RO, y + H - SLAB]; }, 0, TH_END, pr, 1), MAT.wall));
+  var pr = 10, Rm = (RI + RO) / 2;
+  // the terrazzo ramp, darker where it meets the parapet and the wall (baked occlusion)
+  tower.add(new THREE.Mesh(sweep([[RI + PARW, .002], [RI + PARW + .35, .002], [RO - .45, .002], [RO, .002]], 0, TH_END, pr, Rm, [.62, 1, 1, .6]), MAT.ramp));
+  // the five lanes, chalked into the terrazzo all the way up
+  LANES.forEach(function(L, i){ var r0 = RI + .75 + i * .78; tower.add(new THREE.Mesh(sweep([[r0, .008], [r0 + .4, .008]], .1, TH_END, pr, r0 / 3), MAT.chalk[L])); });
+  // the soffit, and a ring of downlight along the void edge of every turn (from below: a coil of light)
+  tower.add(new THREE.Mesh(sweep([[RI + .3, -SLAB], [RI + 1.2, -SLAB - .02], [RO - .6, -SLAB - .02], [RO, -SLAB]], 0, TH_END, pr, Rm, [.9, 1, 1, .7]), MAT.under));
+  tower.add(new THREE.Mesh(sweep([[RI + .04, -SLAB - .006], [RI + .28, -SLAB - .006]], GATE, TH_END, pr, 1), MAT.downlight));
+  // Wright's parapet: one poured band, a rounded cap, and the gutter, a chrome half pipe, sunk in the top
+  var cap = [[RI, -SLAB], [RI, PAR - .08], [RI + .012, PAR - .03], [RI + .045, PAR - .004], [RI + .08, PAR]];
+  var cap2 = [[RI + .26, PAR], [RI + .295, PAR - .004], [RI + .328, PAR - .03], [RI + PARW, PAR - .08], [RI + PARW, 0]];
+  tower.add(new THREE.Mesh(sweep(cap, GATE, TH_END, pr, RI, [.75, 1, 1, 1, 1]), MAT.parapet));
+  tower.add(new THREE.Mesh(sweep(cap2, GATE, TH_END, pr, RI, [1, 1, 1, 1, .7]), MAT.parapet));
+  var groove = []; for (var q = 0; q <= 12; q++) { var t0 = Math.PI + Math.PI * q / 12; groove.push([GUT_C + GUT_RAD * Math.cos(t0), PAR + GUT_RAD * Math.sin(t0)]); }
+  groove.unshift([RI + .08, PAR]); groove.push([RI + .26, PAR]);
+  tower.add(new THREE.Mesh(sweep(groove, GATE, TH_END, pr, RI), MAT.chrome));
+  // the outer wall, occlusion at the floor and the soffit, and the cove light at its head
+  tower.add(new THREE.Mesh(sweep([[RO, 0], [RO, .3], [RO, 1.1], [RO, H - SLAB - .6], [RO, H - SLAB]], 0, TH_END, pr, RO, [.58, .84, 1, 1, .76]), MAT.wall));
   tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t) + H - SLAB - .05; return [RO - .02, y - .07, RO - .5, y]; }, 0, TH_END, pr, 1), MAT.cove));
-  // the fill under the first turn, with the low entrance cut through it (Wright: 2.6 m, then 176 m)
+  // a brass picture rail at 2.85 m, the line every frame hangs from
+  tower.add(new THREE.Mesh(sweep([[RO - .005, 2.82], [RO - .035, 2.84], [RO - .035, 2.88], [RO - .005, 2.9]], 0, TH_END, pr, RO), MAT.brass));
+  // the fill under the first turn, with the low entrance cut through it (Wright: 2.1 m, then 176 m)
   var fillF = function(r){ return function(t){ return [r, 0, r, Math.max(0, yAt(t) - SLAB)]; }; };
   [[0, TUN - .32], [TUN + .32, TAU]].forEach(function(s){
     tower.add(new THREE.Mesh(ribbon(fillF(RO), s[0], s[1], pr, 1), MAT.bone));
@@ -338,13 +422,15 @@ function buildTower(){
     g.quad([RI*cs, 0, RI*sn], [RO*cs, 0, RO*sn], [RO*cs, y, RO*sn], [RI*cs, y, RI*sn]);
     tower.add(new THREE.Mesh(g.geo(), MAT.bone));
   });
-  // exterior: Wright's bands, spiralling, with the glass between
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RO + .7, y - .9, RO + .7, y + 2.2]; }, 0, TH_END, pr, 1), MAT.facade));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RO + .62, y + 2.2, RO + .62, y + 2.7]; }, 0, TH_END, pr, 1), MAT.glassBand));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RO + .7, y + 2.2, RO, y + 2.2]; }, 0, TH_END, pr, 1), MAT.facade));
-  tower.add(new THREE.Mesh(ribbon(function(t){ var y = yAt(t); return [RO, y - .9, RO + .7, y - .9]; }, 0, TH_END, pr, 1), MAT.facade));
-  // ground floor of the void and the entrance
-  var gf = new THREE.Mesh(new THREE.CircleGeometry(RO, 72), MAT.ground); gf.rotation.x = -Math.PI / 2; gf.position.y = .005; tower.add(gf);
+  // exterior: Wright's bands with a rounded nose and a shadow line under each, the glass between
+  tower.add(new THREE.Mesh(sweep([[RO, -.92], [RO + .62, -.92], [RO + .74, -.86], [RO + .8, -.7], [RO + .8, 2.02], [RO + .76, 2.16], [RO + .66, 2.22], [RO, 2.22]], 0, TH_END, pr, RO + .8), MAT.facade));
+  tower.add(new THREE.Mesh(sweep([[RO + .5, 2.22], [RO + .5, 2.68]], 0, TH_END, pr, RO), MAT.glassBand));
+  var mul = new THREE.MeshStandardMaterial({color: 0x2a2f38, metalness: .8, roughness: .3}); // glazing mullions every 1.6 m
+  var mg = new THREE.InstancedMesh(new THREE.BoxGeometry(.05, .46, .05), mul, Math.ceil(TH_END * (RO + .5) / 1.6)), md = new THREE.Object3D();
+  for (var k = 0; k < mg.count; k++) { var th = k * 1.6 / (RO + .5), a = A0 + th; md.position.set((RO + .52) * Math.cos(a), yAt(th) + 2.45, (RO + .52) * Math.sin(a)); md.rotation.y = -a; md.updateMatrix(); mg.setMatrixAt(k, md.matrix); }
+  tower.add(mg);
+  // ground floor of the void: granite
+  var gf = new THREE.Mesh(uvScale(new THREE.CircleGeometry(RO, 96), 2 * RO), MAT.voidFloor); gf.rotation.x = -Math.PI / 2; gf.position.y = .005; tower.add(gf);
   buildCrown();
   for (var n = 0; n < NT; n++) turnObjs.push(buildTurn(n));
   buildCrowd();
@@ -356,7 +442,7 @@ function buildCrowd(){
   var per = 7, N = NT * per, B = new THREE.InstancedMesh(body, new THREE.MeshStandardMaterial({roughness: .8}), N), Hd = new THREE.InstancedMesh(head, new THREE.MeshStandardMaterial({color: 0xc99a7a, roughness: .7}), N);
   var o = new THREE.Object3D(), col = new THREE.Color(), k = 0, skins = [0x8d5a3b, 0xc99a7a, 0xe8c4a2, 0x5a3a28, 0xb07850];
   for (var n = 0; n < NT; n++) for (var j = 0; j < per; j++) {
-    var th = TAU * n + (2.5 + j * 4 + r() * 2) * UA, a = A0 + th, rad = RI + .55 + r() * .3, y = yAt(th);
+    var th = TAU * n + (2.5 + j * 4 + r() * 2) * UA, a = A0 + th, rad = RI + .78 + r() * .3, y = yAt(th);
     o.position.set(rad * Math.cos(a), y + .53, rad * Math.sin(a)); o.rotation.set(0, -a + Math.PI / 2 + (r() - .5), 0); o.scale.setScalar(.9 + r() * .2); o.updateMatrix(); B.setMatrixAt(k, o.matrix);
     B.setColorAt(k, col.setHex(LANE[LANES[Math.floor(r() * 5)]].c));
     o.position.y = y + 1.2; o.updateMatrix(); Hd.setMatrixAt(k, o.matrix); Hd.setColorAt(k, col.setHex(skins[Math.floor(r() * 5)])); k++;
@@ -550,13 +636,20 @@ function dropHi(nr, i){ var m = nr.hi[i]; if (!m) return; tower.remove(m); m.geo
 /* ---------- the crown: landing, glass over the drop, the gate, the marble on top ---------- */
 var crownMarble = null, gateMarbles = [];
 function buildCrown(){
-  var land = new THREE.Mesh(new THREE.RingGeometry(RI, RO, 96, 1), MAT.landing); land.rotation.x = -Math.PI / 2; land.position.y = Y_TOP; tower.add(land);
+  var land = new THREE.Mesh(uvScale(new THREE.RingGeometry(RI, RO, 96, 1), 2 * RO), MAT.landing); land.rotation.x = -Math.PI / 2; land.position.y = Y_TOP; tower.add(land);
   var under = land.clone(); under.material = MAT.under; under.position.y = Y_TOP - SLAB; tower.add(under);
   var glass = new THREE.Mesh(new THREE.CircleGeometry(RI, 72), MAT.glassFloor); glass.rotation.x = -Math.PI / 2; glass.position.y = Y_TOP - .02; tower.add(glass);
   var rim = new THREE.Mesh(new THREE.TorusGeometry(RI, .06, 8, 120), new THREE.MeshBasicMaterial({color: 0xf2bf27})); rim.rotation.x = Math.PI / 2; rim.position.y = Y_TOP + .02; tower.add(rim);
   var drum = new THREE.Mesh(new THREE.CylinderGeometry(RO + .7, RO + .7, 7, 96, 1, true), MAT.facade); drum.position.y = Y_TOP + 3.5; tower.add(drum);
   var win = new THREE.Mesh(new THREE.CylinderGeometry(RO + .66, RO + .66, 3, 96, 1, true), MAT.glassBand); win.position.y = Y_TOP + 2.6; tower.add(win);
-  var dome = new THREE.Mesh(new THREE.SphereGeometry(RO + .7, 64, 24, 0, TAU, 0, Math.PI / 2), new THREE.MeshPhysicalMaterial({color: 0xcfe9ff, transparent: true, opacity: .22, roughness: .08, side: THREE.DoubleSide, depthWrite: false}));
+  var dc = canvasTex(2048, 512), dx = dc.x; dx.clearRect(0, 0, 2048, 512);
+  dx.fillStyle = "rgba(200,230,255,.16)"; dx.fillRect(0, 0, 2048, 512);
+  dx.strokeStyle = "rgba(245,243,236,.95)";
+  for (var k = 0; k < 48; k++) { dx.lineWidth = k % 4 ? 3 : 7; dx.beginPath(); dx.moveTo(k * 2048 / 48, 0); dx.lineTo(k * 2048 / 48, 512); dx.stroke(); }
+  for (k = 1; k < 9; k++) { dx.lineWidth = 5; dx.beginPath(); dx.moveTo(0, k * 56); dx.lineTo(2048, k * 56); dx.stroke(); }
+  for (k = 0; k < 48; k++) for (var j = 2; j < 9; j += 2) { var cx = (k + .5) * 2048 / 48, cy = j * 56 - 28; dx.lineWidth = 2; dx.beginPath(); dx.moveTo(cx, cy - 18); dx.lineTo(cx + 14, cy); dx.lineTo(cx, cy + 18); dx.lineTo(cx - 14, cy); dx.closePath(); dx.stroke(); }
+  dc.t.needsUpdate = true;
+  var dome = new THREE.Mesh(new THREE.SphereGeometry(RO + .7, 96, 24, 0, TAU, 0, Math.PI / 2), new THREE.MeshBasicMaterial({map: dc.t, transparent: true, side: THREE.DoubleSide, depthWrite: false}));
   dome.position.y = Y_TOP + 7; dome.scale.y = .42; tower.add(dome);
   // Wright's ribs on the dome
   for (var k = 0; k < 12; k++) { var rib = new THREE.Mesh(new THREE.TorusGeometry(RO + .7, .08, 6, 48, Math.PI), MAT.bone); rib.position.y = Y_TOP + 7; rib.rotation.y = k * Math.PI / 12; rib.scale.y = .42; tower.add(rib); }
@@ -613,7 +706,7 @@ function buildVoid(){
   x.fillStyle = "#f0efea"; x.beginPath(); x.ellipse(512, 512, 230, 140, 0, 0, TAU); x.fill();
   x.fillStyle = "#2962ff"; x.beginPath(); x.arc(512, 512, 110, 0, TAU); x.fill(); x.fillStyle = "#0d0d0d"; x.beginPath(); x.arc(512, 512, 52, 0, TAU); x.fill();
   x.fillStyle = "#fff"; x.beginPath(); x.arc(540, 480, 18, 0, TAU); x.fill(); med.t.needsUpdate = true;
-  var md = new THREE.Mesh(new THREE.CircleGeometry(4.6, 64), new THREE.MeshStandardMaterial({map: med.t, roughness: .4})); md.rotation.x = -Math.PI / 2; md.position.set(0, .012, 0); scene.add(md);
+  var md = new THREE.Mesh(new THREE.CircleGeometry(3.6, 64), new THREE.MeshStandardMaterial({map: med.t, roughness: .4})); md.rotation.x = -Math.PI / 2; md.position.set(0, .012, 0); scene.add(md);
 }
 function drawJumbo(){
   if (!jumbo) return;
@@ -640,8 +733,16 @@ var PAD = {x: 42, z: 2, L2: 18, R: 9};
 function box(w, h, d, mat, x, y, z, solid){ var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y + h / 2, z); scene.add(m); if (solid) OBST.push({x0: x - w / 2, x1: x + w / 2, z0: z - d / 2, z1: z + d / 2}); return m; }
 function plateMat(url, rep){ var t = texFromUrl(url); if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); } return new THREE.MeshStandardMaterial({map: t, roughness: .8, side: THREE.DoubleSide}); }
 function buildStreet(){
-  var g = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), MAT.ground); g.rotation.x = -Math.PI / 2; scene.add(g);
-  var av = new THREE.Mesh(new THREE.PlaneGeometry(400, 12), MAT.asphalt); av.rotation.x = -Math.PI / 2; av.position.set(0, .01, 41); scene.add(av);
+  var g = new THREE.Mesh(uvScale(new THREE.PlaneGeometry(400, 400), 400), MAT.ground); g.rotation.x = -Math.PI / 2; scene.add(g);
+  var av = new THREE.Mesh(uvScale(new THREE.PlaneGeometry(400, 12), 400, 12), MAT.asphalt); av.rotation.x = -Math.PI / 2; av.position.set(0, .01, 41); scene.add(av);
+  // granite curbs and a line of street trees, Fifth Avenue style
+  var curb = new THREE.MeshStandardMaterial({color: 0x8d8b88, roughness: .7});
+  [35, 47].forEach(function(z){ var c = new THREE.Mesh(new THREE.BoxGeometry(400, .16, .3), curb); c.position.set(0, .08, z); scene.add(c); });
+  var trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(.12, .18, 3.2, 7), new THREE.MeshStandardMaterial({color: 0x3b2f27, roughness: .9}), 24);
+  var crown = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1.7, 1), new THREE.MeshStandardMaterial({color: 0x3f6b3a, roughness: .85, flatShading: true}), 48), tO = new THREE.Object3D(), tr = rng(9), tk = 0;
+  for (var q = -12; q <= 12; q++) { if (Math.abs(q) < 1 || tk >= 24) continue; var tx = q * 9 + 4.5; tO.position.set(tx, 1.6, 33.2); tO.scale.set(1, 1, 1); tO.rotation.set(0, 0, 0); tO.updateMatrix(); trunk.setMatrixAt(tk, tO.matrix);
+    for (var c2 = 0; c2 < 2; c2++) { tO.position.set(tx + (tr() - .5) * .8, 4 + c2 * .9, 33.2 + (tr() - .5) * .8); tO.scale.setScalar(.8 + tr() * .5); tO.rotation.set(tr() * 3, tr() * 3, 0); tO.updateMatrix(); crown.setMatrixAt(tk * 2 + c2, tO.matrix); } tk++; }
+  trunk.count = tk; crown.count = tk * 2; scene.add(trunk, crown);
   var lineM = new THREE.MeshBasicMaterial({color: 0xf2bf27}); for (var k = -40; k < 40; k++) { var l = new THREE.Mesh(new THREE.PlaneGeometry(2.4, .14), lineM); l.rotation.x = -Math.PI / 2; l.position.set(k * 5, .02, 41); scene.add(l); }
   // five chalk lanes from the avenue into the low door, and across the plaza to the paddock
   LANES.forEach(function(L, i){
@@ -669,10 +770,10 @@ function buildStreet(){
   var bs = new THREE.Mesh(new THREE.PlaneGeometry(9.6, 1.2), new THREE.MeshBasicMaterial({map: bsign.t})); bs.position.set(-23.95, 6.3, 27); bs.rotation.y = Math.PI / 2; scene.add(bs);
   // brownstones across the avenue, stoops and all
   var stoopM = new THREE.MeshBasicMaterial({map: texFromUrl(SITE + "skelly/ui/stoop.jpg")});
-  var brick = plateMat(SITE + "skelly/ui/brick.jpg", [1, 1]);
   for (k = -6; k <= 6; k++) {
     var hgt = 13 + (k * 7 % 5 + 5) % 5 * 2;
-    box(9.6, hgt, 14, brick, k * 10, 0, 56, true);
+    var bm = new THREE.Mesh(boxM(9.6, hgt, 14), MAT.brickPBR); bm.position.set(k * 10, hgt / 2, 56); scene.add(bm); OBST.push({x0: k * 10 - 4.8, x1: k * 10 + 4.8, z0: 49, z1: 63});
+    var corn = new THREE.Mesh(new THREE.BoxGeometry(9.8, .5, .5), new THREE.MeshStandardMaterial({color: 0x5a4438, roughness: .8})); corn.position.set(k * 10, hgt - .2, 48.8); scene.add(corn);
     var st = new THREE.Mesh(new THREE.PlaneGeometry(9.4, 4.03), stoopM); st.position.set(k * 10, 2.02, 48.98); st.rotation.y = Math.PI; scene.add(st);
   }
   // the billboard on the brownstone wall: the hero plate, Bryan credited where the engine shows
@@ -729,7 +830,7 @@ function buildPaddock(){
   var shape = new THREE.Shape(); for (k = 0; k <= 120; k++) { var o = ovalAt(k / 120, R + .4); if (k === 0) shape.moveTo(o.x, -o.z); else shape.lineTo(o.x, -o.z); }
   var roof = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshStandardMaterial({color: 0x1b1b22, roughness: .8, side: THREE.DoubleSide})); roof.rotation.x = -Math.PI / 2; roof.position.y = WH; scene.add(roof);
   var sky = new THREE.Mesh(ribbonOval(R - 2.4, R - 1.4, WH - .02), new THREE.MeshBasicMaterial({color: 0xfff1d8, side: THREE.DoubleSide})); scene.add(sky);
-  var fl = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshStandardMaterial({color: 0x23232a, roughness: .7})); fl.rotation.x = -Math.PI / 2; fl.position.y = .015; scene.add(fl);
+  var fl = new THREE.Mesh(new THREE.ShapeGeometry(shape), MAT.paddockFloor); fl.rotation.x = -Math.PI / 2; fl.position.y = .015; scene.add(fl);
   // the infield: a five lane chalk oval, the field warming up on it
   LANES.forEach(function(L, i){ var m = new THREE.Mesh(ribbonOval(2.2 + i * .85, 2.75 + i * .85, .03), new THREE.MeshBasicMaterial({color: LANE[L].c, transparent: true, opacity: .7, side: THREE.DoubleSide})); scene.add(m);
     var mb = marbleMesh(L, .32); mb.userData.lane = i; mb.userData.f = i * .17; scene.add(mb); infield.push(mb); });
@@ -834,12 +935,12 @@ function recentChamps(k){ var out = []; for (var n = TOURS.length - 1; n >= 0 &&
 
 /* ---------- the gutter race ---------- */
 var runners = [], RACE = null;
-var GUT_R = RI + .13;
+var GUT_R = GUT_C, GUT_Y = PAR + .2; // the marble rides on the lips of the chrome half pipe
 function gutterPoint(p, out){
   out = out || new THREE.Vector3();
   var hel = .986;
-  if (p < hel) { var th = TH_END - (p / hel) * (TH_END - GATE), a = A0 + th; return out.set(GUT_R * Math.cos(a), yAt(th) + PAR + .14, GUT_R * Math.sin(a)); }
-  var q = (p - hel) / (1 - hel), a2 = A0 + GATE, sx = GUT_R * Math.cos(a2), sz = GUT_R * Math.sin(a2), sy = yAt(GATE) + PAR + .14;
+  if (p < hel) { var th = TH_END - (p / hel) * (TH_END - GATE), a = A0 + th; return out.set(GUT_R * Math.cos(a), yAt(th) + GUT_Y, GUT_R * Math.sin(a)); }
+  var q = (p - hel) / (1 - hel), a2 = A0 + GATE, sx = GUT_R * Math.cos(a2), sz = GUT_R * Math.sin(a2), sy = yAt(GATE) + GUT_Y;
   var c = cups[0] || new THREE.Vector3(0, .5, 0);
   return out.set(sx + (c.x - sx) * q, sy + (c.y - sy) * q + Math.sin(q * Math.PI) * .4, sz + (c.z - sz) * q);
 }
@@ -899,6 +1000,30 @@ function ghostRun(){
   return true;
 }
 
+/* ---------- game mode: a game takes the camera and the input until it hands them back ---------- */
+var MODE = null, SG = null, KIOSK = [];
+function setMode(m){ if (MODE && MODE.exit) MODE.exit(); MODE = m; document.body.classList.toggle("gaming", !!m); if (m) { if (document.pointerLockElement) document.exitPointerLock(); closeAll(); if (m.enter) m.enter(); } }
+function joyVec(){ return {x: joy.x, y: joy.y}; }
+function gutterLength(){ return (TH_END - GATE) * Math.hypot(GUT_R, H / TAU) + 9; }
+function lastRoster(){ var lr = lastDoneRace(); return lr && lr.r.roster ? lr.r.roster : null; }
+function buildKiosks(){
+  var C = [["ringer", "RINGER", "RED", 7.2, 0, -1.6], ["drop", "THE DROP", "BLUE", null, Y_TOP, A0 + 2.1], ["dash", "GUTTER DASH", "GREEN", null, Y_TOP, A0 - .5], ["skee", "SKEE", "YELLOW", PAD.x + 1.7, 0, PAD.z + 12.6]];
+  C.forEach(function(k){
+    var x, z; if (k[3] == null) { x = 10.6 * Math.cos(k[5]); z = 10.6 * Math.sin(k[5]); } else { x = k[3]; z = k[5]; }
+    var g = new THREE.Group(); g.position.set(x, k[4], z); scene.add(g);
+    var body = new THREE.Mesh(new THREE.BoxGeometry(.9, 1.15, .55), MAT.ink); body.position.y = .58; g.add(body);
+    var c = canvasTex(512, 256), cx = c.x; cx.fillStyle = "#0d0d0d"; cx.fillRect(0, 0, 512, 256); cx.fillStyle = LANE[k[2]].css; cx.fillRect(0, 0, 512, 18);
+    cx.textBaseline = "top"; cx.fillStyle = "#f0efea"; cx.font = "700 76px 'Archivo Narrow'"; cx.fillText(k[1], 24, 40, 470); cx.fillStyle = "#f2bf27"; cx.font = "700 30px 'Archivo Narrow'"; cx.fillText('"PLAY WITH A REAL MARBLE"', 24, 140); cx.fillStyle = "#9a97a6"; cx.font = "400 22px 'IBM Plex Mono'"; cx.fillText("E or click", 24, 196); c.t.needsUpdate = true;
+    var sg = new THREE.Mesh(new THREE.PlaneGeometry(1.3, .65), new THREE.MeshBasicMaterial({map: c.t, side: THREE.DoubleSide})); sg.position.y = 1.62; g.add(sg);
+    var mb = marbleMesh(k[2], .2); mb.position.y = 2.15; g.add(mb); g.userData.spin = mb;
+    g.lookAt(k[3] == null ? 0 : (k[0] === "skee" ? PAD.x - 3 : 5.3), k[4], k[3] == null ? 0 : (k[0] === "skee" ? PAD.z + 20 : 1.4));
+    [body, sg].forEach(function(o){ o.userData.game = k[0]; KIOSK.push(o); });
+  });
+  // the ringer's chalk ring stays drawn on the void floor; the diving board juts over the glass at the top
+  var ring = new THREE.Mesh(new THREE.RingGeometry(1.57, 1.63, 96), new THREE.MeshBasicMaterial({color: 0xf0efea})); ring.rotation.x = -Math.PI / 2; ring.position.set(5.3, .011, 1.4); scene.add(ring);
+  var a = A0 + 2.1, plank = new THREE.Mesh(new THREE.BoxGeometry(2.6, .1, .7), new THREE.MeshStandardMaterial({color: 0x2962ff, roughness: .4})); plank.position.set((RI - .9) * Math.cos(a), Y_TOP + .25, (RI - .9) * Math.sin(a)); plank.rotation.y = -a; scene.add(plank);
+}
+
 /* ---------- player, controls ---------- */
 var P = {x: 0, y: 0, z: 34, yaw: 0, pitch: .04, vy: 0, eye: 1.65}, keys = {}, RIDE = {on: false};
 function polar(x, z){ var r = Math.hypot(x, z), a = Math.atan2(z, x) - A0; a = ((a % TAU) + TAU) % TAU; return {r: r, a: a}; }
@@ -927,7 +1052,7 @@ function legal(ox, oz, nx, nz, feet){
   var fl = floorsAt(nx, nz), best = -1e9;
   for (var k = 0; k < fl.length; k++) if (fl[k] <= feet + .5 && fl[k] > best) best = fl[k];
   if (best < -1e8) return null;
-  var o = polar(ox, oz), n = polar(nx, nz), rc = RI + .3;
+  var o = polar(ox, oz), n = polar(nx, nz), rc = RI + .44;
   var high = feet > .45 && feet < Y_TOP - .5;
   if ((o.r - rc) * (n.r - rc) < 0) { // crossing the parapet line
     if (high) return null;
@@ -947,9 +1072,11 @@ function move(dx, dz){
 }
 addEventListener("keydown", function(e){
   if (e.target && e.target.tagName === "INPUT") return;
+  if (MODE) { if (e.code === "Escape") { if (SG) SG.quit(); return; } if (!e.repeat) { keys[e.code] = true; if (MODE.key) MODE.key(e, true); } if (["ArrowUp","ArrowDown","Space"].indexOf(e.code) >= 0) e.preventDefault(); return; }
   keys[e.code] = true; typed(e.key);
   if (e.code === "KeyE") interact();
   if (e.code === "KeyR") ride();
+  if (e.code === "KeyG" && SG) SG.menu();
   if (e.code === "KeyT") openRuns();
   if (e.code === "KeyL") openFeed();
   if (e.code === "KeyM") toggleSound();
@@ -957,19 +1084,22 @@ addEventListener("keydown", function(e){
   if (e.code === "Escape") { if (RIDE.on) endRide(); closeAll(); }
   if (["ArrowUp","ArrowDown","Space"].indexOf(e.code) >= 0) e.preventDefault();
 });
-addEventListener("keyup", function(e){ keys[e.code] = false; });
+addEventListener("keyup", function(e){ keys[e.code] = false; if (MODE && MODE.key) MODE.key(e, false); });
 var drag = null;
 canvas.addEventListener("pointerdown", function(e){
   if (joy.id === e.pointerId) return;
+  if (MODE) { if (MODE.pointer) MODE.pointer("down", e); canvas.setPointerCapture(e.pointerId); return; }
   drag = {id: e.pointerId, x: e.clientX, y: e.clientY, moved: 0}; canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener("pointermove", function(e){
+  if (MODE) { if (MODE.pointer) MODE.pointer("move", e); return; }
   if (document.pointerLockElement === canvas) { P.yaw -= e.movementX * .0022; P.pitch -= e.movementY * .0022; clampPitch(); return; }
   if (!drag || drag.id !== e.pointerId) return;
   var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; drag.moved += Math.abs(dx) + Math.abs(dy);
   P.yaw -= dx * .0042; P.pitch -= dy * .0042; clampPitch();
 });
 canvas.addEventListener("pointerup", function(e){
+  if (MODE) { if (MODE.pointer) MODE.pointer("up", e); return; }
   if (drag && drag.id === e.pointerId) { if (drag.moved < 6) { if (RIDE.on) rideSwitch(); else interact(); } drag = null; }
 });
 canvas.addEventListener("dblclick", function(){ if (!MOBILE && !RIDE.on && !document.pointerLockElement && Q.get("lock") !== "0") { try { canvas.requestPointerLock(); } catch (er) {} } });
@@ -988,7 +1118,7 @@ function pick(){
   var pn = playerTurn();
   for (var n = Math.max(0, pn - 2); n <= Math.min(NT - 1, pn + 2); n++) { objs.push(turnObjs[n].frames, turnObjs[n].marble); }
   if (paddockStall) objs.push(paddockStall.r, paddockStall.h, paddockStall.p);
-  objs = objs.concat(cardMeshes); if (jumbo) objs.push(jumbo.mesh); objs = objs.concat(eggObjs);
+  objs = objs.concat(cardMeshes); if (jumbo) objs.push(jumbo.mesh); objs = objs.concat(eggObjs).concat(KIOSK);
   var hits = ray.intersectObjects(objs, true);
   for (var k = 0; k < hits.length; k++) {
     var h = hits[k], o = h.object, ud = o.userData || {}, par = o.parent && o.parent.userData || {};
@@ -999,6 +1129,7 @@ function pick(){
     if (ud.jumbo) return {kind: "jumbo", d: h.distance};
     if (par.champMarble != null) return {kind: "slot", n: par.champMarble, i: 25, d: h.distance};
     if (ud.egg) return {kind: "egg", egg: ud.egg, d: h.distance};
+    if (ud.game) return {kind: "game", g: ud.game, d: h.distance};
   }
   return null;
 }
@@ -1028,6 +1159,7 @@ function hotLabel(h){
   if (h.kind === "card") return "E · CARD · " + D.cards[h.k].n;
   if (h.kind === "jumbo") return "E · BRYAN'S LIVE FEED";
   if (h.kind === "egg") return "E · ?";
+  if (h.kind === "game") return "E · PLAY " + (SG ? SG.games[h.g].title.replace(/<[^>]+>/g, "") : "");
   return "";
 }
 function interact(){
@@ -1038,6 +1170,7 @@ function interact(){
   else if (h.kind === "card") openCard(h.k);
   else if (h.kind === "jumbo") openFeed();
   else if (h.kind === "egg") egg(h.egg);
+  else if (h.kind === "game" && SG) SG.open(h.g);
 }
 function lane(L){ return LANE[L] ? '<b style="background:' + LANE[L].css + '"></b>' : "<b></b>"; }
 function finishList(r){
@@ -1136,9 +1269,9 @@ function rideCam(dt){
 
 /* ---------- time, light ---------- */
 var PRE = {
-  day:    {sky: 0x9fc4e8, fog: 0xbfd3e6, fd: .0024, sun: 1.3, sc: 0xfff4e0, hemi: .62, glass: 0, lamps: 0, exp: .92},
-  golden: {sky: 0xf0a56b, fog: 0xd99c78, fd: .0030, sun: 1.05, sc: 0xffb073, hemi: .5, glass: .35, lamps: .2, exp: .95},
-  night:  {sky: 0x0b0f1f, fog: 0x141a2e, fd: .0036, sun: .22, sc: 0x9fb4ff, hemi: .36, glass: 1.4, lamps: 1, exp: 1.0}
+  day:    {sky: 0x9fc4e8, fog: 0xbfd3e6, fd: .0024, sun: .95, sc: 0xfff4e0, hemi: .3, glass: 0, lamps: 0, exp: .8},
+  golden: {sky: 0xf0a56b, fog: 0xd99c78, fd: .0030, sun: .8, sc: 0xffb073, hemi: .24, glass: .35, lamps: .2, exp: .82},
+  night:  {sky: 0x0b0f1f, fog: 0x141a2e, fd: .0036, sun: .15, sc: 0x9fb4ff, hemi: .16, glass: 1.4, lamps: 1, exp: .86}
 };
 var preset = null, presetLocked = false;
 function nyHour(){ try { return +new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour: "numeric", hour12: false}).format(new Date()) % 24; } catch (e) { return 18; } }
@@ -1294,7 +1427,7 @@ function stream(now){
   if (stallMarble) { var want = inPad && hot && hot.kind === "stall" ? hot.m : 0; if (want !== stallHot) { stallHot = want; if (want) { var f = DOOR[1] + (want - .5) / 100 * (1 - (DOOR[1] - DOOR[0])), o3 = ovalAt(f, PAD.R - .55); stallMarble.position.set(o3.x, 4.05, o3.z); stallMarble.visible = true; dress(stallMarble, want, .3); } else { stallMarble.visible = false; undress(stallMarble); } } }
   // practical lights follow you along the ramp; the spotlight finds the nearest champion
   var q = polar(P.x, P.z);
-  practical.forEach(function(l, k){ var th = q.a + (k - 2) * .35 + TAU * pn, a = A0 + th; l.position.set((RO - 1.2) * Math.cos(a), yAt(th) + 2.9, (RO - 1.2) * Math.sin(a)); l.intensity = outside ? 0 : .9 * LIGHT; });
+  practical.forEach(function(l, k){ var th = q.a + (k - 2) * .35 + TAU * pn, a = A0 + th; l.position.set((RO - 1.2) * Math.cos(a), yAt(th) + 2.9, (RO - 1.2) * Math.sin(a)); l.intensity = outside ? 0 : .55 * LIGHT; });
   var c = turnObjs[pn]; champSpot.position.set(c.champPos.x * .55, c.champPos.y + 2.4, c.champPos.z * .55); champSpot.target.position.copy(c.champPos); champSpot.intensity = outside ? 0 : 2.2 * LIGHT;
   // zone readout
   var z = $("zone");
@@ -1311,7 +1444,8 @@ function stream(now){
 var clock = new THREE.Clock(), fwd = new THREE.Vector3(), tmpV = new THREE.Vector3(), frame = 0;
 function step(dt){
   dt = Math.min(dt, .05); var now = clock.elapsedTime;
-  if (!RIDE.on) {
+  if (MODE) { if (MODE.step) MODE.step(dt, now); }
+  else if (!RIDE.on) {
     var tr = 2.4 * dt;
     if (keys.ArrowLeft) P.yaw += tr; if (keys.ArrowRight) P.yaw -= tr; if (keys.ArrowUp) P.pitch += tr * .6; if (keys.ArrowDown) P.pitch -= tr * .6; if (keys.KeyQ) P.yaw += tr; clampPitch();
     var f = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0) - joy.y, s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + joy.x;
@@ -1338,11 +1472,12 @@ function step(dt){
   infield.forEach(function(m){ var u = m.userData; u.f += dt * (.012 + u.lane * .0015 + Math.sin(now * .3 + u.lane) * .002); var o2 = ovalAt(u.f, 2.47 + u.lane * .85); m.position.set(o2.x, .34, o2.z); m.userData.swirl.rotation.z -= dt * 3; });
   for (k = rain.length - 1; k >= 0; k--) { var rm = rain[k]; if (rm.userData.rest) continue; rm.userData.vy -= 20 * dt; rm.position.y += rm.userData.vy * dt; if (rm.position.y < .3) { rm.position.y = .3; rm.userData.vy *= -.42; if (Math.abs(rm.userData.vy) < 1) rm.userData.rest = 1; } }
   if (roll && sndOn) { var dmin = 1e9; runners.forEach(function(r){ if (r.m.visible) dmin = Math.min(dmin, r.m.position.distanceTo(camera.position)); }); roll.gain.value = dmin < 40 ? Math.min(.5, 6 / (dmin + 2)) : 0; }
-  if (frame++ % 6 === 0) { hot = pick(); $("cross").classList.toggle("hot", !!hot); var pr = $("prompt"); if (hot) { pr.textContent = hotLabel(hot); pr.style.display = "block"; } else pr.style.display = "none"; }
+  for (k = 0; k < KIOSK.length; k += 2) { var kp = KIOSK[k].parent; if (kp && kp.userData.spin) kp.userData.spin.rotation.y += dt; }
+  if (MODE) { frame++; } else if (frame++ % 6 === 0) { hot = pick(); $("cross").classList.toggle("hot", !!hot); var pr = $("prompt"); if (hot) { pr.textContent = hotLabel(hot); pr.style.display = "block"; } else pr.style.display = "none"; }
   if (!presetLocked && frame % 600 === 0) { var ap = autoPreset(); if (ap !== preset) setPreset(ap); }
 }
-function loop(){ requestAnimationFrame(loop); step(clock.getDelta()); renderer.render(scene, camera); }
-addEventListener("resize", function(){ camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+function loop(){ requestAnimationFrame(loop); step(clock.getDelta()); if (composer) composer.render(); else renderer.render(scene, camera); }
+addEventListener("resize", function(){ camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (composer) composer.setSize(innerWidth, innerHeight); });
 
 /* ---------- film ---------- */
 var video = null;
@@ -1361,7 +1496,7 @@ function bodegaTV(){
 
 /* ---------- buttons ---------- */
 document.querySelectorAll("#bar .b").forEach(function(b){ b.addEventListener("click", function(e){ e.stopPropagation(); var a = b.dataset.a;
-  if (a === "runs") openRuns(); if (a === "ride") ride(); if (a === "feed") openFeed(); if (a === "film") playFilm(); if (a === "sound") toggleSound();
+  if (a === "games" && SG) SG.menu(); if (a === "runs") openRuns(); if (a === "ride") ride(); if (a === "feed") openFeed(); if (a === "film") playFilm(); if (a === "sound") toggleSound();
   if (a === "light") setPreset(preset === "day" ? "golden" : preset === "golden" ? "night" : "day", true); }); });
 
 /* ---------- boot ---------- */
@@ -1378,12 +1513,17 @@ function boot(){
     if (v[1] && v[1].tournament) mergeLive(v[1]);
     TOURS.sort(function(a, b){ return a.id - b.id; });
     if (LIVE.state && LIVE.state.current) { var t = tourById(LIVE.tid), row = t.races[ORDER.indexOf(LIVE.state.current.raceKey)]; if (row) LIVE.race = {key: row.k, st: row.st || LIVE.state.current.phase, roster: row.roster, seed: row.seed, track: row.track}; }
-    makeMaterials(); buildTower(); buildVoid(); buildStreet(); buildRunners(); buildEggs(); bodegaTV();
-    setPreset(Q.get("t") || autoPreset());
+    buildEnv(); makeMaterials(); buildTower(); buildVoid(); buildStreet(); buildRunners(); buildEggs(); bodegaTV();
+    setPreset(Q.get("t") || autoPreset()); buildFX();
     drawJumbo(); tickText(); $("eggs").textContent = "EGGS 0 / " + Object.keys(EGGS).length;
     var c = D.counts; $("stat").textContent = NT + " runs · " + c.races + " races on the tape · " + c.paintings + " race paintings · " + c.portraits + " champion's portraits · " + c.riders + " riders · " + c.holders + " holders · " + c.cards + " cards" + (LIVE.tid ? " · tournament " + LIVE.tid + " live" : "");
     $("go").disabled = false; $("go").textContent = "ENTER THE SPIRAL";
     goZone(Q.get("at") || "street"); if (Q.get("turn")) goTurn(Math.min(NT - 1, +Q.get("turn")), Q.get("slot") != null ? +Q.get("slot") : null);
+    buildKiosks();
+    if (window.SpiralGames) SG = window.SpiralGames({THREE: THREE, scene: scene, camera: camera, esc: esc, toast: toast, beep: beep, D: function(){ return D; }, recentChamps: recentChamps,
+      marbleMesh: marbleMesh, dress: dress, undress: undress, LANE: LANE, LANES: LANES, keys: keys, joy: joyVec, P: P, Y_TOP: function(){ return Y_TOP; }, RI: RI, cardMeshes: cardMeshes,
+      gutterLength: gutterLength, lastRoster: lastRoster, gutterPoint: gutterPoint, cups: function(){ return cups; }, PAD: PAD, canvasTex: canvasTex, setMode: setMode, goZone: goZone,
+      leaveRide: function(){ if (RIDE.on) { RIDE.on = false; document.body.classList.remove("riding"); camera.fov = 68; camera.updateProjectionMatrix(); } }, ON_SITE: ON_SITE});
     if (!Q.get("offline")) connect();
     loop();
     if (Q.get("go")) enter();
@@ -1391,7 +1531,7 @@ function boot(){
 }
 function enter(){ $("enter").style.display = "none"; if (video) video.play().catch(function(){}); toast("Drag to look, WASD to walk. Double click for mouse look, ESC to get the mouse back for the buttons.", 6000); setTimeout(function(){ dress(crownMarble, latestChampId(), 5.2); }, 1500); }
 $("go").onclick = enter;
-window.__game = {GLB: GLB, dress: dress, ride: ride, RIDE: function(){ return RIDE; }, P: P, get NT(){ return NT; }, get Y_TOP(){ return Y_TOP; }, TOURS: function(){ return TOURS; }, floorsAt: floorsAt, legal: legal, move: move, step: step, goTurn: goTurn, goZone: goZone, startRace: startRace, finishRace: finishRace, ghostRun: ghostRun, pick: pick, turnObjs: turnObjs, keys: keys, scene: scene, renderer: renderer, camera: camera, LIVE: LIVE, setPreset: setPreset, egg: egg, openSlot: openSlot, openStall: openStall, openCard: openCard, closeAll: closeAll, polar: polar, yAt: yAt};
+window.__game = {SG: function(){ return SG; }, MODE: function(){ return MODE; }, GLB: GLB, dress: dress, ride: ride, RIDE: function(){ return RIDE; }, P: P, get NT(){ return NT; }, get Y_TOP(){ return Y_TOP; }, TOURS: function(){ return TOURS; }, floorsAt: floorsAt, legal: legal, move: move, step: step, goTurn: goTurn, goZone: goZone, startRace: startRace, finishRace: finishRace, ghostRun: ghostRun, pick: pick, turnObjs: turnObjs, keys: keys, scene: scene, renderer: renderer, camera: camera, LIVE: LIVE, setPreset: setPreset, egg: egg, openSlot: openSlot, openStall: openStall, openCard: openCard, closeAll: closeAll, polar: polar, yAt: yAt};
 boot();
 })();
 </script>

@@ -19,6 +19,21 @@ Every marble you see racing, on a champion's plinth, on top of the dome, lapping
 Bryan's own GLB, the one his viewer races, read from `marblerun.fun/marbles/manifest.json` (IPFS). `data.json` carries a copy
 for when his server is down. Loaded only near you, at most 18 at once (9 on a phone); our glass marble stands in until it lands.
 
+## The games (`site/assets/games.js`)
+G or the Games button, or a stand in the building. You pick one of Bryan's 100 marbles (his thumbnails, his GLBs) and it plays all four:
+- **RINGER** on the void floor (stand by the chalk ring): slingshot your marble at nine champions' marbles, 7 shots.
+- **THE DROP** from the glass (stand on the landing, blue diving board): fall 176 m through 25 hoops, gold caps, the jumbotron, onto the eye.
+- **GUTTER DASH** (stand at the top by the gate): your marble against four from Bryan's last race, the whole gutter; tuck, heat, boost pads.
+- **SKEE** in the paddock: nine marbles up the incline into 10 to 100.
+Scores go to the site's daily arcade board (`/api/score`, games ringer, drop, dash, skee) when played on n3wyorkers.com, and a best is kept locally.
+
+## Architecture and materials
+Every surface of the tower is a profile swept along the helix (`sweep()`), with occlusion baked into vertex colours: terrazzo ramp
+(Poly Haven concrete_floor_01 recoloured with chips in Bryan's five colours and brass strips, `assets/tex/terrazzo_d.jpg`),
+plaster walls and soffits, Wright's rounded parapet with the gutter as a chrome half pipe sunk in its top, a brass picture rail,
+a ring of downlight under every turn, facade bands with a rounded nose and mullioned glass, the dome as a web of mullions.
+Image based light from a generated sky, bloom on desktop. CC0 sets: `_build/fetch_tex.py` (Poly Haven).
+
 ## Live
 `/api/state` and `/api/champions` at boot (the live tournament becomes the top turn), `wss://marblerun.fun/ws` after. On `race_start` five
 marbles drop from the top and roll the parapet gutter; they bunch above the cups until `race_result`, then finish in Bryan's order.
