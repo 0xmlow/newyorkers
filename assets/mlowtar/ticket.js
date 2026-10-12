@@ -81,6 +81,7 @@ const G = {
 };
 const GLYPH_BY_THEME = { love: ["heart", "bridge", "pigeon", "cup"], money: ["token", "check", "metrocard", "manhole"], work: ["cup", "tower", "metrocard", "bridge"], home: ["stoop", "tower", "hydrant", "bagel"], move: ["bullet", "metrocard", "token", "bridge"], food: ["bagel", "slice", "cup", "pigeon"], art: ["eyeflower", "star", "nazar", "check"], luck: ["star", "token", "check", "nazar"], lost: ["manhole", "pigeon", "nazar", "stoop"], night: ["tower", "bullet", "star", "cup"], family: ["stoop", "bagel", "heart", "pigeon"], fame: ["star", "check", "bullet", "eyeflower"], city: ["manhole", "hydrant", "tower", "bullet"], future: ["bridge", "tower", "eyeflower", "check"], wander: ["pigeon", "manhole", "hydrant", "slice"] };
 const BULLETS = ["1", "4", "7", "A", "B", "G", "J", "L", "N"];
+G._paper = PAPER;
 /* every font set through here so tracking is deliberate: labels open, the display face tight */
 function setFont(c, font, spacing) { c.font = font; try { c.letterSpacing = spacing || "0px"; c.fontKerning = "normal"; } catch (e) {} }
 function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
@@ -167,72 +168,130 @@ function stamp(c, im, x, y, size, rot, shadow) {
   c.drawImage(im, -w / 2, -h / 2, w, h); c.restore();
 }
 
-/* ---------- the art panel ---------- */
+/* ---------- the art panel: a composition engine, not a scatter ----------
+ * An armature (a 6 x 6 grid with the seal's corner and the tag's corner reserved), eight layouts, and a strict
+ * hierarchy: one dominant form, one secondary, a few accents, and at least a third of the paper left alone.
+ * Layers, back to front: ground > field > dominant > secondary > accents > overprint. Stickers and halftones
+ * can live inside a glyph's silhouette (masked layers), stickers can be struck as duotone, and flat colour
+ * shapes overprint with a slight misregistration, the risograph way. Every choice is seeded. */
+const off = (w, h) => { const o = document.createElement("canvas"); o.width = Math.max(1, Math.round(w)); o.height = Math.max(1, Math.round(h)); return o; };
+/* a layer the size of the panel whose content is kept only inside a glyph's silhouette */
+function maskedGlyph(S, glyph, gx, gy, gs, draw, paperFor) {
+  const o = off(S, S), x = o.getContext("2d"); draw(x);
+  // the mask is the glyph's whole silhouette: knockouts painted solid too, on their own canvas, then kept with destination-in
+  const m = off(S, S), mx = m.getContext("2d"); mx.fillStyle = "#000"; G._paper = "#000"; G[glyph](mx, gx, gy, gs, "N"); G._paper = paperFor;
+  x.globalCompositeOperation = "destination-in"; x.drawImage(m, 0, 0); x.globalCompositeOperation = "source-over";
+  return o;
+}
+function halftone(x, w, h, color, angle, cell, bias) {   // dots that grow along a direction
+  x.fillStyle = color; const ca = Math.cos(angle), sa = Math.sin(angle), L = Math.abs(w * ca) + Math.abs(h * sa);
+  for (let yy = -cell; yy < h + cell; yy += cell) for (let xx = -cell + ((yy / cell) % 2) * cell / 2; xx < w + cell; xx += cell) {
+    const t = ((xx - w / 2) * ca + (yy - h / 2) * sa) / L + 0.5; const rad = Math.max(0, (bias ? t : 1 - t) * cell * 0.62 - 0.4); if (rad > 0.5) { x.beginPath(); x.arc(xx, yy, rad, 0, 7); x.fill(); } }
+}
+function hatch(x, w, h, color, angle, gap, lw) { x.strokeStyle = color; x.lineWidth = lw; x.save(); x.translate(w / 2, h / 2); x.rotate(angle); for (let k = -w - h; k < w + h; k += gap) { x.beginPath(); x.moveTo(k, -h - w); x.lineTo(k, h + w); x.stroke(); } x.restore(); }
+function tornPiece(c, r, x, y, w, h, fill, shadow) {   // a cut paper shape, the Memories torn edge on every side
+  const pts = []; const amp = Math.min(w, h) * 0.035, n = 9;
+  for (let i = 0; i <= n; i++) pts.push([x + w * i / n, y + (r() - 0.5) * amp]); for (let i = 1; i <= n; i++) pts.push([x + w + (r() - 0.5) * amp, y + h * i / n]);
+  for (let i = n - 1; i >= 0; i--) pts.push([x + w * i / n, y + h + (r() - 0.5) * amp]); for (let i = n - 1; i >= 1; i--) pts.push([x + (r() - 0.5) * amp, y + h * i / n]);
+  c.save(); if (shadow) { c.shadowColor = "rgba(0,0,0,.25)"; c.shadowBlur = 14; c.shadowOffsetY = 6; } c.fillStyle = fill; c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); c.fill(); c.restore();
+}
+function duotoneOf(im, size, hex) { return dithered(im, size, hex); }
+function stickerAt(c, s, cx, cy, size, rot, o) {   // o: {shadow, duo:hex, alpha}
+  if (!s || !s.im) return; const im = o && o.duo ? duotoneOf(s.im, size, o.duo) : s.im;
+  c.save(); if (o && o.alpha != null) c.globalAlpha = o.alpha; stamp(c, im, cx, cy, size, rot, !(o && o.duo) && !(o && o.flat)); c.restore();
+}
+function overprint(c, r, P, x, y, w, h, shape) {       // a flat colour form in multiply, nudged like a second pass through the press
+  c.save(); c.globalCompositeOperation = "multiply"; c.globalAlpha = 0.85; c.fillStyle = P.acc2; const dx = (r() - 0.5) * 8, dy = (r() - 0.5) * 8;
+  if (shape === "circle") { c.beginPath(); c.arc(x + w / 2 + dx, y + h / 2 + dy, Math.min(w, h) / 2, 0, 7); c.fill(); } else { rr(c, x + dx, y + dy, w, h, Math.min(w, h) * 0.08); c.fill(); }
+  c.restore();
+}
 async function artPanel(c, r, res, P, x0, y0, S) {
-  const theme = res.theme || "wander"; G._paper = P.bg;
+  const theme = res.theme || "wander"; G._paper = P.bg; const glyphs = GLYPH_BY_THEME[theme] || GLYPH_BY_THEME.wander, train = res.lucky && res.lucky.train;
+  const u = S / 6, cx = k => x0 + k * u, cy = k => y0 + k * u;          // the armature
+  const st = await pickStickers(r, theme, 5), hero = st[0], rest = st.slice(1);
+  const layout = (u => u < 0.16 ? "poster" : u < 0.32 ? "window" : u < 0.44 ? "grid" : u < 0.58 ? "diagonal" : u < 0.68 ? "stack" : u < 0.76 ? "orbit" : u < 0.88 ? "split" : "cutpaper")(r());   // weighted toward the richer layouts
+  const dark = P.name === "night", inkA = a => dark ? `rgba(236,232,221,${a})` : `rgba(20,18,16,${a})`;
   c.save(); c.beginPath(); c.rect(x0, y0, S, S); c.clip();
   c.fillStyle = P.bg; c.fillRect(x0, y0, S, S);
-  // ground
-  const ground = Math.floor(r() * 5);
-  if (ground === 0) {            // contour field from seeded noise
-    const nz = noise2d(res.seed), sc = 2.2 + r() * 2; c.strokeStyle = P.ink; c.globalAlpha = 0.14; c.lineWidth = 1.4;
-    for (let lv = 0.3; lv < 0.95; lv += 0.08) for (let gy = 0; gy < 60; gy++) { let on = false; c.beginPath(); for (let gx = 0; gx <= 60; gx++) { const v = nz(gx / 60 * sc, gy / 60 * sc + res.seed % 7); const px = x0 + gx / 60 * S, py = y0 + gy / 60 * S; if (Math.abs(v - lv) < 0.025) { if (!on) { c.moveTo(px, py); on = true; } else c.lineTo(px, py); } else on = false; } c.stroke(); }
-    c.globalAlpha = 1;
-  } else if (ground === 1) {     // halftone gradient
-    c.fillStyle = P.ink; c.globalAlpha = 0.35; const d = 24, ang = r() * Math.PI; for (let gy = 0; gy < S / d + 2; gy++) for (let gx = 0; gx < S / d + 2; gx++) { const px = x0 + gx * d + (gy % 2) * d / 2, py = y0 + gy * d; const t = ((px - x0) * Math.cos(ang) + (py - y0) * Math.sin(ang)) / S; const rad = Math.max(0, (0.5 - Math.abs(t - 0.5)) * d * 0.7 - 2); if (rad > 0.6) { c.beginPath(); c.arc(px, py, rad, 0, 7); c.fill(); } }
-    c.globalAlpha = 1;
-  } else if (ground === 2) {     // hatch
-    c.strokeStyle = P.ink; c.globalAlpha = 0.1; c.lineWidth = 2; const gap = 18 + r() * 10; for (let k = -S; k < S * 2; k += gap) { c.beginPath(); c.moveTo(x0 + k, y0); c.lineTo(x0 + k - S, y0 + S); c.stroke(); } c.globalAlpha = 1;
-  } else if (ground === 3) {     // bloom tiles, the Memories mark repeated
-    const n = 3 + Math.floor(r() * 2), cell = S / n; for (let gy = 0; gy < n; gy++) for (let gx = 0; gx < n; gx++) { c.globalAlpha = 0.1 + r() * 0.08; bloom(c, r, x0 + gx * cell + cell * 0.14, y0 + gy * cell + cell * 0.14, cell * 0.72, P.ink, P.acc); } c.globalAlpha = 1;
-  } else {                       // a solid field of the accent with a paper window
-    c.fillStyle = P.acc; c.fillRect(x0, y0, S, S); c.fillStyle = P.bg; const m = S * (0.06 + r() * 0.08); if (r() < 0.5) { c.beginPath(); c.arc(x0 + S / 2, y0 + S / 2, S / 2 - m, 0, 7); c.fill(); } else rr(c, x0 + m, y0 + m, S - 2 * m, S - 2 * m, S * 0.04), c.fill();
+  /* ground: always quiet, one of four */
+  const ground = Math.floor(r() * 4);
+  if (ground === 0) { const nz = noise2d(res.seed), sc = 2 + r() * 2; c.strokeStyle = inkA(0.12); c.lineWidth = 1.2;
+    for (let lv = 0.3; lv < 0.95; lv += 0.1) for (let gy = 0; gy < 50; gy++) { let on = false; c.beginPath(); for (let gx = 0; gx <= 50; gx++) { const v = nz(gx / 50 * sc, gy / 50 * sc + res.seed % 7), px = x0 + gx / 50 * S, py = y0 + gy / 50 * S; if (Math.abs(v - lv) < 0.025) { if (!on) { c.moveTo(px, py); on = true; } else c.lineTo(px, py); } else on = false; } c.stroke(); } }
+  else if (ground === 1) { c.save(); c.globalAlpha = 0.18; hatch(c, S, S, dark ? "#ECE8DD" : "#141210", r() * Math.PI, 16 + r() * 8, 1.5); c.restore(); }
+  else if (ground === 2) { const o = off(S, S), x = o.getContext("2d"); halftone(x, S, S, inkA(0.35), r() * Math.PI, 22, r() < 0.5); c.drawImage(o, x0, y0); }
+  /* ground 3: plain paper */
+
+  if (layout === "poster") {
+    /* a giant glyph top right as a halftone field, the hero sticker on the lower left golden point, accents in a row */
+    const g = glyphs[0], o = maskedGlyph(S, g, 3.8 * u, 2.3 * u, 4.2 * u, x => halftone(x, S, S, P.acc, Math.PI / 3, 14, true), P.bg); c.drawImage(o, x0, y0);
+    c.fillStyle = P.ink; G[glyphs[1]](c, cx(4.6), cy(4.6), u * 1.1, train);
+    stickerAt(c, hero, cx(2.3), cy(3.7), u * 3.6, (r() - 0.5) * 0.2, { shadow: true });
+    rest.slice(0, 2).forEach((s, i) => stickerAt(c, s, cx(4.3 + i * 1.1), cy(5.1), u * 1.1, (r() - 0.5) * 0.5, { duo: dark ? P.acc : P.ink }));
+  } else if (layout === "window") {
+    /* a big window cut in the shape of a glyph (bagel, bullet, MetroCard), a duotone sticker living inside it, a colour sticker crossing the edge */
+    const win = ["bagel", "bullet", "metrocard", "manhole", "nazar"][Math.floor(r() * 5)];
+    const o = maskedGlyph(S, win, 3 * u, 2.9 * u, 4.6 * u, x => { x.fillStyle = P.acc; x.fillRect(0, 0, S, S); if (rest[0]) stickerAt(x, rest[0], 3 * u, 2.9 * u, u * 3.2, (r() - 0.5) * 0.3, { duo: P.bg, flat: true }); }, P.bg); c.drawImage(o, x0, y0);
+    c.fillStyle = P.ink; G[win](c, cx(3), cy(2.9), u * 4.6 + 10); c.fillStyle = P.bg; G[win](c, cx(3), cy(2.9), u * 4.6 - 14); c.drawImage(o, x0, y0);   // a ring of ink round the window
+    stickerAt(c, hero, cx(4.2), cy(4.1), u * 2.4, (r() - 0.5) * 0.4, { shadow: true });
+    c.fillStyle = P.ink; G[glyphs[2]](c, cx(1.1), cy(1.1), u * 0.9, train);
+  } else if (layout === "grid") {
+    /* a 3 x 3 with one 2 x 2 merged for the hero; the rest alternate glyph and duotone sticker; thin rules */
+    const m = u * 0.45, cell = (S - 2 * m) / 3, big = Math.floor(r() * 4), bigPos = [[0, 0], [1, 0], [0, 1], [1, 1]][big]; let si = 0, gi = 0;
+    for (let gy = 0; gy < 3; gy++) for (let gx = 0; gx < 3; gx++) {
+      const inBig = gx >= bigPos[0] && gx <= bigPos[0] + 1 && gy >= bigPos[1] && gy <= bigPos[1] + 1; if (inBig && !(gx === bigPos[0] && gy === bigPos[1])) continue;
+      const w = inBig ? 2 * cell : cell, px = x0 + m + gx * cell, py = y0 + m + gy * cell;
+      if (inBig) { c.fillStyle = P.acc2; c.fillRect(px + 6, py + 6, w - 12, w - 12); stickerAt(c, hero, px + w / 2, py + w / 2, w * 0.82, (r() - 0.5) * 0.2, { shadow: true }); }
+      else if ((gx + gy) % 2 === 0 && rest[si]) stickerAt(c, rest[si++], px + cell / 2, py + cell / 2, cell * 0.76, (r() - 0.5) * 0.3, { duo: r() < 0.5 ? P.acc : P.ink });
+      else { c.fillStyle = (gx + gy) % 3 ? P.ink : P.acc; G[glyphs[gi++ % glyphs.length]](c, px + cell / 2, py + cell / 2, cell * 0.5, BULLETS[(gx * 3 + gy) % 9]); }
+    }
+    c.strokeStyle = inkA(0.5); c.lineWidth = 1.5; for (let k = 1; k < 3; k++) { c.beginPath(); c.moveTo(x0 + m + k * cell, y0 + m); c.lineTo(x0 + m + k * cell, y0 + S - m); c.moveTo(x0 + m, y0 + m + k * cell); c.lineTo(x0 + S - m, y0 + m + k * cell); c.stroke(); }
+  } else if (layout === "diagonal") {
+    /* a band of colour from bottom left to top right, forms marching along it, scale falling away */
+    c.save(); c.translate(cx(3), cy(3)); c.rotate(-Math.PI / 4); c.fillStyle = P.acc; c.fillRect(-S, -u * 0.9, 2 * S, u * 1.8); c.restore();
+    const o = maskedGlyph(S, glyphs[0], 4.7 * u, 1.3 * u, 2.2 * u, x => halftone(x, S, S, P.ink, Math.PI / 4, 12, false), P.bg); c.drawImage(o, x0, y0);
+    const path = [[1.7, 4.4, 2.5], [3.1, 3.0, 1.6], [4.3, 1.9, 1.1]];
+    path.forEach(([px, py, sz], i) => { const s = i === 0 ? hero : rest[i - 1]; if (s) stickerAt(c, s, cx(px), cy(py), u * sz, -Math.PI / 4 + (r() - 0.5) * 0.3, i === 0 ? { shadow: true } : { duo: P.bg, flat: true }); });
+    c.fillStyle = P.ink; G[glyphs[1]](c, cx(1.0), cy(1.2), u * 0.9, train);
+  } else if (layout === "stack") {
+    /* a tall flat form on the centre line, forms stacked up it, overlapping, each with its shadow */
+    tornPiece(c, r, cx(1.6), cy(0.6), u * 2.8, u * 4.9, P.acc2, true);
+    const col = [[3, 4.3, 2.6, hero], [3.2, 2.5, 2.0, rest[0]], [2.8, 1.2, 1.4, rest[1]]];
+    col.forEach(([px, py, sz, s], i) => stickerAt(c, s, cx(px), cy(py), u * sz, (r() - 0.5) * 0.3, { shadow: true }));
+    c.fillStyle = P.ink; G[glyphs[0]](c, cx(5.0), cy(4.0), u * 1.1, train); G[glyphs[1]](c, cx(1.0), cy(2.0), u * 0.8, train);
+    overprint(c, r, P, cx(1.9), cy(3.6), u * 2.2, u * 2.2, "circle");
+  } else if (layout === "orbit") {
+    /* the hero in the middle struck as a token, small duotone forms on a ring, a thin ring rule */
+    c.strokeStyle = inkA(0.6); c.lineWidth = 1.5; c.beginPath(); c.arc(cx(3), cy(3), u * 2.35, 0, 7); c.stroke();
+    stampCoin(c, hero.im, cx(3), cy(3), u * 2.7, (r() - 0.5) * 0.2, P.acc2, P.bg);
+    const n = 6; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 - Math.PI / 2, px = cx(3) + Math.cos(a) * u * 2.35, py = cy(3) + Math.sin(a) * u * 2.35;
+      if (i % 2 === 0 && rest[i / 2]) { c.fillStyle = P.bg; c.beginPath(); c.arc(px, py, u * 0.6, 0, 7); c.fill(); stickerAt(c, rest[i / 2], px, py, u * 0.95, (r() - 0.5) * 0.6, { duo: dark ? P.acc : P.ink }); }
+      else { c.fillStyle = P.bg; c.beginPath(); c.arc(px, py, u * 0.5, 0, 7); c.fill(); c.fillStyle = P.ink; G[glyphs[(i / 2 | 0) % glyphs.length]](c, px, py, u * 0.7, BULLETS[i % 9]); } }
+  } else if (layout === "split") {
+    /* the panel split by a vertical band; a glyph knocked out of the band; the hero straddles the seam */
+    const bx = cx(r() < 0.5 ? 0.8 : 3.4), bw = u * 1.8; c.fillStyle = P.acc; c.fillRect(bx, y0, bw, S);
+    c.fillStyle = P.bg; G[glyphs[0]](c, bx + bw / 2, cy(1.5), u * 1.3, train);
+    stickerAt(c, hero, Math.min(Math.max(bx + bw / 2 + (r() < 0.5 ? -u * 0.6 : u * 0.6), cx(1.8)), cx(4.2)), cy(3.9), u * 3.0, (r() - 0.5) * 0.2, { shadow: true });
+    const o = maskedGlyph(S, glyphs[1], bx + bw / 2 + (bx < cx(2) ? u * 3.2 : -u * 2.4), cy(1.5), u * 1.6, x => halftone(x, S, S, P.ink, 0, 10, true), P.bg); c.drawImage(o, x0, y0);
+    rest.slice(0, 1).forEach(s => stickerAt(c, s, bx < cx(2) ? cx(4.9) : cx(1.1), cy(4.9), u * 1.1, (r() - 0.5) * 0.5, { duo: P.ink }));
+  } else {
+    /* cut paper: three torn pieces in bg, acc2 and ink tints, stickers pinned on them, one glyph as a stamp */
+    tornPiece(c, r, cx(0.7), cy(0.9), u * 3.2, u * 2.6, P.acc2, true);
+    tornPiece(c, r, cx(2.4), cy(2.4), u * 3.0, u * 3.0, dark ? "#1b2a3c" : "#ffffff", true);
+    tornPiece(c, r, cx(0.9), cy(3.9), u * 2.0, u * 1.5, P.acc, true);
+    stickerAt(c, hero, cx(3.9), cy(3.9), u * 2.6, (r() - 0.5) * 0.3, { shadow: true });
+    stickerAt(c, rest[0], cx(2.0), cy(2.0), u * 1.6, (r() - 0.5) * 0.4, { shadow: true });
+    stickerAt(c, rest[1], cx(1.9), cy(4.6), u * 1.1, (r() - 0.5) * 0.5, { duo: P.bg, flat: true });
+    c.fillStyle = P.ink; G[glyphs[0]](c, cx(5.0), cy(1.2), u * 1.0, train);
   }
-  // glyph layer
-  const glyphs = GLYPH_BY_THEME[theme] || GLYPH_BY_THEME.wander, mode = Math.floor(r() * 4);
-  c.fillStyle = P.ink;
-  if (mode === 0) {              // one giant glyph, Butcher scale
-    const g = glyphs[Math.floor(r() * glyphs.length)]; c.fillStyle = P.ink; G[g](c, x0 + S / 2, y0 + S / 2, S * 0.62, res.lucky && res.lucky.train);
-  } else if (mode === 1) {       // grid of glyphs
-    const n = 3, m = S * 0.12, cell = (S - 2 * m) / n; for (let gy = 0; gy < n; gy++) for (let gx = 0; gx < n; gx++) { const g = glyphs[(gx + gy * n + Math.floor(r() * 2)) % glyphs.length]; c.fillStyle = (gx + gy) % 2 && r() < 0.5 ? P.acc : P.ink; G[g](c, x0 + m + gx * cell + cell / 2, y0 + m + gy * cell + cell / 2, cell * 0.5, BULLETS[(gx + gy) % 9]); }
-  } else if (mode === 2) {       // a ring of glyphs round a seal
-    const n = 8 + Math.floor(r() * 3), R = S * 0.32; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 - Math.PI / 2, g = glyphs[i % glyphs.length]; c.fillStyle = i === 0 ? P.acc : P.ink; G[g](c, x0 + S / 2 + Math.cos(a) * R, y0 + S / 2 + Math.sin(a) * R, S * 0.11, BULLETS[i % 9]); }
-    c.fillStyle = P.acc; c.beginPath(); c.arc(x0 + S / 2, y0 + S / 2, S * 0.14, 0, 7); c.fill(); c.fillStyle = P.bg; G.bullet(c, x0 + S / 2, y0 + S / 2, S * 0.2, res.lucky && res.lucky.train); c.fillStyle = P.ink;
-  } else {                       // mode 3: a scatter of small glyphs, a field for the stickers
-    for (let i = 0; i < 8; i++) { const g = glyphs[i % glyphs.length]; c.globalAlpha = 0.14 + r() * 0.2; c.fillStyle = r() < 0.3 ? P.acc : P.ink; G[g](c, x0 + S * (0.14 + r() * 0.72), y0 + S * (0.14 + r() * 0.72), S * (0.06 + r() * 0.06), BULLETS[i % 9]); } c.globalAlpha = 1; c.fillStyle = P.ink;
-  }
-  // stickers: always on the ticket, in one of eight arrangements; three of them fold the stickers into the system
-  const arrangement = ["hero", "fan", "scatter", "column", "bomb", "grid", "coin", "dither"][Math.floor(r() * 8)];
-  const count = arrangement === "hero" ? 1 : arrangement === "bomb" ? 5 : arrangement === "grid" ? 5 : arrangement === "coin" ? 4 : arrangement === "dither" ? 3 : 2 + Math.floor(r() * 2);
-  const spot = () => { let px, py; do { px = 0.2 + r() * 0.6; py = 0.2 + r() * 0.6; } while ((px > 0.68 && py < 0.32) || (px < 0.32 && py > 0.68)); return [px, py]; };   // off the seal and the tag
-  const st = await pickStickers(r, theme, count);
-  if (st.length) {
-    if (arrangement === "grid") {         // glyph, sticker, glyph: a 3 by 3 of both systems
-      c.fillStyle = P.bg; c.fillRect(x0, y0, S, S); const cell = S / 3; let si = 0;
-      for (let gy = 0; gy < 3; gy++) for (let gx = 0; gx < 3; gx++) { const cx = x0 + gx * cell + cell / 2, cy = y0 + gy * cell + cell / 2;
-        if ((gx + gy) % 2 === 0 && si < st.length) stamp(c, st[si++].im, cx, cy, cell * 0.8, (r() - 0.5) * 0.3, true);
-        else { c.fillStyle = (gx + gy) % 3 === 1 ? P.acc : P.ink; G[glyphs[(gx + gy * 3) % glyphs.length]](c, cx, cy, cell * 0.56, BULLETS[(gx + gy) % 9]); } }
-      c.strokeStyle = P.ink; c.lineWidth = 2; for (let k = 1; k < 3; k++) { c.beginPath(); c.moveTo(x0 + k * cell, y0); c.lineTo(x0 + k * cell, y0 + S); c.moveTo(x0, y0 + k * cell); c.lineTo(x0 + S, y0 + k * cell); c.stroke(); }
-    } else if (arrangement === "coin") {  // stickers struck as tokens, in a gold ring
-      st.forEach((s, i) => { const a = i / st.length * Math.PI * 2 - Math.PI / 4; stampCoin(c, s.im, x0 + S / 2 + Math.cos(a) * S * 0.25, y0 + S / 2 + Math.sin(a) * S * 0.25, S * 0.26, (r() - 0.5) * 0.4, P.acc2, P.bg); });
-      c.fillStyle = P.acc; G[glyphs[0]](c, x0 + S / 2, y0 + S / 2, S * 0.16, res.lucky && res.lucky.train);
-    } else if (arrangement === "dither") { // the stickers in two tones, the dither pack look, one in colour
-      st.forEach((s, i) => { const big = i === 0; const im = big ? s.im : dithered(s.im, S * 0.3, P.acc); const [px, py] = big ? [0.5, 0.5] : spot(); stamp(c, im, x0 + S * px, y0 + S * py, big ? S * 0.46 : S * 0.3, (r() - 0.5) * 0.5, big); });
-    } else if (arrangement === "hero") stamp(c, st[0].im, x0 + S / 2, y0 + S / 2, S * 0.64, (r() - 0.5) * 0.16, true);
-    else if (arrangement === "fan") st.forEach((s, i) => { const a = (i - (st.length - 1) / 2) * 0.3; stamp(c, s.im, x0 + S / 2 + Math.sin(a) * S * 0.26, y0 + S * 0.58 - Math.cos(a) * S * 0.06, S * 0.32, a, true); });
-    else if (arrangement === "scatter") st.forEach(s => { const [px, py] = spot(); stamp(c, s.im, x0 + S * px, y0 + S * py, S * (0.22 + r() * 0.1), (r() - 0.5) * 0.7, true); });
-    else if (arrangement === "column") st.forEach((s, i) => stamp(c, s.im, x0 + S * (0.34 + (i % 2) * 0.32), y0 + S * (0.24 + i / Math.max(1, st.length - 1) * 0.52), S * 0.26, (r() - 0.5) * 0.3, true));
-    else st.forEach((s, i) => { const a = i / st.length * Math.PI * 2 + r(); stamp(c, s.im, x0 + S / 2 + Math.cos(a) * S * 0.17, y0 + S / 2 + Math.sin(a) * S * 0.17, S * (0.26 + r() * 0.08), (r() - 0.5) * 1.0, true); });
-  }
-  // the seal: an identicon of the question, the Memories way of making a token somebody's
+  /* accents: two small glyphs as a row in the top left, only where the layout leaves that corner quiet */
+  if (["poster", "split", "cutpaper", "stack", "diagonal"].includes(layout)) for (let i = 0; i < 2; i++) { c.save(); c.globalAlpha = 0.55; c.fillStyle = i ? P.acc : P.ink; G[glyphs[(i + 2) % glyphs.length]](c, cx(0.55 + i * 0.75), cy(0.55), u * 0.42, BULLETS[i % 9]); c.restore(); }
+  /* the seal and the tag, in their reserved corners */
   const seal = S * 0.11; c.fillStyle = P.bg; c.beginPath(); c.arc(x0 + S - seal * 0.9, y0 + seal * 0.9, seal * 0.78, 0, 7); c.fill();
   identicon(c, (res.question || "") + "|" + res.seed, x0 + S - seal * 1.35, y0 + seal * 0.45, seal * 0.9, 5, P.ink, P.acc);
-  // the theme tag
   const tag = THEME_WORD[theme] || THEME_WORD.wander; setFont(c, "700 22px 'IBM Plex Mono', monospace", "3px"); const tw = c.measureText(tag).width + 44;
   c.fillStyle = P.acc2; rr(c, x0 + 22, y0 + S - 68, tw, 46, 6); c.fill(); c.fillStyle = INK; c.textAlign = "left"; c.textBaseline = "middle"; c.fillText(tag, x0 + 44, y0 + S - 45); setFont(c, c.font);
   c.restore();
-  // frame
-  c.strokeStyle = P.name === "night" ? GOLD : INK; c.lineWidth = 3; c.strokeRect(x0 + 1.5, y0 + 1.5, S - 3, S - 3);
+  c.strokeStyle = dark ? GOLD : INK; c.lineWidth = 3; c.strokeRect(x0 + 1.5, y0 + 1.5, S - 3, S - 3);
 }
 
 /* ---------- the ticket: the site's transit kit on paper ---------- */
