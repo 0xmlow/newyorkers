@@ -33,8 +33,12 @@ from the live site.
 - **The ticket** (`assets/mlowtar/ticket.js`) is a generative piece per fortune. The art panel mixes
   three systems: ports of MLow's Memories renderers (the bloom grid, the identicon seal, the torn edge, the
   perforations, the barcode, the seeded noise contours), a one bit glyph set drawn in the Visualize Value
-  idiom (a bagel, a slice, a manhole, a subway bullet, a water tower, a hydrant, a token, a MetroCard, the
-  anthora cup, a pigeon, a stoop, a bridge, the nazar, a check), and MLow's object stickers pressed on in
+  idiom (forty of them: a bagel, a slice, a manhole, a subway bullet, a water tower, a hydrant, a token, a
+  MetroCard, the anthora cup, a pigeon, a stoop, a bridge, the nazar, a check, a pretzel, a dirty water dog,
+  a cab, a fire escape, a lamppost, a cone, the Con Ed stack, a hoop, a Citi Bike, Liberty's crown, the
+  Empire State, an umbrella, a rat, the ferry, the DON'T WALK hand, a mailbox, the Wonder Wheel, the
+  Unisphere, a tenement, the Washington Square arch, a halal cart, the Grand Central clock at eleven
+  eleven, a sidewalk shed), and MLow's object stickers pressed on in
   five arrangements. The paper wears the site's transit kit: the enamel station sign, the platform edge,
   the mosaic eye frieze, a MetroCard for the lucky strip, one of the N3W YORKERS lockups, the bodega awning
   at the tear. Tickets are kept on a shelf in your browser and save as a 2x PNG. No date is printed.
@@ -47,6 +51,16 @@ from the live site.
 - Five screens on the wall behind the booth cycle New Yorkers from the census.
 - RECORD films the next consult as a 1080 x 1920 clip, synth audio and captions included.
 - Receipts in MLow's blues with the MLOW mark, a CC0 paper scan (ambientCG Paper001), a real QR code to the replay link, stickers folded into the generative system (grid, coin, dither), and a glitch loop you can save.
+
+## The fourth pass (2026-10-13)
+
+- The booth relit. Every light has physical falloff and the three inside the cabinet sat centimetres from
+  the face, so the figure was three stops over: they are now hundredths of a candela, the key is 19 cd and
+  a touch to the side, the bake's cream gold is deepened toward brass in the shader. The crystal had never
+  glowed: its sphere (model centre 0.1075, 0.403, 0, radius 0.045, fitted from the GLB's normals) has its
+  front face outside the rig's inner box and the gate zeroed it. Ungated, it is blue glass with a highlight.
+- Twenty three more glyphs on the ticket (the list above), six to eight per theme, and the three red team
+  themes (health, law, politics) draw their own.
 
 ## Credits
 

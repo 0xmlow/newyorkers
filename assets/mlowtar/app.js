@@ -73,14 +73,16 @@ const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 40);
 const look = new THREE.Vector3(0, 0.5, 0);
 const orbit = { yaw: 0.28, pitch: 0.06, tyaw: 0.28, tpitch: 0.06, dist: 2.35, drag: false, px: 0, py: 0, par: [0, 0], moved: 0 };
 
-/* lights: a warm spot from the marquee side, a cool rim from the alley, the crystal from inside */
-scene.add(new THREE.HemisphereLight(0x27405a, 0x0a0806, 0.35));
-const key = new THREE.SpotLight(0xffd9a0, 30, 7, 0.55, 0.7, 1.6);
-key.position.set(0.9, 2.4, 1.6); key.castShadow = true; key.shadow.mapSize.set(isPhone ? 1024 : 2048, isPhone ? 1024 : 2048);
+/* lights: a warm spot from the marquee side, a cool rim from the alley, the crystal from inside.
+   Every light here is in physical units with real falloff, so the ones inside the cabinet sit centimetres from
+   the face and must be tiny: a 0.7 cd point light 12 cm from the flower was 20 times the key (2026-10-12). */
+scene.add(new THREE.HemisphereLight(0x27405a, 0x0a0806, 0.3));
+const key = new THREE.SpotLight(0xffd9a0, 19, 7, 0.52, 0.7, 1.6);
+key.position.set(1.15, 2.3, 1.5); key.castShadow = true; key.shadow.mapSize.set(isPhone ? 1024 : 2048, isPhone ? 1024 : 2048);
 key.shadow.bias = -0.0004; key.shadow.normalBias = 0.01; key.target.position.set(0, 0.5, 0); scene.add(key, key.target);
 const rim = new THREE.PointLight(0x61C9E2, 5, 4, 1.8); rim.position.set(-1.1, 1.3, -0.7); scene.add(rim);
-const sign = new THREE.PointLight(0xffcf7a, 1.8, 1.4, 1.6); sign.position.set(0, 1.0, 0.4); scene.add(sign);
-const ballLight = new THREE.PointLight(0x7fc8ff, 1.4, 1.1, 1.5); ballLight.position.set(0, 0.42, 0.12); scene.add(ballLight);
+const sign = new THREE.PointLight(0xffcf7a, 0.9, 1.4, 1.6); sign.position.set(0, 1.0, 0.4); scene.add(sign);
+const ballLight = new THREE.PointLight(0x7fc8ff, 0.05, 0.6, 1.6); ballLight.position.set(0, 0.42, 0.14); scene.add(ballLight);
 
 /* the corner: the site's glazed tile underfoot and its brick behind */
 const tileTex = texLoader.load(BASE + "assets/ui/tile.webp", t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(26, 26); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; });
@@ -113,7 +115,7 @@ const U = { uTime: { value: 0 }, uSpeak: { value: 0 }, uLean: { value: 0 }, uFla
 const booth = new THREE.Group(); booth.rotation.y = -Math.PI / 2; scene.add(booth);
 let boothMesh = null;
 function rigMaterial(tex) {
-  const m = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.8, metalness: 0.0, envMapIntensity: 0.6 });
+  const m = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.8, metalness: 0.0, envMapIntensity: 0.38 });
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, U);
     sh.vertexShader = sh.vertexShader
@@ -126,7 +128,7 @@ function rigMaterial(tex) {
         transformed.x += inner*h*(uLean*0.028 + breath + nod + uGaze.y*0.012);
         transformed.z += inner*h*(sin(uTime*0.9)*0.008 + uSpeak*sin(uTime*3.1)*0.004 - uGaze.x*0.03);
         transformed.y += inner*h*h*sin(uTime*2.2)*0.003;
-        vBall = (1.0 - smoothstep(0.045,0.085,distance(position, vec3(0.085,0.40,0.0))))*inner;
+        vBall = 1.0 - smoothstep(0.05,0.062,distance(position, vec3(0.1075,0.403,0.0)));   // the crystal: centre and radius 0.045 fitted from the GLB normals on 2026-10-12. Not gated by inner: the ball's front face is at x 0.152, outside the box, which is why it never glowed
         transformed += normal*vBall*(0.003*sin(uTime*3.0)+0.012*uSpeak);
         vEye = (1.0 - smoothstep(0.05,0.11,distance(position, vec3(0.06,0.69,0.0))))*inner;
         vTop = position.y;`);
@@ -144,16 +146,19 @@ function rigMaterial(tex) {
         float gold = step(0.08, mx) * smoothstep(0.45, 0.6, dc.g / max(dc.r, 1e-4)) * (1.0 - smoothstep(0.85, 0.95, dc.g / max(dc.r, 1e-4))) * (1.0 - smoothstep(0.45, 0.7, dc.b / max(dc.r, 1e-4)));
         float red = step(0.03, dc.r) * (1.0 - smoothstep(0.35, 0.55, dc.g / max(dc.r, 1e-4))) * (1.0 - smoothstep(0.35, 0.6, dc.b / max(dc.r, 1e-4)));
         metalnessFactor = mix(metalnessFactor, 0.9, gold);
-        roughnessFactor = mix(roughnessFactor, 0.3, gold);
+        roughnessFactor = mix(roughnessFactor, 0.36, gold);
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.0, 0.74, 0.36), gold * 0.75);   // the bake's gold is cream; deepen it so the brass reads as brass under the key
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.22, 0.4, 0.7), vBall * 0.95);   // the crystal is glass, not chalk: a deep blue body with a key highlight, its light is the emissive glow below
+        roughnessFactor = mix(roughnessFactor, 0.18, vBall); metalnessFactor = mix(metalnessFactor, 0.25, vBall);
         roughnessFactor = mix(roughnessFactor, 0.5, red * (1.0 - gold));
         float lum = dot(dc, vec3(0.3, 0.59, 0.11));
         vec3 blue = vec3(0.02, 0.26, 0.92) * clamp(lum / 0.22, 0.25, 1.9);     // MLow blue, the paint keeps its shading
         diffuseColor.rgb = mix(diffuseColor.rgb, blue, red * (1.0 - gold) * 0.92);`)
       .replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>
         vec3 iri = mix(vec3(0.35,0.70,1.0), vec3(1.0,0.55,0.85), 0.5+0.5*sin(uTime*1.7+vBall*4.0));
-        totalEmissiveRadiance += diffuseColor.rgb * vBall * iri * (1.1 + 1.8*uSpeak + 0.3*sin(uTime*5.0) + 3.0*uFlash);
+        totalEmissiveRadiance += diffuseColor.rgb * vBall * iri * (0.45 + 0.9*uSpeak + 0.12*sin(uTime*5.0) + 1.6*uFlash);
         vec3 eyeCol = mix(vec3(0.6,0.85,1.0), vec3(1.0,0.75,0.9), 0.5+0.5*sin(uTime*0.9));
-        totalEmissiveRadiance += diffuseColor.rgb * vEye * eyeCol * (0.25 + 0.6*uSpeak + 1.2*uFlash);`);
+        totalEmissiveRadiance += diffuseColor.rgb * vEye * eyeCol * (0.12 + 0.4*uSpeak + 0.8*uFlash);`);
   };
   return m;
 }
@@ -263,11 +268,13 @@ function tickBulbs(t) {
 
 /* the glass */
 /* the glass: a clear pane that only shows as a soft reflection, never a blur, so the oracle reads through it */
-const glass = new THREE.Mesh(new THREE.PlaneGeometry(0.246, 0.43), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.07, roughness: 0.02, metalness: 0, reflectivity: 0.6, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.45, depthWrite: false, side: THREE.FrontSide }));
+const glass = new THREE.Mesh(new THREE.PlaneGeometry(0.246, 0.43), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.07, roughness: 0.02, metalness: 0, reflectivity: 0.6, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.3, depthWrite: false, side: THREE.FrontSide }));
 glass.position.set(0, 0.59, 0.178); glass.renderOrder = 2; scene.add(glass);
-/* light inside the cabinet: a warm lamp above the turban and a soft fill at the glass, so the face is lit, not the pane */
-const lamp = new THREE.PointLight(0xfff0d2, 1.3, 0.55, 1.4); lamp.position.set(0, 0.83, 0.03); scene.add(lamp);
-const fill = new THREE.PointLight(0xdfe9ff, 0.7, 0.5, 1.6); fill.position.set(0.02, 0.62, 0.16); scene.add(fill);
+/* light inside the cabinet: a small warm lamp in the ceiling aimed down the face, and a faint cool fill at the pane.
+   The face is 25 cm from the lamp and 12 cm from the fill, so these are hundredths of a candela: the key outside
+   lands about 4 lux equivalent on the cabinet and the face should sit a stop under it, not three stops over. */
+const lamp = new THREE.SpotLight(0xfff0d2, 0.11, 0.7, 0.75, 0.6, 2); lamp.position.set(0, 0.86, 0.13); lamp.target.position.set(0, 0.58, 0.04); scene.add(lamp, lamp.target);
+const fill = new THREE.PointLight(0xdfe9ff, 0.012, 0.5, 2); fill.position.set(0.02, 0.62, 0.17); scene.add(fill);
 
 /* ---------- the hang: MLow's New Yorkers framed on the brick behind the booth, a salon hang either side ---------- */
 const hang = (() => {
@@ -473,12 +480,12 @@ function frame() {
   camera.position.set(look.x + Math.sin(y) * Math.cos(p) * d, look.y + 0.1 + Math.sin(p) * d, look.z + Math.cos(y) * Math.cos(p) * d);
   camera.lookAt(look);
   const s = U.uSpeak.value;
-  ballLight.intensity = 1.1 + s * 2.6 + Math.sin(t * 5.1) * 0.25 + state.flash * 6;
+  ballLight.intensity = 0.04 + s * 0.09 + Math.sin(t * 5.1) * 0.01 + state.flash * 0.25;
   ballLight.color.setHSL(0.55 + 0.25 * (0.5 + 0.5 * Math.sin(t * 1.7)), 0.8, 0.65);
-  sign.intensity = 1.8 + Math.sin(t * 23) * 0.06 + state.flash * 2;
+  sign.intensity = 0.9 + Math.sin(t * 23) * 0.04 + state.flash * 1;
   crown.face.emissiveIntensity = 0.22 + 0.03 * Math.sin(t * 23) + state.flash * 0.5;
   if (letters) letters.brassLit.emissiveIntensity = 0.35 + 0.1 * Math.sin(t * 2.0) + state.flash * 1.2 + U.uSpeak.value * 0.3;
-  key.intensity = 30 + (state.busy ? Math.sin(t * 18) * 1.5 : 0);
+  key.intensity = 19 + (state.busy ? Math.sin(t * 18) * 1 : 0);
   bulbs.speed = state.busy ? 3.2 : 1; tickBulbs(t);
   if (boothMesh && !reduced) { boothMesh.position.x = state.busy ? Math.sin(t * 60) * 0.0012 : 0; boothMesh.position.z = state.busy ? Math.cos(t * 47) * 0.0012 : 0; }
   if (dust.geometry.attributes.position) { const a = dust.geometry.attributes.position, sp = dust.userData.sp; for (let i = 0; i < sp.length; i++) { let yy = a.getY(i) + dt * 0.03 * sp[i]; if (yy > 1.7) yy = 0; a.setY(i, yy); a.setX(i, a.getX(i) + Math.sin(t * 0.5 + i) * dt * 0.01); } a.needsUpdate = true; }

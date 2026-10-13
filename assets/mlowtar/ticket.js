@@ -6,7 +6,12 @@
  *              helpers2.js), rewritten for Canvas 2D so the ticket can carry raster stickers and real fonts.
  *   GLYPHS     a one bit geometric glyph set in the Visualize Value idiom: a bagel, a slice, a manhole, a
  *              subway bullet, a water tower, a hydrant, a token, a MetroCard, the anthora cup, a pigeon, a
- *              stoop, a bridge, the nazar, a check. Circles, rectangles and arcs only. Black on paper.
+ *              stoop, a bridge, the nazar, a check; then (2026-10-12, the second set) a pretzel, a dirty
+ *              water dog, a cab, a fire escape, a bishop's crook lamppost, a cone, the Con Ed steam stack,
+ *              a hoop, a Citi Bike, Liberty's crown, the Empire State, an umbrella, a rat, the ferry, the
+ *              DON'T WALK hand, a mailbox, the Wonder Wheel, the Unisphere, a tenement, the Washington
+ *              Square arch, a halal cart, the Grand Central clock at eleven eleven, a sidewalk shed.
+ *              Circles, rectangles and arcs only. Black on paper. Knockouts in the paper colour.
  *   STICKERS   MLow's ChatGPT object stickers (the blue and white delft objects with the drips), chosen by
  *              the fortune's theme from assets/mlowtar/stickers.json and pressed on in one of five
  *              arrangements: hero, fan, scatter, column, bomb.
@@ -57,6 +62,10 @@ function noise2d(seed) {
 }
 
 /* ---------- the glyph set (one bit, centred on x,y, size s) ---------- */
+/* ko: draw in the paper colour (a knockout). ink: strokes in the current fill. Both leave the context as found,
+   so a glyph can be used as a mask (maskedGlyph sets G._paper to the ink and every knockout paints solid). */
+function ko(c, f) { const p = c.fillStyle, q = c.strokeStyle; c.fillStyle = c.strokeStyle = G._paper; f(); c.fillStyle = p; c.strokeStyle = q; }
+function ink(c, f) { const q = c.strokeStyle, lw = c.lineWidth, lc = c.lineCap, lj = c.lineJoin; c.strokeStyle = c.fillStyle; f(); c.strokeStyle = q; c.lineWidth = lw; c.lineCap = lc; c.lineJoin = lj; }
 const G = {
   bagel(c, x, y, s) { c.beginPath(); c.arc(x, y, s * 0.46, 0, 7); c.arc(x, y, s * 0.17, 0, 7, true); c.fill(); },
   slice(c, x, y, s) { c.beginPath(); c.moveTo(x, y + s * 0.48); c.lineTo(x - s * 0.36, y - s * 0.3); c.arc(x, y - s * 0.3, s * 0.36, Math.PI, 0); c.closePath(); c.fill();
@@ -78,8 +87,132 @@ const G = {
   eyeflower(c, x, y, s) { for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; c.beginPath(); c.ellipse(x + Math.cos(a) * s * 0.26, y + Math.sin(a) * s * 0.26, s * 0.2, s * 0.11, a, 0, 7); c.fill(); } G.nazar(c, x, y, s * 0.56); },
   star(c, x, y, s) { c.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i / 10 * Math.PI * 2, r = i % 2 ? s * 0.2 : s * 0.5; c.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } c.closePath(); c.fill(); },
   heart(c, x, y, s) { c.beginPath(); c.moveTo(x, y + s * 0.42); c.bezierCurveTo(x - s * 0.7, y - s * 0.05, x - s * 0.3, y - s * 0.55, x, y - s * 0.2); c.bezierCurveTo(x + s * 0.3, y - s * 0.55, x + s * 0.7, y - s * 0.05, x, y + s * 0.42); c.fill(); },
+
+  /* ---- the second set (2026-10-12) ---- */
+  pretzel(c, x, y, s) { ink(c, () => { c.lineWidth = s * 0.13; c.lineCap = "round";
+      c.beginPath(); c.ellipse(x, y + s * 0.04, s * 0.42, s * 0.36, 0, 0, 7); c.stroke();                                         // the ring
+      c.beginPath(); c.moveTo(x - s * 0.3, y - s * 0.2); c.bezierCurveTo(x + s * 0.12, y - s * 0.3, x - s * 0.12, y + s * 0.42, x + s * 0.18, y + s * 0.4); c.stroke();   // one arm
+      c.beginPath(); c.moveTo(x + s * 0.3, y - s * 0.2); c.bezierCurveTo(x - s * 0.12, y - s * 0.3, x + s * 0.12, y + s * 0.42, x - s * 0.18, y + s * 0.4); c.stroke(); });  // the other, crossing it
+    ko(c, () => { for (const [dx, dy] of [[-0.42, -0.1], [0.4, -0.14], [-0.2, -0.34], [0.26, -0.33], [-0.36, 0.26], [0.38, 0.22], [0.02, 0.4]]) c.fillRect(x + dx * s - s * 0.02, y + dy * s - s * 0.02, s * 0.04, s * 0.04); }); },   // the salt
+  hotdog(c, x, y, s) { c.save(); c.translate(x, y); c.rotate(-0.35);
+    rr(c, -s * 0.5, -s * 0.2, s, s * 0.4, s * 0.2); c.fill();
+    ko(c, () => { rr(c, -s * 0.44, -s * 0.08, s * 0.88, s * 0.16, s * 0.08); c.fill(); });
+    rr(c, -s * 0.42, -s * 0.06, s * 0.84, s * 0.12, s * 0.06); c.fill();
+    ko(c, () => { c.lineWidth = s * 0.035; c.lineJoin = "miter"; c.beginPath(); for (let i = 0; i <= 8; i++) c.lineTo(-s * 0.36 + i * s * 0.09, i % 2 ? -s * 0.03 : s * 0.03); c.stroke(); });
+    c.restore(); },
+  taxi(c, x, y, s) { c.fillRect(x - s * 0.5, y - s * 0.05, s, s * 0.3);
+    c.beginPath(); c.moveTo(x - s * 0.3, y - s * 0.05); c.lineTo(x - s * 0.2, y - s * 0.28); c.lineTo(x + s * 0.22, y - s * 0.28); c.lineTo(x + s * 0.34, y - s * 0.05); c.closePath(); c.fill();
+    c.fillRect(x - s * 0.08, y - s * 0.36, s * 0.16, s * 0.08);
+    ko(c, () => { c.beginPath(); c.moveTo(x - s * 0.24, y - s * 0.07); c.lineTo(x - s * 0.16, y - s * 0.24); c.lineTo(x - s * 0.02, y - s * 0.24); c.lineTo(x - s * 0.02, y - s * 0.07); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(x + s * 0.02, y - s * 0.07); c.lineTo(x + s * 0.02, y - s * 0.24); c.lineTo(x + s * 0.19, y - s * 0.24); c.lineTo(x + s * 0.28, y - s * 0.07); c.closePath(); c.fill();
+      for (let i = 0; i < 10; i++) if (i % 2) c.fillRect(x - s * 0.5 + i * s * 0.1, y + s * 0.06, s * 0.1, s * 0.05);
+      for (const dx of [-0.28, 0.28]) { c.beginPath(); c.arc(x + dx * s, y + s * 0.25, s * 0.13, 0, 7); c.fill(); } });
+    for (const dx of [-0.28, 0.28]) { c.beginPath(); c.arc(x + dx * s, y + s * 0.25, s * 0.1, 0, 7); c.fill(); ko(c, () => { c.beginPath(); c.arc(x + dx * s, y + s * 0.25, s * 0.04, 0, 7); c.fill(); }); } },
+  fireescape(c, x, y, s) { ink(c, () => { c.lineWidth = s * 0.05; c.lineCap = "butt";
+    for (let i = 0; i < 3; i++) { const ly = y - s * 0.4 + i * s * 0.36; c.fillRect(x - s * 0.5, ly, s, s * 0.05);
+      for (let j = 0; j <= 5; j++) c.fillRect(x - s * 0.5 + j * s * 0.2 - s * 0.02, ly - s * 0.16, s * 0.04, s * 0.16);
+      c.fillRect(x - s * 0.5, ly - s * 0.19, s, s * 0.035);
+      if (i < 2) { c.beginPath(); c.moveTo(x + s * 0.45, ly + s * 0.05); c.lineTo(x - s * 0.1, ly + s * 0.36); c.stroke(); } } }); },
+  lamppost(c, x, y, s) { c.fillRect(x - s * 0.04, y - s * 0.2, s * 0.08, s * 0.66); c.fillRect(x - s * 0.16, y + s * 0.42, s * 0.32, s * 0.06);
+    ink(c, () => { c.lineWidth = s * 0.07; c.lineCap = "round"; c.beginPath(); c.arc(x + s * 0.18, y - s * 0.2, s * 0.18, Math.PI, 0); c.stroke(); });
+    c.beginPath(); c.moveTo(x + s * 0.26, y - s * 0.2); c.lineTo(x + s * 0.46, y - s * 0.2); c.lineTo(x + s * 0.42, y + s * 0.02); c.lineTo(x + s * 0.3, y + s * 0.02); c.closePath(); c.fill();
+    c.fillRect(x + s * 0.3, y - s * 0.26, s * 0.12, s * 0.06);
+    ko(c, () => c.fillRect(x + s * 0.33, y - s * 0.14, s * 0.06, s * 0.1)); },
+  cone(c, x, y, s) { c.beginPath(); c.moveTo(x - s * 0.14, y - s * 0.46); c.lineTo(x + s * 0.14, y - s * 0.46); c.lineTo(x + s * 0.32, y + s * 0.34); c.lineTo(x - s * 0.32, y + s * 0.34); c.closePath(); c.fill();
+    c.fillRect(x - s * 0.48, y + s * 0.34, s * 0.96, s * 0.12);
+    ko(c, () => { c.fillRect(x - s * 0.19, y - s * 0.14, s * 0.38, s * 0.08); c.fillRect(x - s * 0.25, y + s * 0.1, s * 0.5, s * 0.07); }); },
+  steam(c, x, y, s) { c.beginPath(); c.moveTo(x - s * 0.1, y - s * 0.1); c.lineTo(x + s * 0.1, y - s * 0.1); c.lineTo(x + s * 0.17, y + s * 0.48); c.lineTo(x - s * 0.17, y + s * 0.48); c.closePath(); c.fill();
+    ko(c, () => { for (let i = 0; i < 3; i++) { const yy = i * 0.16, hw = 0.1 + (yy + 0.1) / 0.58 * 0.07; c.fillRect(x - hw * s + s * 0.02, y + yy * s, (hw * 2 - 0.04) * s, s * 0.06); } });
+    for (const [dx, dy, r] of [[0, -0.3, 0.17], [-0.2, -0.2, 0.12], [0.22, -0.22, 0.13], [0.06, -0.14, 0.1], [-0.3, -0.36, 0.08], [0.34, -0.38, 0.07]]) { c.beginPath(); c.arc(x + dx * s, y + dy * s, r * s, 0, 7); c.fill(); } },
+  hoop(c, x, y, s) { c.fillRect(x - s * 0.42, y - s * 0.48, s * 0.84, s * 0.5); ko(c, () => c.fillRect(x - s * 0.36, y - s * 0.42, s * 0.72, s * 0.38));
+    c.fillRect(x - s * 0.16, y - s * 0.26, s * 0.32, s * 0.22); ko(c, () => c.fillRect(x - s * 0.11, y - s * 0.21, s * 0.22, s * 0.13));
+    ink(c, () => { c.lineWidth = s * 0.06; c.beginPath(); c.ellipse(x, y + s * 0.06, s * 0.24, s * 0.07, 0, 0, 7); c.stroke();
+      c.lineWidth = s * 0.035; for (let i = -2; i <= 2; i++) { c.beginPath(); c.moveTo(x + i * s * 0.1, y + s * 0.12); c.lineTo(x + i * s * 0.06, y + s * 0.46); c.stroke(); }
+      c.beginPath(); c.moveTo(x - s * 0.15, y + s * 0.3); c.lineTo(x + s * 0.15, y + s * 0.3); c.stroke(); c.beginPath(); c.moveTo(x - s * 0.12, y + s * 0.46); c.lineTo(x + s * 0.12, y + s * 0.46); c.stroke(); }); },
+  bike(c, x, y, s) { ink(c, () => { c.lineWidth = s * 0.06; c.lineCap = "round"; c.lineJoin = "round";
+    for (const dx of [-0.3, 0.3]) { c.beginPath(); c.arc(x + dx * s, y + s * 0.18, s * 0.2, 0, 7); c.stroke(); }
+    c.beginPath(); c.moveTo(x - s * 0.3, y + s * 0.18); c.lineTo(x - s * 0.1, y - s * 0.16); c.lineTo(x + s * 0.02, y + s * 0.18); c.lineTo(x + s * 0.22, y - s * 0.2); c.lineTo(x + s * 0.3, y + s * 0.18); c.stroke();
+    c.beginPath(); c.moveTo(x - s * 0.1, y - s * 0.16); c.lineTo(x + s * 0.22, y - s * 0.2); c.moveTo(x - s * 0.3, y + s * 0.18); c.lineTo(x + s * 0.02, y + s * 0.18); c.stroke();
+    c.beginPath(); c.moveTo(x - s * 0.2, y - s * 0.22); c.lineTo(x - s * 0.04, y - s * 0.22); c.moveTo(x + s * 0.14, y - s * 0.28); c.lineTo(x + s * 0.32, y - s * 0.28); c.stroke(); });
+    for (const dx of [-0.3, 0.3]) { c.beginPath(); c.arc(x + dx * s, y + s * 0.18, s * 0.05, 0, 7); c.fill(); } c.beginPath(); c.arc(x + s * 0.02, y + s * 0.18, s * 0.06, 0, 7); c.fill(); },
+  liberty(c, x, y, s) { c.beginPath(); c.arc(x, y + s * 0.08, s * 0.3, 0, 7); c.fill(); c.fillRect(x - s * 0.12, y + s * 0.3, s * 0.24, s * 0.18);
+    c.beginPath(); c.arc(x, y + s * 0.08, s * 0.34, Math.PI, 0); c.fill();
+    for (let i = 0; i < 7; i++) { const a = Math.PI + (i + 0.5) / 7 * Math.PI; c.beginPath(); c.moveTo(x + Math.cos(a - 0.09) * s * 0.3, y + s * 0.08 + Math.sin(a - 0.09) * s * 0.3); c.lineTo(x + Math.cos(a) * s * 0.5, y + s * 0.08 + Math.sin(a) * s * 0.5); c.lineTo(x + Math.cos(a + 0.09) * s * 0.3, y + s * 0.08 + Math.sin(a + 0.09) * s * 0.3); c.closePath(); c.fill(); }
+    ko(c, () => { for (const dx of [-0.1, 0.1]) { c.beginPath(); c.arc(x + dx * s, y + s * 0.08, s * 0.035, 0, 7); c.fill(); } c.fillRect(x - s * 0.28, y - s * 0.06, s * 0.56, s * 0.03); }); },
+  spire(c, x, y, s) { const tiers = [[0.5, 0.34, 0.12], [0.36, 0.1, 0.24], [0.24, -0.12, 0.22], [0.14, -0.3, 0.18], [0.08, -0.4, 0.1]];
+    for (const [hw, ty, h] of tiers) c.fillRect(x - hw * s, y + ty * s, hw * 2 * s, h * s); c.fillRect(x - s * 0.02, y - s * 0.5, s * 0.04, s * 0.12);
+    ko(c, () => { for (const [hw, ty, h] of tiers) for (let yy = ty + 0.03; yy + 0.04 < ty + h; yy += 0.07) for (let xx = -hw + 0.05; xx + 0.03 < hw - 0.04; xx += 0.08) c.fillRect(x + xx * s, y + yy * s, s * 0.03, s * 0.04); }); },
+  umbrella(c, x, y, s) { c.beginPath(); c.arc(x, y + s * 0.02, s * 0.48, Math.PI, 0); c.closePath(); c.fill();
+    ko(c, () => { for (let i = 0; i < 4; i++) { c.beginPath(); c.arc(x - s * 0.36 + i * s * 0.24, y + s * 0.02, s * 0.1, Math.PI, 0); c.fill(); } });
+    c.fillRect(x - s * 0.03, y - s * 0.02, s * 0.06, s * 0.4); c.fillRect(x - s * 0.025, y - s * 0.5, s * 0.05, s * 0.06);
+    ink(c, () => { c.lineWidth = s * 0.06; c.lineCap = "round"; c.beginPath(); c.arc(x - s * 0.1, y + s * 0.38, s * 0.1, 0, Math.PI); c.stroke(); }); },
+  rat(c, x, y, s) { c.beginPath(); c.ellipse(x - s * 0.05, y + s * 0.08, s * 0.34, s * 0.2, 0, 0, 7); c.fill();
+    c.beginPath(); c.moveTo(x + s * 0.18, y - s * 0.06); c.lineTo(x + s * 0.5, y + s * 0.1); c.lineTo(x + s * 0.2, y + s * 0.24); c.closePath(); c.fill();
+    c.beginPath(); c.arc(x + s * 0.2, y - s * 0.1, s * 0.09, 0, 7); c.fill();
+    ko(c, () => { c.beginPath(); c.arc(x + s * 0.2, y - s * 0.1, s * 0.04, 0, 7); c.fill(); c.beginPath(); c.arc(x + s * 0.3, y + s * 0.06, s * 0.03, 0, 7); c.fill(); });
+    ink(c, () => { c.lineWidth = s * 0.05; c.lineCap = "round"; c.beginPath(); c.moveTo(x - s * 0.38, y + s * 0.1); c.quadraticCurveTo(x - s * 0.52, y, x - s * 0.46, y - s * 0.28); c.stroke(); });
+    for (const dx of [-0.2, 0.05]) c.fillRect(x + dx * s, y + s * 0.24, s * 0.05, s * 0.1); },
+  ferry(c, x, y, s) { c.beginPath(); c.moveTo(x - s * 0.5, y + s * 0.1); c.lineTo(x + s * 0.5, y + s * 0.1); c.lineTo(x + s * 0.42, y + s * 0.34); c.lineTo(x - s * 0.42, y + s * 0.34); c.closePath(); c.fill();
+    c.fillRect(x - s * 0.38, y - s * 0.12, s * 0.76, s * 0.22); c.fillRect(x - s * 0.26, y - s * 0.3, s * 0.52, s * 0.18); c.fillRect(x - s * 0.04, y - s * 0.46, s * 0.08, s * 0.16);
+    ko(c, () => { for (let i = 0; i < 7; i++) c.fillRect(x - s * 0.33 + i * s * 0.1, y - s * 0.06, s * 0.06, s * 0.08); for (let i = 0; i < 4; i++) c.fillRect(x - s * 0.2 + i * s * 0.12, y - s * 0.25, s * 0.07, s * 0.08); });
+    ink(c, () => { c.lineWidth = s * 0.04; c.lineJoin = "round"; c.beginPath(); for (let i = 0; i <= 6; i++) c.lineTo(x - s * 0.48 + i * s * 0.16, y + s * 0.44 + (i % 2 ? -s * 0.03 : s * 0.03)); c.stroke(); }); },
+  hand(c, x, y, s) { rr(c, x - s * 0.26, y - s * 0.1, s * 0.52, s * 0.4, s * 0.1); c.fill();
+    for (const [dx, ty, h] of [[-0.21, -0.42, 0.24], [-0.07, -0.5, 0.34], [0.07, -0.48, 0.32], [0.2, -0.4, 0.26]]) { rr(c, x + dx * s - s * 0.055, y + ty * s, s * 0.11, h * s + s * 0.1, s * 0.05); c.fill(); }
+    c.save(); c.translate(x - s * 0.3, y); c.rotate(-0.7); rr(c, -s * 0.055, -s * 0.26, s * 0.11, s * 0.3, s * 0.05); c.fill(); c.restore();
+    c.fillRect(x - s * 0.14, y + s * 0.3, s * 0.28, s * 0.18); },
+  mailbox(c, x, y, s) { c.beginPath(); c.arc(x, y - s * 0.14, s * 0.32, Math.PI, 0); c.fill(); c.fillRect(x - s * 0.32, y - s * 0.14, s * 0.64, s * 0.4);
+    ko(c, () => { rr(c, x - s * 0.22, y - s * 0.1, s * 0.44, s * 0.08, s * 0.03); c.fill(); c.fillRect(x - s * 0.26, y + s * 0.1, s * 0.52, s * 0.03); });
+    for (const dx of [-0.22, 0.22]) c.fillRect(x + dx * s - s * 0.04, y + s * 0.26, s * 0.08, s * 0.2); },
+  wheel(c, x, y, s) { ink(c, () => { c.lineWidth = s * 0.045; c.beginPath(); c.arc(x, y - s * 0.04, s * 0.4, 0, 7); c.stroke(); c.beginPath(); c.arc(x, y - s * 0.04, s * 0.14, 0, 7); c.stroke();
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; c.beginPath(); c.moveTo(x + Math.cos(a) * s * 0.14, y - s * 0.04 + Math.sin(a) * s * 0.14); c.lineTo(x + Math.cos(a) * s * 0.4, y - s * 0.04 + Math.sin(a) * s * 0.4); c.stroke(); }
+      c.lineWidth = s * 0.06; c.beginPath(); c.moveTo(x, y - s * 0.04); c.lineTo(x - s * 0.3, y + s * 0.48); c.moveTo(x, y - s * 0.04); c.lineTo(x + s * 0.3, y + s * 0.48); c.stroke(); });
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + Math.PI / 8; c.beginPath(); c.arc(x + Math.cos(a) * s * 0.4, y - s * 0.04 + Math.sin(a) * s * 0.4, s * 0.06, 0, 7); c.fill(); }
+    c.beginPath(); c.arc(x, y - s * 0.04, s * 0.06, 0, 7); c.fill(); },
+  globe(c, x, y, s) { ink(c, () => { c.lineWidth = s * 0.05; c.beginPath(); c.arc(x, y - s * 0.02, s * 0.4, 0, 7); c.stroke();
+      for (const k of [0.16, 0.3]) { c.beginPath(); c.ellipse(x, y - s * 0.02, k * s, s * 0.4, 0, 0, 7); c.stroke(); }
+      for (const k of [-0.2, 0, 0.2]) { const hw = Math.sqrt(0.16 - k * k); c.beginPath(); c.moveTo(x - hw * s, y - s * 0.02 + k * s); c.lineTo(x + hw * s, y - s * 0.02 + k * s); c.stroke(); }
+      c.lineWidth = s * 0.035; c.beginPath(); c.ellipse(x, y - s * 0.02, s * 0.5, s * 0.16, -0.4, 0, 7); c.stroke();
+      c.lineWidth = s * 0.06; c.beginPath(); c.moveTo(x - s * 0.1, y + s * 0.38); c.lineTo(x - s * 0.22, y + s * 0.48); c.moveTo(x + s * 0.1, y + s * 0.38); c.lineTo(x + s * 0.22, y + s * 0.48); c.stroke(); }); },
+  tenement(c, x, y, s) { c.fillRect(x - s * 0.3, y - s * 0.44, s * 0.6, s * 0.92); c.fillRect(x - s * 0.34, y - s * 0.48, s * 0.68, s * 0.06);
+    ko(c, () => { for (let r = 0; r < 5; r++) for (let k = -1; k <= 1; k++) c.fillRect(x + k * s * 0.17 - s * 0.045, y - s * 0.36 + r * s * 0.15, s * 0.09, s * 0.1);
+      c.beginPath(); c.arc(x, y + s * 0.32, s * 0.07, Math.PI, 0); c.fill(); c.fillRect(x - s * 0.07, y + s * 0.32, s * 0.14, s * 0.16); }); },
+  arch(c, x, y, s) { c.fillRect(x - s * 0.46, y - s * 0.3, s * 0.92, s * 0.78); c.fillRect(x - s * 0.5, y - s * 0.46, s, s * 0.16);
+    ko(c, () => { c.beginPath(); c.arc(x, y + s * 0.02, s * 0.24, Math.PI, 0); c.fill(); c.fillRect(x - s * 0.24, y + s * 0.02, s * 0.48, s * 0.46); c.fillRect(x - s * 0.4, y - s * 0.4, s * 0.8, s * 0.04);
+      for (const dx of [-0.38, 0.3]) c.fillRect(x + dx * s, y - s * 0.2, s * 0.08, s * 0.5); }); },
+  cart(c, x, y, s) { c.fillRect(x - s * 0.36, y - s * 0.08, s * 0.72, s * 0.36); ko(c, () => c.fillRect(x - s * 0.3, y - s * 0.02, s * 0.6, s * 0.14));
+    c.fillRect(x - s * 0.02, y - s * 0.36, s * 0.04, s * 0.3); c.beginPath(); c.arc(x, y - s * 0.1, s * 0.38, Math.PI, 0); c.closePath(); c.fill();
+    ko(c, () => { for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(x - s * 0.25 + i * s * 0.25, y - s * 0.1, s * 0.09, Math.PI, 0); c.fill(); } });
+    for (const dx of [-0.24, 0.24]) { c.beginPath(); c.arc(x + dx * s, y + s * 0.36, s * 0.1, 0, 7); c.fill(); ko(c, () => { c.beginPath(); c.arc(x + dx * s, y + s * 0.36, s * 0.04, 0, 7); c.fill(); }); } },
+  clock(c, x, y, s) { c.beginPath(); c.arc(x, y, s * 0.48, 0, 7); c.fill(); ko(c, () => { c.beginPath(); c.arc(x, y, s * 0.4, 0, 7); c.fill(); });
+    ink(c, () => { c.lineWidth = s * 0.04; c.lineCap = "round"; for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, r1 = i % 3 ? 0.34 : 0.3; c.beginPath(); c.moveTo(x + Math.cos(a) * r1 * s, y + Math.sin(a) * r1 * s); c.lineTo(x + Math.cos(a) * s * 0.38, y + Math.sin(a) * s * 0.38); c.stroke(); }
+      c.lineWidth = s * 0.06; c.beginPath(); c.moveTo(x, y); c.lineTo(x - s * 0.1, y - s * 0.17); c.moveTo(x, y); c.lineTo(x + s * 0.27, y - s * 0.12); c.stroke(); });   // eleven eleven
+    c.beginPath(); c.arc(x, y, s * 0.05, 0, 7); c.fill(); },
+  scaffold(c, x, y, s) { ink(c, () => { c.lineWidth = s * 0.05; c.lineCap = "butt";
+    for (const dx of [-0.42, 0, 0.42]) { c.beginPath(); c.moveTo(x + dx * s, y - s * 0.44); c.lineTo(x + dx * s, y + s * 0.48); c.stroke(); }
+    for (const yy of [-0.48, -0.02, 0.44]) c.fillRect(x - s * 0.5, y + yy * s, s, s * 0.06);
+    c.lineWidth = s * 0.035; for (const [x0, y0] of [[-0.42, -0.42], [0, -0.42], [-0.42, 0.04], [0, 0.04]]) { c.beginPath(); c.moveTo(x + x0 * s, y + y0 * s); c.lineTo(x + (x0 + 0.42) * s, y + (y0 + 0.4) * s); c.stroke(); } }); },
 };
-const GLYPH_BY_THEME = { love: ["heart", "bridge", "pigeon", "cup"], money: ["token", "check", "metrocard", "manhole"], work: ["cup", "tower", "metrocard", "bridge"], home: ["stoop", "tower", "hydrant", "bagel"], move: ["bullet", "metrocard", "token", "bridge"], food: ["bagel", "slice", "cup", "pigeon"], art: ["eyeflower", "star", "nazar", "check"], luck: ["star", "token", "check", "nazar"], lost: ["manhole", "pigeon", "nazar", "stoop"], night: ["tower", "bullet", "star", "cup"], family: ["stoop", "bagel", "heart", "pigeon"], fame: ["star", "check", "bullet", "eyeflower"], city: ["manhole", "hydrant", "tower", "bullet"], future: ["bridge", "tower", "eyeflower", "check"], wander: ["pigeon", "manhole", "hydrant", "slice"] };
+/* per theme, solid silhouettes first: index 0 is the halftone mask in the poster and stack layouts, 1 the hero stamp */
+const GLYPH_BY_THEME = {
+  love: ["heart", "umbrella", "bridge", "pigeon", "cup", "ferry", "wheel"],
+  money: ["token", "taxi", "check", "metrocard", "manhole", "cart", "mailbox"],
+  work: ["cup", "cone", "tower", "metrocard", "scaffold", "spire", "hand", "bridge"],
+  home: ["stoop", "tenement", "tower", "hydrant", "bagel", "mailbox", "fireescape"],
+  move: ["bullet", "taxi", "metrocard", "token", "ferry", "bike", "hand", "bridge"],
+  food: ["bagel", "pretzel", "slice", "hotdog", "cup", "cart", "pigeon"],
+  art: ["eyeflower", "arch", "star", "nazar", "check", "globe", "wheel"],
+  luck: ["star", "clock", "token", "check", "nazar", "liberty", "umbrella"],
+  lost: ["manhole", "lamppost", "pigeon", "nazar", "stoop", "rat", "globe"],
+  night: ["tower", "lamppost", "bullet", "star", "cup", "taxi", "rat", "steam"],
+  family: ["stoop", "tenement", "bagel", "heart", "pigeon", "ferry", "umbrella"],
+  fame: ["star", "liberty", "check", "bullet", "eyeflower", "spire", "wheel"],
+  city: ["manhole", "steam", "hydrant", "tower", "bullet", "taxi", "cone", "scaffold"],
+  future: ["bridge", "spire", "tower", "eyeflower", "check", "globe", "clock"],
+  wander: ["pigeon", "arch", "manhole", "hydrant", "slice", "lamppost", "bike", "ferry"],
+  health: ["heart", "umbrella", "cup", "bagel", "clock", "hand", "pigeon"],
+  law: ["hand", "arch", "check", "mailbox", "scaffold", "clock", "liberty"],
+  politics: ["liberty", "arch", "hand", "mailbox", "globe", "check", "steam"],
+};
 const BULLETS = ["1", "4", "7", "A", "B", "G", "J", "L", "N"];
 G._paper = PAPER;
 /* every font set through here so tracking is deliberate: labels open, the display face tight */
@@ -232,7 +365,7 @@ async function artPanel(c, r, res, P, x0, y0, S) {
     rest.slice(0, 2).forEach((s, i) => stickerAt(c, s, cx(4.3 + i * 1.1), cy(5.1), u * 1.1, (r() - 0.5) * 0.5, { duo: dark ? P.acc : P.ink }));
   } else if (layout === "window") {
     /* a big window cut in the shape of a glyph (bagel, bullet, MetroCard), a duotone sticker living inside it, a colour sticker crossing the edge */
-    const win = ["bagel", "bullet", "metrocard", "manhole", "nazar"][Math.floor(r() * 5)];
+    const win = ["bagel", "bullet", "metrocard", "manhole", "nazar", "pretzel", "clock", "hand", "umbrella", "token"][Math.floor(r() * 10)];
     const o = maskedGlyph(S, win, 3 * u, 2.9 * u, 4.6 * u, x => { x.fillStyle = P.acc; x.fillRect(0, 0, S, S); if (rest[0]) stickerAt(x, rest[0], 3 * u, 2.9 * u, u * 3.2, (r() - 0.5) * 0.3, { duo: P.bg, flat: true }); }, P.bg); c.drawImage(o, x0, y0);
     c.fillStyle = P.ink; G[win](c, cx(3), cy(2.9), u * 4.6 + 10); c.fillStyle = P.bg; G[win](c, cx(3), cy(2.9), u * 4.6 - 14); c.drawImage(o, x0, y0);   // a ring of ink round the window
     stickerAt(c, hero, cx(4.2), cy(4.1), u * 2.4, (r() - 0.5) * 0.4, { shadow: true });
@@ -395,3 +528,5 @@ export async function renderTicket(res, opts) {
   return cv;
 }
 export const ticketAspect = W / H;
+/* the glyph set, exported for the glyph sheet (scratchpad glyph_sheet.html); nothing on the site imports it */
+export const __G = G;

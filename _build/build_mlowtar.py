@@ -97,7 +97,7 @@ body = f"""<section class="mz" id="mz">
     <div class="kicker">WHAT IT IS</div>
     <h2>A fortune booth that only knows New York.</h2>
     <p>MLOWTAR was built as a prop for <a href="movies">ON LOCATION</a>, the walkable movie sets. It kept talking after the shoot. Answer five quick questions for the file (where the city keeps you, your hour, your order, your train, what you're carrying), then drop a token in the slot and the booth deals one of the New Yorkers in the census as your card, reads the fortune off the family, the borough and the block, and names the room of the museum you should go stand in next.</p>
-    <p>Every consult prints a ticket: a generative piece drawn from your question, made of three systems MLow keeps around the studio. The bloom grid, the seal, the torn edge and the barcode come from his Memories renderers. The one bit glyphs (a bagel, a slice, a manhole, a subway bullet, a water tower, the nazar) are drawn in the Visualize Value idiom. The objects pressed on top are the New York stickers he made with ChatGPT, arranged fresh every time. Save it. No two are alike.</p>
+    <p>Every consult prints a ticket: a generative piece drawn from your question, made of three systems MLow keeps around the studio. The bloom grid, the seal, the torn edge and the barcode come from his Memories renderers. The one bit glyphs (forty of them: a bagel, a slice, a manhole, a subway bullet, a water tower, the nazar, a pretzel, a dirty water dog, a cab, a fire escape, the Con Ed stack, a rat, the ferry, the DON'T WALK hand, the Wonder Wheel, the Unisphere, Liberty's crown, the Grand Central clock stopped at eleven eleven) are drawn in the Visualize Value idiom. The objects pressed on top are the New York stickers he made with ChatGPT, arranged fresh every time. Save it. No two are alike.</p>
   </div>
   <div>
     <div class="kicker">HOW IT WORKS</div>
@@ -114,7 +114,11 @@ body = f"""<section class="mz" id="mz">
 </section>"""
 head = (f'<link rel="stylesheet" href="assets/mlowtar/app.css?v={_v("app.css")}">\n'
         f'<link rel="modulepreload" href="assets/airport/vendor/three.module.js?v={_vp(three)}">\n'
-        '<script type="importmap">{"imports":{"three":"./assets/airport/vendor/three.module.js?v=' + _vp(three) + '"}}</script>')   # an import map value must be a URL: "./" or it is ignored as a bare specifier
+        '<script type="importmap">' + json.dumps({"imports": {
+            "three": "./assets/airport/vendor/three.module.js?v=" + _vp(three),
+            # app.js imports these by relative path; the map rewrites the resolved URL to a versioned one, so an
+            # edit to a bank reaches visitors at once instead of after Cloudflare's four hour cache floor
+            **{f"./assets/mlowtar/{m}": f"./assets/mlowtar/{m}?v={_v(m)}" for m in ("oracle.js", "match.js", "ticket.js")}}}, separators=(",", ":")) + '</script>')   # an import map value must be a URL: "./" or it is ignored as a bare specifier
 scripts = (f'<script src="assets/qrcode.min.js"></script>\n'
            f'<script>window.MLOWTAR_DECK_URL="assets/mlowtar/deck.json?v={_v("deck.json")}";window.MLOWTAR_SIGN_URL="assets/mlowtar/sign.json?v={_v("sign.json")}";window.MLOWTAR_LIVE=false;document.body.classList.add("mlowtar");</script>\n'
            f'<script type="module" src="assets/mlowtar/app.js?v={_v("app.js")}"></script>')

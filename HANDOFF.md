@@ -90,6 +90,40 @@ of the card slot, names a room of the museum to go stand in, and talks back when
   person. Banks grew (families 4, boroughs 4 to 5, omens 8 a theme, 20 closers, 12 file lines), the aside
   is 55 percent, the card quote stops at a full sentence, the room is dealt from the top five. Findings and
   the before/after table: `../MLOWTAR HANDOFF 2026-10-12/REDTEAM_NOTES.md`.
+- **Seventh pass (the art panel).** `artPanel()` in ticket.js is a composition engine: a 6 x 6 armature
+  (`u = S / 6`, `cx(k)`, `cy(k)`), reserved corners (seal top right, tag bottom left), eight weighted layouts
+  (poster, window, grid, diagonal, stack, orbit, split, cutpaper), layers ground > field > dominant >
+  secondary > accents > overprint. Helpers: `maskedGlyph` (a layer kept inside a glyph silhouette, the mask
+  painted solid on its own canvas), `halftone`, `hatch`, `tornPiece`, `stickerAt` (shadow or duotone),
+  `overprint` (multiply with a nudge). Judge changes with the 16 panel sheet (`stage/art_test.html?s=N`
+  in the scratchpad pattern; `screens/09_art_panels.jpg` in the package is the last one).
+- **Eighth pass (two sticker families).** `stickers.json` rows carry a fifth field, `prop` or `eye`; ten
+  more Open Eye Flower sets joined the drawer (467 stickers). `pickStickers(r, theme, n, lead)` deals the
+  hero from the lead family and alternates the rest from the other, and `artPanel` picks the lead by seed.
+- **Ninth pass (MLow: "the lighting on the machine is off and the figure is overexposed", "more NYC glyphs").**
+  Every light in the scene is in physical units with real falloff, and the three inside the cabinet sat
+  centimetres from the face: the 0.7 cd fill 12 cm from the flower landed about twenty times the key, the 1.4 cd
+  crystal light 4 cm from the ball over a hundred times. The figure crop measured 63 percent clipped pixels.
+  Now: key 19 cd (was 30) a little more to the side for a raking highlight on the trims, sign 0.9, the cabinet
+  lamp is a 0.11 cd spot in the ceiling aimed down the face, the fill 0.012 cd, the crystal light 0.04 cd
+  (pulse and flash scaled the same way), rig envMapIntensity 0.38 (was 0.6) so the key does the modelling, the
+  pane reflects less of the room. In the shader the bake's cream gold is deepened toward brass and the
+  crystal is a deep blue glass body (roughness 0.18, a little metalness) under its iridescent emissive. The
+  crystal itself never glowed before: the sphere is centred at model (0.1075, 0.403, 0) with radius 0.045
+  (fitted from the GLB's vertex normals), and its front face at x 0.152 is outside the rig's inner box, so the
+  old `inner` gate zeroed it; `vBall` is now ungated. After: 4 percent clipped on the figure, the ball reads
+  lavender blue instead of white. Shots and the measuring script were in the session scratchpad only.
+  The glyph set doubled: 23 new one bit glyphs in ticket.js (pretzel, hotdog, taxi, fireescape, lamppost, cone,
+  steam, hoop, bike, liberty, spire, umbrella, rat, ferry, hand, mailbox, wheel, globe, tenement, arch, cart,
+  clock at eleven eleven, scaffold) with two helpers, `ko` (a knockout in the paper colour) and `ink` (strokes
+  in the fill, context restored), so every glyph still works as a mask. `GLYPH_BY_THEME` has six to eight per
+  theme, solid silhouettes first because index 0 is the halftone mask and index 1 the hero stamp, and the
+  three red team themes (health, law, politics) have their own rows instead of falling through to wander. The
+  window layout cuts ten shapes instead of five. `export const __G` at the foot of ticket.js is for the glyph
+  sheet (scratchpad `glyph_sheet.html`: every glyph in ink, then every glyph as a mask); nothing on the site
+  imports it. Tickets re-rendered from the shelf will pick different glyphs than before this pass (the theme
+  rows changed), the seed and the rest of the composition are unchanged. og.jpg still shows the old
+  overexposed booth and was not recaptured.
 - Not done, by choice: Art Blocks style onchain randomness. The seed is `hash(question + minute)`, which is
   what a shared link replays; when MLow wants it onchain the ticket renderer is already deterministic from one
   integer.
