@@ -20,7 +20,7 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "../airport/vendor/addons/environments/RoomEnvironment.js";
 import { read, makeSeed, STARTERS, themeOf, FILE, script } from "./oracle.js";
-import { renderTicket, ticketAspect, glitchFrame, recordLoop } from "./ticket.js";
+import { renderTicket, ticketAspect, glitchFrame, recordLoop, drawQR } from "./ticket.js";
 
 const BASE = window.NY_BASE || "";
 const THUMBS = window.MLOWTAR_THUMBS || (BASE + "assets/t/");   // the census thumbs; a standalone checkout points this at the live site
@@ -566,7 +566,12 @@ const lbC = $("#mzLbC"); let lbRun = 0;
 function openLightbox() {
   if (!lb || !ticket.canvas) return; lb.hidden = false; document.body.classList.add("mz-lb-open");
   if (lbC) { lbC.width = Math.round(ticket.canvas.width / 2); lbC.height = Math.round(ticket.canvas.height / 2); const my = ++lbRun, t0 = performance.now(), seed = (ticket.res && ticket.res.seed) || 1;
-    (function loop() { if (lb.hidden || my !== lbRun) return; glitchFrame(ticket.canvas, lbC, (performance.now() - t0) / 1000, seed); requestAnimationFrame(loop); })(); }
+    (function loop() { if (lb.hidden || my !== lbRun) return; glitchFrame(ticket.canvas, lbC, (performance.now() - t0) / 1000, seed);
+      const q = ticket.canvas._qr; if (q) { const k = lbC.width / ticket.canvas.width; lbC.getContext("2d").drawImage(ticket.canvas, q.x, q.y, q.s, q.s, Math.round(q.x * k), Math.round(q.y * k), Math.round(q.s * k), Math.round(q.s * k)); }   // the QR stays clean under the glitch
+      requestAnimationFrame(loop); })(); }
+  // the replay QR on its own panel, generated fresh at device pixels (the ticket in the lightbox is capped by height, so its stamp is too small for a camera)
+  const scan = $("#mzLbScan"), qc = $("#mzLbQr"), q = ticket.canvas._qr;
+  if (scan && qc) { if (q && q.link) { const px = Math.round(132 * Math.min(devicePixelRatio || 1, 3)); qc.width = qc.height = px; scan.hidden = !drawQR(qc.getContext("2d"), q.link, 0, 0, px, "#000", "#fff"); } else scan.hidden = true; }
 }
 function closeLightbox() { if (!lb) return; lb.hidden = true; lbRun++; document.body.classList.remove("mz-lb-open"); }
 async function saveLoop() {

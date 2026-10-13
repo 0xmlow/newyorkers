@@ -125,6 +125,18 @@ of the card slot, names a room of the museum to go stand in, and talks back when
   rows changed), the seed and the rest of the composition are unchanged. og.jpg was recaptured on
   2026-10-13 with the relit booth (same framing: 1700 x 900 headless page mid consult, clip 130,70 1000 x 525 at 2x,
   resized to 1200 x 630).
+- **Tenth pass (2026-10-13, MLow: "the QR codes on the receipts don't work").** The replay link itself was fine
+  (a cold open of `mlowtar#q=...&s=...` with no file replays the slip and prints the ticket). The symbol was not:
+  112 px on a 1000 px ticket, two modules of quiet zone, dark on the MetroCard gold, the paper texture multiplied
+  over it, and in the lightbox the ticket is capped by height (about 250 px wide on a laptop), so the symbol
+  landed at 55 px on screen. OpenCV decoded 0 of 24 old receipts at 1x. Now: the MetroCard is 236 tall and
+  carries a white stamp (`qs = h - 24`), `drawQR` uses error correction L, a four module quiet zone and whole
+  pixel cells, and the stamp is drawn after the paper (renderTicket, `stamp`), with its place kept on the canvas
+  as `cv._qr`. 24 of 24 new receipts decode at 1x. The lightbox keeps the stamp clean under the glitch and adds
+  its own panel (`#mzLbScan`, `#mzLbQr`, 132 css px at device pixels, `drawQR` exported for it); on screens
+  over 900 px the panel and the buttons sit beside the ticket. Headless screenshots of the lightbox decode on
+  a laptop and a phone viewport. The question in the link is cut at 60 characters (was 80), so a very long
+  question replays approximately. `sample_receipts/` in the package was re-rendered.
 - Not done, by choice: Art Blocks style onchain randomness. The seed is `hash(question + minute)`, which is
   what a shared link replays; when MLow wants it onchain the ticket renderer is already deterministic from one
   integer.

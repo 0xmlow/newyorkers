@@ -91,7 +91,7 @@ body = f"""<section class="mz" id="mz">
     <div class="mz-slips" id="mzSlips" aria-live="polite"></div>
   </aside>
 </section>
-<div class="mz-lb" id="mzLb" hidden role="dialog" aria-label="Your ticket"><div><canvas id="mzLbC" width="500" height="1150"></canvas><img alt="Your ticket"><div class="row"><button class="btn" type="button" id="mzSave">SAVE THE TICKET</button><button class="btn" type="button" id="mzLoop">SAVE THE LOOP</button><button class="btn ghost" type="button" data-close>CLOSE</button></div></div></div>
+<div class="mz-lb" id="mzLb" hidden role="dialog" aria-label="Your ticket"><div><canvas id="mzLbC" width="500" height="1150"></canvas><img alt="Your ticket"><div class="mz-lb-scan" id="mzLbScan" hidden><canvas id="mzLbQr" width="396" height="396"></canvas><span>SCAN TO REPLAY<br>this fortune, on any phone</span></div><div class="row"><button class="btn" type="button" id="mzSave">SAVE THE TICKET</button><button class="btn" type="button" id="mzLoop">SAVE THE LOOP</button><button class="btn ghost" type="button" data-close>CLOSE</button></div></div></div>
 <section class="wrap mz-about">
   <div>
     <div class="kicker">WHAT IT IS</div>
