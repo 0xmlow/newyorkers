@@ -122,8 +122,9 @@ of the card slot, names a room of the museum to go stand in, and talks back when
   window layout cuts ten shapes instead of five. `export const __G` at the foot of ticket.js is for the glyph
   sheet (scratchpad `glyph_sheet.html`: every glyph in ink, then every glyph as a mask); nothing on the site
   imports it. Tickets re-rendered from the shelf will pick different glyphs than before this pass (the theme
-  rows changed), the seed and the rest of the composition are unchanged. og.jpg still shows the old
-  overexposed booth and was not recaptured.
+  rows changed), the seed and the rest of the composition are unchanged. og.jpg was recaptured on
+  2026-10-13 with the relit booth (same framing: 1700 x 900 headless page mid consult, clip 130,70 1000 x 525 at 2x,
+  resized to 1200 x 630).
 - Not done, by choice: Art Blocks style onchain randomness. The seed is `hash(question + minute)`, which is
   what a shared link replays; when MLow wants it onchain the ticket renderer is already deterministic from one
   integer.
