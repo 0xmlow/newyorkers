@@ -1,0 +1,4 @@
+.DS_Store
+_build/node_modules
+_build/art.js
+_build/app.js

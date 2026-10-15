@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BREAK GLASS</title>
+<meta name="description" content="BREAK GLASS. A NEW YORKERS 1/1 by MLow. A blue evil eye emergency case holding the Keystone 111. Hit the glass three times and meet a New Yorker.">
+<style>
+:root{--blue:#2962FF;--ink:#040817;--cloud:#F0F4F8;--slate:#8899AA;--acid:#D7FF1F;--cyan:#00E5FF}
+html,body{margin:0;height:100%;background:var(--ink);overflow:hidden;color:var(--cloud);font-family:Calibri,Arial,sans-serif;-webkit-user-select:none;user-select:none}
+#stage,#stage canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.mono{font-family:Consolas,"Courier New",monospace;letter-spacing:.14em}
+#top{position:fixed;left:16px;right:16px;top:14px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;font-size:11px}
+#top img{height:22px;opacity:.95}
+#top .r{display:flex;gap:8px;pointer-events:auto}
+button{font:inherit;font-family:Consolas,"Courier New",monospace;letter-spacing:.14em;font-size:11px;color:var(--cloud);background:rgba(8,20,70,.55);border:1px solid rgba(160,190,255,.35);padding:8px 11px;border-radius:2px;cursor:pointer;backdrop-filter:blur(6px)}
+button:hover{border-color:var(--cyan);color:#fff}
+#hint{position:fixed;left:50%;bottom:9vh;transform:translate(-50%,10px);font-size:13px;opacity:0;transition:.35s;pointer-events:none;text-shadow:0 2px 12px #000;white-space:nowrap}
+#hint.on{opacity:.9;transform:translate(-50%,0);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.45}}
+#pulls{position:fixed;left:16px;bottom:14px;font-size:10px;color:var(--slate)}
+#card{position:fixed;left:50%;bottom:18px;transform:translate(-50%,24px);width:min(560px,calc(100vw - 32px));box-sizing:border-box;background:rgba(4,10,36,.82);border:1px solid rgba(120,160,255,.35);border-top:3px solid var(--blue);padding:14px 18px 14px;opacity:0;pointer-events:none;transition:.5s cubic-bezier(.2,.9,.2,1.2);backdrop-filter:blur(10px)}
+#card.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#c-no{font-size:11px;color:#9fc4ff}
+#c-title{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:clamp(20px,4.4vw,30px);line-height:1.1;margin:4px 0 6px}
+#c-meta{font-size:13px;color:var(--slate)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+#c-tier{font-size:10px;padding:4px 7px;border:1px solid rgba(160,190,255,.45)}
+#c-tier[data-tier="2"]{border-color:var(--cyan);color:var(--cyan)}
+#c-tier[data-tier="3"]{background:var(--acid);color:#0d0d0d;border-color:var(--acid)}
+#c-odds{font-size:10px;color:var(--slate)}
+#rearm{position:fixed;right:16px;bottom:14px;opacity:0;pointer-events:none;transition:.4s;background:var(--blue);border-color:var(--blue)}
+#rearm.on{opacity:1;pointer-events:auto}
+#flash{position:fixed;inset:0;background:#e8f4ff;opacity:0;pointer-events:none}
+#flash.go{animation:fl .45s ease-out}
+@keyframes fl{0%{opacity:.85}100%{opacity:0}}
+@media (max-width:420px){#top img{height:16px}#top .r{gap:6px}button{padding:6px 7px;font-size:10px;letter-spacing:.08em;white-space:nowrap}}
+@media (max-width:640px){#card{bottom:62px}#rearm{bottom:14px;right:50%;transform:translateX(50%)}#pulls{display:none}}
+</style></head><body>
+<div id="stage"></div>
+<div id="top" class="mono"><img alt="MLow" src="__LOGO__"><div class="r"><button id="turn">TURN IT AROUND</button><button id="snd">SOUND ON</button></div></div>
+<div id="hint" class="mono"></div>
+<div id="card"><div id="c-no" class="mono"></div><div id="c-title"></div><div id="c-meta"></div>
+<div class="row"><span id="c-tier" class="mono"></span><span id="c-odds" class="mono"></span></div></div>
+<button id="rearm">RE-ARM THE CASE</button>
+<div id="pulls" class="mono">BREAK GLASS . NEW YORKERS 1/1 . MLow</div>
+<div id="flash"></div>
+<script>__ART__</script>
+<script>__APP__</script>
+</body></html>
