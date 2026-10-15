@@ -51,13 +51,13 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 scene.environmentIntensity = 0.32;
 
 const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.05, 60);
-const HOME = new THREE.Vector3(0.35, 0.4, 4.7);
+const HOME = new THREE.Vector3(0.35, 0.55, 5.4);
 camera.position.copy(HOME);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 0.15, 0);
+controls.target.set(0, -0.42, 0.15);
 controls.enableDamping = true; controls.dampingFactor = 0.07;
-controls.minDistance = 2.4; controls.maxDistance = 8;
-controls.minPolarAngle = 0.35; controls.maxPolarAngle = Math.PI * 0.56;
+controls.minDistance = 2.2; controls.maxDistance = 9;
+controls.minPolarAngle = 0.3; controls.maxPolarAngle = Math.PI * 0.53;
 controls.enablePan = false;
 controls.update();
 
@@ -67,7 +67,7 @@ const BZ = 0.13, BZTOP = 0.26;                        // bezel widths
 const GW = W - 2 * BZ, GH = H - BZ - BZTOP;           // glass opening
 const GCY = (BZ - BZTOP) / 2;                          // glass centre y (box local)
 const GZ = D / 2 - 0.035;                              // glass plane z
-const FLOOR = -1.22;
+const FLOOR = -1.6;
 const box = new THREE.Group(); box.position.y = 0.18; scene.add(box);
 
 // ---------- the evil eye enamel ----------
@@ -236,41 +236,48 @@ paintGlass();
 const glass = add(new THREE.Mesh(new THREE.PlaneGeometry(GW, GH), glassMat), 0, GCY, GZ);
 glass.renderOrder = 2;
 
-// crack lines drawn on the glass texture
+// ---------- the crack pattern: made at the first hit, spread by the next two, and the shards are cut along it ----------
+let pat = null;
+function makePattern(imp) {
+  const n = 15 + Math.floor(Math.random() * 6);
+  const angs = []; for (let i = 0; i < n; i++) angs.push((i / n) * Math.PI * 2 + R(-0.13, 0.13));
+  const radii = [0, 0.05, 0.13, 0.25, 0.42, 0.66, 1.0, 1.5, 3.2];
+  const jit = angs.map(() => radii.map((r, j) => j === 0 || j === radii.length - 1 ? r : r * R(0.78, 1.22)));
+  const bend = angs.map(() => radii.map(() => R(-0.018, 0.018)));     // no crack is quite straight
+  const ringOn = angs.map(() => radii.map(() => Math.random() < 0.72));
+  return { imp, n, angs, radii, jit, bend, ringOn, hits: [] };
+}
+function P(i, j) { const n = pat.n, ii = ((i % n) + n) % n, r = pat.jit[ii][j]; return { x: pat.imp.x + Math.cos(pat.angs[ii]) * r, y: pat.imp.y + Math.sin(pat.angs[ii]) * r }; }
 function toCanvas(p) { return [(p.x / GW + 0.5) * glassCanvas.width, (0.5 - p.y / GH) * glassCanvas.height]; }
-function drawCracks(p, power) {
-  const c = gctx, [cx, cy] = toCanvas(p), scale = glassCanvas.width / GW;
+function crackPath(c, a, b, bend) {
+  const [ax, ay] = toCanvas(a), [bx, by] = toCanvas(b), k = glassCanvas.width / GW;
+  const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy) || 1;
+  c.moveTo(ax, ay); c.quadraticCurveTo((ax + bx) / 2 - dy / L * bend * k, (ay + by) / 2 + dx / L * bend * k, bx, by);
+}
+// level 1 and 2 are the first two hits; level 3 is the whole pattern, drawn the instant before it falls apart
+function drawCracks(level) {
+  paintGlass();
+  const c = gctx, rays = [0, 3, 5, 8][level], rings = [0, 2, 4, 7][level];
   c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
-  const n = 9 + Math.floor(power * 7), rays = [];
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * Math.PI * 2 + R(-0.25, 0.25), len = R(0.25, 0.55) * power * scale;
-    let x = cx, y = cy; const pts = [[x, y]];
-    for (let s = 1; s <= 8; s++) { const aa = a + R(-0.25, 0.25); x = cx + Math.cos(aa) * len * s / 8; y = cy + Math.sin(aa) * len * s / 8; pts.push([x, y]); }
-    rays.push(pts);
-    for (const [lw, col] of [[5, 'rgba(10,30,90,0.35)'], [2.2, 'rgba(255,255,255,0.95)']]) {
-      c.lineWidth = lw; c.strokeStyle = col; c.beginPath(); pts.forEach(([px, py], k) => k ? c.lineTo(px, py) : c.moveTo(px, py)); c.stroke();
-    }
-    if (Math.random() < 0.5) { // branch
-      const k = 3 + Math.floor(Math.random() * 4), [bx, by] = pts[k], ba = a + R(-0.9, 0.9), bl = len * R(0.15, 0.35);
-      c.lineWidth = 1.6; c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + Math.cos(ba) * bl, by + Math.sin(ba) * bl); c.stroke();
-    }
+  for (const [lw, col] of [[4.5 + level, 'rgba(8,24,80,0.32)'], [1.4 + level * 0.5, 'rgba(255,255,255,0.92)']]) {
+    c.lineWidth = lw; c.strokeStyle = col; c.beginPath();
+    for (let i = 0; i < pat.n; i++) for (let j = 0; j < rays; j++) crackPath(c, P(i, j), P(i, j + 1), pat.bend[i][j]);
+    for (let i = 0; i < pat.n; i++) for (let j = 1; j <= rings; j++) if (level === 3 || pat.ringOn[i][j]) crackPath(c, P(i, j), P(i + 1, j), pat.bend[i][j] * 0.6);
+    c.stroke();
   }
-  // concentric rings between rays
-  for (let ring = 1; ring <= 1 + Math.floor(power * 2); ring++) {
-    const s = Math.min(8, ring * 2 + 1);
-    c.lineWidth = 1.8; c.strokeStyle = 'rgba(255,255,255,0.85)'; c.beginPath();
-    rays.forEach((pts, i) => { const [x, y] = pts[s]; i ? c.lineTo(x + R(-6, 6), y + R(-6, 6)) : c.moveTo(x, y); });
-    c.closePath(); c.stroke();
+  // where the hammer actually landed: crushed, white
+  for (const h of pat.hits) {
+    const [hx, hy] = toCanvas(h), r = 34 + level * 10, g = c.createRadialGradient(hx, hy, 0, hx, hy, r);
+    g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.5, 'rgba(235,244,255,0.5)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.beginPath(); c.arc(hx, hy, r, 0, 7); c.fill();
   }
-  // crushed centre
-  const cg = c.createRadialGradient(cx, cy, 0, cx, cy, 40 + power * 30); cg.addColorStop(0, 'rgba(255,255,255,0.95)'); cg.addColorStop(1, 'rgba(255,255,255,0)');
-  c.fillStyle = cg; c.beginPath(); c.arc(cx, cy, 40 + power * 30, 0, 7); c.fill();
   c.restore(); glassTex.needsUpdate = true;
 }
 
-// ---------- shards ----------
+// ---------- shards: cut along the pattern, given thickness, pushed by the hammer and dropped by gravity ----------
 let shards = [];
-const shardEdgeMat = new THREE.LineBasicMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.55 });
+const SH_T = 0.005;
+const shardEdgeMat = new THREE.LineBasicMaterial({ color: 0x7fa6ff, transparent: true, opacity: 0.85 });
 function clipRect(poly, hw, hh) {
   const edges = [[p => p.x >= -hw, (a, b) => { const t = (-hw - a.x) / (b.x - a.x); return { x: -hw, y: a.y + t * (b.y - a.y) }; }],
     [p => p.x <= hw, (a, b) => { const t = (hw - a.x) / (b.x - a.x); return { x: hw, y: a.y + t * (b.y - a.y) }; }],
@@ -288,64 +295,85 @@ function clipRect(poly, hw, hh) {
   return poly;
 }
 function area(p) { let s = 0; for (let i = 0; i < p.length; i++) { const a = p[i], b = p[(i + 1) % p.length]; s += a.x * b.y - b.x * a.y; } return s / 2; }
-function shatter(imp) {
-  const hw = GW / 2, hh = GH / 2, n = 16 + Math.floor(Math.random() * 6);
-  const angs = []; for (let i = 0; i < n; i++) angs.push((i / n) * Math.PI * 2 + R(-0.12, 0.12));
-  const radii = [0, 0.06, 0.16, 0.3, 0.5, 0.78, 1.15, 3];
-  const jit = angs.map(() => radii.map((r, j) => j === 0 || j === radii.length - 1 ? r : r * R(0.8, 1.2)));
-  const P = (i, j) => { const ii = i % n, r = jit[ii][j]; return { x: imp.x + Math.cos(angs[ii]) * r, y: imp.y + Math.sin(angs[ii]) * r }; };
-  for (let i = 0; i < n; i++) for (let j = 0; j < radii.length - 1; j++) {
+function shatter() {
+  const hw = GW / 2, hh = GH / 2, imp = pat.imp, last = pat.radii.length - 1;
+  for (let i = 0; i < pat.n; i++) for (let j = 0; j < last; j++) {
     const poly = j === 0 ? [{ x: imp.x, y: imp.y }, P(i, 1), P(i + 1, 1)] : [P(i, j), P(i + 1, j), P(i + 1, j + 1), P(i, j + 1)];
     let cp = clipRect(poly, hw, hh); if (cp.length < 3) continue;
     if (area(cp) < 0) cp.reverse();
-    const ar = area(cp); if (ar < 2e-4) continue;
+    const ar = area(cp); if (ar < 1.5e-4) continue;
     const cx = cp.reduce((s, p) => s + p.x, 0) / cp.length, cy = cp.reduce((s, p) => s + p.y, 0) / cp.length;
-    const shape = new THREE.Shape(cp.map(p => new THREE.Vector2(p.x - cx, p.y - cy)));
-    const geo = new THREE.ShapeGeometry(shape);
+    const geo = new THREE.ExtrudeGeometry(new THREE.Shape(cp.map(p => new THREE.Vector2(p.x - cx, p.y - cy))), { depth: SH_T, bevelEnabled: false });
+    geo.translate(0, 0, -SH_T / 2);
     const pos = geo.attributes.position, uv = geo.attributes.uv;
     for (let k = 0; k < pos.count; k++) uv.setXY(k, (pos.getX(k) + cx) / GW + 0.5, (pos.getY(k) + cy) / GH + 0.5);
     const m = new THREE.Mesh(geo, glassMat); m.renderOrder = 3; m.castShadow = true;
-    m.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(cp.map(p => new THREE.Vector3(p.x - cx, p.y - cy, 0.001))), shardEdgeMat));
+    m.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(cp.map(p => new THREE.Vector3(p.x - cx, p.y - cy, SH_T / 2 + 0.0005))), shardEdgeMat));
     m.position.set(cx, GCY + cy, GZ); box.add(m);
     const touchesEdge = cp.some(p => Math.abs(Math.abs(p.x) - hw) < 1e-4 || Math.abs(Math.abs(p.y) - hh) < 1e-4);
-    const dist = Math.hypot(cx - imp.x, cy - imp.y);
-    const stuck = touchesEdge && dist > 0.45 && ar < 0.035 && Math.random() < 0.5;
+    const d = Math.hypot(cx - imp.x, cy - imp.y), near = Math.exp(-d / 0.11);
+    // a few pieces in the frame stay put, as they do in every broken window in the city
+    const stuck = touchesEdge && d > 0.5 && ar < 0.03 && Math.random() < 0.45;
     const dir = new THREE.Vector2(cx - imp.x, cy - imp.y).normalize();
-    const kick = Math.max(0.3, 2.2 - dist * 1.6);
-    const inward = !stuck && Math.random() < 0.14;
+    // the hammer drives the pieces round the hit into the case; the rest lose their support and drop,
+    // tipping out of the frame (mostly towards you) as they go
+    const fwd = Math.random() < 0.8 ? 1 : -1;
+    const vz = -near * R(1.6, 3.0) + (1 - near) * fwd * R(0.12, 0.45);
+    const v = new THREE.Vector3(dir.x * near * R(0.2, 0.7), dir.y * near * R(0.1, 0.5), vz);
+    const spin = 0.4 + near * 1.6;
+    const w = new THREE.Vector3(Math.sign(vz) * R(0.6, 2.4) * spin, R(-1.2, 1.2) * spin, R(-1.8, 1.8) * spin);
     shards.push({
-      m, stuck, home: m.position.clone(), homeQ: m.quaternion.clone(), delay: dist * 0.06, landed: false, rest: false, tink: false,
-      v: new THREE.Vector3(dir.x * kick * R(0.4, 1.1), dir.y * kick * R(0.3, 0.9) + R(0, 0.8), inward ? -R(0.1, 0.35) : R(0.8, 2.6) * Math.min(1.6, kick)),
-      w: new THREE.Vector3(R(-12, 12), R(-12, 12), R(-6, 6)), yaw: R(0, 6.28),
+      m, stuck, home: m.position.clone(), homeQ: m.quaternion.clone(), v, w, pts: cp.map(p => new THREE.Vector3(p.x - cx, p.y - cy, 0)),
+      delay: near > 0.3 ? 0 : d * 0.06 + R(0, 0.12), rest: false, tink: false,
     });
-    if (stuck) { m.rotation.set(R(-0.08, 0.08), R(-0.08, 0.08), 0); }
+    if (stuck) m.rotation.set(R(-0.06, 0.06), R(-0.06, 0.06), 0);
   }
   glass.visible = false;
 }
-const _q = new THREE.Quaternion(), _e = new THREE.Euler();
+// what a falling shard lands on, in the case's own coordinates: the felt inside, the frame's bottom lip,
+// the console, the plinth's two tiers, or the floor
+function surfaceAt(x, z, y) {
+  const ax = Math.abs(x);
+  if (ax < W / 2 - T && z < GZ - 0.02 && z > -D / 2 && y > CASE_FLOOR_L - 0.05) return CASE_FLOOR_L;
+  if (ax < W / 2 && z >= GZ - 0.02 && z < D / 2 + 0.03 && y > LIP_L - 0.05) return LIP_L;
+  for (const s of STEPS) if (ax < s.w / 2 && z > s.z0 && z < s.z1 && y > s.top - 0.05) return s.top;
+  return FLOOR_L;
+}
+const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _e = new THREE.Euler(), _p = new THREE.Vector3(), _n = new THREE.Vector3();
+const UP = new THREE.Vector3(0, 1, 0), DOWN = new THREE.Vector3(0, -1, 0);
 function stepShards(dt) {
-  let moving = false;
   for (const s of shards) {
     if (s.stuck || s.rest) continue;
-    if (s.delay > 0) { s.delay -= dt; moving = true; continue; }
-    moving = true;
-    const p = s.m.position;
-    s.v.y -= 9.8 * dt;
-    p.addScaledVector(s.v, dt);
-    // world-ish floor: inside the cabinet the felt, outside the tiled floor
-    const inside = Math.abs(p.x) < W / 2 - T && p.z < GZ - 0.01;
-    if (inside) { p.z = Math.max(p.z, -D / 2 + T + 0.12); }
-    const floorY = (inside ? CASE_FLOOR : FLOOR) - box.position.y + 0.004;
-    if (p.y <= floorY) {
-      p.y = floorY;
-      if (!s.landed) { s.landed = true; s.targetQ = new THREE.Quaternion().setFromEuler(_e.set(-Math.PI / 2 * (Math.random() < 0.5 ? 1 : -1), 0, s.yaw)); if (!s.tink) { s.tink = true; tinkle(0.3 + Math.random() * 0.4); } }
-      s.v.y = Math.abs(s.v.y) > 0.6 ? -s.v.y * 0.22 : 0; s.v.x *= 0.55; s.v.z *= 0.55; s.w.multiplyScalar(0.4);
-      if (Math.abs(s.v.y) < 0.01 && s.v.lengthSq() < 0.004) s.rest = true;
+    if (s.delay > 0) { s.delay -= dt; continue; }
+    const p = s.m.position, v = s.v;
+    v.y -= 9.8 * dt; v.multiplyScalar(1 - 0.25 * dt);          // gravity, a little air
+    p.addScaledVector(v, dt);
+    _q.setFromEuler(_e.set(s.w.x * dt, s.w.y * dt, s.w.z * dt)); s.m.quaternion.premultiply(_q);
+    // inside the case: the side walls and the painting stop it
+    if (Math.abs(p.x) < W / 2 - T && p.z < GZ - 0.02 && p.z > -D / 2 && p.y > CASE_FLOOR_L - 0.02) {
+      const lim = W / 2 - T - 0.03; if (Math.abs(p.x) > lim) { p.x = Math.sign(p.x) * lim; v.x *= -0.3; }
+      const back = PZ + 0.06; if (p.z < back) { p.z = back; if (v.z < -0.4) tinkle(0.6); v.z = Math.abs(v.z) * 0.2; s.w.multiplyScalar(0.5); }
     }
-    if (s.landed) s.m.quaternion.slerp(s.targetQ, Math.min(1, dt * 9));
-    else { _q.setFromEuler(_e.set(s.w.x * dt, s.w.y * dt, s.w.z * dt)); s.m.quaternion.multiply(_q); }
+    // the lowest corner of the tilted piece is what touches down
+    let low = 0; for (const q of s.pts) { _p.copy(q).applyQuaternion(s.m.quaternion); if (_p.y < low) low = _p.y; }
+    low -= SH_T / 2;
+    const surf = surfaceAt(p.x, p.z, p.y);
+    if (p.y + low <= surf) {
+      p.y = surf - low;
+      if (v.y < -1 && !s.tink) { s.tink = true; tinkle(Math.min(1, -v.y / 4)); }
+      if (surf === LIP_L) { if (!s.lip) { s.lip = true; v.z = Math.max(v.z, 0.25) + 0.25; s.w.x += 2; } else v.z = Math.max(v.z, 0.3); }   // the lip tips it forward, once, and off
+      else { v.x *= 0.6; v.z *= 0.6; }
+      v.y = v.y < -0.8 ? -v.y * 0.2 : 0;
+      s.w.multiplyScalar(0.55);
+      if (surf !== LIP_L) {
+        // lie down flat on whichever face is nearer the floor
+        _n.set(0, 0, 1).applyQuaternion(s.m.quaternion);
+        _q2.setFromUnitVectors(_n, _n.y >= 0 ? UP : DOWN).multiply(s.m.quaternion);
+        s.m.quaternion.slerp(_q2, Math.min(1, dt * 7)); s.w.multiplyScalar(Math.pow(0.02, dt));
+        if (v.lengthSq() < 0.003 && Math.abs(_n.y) > 0.995) s.rest = true;
+      }
+    }
   }
-  return moving;
 }
 function clearShards() { for (const s of shards) { box.remove(s.m); s.m.geometry.dispose(); s.m.children[0].geometry.dispose(); } shards = []; }
 
@@ -387,7 +415,7 @@ function updateChain() {
 
 // ---------- the beacon on top ----------
 const beacon = new THREE.Group(); beacon.position.set(0, H / 2, 0.02); box.add(beacon);
-beacon.add(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.05, 32), chrome)).position.y = 0.025;
+const beaconBase = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.05, 32), chrome); beaconBase.position.y = 0.025; beacon.add(beaconBase);
 const domeMat = new THREE.MeshPhysicalMaterial({ color: 0x00e5ff, emissive: 0x00e5ff, emissiveIntensity: 0.15, transparent: true, opacity: 0.75, roughness: 0.1, clearcoat: 1 });
 const dome = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), domeMat); dome.position.y = 0.05; beacon.add(dome);
 const spinner = new THREE.Group(); spinner.position.y = 0.09; beacon.add(spinner);
@@ -432,22 +460,130 @@ for (const [x, y] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
   const r = add(new THREE.Mesh(new THREE.SphereGeometry(0.02, 16, 8), chrome), x * W * 0.41, y * W * 0.86 * 1340 / 2048 * 0.46, -D / 2 - 0.01); r.scale.z = 0.4;
 }
 
-// ---------- floor, lights ----------
-const floorTex = canvasTex(1024, 1024, (c, w, h) => {
-  c.fillStyle = '#0b1230'; c.fillRect(0, 0, w, h);
-  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
-    const l = 10 + Math.random() * 6; c.fillStyle = `hsl(226,45%,${l}%)`; c.fillRect(x * 128 + 3, y * 128 + 3, 122, 122);
-  }
+// ---------- the room: a white terrazzo plinth, the case on two chrome posts, a control console,
+// velvet ropes on three sides, one spotlight from above with dust in it, a dark terrazzo floor ----------
+function terrazzo(base, chips, n, size) {
+  return canvasTex(1024, 1024, (c, w, h) => {
+    c.fillStyle = base; c.fillRect(0, 0, w, h);
+    for (let i = 0; i < n; i++) {
+      c.fillStyle = chips[Math.floor(Math.random() * chips.length)];
+      const x = Math.random() * w, y = Math.random() * h, r = size * (0.3 + Math.random() * Math.random() * 1.8), k = 3 + Math.floor(Math.random() * 4);
+      c.beginPath(); for (let q = 0; q < k; q++) { const a = q / k * 6.283 + Math.random() * 0.8, rr = r * (0.6 + Math.random() * 0.6); q ? c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : c.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+      c.fill();
+    }
+  });
+}
+const FLOOR_L = FLOOR - box.position.y, CASE_FLOOR_L = -H / 2 + T, LIP_L = -H / 2 + BZ;
+const PB = { w: 3.3, h: 0.13, d: 2.0, z: 0.22 }, PU = { w: 2.8, h: 0.34, d: 1.6, z: 0.2 };   // plinth base and upper tier
+PB.top = FLOOR + PB.h; PU.top = PB.top + PU.h;
+const plTex = terrazzo('#cfd4de', ['#2962FF', '#0a1f8f', '#5ec2ff', '#9aa6ba', '#c9d2e3', '#0d0d0d'], 2400, 7);
+plTex.wrapS = plTex.wrapT = THREE.RepeatWrapping; plTex.repeat.set(1.6, 1.6);
+const plMat = new THREE.MeshPhysicalMaterial({ map: plTex, roughness: 0.3, clearcoat: 0.6, clearcoatRoughness: 0.2 });
+for (const t of [PB, PU]) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(t.w, t.h, t.d), plMat); m.position.set(0, t.top - t.h / 2, t.z); m.castShadow = m.receiveShadow = true; scene.add(m);
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(t.w + 0.004, 0.012, 0.012), chrome); lip.position.set(0, t.top - 0.006, t.z + t.d / 2); scene.add(lip);
+}
+// the posts the case stands on, and the cradle under it
+const caseBottom = box.position.y - H / 2;
+for (const x of [-0.78, 0.78]) {
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.09, caseBottom - PU.top, 0.09), chrome); post.position.set(x, (caseBottom + PU.top) / 2, -0.04); post.castShadow = true; scene.add(post);
+  const foot = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.02, 0.26), chrome); foot.position.set(x, PU.top + 0.01, -0.04); foot.receiveShadow = true; scene.add(foot);
+  for (const bx of [-0.09, 0.09]) for (const bz of [-0.09, 0.09]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.012, 12), chrome); b.position.set(x + bx, PU.top + 0.026, -0.04 + bz); scene.add(b); }
+}
+const cradle = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.035, 0.42), chrome); cradle.position.set(0, caseBottom - 0.018, -0.02); cradle.castShadow = true; scene.add(cradle);
+// the label on the plinth's face
+const plaqueTex = canvasTex(1600, 260, (c, w, h) => {
+  const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#eef2f9'); g.addColorStop(1, '#a9b4c8'); c.fillStyle = g; c.fillRect(0, 0, w, h);
+  c.fillStyle = '#0a1f8f'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  fitText(c, 'BREAK GLASS', w / 2, 98, w - 120, 112, '900 #px "Arial Black", Impact, Arial, sans-serif');
+  c.fillStyle = '#1a2340'; fitText(c, 'MLow  .  NEW YORKERS  .  1 OF 1  .  ENAMEL, GLASS, HAMMER, ONE NEW YORKER', w / 2, 200, w - 120, 40, '700 #px Consolas, "Courier New", monospace');
 });
-floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping; floorTex.repeat.set(10, 10);
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.62, metalness: 0 }));
+const plaque = new THREE.Mesh(new THREE.PlaneGeometry(1.25, 1.25 * 260 / 1600), new THREE.MeshStandardMaterial({ map: plaqueTex, metalness: 0.55, roughness: 0.32 }));
+plaque.position.set(0, PU.top - PU.h / 2, PU.z + PU.d / 2 + 0.003); scene.add(plaque);
+
+// the console: RE-ARM, TURN, SOUND, set into a tilted panel at the front of the plinth
+const CON = { w: 1.3, d: 0.34, h: 0.08, z: PU.z + PU.d / 2 - 0.24, tilt: 0.42 };
+const consoleG = new THREE.Group(); consoleG.position.set(0, PU.top + 0.06, CON.z); consoleG.rotation.x = CON.tilt; scene.add(consoleG);
+const conBody = new THREE.Mesh(new THREE.BoxGeometry(CON.w, CON.h, CON.d), new THREE.MeshStandardMaterial({ color: 0x0b1438, metalness: 0.6, roughness: 0.35 }));
+conBody.castShadow = true; consoleG.add(conBody);
+const conTex = canvasTex(1300, 340, (c, w, h) => {
+  c.fillStyle = '#0d1a4a'; c.fillRect(0, 0, w, h);
+  c.strokeStyle = 'rgba(160,190,255,.35)'; c.lineWidth = 4; c.strokeRect(14, 14, w - 28, h - 28);
+  c.fillStyle = '#dfe9ff'; c.textAlign = 'center'; c.font = '900 50px "Arial Black", Impact, sans-serif';
+  c.fillText('RE-ARM', 270, 304); c.fillText('TURN', 770, 304); c.fillText('SOUND', 1070, 304);
+});
+const conFace = new THREE.Mesh(new THREE.PlaneGeometry(CON.w - 0.02, CON.d - 0.02), new THREE.MeshStandardMaterial({ map: conTex, metalness: 0.3, roughness: 0.5 }));
+conFace.rotation.x = -Math.PI / 2; conFace.position.y = CON.h / 2 + 0.001; consoleG.add(conFace);
+const hitMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+function consoleButton(x, r, color, name) {
+  const g = new THREE.Group(); g.position.set(x, CON.h / 2, -0.01); consoleG.add(g);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(r + 0.01, 0.009, 10, 40), chrome); ring.rotation.x = Math.PI / 2; ring.position.y = 0.004; g.add(ring);
+  const mat = new THREE.MeshPhysicalMaterial({ color, emissive: color, emissiveIntensity: 0.25, roughness: 0.25, clearcoat: 1 });
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.035, 40), mat); cap.position.y = 0.02; cap.castShadow = true; g.add(cap);
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 12, 0, Math.PI * 2, 0, Math.PI / 2), mat); dome.scale.y = 0.35; dome.position.y = 0.037; g.add(dome);
+  const hit = new THREE.Mesh(new THREE.CylinderGeometry(r * 1.9, r * 1.9, 0.16, 16), hitMat); hit.position.y = 0.04; hit.name = name; g.add(hit);
+  return { g, mat, cap, dome, hit, press: 0, glow: 0.25 };
+}
+const BTN = {
+  rearm: consoleButton(-0.4, 0.095, 0x2962FF, 'rearm'),
+  turn: consoleButton(0.12, 0.06, 0xdfe9ff, 'turn'),
+  sound: consoleButton(0.42, 0.05, 0x00e5ff, 'sound'),
+};
+const BTN_HITS = Object.values(BTN).map(b => b.hit);
+
+// shards can land on any of these (case coordinates)
+const STEPS = [
+  { w: CON.w, z0: CON.z - CON.d / 2, z1: CON.z + CON.d / 2, top: PU.top + 0.13 - box.position.y },
+  { w: PU.w, z0: PU.z - PU.d / 2, z1: PU.z + PU.d / 2, top: PU.top - box.position.y },
+  { w: PB.w, z0: PB.z - PB.d / 2, z1: PB.z + PB.d / 2, top: PB.top - box.position.y },
+];
+
+// velvet ropes on three sides, open at the front
+const velvet = new THREE.MeshPhysicalMaterial({ color: 0x1636b8, roughness: 0.85, sheen: 1, sheenColor: new THREE.Color(0x7aa2ff), sheenRoughness: 0.45 });
+const POSTS = [[-2.1, 1.3], [-2.1, -1.35], [2.1, -1.35], [2.1, 1.3]], POST_H = 0.98;
+for (const [x, z] of POSTS) {
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.03, 32), chrome); base.position.set(x, FLOOR + 0.015, z); base.receiveShadow = true; scene.add(base);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, POST_H, 20), chrome); pole.position.set(x, FLOOR + POST_H / 2, z); pole.castShadow = true; scene.add(pole);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.05, 24, 12), chrome); ball.position.set(x, FLOOR + POST_H + 0.03, z); scene.add(ball);
+}
+for (let i = 0; i < 3; i++) {
+  const [x0, z0] = POSTS[i], [x1, z1] = POSTS[i + 1], y = FLOOR + POST_H - 0.07;
+  const a = new THREE.Vector3(x0, y, z0), b = new THREE.Vector3(x1, y, z1), mids = [];
+  for (let k = 0; k <= 12; k++) { const t = k / 12, p = a.clone().lerp(b, t); p.y -= Math.sin(t * Math.PI) * 0.26; mids.push(p); }
+  const rope = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(mids), 60, 0.026, 10), velvet); rope.castShadow = true; scene.add(rope);
+}
+
+// the floor
+const floorTex = terrazzo('#080d22', ['#16255e', '#2962FF', '#5ec2ff', '#26304d', '#cfd8ea'], 1500, 5);
+floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping; floorTex.repeat.set(9, 9);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(16, 64), new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.78, metalness: 0 }));
 floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR; floor.receiveShadow = true; scene.add(floor);
-scene.add(new THREE.HemisphereLight(0x9fb8ff, 0x050818, 0.5));
-const key = new THREE.SpotLight(0xffffff, 38, 20, 0.5, 0.5, 1.6);
-key.position.set(2.2, 4.2, 4.2); key.target.position.set(0, 0, 0); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -0.0005;
+
+// lights: one hard spot from straight above, a cool rim, a little fill
+scene.add(new THREE.HemisphereLight(0x9fb8ff, 0x050818, 0.42));
+const key = new THREE.SpotLight(0xf4f7ff, 62, 14, 0.36, 0.6, 1.5);
+key.position.set(0.3, 5.0, 1.2); key.target.position.set(0, -0.6, 0.15); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.02;
 scene.add(key, key.target);
-const rim = new THREE.DirectionalLight(0x4d7dff, 1.6); rim.position.set(-4, 2, -3); scene.add(rim);
-const fill = new THREE.DirectionalLight(0xbfd4ff, 0.5); fill.position.set(-3, 1, 4); scene.add(fill);
+const front = new THREE.SpotLight(0xdde7ff, 22, 14, 0.5, 0.8, 1.5); front.position.set(-1.2, 1.6, 5.5); front.target.position.set(0, 0, 0); scene.add(front, front.target);
+const rim = new THREE.DirectionalLight(0x4d7dff, 1.5); rim.position.set(-4, 2, -3); scene.add(rim);
+const rim2 = new THREE.DirectionalLight(0x00b8ff, 0.7); rim2.position.set(4, 1, -3); scene.add(rim2);
+// the beam you can see, and the dust in it
+const beamAlpha = canvasTex(4, 256, (c, w, h) => { const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#fff'); g.addColorStop(0.55, '#555'); g.addColorStop(1, '#000'); c.fillStyle = g; c.fillRect(0, 0, w, h); });
+const beam = new THREE.Mesh(new THREE.ConeGeometry(2.05, 6.4, 48, 1, true), new THREE.MeshBasicMaterial({ color: 0x8fb0ff, alphaMap: beamAlpha, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+beam.position.set(0.15, FLOOR + 3.2, 0.25); scene.add(beam);
+const DUST = 260, dustPos = new Float32Array(DUST * 3), dustSeed = [];
+for (let i = 0; i < DUST; i++) { const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * 1.5; dustSeed.push({ a, r, y: R(FLOOR, 3), s: R(0.02, 0.07), ph: R(0, 6.28) }); }
+const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xcfe0ff, size: 0.014, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+scene.add(dust);
+function stepDust(dt, now) {
+  for (let i = 0; i < DUST; i++) {
+    const d = dustSeed[i]; d.y += d.s * dt * 0.4; if (d.y > 3) d.y = FLOOR;
+    const rr = d.r * (1 - (3 - d.y) / 9 * 0.2);
+    dustPos[i * 3] = 0.15 + Math.cos(d.a + now * 0.00004 + d.ph) * rr; dustPos[i * 3 + 1] = d.y + Math.sin(now * 0.0006 + d.ph) * 0.03; dustPos[i * 3 + 2] = 0.25 + Math.sin(d.a + now * 0.00004 + d.ph) * rr;
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+}
 
 // ---------- sound (WebAudio, synthesised, nothing loaded) ----------
 let AC = null, master = null, muted = false;
@@ -488,7 +624,6 @@ const ui = {
   hint: document.getElementById('hint'), card: document.getElementById('card'), flash: document.getElementById('flash'),
   no: document.getElementById('c-no'), title: document.getElementById('c-title'), meta: document.getElementById('c-meta'),
   tier: document.getElementById('c-tier'), odds: document.getElementById('c-odds'), pulls: document.getElementById('pulls'),
-  rearm: document.getElementById('rearm'), turn: document.getElementById('turn'), snd: document.getElementById('snd'),
 };
 let met = new Set(); try { met = new Set(JSON.parse(localStorage.getItem('breakglass.met') || '[]')); } catch (e) {}
 let state = 'armed', hits = 0, current = null, nextTex = null, pulls = 0, shake = 0, rewindT = -1;
@@ -508,20 +643,20 @@ let swing = null, queued = [];
 function strike(local) {
   if (state !== 'armed') return;
   if (swing) { if (hits + (swing.hit ? 0 : 1) + queued.length < 3) queued.push(local); return; }
-  if (hits === 0) prepareNext();
+  if (hits === 0) { pat = makePattern(local); prepareNext(); }
   const target = box.localToWorld(new THREE.Vector3(local.x, local.y, GZ));
   swing = { t: 0, target, local, from: hammer.position.clone() };
 }
 function impact(local) {
-  hits++;
+  hits++; pat.hits.push(local);
   shake = 0.03 + hits * 0.02;
-  if (hits < 3) { drawCracks(local, 0.5 + hits * 0.35); sfxStrike(hits); setHint(HINTS[hits]); for (const e of EYES) if (Math.random() < 0.5) e.bt = 0.001; }
+  if (hits < 3) { drawCracks(hits); sfxStrike(hits); setHint(HINTS[hits]); for (const e of EYES) if (Math.random() < 0.5) e.bt = 0.001; }
   else breakNow(local);
 }
 function breakNow(local) {
   state = 'broken'; setHint('');
-  drawCracks(local, 1.4);
-  shatter(local); sfxShatter(); shake = 0.14;
+  drawCracks(3);
+  shatter(); sfxShatter(); shake = 0.1;
   ui.flash.classList.remove('go'); void ui.flash.offsetWidth; ui.flash.classList.add('go');
   const reveal = () => {
     const tex = nextTex; if (!tex) { setTimeout(reveal, 30); return; }
@@ -536,7 +671,7 @@ function breakNow(local) {
     ui.tier.textContent = `${TIER_NAME[current.tier]}  .  ${current.lab}`;
     ui.tier.dataset.tier = current.tier;
     ui.odds.textContent = `THIS PULL: 1 IN ${current.odds}`;
-    setTimeout(() => { ui.card.classList.add('on'); ui.rearm.classList.add('on'); }, 650);
+    setTimeout(() => ui.card.classList.add('on'), 650);
     alarm = current.tier === 3 ? 5 : 2.6; setTimeout(sfxBell, 180);
     look.wide = 1; for (const e of EYES) e.bt = -Math.random() * 0.8;
   };
@@ -545,31 +680,36 @@ function breakNow(local) {
 let revealT = -1;
 function rearm() {
   if (state !== 'broken' || rewindT >= 0) return;
-  ui.card.classList.remove('on'); ui.rearm.classList.remove('on');
+  ui.card.classList.remove('on'); BTN.rearm.press = 1;
   for (const s of shards) { s.from = s.m.position.clone(); s.fromQ = s.m.quaternion.clone(); s.order = Math.random() * 0.25; }
   rewindT = 0; sfxRewind(); alarm = 0;
 }
 function finishRearm() {
-  clearShards(); rewindT = -1; hits = 0; queued = []; paintGlass(); glass.visible = true;
+  clearShards(); rewindT = -1; hits = 0; queued = []; pat = null; paintGlass(); glass.visible = true;
   if (artMat.map !== sealedTex) { artMat.map.dispose(); artMat.map = sealedTex; artMat.needsUpdate = true; fitArt(16, 9); }
   state = 'armed'; look.wide = 0; setHint(HINTS[0]);
 }
 
 // ---------- input ----------
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-let taps = 0, down = null, lastInput = performance.now();
+let taps = 0, down = null, hover = null, lastInput = performance.now();
 renderer.domElement.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY }; lastInput = performance.now(); audio(); });
 renderer.domElement.addEventListener('pointermove', e => {
   ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   look.tx = THREE.MathUtils.clamp(ndc.x * 1.2, -1, 1); look.ty = THREE.MathUtils.clamp(-ndc.y * 1.2, -1, 1);
   lastInput = performance.now();
-  if (state === 'armed') { ray.setFromCamera(ndc, camera); renderer.domElement.style.cursor = ray.intersectObject(glass).length ? 'crosshair' : 'grab'; }
-  else renderer.domElement.style.cursor = 'grab';
+  ray.setFromCamera(ndc, camera);
+  const overBtn = ray.intersectObjects(BTN_HITS)[0];
+  hover = overBtn ? overBtn.object.name : null;
+  renderer.domElement.style.cursor = hover ? 'pointer' : (state === 'armed' && camera.position.z > 0 && ray.intersectObject(glass).length) ? 'crosshair' : 'grab';
 });
 renderer.domElement.addEventListener('pointerup', e => {
   taps++;
   if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 7) { down = null; return; } down = null;
   ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera);
+  const b = ray.intersectObjects(BTN_HITS)[0];
+  if (b) { pressButton(b.object.name); return; }
+  if (camera.position.z < 0) { if (ray.intersectObject(box, true).length) turnAround(); return; }
   if (state === 'armed') {
     const hit = ray.intersectObject(glass)[0];
     if (hit) { const l = box.worldToLocal(hit.point.clone()); strike({ x: l.x, y: l.y - GCY }); }
@@ -581,18 +721,23 @@ addEventListener('keydown', e => {
   if (e.key === 'b' || e.key === 'B') turnAround();
   if (e.key === 'm' || e.key === 'M') toggleSound();
 });
-ui.rearm.addEventListener('click', rearm);
+function pressButton(name) {
+  const B = BTN[name]; if (!B) return; B.press = 1; audio();
+  if (!muted || name === 'sound') ping(audio().currentTime, name === 'rearm' ? 420 : 760, 0.06, 0.12);
+  if (name === 'rearm') { if (state === 'broken') rearm(); }
+  else if (name === 'turn') turnAround();
+  else toggleSound();
+}
 let camTween = null;
 function turnAround() {
   const behind = camera.position.z < 0;
   const to = behind ? HOME.clone() : new THREE.Vector3(-HOME.x, HOME.y, -HOME.z);
-  camTween = { t: 0, from: camera.position.clone(), to }; ui.turn.textContent = behind ? 'TURN IT AROUND' : 'BACK TO THE GLASS';
+  camTween = { t: 0, from: camera.position.clone(), to };
+  setHint(behind ? (state === 'armed' && hits < 3 ? HINTS[hits] : '') : 'TAP THE CASE TO TURN IT BACK');
 }
-ui.turn.addEventListener('click', turnAround);
-function toggleSound() { muted = !muted; ui.snd.textContent = muted ? 'SOUND OFF' : 'SOUND ON'; }
-ui.snd.addEventListener('click', toggleSound);
+function toggleSound() { muted = !muted; }
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); fitCam(); });
-function fitCam() { const asp = innerWidth / innerHeight, tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); const dist = Math.max(4.7, 1.62 / (tanH * asp), 1.25 / tanH); HOME.set(asp < 1 ? 0.15 : 0.35, 0.4, dist); controls.maxDistance = dist * 1.7; scene.fog.near = dist + 2; scene.fog.far = dist + 12; if (!camTween && camera.position.z > 0 && state === 'armed' && hits === 0) camera.position.copy(HOME); }
+function fitCam() { const asp = innerWidth / innerHeight, tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); const dist = Math.max(6.3, (asp < 1 ? 1.55 : 2.3) / (tanH * asp), 1.95 / tanH); HOME.set(asp < 1 ? 0.2 : 0.7, 1.05, dist); controls.maxDistance = dist * 1.7; scene.fog.near = dist + 2; scene.fog.far = dist + 12; if (!camTween && camera.position.z > 0 && state === 'armed' && hits === 0) camera.position.copy(HOME); }
 fitCam();
 
 // ---------- loop ----------
@@ -647,6 +792,17 @@ renderer.setAnimationLoop(() => {
   // painting slides forward into place
   if (revealT >= 0) { revealT += dt; const k = Math.min(1, revealT / 0.9); artGroup.position.z = PZ - 0.1 + 0.1 * easeOutBack(k); caseLight.intensity = 1.2 + 3 * (1 - k) + 0.8; if (k >= 1) revealT = -1; }
 
+  // the console: presses dip, RE-ARM breathes while there is something to put back, SOUND's light says on or off
+  for (const k in BTN) {
+    const B = BTN[k]; B.press = Math.max(0, B.press - dt * 6);
+    const dip = Math.sin(Math.min(1, B.press) * Math.PI) * 0.014; B.cap.position.y = 0.02 - dip; B.dome.position.y = 0.037 - dip;
+    let glow = hover === k ? 0.9 : 0.25;
+    if (k === 'rearm' && state === 'broken' && rewindT < 0) glow = 0.6 + 0.6 * (0.5 + 0.5 * Math.sin(now / 260));
+    if (k === 'sound') glow = muted ? 0.02 : Math.max(glow, 0.8);
+    B.glow += (glow - B.glow) * Math.min(1, dt * 10); B.mat.emissiveIntensity = B.glow;
+  }
+  stepDust(dt, now);
+
   // beacon
   if (alarm > 0) { alarm -= dt; spinner.rotation.y += dt * 9; const on = Math.min(1, alarm); beams.forEach(b => b.intensity = 40 * on); domeMat.emissiveIntensity = 0.4 + 2.6 * on * (0.6 + 0.4 * Math.sin(now / 60)); }
   else { beams.forEach(b => b.intensity = 0); domeMat.emissiveIntensity = 0.15 + 0.1 * Math.sin(now / 700); }
@@ -666,4 +822,7 @@ renderer.setAnimationLoop(() => {
   cost = cost * 0.9 + (performance.now() - now) * 0.1;
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden && AC) AC.suspend(); });
-window.__breakglass = { strike: () => strike({ x: 0.1, y: 0 }), rearm, turnAround, get state() { return state; }, get debug() { return { hits, swing: !!swing, queued: queued.length, taps, ms: +cost.toFixed(2) }; }, get current() { return current; }, art: ART.length };
+window.__breakglass = { press: n => pressButton(n), _three: { renderer, scene, camera, paintEnamel, stepDust }, strike: () => strike({ x: 0.1, y: 0 }), rearm, turnAround, get state() { return state; }, get debug() { return { hits, swing: !!swing, queued: queued.length, taps, ms: +cost.toFixed(2) }; }, get current() { return current; }, art: ART.length,
+  get shards() { const c = {}; for (const s of shards) { const k = s.stuck ? 'stuck' : !s.rest ? 'moving' : String(Math.round(surfaceAt(s.m.position.x, s.m.position.z, s.m.position.y) * 100) / 100); c[k] = (c[k] || 0) + 1; } return c; } };
+// ?auto breaks the glass by itself a second after load (for stills, films and the marketplace preview)
+if (qs.has('auto')) [+(qs.get('auto') || 900), +(qs.get('auto') || 900) + 600, +(qs.get('auto') || 900) + 1200].forEach((ms, i) => setTimeout(() => strike({ x: 0.18 - i * 0.04, y: 0.06 + i * 0.03 }), ms));

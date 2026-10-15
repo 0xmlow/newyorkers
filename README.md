@@ -2,7 +2,7 @@
 
 A NEW YORKERS 1/1 by MLow. Made 2026-10-15. Not minted. On the site at n3wyorkers.com/breakglass (assets/breakglass, copied by build_galleries.py); code on GitHub branch `break-glass`.
 
-A blue evil eye emergency cabinet. The eyes on the enamel follow your cursor and blink. Hit the frosted glass three times with the hammer on the chain: it cracks, cracks worse, then shatters into real shards that fall, bounce and settle on the floor and in the bottom of the case. Inside is one of the Keystone 111, pulled at random. A cyan beacon on top spins and a bell rings. RE-ARM THE CASE rewinds every shard back into the frame and seals it again for another pull. TURN IT AROUND shows the back: the MLow logo plate and an inspection tag (LAST CHECKED: NEVER).
+A blue evil eye emergency cabinet on a white terrazzo plinth, roped off with blue velvet under one spotlight. The eyes on the enamel follow your cursor and blink. Hit the frosted glass three times with the hammer on the chain. The first hit sets a crack pattern, the second spreads it, the third breaks the glass along exactly those cracks: the pieces round the hit are driven into the case, the rest lose their support, drop, tip off the frame's lip and settle flat on the plinth or the felt, and a few stay stuck in the frame. Inside is one of the Keystone 111, pulled at random. A cyan beacon on top spins and a bell rings. The controls are on the stand, not on the screen: a console on the plinth has RE-ARM (every shard flies back into the frame and the glass seals for another pull), TURN (the back) and SOUND. The back is the MLow logo plate and an inspection tag (LAST CHECKED: NEVER).
 
 ## Files
 
@@ -24,7 +24,7 @@ The card shows the exact odds of the pull (for example 1 IN 111 for a single sta
 
 Images are webp, 960 px on the long edge, quality 58, to keep the file mintable. `python3 build_art.py 1280 72` makes a sharper 32 MB version.
 
-`?seed=123` makes the pulls repeat in order (for a film or a demo). Keys: space or enter strikes, R re-arms, B turns it around, M mutes.
+`?seed=123` makes the pulls repeat in order (for a film or a demo). Keys: space or enter strikes, R re-arms, B turns it around, M mutes. `?auto` (or `?auto=4000`, in ms) breaks the glass by itself, for stills and films.
 
 ## Not verified
 
