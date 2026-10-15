@@ -1,0 +1,117 @@
+[
+  {
+    "file": "dist/assets/props/KENNEY-LICENSE.txt",
+    "sha256": "32a081c2035dd4db47d850c83244da048165f0e53d71c076b76c1afc0590bc7f",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/Textures/colormap.png",
+    "sha256": "75baf74d9483a0fc56ac21ceba346fbe16fc24a2a1bf0524c53e6bbe802e1153",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/blossom_03.glb",
+    "sha256": "7661fb28ca504d4e5a0b8be18536af8f9912765abcafc20111b5a7fd2b6768da",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/fire_escape.glb",
+    "sha256": "1c0caf959bb82a674ca9b8806585c44e5f457f75677002d2d327cee302eb0ec2",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/food-bottle-ketchup.glb",
+    "sha256": "26b0cd52d36be6c432ba7862cc817f39e5ce74482013a3ac3ba6a6d4730489be",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-bread.glb",
+    "sha256": "9bd9db117db654cf1157439d1257a8fc5915ea77a94fb876a5056522b9e49f46",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-croissant.glb",
+    "sha256": "f2f8ee64d7850b262a6af2492cd042fa8eb6506cde49d439360ad1a3df48fe9e",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-cup-coffee.glb",
+    "sha256": "d74652ad1821bc5dedf1b2e1deb4e0ca0c498aa73880e7df5b91e5e729af6f81",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-donut.glb",
+    "sha256": "7dcd094f063efb215b2e1740c426f5b899776ce63e223ce1b1377af6c7d9ef2f",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-honey.glb",
+    "sha256": "7a28a642f074e22c0a570789655fda0d7bd33727159ab23831ac7d22bf258a94",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-loaf-baguette.glb",
+    "sha256": "c969ea026154653edc7062f1884ff2448a68fa0ec121012cfb1b4435eb2db1cf",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/food-pizza.glb",
+    "sha256": "e98eda0a63421bc4e86f063ebd096a21e50254b169ddbba945d2473b59390951",
+    "origin": "Kenney Food Kit 2.0 / CC0"
+  },
+  {
+    "file": "dist/assets/props/hydrant.glb",
+    "sha256": "74bbfc36d31ced2d0bffb2d5fbcfa8da29993fcd780a97e50ffb9dde20987c7d",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/lamppost.glb",
+    "sha256": "cc1b712b2280c5d1dcada0220f3e7cb2d0ff31da18c4132acc99a9f2597f63a2",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/lantern.glb",
+    "sha256": "46cd0a22b291bfbf182f0b51b479344e276b0a8066009c029ace5fe60dabae2f",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/mailbox.glb",
+    "sha256": "df3f61afa80105d2b2b555e8a2973d3b2950334116ae0b8bdc21835bee4ffc5d",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/mlow_eye_monument.glb",
+    "sha256": "2e7615ecc7b4a8ca626d5fd4b52e21dd2fb29a814590d043c0a51dca7d825b63",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/quiet_bench.glb",
+    "sha256": "dfd38af966c7c36f848d2a2e1ae60faa0efca6a90ad0bbf84ffc8c9c1387da0e",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/stoop.glb",
+    "sha256": "e42e65ea3a1baa7dba5905f86a693f00ae2d32978c781391ab36a975b7f07d3e",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/props/water_tower.glb",
+    "sha256": "652fbe8b931b66db9b97544f0ce563eb6078d1c9d760e028d8998605d4101240",
+    "origin": "NEW YORKERS user project library"
+  },
+  {
+    "file": "dist/assets/textures/enamel-imagegen-v2.png",
+    "sha256": "369c104df1c8b5dcae1eb25ef389bbc4ba955dfac606e3ab2ebb5f5b2f113e6a",
+    "origin": "Built-in OpenAI ImageGen, generated for this project"
+  },
+  {
+    "file": "dist/assets/textures/brick-imagegen-v2.png",
+    "sha256": "3d54c86119a0019676a69f312df899a29a6e5a2913352f81e6f2bdf6ede9461c",
+    "origin": "Built-in OpenAI ImageGen, generated for this project"
+  },
+  {
+    "file": "dist/assets/textures/bodega-ceramic-imagegen-v2.png",
+    "sha256": "fffb50bb093fe72b6497270a84451396bacbbfb96c6fb9def0f66d0d9fdd7095",
+    "origin": "Built-in OpenAI ImageGen, generated for this project"
+  }
+]

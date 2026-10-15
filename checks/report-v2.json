@@ -1,0 +1,35 @@
+{
+  "result": "passed",
+  "nodes": 583,
+  "instances": 1688,
+  "triangles": 360731,
+  "artworks": 44,
+  "secrets": 40,
+  "interactiveTargets": 90,
+  "modelsLoaded": 22,
+  "uniqueModels": 18,
+  "navigation": [
+    {
+      "room": "laundry",
+      "spawn": true,
+      "bounds": true,
+      "isolated": true
+    },
+    {
+      "room": "mail",
+      "spawn": true,
+      "bounds": true,
+      "isolated": true
+    },
+    {
+      "room": "roof",
+      "spawn": true,
+      "bounds": true,
+      "isolated": true
+    }
+  ],
+  "endingGated": true,
+  "finiteGeometry": true,
+  "assetFilesPresent": true,
+  "note": "Real Three.js geometry and GLTF parsing; texture pixel decoding, browser rendering, GPU performance, and visual UI behavior remain unverified."
+}

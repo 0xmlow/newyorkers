@@ -1,0 +1,116 @@
+{
+  "models": [
+    {
+      "file": "stoop.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 959092
+    },
+    {
+      "file": "water_tower.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 425816
+    },
+    {
+      "file": "mlow_eye_monument.glb",
+      "meshes": 1,
+      "images": 0,
+      "bytes": 91096
+    },
+    {
+      "file": "food-pizza.glb",
+      "meshes": 8,
+      "images": 1,
+      "bytes": 106780
+    },
+    {
+      "file": "food-croissant.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 14352
+    },
+    {
+      "file": "hydrant.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 617180
+    },
+    {
+      "file": "food-donut.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 11360
+    },
+    {
+      "file": "food-bottle-ketchup.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 9620
+    },
+    {
+      "file": "quiet_bench.glb",
+      "meshes": 3,
+      "images": 0,
+      "bytes": 98472
+    },
+    {
+      "file": "blossom_03.glb",
+      "meshes": 1,
+      "images": 0,
+      "bytes": 920804
+    },
+    {
+      "file": "food-bread.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 9468
+    },
+    {
+      "file": "food-cup-coffee.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 7872
+    },
+    {
+      "file": "fire_escape.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 778004
+    },
+    {
+      "file": "mailbox.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 460844
+    },
+    {
+      "file": "food-honey.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 14888
+    },
+    {
+      "file": "food-loaf-baguette.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 12824
+    },
+    {
+      "file": "lamppost.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 443776
+    },
+    {
+      "file": "lantern.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 481944
+    }
+  ],
+  "models_valid": 18,
+  "artworks_valid": 44,
+  "module_dependencies_valid": true,
+  "note": "GLB containers, buffer/image references and local files checked. Image pixel decoding and GPU rendering not checked."
+}
