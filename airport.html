@@ -77,6 +77,17 @@
     <h1>MLOW <em>INTERNATIONAL</em></h1>
     <p>MLow's airport, landed as a place you can walk. Terminal B is the evil eye from the air and a blossom of seven gates on the ground: logo check in desks, departure boards that list MLow's collections as destinations, a gallery concourse of fLOWers, a sculpture garden in the hub, and MLOW AIR on the apron. Every surface is lit with light baked in Cycles, so it looks like the render.</p>
   </div>
+  <section class="films" id="films">
+  <div class="film" id="film-mlow-international">
+    <div class="eyebrow">Now boarding</div>
+    <h2>The film</h2>
+    <div class="screen"><div class="bulbs" aria-hidden="true"></div>
+      <div class="scr"><video class="trv" muted loop playsinline preload="none" poster="assets/film/mlow-international/poster.jpg" data-teaser="assets/film/mlow-international/teaser.mp4" data-src="assets/film/mlow-international/master.m3u8" aria-label="MLOW INTERNATIONAL, the film, by MLow"></video>
+        <button class="tr-play" type="button" aria-label="Play The film with sound"><i></i><span>WATCH WITH SOUND <b>0:31</b></span></button></div>
+    </div>
+    <p>Thirty seconds through Terminal B: the drop off at golden hour, in under the dome, the gallery concourse, the seven blossoms at the gate, and the eye from the air. The footage is the walkable build above, finished in AI.</p>
+  </div>
+  </section>
 </main>
 <div id="foot"></div>
 <script>window.NY_BASE="";</script>
@@ -84,7 +95,22 @@
 <script src="assets/counts.js"></script>
 <script src="assets/site.js"></script>
 <script>NY.nav("AIRPORT");NY.foot();</script>
-
+<script>
+(function(){
+  var RM = matchMedia("(prefers-reduced-motion: reduce)").matches, HLS = "https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js", loading = null;
+  function hls(cb){ if (window.Hls) return cb(); if (!loading) { loading = new Promise(function(res, rej){ var sc = document.createElement("script"); sc.src = HLS; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); }); } loading.then(cb, cb); }
+  document.querySelectorAll(".gl .film").forEach(function(box){
+    var v = box.querySelector("video.trv"), b = box.querySelector(".tr-play"); if (!v || !b) return; var full = false, SRC = v.dataset.src;
+    if (!RM && "IntersectionObserver" in window) { var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (full) return; if (e.isIntersecting) { if (!v.src) v.src = v.dataset.teaser; v.play().catch(function(){}); } else v.pause(); }); }, {threshold: .35}); io.observe(v); }
+    function go(){ b.hidden = true; v.controls = true; v.muted = false; v.loop = false; v.currentTime = 0; v.play().catch(function(){}); }
+    b.addEventListener("click", function(){ full = true; v.pause();
+      document.querySelectorAll(".gl .film video.trv").forEach(function(o){ if (o !== v && !o.paused && !o.muted) o.pause(); });
+      if (v.canPlayType("application/vnd.apple.mpegurl")) { v.src = SRC; go(); return; }
+      hls(function(){ if (window.Hls && Hls.isSupported()) { var h = new Hls({capLevelToPlayerSize: true}); h.loadSource(SRC); h.attachMedia(v); h.on(Hls.Events.MANIFEST_PARSED, go); } else { v.src = SRC; go(); } });
+    });
+  });
+})();
+</script>
 <script src="assets/eggs.js" defer></script>
 <script src="assets/mint.js" defer></script>
 </body>

@@ -129,7 +129,11 @@ GALLERIES = [
          blurb=("MLow's airport, landed as a place you can walk. Terminal B is the evil eye from the air and a blossom of seven gates on the ground: "
                 "logo check in desks, departure boards that list MLow's collections as destinations, a gallery concourse of fLOWers, a sculpture "
                 "garden in the hub, and MLOW AIR on the apron. Every surface is lit with light baked in Cycles, so it looks like the render."),
-         keywords=["MLOW INTERNATIONAL", "MLow", "airport", "walkable", "three.js", "Blender", "baked lighting", "evil eye", "BLOSSOM", "virtual architecture"]),
+         keywords=["MLOW INTERNATIONAL", "MLow", "airport", "walkable", "three.js", "Blender", "baked lighting", "evil eye", "BLOSSOM", "virtual architecture"],
+         # the hype film under the gallery (encode_film.sh airport): AI finished footage of the same build, scored with Lyria
+         films=[dict(dir="mlow-international", kick="Now boarding", h="The film", dur="0:31", label="MLOW INTERNATIONAL, the film, by MLow",
+                     sub="Thirty seconds through Terminal B: the drop off at golden hour, in under the dome, the gallery concourse, the seven blossoms "
+                         "at the gate, and the eye from the air. The footage is the walkable build above, finished in AI.")]),
     dict(slug="spiral", page="spiral.html", nav="SKELLY CUP", branch="skelly-spiral",
          repo=os.path.join(ROOT, "SKELLY SPIRAL 2026-10-11"),
          skip=(), need=("index.html", "vendor", "assets/data.json"),
