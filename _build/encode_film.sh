@@ -3,6 +3,7 @@
 #   ./encode_film.sh                         the honoraries roll call (honoraries.html), from HONORARIES HYPE FILM 2026-09-26
 #   ./encode_film.sh halloffame              THE HONORARIES Hall of Fame film, room 183 (honoraries.html)
 #   ./encode_film.sh city                    THE CITY IS THE ART (home page), from DREAMINA HYPE FILM 2026-10-01
+#   ./encode_film.sh airport                 MLOW INTERNATIONAL, the hype film (airport.html)
 # Rerun after the film is re-rendered.
 set -e
 cd "${0:A:h}/.."
@@ -30,6 +31,10 @@ fi
 # SKATE THE SETS, the music video (movies.html, under the trailer), from SKATE THE SETS FILM 2026-10-12. Poster: Kong in the sky.
 if [ "$1" = "skate" ]; then
   SRC="../SKATE THE SETS FILM 2026-10-12/out/SKATE THE SETS v3 16x9.mp4"; O=assets/film/skate-the-sets; PT=2.0
+fi
+# MLOW INTERNATIONAL, the hype film (airport.html), from MLOW INTERNATIONAL HYPE FILM 2026-10-04. Poster: the aerial orbit, the eye from the air.
+if [ "$1" = "airport" ]; then
+  SRC="../MLOW INTERNATIONAL HYPE FILM 2026-10-04/MLOW INTERNATIONAL 16x9.mp4"; O=assets/film/mlow-international; PT=24
 fi
 FF=$(python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())")
 rm -rf $O; mkdir -p $O/1080 $O/720
@@ -72,6 +77,11 @@ fi
 # SKATE THE SETS: a 12 s silent teaser (Kong in the sky, the rat, the fall, Blue Steel)
 if [ "$1" = "skate" ]; then
   $FF -v error -y -i "$SRC" -filter_complex "[0:v]trim=1:4,setpts=PTS-STARTPTS[a];[0:v]trim=33:36,setpts=PTS-STARTPTS[b];[0:v]trim=36.5:39.5,setpts=PTS-STARTPTS[c];[0:v]trim=20.5:23.5,setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1,scale=960:-2[v]" \
+    -map "[v]" -an -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart $O/teaser.mp4
+fi
+# MLOW INTERNATIONAL: a 12 s silent teaser (the walk in under the dome, the concourse, the gate hub, the eye from the air)
+if [ "$1" = "airport" ]; then
+  $FF -v error -y -i "$SRC" -filter_complex "[0:v]trim=9.5:12.5,setpts=PTS-STARTPTS[a];[0:v]trim=15:18,setpts=PTS-STARTPTS[b];[0:v]trim=19:22,setpts=PTS-STARTPTS[c];[0:v]trim=23:26,setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1,scale=960:-2[v]" \
     -map "[v]" -an -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart $O/teaser.mp4
 fi
 du -sh $O
