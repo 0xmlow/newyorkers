@@ -1,0 +1,122 @@
+[
+  {
+    "file": "wood-color.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/old_wood_floor/old_wood_floor_diff_2k.jpg",
+    "asset": "old_wood_floor",
+    "map": "color",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/old_wood_floor"
+  },
+  {
+    "file": "wood-normal.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/old_wood_floor/old_wood_floor_nor_gl_1k.jpg",
+    "asset": "old_wood_floor",
+    "map": "normal",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/old_wood_floor"
+  },
+  {
+    "file": "wood-roughness.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/old_wood_floor/old_wood_floor_rough_1k.jpg",
+    "asset": "old_wood_floor",
+    "map": "roughness",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/old_wood_floor"
+  },
+  {
+    "file": "wood-ao.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/old_wood_floor/old_wood_floor_ao_1k.jpg",
+    "asset": "old_wood_floor",
+    "map": "ao",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/old_wood_floor"
+  },
+  {
+    "file": "wood-height.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/old_wood_floor/old_wood_floor_disp_1k.jpg",
+    "asset": "old_wood_floor",
+    "map": "height",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/old_wood_floor"
+  },
+  {
+    "file": "brick-color.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/brown_brick_02/brown_brick_02_diff_2k.jpg",
+    "asset": "brown_brick_02",
+    "map": "color",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/brown_brick_02"
+  },
+  {
+    "file": "brick-normal.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_brick_02/brown_brick_02_nor_gl_1k.jpg",
+    "asset": "brown_brick_02",
+    "map": "normal",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/brown_brick_02"
+  },
+  {
+    "file": "brick-roughness.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_brick_02/brown_brick_02_rough_1k.jpg",
+    "asset": "brown_brick_02",
+    "map": "roughness",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/brown_brick_02"
+  },
+  {
+    "file": "brick-ao.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_brick_02/brown_brick_02_ao_1k.jpg",
+    "asset": "brown_brick_02",
+    "map": "ao",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/brown_brick_02"
+  },
+  {
+    "file": "brick-height.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_brick_02/brown_brick_02_disp_1k.jpg",
+    "asset": "brown_brick_02",
+    "map": "height",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/brown_brick_02"
+  },
+  {
+    "file": "concrete-color.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/concrete_floor_02/concrete_floor_02_diff_2k.jpg",
+    "asset": "concrete_floor_02",
+    "map": "color",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/concrete_floor_02"
+  },
+  {
+    "file": "concrete-normal.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_nor_gl_1k.jpg",
+    "asset": "concrete_floor_02",
+    "map": "normal",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/concrete_floor_02"
+  },
+  {
+    "file": "concrete-roughness.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_rough_1k.jpg",
+    "asset": "concrete_floor_02",
+    "map": "roughness",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/concrete_floor_02"
+  },
+  {
+    "file": "concrete-ao.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_ao_1k.jpg",
+    "asset": "concrete_floor_02",
+    "map": "ao",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/concrete_floor_02"
+  },
+  {
+    "file": "concrete-height.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_disp_1k.jpg",
+    "asset": "concrete_floor_02",
+    "map": "height",
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/concrete_floor_02"
+  }
+]

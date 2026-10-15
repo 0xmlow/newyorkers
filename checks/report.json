@@ -1,0 +1,27 @@
+{
+  "opticalStudies": 6,
+  "scannedMaterials": 3,
+  "heightMappedMaterials": 11,
+  "shaderAssembly": true,
+  "passed": true,
+  "artworks": 24,
+  "interactiveTargets": 52,
+  "rooms": [
+    "loft",
+    "sales",
+    "basement",
+    "roof"
+  ],
+  "clues": 6,
+  "pressureStages": true,
+  "gatedEnding": true,
+  "restoration": true,
+  "finiteGeometry": true,
+  "spawnClearance": true,
+  "nodes": 894,
+  "instances": 1172,
+  "sceneTriangles": 185521,
+  "browserRendering": "UNVERIFIED: browser control service unavailable",
+  "gpuPerformance": "UNVERIFIED",
+  "note": "CPU scene construction with real Three.js geometry; renderer and image decoding are mocked."
+}
