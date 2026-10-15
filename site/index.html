@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>MLOW GARDENS walk</title>
+<meta name="description" content="Walk MLOW GARDENS, an amusement park by MLow built in code in Blender: ten coasters, the BLOSSOM GP circuit, and NEW YORKERS hung on the boardwalk and in LUNA HALL.">
+<style>
+  :root {
+    --ink: #0d0d0d; --cloud: #f0f4f8; --blue: #2962ff; --cyan: #00e5ff; --pink: #ff2e63; --acid: #d7ff1f; --mint: #3dffc0;
+    --panel: rgba(13, 13, 13, 0.72); --line: rgba(240, 244, 248, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: var(--cloud);
+    font-family: Georgia, "Times New Roman", serif; -webkit-user-select: none; user-select: none; }
+  canvas { display: block; touch-action: none; }
+  .overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; background: radial-gradient(ellipse at 50% 40%, #2a1d16 0%, var(--ink) 72%); z-index: 20; padding: 16px; text-align: center; }
+  .overlay img.logo { width: min(300px, 66vw); }
+  .bar { width: min(360px, 80vw); height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--pink), var(--acid)); transition: width .2s; }
+  .sub { font-size: 14px; letter-spacing: .08em; opacity: .78; max-width: 560px; line-height: 1.45; }
+  #start { display: none; background: rgba(13,13,13,.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  #start h1 { font-weight: normal; font-size: clamp(24px, 4.4vw, 38px); margin: 0; letter-spacing: .06em; }
+  #start .go { margin-top: 4px; padding: 12px 28px; border: 1px solid var(--cloud); background: none; color: var(--cloud);
+    font: inherit; font-size: 16px; letter-spacing: .12em; cursor: pointer; border-radius: 2px; }
+  #start .go:hover { background: var(--cloud); color: var(--ink); }
+  .keys { display: grid; grid-template-columns: auto auto; gap: 4px 14px; font-size: 13px; opacity: .82; text-align: left; }
+  .keys b { font-family: ui-monospace, Menlo, monospace; font-weight: normal; color: var(--acid); }
+  #hud { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 14px 16px; pointer-events: none; z-index: 5; }
+  #brand { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .1em; text-shadow: 0 1px 6px #000; }
+  #brand img { height: 22px; }
+  #zone { font-size: 13px; letter-spacing: .1em; opacity: .9; text-shadow: 0 1px 6px #000; text-align: right; }
+  #side { position: fixed; left: 16px; top: 56px; display: flex; flex-direction: column; gap: 10px; z-index: 6; max-height: calc(100vh - 120px); overflow-y: auto; }
+  .stack { display: flex; flex-direction: column; gap: 4px; }
+  .stack button { pointer-events: auto; text-align: left; font: inherit; font-size: 13px; color: var(--cloud); background: var(--panel);
+    border: 1px solid var(--line); padding: 7px 12px; border-radius: 2px; cursor: pointer; letter-spacing: .03em; }
+  .stack button:hover, .stack button.on { border-color: var(--acid); color: #fff; }
+  #rides button { font-size: 12px; letter-spacing: .08em; border-left: 3px solid var(--pink); }
+  .stack button small { opacity: .55; margin-left: 6px; font-size: 11px; }
+  #cross { position: fixed; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.85); z-index: 4; pointer-events: none; display: none; }
+  #plaque { position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line);
+    border-left: 3px solid var(--pink); padding: 10px 16px; font-size: 14px; z-index: 7; display: none; max-width: min(560px, 90vw); cursor: pointer; }
+  #plaque .t { font-size: 17px; }
+  #plaque .m { font-size: 12px; opacity: .72; margin-top: 3px; letter-spacing: .05em; font-family: ui-monospace, Menlo, monospace; }
+  #mode { position: fixed; right: 16px; bottom: 16px; font-size: 12px; opacity: .75; z-index: 5; letter-spacing: .06em; text-shadow: 0 1px 6px #000; }
+  #joy { position: fixed; left: 24px; bottom: 24px; width: 120px; height: 120px; border-radius: 50%; border: 1px solid var(--line);
+    background: rgba(13,13,13,.25); z-index: 6; display: none; touch-action: none; }
+  #joy i { position: absolute; left: 40px; top: 40px; width: 40px; height: 40px; border-radius: 50%; background: rgba(240,244,248,.5); }
+  #flybtn { position: fixed; right: 16px; bottom: 44px; z-index: 6; display: none; font: inherit; font-size: 13px; color: var(--cloud);
+    background: var(--panel); border: 1px solid var(--line); padding: 8px 14px; border-radius: 2px; }
+  @media (max-width: 720px) {
+    #side { top: 52px; left: auto; right: 12px; max-height: 44vh; }
+    .stack button { font-size: 12px; padding: 6px 10px; }
+    .stack button small { display: none; }
+    #brand span { display: none; }
+  }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/", "three-mesh-bvh": "./vendor/three-mesh-bvh.module.js" } }
+</script>
+</head>
+<body>
+<div id="loading" class="overlay">
+  <img class="logo" src="logo_white.png" alt="MLOW">
+  <div class="sub">GARDENS · an amusement park by MLow</div>
+  <div class="bar"><i id="prog"></i></div>
+  <div class="sub" id="ltext">opening the gates…</div>
+</div>
+<div id="start" class="overlay">
+  <h1>MLOW GARDENS</h1>
+  <div class="sub">Ten coasters and the BLOSSOM GP. Coney Island's New Yorkers hang along the boardwalk in the order they were made; the parks of New York fill LUNA HALL.</div>
+  <div class="keys" id="keys">
+    <b>W A S D</b><span>walk</span><b>mouse</b><span>look</span><b>shift</b><span>run</span>
+    <b>E</b><span>see the piece you are looking at</span><b>R</b><span>ride the coasters, then the circuit</span>
+    <b>F</b><span>fly / walk</span><b>Q · E</b><span>down · up (fly)</span><b>1 to 9</b><span>jump to a spot</span><b>esc</b><span>pause</span>
+  </div>
+  <button class="go" id="go">ENTER THE PARK</button>
+  <div class="sub" style="font-size:12px;opacity:.55">Walk the boardwalk from the gate: the first New Yorker you meet is Nathan's Famous.</div>
+</div>
+<div id="hud"><div id="brand"><img src="logo_white.png" alt="MLOW"><span>GARDENS</span></div><div id="zone"></div></div>
+<div id="side"><div id="spots" class="stack"></div><div id="rides" class="stack"></div></div>
+<div id="cross"></div>
+<div id="plaque"><div class="t" id="ptitle"></div><div class="m" id="pmeta"></div></div>
+<div id="mode"></div>
+<div id="joy"><i></i></div>
+<button id="flybtn">fly</button>
+<script type="module" src="main.js"></script>
+</body>
+</html>
