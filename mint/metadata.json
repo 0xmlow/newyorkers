@@ -1,0 +1,130 @@
+{
+  "name": "BREAK GLASS",
+  "created_by": "MLow",
+  "description": "IN CASE OF EMERGENCY, BREAK GLASS.\n\nA one of one by MLow from NEW YORKERS. A blue emergency case, enamelled all over in evil eyes that follow you and blink, stands on a white terrazzo plinth behind blue velvet rope, one spotlight overhead, a fire unit on either side. Behind the frosted glass is a New Yorker.\n\nTake the hammer off its chain and hit the glass three times. The first hit cracks it where you struck, the second spreads the cracks, the third breaks it along them: the pieces round the hit are driven into the case, the rest drop out of the frame and settle on the plinth, a few stay stuck in the frame, the fire jets go up and the alarm rings.\n\nInside is one of the Keystone 111, the founding New Yorkers, drawn at random from all 163 of their painted states. Every work has the same chance. Within a work the keystone state is the usual pull, the alternate states are rarer, and the Canal Street Bootlegs are the rarest thing in the case. Each pull shows its odds.\n\nPress RE-ARM on the plinth and every shard flies back into the frame, the glass seals, and the case is ready again. TURN shows the back: the MLow plate and the inspection tag. Last checked: never.\n\nOne self contained file: three.js, every painting and every sound are inside it. No servers, no network calls. Works in any modern browser, on a desk or a phone. Click the glass to begin.",
+  "image": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/break_glass.gif",
+  "animation_url": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/index.html",
+  "external_url": "https://n3wyorkers.com/breakglass",
+  "attributes": [
+    {
+      "trait_type": "Artist",
+      "value": "MLow"
+    },
+    {
+      "trait_type": "Collection",
+      "value": "NEW YORKERS"
+    },
+    {
+      "trait_type": "Edition",
+      "value": "1 of 1"
+    },
+    {
+      "trait_type": "Medium",
+      "value": "Interactive three.js, one HTML file"
+    },
+    {
+      "trait_type": "Inside",
+      "value": "The Keystone 111"
+    },
+    {
+      "display_type": "number",
+      "trait_type": "Works inside",
+      "value": 111
+    },
+    {
+      "display_type": "number",
+      "trait_type": "Painted states inside",
+      "value": 163
+    },
+    {
+      "trait_type": "Rarest pull",
+      "value": "Canal Street Bootleg"
+    },
+    {
+      "trait_type": "Interaction",
+      "value": "Hit the glass three times"
+    },
+    {
+      "trait_type": "Controls",
+      "value": "RE-ARM, TURN, SOUND on the plinth"
+    },
+    {
+      "trait_type": "Case",
+      "value": "Evil eye blue enamel"
+    },
+    {
+      "trait_type": "Stand",
+      "value": "White terrazzo plinth, velvet rope, two fire units"
+    },
+    {
+      "trait_type": "Back",
+      "value": "MLow plate and inspection tag"
+    },
+    {
+      "trait_type": "Sound",
+      "value": "Synthesised live in the browser"
+    },
+    {
+      "trait_type": "Network calls",
+      "value": "None"
+    },
+    {
+      "trait_type": "Engine",
+      "value": "three.js r185"
+    },
+    {
+      "trait_type": "Year",
+      "value": "2026"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/index.html",
+        "type": "text/html",
+        "role": "the artwork",
+        "size": 17605854
+      },
+      {
+        "uri": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/break_glass.gif",
+        "type": "image/gif",
+        "role": "preview loop",
+        "size": 12509343
+      },
+      {
+        "uri": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/preview.png",
+        "type": "image/png",
+        "role": "still",
+        "size": 1992542
+      },
+      {
+        "uri": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/break_glass_film.mp4",
+        "type": "video/mp4",
+        "role": "the film",
+        "size": 72565327
+      }
+    ],
+    "category": "html",
+    "sha256": {
+      "index.html": "30a8971bf65f0688fa524466bdb22c042633937b392658c22ad715d80b13ad2d",
+      "break_glass.gif": "0096e2c694c49129cee968c338b60c47bc22fcd57766a368c07c144b89fc8947",
+      "preview.png": "977b05e8b94450e2b4fe427dec5a8c177fd7bc3b4f89860daf71c56febfae631",
+      "break_glass_film.mp4": "a39860ada4607a7fbc5d6cda70a54411ffaecf5553c9416e9aa3e63672ab1066"
+    }
+  },
+  "media": {
+    "uri": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/index.html",
+    "mimeType": "text/html"
+  },
+  "tags": [
+    "NEW YORKERS",
+    "MLow",
+    "Keystone 111",
+    "interactive",
+    "three.js",
+    "generative",
+    "evil eye",
+    "New York",
+    "1 of 1"
+  ]
+}

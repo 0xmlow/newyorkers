@@ -21,6 +21,11 @@ const TIER_W = { 1: 6, 2: 2, 3: 1 };
 const TIER_NAME = { 1: 'KEYSTONE STATE', 2: 'ALTERNATE STATE', 3: 'CANAL STREET BOOTLEG' };
 let lastId = -1;
 function pull() {
+  const F = window.__FORCE;   // a film can name its pull: { no, st }
+  if (F) {
+    window.__FORCE = null; const a = ART.find(x => x.no === F.no && x.st === F.st) || ART.find(x => x.no === F.no);
+    if (a) { lastId = a.id; const st = ART.filter(x => x.id === a.id), tot = st.reduce((s, x) => s + TIER_W[x.tier], 0); return { ...a, odds: Math.round(WORKS.length * tot / TIER_W[a.tier]) }; }
+  }
   let id; do { id = WORKS[Math.floor(rnd() * WORKS.length)]; } while (WORKS.length > 1 && id === lastId);
   lastId = id;
   const states = ART.filter(a => a.id === id);
@@ -619,6 +624,91 @@ function sfxBell() {
 }
 function sfxRewind() { if (muted) return; const ac = audio(), t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(200, t); o.frequency.exponentialRampToValueAtTime(1800, t + 0.9); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.15, t + 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 1); o.connect(g).connect(master); o.start(t); o.stop(t + 1.05); for (let i = 0; i < 20; i++) ping(t + 0.9 - Math.pow(Math.random(), 2) * 0.8, R(3000, 8000), 0.08, 0.04); }
 
+// ---------- pyro: two flame units on the floor either side of the plinth. They fire once when the piece
+// opens and again, bigger, when the glass goes. CPU particles, a soft round sprite, a heat ramp in the shader ----------
+const FIRE_N = 2400, JETS = [{ x: -1.72, z: 0.62 }, { x: 1.72, z: 0.62 }];
+const fPos = new Float32Array(FIRE_N * 3), fLife = new Float32Array(FIRE_N).fill(-1), fSize = new Float32Array(FIRE_N), fSeed = new Float32Array(FIRE_N);
+const fVel = new Float32Array(FIRE_N * 3), fMax = new Float32Array(FIRE_N), fEmber = new Uint8Array(FIRE_N);
+for (let i = 0; i < FIRE_N; i++) fSeed[i] = Math.random();
+const fireGeo = new THREE.BufferGeometry();
+fireGeo.setAttribute('position', new THREE.BufferAttribute(fPos, 3));
+fireGeo.setAttribute('aLife', new THREE.BufferAttribute(fLife, 1));
+fireGeo.setAttribute('aSize', new THREE.BufferAttribute(fSize, 1));
+fireGeo.setAttribute('aSeed', new THREE.BufferAttribute(fSeed, 1));
+const fireMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+  uniforms: { uScale: { value: innerHeight * Math.min(devicePixelRatio, 1.5) * 0.5 } },
+  vertexShader: `attribute float aLife; attribute float aSize; attribute float aSeed; varying float vLife; varying float vSeed; uniform float uScale;
+    void main(){ vLife = aLife; vSeed = aSeed; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv;
+      float grow = aLife < 0.0 ? 0.0 : mix(0.55, 1.5, smoothstep(0.0, 0.35, aLife)) * (1.0 - smoothstep(0.7, 1.0, aLife) * 0.6);
+      gl_PointSize = aSize * grow * uScale / -mv.z; }`,
+  fragmentShader: `varying float vLife; varying float vSeed;
+    void main(){ if (vLife < 0.0) discard; vec2 p = gl_PointCoord - 0.5; float r = length(p); if (r > 0.5) discard;
+      float soft = smoothstep(0.5, 0.05, r);
+      vec3 c = mix(vec3(0.55, 0.75, 1.0), vec3(1.0, 0.96, 0.82), smoothstep(0.0, 0.06, vLife));   // blue at the nozzle
+      c = mix(c, vec3(1.0, 0.62, 0.16), smoothstep(0.08, 0.32, vLife));
+      c = mix(c, vec3(0.92, 0.22, 0.05), smoothstep(0.32, 0.62, vLife));
+      c = mix(c, vec3(0.25, 0.05, 0.03), smoothstep(0.62, 1.0, vLife));
+      float a = soft * (1.0 - smoothstep(0.55, 1.0, vLife)) * (0.75 + 0.25 * vSeed);
+      gl_FragColor = vec4(c * a * 0.62, a); }`,
+});
+const fire = new THREE.Points(fireGeo, fireMat); fire.frustumCulled = false; scene.add(fire);
+const fireLights = JETS.map(j => { const l = new THREE.PointLight(0xff8a3a, 0, 6, 1.6); l.position.set(j.x, FLOOR + 1.0, j.z); scene.add(l); return l; });
+// the units themselves: black boxes with a chrome nozzle and a little armed light
+const unitMat = new THREE.MeshStandardMaterial({ color: 0x0a0d18, metalness: 0.5, roughness: 0.45 });
+const armedMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+for (const j of JETS) {
+  const u = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.24, 0.34), unitMat); u.position.set(j.x, FLOOR + 0.12, j.z); u.castShadow = u.receiveShadow = true; scene.add(u);
+  const n = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.1, 20), chrome); n.position.set(j.x, FLOOR + 0.29, j.z); scene.add(n);
+  const led = new THREE.Mesh(new THREE.SphereGeometry(0.014, 10, 8), armedMat); led.position.set(j.x + 0.11, FLOOR + 0.2, j.z + 0.171); scene.add(led);
+}
+let fireT = 0, fireDur = 0, firePow = 1, fireNext = 0;
+function ignite(dur, pow) { fireT = 0; fireDur = dur; firePow = pow; sfxFire(dur, pow); }
+function stepFire(dt, now) {
+  const on = fireT < fireDur; if (on) fireT += dt;
+  // spawn
+  if (on) {
+    const env = Math.min(1, fireT / 0.08) * (1 - Math.max(0, (fireT - fireDur + 0.35) / 0.35));
+    fireNext += dt * 1500 * firePow * env;
+    while (fireNext >= 1) {
+      fireNext -= 1;
+      let i = -1; for (let k = 0; k < 24; k++) { const c = Math.floor(Math.random() * FIRE_N); if (fLife[c] < 0) { i = c; break; } } if (i < 0) break;
+      const j = JETS[Math.random() < 0.5 ? 0 : 1], ember = Math.random() < 0.06;
+      fPos[i * 3] = j.x + R(-0.04, 0.04); fPos[i * 3 + 1] = FLOOR + 0.34; fPos[i * 3 + 2] = j.z + R(-0.04, 0.04);
+      const up = ember ? R(3, 6) : R(4.2, 6.2) * (0.75 + 0.25 * firePow);
+      fVel[i * 3] = R(-0.35, 0.35) * (ember ? 2.5 : 1); fVel[i * 3 + 1] = up; fVel[i * 3 + 2] = R(-0.35, 0.35) * (ember ? 2.5 : 1);
+      fLife[i] = 0; fMax[i] = ember ? R(1.2, 2.0) : R(0.45, 0.85); fSize[i] = ember ? R(0.025, 0.05) : R(0.5, 0.95); fEmber[i] = ember;
+    }
+  }
+  // move
+  let live = 0;
+  for (let i = 0; i < FIRE_N; i++) {
+    if (fLife[i] < 0) continue; live++;
+    fLife[i] += dt / fMax[i]; if (fLife[i] >= 1) { fLife[i] = -1; continue; }
+    const k = i * 3, y = fPos[k + 1];
+    if (fEmber[i]) { fVel[k + 1] -= 4.5 * dt; }
+    else {
+      fVel[k + 1] *= 1 - 1.6 * dt;                                      // a jet slows as it rises and spreads
+      fVel[k] += Math.sin(y * 3.1 + now * 0.004 + fSeed[i] * 9) * 2.2 * dt; fVel[k + 2] += Math.cos(y * 2.7 + now * 0.0035 + fSeed[i] * 7) * 2.2 * dt;
+    }
+    fPos[k] += fVel[k] * dt; fPos[k + 1] += fVel[k + 1] * dt; fPos[k + 2] += fVel[k + 2] * dt;
+  }
+  fireGeo.attributes.position.needsUpdate = fireGeo.attributes.aLife.needsUpdate = fireGeo.attributes.aSize.needsUpdate = true;
+  const glow = on ? Math.min(1, fireT / 0.1) * (0.75 + 0.25 * Math.sin(now * 0.05) * Math.sin(now * 0.031)) : 0;
+  fireLights.forEach(l => l.intensity += (glow * 26 * firePow - l.intensity) * Math.min(1, dt * 14));
+  armedMat.color.setHex(on ? 0xff5a1a : 0x00e5ff);
+  return live > 0 || on;
+}
+// a roar: low noise opening up, crackle on top
+function sfxFire(dur, pow) {
+  if (muted || !AC) return; const ac = AC, t = ac.currentTime;
+  const len = Math.ceil(ac.sampleRate * (dur + 0.4)), b = ac.createBuffer(1, len, ac.sampleRate), d = b.getChannelData(0);
+  let last = 0; for (let i = 0; i < len; i++) { last = last * 0.96 + (Math.random() * 2 - 1) * 0.04; d[i] = last * 6 + (Math.random() < 0.0009 ? (Math.random() * 2 - 1) * 0.9 : 0); }
+  const s = ac.createBufferSource(); s.buffer = b; const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(300, t); lp.frequency.exponentialRampToValueAtTime(2400, t + 0.15);
+  const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * pow, t + 0.06); g.gain.setValueAtTime(0.5 * pow, t + dur - 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.3);
+  s.connect(lp).connect(g).connect(master); s.start(t);
+}
+
 // ---------- state machine ----------
 const ui = {
   hint: document.getElementById('hint'), card: document.getElementById('card'), flash: document.getElementById('flash'),
@@ -672,7 +762,7 @@ function breakNow(local) {
     ui.tier.dataset.tier = current.tier;
     ui.odds.textContent = `THIS PULL: 1 IN ${current.odds}`;
     setTimeout(() => ui.card.classList.add('on'), 650);
-    alarm = current.tier === 3 ? 5 : 2.6; setTimeout(sfxBell, 180);
+    alarm = current.tier === 3 ? 5 : 2.6; setTimeout(sfxBell, 180); ignite(current.tier === 3 ? 3.4 : 2.1, current.tier === 3 ? 1.25 : 1);
     look.wide = 1; for (const e of EYES) e.bt = -Math.random() * 0.8;
   };
   reveal();
@@ -736,9 +826,13 @@ function turnAround() {
   setHint(behind ? (state === 'armed' && hits < 3 ? HINTS[hits] : '') : 'TAP THE CASE TO TURN IT BACK');
 }
 function toggleSound() { muted = !muted; }
-addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); fitCam(); });
+addEventListener('resize', () => { fireMat.uniforms.uScale.value = innerHeight * Math.min(devicePixelRatio, 1.5) * 0.5; camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); fitCam(); });
 function fitCam() { const asp = innerWidth / innerHeight, tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); const dist = Math.max(6.3, (asp < 1 ? 1.55 : 2.3) / (tanH * asp), 1.95 / tanH); HOME.set(asp < 1 ? 0.2 : 0.7, 1.05, dist); controls.maxDistance = dist * 1.7; scene.fog.near = dist + 2; scene.fog.far = dist + 12; if (!camTween && camera.position.z > 0 && state === 'armed' && hits === 0) camera.position.copy(HOME); }
 fitCam();
+
+// the piece opens with a short burst from both units
+if (!window.__FILM) setTimeout(() => ignite(1.3, 0.8), 1400);
+let fireBusy = false;
 
 // ---------- loop ----------
 let lastT = performance.now(), cost = 0;
@@ -747,8 +841,8 @@ const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const easeOutBack = t => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
 renderer.setAnimationLoop(() => {
   frame++; const now = performance.now();
-  const busy = swing || shards.length || camTween || alarm > 0 || revealT >= 0 || now - lastInput < 4000;
-  if (!busy && frame % 2) return;               // idle: half rate, keeps fans quiet
+  const busy = swing || shards.length || camTween || alarm > 0 || revealT >= 0 || fireBusy || now - lastInput < 4000;
+  if (!busy && frame % 2 && !window.__FILM) return;               // idle: half rate, keeps fans quiet
   const dt = Math.min((now - lastT) / 1000, 1 / 20); lastT = now;
 
   // eyes follow the pointer and blink on their own
@@ -802,6 +896,7 @@ renderer.setAnimationLoop(() => {
     B.glow += (glow - B.glow) * Math.min(1, dt * 10); B.mat.emissiveIntensity = B.glow;
   }
   stepDust(dt, now);
+  fireBusy = stepFire(dt, now);
 
   // beacon
   if (alarm > 0) { alarm -= dt; spinner.rotation.y += dt * 9; const on = Math.min(1, alarm); beams.forEach(b => b.intensity = 40 * on); domeMat.emissiveIntensity = 0.4 + 2.6 * on * (0.6 + 0.4 * Math.sin(now / 60)); }
@@ -826,3 +921,15 @@ window.__breakglass = { press: n => pressButton(n), _three: { renderer, scene, c
   get shards() { const c = {}; for (const s of shards) { const k = s.stuck ? 'stuck' : !s.rest ? 'moving' : String(Math.round(surfaceAt(s.m.position.x, s.m.position.z, s.m.position.y) * 100) / 100); c[k] = (c[k] || 0) + 1; } return c; } };
 // ?auto breaks the glass by itself a second after load (for stills, films and the marketplace preview)
 if (qs.has('auto')) [+(qs.get('auto') || 900), +(qs.get('auto') || 900) + 600, +(qs.get('auto') || 900) + 1200].forEach((ms, i) => setTimeout(() => strike({ x: 0.18 - i * 0.04, y: 0.06 + i * 0.03 }), ms));
+
+// film hooks, only when a capture rig sets window.__FILM before the page loads
+if (window.__FILM) {
+  muted = true;
+  window.__breakglass.film = {
+    strike, rearm, ignite, look, EYES, setAlarm: v => { alarm = v; },
+    prep(no, st) { window.__FORCE = { no, st }; prepareNext(); },
+    ready: () => !!nextTex,
+    smash(local) { if (state !== 'armed') return; pat = makePattern(local); pat.hits.push(local); hits = 3; breakNow(local); },
+    get state() { return state; }, get rewinding() { return rewindT >= 0; }, get hits() { return hits; },
+  };
+}

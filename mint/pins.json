@@ -1,0 +1,19 @@
+{
+  "media_folder": "bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva",
+  "animation_url": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/index.html",
+  "image": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/break_glass.gif",
+  "film": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/break_glass_film.mp4",
+  "still": "ipfs://bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/preview.png",
+  "metadata": "bafkreieivnnc3rcfiypyeikvvecri2ab6zktlhmj5ysvib32iqmlbychia",
+  "tokenURI": "ipfs://bafkreieivnnc3rcfiypyeikvvecri2ab6zktlhmj5ysvib32iqmlbychia",
+  "sha256": {
+    "index.html": "30a8971bf65f0688fa524466bdb22c042633937b392658c22ad715d80b13ad2d",
+    "break_glass.gif": "0096e2c694c49129cee968c338b60c47bc22fcd57766a368c07c144b89fc8947",
+    "preview.png": "977b05e8b94450e2b4fe427dec5a8c177fd7bc3b4f89860daf71c56febfae631",
+    "break_glass_film.mp4": "a39860ada4607a7fbc5d6cda70a54411ffaecf5553c9416e9aa3e63672ab1066"
+  },
+  "gateway": {
+    "piece": "https://ipfs.io/ipfs/bafybeig4swrcrlm64mvv2l3tfooy2axwercjlr6l26ubikl5s7zqmimbva/index.html",
+    "metadata": "https://ipfs.io/ipfs/bafkreieivnnc3rcfiypyeikvvecri2ab6zktlhmj5ysvib32iqmlbychia"
+  }
+}

@@ -2,3 +2,6 @@
 _build/node_modules
 _build/art.js
 _build/app.js
+mint/dist/
+mint/*.mp4
+mint/*.gif
