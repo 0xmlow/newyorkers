@@ -17,7 +17,7 @@ const DATA = window.MARKS;
 
 // ---------- renderer ----------
 const renderer = new THREE.WebGLRenderer({ antialias: !MOBILE, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // two device pixels on a 4K laptop screen is a space heater; 1.5 reads the same
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = +(Q.get('ex') || 0.85);
@@ -317,7 +317,18 @@ function enter(i) {
 
 // ---------- loop ----------
 const clock = new THREE.Clock(); let started = false, t0 = 0;
+// ---------- power ----------
+// A visitor wrote that the site turned their fans into a jet engine. A gallery that draws 120 frames a second at two
+// device pixels, forever, with nobody touching it, is one. The loop draws at most 60 a second, 30 once nothing has been
+// touched for twenty seconds, and about six while the window is not the one in front. Everything moves on dt.
+const POWER = { last: performance.now(), drawn: 0, blurred: !document.hasFocus(), frames: 0 };
+const touched = () => { POWER.last = performance.now(); };
+for (const ev of ['keydown', 'mousemove', 'mousedown', 'touchstart', 'touchmove', 'wheel']) addEventListener(ev, touched, { passive: true });
+addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('focus', () => { POWER.blurred = false; touched(); });
+function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
+window.__POWER = POWER; window.__powerBudget = powerBudget;
 function frame() {
+  const nowMs = performance.now(); if (nowMs - POWER.drawn < powerBudget()) { requestAnimationFrame(frame); return; } POWER.drawn = nowMs; POWER.frames++;
   const dt = Math.min(0.05, clock.getDelta()), t = clock.elapsedTime;
   // move
   let f = 0, s = 0; if (keys.KeyW || keys.ArrowUp) f += 1; if (keys.KeyS || keys.ArrowDown) f -= 1; if (keys.KeyA) s -= 1; if (keys.KeyD) s += 1;
