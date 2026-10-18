@@ -1,0 +1,5 @@
+site/
+work/
+gen/raw/
+gen/logs/
+__pycache__/
