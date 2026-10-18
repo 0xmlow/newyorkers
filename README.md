@@ -50,6 +50,11 @@ can hang (970 of 7,542 refused). Fills the theme rooms, orders every room best f
 picks the loops. Its report is `CURATOR.md`; press C inside for the note of the room you are in. Edit `taste.json` and
 rebuild to argue with it.
 
+## Phones
+`site/phone-gpu.js` loads first. On a phone it halves any image texture over 512 (1024 for the atlases and the full
+works) as WebGL uploads it, so the museum asks for about 220 MB instead of 1.1 GB, which iOS Safari closed the tab
+over. `?gpucap=0` turns it off. The canonical copy is the site's `assets/ui/phone-gpu.js`.
+
 ## Rebuild and check
 ```
 python3 _build/build_data.py     # the curator, data.json, atlases, posters, loops, textures, skies, props (Draco through _build/draco.py), from the site repo
