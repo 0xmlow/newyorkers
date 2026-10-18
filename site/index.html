@@ -56,6 +56,16 @@
     #spots button small { display: none; }
     #brand span { display: none; }
   }
+  /* phones (2026-10-18): the places list covered half the view and, in the park, ran off the bottom. It waits
+     behind one PLACES button now; picking a place closes it. */
+  #places { display: none; }
+  @media (max-width: 720px) {
+    #places { display: block; position: fixed; right: 12px; top: 52px; z-index: 7; pointer-events: auto; font: inherit; font-size: 12px;
+      letter-spacing: .16em; color: var(--cloud); background: var(--panel); border: 1px solid rgba(236,232,221,.28); border-radius: 999px; padding: 10px 18px; }
+    body.places #places { border-color: var(--cyan); color: #fff; }
+    body:not(.places) #spots { display: none; }
+    #spots { top: 98px; bottom: auto; left: auto; right: 12px; max-height: calc(100vh - 300px); overflow-y: auto; }
+  }
 </style>
 <script type="importmap">
 { "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/", "three-mesh-bvh": "./vendor/three-mesh-bvh.module.js" } }
@@ -79,6 +89,7 @@
   <div class="sub" style="font-size:12px;opacity:.5">Look for the DeLorean, taxi 317, flight MW6529 and the helipad that watches back.</div>
 </div>
 <div id="hud"><div id="brand"><img src="logo_white.png" alt="MLOW"><span>INTERNATIONAL · TERMINAL B</span></div><div id="zone"></div></div>
+<button id="places" type="button" aria-expanded="false">PLACES</button>
 <div id="spots"></div>
 <div id="cross"></div>
 <div id="plaque"><div class="t" id="ptitle"></div><div class="m" id="pmeta"></div></div>
@@ -86,5 +97,12 @@
 <div id="joy"><i></i></div>
 <button id="flybtn">fly</button>
 <script type="module" src="main.js"></script>
+<script>
+/* phones: the places list opens from the PLACES button and closes once a place is picked */
+(function () { var b = document.getElementById('places'), l = document.getElementById('spots');
+  var set = function (o) { document.body.classList.toggle('places', o); b.setAttribute('aria-expanded', o ? 'true' : 'false'); };
+  b.addEventListener('click', function (e) { e.stopPropagation(); set(!document.body.classList.contains('places')); });
+  l.addEventListener('click', function (e) { if (e.target.closest('button')) set(false); }); })();
+</script>
 </body>
 </html>
