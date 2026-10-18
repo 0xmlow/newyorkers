@@ -1,0 +1,20 @@
+{
+  "name": "unlicensed-new-york",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5198",
+    "build": "node tools/catalog.mjs && vite build",
+    "check": "node checks/validate.mjs",
+    "preview": "vite preview --host 127.0.0.1 --port 5199"
+  },
+  "devDependencies": {
+    "three": "0.185.1",
+    "@types/three": "0.185.4",
+    "typescript": "5.9.3",
+    "vite": "8.0.13"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

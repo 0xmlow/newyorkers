@@ -1,0 +1,4 @@
+interface:
+  display_name: "Virtual Gallery Architect"
+  short_description: "Build immersive, detailed virtual art galleries"
+  default_prompt: "Use $virtual-gallery-architect to build or refine a navigable Three.js exhibition with faithful artwork display and recognizable architecture."

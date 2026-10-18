@@ -1,0 +1,3279 @@
+{
+  "fullResolutionOriginalsIncluded": false,
+  "entries": [
+    {
+      "path": "public/assets/art/h019abd62f6.jpg",
+      "bytes": 159073,
+      "sha256": "097dc48fd39ecf5ad7a76ac16a4dfcf6f95e340cc0cc4043e52546c64646afd4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h019abd62f6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h01c63958ed.jpg",
+      "bytes": 160596,
+      "sha256": "1b726ba7d10bddda599d1cfa7f138eb7e54d3b0be9bdce16ea42f1c83c504b12",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h01c63958ed.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h02d1dbecf1.jpg",
+      "bytes": 121440,
+      "sha256": "20860d0f09ee471898f75ffd3823f4aeb37a9886d3134ea7075d2bc7c06bbe5d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h02d1dbecf1.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h02ee56f1dc.jpg",
+      "bytes": 148809,
+      "sha256": "275259ca0a91896edc86de1235829a639849a0dc97ede45950cc400b3ee53aee",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h02ee56f1dc.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h03cff72670.jpg",
+      "bytes": 171085,
+      "sha256": "6bb5a3935c23d62f7408242b0b5e56a110c5af361538c9da570689624a4142c6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h03cff72670.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h03d1f6dc41.jpg",
+      "bytes": 150802,
+      "sha256": "0ad1159a4f9049eab33d95d26f9109c10ad5d67c4eb0a1a549e1a2aeece0f0ec",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h03d1f6dc41.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h070acedad0.jpg",
+      "bytes": 112809,
+      "sha256": "cbe6a1cb9d69976620e5e869cae09279fd8835e07275fd346435d5bd6e7f2313",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h070acedad0.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h0733040085.jpg",
+      "bytes": 137267,
+      "sha256": "174eba330034894b100f1a451aa6bf524e250d7bba07695289fdc44f853844d0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h0733040085.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h0841d769a0.jpg",
+      "bytes": 93507,
+      "sha256": "c4a0cb6874fb4171226070560c397ce4145beafc2b7e6bce4e6db945f0eb5b1e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h0841d769a0.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h0aabcd348a.jpg",
+      "bytes": 176029,
+      "sha256": "391556f037baa08c19e7cc7eb841e170ec4eb2526490ab6930d1b53805f11cf4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h0aabcd348a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h0c097fcc75.jpg",
+      "bytes": 104439,
+      "sha256": "295d49160fc3fa7f8c70df88f271ae4bf93c9b3688a61aa263697743a15747c4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h0c097fcc75.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h0c6d76fd75.jpg",
+      "bytes": 135467,
+      "sha256": "56f9519c4ae418b9c5dba7e1d4659d0ca6da20c9960007a162a2b9ff7e1b9c18",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h0c6d76fd75.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h0eabc6b524.jpg",
+      "bytes": 132025,
+      "sha256": "6eaf64f72ecc5dd7f9af9bf401582c58511f25089a5291999dac3388eac94867",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h0eabc6b524.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h10d52f1d2a.jpg",
+      "bytes": 150821,
+      "sha256": "a59cf96b1ba73598df14eaf843b4916a9e88d3caa4f12b8ecf367760ceda1918",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h10d52f1d2a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h14ef6e819c.jpg",
+      "bytes": 151433,
+      "sha256": "014998b8a5c0def2f86e50b58c94d71f4881d2026e7964ecf9362c558d9ba590",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h14ef6e819c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h168320c868.jpg",
+      "bytes": 147812,
+      "sha256": "c8a3a14843ffa57d0831d080525e6e0010db1ea45a4d7011268d8b713a1b7399",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h168320c868.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h1b129050b6.jpg",
+      "bytes": 131180,
+      "sha256": "79f75c8006c246a74886caa11cb4e102060407f8a9c3ccaf08adfd4e7f9f939b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h1b129050b6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h1be9ce78a2.jpg",
+      "bytes": 113271,
+      "sha256": "6b6803cdd7e5b6059753246ad0caeb1780dbe3479d7d879dd4e0d80ad505f657",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h1be9ce78a2.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h1e9db82ab5.jpg",
+      "bytes": 142988,
+      "sha256": "d72054d8cd602d6728aac5d609cbed6c780776083bc7579d2d72e0e116ae5465",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h1e9db82ab5.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h1f4806300f.jpg",
+      "bytes": 170995,
+      "sha256": "e46d522643357bf599ad4be0e218cbaed338fade366c94a3b088dfcf3959696e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h1f4806300f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h1fc3fab7df.jpg",
+      "bytes": 129844,
+      "sha256": "e3d13d652ffd8ef0e152e1065124f26aa8054ab20c872c5ba9200e0a62c34a1c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h1fc3fab7df.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h1fc5a4ba97.jpg",
+      "bytes": 144420,
+      "sha256": "3d9829f403602440b435711fe2294b83d5c1bec5a4dc354752be916d09292711",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h1fc5a4ba97.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h234adc3844.jpg",
+      "bytes": 162649,
+      "sha256": "f5e11db9f089aecc8aa0a262bd290d1209c1496cd6998ce07f2ef55f970c1815",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h234adc3844.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h23aa5de0dc.jpg",
+      "bytes": 160423,
+      "sha256": "8040cb1c4b00ff8acaafa73378898bc61c042025118c3ff39fb3719034bdb811",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h23aa5de0dc.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h23e0cf4bbe.jpg",
+      "bytes": 128867,
+      "sha256": "e266f0bae8e18609254dad798bb893690cebb57ce4d911d79101881219c88134",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h23e0cf4bbe.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h25412b3754.jpg",
+      "bytes": 158705,
+      "sha256": "805c8effcb84f6762bc8f04e3508453931495792d30ab346d651e34192655539",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h25412b3754.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h2876c0c2c9.jpg",
+      "bytes": 131033,
+      "sha256": "3ade84da3e4b4fe9b5dca7a6e83ff3660a99d862ec7cc4e28a7ef5653c687e32",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h2876c0c2c9.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h2ad5d59b56.jpg",
+      "bytes": 156912,
+      "sha256": "560ab461deeb5eb9f1f50f3554c458227e1fb249feb32e6ea14e1c6020f5c596",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h2ad5d59b56.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h2c06fd84d6.jpg",
+      "bytes": 119204,
+      "sha256": "e3e6f8d8d8ee1ced97d31c64bebcdad83b29a1712ff2016f6a474cc4c7dbb0e8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h2c06fd84d6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h2dce71fcd8.jpg",
+      "bytes": 158612,
+      "sha256": "f6bcca64706d659fa8b273373a612666e1631decccb1be1d3bafd5097fb8e8a3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h2dce71fcd8.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h2ffb3ba7b4.jpg",
+      "bytes": 148590,
+      "sha256": "be9ef4bfc426617bbe5872cd9edb214e652a804aea8165abeadbfb4cdf616cd0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h2ffb3ba7b4.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h30378e376f.jpg",
+      "bytes": 93203,
+      "sha256": "3086a4e462f0a9a6604fa293c3d59715b1419d16cab4fbb7fb8407ec2a2e2f2a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h30378e376f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h303a78d24e.jpg",
+      "bytes": 156831,
+      "sha256": "f5a93227037bf00c5998c1c42dbe61342426d5ec015eaea618eed1662beeb6d8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h303a78d24e.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h33fc68a226.jpg",
+      "bytes": 166803,
+      "sha256": "889f9a3c260c564819f360ae6d80b4ba13057113c1dfa0fbe822a479affbba29",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h33fc68a226.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3745ca238d.jpg",
+      "bytes": 138436,
+      "sha256": "0281cd804ef2f50e83a4d7148d43718a7bed3cf34787aa4812f655727b038da9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3745ca238d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h37a3a297d4.jpg",
+      "bytes": 169231,
+      "sha256": "66559196e76778cea4bf18600d25c6f6a9c614766ba42b233ca4e60d31083c11",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h37a3a297d4.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h37fbe9341c.jpg",
+      "bytes": 217453,
+      "sha256": "a878472553a986500da33a778ea0ba3bc2d9929d8739d671985fad554e67f8e0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h37fbe9341c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h38886384e6.jpg",
+      "bytes": 112433,
+      "sha256": "b1ed9a62281ab7938495dcfc83aa9a5c3415513944c786b95bdae67b6f55c225",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h38886384e6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h38939db124.jpg",
+      "bytes": 127323,
+      "sha256": "6f93448800c86a5c4c978bf2d6464e71b87a94c65efcb3fb4cd640ef39925d6e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h38939db124.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h39a3f012b5.jpg",
+      "bytes": 172066,
+      "sha256": "670339e7373a36099b8c749264970f8a3261e25a432319de7b0a9f58503c49f5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h39a3f012b5.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3ad6ae342d.jpg",
+      "bytes": 117468,
+      "sha256": "b646c3bfbf0fd544e29f3d194b493ab67e207d6f8eeae96427cb0c198dbad4e2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3ad6ae342d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3d2fb94c20.jpg",
+      "bytes": 122402,
+      "sha256": "e7b81d4ec325b8b8df10298ce211c5bb1c84115774fe2ba84c8aaff7f849344f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3d2fb94c20.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3dd58f3d03.jpg",
+      "bytes": 112152,
+      "sha256": "b673e094d1688b4299254aab4c34ba6d7a147fd5c90c0dce27f65c2961751c24",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3dd58f3d03.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3e03be7370.jpg",
+      "bytes": 132600,
+      "sha256": "e78b8be5c636463a5629f59b2dc25a4ca8986f2a59fbb6f6fb119f7587bd3b4d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3e03be7370.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3f813f2aad.jpg",
+      "bytes": 127049,
+      "sha256": "aa11af722ea484e77e10ce27a82fdc21a2b0b27e4d42aa2a4c06361febde5cf5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3f813f2aad.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h3fd5b346d4.jpg",
+      "bytes": 253827,
+      "sha256": "da397b8aea37aeb1e71a96994fef319145e1542cacf20fe6a95507597cc73e59",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h3fd5b346d4.jpg",
+      "dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "path": "public/assets/art/h42d3f71685.jpg",
+      "bytes": 150010,
+      "sha256": "3f8b1e92bad2cc3f7fc84ceb8dc28ba83990ce1ec9353f83b261d1e91022bc87",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h42d3f71685.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h451f142901.jpg",
+      "bytes": 139731,
+      "sha256": "35285cf8469182ddc6d9e270639ecdc437d3a86c231cfad1424f5da97357356b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h451f142901.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h45fe977447.jpg",
+      "bytes": 140167,
+      "sha256": "a85de5b659a268e5c1331f9700fbbb678fd5e978d7dddb2e0a68c66225e5f28e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h45fe977447.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h462dc8b925.jpg",
+      "bytes": 117678,
+      "sha256": "b426736a801c92020fb62112ce20c27128b61f06d9672617dfd2f6de0ae91f12",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h462dc8b925.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h46484c36f6.jpg",
+      "bytes": 96961,
+      "sha256": "f06f093bc959db92b731d1155980a0c9482a7a1bd075874f30396616fb298a2b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h46484c36f6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h467533fb4b.jpg",
+      "bytes": 152487,
+      "sha256": "d2ab0a408ba02c6865bf994da22a2eb9ef5f4914ce18f6bbce134d77459e7b9a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h467533fb4b.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h47553ca84a.jpg",
+      "bytes": 137598,
+      "sha256": "792abd751a2f772b812cc2d70e66388300314360e2db164a1cb5cd81b77c36db",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h47553ca84a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h484f5d4d5c.jpg",
+      "bytes": 152851,
+      "sha256": "f79794a7c0c0418840a5d7ac828f28cc4419c986841ad70ad3158f150651e81d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h484f5d4d5c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4a2bf43ab9.jpg",
+      "bytes": 149927,
+      "sha256": "26539548a37f372c752c4029913dce0939e5183e184d5b5f1a2687b9fa0401a6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4a2bf43ab9.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4bb4a977af.jpg",
+      "bytes": 162143,
+      "sha256": "2d99de423fe20e4b17925344c0d16553403a3d17d61023bc1b421b883d8b7b0a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4bb4a977af.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4c77a8546c.jpg",
+      "bytes": 146121,
+      "sha256": "b54feffe40329b4e3d5e4980cd2ccd0aadb3328cb8884196bccf99870c9403e9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4c77a8546c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4c8397aad3.jpg",
+      "bytes": 146855,
+      "sha256": "8b671340f5d1716441167beb2f4d6d718f11b80c5dc811bf8b7637e59dbe2399",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4c8397aad3.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4e89a87317.jpg",
+      "bytes": 127825,
+      "sha256": "c63e495791f349a1defe0debb6d79d9612c4b99f085736b89473c0c57045abf3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4e89a87317.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4ea07c5559.jpg",
+      "bytes": 137332,
+      "sha256": "4ab69967936a5100144bbcd802f6301f5ec20c479f22f6d9a96904cd5a0c06fa",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4ea07c5559.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h4eb7eed08b.jpg",
+      "bytes": 62522,
+      "sha256": "4266c913f5a399f5c4ffa4a8a35ee4b30dec3b5e0759896d0899afdbd94c077e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h4eb7eed08b.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h522d3c65ff.jpg",
+      "bytes": 146205,
+      "sha256": "97e5d8725b717bcf06023f469aa3ab9b0d1d2ee63711c1e97ff73239dd9fb8ff",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h522d3c65ff.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h530ce534d0.jpg",
+      "bytes": 149003,
+      "sha256": "3dea2177db608eb845b927069b62ca3548004e75d9b6db5aa7b90d0a6312a1d0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h530ce534d0.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5329cda19a.jpg",
+      "bytes": 154801,
+      "sha256": "e19f72a4374008bb99c44aff8ac9086a15acfc504c9cd5bb504bd4c486fbbc73",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5329cda19a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h556c331c22.jpg",
+      "bytes": 127823,
+      "sha256": "27af0245d4433edb0ec7a8b034ce59d6c4c327636b9a545c625fd6734f951ab6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h556c331c22.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h55d03e67cf.jpg",
+      "bytes": 110772,
+      "sha256": "026c885b9305368273e17ceaa989dc96d1296883b05a4348453eae4056a55f77",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h55d03e67cf.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5606ef7b3d.jpg",
+      "bytes": 149779,
+      "sha256": "c2068c0ec0b8b1ead7665614e0f1ca2a7cb218e8367b52c95f42df5df54fda3a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5606ef7b3d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h56469b4539.jpg",
+      "bytes": 139074,
+      "sha256": "66cedb1bdda120af0ef7b56b875b01909eee8b57adbdf6435f4403a60ddfaea9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h56469b4539.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h571fe6bf81.jpg",
+      "bytes": 132220,
+      "sha256": "f0ee49c24669ec6b3695f3cbcb30545af5b91a6b0a68dcba701a8f678b858440",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h571fe6bf81.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h57fe8e2f74.jpg",
+      "bytes": 157608,
+      "sha256": "7d8289a92e94464892938d5153a2dbb282045eabc06af9bf8e864552a451003c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h57fe8e2f74.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h58c609ebe2.jpg",
+      "bytes": 159078,
+      "sha256": "5ead796781dfdf4013cf4faba10787112b581250ca0a22e7742e0ff91f58d9b5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h58c609ebe2.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5b7b9b0d4c.jpg",
+      "bytes": 154223,
+      "sha256": "853592bf918030ea2aa25b8236c85945fce7e2f3b3665b2b5c7509fef2283e60",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5b7b9b0d4c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5caced8484.jpg",
+      "bytes": 152318,
+      "sha256": "b5119046a576ac46c2e919fb62821fb2072f67241a35b9fc22048fea812a5371",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5caced8484.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5cd64db1c0.jpg",
+      "bytes": 119675,
+      "sha256": "7672062e9b8a85d786404db6c9520af6bef8d62af9a30a9bae6c09c357ce4baf",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5cd64db1c0.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5ce286b24f.jpg",
+      "bytes": 144124,
+      "sha256": "87ad115ed2f1aee6a317d2b8a45bcf0f9c43f366de5351dbb3bd2254c5e4305a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5ce286b24f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5d9a58fc1b.jpg",
+      "bytes": 141185,
+      "sha256": "9768d440ec5bd9deb9022d483ea9423fdaabe8461d87dec580eefde96fe1faed",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5d9a58fc1b.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5e5bdf9daa.jpg",
+      "bytes": 158383,
+      "sha256": "98b4b9a08d5c4053b179225223284a97d9e76495160084aaf05cc84709ff1e2b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5e5bdf9daa.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5f9dcf6695.jpg",
+      "bytes": 123308,
+      "sha256": "fb6ffbcadd6664e33979046e4eb16d001ead194770340f87ab91a4bad30863f1",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5f9dcf6695.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5fba5b3e2b.jpg",
+      "bytes": 180858,
+      "sha256": "dfd1f506357d77be6e25853f15f89f9e6fa719bb40ef89879a0fce9c51b24ea3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5fba5b3e2b.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h5fe6a80a9d.jpg",
+      "bytes": 139991,
+      "sha256": "effd77367b83c5bfa50a8b614445b77fafec04d6471e63e5f1528f89ee63693e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h5fe6a80a9d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h6084943d55.jpg",
+      "bytes": 143985,
+      "sha256": "0da810239d4030b97ab289b391bd35b6424942ad4b641070ff10d224573f8586",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h6084943d55.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h64d82893bc.jpg",
+      "bytes": 185226,
+      "sha256": "47acd1ca05f1e7a6d42c91a9387978cb14b121041bc00bcd9900589b68aa4c1b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h64d82893bc.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h65a3b3e464.jpg",
+      "bytes": 163685,
+      "sha256": "78a92da7293e1a27206ffe91e51f5744397712008fa8c8d0fd8195a8db045423",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h65a3b3e464.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h685ab9a1bb.jpg",
+      "bytes": 152749,
+      "sha256": "ab1aed0ac383a6608f80c5456d7bba03463ad2a748f7c7e0bbf30cb5384c9421",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h685ab9a1bb.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h68e5d49dc4.jpg",
+      "bytes": 168439,
+      "sha256": "c89e8f8fc45a86925db1b45790d64bc967b68a0299c01bac5ae9f6a6c4a00d1e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h68e5d49dc4.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h6982f8d11a.jpg",
+      "bytes": 136059,
+      "sha256": "24e8ec00cc8dd30e06b45206ec75f24ffade49dca70463dcfa34e00a71456f39",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h6982f8d11a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h6bb89a47cd.jpg",
+      "bytes": 141218,
+      "sha256": "e875ba98bcff297e1750035436b6f05e053d7a0c3ef5a949af409635b04f32fe",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h6bb89a47cd.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h6c3d04ec70.jpg",
+      "bytes": 106134,
+      "sha256": "43fad905fe63da9b0efe379b9ca4debef6696da25530b1cf1a71d4411f662266",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h6c3d04ec70.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h6d10f2453a.jpg",
+      "bytes": 126504,
+      "sha256": "2afac8cdd18d5eb47273bea9f9f7beb697a3a063846bdc2a2299cb7efa900e0a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h6d10f2453a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h6d3ee17628.jpg",
+      "bytes": 177703,
+      "sha256": "366b40942b38cef82419ee3b0cb9713fd78365f8345c12f4761d057ee5f693e6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h6d3ee17628.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7087514717.jpg",
+      "bytes": 124581,
+      "sha256": "dc168313e3df66b10553967a84f5e9a88ee7df1159c6c9c65ff4ddd34199304c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7087514717.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h70f8998573.jpg",
+      "bytes": 141411,
+      "sha256": "51c3d2128c34ee79cacb2269965da8d06aac783e451e85d82528e37ecb78a940",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h70f8998573.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h70ff97a4a1.jpg",
+      "bytes": 80898,
+      "sha256": "cdd4568a8be2db9fa2b67fcc2f9b6d439d9d5963c7aa76b8fcd622bf6a20f691",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h70ff97a4a1.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h72813f8ae0.jpg",
+      "bytes": 127360,
+      "sha256": "eb4061467c269da24447582d1ff84ab44a9646b25195b90fa1c5a41d2ec6175e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h72813f8ae0.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h72be2ef4d7.jpg",
+      "bytes": 82180,
+      "sha256": "e00d0b375a884cabe0ed7660c8de63a5c224b19b35e03ed56099bf98535f8e43",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h72be2ef4d7.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h743f0d2e6c.jpg",
+      "bytes": 170374,
+      "sha256": "27397a71b6e42b6661194cf3283c15fee853b3d2d7d97f837b71abc9bfedfccc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h743f0d2e6c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7497618cad.jpg",
+      "bytes": 91835,
+      "sha256": "ab589766ed01230d739936229a56fe2a07e740af3404b0836fee14cec92d28e7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7497618cad.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7528c82b77.jpg",
+      "bytes": 179758,
+      "sha256": "42aae8ece013f81804e1dfd1da87906eaab3691d82340ae0c366484ebb65c025",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7528c82b77.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7c11dc0172.jpg",
+      "bytes": 125283,
+      "sha256": "65529f7f22ca78673fe7b1913fddb2d5afaee24d21840221ddb191fbdbbfe021",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7c11dc0172.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7cbeb08bf1.jpg",
+      "bytes": 128543,
+      "sha256": "3dc0f3bf034a28647cfd3c0a01d968d0497123f73614282a1ae0c779fe4f31fe",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7cbeb08bf1.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7cd065903a.jpg",
+      "bytes": 140905,
+      "sha256": "462b16150f4a979e9cb5cb2bc0a906d5553c43fb84c7f2674a537a567a270d62",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7cd065903a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7d85593bb3.jpg",
+      "bytes": 151352,
+      "sha256": "3b47240e3b97a591e068213c49fba48a1b1282a41e891676c10d1f3806f6fb13",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7d85593bb3.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7e54c2911f.jpg",
+      "bytes": 165138,
+      "sha256": "1ddcfbf9fbb769c4da205d0eadbcb61d308fd477fa90a0425eb00967eea72419",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7e54c2911f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h7e64c4d893.jpg",
+      "bytes": 140691,
+      "sha256": "ef3b37d4bed6683abc97a73f01f0ff23c43dc70649162a6313d1d7ca06481780",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h7e64c4d893.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h8057881cde.jpg",
+      "bytes": 183474,
+      "sha256": "73f162504d57bae49299a03c8699ce655952518420e2620b33eac09c04b5bf22",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8057881cde.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h81af515ac1.jpg",
+      "bytes": 144150,
+      "sha256": "a9577086bc5a8b0ed29527dbaf59cad6082e0994efd8ece00c431c25657d458b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h81af515ac1.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h8292d32f71.jpg",
+      "bytes": 173874,
+      "sha256": "bb5f02fb604de44f4d918357c0365cd81effa716edb78f829af5c838ae0ab50e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8292d32f71.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h82b851578d.jpg",
+      "bytes": 115626,
+      "sha256": "445f9b54e64c1b0620620e90426553f82b8a4f43a40b22361ef2116ab3f86368",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h82b851578d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h84c2eb3f31.jpg",
+      "bytes": 148573,
+      "sha256": "dd9ebfd79d786b2738b6887b4b2d6632823a801a62e9f2dcaf247663d93bb6d9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h84c2eb3f31.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h8acddc3374.jpg",
+      "bytes": 152663,
+      "sha256": "566f0248764d6bd8fc493a59d8bc398d4cffb462af3d66e7caf47aab7da80e69",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8acddc3374.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h8aea981c6e.jpg",
+      "bytes": 119571,
+      "sha256": "94bfaf973024ac7872af3d0b14fe4f30ac38d6909de5b8289ad09339a06f737c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8aea981c6e.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h8b15837d9c.jpg",
+      "bytes": 175626,
+      "sha256": "f7c7303848441d465559482857f17c2480daba34c30afa71db2870ace3310463",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8b15837d9c.jpg",
+      "dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "path": "public/assets/art/h8e0eb6e047.jpg",
+      "bytes": 160945,
+      "sha256": "7e35fff6ff52634f15d8d42727bfbadb6a105451a56ad655772af08e1e4cead3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8e0eb6e047.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h8f70004945.jpg",
+      "bytes": 120459,
+      "sha256": "931c3e466b8f4403691a07ad9d9a376902d7bef6fa1c42501ef2f7553ab1513a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h8f70004945.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h904cf17b56.jpg",
+      "bytes": 131499,
+      "sha256": "e9f204d40c9dd2188d8a8171eb9a472ddd73ef51ab3fb3ce121e7c5d6c817f7b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h904cf17b56.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h9268a9ad63.jpg",
+      "bytes": 153870,
+      "sha256": "e9ce19cf97d45e4debb847c8897d11302070c956e95bbcbe46be250e8e38230d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9268a9ad63.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h940d3376d4.jpg",
+      "bytes": 112885,
+      "sha256": "eba0298e4f7a2c4ec259b3db97f858742273764546b3583aa8481fce248955be",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h940d3376d4.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h940e81173f.jpg",
+      "bytes": 101745,
+      "sha256": "7b3bef0ca63d37aad9d326ef87415b0434a4659a1f2671baf9202b0be21e0d7e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h940e81173f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h944acd4419.jpg",
+      "bytes": 142715,
+      "sha256": "8b2bc364f78581da388d7473da9639f1f3430819f84cc417da3472df31a9bf0d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h944acd4419.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h9495056fe6.jpg",
+      "bytes": 157330,
+      "sha256": "01f477b4ef6bebfff0ce31e9b8e2372f8cd6024ff7749ce0dedfe5681306b403",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9495056fe6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h968ef81a4f.jpg",
+      "bytes": 142898,
+      "sha256": "db86b2a20225f5df75f84fa4ba225b9b8e55f7f390b6b48113bf405a29baf071",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h968ef81a4f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h96a3c571d3.jpg",
+      "bytes": 180917,
+      "sha256": "57e194c67cd3c7e26cc3986f73c60bf0ee5aed4c476ffaaefcdd85232c121200",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h96a3c571d3.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h972d8aadee.jpg",
+      "bytes": 160148,
+      "sha256": "f8583179ef7714e790660b0a66d2619c4f4911561e1d56160ee63c81bb7e378b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h972d8aadee.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h98c955c27b.jpg",
+      "bytes": 172353,
+      "sha256": "e14737ac0219261702fef043bcbaefc1449efa156d2985eb5af32efa90474490",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h98c955c27b.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h98d454bd9f.jpg",
+      "bytes": 149762,
+      "sha256": "c55199b37eabe5679ffd2a76426454c5bb5a376fbe239d42196bcaee50a5fde6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h98d454bd9f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h9b0b3836d9.jpg",
+      "bytes": 238981,
+      "sha256": "b4838802cce03dc5c908aebb49a50c1511dee3929e39c8691c95266c29d373ec",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9b0b3836d9.jpg",
+      "dimensions": [
+        1000,
+        667
+      ]
+    },
+    {
+      "path": "public/assets/art/h9c008ecfb6.jpg",
+      "bytes": 134751,
+      "sha256": "644a5234cbdf932463c3e5b360e3a933a0de2221244830d5f2674769c541df75",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9c008ecfb6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h9d7c883318.jpg",
+      "bytes": 160277,
+      "sha256": "51181449c2b561e88bbffad4c658996db0454df7b6202190ae870c6214069ef3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9d7c883318.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h9eea26a724.jpg",
+      "bytes": 165172,
+      "sha256": "6f2dbc33ddb862e81df6f030484096b35f6c5aa30935f37b2937806e23e3acf9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9eea26a724.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/h9ff962cc94.jpg",
+      "bytes": 130675,
+      "sha256": "88b9e10c2fcabb009702bc048f7168dd3d99e2d1fe93ea4c394291a4fb99017c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/h9ff962cc94.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/ha00703ae56.jpg",
+      "bytes": 155817,
+      "sha256": "c07cd62280d69bb0ff52f59cd7ab4be902fb5890bab7d71dbcdeba9d99e1ac8a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/ha00703ae56.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/ha07c43bd3d.jpg",
+      "bytes": 128403,
+      "sha256": "72ef4b54aeccdd86bb9fa69e1dd1207909bedc4aa6d31508c8177a4fe9470b07",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/ha07c43bd3d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/ha091eba3ef.jpg",
+      "bytes": 117244,
+      "sha256": "5fd5fb818c41d050bca3fb37b0483d9014ec329c54648d58250faa526c2fc3d4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/ha091eba3ef.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/ha3b1ea5f6a.jpg",
+      "bytes": 183799,
+      "sha256": "b5570a15b04f5b29aaeed9233bc9fd2ddc8aca7aff3064f42e5b0c3907ff619c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/ha3b1ea5f6a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/ha678aa34c2.jpg",
+      "bytes": 151124,
+      "sha256": "7024614f7bdd3024afbcad1ccd4d882bf62026b08a3cf4c9851cd338b766dedc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/ha678aa34c2.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/ha7137b5a25.jpg",
+      "bytes": 121718,
+      "sha256": "1ff670dae74527c3695f7f21452414311a15b054ce02f9133c7dc433750b0f08",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/ha7137b5a25.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/habb234f6f5.jpg",
+      "bytes": 158226,
+      "sha256": "ff4d411afe5e551ff7af9f51247139cb2533e75cf5669848970bd5185c175b6b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/habb234f6f5.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hae20592aee.jpg",
+      "bytes": 136344,
+      "sha256": "23092a50b06f8347abc5b47baab19762f71fd16a9f350d58919089b3f7197b31",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hae20592aee.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/haf85d43177.jpg",
+      "bytes": 174122,
+      "sha256": "357b2b93457a2455acf9b4b43f3335ef8ec40d465e9e9a18421b4cdc5a3ddaae",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/haf85d43177.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hb0f37aee27.jpg",
+      "bytes": 154700,
+      "sha256": "009f68e588200963df58ed6150d79acc248585c90d30766cb20c13101a60ecaa",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hb0f37aee27.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hb2d143d25b.jpg",
+      "bytes": 140177,
+      "sha256": "eec8cf383478fd38314c597a6245b4d48c831103750414443ecdc7a3ddaf147e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hb2d143d25b.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hb46761b38d.jpg",
+      "bytes": 144819,
+      "sha256": "4c932731a4c0447d022af80a4f8dd649717d2c6a6f67bf889e568235d746cbbc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hb46761b38d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hb964ddc15e.jpg",
+      "bytes": 160815,
+      "sha256": "3cafca1165dbbd2951db6e7755f14aeef8f55d01badbc0de18c054d59326ef1e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hb964ddc15e.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hbcd23597ac.jpg",
+      "bytes": 140930,
+      "sha256": "79185e1d8f7b37e4b54b67c16990b3cc6743ad725b838356c7c4f52ad113f607",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hbcd23597ac.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hbed1f646d0.jpg",
+      "bytes": 158640,
+      "sha256": "639aae23076e7a95a57343a612cfddb118544af47c5d733398079ba86e55c5b9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hbed1f646d0.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hbee19a5120.jpg",
+      "bytes": 167273,
+      "sha256": "0f56a9c031f57a658140eee57fcd5937115bf7821628ad5eaab55d8485aded63",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hbee19a5120.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hc162475e90.jpg",
+      "bytes": 121522,
+      "sha256": "87e6fda79d8357c5dada777759b60494cd9b8a4b5c3cd34d9dbb8a7d1f702f87",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hc162475e90.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hc40a93bfaa.jpg",
+      "bytes": 145181,
+      "sha256": "d72a73c5ec3cc9d9a786bcb97562d99658270927ab2d2281ca46f1d88f6ad424",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hc40a93bfaa.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hc67a31ecc5.jpg",
+      "bytes": 147217,
+      "sha256": "f8aa53b1fd2b88c10e8e0f9a23aaf8354d6a87af599afbaaec98472c00dae652",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hc67a31ecc5.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hc81a2b78b8.jpg",
+      "bytes": 149549,
+      "sha256": "532e44327f63446d0be92d4f50d69cf5374cb5c58f386f2b1ace68aa89f3cb83",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hc81a2b78b8.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hc8282d09a4.jpg",
+      "bytes": 147316,
+      "sha256": "d06bd204da05a3770128a623aa6a70dce5977367cf497ee8b2e0a433460e9698",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hc8282d09a4.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd1faf40b29.jpg",
+      "bytes": 130183,
+      "sha256": "a83dac5b49cd0a1bda2ca78365410b1071b455717ca72cddcdec6c87cbdbc1b8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd1faf40b29.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd33f8834b8.jpg",
+      "bytes": 100860,
+      "sha256": "2a8d2e6a5cce1a9c3e574c496b47feadf7b180db874f4b4ddb2f99c2a698496a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd33f8834b8.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd4e2d22486.jpg",
+      "bytes": 104962,
+      "sha256": "5fb018aca8752e1897c10554397b51da355fa09b5d6cfdd578a1cd8de01eedc1",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd4e2d22486.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd5ddf73d62.jpg",
+      "bytes": 131001,
+      "sha256": "3557e75625dda14883959ab23c09b09f6a4a844de2904c2d4f2299ac5f4c15ce",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd5ddf73d62.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd6091674fa.jpg",
+      "bytes": 116190,
+      "sha256": "f8f794237a88b7ebe821a784cb98f7a7957623f5b7a3081c19f79642526216ee",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd6091674fa.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd6492923da.jpg",
+      "bytes": 102732,
+      "sha256": "96fa9d93fae3c0c19c510230910ed5a329d67f94a0d9badfdd764a0be2b39fe3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd6492923da.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd714b7e0ec.jpg",
+      "bytes": 129900,
+      "sha256": "eecb0b27a3c8dcc72d5e02bc738bcd57fa64985f9457a34ba169e74abff774c2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd714b7e0ec.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd716ae4422.jpg",
+      "bytes": 146315,
+      "sha256": "b31a79f237c85602d7a02dacf50152ac72e8a7899e76c56dab1ff79046ae5826",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd716ae4422.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hd9f7441f1a.jpg",
+      "bytes": 141380,
+      "sha256": "86691022e90ab040e361d110a5f2a44b26262074d426277477af95294c96c118",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hd9f7441f1a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hda8d447bc9.jpg",
+      "bytes": 170822,
+      "sha256": "16f5cc3cef92ba449b93b58d48deb38da9cff06997e3ad46a226e01762602f06",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hda8d447bc9.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hdaabff0336.jpg",
+      "bytes": 132215,
+      "sha256": "b63cf1b500cefb8e5ab0a7dca1cf9fa0c8252696c7e718d8815d130b4a5e4161",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hdaabff0336.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hdcc5f0c252.jpg",
+      "bytes": 178284,
+      "sha256": "31f29212784048aedca573c6b2474b9c12c15dccdeb38f97d3f90e7912bb3a37",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hdcc5f0c252.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hdd1fa45736.jpg",
+      "bytes": 122837,
+      "sha256": "629fc9f400d663554b6d91c3c9813195192bf76174bebf35c9c4d583d2b1ab57",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hdd1fa45736.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hdf15eaaf9f.jpg",
+      "bytes": 147178,
+      "sha256": "daba457fe70a53164f438dd794732217982174ecd57bbc27c38a2e65f4356903",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hdf15eaaf9f.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he05c3f530d.jpg",
+      "bytes": 138330,
+      "sha256": "99f56d7a17076b8494f4e7cd1524a745f367e8ed94fe51896057af8facd286da",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he05c3f530d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he189759101.jpg",
+      "bytes": 146833,
+      "sha256": "4000b96b93ed4a6ae3b1ec929f814223a0b252370d6d70c970d37a11bc491203",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he189759101.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he21d7097c4.jpg",
+      "bytes": 115125,
+      "sha256": "41f243f308b4febf1ef970b55838f9a51b1d3aa4f837f82f75ca71e2cec4477f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he21d7097c4.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he265828428.jpg",
+      "bytes": 113810,
+      "sha256": "3ba387a6deb4883b938c29a45c4c59bf863524b05b475de1ee5ed1614f4718dc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he265828428.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he27542af1d.jpg",
+      "bytes": 109654,
+      "sha256": "9344564229b692ce9524ba3ef8ac158596476eb3b3225ab1c298081a7ed7ebbe",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he27542af1d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he35209860d.jpg",
+      "bytes": 109301,
+      "sha256": "b65fab82cb5119ae8d865f483f622781c4faa3d0bd49a34025ca92252558c2c0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he35209860d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/he73b5f4d05.jpg",
+      "bytes": 159619,
+      "sha256": "09ceb7978ca47e3505aeb0c0c4e639d2146f183016c6bedf4070c4510ce2cbc8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/he73b5f4d05.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hee24801df3.jpg",
+      "bytes": 154625,
+      "sha256": "49eea6dbb390091069e77ea813b66ba6ae78723c639f4363a601676f4e047190",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hee24801df3.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/heebdb56def.jpg",
+      "bytes": 162894,
+      "sha256": "9034c5ec28edc0df6094d4ed04a59c852870e98bb2702e3d88ef5e6071c113f7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/heebdb56def.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf05fe0bdae.jpg",
+      "bytes": 133369,
+      "sha256": "0578218f0833af814507e5105e6a9722af86ae95659b2dd084538f1d08a4d37d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf05fe0bdae.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf23ca99f11.jpg",
+      "bytes": 152733,
+      "sha256": "93ca82d23de6ebadc0932b149c68f255656e1431cc94a02af0491a901669f8df",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf23ca99f11.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf327fa777c.jpg",
+      "bytes": 157330,
+      "sha256": "74369c510aba1f824907e3ea1ff6b62709b8523a4bf4947bba0fbad50e55d3e3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf327fa777c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf64faeaf8a.jpg",
+      "bytes": 118088,
+      "sha256": "fad5f8d96d7ecc9c646bc89d0838df9dcc2f512ffc9ff5d449db330cc67a3ee2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf64faeaf8a.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf6e32c9c1d.jpg",
+      "bytes": 109999,
+      "sha256": "a540620bd5a087e675b2090630cf1ace6523b4c7d4b74d8c80148d8dcb4b31fb",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf6e32c9c1d.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf75762a66c.jpg",
+      "bytes": 114268,
+      "sha256": "02fa16d448b77ba544019d08089278dda4490229cde24a681938aa5873217e84",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf75762a66c.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hf7e2b10e01.jpg",
+      "bytes": 120813,
+      "sha256": "6b1df1ffca4b2792953a4f295567f2f20e0ea20c99a9ec95ab4f5455ee1e53e5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hf7e2b10e01.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfa75b784ac.jpg",
+      "bytes": 147272,
+      "sha256": "a6bf9f9fdbf4f78268811bd40a47ba6ec1f2f4963ee29fd0cc7cf10a72cabe44",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfa75b784ac.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfc04324edb.jpg",
+      "bytes": 137327,
+      "sha256": "e3184572ed1ac8a828c57b0e18061ef3e7fee1ea171910da59710ca62812b437",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfc04324edb.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfca65cbe31.jpg",
+      "bytes": 140154,
+      "sha256": "27feed4cfc1f4d68c4b4fdd2b3bb3bbd8f925914d81b5835ef618a3997e25b3b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfca65cbe31.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfdee844bf6.jpg",
+      "bytes": 118981,
+      "sha256": "1cabf19adef9059b1efd4fe54c99c2466bdbab0c81681e6d09447b66a72609a4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfdee844bf6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfe1aa29d90.jpg",
+      "bytes": 199777,
+      "sha256": "d39e5b6c07997e0e1400f0cffecfa7afd55c159d67cd3da2e8c1ae1b75810d86",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfe1aa29d90.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfe3298e3a6.jpg",
+      "bytes": 151768,
+      "sha256": "b2579aaa042af1c0177e40e0274e663ac6bf6e8f4c2288044c16d0931ba36b89",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfe3298e3a6.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hfeb5bd4610.jpg",
+      "bytes": 152900,
+      "sha256": "c9387457faf8b47b22910d4eb1143ba6941b44e3c83d332e55d9d78d65b24500",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hfeb5bd4610.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hff0ec8c9db.jpg",
+      "bytes": 117049,
+      "sha256": "5d72a5b8dcd4173de618e8b6b794c819cfce0ad594f58b5c4fe9a9839f445589",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hff0ec8c9db.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/art/hff1d5f10a9.jpg",
+      "bytes": 173794,
+      "sha256": "76bf9ceb89458a6a29960e61f18740e2347f0136247faf20d33a787455603f6a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/art/hff1d5f10a9.jpg",
+      "dimensions": [
+        1000,
+        563
+      ]
+    },
+    {
+      "path": "public/assets/data.js",
+      "bytes": 104218,
+      "sha256": "73ad696c326a8b0d2b84284412366532ceb026774d10178b95fc40a3def9f1ee",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/data.js"
+    },
+    {
+      "path": "public/assets/depth/p_cooler_beach.png",
+      "bytes": 168962,
+      "sha256": "7c7c0468fb6edb0458ed66bfec053d47117acf7304784f20ff72200c7d55f723",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_beach.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_beach2.png",
+      "bytes": 111993,
+      "sha256": "8e7825c73c8f149bae6bbf0c166e79fce047882e26f8635869ed94d3f000812f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_beach2.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_eye.png",
+      "bytes": 167681,
+      "sha256": "8df8d8d8bae10bcba823c7fa3f3dc3e5097c4309d911b50becd7714f6338dd95",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_eye.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_eye2.png",
+      "bytes": 176899,
+      "sha256": "e4c8e9f5b81fc8918f7ad23c37f6c8caa89c855ee744f60cd8a8d9d093b287b5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_eye2.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_harbor.png",
+      "bytes": 171097,
+      "sha256": "570e5302a96e65cc7e62208030bc7406e94bb5ca7497c6cf487c1023af6bc149",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_harbor.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_harbor2.png",
+      "bytes": 67422,
+      "sha256": "b76c2df501719d06f9d0143c5cd10f12a40178a240aefc0a2f3db2f2f8f75722",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_harbor2.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_snow.png",
+      "bytes": 122622,
+      "sha256": "20141c7f62357c0ecd5310f182e2c8872db8610fc1ee0503f3b2159049f37baa",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_snow.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_cooler_snow2.png",
+      "bytes": 82926,
+      "sha256": "0d83fa2f63be3ff4664d3b695a23b6f06a209d2ae80f4a0b5532bc7333df64ba",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_cooler_snow2.png",
+      "dimensions": [
+        1024,
+        1526
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_dream_window.png",
+      "bytes": 68467,
+      "sha256": "c0ddc3960badc91cf2801090e97027c4b5f05c758206b4bcac7692ebf0f6e810",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_dream_window.png",
+      "dimensions": [
+        1024,
+        686
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_dream_window2.png",
+      "bytes": 61610,
+      "sha256": "263c537734bf81c1a53e1ab21cf0b5ca13c53774f849fb7fed4c3ca5332bd99b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_dream_window2.png",
+      "dimensions": [
+        1024,
+        686
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_hall.png",
+      "bytes": 71493,
+      "sha256": "1b1f9e6af12c3d92fec91b2f0ba2d75dcff4ba6233c7185c1ade4f756a06d524",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_hall.png",
+      "dimensions": [
+        1024,
+        686
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_heart.png",
+      "bytes": 70549,
+      "sha256": "09cdc2e5bff43f9cc193b176c5f5526b586efa78de9a4bedf8d815ad4dffa934",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_heart.png",
+      "dimensions": [
+        1024,
+        687
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_map.png",
+      "bytes": 84286,
+      "sha256": "594391da1a6e5571a7afe16fa233b6ee6e45c14a3f6d3a6bc1d4a1148c2417d4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_map.png",
+      "dimensions": [
+        1024,
+        687
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_street.png",
+      "bytes": 62208,
+      "sha256": "e966bde9e6ebe240e34108eea79833e5fb4bd6b5b8d1d698819da55c7f1c0f2c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_street.png",
+      "dimensions": [
+        1024,
+        687
+      ]
+    },
+    {
+      "path": "public/assets/depth/p_tunnel.png",
+      "bytes": 82850,
+      "sha256": "5e4b05c3802ccf263ab62394555362dd092199e1556dac5442059dec7f4dc5c3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/depth/p_tunnel.png",
+      "dimensions": [
+        1024,
+        686
+      ]
+    },
+    {
+      "path": "public/assets/depth/unlicensed.png",
+      "bytes": 1380029,
+      "sha256": "c31075936600d946a32a90acd0762ee9b2bb31b38215e64553404770d47a10cd",
+      "origin": "Derived delivery copy of generated vista or generated depth estimate",
+      "dimensions": [
+        2079,
+        756
+      ]
+    },
+    {
+      "path": "public/assets/draco/draco_decoder.js",
+      "bytes": 512465,
+      "sha256": "8625489da79a805f4f2a7d511c3e52d8b4085608a9d2a4d5f4f9de5db0aea04f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/draco/draco_decoder.js"
+    },
+    {
+      "path": "public/assets/draco/draco_decoder.wasm",
+      "bytes": 192420,
+      "sha256": "a680d927bed9cb864ddbd63521868891af2bfbe755092761b4837487618df8ac",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/draco/draco_decoder.wasm"
+    },
+    {
+      "path": "public/assets/draco/draco_wasm_wrapper.js",
+      "bytes": 58456,
+      "sha256": "8bb2952d2ba7d67e1414f8df819410cb0434a666be53f671fff75f68843d76f6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/draco/draco_wasm_wrapper.js"
+    },
+    {
+      "path": "public/assets/env/night.hdr",
+      "bytes": 1640377,
+      "sha256": "77276a6b67cbf09611efc46e55871eead34e1fc6fa107db412207b91cf74697e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/env/night.hdr"
+    },
+    {
+      "path": "public/assets/eyeflowers.png",
+      "bytes": 1526889,
+      "sha256": "11e73d9b9a56ec81d4e69caf0224c48f46b9f6773f12b2ea6b9db63832f61629",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/eyeflowers.png",
+      "dimensions": [
+        1905,
+        826
+      ]
+    },
+    {
+      "path": "public/assets/flower.png",
+      "bytes": 103868,
+      "sha256": "008f84f997d4649cf6858979471f883bd863f6160de50e04b79abdfe2a4de070",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/flower.png",
+      "dimensions": [
+        234,
+        256
+      ]
+    },
+    {
+      "path": "public/assets/g/g_awning.jpg",
+      "bytes": 591466,
+      "sha256": "9322fe404bc741a2dd6f4eab656ec1987acc6be5c312db30e98e2891f2e3e878",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_awning.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/g/g_lotto.jpg",
+      "bytes": 643819,
+      "sha256": "69fbfef33f90739e414cdf18e6ff9bee71d2277647aa12291f087304970853cf",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_lotto.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/g/g_menu.jpg",
+      "bytes": 564210,
+      "sha256": "fad2361c59355174acf554c2724e5c03b19a27fe9240c64f4e694d1a0396b734",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_menu.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/g/g_metrocard.jpg",
+      "bytes": 470256,
+      "sha256": "87fb6d19e543d87833dbc822a0ebe7823840e0d00af5f86eedec1d4987b4884c",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_metrocard.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/g/g_poster_bodega.jpg",
+      "bytes": 679330,
+      "sha256": "5edd66dd76ec0c43d365ec958c1b14ec954c6f51a0dc04801ddaffc1aca9b9ec",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_poster_bodega.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/g/g_poster_pigeon.jpg",
+      "bytes": 472754,
+      "sha256": "e628d64ee2c6501ed3f1752c3abc0e328a456f80204cd60811613205164c4612",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_poster_pigeon.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/g/g_poster_wake.jpg",
+      "bytes": 653111,
+      "sha256": "44eae654497dc72f1578786af93284d6e87ccefbb6aa70683ad01d724fa3cefe",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_poster_wake.jpg",
+      "dimensions": [
+        1374,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/g/g_shelf_cans.jpg",
+      "bytes": 665282,
+      "sha256": "5f387fbfaff113559e3ccbcb4f6e46e108d4e29a9387170aa9fe5a29556d0811",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_shelf_cans.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/g/g_shelf_home.jpg",
+      "bytes": 787760,
+      "sha256": "8ac1384574993e5e4375de7176573e861faea551c4d2154a61b306a5c2f732f9",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_shelf_home.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/g/g_shelf_snacks.jpg",
+      "bytes": 679330,
+      "sha256": "5edd66dd76ec0c43d365ec958c1b14ec954c6f51a0dc04801ddaffc1aca9b9ec",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/g/g_shelf_snacks.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/generated/contour.png",
+      "bytes": 4087018,
+      "sha256": "5ac2c3db2bdae8de0850ee8dd8a54c87dc88b8f6aba8539822fdd050c3a38b6e",
+      "origin": "Built-in ImageGen / October 18, 2026 / docs/prompts.json",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "public/assets/generated/vista-depth.png",
+      "bytes": 1380029,
+      "sha256": "c31075936600d946a32a90acd0762ee9b2bb31b38215e64553404770d47a10cd",
+      "origin": "Built-in ImageGen / October 18, 2026 / docs/prompts.json",
+      "dimensions": [
+        2079,
+        756
+      ]
+    },
+    {
+      "path": "public/assets/generated/vista.png",
+      "bytes": 3115466,
+      "sha256": "b823789f46ba9a1f8132939d948215c93b45dd72e5e9ae8f66f8008a71ad4d7d",
+      "origin": "Built-in ImageGen / October 18, 2026 / docs/prompts.json",
+      "dimensions": [
+        2079,
+        756
+      ]
+    },
+    {
+      "path": "public/assets/generated/wheatpaste.png",
+      "bytes": 4159629,
+      "sha256": "ced33f0b682ef8f42e0d8f984cd3fcdd12255f448bfd061f78c925e7049c194a",
+      "origin": "Built-in ImageGen / October 18, 2026 / docs/prompts.json",
+      "dimensions": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/glb/bench.glb",
+      "bytes": 1038348,
+      "sha256": "9d7d4be3787b9c417992a0182967660076e474b6bb66159a7c130fc86e0228ae",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/bench.glb"
+    },
+    {
+      "path": "public/assets/glb/boombox.glb",
+      "bytes": 709244,
+      "sha256": "faa5b7caf006951da54d83e61ffdeffe2cc9762f0681f7a64bbc61c557ac984e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/boombox.glb"
+    },
+    {
+      "path": "public/assets/glb/cat.glb",
+      "bytes": 723252,
+      "sha256": "c3934ce811a01eaeab75542f20842d585b5386f4cfa6dcf8d8a88abdddb51065",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/cat.glb"
+    },
+    {
+      "path": "public/assets/glb/dog.glb",
+      "bytes": 110868,
+      "sha256": "cf594d95967dd77791dd63836b5ef34e25b291d019cae2d4050787f0bb2e8fec",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/dog.glb"
+    },
+    {
+      "path": "public/assets/glb/gull.glb",
+      "bytes": 22172,
+      "sha256": "5503fbbc4be5f1bddd18cc1125e032e584ed80c9953902eb2318371951452c07",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/gull.glb"
+    },
+    {
+      "path": "public/assets/glb/h_subway_car.glb",
+      "bytes": 2523144,
+      "sha256": "35bf8751362de69fce7f433cf0a60dae873e7367df888feb6cb70a3616c02cac",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/h_subway_car.glb"
+    },
+    {
+      "path": "public/assets/glb/hotdog.glb",
+      "bytes": 952688,
+      "sha256": "f093f908349ed9c9694f4aadae8dcd1e62fecb82e0852012b81796cfff7f7558",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/hotdog.glb"
+    },
+    {
+      "path": "public/assets/glb/hydrant.glb",
+      "bytes": 712472,
+      "sha256": "ae850b73a662cc9e203bd519731eb824bc45354d32eacb7015b2ce9eced548c0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/hydrant.glb"
+    },
+    {
+      "path": "public/assets/glb/lamppost.glb",
+      "bytes": 443776,
+      "sha256": "cc1b712b2280c5d1dcada0220f3e7cb2d0ff31da18c4132acc99a9f2597f63a2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/lamppost.glb"
+    },
+    {
+      "path": "public/assets/glb/mailbox.glb",
+      "bytes": 460844,
+      "sha256": "df3f61afa80105d2b2b555e8a2973d3b2950334116ae0b8bdc21835bee4ffc5d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/mailbox.glb"
+    },
+    {
+      "path": "public/assets/glb/mlowtar.glb",
+      "bytes": 1072932,
+      "sha256": "d1d830c82ce5b1896ee1d5021b4e356bb1b6ad44550fc647775ec9652c9fee13",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/mlowtar.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_Barrel_01.glb",
+      "bytes": 134160,
+      "sha256": "084d26a81b234bb0f25cc27835c69d51a8a886d847124a7bb9f54a5ec63cd597",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_Barrel_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_CashRegister_01.glb",
+      "bytes": 360104,
+      "sha256": "7b35f7160efa2cecd55d82d141d4cc82eb42477453586f489cf7633775785829",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_CashRegister_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_Chandelier_02.glb",
+      "bytes": 185436,
+      "sha256": "2b36f80ddbc4596033ce980ffdd738b5427994bda43ca7e3356bc748e400c0f0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_Chandelier_02.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_Shelf_01.glb",
+      "bytes": 102588,
+      "sha256": "df5a45bf95b32a33bb27f94dfde8b28f0d7e0e2b098ec1003169723ed52e266f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_Shelf_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_Television_01.glb",
+      "bytes": 110476,
+      "sha256": "6459912c893531da416895a31513ff405464e8e12cd09c0f9efc4c3106b0d17d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_Television_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_WetFloorSign_01.glb",
+      "bytes": 68640,
+      "sha256": "0a14f9d2716b8b8d4590f6469a275af55ec0e91f662b97a6346d416caa02323f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_WetFloorSign_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_bananas.glb",
+      "bytes": 128292,
+      "sha256": "4503f2abe8ad3a2cb9364129beab8113e8d0d65b40fd15d5053d08fb776a69e3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_bananas.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_baseball_01.glb",
+      "bytes": 195188,
+      "sha256": "0d53819f30a577699aa59e0eacdba432d3c40a152a7f4050a450257625247365",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_baseball_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_binoculars.glb",
+      "bytes": 368720,
+      "sha256": "5b8d52ff62b08a1ee33add476a69b35ed6657a7408bab503311be2d5b7fb7cdc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_binoculars.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_boombox.glb",
+      "bytes": 408716,
+      "sha256": "e49f7aae4b0522655196af2584d1ae90787c722c8b3cd7f9f5f381ee81d0c935",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_boombox.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_brass_vase_01.glb",
+      "bytes": 101744,
+      "sha256": "1a8417664a7fd8fab33c0dbb8db7f841f11e1ccb95f49c05448b8f3d5fcb5129",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_brass_vase_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_bronze_whale_statue.glb",
+      "bytes": 124792,
+      "sha256": "5a49ae1d70fbded9c97de791d8599fb76741c15fee80219c6ae35fe1f3938e54",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_bronze_whale_statue.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_caged_hanging_light.glb",
+      "bytes": 218544,
+      "sha256": "1a51bfc0d34d3bfd8cd20e93aa6e4fdfc7c2cbc8d3567180086f6e2547d9916a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_caged_hanging_light.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_cardboard_box_01.glb",
+      "bytes": 134868,
+      "sha256": "75bce9945ea3967df3a93674276e3321f0bd82e689cf6e3c458e26b400178c34",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_cardboard_box_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_ceiling_fan.glb",
+      "bytes": 157888,
+      "sha256": "18c0909fcac9994b4df50a2e04a721d273645f2900694ad64c8638a0542249a1",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_ceiling_fan.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_cigarette_pack.glb",
+      "bytes": 113656,
+      "sha256": "99476ddb3d7251d80c6d4788300c7241e938ca7ec408ddabcb439043a53b3bd0",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_cigarette_pack.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_croissant.glb",
+      "bytes": 124388,
+      "sha256": "fe933f4bb6a75e7a0ac40d3a35ad2b853b64df2334eca4b4c1d1604109ef15e7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_croissant.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_fancy_picture_frame_01.glb",
+      "bytes": 141080,
+      "sha256": "7d9aea99d0251e4a8820ab69c5db50b2acdcc32476abdb49a1362cc976f2cb74",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_fancy_picture_frame_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_fire_alarm.glb",
+      "bytes": 129432,
+      "sha256": "8c1f59c8fc6a7a354693a64b6f36581b434cc00937ba6350f69535eb0250aef8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_fire_alarm.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_food_apple_01.glb",
+      "bytes": 91616,
+      "sha256": "6aa17a6f3e0fd5ffab6e8860d6143a3d3b11ab4da109b64427698b979fa3542b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_food_apple_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_gothic_statue.glb",
+      "bytes": 323820,
+      "sha256": "18693a08e6f2106baee6efd7a10c9a6c89a461020cac3d1be020dd944af5f08b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_gothic_statue.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_hamburger_buns.glb",
+      "bytes": 137008,
+      "sha256": "98be3bba6c13e9f95b661120de1f94632ef2cff567466876d0dbd59b8d401b14",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_hamburger_buns.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_hand_truck.glb",
+      "bytes": 217752,
+      "sha256": "92e48f4c97b33cdcf0963fd05ec866722e52fe33f2d269868b650205bfa086e4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_hand_truck.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_industrial_wall_sconce.glb",
+      "bytes": 134500,
+      "sha256": "ae080bcd3400ccd447ef194e6a0d6b2e358d81e9bf80c9efb5b3dfa6fa339ca7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_industrial_wall_sconce.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_korean_fire_extinguisher_01.glb",
+      "bytes": 802488,
+      "sha256": "bc70ffd0b14400b4855fe3132d0e261fc98541ce7a8bca919378256cf19cfbe4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_korean_fire_extinguisher_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_lemon.glb",
+      "bytes": 114432,
+      "sha256": "548cca4e0bc83a724274e20c83446f7ecb6fd9face765abd9b9110f76beb53e5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_lemon.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_magnifying_glass_01.glb",
+      "bytes": 84512,
+      "sha256": "ec5594f484d85f363724afa416ced61d1bcb616a7befea15f7fb5518545902fc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_magnifying_glass_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_mantel_clock_01.glb",
+      "bytes": 547856,
+      "sha256": "425994a6af07af3751300012b7e72025948c58c23ecf72dcc19484e173f6c653",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_mantel_clock_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_marble_bust_01.glb",
+      "bytes": 148528,
+      "sha256": "f9b337e372df6749181b4e77aed3ba9bdf524a994db57350d2b237a039942306",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_marble_bust_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_metal_stool_01.glb",
+      "bytes": 135280,
+      "sha256": "eb709cf793d1c98166cf8baefc9ebfcfcf01d6b3454c252924db01958fc52951",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_metal_stool_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_metal_trash_can.glb",
+      "bytes": 322884,
+      "sha256": "ace5bb8440ece111b13938eedcb1d21b55ede59fe32fd9b3272e5abfb50d92aa",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_metal_trash_can.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_modular_airduct_rectangular_01.glb",
+      "bytes": 308524,
+      "sha256": "e41dbf99f007bedc7aa7b15add9d45b1311532388afd54ced5848e5006644cdb",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_modular_airduct_rectangular_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_mounted_fluorescent_lights.glb",
+      "bytes": 148360,
+      "sha256": "cea09ea72fa456442daf0fb8e6df53549852f3f592712040afe455ac98e7e880",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_mounted_fluorescent_lights.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_ornate_mirror_01.glb",
+      "bytes": 114356,
+      "sha256": "ef28816a2224b5edc2df3e82b34a631dcb526ee59b56592808a9ef35f7dac045",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_ornate_mirror_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_plastic_crate_01.glb",
+      "bytes": 239952,
+      "sha256": "bac0a4f7fe25fe358cafd7f2b84d7c73a5c388a27dc6c5759843476866861f33",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_plastic_crate_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_postcard_set_01.glb",
+      "bytes": 92680,
+      "sha256": "e6cfa05267d17183f3871629a7051c5400fc3a953b009435d6d36b3e0bce20c8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_postcard_set_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_potted_plant_02.glb",
+      "bytes": 579764,
+      "sha256": "3e4237308388c68ed5ab107f0baba677358bcdc95a3e050911490e188d64c9c8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_potted_plant_02.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_pull_chain_light_socket.glb",
+      "bytes": 152352,
+      "sha256": "55e6b8969af79421707dd29f527f10551b62626c5ea9cc3a41daaa5b0a9806f7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_pull_chain_light_socket.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_round_spectacles.glb",
+      "bytes": 462196,
+      "sha256": "d43bef750063a4e3c97f9a83847c1175c3e4f9962c6c3ebac032d30f467fb3a1",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_round_spectacles.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_rubber_duck_toy.glb",
+      "bytes": 60564,
+      "sha256": "89b28a9944cdd57f3a5343e3c1fc240ad6084dd7d89bd574f57dc318e0ee5889",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_rubber_duck_toy.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_steel_frame_shelves_03.glb",
+      "bytes": 201920,
+      "sha256": "ce349a221df9cad12eeda15c80ea6803143aca1ab0e5229a264a866e288a9164",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_steel_frame_shelves_03.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_street_rat.glb",
+      "bytes": 165880,
+      "sha256": "f74516807c9f60a65b72bfb9f1eb4897e8794f844f50ef8196a0344182195752",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_street_rat.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_tea_set_01.glb",
+      "bytes": 122976,
+      "sha256": "5e02058f1f22c41387f922f7aff7e389341dfcc226884398a876151c601d6a6d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_tea_set_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_trashbag.glb",
+      "bytes": 129432,
+      "sha256": "6ca26fcd25ec316625f89899c6fb1b606813730b04ab195049dd14b9aea94aa2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_trashbag.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_vintage_grandfather_clock_01.glb",
+      "bytes": 609628,
+      "sha256": "eda74b97bc5853dee56a025f3ef5e8467a23a9f576a78dc297af2a3d456664e6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_vintage_grandfather_clock_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_vintage_radio_transceiver.glb",
+      "bytes": 403772,
+      "sha256": "740956bf7ed958e038f95ebeb02430b3bbc8a8731b43cad8d3d1bb30b28aa6f1",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_vintage_radio_transceiver.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_vintage_suitcase.glb",
+      "bytes": 262032,
+      "sha256": "106ebe56dc008f21fb9c22d6f09def6e2b1e5eabd62f0d4f44fa922e6e62a8cf",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_vintage_suitcase.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_wall_clock.glb",
+      "bytes": 120584,
+      "sha256": "f42f9e084220de63cfbdeb475d5ac068cfe24bfecbc4e800ee6a020e7cc7cd49",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_wall_clock.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_wicker_basket_01.glb",
+      "bytes": 194164,
+      "sha256": "d4af1bf3abcea3f5f16b3a4d75694fb112fc40966ac11def3edf0d48b67f40c7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_wicker_basket_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_wooden_crate_01.glb",
+      "bytes": 139136,
+      "sha256": "0cd72d3086fd275532292b22d62fc8b435cc00f123e16be37a7a157c1dc24b85",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_wooden_crate_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_wooden_display_shelves_01.glb",
+      "bytes": 93212,
+      "sha256": "3552299fc11675ec201741fcb0232730bd43b833232ed713330af2d443d67c89",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_wooden_display_shelves_01.glb"
+    },
+    {
+      "path": "public/assets/glb/ph_yellow_onion.glb",
+      "bytes": 100624,
+      "sha256": "d652f7ee841e899e808f0f0b75a8b72fb475fd407ec4b5d8b65ff6eed33749aa",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/ph_yellow_onion.glb"
+    },
+    {
+      "path": "public/assets/glb/pigeon.glb",
+      "bytes": 340116,
+      "sha256": "2857d1927a654e636fd32b0d2f28978f1796b08ccea03415fd84062335ecb91a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/pigeon.glb"
+    },
+    {
+      "path": "public/assets/glb/pigeonlady.glb",
+      "bytes": 1042000,
+      "sha256": "cc27b97627fbccb7f13af3601eac4902758c71c9c59b9907265b13b62b5cf97f",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/pigeonlady.glb"
+    },
+    {
+      "path": "public/assets/glb/popcorn.glb",
+      "bytes": 1089156,
+      "sha256": "278867461122ac983df41777d53828a4c419ab4e2afd30e1fa6b50e4a4497eff",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/popcorn.glb"
+    },
+    {
+      "path": "public/assets/glb/rat.glb",
+      "bytes": 387916,
+      "sha256": "9f56f7b5fd7803bcbe063a5a8dd3b1d3273e7172b0ab1f22f589c8af089ee84d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/glb/rat.glb"
+    },
+    {
+      "path": "public/assets/glb/water_tower.glb",
+      "bytes": 425816,
+      "sha256": "652fbe8b931b66db9b97544f0ce563eb6078d1c9d760e028d8998605d4101240",
+      "origin": "city-has-other-plans/public/assets/props/water_tower.glb"
+    },
+    {
+      "path": "public/assets/logo.png",
+      "bytes": 147362,
+      "sha256": "467c6a20c8bd3e1fff4e49a84091f6641fe28c70f208c1c6efda63797128b0db",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/logo.png",
+      "dimensions": [
+        720,
+        720
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_beach.jpg",
+      "bytes": 612167,
+      "sha256": "22d3bf5b995210d6b9504e5b2b7487ff2b324cdf4badbff0367fe842cd00eb07",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_beach.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_beach2.jpg",
+      "bytes": 490729,
+      "sha256": "40182620cdbb78a3c57a85a4e046e331a4bd7641ab48b9fe71c47151259fefa8",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_beach2.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_eye.jpg",
+      "bytes": 717143,
+      "sha256": "eb68f246b5705de6c15ef25d7b5a1ed88d09153dd42cc4b01b80aec5e26a1c97",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_eye.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_eye2.jpg",
+      "bytes": 742673,
+      "sha256": "304569f0746588b0b2e2239b60fb3906eb7a9b1feb6d4c93992a06ff5981aaf6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_eye2.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_harbor.jpg",
+      "bytes": 580232,
+      "sha256": "ccf8a425adae656223cb66f0af3645d810c1f79f0199467f0a29df94d05d885b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_harbor.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_harbor2.jpg",
+      "bytes": 406571,
+      "sha256": "059aa759bd568a48f6e50c22f2befe4777839d1086745fa69d766d26d1a68a80",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_harbor2.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_snow.jpg",
+      "bytes": 674589,
+      "sha256": "7e3f210f71602672ef1be722b202c3f229d5f9638f79f0ce3da6c604761ec4b6",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_snow.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_cooler_snow2.jpg",
+      "bytes": 655585,
+      "sha256": "3b1932e77a604981dfa08886984f4cba871cb155ce1aa28843ef014e84542ea1",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_cooler_snow2.jpg",
+      "dimensions": [
+        1400,
+        2087
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_dream_window.jpg",
+      "bytes": 501089,
+      "sha256": "4790ad557fb74b694cbd77cd5f6c7f8b24d8d3228b5d686e0919dec16c434562",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_dream_window.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_dream_window2.jpg",
+      "bytes": 253998,
+      "sha256": "029a601cca94a7863b31858a80eb863c5d9e0004f051a31a9d6c4597273aad62",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_dream_window2.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_hall.jpg",
+      "bytes": 597167,
+      "sha256": "ecdc406dce8221bfc3dc0726ed95a66611d650b65dff8e0e71f0fbc7757a7ebc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_hall.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_heart.jpg",
+      "bytes": 675993,
+      "sha256": "99a8ab8976f2d1a2c6bbef9d9f747088db3191ced58eb9dddfd01c5758a1ca1a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_heart.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_map.jpg",
+      "bytes": 617016,
+      "sha256": "2d6c4650e7eed4c9a6f2e1f81681dba12172a97c2e47ff1be821265d99c2fc39",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_map.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_street.jpg",
+      "bytes": 676212,
+      "sha256": "74dfcdcd6f7c233d51734ef9b60fe16de63447ffe82968ecd5c21708699356ad",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_street.jpg",
+      "dimensions": [
+        2048,
+        1374
+      ]
+    },
+    {
+      "path": "public/assets/plates/p_tunnel.jpg",
+      "bytes": 435019,
+      "sha256": "8bf7f3caf8644f23fa2c3f68f45e8d6c131bc08dcc3481ab44691021880922fc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/plates/p_tunnel.jpg",
+      "dimensions": [
+        2048,
+        1373
+      ]
+    },
+    {
+      "path": "public/assets/plates/unlicensed.jpg",
+      "bytes": 738904,
+      "sha256": "11bdb1ecd98b1d1a4aaae3a726d1cca9655fb188049559914b04bbb210a53a4b",
+      "origin": "Derived delivery copy of generated vista or generated depth estimate",
+      "dimensions": [
+        2079,
+        756
+      ]
+    },
+    {
+      "path": "public/assets/poster.jpg",
+      "bytes": 287997,
+      "sha256": "2b1e361705b1bc556081d092cb9649726277520084599999dfe8fc96b4a345ec",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/poster.jpg",
+      "dimensions": [
+        1600,
+        900
+      ]
+    },
+    {
+      "path": "public/assets/stickers/bodega0.png",
+      "bytes": 6270320,
+      "sha256": "bbf1713f2a70d1a6b1c1e93c3fc1d36a9525cae5b10b33da29c61cb5318ea2fe",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/bodega0.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/stickers/eye0.png",
+      "bytes": 6075385,
+      "sha256": "5e4a0efb7f73a76196cc851306daebe68cd3c306ba2b1bb4d08c32e0c50f033b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/eye0.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/stickers/eye1.png",
+      "bytes": 3126879,
+      "sha256": "02b60be0f4477872108e72b0edfc824a411e6d3f9b918528bd64fd423899165d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/eye1.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/stickers/mlow0.png",
+      "bytes": 963042,
+      "sha256": "a80c3fcec90146b19b3c373a18753f0ba3bb113bb76da69f79870636063fe039",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/mlow0.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/stickers/museum0.png",
+      "bytes": 4584675,
+      "sha256": "7a9e0df32f5546cf6c644c3b5d273a3ab5e4b978eac803e41ca7ed6f38a1bf15",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/museum0.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/stickers/street0.png",
+      "bytes": 5596534,
+      "sha256": "a2260a93c0cef87d405e7f2830dc4a3adee514004870b0e2c523e600dd0820c2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/street0.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/stickers/subway0.png",
+      "bytes": 5867218,
+      "sha256": "6fd876819f8774ac5890ed2404a31247fbb97e9941b77c02742404c8e53ed599",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/stickers/subway0.png",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "path": "public/assets/tex/bodega_floor_c.jpg",
+      "bytes": 247845,
+      "sha256": "41a69ad18daf7ea147efacb44d6f200d37ad36ae651fdd8bb9e3921dbc7d94d3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/bodega_floor_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/bodega_floor_n.jpg",
+      "bytes": 116441,
+      "sha256": "d5bdff8e77de08b3dd24a8464fbd823c8e2ce393324f1f453af851ee446adfdc",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/bodega_floor_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/bodega_floor_r.jpg",
+      "bytes": 66836,
+      "sha256": "27b80bb2c4b08d4f5589e5a685da06825dad5877907c2b0a16ec587932bec58e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/bodega_floor_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/ceiling_c.jpg",
+      "bytes": 350330,
+      "sha256": "45d1e6e81d69c0c02909f1f1db0a1104ba21507dc76d159b9e1d08a10f92d27d",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/ceiling_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/ceiling_n.jpg",
+      "bytes": 94431,
+      "sha256": "780315c9414ce686d67dbc2f1e1f44ee0027b49244f55b57d4e3d4a292d7dcd3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/ceiling_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/ceiling_r.jpg",
+      "bytes": 51847,
+      "sha256": "c2ba3b71e8057826fafdaa96be10c43a5e55b2b396f9719a7b951412e3c73163",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/ceiling_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/crop_c.jpg",
+      "bytes": 305193,
+      "sha256": "43ecb0073fd7f083220bc318183b64b1974ba76f612acd31c8bcfa36fa90aebe",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/crop_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/crop_n.jpg",
+      "bytes": 124897,
+      "sha256": "a95334be36a2ca9af1bce6ccb8d202161ab73825361262d572a560df33f27f08",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/crop_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/crop_r.jpg",
+      "bytes": 79024,
+      "sha256": "bc4e9b1eb7ef8ed4ddd9990e3dd46c50e063d79bf76791a54f7800c926f952a2",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/crop_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/feather_c.jpg",
+      "bytes": 504670,
+      "sha256": "b8dab23108852deaea75eed40722efc97a3280f374820b5aadbbc1f3531874d5",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/feather_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/feather_n.jpg",
+      "bytes": 163105,
+      "sha256": "b664f585d3f0ff05d066edbb6093d07c8e942faf74a5964d5efb191df50b9340",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/feather_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/feather_r.jpg",
+      "bytes": 92051,
+      "sha256": "20a870ddca848dbb612a7d82f3b7dd7fdf43fbc052cde28ad7fd5a81f3322132",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/feather_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/receipts_c.jpg",
+      "bytes": 316045,
+      "sha256": "76c557fa8ac34d0f130d8ddefd981af6bd6b4144c15963d25fff7d6715fe0011",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/receipts_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/receipts_n.jpg",
+      "bytes": 165346,
+      "sha256": "f8f3e29da370951c53d94031b889cb581e95fba70eb5703330907805273e0582",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/receipts_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/receipts_r.jpg",
+      "bytes": 98239,
+      "sha256": "9853ec7c0cd88c57a5b9c24bac231c6d2475edb7706b5382d985d8d5c4040208",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/receipts_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/stickerwall_c.jpg",
+      "bytes": 458984,
+      "sha256": "f9b4c47e15dd388126934acce0fae086b2edfa5bc9db7427a6b33116f6a41ddb",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/stickerwall_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/stickerwall_n.jpg",
+      "bytes": 224959,
+      "sha256": "41a54cda1728e5f054a6e77f876e3dd7d270f1aa4692674d3d16c17949c59d8b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/stickerwall_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/stickerwall_r.jpg",
+      "bytes": 122176,
+      "sha256": "55927a2a474414cf73fe1647f8a54ed6da2eee8667f26bc0dd20e3fde6d5fd64",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/stickerwall_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/subway_floor_c.jpg",
+      "bytes": 406487,
+      "sha256": "84630a67647ec618eb61682b2526d291fab86756cb8b92d4e987df7bc90af739",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/subway_floor_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/subway_floor_n.jpg",
+      "bytes": 165688,
+      "sha256": "c1f26d22ac6700fb853a3e514b4127093bc4da81e9e52b344d42bf4174be6c26",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/subway_floor_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/subway_floor_r.jpg",
+      "bytes": 88294,
+      "sha256": "b008aa80e9750fb54b1c785bbdec1a602050a3b44f8d9b496cf9ebb1e0d256e7",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/subway_floor_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/subway_wall_c.jpg",
+      "bytes": 192300,
+      "sha256": "9d483f46f039f7ae66170086931b9c8152389c1a0b35dd3c9a347cb280bca261",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/subway_wall_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/subway_wall_n.jpg",
+      "bytes": 90493,
+      "sha256": "9927d7c0be87dd17c3c10b4c905a7046471c91c823af0cf7db9b5a77de49349e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/subway_wall_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/subway_wall_r.jpg",
+      "bytes": 53881,
+      "sha256": "217cdd9b0a0247840399e5f763d767f90e8e8e9215b45234a7255d48aec15598",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/subway_wall_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/terrazzo_c.jpg",
+      "bytes": 324188,
+      "sha256": "7c7af8bed10a38c55da98cfc164f7324a31f5fb36adc48e870df03c9024603dd",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/terrazzo_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/terrazzo_n.jpg",
+      "bytes": 206531,
+      "sha256": "fddfb62de3cb4c1906c7a13f4a8b034d0a6ab54af9db8ddfce61de9b4ed81f3e",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/terrazzo_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/terrazzo_r.jpg",
+      "bytes": 111757,
+      "sha256": "9ff731e782affebbe74e794d1c42c0bb2180bdc486d8086e74e94f6e5ddc1806",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/terrazzo_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/tile_c.jpg",
+      "bytes": 205758,
+      "sha256": "d5e266f50905fce82709b033e1fd7ea2a98718f1b0b2adbcc3a96d1c69481741",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/tile_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/tile_n.jpg",
+      "bytes": 107674,
+      "sha256": "9e37752113759a6007446d24b98491d05863c1f6ae7be3315e7b0c72524567e3",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/tile_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/tile_r.jpg",
+      "bytes": 58957,
+      "sha256": "765f04f76a3c1e94f341ef71e0a90d74f2c7cc7624b633199f9847ba24115bb4",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/tile_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/velvet_c.jpg",
+      "bytes": 317197,
+      "sha256": "a622261cca6740475390313888544ae35af00c78a937c30b2ac265c750507781",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/velvet_c.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/velvet_n.jpg",
+      "bytes": 114999,
+      "sha256": "22d18afb39c357fff887dab6d46c3c6046030a4de732ae5be7615668fa22fa85",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/velvet_n.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/assets/tex/velvet_r.jpg",
+      "bytes": 66212,
+      "sha256": "1b80859db7fb18d1dfa3ce80a9e5eaad61cce0eeb66211178bd798de46eb823a",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/assets/tex/velvet_r.jpg",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "public/catalog.json",
+      "bytes": 48043,
+      "sha256": "cc20c6ec92db12da87acd4140d8a8eb2869f4b786f0878e8fb5b96be3e8fa35e",
+      "origin": "Generated by tools/catalog.mjs from src/catalog.js"
+    },
+    {
+      "path": "public/collection.html",
+      "bytes": 32387,
+      "sha256": "c8cc71ea1e4efee8fa030db3fb6589ff435c7d7f43106ce0a4479ecda7c98dab",
+      "origin": "Generated by tools/catalog.mjs from src/catalog.js"
+    },
+    {
+      "path": "public/fonts/Fraunces.ttf",
+      "bytes": 360440,
+      "sha256": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/fonts/Fraunces.ttf"
+    },
+    {
+      "path": "public/fonts/IBMPlexMono-Medium.ttf",
+      "bytes": 136704,
+      "sha256": "a9b4c49bb299e05b5f6c481e7fb5e78943d2793249a0c8874ab574a2d1ea6755",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/fonts/IBMPlexMono-Medium.ttf"
+    },
+    {
+      "path": "public/fonts/OFL.txt",
+      "bytes": 4391,
+      "sha256": "bdf4c22802eaf804f998195871c6b8938aac2ac14b2d78a8bd66a6f1eced833b",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/fonts/OFL.txt"
+    },
+    {
+      "path": "public/fonts/SpaceGrotesk.ttf",
+      "bytes": 136676,
+      "sha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+      "origin": "DOWN THE PIGEONHOLE 2026-10-17/site/fonts/SpaceGrotesk.ttf"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "file": "contour.png",
+    "tool": "built-in ImageGen",
+    "prompt": "Create a production material image for NEW YORKERS by MLow impossible municipal museum. One seamless square texture of aged deep navy painted cast iron and plaster, covered in physically painted liquid topographic contour veins in cobalt cyan restrained copper and bone, thick gravitational paint drips, worn edges, subtle realistic surface grain. Orthographic flat scan, even neutral diffuse illumination, no perspective, no baked shadows, no lettering, no logos, no objects. Dense fine hand-worked detail, black negative space, controlled color not generic rainbow. This will be repeated on modeled curved architecture. Material asset not concept scene.",
+    "input_role": "none",
+    "transparent_background": false
+  },
+  {
+    "file": "wheatpaste.png",
+    "tool": "built-in ImageGen",
+    "prompt": "Production environment texture for MLow NEW YORKERS surreal municipal museum: a perfectly straight-on broad wall of layered wheatpaste paper, torn bureaucratic forms, hand-painted cobalt contour rivers physically soaking into the paper, surreal black-and-bone pigeon woodcut insignia, uncanny realistic blue eye in six bone white botanical petals as central witness. Small stamped phrases only: 'UNLICENSED MIRACLE', 'RENT DUE IN ANOTHER DIMENSION', 'PIGEON JURY DUTY', 'NEW YORKERS'. Entire frame filled with pasted paper, realistic glue wrinkles and curled tears, electric cyan and restrained hot pink against ink navy, dry flash scan lighting, no perspective or surrounding scene, no other brands or logos. Original authored urban collage used as wall material.",
+    "input_role": "none",
+    "transparent_background": false
+  },
+  {
+    "file": "vista.png",
+    "tool": "built-in ImageGen",
+    "prompt": "Wide photoreal architectural environmental backdrop for NEW YORKERS by MLow: an impossible New York night skyline bends in a huge cylindrical arc overhead, brick tenement facades with deep windows, cast iron fire escapes, rooftop wooden water towers and copper ducts, midnight cobalt sky, wet reflected cyan and small amber windows. Architectural detail incredibly rich and tactile. At center distant enormous uncanny Open Eye Flower with six bone white petals and realistic blue iris watches a narrow liminal passage; liquid painted cyan contour rivers cling physically to masonry, restrained pink drips. No foreground people, no text, no logos. Wide panoramic composition with foreground entirely empty dark navy, distant city clearly readable, controlled highlights, photographed miniature realism. Used only as a distant vista behind actual modeled architecture, not a UI or concept board.",
+    "input_role": "none",
+    "transparent_background": false
+  },
+  {
+    "file": "vista-depth.png",
+    "tool": "built-in ImageGen",
+    "prompt": "Produce a matching grayscale inverse-depth map for this skyline image for shallow parallax geometry in a web gallery. Preserve exact composition, object boundaries and aspect ratio. This is a data map, no color or lighting. Near foreground terrace brightest gray, middle facade wings medium gray, distant central skyline dark gray, sky black. Smooth coherent planar depth across building facades. Eye flower belongs to distant skyline. No texture, lettering, shading or decorative marks. Depth estimate is artistic rather than measured.",
+    "input_role": "vista.png as composition/depth anchor",
+    "transparent_background": false
+  }
+]

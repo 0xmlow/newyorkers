@@ -1,0 +1,1314 @@
+{
+  "intake": [
+    {
+      "n": 5496,
+      "t": "Adaeze Okonkwo, a prompt janitor who cleans up after the model all night",
+      "h": "Long Island City",
+      "b": "Queens",
+      "f": "h33fc68a226.jpg",
+      "s": "Automation hands the problem back to a person, and the person is Adaeze. One badge on the lanyard, expiring Friday, no word yet about renewal"
+    },
+    {
+      "n": 7642,
+      "t": "The Man Who Prints Because the Screen Is Not the Work",
+      "h": "Sunnyside",
+      "b": "Queens",
+      "f": "h25412b3754.jpg",
+      "s": "He prints because the screen is not the work. A flat file of prints and a loupe, the paper the proof"
+    },
+    {
+      "n": 5268,
+      "t": "The Tailor Who Dresses the Whole Block",
+      "h": "Jackson Heights",
+      "b": "Queens",
+      "f": "habb234f6f5.jpg",
+      "s": "Everyone on this street is wearing his work and nobody says so. Jackson Heights, a wedding suit on the stand, eleven customers waiting and gossiping"
+    },
+    {
+      "n": 5421,
+      "t": "The Woman Who Arrived Yesterday",
+      "h": "Jackson Heights",
+      "b": "Queens",
+      "f": "hdcc5f0c252.jpg",
+      "s": "Thirty hours in and the city is already loud around her. Roosevelt Avenue, the noise and the smell, a face deciding this will work"
+    },
+    {
+      "n": 881,
+      "t": "The Central Park Softball League",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "h019abd62f6.jpg",
+      "s": "Ties tucked into pants, a beer cooler at third base, dusk on the diamond. The skyline watches the outfield while office rivalries settle honestly"
+    },
+    {
+      "n": 1211,
+      "t": "The Night Shift",
+      "h": "Murray Hill",
+      "b": "Manhattan",
+      "f": "hd714b7e0ec.jpg",
+      "s": "8am on the stoop in scrubs with a well earned beer as the block leaves for work. A nod passes between the shifts, honest exhaustion glowing like sunrise"
+    },
+    {
+      "n": 5363,
+      "t": "The Kid Who Understood the Fire Escape",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "h64d82893bc.jpg",
+      "s": "He worked out that the fire escapes connect the entire block. Chinatown, three buildings from home, a private city and total ease"
+    },
+    {
+      "n": 6987,
+      "t": "Yasmin Barakat, a woman who has run the amateur night for thirty years",
+      "h": "Harlem",
+      "b": "Manhattan",
+      "f": "h972d8aadee.jpg",
+      "s": "Thirty years of amateur nights, and she has never had an hour alone. A box office cage pulled halfway down, a stamp pad, a long queue"
+    },
+    {
+      "n": 1853,
+      "t": "The African Burial Ground",
+      "h": "Financial District",
+      "b": "Manhattan",
+      "f": "h070acedad0.jpg",
+      "s": "Fifteen thousand ancestors rest beneath the towers, the diaspora mapped in stone. Office workers pausing into sudden reverence, libations at the circle, the city's ground floor hel"
+    },
+    {
+      "n": 2103,
+      "t": "The High Priestess",
+      "h": "",
+      "b": "",
+      "f": "h1b129050b6.jpg",
+      "s": "The token booth clerk between two pillars of turnstiles, keeper of the system's mysteries. The map behind her is a veil, and some stations are secret"
+    }
+  ],
+  "jury": [
+    {
+      "n": 1072,
+      "t": "The Money Train",
+      "h": "",
+      "b": "",
+      "f": "h1e9db82ab5.jpg",
+      "s": "The armored revenue train glides through a ghost station at 3am, guards in vintage uniforms. Canvas sacks of tokens glow like treasure, the city's whole day riding home"
+    },
+    {
+      "n": 56,
+      "t": "A Historic Monument",
+      "h": "Greenwich Village",
+      "b": "Citywide",
+      "f": "h72be2ef4d7.jpg",
+      "s": "Nobody reads the plaque but everybody meets by the statue. The bronze, the pigeons, the memory the city keeps without looking up"
+    },
+    {
+      "n": 78,
+      "t": "The Rooftop Pigeon Keeper",
+      "h": "",
+      "b": "Brooklyn",
+      "f": "h3dd58f3d03.jpg",
+      "s": "He sends the flock up and trusts the whole block to come home. The coop, the flight, the old Brooklyn hobby on the tar roof"
+    },
+    {
+      "n": 91,
+      "t": "The Street Portrait Artist",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "he27542af1d.jpg",
+      "s": "He catches your face in charcoal before the pigeons scatter. The easel, the caricature, the quick likeness for a folded twenty"
+    },
+    {
+      "n": 911,
+      "t": "The Subway Pigeon",
+      "h": "",
+      "b": "",
+      "f": "h42d3f71685.jpg",
+      "s": "She rides the A standing mid car like a commuter with seniority. Respectful space given, no fare paid, she knows her stop"
+    },
+    {
+      "n": 931,
+      "t": "The Bag in the Tree",
+      "h": "Fort Greene",
+      "b": "Brooklyn",
+      "f": "h3745ca238d.jpg",
+      "s": "One white bag caught in the winter branches, backlit like a saint in stained glass. Pigeons in attendance, the city's accidental cathedral"
+    },
+    {
+      "n": 976,
+      "t": "The Tai Chi Elders",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "h5e5bdf9daa.jpg",
+      "s": "At dawn in Columbus Park the silk moves and the light follows their hands. Pigeons observing, forms flowing, decades held in slow motion"
+    },
+    {
+      "n": 1051,
+      "t": "The Crosstown Bus",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "h39a3f012b5.jpg",
+      "s": "A dog walker, a pedestrian and a pigeon all overtake it in the same block. The driver is zen, the passengers are ancient, the bus abides"
+    },
+    {
+      "n": 1052,
+      "t": "The Pigeon Spikes",
+      "h": "Financial District",
+      "b": "Manhattan",
+      "f": "hc81a2b78b8.jpg",
+      "s": "The ledge got spikes and the pigeons built a nest between them anyway. Three chicks now, the architecture defeated"
+    },
+    {
+      "n": 1064,
+      "t": "The Bridge Falcon",
+      "h": "",
+      "b": "Staten Island",
+      "f": "he73b5f4d05.jpg",
+      "s": "Two hundred miles an hour off a bridge tower, the fastest New Yorker there is. Below her the pigeons scatter like commuters, because they are"
+    }
+  ],
+  "rent": [
+    {
+      "n": 61,
+      "t": "The Transit Spirit",
+      "h": "",
+      "b": "Citywide",
+      "f": "h3fd5b346d4.jpg",
+      "s": "Something luminous rides the current between the stations. The glow, the tunnel, the ghost the trains carry but never catch"
+    },
+    {
+      "n": 1570,
+      "t": "The Dead Fob",
+      "h": "Sunnyside",
+      "b": "Queens",
+      "f": "h30378e376f.jpg",
+      "s": "At 2am the tenant taps the dead fob against the reader like a fading pulse. Red light after red light, groceries wilting, the analog key of childhood remembered like a lost religio"
+    },
+    {
+      "n": 364,
+      "t": "Bushwick",
+      "h": "Bushwick",
+      "b": "Brooklyn",
+      "f": "h4bb4a977af.jpg",
+      "s": "Bodegas below, art fairs above, rent climbing between. Bushwick is the frontier the city keeps re-drawing"
+    },
+    {
+      "n": 3788,
+      "t": "The Mailbox in the Lobby",
+      "h": "Jackson Heights",
+      "b": "Queens",
+      "f": "hf64faeaf8a.jpg",
+      "s": "Every brass door opened at once for a super holding one package. A lobby floor, a high window, a tenant nobody has seen in weeks"
+    },
+    {
+      "n": 907,
+      "t": "The Piping Plover",
+      "h": "Rockaway Beach",
+      "b": "Queens",
+      "f": "h58c609ebe2.jpg",
+      "s": "The smallest landlord in New York closed the beach and everyone complies. Surfers wait behind the rope, tiny, imperious, entirely within its rights"
+    },
+    {
+      "n": 2708,
+      "t": "The Ladder at Four",
+      "h": "Bushwick",
+      "b": "Brooklyn",
+      "f": "hfc04324edb.jpg",
+      "s": "The ladder is still there at 4am, the paint still wet, the writer gone. The sigil dried by sunrise and the block felt different all week"
+    },
+    {
+      "n": 1948,
+      "t": "The Heartbreak Walk",
+      "h": "Greenpoint",
+      "b": "Brooklyn",
+      "f": "hd5ddf73d62.jpg",
+      "s": "Sixty blocks at night to outpace a feeling, the city dispensing therapy in bridge lights and bodega cats. Home tired enough to sleep, lighter by ten blocks"
+    },
+    {
+      "n": 2571,
+      "t": "The Thin Walls",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "h462dc8b925.jpg",
+      "s": "Three apartments hear one argument resolve into laughter through the old plaster. Everyone pauses mid dish and mid page to root for the makeup"
+    },
+    {
+      "n": 2116,
+      "t": "The Devil's Lease",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "h55d03e67cf.jpg",
+      "s": "A landlord enthroned on a radiator, two tenants chained by lease riders they could slip but never read. The way out is in the fine print, printed upside down"
+    },
+    {
+      "n": 1152,
+      "t": "The Couch Surfer",
+      "h": "East Williamsburg",
+      "b": "Brooklyn",
+      "f": "hb0f37aee27.jpg",
+      "s": "Folded onto a friend's loveseat under a coat for a blanket, suitcase as nightstand. The dreams are bigger than the apartment, which is the whole point of coming here"
+    }
+  ],
+  "deli": [
+    {
+      "n": 3,
+      "t": "The Subway Spirit",
+      "h": "",
+      "b": "Citywide",
+      "f": "h8b15837d9c.jpg",
+      "s": "The line has a god and he glows in the tunnel dark. The psychedelic ghost, the tunnel deity, the spirit the third rail feeds"
+    },
+    {
+      "n": 2936,
+      "t": "The Foil Twist",
+      "h": "Long Island City",
+      "b": "Queens",
+      "f": "hfa75b784ac.jpg",
+      "s": "A deli man folds a bacon egg and cheese into foil with three creases and a twist and passes the warm silver brick like a relay baton. On the curb, a whole crew unwraps in unison"
+    },
+    {
+      "n": 1,
+      "t": "The Bodega Matriarch",
+      "h": "Melrose",
+      "b": "Bronx",
+      "f": "h9b0b3836d9.jpg",
+      "s": "She runs the block from a stool behind the counter. The throne, the neighborhood mother, the eye that misses nothing"
+    },
+    {
+      "n": 23,
+      "t": "The Bodega Cat (Scene)",
+      "h": "Astoria",
+      "b": "Citywide",
+      "f": "h6bb89a47cd.jpg",
+      "s": "He naps on the chip rack and dares you to move him. The perch, the nap, the mouser who clocks out whenever he wants"
+    },
+    {
+      "n": 64,
+      "t": "The Bodega Grocer",
+      "h": "Washington Heights",
+      "b": "Citywide",
+      "f": "h37fbe9341c.jpg",
+      "s": "He knows your order and your kid's name before you reach the counter. The lottery slips, the regulars, the light that never goes off"
+    },
+    {
+      "n": 86,
+      "t": "A Street Corner V",
+      "h": "Brownsville",
+      "b": "Citywide",
+      "f": "hdf15eaaf9f.jpg",
+      "s": "The awning shelters the ATM, the crew, and the whole afternoon. The bodega light, the corner boys, the meeting the block never scheduled"
+    },
+    {
+      "n": 550,
+      "t": "Bodega Cat",
+      "h": "Washington Heights",
+      "b": "Citywide (bodega)",
+      "f": "hf7e2b10e01.jpg",
+      "s": "He owns the bodega and lets the humans think they run it. The counter perch, the mouser, the boss the health code ignores"
+    },
+    {
+      "n": 553,
+      "t": "The Chopped Cheese",
+      "h": "Harlem",
+      "b": "Manhattan (Harlem)",
+      "f": "h23e0cf4bbe.jpg",
+      "s": "Uptown answered the cheesesteak and won the argument. The griddle, the hero roll, the bodega classic the rest of the city stole"
+    },
+    {
+      "n": 779,
+      "t": "The Deli Coffee Cup",
+      "h": "Ridgewood",
+      "b": "Queens",
+      "f": "h4ea07c5559.jpg",
+      "s": "We are happy to serve you, and it means it. Blue and gold on a bodega counter at dawn, steam rising like a hymn"
+    },
+    {
+      "n": 816,
+      "t": "The Bodega Chandelier",
+      "h": "Inwood",
+      "b": "Manhattan",
+      "f": "h7e54c2911f.jpg",
+      "s": "Somebody hung a crystal chandelier over the chopped cheese and it was correct. Cathedral light in a bodega, the cat asleep beneath the miracle"
+    }
+  ],
+  "wash": [
+    {
+      "n": 487,
+      "t": "Keith Haring",
+      "h": "",
+      "b": "Manhattan (subway)",
+      "f": "hfe1aa29d90.jpg",
+      "s": "He drew on the subway's black ad squares until the city noticed. The radiant baby, the barking dog, the Pop Shop chalk that never washed off"
+    },
+    {
+      "n": 1162,
+      "t": "The Step Streets",
+      "h": "",
+      "b": "Bronx",
+      "f": "hff1d5f10a9.jpg",
+      "s": "A monumental Bronx staircase climbing between buildings like an outdoor cathedral. Neighbors rest on the landings under laundry flags, the commute measured in stories"
+    },
+    {
+      "n": 2996,
+      "t": "The Nasturtium Special",
+      "h": "Greenpoint",
+      "b": "Brooklyn",
+      "f": "h1fc5a4ba97.jpg",
+      "s": "The Greenpoint diner's Tuesday special arrives crowned with nasturtiums from the dishwasher's window box, and the regulars are suspicious for exactly one bite. The cook watches thr"
+    },
+    {
+      "n": 2117,
+      "t": "The Tower",
+      "h": "SoHo",
+      "b": "Manhattan",
+      "f": "ha07c43bd3d.jpg",
+      "s": "A rooftop water tower struck by summer lightning, staves flying like cards. The crown of water becomes rain, and the gardens below drink the sudden change"
+    },
+    {
+      "n": 3755,
+      "t": "The Boiler Room Held",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "hf75762a66c.jpg",
+      "s": "It ran past every safe limit and held through the coldest night in years. A Washington Heights basement, glowing pipes, a gauge nobody wanted to read"
+    },
+    {
+      "n": 2690,
+      "t": "The Bloom Route Map",
+      "h": "",
+      "b": "",
+      "f": "h1fc3fab7df.jpg",
+      "s": "Someone is mapping the bloom like a subway system, line by line. Tonight the cleaner added a stop and rode home different"
+    },
+    {
+      "n": 4930,
+      "t": "The Vessel Fills",
+      "h": "Chelsea",
+      "b": "Manhattan",
+      "f": "heebdb56def.jpg",
+      "s": "It filled to the brim with clear harbour water and became a public bath. Families from every borough by afternoon, and the defeated security staff in shorts"
+    },
+    {
+      "n": 4320,
+      "t": "The Freight of Forgiveness",
+      "h": "",
+      "b": "Manhattan",
+      "f": "h98c955c27b.jpg",
+      "s": "A midnight freight hauls the city's grudges out over open water. The Hell Gate lighting rose as each car empties, the engineer keeping one small grudge as a souvenir"
+    },
+    {
+      "n": 95,
+      "t": "The Subway Busker",
+      "h": "",
+      "b": "Citywide",
+      "f": "h0841d769a0.jpg",
+      "s": "He tunes to the platform's echo and races the incoming train. The open case, the acoustics, the song the express car drowns"
+    },
+    {
+      "n": 96,
+      "t": "The Subway Commuter",
+      "h": "",
+      "b": "Citywide",
+      "f": "ha7137b5a25.jpg",
+      "s": "He masters the lean that needs no pole and never falls. The middle-distance stare, the ride, the balance every local earns standing"
+    }
+  ],
+  "lost": [
+    {
+      "n": 1431,
+      "t": "The Wrong Express",
+      "h": "",
+      "b": "",
+      "f": "h8f70004945.jpg",
+      "s": "The local revealed itself express and the stop blurred past. A neighborhood not on the map at night, and it was beautiful, the mistake becoming the memory"
+    },
+    {
+      "n": 97,
+      "t": "The Subway Commuter II",
+      "h": "",
+      "b": "Citywide",
+      "f": "h46484c36f6.jpg",
+      "s": "The car packs to the doors and everyone still finds a way to read. The subway fold, the sway, the rush-hour crush that moves as one body"
+    },
+    {
+      "n": 98,
+      "t": "The Subway Musician",
+      "h": "",
+      "b": "Citywide",
+      "f": "h02d1dbecf1.jpg",
+      "s": "The stage moves between stops and the crowd can never leave. The mariachi, the doo-wop, the drum that fills the moving car"
+    },
+    {
+      "n": 99,
+      "t": "A Subway Station",
+      "h": "",
+      "b": "Citywide",
+      "f": "h72813f8ae0.jpg",
+      "s": "The whole city passes through and nobody makes eye contact. The tile, the turnstile, the wait measured in incoming rumble"
+    },
+    {
+      "n": 100,
+      "t": "Subway Transit",
+      "h": "",
+      "b": "Citywide",
+      "f": "h70ff97a4a1.jpg",
+      "s": "The whole city moves on a colored map nobody fully reads. The transfer, the line, the flow that carries five million a day"
+    },
+    {
+      "n": 548,
+      "t": "Pizza Rat",
+      "h": "",
+      "b": "Manhattan (subway stairs)",
+      "f": "h4eb7eed08b.jpg",
+      "s": "He dragged a whole slice down the subway stairs and became us. The hustle, the stairs, the most New York animal on record"
+    },
+    {
+      "n": 3329,
+      "t": "The Model Who Stayed",
+      "h": "Long Island City",
+      "b": "Queens",
+      "f": "h571fe6bf81.jpg",
+      "s": "She holds past the timer because the room finally went right. Twelve pencils, no talking, one pose extended by mutual agreement"
+    },
+    {
+      "n": 7434,
+      "t": "Iryna Wozniak, a woman who runs a museum with no walls",
+      "h": "Long Island City",
+      "b": "Queens",
+      "f": "h9d7c883318.jpg",
+      "s": "Iryna runs a museum with no walls. A hash written by hand on a card at the door"
+    },
+    {
+      "n": 952,
+      "t": "The Terracotta Carver",
+      "h": "Long Island City",
+      "b": "Queens",
+      "f": "h84c2eb3f31.jpg",
+      "s": "Clay to the elbows, he carves the gods that crown the old buildings. A century on they are still up there, watching a city that forgot to look up"
+    },
+    {
+      "n": 81,
+      "t": "The Station Agent",
+      "h": "",
+      "b": "Citywide",
+      "f": "hf05fe0bdae.jpg",
+      "s": "She gives directions all day from a booth the city keeps closing. The glass booth, the pointed finger, the last human help on the platform"
+    }
+  ],
+  "appeals": [
+    {
+      "n": 775,
+      "t": "The Ghost of Penn Station",
+      "h": "",
+      "b": "Manhattan",
+      "f": "hb46761b38d.jpg",
+      "s": "They tore down the greatest room in New York and he never got the memo. A 1910 suit among ghost columns, still waiting on his train"
+    },
+    {
+      "n": 5063,
+      "t": "The Sixth Borough Ballgame",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "h1f4806300f.jpg",
+      "s": "The Dodgers are at Ebbets Field and the old man is not watching the game. A full house on a summer evening, and he waited his whole life for that crowd"
+    },
+    {
+      "n": 4983,
+      "t": "The Bodega Awning That Shelters Exactly Enough",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "h5b7b9b0d4c.jpg",
+      "s": "An awning extends to exactly the number of people waiting out the rain. Nostrand Avenue, most of a block covered tonight, and an owner who has stopped pretending not to notice"
+    },
+    {
+      "n": 1622,
+      "t": "The Frame Shop",
+      "h": "Park Slope",
+      "b": "Brooklyn",
+      "f": "h3e03be7370.jpg",
+      "s": "The framer fits a kid's crayon drawing into museum glass with archival gloves and total ceremony. A scribbled dog becomes an heirloom while walls of other treasures wait in gold an"
+    },
+    {
+      "n": 2660,
+      "t": "The Owl in the Tree",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "h9ff962cc94.jpg",
+      "s": "The tiny owl rode the great spruce three hundred miles to the plaza and blinked into the work lights. The rigger cradled the stowaway like the season's first gift, because it was"
+    },
+    {
+      "n": 912,
+      "t": "The Ghost Station",
+      "h": "Tribeca",
+      "b": "Manhattan",
+      "f": "haf85d43177.jpg",
+      "s": "City Hall station still glitters under the loop where nobody exits. Guastavino arches, leaded skylights, an empty train passing through the jewel"
+    },
+    {
+      "n": 927,
+      "t": "The Subway Mosaic",
+      "h": "",
+      "b": "",
+      "f": "h14ef6e819c.jpg",
+      "s": "The tiles rearrange themselves into vines a century after the craftsman set them. His hands still visible in ghost form, the station name blooming"
+    },
+    {
+      "n": 1074,
+      "t": "The Voice of the Subway",
+      "h": "",
+      "b": "",
+      "f": "h9495056fe6.jpg",
+      "s": "Somewhere beneath the city she sits at a golden microphone in a velvet booth. Her calm ripples outward through every station, and everyone stands clear of the closing doors"
+    },
+    {
+      "n": 1082,
+      "t": "The Nostalgia Train",
+      "h": "Brooklyn Heights",
+      "b": "Brooklyn",
+      "f": "h4c8397aad3.jpg",
+      "s": "Rattan seats, ceiling fans, riders in period hats rolling into a modern station. The 1930s pull in on schedule and every phone comes up"
+    },
+    {
+      "n": 3192,
+      "t": "The Moving Day Truce",
+      "h": "Sunnyside",
+      "b": "Queens",
+      "f": "h4a2bf43ab9.jpg",
+      "s": "Two families moving opposite directions ended up carrying for each other. A Sunnyside street, trucks nose to tail, nobody keeping score"
+    }
+  ],
+  "sky": [
+    {
+      "n": 3373,
+      "t": "The Diwali Roof",
+      "h": "Jackson Heights",
+      "b": "Queens",
+      "f": "h47553ca84a.jpg",
+      "s": "She lights the last lamp as the seven train passes underneath. A Jackson Heights parapet, oil and wick, a row of small flames"
+    },
+    {
+      "n": 4874,
+      "t": "The Prayer Flag Antenna Farm",
+      "h": "Jackson Heights",
+      "b": "Queens",
+      "f": "h37a3a297d4.jpg",
+      "s": "You cannot tell the transmission from the devotion, and she maintains both. A Jackson Heights roof, the same cloth for flags and antennas, the highest point on the block"
+    },
+    {
+      "n": 1394,
+      "t": "The Heat Lightning",
+      "h": "Williamsburg",
+      "b": "Brooklyn",
+      "f": "h5cd64db1c0.jpg",
+      "s": "Silent lightning blooms behind the skyline on a breathless July night. Beers sweating on the rooftop, no thunder ever arriving"
+    },
+    {
+      "n": 1032,
+      "t": "The Closing Doors Sprint",
+      "h": "",
+      "b": "",
+      "f": "hee24801df3.jpg",
+      "s": "Down the stairs at a full sprint, messenger bag flying, one arm through the gap. The doors chime, the arm wins, the whole car pretends not to be impressed"
+    },
+    {
+      "n": 3148,
+      "t": "The Roof Wedding Crashers",
+      "h": "Bushwick",
+      "b": "Brooklyn",
+      "f": "h7d85593bb3.jpg",
+      "s": "Two roofs, one wedding, and beers raised across the tar. Bushwick, string lights next door, a couple toasting back at total strangers"
+    },
+    {
+      "n": 2153,
+      "t": "The Peace of the Platforms",
+      "h": "",
+      "b": "",
+      "f": "hfdee844bf6.jpg",
+      "s": "Rats and pigeons sign the treaty on a subway platform at dawn, the tower cat as neutral witness. Peace sealed with one shared bagel"
+    },
+    {
+      "n": 830,
+      "t": "The Community Garden Elder",
+      "h": "",
+      "b": "Manhattan",
+      "f": "h96a3c571d3.jpg",
+      "s": "Between two tenements she grew a country. Casita flag flying, tomatoes and collards thriving, every bloom in the garden keeping watch"
+    },
+    {
+      "n": 834,
+      "t": "The Locksmith",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "h2ffb3ba7b4.jpg",
+      "s": "The shop is the size of a closet and holds thousands of brass answers. Sparks fly off the wheel and bloom, every door in the city openable"
+    },
+    {
+      "n": 985,
+      "t": "The Courtroom Sketch Artist",
+      "h": "Tribeca",
+      "b": "Manhattan",
+      "f": "h168320c868.jpg",
+      "s": "Pastels flying in the gallery where no cameras are allowed. Her sketchboard blooms with a portrait more alive than the room it happened in"
+    },
+    {
+      "n": 1180,
+      "t": "The Kite Flyer",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "h02ee56f1dc.jpg",
+      "s": "From the hilltop meadow his hand built dragon kite writes calligraphy above the skyline. A crowd of strangers all looks up at once, which he considers payment"
+    }
+  ],
+  "flood": [
+    {
+      "n": 253,
+      "t": "Rockaway",
+      "h": "Rockaway Beach",
+      "b": "Queens",
+      "f": "hb964ddc15e.jpg",
+      "s": "Surfboards on the shuttle, projects behind the dunes. Rockaway is the city's beach and its afterthought"
+    },
+    {
+      "n": 3810,
+      "t": "The Beach Sand Arranged",
+      "h": "Rockaway Beach",
+      "b": "Queens",
+      "f": "hd716ae4422.jpg",
+      "s": "The sand spent all night on a design nobody asked for. Rockaway at low sun, ripple marks in a mandala, surfers stopped on the ramp"
+    },
+    {
+      "n": 800,
+      "t": "The Rockaway Surfer",
+      "h": "Rockaway Beach",
+      "b": "Queens",
+      "f": "hda8d447bc9.jpg",
+      "s": "The A train goes to the beach and the beach has a barrel. Golden hour glass, blooms inside the wave face, a surf town hiding inside a metropolis"
+    },
+    {
+      "n": 1232,
+      "t": "The Pedicab",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "hc8282d09a4.jpg",
+      "s": "Garlanded, fringed, chandeliers on batteries, flying through the park at dusk. The driver stands on the pedals like a charioteer and the passengers laugh into the wind"
+    },
+    {
+      "n": 3119,
+      "t": "The Sunnyside Back Room",
+      "h": "Sunnyside",
+      "b": "Queens",
+      "f": "h7087514717.jpg",
+      "s": "One fiddle starts and the whole bar turns around at once. Queens Boulevard, a back room, stout going still in every glass"
+    },
+    {
+      "n": 873,
+      "t": "The Bushwick Raver",
+      "h": "Bushwick",
+      "b": "Brooklyn",
+      "f": "h904cf17b56.jpg",
+      "s": "It is 6am, the sunglasses are on, and the bodega coffee is holy. Lasers still leaking from the doorway, glitter that will outlive us all"
+    },
+    {
+      "n": 2742,
+      "t": "The Upstairs Bowling League",
+      "h": "Jackson Heights",
+      "b": "Queens",
+      "f": "h0eabc6b524.jpg",
+      "s": "Every night at 3am, the ceiling hosts a tournament. The broom stays loaded, never fired"
+    },
+    {
+      "n": 875,
+      "t": "The Dive Bar Regular",
+      "h": "East Village",
+      "b": "Manhattan",
+      "f": "hae20592aee.jpg",
+      "s": "The corner stool holds his shape now. A beer and a shot in eternal formation, jukebox glow, the last thing on the block that never changed"
+    },
+    {
+      "n": 926,
+      "t": "The Bodega Awning",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "h9268a9ad63.jpg",
+      "s": "Groceries, lotto, hot food, cold beer, six fonts, zero lies. The yellow awning glows at night like a marquee for everything you need at 2am"
+    },
+    {
+      "n": 1271,
+      "t": "The Beer Garden",
+      "h": "Astoria",
+      "b": "Queens",
+      "f": "h8e0eb6e047.jpg",
+      "s": "A century of strangers becoming choirs at the long tables. Pitchers and pretzels under the lindens, an accordion appearing without warning"
+    }
+  ],
+  "bench": [
+    {
+      "n": 2978,
+      "t": "The Petal Lamp",
+      "h": "Bushwick",
+      "b": "Brooklyn",
+      "f": "h2876c0c2c9.jpg",
+      "s": "The street lamp on Suydam Street flowers at the head instead of lighting, and the petals hold a faint glow all night. When the repair truck comes, the whole block comes out to expl"
+    },
+    {
+      "n": 971,
+      "t": "The Bagel Roller",
+      "h": "Borough Park",
+      "b": "Brooklyn",
+      "f": "h10d52f1d2a.jpg",
+      "s": "His hands roll rings at blur speed while the kettle boils behind him. Hand rolled, kettle boiled, no shortcuts survive at this bench"
+    },
+    {
+      "n": 1113,
+      "t": "The Bialy",
+      "h": "Lower East Side",
+      "b": "Manhattan",
+      "f": "h5caced8484.jpg",
+      "s": "On brown paper, its onion center a dark garden at the heart of a pale sun. The bagel gets the press, the bialy keeps the faith"
+    },
+    {
+      "n": 4294,
+      "t": "The Bodega Dragon of Doyers Street",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "hf327fa777c.jpg",
+      "s": "A brass dragon the length of a baguette lives in the rafters. Down every night to count the register, breathing the pilot light that keeps the steamer perfect"
+    },
+    {
+      "n": 530,
+      "t": "Cookie Monster",
+      "h": "Upper West Side",
+      "b": "Manhattan (Sesame Street)",
+      "f": "h5fe6a80a9d.jpg",
+      "s": "He never learned restraint and the whole street loves him for it. The appetite, the crumbs, the blue fur that wants what it wants"
+    },
+    {
+      "n": 1009,
+      "t": "The Sidewalk Bookseller",
+      "h": "Greenwich Village",
+      "b": "Manhattan",
+      "f": "h5329cda19a.jpg",
+      "s": "Folding tables of used paperbacks under the trees, first editions guarded like relics. A philosopher at the till, every book already loved once"
+    },
+    {
+      "n": 5013,
+      "t": "The Autumn That Arrives Indoors",
+      "h": "Harlem",
+      "b": "Manhattan",
+      "f": "h2ad5d59b56.jpg",
+      "s": "Hallway maples go gold three weeks before the street does. A Harlem building, and the super who stopped fighting it now rakes the fourth floor"
+    },
+    {
+      "n": 928,
+      "t": "The 1972 Subway Map",
+      "h": "",
+      "b": "",
+      "f": "ha3b1ea5f6a.jpg",
+      "s": "The modernist map lifts its route lines off the paper into neon ribbons. Beautiful, legendary, and famously never quite where the streets are"
+    },
+    {
+      "n": 2518,
+      "t": "The London Plane",
+      "h": "Park Slope",
+      "b": "Brooklyn",
+      "f": "h4c77a8546c.jpg",
+      "s": "The official tree sheds its bark in camouflage puzzle pieces and lifts one sidewalk square like a hat. Look twice at the mottled patches, they map something"
+    },
+    {
+      "n": 2793,
+      "t": "The Plow Map Vigil",
+      "h": "Bayside",
+      "b": "Queens",
+      "f": "hc67a31ecc5.jpg",
+      "s": "A family in pajamas crowds one laptop at midnight, tracking the plow map street by street with the youngest posted at the window. The little arrow turns onto their block and the ro"
+    }
+  ],
+  "noise": [
+    {
+      "n": 2612,
+      "t": "The Seventeen Year Guest",
+      "h": "New Dorp",
+      "b": "Staten Island",
+      "f": "h944acd4419.jpg",
+      "s": "The cicada surfaced on Staten Island after seventeen years underground to find the block changed and the maple still there. Its first song rattled the porch screens with news from "
+    },
+    {
+      "n": 4228,
+      "t": "The Family Band Reunion Tour",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "hc40a93bfaa.jpg",
+      "s": "Everyone who ever held these instruments is in the band tonight. Three eras of the same nose over the same congas, a block dancing to a song fifty years thick"
+    },
+    {
+      "n": 3950,
+      "t": "The Machines at the Block Party",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "h68e5d49dc4.jpg",
+      "s": "Machines took the grill, the speakers and the sprinkler so the block could dance. Crown Heights at golden hour, an open hydrant, a street closed to traffic"
+    },
+    {
+      "n": 1675,
+      "t": "The Museum After Dark",
+      "h": "Prospect Park",
+      "b": "Brooklyn",
+      "f": "h56469b4539.jpg",
+      "s": "First Friday, a DJ in the sculpture atrium, cocktails among the marbles. The crowd dances under a Calder while the mummies downstairs pretend not to hear the bass"
+    },
+    {
+      "n": 788,
+      "t": "The Deliverista",
+      "h": "Lower East Side",
+      "b": "Manhattan",
+      "f": "h6d3ee17628.jpg",
+      "s": "Rain, red lights, four flights of stairs: dinner is coming anyway. The e-bike cuts through neon and the bag glows like treasure"
+    },
+    {
+      "n": 945,
+      "t": "The Moving Day Couch",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "h70f8998573.jpg",
+      "s": "Three friends, a fourth floor stairwell turn, and a couch that physics rejected. One directs while holding coffee, and the couch goes up anyway"
+    },
+    {
+      "n": 1135,
+      "t": "The Iceman",
+      "h": "Lower East Side",
+      "b": "Manhattan",
+      "f": "h484f5d4d5c.jpg",
+      "s": "Up the tenement stairs with a crystal block on his leather shoulder, tongs gleaming. Children trail behind him for chips of captured winter"
+    },
+    {
+      "n": 1176,
+      "t": "The Quinceañera",
+      "h": "",
+      "b": "",
+      "f": "he35209860d.jpg",
+      "s": "She descends the subway stairs in a glowing gown as her court holds the train. The commuters part and smile despite themselves, the tiara catching tunnel light"
+    },
+    {
+      "n": 1278,
+      "t": "The Fifth Floor Walkup",
+      "h": "East Village",
+      "b": "Manhattan",
+      "f": "h7497618cad.jpg",
+      "s": "Six grocery bags, a mattress, landing three of five. The banister offers nothing, the stairs keep spiraling"
+    },
+    {
+      "n": 1517,
+      "t": "The Broken Escalator",
+      "h": "",
+      "b": "",
+      "f": "he265828428.jpg",
+      "s": "A stopped escalator turns every rider into a stumbling comedian except one. The frozen stairs, the confused legs, the veteran gliding up like nothing changed"
+    }
+  ],
+  "archive": [
+    {
+      "n": 1166,
+      "t": "The Met Steps",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "h9eea26a724.jpg",
+      "s": "Lunch hour turns the museum steps into the city's amphitheater of sandwiches, first dates and pigeons. The banners ripple above and the show below never closes"
+    },
+    {
+      "n": 65,
+      "t": "The Hardware Store",
+      "h": "Greenpoint",
+      "b": "Citywide",
+      "f": "h7cbeb08bf1.jpg",
+      "s": "He finds the one screw you need in a store that fits none. The narrow aisles, the odd part, the guy who knows the fix"
+    },
+    {
+      "n": 1759,
+      "t": "The Human Fly",
+      "h": "Financial District",
+      "b": "Manhattan",
+      "f": "h5606ef7b3d.jpg",
+      "s": "He scales the skyscraper bare handed, hat still on, while ten thousand watch from below. At the twentieth floor ledge he pauses to wave, the ticker tape starting early"
+    },
+    {
+      "n": 1828,
+      "t": "The Durag",
+      "h": "Harlem",
+      "b": "Manhattan",
+      "f": "hdd1fa45736.jpg",
+      "s": "Silk catching golden hour on the stoop, waves in progress like a tide chart. The cape settling in the breeze, the block's own royalty at rest"
+    },
+    {
+      "n": 954,
+      "t": "The NYU Freshman",
+      "h": "Greenwich Village",
+      "b": "Manhattan",
+      "f": "h8057881cde.jpg",
+      "s": "Under the arch with a lanyard, a dorm cart, and the map upside down. Give it one semester, the city is already watching over him"
+    },
+    {
+      "n": 1532,
+      "t": "The Map Room",
+      "h": "Financial District",
+      "b": "Manhattan",
+      "f": "h1be9ce78a2.jpg",
+      "s": "The master map room holds every pipe, tunnel, and forgotten stream the city ever buried. One drawer marked with a small eye flower sits open an inch, glowing, while the cartographe"
+    },
+    {
+      "n": 1593,
+      "t": "The Directions Giver",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "h7e64c4d893.jpg",
+      "s": "A New Yorker stops mid stride to redraw a tourist's whole route with both hands. A second helper arrives to argue a better way, and the map becomes performance art"
+    },
+    {
+      "n": 1797,
+      "t": "The Luthier",
+      "h": "Greenwich Village",
+      "b": "Manhattan",
+      "f": "hdaabff0336.jpg",
+      "s": "Fifty year old maple becomes a violin in golden shaving light. The tap tone tested against his ear like a heartbeat, shavings curling like treble clefs"
+    },
+    {
+      "n": 2144,
+      "t": "The City Bloom Map",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "hd6091674fa.jpg",
+      "s": "The drawer with the eye flower symbol finally opens on a living map, every bloom in the city glowing. The pattern forms an iris around the first grate, and the cartographer sits do"
+    },
+    {
+      "n": 5788,
+      "t": "Lakshmi Ramaswamy, a woman who dresses specifically to defeat detection",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "h5fba5b3e2b.jpg",
+      "s": "Dressing to defeat detection has become a normal part of getting ready. The system returns the wrong name, and she keeps the printed receipt"
+    }
+  ],
+  "pocket": [
+    {
+      "n": 348,
+      "t": "Prospect Heights",
+      "h": "Prospect Heights",
+      "b": "Brooklyn",
+      "f": "h7528c82b77.jpg",
+      "s": "Museum on one side, Barclays on the other. Prospect Heights sits between old money and new noise"
+    },
+    {
+      "n": 1584,
+      "t": "The Stroller Grand Prix",
+      "h": "Upper West Side",
+      "b": "Manhattan",
+      "f": "hd9f7441f1a.jpg",
+      "s": "Two double wide strollers race for the museum's last elevator, parents with chariot eyes. The toddlers exchange solemn nods across the closing gap while a docent steps aside like a"
+    },
+    {
+      "n": 1581,
+      "t": "The Open Window January",
+      "h": "Inwood",
+      "b": "Manhattan",
+      "f": "hd33f8834b8.jpg",
+      "s": "The radiator rages beyond all control so the window opens to the snow. A tenant in shorts watches the flakes die a foot from the sill, the landlord's heat both gift and curse"
+    },
+    {
+      "n": 7826,
+      "t": "Priya Sengupta, a woman who sold her first piece tonight and is hiding in a stairwell",
+      "h": "Bushwick",
+      "b": "Brooklyn",
+      "f": "h743f0d2e6c.jpg",
+      "s": "Priya sold her first piece tonight and is hiding in a stairwell. A clipboard and a floor plan left on the desk"
+    },
+    {
+      "n": 1837,
+      "t": "The Fake Bodega",
+      "h": "Greenpoint",
+      "b": "Brooklyn",
+      "f": "h968ef81a4f.jpg",
+      "s": "A film set bodega built overnight, so perfect the neighbors try to shop there. Prop oranges refused to a confused regular, the cat auditioning itself into the movie"
+    },
+    {
+      "n": 3489,
+      "t": "The Bell Above the Door",
+      "h": "Greenpoint",
+      "b": "Brooklyn",
+      "f": "ha091eba3ef.jpg",
+      "s": "It rang his mother's name in brass and he could not move. Greenpoint doorway, a case of eggs in his arms, dust hanging in the light"
+    },
+    {
+      "n": 2323,
+      "t": "The Nine of Coffees",
+      "h": "Greenpoint",
+      "b": "Brooklyn",
+      "f": "h451f142901.jpg",
+      "s": "End of shift, counter wiped to a mirror, his own first cup of the day. Every stool holds the ghost of a good day's regular"
+    },
+    {
+      "n": 780,
+      "t": "The Rainbow Bagel",
+      "h": "Williamsburg",
+      "b": "Brooklyn",
+      "f": "h7c11dc0172.jpg",
+      "s": "Brooklyn invented a bagel that photographs better than it toasts. A tie dye halo over the counter, cream cheese clouds, zero regrets"
+    },
+    {
+      "n": 932,
+      "t": "The Everything Bagel",
+      "h": "Lower East Side",
+      "b": "Manhattan",
+      "f": "h8292d32f71.jpg",
+      "s": "Presented on deli paper like a crown jewel, seeds orbiting like a galaxy. Sesame, poppy, garlic: everything means everything"
+    },
+    {
+      "n": 1293,
+      "t": "The Hydrant Ticket",
+      "h": "Middle Village",
+      "b": "Queens",
+      "f": "h9c008ecfb6.jpg",
+      "s": "The ticket printer whirs and it might as well be fate. He sprints up the block waving a bag of bagels, one moment too late"
+    }
+  ],
+  "review": [
+    {
+      "n": 7812,
+      "t": "Aissatou Cisse, a gallery intern who understands it better than anyone there",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "h685ab9a1bb.jpg",
+      "s": "Aissatou is the intern who understands it better than anyone there. A van with the back doors open in the rain, loading"
+    },
+    {
+      "n": 5977,
+      "t": "Aileen Vitale, a teenager taught the filing system and taking it seriously",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "hbed1f646d0.jpg",
+      "s": "Proof in writing is the only kind she trusts, at seventeen. She opens her first box in a white hallway and starts a ledger"
+    },
+    {
+      "n": 16,
+      "t": "The Museum Curator",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "h940d3376d4.jpg",
+      "s": "She decides what the city calls art this season. The white wall, the label, the eye behind the hush"
+    },
+    {
+      "n": 486,
+      "t": "Jean-Michel Basquiat",
+      "h": "SoHo",
+      "b": "Manhattan (SoHo)",
+      "f": "h7cd065903a.jpg",
+      "s": "He tagged SAMO on downtown walls and ended up on museum ones. The crown, the neo-expressionism, the Brooklyn kid the market devoured"
+    },
+    {
+      "n": 626,
+      "t": "The Met Gala",
+      "h": "Central Park",
+      "b": "Manhattan (Upper East Side)",
+      "f": "h8acddc3374.jpg",
+      "s": "Fashion climbs the museum steps once a year to be judged. The theme, the carpet, the first Monday in May that stops the internet"
+    },
+    {
+      "n": 864,
+      "t": "The Pawn Shop Broker",
+      "h": "Lower East Side",
+      "b": "Manhattan",
+      "f": "h01c63958ed.jpg",
+      "s": "Under three golden orbs he appraises a trumpet without a flicker. Guitars and fur coats hanging like museum pieces, every object a former dream"
+    },
+    {
+      "n": 1561,
+      "t": "The Museum Mouse",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "h38886384e6.jpg",
+      "s": "A mouse lives behind a Dutch master and sits before the paintings at night like a season ticket holder. The guards agreed long ago not to see him, his whiskers silver in the Vermee"
+    },
+    {
+      "n": 1873,
+      "t": "The Midnight Sculpture",
+      "h": "Financial District",
+      "b": "Manhattan",
+      "f": "h2c06fd84d6.jpg",
+      "s": "A sculptor and friends unloaded a three ton bronze bull outside the exchange at 1am. Guerrilla art installed by forklift and nerve, the city waking to a gift nobody approved"
+    },
+    {
+      "n": 854,
+      "t": "The Honey Roasted Nuts Cart",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "he05c3f530d.jpg",
+      "s": "The smell reaches you three blocks before the cart does. A copper drum of honey roasted almonds, sweet smoke curling through Midtown"
+    },
+    {
+      "n": 1582,
+      "t": "The Line Cutter",
+      "h": "Lower East Side",
+      "b": "Manhattan",
+      "f": "h3ad6ae342d.jpg",
+      "s": "The ancient crime, mid commission, sliding past twelve rigid backs toward the bagel counter. One grandmother prepares a sentence that will be taught in schools"
+    }
+  ],
+  "garden": [
+    {
+      "n": 1470,
+      "t": "The Pollen Route",
+      "h": "",
+      "b": "",
+      "f": "h98d454bd9f.jpg",
+      "s": "Honeybees run the subway map for real, carrying iris pollen between boroughs. Each one trails a thread of light, and eye flowers open where they land"
+    },
+    {
+      "n": 1918,
+      "t": "The Viking Parade",
+      "h": "Bay Ridge",
+      "b": "Brooklyn",
+      "f": "hbcd23597ac.jpg",
+      "s": "The seventeenth of may in the far south of Brooklyn, bunads and little flags. A longboat float rolling past bagel shops, the old country's spring in the new one"
+    },
+    {
+      "n": 2003,
+      "t": "March in New York",
+      "h": "Woodside",
+      "b": "Queens",
+      "f": "h522d3c65ff.jpg",
+      "s": "Wind auditioning for april, green bagels and false springs. Coats opened then regretted, the year's first stoop sitters testing the light"
+    },
+    {
+      "n": 4767,
+      "t": "The Overlay Tailor",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "h57fe8e2f74.jpg",
+      "s": "She cuts the second self on the bias so it drapes instead of clinging. Clients weep at the fitting mirror because the version the city sees finally fits in the shoulders"
+    },
+    {
+      "n": 3431,
+      "t": "The Successor Cat",
+      "h": "Chinatown",
+      "b": "Manhattan",
+      "f": "h6982f8d11a.jpg",
+      "s": "A new cat is placed in the old cat's exact spot for review. A bodega counter, four regulars, a very serious inspection"
+    },
+    {
+      "n": 2186,
+      "t": "The Open Outcry",
+      "h": "Financial District",
+      "b": "Manhattan",
+      "f": "hfe3298e3a6.jpg",
+      "s": "A sea of jackets roaring bids with fingers flying, paper snow at the close. Capitalism performed as full contact theater"
+    },
+    {
+      "n": 2591,
+      "t": "The Taken Flyer",
+      "h": "East Village",
+      "b": "Manhattan",
+      "f": "h6c3d04ec70.jpg",
+      "s": "One commuter accepts the flyer nobody takes, and the promoter's whole posture repairs itself. A small mercy, a cold corner, an even trade"
+    },
+    {
+      "n": 2803,
+      "t": "The Lap Around Liberty",
+      "h": "",
+      "b": "Manhattan",
+      "f": "h234adc3844.jpg",
+      "s": "Wilbur Wright banks his flyer around the Statue of Liberty in 1909 with a canoe strapped underneath, just in case. The torch does not flinch"
+    },
+    {
+      "n": 2487,
+      "t": "The Bodega Nod",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "h556c331c22.jpg",
+      "s": "The regular enters, the order begins unbidden, one nod carries the whole contract. The cat approves from the chip rack throne"
+    },
+    {
+      "n": 3772,
+      "t": "The Bathroom Mirror Wrote",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "hd1faf40b29.jpg",
+      "s": "The steam came up in her mother's handwriting, one week after moving in. Tile, a bare bulb, a message that will be gone by morning"
+    }
+  ],
+  "release": [
+    {
+      "n": 523,
+      "t": "King Kong",
+      "h": "Flatiron",
+      "b": "Manhattan (Empire State)",
+      "f": "h0c097fcc75.jpg",
+      "s": "He climbed the tallest building for love and the planes answered. The giant, the biplanes, the beast the city could not keep"
+    },
+    {
+      "n": 528,
+      "t": "Oscar the Grouch",
+      "h": "Upper West Side",
+      "b": "Manhattan (the curb)",
+      "f": "hd4e2d22486.jpg",
+      "s": "He lives in a can and loves the city's garbage more than you do. The lid, the grouch, the only New Yorker honest about the trash"
+    },
+    {
+      "n": 962,
+      "t": "The Panorama",
+      "h": "Flushing Meadows",
+      "b": "Queens",
+      "f": "h23aa5de0dc.jpg",
+      "s": "All five boroughs in miniature under a god's eye view. A tiny plane forever landing at a tiny LaGuardia, the city small enough to love at once"
+    },
+    {
+      "n": 1045,
+      "t": "The Placebo Button",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "h45fe977447.jpg",
+      "s": "Worn silver by a million desperate presses and wired to absolutely nothing. He presses it seventeen times anyway, and the city loves him for it"
+    },
+    {
+      "n": 2582,
+      "t": "The Beautiful Map",
+      "h": "",
+      "b": "",
+      "f": "hff0ec8c9db.jpg",
+      "s": "The 1972 diagram straightened every route into perfect angles, and the riders declared it looked nothing like the city. They argued about it so long it became the city"
+    },
+    {
+      "n": 4863,
+      "t": "The Toolbelt of the Sidewalk Surgeon",
+      "h": "Crown Heights",
+      "b": "Brooklyn",
+      "f": "h5d9a58fc1b.jpg",
+      "s": "She repairs the street itself with tools that are in no catalogue. No city record of her, a shrine on the block, and a corner that has not cracked in eleven winters"
+    },
+    {
+      "n": 1841,
+      "t": "Rat Rock",
+      "h": "Central Park",
+      "b": "Manhattan",
+      "f": "hfca65cbe31.jpg",
+      "s": "Climbers chalk up on the park's great boulder at dusk, crash pads like lily pads below. A glacier's gift moonlighting as the city's smallest mountain"
+    },
+    {
+      "n": 853,
+      "t": "The Umbrella Man",
+      "h": "Midtown",
+      "b": "Manhattan",
+      "f": "h0aabcd348a.jpg",
+      "s": "He materializes at the first raindrop like the city summoned him. Twenty black umbrellas, five dollars each, dry salvation on every corner"
+    },
+    {
+      "n": 2481,
+      "t": "The Piragua Man",
+      "h": "Washington Heights",
+      "b": "Manhattan",
+      "f": "h6d10f2453a.jpg",
+      "s": "The ice pyramid catches july sun and the syrup bottles line up like stained glass. The scrape and pour is watched with liturgical attention, as it should be"
+    },
+    {
+      "n": 48,
+      "t": "The Noise Complaint",
+      "h": "Williamsburg",
+      "b": "Citywide",
+      "f": "h530ce534d0.jpg",
+      "s": "He loves the block and files against it every weekend. The shush, the papers, the neighbor who calls it in by the bridge"
+    }
+  ]
+}

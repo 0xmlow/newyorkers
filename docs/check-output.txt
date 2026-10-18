@@ -1,0 +1,126 @@
+
+> check
+> node checks/validate.mjs
+
+{
+  "date": "2026-10-18",
+  "roomCount": 16,
+  "uniqueCatalogArt": 190,
+  "displayedArt": 160,
+  "assetReferences": 216,
+  "rooms": [
+    {
+      "id": "intake",
+      "meshesBeforeAsyncAssets": 128,
+      "verticesBeforeAsyncAssets": 15540,
+      "portals": 2,
+      "ticks": 37
+    },
+    {
+      "id": "jury",
+      "meshesBeforeAsyncAssets": 90,
+      "verticesBeforeAsyncAssets": 10033,
+      "portals": 2,
+      "ticks": 0
+    },
+    {
+      "id": "rent",
+      "meshesBeforeAsyncAssets": 51,
+      "verticesBeforeAsyncAssets": 4603,
+      "portals": 2,
+      "ticks": 0
+    },
+    {
+      "id": "deli",
+      "meshesBeforeAsyncAssets": 90,
+      "verticesBeforeAsyncAssets": 21970,
+      "portals": 3,
+      "ticks": 0
+    },
+    {
+      "id": "wash",
+      "meshesBeforeAsyncAssets": 180,
+      "verticesBeforeAsyncAssets": 29746,
+      "portals": 2,
+      "ticks": 1
+    },
+    {
+      "id": "lost",
+      "meshesBeforeAsyncAssets": 47,
+      "verticesBeforeAsyncAssets": 1893,
+      "portals": 2,
+      "ticks": 1
+    },
+    {
+      "id": "appeals",
+      "meshesBeforeAsyncAssets": 109,
+      "verticesBeforeAsyncAssets": 14212,
+      "portals": 3,
+      "ticks": 0
+    },
+    {
+      "id": "sky",
+      "meshesBeforeAsyncAssets": 95,
+      "verticesBeforeAsyncAssets": 2280,
+      "portals": 2,
+      "ticks": 1
+    },
+    {
+      "id": "flood",
+      "meshesBeforeAsyncAssets": 91,
+      "verticesBeforeAsyncAssets": 7281,
+      "portals": 2,
+      "ticks": 1
+    },
+    {
+      "id": "bench",
+      "meshesBeforeAsyncAssets": 82,
+      "verticesBeforeAsyncAssets": 2008,
+      "portals": 2,
+      "ticks": 8
+    },
+    {
+      "id": "noise",
+      "meshesBeforeAsyncAssets": 94,
+      "verticesBeforeAsyncAssets": 5032,
+      "portals": 2,
+      "ticks": 1
+    },
+    {
+      "id": "archive",
+      "meshesBeforeAsyncAssets": 83,
+      "verticesBeforeAsyncAssets": 14569,
+      "portals": 2,
+      "ticks": 0
+    },
+    {
+      "id": "pocket",
+      "meshesBeforeAsyncAssets": 59,
+      "verticesBeforeAsyncAssets": 5324,
+      "portals": 3,
+      "ticks": 0
+    },
+    {
+      "id": "review",
+      "meshesBeforeAsyncAssets": 51,
+      "verticesBeforeAsyncAssets": 1224,
+      "portals": 3,
+      "ticks": 0
+    },
+    {
+      "id": "garden",
+      "meshesBeforeAsyncAssets": 94,
+      "verticesBeforeAsyncAssets": 2296,
+      "portals": 2,
+      "ticks": 1
+    },
+    {
+      "id": "release",
+      "meshesBeforeAsyncAssets": 86,
+      "verticesBeforeAsyncAssets": 21293,
+      "portals": 2,
+      "ticks": 0
+    }
+  ],
+  "scope": "CPU scene factories and finite geometry; not GPU, texture decode or browser evidence."
+}

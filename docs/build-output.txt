@@ -1,0 +1,18 @@
+
+> build
+> node tools/catalog.mjs && vite build
+
+Wrote curated catalog and non-WebGL collection
+vite v8.0.13 building client environment for production...
+[2Ktransforming...✓ 18 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              13.92 kB │ gzip:   4.57 kB
+dist/assets/draco_wasm_wrapper-fZCQGLGb.js   58.45 kB
+dist/assets/draco_wasm_wrapper-DxJM36Ib.js   58.76 kB
+dist/assets/draco_decoder-Z1_iN-Ht.wasm     192.42 kB │ gzip:  64.11 kB
+dist/assets/draco_decoder-C32yEggz.wasm     285.74 kB │ gzip:  89.66 kB
+dist/assets/draco_decoder-fzg4nYZr.js       719.41 kB
+dist/assets/index-CmS7XsDf.js               850.00 kB │ gzip: 229.56 kB
+
+✓ built in 1.03s
