@@ -260,7 +260,17 @@ function frame(dt) {
   renderFrame();
   if (ENV.on && ENV.probe > 0 && --ENV.probe === 0) { try { const gl = renderer.getContext(), px = new Uint8Array(4); let dark = 0; [[0.5, 0.3], [0.3, 0.35], [0.7, 0.35], [0.5, 0.5], [0.2, 0.25]].forEach(([x, y]) => { gl.readPixels(Math.floor(gl.drawingBufferWidth * x), Math.floor(gl.drawingBufferHeight * y), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); if (px[0] + px[1] + px[2] < 3) dark++; }); if (dark >= 4) { scene.environment = null; ENV.on = false; console.warn('BASEMENT: reflections disabled, this GPU rendered them black'); } } catch (e) { } }
 }
-function loop(now) { const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); }
+// ---------- power ----------
+// A visitor wrote that the site turned their fans into a jet engine. A gallery that draws 120 frames a second at two
+// device pixels, forever, with nobody touching it, is one. The loop draws at most 60 a second, 30 once nothing has been
+// touched for twenty seconds, and about six while the window is not the one in front. Everything moves on dt.
+const POWER = { last: performance.now(), drawn: 0, blurred: !document.hasFocus(), frames: 0 };
+const touched = () => { POWER.last = performance.now(); };
+for (const ev of ['keydown', 'mousemove', 'mousedown', 'touchstart', 'touchmove', 'wheel']) addEventListener(ev, touched, { passive: true });
+addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('focus', () => { POWER.blurred = false; touched(); });
+function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
+window.__POWER = POWER; window.__powerBudget = powerBudget;
+function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFrame(loop); return; } POWER.drawn = now; POWER.frames++; const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); }
 
 /* ---------------- boot ---------------- */
 buildCards(); teleport(0, 22.2, PI); P.pitch = 0.02;
