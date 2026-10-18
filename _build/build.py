@@ -18,6 +18,7 @@ js = rd('engine.js') + '\n' + rd('world.js') + '\n' + rd('systems.js') + '\n' + 
 page = f"""<!doctype html>
 <html lang="en">
 <head>
+<script src="phone-gpu.js" data-cap="512"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>YOUR MOM'S BASEMENT</title>
