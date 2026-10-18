@@ -221,6 +221,8 @@ def bundle(out=None):
     bad = re.findall(r"[–—→]", html)
     if bad: sys.exit(f"house rule: dashes or arrows in the page: {bad}")
     open(os.path.join(OUTD, "index.html"), "w").write(html)
+    # on phones this halves any image texture over 512 at upload, so the page fits the memory iOS gives a tab
+    clone(os.path.join(ROOT, "src", "phone-gpu.js"), os.path.join(OUTD, "phone-gpu.js"))
     print("bundle:", os.path.getsize(os.path.join(OA, "gallery.js")) // 1024, "KB", "into", OUTD)
 
 if __name__ == "__main__":
