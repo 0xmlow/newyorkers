@@ -85,6 +85,9 @@ body.riding #bar,body.riding #help,body.riding #cross{display:none}body.riding #
 @media (pointer:coarse){#joy{display:block}}
 /* phones (2026-10-18): the bar wrapped across the whole width and its first row sat under the joystick; it keeps right of it */
 @media (pointer:coarse) and (max-width:760px){#bar{max-width:calc(100vw - 162px)}}
+/* phones (2026-10-18): the header had no backing, so its grey line sat on the bright ceiling, wrapped and ran off the edge.
+   A dark plate the size of its words, a brighter subtitle that wraps rather than run off. */
+@media (max-width:760px){#top{right:auto;max-width:calc(100vw - 24px);gap:12px;padding:9px 14px 9px 12px;background:rgba(8,13,22,.78);border:1px solid rgba(236,232,221,.16);border-radius:12px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}#zone{padding-left:12px;min-width:0;text-shadow:none}#zone b{font-size:18px}#zone small{color:rgba(236,232,221,.82);letter-spacing:.12em;line-height:1.45}}
 @media (max-width:760px){#enter:before{background:linear-gradient(180deg,rgba(5,8,14,.2) 0%,rgba(5,8,14,.72) 38%,rgba(5,8,14,.97) 62%)}#bar [data-a=light]{display:none}}
 @media (prefers-reduced-motion:reduce){#tick span{animation:none}*{transition:none!important}}
 </style>
@@ -204,7 +207,7 @@ function mergeChamps(j){
 var canvas = $("gl");
 var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, powerPreference: "high-performance"});
 var MOBILE = matchMedia("(pointer:coarse)").matches || innerWidth < 760;
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, MOBILE ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));   // two device pixels on a 4K laptop screen is a space heater; 1.5 reads the same
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1753,8 +1756,18 @@ function step(dt){
   if (!presetLocked && frame % 600 === 0) { var ap = autoPreset(); if (ap !== preset) setPreset(ap); }
 }
 var gov = {avg: 16, slow: 0, pr: renderer.getPixelRatio()};
+// ---------- power ----------
+// A visitor wrote that the site turned their fans into a jet engine. A gallery that draws 120 frames a second at two
+// device pixels, forever, with nobody touching it, is one. The loop draws at most 60 a second, 30 once nothing has been
+// touched for twenty seconds, and about six while the window is not the one in front. Everything moves on dt.
+var POWER = { last: performance.now(), drawn: 0, blurred: !document.hasFocus(), frames: 0 };
+var touched = function () { POWER.last = performance.now(); };
+['keydown', 'mousemove', 'mousedown', 'touchstart', 'touchmove', 'wheel'].forEach(function (ev) { addEventListener(ev, touched, { passive: true }); });
+addEventListener('blur', function () { POWER.blurred = true; }); addEventListener('focus', function () { POWER.blurred = false; touched(); });
+function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
+window.__POWER = POWER; window.__powerBudget = powerBudget;
 function loop(){
-  requestAnimationFrame(loop); var dt = clock.getDelta(); if (document.hidden) return;
+  requestAnimationFrame(loop); var nowMs = performance.now(); if (nowMs - POWER.drawn < powerBudget()) return; POWER.drawn = nowMs; POWER.frames++; var dt = clock.getDelta(); if (document.hidden) return;
   step(dt); if (composer) composer.render(); else renderer.render(scene, camera);
   // slow machines lose sharpness, not frames: bloom goes first, then resolution, to a floor
   gov.avg += (dt * 1000 - gov.avg) * .05; if (gov.avg > 23) gov.slow++; else gov.slow = Math.max(0, gov.slow - 1);
