@@ -83,6 +83,8 @@ body.riding #bar,body.riding #help,body.riding #cross{display:none}body.riding #
 #joy{position:fixed;left:18px;bottom:50px;width:116px;height:116px;border-radius:50%;background:rgba(8,13,22,.4);border:1px solid rgba(236,232,221,.22);z-index:6;display:none;touch-action:none}
 #joy i{position:absolute;left:38px;top:38px;width:40px;height:40px;border-radius:50%;background:rgba(236,232,221,.4)}
 @media (pointer:coarse){#joy{display:block}}
+/* phones (2026-10-18): the bar wrapped across the whole width and its first row sat under the joystick; it keeps right of it */
+@media (pointer:coarse) and (max-width:760px){#bar{max-width:calc(100vw - 162px)}}
 @media (max-width:760px){#enter:before{background:linear-gradient(180deg,rgba(5,8,14,.2) 0%,rgba(5,8,14,.72) 38%,rgba(5,8,14,.97) 62%)}#bar [data-a=light]{display:none}}
 @media (prefers-reduced-motion:reduce){#tick span{animation:none}*{transition:none!important}}
 </style>
