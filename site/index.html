@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BIGGER ON THE INSIDE · NEW YORKERS by MLow</title>
+<meta name="description" content="One New York block where every door opens onto a room far too big for the building: a bodega aisle that never ends, a walk-up where every floor is the fifth, an Ames room studio, a laundromat whose dryers look into other rooms, a subway car that rolls around you and a roof where the city folds over the sky. NEW YORKERS by MLow.">
+<style>
+@font-face{font-family:Archivo;src:url(fonts/ArchivoNarrow-500.woff2) format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:Archivo;src:url(fonts/ArchivoNarrow-700.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:Plex;src:url(fonts/IBMPlexMono-400.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Plex;src:url(fonts/IBMPlexMono-600.woff2) format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-400i.woff2) format('woff2');font-style:italic;font-display:swap}
+:root{--void:#02040c;--navy:#06163a;--cobalt:#2962ff;--cyan:#00e5ff;--violet:#6f23a8;--pink:#ff2e63;--bone:#f0f4f8;--copper:#be854c;--glass:rgba(4,10,28,.74);--line:rgba(0,229,255,.22)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--void);color:var(--bone);font-family:Archivo,'Arial Narrow',sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+#scene{position:fixed;inset:0}#scene canvas{display:block;touch-action:none;cursor:grab}#scene canvas:active{cursor:grabbing}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.panel{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:4px}
+.kick{font-family:Plex,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
+#title{position:fixed;left:18px;top:18px;padding:14px 16px;max-width:320px}
+#title h1{font-weight:700;font-size:28px;line-height:.95;margin:6px 0 6px;letter-spacing:-.01em}
+#title h1 em{font-family:Serif,serif;font-style:italic;font-weight:400;color:var(--pink);font-size:1.12em}
+#where{font-family:Plex,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9fb4d8}
+#side{position:fixed;right:18px;top:18px;width:230px;display:flex;flex-direction:column;gap:8px}
+#views{padding:10px;display:flex;flex-direction:column;gap:5px}
+#views button{text-align:left;padding:8px 10px;border:1px solid rgba(240,244,248,.12);border-radius:3px;font-size:14px}
+#views button b{font-family:Plex,monospace;font-weight:600;font-size:11px;color:var(--cyan);margin-right:6px}
+#views button:hover,#views button:focus-visible{border-color:var(--pink);outline:none}
+#tools{display:flex;gap:8px}
+#tools button{flex:1;padding:10px;font-family:Plex,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+#tools button:hover{border-color:var(--pink)}
+#hud{position:fixed;left:50%;top:18px;transform:translateX(-50%);font-family:Plex,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone);text-shadow:0 1px 3px #000;white-space:nowrap}
+#hint{position:fixed;left:18px;bottom:16px;font-family:Plex,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#7f93b8}
+#note{position:fixed;left:50%;bottom:44px;transform:translate(-50%,10px);opacity:0;transition:.4s;padding:11px 16px;font-size:16px;pointer-events:none;max-width:min(560px,calc(100vw - 32px));text-align:center}
+#note.on{opacity:1;transform:translate(-50%,0)}
+#walk{position:fixed;right:18px;bottom:90px;display:flex;flex-direction:column;gap:6px}
+#walk button{width:46px;height:46px;font-size:18px}
+@media (hover:hover) and (pointer:fine){#walk{display:none}}
+#map,#card,#all{position:fixed;inset:0;background:rgba(2,4,12,.78);display:grid;place-items:center;padding:16px;z-index:5}
+#map[hidden],#card[hidden],#all[hidden]{display:none}
+.box{width:min(880px,100%);max-height:100%;overflow:auto;padding:18px}
+#rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:12px}
+#rooms button{padding:14px;border:1px solid var(--line);border-radius:3px;text-align:left;font-size:17px;font-weight:700}
+#rooms button.on{background:var(--pink);border-color:var(--pink)}
+#card img{width:100%;display:block;border-radius:2px}
+#card h2{font-weight:700;font-size:26px;margin:14px 0 4px}
+#card p{color:#c3cede;line-height:1.55;font-size:15px}
+#card a,#all a{color:var(--cyan)}
+.x{float:right;font-family:Plex,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--line);border-radius:2px}
+#all .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+#all .grid a{text-decoration:none;color:var(--bone);font-size:14px}
+#all .grid img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:2px}
+#all .grid span{display:block;font-family:Plex,monospace;font-size:10px;color:#8fa0bf;margin-top:6px}
+#curtain{position:fixed;inset:0;background:var(--void);display:grid;place-items:center;z-index:9;transition:opacity .8s}
+#curtain.up{opacity:0;pointer-events:none}
+#curtain .in{text-align:center}#curtain h2{font-weight:700;font-size:44px;margin:10px 0}#curtain h2 em{font-family:Serif,serif;font-weight:400;color:var(--pink)}
+#bar{width:220px;height:2px;background:rgba(240,244,248,.15);margin:18px auto 0}#bar i{display:block;height:100%;width:0;background:var(--cyan);transition:width .3s}
+.shot #title,.shot #side,.shot #hud,.shot #hint,.shot #note,.shot #walk,.shot #curtain{display:none!important}
+.nogl #curtain{display:none}
+@media (max-width:760px){
+  #title{left:10px;top:10px;right:80px;max-width:none;padding:9px 12px}
+  #title h1{font-size:19px;margin:2px 0}#title .kick{display:none}
+  #side{left:10px;right:10px;top:auto;bottom:10px;width:auto}
+  #views{flex-direction:row;overflow-x:auto;padding:6px;scrollbar-width:none}#views::-webkit-scrollbar{display:none}
+  #views button{flex:0 0 auto;white-space:nowrap;font-size:13px}
+  #hint{display:none}#hud{top:auto;bottom:128px;font-size:10px}
+  #note{bottom:170px;font-size:14px}
+  #walk{right:10px;bottom:auto;top:84px}
+}
+</style>
+  <script type="module" crossorigin src="./js/index-10GU28-I.js"></script>
+</head>
+<body>
+<div id="scene" aria-label="A walkable New York block"></div>
+<header id="title" class="panel"><div class="kick">NEW YORKERS by MLow</div><h1>Bigger on <em>the inside</em></h1><div id="where"></div></header>
+<div id="hud"></div>
+<aside id="side">
+  <nav id="views" class="panel" aria-label="Viewpoints in this room"></nav>
+  <div id="tools"><button id="mapbtn" class="panel">Rooms</button><button id="allbtn" class="panel">All works</button></div>
+</aside>
+<div id="hint">Drag to look . WASD to walk . Click the floor to go there . Doors are real</div>
+<div id="walk"><button id="fwd" class="panel" aria-label="Walk forward">&#8593;</button><button id="back" class="panel" aria-label="Walk back">&#8595;</button></div>
+<div id="note" class="panel" role="status"></div>
+<div id="map" hidden role="dialog" aria-modal="true"><div class="box panel"><button class="x">Close</button><div class="kick">The block . every door</div><div id="rooms"></div></div></div>
+<div id="card" hidden role="dialog" aria-modal="true"><div class="box panel"><button class="x">Close</button><div class="kick num"></div><img alt=""><h2></h2><p></p><a target="_top">Open the full piece</a></div></div>
+<div id="all" hidden role="dialog" aria-modal="true"><div class="box panel"><button class="x">Close</button><div class="kick">Bigger on the inside . every work on the walls</div><div class="grid"></div></div></div>
+<div id="curtain"><div class="in"><div class="kick">NEW YORKERS by MLow</div><h2>Bigger on <em>the inside</em></h2><div class="kick" style="color:#9fb4d8">Space is the one luxury in New York. Online it is free.</div><div id="bar"><i></i></div></div></div>
+</body>
+</html>

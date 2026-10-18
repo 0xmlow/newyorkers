@@ -1,0 +1,2055 @@
+{
+ "art": {
+  "bodega": [
+   {
+    "n": 932,
+    "t": "The Everything Bagel",
+    "story": "Presented on deli paper like a crown jewel, seeds orbiting like a galaxy. Sesame, poppy, garlic: everything means everything",
+    "ar": 1.776,
+    "f": "art/h8292d32f71.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 780,
+    "t": "The Rainbow Bagel",
+    "story": "Brooklyn invented a bagel that photographs better than it toasts. A tie dye halo over the counter, cream cheese clouds, zero regrets",
+    "ar": 1.776,
+    "f": "art/h7c11dc0172.jpg",
+    "place": "Williamsburg"
+   },
+   {
+    "n": 971,
+    "t": "The Bagel Roller",
+    "story": "His hands roll rings at blur speed while the kettle boils behind him. Hand rolled, kettle boiled, no shortcuts survive at this bench",
+    "ar": 1.776,
+    "f": "art/h10d52f1d2a.jpg",
+    "place": "Borough Park"
+   },
+   {
+    "n": 1113,
+    "t": "The Bialy",
+    "story": "On brown paper, its onion center a dark garden at the heart of a pale sun. The bagel gets the press, the bialy keeps the faith",
+    "ar": 1.776,
+    "f": "art/h5caced8484.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 1015,
+    "t": "The Dollar Dumpling",
+    "story": "Five dumplings for two dollars and a spatula moving too fast to see. Steam fogs the window where the line snakes out the door, the best deal left in New York",
+    "ar": 1.776,
+    "f": "art/h319eac1fa5.jpg",
+    "place": "Chinatown"
+   },
+   {
+    "n": 550,
+    "t": "Bodega Cat",
+    "story": "He owns the bodega and lets the humans think they run it. The counter perch, the mouser, the boss the health code ignores",
+    "ar": 1.776,
+    "f": "art/hf7e2b10e01.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 552,
+    "t": "The Bacon Egg and Cheese",
+    "story": "The great equalizer comes wrapped in foil for three bucks. The salt pepper ketchup, the deli grill, the breakfast that unites every borough",
+    "ar": 1.776,
+    "f": "art/h322e1af4ae.jpg",
+    "place": "Ridgewood"
+   },
+   {
+    "n": 553,
+    "t": "The Chopped Cheese",
+    "story": "Uptown answered the cheesesteak and won the argument. The griddle, the hero roll, the bodega classic the rest of the city stole",
+    "ar": 1.776,
+    "f": "art/h23e0cf4bbe.jpg",
+    "place": "Harlem"
+   },
+   {
+    "n": 556,
+    "t": "Katz's Delicatessen",
+    "story": "Hand-carved pastrami and a ticket you had better not lose. The rye, the counter, the booth a movie made famous",
+    "ar": 1.776,
+    "f": "art/h825b6a36e3.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 779,
+    "t": "The Deli Coffee Cup",
+    "story": "We are happy to serve you, and it means it. Blue and gold on a bodega counter at dawn, steam rising like a hymn",
+    "ar": 1.776,
+    "f": "art/h4ea07c5559.jpg",
+    "place": "Ridgewood"
+   },
+   {
+    "n": 788,
+    "t": "The Deliverista",
+    "story": "Rain, red lights, four flights of stairs: dinner is coming anyway. The e-bike cuts through neon and the bag glows like treasure",
+    "ar": 1.776,
+    "f": "art/h6d3ee17628.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 816,
+    "t": "The Bodega Chandelier",
+    "story": "Somebody hung a crystal chandelier over the chopped cheese and it was correct. Cathedral light in a bodega, the cat asleep beneath the miracle",
+    "ar": 1.776,
+    "f": "art/h7e54c2911f.jpg",
+    "place": "Inwood"
+   },
+   {
+    "n": 826,
+    "t": "The Kosher Deli Counterman",
+    "story": "The pastrami is sliced with surgical devotion and no small talk. Pickle barrels like organ pipes, steam on the glass, lean means lean",
+    "ar": 1.776,
+    "f": "art/hae8cb5edaa.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 850,
+    "t": "The Cat Colony Caretaker",
+    "story": "Every dawn twelve cats emerge from the shadows like a royal court because she never missed a day. Neat dishes behind the warehouse, no applause expected",
+    "ar": 1.776,
+    "f": "art/h6d989711a0.jpg",
+    "place": "Brooklyn"
+   },
+   {
+    "n": 860,
+    "t": "The Candy Table Kid",
+    "story": "The candy bars are arranged like a jewelry counter because presentation matters. School tie loosened, honest eyes, a CEO in training on the platform",
+    "ar": 1.776,
+    "f": "art/he09147d942.jpg",
+    "place": ""
+   },
+   {
+    "n": 868,
+    "t": "The Seltzer Man",
+    "story": "He carries the last wooden crate of siphon bottles up the stoop like an heirloom. Blue and green glass, real pressure, a whole trade down to one man",
+    "ar": 1.776,
+    "f": "art/h9ee3e7d585.jpg",
+    "place": "Canarsie"
+   },
+   {
+    "n": 914,
+    "t": "The Catacomb Keeper",
+    "story": "He walks the brick vaults beneath Old St. Patrick's by candlelight. The names of old New York carved in marble, kept company, the flame breathing",
+    "ar": 1.776,
+    "f": "art/hc735f31461.jpg",
+    "place": "Green-Wood Cemetery"
+   },
+   {
+    "n": 926,
+    "t": "The Bodega Awning",
+    "story": "Groceries, lotto, hot food, cold beer, six fonts, zero lies. The yellow awning glows at night like a marquee for everything you need at 2am",
+    "ar": 1.776,
+    "f": "art/h9268a9ad63.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 935,
+    "t": "The Egg Cream",
+    "story": "No egg, no cream, and no better argument for Brooklyn. Seltzer strikes the chocolate into a white foam crown at a marble fountain",
+    "ar": 1.776,
+    "f": "art/h7475434bb2.jpg",
+    "place": "Brownsville"
+   },
+   {
+    "n": 949,
+    "t": "The Soda Jerk",
+    "story": "The pour starts at shoulder height because an audience is watching. Bow tie, orbiting scoops, chrome mirrors doubling every flourish into a matinee",
+    "ar": 1.776,
+    "f": "art/ha41783840a.jpg",
+    "place": "Greenwich Village"
+   },
+   {
+    "n": 1071,
+    "t": "The Window Cat",
+    "story": "Loafed between the lace curtains and the spider plant, surveilling the block with municipal authority. Nothing happens on this street without being seen",
+    "ar": 1.776,
+    "f": "art/h7d632a70e7.jpg",
+    "place": "Park Slope"
+   },
+   {
+    "n": 1110,
+    "t": "The Knish",
+    "story": "Golden off the boardwalk, split open with a stripe of mustard laid like a boulevard. Deli paper for a throne, steam for a crown",
+    "ar": 1.776,
+    "f": "art/h36248fb356.jpg",
+    "place": "Coney Island"
+   },
+   {
+    "n": 1117,
+    "t": "The Bodega Roses",
+    "story": "Plastic wrapped under fluorescent light at 2am, ten dollars of last chance romance. The wrap crinkles like stained glass, and every rose watches you decide",
+    "ar": 1.776,
+    "f": "art/h733f474cba.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 1158,
+    "t": "The Digester Eggs",
+    "story": "Eight silver eggs glowing at blue hour in Greenpoint like a landed fleet. They do the city's dirtiest work and dress the best doing it",
+    "ar": 1.776,
+    "f": "art/h5d6c5dea46.jpg",
+    "place": "Brooklyn"
+   },
+   {
+    "n": 1171,
+    "t": "The Counter Homework",
+    "story": "Fractions on the bodega counter beside the register while his mother works the late shift. The cat guards the pencil case and the customer waits kindly, this is a classroom",
+    "ar": 1.776,
+    "f": "art/h397845ad3f.jpg",
+    "place": "Inwood"
+   },
+   {
+    "n": 1175,
+    "t": "The Coffee Regular",
+    "story": "Light and two sugars, poured before he asks, the cup sliding across marble to hands that have received it ten thousand mornings. Steam writes the whole friendship between them",
+    "ar": 1.776,
+    "f": "art/h4b86519210.jpg",
+    "place": "Sunnyside"
+   },
+   {
+    "n": 1184,
+    "t": "The Appetizing Counter",
+    "story": "He slices the lox into translucent silk pages behind glass cases of whitefish and belly cuts. Wax paper folded like origami, the same order four generations deep",
+    "ar": 1.776,
+    "f": "art/h03f3670bcc.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 1187,
+    "t": "The Namesake Sandwich",
+    "story": "The owner chalks a new sandwich onto the board while the honoree stands overwhelmed and the shop applauds. A neighborhood knighthood, mustard included",
+    "ar": 1.776,
+    "f": "art/h174109e35f.jpg",
+    "place": "Woodside"
+   }
+  ],
+  "walkup": [
+   {
+    "n": 1278,
+    "t": "The Fifth Floor Walkup",
+    "story": "Six grocery bags, a mattress, landing three of five. The banister offers nothing, the stairs keep spiraling",
+    "ar": 1.776,
+    "f": "art/h7497618cad.jpg",
+    "place": "East Village"
+   },
+   {
+    "n": 899,
+    "t": "The Clanging Radiator",
+    "story": "At 3am it performs the full symphony: shriek, drum, encore. Steam screams from the valve while the tenant stands silhouetted, defeated by warmth",
+    "ar": 1.776,
+    "f": "art/h35cce7c86e.jpg",
+    "place": "Inwood"
+   },
+   {
+    "n": 1354,
+    "t": "The Skeleton Key",
+    "story": "It opened apartments that no longer exist. On its nail it casts a keyhole of light, and through it an old parlor is still visible",
+    "ar": 1.776,
+    "f": "art/h6dabf37573.jpg",
+    "place": "East Village"
+   },
+   {
+    "n": 1361,
+    "t": "The Nameplate Chain",
+    "story": "Cursive gold catching the sun on the stoop. Hoops and a fresh manicure completing the crown jewels of the block",
+    "ar": 1.776,
+    "f": "art/hf57b98f7bb.jpg",
+    "place": "Mott Haven"
+   },
+   {
+    "n": 1570,
+    "t": "The Dead Fob",
+    "story": "At 2am the tenant taps the dead fob against the reader like a fading pulse. Red light after red light, groceries wilting, the analog key of childhood remembered like a lost religion",
+    "ar": 1.776,
+    "f": "art/h30378e376f.jpg",
+    "place": "Sunnyside"
+   },
+   {
+    "n": 791,
+    "t": "The Rent Stabilized Lifer",
+    "story": "Fifty years in the same sun drenched pre war and the lease outlives every landlord. She waters her plants and every plant watches back",
+    "ar": 1.776,
+    "f": "art/h07c8425f20.jpg",
+    "place": "Upper West Side"
+   },
+   {
+    "n": 888,
+    "t": "The Rent Hike",
+    "story": "It slides under the door glowing radioactive green. The percentage reads as a scream of color, and the hallway flowers wilt on sight",
+    "ar": 1.776,
+    "f": "art/heeff1812ca.jpg",
+    "place": "Bushwick"
+   },
+   {
+    "n": 889,
+    "t": "The Craigslist Roommate",
+    "story": "One cardboard box, a too calm smile, seventeen red flags arranged like an aura. The wallpaper itself recoils, but the room is cheap",
+    "ar": 1.776,
+    "f": "art/h136860a7c7.jpg",
+    "place": "Ridgewood"
+   },
+   {
+    "n": 39,
+    "t": "The Landlord",
+    "story": "He holds every key and decides who stays the winter. The ring of keys, the notices in the wind, the figure over the block",
+    "ar": 1.776,
+    "f": "art/h298c8914e2.jpg",
+    "place": "Bedford-Stuyvesant"
+   },
+   {
+    "n": 43,
+    "t": "The Landlord",
+    "story": "Another key, another notice, another winter decided upstairs. The papers, the night city, the landlord the block never sees",
+    "ar": 1.776,
+    "f": "art/h5cff919fac.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 49,
+    "t": "The Neighbor",
+    "story": "The face you nod to for years and never name. The stoop regular, the night block, the neighbor the eye-flowers watch",
+    "ar": 1.776,
+    "f": "art/h8684062405.jpg",
+    "place": "Fort Greene"
+   },
+   {
+    "n": 232,
+    "t": "Bed-Stuy",
+    "story": "Brownstone royalty with a bassline. Bed-Stuy holds Do or Die and Biggie in the same breath",
+    "ar": 1.776,
+    "f": "art/hbc904fde26.jpg",
+    "place": "Bedford-Stuyvesant"
+   },
+   {
+    "n": 607,
+    "t": "The Knicks Superfan",
+    "story": "He paid courtside for fifty years of heartbreak and kept the faith. The orange and blue, the season tickets, the suffering that finally paid off",
+    "ar": 1.776,
+    "f": "art/h35e3e1a373.jpg",
+    "place": "Flatiron"
+   },
+   {
+    "n": 782,
+    "t": "The Fire Escape Dreamer",
+    "story": "The fire escape is the only balcony the rent allows. Headphones on, laundry lines above, the whole tenement wall in bloom watching him dream",
+    "ar": 1.776,
+    "f": "art/h8e1eee7200.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 785,
+    "t": "The Stoop Sale Queen",
+    "story": "Everything must go except her spot on the stoop. Leopard coat, cash box on her lap, vinyl priced by how much she likes you",
+    "ar": 1.776,
+    "f": "art/h1e53181a09.jpg",
+    "place": "Park Slope"
+   },
+   {
+    "n": 787,
+    "t": "The Super",
+    "story": "He holds the keys to every apartment and the secrets of every pipe. Find him in the boiler room, already fixing what you were about to report",
+    "ar": 1.776,
+    "f": "art/h8e8b0ae575.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 789,
+    "t": "The Window Washer",
+    "story": "He hangs high above Midtown and squeegees the city's mirror. The glass reflects an infinite city, and he is the only one not afraid to look",
+    "ar": 1.776,
+    "f": "art/h1b23019119.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 793,
+    "t": "The Hell's Kitchen Drag Queen",
+    "story": "The wig is six feet tall and the sidewalk is her runway. Ninth Avenue neon, a mirror sequin gown giving the city back to itself",
+    "ar": 1.776,
+    "f": "art/h43e9eb485f.jpg",
+    "place": "Hell's Kitchen"
+   },
+   {
+    "n": 846,
+    "t": "The Doorman",
+    "story": "His whistle could stop weather. Park Avenue at midnight, brass buttons gleaming, a cab materializing because he asked politely",
+    "ar": 1.776,
+    "f": "art/h2605bbcb24.jpg",
+    "place": "Upper East Side"
+   },
+   {
+    "n": 894,
+    "t": "The Ghost Kitchen",
+    "story": "One steel basement door births delivery bags for fifteen restaurants that do not exist. Phantom menus, glowing screens, dinner from nowhere",
+    "ar": 1.776,
+    "f": "art/hfb13463832.jpg",
+    "place": "Long Island City"
+   },
+   {
+    "n": 896,
+    "t": "The Landlord Special",
+    "story": "One continuous coat of white over the outlet, the hinge, the roach, and the doorbell. Decades of layers at every chip, and the flowers still bloom through",
+    "ar": 1.776,
+    "f": "art/hdec9f5b348.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 898,
+    "t": "The Bedbug",
+    "story": "She reclines on the curbside mattress in a tiny crown, glam and undefeated. The movers flee, the seams sound the alarm, and the throne stays outside",
+    "ar": 1.776,
+    "f": "art/hb639794a32.jpg",
+    "place": "East Village"
+   },
+   {
+    "n": 929,
+    "t": "The Window Unit",
+    "story": "It juts from the brick held by duct tape and prayers, dripping its blessing on the sidewalk. July surrenders to one battered hero",
+    "ar": 1.776,
+    "f": "art/hb422929173.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 937,
+    "t": "The Stoop Barber",
+    "story": "A folding chair, a caped neighbor, and a shape up sharp enough to argue with. The line waits on the stoop, the mirror propped on the railing",
+    "ar": 1.776,
+    "f": "art/h438a519f15.jpg",
+    "place": "Harlem"
+   },
+   {
+    "n": 942,
+    "t": "The Window Watcher",
+    "story": "From the second floor cushion she tracks every arrival and secret on the block. Elbows planted, lace curtains, the original neighborhood watch",
+    "ar": 1.776,
+    "f": "art/hcfe543ed72.jpg",
+    "place": "Bay Ridge"
+   },
+   {
+    "n": 944,
+    "t": "The Fire Escape Garden",
+    "story": "The fire escape became a hanging Babylon of tomato buckets and climbing beans. She waters from the window and every blossom looks back",
+    "ar": 1.776,
+    "f": "art/h3d6d7b2ff8.jpg",
+    "place": "East Village"
+   },
+   {
+    "n": 945,
+    "t": "The Moving Day Couch",
+    "story": "Three friends, a fourth floor stairwell turn, and a couch that physics rejected. One directs while holding coffee, and the couch goes up anyway",
+    "ar": 1.776,
+    "f": "art/h70f8998573.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 974,
+    "t": "The Elevator Operator",
+    "story": "White gloves, a brass cage, a crank throttle. The floor dial glows like a moon, and he lands flush every single time",
+    "ar": 1.776,
+    "f": "art/hfecb9f0434.jpg",
+    "place": "Upper East Side"
+   },
+   {
+    "n": 984,
+    "t": "The Dance Studio Window",
+    "story": "Second floor, warm light, silhouettes mid leap above the street. The sidewalk crowd pauses below, getting the best show in town for free",
+    "ar": 1.776,
+    "f": "art/hd62a076767.jpg",
+    "place": "Chelsea"
+   },
+   {
+    "n": 986,
+    "t": "The Window Dresser",
+    "story": "At midnight on Fifth Avenue she arranges mannequins with pins in her mouth. Swagged velvet, a ladder, tomorrow's desire staged tonight",
+    "ar": 1.776,
+    "f": "art/h160dd5dfea.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1032,
+    "t": "The Closing Doors Sprint",
+    "story": "Down the stairs at a full sprint, messenger bag flying, one arm through the gap. The doors chime, the arm wins, the whole car pretends not to be impressed",
+    "ar": 1.776,
+    "f": "art/hee24801df3.jpg",
+    "place": ""
+   },
+   {
+    "n": 1049,
+    "t": "The Upstairs Neighbor",
+    "story": "At 3am he is apparently bowling with furniture. The chandelier swings, the dust sifts down, and nobody has ever seen him",
+    "ar": 1.776,
+    "f": "art/h6709c41793.jpg",
+    "place": "Astoria"
+   },
+   {
+    "n": 1087,
+    "t": "The Buzzer",
+    "story": "Thirty brass buttons worn blank by generations of thumbs. One glows anyway, a doorbell to another world",
+    "ar": 1.776,
+    "f": "art/h7fc14e68db.jpg",
+    "place": "Washington Heights"
+   },
+   {
+    "n": 1089,
+    "t": "The Sidewalk Cellar Doors",
+    "story": "The steel doors fling open and golden light rises from below with the hand truck ramps. Every delivery is a stage entrance if you treat it like one",
+    "ar": 1.776,
+    "f": "art/hb87513fffe.jpg",
+    "place": "Chinatown"
+   },
+   {
+    "n": 1091,
+    "t": "The Holiday Windows",
+    "story": "A December crowd wrapped in scarves before the department store glass, trains and dancers and snow inside. The city stands in the cold to watch a tiny warm world run",
+    "ar": 1.776,
+    "f": "art/h879ccac065.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1096,
+    "t": "The Door Chime",
+    "story": "Two notes above the closing doors, a great bell of light releasing ripples through the car. The shortest song in the city, and everyone knows the words",
+    "ar": 1.776,
+    "f": "art/h071c9e8b2c.jpg",
+    "place": ""
+   },
+   {
+    "n": 1122,
+    "t": "The Plastic Couch",
+    "story": "Grandmother's floral couch preserved under fitted plastic, doilies in formation. One grandchild in church clothes slides right off, as every grandchild has",
+    "ar": 1.776,
+    "f": "art/h563aeee808.jpg",
+    "place": "Canarsie"
+   },
+   {
+    "n": 1152,
+    "t": "The Couch Surfer",
+    "story": "Folded onto a friend's loveseat under a coat for a blanket, suitcase as nightstand. The dreams are bigger than the apartment, which is the whole point of coming here",
+    "ar": 1.776,
+    "f": "art/hb0f37aee27.jpg",
+    "place": "East Williamsburg"
+   },
+   {
+    "n": 1153,
+    "t": "The Sublet Nomad",
+    "story": "Fifth move this year, everything owned in one taxi trip, boxes labeled by neighborhood. The keys of past apartments hang at her neck like former lives",
+    "ar": 1.776,
+    "f": "art/hfd3ff2295c.jpg",
+    "place": "Astoria"
+   },
+   {
+    "n": 1185,
+    "t": "The Cuchifritos Window",
+    "story": "Golden fried treasures stacked under heat lamps like a chapel of amber light, rain jeweling the glass. The tongs hover, take your time, the window stays open late",
+    "ar": 1.776,
+    "f": "art/h27e35d9c67.jpg",
+    "place": "Hunts Point"
+   },
+   {
+    "n": 1190,
+    "t": "The Window Menorah",
+    "story": "Fifth night in the brownstone window, a child's face lit gold beside the flames. Snow falls past the neighbors' own December lights, the whole block softly agreeing",
+    "ar": 1.776,
+    "f": "art/he5187cb9f5.jpg",
+    "place": "Crown Heights"
+   },
+   {
+    "n": 1202,
+    "t": "The Neighbor's Piano",
+    "story": "Nocturne notes cross the dark airshaft from one lit window to another. A listener leans on the sill with closed eyes, and the laundry lines carry the melody",
+    "ar": 1.776,
+    "f": "art/hf3fdb50fe4.jpg",
+    "place": "Upper West Side"
+   },
+   {
+    "n": 1209,
+    "t": "The Tenant Union",
+    "story": "Folding chairs in a circle under the mailboxes, tenants from every floor. One grandmother stands with the rent ledger like a sword, and resolve hardens in the room",
+    "ar": 1.776,
+    "f": "art/h2f8eecaa68.jpg",
+    "place": "Highbridge"
+   },
+   {
+    "n": 1253,
+    "t": "The Fire Escape Date",
+    "story": "Wine in mismatched mugs, feet dangling over the glowing street, a candle in a jar between them. The night is going well by every metric",
+    "ar": 1.776,
+    "f": "art/hd61ef708f5.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 1290,
+    "t": "The Nameless Neighbor",
+    "story": "Ten thousand hallway nods and both names lost a decade ago. The mutual secret hanging between two doors inches apart",
+    "ar": 1.776,
+    "f": "art/h7b66093330.jpg",
+    "place": "Sunnyside"
+   },
+   {
+    "n": 1309,
+    "t": "The Fire Escape Mantis",
+    "story": "Forearms folded like a tiny doorman on the basil plant. The gardener leans in to negotiate, the skyline stays soft behind",
+    "ar": 1.776,
+    "f": "art/h4abb0ec284.jpg",
+    "place": "Astoria"
+   },
+   {
+    "n": 1311,
+    "t": "The Supermarket Sparrow",
+    "story": "It lives in the cereal aisle now and surveys its kingdom from the sign. Shoppers pointing up, an employee with a broom in gentle unhurried pursuit",
+    "ar": 1.776,
+    "f": "art/h60fb2470f9.jpg",
+    "place": "Elmhurst"
+   },
+   {
+    "n": 1338,
+    "t": "The Million Windows",
+    "story": "Dusk, and a million windows light one by one. Each square a small life, watering plants here, a dance party there, the city a lit honeycomb",
+    "ar": 1.776,
+    "f": "art/he7178fb1f3.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1355,
+    "t": "The Kitchen Tub",
+    "story": "Dish rack by day, candles by night, the clawfoot tub in the kitchen. A tenant reading in bubbles beside the stove",
+    "ar": 1.776,
+    "f": "art/h962fee4acb.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 1356,
+    "t": "The Murphy Bed",
+    "story": "The living room becomes the bedroom mid descent. Books and a cat repositioning with practiced grace, the studio's whole geometry pivoting",
+    "ar": 1.776,
+    "f": "art/h8cac8f6c2f.jpg",
+    "place": "Hell's Kitchen"
+   },
+   {
+    "n": 1358,
+    "t": "The Fire Escape Shadows",
+    "story": "Golden hour throws the zigzag across the brick in perfect calligraphy. A painter across the street races the light and loses gladly, like every evening",
+    "ar": 1.776,
+    "f": "art/h80285e5370.jpg",
+    "place": "Williamsburg"
+   },
+   {
+    "n": 1359,
+    "t": "The Brownstone Doors",
+    "story": "Carved oak under a stained glass transom, brass numbers polished by a century of hands. Evening light makes the wood glow like an instrument",
+    "ar": 1.776,
+    "f": "art/hd68c2aba09.jpg",
+    "place": "Bedford-Stuyvesant"
+   },
+   {
+    "n": 1362,
+    "t": "The Door Knockers",
+    "story": "Two ovals of gold swinging mid laugh at the block party. Catching the hydrant mist, carrying the whole style lineage of the city",
+    "ar": 1.776,
+    "f": "art/hb9f9f9e1b2.jpg",
+    "place": "East Harlem"
+   },
+   {
+    "n": 1367,
+    "t": "The Blue Mailbox",
+    "story": "Forty years of love letters, rent checks, and confessions through one slot. A hand pauses with an envelope that took courage, snow beginning",
+    "ar": 1.776,
+    "f": "art/h9520dc2135.jpg",
+    "place": "Ridgewood"
+   },
+   {
+    "n": 1380,
+    "t": "The Stoop Wine",
+    "story": "Wine in coffee mugs, shoes off, the streetlight for a chandelier. The day's whole story retold with gestures as the block goes soft",
+    "ar": 1.776,
+    "f": "art/h905434cf69.jpg",
+    "place": "Bedford-Stuyvesant"
+   },
+   {
+    "n": 1404,
+    "t": "The Old Moving Day",
+    "story": "May first, 1900, the entire city moves house at once. Wagons of pianos and mirrors, one family's parlor rolling past another's kitchen",
+    "ar": 1.776,
+    "f": "art/h43cb85a93d.jpg",
+    "place": "Greenwich Village"
+   },
+   {
+    "n": 1420,
+    "t": "The Fire Escape Summer",
+    "story": "Before air conditioning, whole families slept in the sky. Mattresses on the fire escapes, a violin drifting from somewhere, a thousand sleepers over the glowing street",
+    "ar": 1.776,
+    "f": "art/hedd2e734bd.jpg",
+    "place": "Lower East Side"
+   },
+   {
+    "n": 1427,
+    "t": "The Stage Door",
+    "story": "The ensemble emerges in street clothes to a wall of teenagers. Playbills held out under one lamp, everyone believing in everything now",
+    "ar": 1.776,
+    "f": "art/hb7e04d2acc.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1428,
+    "t": "The Roommate Lottery",
+    "story": "Four strangers, first dinner, moving boxes for a table. Mismatched chairs and one candle, a found family beginning",
+    "ar": 1.776,
+    "f": "art/hc1eca06d17.jpg",
+    "place": "Bushwick"
+   },
+   {
+    "n": 1434,
+    "t": "The Window Seat Return",
+    "story": "The city rises out of the dark on approach, the grid igniting like circuitry. The word home arriving unannounced at the window seat",
+    "ar": 1.776,
+    "f": "art/h8fea5ff968.jpg",
+    "place": "Queens"
+   },
+   {
+    "n": 1464,
+    "t": "The Supermoon",
+    "story": "It rises impossibly large between two towers and every face on the avenue turns east at once. Taxis pause, the moon briefly the city's only landlord",
+    "ar": 1.776,
+    "f": "art/hcffc97833d.jpg",
+    "place": "Long Island City"
+   },
+   {
+    "n": 1502,
+    "t": "The Subway Window Double",
+    "story": "The reflection in the dark window sits straighter and smiles slightly. It wears the life they are working toward, the tunnel lights strobing between the two selves",
+    "ar": 1.776,
+    "f": "art/h3098cfbbeb.jpg",
+    "place": ""
+   },
+   {
+    "n": 1505,
+    "t": "The Revolving Door",
+    "story": "Each wedge holds a different decade, top hat, disco silk, shoulder pads, headphones. The doorman tips his cap to all four centuries at once",
+    "ar": 1.776,
+    "f": "art/h8bdcd9e308.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1510,
+    "t": "The Rain Window",
+    "story": "The neon runs like wet paint down the night glass. One clear drop holds the whole skyline sharp inside it",
+    "ar": 1.776,
+    "f": "art/haaca2e9437.jpg",
+    "place": "Flatiron"
+   }
+  ],
+  "studio": [
+   {
+    "n": 577,
+    "t": "Studio 54",
+    "story": "The party of the century decided at the door who deserved it. The velvet rope, the disco, the two years everyone claims they made",
+    "ar": 1.776,
+    "f": "art/hae07a4b1b4.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1255,
+    "t": "The Open Studios",
+    "story": "The warehouse opens its studios to the night crowd, wine in plastic cups among wet canvases. One painter explains a twelve foot canvas to a rapt plumber, and both belong",
+    "ar": 1.776,
+    "f": "art/h744e6bccb2.jpg",
+    "place": "Long Island City"
+   },
+   {
+    "n": 1401,
+    "t": "The Disco Loft",
+    "story": "Invitation only, a turntablist blending records like a chemist. Balloons and a mirror ball over a floor where everyone is welcome and everyone is beautiful",
+    "ar": 1.776,
+    "f": "art/hf260f5247e.jpg",
+    "place": "West Village"
+   },
+   {
+    "n": 1408,
+    "t": "The Loft Pioneers",
+    "story": "Twelve foot canvases, a bathtub by the freight elevator, an illegal woodstove. The neighborhood's whole future being painted at 2am",
+    "ar": 1.776,
+    "f": "art/hf224712798.jpg",
+    "place": "SoHo"
+   },
+   {
+    "n": 1412,
+    "t": "The Stained Glass Studio",
+    "story": "Craftsmen lift a rose window section against the light. Lead lines drawn in air, glass jewels on the benches, a cathedral's eye taking shape",
+    "ar": 1.776,
+    "f": "art/h2bd15bab7a.jpg",
+    "place": "Morningside Heights"
+   },
+   {
+    "n": 1429,
+    "t": "The Tiny Dinner Party",
+    "story": "Six guests, the table half on the bed, one burner running three courses. The host triumphant in an apron, joy at maximum density",
+    "ar": 1.776,
+    "f": "art/h69f323915e.jpg",
+    "place": "Hell's Kitchen"
+   },
+   {
+    "n": 2610,
+    "t": "The Great Dane Studio",
+    "story": "A great dane in a studio apartment is a horse in a violin case. He dreams sprawled across the bed while his human sleeps on the remaining third",
+    "ar": 1.776,
+    "f": "art/ha8b1d2646b.jpg",
+    "place": "East Village"
+   },
+   {
+    "n": 2698,
+    "t": "The Cozy Studio",
+    "story": "She can touch both walls without leaving the middle of the room. The listing said cozy and the listing did not exactly lie",
+    "ar": 1.776,
+    "f": "art/h22e387cd57.jpg",
+    "place": "East Village"
+   }
+  ],
+  "laundromat": [
+   {
+    "n": 818,
+    "t": "The Laundromat Lady",
+    "story": "Nothing on this block tumbles without her knowing. She folds towels into perfect squares while the dryers spin like portals, the quietest surveillance in New York",
+    "ar": 1.776,
+    "f": "art/h5bc6f6667f.jpg",
+    "place": "Ridgewood"
+   },
+   {
+    "n": 948,
+    "t": "The Garment District Seamstress",
+    "story": "A loft of a thousand humming machines, and hers the surest. Fabric rivers in every color flowing from her hands into the city's wardrobe",
+    "ar": 1.776,
+    "f": "art/h33752c2e1b.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 967,
+    "t": "The Dry Cleaner",
+    "story": "The carousel spins a rainbow of plastic wrapped clothes around him like a ferris wheel. Ticket spindle full, unflappable, ready Thursday",
+    "ar": 1.776,
+    "f": "art/h56a194c02b.jpg",
+    "place": "Central Park"
+   },
+   {
+    "n": 1108,
+    "t": "The Quarter Water",
+    "story": "A row of them glowing in the bodega cooler like stained glass, every neon color, condensation like jewels. One small hand reaches in, twenty five cents from paradise",
+    "ar": 1.776,
+    "f": "art/hbae5ba818b.jpg",
+    "place": "East New York"
+   },
+   {
+    "n": 1197,
+    "t": "The Subway Knitter",
+    "story": "The scarf flows down the F train and out between the doors like a woolen river. The riders lift it gently overhead as they pass, custodians of the work",
+    "ar": 1.776,
+    "f": "art/h3581f0bf7d.jpg",
+    "place": ""
+   },
+   {
+    "n": 1385,
+    "t": "The Car Wash Fundraiser",
+    "story": "Maximum suds, poster board waving at traffic. More water on the washers than the cars, the pastor's sedan on its fifth wash of the day",
+    "ar": 1.776,
+    "f": "art/hbf2c4808d3.jpg",
+    "place": "Jamaica"
+   },
+   {
+    "n": 1638,
+    "t": "The Boubou Tailor",
+    "story": "The 116th Street tailor fits a grand boubou with pins in his lips, bolts of wax print towering behind like a cathedral of color. The customer turns in the mirror and the garment catches air like a sail",
+    "ar": 1.776,
+    "f": "art/hb30770b152.jpg",
+    "place": "Harlem"
+   },
+   {
+    "n": 1690,
+    "t": "The Empty Laundromat",
+    "story": "Sunday 7am and the laundromat is entirely empty, every machine available at once. One lucky soul spreads across four washers like a land baron, folding table sovereignty absolute",
+    "ar": 1.776,
+    "f": "art/h1229e6ed2f.jpg",
+    "place": "Tottenville"
+   },
+   {
+    "n": 1819,
+    "t": "The Laundry Code",
+    "story": "A red shirt at the line's end means come over, two towels mean stay away. The airshaft's flag language, a grandmother sending three signals in one load",
+    "ar": 1.776,
+    "f": "art/h9e5a404085.jpg",
+    "place": "East Harlem"
+   },
+   {
+    "n": 2035,
+    "t": "The Cast Iron",
+    "story": "The city's lacework, SoHo facades and lampposts and star bolts as one ornate organism. Strength dressed in filigree",
+    "ar": 1.776,
+    "f": "art/hd189bcb226.jpg",
+    "place": "SoHo"
+   },
+   {
+    "n": 2156,
+    "t": "The Dryer Dome Gossip",
+    "story": "Four heads in dryer domes trading the block's entire news over the hum, magazines as props. The truth emerges beautifully styled",
+    "ar": 1.776,
+    "f": "art/h5b7d2202d5.jpg",
+    "place": "Jamaica"
+   },
+   {
+    "n": 2495,
+    "t": "The Laundry Cart Caravan",
+    "story": "Sunday morning the carts caravan toward the laundromat like a merchant route. The quarters are counted like the currency of a small proud nation, which they are",
+    "ar": 1.776,
+    "f": "art/h2e0043a180.jpg",
+    "place": "Ridgewood"
+   }
+  ],
+  "subway": [
+   {
+    "n": 1499,
+    "t": "The Cross-Platform Miracle",
+    "story": "Both trains arrive at once with the doors aligned across the platform. Commuters glide between them in a beam of light, one man laughing out loud at his luck",
+    "ar": 1.776,
+    "f": "art/h0c2efdf944.jpg",
+    "place": ""
+   },
+   {
+    "n": 1331,
+    "t": "The Secret Subway",
+    "story": "1870, built in secret beneath Broadway, a velvet car in a brick tube. The waiting room had a fountain and a grand piano, the inventor gesturing proudly",
+    "ar": 1.776,
+    "f": "art/h36ac29c09d.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1323,
+    "t": "The Ghost El",
+    "story": "The demolished line comes back translucent over its old avenue. An old man on a stoop tips his cap to the 8:15 that stopped running in 1955",
+    "ar": 1.776,
+    "f": "art/h276f2b3f69.jpg",
+    "place": "Murray Hill"
+   },
+   {
+    "n": 1040,
+    "t": "The Weekend Service Change",
+    "story": "A hydra of arrows and shuttle buses erupts from the entrance in caution tape. The diagram loops into a knot, and the knot is your commute",
+    "ar": 1.776,
+    "f": "art/h1044d41932.jpg",
+    "place": ""
+   },
+   {
+    "n": 927,
+    "t": "The Subway Mosaic",
+    "story": "The tiles rearrange themselves into vines a century after the craftsman set them. His hands still visible in ghost form, the station name blooming",
+    "ar": 1.776,
+    "f": "art/h14ef6e819c.jpg",
+    "place": ""
+   },
+   {
+    "n": 51,
+    "t": "The Local",
+    "story": "The regular who is the neighborhood more than any landmark. The night block, the familiar face, the citizen the whole corner claims",
+    "ar": 1.776,
+    "f": "art/h45a1eccd29.jpg",
+    "place": "Astoria"
+   },
+   {
+    "n": 239,
+    "t": "The D Train",
+    "story": "Express to the Bronx, local to your patience. The D Train is a whole borough's mood swing on rails",
+    "ar": 1.776,
+    "f": "art/h31db14e814.jpg",
+    "place": "Citywide"
+   },
+   {
+    "n": 243,
+    "t": "The G Train",
+    "story": "The only line that skips Manhattan entirely. The G Train is Brooklyn and Queens keeping a secret from the island",
+    "ar": 1.776,
+    "f": "art/h240933cd4a.jpg",
+    "place": "Brooklyn/Queens"
+   },
+   {
+    "n": 361,
+    "t": "The G Train",
+    "story": "Crosstown, no Manhattan, take it or leave it. The G Train serves the boroughs the map forgets",
+    "ar": 1.776,
+    "f": "art/h940e81173f.jpg",
+    "place": "Brooklyn/Queens"
+   },
+   {
+    "n": 562,
+    "t": "The MetroCard",
+    "story": "The thin gold card ran the city for thirty years and now it is dying. The swipe, the bent-card trick, the please swipe again the tap made obsolete",
+    "ar": 1.776,
+    "f": "art/h9677e2aa1a.jpg",
+    "place": "Citywide"
+   },
+   {
+    "n": 569,
+    "t": "The MTA Subway",
+    "story": "It moves the whole city and apologizes for none of the delay. The platform, the rumble, the closing doors that wait for no one",
+    "ar": 1.776,
+    "f": "art/h2836bce6d0.jpg",
+    "place": "Citywide"
+   },
+   {
+    "n": 776,
+    "t": "The Subway Preacher",
+    "story": "He preaches the end of the world between one stop and the next. The sign is pure swirling color, the commuters unmoved, the sermon eternal",
+    "ar": 1.776,
+    "f": "art/h81d007a9d8.jpg",
+    "place": ""
+   },
+   {
+    "n": 790,
+    "t": "The Train Conductor",
+    "story": "She points at the zebra board at every stop to prove she is watching. A saint's icon in the cab window, the whole platform in bloom",
+    "ar": 1.776,
+    "f": "art/hd6ab3758e3.jpg",
+    "place": ""
+   },
+   {
+    "n": 843,
+    "t": "The Subway Track Worker",
+    "story": "Between express runs he stands in the tunnel glow with a lantern. Third rail humming, ballast blooming, the ride you take built nightly",
+    "ar": 1.776,
+    "f": "art/h910ea12b3c.jpg",
+    "place": ""
+   },
+   {
+    "n": 865,
+    "t": "The Professional Line Sitter",
+    "story": "He is first in line at 4am for sneakers he will never wear. Camp chair, thermos, invoice book: patience turned into a profession",
+    "ar": 1.776,
+    "f": "art/h2f54f48d38.jpg",
+    "place": "SoHo"
+   },
+   {
+    "n": 880,
+    "t": "The Brunch Line",
+    "story": "Two hours for pancakes and nobody breaks formation. Sunglasses, last night's glitter, a mimosa waiting at the end of the pilgrimage",
+    "ar": 1.776,
+    "f": "art/hf9d053bdd0.jpg",
+    "place": "West Village"
+   },
+   {
+    "n": 911,
+    "t": "The Subway Pigeon",
+    "story": "She rides the A standing mid car like a commuter with seniority. Respectful space given, no fare paid, she knows her stop",
+    "ar": 1.776,
+    "f": "art/h42d3f71685.jpg",
+    "place": ""
+   },
+   {
+    "n": 917,
+    "t": "The Token Booth Ghost",
+    "story": "The booth was decommissioned and she never left her post. A brass token slides under the glass to no one, service uninterrupted",
+    "ar": 1.776,
+    "f": "art/h4edb7d2d63.jpg",
+    "place": ""
+   },
+   {
+    "n": 919,
+    "t": "The Phantom Line",
+    "story": "The platform waits for a line that was never built. Ghost riders under a shifting route bullet, the tunnel fading into blueprint",
+    "ar": 1.776,
+    "f": "art/h834e7a1276.jpg",
+    "place": ""
+   },
+   {
+    "n": 922,
+    "t": "The Freedom Tunnel",
+    "story": "Light falls in shafts on murals the size of history under Riverside Park. One painter works in the beam, tracks running to a vanishing point",
+    "ar": 1.776,
+    "f": "art/h443345b167.jpg",
+    "place": "Upper West Side"
+   },
+   {
+    "n": 928,
+    "t": "The 1972 Subway Map",
+    "story": "The modernist map lifts its route lines off the paper into neon ribbons. Beautiful, legendary, and famously never quite where the streets are",
+    "ar": 1.776,
+    "f": "art/ha3b1ea5f6a.jpg",
+    "place": ""
+   },
+   {
+    "n": 1000,
+    "t": "The Subway Samaritan",
+    "story": "Headlights bloomed far down the tunnel and a stranger went over the edge to pull him up. A dozen hands reaching, the platform holding its breath, everybody made it",
+    "ar": 1.776,
+    "f": "art/h2ae8153e41.jpg",
+    "place": ""
+   }
+  ],
+  "rooftop": [
+   {
+    "n": 773,
+    "t": "The Water Tower Spirit",
+    "story": "The skyline drinks from wooden towers and never asks who keeps them sweet. She rises at twilight, hair running like water, ringed in blooms",
+    "ar": 1.776,
+    "f": "art/hb7fa76e488.jpg",
+    "place": "Tribeca"
+   },
+   {
+    "n": 872,
+    "t": "The Rooftop DJ",
+    "story": "The skyline ignites behind the decks and he takes credit with one raised hand. A Brooklyn rooftop at golden hour, the city doing the light show for free",
+    "ar": 1.776,
+    "f": "art/h6fbd5e57e2.jpg",
+    "place": "Brooklyn"
+   },
+   {
+    "n": 1052,
+    "t": "The Pigeon Spikes",
+    "story": "The ledge got spikes and the pigeons built a nest between them anyway. Three chicks now, the architecture defeated",
+    "ar": 1.776,
+    "f": "art/hc81a2b78b8.jpg",
+    "place": "Financial District"
+   },
+   {
+    "n": 1180,
+    "t": "The Kite Flyer",
+    "story": "From the hilltop meadow his hand built dragon kite writes calligraphy above the skyline. A crowd of strangers all looks up at once, which he considers payment",
+    "ar": 1.776,
+    "f": "art/h02ee56f1dc.jpg",
+    "place": "Central Park"
+   },
+   {
+    "n": 1244,
+    "t": "The Rooftop Fourth",
+    "story": "The whole city climbs its own roof for the show over the river. Ladders, lawn chairs, one grill still going, the skyline wearing chandeliers of fire",
+    "ar": 1.776,
+    "f": "art/ha81a09d3df.jpg",
+    "place": "Williamsburg"
+   },
+   {
+    "n": 1252,
+    "t": "The Rooftop Cinema",
+    "story": "A projector throws silver film onto the warehouse wall for a crowd on couches hauled up somehow. The reel light cuts the night and the skyline makes its cameo",
+    "ar": 1.776,
+    "f": "art/hc7a4cff219.jpg",
+    "place": "Bushwick"
+   },
+   {
+    "n": 1300,
+    "t": "The Orange Sky",
+    "story": "The smoke turned the whole city amber and midtown went quiet. One masked cyclist under a sun reduced to a dim red coin",
+    "ar": 1.776,
+    "f": "art/hca0628bc29.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1485,
+    "t": "The Pigeon Queen",
+    "story": "Iridescent on a bridge cable throne, feathers catching light like an oil slick crown. Squabs and sparrows in attendance, both kingdoms surveyed",
+    "ar": 1.776,
+    "f": "art/h3584c9a753.jpg",
+    "place": "Brooklyn"
+   },
+   {
+    "n": 1503,
+    "t": "The Moon on the Bridge",
+    "story": "The full moon paces the train across the bridge, keeping perfect speed between the cables. Every kid aboard certain it follows only them",
+    "ar": 1.776,
+    "f": "art/h0686fac894.jpg",
+    "place": "Brooklyn"
+   },
+   {
+    "n": 1524,
+    "t": "The Face in the Skyline",
+    "story": "One corner where the gap between towers makes a perfect face against the dusk. A bus stop of strangers all see it at once and nobody says a word",
+    "ar": 1.776,
+    "f": "art/h68d7dd444c.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 1547,
+    "t": "The White Pigeon",
+    "story": "Every gray flock carries one white pigeon, a moving star in the murmur. She lands last and apart like a bride late to her own wedding, and the flock adjusts around her light",
+    "ar": 1.776,
+    "f": "art/h940518cf65.jpg",
+    "place": "Sunnyside"
+   },
+   {
+    "n": 1548,
+    "t": "The Baby Pigeon",
+    "story": "The city's oldest mystery solved in a hidden AC nest, all beak and indignity. One lucky witness at the window, swearing to tell everyone",
+    "ar": 1.776,
+    "f": "art/hed4bb10d0c.jpg",
+    "place": "Woodside"
+   },
+   {
+    "n": 1572,
+    "t": "The June Fireworks",
+    "story": "Fourth straight week of roman candles blooming between the buildings at 1am. Dogs under beds, one parent at the window, the sky celebrating absolutely nothing with total commitment",
+    "ar": 1.776,
+    "f": "art/h88bea9cb78.jpg",
+    "place": "East New York"
+   },
+   {
+    "n": 1642,
+    "t": "The Rooftop Lamb Roast",
+    "story": "Greek Easter on an Astoria rooftop, the lamb turning under the care of three arguing uncles. Lemon and oregano smoke drifts over the neighbors' roofs like an invitation",
+    "ar": 1.776,
+    "f": "art/h9fa535dcd3.jpg",
+    "place": "Astoria"
+   }
+  ],
+  "block": [
+   {
+    "n": 1512,
+    "t": "The Sidewalk Chasm",
+    "story": "The chalk canyon is so convincing pedestrians step around it. One fearless kid stands in its center on flat ground while commuters teeter at the painted edge",
+    "ar": 1.776,
+    "f": "art/h2e9a641905.jpg",
+    "place": "Flatiron"
+   },
+   {
+    "n": 1053,
+    "t": "The Crosswalk Lake",
+    "story": "The corner puddle looks four inches deep and holds the whole skyline in its reflection. One commuter is mid leap, one boot already belongs to it forever",
+    "ar": 1.776,
+    "f": "art/h3935975ef3.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 548,
+    "t": "Pizza Rat",
+    "story": "He dragged a whole slice down the subway stairs and became us. The hustle, the stairs, the most New York animal on record",
+    "ar": 1.776,
+    "f": "art/h4eb7eed08b.jpg",
+    "place": "Manhattan (subway stairs)"
+   },
+   {
+    "n": 527,
+    "t": "Sesame Street",
+    "story": "It taught a generation their letters from a brownstone stoop. The 123, the friendly monsters, the neighborhood that answered how to get there",
+    "ar": 1.776,
+    "f": "art/h344ac6d152.jpg",
+    "place": "Upper West Side"
+   },
+   {
+    "n": 551,
+    "t": "The Halal Cart",
+    "story": "The line forms at midnight and nobody minds the wait. Chicken over rice, the white sauce, the foil that steams the corner",
+    "ar": 1.776,
+    "f": "art/heeb4abf9bb.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 564,
+    "t": "The Yellow Cab",
+    "story": "Raise an arm and a stranger takes you anywhere for the meter. The medallion, the hail, the off-duty light that ruins your night",
+    "ar": 1.776,
+    "f": "art/hacbebac943.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 565,
+    "t": "Citi Bike",
+    "story": "The blue bikes took the streets one empty dock at a time. The dock, the bike lane, the ride that turned commuters into cyclists",
+    "ar": 1.776,
+    "f": "art/h46ee0a20a2.jpg",
+    "place": "East Village"
+   },
+   {
+    "n": 613,
+    "t": "The Hot Dog Eating Contest",
+    "story": "The city celebrates independence by counting hot dogs. The Mustard Belt, the July heat, the Coney record no stomach should hold",
+    "ar": 1.776,
+    "f": "art/hd2a889168a.jpg",
+    "place": "Coney Island"
+   },
+   {
+    "n": 772,
+    "t": "The Pizza Squirrel",
+    "story": "He dragged a whole slice up a Washington Square tree and made no apologies. Cheeks stuffed, slice folded correctly, a champion of the park",
+    "ar": 1.776,
+    "f": "art/h44724a687f.jpg",
+    "place": "Greenwich Village"
+   },
+   {
+    "n": 783,
+    "t": "The Open Hydrant",
+    "story": "Somebody blessed the block with a wrench. Rainbow mist, screaming kids, the coldest sweetest water the city ever gave away free",
+    "ar": 1.776,
+    "f": "art/hdd9e059f46.jpg",
+    "place": "Mott Haven"
+   },
+   {
+    "n": 786,
+    "t": "The Blackout Block Party",
+    "story": "The grid failed and the block did not. Candles, car headlights, a boombox on a hydrant, the whole street dancing in the dark",
+    "ar": 1.776,
+    "f": "art/hf8152232fc.jpg",
+    "place": "Bushwick"
+   },
+   {
+    "n": 795,
+    "t": "The Graffiti King",
+    "story": "The city painted over him for years and he kept signing. A moonlit yard, a whole car burner, proof that somebody was here",
+    "ar": 1.776,
+    "f": "art/h3029ae5f9e.jpg",
+    "place": ""
+   },
+   {
+    "n": 805,
+    "t": "The Scaffolding King",
+    "story": "The sidewalk shed outlived the reason it went up. He lounges on a plywood throne beneath it, decades of permits pinned like trophies",
+    "ar": 1.776,
+    "f": "art/hd2dcba9e93.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 809,
+    "t": "The Canal Street Vendor",
+    "story": "The bedsheet unfolds into a department store and folds back in four seconds. Watches, handbags, one eye always on the corner",
+    "ar": 1.776,
+    "f": "art/hcf381a8544.jpg",
+    "place": "SoHo"
+   },
+   {
+    "n": 814,
+    "t": "The Mango Cart Lady",
+    "story": "She carves a mango into a flower faster than florists work. Con chile in glowing bags, a rainbow umbrella, an iris waiting at the center",
+    "ar": 1.776,
+    "f": "art/h29bd581d65.jpg",
+    "place": "Corona"
+   },
+   {
+    "n": 825,
+    "t": "The Halal Butcher",
+    "story": "The apron is spotless and every customer has a name. Steinway Street, gleaming hooks and scales, a counter run on dignity",
+    "ar": 1.776,
+    "f": "art/h4f0bd80272.jpg",
+    "place": "Astoria"
+   },
+   {
+    "n": 854,
+    "t": "The Honey Roasted Nuts Cart",
+    "story": "The smell reaches you three blocks before the cart does. A copper drum of honey roasted almonds, sweet smoke curling through Midtown",
+    "ar": 1.776,
+    "f": "art/he05c3f530d.jpg",
+    "place": "Midtown"
+   },
+   {
+    "n": 859,
+    "t": "The Fruit Cart Man",
+    "story": "The mango pyramid is architecture and he rebuilds it fresh every dawn. Bananas hung like chandeliers, a corner waking up around him",
+    "ar": 1.776,
+    "f": "art/h715a37dd64.jpg",
+    "place": "Jackson Heights"
+   }
+  ]
+ },
+ "posters": [
+  {
+   "f": "posters/movie-01-manhattanhenge.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-01-manhattanhenge.png"
+  },
+  {
+   "f": "posters/movie-02-the-rearview-city.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-02-the-rearview-city.png"
+  },
+  {
+   "f": "posters/movie-03-the-late-bloomer.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-03-the-late-bloomer.png"
+  },
+  {
+   "f": "posters/movie-04-the-rat-king.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-04-the-rat-king.png"
+  },
+  {
+   "f": "posters/movie-05-the-ghost-station.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-05-the-ghost-station.png"
+  },
+  {
+   "f": "posters/movie-06-the-manhattan-bridge-frame.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-06-the-manhattan-bridge-frame.png"
+  },
+  {
+   "f": "posters/movie-07-the-rockaway-surfer.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-07-the-rockaway-surfer.png"
+  },
+  {
+   "f": "posters/movie-08-the-peephole-view.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-08-the-peephole-view.png"
+  },
+  {
+   "f": "posters/movie-09-the-noodle-puller.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-09-the-noodle-puller.png"
+  },
+  {
+   "f": "posters/movie-10-the-late-set.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-10-the-late-set.png"
+  },
+  {
+   "f": "posters/movie-11-the-seed-beneath-the-city.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-11-the-seed-beneath-the-city.png"
+  },
+  {
+   "f": "posters/movie-12-the-chariot.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-12-the-chariot.png"
+  },
+  {
+   "f": "posters/movie-13-the-clock-winder.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-13-the-clock-winder.png"
+  },
+  {
+   "f": "posters/movie-14-the-ghost-light.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-14-the-ghost-light.png"
+  },
+  {
+   "f": "posters/movie-15-the-aquarium-that-walked-to-the-sea.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-15-the-aquarium-that-walked-to-the-sea.png"
+  },
+  {
+   "f": "posters/movie-16-the-bodega-matriarch.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-16-the-bodega-matriarch.png"
+  },
+  {
+   "f": "posters/movie-17-the-deli-coffee-cup.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-17-the-deli-coffee-cup.png"
+  },
+  {
+   "f": "posters/movie-18-the-subway-track-worker.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-18-the-subway-track-worker.png"
+  },
+  {
+   "f": "posters/movie-19-the-oculus.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-19-the-oculus.png"
+  },
+  {
+   "f": "posters/movie-20-the-mentor.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-20-the-mentor.png"
+  },
+  {
+   "f": "posters/movie-21-the-shared-umbrella.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-21-the-shared-umbrella.png"
+  },
+  {
+   "f": "posters/movie-22-the-statue-in-pieces.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-22-the-statue-in-pieces.png"
+  },
+  {
+   "f": "posters/movie-23-the-last-bounce.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-23-the-last-bounce.png"
+  },
+  {
+   "f": "posters/movie-24-the-dress-on-the-l.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-24-the-dress-on-the-l.png"
+  },
+  {
+   "f": "posters/movie-26-the-puddle-that-goes-all-the-way-down.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-26-the-puddle-that-goes-all-the-way-down.png"
+  },
+  {
+   "f": "posters/movie-27-the-deep-city.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-27-the-deep-city.png"
+  },
+  {
+   "f": "posters/movie-28-the-snowy-owl.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/MOVIE-28-the-snowy-owl.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-01.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-01.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-04.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-04.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-07.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-07.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-10.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-10.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-13.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-13.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-16.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-16.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-19.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-19.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-22.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-22.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-25.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-25.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-28.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-28.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-31.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-31.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-34.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-34.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-37.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-37.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-40.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-40.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-43.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-43.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-46.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-46.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-49.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-49.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-52.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-52.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-55.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-55.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-58.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-58.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-61.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-61.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-64.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-64.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-67.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-67.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-70.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-70.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-73.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-73.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-76.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-76.png"
+  },
+  {
+   "f": "posters/classic-new-yorkers-poster-79.jpg",
+   "ar": 0.6667,
+   "src": "ALL-NEW-YORKERS-POSTERS/CLASSIC-new-yorkers-poster-79.png"
+  }
+ ],
+ "stickers": [
+  {
+   "f": "stickers/b5_album.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/b5_felt.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/b5_runway_cerulean.png",
+   "ar": 0.75,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/b5_runway_paris.png",
+   "ar": 0.75,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/b5_runway_sept.png",
+   "ar": 0.75,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/census.png",
+   "ar": 2.1333,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/counted.png",
+   "ar": 2.1333,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/counted_blue.png",
+   "ar": 2.1333,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/eyeflower.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/eyeflower_cyan.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/eyeflower_die.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/eyeflower_gold.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/label_bymlow.png",
+   "ar": 4.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/label_counted_dept.png",
+   "ar": 4.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/label_n3w.png",
+   "ar": 4.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/label_property.png",
+   "ar": 4.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/logo01.png",
+   "ar": 0.7109,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/logo03.png",
+   "ar": 0.9258,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/logo05.png",
+   "ar": 0.5312,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/logo11.png",
+   "ar": 1.0535,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/logo12.png",
+   "ar": 1.1378,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/logo20.png",
+   "ar": 0.9336,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/nazar.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/nazar_die.png",
+   "ar": 1.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/neon_mlow.png",
+   "ar": 4.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/neon_n3w.png",
+   "ar": 4.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/plate_mlow.png",
+   "ar": 2.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/plate_n3w.png",
+   "ar": 2.0,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/tag_mlow.png",
+   "ar": 2.6667,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/tag_mlow_cyan.png",
+   "ar": 2.6667,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/tag_mlow_gold.png",
+   "ar": 2.6667,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/tag_n3w.png",
+   "ar": 2.6667,
+   "kind": "mark"
+  },
+  {
+   "f": "stickers/lbl_00a6318336.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_04c2fae175.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_09fef0c7eb.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_10aecd8526.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_16af9d0068.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_1e353b394f.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_244a2af3be.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_277b88f669.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_2bf65b340f.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_30e814b414.png",
+   "ar": 0.5,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_3c4de9544a.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_4338517607.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_4a7f5e5db4.png",
+   "ar": 1.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_50cbbc564f.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_563235bacc.png",
+   "ar": 1.6,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_5b86eb02ce.png",
+   "ar": 1.2019,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_5fc3f4c17d.png",
+   "ar": 1.2019,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_64f66327ca.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_68b8166547.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_6cf112d5f2.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_7391847e0c.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_79e824ec87.png",
+   "ar": 1.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_81075f5284.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_852cf687d1.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_8861b5777a.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_8bc89a5199.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_90302d621d.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_98a639fa4e.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_9fcfd71ebd.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_a5756e6e75.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_ab01afb070.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_aeeee9c1b2.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_b30f5ecb5a.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_bf701afa71.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_c88de2d835.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_ce1e61e44f.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_d3dd6017b7.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_d996769d09.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_e00ecf6012.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_e658e873b2.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_ee9e5e940e.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_f2b5f023f3.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_f9e39cadea.png",
+   "ar": 4.0,
+   "kind": "label"
+  },
+  {
+   "f": "stickers/lbl_ff9e43aa14.png",
+   "ar": 4.0,
+   "kind": "label"
+  }
+ ],
+ "interiors": [
+  "win_aquarium.jpg",
+  "win_ballroom.jpg",
+  "win_bodega.jpg",
+  "win_laundromat.jpg",
+  "win_library.jpg",
+  "win_rooftop.jpg",
+  "win_studio.jpg",
+  "win_subway.jpg",
+  "win_walkup.jpg"
+ ],
+ "glb": [
+  "fire_escape",
+  "water_tower",
+  "stoop",
+  "hydrant",
+  "mailbox",
+  "lamppost",
+  "utility_pole",
+  "storm_drain",
+  "h_taxi",
+  "h_taxi_camry",
+  "h_irt_kiosk",
+  "npc_broker",
+  "npc_cabbie",
+  "npc_clerk",
+  "npc_hustler",
+  "npc_workgirl",
+  "npc_wiseguy",
+  "npc_actress",
+  "npc_editor",
+  "barney_bagel",
+  "ph_cash_register",
+  "pigeon",
+  "dog",
+  "bronze_figure",
+  "mlow_eye_monument",
+  "blossom_01",
+  "blossom_03",
+  "museum_bench",
+  "penn_newsstand",
+  "penn_turnstile",
+  "tree",
+  "quiet_bench",
+  "turtle"
+ ],
+ "provenance": {
+  "art": "NEW YORKERS SITE/assets/t (1000 px display copies of MLow's census pieces)",
+  "posters": "MLow's ALL-NEW-YORKERS-POSTERS (ChatGPT project outputs), downsized, never cropped or recoloured",
+  "stickers": "MLow's stickers from ON LOCATION 2026-10-10/work/stickers, downsized",
+  "glb": "NEW YORKERS SITE/assets/museum/props (MLow's museum pack, Tripo and authored), unchanged",
+  "tex": "CC0 PBR surfaces via the museum's surfaces folder",
+  "hdri": "Poly Haven CC0 shanghai_bund 1k",
+  "plates": "ImageGen (ChatGPT, through the Codex CLI) 2026-10-17, prompts in tools/concepts.py; depth by Depth Anything V2 Small"
+ }
+}

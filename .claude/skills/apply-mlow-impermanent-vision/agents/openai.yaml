@@ -1,0 +1,4 @@
+interface:
+  display_name: "MLow Impermanent Vision"
+  short_description: "Apply the MLow liminal visual language"
+  default_prompt: "Use $apply-mlow-impermanent-vision to transform this artwork into the MLow liminal visual language."
