@@ -5,3 +5,7 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 #meter p.rent{display:flex;justify-content:space-between;align-items:baseline;margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a7af9f}#meter p.rent b{font-family:'Barlow Condensed',Impact,sans-serif;font-size:19px;letter-spacing:.3px;color:#e9c79c;text-transform:none;font-weight:600}
 dialog a.census{display:inline-block;text-decoration:none;padding:13px 18px;background:#23352c;color:#efe6cf;font-size:12px;font-weight:600;letter-spacing:.4px}dialog a.census:hover{background:#344a3e}
+
+/* phones (2026-10-18): the controls were 8px buttons in two half width clusters with a gap between, too small to tap and
+   lopsided. Now one even grid of four, 38px tall; the room tabs, title and intro step up to make room. */
+@media(max-width:700px){footer{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}footer>div{display:contents}footer button{font-size:10px;min-height:38px;padding:6px 4px;justify-content:center;text-align:center}#rooms{bottom:104px}#room-label{bottom:178px}#intro{bottom:193px}#toast{bottom:272px}}
