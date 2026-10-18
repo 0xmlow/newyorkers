@@ -839,10 +839,18 @@ let lastT = performance.now(), cost = 0;
 let eyeAcc = 0, frame = 0;
 const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const easeOutBack = t => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+// power (HANDOFF_POWER_2026-10-12.md in the site repo): at most 60 frames a second, 30 once nothing has moved or been
+// touched for twenty seconds, about six while the window is not in front. A capture rig (window.__FILM) is never throttled.
+const POWER = { drawn: 0, frames: 0, blurred: !document.hasFocus() };
+for (const ev of ['keydown', 'mousemove', 'touchstart', 'touchmove', 'wheel']) addEventListener(ev, () => { lastInput = performance.now(); }, { passive: true });
+addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('focus', () => { POWER.blurred = false; lastInput = performance.now(); });
+const powerBudget = (busy) => POWER.blurred ? 160 : (busy || performance.now() - lastInput < 20000) ? 15.5 : 32;
+window.__POWER = POWER; window.__powerBudget = () => powerBudget(false);
 renderer.setAnimationLoop(() => {
-  frame++; const now = performance.now();
-  const busy = swing || shards.length || camTween || alarm > 0 || revealT >= 0 || fireBusy || now - lastInput < 4000;
-  if (!busy && frame % 2 && !window.__FILM) return;               // idle: half rate, keeps fans quiet
+  const now = performance.now();
+  const busy = swing || shards.length || camTween || alarm > 0 || revealT >= 0 || fireBusy;
+  if (!window.__FILM && now - POWER.drawn < powerBudget(busy)) return;
+  POWER.drawn = now; POWER.frames++; frame++;
   const dt = Math.min((now - lastT) / 1000, 1 / 20); lastT = now;
 
   // eyes follow the pointer and blink on their own
