@@ -78,6 +78,7 @@ legend{padding:0 3px;background:var(--face)}
 #taskbar .task{max-width:170px;flex:1;text-align:left;height:24px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}
 #taskbar .task img{width:14px;height:14px}
 .tray{height:24px;display:flex;align-items:center;gap:8px;padding:0 8px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade);white-space:nowrap;font-variant-numeric:tabular-nums}
+[hidden]{display:none !important}   /* #startmenu sets display:flex, which beat the hidden attribute: the menu never closed */
 #startmenu{position:fixed;left:2px;bottom:calc(31px + env(safe-area-inset-bottom,0px));z-index:31;display:flex;padding:3px;max-height:calc(100vh - 44px)}
 #startmenu .side{width:24px;background:linear-gradient(0deg,var(--title1),var(--title2));color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font:700 15px var(--ui);padding:6px 0;letter-spacing:.5px}
 #startmenu .side i{font-style:normal;font-weight:400;color:#fff}
@@ -978,6 +979,8 @@ function stopTour() { tourIdx = -1; RAIL.on = false; RAIL.done = null; teleport(
 const TP = [['THE STAIRS', 0, 22, PI], ['THE TV DEN', 0, 15.5, 0], ['THE WRONG ROOM (MIRROR)', -3.4, 15, PI / 2], ['THE CARD ROOM', -8.5, 20.8, 0], ['BOILER AND LAUNDRY', 9.6, 17.2, -2.3], ['THE INFINITE HALLWAY', -2.5, 10, 0], ['THE EVERYTHING BAGEL', -20, -1.5, 0], ["THE RAT KING'S COURT", 9, 20.2, 0], ["MOM'S SECOND FREEZER", 24, 21.5, 0]];
 TP.forEach(([n, x, z, yaw]) => { const b = document.createElement('button'); b.textContent = n.charAt(0) + n.slice(1).toLowerCase(); b.onclick = e => { e.stopPropagation(); if (n.includes('FREEZER') && !W.freezer.open) { W.freezer.open = true; W.freezerLight.intensity = 3; } teleport(x, z, yaw); startMenu(false); }; $('tp').appendChild(b); });
 function showHud(on) { $('hud').style.display = on ? '' : 'none'; $('hudHide').classList.toggle('on', on); }
+// a phone starts with the window on the taskbar: open it covered half the screen
+if (matchMedia('(pointer:coarse)').matches || innerWidth < 640) showHud(false);
 $('hide').onclick = e => { e.stopPropagation(); showHud(false); }; $('hudX').onclick = e => { e.stopPropagation(); showHud(false); }; $('hudHide').onclick = e => { e.stopPropagation(); showHud($('hud').style.display === 'none'); };
 function startMenu(on) { $('startmenu').hidden = !on; $('start').classList.toggle('on', on); }
 $('start').onclick = e => { e.stopPropagation(); startMenu($('startmenu').hidden); }; document.addEventListener('pointerdown', e => { if (!e.target.closest('#startmenu') && !e.target.closest('#start')) startMenu(false); });

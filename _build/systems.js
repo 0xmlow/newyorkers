@@ -147,6 +147,8 @@ function stopTour() { tourIdx = -1; RAIL.on = false; RAIL.done = null; teleport(
 const TP = [['THE STAIRS', 0, 22, PI], ['THE TV DEN', 0, 15.5, 0], ['THE WRONG ROOM (MIRROR)', -3.4, 15, PI / 2], ['THE CARD ROOM', -8.5, 20.8, 0], ['BOILER AND LAUNDRY', 9.6, 17.2, -2.3], ['THE INFINITE HALLWAY', -2.5, 10, 0], ['THE EVERYTHING BAGEL', -20, -1.5, 0], ["THE RAT KING'S COURT", 9, 20.2, 0], ["MOM'S SECOND FREEZER", 24, 21.5, 0]];
 TP.forEach(([n, x, z, yaw]) => { const b = document.createElement('button'); b.textContent = n.charAt(0) + n.slice(1).toLowerCase(); b.onclick = e => { e.stopPropagation(); if (n.includes('FREEZER') && !W.freezer.open) { W.freezer.open = true; W.freezerLight.intensity = 3; } teleport(x, z, yaw); startMenu(false); }; $('tp').appendChild(b); });
 function showHud(on) { $('hud').style.display = on ? '' : 'none'; $('hudHide').classList.toggle('on', on); }
+// a phone starts with the window on the taskbar: open it covered half the screen
+if (matchMedia('(pointer:coarse)').matches || innerWidth < 640) showHud(false);
 $('hide').onclick = e => { e.stopPropagation(); showHud(false); }; $('hudX').onclick = e => { e.stopPropagation(); showHud(false); }; $('hudHide').onclick = e => { e.stopPropagation(); showHud($('hud').style.display === 'none'); };
 function startMenu(on) { $('startmenu').hidden = !on; $('start').classList.toggle('on', on); }
 $('start').onclick = e => { e.stopPropagation(); startMenu($('startmenu').hidden); }; document.addEventListener('pointerdown', e => { if (!e.target.closest('#startmenu') && !e.target.closest('#start')) startMenu(false); });
