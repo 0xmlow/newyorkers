@@ -1,0 +1,434 @@
+[
+ {
+  "number": 932,
+  "title": "The Everything Bagel",
+  "story": "Presented on deli paper like a crown jewel, seeds orbiting like a galaxy. Sesame, poppy, garlic: everything means everything",
+  "aspect": 1.776,
+  "file": "art/h8292d32f71.jpg",
+  "set": "The listing",
+  "place": "Lower East Side"
+ },
+ {
+  "number": 780,
+  "title": "The Rainbow Bagel",
+  "story": "Brooklyn invented a bagel that photographs better than it toasts. A tie dye halo over the counter, cream cheese clouds, zero regrets",
+  "aspect": 1.776,
+  "file": "art/h7c11dc0172.jpg",
+  "set": "The listing",
+  "place": "Williamsburg"
+ },
+ {
+  "number": 971,
+  "title": "The Bagel Roller",
+  "story": "His hands roll rings at blur speed while the kettle boils behind him. Hand rolled, kettle boiled, no shortcuts survive at this bench",
+  "aspect": 1.776,
+  "file": "art/h10d52f1d2a.jpg",
+  "set": "The listing",
+  "place": "Borough Park"
+ },
+ {
+  "number": 1113,
+  "title": "The Bialy",
+  "story": "On brown paper, its onion center a dark garden at the heart of a pale sun. The bagel gets the press, the bialy keeps the faith",
+  "aspect": 1.776,
+  "file": "art/h5caced8484.jpg",
+  "set": "The listing",
+  "place": "Lower East Side"
+ },
+ {
+  "number": 896,
+  "title": "The Landlord Special",
+  "story": "One continuous coat of white over the outlet, the hinge, the roach, and the doorbell. Decades of layers at every chip, and the flowers still bloom through",
+  "aspect": 1.776,
+  "file": "art/hdec9f5b348.jpg",
+  "set": "The listing",
+  "place": "Washington Heights"
+ },
+ {
+  "number": 1278,
+  "title": "The Fifth Floor Walkup",
+  "story": "Six grocery bags, a mattress, landing three of five. The banister offers nothing, the stairs keep spiraling",
+  "aspect": 1.776,
+  "file": "art/h7497618cad.jpg",
+  "set": "The listing",
+  "place": "East Village"
+ },
+ {
+  "number": 1356,
+  "title": "The Murphy Bed",
+  "story": "The living room becomes the bedroom mid descent. Books and a cat repositioning with practiced grace, the studio's whole geometry pivoting",
+  "aspect": 1.776,
+  "file": "art/h8cac8f6c2f.jpg",
+  "set": "The listing",
+  "place": "Hell's Kitchen"
+ },
+ {
+  "number": 1355,
+  "title": "The Kitchen Tub",
+  "story": "Dish rack by day, candles by night, the clawfoot tub in the kitchen. A tenant reading in bubbles beside the stove",
+  "aspect": 1.776,
+  "file": "art/h962fee4acb.jpg",
+  "set": "The listing",
+  "place": "Lower East Side"
+ },
+ {
+  "number": 889,
+  "title": "The Craigslist Roommate",
+  "story": "One cardboard box, a too calm smile, seventeen red flags arranged like an aura. The wallpaper itself recoils, but the room is cheap",
+  "aspect": 1.776,
+  "file": "art/h136860a7c7.jpg",
+  "set": "The listing",
+  "place": "Ridgewood"
+ },
+ {
+  "number": 1428,
+  "title": "The Roommate Lottery",
+  "story": "Four strangers, first dinner, moving boxes for a table. Mismatched chairs and one candle, a found family beginning",
+  "aspect": 1.776,
+  "file": "art/hc1eca06d17.jpg",
+  "set": "The listing",
+  "place": "Bushwick"
+ },
+ {
+  "number": 1153,
+  "title": "The Sublet Nomad",
+  "story": "Fifth move this year, everything owned in one taxi trip, boxes labeled by neighborhood. The keys of past apartments hang at her neck like former lives",
+  "aspect": 1.776,
+  "file": "art/hfd3ff2295c.jpg",
+  "set": "The listing",
+  "place": "Astoria"
+ },
+ {
+  "number": 1152,
+  "title": "The Couch Surfer",
+  "story": "Folded onto a friend's loveseat under a coat for a blanket, suitcase as nightstand. The dreams are bigger than the apartment, which is the whole point of coming here",
+  "aspect": 1.776,
+  "file": "art/hb0f37aee27.jpg",
+  "set": "The listing",
+  "place": "East Williamsburg"
+ },
+ {
+  "number": 945,
+  "title": "The Moving Day Couch",
+  "story": "Three friends, a fourth floor stairwell turn, and a couch that physics rejected. One directs while holding coffee, and the couch goes up anyway",
+  "aspect": 1.776,
+  "file": "art/h70f8998573.jpg",
+  "set": "The move",
+  "place": "Washington Heights"
+ },
+ {
+  "number": 1404,
+  "title": "The Old Moving Day",
+  "story": "May first, 1900, the entire city moves house at once. Wagons of pianos and mirrors, one family's parlor rolling past another's kitchen",
+  "aspect": 1.776,
+  "file": "art/h43cb85a93d.jpg",
+  "set": "The move",
+  "place": "Greenwich Village"
+ },
+ {
+  "number": 943,
+  "title": "The Curb Find",
+  "story": "They carried the velvet armchair home at dusk like pallbearers of fortune. Doubters watched from the stoops, and the chair was perfect, and it was free",
+  "aspect": 1.776,
+  "file": "art/ha37163f679.jpg",
+  "set": "The move",
+  "place": "Fort Greene"
+ },
+ {
+  "number": 1421,
+  "title": "The IKEA Ferry",
+  "story": "The free ferry returns at dusk, the deck crowded with blue bags. New roommates planning empires on flat pack boxes, the harbor golden behind",
+  "aspect": 1.776,
+  "file": "art/h3bca8a02f9.jpg",
+  "set": "The move",
+  "place": "Manhattan"
+ },
+ {
+  "number": 1423,
+  "title": "The Visiting Parents",
+  "story": "Dad photographs infrastructure, mom grips her bag on the subway then laughs at herself. Pride eclipsing worry block by block",
+  "aspect": 1.776,
+  "file": "art/ha32ccd35af.jpg",
+  "set": "The move",
+  "place": ""
+ },
+ {
+  "number": 899,
+  "title": "The Clanging Radiator",
+  "story": "At 3am it performs the full symphony: shriek, drum, encore. Steam screams from the valve while the tenant stands silhouetted, defeated by warmth",
+  "aspect": 1.776,
+  "file": "art/h35cce7c86e.jpg",
+  "set": "The move",
+  "place": "Inwood"
+ },
+ {
+  "number": 1276,
+  "title": "The Estimated Bill",
+  "story": "The word estimated does a lot of work on that bill. A tenant holding it to the light like a forgery, the meter laughing softly in the basement",
+  "aspect": 1.776,
+  "file": "art/h6fd220b4b0.jpg",
+  "set": "The move",
+  "place": "Concourse"
+ },
+ {
+  "number": 1570,
+  "title": "The Dead Fob",
+  "story": "At 2am the tenant taps the dead fob against the reader like a fading pulse. Red light after red light, groceries wilting, the analog key of childhood remembered like a lost religion",
+  "aspect": 1.776,
+  "file": "art/h30378e376f.jpg",
+  "set": "The move",
+  "place": "Sunnyside"
+ },
+ {
+  "number": 1354,
+  "title": "The Skeleton Key",
+  "story": "It opened apartments that no longer exist. On its nail it casts a keyhole of light, and through it an old parlor is still visible",
+  "aspect": 1.776,
+  "file": "art/h6dabf37573.jpg",
+  "set": "The move",
+  "place": "East Village"
+ },
+ {
+  "number": 1361,
+  "title": "The Nameplate Chain",
+  "story": "Cursive gold catching the sun on the stoop. Hoops and a fresh manicure completing the crown jewels of the block",
+  "aspect": 1.776,
+  "file": "art/hf57b98f7bb.jpg",
+  "set": "The move",
+  "place": "Mott Haven"
+ },
+ {
+  "number": 1634,
+  "title": "The Super's Vacation",
+  "story": "The super waits at his gate in a floral shirt while the building holds its breath. Tenants tiptoe past the boiler room, and the keys handed to his nephew glow with responsibility",
+  "aspect": 1.776,
+  "file": "art/h1205fc5adc.jpg",
+  "set": "The move",
+  "place": "Washington Heights"
+ },
+ {
+  "number": 846,
+  "title": "The Doorman",
+  "story": "His whistle could stop weather. Park Avenue at midnight, brass buttons gleaming, a cab materializing because he asked politely",
+  "aspect": 1.776,
+  "file": "art/h2605bbcb24.jpg",
+  "set": "The move",
+  "place": "Upper East Side"
+ },
+ {
+  "number": 804,
+  "title": "The Co-op Board President",
+  "story": "She has rejected better applicants than you. A mahogany table, a gilded ceiling, one gavel deciding who gets to belong",
+  "aspect": 1.776,
+  "file": "art/h21a573f525.jpg",
+  "set": "The building",
+  "place": "Upper East Side"
+ },
+ {
+  "number": 1560,
+  "title": "The Co-op Hawks",
+  "story": "A hawk pair takes the grand facade while the co-op board meets in crisis below. Renovating without permits, feathers drifting past the doorman, a binocular fan club forming in the lobby",
+  "aspect": 1.776,
+  "file": "art/h384e3d3202.jpg",
+  "set": "The building",
+  "place": "Midtown"
+ },
+ {
+  "number": 782,
+  "title": "The Fire Escape Dreamer",
+  "story": "The fire escape is the only balcony the rent allows. Headphones on, laundry lines above, the whole tenement wall in bloom watching him dream",
+  "aspect": 1.776,
+  "file": "art/h8e1eee7200.jpg",
+  "set": "The building",
+  "place": "Lower East Side"
+ },
+ {
+  "number": 1309,
+  "title": "The Fire Escape Mantis",
+  "story": "Forearms folded like a tiny doorman on the basil plant. The gardener leans in to negotiate, the skyline stays soft behind",
+  "aspect": 1.776,
+  "file": "art/h4abb0ec284.jpg",
+  "set": "The building",
+  "place": "Astoria"
+ },
+ {
+  "number": 1258,
+  "title": "The Estate Sale",
+  "story": "Opening minute, dealers and romantics circling a century of belongings in the grand apartment. One woman finds love letters in a hatbox and sits down right there to read",
+  "aspect": 1.776,
+  "file": "art/h2b9247c426.jpg",
+  "set": "The building",
+  "place": "Upper West Side"
+ },
+ {
+  "number": 1046,
+  "title": "The Vacant Storefront",
+  "story": "The paper went up years ago and the old neon warmth still flickers faintly inside. The block remembers what stood here, which is its own kind of lease",
+  "aspect": 1.776,
+  "file": "art/ha18eaef326.jpg",
+  "set": "The building",
+  "place": "East Village"
+ },
+ {
+  "number": 1541,
+  "title": "The Sub Basement",
+  "story": "Below the basement are the stairs the super does not discuss. Cribs, trunks, one lamp inexplicably lit, and a cat willing to go only halfway down",
+  "aspect": 1.776,
+  "file": "art/hbbc576bfcc.jpg",
+  "set": "The building",
+  "place": "Chelsea"
+ },
+ {
+  "number": 1581,
+  "title": "The Open Window January",
+  "story": "The radiator rages beyond all control so the window opens to the snow. A tenant in shorts watches the flakes die a foot from the sill, the landlord's heat both gift and curse",
+  "aspect": 1.776,
+  "file": "art/hd33f8834b8.jpg",
+  "set": "The building",
+  "place": "Inwood"
+ },
+ {
+  "number": 1380,
+  "title": "The Stoop Wine",
+  "story": "Wine in coffee mugs, shoes off, the streetlight for a chandelier. The day's whole story retold with gestures as the block goes soft",
+  "aspect": 1.776,
+  "file": "art/h905434cf69.jpg",
+  "set": "The building",
+  "place": "Bedford-Stuyvesant"
+ },
+ {
+  "number": 984,
+  "title": "The Dance Studio Window",
+  "story": "Second floor, warm light, silhouettes mid leap above the street. The sidewalk crowd pauses below, getting the best show in town for free",
+  "aspect": 1.776,
+  "file": "art/hd62a076767.jpg",
+  "set": "The building",
+  "place": "Chelsea"
+ },
+ {
+  "number": 1412,
+  "title": "The Stained Glass Studio",
+  "story": "Craftsmen lift a rose window section against the light. Lead lines drawn in air, glass jewels on the benches, a cathedral's eye taking shape",
+  "aspect": 1.776,
+  "file": "art/h2bd15bab7a.jpg",
+  "set": "The building",
+  "place": "Morningside Heights"
+ },
+ {
+  "number": 1505,
+  "title": "The Revolving Door",
+  "story": "Each wedge holds a different decade, top hat, disco silk, shoulder pads, headphones. The doorman tips his cap to all four centuries at once",
+  "aspect": 1.776,
+  "file": "art/h8bdcd9e308.jpg",
+  "set": "The building",
+  "place": "Midtown"
+ },
+ {
+  "number": 1512,
+  "title": "The Sidewalk Chasm",
+  "story": "The chalk canyon is so convincing pedestrians step around it. One fearless kid stands in its center on flat ground while commuters teeter at the painted edge",
+  "aspect": 1.776,
+  "file": "art/h2e9a641905.jpg",
+  "set": "The unreal",
+  "place": "Flatiron"
+ },
+ {
+  "number": 1516,
+  "title": "The Stopped Clock",
+  "story": "Stuck at 4:19 for thirty years, right twice a day and beloved always. A commuter checks it anyway out of loyalty, pigeons roosting on the minute hand",
+  "aspect": 1.776,
+  "file": "art/h733ae3f1a9.jpg",
+  "set": "The unreal",
+  "place": "Greenwich Village"
+ },
+ {
+  "number": 1502,
+  "title": "The Subway Window Double",
+  "story": "The reflection in the dark window sits straighter and smiles slightly. It wears the life they are working toward, the tunnel lights strobing between the two selves",
+  "aspect": 1.776,
+  "file": "art/h3098cfbbeb.jpg",
+  "set": "The unreal",
+  "place": ""
+ },
+ {
+  "number": 1499,
+  "title": "The Cross-Platform Miracle",
+  "story": "Both trains arrive at once with the doors aligned across the platform. Commuters glide between them in a beam of light, one man laughing out loud at his luck",
+  "aspect": 1.776,
+  "file": "art/h0c2efdf944.jpg",
+  "set": "The unreal",
+  "place": ""
+ },
+ {
+  "number": 1467,
+  "title": "The First Eye Flower",
+  "story": "A flower with a human iris pushes up through a subway grate at dawn. Where a dreamer's tear fell a century ago, a tiny crowned rat witnessing",
+  "aspect": 1.776,
+  "file": "art/hfa58958cd9.jpg",
+  "set": "The unreal",
+  "place": ""
+ },
+ {
+  "number": 1468,
+  "title": "The Seed Beneath the City",
+  "story": "One glowing seed sleeps beneath the subway lines and water tunnels. Roots threading every tunnel like veins, the whole skyline resting on its light",
+  "aspect": 1.776,
+  "file": "art/h38606cf640.jpg",
+  "set": "The unreal",
+  "place": ""
+ },
+ {
+  "number": 1053,
+  "title": "The Crosswalk Lake",
+  "story": "The corner puddle looks four inches deep and holds the whole skyline in its reflection. One commuter is mid leap, one boot already belongs to it forever",
+  "aspect": 1.776,
+  "file": "art/h3935975ef3.jpg",
+  "set": "The unreal",
+  "place": "Midtown"
+ },
+ {
+  "number": 1323,
+  "title": "The Ghost El",
+  "story": "The demolished line comes back translucent over its old avenue. An old man on a stoop tips his cap to the 8:15 that stopped running in 1955",
+  "aspect": 1.776,
+  "file": "art/h276f2b3f69.jpg",
+  "set": "The unreal",
+  "place": "Murray Hill"
+ },
+ {
+  "number": 1331,
+  "title": "The Secret Subway",
+  "story": "1870, built in secret beneath Broadway, a velvet car in a brick tube. The waiting room had a fountain and a grand piano, the inventor gesturing proudly",
+  "aspect": 1.776,
+  "file": "art/h36ac29c09d.jpg",
+  "set": "The unreal",
+  "place": "Midtown"
+ },
+ {
+  "number": 579,
+  "title": "The Chelsea Hotel",
+  "story": "Every artist who couldn't make rent still checked in here. The red brick, the residents, the ghosts that never fully left the halls",
+  "aspect": 1.776,
+  "file": "art/h25e80c3b31.jpg",
+  "set": "The unreal",
+  "place": "Chelsea"
+ },
+ {
+  "number": 1545,
+  "title": "The Hum",
+  "story": "The city's sixty cycle om rises in rings from the grates and substations. A meditator on a stoop breathes with it, every lamp and fridge and heart in one chord",
+  "aspect": 1.776,
+  "file": "art/h0df627251e.jpg",
+  "set": "The unreal",
+  "place": "East Village"
+ },
+ {
+  "number": 1040,
+  "title": "The Weekend Service Change",
+  "story": "A hydra of arrows and shuttle buses erupts from the entrance in caution tape. The diagram loops into a knot, and the knot is your commute",
+  "aspect": 1.776,
+  "file": "art/h1044d41932.jpg",
+  "set": "The unreal",
+  "place": ""
+ }
+]

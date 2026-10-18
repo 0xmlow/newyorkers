@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Department of Unreal Estate · NEW YORKERS by MLow</title>
+<meta name="description" content="A fictional SoHo cast iron loft where reality is rent stabilized: a monumental everything bagel, a 900 square foot studio that goes on forever, an anamorphic ring and a moire commute. NEW YORKERS by MLow.">
+<style>
+@font-face{font-family:Archivo;src:url(fonts/ArchivoNarrow-500.woff2) format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:Archivo;src:url(fonts/ArchivoNarrow-700.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:Plex;src:url(fonts/IBMPlexMono-400.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Plex;src:url(fonts/IBMPlexMono-600.woff2) format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-400.woff2) format('woff2');font-display:swap}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-400i.woff2) format('woff2');font-style:italic;font-display:swap}
+:root{--ink:#24241f;--paper:#f3efe4;--acid:#dce552;--violet:#a095c5;--glass:rgba(28,28,24,.78);--line:rgba(255,255,255,.14)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#dde8ef;color:#f3efe4;font-family:Archivo,'Arial Narrow',sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+#scene{position:fixed;inset:0}
+#scene canvas{display:block;touch-action:none;cursor:grab}
+#scene canvas:active{cursor:grabbing}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.panel{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:4px}
+.kick{font-family:Plex,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--acid)}
+#title{position:fixed;left:20px;top:20px;padding:16px 18px;max-width:300px}
+#title h1{font-weight:700;font-size:30px;line-height:1;margin:8px 0 6px;letter-spacing:-.01em}
+#title h1 em{font-family:Serif,serif;font-style:italic;font-weight:400;color:var(--acid);font-size:1.1em}
+#title p{margin:0;font-size:13px;line-height:1.45;color:#d6d1c3}
+#views{position:fixed;right:20px;top:20px;padding:12px;display:flex;flex-direction:column;gap:6px;width:220px}
+#views .kick{margin:2px 4px 6px}
+#views button{text-align:left;padding:8px 10px;border:1px solid var(--line);border-radius:3px;font-size:14px}
+#views button b{font-family:Plex,monospace;font-weight:600;font-size:11px;color:var(--acid);margin-right:6px}
+#views button:hover,#views button:focus-visible{border-color:var(--acid);outline:none}
+#views button.on{background:var(--acid);color:var(--ink)}#views button.on b{color:var(--ink)}
+#home{font-family:Plex,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#d6d1c3;padding:8px 10px;text-align:left}
+#bar{position:fixed;left:20px;right:20px;bottom:16px;display:flex;align-items:flex-end;gap:12px}
+#strip{display:flex;gap:6px;overflow-x:auto;flex:1;padding:8px;scrollbar-width:none}
+#strip::-webkit-scrollbar{display:none}
+#strip button{position:relative;flex:0 0 auto;width:78px;aspect-ratio:16/9;border-radius:2px;overflow:hidden;border:1px solid var(--line);padding:0}
+#strip img{width:100%;height:100%;object-fit:cover;display:block}
+#strip span{position:absolute;left:4px;bottom:2px;font-family:Plex,monospace;font-size:9px;text-shadow:0 1px 2px #000}
+#sets{display:flex;align-items:center;gap:4px;padding:8px 10px;white-space:nowrap}
+#sets button{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;font-size:16px}
+#sets button:hover{border-color:var(--acid)}
+#setname{font-family:Plex,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;min-width:140px;text-align:center}
+#allbtn{font-family:Plex,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:12px 14px;white-space:nowrap}
+#walk{position:fixed;right:20px;bottom:110px;display:flex;flex-direction:column;gap:6px}
+#walk button{width:44px;height:44px;font-size:18px}
+#hint{position:fixed;left:50%;top:20px;transform:translateX(-50%);font-family:Plex,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#4a4a42;background:rgba(243,239,228,.8);padding:6px 10px;border-radius:2px;white-space:nowrap}
+#note{position:fixed;left:50%;bottom:120px;transform:translate(-50%,10px);opacity:0;transition:.35s;padding:10px 14px;font-size:15px;pointer-events:none;max-width:min(520px,calc(100vw - 32px));text-align:center}
+#note.on{opacity:1;transform:translate(-50%,0)}
+#card,#all{position:fixed;inset:0;background:rgba(10,10,8,.72);display:grid;place-items:center;padding:16px;z-index:5}
+#card[hidden],#all[hidden]{display:none}
+#card .box{width:min(860px,100%);max-height:100%;overflow:auto;padding:16px}
+#card img{width:100%;display:block;border-radius:2px}
+#card h2{font-weight:700;font-size:26px;margin:14px 0 4px}
+#card p{color:#d6d1c3;line-height:1.55;font-size:15px}
+#card a,#all a{color:var(--acid)}
+.x{float:right;font-family:Plex,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--line);border-radius:2px}
+#all .box{width:min(1100px,100%);max-height:100%;overflow:auto;padding:18px}
+#all .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:10px}
+#all h3{grid-column:1/-1;margin:18px 0 0;font-family:Plex,monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acid)}
+#all .grid a{text-decoration:none;color:#f3efe4;font-size:14px}
+#all .grid img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:2px}
+#all .grid span{display:block;font-family:Plex,monospace;font-size:10px;color:#a9a497;margin-top:6px}
+.shot #title,.shot #views,.shot #bar,.shot #walk,.shot #hint,.shot #note{display:none!important}
+.nogl #title,.nogl #views,.nogl #bar,.nogl #walk,.nogl #hint{display:none}
+@media (hover:hover) and (pointer:fine){#walk{display:none}}
+/* phones: a compact header, the viewpoints as one scrolling row, nothing over the art */
+@media (max-width:760px){
+  #title{left:10px;right:10px;top:10px;max-width:none;padding:10px 12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  #title h1{font-size:20px;margin:0}
+  #title p,#title .kick{display:none}
+  #hint{display:none}
+  #views{left:10px;right:10px;top:auto;bottom:146px;width:auto;flex-direction:row;overflow-x:auto;padding:6px;scrollbar-width:none}
+  #views::-webkit-scrollbar{display:none}
+  #views .kick{display:none}
+  #views button,#home{flex:0 0 auto;font-size:13px;padding:8px 10px;white-space:nowrap}
+  #bar{left:10px;right:10px;bottom:10px;flex-wrap:wrap;gap:6px}
+  #strip{order:3;flex:1 0 100%;padding:6px}
+  #strip button{width:64px}
+  #sets{flex:1;justify-content:space-between;padding:4px 6px}
+  #setname{min-width:0;font-size:10px}
+  #allbtn{padding:10px 12px}
+  #walk{right:10px;bottom:auto;top:76px}
+  #note{bottom:200px;font-size:14px}
+}
+</style>
+</head>
+<body>
+<div id="scene" aria-label="A walkable loft gallery"></div>
+<header id="title" class="panel">
+  <div class="kick">Reality is rent stabilized</div>
+  <h1>Department of <em>Unreal Estate</em></h1>
+  <p>A fictional SoHo cast iron loft. Four installations, forty eight New Yorkers, one bagel that costs more than your apartment.</p>
+</header>
+<div id="hint">Drag to look . WASD to walk . Click the floor to go there . Click art to read it</div>
+<nav id="views" class="panel" aria-label="Installation viewpoints"><div class="kick">Look again</div><button id="home">Return to entrance</button></nav>
+<div id="walk"><button id="fwd" class="panel" aria-label="Walk forward">&#8593;</button><button id="back" class="panel" aria-label="Walk back">&#8595;</button></div>
+<div id="note" class="panel" role="status"></div>
+<div id="bar">
+  <div id="strip" class="panel" aria-label="Works on the walls"></div>
+  <div id="sets" class="panel"><button id="prev" aria-label="Previous set">&#8249;</button><span id="setname"></span><button id="next" aria-label="Next set">&#8250;</button></div>
+  <button id="allbtn" class="panel">All works</button>
+</div>
+<div id="card" hidden role="dialog" aria-modal="true"><div class="box panel"><button class="x">Close</button><div class="kick num"></div><img alt=""><h2></h2><p></p><a target="_top">Open the full piece</a></div></div>
+<div id="all" hidden role="dialog" aria-modal="true"><div class="box panel"><button class="x">Close</button><div class="kick">Department of Unreal Estate . every work</div><div class="grid"></div></div></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

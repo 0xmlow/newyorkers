@@ -1,0 +1,7 @@
+{
+  "name": "unreal-estate-walk",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "vite --port 5188", "build": "vite build", "check": "tsc --noEmit" },
+  "devDependencies": { "three": "0.185.1", "@types/three": "0.185.4", "typescript": "5.9.3", "vite": "8.0.13" }
+}
