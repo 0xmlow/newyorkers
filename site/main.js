@@ -15,7 +15,7 @@ const touch = matchMedia('(pointer: coarse)').matches;
 
 // ------------------------------------------------------------------ renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, touch ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // two device pixels on a 4K laptop screen is a space heater; 1.5 reads the same
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.AgXToneMapping;
 renderer.toneMappingExposure = 1.0;
@@ -350,7 +350,17 @@ function tick(dt) {
   }
   renderer.render(scene, camera);
 }
-function frame() { tick(Math.min(clock.getDelta(), 0.05)); requestAnimationFrame(frame); }
+// ---------- power ----------
+// A visitor wrote that the site turned their fans into a jet engine. A gallery that draws 120 frames a second at two
+// device pixels, forever, with nobody touching it, is one. The loop draws at most 60 a second, 30 once nothing has been
+// touched for twenty seconds, and about six while the window is not the one in front. Everything moves on dt.
+const POWER = { last: performance.now(), drawn: 0, blurred: !document.hasFocus(), frames: 0 };
+const touched = () => { POWER.last = performance.now(); };
+for (const ev of ['keydown', 'mousemove', 'mousedown', 'touchstart', 'touchmove', 'wheel']) addEventListener(ev, touched, { passive: true });
+addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('focus', () => { POWER.blurred = false; touched(); });
+function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
+window.__POWER = POWER; window.__powerBudget = powerBudget;
+function frame() { const nowMs = performance.now(); if (nowMs - POWER.drawn < powerBudget()) { requestAnimationFrame(frame); return; } POWER.drawn = nowMs; POWER.frames++; tick(Math.min(clock.getDelta(), 0.05)); requestAnimationFrame(frame); }
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
