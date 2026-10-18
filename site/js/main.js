@@ -212,10 +212,21 @@
     return out;
   };
 
+  /* ---------- power ----------
+     at most 60 frames a second, 30 after twenty seconds untouched (a lift ride counts as touching), about six in a window
+     that is not in front. Everything that moves runs on dt. See HANDOFF_POWER_2026-10-12.md in the site repo. */
+  const POWER = { last: performance.now(), drawn: 0, frames: 0, blurred: !document.hasFocus() };
+  const touched = () => { POWER.last = performance.now(); };
+  for (const ev of ["keydown", "mousemove", "mousedown", "touchstart", "touchmove", "wheel"]) addEventListener(ev, touched, { passive: true });
+  addEventListener("blur", () => { POWER.blurred = true; }); addEventListener("focus", () => { POWER.blurred = false; touched(); });
+  function powerBudget() { if (POWER.blurred) return 160; if (riding || performance.now() - POWER.last < 20000) return 15.5; return 32; }
+  window.__POWER = POWER; window.__powerBudget = powerBudget;
+
   /* ---------- the loop ---------- */
   const clock = new THREE.Clock(); let aimT = 0, streamT = 1, zoneT = 0, frames = 0;
   function animate() {
     requestAnimationFrame(animate);
+    const nowMs = performance.now(); if (nowMs - POWER.drawn < powerBudget()) return; POWER.drawn = nowMs; POWER.frames++;
     const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
     if (M.fade < 1) { M.fade = Math.min(1, M.fade + dt / 2.2); M.applyPreset(M.target, 0.08); } else if (frames < 3) M.applyPreset(M.target, 1);
     let mx = 0, mz = 0;

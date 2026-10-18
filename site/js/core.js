@@ -22,7 +22,7 @@ window.M = (function () {
   /* ---- renderer, scene, camera ---- */
   const canvas = M.canvas = M.$("gl");
   const renderer = M.renderer = new THREE.WebGLRenderer({ canvas, antialias: !M.MOBILE, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, M.lo() ? 1.25 : 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, M.lo() ? 1.25 : 1.5));   // 1.5 at most: HANDOFF_POWER_2026-10-12.md
   renderer.setSize(innerWidth, innerHeight);
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
