@@ -100,7 +100,7 @@ const POST = { sat: 1, dream: 0, warp: 0, grain: 0 };
 const SCREEN = { value: new THREE.Vector2(1, 1) };
 function resize() {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
-  const pr = renderer.getPixelRatio(), w = Math.round(innerWidth * pr), h = Math.round(innerHeight * pr);
+  const pr = renderer.getPixelRatio(), w = Math.max(1, Math.round(innerWidth * pr)), h = Math.max(1, Math.round(innerHeight * pr));   // never a zero size target: a pane mid resize once drew into one for 258 frames
   rt.setSize(w, h); const bw = Math.max(1, w >> 2), bh = Math.max(1, h >> 2); bloomA.setSize(bw, bh); bloomB.setSize(bw, bh); blurMat.userData.px = [1 / bw, 1 / bh];
   postMat.uniforms.uAspect.value = innerWidth / innerHeight;
   for (const p of PORTALS) p.sized = false;
