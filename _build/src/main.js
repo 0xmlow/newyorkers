@@ -781,7 +781,7 @@ cnv.addEventListener('webglcontextlost', (e) => { e.preventDefault(); toast('The
 
 // ---------- start ----------
 const sound = new Sound(); ctx.sound = sound; const music = Music(sound); ctx.music = music; window.__music = music;
-const ready = () => { $('#go').disabled = false; $('#go').textContent = 'Take your seat'; $('#goskate').disabled = false; };
+const ready = () => { $('#go').disabled = false; $('#go').textContent = 'Drop the needle'; $('#goskate').disabled = false; };
 mgr.onLoad = ready; setTimeout(ready, 15000);
 // two ways in: on foot, or on a board (SKATE THE SETS, or ?skate in the address) with the same film either way
 function enterFilm(skate) {
