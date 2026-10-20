@@ -685,7 +685,7 @@ const ROOM = {
   // 178 SEVENTH AVENUE SOUTH. The room is a wedge and the point is the bandstand. Walk to the point: the trio swells and so do you.
   vanguard(c, r, g, X, mats) {
     const { THREE } = c, red = std(c, 0x7a1414, { roughness: 0.85 });
-    const wedge = (ax, az, bx, bz) => { const L = Math.hypot(bx - ax, bz - az), m = c.slab(0.2, 4.2, L, red, (ax + bx) / 2, 2.1, (az + bz) / 2); m.rotation.y = Math.atan2(bx - ax, bz - az); g.add(m); c.wall(X(ax), az, X(bx), bz); };
+    const wedge = (ax, az, bx, bz) => { const L = Math.hypot(bx - ax, bz - az), m = c.slab(0.2, 4.2, L, mats.wall || red, (ax + bx) / 2, 2.1, (az + bz) / 2); m.rotation.y = Math.atan2(bx - ax, bz - az); g.add(m); c.wall(X(ax), az, X(bx), bz); };
     wedge(...WEDGE.L); wedge(...WEDGE.R);
     // the steep red stairs you came down, against the back wall
     for (let s = 0; s < 9; s++) g.add(c.slab(1.4, 0.22 * (s + 1), 0.3, std(c, 0x5a1010), 2.2, 0.11 * (s + 1), 7.7 - s * 0.01 - 0.15));
@@ -697,10 +697,7 @@ const ROOM = {
         const cd = new THREE.Sprite(new THREE.SpriteMaterial({ map: candleTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); cd.scale.setScalar(0.35); cd.position.y = 0.85; tg.add(cd);
         if ((k++ % 3) === 0) tg.add(extra(c, tg, 0.45, 0.1, { seated: true, col: 0x2a1a1a, ry: PI }));
         c.post(X(x), z, 0.3 * f); } }
-    // photographs of the players who stood here, every one an eye flower in black and white
-    for (const side of [WEDGE.L, WEDGE.R]) for (let i = 1; i < 6; i++) { const u = i / 6, x = side[0] + (side[2] - side[0]) * u, z = side[1] + (side[3] - side[1]) * u, s = side === WEDGE.L ? 1 : -1;
-      const ph = decal(c, 0.45, 0.55, (q, w, h) => { q.fillStyle = '#111'; q.fillRect(0, 0, w, h); q.fillStyle = '#ddd'; q.fillRect(6, 6, w - 12, h - 12); q.filter = 'grayscale(1)'; eyeFlower(q, w / 2, h * 0.4, w * 0.28, '#eee', '#888'); q.fillStyle = '#333'; q.fillRect(w * 0.3, h * 0.6, w * 0.4, h * 0.3); });
-      ph.position.set(x + s * 0.12, 3.4, z); ph.rotation.y = Math.atan2(side[2] - side[0], side[3] - side[1]) + s * PI / 2; g.add(ph); }
+    // the photographs of the players who stood here are the wallpaper (assets/walls/vanguard.jpg), on the wedge too
     cast(c, r, g, X, 'sally', 6.6, 2.6, { h: 1.3, ry: -0.4, line: 'Two drink minimum and the music goes on till it stops. I have been at this table since the second set of 1961.', egg: 'regular', hint: 'A regular' });
     cast(c, r, g, X, 'maitre', 16.6, 4.4, { h: 1.85, ry: -2.2, line: 'Please. No talking during the ballads. The room can hear you think.', egg: 'hush', hint: 'The doorman' });
     // the horn: the closer to the point, the louder the trio and the bigger you are
