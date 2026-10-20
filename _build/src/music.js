@@ -1,0 +1,120 @@
+// ON RECORD: every room plays its own groove in the music of the place. All of it is synthesised here, note by note,
+// from scratch: no samples, no recordings, no melody anybody wrote before. A step sequencer with a lookahead
+// scheduler (sixteen steps a bar), a handful of voices, and one style per room.
+// music.play(style) crossfades to a style; music.level(v) rides the room's volume (the Vanguard swell, the break);
+// music.mute(true) drops the music for a trick (the break stops when you stop feeding it).
+const N = (m) => 440 * Math.pow(2, (m - 69) / 12);   // midi to Hz
+
+// progressions as midi roots, one chord a bar, and a chord quality
+const STYLES = {
+  // a record store at night: a lazy shuffle on the house system
+  shop: { bpm: 92, swing: 0.18, prog: [[45, 'm7'], [50, '7'], [43, 'maj7'], [48, 'maj7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x...x.x...', comp: '..x...x...x...x.', voice: 'epiano', vol: 0.5 },
+  // a coffee house in the snow: fingerpicked guitar and a harmonica breath, no drums
+  folk: { bpm: 104, swing: 0.1, prog: [[43, 'maj'], [48, 'maj'], [43, 'maj'], [50, 'maj']], pick: [0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 3], bass: 'x.......x.......', voice: 'guitar', harp: true, vol: 0.55 },
+  // the East Village in 1975: a heavy riff in E, half time drums
+  rock: { bpm: 84, swing: 0, prog: [[40, '5'], [40, '5'], [43, '5'], [45, '5']], kick: 'x.....x.x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', riff: [0, 0, 3, 5, 0, 7, 5, 3], bass: 'x.x...x.x.x...x.', voice: 'dist', vol: 0.6 },
+  // Ludlow Street, 1989: a dusty sampled sounding breakbeat with a horn stab
+  boom: { bpm: 96, swing: 0.22, prog: [[41, 'm7'], [41, 'm7'], [44, '7'], [43, '7']], kick: 'x.....x...x.....', snare: '....x.......x..x', hat: 'xxx.xxx.xxx.xxx.', bass: 'x.....x...x.....', stab: '..........x.....', voice: 'horn', vol: 0.6 },
+  // the silver loft: one droning viola note, a monotone piano, a bass drum like a heartbeat
+  drone: { bpm: 120, swing: 0, prog: [[38, '5'], [38, '5'], [38, '5'], [38, '5']], kick: 'x.......x.......', hat: '', bass: '', drone: true, comp: 'x.x.x.x.x.x.x.x.', voice: 'piano1', vol: 0.5 },
+  // the Bowery: three chords, as fast as possible
+  punk: { bpm: 176, swing: 0, prog: [[40, '5'], [45, '5'], [47, '5'], [45, '5']], kick: 'x.x.x.x.x.x.x.x.', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'xxxxxxxxxxxxxxxx', chug: true, voice: 'dist', vol: 0.55 },
+  // the rec room: the break, looped, two copies of the same record
+  break: { bpm: 104, swing: 0.12, prog: [[40, 'm7'], [40, 'm7'], [40, 'm7'], [42, '7']], kick: 'x.x.......x.x...', snare: '....x..x.x..x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x.x..x....', stab: 'x.........x.....', voice: 'clav', bongo: true, vol: 0.65 },
+  // the stoop: a medium swing, horns in unison
+  swing: { bpm: 132, swing: 0.33, prog: [[46, '6'], [43, '7'], [48, 'm7'], [41, '7']], ride: true, walk: true, kick: 'x.......x.......', snare: '', hat: '....x.......x...', comp: '...x.....x......', voice: 'horn', vol: 0.5 },
+  // the Vanguard: a piano trio, brushes, a walking bass
+  trio: { bpm: 116, swing: 0.34, prog: [[50, 'm7'], [43, '7'], [48, 'maj7'], [45, '7']], ride: true, walk: true, kick: '', snare: '', hat: '....x.......x...', comp: '..x.....x..x....', voice: 'piano', vol: 0.55 },
+  // amateur night: the house band vamping on one chord, waiting for you
+  vamp: { bpm: 120, swing: 0.25, prog: [[43, '7'], [43, '7'], [48, '7'], [43, '7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x.x..x..x.', stab: '......x.......x.', voice: 'organ', vol: 0.55 },
+  // the hotel lobby: a slow waltz on an out of tune upright
+  parlour: { bpm: 84, swing: 0, bar: 12, prog: [[45, 'm'], [40, '7'], [45, 'm'], [52, '7']], waltz: true, voice: 'piano', vol: 0.45 },
+};
+const Q = { maj: [0, 4, 7], m: [0, 3, 7], '7': [0, 4, 7, 10], m7: [0, 3, 7, 10], maj7: [0, 4, 7, 11], '6': [0, 4, 7, 9], '5': [0, 7, 12] };
+
+export function Music(sound) {
+  const S = { style: null, step: 0, next: 0, bar: 0, lvl: 1, muted: false, out: null, timer: 0 };
+  const C = () => sound.ctx;
+  function bus() {
+    if (S.out) return S.out;
+    const c = C(); S.out = c.createGain(); S.out.gain.value = 0; S.out.connect(sound.master);
+    // a short room: three taps of feedback delay, low passed, so the synth reads as a band in a room
+    const d = c.createDelay(0.5); d.delayTime.value = 0.09; const fb = c.createGain(); fb.gain.value = 0.28; const lp = c.createBiquadFilter(); lp.frequency.value = 2400;
+    S.out.connect(d); d.connect(lp); lp.connect(fb); fb.connect(d); lp.connect(sound.master);
+    return S.out;
+  }
+  function env(node, t, v, a, d, dest = bus()) { const g = C().createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); node.connect(g); g.connect(dest); return g; }
+  function osc(type, f, t, v, a, d, filt) {
+    const c = C(), o = c.createOscillator(); o.type = type; o.frequency.value = f;
+    let n = o; if (filt) { const fl = c.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = filt; o.connect(fl); n = fl; }
+    env(n, t, v, a, d); o.start(t); o.stop(t + a + d + 0.05); return o;
+  }
+  function noise(t, v, d, f, type = 'highpass') { const c = C(), s = c.createBufferSource(); s.buffer = sound.white; const fl = c.createBiquadFilter(); fl.type = type; fl.frequency.value = f; s.connect(fl); env(fl, t, v, 0.002, d); s.start(t, Math.random() * 0.5); s.stop(t + d + 0.05); }
+  const kick = (t, v = 0.5) => { const c = C(), o = c.createOscillator(); o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(o, t, v, 0.002, 0.28); o.start(t); o.stop(t + 0.35); };
+  const snare = (t, v = 0.25) => { noise(t, v, 0.16, 1400); osc('triangle', 190, t, v * 0.4, 0.002, 0.08); };
+  const hat = (t, v = 0.06, open) => noise(t, v, open ? 0.2 : 0.035, 7000);
+  const ride = (t, v = 0.05) => { noise(t, v, 0.35, 5200, 'bandpass'); osc('square', 3100, t, v * 0.08, 0.002, 0.3, 6000); };
+  const bongo = (t, f) => { const c = C(), o = c.createOscillator(); o.frequency.setValueAtTime(f * 1.4, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.04); env(o, t, 0.12, 0.002, 0.14); o.start(t); o.stop(t + 0.2); };
+  function voice(kind, f, t, v, d) {
+    if (kind === 'guitar') { osc('triangle', f, t, v, 0.003, d * 1.6, 2600); osc('sawtooth', f * 2, t, v * 0.12, 0.003, d * 0.6, 1800); return; }
+    if (kind === 'dist') { for (const k of [1, 1.005, 0.5]) osc('sawtooth', f * k, t, v * 0.5, 0.004, d, 1500); return; }
+    if (kind === 'horn') { osc('sawtooth', f, t, v * 0.6, 0.03, d, 1800); osc('square', f * 1.003, t, v * 0.2, 0.03, d, 1200); return; }
+    if (kind === 'clav') { osc('square', f, t, v * 0.5, 0.002, d * 0.5, 2400); return; }
+    if (kind === 'organ') { for (const k of [1, 2, 3]) osc('sine', f * k, t, v * (0.5 / k), 0.01, d); return; }
+    if (kind === 'epiano') { osc('sine', f, t, v * 0.8, 0.004, d * 2); osc('sine', f * 4, t, v * 0.1, 0.002, d * 0.3); return; }
+    if (kind === 'piano1') { osc('triangle', f, t, v, 0.002, d * 0.8, 3000); return; }
+    // piano: a hammered triangle with a slightly out of tune second string
+    osc('triangle', f, t, v, 0.002, d * 1.8, 3400); osc('triangle', f * 1.004, t, v * 0.5, 0.002, d * 1.4, 2400);
+  }
+  function chordAt(st, bar) { const [root, q] = st.prog[bar % st.prog.length]; return Q[q].map((i) => root + i); }
+  function play16(st, i, t, spb) {
+    const bar = S.bar, notes = chordAt(st, bar), root = notes[0], on = (pat) => pat && pat[i % pat.length] === 'x', L = S.lvl;
+    if (on(st.kick)) kick(t, 0.45 * L);
+    if (on(st.snare)) snare(t, 0.22 * L);
+    if (on(st.hat)) hat(t, 0.05 * L, i === 14);
+    if (st.ride && i % 4 === 0) ride(t, 0.045 * L); if (st.ride && i % 8 === 6) ride(t, 0.03 * L);
+    if (st.bongo && (i === 3 || i === 7 || i === 11 || i === 14)) bongo(t, i % 2 ? 240 : 320);
+    if (st.walk && i % 4 === 0) { const w = [0, 4, 7, 9, 10, 7, 5, 2], n = root - 12 + w[(i / 4 + bar * 4) % 8]; voice('piano1', N(n), t, 0.2 * L, spb * 3.2); osc('sine', N(n), t, 0.25 * L, 0.01, spb * 3.4); }
+    if (on(st.bass)) osc('sawtooth', N(root - 12 + (st.chug ? 0 : (i === 10 ? 7 : 0))), t, 0.18 * L, 0.004, spb * (st.chug ? 0.8 : 1.6), 500);
+    if (st.pick) { const p = st.pick[i]; const chord = [notes[0] - 12, notes[0], notes[1], notes[2]]; voice('guitar', N(chord[p]), t, 0.13 * L, spb * 2); }
+    if (st.harp && i === 0 && bar % 2 === 1) { osc('square', N(root + 24), t, 0.03 * L, 0.2, spb * 6, 1600); osc('square', N(root + 28), t, 0.025 * L, 0.2, spb * 6, 1600); }
+    if (st.riff && i % 2 === 0) { const r = st.riff[(i / 2 + bar * 8) % 8]; voice('dist', N(40 + r), t, 0.11 * L, spb * 1.6); }
+    if (st.chug && i % 2 === 0) for (const n of notes) voice('dist', N(n), t, 0.05 * L, spb * 1.2);
+    if (on(st.comp)) for (const n of notes) voice(st.voice, N(n + 12), t, (st.voice === 'piano1' ? 0.09 : 0.06) * L, spb * 2.2);
+    if (on(st.stab)) for (const n of notes) voice(st.voice, N(n + 12), t, 0.07 * L, spb * 1.4);
+    if (st.drone && i === 0) { osc('sawtooth', N(root + 12), t, 0.06 * L, 0.6, spb * 15, 900); osc('sawtooth', N(root + 19), t, 0.03 * L, 0.6, spb * 15, 900); }
+  }
+  function playWaltz(st, i, t, spb) {
+    // twelve steps a bar: bass on one, chord on two and three, a little tune over the top
+    const notes = chordAt(st, S.bar), L = S.lvl;
+    if (i === 0) voice('piano', N(notes[0] - 12), t, 0.16 * L, spb * 4);
+    if (i === 4 || i === 8) for (const n of notes) voice('piano', N(n), t, 0.06 * L, spb * 3);
+    if (i % 4 === 2 && Math.random() < 0.7) voice('piano', N(notes[(Math.random() * notes.length) | 0] + 12), t, 0.07 * L, spb * 3);
+  }
+  function pump() {
+    const c = C(); if (!c || !S.style) return;
+    const st = STYLES[S.style], spb = 60 / st.bpm / 4, steps = st.bar || 16;
+    while (S.next < c.currentTime + 0.15) {
+      const i = S.step, sw = i % 2 ? spb * st.swing : 0;
+      if (!S.muted) (st.waltz ? playWaltz : play16)(st, i, S.next + sw, spb);
+      S.step = (S.step + 1) % steps; if (S.step === 0) S.bar++;
+      S.next += spb;
+    }
+  }
+  return {
+    STYLES,
+    play(style) {
+      if (!C() || style === S.style) { S.want = style; return; }
+      S.style = style; S.bar = 0; S.step = 0; S.next = C().currentTime + 0.1;
+      const out = bus(); out.gain.cancelScheduledValues(C().currentTime); out.gain.setTargetAtTime(style ? (STYLES[style]?.vol ?? 0.5) : 0, C().currentTime, 0.6);
+      clearInterval(S.timer); if (style) S.timer = setInterval(pump, 40);
+    },
+    start() { if (S.want !== undefined) { const w = S.want; S.want = undefined; this.play(w); } },
+    level(v) { S.lvl = v; },
+    mute(m) { S.muted = m; },
+    get style() { return S.style; },
+    get beat() { const c = C(); if (!c || !S.style) return 0; const st = STYLES[S.style]; return 60 / st.bpm; },
+    // seconds to the nearest beat, for the rhythm game: negative early, positive late
+    offBeat() { const c = C(); if (!c || !S.style) return 1; const b = 60 / STYLES[S.style].bpm, ph = (c.currentTime - (S.next - S.step * b / 4)) % b; return ph > b / 2 ? ph - b : ph; },
+  };
+}
