@@ -2,7 +2,7 @@
 // the stairs. The mailboxes go vacant one by one as the year runs (the building empties with 4F). The trick is the
 // peephole of 1A: put your eye to it and you see the hall from behind yourself, and who is standing there.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, extra, cast, prop, bulb, sheet, relief, tinTex, texMat, CH, stamp, eyeFlower } from './kit.js';
+import { PI, std, basic, box, cyl, decal, cast, prop, bulb, sheet, relief, tinTex, texMat, CH, stamp, eyeFlower, art, artTex, anamorph } from './kit.js';
 
 const NAMES = ['ROSARIO', 'KOWALSKI', 'NGUYEN', 'FELDMAN', 'OKAFOR', 'DIAZ', 'LEVY', 'PIETRZAK', 'MORALES', 'GOLDBERG', 'BAPTISTE', 'SANTANA', 'WEISS', 'CRUZ', 'KAPLAN', 'ALVAREZ', 'MLOW', 'ORTIZ', 'FRIEDMAN', 'TORRES'];
 const APTS = ['1A', '1B', '1C', '1D', '2A', '2B', '2C', '2D', '3A', '3B', '3C', '3D', '4A', '4B', '4C', '4F', '5A', '5B', '5C', '5D'];
@@ -44,8 +44,9 @@ export function vestibule(c, r, g, X, mats) {
     const vac = decal(c, 0.3, 0.07, (q, w, h) => { q.fillStyle = '#c8281e'; q.fillRect(0, 0, w, h); q.fillStyle = '#fff'; q.font = `800 ${h * 0.55}px ${c.MONO}`; q.textAlign = 'center'; q.fillText('VACANT', w / 2, h * 0.7); }, 64);
     vac.position.set(0.21, -0.07, 0.016); vac.visible = false; d.add(vac);
     // behind the door, a fold of paper
-    const inside = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.22), new THREE.MeshStandardMaterial({ map: c.canvasTex(128, 84, (q, w, h) => { q.fillStyle = i % 3 ? '#f2ede0' : '#f6d6e4'; q.fillRect(0, 0, w, h); q.fillStyle = '#333'; for (let k = 0; k < 6; k++) q.fillRect(8, 10 + k * 11, 40 + Math.random() * 70, 3); }) }));
+    const pc = art(r, 12 + i), inside = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.22), new THREE.MeshBasicMaterial({ map: artTex(c, pc), toneMapped: false }));
     inside.position.set(x, y, -0.005); MB.add(inside);
+    c.clickable(inside, () => { if (d.rotation.y === 0) return; c.openPiece(pc); c.egg('postcard', 'In every mailbox, under the notice, a postcard of a New Yorker from the block. Somebody has been sending the building its own neighbours.'); }, `A postcard in ${APTS[i]}`);
     doors.push({ d, vac, card, i });
     c.clickable(face, () => {
       const open = d.rotation.y === 0; d.rotation.y = open ? -1.9 : 0; c.sound.clink(1800);
@@ -103,7 +104,7 @@ export function vestibule(c, r, g, X, mats) {
     fragmentShader: 'uniform sampler2D t; uniform float k; uniform float asp; varying vec2 vUv; void main(){ vec2 p = vUv * 2. - 1.; p.x *= asp; float r = length(p); if (r > 1.) { gl_FragColor = vec4(0.,0.,0.,k); return; } vec2 q = p * (0.62 + 0.38 * r * r); vec3 col = texture2D(t, q * .5 + .5).rgb; col *= smoothstep(1., .82, r); col = mix(col, col * vec3(.9,1.,1.1), .3); gl_FragColor = vec4(col, k); }' });
   const view = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), lensMat); view.renderOrder = 999; view.frustumCulled = false; view.visible = false;
   if (!c.camera.parent) c.scene.add(c.camera); c.camera.add(view); view.position.set(0, 0, -0.2);
-  const me = extra(c, g, 0, 0, { col: 0x2a2a3a }); me.visible = false;
+  const me = c.glb('agent', { h: 1.78, parent: g }); me.visible = false;
   const him = relief(c, g, 'eviction', { h: 1.95, x: 0, z: 0, face: false }); him.visible = false;
   let peep = 0, seen = false;
   c.clickable(hit, () => { if (peep > 0) return; peep = 6.5; c.sound.tick(); if (!seen) { seen = true; setTimeout(() => c.egg('peep', 'Through the peephole of 1A: the hall, from behind you. You, standing at a door. And right behind you, in a Mets coloured cap, him. Turn round. Nobody there.'), 2500); } }, 'Look through the peephole');
@@ -134,4 +135,15 @@ export function vestibule(c, r, g, X, mats) {
   [[5.4, 3.0, 0.3], [8.1, -2.0, 1.2], [11.0, 4.5, 2.1], [6.6, -5.5, 0.9]].forEach(([x, z, ry], k) => sheet(c, g, x, z, ry, ['notice', 'yellow', 'pink'][k % 3], k + 3));
   prop(c, r, g, X, 'metal_trash_can', L + 0.7, 7.2, { h: 0.9, r: 0.35 });
   const eye = decal(c, 0.5, 0.5, (q, w, h) => eyeFlower(q, w / 2, h / 2, w / 2 * 0.9)); eye.position.set(W / 2 - 3, 3.2, D / 2 - 0.16); eye.rotation.y = PI; g.add(eye);
+
+  // ---- the chalk painting: a New Yorker painted flat across the hex tiles, stretched so that from the doormat it stands
+  // up out of the floor like a framed picture on an easel. Two steps either way and it is a smear on the tile again. ----
+  const EYE = [10, 6.2], pk = art(r, 20);
+  anamorph(c, g, artTex(c, pk), { ex: EYE[0], ez: EYE[1], zp: 2.4, cx: 10, w: 2.0, h: 1.12, x0: 5.0, x1: 15.0, z0: 2.38, z1: -7.6, alpha: 0.95 });
+  const mat = decal(c, 0.8, 0.5, (q, w, h) => { q.fillStyle = '#f4ead2'; for (const sx of [-1, 1]) { q.beginPath(); q.ellipse(w / 2 + sx * w * 0.12, h * 0.4, w * 0.07, h * 0.22, 0, 0, 7); q.fill(); } q.font = `800 ${h * 0.13}px ${c.MONO}`; q.textAlign = 'center'; q.fillText('THE DOORMAT · LOOK DOWN THE HALL', w / 2, h * 0.92); }, 256);
+  mat.rotation.x = -PI / 2; mat.position.set(EYE[0], 0.016, EYE[1]); g.add(mat);
+  let chalk = 0; const fw2 = new THREE.Vector3();
+  c.tick((t, dt, P, ri) => { if (ri !== r.i) return; c.camera.getWorldDirection(fw2); const on = Math.hypot(P.x - r.x0 - EYE[0], P.z - EYE[1]) < 0.45 && fw2.z < -0.9 && fw2.y < -0.05; chalk = on ? chalk + dt : 0; if (chalk > 1.2) { chalk = -1e9; c.egg('chalk', `From the doormat the tiles stand up into a painting: ${pk.t}, No. ${pk.n}, ${pk.h}. It is painted flat on the floor. Take one step and it falls back into the tile.`); } });
+  const hit2 = new THREE.Mesh(new THREE.PlaneGeometry(10, 9.8), new THREE.MeshBasicMaterial({ visible: false })); hit2.rotation.x = -PI / 2; hit2.position.set(10, 0.02, -2.6); g.add(hit2);
+  c.clickable(hit2, () => c.openPiece(pk), 'The painting on the floor');
 }

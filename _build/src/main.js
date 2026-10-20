@@ -388,7 +388,7 @@ function sweep(ax, az, bx, bz) {
   }
   return Math.max(0.12, best - 0.08);
 }
-const ctx = { keys: null, wake: (i) => wake(i), THREE, scene, camera, renderer, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, sound: null, MOBILE, shake, FONT, SERIF, MONO, P, FX, EYE, flash, TIME, zoom, ride, ray, hemi, lights };
+const ctx = { keys: null, wake: (i) => wake(i), THREE, scene, camera, renderer, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, openPiece, sound: null, MOBILE, shake, FONT, SERIF, MONO, P, FX, EYE, flash, TIME, zoom, ride, ray, hemi, lights };
 ROOMS.forEach((r, i) => { r.i = i; r.x0 = i * W; r.prev = ROOMS[i - 1]?.name; r.next = ROOMS[i + 1]?.name; r.last = i === ROOMS.length - 1; r.cast = CAST[r.id] || []; });
 window.__clickables = clickables; window.__EGGSET = () => [...EGGS]; window.__P = P;   // for the headless trick tests
 // Round thirteen: sets are built when you come near them, not all 105 at load. Building every set up front put
@@ -561,7 +561,7 @@ const EGGS = new Set(), EGG_N = window.EGG_N || 30;
   put('i-sets', fmt(ROOMS.length)); put('i-sets2', fmt(ROOMS.length)); put('f-sets', fmt(ROOMS.length));   // the lobby is set one, as it always was
   put('i-eggs', fmt(EGG_N));
   put('i-sets3', fmt(ROOMS.length)); put('i-goals', fmt(ROOMS.length * 3));
-  put('i-faces', fmt(ROOMS.reduce((a, r) => a + (r.cast || []).length, 0)));
+  put('i-faces', fmt(ROOMS.reduce((a, r) => a + (r.cast || []).length, 0)));   // every New Yorker in the world, on the walls and in the tricks
   put('i-films', ROOMS.map((r) => r.name + ', ' + r.film).join('   ·   ')); }
 $('#eggs').textContent = `0 / ${EGG_N}`;
 function egg(id, line) {

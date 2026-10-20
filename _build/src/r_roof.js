@@ -2,7 +2,7 @@
 // and the Williamsburg Bridge with the J crossing it. The trick: open the coop and the flock goes out over the river
 // and draws the shape everybody on this block already knows, an eye flower, in the air above the bridge.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, prop, relief, glowTex, eyeFlower, sheet, stamp } from './kit.js';
+import { PI, std, basic, box, cyl, decal, prop, relief, glowTex, eyeFlower, sheet, stamp, art, artTex, anamorph } from './kit.js';
 
 export function roof(c, r, g, X) {
   const { THREE } = c;
@@ -35,18 +35,19 @@ export function roof(c, r, g, X) {
   const sign = c.sign('THE MLOW LOFT · EST. 1979', { w: 1.6, h: 0.18, bg: '#f2ede0', fg: '#141414', font: c.MONO, weight: 700 }); sign.position.set(0, 2.05, 0.84); coop.add(sign);
 
   // ---- the flock: birds out over the river, into the shape of an eye flower, and home ----
-  const NB = c.MOBILE ? 110 : 220, wing = new THREE.BufferGeometry();
+  // The flock is a painting: one bird for each cell of a 16 by 9 grid over a census New Yorker, each bird the colour of its
+  // cell. Out over the river they find their places and hold the picture up over the bridge; then they come home.
+  const GX = 16, GY = 9, NB = GX * GY, wing = new THREE.BufferGeometry();
   wing.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0.12, -0.22, 0, -0.04, 0, 0.02, -0.06, 0, 0, 0.12, 0.22, 0, -0.04, 0, 0.02, -0.06], 3)); wing.computeVertexNormals();
-  const flock = new THREE.InstancedMesh(wing, new THREE.MeshBasicMaterial({ color: 0xd8dce8, side: THREE.DoubleSide, toneMapped: false }), NB); flock.frustumCulled = false; flock.visible = false; g.add(flock);
-  // the target: sample an eye flower drawn on a canvas, mapped onto a plane in the sky above the bridge
-  const cv = document.createElement('canvas'); cv.width = cv.height = 96; const q = cv.getContext('2d'); q.fillStyle = '#000'; q.fillRect(0, 0, 96, 96); eyeFlower(q, 48, 48, 46, '#ffffff', '#ffffff');
-  const px = q.getImageData(0, 0, 96, 96).data, pts = []; for (let y = 0; y < 96; y += 2) for (let x = 0; x < 96; x += 2) if (px[(y * 96 + x) * 4] > 80 || px[(y * 96 + x) * 4 + 2] > 120) pts.push([x, y]);
-  const tgt = []; for (let i = 0; i < NB; i++) { const p = pts[Math.floor(i / NB * pts.length)] || [48, 48]; tgt.push(new THREE.Vector3(W / 2 + (p[0] - 48) * 0.26, 11 - (p[1] - 48) * 0.26, -24)); }
+  const flock = new THREE.InstancedMesh(wing, new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false }), NB); flock.frustumCulled = false; flock.visible = false; g.add(flock);
+  const fp = art(r, 12), grey = new THREE.Color(0xd8dce8); for (let i = 0; i < NB; i++) flock.setColorAt(i, grey);
+  { const im = new Image(); im.onload = () => { const cv = document.createElement('canvas'); cv.width = GX; cv.height = GY; const q2 = cv.getContext('2d'); q2.drawImage(im, 0, 0, GX, GY); const d = q2.getImageData(0, 0, GX, GY).data; for (let i = 0; i < NB; i++) flock.setColorAt(i, new THREE.Color().setRGB(d[i * 4] / 255, d[i * 4 + 1] / 255, d[i * 4 + 2] / 255, THREE.SRGBColorSpace)); flock.instanceColor.needsUpdate = true; }; im.src = `assets/art/${fp.f}`; }
+  const tgt = []; for (let i = 0; i < NB; i++) { const gx = i % GX, gy = (i / GX) | 0; tgt.push(new THREE.Vector3(W / 2 + (gx - (GX - 1) / 2) * 1.05, 12 - (gy - (GY - 1) / 2) * 1.05, -26)); }
   const B = []; for (let i = 0; i < NB; i++) B.push({ p: new THREE.Vector3(), v: new THREE.Vector3(), ph: Math.random() * 6, d: Math.random() });
   const o = new THREE.Object3D(); let phase = -1, pt = 0, opened = 0;
   const release = () => { if (phase >= 0) return; phase = 0; pt = 0; flock.visible = true; door.rotation.y = -1.6; c.sound.whoosh(0.5, 2.4); for (let k = 0; k < 6; k++) setTimeout(() => c.sound.coo(), k * 180);
     B.forEach((b) => { b.p.set(4.0 + (Math.random() - 0.5) * 2, 1.4 + Math.random(), -3.6); b.v.set((Math.random() - 0.5) * 3, 3 + Math.random() * 3, -4 - Math.random() * 4); }); };
-  c.clickable(coop, () => { release(); if (++opened === 1) setTimeout(() => c.egg('flock', 'The birds went out over the river and drew it in the air above the bridge: petals, and an eye in the middle. Every pigeon on this block was born under that sign. Then they came home. They always come home. They have no lease.'), 8000); }, 'Open the coop');
+  c.clickable(coop, () => { release(); if (++opened === 1) setTimeout(() => c.egg('flock', `The birds went out over the river and held up a painting over the bridge, one pigeon to a pixel: ${fp.t}, No. ${fp.n}, ${fp.h}. Then they came home. They always come home. They have no lease.`), 8000); }, 'Open the coop');
   c.tick((t, dt, P, ri) => {
     if (phase < 0) return; pt += dt;
     if (phase === 0 && pt > 3.0) { phase = 1; pt = 0; }
@@ -58,7 +59,7 @@ export function roof(c, r, g, X) {
       else if (phase === 1) { tmp.copy(tgt[i]).sub(b.p); const L = tmp.length(); b.v.lerp(tmp.multiplyScalar(Math.min(1.4, L) * 1.6 / Math.max(0.4, Math.sqrt(L))), Math.min(1, dt * 1.6)); if (L < 0.6) b.v.multiplyScalar(0.6); }
       else { tmp.set(4.0 + (b.d - 0.5) * 2, 1.6, -4.4).sub(b.p); b.v.lerp(tmp.multiplyScalar(0.55), Math.min(1, dt * 1.2)); }
       b.p.addScaledVector(b.v, dt);
-      o.position.copy(b.p); o.lookAt(b.p.x + b.v.x, b.p.y + b.v.y, b.p.z + b.v.z); const flap = 0.4 + Math.abs(Math.sin(t * 14 + b.ph)) * (phase === 1 && b.v.length() < 0.8 ? 0.4 : 1.2); o.scale.set(3.4, flap * 3.4, 3.4); o.updateMatrix(); flock.setMatrixAt(i, o.matrix);
+      o.position.copy(b.p); const hold = phase === 1 && b.v.length() < 0.9; if (hold) { o.rotation.set(PI / 2, 0, 0); o.scale.set(4.6, 1, 6.2); } else { o.lookAt(b.p.x + b.v.x, b.p.y + b.v.y, b.p.z + b.v.z); const flap = 0.4 + Math.abs(Math.sin(t * 14 + b.ph)) * 1.2; o.scale.set(3.4, flap * 3.4, 3.4); } o.updateMatrix(); flock.setMatrixAt(i, o.matrix);
     });
     flock.instanceMatrix.needsUpdate = true;
   });
@@ -71,11 +72,11 @@ export function roof(c, r, g, X) {
   c.tick((t) => bulbs.forEach((b, k) => { b.material.color.setHex(Math.sin(t * 0.8 + k * 1.7) > 0.97 ? 0x8a6a40 : 0xffd090); }));
   // tar beach: a towel, two folding chairs, a radio, a cooler
   const towel = decal(c, 1.0, 1.8, (q2, w, h) => { for (let k = 0; k < 9; k++) { q2.fillStyle = ['#ff4fa3', '#f4ead2', '#22d3ee'][k % 3]; q2.fillRect(0, k * h / 9, w, h / 9); } eyeFlower(q2, w / 2, h / 2, w * 0.3); });
-  towel.rotation.x = -PI / 2; towel.position.set(9.0, 0.012, 1.8); g.add(towel);
+  towel.rotation.x = -PI / 2; towel.position.set(6.4, 0.012, 4.4); towel.rotation.z = 0.3; g.add(towel);
   c.clickable(towel, () => c.egg('tarbeach', 'Tar beach: a towel on the roof in August, because the real beach is an hour on the subway and this one is free. 4F had the best roof on Broadway. Everybody said so.'), 'A towel on the tar');
-  prop(c, r, g, X, 'plastic_monobloc_chair_01', 11.2, 0.6, { h: 0.8, ry: PI * 0.92, r: 0.3 }); prop(c, r, g, X, 'plastic_monobloc_chair_01', 12.3, 0.9, { h: 0.8, ry: PI * 1.1, r: 0.3 });
-  prop(c, r, g, X, 'portable_cassette_player', 10.0, 2.5, { len: 0.36, ry: 0.4 });
-  const cooler = box(c, 0.6, 0.42, 0.4, std(c, 0x1d4ed8, { roughness: 0.4 }), 13.4, 0.21, 1.6); g.add(cooler); g.add(box(c, 0.62, 0.06, 0.42, basic(c, 0xf4f4f4), 13.4, 0.44, 1.6)); c.post(X(13.4), 1.6, 0.35);
+  prop(c, r, g, X, 'plastic_monobloc_chair_01', 17.0, 1.6, { h: 0.8, ry: PI * 0.85, r: 0.3 }); prop(c, r, g, X, 'plastic_monobloc_chair_01', 18.2, 2.0, { h: 0.8, ry: PI * 1.05, r: 0.3 });
+  prop(c, r, g, X, 'portable_cassette_player', 7.4, 4.9, { len: 0.36, ry: 0.4 });
+  const cooler = box(c, 0.6, 0.42, 0.4, std(c, 0x1d4ed8, { roughness: 0.4 }), 17.6, 0.21, 3.4); g.add(cooler); g.add(box(c, 0.62, 0.06, 0.42, basic(c, 0xf4f4f4), 17.6, 0.44, 3.4)); c.post(X(17.6), 3.4, 0.35);
   // the satellite dish and an old TV aerial, pointed at nothing in particular
   const dish = new THREE.Mesh(new THREE.SphereGeometry(0.45, 20, 10, 0, PI * 2, 0, 0.8), std(c, 0xe8e8e8, { side: THREE.DoubleSide, roughness: 0.5 })); dish.position.set(1.0, 2.2, -6.6); dish.rotation.set(-1.1, 0.5, 0); g.add(dish); g.add(cyl(c, 0.03, 0.03, 2.0, std(c, 0x8a8a8a, { metalness: 0.8 }), 1.0, 1.0, -6.6, 6));
   const ant = new THREE.Group(); ant.position.set(19.0, 0, -6.2); g.add(ant); ant.add(cyl(c, 0.02, 0.02, 3.4, std(c, 0x8a8a8a, { metalness: 0.9 }), 0, 1.7, 0, 6)); for (let k = 0; k < 6; k++) ant.add(box(c, 1.2 - k * 0.14, 0.015, 0.015, std(c, 0x8a8a8a, { metalness: 0.9 }), 0, 2.4 + k * 0.16, 0));
@@ -86,4 +87,10 @@ export function roof(c, r, g, X) {
   him.userData.click = () => { c.say(him, 'Off the clock. Best view in Brooklyn. I have been in every flat on this block and I never lived anywhere with a view.', 4400, 2.2); c.egg('offduty'); }; him.userData.hint = 'Somebody at the parapet';
   // the end: walk to the parapet and look out
   let ended = false; c.tick((t, dt, P, ri) => { if (ri === r.i && P.z < -6.4 && !ended) { ended = true; c.toast('The city keeps everything: the key, the chair on the curb, the name on the mailbox. Thank you for walking up.', 6000); c.egg('roofend', 'You came up all six flights. From up here 4F is a window like every other window. Somebody new will be in it by spring.'); } });
+
+  // ---- chalk on the tar: from the top of the stairs a New Yorker stands up off the roof like a sign; walk on and it lies down ----
+  const pk = art(r, 13), EY = [10, 6.4];
+  anamorph(c, g, artTex(c, pk), { ex: EY[0], ez: EY[1], zp: 2.6, cx: 10, w: 2.2, h: 1.24, x0: 4.5, x1: 15.5, z0: 2.58, z1: -7.6, alpha: 0.9 });
+  let ch = 0; const fw4 = new THREE.Vector3();
+  c.tick((t, dt, P, ri) => { if (ri !== r.i) return; c.camera.getWorldDirection(fw4); const on = Math.hypot(P.x - r.x0 - EY[0], P.z - EY[1]) < 0.5 && fw4.z < -0.9 && fw4.y < -0.04; ch = on ? ch + dt : 0; if (ch > 1.2) { ch = -1e9; c.egg('tarchalk', `From the top of the stairs a painting stands up off the tar: ${pk.t}, No. ${pk.n}. It is chalk, flat on the roof, drawn for exactly this spot.`); } });
 }

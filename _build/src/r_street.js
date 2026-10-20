@@ -2,7 +2,7 @@
 // goes over and the whole street shakes, the light through the ties strobes, the paper in the gutter lifts. The trick
 // is the curb: whatever leaves 4F upstairs, month by month, is out here on the sidewalk, and the neighbours pick it over.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, prop, cast, extra, glowTex, paperWind, sheet, CH, LEAVES, FURN, decal, eyeFlower } from './kit.js';
+import { PI, std, basic, box, cyl, prop, cast, glowTex, paperWind, sheet, CH, LEAVES, FURN, decal, eyeFlower, art, artTex, artPlane } from './kit.js';
 
 const COLS = [4.2, 15.8], ZS = [6.5, 0.5, -5.5];
 // where each departed piece lands on the east sidewalk: [x, z, ry]
@@ -55,6 +55,8 @@ export function street(c, r, g, X) {
   // ---- the train ----
   const train = new THREE.Group(); g.add(train); train.visible = false;
   for (let k = 0; k < 4; k++) c.glb('h_subway_car', { len: 15.4, x: 0, z: k * 15.8, ry: PI / 2, parent: train, shadow: false });
+  // the car windows carry New Yorkers: from under the el you see them flicker past in the gaps between the ties
+  for (let k = 0; k < 4; k++) for (let j = 0; j < 6; j++) for (const sx of [-1.45, 1.45]) { const p = art(r, (k * 6 + j) % 24), m = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.84), new THREE.MeshBasicMaterial({ map: artTex(c, p), toneMapped: false, side: THREE.DoubleSide })); m.position.set(sx, 1.25, k * 15.8 - 6.0 + j * 2.4); m.rotation.y = PI / 2; train.add(m); }
   const winGlow = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 62), basic(c, 0xfff2c8, { transparent: true, opacity: 0.7 })); winGlow.position.set(0, -0.2, 23); winGlow.rotation.x = -PI / 2; train.add(winGlow);
   let next = 9, run = null, rides = 0;
   const pass = () => { run = { t: 0, dir: Math.random() < 0.5 ? 1 : -1 }; train.visible = true; train.position.x = run.dir > 0 ? 6.9 : 13.1; train.rotation.y = run.dir > 0 ? 0 : PI; c.sound.roar(0.7); setTimeout(() => c.sound.roar(0.5), 900); };
@@ -103,8 +105,8 @@ export function street(c, r, g, X) {
   for (const [x, z, ry] of [[8.8, -5.4, 0.4], [9.4, -5.9, 2.2], [11.0, -6.4, -1.1]]) c.glb('pigeon', { len: 0.32, x, z, ry, parent: g });
   // the neighbour on a milk crate, watching the pile the way other people watch television
   const crate = box(c, 0.42, 0.32, 0.42, std(c, 0x1d4ed8, { roughness: 0.6 }), 16.0, 0.31, 2.2); g.add(crate); c.post(X(16.0), 2.2, 0.4);
-  const nb = extra(c, g, 16.0, 2.2, { seated: true, col: 0x8a3a2a, ry: -0.9 }); nb.position.y = 0.15;
-  c.clickable(nb, () => { c.say(nb, ['First of the month, every month, like a clock. Something else comes down those stairs.', 'Forty one years they were up there. I took the plant. The plant is doing fine.', 'You want the chair? Take the chair. Nobody is coming back for the chair.'][(Math.random() * 3) | 0], 4200, 1.7); c.egg('crate'); }, 'The neighbour on the crate');
+  const nb = cast(c, r, g, X, 'pigeonlady', 16.6, 2.9, { h: 1.7, ry: -1.2, r: 0 });
+  c.clickable(nb, () => { c.say(nb, ['First of the month, every month, like a clock. Something else comes down those stairs.', 'Forty one years they were up there. I took the plant. The plant is doing fine.', 'You want the chair? Take the chair. Nobody is coming back for the chair.'][(Math.random() * 3) | 0], 4200, 2.0); c.egg('crate'); }, 'The neighbour by the crate');
   // the door of the building: number, buzzers, and the notice taped beside it
   const num = c.sign('N3W', { w: 0.9, h: 0.3, bg: '#0d0d0d', fg: '#f5c542', font: c.SERIF, weight: 900 }); num.position.set(W - 0.4, 4.0, 3.8); num.rotation.y = -PI / 2; g.add(num);
   const buzz = decal(c, 0.22, 0.5, (q, w, h) => { q.fillStyle = '#b8a070'; q.fillRect(0, 0, w, h); for (let i = 0; i < 10; i++) { q.fillStyle = '#1a1a1a'; q.beginPath(); q.arc(w * 0.75, 14 + i * (h - 20) / 10, 4, 0, 7); q.fill(); q.fillStyle = '#f2ede0'; q.fillRect(6, 9 + i * (h - 20) / 10, w * 0.5, 9); } });
@@ -118,4 +120,21 @@ export function street(c, r, g, X) {
   [[3.6, 4.2, 0.4], [5.1, -1.5, 1.4], [9.7, 6.4, 2.6], [12.8, 2.0, 0.2], [16.6, -4.1, -1.0]].forEach(([x, z, ry], k) => sheet(c, g, x, z, ry, ['notice', 'pink', 'yellow'][k % 3], k));
   // an eye on the column where the el meets the street: the city watches the curb too
   const ey = decal(c, 0.9, 0.9, (q, w, h) => eyeFlower(q, w / 2, h / 2, w / 2 * 0.95)); ey.position.set(COLS[1] - 0.26, 3.2, 0.5); ey.rotation.y = -PI / 2; g.add(ey);
+
+  // ---- the wheat paste wall: census New Yorkers from this block, pasted on the shutters, peeling at the corners ----
+  for (let k = 0; k < 6; k++) { const p = art(r, 12 + k), z = -6.6 + k * 1.25, m = artPlane(c, g, p, 1.08, 0.61, { egg: ['wheatpaste', 'Pasted on the shutters on Broadway, the way the art has always gone up in this city: overnight, with a bucket of paste and nobody\'s permission.'] });
+    m.position.set(0.16, 2.1 + (k % 2) * 0.72, z); m.rotation.set(0, PI / 2, (k % 3 - 1) * 0.03); }
+  // ---- the flip book: one poster on the column that is twelve posters. Under the strobe of a passing train it moves. ----
+  const FB = [], fb = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.73), new THREE.MeshBasicMaterial({ toneMapped: false }));
+  for (let k = 0; k < 12; k++) FB.push(artTex(c, art(r, k)));
+  fb.material.map = FB[0]; fb.position.set(COLS[0] + 0.3, 2.2, ZS[1]); fb.rotation.y = PI / 2; g.add(fb);
+  const fl = c.sign('N3W FLIP BOOK · WAIT FOR THE J', { w: 1.3, h: 0.12, bg: '#0d0d0d', fg: '#ff7a1a', font: c.MONO, weight: 700 }); fl.position.set(COLS[0] + 0.3, 1.76, ZS[1]); fl.rotation.y = PI / 2; g.add(fl);
+  let fbk = 0, fbAcc = 0, fbSeen = 0;
+  c.clickable(fb, () => c.openPiece(art(r, fbk)), 'The flip book poster');
+  c.tick((t, dt, P, ri) => {
+    if (ri !== r.i) return;
+    const strobe = run && stripeM.opacity > 0.4;   // the train is over us and the light through the ties is flickering
+    if (strobe) { fbAcc += dt; if (fbAcc > 1 / 12) { fbAcc = 0; fbk = (fbk + 1) % 12; fb.material.map = FB[fbk]; fb.material.needsUpdate = true; }
+      if (Math.hypot(P.x - r.x0 - COLS[0], P.z - ZS[1]) < 7) { fbSeen += dt; if (fbSeen > 2.5) { fbSeen = -1e9; c.egg('zoetrope', 'Under the J the light through the ties flickers twelve times a second, and the poster on the column turns into a film: twelve New Yorkers from this block, one after another, a zoetrope the size of a street.'); } } }
+  });
 }

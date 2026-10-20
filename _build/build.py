@@ -20,7 +20,7 @@ ONLOC = os.path.join(DESK, "ON LOCATION 2026-10-10", "work")
 MUSEUM = os.path.join(SITE_REPO, "_build", "museum")
 OUT = os.path.join(ROOT, "site")
 A = os.path.join(OUT, "assets")
-N_PER = 12
+N_PER = 24   # twelve for the walls, the rest for the art the rooms show off (tv, postcards, posters, docket, flock)
 # the set: where each film was shot, so the walls hold New Yorkers from that block
 HOODS = {
     "street": ["Williamsburg"], "vestibule": ["Williamsburg", "East Williamsburg"], "hallway": ["Williamsburg", "Greenpoint"],

@@ -2,7 +2,7 @@
 // a clerk's window. The trick: the aisle is a treadmill. Walk at the window without a number and the floor carries you
 // back exactly as fast as you walk. Take a number at the door, wait for the sign to reach it, and the floor stops.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, extra, cast, sheet, linoTex, texMat, stamp } from './kit.js';
+import { PI, std, basic, box, cyl, decal, cast, sheet, linoTex, texMat, stamp, art, artTex, artPlane } from './kit.js';
 
 const AX0 = 8.2, AX1 = 11.8;   // the aisle between the benches
 
@@ -16,11 +16,14 @@ export function court(c, r, g, X) {
     const z = 4.6 - k * 1.7, w = x1 - x0, cx = (x0 + x1) / 2;
     g.add(box(c, w, 0.06, 0.42, oak, cx, 0.46, z)); g.add(box(c, w, 0.5, 0.05, oak, cx, 0.78, z + 0.22)); for (const ex of [x0 + 0.08, x1 - 0.08]) g.add(box(c, 0.06, 0.46, 0.42, dark, ex, 0.23, z));
     c.wall(X(x0), z - 0.25, X(x1), z - 0.25); c.wall(X(x0), z + 0.27, X(x1), z + 0.27); c.wall(X(x0), z - 0.25, X(x0), z + 0.27); c.wall(X(x1), z - 0.25, X(x1), z + 0.27);
-    for (let s = x0 + 0.4; s < x1 - 0.3; s += 0.62) if (rnd() < 0.62) { const e = extra(c, g, s, z + 0.02, { seated: true, col: COLS[(rnd() * COLS.length) | 0], ry: PI }); e.position.y = 0.04; sitters.push(e); if (rnd() < 0.4) { const p = sheet(c, g, 0, 0, 0, rnd() < 0.5 ? 'yellow' : 'notice', k); p.rotation.set(-1.1, 0, 0); p.position.set(s, 0.72, z - 0.22); } }
+
   }
-  const LINES = ['Third time. They adjourn it, I take another day off work, they adjourn it again.', 'My lawyer is the man in the hall with the clipboard. He has ninety cases this morning.', 'Forty one years in the building and I learned the word "holdover" this year.', 'They called my name at nine thirty. It is two. I am still here. So is my name.', 'Bring a sandwich. Bring two.'];
-  sitters.forEach((s, k) => { if (k % 3 === 0) c.clickable(s, () => { c.say(s, LINES[k % LINES.length], 3800, 1.5); c.egg('benches'); }, 'Somebody waiting'); });
-  c.tick((t, dt, P, ri) => { if (ri !== r.i) return; sitters.forEach((s, k) => { s.userData.head.rotation.z = Math.sin(t * 0.7 + k) * 0.06; if (k % 7 === 0) s.userData.head.position.y = 0.98 + Math.abs(Math.sin(t * 0.3 + k)) * 0.02; }); });
+  // the people waiting: the cast of the city, standing by the benches with their papers, nobody sitting down for long
+  const WHO = ['susan', 'dad', 'workgirl', 'writer', 'sally', 'rosemary', 'maria', 'loretta', 'annieh', 'bookseller', 'auggie', 'felix', 'butcher', 'jeweler'];
+  const LINES = ['Third time. They adjourn it, I take another day off work, they adjourn it again.', 'My lawyer is the man in the hall with the clipboard. He has ninety cases this morning.', 'Forty one years in the building and I learned the word holdover this year.', 'They called my name at nine thirty. It is two. I am still here. So is my name.', 'Bring a sandwich. Bring two.', 'The landlord sends a lawyer. The lawyer sends a junior. The junior sends his regrets.'];
+  const spots = [[1.0, 5.2, 0.6], [7.7, 4.0, -0.4], [12.4, 4.2, 0.5], [18.9, 5.0, -0.5], [1.0, 1.8, 0.4], [7.75, 0.6, -0.3], [12.3, 2.3, 0.2], [18.9, 1.4, -0.4], [1.0, -1.6, 0.5], [7.8, -2.8, -0.5], [12.3, -1.2, 0.3], [18.9, -2.3, -0.6], [1.0, -4.9, 0.2], [18.9, -5.1, -0.2]];
+  spots.forEach(([x, z, ry], k) => { const m = cast(c, r, g, X, WHO[k % WHO.length], x, z, { h: 1.62 + (k % 4) * 0.06, ry: PI + ry, r: 0.35 }); if (k % 2 === 0) c.clickable(m, () => { c.say(m, LINES[(k / 2) % LINES.length], 3800, 2.0); c.egg('benches'); }, 'Somebody waiting'); });
+  c.tick((t, dt, P, ri) => { if (ri !== r.i) return; });
 
   // ---- the aisle: a treadmill under a strip of the same linoleum ----
   const AZ0 = -6.4, AZ1 = 6.0, lt = linoTex(c).clone(); lt.needsUpdate = true; lt.wrapS = lt.wrapT = THREE.RepeatWrapping; lt.repeat.set((AX1 - AX0) / 2.4, (AZ1 - AZ0) / 2.4);
@@ -76,4 +79,22 @@ export function court(c, r, g, X) {
   // a lawyer in the hall with ninety files
   cast(c, r, g, X, 'editor', 3.0, 6.6, { h: 1.75, ry: 0.4, line: 'Are you 847? No? Who is 847? Has anybody seen 847? I have ninety of you this morning.', egg: 'lawyer', hint: 'The lawyer with the clipboard' });
   [[9.0, 5.0, 0.4], [10.6, 2.0, 1.4], [3.6, -6.0, 2.2], [16.0, -6.2, 0.9], [10.2, -4.2, 2.8]].forEach(([x, z, ry], k) => sheet(c, g, x, z, ry, ['yellow', 'notice', 'pink'][k % 3], k + 12));
+
+  // ---- the docket: the day's cases on a black board, scrolling, every one of them a New Yorker ----
+  const DK = 10, cases = []; for (let k = 0; k < DK; k++) cases.push(art(r, 12 + k));
+  const dk = c.canvasTex(512, 640, () => {}), dq = dk.userData.canvas.getContext('2d'), thumbs = cases.map((p) => { const im = new Image(); im.src = `assets/art/${p.f}`; return im; });
+  const board = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.75), new THREE.MeshBasicMaterial({ map: dk, toneMapped: false })); board.position.set(W - 0.42, 2.2, 2.2); board.rotation.y = -PI / 2; g.add(board);
+  g.add(box(c, 0.06, 2.9, 2.35, std(c, 0x3a2a18), W - 0.38, 2.2, 2.2));
+  let off = 0;
+  c.tick((t, dt, P, ri) => { if (ri !== r.i) return; off = (off + dt * 22) % (DK * 96);
+    dq.fillStyle = '#0d0d0d'; dq.fillRect(0, 0, 512, 640); dq.fillStyle = '#f5c542'; dq.font = `800 26px ${c.MONO}`; dq.textAlign = 'center'; dq.fillText('HOUSING PART · TODAY', 256, 40); dq.fillRect(20, 54, 472, 3);
+    dq.save(); dq.beginPath(); dq.rect(0, 64, 512, 576); dq.clip();
+    for (let k = 0; k < DK + 6; k++) { const i = k % DK, y = 70 + k * 96 - off, p = cases[i]; if (y < -40 || y > 650) continue; const im = thumbs[i]; if (im.complete && im.naturalWidth) dq.drawImage(im, 24, y, 128, 72);
+      dq.textAlign = 'left'; dq.fillStyle = '#f4ead2'; dq.font = `700 17px ${c.MONO}`; dq.fillText(`IN THE MATTER OF`, 166, y + 18); dq.font = `800 20px ${c.FONT}`; const tt = p.t.length > 26 ? p.t.slice(0, 25) + '.' : p.t; dq.fillText(tt.toUpperCase(), 166, y + 44); dq.fillStyle = '#8d8676'; dq.font = `600 14px ${c.MONO}`; dq.fillText(`NO. ${p.n} · ${(p.h || '').toUpperCase()} · ${['ADJOURNED', 'HOLDOVER', 'NONPAYMENT', 'ADJOURNED', 'SETTLED'][i % 5]}`, 166, y + 66); }
+    dq.restore(); dk.needsUpdate = true; });
+  c.clickable(board, () => { const i = Math.floor((off + 288) / 96) % DK; c.openPiece(cases[i]); c.egg('docket', 'The day\'s docket, scrolling: every case on it is a New Yorker from Downtown Brooklyn. IN THE MATTER OF, and then a painting.'); }, 'The docket');
+  c.post(X(W - 0.6), 2.2, 0.4);
+  // when your number comes up, the screen by the window shows who you are today
+  const you = artPlane(c, g, art(r, 22), 1.1, 0.62, { hint: 'Number C 847', egg: ['c847', 'C 847 is a New Yorker too. Everybody in this hall is somebody on a wall somewhere.'] }); you.position.set(AX1 + 0.9, 2.6, BZ + 0.2); you.visible = false;
+  c.tick(() => { you.visible = called; });
 }

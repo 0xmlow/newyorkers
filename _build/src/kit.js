@@ -258,6 +258,32 @@ export function liveTex(c, name, r) {
   v.src = `assets/video/${name}.mp4`; v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.crossOrigin = 'anonymous';
   const t = new THREE.VideoTexture(v); t.colorSpace = THREE.SRGBColorSpace;
   let on = false;
-  c.tick((tt, dt, P, ri) => { const out = Math.max(r.x0 - P.x, P.x - (r.x0 + 20), 0), want = out < 3 && !document.hidden;   // in the room, or at its doorway if (want !== on) { on = want; if (on) v.play().catch(() => {}); else v.pause(); } });
+  c.tick((tt, dt, P, ri) => { const out = Math.max(r.x0 - P.x, P.x - (r.x0 + 20), 0), want = out < 3 && !document.hidden; if (want !== on) { on = want; if (on) v.play().catch(() => {}); else v.pause(); } });
   return t;
+}
+
+// ---------- the art, shown off ----------
+// every room's census New Yorkers (build.py deals 24 per room from the block it stands on): r.cast[0..11] hang on the
+// walls, the rest live in the room's tricks. art(r, k) wraps round; artTex caches one texture per file.
+export const art = (r, k) => { const L = r.cast && r.cast.length ? r.cast : Object.values(window.CAST || {}).flat(); return L[((k % L.length) + L.length) % L.length]; };
+const _ART = {};
+export function artTex(c, p) { if (!p) return null; if (_ART[p.f]) return _ART[p.f]; const t = c.tex.load(`assets/art/${p.f}`); t.colorSpace = c.THREE.SRGBColorSpace; t.anisotropy = 4; return (_ART[p.f] = t); }
+// a painting as a plain lit plane, clickable to its card
+export function artPlane(c, g, p, w, h, o = {}) { const m = new c.THREE.Mesh(new c.THREE.PlaneGeometry(w, h), new c.THREE.MeshBasicMaterial({ map: artTex(c, p), toneMapped: false, transparent: !!o.opacity, opacity: o.opacity ?? 1, side: o.side ?? c.THREE.FrontSide })); g.add(m); if (o.click !== false) c.clickable(m, () => { c.openPiece(p); o.egg && c.egg(o.egg[0], o.egg[1]); }, o.hint || p.t); return m; }
+
+// The chalk painting illusion (street anamorphosis): a picture painted flat across the floor, stretched so that from
+// one mark it stands up out of the ground, upright and the right shape. Every floor vertex gets the texture coordinate
+// of the point where the ray from the eye through it crosses an upright picture plane at zp.
+export function anamorph(c, g, tex, { ex, ez, ey = 1.62, zp, cx, w, h, x0, x1, z0, z1, n = 48, y = 0.014, alpha = 1 }) {
+  const { THREE } = c, pos = [], uv = [], idx = [];
+  for (let j = 0; j <= n; j++) for (let i = 0; i <= n; i++) {
+    const x = x0 + (x1 - x0) * i / n, z = z0 + (z1 - z0) * j / n, t = (zp - ez) / (z - ez), X = ex + (x - ex) * t, Y = ey + (y - ey) * t;
+    pos.push(x, y, z); uv.push((X - (cx - w / 2)) / w, Y / h);
+    if (i && j) { const a = (j - 1) * (n + 1) + i - 1, b = a + n + 1; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+  }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx);
+  const mat = new THREE.ShaderMaterial({ uniforms: { t: { value: tex }, a: { value: alpha } }, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }',
+    fragmentShader: 'uniform sampler2D t; uniform float a; varying vec2 vUv; void main(){ if (vUv.x < 0. || vUv.x > 1. || vUv.y < 0. || vUv.y > 1.) discard; vec4 c = texture2D(t, vUv); float e = min(min(vUv.x, 1. - vUv.x), min(vUv.y, 1. - vUv.y)); gl_FragColor = vec4(c.rgb * .92, c.a * a * smoothstep(0., .015, e));\n#include <colorspace_fragment>\n}' });
+  const m = new THREE.Mesh(geo, mat); g.add(m); return m;
 }

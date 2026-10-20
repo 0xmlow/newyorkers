@@ -7,7 +7,7 @@
 // turns up on the curb on Broadway. Tear the calendar to see ahead; pin a month and the flat stays there for you.
 // One frame comes off the wall every month too, and leaves its pale rectangle behind.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, extra, prop, bulb, glowTex, eyeFlower, relief, stamp, tinTex, texMat, sheet, CH, MONTHS, LEAVES, FURN, liveTex } from './kit.js';
+import { PI, std, basic, box, cyl, decal, prop, bulb, glowTex, eyeFlower, relief, stamp, tinTex, texMat, sheet, CH, MONTHS, LEAVES, FURN, liveTex, art, artTex, artPlane } from './kit.js';
 
 const Z0 = 2.0, Z1 = -7.6, CXM = 10;                        // the flat runs from its front door (z 2) to the back window
 const HW0 = 2.3, HW1 = 1.32, HC0 = 3.3, HC1 = 2.2, RISE = 0.28;
@@ -147,9 +147,22 @@ export function apartment(c, r, g, X, mats) {
   { const z = 0.25, a = Math.atan2(HW0 - HW1, Z0 - Z1); cal.position.set(CXM + hw(z) - 0.03, 1.7, z); cal.rotation.y = -(PI / 2 - a); g.add(cal); }
   c.clickable(cal, () => tear(1), 'Tear a month off the calendar');
   // parlour (z -0.8 to -3.6)
-  add(1, pp('nyb_crooklyn_tv', CXM + hw(-1.6) - 0.5 * S(-1.6), -1.6, { h: 0.62, ry: -PI / 2 }));
-  add(1, box(c, 0.5, 0.5, 0.9, std(c, 0x3a2414), CXM + hw(-1.6) - 0.45 * S(-1.6), fl(-1.6) + 0.25 * S(-1.6), -1.6)).scale.setScalar(S(-1.6)); g.add(items[1][1]);
-  items[1][0].position.y += 0.5 * S(-1.6);
+  // the television: a wooden console CRT, and on it the channels are New Yorkers from the block
+  { const z = -1.6, k = S(z), x = CXM + hw(z) - 0.42 * k, tv = new THREE.Group(); tv.position.set(x, fl(z), z); tv.rotation.y = -PI / 2; tv.scale.setScalar(k); g.add(tv); add(1, tv);
+    const wood = std(c, 0x4a2c18, { roughness: 0.45 });
+    tv.add(box(c, 0.95, 0.5, 0.5, wood, 0, 0.25, 0)); for (const sx of [-0.4, 0.4]) tv.add(cyl(c, 0.02, 0.015, 0.18, wood, sx, -0.04, 0.15, 6));
+    tv.add(box(c, 0.72, 0.58, 0.52, std(c, 0x1a1a1c, { roughness: 0.4 }), 0, 0.79, -0.02));
+    const ch = { k: 0, n: 0, noise: 0 }, scr = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.42), new THREE.MeshBasicMaterial({ toneMapped: false })); scr.position.set(0, 0.8, 0.245); tv.add(scr);
+    const snow = c.canvasTex(128, 96, () => {}), sq = snow.userData.canvas.getContext('2d');
+    const tune = (d) => { ch.k += d; ch.noise = 0.35; c.sound.tick(); };
+    tv.add(box(c, 0.06, 0.06, 0.04, std(c, 0xc8a040, { metalness: 1 }), 0.28, 0.6, 0.25)); tv.add(box(c, 0.06, 0.06, 0.04, std(c, 0xc8a040, { metalness: 1 }), 0.28, 0.5, 0.25));
+    const rabbit = new THREE.Group(); rabbit.position.set(0, 1.08, -0.05); tv.add(rabbit); for (const s2 of [-1, 1]) { const ant = cyl(c, 0.006, 0.006, 0.55, std(c, 0xc0c0c8, { metalness: 1 }), s2 * 0.12, 0.24, 0, 6); ant.rotation.z = -s2 * 0.45; rabbit.add(ant); }
+    c.clickable(tv, () => { tune(1); if (++ch.n === 6) c.egg('channels', 'Six channels and every one of them is a New Yorker from this block. The set came with the flat in 1985. The rabbit ears still get Brooklyn.'); }, 'Change the channel');
+    c.tick((t, dt, P, ri) => { if (ri !== r.i || !tv.visible) return; ch.auto = (ch.auto || 0) + dt; if (ch.auto > 6) { ch.auto = 0; tune(1); }
+      if (ch.noise > 0) { ch.noise -= dt; const im = sq.createImageData(128, 96); for (let i = 0; i < im.data.length; i += 4) { const v = Math.random() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } sq.putImageData(im, 0, 0); snow.needsUpdate = true; scr.material.map = snow; }
+      else { const p = art(r, 12 + (ch.k % 8)); scr.material.map = artTex(c, p); }
+      scr.material.color.setScalar(0.85 + Math.sin(t * 40) * 0.04 + (Math.sin(t * 3.1) > 0.98 ? -0.3 : 0)); });
+  }
   add(2, pp('ArmChair_01', CXM - 0.9, -1.4, { h: 0.95, ry: PI * 0.75 }));
   add(3, pp('boombox', CXM - hw(-3.3) + 0.4, -3.3, { len: 0.5, y: 0.62, ry: PI / 2 })); add(3, pp('side_table_01', CXM - hw(-3.3) + 0.4, -3.3, { h: 0.6 }));
   add(8, pp('sofa_03', CXM - hw(-2.3) + 0.5 * S(-2.3), -2.3, { len: 2.0, ry: PI / 2 }));
@@ -170,7 +183,18 @@ export function apartment(c, r, g, X, mats) {
   add(12, pp('nyb_bronx_lamp', CXM - hw(-6.1) + 0.3, -6.1, { h: 1.55 }));
   // the frames on the walls: one comes down every month and leaves its ghost on the wallpaper
   const frames = (r.hung || []).slice(0, 11);
-  frames.forEach((f, k) => { const sl = f.userData.slot; const gh = new THREE.Mesh(new THREE.PlaneGeometry(sl.w + 0.08, sl.w * 1.25), basic(c, 0xfff6e0, { transparent: true, opacity: 0.16, depthWrite: false })); gh.position.copy(f.position); gh.rotation.copy(f.rotation); gh.translateZ(0.005); g.add(gh); add(k + 1, f); });
+  frames.forEach((f, k) => { const sl = f.userData.slot; const gh = new THREE.Mesh(new THREE.PlaneGeometry(sl.w + 0.08, sl.w * 1.25), basic(c, 0xfff6e0, { transparent: true, opacity: 0.16, depthWrite: false })); gh.position.copy(f.position); gh.rotation.copy(f.rotation); gh.translateZ(0.005); g.add(gh); add(k + 1, f);
+    // the afterimage: touch the pale rectangle and the painting that hung there comes back for a moment, like a burn on the eye
+    const p = r.cast[k], ai = new THREE.Mesh(new THREE.PlaneGeometry(sl.w, sl.w * 9 / 16), new THREE.MeshBasicMaterial({ map: artTex(c, p), transparent: true, opacity: 0, depthWrite: false, toneMapped: false })); ai.position.copy(f.position); ai.rotation.copy(f.rotation); ai.translateZ(0.012); g.add(ai);
+    let fade = 0; c.clickable(gh, () => { if (f.visible) return; fade = 2.6; c.egg('afterimage', `The pale rectangle remembers: ${p.t}, No. ${p.n}. It hung here until they took it down. The wallpaper kept its shape, and for a second, its picture.`); }, 'Where a frame used to hang');
+    c.tick((t, dt) => { if (fade > 0) { fade -= dt; ai.material.opacity = Math.min(1, fade) * 0.85 * (0.9 + Math.sin(t * 30) * 0.1); } else if (ai.material.opacity) ai.material.opacity = 0; }); });
+  // the shrine in the back room: a little shelf of photographs, a candle, and the family that lived here, in New Yorkers
+  { const z = -6.5, k = S(z), x = CXM + hw(z) - 0.12, sh = new THREE.Group(); sh.position.set(x, fl(z) + 1.15 * k, z); sh.rotation.y = -(PI / 2 - Math.atan2(HW0 - HW1, Z0 - Z1)); sh.scale.setScalar(k); g.add(sh); add(11, sh);
+    sh.add(box(c, 0.9, 0.04, 0.2, std(c, 0x3a2414), 0, 0, 0.1));
+    for (let i = 0; i < 4; i++) { const p = art(r, 16 + i), fr = new THREE.Group(); fr.position.set(-0.32 + i * 0.21, 0.13 + (i % 2) * 0.03, 0.1); fr.rotation.x = -0.12; sh.add(fr); fr.add(box(c, 0.19, 0.13, 0.015, std(c, 0xc8a040, { metalness: 0.8 }), 0, 0, 0)); const ph = artPlane(c, fr, p, 0.16, 0.09, { hint: 'A photograph on the shrine', egg: ['shrine', 'The shrine in the back room: four photographs in gold frames, a candle that never went out. Every family in New York has one of these, and every one of them is a New Yorker.'] }); ph.position.z = 0.009; }
+    const flame = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 6), basic(c, 0xffb040)); flame.position.set(0.42, 0.12, 0.12); sh.add(flame); sh.add(cyl(c, 0.025, 0.025, 0.08, std(c, 0xc8281e), 0.42, 0.06, 0.12, 10));
+    const fg = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex(c, 'rgba(255,170,60,.6)'), transparent: true, depthWrite: false, toneMapped: false })); fg.scale.setScalar(0.18); fg.position.copy(flame.position); sh.add(fg);
+    c.tick((t) => { flame.scale.y = 1.3 + Math.sin(t * 17) * 0.25; fg.material.opacity = 0.7 + Math.sin(t * 23) * 0.2; }); }
   // the radiators, which stay
   for (const z of [0.0, -2.0, -6.9]) { const s = S(z), x = CXM - hw(z) + 0.14 * s, R = new THREE.Group(); R.position.set(x, fl(z), z); R.scale.setScalar(s); g.add(R); const iron = std(c, 0xb0a890, { metalness: 0.6, roughness: 0.5 }); for (let k = 0; k < 10; k++) R.add(box(c, 0.14, 0.75, 0.06, iron, 0, 0.45, -0.4 + k * 0.09)); }
   // a bulb in every room, smaller every room
@@ -189,7 +213,7 @@ export function apartment(c, r, g, X, mats) {
 
   // ---------- the year ----------
   // a piece of furniture, carried out by two movers: it slides up the flat to the door and onto the landing
-  const movers = [extra(c, g, 0, 0, { col: 0x4a4a52 }), extra(c, g, 0, 0, { col: 0x2a3a5a })]; movers.forEach((m) => { m.visible = false; });
+  const movers = [c.glb('tough', { h: 1.8, parent: g }), c.glb('tracksuit', { h: 1.78, parent: g })]; movers.forEach((m) => { m.visible = false; });
   const moving = [];
   const home = (o) => { if (!o.userData.home) o.userData.home = o.position.clone(); return o.userData.home; };
   const show = (n, was) => {
@@ -208,7 +232,7 @@ export function apartment(c, r, g, X, mats) {
     const path = [[h.x, h.z], [DOORX(h.z), Math.min(Z0 - 0.3, h.z + 0.6)], [ST[0], Z0 - 0.4], [ST[0], Z0 + 1.2], [ST[0] + 3, Z0 + 3.5]];
     const seg = Math.min(path.length - 2, Math.floor(u * (path.length - 1))), k = u * (path.length - 1) - seg, [ax, az] = path[seg], [bx, bz] = path[seg + 1];
     const x = ax + (bx - ax) * k, z = az + (bz - az) * k; o.position.set(x, fl(z) + 0.12 + Math.abs(Math.sin(u * 18)) * 0.03, z);
-    movers.forEach((m, j) => { m.visible = true; m.scale.setScalar(Math.max(sc(z), 0.75)); m.position.set(x + (j ? 0.45 : -0.45) * sc(z), fl(z), z + (j ? 0.25 : -0.25)); m.rotation.y = Math.atan2(bx - ax, bz - az) + PI; });
+    movers.forEach((m, j) => { m.visible = true; m.scale.setScalar(Math.max(sc(z), 0.7)); m.position.set(x + (j ? 0.45 : -0.45) * sc(z), fl(z), z + (j ? 0.25 : -0.25)); m.rotation.y = Math.atan2(bx - ax, bz - az) + PI; });
     if (u >= 1) { o.visible = false; o.position.copy(h); moving.shift(); }
   });
   function tear(d) {

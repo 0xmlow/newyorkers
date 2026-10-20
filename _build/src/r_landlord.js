@@ -3,7 +3,7 @@
 // the oldest one there is, done backwards: the closer you walk, the bigger he gets, until his head is in the tin
 // ceiling; back away and he is just a man in a coat again.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, prop, cast, relief, steam, sheet, glowTex, stamp } from './kit.js';
+import { PI, std, basic, box, cyl, decal, prop, cast, relief, steam, sheet, glowTex, stamp, art, artTex, artPlane } from './kit.js';
 
 export function landlord(c, r, g, X) {
   const { THREE } = c, HI = 6;
@@ -48,6 +48,11 @@ export function landlord(c, r, g, X) {
   for (let i = 0; i < KN; i++) { const wl = walls[i % 2], z = wl[1] + Math.random() * (wl[2] - wl[1]), y = 0.9 + Math.floor(Math.random() * 26) * 0.16; kd.push({ x: wl[0], y, z, ry: wl[3], ph: Math.random() * 6, a: 0 }); }
   const place = (k, sw) => { o.position.set(k.x, k.y, k.z); o.rotation.set(0, k.ry, sw); o.updateMatrix(); keys.setMatrixAt(kd.indexOf(k), o.matrix); };
   kd.forEach((k, i) => { o.position.set(k.x, k.y, k.z); o.rotation.set(0, k.ry, 0); o.updateMatrix(); keys.setMatrixAt(i, o.matrix); }); g.add(keys);
+  // every key has a tag, and every tag is somebody: click a key and it tells you who it belongs to
+  let tags = 0;
+  c.clickable(keys, () => { const id = c.lastHit?.instanceId ?? 0, p = art(r, 12 + (id % 12)), apt = `${1 + (id % 5)}${'ABCDF'[id % 5]}`; c.sound.clink(2600); c.toast(`Key ${id + 1}, apartment ${apt}: ${p.t}, No. ${p.n}.`, 3000); if (++tags === 3) { c.openPiece(p); c.egg('keytag', 'Every key on the wall has a paper tag, and every tag is a New Yorker. Two thousand doors, two thousand people, one man holding the ring.'); } }, 'A key on the wall');
+  // the rogues' gallery behind the desk: his tenants, in gilt, the way other men hang their diplomas
+  for (let k = 0; k < 5; k++) { const p = art(r, 16 + k), m = artPlane(c, g, p, 0.9, 0.5, { egg: ['rogues', 'Behind his desk, in gilt frames, the tenants: not their faces, their buildings, their stoops, their corners. He hangs the neighbourhood the way other men hang diplomas.'] }); m.position.set(6.2 + k * 1.9, 5.0 + (k % 2) * 0.25, -7.94); const f = box(c, 1.0, 0.6, 0.04, std(c, 0xb8902e, { metalness: 1, roughness: 0.3 }), m.position.x, m.position.y, -7.97); g.add(f); }
   let lastJ = 0;
   c.tick((t, dt, P, ri) => {
     if (ri !== r.i) return; let any = false;

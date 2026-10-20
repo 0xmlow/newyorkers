@@ -3,7 +3,7 @@
 // air. At the end of the hall, a skeleton in a cap and a long black coat. He only moves when you are not looking,
 // and when the light goes out. If he reaches you, you have been served.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, paperWind, sheet, relief, stamp, glowTex, liveTex } from './kit.js';
+import { PI, std, basic, box, cyl, decal, paperWind, sheet, relief, stamp, glowTex, liveTex, watcher, art, artTex } from './kit.js';
 
 const CX0 = 7.6, CX1 = 12.4, CZ = 1.6;   // the corridor runs north from the cross hall at z = 1.6
 const WINS = [-5.4, -3.0, -0.6], DOORS = [[-5.0, '4A'], [-2.5, '4B'], [0.0, '4C']];
@@ -99,4 +99,17 @@ export function hallway(c, r, g, X, mats) {
   const f4 = c.sign('4F', { w: 0.42, h: 0.28, bg: '#b08a3a', fg: '#141414', font: c.SERIF, weight: 900 }); f4.position.set(W - 0.4, 2.05, 6.3); f4.rotation.y = -PI / 2; g.add(f4);
   const cal = decal(c, 0.5, 0.36, (q, w, h) => { q.fillStyle = '#ff7a1a'; q.fillRect(0, 0, w, h); q.fillStyle = '#141414'; q.font = `900 ${h * 0.3}px ${c.MONO}`; q.textAlign = 'center'; q.fillText('4F THIS WAY', w / 2, h * 0.62); });
   cal.position.set(W - 0.39, 2.65, 3.8); cal.rotation.y = -PI / 2; g.add(cal);
+
+  // ---- the mural is watching: real eyes set into the painted flowers, and every one of them follows you down the hall ----
+  const eyes = [[CX0 + 0.13, 2.25, -6.6, PI / 2], [CX0 + 0.13, 2.4, -3.75, PI / 2], [CX0 + 0.13, 2.2, -1.25, PI / 2], [CX1 - 0.13, 2.55, -4.2, -PI / 2], [CX1 - 0.13, 2.55, -1.8, -PI / 2], [CX1 - 0.13, 2.4, 0.9, -PI / 2], [6.0, 2.3, D / 2 - 0.15, PI], [14.0, 2.3, D / 2 - 0.15, PI]];
+  eyes.forEach(([x, y, z, ry], k) => { const w = watcher(c, g, x, y, z, ry, 0.22 + (k % 3) * 0.05); c.clickable(w, () => { c.sound.tick(); c.egg('muraleyes', 'The flowers on the fourth floor have eyes, and the eyes are real: they follow you all the way down the hall. The painting has been watching this building for years. It saw everything.'); }, 'An eye in the mural'); });
+  // ---- the reflection: walk up to a window and look out, and in the glass, over the bridge, a New Yorker looks back ----
+  const ghosts = WINS.map((wz, k) => { const p = art(r, 13 + k), m = new THREE.Mesh(new THREE.PlaneGeometry(1.36, 0.77), new THREE.MeshBasicMaterial({ map: artTex(c, p), transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending }));
+    m.position.set(CX1 + 0.16, 1.78, wz); m.rotation.y = -PI / 2; g.add(m); m.userData.p = p; return m; });
+  let seen = new Set(); const fw3 = new THREE.Vector3();
+  c.tick((t, dt, P, ri) => {
+    if (ri !== r.i) return; c.camera.getWorldDirection(fw3);
+    ghosts.forEach((m, k) => { const near = Math.abs(P.z - WINS[k]) < 0.9 && P.x - r.x0 > CX1 - 1.6 && fw3.x > 0.8; m.material.opacity += ((near ? 0.55 : 0) - m.material.opacity) * Math.min(1, dt * 1.6);
+      if (near && m.material.opacity > 0.45 && !seen.has(k)) { seen.add(k); c.toast(`In the glass, over the bridge: ${m.userData.p.t}, No. ${m.userData.p.n}.`, 3200); if (seen.size === 3) c.egg('reflection', 'Three windows, three New Yorkers in the glass. Pepper\'s ghost, the oldest trick in the theatre: a painting on your side of the window, lit just enough to float over the city.'); } });
+  });
 }

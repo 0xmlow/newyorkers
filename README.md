@@ -19,6 +19,25 @@ Open it by double clicking `Open THE EVICTION.command`. Links: `?chapter=0` to `
 | 7 | Tar Beach | The roof: a cedar water tower, a pigeon coop, string lights, the bridge. **Open the coop**: the flock flies out over the river, draws an eye flower in the air above the bridge, and comes home. |
 | 8 | The Penthouse | By the "Dynamic NFTs with New Yorkers assets" session (`_build/src/r_penthouse.js`, `work/penthouse/README.md`): The Landlord at home over Central Park. Rent Day flips the painting over the fire; it gains a gilded thing for every thing 4F loses. |
 
+## The art, shown off (round two, after MLow: no low poly figures, more eggs that show the art, more illusions)
+
+Every room gets 24 census New Yorkers from its block (`build.py` `N_PER`): twelve hang on the walls, the rest live in the
+tricks (`kit.art(r, k)`, `artTex`, `artPlane`). All of them open their piece card.
+- Street: a wheat paste wall of six; **the flip book**, a poster on an el column that cycles twelve New Yorkers at the
+  strobe rate of a passing train, a zoetrope; the train's windows carry New Yorkers through the gaps in the ties.
+- Vestibule: a postcard of a New Yorker in every mailbox; **the chalk painting** (`kit.anamorph`): a painting laid flat on
+  the hex tile that stands up like a picture on an easel from the doormat, and smears when you step off it.
+- Fourth floor: real eyes set into the mural that follow you; **Pepper's ghost**: a New Yorker floating in each window
+  over the bridge when you walk up and look out.
+- 4F: a console CRT whose channels are New Yorkers (static between, rabbit ears); **afterimages**: touch a pale
+  rectangle where a frame came down and its painting burns back for a moment; a shrine of four photographs and a candle.
+- Office: every key on the wall opens the New Yorker on its tag; a gilt row of tenants over the picture.
+- Court: a docket board scrolling IN THE MATTER OF, every case a New Yorker; your number's New Yorker beside the window.
+- Roof: **the flock is a painting**: 144 pigeons, one per cell of a 16 by 9 grid over a census piece, each the colour of
+  its cell, hold the picture up over the bridge; **chalk on the tar** from the top of the stairs.
+- The cylinder and flower plane extras are gone: every person is an ON LOCATION Tripo GLB (the court's waiting room, the
+  movers, the neighbour, you in the peephole).
+
 ## The dynamic token, as a room
 
 4F is the pin demo from the Dynamic NFT outlines (idea 28, "The Eviction Diorama"), and it runs without any contract:
@@ -52,7 +71,7 @@ new 7160 contract. That choice is MLow's.
 
 - Never walked by a person. Every check was headless Chrome on this Mac with scripted positions and clicks.
 - Fired by script: the curb at chapter 12, the bare flat, the shadowbox view, The Landlord towering, the flock, the
-  hallway serve, the peephole. Not fired by script: the movers' walk out of 4F (the animation), the court treadmill and
-  the number being called, the J passing over the street, the J light in 4F.
+  hallway serve, the peephole, the movers, the court number being called, both chalk paintings, the CRT, the window ghosts. Not seen by script: the J passing over the street (and so the flip book and the train windows), the J light in 4F,
+  the flock's held painting at full hold.
 - The music and sound were never listened to.
 - Phones: inherits ON RECORD's lazy rooms and phone guard. Untried on a device. The video loops add decode load.
