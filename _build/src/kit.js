@@ -256,7 +256,7 @@ export const FURN = {
 export function liveTex(c, name, r) {
   const { THREE } = c, v = document.createElement('video');
   v.src = `assets/video/${name}.mp4`; v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.crossOrigin = 'anonymous';
-  const t = new THREE.VideoTexture(v); t.colorSpace = THREE.SRGBColorSpace;
+  const t = new THREE.VideoTexture(v); t.colorSpace = THREE.SRGBColorSpace; (window.__VIDS ||= []).push(v);
   let on = false;
   c.tick((tt, dt, P, ri) => { const out = Math.max(r.x0 - P.x, P.x - (r.x0 + 20), 0), want = out < 3 && !document.hidden; if (want !== on) { on = want; if (on) v.play().catch(() => {}); else v.pause(); } });
   return t;
