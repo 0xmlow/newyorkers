@@ -1,0 +1,19 @@
+/* ---------- THE SUNDAY COUNT (2026-10-21): the home page email box, posts kind "list" to /api/submit ---------- */
+.sunday { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: end;
+  background: var(--card); border-top: 1px solid var(--divider); border-bottom: 1px solid var(--divider); }
+.sunday .sc-copy p:not(.eyebrow) { font: 15px/1.75 var(--sans); color: var(--slate); max-width: 52ch; margin: 18px 0 0; }
+.sc-form label { display: block; font: 500 11px/1.5 var(--mono); letter-spacing: .19em; text-transform: uppercase; color: var(--slate); margin-bottom: 10px; }
+.sc-row { display: flex; gap: 10px; }
+.sc-row input { flex: 1 1 auto; min-width: 0; font: 400 16px/1.2 var(--sans); color: var(--cloud); background: var(--ink);
+  border: 1px solid var(--divider); border-radius: var(--r); padding: 15px 16px; }
+.sc-row input::placeholder { color: var(--slate); }
+.sc-row input:focus { outline: none; border-color: var(--cyan); }
+.sc-row .btn { flex: 0 0 auto; }
+.sc-row .btn:disabled { opacity: .6; cursor: progress; }
+.sc-msg { min-height: 1.5em; margin: 12px 0 0; font: 400 13px/1.5 var(--sans); color: var(--slate); }
+.sc-msg.ok { color: var(--gold); } .sc-msg.bad { color: var(--coral); }
+.sc-form.done .sc-row { display: none; }
+@media (max-width: 860px) {
+  .sunday { grid-template-columns: 1fr; gap: 28px; }
+  .sc-row { flex-direction: column; } .sc-row .btn { justify-content: center; }
+}

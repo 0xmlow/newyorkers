@@ -1,0 +1,24 @@
+<!-- THE SUNDAY COUNT: the home page email box on n3wyorkers.com, as it ships. Posts kind "list" to /api/submit. -->
+<section class="sunday" id="sunday" aria-labelledby="sc-h">
+ <div class="sc-copy">
+  <p class="eyebrow" data-l="7" style="--lc:var(--l7)">THE SUNDAY COUNT · ONE EMAIL A WEEK</p>
+  <h2 id="sc-h">The city, counted<br>every Sunday.</h2>
+  <p>Who got counted, which reader's nomination got painted, and what opens or closes next, before it hits X. One letter a week, and one click to leave.</p>
+ </div>
+ <form class="sc-form" id="scForm" novalidate>
+  <label for="scEmail">Your email</label>
+  <div class="sc-row"><input id="scEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required><button class="btn pink" type="submit">Count me in</button></div>
+  <p class="sc-msg" id="scMsg" role="status" aria-live="polite"></p>
+ </form>
+ <script>(function(){var f=document.getElementById("scForm"),e=document.getElementById("scEmail"),m=document.getElementById("scMsg"),b=f.querySelector("button");
+ f.addEventListener("submit",function(ev){ev.preventDefault();var v=(e.value||"").trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){m.textContent="That email looks wrong. Try again.";m.className="sc-msg bad";e.focus();return;}
+  b.disabled=true;m.className="sc-msg";m.textContent="Counting you in...";
+  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({kind:"list",email:v,source:"home",ref:(location.search.match(/[?&]ref=([^&]+)/)||[])[1]||""})})
+  .then(function(r){return r.json().catch(function(){return{ok:r.ok}})})
+  .then(function(d){if(d&&d.ok){f.classList.add("done");m.className="sc-msg ok";m.textContent="You're counted. The first letter lands on Sunday.";try{localStorage.setItem("ny_sunday","1")}catch(x){}}
+   else{b.disabled=false;m.className="sc-msg bad";m.textContent=(d&&d.error==="slow down")?"Too many tries. Give it ten minutes.":"That did not go through. Try again in a minute.";}})
+  .catch(function(){b.disabled=false;m.className="sc-msg bad";m.textContent="That did not go through. Try again in a minute.";});});
+ try{if(localStorage.getItem("ny_sunday")){f.classList.add("done");m.className="sc-msg ok";m.textContent="You're already counted. See you Sunday.";}}catch(x){}
+ })()</script>
+</section>
