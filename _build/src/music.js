@@ -1,4 +1,4 @@
-// ON RECORD: every room plays its own groove in the music of the place. All of it is synthesised here, note by note,
+// CLOUDS AND DIRT: every floor plays its own groove. All of it is synthesised here, note by note,
 // from scratch: no samples, no recordings, no melody anybody wrote before. A step sequencer with a lookahead
 // scheduler (sixteen steps a bar), a handful of voices, and one style per room.
 // music.play(style) crossfades to a style; music.level(v) rides the room's volume (the Vanguard swell, the break);
@@ -7,28 +7,30 @@ const N = (m) => 440 * Math.pow(2, (m - 69) / 12);   // midi to Hz
 
 // progressions as midi roots, one chord a bar, and a chord quality
 const STYLES = {
-  // a record store at night: a lazy shuffle on the house system
-  shop: { bpm: 92, swing: 0.18, prog: [[45, 'm7'], [50, '7'], [43, 'maj7'], [48, 'maj7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x...x.x...', comp: '..x...x...x...x.', voice: 'epiano', vol: 0.5 },
-  // a coffee house in the snow: fingerpicked guitar and a harmonica breath, no drums
-  folk: { bpm: 104, swing: 0.1, prog: [[55, 'maj'], [60, 'maj'], [55, 'maj'], [62, 'maj']], pick: [0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 3], bass: 'x.......x.......', voice: 'guitar', harp: true, vol: 0.55 },
-  // the East Village in 1975: a heavy riff in E, half time drums
-  rock: { bpm: 84, swing: 0, prog: [[40, '5'], [40, '5'], [43, '5'], [45, '5']], kick: 'x.....x.x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', riff: [0, 0, 3, 5, 0, 7, 5, 3], bass: 'x.x...x.x.x...x.', voice: 'dist', vol: 0.6 },
-  // Ludlow Street, 1989: a dusty sampled sounding breakbeat with a horn stab
-  boom: { bpm: 96, swing: 0.22, prog: [[41, 'm7'], [41, 'm7'], [44, '7'], [43, '7']], kick: 'x.....x...x.....', snare: '....x.......x..x', hat: 'xxx.xxx.xxx.xxx.', bass: 'x.....x...x.....', stab: '..........x.....', voice: 'horn', vol: 0.6 },
-  // the silver loft: one droning viola note, a monotone piano, a bass drum like a heartbeat
-  drone: { bpm: 120, swing: 0, prog: [[38, '5'], [38, '5'], [38, '5'], [38, '5']], kick: 'x.......x.......', hat: '', bass: '', drone: true, comp: 'x.x.x.x.x.x.x.x.', voice: 'piano1', vol: 0.5 },
-  // the Bowery: three chords, as fast as possible
-  punk: { bpm: 176, swing: 0, prog: [[40, '5'], [45, '5'], [47, '5'], [45, '5']], kick: 'x.x.x.x.x.x.x.x.', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'xxxxxxxxxxxxxxxx', chug: true, voice: 'dist', vol: 0.55 },
-  // the rec room: the break, looped, two copies of the same record
-  break: { bpm: 104, swing: 0.12, prog: [[40, 'm7'], [40, 'm7'], [40, 'm7'], [42, '7']], kick: 'x.x.......x.x...', snare: '....x..x.x..x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x.x..x....', stab: 'x.........x.....', voice: 'clav', bongo: true, vol: 0.65 },
-  // the stoop: a medium swing, horns in unison
-  swing: { bpm: 132, swing: 0.33, prog: [[46, '6'], [43, '7'], [48, 'm7'], [41, '7']], ride: true, walk: true, kick: 'x.......x.......', snare: '', hat: '....x.......x...', comp: '...x.....x......', voice: 'horn', vol: 0.5 },
-  // the Vanguard: a piano trio, brushes, a walking bass
-  trio: { bpm: 116, swing: 0.34, prog: [[50, 'm7'], [43, '7'], [48, 'maj7'], [45, '7']], ride: true, walk: true, kick: '', snare: '', hat: '....x.......x...', comp: '..x.....x..x....', voice: 'piano', vol: 0.55 },
-  // amateur night: the house band vamping on one chord, waiting for you
-  vamp: { bpm: 120, swing: 0.25, prog: [[43, '7'], [43, '7'], [48, '7'], [43, '7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x.x..x..x.', stab: '......x.......x.', voice: 'organ', vol: 0.55 },
-  // the hotel lobby: a slow waltz on an out of tune upright
-  parlour: { bpm: 84, swing: 0, bar: 12, prog: [[57, 'm'], [52, '7'], [57, 'm'], [64, '7']], waltz: true, voice: 'piano', vol: 0.45 },
+  // the lobby of a glass tower: a slow house pulse on the building system
+  lobby: { bpm: 100, swing: 0.1, prog: [[45, 'm7'], [50, 'm7'], [48, 'maj7'], [43, '7']], kick: 'x...x...x...x...', snare: '', hat: '..x...x...x...x.', bass: 'x.......x.......', comp: '....x.......x...', voice: 'epiano', vol: 0.42 },
+  // a stockroom in 1994: a lo fi beat under a fluorescent hum, a tape hiss of a groove
+  basement: { bpm: 86, swing: 0.24, prog: [[41, 'm7'], [46, 'm7'], [44, 'maj7'], [43, '7']], kick: 'x.....x.x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x....x..x....', comp: '..x.......x.....', voice: 'epiano', vol: 0.5 },
+  // the wine show: a big dumb intro riff, the kind a show would open on, then it vamps and waits for the host
+  thunder: { bpm: 112, swing: 0, prog: [[40, '5'], [40, '5'], [45, '5'], [43, '5']], kick: 'x...x...x...x.x.', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', riff: [0, 0, 7, 0, 5, 0, 3, 2], bass: 'x.x.x.x.x.x.x.x.', voice: 'dist', vol: 0.5 },
+  // a boxing gym with a library in it: a bell, a breakbeat, horns that jab
+  gym: { bpm: 98, swing: 0.2, prog: [[43, 'm7'], [43, 'm7'], [46, '7'], [48, '7']], kick: 'x..x..x...x.x...', snare: '....x.......x..x', hat: 'xxx.xxx.xxx.xxx.', bass: 'x..x..x...x.....', stab: 'x..x..x.........', voice: 'horn', bongo: true, vol: 0.55 },
+  // floor 25: deep house for an open plan floor at golden hour
+  office: { bpm: 122, swing: 0.08, prog: [[45, 'm7'], [48, 'maj7'], [50, 'm7'], [43, 'maj7']], kick: 'x...x...x...x...', snare: '', hat: '..x...x...x...x.', bass: 'x..x.x..x..x.x..', comp: '..x.....x...x...', voice: 'epiano', vol: 0.48 },
+  // the studio: a podcast bed, soft keys, a snare on the two and four with brushes
+  podcast: { bpm: 78, swing: 0.3, prog: [[48, 'maj7'], [45, 'm7'], [50, 'm7'], [43, '7']], kick: 'x.......x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x.......x...x...', comp: 'x.......x.......', voice: 'piano', vol: 0.45 },
+  // Park Avenue at dusk: a slow string pad and a walking line, no drums
+  strings: { bpm: 72, swing: 0, prog: [[41, 'maj7'], [45, 'm7'], [38, 'm7'], [43, '7']], kick: '', snare: '', hat: '', bass: 'x.......x.......', drone: true, comp: 'x.......x.......', voice: 'organ', vol: 0.4 },
+  // the carousel: a calliope waltz on a wheezy organ
+  calliope: { bpm: 150, swing: 0, bar: 12, prog: [[55, 'maj'], [50, '7'], [55, 'maj'], [60, 'maj']], waltz: true, voice: 'organ', vol: 0.45 },
+  // the arena: a four on the floor anthem with a stab every bar and the crowd in the hats
+  arena: { bpm: 128, swing: 0, prog: [[45, 'm'], [41, 'maj'], [48, 'maj'], [43, 'maj']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: '..x...x...x...x.', bass: 'x.x.x.x.x.x.x.x.', stab: 'x.......x.......', voice: 'dist', vol: 0.55 },
+  // the exchange: a ticker, a clav on the off beats, a kick like a heartbeat under a bad trade
+  ticker: { bpm: 132, swing: 0, prog: [[40, 'm7'], [40, 'm7'], [43, 'm7'], [38, 'm7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.xxx.x.x.xxx.', bass: 'x.x...x.x.x...x.', comp: '.x.x.x.x.x.x.x.x', voice: 'clav', vol: 0.5 },
+  // the stadium: a drum line, a horn chant, the room shouting on the four
+  stadium: { bpm: 110, swing: 0, prog: [[43, '5'], [43, '5'], [48, '5'], [46, '5']], kick: 'x.x.x...x.x.x...', snare: '....x.......x...', hat: 'x...x...x...x...', bass: 'x.......x.......', stab: '......x.......x.', voice: 'horn', bongo: true, vol: 0.55 },
+  // above the clouds: long pads, a bell every other bar, nothing in a hurry
+  clouds: { bpm: 60, swing: 0, prog: [[48, 'maj7'], [53, 'maj7'], [45, 'm7'], [50, 'maj7']], kick: '', snare: '', hat: '', bass: '', drone: true, comp: 'x...............', harp: true, voice: 'epiano', vol: 0.4 },
 };
 const Q = { maj: [0, 4, 7], m: [0, 3, 7], '7': [0, 4, 7, 10], m7: [0, 3, 7, 10], maj7: [0, 4, 7, 11], '6': [0, 4, 7, 9], '5': [0, 7, 12] };
 

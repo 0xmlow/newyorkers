@@ -4,10 +4,10 @@
 <script>try { performance.setResourceTimingBufferSize(4000) } catch (e) {}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ON RECORD · New York on Wax · NEW YORKERS by MLow</title>
-<meta name="description" content="Walk into eleven New York record covers and music rooms, rebuilt in your browser and recast with NEW YORKERS by MLow: Jones Street in the snow, St. Marks Place, Ludlow and Rivington, the silver loft, the Bowery, the rec room on Sedgwick Avenue, East 126th Street, the Vanguard, the Apollo and the Chelsea Hotel.">
-<meta property="og:title" content="ON RECORD · New York on Wax">
-<meta property="og:description" content="Eleven New York music rooms, walkable, recast with New Yorkers by MLow. Every room plays its own song and hides a trick.">
+<title>CLOUDS AND DIRT · A tower for Gary Vaynerchuk · NEW YORKERS by MLow</title>
+<meta name="description" content="A walkable tower for Gary Vaynerchuk, built by NEW YORKERS by MLow: twelve floors from the dirt of a New Jersey liquor store basement to the clouds above Manhattan, with Wine Library TV, VaynerMedia on 10 Hudson Yards, the VeeFriends carousel, VeeCon, the attention exchange, the owner's box and his honorary New Yorker portraits.">
+<meta property="og:title" content="CLOUDS AND DIRT · A tower for Gary Vaynerchuk">
+<meta property="og:description" content="Twelve walkable floors for Gary Vee, from the dirt to the clouds, built by NEW YORKERS by MLow. Every floor plays its own song and hides a trick.">
 <meta property="og:image" content="assets/poster.jpg">
 <link rel="icon" href="assets/logo.png">
 <style>
@@ -35,13 +35,13 @@
 @media (pointer:coarse),(max-width:700px){#skatebtn{left:auto;right:12px;top:56px;bottom:auto}#skate{bottom:96px;left:12px;min-width:0;padding:8px 12px;font-size:10px}#skate b{font-size:18px}}
 </style>
 <style>
-:root{--ink:#0b0c10;--paper:#f4ead2;--gold:#f5c542;--pink:#ff4fa3;--cyan:#22d3ee;--blue:#1d4ed8;--mono:"IBM Plex Mono",Menlo,monospace;--sans:"Space Grotesk",system-ui,sans-serif;--serif:Fraunces,Georgia,serif}
+:root{--ink:#0b0c10;--paper:#f4ead2;--gold:#f5c542;--pink:#ff4fa3;--cyan:#22d3ee;--blue:#1d4ed8;--purple:#7a4fd0;--green:#125740;--mono:"IBM Plex Mono",Menlo,monospace;--sans:"Space Grotesk",system-ui,sans-serif;--serif:Fraunces,Georgia,serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--ink);color:var(--paper);font-family:var(--sans);overflow:hidden;-webkit-tap-highlight-color:transparent}
 #stage canvas{display:block;touch-action:none}
 button{font:inherit;color:inherit;cursor:pointer}
 /* intro */
-#intro{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 30%,rgba(29,78,216,.35),transparent 60%),linear-gradient(#07080d,#0b0c10);transition:opacity .9s,visibility .9s;padding:24px}
+#intro{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 20%,rgba(245,197,66,.22),transparent 55%),radial-gradient(ellipse at 50% 100%,rgba(122,79,208,.35),transparent 55%),linear-gradient(#07080d,#0b0c10);transition:opacity .9s,visibility .9s;padding:24px}
 #intro.off{opacity:0;visibility:hidden}
 #intro .wrap{max-width:640px;text-align:center}
 #intro img.logo{width:96px;height:96px;border-radius:50%;margin-bottom:18px;box-shadow:0 0 60px rgba(34,211,238,.35)}
@@ -135,13 +135,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div id="stage"></div>
 <div id="wet"></div><div id="flash"></div><div id="strobe"></div><div id="binoc"></div><div id="bars"><i></i><i></i></div>
 <div id="hud">
-  <div id="top"><div class="k">ON RECORD · <span id="rf"></span></div><div id="rname"></div><div id="rk"></div></div>
-  <button id="setsbtn" type="button" aria-controls="rooms">ROOMS <b id="setsn"></b></button>
-  <nav id="rooms" aria-label="Rooms"></nav>
+  <div id="top"><div class="k">CLOUDS AND DIRT · <span id="rf"></span></div><div id="rname"></div><div id="rk"></div></div>
+  <button id="setsbtn" type="button" aria-controls="rooms">FLOORS <b id="setsn"></b></button>
+  <nav id="rooms" aria-label="Floors"></nav>
   <div id="cross"></div><div id="hint"></div><div id="peek"></div>
   <button id="snd" type="button">SOUND ON</button>
-  <button id="waybtn" type="button" title="N: a line on the floor to the next room">WAY OUT</button>
-  <div id="eggbox">EGGS <b id="eggs">0 / 56</b></div>
+  <button id="waybtn" type="button" title="N: a line on the floor to the next floor's door">WAY OUT</button>
+  <div id="eggbox">EGGS <b id="eggs">0 / 0</b></div>
   <div id="skate" aria-live="polite"></div>
   <button id="skatebtn" type="button">SKATE<b id="skatesum"></b></button>
   <button id="olliebtn" type="button">OLLIE</button>
@@ -153,32 +153,32 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div id="intro">
   <div class="wrap">
     <img class="logo" src="assets/logo.png" alt="N3W YORKERS by MLow">
-    <div class="k">NEW YORKERS by MLow · A walkable picture</div>
-    <h1>ON RECORD<span>New York on wax. <b id="i-sets">11</b> rooms where the city made its music, rebuilt so you can walk in. Recast with New Yorkers.</span></h1>
-    <div class="stats"><span><b id="i-sets2">11</b>ROOMS</span><span><b id="i-eggs">56</b>EASTER EGGS</span><span><b id="i-years">1884 TO 1989</b></span><span><b id="i-faces">132</b>NEW YORKERS ON THE WALLS</span></div>
+    <div class="k">NEW YORKERS by MLow · A walkable tower</div>
+    <h1>CLOUDS AND DIRT<span>A tower for Gary Vaynerchuk. <b id="i-sets">12</b> floors, from the basement of a New Jersey liquor store to the sky over Manhattan, built so you can walk them. Everybody in it has an eye flower for a head. The man himself appears only as MLow painted him.</span></h1>
+    <div class="stats"><span><b id="i-sets2">12</b>FLOORS</span><span><b id="i-eggs">0</b>EASTER EGGS</span><span><b id="i-years">1994 TO 2024</b></span><span><b id="i-faces">0</b>NEW YORKERS ON THE WALLS</span></div>
     <div class="tick" aria-hidden="true"><div id="i-films"></div></div>
-    <p>The streets, the stoops and the clubs are New York's. The records belong to the people who made them. The people are ours: everybody has an eye flower for a head, and every wall is hung with real census New Yorkers from the block the room stands on. Every room plays its own song, written note by note in your browser, and every room hides a trick. A sample:</p>
-    <div class="tricks"><i>stand on a turntable and the store turns</i><i>take the photograph on Jones Street</i><i>pull the sleeve and the tenants move</i><i>chop the corner on a sampler</i><i>push the silver clouds</i><i>peel slowly and see</i><i>sit three minutes for a screen test</i><i>survive the pit</i><i>look away and the flyers change</i><i>keep the break going on two decks</i><i>hold still and fifty seven musicians pose</i><i>walk to the point of the wedge</i><i>rub the stump, then take the stage</i><i>look straight up the stairwell</i></div>
+    <p>The dirt is the stockroom at Shoppers Discount Liquors and a folding table of garage sale finds. Up from there: the Wine Library TV desk and its thousand tapes, seven books the size of doors and a heavy bag, the 25th floor of 10 Hudson Yards where a ring light turns one of you into sixty four, the studio, the twelve and a half ingredients on a Park Avenue floor, the VeeFriends carousel with the very very very very lucky black cat, the VeeCon stage, the attention exchange, the owner's box, and the clouds, where his lines hang in the air and only line up from one star each. His two honorary New Yorker portraits and the VeeFriends one hang where they belong. Every floor plays its own song, written note by note in your browser, and every floor hides a trick:</p>
+    <div class="tricks"><i>press 5 in the lift</i><i>flip a garage sale find</i><i>taste four wines and the room changes colour</i><i>jab three times, then the hook</i><i>stand in the ring light and multiply</i><i>record six seconds and meet your loop</i><i>walk the twelve and a half</i><i>wait eleven seconds on the carousel</i><i>fill an arena by walking</i><i>buy underpriced attention</i><i>throw one through the uprights</i><i>read the sky from the stars</i></div>
     <div id="lbar"><div id="lp"></div></div>
-    <div class="ways"><button id="go" type="button" disabled>Dropping the needle</button><button id="goskate" type="button" disabled>Skate the block</button></div>
-    <p class="skateline">SKATE MODE: every room is a skate spot, with three goals in each of the <b id="i-sets3">11</b> rooms, <b id="i-goals">33</b> goals in all. Pick anybody in the cast as your rider. K or the SKATE button switches any time.</p>
-    <small>Desktop: WASD to walk, mouse to look, click anything, M for sound, Z for binoculars, N for a line on the floor to the next room, [ and ] for the previous and next room, R for a random room, or pick one from the list. K to skate: W pushes, S brakes, A and D steer, SPACE ollies, 1, 2 and 3 flip, C picks your rider. Phone: left thumb walks, right thumb looks, tap anything, ROOMS for the list.</small>
+    <div class="ways"><button id="go" type="button" disabled>Calling the lift</button><button id="goskate" type="button" disabled>Skate the tower</button></div>
+    <p class="skateline">SKATE MODE: every floor is a skate spot, with three goals in each of the <b id="i-sets3">12</b> floors, <b id="i-goals">36</b> goals in all. Ride as the kid, the father, the trader, the lucky black cat or MLOWTAR. K or the SKATE button switches any time.</p>
+    <small>Desktop: WASD to walk, mouse to look, click anything, M for sound, Z for binoculars, N for a line on the floor to the next door, [ and ] for the previous and next floor, R for a random floor, or pick one from the list. K to skate: W pushes, S brakes, A and D steer, SPACE ollies, 1, 2 and 3 flip, C picks your rider. Phone: left thumb walks, right thumb looks, tap anything, FLOORS for the list.</small>
   </div>
 </div>
-<div id="riderbox" hidden><div class="in"><div class="head"><div><div class="k">SKATE THE BLOCK</div><h3>Pick your rider</h3><p>The cast of the rooms. Every one of them skates.</p></div><button id="riderx" type="button" aria-label="Close">×</button></div><div id="ridergrid"></div></div></div>
+<div id="riderbox" hidden><div class="in"><div class="head"><div><div class="k">SKATE THE TOWER</div><h3>Pick your rider</h3><p>The cast of the floors. Every one of them skates.</p></div><button id="riderx" type="button" aria-label="Close">×</button></div><div id="ridergrid"></div></div></div>
 <div id="card" aria-modal="true" role="dialog">
   <div class="in">
     <button id="c-x" type="button" aria-label="Close">×</button>
     <div class="media"><img id="c-img" alt=""></div>
     <div class="meta"><div id="c-k"></div><div id="c-t"></div><div id="c-no"></div><div id="c-p"></div>
-      <div class="acts"><a id="c-a" class="btn gold" target="_blank" rel="noopener">Open the record</a><a class="btn" href="https://n3wyorkers.com/census" target="_blank" rel="noopener">The census</a></div></div>
+      <div class="acts"><a id="c-a" class="btn gold" target="_blank" rel="noopener">Open the record</a><a class="btn" href="https://n3wyorkers.com/honoraries" target="_blank" rel="noopener">The honoraries</a><a class="btn" href="https://n3wyorkers.com/census" target="_blank" rel="noopener">The census</a></div></div>
   </div>
 </div>
 <div id="finale">
-  <div><div class="k" style="font:600 12px var(--mono);letter-spacing:.24em;color:var(--gold)">END OF SIDE B</div>
-  <h2>ON RECORD</h2>
-  <p><span id="f-sets">11</span> rooms where New York made its music, rebuilt and recast with New Yorkers. The records belong to the people who made them. The eye flowers, the walls and every face on them belong to MLow, and to the city.</p>
-  <div class="acts"><a class="btn gold" href="https://n3wyorkers.com/census" target="_blank" rel="noopener">Meet the cast</a><button class="btn" type="button" onclick="document.querySelector('#finale').classList.remove('on')">Keep walking</button></div></div>
+  <div><div class="k" style="font:600 12px var(--mono);letter-spacing:.24em;color:var(--gold)">THE ROOF</div>
+  <h2>CLOUDS AND DIRT</h2>
+  <p><span id="f-sets">12</span> floors for Gary Vaynerchuk, from a stockroom in Springfield, New Jersey to the sky over Manhattan, built and recast with New Yorkers. The lines are his. The eye flowers, the walls, the portraits and every face on them belong to MLow, and to the city. Legacy is greater than currency, as he says.</p>
+  <div class="acts"><a class="btn gold" href="https://n3wyorkers.com/h/gary-vaynerchuk" target="_blank" rel="noopener">His honorary portrait</a><a class="btn" href="https://n3wyorkers.com/h/veefriends" target="_blank" rel="noopener">The VeeFriends portrait</a><button class="btn" type="button" onclick="document.querySelector('#finale').classList.remove('on')">Keep walking</button></div></div>
 </div>
 <script src="assets/data.js?v=@@V@@"></script>
 <script type="module" src="assets/gallery.js?v=@@V@@"></script>

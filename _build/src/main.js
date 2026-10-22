@@ -1,4 +1,4 @@
-// ON RECORD: New York on wax, recast with New Yorkers. Walkable. Forked from ON LOCATION (2026-10-10).
+// CLOUDS AND DIRT: a tower for Gary Vaynerchuk, built by NEW YORKERS. Walkable. Forked from ON RECORD (2026-10-20).
 // Ten sets in a row, forked from THE MARKS engine. Each opens onto a photo plate rebuilt as geometry
 // from its depth map (the MONA pass). The cast are Tripo GLBs with eye flowers for heads. Every room
 // carries one trick: a mirror that answers back, a floor that plays, a grate that lifts you, a skeleton
@@ -208,7 +208,7 @@ function plate(room) {
     let k = 0;
     for (let j = 0; j < NY; j++) for (let i = 0; i <= NX; i++, k++) {
       const u = i / NX, v = j / (NY - 1), x = u * 2 - 1, y = 1 - v * 2;
-      let z = 1 / Math.max(1e-4, a * dAt(u, v) + b); z = Math.min(far * 1.4, Math.max(zMin, z * (room.zscale || 1)));
+      let z = room.flat ? room.flat : 1 / Math.max(1e-4, a * dAt(u, v) + b); z = Math.min(far * 1.4, Math.max(zMin, z * (room.zscale || 1)));
       pos[k * 3] = x * TAN_H * z; pos[k * 3 + 1] = EYE + y * tanV * z; pos[k * 3 + 2] = -z; zz[k] = z;
       uvs[k * 2] = u; uvs[k * 2 + 1] = 1 - v;
     }
@@ -253,7 +253,7 @@ function hang(p, x, y, z, ry, w, style, parent = scene) {
   const fit = (asp) => { const h = w / asp; art.scale.set(w, h, 1); fr.scale.set(w + f.b * 2, h + f.b * 2, 1); pl.position.y = -h / 2 - 0.2; };
   const t = tex.load(`assets/art/${p.f}`, (tt) => fit(tt.image.width / tt.image.height)); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
   mat.map = mat.emissiveMap = t;
-  const pl = sign(`${p.t}\nNo. ${p.n}`, { w: Math.min(0.95, w * 0.72), h: 0.16, bg: '#f2ead8', fg: '#1b1b1b', font: MONO, weight: 600, px: 96 });
+  const pl = sign(p.honor ? `${p.t}\n${p.who}, portrait by MLow` : `${p.t}\nNo. ${p.n}`, { w: Math.min(p.honor ? 1.6 : 0.95, w * 0.72), h: 0.16, bg: '#f2ead8', fg: '#1b1b1b', font: MONO, weight: 600, px: 96 });
   pl.position.set(0, -w * 9 / 32 - 0.2, 0.03); g.add(pl);
   fit(16 / 9);
   art.userData.piece = p; p.mesh = art; p.group = g;
@@ -286,12 +286,12 @@ const parkSurf = (R, x, z) => (SKATE.active ? PARK.surface(R, x, z) : 0);
 const PARK = makePark({ THREE, canvasTex, colliders, W, D });
 const parkReady = (r) => r && r.built && !(r.loadingN > 0) && performance.now() - (r.enteredAt || 0) > 1200;
 // goals are kept per browser: { setId: [true, false, true] }
-const BEST = (() => { try { return JSON.parse(localStorage.getItem('onrec.skate.best') || '{}'); } catch (e) { return {}; } })();
-const GOALS = (() => { try { return JSON.parse(localStorage.getItem('onrec.skate.goals') || '{}'); } catch (e) { return {}; } })();
+const BEST = (() => { try { return JSON.parse(localStorage.getItem('cad.skate.best') || '{}'); } catch (e) { return {}; } })();
+const GOALS = (() => { try { return JSON.parse(localStorage.getItem('cad.skate.goals') || '{}'); } catch (e) { return {}; } })();
 function tally() { const n = Object.values(GOALS).reduce((a, d) => a + d.filter(Boolean).length, 0); $('#skatesum').textContent = n ? `${n} / ${ROOMS.length * 3}` : ''; }
 function goal(r, k) {
   const p = PARK.PARK[r.id]; if (!p) return; const done = GOALS[r.id] ||= [];
-  if (done[k]) return; done[k] = true; try { localStorage.setItem('onrec.skate.goals', JSON.stringify(GOALS)); } catch (e) {}
+  if (done[k]) return; done[k] = true; try { localStorage.setItem('cad.skate.goals', JSON.stringify(GOALS)); } catch (e) {}
   sound.ding(); tally(); toast(`GOAL ${done.filter(Boolean).length} OF ${p.goals.length}: ${p.goals[k].text}`, 3600);
   if (p.goals.every((_, i) => done[i])) setTimeout(() => toast(`Every goal at ${r.name}. ${Object.values(GOALS).reduce((a, d) => a + d.filter(Boolean).length, 0)} goals across the city.`, 4200), 3800);
 }
@@ -319,19 +319,16 @@ const rider = new THREE.Group(); rider.visible = false; scene.add(rider);
   const sparks = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffd27a, size: 0.035, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
   sparks.frustumCulled = false; scene.add(sparks); rider.userData.sparks = { sparks, pos, vel, life, k: 0 }; }
 // the rider is one of the cast: the Warriors' tough from the Coney Island set (a Tripo model), standing on the board
-// the roster: the cast of the sets, by the film they came from (press C, or RIDER, to pick)
+// the roster: the cast of the floors, by where they stand (press C, or RIDER, to pick)
 const ROSTER = [
-  ['tough', 'The Roadie', 'St. Marks Place'], ['waltzers', 'The Couple', 'Jones Street'], ['folksinger', 'The Busker', 'Jones Street'], ['writer', 'The Writer', 'Ludlow Street'],
-  ['bluesteel', 'The Silver One', 'The Silver Loft'], ['gown', 'The Singer', 'The Silver Loft'], ['agent', 'Sunglasses', 'The Silver Loft'], ['bartender', 'The Bartender', '315 Bowery'],
-  ['tracksuit', 'The B Boy', 'Sedgwick Avenue'], ['dancer', 'The Dancer', 'Sedgwick Avenue'], ['famer', 'The Guest', 'Sedgwick Avenue'], ['wiseguy', 'The Trumpet', 'East 126th Street'],
-  ['annieh', 'The Piano', 'East 126th Street'], ['hijacker', 'The Saxophone', 'East 126th Street'], ['broker', 'The Bass', 'East 126th Street'], ['sally', 'The Regular', 'The Vanguard'],
-  ['maitre', 'The Doorman', 'The Vanguard'], ['actress', 'The Winner', 'The Apollo'], ['usher', 'The Usher', 'The Apollo'], ['prince', 'The Sandman', 'The Apollo'],
-  ['bookseller', 'The Desk', 'The Chelsea'], ['pigeonlady', 'The Resident', 'The Chelsea'], ['loretta', 'The Songwriter', 'The Chelsea'],
-  ['checker', 'The Cab', 'Jones Street', 1.55], ['hotdog', 'The Cart', 'Ludlow Street', 1.7], ['boombox', 'The Box', 'Ludlow Street', 0.9],
-  ['mlowtar', 'MLOWTAR', 'The Record Store', 1.8], ['cat', 'The Cat', 'St. Marks Place', 0.6], ['pigeon', 'The Pigeon', 'Every stoop', 0.42], ['rat', 'The Rat', 'The Bowery', 0.5],
+  ['hustler', 'The Kid', 'The Dirt'], ['dad', 'The Father', 'The Dirt'], ['bookseller', 'The Regular', 'Wine Library TV'], ['boxer', 'The Sparring Partner', 'Crush It'],
+  ['agent', 'The Strategist', 'Floor 25'], ['workgirl', 'The Desk', 'Floor 25'], ['assistant', 'The Pantry', 'Floor 25'], ['lensman', 'The Videographer', 'The Studio'], ['anchor', 'The Guest', 'The Studio'],
+  ['maitre', 'The Doorman', 'Park Avenue'], ['elf', 'The Ticket Elf', 'The Carousel'], ['tracksuit', 'The MC', 'VeeCon'], ['dancer', 'The Dancer', 'VeeCon'],
+  ['broker', 'The Trader', 'The Exchange'], ['editor', 'The Other Trader', 'The Exchange'], ['famer', 'Season Tickets', 'The Box'], ['golfer', 'The Deck', 'The Clouds'],
+  ['mlowtar', 'MLOWTAR', 'The Lobby', 1.8], ['cat', 'The Lucky Black Cat', 'The Carousel', 0.6], ['dog', 'The Park Avenue Dog', 'Park Avenue', 0.55], ['pigeon', 'Perspective Pigeon', 'Every floor', 0.42], ['rat', 'Reliable Rat', 'The Dirt', 0.5],
 ];
-let riderName = (() => { try { return localStorage.getItem('onrec.skate.rider') || 'tough'; } catch (e) { return 'tough'; } })();
-if (!ROSTER.some((r) => r[0] === riderName)) riderName = 'tough';
+let riderName = (() => { try { return localStorage.getItem('cad.skate.rider') || 'hustler'; } catch (e) { return 'tough'; } })();
+if (!ROSTER.some((r) => r[0] === riderName)) riderName = 'hustler';
 function riderModel(name = riderName) {
   if (rider.userData.model && rider.userData.modelName === name) return;
   if (rider.userData.model) { rider.remove(rider.userData.model); rider.userData.capsule.visible = true; rider.userData.body = rider.userData.capsule; }
@@ -339,7 +336,7 @@ function riderModel(name = riderName) {
   rider.userData.model = hold; rider.userData.modelName = name; riderName = name;
   load(name, hold, { h: row[3] || 1.72, y: 0, shadow: false, onload: () => { if (rider.userData.model !== hold) return; rider.userData.capsule.visible = false; rider.userData.body = hold; } });
 }
-function pickRider(name) { riderModel(name); try { localStorage.setItem('onrec.skate.rider', name); } catch (e) {} const row = ROSTER.find((r) => r[0] === name); toast(`You ride as ${row[1]}, from ${row[2]}.`, 2600);
+function pickRider(name) { riderModel(name); try { localStorage.setItem('cad.skate.rider', name); } catch (e) {} const row = ROSTER.find((r) => r[0] === name); toast(`You ride as ${row[1]}, from ${row[2]}.`, 2600);
   document.querySelectorAll('#ridergrid button').forEach((b) => b.classList.toggle('on', b.dataset.r === name)); }
 { const grid = $('#ridergrid'); grid.innerHTML = ROSTER.map(([k, n, f]) => `<button type="button" data-r="${k}" class="${k === riderName ? 'on' : ''}"><b>${n}</b><small>${f}</small></button>`).join('');
   grid.querySelectorAll('button').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); pickRider(b.dataset.r); }));
@@ -387,7 +384,13 @@ function sweep(ax, az, bx, bz) {
   }
   return Math.max(0.12, best - 0.08);
 }
-const ctx = { keys: null, wake: (i) => wake(i), THREE, scene, camera, renderer, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, sound: null, MOBILE, shake, FONT, SERIF, MONO, P, FX, EYE, flash, TIME, zoom, ride, ray, hemi, lights };
+// the visitor, seen only by cameras that ask (layer 1): the content machine on floor 25 films this
+const avatar = new THREE.Group(); scene.add(avatar);
+{ const cloth = new THREE.MeshStandardMaterial({ color: 0x1b1d26, roughness: 0.85 }); const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.9, 4, 10), cloth); body.position.y = 0.95; avatar.add(body);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; eyeFlower(cv.getContext('2d'), 128, 128, 120); const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace;
+  const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshBasicMaterial({ map: ht, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide })); head.position.y = 1.62; avatar.add(head);
+  avatar.traverse((o) => o.layers.set(1)); }
+const ctx = { avatar, keys: null, wake: (i) => wake(i), THREE, scene, camera, renderer, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, sound: null, MOBILE, shake, FONT, SERIF, MONO, P, FX, EYE, flash, TIME, zoom, ride, ray, hemi, lights };
 ROOMS.forEach((r, i) => { r.i = i; r.x0 = i * W; r.prev = ROOMS[i - 1]?.name; r.next = ROOMS[i + 1]?.name; r.last = i === ROOMS.length - 1; r.cast = CAST[r.id] || []; });
 window.__clickables = clickables; window.__EGGSET = () => [...EGGS];
 // Round thirteen: sets are built when you come near them, not all 105 at load. Building every set up front put
@@ -566,7 +569,7 @@ $('#eggs').textContent = `0 / ${EGG_N}`;
 function egg(id, line) {
   if (!EGGS.has(id)) {
     EGGS.add(id); $('#eggs').textContent = `${EGGS.size} / ${EGG_N}`; $('#eggbox').classList.add('pop'); setTimeout(() => $('#eggbox').classList.remove('pop'), 600); sound.ding();
-    if (EGGS.size === EGG_N) setTimeout(() => toast('Every egg found. Side B is over. Flip the record: you have been counted.', 5000), 3000);
+    if (EGGS.size === EGG_N) setTimeout(() => toast('Every egg found, from the dirt to the clouds. You have been counted. Now go do the thing.', 5000), 3000);
   }
   if (line) toast(line, 3600);
 }
@@ -579,8 +582,9 @@ function openPiece(p) {
   const c = $('#card'); c.classList.add('on'); if (locked) document.exitPointerLock();
   $('#c-t').textContent = p.t; $('#c-no').textContent = `No. ${p.n}`;
   $('#c-p').textContent = [[p.h, p.b].filter(Boolean).join(', '), p.s].filter(Boolean).join('  ·  ');
-  $('#c-k').textContent = `ON THE WALL · ${(ROOMS[cur]?.film || '').toUpperCase()}`;
-  $('#c-a').href = `https://n3wyorkers.com/n/${p.n}`;
+  $('#c-k').textContent = (p.honor ? 'HONORARY NEW YORKER · PORTRAIT BY MLOW · ' : 'ON THE WALL · ') + (ROOMS[cur]?.film || '').toUpperCase();
+  $('#c-a').href = p.honor ? `https://n3wyorkers.com/h/${p.honor}` : `https://n3wyorkers.com/n/${p.n}`;
+  $('#c-a').textContent = p.honor ? 'Meet the honorary' : 'Open the record';
   $('#c-img').src = `assets/art/${p.f}`;
 }
 function closePiece() { $('#card').classList.remove('on'); }
@@ -661,7 +665,7 @@ function frame() {
       P.x = SKATE.x; P.z = SKATE.z; P.yaw = SKATE.yaw;
       for (const e of SKATE.events) {
         if (e.type === 'land') { sound.thud(0.25); sound.tick(); SK.dip = 0.22;
-          if (e.points > (BEST[R0.id] || 0)) { const had = BEST[R0.id]; BEST[R0.id] = e.points; try { localStorage.setItem('onrec.skate.best', JSON.stringify(BEST)); } catch (er) {} if (had) toast(`NEW BEST ON THIS SET: ${e.points.toLocaleString('en-US')}`, 2600); }
+          if (e.points > (BEST[R0.id] || 0)) { const had = BEST[R0.id]; BEST[R0.id] = e.points; try { localStorage.setItem('cad.skate.best', JSON.stringify(BEST)); } catch (er) {} if (had) toast(`NEW BEST ON THIS SET: ${e.points.toLocaleString('en-US')}`, 2600); }
           if (park) park.goals.forEach((G, k) => {
             if ((G.k === 'gap' && e.gap) || (G.k === 'grind' && e.grind >= G.t) || (G.k === 'combo' && e.points >= G.n) || (G.k === 'trick' && e.tricks.includes(G.trick))) goal(R0, k); }); }
         else if (e.type === 'bail') { sound.thud(0.5); shake(0.05); SK.dip = 0.3; }
@@ -685,7 +689,7 @@ function frame() {
   const ri = Math.max(0, Math.min(ROOMS.length - 1, Math.floor(P.x / W))); if (ri !== cur) enter(ri);
   const R = ROOMS[ri];
   const gy = R.ground ? R.ground(P.x - R.x0, P.z) : 0;
-  { const pk = PARK.get(R, SKATE.active && parkReady(R)); if (pk) pk.group.visible = SKATE.active; }   // ON RECORD: the ramps only exist while you skate; walking, the rooms are the rooms
+  { const pk = PARK.get(R, SKATE.active && parkReady(R)); if (pk) pk.group.visible = SKATE.active; }   // the ramps only exist while you skate; walking, the rooms are the rooms
   const gs = parkSurf(R, P.x, P.z);
   P.y += ((gy + gs + EYE * P.scale + P.lift) - P.y) * Math.min(1, dt * (R.ground || gs ? 14 : 4));
   if (!SKATE.active && !R.holdLift && !P.ride) P.lift += (0 - P.lift) * Math.min(1, rdt * 1.4);
@@ -696,6 +700,7 @@ function frame() {
   if (Math.abs(camera.fov - P.fov) > 0.01 || P.squeeze || P.squeezed) { camera.fov = P.fov; camera.updateProjectionMatrix(); if (P.squeeze) { camera.projectionMatrix.elements[5] *= P.squeeze; camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert(); } P.squeezed = !!P.squeeze; }
   const back = R.fov ? (Math.tan(FOV * Math.PI / 360) / Math.tan(P.fov * Math.PI / 360) - 1) * 3.2 : 0; P.back += (back - P.back) * Math.min(1, dt * 3);
   camera.rotation.set(P.pitch, P.yaw, P.roll || 0); P.roll = (P.roll || 0) * 0.9;
+  avatar.position.set(P.x, P.y - EYE * P.scale, P.z); avatar.rotation.y = P.yaw; avatar.scale.setScalar(P.scale); avatar.visible = !SKATE.active;
   camera.position.set(P.x + (Math.random() - 0.5) * shakeAmt + Math.sin(P.yaw) * P.back, P.y + Math.sin(P.bob) * 0.035 * P.scale + (Math.random() - 0.5) * shakeAmt, P.z + (Math.random() - 0.5) * shakeAmt + Math.cos(P.yaw) * P.back);
   shakeAmt *= 0.9;
   // skating, the camera rides behind and above the board; it eases in and out of the eyes, so the switch never snaps
@@ -739,7 +744,7 @@ function frame() {
     if (SKATE.message !== SK.lastMsg) { SK.lastMsg = SKATE.message; SK.msgAt = SKATE.elapsed; const el = $('#skate'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
     const park = PARK.PARK[R.id], done = GOALS[R.id] || [];
     const goals = park ? '\n' + park.goals.map((G, k) => `<span class="${done[k] ? 'gd' : 'g'}">${done[k] ? '●' : '○'} ${G.text}</span>`).join('\n') : '\n<span class="g">Laying out the set...</span>';
-    const html = `SKATE THE BLOCK · ${R.i + 1} / ${ROOMS.length} · ${R.film || R.name}\n<b>${SKATE.score.toLocaleString('en-US')}</b>\n${Math.round(SKATE.v * 3.6)} KM/H${SKATE.grind ? ' · GRINDING' : ''}${BEST[R.id] ? ' · BEST ' + BEST[R.id].toLocaleString('en-US') : ''}\n<span class="t">${msg}</span>${goals}` +
+    const html = `SKATE THE TOWER · ${R.i + 1} / ${ROOMS.length} · ${R.film || R.name}\n<b>${SKATE.score.toLocaleString('en-US')}</b>\n${Math.round(SKATE.v * 3.6)} KM/H${SKATE.grind ? ' · GRINDING' : ''}${BEST[R.id] ? ' · BEST ' + BEST[R.id].toLocaleString('en-US') : ''}\n<span class="t">${msg}</span>${goals}` +
       (SK.debug ? `\n<span class="dbg">room ${R.id} · v ${SKATE.v.toFixed(2)} · ${SKATE.grind ? 'GRIND' : SKATE.air ? 'AIR ' + SKATE.height.toFixed(2) : 'GROUND'} · y ${SKATE.y.toFixed(2)} · ${park ? park.features.length + ' spots' : 'no layout'} · steer ${SKATE.steering.toFixed(2)} · ${SKATE.tricks.at(-1) || 'no trick'}</span>` : '');
     if (html !== SK.html) { SK.html = html; $('#skate').innerHTML = html; }
   }
@@ -782,7 +787,7 @@ cnv.addEventListener('webglcontextlost', (e) => { e.preventDefault(); toast('The
 
 // ---------- start ----------
 const sound = new Sound(); ctx.sound = sound; const music = Music(sound); ctx.music = music; window.__music = music;
-const ready = () => { $('#go').disabled = false; $('#go').textContent = 'Drop the needle'; $('#goskate').disabled = false; };
+const ready = () => { $('#go').disabled = false; $('#go').textContent = 'Take the lift'; $('#goskate').disabled = false; };
 mgr.onLoad = ready; setTimeout(ready, 15000);
 // two ways in: on foot, or on a board (SKATE THE SETS, or ?skate in the address) with the same film either way
 function enterFilm(skate) {

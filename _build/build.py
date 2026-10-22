@@ -1,4 +1,4 @@
-"""build.py: assemble ON RECORD into site/.
+"""build.py: assemble CLOUDS AND DIRT into site/.
 
 Reads the census from the site repo (api/pieces.json), deals twelve New Yorkers to each room by the
 neighbourhood the room stands in, clones what the gallery needs into site/assets (APFS clones, so no
@@ -23,10 +23,12 @@ A = os.path.join(OUT, "assets")
 N_PER = 12
 # the set: where each film was shot, so the walls hold New Yorkers from that block
 HOODS = {
-    "lobby": ["Greenwich Village"], "jones": ["West Village", "Greenwich Village"], "stmarks": ["East Village"], "ludlow": ["Lower East Side"],
-    "factory": ["Turtle Bay", "Midtown"], "cbgb": ["East Village", "Lower East Side"], "sedgwick": ["Highbridge", "Concourse", "Morrisania"],
-    "harlem": ["Harlem"], "vanguard": ["West Village", "Greenwich Village"], "apollo": ["Harlem", "East Harlem"], "chelsea": ["Chelsea"],
+    "lobby": ["Chelsea", "Hell's Kitchen"], "dirt": ["Elmhurst", "Jackson Heights", "Forest Hills", "Rego Park"], "library": ["Flushing", "Astoria"], "crush": ["Hell's Kitchen", "Midtown"],
+    "hudson": ["Chelsea", "Midtown"], "studio": ["Long Island City"], "empathy": ["Upper East Side", "Murray Hill"], "carousel": ["Central Park"],
+    "veecon": ["Flatiron", "Gramercy"], "attention": ["Financial District"], "jets": ["Washington Heights", "Astoria"], "clouds": ["Midtown", "Tribeca"],
 }
+# the honoraries on the walls: MLow's portraits of the man, of VeeFriends, and of a VaynerMedia alumna. [room, id, which work]
+HONOR = [("empathy", "gary-vaynerchuk", 0), ("empathy", "gary-vaynerchuk", 1), ("carousel", "veefriends", 0), ("hudson", "erikalee", 0)]
 
 def clone(src, dst):
     os.makedirs(os.path.dirname(dst), exist_ok=True)
@@ -36,9 +38,15 @@ def clone(src, dst):
 
 def assets():
     P = json.load(open(os.path.join(SITE_REPO, "api", "pieces.json")))
+    H = json.load(open(os.path.join(SITE_REPO, "_build", "honoraries", "honoraries.json")))["people"]
     used, cast = set(), {}
     for room, hoods in HOODS.items():
         pick = []
+        for rm, hid, wi in HONOR:
+            if rm != room: continue
+            h = next(x for x in H if x["id"].replace("-", "") == hid.replace("-", "")); w = h["works"][wi]
+            clone(os.path.join(SITE_REPO, "assets", "honoraries", w["l"]), os.path.join(A, "art", w["l"]))
+            pick.append({"n": "HONORARY", "t": w["title"], "h": "Honorary New Yorker", "b": "", "f": w["l"], "s": h["bio"], "honor": hid, "who": h["name"]})
         for h in hoods:
             for p in sorted((p for p in P if p.get("neighborhood") == h and p.get("image")), key=lambda p: p["n"]):
                 f = p["image"].split("/assets/")[-1]
@@ -57,8 +65,6 @@ def assets():
     clone(os.path.join(S, "hdri", "night.hdr"), os.path.join(A, "env", "night.hdr"))
     for p in ["h_taxi", "lamppost", "mailbox", "h_subway_car", "gull", "life_ring", "dog"]:
         clone(os.path.join(S, "props", f"{p}.glb"), os.path.join(A, "glb", f"{p}.glb"))
-    for p in ["hydrant", "pigeon", "rat", "cat"]:   # THE MARKS heroes, reused
-        clone(os.path.join(MARKS, "work", "glb_pass", f"{p}.glb"), os.path.join(A, "glb", f"{p}.glb"))
     clone(os.path.join(SITE_REPO, "assets", "brand", "logos", "n3w-01.png"), os.path.join(A, "logo.png"))
     # only the models some set names: recipe sources (*_cut, *_src_*) and spare Poly Haven downloads stay in work/
     used = used_models()
