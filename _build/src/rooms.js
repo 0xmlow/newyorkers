@@ -1,0 +1,53 @@
+// The rooms, in order. Each is 20 m along x and 16 m deep; the north side opens onto its plate.
+// lights: [x, y, z, colour, intensity, distance] in room coordinates (x from the room's west wall).
+// post: the screen pass per room. sat 0 is black and white, heat is the shimmer, warp is the wobble.
+// `film` keeps its name from ON LOCATION (main.js reads it): here it is the record or the date, ending in a year.
+export const W = 20, D = 16, H_IN = 6;
+export const PORTAL = { dist: 8, w: 12, h: 4.4 };   // the plate camera stands 8 m back from a 12 m opening
+
+export const ROOMS = [
+  { id: 'lobby', music: 'shop', name: 'The Record Store, Broadway', film: 'Now spinning', kicker: 'Step onto the platter. Drop the needle.', plate: 'lobby', far: 40, tear: 2.4,
+    floor: 'terrazzo', floorTint: 0x2a2228, wall: 'plaster', ceil: 'plaster', wallTint: 0x2a2a34, sound: 'lobby', fog: 0x0a0612, fogD: 0.008, sky: 0x05030a, frame: 'black',
+    hemi: [0xffc0e0, 0x180a20, 0.26], env: 0.25,
+    lights: [[6, 5.4, -1, 0xff4fa3, 18, 18], [14, 5.4, 2, 0x22d3ee, 16, 18], [10, 3, 5, 0xffd8a0, 10, 14]] },
+  { id: 'jones', music: 'folk', name: 'Jones Street in the Snow', film: 'The Freewheelin\' cover, 1963', kicker: 'Stand where the photographer stood. Somebody will take your arm.', plate: 'jones', far: 70, tear: 2.2,
+    floor: 'asphalt', floorTint: 0x9aa0a8, wall: 'brick', outdoor: true, sound: 'jones', fog: 0x8a9098, fogD: 0.012, sky: 0xb8bcc4, frame: 'oak',
+    hemi: [0xdfe8f4, 0x4a4038, 0.75], env: 0.5, post: { sat: 0.82 },
+    lights: [[10, 8, -4, 0xeef2ff, 22, 26], [3, 3.6, 2, 0xffc890, 8, 12], [17, 3.6, 2, 0xffc890, 8, 12]] },
+  { id: 'stmarks', music: 'rock', name: '96 and 98 St. Marks Place', film: 'The Physical Graffiti cover, 1975', kicker: 'Pull the sleeve: walk left and right and the windows change tenants.', plate: 'stmarks', far: 50, tear: 2.4,
+    floor: 'concrete', floorTint: 0x9a9088, wall: 'brick', outdoor: true, sound: 'stmarks', fog: 0x3a2a20, fogD: 0.006, sky: 0xe8b880, frame: 'black',
+    hemi: [0xffe0b0, 0x40302a, 0.7], env: 0.5,
+    lights: [[10, 9, -4, 0xffe0a8, 30, 28], [4, 4, 3, 0xffb070, 10, 14], [16, 4, 3, 0xffb070, 10, 14]] },
+  { id: 'ludlow', music: 'boom', name: 'Ludlow and Rivington', film: 'The Paul\'s Boutique cover, 1989', kicker: 'Turn all the way round. The corner keeps going.', plate: 'ludlow', far: 70, tear: 2.2,
+    floor: 'asphalt', wall: 'brick', outdoor: true, sound: 'ludlow', fog: 0x4a3a28, fogD: 0.005, sky: 0xf0c890, frame: 'steel', post: { sat: 1.15 },
+    hemi: [0xfff0d0, 0x60402a, 0.85], env: 0.6,
+    lights: [[10, 9, -4, 0xfff0c8, 36, 30], [3, 4, 4, 0xffd090, 12, 16], [17, 4, 4, 0xffd090, 12, 16]] },
+  { id: 'factory', music: 'drone', name: 'The Silver Loft, East 47th Street', film: 'The Velvet Underground and Nico, 1967', kicker: 'Push the silver clouds. Peel slowly and see.', plate: 'factory', far: 36, tear: 2.4,
+    floor: 'concrete', floorTint: 0x8a8a90, wall: 'plaster', ceil: 'plaster', sound: 'factory', fog: 0x101014, fogD: 0.008, sky: 0x0a0a0c, frame: 'steel',
+    hemi: [0xf0f4ff, 0x303034, 0.4], env: 0.9,
+    lights: [[5, 5.4, 0, 0xffffff, 22, 18], [15, 5.4, 0, 0xffffff, 22, 18], [10, 3, -6, 0xfff0d0, 12, 14]] },
+  { id: 'cbgb', music: 'punk', name: '315 Bowery', film: 'CBGB, 1977', kicker: 'Get in the pit. Look away and the flyers change.', plate: 'cbgb', far: 30, tear: 2.4,
+    floor: 'planks', floorTint: 0x3a3028, wall: 'brick', wallTint: 0x5a4a44, ceil: 'plaster', sound: 'cbgb', fog: 0x140808, fogD: 0.014, sky: 0x080404, frame: 'black', post: { grain: 0.18 },
+    hemi: [0xff8080, 0x100808, 0.16], env: 0.18,
+    lights: [[10, 5.2, -5, 0xff2030, 22, 16], [4, 5, 2, 0x3060ff, 14, 14], [16, 5, 2, 0xffd060, 10, 14]] },
+  { id: 'sedgwick', music: 'break', name: '1520 Sedgwick Avenue, the Rec Room', film: 'The back to school jam, 1973', kicker: 'Two turntables. Keep the break going and the room goes off.', plate: 'sedgwick', far: 34, tear: 2.4,
+    floor: 'terrazzo', floorTint: 0x7a7060, wall: 'concrete', wallTint: 0xa89880, ceil: 'plaster', sound: 'sedgwick', fog: 0x10080a, fogD: 0.01, sky: 0x08040a, frame: 'black',
+    hemi: [0xffb0ff, 0x101020, 0.2], env: 0.2,
+    lights: [[6, 5, -1, 0xff3080, 16, 16], [14, 5, -1, 0x30a0ff, 16, 16], [10, 3, 5, 0xffe070, 10, 14]] },
+  { id: 'harlem', music: 'swing', name: 'East 126th Street', film: 'A Great Day in Harlem, 1958', kicker: 'Fifty seven musicians on one stoop. Stand on the mark and hold still.', plate: 'harlem', far: 60, tear: 2.4,
+    floor: 'concrete', floorTint: 0xb0a898, wall: 'brick', outdoor: true, sound: 'harlem', fog: 0x6a6050, fogD: 0.005, sky: 0xe8dcc0, frame: 'gilt',
+    hemi: [0xfff0d8, 0x50443a, 0.85], env: 0.55,
+    lights: [[10, 9, -4, 0xfff0d0, 32, 30], [3, 4, 3, 0xffe0b0, 10, 14], [17, 4, 3, 0xffe0b0, 10, 14]] },
+  { id: 'vanguard', music: 'trio', name: '178 Seventh Avenue South', film: 'The Village Vanguard, 1935', kicker: 'A room shaped like a wedge. Walk to the point and the music grows. So do you.', plate: 'vanguard', far: 26, tear: 2.4, noRope: true, edge: true,
+    floor: 'planks', floorTint: 0x5a3020, wall: 'plaster', wallTint: 0x8a1a1a, ceil: 'plaster', sound: 'vanguard', fog: 0x140806, fogD: 0.012, sky: 0x0a0402, frame: 'black',
+    hemi: [0xffb070, 0x200804, 0.18], env: 0.2,
+    lights: [[10, 4.6, -5, 0xffb060, 16, 14], [4, 4, 3, 0xff7040, 8, 12], [16, 4, 3, 0xff7040, 8, 12]] },
+  { id: 'apollo', music: 'vamp', name: '253 West 125th Street', film: 'Amateur Night at the Apollo, 1934', kicker: 'Rub the stump for luck, then take the stage. Do not freeze.', plate: 'apollo', far: 40, tear: 2.4,
+    floor: 'planks', floorTint: 0x6a4428, wall: 'plaster', wallTint: 0x7a1020, ceil: 'plaster', sound: 'apollo', fog: 0x140608, fogD: 0.008, sky: 0x0a0204, frame: 'gilt',
+    hemi: [0xffd0a0, 0x300810, 0.25], env: 0.3,
+    lights: [[10, 5.6, -5, 0xfff2d0, 26, 16], [4, 5, 2, 0xffb070, 12, 14], [16, 5, 2, 0xffb070, 12, 14]] },
+  { id: 'chelsea', music: 'parlour', well: [14.5, -3.0, 3.4], name: '222 West 23rd Street', film: 'The Chelsea Hotel, 1884', kicker: 'Rent paid in paintings. Look straight up the stairwell.', plate: 'chelsea', far: 30, tear: 2.4,
+    floor: 'terrazzo', floorTint: 0x9a8a78, wall: 'plaster', wallTint: 0xc8b898, ceil: 'plaster', sound: 'chelsea', fog: 0x140e0a, fogD: 0.008, sky: 0x0a0806, frame: 'gilt',
+    hemi: [0xffe0b0, 0x302418, 0.3], env: 0.3,
+    lights: [[5, 5.4, 0, 0xffd8a0, 18, 16], [15, 5.4, 0, 0xffd8a0, 18, 16], [10, 3, -6, 0xffb070, 10, 12]] },
+];
