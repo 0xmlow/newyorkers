@@ -472,7 +472,7 @@ function collide(nx, nz) {
   }
   return [nx, nz];
 }
-function go(i) { const r = ROOMS[i]; if (!r) return; Object.assign(SKATE, { v: 0, y: 0, height: 0, vy: 0, air: false, grind: null, pending: 0, tricks: [], busy: 0, wiped: false, takeoff: null }); SK.anim = null; P.x = r.x0 + W / 2; P.z = D / 2 - 2.2; P.yaw = 0; P.pitch = -0.02; settle(); }
+function go(i) { const r = ROOMS[i]; if (!r) return; Object.assign(SKATE, { v: 0, y: 0, height: 0, vy: 0, air: false, grind: null, pending: 0, tricks: [], busy: 0, wiped: false, takeoff: null }); SK.anim = null; P.x = r.x0 + (r.spawn ? r.spawn[0] : W / 2); P.z = r.spawn ? r.spawn[1] : D / 2 - 2.2; P.yaw = 0; P.pitch = -0.02; settle(); }
 // a set that parks a prop on the arrival point used to put you inside it: step out of anything you land in
 function settle() { for (let k = 0; k < 4; k++) [P.x, P.z] = collide(P.x, P.z); }
 window.__go = go;
@@ -546,6 +546,21 @@ function pick(e) {
 const _w = new THREE.Vector3();
 const near = (o) => { o.getWorldPosition(_w); return Math.abs(_w.x - P.x) < 16; };
 function interact(e) { if ($('#card').classList.contains('on')) return; const o = pick(e); if (o && o.userData.click) { sound.click(); o.userData.click(o); } }
+
+// ---------- clip mode: the vertical cut, live ----------
+// V (or the CLIP button) masks the screen to 9:16, puts a hook caption on it in the house style and dollies the camera
+// slowly through the room from the door toward the picture, so anyone can see the TikTok before it is cut.
+const CLIP = { on: false, t0: 0, hooks: ['POV: you walked into a museum about yourself', 'nobody is coming to save your content', 'day one, or one day', 'the dirt is where the work is', 'he said 22 years. the clock is running', 'one is greater than zero', 'document. do not create.', 'the thumb stops here'] };
+function setClip(on = !CLIP.on) {
+  if (!started || P.ride) return;
+  CLIP.on = on; $('#clip').classList.toggle('on', on); $('#clipbtn').classList.toggle('on', on);
+  if (on) { const r = ROOMS[cur]; $('#cliphook').textContent = CLIP.hooks[(cur + 3) % CLIP.hooks.length]; $('#cliproom').textContent = (r.name || '').toUpperCase() + ' · CLOUDS AND DIRT';
+    const z0 = D / 2 - 1.6, z1 = -D / 2 + 2.2, c = new THREE.CatmullRomCurve3([new THREE.Vector3(r.x0 + W / 2 + 2.5, EYE, z0), new THREE.Vector3(r.x0 + W / 2 - 1.5, EYE + 0.2, (z0 + z1) / 2), new THREE.Vector3(r.x0 + W / 2, EYE, z1)]);
+    ride(c, 9, () => { if (CLIP.on) toast('That was the clip. V again for another take, or walk.', 2600); }); egg('clip', 'Clip mode. Nine seconds, vertical, a hook on top. That is one of sixty four.'); }
+}
+addEventListener('keydown', (e) => { if (e.code === 'KeyV' && !e.repeat && started && !e.metaKey && !e.ctrlKey) setClip(); });
+$('#clipbtn').addEventListener('click', (e) => { e.stopPropagation(); setClip(); });
+window.__setClip = setClip;
 
 // ---------- binoculars, the long take ----------
 // Z (or any pair of binoculars on a set) narrows the lens to 14 degrees behind a binocular mask.

@@ -31,6 +31,20 @@ const STYLES = {
   stadium: { bpm: 110, swing: 0, prog: [[43, '5'], [43, '5'], [48, '5'], [46, '5']], kick: 'x.x.x...x.x.x...', snare: '....x.......x...', hat: 'x...x...x...x...', bass: 'x.......x.......', stab: '......x.......x.', voice: 'horn', bongo: true, vol: 0.55 },
   // above the clouds: long pads, a bell every other bar, nothing in a hurry
   clouds: { bpm: 60, swing: 0, prog: [[48, 'maj7'], [53, 'maj7'], [45, 'm7'], [50, 'maj7']], kick: '', snare: '', hat: '', bass: '', drone: true, comp: 'x...............', harp: true, voice: 'epiano', vol: 0.4 },
+  // ---------- the wing ----------
+  doodle: { bpm: 96, swing: 0.2, prog: [[48, 'maj7'], [45, 'm7'], [50, 'm7'], [43, '7']], kick: 'x.......x.......', snare: '', hat: 'x.x.x.x.x.x.x.x.', bass: 'x.......x.......', comp: 'x...x...x...x...', voice: 'epiano', vol: 0.4 },
+  vault: { bpm: 70, swing: 0, prog: [[40, 'm7'], [40, 'm7'], [43, 'maj7'], [38, 'm7']], kick: 'x.......x.......', snare: '', hat: '', bass: 'x.......x.......', drone: true, comp: 'x.......x.......', voice: 'organ', vol: 0.4 },
+  tcg: { bpm: 126, swing: 0.1, prog: [[45, 'm7'], [48, 'maj7'], [50, '7'], [43, 'maj7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x.x...x.x.x...x.', stab: 'x.......x.......', voice: 'clav', vol: 0.5 },
+  burn: { bpm: 88, swing: 0, prog: [[38, '5'], [38, '5'], [41, '5'], [36, '5']], kick: 'x..x....x..x....', snare: '....x.......x...', hat: '', bass: 'x.......x.......', drone: true, riff: [0, 0, 3, 0, 5, 3, 0, 0], voice: 'dist', bongo: true, vol: 0.5 },
+  veedome: { bpm: 132, swing: 0, prog: [[45, 'm'], [41, 'maj'], [48, 'maj'], [43, 'maj']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: '..x...x...x...x.', bass: 'x.x.x.x.x.x.x.x.', stab: 'x...............', voice: 'horn', vol: 0.55 },
+  goat: { bpm: 108, swing: 0.3, prog: [[48, 'maj7'], [53, 'maj7'], [50, 'm7'], [43, '7']], kick: 'x.......x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x....x..x....', comp: '..x...x...x...x.', voice: 'piano', harp: true, vol: 0.45 },
+  court: { bpm: 112, swing: 0.15, prog: [[43, 'm7'], [43, 'm7'], [46, '7'], [48, '7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'xxx.xxx.xxx.xxx.', bass: 'x..x..x...x.....', stab: '......x.......x.', voice: 'organ', vol: 0.5 },
+  press: { bpm: 100, swing: 0.1, prog: [[41, 'm7'], [41, 'm7'], [44, 'maj7'], [43, '7']], kick: 'x.x.x.x.x.x.x.x.', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x.......x.......', comp: 'x...x...x...x...', voice: 'clav', bongo: true, vol: 0.45 },
+  toys: { bpm: 140, swing: 0, bar: 12, prog: [[60, 'maj'], [55, '7'], [60, 'maj'], [65, 'maj']], waltz: true, voice: 'organ', vol: 0.4 },
+  punks: { bpm: 118, swing: 0, prog: [[40, 'm7'], [43, 'm7'], [45, 'm7'], [38, 'm7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.xxx.x.x.x.x.', bass: 'x.x...x.x.x...x.', comp: '.x.x.x.x.x.x.x.x', voice: 'clav', vol: 0.45 },
+  cellar: { bpm: 84, swing: 0.28, prog: [[45, 'm7'], [50, '7'], [43, 'maj7'], [48, 'maj7']], kick: 'x.....x.x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x...x.x...', comp: '..x...x...x...x.', voice: 'epiano', vol: 0.45 },
+  gameday: { bpm: 110, swing: 0, prog: [[43, '5'], [43, '5'], [48, '5'], [46, '5']], kick: 'x.x.x...x.x.x...', snare: '....x.......x...', hat: 'x...x...x...x...', bass: 'x.......x.......', stab: '......x.......x.', voice: 'horn', bongo: true, vol: 0.55 },
+  feed: { bpm: 124, swing: 0, prog: [[45, 'm7'], [45, 'm7'], [48, 'maj7'], [50, 'm7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: '..x...x...x...x.', bass: 'x..x.x..x..x.x..', comp: '..x.....x...x...', voice: 'epiano', vol: 0.45 },
 };
 const Q = { maj: [0, 4, 7], m: [0, 3, 7], '7': [0, 4, 7, 10], m7: [0, 3, 7, 10], maj7: [0, 4, 7, 11], '6': [0, 4, 7, 9], '5': [0, 7, 12] };
 

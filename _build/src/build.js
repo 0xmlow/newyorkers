@@ -340,6 +340,10 @@ const SLOTS = {
 // ---------- the floors ----------
 const V3 = (c, x, y, z) => new c.THREE.Vector3(x, y, z);
 import { ROOMS } from './rooms.js';
+import { ROOMS_A, PROPS_A, SLOTS_A } from './wing_a.js';
+import { ROOMS_B, PROPS_B, SLOTS_B } from './wing_b.js';
+import { ROOMS_C, PROPS_C, SLOTS_C } from './wing_c.js';
+import { ROOMS_D, PROPS_D, SLOTS_D } from './wing_d.js';
 const ROOM = {
   // THE LOBBY. A directory, a lift with twelve buttons, a guard, MLOWTAR, and a suitcase from 1978 turned to stone.
   lobby(c, r, g, X) {
@@ -349,9 +353,9 @@ const ROOM = {
     const sub = c.sign('A TOWER FOR GARY VAYNERCHUK · BUILT BY NEW YORKERS · THE DIRT IS DOWNSTAIRS', { w: 7.2, h: 0.3, bg: null, fg: '#22d3ee', font: c.MONO, weight: 700, glow: 10 }); sub.position.set(W / 2, PORTAL.h + 0.12, -D / 2 + 0.06); g.add(sub);
     // the directory on the west wall: every floor, clickable
     const lines = ROOMS.map((q) => `${q.lvl.padStart(4, ' ')}   ${q.name.toUpperCase()}`).reverse();
-    const dir = c.sign('DIRECTORY\n' + lines.join('\n'), { w: 3.6, h: 4.2, bg: '#0d0d0d', fg: '#f4ead2', font: c.MONO, weight: 600, px: 640, pad: 0.08, border: '#c9a033' });
-    dir.position.set(0.16, 2.6, -2.0); dir.rotation.y = PI / 2; g.add(dir);
-    c.clickable(dir, () => { const p = c.lastHit?.point; if (!p) return; const u = (p.y - 0.5) / 4.2, n = ROOMS.length; const k = Math.max(0, Math.min(n - 1, Math.floor(u * (n + 1)) - 1)); const q = ROOMS[Math.max(0, Math.min(n - 1, k))]; c.toast(`${q.lvl}: ${q.name}. ${q.kicker}`, 3600); c.sound.click(); }, 'The directory');
+    const dir = c.sign('DIRECTORY\n' + lines.join('\n'), { w: 4.4, h: 5.4, bg: '#0d0d0d', fg: '#f4ead2', font: c.MONO, weight: 600, px: 1024, pad: 0.06, border: '#c9a033' });
+    dir.position.set(0.16, 2.9, -2.4); dir.rotation.y = PI / 2; g.add(dir);
+    c.clickable(dir, () => { const p = c.lastHit?.point; if (!p) return; const u = (p.y - 0.2) / 5.4, n = ROOMS.length; const k = Math.max(0, Math.min(n - 1, Math.floor(u * (n + 1)) - 1)); const q = ROOMS[Math.max(0, Math.min(n - 1, k))]; c.toast(`${q.lvl}: ${q.name}. ${q.kicker}`, 3600); c.sound.click(); }, 'The directory');
     // the lift: a car in the south east corner with twelve brass buttons. Press one and you are there.
     const steel = std(c, 0x9a9ca0, { metalness: 0.9, roughness: 0.3 }), brass = std(c, 0xc9a033, { metalness: 1, roughness: 0.3 });
     const LX = 16.5, LZ = 6.6;
@@ -880,3 +884,5 @@ const ROOM = {
 // the screens on the desks of floor 25: little charts and feeds, never a real logo
 const _SCR = {};
 function screenTex(c, seed) { const k = Math.abs(Math.round(seed * 7)) % 6; if (_SCR[k]) return _SCR[k]; return (_SCR[k] = c.canvasTex(256, 160, (q, w, h) => { q.fillStyle = '#0d1018'; q.fillRect(0, 0, w, h); q.strokeStyle = ['#7fff9a', '#22d3ee', '#f5c542', '#ff4fa3'][k % 4]; q.lineWidth = 3; q.beginPath(); for (let i = 0; i < 20; i++) { const x = 10 + i * 12, y = 120 - Math.abs(Math.sin(i * 0.7 + k)) * 80; i ? q.lineTo(x, y) : q.moveTo(x, y); } q.stroke(); q.fillStyle = '#f4ead2'; q.font = `700 14px ${c.MONO}`; q.fillText(['REACH', 'VIEWS', 'SAVES', 'SHARES', 'COMMENTS', 'ATTENTION'][k], 12, 24); })); }
+// the wing, built in parallel by four builders (see _build/BRIEF_WING.md)
+Object.assign(ROOM, ROOMS_A, ROOMS_B, ROOMS_C, ROOMS_D); Object.assign(PROPS, PROPS_A || {}, PROPS_B || {}, PROPS_C || {}, PROPS_D || {}); Object.assign(SLOTS, SLOTS_A || {}, SLOTS_B || {}, SLOTS_C || {}, SLOTS_D || {});

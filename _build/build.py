@@ -26,7 +26,11 @@ HOODS = {
     "lobby": ["Chelsea", "Hell's Kitchen"], "dirt": ["Elmhurst", "Jackson Heights", "Forest Hills", "Rego Park"], "library": ["Flushing", "Astoria"], "crush": ["Hell's Kitchen", "Midtown"],
     "hudson": ["Chelsea", "Midtown"], "studio": ["Long Island City"], "empathy": ["Upper East Side", "Murray Hill"], "carousel": ["Central Park"],
     "veecon": ["Flatiron", "Gramercy"], "attention": ["Financial District"], "jets": ["Washington Heights", "Astoria"], "clouds": ["Midtown", "Tribeca"],
+    "doodle": ["SoHo", "NoHo"], "vault": ["Financial District", "Tribeca"], "tcg": ["Midtown", "Chelsea"], "burn": ["Coney Island", "Rockaway"], "veedome": ["Flatiron", "Midtown"],
+    "goat": ["Upper West Side", "Morningside Heights"], "middle": ["Harlem", "Bedford-Stuyvesant"], "comics": ["Long Island City", "Sunnyside"], "toys": ["Herald Square", "Midtown"],
+    "punks": ["Williamsburg", "Bushwick"], "cellar": ["Flushing", "Astoria"], "gameday": ["Astoria", "Jackson Heights"], "feed": ["Chelsea", "Midtown"],
 }
+VF = os.path.join(ROOT, "work", "vf_glb")   # the thirteen VeeFriends inspired figures built in Blender (_build/blender/veefriends_kit.py)
 # the honoraries on the walls: MLow's portraits of the man, of VeeFriends, and of a VaynerMedia alumna. [room, id, which work]
 HONOR = [("empathy", "gary-vaynerchuk", 0), ("empathy", "gary-vaynerchuk", 1), ("carousel", "veefriends", 0), ("hudson", "erikalee", 0)]
 
@@ -78,19 +82,21 @@ def assets():
             src = os.path.join(ONLOC, "glb_pass", f); dz = os.path.join(ONLOC, "glb_draco", f)
             # the Draco copy when it is current (python3 _build/draco.py makes them), the plain pass when it is not
             clone(dz if os.path.exists(dz) and os.path.getmtime(dz) >= os.path.getmtime(src) else src, os.path.join(A, "glb", f))
+    for f in sorted(os.listdir(VF)):
+        if f.endswith(".glb"): clone(os.path.join(VF, f), os.path.join(A, "glb", f))
     for f in ("draco_decoder.wasm", "draco_wasm_wrapper.js", "draco_decoder.js"):
         clone(os.path.join(MUSEUM, "node_modules", "three", "examples", "jsm", "libs", "draco", "gltf", f), os.path.join(A, "draco", f))
     print("assets:", {k: len(v) for k, v in cast.items()})
 
 def used_models():
     """Every model file a set can ask for: any quoted name in the code, with or without its ph_ prefix."""
-    src = [os.path.join(HERE, "src", f) for f in ("build.js", "main.js")]
+    src = [os.path.join(HERE, "src", f) for f in os.listdir(os.path.join(HERE, "src")) if f.endswith(".js")]
     txt = "\n".join(open(f).read() for f in src); q = set(re.findall(r"['\"`]([A-Za-z0-9_]+)['\"`]", txt))
     return {f[:-4] for f in os.listdir(os.path.join(ONLOC, "glb_pass")) if f.endswith(".glb") and (f[:-4] in q or (f.startswith("ph_") and f[3:-4] in q))}
 
 def count_eggs():
     """Every egg id in the code: c.egg('id', ...) calls and the egg: [hint, 'id', line] of props, in build.js and every batch file."""
-    srcs = [os.path.join(HERE, "src", "build.js")]
+    srcs = [os.path.join(HERE, "src", f) for f in os.listdir(os.path.join(HERE, "src")) if f.endswith(".js") and f != "main.js"]
     txt = "\n".join(open(f).read() for f in srcs)
     return sorted(set(re.findall(r"c\.egg\('(\w+)'", txt)) | set(re.findall(r"egg: \['(?:[^'\\]|\\.)*', '(\w+)'", txt)) | set(re.findall(r"egg: '(\w+)'", txt)))
 
