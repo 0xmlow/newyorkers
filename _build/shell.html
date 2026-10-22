@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head><script src="phone-gpu.js" data-cap="512"></script>
+<script>try { performance.setResourceTimingBufferSize(4000) } catch (e) {}</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CLOUDS AND DIRT · A tower for Gary Vaynerchuk · NEW YORKERS by MLow</title>
+<meta name="description" content="A walkable tower for Gary Vaynerchuk, built by NEW YORKERS by MLow: twelve floors from the dirt of a New Jersey liquor store basement to the clouds above Manhattan, with Wine Library TV, VaynerMedia on 10 Hudson Yards, the VeeFriends carousel, VeeCon, the attention exchange, the owner's box and his honorary New Yorker portraits.">
+<meta property="og:title" content="CLOUDS AND DIRT · A tower for Gary Vaynerchuk">
+<meta property="og:description" content="Twelve walkable floors for Gary Vee, from the dirt to the clouds, built by NEW YORKERS by MLow. Every floor plays its own song and hides a trick.">
+<meta property="og:image" content="assets/poster.jpg">
+<link rel="icon" href="assets/logo.png">
+<style>
+@font-face{font-family:Fraunces;src:url(fonts/Fraunces.ttf) format("truetype");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Space Grotesk";src:url(fonts/SpaceGrotesk.ttf) format("truetype");font-weight:300 700;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url(fonts/IBMPlexMono-Medium.ttf) format("truetype");font-weight:400 700;font-display:swap}
+/* skate mode: K on a keyboard, the SKATE button on a phone */
+#skate{position:absolute;left:16px;bottom:140px;min-width:210px;max-width:min(380px,70vw);font:600 11px/1.5 var(--mono);letter-spacing:.12em;background:rgba(11,12,16,.72);border:1px solid var(--gold);border-radius:14px;padding:10px 14px;display:none;white-space:pre-line}
+#skate b{color:var(--gold);font-size:22px;letter-spacing:.04em}#skate.on{display:block}#skate .t{color:var(--pink)}#skate .dbg{color:#8d8676;font-size:10px}@keyframes skpop{0%{transform:scale(1)}30%{transform:scale(1.06)}100%{transform:scale(1)}}#skate.pop .t{animation:skpop .35s ease;display:inline-block;transform-origin:left}
+#skate .g{color:#cfc6b0;font-weight:500;letter-spacing:.04em}#skate .gd{color:var(--gold);font-weight:600;letter-spacing:.04em}
+#skatebtn,#olliebtn{display:none;position:absolute;pointer-events:auto;font:700 11px var(--mono);letter-spacing:.16em;border-radius:999px;color:var(--paper);background:rgba(11,12,16,.72);border:1px solid var(--gold)}
+#skatebtn{display:block;left:16px;bottom:96px;padding:9px 14px}#skatebtn.on{background:var(--gold);color:var(--ink)}#skatebtn b{color:var(--pink);margin-left:6px}
+#olliebtn{right:22px;bottom:96px;width:86px;height:86px;border-radius:50%;font-size:13px;background:rgba(245,197,66,.22)}
+#hud.skating #cross{display:none}
+#riderbtn{display:none;left:112px;bottom:96px;padding:9px 14px}#hud.skating #riderbtn{display:block}
+#riderbox[hidden]{display:none}#riderbox{position:fixed;inset:0;z-index:30;background:rgba(5,6,10,.78);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px}
+#riderbox .in{width:min(880px,96vw);max-height:88vh;overflow:auto;background:#0b0c10;border:1px solid var(--gold);border-radius:18px;padding:22px}
+#riderbox .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}#riderbox .k{font:600 10px var(--mono);letter-spacing:.24em;color:var(--gold)}#riderbox h3{font:900 30px/1 var(--serif);margin:6px 0 6px}#riderbox p{font:500 13px var(--sans);color:#8d8676}
+#riderx{background:transparent;border:1px solid rgba(244,234,210,.3);color:var(--paper);width:34px;height:34px;border-radius:50%;font-size:18px}
+#ridergrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+#ridergrid button{text-align:left;background:#12141c;border:1px solid rgba(244,234,210,.12);border-radius:10px;padding:10px 12px;color:var(--paper);display:flex;flex-direction:column;gap:3px;cursor:pointer}#ridergrid button:hover{border-color:var(--pink)}#ridergrid button.on{border-color:var(--gold);background:rgba(245,197,66,.12)}
+#ridergrid b{font:700 13px var(--sans)}#ridergrid small{font:500 9px var(--mono);letter-spacing:.08em;color:#8d8676;text-transform:uppercase}
+@media (pointer:coarse),(max-width:700px){#riderbtn{left:auto;right:12px;top:100px;bottom:auto}#ridergrid{grid-template-columns:repeat(2,1fr)}}
+@media (pointer:coarse){#hud.skating #olliebtn{display:block}}
+@media (pointer:coarse),(max-width:700px){#skatebtn{left:auto;right:12px;top:56px;bottom:auto}#skate{bottom:96px;left:12px;min-width:0;padding:8px 12px;font-size:10px}#skate b{font-size:18px}}
+</style>
+<style>
+:root{--ink:#0b0c10;--paper:#f4ead2;--gold:#f5c542;--pink:#ff4fa3;--cyan:#22d3ee;--blue:#1d4ed8;--purple:#7a4fd0;--green:#125740;--mono:"IBM Plex Mono",Menlo,monospace;--sans:"Space Grotesk",system-ui,sans-serif;--serif:Fraunces,Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--paper);font-family:var(--sans);overflow:hidden;-webkit-tap-highlight-color:transparent}
+#stage canvas{display:block;touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer}
+/* intro */
+#intro{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 20%,rgba(245,197,66,.22),transparent 55%),radial-gradient(ellipse at 50% 100%,rgba(122,79,208,.35),transparent 55%),linear-gradient(#07080d,#0b0c10);transition:opacity .9s,visibility .9s;padding:24px}
+#intro.off{opacity:0;visibility:hidden}
+#intro .wrap{max-width:640px;text-align:center}
+#intro img.logo{width:96px;height:96px;border-radius:50%;margin-bottom:18px;box-shadow:0 0 60px rgba(34,211,238,.35)}
+#intro .k{font:600 12px var(--mono);letter-spacing:.24em;color:var(--gold);text-transform:uppercase}
+#intro h1{font:900 clamp(48px,9vw,96px)/.92 var(--serif);letter-spacing:-.02em;margin:10px 0 6px}
+#intro h1 span{display:block;font:500 clamp(16px,2.4vw,22px) var(--sans);letter-spacing:.02em;color:#cfc6b0;margin-top:12px}
+#intro p{color:#cfc6b0;line-height:1.55;margin:18px auto 22px;max-width:520px;font-size:15px}
+.reel{font:700 18px var(--mono);letter-spacing:.6em;color:var(--gold);margin:18px 0 22px;opacity:.8}
+#lbar{width:min(360px,80vw);height:3px;background:#1f2230;margin:0 auto 22px;border-radius:2px;overflow:hidden}#lp{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--cyan),var(--gold));transition:width .3s}
+#go{background:var(--gold);color:var(--ink);border:0;border-radius:999px;padding:16px 38px;font:700 15px var(--sans);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 0 0 3px rgba(245,197,66,.25),0 10px 40px rgba(245,197,66,.25)}
+#go:disabled,#goskate:disabled{opacity:.5;cursor:wait}
+#intro .ways{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}#goskate{background:var(--pink);color:#fff;border:0;border-radius:999px;padding:16px 30px;font:700 15px var(--sans);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 0 0 3px rgba(255,79,163,.25),0 10px 40px rgba(255,79,163,.25)}
+#intro .skateline{margin:14px auto 0;max-width:640px;font:500 12px/1.6 var(--mono);letter-spacing:.04em;color:#cfc6b0}#intro .skateline b{color:var(--pink)}
+#intro small{display:block;margin-top:16px;font:500 11px var(--mono);color:#8d8676;letter-spacing:.06em}
+#intro .wrap{max-width:760px;width:100%;min-width:0;max-height:100vh;overflow-x:hidden;overflow-y:auto;padding:12px 4px}
+#intro .k{overflow-wrap:anywhere}
+#intro .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;margin:16px auto 10px}
+#intro .stats span{font:600 11px var(--mono);letter-spacing:.14em;color:#cfc6b0;border:1px solid rgba(245,197,66,.35);border-radius:999px;padding:7px 12px;background:rgba(0,0,0,.25)}
+#intro .stats b{color:var(--gold);font-weight:800;margin-right:6px}
+#intro .tick{overflow:hidden;white-space:nowrap;margin:6px auto 4px;max-width:720px;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+#intro .tick div{display:inline-block;font:500 12px var(--mono);letter-spacing:.08em;color:#8d8676;animation:tick 260s linear infinite;padding-left:100%}
+@keyframes tick{to{transform:translateX(-100%)}}
+#intro .tricks{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:4px auto 18px;max-width:700px}
+#intro .tricks i{font:500 12px var(--sans);font-style:normal;color:#f4ead2;background:rgba(255,79,163,.12);border:1px solid rgba(255,79,163,.3);border-radius:8px;padding:5px 9px}
+@media (max-width:600px){#intro .tricks i:nth-child(n+5){display:none}#intro p{font-size:14px}#intro h1{font-size:44px}#go{position:sticky;bottom:12px}}
+/* hud */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+#top{position:absolute;left:16px;top:14px;max-width:60vw}
+#top .k span{color:var(--paper)}#top .k{font:600 10px var(--mono);letter-spacing:.24em;color:var(--gold)}
+#rname{font:900 clamp(20px,3vw,30px)/1 var(--serif);margin-top:4px;text-shadow:0 2px 16px #000}
+#rk{font:500 13px var(--sans);color:#d8cfb8;margin-top:4px;text-shadow:0 1px 8px #000}
+#rooms{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:3px;pointer-events:auto;max-height:calc(100vh - 90px);overflow-y:auto;scrollbar-width:none}#rooms::-webkit-scrollbar{display:none}#rooms{align-items:flex-end}#rooms button{width:auto}
+#rooms button{display:flex;align-items:center;gap:8px;background:rgba(11,12,16,.62);border:1px solid rgba(244,234,210,.14);border-radius:999px;padding:5px 12px 5px 5px;font:500 12px var(--sans);backdrop-filter:blur(6px);text-align:left}
+#rooms button i{font:600 11px var(--mono);font-style:normal;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#1d2030}
+#rooms button span{display:none}#rooms button:hover span,#rooms button.on span{display:inline}#rooms button{padding:4px 10px 4px 4px!important;font-size:11px!important}#rooms button.on{border-color:var(--gold)}#rooms button.on i{background:var(--gold);color:var(--ink)}
+#eggbox{position:absolute;left:16px;bottom:16px;font:600 11px var(--mono);letter-spacing:.12em;background:rgba(11,12,16,.62);border:1px solid rgba(244,234,210,.14);border-radius:999px;padding:8px 14px;transition:transform .2s;pointer-events:auto}
+#eggbox b{color:var(--gold)}#eggbox.pop{transform:scale(1.18)}
+#waybtn{position:absolute;left:118px;bottom:56px;font:600 10px var(--mono);letter-spacing:.14em;background:rgba(11,12,16,.62);border:1px solid rgba(244,234,210,.14);border-radius:999px;padding:6px 12px;pointer-events:auto;color:var(--paper)}#waybtn.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+#snd{position:absolute;left:16px;bottom:56px;font:600 10px var(--mono);letter-spacing:.14em;background:rgba(11,12,16,.62);border:1px solid rgba(244,234,210,.14);border-radius:999px;padding:6px 12px;pointer-events:auto}
+#cross{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;border:2px solid rgba(244,234,210,.7);opacity:0;transition:.15s}
+#hud.locked #cross{opacity:1}#cross.hot{transform:scale(1.8);border-color:var(--gold);background:rgba(245,197,66,.3)}
+#hint{position:absolute;left:50%;top:calc(50% + 18px);transform:translateX(-50%);font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-shadow:0 1px 6px #000;white-space:nowrap}
+#toast{position:absolute;left:50%;bottom:28px;transform:translate(-50%,20px);max-width:min(640px,88vw);text-align:center;background:rgba(11,12,16,.86);border:1px solid var(--gold);border-radius:14px;padding:12px 18px;font:500 14px/1.4 var(--sans);opacity:0;transition:.35s}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#peek{position:absolute;left:50%;top:16px;transform:translate(-50%,-8px);font:600 11px var(--mono);letter-spacing:.08em;background:rgba(11,12,16,.7);border:1px solid rgba(245,197,66,.5);border-radius:999px;padding:6px 14px;opacity:0;transition:.3s;white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis}
+#peek.on{opacity:1;transform:translate(-50%,0)}
+#bubbles .bubble{position:absolute;left:0;top:0;background:var(--paper);color:var(--ink);font:600 13px/1.3 var(--sans);padding:8px 12px;border-radius:14px;max-width:220px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+#bubbles .bubble:after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-top-color:var(--paper);border-bottom:0}
+#stick{position:fixed;width:100px;height:100px;border-radius:50%;border:2px solid rgba(244,234,210,.3);display:none;z-index:11;pointer-events:none}#knob{position:absolute;left:30px;top:30px;width:40px;height:40px;border-radius:50%;background:rgba(245,197,66,.6)}
+#wet{position:fixed;inset:0;pointer-events:none;z-index:9;opacity:0;background:radial-gradient(circle at 20% 30%,rgba(200,230,255,.25) 0 3%,transparent 4%),radial-gradient(circle at 70% 60%,rgba(200,230,255,.25) 0 2%,transparent 3%),radial-gradient(circle at 45% 80%,rgba(200,230,255,.2) 0 4%,transparent 5%),radial-gradient(circle at 85% 20%,rgba(200,230,255,.22) 0 2.5%,transparent 3.5%),linear-gradient(rgba(150,190,230,.12),rgba(150,190,230,.12));transition:opacity .3s}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:9;background:#fff8e0;opacity:0;transition:opacity .25s}
+#strobe{position:fixed;inset:0;pointer-events:none;z-index:9;background:#000;opacity:0}
+#binoc{position:fixed;inset:0;pointer-events:none;z-index:9;opacity:0;transition:opacity .25s;background:radial-gradient(circle at 36% 50%,transparent 0 23vmin,#000 23.5vmin) ,radial-gradient(circle at 64% 50%,transparent 0 23vmin,#000 23.5vmin);background-blend-mode:darken}
+#binoc{-webkit-mask:radial-gradient(circle at 36% 50%,transparent 0 23vmin,#000 23.6vmin),radial-gradient(circle at 64% 50%,transparent 0 23vmin,#000 23.6vmin);-webkit-mask-composite:source-in;mask-composite:intersect;background:#000}
+#binoc.on{opacity:1}
+#bars i{position:fixed;left:0;right:0;height:0;background:#000;z-index:9;transition:height .8s;pointer-events:none}#bars i:first-child{top:0}#bars i:last-child{bottom:0}#bars.on i{height:11vh}
+/* card */
+#card{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(5,6,10,.78);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s;padding:16px}
+#card.on{opacity:1;visibility:visible}
+#card .in{width:min(960px,100%);background:#0f1016;border:1px solid rgba(245,197,66,.4);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#card .media{position:relative;aspect-ratio:16/9;background:#000}#card .media img,#card .media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#card .meta{padding:18px 20px 20px;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:end}
+#c-k{grid-column:1/-1;font:600 11px var(--mono);letter-spacing:.2em;color:var(--gold)}
+#c-t{font:900 clamp(24px,4vw,40px)/1 var(--serif)}#c-no{font:600 14px var(--mono);color:#cfc6b0;text-align:right}
+#c-p{grid-column:1/-1;color:#cfc6b0;font-size:14px}
+#card .acts{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.btn{display:inline-block;text-decoration:none;border-radius:999px;padding:11px 20px;font:700 13px var(--sans);letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(244,234,210,.3);color:var(--paper);background:transparent}
+.btn.gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+#c-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(11,12,16,.7);font-size:20px;z-index:2}
+#card .in{position:relative}
+/* finale */
+#finale{position:fixed;inset:0;z-index:45;display:grid;place-items:center;background:radial-gradient(ellipse at center,rgba(255,79,163,.25),rgba(5,6,10,.92) 60%);opacity:0;visibility:hidden;transition:1s;padding:20px;text-align:center}
+#finale.on{opacity:1;visibility:visible}
+#finale h2{font:900 clamp(44px,8vw,88px)/.95 var(--serif)}#finale p{max-width:560px;margin:16px auto 24px;color:#d8cfb8;line-height:1.55}
+#finale .acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+@media (max-width:700px){#rooms button span{display:none}#rooms button{padding:5px}#top{max-width:70vw}#toast{bottom:90px}}
+/* round thirteen: on a phone the 105 set buttons sat over the thumb that looks around; now they live behind SETS */
+#setsbtn{display:none;position:absolute;right:12px;top:12px;pointer-events:auto;font:700 11px var(--mono);letter-spacing:.16em;background:rgba(11,12,16,.72);border:1px solid var(--gold);border-radius:999px;padding:9px 14px;color:var(--paper)}
+#setsbtn b{color:var(--gold);margin-left:4px}
+@media (pointer:coarse),(max-width:700px){
+  #setsbtn{display:block}
+  #rooms{display:none;position:fixed;inset:60px 12px 80px 12px;max-height:none;background:rgba(8,9,13,.94);border:1px solid rgba(245,197,66,.4);border-radius:16px;padding:10px;display:none;flex-direction:column;align-items:stretch;gap:4px;backdrop-filter:blur(10px);z-index:20}
+  #rooms.open{display:flex}
+  #rooms button{width:100%!important;padding:9px 12px!important;font-size:13px!important;border-radius:10px}
+  #rooms button span{display:inline!important}
+  #rooms button i{width:auto;min-width:30px;padding:0 6px;border-radius:999px}
+}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="wet"></div><div id="flash"></div><div id="strobe"></div><div id="binoc"></div><div id="bars"><i></i><i></i></div>
+<div id="hud">
+  <div id="top"><div class="k">CLOUDS AND DIRT · <span id="rf"></span></div><div id="rname"></div><div id="rk"></div></div>
+  <button id="setsbtn" type="button" aria-controls="rooms">FLOORS <b id="setsn"></b></button>
+  <nav id="rooms" aria-label="Floors"></nav>
+  <div id="cross"></div><div id="hint"></div><div id="peek"></div>
+  <button id="snd" type="button">SOUND ON</button>
+  <button id="waybtn" type="button" title="N: a line on the floor to the next floor's door">WAY OUT</button>
+  <div id="eggbox">EGGS <b id="eggs">0 / 0</b></div>
+  <div id="skate" aria-live="polite"></div>
+  <button id="skatebtn" type="button">SKATE<b id="skatesum"></b></button>
+  <button id="olliebtn" type="button">OLLIE</button>
+  <button id="riderbtn" type="button">RIDER</button>
+  <div id="toast" role="status"></div>
+  <div id="bubbles"></div>
+</div>
+<div id="stick"><div id="knob"></div></div>
+<div id="intro">
+  <div class="wrap">
+    <img class="logo" src="assets/logo.png" alt="N3W YORKERS by MLow">
+    <div class="k">NEW YORKERS by MLow · A walkable tower</div>
+    <h1>CLOUDS AND DIRT<span>A tower for Gary Vaynerchuk. <b id="i-sets">12</b> floors, from the basement of a New Jersey liquor store to the sky over Manhattan, built so you can walk them. Everybody in it has an eye flower for a head. The man himself appears only as MLow painted him.</span></h1>
+    <div class="stats"><span><b id="i-sets2">12</b>FLOORS</span><span><b id="i-eggs">0</b>EASTER EGGS</span><span><b id="i-years">1994 TO 2024</b></span><span><b id="i-faces">0</b>NEW YORKERS ON THE WALLS</span></div>
+    <div class="tick" aria-hidden="true"><div id="i-films"></div></div>
+    <p>The dirt is the stockroom at Shoppers Discount Liquors and a folding table of garage sale finds. Up from there: the Wine Library TV desk and its thousand tapes, seven books the size of doors and a heavy bag, the 25th floor of 10 Hudson Yards where a ring light turns one of you into sixty four, the studio, the twelve and a half ingredients on a Park Avenue floor, the VeeFriends carousel with the very very very very lucky black cat, the VeeCon stage, the attention exchange, the owner's box, and the clouds, where his lines hang in the air and only line up from one star each. His two honorary New Yorker portraits and the VeeFriends one hang where they belong. Every floor plays its own song, written note by note in your browser, and every floor hides a trick:</p>
+    <div class="tricks"><i>press 5 in the lift</i><i>flip a garage sale find</i><i>taste four wines and the room changes colour</i><i>jab three times, then the hook</i><i>stand in the ring light and multiply</i><i>record six seconds and meet your loop</i><i>walk the twelve and a half</i><i>wait eleven seconds on the carousel</i><i>fill an arena by walking</i><i>buy underpriced attention</i><i>throw one through the uprights</i><i>read the sky from the stars</i></div>
+    <div id="lbar"><div id="lp"></div></div>
+    <div class="ways"><button id="go" type="button" disabled>Calling the lift</button><button id="goskate" type="button" disabled>Skate the tower</button></div>
+    <p class="skateline">SKATE MODE: every floor is a skate spot, with three goals in each of the <b id="i-sets3">12</b> floors, <b id="i-goals">36</b> goals in all. Ride as the kid, the father, the trader, the lucky black cat or MLOWTAR. K or the SKATE button switches any time.</p>
+    <small>Desktop: WASD to walk, mouse to look, click anything, M for sound, Z for binoculars, N for a line on the floor to the next door, [ and ] for the previous and next floor, R for a random floor, or pick one from the list. K to skate: W pushes, S brakes, A and D steer, SPACE ollies, 1, 2 and 3 flip, C picks your rider. Phone: left thumb walks, right thumb looks, tap anything, FLOORS for the list.</small>
+  </div>
+</div>
+<div id="riderbox" hidden><div class="in"><div class="head"><div><div class="k">SKATE THE TOWER</div><h3>Pick your rider</h3><p>The cast of the floors. Every one of them skates.</p></div><button id="riderx" type="button" aria-label="Close">×</button></div><div id="ridergrid"></div></div></div>
+<div id="card" aria-modal="true" role="dialog">
+  <div class="in">
+    <button id="c-x" type="button" aria-label="Close">×</button>
+    <div class="media"><img id="c-img" alt=""></div>
+    <div class="meta"><div id="c-k"></div><div id="c-t"></div><div id="c-no"></div><div id="c-p"></div>
+      <div class="acts"><a id="c-a" class="btn gold" target="_blank" rel="noopener">Open the record</a><a class="btn" href="https://n3wyorkers.com/honoraries" target="_blank" rel="noopener">The honoraries</a><a class="btn" href="https://n3wyorkers.com/census" target="_blank" rel="noopener">The census</a></div></div>
+  </div>
+</div>
+<div id="finale">
+  <div><div class="k" style="font:600 12px var(--mono);letter-spacing:.24em;color:var(--gold)">THE ROOF</div>
+  <h2>CLOUDS AND DIRT</h2>
+  <p><span id="f-sets">12</span> floors for Gary Vaynerchuk, from a stockroom in Springfield, New Jersey to the sky over Manhattan, built and recast with New Yorkers. The lines are his. The eye flowers, the walls, the portraits and every face on them belong to MLow, and to the city. Legacy is greater than currency, as he says.</p>
+  <div class="acts"><a class="btn gold" href="https://n3wyorkers.com/h/gary-vaynerchuk" target="_blank" rel="noopener">His honorary portrait</a><a class="btn" href="https://n3wyorkers.com/h/veefriends" target="_blank" rel="noopener">The VeeFriends portrait</a><button class="btn" type="button" onclick="document.querySelector('#finale').classList.remove('on')">Keep walking</button></div></div>
+</div>
+<script src="assets/data.js?v=@@V@@"></script>
+<script type="module" src="assets/gallery.js?v=@@V@@"></script>
+</body>
+</html>
