@@ -6,7 +6,8 @@ each, three or more eggs in each, and twelve census New Yorkers on every wall, d
 `_build/build.py`). Every room plays its own song, synthesised in the browser (`_build/src/music.js`). The only people
 down here have an eye flower for a head; the residents are rats, one alligator, one goldfish and one bodega cat.
 
-Open it: double click `Open LIVE FROM THE SEWERS.command`. Not on the site yet (see "Not done").
+Open it: double click `Open LIVE FROM THE SEWERS.command`. On the site it is n3wyorkers.com/sewers (`sewers.html`), registered in
+`NEW YORKERS SITE/_build/build_galleries.py` as slug `sewers`, which copies `site/` into `assets/sewers`.
 
 | # | Room | The fact under it | The trick |
 |---|---|---|---|
@@ -50,7 +51,7 @@ Open it: double click `Open LIVE FROM THE SEWERS.command`. Not on the site yet (
 - Brand check: plates and walls looked at as contact sheets, not every one at full size. The grate plate shows a yellow
   fare card printed "New York" and earbuds shaped like a famous pair, no logo; the gallery's own fare card says N3W.
 
-## Not done
+## Shipped
 
-- Not registered on n3wyorkers.com, not deployed, no GitHub branch, nothing posted. The registration list is in
-  `virtual-architect/references/film-sets-and-tricks.md` section 6.
+- LIVE on n3wyorkers.com/sewers as build 20261023-061836 (deployment f2bef811), on MLow's word, 2026-10-23.
+- GitHub: branch `live-from-the-sewers` of 0xmlow/newyorkers. Nothing posted.
