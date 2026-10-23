@@ -25,7 +25,7 @@ Open it: double click `Open LIVE FROM THE SEWERS.command`. Not on the site yet (
 
 38 eggs, counted from the source at build time.
 
-## How it was made, and what it cost ($7.02 of a $12 budget, FLORA Creative Partner workspace)
+## How it was made, and what it cost ($6.75 of a $12 budget, FLORA Creative Partner workspace)
 
 - **Art direction**: GPT-6 Astra on FLORA wrote the room brief and later ranked fixes from a contact sheet (`work/astra_brief.txt`). $0.17.
 - **Plates**: 12 x Nano Banana Pro, 21:9 2K, the eye flower as reference, prompts in `tools/plates.tsv`. $2.16. Depth from
