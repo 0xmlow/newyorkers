@@ -758,7 +758,7 @@ function frame() {
     if (SKATE.message !== SK.lastMsg) { SK.lastMsg = SKATE.message; SK.msgAt = SKATE.elapsed; const el = $('#skate'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
     const park = PARK.PARK[R.id], done = GOALS[R.id] || [];
     const goals = park ? '\n' + park.goals.map((G, k) => `<span class="${done[k] ? 'gd' : 'g'}">${done[k] ? '●' : '○'} ${G.text}</span>`).join('\n') : '\n<span class="g">Laying out the set...</span>';
-    const html = `SKATE THE TOWER · ${R.i + 1} / ${ROOMS.length} · ${R.film || R.name}\n<b>${SKATE.score.toLocaleString('en-US')}</b>\n${Math.round(SKATE.v * 3.6)} KM/H${SKATE.grind ? ' · GRINDING' : ''}${BEST[R.id] ? ' · BEST ' + BEST[R.id].toLocaleString('en-US') : ''}\n<span class="t">${msg}</span>${goals}` +
+    const html = `SKATE THE SEWER · ${R.i + 1} / ${ROOMS.length} · ${R.film || R.name}\n<b>${SKATE.score.toLocaleString('en-US')}</b>\n${Math.round(SKATE.v * 3.6)} KM/H${SKATE.grind ? ' · GRINDING' : ''}${BEST[R.id] ? ' · BEST ' + BEST[R.id].toLocaleString('en-US') : ''}\n<span class="t">${msg}</span>${goals}` +
       (SK.debug ? `\n<span class="dbg">room ${R.id} · v ${SKATE.v.toFixed(2)} · ${SKATE.grind ? 'GRIND' : SKATE.air ? 'AIR ' + SKATE.height.toFixed(2) : 'GROUND'} · y ${SKATE.y.toFixed(2)} · ${park ? park.features.length + ' spots' : 'no layout'} · steer ${SKATE.steering.toFixed(2)} · ${SKATE.tricks.at(-1) || 'no trick'}</span>` : '');
     if (html !== SK.html) { SK.html = html; $('#skate').innerHTML = html; }
   }
