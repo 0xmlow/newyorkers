@@ -13,7 +13,7 @@
 (function () {
   "use strict";
   const THREE = window.THREE;
-  const Y = new THREE.Vector3(0, 1, 0), _q = new THREE.Quaternion();
+  const Y = new THREE.Vector3(0, 1, 0), _q = new THREE.Quaternion(), _hq = new THREE.Quaternion(), _ax = new THREE.Vector3(), _p = new THREE.Vector3();
   const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
 
   function parallel(a, b, fn) { fn(a, b); for (let i = 0; i < a.children.length; i++) parallel(a.children[i], b.children[i], fn); }
@@ -43,11 +43,12 @@
   }
 
   // opt: { scale, speed (the recorded walk speed in m/s at scale 1), walks (false for idle only), lookMax (radians),
-  //        shadow, material (fn: material => material), moving }
+  //        shadow, material (fn: material => material), moving, yaw (turns the model inside the root) }
   function Figure(asset, opt) {
     this.opt = opt; this.scale = opt.scale || 1; this.speed = opt.speed || 0.7; this.lookMax = opt.lookMax || 1.05;
     this.root = new THREE.Group();
     const o = this.model = cloneSkinned(asset.scene); this.root.add(o); this.root.scale.setScalar(this.scale);
+    if (opt.yaw) o.rotation.y = opt.yaw;   // a file that does not face +Z (the Blind Woman faces 90 degrees off)
     this.head = null; this.tris = 0;
     o.traverse((m) => {
       if (m.isBone && m.name === "head") this.head = m;
@@ -62,6 +63,10 @@
     this.idle = asset.clips.idle ? mx.clipAction(asset.clips.idle) : null;
     for (const a of [this.walk, this.idle]) if (a) { a.play(); a.time = Math.random() * a.getClip().duration; a.setEffectiveWeight(0); a.enabled = false; }
     this.moving = null; this.look = 0; this.lookWant = 0; this.lookOn = false;
+    // the head bone's rest pose is tilted (HEAD_TURN_FIX.md): keep it, put it back before every mixer update (a clip
+    // that does not key the head would otherwise accumulate the turn), and turn about world up in the head's own frame
+    this.rest = this.head ? this.head.quaternion.clone() : null;
+    this.vel = new THREE.Vector3(); this.last = null; this.walking = false;
     this.setMoving(!!opt.moving, 0);
   }
   Figure.prototype.setMoving = function (on, fade) {
@@ -83,9 +88,18 @@
   // ground speed in m/s while moving: the walk's time scale follows it so the planted foot stays put
   Figure.prototype.update = function (dt, ground) {
     if (this.moving && this.walk && ground) this.walk.setEffectiveTimeScale(ground / (this.speed * this.scale));
+    // walking is read from the figure's real motion, averaged as a vector, so a bob or a sway never counts
+    this.root.getWorldPosition(_p);
+    if (this.last && dt > 0) this.vel.lerp(this.last.sub(_p).multiplyScalar(-1 / dt), Math.min(1, dt * 2.5));
+    this.last = (this.last || new THREE.Vector3()).copy(_p); this.walking = this.vel.length() > 0.2;
+    if (this.head && this.rest) this.head.quaternion.copy(this.rest);
     this.mixer.update(dt);
-    this.look += (this.lookWant - this.look) * Math.min(1, dt * 4);
-    if (this.head && Math.abs(this.look) > 1e-4) this.head.quaternion.multiply(_q.setFromAxisAngle(Y, this.look));
+    const want = this.walking ? 0 : this.lookWant;
+    this.look += (want - this.look) * Math.min(1, dt * 4);
+    if (this.head && Math.abs(this.look) > 1e-3) {
+      this.head.getWorldQuaternion(_hq).invert(); _ax.copy(Y).applyQuaternion(_hq).normalize();
+      this.head.quaternion.multiply(_q.setFromAxisAngle(_ax, this.look));
+    }
   };
   Figure.prototype.dispose = function () { this.mixer.stopAllAction(); if (this.root.parent) this.root.parent.remove(this.root); };
 
