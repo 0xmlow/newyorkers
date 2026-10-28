@@ -1,0 +1,479 @@
+[
+ {
+  "id": "profit",
+  "room": "platform",
+  "a": "PROFIT",
+  "b": "PROPHET",
+  "la": "A Wall Street trader in a loosened tie and fleece vest screaming at six glowing stock screens full of red falling charts, coffee cups everywhere, on a trading floor.",
+  "lb": "A subway preacher in a long coat on a subway platform holding a hand painted cardboard sign that says THE END IS NEAR, one arm raised to the sky, commuters ignoring him.",
+  "quip": "Both called the crash. Only one got a bonus."
+ },
+ {
+  "id": "knew",
+  "room": "platform",
+  "a": "KNEW",
+  "b": "NEW",
+  "la": "An old timer in a flat cap on a folding chair outside a Little Italy social club, arms crossed, who has seen everything, a faded awning, cigars, pigeons at his feet.",
+  "lb": "A brand new transplant from Ohio on the same kind of sidewalk with a giant rolling suitcase, a paper map, an I LOVE NY tote bag, looking up at the buildings in wonder.",
+  "quip": "One knew it when. One just got here."
+ },
+ {
+  "id": "miner",
+  "room": "platform",
+  "a": "MINER",
+  "b": "MINOR",
+  "la": "A sandhog tunnel worker deep under Manhattan in a hard hat with a headlamp, covered in mud, a giant tunnel boring machine behind, the bedrock glistening.",
+  "lb": "A nervous teenager outside a St Marks Place bar at night holding out an obviously fake ID to a huge bouncer, neon signs, a line of people.",
+  "quip": "One digs the tunnel. One is digging himself a hole."
+ },
+ {
+  "id": "idle",
+  "room": "platform",
+  "a": "IDLE",
+  "b": "IDOL",
+  "la": "A yellow cab idling at the curb with exhaust curling out, the driver asleep, and a neighbour on the sidewalk filming it with a phone, a parking sign, a fire hydrant.",
+  "lb": "A screaming K pop fan in the front row of an arena concert holding a glowing lightstick and a handmade banner, confetti falling, stage lights.",
+  "quip": "Idle cars get reported. Idols get screamed at."
+ },
+ {
+  "id": "peace",
+  "room": "platform",
+  "a": "PEACE",
+  "b": "PIECE",
+  "la": "A barefoot hippie with a guitar sitting on the mosaic circle in Central Park surrounded by flowers and candles, doves, autumn leaves, golden light.",
+  "lb": "A pizza man at a counter handing over a single folded slice of New York pizza on a paper plate, cheese stretching, oregano shakers, a glowing oven behind.",
+  "quip": "Give one a chance. Fold the other one in half."
+ },
+ {
+  "id": "brake",
+  "room": "platform",
+  "a": "BRAKE",
+  "b": "BREAK",
+  "la": "A New York City subway train operator in the cab of a silver subway car slamming the emergency brake lever, sparks under the wheels, passengers lurching, tunnel lights streaking.",
+  "lb": "A breakdancer doing a one handed freeze on the floor of the same subway car, passengers holding the poles, a boombox, mid SHOWTIME, tunnel lights streaking.",
+  "quip": "What's the difference. About four seconds of showtime."
+ },
+ {
+  "id": "morning",
+  "room": "departures",
+  "a": "MORNING",
+  "b": "MOURNING",
+  "la": "A bodega counter at 7am, a bacon egg and cheese on a roll being handed across in foil, steam rising, a deli cat on the counter, sunlight through the door.",
+  "lb": "Neighbourhood regulars in black standing outside the same bodega now closed, its gate down, flowers and candles and photographs taped to the gate, the deli cat in the window.",
+  "quip": "Bacon egg and cheese. Then one day the gate stays down."
+ },
+ {
+  "id": "plain",
+  "room": "departures",
+  "a": "PLAIN",
+  "b": "PLANE",
+  "la": "A deli worker spreading scallion cream cheese on a plain bagel, close up, sesame crumbs, a wall of bagels in bins behind.",
+  "lb": "A plane spotter with binoculars on a fence by the runway at JFK as a huge jet roars overhead, landing lights on, sunset.",
+  "quip": "Plain bagel. Plane spotter. Both obsessed with the same holes in the sky."
+ },
+ {
+  "id": "flew",
+  "room": "departures",
+  "a": "FLEW",
+  "b": "FLU",
+  "la": "A traveller running through LaGuardia terminal with a rolling bag and a neck pillow, departure boards, big windows, planes outside.",
+  "lb": "A miserable commuter on a crowded subway car coughing into a tissue, everyone else leaning away from him, a box of tissues on his lap.",
+  "quip": "He flew home. He brought the flu home."
+ },
+ {
+  "id": "road",
+  "room": "departures",
+  "a": "ROAD",
+  "b": "RODE",
+  "la": "A giant pothole on the Belt Parkway with a car tire stuck in it, a hubcap flying, orange cones, traffic backed up, the bay behind.",
+  "lb": "A Citi Bike style rider pedalling the wrong way down a one way avenue, delivery bag on his back, cabs honking at him, steam from a manhole.",
+  "quip": "One road. One rode the wrong way down it."
+ },
+ {
+  "id": "hour",
+  "room": "departures",
+  "a": "HOUR",
+  "b": "OUR",
+  "la": "A Midtown bar at happy hour, a bartender pouring two beers at once, office workers in suits crowding the bar, a chalkboard, warm light.",
+  "lb": "A community garden between tenements, neighbours watering tomatoes and sunflowers together, a hand painted gate, a tiny casita, string lights.",
+  "quip": "Happy hour is theirs. The garden is ours."
+ },
+ {
+  "id": "sea",
+  "room": "departures",
+  "a": "SEA",
+  "b": "SEE",
+  "la": "Swimmers in caps charging into the grey Atlantic at Coney Island in January, the Wonder Wheel behind, splashing, steam from their skin.",
+  "lb": "A tourist stopped dead in the middle of a crowded Midtown sidewalk staring straight up at a skyscraper, mouth open, a New Yorker walking right into him.",
+  "quip": "Polar plunge. Tourist plunge. Both freezing everyone around them."
+ },
+ {
+  "id": "or",
+  "room": "deli",
+  "a": "OR",
+  "b": "OAR",
+  "la": "A deli counterman holding a sandwich mid air asking salt pepper ketchup, rows of condiment bottles, a sneeze guard, a long line behind the customer.",
+  "lb": "A couple in a green rowboat on the Central Park lake, one rowing hard with a wooden oar, the Bow Bridge behind, autumn trees.",
+  "quip": "Salt pepper ketchup, or? Row row row, oar."
+ },
+ {
+  "id": "role",
+  "room": "deli",
+  "a": "ROLE",
+  "b": "ROLL",
+  "la": "A Broadway understudy in full costume in the wings of a theatre, script clutched to his chest, staring at the spotlight, waiting for his role.",
+  "lb": "A bacon egg and cheese on a kaiser roll on a deli counter, glowing like a star in its own spotlight, wrapped half in foil.",
+  "quip": "One waits his whole life for a role. One is ready in four minutes."
+ },
+ {
+  "id": "bread",
+  "room": "deli",
+  "a": "BREAD",
+  "b": "BRED",
+  "la": "A baker pulling a tray of bagels from a huge brick oven at 4am, flour in the air, wooden peels, racks of bread.",
+  "lb": "A dog show handler running a perfectly groomed purebred poodle around a green carpet in a huge arena, judges watching, spotlights.",
+  "quip": "One is kneaded. One is needy."
+ },
+ {
+  "id": "flour",
+  "room": "deli",
+  "a": "FLOUR",
+  "b": "FLOWER",
+  "la": "A Chinatown dumpling maker at a steel table pleating dumplings in a cloud of flour, steamer baskets stacked high, red lanterns.",
+  "lb": "A bodega flower stand at night on the sidewalk, buckets of roses and tulips under plastic sheeting, a vendor arranging a bouquet, neon reflections.",
+  "quip": "Same sound. One gets steamed, one gets wrapped."
+ },
+ {
+  "id": "meat",
+  "room": "deli",
+  "a": "MEAT",
+  "b": "MEET",
+  "la": "A cheerful butcher in a clean white apron and paper hat in the Meatpacking District, holding up a huge string tied roast like a prize, a marble counter, hanging salami, cobblestones and a loading dock through the window.",
+  "lb": "Two people meeting for a first date on the steps of a grand museum, one holding flowers, phones in hand checking the dating app, the fountain behind.",
+  "quip": "Meat market. Meet market."
+ },
+ {
+  "id": "leak",
+  "room": "deli",
+  "a": "LEAK",
+  "b": "LEEK",
+  "la": "A building super on a ladder holding a bucket under a dripping water stain in a ceiling, the upstairs bathtub showing through a hole, an angry tenant pointing.",
+  "lb": "A farmer at the Union Square Greenmarket holding up a giant leek like a trophy, crates of vegetables, white tents, autumn sun.",
+  "quip": "One drips from upstairs. One goes in the soup."
+ },
+ {
+  "id": "liar",
+  "room": "interrogation",
+  "a": "LIAR",
+  "b": "LYRE",
+  "la": "A hustler in Times Square in sunglasses pushing a free mixtape CD into a tourist's hands, neon billboards, the tourist clearly about to be charged twenty dollars.",
+  "lb": "A harpist in an evening dress playing a golden lyre in the middle of Grand Central's main concourse, the zodiac ceiling, commuters rushing by.",
+  "quip": "It's free. Twenty dollars. Strings attached either way."
+ },
+ {
+  "id": "cell",
+  "room": "interrogation",
+  "a": "CELL",
+  "b": "SELL",
+  "la": "A phone repair kiosk in Times Square with two hundred cell phone cases on the wall, the clerk holding up a cracked phone, glowing screens.",
+  "lb": "A trader on the floor of the stock exchange screaming SELL with both arms up, paper slips flying, a bell, chaos.",
+  "quip": "One sells cells. One yells sell."
+ },
+ {
+  "id": "council",
+  "room": "interrogation",
+  "a": "COUNCIL",
+  "b": "COUNSEL",
+  "la": "A City Council member at a folding table at a stoop meeting with neighbours, holding a microphone, a hand painted banner, a brownstone stoop.",
+  "lb": "An injury lawyer on a subway car advertising card, pointing at the viewer with a huge smile and a phone number, the subway car interior around it.",
+  "quip": "One holds the hearing. One is on the ad above your head."
+ },
+ {
+  "id": "principal",
+  "room": "interrogation",
+  "a": "PRINCIPAL",
+  "b": "PRINCIPLE",
+  "la": "A school principal in a sweater vest at the front doors of a big brick public high school, a whistle and clipboard, students streaming in.",
+  "lb": "A diner customer refusing to leave a tip on principle, arms crossed, the waitress staring him down holding the check, a chrome diner, pie case.",
+  "quip": "One runs the school. One won't tip, on principle."
+ },
+ {
+  "id": "heard",
+  "room": "interrogation",
+  "a": "HEARD",
+  "b": "HERD",
+  "la": "Two hairdressers in a Bensonhurst salon leaning in to gossip, one whispering you heard, customers under dryers listening, foil in their hair.",
+  "lb": "A huge herd of commuters stampeding up the escalators at Penn Station at 5:30, briefcases, coffee, departure boards.",
+  "quip": "You heard? The herd heard."
+ },
+ {
+  "id": "gilt",
+  "room": "interrogation",
+  "a": "GILT",
+  "b": "GUILT",
+  "la": "A Gilded Age socialite in a ballgown in a Fifth Avenue mansion ballroom dripping with gold leaf, chandeliers, a tiny dog.",
+  "lb": "A mother on a kitchen phone in Queens with a cord stretched across the room, one hand on her heart, saying you never call, a pot boiling.",
+  "quip": "One is covered in gold. One is covered in you never call."
+ },
+ {
+  "id": "tawk",
+  "room": "whisper",
+  "a": "TAWK",
+  "b": "TOCK",
+  "la": "A sports radio caller in his car in Queens shouting into his phone about the Jets, the windshield fogged, a coffee on the dashboard, tail lights.",
+  "lb": "The great four faced golden clock over the information booth in Grand Central, its hands at 4 o'clock, commuters below, beams of light.",
+  "quip": "Say it like a New Yorker. They're the same word."
+ },
+ {
+  "id": "sauce",
+  "room": "whisper",
+  "a": "SAWCE",
+  "b": "SAWCE",
+  "la": "An Italian grandmother stirring a giant pot of Sunday sauce in a Bensonhurst kitchen, a wooden spoon, basil, a crucifix on the wall, steam.",
+  "lb": "An anonymous source in a trench coat in a dark parking garage handing a manila envelope to a tabloid reporter, one bare bulb.",
+  "quip": "Sauce. Source. Both arrive in a back room on Sunday."
+ },
+ {
+  "id": "cah",
+  "room": "whisper",
+  "a": "CAH",
+  "b": "CAW",
+  "la": "A guy on a Brooklyn street finding a parking ticket on his car windshield during alternate side parking, the street sweeper passing, his hands on his head.",
+  "lb": "A huge crow standing on the hood of the same car going CAW with its beak wide open, feathers ruffled, pigeons watching.",
+  "quip": "Pahk the cah. The crow has opinions."
+ },
+ {
+  "id": "toid",
+  "room": "whisper",
+  "a": "TOID",
+  "b": "TOID",
+  "la": "An old New Yorker on a street corner giving directions with big hand gestures, pointing up the avenue, a street sign for 33rd Street and Third Avenue.",
+  "lb": "A dog walker with ten dogs on leashes bending down to pick up after one of them with a plastic bag, holding his nose, a brownstone block.",
+  "quip": "Toity toid and toid. And the other toid."
+ },
+ {
+  "id": "son",
+  "room": "henge",
+  "a": "SON",
+  "b": "SUN",
+  "la": "A Bronx dad and his son on a stoop, the dad giving advice with a hand on the boy's shoulder, a boombox, a fire hydrant spraying, summer.",
+  "lb": "Hundreds of people standing in the middle of 42nd Street photographing the sun setting perfectly between the skyscrapers, Manhattanhenge, golden light down the canyon.",
+  "quip": "You know what it is, son. Twice a year, it's the sun."
+ },
+ {
+  "id": "knight",
+  "room": "henge",
+  "a": "KNIGHT",
+  "b": "NIGHT",
+  "la": "A chess hustler in Washington Square Park slamming down a knight on a stone chess table, a timer clock, a crowd watching, the arch behind.",
+  "lb": "The night shift bodega guy at 3am behind the counter under fluorescent light, a cat asleep on the lottery tickets, a lone customer buying chips.",
+  "quip": "Knight to E5. Night shift to 7."
+ },
+ {
+  "id": "rain",
+  "room": "henge",
+  "a": "RAIN",
+  "b": "REIGN",
+  "la": "An umbrella seller who appeared out of nowhere in a downpour at a subway exit, holding up a fan of five dollar umbrellas, everyone soaked.",
+  "lb": "A drag queen in a giant crown and cape reigning over the Halloween parade on Sixth Avenue, crowds cheering, confetti, floats.",
+  "quip": "Five dollar umbrellas. Priceless crown."
+ },
+ {
+  "id": "pail",
+  "room": "henge",
+  "a": "PAIL",
+  "b": "PALE",
+  "la": "A kid with a red sand pail and shovel building a sandcastle at Rockaway Beach, the boardwalk behind, surfers, summer sun.",
+  "lb": "An office worker in a suit lying on the grass in Sheep Meadow in May seeing the sun for the first time all year, shirt sleeves rolled, ghostly pale arms, everyone else tanned.",
+  "quip": "Bring a pail. Bring sunscreen."
+ },
+ {
+  "id": "pole",
+  "room": "subway",
+  "a": "POLE",
+  "b": "POLL",
+  "la": "A man hugging the entire subway pole with his whole body on a packed car, everyone else unable to hold on, glaring at him.",
+  "lb": "An exit poll volunteer with a clipboard outside a school polling place on Election Day, a line of voters, I VOTED stickers, a flag.",
+  "quip": "One hogs the pole. One wants your opinion of him."
+ },
+ {
+  "id": "lone",
+  "room": "subway",
+  "a": "LONE",
+  "b": "LOAN",
+  "la": "A completely empty subway car at rush hour except for one guy sitting alone at the end, every other rider packed into the next car staring through the door window. There is a reason.",
+  "lb": "A young graduate in a cap and gown on the steps of a university library holding a diploma and a student loan bill as long as a scroll unrolling down the steps.",
+  "quip": "The lone empty car. The loan that never empties."
+ },
+ {
+  "id": "feat",
+  "room": "subway",
+  "a": "FEAT",
+  "b": "FEET",
+  "la": "A tightrope walker on a wire high between two skyscrapers above Lower Manhattan, a balancing pole, clouds, a tiny crowd below.",
+  "lb": "A man asleep on a subway seat with his bare feet up on the seat across, socks hanging off his shoes, passengers horrified.",
+  "quip": "Both put their feet where nobody should."
+ },
+ {
+  "id": "patience",
+  "room": "subway",
+  "a": "PATIENCE",
+  "b": "PATIENTS",
+  "la": "A long line inside a DMV office, people holding paper numbers, one person asleep standing up, a slow clock, a NOW SERVING sign.",
+  "lb": "A packed hospital emergency room waiting room in the city, people with ice packs and bandages, a vending machine, a triage nurse with a clipboard.",
+  "quip": "Both have been waiting since Tuesday."
+ },
+ {
+  "id": "cereal",
+  "room": "subway",
+  "a": "CEREAL",
+  "b": "SERIAL",
+  "la": "A bodega shelf with a single box of sugary cereal under a nine dollar price tag, a shocked customer holding it, the deli cat on the shelf.",
+  "lb": "A serial dater at a candlelit restaurant table, swiping a dating app under the table while on a date, three other dates waiting at the bar.",
+  "quip": "Nine dollars for cereal. Three dates in one night for serial."
+ },
+ {
+  "id": "fair",
+  "room": "subway",
+  "a": "FAIR",
+  "b": "FARE",
+  "la": "The Feast of San Gennaro on Mulberry Street at night, arches of lights, zeppole frying, a ferris wheel, crowds.",
+  "lb": "A guy vaulting over a subway turnstile in one perfect leap, a transit cop watching from the booth, arms crossed.",
+  "quip": "Pay at the fair. Jump the fare."
+ },
+ {
+  "id": "cent",
+  "room": "subway",
+  "a": "CENT",
+  "b": "SCENT",
+  "la": "A businessman in a suit bending down in the middle of Times Square to pick up a single penny off the sidewalk, crowds stepping around him.",
+  "lb": "A perfume sprayer at a department store ambushing a shopper with a cloud of perfume, glass counters, the shopper choking.",
+  "quip": "He picked up the cent. He did not want the scent."
+ },
+ {
+  "id": "hoarse",
+  "room": "subway",
+  "a": "HOARSE",
+  "b": "HORSE",
+  "la": "A baseball fan in the bleachers screaming himself hoarse, veins popping, a foam finger, the stadium lights, the crowd chanting.",
+  "lb": "A police officer on a giant horse in Times Square, tourists photographing the horse, neon billboards reflecting on its coat.",
+  "quip": "One screamed for nine innings. One never says a word."
+ },
+ {
+  "id": "one",
+  "room": "shop",
+  "a": "ONE",
+  "b": "WON",
+  "la": "A man scratching a lottery ticket with a coin at a bodega counter, a deli cat watching, a wall of scratch off tickets behind.",
+  "lb": "The same man jumping in the air with the ticket held high outside the bodega, confetti, neighbours cheering, the cat unimpressed.",
+  "quip": "One ticket. Won ticket."
+ },
+ {
+  "id": "pair",
+  "room": "doors",
+  "a": "PAIR",
+  "b": "PEAR",
+  "la": "A sneakerhead in a sneaker boutique holding up one perfect pair of sneakers like a holy relic under spotlights, a wall of sneakers behind, other customers in awe.",
+  "lb": "A single green pear sitting alone on a bodega counter under a fluorescent light, the bodega guy staring at it, the deli cat staring at it, a sign that says N3W.",
+  "quip": "One costs four hundred dollars. One costs a dollar and is lonelier."
+ },
+ {
+  "id": "made",
+  "room": "doors",
+  "a": "MADE",
+  "b": "MAID",
+  "la": "A made guy in a sharp suit and pinky ring at a red sauce restaurant in Little Italy, a plate of linguine, men in suits at the bar, checkered tablecloths.",
+  "lb": "A hotel maid in a crisp uniform pushing a cart down a grand hotel corridor with chandeliers, folding a towel into a swan, a do not disturb sign.",
+  "quip": "One got made. One made the bed."
+ },
+ {
+  "id": "mail",
+  "room": "doors",
+  "a": "MAIL",
+  "b": "MALE",
+  "la": "A mail carrier in a blue uniform and shorts in a downpour on a brownstone block, mailbag over his shoulder, an umbrella flipped inside out, a dog barking.",
+  "lb": "A male model posing on a giant SoHo billboard in underwear, smouldering, while a pigeon sits on the edge of the billboard, taxis below.",
+  "quip": "Neither rain nor sleet. Neither shirt nor pants."
+ },
+ {
+  "id": "in",
+  "room": "doors",
+  "a": "IN",
+  "b": "INN",
+  "la": "A bouncer with a clipboard at a velvet rope outside a nightclub at 1am deciding who gets in, a long line in sparkly outfits, neon.",
+  "lb": "A tiny cozy Bowery hostel lobby, a sleepy desk clerk handing a key on a giant wooden tag to a backpacker, bunk beds visible, a cat on the desk.",
+  "quip": "One decides who gets in. One will take anybody for forty dollars."
+ },
+ {
+  "id": "bare",
+  "room": "doors",
+  "a": "BARE",
+  "b": "BEAR",
+  "la": "The Naked Cowboy style street performer in Times Square in just a hat, boots and a guitar, tourists taking photos, billboards blazing.",
+  "lb": "A stock trader wearing a full bear costume on the floor of the exchange on a red day, everyone else panicking, screens of falling red charts.",
+  "quip": "Same street. Different market."
+ },
+ {
+  "id": "hair",
+  "room": "doors",
+  "a": "HAIR",
+  "b": "HARE",
+  "la": "A Bushwick barber giving a fresh fade, clippers buzzing, hair falling, a barber pole, a mirror full of reflections, a waiting customer reading.",
+  "lb": "A street magician in Washington Square Park pulling a huge white rabbit out of a top hat, the crowd gasping, the arch behind.",
+  "quip": "One cuts it. One pulls it out of a hat."
+ },
+ {
+  "id": "peak",
+  "room": "doors",
+  "a": "PEAK",
+  "b": "PEEK",
+  "la": "Tourists at the very top of the Empire State Building observation deck at sunset, the whole city glowing below, wind blowing their scarves.",
+  "lb": "A nosy neighbour pressing her eye to the peephole of a tenement apartment door, slippers and a housecoat, the hallway behind her.",
+  "quip": "Best view in the city. Second best view in the city."
+ },
+ {
+  "id": "right",
+  "room": "doors",
+  "a": "RIGHT",
+  "b": "WRITE",
+  "la": "A yellow cab stopped at a red light with a big NO TURN ON RED sign, the cab driver throwing his hands up, horns honking all around.",
+  "lb": "A writer in a tiny café typing a screenplay on a laptop with a cold coffee, crumpled pages everywhere, a sign on the laptop that says N3W.",
+  "quip": "You can't turn right on red. He can't write on deadline."
+ },
+ {
+  "id": "nose",
+  "room": "doors",
+  "a": "NOSE",
+  "b": "KNOWS",
+  "la": "A commuter sniffing the air at the open doors of a subway car before deciding whether to get on, everyone inside looking guilty.",
+  "lb": "A bodega guy behind the counter already making your order before you say a word, egg on the grill, a roll open, he just knows.",
+  "quip": "One smells trouble. One knows your order."
+ },
+ {
+  "id": "berry",
+  "room": "doors",
+  "a": "BERRY",
+  "b": "BURY",
+  "la": "A farmer at the Union Square Greenmarket holding a basket of bright strawberries and blueberries, white tents, a crowd, autumn light.",
+  "lb": "A gravedigger with a shovel resting at the top of a hill in Green-Wood Cemetery, old angel statues, the Manhattan skyline far behind at dusk.",
+  "quip": "Same farm stand energy. Very different harvest."
+ },
+ {
+  "id": "blew",
+  "room": "doors",
+  "a": "BLEW",
+  "b": "BLUE",
+  "la": "A Mets closer on the mound with his head in his glove after blowing the save, the scoreboard behind him, fans with their heads in their hands.",
+  "lb": "A die hard Mets fan dressed head to toe in blue and orange in the stands, face painted blue, waving a giant blue foam finger, fully undefeated in spirit.",
+  "quip": "He blew it. She bleeds blue."
+ },
+ {
+  "id": "dear",
+  "room": "doors",
+  "a": "DEAR",
+  "b": "DEER",
+  "la": "A deli lady behind a counter calling everybody my dear, handing over a sandwich with a smile, a line of regulars, a cash register.",
+  "lb": "A family of deer standing calmly in the middle of a Staten Island cul de sac at dawn, a man in a bathrobe holding his newspaper staring at them.",
+  "quip": "What can I get you, dear? Staten Island has an answer."
+ }
+]

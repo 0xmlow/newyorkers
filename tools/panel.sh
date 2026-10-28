@@ -1,0 +1,9 @@
+#!/bin/bash
+# One homophone diptych through ChatGPT ImageGen (the Codex CLI bundled with ChatGPT.app): a 3:2 picture split down the
+# middle, word A on the left, word B on the right, cut in two by _build/panels.py.  usage: tools/panel.sh <id> "<left>" "<right>"
+C=/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex
+HERE="$(cd "$(dirname "$0")/.." && pwd)"; out="$HERE/work/raw"; id="$1"; L="$2"; R="$3"
+STYLE="Two paintings side by side in one image, a diptych: the image is split exactly down the vertical centre line by a thin straight black seam, each half a complete composition of its own, same camera height, same horizon line, same light direction, so the two halves rhyme. Painted in MLow's style: materially painted realism, thick oil paint with visible impasto, fine contour lines that wrap around the actual forms, physical marbled paint and gravity drips, rich New York colour, cinematic controlled light, funny and specific. Every person has a giant surreal flower instead of a head, exactly like the attached reference image: pink petals around one large human eye with a blue iris. No human faces. No words, no letters, no captions anywhere unless a sign is described; any sign says NEW YORKERS or N3W or is blank. No real logos, no real brands, no celebrities. No border around the image."
+cd "$out" && $C exec --skip-git-repo-check -s workspace-write --image="$HERE/work/flower.png" -- \
+ "Use your image generation tool to create ONE image, landscape 3:2 (1536x1024), using the attached image as the reference for the flower heads, then copy the generated PNG into the current directory as $id.png. Do nothing else. Image: LEFT HALF: $L RIGHT HALF: $R $STYLE" < /dev/null > "$HERE/work/log_$id.log" 2>&1
+ls -la "$id.png" 2>/dev/null || { echo "FAILED $id"; tail -5 "$HERE/work/log_$id.log"; }
