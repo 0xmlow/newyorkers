@@ -5,3 +5,6 @@ _build/app.js
 mint/dist/
 mint/*.mp4
 mint/*.gif
+mint/v2/
+mint/dist_v2/
+mint/v2_media/

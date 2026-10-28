@@ -26,7 +26,7 @@ try:
 finally:
     w.close(); g.close()
 pal = out + '.pal.png'
-for side, colors in ((720, 192),):
+for side, colors in ((720, int(os.environ.get("BG_GIF_COLORS", 192))),):   # v2 media used 144 to stay under the first GIF (12.51 MB)
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', tmp, '-vf', f'scale={side}:{side}:flags=lanczos,palettegen=max_colors={colors}:stats_mode=full', pal], check=True)
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', tmp, '-i', pal, '-lavfi', f'scale={side}:{side}:flags=lanczos[x];[x][1:v]paletteuse=dither=sierra2_4a:diff_mode=rectangle', '-loop', '0', out], check=True)
 os.remove(pal)

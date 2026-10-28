@@ -13,8 +13,10 @@ sys.path.insert(0, "/Users/degens/Desktop/NEW YORKERS BY MLOW/NEW YORKERS SITE/_
 import websocket
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PIECE = "/Users/degens/Desktop/NEW YORKERS BY MLOW/BREAK GLASS 1 OF 1 2026-10-15/site"
-STAGE = "/private/tmp/claude-501/-Users-degens-Desktop-NEW-YORKERS-BY-MLOW/14917f2a-a913-4deb-a583-7416d413bd06/scratchpad/filmstage"
+# BG_PIECE: the folder holding the index.html to film (2026-10-28: mint/v2 for the upgraded token media);
+# BG_STAGE: where the copy is served from (the default was one old session's scratchpad).
+PIECE = os.environ.get("BG_PIECE", "/Users/degens/Desktop/NEW YORKERS BY MLOW/BREAK GLASS 1 OF 1 2026-10-15/site")
+STAGE = os.environ.get("BG_STAGE", "/private/tmp/claude-501/-Users-degens-Desktop-NEW-YORKERS-BY-MLOW/14917f2a-a913-4deb-a583-7416d413bd06/scratchpad/filmstage")
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 SHIM = r"""

@@ -26,6 +26,12 @@ Images are webp, 960 px on the long edge, quality 58, to keep the file mintable.
 
 `?seed=123` makes the pulls repeat in order (for a film or a demo). Keys: space or enter strikes, R re-arms, B turns it around, M mutes. `?auto` (or `?auto=4000`, in ms) breaks the glass by itself, for stills and films.
 
+## Upgrade, 2026-10-28
+
+A real emergency hammer (turned steel head, hardened point, flat face, evil eye badges, ferrule, enamel handle, ridged grip), stage flame projectors instead of boxes, and stanchions whose ropes clip on with snap hooks. All code, no new files. `mint/build_mint.py` makes the one file mint version (`mint/v2/index.html`, phone guard inlined); `mint/pin.py --piece mint/v2/index.html` would pin it. Token 51 is on the Keystone contract (ERC7160TL): a new version is added with `addTokenUris` and shown once pinned with `pinTokenUri`.
+
+Token 51's next version, ready to pin (2026-10-28): `mint/token51_current.json` is version 0 as read on chain; `mint/build_meta_v2.py` writes `metadata_v2.template.json` from it, changing only the file fields; the GIF and still are remade at the original framing into `mint/v2_media/` (`BG_PIECE=mint/v2 BG_GIF_COLORS=144 python3 film/gif.py mint/v2_media/break_glass.gif`; the still is a 1600 square headless shot of the default view). `python3 mint/pin.py --v2 --dry` checks the set; `python3 mint/pin.py --v2` pins it.
+
 ## Not verified
 
 - Not tested inside OpenSea, SuperRare or Foundation iframes. Sound needs a click first in every browser, which the first strike provides.

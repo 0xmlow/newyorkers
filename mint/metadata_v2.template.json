@@ -1,0 +1,57 @@
+{
+  "name": "IN CASE OF EMERGENCY: BREAK GLASS",
+  "description": "IN CASE OF EMERGENCY: BREAK GLASS //\n\nA one of one by MLow from NEW YORKERS. A blue emergency case, enamelled all over in evil eyes that follow you and blink, stands on a white terrazzo plinth behind blue velvet rope, one spotlight overhead, a fire unit on either side. Behind the frosted glass is a New Yorker.\n\n// Take the hammer off its chain and hit the glass three times. The first hit cracks it where you struck, the second spreads the cracks, the third breaks it along them: the pieces round the hit are driven into the case, the rest drop out of the frame and settle on the plinth, a few stay stuck in the frame, the fire jets go up and the alarm rings.\n\n// Inside is one of the Keystone 111, the founding New Yorkers, drawn at random from all 163 of their painted states. Every work has the same chance. Within a work the keystone state is the usual pull, the alternate states are rarer, and the Canal Street Bootlegs are the rarest thing in the case. Each pull shows its odds.\n\n// Press RE-ARM on the plinth and every shard flies back into the frame, the glass seals, and the case is ready again. TURN shows the back: the MLow plate and the inspection tag. Last checked: never.\n\n// One self contained file: three.js, every painting and every sound are inside it. No servers, no network calls. Works in any modern browser, on a desk or a phone. Click the glass to begin.",
+  "external_url": "https://www.N3wyorkers.com",
+  "image": "ipfs://MEDIA/break_glass.gif",
+  "image_sha256": "9c124884ee7c8327ba155fb0667fdc6abd5f1b945611d1a7661fa7ffa4a3ce9b",
+  "animation_url": "ipfs://MEDIA/index.html",
+  "animation_sha256": "275797b15151cb4dd283631fc7d125753ca3e8f2a71b5f760446e82f358075b2",
+  "attributes": [
+    {
+      "trait_type": "ARTIST",
+      "value": "MLow"
+    },
+    {
+      "trait_type": "Year",
+      "value": "2026"
+    },
+    {
+      "trait_type": "COLLECTION",
+      "value": "NEW YORKERS // BY MLOW"
+    },
+    {
+      "trait_type": "ARTIST SITE",
+      "value": "MLOW.XYZ"
+    },
+    {
+      "trait_type": "PROJECT SITE",
+      "value": "N3WYORKERS.COM"
+    },
+    {
+      "trait_type": "FEATURING",
+      "value": "KEYSTONE NEW YORKERS"
+    },
+    {
+      "trait_type": "IN CASE OF EMERGENCY",
+      "value": "BREAK GLASS"
+    },
+    {
+      "trait_type": "DYNAMIC GENERATIVE",
+      "value": "MIXED MODEL ART"
+    },
+    {
+      "trait_type": "LOCATION",
+      "value": "NYC"
+    },
+    {
+      "trait_type": "DYNAMIC",
+      "value": "YES"
+    }
+  ],
+  "tags": [],
+  "media": {
+    "dimensions": "720x720",
+    "size": "17622382",
+    "mimeType": "text/html"
+  }
+}

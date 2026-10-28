@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import LOGO from './logo_white.png';
 
 const ART = window.KEYSTONE || [];
@@ -383,14 +384,51 @@ function stepShards(dt) {
 function clearShards() { for (const s of shards) { box.remove(s.m); s.m.geometry.dispose(); s.m.children[0].geometry.dispose(); } shards = []; }
 
 // ---------- the hammer on its chain ----------
+// A real emergency break glass hammer (2026-10-28 upgrade): a turned steel head with a hardened conical point and a
+// flat striking face, a chrome ferrule, a lathed enamel handle in the house blue with a ridged navy rubber grip, a
+// lanyard eye where the chain clips on, and a little evil eye badge on each cheek of the head. Same local frame as
+// before (head along x, point at +x, handle down to y = -0.42) so the swing and the chain are untouched.
 const hammer = new THREE.Group();
-const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.42, 16), new THREE.MeshPhysicalMaterial({ color: 0x0a1f8f, roughness: 0.4, clearcoat: 1 }));
-handle.position.y = -0.21; hammer.add(handle);
-const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0x05070f, roughness: 0.9 })); grip.position.y = -0.33; hammer.add(grip);
-const head = new THREE.Group(); head.position.y = 0.0; hammer.add(head);
-const headBody = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.06, 0.06), chrome); head.add(headBody);
-const spike = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.09, 4), chrome); spike.rotation.z = -Math.PI / 2; spike.position.x = 0.125; head.add(spike);
-const pein = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.036, 0.04, 20), chrome); pein.rotation.z = Math.PI / 2; pein.position.x = -0.1; head.add(pein);
+const wearTex = canvasTex(256, 256, (c, w, h) => {      // brushed steel with edge wear: a roughness map, grey = rough
+  c.fillStyle = '#7a7a7a'; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 900; i++) { const y = Math.random() * h, v = 90 + Math.random() * 70 | 0; c.strokeStyle = `rgba(${v},${v},${v},.35)`; c.lineWidth = Math.random() * 1.4; c.beginPath(); c.moveTo(0, y); c.lineTo(w, y + Math.random() * 3 - 1.5); c.stroke(); }
+  for (let i = 0; i < 60; i++) { const v = 30 + Math.random() * 40 | 0; c.fillStyle = `rgba(${v},${v},${v},.6)`; c.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 6, 1); }
+});
+wearTex.colorSpace = THREE.NoColorSpace; wearTex.wrapS = wearTex.wrapT = THREE.RepeatWrapping;
+const steel = new THREE.MeshPhysicalMaterial({ color: 0xc9d0da, metalness: 1, roughness: 0.42, roughnessMap: wearTex, clearcoat: 0.15 });
+const tipSteel = new THREE.MeshPhysicalMaterial({ color: 0xa9b3c4, metalness: 1, roughness: 0.16, sheen: 0.15, sheenColor: new THREE.Color(0xc8a86a) }); // hardened, a faint heat tint
+const enamelBlue = new THREE.MeshPhysicalMaterial({ color: 0x1c4fe8, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.08 });
+const rubber = new THREE.MeshStandardMaterial({ color: 0x0b1438, roughness: 0.92 });
+// profiles run bottom to top so the lathe's faces point outward (a top down profile turns them inside out)
+const lathe = (pts, mat, seg = 32) => { if (pts[0][1] > pts[pts.length - 1][1]) pts = pts.slice().reverse(); return new THREE.Mesh(new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), seg), mat); };
+// the head, turned about its own axis (lathe y), laid along x: flat face at -x, point at +x
+const head = new THREE.Group(); hammer.add(head);
+const headBody = lathe([[0, -0.098], [0.024, -0.098], [0.029, -0.093], [0.029, -0.06], [0.026, -0.055], [0.026, 0.035], [0.029, 0.04], [0.029, 0.058], [0.0255, 0.062]], steel);
+headBody.rotation.z = -Math.PI / 2; head.add(headBody);
+const spike = lathe([[0.0255, 0.062], [0.021, 0.08], [0.011, 0.118], [0.0035, 0.137], [0, 0.141]], tipSteel);
+spike.rotation.z = -Math.PI / 2; head.add(spike);
+const pein = new THREE.Mesh(new THREE.CircleGeometry(0.024, 32), tipSteel);   // the polished striking face
+pein.rotation.y = -Math.PI / 2; pein.position.x = -0.0985; head.add(pein);
+// the eye block through the head where the handle goes in (square in section, as forged heads are), badges on both cheeks
+const eyeBlock = new THREE.Mesh(new RoundedBoxGeometry(0.064, 0.058, 0.057, 3, 0.006), steel); eyeBlock.position.x = -0.012; head.add(eyeBlock);
+const eyeBadge = canvasTex(128, 128, (c, w) => { c.clearRect(0, 0, w, w); drawEye(c, w / 2, w / 2, w * 0.4, 0, 0, 0, 0); });
+const badgeMat = new THREE.MeshPhysicalMaterial({ map: eyeBadge, transparent: true, alphaTest: 0.2, roughness: 0.25, clearcoat: 1 });
+for (const sz of [-1, 1]) {
+  const b = new THREE.Mesh(new THREE.CircleGeometry(0.019, 28), badgeMat);
+  b.position.set(-0.012, 0, sz * 0.0291); b.rotation.y = sz > 0 ? 0 : Math.PI; head.add(b);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.0195, 0.0016, 6, 28), chrome); rim.position.copy(b.position); rim.position.z += sz * 0.0006; head.add(rim);
+}
+// the handle: a lathed enamel shaft, a chrome ferrule under the head, a ridged rubber grip, a flared pommel
+const shaft = lathe([[0.0, 0.0], [0.016, 0.0], [0.016, -0.03], [0.0165, -0.06], [0.0185, -0.2], [0.019, -0.215]], enamelBlue);
+hammer.add(shaft);
+const ferrule = lathe([[0.0, -0.026], [0.019, -0.026], [0.0205, -0.03], [0.0205, -0.056], [0.019, -0.06], [0, -0.06]], chrome);
+hammer.add(ferrule);
+const gp = [[0.0, -0.205], [0.021, -0.205]];
+for (let i = 0; i < 9; i++) { const y = -0.215 - i * 0.019; gp.push([0.0225, y], [0.0255, y - 0.005], [0.0255, y - 0.012], [0.0225, y - 0.017]); }
+gp.push([0.026, -0.39], [0.0295, -0.404], [0.0285, -0.414], [0.012, -0.42], [0, -0.42]);
+const grip = lathe(gp, rubber, 28); hammer.add(grip);
+const pommel = lathe([[0.0, -0.414], [0.0287, -0.414], [0.029, -0.407], [0.0, -0.407]], enamelBlue); hammer.add(pommel);
+const lanyardEye = new THREE.Mesh(new THREE.TorusGeometry(0.011, 0.0032, 8, 18), chrome); lanyardEye.position.y = -0.428; hammer.add(lanyardEye);
 hammer.traverse(o => { if (o.isMesh) o.castShadow = true; });
 scene.add(hammer);
 const HOOK = new THREE.Vector3(W / 2 + 0.06, box.position.y + H / 2 - 0.15, D / 2 - 0.08);
@@ -546,14 +584,37 @@ const STEPS = [
 // velvet ropes on three sides, open at the front
 const velvet = new THREE.MeshPhysicalMaterial({ color: 0x1636b8, roughness: 0.85, sheen: 1, sheenColor: new THREE.Color(0x7aa2ff), sheenRoughness: 0.45 });
 const POSTS = [[-2.1, 1.3], [-2.1, -1.35], [2.1, -1.35], [2.1, 1.3]], POST_H = 0.98;
+// 2026-10-28 upgrade: turned bases, a collar with an eye on each post at rope height, and every rope ends in a
+// chrome cap and a snap hook clipped into that eye, so the ropes hang from the posts instead of running into them.
+const ROPE_Y = FLOOR + POST_H - 0.07, POST_R = 0.028;
+const baseProfile = [[0, 0], [0.18, 0], [0.18, 0.012], [0.165, 0.026], [0.11, 0.04], [0.05, 0.052], [0.034, 0.07], [0.03, 0.08], [0, 0.08]];
 for (const [x, z] of POSTS) {
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.03, 32), chrome); base.position.set(x, FLOOR + 0.015, z); base.receiveShadow = true; scene.add(base);
-  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, POST_H, 20), chrome); pole.position.set(x, FLOOR + POST_H / 2, z); pole.castShadow = true; scene.add(pole);
+  const base = new THREE.Mesh(new THREE.LatheGeometry(baseProfile.map(([r, y]) => new THREE.Vector2(r, y)), 40), chrome);
+  base.position.set(x, FLOOR, z); base.receiveShadow = base.castShadow = true; scene.add(base);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(POST_R, POST_R, POST_H, 20), chrome); pole.position.set(x, FLOOR + POST_H / 2, z); pole.castShadow = true; scene.add(pole);
   const ball = new THREE.Mesh(new THREE.SphereGeometry(0.05, 24, 12), chrome); ball.position.set(x, FLOOR + POST_H + 0.03, z); scene.add(ball);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.034, 0.03, 20), chrome); neck.position.set(x, FLOOR + POST_H - 0.005, z); scene.add(neck);
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 0.034, 24), chrome); collar.position.set(x, ROPE_Y, z); scene.add(collar);
+}
+const capMat = new THREE.MeshStandardMaterial({ color: 0xdfe6f2, metalness: 1, roughness: 0.24 });
+function ropeEnd(post, toward) {   // an eye on the post's collar facing the rope, a snap hook in it, a cap on the rope
+  const dir = toward.clone().sub(post).setY(0).normalize(), q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(1, 0, 0), dir);
+  const eye = new THREE.Mesh(new THREE.TorusGeometry(0.012, 0.0035, 8, 18), chrome);
+  eye.position.copy(post).addScaledVector(dir, 0.046); eye.quaternion.copy(q); scene.add(eye);   // a vertical ring in the rope's plane
+  const hook = new THREE.Mesh(new THREE.TorusGeometry(0.017, 0.0042, 8, 22, Math.PI * 1.65), chrome);
+  hook.position.copy(post).addScaledVector(dir, 0.068); hook.position.y -= 0.004; hook.quaternion.copy(q).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2)); scene.add(hook);
+  const gate = new THREE.Mesh(new THREE.CylinderGeometry(0.0025, 0.0025, 0.022, 6), chrome);
+  gate.position.copy(post).addScaledVector(dir, 0.074); gate.position.y -= 0.004; gate.quaternion.copy(q).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0.5)); scene.add(gate);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.031, 0.034, 0.06, 20), capMat);
+  cap.position.copy(post).addScaledVector(dir, 0.112); cap.quaternion.copy(q).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2)); cap.castShadow = true; scene.add(cap);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.0335, 0.004, 8, 24), chrome);
+  ring.position.copy(post).addScaledVector(dir, 0.14); ring.quaternion.copy(q).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)); scene.add(ring);
+  return post.clone().addScaledVector(dir, 0.13);   // where the velvet starts
 }
 for (let i = 0; i < 3; i++) {
-  const [x0, z0] = POSTS[i], [x1, z1] = POSTS[i + 1], y = FLOOR + POST_H - 0.07;
-  const a = new THREE.Vector3(x0, y, z0), b = new THREE.Vector3(x1, y, z1), mids = [];
+  const [x0, z0] = POSTS[i], [x1, z1] = POSTS[i + 1], y = ROPE_Y;
+  const p0 = new THREE.Vector3(x0, y, z0), p1 = new THREE.Vector3(x1, y, z1);
+  const a = ropeEnd(p0, p1), b = ropeEnd(p1, p0), mids = [];
   for (let k = 0; k <= 12; k++) { const t = k / 12, p = a.clone().lerp(b, t); p.y -= Math.sin(t * Math.PI) * 0.26; mids.push(p); }
   const rope = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(mids), 60, 0.026, 10), velvet); rope.castShadow = true; scene.add(rope);
 }
@@ -654,13 +715,48 @@ const fireMat = new THREE.ShaderMaterial({
 });
 const fire = new THREE.Points(fireGeo, fireMat); fire.frustumCulled = false; scene.add(fire);
 const fireLights = JETS.map(j => { const l = new THREE.PointLight(0xff8a3a, 0, 6, 1.6); l.position.set(j.x, FLOOR + 1.0, j.z); scene.add(l); return l; });
-// the units themselves: black boxes with a chrome nozzle and a little armed light
-const unitMat = new THREE.MeshStandardMaterial({ color: 0x0a0d18, metalness: 0.5, roughness: 0.45 });
+// the units themselves (2026-10-28 upgrade): stage flame projectors, not boxes. A rounded powder coated chassis on
+// rubber feet, louvred vents and a key panel on the front, vents on the sides, a bolted top plate under the chrome
+// nozzle, carry handles, and a power cable running back under the plinth. The armed light is where it was.
+const unitMat = new THREE.MeshPhysicalMaterial({ color: 0x10142a, metalness: 0.35, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.5 });
 const armedMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+const ventTex = canvasTex(512, 340, (c, w, h) => {
+  c.fillStyle = '#121730'; c.fillRect(0, 0, w, h);
+  c.strokeStyle = 'rgba(160,190,255,.25)'; c.lineWidth = 3; c.strokeRect(10, 10, w - 20, h - 20);
+  for (let i = 0; i < 9; i++) { const y = 34 + i * 20; const g = c.createLinearGradient(0, y, 0, y + 12); g.addColorStop(0, '#02030a'); g.addColorStop(1, '#2a3156'); c.fillStyle = g; c.fillRect(40, y, w - 80, 11); }
+  c.fillStyle = '#dfe9ff'; c.font = '900 30px "Arial Black", Impact, sans-serif'; c.textAlign = 'left'; c.fillText('FLAME FX', 40, 262);
+  c.font = '700 18px Consolas, "Courier New", monospace'; c.fillStyle = '#8fb0ff'; c.fillText('KEEP 3 M CLEAR . ARMED WHEN LIT', 40, 296);
+  c.fillStyle = '#2962FF'; c.fillRect(w - 128, 236, 76, 58); c.fillStyle = '#05070f'; c.beginPath(); c.arc(w - 90, 265, 17, 0, 7); c.fill();
+  c.fillStyle = '#dfe9ff'; c.fillRect(w - 92, 250, 4, 14);
+});
+const sideTex = canvasTex(512, 340, (c, w, h) => {
+  c.fillStyle = '#121730'; c.fillRect(0, 0, w, h);
+  for (let r = 0; r < 6; r++) for (let k = 0; k < 10; k++) { c.fillStyle = '#03050d'; c.beginPath(); c.arc(70 + k * 41, 70 + r * 40, 12, 0, 7); c.fill(); }
+});
+const ventMat = new THREE.MeshStandardMaterial({ map: ventTex, metalness: 0.3, roughness: 0.6 });
+const sideMat = new THREE.MeshStandardMaterial({ map: sideTex, metalness: 0.3, roughness: 0.6 });
+const footMat = new THREE.MeshStandardMaterial({ color: 0x05060c, roughness: 0.95 });
+const UW = 0.34, UH = 0.24, UFT = 0.018;
 for (const j of JETS) {
-  const u = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.24, 0.34), unitMat); u.position.set(j.x, FLOOR + 0.12, j.z); u.castShadow = u.receiveShadow = true; scene.add(u);
-  const n = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.1, 20), chrome); n.position.set(j.x, FLOOR + 0.29, j.z); scene.add(n);
-  const led = new THREE.Mesh(new THREE.SphereGeometry(0.014, 10, 8), armedMat); led.position.set(j.x + 0.11, FLOOR + 0.2, j.z + 0.171); scene.add(led);
+  const g = new THREE.Group(); g.position.set(j.x, FLOOR, j.z); scene.add(g);
+  const u = new THREE.Mesh(new RoundedBoxGeometry(UW, UH, UW, 4, 0.025), unitMat); u.position.y = UFT + UH / 2; u.castShadow = u.receiveShadow = true; g.add(u);
+  const fp = new THREE.Mesh(new THREE.PlaneGeometry(UW - 0.05, UH - 0.06), ventMat); fp.position.set(0, UFT + UH / 2, UW / 2 + 0.0015); g.add(fp);
+  for (const sx of [-1, 1]) {
+    const sp = new THREE.Mesh(new THREE.PlaneGeometry(UW - 0.07, UH - 0.08), sideMat); sp.position.set(sx * (UW / 2 + 0.0015), UFT + UH / 2, 0); sp.rotation.y = sx * Math.PI / 2; g.add(sp);
+    const hd = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.008, 8, 20, Math.PI), chrome);    // carry handle
+    hd.position.set(sx * (UW / 2 + 0.004), UFT + UH - 0.05, 0); hd.rotation.set(0, sx * Math.PI / 2, 0); g.add(hd);
+  }
+  for (const fx of [-1, 1]) for (const fz of [-1, 1]) { const f = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, UFT, 14), footMat); f.position.set(fx * 0.12, UFT / 2, fz * 0.12); g.add(f); }
+  const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.008, 32), chrome); plate.position.y = UFT + UH + 0.004; g.add(plate);
+  for (let k = 0; k < 6; k++) { const an = k / 6 * Math.PI * 2, bo = new THREE.Mesh(new THREE.CylinderGeometry(0.0075, 0.0075, 0.007, 6), chrome); bo.position.set(Math.cos(an) * 0.082, UFT + UH + 0.011, Math.sin(an) * 0.082); g.add(bo); }
+  const n = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.1, 20), chrome); n.position.y = 0.29; g.add(n);    // the nozzle, as before
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.006, 8, 24), chrome); lip.rotation.x = Math.PI / 2; lip.position.y = 0.34; g.add(lip);
+  const led = new THREE.Mesh(new THREE.SphereGeometry(0.014, 10, 8), armedMat); led.position.set(0.11, 0.2, UW / 2 + 0.003); g.add(led);
+  // the power cable: out of the back, along the floor and in under the plinth
+  const sx = Math.sign(j.x), cab = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(sx * 0.06, 0.07, -UW / 2 - 0.002), new THREE.Vector3(sx * 0.07, 0.03, -UW / 2 - 0.06), new THREE.Vector3(sx * 0.02, 0.008, -UW / 2 - 0.16),
+    new THREE.Vector3(-sx * 0.12, 0.008, -UW / 2 - 0.26), new THREE.Vector3(-sx * 0.2, 0.008, -UW / 2 - 0.3)]);
+  const cable = new THREE.Mesh(new THREE.TubeGeometry(cab, 40, 0.008, 8), footMat); cable.castShadow = true; g.add(cable);
 }
 let fireT = 0, fireDur = 0, firePow = 1, fireNext = 0;
 function ignite(dur, pow) { fireT = 0; fireDur = dur; firePow = pow; sfxFire(dur, pow); }
@@ -925,7 +1021,7 @@ renderer.setAnimationLoop(() => {
   cost = cost * 0.9 + (performance.now() - now) * 0.1;
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden && AC) AC.suspend(); });
-window.__breakglass = { press: n => pressButton(n), _three: { renderer, scene, camera, paintEnamel, stepDust }, strike: () => strike({ x: 0.1, y: 0 }), rearm, turnAround, get state() { return state; }, get debug() { return { hits, swing: !!swing, queued: queued.length, taps, ms: +cost.toFixed(2) }; }, get current() { return current; }, art: ART.length,
+window.__breakglass = { press: n => pressButton(n), _three: { renderer, scene, camera, controls, paintEnamel, stepDust }, strike: () => strike({ x: 0.1, y: 0 }), rearm, turnAround, get state() { return state; }, get debug() { return { hits, swing: !!swing, queued: queued.length, taps, ms: +cost.toFixed(2) }; }, get current() { return current; }, art: ART.length,
   get shards() { const c = {}; for (const s of shards) { const k = s.stuck ? 'stuck' : !s.rest ? 'moving' : String(Math.round(surfaceAt(s.m.position.x, s.m.position.z, s.m.position.y) * 100) / 100); c[k] = (c[k] || 0) + 1; } return c; } };
 // ?auto breaks the glass by itself a second after load (for stills, films and the marketplace preview)
 if (qs.has('auto')) [+(qs.get('auto') || 900), +(qs.get('auto') || 900) + 600, +(qs.get('auto') || 900) + 1200].forEach((ms, i) => setTimeout(() => strike({ x: 0.18 - i * 0.04, y: 0.06 + i * 0.03 }), ms));
