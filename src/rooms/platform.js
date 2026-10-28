@@ -9,6 +9,8 @@
 // far faster than the columns beside it, and by the time you reach it you are standing at the feet of a pigeon nine
 // metres tall. Its feet never move. When it is full size it turns, tips its head down at you, and coos. Back away and it
 // shrinks back to a pigeon. Its collider grows with it, so you can never walk into its chest.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'platform', name: 'The Platform of Wrong Sizes', scale: 'I · The dream', sound: 'platform',
   kicker: 'A station that should not exist. Everything is the right size except the pigeon, which is the right size from where you are standing.',
@@ -271,7 +273,9 @@ export default {
       const v2 = new THREE.Mesh(new THREE.CapsuleGeometry(0.245, 0.3, 4, 10), vest); v2.position.y = 1.3; v2.scale.set(1, 1, 0.95); att.add(v2);
       for (const s of [-1, 1]) { const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.36, 4, 8), coat); arm.position.set(0.18, 1.18, s * 0.26); arm.rotation.z = -1.1; att.add(arm); }
       const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: attT, transparent: true })); head.scale.set(0.62, 0.62, 1); head.position.y = 1.95; att.add(head); att.userData.head = head;
-      c.glb('ph_metal_stool_01', { h: 0.75, x: BX - 0.2, z: BZZ }); c.glb('ph_vintage_radio_transceiver', { h: 0.18, x: BX + 0.55, y: 1.0, z: BZZ - 0.6, ry: Math.PI / 2 }); }
+      c.glb('ph_metal_stool_01', { h: 0.75, x: BX - 0.2, z: BZZ });
+      // 2026-10-28: the Cabbie from the cast, whole, his own eye flower for a head (the drawn flower is hidden), facing the window
+      rigged(c, att, 'cabbie', { h: 1.78, ry: Math.PI / 2, hide: [...parts(att), head], near: 9, body: 0.5 }); c.glb('ph_vintage_radio_transceiver', { h: 0.18, x: BX + 0.55, y: 1.0, z: BZZ - 0.6, ry: Math.PI / 2 }); }
     c.click(att, () => { c.say(att.userData.head, pickOf(['One fare, please. You paid it falling asleep.', 'Lost and found is inside the pigeon.', 'I have been watching you since the train. It is my job.'])); c.egg('platform_attendant', 'The attendant has worked this booth since the station did not exist. Lost property is kept inside the pigeon.'); }, 'Ask the attendant');
     // turnstiles: old cast ones, three arms, between the booth and the wall
     const tsArms = [];

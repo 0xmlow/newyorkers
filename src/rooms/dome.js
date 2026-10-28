@@ -37,6 +37,8 @@ const BRIDGES = [[[-73.998, 40.712], [-73.991, 40.701], 'Brooklyn'], [[-73.993, 
   [[-73.932, 40.8], [-73.912, 40.782], 'Triborough'], [[-73.945, 40.851], [-73.963, 40.853], 'George Washington'], [[-74.055, 40.603], [-74.03, 40.612], 'Verrazzano'], [[-73.833, 40.808], [-73.828, 40.789], 'Whitestone'],
   [[-73.795, 40.815], [-73.792, 40.795], 'Throgs Neck'], [[-74.142, 40.641], [-74.14, 40.652], 'Bayonne'], [[-74.198, 40.634], [-74.21, 40.641], 'Goethals'], [[-74.247, 40.522], [-74.258, 40.527], 'Outerbridge'], [[-73.885, 40.573], [-73.882, 40.588], 'Marine Parkway']];
 
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'dome', name: 'The Homing Dome', scale: 'III · The pigeon', sound: 'dome',
   kicker: 'The brain of a homing pigeon is a planetarium that only knows one way. Walk the map. The city stands up to meet you.',
@@ -289,6 +291,8 @@ export default {
       const cv = document.createElement('canvas'); cv.width = cv.height = 256; c.eyeFlower(cv.getContext('2d'), 128, 128, 120, { lid: 0, look: [0, -0.4] });
       const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace;
       const hd = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshBasicMaterial({ map: ht, alphaTest: 0.5, side: THREE.DoubleSide })); hd.position.set(0, 1.72, -0.02); hd.rotation.y = Math.PI; fig.add(hd);
+      // 2026-10-28: the Killer from the cast (long black coat, his dark purple flower), back to the room, looking out
+      rigged(c, fig, 'killer', { h: 1.8, ry: Math.PI, hide: parts(fig), near: 7, body: 0.5 });
       c.post(fig.position.x, fig.position.z, 0.35);
       c.click(fig, () => c.say(hd, 'I come up here to see where I live. It is right behind me. It always is.'), 'Someone at the rail');
       const bin = c.glb('ph_binoculars', { len: 0.2, x: bx + 1.4, y: 1.04, z: bz - 1.2, ry: Math.PI / 2 });

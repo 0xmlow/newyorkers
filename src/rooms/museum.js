@@ -7,6 +7,8 @@
 //   SECOND: THE COLLECTION OF ITSELF. The big painting on the north wall is a portal into this room seen from its south
 //   end, rendered recursively five deep, so the painting contains the room containing the painting.
 //   THIRD: THE GUARD. Stand still in front of any painting for four seconds and the guard's eye flower turns to you.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'museum', name: 'The Museum of Modern Pigeon', scale: 'IV · The museum', sound: 'museum',
   kicker: 'The white cube at the centre of a pigeon. Curated by pigeons, about people. There is a model of the bodega. It is not a model.',
@@ -93,6 +95,9 @@ export default {
     const gcv = document.createElement('canvas'); gcv.width = gcv.height = 256; const gctx = gcv.getContext('2d'); c.eyeFlower(gctx, 128, 128, 120);
     const gt = new THREE.CanvasTexture(gcv); gt.colorSpace = THREE.SRGBColorSpace;
     const ghead = new THREE.Mesh(new THREE.CircleGeometry(0.33, 32), new THREE.MeshBasicMaterial({ map: gt, transparent: true, side: THREE.DoubleSide })); ghead.position.set(0, 1.62, 0); guard.add(ghead);
+    // 2026-10-28: the Bartender from the cast (waistcoat, bow tie, his own eye flower), standing beside the stool; the whole
+    // body turns to you. Not the Usher: that model stops above the knee and reads as sunk into the floor
+    rigged(c, guard, 'bartender', { h: 1.78, x: 0.42, z: 0.05, hide: [...parts(guard).slice(1), ghead], near: 9, body: 0 });   // rigged: his head follows you too
     c.post(7.4, 10.4, 0.4);
     c.click(guard, () => { c.egg('museum_guard', 'The guard has been watching you look. The guard has opinions.'); c.say(ghead, 'Two metres from the art, please. It bites.'); }, 'Ask the guard');
     // DO NOT STICKER, covered in stickers

@@ -13,6 +13,8 @@
 const H = Math.PI / 2, D2R = Math.PI / 180;
 const seeded = (s) => () => ((s = (s * 16807) % 2147483647) / 2147483647);
 
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'heart', name: 'The Heart', scale: 'III · The pigeon', sound: 'heart',
   kicker: 'An opera house the size of a pigeon heart. Tonight: circulation. The tempo is you.',
@@ -160,6 +162,14 @@ export default {
       const heads = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.42, 0.42), new THREE.MeshBasicMaterial({ map: et, alphaTest: 0.4, side: THREE.DoubleSide }), seatsBox.length);
       S.aud = seatsBox.map(([th, y], i) => { const [x, z] = P(th, 10.45); m4.makeTranslation(x, y + 0.95, z); body.setMatrixAt(i, m4); body.setColorAt(i, coats[i % coats.length]); return { p: new THREE.Vector3(x, y + 1.6, z), th }; });
       c.add(body); c.add(heads); S.heads = heads;
+      // 2026-10-28: the audience is the cast, hips up, an eye flower modelled into every head, one InstancedMesh per
+      // character; the capsules and the flat heads stay until it lands. The whole body turns to you when the room flushes.
+      audience(c, ['actress_upper', 'gown_upper', 'loretta_upper', 'editor_upper', 'discoking_upper', 'hustler_upper'], S.aud.map((a) => ({ x: a.p.x, y: a.p.y - 1.6, z: a.p.z })), { hip: 0.85, done: (list) => {
+        const q0 = new THREE.Quaternion(), up0 = new THREE.Vector3(0, 1, 0), s0 = new THREE.Vector3();
+        list.forEach((cr, i) => { const a = S.aud[i]; q0.setFromAxisAngle(up0, Math.atan2(-a.p.x, -a.p.z)); m4.compose(cr.base, q0, s0.setScalar(cr.k)); cr.mesh.setMatrixAt(cr.idx, m4); });
+        S.crowdMeshes = [...new Set(list.map((cr) => cr.mesh))]; S.crowdMeshes.forEach((m) => { m.instanceMatrix.needsUpdate = true; });
+        body.visible = false; heads.visible = false; S.crowd = list;
+      } });
       const pm = [new THREE.MeshPhysicalMaterial({ color: 0xff2e63, roughness: 0.2, clearcoat: 1, emissive: 0xff2e63, emissiveIntensity: 0.25 }), new THREE.MeshPhysicalMaterial({ color: 0x6f23a8, roughness: 0.2, clearcoat: 1, emissive: 0x6f23a8, emissiveIntensity: 0.25 })];
       const dg = new THREE.LatheGeometry([0, 0.2, 0.5, 0.75, 0.88, 0.96, 1].map((t, i) => new THREE.Vector2(i === 6 ? 0.001 : t < 0.75 ? 0.035 * (1 - t * 0.4) : 0.05 * Math.sin((t - 0.75) / 0.25 * Math.PI) + 0.012, -t)), 8);
       const dm = pm.map((m) => new THREE.InstancedMesh(dg, m, drips.length)), cnt = [0, 0];
@@ -239,6 +249,9 @@ export default {
       const hcv = document.createElement('canvas'); hcv.width = hcv.height = 256; const ht = new THREE.CanvasTexture(hcv); ht.colorSpace = THREE.SRGBColorSpace;
       const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: ht })); head.scale.set(0.6, 0.6, 1); head.position.y = 1.8; ush.add(head);
       const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.1, 16), red); hat.position.set(0, 2.14, 0); ush.add(hat);
+      // 2026-10-28: the Maitre d' from the cast, whole (white dinner jacket, front of house, his own eye flower); the drawn head
+      // and the capsules hide. Not the Usher: that model stops above the knee
+      rigged(c, ush, 'maitre', { h: 1.8, hide: ush.children.slice(), near: 7, body: 0.6 });   // rigged: the usher's eyes follow you again
       const hatBand = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.012, 6, 24).rotateX(H), gilt); hatBand.position.set(0, 2.1, 0); ush.add(hatBand);
       S.ush = { head, hcv, ht, look: [0, 0], lid: 0 };
       c.post(ush.position.x, ush.position.z, 0.35);
@@ -307,7 +320,9 @@ export default {
       VW.cusps.forEach((C) => C.pv.quaternion.setFromAxisAngle(C.axis, -b * 0.08));
       // 5. the boxes: the audience faces the stage, and turns to you when the room flushes
       if (S.heads) { const hd = S.heads; S.aud.forEach((a, i) => { const lx = me.x - a.p.x, lz = me.z - a.p.z, yawYou = Math.atan2(lx, lz), yawC = Math.atan2(-a.p.x, -a.p.z); let dy = yawYou - yawC; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
-        e.set(0, yawC + dy * B.flush, 0); q.setFromEuler(e); m4.compose(a.p, q, one.setScalar(1 + b * 0.06)); hd.setMatrixAt(i, m4); }); hd.instanceMatrix.needsUpdate = true; one.set(1, 1, 1); }
+        e.set(0, yawC + dy * B.flush, 0); q.setFromEuler(e); m4.compose(a.p, q, one.setScalar(1 + b * 0.06)); hd.setMatrixAt(i, m4);
+        const cr = S.crowd && S.crowd[i]; if (cr) { m4.compose(cr.base, q, one.setScalar(cr.k * (1 + b * 0.03))); cr.mesh.setMatrixAt(cr.idx, m4); } }); hd.instanceMatrix.needsUpdate = true; one.set(1, 1, 1);
+        if (S.crowdMeshes) S.crowdMeshes.forEach((m) => { m.instanceMatrix.needsUpdate = true; }); }
       // 6. the usher watches you, and blinks
       const U2 = S.ush; if (U2 && t - drawT > 0.15) { drawT = t; const dx = me.x - ush.position.x, dz = me.z - ush.position.z, yaw = Math.atan2(dx, dz) - ush.rotation.y, lx = Math.max(-1, Math.min(1, Math.sin(yaw) * 1.4));
         let lid = 0; if (t > blinkAt) { lid = 1; if (t > blinkAt + 0.18) blinkAt = t + 2 + Math.random() * 4; }

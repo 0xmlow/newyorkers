@@ -28,6 +28,8 @@ const FLOOR_LINES = {
 };
 const floorLine = (n) => FLOOR_LINES[n] || (n % 10 === 0 ? `${n} FLOORS. THE MOP SINK IS STILL HERE.` : `${n} FLOORS BELOW THE STREET`);
 
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'stairs', name: 'The Stockroom Stairs', scale: 'II · The bodega',
   kicker: 'Behind the stockroom door a stair goes down to the basement. Four flights, always down, and you are back on the first.',
@@ -349,6 +351,8 @@ export default {
           const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace;
           const head = new THREE.Mesh(new THREE.PlaneGeometry(0.52, 0.52), new THREE.MeshBasicMaterial({ map: ht, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide })); head.position.set(0, 1.45, 0.02); clerk.add(head);
           const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.2, 8), new THREE.MeshStandardMaterial({ color: 0x2e5d32 })); stem.position.y = 1.22; clerk.add(stem);
+          // 2026-10-28: the Robber from the cast, whole (his own masked eye flower), cross legged on the crate in his white jumpsuit
+          rigged(c, clerk, 'robber', { h: 0.95, y: 0.5, hide: parts(clerk), near: 6, body: 0 });   // rigged: he watches you go down
           if (main) {
             R.state.clerk = { head, cv, ht, look: [0, 0] };
             c.click(clerk, () => { const n = S0.base + 3; c.egg('stairs_clerk', 'The overnight clerk: "Been restocking since B1. The bottom shelf is at the bottom. Nobody has found the bottom."'); c.say(head, n > 3 ? `B${n}. You came down ${n} floors for a coffee?` : 'Coffee is upstairs. Everything else is down.'); }, 'The clerk');

@@ -181,6 +181,12 @@ def statics():
         src = os.path.join(ONLOC, "assets", "glb", p + ".glb")
         if os.path.exists(src): clone(src, os.path.join(A, "glb", p + ".glb"))
         else: print("no model", p)
+    # the cast as crowd figures (tools/crowd_pass.py, then Draco): src/crowd.js
+    for f in sorted(os.listdir(os.path.join(ROOT, "gen", "crowd"))):
+        if f.endswith(".glb"): clone(os.path.join(ROOT, "gen", "crowd", f), os.path.join(A, "glb", f))
+    # the same cast rigged (UPGRADE ALL ROOMS 2026-10-28/rig): skinned, no Draco, src/rig.js
+    for f in sorted(os.listdir(os.path.join(ROOT, "gen", "rig"))):
+        if f.endswith(".glb"): clone(os.path.join(ROOT, "gen", "rig", f), os.path.join(A, "glb", f))
     for f in ("draco_decoder.wasm", "draco_wasm_wrapper.js", "draco_decoder.js"):
         clone(os.path.join(ONLOC, "assets", "draco", f), os.path.join(A, "draco", f))
     clone(os.path.join(ONLOC, "assets", "env", "night.hdr"), os.path.join(A, "env", "night.hdr"))

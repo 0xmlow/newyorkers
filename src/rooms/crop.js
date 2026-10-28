@@ -14,6 +14,7 @@
 const H = Math.PI / 2;
 const seeded = (s) => () => ((s = (s * 16807) % 2147483647) / 2147483647);
 
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
 export default {
   id: 'crop', name: 'Lost and Found', scale: 'III · The pigeon', sound: 'crop',
   kicker: 'The crop of one pigeon, where everything it ever swallowed is kept, catalogued and never returned.',
@@ -409,6 +410,8 @@ export default {
       const badge = c.sign('DOCENT', { w: 0.16, h: 0.06, bg: '#f0f4f8', fg: '#06163a', font: c.MONO, px: 48 }); badge.position.set(0.1, 1.28, 0.21); fg.add(badge);
       const cv = document.createElement('canvas'); cv.width = cv.height = 256; c.eyeFlower(cv.getContext('2d'), 128, 128, 120, { iris: '#2962ff', look: [0.3, 0.1] });
       const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace; const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: ht })); head.scale.set(0.55, 0.55, 1); head.position.y = 1.78; fg.add(head);
+      // 2026-10-28: the Assistant from the cast (cardigan, skirt, an armful of papers) is the docent, whole, her own eye flower
+      figure(c, fg, 'assistant_full', { h: 1.72, hide: [...parts(fg, [badge]), head] });
       c.post(-4.9, -29.3, 0.35);
       const lines = ['She has fed this pigeon every one of these. Personally.', 'Please do not touch the bagel. It is load bearing.', 'The earring is the only thing here anyone came back for.'];
       let k = 0; c.click(fg, () => { c.say(head, lines[k++ % lines.length]); c.egg('crop_docent', 'The docent: "I fed him every piece in the collection. He is not ungrateful. He is curating."'); }, 'The docent');

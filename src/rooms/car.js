@@ -3,6 +3,7 @@
 // are live portals into this room (k = 1), and because a portal can see itself, the cars repeat to the vanishing point.
 // Walk through and you are in the next car, which is this car, one further. Something changes each time. On the
 // third car the doors open on a platform that should not exist.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
 export default {
   id: 'car', name: 'Last Stop, 3:33 A.M.', scale: 'I · The dream', sound: 'train',
   kicker: 'You fell asleep on the N. The train is crossing the sky. The car goes on forever, and every car is this one.',
@@ -127,7 +128,10 @@ export default {
       const cv = document.createElement('canvas'); cv.width = cv.height = 256; c.eyeFlower(cv.getContext('2d'), 128, 128, 120, { lid: 1 });
       const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace;
       const head = new THREE.Mesh(new THREE.CircleGeometry(0.24, 32), new THREE.MeshBasicMaterial({ map: ht, transparent: true, side: THREE.DoubleSide })); head.position.set(0.05, 0.22, 0.62); head.rotation.set(-0.5, Math.PI / 2 - 0.4, 0); sleeper.add(head);
-      sleeper.userData.cv = cv; sleeper.userData.tex = ht; }
+      sleeper.userData.cv = cv; sleeper.userData.tex = ht;
+      // 2026-10-28: the Hustler from the cast (pale suit), whole, asleep on his side along the bench, face to the aisle,
+      // his own eye flower for a head; THE DAILY COO stays over him. Standing figure turned: up becomes +z, front becomes +x.
+      figure(c, sleeper, 'hustler_full', { h: 1.66, y: 0.21, z: -1.06, hide: parts(sleeper, [paper]), onload: (g) => { g.quaternion.setFromAxisAngle(new THREE.Vector3(1, 1, 1).normalize(), Math.PI * 2 / 3); paper.position.z = -0.4; } }); }
     c.click(sleeper, () => { c.egg('dreamer', 'Do not wake the dreamer. You are the dreamer.'); c.say(sleeper, 'zzz. three more stops.'); }, 'Do not wake them');
     // the car number, the stop sign, the loop count
     const num = c.sign('CAR 1 OF 1', { w: 0.9, h: 0.16, bg: '#02040c', fg: '#ff2e63', font: c.MONO, glow: 8, px: 96 }); num.position.set(0, 2.15, -L / 2 + 0.07); c.add(num); num.visible = false;

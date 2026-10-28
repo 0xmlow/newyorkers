@@ -8,6 +8,8 @@
 // points at the axis, and the mouse look the engine computed is applied in that local frame, so yaw and pitch stay
 // relative to the floor under you. Colliders live on the unrolled sheet (with copies a turn either side of the seam),
 // and clicks work because the engine raycasts from the camera we set.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'wing', name: 'Hall of Flight', scale: 'III · The pigeon', sound: 'wing',
   kicker: 'Inside the wing. Down is wherever your feet are. Walk up the wall, across the ceiling, and keep going.',
@@ -207,6 +209,8 @@ export default {
       const cv = document.createElement('canvas'); cv.width = cv.height = 256; c.eyeFlower(cv.getContext('2d'), 128, 128, 120, { lid: 0.3, look: [0, 0.6] });
       const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace;
       const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshBasicMaterial({ map: ht, alphaTest: 0.5, side: THREE.DoubleSide })); head.position.set(0, 1.72, 0.02); fig.add(head);
+      // 2026-10-28: Oscar from the cast (cap, cigar), reading THE DAILY COO on the old ceiling
+      rigged(c, fig, 'oscar', { h: 1.74, hide: parts(fig, [paper]), near: 7, body: 0.3 });
       postU(uOf(Math.PI), -12.6, 0.35);
       c.click(fig, () => c.say(head, 'Reading the ceiling edition. Same news, other way up.'), 'A reader');
     }

@@ -14,6 +14,8 @@ const APEX = SPRING + Math.sqrt(ARC_R * ARC_R - ARC_C * ARC_C);
 const mulberry = (a) => () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 const BREATH = { value: 0 }, IRI = { value: 1 };
 
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'nave', name: 'The Nave', scale: 'III · The pigeon',
   kicker: "You fell through a pigeon's eye. This is the inside of its neck, and the neck is a cathedral. It is breathing.",
@@ -219,6 +221,8 @@ export default {
       const head = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.55), new THREE.MeshBasicMaterial({ map: ht, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide })); head.position.set(0, 1.66, 0.02); fig.add(head);
       c.click(fig, () => c.say(head, 'Every Sunday I come and look at this one. It looks back. So do you, apparently.'), 'A New Yorker');
       R.state.fig = { head, cv, ht, look: [0, 0] };
+      // 2026-10-28: the Blind Woman from the cast (cardigan, grey skirt), whole, her own eye flower for a head, at the painting
+      rigged(c, fig, 'blindwoman', { h: 1.72, hide: parts(fig), near: 6, body: 0.5 });   // rigged: she looks back
     }
     // the lectern: a quill standing on its point, holding the hymnal open at the only hymn
     {

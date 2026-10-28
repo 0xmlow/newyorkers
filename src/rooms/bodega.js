@@ -10,6 +10,7 @@
 //   It is one flower only from the STAND HERE sticker inside the door.
 //   CCTV: the monitor over the register is a second camera into a target, and in it you have a body (layer 1, which
 //   your own camera never draws): a New Yorker in a hoodie with an eye flower for a head, doing what you do.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
 export default {
   id: 'bodega', name: 'Pigeonhole Deli Grocery', scale: 'II · The bodega', sound: 'bodega',
   kicker: 'Open 25 hours. The coffee is a dollar, the cat has tenure, and the pigeon on the counter is a door.',
@@ -207,6 +208,8 @@ export default {
       part(new THREE.CapsuleGeometry(0.22, 0.55, 4, 12), hood, 0, 1.15, 0); part(new THREE.CapsuleGeometry(0.08, 0.7, 4, 8), jeans, -0.1, 0.42, 0); part(new THREE.CapsuleGeometry(0.08, 0.7, 4, 8), jeans, 0.1, 0.42, 0);
       const cv = document.createElement('canvas'); cv.width = cv.height = 256; c.eyeFlower(cv.getContext('2d'), 128, 128, 120); const ht = new THREE.CanvasTexture(cv); ht.colorSpace = THREE.SRGBColorSpace;
       const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: ht })); head.scale.set(0.55, 0.55, 1); head.position.y = 1.72; me.add(head); }
+    // 2026-10-28: you, on camera, are the Writer from the cast (puffer, spray can), facing where you look
+    figure(c, me, 'writer_full', { h: 1.75, ry: Math.PI, hide: me.children.slice(), onload: (g) => g.traverse((o) => { o.layers.set(1); o.userData.noAnamorph = true; }) });
     me.traverse((o) => { o.layers.set(1); o.userData.noAnamorph = true; });
     R.state.me = me;
     // ---------- the anamorphic flower ----------

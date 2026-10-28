@@ -8,6 +8,7 @@
 // a wall that is half a metre thick: Rockaway in August, the harbor at dawn, a snow day, the eye, an infinite row of
 // eggs, and a whole bodega corner at one twelfth scale. Walk past them and the parallax is real, because the places are.
 // The door you came in by is a live render target portal back into the bodega, so the way out is the view out.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
 export default {
   id: 'cooler', name: 'The Cooler', scale: 'II · The bodega', sound: 'cold',
   kicker: 'Behind the last cooler door in the bodega. Thirty four degrees, thirty metres, and every door in here goes somewhere else.',
@@ -230,6 +231,8 @@ export default {
       const ny = new THREE.Group(); ny.position.set(X0 - 1.05, 0.54, z + 0.15); grp.add(ny);
       const bod = new THREE.Mesh(new THREE.CapsuleGeometry(0.018, 0.07, 3, 8), new THREE.MeshStandardMaterial({ color: 0x2a2f44 })); bod.position.y = 0.07; ny.add(bod);
       const hd = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 0.07), new THREE.MeshBasicMaterial({ map: nyCv, transparent: true, alphaTest: 0.1 })); hd.position.set(0.0, 0.15, 0); hd.rotation.y = Math.PI / 2; ny.add(hd);
+      // 2026-10-28: the tiny New Yorker is Susan from the cast at one twelfth scale (1,500 tris), whole, her own eye flower
+      figure(c, ny, 'susan_full', { h: 0.15, ry: Math.PI / 2, hide: [bod, hd], onload: () => seal() });
       // warm light for the little street, from inside the pocket
       const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), new THREE.MeshBasicMaterial({ color: 0xfff0c0 })); lamp.position.set(X0 - 0.85, 0.54 + 0.36, z + 0.6); grp.add(lamp);
     }, 'THE BODEGA, SMALLER. THE CAT IS TO SCALE.');

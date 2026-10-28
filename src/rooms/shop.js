@@ -11,6 +11,8 @@
 // The engine renders at most two portals a frame and favours the biggest. A shelf of eleven would starve, so this room
 // deals the turns itself: every three frames one on screen shelf globe is made eligible (its portal is handed to this
 // room), the rest keep showing the last frame they drew. Snow runs every frame, so the shelf never looks paused.
+import { figure, parts, audience, CROWD_ON } from '../crowd.js';
+import { rigged } from '../rig.js';
 export default {
   id: 'shop', name: 'The Gift Shop', scale: 'IV · The museum', sound: 'shop',
   kicker: 'Every museum ends in a gift shop, even the one inside a pigeon. The snow globes are not souvenirs. They are the rooms.',
@@ -335,6 +337,8 @@ export default {
       const nt = c.sign('HI. I AM\nSTILL HERE.', { w: 0.13, h: 0.06, bg: '#f0f4f8', fg: '#ff2e63', font: c.MONO, px: 64 }); nt.position.set(-0.08, 1.3, 0.175); cashier.add(nt);
     }
     c.glb('ph_metal_stool_01', { h: 0.65, x: 1.9, z: CZ - 0.85 });
+    // 2026-10-28: the Prince from the cast (red uniform, mop and bucket), whole, his own eye flower for a head; the drawn eye is hidden
+    const cashRig = rigged(c, cashier, 'prince', { h: 1.78, hide: [...parts(cashier).filter((o) => o.geometry && o.geometry.type === 'CapsuleGeometry'), face], near: 8, body: 0.4 });   // rigged: watches you, snaps round at a shake
     c.click(cashier, () => c.say(eyeHead, pick(['Exit is through the gift shop. So is the entrance.', 'Everything is 3 for $10. Except you. You are priceless. Also 3 for $10.', 'I have been watching the merchandise since the museum opened. The merchandise watches back.', 'The big globe? That is the N. Shake it, then get in. Everybody does.', 'Receipt? It is a dream. Keep the dream.'])), 'Talk to the cashier');
 
     // the register, with the loop count where the total should be
@@ -688,6 +692,7 @@ export default {
       const want = Math.atan2(_cw.x, _cw.z); let dy = want - eyeState.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); eyeState.yaw += dy * Math.min(1, dt * 2.2); eyeHead.rotation.y = eyeState.yaw;
       const res = Math.atan2(Math.sin(want - eyeState.yaw), Math.cos(want - eyeState.yaw)), el = Math.atan2(_cw.y, Math.hypot(_cw.x, _cw.z));
       eyeState.look = [Math.max(-1, Math.min(1, res * 2.5)), Math.max(-1, Math.min(1, -el * 2))];
+      if (cashRig && eyeState.alarm > (S.alarmWas || 0) + 0.5) cashRig.snap(); S.alarmWas = eyeState.alarm;
       eyeState.alarm = Math.max(0, eyeState.alarm - dt); eyeState.next -= dt;
       if (eyeState.next < 0 && eyeState.alarm <= 0) { eyeState.blink = 0.18; eyeState.next = rnd(2.5, 6); }
       eyeState.blink = Math.max(0, eyeState.blink - dt);
