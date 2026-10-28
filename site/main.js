@@ -7,6 +7,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { MeshBVH } from 'three-mesh-bvh';
+import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
+import './assets/rig/rigcast.js?v=face1028';   // FACE table: five rig files turned to +Z
 
 const SUN_DIR = new THREE.Vector3(-0.8, 0.16, 0.58).normalize();    // low golden sun (about 9 degrees) from the west south west
 const EYE = 1.65, RADIUS = 0.35, STEP = 0.5, GRAVITY = 22;
@@ -200,7 +202,8 @@ const animated = new Set(meta.anim.map((n) => THREE.PropertyBinding.sanitizeNode
 const dynamic = new Set();
 gltf.scene.traverse((o) => { if (animated.has(o.name)) o.traverse((c) => dynamic.add(c)); });
 
-const slots = [], statics = [];
+const slots = [], statics = [], crowdSpots = [];
+const crowdNode = (o) => (/^crowd_/.test(o.name) ? o : /^crowd_/.test(o.parent?.name || '') ? o.parent : null);
 gltf.scene.traverse((o) => {
   if (!o.isMesh) return;
   const nm = o.name.startsWith('NYA_') ? o.name : o.parent?.name?.startsWith('NYA_') ? o.parent.name : null;
@@ -227,6 +230,17 @@ gltf.scene.traverse((o) => {
     o.material = m; o.castShadow = !NO_SHADOW.has(m.userData.kind); return;
   }
   o.material = m;
+  const cn = crowdNode(o);
+  if (cn) {                                      // a grandstand spectator: merged on its own, so the rigged cast can hide it
+    o.userData.crowd = true;
+    if (!cn.userData.spot) {
+      const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3();
+      cn.matrixWorld.decompose(p, q, sc);
+      p.y -= sc.y;                               // a unit cube scaled to half extents: its foot is the centre less the half height
+      cn.userData.spot = { pos: p, ry: new THREE.Euler().setFromQuaternion(q, 'YXZ').y + Math.PI };
+      crowdSpots.push(cn.userData.spot);
+    }
+  }
   statics.push(o);
 });
 
@@ -242,8 +256,8 @@ for (const o of statics) {
   g.applyMatrix4(o.matrixWorld);
   if (o.material.userData.uvScale) boxUV(g, o.material.userData.uvScale);
   const flat = g.index ? g.toNonIndexed() : g;
-  const key = o.material.uuid;
-  if (!groups.has(key)) groups.set(key, { mat: o.material, geos: [] });
+  const key = (o.userData.crowd ? 'crowd|' : '') + o.material.uuid;
+  if (!groups.has(key)) groups.set(key, { mat: o.material, geos: [], crowd: !!o.userData.crowd });
   groups.get(key).geos.push(flat);
   if (!NO_COLLIDE.test(o.material.name || '')) {
     const c = new THREE.BufferGeometry(); c.setAttribute('position', flat.attributes.position); colGeos.push(c);
@@ -251,10 +265,12 @@ for (const o of statics) {
   o.visible = false;
 }
 const merged = new THREE.Group(); merged.name = 'merged';
-for (const { mat, geos } of groups.values()) {
+const crowdMeshes = [];
+for (const { mat, geos, crowd } of groups.values()) {
   const mg = mergeGeometries(geos, false);
   if (!mg) continue;
   const mesh = new THREE.Mesh(mg, mat);
+  if (crowd) crowdMeshes.push(mesh);
   mesh.castShadow = !NO_SHADOW.has(mat.userData.kind);
   mesh.receiveShadow = mat.userData.kind !== 'glass';
   if (mat.transparent) mesh.renderOrder = 2;
@@ -281,6 +297,28 @@ function cast(origin, dir, far) {
   ray.origin.copy(origin); ray.direction.copy(dir);
   const hit = bvh.raycastFirst(ray, THREE.DoubleSide);
   return hit && hit.distance <= far ? hit : null;
+}
+
+// ---------------------------------------------------------- the rigged cast (2026-10-28)
+// The three grandstands round the eye circuit held 368 spectators built as a box with a ball on top. They become
+// rigged NEW YORKERS on the same steps, facing the track, standing at 0.88 of the 1.88 m rig, as a race crowd
+// stands. (The seated robber was tried on the steps: from the track only his flower showed over each step's edge,
+// a row of loose heads, so the stands are all standing figures.) The nearest
+// 20 (8 on a phone) breathe and glance on their own mixer and turn their heads to a visitor who comes close; the
+// rest are the same figures, one instanced draw call per character. The primitives hide only once every file has
+// loaded; ?rig=off keeps them.
+let rig = null;
+if (new URLSearchParams(location.search).get('rig') !== 'off' && window.RigCast && crowdSpots.length) {
+  const STAND = ['cabbie', 'susan', 'annieh', 'hustler', 'oscar', 'writer', 'tough', 'workgirl', 'wiseguy', 'discoking'];
+  let seed = 103; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (const s of crowdSpots) {
+    s.cast = STAND[Math.floor(rnd() * STAND.length)];
+    s.s = 0.88 * (0.96 + rnd() * 0.08);
+    s.ry += (rnd() - 0.5) * 0.3;
+  }
+  rig = window.RigCast({ THREE, loader: new GLTFLoader(), clone: cloneSkinned, base: 'assets/rig/', spots: crowdSpots, parent: scene,
+    camera, phone: touch, cap: 20, capPhone: 8, near: 40, nearPhone: 22, shadow: true,
+    onReady: () => { for (const m of crowdMeshes) m.visible = false; renderer.shadowMap.needsUpdate = true; } });
 }
 
 // ------------------------------------------------------------- animation
@@ -550,6 +588,7 @@ function tick(dt) {
       $('pmeta').textContent = `NO. ${String(a.n).padStart(4, '0')} · ${a.nb} · Era ${a.era} · ${touch ? 'tap' : 'E'} to see the piece`;
     }
   }
+  rig?.update(dt);
   renderer.render(scene, camera);
 }
 
@@ -572,6 +611,6 @@ addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; cam
 goTo(spots[0]);
 $('loading').style.display = 'none';
 $('start').style.display = 'flex';
-window.__walk = { P, scene, camera, renderer, spots, goTo, cast, meta, slots, startRide, endRide, mixer, merged,
+window.__walk = { rig: () => rig, P, scene, camera, renderer, spots, goTo, cast, meta, slots, startRide, endRide, mixer, merged,
   tick: (dt = 1 / 60, n = 1) => { for (let i = 0; i < n; i++) tick(dt); } };
 frame();
