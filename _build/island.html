@@ -1013,7 +1013,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
   const cat = new THREE.Group(); const fur = cm(0xd88a3a); const cb = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 10), fur); cb.scale.set(1, 0.8, 1.5); cb.position.y = 0.26; cat.add(cb);
   const chd = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 10), fur); chd.position.set(0, 0.52, 0.32); cat.add(chd);
   [-0.09, 0.09].forEach(x => { const e = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.13, 4), fur); e.position.set(x, 0.72, 0.3); cat.add(e); });
-  cat.position.set(bx + 1.6, g + 1.1, bz - 4.6); cat.rotation.y = -PI / 2; scene.add(cat); CAT.g = cat;
+  cat.position.set(bx + 1.6, g + 1.1, bz - 4.6); cat.rotation.y = -PI / 2; scene.add(cat); CAT.g = cat; CAT.x = bx + 1.6; CAT.z = bz - 4.6; CAT.prims = cat.children.slice();
   interact(bx + 0.6, bz - 4.6, 2, 'E  PET THE BODEGA CAT', () => { toast('mrrp. (gm)'); state.gm++; chime(660); });
   interact(bx - 1, bz, 3, 'E  ASK THE CLERK ABOUT SWIM LESSONS', () => toast('THE CLERK MINTED BEFORE YOU FINISHED EXPLAINING.'));
   practical(bx, g + 4, bz, 0xfff4d0, 6, 12).userData.alwaysOn = 0.25;
@@ -1987,6 +1987,14 @@ function updateWorld(dt, t) {
   if (rainT > 0) rainT -= dt; rainMesh.visible = rainT > 0; if (rainT > 0) { rain.forEach((r, i) => { r.y -= r.v * dt; r.r += dt * r.w; if (r.y < 0) r.y = 30 + Math.random() * 10; _m.compose(_p.set(P.x + r.x, r.y, P.z + r.z), _q.setFromEuler(_e.set(r.r, r.r * 0.7, 0)), _s.set(0.9, 1.3, 1)); rainMesh.setMatrixAt(i, _m); }); rainMesh.instanceMatrix.needsUpdate = true; }
   // the cat breathes
   if (CAT.g) CAT.g.scale.y = 1 + Math.sin(t * 2.4) * 0.03;
+  // 2026-10-28: the sphere cat becomes cat.glb (the MARKS and UNLICENSED cat, sitting, faces +X so a quarter turn), fitted to the
+  // stand in's 0.7 m when the visitor comes within 90 m. The spheres stay until it lands and stay if it fails.
+  if (CAT.g && !CAT.req && gltfLoader && Math.hypot(P.x - CAT.x, P.z - CAT.z) < 90) { CAT.req = 1;
+    gltfLoader.load('assets/glb/cat.glb', gl => { const obj = gl.scene, inner = new THREE.Group(); inner.add(obj); inner.rotation.y = -PI / 2; inner.updateMatrixWorld(true);
+      const bb = new THREE.Box3().setFromObject(inner), sz = bb.getSize(new V3()), c = bb.getCenter(new V3()); inner.position.set(-c.x, -bb.min.y, -c.z);
+      const fit = new THREE.Group(); fit.add(inner); fit.scale.setScalar(0.7 / Math.max(0.001, sz.y));
+      obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const mt = o.material; if (mt) { mt.envMapIntensity = 0.75; if (mt.map) mt.map.anisotropy = ANISO; } });
+      CAT.g.add(fit); CAT.prims.forEach(m => { m.visible = false; }); CAT.req = 2; }, undefined, () => { CAT.req = 3; }); }
 }
 const _p2 = new V3(), _m = new THREE.Matrix4(), _e = new THREE.Euler();
 let vaultOpenT = 0;
