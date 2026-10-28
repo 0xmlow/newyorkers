@@ -40,21 +40,25 @@ From the audit in `UPGRADE ALL ROOMS 2026-10-28/audit/galleries_other.md`.
 
 ## The crowd, 2026-10-28 (on by default, `?crowd=old` for the cylinders)
 
-Approved by MLow through the swap coordinator. The 43 people (40 residents carrying their NEW YORKER on a pole and the
-3 bank agents) were cylinders and a sphere from `person()` in `_build/island.html`. Each now keeps its sphere head and
-gets a body from our own Tripo cast, the method of ON LOCATION's crowd trial (`ON LOCATION 2026-10-10/_build/crowd_pass.py`
-and `src/crowd.js`, commit 45a283b; read only there). Eight bodies (agent, tracksuit, writer, cabbie, workgirl, wiseguy,
-actress, annieh) copied from that commit into `site/assets/glb/crowd_*_body.glb`: 1,800 tris, 256 px JPEG texture, about
-90 KB each, 732 KB in all, no Draco and no glTF extensions, so the r128 GLTFLoader reads them as they are.
+Approved by MLow through the swap coordinator, then corrected the same day: no superimposed heads. The 43 people (40
+residents carrying their NEW YORKER on a pole and the 3 bank agents) were cylinders and a sphere from `person()` in
+`_build/island.html`. Each is now a WHOLE character from our own Tripo cast, with its own sculpted eye flower head; the
+sphere head is hidden with the cylinders (and the agents' box glasses with them).
 
-- Copies share their character's geometry and one material per character and shirt colour (30 percent tint). The neck
-  meets the underside of the head (1.58 m), with plus or minus 3 percent jitter. They face +Z, as the walkers do.
-- The cylinders stay built and are hidden only when a body lands, so a failed load leaves the old people. The bodies do
-  not swing their legs (the hidden cylinders still do, harmlessly); the walkers glide, as in ON LOCATION.
-- Measured, headless Chrome (SwiftShader), the main scene render at 1280x720 on the ring, old then new: close view
-  530 draw calls and 2.83M tris, then 446 and 2.77M; wide view 553 and 3.14M, then 466 and 3.34M. The people are
-  not on the same spot in the two runs, so the triangle numbers move with what is in view; draw calls fall by about 85.
+- Source: the cast GLBs in `NEW YORKERS SITE/assets/movies/assets/glb` (read only), seven that stand on their own feet:
+  writer, cabbie, workgirl, wiseguy, actress, annieh, editor. agent, tracksuit, broker, usher and rosemary are cut off at
+  the thigh or knee and were left out. The bank agents are all wiseguy (dark suit).
+- Decimated in Blender from about 30,000 to 3,000 tris each, texture 512 px JPEG, no Draco and no glTF extensions, so
+  the r128 GLTFLoader reads them as they are: `site/assets/glb/cast_<name>.glb`, 150 to 175 KB each, 1.13 MB in all.
+  The pass is a 40 line Blender script (join, decimate, shrink the texture, feet at the origin) that was run from the
+  session scratchpad and not kept; prop_pass.py would do the same job.
+- The cast face +X, so each body gets a quarter turn. 1.85 m tall with 3 percent jitter. Copies share their character's
+  geometry and one material per character and shirt colour (25 percent tint). The old parts stay built and are hidden only
+  once a body lands, so a failed load leaves the old people. The bodies do not swing their legs.
+- Measured, headless Chrome (SwiftShader), main scene render at 1280x720, the same camera spot (28.28, -28.28, yaw -2.356)
+  with the same people staged in the same places, old then new: close 392 draw calls, 378 new; wide 484, 414 new. The
+  triangle totals (3.3M to 3.9M) are dominated by the meme sculptures and moved between runs as they streamed, so
+  they say nothing here; the people themselves go from about 400 tris each to 3,000, about 129k for all 43.
 - Shots: `UPGRADE ALL ROOMS 2026-10-28/shots/crowd_rollout/island_{close,wide}_{old,new}.jpg`.
-- **Not verified:** a real phone and a real GPU; the bodies were not watched walking in motion; some characters keep a
-  few pale petal drips at the neck from the 45a283b cut (ON LOCATION has an uncommitted cleaner cut in progress, not
-  taken; recopy the eight files once it is committed).
+- **Not verified:** a real phone and a real GPU; the crowd was not watched walking in motion (the stills stage the people
+  facing the camera).

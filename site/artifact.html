@@ -711,33 +711,39 @@ const PG = { leg: new THREE.CylinderGeometry(0.09, 0.08, 0.86, 8), body: new THR
 PG.leg.translate(0, -0.43, 0); PG.arm.translate(0, -0.33, 0);
 const matCache = {}; const cm = c => matCache[c] || (matCache[c] = new THREE.MeshStandardMaterial({ color: c, roughness: 0.8 }));
 const SKIN = [0x8d5524, 0xc68642, 0xe0ac69, 0xf1c27d, 0xffdbac, 0x5c3a21, 0xa0704a];
-function person(shirt, pants, skin) {
+function person(shirt, pants, skin, cast) {
   const g = new THREE.Group(), legs = [], arms = [];
   [-0.11, 0.11].forEach(x => { const p = new THREE.Group(); p.position.set(x, 0.86, 0); const l = new THREE.Mesh(PG.leg, cm(pants)); l.castShadow = true; p.add(l); g.add(p); legs.push(p); });
   const b = new THREE.Mesh(PG.body, cm(shirt)); b.position.y = 1.22; b.castShadow = true; g.add(b);
   const h = new THREE.Mesh(PG.head, cm(skin)); h.position.y = 1.74; h.castShadow = true; g.add(h);
   [-0.27, 0.27].forEach(x => { const p = new THREE.Group(); p.position.set(x, 1.52, 0); p.add(new THREE.Mesh(PG.arm, cm(skin))); g.add(p); arms.push(p); });
-  crowdBody(g, shirt, [b, ...legs, ...arms]);
-  scene.add(g); return { g, legs, arms, head: h };
+  const hide = [b, h, ...legs, ...arms]; crowdBody(g, shirt, hide, cast);
+  scene.add(g); return { g, legs, arms, head: h, hide };
 }
-/* the crowd (2026-10-28, after ON LOCATION's crowd trial, on by default here, ?crowd=old for the cylinders): every person keeps
-   its sphere head and gets a body cut from our own Tripo cast (ON LOCATION _build/crowd_pass.py: eight characters cut below
-   the head, 1,800 tris, 256 px texture, about 90 KB each, no glTF extensions so the r128 GLTFLoader reads them as they are).
-   Copies share their character's geometry and one material per character and shirt colour (the shirt tints it 30 percent).
-   The neck meets the head's underside. The cylinders stay built and are hidden only once a body lands, so a failed load
-   leaves the person as they were. The bodies do not swing their legs; the hidden cylinder legs still do, harmlessly. */
-const CROWD = { on: !/[?&]crowd=old\b/.test(location.search), names: ['agent', 'tracksuit', 'writer', 'cabbie', 'workgirl', 'wiseguy', 'actress', 'annieh'], parts: {}, mats: {}, wait: [], n: 0, loaded: false };
-function crowdBody(g, shirt, hide) {
-  if (!CROWD.on) return; const k = CROWD.n++, slot = new THREE.Group(); g.add(slot);
-  const fill = () => { const nm = CROWD.names[(k * 5 + (k >> 3)) % CROWD.names.length], part = CROWD.parts[nm]; if (!part) return;
-    const mk = nm + ':' + shirt; let mt = CROWD.mats[mk]; if (!mt) { mt = CROWD.mats[mk] = part.mat.clone(); mt.color = new THREE.Color(0xffffff).lerp(new THREE.Color(shirt), 0.3); }
-    const m = new THREE.Mesh(part.geo, mt); m.scale.setScalar(1.58 / part.h * (0.97 + ((k * 37) % 7) / 100)); m.castShadow = true; slot.add(m); hide.forEach(o => { o.visible = false; }); };
+/* the crowd (2026-10-28, on by default, ?crowd=old for the cylinders). MLow: no superimposed heads, the cast already have
+   their own sculpted eye flower heads, so every person is a WHOLE character from our own Tripo cast (the ON LOCATION and
+   MoMLOW cast, NEW YORKERS SITE/assets/movies/assets/glb), decimated in Blender to 3,000 tris with a 512 px JPEG texture,
+   about 160 KB each, no Draco and no glTF extensions, so the r128 GLTFLoader reads them as they are. Seven characters that
+   stand on their own feet (agent, tracksuit, broker, usher and rosemary are cut off at the thigh or knee and were left
+   out); the cast face +X, so each gets a quarter turn. Copies share their character's geometry and one material per
+   character and shirt colour (the shirt tints it 25 percent), 1.85 m tall with 3 percent jitter. The sphere head and the
+   cylinders stay built and are hidden only once a body lands, so a failed load leaves the person as they were. The bodies
+   do not swing their legs; the hidden cylinder legs still do, harmlessly. */
+const CROWD = { on: !/[?&]crowd=old\b/.test(location.search), names: ['writer', 'cabbie', 'workgirl', 'wiseguy', 'actress', 'annieh', 'editor'], parts: {}, mats: {}, wait: [], n: 0, loaded: false };
+function crowdBody(g, shirt, hide, cast) {
+  if (!CROWD.on) return; const k = CROWD.n++, slot = new THREE.Group(); slot.rotation.y = -PI / 2; g.add(slot);
+  const fill = () => { const nm = cast || CROWD.names[(k * 3 + (k >> 2)) % CROWD.names.length], part = CROWD.parts[nm]; if (!part) return;
+    const sc = 1.85 / part.h * (0.97 + ((k * 37) % 7) / 100);
+    part.meshes.forEach(({ geo, mat }, j) => { const mk = nm + ':' + j + ':' + shirt; let mt = CROWD.mats[mk]; if (!mt) { mt = CROWD.mats[mk] = mat.clone(); mt.color = new THREE.Color(0xffffff).lerp(new THREE.Color(shirt), 0.25); }
+      const m = new THREE.Mesh(geo, mt); m.scale.setScalar(sc); m.castShadow = true; slot.add(m); });
+    hide.forEach(o => { o.visible = false; }); };
   CROWD.loaded ? fill() : CROWD.wait.push(fill);
 }
 function crowdInit(loader) {
   if (!CROWD.on || !loader) return; let left = CROWD.names.length;
-  CROWD.names.forEach(nm => loader.load('assets/glb/crowd_' + nm + '_body.glb', r => { let mesh = null; r.scene.traverse(o => { if (!mesh && o.isMesh) mesh = o; });
-    if (mesh) { mesh.geometry.computeBoundingBox(); const bb = mesh.geometry.boundingBox; CROWD.parts[nm] = { geo: mesh.geometry, mat: mesh.material, h: bb.max.y - bb.min.y }; if (mesh.material.map) mesh.material.map.anisotropy = ANISO; }
+  CROWD.names.forEach(nm => loader.load('assets/glb/cast_' + nm + '.glb', r => { const meshes = []; let y0 = Infinity, y1 = -Infinity;
+    r.scene.updateMatrixWorld(true); r.scene.traverse(o => { if (!o.isMesh) return; o.geometry.applyMatrix4(o.matrixWorld); o.geometry.computeBoundingBox(); y0 = Math.min(y0, o.geometry.boundingBox.min.y); y1 = Math.max(y1, o.geometry.boundingBox.max.y); if (o.material.map) o.material.map.anisotropy = ANISO; meshes.push({ geo: o.geometry, mat: o.material }); });
+    if (meshes.length) CROWD.parts[nm] = { meshes, h: y1 - y0 };
     if (--left === 0) done(); }, undefined, () => { if (--left === 0) done(); }));
   function done() { CROWD.loaded = true; CROWD.wait.forEach(f => f()); CROWD.wait.length = 0; }
 }
@@ -1253,9 +1259,9 @@ const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
     residents.push({ P, n: p.n, route, idx, speed: 1.0 + rnd() * 0.7, pause: rnd() * 3, phase: rnd() * 6, dir: i % 2 ? 1 : -1, bub: null, bubT: 0 });
   });
   for (let i = 0; i < 3; i++) {
-    const P = person(0x15161a, 0x15161a, SKIN[(i * 3) % SKIN.length]);
+    const P = person(0x15161a, 0x15161a, SKIN[(i * 3) % SKIN.length], 'wiseguy');
     const bc = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.3, 0.1), cm(0x3a2a1a)); bc.position.set(0.32, 0.95, 0); P.g.add(bc);
-    const gl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.05), MAT.ink); gl.position.set(0, 1.77, 0.15); P.g.add(gl);
+    const gl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.05), MAT.ink); gl.position.set(0, 1.77, 0.15); P.g.add(gl); P.hide.push(gl);
     const carry = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ toneMapped: false, side: THREE.DoubleSide })); carry.position.set(0, 1.3, 0.35); carry.visible = false; P.g.add(carry);
     P.g.position.set(BANK.door[0] + 2, ground(-55, 0), i * 2 - 2); scene.add(P.g);
     agents.push({ P, carry, stolen: null, target: null, mode: 'out', wait: 4 + i * 6, speed: 1.6 });
