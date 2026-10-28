@@ -50,3 +50,25 @@ the 15th of the month).
 Lighting after the Monaverse creator rules: one or two real lights (a spotlight that follows the nearest bulb, with the only
 shadow map), everything else a practical or faked (gradient occlusion strips, contact shadows), one reflection probe per
 area built from the wrong room's photograph, 1024 textures, instanced repeats, meshopt models under 1 MB each.
+
+## GLB swap, 2026-10-28 (free swaps only)
+
+From the audit in `UPGRADE ALL ROOMS 2026-10-28/audit/galleries_other.md`.
+
+- **Swapped, the bodega cat** on mom's second freezer (`_build/world.js`, the court): now `site/assets/glb/cat.glb`
+  (723 KB, the Tripo cat from THE MARKS `work/glb_pass`, the same file UNLICENSED uses; no glTF extensions, so the r128
+  GLTFLoader reads it as is). It faces +X natively, so a quarter turn, fitted to the stand in's 0.37 m height. The blink,
+  the breathing, the freezer refusals and the walk off all act on the same `W.cat` group, so they still run; the blink
+  now scales the hidden sphere eyes, which is harmless.
+- **Swapped, the twelve procession rats** (`_build/world.js`, the court): Poly Haven `street_rat` (CC0,
+  `site/assets/cc0/street_rat.gltf.json`, already loaded twice in this page by v2.js), one load cloned twelve times,
+  fitted to the stand in's 0.7 m length with the nose where the cone head ended. The dollar slices they carry stay
+  as they were. The chart egg still works (it moves the groups).
+- **How:** `lazyGLB()` and `fitGLB()` in `_build/engine.js`, beside the model streamer. The stand ins are built first and
+  hidden only when the GLB lands; a failed load leaves the room as it was. Loaded within 46 m, like the models.
+- **Left alone, as the brief says:** the Rat King in his bathrobe, the washer and dryer (paid, Tripo).
+- **Not fixed, noticed:** the procession rats start at the world origin and walk through the walls to the court on the
+  first seconds of a visit (old behaviour, not part of the swap).
+- **Checked:** `node _build/harness.js site/index.html` passes (soak 900 frames, 0 errors). Headless Chrome stills
+  before and after in `UPGRADE ALL ROOMS 2026-10-28/shots/basement/`.
+- **Not verified:** a real phone, and a real GPU (the stills are SwiftShader).

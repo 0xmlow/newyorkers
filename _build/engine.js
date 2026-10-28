@@ -289,9 +289,26 @@ function model(key, x, y, z, ry, size, o = {}) {
 function updateModels(dt) {
   MODELS.forEach(s => { if (!s.root) return; if (s.pop < 1) { s.pop = Math.min(1, s.pop + dt * 2.2); const e = 1 - Math.pow(1 - s.pop, 3); s.root.scale.setScalar(0.001 + e); } if (s.tick) s.tick(s, dt); });
   SCL.t -= dt; if (SCL.t > 0 || !gltfLoader) return; SCL.t = 0.3;
+  LAZY.forEach(l => { if (l.state || Math.hypot(P.x - l.x, P.z - l.z) > l.range) return; l.state = 'loading';
+    gltfLoader.load(l.url, g => { try { l.onLoad(g.scene); l.state = 'ready'; } catch (e) { l.state = 'error'; console.warn(l.url, e); } }, undefined, () => { l.state = 'error'; }); });
   const near = MODELS.filter(s => !s.state).sort((a, b) => Math.hypot(P.x - a.x, P.z - a.z) - Math.hypot(P.x - b.x, P.z - b.z));
   for (const s of near) { if (SCL.loading >= 3) break; if (Math.hypot(P.x - s.x, P.z - s.z) > SCL.range) break; s.state = 'loading'; SCL.loading++;
     gltfLoader.load('assets/' + s.dir + '/' + s.key + '.gltf.json', g => { SCL.loading--; s.state = 'ready'; SCL.done++; placeModel(s, g.scene); }, undefined, () => { SCL.loading--; s.state = 'error'; }); }
+}
+/* a GLB that replaces a code built stand in (2026-10-28 swap pass): the stand in is built first and stays until the GLB
+   lands; a failed load leaves it as it was. Loaded when the visitor comes within range, like the models. */
+const LAZY = [];
+function lazyGLB(url, x, z, onLoad, range = SCL.range) { const l = { url, x, z, onLoad, range, state: null }; LAZY.push(l); return l; }
+/* fit a loaded scene: yaw first (to make the model face +Z), then centred on x and z, standing on y = 0, scaled so its
+   height (mode 'h') or its largest side (mode 'm') is size metres. Returns the group and its fitted size. */
+function fitGLB(obj, size, mode = 'h', yaw = 0) {
+  const inner = new THREE.Group(); inner.add(obj); inner.rotation.y = yaw; inner.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(inner), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());
+  const k = mode === 'm' ? size / Math.max(sz.x, sz.y, sz.z) : size / Math.max(0.001, sz.y);
+  inner.position.set(-c.x, -bb.min.y, -c.z); const outer = new THREE.Group(); outer.add(inner); outer.scale.setScalar(k);
+  obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true;
+    (Array.isArray(o.material) ? o.material : [o.material]).forEach(mt => { if (mt) { mt.envMapIntensity = 0.5; if (mt.map) mt.map.anisotropy = ANISO; } }); });
+  return { g: outer, size: sz.multiplyScalar(k) };
 }
 function placeModel(s, obj) {
   obj.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(obj), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());

@@ -232,7 +232,11 @@ HALL.w = z => HALL.w0 + (HALL.z0 - z) / (HALL.z0 - HALL.z1) * (HALL.w1 - HALL.w0
   const slice = new THREE.Shape(); slice.moveTo(0, 0); slice.lineTo(-0.11, 0.3); slice.quadraticCurveTo(0, 0.34, 0.11, 0.3); slice.lineTo(0, 0); const sg = new THREE.ExtrudeGeometry(slice, { depth: 0.015, bevelEnabled: false }); sg.rotateX(-PI / 2);
   for (let i = 0; i < 12; i++) { const g = new THREE.Group(); const b = new THREE.Mesh(body, MAT.fur); b.position.y = 0.09; b.castShadow = true; g.add(b); const h = new THREE.Mesh(head, MAT.fur); h.position.set(0, 0.1, 0.22); g.add(h); [-1, 1].forEach(s => { const e = new THREE.Mesh(ear, MAT.fur); e.position.set(s * 0.05, 0.16, 0.18); g.add(e); }); const t = new THREE.Mesh(tail, new THREE.MeshStandardMaterial({ color: 0xc9a08a, roughness: 1 })); t.position.set(0, 0.06, -0.28); g.add(t);
     const s = new THREE.Mesh(sg, MAT.cheese); s.position.set(0, 0.02, 0.32); g.add(s); const c = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.012, 0.03), MAT.crust); c.position.set(0, 0.025, 0.62); g.add(c); [[-0.03, 0.42], [0.04, 0.5], [-0.01, 0.56]].forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.004, 8), MAT.pepperoni); p.position.set(x, 0.032, z); g.add(p); });
-    scene.add(g); W.rats.push({ g, a: i / 12 * PI * 2, sp: 0.45 + rnd() * 0.25, mode: 'loop', tx: 0, tz: 0, bob: rnd() * 6 }); }
+    scene.add(g); W.rats.push({ g, fur: g.children.slice(0, 5), a: i / 12 * PI * 2, sp: 0.45 + rnd() * 0.25, mode: 'loop', tx: 0, tz: 0, bob: rnd() * 6 }); }
+  // 2026-10-28: the procession becomes Poly Haven's street_rat (CC0, already loaded twice in this page), one load cloned twelve
+  // times at the stand in's length, nose where the cone head ended. The sphere rats stay until it lands and stay if it fails.
+  lazyGLB('assets/cc0/street_rat.gltf.json', 8.6, 23.6, obj => { const f = fitGLB(obj, 0.7, 'm');
+    W.rats.forEach(r => { const c = f.g.clone(); c.position.z = 0.3 - f.size.z / 2; r.g.add(c); r.fur.forEach(m => { m.visible = false; }); }); });
   interact(8.5, 23.5, 2.6, '', null, 0); zone(5, 13, 19.25, 28, "THE RAT KING'S COURT");
   plaque([{ t: '"THE PROCESSION"', s: 0.42 }, { t: 'TWELVE RATS, TWELVE SLICES. STAND STILL AND THEY WILL SHOW YOU THE CHART.', s: 0.16 }], 5.03, 2.0, 23.5, PI / 2, 1.1, 0.3);
   prop('catbed', 6.0, 0, 20.0, 0.5, 0.18); prop('cooler', 5.6, 0, 26.6, PI / 2, 1.0); prop('rat', 9.0, 2.35, 19.3, 0, 0.25, { label: 'Rat on rail' }); prop('ceilingfan', 9, 2.45, 23.5, 0, 0.35, { tick: (s, dt) => { if (s.root) s.root.rotation.y += dt * 2.2; } });
@@ -244,6 +248,9 @@ HALL.w = z => HALL.w0 + (HALL.z0 - z) / (HALL.z0 - HALL.z1) * (HALL.w1 - HALL.w0
   [-1, 1].forEach(s => { const e = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 6), MAT.catfur); e.position.set(s * 0.06, 0.33, 0.2); cat.add(e); const ey = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 6), new THREE.MeshBasicMaterial({ color: 0xb6ff3a })); ey.position.set(s * 0.04, 0.26, 0.29); cat.add(ey); cat.userData[s < 0 ? 'l' : 'r'] = ey; });
   const ct = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.4, 6), MAT.catfur); ct.rotation.z = 1.2; ct.position.set(0.15, 0.1, -0.2); cat.add(ct); const chest = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), MAT.white); chest.position.set(0, 0.16, 0.26); cat.add(chest);
   cat.position.set(8.6, 0.91, 27.5); cat.rotation.y = PI; cat.traverse(o => { if (o.isMesh) o.castShadow = true; }); scene.add(cat); W.cat = cat;
+  // 2026-10-28: the cat becomes cat.glb (the MARKS and UNLICENSED cat, sitting, faces +X so a quarter turn), fitted to the
+  // stand in's 0.37 m. The spheres stay until it lands; the blink and the leaving still move this group.
+  lazyGLB('assets/glb/cat.glb', 8.6, 27.5, obj => { const f = fitGLB(obj, 0.37, 'h', -PI / 2); const prims = cat.children.slice(); cat.add(f.g); prims.forEach(m => { m.visible = false; }); });
   interact(8.6, 26.6, 1.3, 'OPEN THE FREEZER', () => openFreezer(), 0);
   plaque([{ t: '"THE SECOND FREEZER"', s: 0.42 }, { t: 'YOU KNOW WHAT YOU DID.', s: 0.2 }], 8.6, 1.5, 27.97, PI, 0.9, 0.3);
   plaque([{ t: '"THE BODEGA CAT"', s: 0.42 }, { t: 'THE ONLY ONE DOWN HERE WHO RESPECTS YOU. STILL NO.', s: 0.18 }], 7.3, 1.55, 27.97, PI, 0.9, 0.3);
