@@ -3,6 +3,7 @@ import {createMaterials} from './materials.js';
 import {atmosphere} from './atmosphere.js';
 import {addInstallations} from './installations.js';
 import {RoundedBoxGeometry} from './vendor/addons/geometries/RoundedBoxGeometry.js';
+import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const canvas=$('#world');canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();modal('The graphics engine needs a moment.','<p>Reload this page to restart the 3D view, or <a href="collection.html">continue with the artwork collection</a>.</p>')});let renderer;
 try{renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(e){$('#loading').innerHTML='This device could not open the 3D museum.<a href="collection.html">Visit the artwork collection</a>';throw e}
@@ -28,6 +29,11 @@ function target(r,o,title,fn){targets.push({r:r.id,o,title,fn});return o}
 function note(r,title,body,p,w=.8,h=.6,opt={}){const o=sign(r,title.toUpperCase(),p,w,h,{size:30,...opt});return target(r,o,title,()=>modal(title,`<p>${esc(body)}</p>`, 'FOUND IN THE BUILDING'))}
 function clue(r,id,title,body,p,opt={}){let o=sign(r,['TENANT FILE',title.toUpperCase()],p,1.05,.7,{size:25,bg:'#d8ba53',...opt});target(r,o,title,()=>{evidence.add(id);try{localStorage.setItem('mlow-tenants-v1',JSON.stringify([...evidence]))}catch{}updateUI();modal(title,`<p>${esc(body)}</p><p><strong>Added to the tenant file. ${evidence.size}/6 pieces recovered.</strong></p>`,'EVIDENCE OF A LIFE HERE')});}
 function block(r,x,z,w,d){r.blocks.push([x-w/2-.3,x+w/2+.3,z-d/2-.3,z+d/2+.3])}
+// GLB props (2026-10-28): fitted to a height, base on p, turned by ry. The primitives they replace stay built and are hidden
+// only when every model of a set loads; if one fails the others are removed and the room is as it was. Poly Haven files keep their ids.
+let glbLoader;const glbCache=new Map();
+function glb(r,file,p,height,ry=0){glbLoader??=new GLTFLoader(new T.LoadingManager());if(!glbCache.has(file))glbCache.set(file,glbLoader.loadAsync('assets/props/'+file));return glbCache.get(file).then(g=>{const o=g.scene.clone(true),b=new T.Box3().setFromObject(o),c=b.getCenter(new T.Vector3()),h=new T.Group();o.position.set(-c.x,-b.min.y,-c.z);o.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true}});h.add(o);h.scale.setScalar(height/(b.max.y-b.min.y));h.rotation.y=ry;h.position.set(...p);h.name=file;r.g.add(h);return h}).catch(e=>{console.warn('Model failed, keeping the built one:',file,e);return null})}
+function swapIn(parts,tasks,done){return Promise.all(tasks).then(hs=>{if(hs.every(Boolean)){parts.forEach(o=>o&&(o.visible=false));done?.(hs)}else hs.forEach(h=>h?.removeFromParent())})}
 function shell(r,floor=wood,height=6){
  // Estimated meter-scale industrial shell, with true window openings and wall returns.
  const floorShape=new T.Shape();floorShape.moveTo(-r.w/2,-r.d/2);floorShape.lineTo(r.w/2,-r.d/2);floorShape.lineTo(r.w/2,r.d/2);floorShape.lineTo(-r.w/2,r.d/2);floorShape.closePath();
@@ -65,7 +71,9 @@ box(loft,[0,.03,12.4],[25,.17,2.5],concrete);box(loft,[0,3.1,11],[24.5,.72,.38],
 // A table still carrying the work; blocks are collision-tested in walking mode.
 box(loft,[-6,1,-1],[4,.16,2],wood);for(let x of [-7.6,-4.4])for(let z of [-1.7,-.3])box(loft,[x,.5,z],[.11,1,.11],metal);block(loft,-6,-1,4,2);
 for(let i=0;i<8;i++){cyl(loft,[-7.5+i*.38,1.2,-1.5],[.2,.3,.2],['#c56545','#d6b755','#566c65'][i%3]);box(loft,[-7+rnd()*2,1.1,-.7+rnd()*.4],[.7,.025,.5],paper,[0,rnd(),0])}
-box(loft,[7,.55,5],[3.2,1.1,1.5],'#576b55');box(loft,[7,1.2,5.55],[3.2,.65,.28],'#576b55');for(let x of [5.35,8.65])box(loft,[x,.95,5],[.25,.6,1.5],'#4b5c4a');block(loft,7,5,3.5,1.6);
+const couchParts=[box(loft,[7,.55,5],[3.2,1.1,1.5],'#576b55',[0,0,0],false),box(loft,[7,1.2,5.55],[3.2,.65,.28],'#576b55',[0,0,0],false),...[5.35,8.65].map(x=>box(loft,[x,.95,5],[.25,.6,1.5],'#4b5c4a',[0,0,0],false))];block(loft,7,5,3.5,1.6);
+// The tenants' sofa: Poly Haven Sofa_01 (CC0), a thrifted Victorian couch, 1.1 m high and 2.2 m long; it faces +Z, so it turns PI to face the room.
+swapIn(couchParts,[glb(loft,'Sofa_01.glb',[7,0,5.05],1.1,Math.PI)],([h])=>{h.traverse(o=>{if(o.isMesh)projector.patch(o.material)});loft.g.traverse(o=>{if(o.name==='couch-cushion')o.visible=false});projector.dirty=true});
 for(let i=0;i<5;i++)box(loft,[10.3,.3+i*.36,9.5],[1.4,.3,1.1],i%2?'#916c47':'#71634d');
 clue(loft,'lease','The original lease','The first lease was signed by twelve artists. The rent was small enough to leave room for failure. On the back: “No one gets a smaller studio because they make quieter work.”',[-10.98,2.2,-10.79]);
 clue(loft,'negative','A photograph without a logo','A contact sheet shows the first show: extension cords, borrowed chairs, twenty-seven people. No brand activation. No neighborhood discovery campaign. Just people looking carefully.',[-11.79,.86,6.3],{ry:Math.PI/2});
@@ -100,8 +108,12 @@ note(sales,'The square footage trick','The brochure includes the volume of your 
 // Basement archive: low ceiling pipes, dense salon hanging, community folding table and heater.
 for(let x of [-7,-3,3,7])cyl(basement,[x,3.9,0],[.14,18,.14],x===3?'#b19b66':'#6d7970',[Math.PI/2,0,0]);
 for(let z of [-5,1,6]){box(basement,[0,3.8,z],[2.8,.12,.4],'#7d8171');box(basement,[0,3.71,z],[2.6,.04,.25],lightMat('#ffda89'))}
-box(basement,[0,.8,1],[5,.1,2],wood);for(let x of [-2,2])for(let z of [.3,1.7])box(basement,[x,.4,z],[.07,.8,.07],metal);block(basement,0,1,5,2);
-for(let x of [-3.5,3.5])for(let z of [-1,2,4]){box(basement,[x,.5,z],[.75,.1,.75],'#897e64');box(basement,[x,.88,z+.35],[.75,.6,.08],'#897e64');for(let dx of [-.28,.28])box(basement,[x+dx,.25,z],[.04,.5,.65],metal)}
+const tableParts=[box(basement,[0,.8,1],[5,.1,2],wood,[0,0,0],false)];for(let x of [-2,2])for(let z of [.3,1.7])tableParts.push(box(basement,[x,.4,z],[.07,.8,.07],metal,[0,0,0],false));block(basement,0,1,5,2);
+// The community table: two Poly Haven dining_table (CC0) end to end under their checked cloths, 0.85 m like the old top.
+swapIn(tableParts,[-1.1,1.1].map(x=>glb(basement,'dining_table.glb',[x,0,1],.85)));
+const chairParts=[],chairAt=[];for(let x of [-3.5,3.5])for(let z of [-1,2,4]){chairAt.push([x,z]);chairParts.push(box(basement,[x,.5,z],[.75,.1,.75],'#897e64',[0,0,0],false),box(basement,[x,.88,z+.35],[.75,.6,.08],'#897e64',[0,0,0],false),...[-.28,.28].map(dx=>box(basement,[x+dx,.25,z],[.04,.5,.65],metal,[0,0,0],false)))}
+// The holdouts' chairs: Poly Haven plastic_monobloc_chair_01 (CC0), the white chair of every community meeting, facing -Z like the old ones.
+swapIn(chairParts,chairAt.map(([x,z],i)=>glb(basement,'plastic_monobloc_chair_01.glb',[x,0,z],.88,Math.PI+(i%3-1)*.12)));
 sign(basement,['THE HOLDOUTS','NO ONE IS A HISTORICAL FOOTNOTE.'],[0,3,-8.76],7,.9,{bg:'#ae412e',fg:'#f0e3c7',size:29});
 clue(basement,'petition','The petition','Eighty-three signatures. Some are shaky. Some are first names only. One is a paw print. The demand is simple: a place to keep making things.',[-1,.88,1],{rx:-Math.PI/2});
 clue(basement,'key','The spare key','A key labeled EVERYBODY. It opened the studio, the supply cupboard, and the door for the neighbor who needed somewhere warm. Ownership was never the whole story.',[-9.78,2,7.55],{ry:Math.PI/2});
@@ -111,11 +123,18 @@ for(let z of [-6,-3.2]){box(basement,[8.1,.6,z],[1.2,1.2,1.5],'#786344');for(let
 note(basement,'The emergency exhibition','If the upstairs museum closes, this room remains a museum. A museum begins when someone decides that something deserves to be seen.',[0,1.02,1],1.3,.6,{rx:-Math.PI/2});
 // Rooftop commons: raised planting beds, rain barrels, water tank and a growing alternative.
 box(roof,[0,-.3,0],[23,.6,21],concrete);for(let x of [-11.5,11.5])box(roof,[x,.65,0],[.4,1.3,21],brick);box(roof,[0,.65,-10.5],[23,1.3,.4],brick);
-for(let x of [-7,7])for(let z of [-5,1,6]){box(roof,[x,.4,z],[4,.8,2.6],wood);box(roof,[x,.82,z],[3.75,.08,2.35],'#423d2b');block(roof,x,z,4,2.6);for(let i=0;i<10;i++){const px=x-1.5+(i%5)*.75,pz=z-.7+Math.floor(i/5)*1.3;cyl(roof,[px,1.12,pz],[.035,.6,.035],'#5a7044');for(let a=0;a<3;a++){const leaf=shape(roof,new T.SphereGeometry(.5,12,8),mat(a%2?'#82944d':'#496949'),[px+Math.sin(a*2)*.2,1.25+a*.12,pz+Math.cos(a*2)*.2],[.5,.09,.24],[0,a*2,.3],false);movables.push({o:leaf,base:leaf.rotation.z})}}}
-for(let x of [-2,2])for(let z of [-8,-5])box(roof,[x,1.8,z],[.13,3.6,.13],metal);cyl(roof,[0,4.3,-6.5],[4.5,3.6,4.5],wood);shape(roof,new T.ConeGeometry(2.6,1.2,32),mat('#4d5c50'),[0,6.7,-6.5],[1,1,1]);for(let y of [2.8,3.5,4.3,5.1,5.8]){let ring=shape(roof,new T.TorusGeometry(2.27,.045,6,48),metal,[0,y,-6.5],[1,1,1],[Math.PI/2,0,0],false)}block(roof,0,-6.5,4.6,4.6);
+const bedSwaps=[];for(let x of [-7,7])for(let z of [-5,1,6]){bedSwaps.push([[box(roof,[x,.4,z],[4,.8,2.6],wood,[0,0,0],false),box(roof,[x,.82,z],[3.75,.08,2.35],'#423d2b',[0,0,0],false)],x,z]);block(roof,x,z,4,2.6);for(let i=0;i<10;i++){const px=x-1.5+(i%5)*.75,pz=z-.7+Math.floor(i/5)*1.3;cyl(roof,[px,1.12,pz],[.035,.6,.035],'#5a7044');for(let a=0;a<3;a++){const leaf=shape(roof,new T.SphereGeometry(.5,12,8),mat(a%2?'#82944d':'#496949'),[px+Math.sin(a*2)*.2,1.25+a*.12,pz+Math.cos(a*2)*.2],[.5,.09,.24],[0,a*2,.3],false);movables.push({o:leaf,base:leaf.rotation.z})}}}
+// Each bed is four Poly Haven planter_box_01 (CC0), two per row of seedlings, soil just under the rim.
+for(const [bed,x,z] of bedSwaps){const at=[];for(const dx of [-.86,.86])for(const dz of [-.65,.65])at.push([x+dx,z+dz]);swapIn(bed,at.map(([px,pz])=>glb(roof,'planter_box_01.glb',[px,0,pz],.8)),()=>{for(const [px,pz] of at)box(roof,[px,.78,pz],[1.56,.04,.64],'#423d2b',[0,0,0],false)})}
+// The water tank: the primitive tank is built unbatched as the fallback and hidden only once the real one loads,
+// tower.glb, the cedar tank with the N3W YORKERS mural from THE MARKS (EVICTION's roof has it too), mural turned to the stairs, fitted to the old tank's 7.3 m from roof to cap.
+const tankParts=[];for(let x of [-2,2])for(let z of [-8,-5])tankParts.push(box(roof,[x,1.8,z],[.13,3.6,.13],metal,[0,0,0],false));tankParts.push(cyl(roof,[0,4.3,-6.5],[4.5,3.6,4.5],wood,[0,0,0],false),shape(roof,new T.ConeGeometry(2.6,1.2,32),mat('#4d5c50'),[0,6.7,-6.5],[1,1,1],[0,0,0],false));for(let y of [2.8,3.5,4.3,5.1,5.8]){tankParts.push(shape(roof,new T.TorusGeometry(2.27,.045,6,48),metal,[0,y,-6.5],[1,1,1],[Math.PI/2,0,0],false))}block(roof,0,-6.5,4.6,4.6);
+swapIn(tankParts,[glb(roof,'tower.glb',[0,0,-6.5],7.3,-Math.PI/2)]);
 for(let x of [-10,10]){cyl(roof,[x,2,9],[.1,4,.1],metal);for(let z of [-8,8])cyl(roof,[x,2,z],[.07,4,.07],metal)}
 for(let z of [-7,7]){let pts=[];for(let i=0;i<=30;i++){let x=-10+i*20/30,y=4-.7*Math.sin(i*Math.PI/30);pts.push(new T.Vector3(x,y,z));if(i%2===0)ball(roof,[x,y-.12,z],[.12,.18,.12],lightMat('#ffe5a2'))}let line=new T.Line(new T.BufferGeometry().setFromPoints(pts),new T.LineBasicMaterial({color:'#454d3f'}));roof.g.add(line)}
-box(roof,[0,.8,3],[4,.15,2],wood);for(let x of [-1.6,1.6])box(roof,[x,.4,3],[.12,.8,1.6],metal);block(roof,0,3,4,2);
+const picnicParts=[box(roof,[0,.8,3],[4,.15,2],wood,[0,0,0],false),...[-1.6,1.6].map(x=>box(roof,[x,.4,3],[.12,.8,1.6],metal,[0,0,0],false))];block(roof,0,3,4,2);
+// The commons table: Poly Haven wooden_picnic_table (CC0), long side along the roof; the seed envelope moves down onto its top.
+swapIn(picnicParts,[glb(roof,'wooden_picnic_table.glb',[0,0,3],.8,Math.PI/2)],()=>{const t=targets.find(t=>t.title==='The seed envelope');if(t)t.o.position.y=.815});
 clue(roof,'seed','The seed envelope','Seeds saved from the garden the developer called vacant. Instructions: plant after the last frost. Share what grows. Leave the gate unlocked.',[0,.9,3],{rx:-Math.PI/2});
 note(roof,'The private public bench','This bench used to require a reservation. Someone removed the sign. Its capacity immediately doubled.',[-4,.7,8],1.5,.65);
 box(roof,[-4,.5,8],[3,.14,.8],wood);for(let x of [-5,-3])box(roof,[x,.25,8],[.12,.5,.6],metal);
