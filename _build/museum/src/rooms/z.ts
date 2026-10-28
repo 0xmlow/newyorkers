@@ -1,5 +1,6 @@
 /* 122 and 123: Katz's and Barney Greengrass, rebuilt by hand after the first pass read as boxes. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
@@ -12,6 +13,7 @@ const PI = Math.PI;
 function traffic(k: Parameters<RoomDef['build']>[0], lanes: { at: number; dir: number }[], axis: 'x' | 'z', len: number, perLane: number, animate: boolean, seed: number) {
   const rnd = X.mulberry(seed), n = lanes.length * perLane, blank = () => Array.from({ length: n }, () => new T.Matrix4());
   const body = k.instances(new T.BoxGeometry(1.9, 0.8, 4.4), k.flat(0xffffff, 0.5, 0.35), blank());
+  body.userData.car = true; // 2026-10-28: the kit swaps every body, cab yellow or not, for a real car (kit.ts swapCabs, ?cars=old)
   const cab = k.instances(new T.BoxGeometry(1.7, 0.62, 2.2), k.flat(0x1a2530, 0.6, 0.15), blank());
   const wg = new T.CylinderGeometry(0.34, 0.34, 2.02, 12); wg.rotateZ(PI / 2);
   const wheels = k.instances(wg, k.flat(0x111111, 0.1, 0.8), Array.from({ length: n * 2 }, () => new T.Matrix4()));
@@ -434,7 +436,7 @@ export const barney: RoomDef = {
     const bike = new T.Group();
     for (const dz of [-0.55, 0.55]) { const w = new T.Mesh(new T.TorusGeometry(0.34, 0.035, 6, 18), iron); w.position.set(0, 0.36, dz); w.rotation.y = PI / 2; bike.add(w); }
     const frame = new T.Mesh(new T.BoxGeometry(0.05, 0.05, 1.1), k.flat(0x2d6fb8, 0.3, 0.5)); frame.position.y = 0.62; bike.add(frame);
-    const rider = new T.Mesh(new T.CapsuleGeometry(0.19, 0.6, 3, 8), k.flat(0x8a2a2a, 0, 0.8)); rider.position.set(0, 1.25, -0.1); rider.rotation.x = 0.35; bike.add(rider);
+    const rider = new T.Mesh(new T.CapsuleGeometry(0.19, 0.6, 3, 8), k.flat(0x8a2a2a, 0, 0.8)); rider.position.set(0, 0.95, -0.1); rider.rotation.x = 0.35; bike.add(personTag(rider, 'seat', 1.7));   // 2026-10-28: a seated cast rider
     k.add(bike);
     if (!ctx.reduced) k.rider(bike, k.spline([v(-75, 0, 7.4), v(75, 0, 7.4)]), 4.2, 20); else bike.position.set(-9, 0, 7.4);
     // pigeons working the sidewalk crumbs in front of the tables
@@ -618,6 +620,10 @@ export const barney: RoomDef = {
     // so `face` turns it to +z for the rider, which steers along the tangent. They glide with a small bob:
     // the models are not rigged, and the walk is a slow shuffle, the way a queue moves.
     type Npc = { name: string; h: number; face: number };
+    /* 2026-10-28: rendered from the front, every npc_ model has its face along its own +x, so a walker needs -PI/2 to
+       face along the route; the +PI/2 walkers (the wiseguy, the maitre d') walked backwards. The standing figures keep
+       their `face` as authored: their yaws were set against it and they read right in the room. */
+    const WALK_FACE = -PI / 2;
     const cast: Record<string, Npc> = {
       bartender: { name: 'bartender', h: 2.55, face: PI / 2 }, maitre: { name: 'maitre', h: 2.55, face: PI / 2 }, clerk: { name: 'clerk', h: 2.5, face: -PI / 2 },
       wiseguy: { name: 'wiseguy', h: 2.6, face: PI / 2 }, broker: { name: 'broker', h: 2.6, face: -PI / 2 }, sonny: { name: 'sonny', h: 2.55, face: -PI / 2 },
@@ -629,7 +635,7 @@ export const barney: RoomDef = {
     const walk = (c: Npc, route: T.Vector3[], speed: number, offset: number, closed = true) =>
       k.prop(`npc_${c.name}`, route[0].x, 0, route[0].z, { height: c.h }).then((o) => {
         if (!o) return;
-        const g = new T.Group(); k.scene.remove(o); o.position.set(0, 0, 0); o.rotation.y = c.face; g.add(o); k.add(g);
+        const g = new T.Group(); k.scene.remove(o); o.position.set(0, 0, 0); o.rotation.y = WALK_FACE; g.add(o); k.add(g);
         const ph = offset * 1.7;
         if (ctx.reduced) { const p0 = route[0]; g.position.set(p0.x, 0, p0.z); return; }
         k.rider(g, k.spline(route, closed), speed, offset);
