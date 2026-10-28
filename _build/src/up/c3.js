@@ -463,6 +463,11 @@ Object.assign(ROOM, {
     const tl = []; for (let i = 0; i < 40; i++) { const a = i * 2.4, y = 0.45 + (i / 40) * 1.7, rr = 0.75 * (1 - (y - 0.35) / 2.1) + 0.04; tl.push([Math.cos(a) * rr, y, Math.sin(a) * rr, 0, 1, [0xffffff, 0xffe0a0, 0xff9090, 0x90c0ff][i % 4]]); }
     const tli = field(c, tree, new THREE.SphereGeometry(0.035, 6, 5), hot(c, 0xffffff, 2.0), tl);
     const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.12), hot(c, 0xfff0c0, 2.4)); star.position.y = 2.25; tree.add(star); halo(c, K, tree, 0, 2.25, 0, 'rgba(255,250,230,.6)', 0.9);
+    // 2026-10-28: a real little spruce (the museum kit's tree_pine, the rink's tree) in place of the four cones. nyb_miracle_tree
+    // was tried first and is a bare sapling that all but vanished at this size. Its trunk goes 0.45 m under the carpet so the
+    // boughs reach the floor; the cones and the trunk hide once it lands, the lights and the star stay.
+    const coneT = tree.children.filter((m) => m !== tli && m !== star && m.isMesh);
+    c.glb('tree_pine', { h: 2.8, y: -0.45, parent: tree, shadow: false, onload: (gg) => { coneT.forEach((m) => { m.visible = false; }); K.leafy(gg, null, 0.35); } });
     c.tick((t, dt, P, ri) => { if (ri !== r.i) return; tli.visible = Math.sin(t * 3) > -0.7; star.rotation.y = t; });
     field(c, g, new THREE.PlaneGeometry(0.21, 0.28).rotateX(-PI / 2), K.std(0xf4f4f0, { roughness: 0.9, side: THREE.DoubleSide }), Array.from({ length: c.MOBILE ? 40 : 80 }, (_, i) => [1 + Math.random() * 18, 0.006 + i * 0.0001, -0.5 + Math.random() * 7.5, Math.random() * 6.3]));
     // the elevator floor dial over the west door, its needle stuck between eighteen and twenty

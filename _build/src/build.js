@@ -3,6 +3,16 @@
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { W, D, H_IN, PORTAL } from './rooms.js';
 import { UPGRADES } from './up/index.js';
+import { crowdBody, crowdCast } from './crowd.js';
+// who stands in each set's crowd (crowd.js POOLS, or names): the set's own world first (CHARACTERS_INVENTORY.md 2026-10-28)
+const CROWD_CAST = {
+  angrymen: 'suits', wolf: 'suits', crowd: 'suits', apartment: 'suits', deskset: 'suits', trading: 'suits', hudsucker: 'suits', wallst: 'suits', clover: 'suits', network: 'suits', mitty: 'suits',
+  gangs: ['oscar', 'tough', 'killer', 'hustler', 'cabbie', 'wiseguy'],
+  dolly: 'dressy', copa: 'dressy', tiffany: 'dressy', scent: 'dressy', blackswan: 'dressy', producers: 'dressy', prada: 'dressy', gatsby: 'dressy', crown: 'dressy',
+  beatstreet: 'night', statuewalk: 'night', disco: 'night', wildstyle: 'night', susan: 'night', afterhours: 'night', llewyn: 'night', cocktail: 'night', nowyousee: 'night', meanstreets: 'night',
+  wrap: ['tough', 'cabbie', 'writer', 'workgirl'],   // THE WRAP: a stagehand in the office corner
+  fisherking: 'walkers', walking: 'walkers', nakedcity: 'walkers', outoftowners: 'walkers', annie: ['annieh', 'wiseguy', 'clerk', 'rosemary', 'editor', 'assistant', 'blindwoman', 'oscar'],
+};
 
 const PI = Math.PI;
 const INK = ['#ff4fa3', '#22d3ee', '#f5c542', '#3b82f6', '#ffffff', '#ff7a1a'];
@@ -50,6 +60,7 @@ export function buildRoom(c, r) {
   slate(c, r, g);
   if (!r.noRope) rope(c, r, g, X);
   else if (r.edge) c.wall(X(0), -D / 2 + 1.2, X(W), -D / 2 + 1.2);   // an unmarked edge, so nobody walks into the photograph
+  crowdCast(CROWD_CAST[r.id]);
   ROOM[r.id] && ROOM[r.id](c, r, g, X, mats);
   (PROPS[r.id] || []).forEach((q) => prop(c, r, g, X, ...q));
   // round twelve: every set's upgrade (src/up/b*.js), its props first, then its code
@@ -196,7 +207,7 @@ function prop(c, r, g, X, name, x, z, o = {}) {
 let _KIT;
 function KIT(c) { return _KIT ||= { PI, INK, W, D, H_IN, PORTAL, prop: (r, g, X, name, x, z, o) => prop(c, r, g, X, name, x, z, o), eyeFlower, decal: (w, h, draw, px) => decal(c, w, h, draw, px),
   glowTex: (col) => glowTex(c, col), basic: (color, o) => basic(c, color, o), std: (color, o) => std(c, color, o), bulbs: (g, x1, x2, y, z, n, col) => bulbs(c, g, x1, x2, y, z, n, col),
-  watcher: (g, x, y, z, ry, R) => watcher(c, g, x, y, z, ry, R), flyer: (text, bg) => flyer(c, text, bg), extra: (g, x, z, o) => extra(c, g, x, z, o), figure, steam: (g, x, y, z) => steam(c, g, x, y, z) }; }
+  watcher: (g, x, y, z, ry, R) => watcher(c, g, x, y, z, ry, R), flyer: (text, bg) => flyer(c, text, bg), extra: (g, x, z, o) => extra(c, g, x, z, o), leafy, figure, steam: (g, x, y, z) => steam(c, g, x, y, z) }; }
 const PROPS = {
   lobby: [
     ['Chandelier_02', 4.6, 2.2, { h: 1.3, y: 4.6 }], ['Chandelier_02', 15.4, -0.6, { h: 1.3, y: 4.6 }],
@@ -869,15 +880,30 @@ Object.assign(ROOM, {
   },
 });
 
-// a seated or standing extra: a coloured body and an eye flower head that can turn to look at you
+// the credit Gravity Jack's Statue of Liberty asks for (CC BY 4.0), as the museum's plaque does (museum commit 0af63649)
+function libCredit(c, g, x, z, ry) {
+  const p = c.sign('STATUE MODEL: GRAVITY JACK, CC BY 4.0', { w: 1.9, h: 0.2, bg: '#22302e', fg: '#e8e2d4', font: c.MONO, weight: 700 });
+  p.position.set(x, 0.95, z); p.rotation.y = ry; g.add(p);
+  const pole = c.slab(0.04, 0.85, 0.04, std(c, 0x22302e, { metalness: 0.6 }), x, 0.425, z - 0.02); g.add(pole);
+}
+// a tree kit GLB's leaves are alpha blended cards: cut them out instead, so they sort and write depth (2026-10-28)
+function leafy(o, tint, cut = 0.5) {
+  o.traverse((m) => { if (!m.isMesh) return; const leaf = m.material.transparent || /leaf/.test(m.material.name || ''); if (!leaf) return;
+    m.material = m.material.clone(); m.material.transparent = false; m.material.alphaTest = cut; m.material.depthWrite = true; m.material.side = 2; if (tint) m.material.color.set(tint); });
+}
+// a seated or standing extra: a coloured body and an eye flower head that can turn to look at you; since 2026-10-28 a
+// whole character from the cast stands in for all three (crowd.js), and userData.head turns it whole
 const HEAD = {};
-function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0 } = {}) {
+function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, pool, crowd = true } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; g.add(o);
   const h = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = h + (seated ? 0.36 : 1.0); o.add(body);
-  if (!seated) { const legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
+  let legs = null; if (!seated) { legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98));
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: HEAD.t, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; return o;
+  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head;
+  // the whole cast character, its own flower head and all (crowd.js); body, legs and sprite head hidden once it lands, ?crowd=old keeps them
+  if (crowd) crowdBody(o, { seated, col, hide: legs ? [body, legs, head] : [body, head], pool });
+  return o;
 }
 
 Object.assign(ROOM, {
@@ -1057,6 +1083,12 @@ Object.assign(ROOM, {
     // the tree: a cone of boughs, ornaments that are eye flowers, a star you can light
     const tree = new THREE.Group(); tree.position.set(W / 2, 0, -6.8); g.add(tree); c.post(X(W / 2), -6.8, 1.8);
     for (let k = 0; k < 7; k++) { const cn = new THREE.Mesh(new THREE.ConeGeometry(2.4 - k * 0.3, 1.8, 18), std(c, 0x1a4a2a, { roughness: 0.9 })); cn.position.y = 1.2 + k * 1.05; tree.add(cn); }
+    // 2026-10-28: a real spruce from the museum's tree kit (one variant of tree_pine). The kit tree has a bare trunk under its
+    // boughs and the plaza's tree has boughs to the ground, so it stands 10.4 m with 2 m of trunk under the ice: the top
+    // sits under the star and the boughs come down round the ornaments. The real tree is about 0.6 as wide as it is tall,
+    // and so is this one. The seven cones stay built and hide only when it lands.
+    const cones = tree.children.slice();
+    c.glb('tree_pine', { h: 10.4, y: -2.0, parent: tree, shadow: false, onload: (gg) => { cones.forEach((m) => { m.visible = false; }); leafy(gg, null, 0.35); } });
     const ornT = HEAD.t || (HEAD.t = c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98)));
     for (let k = 0; k < 60; k++) { const lvl = Math.random(), y = 0.8 + lvl * 7.2, rad = (2.3 - lvl * 2.0), a = Math.random() * 6.3, o = new THREE.Sprite(new THREE.SpriteMaterial({ map: ornT, toneMapped: false })); o.scale.setScalar(0.32); o.position.set(Math.cos(a) * rad, y, Math.sin(a) * rad); tree.add(o); }
     const lightsM = []; for (let k = 0; k < 90; k++) { const lvl = Math.random(), a = Math.random() * 6.3, m = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 4), basic(c, [0xff3030, 0xffd040, 0x30ff60, 0x40a0ff][k % 4])); m.position.set(Math.cos(a) * (2.35 - lvl * 2.05), 0.6 + lvl * 7.4, Math.sin(a) * (2.35 - lvl * 2.05)); tree.add(m); lightsM.push(m); }
@@ -1263,7 +1295,7 @@ Object.assign(ROOM, {
     c.tick((t, dt, P, ri) => {
       if (ri !== r.i) { sub.style.display = 'none'; return; }
       c.camera.getWorldDirection(fw); let best = -1, bd = 0.97;
-      line.forEach((e, k) => { e.userData.head.getWorldPosition(hw); const d = hw.distanceTo(c.camera.position); if (d > 6) return; const dot = hw.sub(c.camera.position).normalize().dot(fw); if (dot > bd) { bd = dot; best = k; } });
+      line.forEach((e, k) => { e.userData.head.getWorldPosition(hw); hw.y += e.userData.headY || 0; const d = hw.distanceTo(c.camera.position); if (d > 6) return; const dot = hw.sub(c.camera.position).normalize().dot(fw); if (dot > bd) { bd = dot; best = k; } });
       if (best >= 0) { const [a2, b2] = SUB[best]; sub.innerHTML = `“${a2}”<br><span style="color:#f5c542;font-size:15px">SUBTITLE: ${b2}</span>`; sub.style.display = 'block'; read.add(best); if (read.size === 5) { read.add(99); c.egg('subtitles', 'Five people, five subtitles. Everybody in this city is thinking something else.'); } }
       else sub.style.display = 'none';
     });
@@ -1387,6 +1419,10 @@ Object.assign(ROOM, {
     g.add(c.slab(15, 0.5, D, steel, W / 2, 6.2, 0));
     const ties = []; for (let k = 0; k < 18; k++) { const m = c.slab(14.6, 0.12, 0.25, std(c, 0x2a2a20), W / 2, 5.9, 7.5 - k * 0.9); g.add(m); ties.push(m); }
     const train = new THREE.Group(); g.add(train); train.add(c.slab(3, 3, 17, std(c, 0x9a9a9a, { metalness: 0.7 }), 0, 0, 0)); for (let k = 0; k < 8; k++) { const w = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.8), basic(c, 0xfff0c0)); w.position.set(1.52, 0.4, -7 + k * 2); w.rotation.y = PI / 2; train.add(w); const w2 = w.clone(); w2.position.x = -1.52; w2.rotation.y = -PI / 2; train.add(w2); }
+    // 2026-10-28: three real cars (h_subway_car, the one Wild Style and the bridge use) coupled nose to tail on the deck; the
+    // slab and its windows hide only once the cars land
+    const slabCar = train.children.slice(); let carsIn = 0;
+    [-15.4, 0, 15.4].forEach((dz) => c.glb('h_subway_car', { len: 15, y: -1.45, z: dz, parent: train, shadow: false, onload: () => { if (++carsIn === 3) slabCar.forEach((m) => { m.visible = false; }); } }));
     const CX = 13.2, car = c.glb('sedan', { len: 5.0, x: CX, z: 1.4, ry: PI, parent: g }); [-0.2, 1.4, 3.0].forEach((z) => c.post(X(CX), z, 1.0));
     let ride = 0, tz = -60, done = false;
     c.tick((t, dt, P, ri) => {
@@ -1965,7 +2001,7 @@ Object.assign(ROOM, {
     const screens = [];
     const monitor = (x, z, ry, s) => { const m = new THREE.Group(); m.position.set(x, 0, z); m.rotation.y = ry; g.add(m); m.add(c.slab(0.05, 1.2 * s, 0.05, chrome, 0, 0.6 * s, 0)); m.add(c.slab(1.0 * s, 0.62 * s, 0.4 * s, dk, 0, 1.45 * s, 0)); const sc = new THREE.Mesh(new THREE.PlaneGeometry(0.88 * s, 0.5 * s), new THREE.MeshBasicMaterial({ map: rt2.texture, color: 0xdde6ff })); sc.position.set(0, 1.45 * s, 0.21 * s); m.add(sc); screens.push(sc); c.post(X(x), z, 0.4 * s); return m; };
     monitor(3.2, 1.0, 0.9, 1.3); monitor(16.8, -1.4, -1.0, 1.1); monitor(6.6, 5.4, PI - 0.3, 1.0);
-    const me = extra(c, c.scene, 0, 0, { col: 0xc8102e }); me.traverse((o) => o.layers.set(1));
+    const me = extra(c, c.scene, 0, 0, { col: 0xc8102e, crowd: false }); me.traverse((o) => o.layers.set(1));
     const onair = c.sign('ON AIR', { w: 1.6, h: 0.42, bg: '#2a0000', fg: '#ff4040', font: c.MONO, weight: 800 }); onair.position.set(W / 2, 4.6, -D / 2 + 0.2); g.add(onair);
     const v = new THREE.Vector3(); let fc = 0, aired = 0, was = false;
     c.tick((t, dt, P, ri) => {
@@ -2987,7 +3023,7 @@ Object.assign(ROOM, {
     // two tall mirrors facing each other: the room repeats forever, and so do you
     const mk = (x, ry) => { const m = new Reflector(new THREE.PlaneGeometry(7.0, 3.6), { textureWidth: c.MOBILE ? 512 : 1024, textureHeight: c.MOBILE ? 256 : 528, color: 0xb8b0a8, clipBias: 0.003 }); m.position.set(x, 1.9, -2.2); m.rotation.y = ry; g.add(m); m.getReflectionCamera(c.camera).layers.enable(1); const fr = std(c, 0xd8b048, { metalness: 1, roughness: 0.3 }); [[0, 3.75, 7.3, 0.14], [0, 0.05, 7.3, 0.14]].forEach(([dz, y, w, h]) => { const b = c.slab(0.12, h, w, fr, x, y, -2.2); g.add(b); }); [-5.7, 1.3].forEach((z) => g.add(c.slab(0.12, 3.8, 0.14, fr, x, 1.9, z))); return m; };
     const mL = mk(0.32, PI / 2), mR = mk(W - 0.52, -PI / 2);
-    const me = extra(c, c.scene, 0, 0, { col: 0x2a2a34 }); me.traverse((o) => o.layers.set(1));
+    const me = extra(c, c.scene, 0, 0, { col: 0x2a2a34, crowd: false }); me.traverse((o) => o.layers.set(1));
     c.tick((t, dt, P, ri) => { if (ri !== r.i) { me.visible = false; return; } me.visible = true; me.position.set(P.x, P.y - 1.62, P.z); me.rotation.y = P.yaw; });
     // shots: each mirror takes a crack, and when enough are gone the killer is in the only one left
     let cracks = 0; const crackT = c.canvasTex(256, 256, (q) => { q.strokeStyle = 'rgba(255,255,255,.85)'; q.lineWidth = 2; for (let k = 0; k < 14; k++) { q.beginPath(); q.moveTo(128, 128); let x = 128, y = 128; const a = k / 14 * PI * 2; for (let s = 0; s < 6; s++) { x += Math.cos(a + (Math.random() - 0.5)) * 22; y += Math.sin(a + (Math.random() - 0.5)) * 22; q.lineTo(x, y); } q.stroke(); } q.beginPath(); q.arc(128, 128, 8, 0, 7); q.stroke(); });
@@ -3138,6 +3174,11 @@ Object.assign(ROOM, {
     const head = c.glb('libhead', { h: 2.6, x: SX - 3.4, y: -2.8, z: SZ + 1.0, ry: 0.5, parent: g, shadow: false });
     const cu = std(c, 0x5aa08a, { roughness: 0.6, metalness: 0.4 }), arm = new THREE.Group(); arm.position.set(SX - 1.4, -5.2, SZ + 0.6); arm.rotation.z = -0.25; g.add(arm); arm.add(new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.36, 4.0, 14), cu)); arm.children[0].position.y = 2.0; const torch = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.28, 0.7, 14), cu); torch.position.y = 4.2; arm.add(torch); const flame = new THREE.Mesh(new THREE.ConeGeometry(0.36, 0.8, 12), std(c, 0xc8a040, { metalness: 0.8, roughness: 0.3 })); flame.position.y = 4.9; arm.add(flame);
         c.post(X(SX - 3.4), SZ + 1.0, 1.4); c.post(X(SX - 1.4), SZ + 0.6, 0.5);
+    // 2026-10-28: one real statue (the same CC BY 4.0 model as Fifth Avenue's), buried to the shoulders and leaning, rises in
+    // place of the libhead and the cylinder arm; the old pair hide only once she lands. lib.position.y follows reveal below.
+    const LIB_H = 14, LIB_Y0 = -14.6, LIB_Y1 = -8.4;
+    const lib = c.glb('liberty_statue_v2', { h: LIB_H, x: SX - 2.4, y: LIB_Y0, z: SZ + 0.2, ry: 0.35, parent: g, shadow: false, onload: () => { head.visible = arm.visible = false; libCredit(c, g, 15.2, 4.6, -0.4); } });
+    lib.rotation.z = 0.22; lib.rotation.x = 0.12;
     // the waves
     const wGeo = new THREE.PlaneGeometry(W, 2.2, 40, 6); wGeo.rotateX(-PI / 2); const wave = new THREE.Mesh(wGeo, new THREE.MeshStandardMaterial({ color: 0x3a6a8a, metalness: 0.3, roughness: 0.2, transparent: true, opacity: 0.85 })); wave.position.set(W / 2, 0.04, -7.2); g.add(wave); const wp = wGeo.attributes.position, wy = new Float32Array(wp.count);
     let reveal = 0, shown = false;
@@ -3145,7 +3186,7 @@ Object.assign(ROOM, {
       for (let k = 0; k < wp.count; k++) wp.setY(k, Math.sin(wp.getX(k) * 0.5 + t * 1.4) * 0.06 + Math.sin(wp.getZ(k) * 2 - t * 2) * 0.04); wp.needsUpdate = true;
       if (ri !== r.i) return;
       const want = Math.max(0, Math.min(1, (3.0 - P.z) / 6.0)); reveal += (want - reveal) * Math.min(1, dt * 0.8);
-      head.position.y = -2.8 + reveal * 2.6; arm.position.y = -5.2 + reveal * 4.4; if (reveal > 0.05 && Math.random() < dt * 4) c.shake(0.004);
+      head.position.y = -2.8 + reveal * 2.6; arm.position.y = -5.2 + reveal * 4.4; lib.position.y = LIB_Y0 + reveal * (LIB_Y1 - LIB_Y0); if (reveal > 0.05 && Math.random() < dt * 4) c.shake(0.004);
       if (reveal > 0.92 && !shown) { shown = true; document.querySelector('#bars').classList.add('on'); setTimeout(() => document.querySelector('#bars').classList.remove('on'), 4000); c.sound.boom(0.6); c.sound.chords(5); c.egg('statue', 'Under the sand all along: the crown and the torch, up to the shoulder in a beach at the end of the world. You counted everyone and forgot to look down.'); }
     });
     c.clickable(head, () => { c.say(head, 'You maniacs. You counted everyone and never looked down.', 2800, 2.2); c.egg('maniacs'); }, 'The statue');
@@ -3424,6 +3465,9 @@ Object.assign(ROOM, {
     const head = c.glb('libhead', { h: 2.0, y: 5.0, parent: lady, shadow: false });
     const arm = new THREE.Group(); arm.position.set(0.7, 4.6, 0); arm.rotation.z = -0.25; lady.add(arm); const ar = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 2.6, 12), cu); ar.position.y = 1.3; arm.add(ar); const torch = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.2, 0.5, 12), cu); torch.position.y = 2.8; arm.add(torch); const flame = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.6, 12), basic(c, 0xffd070)); flame.position.y = 3.3; arm.add(flame);
     const tab = c.slab(0.9, 1.2, 0.18, cu, -0.8, 3.4, 0.3); tab.rotation.z = 0.3; lady.add(tab);
+    // 2026-10-28: the whole statue, Gravity Jack's model the museum's Liberty Island uses (CC BY 4.0, credit below), heel to
+    // flame 8.8 m at full size; the robe, arm, tablet and the libhead hide only once she lands
+    c.glb('liberty_statue_v2', { h: 8.8, parent: lady, shadow: false, onload: () => { [robe, arm, tab, head].forEach((m) => { m.visible = false; }); libCredit(c, g, 7.6, 3.6, -0.3); } });
     const slimeM = new THREE.MeshStandardMaterial({ color: 0xff4fa3, emissive: 0xc0306a, emissiveIntensity: 0.8, roughness: 0.1, transparent: true, opacity: 0.85 }), slime = [];
     for (let k = 0; k < 14; k++) { const s = new THREE.Mesh(new THREE.CircleGeometry(0.5 + Math.random() * 0.4, 16), slimeM); s.rotation.x = -PI / 2; s.position.set(W / 2 + (Math.random() - 0.5) * 2.4, 0.015, -6 + k * 0.4); s.visible = false; g.add(s); slime.push(s); }
     let walk = 0, dir = 0, arrived = false, hold = 0, step = 0;

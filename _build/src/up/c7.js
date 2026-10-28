@@ -494,6 +494,11 @@ ROOM.bobbyfischer = (c, r, g, X, K) => {
   const bark = new T.MeshStandardMaterial({ color: 0x8a8070, roughness: 1 }), leafT = ctex(c, 512, 512, (q, w, h) => { q.clearRect(0, 0, w, h); for (let k = 0; k < 1400; k++) { const v = Math.random(); q.fillStyle = v < 0.4 ? '#e8902a' : v < 0.7 ? '#f5c542' : v < 0.85 ? '#c8502a' : '#8a6a2a'; q.beginPath(); q.ellipse(Math.random() * w, Math.random() * h, 6 + Math.random() * 9, 4 + Math.random() * 5, Math.random() * PI, 0, 7); q.fill(); } });
   const leafM = new T.MeshStandardMaterial({ map: leafT, alphaTest: 0.45, side: T.DoubleSide, roughness: 0.9 });
   [[0.9, 7.2], [19.1, 7.2], [3.1, -7.5], [16.9, -7.5]].forEach(([x, z]) => { const tr = new T.Mesh(new T.CylinderGeometry(0.22, 0.34, 6.2, 12), bark); tr.position.set(x, 3.1, z); tall.add(tr); c.post(X(x), z, 0.4); for (let k = 0; k < 6; k++) { const m2 = new T.Mesh(new T.PlaneGeometry(3.4 + (k % 3) * 0.6, 3.2), leafM); m2.rotation.set(-H + Math.sin(k * 2.1) * 0.6, k * 1.05, Math.cos(k * 1.7) * 0.4); m2.position.set(x + (x < 10 ? 1 : -1) * (0.6 + (k % 3) * 0.5), 5.2 + k * 0.3, z + (z < 0 ? 1 : -1) * (0.5 + (k % 2) * 0.8)); tall.add(m2); } });
+  // 2026-10-28: London planes from the museum's tree kit (tree_plane, one variant) in autumn colour, 8.5 m; the cylinder trunks and
+  // leaf cards hide once they land, the falling leaves stay
+  const oldTrees = tall.children.slice(); let planesIn = 0;
+  [[0.9, 7.2], [19.1, 7.2], [3.1, -7.5], [16.9, -7.5]].forEach(([x, z], i) => c.glb('tree_plane', { h: 8.5, x: x + (x < 10 ? 0.8 : -0.8), z: z + (z < 0 ? 0.8 : -0.8), ry: i * 1.7, parent: tall, shadow: false,
+    onload: (gg) => { K.leafy(gg, 0xffb060); if (++planesIn === 4) oldTrees.forEach((m) => { m.visible = false; }); } }));
   const NL = c.MOBILE ? 30 : 70, lfT = ctex(c, 32, 32, (q, w, h) => { q.clearRect(0, 0, w, h); q.fillStyle = '#ffffff'; q.beginPath(); q.ellipse(w / 2, h / 2, w * 0.45, h * 0.3, 0.5, 0, 7); q.fill(); });
   const lf = new T.InstancedMesh(new T.PlaneGeometry(0.12, 0.12), new T.MeshStandardMaterial({ map: lfT, alphaTest: 0.4, side: T.DoubleSide }), NL); lf.frustumCulled = false; g.add(lf);
   const LC = ['#e8902a', '#f5c542', '#c8502a', '#a87a2a'].map((h) => new T.Color(h)), ls = [];
@@ -694,6 +699,10 @@ ROOM.deskset = (c, r, g, X, K) => {
   [[1.0, 1.1, 0.75], [0.8, 0.9, 1.35], [0.55, 0.75, 1.9]].forEach(([rr, hh, y]) => { const cn = new T.Mesh(new T.ConeGeometry(rr, hh, 14), fir); cn.position.y = y; tree.add(cn); }); tree.add(c.slab(0.12, 0.3, 0.12, K.std(0x4a2a1a), 0, 0.15, 0)); c.post(X(12.9), -5.9, 0.7);
   const NT = 36, tb2 = new T.InstancedMesh(new T.SphereGeometry(0.04, 8, 6), new T.MeshBasicMaterial({ toneMapped: false }), NT), TC = [new T.Color(3, 0.4, 0.4), new T.Color(0.4, 2.4, 0.6), new T.Color(3, 2.4, 0.5), new T.Color(0.5, 0.9, 3)];
   for (let k = 0; k < NT; k++) { const y = 0.4 + (k / NT) * 1.9, rr = 0.98 * (1 - (y - 0.3) / 2.2) + 0.05, a = k * 2.4; m4.makeTranslation(Math.cos(a) * rr, y, Math.sin(a) * rr); tb2.setMatrixAt(k, m4); tb2.setColorAt(k, TC[k % 4]); } tree.add(tb2);
+  // 2026-10-28: a real little spruce (tree_pine, as on the nineteenth floor) in place of the three cones; nyb_miracle_tree was
+  // too bare at this size. The cones and the trunk hide once it lands, the bulbs and the star's glow stay.
+  const coneD = tree.children.filter((m) => m !== tb2 && m.isMesh);
+  c.glb('tree_pine', { h: 3.0, y: -0.5, parent: tree, shadow: false, onload: (gg) => { coneD.forEach((m) => { m.visible = false; }); K.leafy(gg, null, 0.35); } });
   const star = glow(c, K, tree, 0, 2.4, 0, 0.8, 'rgba(255,230,150,.9)'); c.tick((t, dt, P, ri) => { if (ri === r.i) star.material.opacity = 0.7 + Math.sin(t * 3) * 0.3; });
   const gpts = []; for (let k = 0; k <= 60; k++) { const u = k / 60; gpts.push(new T.Vector3(0.6 + u * 18.8, 3.5 - Math.abs(Math.sin(u * PI * 4)) * 0.35, 7.78)); }
   g.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(gpts), 120, 0.05, 6), K.std(0xc8d0d8, { metalness: 1, roughness: 0.35 })));

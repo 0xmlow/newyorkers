@@ -484,6 +484,10 @@ export const ROOM = {
     const cart = new THREE.Group(); cart.position.set(16.2, 0, 6.4); now.add(cart); cart.add(c.slab(1.4, 0.9, 0.7, K.std(0xd8dce0, { metalness: 0.8, roughness: 0.3 }), 0, 0.6, 0));
     const um = new THREE.Mesh(new THREE.ConeGeometry(1.1, 0.4, 16, 1, true), new THREE.MeshStandardMaterial({ map: c.canvasTex(256, 32, (q, w, h) => { for (let i = 0; i < 16; i++) { q.fillStyle = i % 2 ? '#f5c542' : '#1d4ed8'; q.fillRect(i * 16, 0, 16, h); } }), side: THREE.DoubleSide, roughness: 0.7 })); um.position.y = 2.35; cart.add(um); cart.add(c.slab(0.04, 1.3, 0.04, K.std(0x888888), 0, 1.6, 0));
     const cs = c.sign('N3W FRANKS', { w: 1.2, h: 0.24, bg: '#c8102e', fg: '#fff', font: c.FONT, weight: 900 }); cs.position.set(0, 0.75, 0.36); cart.add(cs); c.post(X(16.2), 6.4, 0.75);
+    // 2026-10-28: the Big Daddy frank cart (nyb_bigdaddy_cart, its own eye flower on the pole) in place of the slab, umbrella and
+    // pole; they hide once it lands and the N3W FRANKS sign moves to its front
+    const oldCart = cart.children.filter((m) => m !== cs);
+    c.glb('nyb_bigdaddy_cart', { len: 1.7, parent: cart, onload: () => { oldCart.forEach((m) => { m.visible = false; }); cs.position.set(0, 1.05, 0.46); } });
     // fog off the river below, gulls over it
     const fogM = new THREE.SpriteMaterial({ map: gtex(K, 'rgba(240,235,225,.35)'), transparent: true, depthWrite: false, opacity: 0.45 }), banks = [];
     for (let k = 0; k < (c.MOBILE ? 3 : 6); k++) { const s = new THREE.Sprite(fogM); s.scale.set(6, 2.2, 1); s.position.set(Math.random() * 20, 0.6 + Math.random(), -7.0 + Math.random() * 0.6); g.add(s); banks.push(s); }

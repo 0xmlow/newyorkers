@@ -109,6 +109,9 @@ export const ROOM = {
     // inside: the torch and the locker tag
     const torch = new THREE.Group(); torch.position.set(9.4, 0, -5.8); cage.add(torch); torch.position.set(-0.6, 0, -0.2);
     const tb = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.26, 10), K.std(0x2a0a4a, { metalness: 0.5 })); tb.rotation.z = PI / 2; tb.position.set(0, 0.49, 0); torch.add(tb);
+    // 2026-10-28: a real torch (Poly Haven small_plastic_torch, CC0, already in the kit) lying on the case, a little purple in its
+    // yellow; the cylinder hides once it lands, the UV glow stays
+    c.glb('ph_small_plastic_torch', { len: 0.26, y: 0.46, ry: PI / 2, parent: torch, shadow: false, onload: (gg) => { tb.visible = false; gg.traverse((m) => { if (m.isMesh) { m.material = m.material.clone(); m.material.color.lerp(new THREE.Color(0x8a4aff), 0.45); } }); } });
     const tglow = new THREE.Sprite(new THREE.SpriteMaterial({ map: K.glowTex('rgba(160,80,255,.7)'), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); tglow.scale.set(0.5, 0.5, 1); tglow.position.set(0.16, 0.49, 0); torch.add(tglow);
     cage.add(c.slab(0.9, 0.46, 0.5, K.std(0x1b1b1e), -0.6, 0.23, -0.2)); const tag = c.sign('LOCKER 3\nGAFFER', { w: 0.34, h: 0.22, bg: '#f5c542', fg: ink, font: c.MONO, weight: 800 }); tag.position.set(0.5, 0.6, -0.2); tag.rotation.x = -0.6; cage.add(tag);
     cage.add(c.slab(0.9, 0.46, 0.5, K.std(0x1b1b1e), 0.6, 0.23, -0.2));

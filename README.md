@@ -281,3 +281,137 @@ MLow could not get to the other side of the Pelham car, and said a few other set
 - Answers, for the record: 7412, up left down down right up, pink up blue half gold down cyan up, TOKEN.
 Not verified: a real phone (the lock panels use native inputs, untested on iOS); the wrap on a 60 minute clock was only
 played by script, so the hint pacing is a guess.
+
+## Free GLB swaps and the crowd trial (2026-10-28)
+
+From the 2026-10-28 audit (`UPGRADE ALL ROOMS 2026-10-28/audit/galleries_movies_records_garyvee_momlow.md`). Every swap keeps
+the old primitives built and hides them only when the model lands (`onload`), so a failed load leaves the set as it was.
+
+- **rink (Elf):** the seven cones are `tree_pine` (one variant cut from the museum tree kit by a Blender pass, Draco 1.1 MB),
+  10.4 m with 2 m of bare trunk under the ice so the boughs reach the ground and the top sits under the star. Ornaments,
+  lights, star, glow and the dolly zoom are untouched. Leaves are cut out (`leafy()` in build.js: alphaTest, no blending).
+- **statuewalk (Ghostbusters II):** robe, arm, tablet and the libhead are the whole `liberty_statue_v2` (Gravity Jack,
+  Sketchfab, CC BY 4.0, the museum's Liberty Island model; prop_pass to 30,000 tris, Draco 660 KB), heel to flame 8.8 m.
+  `libCredit()` stands the plaque STATUE MODEL: GRAVITY JACK, CC BY 4.0 in the set once she loads.
+- **apes (Planet of the Apes):** the same statue at 14 m, leaning, buried to the shoulders, rises with `reveal` in place of
+  the libhead and the cylinder arm; the same credit plaque.
+- **chase (French Connection):** the el train slab is three `h_subway_car` coupled nose to tail.
+- **apartment and deskset (office parties):** `tree_pine` at 2.8 and 3 m with their trunks under the floor. The audit named
+  `nyb_miracle_tree`; it was tried and is a bare sapling that all but vanished at that size, so it was not used.
+- **kateleopold (2001 side):** the slab cart, umbrella and pole are `nyb_bigdaddy_cart`; the N3W FRANKS sign moved to its front.
+- **bobbyfischer (Washington Square):** the four cylinder trunks and leaf cards are `tree_plane` (museum kit, one variant,
+  Draco 950 KB) at 8.5 m in autumn tint; the falling leaves stay.
+- **The crowd trial, `?crowd=new`, off by default.** `src/crowd.js` gives every flower headed extra a body cut from the cast
+  we already generated: `_build/crowd_pass.py` takes eight Tripo characters (agent, tracksuit, writer, cabbie, workgirl,
+  wiseguy, actress, annieh), cuts each below its sculpted head (the extra keeps its eye flower sprite head, so heads still
+  turn), decimates to 1,800 tris (body) and 1,000 (seated torso), 256 px texture, about 90 KB each. Copies share their
+  character's geometry and one material per character and colour; the extra's colour tints it 30 percent, scale jitters
+  plus or minus 5 percent. Measured in headless Chrome (main scene pass): Grand Central 865 draw calls and 711k tris old,
+  803 and 852k new on desktop; 162 and 116k old, 149 and 141k new on the phone path. The Jury Room 280 and 589k old,
+  280 and 599k new. Shots in `UPGRADE ALL ROOMS 2026-10-28/shots/movies/crowd_*`.
+  To adopt it elsewhere: copy `crowd.js` and the `crowd_*.glb` files, call `crowdInit({ THREE, loader, base, on, clickable })`
+  once, and call `crowdBody(o, { seated, col, hide: [oldBody, oldLegs] })` inside the gallery's extra() before its head is added.
+- **Not verified:** nothing was walked by hand or tried on a real phone; the crowd's waltz, conga and jury moves were not
+  watched in motion; some cut characters keep a few petal drips at the neck under the sprite head; the train is seen from
+  a scripted outside camera, since from the street the deck hides it, as it always did.
+
+## The crowd, on by default: whole characters (2026-10-28, later)
+
+MLow approved the crowd trial for every gallery, then ruled on its method: use the WHOLE character, its own sculpted eye
+flower head included, and hide the old sprite head (a second flower on top looked silly). So the trial's neck cuts (and
+their petal drips) are gone, and the eight trial files of 45a283b with them. On by default; `?crowd=old` brings back the
+cylinder, box and sprite head, which stay built and hide only once a character lands.
+
+- **Cast: 22.** `_build/crowd_pass.py` decimates each whole character to 3,000 triangles (512 px texture) and, for big
+  instanced crowds, 380 (`_lite`, 256 px), in metres: standing 1.88 m to the flower's top (the sprite's top was 1.93, so the
+  hats the sets put at about 1.9 m still sit on it). 18 standing: actress, agent, annieh, assistant, auggie, blindwoman,
+  broker, cabbie, editor, gown, killer, oscar, rosemary, tough, usher, wiseguy, workgirl, writer. 4 seated, whole with their
+  own seat: folksinger (stool and guitar), sally (cafe table and bentwood chair), lensman (wheelchair and long lens), robber
+  (cross legged on the floor). 40 files, Draco, 1.9 MB together; `crowd.js` loads a file only when a set casts it. Command:
+  `Blender -b -P _build/crowd_pass.py -- actress:-90,annieh:-90,assistant:-90,blindwoman:180,cabbie:90,editor:-90,gown:-90,killer:-90,oscar:-90,rosemary:-90,tough:0,wiseguy:-90,workgirl:-90,writer:90,agent:-90,broker:-90,usher:-90,auggie:-90,folksinger:-90:1.5,sally:0:1.4,lensman:0:1.5,robber:-90:1.1`
+  (yaws read off four view renders), then `python3 _build/draco.py crowd_...`; delete the four seated `_lite` files.
+- **Full length only (feet lineup, later the same day).** A Blender feet lineup for MoMLOW found agent, auggie, broker and usher
+  (also bookseller, dad, hijacker, jeweler, sonny, tracksuit) were generated cut off above the knee and read as sunk into the
+  floor when standing. They are out of every crowd pool and the VeeCon set, their crowd files deleted; bartender, felix,
+  loretta, golfer and clerk came in (`crowd_pass.py -- bartender:-90,felix:-90,loretta:-90,golfer:-90,clerk:-90`). The
+  standing cast is now 19, all full length: actress, annieh, assistant, bartender, blindwoman, cabbie, clerk, editor, felix,
+  golfer, gown, killer, loretta, oscar, rosemary, tough, wiseguy, workgirl, writer. Shots `*_v3.jpg`.
+- **Seated extras** take only seated characters (a standing one would stand up through the table). They stand their seat
+  on the extra's floor, so Katz's patrons, the jurors and the office desks get a stool, a chair or a wheelchair of their own.
+- **Head tricks.** When a character lands, `o.userData.head` becomes a pivot at its feet, so tricks that turned the sprite
+  now turn the whole character on its vertical axis: Katz's deli turning to look at you, the clerks' nod in The Crowd (a
+  small sway now). The Annie Hall line reads where you look from the head's world position, so it adds `userData.headY`.
+- **Casting.** `crowd.js` POOLS (walkers, suits, night, dressy, seated); `build.js` CROWD_CAST names a pool per set (juries,
+  offices and trading floors in suits, the parade and the supper clubs dressy, the clubs and the Bronx at night, Five Points in
+  oscar, tough, killer, felix, cabbie and wiseguy, Grand Central walkers). An extra can pass its own `pool`. The two camera
+  only avatars (the Tootsie monitors, the Reflector mirrors) keep their cylinders (`crowd: false`).
+- **Rejected:** tracksuit, hijacker, bookseller and hustler were left out to keep the cast near the 16 to 20 asked; nothing
+  wrong with them whole. The 0.6 scaled "kids" are small adults, as before.
+- **Measured** (headless Chrome, main scene pass, `?room=<id>` start view, old to new): Grand Central 870 draw calls and 711k
+  tris to 713 and 947k on desktop, 871 and 630k to 757 and 777k on the phone path (pointer coarse, 844 x 390); Five Points
+  554 and 626k to 498 and 732k; Katz's 404 and 897k to 373 and 938k. Shots in
+  `../UPGRADE ALL ROOMS 2026-10-28/shots/crowd_rollout/movies_*`.
+- **Not verified:** nobody walked it by hand or on a real phone; crowds were seen standing, not in motion (the waltz, the
+  conga, the parade, the deli turning to you were not watched); characters glide, they are not rigged.
+
+## The crowd walks and looks: the rigged cast (2026-10-28, later)
+
+MLow asked to roll the rigged cast (`../UPGRADE ALL ROOMS 2026-10-28/rig/`, rig_pass.py, free headless Blender: 26 figures at
+3,000 triangles with a skeleton, `walk` and `idle` clips and a bone named `head`) into the crowds. `crowd.js` (shared by ON
+LOCATION, ON RECORD and CLOUDS AND DIRT V2) now does it; `?rig=off` keeps every character static, `?crowd=old` still brings
+back the cylinders.
+
+- **Files.** The 25 rigs used are copied as `rig_<name>.glb` into ON LOCATION's `work/glb_pass` (ON RECORD and CLOUDS build
+  from there), not Draco, about 6 MB; a gallery fetches one only when a near extra needs it. Sally stays static (her raised
+  hands follow the head); assistant and golfer have no rig. The 18 lite rigs are not used: VeeCon stays instanced and static.
+- **The cap.** Every quarter second the nearest 20 rigged extras within 30 m (8 on a phone) become skinned clones
+  (`SkeletonUtils.clone`, one mixer each, a random start in the clip); the rest stay the static 3,000 triangle mesh.
+- **Walk.** Each extra's path speed is read from its world position every frame and smoothed over about a second (so a bob or
+  a sway in place, like a pit, does not start a walk). Over 0.25 m/s a figure with a walk clip faces its path (in its own
+  frame) and plays `walk` at timeScale = speed / (walk speed x scale), so the planted foot holds; otherwise `idle`, with a
+  crossfade. Idle only figures (clerk, felix, blindwoman, prince, the seated four) and figures without a rig are kept out of
+  the pools whose extras walk (walkers, Harlem, CLOUDS_CROWD), since they would glide; hustler, susan, discoking and maitre
+  came in as statics (crowd_pass.py) to fill them.
+- **Head tricks.** `o.userData.head` is now `look`, an empty at head height: a trick turns it as it turned the sprite, and
+  each frame the head bone takes up to 60 degrees of that turn (25 for bartender and susan, whose shaker hand and hair bow
+  stretch past that), the body the rest; static figures turn whole, as before. The turn is about world up converted into the
+  head's own frame, and the head is reset to rest before the mixer runs (HEAD_TURN_FIX.md): the head bone's rest is tilted,
+  and a first pass that turned it on its own Y spun the flower edge-on and smeared it into a white sheet on the folk singer
+  in Katz's. Checked with stills at 45 degrees (`rig_front_and_head45.jpg`, `rig_blindwoman_head45.jpg`,
+  `rig_folksinger_head45.jpg`: the flower face toward the camera) and on film (Katz's deli). The nods (rotation.z) roll the
+  head about the figure's forward axis the same way. The Annie Hall line reads the head position from `look`.
+- **Static facing.** The front stills also caught three static crowd files facing backwards or sideways since the first
+  pass (cabbie, writer, susan; their yaws had come from main.js's YAW table, not from renders). crowd_pass.py reran them at
+  -90 degrees; they now face the way their rigs do.
+- **Rig facing.** Four rig files face the wrong way (rig_pass turned every cast file the same -90 degrees): blindwoman and
+  hustler face +X, lensman and tough -X (blindwoman is now noted in rig_manifest.json too). `RIG_YAW` in crowd.js turns them
+  inside the rig root; the rig source was not edited (read only). Blindwoman's front still matches her static file.
+- **Measured** (headless Chrome, main scene pass, start view; frame = main thread JS per rendered frame, crowd = crowdTick):
+  Grand Central desktop rig off 717 draw calls, 947k tris, 3.2 ms; rig on 726, 954k, 3.8 ms (crowd 0.16 ms, 20 skins); phone
+  path rig off 762, 777k, 3.5 ms; rig on 761, 777k, 3.6 ms (crowd 0.08 ms, 8 skins). Films in `../UPGRADE ALL ROOMS 2026-10-28/shots/rig_rollout/`:
+  `movies_grandcentral_rig.mp4` and `movies_katz_look_rig.mp4` with `_sheet.jpg` contact sheets, frame exact (a virtual
+  clock, one render per frame), watched frame by frame: walkers face their path, no tears; the deli turns to you.
+- **Not verified:** by hand, on a real phone; GPU time per frame (headless renders about two frames a second here, so only main
+  thread JS was timed); the waltz (it did not fire in the filmed 7 s); feet were checked on a grid for one Grand Central walker
+  (the planted foot drifts 2 to 3 cm over 8 frames, inside the smoothing lag), not for every figure; the Grand Central hats
+  (c5.js, 1.86 to 1.93 m) perch on the flower tops and bob only with the extra, not the head.
+
+## Round two (2026-10-28): THE WRAP and the skate park
+
+The audit had skipped two parts of ON LOCATION. Both are audited now, with free swaps only.
+
+- **THE WRAP (set 105, `src/up/e1.js`).** Already dressed with Poly Haven props in round thirteen (the table, lamp, crates,
+  ladder, monitor, barrel, the wet floor sign). Code built and close up: the UV torch in the prop cage, a purple cylinder, is
+  now Poly Haven `small_plastic_torch` (CC0, already in the kit), a little purple in its yellow, the glow kept, the cylinder
+  hidden once it lands. Left as they are: the fridge, the lockers, the flight case, the fresnels, the slate road cases, the
+  lighting board and the walkie (no free model fits; each is part of a puzzle, and the fridge and lockers would need
+  `generate: Tripo`). The stagehand in the office corner draws from a crew pool (tough, cabbie, writer, workgirl) and is
+  rigged like the rest of the crowd.
+- **The skate park (`src/skatepark.js`).** Every ramp, rail, ledge, pyramid and roller is code because skate.mjs rides its
+  exact surfaces; a GLB in its place would not match the physics, so none was swapped. The rider is a cast GLB on the board.
+  Not changed, flagged: the rider roster in main.js still offers the cut models (agent, broker, jeweler, sonny, tracksuit,
+  auggie, bookseller, dad), which would stand sunk on the board.
+- **Lite tier 380 to 300 triangles** (crowd_pass.py): the VeeCon crowd on a phone in CLOUDS V1 was +32 percent at 380.
+- **Checked:** same camera before and after shots in `../UPGRADE ALL ROOMS 2026-10-28/shots/round2/movies_wrap_*` and
+  `movies_skatepark_coney_*`; films `movies_wrap_rig.mp4` and `movies_skatepark_coney.mp4`; every set rendered headless
+  with no console errors. **Not verified:** by hand, the escape room played through, skating the park by hand.
