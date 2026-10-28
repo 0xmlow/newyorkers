@@ -72,3 +72,35 @@ ruin everything) are introduced with "as he says".
 - Phones: the lobby and the carousel were shot as an iPhone and laid out; the phone guard is inherited from ON RECORD, untried on
   a device.
 - Spend: $0 (Firefly on the silan account's unlimited plan, ChatGPT ImageGen through Codex, CC0 and existing models, local depth).
+
+## Round two (2026-10-28): what V2 got tonight, ported
+
+MLow approved a free round for V1 too, so his never-edit rule for V1 is lifted for this pass. Everything V2 got tonight:
+
+- **The crowd.** `_build/src/crowd.js` (ON LOCATION's, identical in every gallery) and `extra()` in build.js: every flower
+  headed extra is a whole cast character with its own sculpted eye flower head, the sprite head hidden (never a second head),
+  full length models only. Standing extras draw from CLOUDS_CROWD, seated ones from the seated cast. The studio's see through
+  ghost of you keeps its cylinder. `?crowd=old` brings back the cylinders.
+- **The rigged cast.** The nearest 20 extras (8 on a phone) become skinned clones that walk at their path speed or idle;
+  head tricks turn the head bone about world up in its own frame (HEAD_TURN_FIX.md), up to 60 degrees, the body the rest; the
+  rig facing yaws (blindwoman, hustler, lensman, tough) and the susan re-rig come with crowd.js. `?rig=off` keeps them static.
+- **VeeCon** stays instanced: eight whole characters at 300 triangles (the lite parts), one InstancedMesh each, the
+  instanced sprite heads hidden once they land.
+- **Leads** on cut models that read sunk: floor 25's strategist is wiseguy (was agent), the Exchange trader annieh (was
+  broker), the skate roster follows. Still cut and standing, not changed: dad, bookseller, the VeeCon MC tracksuit.
+- build.py now reads crowd.js, so the crowd and rig files ship.
+
+**Audit and free swaps.** V1's twelve floors are byte for byte V2's before its wing (build.js at V2 e7e600c), so the
+2026-10-28 audit of V2 (`../UPGRADE ALL ROOMS 2026-10-28/audit/galleries_movies_records_garyvee_momlow.md`) holds for them:
+the helmet, carousel canopy, 1997 computer, lift car and hoops need paid generation or a Sketchfab download by MLow, and the
+office desks, searchlights and spit bucket candidates were rejected on sight in V2. One free swap that V2's pass missed:
+- **dirt (B1): the folding table** of finds was a grey slab on four sticks. It is two Poly Haven `metal_office_desk` (CC0,
+  already shipped by ON LOCATION) at their own 2 m and 0.79 m, so the finds sit on their tops as on the slab; the slab and
+  legs hide once both land. The floor's kicker still says "a folding table"; the copy is MLow's to change.
+
+**Checked:** same camera before and after shots in `../UPGRADE ALL ROOMS 2026-10-28/shots/round2/garyveev1_*`; film
+`garyveev1_attention_rig.mp4` (the Exchange pit); every floor rendered headless with no console errors. Numbers (main scene
+pass): VeeCon filled 103 draw calls and 413k tris before, 108 and 550k with ?rig=off, 120 and 586k after on desktop; on the
+phone path 139 and 193k before, 146 and 272k rig off, 153 and 293k after. The 180 instanced visitors alone add 47k (+24
+percent of the old floor); the rest is the floor's ordinary extras as whole characters and the 8 skins.
+**Not verified:** by hand, on a real phone, GPU time.

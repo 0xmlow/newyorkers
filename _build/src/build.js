@@ -3,6 +3,7 @@
 // appears only as MLow painted him, and the only faces are his portraits.
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { W, D, H_IN, PORTAL } from './rooms.js';
+import { crowdBody, crowdParts, CROWD } from './crowd.js';
 
 const PI = Math.PI;
 const INK = ['#f5c542', '#ff4fa3', '#22d3ee', '#3b82f6', '#ffffff', '#ff7a1a'];
@@ -132,13 +133,20 @@ function flyer(c, text, bg = '#f4ead2') { return c.canvasTex(128, 160, (q, w, h)
 
 
 const HEAD = {};
-function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0 } = {}) {
+// the tower's crowd (crowd.js): office and street New Yorkers, walkers and suits; the guards stay the usher (cast)
+const CLOUDS_CROWD = ['workgirl', 'wiseguy', 'cabbie', 'editor', 'annieh', 'rosemary', 'writer', 'tough', 'bartender', 'hustler', 'susan', 'oscar'];
+
+// a seated or standing extra; since 2026-10-28 its body is one of the cast cut for crowds (crowd.js), the cylinder and box
+// hidden once it lands; ?crowd=old keeps them
+function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, pool, crowd = true } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; g.add(o);
   const h = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = h + (seated ? 0.36 : 1.0); o.add(body);
-  if (!seated) { const legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
+  let legs = null; if (!seated) { legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98));
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: HEAD.t, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; return o;
+  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head;
+  if (crowd) crowdBody(o, { seated, col, hide: legs ? [body, legs, head] : [body, head], pool: pool || (seated ? 'seated' : CLOUDS_CROWD) });   // the whole cast character (crowd.js), its own flower head; the sprite hidden once it lands
+  return o;
 }
 
 function facade(c, g, { x0 = 0, w = 20, h = 16, z = -24, cols = 6, rows = 4, draw }) {
@@ -397,7 +405,10 @@ const ROOM = {
   dirt(c, r, g, X) {
     const { THREE } = c;
     const tbl = c.slab(3.4, 0.06, 1.0, std(c, 0x8a8a8a, { metalness: 0.4, roughness: 0.5 }), 10, 0.76, -2.4); g.add(tbl);
-    for (const [x, z] of [[8.5, -2.8], [11.5, -2.8], [8.5, -2.0], [11.5, -2.0]]) g.add(c.slab(0.04, 0.76, 0.04, std(c, 0x333333), x, 0.38, z));
+    const tlegs = [[8.5, -2.8], [11.5, -2.8], [8.5, -2.0], [11.5, -2.0]].map(([x, z]) => { const l = c.slab(0.04, 0.76, 0.04, std(c, 0x333333), x, 0.38, z); g.add(l); return l; });
+    // 2026-10-28: two Poly Haven steel desks (metal_office_desk, CC0, already shipped by ON LOCATION) at their own 2 m and 0.79 m,
+    // so the finds sit on their tops as on the slab; the slab and its legs hide once both land
+    let desks = 0; [9.0, 11.0].forEach((x) => c.glb('ph_metal_office_desk', { len: 2.0, x, z: -2.4, parent: g, onload: () => { if (++desks === 2) [tbl, ...tlegs].forEach((m) => { m.visible = false; }); } }));
     c.wall(X(8.2), -2.95, X(11.8), -2.95); c.wall(X(8.2), -1.85, X(11.8), -1.85); c.wall(X(8.2), -2.95, X(8.2), -1.85); c.wall(X(11.8), -2.95, X(11.8), -1.85);
     const lbl = c.sign('TRASH TALK · GARAGE SALE FINDS · BUY LOW, SELL ON THE INTERNET', { w: 3.2, h: 0.24, bg: '#f4ead2', fg: '#111', font: c.MONO, weight: 800 }); lbl.position.set(10, 1.3, -2.95); g.add(lbl);
     // the finds: Poly Haven props, each with a sticker price and what the internet pays
@@ -582,7 +593,8 @@ const ROOM = {
     });
     plaque(c, g, 10, 5.0, D / 2 - 0.2, PI, 'Document, don\'t create.', 'THE CONTENT MODEL, 2016', 2.0);
     const fl = c.sign('25 · VAYNERMEDIA · 10 HUDSON YARDS · THE WHOLE FLOOR AND HALF OF 24', { w: 5.6, h: 0.3, bg: null, fg: '#f5c542', font: c.MONO, weight: 700, glow: 8 }); fl.position.set(10, 5.5, -7.86); g.add(fl);
-    cast(c, r, g, X, 'agent', 12.6, -1.2, { h: 1.85, ry: 0.4, line: 'Media and creative under one roof. He says it in London, he says it in Singapore, he says it in the lift.', egg: 'oneroof', hint: 'A strategist' });
+    cast(c, r, g, X, 'wiseguy', 12.6, -1.2, { h: 1.85,   // was agent, whose model stops above the knee and read sunk (2026-10-28)
+      ry: 0.4, line: 'Media and creative under one roof. He says it in London, he says it in Singapore, he says it in the lift.', egg: 'oneroof', hint: 'A strategist' });
     cast(c, r, g, X, 'workgirl', 5.0, 0.6, { h: 1.75, ry: PI, line: 'Five hundred and sixty desks on a floor and a half. Pack them in, he said. We packed them in.', egg: 'desks', hint: 'Somebody at a desk' });
     cast(c, r, g, X, 'assistant', 9.0, 3.6, { h: 1.75, ry: -0.6, line: 'The town hall is the pantry. Every all hands happens next to the coffee. That is not an accident.', egg: 'townhall', hint: 'At the pantry' });
   },
@@ -609,7 +621,7 @@ const ROOM = {
     c.tick((t, dt, P, ri) => {
       if (ri !== r.i) { if (recording) { recording = false; rec.style.opacity = 0; } return; }
       if (recording) { const u = t - t0; rec.textContent = `● REC  00:0${Math.min(6, Math.floor(u))}`; path.push([P.x - r.x0, P.z, P.yaw]); if (u >= 6) { recording = false; rec.style.opacity = 0; c.sound.tick(); clips++;
-          ghost = extra(c, g, path[0][0], path[0][1], { col: 0xff4fa3 }); ghost.traverse((o) => { if (o.material) { o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = 0.55; } }); ghostT = 0;
+          ghost = extra(c, g, path[0][0], path[0][1], { col: 0xff4fa3, crowd: false }); ghost.traverse((o) => { if (o.material) { o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = 0.55; } }); ghostT = 0;
           c.egg('clip', 'That is you, on loop, forever, next to the desk. Six seconds of nothing special is a clip. Document, do not create.'); if (clips >= 3) c.egg('reclips', 'Three takes. He would have posted the first one.'); } }
       if (ghost && path.length) { ghostT += dt * 60; const k = Math.floor(ghostT) % path.length, [x, z, yaw] = path[k]; ghost.position.set(x, Math.abs(Math.sin(ghostT * 0.2)) * 0.02, z); ghost.rotation.y = yaw; }
     });
@@ -719,9 +731,26 @@ const ROOM = {
     const spots = []; for (let i = 0; i < MAXN; i++) { const ring = Math.floor(i / 18) + 1; let x, z; if (i === 0) { x = 10; z = -2.6; } else { const a = (i % 18) / 18 * PI * 1.2 - PI * 0.1 + Math.random() * 0.1, rr = 1.8 + ring * 0.75 + Math.random() * 0.3; x = 10 + Math.cos(a) * rr * 1.6; z = -1.2 - Math.sin(a) * rr; } spots.push([Math.max(1, Math.min(19, x)), Math.max(-7.4, Math.min(2.8, z)), Math.random() * 6, 0.9 + Math.random() * 0.15]); }
     const M = new THREE.Matrix4(), col = new THREE.Color(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), Pv = new THREE.Vector3();
     let walked = 0, shown = 1, last = [0, 0], confetti = null, big = false;
-    const place = (i, t) => { const [x, z, ph, sc] = spots[i], bob = Math.abs(Math.sin(t * 5 + ph)) * 0.18; Pv.set(x, 0.5 * sc + bob, z); S.set(sc, sc, sc); Q.identity(); M.compose(Pv, Q, S); bodies.setMatrixAt(i, M); Pv.set(x, 1.3 * sc + bob, z); M.compose(Pv, Q, S); heads.setMatrixAt(i, M); };
-    for (let i = 0; i < MAXN; i++) { place(i, 0); bodies.setColorAt(i, col.setHex([0x1a1a22, 0x2a2a3a, 0x5a1030, 0x1a2a4a, 0x3a2a1a][i % 5])); }
+    // the visitors (2026-10-28): eight whole characters of the cast, their own flower heads included, at 300 triangles (crowd.js,
+    // the lite part), one InstancedMesh each holding every eighth visitor; the cylinders and sprite heads stay until they land
+    // and come back with ?crowd=old
+    const VEECON = ['editor', 'workgirl', 'golfer', 'assistant', 'cabbie', 'wiseguy', 'rosemary', 'tough'], VCOL = [0x1a1a22, 0x2a2a3a, 0x5a1030, 0x1a2a4a, 0x3a2a1a];
+    let vb = null; const BS = 1.6 / 1.88, Qb = new THREE.Quaternion(), UP = new THREE.Vector3(0, 1, 0);
+    const place = (i, t) => { const [x, z, ph, sc] = spots[i], bob = Math.abs(Math.sin(t * 5 + ph)) * 0.18; Q.identity(); S.set(sc, sc, sc);
+      if (vb) { const n = vb.length, m = vb[i % n]; Pv.set(x, bob, z); Qb.setFromAxisAngle(UP, Math.sin(ph * 3.1) * 0.35); S.setScalar(sc * BS); M.compose(Pv, Qb, S); m.setMatrixAt((i / n) | 0, M); S.set(sc, sc, sc); }
+      else { Pv.set(x, 0.5 * sc + bob, z); M.compose(Pv, Q, S); bodies.setMatrixAt(i, M); }
+      Pv.set(x, 1.3 * sc + bob, z); M.compose(Pv, Q, S); heads.setMatrixAt(i, M); };
+    for (let i = 0; i < MAXN; i++) { place(i, 0); bodies.setColorAt(i, col.setHex(VCOL[i % 5])); }
     bodies.instanceMatrix.needsUpdate = true; heads.instanceMatrix.needsUpdate = true;
+    const counts = () => { if (vb) vb.forEach((m, k) => { m.count = Math.max(0, Math.ceil((shown - k) / vb.length)); m.instanceMatrix.needsUpdate = true; }); };
+    if (CROWD.on) crowdParts(VEECON, 'lite').then((parts) => {
+      if (!parts.length) return;
+      const n = parts.length, wh = new THREE.Color();
+      vb = parts.map((p, k) => { const m = new THREE.InstancedMesh(p.geo, p.mat.clone(), Math.ceil(MAXN / n)); m.material.envMapIntensity = 1.0; m.frustumCulled = false;
+        for (let j = 0; j * n + k < MAXN; j++) m.setColorAt(j, wh.setHex(0xffffff).lerp(col.setHex(VCOL[(j * n + k) % 5]), 0.3));
+        g.add(m); c.clickable(m, front, 'The front row'); return m; });
+      bodies.visible = false; heads.visible = false; for (let i = 0; i < MAXN; i++) place(i, 0); counts();
+    });
     const cf = c.MOBILE ? 200 : 500, cfG = new THREE.PlaneGeometry(0.08, 0.14), cfM = new THREE.InstancedMesh(cfG, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, toneMapped: false }), cf), cfP = new Float32Array(cf * 4); cfM.visible = false; g.add(cfM);
     for (let i = 0; i < cf; i++) { cfP[i * 4] = Math.random() * W; cfP[i * 4 + 1] = 6 + Math.random() * 6; cfP[i * 4 + 2] = -7 + Math.random() * 10; cfP[i * 4 + 3] = Math.random() * 6; cfM.setColorAt(i, col.setHex([0xff4fa3, 0x22d3ee, 0xf5c542, 0xffffff][i % 4])); }
     c.tick((t, dt, P, ri) => {
@@ -730,13 +759,14 @@ const ROOM = {
       if (mv < 0.5) walked += mv;
       const want = Math.min(MAXN, 1 + Math.floor(walked * 9)); const count = 1 + Math.floor(walked * 120);
       if (want !== shown) { shown = want; bodies.count = shown; heads.count = shown; }
-      for (let i = 0; i < shown; i++) place(i, t); bodies.instanceMatrix.needsUpdate = true; heads.instanceMatrix.needsUpdate = true;
+      for (let i = 0; i < shown; i++) place(i, t); bodies.instanceMatrix.needsUpdate = true; heads.instanceMatrix.needsUpdate = true; counts();
       if ((t * 6 | 0) !== ((t - dt) * 6 | 0)) draw(Math.min(count, 7000));
       beams.forEach(({ b, k }) => { b.rotation.x = Math.sin(t * 0.7 + k) * 0.5; b.rotation.z = Math.sin(t * 0.5 + k * 1.3) * 0.4; });
       if (count >= 7000 && !big) { big = true; cfM.visible = true; c.flash(0.7); c.sound.applause(5); c.egg('seventhousand', 'Seven thousand, from forty seven states and seventy countries, in a football stadium in Minneapolis, because one guy kept moving. One was greater than zero.'); }
       if (cfM.visible) { for (let i = 0; i < cf; i++) { cfP[i * 4 + 1] -= dt * (1.2 + (i % 5) * 0.3); if (cfP[i * 4 + 1] < 0.7) cfP[i * 4 + 1] = 8 + Math.random() * 3; Pv.set(cfP[i * 4] + Math.sin(t * 2 + cfP[i * 4 + 3]) * 0.3, cfP[i * 4 + 1], cfP[i * 4 + 2]); Q.setFromEuler(new THREE.Euler(t * 2 + i, cfP[i * 4 + 3], 0)); S.set(1, 1, 1); M.compose(Pv, Q, S); cfM.setMatrixAt(i, M); } cfM.instanceMatrix.needsUpdate = true; }
     });
-    c.clickable(bodies, () => { c.sound.applause(1.5); c.egg('onegreater', 'The first one. One person in the room is greater than zero, and he would do the whole keynote for them. Keep moving and the rest show up.'); }, 'The front row');
+    function front() { c.sound.applause(1.5); c.egg('onegreater', 'The first one. One person in the room is greater than zero, and he would do the whole keynote for them. Keep moving and the rest show up.'); }
+    c.clickable(bodies, front, 'The front row');
     const mc = cast(c, r, g, X, 'tracksuit', 3.6, 5.6, { h: 1.8, ry: 0.9, line: 'VeeCon, 2022. No tickets, only the tokens. Every single holder got in. The coolest business conference, he said. He was not wrong about the coolest.', egg: 'mc', hint: 'The MC' });
     cast(c, r, g, X, 'dancer', 16.4, 5.6, { h: 1.8, ry: -0.9, line: 'Minneapolis, then Indianapolis, then Los Angeles. Then a year off. The next one is coming, they keep saying.', egg: 'veecons', hint: 'A dancer' });
     plaque(c, g, 10, 2.0, 7.86, PI, 'We want to be the coolest business conference.', 'GARY VAYNERCHUK, ON VEECON', 2.2);
@@ -779,7 +809,8 @@ const ROOM = {
     const pennies = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.18, 0.3, 20), std(c, 0xb87333, { metalness: 0.9, roughness: 0.35 })); pennies.position.set(16.6, 0.94, 5.4); g.add(pennies);
     const jl = c.sign('$1.80', { w: 0.5, h: 0.14, bg: '#f4ead2', fg: '#111', font: c.MONO, weight: 900, px: 48 }); jl.position.set(16.6, 1.28, 5.62); g.add(jl);
     c.clickable(jar, () => { c.sound.clink(2200); c.egg('pennies', 'A dollar eighty in pennies. Ninety comments at two cents each, which is how a nobody becomes a somebody on any platform that has a comment box.'); }, 'The penny jar');
-    cast(c, r, g, X, 'broker', 3.2, -4.6, { h: 1.85, ry: 0.6, line: 'Short video is at a hundred and twelve. Sell. Everybody and their aunt is on it now.', egg: 'broker1', hint: 'A trader' });
+    cast(c, r, g, X, 'annieh', 3.2, -4.6, { h: 1.85,   // was broker, whose model stops above the knee and read sunk (2026-10-28)
+      ry: 0.6, line: 'Short video is at a hundred and twelve. Sell. Everybody and their aunt is on it now.', egg: 'broker1', hint: 'A trader' });
     cast(c, r, g, X, 'editor', 17.2, -3.4, { h: 1.8, ry: -1.4, line: 'The new app is at nineteen and nobody wants it. That is the one. That is always the one.', egg: 'broker2', hint: 'A trader' });
     plaque(c, g, 10, 2.2, 7.86, PI, 'I day trade attention and build businesses.', 'GARYVAYNERCHUK.COM, LINE ONE', 2.2);
   },
