@@ -61,7 +61,7 @@ def assets():
     clone(os.path.join(S, "hdri", "night.hdr"), os.path.join(A, "env", "night.hdr"))
     for p in MUSEUM_PROPS:
         clone(os.path.join(S, "props", f"{p}.glb"), os.path.join(A, "glb", f"{p}.glb"))
-    for p in ["hydrant", "pigeon", "rat", "cat"]:   # THE MARKS heroes, reused
+    for p in ["hydrant", "pigeon", "rat", "cat", "tower"]:   # THE MARKS heroes, reused (tower: the roof tank, 2026-10-28)
         clone(os.path.join(MARKS, "work", "glb_pass", f"{p}.glb"), os.path.join(A, "glb", f"{p}.glb"))
     clone(os.path.join(SITE_REPO, "assets", "brand", "logos", "n3w-01.png"), os.path.join(A, "logo.png"))
     # only the models some set names: recipe sources (*_cut, *_src_*) and spare Poly Haven downloads stay in work/
@@ -69,7 +69,7 @@ def assets():
     shutil.rmtree(os.path.join(A, "glb"), ignore_errors=True)   # so a model dropped from every set leaves the package too
     for p in MUSEUM_PROPS:
         clone(os.path.join(S, "props", f"{p}.glb"), os.path.join(A, "glb", f"{p}.glb"))
-    for p in ["hydrant", "pigeon", "rat", "cat"]:
+    for p in ["hydrant", "pigeon", "rat", "cat", "tower"]:
         clone(os.path.join(MARKS, "work", "glb_pass", f"{p}.glb"), os.path.join(A, "glb", f"{p}.glb"))
     for f in sorted(os.listdir(os.path.join(ONLOC, "glb_pass"))):
         if f.endswith(".glb") and f[:-4] in used:

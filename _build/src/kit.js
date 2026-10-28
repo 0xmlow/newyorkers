@@ -58,6 +58,11 @@ export function steam(c, g, x, y, z, col = 'rgba(230,230,230,.35)', rise = 2.2) 
 
 // ---------- the CC0 prop library (Poly Haven) and the cast (ON LOCATION's Tripo eye flower GLBs) ----------
 // [name, x, z, { h | len, ry, y, r: collider radius, egg: [hint, id, line], snd }]. Names are Poly Haven ids, files ph_<id>.glb.
+// a free GLB over a built stand in: the stand in is built first and hidden only when the model lands, so a failed load
+// leaves the room as it was (the museum's heroes.ts pattern). o takes glb()'s h, len, x, y, z, ry; o.then(gg, sc) runs after.
+export function swap(c, parent, name, hide, o = {}) {
+  return c.glb(name, { ...o, parent, quiet: true, onload: (gg, sc) => { for (const m of hide) m.visible = false; o.then && o.then(gg, sc); } });
+}
 export function prop(c, r, g, X, name, x, z, o = {}) {
   const m = c.glb(/^(nyb_|ph_)/.test(name) || o.raw ? name : 'ph_' + name, { h: o.h, len: o.len, x, y: o.y || 0, z, ry: o.ry || 0, parent: g, shadow: !o.y });
   if (o.r) c.post(X(x), z, o.r);

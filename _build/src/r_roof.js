@@ -2,7 +2,7 @@
 // and the Williamsburg Bridge with the J crossing it. The trick: open the coop and the flock goes out over the river
 // and draws the shape everybody on this block already knows, an eye flower, in the air above the bridge.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, prop, relief, glowTex, eyeFlower, sheet, stamp, art, artTex, anamorph } from './kit.js';
+import { PI, std, basic, box, cyl, decal, prop, swap, relief, glowTex, eyeFlower, sheet, stamp, art, artTex, anamorph } from './kit.js';
 
 export function roof(c, r, g, X) {
   const { THREE } = c;
@@ -20,6 +20,8 @@ export function roof(c, r, g, X) {
     const cone = new THREE.Mesh(new THREE.ConeGeometry(1.85, 1.3, 24), std(c, 0x4a3a2a, { roughness: 0.9 })); cone.position.y = 7.6; T.add(cone); T.add(cyl(c, 0.1, 0.02, 0.5, steel, 0, 8.4, 0, 8));
     const lad = std(c, 0x2a2a2e, { metalness: 0.7 }); for (const dx of [-0.2, 0.2]) T.add(box(c, 0.04, 7.2, 0.04, lad, dx, 3.6, 1.72)); for (let y = 0.4; y < 7; y += 0.32) T.add(box(c, 0.44, 0.03, 0.03, lad, 0, y, 1.72));
     const tag = c.sign('N3W', { w: 1.2, h: 0.5, bg: null, fg: '#ff4fa3', font: c.FONT, weight: 900 }); tag.position.set(0, 5.0, 1.72); T.add(tag);
+    // THE MARKS tower.glb, the tank with the eye flower and N3W YORKERS on it, turned so the painted side faces the roof door
+    swap(c, T, 'tower', [...T.children], { h: 8.6, ry: -PI / 2 });
     c.post(X(16.2), -4.2, 2.0); }
   // ---- the pigeon coop: a wooden loft with a wire front, birds inside ----
   const coop = new THREE.Group(); coop.position.set(4.0, 0, -4.4); g.add(coop);

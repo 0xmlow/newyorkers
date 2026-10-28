@@ -7,7 +7,7 @@
 // turns up on the curb on Broadway. Tear the calendar to see ahead; pin a month and the flat stays there for you.
 // One frame comes off the wall every month too, and leaves its pale rectangle behind.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, prop, bulb, glowTex, eyeFlower, relief, stamp, tinTex, texMat, sheet, CH, MONTHS, LEAVES, FURN, liveTex, art, artTex, artPlane } from './kit.js';
+import { PI, std, basic, box, cyl, decal, prop, swap, bulb, glowTex, eyeFlower, relief, stamp, tinTex, texMat, sheet, CH, MONTHS, LEAVES, FURN, liveTex, art, artTex, artPlane } from './kit.js';
 
 const Z0 = 2.0, Z1 = -7.6, CXM = 10;                        // the flat runs from its front door (z 2) to the back window
 const HW0 = 2.3, HW1 = 1.32, HC0 = 3.3, HC1 = 2.2, RISE = 0.28;
@@ -151,11 +151,14 @@ export function apartment(c, r, g, X, mats) {
   { const z = -1.6, k = S(z), x = CXM + hw(z) - 0.42 * k, tv = new THREE.Group(); tv.position.set(x, fl(z), z); tv.rotation.y = -PI / 2; tv.scale.setScalar(k); g.add(tv); add(1, tv);
     const wood = std(c, 0x4a2c18, { roughness: 0.45 });
     tv.add(box(c, 0.95, 0.5, 0.5, wood, 0, 0.25, 0)); for (const sx of [-0.4, 0.4]) tv.add(cyl(c, 0.02, 0.015, 0.18, wood, sx, -0.04, 0.15, 6));
-    tv.add(box(c, 0.72, 0.58, 0.52, std(c, 0x1a1a1c, { roughness: 0.4 }), 0, 0.79, -0.02));
+    const crt = box(c, 0.72, 0.58, 0.52, std(c, 0x1a1a1c, { roughness: 0.4 }), 0, 0.79, -0.02); tv.add(crt);
     const ch = { k: 0, n: 0, noise: 0 }, scr = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.42), new THREE.MeshBasicMaterial({ toneMapped: false })); scr.position.set(0, 0.8, 0.245); tv.add(scr);
     const snow = c.canvasTex(128, 96, () => {}), sq = snow.userData.canvas.getContext('2d');
     const tune = (d) => { ch.k += d; ch.noise = 0.35; c.sound.tick(); };
-    tv.add(box(c, 0.06, 0.06, 0.04, std(c, 0xc8a040, { metalness: 1 }), 0.28, 0.6, 0.25)); tv.add(box(c, 0.06, 0.06, 0.04, std(c, 0xc8a040, { metalness: 1 }), 0.28, 0.5, 0.25));
+    const knobs = [box(c, 0.06, 0.06, 0.04, std(c, 0xc8a040, { metalness: 1 }), 0.28, 0.6, 0.25), box(c, 0.06, 0.06, 0.04, std(c, 0xc8a040, { metalness: 1 }), 0.28, 0.5, 0.25)]; knobs.forEach((m) => tv.add(m));
+    // the set itself is nyb_crooklyn_tv, the same one that ends up on the curb in chapter 1: 0.72 m wide on the console, the
+    // channel plane moved onto its glass (measured off a front render: 0.41 by 0.32 m of screen, 0.066 m left of centre, 1.2x)
+    swap(c, tv, 'nyb_crooklyn_tv', [crt, ...knobs], { len: 0.72, y: 0.5, z: -0.02, then: (gg) => { scr.position.set(-0.079, 0.5 + 0.24 * 1.2, -0.02 + 0.235 * 1.2 + 0.004); scr.scale.set(0.456 / 0.56, 0.336 / 0.42, 1); c.clickable(gg, tv.userData.click, tv.userData.hint); } });
     const rabbit = new THREE.Group(); rabbit.position.set(0, 1.08, -0.05); tv.add(rabbit); for (const s2 of [-1, 1]) { const ant = cyl(c, 0.006, 0.006, 0.55, std(c, 0xc0c0c8, { metalness: 1 }), s2 * 0.12, 0.24, 0, 6); ant.rotation.z = -s2 * 0.45; rabbit.add(ant); }
     c.clickable(tv, () => { tune(1); if (++ch.n === 6) c.egg('channels', 'Six channels and every one of them is a New Yorker from this block. The set came with the flat in 1985. The rabbit ears still get Brooklyn.'); }, 'Change the channel');
     c.tick((t, dt, P, ri) => { if (ri !== r.i || !tv.visible) return; ch.auto = (ch.auto || 0) + dt; if (ch.auto > 6) { ch.auto = 0; tune(1); }
@@ -228,11 +231,16 @@ export function apartment(c, r, g, X, mats) {
   let anim = 0;
   c.tick((t, dt, P, ri) => {
     if (!moving.length) { movers.forEach((m) => { m.visible = false; }); return; }
-    const mv = moving[0]; mv.t += dt / 3.6; const o = mv.o, h = o.userData.home, u = Math.min(1, mv.t);
+    // 2026-10-28: the movers are rigged and walk, so the piece goes at a steady carrying pace (1.1 m/s along the path, not
+    // equal time per leg, which ran them at up to 2.7 m/s and slid their feet) and they face the way they walk
+    const mv = moving[0], o = mv.o, h = o.userData.home;
     const path = [[h.x, h.z], [DOORX(h.z), Math.min(Z0 - 0.3, h.z + 0.6)], [ST[0], Z0 - 0.4], [ST[0], Z0 + 1.2], [ST[0] + 3, Z0 + 3.5]];
-    const seg = Math.min(path.length - 2, Math.floor(u * (path.length - 1))), k = u * (path.length - 1) - seg, [ax, az] = path[seg], [bx, bz] = path[seg + 1];
-    const x = ax + (bx - ax) * k, z = az + (bz - az) * k; o.position.set(x, fl(z) + 0.12 + Math.abs(Math.sin(u * 18)) * 0.03, z);
-    movers.forEach((m, j) => { m.visible = true; m.scale.setScalar(Math.max(sc(z), 0.7)); m.position.set(x + (j ? 0.45 : -0.45) * sc(z), fl(z), z + (j ? 0.25 : -0.25)); m.rotation.y = Math.atan2(bx - ax, bz - az) + PI; });
+    const lens = path.slice(1).map((p, i) => Math.hypot(p[0] - path[i][0], p[1] - path[i][1])), total = lens.reduce((a, b) => a + b, 0);
+    mv.d = (mv.d || 0) + dt * 1.1; const u = Math.min(1, mv.d / total);
+    let seg = 0, rest = u * total; while (seg < lens.length - 1 && rest > lens[seg]) rest -= lens[seg++];
+    const k = Math.min(1, rest / Math.max(1e-6, lens[seg])), [ax, az] = path[seg], [bx, bz] = path[seg + 1];
+    const x = ax + (bx - ax) * k, z = az + (bz - az) * k; o.position.set(x, fl(z) + 0.12 + Math.abs(Math.sin(mv.d * 5)) * 0.03, z);
+    movers.forEach((m, j) => { m.visible = true; m.scale.setScalar(Math.max(sc(z), 0.7)); m.position.set(x + (j ? 0.45 : -0.45) * sc(z), fl(z), z + (j ? 0.25 : -0.25)); m.rotation.y = Math.atan2(bx - ax, bz - az); });
     if (u >= 1) { o.visible = false; o.position.copy(h); moving.shift(); }
   });
   function tear(d) {

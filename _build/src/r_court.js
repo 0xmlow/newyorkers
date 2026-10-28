@@ -2,7 +2,7 @@
 // a clerk's window. The trick: the aisle is a treadmill. Walk at the window without a number and the floor carries you
 // back exactly as fast as you walk. Take a number at the door, wait for the sign to reach it, and the floor stops.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, cast, sheet, linoTex, texMat, stamp, art, artTex, artPlane } from './kit.js';
+import { PI, std, basic, box, cyl, decal, cast, sheet, linoTex, texMat, stamp, art, artTex, artPlane, swap } from './kit.js';
 
 const AX0 = 8.2, AX1 = 11.8;   // the aisle between the benches
 
@@ -14,7 +14,9 @@ export function court(c, r, g, X) {
   const sitters = []; let seed = 7; const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
   for (const [x0, x1] of [[1.2, AX0 - 0.3], [AX1 + 0.3, W - 1.4]]) for (let k = 0; k < 6; k++) {
     const z = 4.6 - k * 1.7, w = x1 - x0, cx = (x0 + x1) / 2;
-    g.add(box(c, w, 0.06, 0.42, oak, cx, 0.46, z)); g.add(box(c, w, 0.5, 0.05, oak, cx, 0.78, z + 0.22)); for (const ex of [x0 + 0.08, x1 - 0.08]) g.add(box(c, 0.06, 0.46, 0.42, dark, ex, 0.23, z));
+    const row = [box(c, w, 0.06, 0.42, oak, cx, 0.46, z), box(c, w, 0.5, 0.05, oak, cx, 0.78, z + 0.22)]; for (const ex of [x0 + 0.08, x1 - 0.08]) row.push(box(c, 0.06, 0.46, 0.42, dark, ex, 0.23, z)); row.forEach((m) => g.add(m));
+    // each built pew becomes five Poly Haven painted wooden benches end to end (CC0, 630 tris), back to the aisle door like the pew
+    for (let j = 0; j < 5; j++) swap(c, g, 'ph_painted_wooden_bench', row, { len: w / 5, x: x0 + w / 5 * (j + 0.5), z: z + 0.01, ry: PI });
     c.wall(X(x0), z - 0.25, X(x1), z - 0.25); c.wall(X(x0), z + 0.27, X(x1), z + 0.27); c.wall(X(x0), z - 0.25, X(x0), z + 0.27); c.wall(X(x1), z - 0.25, X(x1), z + 0.27);
 
   }

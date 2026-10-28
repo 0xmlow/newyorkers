@@ -11,6 +11,7 @@ import { ROOMS, W, D, H_IN, PORTAL } from './rooms.js';
 import { Sound } from './sound.js';
 import { Music } from './music.js';
 import { liveTex } from './kit.js';
+import { RIG, RIG_FACE, RIG_ON, RIGSTAT, rigAdd, rigClone, rigTick } from './rig.js';
 
 const $ = (s) => document.querySelector(s);
 await Promise.race([Promise.all(['900 40px Fraunces', '700 40px "Space Grotesk"', '600 40px "IBM Plex Mono"'].map((f) => document.fonts.load(f))), new Promise((r) => setTimeout(r, 2500))]).catch(() => {});
@@ -161,23 +162,41 @@ const GLB = {};
 // Tripo hands models back facing any which way; these turn each one so its front is three.js +Z.
 // Read off the front and top renders (_build/front_sheet.py into work/sheet).
 const H = Math.PI / 2;
-const YAW = { bluesteel: -H, writer: H, boxer: Math.PI, workgirl: -H, tracksuit: -H, golfer: -H, wiseguy: -H, dog: Math.PI, cat: -H, deer: 0, folksinger: Math.PI, flyer: -H, anchor: -H, jeweler: -H, auggie: -H, bookseller: -H, susan: 0, dad: Math.PI, libhead: -H, sedan: -H, prince: -H, agent: -H, famer: -H, annieh: -H, rosemary: -H, sonny: -H, clerk: -H, sally: 0, pigeonlady: -H, elf: -H, broker: -H, maria: -H, loretta: -H, hijacker: -H, bench: H, checker: -H, gown: -H, lensman: 0, discoking: -H, maitre: -H, hustler: Math.PI, ambulance: -H, ape: -H, boombox: -H, cabbie: H, dancer: -H, dress: -H, hotdog: -H, mlowtar: -H, moai: -H, popcorn: -H, puft: -H, usher: -H, trex: Math.PI, hydrant: Math.PI, pigeon: Math.PI, rat: -H, blindwoman: Math.PI, killer: -H, actress: -H, robber: -H, odette: Math.PI, bartender: -H, waltzers: -H, butcher: -H, felix: -H, oscar: -H, sailors: -H, editor: -H, assistant: -H, odile: 0 };
+// susan: H since 2026-10-28 (MLow: "doll face forward"); at 0 she stood side on. Her rig file was re-rigged facing +Z.
+const YAW = { bluesteel: -H, writer: H, boxer: Math.PI, workgirl: -H, tracksuit: -H, golfer: -H, wiseguy: -H, dog: Math.PI, cat: -H, deer: 0, folksinger: Math.PI, flyer: -H, anchor: -H, jeweler: -H, auggie: -H, bookseller: -H, susan: H, dad: Math.PI, libhead: -H, sedan: -H, prince: -H, agent: -H, famer: -H, annieh: -H, rosemary: -H, sonny: -H, clerk: -H, sally: 0, pigeonlady: -H, elf: -H, broker: -H, maria: -H, loretta: -H, hijacker: -H, bench: H, checker: -H, gown: -H, lensman: 0, discoking: -H, maitre: -H, hustler: Math.PI, ambulance: -H, ape: -H, boombox: -H, cabbie: H, dancer: -H, dress: -H, hotdog: -H, mlowtar: -H, moai: -H, popcorn: -H, puft: -H, usher: -H, trex: Math.PI, hydrant: Math.PI, pigeon: Math.PI, rat: -H, blindwoman: Math.PI, killer: -H, actress: -H, robber: -H, odette: Math.PI, bartender: -H, waltzers: -H, butcher: -H, felix: -H, oscar: -H, sailors: -H, editor: -H, assistant: -H, odile: 0 };
 // a soft contact shadow under everything that stands on the floor: the cheapest realism there is
 const BLOB = canvasTex(128, 128, (q) => { const g = q.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(0,0,0,.62)'); g.addColorStop(0.55, 'rgba(0,0,0,.28)'); g.addColorStop(1, 'rgba(0,0,0,0)'); q.fillStyle = g; q.fillRect(0, 0, 128, 128); });
 const BLOB_M = new THREE.MeshBasicMaterial({ map: BLOB, transparent: true, depthWrite: false, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -4 });
 const BLOB_G = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
-function glb(name, { h, len, x = 0, y = 0, z = 0, ry = 0, parent = scene, onload, shadow = true } = {}) {
+function glb(name, { h, len, x = 0, y = 0, z = 0, ry = 0, parent = scene, onload, shadow = true, rig = true, quiet = false } = {}) {
   const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; parent.add(g);
   // models load when their set, or the one next door, is where you are: fifteen sets of props up front is too much for a phone
   const ri = BUILDING.i;   // each set counts its models in flight, so the skate layout waits for the props to land
-  PENDING.push({ room: ri, run: () => { const rr = ROOMS[ri]; if (rr) rr.loadingN = (rr.loadingN || 0) + 1; load(name, g, { h, len, y, onload, shadow, done: () => { if (rr) rr.loadingN--; } }); } });
+  PENDING.push({ room: ri, run: () => { const rr = ROOMS[ri]; if (rr) rr.loadingN = (rr.loadingN || 0) + 1; load(name, g, { h, len, y, onload, shadow, quiet, rig, done: () => { if (rr) rr.loadingN--; } }); } });
   return g;
 }
 const PENDING = [], BUILDING = { i: -1 };
 function wake(ri) { for (let k = PENDING.length - 1; k >= 0; k--) if (Math.abs(PENDING[k].room - ri) <= 1) { PENDING[k].run(); PENDING.splice(k, 1); } }
-function load(name, g, { h, len, y, onload, shadow, done }) {
-  (GLB[name] ||= new Promise((res, rej) => gltf.load(`assets/glb/${name}.glb`, (r) => res(r.scene), undefined, rej))).then((src) => {
-    const o = src.clone(true), pv = new THREE.Group(); pv.add(o); pv.rotation.y = YAW[name] || 0; pv.updateMatrixWorld(true);
+// the rigged cast (rig.js, 2026-10-28): assets/rig/<name>.glb when the name has one, the static GLB when it fails or ?rig=off
+const RIGC = {};
+function load(name, g, opt) {
+  if (opt.rig && RIG_ON && RIG[name]) {
+    (RIGC[name] ||= new Promise((res, rej) => gltf.load(`assets/rig/${name}.glb`, res, undefined, rej))).then((r) => {
+      const root = rigClone(r.scene); root.rotation.y = RIG_FACE[name] || 0; place(name, g, root, 0, opt); rigAdd(root, r.animations, name, g); opt.done && opt.done();
+    }).catch(() => loadStatic(name, g, opt));
+    return g;
+  }
+  return loadStatic(name, g, opt);
+}
+function loadStatic(name, g, opt) {
+  const { h, done } = opt, quiet = opt.quiet;
+  (GLB[name] ||= new Promise((res, rej) => gltf.load(`assets/glb/${name}.glb`, (r) => res(r.scene), undefined, rej))).then((src) => place(name, g, src.clone(true), YAW[name] || 0, opt)
+  ).catch(() => { if (name.startsWith('ph_') || quiet) return;   // quiet: a swap over a built stand in, which stays when the model fails
+  const ph = slab(0.5, h || 1, 0.5, new THREE.MeshStandardMaterial({ color: 0x333333 }), 0, (h || 1) / 2, 0); g.add(ph); }).finally(() => done && done());
+  return g;
+}
+function place(name, g, o, yaw, { h, len, y, onload, shadow }) {
+    const pv = new THREE.Group(); pv.add(o); pv.rotation.y = yaw; pv.updateMatrixWorld(true);
     const b = new THREE.Box3().setFromObject(pv), s = new THREE.Vector3(); b.getSize(s);
     const k = h ? h / s.y : len ? len / Math.max(s.x, s.z) : 1;
     const c = new THREE.Vector3(); b.getCenter(c);
@@ -185,8 +204,6 @@ function load(name, g, { h, len, y, onload, shadow, done }) {
     o.traverse((m) => { if (m.isMesh && m.material) { m.material.envMapIntensity = 1.2; m.castShadow = false; } });
     if (shadow && y < 0.4) { const sh = new THREE.Mesh(BLOB_G, BLOB_M); sh.scale.set(Math.max(0.3, s.x * k * 1.25), 1, Math.max(0.3, s.z * k * 1.25)); sh.position.y = 0.012; sh.renderOrder = 1; g.add(sh); }
     g.add(sc); g.userData.ready = true; if (g.userData.click) clickable(g, g.userData.click, g.userData.hint); onload && onload(g, sc);
-  }).catch(() => { if (name.startsWith('ph_')) return; const ph = slab(0.5, h || 1, 0.5, new THREE.MeshStandardMaterial({ color: 0x333333 }), 0, (h || 1) / 2, 0); g.add(ph); }).finally(() => done && done());
-  return g;
 }
 
 // ---------- the photo plates, rebuilt as space ----------
@@ -390,7 +407,7 @@ function sweep(ax, az, bx, bz) {
 }
 const ctx = { keys: null, wake: (i) => wake(i), THREE, scene, camera, renderer, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, openPiece, sound: null, MOBILE, shake, FONT, SERIF, MONO, P, FX, EYE, flash, TIME, zoom, ride, ray, hemi, lights };
 ROOMS.forEach((r, i) => { r.i = i; r.x0 = i * W; r.prev = ROOMS[i - 1]?.name; r.next = ROOMS[i + 1]?.name; r.last = i === ROOMS.length - 1; r.cast = CAST[r.id] || []; });
-window.__clickables = clickables; window.__EGGSET = () => [...EGGS]; window.__P = P;   // for the headless trick tests
+window.__clickables = clickables; window.__EGGSET = () => [...EGGS]; window.__rig = RIGSTAT; window.__P = P;   // for the headless trick tests
 // Round thirteen: sets are built when you come near them, not all 105 at load. Building every set up front put
 // 105 plates, 1,260 paintings and every wallpaper on the GPU at once, and a phone gave up before the first frame.
 const NEAR = MOBILE ? 1 : 2, KEEP = MOBILE ? 2 : 5;
@@ -691,6 +708,7 @@ function frame() {
   P.y += ((gy + gs + EYE * P.scale + P.lift) - P.y) * Math.min(1, dt * (R.ground || gs ? 14 : 4));
   if (!SKATE.active && !R.holdLift && !P.ride) P.lift += (0 - P.lift) * Math.min(1, rdt * 1.4);
   for (const f2 of tickers) f2(TIME.t, dt, P, ri, rdt);
+  rigTick(dt, camera, MOBILE ? 8 : 20);   // the rigged cast: nearest 20 play (8 on a phone), the rest hold their pose
   wayTick(t);
   // the camera: dolly back along the view for the vertigo, with the field of view the room asks for
   const fovT = (P.zoom ? 14 : R.fov ? R.fov(P) : FOV) + (SKATE.active ? SKATE.v * 1.5 : 0); P.fov += (fovT - P.fov) * Math.min(1, dt * 3);

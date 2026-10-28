@@ -3,7 +3,7 @@
 // the oldest one there is, done backwards: the closer you walk, the bigger he gets, until his head is in the tin
 // ceiling; back away and he is just a man in a coat again.
 import { W, D } from './rooms.js';
-import { PI, std, basic, box, cyl, decal, prop, cast, relief, steam, sheet, glowTex, stamp, art, artTex, artPlane } from './kit.js';
+import { PI, std, basic, box, cyl, decal, prop, swap, cast, relief, steam, sheet, glowTex, stamp, art, artTex, artPlane } from './kit.js';
 
 export function landlord(c, r, g, X) {
   const { THREE } = c, HI = 6;
@@ -12,6 +12,8 @@ export function landlord(c, r, g, X) {
   const desk = new THREE.Group(); desk.position.set(DX, 0, DZ); g.add(desk);
   desk.add(box(c, 2.6, 0.08, 1.1, top, 0, 0.82, 0)); desk.add(box(c, 0.7, 0.78, 1.0, oak, -0.9, 0.39, 0)); desk.add(box(c, 0.7, 0.78, 1.0, oak, 0.9, 0.39, 0)); desk.add(box(c, 1.1, 0.5, 0.06, oak, 0, 0.55, 0.47));
   for (const sx of [-0.9, 0.9]) for (let k = 0; k < 3; k++) { desk.add(box(c, 0.6, 0.2, 0.02, std(c, 0x4a2c18, { roughness: 0.4 }), sx, 0.15 + k * 0.24, 0.51)); desk.add(box(c, 0.12, 0.02, 0.02, std(c, 0xb08a3a, { metalness: 1 }), sx, 0.18 + k * 0.24, 0.53)); }
+  // the desk itself is ON LOCATION's nyb_wolf_desk (the one in his penthouse too), sized so its top is the 0.86 m the lamp, ledger and phone sit at
+  swap(c, desk, 'nyb_wolf_desk', [...desk.children], { h: 0.86 * 1.026 / 0.79 });
   c.wall(X(DX - 1.35), DZ - 0.6, X(DX + 1.35), DZ - 0.6); c.wall(X(DX - 1.35), DZ + 0.6, X(DX + 1.35), DZ + 0.6); c.wall(X(DX - 1.35), DZ - 0.6, X(DX - 1.35), DZ + 0.6); c.wall(X(DX + 1.35), DZ - 0.6, X(DX + 1.35), DZ + 0.6);
   // the banker's lamp: green glass, brass, a pool of light on the leather
   const lamp = new THREE.Group(); lamp.position.set(DX - 0.8, 0.86, DZ - 0.2); g.add(lamp);
