@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script src="phone-gpu.js?v=6845919975" data-cap="512"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>YOUR MOM'S BASEMENT</title>
@@ -77,6 +78,7 @@ legend{padding:0 3px;background:var(--face)}
 #taskbar .task{max-width:170px;flex:1;text-align:left;height:24px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}
 #taskbar .task img{width:14px;height:14px}
 .tray{height:24px;display:flex;align-items:center;gap:8px;padding:0 8px;box-shadow:inset -1px -1px var(--hi),inset 1px 1px var(--shade);white-space:nowrap;font-variant-numeric:tabular-nums}
+[hidden]{display:none !important}   /* #startmenu sets display:flex, which beat the hidden attribute: the menu never closed */
 #startmenu{position:fixed;left:2px;bottom:calc(31px + env(safe-area-inset-bottom,0px));z-index:31;display:flex;padding:3px;max-height:calc(100vh - 44px)}
 #startmenu .side{width:24px;background:linear-gradient(0deg,var(--title1),var(--title2));color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font:700 15px var(--ui);padding:6px 0;letter-spacing:.5px}
 #startmenu .side i{font-style:normal;font-weight:400;color:#fff}
@@ -520,9 +522,26 @@ function model(key, x, y, z, ry, size, o = {}) {
 function updateModels(dt) {
   MODELS.forEach(s => { if (!s.root) return; if (s.pop < 1) { s.pop = Math.min(1, s.pop + dt * 2.2); const e = 1 - Math.pow(1 - s.pop, 3); s.root.scale.setScalar(0.001 + e); } if (s.tick) s.tick(s, dt); });
   SCL.t -= dt; if (SCL.t > 0 || !gltfLoader) return; SCL.t = 0.3;
+  LAZY.forEach(l => { if (l.state || Math.hypot(P.x - l.x, P.z - l.z) > l.range) return; l.state = 'loading';
+    gltfLoader.load(l.url, g => { try { l.onLoad(g.scene); l.state = 'ready'; } catch (e) { l.state = 'error'; console.warn(l.url, e); } }, undefined, () => { l.state = 'error'; }); });
   const near = MODELS.filter(s => !s.state).sort((a, b) => Math.hypot(P.x - a.x, P.z - a.z) - Math.hypot(P.x - b.x, P.z - b.z));
   for (const s of near) { if (SCL.loading >= 3) break; if (Math.hypot(P.x - s.x, P.z - s.z) > SCL.range) break; s.state = 'loading'; SCL.loading++;
     gltfLoader.load('assets/' + s.dir + '/' + s.key + '.gltf.json', g => { SCL.loading--; s.state = 'ready'; SCL.done++; placeModel(s, g.scene); }, undefined, () => { SCL.loading--; s.state = 'error'; }); }
+}
+/* a GLB that replaces a code built stand in (2026-10-28 swap pass): the stand in is built first and stays until the GLB
+   lands; a failed load leaves it as it was. Loaded when the visitor comes within range, like the models. */
+const LAZY = [];
+function lazyGLB(url, x, z, onLoad, range = SCL.range) { const l = { url, x, z, onLoad, range, state: null }; LAZY.push(l); return l; }
+/* fit a loaded scene: yaw first (to make the model face +Z), then centred on x and z, standing on y = 0, scaled so its
+   height (mode 'h') or its largest side (mode 'm') is size metres. Returns the group and its fitted size. */
+function fitGLB(obj, size, mode = 'h', yaw = 0) {
+  const inner = new THREE.Group(); inner.add(obj); inner.rotation.y = yaw; inner.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(inner), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());
+  const k = mode === 'm' ? size / Math.max(sz.x, sz.y, sz.z) : size / Math.max(0.001, sz.y);
+  inner.position.set(-c.x, -bb.min.y, -c.z); const outer = new THREE.Group(); outer.add(inner); outer.scale.setScalar(k);
+  obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true;
+    (Array.isArray(o.material) ? o.material : [o.material]).forEach(mt => { if (mt) { mt.envMapIntensity = 0.5; if (mt.map) mt.map.anisotropy = ANISO; } }); });
+  return { g: outer, size: sz.multiplyScalar(k) };
 }
 function placeModel(s, obj) {
   obj.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(obj), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());
@@ -792,7 +811,11 @@ HALL.w = z => HALL.w0 + (HALL.z0 - z) / (HALL.z0 - HALL.z1) * (HALL.w1 - HALL.w0
   const slice = new THREE.Shape(); slice.moveTo(0, 0); slice.lineTo(-0.11, 0.3); slice.quadraticCurveTo(0, 0.34, 0.11, 0.3); slice.lineTo(0, 0); const sg = new THREE.ExtrudeGeometry(slice, { depth: 0.015, bevelEnabled: false }); sg.rotateX(-PI / 2);
   for (let i = 0; i < 12; i++) { const g = new THREE.Group(); const b = new THREE.Mesh(body, MAT.fur); b.position.y = 0.09; b.castShadow = true; g.add(b); const h = new THREE.Mesh(head, MAT.fur); h.position.set(0, 0.1, 0.22); g.add(h); [-1, 1].forEach(s => { const e = new THREE.Mesh(ear, MAT.fur); e.position.set(s * 0.05, 0.16, 0.18); g.add(e); }); const t = new THREE.Mesh(tail, new THREE.MeshStandardMaterial({ color: 0xc9a08a, roughness: 1 })); t.position.set(0, 0.06, -0.28); g.add(t);
     const s = new THREE.Mesh(sg, MAT.cheese); s.position.set(0, 0.02, 0.32); g.add(s); const c = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.012, 0.03), MAT.crust); c.position.set(0, 0.025, 0.62); g.add(c); [[-0.03, 0.42], [0.04, 0.5], [-0.01, 0.56]].forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.004, 8), MAT.pepperoni); p.position.set(x, 0.032, z); g.add(p); });
-    scene.add(g); W.rats.push({ g, a: i / 12 * PI * 2, sp: 0.45 + rnd() * 0.25, mode: 'loop', tx: 0, tz: 0, bob: rnd() * 6 }); }
+    scene.add(g); W.rats.push({ g, fur: g.children.slice(0, 5), a: i / 12 * PI * 2, sp: 0.45 + rnd() * 0.25, mode: 'loop', tx: 0, tz: 0, bob: rnd() * 6 }); }
+  // 2026-10-28: the procession becomes Poly Haven's street_rat (CC0, already loaded twice in this page), one load cloned twelve
+  // times at the stand in's length, nose where the cone head ended. The sphere rats stay until it lands and stay if it fails.
+  lazyGLB('assets/cc0/street_rat.gltf.json', 8.6, 23.6, obj => { const f = fitGLB(obj, 0.7, 'm');
+    W.rats.forEach(r => { const c = f.g.clone(); c.position.z = 0.3 - f.size.z / 2; r.g.add(c); r.fur.forEach(m => { m.visible = false; }); }); });
   interact(8.5, 23.5, 2.6, '', null, 0); zone(5, 13, 19.25, 28, "THE RAT KING'S COURT");
   plaque([{ t: '"THE PROCESSION"', s: 0.42 }, { t: 'TWELVE RATS, TWELVE SLICES. STAND STILL AND THEY WILL SHOW YOU THE CHART.', s: 0.16 }], 5.03, 2.0, 23.5, PI / 2, 1.1, 0.3);
   prop('catbed', 6.0, 0, 20.0, 0.5, 0.18); prop('cooler', 5.6, 0, 26.6, PI / 2, 1.0); prop('rat', 9.0, 2.35, 19.3, 0, 0.25, { label: 'Rat on rail' }); prop('ceilingfan', 9, 2.45, 23.5, 0, 0.35, { tick: (s, dt) => { if (s.root) s.root.rotation.y += dt * 2.2; } });
@@ -804,6 +827,9 @@ HALL.w = z => HALL.w0 + (HALL.z0 - z) / (HALL.z0 - HALL.z1) * (HALL.w1 - HALL.w0
   [-1, 1].forEach(s => { const e = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 6), MAT.catfur); e.position.set(s * 0.06, 0.33, 0.2); cat.add(e); const ey = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 6), new THREE.MeshBasicMaterial({ color: 0xb6ff3a })); ey.position.set(s * 0.04, 0.26, 0.29); cat.add(ey); cat.userData[s < 0 ? 'l' : 'r'] = ey; });
   const ct = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.4, 6), MAT.catfur); ct.rotation.z = 1.2; ct.position.set(0.15, 0.1, -0.2); cat.add(ct); const chest = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), MAT.white); chest.position.set(0, 0.16, 0.26); cat.add(chest);
   cat.position.set(8.6, 0.91, 27.5); cat.rotation.y = PI; cat.traverse(o => { if (o.isMesh) o.castShadow = true; }); scene.add(cat); W.cat = cat;
+  // 2026-10-28: the cat becomes cat.glb (the MARKS and UNLICENSED cat, sitting, faces +X so a quarter turn), fitted to the
+  // stand in's 0.37 m. The spheres stay until it lands; the blink and the leaving still move this group.
+  lazyGLB('assets/glb/cat.glb', 8.6, 27.5, obj => { const f = fitGLB(obj, 0.37, 'h', -PI / 2); const prims = cat.children.slice(); cat.add(f.g); prims.forEach(m => { m.visible = false; }); });
   interact(8.6, 26.6, 1.3, 'OPEN THE FREEZER', () => openFreezer(), 0);
   plaque([{ t: '"THE SECOND FREEZER"', s: 0.42 }, { t: 'YOU KNOW WHAT YOU DID.', s: 0.2 }], 8.6, 1.5, 27.97, PI, 0.9, 0.3);
   plaque([{ t: '"THE BODEGA CAT"', s: 0.42 }, { t: 'THE ONLY ONE DOWN HERE WHO RESPECTS YOU. STILL NO.', s: 0.18 }], 7.3, 1.55, 27.97, PI, 0.9, 0.3);
@@ -977,6 +1003,8 @@ function stopTour() { tourIdx = -1; RAIL.on = false; RAIL.done = null; teleport(
 const TP = [['THE STAIRS', 0, 22, PI], ['THE TV DEN', 0, 15.5, 0], ['THE WRONG ROOM (MIRROR)', -3.4, 15, PI / 2], ['THE CARD ROOM', -8.5, 20.8, 0], ['BOILER AND LAUNDRY', 9.6, 17.2, -2.3], ['THE INFINITE HALLWAY', -2.5, 10, 0], ['THE EVERYTHING BAGEL', -20, -1.5, 0], ["THE RAT KING'S COURT", 9, 20.2, 0], ["MOM'S SECOND FREEZER", 24, 21.5, 0]];
 TP.forEach(([n, x, z, yaw]) => { const b = document.createElement('button'); b.textContent = n.charAt(0) + n.slice(1).toLowerCase(); b.onclick = e => { e.stopPropagation(); if (n.includes('FREEZER') && !W.freezer.open) { W.freezer.open = true; W.freezerLight.intensity = 3; } teleport(x, z, yaw); startMenu(false); }; $('tp').appendChild(b); });
 function showHud(on) { $('hud').style.display = on ? '' : 'none'; $('hudHide').classList.toggle('on', on); }
+// a phone starts with the window on the taskbar: open it covered half the screen
+if (matchMedia('(pointer:coarse)').matches || innerWidth < 640) showHud(false);
 $('hide').onclick = e => { e.stopPropagation(); showHud(false); }; $('hudX').onclick = e => { e.stopPropagation(); showHud(false); }; $('hudHide').onclick = e => { e.stopPropagation(); showHud($('hud').style.display === 'none'); };
 function startMenu(on) { $('startmenu').hidden = !on; $('start').classList.toggle('on', on); }
 $('start').onclick = e => { e.stopPropagation(); startMenu($('startmenu').hidden); }; document.addEventListener('pointerdown', e => { if (!e.target.closest('#startmenu') && !e.target.closest('#start')) startMenu(false); });

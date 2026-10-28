@@ -142,6 +142,14 @@ def states_all(k):
         tj = os.path.join(KIT, d, "token.json")
         if os.path.exists(tj):
             t = json.load(open(tj)); tok[t["census_number"]] = t["states"]
+            # The kit's "source" is provenance, and some of it lived in ~/Downloads (two Dreamina GIFs were gone by
+            # 2026-10-13). The kit keeps its own copy of every state under media/; when the source is gone, read that.
+            for st in t["states"]:
+                if not os.path.exists(st["source"]):
+                    kit_copy = os.path.join(KIT, d, st["file"])
+                    if not os.path.exists(kit_copy): raise SystemExit(f"keystone state {t['census_number']}/{st['state']}: neither source nor kit copy exists: {st['source']}")
+                    print(f"  keystone state {t['census_number']}/{st['state']}: source gone, using the kit copy {st['file']}")
+                    st["source"] = kit_copy
     # site only states (the later Canal Street bootlegs, the memes) go after the kit's, numbered on from them
     EX = os.path.join(HERE, "keystone_extra_states.json"); p_id = {p["n"]: p["id"] for p in k}
     if os.path.exists(EX):

@@ -35,7 +35,7 @@
       "Census New Yorkers mint on OpenSea as ERC-721 tokens that are dynamic by metadata: the stack of states lives in each token and its own viewer, so the same Fridays reach them."
     ],
     "links": [
-      {"t": "Mint a Keystone on Transient", "u": "https://transient.xyz/mint/newyorkers", "primary": true},
+      {"t": "Collect a Keystone on Transient", "u": "https://www.transient.xyz/nfts/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9", "primary": true},
       {"t": "THE CENSUS RELEASE on OpenSea", "u": "https://opensea.io/collection/newyorkers"},
       {"t": "Who holds what", "u": "collectors.html"},
       {"t": "Walk the Keystone ramp", "u": "keystone.html"}

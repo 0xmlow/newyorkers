@@ -6,6 +6,7 @@
    line of sight and shrunk by the same factor, so from the deck it subtends exactly the angle it
    would, and the camera's far plane never cuts the horizon. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -42,13 +43,13 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const body = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h * crouch, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h * crouch, z);
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0xc8a284, 0, 0.7), x, y + (1.22 * h * crouch + 0.13), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 /* a small figure with a head, as one merged geometry for instancing */
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* a texture painted once on a canvas; UVs are kept because the material carries no density */
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, repeat = false) {

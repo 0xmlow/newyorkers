@@ -23,6 +23,10 @@ HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE);
 URL = cfg()["siteUrl"]
 GITHUB = "https://github.com/0xmlow/newyorkers/tree/"
 FONT = os.path.join(HERE, "honoraries", "fonts", "IBMPlexMono-Medium.ttf")
+# every gallery gets this first, before its engine: on a phone it halves any image texture over the cap at upload, so no
+# gallery outgrows the memory iOS gives a tab (MoMLOW crashed phones at 1.1 GB). A gallery's gpu= sets the cap and which
+# image URLs are the art and keep more detail. See HANDOFF_PHONE_2026-10-18.md.
+PHONE_GPU = os.path.join(SITE, "assets", "ui", "phone-gpu.js")
 
 GALLERIES = [
     dict(slug="island", page="island.html", nav="ISLAND", branch="meme-island",
@@ -78,7 +82,7 @@ GALLERIES = [
                 "and the skyline go on past the walls. 150 of the uncounted hang where New Yorkers would hang them: wheatpasted on plywood, over "
                 "the deli shelves, on the platform, on the washing line. The nine era closers have the theatre to themselves. Nobody picks, "
                 "not even MLow."),
-         keywords=["THE MARKS", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "3D gallery", "SuperRare", "blind mint", "bodega", "virtual museum"]),
+         keywords=["THE MARKS", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "3D gallery", "SuperRare", "instant reveal", "bodega", "virtual museum"]),
     dict(slug="movies", page="movies.html", nav="MOVIES", branch="on-location",
          repo=os.path.join(ROOT, "ON LOCATION 2026-10-10"),
          skip=(), need=("index.html", "assets/gallery.js"),
@@ -134,6 +138,157 @@ GALLERIES = [
          films=[dict(dir="mlow-international", kick="Now boarding", h="The film", dur="0:31", label="MLOW INTERNATIONAL, the film, by MLow",
                      sub="Thirty seconds through Terminal B: the drop off at golden hour, in under the dome, the gallery concourse, the seven blossoms "
                          "at the gate, and the eye from the air. The footage is the walkable build above, finished in AI.")]),
+    dict(slug="gardens", page="gardens.html", nav="GARDENS", branch="mlow-gardens",
+         repo=os.path.join(ROOT, "MLOW GARDENS WALK 2026-10-15"),
+         skip=(), still=os.path.join("site", "assets", "poster.jpg"),
+         tag="MLOW GARDENS", name="MLOW GARDENS", h1="MLOW <em>GARDENS</em>",
+         title="MLOW GARDENS · an amusement park by MLow, hung with Coney Island",
+         desc=("MLOW GARDENS, a walkable amusement park by MLow, built in code in Blender. Ten roller coasters, the BLOSSOM GP circuit "
+               "whose plan is the evil eye, a ferris wheel that is an eye, and 179 NEW YORKERS on the walls: every Coney Island New Yorker "
+               "hung along the boardwalk in the order they were made, and the parks of New York in LUNA HALL, a ribbed glass gallery named "
+               "for Luna Park's Million Lights. Ride the coasters, ride along on the circuit. Free in your browser."),
+         controls="WASD walk, SHIFT run, mouse to look, E to see the piece you are looking at, R to ride, F to fly, 1 to 9 to jump.",
+         phone="MLOW GARDENS is built for a keyboard and a big screen. It opens on a phone, but a laptop is where it sings.",
+         tagline="Ride the coasters: stay for Coney Island",
+         blurb=("An amusement park built in code, hung with New Yorkers. Every Coney Island piece lines the boardwalk, in the order it "
+                "was made. The parks of New York fill LUNA HALL. Ride the front car. Watch the race from the back of the pack. Ten "
+                "coasters. One eye. Zero tickets."),
+         # shots under the description: files inside the walk repo's site/, so they ship with the copy
+         shots=[("assets/shots/boardwalk.jpg", "The boardwalk: Coney Island, in the order it was made"),
+                ("assets/shots/coney-island.jpg", "Coney Island, hung where it belongs"),
+                ("assets/shots/luna-hall.jpg", "LUNA HALL: the parks of New York, under glass"),
+                ("assets/shots/eye-wheel.jpg", "The ferris wheel is the eye"),
+                ("assets/shots/first-drop.jpg", "The first drop, from the front car"),
+                ("assets/shots/eye-circuit.jpg", "From the air: the racetrack is the logo"),
+                ("assets/shots/plaza.jpg", "The logo is the floor"),
+                ("assets/shots/gate.jpg", "Walk in: the first New Yorker you meet is Nathan's Famous"),
+                ("assets/shots/aerial.jpg", "Ten coasters. One eye. Zero tickets")],
+         keywords=["MLOW GARDENS", "MLow", "NEW YORKERS", "Coney Island", "amusement park", "roller coaster", "walkable gallery", "three.js", "Blender", "virtual architecture"]),
+    dict(slug="bodega", page="bodega.html", nav="BODEGA", branch="last-bodega",
+         repo=os.path.join(ROOT, "LAST BODEGA WALK 2026-10-15"),
+         skip=(), need=("index.html", "vendor", "app.js", "expansion.js", "assets/expanded-art.json"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="THE LAST BODEGA", name="THE LAST BODEGA IN THE UNIVERSE", h1="THE LAST <em>BODEGA</em>",
+         title="THE LAST BODEGA IN THE UNIVERSE · a walkable bodega at the end of everything, by MLow",
+         desc=("THE LAST BODEGA IN THE UNIVERSE, a walkable three.js bodega by MLow. The stars went out and the coffee is still a dollar. "
+               "Walk the shop, then the five places behind it: the freezer archive, the Midnight Laundromat, the Office of Lost Letters "
+               "and the Garden of the Next Universe on the roof. 44 NEW YORKERS hung in the rooms they belong to, shelves stocked with "
+               "labels made from the collection, an immortal cat, forty secrets, and three brass tokens that bring back the sun. Free in your browser."),
+         controls="WASD or arrows walk, drag to look, Q and R turn, click or E on anything, the Rooms button jumps between the five places.",
+         phone="THE LAST BODEGA works on a phone: the arrows walk, drag to look, tap anything. A laptop shows it best.",
+         tagline="The stars went out: the coffee is still a dollar",
+         blurb=("A corner store at the end of the universe, still open. The shelves are stocked with New Yorkers. The freezer opens onto "
+                "an archive. Behind the shop: a laundromat that washes yesterday, a post office for letters that never arrived, and a roof "
+                "garden where somebody is growing the next universe. Forty secrets. Three brass words. One immortal cat."),
+         shots=[("assets/shots/shop.jpg", "The shop: the shelves are stocked with New Yorkers"),
+                ("assets/shots/archive.jpg", "Through the freezer: the things we kept"),
+                ("assets/shots/laundromat.jpg", "The Midnight Laundromat: wash yesterday, keep the change"),
+                ("assets/shots/lost-letters.jpg", "The Office of Lost Letters: forwarding address unknown"),
+                ("assets/shots/garden.jpg", "The roof: somebody has to water tomorrow")],
+         keywords=["THE LAST BODEGA", "bodega", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "3D gallery", "easter eggs", "virtual museum", "New York"]),
+    dict(slug="gentrifying", page="gentrifying.html", nav="GENTRIFYING", branch="gentrifying-museum",
+         repo=os.path.join(ROOT, "GENTRIFYING MUSEUM WALK 2026-10-15"),
+         skip=(), need=("index.html", "vendor", "app.js", "installations.js", "materials.js", "atmosphere.js", "assets/art.json"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="THE GENTRIFYING MUSEUM", name="THE MUSEUM THAT IS GENTRIFYING ITSELF", h1="THE MUSEUM THAT IS <em>GENTRIFYING ITSELF</em>",
+         title="THE MUSEUM THAT IS GENTRIFYING ITSELF · a walkable loft gallery that sells itself while you watch, by MLow",
+         desc=("THE MUSEUM THAT IS GENTRIFYING ITSELF, a walkable three.js gallery by MLow. A working artists' loft in New York with 58 NEW YORKERS "
+               "on its brick. Generate a little buzz and watch it turn into luxury real estate: the brick is painted white, a branded wall pushes "
+               "the art into a corridor, the asking rent climbs, and the developer's name is painted across the whole room. Seven optical "
+               "illusions, six tenant records, one cooperative ending. Free in your browser."),
+         controls="WASD or arrows walk, drag to look, Q and R turn, click or E on anything. Generate buzz to redevelop the building; Optical studies takes you to each illusion's viewing point.",
+         phone="THE GENTRIFYING MUSEUM works on a phone: the arrows walk, drag to look, tap anything. A laptop shows it best.",
+         tagline="First the artists. Then the amenities",
+         blurb=("A loft where twelve artists signed one lease. Every bit of buzz makes the building more desirable and gives the art less room. "
+                "The sales suite sells the paintings with the penthouse. The holdouts keep everything that was moved downstairs. Find the six "
+                "tenant records, call the assembly on the roof, and take the building back."),
+         shots=[("assets/shots/working-floor.jpg", "The working floor: twelve artists, one lease"),
+                ("assets/shots/the-rebrand.jpg", "The Rebrand: flat letters, from the door"),
+                ("assets/shots/the-rebrand-broken.jpg", "One step to the side: the brand breaks into the building"),
+                ("assets/shots/the-corridor.jpg", "The art, moved to a corridor"),
+                ("assets/shots/the-hang.jpg", "Every New Yorker lit like it matters"),
+                ("assets/shots/sales-suite.jpg", "The sales suite: art included with the penthouse"),
+                ("assets/shots/bottomless-value.jpg", "Bottomless Value: the floor is glass"),
+                ("assets/shots/the-holdouts.jpg", "The holdouts: everything they moved, floor to pipes"),
+                ("assets/shots/the-commons.jpg", "The cooperative ending: the brick comes back")],
+         keywords=["THE MUSEUM THAT IS GENTRIFYING ITSELF", "gentrification", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "optical illusion", "anamorphic", "virtual museum", "New York loft"]),
+    dict(slug="unreal", page="unreal.html", nav="UNREAL ESTATE", branch="unreal-estate",
+         repo=os.path.join(ROOT, "UNREAL ESTATE WALK 2026-10-17"),
+         skip=(), need=("index.html", "js", "art.json", "art", "fonts"),
+         still=os.path.join("public", "shots", "bagel.jpg"),
+         tag="UNREAL ESTATE", name="DEPARTMENT OF UNREAL ESTATE", h1="DEPARTMENT OF <em>UNREAL ESTATE</em>",
+         title="DEPARTMENT OF UNREAL ESTATE · a walkable SoHo loft where reality is rent stabilized, by MLow",
+         desc=("DEPARTMENT OF UNREAL ESTATE, a walkable three.js gallery by MLow. A fictional cast iron loft in SoHo with four optical "
+               "installations: a monumental everything bagel, a 900 square foot studio that goes on forever, an anamorphic ring that only "
+               "closes from one spot on the floor, and a moire commute that changes as you walk. 48 New Yorkers about rent, roommates, "
+               "moving day and the building, in four sets of twelve. Free in your browser."),
+         controls="WASD or arrows walk, drag to look, click the floor to walk there, click any work. Look again takes you to each installation's viewing point.",
+         phone="DEPARTMENT OF UNREAL ESTATE works on a phone: the arrows walk, drag to look, tap anything. A laptop shows it best.",
+         tagline="Reality is rent stabilized",
+         blurb=("A loft that cost more than it looks. The bagel on the plinth includes your security deposit. The studio at the back is "
+                "seven metres deep and reads as forty. Stand on the yellow ring and the pieces in the air close into one circle; take a "
+                "step and it breaks. Sit on the bench at the back and watch the commute move while you do not. Four sets of twelve New "
+                "Yorkers hang in the bays: the listing, the move, the building and the unreal."),
+         shots=[("shots/entrance.jpg", "The loft from the door"),
+                ("shots/bagel.jpg", "01 The everything bagel"),
+                ("shots/studio.jpg", "02 The 900 square foot studio"),
+                ("shots/circle.jpg", "03 Circle back, from the yellow ring"),
+                ("shots/commute.jpg", "04 The commute")],
+         keywords=["DEPARTMENT OF UNREAL ESTATE", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "optical illusion", "anamorphic", "moire", "SoHo loft", "everything bagel"]),
+    dict(slug="inside", page="inside.html", nav="INSIDE", branch="bigger-on-the-inside",
+         repo=os.path.join(ROOT, "BIGGER ON THE INSIDE 2026-10-17"),
+         skip=(), need=("index.html", "js", "manifest.json", "glb", "plates", "art"),
+         still=os.path.join("public", "shots", "block.jpg"),
+         tag="BIGGER ON THE INSIDE", name="BIGGER ON THE INSIDE", h1="BIGGER ON <em>THE INSIDE</em>",
+         title="BIGGER ON THE INSIDE · one New York block where every door opens onto a room too big for it, by MLow",
+         desc=("BIGGER ON THE INSIDE, a walkable three.js gallery by MLow. One Lower East Side block at night where every door is a live "
+               "portal into a room far bigger than its building: a bodega aisle a mile deep, a walk-up where every floor is the fifth "
+               "and the paintings change as you climb, a 900 square foot studio built as an Ames room, a laundromat whose dryers look "
+               "into the other rooms, a subway car that rolls all the way round you, and a roof where the city folds over the sky. "
+               "Walk off either end of the street and you walk back in at the other. 166 New Yorkers, MLow's posters and stickers, "
+               "and an Eye Flower that watches the whole block. Free in your browser."),
+         controls="WASD or arrows walk, drag to look, click the floor to walk there, click any work. Doors are real: walk through them. Rooms jumps anywhere.",
+         phone="BIGGER ON THE INSIDE works on a phone: the arrows walk, drag to look, tap anything. A laptop with a good graphics chip shows it best.",
+         tagline="Space is the one luxury in New York. Online it is free",
+         blurb=("New York has everything except room. So here is one block with more of it than the buildings could ever hold. The "
+                "bodega has one aisle and it goes back about a mile. The walk-up only goes up, and every landing is the fifth floor. "
+                "Apartment 5A is nine hundred square feet and looks it from exactly one spot. The dryers at the laundromat look into "
+                "the other rooms, and the big one at the back is a tunnel. The train rolls, the riders do not mind, and on the roof "
+                "the city keeps going, up and over your head. Walk off the end of the street and you are back at the start."),
+         shots=[("shots/block.jpg", "The block: every door is a portal"),
+                ("shots/flower.jpg", "The Eye Flower over the street, and the street again through the corner"),
+                ("shots/hoarding.jpg", "Post no bills: posters, stickers and New Yorkers on the hoarding"),
+                ("shots/bodega.jpg", "Infinity Deli: one aisle, about a mile"),
+                ("shots/walkup.jpg", "5 Eldridge: up the well, every floor the fifth"),
+                ("shots/studio.jpg", "Apartment 5A, from the peephole: an Ames room"),
+                ("shots/dryers.jpg", "Suds and Space: each dryer looks into another room, live"),
+                ("shots/drum.jpg", "The big one: a drum that turns round a still bridge"),
+                ("shots/train.jpg", "Bigger on the Inside St: the car rolls, you do not"),
+                ("shots/fold.jpg", "Tar beach: the city folds over the sky")],
+         keywords=["BIGGER ON THE INSIDE", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "optical illusion", "portal", "Ames room", "non Euclidean", "New York block"]),
+    dict(slug="breakglass", page="breakglass.html", nav="BREAK GLASS", branch="break-glass",
+         eyebrow="The grail . a NEW YORKERS 1/1 by MLow",
+         collect=dict(url="https://superrare.com/artwork/eth/0x2DBFCcA230979a91863BE63EBcE55dD5AaE2B5C9/51", where="SuperRare",
+                      kicker="The grail . 1 of 1", h="There is only one. It is available.",
+                      price=[("Buy now", "1.4269 ETH"), ("Or bid, reserve", "1 ETH")],
+                      p="IN CASE OF EMERGENCY: BREAK GLASS is a single token: one case, one owner, all 111 Keystone New Yorkers and their 163 painted states inside it. It is listed now on SuperRare."),
+         repo=os.path.join(ROOT, "BREAK GLASS 1 OF 1 2026-10-15"),
+         skip=(), need=("index.html",),
+         still="PREVIEW.png",
+         tag="BREAK GLASS · 1/1", name="BREAK GLASS", h1="BREAK <em>GLASS</em>",
+         title="BREAK GLASS · a NEW YORKERS 1/1 by MLow: break the case, meet a Keystone New Yorker",
+         desc=("BREAK GLASS, a three.js 1/1 by MLow. A blue emergency case covered in evil eyes that watch you back, on a white terrazzo plinth behind velvet ropes. Take the hammer off its "
+               "chain, hit the glass three times, and it shatters to show one of the Keystone 111, pulled at random from 163 painted states. "
+               "Press RE-ARM on the plinth and every shard flies back into the frame for another pull. Canal Street Bootlegs are the rarest. Free in your browser."),
+         controls="Click the glass three times. Drag to walk round the stand, scroll to zoom. RE-ARM, TURN and SOUND are the buttons on the plinth. SPACE strikes, R re-arms, B turns it, M mutes.",
+         phone="BREAK GLASS works on a phone: tap the glass three times, then the buttons on the plinth.",
+         tagline="In case of emergency. A New Yorker is waiting",
+         blurb=("Every fire cabinet in the city holds the same thing. This one holds a New Yorker. The enamel is evil eye blue and every eye on it "
+                "follows the hammer. Break the glass and one of the 111 Keystone works slides forward, the siren spins and the bell rings. "
+                "Turn the case around for the inspection tag. Last checked: never."),
+         films=[dict(dir="break-glass", kick="The film", h="BREAK GLASS", dur="0:44", label="BREAK GLASS, the hype film, by MLow",
+                     sub="Shot inside the piece itself, frame by frame: the eyes, the hammer, three hits, the glass in slow motion, seven pulls and the rarest one. The score is made in code too.")],
+         keywords=["BREAK GLASS", "MLow", "NEW YORKERS", "Keystone 111", "1/1", "three.js", "evil eye", "interactive art", "NFT", "generative reveal"]),
     dict(slug="spiral", page="spiral.html", nav="SKELLY CUP", branch="skelly-spiral",
          repo=os.path.join(ROOT, "SKELLY SPIRAL 2026-10-11"),
          skip=(), need=("index.html", "vendor", "assets/data.json"),
@@ -157,6 +312,7 @@ GALLERIES = [
                 "the building, from NimBuds under the dome to five Lost Marbles. Art, not an investment. Not a betting product."),
          keywords=["SKELLY CUP", "THE SPIRAL", "Marble Run", "Bryan Brinkman", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "marble race", "Guggenheim"]),
     dict(slug="momlow", page="momlow.html", nav="MoMLOW", branch="momlow",
+         gpu=dict(art=r"/atlas/|/t/"),
          repo=os.path.join(ROOT, "MOMLOW 2026-10-12"),
          skip=(), need=("index.html", "vendor", "js", "assets/data.json", "assets/atlas", "assets/glb"),
          still=os.path.join("DELIVERABLES", "cover.jpg"),
@@ -176,7 +332,318 @@ GALLERIES = [
                 "void floor by floor, and a curator that learned what MLow likes hung every room and refused every soft painting. Press C in any room for "
                 "its note. Ride the lift. Cross the bridge. Out back, on the garden's north wall, every New Yorker anyone has collected hangs in the order "
                 "it happened. Admission is free. It always was."),
-         keywords=["MoMLOW", "MoMA", "MLow", "NEW YORKERS", "walkable museum", "three.js", "3D gallery", "virtual museum", "53rd Street", "sculpture garden", "The Counted"])
+         keywords=["MoMLOW", "MoMA", "MLow", "NEW YORKERS", "walkable museum", "three.js", "3D gallery", "virtual museum", "53rd Street", "sculpture garden", "The Counted"]),
+    dict(slug="pigeonhole", page="pigeonhole.html", nav="PIGEONHOLE", branch="the-pigeonhole",
+         repo=os.path.join(ROOT, "DOWN THE PIGEONHOLE 2026-10-17"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/art", "assets/glb", "assets/stickers"),
+         still=os.path.join("shots", "diorama.jpg"),
+         tag="THE PIGEONHOLE", name="THE PIGEONHOLE", h1="THE <em>PIGEONHOLE</em>",
+         title="THE PIGEONHOLE · a museum inside a pigeon inside a bodega inside a dream, a walkable exhibition by MLow",
+         desc=("THE PIGEONHOLE, a walkable three.js exhibition by MLow for NEW YORKERS. Twelve rooms at four scales, each inside something in "
+               "the room before it: the last N train at 3:33 a.m. whose car repeats forever, a platform where a pigeon grows nine metres tall, a "
+               "Jackson Heights bodega whose cooler doors open onto Rockaway and the harbour, a stockroom stair that only goes down, and the "
+               "pigeon on the counter whose eye you fall into. Inside her: a breathing feather cathedral, a gallery of everything she ever ate, "
+               "an opera house heart with your pulse, a wing where gravity follows the wall, a planetarium map where 40 New Yorkers pop up at "
+               "their neighbourhoods, the Museum of Modern Pigeon with the bodega live in a glass case, and a gift shop of snow globes that hold "
+               "every room. 190 New Yorkers, MLow's stickers on every surface. Free in your browser."),
+         controls="WASD or arrows walk, mouse or drag to look, click anything, I for the index of every piece, [ and ] change rooms, M sound.",
+         phone="THE PIGEONHOLE works on a phone: left thumb walks, right thumb looks, tap anything. A laptop with a good graphics chip shows it best.",
+         tagline="The smallest thing in the room holds the biggest world",
+         # the spot under the gallery (add_media.py the-pigeonhole; also leads media.html)
+         films=[dict(dir="the-pigeonhole", kick="The spot", h="Look her in the eye", dur="1:00", label="THE PIGEONHOLE, the spot, a film by MLow",
+                     sub="Every bodega has a pigeon. Nobody looked her in the eye. One minute shot entirely inside the exhibition: into her eye on the drop, "
+                         "a museum inside a pigeon inside a bodega inside a dream, out through the snow globe and back on the N.")],
+         blurb=("You fell asleep on the N. The car is crossing the sky and its end doors open onto the same car, again and again. On the third "
+                "car the doors open on a platform that should not exist, and the platform opens on a bodega that is open 25 hours. There is a "
+                "pigeon on the counter. Look into her eye. Inside the pigeon is a cathedral, a lost and found, a heart that keeps your time, a "
+                "wing that turns you upside down and a brain that knows the way home. At the very centre is a museum, and in its glass case is "
+                "the bodega you just left, live, with you in it, very small. Exit through the gift shop. The big snow globe holds the train."),
+         shots=[("shots/car.jpg", "Last Stop, 3:33 A.M.: every car is this one"),
+                ("shots/giant.jpg", "The Platform of Wrong Sizes: the pigeon grows as you walk to it"),
+                ("shots/bodega.jpg", "Pigeonhole Deli Grocery: one eye, from one sticker on the floor"),
+                ("shots/eye.jpg", "The pigeon on the counter. Her eye is a door"),
+                ("shots/cooler.jpg", "The Cooler: thirty metres of aisle, every door somewhere else"),
+                ("shots/nave.jpg", "The Nave: the neck is a cathedral, and it breathes"),
+                ("shots/crop.jpg", "Lost and Found: the reverse magnifier"),
+                ("shots/heart.jpg", "The Heart: an opera house that keeps your pulse"),
+                ("shots/wing.jpg", "Hall of Flight: down is wherever your feet are"),
+                ("shots/dome.jpg", "The Homing Dome: the city stands up to meet you"),
+                ("shots/diorama.jpg", "The Museum of Modern Pigeon: the bodega, live, in a glass case"),
+                ("shots/itself.jpg", "The Collection of Itself: the painting holds the room that holds it"),
+                ("shots/shop.jpg", "The Gift Shop: every snow globe is a room of the show")],
+         keywords=["THE PIGEONHOLE", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "optical illusion", "portal", "recursive", "bodega", "pigeon", "anamorphic", "virtual museum"]),
+    dict(slug="unlicensed", page="unlicensed.html", nav="UNLICENSED", branch="unlicensed-new-york",
+         repo=os.path.join(ROOT, "UNLICENSED NEW YORK 2026-10-18"),
+         skip=(), need=("index.html", "collection.html", "assets/data.js", "assets/art", "assets/glb", "assets/stickers", "assets/generated"),
+         still=os.path.join("site", "shots", "sky.jpg"),
+         tag="UNLICENSED NEW YORK", name="UNLICENSED NEW YORK", h1="UNLICENSED <em>NEW YORK</em>",
+         title="UNLICENSED NEW YORK · the department that impounded the impossible parts of the city, a walkable exhibition by MLow",
+         desc=("UNLICENSED NEW YORK, a walkable three.js exhibition by MLow for NEW YORKERS: a fictional municipal building that has "
+               "impounded the impossible parts of New York. Sixteen departments in a cycle: take a number at the Bureau of Unlicensed Miracles, "
+               "stand trial before a jury of pigeons, step into an apartment that is bigger than its lease, open a deli refrigerator that holds "
+               "a whole rooftop, wash gravity, open your emotional baggage, repeat your appeal down a hallway four levels deep, fold the "
+               "borough overhead, watch the city sink into its own reflection, chase a bench that will not be sat on, play an organ made of "
+               "noise complaints, assemble a witness out of 196 fragments, find the actual museum live inside a landlord's coat pocket, see "
+               "a painting that holds the room that holds it, give a rooftop back to the block, and fill in your exit interview. "
+               "160 New Yorkers on the walls, 43 things to find, four generated plates. Free in your browser."),
+         controls="WASD or arrows walk, mouse or drag to look, click anything, E interacts, I for the index of every piece, [ and ] change rooms, Escape closes a card.",
+         phone="UNLICENSED NEW YORK works on a phone: left thumb walks, right thumb looks, tap anything. A laptop with a good graphics chip shows it best.",
+         tagline="Your application will be processed yesterday",
+         blurb=("Somewhere in the city there is a building that handles the parts of New York that do not fit on the form. Apply for a "
+                "miracle at the intake counter. Appeal your rent to a jury of pigeons. Stand on the brass eye in an apartment that is bigger "
+                "than its lease. Enter a universe through a deli refrigerator. Wash gravity. Open a suitcase that has a whole neighbourhood "
+                "packed in it. Walk down a hallway of appeals that opens on the same hallway, four deep. Click a water tower and the borough "
+                "folds over your head. Chase a bench. Play the noise. Walk onto an eye and watch 196 scattered pieces become one witness. "
+                "In the landlord's coat pocket is the actual museum, live, at one to seven. Then the exit interview, where you are approved "
+                "to remain impossible, and the form sends you back to the start."),
+         shots=[("shots/intake.jpg", "The Bureau of Unlicensed Miracles: take a number, the number is taking you"),
+                ("shots/jury.jpg", "The International Court of Pigeon Justice: the jury has reviewed your sidewalk privileges"),
+                ("shots/rent.jpg", "The Apartment Bigger Than Its Lease: stand on the brass eye"),
+                ("shots/deli.jpg", "The Last Bodega in the Universe: the refrigerator contains a city"),
+                ("shots/wash.jpg", "The Gravity Laundromat: the room turns, you do not"),
+                ("shots/lost.jpg", "Emotional Baggage Claim: every suitcase is a door"),
+                ("shots/appeals.jpg", "The Endless Appeals Office: the hallway opens on itself, four levels deep"),
+                ("shots/sky.jpg", "The Sky Is Under Renovation: click the water tower and the borough folds overhead"),
+                ("shots/flood.jpg", "The Department of Liquid Assets: the city sinking into its own reflection"),
+                ("shots/bench.jpg", "The Central Park of Forbidden Benches: it has somewhere else to be"),
+                ("shots/noise.jpg", "The Cathedral of Noise Complaints: an organ of architecture"),
+                ("shots/archive.jpg", "The Archive of Unfinished New Yorkers: 196 fragments, one witness"),
+                ("shots/pocket.jpg", "The Landlord's Coat Pocket: the actual museum, live, at one to seven"),
+                ("shots/review.jpg", "The Museum Inside Its Own Review: the painting holds the room that holds it"),
+                ("shots/garden.jpg", "The Rooftop That Refused to Be Luxury: the flower watches the city"),
+                ("shots/release.jpg", "The Exit Interview With New York: approved to remain impossible")],
+         keywords=["UNLICENSED NEW YORK", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "optical illusion", "portal", "recursive", "anamorphic", "forced perspective", "pigeon", "bodega", "virtual museum"]),
+    dict(slug="records", page="records.html", nav="RECORDS", branch="on-record",
+         repo=os.path.join(ROOT, "ON RECORD 2026-10-20"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="ON RECORD", name="ON RECORD: New York on Wax", h1="ON <em>RECORD</em>",
+         title="ON RECORD · New York on Wax · a walkable gallery by MLow",
+         desc=("ON RECORD, a walkable three.js gallery by MLow, the sister of ON LOCATION: eleven rooms where New York made its music, rebuilt "
+               "and recast with NEW YORKERS. A record store where the floor is a turntable, Jones Street in the snow in 1963, the die cut tenement "
+               "on St. Marks Place, the corner of Ludlow and Rivington, the silver loft on East 47th Street, 315 Bowery, the rec room at 1520 "
+               "Sedgwick Avenue where the break was born, the stoop on East 126th Street where fifty seven musicians posed for one picture, the "
+               "wedge shaped basement at 178 Seventh Avenue South, Amateur Night at 253 West 125th Street and the Chelsea Hotel. Every room plays "
+               "its own song, written note by note in your browser, every member of the cast has an eye flower for a head, every wall holds census "
+               "New Yorkers from the block, and every room hides a trick. Free in your browser."),
+         controls="WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, Z for binoculars, N or WAY OUT for a line on the floor to the next room, [ and ] for the previous and next room, R for a random room, K to skate.",
+         phone="ON RECORD works on a phone: left thumb walks, right thumb looks, tap anything. Turn the sound on: every room has its own song.",
+         tagline="Drop the needle anywhere",
+         blurb=("The streets, the stoops and the clubs are New York's. The records belong to the people who made them. The people are ours. "
+                "Step onto the turntable in the record store and the whole shop turns round you. Stand on the photographer's mark on Jones Street "
+                "and the snow stops for a square picture, then walk on and somebody takes your arm. Walk left and right in front of the tenement on "
+                "St. Marks Place and the tenants change. Chop the corner of Ludlow Street on a sampler. Push the silver clouds, peel the banana slowly "
+                "and sit three minutes for a screen test. Survive the pit on the Bowery while the flyers rewrite themselves behind your back. Keep "
+                "the break going on two turntables in the Bronx until the room goes off. Hold still on East 126th Street and fifty seven musicians "
+                "pose. Walk to the point of the Vanguard and the trio swells, and so do you. Rub the stump at the Apollo before you take the stage, "
+                "or meet the Sandman. Then look straight up the Chelsea stairwell."),
+         shots=[("shots/lobby.jpg", "The record store: the floor in the middle is a turntable"),
+                ("shots/jones.jpg", "Jones Street in the snow: stand where the photographer stood"),
+                ("shots/stmarks.jpg", "96 and 98 St. Marks Place: pull the sleeve and the tenants change"),
+                ("shots/ludlow.jpg", "Ludlow and Rivington: a sampler that chops the corner"),
+                ("shots/factory.jpg", "The silver loft: push the clouds, peel slowly"),
+                ("shots/cbgb.jpg", "315 Bowery: the pit, and the flyers that will not sit still"),
+                ("shots/sedgwick.jpg", "1520 Sedgwick Avenue: two copies of one record and a break that never ends"),
+                ("shots/harlem.jpg", "East 126th Street: hold still and everybody poses"),
+                ("shots/vanguard.jpg", "178 Seventh Avenue South: walk to the point of the wedge"),
+                ("shots/apollo.jpg", "253 West 125th Street: rub the stump, then take the stage"),
+                ("shots/chelsea.jpg", "222 West 23rd Street: rent paid in paintings, twelve floors up")],
+         keywords=["ON RECORD", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "New York music history", "record covers", "hip hop", "jazz", "punk", "optical illusions", "virtual museum"]),
+    dict(slug="garyvee", page="garyvee.html", nav="GARY VEE", branch="clouds-and-dirt-v2",
+         repo=os.path.join(ROOT, "CLOUDS AND DIRT V2 2026-10-22"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="CLOUDS AND DIRT", name="CLOUDS AND DIRT: a tower for Gary Vaynerchuk", h1="CLOUDS AND <em>DIRT</em>",
+         title="CLOUDS AND DIRT · A tower for Gary Vaynerchuk · a walkable gallery by MLow",
+         desc=("CLOUDS AND DIRT, a walkable three.js tower for Gary Vaynerchuk built by MLow with NEW YORKERS: twenty five floors, the first twelve from the "
+               "stockroom of Shoppers Discount Liquors in Springfield, New Jersey to the sky over Manhattan. The lobby with a lift that goes "
+               "to every floor, the dirt with a folding table of garage sale finds, the Wine Library TV desk and its thousand tapes, seven books "
+               "the size of doors and a heavy bag, the 25th floor of 10 Hudson Yards where a ring light cuts one visitor into sixty four pieces "
+               "of content, the studio, the twelve and a half ingredients on a Park Avenue floor, the VeeFriends carousel with the very very "
+               "very very lucky black cat, the VeeCon stage that fills as you move, the attention exchange, the owner's box with the uprights, "
+               "and the clouds, where his lines hang in the air and only line up from one star each, then the VeeFriends wing that could not exist "
+               "anywhere but online: a doodle room that draws itself while you look away, a vault of the six Spectaculars rendered live, the trading "
+               "card arena where you play first to seven, Burn Island, the VeeDome parade, the Gift Goat's three doors, the gym that flips at half "
+               "court, a newspaper press that prints you in halftone, the toy aisle with an honest claw, the punk vault with three voxel giants, "
+               "the Wine Library cellar with its mezzanine, game day with the 1969 scoreboard, and the feed. His honorary New Yorker portraits by "
+               "MLow and the VeeFriends one hang on the walls with census New Yorkers from the blocks. Every floor plays its own song and hides a "
+               "trick, and V cuts any floor into a vertical clip. Free in your browser."),
+         controls="WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, Z for binoculars, N or WAY OUT for a line on the floor to the next door, [ and ] for the previous and next floor, R for a random floor, K to skate.",
+         phone="CLOUDS AND DIRT works on a phone: left thumb walks, right thumb looks, tap anything. Turn the sound on: every floor has its own song.",
+         tagline="Take the lift. Press 5. Then find the wing.",
+         # the skate film under the tower (add_media.py clouds-and-dirt; also leads media.html)
+         films=[dict(dir="clouds-and-dirt", kick="The skate film", h="Twenty five floors, one skateboard", dur="2:00", label="CLOUDS AND DIRT, the skate film, by MLow",
+                     sub="Twenty five unlikely riders skate the tower top to bottom: the cab out of the lobby, the Kid in the dirt, the Lucky Black Cat over the "
+                         "VeeCon stage, the panda in the vault, the worm on Burn Island, the pig that flips the gym. Every floor's song, every floor's trick on the beat.")],
+         blurb=("A tower for the man who day trades attention, with the dirt in the basement and the clouds on the roof. Flip a garage sale find "
+                "on the folding table. Taste four wines at the Wine Library desk and the whole room changes colour. Jab the heavy bag three times, "
+                "then throw the hook. Stand in the ring light on floor 25 and watch sixty four screens cut you into content. Record six seconds "
+                "of yourself in the studio and meet your loop. Walk the twelve and a half ingredients under his portrait on Park Avenue and face "
+                "the mirror of kind candor. Ride the carousel of friends and wait eleven seconds on the Patient Panda. Fill an arena by walking. "
+                "Buy attention while it is underpriced. Throw a football through the uprights from the owner's box. Then stand on a star on the "
+                "roof and read the sky."),
+         shots=[("shots/lobby.jpg", "The lobby: a directory, a lift with twelve buttons, a suitcase from 1978 turned to stone"),
+                ("shots/dirt.jpg", "The dirt: the stockroom in Springfield, New Jersey, and the folding table"),
+                ("shots/library.jpg", "Wine Library TV: four wines, one bucket, a thousand tapes"),
+                ("shots/crush.jpg", "Crush It: seven books the size of doors and a heavy bag"),
+                ("shots/hudson.jpg", "Floor 25, 10 Hudson Yards: the ring light and the wall of sixty four"),
+                ("shots/studio.jpg", "The studio: document, do not create"),
+                ("shots/empathy.jpg", "Empathy Over Park Avenue: the portraits and the twelve and a half ingredients"),
+                ("shots/carousel.jpg", "The carousel of friends: eight horses, one lucky black cat"),
+                ("shots/veecon.jpg", "VeeCon: one is greater than zero"),
+                ("shots/attention.jpg", "The attention exchange: buy it underpriced"),
+                ("shots/jets.jpg", "The owner's box: the knitted five and the uprights"),
+                ("shots/clouds.jpg", "The clouds: the words in the sky, read from the stars"),
+                ("shots/doodle.jpg", "The doodle room: the walls draw while you are not looking"),
+                ("shots/vault.jpg", "The Spectacular vault: hologram, lava, bubble gum, diamond, gold, emerald"),
+                ("shots/tcg.jpg", "The TCG arena: Aura, Skill, Stamina, first to seven"),
+                ("shots/burn.jpg", "Burn Island: throw a token in the crater"),
+                ("shots/veedome.jpg", "The VeeDome: the parade of friends"),
+                ("shots/goat.jpg", "The Gift Goat's room: three doors, three sizes"),
+                ("shots/middle.jpg", "Meet Me in the Middle: the gym flips at half court"),
+                ("shots/comics.jpg", "The Sunday comics: the press prints you"),
+                ("shots/toys.jpg", "The toy aisle: the claw is honest"),
+                ("shots/punks.jpg", "The punk vault: one of the giants is watching you"),
+                ("shots/cellar.jpg", "The cellar: ten thousand bottles and the sweaty sock"),
+                ("shots/gameday.jpg", "Game day: run the route, then look at the scoreboard"),
+                ("shots/feed.jpg", "The feed: make the thumb stop")],
+         keywords=["CLOUDS AND DIRT", "Gary Vaynerchuk", "GaryVee", "VeeFriends", "VeeFriends TCG", "Compete and Collect", "Burn Island", "VaynerMedia", "VeeCon", "CryptoPunks", "Wine Library", "New York Jets", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "virtual museum", "10 Hudson Yards"]),
+    dict(slug="garyvee-v1", page="garyvee-v1.html", nav="GARY VEE", branch="clouds-and-dirt",
+         repo=os.path.join(ROOT, "CLOUDS AND DIRT 2026-10-22"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="CLOUDS AND DIRT V1", name="CLOUDS AND DIRT V1: the first tower for Gary Vaynerchuk", h1="CLOUDS AND <em>DIRT</em>",
+         title="CLOUDS AND DIRT V1 · the first twelve floors · a walkable gallery by MLow",
+         desc=("CLOUDS AND DIRT, a walkable three.js tower for Gary Vaynerchuk built by MLow with NEW YORKERS: twelve floors, from the "
+               "stockroom of Shoppers Discount Liquors in Springfield, New Jersey to the sky over Manhattan. The lobby with a lift that goes "
+               "to every floor, the dirt with a folding table of garage sale finds, the Wine Library TV desk and its thousand tapes, seven books "
+               "the size of doors and a heavy bag, the 25th floor of 10 Hudson Yards where a ring light cuts one visitor into sixty four pieces "
+               "of content, the studio, the twelve and a half ingredients on a Park Avenue floor, the VeeFriends carousel with the very very "
+               "very very lucky black cat, the VeeCon stage that fills as you move, the attention exchange, the owner's box with the uprights, "
+               "and the clouds, where his lines hang in the air and only line up from one star each. His honorary New Yorker portraits by MLow "
+               "and the VeeFriends one hang on the walls with census New Yorkers from the blocks. Every floor plays its own song and hides a "
+               "trick. Free in your browser."),
+         controls="WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, Z for binoculars, N or WAY OUT for a line on the floor to the next door, [ and ] for the previous and next floor, R for a random floor, K to skate.",
+         phone="CLOUDS AND DIRT works on a phone: left thumb walks, right thumb looks, tap anything. Turn the sound on: every floor has its own song.",
+         tagline="Take the lift. Press 5.",
+         blurb=("A tower for the man who day trades attention, with the dirt in the basement and the clouds on the roof. Flip a garage sale find "
+                "on the folding table. Taste four wines at the Wine Library desk and the whole room changes colour. Jab the heavy bag three times, "
+                "then throw the hook. Stand in the ring light on floor 25 and watch sixty four screens cut you into content. Record six seconds "
+                "of yourself in the studio and meet your loop. Walk the twelve and a half ingredients under his portrait on Park Avenue and face "
+                "the mirror of kind candor. Ride the carousel of friends and wait eleven seconds on the Patient Panda. Fill an arena by walking. "
+                "Buy attention while it is underpriced. Throw a football through the uprights from the owner's box. Then stand on a star on the "
+                "roof and read the sky."),
+         shots=[("shots/lobby.jpg", "The lobby: a directory, a lift with twelve buttons, a suitcase from 1978 turned to stone"),
+                ("shots/dirt.jpg", "The dirt: the stockroom in Springfield, New Jersey, and the folding table"),
+                ("shots/library.jpg", "Wine Library TV: four wines, one bucket, a thousand tapes"),
+                ("shots/crush.jpg", "Crush It: seven books the size of doors and a heavy bag"),
+                ("shots/hudson.jpg", "Floor 25, 10 Hudson Yards: the ring light and the wall of sixty four"),
+                ("shots/studio.jpg", "The studio: document, do not create"),
+                ("shots/empathy.jpg", "Empathy Over Park Avenue: the portraits and the twelve and a half ingredients"),
+                ("shots/carousel.jpg", "The carousel of friends: eight horses, one lucky black cat"),
+                ("shots/veecon.jpg", "VeeCon: one is greater than zero"),
+                ("shots/attention.jpg", "The attention exchange: buy it underpriced"),
+                ("shots/jets.jpg", "The owner's box: the knitted five and the uprights"),
+                ("shots/clouds.jpg", "The clouds: the words in the sky, read from the stars")],
+         keywords=["CLOUDS AND DIRT", "Gary Vaynerchuk", "GaryVee", "VeeFriends", "VaynerMedia", "VeeCon", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "virtual museum", "Wine Library", "10 Hudson Yards"]),
+    dict(slug="eviction", page="eviction.html", nav="EVICTION", branch="the-eviction",
+         repo=os.path.join(ROOT, "THE EVICTION 2026-10-20"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb", "assets/figs"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="THE EVICTION", name="THE EVICTION: 4F", h1="THE <em>EVICTION</em>",
+         title="THE EVICTION · 4F, a year in a railroad apartment · a walkable world by MLow",
+         desc=("THE EVICTION, a walkable three.js world by MLow built on two NEW YORKERS, The Eviction (No. 47) and The Landlord (No. 39): "
+               "one Williamsburg tenement under the J at Broadway and Marcy Avenue, and the year apartment 4F was emptied, October 2026 to "
+               "October 2027. The curb under the el, the vestibule and the peephole of 1A, the painted fourth floor hall, 4F itself as a forced "
+               "perspective shadowbox whose year runs on a wall calendar (tear a month and the movers carry something out; pin a month and the flat "
+               "stays), the management office where the Landlord grows as you come near, the treadmill of housing court, tar beach and the "
+               "Landlord's penthouse over Central Park. Census New Yorkers from the block are on every wall and in every trick. Free in your browser."),
+         controls="WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, N or WAY OUT for a line on the floor to the next room, [ and ] for the previous and next room. ?chapter=0 to 12 opens 4F at that month.",
+         phone="THE EVICTION works on a phone: left thumb walks, right thumb looks, tap anything. The 4F panel tears, pins and follows the calendar.",
+         tagline="Pin the month you want to keep",
+         blurb=("One building on Broadway, under the J. On the first of every month something leaves apartment 4F, and it ends up on the curb "
+                "under the el. Wait for a train and the poster on the column turns into a film. Open the mailboxes for the postcards; look through "
+                "the peephole of 1A and see who is standing behind you. Stand on the doormat and a painting stands up out of the tile. Do not look "
+                "away from the end of the fourth floor hall. Stand on the mark at the door of 4F: nine metres of railroad flat read as twenty. Tear "
+                "the calendar, change the channel, touch where a frame used to hang. Walk up to the Landlord's desk and watch him grow. Take a "
+                "number at housing court, or walk the treadmill forever. Then open the coop on the roof: the pigeons hold up a painting."),
+         shots=[("shots/apartment.jpg", "4F from the door: a railroad flat in forced perspective, a shadowbox"),
+                ("shots/inside.jpg", "Inside 4F: every room smaller than the last"),
+                ("shots/street.jpg", "Broadway under the J: the curb, piled with what left 4F"),
+                ("shots/vestibule.jpg", "The vestibule: from the doormat a painting stands up off the tile"),
+                ("shots/hallway.jpg", "The fourth floor: he only moves when you are not looking"),
+                ("shots/landlord.jpg", "The management office: the closer you come, the bigger he gets"),
+                ("shots/court.jpg", "Housing court: the window gets no closer until you take a number"),
+                ("shots/roof.jpg", "Tar beach: the flock holds up a painting over the bridge"),
+                ("shots/roofchalk.jpg", "Chalk on the tar, drawn for the top of the stairs")],
+         keywords=["THE EVICTION", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "dynamic NFT", "forced perspective", "anamorphic", "Williamsburg", "J train", "housing court", "railroad apartment"]),
+    dict(slug="sewers", page="sewers.html", nav="SEWERS", branch="live-from-the-sewers",
+         repo=os.path.join(ROOT, "LIVE FROM THE SEWERS 2026-10-23"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="LIVE FROM THE SEWERS", name="LIVE FROM THE SEWERS: home of the Pizza Rat", h1="LIVE FROM THE <em>SEWERS</em>",
+         title="LIVE FROM THE SEWERS · Home of the Pizza Rat · a walkable gallery by MLow",
+         desc=("LIVE FROM THE SEWERS, a walkable photoreal three.js gallery by MLow with NEW YORKERS: you fall through a manhole on First Avenue "
+               "and land at rat scale in the city under the city, where every human thing is colossal and the rats have built a world out of "
+               "everything New York drops, flushes and forgets. Twelve rooms: customs at Arrivals, the Pizza Rat shrine on the First Avenue L "
+               "stairs (September 2015), the goldfish Upstate Farm, the Gator Room after the alligator pulled from a sewer on East 123rd Street in "
+               "February 1935, a cathedral carved from a fatberg, the Crumb Exchange under a bakery, lost property at the size it was lost at, "
+               "Alfred Beach's secret 1870 pneumatic subway, a spa that runs on Con Edison steam, the rat council in the City Hall station closed "
+               "in 1945, the bodega cat who runs the border, and the sewer king who rents his throne by the minute. Census New Yorkers by MLow hang "
+               "on every wall. Every room plays its own song and hides a trick. Free in your browser."),
+         controls="WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, Z for binoculars, N or WAY OUT for a line on the floor to the next door, [ and ] for the previous and next room, R for a random room, K to skate.",
+         phone="LIVE FROM THE SEWERS works on a phone: left thumb walks, right thumb looks, tap anything. Turn the sound on: every room has its own song.",
+         tagline="You fell in. Everybody falls in.",
+         blurb=("Fall through the manhole and walk your shadow through customs: it is approved, you are not. Push the slice up the stairs "
+                "to Pizza Rat's shrine and watch the stairs get longer. Pull the chain in the goldfish Upstate Farm and the room fills past your "
+                "eyes. Pull the 1935 clipping and the gator wakes; hold still by the water and something surfaces. Light six votives in the "
+                "fatberg. Drop one sesame seed and crash the Crumb Exchange. Ring the left earbud and every rat leaves. Pump the bellows until "
+                "the 1870 train is cancelled due to atmosphere. Turn the spa dial from bagel to lawsuit. Vote until the agenda returns to item one. "
+                "Cross the bodega border only while the cat is not looking. Then pull the plunger and go up one problem."),
+         shots=[("shots/arrivals.jpg", "Arrivals: customs under the manhole, and the board of everything that fell in today"),
+                ("shots/slice.jpg", "The Slice: Pizza Rat's shrine on the First Avenue L stairs"),
+                ("shots/flushed.jpg", "Flushed: the Upstate Farm, run by a goldfish in brogues"),
+                ("shots/gator.jpg", "The Gator Room: two sets nightly since 1935"),
+                ("shots/fatberg.jpg", "The Fatberg: a cathedral of everything poured down the drain"),
+                ("shots/exchange.jpg", "The Crumb Exchange: do not drop the seed"),
+                ("shots/grate.jpg", "Lost Through the Grate: the left earbud, emotionally unavailable"),
+                ("shots/pneumatic.jpg", "Beach Pneumatic: one block, one fan, one car, 1870"),
+                ("shots/steam.jpg", "The Steam Baths: a spa that runs on Con Edison"),
+                ("shots/cityhall.jpg", "City Hall Loop: the rat council returns to item one"),
+                ("shots/border.jpg", "The Border: the bodega cat only sees you when you move"),
+                ("shots/throne.jpg", "The Throne: the sewer king, three dollars a minute")],
+         keywords=["LIVE FROM THE SEWERS", "Pizza Rat", "New York sewers", "alligators in the sewers", "Beach Pneumatic Transit", "City Hall station", "fatberg", "bodega cat", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "virtual museum", "rat scale"]),
+    dict(slug="same", page="same.html", nav="SAME", branch="same-difference",
+         repo=os.path.join(ROOT, "SAME DIFFERENCE 2026-10-20"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/pairs", "assets/posters", "assets/glb"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="SAME DIFFERENCE", name="SAME DIFFERENCE", h1="SAME <em>DIFFERENCE</em>",
+         title="SAME DIFFERENCE · a museum of New Yorkers who sound the same · a walkable world by MLow",
+         desc=("SAME DIFFERENCE, a walkable three.js museum by MLow of New Yorkers who sound the same: PROFIT and PROPHET, BRAKE and BREAK, "
+               "KNEW and NEW, TAWK and TOCK. Fifty three pairs, each a diptych of two eye flower New Yorkers painted in MLow's hand, in nine real New York "
+               "places that each make a diptych move a different way: lenticular ads on a subway platform, split flap boards that flip on the New York "
+               "hour, two sided deli signs that spin as you pass, a two way mirror with a light switch, a Whispering Gallery where a word arrives "
+               "as its New York twin, Manhattanhenge's shadow climbing the facades of 42nd Street, a tunnel blink on the 6 train, subway doors that close the two words "
+               "into one picture, and a gift shop of twenty four posters with a scratch off. Free in your browser."),
+         controls="WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, N or WAY OUT for a line on the floor to the next room, [ and ] for the previous and next room.",
+         phone="SAME DIFFERENCE works on a phone: left thumb walks, right thumb looks, tap anything.",
+         tagline="Two New Yorkers, one word",
+         blurb=("PROFIT // PROPHET: two New Yorkers who both call the crash, and only one gets a bonus. Every picture in here is a pair like "
+                "that. Walk past an ad on the platform one way, then the other, and it changes under you; stand dead centre and you get both. "
+                "Click a split flap board and watch MORNING clack into MOURNING. Walk fast past the deli signs and they spin. Flip the light "
+                "switch in the precinct and the mirror turns to glass. Whisper TAWK into a corner of the vault and TOCK lights up across the way. "
+                "Watch the sun go down 42nd Street and turn SON into SUN. Ride the 6 through a blink. Then scratch the ticket in the gift shop."),
+         shots=[("shots/henge.jpg", "Manhattanhenge: 42nd Street at sundown, the shadow turning SON into SUN on the facades"),
+                ("shots/platform.jpg", "Coming // Going: walk past from the west and the ad says PROFIT"),
+                ("shots/platform2.jpg", "The platform opens onto the tracks, and the train coming in"),
+                ("shots/departures.jpg", "Departures: split flap pictures that flip on the New York hour"),
+                ("shots/deli.jpg", "Open // Closed: two sided deli signs that spin as you pass"),
+                ("shots/interrogation.jpg", "The two way mirror, their side lit: who is really in there"),
+                ("shots/whisper.jpg", "The Whispering Gallery: whisper TAWK, hear TOCK"),
+                ("shots/doors.jpg", "Stand clear of the closing doors: the chime, and the two words meet as one picture"),
+                ("shots/subway.jpg", "The tunnel blink: every picture on the 6 becomes the other word"),
+                ("shots/shop.jpg", "The gift shop: the posters, and ONE // WON on the counter")],
+         keywords=["SAME DIFFERENCE", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "homophones", "diptych", "lenticular", "split flap", "Whispering Gallery", "Manhattanhenge", "New York accent"]),
 ]
 
 
@@ -217,7 +684,7 @@ def sync(src, dst, skip):
     for root, dirs, files in os.walk(dst, topdown=False):
         for f in files:
             r = os.path.relpath(os.path.join(root, f), dst).replace("\\", "/")
-            if r not in want and r != "poster.jpg": os.remove(os.path.join(root, f))
+            if r not in want and r not in ("poster.jpg", "phone-gpu.js"): os.remove(os.path.join(root, f))
         for d in dirs:
             p = os.path.join(root, d)
             if not os.listdir(p): os.rmdir(p)
@@ -271,6 +738,18 @@ for G in GALLERIES:
         print(f"  {slug}: repository not found, keeping the last copy in assets/{slug}")
     if not os.path.exists(os.path.join(dst, "poster.jpg")): raise SystemExit(f"{slug}: no share card at assets/{slug}/poster.jpg")
     html = check(dst, slug, G.get("need", ("index.html", "vendor")))
+    # the phone guard: copied in beside index.html and loaded before anything else in <head>
+    gpu = G.get("gpu", {})
+    shutil.copyfile(PHONE_GPU, os.path.join(dst, "phone-gpu.js"))
+    gv = hashlib.sha256(open(PHONE_GPU, "rb").read()).hexdigest()[:10]
+    attrs = "".join(f' data-{k}="{v}"' for k, v in (("cap", gpu.get("cap", 512)), ("art", gpu.get("art")), ("artcap", gpu.get("artcap"))) if v)
+    tag_ = f'<script src="phone-gpu.js?v={gv}"{attrs}></script>'
+    html2 = re.sub(r'<script src="phone-gpu\.js[^"]*"[^>]*></script>\n?', "", html)
+    m = re.search(r'<head[^>]*>', html2, re.I)
+    if not m: raise SystemExit(f"{slug}: index.html has no <head> for the phone guard")
+    html2 = html2[:m.end()] + "\n" + tag_ + html2[m.end():]
+    if html2 != html:
+        open(os.path.join(dst, "index.html"), "w", encoding="utf-8").write(html2); html = html2
     # a gallery split into js/ files: the page's version covers them too, and the copied index.html asks for them by that
     # version, or a returning visitor keeps four hours of old script under a new page (the Cloudflare browser cache floor)
     jsdir = os.path.join(dst, "js")
@@ -352,15 +831,54 @@ for G in GALLERIES:
   });
 })();
 </script>"""
+    if G.get("tagline") or G.get("shots"):   # only the galleries that use them carry these rules
+        extra_css += """
+.gl .tagline{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:clamp(19px,2.6vw,26px);color:#E8EEF4;margin:0 auto 14px;max-width:760px}
+.gl .shots{max-width:1240px;margin:40px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:18px;text-align:left}
+.gl .shots figure{margin:0}
+.gl .shots a{display:block;border-radius:12px;overflow:hidden;border:1px solid #223;background:#080D16}
+.gl .shots img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;transition:transform .5s}
+.gl .shots a:hover img{transform:scale(1.03)}
+.gl .shots figcaption{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8FA7AB;margin-top:9px;line-height:1.6;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){ .gl .shots img{transition:none} .gl .shots a:hover img{transform:none} }
+"""
+    tagline_html = f'\n    <p class="tagline">{G["tagline"]}</p>' if G.get("tagline") else ""
+    collect_html = ""
+    if G.get("collect"):
+        K = G["collect"]
+        extra_css += """
+.gl .grail{max-width:1100px;margin:22px auto 0;display:flex;align-items:center;justify-content:space-between;gap:28px;text-align:left;
+  padding:26px 30px;border:1px solid #2a3d52;border-top:4px solid var(--pink,#DC6F57);border-radius:14px;background:linear-gradient(180deg,#0F1A26,#0b141e)}
+.gl .grail .eyebrow{color:var(--pink,#DC6F57)}
+.gl .grail h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(24px,3.4vw,36px);margin:6px 0 8px}
+.gl .grail p{margin:0;max-width:620px}
+.gl .grail .btn{flex:none;white-space:nowrap}
+.gl .grail .buy{flex:none;display:flex;flex-direction:column;align-items:stretch;gap:12px}
+.gl .grail .pr{display:flex;justify-content:space-between;align-items:baseline;gap:18px;border-bottom:1px solid #24394A;padding-bottom:8px}
+.gl .grail .pr small{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#8FA7AB}
+.gl .grail .pr b{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:26px;color:#ECE8DD}
+@media (max-width:760px){.gl .grail{flex-direction:column;align-items:flex-start;padding:22px 20px}.gl .grail .buy{width:100%}.gl .grail .btn{width:100%;justify-content:center}}
+"""
+        collect_html = (f'\n  <section class="grail" aria-label="Collect {G["name"]}"><div><div class="eyebrow">{K["kicker"]}</div><h2>{K["h"]}</h2><p>{K["p"]}</p></div>'
+                        f'<div class="buy">' + "".join(f'<div class="pr"><small>{a}</small><b>{b}</b></div>' for a, b in K.get("price", ())) + f'<a class="btn pink" href="{K["url"]}" target="_blank" rel="noopener">Collect it on {K["where"]} \u2197</a></div></section>')
+    # optional stills under the description: (file inside the copied gallery, caption); a click opens the full frame
+    shots_html = ""
+    if G.get("shots"):
+        missing = [f for f, _ in G["shots"] if not os.path.exists(os.path.join(dst, f))]
+        if missing: raise SystemExit(f"{slug}: shots missing from assets/{slug}: {missing}")
+        figs = "".join(f'\n    <figure><a href="assets/{slug}/{f}?v={v}" target="_blank" rel="noopener"><img src="assets/{slug}/{f}?v={v}" '
+                       f'alt="{c}, {G["name"]} by MLow" width="1280" height="720" loading="lazy" decoding="async"></a><figcaption>{c}</figcaption></figure>'
+                       for f, c in G["shots"])
+        shots_html = f'\n  <section class="shots" aria-label="Shots from {G["name"]}">{figs}\n  </section>'
     body = f"""<main class="gl">
   <div class="phone">{G['phone']}</div>
-  <div class="frame"><iframe id="glFrame" src="assets/{slug}/?v={v}" title="{G['name']} by MLow" allow="fullscreen; autoplay; clipboard-write" loading="eager"></iframe></div>
+  <div class="frame"><iframe id="glFrame" src="assets/{slug}/?v={v}" title="{G['name']} by MLow" allow="fullscreen; autoplay; clipboard-write" loading="eager"></iframe></div>{collect_html}
   <div class="how">{G['controls']}<br><a href="assets/{slug}/?v={v}" target="_blank" rel="noopener">Open full screen</a> &nbsp;·&nbsp; <a href="{GITHUB}{G['branch']}" target="_blank" rel="noopener">The code</a></div>
   <div class="under">
-    <div class="eyebrow">A walkable gallery by MLow</div>
-    <h1>{G['h1']}</h1>
+    <div class="eyebrow">{G.get("eyebrow", "A walkable gallery by MLow")}</div>
+    <h1>{G['h1']}</h1>{tagline_html}
     <p>{G['blurb']}</p>
-  </div>{films_html}
+  </div>{shots_html}{films_html}
 </main>"""
     jsonld = {"@context": "https://schema.org", "@type": "WebApplication", "@id": f"{URL}/{slug}",
               "name": G["name"], "url": f"{URL}/{slug}", "description": G["desc"],

@@ -7,6 +7,7 @@ import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero } from './heroes';
 
 const PI = Math.PI;
 const UP = new T.Vector3(0, 1, 0);
@@ -414,6 +415,8 @@ export const armstrong: RoomDef = {
     for (const dz of [-15.2, 0, 15.2]) { const car = new T.Mesh(new T.BoxGeometry(2.9, 3.0, 14.4), steelL); car.position.set(0, 0, dz); train.add(car); const win = new T.Mesh(new T.BoxGeometry(2.96, 0.9, 13.6), warm); win.position.set(0, 0.5, dz); train.add(win); }
     const band = new T.Mesh(new T.BoxGeometry(2.98, 0.3, 45.2), k.flat(0x8a2a9a, 0.2, 0.6)); band.position.y = -0.3; train.add(band);
     k.add(train);
+    /* 2026-10-28: the three box cars become hero cars (h_subway_car_lo), the purple band kept along their sides; boxes stay until it loads */
+    void hero(k, 'h_subway_car_lo', { box: [2.9, 3.4, 14.4] }).then((h) => { if (!h) return; for (const c of train.children) if (c !== band) c.visible = false; [-15.2, 0, 15.2].forEach((dz, i) => { const c = i ? h.clone() : h; c.position.set(0, -1.5, dz); train.add(c); }); });
     const route: T.Vector3[] = [];
     for (let x = -280; x <= 280; x += 40) route.push(v(x, 10.6, 78));
     route.push(v(320, 10.6, 90), v(320, 10.6, 520), v(-320, 10.6, 520), v(-320, 10.6, 90));

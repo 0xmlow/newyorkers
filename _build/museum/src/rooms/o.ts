@@ -1,5 +1,6 @@
 /* Rooms 67 to 71: balloon inflation night, Christopher Street, the San Gennaro feast, the Chelsea Hotel, the Strand. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v } from '../kit';
 import type { Mount } from '../kit';
@@ -246,7 +247,9 @@ export const sangennaro: RoomDef = {
     const head = new T.Mesh(new T.SphereGeometry(0.26, 12, 10), k.flat(0xe8d4b8, 0, 0.6)); head.position.y = 3.25; litter.add(head);
     const mitre = new T.Mesh(new T.ConeGeometry(0.24, 0.6, 6), gold); mitre.position.y = 3.75; litter.add(mitre);
     for (let i = 0; i < 30; i++) { const rib = new T.Mesh(new T.PlaneGeometry(0.16, 0.7 + (i % 3) * 0.3), k.flat([0x3aa06a, 0xf4f0e8, 0xe83a3a][i % 3], 0, 0.8, { side: T.DoubleSide })); const a = (i / 30) * PI * 2; rib.position.set(Math.cos(a) * 0.7, 2.4 + (i % 4) * 0.25, Math.sin(a) * 0.7); rib.rotation.y = -a; litter.add(rib); }
-    for (const dx of [-1.2, 1.2]) for (const dz of [-1.5, 1.5]) { const bearer = new T.Mesh(new T.CapsuleGeometry(0.2, 0.9, 3, 8), k.flat(0xf4f0e8, 0, 0.8)); bearer.position.set(dx, 0.9, dz); litter.add(bearer); const pole = new T.Mesh(new T.BoxGeometry(0.08, 0.08, 3.4), wood); pole.position.set(dx, 1.5, 0); litter.add(pole); }
+    /* 2026-10-28: the four bearers stand under the poles, feet on the street and shoulders at the pole (1.5 m), working men in suits and jackets */
+    const bearerCast = ['wiseguy', 'cabbie', 'oscar', 'cabbie']; let bi = 0;
+    for (const dx of [-1.2, 1.2]) for (const dz of [-1.5, 1.5]) { const bearer = new T.Mesh(new T.CapsuleGeometry(0.2, 0.9, 3, 8), k.flat(0xf4f0e8, 0, 0.8)); bearer.position.set(dx, 0.65, dz); litter.add(personTag(bearer, 'auto', 1.41, bearerCast[bi++])); const pole = new T.Mesh(new T.BoxGeometry(0.08, 0.08, 3.4), wood); pole.position.set(dx, 1.5, 0); litter.add(pole); }
     k.add(litter);
     if (!ctx.reduced) k.rider(litter, k.spline([v(0, 0, 76), v(0.4, 0, 0), v(0, 0, -76), v(-14, 0, -90), v(14, 0, -90)], true), 0.7, 60);
     if (!ctx.reduced) k.ticks.push((t) => { litter.position.y = 0.08 * Math.sin(t * 3); });

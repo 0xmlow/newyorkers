@@ -3,6 +3,7 @@
    the Ohel at Montefiore Cemetery, reached from the visitor center on Francis Lewis Boulevard.
    No likeness of any person, no lettered scripture, no art in a sanctuary or at the grave. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -13,12 +14,12 @@ type K = Parameters<RoomDef['build']>[0];
 /* ---------- shared helpers ---------- */
 /* a person in three instanced parts, so a coat, a face and a hat can each take their own colour */
 const FS = 1.15;
-function bodyGeo() { const g = new T.CapsuleGeometry(0.2, 0.82, 3, 8); g.translate(0, 0.61, 0); return g; }
-function headGeo() { const g = new T.SphereGeometry(0.125, 8, 6); g.translate(0, 1.35, 0); return g; }
+function bodyGeo() { const g = new T.CapsuleGeometry(0.2, 0.82, 3, 8); g.translate(0, 0.61, 0); return personTag(g, 'auto', 1.25); }
+function headGeo() { const g = new T.SphereGeometry(0.125, 8, 6); g.translate(0, 1.35, 0); return personTag(g, 'part'); }
 function hatGeo() {
   const brim = new T.CylinderGeometry(0.2, 0.2, 0.018, 9); brim.translate(0, 1.43, 0);
   const crown = new T.CylinderGeometry(0.12, 0.13, 0.15, 8); crown.translate(0, 1.51, 0);
-  return mergeGeometries([brim, crown])!;
+  return personTag(mergeGeometries([brim, crown])!, 'part');
 }
 type Person = { x: number; y: number; z: number; yaw: number; coat: number; skin: number; hat: boolean; ph: number; sway: number };
 /* many people in place: seated, standing, swaying over their books. One draw call per part. */

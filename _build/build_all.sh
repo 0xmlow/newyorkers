@@ -44,10 +44,12 @@ python3 build_keystone.py
 python3 build_marks.py      # THE MARKS: the uncounted and the era closers, release one
 python3 build_states.py        # states.html, Friday State: what is on the tokens and the next four Fridays, from states.json
 python3 build_bloomrun.py
+python3 build_tools.py         # /tools: the toolbox, cards that open MLow's tools on mvibe
 python3 build_moshlab.py       # MOSH LAB from its own repo (MOSH LAB/moshlab/app) into assets/moshlab
 python3 build_markup.py        # markup.html, draw on any New Yorker (ported from MLow's moodroom); after the hang, it reads hang_owned.ts
 python3 build_mlowtar.py       # mlowtar.html, MLOWTAR SPEAKS: the fortune booth, the census deck (assets/mlowtar/deck.js) and the matcher the Function shares
 python3 build_arcade.py       # arcade.html + assets/arcade: THE DOOR, THE LAST TRAIN, BODEGA COUNTER with the score bridge
+python3 build_media.py         # media.html: THE SCREENING ROOM, every film from _build/media.json (add_media.py encodes a new one)
 python3 build_galleries.py     # island.html + basement.html: MEME ISLAND and YOUR MOM'S BASEMENT, whole, from their own repos into assets/island and assets/basement
 python3 build_stop.py          # stop.html, YOUR STOP: the New Yorkers within three blocks of any subway station, from geo.js
 python3 build_skelly.py        # skelly.html, SKELLY CUP: NEW YORKERS riders on Bryan Brinkman's Marble Run, champion portraits, free picks via /api/skelly
@@ -61,6 +63,7 @@ python3 build_mint.py           # api/mint.json + api/minted.json: live count fo
 python3 build_tokens.py         # api/tokens.json: token id, pool and the real state stack per census number, for the census viewer; after build_mint, before seo
 python3 build_mosaic.py --nft   # mosaic.html + api/mosaic.json (minted tiles, live layer for the NFT); after collectors
 python3 build_honor_cards.py
+python3 build_collectors.py >/dev/null; python3 build_skelly.py >/dev/null; node collectors/parity.mjs   # again, both, and the live board (functions/api/live) must score as this build does: the honor cards are named by a hash of what is drawn, now including the collection, so api/c needs the new names
 python3 build_honoraries.py
 python3 build_posters.py        # posters, cards and memes wall; after the honor cards and piece extras
 python3 build_tv.py             # tv.html, the living frame: a collector's New Yorkers full screen on a TV

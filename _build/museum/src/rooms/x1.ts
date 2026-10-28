@@ -9,6 +9,7 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
+import { standIn, hide } from './heroes';
 
 const PI = Math.PI;
 
@@ -1367,11 +1368,13 @@ export const newsprint: RoomDef = {
     k.box(2.2, 0.16, 2.4, GX, 1.72, GZ, granite);
     k.box(1.1, 0.5, 0.9, GX, 2.05, GZ + 0.1, bronzeN);
     k.box(1.1, 1.0, 0.12, GX, 2.55, GZ + 0.55, bronzeN);
+    const gm = k.objects.length;   // 2026-10-28: the seated capsule figure is the stand in for the faceless bronze_figure, never a likeness
     k.mesh(new T.CapsuleGeometry(0.3, 0.5, 4, 10), bronzeN, GX, 2.75, GZ + 0.15).rotation.x = 0.12;
     k.sphere(0.17, GX, 3.38, GZ + 0.05, bronzeN, 14);
     k.box(0.72, 0.22, 0.7, GX, 2.4, GZ - 0.35, bronzeN);
     k.box(0.62, 0.62, 0.22, GX, 2.1, GZ - 0.7, bronzeN);
     for (const s of [-1, 1]) k.beam(v(GX + s * 0.34, 3.0, GZ + 0.1), v(GX + s * 0.36, 2.52, GZ - 0.3), 0.07, bronzeN, 8);
+    { const old = standIn(k, gm); void Promise.resolve(k.prop('bronze_figure', GX, 1.8, GZ - 0.45, { height: 1.95, rotY: PI })).then((o) => { if (o) hide(old); }); }
     k.keepOut.push({ x: GX, z: GZ, r: 1.5 });
     k.egg(v(GX, 2.6, GZ), { id: 'greeley', title: 'Horace Greeley', year: '1890', room: 'cityhallrotunda', text: 'John Quincy Adams Ward\'s bronze of Horace Greeley, founder of the New York Tribune, was cast in 1890 and dedicated outside the Tribune Building that September. It moved into City Hall Park in 1916, where Greeley still sits.', clue: 'A seated man in bronze keeps watch in front of his old paper across the street.', source: { name: 'Wikipedia, Statue of Horace Greeley', url: 'https://en.wikipedia.org/wiki/Statue_of_Horace_Greeley_(City_Hall_Park)' } }, { r: 1.8 });
     // 4. Benjamin Franklin on Printing House Square, Gazette in hand, pigeons on his hat
@@ -1379,12 +1382,14 @@ export const newsprint: RoomDef = {
     k.box(1.7, 0.35, 1.7, FRX, 0.315, FRZ, granite);
     k.box(1.3, 1.7, 1.3, FRX, 1.34, FRZ, granite);
     k.box(1.55, 0.22, 1.55, FRX, 2.3, FRZ, granite);
+    const fm = k.objects.length;   // 2026-10-28: Franklin in code is the stand in for the faceless bronze_figure, never a likeness
     k.lathe([[0, 0], [0.42, 0], [0.4, 0.15], [0.36, 0.9], [0.3, 1.3], [0.34, 1.62], [0.3, 1.85], [0.14, 1.95], [0, 1.95]], FRX, B0, FRZ, bronzeN, 16);
     k.sphere(0.17, FRX, B0 + 2.12, FRZ - 0.03, bronzeN, 14);
     k.sphere(0.18, FRX, B0 + 2.1, FRZ + 0.04, bronzeN, 12).scale.set(1, 0.9, 1);
     k.beam(v(FRX + 0.3, B0 + 1.75, FRZ), v(FRX + 0.36, B0 + 1.2, FRZ - 0.28), 0.08, bronzeN, 8);
     k.box(0.32, 0.42, 0.03, FRX + 0.3, B0 + 1.2, FRZ - 0.36, bronzeN).rotation.x = 0.35;
     k.beam(v(FRX - 0.3, B0 + 1.75, FRZ), v(FRX - 0.42, B0 + 1.05, FRZ - 0.1), 0.08, bronzeN, 8);
+    { const old = standIn(k, fm); void Promise.resolve(k.prop('bronze_figure', FRX, B0, FRZ, { height: 2.3, rotY: PI })).then((o) => { if (o) hide(old); }); }
     k.keepOut.push({ x: FRX, z: FRZ, r: 1.3 });
     k.egg(v(FRX, 3.0, FRZ), { id: 'franklin', title: 'Printing House Square', year: '1872', text: 'Ernst Plassman\'s bronze Benjamin Franklin, holding a copy of his Gazette, was unveiled here on January 17, 1872, Franklin\'s 166th birthday. Samuel Morse pulled off the shroud and Horace Greeley gave the speech, a printer honoured at the heart of the city\'s newspapers.', clue: 'The pigeons know which printer stands on the corner.', source: { name: 'NYC Parks, Benjamin Franklin, Printing House Square', url: 'https://www.nycgovparks.org/about/history/historical-signs/listings?id=11957' } }, { r: 2.0 });
     flock(k, ctx, { x: FRX, y: 6.5, z: FRZ + 2, r: 4.5, n: 8, seed: 137, perch: [v(FRX, B0 + 2.36, FRZ), v(FRX + 0.6, B0 + 0.1, FRZ + 0.6), v(FRX - 0.6, B0 + 0.1, FRZ - 0.55), v(FRX + 0.62, B0 + 0.1, FRZ - 0.5)] });

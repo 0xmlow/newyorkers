@@ -4,6 +4,7 @@
    there is exported. Rules kept: no likeness of any real person (Washington is a plain bronze form on a
    plain bronze horse), no lettered text beyond public signage, no brand on any stall or kiosk. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
@@ -18,7 +19,7 @@ const one = new T.Vector3(1, 1, 1), up = new T.Vector3(0, 1, 0);
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* a mount on a wall: rotation r faces the normal (sin r, 0, cos r); the target is d metres out */
 function hang(ms: Mount[], x: number, y: number, z: number, r: number, w: number, h: number, style: FrameStyle, d = 3.2) {
@@ -320,6 +321,8 @@ export const unionsquare: RoomDef = {
       const body = new T.Mesh(figureGeo(0.19, 0.72, 1.24), k.flat(0x5a4a3a, 0, 0.85)); g.add(body);
       const dog = new T.Mesh(mergeGeometries([part(0.5, 0.26, 0.2, 0, 0.35, 0), part(0.2, 0.2, 0.18, 0.32, 0.5, 0), part(0.06, 0.24, 0.06, 0.18, 0.12, 0.07), part(0.06, 0.24, 0.06, 0.18, 0.12, -0.07), part(0.06, 0.24, 0.06, -0.18, 0.12, 0.07), part(0.06, 0.24, 0.06, -0.18, 0.12, -0.07)])!, k.flat(0x7a5a3a, 0, 0.9));
       dog.position.set(0.7, 0, 1.2); dog.rotation.y = PI / 2; g.add(dog);
+      /* 2026-10-28: the kit's dog.glb on the lead (as v19.ts), the box dog the stand in */
+      k.prop('dog', 0, 0, 0, { height: 0.55 }).then((d) => { if (!d) return; k.scene.remove(d); dog.visible = false; d.position.set(0.7, 0, 1.2); d.rotation.y = 0; g.add(d); });
       const lead = new T.Mesh(new T.CylinderGeometry(0.008, 0.008, 1.4, 4), iron); lead.position.set(0.45, 0.7, 0.6); lead.rotation.x = -1.0; lead.rotation.z = 0.35; g.add(lead);
       k.add(g); k.rider(g, walk, 1.3, 40);
     }

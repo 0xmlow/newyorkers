@@ -16,6 +16,7 @@
    Here the tables are pulled in, the side aisles are kept clear, and the works
    hang in bays cut into the lower tier of shelves. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -30,7 +31,7 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const b = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h, z);
   b.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 8, 6), k.flat(skin, 0, 0.7), x, y + 1.22 * h + 0.13, z);
-  return b;
+  personTag(b, 'auto', 1.25); for (let i = k.objects.indexOf(b) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return b;
 }
 /* A person as one mesh, so a figure can be moved as a whole on a tick. */
 function personGroup(coat: number, skin = 0xc8a284) {
@@ -40,13 +41,13 @@ function personGroup(coat: number, skin = 0xc8a284) {
   const h = new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: skin, roughness: 0.7 }));
   h.position.y = 1.35;
   g.add(b, h);
-  return g;
+  return personTag(g, 'auto');
 }
 /* Seated: a shorter body and a head, merged, for instancing at a table. */
 function seatedGeo() {
   const body = new T.CapsuleGeometry(0.19, 0.42, 3, 8); body.translate(0, 0.4, 0);
   const head = new T.SphereGeometry(0.12, 8, 6); head.translate(0, 0.92, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'seat');
 }
 const mod = (a: number, n: number) => ((a % n) + n) % n;
 const at = (x: number, y: number, z: number, ry = 0, s = ONE) => new T.Matrix4().compose(v(x, y, z), new T.Quaternion().setFromEuler(new T.Euler(0, ry, 0)), s);

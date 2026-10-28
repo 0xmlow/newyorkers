@@ -6,6 +6,7 @@
    (the band on the Room's wall is plain granite), the memorial keeps its tone and its Room stays
    empty of art. Helpers are copied from v14 and v3, nothing there is exported. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
@@ -23,7 +24,7 @@ const cam = (): T.Camera | undefined => (typeof window === 'undefined' ? undefin
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* a wall with round arched openings, round windows or plain rectangles, one extrusion, centred on x, base at y 0 */
 type Hole = { kind: 'arch'; cx: number; y0: number; w: number; h: number; shoe?: number } | { kind: 'circle'; cx: number; cy: number; r: number } | { kind: 'rect'; cx: number; y0: number; w: number; h: number };

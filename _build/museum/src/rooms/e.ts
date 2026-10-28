@@ -4,7 +4,7 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef } from './types';
-import { liberty } from './b';
+import { liberty, LIBERTY_CREDIT } from './b';
 
 const PI = Math.PI;
 
@@ -528,7 +528,9 @@ export const governors: RoomDef = {
     k.prop('cleat', 8, 0, 14, { height: 0.5 });
     k.prop('lamppost', -6, 0, 14, { height: 6, keepOut: 0.5 });
     // the harbour: Liberty to the west, lower Manhattan ahead, Brooklyn to the east
-    liberty(k, -90, -1.5, -60, 1.4);
+    liberty(k, -90, -1.5, -60, 1.4, [0, 0]);
+    /* the credit her model's licence asks for, on a low post at the west edge of the path, the side she stands on */
+    { const p = path[16], cx = p.x - 2.5, cy = hill(cx, p.z); k.box(0.08, 0.8, 0.08, cx - 0.05, cy + 0.4, p.z, dark); k.sign(LIBERTY_CREDIT, 3.4, 0.42, cx, cy + 0.95, p.z, '#2f4a3a', '#f0f4e8', 46, PI / 2); }
     k.box(60, 4, 40, -90, -1.5, -62, k.pbr('libIsland', X.ashlar(0x6f7566, 4, 3), 0.1));
     k.skyline({ z: -190, count: 34, spacing: 6.5, scale: 1.9, base: -1.5, seed: 44, lit: 0.22, glow: 0.5, tint: 0x6e7684 });
     k.skyline({ z: -215, count: 30, spacing: 9, scale: 3, base: -1.5, seed: 45, lit: 0.15, glow: 0.4, tint: 0x7d8490, rows: 1 });

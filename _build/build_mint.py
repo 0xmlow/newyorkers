@@ -10,6 +10,7 @@ Writes
                     handle, their address, when it moved. build_seo.py reads it for the TOKEN block on n/ pages,
                     flywheel.js reads it to send a quiz result to the right OpenSea page.
                     Also "pool": the 1,111 census piece numbers THE CENSUS RELEASE can deal (see below).
+  api/census_tokmap.json  token id to New Yorker for those 1,111, and the Team wallets, read by /api/mint.
 
 THE POOL. census_traits.json maps every census token id to the New Yorker it reveals as. SeaDrop deals token
 ids in order from 1 and every id minted so far is contiguous from 1, so with the release cut to 1,111 the pool
@@ -24,10 +25,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.dirname(HERE)
 ZERO = "0x0000000000000000000000000000000000000000"
 CENSUS = {"contract": "0x3386e98e3835d25f20e9a4e2c0bbb9859fedc9c4", "cap": 1111, "price": "0.0042 ETH",
-          "open": "2026-09-23T11:11:00-04:00", "close": "2026-10-23T11:11:00-04:00",
+          "open": "2026-09-23T11:11:00-04:00", "close": "2026-11-07T11:11:00-05:00",
           "url": "https://opensea.io/collection/newyorkers/overview"}
 KEYSTONE = {"contract": "0x2dbfcca230979a91863be63ebce55dd5aae2b5c9", "painted": 111, "price": "0.069 ETH",
-            "url": "https://transient.xyz/mint/newyorkers"}
+            "url": "https://www.transient.xyz/nfts/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9"}
 ET = datetime.timezone(datetime.timedelta(hours=-4))
 
 
@@ -69,7 +70,14 @@ def main():
     by_title = {p["t"].strip().lower(): n for n, p in kit.items()}
     km = ch.get("keystone_meta", {})
 
+    # keystone/tokens.json is the census number to token map read off the chain; names are the fallback
+    try:
+        k_tok = {int(t): int(n) for n, t in json.load(open(os.path.join(HERE, "keystone", "tokens.json")))["tokens"].items()}
+    except (OSError, ValueError, KeyError):
+        k_tok = {}
+
     def keystone_n(tok):
+        if int(tok) in k_tok: return k_tok[int(tok)]
         name = km.get(str(tok), {}).get("name", "")
         if "#" in name and name.rsplit("#", 1)[1].strip().isdigit():
             return int(name.rsplit("#", 1)[1])
@@ -97,10 +105,16 @@ def main():
             if c == "keystone" and not keystone_n(tok): rec["name"] = km.get(str(tok), {}).get("name", "")
             out[c][key] = rec
 
+    # The reader on the mint bar scrolls these as "COUNTED BY", so a wallet the collectors board tags Team or
+    # Artist is never shown off as a collector. The tag lives in api/collectors.json (build_collectors.py).
+    team = sorted({a.lower() for r in (jload(os.path.join(SITE, "api", "collectors.json"), {}) or {}).get("collectors", [])
+                   if r.get("tag") in ("Team", "Artist") for a in [r["a"]] + (r.get("also") or [])})
     recent = []
-    for tok, t in stats["census"]["mints"][-12:][::-1]:
+    for tok, t in stats["census"]["mints"][::-1]:
         tt = tr.get(str(tok)); a = next((r["a"] for r in out["census"].values() if r["t"] == tok), "")
+        if a in team: continue
         recent.append({"t": tok, "n": tt["n"] if tt else None, "o": who(a)[0] if a else "", "at": t})
+        if len(recent) == 12: break
 
     pool = sorted({tr[str(i)]["n"] for i in range(1, CENSUS["cap"] + 1) if str(i) in tr})
     out["pool"] = pool
@@ -112,7 +126,10 @@ def main():
                              lastMintAt=stats["keystone"]["lastMintAt"]),
             "recent": recent}
     api = os.path.join(SITE, "api"); os.makedirs(api, exist_ok=True)
-    for name, obj in (("mint.json", mint), ("minted.json", out)):
+    # token id to New Yorker for the release's 1,111, so the live endpoint (api/functions/api/mint.js) can name
+    # a mint it reads off the chain after this build
+    tokmap = {"tok": {str(i): tr[str(i)]["n"] for i in range(1, CENSUS["cap"] + 1) if str(i) in tr}, "team": team}
+    for name, obj in (("mint.json", mint), ("minted.json", out), ("census_tokmap.json", tokmap)):
         json.dump(obj, open(os.path.join(api, name), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     unnamed = [k for k in out["keystone"] if k.startswith("k")]
     print(f"  mint: census {stats['census']['count']} of {CENSUS['cap']} to {stats['census']['holders']} holders, "

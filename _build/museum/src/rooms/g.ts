@@ -5,6 +5,7 @@ import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef } from './types';
 import { billboard } from './a';
+import { hero } from './heroes';
 
 const PI = Math.PI;
 
@@ -413,9 +414,18 @@ export const snug: RoomDef = {
     k.mesh(new T.CylinderGeometry(7, 7.5, 0.8, 32), stoneG, -6, 0.3, GZ - 16);
     k.mesh(new T.CylinderGeometry(6.4, 6.4, 0.8, 32), water, -6, 0.35, GZ - 16);
     k.keepOut.push({ x: -6, z: GZ - 16, r: 7.8 });
-    const fish: T.Mesh[] = [];
+    const fish: T.Object3D[] = [];
     for (let i = 0; i < 8; i++) { const f = k.mesh(new T.SphereGeometry(0.22, 8, 6), koi, -6, 0.6, GZ - 16, true); f.scale.set(1, 0.5, 2); fish.push(f); }
-    if (!ctx.reduced) k.ticks.push((t) => fish.forEach((f, i) => { const a = t * 0.3 + i; const r = 2 + (i % 4); f.position.set(-6 + Math.cos(a) * r, 0.6, GZ - 16 + Math.sin(a) * r); f.rotation.y = -a; }));
+    /* 2026-10-28: the kit's koi.glb takes the place of the squashed spheres; they swim the same circles, backs just
+       breaking the surface (the pool top is at 0.75 at 0.9 opacity: the old spheres at 0.6 barely showed).
+       A failed load leaves the spheres. */
+    const swim = (t: number) => fish.forEach((f, i) => { const a = t * 0.3 + i; const r = 2 + (i % 4); f.position.set(-6 + Math.cos(a) * r, 0.6, GZ - 16 + Math.sin(a) * r); f.rotation.y = -a; });
+    swim(0);
+    void hero(k, 'koi', { length: 0.62 }).then((h) => {
+      if (!h) return;
+      fish.forEach((f, i) => { f.visible = false; const c = i ? h.clone() : h; c.position.set(0, -0.02, 0); const g = new T.Group(); g.add(c); k.add(g); g.position.copy(f.position); g.rotation.y = f.rotation.y; fish[i] = g; });
+    });
+    if (!ctx.reduced) k.ticks.push(swim);
     for (let i = 0; i < 9; i++) { const s = 0.8 + rnd() * 1.4; k.box(s * 1.2, s * 1.6, s, 8 + rnd() * 8, s * 0.7, GZ - 8 - rnd() * 14, stoneG).rotation.set(rnd() * 0.3, rnd() * PI, rnd() * 0.3); }
     k.keepOut.push({ x: 12, z: GZ - 15, r: 6 });
     const PX = 10, PZ = GZ - 24;

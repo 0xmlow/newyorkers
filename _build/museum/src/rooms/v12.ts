@@ -5,10 +5,12 @@
    street front. Never on the ark wall, never in a sanctuary facing the congregation. No likeness of
    any real person, no lettered scripture: the tablets are blank, the ark curtains plain. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { followInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -17,7 +19,7 @@ type C = Parameters<RoomDef['build']>[1];
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, repeat = false) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -231,6 +233,7 @@ function pigeons(k: K, ctx: C, ground: T.Vector3[], flock: { x: number; y: numbe
   };
   place(3);
   if (!ctx.reduced) k.ticks.push(place);
+  followInstances(k, o, 'pigeon', { height: 0.28 }, new T.Matrix4().makeTranslation(0, -0.1, 0)); // 2026-10-28: pigeon.glb, as v22.ts
 }
 /* blank tablets of the law over an ark: two round topped stones, no letters */
 function tablets(k: K, x: number, y: number, z: number, stone: T.Material, edge: T.Material, s = 1, rotY = 0) {

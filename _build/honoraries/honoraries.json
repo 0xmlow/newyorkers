@@ -250,6 +250,24 @@
 "iv": []
 },
 {
+"id": "alice-wexell",
+"name": "Alice Wexell",
+"handle": "@alicewexell",
+"x": "alicewexell",
+"cat": "A",
+"works": [
+{
+"title": "The Wild Within on Roosevelt Island",
+"s": "alice-wexell-7a026d9cs.jpg",
+"l": "alice-wexell-7a026d9cl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Swedish artist who makes The Wild Within with Ryan Koopmans, abandoned palaces grown over with sculpted meadows, now showing at Leila Heller Gallery in New York. The ruin on Roosevelt Island blooms.",
+"iv": []
+},
+{
 "id": "all-seeing-seneca",
 "name": "All Seeing Seneca",
 "handle": "@allseeingseneca",
@@ -377,6 +395,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "andrew-mitchell",
+"name": "Andrew Mitchell",
+"handle": "@4ndrew_mitchell",
+"x": "4ndrew_mitchell",
+"cat": "A",
+"works": [
+{
+"title": "Daisies over the Conservatory",
+"s": "andrew-mitchell-2acb9805s.jpg",
+"l": "andrew-mitchell-2acb9805l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "New York generative artist making art with code, and half of MY Studios. Pictured behind the phone of the avatar at the Bronx conservatory. The daisies are code.",
+"iv": []
 },
 {
 "id": "andr-s-del-vecchio",
@@ -549,6 +585,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "azuki",
+"name": "Azuki",
+"handle": "@Azuki",
+"x": "Azuki",
+"cat": "A",
+"works": [
+{
+"title": "The Blade on St. Marks",
+"s": "azuki-c3888c58s.jpg",
+"l": "azuki-c3888c58l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Azuki is the anime world born as an NFT collection and grown into manga, a trading card game and The Garden. The blade on St. Marks.",
+"iv": []
 },
 {
 "id": "banksy",
@@ -755,6 +809,24 @@
 "iv": []
 },
 {
+"id": "bold",
+"name": "Bold",
+"handle": "@boldleonidas",
+"x": "boldleonidas",
+"cat": "A",
+"works": [
+{
+"title": "Sketching the Charts in Washington Square",
+"s": "bold-dd7106e9s.jpg",
+"l": "bold-dd7106e9l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Bold draws a crypto comic or meme by hand every day for more than a hundred thousand followers. Pictured as the coffee drinking frog under the Washington Square Arch. Sketching the charts.",
+"iv": []
+},
+{
 "id": "bosslogic",
 "name": "Bosslogic",
 "handle": "@Bosslogic",
@@ -895,6 +967,13 @@
 "cat": "A",
 "works": [
 {
+"title": "NimBuds on the 86th Floor",
+"s": "bryan-brinkman-41-5734a16bs.jpg",
+"l": "bryan-brinkman-41-5734a16bl.jpg",
+"w": 1280,
+"h": 719
+},
+{
 "title": "NimBuds at the Warehouse",
 "s": "bryan-brinkman-1313a121s.jpg",
 "l": "bryan-brinkman-1313a121l.jpg",
@@ -909,7 +988,7 @@
 "h": 720
 }
 ],
-"bio": "Emmy winning animator from SNL and the Tonight Show who made NimBuds, the on chain cloud characters. Pictured at a Costco upstate with a NimBud chainsaw and a $1.50 hot dog",
+"bio": "Emmy winning animator from SNL and the Tonight Show who made NimBuds, the on chain cloud characters. Pictured on the 86th floor of the Empire State Building, NimBuds drifting past the spire",
 "iv": [
 {
 "url": "https://x.com/0xmlow/status/1696344600682615272",
@@ -1073,6 +1152,24 @@
 ]
 },
 {
+"id": "chimpers",
+"name": "Chimpers",
+"handle": "@ChimpersHQ",
+"x": "ChimpersHQ",
+"cat": "A",
+"works": [
+{
+"title": "Smiles on the Boardwalk",
+"s": "chimpers-cee9c7abs.jpg",
+"l": "chimpers-cee9c7abl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Chimpers began as Timpers' pixel chimps and grew into an illustrated adventure brand on a mission to make people smile. Pictured waving on the Coney Island boardwalk. Smiles all the way down.",
+"iv": []
+},
+{
 "id": "chris-torres",
 "name": "Chris Torres",
 "handle": "@PRguitarman",
@@ -1098,6 +1195,13 @@
 "cat": "A",
 "works": [
 {
+"title": "Venus Returns to Grand Army Plaza",
+"s": "claire-silver-41-c5ee88b9s.jpg",
+"l": "claire-silver-41-c5ee88b9l.jpg",
+"w": 1280,
+"h": 719
+},
+{
 "title": "Three Gowns in the East River",
 "s": "claire-silver-84d4ec02s.jpg",
 "l": "claire-silver-84d4ec02l.jpg",
@@ -1105,7 +1209,7 @@
 "h": 720
 }
 ],
-"bio": "Artist who works with AI as a collaborator, pictured here as her avatar on a Brooklyn pier. Three of her gowns stand in the river",
+"bio": "Artist who works with AI as a collaborator, pictured here as her avatar at Grand Army Plaza. Her Venus rises from the Pulitzer Fountain",
 "iv": []
 },
 {
@@ -1133,6 +1237,13 @@
 "x": "Coldie",
 "cat": "A",
 "works": [
+{
+"title": "Torn in Stereo Under the Bridge",
+"s": "coldie-41-58981b40s.jpg",
+"l": "coldie-41-58981b40l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Stepping Out of Stereo",
 "s": "coldie-2d95562bs.jpg",
@@ -1291,6 +1402,24 @@
 "iv": []
 },
 {
+"id": "dario-de-siena",
+"name": "Dario De Siena",
+"handle": "@dario_desiena",
+"x": "dario_desiena",
+"cat": "A",
+"works": [
+{
+"title": "The City Wears His Face",
+"s": "dario-de-siena-51697086s.jpg",
+"l": "dario-de-siena-51697086l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Zurich based visual artist from graffiti roots who builds collage portraits out of city fragments and pixel masks, CryptoPunk 7878 and the force behind R3ORDR. The city wears his face.",
+"iv": []
+},
+{
 "id": "darkfarms",
 "name": "Darkfarms",
 "handle": "@Darkfarms1",
@@ -1420,6 +1549,24 @@
 "iv": []
 },
 {
+"id": "derech",
+"name": "Derech",
+"handle": "@iderech",
+"x": "iderech",
+"cat": "A",
+"works": [
+{
+"title": "The Burning Willow on Mott Street",
+"s": "derech-2bd6a1a1s.jpg",
+"l": "derech-2bd6a1a1l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Ilan Derech is a Tokyo based photographer and filmmaker, a ZEISS ambassador and one of the leading photographers in crypto art. Don't think, feel.",
+"iv": []
+},
+{
 "id": "derrick-adams",
 "name": "Derrick Adams",
 "handle": "",
@@ -1518,6 +1665,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "dk",
+"name": "DK",
+"handle": "@danielkoeth",
+"x": "danielkoeth",
+"cat": "A",
+"works": [
+{
+"title": "Blue Skies Forever over DUMBO",
+"s": "dk-09264b2ds.jpg",
+"l": "dk-09264b2dl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "DK is Daniel Koeth, a conceptual photographer known in crypto art for deadpan bodies against blue skies. Blue skies forever, even at night.",
+"iv": []
 },
 {
 "id": "dmitri-cherniak",
@@ -2403,6 +2568,13 @@
 "cat": "A",
 "works": [
 {
+"title": "Twin Towers of the Bridge",
+"s": "justin-aversano-41-c1515432s.jpg",
+"l": "justin-aversano-41-c1515432l.jpg",
+"w": 1280,
+"h": 719
+},
+{
 "title": "Twins on the Parapet",
 "s": "justin-aversano-493bf8d4s.jpg",
 "l": "justin-aversano-493bf8d4l.jpg",
@@ -2945,6 +3117,24 @@
 "iv": []
 },
 {
+"id": "matto",
+"name": "matto",
+"handle": "@MonkMatto",
+"x": "MonkMatto",
+"cat": "A",
+"works": [
+{
+"title": "One Breath Over the Pond",
+"s": "matto-37acbccfs.jpg",
+"l": "matto-37acbccfl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Generative artist behind Ensō and FOCUS on Art Blocks, and a holder of MARFA LIGHT. Pictured as his green pixel headed sitter by the Japanese pond in the Brooklyn Botanic Garden, an Ensō circle closing over the water.",
+"iv": []
+},
+{
 "id": "max-osiris",
 "name": "Max Osiris",
 "handle": "@maxOSIRISart",
@@ -3003,6 +3193,24 @@
 }
 ],
 "bio": "Generative artist behind Sudfah, organic fields grown from algorithms. Nature, written in code",
+"iv": []
+},
+{
+"id": "mendezmendez",
+"name": "mendezmendez",
+"handle": "@mendezmendez",
+"x": "mendezmendez",
+"cat": "A",
+"works": [
+{
+"title": "The Sky Man Sleeps on Sheep Meadow",
+"s": "mendezmendez-25dda170s.jpg",
+"l": "mendezmendez-25dda170l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "mendezmendez makes a collage every day and has for more than a thousand days, documenting the human experience. The sky man sleeps on Sheep Meadow.",
 "iv": []
 },
 {
@@ -3491,6 +3699,24 @@
 "iv": []
 },
 {
+"id": "ol1y",
+"name": "ol1y",
+"handle": "@ol1y_art",
+"x": "ol1y_art",
+"cat": "A",
+"works": [
+{
+"title": "Pastures at Idlewild",
+"s": "ol1y-427bc34es.jpg",
+"l": "ol1y-427bc34el.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "ol1y is an English compressionist making fully onchain photography, and a collector of onchain art. Pictured as the ripcache camera head at the TWA terminal. To be a cow.",
+"iv": []
+},
+{
 "id": "olive-allen",
 "name": "Olive Allen",
 "handle": "@IamOliveAllen",
@@ -3531,6 +3757,24 @@
 }
 ],
 "bio": "Anonymous feminist performance artist asking what a woman artist is worth, from live auctions at the Met to a loaf of bread with a Bitcoin wallet baked inside. The mask stays on",
+"iv": []
+},
+{
+"id": "opepen",
+"name": "Opepen",
+"handle": "@opepenedition",
+"x": "opepenedition",
+"cat": "A",
+"works": [
+{
+"title": "Public Art at the Park Gate",
+"s": "opepen-4a617f8bs.jpg",
+"l": "opepen-4a617f8bl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Opepen Edition is Jack Butcher's public art project on Ethereum, where holders vote on artist sets for one shared symbol. Public art at the park gate.",
 "iv": []
 },
 {
@@ -3611,6 +3855,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "p0ng",
+"name": "p0ng",
+"handle": "@r0bp",
+"x": "r0bp",
+"cat": "A",
+"works": [
+{
+"title": "The Glass Hand of Fulton Street",
+"s": "p0ng-a7e4306ds.jpg",
+"l": "p0ng-a7e4306dl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "p0ng is Robert Panepinto, a glassblower since the 1990s who found the furnace at UrbanGlass in Brooklyn, a digital artist behind FutureCraft and a teacher. Pictured as the chrome avatar outside UrbanGlass. The glass hand of Fulton Street.",
+"iv": []
 },
 {
 "id": "pak",
@@ -3710,12 +3972,37 @@
 "iv": []
 },
 {
+"id": "pho",
+"name": "pho",
+"handle": "@photonisdead",
+"x": "photonisdead",
+"cat": "A",
+"works": [
+{
+"title": "The Void Above the Oculus",
+"s": "pho-628fa5bds.jpg",
+"l": "pho-628fa5bdl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "pho is a digital alchemist known for psychedelic marbled voids and lone silhouettes. Pictured from behind, as in the avatar, under the Oculus. Exploring the unknown.",
+"iv": []
+},
+{
 "id": "pindar-van-arman",
 "name": "Pindar Van Arman",
 "handle": "@vanarman",
 "x": "vanarman",
 "cat": "A",
 "works": [
+{
+"title": "The Robot at the Met",
+"s": "pindar-van-arman-41-c3b91f49s.jpg",
+"l": "pindar-van-arman-41-c3b91f49l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "The Robot Paints on West 24th",
 "s": "pindar-van-arman-3cf0b19es.jpg",
@@ -3724,7 +4011,7 @@
 "h": 719
 }
 ],
-"bio": "Artist who has spent twenty years building robots that paint with AI. Pictured on West 24th Street while his robot finishes a portrait behind him",
+"bio": "Artist who has spent twenty years building robots that paint with AI. Pictured on the steps of the Met while a robot arm finishes a portrait behind him",
 "iv": [
 {
 "url": "https://x.com/0xMLow/status/1719249264600031687",
@@ -3759,6 +4046,13 @@
 "x": "POSTWOOK",
 "cat": "A",
 "works": [
+{
+"title": "A Capriccio at Grand Central",
+"s": "post-wook-3020eea2s.jpg",
+"l": "post-wook-3020eea2l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Saturn at the Easel",
 "s": "post-wook-natasha-chomko-e8b25f15s.jpg",
@@ -3965,6 +4259,42 @@
 "iv": []
 },
 {
+"id": "rik-oostenbroek",
+"name": "Rik Oostenbroek",
+"handle": "@rikoostenbroek",
+"x": "rikoostenbroek",
+"cat": "A",
+"works": [
+{
+"title": "Color Therapy at the Oculus",
+"s": "rik-oostenbroek-e6c63785s.jpg",
+"l": "rik-oostenbroek-e6c63785l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Dutch digital artist known for his Color Therapy gradients and fluid 3D sculptures. The Oculus fills with colour.",
+"iv": []
+},
+{
+"id": "ripcache",
+"name": "ripcache",
+"handle": "@ripcache",
+"x": "ripcache",
+"cat": "A",
+"works": [
+{
+"title": "Do Not Feed the Birds at Fresh Kills",
+"s": "ripcache-c53b3279s.jpg",
+"l": "ripcache-c53b3279l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "ripcache is an onchain pixel artist of network mythology and surveillance, cameras and warning signs. Pictured as the camera head at Freshkills. Do not feed the birds.",
+"iv": []
+},
+{
 "id": "robert-hodgin",
 "name": "Robert Hodgin",
 "handle": "@flight404",
@@ -4041,6 +4371,24 @@
 }
 ],
 "bio": "Street pop artist behind POPaganda and the grinning skull face. Billboards hijacked, brands turned inside out",
+"iv": []
+},
+{
+"id": "roope-rainisto",
+"name": "Roope Rainisto",
+"handle": "@rainisto",
+"x": "rainisto",
+"cat": "A",
+"works": [
+{
+"title": "Orange Juice Over Astoria",
+"s": "roope-rainisto-3485e38bs.jpg",
+"l": "roope-rainisto-3485e38bl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Finnish AI artist and designer behind Life In West America and BeatBandit. Orange juice over Astoria.",
 "iv": []
 },
 {
@@ -4220,6 +4568,24 @@
 "iv": []
 },
 {
+"id": "sartoshi",
+"name": "sartoshi",
+"handle": "@sartoshi_rip",
+"x": "sartoshi_rip",
+"cat": "A",
+"works": [
+{
+"title": "A Moon Over Coney Island",
+"s": "sartoshi-1b7e41eds.jpg",
+"l": "sartoshi-1b7e41edl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "sartoshi made mfers, the CC0 stick figure collection, walked away in 2022 and came back in 2025 with mfercoin. Pictured as the mfer at the desk, headphones on, under a Coney Island moon. we all mfers.",
+"iv": []
+},
+{
 "id": "sasha-stiles",
 "name": "Sasha Stiles",
 "handle": "@sashastiles",
@@ -4253,6 +4619,24 @@
 }
 ],
 "bio": "Design provocateur and sculptor known for surreal furniture and cracked classical statues. Break it to see it",
+"iv": []
+},
+{
+"id": "sendrock",
+"name": "Sendrock",
+"handle": "@sendrock",
+"x": "sendrock",
+"cat": "A",
+"works": [
+{
+"title": "The Deep End of the East River",
+"s": "sendrock-ba0fefd0s.jpg",
+"l": "sendrock-ba0fefd0l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Sendrock is a film photographer and collector, a 1 of 1 artist on SuperRare and Foundation and part of Spirit DAO. Pictured as the illustrated avatar at Domino Park. The deep end of the East River.",
 "iv": []
 },
 {
@@ -4332,6 +4716,24 @@
 }
 ],
 "bio": "Making digital art since 2005 in Bosnia and Herzegovina, and a 6529 meme artist. Do you, make art",
+"iv": []
+},
+{
+"id": "slander",
+"name": "slander",
+"handle": "@slander_eth",
+"x": "slander_eth",
+"cat": "A",
+"works": [
+{
+"title": "Under the J Train",
+"s": "slander-4f171b65s.jpg",
+"l": "slander-4f171b65l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "slander is a New York prompt artist working in the look of 1970s and 80s film stills. Pictured as the NEET toy headed character under the J train. Sparks from the tracks.",
 "iv": []
 },
 {
@@ -4555,6 +4957,24 @@
 }
 ],
 "bio": "Street artist who took geometric spray paintings from walls to Sotheby's. The wall came inside",
+"iv": []
+},
+{
+"id": "timpers",
+"name": "Timpers",
+"handle": "@timpershd",
+"x": "timpershd",
+"cat": "A",
+"works": [
+{
+"title": "Pixel Blossoms by the Bridge",
+"s": "timpers-d9a1a7dfs.jpg",
+"l": "timpers-d9a1a7dfl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Timpers is a pixel artist and co founder of Chimpers. Pictured as the pixel wanderer with a cup of ramen under the cherry trees of Brooklyn Bridge Park. Pixel blossoms falling.",
 "iv": []
 },
 {
@@ -4820,6 +5240,13 @@
 "cat": "A",
 "works": [
 {
+"title": "The Bubble over Houston Street",
+"s": "vinnie-hager-41-cdefa61bs.jpg",
+"l": "vinnie-hager-41-cdefa61bl.jpg",
+"w": 1280,
+"h": 719
+},
+{
 "title": "The Diary Open",
 "s": "vinnie-hager-010bae15s.jpg",
 "l": "vinnie-hager-010bae15l.jpg",
@@ -4878,6 +5305,24 @@
 }
 ],
 "bio": "Artist behind Vandal Gummy, the translucent gummy bear posed for a mug shot. Candy with a record",
+"iv": []
+},
+{
+"id": "whitters",
+"name": "Whitters",
+"handle": "@whitterss",
+"x": "whitterss",
+"cat": "A",
+"works": [
+{
+"title": "Letters Like Dough in Bushwick",
+"s": "whitters-db5a5d8cs.jpg",
+"l": "whitters-db5a5d8cl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Whitters is an artist, muralist and graffiti letterer from Appalachia. Letters like dough in Bushwick.",
 "iv": []
 },
 {
@@ -5547,6 +5992,24 @@
 "iv": []
 },
 {
+"id": "4156",
+"name": "4156",
+"handle": "@punk4156",
+"x": "punk4156",
+"cat": "C",
+"works": [
+{
+"title": "Noggles Over Bergen Street",
+"s": "4156-967fb8efs.jpg",
+"l": "4156-967fb8efl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "4156 is a pseudonymous OG collector named for CryptoPunk 4156 and one of the loudest voices of Nouns DAO. Pictured as the Noun, noggles on, in Brooklyn. Proliferation over everything.",
+"iv": []
+},
+{
 "id": "666k",
 "name": "666k",
 "handle": "",
@@ -5580,6 +6043,24 @@
 }
 ],
 "bio": "Cofounder of FlamingoDAO, one of the early groups to collect digital art together. A vault with many keys",
+"iv": []
+},
+{
+"id": "ab500-dao",
+"name": "AB500 DAO",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Five Hundred Through the Arch",
+"s": "ab500-dao-33dad927s.jpg",
+"l": "ab500-dao-33dad927l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collective of Art Blocks collectors, and a holder of MARFA LIGHT. Pictured as its letter A in Washington Square, a Chromie Squiggle threading through the arch.",
 "iv": []
 },
 {
@@ -5624,6 +6105,24 @@
 "label": ""
 }
 ]
+},
+{
+"id": "adam-ilenich",
+"name": "Adam Ilenich",
+"handle": "@adamilenich",
+"x": "adamilenich",
+"cat": "C",
+"works": [
+{
+"title": "Holding the Cards at Domino Park",
+"s": "adam-ilenich-5d50155es.jpg",
+"l": "adam-ilenich-5d50155el.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Adam Ilenich, asterism.eth on X, runs social at OpenSea after Rarible and Twitter, and collects in New York. Holding the cards at Domino Park.",
+"iv": []
 },
 {
 "id": "adam-weitsman",
@@ -5788,6 +6287,24 @@
 "iv": []
 },
 {
+"id": "artcollectorrr",
+"name": "artcollectorrr",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "What Is in Your Wallet on the Bowery",
+"s": "artcollectorrr-5e7e0c25s.jpg",
+"l": "artcollectorrr-5e7e0c25l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector with no public face who minted twenty TRANSDIMENSIONAL TRIPPERS and fifteen SOFT CONSPIRACY pieces, and a holder of MARFA LIGHT. Pictured faceless on the Bowery, the Tripper they minted leaning on the New Museum.",
+"iv": []
+},
+{
 "id": "balon",
 "name": "balón",
 "handle": "@balon_art",
@@ -5881,6 +6398,24 @@
 "iv": []
 },
 {
+"id": "benjamin-redbeard-gross",
+"name": "Benjamin Redbeard Gross",
+"handle": "@redbeardnft",
+"x": "redbeardnft",
+"cat": "C",
+"works": [
+{
+"title": "The Tile on Mott Street",
+"s": "benjamin-redbeard-gross-cf4b6f83s.jpg",
+"l": "benjamin-redbeard-gross-cf4b6f83l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Crypto investor since 2012, art advisor and patron of digital fine art, and one of the most connected collectors in crypto art. The beard is a signal.",
+"iv": []
+},
+{
 "id": "bharat-krymo",
 "name": "Bharat Krymo",
 "handle": "@krybharat",
@@ -5939,6 +6474,24 @@
 }
 ],
 "bio": "A cartoon girl with violet hair, a party sized tongue and a fly for company. Pictured on Main Street in Flushing in a heat wave",
+"iv": []
+},
+{
+"id": "b-r4ted",
+"name": "B-R4TED",
+"handle": "@BR4ted",
+"x": "BR4ted",
+"cat": "C",
+"works": [
+{
+"title": "Times Square Melts",
+"s": "b-r4ted-e70e4b4ds.jpg",
+"l": "b-r4ted-e70e4b4dl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "₿-R4TED is an invite only collective of artists, collectors, degens and builders with a Bitcoin leaning heart, running since 2022. Pictured as the rainbow melting mascot in Times Square. The whole square drips.",
 "iv": []
 },
 {
@@ -6171,6 +6724,24 @@
 "iv": []
 },
 {
+"id": "crazenfts",
+"name": "CrazeNFTs",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Block Head of Sunset Park",
+"s": "crazenfts-1898a7f8s.jpg",
+"l": "crazenfts-1898a7f8l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Six New Yorkers from three boroughs. Pictured as their block head above the harbor at Sunset Park",
+"iv": []
+},
+{
 "id": "mr-quack",
 "name": "Crusher",
 "handle": "@cryptocrusher6",
@@ -6243,6 +6814,42 @@
 "iv": []
 },
 {
+"id": "cyborgnomad",
+"name": "Cyborgnomad",
+"handle": "@cyborgnomad",
+"x": "cyborgnomad",
+"cat": "C",
+"works": [
+{
+"title": "Seize the Fed",
+"s": "cyborgnomad-55cf8e28s.jpg",
+"l": "cyborgnomad-55cf8e28l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Cyborgnomad collects Sam Spratt and deekay and argues for Bitcoin and memes. Pictured as the Spratt skull of the avatar outside the Federal Reserve. Seize the memes of production.",
+"iv": []
+},
+{
+"id": "cydr",
+"name": "cydr",
+"handle": "@cydr",
+"x": "cydr",
+"cat": "C",
+"works": [
+{
+"title": "Rare Fish on South Street",
+"s": "cydr-79d65b3cs.jpg",
+"l": "cydr-79d65b3cl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "cydr is a pseudonymous collector and curator tied to the AOTM gallery and Rare Fish Market. Pictured as the bored dog of the avatar at the Seaport, one paw on a rare fish. Unimpressed, on purpose.",
+"iv": []
+},
+{
 "id": "dannyboyy",
 "name": "Dannyboyy",
 "handle": "@Dannyb0yyy_",
@@ -6279,6 +6886,24 @@
 "iv": []
 },
 {
+"id": "davus",
+"name": "Davus",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Conspiracy Under the Arch",
+"s": "davus-4f9dd3bfs.jpg",
+"l": "davus-4f9dd3bfl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector of memecoin era art who keeps twenty three pieces of THE SOFT CONSPIRACY, and a holder of MARFA LIGHT. Pictured as a laser eyed Squig at the Washington Square Arch, a SOFT CONSPIRACY figure looming behind it.",
+"iv": []
+},
+{
 "id": "dcinvestor",
 "name": "DCinvestor",
 "handle": "@DCinvestor",
@@ -6294,6 +6919,24 @@
 }
 ],
 "bio": "Longtime collector of generative art, best known for holding Fidenza works. Curves over charts",
+"iv": []
+},
+{
+"id": "ddaavvee",
+"name": "ddaavvee",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Rainbow Over the Boardwalk",
+"s": "ddaavvee-74eb33fes.jpg",
+"l": "ddaavvee-74eb33fel.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "An Art Blocks collector with eighty three Chromie Squiggles and a wall of CryptoPunks, and a holder of MARFA LIGHT. Pictured as a Punk on the Coney Island boardwalk, a Squiggle arcing over the Atlantic.",
 "iv": []
 },
 {
@@ -6369,6 +7012,24 @@
 "iv": []
 },
 {
+"id": "dgtl",
+"name": "DGTL",
+"handle": "@dgtlemissions",
+"x": "dgtlemissions",
+"cat": "C",
+"works": [
+{
+"title": "The Flag Over Delancey",
+"s": "dgtl-0157a6e5s.jpg",
+"l": "dgtl-0157a6e5l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "DGTL is Head of Community at Azuki, based in New York. Pictured as the anime avatar on a Lower East Side rooftop, the red flag over the skyline.",
+"iv": []
+},
+{
 "id": "digger",
 "name": "Digger",
 "handle": "@rektfluf",
@@ -6423,6 +7084,24 @@
 "iv": []
 },
 {
+"id": "dorkian",
+"name": "dorkian",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Click at Rockefeller",
+"s": "dorkian-f7483104s.jpg",
+"l": "dorkian-f7483104l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "An Art Blocks collector with a builder's eye, from Ivan Dianov's Click to Checks, and a holder of MARFA LIGHT. Pictured at Rockefeller Center, a tower of Click bricks stacked outside the LEGO Store.",
+"iv": []
+},
+{
 "id": "doug-dimmadome",
 "name": "Doug Dimmadome",
 "handle": "@DimmadomeCrypto",
@@ -6438,6 +7117,24 @@
 }
 ],
 "bio": "Doug Dimmadome is the anonymous Ethereum collector behind Cave Corp and Cave ArtDAO, playing the cartoon tycoon across several wallets. The hat is the biggest in the room.",
+"iv": []
+},
+{
+"id": "drcco",
+"name": "drCCO",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Night Bloom in the Conservatory Garden",
+"s": "drcco-9780d462s.jpg",
+"l": "drcco-9780d462l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector of generative art who holds a hundred RVig Flowers, and a holder of MARFA LIGHT. Pictured hooded in the Conservatory Garden after the gates close, a Flower blooming over the fountain.",
 "iv": []
 },
 {
@@ -6574,6 +7271,24 @@
 "iv": []
 },
 {
+"id": "elated-pixel",
+"name": "Elated Pixel",
+"handle": "@voxeliving",
+"x": "voxeliving",
+"cat": "C",
+"works": [
+{
+"title": "A Gallery Over Electric Lady",
+"s": "elated-pixel-296c9fcbs.jpg",
+"l": "elated-pixel-296c9fcbl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Elated Pixel keeps The People's Gallery Annex, a gallery in Voxels at parcel 2636. Pictured as the bandana pixel punk with a guitar outside Electric Lady Studios. The gallery floats over the roof.",
+"iv": []
+},
+{
 "id": "elena-zavelev",
 "name": "Elena Zavelev",
 "handle": "@elenazavelev",
@@ -6607,6 +7322,24 @@
 }
 ],
 "bio": "Curator known as Breezy, among the first to organize crypto art shows. The salon wall went digital",
+"iv": []
+},
+{
+"id": "eli-scheinman",
+"name": "Eli Scheinman",
+"handle": "@eli_schein",
+"x": "eli_schein",
+"cat": "C",
+"works": [
+{
+"title": "The Squiggle Over West 24th",
+"s": "eli-scheinman-f4a50b30s.jpg",
+"l": "eli-scheinman-f4a50b30l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Senior Advisor at Art Basel after leading art at PROOF and digital art at Yuga Labs, and a collector of Chromie Squiggles and Terraforms. Squiggle 461 rides over the galleries of West 24th.",
 "iv": []
 },
 {
@@ -6679,6 +7412,24 @@
 }
 ],
 "bio": "Digital art advisor and collector who founded LAL Art. Curates the wall before the market finds it",
+"iv": []
+},
+{
+"id": "flamingo-dao",
+"name": "Flamingo DAO",
+"handle": "@FLAMINGODAO",
+"x": "FLAMINGODAO",
+"cat": "C",
+"works": [
+{
+"title": "A Flamboyance of One",
+"s": "flamingo-dao-a9118cc0s.jpg",
+"l": "flamingo-dao-a9118cc0l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collective that gathers CryptoPunks, Chromie Squiggles and Fidenzas, and a holder of MARFA LIGHT. Pictured as its flamingo standing on one leg at Bethesda Fountain under a Squiggle.",
 "iv": []
 },
 {
@@ -7114,6 +7865,24 @@
 "iv": []
 },
 {
+"id": "jdh",
+"name": "jdh",
+"handle": "@jdh",
+"x": "jdh",
+"cat": "C",
+"works": [
+{
+"title": "One String, Many Pegs",
+"s": "jdh-8f897e06s.jpg",
+"l": "jdh-8f897e06l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector of Ringers, Squiggles and Fidenzas, and a holder of MARFA LIGHT. Pictured as CryptoPunk #6081 at Hudson Yards, a Ringers peg board standing taller than the Vessel.",
+"iv": []
+},
+{
 "id": "jedi6900",
 "name": "Jedi6900",
 "handle": "@jedi6900",
@@ -7312,6 +8081,24 @@
 "iv": []
 },
 {
+"id": "kevbot",
+"name": "Kevbot",
+"handle": "@Kevvvbot",
+"x": "Kevvvbot",
+"cat": "C",
+"works": [
+{
+"title": "A Little Devil at Luna Park",
+"s": "kevbot-03515e22s.jpg",
+"l": "kevbot-03515e22l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Kevbot is a Philadelphia crypto regular around Monad and a Penn State football fan. Pictured as the little blue devil with a soft pretzel at Luna Park.",
+"iv": []
+},
+{
 "id": "kompucoma",
 "name": "kompucoma",
 "handle": "",
@@ -7426,6 +8213,13 @@
 "x": "musicalnetta",
 "cat": "C",
 "works": [
+{
+"title": "The Porcelain Giant on Fifth",
+"s": "lanett-bennett-grant-41-242d0555s.jpg",
+"l": "lanett-bennett-grant-41-242d0555l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Mask on the Music Stand",
 "s": "lanett-bennett-grant-4ab39d28s.jpg",
@@ -7561,6 +8355,24 @@
 }
 ],
 "bio": "Former auction specialist who sold the Salvator Mundi and then founded Particle. One masterpiece, many owners",
+"iv": []
+},
+{
+"id": "mabkk-eth",
+"name": "mabkk.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Shore Leave at the Algonquin",
+"s": "mabkk-eth-ed804560s.jpg",
+"l": "mabkk-eth-ed804560l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Six New Yorkers, the Algonquin Cat among them. Pictured as their sailor ape on shore leave in the hotel lobby",
 "iv": []
 },
 {
@@ -7924,6 +8736,24 @@
 "iv": []
 },
 {
+"id": "multi",
+"name": "Multi",
+"handle": "@multivrsstudios",
+"x": "multivrsstudios",
+"cat": "C",
+"works": [
+{
+"title": "Cold Cameras on the Plaza",
+"s": "multi-9cbccf17s.jpg",
+"l": "multi-9cbccf17l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Multi is a collector and web3 community lead, moderator for Beeple and formerly for XCOPY, Art On Internet and Async Art. Pictured as the painted skull at the Rockefeller rink. The cameras are cold.",
+"iv": []
+},
+{
 "id": "newyat",
 "name": "newyat",
 "handle": "@SecretariYat",
@@ -7975,6 +8805,24 @@
 }
 ],
 "bio": "Posts as nicedayJules and wishes everyone the same. Pictured kneeling on Orchard Beach in a heat wave",
+"iv": []
+},
+{
+"id": "nicole-sales-giles",
+"name": "Nicole Sales Giles",
+"handle": "@nicoleasales",
+"x": "nicoleasales",
+"cat": "C",
+"works": [
+{
+"title": "Paddle 138 at Rockefeller Plaza",
+"s": "nicole-sales-giles-17080104s.jpg",
+"l": "nicole-sales-giles-17080104l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Global Head of Zero 10, Art Basel's home for digital art, after running digital art at Christie's, including the 2025 Augmented Intelligence sale. Paddle 138, raised.",
 "iv": []
 },
 {
@@ -8086,6 +8934,24 @@
 "iv": []
 },
 {
+"id": "nucci",
+"name": "nucci",
+"handle": "@house0fnucci",
+"x": "house0fnucci",
+"cat": "C",
+"works": [
+{
+"title": "Fuzzy Dice Over the Bowery",
+"s": "nucci-5235004bs.jpg",
+"l": "nucci-5235004bl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "nucci collects the avant garde and keeps the House of Nucci collection. Pictured as the pixel bust of the avatar on the Bowery. Fuzzy dice over the New Museum.",
+"iv": []
+},
+{
 "id": "octoclan",
 "name": "Octoclan",
 "handle": "octoclan.eth",
@@ -8110,6 +8976,13 @@
 "x": "OGtheperson",
 "cat": "C",
 "works": [
+{
+"title": "Pixel Rain on Doyers Street",
+"s": "og-41-bbd36518s.jpg",
+"l": "og-41-bbd36518l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Be Cool at the Fountain",
 "s": "og-b82e68d1s.jpg",
@@ -8480,10 +9353,17 @@
 {
 "id": "pinstripedgator",
 "name": "PinstripedGator",
-"handle": "",
-"x": "",
+"handle": "@PinstripedGator",
+"x": "PinstripedGator",
 "cat": "C",
 "works": [
+{
+"title": "Field of Dreams on River Avenue",
+"s": "pinstripedgator-41-b8cd9ad8s.jpg",
+"l": "pinstripedgator-41-b8cd9ad8l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Chomp Held High at Washington Square",
 "s": "pinstripedgator-bdc68aa9s.jpg",
@@ -8492,7 +9372,7 @@
 "h": 720
 }
 ],
-"bio": "A gator in Yankees pinstripes and a NY cap, headphones on. Pictured holding a marble high under the Washington Square arch in the rain",
+"bio": "A gator in Yankees pinstripes and a NY cap. Pictured with a bat on River Avenue, a field of corn rising behind Yankee Stadium",
 "iv": []
 },
 {
@@ -8809,6 +9689,24 @@
 "iv": []
 },
 {
+"id": "refinator",
+"name": "refinator",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Monolith on the Hudson",
+"s": "refinator-151bea41s.jpg",
+"l": "refinator-151bea41l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A quiet collector of Flow3rs, mirrored and glowing, and a holder of MARFA LIGHT. Pictured with a chrome orb for a head on Little Island, a Flow3rs monolith rising out of the Hudson.",
+"iv": []
+},
+{
 "id": "regina-harsanyi",
 "name": "Regina Harsanyi",
 "handle": "@reginaharsanyi",
@@ -9093,6 +9991,42 @@
 "iv": []
 },
 {
+"id": "shwig",
+"name": "shwig",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Blocks on the Bowery",
+"s": "shwig-e363a93es.jpg",
+"l": "shwig-e363a93el.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector of Art Blocks with a punk's eye, from Archetype to Fidenza, and a holder of MARFA LIGHT. Pictured as a purple haired punk on the Bowery, an Archetype stacked into a tower over the New Museum.",
+"iv": []
+},
+{
+"id": "silversurfer888",
+"name": "silversurfer888",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Squiggle Over the Banks",
+"s": "silversurfer888-638a9c5as.jpg",
+"l": "silversurfer888-638a9c5al.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "One of the widest Art Blocks collectors, with more than a thousand pieces and five Chromie Squiggles, and a holder of MARFA LIGHT. Pictured as a CryptoVenetian skating the Brooklyn waterfront under a Squiggle.",
+"iv": []
+},
+{
 "id": "simon-de-pury",
 "name": "Simon de Pury",
 "handle": "@simondepury",
@@ -9108,6 +10042,24 @@
 }
 ],
 "bio": "Auctioneer who brought the gavel to digital art sales. The same hammer, new lots",
+"iv": []
+},
+{
+"id": "sneketoshi",
+"name": "Sneketoshi",
+"handle": "@Sneketoshi",
+"x": "Sneketoshi",
+"cat": "C",
+"works": [
+{
+"title": "The Judge of St Marks Place",
+"s": "sneketoshi-00d5aa8bs.jpg",
+"l": "sneketoshi-00d5aa8bl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Sneketoshi is a collector and patron who runs the Sneketoshi Art Gallery and its themed art contests, lifting up emerging artists, and made the Snekees. Pictured as the ink viper on St Marks Place. The judge has fangs.",
 "iv": []
 },
 {
@@ -9180,6 +10132,24 @@
 }
 ],
 "bio": "Owner of the New York Mets and one of the city's major art collectors. A diamond and a collection",
+"iv": []
+},
+{
+"id": "steven-miller",
+"name": "Steven Miller",
+"handle": "@stevemiller",
+"x": "stevemiller",
+"cat": "C",
+"works": [
+{
+"title": "Color Commentary in Chelsea",
+"s": "steven-miller-86b41a00s.jpg",
+"l": "steven-miller-86b41a00l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Steven Miller is a digital art advisor and curator, author of The Patron Age and host of Color Commentary. A loupe on Chelsea.",
 "iv": []
 },
 {
@@ -9273,6 +10243,24 @@
 "iv": []
 },
 {
+"id": "talmadge",
+"name": "talmadge",
+"handle": "@TalmadgeOrion",
+"x": "TalmadgeOrion",
+"cat": "C",
+"works": [
+{
+"title": "Bracelet for the Road",
+"s": "talmadge-79437ceds.jpg",
+"l": "talmadge-79437cedl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector with a deep shelf of Friendship Bracelets, and a holder of MARFA LIGHT. Pictured as a masked stick figure pulling a suitcase through Grand Central, a golden bracelet wound around the clock.",
+"iv": []
+},
+{
 "id": "teamsteggy-vibes",
 "name": "TeamSteggy-VIBES",
 "handle": "",
@@ -9342,6 +10330,24 @@
 }
 ],
 "bio": "Behind thematthewa.com, under a low poly face, silver hair and a purple bandana. Pictured flicking a marble across DUMBO at golden hour",
+"iv": []
+},
+{
+"id": "thetexican",
+"name": "thetexican",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "Armada at the Seaport",
+"s": "thetexican-a2bec4e7s.jpg",
+"l": "thetexican-a2bec4e7l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A deep Art Blocks collector, from Kjetil Golid's Paper Armada to Matto's Ensō, and a holder of MARFA LIGHT. Pictured as an XTOADZ toad at the South Street Seaport, a Paper Armada ship sailing the East River.",
 "iv": []
 },
 {
@@ -9543,6 +10549,42 @@
 "iv": []
 },
 {
+"id": "visavi",
+"name": "visavi",
+"handle": "@visavi_eth",
+"x": "visavi_eth",
+"cat": "C",
+"works": [
+{
+"title": "The Fan Under the Bridge",
+"s": "visavi-25e6afces.jpg",
+"l": "visavi-25e6afcel.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "A collector of Edifice, Apparitions and hundreds more Art Blocks works, and a holder of MARFA LIGHT. Pictured as a pixel Van Gogh in DUMBO, an Edifice tower glowing under the Manhattan Bridge.",
+"iv": []
+},
+{
+"id": "vvd",
+"name": "vvd",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Lucky Cat of West 24th",
+"s": "vvd-60a2c38as.jpg",
+"l": "vvd-60a2c38al.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "One of the biggest Art Blocks buyers by volume, holding Fidenzas and Ringers by the dozen, and a holder of MARFA LIGHT. Pictured as a neon lucky cat on West 24th Street, a Fidenza filling the gallery wall.",
+"iv": []
+},
+{
 "id": "walafortress-eth",
 "name": "walafortress.eth",
 "handle": "walafortress.eth",
@@ -9558,6 +10600,24 @@
 }
 ],
 "bio": "Collector who minted New Yorkers in The Census Release. A fortress with room for three",
+"iv": []
+},
+{
+"id": "wallplug",
+"name": "wallplug",
+"handle": "@wallplugnft",
+"x": "wallplugnft",
+"cat": "C",
+"works": [
+{
+"title": "Closer Than They Appear",
+"s": "wallplug-f8656150s.jpg",
+"l": "wallplug-f8656150l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "wallplug is an artist, collector and connector who co hosted the TIME Pieces Good News Show, maker of Rearview Trauma. Pictured as the outlet headed figure at the Queensboro Bridge. Closer than they appear.",
 "iv": []
 },
 {
@@ -9635,10 +10695,17 @@
 {
 "id": "wsavas",
 "name": "wsavas",
-"handle": "",
-"x": "",
+"handle": "@wsavas",
+"x": "wsavas",
 "cat": "C",
 "works": [
+{
+"title": "Smoke Over the Bull",
+"s": "wsavas-41-b7bfefees.jpg",
+"l": "wsavas-41-b7bfefeel.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Phoenix Held High at Coney Island",
 "s": "wsavas-27f535b5s.jpg",
@@ -9647,7 +10714,25 @@
 "h": 720
 }
 ],
-"bio": "Collector who signs as wsavas. Pictured holding a marble high on the Coney Island boardwalk at midnight",
+"bio": "New York collector and broker who backs artists and signs as wsavas. Pictured with a hand on the Charging Bull, pipe lit",
+"iv": []
+},
+{
+"id": "xkevie-vault-eth",
+"name": "xkevie-vault.eth",
+"handle": "",
+"x": "",
+"cat": "C",
+"works": [
+{
+"title": "The Crown at McSorley's",
+"s": "xkevie-vault-eth-a9cb852ds.jpg",
+"l": "xkevie-vault-eth-a9cb852dl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Five New Yorkers kept in a vault, The Oldest Tavern among them. Pictured as their crowned ape holding court at McSorley's",
 "iv": []
 },
 {
@@ -10108,6 +11193,42 @@
 "iv": []
 },
 {
+"id": "aventurine",
+"name": "Aventurine",
+"handle": "@aventurine_eth",
+"x": "aventurine_eth",
+"cat": "B",
+"works": [
+{
+"title": "The Squiggle Over Hudson Yards",
+"s": "aventurine-384d020es.jpg",
+"l": "aventurine-384d020el.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Founder of Aventurine Labs, project lead of hv-MTL and on the Art Blocks community team. Pictured as the avatar at the Vessel. The squiggle wraps Hudson Yards.",
+"iv": []
+},
+{
+"id": "awaken",
+"name": "Awaken",
+"handle": "@AwakenTax",
+"x": "AwakenTax",
+"cat": "B",
+"works": [
+{
+"title": "The Sun Rises on Wall Street",
+"s": "awaken-a68aebdfs.jpg",
+"l": "awaken-a68aebdfl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Awaken is crypto tax software for more than forty thousand onchain users across Hyperliquid, Solana, Robinhood and Coinbase. Pictured as the sunrise glyph come to life on the steps of Federal Hall. Paid in full.",
+"iv": []
+},
+{
 "id": "balaji-srinivasan",
 "name": "Balaji Srinivasan",
 "handle": "@balajis",
@@ -10231,6 +11352,24 @@
 }
 ],
 "bio": "Rented air mattresses in his San Francisco loft to pay rent and turned it into Airbnb. Belong anywhere",
+"iv": []
+},
+{
+"id": "burga",
+"name": "Burga",
+"handle": "@0xburga",
+"x": "0xburga",
+"cat": "B",
+"works": [
+{
+"title": "The Key on 47th Street",
+"s": "burga-8846d2d4s.jpg",
+"l": "burga-8846d2d4l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Burga is the pseudonymous co founder of GONDI, the NFT lending protocol where the biggest collectors borrow against CryptoPunks and fine art. Pictured as the St George coin of the avatar on 47th Street. Collateral, kept close.",
 "iv": []
 },
 {
@@ -10540,6 +11679,24 @@
 "iv": []
 },
 {
+"id": "duca",
+"name": "Duca",
+"handle": "@big_duca",
+"x": "big_duca",
+"cat": "B",
+"works": [
+{
+"title": "Postmarked Before Midnight",
+"s": "duca-6180eac2s.jpg",
+"l": "duca-6180eac2l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Founder and CEO of Awaken, the crypto tax software, and a self described builder, caffeine addict and optimist. Postmarked before midnight at the Farley Post Office.",
+"iv": []
+},
+{
 "id": "duncan-cock-foster",
 "name": "Duncan Cock Foster",
 "handle": "@duncancfoster",
@@ -10684,6 +11841,24 @@
 "iv": []
 },
 {
+"id": "ethos",
+"name": "Ethos",
+"handle": "@ethos_network",
+"x": "ethos_network",
+"cat": "B",
+"works": [
+{
+"title": "Weighed at Foley Square",
+"s": "ethos-5fb988b4s.jpg",
+"l": "ethos-5fb988b4l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Ethos is an onchain reputation network for crypto, built on peer reviews and staked $WHUF. Pictured holding the scales at Foley Square. Weighed and found level.",
+"iv": []
+},
+{
 "id": "evan-spiegel",
 "name": "Evan Spiegel",
 "handle": "Cofounder and CEO of Snap",
@@ -10780,6 +11955,13 @@
 "x": "garyvee",
 "cat": "B",
 "works": [
+{
+"title": "Empathy Over Park Avenue",
+"s": "gary-vaynerchuk-41-fc553794s.jpg",
+"l": "gary-vaynerchuk-41-fc553794l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "The Man Who Bet on Attention",
 "s": "gary-vaynerchuk-777bb74bs.jpg",
@@ -11346,6 +12528,24 @@
 "iv": []
 },
 {
+"id": "justin-trimble",
+"name": "Justin Trimble",
+"handle": "@JustinTrimble",
+"x": "JustinTrimble",
+"cat": "B",
+"works": [
+{
+"title": "The Squiggle over Coney Island",
+"s": "justin-trimble-870a36e0s.jpg",
+"l": "justin-trimble-870a36e0l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Justin Trimble co-founded BrainDrops and was among the first to claim CryptoPunks for free when they launched in 2017. Pictured as his hooded Ape Punk on the Coney Island boardwalk at night, a Chromie Squiggle from his collection rising out of the Atlantic.",
+"iv": []
+},
+{
 "id": "kain-warwick",
 "name": "Kain Warwick",
 "handle": "@kaiynne",
@@ -11514,6 +12714,13 @@
 "x": "LucaNetz",
 "cat": "B",
 "works": [
+{
+"title": "Inflating the Penguin on 77th Street",
+"s": "luca-netz-41-836858a2s.jpg",
+"l": "luca-netz-41-836858a2l.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Penguins in the Toy Store Window",
 "s": "luca-netz-c8f66507s.jpg",
@@ -11778,6 +12985,24 @@
 "iv": []
 },
 {
+"id": "micky-malka",
+"name": "Micky Malka",
+"handle": "@mickymalka",
+"x": "mickymalka",
+"cat": "B",
+"works": [
+{
+"title": "The Future Belongs to the Rebels",
+"s": "micky-malka-9bfdc79ds.jpg",
+"l": "micky-malka-9bfdc79dl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Venezuelan born founder and managing partner of Ribbit Capital, the fund that backed Coinbase, Robinhood, Nubank and Revolut, and an early Bitcoin believer. The future belongs to the rebels.",
+"iv": []
+},
+{
 "id": "mike-dudas",
 "name": "Mike Dudas",
 "handle": "@mdudas",
@@ -12015,6 +13240,24 @@
 "iv": []
 },
 {
+"id": "opensea",
+"name": "OpenSea",
+"handle": "@opensea",
+"x": "opensea",
+"cat": "B",
+"works": [
+{
+"title": "Open Water in the Harbor",
+"s": "opensea-2fb17175s.jpg",
+"l": "opensea-2fb17175l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "OpenSea is the largest NFT marketplace, where much of the collection has been traded. Pictured as the sailboat cutting across the harbor. Open water.",
+"iv": []
+},
+{
 "id": "pacman",
 "name": "Pacman",
 "handle": "@pacmanblur",
@@ -12123,6 +13366,24 @@
 "iv": []
 },
 {
+"id": "pudgy-penguins",
+"name": "Pudgy Penguins",
+"handle": "@pudgypenguins",
+"x": "pudgypenguins",
+"cat": "B",
+"works": [
+{
+"title": "Skating at Wollman Rink",
+"s": "pudgy-penguins-33c45e9cs.jpg",
+"l": "pudgy-penguins-33c45e9cl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Pudgy Penguins is the NFT collection that became toys, $PENGU and the internet's favorite penguins. Skating at Wollman Rink.",
+"iv": []
+},
+{
 "id": "rachel-spratt",
 "name": "Rachel Spratt",
 "handle": "@MrsRachelSpratt",
@@ -12192,6 +13453,24 @@
 }
 ],
 "bio": "PayPal veteran who cofounded LinkedIn and backs founders at Greylock, and wrote Blitzscaling. The network is the moat",
+"iv": []
+},
+{
+"id": "richerd",
+"name": "Richerd",
+"handle": "@richerd",
+"x": "richerd",
+"cat": "B",
+"works": [
+{
+"title": "Smoke Over the Lower East Side",
+"s": "richerd-1102cb11s.jpg",
+"l": "richerd-1102cb11l.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Richerd Chan co founded Manifold, the creator owned contracts behind a large share of the 1 of 1 and edition drops in crypto art. Pictured as CryptoPunk 6046, 3D glasses and a cigarette. Artists own the contract.",
 "iv": []
 },
 {
@@ -12267,6 +13546,24 @@
 "iv": []
 },
 {
+"id": "sappy-seals",
+"name": "Sappy Seals",
+"handle": "@SappySeals",
+"x": "SappySeals",
+"cat": "B",
+"works": [
+{
+"title": "Slides at Coney Island",
+"s": "sappy-seals-5af37ef4s.jpg",
+"l": "sappy-seals-5af37ef4l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Sappy Seals is the NFT community of plump white seals in a summer waterpark world. Pictured with a soft serve on the Coney Island boardwalk. Slides all the way to the Atlantic.",
+"iv": []
+},
+{
 "id": "satoshi-nakamoto",
 "name": "Satoshi Nakamoto",
 "handle": "",
@@ -12336,6 +13633,24 @@
 }
 ],
 "bio": "Cofounder of Chainlink, the oracle network that feeds real world data to blockchains.",
+"iv": []
+},
+{
+"id": "serpin-taxt",
+"name": "Serpin Taxt",
+"handle": "@serpinxbt",
+"x": "serpinxbt",
+"cat": "B",
+"works": [
+{
+"title": "The Lantern at the Cloisters",
+"s": "serpin-taxt-96070e07s.jpg",
+"l": "serpin-taxt-96070e07l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Serpin Taxt is CEO of Ethos Network and managing partner at Thompson Meridian Capital. Pictured as the pencil drawn avatar with a lantern at the Cloisters.",
 "iv": []
 },
 {
@@ -12483,6 +13798,24 @@
 "iv": []
 },
 {
+"id": "tyler-durd-th",
+"name": "Tyler DurdΞth",
+"handle": "@tylerdurdeth",
+"x": "tylerdurdeth",
+"cat": "B",
+"works": [
+{
+"title": "The First Rule of Hell's Kitchen",
+"s": "tyler-durd-th-34f059e1s.jpg",
+"l": "tyler-durd-th-34f059e1l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Tyler DurdΞth co founded xTensor Labs and xTensor Capital in the Bittensor world and is a Chimpers holder for life. Pictured as the pixel Chimper in Hell's Kitchen. The first rule applies.",
+"iv": []
+},
+{
 "id": "tyler-winklevoss",
 "name": "Tyler Winklevoss",
 "handle": "@tyler",
@@ -12498,6 +13831,24 @@
 }
 ],
 "bio": "Cofounder of Gemini, the company that owns Nifty Gateway. Twin oars, one vault",
+"iv": []
+},
+{
+"id": "veefriends",
+"name": "VeeFriends",
+"handle": "@veefriends",
+"x": "veefriends",
+"cat": "B",
+"works": [
+{
+"title": "The Carousel of Friends",
+"s": "veefriends-7074d3ces.jpg",
+"l": "veefriends-7074d3cel.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "VeeFriends is Gary Vaynerchuk's cast of characters built on traits like Patient Panda and Empathy Elephant. Pictured as the black cat of the avatar on the Central Park carousel. Here to make friends.",
 "iv": []
 },
 {
@@ -12534,6 +13885,24 @@
 }
 ],
 "bio": "Cofounder of Ethereum, which he proposed while still a teenager. A computer nobody owns",
+"iv": []
+},
+{
+"id": "wab-eth",
+"name": "wab.eth",
+"handle": "@wabdoteth",
+"x": "wabdoteth",
+"cat": "B",
+"works": [
+{
+"title": "Lights at Grand Army Plaza",
+"s": "wab-eth-3b2448bds.jpg",
+"l": "wab-eth-3b2448bdl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "wab.eth is founder and CEO of Sappy Seals and Omnia. Pictured as the seal of the avatar with a lit menorah at Grand Army Plaza in Brooklyn.",
 "iv": []
 },
 {
@@ -12642,6 +14011,24 @@
 }
 ],
 "bio": "Writer and researcher who digs up the earliest NFT projects as history. Archaeology of the recent past",
+"iv": []
+},
+{
+"id": "alex-estorick",
+"name": "Alex Estorick",
+"handle": "@AlexEstorick",
+"x": "AlexEstorick",
+"cat": "W",
+"works": [
+{
+"title": "Right Click Save at the Strand",
+"s": "alex-estorick-a2e8ba0cs.jpg",
+"l": "alex-estorick-a2e8ba0cl.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Founding editor of Right Click Save and art and technology editor at Flash Art, named to Monopol's Top 100 of the art world. The critic who took digital art seriously first.",
 "iv": []
 },
 {
@@ -12774,6 +14161,24 @@
 "iv": []
 },
 {
+"id": "camol",
+"name": "camol",
+"handle": "@camolnft",
+"x": "camolnft",
+"cat": "W",
+"works": [
+{
+"title": "The Big Claw on Canal Street",
+"s": "camol-dc2ae75ds.jpg",
+"l": "camol-dc2ae75dl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "camol does growth at Katana after Zynga and posts by one rule: be kind, but also be hilarious online. Pictured as the pink cat at a Canal Street claw machine. Deadpan.",
+"iv": []
+},
+{
 "id": "captain-zwingli",
 "name": "Captain Zwingli",
 "handle": "@ChrisJourdan",
@@ -12825,6 +14230,24 @@
 }
 ],
 "bio": "British trader and writer, co-host of UpOnly and founder of Echo, sold to Coinbase.",
+"iv": []
+},
+{
+"id": "coffee-with-captain",
+"name": "Coffee with Captain",
+"handle": "@coffeewithcap_",
+"x": "coffeewithcap_",
+"cat": "W",
+"works": [
+{
+"title": "Eight AM at the Diner",
+"s": "coffee-with-captain-1c3275c5s.jpg",
+"l": "coffee-with-captain-1c3275c5l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "The Coffee with Captain Show is live every weekday at 8am ET on markets, products and culture, and the show MLow joined on census mint day. Pictured as the mug come to life behind a diner counter. Eight AM, sharp.",
 "iv": []
 },
 {
@@ -12897,6 +14320,24 @@
 }
 ],
 "bio": "Cofounder of Bankless, the media company covering crypto and a bankless future. Built an audience around a thesis",
+"iv": []
+},
+{
+"id": "decrypt",
+"name": "Decrypt",
+"handle": "@decryptmedia",
+"x": "decryptmedia",
+"cat": "W",
+"works": [
+{
+"title": "Breaking at One Times Square",
+"s": "decrypt-f467686fs.jpg",
+"l": "decrypt-f467686fl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Decrypt is the New York media company covering crypto, AI and emerging tech. Pictured as the broken ring at a newsstand under One Times Square. Breaking.",
 "iv": []
 },
 {
@@ -12975,12 +14416,37 @@
 "iv": []
 },
 {
+"id": "erika-lee",
+"name": "Erika Lee",
+"handle": "@erikalee",
+"x": "erikalee",
+"cat": "W",
+"works": [
+{
+"title": "The Stairs Out of Union Square",
+"s": "erika-lee-d3727260s.jpg",
+"l": "erika-lee-d3727260l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Writer on internet culture and emerging tech and head of brand at Corgi, after Decrypt, VaynerMedia and CBS News. The stairs out of Union Square go up.",
+"iv": []
+},
+{
 "id": "farokh",
 "name": "Farokh",
 "handle": "@farokh",
 "x": "farokh",
 "cat": "W",
 "works": [
+{
+"title": "On Air at Radio City",
+"s": "farokh-41-693dc90fs.jpg",
+"l": "farokh-41-693dc90fl.jpg",
+"w": 1280,
+"h": 719
+},
 {
 "title": "Mic on the Rooftop",
 "s": "farokh-56badac5s.jpg",
@@ -12989,7 +14455,7 @@
 "h": 714
 }
 ],
-"bio": "Founder of Rug Radio, a network of live shows about crypto culture. The signal is the community",
+"bio": "President and co founder of Myriad Markets, Rug Radio and Decrypt, and host of FOMO HOUR. The signal is the community",
 "iv": []
 },
 {
@@ -13146,6 +14612,24 @@
 }
 ],
 "bio": "Wrote The Death and Life of Great American Cities and helped save the Village from Robert Moses. Neighbors beat the bulldozer",
+"iv": []
+},
+{
+"id": "jason-bailey",
+"name": "Jason Bailey",
+"handle": "@artnome",
+"x": "artnome",
+"cat": "W",
+"works": [
+{
+"title": "A Ring of Light Over Rockefeller Plaza",
+"s": "jason-bailey-5ff9c6ecs.jpg",
+"l": "jason-bailey-5ff9c6ecl.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Jason Bailey writes Artnome on art and technology, co founded ClubNFT and chronicled crypto art from its earliest days. The historian of the thing.",
 "iv": []
 },
 {
@@ -13350,6 +14834,24 @@
 }
 ],
 "bio": "Crypto journalist who hosts the Unchained podcast from New York. The story, told straight",
+"iv": []
+},
+{
+"id": "lorepunk",
+"name": "lorepunk",
+"handle": "@lorepunk",
+"x": "lorepunk",
+"cat": "W",
+"works": [
+{
+"title": "Ink Beneath the Lions",
+"s": "lorepunk-dabf4cf4s.jpg",
+"l": "lorepunk-dabf4cf4l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "lorepunk writes copy, lore and news for web3 and AI projects with an ensemble of agents. Pictured as the punk with a quill on the library steps. A word goblin between the lions.",
 "iv": []
 },
 {
@@ -13594,6 +15096,24 @@
 "iv": []
 },
 {
+"id": "now-media",
+"name": "Now Media",
+"handle": "@nowmedia",
+"x": "nowmedia",
+"cat": "W",
+"works": [
+{
+"title": "Live From the Flatiron",
+"s": "now-media-f89ec6fas.jpg",
+"l": "now-media-f89ec6fal.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Now Media calls itself the voice of digital culture, covering crypto, art and the internet. Pictured as the n come to life at Madison Square. Live from the Flatiron.",
+"iv": []
+},
+{
 "id": "orangie",
 "name": "Orangie",
 "handle": "@orangie",
@@ -13681,6 +15201,24 @@
 }
 ],
 "bio": "Bitcoin advocate and CEO of The Bitcoin Bond Company, formerly at Riot Platforms and Kraken, a strategic Bitcoin reserve proponent.",
+"iv": []
+},
+{
+"id": "pingu",
+"name": "Pingu",
+"handle": "@Web3Pingu",
+"x": "Web3Pingu",
+"cat": "W",
+"works": [
+{
+"title": "System Error on Knickerbocker",
+"s": "pingu-64965242s.jpg",
+"l": "pingu-64965242l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Pingu is a crypto personality who hosts a weekday morning show, with Toshi Bet and Bitrefill. Pictured as the avatar at a Bushwick bodega counter. System error.",
 "iv": []
 },
 {
@@ -13990,6 +15528,24 @@
 "iv": []
 },
 {
+"id": "tylerd",
+"name": "TylerD",
+"handle": "@tyler_did_it",
+"x": "tyler_did_it",
+"cat": "W",
+"works": [
+{
+"title": "Fomo Hour at the Crossroads",
+"s": "tylerd-227ea55es.jpg",
+"l": "tylerd-227ea55el.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "TylerD hosts Fomo Hour, a daily crypto news show at 10 am ET, and covers prediction markets. Pictured as the wizard Pudgy Penguin in Times Square. On air.",
+"iv": []
+},
+{
 "id": "udi-wertheimer",
 "name": "Udi Wertheimer",
 "handle": "@udiWertheimer",
@@ -14023,6 +15579,24 @@
 }
 ],
 "bio": "Former Google engineer and author of The Bullish Case for Bitcoin, the famous essay turned book on money's origins.",
+"iv": []
+},
+{
+"id": "wale",
+"name": "Wale",
+"handle": "@waleswoosh",
+"x": "waleswoosh",
+"cat": "W",
+"works": [
+{
+"title": "The Bodega by the Court",
+"s": "wale-c5da745es.jpg",
+"l": "wale-c5da745el.jpg",
+"w": 1280,
+"h": 853
+}
+],
+"bio": "Wale is an undoxxed NFT analyst whose threads are among the most read market writing on X, a Spaces regular and advisor to Azuki research and Moca Network. Pictured as the anime avatar at a bodega by the court. Read the thread.",
 "iv": []
 },
 {
@@ -15440,6 +17014,24 @@
 "iv": []
 },
 {
+"id": "ben-stiller",
+"name": "Ben Stiller",
+"handle": "@BenStiller",
+"x": "BenStiller",
+"cat": "F",
+"works": [
+{
+"title": "The Night Guard on Central Park West",
+"s": "ben-stiller-c23fd943s.jpg",
+"l": "ben-stiller-c23fd943l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "New York born actor and director of Zoolander, Tropic Thunder and Severance, and the night guard of Night at the Museum. The T. rex is awake on Central Park West.",
+"iv": []
+},
+{
 "id": "era1-662",
 "name": "Jerry Orbach",
 "handle": "",
@@ -16586,6 +18178,24 @@
 }
 ],
 "bio": "Pastry chef who invented the Cronut at his Spring Street bakery in 2013. The line went around the block",
+"iv": []
+},
+{
+"id": "jed",
+"name": "Jed",
+"handle": "@jed_131",
+"x": "jed_131",
+"cat": "D",
+"works": [
+{
+"title": "Come Home for Dinner",
+"s": "jed-e42d5652s.jpg",
+"l": "jed-e42d5652l.jpg",
+"w": 1280,
+"h": 720
+}
+],
+"bio": "Jed runs DeStefano's Steakhouse at Lorimer and Conselyea in Williamsburg, the official steakhouse for crypto and web3, and co founded re_generates. Pictured as the pixel avatar on a rooftop with a dry aged tomahawk. Come home for dinner.",
 "iv": []
 },
 {
@@ -18659,6 +20269,24 @@
 }
 ],
 "bio": "Former FaZe Clan pro Fortnite player turned Solana meme coin trader, one of the biggest names on the Kolscan board. Pictured as the avatar",
+"iv": []
+},
+{
+"id": "mike-three",
+"name": "Mike Three",
+"handle": "@mikethree",
+"x": "mikethree",
+"cat": "T",
+"works": [
+{
+"title": "Born to Mog on Wall Street",
+"s": "mike-three-50e5d174s.jpg",
+"l": "mike-three-50e5d174l.jpg",
+"w": 1280,
+"h": 719
+}
+],
+"bio": "Mike Three is a memecoin trader and crypto enjoyoor known for degen humour. Pictured as the ink drawing of the avatar on Wall Street, laptop open. Born to mog.",
 "iv": []
 },
 {

@@ -2,6 +2,7 @@
 import * as T from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as SU from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
@@ -97,6 +98,90 @@ function loadHdr(name: string) {
 }
 /* ---------- MLow cabs (2026-10-09): every yellow cab becomes a real NYC taxi with the MLOW topper ---------- */
 const OLD_CABS = typeof location !== 'undefined' && /[?&]cabs=old/.test(location.search);
+/* private cars (2026-10-28): a box a room tags userData.car that is not cab yellow becomes a Camry or an Escape body,
+   no topper, its paint the box's colour; ?cars=old keeps the boxes */
+const OLD_CARS = typeof location !== 'undefined' && /[?&]cars=old/.test(location.search);
+/* the crowd's cast (2026-10-28): every k.crowd walker becomes one of MLow's ON LOCATION characters, the whole model
+   with its own sculpted eye flower head (the museum's npc_ files, decimated to 3k triangles near and 500 far, front
+   baked to +z). One InstancedMesh per character and distance per room; ?crowd=old keeps the capsules. */
+const OLD_CROWD = typeof location !== 'undefined' && /[?&]crowd=old/.test(location.search);
+const CAST = ['actress', 'annieh', 'gown', 'cabbie', 'clerk', 'editor', 'felix', 'maitre', 'oscar', 'loretta', 'wiseguy', 'workgirl', 'tough', 'discoking'];
+const CROWD_N = 12;   // crowds draw from the first twelve; tough and discoking only where a room names them   // broker and sonny stop above the knee: replaced by gown and loretta (whole, from assets/movies)
+const SEATS = ['seat_robber', 'seat_folksinger'];   // whole seated cast (ON LOCATION), front to +z
+const castFile = (v: number) => (v < CAST.length ? 'cast_' + CAST[v] : SEATS[v - CAST.length]);
+/* Rooms tag their own primitive people so the kit can cast them (batch five, 2026-10-28): 'auto' decides standing or
+   seated by height, 'seat' forces seated, 'part' is a head or hat to hide; `hs` turns the tagged geometry's height into
+   the person's (a body capsule alone is about 0.8 of a person). */
+export function personTag<O extends { userData: Record<string, unknown> }>(o: O, kind: 'auto' | 'seat' | 'part' = 'auto', hs = 1.06, cast?: string): O {
+  o.userData.person = kind; o.userData.personH = hs; if (cast) o.userData.personCast = cast; return o;
+}
+/* the rigged cast (2026-10-28, UPGRADE ALL ROOMS 2026-10-28/rig, free Blender rigs with walk and idle clips and a bone
+   named head): the nearest people become skinned clones that walk at their path's speed with planted feet, or stand
+   and breathe and turn their head toward the visitor. Walk speeds and heights from rig_manifest.json; only figures whose
+   result was good or acceptable. clerk and felix are idle only; the seated ones have no walk. ?rig=off keeps them all static. */
+const OLD_RIG = typeof location !== 'undefined' && /[?&]rig=off/.test(location.search);
+const RIG: Record<string, { walk: number; h: number }> = {
+  actress: { walk: 0.55, h: 1.88 }, gown: { walk: 0.55, h: 1.88 }, loretta: { walk: 0.457, h: 1.88 }, maitre: { walk: 0.485, h: 1.88 },
+  oscar: { walk: 0.869, h: 1.88 }, annieh: { walk: 0.457, h: 1.88 }, editor: { walk: 0.457, h: 1.88 }, wiseguy: { walk: 0.756, h: 1.88 },
+  workgirl: { walk: 0.778, h: 1.88 }, cabbie: { walk: 0.711, h: 1.88 }, tough: { walk: 0.756, h: 1.88 }, discoking: { walk: 0.733, h: 1.88 }, clerk: { walk: 0, h: 1.88 }, felix: { walk: 0, h: 1.88 },
+  robber: { walk: 0, h: 1.0 }, folksinger: { walk: 0, h: 1.5 },
+};
+/* rig files that face 90 degrees off +z (2026-10-28, UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing; rig_pass.py turned every
+   cast file the same -90 degrees). Of the museum's rigs only the tough (the Paradise Garage DJ); the rest are here so a room
+   that names one later gets it right. The static cast_tough (near and far) faces the same way as its rig file, so it takes
+   the same turn (CAST_FACE) and the static and skinned tiers agree; the other fifteen cast_ and seat_ files face +z. */
+const CAST_FACE: Record<string, number> = { cast_tough: Math.PI / 2 };
+const RIG_FACE: Record<string, number> = { blindwoman: -Math.PI / 2, hustler: -Math.PI / 2, lensman: Math.PI / 2, tough: Math.PI / 2, sally: Math.PI / 2 };
+const rigName = (v: number) => (v < CAST.length ? CAST[v] : SEATS[v - CAST.length].replace('seat_', ''));
+type RigT = { scene: T.Object3D; walk?: T.AnimationClip; idle?: T.AnimationClip };
+const rigCache = new Map<string, Promise<RigT | null>>();
+function loadRig(name: string) {
+  let p = rigCache.get(name);
+  if (!p) {
+    p = new Promise<RigT | null>((res) => gltf.load(`assets/museum/rig/rig_${name}.glb`, (g) => {
+      g.scene.traverse((c) => { if (c instanceof T.Mesh) for (const m of [c.material].flat() as T.MeshStandardMaterial[]) for (const v of Object.values(m)) if (v instanceof T.Texture) markShared(v); });
+      res({ scene: g.scene, walk: g.animations.find((a) => a.name === 'walk'), idle: g.animations.find((a) => a.name === 'idle') });
+    }, undefined, () => res(null)));
+    rigCache.set(name, p);
+  }
+  return p;
+}
+/* a cast person: its matrix each frame, its cast index, drawn by the rig layer, in the near band last frame, and for a
+   box crowd kept far (stadiums, Delacorte) the box instance it stands in for, hidden only while the cast draws it */
+const ZERO4 = new T.Matrix4().makeScale(0, 0, 0), WHITE = new T.Color(1, 1, 1);
+type CastFig = { m: T.Matrix4; v: number; skinned?: boolean; near?: boolean; tint?: T.Color; box?: { im: T.InstancedMesh; i: number; orig: T.Matrix4; off: boolean } };
+/* a box crowd (stadium sections, theatre seats): the nearest become seated cast (the robber, the one seated pose that
+   sits on a seat without bringing its own furniture), the far keep their boxes. `yaw` turns the cast to the box's front. */
+export function boxCrowdTag<O extends { userData: Record<string, unknown> }>(o: O, yaw = 0, hs = 1.25, cast = 'seat_robber'): O {
+  o.userData.person = 'seat'; o.userData.personH = hs; o.userData.personCast = cast; o.userData.personKeepFar = true; o.userData.personYaw = yaw; return o;
+}
+const CAST_H = 1.62;      // metres to the top of the flower at a.h 1, scale 1: the old capsule and head stood 1.5
+const CAST_NEAR = 30;     // beyond this the 500 triangle body; on the low path (phones) 9
+const CARS: { name: string; len: number }[] = [{ name: 'h_car_camry_lo', len: 4.88 }, { name: 'h_car_escape_lo', len: 4.6 }]; // the cab bodies at 4k triangles, 512 textures
+/* The cab bodies carry MLow's cab yellow in their texture. A private car repaints only the yellow texels (in linear
+   space red well above blue and real green), scaled by their brightness, so glass, tyres, lamps and trim keep their
+   own colour. The paint is the instance colour on a fleet, a uniform on a single car. */
+function paintable(src: T.Material, instanced: boolean, paint?: T.Color) {
+  const m = src.clone() as T.MeshStandardMaterial;
+  if (!m.map) { if (paint && !instanced) m.color.multiply(new T.Color(0.6, 0.6, 0.6)); return m; }
+  const u = { value: paint ? paint.clone() : new T.Color(1, 1, 1) };
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uPaint = u;
+    sh.fragmentShader = 'uniform vec3 uPaint;\n' + sh.fragmentShader
+      .replace('#include <color_fragment>', '')
+      .replace('#include <map_fragment>', `
+#ifdef USE_MAP
+  vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+  float yel = smoothstep( 0.08, 0.22, sampledDiffuseColor.r - sampledDiffuseColor.b ) * smoothstep( 0.06, 0.14, sampledDiffuseColor.g ) * step( sampledDiffuseColor.g, sampledDiffuseColor.r * 1.1 );
+  float lum = dot( sampledDiffuseColor.rgb, vec3( 0.2126, 0.7152, 0.0722 ) );
+  vec3 paintC = ${instanced ? 'vColor.rgb' : 'uPaint'} * clamp( lum / 0.55, 0.35, 1.3 );
+  diffuseColor.rgb *= mix( sampledDiffuseColor.rgb, paintC, yel );
+  diffuseColor.a *= sampledDiffuseColor.a;
+#endif`);
+  };
+  m.customProgramCacheKey = () => 'carpaint' + (instanced ? 'I' : 'U');
+  return m;
+}
 const TAXI_LEN = 4.6;
 /* the five cab types MLow photographed on the street, real lengths in metres (2026-10-09) */
 const TAXIS: { name: string; len: number }[] = [
@@ -716,6 +801,10 @@ export class Kit {
     for (let i = 0; i < n; i++) { body.setColorAt(i, c.set(colors[Math.floor(rnd() * colors.length)])); head.setColorAt(i, c.set(skins[Math.floor(rnd() * skins.length)])); }
     body.castShadow = head.castShadow = this.o.quality === 'high';
     this.add(body); this.add(head);
+    /* the cast: a separate seeded draw so the capsules' own randomness is unchanged */
+    const crnd = X.mulberry(seed * 31 + 7), figs = OLD_CROWD ? [] : Array.from({ length: n }, () => ({ m: new T.Matrix4(), v: Math.floor(crnd() * CROWD_N) }));
+    this.castFigs.push(...figs); if (figs.length) this.castOld.push(body, head);
+    const fsc = new T.Vector3();
     const m = new T.Matrix4(), q = new T.Quaternion(), pos = new T.Vector3(), tan = new T.Vector3(), side = new T.Vector3(), sc = new T.Vector3(), up = new T.Vector3(0, 1, 0), lift = new T.Vector3();
     const place = (t: number, dt: number) => {
       for (let i = 0; i < n; i++) {
@@ -734,6 +823,7 @@ export class Kit {
         lift.set(0, (1.22 * a.h * bob + 0.13) * scale, 0);
         sc.set(1, 1, 1);
         m.compose(pos.clone().add(lift), q, sc); head.setMatrixAt(i, m);
+        if (figs.length) { const H = CAST_H * a.h * scale; lift.set(0, 0.02 * Math.max(0, Math.sin(t * 7 + i * 1.3)) * scale, 0); fsc.set(H, H * (1 + 0.012 * Math.sin(t * 7 + i * 1.3)), H); figs[i].m.compose(pos.clone().add(lift), q, fsc); }
       }
       body.instanceMatrix.needsUpdate = head.instanceMatrix.needsUpdate = true;
     };
@@ -1405,41 +1495,50 @@ export class Kit {
   private cabsLater() {
     if (OLD_CABS || typeof window === 'undefined') return;
     let done = false;
+    /* with reduced motion the kit's ticks never run, so the swap waits on a timer instead (2026-10-28) */
+    if (this.o.reduced) { setTimeout(() => { if (this.live) void this.swapCabs(); }, 500); return; }
     this.ticks.push((t) => { if (done || t < 0.5) return; done = true; void this.swapCabs(); });
   }
   private async swapCabs() {
     this.scene.updateMatrixWorld(true);
     const m = new T.Matrix4(), c = new T.Color(), box = new T.Box3(), size = new T.Vector3();
-    const fleets: { im: T.InstancedMesh; idx: number[] }[] = [];
-    const singles: T.Object3D[] = [];
+    const fleets: { im: T.InstancedMesh; idx: number[]; paint: (T.Color | null)[] }[] = [];
+    const singles: T.Object3D[] = [], singlePaint: (T.Color | null)[] = [];
     const ims: T.InstancedMesh[] = [];
     this.scene.traverse((o) => {
       if (o instanceof T.InstancedMesh) { if (o.userData.leaf === undefined && !o.userData.cab) ims.push(o); return; }
       if (!(o instanceof T.Mesh) || o.userData.cab) return;
       const mat = o.material as T.MeshStandardMaterial;
-      if (!mat || !mat.color || !isCabYellow(mat.color)) return;
+      if (!mat || !mat.color) return;
+      const yellow = isCabYellow(mat.color);
+      if (!yellow && (OLD_CARS || !o.userData.car)) return;
       const target = o.parent && o.parent !== this.scene && o.parent.type === 'Group' ? o.parent : o;
       box.setFromObject(target).getSize(size);
-      if (carLike(size) && !singles.includes(target)) singles.push(target);
+      if (carLike(size) && !singles.includes(target)) { singles.push(target); singlePaint.push(yellow ? null : mat.color.clone()); }
     });
     for (const im of ims) {
       const mat = im.material as T.MeshStandardMaterial;
       if (!mat || Array.isArray(mat) || !mat.color) continue;
       if (!im.geometry.boundingBox) im.geometry.computeBoundingBox();
-      const idx: number[] = [];
+      const idx: number[] = [], paint: (T.Color | null)[] = [];
+      const cars = !OLD_CARS && !!im.userData.car;
       for (let i = 0; i < im.count; i++) {
         c.copy(mat.color);
         if (im.instanceColor) { const ic = new T.Color(); im.getColorAt(i, ic); c.multiply(ic); }
-        if (!isCabYellow(c)) continue;
+        const yellow = isCabYellow(c);
+        if (!yellow && !cars) continue;
         im.getMatrixAt(i, m);
         box.copy(im.geometry.boundingBox!).applyMatrix4(m).applyMatrix4(im.matrixWorld).getSize(size);
-        if (carLike(size)) idx.push(i);
+        if (carLike(size)) { idx.push(i); paint.push(yellow ? null : c.clone()); }
       }
-      if (idx.length) fleets.push({ im, idx });
+      if (idx.length) fleets.push({ im, idx, paint });
     }
     if (!fleets.length && !singles.length) return;
     const kinds = (await Promise.all(TAXIS.map((k) => this.taxiTemplate(k)))).filter((g): g is T.Group => !!g);
     if (!kinds.length || !this.live) return;
+    const needCars = singlePaint.some((p) => p) || fleets.some((f) => f.paint.some((p) => p));
+    const carKinds = needCars ? (await Promise.all(CARS.map((n) => this.taxiTemplate(n)))).filter((g): g is T.Group => !!g).map((g) => this.carBody(g)) : [];
+    if (!this.live) return;
     const tmpl = kinds[0];
     let nth = 0;
     /* single cabs: the taxi rides inside the cab's own group, the boxes go dark */
@@ -1450,7 +1549,10 @@ export class Kit {
       o.traverse((ch) => { if (ch instanceof T.Mesh) { lb.union(new T.Box3().setFromObject(ch).applyMatrix4(inv)); } });
       const ls = lb.getSize(new T.Vector3()), along = ls.x > ls.z;
       const pick = nth++;
-      const t = kinds[(pick * 7 + 3) % kinds.length].clone();
+      const paintC = singlePaint[singles.indexOf(o)];
+      if (paintC && !carKinds.length) continue;
+      const t = paintC ? carKinds[pick % carKinds.length].clone() : kinds[(pick * 7 + 3) % kinds.length].clone();
+      if (paintC) t.traverse((ch) => { if (ch instanceof T.Mesh) ch.material = paintable(ch.material as T.Material, false, paintC); });
       const slot = pickScreen(pick * 13 + 5);
       t.traverse((ch) => { if (ch instanceof T.Mesh && ch.userData.screen) ch.geometry = slotGeometry(ch.geometry, slot); });
       t.userData.cab = true;
@@ -1458,9 +1560,13 @@ export class Kit {
       t.scale.setScalar(Math.min(1.1, Math.max(0.85, Math.max(ls.x, ls.z) / TAXI_LEN)));
       t.rotation.y = along ? Math.PI / 2 : 0;
       t.position.set((lb.min.x + lb.max.x) / 2, lb.min.y, (lb.min.z + lb.max.z) / 2);
-      o.traverse((ch) => { if (ch instanceof T.Mesh) ch.visible = false; });
-      if (o instanceof T.Mesh) { o.visible = false; t.applyMatrix4(o.matrixWorld); this.add(t); }
-      else o.add(t);
+      if (o instanceof T.Mesh) {
+        /* the box keeps moving, so the car rides inside it: the box's own material goes invisible, its children
+           (lamps) hide, and the car is its child (lb is in the box's frame) */
+        o.children.forEach((ch) => { ch.visible = false; });
+        const ghost = (o.material as T.Material).clone(); ghost.visible = false; o.material = ghost;
+        o.add(t);
+      } else { o.traverse((ch) => { if (ch instanceof T.Mesh) ch.visible = false; }); o.add(t); }
     }
     /* fleets: hide the yellow instances (and the cabins and wheels that ride with them), run instanced taxis */
     for (const f of fleets) {
@@ -1485,11 +1591,14 @@ export class Kit {
       };
       const collapse = () => { for (const im of riders) { for (const i of hidden) im.setMatrixAt(i, zero); im.instanceMatrix.needsUpdate = true; } };
       void hideable;
-      /* every cab its own type and its own screen: the five types MLow photographed, the mark or a painting */
-      const kindOf = f.idx.map((i, j) => (i * 7 + j * 3 + f.idx.length) % kinds.length);
-      const runs = kinds.map((g, ki) => {
+      /* every cab its own type and its own screen: the five types MLow photographed, the mark or a painting;
+         private cars a Camry or an Escape body in their box's own colour */
+      const all = [...kinds, ...carKinds], nT = kinds.length;
+      const kindOf = f.idx.map((i, j) => (f.paint[j] && carKinds.length ? nT + ((i * 5 + j) % carKinds.length) : (i * 7 + j * 3 + f.idx.length) % nT));
+      const runs = all.map((g, ki) => {
         const mine = kindOf.map((k, j) => (k === ki ? j : -1)).filter((j) => j >= 0);
-        const r = heroLikeInstances(this, g, Math.max(1, mine.length), mine.map((j) => pickScreen(f.idx[j] * 13 + j * 5 + 1)));
+        const r = heroLikeInstances(this, g, Math.max(1, mine.length), mine.map((j) => pickScreen(f.idx[j] * 13 + j * 5 + 1)), ki >= nT);
+        if (ki >= nT) mine.forEach((j, n) => r.setColor(n, f.paint[j]!));
         if (!mine.length) r.setAt(0, new T.Matrix4().makeScale(0, 0, 0));
         return { r, slotOf: new Map(mine.map((j, n) => [j, n])) };
       });
@@ -1523,6 +1632,241 @@ export class Kit {
   /* the taxi: an NYC hybrid cab (Tripo from MLow's own cab photo) with the MLOW topper on its rails;
      the topper's two screens show the MLOW mark, then a painting, like the real digital toppers */
   private taxiTemplates = new Map<string, Promise<T.Group | null>>();
+  private castFigs: CastFig[] = [];
+  /* the nearest people as skinned clones: assigned by distance with hysteresis (in at rIn, out past 1.25 rIn), capped,
+     clones pooled per figure. Walk clip time is scaled to the measured path speed over the clip's own speed at that
+     figure's scale, so feet stay planted; under 0.08 m/s they idle and turn their head (up to 60 degrees, eased) toward
+     the visitor. Returns the per frame update; reports mixer time in window.__rigStats. */
+  private rigLayer(figs: CastFig[], phone: boolean) {
+    const CAP = phone ? 8 : 20, rIn = phone ? 8 : 16, rOut2 = (rIn * 1.25) ** 2, rIn2 = rIn * rIn;
+    type Slot = { mats: T.MeshStandardMaterial[]; name: string; root: T.Object3D; mixer: T.AnimationMixer; walk?: T.AnimationAction; idle?: T.AnimationAction; head?: T.Object3D; rest?: T.Quaternion; fig: number; yaw: number; walking: boolean };
+    const free = new Map<string, Slot[]>(), slots: Slot[] = [], loaded = new Map<string, RigT | null>();
+    const prev = figs.map((f) => new T.Vector3().setFromMatrixPosition(f.m)), spd = figs.map(() => 0), vel = figs.map(() => new T.Vector3()), sc = new T.Vector3(), fp = new T.Vector3(), lc = new T.Vector3(), inv = new T.Matrix4(), qy = new T.Quaternion(), hq = new T.Quaternion(), hax = new T.Vector3(), UPV = new T.Vector3(0, 1, 0), d = new T.Vector3();
+    const stats: { ms: number; skinned: number; walking: number; frames: number; detail?: unknown } = { ms: 0, skinned: 0, walking: 0, frames: 0 };
+    (window as unknown as { __rigStats?: unknown }).__rigStats = stats;
+    const make = (name: string, r: RigT): Slot => {
+      /* the yaw goes inside the figure's root (RIG_FACE): the root takes the stand in's matrix, front +z, and the look reads that frame */
+      const body = SU.clone(r.scene); body.rotation.y = RIG_FACE[name] ?? 0;
+      const root = new T.Group(); root.add(body); root.matrixAutoUpdate = false; const mats: T.MeshStandardMaterial[] = [];
+      let head: T.Object3D | undefined; body.traverse((c) => { if (c.name === 'head') head = c; if (c instanceof T.Mesh) { c.frustumCulled = false; c.castShadow = false; c.receiveShadow = this.o.quality === 'high'; c.material = (c.material as T.Material).clone(); mats.push(c.material as T.MeshStandardMaterial); } });
+      this.add(root);
+      const mixer = new T.AnimationMixer(body);
+      const walk = r.walk ? mixer.clipAction(r.walk) : undefined, idle = r.idle ? mixer.clipAction(r.idle) : undefined;
+      walk?.play(); idle?.play();
+      return { mats, name, root, mixer, walk, idle, head, rest: (head as T.Object3D | undefined)?.quaternion.clone(), fig: -1, yaw: 0, walking: false };
+    };
+    /* a walker the clip cannot match without sliding (needs under 0.5 or over 2 times the clip's cadence) stays a static body */
+    const fits = (i: number) => { const R = RIG[rigName(figs[i].v)]; if (!R) return false; if (spd[i] < 0.2) return true; if (!R.walk) return false; sc.setFromMatrixScale(figs[i].m); const ts = spd[i] / (R.walk * (sc.y / R.h)); return ts >= 0.5 && ts <= 2.0; };
+    let age = 0;
+    return (cp: T.Vector3, _cam: T.Camera, dt: number) => {
+      const t0 = performance.now(), ddt = Math.max(1e-3, Math.min(dt, 0.1));
+      for (let i = 0; i < figs.length; i++) { fp.setFromMatrixPosition(figs[i].m); d.subVectors(fp, prev[i]); d.y = 0; vel[i].lerp(d.divideScalar(ddt), Math.min(1, ddt * 2.5)); spd[i] = vel[i].length(); prev[i].copy(fp); }   // velocity averaged as a vector: a dancer's sway or a bob cancels out, a walk does not
+      /* release slots whose person left, hid, or is past the outer radius */
+      for (let s = slots.length - 1; s >= 0; s--) {
+        const sl = slots[s], m = figs[sl.fig].m; fp.setFromMatrixPosition(m);
+        if (Math.abs(m.determinant()) < 1e-12 || fp.distanceToSquared(cp) > rOut2 || !fits(sl.fig)) { figs[sl.fig].skinned = false; sl.root.visible = false; sl.fig = -1; (free.get(sl.name) ?? free.set(sl.name, []).get(sl.name)!).push(sl); slots.splice(s, 1); }
+      }
+      /* take the nearest unassigned people inside rIn, up to the cap */
+      if (++age > 8 && slots.length < CAP) {   // eight frames first, so the measured speeds have settled
+        const cand: [number, number][] = [];
+        for (let i = 0; i < figs.length; i++) { if (figs[i].skinned) continue; const m = figs[i].m; if (Math.abs(m.determinant()) < 1e-12) continue; fp.setFromMatrixPosition(m); const d2 = fp.distanceToSquared(cp); if (d2 < rIn2 && fits(i)) cand.push([d2, i]); }
+        cand.sort((a, b) => a[0] - b[0]);
+        for (const [, i] of cand) {
+          if (slots.length >= CAP) break;
+          const name = rigName(figs[i].v); if (!RIG[name]) continue;
+          if (!loaded.has(name)) { loaded.set(name, null); void loadRig(name).then((r) => loaded.set(name, r)); continue; }
+          const r = loaded.get(name); if (!r) continue;
+          const sl = free.get(name)?.pop() ?? make(name, r);
+          sl.fig = i; sl.root.visible = true; sl.yaw = 0; figs[i].skinned = true; slots.push(sl);
+          for (const mt of sl.mats) mt.color.copy(figs[i].tint ?? WHITE);   // a box crowd's seat colour on the rigged body too
+          if (sl.walk) sl.walk.time = Math.random() * r.walk!.duration; if (sl.idle) sl.idle.time = Math.random() * r.idle!.duration;
+        }
+      }
+      /* drive them */
+      for (const sl of slots) {
+        const m = figs[sl.fig].m, R = RIG[sl.name]; sc.setFromMatrixScale(m);
+        sl.root.matrix.copy(m).scale(lc.set(1 / R.h, 1 / R.h, 1 / R.h)); sl.root.matrixWorldNeedsUpdate = true;
+        const v = spd[sl.fig], s = sc.y / R.h, walking = !!sl.walk && R.walk > 0 && v > 0.2;
+        if (walking !== sl.walking || !sl.walk) { sl.walking = walking; sl.walk?.setEffectiveWeight(walking ? 1 : 0); sl.idle?.setEffectiveWeight(walking || !sl.idle ? 0 : 1); if (!sl.walk) sl.idle?.setEffectiveWeight(1); }
+        if (walking && sl.walk) sl.walk.timeScale = v / (R.walk * s);   // within 0.5 to 2 by fits(): planted feet
+        if (sl.head && sl.rest) sl.head.quaternion.copy(sl.rest);   // the clips may not key the head: never let the look accumulate
+        sl.mixer.update(ddt);
+        if (sl.head) {
+          let want = 0;
+          if (!walking) { sl.root.updateMatrixWorld(true); inv.copy(sl.root.matrixWorld).invert(); lc.copy(cp).applyMatrix4(inv); if (lc.lengthSq() < (10 / s) ** 2) want = Math.max(-1.05, Math.min(1.05, Math.atan2(lc.x, lc.z))); }
+          sl.yaw += (want - sl.yaw) * Math.min(1, ddt * 3);
+          /* turn about world up, taken into the head's own frame: the bone's rest is tilted, so its local Y is not up */
+          if (Math.abs(sl.yaw) > 1e-3) { sl.root.updateMatrixWorld(true); sl.head.getWorldQuaternion(hq).invert(); hax.copy(UPV).applyQuaternion(hq).normalize(); sl.head.quaternion.multiply(qy.setFromAxisAngle(hax, sl.yaw)); }
+        }
+      }
+      stats.ms = stats.ms * 0.9 + (performance.now() - t0) * 0.1; stats.skinned = slots.length; stats.frames++;
+      stats.walking = slots.filter((sl) => sl.walking).length;
+      stats.detail = slots.slice(0, 6).map((sl) => [sl.name, Math.round(spd[sl.fig] * 100) / 100, sl.walking ? Math.round((sl.walk?.timeScale ?? 0) * 100) / 100 : 0, Math.round(prev[sl.fig].x * 10) / 10, Math.round(prev[sl.fig].z * 10) / 10]);
+    };
+  }
+  private peopleUpd: (() => void)[] = [];
+  /* before the static merge: every tagged person (rooms' figure(), figureGeo, seatedGeo, personGroup) becomes a walker
+     of the cast with its matrix read from the stand in each frame; the stand ins and their heads hide when it lands */
+  private peopleCollect() {
+    if (OLD_CROWD || typeof window === 'undefined') return;
+    const tagged = (o: T.Object3D) => (o.userData.person as string | undefined) ?? ((o as T.Mesh).geometry?.userData?.person as string | undefined);
+    const keep: T.Mesh[] = [];
+    for (const o of this.objects) { if (tagged(o)) this.dynamic.add(o); else keep.push(o); }
+    this.objects.length = 0; this.objects.push(...keep);
+    const srcs: T.Object3D[] = [];
+    this.scene.traverse((o) => { const t = tagged(o); if (!t) return; if (t === 'part') { this.castOld.push(o); return; } if (o instanceof T.Mesh || o instanceof T.Group) srcs.push(o); });
+    this.personSources(srcs, tagged);
+  }
+  /* each stand in becomes a cast person: its matrix (per instance for an InstancedMesh) is read every frame */
+  private personSources(srcs: T.Object3D[], tagged: (o: T.Object3D) => string | undefined) {
+    const box = new T.Box3(), sz = new T.Vector3(), hash = (x: number, z: number, i: number) => Math.abs(Math.floor(Math.sin(x * 12.9898 + z * 78.233 + i * 37.719) * 43758.5453));
+    for (const o of srcs) {
+      const hs = ((o.userData.personH ?? (o as T.Mesh).geometry?.userData?.personH) as number | undefined) ?? 1.06;
+      if (o.userData.personBox) box.copy(o.userData.personBox as T.Box3);
+      else if (o instanceof T.Mesh) { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); box.copy(o.geometry.boundingBox!); }
+      else { const p = o.position.clone(), r = o.rotation.clone(), sc = o.scale.clone(), par = o.parent; o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1); if (par) par.remove(o); o.updateMatrixWorld(true); box.setFromObject(o); if (par) par.add(o); o.position.copy(p); o.rotation.copy(r); o.scale.copy(sc); }
+      box.getSize(sz);
+      const H = sz.y * hs, seat = tagged(o) === 'seat' || H < 1.25;
+      const L = new T.Matrix4().makeTranslation((box.min.x + box.max.x) / 2, box.min.y, (box.min.z + box.max.z) / 2).multiply(new T.Matrix4().makeRotationY((o.userData.personYaw as number | undefined) ?? 0)).multiply(new T.Matrix4().makeScale(H, H, H));
+      const keepFar = !!o.userData.personKeepFar && o instanceof T.InstancedMesh;
+      const n = o instanceof T.InstancedMesh ? o.count : 1, start = this.castFigs.length;
+      for (let i = 0; i < n; i++) {
+        const w = new T.Vector3(); o.getWorldPosition(w);
+        const hh = hash(w.x, w.z, i);
+        const pc = o.userData.personCast as string | undefined, named = pc && pc.startsWith('seat_') ? (SEATS.indexOf(pc) >= 0 ? CAST.length + SEATS.indexOf(pc) : -1) : CAST.indexOf(pc as string);
+        const f: CastFig = { m: new T.Matrix4(), v: named >= 0 ? named : seat ? CAST.length + (hh % SEATS.length) : hh % CROWD_N };
+        if (keepFar) {
+          const bim = o as T.InstancedMesh, om = new T.Matrix4(); bim.getMatrixAt(i, om); f.box = { im: bim, i, orig: om, off: false };
+          /* variety: the shirt colour of the box this person replaces, 60 percent over the cast texture */
+          if (bim.instanceColor) { const bc = new T.Color(); bim.getColorAt(i, bc); f.tint = new T.Color(1, 1, 1).lerp(bc, 0.6); }
+        }
+        this.castFigs.push(f);
+      }
+      const roomHidden = !o.visible;   // hidden by its room before the cast arrived (castLater hides the rest later)
+      /* a seat by seat jitter for box crowds, so a house is not a field of clones: up to 8 degrees of turn, 4 percent of size */
+      const jit = keepFar ? Array.from({ length: n }, (_, i) => { const r1 = (hash(i, 3.1, 7) % 1000) / 1000, r2 = (hash(i, 9.7, 11) % 1000) / 1000; const sj = 0.96 + r2 * 0.08; return L.clone().multiply(new T.Matrix4().makeRotationY((r1 - 0.5) * 0.28)).multiply(new T.Matrix4().makeScale(sj, sj, sj)); }) : null;
+      if (!keepFar) this.castOld.push(o);   // a box crowd kept far stays drawn; the cast hides its instances one by one
+      const im = o instanceof T.InstancedMesh ? o : null, tmp = new T.Matrix4(), figs = this.castFigs, minY = o.userData.personMinY as number | undefined;
+      this.peopleUpd.push(() => {
+        o.updateWorldMatrix(true, false);
+        /* a stand in its room hides (an empty boat at the dock, a figure switched off) has no cast either */
+        let shown = !roomHidden; for (let p: T.Object3D | null = o.parent; shown && p; p = p.parent) if (!p.visible && !this.castOld.includes(p)) shown = false;
+        if (!shown) { for (let i = 0; i < n; i++) figs[start + i].m.makeScale(0, 0, 0); return; }
+        for (let i = 0; i < n; i++) {
+          if (im) {
+            im.getMatrixAt(i, tmp);
+            const bx = figs[start + i].box;
+            if (bx) { if (bx.off && Math.abs(tmp.determinant()) < 1e-12) tmp.copy(bx.orig); else bx.orig.copy(tmp); }   // the instance the cast hid reads back as its own place
+            tmp.premultiply(im.matrixWorld);
+          } else tmp.copy(o.matrixWorld);
+          if (minY !== undefined && tmp.elements[13] < minY) { figs[start + i].m.makeScale(0, 0, 0); continue; }   // templates parked under the ground
+          figs[start + i].m.multiplyMatrices(tmp, jit ? jit[i] : L);
+        }
+      });
+    }
+  }
+  private castOld: T.Object3D[] = [];
+  /* people a room only knows after its own async load (room 182's travellers live in the terminal GLB): their own
+     cast set, rig layer included; `hides` go when it lands. ?crowd=old keeps the room's own figures. */
+  castLate(srcs: T.Object3D[], hides: T.Object3D[]) {
+    if (OLD_CROWD || typeof window === 'undefined' || !this.live || !srcs.length) return;
+    const keepF = this.castFigs, keepU = this.peopleUpd, keepO = this.castOld, keepS = this.castStarted;
+    this.castFigs = []; this.peopleUpd = []; this.castOld = [];
+    this.personSources(srcs, (o) => (o.userData.person as string | undefined) ?? 'auto');
+    this.castOld.push(...hides);
+    this.castStarted = false; this.castLater();
+    const late = this.castOld;
+    this.castFigs = keepF; this.peopleUpd = keepU; this.castOld = keepO.concat(late); this.castStarted = keepS;
+  }
+  private castStarted = false;
+  /* once per room, after the build has registered every walker: load the cast, make the instanced bodies, hide the
+     capsules, and hand each walker to its near or far body by distance every frame */
+  private castLater() {
+    if (OLD_CROWD || this.castStarted || !this.castFigs.length || typeof window === 'undefined') return;
+    this.castStarted = true;
+    const figs = this.castFigs, upd = this.peopleUpd, old = this.castOld, high = this.o.quality === 'high', phone = matchMedia('(pointer: coarse)').matches, nearMax = high && !phone ? CAST_NEAR : 9;
+    let near2 = nearMax ** 2, nearR = nearMax;
+    const tmpl = (name: string) => Promise.resolve(this.prop(name, 0, -500, 0, { scale: 1 })).then((o) => {
+      if (!o) return null;
+      this.scene.remove(o); this.dynamic.delete(o);
+      o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrixWorld(true);
+      let mesh: T.Mesh | null = null; o.traverse((c) => { if (!mesh && c instanceof T.Mesh) mesh = c; });
+      if (!mesh) return null;
+      const mm = mesh as T.Mesh;
+      const bb = new T.Box3().setFromObject(mm), sz = bb.getSize(new T.Vector3()), k = 1 / sz.y;
+      const local = new T.Matrix4().makeScale(k, k, k).multiply(new T.Matrix4().makeTranslation(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2)).multiply(mm.matrixWorld);
+      const face = CAST_FACE[name.replace(/_far$/, '')]; if (face) local.premultiply(new T.Matrix4().makeRotationY(face));   // about the feet, after the fit
+      return { geo: mm.geometry, mat: mm.material as T.Material, local };
+    });
+    const used = [...new Set(figs.map((f) => f.v))];
+    void Promise.all(used.map((v) => Promise.all([tmpl(castFile(v)), tmpl(castFile(v) + '_far')]))).then((pairs) => {
+      if (!this.live) return;
+      const runs: { near: T.InstancedMesh; far: T.InstancedMesh; local: [T.Matrix4, T.Matrix4]; mine: number[] }[] = [];
+      const runOf = new Map<number, number>();
+      pairs.forEach(([n, f], j) => {
+        if (!n || !f) return;
+        const mine = figs.map((g, i) => (g.v === used[j] ? i : -1)).filter((i) => i >= 0);
+        const mk = (t: { geo: T.BufferGeometry; mat: T.Material }, shadow: boolean) => { const im = new T.InstancedMesh(t.geo, t.mat, mine.length); im.frustumCulled = false; im.castShadow = shadow; im.receiveShadow = high; im.userData.cast = true; this.add(im); return im; };
+        runOf.set(used[j], runs.length);
+        const farIm = mk(f, false); farIm.userData.noAO = true;   // the mid and far bodies skip the occlusion pass, which drew the whole cast a second time
+        runs.push({ near: mk(n, false), far: farIm, local: [n.local, f.local], mine }); // no shadow pass: at crowd counts it costs more than the whole room
+      });
+      if (!runs.length) return;
+      for (const o of old) o.visible = false;
+      const tmp = new T.Matrix4(), cp = new T.Vector3(), fp = new T.Vector3();
+      const cam = () => (window as unknown as { __museum?: { camera?: T.Camera } }).__museum?.camera;
+      const rig = OLD_RIG ? null : this.rigLayer(figs, phone);
+      const step = (_t = 0, dt = 1 / 30) => {
+        for (const u of upd) u();
+        const c = cam(); if (c) cp.setFromMatrixPosition(c.matrixWorld);
+        if (rig && c) rig(cp, c, dt);
+        let nearN = 0, midN = 0;
+        /* packed: the near and far bodies draw only as many instances as are in their band (a zero scaled instance
+           still costs its vertices, and three counts its triangles) */
+        for (const r of runs) {
+          let a = 0, b = 0;
+          for (const i of r.mine) {
+            const f = figs[i], m = f.m; fp.setFromMatrixPosition(m);
+            if (Math.abs(m.determinant()) < 1e-12) continue;   // hidden by its room
+            const d2 = c ? fp.distanceToSquared(cp) : 0;
+            let near = !c || d2 < near2 * (f.near ? 1.3 : 1);   // hysteresis: in at nearR, out past 1.14 nearR
+            f.near = near;
+            if (f.box) {
+              const want = near || !!f.skinned;
+              if (want !== f.box.off) { f.box.off = want; f.box.im.setMatrixAt(f.box.i, want ? ZERO4 : f.box.orig); f.box.im.instanceMatrix.needsUpdate = true; }
+              if (!want) continue;   // far: the room's own box stands there
+              near = d2 < 64 * (f.near ? 1.3 : 1);   // a packed house: full bodies within 8 m, the 500 triangle body to the band's edge
+              if (!near) midN++;
+            }
+            if (f.skinned) continue;   // drawn by the rig layer
+            if (near) { r.near.setColorAt(a, f.tint ?? WHITE); r.near.setMatrixAt(a++, tmp.multiplyMatrices(m, r.local[0])); }
+            else { r.far.setColorAt(b, f.tint ?? WHITE); r.far.setMatrixAt(b++, tmp.multiplyMatrices(m, r.local[1])); }
+          }
+          r.near.count = a; r.far.count = b; nearN += a;
+          r.near.instanceMatrix.needsUpdate = r.far.instanceMatrix.needsUpdate = true;
+          if (r.near.instanceColor) r.near.instanceColor.needsUpdate = true; if (r.far.instanceColor) r.far.instanceColor.needsUpdate = true;
+        }
+        /* a budget of about 120 full bodies (40 on a phone): the near radius shrinks in a packed hall and grows back */
+        const budget = phone ? 40 : 120;
+        nearN += midN / 6;   // six 500 triangle bodies cost about one full one
+        if (nearN > budget) nearR = Math.max(4, nearR * (nearN > budget * 2 ? 0.6 : 0.85)); else if (nearN < budget * 0.6) nearR = Math.min(nearMax, nearR * 1.05);
+        near2 = nearR * nearR;
+      };
+      step();
+      if (this.o.reduced) { let k = 0; const id = setInterval(() => { if (!this.live || ++k > 40) { clearInterval(id); return; } step(0, 0.5); }, 500); }
+      else this.ticks.push(step);
+      void runOf;
+    });
+  }
+  /* a cab template without its topper (frame, screens, legs), for a private car */
+  private carBody(g: T.Group) {
+    const c = g.clone();
+    const drop: T.Object3D[] = [];
+    c.children.forEach((ch) => { if (ch.userData.topper) drop.push(ch); });
+    drop.forEach((ch) => c.remove(ch));
+    c.userData.cab = true;
+    return c;
+  }
   /* one cab type (Tripo from MLow's own cab photos, his real yellow and NYC markings baked in) with the
      roof ad on its rails. The topper sits centred on the roof itself, found from the model's top
      vertices (an SUV's middle is over the dashboard). Its two screens read their picture from the
@@ -1552,12 +1896,12 @@ export class Kit {
       const frame = new T.MeshStandardMaterial({ color: 0x2a2d30, metalness: 0.6, roughness: 0.4 });
       /* a real topper is about 1.2 m long; never longer than 70 percent of this roof */
       const TL = Math.min(1.2, Math.max(0.8, len * 0.7)), TH = 0.38, TT = 0.18, ty = top + 0.07 + TH / 2;
-      const body = new T.Mesh(new T.BoxGeometry(TT, TH, TL), frame); body.position.set(rx, ty, rz); g.add(body);
+      const body = new T.Mesh(new T.BoxGeometry(TT, TH, TL), frame); body.position.set(rx, ty, rz); body.userData.topper = true; g.add(body);
       for (const side of [-1, 1]) {
         const p = new T.Mesh(new T.PlaneGeometry(TL * 0.95, TH * 0.86), topperScreenMaterial());
-        p.position.set(rx + side * (TT / 2 + 0.003), ty, rz); p.rotation.y = side * Math.PI / 2; p.userData.screen = true; g.add(p);
+        p.position.set(rx + side * (TT / 2 + 0.003), ty, rz); p.rotation.y = side * Math.PI / 2; p.userData.screen = true; p.userData.topper = true; g.add(p);
       }
-      const legs = new T.Mesh(new T.BoxGeometry(0.07, 0.09, TL * 0.8), frame); legs.position.set(rx, top + 0.035, rz); g.add(legs);
+      const legs = new T.Mesh(new T.BoxGeometry(0.07, 0.09, TL * 0.8), frame); legs.position.set(rx, top + 0.035, rz); legs.userData.topper = true; g.add(legs);
       g.userData.cab = true;
       g.userData.len = kind.len;
       return g;
@@ -1568,6 +1912,8 @@ export class Kit {
   batch() {
     this.applyTime();
     this.cabsLater();
+    this.peopleCollect();
+    this.castLater();
     const groups = new Map<T.Material, T.Mesh[]>();
     for (const o of this.objects) {
       if (Array.isArray(o.material)) continue;
@@ -1699,7 +2045,7 @@ export class Kit {
 
 const sharedTextures = new WeakSet<T.Texture>();
 /* one template group as instanced parts (same idea as rooms/heroes.ts heroInstances, kept here so the kit owns it) */
-function heroLikeInstances(k: Kit, g: T.Group, n: number, slots?: number[]) {
+function heroLikeInstances(k: Kit, g: T.Group, n: number, slots?: number[], painted = false) {
   g.updateMatrixWorld(true);
   const parts: { im: T.InstancedMesh; local: T.Matrix4 }[] = [];
   g.traverse((c) => {
@@ -1712,7 +2058,8 @@ function heroLikeInstances(k: Kit, g: T.Group, n: number, slots?: number[]) {
         for (let i = 0; i < n; i++) { const [u, v] = screenSlot(slots?.[i] ?? 0); a[i * 2] = u; a[i * 2 + 1] = v; }
         geo.setAttribute('aSlot', new T.InstancedBufferAttribute(a, 2));
       }
-      const im = new T.InstancedMesh(geo, c.material, n);
+      const im = new T.InstancedMesh(geo, painted ? paintable(c.material as T.Material, true) : c.material, n);
+      if (painted) for (let i = 0; i < n; i++) im.setColorAt(i, new T.Color(1, 1, 1));
       im.castShadow = k.o.quality === 'high'; im.receiveShadow = true; im.frustumCulled = false;
       im.userData.cab = true;
       k.scene.add(im); k.dynamic.add(im);
@@ -1722,6 +2069,7 @@ function heroLikeInstances(k: Kit, g: T.Group, n: number, slots?: number[]) {
   const tmp = new T.Matrix4();
   return {
     setAt(i: number, m: T.Matrix4) { for (const p of parts) p.im.setMatrixAt(i, tmp.multiplyMatrices(m, p.local)); },
+    setColor(i: number, c: T.Color) { for (const p of parts) { p.im.setColorAt(i, c); if (p.im.instanceColor) p.im.instanceColor.needsUpdate = true; } },
     commit() { for (const p of parts) p.im.instanceMatrix.needsUpdate = true; },
   };
 }

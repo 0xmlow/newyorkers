@@ -29,6 +29,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { standIn, hide } from './heroes';
 import { HONOR_N, HONOR_PER, HONOR_COLS, HONOR_CAT_NAMES } from '../honor';
 const PI = Math.PI, TAU = PI * 2;
 type K = Parameters<RoomDef['build']>[0];
@@ -455,7 +456,8 @@ export const honoraries: RoomDef = {
     k.point(0, 1.8, -6.2, 0xffe0a8, 10 + 30 * k.night, 7, 1.6);
     k.point(0, 1.8, 6.2, 0xffe0a8, 10 + 30 * k.night, 7, 1.6);
     /* benches facing the walls, between columns */
-    for (const b of [3, 5, 11, 13]) { const a = bayAng(b), p = dir(a).multiplyScalar(12.2); k.bench(p.x, p.z, Math.atan2(p.x, p.z) + PI / 2, walnut, bronze, 2.4); }
+    /* 2026-10-28: the kit bench of box slats is the stand in for museum_bench.glb */
+    for (const b of [3, 5, 11, 13]) { const a = bayAng(b), p = dir(a).multiplyScalar(12.2), bm = k.objects.length; k.bench(p.x, p.z, Math.atan2(p.x, p.z) + PI / 2, walnut, bronze, 2.4); const old = standIn(k, bm); void Promise.resolve(k.prop('museum_bench', p.x, 0, p.z, { height: 0.58, rotY: Math.atan2(p.x, p.z) + PI / 2 })).then((o) => { if (o) hide(old); }); }
 
     /* ================= THE PASSAGE ================= */
     const pX0 = -R - 0.2, pX1 = -rIn - 0.1, pL = pX0 - pX1, pMid = (pX0 + pX1) / 2;

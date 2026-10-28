@@ -156,7 +156,9 @@ function hexBytes(x){var u=new Uint8Array(x.length/2);for(var i=0;i<u.length;i++
 function namehash(n){var node='0000000000000000000000000000000000000000000000000000000000000000';var L=n.split('.');for(var i=L.length-1;i>=0;i--)node=window.keccak_256(hexBytes(node+window.keccak_256(L[i])));return node;}
 function rpc(i,to,data){if(i>=RPCS.length)return Promise.reject(new Error('no rpc'));return fetch(RPCS[i],{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_call',params:[{to:to,data:data},'latest']})}).then(function(r){return r.json();}).then(function(j){if(!j||typeof j.result!=='string')throw 0;return j.result;}).catch(function(){return rpc(i+1,to,data);});}
 function resolveName(n){if(!window.keccak_256)return Promise.resolve(null);var node=namehash(n);return rpc(0,ENS_REG,'0x0178b8bf'+node).then(function(r){var res='0x'+r.slice(-40);if(/^0x0{40}$/.test(res))return null;return rpc(0,res,'0x3b3b57de'+node).then(function(r2){var a='0x'+r2.slice(-40);return /^0x0{40}$/.test(a)?null:a;});}).catch(function(){return null;});}
-function index(){return IDX?Promise.resolve(IDX):fetch(B+'api/c/index.json').then(function(r){return r.json();}).then(function(j){IDX=j;return j;});}
+function okj(r){if(!r.ok)throw 0;return r.json();}
+/* live first (re read off the chain every 15 minutes, functions/api/live), the build's files if it is down */
+function index(){return IDX?Promise.resolve(IDX):fetch(B+'api/live/c/index').then(okj).catch(function(){return fetch(B+'api/c/index.json').then(okj);}).then(function(j){IDX=j;return j;});}
 function lookup(q){
   q=q.trim().toLowerCase();
   if(/^0x[0-9a-f]{40}$/.test(q))return Promise.resolve(q);
@@ -166,7 +168,9 @@ function open(q){
   var msg=$('mMsg');if(!q)return;msg.textContent='Looking up '+q+'\\u2026';
   lookup(q).then(function(a){
     if(!a){msg.textContent='That name does not resolve to a wallet. Paste the 0x address instead.';return null;}
-    return fetch(B+'api/c/'+a.toLowerCase()+'.json').then(function(r){if(!r.ok){msg.textContent='That wallet holds no NEW YORKERS as of this snapshot. Mint one and it opens here at the next read.';return null;}return r.json();});
+    var none=function(){msg.textContent='That wallet holds no NEW YORKERS yet. Mint one and it opens here within fifteen minutes.';return null;};
+    return fetch(B+'api/live/c/'+a.toLowerCase()).then(function(r){if(r.status===404)return none();return okj(r);})
+      .catch(function(){return fetch(B+'api/c/'+a.toLowerCase()+'.json').then(function(r){return r.ok?r.json():none();});});
   }).then(function(d){if(d){msg.textContent='';paint(d,q);}}).catch(function(){msg.textContent='Could not load that collection. Try again in a moment.';});
 }
 function paint(d,q){
@@ -220,6 +224,9 @@ $('mForm').onsubmit=function(e){e.preventDefault();open($('mQ').value);};
 var hs=decodeURIComponent(location.hash.slice(1));if(hs){$('mQ').value=hs;open(hs);}
 })();
 </script>""".replace("__VAR__", json.dumps(VAR, ensure_ascii=False)).replace("__ROOMS__", json.dumps(ROOMNAMES, ensure_ascii=False))
+# the card script is cached for hours, so the page names it by its hash and a change reaches people at once
+import hashlib as _hl
+js = js.replace("assets/collector-card.js", "assets/collector-card.js?v=" + _hl.sha256(open(os.path.join(SITE, "assets", "collector-card.js"), "rb").read()).hexdigest()[:10], 1)
 
 page = shell(title="My NEW YORKERS · NEW YORKERS by MLow",
              description="Your NEW YORKERS in one place: your own gallery in the museum, the collection rehung in any room of the city, a frame for your TV, a wall in your home and your collector card.",

@@ -4,6 +4,7 @@
    pouring frag, the trucks, all in a sandy valley with wooded ridges on every side.
    Everything that moves is one group or one instanced rig on k.ticks. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -40,7 +41,7 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0xc8a284, 0, 0.7), x, y + (1.22 * h + 0.13), z);
   k.mesh(new T.SphereGeometry(0.15, 10, 6, 0, PI * 2, 0, PI / 2), k.flat(0xf2f2ee, 0, 0.5), x, y + (1.22 * h + 0.17), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 /* geometry builders that return transformed pieces for merging */
 function bx(w: number, h: number, d: number, x: number, y: number, z: number, rx = 0, ry = 0, rz = 0) {
@@ -230,7 +231,7 @@ function seatedGeo() {
   const body = new T.CapsuleGeometry(0.19, 0.42, 2, 6); body.translate(0, 0.62, 0);
   const head = new T.SphereGeometry(0.11, 7, 5); head.translate(0, 1.1, 0);
   const lap = new T.BoxGeometry(0.34, 0.14, 0.4); lap.translate(0, 0.42, 0.16);
-  return merge([body, head, lap]);
+  return personTag(merge([body, head, lap]), 'seat');
 }
 export const unassembly: RoomDef = {
   id: 'unassembly',
@@ -383,7 +384,7 @@ export const unassembly: RoomDef = {
     k.block(-9.4, 9.4, Z0 - 1, Z0 + 8.2);
     /* the speaker at the lectern, turning to the hall and working with one hand */
     const spk = new T.Group(); spk.position.set(0, 1.4, Z0 + 6.3); k.add(spk);
-    { const b = new T.Mesh(new T.CapsuleGeometry(0.22, 0.8, 3, 8), k.flat(0x1a1c22, 0, 0.8)); b.position.y = 0.62; spk.add(b); const h = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), k.flat(0x8d5a3b, 0, 0.7)); h.position.y = 1.35; spk.add(h); }
+    { const b = new T.Mesh(new T.CapsuleGeometry(0.22, 0.8, 3, 8), k.flat(0x1a1c22, 0, 0.8)); b.position.y = 0.62; spk.add(personTag(b, 'auto', 1.25)); const h = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), k.flat(0x8d5a3b, 0, 0.7)); h.position.y = 1.35; spk.add(personTag(h, 'part')); }
     const spArm = new T.Group(); spArm.position.set(0.28, 1.12, 0); spk.add(spArm);
     { const a = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 0.55, 6), k.flat(0x1a1c22, 0, 0.8)); a.position.y = -0.26; spArm.add(a); }
     if (!R) k.ticks.push((t) => { spk.rotation.y = 0.35 * Math.sin(t * 0.23); spArm.rotation.x = -0.6 - 0.5 * Math.max(0, Math.sin(t * 1.7)) * (Math.sin(t * 0.4) > 0 ? 1 : 0.3); spArm.rotation.z = 0.2 * Math.sin(t * 1.1); });

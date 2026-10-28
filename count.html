@@ -109,7 +109,7 @@ const q=new URLSearchParams(location.search);
 const proj=q.get("mode")==="projection";
 if(proj)document.body.classList.add("proj"); else NY.nav("THE COUNT");
 const open=Date.now()>=new Date(CFG.claimDate).getTime();
-const target=new Date(open?(CFG.closeDate||"2026-10-23T11:11:00-04:00"):CFG.claimDate).getTime();
+const target=new Date(open?(CFG.closeDate||"2026-11-07T11:11:00-05:00"):CFG.claimDate).getTime();
 if(!open){ $("#clockLabel").textContent="THE CLAIM OPENS IN"; $("#liveLabel").textContent="ENUMERATION OPEN"; }
 const pad=n=>String(n).padStart(2,"0");
 function tick(){

@@ -59,3 +59,9 @@ here, so that spend is not known.
 - Phones, frame rate, the mint export (`mint_export.py`) and `build_all.sh` were not run. The bundle,
   `museum.html`, audit (unchanged counts, nothing stuck) and preflight (no problems) were.
 - The animals on the clock are only seen from below; up close they were judged on contact sheets.
+
+## Rig facing fix (2026-10-28)
+
+Five rig files face 90 degrees off +Z (blindwoman, hustler -90; lensman, tough, sally +90). The yaw now goes on the
+skinned clone inside the root here, and the static twin was checked against it. Stills and the lineup:
+`UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`; method in `UPGRADE ALL ROOMS 2026-10-28/rig/HEAD_TURN_FIX.md`. Not deployed.

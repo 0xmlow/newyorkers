@@ -7,6 +7,7 @@
    as promises and attach their motion inside .then(). No lettered text beyond public signage,
    no likeness of anyone, no dates on anything a visitor reads except the eggs, which are sourced. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
@@ -21,7 +22,7 @@ const ONE = new T.Vector3(1, 1, 1);
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, repeat = false) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;

@@ -11,6 +11,7 @@
    x = 6.45 on a deck that ends at 5.6, so nobody could ever stand where the
    works were meant to be seen from. */
 import * as T from 'three';
+import { personTag, boxCrowdTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -25,7 +26,7 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const b = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h, z);
   b.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 8, 6), k.flat(skin, 0, 0.7), x, y + 1.22 * h + 0.13, z);
-  return b;
+  personTag(b, 'auto', 1.25); for (let i = k.objects.indexOf(b) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return b;
 }
 /* A path that follows the ground instead of being stacked out of boxes: a quad
    strip sampled along a line, each pair of vertices set on the terrain. */
@@ -181,7 +182,7 @@ export const littleisland2: RoomDef = {
       k.crowd([v(-70, 0.9, 20), v(70, 0.9, 20)], 16, { seed: 51, speed: 0.5, spread: 2.4 });
       /* the Amph has an audience, on the tiers, facing the water */
       const NA = 150, aud = k.instances(boxFigureGeo(), new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: NA }, () => new T.Matrix4()));
-      aud.frustumCulled = false;
+      aud.frustumCulled = false; boxCrowdTag(aud);   // 2026-10-28: the nearest are seated cast
       const rnd = X.mulberry(687), c = new T.Color(), pal = [0x1c232c, 0xe8e2d4, 0x2a3f6a, 0x8a2a2a, 0xd8c04a, 0x3a5a3a, 0x6a4a8a, 0xd07a3a];
       const m = new T.Matrix4(), p = new T.Vector3(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
       for (let i = 0; i < NA; i++) {

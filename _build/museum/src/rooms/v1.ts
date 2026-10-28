@@ -3,10 +3,12 @@
    Everything that moves here is either instanced or a single group on k.ticks, so a room
    with a thousand moving things still costs a handful of draw calls. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -192,8 +194,8 @@ export const fultonfish: RoomDef = {
       for (const s of [-0.42, 0.42]) { const fk = new T.Mesh(new T.BoxGeometry(0.12, 0.08, 1.2), steel); fk.position.set(s, 0.36, 1.85); g.add(fk); }
       const load = new T.Mesh(new T.BoxGeometry(1.1, 0.9, 1.1), wax); load.position.set(0, 0.85, 1.85); g.add(load);
       for (const s of [-0.7, 0.7]) for (const dz of [-0.8, 0.8]) { const w = new T.Mesh(new T.CylinderGeometry(0.3, 0.3, 0.2, 10), dark); w.rotation.z = PI / 2; w.position.set(s, 0.3, dz); g.add(w); }
-      const driver = new T.Mesh(new T.CapsuleGeometry(0.19, 0.5, 3, 7), k.flat(0x22303c, 0, 0.85)); driver.position.set(0, 1.85, -0.2); g.add(driver);
-      const head = new T.Mesh(new T.SphereGeometry(0.13, 9, 7), k.flat(0xd8b088, 0, 0.7)); head.position.set(0, 2.25, -0.2); g.add(head);
+      const driver = new T.Mesh(new T.CapsuleGeometry(0.19, 0.5, 3, 7), k.flat(0x22303c, 0, 0.85)); driver.position.set(0, 1.85, -0.2); g.add(personTag(driver, 'seat', 1.6));
+      const head = new T.Mesh(new T.SphereGeometry(0.13, 9, 7), k.flat(0xd8b088, 0, 0.7)); head.position.set(0, 2.25, -0.2); g.add(personTag(head, 'part'));
       const beacon = new T.Mesh(new T.SphereGeometry(0.15, 9, 7), amber); beacon.position.set(0, 2.05, 0.9); g.add(beacon);
       k.add(g);
       const lane = i % 2 ? 6.6 : -6.6;
@@ -201,6 +203,13 @@ export const fultonfish: RoomDef = {
       k.rider(g, route, 4.2 + i * 0.7, i * 40);
       lifts.push({ beacon, g });
     }
+    /* 2026-10-28: the hero forklift (h_forklift, as v21.ts) takes the place of the box cage, mast, forks and wheels;
+       the load, the driver and the beacon stay. A failed load keeps the boxes. */
+    void hero(k, 'h_forklift', { height: 2.45 }).then((h) => {
+      if (!h) return;
+      /* children in build order: cage, mast, two forks, load, four wheels, driver, head, beacon */
+      lifts.forEach((l, i) => { [0, 1, 2, 3, 5, 6, 7, 8].forEach((j) => { l.g.children[j].visible = false; }); l.g.add(i ? h.clone() : h); });
+    });
     if (!ctx.reduced) k.ticks.push((t) => lifts.forEach((l, i) => { l.beacon.scale.setScalar(0.7 + 0.7 * Math.abs(Math.sin(t * 3 + i * 2))); }));
     /* the gulls, the buyers, the porters */
     if (!ctx.reduced) {
@@ -358,8 +367,8 @@ export const lunarnewyear: RoomDef = {
       hoop.scale.set(1.25, 0.85, 1); hoop.position.y = 3.25; g.add(hoop);
       if (i === 0) { for (const s of [-1, 1]) { const horn = new T.Mesh(new T.ConeGeometry(0.08, 0.38, 6), gold); horn.position.set(s * 0.24, 3.75, 0); horn.rotation.z = s * 0.35; g.add(horn); } const snout = new T.Mesh(new T.BoxGeometry(0.4, 0.24, 0.56), red); snout.position.set(0, 3.2, 0.56); g.add(snout); }
       const pole = new T.Mesh(new T.CylinderGeometry(0.04, 0.04, 2.1, 6), dark); pole.position.y = 2.1; g.add(pole);
-      const carrier = new T.Mesh(new T.CapsuleGeometry(0.2, 0.62, 3, 7), i % 2 ? k.flat(0xd8342c, 0, 0.8) : k.flat(0xf0e2c0, 0, 0.8)); carrier.position.y = 0.72; g.add(carrier);
-      const head2 = new T.Mesh(new T.SphereGeometry(0.13, 9, 7), k.flat(0xd8b088, 0, 0.7)); head2.position.y = 1.2; g.add(head2);
+      const carrier = new T.Mesh(new T.CapsuleGeometry(0.2, 0.62, 3, 7), i % 2 ? k.flat(0xd8342c, 0, 0.8) : k.flat(0xf0e2c0, 0, 0.8)); carrier.position.y = 0.72; g.add(personTag(carrier, 'auto', 1.25));
+      const head2 = new T.Mesh(new T.SphereGeometry(0.13, 9, 7), k.flat(0xd8b088, 0, 0.7)); head2.position.y = 1.2; g.add(personTag(head2, 'part'));
       k.add(g); segs.push(g);
       k.rider(g, dragonRoute, 3.4, -i * 3.4);
     }

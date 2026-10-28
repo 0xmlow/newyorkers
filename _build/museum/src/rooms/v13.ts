@@ -4,10 +4,12 @@
    lit over the ark. No work hangs in the sanctuary. Gramercy Park: the locked park seen through its
    fence, the works hung on the railings and under the awnings, and a brass key that opens the gate. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { followInstances } from './heroes';
 import { street, blockFront } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
@@ -41,7 +43,7 @@ function archPane(w: number, h: number, horseshoeHead = false) {
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* pigeons pecking in a few spots: one instanced mesh, heads bobbing, a hop now and then */
 function pigeons(k: K, reduced: boolean, spots: T.Vector3[], n: number, seed: number) {
@@ -59,6 +61,7 @@ function pigeons(k: K, reduced: boolean, spots: T.Vector3[], n: number, seed: nu
     o.instanceMatrix.needsUpdate = true;
   };
   place(0); if (!reduced) k.ticks.push(place);
+  followInstances(k, o, 'pigeon', { height: 0.28 }, new T.Matrix4().makeTranslation(0, -0.1, 0)); // 2026-10-28: pigeon.glb, as v22.ts
 }
 /* cars on a lane: boxes with a cabin, driving along z and wrapping */
 function cars(k: K, reduced: boolean, lanes: { x: number; dir: 1 | -1; n: number; y?: number }[], len: number, seed: number, cols = [0xf0c22a, 0x1c1e24, 0xd8dadc, 0x5a6a7a, 0x8a1e22, 0x2a3a5a]) {
@@ -671,9 +674,9 @@ export const gramercy: RoomDef = {
     k.add(key);
     /* the doorman, in a long coat and cap, standing by the door */
     { const g = new T.Group(); g.position.set(AWX - 1.4, 0.15, NZ - 1.4);
-      const body = new T.Mesh(new T.CapsuleGeometry(0.22, 0.95, 3, 8), k.flat(0x1a2a24, 0, 0.8)); body.position.y = 0.72; g.add(body);
-      const head = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), k.flat(0xc8a284, 0, 0.7)); head.position.y = 1.46; g.add(head);
-      const cap = new T.Mesh(new T.CylinderGeometry(0.15, 0.14, 0.08, 12), k.flat(0x1a2a24, 0, 0.8)); cap.position.y = 1.58; g.add(cap);
+      const body = new T.Mesh(new T.CapsuleGeometry(0.22, 0.95, 3, 8), k.flat(0x1a2a24, 0, 0.8)); body.position.y = 0.72; g.add(personTag(body, 'auto', 1.25));
+      const head = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), k.flat(0xc8a284, 0, 0.7)); head.position.y = 1.46; g.add(personTag(head, 'part'));
+      const cap = new T.Mesh(new T.CylinderGeometry(0.15, 0.14, 0.08, 12), k.flat(0x1a2a24, 0, 0.8)); cap.position.y = 1.58; g.add(personTag(cap, 'part'));
       k.add(g); k.keepOut.push({ x: AWX - 1.4, z: NZ - 1.4, r: 0.45 }); }
     /* ---- the works: on the railings facing the street, under the awnings, on the club fronts ---- */
     const mounts: Mount[] = [];
@@ -713,6 +716,8 @@ export const gramercy: RoomDef = {
       const dh = new T.Mesh(new T.SphereGeometry(0.12, 8, 6), k.flat(0xc89a5a, 0, 0.85)); dh.position.set(0, 0.5, 0.35); dog.add(dh);
       for (const [dx, dz] of [[-0.09, -0.18], [0.09, -0.18], [-0.09, 0.18], [0.09, 0.18]]) { const l = new T.Mesh(new T.CylinderGeometry(0.03, 0.03, 0.26, 5), k.flat(0xc89a5a, 0, 0.85)); l.position.set(dx, 0.13, dz); dog.add(l); }
       dog.position.set(0.5, 0, 1.4); w.add(dog);
+      /* 2026-10-28: the kit's dog.glb on the lead (as v19.ts), the capsule dog the stand in */
+      k.prop('dog', 0, 0, 0, { height: 0.55 }).then((d) => { if (!d) return; k.scene.remove(d); d.position.set(0, 0, 0); d.rotation.y = 0; dog.children.forEach((c) => { c.visible = false; }); dog.add(d); });
       const lead = new T.Mesh(new T.CylinderGeometry(0.008, 0.008, 1.5, 4), iron); lead.position.set(0.3, 0.75, 0.7); lead.rotation.x = 1.1; w.add(lead);
       k.add(w);
       k.rider(w, k.spline(ringR(PXf + 2.2, PZf + 2.4).map((p) => p.setY(0.15)), true, 0.1), 1.1, 20);

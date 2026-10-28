@@ -5,6 +5,7 @@ import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero } from './heroes';
 
 const PI = Math.PI;
 
@@ -390,6 +391,16 @@ export const queensboro: RoomDef = {
     for (let c = 0; c < 3; c++) { const cc = car(silver, 14, yellow2); cc.position.z = c * 15; trainN.add(cc); }
     trainN.position.set(8, PY + 9, 40);
     k.add(trainN);
+    /* 2026-10-28: each box car becomes the hero car (h_subway_car_lo, as in the subway room). The coloured band stays
+       on top of it, purple for the 7 and yellow for the N, so the lines still read. A failed load keeps the boxes. */
+    void hero(k, 'h_subway_car_lo', { box: [2.66, 3.6, 13.8] }).then((h) => {
+      if (!h) return;
+      let n = 0;
+      for (const tr of [train7, trainN]) for (const cc of tr.children) {
+        cc.children.forEach((m, j) => { if (j < cc.children.length - 1) m.visible = false; });
+        const c = n++ ? h.clone() : h; c.position.y = 0.05; cc.add(c);
+      }
+    });
     if (!ctx.reduced) k.ticks.push((t) => { const p = (t * 9) % 260; train7.position.z = -150 + p; const q = (t * 6 + 60) % 260; trainN.position.z = 110 - q; });
     // the river and Manhattan to the west, the bridge, the tower with the crown far off
     k.water({ y: -1.5, color: 0x2e4a60, w: 400, d: 500, x: -220, z: -20, amp: 1.0 });

@@ -175,9 +175,14 @@
       "rule": "Hold a New Yorker that carries a glitch edition."
     }
   ],
+  "escrow": {
+    "0x6f66b95a0c512f3497fb46660e0bc3b94b989f8d": "Transient auction house (TLAuctionHouse), holds what MLow lists on Transient"
+  },
   "tags": {
     "0xa8357ee17cb3ff5a6b9694ddc8fde0ed2ce9d788": "Artist",
     "0xcc235a9a16fa6cf3fe749a3752af3b4b4aed9d5d": "Team",
-    "0x83ee04581317329bf87181df848918952adde719": "Team"
+    "0x83ee04581317329bf87181df848918952adde719": "Team",
+    "0xe04d38edae0297c4057cfe4caea195d913764b50": "Team",
+    "0x1bc339497c6bc67d1744afd6b97b8ef4f53432ed": "Team"
   }
 }

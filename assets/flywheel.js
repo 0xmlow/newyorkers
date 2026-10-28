@@ -19,7 +19,7 @@
   var SITE = "https://n3wyorkers.com/";
   var EGG_TOTAL_FALLBACK = 14;
   /* THE CENSUS RELEASE on OpenSea: a token page per minted New Yorker, and the mint itself. */
-  var KEY_TOKEN = "https://opensea.io/assets/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/", KEY_MINT = "https://transient.xyz/mint/newyorkers";
+  var KEY_TOKEN = "https://www.transient.xyz/nfts/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9/", KEY_MINT = "https://www.transient.xyz/nfts/ethereum/0x2dbfcca230979a91863be63ebce55dd5aae2b5c9";
   var OS_TOKEN = "https://opensea.io/assets/ethereum/0x3386e98e3835d25f20e9a4e2c0bbb9859fedc9c4/";
   var OS_MINT = "https://opensea.io/collection/newyorkers/overview";
 

@@ -85,8 +85,23 @@ page and looked healthy.
 | If your task is | Read | Lines |
 |---|---|---|
 | Anything about the live site | `../HANDOFF 2026-09-08/00_START_HERE.md` | 243 |
+| The collectors board updating itself (2026-10-27): the live Cloudflare endpoint, its parity check against the Python, the nightly build and deploy, escrow | `HANDOFF_LIVE_COLLECTORS_2026-10-27.md` | 45 |
 | The site's colours, buttons, nav and materials (2026-10-09 design pass) | `HANDOFF_DESIGN_2026-10-09.md` | 25 |
+| MLOW GARDENS at /gardens (2026-10-15): the amusement park as a walkable gallery, the Coney Island hang, where the generator lives | `HANDOFF_GARDENS_2026-10-15.md` | 50 |
+| THE LAST BODEGA at /bodega (2026-10-15): the ChatGPT build ported and finished, its walk repo, what was fixed | `HANDOFF_BODEGA_2026-10-15.md` | 35 |
+| THE MUSEUM THAT IS GENTRIFYING ITSELF at /gentrifying (2026-10-15): the second ChatGPT build ported, the redevelopment you can watch, the anamorphic Rebrand | `HANDOFF_GENTRIFYING_2026-10-15.md` | 45 |
+| DEPARTMENT OF UNREAL ESTATE at /unreal (2026-10-17): the ChatGPT venue fixed (bagel, Commute, phone) and ported, its walk repo | `HANDOFF_UNREAL_2026-10-17.md` | 40 |
+| BIGGER ON THE INSIDE at /inside (2026-10-17): the block where every door is a portal, its walk repo and engine | `HANDOFF_INSIDE_2026-10-17.md` | 35 |
+| MEDIA at /media (2026-10-18): the screening room, every film and highlight from one manifest, how to dump a new one in | `HANDOFF_MEDIA_2026-10-18.md` | 45 |
+| THE PIGEONHOLE at /pigeonhole (2026-10-17): the museum inside a pigeon inside a bodega inside a dream, twelve rooms, its walk repo | `HANDOFF_PIGEONHOLE_2026-10-17.md` | 40 |
+| UNLICENSED NEW YORK at /unlicensed (2026-10-18): the ChatGPT build of the civic building that impounded the impossible, sixteen departments on the pigeonhole engine, ported and checked, its walk repo | `HANDOFF_UNLICENSED_2026-10-18.md` | 40 |
+| LIVE FROM THE SEWERS at /sewers (2026-10-23): the city under New York at rat scale, home of the Pizza Rat, twelve rooms made in FLORA with Astra, its walk repo | `HANDOFF_SEWERS_2026-10-23.md` | 35 |
+| CLOUDS AND DIRT at /garyvee (2026-10-22): a tower of twelve floors for Gary Vaynerchuk on the ON RECORD engine, his portraits by MLow on the walls, Firefly plates, a flat plate mode and a camera that films the visitor, its walk repo | `HANDOFF_CLOUDS_2026-10-22.md` | 40 |
+| ON RECORD at /records (2026-10-20): the sister of ON LOCATION, eleven New York music rooms with a song and a trick each, its walk repo, where its models come from | `HANDOFF_RECORDS_2026-10-20.md` | 35 |
+| THE EVICTION at /eviction (2026-10-20): one Williamsburg tenement under the J and the year 4F was emptied, the forced perspective shadowbox, the year you can tear and pin, its walk repo | `HANDOFF_EVICTION_2026-10-20.md` | 35 |
+| BREAK GLASS at /breakglass (2026-10-15): the evil eye emergency case 1/1, Keystone 111 inside, where the mint file is built | `HANDOFF_BREAKGLASS_2026-10-15.md` | 35 |
 | The Barney Greengrass room (2026-10-12): the mirrored model, the wallpaper, the dithered merch, where Gary's likeness files live | `HANDOFF_BARNEY_2026-10-12.md` | 70 |
+| Why every gallery loads assets/ui/phone-gpu.js first (MoMLOW crashed phones at 1.1 GB, 2026-10-18), and each gallery's phone memory | `HANDOFF_PHONE_2026-10-18.md` | 60 |
 | Why every gallery throttles its frame rate and pixel ratio (the fan noise complaint, 2026-10-12) | `HANDOFF_POWER_2026-10-12.md` | 45 |
 | What changed on 2026-10-07 (mint awareness, arcade, stop, states, posting pipeline, what still needs MLow) | `HANDOFF_2026-10-07.md` | 60 |
 | The museum upgrade plan after the heroes (trees, surfaces, truth pass, eggs, heroes everywhere) | `_build/museum/UPGRADE_PLAN_2026-10-09.md` | 150 |

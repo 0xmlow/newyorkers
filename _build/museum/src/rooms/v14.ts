@@ -7,10 +7,12 @@
    scripture anywhere (the band over the ark is plain stone, the tablets are blank), and no New Yorker
    in the sanctuary: the art hangs in the lobby, the library, the social hall and on the roof. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { standIn, hide } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -19,7 +21,7 @@ type C = Parameters<RoomDef['build']>[1];
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, repeat = false) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -572,7 +574,8 @@ export const safra2: RoomDef = {
     const green = k.flat(0x1e6b4f, 0.2, 0.4, { emissive: 0x2e8b57, emissiveIntensity: 0.5 }), parch = k.flat(0xefe4c8, 0, 0.9);
     for (const [x, z] of [[-22.4, -7.0], [-18.4, -7.0], [-22.4, -11.6], [-18.4, -11.6]]) {
       k.box(2.6, 0.1, 1.2, x, LY + 0.8, z, wood); for (const [dx, dz] of [[-1.1, -0.45], [1.1, -0.45], [-1.1, 0.45], [1.1, 0.45]]) k.box(0.1, 0.8, 0.1, x + dx, LY + 0.4, z + dz, woodDark);
-      k.sphere(0.2, x, LY + 1.1, z, green, 10); k.cyl(0.02, 0.28, x, LY + 0.95, z, brass, 0.02, 6);
+      /* 2026-10-28: the sphere and stem are the stand in for the kit's hf_lamp.glb (as v26.ts) */
+      { const lm = k.objects.length; k.sphere(0.2, x, LY + 1.1, z, green, 10); k.cyl(0.02, 0.28, x, LY + 0.95, z, brass, 0.02, 6); const old = standIn(k, lm); void Promise.resolve(k.prop('hf_lamp', x, LY + 0.85, z, { height: 0.52 })).then((o) => { if (o) hide(old); }); }
       for (const s of [-1, 1]) { k.box(0.5, 0.03, 0.36, x + s * 0.7, LY + 0.87, z, parch); for (const cz of [-0.95, 0.95]) { k.box(0.45, 0.45, 0.45, x + s * 0.7, LY + 0.23, z + cz, woodDark); k.box(0.45, 0.55, 0.06, x + s * 0.7, LY + 0.72, z + cz * 1.22, woodDark); } }
       k.keepOut.push({ x: x - 0.7, z, r: 1.35 }, { x: x + 0.7, z, r: 1.35 });
     }

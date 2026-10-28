@@ -7,7 +7,8 @@ import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
 import { street, blockFront } from './f';
-import { liberty } from './b';
+import { liberty, LIBERTY_CREDIT } from './b';
+import { hero, standIn, hide } from './heroes';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PI = Math.PI;
@@ -1242,7 +1243,9 @@ export const castle: RoomDef = {
     // the harbor: water, Liberty, Governors Island, the Jersey shore, Brooklyn, the towers behind the Battery
     k.water({ y: -1.0, color: 0x30586a, w: 1400, d: 1400, x: 0, z: -300, amp: 1.2 });
     k.box(220, 1.2, 130, 10, -0.6, CZ + 25, lawn);
-    liberty(k, -260, -1.0, CZ - 110, 1.3);
+    liberty(k, -260, -1.0, CZ - 110, 1.3, [48, CZ - 22]);
+    /* 2026-10-28: liberty() now carries Gravity Jack's figure (CC BY 4.0); her credit, on a post by the promenade */
+    k.box(0.08, 0.9, 0.08, 40, 0.45, CZ - 26, dark); k.sign(LIBERTY_CREDIT, 3.4, 0.42, 40.05, 1.1, CZ - 26, '#22302e', '#e8e2d4', 46, PI / 2);
     k.box(120, 2, 60, 170, -0.5, -230, island);
     for (const [x, z, h] of [[150, -225, 8], [175, -240, 10], [195, -222, 7]]) k.box(16, h, 12, x, h / 2 - 0.5, z, k.pbr('nbBrickA', X.brick(0x6b4437, 21), 0.28));
     k.skyline({ z: -330, count: 16, spacing: 7, scale: 3.0, base: -1, seed: 519, lit: 0.22, glow: 0.4, tint: 0x6e7684, rows: 1, x: -250 });
@@ -1291,14 +1294,23 @@ export const castle: RoomDef = {
     k.mesh(new T.CylinderGeometry(1.2, 1.4, 0.5, 16), granite, CX, 0.25, CZ);
     k.keepOut.push({ x: CX, z: CZ, r: 1.6 });
     // cannon on carriages at four embrasures
+    /* 2026-10-28: each built cannon is the stand in for Poly Haven's Cannon 01 (James Ray Cock, CC0), passed to 10k
+       triangles at 1k textures (ph_cannon_01.glb), muzzle out through its embrasure */
+    const cannons: { old: T.Object3D[]; x: number; z: number; a: number }[] = [];
     for (const i of [0, 2, 13, 15]) {
+      const cm = k.objects.length;
       const a = (i / 20) * PI * 2, r = 20.2, x = CX + Math.sin(a) * r, z = CZ + Math.cos(a) * r, ux = Math.sin(a), uz = Math.cos(a);
       const car = k.box(1.0, 0.7, 1.8, 0, 0, 0, oak); car.position.set(x, 0.75, z); car.rotation.y = a;
       for (const s of [-1, 1]) for (const d of [-0.6, 0.7]) { const w = k.cyl(0.5, 0.12, x + Math.cos(a) * s * 0.62 + ux * d, 0.5, z - Math.sin(a) * s * 0.62 + uz * d, ironG, 0.5, 14); w.rotation.set(0, a, PI / 2); }
       k.beam(v(x - ux * 1.2, 1.25, z - uz * 1.2), v(x + ux * 1.7, 1.75, z + uz * 1.7), 0.2, ironG, 12);
       k.sphere(0.24, x - ux * 1.25, 1.24, z - uz * 1.25, ironG, 8);
       k.keepOut.push({ x, z, r: 1.6 });
+      cannons.push({ old: standIn(k, cm), x, z, a });
     }
+    void hero(k, 'ph_cannon_01', { length: 3.0 }).then((h) => {
+      if (!h) return;
+      cannons.forEach((c, i) => { hide(c.old); const g = i ? h.clone() : h; g.position.set(c.x, 0.17, c.z); g.rotation.y = c.a; k.add(g); });
+    });
     // the ticket booth and the benches in the court
     const BX = 8, BZ = CZ + 9;
     k.box(6, 4.2, 4, BX, 2.1, BZ, oak);
@@ -1321,7 +1333,9 @@ export const castle: RoomDef = {
     const cab = new T.Mesh(new T.BoxGeometry(10, 4, 34), cream); cab.position.y = 4.9; ferry.add(cab);
     const top = new T.Mesh(new T.BoxGeometry(8, 2.4, 18), orange); top.position.y = 8.1; ferry.add(top);
     k.add(ferry);
-    if (!ctx.reduced) k.rider(ferry, k.spline([v(80, -0.8, CZ - 170), v(-40, -0.8, CZ - 240), v(-140, -0.8, CZ - 170), v(-60, -0.8, CZ - 100)], true), 4, 0);
+    /* 2026-10-28: the box ferry becomes h_ferry, painted Staten Island orange; the boxes stay until it loads */
+    void hero(k, 'h_ferry', { length: 44 }).then((h) => { if (!h) return; for (const o of ferry.children) o.visible = false; h.traverse((o) => { if (o instanceof T.Mesh) { const m = (o.material as T.MeshStandardMaterial).clone(); m.color.setHex(0xf08a3a); o.material = m; } }); h.position.y = -1.0; ferry.add(h); });
+    { const route = k.spline([v(80, -0.8, CZ - 170), v(-40, -0.8, CZ - 240), v(-140, -0.8, CZ - 170), v(-60, -0.8, CZ - 100)], true); if (!ctx.reduced) k.rider(ferry, route, 4, 0); else ferry.position.copy(route.getPointAt(0.1)); } // reduced motion: on the harbor, not in the fort
     const lib = new T.Group();
     const lh = new T.Mesh(new T.BoxGeometry(6, 2.4, 24), white); lh.position.y = 1.0; lib.add(lh);
     const lc = new T.Mesh(new T.BoxGeometry(5, 2.6, 16), navy); lc.position.y = 3.5; lib.add(lc);
@@ -1362,6 +1376,8 @@ export const castle: RoomDef = {
       tug.add(new T.Mesh(mergeGeometries([new T.BoxGeometry(3, 2.2, 3.4).translate(0, 2.8, -0.8), new T.BoxGeometry(2.4, 1.6, 2.4).translate(0, 4.7, -0.4)]), wht));
       tug.add(new T.Mesh(new T.BoxGeometry(8, 1.8, 22).translate(0, 0.5, 15.8), barge));
       k.add(tug);
+      /* 2026-10-28: the box tug becomes h_tug_lo pushing the same barge; a failed load keeps the boxes */
+      void hero(k, 'h_tug_lo', { length: 10 }).then((h) => { if (!h) return; tug.children[0].visible = tug.children[1].visible = false; h.position.set(0, -0.6, -1); tug.add(h); });
       if (!ctx.reduced) k.rider(tug, k.spline([v(130, -0.8, CZ - 70), v(-40, -0.8, CZ - 60), v(-170, -0.8, CZ - 95), v(-60, -0.8, CZ - 135), v(90, -0.8, CZ - 125)], true), 2.6, 0);
       else { tug.position.set(40, -0.8, CZ - 66); tug.rotation.y = -PI / 2; }
       const col = (g: T.BufferGeometry, c: number) => { const cc = new T.Color(c), n = g.attributes.position.count, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { a[i * 3] = cc.r; a[i * 3 + 1] = cc.g; a[i * 3 + 2] = cc.b; } g.setAttribute('color', new T.BufferAttribute(a, 3)); return g; };

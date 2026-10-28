@@ -30,7 +30,7 @@ CONTRACTS = {"keystone": "0x2dbfcca230979a91863be63ebce55dd5aae2b5c9",
              "census": "0x3386e98e3835d25f20e9a4e2c0bbb9859fedc9c4"}
 # Nothing NEW YORKERS existed on chain before July 2026 (Keystone token 1 is block 25,398,308); scanning from here is safe and cheap.
 START_BLOCK = 25_300_000
-GATEWAYS = ["https://gateway.pinata.cloud/ipfs/", "https://ipfs.io/ipfs/", "https://dweb.link/ipfs/"]
+GATEWAYS = ["https://ipfs.filebase.io/ipfs/", "https://gateway.pinata.cloud/ipfs/", "https://ipfs.io/ipfs/", "https://dweb.link/ipfs/", "https://w3s.link/ipfs/", "https://4everland.io/ipfs/"]
 REVERSE_RECORDS = "0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C"
 
 
@@ -114,18 +114,28 @@ def ens_twitter(names):
 def keystone_meta(ids, old):
     """Keystone token ids on chain are mint order, not the kit's numbering (token 1 is THE DOULA,
     the kit's token 1 is The Bodega Matriarch), so each token's name is read from its own tokenURI.
-    The tokens are dynamic and the URI moves with the state, so this is refreshed every run."""
+    The tokens are dynamic and the URI moves with the state, so the URI is read every run, but the JSON
+    behind it only when the URI changed: fetching all of them each run had the IPFS gateways answering
+    429 and 72 new tokens never got a name (2026-10-27)."""
     out = {}
+    deadline = time.time() + 180   # gateways that throttle can stall for minutes; what is not reached keeps its old name and goes next run
     for i in ids:
+        if time.time() > deadline:
+            if str(i) in old: out[str(i)] = old[str(i)]
+            continue
         try:
             raw = bytes.fromhex(rpc("eth_call", [{"to": CONTRACTS["keystone"], "data": "0xc87b56dd" + "%064x" % i}, "latest"])[2:])
             uri = raw[64:64 + int.from_bytes(raw[32:64], "big")].decode()
+            was = old.get(str(i)) or {}
+            if was.get("uri") == uri and was.get("name"):
+                out[str(i)] = was; continue
+            time.sleep(0.4)
             for g in GATEWAYS:
                 try:
                     req = urllib.request.Request(g + uri.replace("ipfs://", ""), headers={"User-Agent": "n3wyorkers-collectors/1"})
-                    d = json.load(urllib.request.urlopen(req, timeout=30)); break
-                except (urllib.error.URLError, TimeoutError, ValueError): d = None
-            if d: out[str(i)] = {"name": d.get("name", ""), "image": d.get("image", "")}
+                    d = json.load(urllib.request.urlopen(req, timeout=12)); break
+                except Exception: d = None   # Python 3.9's socket.timeout is not a TimeoutError; any gateway failure moves on
+            if d: out[str(i)] = {"name": d.get("name", ""), "image": d.get("image", ""), "uri": uri}
             elif str(i) in old: out[str(i)] = old[str(i)]
         except SystemExit:
             if str(i) in old: out[str(i)] = old[str(i)]

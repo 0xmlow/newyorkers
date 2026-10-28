@@ -1,10 +1,13 @@
 /* Rooms 77 to 81: Ellis Island, the marathon start, the Halloween parade, Eastern Parkway, Manhattanhenge. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { libertyFigure, LIBERTY_CREDIT } from './b';
+import { standIn } from './heroes';
 
 const PI = Math.PI;
 
@@ -39,7 +42,10 @@ export const ellis: RoomDef = {
     const ferry = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(9, 3, 30), k.flat(0xf1c531, 0.2, 0.6)); hull.position.y = 1.2; ferry.add(hull); const cab = new T.Mesh(new T.BoxGeometry(7, 3, 20), k.flat(0xe6e2da, 0.2, 0.6)); cab.position.y = 4.2; ferry.add(cab); k.add(ferry);
     if (!ctx.reduced) k.rider(ferry, k.spline([v(-66, -0.8, 20), v(-120, -0.8, 80), v(-200, -0.8, 40), v(-160, -0.8, -40), v(-90, -0.8, -20)], true), 3, 0);
     k.skyline({ z: -300, count: 40, spacing: 9, scale: 4.2, base: -1.2, seed: 235, lit: 0.25, glow: 0.5, tint: 0x6e7684, spires: true });
-    k.lathe([[0, 0], [5, 0], [4.4, 6], [3.6, 18], [2.4, 26], [0, 27]], -160, 6, 140, copper, 24); k.box(12, 14, 12, -160, -1, 140, lime);
+    /* 2026-10-28: the lathed cone across the water is the stand in for Gravity Jack's Liberty (CC BY 4.0, b.ts), credit by the spawn */
+    { const lm = k.objects.length; k.lathe([[0, 0], [5, 0], [4.4, 6], [3.6, 18], [2.4, 26], [0, 27]], -160, 6, 140, copper, 24); libertyFigure(k, standIn(k, lm), -160, 6, 140, 27, [-4, 21]); }
+    k.box(12, 14, 12, -160, -1, 140, lime);
+    k.box(0.08, 0.9, 0.08, -12, 0.55, 18, iron); k.sign(LIBERTY_CREDIT, 3.4, 0.42, -12, 1.2, 18.05, '#2a3a36', '#e8e2d4', 46, 0);
     // the main building: brick with limestone trim, four corner towers with copper domes, three arched windows on the front
     const BX = 0, BZ = -20, BW = 60, BD = 30, BH = 21;
     k.box(BW, BH, BD, BX, BH / 2, BZ, brick);
@@ -280,7 +286,7 @@ export const easternparkway: RoomDef = {
     for (const s of [-1, 1]) { k.box(10, 0.3, 200, s * 26, 0.05, 120, k.pbr('epMall', X.pavers(0x8e8b84, 114), 0.42)); for (let z = 30; z < 220; z += 14) k.tree(s * 26, 0, z, { kind: 'round', h: 12, r: 6, leaf: 0x4a7a3c, seed: z, species: 'elm' }); } /* Olmsted planted elms along the main road */
     for (const s of [-1, 1]) for (let z = 30; z < 220; z += 2.4) { k.box(2.2, 1.0, 0.06, s * 20.5, 0.55, z, dark); }
     // the parade: masqueraders in feathers and a sound truck rolling up the parkway toward the arch, flags on the malls
-    const mas = (x: number, z: number, i: number) => { const g = new T.Group(); const body = new T.Mesh(new T.CapsuleGeometry(0.22, 0.9, 3, 8), k.flat(0x4a2a1a, 0, 0.8)); body.position.y = 0.9; g.add(body); const head = new T.Mesh(new T.SphereGeometry(0.14, 8, 6), k.flat(0x5a3a26, 0, 0.7)); head.position.y = 1.7; g.add(head); const n = 14 + (i % 3) * 6; for (let f = 0; f < n; f++) { const a = -PI * 0.15 + (f / (n - 1)) * PI * 1.3; const plume = new T.Mesh(new T.ConeGeometry(0.16, 2.4 + (f % 3) * 0.6, 5), feathers[(i + f) % 8]); plume.position.set(Math.cos(a) * 1.8, 1.6 + Math.sin(a) * 1.8, -0.4); plume.rotation.z = -a + PI / 2; g.add(plume); } for (let f = 0; f < 8; f++) { const a = (f / 8) * PI * 2; const p2 = new T.Mesh(new T.ConeGeometry(0.1, 1.2, 5), feathers[(i + f + 3) % 8]); p2.position.set(Math.cos(a) * 0.4, 2.0, Math.sin(a) * 0.4); p2.rotation.z = -Math.cos(a) * 0.5; p2.rotation.x = Math.sin(a) * 0.5; g.add(p2); } g.position.set(x, 0, z); k.add(g); return g; };
+    const mas = (x: number, z: number, i: number) => { const g = new T.Group(); const body = new T.Mesh(new T.CapsuleGeometry(0.22, 0.9, 3, 8), k.flat(0x4a2a1a, 0, 0.8)); body.position.y = 0.9; g.add(personTag(body, 'auto', 1.25)); const head = new T.Mesh(new T.SphereGeometry(0.14, 8, 6), k.flat(0x5a3a26, 0, 0.7)); head.position.y = 1.7; g.add(personTag(head, 'part')); const n = 14 + (i % 3) * 6; for (let f = 0; f < n; f++) { const a = -PI * 0.15 + (f / (n - 1)) * PI * 1.3; const plume = new T.Mesh(new T.ConeGeometry(0.16, 2.4 + (f % 3) * 0.6, 5), feathers[(i + f) % 8]); plume.position.set(Math.cos(a) * 1.8, 1.6 + Math.sin(a) * 1.8, -0.4); plume.rotation.z = -a + PI / 2; g.add(plume); } for (let f = 0; f < 8; f++) { const a = (f / 8) * PI * 2; const p2 = new T.Mesh(new T.ConeGeometry(0.1, 1.2, 5), feathers[(i + f + 3) % 8]); p2.position.set(Math.cos(a) * 0.4, 2.0, Math.sin(a) * 0.4); p2.rotation.z = -Math.cos(a) * 0.5; p2.rotation.x = Math.sin(a) * 0.5; g.add(p2); } g.position.set(x, 0, z); k.add(g); return g; };
     const dancers: T.Group[] = []; for (let i = 0; i < 12; i++) dancers.push(mas(-14 + (i % 4) * 9.3, 60 + Math.floor(i / 4) * 16, i));
     if (!ctx.reduced) k.ticks.push((t, dt) => dancers.forEach((g, i) => { g.position.z -= 0.9 * Math.min(dt, 0.1); if (g.position.z < -14) g.position.z = 210; g.rotation.y = Math.sin(t * 2 + i) * 0.6; g.position.y = 0.15 * Math.abs(Math.sin(t * 4 + i)); }));
     const truck = new T.Group(); const cabT = new T.Mesh(new T.BoxGeometry(2.6, 2.6, 3), k.flat(0xe83a3a, 0.2, 0.6)); cabT.position.set(0, 1.6, 6); truck.add(cabT); const bedT = new T.Mesh(new T.BoxGeometry(2.6, 1.2, 10), dark); bedT.position.set(0, 0.8, -1); truck.add(bedT); for (let i = 0; i < 8; i++) { const sp = new T.Mesh(new T.BoxGeometry(1.1, 1.1, 1.1), k.flat(0x0a0a0c, 0.3, 0.8)); sp.position.set(-0.75 + (i % 2) * 1.5, 2 + Math.floor(i / 2) * 1.15, -3 + (i % 2) * 0); truck.add(sp); const cone = new T.Mesh(new T.CylinderGeometry(0.42, 0.42, 0.05, 14), k.flat(0x2a2a2e, 0.4, 0.5)); cone.position.set(-0.75 + (i % 2) * 1.5, 2 + Math.floor(i / 2) * 1.15, -2.42); cone.rotation.x = PI / 2; truck.add(cone); } for (let i = 0; i < 4; i++) { const fl = new T.Mesh(new T.PlaneGeometry(0.8, 0.5), feathers[i], ); fl.position.set(-1.2 + i * 0.8, 6.4, -1); truck.add(fl); const pole = new T.Mesh(new T.CylinderGeometry(0.02, 0.02, 3, 4), dark); pole.position.set(-1.6 + i * 0.8, 5.2, -1); truck.add(pole); } truck.position.set(0, 0, 120); k.add(truck);
@@ -335,11 +341,13 @@ export const manhattanhenge: RoomDef = {
     const road = k.box(400, 0.3, 24, -150, -0.15, 0, asphalt); void road;
     for (const s of [-1, 1]) k.box(400, 0.28, 5, -150, 0, s * 14.5, k.pbr('mhWalk', X.pavers(0x8e8b84, 115), 0.42));
     for (let x = -30; x >= -340; x -= 30) for (const s of [-1, 1]) { const h = 40 + ((-x / 30) % 4) * 25; k.box(26, h, 30, x, h / 2, s * 32, ((-x / 30) % 2) ? facade : facadeB); k.box(27, 0.8, 31, x, h + 0.4, s * 32, dark); }
-    for (let x = -22; x >= -340; x -= 28) for (const s of [-1, 1]) k.lamp(s * 13.5, x * 0 + 0, 0, dark, 0xffd9a8, 0), void s;
-    for (let x = -22; x >= -340; x -= 28) { k.box(0.16, 7, 0.16, x, 3.5, 13.6, dark); k.box(0.16, 7, 0.16, x, 3.5, -13.6, dark); }
+    /* 2026-10-28: this used to call k.lamp 24 times at height 0 and intensity 0, all at (+-13.5, 0): no light, but 24
+       lathed stubs and glowing bulbs stacked on the pavement at one spot. The posts below are the lamps; they get their
+       heads, lit by emission only (24 point lights would cost more than the canyon shows). */
+    for (let x = -22; x >= -340; x -= 28) for (const s of [-1, 1]) { k.box(0.16, 7, 0.16, x, 3.5, s * 13.6, dark); k.box(0.9, 0.12, 0.16, x, 7.0, s * 13.2, dark); k.box(0.5, 0.14, 0.34, x, 6.9, s * 12.85, glow); }
     for (let x = -14; x >= -330; x -= 12) k.box(4, 0.012, 0.6, x - 150 + 150, 0.01, 0, yellow);
     const cars: T.Mesh[] = [];
-    for (let i = 0; i < 24; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.4, 1.8), i % 3 ? yellow : k.flat(0x1a1a1a, 0.4, 0.4), -20 - i * 13, 0.7, (i % 4 - 1.5) * 5, true); cars.push(c); const l = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 1.4), glow); l.position.set(2.1, 0, 0); c.add(l); }
+    for (let i = 0; i < 24; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.4, 1.8), i % 3 ? yellow : k.flat(0x1a1a1a, 0.4, 0.4), -20 - i * 13, 0.7, (i % 4 - 1.5) * 5, true); c.userData.car = true; cars.push(c); const l = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 1.4), glow); l.position.set(2.1, 0, 0); c.add(l); }
     if (!ctx.reduced) k.ticks.push((t) => cars.forEach((c, i) => { c.position.x = -20 - i * 13 + Math.max(0, Math.sin(t * 0.2 + i)) * 0.6; }));
     // the sun itself: a disc down the axis, low, with a glow, and the crowd on the overpass in front
     k.mesh(new T.CircleGeometry(16, 48), k.glow(0xffc040), -380, 12, 0).rotation.y = PI / 2;

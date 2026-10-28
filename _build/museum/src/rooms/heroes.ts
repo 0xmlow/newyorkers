@@ -73,3 +73,19 @@ export function heroInstances(k: K, g: T.Group, n: number) {
     },
   };
 }
+
+/* 2026-10-28: a room's instanced stand in (pigeons, say) driven by its own place(): a hero takes every instance's
+   matrix each frame, `local` applied first (to move the stand in's origin to the hero's base), and the stand in hides.
+   With reduced motion the ticks never run, so it copies once on load. */
+export function followInstances(k: K, src: T.InstancedMesh, name: string, fit: Parameters<typeof hero>[2], local = new T.Matrix4(), shadows = false) {
+  void hero(k, name, fit).then((h) => {
+    if (!h) return;
+    const ins = heroInstances(k, h, src.count);
+    for (const p of ins.parts) p.im.castShadow = shadows;
+    src.visible = false;
+    const m = new T.Matrix4();
+    const copy = () => { for (let i = 0; i < src.count; i++) { src.getMatrixAt(i, m); ins.setAt(i, m.multiply(local)); } ins.commit(); };
+    copy();
+    k.ticks.push(copy);
+  });
+}

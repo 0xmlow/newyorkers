@@ -53,9 +53,13 @@ BANNED = {key(b.get("x") or b.get("handle") or "") for b in json.load(open(os.pa
     if os.path.exists(os.path.join(BUILD, "honoraries", "banned.json")) else set()
 
 # holdings, from the transfer log
+# a piece in a marketplace's custody (badges.json "escrow") is still its lister's, as build_collectors books it
+ESCROW = {a.lower() for a in json.load(open(os.path.join(HERE, "badges.json"))).get("escrow", {})}
 own = {}
 for lg in sorted(CH["logs"], key=lambda l: (l["b"], l.get("i", 0))):
-    own[(lg["c"], lg["id"])] = lg["to"]
+    k = (lg["c"], lg["id"])
+    if lg["to"] in ESCROW and lg["from"] not in ESCROW: continue   # listed: stays with the lister
+    own[k] = lg["to"]
 held = collections.Counter(a for a in own.values() if a != ZERO)
 
 # honoree indexes: by X handle, and by every other name that is unmistakably theirs

@@ -1,6 +1,7 @@
 /* Rooms 129 to 133: Greenacre Park, Paley Park, St. Mark's in-the-Bowery, the Kings Theatre foyer, Loew's Valencia.
    Real places first: the street, the block, the facade, the door, then the room and the hang. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { v } from '../kit';
@@ -140,8 +141,8 @@ function seated(k: Kit, seats: Seat[], seed = 3, every = 0.6) {
   const rnd = X.mulberry(seed);
   const use = seats.filter(() => rnd() < every);
   if (!use.length) return;
-  const body = new T.InstancedMesh(new T.CapsuleGeometry(0.2, 0.5, 3, 8), new T.MeshStandardMaterial({ roughness: 0.85 }), use.length);
-  const head = new T.InstancedMesh(new T.SphereGeometry(0.125, 10, 8), new T.MeshStandardMaterial({ roughness: 0.7 }), use.length);
+  const body = personTag(new T.InstancedMesh(new T.CapsuleGeometry(0.2, 0.5, 3, 8), new T.MeshStandardMaterial({ roughness: 0.85 }), use.length), 'seat', 1.25);
+  const head = personTag(new T.InstancedMesh(new T.SphereGeometry(0.125, 10, 8), new T.MeshStandardMaterial({ roughness: 0.7 }), use.length), 'part');
   const colors = [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x4a6a3a, 0x151517, 0xc9a25a, 0x6a4a8a, 0xe6e2da, 0x2b5f6e], skins = [0xf1d3b5, 0xc8a284, 0x8d5a3b, 0x5a3a26, 0xe9c2a0, 0xa77653];
   const m = new T.Matrix4(), q = new T.Quaternion(), c = new T.Color(), up = new T.Vector3(0, 1, 0), one = new T.Vector3(1, 1, 1);
   use.forEach((s, i) => {
@@ -731,7 +732,7 @@ export const stmarks: RoomDef = {
     // a reader at the lectern, swaying through a poem
     const rb = new T.CapsuleGeometry(0.21, 0.8, 3, 8); rb.translate(0, 0.62, 0);
     const rh = new T.SphereGeometry(0.13, 10, 8); rh.translate(0, 1.38, 0);
-    const reader = k.mesh(mergeGeometries([rb, rh])!, k.flat(0x1c1e24, 0, 0.8), 0, CF + 0.3, -21.3, true);
+    const reader = personTag(k.mesh(mergeGeometries([rb, rh])!, k.flat(0x1c1e24, 0, 0.8), 0, CF + 0.3, -21.3, true), 'seat', 1.0);
     if (!ctx.reduced) k.ticks.push((t) => { reader.rotation.z = 0.04 * Math.sin(t * 0.9); reader.rotation.x = 0.05 * Math.max(0, Math.sin(t * 0.37)); reader.rotation.y = 0.2 * Math.sin(t * 0.23); });
     // sparrows on the front lawn, leaves off the yard trees
     sparrows(k, ctx, 12, { x0: -17, x1: 17, z0: 16.6, z1: 19.4 }, () => 0, 53);
@@ -903,7 +904,7 @@ export const kings: RoomDef = {
     organConsole(k, 15.4, 0, -12, -PI / 2, { body: cream, trim: gilt, keys: k.flat(0xf4efe2, 0, 0.35), black: dark, stops: k.flat(0xc83a2a, 0, 0.4) });
     // ushers in maroon at the auditorium arch, one with a flashlight
     const usherM = k.flat(0x5a1420, 0, 0.7), capM = k.flat(0x1a1416, 0, 0.6), skinU = k.flat(0xc8a284, 0, 0.7);
-    const usher = (x: number, z: number) => { k.mesh(new T.CapsuleGeometry(0.21, 0.82, 3, 8), usherM, x, 0.63, z); k.sphere(0.125, x, 1.37, z, skinU, 10); k.cyl(0.13, 0.1, x, 1.52, z, capM, 0.12, 10); for (let b = 0; b < 4; b++) k.sphere(0.022, x - 0.2, 0.75 + b * 0.12, z, gilt, 5); k.keepOut.push({ x, z, r: 0.5 }); };
+    const usher = (x: number, z: number) => { personTag(k.mesh(new T.CapsuleGeometry(0.21, 0.82, 3, 8), usherM, x, 0.63, z), 'auto', 1.25); personTag(k.sphere(0.125, x, 1.37, z, skinU, 10), 'part'); personTag(k.cyl(0.13, 0.1, x, 1.52, z, capM, 0.12, 10), 'part'); for (let b = 0; b < 4; b++) k.sphere(0.022, x - 0.2, 0.75 + b * 0.12, z, gilt, 5); k.keepOut.push({ x, z, r: 0.5 }); };
     usher(12.3, -15.0); usher(12.3, -8.95);
     const beamG = new T.ConeGeometry(0.38, 2.6, 12, 1, true); beamG.translate(0, -1.3, 0); beamG.rotateX(-PI / 2);
     const torch = k.mesh(beamG, new T.MeshBasicMaterial({ color: 0xfff0c8, transparent: true, opacity: 0.1, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide }), 12.05, 1.05, -9.2, true);

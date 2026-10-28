@@ -1,10 +1,12 @@
 /* Rooms 57 to 61: Rockaway Beach, Green-Wood, the Domino refinery, the Staten Island boat graveyard, the Intrepid. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero, standIn, hide } from './heroes';
 
 const PI = Math.PI;
 
@@ -39,7 +41,7 @@ export const rockaway: RoomDef = {
     if (!ctx.reduced) k.ticks.push((t) => foamLines.forEach((f, i) => { const u = ((t * 0.12 + i * 0.25) % 1); f.position.z = -190 + u * 60; (f.material as T.MeshStandardMaterial).opacity = 0.8 * (1 - u) * Math.min(1, u * 4); f.scale.x = 0.7 + 0.3 * Math.sin(t * 0.5 + i); }));
     for (const x of [-120, 120]) for (let i = 0; i < 14; i++) k.box(3, 1.4, 5, x + (i % 2) * 1.2, 0.2, -110 - i * 6, k.pbr('rbJetty', X.ashlar(0x5a5650, 143, 1), 0.2));
     const surfers: T.Group[] = [];
-    for (let i = 0; i < 9; i++) { const g = new T.Group(); const board = new T.Mesh(new T.BoxGeometry(0.5, 0.08, 2.2), i % 2 ? white : orange); g.add(board); const body = new T.Mesh(new T.CapsuleGeometry(0.16, 0.5, 3, 6), dark); body.position.y = 0.45; g.add(body); g.position.set(-80 + i * 20, -0.4, -150 - (i % 3) * 8); k.add(g); surfers.push(g); }
+    for (let i = 0; i < 9; i++) { const g = new T.Group(); const board = new T.Mesh(new T.BoxGeometry(0.5, 0.08, 2.2), i % 2 ? white : orange); g.add(board); const body = new T.Mesh(new T.CapsuleGeometry(0.16, 0.5, 3, 6), dark); body.position.y = 0.45; g.add(personTag(body, 'seat', 1.5)); /* 2026-10-28: sitting on the board, waiting for a wave */ g.position.set(-80 + i * 20, -0.4, -150 - (i % 3) * 8); k.add(g); surfers.push(g); }
     if (!ctx.reduced) k.ticks.push((t) => surfers.forEach((g, i) => { g.position.y = -0.4 + 0.5 * Math.sin(t * 0.9 + i); g.rotation.x = 0.15 * Math.sin(t * 0.9 + i + 1); }));
     // the boardwalk, the shade shelters, the dunes with their fences and grass
     k.box(400, 0.5, 14, 0, 0.25, 0, conc);
@@ -311,13 +313,25 @@ export const boatgraveyard: RoomDef = {
     const wrecks: { x: number; z: number; rot: number; g: T.Group }[] = [];
     const spots: [number, number][] = [[-30, -20], [20, -36], [50, 10], [-60, 30], [10, 44], [-20, 70], [70, -60], [-80, -50], [40, 80], [-70, 90]];
     spots.forEach(([x, z], i) => { const rot = rnd() * PI * 2, tilt = (rnd() - 0.5) * 0.4; const g = tug(x, z, rot, tilt, [rust, rustD, paint][i % 3]); wrecks.push({ x, z, rot, g }); });
+    /* 2026-10-28: the box tugs and the ferry become h_tug_lo (h_tug cut to 9k triangles, ten of them) and h_ferry (made 2026-10-09), each clone's paint pulled
+       toward the wreck's own rust, tilt and sink kept; the boxes stay as the stand in until the GLB loads. */
+    const rusted = (g: T.Object3D, tint: number) => { const cache = new Map<T.Material, T.Material>(); g.traverse((o) => { if (!(o instanceof T.Mesh)) return; const src = o.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const c = src.clone(); c.color.setHex(tint); c.roughness = 0.88; c.metalness = 0.35; m = c; cache.set(src, m); } o.material = m; }); return g; };
+    const wreckTint = [0xb0704a, 0x8a5a40, 0xc09a6a];
+    void hero(k, 'h_tug_lo', { length: 18 }).then((h) => {
+      if (!h) return;
+      wrecks.forEach((w, i) => { for (const o of w.g.children) o.visible = false; const c = rusted(h.clone(), wreckTint[i % 3]); c.position.y = -0.7; w.g.add(c); });
+    });
     for (const [x, z] of [[90, 40], [-100, 0], [30, -90]]) { const b = k.box(12, 3, 40, x, 0.2, z, rustD); b.rotation.set(0.05, rnd() * PI, 0.08); k.keepOut.push({ x, z, r: 20 }); }
-    const FX = -20, FZ = -110;
+    const FX = -20, FZ = -110, ferryMark = k.objects.length;
     k.box(16, 5, 60, FX, 0.4, FZ, paint).rotation.z = 0.12;
     k.box(14, 4, 50, FX, 5, FZ, white).rotation.z = 0.12;
     for (let i = 0; i < 12; i++) k.box(1.2, 1.2, 0.1, FX - 7.05, 5.2 + 0.12 * 0, FZ - 22 + i * 4, dark);
     k.box(8, 3, 8, FX, 8.5, FZ, white).rotation.z = 0.12;
     k.cyl(0.9, 4, FX, 11.5, FZ - 8, rustD, 1.0, 12);
+    {
+      const old = standIn(k, ferryMark);
+      void hero(k, 'h_ferry', { length: 60 }).then((h) => { if (!h) return; hide(old); rusted(h, 0xc8a888); h.position.set(FX, -2.1, FZ); h.rotation.z = 0.12; k.add(h); });
+    }
     /* The flagship is a 16 by 60 hull, but it carried a 32 metre circular keep
        out, wider than the wreck itself, which walled off the four works hung on
        its starboard flank: there was nowhere in sight of them to stand. A
@@ -453,6 +467,18 @@ export const intrepid: RoomDef = {
     const pav = k.objects[k.objects.length - 1]; pav.rotation.set(0, 0, PI / 2); pav.rotateX(PI / 2); pav.position.set(-4, DY, PZ);
     k.block(-18.5, 10.5, PZ - 20.5, PZ + 20.5);
     const shuttle = new T.Group(); shuttle.position.set(-4, DY + 3, PZ); const sf = new T.Mesh(new T.CylinderGeometry(2.4, 2.0, 24, 14), white); sf.rotation.x = PI / 2; shuttle.add(sf); const sn = new T.Mesh(new T.SphereGeometry(2.4, 12, 8), dark); sn.scale.set(1, 1, 1.4); sn.position.z = 12; shuttle.add(sn); const dw = new T.Shape(); dw.moveTo(0, 6); dw.lineTo(11, -10); dw.lineTo(11, -12); dw.lineTo(0, -12); dw.closePath(); for (const s of [-1, 1]) { const w = new T.Mesh(new T.ExtrudeGeometry(dw, { depth: 0.3, bevelEnabled: false }), white); w.rotation.x = PI / 2; w.scale.x = s; w.position.set(0, -1.4, 0); shuttle.add(w); } const st = new T.Mesh(new T.BoxGeometry(0.3, 7, 6), white); st.position.set(0, 4.5, -9); shuttle.add(st); for (let i = 0; i < 3; i++) { const e = new T.Mesh(new T.ConeGeometry(0.9, 2.2, 10, 1, true), jetD); e.rotation.x = -PI / 2; e.position.set([-1.4, 1.4, 0][i], [-0.6, -0.6, 1.4][i], -12.6); shuttle.add(e); } k.add(shuttle);
+    /* 2026-10-28: the orbiter is NASA 3D Resources' "Space Shuttle (D)" (public domain, github.com/nasa/NASA-3D-Resources),
+       with the textures that carry the agency insignia, the flag and the lettering (wing tops, fuselage sides, tail,
+       arrows) replaced by plain white in Blender, then prop_pass at 512 textures: h_shuttle_enterprise.glb. Fitted to
+       the code shuttle's wingspan, nose to +z like it; the code shuttle stays until it loads. */
+    void hero(k, 'h_shuttle_enterprise', { width: 23.8 }).then((h) => {
+      if (!h) return;
+      for (const o of shuttle.children) o.visible = false;
+      /* the exported materials are physical (sheen, specular) and the plain white panels read blown out in the pavilion:
+         each becomes a plain matte standard material, the untextured panels a shade of grey that reads white in that light */
+      h.traverse((o) => { if (o instanceof T.Mesh) o.material = [o.material].flat().map((src) => { const s0 = src as T.MeshStandardMaterial; const m = new T.MeshStandardMaterial({ name: s0.name, map: s0.map, normalMap: s0.normalMap, color: s0.color.clone().multiplyScalar(/wing/.test(s0.name) ? (s0.map ? 0.5 : 0.3) : s0.map ? 0.85 : 0.62) /* the wing tops face the sun */, roughness: 0.85, metalness: 0, envMapIntensity: 0.4 }); return m; })[0]; });
+      h.position.y = -2.6; shuttle.add(h);
+    });
     for (const dz of [-12, 0, 12]) k.point(-4, DY + 10, PZ + dz, 0xfff0e0, 30, 20);
     // the hangar deck: the level below, open along both sides, reached by the aircraft elevator aft of the island
     const HY = DY - 8;

@@ -14,6 +14,7 @@
    box 60 metres on a side with the whole hall inside it, and 57th Street ran
    straight into the building instead of across its front. */
 import * as T from 'three';
+import { personTag, boxCrowdTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -30,7 +31,7 @@ function personGroup(coat: number, skin = 0xc8a284) {
   const h = new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: skin, roughness: 0.7 }));
   h.position.y = 1.35;
   g.add(b, h);
-  return g;
+  return personTag(g, 'auto');
 }
 /* Twenty four triangles a head, seated: for a full house seen from the aisle. */
 function seatedBoxGeo() {
@@ -42,7 +43,7 @@ function seatedBoxGeo() {
 function seatedGeo() {
   const body = new T.CapsuleGeometry(0.19, 0.42, 3, 8); body.translate(0, 0.4, 0);
   const head = new T.SphereGeometry(0.12, 8, 6); head.translate(0, 0.92, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'seat');
 }
 const COATS = [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x4a6a3a, 0x151517, 0xc9a25a, 0x6a4a8a, 0xe6e2da, 0x2b5f6e, 0x7a2a4a, 0x1f1f24];
 
@@ -103,7 +104,7 @@ function house(k: K, seatsAt: T.Vector3[], fill: number, seatMat: T.Material, se
   const who = seatsAt.filter(() => rnd() < fill);
   const base = who.map((p) => at(p.x, p.y + 0.42, p.z - 0.02 * Math.cos(facing), facing));
   const aud = k.instances(seatedBoxGeo(), new T.MeshStandardMaterial({ roughness: 0.9 }), base);
-  aud.frustumCulled = false;
+  aud.frustumCulled = false; boxCrowdTag(aud, Math.PI);   // 2026-10-28: the nearest are seated cast (the seat backs are at +z, so the cast turns round)
   const c = new T.Color();
   for (let i = 0; i < who.length; i++) aud.setColorAt(i, c.set(COATS[Math.floor(rnd() * COATS.length)]));
   if (aud.instanceColor) aud.instanceColor.needsUpdate = true;
@@ -411,7 +412,7 @@ export const carnegie2: RoomDef = {
       const rnd = X.mulberry(193);
       const who = tierAud.filter(() => rnd() < 0.8);
       const mats = who.map((p) => { const yaw = Math.atan2(-p.x, (STF - 4) - p.z); return at(p.x, p.y + 0.02, p.z, yaw + PI); });
-      const aud = k.instances(seatedBoxGeo(), new T.MeshStandardMaterial({ roughness: 0.9 }), mats);
+      const aud = boxCrowdTag(k.instances(seatedBoxGeo(), new T.MeshStandardMaterial({ roughness: 0.9 }), mats), Math.PI);
       const c = new T.Color(); for (let i = 0; i < who.length; i++) aud.setColorAt(i, c.set(COATS[Math.floor(rnd() * COATS.length)])); if (aud.instanceColor) aud.instanceColor.needsUpdate = true;
     }
     // the parquet: straight rows to the stage, a centre aisle, the ring aisle clear under the first tier

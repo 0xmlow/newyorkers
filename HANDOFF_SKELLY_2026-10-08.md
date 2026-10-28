@@ -136,3 +136,45 @@ Brick, stoop and bodega plates were left alone, since the recolour would turn th
 Every run is one turn of a Guggenheim ramp: 636 race paintings in bracket order, 26 Champion's Portraits on their bays, unpainted races as
 wet tape from the ledger, the paddock of 100 riders and 98 holders, 42 cards in the void, live top turn and gutter race from marblerun.fun.
 After new race paintings or portraits publish: `ledger.py`, then `SKELLY SPIRAL/_build/build_data.py`, then `build_galleries.py`.
+
+### Street GLB swaps (2026-10-28, SKELLY SPIRAL 778cdf9)
+
+The avenue's code taxis, trees, lamp posts and sprite pigeons now load GLBs from BIGGER ON THE INSIDE's pack, copied
+into `site/assets/street/` (4.3 MB): MLow's five cabs with the MLOW topper (`topper.jpg`, slots 0 and 1 of INSIDE's
+`taxi/screens.jpg`), `tree.glb` instanced (5.6 m, 0.8 across), `lamppost.glb` with the night glow moved into the
+lantern, `pigeon.glb` instanced and driven by the hidden sprites (the gm hop still works). The r128 GLTFLoader reads the
+webp textures. Every code piece is still built and hidden only when its GLB lands. Street view went from 435 draw calls
+and 1.40 M triangles to 427 and 1.54 M. Shots: `UPGRADE ALL ROOMS 2026-10-28/shots/spiral/`. Not verified: phones,
+frame time, the ride camera passing the cabs, the egg pigeon at the top (a sprite, untouched).
+
+Revised the same night (SKELLY SPIRAL 55ec82a): the blue drip `tree.glb` read as a style change, so the street trees
+are now the museum kit's London plane (`tree_plane.glb`, 22 trees, 9 to 10 m, near mesh inside 26 m and far beyond,
+phones far only) in new iron guards, with the two pits in front of the bodega left empty. The lamppost GLB is
+recoloured park green cast iron. Shots: `shots/spiral/*_v2_*.jpg`. Not verified: phones, the alpha leaves against the
+bloom pass, frame time.
+
+## The rigged cast on the parapet (2026-10-28)
+
+SKELLY SPIRAL 686fe4f. The parapet crowd (seven a turn, an instanced capsule and ball, 490 now) is the rigged ON LOCATION
+cast from `UPGRADE ALL ROOMS 2026-10-28/rig`: ten characters at 0.86 to 0.96 of the 1.88 m rig, turned to the parapet
+(the capsules faced the wall). `site/assets/rig/rigcast.js` plus 20 GLBs (3.5 MB) and `vendor/SkeletonUtils.js` (r128
+examples/js, three 0.128.0). Far tier one InstancedMesh per character (lite rig, rest pose); the nearest 20 (8 on a
+phone) are skinned clones on idle, head turning to a visitor within 7 m. Capsules hide only once every file loads;
+`?rig=off` keeps them. `window.__game` gains `rig()`, `frame(dt)`, `crowdSpots()`. Numbers (headless, looking up the
+void from turn nine): 312 draw calls against 283, 1.43M triangles against 1.07M (the far tier is 376k), mixers 0.13 ms.
+Film: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_rollout/spiral_idle_headturn.mp4`. Not verified: a real phone (the far
+tier draws all 490 figures unculled, about 385k triangles), riding a marble past the crowd, the games modes.
+
+## Rig facing fix (2026-10-28)
+
+Five rig files face 90 degrees off +Z (blindwoman, hustler -90; lensman, tough, sally +90). The yaw now goes on the
+skinned clone inside the root here, and the static twin was checked against it. Stills and the lineup:
+`UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`; method in `UPGRADE ALL ROOMS 2026-10-28/rig/HEAD_TURN_FIX.md`. Not deployed.
+
+## Hustler reweighted, Susan doll face forward (2026-10-28, later)
+
+MLow settled the two open rig questions. The Hustler is re-rigged with his whole eye flower bound to the head
+(`rig_pass.py` FLOWER), so a look turns it the full angle; his -90 face yaw stays. Susan is re-rigged facing +Z (doll
+face, sweater front and toes; the flower behind), so her rig needs no gallery yaw and her look aims the doll face; her
+static twins turn instead (Tripo `susan` YAW 90, `crowd_susan` and `crowd_susan_full` 180). The new files reuse the old
+names, so a returning visitor may see the old GLB until the cache turns over. Stills: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`.

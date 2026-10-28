@@ -16,7 +16,7 @@ What this writes:
 
 The booth model itself is the one ON LOCATION already ships, assets/movies/assets/glb/mlowtar.glb (all three
 copies MLow had of it were byte identical on 2026-10-12); the page reads it from there so the GLB is not
-committed twice. app.js, app.css, oracle.js and match.js in assets/mlowtar/ are hand written and versioned here
+committed twice. app.js, app.css, oracle.js, answers.js and match.js in assets/mlowtar/ are hand written and versioned here
 by content hash. Runs anywhere data.js exists; needs nothing else built first.
 """
 import hashlib, json, os, re, shutil
@@ -55,7 +55,7 @@ if not os.path.exists(og): print("  mlowtar: NOTE no og.jpg (concept render not 
 import subprocess
 subprocess.run(["python3", os.path.join(HERE, "mlowtar_stickers.py")], check=True)
 subprocess.run(["python3", os.path.join(HERE, "mlowtar_sign.py")], check=True)        # the crown's letters, as outlines
-for f in ("app.js", "app.css", "oracle.js", "match.js", "ticket.js", "deck.json", "stickers.json", "sign.json", "paper.jpg", "plaque.jpg", "brand/logo_white.png", "brand/logo_black.png"):
+for f in ("app.js", "app.css", "oracle.js", "answers.js", "match.js", "ticket.js", "deck.json", "stickers.json", "sign.json", "paper.jpg", "plaque.jpg", "brand/logo_white.png", "brand/logo_black.png"):
     if not os.path.exists(os.path.join(DST, f)): raise SystemExit(f"mlowtar: assets/mlowtar/{f} missing")
 glb = os.path.join(SITE, "assets", "movies", "assets", "glb", "mlowtar.glb")
 if not os.path.exists(glb): raise SystemExit("mlowtar: the booth GLB is missing from assets/movies/assets/glb")
@@ -65,8 +65,8 @@ three = os.path.join(SITE, "assets", "airport", "vendor", "three.module.js")
 if not os.path.exists(three): raise SystemExit("mlowtar: assets/airport/vendor/three.module.js is missing (the page imports it)")
 
 # ---------- the page ----------
-desc = ("MLOW SPEAKS: MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It deals a "
-        "New Yorker from the census, reads your fortune off the card, prints you a one of a kind generative ticket, and sends you to a room of the museum.")
+desc = ("MLOW SPEAKS: MLOWTAR, the fortune booth from the NEW YORKERS movie sets, made real. Drop a token, ask it anything. It gives you a "
+        "straight answer about the city, then deals a New Yorker from the census, prints you a one of a kind generative ticket, and sends you to a room of the museum.")
 body = f"""<section class="mz" id="mz">
   <div class="mz-stage">
     <canvas id="mzc" aria-label="MLOWTAR, the fortune booth"></canvas>
@@ -78,12 +78,12 @@ body = f"""<section class="mz" id="mz">
     <header>
       <div class="kicker">MLOW SPEAKS</div>
       <h1>Drop a token. Ask the booth.</h1>
-      <p>MLOWTAR deals a New Yorker from the census as your card, reads your fortune off it, prints you a ticket no one else will ever get, and sends you to a room of the museum. Ask it anything, then ask it again.</p>
+      <p>Ask MLOWTAR anything about the city: where to live, where to eat, what to do tonight, is it safe, should you. It gives you the straight answer first, then deals a New Yorker from the census as your card, prints you a ticket no one else will ever get, and sends you to a room of the museum. Ask it anything, then ask it again.</p>
     </header>
     <div class="mz-file" id="mzFile" hidden></div>
     <div class="mz-filed" id="mzFiled" hidden></div>
     <form class="mz-form" id="mzForm" autocomplete="off">
-      <input id="mzQ" name="q" maxlength="240" placeholder="A street, a worry, a wish." aria-label="Your question for MLOWTAR">
+      <input id="mzQ" name="q" maxlength="240" placeholder="Where to live, where to eat, is it safe, should I…" aria-label="Your question for MLOWTAR">
       <button class="btn" type="submit">ASK</button>
     </form>
     <div class="mz-chips" id="mzChips"></div>
@@ -91,7 +91,7 @@ body = f"""<section class="mz" id="mz">
     <div class="mz-slips" id="mzSlips" aria-live="polite"></div>
   </aside>
 </section>
-<div class="mz-lb" id="mzLb" hidden role="dialog" aria-label="Your ticket"><div><canvas id="mzLbC" width="500" height="1150"></canvas><img alt="Your ticket"><div class="row"><button class="btn" type="button" id="mzSave">SAVE THE TICKET</button><button class="btn" type="button" id="mzLoop">SAVE THE LOOP</button><button class="btn ghost" type="button" data-close>CLOSE</button></div></div></div>
+<div class="mz-lb" id="mzLb" hidden role="dialog" aria-label="Your ticket"><div><canvas id="mzLbC" width="500" height="1150"></canvas><img alt="Your ticket"><div class="mz-lb-scan" id="mzLbScan" hidden><canvas id="mzLbQr" width="396" height="396"></canvas><span>SCAN TO REPLAY<br>this fortune, on any phone</span></div><div class="row"><button class="btn" type="button" id="mzSave">SAVE THE TICKET</button><button class="btn" type="button" id="mzLoop">SAVE THE LOOP</button><button class="btn ghost" type="button" data-close>CLOSE</button></div></div></div>
 <section class="wrap mz-about">
   <div>
     <div class="kicker">WHAT IT IS</div>
@@ -118,7 +118,7 @@ head = (f'<link rel="stylesheet" href="assets/mlowtar/app.css?v={_v("app.css")}"
             "three": "./assets/airport/vendor/three.module.js?v=" + _vp(three),
             # app.js imports these by relative path; the map rewrites the resolved URL to a versioned one, so an
             # edit to a bank reaches visitors at once instead of after Cloudflare's four hour cache floor
-            **{f"./assets/mlowtar/{m}": f"./assets/mlowtar/{m}?v={_v(m)}" for m in ("oracle.js", "match.js", "ticket.js")}}}, separators=(",", ":")) + '</script>')   # an import map value must be a URL: "./" or it is ignored as a bare specifier
+            **{f"./assets/mlowtar/{m}": f"./assets/mlowtar/{m}?v={_v(m)}" for m in ("oracle.js", "answers.js", "match.js", "ticket.js")}}}, separators=(",", ":")) + '</script>')   # an import map value must be a URL: "./" or it is ignored as a bare specifier
 scripts = (f'<script src="assets/qrcode.min.js"></script>\n'
            f'<script>window.MLOWTAR_DECK_URL="assets/mlowtar/deck.json?v={_v("deck.json")}";window.MLOWTAR_SIGN_URL="assets/mlowtar/sign.json?v={_v("sign.json")}";window.MLOWTAR_LIVE=false;document.body.classList.add("mlowtar");</script>\n'
            f'<script type="module" src="assets/mlowtar/app.js?v={_v("app.js")}"></script>')

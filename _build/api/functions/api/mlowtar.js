@@ -7,7 +7,7 @@
  * failure it returns 503 and the booth carries on alone.
  *
  * Body: { messages: [{role:"user"|"assistant", content:"..."}] }  the last one is the question (<= 12 turns).
- * Reply: { ok, mode:"live", theme, fortune:{greet, reading[], omen, closer}, card:{...}, room:{...}, lucky:{train} }
+ * Reply: { ok, mode:"live", theme, fortune:{greet, answer:{head, lines[]}, reading[], omen, closer}, card:{...}, room:{...}, lucky:{train} }
  *
  * Secrets on the Pages project: ANTHROPIC_API_KEY (required). Optional vars: MLOWTAR_MODEL (default
  * claude-opus-5-5), MLOWTAR_EFFORT (default low). D1 `DB` is optional: when bound, the hit_rate table from
@@ -75,15 +75,17 @@ const TOOLS = [
     input_schema: { type: "object", properties: { query: { type: "string" }, limit: { type: "integer", minimum: 1, maximum: 10 } }, required: ["query"], additionalProperties: false }, strict: true },
   { name: "deliver_fortune", description: "Hand the finished slip to the booth. Call this exactly once, last, after you have searched. Every string is spoken by MLOWTAR.",
     input_schema: { type: "object", properties: {
-      greet: { type: "string", description: "one line, the booth waking up to this particular visitor" },
-      reading: { type: "array", items: { type: "string" }, minItems: 2, maxItems: 4, description: "two to four short lines reading the card: name the New Yorker by number and title, say what the family, borough and block mean for the question" },
+      greet: { type: "string", description: "one short line, the booth waking up to this particular visitor" },
+      answer_head: { type: "string", description: "the straight answer to the question in one plain sentence: the neighborhoods, the places, the yes or no. No riddles" },
+      answer_lines: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 5, description: "plain, specific, true lines that back the answer up, each under 35 words" },
+      reading: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 2, description: "one or two short lines tying the card to the answer: name the New Yorker by number and title (a New Yorker from the neighborhood the answer named is best)" },
       omen: { type: "string", description: "the fortune proper, one or two sentences, specific to New York and to the question" },
       card_id: { type: "string", description: "the id of the New Yorker you dealt, from search_new_yorkers" },
       room_id: { type: "string", description: "the id of the room you are sending them to, from search_rooms" },
       room_why: { type: "string", description: "one short line on why that room, in the booth's voice" },
       lucky_train: { type: "string", enum: TRAINS },
       closer: { type: "string", description: "one line to end on" } },
-      required: ["greet", "reading", "omen", "card_id", "room_id", "room_why", "lucky_train", "closer"], additionalProperties: false }, strict: true },
+      required: ["greet", "answer_head", "answer_lines", "reading", "omen", "card_id", "room_id", "room_why", "lucky_train", "closer"], additionalProperties: false }, strict: true },
 ];
 
 const SYSTEM = `You are MLOWTAR, the fortune telling booth on n3wyorkers.com, the website of NEW YORKERS, a census of New York City painted as a networked art collection by the artist MLow (always written MLow, never his legal name). You were built as a prop for ON LOCATION, MLow's walkable movie sets, and you kept talking.
@@ -97,6 +99,8 @@ How the lines are written (this is the house compression, do not loosen it):
 - Deadpan beats drama. Say the absurd thing plainly. No exclamation marks. No questions unless the question is the point.
 - Never these words: utilize, journey, vibe, energy, manifest, universe, align, unlock, elevate, embrace, powerful, truly, simply.
 - A real New York fact (search_city_facts) is worth more than a metaphor. Use one when it fits, lightly, never as a lecture.
+
+ANSWER THE QUESTION FIRST. This is the most important rule. People ask the booth real things ("where should I move in January", "where am I most likely to get robbed", "best pizza in Brooklyn") and a riddle in reply is a failure. answer_head is the straight answer in one sentence a stranger understands on first read: name the neighborhoods, the places, the yes or no. answer_lines are two to five plain, specific, true lines that back it up (rents as a ballpark, trains, real institutions, the season). Respect every constraint in the question: the borough, the month (nobody wants a garden in a January lease hunt), the budget, the person. Only after the answer does the booth do its fortune voice. If a question has no factual answer (a feeling, a fate), answer_head is a clear verdict (YES, NOT YET, YES BUT) with the condition.
 
 The method, every time:
 1. Read the question, then call search_new_yorkers at least once to deal the visitor a card (a real New Yorker from the census). Pick the one whose title, family or hook speaks to the question, not the first result. Search twice with different words if the first set is flat. Never deal a card that was dealt earlier in this conversation.
@@ -144,7 +148,7 @@ export async function onRequestPost({ request, env }) {
     const theme = themeOf(q);
     const model = env.MLOWTAR_MODEL || "claude-opus-5-5", effort = env.MLOWTAR_EFFORT || "medium";
     const messages = turns.map(m => ({ role: m.role, content: m.content }));
-    messages.push({ role: "user", content: `(booth note: the theme detector read this as "${theme}"; the hour in New York is ${new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" })}. Deal the card, pick the room, deliver the slip.)` });
+    messages.push({ role: "user", content: `(booth note: the theme detector read this as "${theme}"; in New York it is ${new Date().toLocaleString("en-US", { timeZone: "America/New_York", weekday: "long", month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}. Answer the question first, then deal the card, pick the room, deliver the slip.)` });
     // the note rides as a second user block so the visitor's own words stay untouched in the history
     const last = messages.splice(messages.length - 2, 2);
     messages.push({ role: "user", content: [{ type: "text", text: last[0].content }, { type: "text", text: last[1].content }] });
@@ -183,7 +187,7 @@ export async function onRequestPost({ request, env }) {
     }
     if (!slip) return json({ ok: false, error: "no slip", say: say.trim().slice(0, 600) }, 502);
     return json({ ok: true, mode: "live", theme, say: say.trim().slice(0, 600),
-      fortune: { greet: slip.greet, reading: slip.reading, omen: slip.omen, closer: slip.closer },
+      fortune: { greet: slip.greet, answer: { kind: "live", head: slip.answer_head, lines: slip.answer_lines || [] }, reading: slip.reading, omen: slip.omen, closer: slip.closer },
       card: { id: dealt[0], title: dealt[1], family: dealt[2], borough: dealt[3], neighborhood: dealt[4], era: dealt[5], thumb: dealt[6], hook: dealt[7] },
       room: { id: sent.id, name: sent.name, area: sent.area, mood: sent.mood, learn: sent.learn, image: sent.image, why: slip.room_why },
       lucky: { train: TRAINS.includes(slip.lucky_train) ? slip.lucky_train : TRAINS[0], number: Number(dealt[0]) } });

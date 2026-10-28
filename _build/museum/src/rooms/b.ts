@@ -6,12 +6,19 @@ import type { Kit } from '../kit';
 import { corridorMounts } from './types';
 import type { RoomDef } from './types';
 import { billboard } from './a';
+import { hero, standIn, hide } from './heroes';
 
 const PI = Math.PI;
 
-/* Liberty as a harbour silhouette: pedestal, lathed robe, crown and torch.
-   A procedural interpretation, never presented as the statue itself. */
-export function liberty(k: Kit, x: number, y: number, z: number, s = 1) {
+/* Liberty in the harbour: the pedestal in code, the figure Gravity Jack's "Statue Of Liberty" (Sketchfab, CC BY 4.0,
+   https://sketchfab.com/3d-models/statue-of-liberty-84094e8d5e724b5c882cf576ca12e44e), the same file the climb rooms
+   use (liberty_statue_v2.glb, up6.ts and up7.ts). 2026-10-28: the lathed robe, sphere head and cone crown read as a
+   green traffic cone with a torch, MLow's words for the old climb figure. At this distance she is only the shell: no
+   crown mask, no stair. The code figure is still built first and hidden when she loads, so a failed load leaves the
+   silhouette. She turns to face `toward` (x, z), the visitor's side of the water. The licence asks for credit: each
+   room that calls this carries the plaque line from `LIBERTY_CREDIT`. */
+export const LIBERTY_CREDIT = 'STATUE MODEL: GRAVITY JACK, CC BY 4.0';
+export function liberty(k: Kit, x: number, y: number, z: number, s = 1, toward: [number, number] = [0, 0]) {
   const copper = k.pbr('patina', X.patina(), 0.4, { roughness: 0.55, metalness: 0.25 }),
     stone = k.pbr('pedestal', X.ashlar(0x9a9488, 6, 3), 0.25),
     warm = k.glow(0xffe2a0);
@@ -19,6 +26,7 @@ export function liberty(k: Kit, x: number, y: number, z: number, s = 1) {
   k.box(5 * s, 5 * s, 5 * s, x, y + 3.6 * s, z, stone);
   k.box(5.6 * s, 0.6 * s, 5.6 * s, x, y + 6.3 * s, z, stone);
   k.box(4 * s, 1.4 * s, 4 * s, x, y + 7.3 * s, z, stone);
+  const mark = k.objects.length;
   const robe = [[1.7, 0], [1.6, 0.6], [1.35, 2.2], [1.15, 3.6], [1.0, 5.2], [0.8, 6.4], [0.62, 7.2]].map((p) => [p[0] * s, p[1] * s]);
   k.lathe(robe, x, y + 8 * s, z, copper, 18);
   for (let kk = 0; kk < 16; kk++) {
@@ -37,8 +45,25 @@ export function liberty(k: Kit, x: number, y: number, z: number, s = 1) {
   k.beam(v(x + 0.7 * s, y + 13.8 * s, z), v(x + 2.2 * s, y + 18.4 * s, z), 0.3 * s, copper, 8);
   k.cyl(0.22 * s, 1.1 * s, x + 2.3 * s, y + 18.9 * s, z, k.flat(0xc9a44a, 0.8, 0.3), 0.3 * s, 8);
   k.sphere(0.4 * s, x + 2.3 * s, y + 19.6 * s, z, warm, 10);
-  k.point(x + 2.3 * s, y + 19.6 * s, z, 0xffd27a, 60, 40);
+  const torch = k.point(x + 2.3 * s, y + 19.6 * s, z, 0xffd27a, 60, 40);
   k.box(0.9 * s, 1.8 * s, 0.35 * s, x - 1.1 * s, y + 12.4 * s, z + 0.6 * s, copper);
+  libertyFigure(k, standIn(k, mark), x, y + 8 * s, z, 12 * s, toward, torch, warm);
+}
+/* The figure alone, for rooms that keep their own base: Gravity Jack's model `height` tall standing at (x, y, z), facing
+   `toward`; `old` (the code figure) is hidden when she loads. The model faces its own -z with the torch at about
+   (3.45, top, 2.85) in its frame (up7.ts FLAME, unrotated); a torch light and glow, if given, move to her flame. */
+export function libertyFigure(k: Kit, old: T.Object3D[], x: number, y: number, z: number, height: number, toward: [number, number], torch?: T.PointLight, warm?: T.Material) {
+  void hero(k, 'liberty_statue_v2', { height }).then((h) => {
+    if (!h) return;
+    hide(old);
+    h.position.set(x, y, z);
+    h.rotation.y = Math.atan2(-(toward[0] - x), -(toward[1] - z));
+    k.add(h);
+    h.updateMatrixWorld(true);
+    const top = new T.Box3().setFromObject(h).max.y, f = h.children[0].localToWorld(new T.Vector3(3.45, 0, 2.85)), u = height / 12;
+    if (torch) torch.position.set(f.x, top - 0.25 * u, f.z);
+    if (warm) k.mesh(new T.SphereGeometry(0.32 * u, 10, 8), warm, f.x, top - 0.45 * u, f.z, true);
+  });
 }
 
 /* ---------------- 03 THE MET ROOF GARDEN ---------------- */
@@ -118,14 +143,14 @@ export const met: RoomDef = {
     k.egg(v(0, 5.4, ZC - L / 2 + 5.5), { id: 'met-roof-closed', title: 'Closed for five years', year: '2025', text: 'In 2025 the Met announced that the roof garden would close for five years starting that October. The museum meanwhile has a new Tang Wing for Modern Art set for completion in 2030.', clue: 'Look at the top of the limestone wall at the far end of the terrace.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.8 });
     // the park below and the city beyond
     k.box(300, 0.4, 200, 0, -7, -140, k.pbr('lawn', X.grass(0x4a6a3b), 0.15));
-    const canopy: T.Matrix4[] = [];
+    /* 2026-10-28: Central Park below the roof was 260 icosahedron blobs on sticks; it is the tree kit now (instanced photo
+       trees, the city's street mix, far LOD at this distance), same places and sizes, the rnd() sequence kept */
     const rnd = X.mulberry(5);
     for (let i = 0; i < 260; i++) {
       const x = (rnd() - 0.5) * 220, z = -68 - rnd() * 60, s = 2.4 + rnd() * 3.4;
-      canopy.push(new T.Matrix4().compose(v(x, -6.5 + s * 0.7, z), new T.Quaternion().setFromEuler(new T.Euler(rnd(), rnd(), rnd())), v(s, s * 0.8, s)));
+      rnd(); rnd(); rnd();
+      if (i % 3 === 0) k.tree(x, -6.8, z, { h: 4 + s * 1.5, r: s * 1.35, seed: 500 + i });   // a third of them, larger: below the parapet the canopy reads as one, and 260 kit trees cost a million triangles
     }
-    k.instances(new T.IcosahedronGeometry(1, 1), k.flat(0x3d5c34, 0, 1), canopy);
-    k.instances(new T.CylinderGeometry(0.2, 0.3, 4, 6), k.flat(0x4a3a2c, 0, 1), canopy.map((m) => { const p = new T.Vector3().setFromMatrixPosition(m); return new T.Matrix4().makeTranslation(p.x, -5, p.z); }));
     k.skyline({ z: -150, count: 34, spacing: 6, scale: 2.2, base: -8, seed: 8, lit: 0.18, glow: 0.35, tint: 0x8a8576, warm: true });
     k.skyline({ z: -200, count: 30, spacing: 8, scale: 2.8, base: -8, seed: 9, lit: 0.12, glow: 0.25, tint: 0x9c968a, rows: 1 });
     const mounts = corridorMounts({ pairs: 10, x: 9.25, z0: 2, pitch: 6.2, y: 3.0, width: 5.4, height: 3.1, inset: 4.4, style: 'gilt' });
@@ -407,7 +432,9 @@ export const ferry: RoomDef = {
     k.egg(v(0, 6.6, -5.7), { id: 'ferry-spirit-of-america', title: 'Which boat is this', year: '2006', text: 'The Molinari class boats, the Guy V. Molinari, the Sen. John J. Marchi and the Spirit of America, are 310 feet long and carry up to 4,427 passengers and 30 vehicles, built to recall the classic New York ferryboats. Spirit of America was delivered on September 16, 2005, but did not make its maiden voyage until April 4, 2006. The bigger Barberi class boats carry 6,000.', clue: 'Look up at the wheelhouse windows.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.8 });
     k.egg(v(0, 11, -22), { id: 'ferry-orange', title: 'Why orange', year: '1926', text: 'The ferries were originally white. In 1926 the colour was changed to a reddish maroon and later to orange, to make the boats easier to see in fog and snow.', clue: 'Look up at the orange funnel.', source: { name: 'The Top 13 Secrets of NYC\'s Staten Island Ferry, Untapped New York', url: 'https://www.untappedcities.com/the-top-13-secrets-of-nycs-staten-island-ferry/' } }, { r: 1.8 });
     // the harbour: Liberty, distant islands, the skyline ahead, buoys
-    liberty(k, -64, -3, -120, 1.6);
+    liberty(k, -64, -3, -120, 1.6, [0, -40]);
+    /* the credit her model's licence asks for, on the port rail beside the Liberty egg */
+    k.sign(LIBERTY_CREDIT, 3.4, 0.42, -12.2, 1.25, -36, '#1a3446', '#fff3d5', 46, PI / 2);
     for (const [x, z] of [[-40, -60], [50, -90], [30, -40]]) k.prop('buoy', x, -2.9, z, { height: 2.4 });
     k.box(60, 6, 30, -64, -3, -125, k.pbr('island', X.ashlar(0x6f7566, 4, 3), 0.1));
     k.skyline({ z: -190, count: 36, spacing: 6.5, scale: 2.6, base: -3, seed: 15, lit: 0.3, glow: 0.9, tint: 0x4a4f5c });

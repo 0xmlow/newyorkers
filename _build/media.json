@@ -1,0 +1,149 @@
+{
+  "_": "The media room (media.html). Newest first. To add a film: append an entry, then `python3 add_media.py <slug>` (encodes HLS 1080 + 720, a poster and a 12 s silent teaser into assets/film/<slug>), then `python3 build_media.py` and build_seo. src is relative to the NEW YORKERS BY MLOW folder. poster_t is the poster frame in seconds; teaser is four [start, end] cuts of about three seconds each, or [] for no teaser. link is the page the film belongs to. No dates and no totals in any copy.",
+  "films": [
+    {
+      "slug": "clouds-and-dirt",
+      "title": "CLOUDS AND DIRT",
+      "kick": "The tower, the skate film",
+      "label": "CLOUDS AND DIRT, a skate film through the tower for Gary Vaynerchuk, by MLow",
+      "blurb": "Twenty five floors built for Gary Vaynerchuk, skated top to bottom by twenty five unlikely riders: a yellow cab out of the lobby, the Kid in the dirt, the Lucky Black Cat over the VeeCon stage, a panda in the Spectacular vault, a worm on Burn Island, a pig that flips the gym at half court. Every floor plays its own song, every floor's trick goes off on the beat, and all twenty five play at once before the Kid lands on the roof among the words in the sky.",
+      "src": "CLOUDS AND DIRT HYPE FILM 2026-10-22/out/CLOUDS AND DIRT v1.mp4",
+      "poster_t": 9.8,
+      "teaser": [[2.0, 5.0], [12.4, 15.4], [98.6, 101.6], [103.4, 106.4]],
+      "link": "garyvee",
+      "link_label": "Skate the tower"
+    },
+    {
+      "slug": "one-day-in-new-york",
+      "title": "One day in New York",
+      "kick": "NEW YORKERS, the film",
+      "label": "One day in New York, a NEW YORKERS film by MLow",
+      "blurb": "One day in the city, told by the New Yorkers in the collection: first light on the bridge, the train, the block, the music, a quiet moment, the Cyclone's first drop. Then the camera pulls back through the whole census until it becomes the seal. Scored to MLow's song Runway In My Mind.",
+      "src": "GLITCH FILM 2026-10-20/out/NEW YORKERS v2 16x9.mp4",
+      "poster_t": 148.6,
+      "teaser": [[77.0, 80.0], [110.5, 113.5], [147.95, 150.95], [179.0, 182.0]],
+      "link": "census",
+      "link_label": "Find your New Yorker"
+    },
+    {
+      "slug": "the-pigeonhole",
+      "title": "Look her in the eye",
+      "kick": "THE PIGEONHOLE, the spot",
+      "label": "THE PIGEONHOLE, the spot, a film by MLow",
+      "blurb": "Every bodega has a pigeon. Nobody looked her in the eye. One minute, shot entirely inside the walkable exhibition: into the pigeon's eye on the drop, a museum inside a pigeon inside a bodega inside a dream, out through the snow globe and back on the N.",
+      "src": "THE PIGEONHOLE HYPE FILM 2026-10-17/THE PIGEONHOLE v2 16x9.mp4",
+      "poster_t": 1.4,
+      "teaser": [[6.9, 9.9], [17.6, 20.6], [31.0, 34.0], [47.8, 50.8]],
+      "link": "pigeonhole",
+      "link_label": "Walk THE PIGEONHOLE"
+    },
+    {
+      "slug": "break-glass",
+      "title": "BREAK GLASS",
+      "kick": "The hype film",
+      "label": "BREAK GLASS, the hype film, by MLow",
+      "blurb": "The evil eye emergency case. Hit the glass three times and it shatters to show one of the Keystone 111, pulled at random, then arm it again.",
+      "src": "BREAK GLASS FILM 2026-10-15/out/BREAK_GLASS_film_v3.mp4",
+      "poster_t": 27.2,
+      "teaser": [[11.9, 14.9], [17.9, 20.9], [25.9, 28.9], [36.9, 39.9]],
+      "link": "breakglass",
+      "link_label": "Break the glass"
+    },
+    {
+      "slug": "skate-the-sets",
+      "title": "SKATE THE SETS",
+      "kick": "The music video",
+      "label": "SKATE THE SETS, a music video by MLow",
+      "blurb": "Kong clears the Warriors gap at Coney Island. Then the cast of ON LOCATION skate each other's New York movie sets, one bar each, and everybody falls on the drop except Sonny.",
+      "src": "SKATE THE SETS FILM 2026-10-12/out/SKATE THE SETS v3 16x9.mp4",
+      "poster_t": 2.0,
+      "teaser": [[1, 4], [33, 36], [36.5, 39.5], [20.5, 23.5]],
+      "link": "movies",
+      "link_label": "Skate the sets yourself"
+    },
+    {
+      "slug": "on-location",
+      "title": "ON LOCATION, the trailer",
+      "kick": "Now showing",
+      "label": "ON LOCATION, the trailer, a film by MLow",
+      "blurb": "Two minutes through the sets: the scenes New York gave the movies, rebuilt as a walkable gallery and recast with NEW YORKERS.",
+      "src": "ON LOCATION HYPE FILM 2026-10-10/out/ON LOCATION v2 16x9.mp4",
+      "poster_t": 12,
+      "teaser": [[9, 12], [30, 33], [42, 45], [99, 102]],
+      "link": "movies",
+      "link_label": "Walk ON LOCATION"
+    },
+    {
+      "slug": "the-marks",
+      "title": "THE MARKS, the trailer",
+      "kick": "One night in the city",
+      "label": "THE MARKS, the trailer, a film by MLow",
+      "blurb": "One night in the city with THE MARKS: the uncounted New Yorkers who came back with a tally on them, and the nine era closers.",
+      "src": "MARKS PROMO 2026-10-09/THE MARKS 16x9.mp4",
+      "poster_t": 18.45,
+      "teaser": [[19.33, 22.33], [22.33, 25.33], [25.33, 28.33], [28.33, 31.33]],
+      "link": "marks",
+      "link_label": "See THE MARKS"
+    },
+    {
+      "slug": "hall-of-fame",
+      "title": "THE HONORARIES",
+      "kick": "Room 183, the Hall of Fame",
+      "label": "THE HONORARIES, a film of room 183, the Hall of Fame, by MLow",
+      "blurb": "A walk through room 183 of the museum, the Hall of Fame, where every honorary portrait MLow has made hangs in one rotunda.",
+      "src": "HONORARIES HYPE FILM 2026-10-05/THE HONORARIES 16x9 master.mp4",
+      "poster_t": 21,
+      "teaser": [[8, 11], [16, 19], [20, 23], [36, 39]],
+      "link": "honoraries",
+      "link_label": "Meet the honoraries"
+    },
+    {
+      "slug": "mlow-international",
+      "title": "MLOW INTERNATIONAL",
+      "kick": "Now boarding",
+      "label": "MLOW INTERNATIONAL, the film, by MLow",
+      "blurb": "Thirty seconds through Terminal B BLOSSOM: the drop off at golden hour, in under the dome, the gallery concourse of fLOWers, the seven blossoms and the evil eye from the air.",
+      "src": "MLOW INTERNATIONAL HYPE FILM 2026-10-04/MLOW INTERNATIONAL 16x9.mp4",
+      "poster_t": 24,
+      "teaser": [[9.5, 12.5], [15, 18], [19, 22], [23, 26]],
+      "link": "airport",
+      "link_label": "Walk the terminal"
+    },
+    {
+      "slug": "hall-new-york-lost",
+      "title": "THE HALL NEW YORK LOST",
+      "kick": "Room 180, the invitation",
+      "label": "THE HALL NEW YORK LOST, the museum invitation, by MLow",
+      "blurb": "The old Penn Station waiting room, rebuilt as room 180 of the museum and hung with the census. The film that opens the door.",
+      "src": "CENSUS HALL 2026-10-01/film/THE HALL NEW YORK LOST.mp4",
+      "poster_t": 2.3,
+      "teaser": [[0, 3], [30, 33], [47, 50], [8, 11]],
+      "link": "museum",
+      "link_label": "Enter the museum"
+    },
+    {
+      "slug": "city-is-the-art",
+      "title": "THE CITY IS THE ART",
+      "kick": "The opening film",
+      "label": "THE CITY IS THE ART, a film by MLow",
+      "blurb": "The film NEW YORKERS opened with: a living art census of New York City, one character at a time.",
+      "src": "DREAMINA HYPE FILM 2026-10-01/NEW YORKERS THE CITY IS THE ART.mp4",
+      "poster_t": 11.9,
+      "teaser": [],
+      "link": "census",
+      "link_label": "Open the census"
+    },
+    {
+      "slug": "roll-call",
+      "title": "THE HONORARIES ROLL CALL",
+      "kick": "Every name, called",
+      "label": "NEW YORKERS THE HONORARIES ROLL CALL, a film by MLow",
+      "blurb": "The roll call of the honoraries: the real New Yorkers MLow has brought into the census, one after another.",
+      "src": "HONORARIES HYPE FILM 2026-09-26/NEW YORKERS THE HONORARIES ROLL CALL.mp4",
+      "poster_t": 10.5,
+      "teaser": [],
+      "link": "honoraries",
+      "link_label": "The honoraries"
+    }
+  ]
+}

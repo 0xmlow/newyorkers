@@ -5,6 +5,7 @@ import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { standIn, hide } from './heroes';
 
 const PI = Math.PI;
 
@@ -276,7 +277,8 @@ export const moma: RoomDef = {
     k.sky({ top: 0x6f9ad8, horizon: 0xeef0ec, ground: 0x6a6a66, fog: 0.002, sun: { az: 3.4, el: 0.8, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xf2f6ff, 0x5a5a58, 0.95);
     k.sun(0xfff2dc, 2.4, 20, 80, 20, true, 80);
-    const marble = k.pbr('mmMarble', X.marble(0xd8d4cc, 0x9a948a, 15), 0.6, { roughness: 0.35 }),
+    /* 2026-10-28: the marble tint was 0xd8d4cc and under the noon sun the floor read as snow; now about 0.65 albedo */
+    const marble = k.pbr('mmMarble', X.marble(0xa8a49c, 0x77736a, 15), 0.6, { roughness: 0.28 }),
       granite = k.pbr('mmGranite', X.ashlar(0x6a6a66, 220, 3), 0.25),
       water = k.flat(0x1e3a44, 0.2, 0.1, { transparent: true, opacity: 0.85 }),
       glass = k.glass(0xdcecf6, 0.14, 0.04),
@@ -287,9 +289,14 @@ export const moma: RoomDef = {
       pave = k.pbr('mmPave', X.terrazzo(0xc8c4bc, 103), 0.5, { roughness: 0.3 }),
       birchBark = k.flat(0xe8e4dc, 0, 0.9), birchLeaf = k.flat(0x8ab04a, 0, 0.9);
     // 54th Street and the granite wall, the museum's glass flanks, the towers over it
-    street(k, { w: 20, len: 140, z: 30, x: 0 });
-    blockFront(k, { x: -46, z0: 90, count: 10, face: 1, seed: 221, h: [18, 40] });
     const GW = 60, GD = 34, GZ = 8;
+    /* 2026-10-28: 54th Street was laid with street(), which only runs along z, so a road with its double yellow line
+       ran north to south straight through the sunken garden and buried the plinths. It now runs east to west, north
+       of the garden's screen: a pavement, the roadway and the far pavement. */
+    { const asph = k.pbr('asphaltS', X.asphalt(0x24282d), 0.11, { roughness: 0.62, metalness: 0.12 }), pav = k.pbr('sidewalkS', X.pavers(0x8e8b84, 5), 0.42), yl = k.flat(0xe6a626, 0, 0.6);
+      k.box(140, 0.28, 5, 0, 0, GZ + 3, pav); k.box(140, 0.3, 20, 0, -0.15, GZ + 15.5, asph); k.box(140, 0.28, 5, 0, 0, GZ + 28, pav);
+      for (const dz of [-0.14, 0.14]) k.box(134, 0.012, 0.09, 0, 0.01, GZ + 15.5 + dz, yl); }
+    blockFront(k, { x: -46, z0: 90, count: 10, face: 1, seed: 221, h: [18, 40] });
     // the north edge on 54th Street: since 2004 a 14 foot aluminium screen, before that an 18 foot grey brick wall with ivy
     k.box(GW + 8, 4.6, 0.8, 0, 2.3, GZ, k.flat(0xb8bec4, 0.85, 0.35));
     k.block(-GW / 2 - 4, -2.4, GZ - 0.6, GZ + 0.6); k.block(2.4, GW / 2 + 4, GZ - 0.6, GZ + 0.6);
@@ -302,14 +309,21 @@ export const moma: RoomDef = {
     for (const [x, z, w, h] of [[-50, -60, 30, 120], [40, -70, 34, 160], [0, -90, 40, 200]]) k.box(w as number, h as number, w as number, x as number, (h as number) / 2, z as number, k.pbr('mmTower', X.windows(222, 0.25, 0x6a7a8a, false), 0.11, { emissive: 0xffffff, emissiveIntensity: 0.4, roughness: 0.3, metalness: 0.6, stretch: 0.42 }));
     // the pools with their bridges, the trees, the bronzes on plinths, the benches
     const Y = -0.85;
-    for (const [x, len] of [[-12, 29], [17, 15]]) { k.box(len as number, 0.2, 5, x as number, Y + 0.05, GZ - GD / 2 + 2, k.flat(0x141416, 0.1, 0.4)); k.box((len as number) - 0.6, 0.12, 4.4, x as number, Y + 0.16, GZ - GD / 2 + 2, water); k.block((x as number) - (len as number) / 2, (x as number) + (len as number) / 2, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5); }
+    for (const [x, len] of [[-12, 29], [17, 15]]) { k.box(len as number, 0.2, 5, x as number, Y + 0.05, GZ - GD / 2 + 2, k.flat(0x141416, 0.1, 0.4)); k.water({ y: Y + 0.2, color: 0x1c323c, w: (len as number) - 0.6, d: 4.4, x: x as number, z: GZ - GD / 2 + 2, amp: 0.03 }); void water; k.block((x as number) - (len as number) / 2, (x as number) + (len as number) / 2, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5); }
     for (const x of [-20, -6, 17]) { k.box(1.6, 0.14, 5.2, x, Y + 0.32, GZ - GD / 2 + 2, marble); k.keepOut.splice(0, 0); }
     k.block(-26.5, -21, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5); k.block(-19, -7, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5); k.block(-5, 2.5, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5); k.block(9.5, 16, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5); k.block(18, 24.5, GZ - GD / 2 - 0.5, GZ - GD / 2 + 4.5);
     const rnd = X.mulberry(75);
-    for (let i = 0; i < 14; i++) { const x = -26 + rnd() * 52, z = GZ - GD + 3 + rnd() * 8; k.cyl(0.12, 6 + rnd() * 3, x, Y + 3, z, birchBark, 0.09, 8); for (let j = 0; j < 4; j++) k.sphere(0.9 + rnd() * 0.6, x + (rnd() - 0.5) * 1.6, Y + 5 + j * 0.9 + rnd(), z + (rnd() - 0.5) * 1.6, birchLeaf, 7); k.keepOut.push({ x, z, r: 0.4 }); }
+    /* 2026-10-28: the birch grove was code: a white stick and four green spheres each, the blob trees in the shots. It is
+       now the tree kit (instanced photo trees; no birch in the kit, so the fine leaved honey locust), same places;
+       the old calls to rnd() are kept so everything seeded after it lands where it did. */
+    for (let i = 0; i < 14; i++) { const x = -26 + rnd() * 52, z = GZ - GD + 3 + rnd() * 8, h = 6 + rnd() * 3; for (let j = 0; j < 4; j++) { rnd(); rnd(); rnd(); rnd(); } k.tree(x, Y, z, { species: 'locust', h: h * 0.75, r: 1.6, seed: 75 + i }); k.keepOut.push({ x, z, r: 0.4 }); }
+    void birchBark; void birchLeaf;
     k.tree(-22, Y, GZ - 8, { kind: 'round', h: 6, r: 5, leaf: 0x5a3a4a, seed: 9 });
     const plinths: [number, number][] = [[-4, GZ - 8], [8, GZ - 8], [0, GZ - 24], [24, GZ - 12], [-26, GZ - 22]];
-    plinths.forEach(([x, z], i) => { k.box(1.6, 0.5, 1.6, x, Y + 0.25, z, white); if (i % 2) { k.mesh(new T.TorusKnotGeometry(0.5, 0.16, 64, 10), bronze, x, Y + 1.4, z); } else { k.box(0.5, 1.7, 0.4, x, Y + 1.35, z, bronze); k.sphere(0.22, x, Y + 2.4, z, bronze, 10); k.box(0.16, 0.9, 0.16, x + 0.4, Y + 1.4, z, bronze).rotation.z = -0.6; } k.keepOut.push({ x, z, r: 1.3 }); });
+    /* 2026-10-28: the torus knots and box figures on the plinths are the stand ins for the kit's own sculpture props, a
+       bronze figure, two Noguchi stones and the equestrian; hidden when each loads. */
+    const garden: [string, number][] = [['bronze_figure', 2.0], ['noguchi_stone_1', 1.3], ['equestrian', 2.4], ['noguchi_stone_3', 1.2], ['noguchi_stone_2', 1.5]];
+    plinths.forEach(([x, z], i) => { k.box(1.6, 0.5, 1.6, x, Y + 0.25, z, white); const sm = k.objects.length; if (i % 2) { k.mesh(new T.TorusKnotGeometry(0.5, 0.16, 64, 10), bronze, x, Y + 1.4, z); } else { k.box(0.5, 1.7, 0.4, x, Y + 1.35, z, bronze); k.sphere(0.22, x, Y + 2.4, z, bronze, 10); k.box(0.16, 0.9, 0.16, x + 0.4, Y + 1.4, z, bronze).rotation.z = -0.6; } k.keepOut.push({ x, z, r: 1.3 }); const old = standIn(k, sm); void Promise.resolve(k.prop(garden[i][0], x, Y + 0.5, z, { height: garden[i][1], rotY: [0.4, 0, PI / 2, 1.2, 2.2][i] })).then((o) => { if (o) hide(old); }); });
     for (const x of [-10, 4, 18]) k.bench(x, GZ - 3, 0, k.pbr('mmBench', X.planks(0x4a4a48, 3, 223), 1.2), steel, 2.4);
     k.crowd([v(-24, Y, GZ - 4), v(-4, Y, GZ - 12), v(10, Y, GZ - 26), v(26, Y, GZ - 6)], 20, { seed: 87, speed: 0.4, spread: 2, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a, 0x33477f] });
     k.censusWall({ x: 0, y: 2.0, z: GZ - 0.42, rotY: PI, cols: 40, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(5300, 120), pieces: ctx.all, backing: granite });

@@ -47,7 +47,8 @@ export class Fx {
     const hideLinesAndPoints = g._overrideVisibility.bind(g);
     g._overrideVisibility = () => {
       hideLinesAndPoints();
-      g.scene.traverse((o) => { if ((o as T.Sprite).isSprite && o.visible) { o.visible = false; g._visibilityCache.push(o); } });
+      /* and anything marked noAO (2026-10-28: the cast's mid band, hundreds of small bodies the occlusion cannot resolve anyway) */
+      g.scene.traverse((o) => { if (((o as T.Sprite).isSprite || o.userData.noAO) && o.visible) { o.visible = false; g._visibilityCache.push(o); } });
     };
     /* `?fx=ao` renders the occlusion buffer on its own. Worth having: the
        effect is meant to be felt rather than seen, so the only honest way to

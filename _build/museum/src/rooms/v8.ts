@@ -6,10 +6,12 @@
    Tenth Avenue end. Moving things are instanced rigs or single groups on k.ticks, and nothing
    moves when ctx.reduced is set. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { standIn, hide } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -19,13 +21,13 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const body = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h, z);
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(skin, 0, 0.7), x, y + (1.22 * h + 0.13), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 /* a small figure with a head, as one merged geometry for instancing */
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 const canvasTex = (c: HTMLCanvasElement) => { const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; return t; };
 const mkCanvas = (w: number, h: number) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
@@ -263,7 +265,11 @@ export const palmcourt: RoomDef = {
     const palm = (x: number, z: number, h = 5.4) => {
       k.lathe([[0, 0], [0.62, 0], [0.72, 0.12], [0.6, 0.35], [0.78, 0.9], [0.86, 1.0], [0, 1.0]], x, 0, z, pot, 20);
       k.cyl(0.7, 0.04, x, 0.99, z, k.flat(0x3a2c20, 0, 1));
+      /* 2026-10-28: the procedural kentia is the stand in for the kit's cp_palm.glb, hidden when it loads */
+      const pm = k.objects.length;
       kentia(k, x, 0.95, z, h, Math.round(x * 7 + z * 3 + 500), frond, stalk);
+      const old = standIn(k, pm);
+      void Promise.resolve(k.prop('cp_palm', x, 0.95, z, { height: h, rotY: (x * 7 + z * 3) % 6.28 })).then((o) => { if (o) hide(old); });
       k.keepOut.push({ x, z, r: 1.0 });
     };
     for (const s of [-1, 1]) { for (const z of [-8.25, 0.75, 5.25]) palm(s * 8.7, z, 5.2 + rnd() * 0.8); palm(s * 8.6, -12.6, 5.8); palm(s * 8.6, 13.0, 5.6); }
@@ -332,8 +338,8 @@ export const palmcourt: RoomDef = {
       const bench = new T.Vector3(0, 0, -0.75).applyAxisAngle(new T.Vector3(0, 1, 0), PI * 0.8);
       k.box(0.9, 0.48, 0.38, PX + bench.x, 0.24, PZ + bench.z, lacquer).rotation.y = PI * 0.8;
       const pianist = new T.Group(); pianist.position.set(PX + bench.x, 0.48, PZ + bench.z); pianist.rotation.y = PI * 0.8 + PI;
-      const pb = new T.Mesh(new T.CapsuleGeometry(0.2, 0.46, 3, 8), k.flat(0x111114, 0, 0.8)); pb.position.y = 0.43; pianist.add(pb);
-      const ph = new T.Mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0x8d5a3b, 0, 0.7)); ph.position.y = 0.96; pianist.add(ph);
+      const pb = new T.Mesh(new T.CapsuleGeometry(0.2, 0.46, 3, 8), k.flat(0x111114, 0, 0.8)); pb.position.y = 0.43; pianist.add(personTag(pb, 'seat', 1.6));
+      const ph = new T.Mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0x8d5a3b, 0, 0.7)); ph.position.y = 0.96; pianist.add(personTag(ph, 'part'));
       k.add(pianist);
       if (!ctx.reduced) k.ticks.push((t) => { pianist.rotation.z = 0.06 * Math.sin(t * 1.9); pianist.rotation.x = 0.05 * Math.sin(t * 0.95 + 1); });
       k.keepOut.push({ x: PX, z: PZ + 0.6, r: 1.6 });

@@ -33,7 +33,7 @@ export const mad: RoomDef = {
     k.mesh(new T.RingGeometry(12, 16, 64), waterM, 0, 0.55, 40).rotation.x = -PI / 2;
     k.block(-16, 16, 24, 56);
     const cars: T.Mesh[] = [];
-    for (let i = 0; i < 16; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.4, 1.8), i % 3 ? k.flat(0xf1c531, 0.2, 0.5) : k.flat(0x1a1a1a, 0.4, 0.4), 0, 0.7, 0, true); c.userData.a = (i / 16) * PI * 2; cars.push(c); }
+    for (let i = 0; i < 16; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.4, 1.8), i % 3 ? k.flat(0xf1c531, 0.2, 0.5) : k.flat(0x1a1a1a, 0.4, 0.4), 0, 0.7, 0, true); c.userData.a = (i / 16) * PI * 2; c.userData.car = true; cars.push(c); }
     if (!ctx.reduced) k.ticks.push((t) => cars.forEach((c) => { const a = c.userData.a + t * 0.25; c.position.set(Math.cos(a) * 30, 0.7, 40 + Math.sin(a) * 30); c.rotation.y = -a; }));
     k.box(120, 0.4, 100, 80, -0.2, -30, k.pbr('madLawn', X.grass(0x4a7a3a, 160), 0.06));
     const rnd = X.mulberry(97); for (let i = 0; i < 24; i++) k.tree(40 + rnd() * 80, 0, -70 + rnd() * 80, { kind: 'round', h: 8 + rnd() * 6, r: 3 + rnd() * 2, leaf: 0x4a7a3c, seed: i });

@@ -5,6 +5,7 @@ import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero } from './heroes';
 
 const PI = Math.PI;
 
@@ -390,10 +391,40 @@ export const gantry: RoomDef = {
       warm = k.glow(0xffe0b0),
       dark = k.flat(0x111216, 0.5, 0.6),
       glassT = k.pbr('gpGlass', X.windows(139, 0.55, 0x3a4a6a, false), 0.11, { emissive: 0xffffff, emissiveIntensity: 1.2, roughness: 0.3, metalness: 0.5, stretch: 0.42 });
-    // the river and Midtown across it, the LIC towers behind
+    // the river, and Midtown across it as the real towers in their real order from Long Island City (2026-10-28):
+    // the UN Secretariat dead ahead with Trump World Tower beside it, Chrysler, One Vanderbilt and the Empire State
+    // to the south (left), Citicorp and 432 Park to the north (right). A dim generic row behind fills the gaps.
     k.water({ y: -1.6, color: 0x14243a, w: 700, d: 500, z: -200, amp: 0.8 });
-    k.skyline({ z: -330, count: 46, spacing: 8, scale: 5.2, base: -1.6, seed: 140, lit: 0.55, glow: 1.6, tint: 0x1e2434, spires: true });
-    k.skyline({ z: -380, count: 40, spacing: 10, scale: 4.2, base: -1.6, seed: 141, lit: 0.5, glow: 1.3, tint: 0x2a3040, rows: 1 });
+    k.skyline({ z: -600, count: 60, spacing: 9, scale: 4.6, base: -1.6, seed: 141, lit: 0.4, glow: 0.9, tint: 0x232a38, rows: 1, spires: false });
+    k.skyline({ z: -520, count: 30, spacing: 12, scale: 3.4, base: -1.6, seed: 143, lit: 0.45, glow: 1.0, tint: 0x1e2434, rows: 1, spires: false, x: -40 });
+    const facade = (seed: number, lit: number, tint: number, warm = true, glow = 1.15) => k.pbr('gpT' + seed, X.windows(seed, lit, tint, warm), 0.11, { emissive: 0xffffff, emissiveIntensity: glow, roughness: 0.35, metalness: 0.45, stretch: 0.42 });
+    const roofDark = k.flat(0x14171d, 0.3, 0.7), crownW = k.glow(0xe8eeff), crownG = k.glow(0xffe2a0), crownR = k.glow(0xff5a4a), spireM = k.flat(0x9aa4b0, 0.8, 0.3);
+    const LS = 0.5; // the towers at half size: at this distance true size reads as next door
+    const tower = (x: number, z: number, tiers: number[][], m: T.Material) => { let y = -1.6; for (const [w0, d0, h0] of tiers) { const w = w0 * LS, d = d0 * LS, h = h0 * LS; k.box(w, h, d, x, y + h / 2, z, m); k.box(w + 0.6, 0.6, d + 0.6, x, y + h, z, roofDark); y += h; } return y; };
+    // the UN Secretariat: the green glass slab broadside to Queens, and Trump World Tower beside it
+    tower(-8, -340, [[87, 22, 156]], facade(201, 0.32, 0x2a4a54, false, 1.0));
+    k.box(87.4 * LS, 1.5, 22.4 * LS, -8, 156 * LS - 1.6, -340, roofDark);
+    tower(46, -350, [[42, 42, 262]], facade(202, 0.3, 0x3a3428, true, 1.0));
+    // Chrysler: setbacks, the stacked sunburst arches lit white, the needle
+    const cy = tower(-62, -430, [[58, 58, 160], [46, 46, 40], [38, 38, 30]], facade(203, 0.42, 0x2a2e38));
+    for (let i = 0; i < 7; i++) { const r0 = (17 - i * 2.3) * LS; k.cyl(r0, 6 * LS, -62, cy + (3 + i * 6) * LS, -430, i % 2 ? crownW : spireM, r0 - 2.2 * LS, 4); }
+    k.cyl(0.6, 40 * LS, -62, cy + 62 * LS, -430, spireM, 0.12, 6);
+    // One Vanderbilt: four tapering tiers and its spire
+    const vy = tower(-98, -462, [[56, 56, 150], [48, 48, 130], [38, 38, 80], [26, 26, 50]], facade(204, 0.38, 0x2c3442, false));
+    k.cyl(0.8, 20 * LS, -98, vy + 10 * LS, -462, spireM, 0.15, 6);
+    // the Empire State Building: the setback base, the shaft, the lit crown and the mast
+    const ey = tower(-180, -545, [[130, 62, 26], [96, 54, 60], [66, 44, 230], [36, 30, 40]], facade(205, 0.45, 0x2e2c30));
+    for (let i = 0; i < 3; i++) k.box((30 - i * 6) * LS, 8 * LS, (24 - i * 5) * LS, -180, ey + (4 + i * 8) * LS, -545, i === 1 ? crownR : crownG);
+    k.cyl(1.5, 18 * LS, -180, ey + 33 * LS, -545, crownG, 1, 8);
+    k.cyl(0.5, 60 * LS, -180, ey + 72 * LS, -545, spireM, 0.15, 6);
+    // Citicorp: the square tower and its 45 degree crown, lit, facing south
+    const ty = tower(104, -440, [[48, 48, 230]], facade(206, 0.4, 0x30343c, false));
+    const wedge = new T.Shape(); wedge.moveTo(-12, 0); wedge.lineTo(12, 0); wedge.lineTo(12, 24); wedge.closePath();
+    const wg = new T.ExtrudeGeometry(wedge, { depth: 24, bevelEnabled: false }); wg.translate(0, 0, -12);
+    k.mesh(wg, k.flat(0xd8dde6, 0.2, 0.5, { emissive: 0xc8d4ff, emissiveIntensity: 0.55 }), 104, ty, -440);
+    // 432 Park: the thin square grid, the tallest thing in the view
+    tower(168, -515, [[30, 30, 425]], facade(207, 0.35, 0x2a2e36, true, 0.9));
+    // Long Island City behind the park
     for (const [x, z, w, h] of [[-60, 70, 26, 110], [-20, 90, 30, 140], [30, 80, 24, 100], [70, 70, 28, 120]]) k.box(w as number, h as number, w as number, x as number, (h as number) / 2, z as number, glassT);
     k.box(300, 0.4, 120, 0, -0.2, 40, lawn);
     k.box(300, 0.3, 30, 0, 0.05, -4, pave);
@@ -411,30 +442,40 @@ export const gantry: RoomDef = {
       k.block(gx - 9.8, gx - 8.2, -21, -7); k.block(gx + 8.2, gx + 9.8, -21, -7);
       for (const s of [-1, 1]) k.point(gx + s * 6, 20, -14, 0xffe0b0, 30, 24);
     }
-    // the neon sign on its frame, blinking slowly
-    const SX = 60, SZ = 30;
-    for (const dx of [-14, 14]) k.box(0.6, 20, 0.6, SX + dx, 10, SZ, iron);
-    for (let y = 4; y < 20; y += 4) k.box(28, 0.3, 0.3, SX, y, SZ, iron);
-    const bottle = k.mesh(new T.BoxGeometry(24, 6, 0.3), dark, SX, 15, SZ - 0.2);
-    void bottle;
-    k.sign('Pepsi-Cola', 22, 4, SX, 15, SZ - 0.4, '#141416', '#ff4a4a', 200, PI, { border: true });
+    // the neon sign: moved from inland to the north end of the waterfront (2026-10-28), where it really stands, on its
+    // steel frame at real size (about 36 by 18 m), turned toward the park so it reads in the opening frame. Script in
+    // red neon italic (the sign helper takes Helvetica or Georgia, so no script face) over an open lattice, a glow behind it, its light on the water, a slow flicker.
+    // Every piece is placed in world space: static meshes are merged at build time by their own world matrix, so a
+    // parent group's turn would be lost (it was, once: the frame stood unturned in front of the letters).
+    const SX = 126, SZ = -4, RY = 1.15, cR = Math.cos(RY), sR = Math.sin(RY);
+    const P = (lx: number, y: number, lz: number) => v(SX + lx * cR + lz * sR, y, SZ - lx * sR + lz * cR);
+    const place = (m: T.Mesh, lx: number, y: number, lz: number, rot = 0) => { m.position.copy(P(lx, y, lz)); m.rotation.y = RY + rot; return m; };
+    for (const dx of [-17, -6, 6, 17]) place(k.box(0.7, 22, 0.7, 0, 0, 0, iron), dx, 11, 0.6);
+    for (let y = 6; y <= 22; y += 4) place(k.box(35, 0.35, 0.35, 0, 0, 0, iron), 0, y, 0.6);
+    for (let i = 0; i < 8; i++) { const x0 = -17 + i * 4.25; k.beam(P(x0, 6, 0.6), P(x0 + 4.25, 22, 0.6), 0.1, iron, 4); }
+    place(k.mesh(new T.PlaneGeometry(36, 13), k.glow(0xff2a2a, 0.06), 0, 0, 0, true), 0, 15, -0.1, PI);
+    const script = place(k.sign('Pepsi-Cola', 34, 11, 0, 0, 0, 'transparent', '#ff3b30', 250, 0, { font: 'italic 800' }) as T.Mesh, 0, 15, -0.3, PI);
     const tubes: T.Mesh[] = [];
-    for (let i = 0; i < 3; i++) tubes.push(k.mesh(new T.BoxGeometry(24.4, 0.14, 0.14), neon, SX, 12.4 + i * 2.6, SZ - 0.5, true));
-    const signLight = k.point(SX, 15, SZ - 6, 0xff4a4a, 120, 50);
-    if (!ctx.reduced) k.ticks.push((t) => { const on = Math.sin(t * 0.8) > -0.85 ? 1 : 0.15; tubes.forEach((m) => ((m.material as T.MeshBasicMaterial).opacity = on)); signLight.intensity = 120 * on; });
+    for (const [w, h, x, y] of [[35, 0.22, 0, 21.2], [35, 0.22, 0, 8.8], [0.22, 12.6, -17.4, 15], [0.22, 12.6, 17.4, 15]]) tubes.push(place(k.mesh(new T.BoxGeometry(w, h, 0.22), k.glow(0xff3a3a), 0, 0, 0, true), x, y, -0.35));
+    const signLight = k.point(SX - 16, 12, SZ - 6, 0xff3a30, 160, 70), waterLight = k.point(SX - 20, 1, SZ - 22, 0xff2a20, 60, 40);
     tubes.forEach((m) => ((m.material as T.MeshBasicMaterial).transparent = true));
+    (script.material as T.MeshBasicMaterial).transparent = true;
+    if (!ctx.reduced) k.ticks.push((t) => { const flick = Math.sin(t * 0.6) > -0.93 ? 1 : 0.25; const hum = 0.92 + 0.08 * Math.sin(t * 9.7) * Math.sin(t * 2.3); const on = flick * hum; tubes.forEach((m) => ((m.material as T.MeshBasicMaterial).opacity = on)); (script.material as T.MeshBasicMaterial).opacity = 0.35 + 0.65 * on; signLight.intensity = 160 * on; waterLight.intensity = 60 * on; });
+    for (const dx of [-17, -6, 6, 17]) { const q = P(dx, 0, 0.6); k.keepOut.push({ x: q.x, z: q.z, r: 1.2 }); }
     const ferry = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(8, 3, 26), k.flat(0xe6e2da, 0.2, 0.6)); hull.position.y = 1.2; ferry.add(hull); const cab = new T.Mesh(new T.BoxGeometry(6, 3, 16), k.flat(0x2b4a8a, 0.2, 0.6)); cab.position.y = 4; ferry.add(cab); for (let i = -6; i <= 6; i += 2) { const w = new T.Mesh(new T.PlaneGeometry(1.4, 1), warm); w.position.set(3.05, 4, i); w.rotation.y = PI / 2; ferry.add(w); } k.add(ferry);
-    if (!ctx.reduced) k.rider(ferry, k.spline([v(-200, -1.2, -100), v(0, -1.2, -80), v(200, -1.2, -110), v(0, -1.2, -140)], true), 5, 0);
+    /* 2026-10-28: the box ferry becomes the hero ferry (h_ferry, nose to +z as k.rider points it); a failed load keeps the box */
+    void hero(k, 'h_ferry', { length: 26 }).then((h) => { if (!h) return; for (const m of ferry.children) m.visible = false; h.position.y = -0.9; ferry.add(h); });
+    { const route = k.spline([v(-200, -1.2, -100), v(0, -1.2, -80), v(200, -1.2, -110), v(0, -1.2, -140)], true); if (!ctx.reduced) k.rider(ferry, route, 5, 0); else ferry.position.copy(route.getPointAt(0.2)); } // reduced motion: on the river, not at the park's origin
     k.crowd([v(-100, 0, -4), v(-40, 0, -6), v(0, 0, -4), v(50, 0, -6), v(100, 0, -4)], 30, { seed: 57, speed: 0.9, spread: 5, animate: !ctx.reduced });
     // the fish cleaning table on the fishing pier
     const fishTable = k.box(0.8, 0.9, 1.8, 62.4, 0.95, -61, steel);
     const W = 'https://en.wikipedia.org/wiki/Gantry_Plaza_State_Park', WN = 'Gantry Plaza State Park, Wikipedia';
     k.egg(v(-30, 18, -14), { id: 'gantry-transfer-bridges', title: 'Railcars on barges', year: '1925', text: 'The gantries lifted and lowered contained apron transfer bridges, built in 1925 to the James B. French patent. Freight railcars rolled off the Long Island Rail Road onto car floats, barges that carried them across the river between Queens and Manhattan.', clue: 'Look up into the frame of the first gantry.', source: { name: WN, url: W } }, { r: 3 });
-    k.egg(v(SX, 15, SZ - 1), { id: 'gantry-pepsi-sign', title: 'Moved off the roof', year: '1939', text: 'The neon sign is 120 feet long and 60 feet high, made in 1939 by the General Outdoor Advertising Company and rebuilt in 1993 by Artkraft Strauss. It stood on top of the Pepsi bottling plant until it was moved into the park in 2009, and became a city landmark on April 12, 2016.', clue: 'Look at the red neon on its steel frame.', source: { name: WN, url: W } }, { r: 3.5 });
+    k.egg(v(SX - 10, 14, SZ - 6), { id: 'gantry-pepsi-sign', title: 'Moved off the roof', year: '1939', text: 'The neon sign is 120 feet long and 60 feet high, made in 1939 by the General Outdoor Advertising Company and rebuilt in 1993 by Artkraft Strauss. It stood on top of the Pepsi bottling plant until it was moved into the park in 2009, and became a city landmark on April 12, 2016.', clue: 'Look at the red neon on its steel frame.', source: { name: WN, url: W } }, { r: 3.5 });
     k.egg(v(-20, 1.6, -86.4), { id: 'gantry-final-scenes', title: 'Two final scenes', year: '2005', text: 'Two films from 2005 end here. The last scene of Munich was shot on the park with the pier and the sign in view, and The Interpreter used the same spot for its closing goodbye. The park also turns up in The Olsen Gang in a Fix of 1969.', clue: 'Walk to the end of the longest pier and turn round.', source: { name: WN, url: W } }, { r: 2 });
     k.egg(fishTable, { id: 'gantry-fishing-pier', title: 'The cleaning table', text: 'Of the park\'s four piers, one is a fishing pier with its own fish cleaning table. Fishing and crabbing are allowed at pier 4, under state conservation rules, and the park runs a program called Fishing at the Gantries.', clue: 'Find the steel table out on the pier with the lounge chairs.', source: { name: 'Gantry Plaza State Park, New York State Parks', url: 'https://parks.ny.gov/parks/gantryplaza/details.aspx' } }, { r: 1.4 });
     k.egg(v(-30, 0.6, 0), { id: 'gantry-freight-branch', title: 'The buried railroad', text: 'The car floats served Long Island industry through the Long Island Rail Road\'s North Shore Freight Branch. It ran below street level along the south side of 48th Avenue, now part of Hunter\'s Point Park, and was filled in during the early 2000s.', clue: 'Stand on the esplanade at the land end of the first gantry.', source: { name: WN, url: W } }, { r: 1.6 });
-    k.egg(v(46, 1.2, 14), { id: 'gantry-bottling-plant', title: 'A bottling plant before', year: '1998', text: 'The park opened in May 1998 on a former dockyard and manufacturing area, designed by the landscape architects Thomas Balsley and Lee Weintraub with the architect Richard Sullivan. Its northern section was part of a PepsiCo bottling plant that closed in 1999. In 2014 it had 905,450 visitors.', clue: 'Walk to the north end of the esplanade, under the sign.', source: { name: WN, url: W } }, { r: 1.6 });
+    k.egg(v(SX - 7, 1.2, SZ + 7), { id: 'gantry-bottling-plant', title: 'A bottling plant before', year: '1998', text: 'The park opened in May 1998 on a former dockyard and manufacturing area, designed by the landscape architects Thomas Balsley and Lee Weintraub with the architect Richard Sullivan. Its northern section was part of a PepsiCo bottling plant that closed in 1999. In 2014 it had 905,450 visitors.', clue: 'Walk to the north end of the esplanade, under the sign.', source: { name: WN, url: W } }, { r: 1.6 });
     k.censusWall({ x: 0, y: 3.4, z: 12.34, rotY: PI, cols: 40, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(7000, 160), pieces: ctx.all, backing: dark });
     k.box(24, 7, 0.6, 0, 3.5, 12.6, dark);
     for (const x of [-9, 9]) k.point(x, 5, 9, 0xffe0b0, 20, 14);
@@ -442,8 +483,16 @@ export const gantry: RoomDef = {
     const mounts: Mount[] = [];
     for (let i = 0; i < 8; i++) { const x = -110 + i * 30; if (Math.abs(x) < 14) continue; k.box(4.6, 3.2, 0.4, x, 2.0, 12.6, dark); mounts.push({ position: v(x, 2.1, 12.36), rotation: PI, target: v(x, 2, 4), width: 4.2, height: 2.5, style: 'black', wash: true }); }
     for (let i = 0; i < 4; i++) { const x = -60 + i * 40; const len = 50 + (i % 2) * 20; const z = -18 - len + 0.6; k.box(6, 3, 0.3, x, 2.0, z, dark); mounts.push({ position: v(x, 2.1, z + 0.18), rotation: 0, target: v(x, 2, z + 8), width: 4.6, height: 2.6, style: 'black', wash: true }); }
-    for (const gx of [-30, 10]) for (const s of [-1, 1]) { k.box(0.2, 2.8, 4, gx + s * 8.2, 2.2, -14, dark); mounts.push({ position: v(gx + s * 8.05, 2.3, -14), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(gx, 2, -14), width: 3.6, height: 2.1, style: 'black', wash: false }); }
-    for (let i = 0; i < 4; i++) { const x = 44 + i * 8; mounts.push({ position: v(x, 4.2, SZ - 0.5 - 8), rotation: PI, target: v(x, 3, 10), width: 3.2, height: 1.9, style: 'black', wash: false }); k.box(3.6, 2.4, 0.3, x, 4.2, SZ - 8.3, dark); k.box(0.2, 5.4, 0.2, x - 1.7, 2.7, SZ - 8.3, iron); k.box(0.2, 5.4, 0.2, x + 1.7, 2.7, SZ - 8.3, iron); }
-    return { mounts, spawn: v(-10, 3, 6), look: v(-10, 14, -120), eye: 3, bounds: [-120, 120, -90, 40], style: 'black' };
+    for (const gx of [-30, 10]) for (const s of [-1, 1]) { k.box(0.2, 2.8, 4, gx + s * 8.2, 2.2, -14, dark); mounts.push({ position: v(gx + s * 8.05, 2.3, -14), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(gx, 2, -14), width: 3.6, height: 2.1, style: 'black', wash: false }); }
+    // the procession (2026-10-28): four lit boxes on the esplanade, angled to the river and the way in, so the first
+    // thing a visitor sees past the plaque is the art, then the gantries, then Midtown and the sign
+    for (const x of [-56, -46, -38, -30]) {
+      const z = 1.5, r = -2.27, fx = Math.sin(r), fz = Math.cos(r);
+      const box = k.box(4.8, 3.2, 0.5, x, 2.2, z, dark); box.rotation.y = r;
+      for (const s2 of [-1, 1]) { const leg = k.box(0.18, 0.6, 0.18, x + s2 * 2 * Math.cos(r), 0.3, z - s2 * 2 * Math.sin(r), iron); void leg; }
+      mounts.push({ position: v(x + fx * 0.27, 2.25, z + fz * 0.27), rotation: r, target: v(x + fx * 4, 2, z + fz * 4), width: 4.4, height: 2.6, style: 'black', wash: true });
+      k.keepOut.push({ x, z, r: 2 });
+    }
+    return { mounts, spawn: v(-66, 3, 10), look: v(34, 13, -30), eye: 3, bounds: [-120, 120, -90, 40], style: 'black' };
   },
 };

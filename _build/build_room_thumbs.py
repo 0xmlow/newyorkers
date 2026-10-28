@@ -25,8 +25,11 @@ for r in rooms:
             im = Image.open(src).convert("RGB")
             # crop to 16:9 from the centre in case a poster is not
             W, H = im.size
-            if abs(W / H - 16 / 9) > 0.01:
+            if W / H < 16 / 9 - 0.01:
                 nh = int(W * 9 / 16); top = max(0, (H - nh) // 2); im = im.crop((0, top, W, top + nh))
+            elif W / H > 16 / 9 + 0.01:
+                # a poster wider than 16:9 (1600x813, 2026-10-28) was cropped past its bottom edge into a black band
+                nw = int(H * 16 / 9); left = (W - nw) // 2; im = im.crop((left, 0, left + nw, H))
             im = im.resize((w, w * 9 // 16), Image.LANCZOS)
         elif os.path.exists(dst):
             # no poster export yet, but a thumbnail already exists (the 25 rooms of 2026-09-13

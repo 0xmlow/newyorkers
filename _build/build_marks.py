@@ -15,13 +15,13 @@ Outputs
 
 Design (second pass, 2026-10-09, MLow: "creative, New York culture throughout, custom, awwwards"): the page is
 one night in the city, every section a New York object painted on Krea (site_kit/raw2): subway doors open on a
-newsstand, a tabloid front page, car cards, a deli counter where you take a number (the blind mint), a platform
+newsstand, a tabloid front page, car cards, a deli counter where you take a number (the mint), a platform
 you ride sideways past the Marks, the census ledger, a POST NO BILLS wall (the four layers, a street clock, a
 tear off flyer), an MTA style map, a Broadway marquee and playbills (the eleven), a roll gate at last call (the
 closers), a three card monte box (the fair shuffle) and a stack of parking signs (the release). None of the
 mechanics are on chain yet; the copy says so. Run after build_data and before build_seo; part of build_all.sh.
 """
-import csv, json, os, hashlib, math
+import csv, json, os, hashlib, math, re
 from page_shell import shell, esc, cfg
 
 HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE); ROOT = os.path.dirname(SITE)
@@ -86,6 +86,37 @@ bcount = {b: sum(1 for x in U if x["b"] == b) for b in BOROS}
 # the list commitment: anyone can recompute this from the page or api/marks.json
 LIST = ",".join(str(x["n"]) for x in U)
 LIST_HASH = hashlib.sha256(LIST.encode()).hexdigest()
+_sh = open(os.path.join(MK, "mint_kit", "reveal", "SHUFFLE.md")).read()
+_f = lambda k: re.search(r"\| " + k + r" \| (\S+) \|", _sh).group(1)
+SHUFFLE = {"algorithm": "sha256(seed || blockhash), Fisher Yates from the end, reveal.py in the kit", "seed": _f("seed \(32 bytes, hex\)"),
+           "seedSha256": _f("seed sha256"), "block": int(_f("block")), "blockHash": _f("block hash"),
+           "tokenMap": [{"token": int(x["token"]), "census": int(x["census"]), "mark": int(x["mark"])}
+                        for x in csv.DictReader(open(os.path.join(MK, "mint_kit", "reveal", "TOKEN_MAP.csv")))]}
+assert len(SHUFFLE["tokenMap"]) == 150
+_st = os.path.join(MK, "mainnet", "state.json")
+CONTRACT = (json.load(open(_st)).get("contract") if os.path.exists(_st) else None) or None   # set by mainnet/go_live.py once deployed
+RARE_MINTER = "0x5fa112EFeD8297bec0010b312208d223E0cE891E"        # RareMinter on mainnet (rare-sdk addresses.js); mintDirectSale lives here
+MARKET_SETTINGS = "0x61DBF87164d33FD3695256DC8Ba74D3B1d304170"    # MarketplaceSettings on mainnet; getMarketplaceFeePercentage() = 3
+MINT = {"contract": CONTRACT, "minter": RARE_MINTER, "settings": MARKET_SETTINGS, "priceWei": "69000000000000000", "price": "0.069", "max": 150, "perTx": 5,
+        "map": [[r["token"], r["mark"], r["census"]] for r in SHUFFLE["tokenMap"]]} if CONTRACT else None
+MINT_HTML = f"""
+<section class="s-mint" id="mint">
+  <div class="wrap">
+    <p class="kick" data-rv>Now minting · instant reveal</p>
+    <h2 class="big" data-rv>Mint a Mark.</h2>
+    <p class="sub" data-rv>0.069 ETH on SuperRare's contracts. The order was shuffled once before the drop and published below. Your ticket is the next number on the roll, and it opens the moment it mints. Nothing is sealed, nobody waits.</p>
+    <div class="mt" data-rv>
+      <div class="mt-count"><b><span id="mt-n">…</span> of 150</b> minted · <span id="mt-left">…</span> left<div class="mt-track"><i id="mt-bar"></i></div></div>
+      <p class="mt-next" id="mt-next">Next ticket</p>
+      <div class="mt-row"><label>How many <select id="mt-qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><button type="button" class="btn" id="mt-go">MINT · 0.069 ETH</button></div>
+      <p class="mt-total" id="mt-total"></p>
+      <p class="mt-st" id="mt-st" aria-live="polite"></p>
+      <div class="mt-got" id="mt-got"></div>
+      <p class="fine">Contract <a href="https://etherscan.io/address/{CONTRACT}">{CONTRACT}</a>. Mints go through SuperRare's RareMinter at <a href="https://etherscan.io/address/{RARE_MINTER}#writeContract">{RARE_MINTER}</a>, which adds its 3% fee. No wallet in this browser? Any wallet can call mintDirectSale on that contract, or run <code>rare listing release mint --contract {CONTRACT} --quantity 1</code>. Art, not an investment.</p>
+    </div>
+  </div>
+</section>
+""" if CONTRACT else ""
 
 # ---------- the map, projected from geo.js ----------
 LON0, LON1, LAT0, LAT1 = -74.27, -73.69, 40.49, 40.92
@@ -114,7 +145,7 @@ json.dump({"release": "THE MARKS", "count": REL["count"], "status": REL["status"
                           "record": f"{URL}/n/{x['id']}", "wasTheOnes": x["ones"]} for x in U],
            "eraClosers": [{"census": x["n"], "title": x["t"], "era": x["era"], "record": f"{URL}/n/{x['id']}"} for x in C],
            "listCommitment": {"algorithm": "sha256", "of": "the 150 census numbers in mark order, comma separated, no spaces", "hash": LIST_HASH},
-           "seedCommitment": None, "note": "The seed hash is published here before the mint opens. Nothing on this endpoint is minted yet."},
+           "contract": CONTRACT, "chain": "ethereum mainnet" if CONTRACT else None, "shuffle": SHUFFLE, "note": "Instant reveal. The 150 were shuffled once before the drop with the seed and block above; token 1 is the first mint. Every Mark opens the moment it is minted."},
           open(os.path.join(SITE, "api", "marks.json"), "w"), ensure_ascii=False, indent=1)
 
 def v(rel):
@@ -184,21 +215,21 @@ def playbill(x):
             f'</div></article>')
 
 def closer(x):
-    return (f'<a class="cl" href="n/{esc(x["id"])}" data-cur="Bid"><span class="cl-art">{media(x)}</span>'
+    return (f'<a class="cl" href="n/{esc(x["id"])}" data-cur="Mint"><span class="cl-art">{media(x)}</span>'
             f'<span class="cl-tx"><i>ERA {x["era"]} CLOSER · NO. {x["n"]:04d}</i><strong>{esc(x["t"])}</strong><small>{esc(short_story(x["s"], 140))}</small></span></a>')
 
 stickers = sorted(f for f in os.listdir(os.path.join(SITE, "assets", "stickers")) if f.endswith(".png"))[:8]
 logos = [f"assets/brand/logos/n3w-{i:02d}-s.jpg" for i in (3, 7, 11) if os.path.exists(os.path.join(SITE, "assets", "brand", "logos", f"n3w-{i:02d}-s.jpg"))]
-ZIP = " ★ ".join(["EXTRA", "5,555 NEW YORKERS LEFT OFF THE COUNT", "150 GET THE MARK", "SEALED UNTIL THE REVEAL", "NOBODY PICKS, NOT EVEN THE ARTIST",
+ZIP = " ★ ".join(["EXTRA", "5,555 NEW YORKERS LEFT OFF THE COUNT", "150 GET THE MARK", "REVEALED THE MOMENT IT MINTS", "NOBODY PICKS, NOT EVEN THE ARTIST",
                   f"{len(C)} ERA CLOSERS AT LAST CALL", "ELEVEN WERE THE ONES", "THE CITY KEEPS MARKING THEM", "ART, NOT AN INVESTMENT"]) + " ★ "
 STOPS = [("street", "Street"), ("trailer", "The trailer"), ("paper", "The paper"), ("deli", "The deli"), ("platform", "The platform"), ("ledger", "The ledger"), ("wall", "Post no bills"),
          ("map", "The line"), ("cast", "Broadway"), ("last", "Last call"), ("monte", "No monte"), ("signs", "The signs")]
-SIGNS = [("red", "NO MINTING", "UNTIL THE SEED IS PUBLISHED"),
-         ("green", f"{REL['count']} MARKS", f"150 SEALED · {len(C)} BY AUCTION"),
+SIGNS = [("red", "NO SEALED CARDS", "EVERY MARK OPENS ON MINT"),
+         ("green", f"{REL['count']} MARKS", f"150 UNCOUNTED · {len(C)} CLOSERS"),
          ("green", "ONES OF ONE", "ONE OWNER EACH · ANYTIME"),
          ("red", "NO NEW YORKER", "SOLD TWICE · EVER"),
          ("green", "SUPERRARE", "ONLY · DATES ANNOUNCED FIRST"),
-         ("red", "PRICE", "ANNOUNCED BEFORE THE MINT"),
+         ("green", "0.069 ETH", "EVERY MARK · CLOSERS 0.269"),
          ("green", "ART", "NOT AN INVESTMENT")]
 signs = "".join(f'<div class="sg {c}" data-rv><b>{esc(a)}</b><small>{esc(b)}</small>{"<i class=ar></i>" if i % 2 else ""}</div>' for i, (c, a, b) in enumerate(SIGNS))
 
@@ -219,12 +250,13 @@ body = f"""
     <h1 class="mega"><span class="ln"><span>THE</span></span><span class="ln"><span>MARKS</span></span></h1>
     <p class="hand" data-rv>150 of the uncounted <svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 30 C40 4 80 4 112 24 M100 14 L113 25 L98 32"/></svg></p>
     <div class="htally" aria-label="{REL['count']} tally marks, one for every Mark">{tally_svg(REL['count'], 'tl h')}</div>
-    <p class="lede" data-rv>Made, numbered, then left off the count. They mint sealed, open together, and the city keeps marking them after that.</p>
-    <div class="cta" data-rv><a class="btn" href="#deli">Take a number</a><a class="btn ghost" href="#platform">Ride the line</a><a class="btn pink" href="night">Walk the night</a></div>
+    <p class="lede" data-rv>Made, numbered, then left off the count. They mint in a shuffled order, open the moment they mint, and the city keeps marking them after that.</p>
+    <div class="cta" data-rv>{'<a class="btn" href="#mint">Mint a Mark · 0.069 ETH</a><a class="btn ghost" href="#deli">Take a number</a>' if CONTRACT else '<a class="btn" href="#deli">Take a number</a><a class="btn ghost" href="#platform">Ride the line</a>'}<a class="btn pink" href="night">Walk the night</a></div>
   </div>
   <a class="cue" href="#paper"><img src="assets/ui/token.png" alt="">Scroll</a>
 </section>
 
+{MINT_HTML}
 <section class="s-trailer" id="trailer">
   <div class="wrap">
     <p class="kick" data-rv>Now showing</p>
@@ -234,7 +266,7 @@ body = f"""
       <div class="scr"><video id="tr" muted loop playsinline preload="none" poster="{FILM}/poster.jpg" data-teaser="{FILM}/teaser.mp4" aria-label="THE MARKS, the trailer, a film by MLow"></video>
         <button class="tr-play" id="trp" type="button" data-cur="Play" aria-label="Play the trailer with sound"><i></i><span>WATCH WITH SOUND <b>0:56</b></span></button></div>
     </div>
-    <p class="sub tr-sub" data-rv>6,666 New Yorkers were made. 5,555 never made the count. 150 are coming back, sealed, on SuperRare. Every shot is a Mark or an era closer, the city they live in moving for the first time.</p>
+    <p class="sub tr-sub" data-rv>6,666 New Yorkers were made. 5,555 never made the count. 150 are coming back on SuperRare. Every shot is a Mark or an era closer, the city they live in moving for the first time.</p>
   </div>
 </section>
 
@@ -276,8 +308,8 @@ body = f"""
 </section>
 
 <section class="s-deli" id="deli">
-  <div class="wrap head"><p class="kick">Layer one · The seal</p><h2 class="big">Take a number.</h2>
-    <p class="sub">Every Mark mints sealed and every card looks the same. They open together, and the shuffle decides which New Yorker you get. Pull a ticket, then hold the wax.</p></div>
+  <div class="wrap head"><p class="kick">Layer one · The ticket</p><h2 class="big">Take a number.</h2>
+    <p class="sub">Every Mark opens the moment it mints. The order was shuffled once before the drop and published, so your ticket number decides which New Yorker you get. Pull a ticket, then hold the wax.</p></div>
   <div class="deli">
     <div class="deli-img"><picture><source media="(max-width:760px)" srcset="{v('assets/marks/deli-s.jpg')}"><img class="deli-bg" src="{v('assets/marks/deli.jpg')}" alt="The Uncounted Delicatessen at night, a NOW SERVING sign over the counter, a cat asleep on the case"></picture>
     <div class="led" aria-live="polite"><span id="led">- - -</span></div>
@@ -290,7 +322,7 @@ body = f"""
     </div>
     <p class="hint" id="hint">Pull a ticket</p>
   </div>
-  <p class="wrap fine">A preview. It pulls a random Mark; at the real reveal a published seed decides, not this counter. <button type="button" class="link" id="again" hidden>Take another number</button></p>
+  <p class="wrap fine">A preview. It pulls a random Mark; on SuperRare the published shuffle order decides, not this counter. <button type="button" class="link" id="again" hidden>Take another number</button></p>
 </section>
 
 <section class="s-plat" id="platform">
@@ -357,7 +389,7 @@ body = f"""
     <h2 class="neon" aria-label="Last call"><span>LAST</span> <span>CALL</span></h2>
     <div class="shop"><div class="window">{''.join(closer(x) for x in C)}</div><img class="gate" id="gate" src="{v('assets/marks/gate.jpg')}" alt="A steel roll gate covered in chalk tally marks, rolling up"></div>
   </div>
-  <div class="wrap"><p class="sub">The era closers: the last New Yorker made in an era, one at a time by auction with a published reserve. {len(C)} are in THE MARKS. The other nine ({', '.join(map(str, in_keystone))}) were already in <a href="keystone">KEYSTONE</a> and stay there, because no New Yorker is sold twice.</p></div>
+  <div class="wrap"><p class="sub">The era closers: the last New Yorker made in an era. Each one is a separate one of one at 0.269 ETH on SuperRare, revealed the moment it mints, no reserve, no bidding, one at a time at last call. {len(C)} are in THE MARKS. The other nine ({', '.join(map(str, in_keystone))}) were already in <a href="keystone">KEYSTONE</a> and stay there, because no New Yorker is sold twice.</p></div>
 </section>
 
 <section class="s-monte" id="monte">
@@ -366,11 +398,11 @@ body = f"""
     <div class="monte">
       <div class="table"><img src="{v('assets/marks/box.webp')}" alt="A cardboard box on the sidewalk" loading="lazy"><div class="cards3"><i></i><i></i><i></i></div><p class="sign">Nobody picks.<br>Not even MLow.</p></div>
       <ol class="steps">
-        <li><b>Before the mint</b>The list of 150 and the hash of a secret seed are published here. The list is already fixed, its hash is on the receipt.</li>
-        <li><b>After the mint closes</b>The seed is revealed and mixed with the hash of an Ethereum block named in advance, a block nobody can know yet.</li>
-        <li><b>The reveal</b>Public code shuffles the 150 with that number. Anyone can run it and get the same answer.</li>
+        <li><b>The list</b>The 150 were fixed first. Their hash is on the receipt.</li>
+        <li><b>The shuffle</b>Before the drop, public code shuffled the 150 once with a seed and the hash of mainnet block {SHUFFLE['block']:,}. Both are on the receipt. Anyone can run it and get the same order.</li>
+        <li><b>The mint</b>Ticket 1 is the first mint, ticket 150 the last. Every Mark opens the moment it mints. Nothing is sealed, nobody waits.</li>
       </ol>
-      <div class="receipt"><p class="rh">THE UNCOUNTED DELI<br>NEW YORK, NY</p><p>--------------------------------</p><p>LIST OF 150 ........ FIXED</p><p>ALGORITHM ......... SHA-256</p><code>{LIST_HASH}</code><p>SEED HASH ......... PENDING</p><p>PUBLISHED BEFORE THE MINT</p><p>--------------------------------</p><p class="rh">THANK YOU<br>WE ARE HAPPY TO COUNT YOU</p><a href="api/marks.json">api/marks.json</a></div>
+      <div class="receipt"><p class="rh">THE UNCOUNTED DELI<br>NEW YORK, NY</p><p>--------------------------------</p><p>LIST OF 150 ........ FIXED</p><p>ALGORITHM ......... SHA-256</p><code>{LIST_HASH}</code><p>SEED ............... PUBLISHED</p><code>{SHUFFLE['seed']}</code><p>BLOCK ......... {SHUFFLE['block']:,}</p><code>{SHUFFLE['blockHash']}</code><p>SHUFFLED BEFORE THE MINT</p><p>--------------------------------</p><p class="rh">THANK YOU<br>WE ARE HAPPY TO COUNT YOU</p><a href="api/marks.json">api/marks.json</a></div>
     </div>
   </div>
 </section>
@@ -384,6 +416,7 @@ body = f"""
         <tr><td>Size</td><td>{REL['count']}: 150 uncounted, {len(C)} era closers</td></tr>
         <tr><td>Format</td><td>{esc(REL['format'])}</td></tr>
         <tr><td>Platform</td><td>{esc(REL['platform'])}</td></tr>
+        {f'<tr><td>Contract</td><td><a href="https://etherscan.io/address/{CONTRACT}">{CONTRACT}</a></td></tr>' if CONTRACT else ''}
         <tr><td>When</td><td>{esc(REL['when'])}</td></tr>
         <tr><td>Price</td><td>{esc(REL['price'])}</td></tr>
         <tr><td>Changed</td><td>{esc(REL['detail'])}</td></tr>
@@ -396,8 +429,7 @@ body = f"""
 """
 
 ALLD = [{k: x[k] for k in ("n", "m", "t", "id", "b", "nb", "th", "x", "y", "ones", "era", "lp") if k in x and x[k] is not None} for x in ITEMS]
-DATA = json.dumps({"u": [d for d in ALLD if d.get("m")], "c": [d for d in ALLD if not d.get("m")], "lc": LINEC}, ensure_ascii=False, separators=(",", ":"))
-
+DATA = json.dumps({"u": [d for d in ALLD if d.get("m")], "c": [d for d in ALLD if not d.get("m")], "lc": LINEC, "mint": MINT}, ensure_ascii=False, separators=(",", ":"))
 CSS = r"""
 body{background:#06090f}
 .mk-page{overflow-x:clip}
@@ -753,6 +785,18 @@ body{background:#06090f}
 .receipt code{display:block;word-break:break-all;font-size:11px;margin:4px 0 6px;padding:6px;background:#eee}
 .receipt a{display:block;text-align:center;margin-top:10px;color:#222}
 /* 12 signs */
+.s-mint{padding:10vh 0 8vh;background:linear-gradient(#06090f,#0b0f14)}
+.mt{max-width:720px;margin:0 auto;padding:22px 24px 18px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.04)}
+.mt-count{font:600 15px/1.4 var(--hel);letter-spacing:.02em}.mt-count b{font-family:var(--anton);font-weight:400;font-size:28px;letter-spacing:.02em}
+.mt-track{height:6px;border-radius:3px;background:rgba(255,255,255,.12);margin:10px 0 14px;overflow:hidden}.mt-track i{display:block;height:100%;width:0;background:#F26D5B;transition:width .6s}
+.mt-next{font:15px/1.4 var(--hel);opacity:.9;margin:0 0 14px}
+.mt-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.mt-row label{font:600 12px/1 var(--hel);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.mt-row select{font:600 16px var(--hel);padding:10px 12px;border-radius:8px;background:#141A22;color:#fff;border:1px solid rgba(255,255,255,.2)}
+.mt-total{font:14px/1.4 var(--hel);opacity:.8;margin:10px 0 0}
+.mt-st{font:14px/1.5 var(--hel);min-height:1.5em;margin:8px 0 0}.mt-st.bad{color:#ff7b6b}.mt-st.ok{color:#9be28f}.mt-st.wait{opacity:.8}
+.mt-got{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+.mt-card{display:flex;gap:10px;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,.06);color:inherit;text-decoration:none}.mt-card img{width:56px;height:56px;object-fit:cover;border-radius:6px}.mt-card span{display:flex;flex-direction:column;gap:2px}.mt-card small{font:600 11px var(--hel);letter-spacing:.1em;opacity:.7}.mt-card b{font:600 14px/1.2 var(--hel)}.mt-card i{font:12px var(--hel);opacity:.7;font-style:normal}
+.mt .fine{font:12px/1.5 var(--hel);opacity:.65;margin:14px 0 0}.mt .fine code{font-family:var(--doto);font-size:12px}
 .s-signs{padding:14vh 0 12vh;background:linear-gradient(#0b0f14,#06090f)}
 .signs-w{display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:70px;align-items:start}
 .pole{position:relative;display:flex;flex-direction:column;gap:12px;align-items:center;padding:20px 0 60px}
@@ -954,6 +998,61 @@ $$("#lines button").forEach(b=>b.onclick=()=>{ sel=sel===b.dataset.b?null:b.data
 
 /* ---- playbills flip on tap ---- */
 $$(".pb").forEach(p=>p.addEventListener("click",e=>{ if(e.target.closest("a"))return; if(!FINE) p.classList.toggle("flip"); }));
+
+/* ---- mint: RareMinter direct sale, instant reveal. Plain JSON-RPC and the wallet's own provider, no library. ---- */
+(function(){
+const K=M.mint; if(!K||!K.contract) return;
+const RPCS=["https://ethereum-rpc.publicnode.com","https://cloudflare-eth.com"];
+const byMark=new Map(U.map(x=>[x.m,x]));
+function hex(v){return "0x"+BigInt(v).toString(16);}
+function w(v){return BigInt(v).toString(16).padStart(64,"0");}
+async function rpc(method,params){let err;for(const u of RPCS){try{const r=await fetch(u,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:1,method,params})});const j=await r.json();if(j.error)throw new Error(j.error.message);return j.result;}catch(e){err=e;}}throw err;}
+const call=(to,data)=>rpc("eth_call",[{to,data},"latest"]);
+const price=BigInt(K.priceWei);
+let supply=null, feePct=null;
+const el={n:$("#mt-n"),left:$("#mt-left"),next:$("#mt-next"),btn:$("#mt-go"),qty:$("#mt-qty"),st:$("#mt-st"),tot:$("#mt-total"),bar:$("#mt-bar"),got:$("#mt-got")};
+const fmt=v=>(Number(v)/1e18).toFixed(5).replace(/0+$/,"").replace(/\.$/,"");
+const markOf=t=>{const r=K.map.find(z=>z[0]===t);return r?byMark.get(r[1]):null;};
+async function refresh(){try{const s=Number(BigInt(await call(K.contract,"0x18160ddd")));supply=s;el.n.textContent=s;el.left.textContent=Math.max(0,K.max-s);el.bar.style.width=(100*s/K.max)+"%";
+  if(s>=K.max){el.next.textContent="Sold out. Every Mark is spoken for.";el.btn.disabled=true;el.btn.textContent="SOLD OUT";return;}
+  const x=markOf(s+1);el.next.innerHTML=`Next ticket: <b>No. ${pad(s+1,3)}</b>${x?", "+esc(x.t):""}`;}catch(e){}}
+async function feeFor(total){try{if(feePct===null)feePct=BigInt(await call(K.settings,"0x83475921"));return total*feePct/100n;}catch(e){return total*3n/100n;}}
+async function total(){const q=BigInt(el.qty.value||1),t=price*q,f=await feeFor(t);return {q,t,f,v:t+f};}
+async function showTotal(){const o=await total();el.tot.textContent=`${fmt(o.v)} ETH for ${o.q}: 0.069 each plus the 3% marketplace fee, plus gas.`;}
+function say(s,cls){el.st.textContent=s;el.st.className="mt-st "+(cls||"");}
+function reason(e){const c=e&&(e.code!=null?e.code:(e.cause&&e.cause.code));const m=String((e&&(e.message||e.reason||e.shortMessage))||"");
+  if(c===4001||/reject|denied|declined/i.test(m))return "You declined it in your wallet.";
+  if(c===-32002)return "Your wallet already has a request open. Finish or dismiss it, then try again.";
+  if(/insufficient/i.test(m))return "Not enough ETH in that wallet for the price, the fee and gas.";
+  if(/not started/i.test(m))return "The sale has not opened yet.";
+  if(/mint limit|transaction limit|exceeded/i.test(m))return "That is over the limit for one transaction.";
+  return m?m.slice(0,160):"The wallet gave no reason.";}
+el.qty.addEventListener("change",showTotal);
+el.btn.addEventListener("click",async()=>{
+  const eth=window.ethereum; if(!eth){say("No wallet found in this browser. Open this page inside your wallet's browser, or use the contract link below.","bad");return;}
+  el.btn.disabled=true;
+  try{
+    say("Check your wallet: it should ask you to connect.");
+    const acc=await eth.request({method:"eth_requestAccounts"}); const from=acc&&acc[0]; if(!from)throw new Error("Your wallet did not share an address.");
+    const cid=await eth.request({method:"eth_chainId"});
+    if(parseInt(cid,16)!==1){say("Switching your wallet to Ethereum mainnet.");try{await eth.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x1"}]});}catch(e){throw new Error("Switch your wallet to Ethereum mainnet and try again.");}}
+    const o=await total();
+    const data="0xd647ed3c"+w(K.contract)+w(0)+w(price)+w(o.q)+w(0xa0)+w(0);   /* mintDirectSale(contract, ETH, price, qty, proof[]) */
+    say(`Confirm in your wallet: ${fmt(o.v)} ETH for ${o.q}.`);
+    const tx=await eth.request({method:"eth_sendTransaction",params:[{from,to:K.minter,value:hex(o.v),data}]});
+    say("Sent. Waiting for the block.","wait"); el.got.innerHTML=`<p class="fine"><a href="https://etherscan.io/tx/${tx}">${tx.slice(0,12)}… on Etherscan</a></p>`;
+    let rc=null; for(let i=0;i<120&&!rc;i++){await new Promise(r=>setTimeout(r,5000)); try{rc=await rpc("eth_getTransactionReceipt",[tx]);}catch(e){}}
+    if(!rc){say("Still pending. Watch it on Etherscan; your Marks show here when it lands.","wait");}
+    else if(rc.status==="0x1"){await refresh();
+      const ids=[]; (rc.logs||[]).forEach(l=>{if(l.address.toLowerCase()===K.contract.toLowerCase()&&l.topics[0]==="0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"&&l.topics.length===4)ids.push(Number(BigInt(l.topics[3])));});
+      say("Minted."+(ids.length?" You got "+ids.map(i=>"No. "+pad(i,3)).join(", ")+".":""),"ok");
+      el.got.innerHTML=ids.map(i=>{const x=markOf(i);return `<a class="mt-card" href="https://superrare.com/artwork/eth/${K.contract}/${i}">${x&&x.th?`<img src="${x.th}" alt="">`:""}<span><small>TICKET ${pad(i,3)}</small><b>${esc(x?x.t:"Mark")}</b><i>${esc(x?(x.nb||x.b||""):"")}</i></span></a>`;}).join("")+`<p class="fine"><a href="https://etherscan.io/tx/${tx}">The transaction on Etherscan</a></p>`;}
+    else say("The transaction failed on chain. Nothing was charged beyond gas.","bad");
+  }catch(e){say(reason(e),"bad");}
+  el.btn.disabled=supply!==null&&supply>=K.max;
+});
+refresh(); showTotal(); setInterval(refresh,20000);
+})();
 })();
 """
 
@@ -962,18 +1061,18 @@ for k, f in {"newsstand": "newsstand.jpg", "wheat": "wheat.webp", "tile": "../ui
     CSS = CSS.replace(f"@@{k}@@", v(os.path.normpath(f"assets/marks/{f}")))
 FONTS_X = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Doto:wght@700;900&family=Monoton&family=UnifrakturMaguntia&family=Bungee&family=Rock+Salt&display=swap">'
 ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "@id": URL + "/marks", "name": "THE MARKS · NEW YORKERS by MLow", "url": URL + "/marks",
-       "isPartOf": {"@id": URL + "/#site"}, "description": "150 New Yorkers made, numbered and left off the count, sealed and revealed together, plus nine era closers by auction.",
+       "isPartOf": {"@id": URL + "/#site"}, "description": "150 New Yorkers made, numbered and left off the count, minting at 0.069 ETH in a published shuffled order and revealed the moment they mint, plus nine era closers, separate one of ones at 0.269 ETH on SuperRare.",
        "mainEntity": {"@type": "ItemList", "name": "THE MARKS", "numberOfItems": len(ITEMS),
                       "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": x["t"], "url": f"{URL}/n/{x['id']}"} for i, x in enumerate(ITEMS)]}},
       {"@context": "https://schema.org", "@type": "VideoObject", "name": "THE MARKS, the trailer", "creator": {"@type": "Person", "name": "MLow"},
-       "description": "6,666 New Yorkers were made. 5,555 never made the count. 150 are coming back, sealed, on SuperRare. A film by MLow.",
+       "description": "6,666 New Yorkers were made. 5,555 never made the count. 150 are coming back on SuperRare. A film by MLow.",
        "thumbnailUrl": f"{URL}/{FILM}/poster.jpg", "contentUrl": f"{URL}/{FILM}/1080/index.m3u8", "embedUrl": f"{URL}/marks#trailer",
        "duration": "PT56S", "uploadDate": "2026-10-09"}]
 page = shell(title="THE MARKS · 150 of the uncounted · NEW YORKERS by MLow",
-             description="THE MARKS: 150 New Yorkers who were made, numbered and then left off the count. They mint sealed, open together, and keep getting marked by the city. Plus nine era closers by auction.",
+             description="THE MARKS: 150 New Yorkers who were made, numbered and then left off the count. They mint at 0.069 ETH in a published shuffled order, open the moment they mint, and keep getting marked by the city. Plus nine era closers, separate one of ones at 0.269 ETH on SuperRare.",
              body=FILTER + body, path="marks.html", active="MARKS", extra_css=CSS, extra_head=FONTS_X, jsonld=ld,
              image=f"{URL}/assets/marks/newsstand.jpg",
-             keywords=["THE MARKS", "NEW YORKERS by MLow", "blind mint", "SuperRare", "dynamic NFT", "NYC art", "MLow"],
+             keywords=["THE MARKS", "NEW YORKERS by MLow", "instant reveal", "SuperRare", "dynamic NFT", "NYC art", "MLow"],
              scripts_after=f'<script type="application/json" id="marks-data">{DATA}</script>\n<script>{JS}</script>')
 open(os.path.join(SITE, "marks.html"), "w", encoding="utf-8").write(page)
 NPOST = sum(1 for t in track if t.startswith('<a class="post"'))

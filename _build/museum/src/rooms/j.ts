@@ -6,6 +6,7 @@ import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero, heroInstances, standIn, hide } from './heroes';
 
 const PI = Math.PI;
 
@@ -211,7 +212,11 @@ export const brooklynbridge: RoomDef = {
     const carCols = [0xd8d0c0, 0x1a1a1a, 0xc62828, 0x2b4a8a, 0xf1c531, 0x6a6a6e];
     for (let i = 0; i < 28; i++) { const s = i % 2 ? 1 : -1; const c = new T.Mesh(carG, k.flat(carCols[i % carCols.length], 0.4, 0.4)); c.position.set(s * (9.5 + (i % 4 < 2 ? -2.4 : 2.4)), ROAD + 0.7, -150 + (i * 31) % 420); c.userData.s = s; c.userData.v = 9 + (i % 5) * 1.5; k.add(c); cars.push(c); const lamp = new T.Mesh(new T.BoxGeometry(1.4, 0.2, 0.1), warm); lamp.position.set(0, 0, s * 2.1); c.add(lamp); }
     if (!ctx.reduced) k.ticks.push((_t, dt) => { for (const c of cars) { c.position.z += c.userData.s * c.userData.v * Math.min(dt, 0.1); if (c.position.z > 290) c.position.z = -150; if (c.position.z < -150) c.position.z = 290; } });
-    for (const z of [-40, 60, 160]) { const boat = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(6, 2.2, 22), k.flat(0xe6e2da, 0.2, 0.6)); hull.position.y = 1; boat.add(hull); const cab = new T.Mesh(new T.BoxGeometry(4, 2.4, 8), k.flat(0xd84a2a, 0.2, 0.6)); cab.position.set(0, 3.2, 0); boat.add(cab); k.add(boat); if (!ctx.reduced) k.rider(boat, k.spline([v(-120, RIVER + 0.3, z), v(0, RIVER + 0.3, z + 40), v(120, RIVER + 0.3, z), v(0, RIVER + 0.3, z - 40)], true), 3.2, z); }
+    const boats: T.Group[] = [];
+    for (const z of [-40, 60, 160]) { const boat = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(6, 2.2, 22), k.flat(0xe6e2da, 0.2, 0.6)); hull.position.y = 1; boat.add(hull); const cab = new T.Mesh(new T.BoxGeometry(4, 2.4, 8), k.flat(0xd84a2a, 0.2, 0.6)); cab.position.set(0, 3.2, 0); boat.add(cab); k.add(boat); boats.push(boat); const route = k.spline([v(-120, RIVER + 0.3, z), v(0, RIVER + 0.3, z + 40), v(120, RIVER + 0.3, z), v(0, RIVER + 0.3, z - 40)], true); if (!ctx.reduced) k.rider(boat, route, 3.2, z); else boat.position.copy(route.getPointAt(0.1)); }
+    /* 2026-10-28: the box boats become the hero ferry and tug (h_ferry, h_tug, made 2026-10-09 nose to +z, the way
+       k.rider points them): a ferry, a tug, a ferry. A failed load keeps the boxes. */
+    boats.forEach((boat, i) => { void hero(k, i === 1 ? 'h_tug' : 'h_ferry', { length: i === 1 ? 14 : 22 }).then((h) => { if (!h) return; for (const m of boat.children) m.visible = false; h.position.y = -0.7; boat.add(h); }); });
     k.censusWall({ x: -3.22, y: 1.6, z: -30, rotY: PI / 2, cols: 40, rows: 2, tile: 0.55, gap: 0.05, start: ctx.wallStart(3000, 80), pieces: ctx.all, backing: iron });
     k.sign('BROOKLYN BRIDGE  ·  1883', 8, 0.8, 0, DECK + 5.4, TZ[0] + 7.3, '#2a2622', '#e8dcc0', 80, 0, { border: true });
     // eggs
@@ -486,17 +491,30 @@ export const oysterbar: RoomDef = {
     k.mesh(new T.BoxGeometry(6.2, 0.06, 0.06), neon, 0, 5.8, -0.12);
     k.point(0, 4.4, -1.4, 0xff6a5a, 18, 10);
     // counters: two U shaped lunch counters with stools, the raw bar with ice and shells, the tables
+    const stools: [number, number][] = [], stoolBoxes: T.Object3D[] = [];
     const counter = (cx: number, cz: number) => {
       k.box(9, 1.1, 0.9, cx, 0.55, cz, wood); k.box(9.2, 0.1, 1.1, cx, 1.12, cz, marble);
       for (const s of [-1, 1]) { k.box(0.9, 1.1, 6, cx + s * 4.05, 0.55, cz - 3, wood); k.box(1.1, 0.1, 6.2, cx + s * 4.05, 1.12, cz - 3, marble); }
       k.block(cx - 4.6, cx + 4.6, cz - 0.5, cz + 0.5); k.block(cx - 4.6, cx - 3.5, cz - 6, cz); k.block(cx + 3.5, cx + 4.6, cz - 6, cz);
-      for (let i = 0; i < 7; i++) { const x = cx - 3.6 + i * 1.2; k.cyl(0.06, 0.7, x, 0.35, cz + 1.0, chrome, 0.06, 8); k.cyl(0.24, 0.1, x, 0.75, cz + 1.0, cloth, 0.24, 12); k.keepOut.push({ x, z: cz + 1.0, r: 0.3 }); }
-      for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = cz - 1.2 - i * 1.3; k.cyl(0.06, 0.7, cx + s * 5.1, 0.35, z, chrome, 0.06, 8); k.cyl(0.24, 0.1, cx + s * 5.1, 0.75, z, cloth, 0.24, 12); k.keepOut.push({ x: cx + s * 5.1, z, r: 0.3 }); }
+      const sm = k.objects.length;
+      for (let i = 0; i < 7; i++) { const x = cx - 3.6 + i * 1.2; k.cyl(0.06, 0.7, x, 0.35, cz + 1.0, chrome, 0.06, 8); k.cyl(0.24, 0.1, x, 0.75, cz + 1.0, cloth, 0.24, 12); k.keepOut.push({ x, z: cz + 1.0, r: 0.3 }); stools.push([x, cz + 1.0]); }
+      for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = cz - 1.2 - i * 1.3; k.cyl(0.06, 0.7, cx + s * 5.1, 0.35, z, chrome, 0.06, 8); k.cyl(0.24, 0.1, cx + s * 5.1, 0.75, z, cloth, 0.24, 12); k.keepOut.push({ x: cx + s * 5.1, z, r: 0.3 }); stools.push([cx + s * 5.1, z]); }
+      stoolBoxes.push(...standIn(k, sm));
       k.box(8.6, 0.5, 0.8, cx, 1.4, cz - 3.2, ice);
       for (let i = 0; i < 40; i++) { const a = X.mulberry(46 + i)(); k.sphere(0.07, cx - 4 + (i % 20) * 0.42, 1.7, cz - 3.5 + Math.floor(i / 20) * 0.5 + a * 0.2, shell, 6); }
       for (const dx of [-3.2, 0, 3.2]) k.point(cx + dx, 3.2, cz, 0xffe8c8, 12, 6);
     };
     counter(-11, -14); counter(11, -14);
+    /* 2026-10-28: the two cylinder stools become Poly Haven's Bar Chair Round 01 (Dairon Sanchez, CC0), instanced,
+       seat at the old 0.8 m. A failed load keeps the cylinders. */
+    void hero(k, 'ph_bar_chair_round_01', { height: 0.8 }).then((h) => {
+      if (!h) return;
+      hide(stoolBoxes);
+      const ins = heroInstances(k, h, stools.length), m = new T.Matrix4();
+      stools.forEach(([x, z], i) => ins.setAt(i, m.makeTranslation(x, 0, z)));
+      ins.commit();
+      for (const p of ins.parts) p.im.castShadow = false; // under the counter lamps their shadows cost more than they show
+    });
     const rnd = X.mulberry(46);
     for (let i = 0; i < 14; i++) { const x = -18 + (i % 7) * 6, z = -26 - Math.floor(i / 7) * 5; if (Math.abs(x) < 3) continue; k.cyl(0.06, 0.7, x, 0.35, z, chrome, 0.06, 8); k.box(1.4, 0.06, 1.4, x, 0.74, z, cloth).rotation.y = rnd() * 0.3; k.box(1.3, 0.02, 1.3, x, 0.78, z, white).rotation.y = 0.78; k.keepOut.push({ x, z, r: 0.9 }); for (const [dx, dz] of [[-0.9, 0], [0.9, 0]]) { k.box(0.45, 0.45, 0.45, x + dx, 0.45, z + dz, wood); k.box(0.45, 0.5, 0.06, x + dx * 1.2, 0.9, z + dz, wood); } }
     k.crowd([v(0, 0, 22), v(0, 0, 4), v(-6, 0, -6), v(-14, 0, -8), v(-20, 0, -20), v(-8, 0, -30), v(8, 0, -30), v(20, 0, -20)], 16, { seed: 46, speed: 0.5, spread: 1.2, animate: !ctx.reduced });

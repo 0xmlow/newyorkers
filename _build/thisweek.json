@@ -1,11 +1,11 @@
 {
   "_note": "THIS WEEK IN NEW YORKERS, the editorial heartbeat on the home page. Hand edited, one edition a week. Five slots, each a link. Dates are the artist's published intent.",
-  "edition": "October 6 to 12, 2026",
+  "edition": "October 13 to 19, 2026",
   "slots": [
-    {"k": "SEE", "t": "The Mosaic", "s": "MLow in his cab, made of 9,216 New Yorkers. Every tile clickable, minted tiles lit from the chain.", "h": "mosaic"},
-    {"k": "PLAY", "t": "The Arcade", "s": "Three games. The day's top score on each gets a New Yorker, read off the board at midnight.", "h": "arcade"},
-    {"k": "WALK", "t": "Room 183, the Hall of Fame", "s": "Every honorary portrait in one rotunda, a bronze name plate under each. Find your face.", "h": "museum#room=honoraries"},
-    {"k": "FIND", "t": "Your Stop", "s": "Type your subway station. See the New Yorkers painted within three blocks of it.", "h": "stop"},
-    {"k": "NEXT", "t": "Friday State, October 9", "s": "A new state lands on a tranche of census tokens every Friday. The schedule is public now.", "h": "states"}
+    {"k": "WALK", "t": "Barney Greengrass, Room 123", "s": "The Sturgeon King's dining room, laid out like the real one. Gary at the counter, the merch on the shelves, lox on the deck.", "h": "museum#room=barney"},
+    {"k": "SEE", "t": "MoMLOW", "s": "The museum of modern MLow on the real MoMA floor plan. Over a thousand New Yorkers hung by a curator with taste, with models, posters and loops.", "h": "momlow"},
+    {"k": "CLIMB", "t": "The Spiral", "s": "A marble run tower you walk up, one turn for every Marble Run tournament. Race paintings in bracket order, a bay for each champion, live drops from marblerun.fun.", "h": "spiral"},
+    {"k": "SKATE", "t": "On Location", "s": "One hundred and five New York film sets, rebuilt to walk. Now with a skate mode: quarters, rails and a halfpipe on the lots.", "h": "movies"},
+    {"k": "NEXT", "t": "Friday State, October 16", "s": "BOOTLEG lands on 13 Keystone tokens: the Canal Street knockoff of each New Yorker, appended as a state of its own.", "h": "states"}
   ]
 }

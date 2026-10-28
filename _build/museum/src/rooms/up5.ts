@@ -16,10 +16,12 @@
    the courtyard could not be walked into at all. There was no 72nd Street for the
    arch to open onto. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
+import { standIn, hide } from './heroes';
 import { street, blockFront } from './f';
 import { mlowBanner, blossomFlag, donorWall, eyeMedallion } from './brand';
 const PI = Math.PI;
@@ -57,7 +59,9 @@ export const mcny2: RoomDef = {
     k.box(2.4, 3.8, 6, FX + 1.2, 6.1, BZ, marble);
     // Hamilton and Clinton in their niches, looking at the park
     const statues: T.Vector3[] = [];
-    for (const s of [-1, 1]) { const z = BZ + s * 8; k.box(0.5, 4.2, 2.2, FX + 0.1, 5.6, z, marble); k.box(1.2, 0.5, 1.4, FX + 0.6, 3.75, z, marble); k.cyl(0.36, 1.9, FX + 0.6, 4.95, z, marble, 0.44, 10); k.sphere(0.24, FX + 0.6, 6.15, z, marble, 10); statues.push(v(FX + 0.6, 5.2, z)); } for (let i = 0; i < 4; i++) k.column(BX + BW / 2 + 2.4, 0.1, BZ - 4.5 + i * 3, 6, 0.6, marble, true); k.box(8, 1.4, 8, BX + BW / 2 + 0.8, 6.9, BZ, marble);
+    for (const s of [-1, 1]) { const z = BZ + s * 8; k.box(0.5, 4.2, 2.2, FX + 0.1, 5.6, z, marble); k.box(1.2, 0.5, 1.4, FX + 0.6, 3.75, z, marble); const sm = k.objects.length; k.cyl(0.36, 1.9, FX + 0.6, 4.95, z, marble, 0.44, 10); k.sphere(0.24, FX + 0.6, 6.15, z, marble, 10); statues.push(v(FX + 0.6, 5.2, z));
+      /* 2026-10-28: real people in stone get the faceless figure, never a likeness: the kit's bronze_figure, in marble */
+      const old = standIn(k, sm); void Promise.resolve(k.prop('bronze_figure', FX + 0.6, 4.0, z, { height: 2.5, rotY: PI / 2 })).then((o) => { if (!o) return; hide(old); o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.color.setHex(0xe6e1d6); m.metalness = 0; m.roughness = 0.6; c.material = m; } }); }); } for (let i = 0; i < 4; i++) k.column(BX + BW / 2 + 2.4, 0.1, BZ - 4.5 + i * 3, 6, 0.6, marble, true); k.box(8, 1.4, 8, BX + BW / 2 + 0.8, 6.9, BZ, marble);
     const ped = new T.Shape(); ped.moveTo(-4, 0); ped.lineTo(4, 0); ped.lineTo(0, 2); ped.closePath(); k.mesh(new T.ExtrudeGeometry(ped, { depth: 6 }), marble, BX + BW / 2 + 3.4, 7.6, BZ - 3).rotation.y = PI / 2;
     k.cyl(2.4, 4, BX, 18, BZ, marble, 2.4, 12); k.mesh(new T.SphereGeometry(2.6, 16, 10, 0, PI * 2, 0, PI / 2), k.pbr('mcCopper', X.patina(0x5f9a8c), 0.6), BX, 20, BZ);
     for (let f = 0; f < 3; f++) for (let i = 0; i < 7; i++) { const y = 4 + f * 4.2, z = BZ - 15 + i * 5; if (Math.abs(z) < 3.5 && f === 0) continue; k.box(0.16, 2.6, 1.6, BX + BW / 2 + 0.02, y, z, lime); k.box(0.06, 2.2, 1.2, BX + BW / 2 + 0.1, y, z, glass); }
@@ -108,7 +112,7 @@ export const mcny2: RoomDef = {
 
     /* life: the screens change, a class follows its guide, traffic on Fifth */
     k.crowd([v(BX + 12, 0.15, BZ + 5.6), v(BX - 6, 0.15, BZ + 6.4), v(BX - 12, 0.15, BZ - 6), v(BX - 4, 0.15, TZ + 2), v(BX + 10, 0.15, TZ - 2)], 12, { seed: 141, speed: 0.4, spread: 0.9, scale: 0.8, closed: true, animate: !ctx.reduced, colors: [0xf1c531, 0xe8a020, 0xf1c531] });
-    const guide = new T.Group(); { const b = new T.Mesh(new T.CapsuleGeometry(0.2, 0.82, 3, 8), new T.MeshStandardMaterial({ color: 0x1f3f6a })); b.position.y = 0.76; const h = new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: 0x8d5a3b })); h.position.y = 1.5; const flag = new T.Mesh(new T.BoxGeometry(0.02, 0.3, 0.4), new T.MeshBasicMaterial({ color: 0xff4a2a })); flag.position.set(0, 2.3, 0.2); const pole = new T.Mesh(new T.CylinderGeometry(0.015, 0.015, 1.2, 5), new T.MeshStandardMaterial({ color: 0x2a2a2a })); pole.position.set(0, 1.75, 0); guide.add(b, h, pole, flag); }
+    const guide = new T.Group(); { const b = new T.Mesh(new T.CapsuleGeometry(0.2, 0.82, 3, 8), new T.MeshStandardMaterial({ color: 0x1f3f6a })); b.position.y = 0.76; personTag(b, 'auto', 1.25); const h = personTag(new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: 0x8d5a3b })), 'part'); h.position.y = 1.5; const flag = new T.Mesh(new T.BoxGeometry(0.02, 0.3, 0.4), new T.MeshBasicMaterial({ color: 0xff4a2a })); flag.position.set(0, 2.3, 0.2); const pole = new T.Mesh(new T.CylinderGeometry(0.015, 0.015, 1.2, 5), new T.MeshStandardMaterial({ color: 0x2a2a2a })); pole.position.set(0, 1.75, 0); guide.add(b, h, pole, flag); }
     k.add(guide);
     const tcars: { g: T.Group; dir: number; off: number }[] = [];
     for (let i = 0; i < 6; i++) { const g = new T.Group(), dir = i % 2 ? -1 : 1; const body = new T.Mesh(new T.BoxGeometry(1.8, 0.75, 4.4), new T.MeshStandardMaterial({ color: [0xf2b705, 0x1a1c20, 0xd8d4cc, 0x2a3f6a, 0xf2b705, 0x8a2a2a][i], metalness: 0.4, roughness: 0.4 })); body.position.y = 0.6; const cab = new T.Mesh(new T.BoxGeometry(1.6, 0.6, 2.2), new T.MeshStandardMaterial({ color: 0x22303a, metalness: 0.6, roughness: 0.2 })); cab.position.y = 1.28; g.add(body, cab); g.position.x = dir > 0 ? 4.5 : 9.5; k.add(g); tcars.push({ g, dir, off: i * 30 }); }
@@ -222,7 +226,7 @@ export const dakota2: RoomDef = {
     for (let i = 0; i < NS; i++) fb.push(-50 + fr() * 100, fr() * 18, -40 + fr() * 90, fr() * 6.3);
     const snow = (t: number) => { const m = new T.Matrix4(); for (let i = 0; i < NS; i++) { const x = fb[i * 4], y0 = fb[i * 4 + 1], z = fb[i * 4 + 2], ph = fb[i * 4 + 3]; const y = ((y0 - t * 0.9) % 18 + 18) % 18; m.makeTranslation(x + 0.4 * Math.sin(t * 0.7 + ph), y, z + 0.3 * Math.cos(t * 0.5 + ph)); flakes.setMatrixAt(i, m); } flakes.instanceMatrix.needsUpdate = true; };
     snow(0);
-    const person = (coat: number, skin = 0xc8a284) => { const g = new T.Group(); const b = new T.Mesh(new T.CapsuleGeometry(0.2, 0.82, 3, 8), new T.MeshStandardMaterial({ color: coat, roughness: 0.85 })); b.position.y = 0.61; const h = new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: skin, roughness: 0.7 })); h.position.y = 1.35; g.add(b, h); return g; };
+    const person = (coat: number, skin = 0xc8a284) => { const g = new T.Group(); const b = new T.Mesh(new T.CapsuleGeometry(0.2, 0.82, 3, 8), new T.MeshStandardMaterial({ color: coat, roughness: 0.85 })); b.position.y = 0.61; const h = new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: skin, roughness: 0.7 })); h.position.y = 1.35; g.add(personTag(b, 'auto', 1.25), personTag(h, 'part')); return g; };
     const doorman = person(0x1f2a3a); doorman.position.set(BX + 2.2, 0, AZ + 5.6); k.add(doorman);
     const busker = person(0x5a3a2a); busker.position.set(MX - 4.6, 0, MZ + 1.2); busker.rotation.y = PI / 2 + 0.3; k.add(busker);
     const guitar = new T.Group(); { const body = new T.Mesh(new T.CylinderGeometry(0.22, 0.26, 0.1, 12), new T.MeshStandardMaterial({ color: 0x9a5a2a })); body.rotation.x = PI / 2; const neck = new T.Mesh(new T.BoxGeometry(0.06, 0.06, 0.7), new T.MeshStandardMaterial({ color: 0x3a2a1a })); neck.position.set(0.35, 0, 0); neck.rotation.y = PI / 2; guitar.add(body, neck); }

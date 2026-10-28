@@ -25,6 +25,7 @@
    with the pylon out of the line of sight, every third of a turn; in the head, two at
    the back at 1.0 by 0.62. Twelve works where there were none, inside the copper. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -42,7 +43,7 @@ function hollowBox(k: K, w: number, h: number, d: number, x: number, y: number, 
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 8, 6); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* The inside of the model, measured: height above her plinth, the centre of the
    widest circle that fits inside the copper at that height (room x, z), its radius. */

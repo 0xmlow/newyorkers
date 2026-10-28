@@ -100,7 +100,8 @@ for p in k:
 
 # ---------- on chain ----------
 CONTRACT = "0x2dbfcca230979a91863be63ebce55dd5aae2b5c9"
-MINT_URL = "https://transient.xyz/mint/newyorkers"
+MINT_URL = f"https://www.transient.xyz/nfts/ethereum/{CONTRACT}"   # the collection page; the 2026-09 drop page is closed
+TOKEN_URL = MINT_URL + "/"
 ZERO = "0x" + "0" * 40
 ET = datetime.timezone(datetime.timedelta(hours=-4))   # EDT through 1 November
 CH = json.load(open(os.path.join(HERE, "collectors", "chain.json")))
@@ -113,6 +114,12 @@ for lg in sorted(CH["logs"], key=lambda l: (l["b"], l["i"])):
     if lg["from"] == ZERO: minted_at[lg["id"]] = lg["t"]
 on_chain = sorted(i for i, a in owner.items() if a != ZERO)
 holders = sorted({owner[i] for i in on_chain})
+# keystone/tokens.json maps each census number to its token id (read off the chain 2026-10-27); the card's Collect link uses it
+KTOK = json.load(open(os.path.join(HERE, "keystone", "tokens.json")))["tokens"]
+for p_ in k:
+    if str(p_["n"]) in KTOK: p_["tok"] = KTOK[str(p_["n"])]
+k_on = sum(1 for p_ in k if p_.get("tok") in on_chain)
+print(f"  keystone pieces on chain: {k_on} of {len(k)}")
 short = lambda a: a[:6] + "\u2026" + a[-4:]
 def holder_name(a): return ENS.get(a.lower()) or short(a)
 def kthumb(i, name):
@@ -132,28 +139,28 @@ tokens = []
 for i in on_chain:
     name = (KM.get(str(i)) or {}).get("name") or f"Keystone #{i}"
     tokens.append({"id": i, "name": name, "holder": owner[i], "holderName": holder_name(owner[i]), "th": kthumb(i, name),
-                   "opensea": f"https://opensea.io/assets/ethereum/{CONTRACT}/{i}",
+                   "transient": f"{TOKEN_URL}{i}", "opensea": f"https://opensea.io/assets/ethereum/{CONTRACT}/{i}",
                    "mintedAt": datetime.datetime.fromtimestamp(minted_at[i], ET).isoformat() if i in minted_at else None})
 os.makedirs(os.path.join(SITE, "api"), exist_ok=True)
 json.dump({"asOf": asof, "block": CH["to"], "contract": CONTRACT, "chain": "Ethereum", "standard": "ERC-7160TL",
            "painted": len(k), "paintedNote": "111 and counting: KEYSTONE is open ended and grows as new Keystone New Yorkers are made.",
-           "onChain": len(on_chain), "holders": len(holders), "price": "0.069 ETH", "mint": MINT_URL,
+           "onChain": len(on_chain), "keystoneOnChain": k_on, "holders": len(holders), "price": "0.069 ETH", "mint": MINT_URL, "collection": MINT_URL,
            "foldedIn": {"count": len(pre), "from": pre_from, "to": pre_to, "note": "Minted on the contract before the Keystone release and folded into it. Token ids are mint order."},
            "tokens": [{k_: v for k_, v in t.items() if k_ != "th"} for t in tokens]},
           open(os.path.join(SITE, "api", "keystone.json"), "w"), ensure_ascii=False, separators=(",", ":"))
 def tok_li(t):
     img = f'<img src="{t["th"]}" alt="" loading="lazy">' if t["th"] else '<span class="ph" aria-hidden="true"></span>'
-    return (f'<li><a href="{t["opensea"]}" target="_blank" rel="noopener">{img}<div><b>{esc(t["name"])}</b><i>held by {esc(t["holderName"])}</i></div>'
+    return (f'<li><a href="{t["transient"]}" target="_blank" rel="noopener">{img}<div><b>{esc(t["name"])}</b><i>held by {esc(t["holderName"])}</i></div>'
             f'<span>#{t["id"]}</span></a></li>')
 ONCHAIN_HTML = f"""
 <section id="onchain" class="open" tabindex="-1" aria-label="Keystone on chain">
   <button class="close" id="chainx" type="button" aria-label="Close">×</button>
   <div class="eyebrow">Keystone · Ethereum · ERC-7160</div>
   <h2>ON CHAIN</h2>
-  <p class="big"><b>{len(k)} made and counting.</b> <b>{len(on_chain)} on chain.</b> <b>{len(holders)} holders.</b></p>
-  <p class="note">Read off Ethereum on {esc(asof)}, block {CH["to"]:,}. Contract <a href="https://etherscan.io/address/{CONTRACT}" target="_blank" rel="noopener">{CONTRACT[:6]}\u2026{CONTRACT[-4:]}</a> on Transient Labs, 0.069 ETH each, one price and no ladder. Token ids are mint order; {len(pre)} were minted before the Keystone release, {esc(pre_from)} to {esc(pre_to)}, and were folded in. Raw data at <a href="api/keystone.json">api/keystone.json</a>.</p>
-  <a class="mintk" href="{MINT_URL}" target="_blank" rel="noopener">Mint a Keystone on Transient</a>
-  <h3>The {len(on_chain)} minted</h3>
+  <p class="big"><b>{len(k)} made and counting.</b> <b>{"All " + str(len(k)) if k_on == len(k) else str(k_on)} on chain.</b> <b>{len(holders)} holders.</b></p>
+  <p class="note">Read off Ethereum on {esc(asof)}, block {CH["to"]:,}. Contract <a href="https://etherscan.io/address/{CONTRACT}" target="_blank" rel="noopener">{CONTRACT[:6]}\u2026{CONTRACT[-4:]}</a> on Transient Labs, 0.069 ETH each, one price and no ladder. Token ids are mint order; {len(pre)} were minted before the Keystone release, {esc(pre_from)} to {esc(pre_to)}, and were folded in. The contract also holds {len(on_chain) - k_on} tokens that are not Keystone pieces: the {len(pre)} folded in and the BREAK GLASS one of one. Raw data at <a href="api/keystone.json">api/keystone.json</a>.</p>
+  <a class="mintk" href="{MINT_URL}" target="_blank" rel="noopener">Collect a Keystone on Transient</a>
+  <h3>All {len(on_chain)} tokens on the contract</h3>
   <ol>{"".join(tok_li(t) for t in tokens)}</ol>
 </section>
 """
@@ -216,9 +223,9 @@ subs = [
      '  #card .ksave button,#card .ksave a{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:9px 14px;border:1px solid var(--blue);color:#fff;background:transparent;cursor:pointer;text-decoration:none}\n'
      '  #card .ksave button{background:var(--blue)}\n'
      '  #card #kSaveMsg{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--slate)}\n'),
-    ('See it in the census</a>', 'See it in the census</a><a class="out" id="kPrint" href="#" target="_blank" rel="noopener" hidden>Order a print</a>'),
+    ('See it in the census</a>', 'See it in the census</a><a class="out" id="kBuy" href="#" target="_blank" rel="noopener" hidden>Collect on Transient</a><a class="out" id="kPrint" href="#" target="_blank" rel="noopener" hidden>Order a print</a>'),
     ("kLink').href='https://n3wyorkers.com/n/'+d.n",
-     "kLink').href='n/'+d.sid+'.html';\n  (function(){ var a=document.getElementById('kPrint'), P=window.NY_PRINTS, K=window.NY_KEYSTONE_PRINTS, kp=K&&K.pieces[String(d.n)];"
+     "kLink').href='n/'+d.sid+'.html';\n  (function(){ var b=document.getElementById('kBuy'); if(d.tok){ b.href='"+TOKEN_URL+"'+d.tok; b.hidden=false; } else b.hidden=true; })();\n  (function(){ var a=document.getElementById('kPrint'), P=window.NY_PRINTS, K=window.NY_KEYSTONE_PRINTS, kp=K&&K.pieces[String(d.n)];"
      " if(!P||P.status!=='live'){ a.hidden=true; return; }"
      " a.href=(K&&K.status==='live'&&kp)?K.shop+'/products/'+kp.handle:'n/'+d.sid+'.html#orderbox'; a.hidden=false; })()"),
     ("<title>Keystone 111</title>", "<title>NEW YORKERS · Keystone 111</title>"),

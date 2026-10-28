@@ -6,6 +6,7 @@
    and the Unisphere lit far off. Helpers are copied from v14 and v3, nothing there is exported.
    Rules kept: no lettered text beyond public signage, no business names, no likeness of anyone. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
@@ -21,7 +22,7 @@ const cam = (): T.Camera | undefined => (typeof window === 'undefined' ? undefin
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35, seg = 8) {
   const body = new T.CapsuleGeometry(r, len, seg > 6 ? 3 : 2, seg); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, seg + 2, Math.max(5, seg - 2)); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, repeat = false) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -597,8 +598,8 @@ export const nightmarket: RoomDef = {
       const member = (x: number, z: number, coat: number, kind: 'guitar' | 'bass' | 'mic' | 'drums') => {
         const g = new T.Group(); g.position.set(x, 1.32, SZ + z);
         const sit = kind === 'drums';
-        const body = new T.Mesh(new T.CapsuleGeometry(0.2, sit ? 0.5 : 0.72, 3, 8), k.flat(coat, 0, 0.8)); body.position.y = sit ? 0.45 : 0.56; g.add(body);
-        const head = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), skinM); head.position.y = sit ? 0.95 : 1.22; g.add(head);
+        const body = new T.Mesh(new T.CapsuleGeometry(0.2, sit ? 0.5 : 0.72, 3, 8), k.flat(coat, 0, 0.8)); body.position.y = sit ? 0.45 : 0.56; g.add(personTag(body, sit ? 'seat' : 'auto', sit ? 1.6 : 1.3));
+        const head = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), skinM); head.position.y = sit ? 0.95 : 1.22; g.add(personTag(head, 'part'));
         if (kind === 'guitar' || kind === 'bass') { const ins = new T.Mesh(new T.BoxGeometry(kind === 'bass' ? 1.1 : 0.9, 0.3, 0.1), instM); ins.position.set(0.05, 0.6, 0.26); ins.rotation.z = -0.55; g.add(ins); }
         if (kind === 'mic') { const st = new T.Mesh(new T.CylinderGeometry(0.015, 0.015, 1.5, 6), chrome); st.position.set(0, 0.0, 0.42); g.add(st); const mic = new T.Mesh(new T.SphereGeometry(0.06, 8, 6), black); mic.position.set(0, 0.78, 0.42); g.add(mic); }
         if (kind === 'drums') for (const s of [-1, 1]) { const arm = new T.Group(); arm.position.set(s * 0.22, 0.75, 0.1); const a = new T.Mesh(new T.CylinderGeometry(0.02, 0.02, 0.5, 5), chrome); a.position.set(0, 0, 0.25); a.rotation.x = PI / 2; arm.add(a); g.add(arm); arms.push(arm); }

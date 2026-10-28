@@ -20,9 +20,9 @@ window.NY_CONFIG = {
   claimDate: "2026-09-23T11:11:00-04:00",
   claimLabel: "WEDNESDAY SEPT 23, 2026 · 11:11 AM ET · MINTING ON OPENSEA",
   claimSigned: true,
-  // THE CENSUS RELEASE closes thirty days later (releases.json). count.html counts down to this once the claim is open.
-  closeDate: "2026-10-23T11:11:00-04:00",
-  closeLabel: "OPEN UNTIL FRIDAY OCT 23, 2026 · 11:11 AM ET · OPENSEA",
+  // THE CENSUS RELEASE closes Saturday November 7, 11:11 AM EST (releases.json; extended by MLow 2026-10-21). count.html counts down to this once the claim is open.
+  closeDate: "2026-11-07T11:11:00-05:00",
+  closeLabel: "OPEN UNTIL SATURDAY NOV 7, 2026 · 11:11 AM ET · OPENSEA",
 
   // The public count of people counted. Never estimated, never inflated: leave null
   // until there is a real posted number, and the site shows the painted census instead.

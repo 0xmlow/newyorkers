@@ -4,10 +4,12 @@
    the rowboats underneath and the San Remo over the trees. Moving things are instanced rigs or single
    groups on k.ticks, and nothing moves when ctx.reduced is set. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { hero, heroInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const one = new T.Vector3(1, 1, 1);
@@ -18,13 +20,13 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const body = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h * crouch, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h * crouch, z);
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(skin, 0, 0.7), x, y + (1.22 * h * crouch + 0.13), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 /* a small figure with a colour and a head, as one merged geometry for instancing */
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 const part = (w: number, h: number, d: number, x: number, y: number, z: number, rz = 0) => { const g = new T.BoxGeometry(w, h, d); g.rotateZ(rz); g.translate(x, y, z); return g; };
 
@@ -272,14 +274,21 @@ export const dumbo: RoomDef = {
       const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), up = new T.Vector3(0, 1, 0), hide = new T.Vector3(0.0001, 0.0001, 0.0001);
       hs.forEach((h, j) => { q.setFromAxisAngle(up, -h.a - PI / 2); p.set(Math.cos(h.a) * h.r, 2.6, Math.sin(h.a) * h.r); m.compose(p, q, one); poles.setMatrixAt(j, m); });
       poles.instanceMatrix.needsUpdate = true;
+      /* 2026-10-28: Jane's Carousel gets the carved hero horse too (h_carousel_horse), instanced on the rig */
+      let steeds: ReturnType<typeof heroInstances> | null = null;
+      const hq = new T.Quaternion(), hm = new T.Matrix4();
       const place = (t: number) => {
         hs.forEach((h, j) => {
           q.setFromAxisAngle(up, -h.a - PI / 2); p.set(Math.cos(h.a) * h.r, 0.4 + (h.jump ? 0.3 * Math.sin(t * 2.6 + h.ph) : 0), Math.sin(h.a) * h.r);
-          m.compose(p, q, one); horses.setMatrixAt(j, m); p.y += 1.38; m.compose(p, q, h.rider ? one : hide); riders.setMatrixAt(j, m);
+          m.compose(p, q, one); horses.setMatrixAt(j, m);
+          if (steeds) { hq.setFromAxisAngle(up, -h.a); steeds.setAt(j, hm.compose(p, hq, one)); }
+          p.y += steeds ? 1.1 : 1.38; m.compose(p, q, h.rider ? one : hide); riders.setMatrixAt(j, m);
         });
         horses.instanceMatrix.needsUpdate = riders.instanceMatrix.needsUpdate = true;
+        steeds?.commit();
       };
       place(0);
+      void hero(k, 'h_carousel_horse_lo', { height: 1.85 }).then((g) => { if (!g) return; steeds = heroInstances(k, g, NH); for (const pt of steeds.parts) { rig.add(pt.im); pt.im.castShadow = false; } horses.visible = poles.visible = false; place(0); });
       const cone = new T.Mesh(new T.CylinderGeometry(0.4, 8.3, 2.2, 24, 1, true), cream); cone.position.y = 5.6; rig.add(cone);
       const board = new T.Mesh(new T.CylinderGeometry(8.35, 8.35, 0.9, 32, 1, true), cream); board.position.y = 4.4; rig.add(board);
       for (const y of [3.95, 4.85]) { const tr = new T.Mesh(new T.TorusGeometry(8.37, 0.05, 6, 64), gilt); tr.rotation.x = PI / 2; tr.position.y = y; rig.add(tr); }
@@ -298,6 +307,15 @@ export const dumbo: RoomDef = {
       g.add(new T.Mesh(mergeGeometries(wins)!, k.flat(0x1a2028, 0.3, 0.3)));
       const lamp = new T.Mesh(new T.BoxGeometry(2.2, 0.3, 0.1), k.glow(0xfff2c8)); lamp.position.set(0, 1.2, dir > 0 ? -9.05 : 9.05 + 7 * 18.6); g.add(lamp);
       g.rotation.y = TH; k.add(g);
+      /* 2026-10-28: the eight box cars become hero cars (h_subway_car_lo), instanced inside the train; boxes stay until it loads */
+      void hero(k, 'h_subway_car_lo', { box: [3.0, 3.6, 18] }).then((h) => {
+        if (!h) return;
+        const cars = heroInstances(k, h, 8);
+        for (const pt of cars.parts) { g.add(pt.im); pt.im.frustumCulled = false; pt.im.castShadow = false; }
+        for (let i = 0; i < 8; i++) cars.setAt(i, new T.Matrix4().makeTranslation(0, 0, i * 18.6));
+        cars.commit();
+        g.children[0].visible = g.children[1].visible = false;
+      });
       const span = ZB + 60 - (ZMA - 160), len = 8 * 18.6;
       const place = (t: number) => {
         const u = ((t * 16 + off) % span + span) % span;
@@ -318,6 +336,8 @@ export const dumbo: RoomDef = {
       const win = new T.Mesh(new T.BoxGeometry(6.7, 0.9, 15), k.flat(0x1a2530, 0.4, 0.2)); win.position.set(0, 3.9, -1); f.add(win);
       const top = new T.Mesh(new T.BoxGeometry(4, 1.2, 5), k.flat(0xf08a2a, 0.1, 0.5)); top.position.set(0, 5.4, 2); f.add(top);
       k.add(f);
+      /* 2026-10-28: the box NYC Ferry becomes h_ferry, the boat it was drawn after; boxes stay until it loads */
+      void hero(k, 'h_ferry', { length: 26 }).then((h) => { if (!h) return; for (const c of f.children) c.visible = false; h.position.y = -0.8; f.add(h); });
       k.rider(f, k.spline([v(-500, -2, -250), v(0, -2, -262), v(500, -2, -250), v(520, -2, -300), v(0, -2, -312), v(-520, -2, -300)], true), 7, 200);
       const NG = 14, gulls = k.instances(mergeGeometries([part(1.4, 0.05, 0.3, 0, 0, 0), part(0.2, 0.18, 0.5, 0, 0, 0)])!, k.flat(0xf4f4f0, 0, 0.8), Array.from({ length: NG }, () => new T.Matrix4()));
       gulls.frustumCulled = false;
@@ -445,28 +465,11 @@ export const bowbridge: RoomDef = {
       }
       for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const a = v(sx * HALF, 0.74, BZ + sz * HW), b = v(sx * (HALF + 1.6), 0.74, BZ + sz * (HW + 0.9)); k.beam(a, b, 0.05, iron, 6); k.beam(a.clone().setY(0.12), b.clone().setY(0.12), 0.04, iron, 6); }
     }
-    /* ---- the willows on the banks: a crown and a curtain of hanging strands that moves in the wind ---- */
+    /* ---- the willows on the banks ---- */
+    /* 2026-10-28: the willows were code (a lathe trunk, a squashed icosahedron crown, 480 instanced box strands); they are
+       the tree kit's weeping willow now, instanced, with its own fallback if the file fails */
     const willows = [[-25, -17.5], [25.5, -17.5], [-29, 3], [29.5, 3.5], [-36, -27], [36, -30]];
-    {
-      const rnd = X.mulberry(1873), bark = k.pbr('bark', X.bark(), 0.7, { roughness: 1 });
-      const strands: { x: number; y: number; z: number; L: number; ph: number }[] = [];
-      for (const [wx, wz] of willows) {
-        k.lathe([[0.5, 0], [0.34, 1], [0.28, 4.2], [0.18, 6.4]], wx, 0, wz, bark, 9);
-        const cr = k.mesh(new T.IcosahedronGeometry(3.3, 1), k.flat(0x8a9a3e, 0, 0.95), wx, 6.6, wz); cr.scale.set(1, 0.55, 1);
-        for (let i = 0; i < 80; i++) { const a = rnd() * PI * 2, rr = 1.4 + rnd() * 2.4, top = 7.4 - (rr / 3.8) * 1.6; strands.push({ x: wx + Math.cos(a) * rr, y: top, z: wz + Math.sin(a) * rr, L: 3.6 + rnd() * 2.6 * (rr / 3.8) + rnd(), ph: rnd() * 6.3 }); }
-        k.keepOut.push({ x: wx, z: wz, r: 0.8 });
-      }
-      const sg = new T.BoxGeometry(0.16, 1, 0.05); sg.translate(0, -0.5, 0);
-      const cur = k.instances(sg, new T.MeshStandardMaterial({ roughness: 0.9, side: T.DoubleSide }), strands.map(() => new T.Matrix4()));
-      cur.frustumCulled = false;
-      const c = new T.Color(), pal = [0x9aac44, 0xb0b84a, 0x7f9a3a, 0xc4b24a];
-      strands.forEach((_, i) => cur.setColorAt(i, c.set(pal[i % pal.length])));
-      if (cur.instanceColor) cur.instanceColor.needsUpdate = true;
-      const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(), p = new T.Vector3(), sc = new T.Vector3();
-      const place = (t: number) => { strands.forEach((s, i) => { e.set(0.08 * Math.sin(t * 0.9 + s.ph), s.ph, 0.1 * Math.sin(t * 0.7 + s.ph * 1.3)); q.setFromEuler(e); p.set(s.x, s.y, s.z); sc.set(1, s.L, 1); m.compose(p, q, sc); cur.setMatrixAt(i, m); }); cur.instanceMatrix.needsUpdate = true; };
-      place(0);
-      if (!ctx.reduced) k.ticks.push(place);
-    }
+    for (const [wx, wz] of willows) { k.tree(wx, 0, wz, { species: 'willow', h: 6.2, r: 3.8, seed: Math.round(wx * 3 + wz) }); k.keepOut.push({ x: wx, z: wz, r: 0.8 }); }
     /* ---- autumn: the Ramble going gold to the north, Cherry Hill to the south, a wall of trees on the far shore ---- */
     {
       const rnd = X.mulberry(1859), fall = [0xc8641e, 0xd89a2a, 0x9a2a1e, 0x6a7a2e, 0xc8a22a, 0x4f6b34, 0xb84a1e, 0xe0b040];
@@ -539,8 +542,8 @@ export const bowbridge: RoomDef = {
       g.add(new T.Mesh(mergeGeometries([part(1.1, 0.03, 2.9, 0, 0.21, 0), part(1.1, 0.08, 0.3, 0, 0.3, 0.3), part(1.1, 0.08, 0.3, 0, 0.3, -1.1)])!, k.flat(0xe8e0cc, 0, 0.7)));
       const body = (z: number) => { const b = new T.CapsuleGeometry(0.19, 0.42, 3, 8); b.translate(0, 0.72, z); return b; };
       const head = (z: number) => { const h = new T.SphereGeometry(0.12, 8, 6); h.translate(0, 1.2, z); return h; };
-      g.add(new T.Mesh(body(0.3), k.flat(shirt, 0, 0.85))); g.add(new T.Mesh(body(-1.1), k.flat(pass, 0, 0.85)));
-      g.add(new T.Mesh(mergeGeometries([head(0.3), head(-1.1)])!, k.flat(0xc8a284, 0, 0.7)));
+      g.add(personTag(new T.Mesh(body(0.3), k.flat(shirt, 0, 0.85)), 'seat', 1.55)); g.add(personTag(new T.Mesh(body(-1.1), k.flat(pass, 0, 0.85)), 'seat', 1.55));   // 2026-10-28: the rowers are seated cast
+      g.add(personTag(new T.Mesh(mergeGeometries([head(0.3), head(-1.1)])!, k.flat(0xc8a284, 0, 0.7)), 'part'));
       const oars = new T.Group(); oars.position.set(0, 0.62, 0.55); g.add(oars);
       for (const s of [-1, 1]) { const o = new T.Mesh(new T.BoxGeometry(2.6, 0.05, 0.05), k.flat(0xb89a6a, 0, 0.7)); o.position.x = s * 1.1; o.rotation.z = s * 0.34; oars.add(o); const bl = new T.Mesh(new T.BoxGeometry(0.5, 0.02, 0.16), k.flat(0xb89a6a, 0, 0.7)); bl.position.set(s * 2.25, -0.42, 0); oars.add(bl); }
       k.add(g);

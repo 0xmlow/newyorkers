@@ -98,6 +98,19 @@ export const mlowintl: RoomDef = {
          (it lifted the terminal 58 m). The set is built at true size in the room's own frame: put it there */
       root.position.set(0, 0, 0); root.rotation.set(0, 0, 0); root.scale.setScalar(1);
       root.updateMatrixWorld(true);
+      /* 2026-10-28: the travellers were Blender primitives instanced in the set (a shirt coloured cylinder body, a sphere
+         head, cylinder legs; six templates parked under the ground). The kit casts each where it stood as a whole cast
+         character, rigged near the visitor (idle, head turned to you); the primitives hide when the cast lands. */
+      const people = new Set<T.Object3D>();
+      {
+        /* each traveller is a node person_tmpl<k>[.nnn] (body, head and legs as its primitives); the six bare
+           templates are parked under the ground */
+        const srcs: T.Object3D[] = [];
+        const oldCrowd = HAS_DOM && /[?&]crowd=old/.test(location.search);   // then they merge with the set as before
+        if (!oldCrowd) root.traverse((o) => { if (/^person_tmpl\d/.test(o.name) && !/^person_tmpl\d/.test(o.parent?.name || '')) srcs.push(o); });
+        for (const o of srcs) { o.userData.person = 'auto'; o.userData.personH = 1.0; o.userData.personMinY = -10; o.traverse((c) => people.add(c)); }   // kept out of the static merge below
+        k.castLate(srcs, srcs);
+      }
       const jetParts: T.Object3D[] = [], blimpParts: T.Object3D[] = [];
       root.traverse((o) => {
         if (/^MLOWAIR_taxi/.test(o.name)) jetParts.push(o);
@@ -116,7 +129,7 @@ export const mlowintl: RoomDef = {
       root.updateMatrixWorld(true);
       const inv = new T.Matrix4().copy(root.matrixWorld).invert();
       root.traverse((o) => {
-        if (!(o instanceof T.Mesh) || moving.has(o)) return;
+        if (!(o instanceof T.Mesh) || moving.has(o) || people.has(o)) return;
         /* the census takes the concourse frames: the terminal's own fLOWers canvases, their title plaques
            and halos go; its frames, rails and picture lights stay */
         if (/^art[WEA]+_\d+(_ttl|_halo|_grail)?(_\d+)?$/.test(o.name || o.parent?.name || '')) { drop.push(o); return; }

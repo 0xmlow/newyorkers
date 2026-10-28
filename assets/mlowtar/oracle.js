@@ -16,6 +16,7 @@
  * Red teamed 2026-10-12: see MLOWTAR HANDOFF 2026-10-12/REDTEAM_NOTES.md for what changed and why.
  */
 import { tokens, themeOf, hash, rng, pickRoom, pickCard, TRAINS, guard } from "./match.js";
+import { answer } from "./answers.js";
 
 /* ---------- the file: five questions, answered once, kept in the browser ---------- */
 export const FILE = [
@@ -34,6 +35,8 @@ const GREET = {
   "LAST SET": ["11:40. One more set, one more question", "The last set is where the band tells the truth. Same here", "11:40 PM: the hour the city stops pretending. Go ahead"],
   "THE 3 AM": ["3 AM. The booth keeps your hours", "Awake anyway. Good. The city answers faster at this hour", "3 AM question. The ball is clearest when the bodega is the only light"],
 };
+/* when the booth has a real answer it doesn't make you wait for it */
+const GREET_SHORT = ["The booth knows this one", "Easy. The ball barely had to think", "MLOWTAR has lived here too long not to know", "The eye opens. Here's the straight answer", "Good question. Real answer first, magic after", "The booth asked around", "Straight from the ball, no riddles this time"];
 const FILE_LINE = [
   "{Borough}, {hour}, {order}, the {train}: the booth has your type on file",
   "On file: {Borough}, {hour}, {order}. Carrying {carry}. Noted",
@@ -149,35 +152,57 @@ function careful(kind, q, seed, rooms, file) {
 export function read(q, seed, deck, rooms, opts) {
   opts = opts || {}; const file = opts.file || {};
   const kind = guard(q); if (kind) return careful(kind, q, seed, rooms, file);
-  const r = rng(seed), theme = themeOf(q), pick = arr => arr[Math.floor(r() * arr.length)];
+  const r = rng(seed), pick = arr => arr[Math.floor(r() * arr.length)];
+  /* 2026-10-17: the answer comes first. When the city can answer the question (where to live, safety, food,
+     plans, weather, airports, this or that, should I), answers.js says so plainly and the card and the room
+     follow from it: a New Yorker from the neighborhood it named, a room near what it recommended. */
+  let ans = (q && q.trim()) ? answer(q, seed, { file, now: opts.now }) : null;
+  const raw = themeOf(q);       // health, law, politics and grief keep their gentle, no advice slips: no verdicts on anyone's body, case or ballot
+  if (ans && (raw === "health" || raw === "law" || raw === "politics" || raw === "lost") && ans.kind !== "lost") ans = null;
+  const theme = (ans && ans.theme) || themeOf(q);
   const fileSeed = hash(JSON.stringify(file)), gentle = theme === "health" || theme === "law" || theme === "lost";
   const boroughWant = { MANHATTAN: "Manhattan", BROOKLYN: "Brooklyn", QUEENS: "Queens", "THE BRONX": "Bronx", "STATEN ISLAND": "Staten Island" }[file.borough] || null;
-  let card = pickCard(deck, q, seed ^ fileSeed, opts.exclude);
-  if (boroughWant && card && !String(card[3]).startsWith(boroughWant) && r() < 0.55) {
+  let card = null;
+  if (ans && ans.where && ans.where.length) {
+    const want = ans.where.map(w => w.replace(/^the /i, "").toLowerCase());
+    const local = deck.filter(d => { const nb = String(d[4] || "").toLowerCase(); return nb && want.some(w => nb.includes(w) || w.includes(nb) && nb.length > 4); });
+    if (local.length) card = pickCard(local, "", seed ^ fileSeed, opts.exclude);
+  }
+  if (!card && ans && ans.kind === "safety") card = pickCard(deck.filter(d => d[2] === "Heroes"), ans.words, seed ^ fileSeed, opts.exclude);   // never a card from the block it just warned about
+  if (!card) card = pickCard(deck, ans ? q + " " + ans.words : q, seed ^ fileSeed, opts.exclude);
+  if (!ans && boroughWant && card && !String(card[3]).startsWith(boroughWant) && r() < 0.55) {
     const alt = pickCard(deck.filter(d => String(d[3]).startsWith(boroughWant)), q, seed ^ 0x51ed, opts.exclude); if (alt) card = alt;
   }
-  const room = pickRoom(rooms, q + (boroughWant ? " " + boroughWant : ""), theme, card, seed ^ fileSeed);
+  const room = pickRoom(rooms, ans ? (ans.words || q) + " " + q : q + (boroughWant ? " " + boroughWant : ""), theme, card, seed ^ fileSeed);
   const fam = FAMILY[card && card[2]] || FAMILY.Citizens, bo = card ? String(card[3] || "").replace(/\s*\(.*$/, "") : "";
   const haveFile = !!(file.borough && file.hour && file.order && file.train && file.carry);
-  const greetBank = gentle ? GREET.any.filter(g => !/cold|pigeon|allergy/.test(g)) : (file.hour && GREET[file.hour] && r() < 0.45) ? GREET[file.hour] : GREET.any;
-  const reading = [`The census turns up No. ${card ? card[0] : "?"}, ${card ? card[1] : "a New Yorker"}${card && card[4] ? ", " + card[4] : ""}`, pick(fam)];
-  const boroughLine = BOROUGH[bo] ? pick(BOROUGH[bo]) : null;
-  if (boroughLine && r() < (haveFile ? 0.4 : 0.7)) reading.push(boroughLine);     // the file already named a borough; don't say it twice
-  const hl = card ? hookLine(card[7]) : null; if (hl && !(gentle && /kill|dead|die|hospital|cancer|court|arrest/i.test(hl))) reading.push(hl);
-  const fileLine = haveFile ? cap(pick(FILE_LINE)
+  const greetBank = ans ? GREET_SHORT : gentle ? GREET.any.filter(g => !/cold|pigeon|allergy/.test(g)) : (file.hour && GREET[file.hour] && r() < 0.45) ? GREET[file.hour] : GREET.any;
+  let reading;
+  if (ans) {
+    const nb = card && card[4], local = nb && ans.where && ans.where.some(w => String(nb).toLowerCase().includes(w.replace(/^the /i, "").toLowerCase()));
+    reading = card && local ? [`A New Yorker from ${nb} vouches for it`] : [];      // the card box under it names them; never say it twice
+  } else {
+    reading = [`Your card: No. ${card ? card[0] : "?"}, ${card ? card[1] : "a New Yorker"}${card && card[4] ? ", " + card[4] : ""}`, pick(fam)];
+    const boroughLine = BOROUGH[bo] ? pick(BOROUGH[bo]) : null;
+    if (boroughLine && r() < (haveFile ? 0.4 : 0.7)) reading.push(boroughLine);     // the file already named a borough; don't say it twice
+    const hl = card ? hookLine(card[7]) : null; if (hl && !(gentle && /kill|dead|die|hospital|cancer|court|arrest/i.test(hl))) reading.push(hl);
+  }
+  const fileLine = haveFile && !ans ? cap(pick(FILE_LINE)
     .replace(/\{Borough\}/g, file.borough === "VISITING" ? "Visiting" : titleCase(file.borough)).replace(/\{borough\}/g, file.borough === "VISITING" ? "visiting" : titleCase(file.borough))
     .replace(/\{Hour\}/g, cap(hourWord(file.hour))).replace(/\{hour\}/g, hourWord(file.hour))
     .replace(/\{Order\}/g, cap(orderWord(file.order))).replace(/\{order\}/g, orderWord(file.order))
     .replace(/\{Train\}/g, file.train.replace("THE ", "")).replace(/\{train\}/g, file.train.replace("THE ", ""))
     .replace(/\{Carry\}/g, cap(file.carry.toLowerCase())).replace(/\{carry\}/g, file.carry.toLowerCase())) : null;
-  const aside = haveFile && !gentle && r() < 0.55 ? (r() < 0.5 ? pick(CARRY[file.carry] || CARRY["A PLAN"]) : pick(ORDER[file.order] || ORDER["THE COFFEE"])) : null;
-  const omen = (!q || !q.trim()) ? pick(EMPTY) : pick(OMEN[theme] || OMEN.wander);
+  const aside = haveFile && !gentle && !ans && r() < 0.55 ? (r() < 0.5 ? pick(CARRY[file.carry] || CARRY["A PLAN"]) : pick(ORDER[file.order] || ORDER["THE COFFEE"])) : null;
+  const omen = (!q || !q.trim()) ? pick(EMPTY) : (ans && ans.omen) || pick(OMEN[ans && ans.kind === "verdict" ? themeOf(q) : theme] || OMEN.wander);
   const train = (file.train && TRAINS.includes(file.train.replace("THE ", ""))) ? file.train.replace("THE ", "") : TRAINS[seed % TRAINS.length];
+  const why = ans && ans.kind === "food" ? "Walk it off in here after" : ans && ans.kind === "live" ? "Go see how the city lived before your lease" : ans && ans.kind === "safety" ? "Somewhere the city keeps an eye out" : ROOM_WHY[theme] || ROOM_WHY.wander;
   return {
     mode: "booth", theme, seed, question: q,
+    answer: ans ? { kind: ans.kind, head: ans.head, lines: ans.lines, verdict: ans.verdict || null } : null,
     greet: pick(greetBank), fileLine, reading, aside, omen, closer: gentle ? pick(CLOSER.filter(c => !/Next|audits|strict/.test(c))) : pick(CLOSER),
     card: card ? { id: card[0], title: card[1], family: card[2], borough: card[3], neighborhood: card[4], era: card[5], thumb: card[6], hook: card[7] } : null,
-    room: room ? { id: room.id, name: room.name, area: room.area, mood: room.mood, learn: room.learn, image: room.image, why: ROOM_WHY[theme] || ROOM_WHY.wander } : null,
+    room: room ? { id: room.id, name: room.name, area: room.area, mood: room.mood, learn: room.learn, image: room.image, why } : null,
     lucky: { number: card ? Number(card[0]) : 0, train },
     file: haveFile ? { borough: file.borough, hour: file.hour, order: file.order, train: file.train, carry: file.carry } : null,
   };
@@ -185,8 +210,9 @@ export function read(q, seed, deck, rooms, opts) {
 /* everything the booth says, in order: what the voice reads and the recorder captions */
 export function script(res) {
   const lucky = res.careful ? null : `Lucky train, the ${res.lucky.train}. Lucky number, ${res.lucky.number}`;
-  return [res.greet, res.fileLine, ...res.reading, res.aside, res.omen, res.room ? `Go to ${res.room.name}. ${res.room.why}` : "", lucky, res.closer].filter(Boolean);
+  const ans = res.answer ? [res.answer.head, res.answer.lines && res.answer.lines[0]] : [];
+  return [res.greet, ...ans, res.fileLine, ...res.reading, res.aside, res.omen, res.room ? `Go to ${res.room.name}. ${res.room.why}` : "", lucky, res.closer].filter(Boolean);
 }
 
-export const STARTERS = ["Will I find an apartment I can afford?", "Should I take the job?", "Does he text back?", "Where should I eat tonight?", "Is it my year?", "What does the city want from me?", "Which train is my train?", "I lost something on the L.", "Should I move to Queens?", "Will the Knicks break my heart again?", "Is the bodega cat judging me?", "Do I stay or do I go?"];
+export const STARTERS = ["Where should I live in Brooklyn under $3,000?", "Best pizza in Brooklyn?", "What should I do tonight?", "Is the subway safe at night?", "Astoria or Bushwick?", "Should I take the job?", "How do I get to JFK?", "I lost something on the L.", "Should I move to Queens?", "Will the Knicks break my heart again?", "Is the bodega cat judging me?", "What does the city want from me?"];
 export { tokens, themeOf, hash, rng };

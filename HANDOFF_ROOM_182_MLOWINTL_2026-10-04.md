@@ -75,3 +75,30 @@ triangles. **That is two to three times the other rooms**: the whole airfield co
   this one included, are missed there. `places.json` still lacks pennstation and crystalpalace,
   and rooms 180 to 182 are in no wing.
 - The set is 12.6 MB, against 134 to 650 KB for other props.
+
+## The airport walk (airport.html): the rigged cast (2026-10-28)
+
+This is the walk repo `MLOW INTERNATIONAL WALK 2026-10-09` (commit 10337fb), not museum room 182, which is unchanged.
+The 107 travellers in `airport.glb` (`crowd_person`: cylinder body, sphere head, cylinder legs, instanced, six shirt
+colours; six templates parked at y -60 are skipped) are now rigged NEW YORKERS from `UPGRADE ALL ROOMS 2026-10-28/rig`
+standing where each stood: workgirl, writer, annieh, editor, loretta, hustler, oscar, cabbie, susan, wiseguy, at 0.9
+of the 1.88 m rig. `site/assets/rig/` (rigcast.js plus 20 GLBs, 3.6 MB), `vendor/addons/utils/SkeletonUtils.js`.
+Nearest 20 (8 on a phone) skinned on idle with the head turn; the rest one InstancedMesh per character. Primitives
+hide only after every file loads; `?rig=off` keeps them. The terminal's baked lightmap still carries each
+primitive's contact shadow, which now sits under the new figure. Numbers (rotunda, headless): 624 draw calls against
+600, mixers 0.18 ms. Film: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_rollout/airport_idle_headturn.mp4`. Not verified:
+a real phone; the museum room's copy of the set still has the primitives.
+
+## Rig facing fix (2026-10-28)
+
+Five rig files face 90 degrees off +Z (blindwoman, hustler -90; lensman, tough, sally +90). The yaw now goes on the
+skinned clone inside the root here, and the static twin was checked against it. Stills and the lineup:
+`UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`; method in `UPGRADE ALL ROOMS 2026-10-28/rig/HEAD_TURN_FIX.md`. Not deployed.
+
+## Hustler reweighted, Susan doll face forward (2026-10-28, later)
+
+MLow settled the two open rig questions. The Hustler is re-rigged with his whole eye flower bound to the head
+(`rig_pass.py` FLOWER), so a look turns it the full angle; his -90 face yaw stays. Susan is re-rigged facing +Z (doll
+face, sweater front and toes; the flower behind), so her rig needs no gallery yaw and her look aims the doll face; her
+static twins turn instead (Tripo `susan` YAW 90, `crowd_susan` and `crowd_susan_full` 180). The new files reuse the old
+names, so a returning visitor may see the old GLB until the cache turns over. Stills: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`.

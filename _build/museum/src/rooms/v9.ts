@@ -7,10 +7,12 @@
    Bailey Fountain stand across the plaza behind the visitor. Moving things are instanced rigs or single
    groups on k.ticks, and nothing moves when ctx.reduced is set. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { followInstances } from './heroes';
 const PI = Math.PI;
 const one = new T.Vector3(1, 1, 1);
 
@@ -18,7 +20,7 @@ const one = new T.Vector3(1, 1, 1);
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 const part = (w: number, h: number, d: number, x: number, y: number, z: number, rz = 0) => { const g = new T.BoxGeometry(w, h, d); g.rotateZ(rz); g.translate(x, y, z); return g; };
 
@@ -437,6 +439,7 @@ export const brooklyncentral: RoomDef = {
         pg.instanceMatrix.needsUpdate = true;
       };
       place(0);
+      followInstances(k, pg, 'pigeon', { height: 0.28 }); // 2026-10-28: pigeon.glb, as v22.ts; these boxes already stand on y 0
       if (!ctx.reduced) k.ticks.push(place);
     }
     /* light on the screen at night, and the lobby glowing through the doors */

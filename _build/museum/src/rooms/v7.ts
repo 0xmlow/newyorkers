@@ -7,10 +7,12 @@
    line of sight and shrunk by the same factor, so from the deck it subtends exactly the angle it
    would, and the camera's far plane never cuts the horizon. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { standIn, hide } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const one = new T.Vector3(1, 1, 1);
@@ -43,13 +45,13 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const body = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h * crouch, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h * crouch, z);
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0xc8a284, 0, 0.7), x, y + (1.22 * h * crouch + 0.13), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 /* a small figure with a head, as one merged geometry for instancing */
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* a texture painted once on a canvas; UVs are kept because the material carries no density */
 function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, repeat = false) {
@@ -984,8 +986,12 @@ export const stpatricks2: RoomDef = {
       k.box(4, 4.5, 4, 0, 1.3, Z0 + 43, k.flat(0x5a5652, 0, 0.7));
       const AT = k.flat(0x3a3020, 0.8, 0.4);
       { const b = k.mesh(new T.CapsuleGeometry(0.8, 2.4, 4, 10), AT, 0, 5.4, Z0 + 43); b.rotation.x = 0.35; k.sphere(0.5, 0, 7.4, Z0 + 42.6, AT, 10); }
+      /* 2026-10-28: the five tori and the axis are the stand in for the kit's armillary.glb, the sphere he carries; its stand
+         post is sunk into the figure so the sphere sits where the rings were */
+      const am = k.objects.length;
       for (let i = 0; i < 5; i++) { const r = k.torus(3.2, 0.09, 0, 10.6, Z0 + 43, gilt, 40); r.rotation.set(i * 0.6, i * 0.7, 0.3); }
       k.beam(v(-3.4, 8, Z0 + 43), v(3.4, 13.2, Z0 + 43), 0.08, gilt, 6);
+      { const old = standIn(k, am); void Promise.resolve(k.prop('armillary', 0, 3.6, Z0 + 43, { height: 10 })).then((o) => { if (o) hide(old); }); }
       if (!ctx.reduced) {
         const NC = 12, cabs = k.instances(new T.BoxGeometry(4.6, 1.5, 2), new T.MeshStandardMaterial({ roughness: 0.5, metalness: 0.3 }), Array.from({ length: NC }, () => new T.Matrix4()));
         cabs.frustumCulled = false;

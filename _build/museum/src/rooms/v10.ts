@@ -5,10 +5,12 @@
    congregation honestly shows art: the vestibule, the lobby, the museum galleries, the school corridor,
    the social hall. Each sanctuary is the view you walk into, with its eternal light lit. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { followInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const one = new T.Vector3(1, 1, 1);
@@ -25,7 +27,7 @@ function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => 
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body.toNonIndexed(), head.toNonIndexed()])!;
+  return personTag(mergeGeometries([body.toNonIndexed(), head.toNonIndexed()])!, 'auto');
 }
 /* a standing figure that never moves, batched with everything else of its colour */
 function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: number; rotY?: number } = {}) {
@@ -33,7 +35,7 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const body = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h, z);
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0xc8a284, 0, 0.7), x, y + (1.22 * h + 0.13), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 type Hole = { cx: number; y0: number; w: number; h: number; square?: boolean; circle?: boolean };
 /* a wall w wide, h tall and depth thick, centred on x = 0 and z = 0, with round headed or square openings */
@@ -174,6 +176,7 @@ function pigeons(k: K, spots: [number, number][], y: number, seed: number, reduc
     o.instanceMatrix.needsUpdate = true;
   };
   place(0); if (!reduced) k.ticks.push(place);
+  followInstances(k, o, 'pigeon', { height: 0.28 }, new T.Matrix4().makeTranslation(0, -0.1, 0)); // 2026-10-28: pigeon.glb, as v22.ts
 }
 const wallBlock = (k: K, x0: number, x1: number, z0: number, z1: number) => k.block(Math.min(x0, x1), Math.max(x0, x1), Math.min(z0, z1), Math.max(z0, z1));
 

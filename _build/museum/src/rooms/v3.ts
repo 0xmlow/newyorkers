@@ -4,10 +4,12 @@
    Every moving thing is either one instanced rig updated in place or a single group on k.ticks,
    so a room with six thousand spectators still costs a handful of draw calls. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { hero, heroInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -39,13 +41,13 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const body = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h * crouch, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h * crouch, z);
   body.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 10, 8), k.flat(0xc8a284, 0, 0.7), x, y + (1.22 * h * crouch + 0.13), z);
-  return body;
+  personTag(body, 'auto', 1.25); for (let i = k.objects.indexOf(body) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return body;
 }
 /* a small figure with a colour and a head, as one merged geometry for instancing */
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 const one = new T.Vector3(1, 1, 1);
 
@@ -169,8 +171,8 @@ export const arthurashe: RoomDef = {
     const ball = k.mesh(new T.SphereGeometry(0.075, 8, 6), k.glow(0xd8ff2a), 0, 1, 12, true);
     const mkPlayer = (shirt: number, z: number) => {
       const g = new T.Group(); g.position.set(0, 0, z);
-      const body = new T.Mesh(new T.CapsuleGeometry(0.24, 0.66, 3, 8), k.flat(shirt, 0, 0.85)); body.position.y = 0.92; g.add(body);
-      const head = new T.Mesh(new T.SphereGeometry(0.16, 10, 8), k.flat(0xc8a284, 0, 0.7)); head.position.y = 1.56; g.add(head);
+      const body = new T.Mesh(new T.CapsuleGeometry(0.24, 0.66, 3, 8), k.flat(shirt, 0, 0.85)); body.position.y = 0.92; g.add(personTag(body, 'auto', 1.25));
+      const head = new T.Mesh(new T.SphereGeometry(0.16, 10, 8), k.flat(0xc8a284, 0, 0.7)); head.position.y = 1.56; g.add(personTag(head, 'part'));
       const band = new T.Mesh(new T.CylinderGeometry(0.17, 0.17, 0.06, 10), k.flat(0xf4f4f4, 0, 0.8)); band.position.y = 1.6; g.add(band);
       for (const dx of [-0.12, 0.12]) { const leg = new T.Mesh(new T.CylinderGeometry(0.08, 0.07, 0.62, 8), k.flat(0xf0f0f0, 0, 0.8)); leg.position.set(dx, 0.31, 0); g.add(leg); }
       const arm = new T.Group(); arm.position.set(0.34, 1.25, 0); g.add(arm);
@@ -364,19 +366,32 @@ export const carousel: RoomDef = {
       if (saddles.instanceColor) saddles.instanceColor.needsUpdate = true;
       if (riders.instanceColor) riders.instanceColor.needsUpdate = true;
       const hide = new T.Vector3(0.0001, 0.0001, 0.0001);
+      /* 2026-10-28: the carved hero horse (h_carousel_horse, as v16.ts) instanced on the rig, one draw per part for all
+         57; the box horses, saddles and plain poles go when it loads (it carries its own brass pole), riders stay */
+      let steeds: ReturnType<typeof heroInstances> | null = null;
+      const hq = new T.Quaternion(), hm = new T.Matrix4();
       const place = (t: number) => {
         hs.forEach((h, i) => {
           q.setFromAxisAngle(up, -h.a - PI / 2);
           const bob = h.jump ? 0.34 * Math.sin(t * 2.6 + h.ph) : 0;
           p.set(Math.cos(h.a) * h.r, 0.5 + bob, Math.sin(h.a) * h.r);
           m.compose(p, q, h.chariot ? hide : one); horses.setMatrixAt(i, m); saddles.setMatrixAt(i, m);
-          p.y += h.chariot ? 0.6 : 1.42;
+          if (steeds) { hq.setFromAxisAngle(up, -h.a); steeds.setAt(i, hm.compose(p, hq, h.chariot ? hide : one)); }
+          p.y += h.chariot ? 0.6 : steeds ? 1.12 : 1.42;
           m.compose(p, q, h.rider ? one : hide); riders.setMatrixAt(i, m);
         });
         horses.instanceMatrix.needsUpdate = saddles.instanceMatrix.needsUpdate = riders.instanceMatrix.needsUpdate = true;
+        steeds?.commit();
       };
       place(0);
       if (!ctx.reduced) k.ticks.push(place);
+      void hero(k, 'h_carousel_horse_lo', { height: 1.95 }).then((g) => {
+        if (!g) return;
+        steeds = heroInstances(k, g, NH);
+        for (const pt of steeds.parts) { rig.add(pt.im); pt.im.castShadow = false; } // 57 carved horses: their shadow pass would double the room
+        horses.visible = saddles.visible = poles.visible = false;
+        place(0);
+      });
     }
     /* the top: canopy, rounding board, sweeps, a ring of chasing bulbs */
     const cone = new T.Mesh(new T.CylinderGeometry(0.4, 9.4, 2.7, 24, 1, true), canopy); cone.position.y = 6.35; rig.add(cone);
@@ -851,6 +866,8 @@ export const rockcenter: RoomDef = {
     k.box(6, 1.2, 6, TX, 0.6, 0, granite);
     k.keepOut.push({ x: TX, z: 0, r: 8.5 });
     const tiers: [number, number][] = [];
+    /* 2026-10-28: tried the kit's pine (k.tree species pine) here; at 25 m it reads as a sparse scrub pine, not the
+       dense Norway spruce, and the lights hang in its gaps, so the tiers stay until a spruce is made */
     for (let i = 0; i < 7; i++) { const r = 7.4 - i * 0.95, y = 1 + i * 3.3; tiers.push([r, y]); k.cyl(r, 5.2, TX, y + 2.6, 0, green, 0.3, 14); }
     {
       const NL = 3000, rnd = X.mulberry(1933), c = new T.Color(), pal = [0xff3b3b, 0x3bff6a, 0x3b8cff, 0xffd23b, 0xffffff, 0xff8c3b];

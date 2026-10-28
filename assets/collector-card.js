@@ -19,13 +19,14 @@ window.NYCard=function(r,opt,btn){
   x.font='500 22px "Space Grotesk",sans-serif';
   var chips=r.badges.map(function(id){return {b:BD[id],w:CH+16+x.measureText(BD[id].name.toUpperCase()).width+26};}),lines=[[]],lw=0;
   chips.forEach(function(ch){if(lw+ch.w>W-2*P&&lines[0].length){lines.push([]);lw=0;}lines[lines.length-1].push(ch);lw+=ch.w+CG;});
-  // an honoree's portrait, card and bio, the one we wrote for the honoraries, sit between the name and the badges
+  // an honoree's portrait and bio sit between the name and the badges. Not the honorary card itself: since
+  // 2026-10-26 that card carries their collection, so drawing it here put the pieces on the card twice
   var ho=r.honor||null,HB=ho?380:0;
   // their N3W YORKERS logo: one of MLow's lockups, picked by the wallet so the card and their page always match
   var LG=window.NY_LOGOS?window.NY_LOGOS.url(window.NY_LOGOS.forKey((r.ens||r.a).toLowerCase()),false):null,LS=210;
   var top=330+HB,bh=r.badges.length?lines.length*(CH+CG)+30:0,H=top+bh+rows*(cell+G)-G+150;
   c.width=W;c.height=H;
-  Promise.all([document.fonts?document.fonts.ready:null,loadImg(BASE+'assets/brand/logo_white.png'),loadImg(ho&&ho.img?BASE+ho.img:null),loadImg(ho&&ho.card?BASE+ho.card:null),loadImg(LG?LG:null)]
+  Promise.all([document.fonts?document.fonts.ready:null,loadImg(BASE+'assets/brand/logo_white.png'),loadImg(ho&&ho.img?BASE+ho.img:null),loadImg(ho&&!ho.img&&ho.card?BASE+ho.card:null),loadImg(LG?LG:null)]
     .concat(r.badges.map(function(id){return loadImg(BD[id]&&BD[id].img?BASE+BD[id].img:null);}))
     .concat(r.pieces.map(function(p){return loadImg(p.th?BASE+p.th:null);}))).then(function(res){
     var logo=res[1],hoImg=res[2],hoCard=res[3],lg=res[4],bimg={};r.badges.forEach(function(id,i){bimg[id]=res[5+i];});var imgs=res.slice(5+r.badges.length);

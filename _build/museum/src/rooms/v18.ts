@@ -8,6 +8,7 @@
    the stage with fireflies over it and Belvedere Castle lit on Vista Rock. No real play, no likeness.
    Every moving thing is one instanced rig rewritten in place or one group on k.ticks. */
 import * as T from 'three';
+import { personTag, boxCrowdTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
@@ -21,7 +22,7 @@ type C = Parameters<RoomDef['build']>[1];
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 10, 8); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* a seated or standing figure as two boxes, 24 triangles, for crowds in the thousands */
 function boxFigureGeo(w = 0.36, h = 0.62, d = 0.24, head = 0.22) {
@@ -470,7 +471,7 @@ export const delacorte: RoomDef = {
       void seatI;
     }
     const house = k.instances(boxFigureGeo(0.4, 0.58, 0.26, 0.22), new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: N }, () => new T.Matrix4()));
-    house.frustumCulled = false;
+    house.frustumCulled = false; boxCrowdTag(house);   // 2026-10-28: the nearest seats hold seated cast, the far keep their boxes
     const hs = new Float32Array(N), ph = new Float32Array(N), face = new Float32Array(N);
     {
       const rnd = X.mulberry(1721), c = new T.Color(), pal = [0x1c232c, 0xe8e2d4, 0x2a3f6a, 0x8a2a2a, 0xd8c04a, 0x3a5a3a, 0xf0f0f0, 0x6a4a8a, 0x2b5f6e, 0xd07a3a, 0x24262c, 0x8a3a3a];

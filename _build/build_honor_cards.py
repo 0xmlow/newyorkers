@@ -20,7 +20,7 @@ SITE = os.path.dirname(HERE)
 SRC = os.path.join(SITE, "assets", "honoraries")
 OUT = os.path.join(SITE, "assets", "cards")
 FD = os.path.join(HERE, "honoraries", "fonts")
-VERSION = "4"  # bump to redraw every card after a layout change
+VERSION = "5"  # bump to redraw every card after a layout change
 os.makedirs(OUT, exist_ok=True)
 
 D = json.load(open(os.path.join(HERE, "honoraries", "honoraries.json")))
@@ -122,6 +122,14 @@ def holo(w, h):
     return g
 
 
+# Honorees who also collect carry the New Yorkers they hold on the card, under a shorter bio
+# (MLow, 2026-10-26). collectors/honor_links.json is written by build_collectors.py, which runs first.
+_HL = os.path.join(HERE, "collectors", "honor_links.json")
+HELD = json.load(open(_HL)) if os.path.exists(_HL) else {}
+RETAIN = 30  # days a replaced og image name keeps answering, for cards X already holds
+STRIP = 6  # thumbs in the row; the last becomes "+N" when they hold more
+
+
 W, H = 1080, 1512
 R = 46
 HOLO = None
@@ -185,21 +193,27 @@ def card(p):
         d.text((x + 16, CY + 1), c, font=cf, fill=INK, anchor="lm")
         x += tw + 44
 
-    # flavour text: the bio
+    # flavour text: the bio, shorter when the collection strip sits under it
+    col = HELD.get(p["id"])
     BY0 = CY + 44
-    BY1 = H - 246
+    BY1 = H - 246 if not col else BY0 + 128
     d.rounded_rectangle((X0 - 8, BY0, X1 + 8, BY1), 14, outline=(42, 48, 64), width=2)
     bio = p.get("bio") or "Painted into NEW YORKERS by MLow, one of the people who make this city what it is."
-    bf = font("SpaceGrotesk.ttf", 34, var="Regular")
-    lines = wrap(d, bio, bf, X1 - X0 - 40, 5)
-    lh = 48
-    y = BY0 + (BY1 - BY0 - lh * len(lines)) // 2 + 34
+    bf = font("SpaceGrotesk.ttf", 34 if not col else 30, var="Regular")
+    lines = wrap(d, bio, bf, X1 - X0 - 40, 5 if not col else 3)
+    lh = 48 if not col else 38
+    y = BY0 + (BY1 - BY0 - lh * len(lines)) // 2 + (34 if not col else 28)
     for l in lines:
         d.text((X0 + 14, y), l, font=bf, fill=(221, 227, 234), anchor="ls")
         y += lh
 
+    if col:
+        LS = 132  # a smaller wordmark gives the thumbs their height
+        collection(im, d, col, acc, X0 - 8, X1 + 8, BY1 + 32, H - B - 22 - LS - 18)
+    else:
+        LS = 188
+
     # footer: handle, wordmark, site
-    LS = 188
     LY = H - B - 22 - LS
     lg = logo(p, LS)
     im.paste(lg, (X1 + 8 - LS, LY), lg)
@@ -212,6 +226,33 @@ def card(p):
     out = Image.new("RGB", (W, H), INK)
     out.paste(im, (0, 0), mask)
     return out
+
+
+def collection(im, d, col, acc, x0, x1, y0, y1):
+    """IN THEIR COLLECTION: a row of the New Yorkers this honoree holds, square thumbs."""
+    n = col["n"]
+    d.text((x0 + 6, y0), f"IN THEIR COLLECTION  ·  {n} NEW YORKER{'' if n == 1 else 'S'}",
+           font=font("IBMPlexMono-Medium.ttf", 21), fill=acc, anchor="ls")
+    held = [h for h in col["held"] if os.path.exists(os.path.join(SITE, h["th"]))][:STRIP]
+    ty = y0 + 14
+    gap = 12
+    sz = min(y1 - ty, int((x1 - x0 - (STRIP - 1) * gap) / STRIP))
+    gap = (x1 - x0 - STRIP * sz) / (STRIP - 1)
+    more = n - len(held)
+    if more > 0 and len(held) == STRIP:
+        more += 1  # the last thumb gives way to the count
+    for i, h in enumerate(held):
+        x = round(x0 + i * (sz + gap))
+        t = cover(Image.open(os.path.join(SITE, h["th"])).convert("RGB"), sz, sz)
+        last = more > 0 and i == len(held) - 1 and len(held) == STRIP
+        if last:
+            t = Image.blend(t, Image.new("RGB", t.size, INK), .72)
+        m = Image.new("L", t.size, 0)
+        ImageDraw.Draw(m).rounded_rectangle((0, 0, sz - 1, sz - 1), 10, fill=255)
+        im.paste(t, (x, ty), m)
+        d.rounded_rectangle((x, ty, x + sz - 1, ty + sz - 1), 10, outline=(255, 176, 32) if h.get("k") else (42, 48, 64), width=2)
+        if last:
+            d.text((x + sz // 2, ty + sz // 2), f"+{more}", font=font("Fraunces.ttf", 48, var="Black"), fill=CLOUD, anchor="mm")
 
 
 def og(p, c):
@@ -261,8 +302,43 @@ CG = json.load(open(os.path.join(HERE, "honoraries", "chatgpt_cards.json")))["pe
 ROOT = os.path.dirname(SITE)
 
 
+# Where the collection row goes on a painted card, in card pixels: the empty band between the lore and
+# the footer, picked by eye per card so nothing ChatGPT painted is covered. Thumbs fill the box from the
+# right; the label sits at (lx, ly). A collector whose painted card is not listed here fails the build.
+MADE_STRIP = {"pindar-van-arman": {"box": (626, 1244, 990, 1326), "label": (59, 1300), "acc": (97, 201, 226), "max": 4}}
+
+
 def made_card(p):
-    return Image.open(os.path.join(ROOT, CG[p["id"]]["src"])).convert("RGB").resize((W, H), Image.LANCZOS)
+    c = Image.open(os.path.join(ROOT, CG[p["id"]]["src"])).convert("RGB").resize((W, H), Image.LANCZOS)
+    col = HELD.get(p["id"])
+    if col:
+        if p["id"] not in MADE_STRIP:
+            raise SystemExit(f"honor cards: {p['id']} collects and has a painted card; give it a MADE_STRIP box")
+        m = MADE_STRIP[p["id"]]
+        d = ImageDraw.Draw(c)
+        n = col["n"]
+        d.text(m["label"], f"IN THEIR COLLECTION  ·  {n} NEW YORKER{'' if n == 1 else 'S'}",
+               font=font("IBMPlexMono-Medium.ttf", 19), fill=m["acc"], anchor="ls")
+        x0, y0, x1, y1 = m["box"]
+        held = [h for h in col["held"] if os.path.exists(os.path.join(SITE, h["th"]))][:m["max"]]
+        sz, gap = y1 - y0, 12
+        more = n - len(held)
+        if more > 0 and len(held) == m["max"]:
+            more += 1
+        x = x1 - len(held) * sz - (len(held) - 1) * gap
+        for i, h in enumerate(held):
+            t = cover(Image.open(os.path.join(SITE, h["th"])).convert("RGB"), sz, sz)
+            last = more > 0 and i == len(held) - 1 and len(held) == m["max"]
+            if last:
+                t = Image.blend(t, Image.new("RGB", t.size, INK), .72)
+            mk = Image.new("L", t.size, 0)
+            ImageDraw.Draw(mk).rounded_rectangle((0, 0, sz - 1, sz - 1), 8, fill=255)
+            c.paste(t, (x, y0), mk)
+            d.rounded_rectangle((x, y0, x + sz - 1, y0 + sz - 1), 8, outline=(255, 176, 32) if h.get("k") else m["acc"], width=2)
+            if last:
+                d.text((x + sz // 2, y0 + sz // 2), f"+{more}", font=font("Fraunces.ttf", 34, var="Black"), fill=CLOUD, anchor="mm")
+            x += sz + gap
+    return c
 
 
 def main():
@@ -272,7 +348,8 @@ def main():
     for p in D["people"]:
         w0 = p["works"][0]
         sig = json.dumps([VERSION, p["name"], p["handle"], p["cat"], p.get("bio"), w0["l"], w0.get("title"),
-                          [(w.get("num"), w.get("key")) for w in p["works"]], CG.get(p["id"], {}).get("src")], ensure_ascii=False)
+                          [(w.get("num"), w.get("key")) for w in p["works"]], CG.get(p["id"], {}).get("src"),
+                          [HELD[p["id"]]["n"]] + [h["th"] for h in HELD[p["id"]]["held"][:STRIP]] if p["id"] in HELD else None], ensure_ascii=False)
         h = hashlib.sha256(sig.encode()).hexdigest()[:8]
         cn, on = f'{p["id"]}-{h}.jpg', f'{p["id"]}-{h}-og.jpg'
         keep |= {cn, on}
@@ -282,10 +359,32 @@ def main():
             c.save(cp, "JPEG", quality=88, optimize=True, progressive=True)
             og(p, c).save(op, "JPEG", quality=85, optimize=True, progressive=True)
         out[p["id"]] = {"card": cn, "og": on}
+    # X keeps a link's card for about a week and fetches the og image by the name it saw. A redraw
+    # renames the image, so the old name must keep answering or every link already posted loses its
+    # picture (2026-10-26: the VERSION 5 redraw broke all 1,119 h/ links on X). A replaced og name
+    # stays for RETAIN days, holding the person's current og; retired_og.json says since when.
+    import datetime, shutil
+    today = datetime.date.today().isoformat()
+    cj = os.path.join(HERE, "honoraries", "cards.json")
+    prev = json.load(open(cj)) if os.path.exists(cj) else {}
+    rj = os.path.join(HERE, "honoraries", "retired_og.json")
+    ret = json.load(open(rj)) if os.path.exists(rj) else {}
+    for pid, v in prev.items():
+        if pid in out and v["og"] != out[pid]["og"]:
+            ret.setdefault(v["og"], {"id": pid, "since": today})
+    cutoff = (datetime.date.today() - datetime.timedelta(days=RETAIN)).isoformat()
+    ret = {n: r for n, r in ret.items() if r["since"] >= cutoff and r["id"] in out and n != out[r["id"]]["og"]}
+    for n, r in ret.items():
+        dst = os.path.join(OUT, n)
+        src = os.path.join(OUT, out[r["id"]]["og"])
+        if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(src):
+            shutil.copyfile(src, dst)
+        keep.add(n)
+    json.dump(ret, open(rj, "w"), indent=0, sort_keys=True)
     for f in os.listdir(OUT):
         if f.endswith(".jpg") and f not in keep:
             os.remove(os.path.join(OUT, f))
-    json.dump(out, open(os.path.join(HERE, "honoraries", "cards.json"), "w"), indent=0)
+    json.dump(out, open(cj, "w"), indent=0)
     mb = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT)) / 1e6
     print(f"honor cards: {len(out)} people, {len(keep)} images, {mb:.0f} MB")
 

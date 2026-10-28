@@ -30,6 +30,23 @@ systems.js` and `engine.js`, `MLOW INTERNATIONAL WALK 2026-10-09/site/main.js`, 
 index.html`. Each gallery is rebuilt by its own build.py (the airport and the spiral have none) and then
 `build_galleries.py` copies site/ in.
 
+## The galleries made after this (2026-10-18)
+
+Checked every gallery. Already on the policy in their own engines: THE PIGEONHOLE and UNLICENSED NEW YORK (`POWER` in
+src/engine.js), BIGGER ON THE INSIDE and DEPARTMENT OF UNREAL ESTATE (`frame()` in src/main.ts). These do not set
+`window.__POWER`, so a probe that looks for it misses them. Added the same block, with `window.__POWER` and
+`__powerBudget`, to the four that lacked it:
+
+- MoMLOW (`MOMLOW 2026-10-12/site/js/main.js`; a lift ride counts as touching), pixel ratio 2 to 1.5 in `core.js`.
+- THE LAST BODEGA (`LAST BODEGA WALK 2026-10-15/site/app.js`; a camera flight counts), pixel ratio 1.75 to 1.5.
+- BREAK GLASS (`BREAK GLASS 1 OF 1 2026-10-15/_build/main.js`, then `_build/build.sh`): it only halved its rate after 4 s
+  idle, with no cap and nothing for a background window. The case's own animations (swing, shards, fire, the reveal)
+  count as busy; a capture rig (`window.__FILM`) is never throttled.
+- MLOWTAR (`assets/mlowtar/app.js` in this repo; a fortune being told or spoken counts), pixel ratio 2 to 1.5.
+
+Measured headless at 1440: active 60, idle 30, blurred 6 in all four. LIVE in build 20261018-063034; the momlow,
+last-bodega and break-glass branches carry it.
+
 ## The home page
 
 - `.welcome::before` (home.css): the hero drift runs twice (52 s) and settles, instead of forever.

@@ -122,8 +122,41 @@ of the card slot, names a room of the museum to go stand in, and talks back when
   window layout cuts ten shapes instead of five. `export const __G` at the foot of ticket.js is for the glyph
   sheet (scratchpad `glyph_sheet.html`: every glyph in ink, then every glyph as a mask); nothing on the site
   imports it. Tickets re-rendered from the shelf will pick different glyphs than before this pass (the theme
-  rows changed), the seed and the rest of the composition are unchanged. og.jpg still shows the old
-  overexposed booth and was not recaptured.
+  rows changed), the seed and the rest of the composition are unchanged. og.jpg was recaptured on
+  2026-10-13 with the relit booth (same framing: 1700 x 900 headless page mid consult, clip 130,70 1000 x 525 at 2x,
+  resized to 1200 x 630).
+- **Tenth pass (2026-10-13, MLow: "the QR codes on the receipts don't work").** The replay link itself was fine
+  (a cold open of `mlowtar#q=...&s=...` with no file replays the slip and prints the ticket). The symbol was not:
+  112 px on a 1000 px ticket, two modules of quiet zone, dark on the MetroCard gold, the paper texture multiplied
+  over it, and in the lightbox the ticket is capped by height (about 250 px wide on a laptop), so the symbol
+  landed at 55 px on screen. OpenCV decoded 0 of 24 old receipts at 1x. Now: the MetroCard is 236 tall and
+  carries a white stamp (`qs = h - 24`), `drawQR` uses error correction L, a four module quiet zone and whole
+  pixel cells, and the stamp is drawn after the paper (renderTicket, `stamp`), with its place kept on the canvas
+  as `cv._qr`. 24 of 24 new receipts decode at 1x. The lightbox keeps the stamp clean under the glitch and adds
+  its own panel (`#mzLbScan`, `#mzLbQr`, 132 css px at device pixels, `drawQR` exported for it); on screens
+  over 900 px the panel and the buttons sit beside the ticket. Headless screenshots of the lightbox decode on
+  a laptop and a phone viewport. The question in the link is cut at 60 characters (was 80), so a very long
+  question replays approximately. `sample_receipts/` in the package was re-rendered.
+- **Eleventh pass (2026-10-17, MLow: "kinda hard to understand wtf its talking about", "it gave me a garden, it's freezing in January").**
+  The booth never answered the question: it dealt a card and wrapped canned mystic lines around it. Now
+  `assets/mlowtar/answers.js` answers first. It works out what was asked (where to live, safety, where to eat,
+  what to do, weather, airports, this or that, lost property, should I or will I) and the constraints inside
+  it (borough, month or season from the words or the clock, budget, wants such as quiet or nightlife or a
+  park), and returns `{kind, head, lines, where, words, omen}`. The knowledge is in the file: 57 neighborhoods
+  (`HOODS`: rough one bedroom rent, trains, tags, a winter score, one honest line), a food guide of real
+  institutions by kind, season lists of things to do, NYC monthly normals, heat season law, the FARE Act, the
+  40x rule, MTA lost and found. In winter the ranking favours express trains and elevator buildings and never a
+  park. `read()` in oracle.js puts the answer first (`res.answer`), deals a New Yorker from the neighborhood the
+  answer named when the deck has one (a Hero for safety questions), picks the room from the answer's words, and
+  drops the file line, the aside, the family line and the card quote when there is an answer, because those
+  were the noise MLow could not follow. Health, law, politics and grief still get their gentle slips with no
+  answer (no verdict on anyone's body, case or ballot); lost property is the one exception. The slip shows the
+  answer head big and the lines as a list (`.say.answer`, `.answer-lines` in app.css); the ticket prints
+  THE ANSWER in place of the omen. Placeholder and starter chips now invite real questions. Live mode (still
+  off) got the same rule: `deliver_fortune` requires `answer_head` and `answer_lines`, the system prompt says
+  answer first, and the booth note carries the full New York date so the month is right.
+  Facts are as of October 2026 and drift: rents are ballparks, places are institutions but can close. Edit
+  `HOODS` and `FOOD` in answers.js to keep it true.
 - Not done, by choice: Art Blocks style onchain randomness. The seed is `hash(question + minute)`, which is
   what a shared link replays; when MLow wants it onchain the ticket renderer is already deterministic from one
   integer.

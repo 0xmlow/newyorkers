@@ -62,3 +62,36 @@ outside code, the inline script parses. Draw calls about 380 with eight lights l
 ## Not verified
 Real Safari, iOS and a real GPU (headless swiftshader only; phones get the low quality path: no shadows, no bloom, fewer
 visitors, three loops). The live site: built and committed, not deployed. Deploy is MLow's, with `_build/deploy.sh`.
+
+## Free GLB swaps (2026-10-28): none made
+
+The 2026-10-28 audit lists three code objects left in MoMLOW: the visitors (the flower headed extra, which waits on the
+ON LOCATION trial), the escalators (Sketchfab, needs MLow's download and a plaque) and the 53rd Street traffic cone. No
+cone model is on disk and Poly Haven has none; a Kenney cone is stylised and would clash beside the scanned props. Nothing
+in the walk repo changed.
+
+## 2026-10-28: the visitors are the cast (MOMLOW a136362)
+
+Every cylinder visitor and the guard are whole ON LOCATION Tripo cast members with their own sculpted eye flower heads
+(12 museumgoers plus the Usher as the guard), 2,500 tris and 512 px each, about 65 KB Draco, `crowd_<name>_full.glb`.
+Cut by `_build/crowd_pass.py` into `_build/crowd` (committed), cloned and compressed by `build_data.py`. Not rigged: the
+walk is a bob, roll, lean and corner turn in `people.js`; the guard's whole body follows you. Cylinders stay built until
+a model lands; `?crowd=old` keeps them. Crowd footprint 744 meshes 26k tris to 60 meshes 150k tris; lobby view 3,089 to
+2,199 draw calls (desktop), 351 to 313 (phone path). Not checked by hand, on a real phone, or at full frame rate.
+2026-10-28 later (MOMLOW 05c4398): the Usher stops above the knee in the Tripo source and read as sunk into the floor, as do
+Auggie, the Bookseller and the Broker. The guard is the Bartender; those three visitors became the Gown, the Hustler and
+Oscar. Cut models never to cast standing: usher, agent, auggie, bookseller, broker, dad, hijacker, jeweler, sonny, tracksuit.
+
+## Rig facing fix (2026-10-28)
+
+Five rig files face 90 degrees off +Z (blindwoman, hustler -90; lensman, tough, sally +90). The yaw now goes on the
+skinned clone inside the root here, and the static twin was checked against it. Stills and the lineup:
+`UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`; method in `UPGRADE ALL ROOMS 2026-10-28/rig/HEAD_TURN_FIX.md`. Not deployed.
+
+## Hustler reweighted, Susan doll face forward (2026-10-28, later)
+
+MLow settled the two open rig questions. The Hustler is re-rigged with his whole eye flower bound to the head
+(`rig_pass.py` FLOWER), so a look turns it the full angle; his -90 face yaw stays. Susan is re-rigged facing +Z (doll
+face, sweater front and toes; the flower behind), so her rig needs no gallery yaw and her look aims the doll face; her
+static twins turn instead (Tripo `susan` YAW 90, `crowd_susan` and `crowd_susan_full` 180). The new files reuse the old
+names, so a returning visitor may see the old GLB until the cache turns over. Stills: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_facing/`.

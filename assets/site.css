@@ -264,6 +264,21 @@ hr.rule{border:none;border-top:1px solid var(--divider);margin:0}
   :where(body:not(.skelly)) #nav .links{background:linear-gradient(#11151C,#090C11);top:calc(100% + 9px);border-bottom:1px solid rgba(236,232,221,.1);max-height:calc(100vh - 90px);overflow:auto}
   :where(body:not(.skelly)) #nav .links a::before{opacity:1;transform:none;width:11px;height:11px}
 }
+/* the phone menu (2026-10-18). The column above had flex-wrap and a max height, so once the stops outgrew the screen they
+   wrapped into side by side columns: lopsided, the MORE heading pushed off the top, PRINTS off the right. Now one panel
+   that scrolls by itself, two even columns, the MORE stops after a rule, PRINTS full width last, and the mint bar
+   steps aside while it is open (body.nav-open, set in site.js). */
+@media (max-width:1060px){
+  #nav .links{background-color:#090C11;flex-wrap:nowrap;max-height:calc(100vh - 80px);max-height:calc(100dvh - 80px);overflow-y:auto;overscroll-behavior:contain}
+  #nav .links.open{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px;align-content:start;padding:12px 16px calc(22px + env(safe-area-inset-bottom))}
+  #nav .links a,#nav .more-p a{padding:12px 10px !important;min-width:0;overflow:hidden}
+  #nav .more,#nav .more-p{display:contents}
+  #nav .more-p small{grid-column:1/-1;margin-top:10px;padding:16px 10px 6px;border-top:1px solid rgba(236,232,221,.12)}
+  #nav .links a.cta{grid-column:1/-1;justify-content:center;margin:14px 0 0;padding:15px 10px !important}
+  #nav .links>a.ext{grid-column:1/-1;justify-content:center;text-align:center;margin:14px 0 0;padding:15px 10px !important;border-color:rgba(236,232,221,.22) !important}
+  body.nav-open{overflow:hidden}
+  body.nav-open #ny-mintbar{display:none}
+}
 
 /* ---------- buttons ---------- */
 :where(body:not(.skelly)) :is(.btn,.primary,.fly-btn){position:relative;isolation:isolate;overflow:hidden;--mx:50%;--my:30%;font-family:var(--bullet);font-weight:700;letter-spacing:.14em;border-radius:10px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),color .2s,background-color .2s}

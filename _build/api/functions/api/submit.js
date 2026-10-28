@@ -5,7 +5,8 @@
  *
  * Binding required on the Pages project: D1 named `DB`.
  */
-const KINDS = new Set(["allowlist", "census", "nomination", "survey"]);
+// "list" is THE SUNDAY COUNT, the weekly letter: the email box on the home page (2026-10-21).
+const KINDS = new Set(["allowlist", "census", "list", "nomination", "survey"]);
 const MAX_BODY = 24 * 1024;
 
 const json = (obj, status = 200, origin = "*") =>
@@ -54,7 +55,7 @@ export async function onRequestPost({ request, env }) {
     // Census registrations need an email. Allowlist filings from THE ROLL do not: the checker page
     // tells you where you stand, so email is optional there, but if one is given it must be real.
     const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-    if (kind === "census" && !emailOk) return json({ ok: false, error: "email looks wrong" }, 400);
+    if ((kind === "census" || kind === "list") && !emailOk) return json({ ok: false, error: "email looks wrong" }, 400);
     if (kind === "allowlist" && email && !emailOk) return json({ ok: false, error: "email looks wrong" }, 400);
 
     const wallet = String(data.wallet || "").trim().toLowerCase();

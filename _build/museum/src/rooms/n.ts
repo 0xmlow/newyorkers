@@ -390,7 +390,7 @@ export const sedgwick: RoomDef = {
     for (let i = 0; i < 6; i++) k.box(300, 12, 3, 0, -6, 40 + i * 0, k.pbr('sdWall', X.concrete(0x8a8a82, 87), 0.3));
     for (let i = 0; i < 6; i++) k.box(300, 12, 3, 0, -6, 80, k.pbr('sdWall', X.concrete(0x8a8a82, 87), 0.3));
     const cars: T.Mesh[] = [];
-    for (let i = 0; i < 20; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.3, 1.8), k.flat([0xd8d0c0, 0x1a1a1a, 0xc62828, 0x2b4a8a][i % 4], 0.4, 0.4), -150 + i * 15, -11.2, 52 + (i % 2) * 8, true); c.userData.d = i % 2 ? 1 : -1; cars.push(c); const l = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 1.4), warm); l.position.set(c.userData.d * 2.1, 0, 0); c.add(l); }
+    for (let i = 0; i < 20; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.3, 1.8), k.flat([0xd8d0c0, 0x1a1a1a, 0xc62828, 0x2b4a8a][i % 4], 0.4, 0.4), -150 + i * 15, -11.2, 52 + (i % 2) * 8, true); c.userData.d = i % 2 ? 1 : -1; c.userData.car = true; cars.push(c); const l = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 1.4), warm); l.position.set(c.userData.d * 2.1, 0, 0); c.add(l); }
     if (!ctx.reduced) k.ticks.push((_t, dt) => cars.forEach((c) => { c.position.x += c.userData.d * 14 * Math.min(dt, 0.1); if (c.position.x > 160) c.position.x = -160; if (c.position.x < -160) c.position.x = 160; }));
     k.rail(0, 39, 300, steel, 1.1, 'x', 2.5);
     k.block(-150, 150, 38.6, 39.6);

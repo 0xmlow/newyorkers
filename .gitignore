@@ -75,6 +75,37 @@ assets/movies/*
 # MLOW INTERNATIONAL WALK 2026-10-09, copied in by build_galleries.py
 assets/airport/*
 !assets/airport/poster.jpg
+assets/gardens/*
+!assets/gardens/poster.jpg
+assets/bodega/*
+!assets/bodega/poster.jpg
+assets/gentrifying/*
+!assets/gentrifying/poster.jpg
+assets/unreal/*
+!assets/unreal/poster.jpg
+assets/inside/*
+!assets/inside/poster.jpg
+assets/breakglass/*
+!assets/breakglass/poster.jpg
 # MoMLOW 2026-10-12 (The MLow Museum, after MoMA), copied in by build_galleries.py; GitHub branch momlow
 assets/momlow/*
 !assets/momlow/poster.jpg
+assets/pigeonhole/*
+!assets/pigeonhole/poster.jpg
+assets/unlicensed/*
+!assets/unlicensed/poster.jpg
+assets/records/*
+!assets/records/poster.jpg
+assets/garyvee/*
+!assets/garyvee/poster.jpg
+assets/garyvee-v1/*
+!assets/garyvee-v1/poster.jpg
+assets/eviction/*
+!assets/eviction/poster.jpg
+assets/sewers/*
+!assets/sewers/poster.jpg
+assets/same/*
+!assets/same/poster.jpg
+
+# nightly.sh run logs
+_build/logs/

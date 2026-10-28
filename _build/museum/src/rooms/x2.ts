@@ -6,9 +6,10 @@ import * as T from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
-import { v, type Kit, type Mount } from '../kit';
+import { v, personTag, type Kit, type Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
 import { street, blockFront } from './f';
+import { hero, standIn, hide } from './heroes';
 const PI = Math.PI;
 
 /* a wall mount facing a viewing point on the floor */
@@ -32,6 +33,10 @@ function mat(x: number, y: number, z: number, ry = 0, sx = 1, sy = 1, sz = 1, rx
 /* a part: geometry, material, offset, rotation. Moving machines are merged per material, so a train or a
    loader costs one draw call per material rather than one per box; still ones go to the kit's static merge. */
 type Part = [T.BufferGeometry, T.Material, number, number, number, number?, number?, number?];
+/* 2026-10-28: the person parts of a merged group (by material) are tagged so the kit casts them */
+function tagPeople(g: T.Object3D, body: T.Material, head: T.Material, kind: 'auto' | 'seat', hs: number) {
+  for (const c of g.children) { const m = (c as T.Mesh).material; if (m === body) personTag(c, kind, hs); else if (m === head) personTag(c, 'part'); }
+}
 function merged(parts: Part[]) {
   const g = new T.Group(), by = new Map<T.Material, T.BufferGeometry[]>();
   for (const [geo, m, x, y, z, rx = 0, ry = 0, rz = 0] of parts) {
@@ -272,6 +277,12 @@ export const laundry: RoomDef = {
     const carBody = k.flat(0xb8bec4, 0.8, 0.3), carWin = k.glow(0xfff2d6), carDark = k.flat(0x2a2e34, 0.5, 0.6);
     const train = () => { const parts: Part[] = []; for (let i = 0; i < 5; i++) { const z = (i - 2) * 15.6; parts.push([new T.BoxGeometry(2.7, 3.0, 15.2), carBody, 0, 2.0, z], [new T.BoxGeometry(2.74, 0.62, 13.8), carWin, 0, 2.35, z], [new T.BoxGeometry(2.3, 0.5, 14.6), carDark, 0, 0.3, z]); } return k.add(merged(parts)); };
     const trains = [train(), train()], runL = ELn - 100;
+    /* 2026-10-28: each five car box train becomes five hero cars (h_subway_car_lo, as in the subway room); the boxes stay until it loads */
+    void hero(k, 'h_subway_car_lo', { box: [2.7, 3.6, 15.2] }).then((h) => {
+      if (!h) return;
+      let n = 0;
+      for (const g of trains) { for (const c of g.children) c.visible = false; for (let i = 0; i < 5; i++) { const c = n++ ? h.clone() : h; c.position.set(0, 0.05, (i - 2) * 15.6); g.add(c); } }
+    });
     const runTrains = (t: number) => trains.forEach((g, i) => { const u = (t * 11 + i * runL * 0.55) % runL; g.position.set(i ? 2.4 : -2.4, 10.8, i ? EL0 + 50 + u : EL1 - 50 - u); });
     runTrains(3);
     if (!ctx.reduced) k.ticks.push((t) => runTrains(t));
@@ -423,7 +434,10 @@ export const taxi: RoomDef = {
     // the machines: the lift with a cab up on it, tire stacks, the tool chest, drums of oil
     const cabYellow = yellow;
     const wheels: T.Matrix4[] = [];
-    const park = (x: number, z: number, ry: number, y = 0) => { const lamp = cabStatic(k, x, y, z, ry, cabYellow, glassDark, dark, new T.MeshBasicMaterial({ color: 0xfff0c0 })); for (const [dx, dz] of [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]]) { const p = v(dx, 0.32 + y, dz).applyAxisAngle(v(0, 1, 0), ry).add(v(x, 0, z)); wheels.push(mat(p.x, p.y, p.z, ry, 1, 1, 1, 0, PI / 2)); } k.keepOut.push({ x, z, r: 2.6 }); return lamp; };
+    /* 2026-10-28: the parked cabs were boxes even with the kit's cab swap on (merged into the static batch they are no
+       longer cab sized); each is now one of the five real cab types, the boxes and their four wheels the stand in */
+    const parkedCabs: { old: T.Object3D[]; w0: number; x: number; y: number; z: number; ry: number; lamp: T.Mesh }[] = [];
+    const park = (x: number, z: number, ry: number, y = 0) => { const mark = k.objects.length, w0 = wheels.length; const lamp = cabStatic(k, x, y, z, ry, cabYellow, glassDark, dark, new T.MeshBasicMaterial({ color: 0xfff0c0 })); const old = standIn(k, mark); old.forEach((o) => { o.userData.cab = true; }); /* not the kit's cab swap's to take */ parkedCabs.push({ old, w0, x, y, z, ry, lamp }); for (const [dx, dz] of [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]]) { const p = v(dx, 0.32 + y, dz).applyAxisAngle(v(0, 1, 0), ry).add(v(x, 0, z)); wheels.push(mat(p.x, p.y, p.z, ry, 1, 1, 1, 0, PI / 2)); } k.keepOut.push({ x, z, r: 2.6 }); return lamp; };
     const parked = [park(bays[1].x - Math.cos(bays[1].th) * 3.4, bays[1].z - Math.sin(bays[1].th) * 3.4, PI / 2 - bays[1].th), park(bays[3].x - 3.4, bays[3].z, PI / 2), park(bays[5].x - Math.cos(bays[5].th) * 3.4, bays[5].z - Math.sin(bays[5].th) * 3.4, PI / 2 - bays[5].th), park(20, 26, 0.1), park(24, 26, -0.1)];
     const LX = 24, LZ = -15;
     for (const s of [-1, 1]) { k.box(0.5, 4.6, 0.6, LX, 2.3, LZ + s * 1.55, red); k.box(0.8, 0.08, 0.9, LX, 0.04, LZ + s * 1.55, dark); }
@@ -437,7 +451,19 @@ export const taxi: RoomDef = {
     if (!ctx.reduced) k.ticks.push((t) => { lift.position.y = liftH(t); });
     k.keepOut.push({ x: LX, z: LZ, r: 2.6 });
     parked.push(lift.children.find((c) => (c as T.Mesh).material === liftLamp) as T.Mesh<T.BufferGeometry, T.Material>);
-    k.instances(new T.CylinderGeometry(0.32, 0.32, 0.22, 12), rubber, wheels);
+    const wheelIm = k.instances(new T.CylinderGeometry(0.32, 0.32, 0.22, 12), rubber, wheels);
+    const cabKinds: [string, number][] = [['h_taxi', 4.6], ['h_taxi_camry', 4.88], ['h_taxi_sienna', 5.17], ['h_taxi_escape', 4.6], ['h_taxi_nv200', 4.4]];
+    parkedCabs.forEach((pc, i) => {
+      const [name, len] = cabKinds[i % cabKinds.length];
+      void hero(k, name, { length: len }).then((h) => {
+        if (!h) return;
+        hide(pc.old);
+        for (let j = 0; j < 4; j++) wheelIm.setMatrixAt(pc.w0 + j, new T.Matrix4().makeScale(0, 0, 0));
+        wheelIm.instanceMatrix.needsUpdate = true;
+        h.position.set(pc.x, pc.y, pc.z); h.rotation.y = pc.ry; k.add(h);
+        pc.lamp.position.y = pc.y + (h.userData.size as T.Vector3).y + 0.1;
+      });
+    });
     const tires: T.Matrix4[] = [];
     for (const [tx, tz, n] of [[30, -19.5, 5], [32, -19.5, 4], [34, -19.5, 6]]) for (let i = 0; i < n; i++) tires.push(mat(tx, 0.18 + i * 0.24, tz, 0, 1, 1, 1, PI / 2));
     k.instances(new T.TorusGeometry(0.33, 0.12, 8, 18), rubber, tires);
@@ -710,7 +736,9 @@ export const flowercold: RoomDef = {
     const pot = k.flat(0xb8663a, 0, 0.8), leafA = k.flat(0x3d7a3a, 0, 0.9), leafB = k.flat(0x5a8a3a, 0, 0.85);
     const trolley = (): Part[] => { const p: Part[] = [[new T.BoxGeometry(0.56, 0.05, 1.35), steel, 0, 0.18, 0]]; for (const dx of [-0.26, 0.26]) for (const dz of [-0.64, 0.64]) p.push([new T.BoxGeometry(0.03, 1.9, 0.03), steel, dx, 1.1, dz]); [0.6, 1.0, 1.4, 1.8].forEach((y, r) => { p.push([new T.BoxGeometry(0.56, 0.02, 1.35), steel, 0, y, 0]); for (let i = 0; i < 4; i++) { const dz = -0.48 + i * 0.32; p.push([new T.CylinderGeometry(0.1, 0.08, 0.16, 8), pot, 0, y + 0.09, dz], [new T.IcosahedronGeometry(0.15, 0), (i + r) % 2 ? leafA : leafB, 0, y + 0.3, dz]); } }); for (const dx of [-0.22, 0.22]) for (const dz of [-0.55, 0.55]) p.push([new T.CylinderGeometry(0.05, 0.05, 0.04, 8), rubber, dx, 0.06, dz, 0, 0, PI / 2]); return p; };
     for (const z of [-3.6, -10.6]) { placeParts(k, trolley(), 10.9, 0, z); k.keepOut.push({ x: 10.9, z, r: 0.8 }); }
-    const hauler = k.add(merged([...trolley(), [new T.CapsuleGeometry(0.2, 0.8, 3, 8), k.flat(0x1f5a3a, 0, 0.8), 0, 1.0, -1.05], [new T.SphereGeometry(0.12, 10, 8), k.flat(0xc8a284, 0, 0.7), 0, 1.62, -1.05]]));
+    const haulBody = k.flat(0x1f5a3a, 0, 0.8), haulHead = k.flat(0xc8a284, 0, 0.7);
+    const hauler = k.add(merged([...trolley(), [new T.CapsuleGeometry(0.2, 0.8, 3, 8), haulBody, 0, 1.0, -1.05], [new T.SphereGeometry(0.12, 10, 8), haulHead, 0, 1.62, -1.05]]));
+    tagPeople(hauler, haulBody, haulHead, 'auto', 1.25);
     const haul = k.spline([v(5.2, 0, 14.4), v(8.6, 0, 12.4), v(11.8, 0, 11.7)]);
     const haulAt = (t: number) => { const c = (t * 0.06) % 2, u = c < 1 ? c : 2 - c, s = u * u * (3 - 2 * u), d = c < 1 ? 1 : -1; haul.getPointAt(s, hauler.position); const tg = haul.getTangentAt(s); hauler.rotation.y = Math.atan2(tg.x * d, tg.z * d); };
     haulAt(7);
@@ -857,7 +885,9 @@ export const handball: RoomDef = {
     const loop = k.spline([v(16.2, 0, 78), v(16.2, 0, -78), v(21, 0, -86), v(25.8, 0, -78), v(25.8, 0, 78), v(21, 0, 86)], true);
     const cars = [k.add(merged([...cabParts(k.flat(0xf2c230, 0.2, 0.45), carGlass, carDark, tire), [new T.BoxGeometry(0.7, 0.16, 0.22), k.glow(0xfff0c0), 0, 1.63, 0.2]])), k.add(merged(cabParts(k.flat(0x2a3a5a, 0.5, 0.35), carGlass, carDark, tire)))];
     cars.forEach((c, i) => { if (!ctx.reduced) k.rider(c, loop, 7 + i * 1.5, i * 160); else c.position.set(i ? 25.8 : 16.2, 0, i ? 30 : -24); });
-    const bike = k.add(merged([[new T.TorusGeometry(0.33, 0.035, 6, 18), carDark, 0, 0.36, 0.52, 0, PI / 2, 0], [new T.TorusGeometry(0.33, 0.035, 6, 18), carDark, 0, 0.36, -0.52, 0, PI / 2, 0], [new T.BoxGeometry(0.05, 0.05, 1.0), k.flat(0x2a8ad8, 0.4, 0.4), 0, 0.62, 0], [new T.BoxGeometry(0.05, 0.4, 0.05), carDark, 0, 0.85, -0.25], [new T.CapsuleGeometry(0.19, 0.55, 3, 8), k.flat(0xc83a2a, 0, 0.8), 0, 1.35, -0.1, 0.35, 0, 0], [new T.SphereGeometry(0.12, 10, 8), k.flat(0x8d5a3b, 0, 0.7), 0, 1.86, 0.1]]));
+    const bikeBody = k.flat(0xc83a2a, 0, 0.8), bikeHead = k.flat(0x8d5a3b, 0, 0.7);
+    const bike = k.add(merged([[new T.TorusGeometry(0.33, 0.035, 6, 18), carDark, 0, 0.36, 0.52, 0, PI / 2, 0], [new T.TorusGeometry(0.33, 0.035, 6, 18), carDark, 0, 0.36, -0.52, 0, PI / 2, 0], [new T.BoxGeometry(0.05, 0.05, 1.0), k.flat(0x2a8ad8, 0.4, 0.4), 0, 0.62, 0], [new T.BoxGeometry(0.05, 0.4, 0.05), carDark, 0, 0.85, -0.25], [new T.CapsuleGeometry(0.19, 0.55, 3, 8), bikeBody, 0, 1.05, -0.1, 0.35, 0, 0], [new T.SphereGeometry(0.12, 10, 8), bikeHead, 0, 1.86, 0.1]]));
+    tagPeople(bike, bikeBody, bikeHead, 'seat', 1.7);   // 2026-10-28: a seated cast rider
     if (!ctx.reduced) k.rider(bike, k.spline([v(22.9, 0.17, 72), v(22.9, 0.17, -72), v(22.5, 0.17, -74), v(22.1, 0.17, -72), v(22.1, 0.17, 72), v(22.5, 0.17, 74)], true), 4.2);
     else bike.position.set(22.9, 0.17, 10);
     // the neighbourhood the game grew up in

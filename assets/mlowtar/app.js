@@ -20,7 +20,7 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "../airport/vendor/addons/environments/RoomEnvironment.js";
 import { read, makeSeed, STARTERS, themeOf, FILE, script } from "./oracle.js";
-import { renderTicket, ticketAspect, glitchFrame, recordLoop } from "./ticket.js";
+import { renderTicket, ticketAspect, glitchFrame, recordLoop, drawQR } from "./ticket.js";
 
 const BASE = window.NY_BASE || "";
 const THUMBS = window.MLOWTAR_THUMBS || (BASE + "assets/t/");   // the census thumbs; a standalone checkout points this at the live site
@@ -60,7 +60,7 @@ async function loadBooth(url) {
 /* ---------- the scene ---------- */
 const canvas = $("#mzc");
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));   // 1.5 at most: HANDOFF_POWER_2026-10-12.md
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 const scene = new THREE.Scene();
@@ -466,8 +466,17 @@ let letters = null;
 const clock = new THREE.Clock(); let hidden = document.hidden;
 window.__mz = { camera, look, orbit, scene };
 document.addEventListener("visibilitychange", () => { hidden = document.hidden; if (!hidden) clock.getDelta(); });
+/* power (HANDOFF_POWER_2026-10-12.md): at most 60 frames a second, 30 after twenty seconds untouched (a fortune being
+   told or spoken counts as touching), about six in a window that is not in front. Everything moves on dt. */
+const POWER = { last: performance.now(), drawn: 0, frames: 0, blurred: !document.hasFocus() };
+const touched = () => { POWER.last = performance.now(); };
+for (const ev of ["keydown", "mousemove", "mousedown", "touchstart", "touchmove", "wheel"]) addEventListener(ev, touched, { passive: true });
+addEventListener("blur", () => { POWER.blurred = true; }); addEventListener("focus", () => { POWER.blurred = false; touched(); });
+function powerBudget() { if (POWER.blurred) return 160; if (state.busy || state.voice || state.speak > 0 || performance.now() - POWER.last < 20000) return 15.5; return 32; }
+window.__POWER = POWER; window.__powerBudget = powerBudget;
 function frame() {
   requestAnimationFrame(frame); if (hidden) return;
+  const nowMs = performance.now(); if (nowMs - POWER.drawn < powerBudget()) return; POWER.drawn = nowMs; POWER.frames++;
   const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
   U.uTime.value = t;
   const speakTarget = state.voice ? 1 : state.speak;
@@ -526,7 +535,7 @@ const LIVE = window.MLOWTAR_LIVE === true;
 const SHELF_KEY = "ny_mlowtar_tickets";
 function shelfRead() { try { return JSON.parse(localStorage.getItem(SHELF_KEY) || "[]"); } catch (e) { return []; } }
 function shelfKeep(res) {
-  const slim = { q: res.question, question: res.question, seed: res.seed, serial: res.serial, of: res.of, mode: res.mode, theme: res.theme, greet: res.greet, reading: res.reading, omen: res.omen, closer: res.closer, card: res.card, room: res.room && { id: res.room.id, name: res.room.name, area: res.room.area, image: res.room.image, why: res.room.why }, lucky: res.lucky, at: Date.now() };
+  const slim = { q: res.question, question: res.question, seed: res.seed, serial: res.serial, of: res.of, mode: res.mode, theme: res.theme, answer: res.answer, greet: res.greet, reading: res.reading, omen: res.omen, closer: res.closer, card: res.card, room: res.room && { id: res.room.id, name: res.room.name, area: res.room.area, image: res.room.image, why: res.room.why }, lucky: res.lucky, at: Date.now() };
   const list = shelfRead().filter(t => t.seed !== res.seed); list.unshift(slim); while (list.length > 24) list.pop();
   try { localStorage.setItem(SHELF_KEY, JSON.stringify(list)); } catch (e) {}
   try { if (window.NY && NY.track) NY.track("ticket", String(res.seed), { q: res.question, card: res.card && res.card.id, room: res.room && res.room.id, train: res.lucky && res.lucky.train }); } catch (e) {}
@@ -566,7 +575,12 @@ const lbC = $("#mzLbC"); let lbRun = 0;
 function openLightbox() {
   if (!lb || !ticket.canvas) return; lb.hidden = false; document.body.classList.add("mz-lb-open");
   if (lbC) { lbC.width = Math.round(ticket.canvas.width / 2); lbC.height = Math.round(ticket.canvas.height / 2); const my = ++lbRun, t0 = performance.now(), seed = (ticket.res && ticket.res.seed) || 1;
-    (function loop() { if (lb.hidden || my !== lbRun) return; glitchFrame(ticket.canvas, lbC, (performance.now() - t0) / 1000, seed); requestAnimationFrame(loop); })(); }
+    (function loop() { if (lb.hidden || my !== lbRun) return; glitchFrame(ticket.canvas, lbC, (performance.now() - t0) / 1000, seed);
+      const q = ticket.canvas._qr; if (q) { const k = lbC.width / ticket.canvas.width; lbC.getContext("2d").drawImage(ticket.canvas, q.x, q.y, q.s, q.s, Math.round(q.x * k), Math.round(q.y * k), Math.round(q.s * k), Math.round(q.s * k)); }   // the QR stays clean under the glitch
+      requestAnimationFrame(loop); })(); }
+  // the replay QR on its own panel, generated fresh at device pixels (the ticket in the lightbox is capped by height, so its stamp is too small for a camera)
+  const scan = $("#mzLbScan"), qc = $("#mzLbQr"), q = ticket.canvas._qr;
+  if (scan && qc) { if (q && q.link) { const px = Math.round(132 * Math.min(devicePixelRatio || 1, 3)); qc.width = qc.height = px; scan.hidden = !drawQR(qc.getContext("2d"), q.link, 0, 0, px, "#000", "#fff"); } else scan.hidden = true; }
 }
 function closeLightbox() { if (!lb) return; lb.hidden = true; lbRun++; document.body.classList.remove("mz-lb-open"); }
 async function saveLoop() {
@@ -626,7 +640,7 @@ async function consult(q) {
   let res;
   if (live && live.fortune) {
     const loc = read(q, seed, DECK, ROOMS, { file: fileNow() });
-    res = { mode: "live", theme: live.theme || loc.theme, seed, greet: live.fortune.greet || loc.greet, reading: (live.fortune.reading && live.fortune.reading.length ? live.fortune.reading : loc.reading),
+    res = { mode: "live", theme: live.theme || loc.theme, seed, answer: (live.fortune.answer && live.fortune.answer.head) ? live.fortune.answer : loc.answer, greet: live.fortune.greet || loc.greet, reading: (live.fortune.reading && live.fortune.reading.length ? live.fortune.reading : loc.reading),
       omen: live.fortune.omen || loc.omen, closer: live.fortune.closer || loc.closer, card: live.card || loc.card, room: live.room ? Object.assign({}, live.room, { why: live.room.why || (loc.room && loc.room.why) }) : loc.room,
       lucky: Object.assign({}, loc.lucky, live.lucky || {}) };
     if (res.card && res.card.id) res.lucky.number = Number(res.card.id);
@@ -635,7 +649,7 @@ async function consult(q) {
   res.question = q; film.captions = []; film.res = null;
   const ser = res.careful ? null : await serialP; if (ser) { res.serial = ser.n; res.of = ser.of; res.index = ser.index; }
   state.history.push({ role: "user", content: q });
-  state.history.push({ role: "assistant", content: [res.greet].concat(res.reading, [res.omen, res.room ? `I sent them to ${res.room.name}.` : ""]).join(" ").slice(0, 900) });
+  state.history.push({ role: "assistant", content: [res.greet].concat(res.answer ? [res.answer.head].concat(res.answer.lines || []) : [], res.reading, [res.omen, res.room ? `I sent them to ${res.room.name}.` : ""]).join(" ").slice(0, 900) });
   if (state.history.length > 12) state.history.splice(0, state.history.length - 12);
   // the reveal: the booth lights up, speaks, and the printer starts on the ticket
   humOff(); if (!res.careful) { chime(); state.flash = 1; } state.speak = 1; state.busy = false; setMode(state.live ? "live" : "booth");
@@ -650,6 +664,11 @@ async function consult(q) {
   if (res.careful === "crisis") slip.classList.add("care");
   slip.querySelector(".slip-mode").classList.toggle("live", res.mode === "live");
   const greet = slip.querySelector(".greet"); await type(greet, res.greet, 14);
+  if (res.answer && res.answer.head) {      // the straight answer first, the magic after (2026-10-17)
+    const h = document.createElement("p"); h.className = "say answer" + (res.answer.verdict ? " verdict" : ""); slip.appendChild(h); await type(h, res.answer.head, 12);
+    if (res.answer.lines && res.answer.lines.length) { const ul = document.createElement("ul"); ul.className = "answer-lines"; slip.appendChild(ul);
+      for (const line of res.answer.lines) { const li = document.createElement("li"); ul.appendChild(li); await type(li, line, 5); } }
+  }
   if (res.fileLine) { const p = document.createElement("p"); p.className = "say file"; slip.appendChild(p); await type(p, res.fileLine, 11); }
   for (const line of res.reading) { const p = document.createElement("p"); p.className = "say"; slip.appendChild(p); await type(p, line, 11); }
   if (res.aside) { const p = document.createElement("p"); p.className = "say"; slip.appendChild(p); await type(p, res.aside, 11); }

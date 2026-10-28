@@ -85,6 +85,22 @@ FAMS = sorted({v["f"] for v in T.values() if v.get("f")})
 SETSIZE = collections.Counter(v["set"] for v in T.values() if v.get("set"))   # some pieces belong to no set
 
 # ---------- replay the transfers ----------
+# A piece listed on a marketplace that takes custody (badges.json "escrow", Transient's auction house) is
+# still its lister's: the move into escrow is dropped and the sale out of it is booked from the lister.
+# Without this the auction house ranked second on the board with 60 Keystones (2026-10-27).
+ESCROW = {a.lower() for a in B.get("escrow", {})}
+def unescrow(logs):
+    lister, out = {}, []
+    for lg in logs:
+        k = (lg["c"], lg["id"])
+        if lg["to"] in ESCROW and lg["from"] not in ESCROW: lister[k] = lg["from"]; continue
+        if lg["from"] in ESCROW:
+            if lg["to"] == lister.get(k): lister.pop(k, None); continue   # delisted, back where it was
+            lg = {**lg, "from": lister.pop(k, lg["from"])}
+        out.append(lg)
+    return out
+RAW_LOGS = sorted(CH["logs"], key=lambda l: (l["b"], l["i"]))   # the live board gets these raw and unescrows them itself
+CH["logs"] = unescrow(RAW_LOGS)
 owner, minted_by, mint_t, sent = {}, {}, {}, collections.Counter()
 for lg in CH["logs"]:
     k = (lg["c"], lg["id"])
@@ -138,7 +154,8 @@ def keystone_thumb(i):
 
 
 def keystone_piece(i):
-    name = KM.get(str(i), {}).get("name") or f"Keystone #{i}"
+    name = KM.get(str(i), {}).get("name")
+    if not name: return "Keystone", None   # not named yet: the token id is not a census number
     n = int(name.rsplit("#", 1)[1]) if "#" in name and name.rsplit("#", 1)[1].isdigit() else None
     return name.rsplit(" #", 1)[0], n
 
@@ -252,8 +269,8 @@ bw_five = sorted([x for x in bw_elig if x["have"] == 5 and first_five.get(x["a"]
 bw_fam = sorted([x for x in bw_elig if x["fams"] == len(FAMS) and first_fam.get(x["a"], 0) >= BW_START], key=lambda x: first_fam.get(x["a"], 1e12))
 bw_race = [x for x in bw_elig if x["a"] not in {y["a"] for y in bw_already}]
 BW = {"name": "BOROUGH WARS",
-      "rules": f"From Tuesday October 7 the race is on: the first wallet to complete all five boroughs wins a Keystone, and the first to hold one of every family wins a signed print. {len(bw_already)} wallets already held the five before the start; they are honoured below and the prize goes to the next. Runs until the census closes, Friday October 23, 11:11 AM ET.",
-      "start": "2026-10-07T00:00:00-04:00", "closes": "2026-10-23T11:11:00-04:00", "boroughs": [BORO_LABEL[b] for b in FIVE], "families": len(FAMS),
+      "rules": f"From Tuesday October 7 the race is on: the first wallet to complete all five boroughs wins a Keystone, and the first to hold one of every family wins a signed print. {len(bw_already)} wallets already held the five before the start; they are honoured below and the prize goes to the next. Runs until the census closes, Saturday November 7, 11:11 AM ET.",
+      "start": "2026-10-07T00:00:00-04:00", "closes": "2026-11-07T11:11:00-05:00", "boroughs": [BORO_LABEL[b] for b in FIVE], "families": len(FAMS),
       "top": bw_race[:12], "already": bw_already, "fiveWinner": bw_five[0] if bw_five else None, "familyWinner": bw_fam[0] if bw_fam else None,
       "oneAway": sum(1 for x in bw_race if x["have"] == 4), "closestFamily": max(bw_race, key=lambda x: (x["fams"], -x["rank"]), default=None),
       "excluded": [x for x in bw_all if not x["eligible"]]}
@@ -285,6 +302,37 @@ json.dump({r["a"]: r["ens"] for r in rows}, open(os.path.join(SITE, "api", "c", 
 json.dump({"meta": meta, "badges": badges_out, "boroughWars": BW,
            "collectors": [{k: v for k, v in r.items() if k != "pieces"} | {"tokens": {"census": [p["tok"] for p in r["pieces"] if p["c"] == "census"], "keystone": [p["tok"] for p in r["pieces"] if p["c"] == "keystone"]}} for r in rows]},
           open(os.path.join(SITE, "api", "collectors.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+# ---------- the live board's kit ----------
+# functions/api/live/[[path]].js keeps this board current between builds (MLow 2026-10-27: "make these
+# updates happen automatically"). It starts from the same chain snapshot, reads only the transfers since,
+# and scores with _lib/collectors_core.js, a port of the code above. The kit is every table that code
+# reads, written here so both sides score from identical inputs; collectors/parity.mjs replays this
+# snapshot through the port and the build stops if a single row differs.
+_ksnap = {}
+for _k in sorted({lg["id"] for lg in CH["logs"] if lg["c"] == "keystone"}):
+    if not KM.get(str(_k), {}).get("name"): continue   # unnamed here: the live board names it from its tokenURI
+    _nm, _n = keystone_piece(_k); _th, _pid = thumb(_n) if _n else (None, None)
+    _th = _th or (f"assets/collectors/k{_k}.jpg" if os.path.exists(os.path.join(SITE, "assets", "collectors", f"k{_k}.jpg")) else None)
+    _mv, _ar = media(_n) if _n and _pid else (None, 1.0)
+    _ksnap[str(_k)] = [_nm, _n, _th, _pid, _mv, _ar]
+_byn = {}
+for _n in BYN:
+    _th, _pid = thumb(_n)
+    if _pid:
+        _mv, _ar = media(_n); _byn[str(_n)] = [_th, _pid, _mv, _ar]
+KIT = {"v": 1, "tz": -4, "five": FIVE, "eras": ERAS, "fams": FAMS, "setsize": dict(SETSIZE), "points": B["points"],
+       "badges": B["badges"], "tags": TAGS, "escrow": sorted(ESCROW), "ens": ENS, "homes": {a: v["room"] for a, v in HOMES.items() if v.get("room")},
+       "ident": {a: {k: v[k] for k in ("user", "x", "wallets") if v.get(k)} for a, v in IDENT.items()},
+       "honor": {a: honor(a) for a in HONOR}, "roomOf": {str(n): r for n, r in ROOM_OF.items()},
+       "rooms": {rid: r["name"] for rid, r in ROOMS.items()}, "ipfs": IPFS,
+       "census": {k: [v["n"], v["t"], v["era"], v.get("b"), v.get("f"), v.get("set"), v.get("nb"), bool(v.get("anim")), bool(v.get("gl")), v.get("img")] for k, v in T.items()},
+       "keystone": _ksnap, "byn": _byn, "dayOneEnd": day_one_end, "bwStart": BW_START,
+       "bwRules": BW["rules"].replace(f"{len(bw_already)} wallets already held", "{n} wallets already held", 1)}
+assert "{n}" in KIT["bwRules"], "BOROUGH WARS rules text changed: update the {n} template for the live board"
+json.dump(KIT, open(os.path.join(SITE, "api", "collectors_kit.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+json.dump({"to": CH["to"], "fetched": CH["fetched"], "ens": ENS, "logs": [[lg["c"], lg["id"], lg["from"], lg["to"], lg["b"], lg["i"], lg["t"], lg["tx"]] for lg in RAW_LOGS]},
+          open(os.path.join(SITE, "api", "collectors_snap.json"), "w"), separators=(",", ":"))
+
 # /api/* is cached for an hour and Cloudflare stretches that to four, so the page's fetch URLs carry a hash
 # of the file they fetch (the same trick build_deploy.py plays for my.html): a new snapshot lands at once.
 import hashlib
@@ -366,7 +414,7 @@ body = f"""
 </section>
 <section class="wrap" style="padding-top:18px;padding-bottom:40px" id="paneBoard"><div class="cboard" id="cboard">{SSR_ROWS}</div><button class="btn ghost" type="button" id="cmore" hidden>Show more</button></section>
 <section class="wrap" style="padding-top:18px;padding-bottom:40px" id="paneBadges" hidden><div class="cbadges" id="cbadges">{SSR_BADGES}</div></section>
-<section class="wrap" style="padding-bottom:90px"><p class="cfoot">Read off Ethereum on {esc(meta['asOf'])}, block {meta['block']:,}. THE CENSUS RELEASE and KEYSTONE both count. Wallets marked Artist and Team belong to MLow and the NEW YORKERS team, and rank like everyone else. Points: {B['points']['census']} a census piece, {B['points']['keystone']} a Keystone, plus every badge. Raw data at <a href="api/collectors.json">api/collectors.json</a>.</p></section>
+<section class="wrap" style="padding-bottom:90px"><p class="cfoot">Read off Ethereum on <span id="cAsOf">{esc(meta['asOf'])}, block {meta['block']:,}</span>. THE CENSUS RELEASE and KEYSTONE both count. Wallets marked Artist and Team belong to MLow and the NEW YORKERS team, and rank like everyone else. Points: {B['points']['census']} a census piece, {B['points']['keystone']} a Keystone, plus every badge. Raw data at <a href="api/collectors.json">api/collectors.json</a>.</p></section>
 """
 
 css = """
@@ -471,7 +519,8 @@ function bar(label,have,of){var d=h('div');d.appendChild(document.createTextNode
 /* every piece a wallet holds lives in api/c/<wallet>.json, the file my.html and the TV read; fetched the first time a row opens */
 function pieces(r){
   if(r.pieces)return Promise.resolve(r.pieces);
-  return fetch(BASE+'api/c/'+r.a+'.json?v='+PV).then(function(x){if(!x.ok)throw 0;return x.json();}).then(function(j){r.pieces=j.pieces||[];return r.pieces;}).catch(function(){r.pieces=[];return r.pieces;});
+  var got=function(x){if(!x.ok)throw 0;return x.json();};
+  return fetch(BASE+'api/live/c/'+r.a).then(got).catch(function(){return fetch(BASE+'api/c/'+r.a+'.json?v='+PV).then(got);}).then(function(j){r.pieces=j.pieces||[];return r.pieces;}).catch(function(){r.pieces=[];return r.pieces;});
 }
 function nudge(r){var n=r.boros?5-r.boros.length:0;return (n>=1&&n<=3)?h('em','cset','Collect the set: needs '+n+' for the five'):null;}
 function row(r){
@@ -560,13 +609,18 @@ if(hs==='badges')tab('badges');else if(hs)pending=hs;
 window.addEventListener('hashchange',function(){var v=decodeURIComponent(location.hash.slice(1));if(v&&v!=='badges'){document.getElementById('cq').value=v;find(v);}});
 function boot(j){
   D=j;D.badges.forEach(function(b){BD[b.id]=b;});
+  if(j.meta&&j.meta.live){var ao=document.getElementById('cAsOf');if(ao)ao.textContent=j.meta.asOf+', block '+j.meta.block.toLocaleString('en-US');}
   draw();badgesPane();
   if(pending!=null){var v=pending;pending=null;document.getElementById('cq').value=v;find(v);}
 }
 /* the rows above are rendered at build time for crawlers and for anyone whose fetch fails; the live board replaces them */
-fetch(BASE+API).then(function(x){if(!x.ok)throw 0;return x.json();}).then(boot).catch(function(){msg.textContent='The live board could not load. The ranking shown is from the last build.';});
+var okj=function(x){if(!x.ok)throw 0;return x.json();};
+fetch(BASE+'api/live/collectors').then(okj).catch(function(){return fetch(BASE+API).then(okj);}).then(boot).catch(function(){msg.textContent='The live board could not load. The ranking shown is from the last build.';});
 })();
 </script>""".replace("__SITE__", URL).replace("__CV__", CV).replace("__PV__", PV)
+# the card script is cached for hours, so the page names it by its hash and a change reaches people at once
+import hashlib as _hl
+js = js.replace("assets/collector-card.js", "assets/collector-card.js?v=" + _hl.sha256(open(os.path.join(SITE, "assets", "collector-card.js"), "rb").read()).hexdigest()[:10], 1)
 
 page = shell(title="Collectors · NEW YORKERS by MLow",
              description=f"The NEW YORKERS collectors leaderboard: {meta['collectors']} collectors ranked by points, with badges for holding all five boroughs, every family, a whole set, a Keystone and day one. BOROUGH WARS from October 7 to the close of the census: the first wallet to complete all five boroughs wins a Keystone.",

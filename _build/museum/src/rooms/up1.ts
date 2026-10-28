@@ -11,6 +11,7 @@
    the normal outward on a circle; inward is -a - PI/2), and neither room had a
    moving thing in it. */
 import * as T from 'three';
+import { personTag, boxCrowdTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
@@ -23,7 +24,7 @@ const ONE = new T.Vector3(1, 1, 1);
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
   const body = new T.CapsuleGeometry(r, len, 3, 8); body.translate(0, r + len / 2, 0);
   const head = new T.SphereGeometry(r * 0.62, 8, 6); head.translate(0, headY, 0);
-  return mergeGeometries([body, head])!;
+  return personTag(mergeGeometries([body, head])!, 'auto');
 }
 /* A person for a crowd nobody can walk into: two boxes, 24 triangles. A capsule
    figure is 200 and a full stadium of them is a million and a half triangles. */
@@ -38,7 +39,7 @@ function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: nu
   const b = k.mesh(new T.CapsuleGeometry(0.2, 0.82 * h, 3, 8), k.flat(coat, 0, 0.85), x, y + 0.61 * h, z);
   b.rotation.y = rotY;
   k.mesh(new T.SphereGeometry(0.125, 8, 6), k.flat(skin, 0, 0.7), x, y + 1.22 * h + 0.13, z);
-  return b;
+  personTag(b, 'auto', 1.25); for (let i = k.objects.indexOf(b) + 1; i < k.objects.length; i++) personTag(k.objects[i], 'part'); return b;
 }
 /* A ground ribbon between two radius functions: warning tracks, aprons, kerbs. */
 function ribbon(k: K, rIn: (t: number) => number, rOut: (t: number) => number, t0: number, t1: number, y: number, steps: number, m: T.Material, dir: (t: number) => T.Vector3) {
@@ -187,7 +188,7 @@ export const bleachers2: RoomDef = {
       for (let i = 0; i < N; i++) if (rnd() < (ctx.quality === 'high' ? 0.6 : 0.4)) keep.push(i);
       const P = keep.length;
       const crowd = k.instances(boxFigureGeo(), new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: P }, () => new T.Matrix4()));
-      crowd.frustumCulled = false; crowd.castShadow = crowd.receiveShadow = false;
+      crowd.frustumCulled = false; crowd.castShadow = crowd.receiveShadow = false; boxCrowdTag(crowd, Math.PI);   // 2026-10-28: the nearest sections are seated cast, turned to face the field
       const c = new T.Color(), pal = [0x1c232c, 0xe8e2d4, 0x2a3f6a, 0x8a2a2a, 0xd8c04a, 0x3a5a3a, 0xf0f0f0, 0x6a4a8a, 0x2b5f6e, 0xd07a3a, 0x14306a];
       const hs = new Float32Array(P), ph = new Float32Array(P);
       for (let j = 0; j < P; j++) { crowd.setColorAt(j, c.set(pal[Math.floor(rnd() * pal.length)])); hs[j] = 0.85 + rnd() * 0.3; ph[j] = rnd() * 6.3; }

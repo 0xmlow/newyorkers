@@ -3,6 +3,7 @@
    Both run one instanced particle rig and a small set of lights on a beat, so the cost is in the
    arithmetic and not in the draw calls. */
 import * as T from 'three';
+import { personTag } from '../kit';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
@@ -265,8 +266,9 @@ export const paradisegarage: RoomDef = {
     k.box(1.1, 0.14, 1.0, -W / 2 + 4.2, 1.6, -D / 2 + 4.4, k.flat(0x2e3038, 0.5, 0.35));
     const boothLamp = k.mesh(new T.SphereGeometry(0.12, 8, 6), k.glow(0xff9a3a), -W / 2 + 4.2, 2.3, -D / 2 + 3.0, true);
     k.point(-W / 2 + 4.2, 2.6, -D / 2 + 3.2, 0xff9a3a, 7, 6);
-    const dj = k.mesh(new T.CapsuleGeometry(0.22, 0.66, 3, 8), k.flat(0x2a2028, 0, 0.85), -W / 2 + 4.2, 2.1, -D / 2 + 2.2, true);
-    k.mesh(new T.SphereGeometry(0.15, 10, 8), k.flat(0x6a4832, 0, 0.7), -W / 2 + 4.2, 2.62, -D / 2 + 2.2, true);
+    /* 2026-10-28: the DJ is the tough (the disco king's white suit flared under the booth lamp), standing at the decks facing the floor (+z), rigged idle with the head look */
+    const dj = personTag(k.mesh(new T.CapsuleGeometry(0.22, 0.66, 3, 8), k.flat(0x2a2028, 0, 0.85), -W / 2 + 4.2, 2.1, -D / 2 + 2.6, true), 'auto', 1.6, 'tough');
+    personTag(k.mesh(new T.SphereGeometry(0.15, 10, 8), k.flat(0x6a4832, 0, 0.7), -W / 2 + 4.2, 2.62, -D / 2 + 2.6, true), 'part');
     /* the stacks: four corners of horns and bass bins, cones that move with the bottom end */
     const woofers: T.Mesh[] = [];
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) {

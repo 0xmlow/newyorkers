@@ -5,6 +5,7 @@ import { v, loadThumb } from '../kit';
 import type { Kit } from '../kit';
 import { corridorMounts } from './types';
 import type { RoomDef, RoomCtx } from './types';
+import { hero, hide } from './heroes';
 
 const PI = Math.PI;
 
@@ -278,7 +279,10 @@ export const subway: RoomDef = {
     const train = new T.Group();
     train.position.set(-11.2, 0, ZC);
     const carLen = 66;
+    /* the box parts below are the stand in: hidden once the hero cars arrive (2026-10-28) */
+    const boxCar: T.Object3D[] = [];
     const body = new T.Mesh(new T.BoxGeometry(2.7, 3.5, carLen), silver);
+    boxCar.push(body);
     body.position.y = 2.15;
     train.add(body);
     const roof = new T.Mesh(new T.CylinderGeometry(1.35, 1.35, carLen, 12, 1, false, 0, PI), k.flat(0x8a949a, 0.85, 0.35));
@@ -286,19 +290,23 @@ export const subway: RoomDef = {
     roof.rotation.y = PI / 2;
     roof.position.y = 3.9;
     train.add(roof);
+    boxCar.push(roof);
     for (let i = 0; i < 11; i++) {
       const z = -carLen / 2 + 3 + i * 6;
       const door = new T.Mesh(new T.BoxGeometry(0.06, 2.8, 1.3), k.flat(0x74808a, 0.8, 0.35));
       door.position.set(1.36, 1.8, z);
       train.add(door);
+      boxCar.push(door);
       const gap = new T.Mesh(new T.BoxGeometry(0.07, 2.8, 0.03), iron);
       gap.position.set(1.37, 1.8, z);
       train.add(gap);
+      boxCar.push(gap);
       for (const dz of [-0.32, 0.32]) {
         const w = new T.Mesh(new T.PlaneGeometry(0.45, 1.1), glassDark);
         w.position.set(1.4, 2.35, z + dz);
         w.rotation.y = PI / 2;
         train.add(w);
+        boxCar.push(w);
       }
       if (i < 10) {
         const wz = z + 3;
@@ -315,11 +323,13 @@ export const subway: RoomDef = {
       const stripe = new T.Mesh(new T.BoxGeometry(0.02, 0.12, carLen), k.flat(0x1c3f8f, 0.3, 0.5));
       stripe.position.set(1.37, 3.65, 0);
       train.add(stripe);
+      boxCar.push(stripe);
     }
     for (const dz of [-carLen / 2, carLen / 2]) {
       const face = new T.Mesh(new T.BoxGeometry(2.7, 3.5, 0.3), k.flat(0x232a2f, 0.6, 0.4));
       face.position.set(0, 2.15, dz);
       train.add(face);
+      boxCar.push(face);
       const lamp = new T.Mesh(new T.SphereGeometry(0.16, 10, 8), k.glow(0xfff0c0));
       lamp.position.set(0.7, 1.4, dz + (dz > 0 ? 0.16 : -0.16));
       train.add(lamp);
@@ -329,8 +339,18 @@ export const subway: RoomDef = {
       wheel.rotation.z = PI / 2;
       wheel.position.set(0, -1.0, -carLen / 2 + 5 + i * 11);
       train.add(wheel);
+      boxCar.push(wheel);
     }
     k.add(train);
+    /* 2026-10-28: the hero car (h_subway_car_lo: the stainless R142 type made 2026-10-09 that v15.ts uses, cut from 40k to 12k triangles for the tiling) tiled
+       four times along the 66 m train instead of one stretched box. The lit windows with the room's New Yorkers,
+       their frames and the head lamps stay; a failed load leaves the box train as it was. */
+    const CARS = 4, CAR = carLen / CARS;
+    void hero(k, 'h_subway_car_lo', { box: [2.75, 4.5, CAR - 0.3] }).then((h) => {
+      if (!h) return;
+      hide(boxCar);
+      for (let i = 0; i < CARS; i++) { const c = i ? h.clone() : h; c.position.set(0, -0.6, -carLen / 2 + CAR / 2 + i * CAR); train.add(c); }
+    });
     k.sign('DOWNTOWN & BROOKLYN   ↓', 7, 0.7, 0, 5.4, ZC - L / 2 + 0.7, '#0f1a1c', '#f9f8e9', 80, 0, { border: true });
     k.sign('B   D   F   M', 4, 0.7, 0, 4.4, ZC - L / 2 + 0.7, '#152728', '#ffbc69', 150, 0, { border: true });
     k.sign('EXIT  ↑  HOUSTON STREET', 5, 0.62, 0, 6.2, 11.6, '#8f3a2c', '#ffffff', 80, PI, { border: true });

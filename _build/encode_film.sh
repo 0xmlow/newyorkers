@@ -36,6 +36,10 @@ fi
 if [ "$1" = "airport" ]; then
   SRC="../MLOW INTERNATIONAL HYPE FILM 2026-10-04/MLOW INTERNATIONAL 16x9.mp4"; O=assets/film/mlow-international; PT=24
 fi
+# BREAK GLASS, the hype film (breakglass.html), from BREAK GLASS FILM 2026-10-15. Poster: the Canal Street Bootleg pull, fire up.
+if [ "$1" = "breakglass" ]; then
+  SRC="../BREAK GLASS FILM 2026-10-15/out/BREAK_GLASS_film_v3.mp4"; O=assets/film/break-glass; PT=27.2
+fi
 FF=$(python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())")
 rm -rf $O; mkdir -p $O/1080 $O/720
 enc() { $FF -v error -y -i "$SRC" -map 0:v -map 0:a ${=1} -c:v libx264 -preset slow -profile:v high -b:v $2 -maxrate $3 -bufsize $4 \
@@ -72,6 +76,11 @@ du -sh $O
 # ON LOCATION: a 12 s silent teaser from four bright sets (Moonstruck, Birdman, the lab, the rink)
 if [ "$1" = "onlocation" ]; then
   $FF -v error -y -i "$SRC" -filter_complex "[0:v]trim=9:12,setpts=PTS-STARTPTS[a];[0:v]trim=30:33,setpts=PTS-STARTPTS[b];[0:v]trim=42:45,setpts=PTS-STARTPTS[c];[0:v]trim=99:102,setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1,scale=960:-2[v]" \
+    -map "[v]" -an -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart $O/teaser.mp4
+fi
+# BREAK GLASS: a 12 s silent teaser (the drop, two pulls, the bootleg, the last smash)
+if [ "$1" = "breakglass" ]; then
+  $FF -v error -y -i "$SRC" -filter_complex "[0:v]trim=11.9:14.9,setpts=PTS-STARTPTS[a];[0:v]trim=17.9:20.9,setpts=PTS-STARTPTS[b];[0:v]trim=25.9:28.9,setpts=PTS-STARTPTS[c];[0:v]trim=36.9:39.9,setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1,scale=960:-2[v]" \
     -map "[v]" -an -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart $O/teaser.mp4
 fi
 # SKATE THE SETS: a 12 s silent teaser (Kong in the sky, the rat, the fall, Blue Steel)

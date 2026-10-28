@@ -6,6 +6,7 @@ import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
 import { billboard } from './a';
+import { hero, heroInstances, standIn, hide } from './heroes';
 
 const PI = Math.PI;
 
@@ -237,13 +238,30 @@ export const flatiron: RoomDef = {
     top.scale.set(1.06, 1.06, 1);
     // the plaza: chairs, planters, the street clock, the park across Fifth
     const rnd = X.mulberry(23);
+    /* 2026-10-28: the box chairs are the stand in for a real folding cafe chair, one chair from Poly Haven's Outdoor
+       Table Chair Set 01 (James Ray Cock, CC0), its wood painted the plaza's green, one instanced draw for all 26; same
+       places, same random turns. (Green Chair 01, the audit's pick, is a gothic upholstered armchair: wrong for a
+       plaza, and it read black.) A failed load keeps the boxes. */
+    const chairMark = k.objects.length, chairAt: [number, number, number][] = [];
     for (let i = 0; i < 26; i++) {
       const x = (rnd() - 0.5) * 30, z = 4 + rnd() * 18;
       const seat = k.box(0.5, 0.05, 0.5, x, 0.55, z, green);
       k.box(0.5, 0.6, 0.05, x, 0.85, z - 0.25, green);
       for (const dx of [-0.2, 0.2]) for (const dz of [-0.2, 0.2]) k.box(0.04, 0.55, 0.04, x + dx, 0.27, z + dz, iron);
       seat.rotation.y = rnd() * PI;
+      chairAt.push([x, z, seat.rotation.y]);
       k.keepOut.push({ x, z, r: 0.5 });
+    }
+    {
+      const old = standIn(k, chairMark);
+      void hero(k, 'ph_folding_chair_01', { height: 0.88 }).then((h) => {
+        if (!h) return;
+        hide(old);
+        h.traverse((c) => { if (c instanceof T.Mesh) for (const m of [c.material].flat() as T.MeshStandardMaterial[]) { m.color.setHex(0x8cc27a); m.metalness = 0; m.metalnessMap = null; m.needsUpdate = true; } });
+        const ins = heroInstances(k, h, chairAt.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0), one = new T.Vector3(1, 1, 1);
+        chairAt.forEach(([x, z, r], i) => ins.setAt(i, m.compose(new T.Vector3(x, 0, z), q.setFromAxisAngle(up, r), one)));
+        ins.commit();
+      });
     }
     for (const x of [-16, 16]) { k.box(3, 0.8, 8, x, 0.4, 14, lime); k.tree(x, 0.8, 14, { kind: 'round', h: 3.2, r: 1.8, leaf: 0x4f7f3c, seed: x }); }
     /* the 1909 Fifth Avenue Building clock stands on the Fifth Avenue (west, +x) side */

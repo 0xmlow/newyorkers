@@ -442,10 +442,13 @@ function awning(c, x, y, w, h) {                    // the bodega awning stripe
   for (let k = -h; k < w + h; k += 44) { c.beginPath(); c.moveTo(x + k, y); c.lineTo(x + k + 22, y); c.lineTo(x + k + 22 - h * 0.35, y + h); c.lineTo(x + k - h * 0.35, y + h); c.closePath(); c.fill(); }
   c.restore(); c.fillStyle = NAVY; for (let k = 0; k < w; k += 44) { c.beginPath(); c.arc(x + k + 22, y + h, 10, 0, Math.PI); c.fill(); }
 }
+/* The QR: black on white, a four module quiet zone, cells snapped to whole pixels so no edge is grey. Error correction
+   L keeps the symbol small (a replay link is about 100 bytes, version 5 or 6, 37 to 41 modules); the symbol is drawn after
+   the paper texture so nothing softens it (2026-10-13: the old 112 px gold symbol under the paper did not scan). */
 function drawQR(c, text, x, y, size, dark, light) {
-  try { const q = window.qrcode(0, "M"); q.addData(text); q.make(); const n = q.getModuleCount(), cell = size / (n + 4);
+  try { const q = window.qrcode(0, "L"); q.addData(text); q.make(); const n = q.getModuleCount(), cell = Math.floor(size / (n + 8)), ox = Math.round(x + (size - cell * n) / 2), oy = Math.round(y + (size - cell * n) / 2);
     c.fillStyle = light; c.fillRect(x, y, size, size); c.fillStyle = dark;
-    for (let rr_ = 0; rr_ < n; rr_++) for (let cc = 0; cc < n; cc++) if (q.isDark(rr_, cc)) c.fillRect(x + (cc + 2) * cell, y + (rr_ + 2) * cell, cell + 0.4, cell + 0.4);
+    for (let rr_ = 0; rr_ < n; rr_++) for (let cc = 0; cc < n; cc++) if (q.isDark(rr_, cc)) c.fillRect(ox + cc * cell, oy + rr_ * cell, cell, cell);
     return true; } catch (e) { return false; }
 }
 function metroCard(c, x, y, w, h, res, ink) {        // the lucky strip as a MetroCard
@@ -459,9 +462,10 @@ function metroCard(c, x, y, w, h, res, ink) {        // the lucky strip as a Met
   c.fillStyle = "#1b1b1b"; c.beginPath(); c.arc(x + 54, y + 92, 26, 0, 7); c.fill(); c.fillStyle = GOLD; c.font = "700 28px Helvetica, Arial, sans-serif"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(res.lucky ? res.lucky.train : "N", x + 54, y + 93);
   c.textAlign = "left"; c.textBaseline = "alphabetic"; c.fillStyle = "#5a4a20"; setFont(c, "700 13px 'IBM Plex Mono', monospace", "2px"); c.fillText("LUCKY TRAIN", x + 96, y + 84); c.fillText("LUCKY NUMBER", x + 290, y + 84);
   c.fillStyle = INK; setFont(c, "700 28px 'Space Grotesk', sans-serif"); c.fillText("the " + (res.lucky ? res.lucky.train : "N"), x + 96, y + 112); c.fillText("No. " + (res.lucky ? res.lucky.number : ""), x + 290, y + 112);
-  const link = "https://n3wyorkers.com/mlowtar#q=" + encodeURIComponent((res.question || "").slice(0, 80)) + "&s=" + (res.seed >>> 0);
-  if (!drawQR(c, link, x + w - 136, y + 12, 112, "#1b1b1b", GOLD)) barcode(c, RNG(res.seed >>> 0), x + w - 290, y + 24, 262, 70, "#1b1b1b");
-  c.fillStyle = "#5a4a20"; setFont(c, "500 12px 'IBM Plex Mono', monospace", "1px"); c.textAlign = "right"; c.fillText("SCAN TO REPLAY", x + w - 150, y + 60); c.fillText(res.serial ? "TICKET " + String(res.serial).padStart(4, "0") : ("N3W-" + (res.seed >>> 0).toString(36).toUpperCase()).slice(0, 12), x + w - 150, y + 82); c.textAlign = "left"; setFont(c, c.font);
+  const link = "https://n3wyorkers.com/mlowtar#q=" + encodeURIComponent((res.question || "").slice(0, 60)) + "&s=" + (res.seed >>> 0);
+  const qs = h - 24, qx = x + w - qs - 12, qy = y + 12;           // the stamp: a white square the height of the card, drawn after the paper (renderTicket)
+  c.fillStyle = "#5a4a20"; setFont(c, "500 12px 'IBM Plex Mono', monospace", "1px"); c.textAlign = "right"; c.fillText("SCAN TO REPLAY", qx - 14, y + 60); c.fillText(res.serial ? "TICKET " + String(res.serial).padStart(4, "0") : ("N3W-" + (res.seed >>> 0).toString(36).toUpperCase()).slice(0, 12), qx - 14, y + 82); c.textAlign = "left"; setFont(c, c.font);
+  return { link, qx, qy, qs };
 }
 export async function renderTicket(res, opts) {
   opts = opts || {}; const scale = opts.scale || 1, seed = res.seed >>> 0, r = RNG(seed ^ 0x5bd1e995);
@@ -500,7 +504,7 @@ export async function renderTicket(res, opts) {
   if (res.card) {
     const th = await img(THUMBS + res.card.thumb + ".jpg", 5000);
     if (th) {                      // the whole painting at its own aspect, never cropped to a square
-      const ar = th.width / th.height, bw = W - 160, maxH = 400; let w = bw, h = w / ar; if (h > maxH) { h = maxH; w = h * ar; }
+      const ar = th.width / th.height, bw = W - 160, maxH = res.answer ? 330 : 400; let w = bw, h = w / ar; if (h > maxH) { h = maxH; w = h * ar; }
       const ix = 80 + (bw - w) / 2; c.save(); c.shadowColor = "rgba(0,0,0,.22)"; c.shadowBlur = 16; c.shadowOffsetY = 6; rr(c, ix, y + 24, w, h, 8); c.fillStyle = "#000"; c.fill(); c.restore();
       c.save(); rr(c, ix, y + 24, w, h, 8); c.clip(); c.drawImage(th, ix, y + 24, w, h); c.restore(); y += h + 44;
     } else y += 24;
@@ -509,15 +513,17 @@ export async function renderTicket(res, opts) {
     c.fillStyle = dim; setFont(c, "500 20px 'Space Grotesk', sans-serif"); c.fillText([res.card.family, res.card.neighborhood || res.card.borough].filter(Boolean).join("  ·  "), 80, ny + 10);
     y = ny + 50;
   } else y += 40;
+  // the answer, when the booth had one, is what the ticket keeps; the omen otherwise
+  if (res.answer && res.answer.head) { c.fillStyle = dim; setFont(c, "700 16px 'IBM Plex Mono', monospace", "3px"); c.fillText("THE ANSWER", 80, y + 8); setFont(c, c.font); y += 12; }
   c.fillStyle = dark ? SKY : EYE; setFont(c, "500 38px Fraunces, Georgia, serif");
-  const oy = wrapText(c, res.omen, 80, y + 44, W - 160, 48, 4); y = oy + 18;
+  const oy = wrapText(c, res.answer && res.answer.head ? res.answer.head : res.omen, 80, y + 44, W - 160, 48, 4); y = oy + 18;
   c.fillStyle = dim; setFont(c, "700 16px 'IBM Plex Mono', monospace", "3px"); c.fillText("THE ROOM FOR YOU", 80, y + 8);
   c.fillStyle = ink; setFont(c, "500 40px Fraunces, Georgia, serif", "-0.5px"); c.fillText(res.room ? res.room.name : "The museum", 80, y + 56);
   c.fillStyle = dim; setFont(c, "500 16px 'IBM Plex Mono', monospace", "2px"); c.fillText((res.room && res.room.area || "").toUpperCase(), 80, y + 88); setFont(c, c.font);
   // the MetroCard
-  const ly = Math.min(y + 128, H - 470); metroCard(c, 80, ly, W - 160, 150, res, ink);
+  const ly = Math.min(y + 128, H - 556); const stamp = metroCard(c, 80, ly, W - 160, 236, res, ink);
   // the footer: a lockup from the brand set, the address, the closer, the awning
-  const fy = Math.max(ly + 176, H - 300);
+  const fy = Math.max(ly + 262, H - 300);
   if (logo) { c.save(); if (dark) { c.fillStyle = PAPER; rr(c, 80, fy - 6, 118, 118, 10); c.fill(); } c.globalCompositeOperation = "multiply"; c.drawImage(logo, 84, fy - 2, 110, 110); c.restore(); }
   c.textAlign = "left"; c.fillStyle = ink; setFont(c, "900 32px Fraunces, Georgia, serif", "-0.5px"); c.fillText("N3W YORKERS", logo ? 216 : 80, fy + 30);
   c.fillStyle = dim; setFont(c, "500 15px 'IBM Plex Mono', monospace", "2px"); c.fillText("N3WYORKERS.COM/MLOWTAR  ·  ART, NOT AN INVESTMENT", logo ? 216 : 80, fy + 58);
@@ -525,8 +531,13 @@ export async function renderTicket(res, opts) {
   awning(c, 0, H - 134, W, 40);
   // the paper, last: a CC0 scan (ambientCG Paper001) multiplied over everything so the ticket reads as a thing
   if (paperTex) { c.save(); c.globalCompositeOperation = dark ? "soft-light" : "multiply"; c.globalAlpha = dark ? 0.5 : 0.85; c.drawImage(paperTex, 0, 0, W, H); c.restore(); }
+  // the QR last, over the paper, black on white: the one part of the ticket that has to be read by a machine
+  if (stamp) { c.save(); c.shadowColor = "rgba(0,0,0,.18)"; c.shadowBlur = 10; c.shadowOffsetY = 3; c.fillStyle = "#fff"; rr(c, stamp.qx, stamp.qy, stamp.qs, stamp.qs, 8); c.fill(); c.restore();
+    if (drawQR(c, stamp.link, stamp.qx, stamp.qy, stamp.qs, "#000", "#fff")) cv._qr = { x: stamp.qx, y: stamp.qy, s: stamp.qs, link: stamp.link };
+    else barcode(c, RNG(res.seed >>> 0), stamp.qx + 10, stamp.qy + stamp.qs / 2 - 35, stamp.qs - 20, 70, "#1b1b1b"); }
   return cv;
 }
 export const ticketAspect = W / H;
+export { drawQR };   // the lightbox draws the replay QR on its own panel at device pixels
 /* the glyph set, exported for the glyph sheet (scratchpad glyph_sheet.html); nothing on the site imports it */
 export const __G = G;

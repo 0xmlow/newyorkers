@@ -279,3 +279,327 @@ the app browser avoids the local screenshot tools, which drop the Desktop permis
 
 snug (13), strivers (13), halloffame (12). Then the facade rooms, then
 the ported corridors 1 to 21.
+
+## Free GLB swaps, rooms in a.ts to l.ts (2026-10-28)
+
+From the audit `UPGRADE ALL ROOMS 2026-10-28/audit/museum_a_l.md`. Every swap builds the old code
+object first and hides it only when the GLB arrives (`rooms/heroes.ts`), so a failed load leaves the
+room as it was. Nothing paid; nothing deployed.
+
+- subway (a.ts): the 66 m box train is four hero cars tiled along it. `h_subway_car_lo.glb` (new,
+  959 KB) is the 2026-10-09 `h_subway_car` cut from 40k to 12k triangles by `blender/prop_pass.py`,
+  because four to seven copies of the 40k car tripled the overlay's triangles. The lit windows with
+  the room's New Yorkers, their frames and the head lamps stay on top of the cars. The cars are lower
+  than the old box roof (it reached 5.25), so the station signs on the far wall now show over them.
+- queensboro (i.ts): the 7 (four cars) and the N (three) are the same `h_subway_car_lo`; the purple
+  and yellow bands stay on top of each car so the lines still read.
+- snug (g.ts): `koi.glb` for the eight squashed spheres, same circles. The pool top is at 0.75 at 0.9
+  opacity and the old spheres swam at 0.6, so they barely showed; the koi now break the surface.
+- brooklynbridge (j.ts): the three box boats are `h_ferry`, `h_tug`, `h_ferry`. gantry (l.ts): the
+  box ferry is `h_ferry`. Both rooms left their boats at the origin (on the deck, in the park) with
+  reduced motion, because `k.rider` is only called with motion on; they now park on their route.
+- ferry and governors (b.ts `liberty()`, called at b.ts and e.ts, and by y1.ts Castle Clinton): the
+  lathed figure is `liberty_statue_v2.glb` (Gravity Jack, CC BY 4.0) at 12 x s on the code pedestal,
+  turned to face a `toward` point (new optional argument, default the origin), torch light and glow
+  moved to her flame. No crown mask or double side: at that distance she is the shell. Credit:
+  `LIBERTY_CREDIT` exported from b.ts, a plaque on the ferry's port rail by the Liberty egg and on a
+  post at the west edge of the Governors Island path. y1.ts is not mine and has no plaque yet.
+- flatiron (f.ts): 26 plaza chairs instanced. The audit's Poly Haven Green Chair 01 turned out to be
+  a gothic upholstered armchair and read black in the plaza, so it is one folding cafe chair from
+  Poly Haven's Outdoor Table Chair Set 01 (James Ray Cock, CC0) instead, painted the plaza green
+  (`ph_folding_chair_01.glb`, 3,752 triangles, 561 KB).
+- oysterbar (j.ts): 30 stools are Poly Haven's Bar Chair Round 01 (Dairon Sanchez, CC0), passed from
+  14k to 2,500 triangles at 512 textures (`ph_bar_chair_round_01.glb`, 289 KB), instanced, no shadows.
+
+Poly Haven is CC0 site wide (polyhaven.com/license, checked today). Overlay at spawn, headless, 1280
+by 720, before then after: subway calls 1227 to 1010, tris 425k to 614k; flatiron calls 647 to 631,
+tris 548k to 931k (the chairs cast sun shadows; phones run without shadows); queensboro platform view
+calls 545 to 449, tris 225k to 488k; oysterbar calls 557 to 559, tris 108k to 249k. Audit: 183 rooms,
+3702 mounts, unreachable 150, backwards 91, still stuck 0, identical to HEAD before the change.
+
+Screenshot trap, and the fix: `at=` is clamped to the room's bounds and the controller overrides any
+`camera.lookAt`, so objects outside the walkable area (boats on the river, Liberty across the water)
+could not be framed. Patching `renderer.render` from `shot_room.py --eval` to set the camera pose
+whenever it is called with the room camera pins any view (script in the session scratchpad,
+`pin.js`). Also: the shared server on 4185 may serve another session's copy; serve the site yourself.
+
+Not verified: phones, frame rate, the boats and Queensboro trains while moving (shot with motion
+off), Liberty from y1.ts Castle Clinton, the night look of the folding chairs beyond one shot.
+
+## Free GLB swaps, m.ts to z.ts and the x/y files (2026-10-28, batch two)
+
+From `audit/museum_m_z.md` and `audit/museum_x_up.md`. Same pattern: code object first, hidden only
+when the GLB loads. Shots in `UPGRADE ALL ROOMS 2026-10-28/shots/museum_m_up/` (swapal0_ before,
+swapb1_ after, pinned cameras).
+
+- boatgraveyard (m.ts): ten box tugs are `h_tug_lo` (new, h_tug cut to 9k triangles, 728 KB) and the
+  flagship ferry `h_ferry`, every clone's material pulled to the wreck's rust tint, tilt and sink kept.
+- intrepid (m.ts): the shuttle is NASA 3D Resources "Space Shuttle (D)" (public domain). The textures
+  with the agency insignia, the flag and lettering (wing tops, fuselage sides, tail, arrows) are plain
+  white; the model's axes were permuted in Blender (it shipped length on x, span on y); 512 textures,
+  `h_shuttle_enterprise.glb` 762 KB, 19k triangles, 42 materials. Checked from above: no logos seen.
+- moma (p.ts): the plinths carry the kit's bronze_figure, noguchi_stone_1/2/3 and equestrian. Not
+  mine, seen while shooting: the sunken garden floor (Y = -0.85) sits under a road surface with a
+  double yellow line, so the plinths are buried and the props stand on asphalt.
+- cars: `kit.ts` swapCabs now also takes any car sized box a room tags `userData.car`, cab yellow or
+  not; the non yellow ones become a Camry or Escape body (`h_car_camry_lo`, `h_car_escape_lo`, the cab
+  bodies at 4k triangles, 512 textures) with no topper, repainted in a shader that recolours only the
+  texture's yellow texels to the box colour (instance colour on fleets, a uniform on singles).
+  `?cars=old` keeps the boxes. Tagged: z.ts traffic() (katz, barney), q.ts manhattanhenge, u.ts mad,
+  n.ts sedgwick. Two kit fixes on the way: a single moving cab box now carries its taxi as a child
+  with its own material made invisible (before, the taxi was frozen where the box was at swap time),
+  and with reduced motion the swap runs on a timer (kit ticks never run then, so no room swapped).
+- taxidispatch (x2.ts): the five parked cabs were boxes even with the swap on (merged into the static
+  batch they are no longer cab sized; checked with and without `?cabs=old`). Each is now one of the
+  five cab types via `hero()`, its four wheel instances collapsed, the roof light lifted to the roof.
+  The stand in boxes are tagged `cab` so the kit does not swap them a second time.
+- Liberty: `libertyFigure()` exported from b.ts for rooms with their own base: ellis (q.ts) and
+  pioneerworks (w.ts) lathed cones swapped, castleclinton (y1.ts) calls liberty() and now faces the
+  promenade. Credit plaques by each spawn.
+- laundry (x2.ts) two five car 7 trains and armstronggarden (y3.ts) three cars: `h_subway_car_lo`.
+  That file is now the 2026-10-09 car at 22k triangles (was 12k this morning): the 12k cut read as
+  crumpled foil at close range on the el. The subway and Queensboro rooms use the same file.
+- castleclinton (y1.ts): four Poly Haven Cannon 01 (CC0; its glTF crashes Blender's importer, so it
+  came from the .blend with the 1k textures wired in by script, 10k triangles, 512 textures, 472 KB);
+  the Staten Island ferry is `h_ferry` painted orange; the tug `h_tug_lo` pushing the same barge.
+  With reduced motion the ferry used to sit inside the fort; it now parks on its route.
+- manhattanhenge (q.ts:338): a bug, as suspected. 24 `k.lamp` calls at height 0, intensity 0, all at
+  (+-13.5, 0): no light, a pile of stubs and bulbs on the pavement. Replaced by heads on the existing
+  posts, lit by emission only.
+
+Overlay, before then after (pinned views, 1280 by 720): boatgraveyard tugs view tris 165k to 882k
+before the 9k tug (not remeasured after); intrepid 118k to 194k; taxidispatch 153k to 180k;
+sedgwick spawn 208k to 422k with the 4k cars (962k with the 14k bodies); katz 979k to 1115k; mad
+494k to 510k; manhattanhenge 999k to 1418k with all taxis and cars (before the 4k bodies). Calls
+fell or held in every room. Audit: unchanged (150 unreachable, 91 backwards, 0 stuck).
+
+Not verified: the tug's facing against its barge at Castle Clinton (the bow may point away), moving
+traffic (shots are motion off), phones, the night look of the private cars.
+
+## Free GLB swaps, v0 to v26 (2026-10-28, batch three)
+
+From `audit/museum_v0_v26.md`; shots in `UPGRADE ALL ROOMS 2026-10-28/shots/museum_v/` (swapal0_
+before, swapc1_ after). Same stand in pattern throughout.
+
+- carousel (v3.ts, 57 horses) and dumbo Jane's Carousel (v5.ts, 48): the carved hero horse, instanced
+  on the turning rig (one draw per part), as `h_carousel_horse_lo` (new, the 8k horse cut to 3k at 512
+  textures, 215 KB) with shadows off; box horses, saddles and plain poles hidden, riders kept and set
+  down onto the new saddle height.
+- rockcenter tree: tried the kit's pine and reverted. At 25 m it reads as a sparse scrub pine, not a
+  dense Norway spruce, and the 3,000 lights hang in its gaps. Needs a generated spruce.
+- fultonfish (v1.ts): the three box forklifts are `h_forklift` (as v21.ts); load, driver, beacon kept.
+- dumbo (v5.ts): the two eight car B D N Q trains are `h_subway_car_lo`, instanced inside each train,
+  shadows off; the NYC Ferry is `h_ferry`.
+- pigeons: new `followInstances()` in heroes.ts drives a hero from an instanced stand in's own
+  matrices every frame (once with reduced motion). pigeon.glb in v9 brooklyncentral, v10 (three
+  rooms), v12 (two rooms), v13 (two rooms). Dogs: dog.glb on the leads in v13 gramercy and v16
+  unionsquare (as v19.ts). Palms: cp_palm.glb for the 14 procedural kentias in v8 palmcourt.
+  Atlas: armillary.glb for the five tori, its post sunk into the figure (v7 stpatricks). Reading lamps:
+  hf_lamp.glb on the four Safra tables (v14). Benches: museum_bench.glb for the four rotunda benches
+  (v26 honoraries).
+- private cars: the kit path from batch two covers it (`userData.car`, `?cars=old`).
+
+Overlay numbers in these rooms move by hundreds of thousands of triangles from frame to frame in the
+headless shots (shadow updates), so only the steady one is given: dumbo spawn 328k to 1424k with the
+8k horses, before the 3k cut and shadows off (carousel view after the cut: 905k). Audit unchanged.
+
+Not verified in a shot: the v10 and v12 pigeons, the Safra lamps, both dogs (they ride their walkers'
+splines; `pinname` found no node named dog), the Dumbo trains and ferry. Phones not measured.
+
+## The crowd is the cast (2026-10-28, batch four, k.crowd only)
+
+MLow approved replacing the museum's primitive people with our own characters, the whole model with its
+own sculpted eye flower head (never a sphere or sprite head on a cut body). This pass does `k.crowd`
+(kit.ts, about 5,000 walkers in 314 calls). The 92 per room figure, figureGeo and seated capsule sites in
+`CHARACTERS_INVENTORY.md` are not done yet.
+
+- Cast: the twelve museum `npc_` characters already used in Barney Greengrass (actress, annieh, broker,
+  cabbie, clerk, editor, felix, maitre, oscar, sonny, wiseguy, workgirl), each decimated from about 30k
+  to 3,000 triangles at 512 textures (`cast_<name>.glb`, about 160 KB) and to 500 at 128
+  (`cast_<name>_far.glb`, about 33 KB), front turned to +z with the yaws z.ts already uses. 2.3 MB.
+- `k.crowd` still builds its capsules and heads (the fallback) and now records each walker's matrix;
+  `batch()` calls `castLater()`, which loads only the characters the room casts and makes one
+  InstancedMesh per character and band (near, far) for the whole room, then hides the capsules. Each
+  frame the walkers are packed into their band by distance to the camera: 30 m on desktop, 9 m with a
+  coarse pointer. Packing matters: a zero scaled instance still costs its vertices, and three counts its
+  triangles. No shadow pass for the cast. `?crowd=old` keeps the capsules. With reduced motion the bands
+  are redistributed on a timer for 20 s.
+- Measured, headless, spawn view, `cabs=old` both sides, old then new: halloween (172 walkers) desktop
+  1534 calls 1121k tris to 1544 and 1260k, phone (390 x 844 at 3x, touch) 348 and 215k to 356 and 268k;
+  manhattanhenge (150) desktop 540 and 173k to 560 and 392k, phone 142 and 48k to 155 and 126k;
+  easternparkway (130) desktop 1195 and 557k to 1211 and 770k, phone 101 and 170k to 110 and 227k.
+  Shots: `UPGRADE ALL ROOMS 2026-10-28/shots/crowd_rollout/museum_*.jpg`.
+- Lost: the per walker shirt and skin colours (the characters wear their own). Not verified: walking
+  (they glide with a 2 cm bob, unrigged, as in Barney), a real phone, every one of the 183 rooms.
+
+## Batch five (2026-10-28): the rooms' own people, MoMA's garden, the shuttle, statues
+
+- People: rooms tag their primitive people with `personTag()` (exported from kit.ts): every `figureGeo`
+  and `seatedGeo` (as instanced crowds or meshes), every room `figure()` (body capsule plus head, the
+  head tagged 'part'), `personGroup()`, v11's bodies (heads and hats 'part') and y2's seated sitters.
+  27 room files. Before the static merge, `peopleCollect()` pulls the tagged objects out, reads each
+  stand in's matrix every frame and hands it to the same instanced, distance packed cast as `k.crowd`:
+  standing under 1.25 m tall becomes seated. Seated cast: `seat_robber` and `seat_folksinger`, whole
+  models decimated to 3,000 and 400 triangles, front to +z. A near body budget (120, 40 on phones)
+  shrinks the near radius in packed halls. `?crowd=old` keeps the capsules. Not tagged: one off
+  capsules that are not people builders (herons, fish, legs, saint, bearers, magi, riders, forklift
+  drivers, the DJ), the 24 triangle box stadium figures, Atlas and Prometheus (statues).
+- Fix for batch four: six cast files faced backwards (actress, cabbie, editor, maitre, oscar,
+  wiseguy). The yaws were taken from z.ts Barney's `face`; renders from +z showed all six with their
+  backs turned, so every npc_ model needs -90. Rebaked. Barney's own +PI/2 walkers likely walk
+  backwards too (z.ts, not touched).
+- Statues of real people get the faceless `bronze_figure`, never a likeness: Greeley and Franklin
+  (newsprint, x1.ts), Hamilton and Clinton in marble (mcny, up5.ts).
+- MoMA (p.ts): 54th Street was laid with `street()`, which only runs along z, so a road and its double
+  yellow line ran north to south through the sunken garden over the plinths. It now runs east to west
+  north of the garden screen; the marble floor, pools, birches and sculptures read.
+- Intrepid (m.ts): the shuttle's exported physical materials are replaced by matte standard ones,
+  untextured panels a shade of grey; the tiles on the pods and tail read now.
+- Castle Clinton tug: checked from renders, its bow (the end with the wheelhouse) is at +z, so it
+  already faces and pushes its barge. No change.
+
+Measured, spawn, `cabs=old`, before then after: unassembly 461k to 1150k tris, templeemanuel 392k to
+605k, paley 861k to 1010k, columbuspark 886k to 1001k, chabad770 1152k to 1341k, cityhallloop 710k
+to 730k; calls within 25 either way. Shots: `UPGRADE ALL ROOMS 2026-10-28/shots/museum_b5/` (pairs
+from the same camera, JPEG). Not verified: walking crowds in motion, phones, the 27 rooms beyond the
+ten shot, whether chabad's hats all hid (dark shapes on the ground in one shot).
+
+## Batch five, review fixes (2026-10-28, v2)
+
+- MoMA garden (p.ts): the marble floor read as snow. Its tint goes from 0xd8d4cc to 0xa8a49c (about 0.65
+  albedo on the photo marble), roughness 0.35 to 0.28; the slabs, joints and steps read. The two pools
+  were opaque boxes that rendered white in the noon sun; they are now `k.water` surfaces, dark and
+  reflective, inside their marble kerbs.
+- Barney Greengrass (z.ts): measured each walker's front against its travel direction in the page:
+  before, two of six read -1 (the wiseguy and the maitre d' walked backwards, faced +PI/2), after all six
+  read +1. Walkers now use one `WALK_FACE` of -PI/2; the standing figures keep their authored facing.
+- Intrepid shuttle (m.ts): the wing materials (wing tops and flap tops) are darker again (0.3 untextured,
+  0.5 textured); the wings read grey with their edges in the noon sun.
+
+Shots: `shots/museum_b5/*_v2.jpg`, before and after from the same pinned cameras. Audit unchanged.
+
+## Cast feet and the MoMA trees (2026-10-28, v3)
+
+- Front renders of the decimated `cast_broker` and `cast_sonny` confirm both stop at the thigh and stood
+  sunk in the floor. They leave the crowd cast; `gown` and `loretta` (whole, full length, from
+  assets/movies, 3,000 and 500 triangles, front to +z, checked from renders) take their places. The other
+  ten cast members have feet.
+- MoMA garden trees: a real miss, not a headless fallback. The birch grove was code (a white stick and
+  four green spheres each). It is now the tree kit (no birch in the kit, so the fine leaved honey
+  locust), same places, the old rnd() calls kept so the rest of the seeded room is unchanged.
+- Rockefeller Center: the room has no trees besides the Christmas tree, which stays as it is (needs a
+  generated spruce).
+Shots: `shots/museum_b5/moma_trees_{before,after}_v3.jpg`, `crowd_fulllength_after_v3.jpg`.
+
+## Code built trees routed through the tree kit (2026-10-28)
+
+Swept every room file for trees made outside `k.tree` (sphere or icosahedron canopies on sticks, cone
+pines, lollipops, local tree builders).
+- Changed: met (b.ts), Central Park below the roof: 260 icosahedron blobs on sticks; now 87 kit trees (a
+  third, larger), same seeded places. Before they did not show above the parapet; now the canopy reads.
+  Spawn 514k to 854k triangles, 868 calls both (the full 260 cost 1607k, so they were thinned).
+  bowbridge (v5.ts): six willows (lathe trunk, squashed icosahedron, 480 box strands) are the kit's willow;
+  spawn 759k to 742k triangles, 695 to 691 calls. moma (p.ts): done in the previous commit.
+- Left: weitsmanyard (v6.ts) 4,600 instanced icosahedron blobs as the wooded hills 112 to 580 m out, a
+  landscape texture; as kit trees it would cost well over a million triangles. The Rockefeller Christmas
+  tree. Hedges and planter shrubs of spheres (b.ts, c.ts, h.ts, v14, v22): shrubs, not trees. v21's wire
+  light trees (a light sculpture). v17 lindens and v19 cherries already use the kit.
+Shots: `shots/museum_trees/` (met, met_park, bowbridge, moma, before and after).
+
+## The one off people (2026-10-28, people pass two)
+
+Every remaining capsule or box person a room builds by hand is tagged with `personTag` so the kit casts it
+(same instanced, distance packed cast; `?crowd=old` keeps the shapes), heads and caps tagged as parts:
+Bow Bridge rowers (seated), Barney's cyclist and the handball cyclist (seated), the Fulton Fish forklift
+drivers (seated) and porters, the Paradise Garage DJ, the San Gennaro bearers (the saint stays a statue),
+the Eastern Parkway magi, the Rockaway surfers (seated on their boards), the Gramercy resident, the
+v20 performers (standing or seated by pose), the Arthur Ashe players, the Palm Court pianist (seated), the
+v6 speaker, the y2 usher and reader (seated), the MCNY guide, doorman and busker, the flower market hauler.
+Left: the children (v3 carousel kids, Astoria pool kids: no child bodies in the cast), the swimmers and
+sunbathers lying flat (v3, v10: no lying pose), the 24 triangle box stadium crowds and Delacorte's 1,800
+box seats (no cheap near band added), statues (Atlas, Prometheus, bronzes), helmets and helicopters.
+Before and after from the same pinned camera: `shots/museum_people2/` (bowbridge, barney, fultonfish,
+sangennaro, paradisegarage); triangles change by under 50k in each, calls fall or hold.
+
+## The rigged cast walks (2026-10-28)
+
+From `UPGRADE ALL ROOMS 2026-10-28/rig/` (free Blender rigs, walk and idle clips, a bone named head). Copied
+read only into `assets/museum/rig/rig_<name>.glb` (14 files, 3.3 MB): actress, gown, loretta, maitre, oscar,
+annieh, editor, wiseguy, workgirl, cabbie (walk and idle, all good or acceptable), clerk and felix (idle
+only), robber and folksinger (seated idle). No lite files: mid and far stay the static instanced bands.
+- `kit.rigLayer()`: every cast person (k.crowd walkers and personTag people) is a candidate. The nearest
+  within 16 m (8 on phones), up to 20 (8 on phones), become `SkeletonUtils.clone` skinned figures pooled per
+  character; they leave past 1.25 times that radius (hysteresis) and their instanced body hides meanwhile.
+  Speed is measured from each person's own matrix per frame; the walk clip's time scale is that speed over
+  the clip's speed at the figure's scale, so the feet stay planted. A walker the clip cannot match without
+  sliding (outside 0.5 to 2 times the clip cadence, e.g. a fast coat walker) stays a static body. Under
+  0.2 m/s they idle, and within 10 m the head turns toward the visitor, clamped to 60 degrees, eased; the head
+  is reset to the clip pose each frame so the look never accumulates. `?rig=off` keeps everything static,
+  `?crowd=old` the capsules. `window.__rigStats` reports mixer ms, skinned and walking counts.
+- Measured (spawn view, cabs=old, rig off then on; triangles unchanged, the skinned bodies replace near ones):
+  halloween desktop 1540 to 1564 calls, mixer 0.10 ms, 14 skinned, 6 walking; phone 354 to 355, 0.035 ms, 3.
+  manhattanhenge desktop 560 to 598, 0.15 ms, 20 (all standing); phone 155 to 160, 0.056 ms, 8.
+  paley desktop 750 to 784, 0.08 ms, 20, 7 walking; phone 145 to 148, 0.06 ms, 8.
+- Films: `shots/rig_rollout/museum_{halloween,manhattanhenge,paley}.mp4` (8 s, 1280x720, static pinned camera
+  on a moving skinned walker). Headless Chrome renders at 8 to 10 fps and the kit clamps dt to 0.1, so the
+  films play in slow motion; walk and travel use the same simulated time. Seen frame by frame: legs alternate,
+  walkers face their direction of travel, no popping seen in the crops. Not verified at full frame rate, on a
+  real phone, or for the head look in a film (manhattanhenge's skinned people all stand; its film is still).
+
+## People pass two, review fixes (2026-10-28)
+
+- Bow Bridge: the "post" was one of the two empty boats tied up at the dock. The room hides those boats' rowers,
+  but the kit cast them anyway. Stand ins hidden by their room before the cast arrives (or under a hidden
+  parent) now get no cast; the mooring post shows again. The same rule covers every tagged room.
+- Paradise Garage: the DJ is named (`personTag(o, kind, hs, cast)`): the tough, at the decks facing the floor.
+  The disco king's white suit flared under the booth lamp. tough and discoking added to the cast (static near
+  and far, rigged), but crowds still draw from the first twelve only.
+- San Gennaro: the bearers stand under the poles, feet on the street, shoulders at the pole, as the wiseguy,
+  two cabbies and Oscar.
+- Rig layer fixes found on the way: the head turn is now about world up taken into the head's frame (the head
+  bone's rest is tilted, so its local Y was not up and the flower spun edge on); speed is a vector average, so a
+  dancer's sway or the DJ's bob reads as standing, not as an unmatched walk.
+Shots: `shots/museum_people2/*_v2.jpg`, same cameras before and after.
+
+## Room 182 MLOW INTERNATIONAL: the travellers are the cast (2026-10-28)
+
+The terminal GLB carries 107 primitive travellers (nodes `person_tmpl<k>[.nnn]`, body, head and legs as
+primitives; the six bare templates parked under the ground). New `kit.castLate(srcs, hides)` takes people a
+room only finds after its own async load and gives them their own cast set (instanced near and far bodies,
+rig layer: the nearest stand and breathe and turn their heads to the visitor). v25.ts keeps those nodes out
+of its static merge (with `?crowd=old` they merge as before). Spawn, headless: desktop 638 calls with rig off,
+652 with the rig (9 skinned, mixer 0.10 ms); phone 271 both (2 skinned, 0.04 ms); `?crowd=old` 610 calls as
+before. Shot: `shots/museum_people2/mlowintl_{before,after}.jpg`, spawn camera.
+
+## The box crowds get a near band of cast (2026-10-28, round two)
+
+The 24 triangle box crowds (bleachers' stadium, the Little Island amph, the Apollo and Carnegie houses) and
+Delacorte's box seats are tagged with the new `boxCrowdTag(im, yaw)`: the nearest become seated cast (the
+robber, the one seated pose that sits on a seat without bringing furniture; the folksinger brings a stool,
+sally a table, lensman a wheelchair), the far keep their boxes. The kit hides a box instance only while the
+cast draws it, and reads the room's own matrix back for it (`CastFig.box`), so a box crowd its room animates or
+leaves static both work. Bands: full body within 8 m, the 500 triangle body to the near radius, boxes beyond;
+hysteresis on both edges (in at r, out past 1.14 r). The budget counts six mid bodies as one full one, so a
+packed house shrinks the radius. The nearest are rigged idle with the head look (the existing rig layer). Yaw
+PI where the seat backs are at +z (up4's houses). `?crowd=old` keeps the boxes.
+Measured, pinned camera at the crowd, renderer totals (scene plus shadow and fx passes), before then after:
+bleachers desktop 446 to 488 calls, 1949k to 3116k tris (cast itself 315k static plus 22 rigged), phone 76 to
+85, 287k to 476k; apollo desktop 566 to 610, 330k to 1525k, phone 50 to 59, 78k to 252k; carnegie desktop 557
+to 589, 443k to 1502k, phone 61 to 70, 120k to 252k; delacorte desktop 636 to 654, 917k to 1829k, phone 48 to
+54, 203k to 326k. littleisland (up2.ts) is tagged but its live room id is the rebuild, not seen in a shot.
+Not done: variety. Every seated cast member in a box crowd is the robber.
+Shots: `UPGRADE ALL ROOMS 2026-10-28/shots/round2/museum_*` (before and after, same pinned camera).
+
+## Box crowds, review fixes (2026-10-28, round two v2)
+
+- Variety: each seated cast member takes the shirt colour of the box it replaces through instanceColor,
+  60 percent over the texture (the rigged ones too, on cloned materials), with a fixed per seat jitter of up to
+  8 degrees of turn and 4 percent of size. Gaps stay where the room left empty seats. No second seated variant.
+- Cost: the second pass was not the shadow map (the cast casts none) but the GTAO occlusion pass, which draws
+  the scene again for its normals. The mid and far bodies are now marked noAO and skipped there (fx.ts
+  hides them with the pass's own sprite rule); the full near bodies keep their occlusion.
+- Fix found on the way: the bleachers' cast faced the back wall (turned PI now); Apollo and Delacorte faced
+  the stage already.
+Same pinned cameras, HEAD then this: bleachers desktop 488 to 479 calls, 3116k to 2768k tris, phone 40 and
+399k both; apollo (from the stage) desktop 917 to 905, 992k to 829k, phone unchanged 146 and 209k; delacorte
+(front) desktop 714 to 705, 2190k to 2181k, phone 51, 356k to 329k. Shots `shots/round2/museum_*_v2.jpg`.

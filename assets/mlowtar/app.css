@@ -64,6 +64,12 @@ body.mlowtar{background:var(--ink)}
 .mz-rec.armed{border-color:var(--coral);color:var(--coral)}.mz-rec.armed::before{background:var(--coral);animation:mzblink 1s infinite}
 .mz-lb canvas{display:block;max-height:calc(100svh - 210px);max-width:min(92vw,520px);width:auto;height:auto;border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 .mz-lb img{display:none}
+/* the replay QR on its own, drawn at device pixels: the ticket itself is capped by height in the lightbox, so its stamp lands too small for a camera */
+.mz-lb-scan{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}.mz-lb-scan[hidden]{display:none}
+.mz-lb canvas#mzLbQr{width:132px;height:132px;max-height:none;border-radius:8px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.mz-lb-scan span{font:600 10px/1.6 "IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--slate);text-transform:uppercase}
+/* wide screens: the ticket on the left, the replay QR and the buttons beside it, so nothing falls under the mint bar */
+@media (min-width:900px){.mz-lb>div{display:grid;grid-template-columns:auto 250px;grid-template-areas:"t s" "t r";column-gap:30px;align-items:center;align-content:center;min-height:calc(100svh - 110px)}.mz-lb>div>canvas#mzLbC{grid-area:t}.mz-lb-scan{grid-area:s;flex-direction:column;align-items:flex-start;gap:12px;margin:0;align-self:end}.mz-lb .row{grid-area:r;justify-content:flex-start;align-self:start;margin-top:16px}}
 .slip-film{margin:8px 0 10px}.slip-film video{display:block;width:100%;border-radius:6px;background:#000}
 .mz-shelf{padding:0 26px 14px}
 .mz-shelf[hidden]{display:none}
@@ -84,6 +90,12 @@ body.mlowtar{background:var(--ink)}
 .slip .say{margin:0 0 9px;font:400 15px/1.5 "Space Grotesk",sans-serif;min-height:1em}
 .slip .say.greet{font-family:Fraunces,serif;font-size:19px;line-height:1.3;color:#2a221a}
 .slip .say.omen{font-family:Fraunces,serif;font-size:18px;line-height:1.35;color:#8a2a22;padding:10px 12px;border-left:3px solid var(--brick);background:rgba(162,50,49,.06)}
+.slip .say.answer{font-family:Fraunces,serif;font-weight:600;font-size:21px;line-height:1.25;color:#14110d;margin:4px 0 10px}
+.slip .say.answer.verdict{font-size:30px;letter-spacing:-.01em;color:#8a2a22}
+.slip .answer-lines{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid #d9d0bd}
+.slip .answer-lines li{font:400 14.5px/1.5 "Space Grotesk",sans-serif;color:#2a221a;padding:8px 0 8px 18px;border-bottom:1px solid #e6dfcf;position:relative;min-height:1em}
+.slip .answer-lines li::before{content:"";position:absolute;left:2px;top:15px;width:7px;height:7px;border-radius:50%;background:var(--brick)}
+.slip .answer-lines li .cur{display:inline-block;width:.5em;height:1em;background:#8a2a22;vertical-align:-.15em;animation:mzblink .7s infinite}
 .slip .say.closer{color:#6a6050;font-style:italic;font-size:14px}
 .slip .say .cur{display:inline-block;width:.5em;height:1em;background:#8a2a22;vertical-align:-.15em;animation:mzblink .7s infinite}
 .slip-card{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;background:#fff;border:1px solid #d9d0bd;border-radius:6px;padding:8px;margin:4px 0 12px;transition:transform .2s}

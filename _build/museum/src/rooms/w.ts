@@ -5,6 +5,8 @@ import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { libertyFigure, LIBERTY_CREDIT } from './b';
+import { standIn } from './heroes';
 import { mlowBanner, blossomFlag, donorWall, eyeMedallion, wordmarkRelief, eyeMonument, blossomGarden, INK, CLOUD, ELECTRIC, CYAN } from './brand';
 
 const PI = Math.PI;
@@ -238,7 +240,10 @@ export const pioneerworks: RoomDef = {
     street(k, { w: 14, len: 140, z: 30, x: 0 });
     blockFront(k, { x: 20, z0: 90, count: 10, face: -1, seed: 348, h: [8, 12] });
     k.water({ y: -1.6, color: 0x30506a, w: 600, d: 400, x: -260, z: 0, amp: 1.2 });
-    k.lathe([[0, 0], [4, 0], [3.6, 5], [3, 14], [2, 22], [0, 23]], -220, 4, 40, k.pbr('pwCopper', X.patina(0x5f9a8c), 0.6), 24); k.box(10, 10, 10, -220, -1, 40, k.pbr('pwGranite', X.ashlar(0xa89c88, 349, 3), 0.25));
+    /* 2026-10-28: the lathed cone across the water is the stand in for Gravity Jack's Liberty (CC BY 4.0, b.ts), credit by the spawn */
+    { const lm = k.objects.length; k.lathe([[0, 0], [4, 0], [3.6, 5], [3, 14], [2, 22], [0, 23]], -220, 4, 40, k.pbr('pwCopper', X.patina(0x5f9a8c), 0.6), 24); libertyFigure(k, standIn(k, lm), -220, 4, 40, 23, [2, 22]); }
+    k.box(10, 10, 10, -220, -1, 40, k.pbr('pwGranite', X.ashlar(0xa89c88, 349, 3), 0.25));
+    k.box(0.08, 0.9, 0.08, 8, 0.45, 16, dark); k.sign(LIBERTY_CREDIT, 3.4, 0.42, 8, 1.1, 16.05, '#1a1c20', '#e8e2d4', 46, 0);
     k.skyline({ z: -200, count: 30, spacing: 9, scale: 3.8, base: -1.6, seed: 350, lit: 0.25, glow: 0.5, tint: 0x6e7684, x: -80, rows: 1, spires: true });
     // the ironworks: a long brick hall three storeys tall, arched windows, the great hall inside with balconies
     const BX = -22, BZ = -10, BW = 30, BD = 46, BH = 16;
