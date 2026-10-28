@@ -3,6 +3,7 @@
 // (Compete and Collect, playable, first to seven in one attribute), The VeeDome (the parade of friends, keep pace and
 // you are in it). Built on fx.js and the room context `c` from main.js. Helpers that live in build.js are copied here.
 import { W, D, H_IN, PORTAL } from './rooms.js';
+import { crowdBody } from './crowd.js';
 import { hologram, lava, bubblegum, diamond, gold, emerald, recolor, alcove, column, coffer, neon, cardTex } from './fx.js';
 
 const PI = Math.PI, PURPLE = 0x5a2fa0, GOLD = 0xf5c542;
@@ -20,12 +21,19 @@ function eyeFlower(g, x, y, R, petal = '#fbe6f0', edge = '#ff4fa3') {
 }
 const HEAD = {};
 const headTex = (c) => (HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98)));
-function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0 } = {}) {
+// the tower's crowd (crowd.js): office and street New Yorkers, walkers and suits; the guards stay the usher (cast)
+const CLOUDS_CROWD = ['workgirl', 'wiseguy', 'cabbie', 'editor', 'annieh', 'rosemary', 'writer', 'tough', 'bartender', 'hustler', 'susan', 'oscar'];
+
+// a seated or standing extra; since 2026-10-28 its body is one of the cast cut for crowds (crowd.js), the cylinder and box
+// hidden once it lands; ?crowd=old keeps them
+function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, pool, crowd = true } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; g.add(o);
   const h = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = h + (seated ? 0.36 : 1.0); o.add(body);
-  if (!seated) o.add(c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0));
+  let legs = null; if (!seated) { legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: headTex(c), transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; return o;
+  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head;
+  if (crowd) crowdBody(o, { seated, col, hide: legs ? [body, legs, head] : [body, head], pool: pool || (seated ? 'seated' : CLOUDS_CROWD) });   // the whole cast character (crowd.js), its own flower head; the sprite hidden once it lands
+  return o;
 }
 function cast(c, r, g, X, name, x, z, { h = 1.8, ry = 0, y = 0, r: rad = 0.4, line, egg, hint } = {}) {
   const m = c.glb(name, { h, x, y, z, ry, parent: g });

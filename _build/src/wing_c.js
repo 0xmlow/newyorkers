@@ -5,6 +5,7 @@
 // Nothing here is a real punk, a real drawing or a real face: every figure has an eye flower for a head.
 // The nooks are bays built inside the room volume (see bay() below) because the room walls are solid slabs.
 import { W, D, H_IN, PORTAL } from './rooms.js';
+import { crowdBody } from './crowd.js';
 import { punkCanvas, voxelPunk, halftoneMaterial, column, mezzanine, coffer, neon } from './fx.js';
 
 const PI = Math.PI;
@@ -26,13 +27,20 @@ function eyeFlower(g, x, y, R, petal = '#fbe6f0', edge = '#ff4fa3') {
 // the stick figure of the house: a body, two arms, an eye flower for a head
 function figure(q, x, y, s, col, t, arms = 0) { q.fillStyle = col; q.fillRect(x - 8 * s, y - 26 * s, 16 * s, 40 * s); q.strokeStyle = col; q.lineWidth = 5 * s; q.beginPath(); q.moveTo(x - 7 * s, y - 22 * s); q.lineTo(x - 20 * s, y - 22 * s - arms * 18 * s + Math.sin(t * 6) * 4 * s); q.moveTo(x + 7 * s, y - 22 * s); q.lineTo(x + 20 * s, y - 22 * s - arms * 18 * s + Math.cos(t * 6) * 4 * s); q.stroke(); eyeFlower(q, x, y - 40 * s, 17 * s); }
 const HEAD = {};
-function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0 } = {}) {
+// the tower's crowd (crowd.js): office and street New Yorkers, walkers and suits; the guards stay the usher (cast)
+const CLOUDS_CROWD = ['workgirl', 'wiseguy', 'cabbie', 'editor', 'annieh', 'rosemary', 'writer', 'tough', 'bartender', 'hustler', 'susan', 'oscar'];
+
+// a seated or standing extra; since 2026-10-28 its body is one of the cast cut for crowds (crowd.js), the cylinder and box
+// hidden once it lands; ?crowd=old keeps them
+function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, pool, crowd = true } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; g.add(o);
   const h = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = h + (seated ? 0.36 : 1.0); o.add(body);
-  if (!seated) { const legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
+  let legs = null; if (!seated) { legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98));
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: HEAD.t, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; return o;
+  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head;
+  if (crowd) crowdBody(o, { seated, col, hide: legs ? [body, legs, head] : [body, head], pool: pool || (seated ? 'seated' : CLOUDS_CROWD) });   // the whole cast character (crowd.js), its own flower head; the sprite hidden once it lands
+  return o;
 }
 function cast(c, r, g, X, name, x, z, { h = 1.8, ry = 0, y = 0, r: rad = 0.4, line, egg, hint } = {}) {
   const m = c.glb(name, { h, x, y, z, ry, parent: g });
@@ -285,7 +293,8 @@ export const ROOMS_C = {
     c.clickable(cubes, () => c.toast('The floor. It moves every day and everybody has an opinion about why. Climb it.', 2600), 'The floor price');
     // the people
     cast(c, r, g, X, 'tough', 11.6, 7.0, { h: 1.85, ry: -0.9, line: 'Dozens, he says. Not one of them is on this wall. Everybody on this wall got counted first.', egg: 'punks_guard', hint: 'The vault guard' });
-    cast(c, r, g, X, 'broker', 17.6, -2.0, { h: 1.8, ry: -1.5, line: 'The floor is a mountain and the mountain moves. Buy the thing you would still want if the floor was zero.', hint: 'A collector' });
+    cast(c, r, g, X, 'golfer', 17.6, -2.0, { h: 1.8,   // a collector in a hoodie; was broker, whose model stops above the knee (2026-10-28)
+      ry: -1.5, line: 'The floor is a mountain and the mountain moves. Buy the thing you would still want if the floor was zero.', hint: 'A collector' });
     extra(c, g, 1.4, -3.0, { col: 0x1a1a2a, ry: -PI / 2 }); c.post(X(1.4), -3.0, 0.3); extra(c, g, 18.4, -4.5, { col: 0x3a1a3a, ry: PI / 2 }); c.post(X(18.4), -4.5, 0.3);
     // the ticks: the cubes fly in, the one turns, the summit counts
     let top = 0, floored = false;

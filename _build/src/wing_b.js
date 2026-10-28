@@ -3,6 +3,7 @@
 // trick the browser can do that a building cannot: a crater that pays out, a door that shrinks you, a gym that turns
 // over, a claw that is honest. Helpers from build.js are copied here, never imported, so the two files stay separate.
 import { W, D, H_IN, PORTAL } from './rooms.js';
+import { crowdBody } from './crowd.js';
 import { lava, gold, column } from './fx.js';
 
 const PI = Math.PI;
@@ -26,13 +27,20 @@ function eyeFlower(g, x, y, R, petal = '#fbe6f0', edge = '#ff4fa3') {
   g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(x - R * 0.06, y - R * 0.06, R * 0.04, 0, PI * 2); g.fill();
 }
 const HEAD = {};
-function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0 } = {}) {
+// the tower's crowd (crowd.js): office and street New Yorkers, walkers and suits; the guards stay the usher (cast)
+const CLOUDS_CROWD = ['workgirl', 'wiseguy', 'cabbie', 'editor', 'annieh', 'rosemary', 'writer', 'tough', 'bartender', 'hustler', 'susan', 'oscar'];
+
+// a seated or standing extra; since 2026-10-28 its body is one of the cast cut for crowds (crowd.js), the cylinder and box
+// hidden once it lands; ?crowd=old keeps them
+function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, pool, crowd = true } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; g.add(o);
   const h = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = h + (seated ? 0.36 : 1.0); o.add(body);
-  if (!seated) { const legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
+  let legs = null; if (!seated) { legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98));
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: HEAD.t, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; return o;
+  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head;
+  if (crowd) crowdBody(o, { seated, col, hide: legs ? [body, legs, head] : [body, head], pool: pool || (seated ? 'seated' : CLOUDS_CROWD) });   // the whole cast character (crowd.js), its own flower head; the sprite hidden once it lands
+  return o;
 }
 function cast(c, r, g, X, name, x, z, { h = 1.8, ry = 0, y = 0, r: rad = 0.4, line, egg, hint } = {}) {
   const m = c.glb(name, { h, x, y, z, ry, parent: g });
@@ -347,7 +355,7 @@ export const ROOMS_B = {
     stands(3.6, 13.6, 6.2, 1, seatM); stands(1.0, 7.4, -5.0, -1, seatM2); stands(12.6, 19.0, -5.0, -1, seatM);
     c.wall(X(3.6), 6.15, X(13.6), 6.15); c.wall(X(1.0), -4.95, X(7.4), -4.95); c.wall(X(7.4), -4.95, X(7.4), -6.75); c.wall(X(12.6), -4.95, X(19.0), -4.95); c.wall(X(12.6), -4.95, X(12.6), -6.75);
     const crowd = [];
-    const sit = (x, z, k, west) => { const o = extra(c, inner, x, z, { seated: true, col: west ? (Math.random() < 0.6 ? PINK : 0xf4ead2) : (Math.random() < 0.5 ? BROWN : 0xf4f4f0), ry: z > 0 ? PI : 0 }); o.position.y = 0.4 * (k + 1); crowd.push({ o, ph: Math.random() * 7 }); };
+    const sit = (x, z, k, west) => { const o = extra(c, inner, x, z, { seated: true, col: west ? (Math.random() < 0.6 ? PINK : 0xf4ead2) : (Math.random() < 0.5 ? BROWN : 0xf4f4f0), ry: z > 0 ? PI : 0, pool: ['robber', 'folksinger'] }); o.position.y = 0.4 * (k + 1); crowd.push({ o, ph: Math.random() * 7 }); };
     for (let i = 0; i < 9; i++) sit(4.2 + i * 1.1 + rnd(-0.15, 0.15), 6.2 + 0.3 + 0.53 * (i % 3), i % 3, 4.2 + i * 1.1 < 10);
     for (let i = 0; i < 5; i++) sit(1.6 + i * 1.3, -5.0 - 0.3 - 0.53 * (i % 3), i % 3, true);
     for (let i = 0; i < 5; i++) sit(13.2 + i * 1.3, -5.0 - 0.3 - 0.53 * (i % 3), i % 3, false);
