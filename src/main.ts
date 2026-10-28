@@ -13,6 +13,7 @@ import { walkable, batchStatic } from './core/kit';
 import { Portal, type PortalOpts } from './core/portal';
 import type { Room, Ctx } from './core/room';
 import { buildBlock } from './rooms/block';
+import { rigTick, RIGSTAT } from './core/rig';
 import { ROOM_BUILDERS, LINKS } from './rooms/index';
 
 // BIGGER ON THE INSIDE: the world. Rooms 1 km apart in one scene, one visible at a time; doorways are live portals.
@@ -327,6 +328,7 @@ function step(now: number) {
   camera.updateMatrixWorld();
   // rooms tick (the one you are in, and any a portal will draw)
   for (const r of rooms.values()) r.tick(t, dt, camera, r === here);
+  rigTick(dt, camera, mobile ? 8 : 20);   // the rigged cast: the nearest play, the rest hold their pose
   // portal passes: the nearest two that are in view, plus every portal within reach every other frame
   pv.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); frustum.setFromProjectionMatrix(pv);
   const want = portals.filter((p) => p.fromRoom === here.id).map((p) => ({ p, w: p.wants(camera, frustum) })).filter((x) => x.w > 0).sort((a, b) => b.w - a.w);
@@ -343,7 +345,7 @@ function step(now: number) {
 (window as unknown as Record<string, unknown>).inside = {
   // advance(ms, key): run the world without requestAnimationFrame (headless review; a hidden tab gets no frames)
   advance(ms: number, key?: string) { if (key) keys.add(key); const t0 = last; for (let t = 16; t <= ms; t += 16) step(t0 + t); if (key) keys.delete(key); return { at: camera.position.toArray(), room: here.id }; },
-  rooms, portals, camera, go, jump, enter: (id: string) => enter(rooms.get(id)!, true), loading, THREE: T, scene,
+  rig: RIGSTAT, rooms, portals, camera, go, jump, enter: (id: string) => enter(rooms.get(id)!, true), loading, THREE: T, scene,
   view: (i: number) => { const v = here.views[i]; if (v) jump(v.at, v.look); },
 };
 boot();

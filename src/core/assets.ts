@@ -13,7 +13,7 @@ export type Manifest = {
 };
 
 export const loading = { total: 0, done: 0, failed: [] as string[], onChange: () => {} };
-const track = <X>(p: Promise<X>, url: string) => {
+export const track = <X>(p: Promise<X>, url: string) => {
   loading.total++; loading.onChange();
   return p.then((v) => { loading.done++; loading.onChange(); return v; },
     (e) => { loading.done++; loading.failed.push(url); loading.onChange(); throw e; });

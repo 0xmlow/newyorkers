@@ -33,7 +33,11 @@ export function buildBodega(ctx: Ctx): Room {
   box(g, 0.9, 0.05, 3.7, 1.95, 1.07, -2.6, marble);
   const reg = prop('ph_cash_register', 0.42); reg.position.set(1.95, 1.1, -1.5); reg.rotation.y = -Math.PI / 2; g.add(reg);
   const bag = prop('barney_bagel', 0.45); bag.position.set(1.95, 1.1, -3.2); g.add(bag);
-  const cat = bodegaCat(); cat.userData.dynamic = true; cat.position.set(1.95, 1.1, -2.4); cat.rotation.y = -1.9; g.add(cat);
+  // the cat: the orange tabby GLB (the one UNLICENSED and THE MARKS use), sitting up, 0.36 m. The code loaf stays as
+  // the stand in and is hidden when the GLB lands, so a failed load leaves the old cat on the counter.
+  const cat = new T.Group(), catLoaf = bodegaCat(); cat.add(catLoaf);
+  cat.userData.dynamic = true; cat.position.set(1.95, 1.1, -2.4); cat.rotation.y = -1.9; g.add(cat);
+  const catGlb = prop('cat', 0.36, () => { catLoaf.visible = false; }); catGlb.rotation.y = -0.9; cat.add(catGlb); // three quarters to the aisle
   // the coffee, in the cup
   const cup = new T.MeshStandardMaterial({ color: 0xe9eef5, roughness: 0.5 });
   for (let i = 0; i < 6; i++) { const c = new T.Mesh(new T.CylinderGeometry(0.045, 0.035, 0.13, 16), cup); c.position.set(1.75 + (i % 2) * 0.12, 1.16, -3.9 - Math.floor(i / 2) * 0.12); g.add(c); }
@@ -147,11 +151,11 @@ export function buildBodega(ctx: Ctx): Room {
     walk, block,
     bg: new T.Color(0x0b0f1c), fog: new T.FogExp2(0x1a2236, 0.006), exposure: 0.9,
     floorY: () => O.y,
-    tick(t, _dt, _cam) { if (!ctx.still) cat.children[0].rotation.y = Math.sin(t * 1.3) * 0.25; },
+    tick(t, _dt, _cam) { if (!ctx.still) catLoaf.children[0].rotation.y = Math.sin(t * 1.3) * 0.25; },
   };
 }
 
-/** The bodega cat: a loaf with ears and a tail, orange tabby. Built here; the museum pack has no cat. */
+/** The stand in bodega cat: a loaf with ears and a tail, orange tabby. Shown only until cat.glb arrives. */
 function bodegaCat() {
   const g = new T.Group(), fur = new T.MeshStandardMaterial({ color: 0xd8873a, roughness: 0.85 }), dark = new T.MeshStandardMaterial({ color: 0x1a120c });
   const tail = new T.Group(); g.add(tail);

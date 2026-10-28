@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { pbr, prop, tex } from '../core/assets';
-import { box, floorPlane, sign, v3, seeded, type Rect } from '../core/kit';
+import { box, floorPlane, sign, v3, seeded, batchStatic, type Rect } from '../core/kit';
 import { contour, drips, eyeFlower, addThreshold, INK } from '../core/mlow';
 import { windows, type Win } from '../core/interior';
 import { hang, poster, sticker } from '../core/hang';
@@ -186,18 +186,24 @@ export function buildBlock(ctx: Ctx): Room {
   put('mailbox', 1.25, 5.7, 3, -Math.PI / 2);
   put('storm_drain', 0.25, -4.7, -27, Math.PI / 2, 0);
   put('penn_newsstand', 2.6, 6.4, -27.5, -Math.PI / 2);
+  // street trees: the museum pack's tree (its own public/glb/tree.glb) in the iron tree guard. The trunk and
+  // icosahedron crowns stay built as the stand in (batched apart, hidden once the GLB is in), so a failed load leaves
+  // the block as it was.
   const bark = new T.MeshStandardMaterial({ color: 0x2b2420, roughness: 0.9 });
   const leaf = new T.MeshStandardMaterial({ color: 0x24402a, roughness: 0.85, emissive: 0x05140a, flatShading: true });
+  const treeFallback = new T.Group(); g.add(treeFallback);
   for (const [x, z] of [[-6.4, 0], [6.4, -21], [-6.4, -33]] as const) {
-    const tr = new T.Mesh(new T.CylinderGeometry(0.11, 0.17, 4.2, 9), bark); tr.position.set(x, 2.25, z); tr.castShadow = true; g.add(tr);
+    const tr = new T.Mesh(new T.CylinderGeometry(0.11, 0.17, 4.2, 9), bark); tr.position.set(x, 2.25, z); tr.castShadow = true; treeFallback.add(tr);
     for (let k = 0; k < 4; k++) box(g, k % 2 ? 0.04 : 1.0, 0.45, k % 2 ? 1.0 : 0.04, x + (k === 1 ? 0.5 : k === 3 ? -0.5 : 0), 0.38, z + (k === 0 ? 0.5 : k === 2 ? -0.5 : 0), iron, false);
     for (let k = 0; k < 9; k++) {
       const geo = new T.IcosahedronGeometry(0.9 + rnd() * 0.7, 1), p2 = geo.attributes.position;
       for (let i = 0; i < p2.count; i++) p2.setXYZ(i, p2.getX(i) * (0.8 + rnd() * 0.4), p2.getY(i) * (0.7 + rnd() * 0.3), p2.getZ(i) * (0.8 + rnd() * 0.4));
       geo.computeVertexNormals();
-      const c = new T.Mesh(geo, leaf); c.position.set(x + (rnd() - 0.5) * 2.4, 4.6 + rnd() * 2.2, z + (rnd() - 0.5) * 2.4); c.castShadow = true; g.add(c);
+      const c = new T.Mesh(geo, leaf); c.position.set(x + (rnd() - 0.5) * 2.4, 4.6 + rnd() * 2.2, z + (rnd() - 0.5) * 2.4); c.castShadow = true; treeFallback.add(c);
     }
+    const t = prop('tree', 5.2, () => { treeFallback.visible = false; }); t.position.set(x, 0.15, z); t.rotation.y = (x + z) * 1.7; g.add(t);
   }
+  batchStatic(treeFallback, new Set()); treeFallback.userData.dynamic = true;
   // MLow's cabs with the MLOW topper (cab.ts): three parked at the curbs, two working the street
   for (const [kind, slot, x, z, ry] of [[0, 0, -3.4, -31, 0], [4, 3, 3.4, -11.5, Math.PI], [3, 1, -3.5, -42.5, 0]] as const) {
     const c = mlowCab(kind, slot); c.position.set(x, 0, z); c.rotation.y = ry; g.add(c);

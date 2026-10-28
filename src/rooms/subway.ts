@@ -1,5 +1,6 @@
 import * as T from 'three';
 import { pbr, prop } from '../core/assets';
+import { castProp } from '../core/rig';
 import { box, floorPlane, sign, v3, seeded, type Rect } from '../core/kit';
 import { contour, drips, addThreshold, shared } from '../core/mlow';
 import { hang, poster, sticker } from '../core/hang';
@@ -116,7 +117,7 @@ export function buildSubway(ctx: Ctx): Room {
   // riders, who roll with the car and do not look up
   const NPC = ['npc_workgirl', 'npc_editor', 'npc_hustler', 'npc_actress', 'npc_wiseguy', 'npc_clerk', 'npc_cabbie'];
   NPC.forEach((n, i) => {
-    const r = prop(n, 1.72); const c = Math.floor(i / 3), k = i % 3;
+    const r = castProp(n, 1.72); /* the rigged twin (core/rig.ts), the static npc_ file as the fallback */ const c = Math.floor(i / 3), k = i % 3;
     r.position.set((k - 1) * 0.55 + (rnd() - 0.5) * 0.2, FLOOR, -c * CAR - 3 - k * 4.4 - rnd() * 1.5); r.rotation.y = rnd() * Math.PI * 2;
     if (k === 1 && i !== 4) r.position.x = rnd() < 0.5 ? -0.75 : 0.75;
     roller.add(r);
