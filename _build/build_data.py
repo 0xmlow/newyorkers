@@ -188,6 +188,12 @@ ONL = ["nyb_coffeecart", "hotdog", "nyb_barrier", "nyb_aframe_sign", "ph_planter
        "nyb_afterhours_phone", "nyb_diehard_phone", "nyb_devils_lion", "nyb_crown_bust", "nyb_bigbusiness_planter", "nyb_chainlink", "nyb_annie_chandelier", "nyb_disco_chandelier", "nyb_hydrant_gold", "nyb_hydrant_pink",
        "ph_modular_fire_escape", "ph_water_manhole_cover", "ph_painted_wooden_bench"]
 for p in ONL: clone(os.path.join(ONLOC, "glb", f"{p}.glb"), os.path.join(RAW, f"{p}.glb"))
+# the visitors: whole cast members cut light by _build/crowd_pass.py (2,500 tris, 512 px), kept in _build/crowd
+for f in sorted(os.listdir(os.path.join(H, "crowd"))):
+    if f.endswith(".glb"): clone(os.path.join(H, "crowd", f), os.path.join(RAW, f))
+# the same cast rigged (UPGRADE ALL ROOMS 2026-10-28/rig, copied into _build/rig): skinned, no Draco, straight into assets/glb/rig
+for f in sorted(os.listdir(os.path.join(H, "rig"))):
+    if f.endswith(".glb"): clone(os.path.join(H, "rig", f), os.path.join(OUT, "glb", "rig", f))
 for p in ["cat", "rat", "newsstand", "turnstile", "taker", "monte", "dispenser", "stamp", "seal", "tower"]: clone(os.path.join(MARKS, f"{p}.glb"), os.path.join(RAW, f"marks_{p}.glb"))
 for f in ["draco_decoder.js", "draco_decoder.wasm", "draco_wasm_wrapper.js"]: clone(os.path.join(ONLOC, "draco", f), os.path.join(OUT, "draco", f))
 clone(os.path.join(SITE, "assets", "brand", "logos", "n3w-01.png"), os.path.join(OUT, "logo.png"))

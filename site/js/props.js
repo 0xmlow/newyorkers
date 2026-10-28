@@ -5,6 +5,7 @@
   const { world, MAT, box, sign, signTex, addSolid, rnd, FLOORS: F } = M;
   const gltf = new THREE.GLTFLoader();
   if (THREE.DRACOLoader) { const d = new THREE.DRACOLoader(); d.setDecoderPath("assets/draco/"); gltf.setDRACOLoader(d); }
+  M.gltf = gltf;   // shared with people.js (one Draco worker pool)
   const cache = {}, all = M.allProps = [];
   function load(name) { if (!cache[name]) cache[name] = new Promise((res, rej) => gltf.load(`assets/glb/${name}.glb`, g => res(g.scene), undefined, rej)); return cache[name]; }
   const tb = new THREE.Box3(), tv = new THREE.Vector3();
