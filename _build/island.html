@@ -212,6 +212,7 @@ legend{padding:0 3px;background:var(--face)}
 </script>
 <script src="vendor/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/rigcrowd.js?v=20261028b"></script>
 <script src="vendor/meshopt_decoder.js"></script>
 <script src="vendor/CopyShader.js"></script>
 <script src="vendor/LuminosityHighPassShader.js"></script>
@@ -718,14 +719,72 @@ const PG = { leg: new THREE.CylinderGeometry(0.09, 0.08, 0.86, 8), body: new THR
 PG.leg.translate(0, -0.43, 0); PG.arm.translate(0, -0.33, 0);
 const matCache = {}; const cm = c => matCache[c] || (matCache[c] = new THREE.MeshStandardMaterial({ color: c, roughness: 0.8 }));
 const SKIN = [0x8d5524, 0xc68642, 0xe0ac69, 0xf1c27d, 0xffdbac, 0x5c3a21, 0xa0704a];
-function person(shirt, pants, skin) {
+function person(shirt, pants, skin, cast) {
   const g = new THREE.Group(), legs = [], arms = [];
   [-0.11, 0.11].forEach(x => { const p = new THREE.Group(); p.position.set(x, 0.86, 0); const l = new THREE.Mesh(PG.leg, cm(pants)); l.castShadow = true; p.add(l); g.add(p); legs.push(p); });
   const b = new THREE.Mesh(PG.body, cm(shirt)); b.position.y = 1.22; b.castShadow = true; g.add(b);
   const h = new THREE.Mesh(PG.head, cm(skin)); h.position.y = 1.74; h.castShadow = true; g.add(h);
   [-0.27, 0.27].forEach(x => { const p = new THREE.Group(); p.position.set(x, 1.52, 0); p.add(new THREE.Mesh(PG.arm, cm(skin))); g.add(p); arms.push(p); });
-  scene.add(g); return { g, legs, arms, head: h };
+  const hide = [b, h, ...legs, ...arms]; crowdBody(g, shirt, hide, cast);
+  scene.add(g); return { g, legs, arms, head: h, hide, shirt };
 }
+/* the crowd (2026-10-28, on by default, ?crowd=old for the cylinders). MLow: no superimposed heads, the cast already have
+   their own sculpted eye flower heads, so every person is a WHOLE character from our own Tripo cast (the ON LOCATION and
+   MoMLOW cast, NEW YORKERS SITE/assets/movies/assets/glb), decimated in Blender to 3,000 tris with a 512 px JPEG texture,
+   about 160 KB each, no Draco and no glTF extensions, so the r128 GLTFLoader reads them as they are. Seven characters that
+   stand on their own feet (agent, tracksuit, broker, usher and rosemary are cut off at the thigh or knee and were left
+   out); the cast face +X, so each gets a quarter turn. Copies share their character's geometry and one material per
+   character and shirt colour (the shirt tints it 25 percent), 1.85 m tall with 3 percent jitter. The sphere head and the
+   cylinders stay built and are hidden only once a body lands, so a failed load leaves the person as they were. The bodies
+   do not swing their legs; the hidden cylinder legs still do, harmlessly. */
+const CROWD = { on: !/[?&]crowd=old\b/.test(location.search), names: ['writer', 'cabbie', 'workgirl', 'wiseguy', 'actress', 'annieh', 'editor'], parts: {}, mats: {}, wait: [], n: 0, loaded: false };
+function crowdBody(g, shirt, hide, cast) {
+  if (!CROWD.on) return; const k = CROWD.n++, slot = new THREE.Group(); slot.rotation.y = -PI / 2; g.add(slot);
+  g.userData.cast = cast || CROWD.names[(k * 3 + (k >> 2)) % CROWD.names.length]; g.userData.tall = 1.85 * (0.97 + ((k * 37) % 7) / 100); g.userData.slot = slot; g.userData.hide = hide;
+  const fill = () => { const nm = g.userData.cast, part = CROWD.parts[nm]; if (!part) return;
+    const sc = 1.85 / part.h * (0.97 + ((k * 37) % 7) / 100); if (g.userData.fig) slot.visible = false;
+    part.meshes.forEach(({ geo, mat }, j) => { const mk = nm + ':' + j + ':' + shirt; let mt = CROWD.mats[mk]; if (!mt) { mt = CROWD.mats[mk] = mat.clone(); mt.color = new THREE.Color(0xffffff).lerp(new THREE.Color(shirt), 0.25); }
+      const m = new THREE.Mesh(geo, mt); m.scale.setScalar(sc); m.castShadow = true; slot.add(m); });
+    hide.forEach(o => { o.visible = false; }); };
+  CROWD.loaded ? fill() : CROWD.wait.push(fill);
+}
+function crowdInit(loader) {
+  if (!CROWD.on || !loader) return; let left = CROWD.names.length;
+  CROWD.names.forEach(nm => loader.load('assets/glb/cast_' + nm + '.glb', r => { const meshes = []; let y0 = Infinity, y1 = -Infinity;
+    r.scene.updateMatrixWorld(true); r.scene.traverse(o => { if (!o.isMesh) return; o.geometry.applyMatrix4(o.matrixWorld); o.geometry.computeBoundingBox(); y0 = Math.min(y0, o.geometry.boundingBox.min.y); y1 = Math.max(y1, o.geometry.boundingBox.max.y); if (o.material.map) o.material.map.anisotropy = ANISO; meshes.push({ geo: o.geometry, mat: o.material }); });
+    if (meshes.length) CROWD.parts[nm] = { meshes, h: y1 - y0 };
+    if (--left === 0) done(); }, undefined, () => { if (--left === 0) done(); }));
+  function done() { CROWD.loaded = true; CROWD.wait.forEach(f => f()); CROWD.wait.length = 0; }
+}
+/* the rigged crowd (2026-10-28, later; ?rig=off for the static cast above). The same seven are rigged in UPGRADE ALL
+   ROOMS 2026-10-28/rig and copied into assets/glb/rig: one skinned mesh, a `walk` clip and an `idle` clip, a `head`
+   bone. vendor/rigcrowd.js clones them for r128 (its own SkeletonUtils.clone) and ranks the 40 residents by distance:
+   the nearest 8 (4 on a phone) get the 3,000 tri rig, the next 12 (4) the 800 tri lite rig, the rest stay the static
+   copies above. A rigged resident walks at the speed its rig recorded (so the planted foot stays put), stands in idle
+   when it pauses or sleeps, and turns its head to you inside six metres, its body only past 60 degrees. The three bank
+   agents stay static: they run at 1.6 m/s, twice the walk the rig was made for. */
+const RIGS = { writer: 0.666, cabbie: 0.711, workgirl: 0.778, wiseguy: 0.756, actress: 0.55, annieh: 0.457, editor: 0.457 };
+const RIGC = { on: CROWD.on && !/[?&]rig=off\b/.test(location.search) && !!window.RigCrowd, mats: {} };
+RIGC.lod = RIGC.on ? new RigCrowd.Lod({ cap: isMobile ? 8 : 20, full: isMobile ? 4 : 8 }) : null;
+function rigResident(r) {
+  const g = r.P.g, nm = g.userData.cast; if (!RIGC.lod || !RIGS[nm]) return;
+  const tall = g.userData.tall; r.rig = { nm, tall, figs: [null, null], loading: [false, false] }; r.fig = null;
+  r.speed = RIGS[nm] * tall / 1.88 * (0.95 + Math.random() * 0.1);
+  const show = (fig) => { for (const f of r.rig.figs) if (f) f.root.visible = f === fig; g.userData.slot.visible = !fig; r.fig = fig; g.userData.fig = fig; if (fig) g.userData.hide.forEach(o => { o.visible = false; }); };
+  const item = { rig: true, pos: () => g.position, get fig() { return r.fig; }, r, setTier: (t) => {
+    if (t === 2) return show(null);
+    const have = r.rig.figs[t]; if (have) { show(have); have.setMoving(!!r.moving, 0); return; }
+    if (r.rig.loading[t]) return; r.rig.loading[t] = true;
+    RigCrowd.load(gltfLoader, 'assets/glb/rig/' + nm + (t ? '_lite' : '') + '.glb').then(a => {
+      if (!a) { item.rig = false; return; }
+      const fig = new RigCrowd.Figure(a, { scale: tall / 1.88, speed: RIGS[nm], shadow: t === 0, moving: !!r.moving, material: m => {
+        const k = nm + ':' + r.P.shirt; let mt = RIGC.mats[k]; if (!mt) { mt = RIGC.mats[k] = m.clone(); mt.color = new THREE.Color(0xffffff).lerp(new THREE.Color(r.P.shirt), 0.25); if (mt.map) mt.map.anisotropy = ANISO; } return mt; } });
+      fig.root.visible = false; g.add(fig.root); r.rig.figs[t] = fig; if (item.tier === t) show(fig);
+    });
+  } };
+  r.item = item; RIGC.lod.add(item);
+}
+window.__rig = RIGC;
 function bubble(text) {
   const t = signTex([{ t: text, s: 0.5 }], 256, 128, '#FFFFFF', '#0D0D0D');
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, toneMapped: false, depthTest: true })); s.scale.set(0.9, 0.45, 1); return s;
@@ -1013,7 +1072,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
   const cat = new THREE.Group(); const fur = cm(0xd88a3a); const cb = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 10), fur); cb.scale.set(1, 0.8, 1.5); cb.position.y = 0.26; cat.add(cb);
   const chd = new THREE.Mesh(new THREE.SphereGeometry(0.19, 12, 10), fur); chd.position.set(0, 0.52, 0.32); cat.add(chd);
   [-0.09, 0.09].forEach(x => { const e = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.13, 4), fur); e.position.set(x, 0.72, 0.3); cat.add(e); });
-  cat.position.set(bx + 1.6, g + 1.1, bz - 4.6); cat.rotation.y = -PI / 2; scene.add(cat); CAT.g = cat;
+  cat.position.set(bx + 1.6, g + 1.1, bz - 4.6); cat.rotation.y = -PI / 2; scene.add(cat); CAT.g = cat; CAT.x = bx + 1.6; CAT.z = bz - 4.6; CAT.prims = cat.children.slice();
   interact(bx + 0.6, bz - 4.6, 2, 'E  PET THE BODEGA CAT', () => { toast('mrrp. (gm)'); state.gm++; chime(660); });
   interact(bx - 1, bz, 3, 'E  ASK THE CLERK ABOUT SWIM LESSONS', () => toast('THE CLERK MINTED BEFORE YOU FINISHED EXPLAINING.'));
   practical(bx, g + 4, bz, 0xfff4d0, 6, 12).userData.alwaysOn = 0.25;
@@ -1236,11 +1295,12 @@ const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
     const start = route === 'beach' ? BEACH[i % 4] : RING[idx];
     P.g.position.set(start[0], ground(start[0], start[1]), start[1]);
     residents.push({ P, n: p.n, route, idx, speed: 1.0 + rnd() * 0.7, pause: rnd() * 3, phase: rnd() * 6, dir: i % 2 ? 1 : -1, bub: null, bubT: 0 });
+    rigResident(residents[residents.length - 1]);
   });
   for (let i = 0; i < 3; i++) {
-    const P = person(0x15161a, 0x15161a, SKIN[(i * 3) % SKIN.length]);
+    const P = person(0x15161a, 0x15161a, SKIN[(i * 3) % SKIN.length], 'wiseguy');
     const bc = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.3, 0.1), cm(0x3a2a1a)); bc.position.set(0.32, 0.95, 0); P.g.add(bc);
-    const gl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.05), MAT.ink); gl.position.set(0, 1.77, 0.15); P.g.add(gl);
+    const gl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.05), MAT.ink); gl.position.set(0, 1.77, 0.15); P.g.add(gl); P.hide.push(gl);
     const carry = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ toneMapped: false, side: THREE.DoubleSide })); carry.position.set(0, 1.3, 0.35); carry.visible = false; P.g.add(carry);
     P.g.position.set(BANK.door[0] + 2, ground(-55, 0), i * 2 - 2); scene.add(P.g);
     agents.push({ P, carry, stolen: null, target: null, mode: 'out', wait: 4 + i * 6, speed: 1.6 });
@@ -1562,6 +1622,7 @@ const SC = [];
 const gltfLoader = THREE.GLTFLoader ? new THREE.GLTFLoader() : null;
 if (gltfLoader && window.MeshoptDecoder) gltfLoader.setMeshoptDecoder(window.MeshoptDecoder);
 const SCL = { loading: 0, t: 0, done: 0, dir: 'sculpt_hi', range: 170 };
+crowdInit(gltfLoader);
 function updateSculpts(dt) {
   SC.forEach(s => { if (!s.root) return; if (s.pop < 1) { s.pop = Math.min(1, s.pop + dt * 1.8); const e = 1 - Math.pow(1 - s.pop, 3); s.root.scale.setScalar(0.001 + e); }
     if (s.anim === 'orbit') { const a = T * 0.25; s.root.position.set(wheel.cx - 4, wheel.hub + Math.sin(a) * 21, wheel.cz + Math.cos(a) * 21); s.root.rotation.set(-a, -PI / 2, 0, 'YXZ'); }
@@ -1987,6 +2048,14 @@ function updateWorld(dt, t) {
   if (rainT > 0) rainT -= dt; rainMesh.visible = rainT > 0; if (rainT > 0) { rain.forEach((r, i) => { r.y -= r.v * dt; r.r += dt * r.w; if (r.y < 0) r.y = 30 + Math.random() * 10; _m.compose(_p.set(P.x + r.x, r.y, P.z + r.z), _q.setFromEuler(_e.set(r.r, r.r * 0.7, 0)), _s.set(0.9, 1.3, 1)); rainMesh.setMatrixAt(i, _m); }); rainMesh.instanceMatrix.needsUpdate = true; }
   // the cat breathes
   if (CAT.g) CAT.g.scale.y = 1 + Math.sin(t * 2.4) * 0.03;
+  // 2026-10-28: the sphere cat becomes cat.glb (the MARKS and UNLICENSED cat, sitting, faces +X so a quarter turn), fitted to the
+  // stand in's 0.7 m when the visitor comes within 90 m. The spheres stay until it lands and stay if it fails.
+  if (CAT.g && !CAT.req && gltfLoader && Math.hypot(P.x - CAT.x, P.z - CAT.z) < 90) { CAT.req = 1;
+    gltfLoader.load('assets/glb/cat.glb', gl => { const obj = gl.scene, inner = new THREE.Group(); inner.add(obj); inner.rotation.y = -PI / 2; inner.updateMatrixWorld(true);
+      const bb = new THREE.Box3().setFromObject(inner), sz = bb.getSize(new V3()), c = bb.getCenter(new V3()); inner.position.set(-c.x, -bb.min.y, -c.z);
+      const fit = new THREE.Group(); fit.add(inner); fit.scale.setScalar(0.7 / Math.max(0.001, sz.y));
+      obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const mt = o.material; if (mt) { mt.envMapIntensity = 0.75; if (mt.map) mt.map.anisotropy = ANISO; } });
+      CAT.g.add(fit); CAT.prims.forEach(m => { m.visible = false; }); CAT.req = 2; }, undefined, () => { CAT.req = 3; }); }
 }
 const _p2 = new V3(), _m = new THREE.Matrix4(), _e = new THREE.Euler();
 let vaultOpenT = 0;
@@ -2011,12 +2080,16 @@ function updatePeople(dt, t) {
   residents.forEach(r => {
     if (r.bubT > 0) { r.bubT -= dt; if (r.bubT <= 0 && r.bub) { r.P.g.remove(r.bub); r.bub = null; } }
     if (r.greet > 0) r.greet -= dt; else if ((CAL.gm || CAL.gn) && dist2(r) < 16) { r.greet = 25; say(r, CAL.gm ? (Math.random() < 0.2 ? 'gm ser' : 'gm') : (Math.random() < 0.5 ? 'gn' : 'zzz')); }
-    if (CAL.gn && r.n % 3 === 0) { animLegs(r.P, t, false); return; }
-    if (r.pause > 0) { r.pause -= dt; animLegs(r.P, t, false); return; }
+    const f = r.fig, stand = () => { r.moving = false; if (!f) return; f.setMoving(false, 0.3); const g = r.P.g, dx = P.x - g.position.x, dz = P.z - g.position.z;
+      if (dx * dx + dz * dz < 36) { const over = f.lookToward(Math.atan2(dx, dz) - g.rotation.y); g.rotation.y += over * Math.min(1, dt * 1.2); } else f.lookToward(null); };
+    if (CAL.gn && r.n % 3 === 0) { animLegs(r.P, t, false); stand(); return; }
+    if (r.pause > 0) { r.pause -= dt; animLegs(r.P, t, false); stand(); return; }
     const tgt = r.route === 'beach' ? BEACH[r.idx % 4] : RING[(r.idx + 8) % 8];
+    r.moving = true; if (f) { f.setMoving(true, 0.3); f.lookToward(null); }
     if (walkTo(r.P, tgt[0], tgt[1], r.speed, dt)) { r.idx = (r.idx + r.dir + 8) % 8; if (Math.random() < 0.35) r.pause = 2 + Math.random() * 5; }
     animLegs(r.P, t + r.phase, true);
   });
+  if (RIGC.lod) RIGC.lod.tick(dt, camera, (it) => { const r = it.r; if (r.fig) r.fig.update(dt, r.moving ? r.speed : 0); });
   agents.forEach(a => {
     if (a.wait > 0) { a.wait -= dt; animLegs(a.P, t, false); return; }
     if (a.mode === 'out') {
