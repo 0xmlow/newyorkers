@@ -505,12 +505,17 @@ function resetChain(){
 function jitterParam(p, base, rng){
   if(p.type === 'color' || p.type === 'select') return base;
   /* proportional jitter keeps each family near its tuned look */
-  let v = (+base) * (1 + (rng()*2 - 1) * JITTER);
+  let v = (+base) * (1 + (rng()*2 - 1) * curJitter);
   v = Math.max(p.min, Math.min(p.max, v));
   if(p.int || p.step >= 1) v = Math.round(v);
   return +(+v).toFixed(4);
 }
-function applyRecipe(seed, forceFamily){
+/* job level variety knobs, all off by default so existing seeds render exactly as before:
+   jitter (default JITTER), extraPool + extraMin/extraMax (extra finishers drawn after the bonus),
+   extraStrength [lo, hi] (fraction of each param's range, default [0.12, 0.55]) */
+let curJitter = JITTER;
+function applyRecipe(seed, forceFamily, opts = {}){
+  curJitter = opts.jitter ?? JITTER;
   const rng = mulberry32(strHash(seed));
   const family = FAMILIES.find(f=>f.key===forceFamily) || FAMILIES[Math.floor(rng()*FAMILIES.length)];
   resetChain();
@@ -583,9 +588,35 @@ function applyRecipe(seed, forceFamily){
       bonus = id;
     }
   }
+  /* extra finishers from a wider pool, each at its own seeded strength */
+  const extras = [];
+  if(opts.extraPool && opts.extraPool.length){
+    const lo = opts.extraMin ?? 1, hi = opts.extraMax ?? 2;
+    const n = lo + Math.floor(rng()*(hi-lo+1));
+    for(let k=0; k<n; k++){
+      const usedIds = new Set(order.map(e=>e.id));
+      const cands = opts.extraPool.filter(id=>!usedIds.has(id) && state.chain.find(x=>x.id===id));
+      if(!cands.length) break;
+      const id = cands[Math.floor(rng()*cands.length)];
+      const e = state.chain.find(x=>x.id===id);
+      const def = fxDef(id);
+      e.on = true;
+      const [sLo, sHi] = opts.extraStrength || [0.12, 0.55];
+      const strength = sLo + rng()*(sHi - sLo);
+      for(const p of def.params){
+        if(p.type==='color'||p.type==='select'){ e.params[p.k]=p.def; continue; }
+        let v = p.min + (strength*(0.7+rng()*0.6))*(p.max-p.min);
+        v = Math.max(p.min, Math.min(p.max, v));
+        if(p.int || p.step >= 1) v = Math.round(v);
+        e.params[p.k] = +(+v).toFixed(4);
+      }
+      order.push(e);
+      extras.push(id);
+    }
+  }
   const rest = state.chain.filter(e => !order.includes(e));
   state.chain = order.concat(rest);
-  return {family, bonus, frames, delayCs, maxColors, arcPow, brandMode};
+  return {family, bonus, extras, frames, delayCs, maxColors, arcPow, brandMode};
 }
 
 /* ---------- io ---------- */
@@ -649,8 +680,8 @@ async function main(){
       /* job.seedTag cuts a separate generation without touching the V2 gifts;
          job.stillOnly skips the GIF (about 20MB each) when only a frame is wanted */
       const seed = 'MLOW-NY-' + item.token + '-' + (job.seedTag || 'GLITCH-V2');
-      const r = applyRecipe(seed, item.family);
-      const {family, bonus, frames, delayCs, maxColors, arcPow, brandMode} = r;
+      const r = applyRecipe(seed, item.family, job);
+      const {family, bonus, extras, frames, delayCs, maxColors, arcPow, brandMode} = r;
 
       const base = item.token + ' ' + item.name;
       if(!job.stillOnly){
@@ -659,12 +690,18 @@ async function main(){
         const gifBytes = encodeGIF(w, h, indexed, palette, delayCs);
         fs.writeFileSync(path.join(gifDir, base + '.gif'), Buffer.from(gifBytes));
       }
-      fs.writeFileSync(path.join(stillDir, base + '.png'), stillPNG(w, h, item.stillPhase ?? job.stillPhase ?? 0.72));
+      /* job.stillPhases writes one still per phase ("<base> @<phase>.png") so a caller can pick the best */
+      const phases = item.stillPhases || job.stillPhases;
+      if(phases){
+        for(const ph of phases) fs.writeFileSync(path.join(stillDir, base + ' @' + ph + '.png'), stillPNG(w, h, ph));
+      } else {
+        fs.writeFileSync(path.join(stillDir, base + '.png'), stillPNG(w, h, item.stillPhase ?? job.stillPhase ?? 0.72));
+      }
 
       const rec = {
         token: item.token, name: item.name, seed,
         family: family.key, familyName: family.name, tag: family.tag,
-        bonus, loopSec: state.loopSec, frames, w, h, delayCs,
+        bonus, extras, loopSec: state.loopSec, frames, w, h, delayCs,
         fps: +(100/delayCs).toFixed(1), maxColors,
         arc: family.arc || 'burst', arcPow, brandMode,
         src: item.src,
