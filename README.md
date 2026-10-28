@@ -62,3 +62,21 @@ sphere head is hidden with the cylinders (and the agents' box glasses with them)
 - Shots: `UPGRADE ALL ROOMS 2026-10-28/shots/crowd_rollout/island_{close,wide}_{old,new}.jpg`.
 - **Not verified:** a real phone and a real GPU; the crowd was not watched walking in motion (the stills stage the people
   facing the camera).
+
+## The crowd walks, 2026-10-28 (later; `?rig=off` for the static cast, `?crowd=old` for the cylinders)
+
+MLow asked for the cast rigged, bodies and heads; `UPGRADE ALL ROOMS 2026-10-28/rig` made them (RIG_TRIAL.md). The
+same seven characters are copied into `site/assets/glb/rig/` (3,000 tri and 800 tri `_lite` files, skinned, no Draco,
+2.4 MB). `site/vendor/rigcrowd.js` clones them for r128 (no SkeletonUtils is vendored, so it carries the same parallel
+traverse rebind) and ranks the 40 residents every 0.3 s: the nearest 8 (4 on a touch screen) get the full rig, the next
+12 (4) the lite rig, the rest stay the static copies. A rigged resident walks at the speed its rig recorded (0.46 to
+0.78 m/s, slower than the old 1.0 to 1.7, so the planted foot stays put), stands in idle when it pauses or sleeps (gn),
+and inside six metres turns its head to you, its body only past 60 degrees. The shirt tint is kept. The three bank
+agents stay static: they hurry at 1.6 m/s, twice the walk the rig was made for.
+
+- Measured, headless Chrome on this Mac (Apple GPU), 40 residents staged around (-9.5, -33.2), 60 frames, static then
+  rigged: desktop 767 to 748 draw calls, 6.49M to 6.28M tris, frame CPU 9.8 to 8.3 ms (noise), mixers 0.1 ms for 20;
+  phone emulation (390 x 844, touch) 438 to 424 calls, 5.11M to 5.10M tris, 2.4 to 2.6 ms.
+- Film: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_rollout/island_rig.mp4`.
+- `_build/harness_island.js` stops at `c.strokeRect is not a function` (its canvas stub lacks strokeRect) on the
+  committed page too, before and after this change, so it was not a check here. Not seen on a real phone.
