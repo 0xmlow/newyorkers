@@ -7,6 +7,8 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { MeshBVH } from 'three-mesh-bvh';
+import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
+import './assets/rig/rigcast.js?v=face1028';   // FACE table: five rig files turned to +Z
 
 const SUN_DIR = new THREE.Vector3(-0.551, 0.276, -0.787).normalize();   // bake sun: elev 16°, az 215°
 const EYE = 1.65, RADIUS = 0.35, STEP = 0.5, GRAVITY = 22;
@@ -153,6 +155,34 @@ for (const { mat, geos } of groups.values()) {
   if (mg) mergedRoot.add(new THREE.Mesh(mg, mat)); else console.warn('merge failed for', mat.name);
 }
 scene.add(mergedRoot);   // originals stay (hidden) as the collision source
+
+// ---------------------------------------------------------- the rigged cast (2026-10-28)
+// The travellers were Blender primitives (a cylinder body, a sphere head, cylinder legs, six shirt colours)
+// instanced in the GLB, 107 of them (and six templates parked under the ground). They become rigged NEW YORKERS standing where each one stood: the nearest
+// 20 (8 on a phone) breathe, shift and glance on their own mixer and turn their head to you; the rest are the
+// same figures as one instanced draw call per character. The primitives are hidden only once every file has
+// loaded, so a failed load leaves the terminal as it was. ?rig=off keeps the primitives.
+let rig = null;
+if (new URLSearchParams(location.search).get('rig') !== 'off' && window.RigCast) {
+  const CAST = ['workgirl', 'writer', 'annieh', 'editor', 'loretta', 'hustler', 'oscar', 'cabbie', 'susan', 'wiseguy'];
+  const parts = [], spotsR = [], m4 = new THREE.Matrix4(), w4 = new THREE.Matrix4();
+  gltf.scene.traverse((o) => { if (o.isInstancedMesh && /^shirt\d/.test(o.material.name || '')) parts.push(o); });
+  let seed = 317; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (const sh of parts) {
+    for (const sib of sh.parent.children) if (sib.isInstancedMesh && sib.count === sh.count) sib.userData.person = true;
+    for (let i = 0; i < sh.count; i++) {
+      sh.getMatrixAt(i, m4); w4.multiplyMatrices(sh.matrixWorld, m4);
+      const e = w4.elements, pos = new THREE.Vector3().setFromMatrixPosition(w4);
+      if (pos.y < -10) continue;                       // the six Blender templates parked at z -60
+      spotsR.push({ pos, ry: Math.atan2(e[8], e[10]), s: 0.9 * (0.96 + rnd() * 0.08), cast: CAST[Math.floor(rnd() * CAST.length)] });
+    }
+  }
+  if (spotsR.length) {
+    rig = window.RigCast({ THREE, loader: new GLTFLoader(), clone: cloneSkinned, base: 'assets/rig/', spots: spotsR, parent: scene,
+      camera, phone: touch, cap: 20, capPhone: 8, near: 30, nearPhone: 18,
+      onReady: () => { for (const sh of parts) for (const sib of sh.parent.children) if (sib.userData.person) sib.visible = false; } });
+  }
+}
 
 // ----------------------------------------------------------------- collision
 const geos = [];
@@ -348,6 +378,7 @@ function tick(dt) {
       $('pmeta').textContent = 'MLow · fLOWers';
     }
   }
+  rig?.update(dt);
   renderer.render(scene, camera);
 }
 // ---------- power ----------
@@ -370,5 +401,5 @@ $('loading').style.display = 'none';
 $('start').style.display = 'flex';
 // harness hook: tick() renders a frame on demand (rAF pauses while the tab is hidden, so
 // screenshots of a hidden pane are stale unless the harness ticks first)
-window.__walk = { P, scene, camera, renderer, spots, goTo, cast, meta, tick: (dt = 1 / 60, n = 1) => { for (let i = 0; i < n; i++) tick(dt); } };
+window.__walk = { rig: () => rig, P, scene, camera, renderer, spots, goTo, cast, meta, tick: (dt = 1 / 60, n = 1) => { for (let i = 0; i < n; i++) tick(dt); } };
 frame();
