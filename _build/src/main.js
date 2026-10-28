@@ -10,6 +10,7 @@ import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import { ROOMS, W, D, H_IN, PORTAL } from './rooms.js';
 import { Sound } from './sound.js';
 import { Music } from './music.js';
+import { crowdInit, crowdTick, CROWD } from './crowd.js';
 
 const $ = (s) => document.querySelector(s);
 await Promise.race([Promise.all(['900 40px Fraunces', '700 40px "Space Grotesk"', '600 40px "IBM Plex Mono"'].map((f) => document.fonts.load(f))), new Promise((r) => setTimeout(r, 2500))]).catch(() => {});
@@ -155,12 +156,17 @@ const post = (x, z, r) => { const c = { x, z, r }; colliders.push(c); return c; 
 const tick = (f) => tickers.push(f);
 // a GLB group is empty until it loads, so the group remembers its click and glb() hands it on to the meshes
 const clickable = (obj, fn, hint) => { obj.userData.click = fn; obj.userData.hint = hint; obj.traverse((o) => { if (o.isMesh && !clickables.includes(o)) { o.userData.click = fn; o.userData.hint = hint; clickables.push(o); } }); };
+// the crowd (2026-10-28): the flower headed extras get bodies cut from the cast (crowd.js); ?crowd=old brings back the cylinders
+crowdInit({ THREE, loader: gltf, on: Q.get('crowd') !== 'old', clickable, rig: Q.get('rig') !== 'off', mobile: MOBILE });
+// the rigged crowd walks and looks once a frame (?rig=off keeps every character static)
+tick((t, dt) => crowdTick(dt, camera)); window.__CROWD = CROWD;
 
 const GLB = {};
 // Tripo hands models back facing any which way; these turn each one so its front is three.js +Z.
 // Read off the front and top renders (_build/front_sheet.py into work/sheet).
 const H = Math.PI / 2;
-const YAW = { bluesteel: -H, writer: H, boxer: Math.PI, workgirl: -H, tracksuit: -H, golfer: -H, wiseguy: -H, dog: Math.PI, cat: -H, deer: 0, folksinger: Math.PI, flyer: -H, anchor: -H, jeweler: -H, auggie: -H, bookseller: -H, susan: 0, dad: Math.PI, libhead: -H, sedan: -H, prince: -H, agent: -H, famer: -H, annieh: -H, rosemary: -H, sonny: -H, clerk: -H, sally: 0, pigeonlady: -H, elf: -H, broker: -H, maria: -H, loretta: -H, hijacker: -H, bench: H, checker: -H, gown: -H, lensman: 0, discoking: -H, maitre: -H, hustler: Math.PI, ambulance: -H, ape: -H, boombox: -H, cabbie: H, dancer: -H, dress: -H, hotdog: -H, mlowtar: -H, moai: -H, popcorn: -H, puft: -H, usher: -H, trex: Math.PI, hydrant: Math.PI, pigeon: Math.PI, rat: -H, blindwoman: Math.PI, killer: -H, actress: -H, robber: -H, odette: Math.PI, bartender: -H, waltzers: -H, butcher: -H, felix: -H, oscar: -H, sailors: -H, editor: -H, assistant: -H, odile: 0 };
+// susan: H since 2026-10-28 (MLow: "doll face forward"); at 0 she stood side on. Her rig file was re-rigged facing +Z.
+const YAW = { bluesteel: -H, writer: H, boxer: Math.PI, workgirl: -H, tracksuit: -H, golfer: -H, wiseguy: -H, dog: Math.PI, cat: -H, deer: 0, folksinger: Math.PI, flyer: -H, anchor: -H, jeweler: -H, auggie: -H, bookseller: -H, susan: H, dad: Math.PI, libhead: -H, sedan: -H, prince: -H, agent: -H, famer: -H, annieh: -H, rosemary: -H, sonny: -H, clerk: -H, sally: 0, pigeonlady: -H, elf: -H, broker: -H, maria: -H, loretta: -H, hijacker: -H, bench: H, checker: -H, gown: -H, lensman: 0, discoking: -H, maitre: -H, hustler: Math.PI, ambulance: -H, ape: -H, boombox: -H, cabbie: H, dancer: -H, dress: -H, hotdog: -H, mlowtar: -H, moai: -H, popcorn: -H, puft: -H, usher: -H, trex: Math.PI, hydrant: Math.PI, pigeon: Math.PI, rat: -H, blindwoman: Math.PI, killer: -H, actress: -H, robber: -H, odette: Math.PI, bartender: -H, waltzers: -H, butcher: -H, felix: -H, oscar: -H, sailors: -H, editor: -H, assistant: -H, odile: 0 };
 // a soft contact shadow under everything that stands on the floor: the cheapest realism there is
 const BLOB = canvasTex(128, 128, (q) => { const g = q.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(0,0,0,.62)'); g.addColorStop(0.55, 'rgba(0,0,0,.28)'); g.addColorStop(1, 'rgba(0,0,0,0)'); q.fillStyle = g; q.fillRect(0, 0, 128, 128); });
 const BLOB_M = new THREE.MeshBasicMaterial({ map: BLOB, transparent: true, depthWrite: false, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -4 });
@@ -327,6 +333,7 @@ const ROSTER = [
   ['annieh', 'The Piano', 'East 126th Street'], ['hijacker', 'The Saxophone', 'East 126th Street'], ['broker', 'The Bass', 'East 126th Street'], ['sally', 'The Regular', 'The Vanguard'],
   ['maitre', 'The Doorman', 'The Vanguard'], ['actress', 'The Winner', 'The Apollo'], ['usher', 'The Usher', 'The Apollo'], ['prince', 'The Sandman', 'The Apollo'],
   ['bookseller', 'The Desk', 'The Chelsea'], ['pigeonlady', 'The Resident', 'The Chelsea'], ['loretta', 'The Songwriter', 'The Chelsea'],
+  ['checker', 'The Cab', 'Jones Street', 1.55], ['hotdog', 'The Cart', 'Ludlow Street', 1.7], ['boombox', 'The Box', 'Ludlow Street', 0.9],
   ['mlowtar', 'MLOWTAR', 'The Record Store', 1.8], ['cat', 'The Cat', 'St. Marks Place', 0.6], ['pigeon', 'The Pigeon', 'Every stoop', 0.42], ['rat', 'The Rat', 'The Bowery', 0.5],
 ];
 let riderName = (() => { try { return localStorage.getItem('onrec.skate.rider') || 'tough'; } catch (e) { return 'tough'; } })();

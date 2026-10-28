@@ -2,6 +2,7 @@
 // eye flower for a head: the places are New York's, the records are their makers', the people are ours.
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { W, D, H_IN, PORTAL } from './rooms.js';
+import { crowdBody } from './crowd.js';
 
 const PI = Math.PI;
 const INK = ['#ff4fa3', '#22d3ee', '#f5c542', '#3b82f6', '#ffffff', '#ff7a1a'];
@@ -131,13 +132,17 @@ function flyer(c, text, bg = '#f4ead2') { return c.canvasTex(128, 160, (q, w, h)
 
 
 const HEAD = {};
-function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0 } = {}) {
+// a seated or standing extra: a coloured body and an eye flower head. Since 2026-10-28 the body is one of the cast cut
+// for crowds (crowd.js, from ON LOCATION's crowd_pass.py), the cylinder and box hidden once it lands; ?crowd=old keeps them
+function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, pool } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; g.add(o);
   const h = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = h + (seated ? 0.36 : 1.0); o.add(body);
-  if (!seated) { const legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
+  let legs = null; if (!seated) { legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98));
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: HEAD.t, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; return o;
+  head.position.y = h + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head;
+  crowdBody(o, { seated, col, hide: legs ? [body, legs, head] : [body, head], pool });   // the whole cast character (crowd.js), its own flower head; the sprite hidden once it lands
+  return o;
 }
 
 function facade(c, g, { x0 = 0, w = 20, h = 16, z = -24, cols = 6, rows = 4, draw }) {
@@ -326,8 +331,14 @@ const ROOM = {
     const sub = c.sign('NEW YORK ON WAX · RECORDS · TAPES · NO REFUNDS', { w: 6.4, h: 0.3, bg: null, fg: '#22d3ee', font: c.MONO, weight: 700, glow: 12 }); sub.position.set(W / 2, PORTAL.h + 0.12, -D / 2 + 0.06); g.add(sub);
     // the bins: two islands of crates, sleeves leaning back, every one a NEW YORKERS record
     const wood = std(c, 0x5a3a1e, { roughness: 0.7 });
-    const bin = (x0, z0, n) => { for (let k = 0; k < n; k++) { const bx = x0 + k * 1.05; g.add(c.slab(1.0, 0.8, 0.7, wood, bx, 0.4, z0));
-      for (let s = 0; s < 7; s++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.31, 0.31), new THREE.MeshStandardMaterial({ map: sleeveTex(c, k * 7 + s + n), roughness: 0.6 })); m.position.set(bx - 0.36 + s * 0.12, 0.95, z0); m.rotation.set(0, PI / 2, 0.25); m.rotation.order = 'YXZ'; g.add(m); }
+    // each bin is a Poly Haven wooden crate (CC0) with two open plastic crates on it, the sleeves standing in them.
+    // The slab stays as the fallback and hides only once all three models land; then the sleeves drop into the crates.
+    const bin = (x0, z0, n) => { for (let k = 0; k < n; k++) { const bx = x0 + k * 1.05, box = c.slab(1.0, 0.8, 0.7, wood, bx, 0.4, z0); g.add(box);
+      const sl = [];
+      for (let s = 0; s < 7; s++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.31, 0.31), new THREE.MeshStandardMaterial({ map: sleeveTex(c, k * 7 + s + n), roughness: 0.6, side: THREE.DoubleSide })); m.position.set(bx - 0.36 + s * 0.12, 0.95, z0); m.rotation.set(0, PI / 2, 0.25); m.rotation.order = 'YXZ'; g.add(m); sl.push(m); }
+      let landed = 0; const land = () => { if (++landed < 3) return; box.visible = false; sl.forEach((m) => { m.position.y = 0.74; }); };
+      c.glb('ph_wooden_crate_01', { len: 1.0, x: bx, z: z0, ry: k % 2 ? PI : 0, parent: g, onload: land });
+      for (const dx of [-0.25, 0.25]) c.glb('ph_plastic_crate_02', { len: 0.5, x: bx + dx, y: 0.42, z: z0, ry: dx < 0 ? 0 : PI, parent: g, shadow: false, onload: land });
       c.post(X(bx), z0, 0.55); } };
     bin(2.6, -3.0, 3); bin(14.3, -3.0, 3);
     const dig = c.slab(3.2, 0.9, 0.8, new THREE.MeshBasicMaterial({ visible: false }), 2.6 + 1.05, 0.45, -3.0); g.add(dig);
@@ -402,7 +413,7 @@ const ROOM = {
     let still = 0, frozen = false, last = [0, 0], took = false;
     const fw = new THREE.Vector3();
     // the companion: once you have walked a little on Jones Street, a girl in a green coat falls into step at your right
-    const her = extra(c, g, 11, 6, { col: 0x2e5a3c }); her.visible = false; let walked = 0, armT = 0;
+    const her = extra(c, g, 11, 6, { col: 0x2e5a3c, pool: ['rosemary'] }); her.visible = false; let walked = 0, armT = 0;
     c.tick((t, dt, P, ri) => {
       const here = ri === r.i;
       if (!here) { sq.style.opacity = 0; still = 0; frozen = false; her.visible = false; walked = 0; return; }
@@ -531,6 +542,7 @@ const ROOM = {
     c.tick((t) => { bg.rotation.y = -0.3 + Math.sin(t * 0.3) * 0.2; });
     // the screen test: a stool, a camera, a mark. Hold still and the picture goes black and white and starts counting.
     const stool = c.slab(0.4, 0.62, 0.4, std(c, 0x111111), 16.8, 0.31, -4.2); g.add(stool);
+    c.glb('ph_metal_stool_01', { h: 0.72, x: 16.8, z: -4.2, ry: 0.3, parent: g, onload: () => { stool.visible = false; } });   // Poly Haven, CC0; the slab is the fallback
     const mk = decal(c, 0.8, 0.8, (q, w, h) => { q.strokeStyle = '#ff3b3b'; q.lineWidth = 8; q.strokeRect(10, 10, w - 20, h - 20); q.fillStyle = '#ff3b3b'; q.font = `800 ${w * 0.1}px ${c.MONO}`; q.textAlign = 'center'; q.fillText('SCREEN TEST', w / 2, h / 2 + 6); });
     mk.rotation.x = -PI / 2; mk.position.set(15.6, 0.02, -2.8); g.add(mk);
     g.add(c.slab(0.04, 1.2, 0.04, std(c, 0x222222), 15.2, 0.6, -1.0));
@@ -581,7 +593,7 @@ const ROOM = {
     });
     c.clickable(walls[0].m, () => { if (walls[0].n >= 6) c.egg('mlowtonight', 'There it is, bottom right, fresh glue: MLOW TONIGHT. Look away again and it will be gone. That is how you know it was real.'); else c.toast('The flyers keep changing. Look away a few more times.'); }, 'The flyer wall');
     // the pit: eighteen New Yorkers bouncing; walk into it and it walks into you
-    const pit = []; for (let i = 0; i < 18; i++) { const e = extra(c, g, 5.5 + (i % 6) * 1.6 + Math.random() * 0.4, -5.6 + ((i / 6) | 0) * 1.5, { col: [0x111111, 0x2a2a2a, 0x5a1010, 0x1a2a4a][i % 4], ry: PI }); pit.push({ e, x: e.position.x, z: e.position.z, s: Math.random() * 6 }); }
+    const pit = []; for (let i = 0; i < 18; i++) { const e = extra(c, g, 5.5 + (i % 6) * 1.6 + Math.random() * 0.4, -5.6 + ((i / 6) | 0) * 1.5, { col: [0x111111, 0x2a2a2a, 0x5a1010, 0x1a2a4a][i % 4], ry: PI, pool: 'night' }); pit.push({ e, x: e.position.x, z: e.position.z, s: Math.random() * 6 }); }
     let inPit = 0, shove = [0, 0];
     r.move = (P, nx, nz, dt) => [nx + shove[0] * dt, nz + shove[1] * dt];
     c.tick((t, dt, P, ri) => {
@@ -621,7 +633,7 @@ const ROOM = {
       if (chain >= 8 && !wentOff) { wentOff = true; c.egg('merrygoround', 'Eight times round the merry go round. The break did not end, the room did not stop, and a whole new kind of music walked out of a rec room in the Bronx.'); }
     }, 'Drop the needle on the break'));
     // the dancers: they only move on the break
-    const crowd = []; for (let i = 0; i < 14; i++) { const a = i / 14 * PI * 2, e = extra(c, g, 10 + Math.cos(a) * 3.4, -0.6 + Math.sin(a) * 2.4, { col: INK.map((h) => parseInt(h.slice(1), 16))[i % 6], ry: -a - PI / 2 }); crowd.push({ e, a, s: Math.random() * 6 }); }
+    const crowd = []; for (let i = 0; i < 14; i++) { const a = i / 14 * PI * 2, e = extra(c, g, 10 + Math.cos(a) * 3.4, -0.6 + Math.sin(a) * 2.4, { col: INK.map((h) => parseInt(h.slice(1), 16))[i % 6], ry: -a - PI / 2, pool: 'night' }); crowd.push({ e, a, s: Math.random() * 6 }); }
     const bboy = c.glb('tracksuit', { h: 1.75, x: 10, z: -0.6, parent: g }); c.post(X(10), -0.6, 0.6);
     const dancer = c.glb('dancer', { h: 1.8, x: 13.2, z: 2.0, ry: -0.6, parent: g }); c.post(X(13.2), 2.0, 0.4);
     c.tick((t, dt, P, ri) => {
@@ -647,16 +659,18 @@ const ROOM = {
     const iron = std(c, 0x111111, { metalness: 0.7, roughness: 0.4 });
     for (const sx of [-1, 1]) { const x = 10 + sx * 1.9; for (let s = 0; s < 9; s++) g.add(c.slab(0.03, 0.9, 0.03, iron, x, 0.2 * s + 0.45, -4.6 - s * 0.36)); const rail = c.slab(0.05, 0.05, 3.4, iron, x, 1.6, -6.0); rail.rotation.x = Math.atan2(1.6, 3.0); g.add(rail); }
     c.wall(X(8.1), -4.4, X(11.9), -4.4); c.wall(X(8.1), -4.4, X(8.1), -7.4); c.wall(X(11.9), -4.4, X(11.9), -7.4);
-    // the crowd: forty New Yorkers, milling. Each has a home in the photograph: rows on the steps and the sidewalk, children on the curb.
+    // the crowd: forty New Yorkers, milling. The picture is a famous photograph of real musicians, so every figure stays a
+    // generic New Yorker, never labelled (HARLEM, HARLEM_CURB at the foot of this file). Each has a home in the photograph: rows on the steps and the sidewalk, children on the curb.
     const home = [];
     for (let s = 0; s < 6; s++) for (let k = 0; k < 4; k++) home.push([8.7 + k * 0.85, 0.2 * (s + 1) + 0.02, -4.6 - s * 0.36 - 0.05]);
     for (let k = 0; k < 10; k++) home.push([4.6 + k * 1.2 + (k > 4 ? 2.6 : 0), 0, -3.4 - (k % 2) * 0.6]);
     const kids = 8; for (let k = 0; k < kids; k++) home.push([6.4 + k * 1.0, -0.55, -1.6]);
-    const people = home.map(([x, y, z], i) => { const kid = i >= home.length - kids, e = extra(c, g, 2 + Math.random() * 16, z + 2 + Math.random() * 3, { col: kid ? INK.map((h) => parseInt(h.slice(1), 16))[i % 6] : [0x1a1a22, 0x3a3020, 0x2a2a3a, 0x4a3a2a][i % 4], seated: kid, ry: Math.random() * 6 }); return { e, home: [x, y, z], wx: e.position.x, wz: e.position.z, s: Math.random() * 9, kid }; });
+    const people = home.map(([x, y, z], i) => { const kid = i >= home.length - kids, e = extra(c, g, 2 + Math.random() * 16, z + 2 + Math.random() * 3, { col: kid ? INK.map((h) => parseInt(h.slice(1), 16))[i % 6] : [0x1a1a22, 0x3a3020, 0x2a2a3a, 0x4a3a2a][i % 4], seated: kid, ry: Math.random() * 6, pool: kid ? HARLEM_CURB : HARLEM }); return { e, home: [x, y, z], wx: e.position.x, wz: e.position.z, s: Math.random() * 9, kid }; });
     [{ nm: 'wiseguy', egg: 'trumpet', line: 'Trumpet. I came because somebody said there would be breakfast. There was no breakfast.' },
       { nm: 'annieh', egg: 'pianohat', line: 'Piano. I wore my best hat. Everybody wore their best hat. It is a hat picture, really.' },
-      { nm: 'hijacker', egg: 'tenmorning', line: 'Saxophone. Ten in the morning. Most of us had never seen ten in the morning from this side.' },
-      { nm: 'broker', egg: 'bassback', line: 'Bass. I stood at the back so the bass could be in it. The bass did not fit.' }]
+      { nm: 'discoking', egg: 'tenmorning', line: 'Saxophone. Ten in the morning. Most of us had never seen ten in the morning from this side.' },
+      { nm: 'maitre', egg: 'bassback',   // saxophone and bass were hijacker and broker, whose models stop above the knee (2026-10-28)
+        line: 'Bass. I stood at the back so the bass could be in it. The bass did not fit.' }]
       .forEach((m, i) => cast(c, r, g, X, m.nm, 3.0 + i * 4.4 + (i > 1 ? 1.4 : 0), -2.4, { h: 1.8, ry: 0, rad: 0.4, line: m.line, egg: m.egg, hint: 'A musician' }));
     // the mark across the street
     const mk = decal(c, 1, 1, (q, w, h) => { q.fillStyle = '#f5c542'; q.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * PI * 2 - PI / 2, rr = i % 2 ? w * 0.2 : w * 0.48; q.lineTo(w / 2 + Math.cos(a) * rr, h / 2 + Math.sin(a) * rr); } q.fill(); q.fillStyle = '#0d0d0d'; q.font = `800 ${w * 0.08}px ${c.MONO}`; q.textAlign = 'center'; q.fillText('HOLD STILL', w / 2, h / 2 + 4); });
@@ -673,7 +687,8 @@ const ROOM = {
       pose += ((still > 0.6 ? 1 : 0) - pose) * Math.min(1, dt * (still > 0.6 ? 0.9 : 2.5));
       for (const p of people) {
         const wx = p.wx + Math.sin(t * 0.3 + p.s) * 1.4, wz = p.wz + Math.cos(t * 0.23 + p.s) * 0.8;
-        p.e.position.x = wx + (p.home[0] - wx) * pose; p.e.position.z = wz + (p.home[2] - wz) * pose; p.e.position.y = p.home[1] * pose + (p.kid ? 0 : 0);
+        const sit = p.kid && p.e.userData.cast;   // a cast character on the curb brings its own seat and stays put: it cannot walk seated
+        p.e.position.x = sit ? p.home[0] : wx + (p.home[0] - wx) * pose; p.e.position.z = sit ? p.home[2] : wz + (p.home[2] - wz) * pose; p.e.position.y = sit ? 0 : p.home[1] * pose;
         p.e.rotation.y = (1 - pose) * (Math.atan2(wx - p.wx, wz - p.wz) + p.s) + pose * 0;
       }
       if (pose > 0.97) { held += dt; if (held > 0.8 && !shot) { shot = true; c.flash(1); c.sound.tick(); setTimeout(() => c.sound.tick(), 120); c.FX.tint = 0xe8c898; c.FX.sat = 0.25; r.owns = true; c.egg('greatday', 'Click. Fifty seven musicians, a dozen kids on the curb, one stoop on East 126th Street, a little after ten in the morning. The only time they were all in one place.'); setTimeout(() => { if (r.owns) { c.FX.tint = null; c.FX.sat = null; r.owns = false; } shot = false; held = 0; }, 6000); } }
@@ -695,7 +710,7 @@ const ROOM = {
       for (let x = 10 - half; x <= 10 + half + 0.01; x += 1.6 * f) { const tg = new THREE.Group(); tg.position.set(x, 0, z); tg.scale.setScalar(f); g.add(tg);
         tg.add(new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.04, 20), std(c, 0x1a1a1a))).position.y = 0.72; tg.add(new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.08, 0.72, 8), std(c, 0x111111))).position.y = 0.36;
         const cd = new THREE.Sprite(new THREE.SpriteMaterial({ map: candleTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); cd.scale.setScalar(0.35); cd.position.y = 0.85; tg.add(cd);
-        if ((k++ % 3) === 0) tg.add(extra(c, tg, 0.45, 0.1, { seated: true, col: 0x2a1a1a, ry: PI }));
+        if ((k++ % 3) === 0) tg.add(extra(c, tg, 0.45, 0.1, { seated: true, col: 0x2a1a1a, ry: PI, pool: ['folksinger', 'sally'] }));
         c.post(X(x), z, 0.3 * f); } }
     // the photographs of the players who stood here are the wallpaper (assets/walls/vanguard.jpg), on the wedge too
     cast(c, r, g, X, 'sally', 6.6, 2.6, { h: 1.3, ry: -0.4, line: 'Two drink minimum and the music goes on till it stops. I have been at this table since the second set of 1961.', egg: 'regular', hint: 'A regular' });
@@ -797,3 +812,8 @@ const ROOM = {
     const lbl = c.sign('LOOK STRAIGHT UP', { w: 1.6, h: 0.22, bg: '#0d0d0d', fg: '#f5c542', font: c.MONO, weight: 700 }); lbl.position.set(WX, 2.2, WZ + S / 2 + 0.3); g.add(lbl);
   },
 };
+
+// who stands on the Harlem stoop: generic New Yorkers in their good clothes; on the curb the seated poses that need no
+// table or chair (a guitar on a stool, a man cross legged)
+const HARLEM = ['bartender', 'wiseguy', 'annieh', 'rosemary', 'gown', 'loretta', 'editor', 'oscar', 'workgirl', 'hustler', 'susan'];   // walkers whose rig walks: the crowd mills before the photograph
+const HARLEM_CURB = ['folksinger', 'robber'];

@@ -10,7 +10,7 @@ const STYLES = {
   // a record store at night: a lazy shuffle on the house system
   shop: { bpm: 92, swing: 0.18, prog: [[45, 'm7'], [50, '7'], [43, 'maj7'], [48, 'maj7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x...x.x...', comp: '..x...x...x...x.', voice: 'epiano', vol: 0.5 },
   // a coffee house in the snow: fingerpicked guitar and a harmonica breath, no drums
-  folk: { bpm: 104, swing: 0.1, prog: [[43, 'maj'], [48, 'maj'], [43, 'maj'], [50, 'maj']], pick: [0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 3], bass: 'x.......x.......', voice: 'guitar', harp: true, vol: 0.55 },
+  folk: { bpm: 104, swing: 0.1, prog: [[55, 'maj'], [60, 'maj'], [55, 'maj'], [62, 'maj']], pick: [0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 2, 0, 2, 1, 3], bass: 'x.......x.......', voice: 'guitar', harp: true, vol: 0.55 },
   // the East Village in 1975: a heavy riff in E, half time drums
   rock: { bpm: 84, swing: 0, prog: [[40, '5'], [40, '5'], [43, '5'], [45, '5']], kick: 'x.....x.x.......', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', riff: [0, 0, 3, 5, 0, 7, 5, 3], bass: 'x.x...x.x.x...x.', voice: 'dist', vol: 0.6 },
   // Ludlow Street, 1989: a dusty sampled sounding breakbeat with a horn stab
@@ -28,7 +28,7 @@ const STYLES = {
   // amateur night: the house band vamping on one chord, waiting for you
   vamp: { bpm: 120, swing: 0.25, prog: [[43, '7'], [43, '7'], [48, '7'], [43, '7']], kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.', bass: 'x..x..x.x..x..x.', stab: '......x.......x.', voice: 'organ', vol: 0.55 },
   // the hotel lobby: a slow waltz on an out of tune upright
-  parlour: { bpm: 84, swing: 0, bar: 12, prog: [[45, 'm'], [40, '7'], [45, 'm'], [52, '7']], waltz: true, voice: 'piano', vol: 0.45 },
+  parlour: { bpm: 84, swing: 0, bar: 12, prog: [[57, 'm'], [52, '7'], [57, 'm'], [64, '7']], waltz: true, voice: 'piano', vol: 0.45 },
 };
 const Q = { maj: [0, 4, 7], m: [0, 3, 7], '7': [0, 4, 7, 10], m7: [0, 3, 7, 10], maj7: [0, 4, 7, 11], '6': [0, 4, 7, 9], '5': [0, 7, 12] };
 
@@ -50,7 +50,7 @@ export function Music(sound) {
     env(n, t, v, a, d); o.start(t); o.stop(t + a + d + 0.05); return o;
   }
   function noise(t, v, d, f, type = 'highpass') { const c = C(), s = c.createBufferSource(); s.buffer = sound.white; const fl = c.createBiquadFilter(); fl.type = type; fl.frequency.value = f; s.connect(fl); env(fl, t, v, 0.002, d); s.start(t, Math.random() * 0.5); s.stop(t + d + 0.05); }
-  const kick = (t, v = 0.5) => { const c = C(), o = c.createOscillator(); o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(o, t, v, 0.002, 0.28); o.start(t); o.stop(t + 0.35); };
+  const kick = (t, v = 0.5) => { const c = C(), o = c.createOscillator(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(58, t + 0.08); env(o, t, v * 0.8, 0.002, 0.12); o.start(t); o.stop(t + 0.2); osc('triangle', 190, t, v * 0.35, 0.001, 0.03); noise(t, v * 0.12, 0.012, 2500); };   // phones: a 190 Hz knock, an 80 ms body, a click
   const snare = (t, v = 0.25) => { noise(t, v, 0.16, 1400); osc('triangle', 190, t, v * 0.4, 0.002, 0.08); };
   const hat = (t, v = 0.06, open) => noise(t, v, open ? 0.2 : 0.035, 7000);
   const ride = (t, v = 0.05) => { noise(t, v, 0.35, 5200, 'bandpass'); osc('square', 3100, t, v * 0.08, 0.002, 0.3, 6000); };
@@ -74,9 +74,9 @@ export function Music(sound) {
     if (on(st.hat)) hat(t, 0.05 * L, i === 14);
     if (st.ride && i % 4 === 0) ride(t, 0.045 * L); if (st.ride && i % 8 === 6) ride(t, 0.03 * L);
     if (st.bongo && (i === 3 || i === 7 || i === 11 || i === 14)) bongo(t, i % 2 ? 240 : 320);
-    if (st.walk && i % 4 === 0) { const w = [0, 4, 7, 9, 10, 7, 5, 2], n = root - 12 + w[(i / 4 + bar * 4) % 8]; voice('piano1', N(n), t, 0.2 * L, spb * 3.2); osc('sine', N(n), t, 0.25 * L, 0.01, spb * 3.4); }
-    if (on(st.bass)) osc('sawtooth', N(root - 12 + (st.chug ? 0 : (i === 10 ? 7 : 0))), t, 0.18 * L, 0.004, spb * (st.chug ? 0.8 : 1.6), 500);
-    if (st.pick) { const p = st.pick[i]; const chord = [notes[0] - 12, notes[0], notes[1], notes[2]]; voice('guitar', N(chord[p]), t, 0.13 * L, spb * 2); }
+    if (st.walk && i % 4 === 0) { const w = [0, 4, 7, 9, 10, 7, 5, 2], n = root + w[(i / 4 + bar * 4) % 8]; voice('piano1', N(n), t, 0.2 * L, spb * 3.2); osc('triangle', N(n), t, 0.22 * L, 0.01, spb * 3.4, 1400); }
+    if (on(st.bass)) osc('sawtooth', N(root + (st.chug ? 0 : (i === 10 ? 7 : 0))), t, 0.16 * L, 0.004, spb * (st.chug ? 0.8 : 1.6), 1100);
+    if (st.pick) { const p = st.pick[i]; const chord = [notes[0], notes[1], notes[2], notes[0] + 12]; voice('guitar', N(chord[p]), t, 0.13 * L, spb * 2); }
     if (st.harp && i === 0 && bar % 2 === 1) { osc('square', N(root + 24), t, 0.03 * L, 0.2, spb * 6, 1600); osc('square', N(root + 28), t, 0.025 * L, 0.2, spb * 6, 1600); }
     if (st.riff && i % 2 === 0) { const r = st.riff[(i / 2 + bar * 8) % 8]; voice('dist', N(40 + r), t, 0.11 * L, spb * 1.6); }
     if (st.chug && i % 2 === 0) for (const n of notes) voice('dist', N(n), t, 0.05 * L, spb * 1.2);
@@ -87,7 +87,7 @@ export function Music(sound) {
   function playWaltz(st, i, t, spb) {
     // twelve steps a bar: bass on one, chord on two and three, a little tune over the top
     const notes = chordAt(st, S.bar), L = S.lvl;
-    if (i === 0) voice('piano', N(notes[0] - 12), t, 0.16 * L, spb * 4);
+    if (i === 0) voice('piano', N(notes[0]), t, 0.16 * L, spb * 4);
     if (i === 4 || i === 8) for (const n of notes) voice('piano', N(n), t, 0.06 * L, spb * 3);
     if (i % 4 === 2 && Math.random() < 0.7) voice('piano', N(notes[(Math.random() * notes.length) | 0] + 12), t, 0.07 * L, spb * 3);
   }
@@ -114,6 +114,19 @@ export function Music(sound) {
     mute(m) { S.muted = m; },
     get style() { return S.style; },
     get beat() { const c = C(); if (!c || !S.style) return 0; const st = STYLES[S.style]; return 60 / st.bpm; },
+    // offline: schedule a medley into an OfflineAudioContext, [[style, t0, t1, level]] in seconds, each style from its own
+    // bar one at t0 (the hype film renders the rooms' songs this way, note for note, and cuts the picture to them)
+    offline(segs) {
+      const out = bus(); out.gain.setValueAtTime(0, 0);
+      for (const [style, t0, t1, lvl = 1] of segs) {
+        const st = STYLES[style]; if (!st) continue; S.style = style; S.step = 0; S.bar = 0; S.next = t0; S.lvl = lvl; S.muted = false;
+        out.gain.setValueAtTime(st.vol, t0);
+        const spb = 60 / st.bpm / 4, steps = st.bar || 16;
+        while (S.next < t1 - 1e-6) { const i = S.step, sw = i % 2 ? spb * st.swing : 0; (st.waltz ? playWaltz : play16)(st, i, S.next + sw, spb); S.step = (S.step + 1) % steps; if (S.step === 0) S.bar++; S.next += spb; }
+      }
+      S.style = null;
+    },
+    barLength(style) { const st = STYLES[style]; return (st.bar || 16) * 60 / st.bpm / 4; },
     // seconds to the nearest beat, for the rhythm game: negative early, positive late
     offBeat() { const c = C(); if (!c || !S.style) return 1; const b = 60 / STYLES[S.style].bpm, ph = (c.currentTime - (S.next - S.step * b / 4)) % b; return ph > b / 2 ? ph - b : ph; },
   };

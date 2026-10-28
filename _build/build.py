@@ -78,7 +78,7 @@ def assets():
 
 def used_models():
     """Every model file a set can ask for: any quoted name in the code, with or without its ph_ prefix."""
-    src = [os.path.join(HERE, "src", f) for f in ("build.js", "main.js")]
+    src = [os.path.join(HERE, "src", f) for f in ("build.js", "main.js", "crowd.js")]
     txt = "\n".join(open(f).read() for f in src); q = set(re.findall(r"['\"`]([A-Za-z0-9_]+)['\"`]", txt))
     return {f[:-4] for f in os.listdir(os.path.join(ONLOC, "glb_pass")) if f.endswith(".glb") and (f[:-4] in q or (f.startswith("ph_") and f[3:-4] in q))}
 
