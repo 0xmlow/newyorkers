@@ -724,7 +724,29 @@ function person(shirt, pants, skin) {
   const b = new THREE.Mesh(PG.body, cm(shirt)); b.position.y = 1.22; b.castShadow = true; g.add(b);
   const h = new THREE.Mesh(PG.head, cm(skin)); h.position.y = 1.74; h.castShadow = true; g.add(h);
   [-0.27, 0.27].forEach(x => { const p = new THREE.Group(); p.position.set(x, 1.52, 0); p.add(new THREE.Mesh(PG.arm, cm(skin))); g.add(p); arms.push(p); });
+  crowdBody(g, shirt, [b, ...legs, ...arms]);
   scene.add(g); return { g, legs, arms, head: h };
+}
+/* the crowd (2026-10-28, after ON LOCATION's crowd trial, on by default here, ?crowd=old for the cylinders): every person keeps
+   its sphere head and gets a body cut from our own Tripo cast (ON LOCATION _build/crowd_pass.py: eight characters cut below
+   the head, 1,800 tris, 256 px texture, about 90 KB each, no glTF extensions so the r128 GLTFLoader reads them as they are).
+   Copies share their character's geometry and one material per character and shirt colour (the shirt tints it 30 percent).
+   The neck meets the head's underside. The cylinders stay built and are hidden only once a body lands, so a failed load
+   leaves the person as they were. The bodies do not swing their legs; the hidden cylinder legs still do, harmlessly. */
+const CROWD = { on: !/[?&]crowd=old\b/.test(location.search), names: ['agent', 'tracksuit', 'writer', 'cabbie', 'workgirl', 'wiseguy', 'actress', 'annieh'], parts: {}, mats: {}, wait: [], n: 0, loaded: false };
+function crowdBody(g, shirt, hide) {
+  if (!CROWD.on) return; const k = CROWD.n++, slot = new THREE.Group(); g.add(slot);
+  const fill = () => { const nm = CROWD.names[(k * 5 + (k >> 3)) % CROWD.names.length], part = CROWD.parts[nm]; if (!part) return;
+    const mk = nm + ':' + shirt; let mt = CROWD.mats[mk]; if (!mt) { mt = CROWD.mats[mk] = part.mat.clone(); mt.color = new THREE.Color(0xffffff).lerp(new THREE.Color(shirt), 0.3); }
+    const m = new THREE.Mesh(part.geo, mt); m.scale.setScalar(1.58 / part.h * (0.97 + ((k * 37) % 7) / 100)); m.castShadow = true; slot.add(m); hide.forEach(o => { o.visible = false; }); };
+  CROWD.loaded ? fill() : CROWD.wait.push(fill);
+}
+function crowdInit(loader) {
+  if (!CROWD.on || !loader) return; let left = CROWD.names.length;
+  CROWD.names.forEach(nm => loader.load('assets/glb/crowd_' + nm + '_body.glb', r => { let mesh = null; r.scene.traverse(o => { if (!mesh && o.isMesh) mesh = o; });
+    if (mesh) { mesh.geometry.computeBoundingBox(); const bb = mesh.geometry.boundingBox; CROWD.parts[nm] = { geo: mesh.geometry, mat: mesh.material, h: bb.max.y - bb.min.y }; if (mesh.material.map) mesh.material.map.anisotropy = ANISO; }
+    if (--left === 0) done(); }, undefined, () => { if (--left === 0) done(); }));
+  function done() { CROWD.loaded = true; CROWD.wait.forEach(f => f()); CROWD.wait.length = 0; }
 }
 function bubble(text) {
   const t = signTex([{ t: text, s: 0.5 }], 256, 128, '#FFFFFF', '#0D0D0D');
@@ -1562,6 +1584,7 @@ const SC = [];
 const gltfLoader = THREE.GLTFLoader ? new THREE.GLTFLoader() : null;
 if (gltfLoader && window.MeshoptDecoder) gltfLoader.setMeshoptDecoder(window.MeshoptDecoder);
 const SCL = { loading: 0, t: 0, done: 0, dir: 'sculpt_hi', range: 170 };
+crowdInit(gltfLoader);
 function updateSculpts(dt) {
   SC.forEach(s => { if (!s.root) return; if (s.pop < 1) { s.pop = Math.min(1, s.pop + dt * 1.8); const e = 1 - Math.pow(1 - s.pop, 3); s.root.scale.setScalar(0.001 + e); }
     if (s.anim === 'orbit') { const a = T * 0.25; s.root.position.set(wheel.cx - 4, wheel.hub + Math.sin(a) * 21, wheel.cz + Math.cos(a) * 21); s.root.rotation.set(-a, -PI / 2, 0, 'YXZ'); }
