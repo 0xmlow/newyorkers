@@ -13,6 +13,6 @@ for f in (dist/'vendor').rglob('*.js'):
   if ref.startswith('.'):assert (f.parent/ref).exists(),(f,ref)
 arts=json.loads((dist/'assets/art.json').read_text())+json.loads((dist/'assets/expanded-art.json').read_text());assert len({a['id'] for a in arts})==44
 for a in arts:assert (dist/'assets'/a['file']).is_file(),a
-assert len(report)==18
-(root/'checks/assets-report-v2.json').write_text(json.dumps({'models':report,'models_valid':18,'artworks_valid':44,'module_dependencies_valid':True,'note':'GLB containers, buffer/image references and local files checked. Image pixel decoding and GPU rendering not checked.'},indent=2))
-print('18 GLB containers and their image references, 44 artwork files, and local module dependencies passed.')
+assert len(report)==24
+(root/'checks/assets-report-v2.json').write_text(json.dumps({'models':report,'models_valid':24,'artworks_valid':44,'module_dependencies_valid':True,'note':'GLB containers, buffer/image references and local files checked. Image pixel decoding and GPU rendering not checked.'},indent=2))
+print('24 GLB containers and their image references, 44 artwork files, and local module dependencies passed.')

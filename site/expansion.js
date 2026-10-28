@@ -84,8 +84,24 @@ export async function expandBodega(ctx){
  for(let i=0;i<6;i++){let z=-2-i*.65,scale=1-i*.085;box(mail,[-4.2,2.2,z],[2.3*scale,.06,.06],warm);for(let dx of [-1.1,1.1])box(mail,[-4.2+dx*scale,1.2,z],[.06,2.1*scale,.06],warm)}
  art(mail,3492,[-6.82,2.5,2.1],3.5,Math.PI/2);art(mail,4986,[6.82,2.5,-2],3.6,-Math.PI/2);art(mail,1367,[6.82,2.7,2.1],2.5,-Math.PI/2);art(mail,3,[-2.4,2.7,6.8],3,Math.PI);
  model(mail,'mailbox.glb',[4.9,0,4.4],1.5,Math.PI);model(mail,'lantern.glb',[-3,1.18,.3],.65);model(mail,'quiet_bench.glb',[-4.9,0,4.7],.8);
- // A pigeon fashioned from the room's postal materials, guarding a letter under its wing.
- ball(mail,[-2.4,1.6,-.3],[.48,.55,.7],'#818c8c');ball(mail,[-2.4,1.94,-.1],[.29,.3,.3],'#587478');obj(mail,new THREE.ConeGeometry(.07,.2,8),copper,[-2.4,1.93,.12],[1,1,1],[Math.PI/2,0,0],false);for(let x of [-2.47,-2.33])cyl(mail,[x,1.27,-.2],[.025,.22,.025],copper);ball(mail,[-2.29,1.98,-.02],[.04,.04,.04],warm);
+ // The pigeon postmaster, guarding a letter under its wing. The primitive bird stays built as the fallback and is
+ // hidden only once the real pigeon (pigeon.glb, the Tripo bird from UNLICENSED, faces -Z so it turns by PI) loads.
+ const pigeonParts=[ball(mail,[-2.4,1.6,-.3],[.48,.55,.7],'#818c8c',[0,0,0],false),ball(mail,[-2.4,1.94,-.1],[.29,.3,.3],'#587478',[0,0,0],false),obj(mail,new THREE.ConeGeometry(.07,.2,8),copper,[-2.4,1.93,.12],[1,1,1],[Math.PI/2,0,0],false),...[-2.47,-2.33].map(x=>cyl(mail,[x,1.27,-.2],[.025,.22,.025],copper,[0,0,0],false)),ball(mail,[-2.29,1.98,-.02],[.04,.04,.04],warm,[0,0,0],false)];
+ model(mail,'pigeon.glb',[-2.4,1.16,-.3],.93,Math.PI).then(h=>{if(h)pigeonParts.forEach(o=>o.visible=false)});
+ // The immortal cat on the counter (app.js builds a sphere cat as the fallback): cat.glb, the Tripo ginger cat with
+ // the evil eye on its collar, from UNLICENSED. It faces +X, so it turns by -PI/2 to face the door like the old one.
+ // Poly Haven CC0 swaps (2026-10-28): the primitives stay built and are hidden only when every model of a set loads;
+ // if one fails, the ones that did load are removed and the room is as it was. Files keep their Poly Haven ids.
+ function swap(parts,tasks,done){return Promise.all(tasks).then(hs=>{if(hs.every(Boolean)){parts.forEach(o=>o&&(o.visible=false));done?.(hs)}else hs.forEach(h=>h?.removeFromParent())})}
+ const sw=ctx.swaps;
+ if(sw){
+  // The register on the counter, facing the customer; the $ 1.00 panel shrinks to a pop up price flag seated on its top.
+  swap(sw.registerParts,[model(store,'CashRegister_01.glb',[4.7,1.41,5.2],.62)],()=>{sw.register.scale.setScalar(.42);sw.register.position.set(4.7,2.08,5.1)});
+  // Trash bags by the door and two stacks of milk crates.
+  swap(sw.bagParts,[0,1,2].map(i=>model(store,'trashbag.glb',[6.6,0,3+i*.65],.66-i*.05,i*2.1)));
+  swap(sw.crateParts,[5.8,6.5].flatMap((z,k)=>[model(store,'plastic_crate_02.glb',[-4.6,.02,z],.27,k*.06),model(store,'plastic_crate_02.glb',[-4.6,.29,z],.27,.09-k*.05)]));
+ }
+ if(ctx.cat){const catParts=[...ctx.cat.children];model({id:'store',group:ctx.cat},'cat.glb',[-.05,0,.05],.62,-Math.PI/2).then(h=>{if(h)catParts.forEach(o=>o.visible=false)});}
  panel(mail,'A',[-2.4,1.22,.25],.4,.3,{size:70});
  const mailEggs=[
  ['letter','The letter that arrived before it was written','The envelope is addressed to the person you become when someone believes in you. The postmark is tomorrow.','Look at the envelope beside the typewriter.',[2.55,1.2,.6],[.6,.3,.6]],
@@ -99,10 +115,12 @@ export async function expandBodega(ctx){
  for(const a of mailEggs)egg(mail,...a);box(mail,[-1.9,.3,.2],[.9,.6,.8],paper);panel(mail,'FRAGILE',[-1.9,.35,.61],.7,.25,{size:30});panel(mail,'HOME',[1.8,1.6,.7],.8,.18,{size:35});
  gate(mail,'RETURN TO THE BODEGA',[3.4,0,6.8],'walk',Math.PI);
  // Room 03: the roof is a place to nurture a universe, not merely to watch it end.
- const roof=makeRoom('roof','The Garden of the Next Universe','Somebody has to water tomorrow.',[0,0,38],[-8.4,8.4,-7.4,7.4],[0,1.72,6]);
+ const bedSwaps=[];const roof=makeRoom('roof','The Garden of the Next Universe','Somebody has to water tomorrow.',[0,0,38],[-8.4,8.4,-7.4,7.4],[0,1.72,6]);
  box(roof,[0,-.15,0],[18,.3,16],'#5a5c55');for(let x of [-8.8,8.8])box(roof,[x,.55,0],[.4,1.1,16],brick);for(let z of [-7.8,7.8])box(roof,[0,.55,z],[18,1.1,.4],brick);
  roomLight(roof,'#b4cce8',35,[0,5,0]);roomLight(roof,'#f2c885',25,[3,2,-1]);
- for(let x of [-4.8,4.8])for(let z of [-2.6,1.4]){box(roof,[x,.45,z],[3.7,.9,2.7],copper);box(roof,[x,.93,z],[3.45,.07,2.45],soil);roof.blocks.push([x-2,x+2,z-1.5,z+1.5]);for(let i=0;i<15;i++){let px=x-1.35+(i%5)*.67,pz=z-.8+Math.floor(i/5)*.75,h=.4+(i%3)*.18;cyl(roof,[px,1+h/2,pz],[.035,h,.035],'#506f45');for(let side of [-1,1])ball(roof,[px+side*.12,1.1+h*.4,pz],[.3,.09,.2],'#7d9a54',[0,0,side*.4]);ball(roof,[px,1+h,pz],[.12,.14,.12],i%5===0?warm:mat('#a7b47b'))}}
+ for(let x of [-4.8,4.8])for(let z of [-2.6,1.4]){const bed=[box(roof,[x,.45,z],[3.7,.9,2.7],copper,[0,0,0],false),box(roof,[x,.93,z],[3.45,.07,2.45],soil,[0,0,0],false)];bedSwaps.push([bed,x,z]);roof.blocks.push([x-2,x+2,z-1.5,z+1.5]);for(let i=0;i<15;i++){let px=x-1.35+(i%5)*.67,pz=z-.8+Math.floor(i/5)*.75,h=.4+(i%3)*.18;cyl(roof,[px,1+h/2,pz],[.035,h,.035],'#506f45');for(let side of [-1,1])ball(roof,[px+side*.12,1.1+h*.4,pz],[.3,.09,.2],'#7d9a54',[0,0,side*.4]);ball(roof,[px,1+h,pz],[.12,.14,.12],i%5===0?warm:mat('#a7b47b'))}}
+ // Each bed is three Poly Haven planter boxes (planter_box_02, CC0) in a row, one per row of seedlings, soil just under the rim.
+ for(const [bed,x,z] of bedSwaps)swap(bed,[-1.01,0,1.01].map(dz=>model(roof,'planter_box_02.glb',[x,0,z+dz],.98)),()=>{for(const dz of [-1.01,0,1.01])box(roof,[x,.975,z+dz],[2.5,.05,.85],soil,[0,0,0],false)});
  model(roof,'water_tower.glb',[-5.8,0,-5.7],6.1);roof.blocks.push([-7.8,-3.8,-7.4,-4.3]);model(roof,'fire_escape.glb',[8.6,-1,4.6],3.2,Math.PI/2);model(roof,'quiet_bench.glb',[4.7,0,5.2],.85);model(roof,'mlow_eye_monument.glb',[0,.2,-4.5],2.6);model(roof,'blossom_03.glb',[0,.2,-4.5],.7);model(roof,'lamppost.glb',[7.3,0,-6.4],4.5);
  for(const z of [-4,3]){let pts=[];for(let i=0;i<=40;i++){let x=-8+i*.4;pts.push(new THREE.Vector3(x,4.3-.65*(1-(x*x)/64),z))}obj(roof,new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),50,.018,5,false),dark,[0,0,0],[1,1,1],[0,0,0],false);for(let x=-7.5;x<8;x+=1.25){let y=4.3-.65*(1-x*x/64);cyl(roof,[x,y-.1,z],[.045,.16,.045],copper);ball(roof,[x,y-.23,z],[.15,.2,.15],warm)}}
  // A rotating armillary inside a terrarium. Finding three tokens changes the sky.
