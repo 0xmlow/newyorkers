@@ -19,6 +19,12 @@ N = len(PPL)
 NW = sum(len(p["works"]) for p in PPL)
 CATN = {c["code"]: c["name"] for c in CATS}
 CARDS = json.load(open(os.path.join(HERE, "honoraries", "cards.json")))  # build_honor_cards.py
+# portraits with their own listing on mlow.nyc (piece_shop.py). Only once its status is live does a work carry
+# "shop", which gives the lightbox and the h/ page a print button; a draft listing shows nothing.
+_PP = json.load(open(os.path.join(HERE, "api", "piece_prints.json"), encoding="utf-8"))
+def shop_url(p, w):
+    hd = (_PP["h"].get(p["id"]) or {}).get(w.get("title") or "") if _PP["status"] == "live" else None
+    return f'{_PP["shop"]}/products/{hd}' if hd else None
 # honorees who also collect NEW YORKERS, written by build_collectors.py (run before this in build_all.sh)
 _HL = os.path.join(HERE, "collectors", "honor_links.json")
 COL = json.load(open(_HL)) if os.path.exists(_HL) else {}
@@ -89,7 +95,7 @@ rowA, rowB = row(pick[:32]), row(pick[32:])
 
 counts = " &middot; ".join(f'{sum(1 for p in PPL if p["cat"] == c["code"])} {e(SHORT.get(c["name"], c["name"]))}' for c in CATS)
 DATA = {"people": [{"id": p["id"], "card": CARDS[p["id"]]["card"], "name": p["name"], "handle": p["handle"], "x": p["x"], "cat": p["cat"], "bio": p.get("bio", ""), "iv": p.get("iv", []), "col": COL.get(p["id"]),
-                    "works": [{k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")} for w in p["works"]]} for p in PPL],
+                    "works": [dict({k: w.get(k) for k in ("title", "l", "w", "h", "num", "key", "rec")}, shop=shop_url(p, w)) for w in p["works"]]} for p in PPL],
         "cats": CATN}
 _DP = os.path.join(SITE, "assets", "honoraries", "data.json")
 open(_DP, "w", encoding="utf-8").write(json.dumps(DATA, ensure_ascii=False, separators=(",", ":")))
@@ -202,7 +208,7 @@ JS = r'''<script>
     document.getElementById("lbt").textContent=w.title?"“"+w.title+"”":"";
     card(p);
     if(history.replaceState) history.replaceState(null,"","#"+p.id);
-    document.getElementById("lbr").innerHTML=w.rec?'<a class="btn sm" href="n/'+esc(w.rec)+'.html">Open the census record</a>':"";
+    document.getElementById("lbr").innerHTML=(w.shop?'<a class="btn sm pink" href="'+esc(w.shop)+'" target="_blank" rel="noopener">Collect a print</a> ':"")+(w.rec?'<a class="btn sm" href="n/'+esc(w.rec)+'.html">Open the census record</a>':"");
   }
   /* The card: X's post intent cannot carry a picture, so the link goes to h/<id>, whose og:image is the
      card and unfurls in the timeline. Where the browser can share files (phones), the button hands the
@@ -427,7 +433,9 @@ def fig(p, w):
     """The painting itself, full width under the card: the image search should find."""
     t = f'&ldquo;{e(w["title"])}&rdquo;, ' if w.get("title") else ""
     return (f'<figure><img src="../assets/honoraries/{w["l"]}" alt="{e(alt(p, w))}" width="{w["w"]}" height="{w["h"]}" loading="lazy">'
-            f'<figcaption>{t}{e(p["name"])}, portrait by MLow for NEW YORKERS</figcaption></figure>')
+            f'<figcaption>{t}{e(p["name"])}, portrait by MLow for NEW YORKERS</figcaption>'
+            + (f'<p><a class="btn sm pink" href="{e(shop_url(p, w))}" target="_blank" rel="noopener">Collect a print</a></p>' if shop_url(p, w) else "")
+            + '</figure>')
 
 
 def desc(p):

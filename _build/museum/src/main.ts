@@ -1002,9 +1002,20 @@ function openPanel(id: string) {
    a draft, goes to its own record page's order block, where the size and the surface are chosen
    and the piece number rides on the cart line. Extensionless, because Pages 308s the .html form. */
 type PrintSwitch = { status?: string; shop?: string; pieces?: Record<string, { handle?: string }> };
+/* Pieces with their own listing on the shop (assets/piece_prints.js, window.NY_PIECE_PRINTS: THE MARKS,
+   the curated NEW YORKERS, the honorary portraits). n maps a census number to a product handle, h an
+   honoree id to {work title: handle}. Until it says live every work keeps the path below. */
+type PieceSwitch = { status?: string; shop?: string; n?: Record<string, string>; h?: Record<string, Record<string, string>>; no?: number[] };
+function ownProduct(handle: string | undefined, shop?: string): string {
+  return handle ? `${(shop || 'https://mlow.nyc').replace(/\/+$/, '')}/products/${encodeURIComponent(handle)}` : '';
+}
 function printHref(p: Piece): string {
-  const w = window as unknown as { NY_PRINTS?: PrintSwitch; NY_KEYSTONE_PRINTS?: PrintSwitch };
+  const w = window as unknown as { NY_PRINTS?: PrintSwitch; NY_KEYSTONE_PRINTS?: PrintSwitch; NY_PIECE_PRINTS?: PieceSwitch };
   if (!w.NY_PRINTS || w.NY_PRINTS.status !== 'live' || p.n == null) return '';
+  const pp = w.NY_PIECE_PRINTS;
+  if (pp && pp.no && pp.no.indexOf(p.n) >= 0) return '';   /* never sold as a print (children in the picture) */
+  const own = pp && pp.status === 'live' && pp.n ? ownProduct(pp.n[String(p.n)], pp.shop) : '';
+  if (own) return own;
   const ks = w.NY_KEYSTONE_PRINTS;
   const handle = ks && ks.status === 'live' && ks.pieces ? ks.pieces[String(p.n)]?.handle : '';
   if (handle) return `${(ks!.shop || 'https://mlow.nyc').replace(/\/+$/, '')}/products/${encodeURIComponent(handle)}`;
@@ -1093,8 +1104,14 @@ function openHonor(e: HonorHit) {
   const x = $('#dAtlas') as HTMLAnchorElement, handle = (e.h || '').replace(/^@/, '');
   x.hidden = !/^[A-Za-z0-9_]{1,15}$/.test(handle);
   x.href = `https://x.com/${handle}`; x.target = '_blank'; x.rel = 'noopener'; x.textContent = 'ON X ↗';
+  /* an honorary portrait with its own listing on the shop gets the print button; the rest have none */
   const dPrint = $('#dPrint') as HTMLAnchorElement | null;
-  if (dPrint) dPrint.hidden = true;
+  if (dPrint) {
+    const pp = (window as unknown as { NY_PIECE_PRINTS?: PieceSwitch }).NY_PIECE_PRINTS;
+    const href = pp && pp.status === 'live' && pp.h ? ownProduct(pp.h[e.id]?.[e.t], pp.shop) : '';
+    dPrint.hidden = !href;
+    dPrint.href = href || '#';
+  }
   ($('#dHang') as HTMLButtonElement).hidden = true;
   const url = `${location.origin}${location.pathname.replace(/museum(\.html)?$/, '')}h/${encodeURIComponent(e.id)}?wall`;
   const dShare = $('#dShare') as HTMLButtonElement | null;

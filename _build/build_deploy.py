@@ -99,7 +99,7 @@ print("media packed:", len(packed), "failed:", len(failed), failed[:5])
 # ---------- copy site shell + assets ----------
 SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.html", "press.html",
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
-              "profile.html", "faq.html", "vault.html", "shipping.html", "new-rooms.html",
+              "profile.html", "faq.html", "vault.html", "shipping.html", "printlab.html", "new-rooms.html",
               "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html", "tools.html", "markup.html", "survey.html", "mosaic.html",
               "states.html", "stop.html", "arcade.html", "island.html", "basement.html", "skelly.html", "marks.html", "night.html", "movies.html", "airport.html", "gardens.html", "bodega.html", "gentrifying.html", "unreal.html", "inside.html", "pigeonhole.html", "unlicensed.html", "records.html", "garyvee.html", "garyvee-v1.html", "eviction.html", "sewers.html", "same.html", "breakglass.html", "spiral.html", "mlowtar.html", "momlow.html", "media.html")
 # favicon.ico and the touch icon are real files at the root (made from the eye mark with its white corner
@@ -120,7 +120,7 @@ for f in os.listdir(OUT):
 # but never copied here. One tuple drives both the copy and the prune: two lists drift,
 # and the drift is silent (an asset stops shipping and every page that needs it breaks).
 COPY_ASSETS = ("three.min.js", "site.css", "site.js", "geo.js", "eggs.js", "counts.js",
-               "rooms.js", "articles.js", "shipping.js", "prints.js", "keystone_prints.js", "qrcode.min.js", "sha3.min.js",
+               "rooms.js", "articles.js", "shipping.js", "prints.js", "keystone_prints.js", "piece_prints.js", "qrcode.min.js", "sha3.min.js",
                "home.css", "flywheel.js", "cast.json", "mint.js", "collector-card.js", "save.js")
 KEEP_ASSETS = set(COPY_ASSETS) | {"config.js", "data.js"}
 _ad = os.path.join(OUT, "assets")

@@ -23,6 +23,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
 OUT = os.path.join(HERE, "api", "keystone_prints.json")
 JS = os.path.join(SITE, "assets", "keystone_prints.js")
 SHOP = "https://mlow.nyc"
+# pieces never sold as prints (children in the picture), from piece_prints.json; their products are DRAFT
+NOPRINT = set(json.load(open(os.path.join(HERE, "api", "piece_prints.json"))).get("noprint", []))
 KIT = os.path.join(os.path.dirname(SITE), "KEYSTONE 111 MINT KIT 2026-09-17", "tokens")
 
 def leads():
@@ -72,7 +74,7 @@ def write_js():
     if d["status"] == "live" and missing:
         raise SystemExit(f"keystone_shop: status is live but {len(missing)} pieces have no product: {missing[:8]}")
     js = {"status": d["status"], "shop": SHOP, "collection": SHOP + "/collections/" + d["collection"]["handle"],
-          "pieces": {str(p["n"]): {"handle": p["handle"]} for p in d["pieces"]}}
+          "pieces": {str(p["n"]): {"handle": p["handle"]} for p in d["pieces"] if p["n"] not in NOPRINT}}
     open(JS, "w", encoding="utf-8").write("window.NY_KEYSTONE_PRINTS = " + json.dumps(js, separators=(",", ":")) + ";\n")
     print(f"keystone_prints.js  {d['status']}  {len(js['pieces'])} pieces  {js['collection']}")
 

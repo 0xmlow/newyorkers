@@ -216,7 +216,7 @@ subs = [
     # record page, whose order block sells it through NEW YORKERS Print with the piece named on the order.
     # No link at all unless NY_PRINTS is live, the same switch that governs every buy button on the site.
     ('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>',
-     '<script src="assets/three.min.js"></script>\n<script src="assets/prints.js"></script>\n<script src="assets/keystone_prints.js"></script>'),
+     '<script src="assets/three.min.js"></script>\n<script src="assets/prints.js"></script>\n<script src="assets/keystone_prints.js"></script>\n<script src="assets/piece_prints.js"></script>'),
     ('  #card a.out:hover{color:var(--blue-soft)}\n',
      '  #card a.out:hover{color:var(--blue-soft)}\n  #card a.out + a.out{margin-left:18px}\n'
      '  #card .ksave{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px}\n'
@@ -226,7 +226,7 @@ subs = [
     ('See it in the census</a>', 'See it in the census</a><a class="out" id="kBuy" href="#" target="_blank" rel="noopener" hidden>Collect on Transient</a><a class="out" id="kPrint" href="#" target="_blank" rel="noopener" hidden>Order a print</a>'),
     ("kLink').href='https://n3wyorkers.com/n/'+d.n",
      "kLink').href='n/'+d.sid+'.html';\n  (function(){ var b=document.getElementById('kBuy'); if(d.tok){ b.href='"+TOKEN_URL+"'+d.tok; b.hidden=false; } else b.hidden=true; })();\n  (function(){ var a=document.getElementById('kPrint'), P=window.NY_PRINTS, K=window.NY_KEYSTONE_PRINTS, kp=K&&K.pieces[String(d.n)];"
-     " if(!P||P.status!=='live'){ a.hidden=true; return; }"
+     " var PP=window.NY_PIECE_PRINTS; if(!P||P.status!=='live'||(PP&&PP.no&&PP.no.indexOf(+d.n)>=0)){ a.hidden=true; return; }"
      " a.href=(K&&K.status==='live'&&kp)?K.shop+'/products/'+kp.handle:'n/'+d.sid+'.html#orderbox'; a.hidden=false; })()"),
     ("<title>Keystone 111</title>", "<title>NEW YORKERS · Keystone 111</title>"),
     # state buttons: every chip on the card is a button that puts that state in the frame on the wall;
@@ -399,7 +399,7 @@ subs += [
     # with script the panel starts closed; without it the ledger simply stands beside the canvas
     ('<body>\n\n<div class="scrim top"></div>', '<body>\n<script>document.documentElement.className+=" js";</script>\n<div class="scrim top"></div>'),
     ('<button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button></div>',
-     f'<button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button><button class="btn" id="chainb" type="button" aria-expanded="false" aria-controls="onchain">On chain: {len(on_chain)} of {len(k)}</button></div>'),
+     f'<button class="btn" id="tour" type="button" aria-pressed="true">Auto tour: on</button><button class="btn" id="chainb" type="button" aria-expanded="false" aria-controls="onchain">On chain: {len(on_chain)} of {len(k)}</button><a class="btn" href="printlab#keystone">All 111 as prints</a></div>'),
     ('<aside id="card" aria-live="polite" aria-label="Selected piece">', ONCHAIN_HTML + '\n<aside id="card" aria-live="polite" aria-label="Selected piece">'),
     ("\n</body>", "\n" + ONCHAIN_JS + "\n</body>"),
 ]

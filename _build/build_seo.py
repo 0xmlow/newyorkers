@@ -150,6 +150,8 @@ PRINT_JS = """
  // The box is hidden while the page parses, so a link to #orderbox (the museum and the Keystone wall
  // send buyers here) finds nothing to scroll to. Scroll once it exists, and again after images settle.
  if(location.hash==="#orderbox"){ box.scrollIntoView({block:"center"}); window.addEventListener("load",function(){ box.scrollIntoView({block:"center"}); }); }
+ var PP=window.NY_PIECE_PRINTS, own=PP&&PP.status==="live"&&PP.n?PP.n[__NUM__]:"";
+ if(PP&&PP.no&&PP.no.indexOf(+__NUM__)>=0){ box.hidden=true; return; }   // never sold as a print
  var sz=document.getElementById("oSize"), fm=document.getElementById("oFmt");
  sz.innerHTML=P.sizes.map(function(s){return '<option>'+s+'</option>'}).join("");
  fm.innerHTML=P.formats.map(function(f){return '<option>'+f+'</option>'}).join("");
@@ -160,6 +162,9 @@ PRINT_JS = """
    // /cart/add carries a real line item property. The /cart/{id}:{qty} permalink
    // returns 422 for properties[] and would lose the piece number. Do not swap it.
    document.getElementById("oBuy").href=P.shop+"/cart/add?id="+v.id+"&quantity=1&properties%5BPiece%5D="+encodeURIComponent(__PIECE__);
+   // A piece with its own live listing (assets/piece_prints.js: THE MARKS, the curated NEW YORKERS) goes to
+   // that product instead, where the shop shows its own picture and the size is picked again.
+   if(own){ var b=document.getElementById("oBuy"); b.href=(PP.shop||P.shop)+"/products/"+encodeURIComponent(own); b.textContent="COLLECT IT AT THE SHOP"; }
  }
  sz.onchange=fm.onchange=upd; upd();
 })();
@@ -341,7 +346,7 @@ for k, p in enumerate(byn):
     sd = json.dumps(save_data(p, base), ensure_ascii=False).replace("</", "<\\/")
     page = shell(title=f"{n4} · {p['t']} · NEW YORKERS by MLow", description=(p.get("story") or p["t"])[:158], body=body, base=base, path=f"n/{p['id']}.html", active="THE CENSUS", jsonld=ld, image=f"{URL}/{img}", keywords=[x for x in [p["t"], p.get("f"), p.get("b"), p.get("cat"), p.get("loc"), "NEW YORKERS by MLow", "MLow"] if x], noindex=(p["e"] == 1), kind="article",
                  extra_css=SAVE_CSS + TOK_CSS + ".canal{margin-top:34px;border:1px dashed var(--divider);border-radius:12px;padding:20px 22px}.canal h2{font-family:var(--serif);font-size:30px;margin:8px 0 4px}.canal p{font-family:var(--sans);font-size:14px;color:var(--slate)}.csgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px}.cs{margin:0}.cs img,.cs video{width:100%;border-radius:8px;border:1px solid var(--divider);display:block;background:#000}.cs figcaption{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--slate);margin-top:6px}.orderbox{background:var(--card);border:1px solid var(--divider);border-left:3px solid var(--pink);border-radius:12px;padding:22px 24px;margin-top:26px;max-width:720px}.orderbox .orow{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;margin:14px 0 16px}@media (max-width:620px){.orderbox .orow{grid-template-columns:1fr}}.orderbox label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}.orderbox select{background:var(--ink);border:1px solid var(--divider);color:var(--cloud);font-family:var(--sans);font-size:15px;padding:11px 12px;border-radius:7px;outline:none}.orderbox output{font-family:var(--mono);font-size:22px;color:var(--cyan);padding-top:8px;white-space:nowrap}.orderbox .ofine{font-family:var(--sans);font-size:12.5px;line-height:1.6;color:var(--slate);margin-top:14px}.rec td{padding:10px 0;border-bottom:1px solid var(--divider);vertical-align:top}.rec td:first-child{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);width:160px;padding-top:13px}",
-                 scripts_after=f'<script>window.NY_SAVE={sd};</script><script src="{base}assets/save.js"></script><script src="{base}assets/prints.js"></script><script>NY.shareRow(document.getElementById("share"),{{title:{json.dumps(n4 + " · " + p["t"])},text:{json.dumps(n4 + " · " + p["t"] + ". " + (p.get("story") or "") + " NEW YORKERS by MLow.")}}});' + PRINT_JS.replace("__PIECE__", json.dumps(f"NO. {p['n']:04d} " + p["t"])) + '</script>')
+                 scripts_after=f'<script>window.NY_SAVE={sd};</script><script src="{base}assets/save.js"></script><script src="{base}assets/prints.js"></script><script src="{base}assets/piece_prints.js"></script><script>NY.shareRow(document.getElementById("share"),{{title:{json.dumps(n4 + " · " + p["t"])},text:{json.dumps(n4 + " · " + p["t"] + ". " + (p.get("story") or "") + " NEW YORKERS by MLow.")}}});' + PRINT_JS.replace("__PIECE__", json.dumps(f"NO. {p['n']:04d} " + p["t"])).replace("__NUM__", json.dumps(str(p["n"]))) + '</script>')
     open(os.path.join(ndir, p["id"] + ".html"), "w", encoding="utf-8").write(page)
 print("piece pages", len(byn))
 

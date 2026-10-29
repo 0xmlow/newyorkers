@@ -1,0 +1,25 @@
+# Paths that must never reach the PUBLIC GitHub repo (0xmlow/newyorkers), one per line, fnmatch globs
+# against repo paths. push_museum_branch.sh drops every match before it builds the snapshot and refuses to
+# push if a match is still in the tree. Add to this list; do not remove from it without MLow's word.
+#
+# 2026-10-28: the collectors identity files had reached the public Museum branch through this script's
+# earlier version and its history was rewritten (5ab9bb4 to 7ed0a1b). They link wallets to people.
+
+# collectors identity: wallets linked to X handles, honorees, OpenSea profiles and display names
+_build/collectors/identity.json
+_build/collectors/IDENTITY_REVIEW.md
+_build/collectors/honor_links.json
+_build/collectors/opensea_profiles.json
+_build/collectors/homes.json
+
+# secrets and local tooling state
+*.env
+*.env.*
+.env
+*.pem
+*.key
+*secret*
+*credential*
+.wrangler/*
+*/.wrangler/*
+_build/logs/*

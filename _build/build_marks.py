@@ -251,7 +251,7 @@ body = f"""
     <p class="hand" data-rv>150 of the uncounted <svg viewBox="0 0 120 40" aria-hidden="true"><path d="M2 30 C40 4 80 4 112 24 M100 14 L113 25 L98 32"/></svg></p>
     <div class="htally" aria-label="{REL['count']} tally marks, one for every Mark">{tally_svg(REL['count'], 'tl h')}</div>
     <p class="lede" data-rv>Made, numbered, then left off the count. They mint in a shuffled order, open the moment they mint, and the city keeps marking them after that.</p>
-    <div class="cta" data-rv>{'<a class="btn" href="#mint">Mint a Mark · 0.069 ETH</a><a class="btn ghost" href="#deli">Take a number</a>' if CONTRACT else '<a class="btn" href="#deli">Take a number</a><a class="btn ghost" href="#platform">Ride the line</a>'}<a class="btn pink" href="night">Walk the night</a></div>
+    <div class="cta" data-rv>{'<a class="btn" href="#mint">Mint a Mark · 0.069 ETH</a><a class="btn ghost" href="#deli">Take a number</a>' if CONTRACT else '<a class="btn" href="#deli">Take a number</a><a class="btn ghost" href="#platform">Ride the line</a>'}<a class="btn pink" href="night">Walk the night</a><a class="btn ghost" href="printlab#marks">Every Mark as a print</a></div>
   </div>
   <a class="cue" href="#paper"><img src="assets/ui/token.png" alt="">Scroll</a>
 </section>

@@ -37,6 +37,7 @@ python3 build_profile.py
 python3 build_shop.py || echo "  shop build skipped (storefront unreachable); the last catalog stands"
 python3 build_prints.py   # local: must not be skipped, the buy buttons read it
 python3 keystone_shop.py  # local: KEYSTONE 111 store handles for the museum panel and keystone.html
+python3 piece_shop.py  # local: per piece listings (THE MARKS, curated NEW YORKERS, honoraries) for the n/ pages, the museum panel and honoraries
 python3 build_links.py
 python3 sync_keystone_extras.py  # the wall's site only states follow piece_extras.json
 python3 keystone_images.py   # sharp wall images and loops from the mint kit masters; skips what is current
@@ -65,6 +66,7 @@ python3 build_mosaic.py --nft   # mosaic.html + api/mosaic.json (minted tiles, l
 python3 build_honor_cards.py
 python3 build_collectors.py >/dev/null; python3 build_skelly.py >/dev/null; node collectors/parity.mjs   # again, both, and the live board (functions/api/live) must score as this build does: the honor cards are named by a hash of what is drawn, now including the collection, so api/c needs the new names
 python3 build_honoraries.py
+python3 build_printlab.py  # THE PRINT LAB: every piece with its own listing, after piece_shop.py and build_honoraries.py
 python3 build_posters.py        # posters, cards and memes wall; after the honor cards and piece extras
 python3 build_tv.py             # tv.html, the living frame: a collector's New Yorkers full screen on a TV
 python3 build_wall.py           # wall.html, see it on your wall: a collector's New Yorker framed, in AR on a phone

@@ -142,11 +142,20 @@ css = """
 @media (max-width:760px){.mhome{grid-template-columns:1fr}.mhome img{min-height:190px}.mtwo{grid-template-columns:1fr}.cfind{flex-direction:column}.mstats{gap:20px}.mstats b{font-size:28px}.mrooms{grid-template-columns:repeat(2,1fr)}.mgrid{grid-template-columns:repeat(2,1fr)}}
 """
 
-js = """<script src="assets/sha3.min.js"></script>
+js = """<script src="assets/sha3.min.js"></script><script src="assets/prints.js"></script><script src="assets/keystone_prints.js"></script><script src="assets/piece_prints.js"></script>
 <script src="assets/collector-card.js"></script>
 <script>
 (function(){
 var VAR=__VAR__, RN=__ROOMS__, B=window.NY_BASE||'', $=function(i){return document.getElementById(i);}, cur=null, IDX=null;
+/* Print: a holder can order a print of anything they hold. A piece with its own listing at the shop (piece_prints.js,
+   keystone_prints.js) goes there; every other census piece goes to its record page's order box, where the piece
+   number rides on the cart line. Nothing while the shop's print switch (prints.js) is off. */
+function printOf(p){var P=window.NY_PRINTS;if(!P||P.status!=='live')return '';
+  var PP=window.NY_PIECE_PRINTS,K=window.NY_KEYSTONE_PRINTS,n=p.n!=null?String(parseInt(p.n,10)):'';
+  if(n&&PP&&PP.no&&PP.no.indexOf(+n)>=0)return '';
+  var own=n&&PP&&PP.status==='live'&&PP.n&&PP.n[n];if(own)return (PP.shop||P.shop)+'/products/'+encodeURIComponent(own);
+  var kh=n&&K&&K.status==='live'&&K.pieces&&K.pieces[n]&&K.pieces[n].handle;if(kh)return (K.shop||P.shop)+'/products/'+encodeURIComponent(kh);
+  return p.id?B+'n/'+p.id+'#orderbox':'';}
 function h(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;}
 function short(a){return a.slice(0,6)+'\\u2026'+a.slice(-4);}
 function stat(b,s){var d=h('div');d.appendChild(h('b',null,b));d.appendChild(h('span',null,s));return d;}
@@ -201,7 +210,7 @@ function paint(d,q){
   VAR.filter(function(v){return v.id!==d.home;}).slice(0,15).forEach(function(v){var a=h('a');a.href=B+'museum.html#room='+v.id+hang;var im=h('img');im.loading='lazy';im.alt='';im.src=B+'assets/museum/rooms/'+v.id+'.jpg';a.appendChild(im);var x=h('div');x.appendChild(h('b',null,v.name));x.appendChild(h('span',null,v.area));a.appendChild(x);rm.appendChild(a);});
   var sp=h('a','spin','Spin a room');sp.href=B+'museum.html#room=random'+hang;rm.appendChild(sp);
   $('mTv').href=B+'tv.html#'+key;$('mWall').href=B+'wall.html#'+key;
-  $('mPiecesSub').textContent='Every New Yorker you hold. Open one, see it on your wall, or find it on its own wall in the museum.';
+  $('mPiecesSub').textContent='Every New Yorker you hold. Open one, see it on your wall, order it as a print, or find it on its own wall in the museum.';
   var g=$('mGrid');g.innerHTML='';
   d.pieces.forEach(function(p,i){
     var f=h('figure',p.c==='keystone'?'k':'');
@@ -211,6 +220,7 @@ function paint(d,q){
     if(p.id){var o=h('a',null,'Open');o.href=B+'n/'+p.id+'.html';n.appendChild(o);}
     else{var o2=h('a',null,'Keystone');o2.href=B+'keystone.html';n.appendChild(o2);}
     if(p.th){var w=h('a',null,'Wall');w.href=B+'wall.html#'+key+'&p='+(p.c==='keystone'?'k':'')+p.tok;n.appendChild(w);}
+    var pr=printOf(p); if(pr){var q=h('a',null,'Print');q.href=pr;if(/^https?:/.test(pr)){q.target='_blank';q.rel='noopener';}n.appendChild(q);}
     c.appendChild(n);f.appendChild(c);g.appendChild(f);
   });
   var wh=$('mWhere');wh.innerHTML='';(d.where||[]).forEach(function(w){var a=h('a');a.href=B+'museum.html#room='+w.room;a.appendChild(document.createTextNode(w.name));a.appendChild(h('b',null,w.n));wh.appendChild(a);});
