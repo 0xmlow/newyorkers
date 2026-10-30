@@ -1,0 +1,11 @@
+{
+  "title": "THE WRAPPED WING",
+  "key": "wrap",
+  "goText": "Break in",
+  "toast": "WASD to walk. Shift to hurry. F wraps whatever you look at. Click anything. 1 to 8 jumps rooms. K to skate.",
+  "skateTitle": "SKATE THE WING",
+  "eggline": "Every egg in the wing found. The museum has counted you. You are now a permanent collection.",
+  "hooks": ["POV: you broke into the museum and wrapped everything in paintings", "the sphinx has three riddles and union rules", "the guards only move when you look away", "the audio guide is lying and it is so confident", "the gift shop price goes up while you look", "the moon is huge until you look up", "one of the originals was never original", "do not touch. everybody touches"],
+  "roster": [["tracksuit", "The Crew", "Gallery 823", 1.78], ["writer", "The Writer", "Gallery 823", 1.76], ["usher", "A Guard", "Everywhere", 1.85], ["agent", "The Night Agent", "Everywhere", 1.85], ["dancer", "The Regular", "The Roof", 1.76], ["clerk", "The Conservator", "The Lab", 1.76], ["sw_bodegacat", "The Cashier", "The Gift Shop", 1.0]],
+  "yaw": {}
+}

@@ -1,0 +1,27 @@
+{
+  "seed": 1969,
+  "perRoom": 12,
+  "posters": false,
+  "hdri": "night",
+  "surfaces": ["asphalt", "brick", "plaster", "terrazzo", "concrete", "marble", "cobble", "planks", "ashlar", "pavers", "steel", "boardwalk"],
+  "hoods": {
+    "control": ["Sheepshead Bay", "Canarsie", "Flatbush"],
+    "pad": ["Rockaway Beach", "Howard Beach", "Ozone Park"],
+    "capsule": ["Long Island City", "Sunnyside", "Woodside"],
+    "moon": ["Central Park", "Upper West Side"],
+    "mars": ["Bushwick", "Ridgewood"],
+    "hubble": ["Greenwich Village", "West Village"],
+    "belt": ["Flushing Meadows", "Flushing", "Corona"],
+    "splash": ["St. George", "The Battery", "Financial District"]
+  },
+  "plates": {
+    "control": { "from": "on-location/wallst", "sat": 0.9 },
+    "pad": { "from": "on-location/apes" },
+    "capsule": { "from": "on-location/pelham", "sat": 0.9 },
+    "moon": { "from": "on-location/pigeons", "sat": 0.0, "bright": 0.9 },
+    "mars": { "from": "on-location/heat", "tint": [1.25, 0.72, 0.55], "sat": 0.9 },
+    "hubble": { "from": "on-location/rear" },
+    "belt": { "from": "on-location/unisphere", "bright": 0.75, "sat": 0.9 },
+    "splash": { "from": "on-location/ferry" }
+  }
+}

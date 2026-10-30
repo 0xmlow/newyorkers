@@ -1,0 +1,11 @@
+{
+  "title": "TAKE A NUMBER",
+  "key": "line",
+  "goText": "Get in line",
+  "toast": "WASD to walk. Shift to hurry. Click anything. Take a ticket in room one and keep it. 1 to 8 jumps lines. K to skate.",
+  "skateTitle": "SKATE THE LINE",
+  "eggline": "Every egg in every line found. Your number is up. Window 4 is closed.",
+  "hooks": ["POV: you took a number at the DMV and it was nine million", "the trader joe's line only lets you leave backwards", "the bouncer freezes the line when you look at him", "lose the deli ticket and it is fifty dollars", "the drop line moves only while you stand still", "santaland is a loop and the elf knows", "schrodinger's bathroom stall on avenue a", "your number finally came up at grand central"],
+  "roster": [["clerk", "The Clerk", "The DMV", 1.76], ["workgirl", "The Samples", "The Market", 1.74], ["boxer", "The Bouncer", "The Rope", 1.95], ["butcher", "The Cutter", "The Deli", 1.82], ["tracksuit", "The Drop Clerk", "The Drop", 1.78], ["elf", "The Elf", "Santaland", 1.6], ["bartender", "The Bartender", "The Bar", 1.8], ["anchor", "The Announcer", "Grand Central", 1.8]],
+  "yaw": {}
+}

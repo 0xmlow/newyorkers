@@ -1,0 +1,11 @@
+{
+  "title": "N3W YORKERS SPACE PROGRAM",
+  "key": "space",
+  "goText": "Launch",
+  "toast": "WASD to walk. Shift to hurry. SPACE jumps where gravity allows. Click anything. 1 to 8 jumps rooms. K to skate.",
+  "skateTitle": "SKATE THE PROGRAM",
+  "eggline": "Every egg in the program found. Mission accomplished. The lease is still up.",
+  "hooks": ["POV: the city started a space program to get out of a lease", "the countdown only runs when nobody is looking at it", "the capsule is a subway car and gravity is off", "alternate side parking on the moon", "the bodega on mars answers three seconds late", "a two billion dollar telescope pointed at a courtyard", "whisper into the dish and astoria answers", "the ferry did not stop for the splashdown"],
+  "roster": [["agent", "The Flight Director", "Mission Control", 1.85], ["hotdog", "The Vendor", "The Launch Pad", 1.8], ["cabbie", "The Pilot", "The Capsule", 1.8], ["clerk", "The Sweeper", "The Moon", 1.76], ["sw_bodegacat", "The Bodega Cat", "Mars", 1.0], ["lensman", "The Photographer", "The Hubble Room", 1.78], ["sailors", "The Sailors", "Splashdown", 1.8], ["hustler", "A Regular", "Splashdown", 1.78]],
+  "yaw": {}
+}
