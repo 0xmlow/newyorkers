@@ -101,7 +101,7 @@ SITE_PAGES = ("index.html", "census.html", "map.html", "count.html", "counted.ht
               "museum.html", "learn.html", "brand.html", "agents.html", "pigeon.html", "links.html",
               "profile.html", "faq.html", "vault.html", "shipping.html", "printlab.html", "new-rooms.html",
               "keystone.html", "honoraries.html", "bloomrun.html", "posters.html", "collectors.html", "tv.html", "my.html", "wall.html", "moshlab.html", "tools.html", "markup.html", "survey.html", "mosaic.html",
-              "states.html", "stop.html", "arcade.html", "island.html", "basement.html", "skelly.html", "marks.html", "night.html", "movies.html", "airport.html", "gardens.html", "bodega.html", "gentrifying.html", "unreal.html", "inside.html", "pigeonhole.html", "unlicensed.html", "records.html", "garyvee.html", "garyvee-v1.html", "eviction.html", "sewers.html", "same.html", "breakglass.html", "spiral.html", "mlowtar.html", "momlow.html", "media.html")
+              "states.html", "stop.html", "arcade.html", "island.html", "basement.html", "skelly.html", "marks.html", "night.html", "movies.html", "airport.html", "gardens.html", "bodega.html", "gentrifying.html", "unreal.html", "inside.html", "pigeonhole.html", "unlicensed.html", "records.html", "garyvee.html", "garyvee-v1.html", "eviction.html", "sewers.html", "same.html", "wrapped.html", "space.html", "number.html", "breakglass.html", "spiral.html", "mlowtar.html", "momlow.html", "media.html")
 # favicon.ico and the touch icon are real files at the root (made from the eye mark with its white corner
 # cropped away); site.webmanifest names them so a phone can pin the site.
 SITE_FILES = SITE_PAGES + ("og.jpg", "sitemap.xml", "robots.txt", "llms.txt", "llms-full.txt",
@@ -200,7 +200,7 @@ def sync_dir(src, dst):
             shutil.rmtree(fp) if os.path.isdir(fp) else os.remove(fp)
 
 
-for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly", "ui", "marks", "night", "movies", "airport", "gardens", "bodega", "gentrifying", "unreal", "inside", "pigeonhole", "unlicensed", "records", "garyvee", "garyvee-v1", "eviction", "sewers", "same", "breakglass", "spiral", "mlowtar", "momlow"):
+for sub in ("brand", "brand/logos", "stickers", "atlas", "mt", "t", "launch", "glitch", "motion", "keystone", "honoraries", "cards", "posters", "collectors", "badges", "film", "bloomrun", "moshlab", "markup", "mosaic", "onchain", "museum", "press", "og", "home", "404", "stop", "arcade", "island", "basement", "skelly", "ui", "marks", "night", "movies", "airport", "gardens", "bodega", "gentrifying", "unreal", "inside", "pigeonhole", "unlicensed", "records", "garyvee", "garyvee-v1", "eviction", "sewers", "same", "wrapped", "space", "number", "breakglass", "spiral", "mlowtar", "momlow"):
     src = os.path.join(SITE, "assets", sub); dst = os.path.join(OUT, "assets", sub)
     if sub == "museum":
         # the museum bundle changes with every build: always overwrite

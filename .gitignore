@@ -106,6 +106,12 @@ assets/sewers/*
 !assets/sewers/poster.jpg
 assets/same/*
 !assets/same/poster.jpg
+assets/wrapped/*
+!assets/wrapped/poster.jpg
+assets/space/*
+!assets/space/poster.jpg
+assets/number/*
+!assets/number/poster.jpg
 
 # nightly.sh run logs
 _build/logs/

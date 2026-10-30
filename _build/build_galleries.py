@@ -28,6 +28,8 @@ FONT = os.path.join(HERE, "honoraries", "fonts", "IBMPlexMono-Medium.ttf")
 # image URLs are the art and keep more detail. See HANDOFF_PHONE_2026-10-18.md.
 PHONE_GPU = os.path.join(SITE, "assets", "ui", "phone-gpu.js")
 
+# the sewers lineage engine shares one set of controls (the three 2026-10-30 galleries)
+CTRL = "WASD walk, SHIFT hurry, mouse to look, click anything, M for sound, N or WAY OUT for a line on the floor to the next door, [ and ] for the previous and next room, R for a random room, K to skate."
 GALLERIES = [
     dict(slug="island", page="island.html", nav="ISLAND", branch="meme-island",
          repo=os.path.join(ROOT, "MEME ISLAND 2026-10-07"),
@@ -613,6 +615,94 @@ GALLERIES = [
                 ("shots/border.jpg", "The Border: the bodega cat only sees you when you move"),
                 ("shots/throne.jpg", "The Throne: the sewer king, three dollars a minute")],
          keywords=["LIVE FROM THE SEWERS", "Pizza Rat", "New York sewers", "alligators in the sewers", "Beach Pneumatic Transit", "City Hall station", "fatberg", "bodega cat", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "virtual museum", "rat scale"]),
+    dict(slug="wrapped", page="wrapped.html", nav="WRAPPED", branch="mclaude/funny-albattani-c6wzey/wrapped-wing",
+         repo=os.path.join(ROOT, "THREE GALLERIES 2026-10-30", "wrapped-wing"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb", "assets/walls"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="THE WRAPPED WING", name="THE WRAPPED WING", h1="THE WRAPPED <em>WING</em>",
+         title="THE WRAPPED WING · the night the museum got M.Textured · a walkable gallery by MLow",
+         desc=("THE WRAPPED WING, a walkable three.js gallery by MLow with NEW YORKERS: a great New York museum after closing, every antiquity "
+               "wrapped in a census painting, and you holding the gun. Press F and whatever you look at takes a painting on its own skin. Eight rooms: "
+               "Gallery 823 with guards who only move when you look away, the Egyptian temple whose pool reflects the sphinxes plain, the court where "
+               "a painting assembles from one gold star, arms and armor with an audio guide that lies about everything, the American wing's alarm, "
+               "the gift shop where the price climbs while you look, the roof garden with the moon illusion and a wrapped Hubble, and the conservation "
+               "lab where the gun runs backwards. Fifty nine of MLow's M.Texture wrapped Smithsonian and Three D Scans objects, a mural on every wall, "
+               "crowds of New Yorkers, forty four easter eggs. Free in your browser."),
+         controls=CTRL + " F wraps whatever you are looking at.",
+         phone="THE WRAPPED WING works on a phone: left thumb walks, right thumb looks, tap anything, the WRAP button is the gun.",
+         tagline="The museum closed at nine. You are holding the gun.",
+         blurb=("The wrap crew came in through the gift shop and got everything: the whale, the gods, the parade horse, the sphinxes, the moon. "
+                "Walk the galleries after closing with the gun. The guards only move while you are not looking at them. The pool remembers the "
+                "sphinxes plain. One painting is scattered across the court until you stand on the gold star. The audio guide lies. Touch anything "
+                "in the American wing and the alarm has opinions. Look at the duck in the gift shop too long and it costs more. On the roof the moon "
+                "is bigger near the skyline, and nobody knows why. Then go down to the lab, where the gun unwraps, and one of the originals was never original."),
+         shots=[("shots/gallery.jpg", "Gallery 823: the crown frame, the guards who move when you look away"),
+                ("shots/dendur.jpg", "The Temple: the whale over the pool, and the pool that remembers"),
+                ("shots/court.jpg", "The Court: every god wrapped, one painting waiting for the gold star"),
+                ("shots/armor.jpg", "Arms and Armor: the parade horse, the carousel horse, the audio guide that lies"),
+                ("shots/american.jpg", "The American Wing: the parlour, the alarm, do not touch anything"),
+                ("shots/shop.jpg", "The Gift Shop: the four million dollar duck, prices that climb while you look"),
+                ("shots/roof.jpg", "The Roof Garden: the moon illusion, the water tower, a wrapped Hubble"),
+                ("shots/lab.jpg", "The Conservation Lab: where the gun runs backwards")],
+         keywords=["THE WRAPPED WING", "M.Texture", "wrapped sculpture", "Met after closing", "Temple of Dendur", "moon illusion", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "virtual museum"]),
+    dict(slug="space", page="space.html", nav="SPACE", branch="mclaude/funny-albattani-c6wzey/space-program",
+         repo=os.path.join(ROOT, "THREE GALLERIES 2026-10-30", "space-program"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb", "assets/walls"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="N3W YORKERS SPACE PROGRAM", name="N3W YORKERS SPACE PROGRAM", h1="N3W YORKERS <em>SPACE PROGRAM</em>",
+         title="N3W YORKERS SPACE PROGRAM · the only way out of a lease · a walkable gallery by MLow",
+         desc=("N3W YORKERS SPACE PROGRAM, a walkable three.js gallery by MLow with NEW YORKERS: the city has a space program now, funded by the "
+               "fare hike, and it is the only way out of a lease. Eight rooms: mission control at Floyd Bennett Field with a countdown that only runs "
+               "while nobody is watching, a launch pad on Rockaway Beach with a dolly zoom walk, a subway car in zero gravity, the moon with footprints "
+               "that stay and alternate side parking for the lander, a bodega on Mars that answers three seconds late, a two billion dollar telescope "
+               "pointed at a courtyard of live windows, two Deep Space Network dishes at the World's Fair that whisper to each other, and splashdown by "
+               "the Staten Island Ferry with a ticker tape parade. The spacecraft are MLow's wrapped NASA models. A mural on every wall, crowds of New "
+               "Yorkers, sixty four easter eggs. Free in your browser."),
+         controls=CTRL + " Space pushes off in zero G, jump on the moon is a sixth of yours.",
+         phone="N3W YORKERS SPACE PROGRAM works on a phone: left thumb walks, right thumb looks, tap anything.",
+         tagline="Funded by the fare hike. T minus ten.",
+         blurb=("The countdown only runs while nobody is looking at it, so look away. Walk up to the rocket on Rockaway Beach and the beach gets "
+                "wider. Float through a retired R46 car with the bagels and the fare card. Leave footprints on the Sheep Meadow of the moon and move "
+                "the lander before the sweeper comes. Order a coffee on Mars and wait three seconds for the answer. Point the Hubble at the courtyard "
+                "and find the window doing something wrong. Whisper into a dish and Astoria answers. Then come down next to the ferry, which did not stop."),
+         shots=[("shots/control.jpg", "Mission Control: the countdown only runs while nobody is watching"),
+                ("shots/pad.jpg", "The Launch Pad: Rockaway Beach, the bleachers, the dolly zoom"),
+                ("shots/capsule.jpg", "The Capsule: a retired R46, gravity off, mind the airlock"),
+                ("shots/moon.jpg", "The Moon: the Sheep Meadow of Tranquility, the dig, alternate side parking"),
+                ("shots/mars.jpg", "Mars, the Bodega: everything answers three seconds late"),
+                ("shots/hubble.jpg", "The Hubble Room: a two billion dollar telescope and a courtyard of windows"),
+                ("shots/belt.jpg", "The Asteroid Belt: two dishes that whisper, catch what comes out of the sky"),
+                ("shots/splash.jpg", "Splashdown: the ferry did not stop, the city throws the parade")],
+         keywords=["N3W YORKERS SPACE PROGRAM", "space program", "mission control", "zero gravity subway", "moon", "Mars bodega", "Hubble", "ticker tape parade", "NASA models", "MLow", "NEW YORKERS", "walkable gallery", "three.js"]),
+    dict(slug="number", page="number.html", nav="NUMBER", branch="mclaude/funny-albattani-c6wzey/take-a-number",
+         repo=os.path.join(ROOT, "THREE GALLERIES 2026-10-30", "take-a-number"),
+         skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/plates", "assets/glb", "assets/walls"),
+         still=os.path.join("site", "assets", "poster.jpg"),
+         tag="TAKE A NUMBER", name="TAKE A NUMBER", h1="TAKE A <em>NUMBER</em>",
+         title="TAKE A NUMBER · a museum of New York lines · a walkable gallery by MLow",
+         desc=("TAKE A NUMBER, a walkable three.js gallery by MLow with NEW YORKERS: a museum of the lines New York stands in. Take a ticket at the "
+               "DMV in Jamaica and keep it for the whole museum. Eight rooms: the DMV with six windows and one open, the market aisle that moves with "
+               "you and can only be left backwards, the club rope where the bouncer freezes the line while you look at him, the deli where a man by "
+               "the pickles steals your ticket, the drop line that moves only while you stand still, Santaland the maze that sends you back twice, the "
+               "bathroom stall that is occupied only while you look, and the front of the line under the clock at Grand Central. A mural on every wall, "
+               "crowds of New Yorkers in every line, thirty nine easter eggs. Free in your browser."),
+         controls=CTRL + " Walk backwards to leave the market. Stand still to move up the drop line.",
+         phone="TAKE A NUMBER works on a phone: left thumb walks, right thumb looks, tap anything. Keep the ticket.",
+         tagline="Your number is real. So is the one being served. They will never meet.",
+         blurb=("Take a ticket from the machine under the NOW SERVING board and hold it through eight lines. The market aisle slides with you "
+                "until you walk backwards. The bouncer lets the line move only while you are not looking at him. The deli cutter takes your order "
+                "and the man by the pickles takes your ticket, and losing it is fifty dollars. The drop moves only when you stand still and sells "
+                "out at 11:01. Santaland's exit sends you back to the entrance twice. The bathroom door is occupied while you look at it. Then stand "
+                "on the gold star under the Grand Central clock and your number comes up. Finally."),
+         shots=[("shots/ticket.jpg", "Take a Number: the DMV, six windows, one open, the clerk at lunch"),
+                ("shots/market.jpg", "The Line for the Line: the aisle moves with you, walk backwards to leave"),
+                ("shots/club.jpg", "The Rope: the bouncer moves the line only while you are not looking"),
+                ("shots/deli.jpg", "Hold the Ticket: the cutters, the pickles, the man by the pickles"),
+                ("shots/drop.jpg", "The Drop: the line moves while you stand still, sold out at 11:01"),
+                ("shots/santa.jpg", "The Maze: Santaland, the gilded Prometheus, the grotto"),
+                ("shots/bathroom.jpg", "The Bathroom Line: one stall, occupied while you look"),
+                ("shots/front.jpg", "The Front of the Line: the brass booth, the star under the clock")],
+         keywords=["TAKE A NUMBER", "New York lines", "DMV", "Trader Joe's line", "Santaland", "Grand Central", "bouncer", "MLow", "NEW YORKERS", "walkable gallery", "three.js", "virtual museum"]),
     dict(slug="same", page="same.html", nav="SAME", branch="same-difference",
          repo=os.path.join(ROOT, "SAME DIFFERENCE 2026-10-20"),
          skip=(), need=("index.html", "assets/gallery.js", "assets/data.js", "assets/pairs", "assets/posters", "assets/glb"),
@@ -713,6 +803,9 @@ def check(dst, slug, need=("index.html", "vendor")):
     for n in need:
         if not os.path.exists(os.path.join(dst, n)): raise SystemExit(f"{slug}: {n} missing from the copy")
     return html
+
+# slugs on the command line build only those galleries (a machine without the other walk repos, or one gallery after a change)
+if len(sys.argv) > 1: GALLERIES = [g for g in GALLERIES if g["slug"] in sys.argv[1:]]
 
 for G in GALLERIES:
     slug, repo = G["slug"], G["repo"]
