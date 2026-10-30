@@ -7,7 +7,7 @@ const TAU = Math.PI*2;
 function strHash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function hexToRgb(h){const n=parseInt(h.slice(1),16);return[((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];}
-function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),8000);}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.style.display='none';document.body.append(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(a.href);},8000);}
 const $=id=>document.getElementById(id);
 function toast(msg, ms){
   const t = $('toast');
@@ -226,6 +226,17 @@ function allocTargets(w,h){
   work = [makeFBO(w,h), makeFBO(w,h)];
   prevA = makeFBO(w,h); prevB = makeFBO(w,h);
   for(const id in ovLayers){ ovLayers[id].step = -9; ovLayers[id].sig=''; }
+}
+/* phones cap textures at 4096 and refuse anything bigger without a word: shrink the source first */
+const MAX_SRC = Math.min(4096, (gl && gl.getParameter(gl.MAX_TEXTURE_SIZE)) || 4096);
+function fitSource(img){
+  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  if(w <= MAX_SRC && h <= MAX_SRC) return img;
+  const s = MAX_SRC / Math.max(w, h);
+  const c = document.createElement('canvas');
+  c.width = Math.max(4, Math.round(w*s)); c.height = Math.max(4, Math.round(h*s));
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c;
 }
 function fitSize(maxDim){
   const s = Math.min(1, maxDim/Math.max(srcW, srcH));
@@ -901,7 +912,7 @@ function addImages(files){
   for(const f of list){
     const img = new Image();
     img.onload = ()=>{
-      images.push({name:f.name, img});
+      images.push({name:f.name, img:fitSource(img)});
       if(firstNew<0) firstNew = images.length-1;
       if(--pending === 0){ rebuildFileList(); switchToImage(firstNew); }
     };
@@ -912,7 +923,7 @@ function addImages(files){
 function addImageEl(name, img, meta){
   const at = images.findIndex(x=>x.name===name);
   if(at>=0){ switchToImage(at); return at; }
-  images.push({name, img, meta:meta||null});
+  images.push({name, img:fitSource(img), meta:meta||null});
   rebuildFileList();
   switchToImage(images.length-1);
   return images.length-1;
@@ -1076,10 +1087,33 @@ $('backbtn').onclick = ()=>restoreSnapshot(lastChainSnapshot);
 $('clearbtn').onclick = ()=>{ lastChainSnapshot = snapshotChain(); for(const e of state.chain) e.on=false; buildFxList(); saveSoon(); };
 $('playbtn').onclick = ()=>{ playing = !playing; $('playbtn').textContent = playing?'⏸':'▶'; };
 $('scrub').oninput = ()=>{ playing = false; $('playbtn').textContent='▶'; phase = +$('scrub').value/1000; };
-$('comparebtn').onmousedown = ()=>compareHeld=true;
-$('comparebtn').onmouseup = ()=>compareHeld=false;
-$('comparebtn').onmouseleave = ()=>compareHeld=false;
-$('fsbtn').onclick = ()=>{ if(document.fullscreenElement) document.exitFullscreen(); else canvas.requestFullscreen(); };
+$('comparebtn').onpointerdown = e=>{ compareHeld=true; try{ e.target.setPointerCapture(e.pointerId); }catch(_){} };
+['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>$('comparebtn').addEventListener(ev, ()=>compareHeld=false));
+$('comparebtn').oncontextmenu = e=>e.preventDefault();
+function setStageFull(v){
+  document.body.classList.toggle('stagefull', v);
+  $('fsbtn').classList.toggle('ghost-on', v);
+}
+$('fsbtn').onclick = ()=>{
+  if(document.fullscreenElement){ document.exitFullscreen(); return; }
+  if(document.body.classList.contains('stagefull')){ setStageFull(false); return; }
+  const small = window.matchMedia('(max-width:900px)').matches;
+  if(!small && canvas.requestFullscreen){ canvas.requestFullscreen().catch(()=>setStageFull(true)); }
+  else setStageFull(true);
+};
+/* phones: the two panels share the space under the stage, one at a time */
+function setTab(deck){
+  document.body.classList.toggle('tab-deck', deck);
+  $('tabrack').classList.toggle('on', !deck);
+  $('tabdeck').classList.toggle('on', deck);
+}
+$('tabrack').onclick = ()=>{ if($('casino').classList.contains('open')) $('czclose').click(); setTab(false); };
+$('tabdeck').onclick = ()=>{ if($('casino').classList.contains('open')) $('czclose').click(); setTab(true); };
+$('tabspin').onclick = ()=>$('spinbtn').click();
+/* on a phone the open machine takes the panel space under the stage */
+const syncCasino = ()=>document.body.classList.toggle('casino-open', $('casino').classList.contains('open'));
+new MutationObserver(syncCasino).observe($('casino'), {attributes:true, attributeFilter:['class']});
+syncCasino();
 $('loopsec').oninput = ()=>{ state.loopSec = +$('loopsec').value; $('loopsecv').textContent = state.loopSec.toFixed(1); saveSoon(); };
 $('prevres').oninput = ()=>{ state.previewMax = +$('prevres').value; $('prevresv').textContent = state.previewMax; resizePreview(); saveSoon(); };
 $('autoloops').oninput = ()=>{ state.autoLoops = +$('autoloops').value; $('autoloopsv').textContent = state.autoLoops; saveSoon(); };
@@ -1168,6 +1202,9 @@ $('autoloops').value = state.autoLoops; $('autoloopsv').textContent = state.auto
 buildFxList();
 buildPresetButtons();
 if(!localStorage.getItem(STORE_KEY)){
+  if(window.matchMedia('(max-width:900px), (pointer:coarse)').matches){
+    state.previewMax = 720; $('prevres').value = 720; $('prevresv').textContent = '720';
+  }
   for(const id of ['rgbshift','scan','noise','vignette']){
     const e = state.chain.find(x=>x.id===id);
     if(e) e.on = true;
@@ -1180,7 +1217,7 @@ const urlImg = new URLSearchParams(location.search).get('img');
 if(urlImg){
   const img = new Image();
   img.crossOrigin = 'anonymous';
-  img.onload = ()=>{ images.push({name:decodeURIComponent(urlImg.split('/').pop()), img}); rebuildFileList(); switchToImage(images.length-1); };
+  img.onload = ()=>{ images.push({name:decodeURIComponent(urlImg.split('/').pop()), img:fitSource(img)}); rebuildFileList(); switchToImage(images.length-1); };
   img.src = urlImg;
 }
 requestAnimationFrame(t=>{ lastNow=t; tick(t); });

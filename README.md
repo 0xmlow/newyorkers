@@ -15,6 +15,8 @@ npm start
 
 No build step. The app is plain HTML, CSS, and JavaScript inside `app/`; Electron just gives it a window, a menu, and a Dock icon. You can also open `app/index.html` directly in any Chromium browser and everything works.
 
+On a phone the page folds into one column: the canvas on top, the transport under it, and tabs for the effect rack, the source and export deck, and the mosh machine. Hold ORIG with a finger to see the source, the fullscreen button fills the screen with the canvas, and photos bigger than the GPU can hold as one texture are shrunk on the way in.
+
 ## Build a distributable
 
 ```bash
