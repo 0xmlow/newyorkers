@@ -4,23 +4,77 @@
   "posters": true,
   "hdri": "night",
   "hoods": {
-    "gallery": ["Upper East Side", "Midtown"],
-    "dendur": ["East Harlem", "Harlem"],
-    "court": ["Morningside Heights", "Upper West Side"],
-    "armor": ["Chelsea", "Flatiron"],
-    "american": ["Greenwich Village", "West Village"],
-    "shop": ["SoHo", "Tribeca"],
-    "roof": ["Central Park", "Midtown"],
-    "lab": ["Financial District", "Chinatown"]
+    "gallery": [
+      "Upper East Side",
+      "Midtown"
+    ],
+    "dendur": [
+      "East Harlem",
+      "Harlem"
+    ],
+    "court": [
+      "Morningside Heights",
+      "Upper West Side"
+    ],
+    "armor": [
+      "Chelsea",
+      "Flatiron"
+    ],
+    "american": [
+      "Greenwich Village",
+      "West Village"
+    ],
+    "shop": [
+      "SoHo",
+      "Tribeca"
+    ],
+    "roof": [
+      "Central Park",
+      "Midtown"
+    ],
+    "lab": [
+      "Financial District",
+      "Chinatown"
+    ]
   },
   "plates": {
-    "gallery": { "from": "on-location/crown" },
-    "dendur": { "from": "on-location/stuart", "sat": 0.85 },
-    "court": { "from": "on-location/fisherking", "flip": true },
-    "armor": { "from": "on-location/scent" },
-    "american": { "from": "on-location/tenenbaums" },
-    "shop": { "from": "on-location/mail", "flip": true },
-    "roof": { "from": "on-location/birdman" },
-    "lab": { "from": "on-location/insideman", "sat": 0.7 }
+    "gallery": {
+      "from": "on-location/crown"
+    },
+    "dendur": {
+      "from": "on-location/stuart",
+      "sat": 0.85
+    },
+    "court": {
+      "from": "on-location/fisherking",
+      "flip": true
+    },
+    "armor": {
+      "from": "on-location/scent"
+    },
+    "american": {
+      "from": "on-location/tenenbaums"
+    },
+    "shop": {
+      "from": "on-location/mail",
+      "flip": true
+    },
+    "roof": {
+      "from": "on-location/birdman"
+    },
+    "lab": {
+      "from": "on-location/insideman",
+      "sat": 0.7
+    }
+  },
+  "walls": {
+    "gallery": "on_crown",
+    "dendur": "on_natm",
+    "court": "on_insideman",
+    "armor": "on_scent",
+    "american": "on_tenenbaums",
+    "shop": "on_mail",
+    "roof": "on_birdman",
+    "lab": "on_splash"
   }
 }

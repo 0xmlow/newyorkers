@@ -10,6 +10,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import { ROOMS, W, D, H_IN, PORTAL } from './rooms.js';
 import { Sound } from './sound.js';
+import { crowdInit, crowdTick, CROWD } from './crowd.js';
 import { Music } from './music.js';
 
 const $ = (s) => document.querySelector(s);
@@ -100,6 +101,7 @@ const tex = new THREE.TextureLoader(mgr);
 const gltf = new GLTFLoader(mgr);
 // round twelve: the CC0 props ship Draco compressed (_build/draco.py), the decoder is three's own, served from assets/draco
 const draco = new DRACOLoader(); draco.setDecoderPath('assets/draco/'); gltf.setDRACOLoader(draco);
+crowdInit({ THREE, loader: gltf, on: Q.get('crowd') !== 'old', clickable: (m, fn, hint) => clickable(m, fn, hint), rig: Q.get('rig') !== 'off', mobile: MOBILE }); window.__CROWD = CROWD;
 new HDRLoader(mgr).load('assets/env/night.hdr', (h) => {
   h.mapping = THREE.EquirectangularReflectionMapping;
   const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromEquirectangular(h).texture; h.dispose(); pm.dispose();
@@ -154,6 +156,7 @@ const tickers = [];
 const wall = (x1, z1, x2, z2) => { const c = { x1, z1, x2, z2 }; colliders.push(c); return c; };
 const post = (x, z, r) => { const c = { x, z, r }; colliders.push(c); return c; };
 const tick = (f) => tickers.push(f);
+tick((t, dt) => crowdTick(dt, camera));
 // a GLB group is empty until it loads, so the group remembers its click and glb() hands it on to the meshes
 const clickable = (obj, fn, hint) => { obj.userData.click = fn; obj.userData.hint = hint; obj.traverse((o) => { if (o.isMesh && !clickables.includes(o)) { o.userData.click = fn; o.userData.hint = hint; clickables.push(o); } }); };
 

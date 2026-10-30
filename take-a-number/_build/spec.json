@@ -3,25 +3,81 @@
   "perRoom": 12,
   "posters": false,
   "hdri": "night",
-  "surfaces": ["asphalt", "brick", "plaster", "terrazzo", "concrete", "marble", "cobble", "planks", "ashlar", "pavers", "steel", "boardwalk"],
   "hoods": {
-    "ticket": ["Jamaica", "Richmond Hill", "Kew Gardens"],
-    "market": ["Flatiron", "Gramercy", "Murray Hill"],
-    "club": ["Midtown", "Hell's Kitchen"],
-    "deli": ["Lower East Side", "Chinatown"],
-    "drop": ["SoHo", "Tribeca"],
-    "santa": ["Midtown", "Chelsea"],
-    "bathroom": ["East Village", "Lower East Side"],
-    "front": ["Turtle Bay", "Murray Hill", "Midtown"]
+    "ticket": [
+      "Jamaica",
+      "Richmond Hill",
+      "Kew Gardens"
+    ],
+    "market": [
+      "Flatiron",
+      "Gramercy",
+      "Murray Hill"
+    ],
+    "club": [
+      "Midtown",
+      "Hell's Kitchen"
+    ],
+    "deli": [
+      "Lower East Side",
+      "Chinatown"
+    ],
+    "drop": [
+      "SoHo",
+      "Tribeca"
+    ],
+    "santa": [
+      "Midtown",
+      "Chelsea"
+    ],
+    "bathroom": [
+      "East Village",
+      "Lower East Side"
+    ],
+    "front": [
+      "Turtle Bay",
+      "Murray Hill",
+      "Midtown"
+    ]
   },
   "plates": {
-    "ticket": { "from": "on-location/apartment", "sat": 0.0, "bright": 0.9 },
-    "market": { "from": "same-difference/deli" },
-    "club": { "from": "on-location/disco" },
-    "deli": { "from": "on-location/katz" },
-    "drop": { "from": "on-location/prada", "flip": true },
-    "santa": { "from": "on-location/miracle", "sat": 0.0 },
-    "bathroom": { "from": "on-location/cocktail" },
-    "front": { "from": "same-difference/departures" }
+    "ticket": {
+      "from": "on-location/apartment",
+      "sat": 0.0,
+      "bright": 0.9
+    },
+    "market": {
+      "from": "same-difference/deli"
+    },
+    "club": {
+      "from": "on-location/disco"
+    },
+    "deli": {
+      "from": "on-location/katz"
+    },
+    "drop": {
+      "from": "on-location/prada",
+      "flip": true
+    },
+    "santa": {
+      "from": "on-location/miracle",
+      "sat": 0.0
+    },
+    "bathroom": {
+      "from": "on-location/cocktail"
+    },
+    "front": {
+      "from": "same-difference/departures"
+    }
+  },
+  "walls": {
+    "ticket": "on_dogday",
+    "market": "on_big",
+    "club": "on_disco",
+    "deli": "on_katz",
+    "drop": "on_prada",
+    "santa": "on_rink",
+    "bathroom": "on_cocktail",
+    "front": "on_fisherking"
   }
 }

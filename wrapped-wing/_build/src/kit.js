@@ -3,6 +3,7 @@
 // Every room is W by D metres, its north side opens onto a photograph rebuilt from its depth map, the New Yorkers of
 // the census hang on the south and side walls, and the room's own function (ROOM[id]) adds the trick.
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
+import { crowdBody, crowdCast } from './crowd.js';
 import { W, D, H_IN, PORTAL } from './rooms.js';
 
 export const PI = Math.PI;
@@ -21,6 +22,7 @@ export function shell(c, r, { SLOTS = {}, PROPS = {}, ROOM = {}, dressing } = {}
   const g = r.group = new THREE.Group(); g.position.x = r.x0; scene.add(g);
   const X = (x) => r.x0 + x;
   const mats = matsFor(c, r);
+  crowdCast(r.crowd || 'walkers');
   const HT = r.outdoor ? (r.low ? 4 : 10) : (r.tall || H_IN);
 
   if (!r.noFloor) g.add(c.slab(W, 0.1, D, mats.floor, W / 2, -0.05, 0));
@@ -114,13 +116,16 @@ export function watcher(c, g, x, y, z, ry, R = 0.5) {
 }
 const HEAD = {};
 // a simple New Yorker: a body, legs and an eye flower for a head. For crowds and lines.
-export function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, h = 1 } = {}) {
+export function extra(c, g, x, z, { seated = false, col = 0x3a4a6a, ry = 0, h = 1, pool, crowd = true } = {}) {
   const { THREE } = c, o = new THREE.Group(); o.position.set(x, 0, z); o.rotation.y = ry; o.scale.setScalar(h); g.add(o);
   const hh = seated ? 0.45 : 0, body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.72, 12), std(c, col, { roughness: 0.8 })); body.position.y = hh + (seated ? 0.36 : 1.0); o.add(body);
   if (!seated) { const legs = c.slab(0.32, 0.64, 0.16, std(c, 0x1a1a22), 0, 0.32, 0); o.add(legs); }
   HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98));
   const head = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshStandardMaterial({ map: HEAD.t, transparent: true, alphaTest: 0.2, side: THREE.DoubleSide, roughness: 0.6 }));
-  head.position.y = hh + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; o.userData.body = body; return o;
+  head.position.y = hh + (seated ? 0.98 : 1.62); o.add(head); o.userData.head = head; o.userData.body = body;
+  // since CLOUDS AND DIRT V2: the body is one of the cast cut for crowds (crowd.js), the cylinder and sprite hidden once it lands
+  if (crowd) crowdBody(o, { seated, col, hide: [body, head, ...o.children.filter((k) => k !== body && k !== head)], pool });
+  return o;
 }
 export function headTex(c) { return (HEAD.t ||= c.canvasTex(256, 256, (q, w) => eyeFlower(q, w / 2, w / 2, w / 2 * 0.98))); }
 // the plate's name on a slate by the rope, and the kicker under it

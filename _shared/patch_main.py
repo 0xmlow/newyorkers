@@ -37,5 +37,10 @@ sub("SKATE THE SEWER", cfg.get("skateTitle", "SKATE IT"))
 sub("put('i-years', `${Math.min(...yrs)} TO ${Math.max(...yrs)}`);", "if (yrs.length) put('i-years', `${Math.min(...yrs)} TO ${Math.max(...yrs)}`);")
 sub("put('i-films', sets.map((r) => r.film.replace(/, (\\d{4})$/, ' ($1)')).join('   ·   ')); }", "put('i-films', ROOMS.map((r) => r.name.toUpperCase() + ' · ' + r.film).join('   ·   ')); }")
 s = s.replace("The customs officer", "")
+# the crowd (crowd.js, CLOUDS AND DIRT V2): extras become the Tripo cast cut for crowds, the nearest twenty rigged
+s = s.replace("import { Sound } from './sound.js';", "import { Sound } from './sound.js';\nimport { crowdInit, crowdTick, CROWD } from './crowd.js';", 1)
+s = s.replace("gltf.setDRACOLoader(draco);", "gltf.setDRACOLoader(draco);\ncrowdInit({ THREE, loader: gltf, on: Q.get('crowd') !== 'old', clickable: (m, fn, hint) => clickable(m, fn, hint), rig: Q.get('rig') !== 'off', mobile: MOBILE }); window.__CROWD = CROWD;", 1)
+s = s.replace("const tick = (f) => tickers.push(f);", "const tick = (f) => tickers.push(f);\ntick((t, dt) => crowdTick(dt, camera));", 1)
+assert "crowdTick(dt, camera)" in s and "crowdInit({" in s
 open(os.path.join(SRC, "main.js"), "w").write(s)
 print("main.js patched for", cfg["title"])

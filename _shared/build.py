@@ -91,7 +91,7 @@ def count_eggs():
 
 def assets():
     cast = art()
-    for s in SPEC.get("surfaces", ["asphalt", "brick", "plaster", "terrazzo", "concrete", "marble", "cobble", "planks", "ashlar", "pavers", "steel", "grass"]):
+    for s in SPEC.get("surfaces", sorted({f.split("_")[0] for f in os.listdir(os.path.join(SHARED, "tex")) if f.endswith(".jpg")})):   # every surface in the vault unless the spec narrows it
         for k in "cnr": put(os.path.join(SHARED, "tex", f"{s}_{k}.jpg"), os.path.join(A, "tex", f"{s}_{k}.jpg"))
     put(os.path.join(SHARED, "env", SPEC.get("hdri", "night") + ".hdr"), os.path.join(A, "env", "night.hdr"))
     for f in ("draco_decoder.wasm", "draco_wasm_wrapper.js", "draco_decoder.js"): put(os.path.join(SHARED, "draco", f), os.path.join(A, "draco", f))
@@ -106,8 +106,15 @@ def assets():
                 if not os.path.exists(dst): im = Image.open(src).convert("RGB"); im.thumbnail((512, 768)); im.save(dst, quality=80)
                 posters.append(f)
     plates()
+    walls = []   # a wall mural per room (THE MARKS method): spec "walls": {roomId: "<world>_<set>"} from vault/walls
+    for rid, name in SPEC.get("walls", {}).items():
+        src = os.path.join(SHARED, "walls", name + ".jpg"); dst = os.path.join(A, "walls", rid + ".jpg")
+        if not os.path.exists(src): sys.exit(f"wall missing: {name}")
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(src): im = Image.open(src).convert("RGB"); im.thumbnail((2048, 2048)); im.save(dst, quality=84, optimize=True, progressive=True)
+        walls.append(rid)
     eggs = count_eggs()
-    open(os.path.join(A, "data.js"), "w").write("window.EGG_N=" + str(len(eggs)) + ";\nwindow.CAST=" + json.dumps(cast, ensure_ascii=False, separators=(",", ":")) + ";\nwindow.WALLS=[];\nwindow.POSTERS=" + json.dumps(posters) + ";\n")
+    open(os.path.join(A, "data.js"), "w").write("window.EGG_N=" + str(len(eggs)) + ";\nwindow.CAST=" + json.dumps(cast, ensure_ascii=False, separators=(",", ":")) + ";\nwindow.WALLS=" + json.dumps(walls) + ";\nwindow.POSTERS=" + json.dumps(posters) + ";\n")
     print("art:", {k: len(v) for k, v in cast.items()}); print("eggs:", len(eggs), eggs); print("models:", len(os.listdir(os.path.join(A, "glb"))))
 
 def bundle():
