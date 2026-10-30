@@ -67,3 +67,12 @@ against. What fixed it, in order of effect:
 - **One headless shooter at a time.** Three in parallel on the software GL box put the load at 12, navigation and
   screenshots timed out at 60 and 180 s, and an audit piped through `tail` lost its room lines. The shooter's
   navigation timeout is 180 s now; run audits and shot sets in series and write them to a file.
+
+## On the site
+
+The three galleries are wired into the `Museum` branch (`HANDOFF_THREE_GALLERIES_2026-10-30.md` there): a
+`build_galleries.py` entry each (slugs `wrapped`, `space`, `number`), the nav, the home cards, the deploy and SEO lists.
+`build_galleries.py` expects this checkout beside the site as `THREE GALLERIES 2026-10-30/`. The eight entrance stills
+a page shows come from `<gallery>/site/shots/` (`final_shots.sh` makes them, copy them in); the share card from
+`poster.py`.
+
