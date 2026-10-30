@@ -41,6 +41,9 @@ s = s.replace("The customs officer", "")
 s = s.replace("import { Sound } from './sound.js';", "import { Sound } from './sound.js';\nimport { crowdInit, crowdTick, CROWD } from './crowd.js';", 1)
 s = s.replace("gltf.setDRACOLoader(draco);", "gltf.setDRACOLoader(draco);\ncrowdInit({ THREE, loader: gltf, on: Q.get('crowd') !== 'old', clickable: (m, fn, hint) => clickable(m, fn, hint), rig: Q.get('rig') !== 'off', mobile: MOBILE }); window.__CROWD = CROWD;", 1)
 s = s.replace("const tick = (f) => tickers.push(f);", "const tick = (f) => tickers.push(f);\ntick((t, dt) => crowdTick(dt, camera));", 1)
+# a room's own spawn point counts at the start and on a ?room= link too, not only on the room buttons (the walk audit and the shots stand where the visitor stands)
+s = s.replace("if (Q.get('room')) { const r = ROOMS.find((q) => q.id === Q.get('room')); if (r) P.x = r.x0 + W / 2; }", "if (Q.get('room')) { const r = ROOMS.find((q) => q.id === Q.get('room')); if (r) { P.x = r.x0 + (r.spawn ? r.spawn[0] : W / 2); P.z = r.spawn ? r.spawn[1] : D / 2 - 2.2; } } else if (ROOMS[0] && ROOMS[0].spawn) { P.x = ROOMS[0].x0 + ROOMS[0].spawn[0]; P.z = ROOMS[0].spawn[1]; }", 1)
+assert "ROOMS[0].spawn[1]" in s
 assert "crowdTick(dt, camera)" in s and "crowdInit({" in s
 open(os.path.join(SRC, "main.js"), "w").write(s)
 print("main.js patched for", cfg["title"])

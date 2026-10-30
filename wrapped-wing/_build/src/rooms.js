@@ -10,7 +10,7 @@ export const ROOMS = [
     floor: 'planks', floorTint: 0x8a7050, wall: 'plaster', ceil: 'plaster', wallTint: 0x7a2630, ceilTint: 0xe8e4dc, sound: 'lobby', fog: 0x0e0d0b, fogD: 0.009, sky: 0x080706, frame: 'gilt', post: { grain: 0.05, vig: 0.38 },
     hemi: [0xfff0d8, 0x1a1410, 0.4], env: 0.3,
     lights: [[5, 5.6, -2, 0xfff2d8, 22, 18], [15, 5.6, -2, 0xfff2d8, 22, 18], [10, 2.6, 4, 0xffb060, 10, 12]] },
-  { id: 'dendur', lvl: '131', music: 'nile', name: 'The Temple', film: 'The Egyptian Wing, the pool, 12:20 am', kicker: 'A temple a country gave away, a pool that remembers, two sphinxes who do not. Look at the water.', plate: 'dendur', far: 50, tear: 2.0, plateTint: 0x9fb0c8,
+  { id: 'dendur', lvl: '131', spawn: [10, 6.7], music: 'nile', name: 'The Temple', film: 'The Egyptian Wing, the pool, 12:20 am', kicker: 'A temple a country gave away, a pool that remembers, two sphinxes who do not. Look at the water.', plate: 'dendur', far: 50, tear: 2.0, plateTint: 0x9fb0c8,
     floor: 'marble', floorTint: 0xc8c0b0, wall: 'ashlar', ceil: 'plaster', wallTint: 0xb8a890, ceilTint: 0x9a9890, sound: 'walking', fog: 0x0a0c12, fogD: 0.007, sky: 0x06080c, frame: 'black', post: { bloom: 0.5, vig: 0.3 },
     hemi: [0xbfd0ff, 0x1a1810, 0.42], env: 0.4, noRope: true, edge: true,
     lights: [[10, 5.6, -3, 0xcfe0ff, 26, 20], [4, 3.6, 4, 0xffd090, 10, 12], [16, 3.6, 4, 0xffd090, 10, 12]] },

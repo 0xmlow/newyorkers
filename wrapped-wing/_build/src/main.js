@@ -422,7 +422,7 @@ function near3(i) {
   ROOMS.forEach((r) => { if (Math.abs(r.i - i) > KEEP) freeRoom(r); });
 }
 
-if (Q.get('room')) { const r = ROOMS.find((q) => q.id === Q.get('room')); if (r) P.x = r.x0 + W / 2; }
+if (Q.get('room')) { const r = ROOMS.find((q) => q.id === Q.get('room')); if (r) { P.x = r.x0 + (r.spawn ? r.spawn[0] : W / 2); P.z = r.spawn ? r.spawn[1] : D / 2 - 2.2; } } else if (ROOMS[0] && ROOMS[0].spawn) { P.x = ROOMS[0].x0 + ROOMS[0].spawn[0]; P.z = ROOMS[0].spawn[1]; }
 if (Q.get('cam')) { const [x, z, yaw, pitch] = Q.get('cam').split(',').map(Number); P.x = x; P.z = z; P.yaw = yaw || 0; P.pitch = pitch || 0; }
 const keys = {}; ctx.keys = keys;
 addEventListener('keydown', (e) => {

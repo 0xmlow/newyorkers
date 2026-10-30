@@ -291,10 +291,10 @@ const ROOM = {
     for (const x of [6, 14]) { const d = decal(c, 1.2, 3.4, (q, w, h) => { q.fillStyle = 'rgba(60,40,20,.55)'; q.fillRect(0, 0, w, h); q.strokeStyle = '#f5c542'; q.lineWidth = 6; q.strokeRect(10, 10, w - 20, h - 20); for (let k = 0; k < 4; k++) { eyeFlower(q, w / 2, h * (0.14 + k * 0.24), w * 0.16); } }); d.position.set(x, 2.8, -0.38); g.add(d); }
     // the walkways: lanterns, lotus pots, planters as a hedge, benches by the water, the visitors who stayed for the pool
     for (const [x, z] of [[4.2, 7.2], [15.8, 7.2]]) { prop(c, r, g, X, 'planter_box_01', x, z, { len: 1.6, r: 0.8 }); prop(c, r, g, X, 'potted_plant_02', x, z, { h: 1.3, y: 0.4 }); }
-    prop(c, r, g, X, 'potted_plant_01', 2.6, 6.4, { h: 1.1, r: 0.3 }); prop(c, r, g, X, 'potted_plant_04', 17.4, 6.4, { h: 1.1, r: 0.3 }); prop(c, r, g, X, 'nyb_pigeons_planter', 10, 7.3, { len: 1.6, r: 0.8 });
-    prop(c, r, g, X, 'nyb_bench_plaque', 6.8, 7.0, { len: 2.0, r: 0.9 }); prop(c, r, g, X, 'nyb_bench_plaque', 13.2, 7.0, { len: 2.0, r: 0.9 });
+    prop(c, r, g, X, 'potted_plant_01', 2.6, 7.6, { h: 1.1, r: 0.3 }); prop(c, r, g, X, 'potted_plant_04', 17.4, 7.6, { h: 1.1, r: 0.3 }); prop(c, r, g, X, 'nyb_pigeons_planter', 15.8, 7.5, { len: 1.6, r: 0.6 });
+    prop(c, r, g, X, 'nyb_bench_plaque', 6.8, 7.5, { len: 2.0, r: 0.6 }); prop(c, r, g, X, 'nyb_bench_plaque', 13.2, 7.5, { len: 2.0, r: 0.6 });
     prop(c, r, g, X, 'nyb_natm_flashlight', 6.0, 6.0, { len: 0.4, y: 0.18, ry: 0.6 }); prop(c, r, g, X, 'nyb_natm_wet', 2.8, 4.6, { h: 0.85, ry: 0.4, r: 0.3, hint: 'A sign', fn: (cc, m) => cc.say(m, 'CAUTION, WET FLOOR. It is a pool. The sign is doing its best.', 2400, 1.1) });
-    extra(c, g, 2.2, 0.8, { ry: 0, pool: 'night' }); extra(c, g, 17.4, 3.6, { ry: -PI / 2, pool: 'dressy' }); extra(c, g, 12.4, 6.5, { ry: 0, pool: 'walkers' }); extra(c, g, 7.6, 6.4, { ry: 0.3, pool: 'suits' });
+    extra(c, g, 2.2, 0.8, { ry: 0, pool: 'night' }); extra(c, g, 17.4, 3.6, { ry: -PI / 2, pool: 'dressy' }); extra(c, g, 12.4, 7.4, { ry: 0, pool: 'walkers' }); extra(c, g, 4.6, 7.4, { ry: 0.3, pool: 'suits' });
     fxColumn(c, r, g, X, 3.9, -5.6, { h: H_IN, rad: 0.36, mat: sand }); fxColumn(c, r, g, X, 16.1, -5.6, { h: H_IN, rad: 0.36, mat: sand });
     bulbs(c, g, 3.6, 16.4, 5.5, 6.2, 14, 0xbfd8ff);
     // the nook: a gift shop sarcophagus in an alcove by the door, in case you want to take the feeling home
