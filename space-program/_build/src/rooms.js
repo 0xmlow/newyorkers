@@ -7,7 +7,7 @@ export const PORTAL = { dist: 8, w: 12, h: 4.4 };
 export const ROOMS = [
   { id: 'control', lvl: 'T-10', music: 'control', name: 'Mission Control', film: 'Floyd Bennett Field, Brooklyn, T minus ten', kicker: 'The city has a space program now. It is funded by the fare hike. The countdown only runs while nobody is watching it.', plate: 'control', far: 40, tear: 2.2, plateTint: 0xb8c8e0,
     floor: 'concrete', floorTint: 0x8a8e98, wall: 'concrete', ceil: 'steel', wallTint: 0x7a8090, ceilTint: 0xa0a4ac, sound: 'lobby', fog: 0x080a12, fogD: 0.01, sky: 0x05060c, frame: 'steel', post: { grain: 0.04, vig: 0.36, ca: 0.004 },
-    hemi: [0xc0d8ff, 0x101420, 0.46], env: 0.35, crowd: 'suits', spawn: [10, 4.4],
+    hemi: [0xc0d8ff, 0x101420, 0.46], env: 0.35, crowd: 'suits', spawn: [11.45, 4.6],
     lights: [[5, 5.6, -2, 0xd8e8ff, 22, 18], [15, 5.6, -2, 0xd8e8ff, 22, 18], [10, 2.6, 4, 0x40ff90, 8, 12]] },
   { id: 'pad', lvl: 'T-0', music: 'launch', name: 'The Launch Pad', film: 'Rockaway Beach, Queens, T minus zero', kicker: 'The rocket is on the beach because the beach was free. Walk up to it. Keep walking. The pad gets no closer and the lens gets wider.', plate: 'pad', far: 70, tear: 2.0,
     outdoor: true, floor: 'asphalt', floorTint: 0x6a6a6e, wall: 'concrete', wallTint: 0x8a8880, sound: 'walking', fog: 0x1a2030, fogD: 0.005, sky: 0x0c1020, frame: 'steel', post: { bloom: 0.6, vig: 0.3, heat: 0.3 },
