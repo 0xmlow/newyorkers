@@ -290,7 +290,7 @@ const ROOM = {
     for (const x of [7.0, 13.0]) { vitrine(c, g, X, x, 0.7, 0.7, 0.9, 0.7, 0xc8b8a0); const b = prop(c, r, g, X, 'nyb_natm_bust', x, 0.7, { h: 0.55, y: 0.92, ry: x < 10 ? 0.5 : -0.5 }); wrappable(c, r, b, { name: 'A bust in a case' }); }
     for (const x of [6, 14]) { const d = decal(c, 1.2, 3.4, (q, w, h) => { q.fillStyle = 'rgba(60,40,20,.55)'; q.fillRect(0, 0, w, h); q.strokeStyle = '#f5c542'; q.lineWidth = 6; q.strokeRect(10, 10, w - 20, h - 20); for (let k = 0; k < 4; k++) { eyeFlower(q, w / 2, h * (0.14 + k * 0.24), w * 0.16); } }); d.position.set(x, 2.8, -0.38); g.add(d); }
     // the walkways: lanterns, lotus pots, planters as a hedge, benches by the water, the visitors who stayed for the pool
-    for (const [x, z] of [[4.2, 7.2], [15.8, 7.2]]) { prop(c, r, g, X, 'planter_box_01', x, z, { len: 1.6, r: 0.8 }); prop(c, r, g, X, 'potted_plant_02', x, z, { h: 1.3, y: 0.4 }); }
+    for (const [x, z] of [[4.2, 7.6], [11.4, 7.6]]) { prop(c, r, g, X, 'planter_box_01', x, z, { len: 1.6, r: 0.5 }); prop(c, r, g, X, 'potted_plant_02', x, z, { h: 1.3, y: 0.4 }); }
     prop(c, r, g, X, 'potted_plant_01', 2.6, 7.6, { h: 1.1, r: 0.3 }); prop(c, r, g, X, 'potted_plant_04', 17.4, 7.6, { h: 1.1, r: 0.3 }); prop(c, r, g, X, 'nyb_pigeons_planter', 15.8, 7.5, { len: 1.6, r: 0.6 });
     prop(c, r, g, X, 'nyb_bench_plaque', 6.8, 7.5, { len: 2.0, r: 0.6 }); prop(c, r, g, X, 'nyb_bench_plaque', 13.2, 7.5, { len: 2.0, r: 0.6 });
     prop(c, r, g, X, 'nyb_natm_flashlight', 6.0, 6.0, { len: 0.4, y: 0.18, ry: 0.6 }); prop(c, r, g, X, 'nyb_natm_wet', 2.8, 4.6, { h: 0.85, ry: 0.4, r: 0.3, hint: 'A sign', fn: (cc, m) => cc.say(m, 'CAUTION, WET FLOOR. It is a pool. The sign is doing its best.', 2400, 1.1) });
@@ -553,7 +553,7 @@ const ROOM = {
     // the hedge: planters along the south wall and the corners, the benches, the pigeons who own the bench
     for (const [x, z] of [[2, 5.2], [18.4, -6.2, 1], [2.2, -6.2, 1], [5.2, 7.3], [8.2, 7.3], [11.8, 7.3]]) prop(c, r, g, X, 'nyb_pigeons_planter', x, z, { len: 1.6, r: 0.8, y: z < -4 ? 1.0 : 0 });
     prop(c, r, g, X, 'potted_plant_02', 2.2, 1.2, { h: 1.4, r: 0.4 }); prop(c, r, g, X, 'potted_plant_04', 18, 0.8, { h: 1.3, r: 0.4 }); prop(c, r, g, X, 'nyb_manhattan_planter', 2.4, 7.2, { len: 1.2, r: 0.6 });
-    prop(c, r, g, X, 'nyb_manhattan_bench', 10, 6.9, { len: 2.0, r: 0.9 }); const pb = prop(c, r, g, X, 'nyb_pigeons_bench', 2.8, -0.8, { len: 1.8, ry: PI / 2, r: 0.9, hint: 'A bench', fn: (cc, m) => cc.say(m, 'The pigeons have the bench. They had it before the garden, before the museum, before the park. You may sit. They will let you know.', 3200, 1.0) }); wrappable(c, r, pb, { name: 'The pigeons\' bench' });
+    prop(c, r, g, X, 'nyb_manhattan_bench', 10, 7.4, { len: 2.0, r: 0.6 }); const pb = prop(c, r, g, X, 'nyb_pigeons_bench', 2.8, -0.8, { len: 1.8, ry: PI / 2, r: 0.9, hint: 'A bench', fn: (cc, m) => cc.say(m, 'The pigeons have the bench. They had it before the garden, before the museum, before the park. You may sit. They will let you know.', 3200, 1.0) }); wrappable(c, r, pb, { name: 'The pigeons\' bench' });
     [[2.8, -1.6, 0.46], [2.6, -0.2, 0.46], [3.6, 0.4, 0], [2.0, 0.6, 0]].forEach(([x, z, y], k) => prop(c, r, g, X, 'mk_pigeon', x, z, { len: 0.3, y, ry: k * 1.7, bob: y ? 0 : 0 }));
     prop(c, r, g, X, 'nyb_pigeons_seed', 3.2, 0.3, { len: 0.3 });
     // the walls: a fire escape, window units, the security light, the theatre's own lamps

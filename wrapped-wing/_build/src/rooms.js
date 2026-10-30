@@ -14,7 +14,7 @@ export const ROOMS = [
     floor: 'marble', floorTint: 0xc8c0b0, wall: 'ashlar', ceil: 'plaster', wallTint: 0xb8a890, ceilTint: 0x9a9890, sound: 'walking', fog: 0x0a0c12, fogD: 0.007, sky: 0x06080c, frame: 'black', post: { bloom: 0.5, vig: 0.3 },
     hemi: [0xbfd0ff, 0x1a1810, 0.42], env: 0.4, noRope: true, edge: true,
     lights: [[10, 5.6, -3, 0xcfe0ff, 26, 20], [4, 3.6, 4, 0xffd090, 10, 12], [16, 3.6, 4, 0xffd090, 10, 12]] },
-  { id: 'court', lvl: '162', music: 'marble', name: 'The Court', film: 'Greek and Roman, under the skylight, 12:45 am', kicker: 'Every god in here has been wrapped. There is one spot on the floor where it all lines up. Find the gold star.', plate: 'court', far: 46, tear: 2.0,
+  { id: 'court', spawn: [10, 4.8], lvl: '162', music: 'marble', name: 'The Court', film: 'Greek and Roman, under the skylight, 12:45 am', kicker: 'Every god in here has been wrapped. There is one spot on the floor where it all lines up. Find the gold star.', plate: 'court', far: 46, tear: 2.0,
     floor: 'marble', floorTint: 0xd8d4cc, wall: 'ashlar', ceil: 'plaster', wallTint: 0xd0c8b8, ceilTint: 0xe8e4dc, sound: 'lobby', fog: 0x121210, fogD: 0.006, sky: 0x0c0c0a, frame: 'gilt', post: { bloom: 0.4 }, tall: 7,
     hemi: [0xfff8e8, 0x2a2820, 0.55], env: 0.45,
     lights: [[6, 6.4, -1, 0xfff8e8, 26, 20], [14, 6.4, -1, 0xfff8e8, 26, 20], [10, 3, 4, 0xffe0b0, 8, 12]] },
