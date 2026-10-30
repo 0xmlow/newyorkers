@@ -13,7 +13,7 @@ const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'applica
   page.on('pageerror', (e) => logs.push('EXC ' + String(e).slice(0, 400)));
   for (const s of shots) {
     const i = s.indexOf('='), name = s.slice(0, i), q = s.slice(i + 1); logs.length = 0;
-    await page.goto(`http://127.0.0.1:${port}/index.html?${q.includes('intro') ? '' : 'auto=1&'}nolock&${q}&v=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto(`http://127.0.0.1:${port}/index.html?${q.includes('intro') ? '' : 'auto=1&'}nolock&${q}&v=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
     await page.waitForTimeout(+waitS * 1000);
     if (evalJS) { try { console.log(name, 'eval:', JSON.stringify(await page.evaluate(evalJS))); } catch (e) { console.log(name, 'eval failed', String(e).slice(0, 200)); } }
     await page.waitForTimeout(400);

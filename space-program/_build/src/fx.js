@@ -126,7 +126,7 @@ export function alcove(c, r, g, X, { side = 'w', at = 0, w = 2.4, d = 1.8, h = 2
 }
 // a column: a shaft with a base and a cap, and a round collider
 export function column(c, r, g, X, x, z, { h = 6, rad = 0.35, mat, cap = true } = {}) {
-  const { THREE } = c, m = mat || c.surf('marble2', 1, 0xd8d0c8);
+  const { THREE } = c, m = mat || c.surf('marble', 1, 0xd8d0c8);
   const sh = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad * 1.06, h - 0.5, 24), m); sh.position.set(x, h / 2 - 0.25 + 0.25, z); g.add(sh);
   g.add(c.slab(rad * 2.6, 0.25, rad * 2.6, m, x, 0.125, z)); if (cap) g.add(c.slab(rad * 2.6, 0.25, rad * 2.6, m, x, h - 0.125, z));
   c.post(X(x), z, rad + 0.1); return sh;
