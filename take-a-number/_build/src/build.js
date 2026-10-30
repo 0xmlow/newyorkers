@@ -197,7 +197,7 @@ const ROOM = {
     const pl = new THREE.PointLight(0xff4fa3, 20, 14, 1.6); pl.position.set(10, 3.5, -4.5); g.add(pl);
     // the rope and the line behind it (the lane stops short of the door lane so the room stays walkable)
     stanchions(c, g, X, [[6.8, -4.0], [13.2, -4.0]]); stanchions(c, g, X, [[12.6, -2.6], [12.6, 2.0]]); stanchions(c, g, X, [[7.4, -2.6], [7.4, 2.0]]);
-    const N = 12, Qs = []; for (let i = 0; i < N; i++) { const z = -2.4 + i * 0.52; Qs.push({ o: extra(c, g, 10 + Math.sin(i) * 0.4, z, { col: [0x6a2a5a, 0x2a2a6a, 0xa02a3a, 0x2a6a6a][i % 4] }), z, home: z }); }
+    const N = 12, Qs = []; for (let i = 0; i < N; i++) { const z = -3.0 + i * 0.52; Qs.push({ o: extra(c, g, 10 + Math.sin(i) * 0.4, z, { col: [0x6a2a5a, 0x2a2a6a, 0xa02a3a, 0x2a6a6a][i % 4] }), z, home: z }); }
     const bouncer = cast(c, r, g, X, 'boxer', 10, -4.8, { h: 1.95, ry: 0, r: 0.5, line: 'You are not on the list. The list is not on the list. Stop looking at me.', hint: 'The bouncer' });
     box(c, g, 0.6, 1.1, 0.5, velB, 8.6, 0.55, -4.7); prop(c, r, g, X, 'clipboard', 8.6, -4.7, { len: 0.4, y: 1.1, ry: 0.3 }); notice(c, g, 'THE "LIST"', 8.6, 0.8, -4.44, 0, 0.5, 0.14, '#f5c542', '#111'); c.post(X(8.6), -4.7, 0.45); prop(c, r, g, X, 'nyb_blackswan_boombox', 11.4, -4.7, { len: 0.6, y: 0.0, ry: -0.3 });
     const fwd = new THREE.Vector3(); let moved = 0, seenT = 0, inside = false, lastSeen = false;
@@ -205,7 +205,7 @@ const ROOM = {
     c.tick((t, dt, P, ri) => { if (!here(r, ri) || inside) return; c.camera.getWorldDirection(fwd); const L = local(r, P); const dx = 10 - L.x, dz = -4.8 - L.z, d = Math.hypot(dx, dz), dot = (dx * fwd.x + dz * fwd.z) / (d + 1e-6);
       const seen = dot > 0.55 && d < 16;
       if (seen !== lastSeen) { lastSeen = seen; if (seen && moved > 0.5) c.say(bouncer, ['Stop.', 'Eyes.', 'Nobody moves.', 'I said.'][(moved * 3 | 0) % 4], 1200, 2.2); }
-      if (!seen) { moved += dt; for (const q of Qs) { q.z -= dt * 0.35; if (q.z < -3.4) { q.z = 3.8; } q.o.position.z = q.z; }
+      if (!seen) { moved += dt; for (const q of Qs) { q.z -= dt * 0.35; if (q.z < -3.4) { q.z = 2.8; } q.o.position.z = q.z; }
         // you move too, if you are in the lane
         if (L.x > 7.6 && L.x < 12.4 && L.z > -3.2 && L.z < 5.4) { c.P.z -= dt * 0.35; }
       } else seenT += dt;
@@ -449,7 +449,7 @@ const ROOM = {
     const paper = confetti(c, g, 600);
     c.tick((t, dt, P, ri) => { if (!here(r, ri) || flipped) return; const L = local(r, P); if (Math.hypot(L.x - 10, L.z - 2.4) < 0.6) { if (!TICKET.taken) { if (!r.noTk) { r.noTk = true; c.toast('No ticket. The board cannot serve a number you never took. Room one has the machine.', 3600); } return; } flipped = true; let k = 0; const iv = setInterval(() => { k++; c.sound.tick && c.sound.tick(); if (k > 14) { clearInterval(iv); draw(true); c.sound.applause && c.sound.applause(); paper.burst(10, 5, 2.4, 8); c.egg('front_served', `Now serving ${TICKET.n.toLocaleString('en-US')}. Your number. It took ${LINES.length} lines and the whole museum. The window is open. The window is closed. Thank you for waiting.`); setTimeout(() => { window.__finale && window.__finale(); }, 4500); } else { const { q, W: w2, H: h2 } = BIG; q.fillStyle = '#0a0a0a'; q.fillRect(w2 * 0.5, h2 * (0.22 + 7 * 0.095) - h2 * 0.07, w2 * 0.5, h2 * 0.09); q.fillStyle = '#ff8a4a'; q.font = `600 ${h2 * 0.07}px ${c.MONO}`; q.textAlign = 'right'; q.fillText(String(Math.floor(Math.random() * 9999999)).padStart(7, '0'), w2 - 30, h2 * (0.22 + 7 * 0.095)); q.textAlign = 'left'; BIG.up(); } }, 120); } });
     // the concourse: the crowd crossing, the columns, the benches, the luggage, the shoe shine
-    const Q = queue(c, g, (u) => [1 + u * 18, 3.6 + Math.sin(u * 7) * 1.5, PI / 2], 16, { col: (k) => [0x2a3a6a, 0x5a3a2a, 0x3a5a4a, 0x2a2a2a][k % 4] }); c.tick((t, dt) => { for (const q of Q) { q.u = (q.u + dt * 0.03 * (q.k % 2 ? 1 : -1) + 1) % 1; q.o.position.set(1 + q.u * 18, 0, 3.6 + Math.sin(q.u * 7) * 1.5); q.o.rotation.y = q.k % 2 ? PI / 2 : -PI / 2; } });
+    const Q = queue(c, g, (u) => [1 + u * 18, 2.4 + Math.sin(u * 7) * 1.2, PI / 2], 16, { col: (k) => [0x2a3a6a, 0x5a3a2a, 0x3a5a4a, 0x2a2a2a][k % 4] }); c.tick((t, dt) => { for (const q of Q) { q.u = (q.u + dt * 0.03 * (q.k % 2 ? 1 : -1) + 1) % 1; q.o.position.set(1 + q.u * 18, 0, 3.6 + Math.sin(q.u * 7) * 1.5); q.o.rotation.y = q.k % 2 ? PI / 2 : -PI / 2; } });
     for (const [x, z] of [[2.6, -3.2], [17.4, -3.2], [2.6, 0.6], [17.4, 0.6]]) pillar(c, r, g, X, x, z, { h: HT, rad: 0.42, mat: marble });
     for (const [x, z, ry] of [[6.0, -3.6, 0], [14.0, -3.6, 0]]) { prop(c, r, g, X, 'nyb_fisherking_bench', x, z, { len: 2.0, ry, r: 0.9 }); extra(c, g, x - 0.5, z, { seated: true, ry, col: 0x2a3a6a }); extra(c, g, x + 0.5, z, { seated: true, ry, col: 0x5a3a2a }); }
     prop(c, r, g, X, 'nyb_fisherking_suitcase', 5.2, -2.6, { len: 0.7, ry: 0.3 }); prop(c, r, g, X, 'nyb_serendipity_luggage', 14.9, -2.5, { len: 0.8, ry: -0.4 }); prop(c, r, g, X, 'nyb_dundee_luggage', 7.4, -0.8, { len: 0.8, ry: 0.6, r: 0.4 }); prop(c, r, g, X, 'nyb_ontown_crate1', 12.6, -0.6, { len: 0.8, r: 0.5 }); prop(c, r, g, X, 'vintage_suitcase', 12.6, -0.6, { len: 0.6, y: 0.5 });
