@@ -74,8 +74,11 @@ def plates():
 
 def used_models():
     """Every model file a room can ask for: any quoted name in the code, with or without its ph_ prefix."""
-    txt = "\n".join(open(os.path.join(SRC, f)).read() for f in os.listdir(SRC) if f.endswith(".js"))
+    txt = "\n".join(open(os.path.join(SRC, f)).read() for f in os.listdir(SRC) if f.endswith(".js") and f != "crowd.js")
     q = set(re.findall(r"['\"`]([A-Za-z0-9_\-]+)['\"`]", txt))
+    # crowd.js names the cast by bare name (pools) and its files by crowd_ and rig_: only the files are models
+    cj = os.path.join(SRC, "crowd.js")
+    if os.path.exists(cj): q |= {n for n in re.findall(r"['\"`]([A-Za-z0-9_\-]+)['\"`]", open(cj).read()) if n.startswith(("crowd_", "rig_"))}
     names = set()
     for d in ("glb", "wrapped"):
         for f in os.listdir(os.path.join(SHARED, d)):
@@ -97,7 +100,11 @@ def assets():
     for f in ("draco_decoder.wasm", "draco_wasm_wrapper.js", "draco_decoder.js"): put(os.path.join(SHARED, "draco", f), os.path.join(A, "draco", f))
     put(os.path.join(SHARED, "brand", "n3w-01.png"), os.path.join(A, "logo.png"))
     shutil.rmtree(os.path.join(A, "glb"), ignore_errors=True)
-    for d, f in sorted(used_models()): put(os.path.join(SHARED, d, f), os.path.join(A, "glb", f))
+    used = sorted(used_models())
+    for d, f in used: put(os.path.join(SHARED, d, f), os.path.join(A, "glb", f))
+    keep = {f for d, f in used}
+    for f in os.listdir(os.path.join(A, "glb")):   # prune models no room names any more (a renamed prop, a dropped cast)
+        if f.endswith(".glb") and f not in keep and os.path.exists(os.path.join(SHARED, "glb", f)) or f.endswith(".glb") and f not in keep and os.path.exists(os.path.join(SHARED, "wrapped", f)): os.remove(os.path.join(A, "glb", f))
     posters = []
     if SPEC.get("posters"):
         for f in sorted(os.listdir(os.path.join(SHARED, "posters"))):
