@@ -29,7 +29,7 @@ export const ROOMS = [
   { id: 'shop', lvl: 'G', music: 'muzak', name: 'The Gift Shop', film: 'Exit through it, 2:05 am', kicker: 'Everything here is a wrapped version of something you cannot afford. The longer you look, the more it costs.', plate: 'shop', far: 36, tear: 2.2,
     floor: 'terrazzo', floorTint: 0xd0c8b8, wall: 'plaster', ceil: 'plaster', wallTint: 0xe8e4dc, ceilTint: 0xf0ece4, sound: 'lobby', fog: 0x161614, fogD: 0.006, sky: 0x0e0e0c, frame: 'black',
     hemi: [0xffffff, 0x2a2a28, 0.6], env: 0.45,
-    lights: [[5, 5.6, -2, 0xffffff, 22, 18], [15, 5.6, -2, 0xffffff, 22, 18], [10, 3, 4, 0xfff0d0, 10, 12]] },
+    lights: [[5, 4.1, -2, 0xffffff, 18, 16], [15, 4.1, -2, 0xffffff, 18, 16], [10, 3, 4, 0xfff0d0, 10, 12]] },   // the shop's ceiling is dropped to 4.4 m, the lights hang under it
   { id: 'roof', lvl: 'R', music: 'skyline', name: 'The Roof Garden', film: 'Over the park, the moon, 2:30 am', kicker: 'The roof garden closes at dusk. The moon does not. It is bigger near the skyline than overhead. Nobody knows why. Press Z.', plate: 'roof', far: 70, tear: 2.0,
     outdoor: true, floor: 'pavers', floorTint: 0x8a8a90, wall: 'ashlar', wallTint: 0x6a6660, sound: 'walking', fog: 0x0a0c16, fogD: 0.006, sky: 0x060810, frame: 'steel', post: { bloom: 0.6, vig: 0.3 },
     hemi: [0x8aa0ff, 0x101018, 0.4], env: 0.5, noRope: true, edge: true,

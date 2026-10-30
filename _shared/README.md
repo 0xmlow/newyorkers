@@ -61,3 +61,9 @@ against. What fixed it, in order of effect:
 - **`texture.clone()` before the image lands renders black** (again): the anamorph tiles now carry their sub rectangle
   in their UVs and share one texture.
 - **Software GL needs long screenshot timeouts** (180 s) and `domcontentloaded`, not `load`, on a 70 MB site.
+
+- **Count every egg the way it is written.** Two capsule eggs passed `[id, line]` to a drift helper; the counter only
+  saw `c.egg('id'` and the HUD would have read 64 of 62. `count_eggs` now takes the pair form too.
+- **One headless shooter at a time.** Three in parallel on the software GL box put the load at 12, navigation and
+  screenshots timed out at 60 and 180 s, and an audit piped through `tail` lost its room lines. The shooter's
+  navigation timeout is 180 s now; run audits and shot sets in series and write them to a file.

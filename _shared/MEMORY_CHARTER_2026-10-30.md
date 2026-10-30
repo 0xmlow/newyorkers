@@ -210,7 +210,7 @@ Short-lived parking lot. Delete items when resolved.
 
 ## 2026-10-30: THE WRAPPED WING, N3W YORKERS SPACE PROGRAM, TAKE A NUMBER (three galleries, one session, cloud)
 
-- Shipped: three walkable galleries on the LIVE FROM THE SEWERS engine, each eight rooms, one trick a room, 83 eggs in
+- Shipped: three walkable galleries on the LIVE FROM THE SEWERS engine, each eight rooms, one trick a room, 147 eggs in
   all, 288 census New Yorkers on the walls, in the `newyorkers` repo on branch `mclaude/funny-albattani-c6wzey`
   (`wrapped-wing/`, `space-program/`, `take-a-number/`, the shared build in `_shared/`). Not deployed.
 - The wrap gun (press F, whatever you look at takes a census painting on its own UVs) is M.Texture live in the room;
@@ -231,3 +231,26 @@ Short-lived parking lot. Delete items when resolved.
   is the cheapest joke in the practice.
 - Taste: asked for "hilarious, absurd, extremely detailed, meme worthy, viral", with optical illusions, eggs, depth
   maps, and his new M.Texture and wrapped assets used; wants Adobe Firefly for assets (blocked here; note the lane).
+
+### The second pass, the same day: "these look awful"
+
+- MLow's verdict on the first version was the CLOUDS AND DIRT V2 verdict again ("plain jane"): a 20 by 16 m box with a
+  wallpaper, five to twelve props against the walls, cylinders for people, the branded library unused. The fix was the
+  written standard, applied: the wall mural per room (THE MARKS method, 136 murals already in the repo), crowd bodies
+  for every extra (CLOUDS AND DIRT V2's crowd.js), the fx toolbox (alcove, column, mezzanine, coffer, neon), the 577
+  `nyb_*` branded edits as the first reach, and a brief (`_shared/BRIEF_100X.md`) with ten gates per room: forty
+  objects in layers, a nook, a hero from the door, six branded edits, every surface textured, the trick kept, three to
+  five room prefixed eggs, people where the story puts them, the approach and both doors clear, at most three lights.
+- One builder per gallery owning only its `build.js` and `rooms.js`, each verifying every room with a headless shot;
+  the lead integrating, auditing the walk (`audit_walk.py`), fixing the pinches, committing. Two and a half hours for
+  24 rooms, 40 to 190 objects each, 147 eggs (from 83).
+- Steal: start from the bar, not from the engine. Read the standard before the first room and measure the first room
+  against it before the second. A mural and a crowd do more than any prop. An egg id handed to a helper in an array is
+  invisible to a counter that greps `c.egg('`; count the pair form too, or the HUD reads 64 of 62.
+- Never repeat: shipping a room because the engine ran; a mezzanine's stair in the door lane; a bar on the spawn; a
+  default material name that does not exist (`marble2` rendered black for every column that took the default); three
+  headless shooters on one software GL machine (load 12, navigation and screenshot timeouts, lost audit output piped
+  through tail).
+- Surprise: the builders found the nooks themselves (a dig on the moon, a bulkhead hatch in the subway car, a brass
+  information booth, a grotto in the maze, a reviewing stand with a pier) once the brief said a room must not be a box.
+

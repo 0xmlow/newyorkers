@@ -90,7 +90,7 @@ def used_models():
 def count_eggs():
     srcs = [os.path.join(SRC, f) for f in os.listdir(SRC) if f.endswith(".js") and not f.startswith("main")]
     txt = "\n".join(open(f).read() for f in srcs)
-    return sorted(set(re.findall(r"c\.egg\('(\w+)'", txt)) | set(re.findall(r"egg: \['(?:[^'\\]|\\.)*', '(\w+)'", txt)) | set(re.findall(r"egg: '(\w+)'", txt)) | set(re.findall(r"cc?\.egg\(`(\w+)", txt)))
+    return sorted(set(re.findall(r"c\.egg\('(\w+)'", txt)) | set(re.findall(r"egg: \['(?:[^'\\]|\\.)*', '(\w+)'", txt)) | set(re.findall(r"egg: '(\w+)'", txt)) | set(re.findall(r"cc?\.egg\(`(\w+)", txt)) | {e for e in re.findall(r"\['([a-z]+_[a-z0-9_]+)', '[A-Z]", txt) if not e.startswith(("nyb_", "ph_", "sw_", "mk_", "tds_", "si_", "nasa_", "crowd_", "rig_"))})   # an [id, line] pair handed to a helper counts too
 
 def assets():
     cast = art()
