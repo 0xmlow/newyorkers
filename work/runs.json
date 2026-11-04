@@ -1,0 +1,217 @@
+{
+ "project": "prj_ns77j0xqyy137n66mw13cwanr18hjh29",
+ "workspace": "ws_qd74cjtasft9ydr6yqneqjkqax822mhs",
+ "flower": "https://media.flora.ai/mcp-uploads/2026/11/4/user_39BJEqp3wTqfXqgPdaZ09BRa4W8/3c257504-57cf-4ec5-a758-2bc2b38c6f4f.png",
+ "astra": {
+  "timed_out": [
+   "run_m171mqk98wtsznqvgyzvdswv2d8hkdg1",
+   "run_m17264y0fy00tgz4wcpe29etdh8hkq4h"
+  ],
+  "brief": [
+   "run_m17eznf97tb01cmrxefrja3dk58hjs7t",
+   "run_m170a372v6k606hvm788cbf0518hkat2",
+   "run_m176803y4cyhs68dnvm7arec358hkbbs",
+   "run_m172ak3cy85x9xm9tts0m00bj98hkd6r",
+   "run_m17fhmxh8yk3nqr53h6q115b1n8hkx3t"
+  ],
+  "brief_result": {
+   "k_b_b": "run_m17eznf97tb01cmrxefrja3dk58hjs7t",
+   "h_ho": "run_m170a372v6k606hvm788cbf0518hkat2",
+   "l_d": "run_m176803y4cyhs68dnvm7arec358hkbbs",
+   "w_v_timed_out": "run_m172ak3cy85x9xm9tts0m00bj98hkd6r",
+   "p_bk": "run_m17fhmxh8yk3nqr53h6q115b1n8hkx3t"
+  },
+  "w_v_retry": "run_m17e2xtkyedcd523rn1ggeg9th8hjn6z",
+  "critique": "run_m17dryq9gr2e97bxvmqyn7nygn8hkxk8"
+ },
+ "walls": {
+  "kusama_a": "run_m17e8252z01e6080je33h5wrbd8hk7se",
+  "kusama_b": "run_m17649hf0h2bp32kxvqjnbajq58hjc5e",
+  "basquiat_a": "run_m172z4329mjzh1ftsqj9vvda1h8hjmzd",
+  "basquiat_b": "run_m17cjgr7jppswsc90y0mf8rkv98hk65m",
+  "haring_a": "run_m17ac5re1880rwwcexebxv47ks8hktgr",
+  "haring_b": "run_m170wa36gkm83dgcckdac29e6d8hkw8m",
+  "hokusai_a": "run_m17235mmm3xkhq7z2ryx24gzcn8hj2sw",
+  "hokusai_b": "run_m17bept7tss5326d1zyd5150xx8hk3sf",
+  "lichtenstein_a": "run_m17be5721s7fezrjp5gm36yaas8hkxwt",
+  "lichtenstein_b": "run_m177j0tag3ha2zxsjby1bg8ebd8hj9kc",
+  "dali_a": "run_m17an6az5egq3ar5p2ms1gz6rs8hjfwv",
+  "dali_b": "run_m17511haa14ygh9ywq70c7d5318hkvzy",
+  "warhol_a": "run_m176gzsvmge86tfqpz0g227nts8hjtf5",
+  "warhol_b": "run_m17e0xwn8shr1geyv8vrdykz0x8hj8xt",
+  "vangogh_a": "run_m17bfgkqw2p1y5992mga00vtbh8hkqym",
+  "vangogh_b": "run_m17bdfncg8krsatcszrcpx5ewh8hjd2h",
+  "picasso_a": "run_m170gftst31g6g2yb6ett4saqn8hkj9t",
+  "picasso_b": "run_m17drq1t0735q8djap9yqvn3ch8hj1yg",
+  "banksy_a": "run_m17d02ewq5av840rrdvf3y96ds8hkbg4",
+  "banksy_b": "run_m17b129hb5a37ss58hskmydxw98hkdvf"
+ },
+ "plates": {
+  "kusama_a": "run_m17392s4hw9fyj6k9mam3x5wds8hkdtg",
+  "kusama_b": "run_m17e757f614ef4wsekg4c53t3d8hk37m",
+  "basquiat_a": "run_m174cvmm41f1txxnaeh8n0e4jh8hkfzg",
+  "basquiat_b": "run_m1740xk3b46qn1cwwk1qvn6je58hkbdc",
+  "haring_a": "run_m1749pcbwyv1n7twpd6rybkp518hj3eg",
+  "haring_b": "run_m1748wt99se57bsj0ng8yf3hd98hjgf3",
+  "hokusai_a": "run_m178c6jaywayzmz4z9ts8qrpvx8hjjvm",
+  "hokusai_b": "run_m17431m9sqrv2pg7g02dvxrfd98hjj9v",
+  "lichtenstein_a": "run_m17dwn0b2axdttsxdqeqr61hr58hkdpx",
+  "lichtenstein_b": "run_m17571m6qj9pak7f555wxsaxv98hj12h",
+  "dali_a": "run_m171wqhdwyw447k1haej94g8v18hj7nw",
+  "dali_b": "run_m1739fbnxr1d9m5zahncak49ah8hkfe3",
+  "warhol_a": "run_m179tbwtg5srmt667q29tpgr8d8hkff8",
+  "warhol_b": "run_m1761f614k7171hg2wx16e44cx8hjxrh",
+  "vangogh_a": "run_m1717prz93cd8a4vxfsm2w9yz98hks35",
+  "vangogh_b": "run_m17e74z9vsh7vfjx9663nvweks8hkeeq",
+  "picasso_a": "run_m176dhx3sayb7q7ftjc5r5vxv98hjrp3",
+  "picasso_b": "run_m1752zhn7fkmy237x4k2fkte098hk49d",
+  "banksy_a": "run_m17bpba7a431jbvv3m3ybyr5y18hk6j1",
+  "banksy_b": "run_m17edazyzbd6vtd104dq4na6cd8hjfh9"
+ },
+ "concepts": {
+  "ts_dotdancer": {
+   "run": "run_m17ccdbp19m0rzv0syqnq898hd8hjmrx",
+   "note": "first moderated"
+  },
+  "ts_crownbag": {
+   "run": "run_m17ab25tn1c56zxpddrsdz88t18hj3n6",
+   "node": "02a69251-c8b0-4440-be6c-5b611ab31773"
+  },
+  "ts_transitcop": {
+   "run": "run_m178k25m6ckpycg8jxwvzwsv498hjfw7",
+   "node": "6b202c91-62e1-4313-9981-e0a74f180a5d"
+  },
+  "ts_wave": {
+   "run": "run_m1719dnvv2p05f5mf3x9sc018d8hkncj",
+   "node": "f3a3aea3-5e1f-45d6-b2bb-8e7ea8a1cf09"
+  },
+  "ts_brushstroke": {
+   "run": "run_m177rsrzgx996x5vd3se0aebys8hj6dw",
+   "node": "8d7d0fee-35c5-4bcc-bdb4-0eb003fc57ce"
+  },
+  "ts_furtub": {
+   "run": "run_m17ftznzfzwnc8pfc5kvg8z2dx8hjhf6",
+   "node": "2010482e-ecc2-46ed-95c4-652f561b0f7f"
+  },
+  "ts_bolex": {
+   "run": "run_m172dc5px2k6ac80s5pr57q7cd8hka68",
+   "node": "c6c75676-165c-474c-a89b-25fb8522e3ed"
+  },
+  "ts_cypress": {
+   "run": "run_m179hxj0w09afgwksc3ap5fznn8hjmnh",
+   "node": "cff5b329-ca67-4ccc-b6e0-2c8cab66c4b0"
+  },
+  "ts_guitar": {
+   "run": "run_m175h4dbfmetmg8522wd56k66n8hjhf9",
+   "node": "ccc9af87-c3a8-4312-8be9-ce72e32044b4"
+  },
+  "ts_lamb": {
+   "run": "run_m175za61t9bnmp4h069wtfba558hkfek",
+   "node": "95e75db9-f5c4-454a-87eb-e5687ef5e4f7"
+  },
+  "ts_pumpkin": "run_m17cem8fk2w6ebmqnydnq3crnd8hjw03",
+  "ts_haringfig": "run_m17bs9q0wb7ep1spw5c6kcyacs8hkxr9",
+  "ts_lobsterphone": "run_m171grfna988e5da0a4pdbm7pd8hk1rf",
+  "ts_payphone": "run_m175k2t73fw63s17nm7g7q5zt18hjb6c"
+ },
+ "tripo": {
+  "ts_crownbag": "run_m17dzayzabc4hg68s3h8j48zvn8hkyt6",
+  "ts_transitcop": "run_m17fq44j3p5ak76mdcktx66yvx8hkjmf",
+  "ts_wave": "run_m1766jdhy9bhb0k1h1h9rhr6zd8hkh0j",
+  "ts_brushstroke": "run_m177j2dd1qc5bwv2hrdb4edzd18hkm5s",
+  "ts_furtub": "run_m1756kkrdk507bz43wzamg7nt18hjjcm",
+  "ts_bolex": "run_m1797zxt37vbrpas4dckn9mwxh8hj1a7",
+  "ts_cypress": "run_m17a75g8r33x9tcdw4cx8nzxgh8hj45m",
+  "ts_guitar": "run_m178nx7bmcjk72azs04npgm45h8hkgjk",
+  "ts_lamb": "run_m177esc4kmpz9qbcgjj8g2j1p58hjtyg",
+  "ts_dotdancer": "run_m179329k5tq11r6j5vs2kf4dxs8hkgr8",
+  "ts_pumpkin": "run_m170wpry1c8v60yqmwk4tja5n98hkpja",
+  "ts_haringfig": "run_m179608xjy3vm3dwxft61h62ex8hksmy",
+  "ts_lobsterphone": "run_m1739ynt9ez97qzmg429j14qah8hkf5k",
+  "ts_payphone": "run_m177wh45yyrfr81akcs3w3rkd98hj8s3"
+ },
+ "c_astra": {
+  "batch1_timeout": "run_m17casrsc4s8g2qgfnjayw8dax8hj5zx",
+  "lichtenstein_dali_warhol": "run_m17f4dzeq44we6b6w1mggt90wn8hjdnz",
+  "vangogh_picasso_banksy": "run_m175vkf4frgs09x1b88ta5cbhx8hk71c",
+  "kusama_basquiat": "run_m17ay2zbetrdzp1pd39dvsjbxn8hjhay",
+  "haring_hokusai": "run_m17bnghh7wrkb07bz8jd9cz7718hkpb5"
+ },
+ "c_plates": {
+  "haring_c": "run_m176swvfxwmzv30drewbpjf5ws8hj7j8",
+  "hokusai_c": "run_m17c5dgzqnhmrjbff0dajxsekh8hk3sj",
+  "lichtenstein_c": "run_m173841ce0mgrt9t98dv5fbp598hk125",
+  "dali_c": "run_m176tm6ymjkwswwh7tsmf9mmb58hjpb8",
+  "warhol_c": "run_m176c3jfrg16ft5ee14sf0zzyd8hk8y1",
+  "picasso_c": "run_m17708ewehszdvp0th12qhj9z58hk6b3",
+  "banksy_c": "run_m17fa25a8fm8szeydaxgtcbjq18hj7pr",
+  "kusama_c": "run_m17b98wp0srzxm1svd68se17md8hky10",
+  "basquiat_c": "run_m172mgj3f1bndra0vj7frshwnx8hj16y",
+  "luna_luna": "run_m170styfcmfvre763b33hf4gps8hk5m7"
+ },
+ "c_walls": {
+  "haring_c": "run_m171rzp6wrbjydbs0kwwtwmmg58hkrr3",
+  "hokusai_c": "run_m17ay4wvwgztajxe5qc8bv869s8hjgbc",
+  "lichtenstein_c": "run_m17acptqgamp7gg8kwbpz361858hkezs",
+  "dali_c": "run_m179vd3p423zsk1n6z0eagqv8h8hj87e",
+  "warhol_c": "run_m17avdkee452qejje43n93bprd8hjvbe",
+  "picasso_c": "run_m178jnx2rt9byqkv61d0xz9s0d8hk6zg",
+  "banksy_c": "run_m17adcbzgtydtac8pe2vqjxybd8hknfp",
+  "vangogh_c": "run_m17fbnhsa5deht6d6ga8zdeb918hjgy6",
+  "kusama_c": "run_m17cdhwwwp521zzfmyybxrf6e58hjnxg",
+  "basquiat_c": "run_m174yfks61rbt7cxx19ns3jdex8hjqpv"
+ },
+ "c_cast": {
+  "ts_softboat": "run_m177mcbw227vrn2x3pmgdj9mt58hj9bg",
+  "ts_comicsofa": "run_m179t2g06h89g4d2q8801e1m618hkd0f",
+  "ts_meltframe": "run_m1710aft1ack3s95ep934swsvd8hjz8e",
+  "ts_pricestation": "run_m171mhbx6sv613ksp2ekpce8f18hjg47",
+  "ts_popcounter": "run_m1759f4n0hzpy3vw0ya3pw4sbd8hkd5x",
+  "ts_amesscope": "run_m17dnawa9v9p1ap1thc7mxsnm58hjhnf",
+  "ts_floormodel": "run_m1742z1wz8c4psxc2kbc3vwc458hj210"
+ },
+ "c_tripo": {
+  "ts_softboat": "run_m178g3jgqzcsf2p4ftdj3n98v18hkjp3",
+  "ts_comicsofa": "run_m1739fygeprwdgbqv2pd23bm3h8hjc9h",
+  "ts_meltframe": "run_m17b3qncm15mqvt87tqjz7zybs8hj5ty",
+  "ts_pricestation": "run_m17fqj8qqyrx9k0tnzek8w3fmh8hk83j",
+  "ts_popcounter": "run_m17cyb9pabtf8h71fr159kmf7h8hjnj3",
+  "ts_amesscope": "run_m175q3srtsg6vb0c5c688rzd9h8hjb66",
+  "ts_floormodel": "run_m172xdkkg0pv2t9k8sqz93fypd8hk46w"
+ },
+ "c_critique": "run_m17cachsjbw5f3hqwxqwd397bx8hjq96",
+ "d_cast": {
+  "ts_spaceelephant": "run_m171mn1ymsbvypcp7tgc404ha98hjcn6",
+  "ts_sunflowers": "run_m173zzasr0vb9hja42ze215dzd8hj4jn",
+  "ts_tentacle": "run_m17e11xsgjhhy5rpr1e1kb1yk18hk8nz",
+  "ts_crownskull": "run_m174wa98gd0s6zhz84hd7drpan8hjrws"
+ },
+ "d_tripo": {
+  "ts_spaceelephant": "run_m1734487kbvsfa9g5ftawm8fas8hj9p2",
+  "ts_sunflowers": "run_m1788b6rbv8112aka2zedchzjn8hjx4k",
+  "ts_tentacle": "run_m17aj5bthezpyzsb44mt792teh8hjmpj",
+  "ts_crownskull": "run_m17b49esajayny1ww1eh3w8q118hjvc6"
+ },
+ "e_cast": {
+  "ts_soupcan": "run_m172e3naygtaah9kvr76h16dnx8hkm5p",
+  "ts_radiantbaby": "run_m178wa44yhzdmgt8n716bn4nxx8hk4d2",
+  "ts_bust": "run_m17bv7pvxf2wnw27eqn3bfgfq98hjpjs"
+ },
+ "e_tripo": {
+  "ts_soupcan": "run_m1770s6enw6acx55qyezkaw65n8hj9t2",
+  "ts_radiantbaby": "run_m17dra9t1xbsf4gk4xz7kv6zt98hkx1x",
+  "ts_bust": "run_m170130q86xwx2j4cwyb99ravn8hjy38"
+ },
+ "f_walls": {
+  "kusama_d": "run_m174tkfbkmvr2ms8rbfctxg0d58hkycd",
+  "basquiat_d": "run_m17cpxj2zhmnbpmgx6at3gc4hs8hkwfj",
+  "haring_d": "run_m178830xvk4gtmbhxq1sj1hyk18hk7he",
+  "hokusai_d": "run_m171r2x83fp0kyczbvx691vpxn8hjxa1",
+  "lichtenstein_d": "run_m17cepnh8fcdgz0qqybbp1f29d8hkwqs",
+  "dali_d": "run_m17bvy5zqdwnag7n8xatjvdg718hj97c",
+  "warhol_d": "run_m17e9r0wdn8sq7n70c8yzk3nd58hk0te",
+  "vangogh_d": "run_m1716cw5k9dxnghq4htcrmzmgs8hj758",
+  "picasso_d": "run_m171ns7vwamwagap3n03yymc4n8hkzvf",
+  "banksy_d": "run_m173zpkxatb3yw1kxgzb77bxpd8hjsjx"
+ }
+}
