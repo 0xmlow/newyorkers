@@ -162,3 +162,10 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - **Cost:** about 15 ms a frame on the gm beach rail (v6 about 14). 28 MB in `site/assets/ph` all told.
 - **Not verified:** a phone, Safari, a non Apple GPU; interiors were not reworked; the lighthouse, the toll booths, the
   ferry and the Summer.jpg house were left as they were.
+
+## v8 landmarks and water (2026-11-21)
+- The aerial stripes are fixed. The post chain's render targets had a 16 bit depth buffer (three r128's default without a stencil), which from 200 m up is metres coarse, so the sea drew through the island. The composer now gets a target with `stencilBuffer: true`, which allocates 24 bit depth. The sea also has no geometry under the island any more.
+- `_build/v8_land.js` (inlined at `/*__V8_LAND__*/`): `v8Loft` builds hulls from cross sections. The Census Ferry is a double ended harbour boat with two decks, wrapped window bands that light at night, railings, two wheelhouses, an oval funnel, a spinning radar and a flag. The sailboats are lofted sloops with a main and jib that billow. The traffic is bevelled cars with glass, wheels and lamps.
+- Toll plaza: canopy on four columns, light panels, glass booths, a striped arm with a counterweight, rumble strips, Poly Haven road barriers and a wet floor sign. The lighthouse has a gallery, railing, mullions, a vent ball, a rod and a red beacon. SUMMER.JPG has striped canvas umbrellas with ribs, plus chairs. The harbour has two lateral sea markers and a tall ship at anchor (ship_pinnace, 16k tris, 2 MB).
+- Prop loading in v7 now starts a microtask later so v8 can add to `PROP_FILES`; `landBuild()` runs after `archBuildProps()`.
+- About 16 ms a frame on the gm beach rail (v7: 15).
