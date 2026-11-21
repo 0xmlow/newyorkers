@@ -1365,23 +1365,23 @@ const colossus = { lenses: null, lasers: [], t: 0 };
 })();
 
 /* --- 18. palms, scattered signs, residents, agents --- */
+const PALM_SPOTS = [];
 (function palms() {
-  const N = 70, trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.18, 0.32, 1, 7), MAT.trunk, N), lg = new THREE.ConeGeometry(0.55, 4.2, 4, 1); lg.rotateX(PI / 2); lg.translate(0, 0, 2.1); lg.scale(1, 0.18, 1);
-  const leaves = new THREE.InstancedMesh(lg, MAT.leaf, N * 7); let k = 0, n = 0; const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  // v6: the spots and sizes are drawn exactly as before (the island's random sequence must not move), the palms themselves are built by PALM
+  const N = 70; let n = 0;
   let tries = 0; while (n < N && tries++ < 2000) {
     const a = rnd() * 360, r = 110 + rnd() * 22, [x, z] = P2(a, r);
     if (Math.abs(x) < 10 || (z < -100 && Math.abs(x) < 18) || (x > 0 && x < 30 && z > 120)) continue;
     const g = ground(x, z), h = 6 + rnd() * 4, lean = (rnd() - 0.5) * 0.25;
-    q.setFromEuler(e.set(lean, 0, lean * 0.6)); m.compose(new V3(x, g + h / 2, z), q, new V3(1, h, 1)); trunks.setMatrixAt(n, m); post(x, z, 0.35);
-    for (let i = 0; i < 7; i++) { q.setFromEuler(e.set(0.35 + rnd() * 0.35, i / 7 * PI * 2 + rnd() * 0.3, 0, 'YXZ')); m.compose(new V3(x + lean * h * 0.5, g + h, z - lean * h * 0.3), q, new V3(1, 1, 1)); leaves.setMatrixAt(k++, m); }
+    PALM_SPOTS.push({ x, z, g, h: h * 1.15, lean }); post(x, z, 0.35);
+    for (let i = 0; i < 7; i++) { rnd(); rnd(); }
     n++;
   }
-  trunks.count = n; leaves.count = k; trunks.castShadow = leaves.castShadow = true; scene.add(trunks); scene.add(leaves);
 })();
 [['PLEASE DO NOT RIGHT CLICK THE OCEAN.', 30, 128, 0.25], ['YOU ARE EARLY. THE STAIRS ARE NOT HERE.', -20, -20, 0.8], ['TOTAL DAYS HELD. TOTAL NIGHTS AWAKE.', 22, 22, -0.8], ['DECENTRALIZE EVERYTHING. INCLUDING THIS QUEUE.', -22, 22, 0.8], ['ANOTHER HISTORIC FIRST SUNRISE.', 26, 118, 0.2], ['SZN14. STILL LEARNING TO SAY GM.', -40, 120, -0.3], ['THIS IS NOT A ROADMAP. IT IS A ROUNDABOUT.', 74, 62, -2.3]]
   .forEach(([t, x, z, ry]) => sign([{ t: Q(t), s: 0.2 }], x, z, ry, 3.6, 0.7));
 
-const residents = [], agents = [];
+const residents = [], agents = [], SHRUB_SPOTS = [];
 const RING = []; for (let i = 0; i < 8; i++) RING.push(P2(i * 45 + 22.5, 40));
 const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
 (function () {
@@ -1425,7 +1425,7 @@ const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
   bs.count = bb.count = k; bl.count = k * 2; [bs, bb, bl].forEach(o => { o.castShadow = o.receiveShadow = true; scene.add(o); });
   const sh = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.7, 0), MAT.shrub, 120); let n = 0;
   for (let i = 0; i < 12; i++) { const a0 = (i + 0.5) / 12 * 360 + 7; for (let j = 0; j < 10; j++) { const [x, z] = P2(a0 + (rnd() - 0.5) * 9, 46 + rnd() * 4.5); const s = 0.6 + rnd() * 0.9; m.compose(new V3(x, ground(x, z) + s * 0.4, z), q.setFromEuler(new THREE.Euler(rnd(), rnd() * 3, 0)), new V3(s, s * 0.8, s)); sh.setMatrixAt(n++, m); } }
-  sh.count = n; sh.castShadow = true; scene.add(sh);
+  sh.count = n; sh.castShadow = true; for (let i = 0; i < n; i++) { const mm = new THREE.Matrix4(); sh.getMatrixAt(i, mm); SHRUB_SPOTS.push([mm.elements[12], mm.elements[14]]); } // v6: real shrubs stand here instead
   // GM beach loungers, three groups of four
   const lo = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.12, 2), cm(0xDDD5C7), 12), lb2 = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.9, 0.1), cm(0xDDD5C7), 12); k = 0;
   [[-26, 127], [12, 128], [28, 124]].forEach(([gx, gz]) => { for (let i = 0; i < 4; i++) { const x = gx + i * 1.2, z = gz, g = ground(x, z); m.compose(new V3(x, g + 0.32, z), q.identity(), new V3(1, 1, 1)); lo.setMatrixAt(k, m); m.compose(new V3(x, g + 0.62, z - 0.9), q.setFromEuler(new THREE.Euler(-0.6, 0, 0)), new V3(1, 1, 1)); lb2.setMatrixAt(k++, m); post(x, z, 0.5, -10, 0.9); } });
@@ -1605,7 +1605,7 @@ function updateCalendar(t) {
   if (newDay) {
     // seasons tint the lawn: spring green, high summer, a gold autumn, a tired winter
     const doy = daysFromCivil(t.y, t.mo, t.d) - daysFromCivil(t.y, 1, 1);
-    SEASON.grass.set(doy < 59 || doy > 340 ? 0xcfcab4 : doy < 140 ? 0xd2e0bc : doy < 245 ? 0xdce6b6 : doy < 300 ? 0xe4d9a8 : 0xdacb9c);
+    SEASON.grass.set(doy < 59 || doy > 340 ? 0xe2e0d2 : doy < 140 ? 0xeef6e2 : doy < 245 ? 0xf4f8e4 : doy < 300 ? 0xf6f0d6 : 0xf0e8d2); // v6: lighter, the scanned lawn carries its own colour
     CAL.cod = CARDS[(Math.imul(t.days, 7919) >>> 0) % CARDS.length].n; if (COD.mesh) { setPlaneUV(COD.mesh, 'meme', CAL.cod, 3.4); COD.mesh.userData.card = CAL.cod; COD.redraw(t); }
     MINTSIGN.redraw && MINTSIGN.redraw();
   }
@@ -1673,7 +1673,7 @@ const GRASS = { mesh: null, shader: null };
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
   const mat = new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.9, color: 0xd6dcc4 });
   mat.onBeforeCompile = sh => { sh.uniforms.uTime = { value: 0 }; GRASS.shader = sh; sh.vertexShader = 'uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvec4 ip = instanceMatrix[3];\n\ttransformed.x += sin(uTime * 1.6 + ip.x * 0.31 + ip.z * 0.23) * 0.07 * uv.y;\n\ttransformed.z += cos(uTime * 1.3 + ip.z * 0.27) * 0.04 * uv.y;'); };
-  const N = isMobile ? 4000 : 9000, mesh = new THREE.InstancedMesh(geo, mat, N), m = new THREE.Matrix4(); let k = 0, tries = 0;
+  const N = isMobile ? 2500 : 5000, mesh = new THREE.InstancedMesh(geo, mat, N), m = new THREE.Matrix4(); let k = 0, tries = 0;
   while (k < N && tries++ < N * 6) {
     const a = rnd() * PI * 2, r = Math.sqrt(rnd()) * 101, x = Math.cos(a) * r, z = Math.sin(a) * r, g = ground(x, z);
     if (Math.abs(x) < 17.5 && Math.abs(z) < 17.5) continue; if (r > 36.5 && r < 43.5) continue; if (Math.abs(x) < 3 && Math.abs(z) > 16) continue; if (Math.abs(z) < 3 && Math.abs(x) > 16) continue;
@@ -1879,7 +1879,7 @@ function setupAO(sz, pr) {
 function renderAO() {
   if (!AO.on) return;
   if ((AO.hideT -= 1) <= 0) { AO.hideT = 90; AO.hide.length = 0;
-    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
+    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || m.alphaTest > 0 || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
   const vis = AO.hide.map(o => o.visible); AO.hide.forEach(o => o.visible = false);
   const bg = scene.background, cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
   try { scene.overrideMaterial = AO.over; renderer.setRenderTarget(AO.depth); renderer.clear(); renderer.render(scene, camera); }
@@ -2324,7 +2324,7 @@ function frame(dt) {
   if (GRASS.shader) GRASS.shader.uniforms.uTime.value = T; MAT.water.normalMap.offset.set(T * 0.004, T * 0.0025);
   lhBeam.visible = L.lamps > 0.25;
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
-  updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
+  natFrame(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
   // camera
   const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
@@ -2362,6 +2362,8 @@ addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('foc
 function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
 window.__POWER = POWER; window.__powerBudget = powerBudget;
 function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFrame(loop); return; } POWER.drawn = now; POWER.frames++; const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
+
+/*__V6_NATURE__*/
 
 /* ---------------- boot ---------------- */
 buildCards();

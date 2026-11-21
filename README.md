@@ -105,3 +105,35 @@ A look pass, all in `_build/island.html` (search `v5`). No new assets beyond two
   11.7 ms. The GPU waves pay for the occlusion. Phones get the sea, the sand and the grade; no AO, no SMAA.
 - **Not verified:** a real phone, a non Apple GPU, Safari, and the photoreal film and hype cuts (not re-rendered).
 - Harness mock gained `strokeRect` (it failed at HEAD without it).
+
+## v6 nature, 2026-11-21 (later)
+
+MLow: v5 still looked bad; "next level", better textures, realistic assets, flowers. All CC0 from Poly Haven, no paid
+generation. Code in `_build/v6_nature.js`, inlined by `build.py` at `/*__V6_NATURE__*/`.
+
+- **Scanned surfaces** (`site/assets/ph/*_c|n|r.webp`): coast_sand_01 (beach), leafy_grass (lawn), weathered_planks
+  (boardwalk, decks), concrete_floor_02, white_stucco (white and bone blocks), hexagonal_concrete_paving (the plaza ring
+  and paths, which now get world UVs). Sand and lawn break their repeat with a rotated second read and a slow brightness
+  field, and are remapped (sand paler, lawn greener). Cloud shadows drift across both when the weather is SCATTERED.
+  The season tints were lightened because the scan carries its own colour.
+- **Plants and rocks** (`site/assets/ph/ph_*.glb`, 14 files): gazania, periwinkle, ursinia, dandelion, fern, shrub,
+  bermuda tufts, dune grass, ice plant, two island trees, boulders, beach rocks, coastal rocks, conch shells. Lineups
+  were split into single plants and decimated in headless Blender (scratch scripts `ph_get.py`, `ph_pass.py`,
+  `ph_split.py`, not kept in the repo; the recipe is: fetch the 1k glTF from api.polyhaven.com with a User-Agent, join,
+  separate loose parts, cluster by plan overlap, decimate per plant, base at origin, export GLB with AUTO images).
+  Plants are sized by a target height per species, not by their scan.
+- **Placement** (`natScatter`): 120 flower drifts of one or two species, 1,500 tufts, ferns and shrubs, real shrubs at
+  the old icosahedron spots, 26 trees in open lawn (with a collision post each), dune grass and ice plant on the beach,
+  shells at the tide line, boulders and coastal rocks half in the sea around the shore. A cell is free when it is not
+  on a pad, in a wall or post, or on a path. Its own seeded random, so the island's shared sequence does not move.
+- **Instancing and culling:** one InstancedMesh per species, variant, part and 44 m cell, culled per frame by distance
+  (per species range) and frustum. Phones get 40 percent of the scatter and no plant shadows.
+- **Wind:** one shader sway for every plant, rising with height squared and with the rain.
+- **Palms rebuilt:** ringed, tapered, curved trunks with the palm_bark scan; nine to eleven pinnate fronds per palm
+  from a painted canvas, drooping, swaying; coconuts. Same spots and heights as before (the random calls are kept).
+- **Butterflies:** forty, working the flower drifts in sun.
+- **Removed:** the jacaranda (24 m, 8 MB after decimation); the dark rooibos bush (read as black blots).
+- **Cost:** headless Chrome M5 Pro 1440x810 gm beach rail, about 14 to 15 ms a frame (v5 about 11). 20 MB of new assets,
+  loaded after Enter for the plants, before Enter for the textures.
+- **Not verified:** a real phone, Safari, a non Apple GPU. The aerial still shows horizontal stripes across the island
+  that were there in v4 and v5 too; not diagnosed.
