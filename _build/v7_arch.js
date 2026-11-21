@@ -220,5 +220,6 @@ function archFrame(dt) {
   ARCH.glass.emissiveIntensity = 0.08 + 1.4 * L.lamps;
   if (ARCH.buoyMeshes) { const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(); ARCH.buoyMeshes.forEach(im => { ARCH.buoys.forEach((b, i) => { q.setFromEuler(e.set(Math.sin(T * 0.9 + b.ph) * 0.12, b.ph, Math.cos(T * 0.7 + b.ph) * 0.12)); m.compose(new V3(b.x, -0.55 + Math.sin(T * 0.8 + b.ph) * 0.22, b.z), q, new V3(1, 1, 1)); im.setMatrixAt(i, m); }); im.instanceMatrix.needsUpdate = true; }); }
 }
-if (typeof THREE.GLTFLoader === 'function') archLoadProps().then(() => { try { archBuildProps(); } catch (e) { console.warn('MEME ISLAND: props failed,', e.message); } });
+// started a tick later so v8 can add its props to the list first
+if (typeof THREE.GLTFLoader === 'function') Promise.resolve().then(archLoadProps).then(() => { try { archBuildProps(); if (typeof landBuild === 'function') landBuild(); } catch (e) { console.warn('MEME ISLAND: props failed,', e.message); } });
 window.__ARCH = ARCH;
