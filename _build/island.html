@@ -46,24 +46,24 @@ legend{padding:0 3px;background:var(--face)}
 #enter img.bb{width:100%;display:block;box-shadow:inset 0 0 0 1px var(--shade)}
 #enter .banner{background:linear-gradient(90deg,var(--title1),var(--title2));padding:8px 10px;display:flex;align-items:center;gap:10px;color:#fff}
 #enter .banner img{height:18px}
-#enter .banner b{font:400 30px/1 'Instrument Serif',Georgia,serif;letter-spacing:.01em}
+#enter .banner b{font:400 30px/1 Anton,Impact,sans-serif;letter-spacing:.03em;text-transform:uppercase}
 #enter p{margin:0;line-height:1.5;font-size:12px}
 #enter .btns{display:flex;justify-content:flex-end;gap:6px}
 #go{min-width:96px;font-weight:700}
 #bar{height:18px;padding:2px}
 #bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--title1) 0 9px,transparent 9px 11px);transition:width .2s}
-.small{color:var(--ink);font:400 11px/1.5 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em}
+.small{color:var(--ink);font:400 11px/1.5 'JetBrains Mono',Menlo,monospace;letter-spacing:.02em}
 /* the main window */
 #hud{position:fixed;left:12px;top:12px;z-index:10;width:300px;max-width:calc(100vw - 24px);max-height:calc(100vh - 64px);display:flex;flex-direction:column}
 #hud .body{padding:2px 4px 4px;overflow:auto}
 #hud .brand{background:var(--ink);padding:6px 8px;display:flex;align-items:center;justify-content:space-between;margin-top:2px}
 #hud .brand img{height:13px}
-#hud .brand span{color:#fff;font:400 20px/1 'Instrument Serif',Georgia,serif;letter-spacing:.01em}
-#zone{margin-top:4px;font:700 15px/1.2 'Archivo Narrow',var(--ui);letter-spacing:.04em;color:var(--blue2);text-transform:uppercase}
+#hud .brand span{color:#fff;font:400 20px/1 Anton,Impact,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+#zone{margin-top:4px;font:800 13px/1.2 'Archivo Expanded',var(--ui);letter-spacing:.04em;color:var(--blue2);text-transform:uppercase}
 #stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 6px}
 #stats span{display:flex;justify-content:space-between;gap:4px}
 #stats b{font-weight:700;font-variant-numeric:tabular-nums}
-.clock{font:400 11px/1.6 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.clock{font:400 11px/1.6 'JetBrains Mono',Menlo,monospace;letter-spacing:.02em;font-variant-numeric:tabular-nums}
 .clock b{color:var(--blue2);font-weight:600}
 .clock .ev{color:var(--blue2);font-weight:600}
 #hud .row{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
@@ -89,15 +89,15 @@ legend{padding:0 3px;background:var(--face)}
 #startmenu hr{border:0;margin:3px 2px;box-shadow:inset 0 1px var(--shade),inset 0 -1px var(--hi);height:2px}
 #tp{display:flex;flex-direction:column}
 #tp button::before{content:"\25B8";width:16px;text-align:center}
-.sub{font:600 10px 'IBM Plex Mono',Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:6px 6px 2px;color:var(--blue2)}
+.sub{font:600 10px 'JetBrains Mono',Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:6px 6px 2px;color:var(--blue2)}
 /* crosshair, tooltips, balloons */
 #cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:9;pointer-events:none}
 #cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.35)}
 #cross:before{left:6px;top:0;width:2px;height:14px}#cross:after{top:6px;left:0;height:2px;width:14px}
-#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:#fff;color:var(--ink);font:400 11px 'IBM Plex Mono',Menlo,monospace;border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
-#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:6px 12px;font:700 13px 'Archivo Narrow',var(--ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
+#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:#fff;color:var(--ink);font:400 11px 'JetBrains Mono',Menlo,monospace;border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:6px 12px;font:800 12px 'Archivo Expanded',var(--ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
 #toasts{position:fixed;right:10px;bottom:calc(40px + env(safe-area-inset-bottom,0px));z-index:32;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none;width:min(340px,calc(100vw - 20px))}
-.toast{background:#fff;color:var(--ink);font:600 11px/1.45 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em;border:1px solid #000;border-radius:7px;padding:8px 11px 8px 32px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
+.toast{background:#fff;color:var(--ink);font:600 11px/1.45 'JetBrains Mono',Menlo,monospace;letter-spacing:.02em;border:1px solid #000;border-radius:7px;padding:8px 11px 8px 32px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
 .toast:before{content:"i";position:absolute;left:8px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--title1);color:#fff;font:700 10px/14px Georgia,serif;text-align:center}
 .toast.blue:before{background:var(--ink);content:"!"}
 @keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
@@ -110,8 +110,8 @@ legend{padding:0 3px;background:var(--face)}
 #modal .art{flex:0 0 42%;display:flex;align-items:flex-start;justify-content:center}
 #modal .art canvas,#modal .art img{width:100%;height:auto;box-shadow:inset 0 0 0 1px var(--shade)}
 #modal .txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
-#modal h2{font:400 30px/1.1 'Instrument Serif',Georgia,serif;margin:0;color:var(--ink)}
-#modal .meta{font:400 11px/1.7 'IBM Plex Mono',Menlo,monospace;letter-spacing:.03em;color:var(--ink)}
+#modal h2{font:400 30px/1.1 Anton,Impact,sans-serif;letter-spacing:.02em;margin:0;color:var(--ink)}
+#modal .meta{font:400 11px/1.7 'JetBrains Mono',Menlo,monospace;letter-spacing:.03em;color:var(--ink)}
 #modal .d{font-size:12px;line-height:1.5;-webkit-user-select:text;user-select:text}
 #modal a{color:var(--blue2)}
 #modal .x{display:flex;justify-content:flex-end;margin-top:auto}
@@ -695,10 +695,17 @@ function collide(p, feet) {
 }
 
 /* ---------------- signs: Abloh owns all text ---------------- */
-/* typography: Archivo Narrow for plaque titles, IBM Plex Mono for the small print, Instrument Serif for the
-   display moments. Text is only ever Evil Eye Blue, Ink or white; the plate decides which of them reads. */
-const TYPE = { title: '"Archivo Narrow","Helvetica Neue",Arial,sans-serif', mono: '"IBM Plex Mono",Menlo,monospace', serif: '"Instrument Serif",Georgia,serif' };
+/* v11 typography, MLow's own N3W house type (N3W CUSTOM LOGOS 2026-11-18):
+   titles in N3W REDACTED, Anton with the first and last letter of each word struck by the MLOW bar and every letter
+   between slit at its own clean height (N3W_Y, the best_y table from n3w_type.py), the evil eye as every O and @;
+   second lines in Archivo Expanded (the mlow.xyz face at width 125); numbers and screens in JetBrains Mono; anything
+   handwritten (gm, WELCOME) in Permanent Marker. NEW YORKERS is always written N3W YORKERS. */
+const TYPE = { n3w: 'Anton,Impact,"Arial Narrow",sans-serif', wide: '"Archivo Expanded",Archivo,"Helvetica Neue",Arial,sans-serif', mono: '"JetBrains Mono",Menlo,monospace', hand: '"Permanent Marker","Marker Felt",cursive' };
+TYPE.title = TYPE.n3w; TYPE.serif = TYPE.hand;
 const TXT = { blue: '#2962FF', ink: '#0D0D0D', white: '#FFFFFF' };
+const N3W_Y = {"A":[0.6,0.53],"B":[0.615,0.6],"C":[0.58,0.51],"D":[0.58,0.55],"E":[0.58,0.64],"F":[0.58,0.61],"G":[0.58,0.4],"H":[0.58,0.55],"I":[0.58,0.55],"J":[0.58,0.47],"K":[0.595,0.585],"L":[0.58,0.55],"M":[0.61,0.525],"N":[0.59,0.58],"P":[0.58,0.665],"Q":[0.58,0.55],"R":[0.525,0.51],"S":[0.575,0.56],"T":[0.58,0.55],"U":[0.58,0.55],"V":[0.585,0.57],"W":[0.57,0.55],"X":[0.57,0.495],"Y":[0.59,0.605],"Z":[0.56,0.545],"0":[0.58,0.55],"1":[0.58,0.55],"2":[0.605,0.565],"3":[0.625,0.565],"4":[0.6,0.615],"5":[0.615,0.59],"6":[0.605,0.355],"7":[0.61,0.57],"8":[0.62,0.605],"9":[0.625,0.645],"&":[0.54,0.43],"#":[0.56,0.55],"$":[0.615,0.625],"%":[0.62,0.735],"!":[0.575,0.735],"?":[0.565,0.68]};
+const N3W = { BAR: 0.15, SLIT: 0.12, OV: 0.13, TRACK: 0.075, GAP: 0.30, cap: 0.735 };
+const n3wBrand = t => String(t).toUpperCase().replace(/\bNEW(\s+)YORKER/g, 'N3W$1YORKER');
 const lum = hex => { const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex || ''); if (!m) return 0; let h = m[1]; if (h.length === 3) h = h.split('').map(x => x + x).join(''); const v = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 function textColor(c, bg, accent) {
   const dark = bg ? lum(bg) < 0.45 : true, blueBg = bg && /2962ff/i.test(bg);
@@ -708,26 +715,81 @@ function textColor(c, bg, accent) {
   if (k === '#0d0d0d' || k === '#000' || k === '#000000') return TXT.ink;
   if (k === '#ffffff' || k === '#fff' || k === '#f0f4f8') return dark ? TXT.white : TXT.ink;
   if (k === '#ff6b00' || accent) return blueBg ? TXT.white : (bg && /ff6b00|ff7a1a|ffd400/i.test(bg)) ? TXT.ink : TXT.blue;
+  if (/^#(e8f0ff|ffe2b0)$/.test(k)) return c;
   return dark ? TXT.white : TXT.ink; // greys, browns, creams: the plate decides
 }
-const SIGNS = [];
+/* measure Anton's cap height once the face is in (a fallback face gives a different number, so redo on load) */
+function n3wCap(c) { try { c.font = '400 200px ' + TYPE.n3w; const m = c.measureText('H'); if (m && m.actualBoundingBoxAscent > 40) N3W.cap = m.actualBoundingBoxAscent / 200; } catch (e) { } return N3W.cap; }
+/* lay out one line of N3W REDACTED at cap height capH: per character its x, width and form */
+function n3wLayout(c, t, capH) {
+  const fs = capH / N3W.cap; c.font = '400 ' + fs + 'px ' + TYPE.n3w; if ('letterSpacing' in c) c.letterSpacing = '0px';
+  const items = []; let x = 0;
+  t.split(' ').forEach((w, wi) => {
+    if (wi) x += capH * N3W.GAP;
+    const cut = [...w].map(ch => !!N3W_Y[ch]), first = cut.indexOf(true), last = cut.lastIndexOf(true);
+    [...w].forEach((ch, i) => {
+      if (ch === 'O' || ch === '@') { const d = capH; items.push({ ch, form: 'eye', x, w: d }); x += d + capH * N3W.TRACK; return; }
+      const gw = (c.measureText(ch).width) || capH * 0.5, form = !cut[i] ? 'plain' : (i === first || i === last) ? 'struck' : 'slit';
+      const ext = form === 'struck' ? capH * (N3W.OV + 0.035) : form === 'slit' ? capH * 0.01 : 0;
+      x += ext; items.push({ ch, form, x, w: gw }); x += gw + capH * N3W.TRACK + ext;
+    });
+  });
+  return { items, width: Math.max(1, x - capH * N3W.TRACK), fs };
+}
+const n3wScratch = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+/* draw it centred on (cx, cy) with the given ink; the eyes keep their own blue whatever the ink */
+function n3wDraw(c, L, capH, cx, cy, ink) {
+  const pad = Math.ceil(capH * 0.4), W = Math.ceil(L.width + pad * 2), H = Math.ceil(capH * 1.8), sc = n3wScratch;
+  if (!sc || !sc.getContext) return; sc.width = W; sc.height = H; const o = sc.getContext('2d'); if (!o || !o.fillText) return;
+  const top = (H - capH) / 2, base = top + capH;
+  o.clearRect(0, 0, W, H); o.font = '400 ' + L.fs + 'px ' + TYPE.n3w; o.textBaseline = 'alphabetic'; o.textAlign = 'left'; o.fillStyle = ink;
+  L.items.forEach(it => { if (it.form !== 'eye') o.fillText(it.ch, pad + it.x, base); });
+  o.globalCompositeOperation = 'destination-out';
+  L.items.forEach(it => { if (it.form === 'slit') { const y = top + capH * N3W_Y[it.ch][1]; o.fillRect(pad + it.x - 1, y - capH * N3W.SLIT / 2, it.w + 2, capH * N3W.SLIT); } });
+  o.globalCompositeOperation = 'source-over'; o.fillStyle = ink;
+  L.items.forEach(it => { if (it.form === 'struck') { const y = top + capH * N3W_Y[it.ch][0]; o.fillRect(pad + it.x - capH * N3W.OV, y - capH * N3W.BAR / 2, it.w + capH * N3W.OV * 2, capH * N3W.BAR); } });
+  L.items.forEach(it => { if (it.form !== 'eye' || !o.arc) return; const ex = pad + it.x + it.w / 2, ey = top + capH / 2, r = it.w / 2;
+    [[1, '#1E77E3'], [0.575, '#FFFFFF'], [0.395, '#08DEFF']].forEach(([k, col]) => { o.fillStyle = col; o.beginPath(); o.arc(ex, ey, r * k, 0, Math.PI * 2); o.fill(); });
+    o.globalCompositeOperation = 'destination-out'; o.beginPath(); o.arc(ex, ey, r * 0.30, 0, Math.PI * 2); o.fill(); o.globalCompositeOperation = 'source-over'; });
+  try { c.drawImage(sc, cx - W / 2, cy - H / 2); } catch (e) { }
+}
+const SIGNS = []; window.__SIGNS = SIGNS;
 function signCanvas(lines, w, h, bg, fg, cv) {
   cv = cv || document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   c.clearRect(0, 0, w, h); if (bg) { c.fillStyle = bg; c.fillRect(0, 0, w, h); }
   const plate = !!bg && h >= 160 && lines.length > 1 && !/2962ff|ff6b00|ffd400|ffffff/i.test(bg);
   if (plate) { const m = Math.round(h * 0.045); c.strokeStyle = lum(bg) < 0.45 ? 'rgba(255,255,255,0.9)' : TXT.ink; c.lineWidth = Math.max(2, h * 0.006); c.strokeRect(m, m, w - 2 * m, h - 2 * m); }
-  const style = (l, i) => { const serif = /georgia|serif/i.test(l.f || '') && !/courier|mono/i.test(l.f || ''), mono = /courier|mono/i.test(l.f || '') || (l.b === false && !serif) || (i > 0 && !serif && !l.f);
-    return serif ? { fam: TYPE.serif, wt: '400', sp: 0, up: false } : mono ? { fam: TYPE.mono, wt: i > 0 && l.b !== false ? '600' : '400', sp: 0.08, up: true } : { fam: TYPE.title, wt: '700', sp: 0.02, up: true }; };
-  const sized = lines.map((l, i) => { const st = style(l, i); let sz = (l.s || 0.3) * h * (st.fam === TYPE.mono ? 0.86 : st.fam === TYPE.serif ? 1.12 : 1.06); const t = st.up ? l.t.toUpperCase() : l.t;
+  n3wCap(c);
+  const kind = (l, i) => {
+    const f = l.f || '';
+    if (/georgia|serif/i.test(f) && !/courier|mono/i.test(f)) return i === 0 && l.t.length >= 10 && l.t === l.t.toUpperCase() ? 'n3w' : 'hand';
+    if (/courier|mono/i.test(f)) return 'mono';
+    if (!/[A-Za-z0-9]/.test(l.t)) return 'wide';
+    if (i === 0 && l.b !== false) return l.t.split(' ').length <= 5 && l.t.length <= 30 ? 'n3w' : 'wide';
+    return /\d{3,}|\d+\s*(ETH|TDH|%|GWEI)/i.test(l.t) && l.t.length < 40 ? 'mono' : 'wide';
+  };
+  const maxW = w * (plate ? 0.84 : 0.9);
+  const sized = lines.map((l, i) => {
+    const k = kind(l, i); let t = k === 'hand' ? l.t : n3wBrand(l.t); if (k === 'n3w') t = t.replace(/^["\u201c]+|["\u201d]+$/g, '');
+    if (k === 'n3w') { let capH = (l.s || 0.3) * h * 0.72, L = n3wLayout(c, t, capH);
+      if (L.width > maxW) { capH *= maxW / L.width; L = n3wLayout(c, t, capH); }
+      return { l, k, t, capH, L, sz: capH / 0.72, lead: 1.22 }; }
+    const st = k === 'hand' ? { fam: TYPE.hand, wt: '400', sp: 0, f: 1.05 } : k === 'mono' ? { fam: TYPE.mono, wt: i > 0 && l.b !== false ? '700' : '500', sp: 0.04, f: 0.86 }
+      : { fam: TYPE.wide, wt: i === 0 ? '800' : l.b === false ? '500' : '700', sp: i === 0 ? 0.01 : 0.05, f: i === 0 ? 0.9 : 0.74 };
+    let sz = (l.s || 0.3) * h * st.f;
     const font = f => `${st.wt} ${f}px ${st.fam}`; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px';
-    while (c.measureText(t).width > w * (plate ? 0.84 : 0.9) && sz > 8) { sz *= 0.94; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px'; }
-    return { l, i, st, t, sz, font: font(sz), lead: st.fam === TYPE.mono ? 1.5 : 1.1 }; });
+    while (c.measureText(t).width > maxW && sz > 8) { sz *= 0.94; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px'; }
+    return { l, k, t, st, sz, font: font(sz), lead: k === 'mono' ? 1.5 : k === 'hand' ? 1.15 : 1.35 };
+  });
   const rule = plate && sized.length > 1 ? h * 0.05 : 0, total = sized.reduce((a, x) => a + x.sz * x.lead, 0) + rule; let y = (h - total) / 2;
   sized.forEach((x, k) => {
-    c.font = x.font; if ('letterSpacing' in c) c.letterSpacing = (x.st.sp * x.sz) + 'px'; c.textAlign = 'center'; c.textBaseline = 'middle';
-    c.fillStyle = textColor(x.l.c || (k === 0 ? fg : null), bg, x.l.c === '#FF6B00'); c.fillText(x.t, w / 2, y + x.sz * x.lead / 2); y += x.sz * x.lead;
+    const ink = textColor(x.l.c || (k === 0 ? fg : null), bg, x.l.c === '#FF6B00'), cy = y + x.sz * x.lead / 2;
+    if (x.k === 'n3w') n3wDraw(c, x.L, x.capH, w / 2, cy, ink);
+    else { c.font = x.font; if ('letterSpacing' in c) c.letterSpacing = (x.st.sp * x.sz) + 'px'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = ink; c.fillText(x.t, w / 2, cy); }
+    y += x.sz * x.lead;
     if (k === 0 && rule) { c.fillStyle = TXT.blue; const rw = Math.min(w * 0.18, 220); c.fillRect((w - rw) / 2, y + rule * 0.25, rw, Math.max(3, h * 0.012)); y += rule; }
   });
+  if ('letterSpacing' in c) c.letterSpacing = '0px';
   return cv;
 }
 function signTex(lines, w = 1024, h = 512, bg = '#0D0D0D', fg) {
@@ -735,9 +797,10 @@ function signTex(lines, w = 1024, h = 512, bg = '#0D0D0D', fg) {
   SIGNS.push({ cv, t, lines, w, h, bg, fg }); return t;
 }
 /* the web fonts arrive after the first draw: redraw every sign once they are in */
-if (document.fonts && document.fonts.load) Promise.all(['700 40px "Archivo Narrow"', '400 40px "IBM Plex Mono"', '600 40px "IBM Plex Mono"', '400 40px "Instrument Serif"'].map(f => document.fonts.load(f))).then(() => {
+if (document.fonts && document.fonts.load) Promise.all(['400 40px Anton', '800 40px "Archivo Expanded"', '500 40px "Archivo Expanded"', '700 40px "Archivo Expanded"', '500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"', '400 40px "Permanent Marker"'].map(f => document.fonts.load(f))).then(() => {
   SIGNS.forEach(s => { signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; });
   try { LHS.cur = -1; MINTSIGN.redraw && MINTSIGN.redraw(); COD.redraw && SKY.t && COD.redraw(SKY.t); WHALE.draw && WHALE.draw(WHALE.on ? 'ONE WHALE' : 'NO WHALES'); } catch (e) { }
+  try { window.dispatchEvent(new Event('n3wfonts')); } catch (e) { }
   window.__fontsReady = true;
 }).catch(() => { window.__fontsReady = true; });
 function plane(W, H, mat, x, y, z, ry = 0, rx = 0) {
@@ -1485,12 +1548,12 @@ function endRide() { RIDE.on = false; wheel.speed = wheelBase; teleport(wheel.cx
 function issueReceipt() {
   const cv = document.createElement('canvas'); cv.width = 600; cv.height = 900; const c = cv.getContext('2d');
   c.fillStyle = '#F6F3EA'; c.fillRect(0, 0, 600, 900); c.fillStyle = '#0D0D0D'; c.textAlign = 'center';
-  c.font = '700 34px "Courier New",monospace'; c.fillText('6529 BODEGA', 300, 80); c.font = '400 20px "Courier New",monospace'; c.fillText('MEME ISLAND · OPEN BEFORE AND AFTER THE CYCLE', 300, 116);
-  c.fillText('--------------------------------', 300, 160); c.font = '700 30px "Courier New",monospace'; c.fillText('PROOF OF TOUCHING GRASS', 300, 220);
-  c.font = '400 22px "Courier New",monospace'; c.textAlign = 'left';
+  c.font = '400 46px Anton,Impact,sans-serif'; c.fillText('6529 BODEGA', 300, 80); c.font = '500 17px "JetBrains Mono",Menlo,monospace'; c.fillText('MEME ISLAND · OPEN BEFORE AND AFTER THE CYCLE', 300, 116);
+  c.fillText('--------------------------------', 300, 160); c.font = '800 26px "Archivo Expanded",Arial,sans-serif'; c.fillText('PROOF OF TOUCHING GRASS', 300, 220);
+  c.font = '500 20px "JetBrains Mono",Menlo,monospace'; c.textAlign = 'left';
   [['GRASS TOUCHED', '1'], ['SECONDS HELD', '10'], ['GAS USED', '0'], ['WALLET CONNECTED', 'NO'], ['SEED PHRASE ASKED', 'NEVER'], ['TDH AT TIME OF TOUCH', String(Math.floor(state.tdh))], ['GM SAID TODAY', String(state.gm)], ['KEYS HELD', state.keys + '/6']].forEach(([k, v], i) => { c.fillText(k, 60, 290 + i * 46); c.textAlign = 'right'; c.fillText(v, 540, 290 + i * 46); c.textAlign = 'left'; });
-  c.textAlign = 'center'; c.fillText('--------------------------------', 300, 680); c.font = '700 26px "Courier New",monospace'; c.fillText('TOTAL:PRICELESS', 300, 730);
-  c.font = '400 18px "Courier New",monospace'; c.fillText('THIS RECEIPT IS NOT A TOKEN. IT IS A RECEIPT.', 300, 780); c.fillText('MEME ISLAND by MLow', 300, 830);
+  c.textAlign = 'center'; c.fillText('--------------------------------', 300, 680); c.font = '800 24px "JetBrains Mono",Menlo,monospace'; c.fillText('TOTAL:PRICELESS', 300, 730);
+  c.font = '500 15px "JetBrains Mono",Menlo,monospace'; c.fillText('THIS RECEIPT IS NOT A TOKEN. IT IS A RECEIPT.', 300, 780); c.fillText('MEME ISLAND by MLow', 300, 830);
   saveCanvas(cv, 'proof-of-touching-grass.png'); toast('PROOF OF TOUCHING GRASS ISSUED.', 'blue'); chime(880);
 }
 function saveCanvas(cv, name) { // downloads are blocked inside artifacts, so show the image to save by hand
@@ -1500,8 +1563,8 @@ function saveCanvas(cv, name) { // downloads are blocked inside artifacts, so sh
 function postcard() {
   frame(0); const src = renderer.domElement, W = 1600, H = Math.round(1600 * src.height / src.width), cv = document.createElement('canvas'); cv.width = W + 80; cv.height = H + 200; const c = cv.getContext('2d');
   c.fillStyle = '#F2EBDD'; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(src, 40, 40, W, H);
-  c.fillStyle = '#0D0D0D'; c.font = '400 54px Georgia,serif'; c.textAlign = 'left'; c.fillText('Greetings from MEME ISLAND', 40, H + 120);
-  c.font = '700 22px "Helvetica Neue",Helvetica,Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 527 CARDS', 40, H + 168);
+  c.fillStyle = '#0D0D0D'; c.font = '400 58px "Permanent Marker",cursive'; c.textAlign = 'left'; c.fillText('Greetings from Meme Island', 40, H + 120);
+  c.font = '800 20px "Archivo Expanded",Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 527 CARDS', 40, H + 168);
   c.fillStyle = '#0D0D0D'; c.textAlign = 'right'; c.fillText('MLow', W + 40, H + 168);
   saveCanvas(cv, 'meme-island-postcard.png'); toast('POSTCARD READY. SAVE IT, POST IT, TAG A FRIEND WHO SAYS GN.', 'blue');
 }

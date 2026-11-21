@@ -67,7 +67,7 @@ const BODEGA = { cooler: null, tubes: null };
   for (let i = 0; i < 3; i++) { const z = cz - cW / 2 + (i + 0.5) * cW / 3; const gl = new THREE.Mesh(new THREE.PlaneGeometry(cW / 3 - 0.08, cH - 0.06), door); gl.rotation.y = -PI / 2; gl.position.set(cx - 0.36, fy + 0.15 + cH / 2, z); scene.add(gl);
     sb(0.05, cH, 0.06, cx - 0.37, fy + 0.15 + cH / 2, z - cW / 6, frameM); const hd = sb(0.05, 0.9, 0.04, cx - 0.42, fy + 1.2, z + cW / 6 - 0.14, new THREE.MeshStandardMaterial({ color: 0xc9ccd0, roughness: 0.2, metalness: 1 })); }
   sb(0.05, cH, 0.06, cx - 0.37, fy + 0.15 + cH / 2, cz + cW / 2, frameM); sb(0.06, 0.1, cW + 0.1, cx - 0.37, fy + 0.15 + cH, cz, frameM); sb(0.06, 0.15, cW + 0.1, cx - 0.37, fy + 0.08, cz, frameM);
-  const hdr = cvs(512, 64, c => { c.fillStyle = '#d22a1e'; c.fillRect(0, 0, 512, 64); c.fillStyle = '#ffffff'; c.font = '700 40px Helvetica,Arial,sans-serif'; c.textAlign = 'center'; c.fillText && c.fillText('ICE COLD · JPGs · GM', 256, 47); });
+  const hdr = cvs(512, 64, c => { c.fillStyle = '#d22a1e'; c.fillRect(0, 0, 512, 64); c.fillStyle = '#ffffff'; c.font = '400 44px Anton,Impact,sans-serif'; if ('letterSpacing' in c) c.letterSpacing = '3px'; c.textAlign = 'center'; c.fillText && c.fillText('ICE COLD · JPGs · GM', 256, 47); });
   const hp = new THREE.Mesh(new THREE.PlaneGeometry(cW, 0.4), new THREE.MeshStandardMaterial({ map: hdr, emissive: 0xffffff, emissiveMap: hdr, emissiveIntensity: 0.35 })); hp.rotation.y = -PI / 2; hp.position.set(cx - 0.36, fy + cH + 0.5, cz); scene.add(hp);
 
   /* the counter gets a laminate top, a register, the lotto rack, a tip jar and a scratch off bin */
