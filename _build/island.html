@@ -46,24 +46,24 @@ legend{padding:0 3px;background:var(--face)}
 #enter img.bb{width:100%;display:block;box-shadow:inset 0 0 0 1px var(--shade)}
 #enter .banner{background:linear-gradient(90deg,var(--title1),var(--title2));padding:8px 10px;display:flex;align-items:center;gap:10px;color:#fff}
 #enter .banner img{height:18px}
-#enter .banner b{font:400 30px/1 'Instrument Serif',Georgia,serif;letter-spacing:.01em}
+#enter .banner b{font:400 30px/1 Anton,Impact,sans-serif;letter-spacing:.03em;text-transform:uppercase}
 #enter p{margin:0;line-height:1.5;font-size:12px}
 #enter .btns{display:flex;justify-content:flex-end;gap:6px}
 #go{min-width:96px;font-weight:700}
 #bar{height:18px;padding:2px}
 #bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--title1) 0 9px,transparent 9px 11px);transition:width .2s}
-.small{color:var(--ink);font:400 11px/1.5 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em}
+.small{color:var(--ink);font:400 11px/1.5 'JetBrains Mono',Menlo,monospace;letter-spacing:.02em}
 /* the main window */
 #hud{position:fixed;left:12px;top:12px;z-index:10;width:300px;max-width:calc(100vw - 24px);max-height:calc(100vh - 64px);display:flex;flex-direction:column}
 #hud .body{padding:2px 4px 4px;overflow:auto}
 #hud .brand{background:var(--ink);padding:6px 8px;display:flex;align-items:center;justify-content:space-between;margin-top:2px}
 #hud .brand img{height:13px}
-#hud .brand span{color:#fff;font:400 20px/1 'Instrument Serif',Georgia,serif;letter-spacing:.01em}
-#zone{margin-top:4px;font:700 15px/1.2 'Archivo Narrow',var(--ui);letter-spacing:.04em;color:var(--blue2);text-transform:uppercase}
+#hud .brand span{color:#fff;font:400 20px/1 Anton,Impact,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+#zone{margin-top:4px;font:800 13px/1.2 'Archivo Expanded',var(--ui);letter-spacing:.04em;color:var(--blue2);text-transform:uppercase}
 #stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 6px}
 #stats span{display:flex;justify-content:space-between;gap:4px}
 #stats b{font-weight:700;font-variant-numeric:tabular-nums}
-.clock{font:400 11px/1.6 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.clock{font:400 11px/1.6 'JetBrains Mono',Menlo,monospace;letter-spacing:.02em;font-variant-numeric:tabular-nums}
 .clock b{color:var(--blue2);font-weight:600}
 .clock .ev{color:var(--blue2);font-weight:600}
 #hud .row{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
@@ -89,15 +89,15 @@ legend{padding:0 3px;background:var(--face)}
 #startmenu hr{border:0;margin:3px 2px;box-shadow:inset 0 1px var(--shade),inset 0 -1px var(--hi);height:2px}
 #tp{display:flex;flex-direction:column}
 #tp button::before{content:"\25B8";width:16px;text-align:center}
-.sub{font:600 10px 'IBM Plex Mono',Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:6px 6px 2px;color:var(--blue2)}
+.sub{font:600 10px 'JetBrains Mono',Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:6px 6px 2px;color:var(--blue2)}
 /* crosshair, tooltips, balloons */
 #cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:9;pointer-events:none}
 #cross:before,#cross:after{content:"";position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.35)}
 #cross:before{left:6px;top:0;width:2px;height:14px}#cross:after{top:6px;left:0;height:2px;width:14px}
-#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:#fff;color:var(--ink);font:400 11px 'IBM Plex Mono',Menlo,monospace;border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
-#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:6px 12px;font:700 13px 'Archivo Narrow',var(--ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
+#aim{position:fixed;left:50%;top:calc(50% + 20px);transform:translateX(-50%);z-index:9;background:#fff;color:var(--ink);font:400 11px 'JetBrains Mono',Menlo,monospace;border:1px solid #000;padding:2px 5px;pointer-events:none;display:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#prompt{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:9;display:none;padding:6px 12px;font:800 12px 'Archivo Expanded',var(--ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
 #toasts{position:fixed;right:10px;bottom:calc(40px + env(safe-area-inset-bottom,0px));z-index:32;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none;width:min(340px,calc(100vw - 20px))}
-.toast{background:#fff;color:var(--ink);font:600 11px/1.45 'IBM Plex Mono',Menlo,monospace;letter-spacing:.02em;border:1px solid #000;border-radius:7px;padding:8px 11px 8px 32px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
+.toast{background:#fff;color:var(--ink);font:600 11px/1.45 'JetBrains Mono',Menlo,monospace;letter-spacing:.02em;border:1px solid #000;border-radius:7px;padding:8px 11px 8px 32px;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,.25);animation:tin .2s ease;max-width:100%}
 .toast:before{content:"i";position:absolute;left:8px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--title1);color:#fff;font:700 10px/14px Georgia,serif;text-align:center}
 .toast.blue:before{background:var(--ink);content:"!"}
 @keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
@@ -110,8 +110,8 @@ legend{padding:0 3px;background:var(--face)}
 #modal .art{flex:0 0 42%;display:flex;align-items:flex-start;justify-content:center}
 #modal .art canvas,#modal .art img{width:100%;height:auto;box-shadow:inset 0 0 0 1px var(--shade)}
 #modal .txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
-#modal h2{font:400 30px/1.1 'Instrument Serif',Georgia,serif;margin:0;color:var(--ink)}
-#modal .meta{font:400 11px/1.7 'IBM Plex Mono',Menlo,monospace;letter-spacing:.03em;color:var(--ink)}
+#modal h2{font:400 30px/1.1 Anton,Impact,sans-serif;letter-spacing:.02em;margin:0;color:var(--ink)}
+#modal .meta{font:400 11px/1.7 'JetBrains Mono',Menlo,monospace;letter-spacing:.03em;color:var(--ink)}
 #modal .d{font-size:12px;line-height:1.5;-webkit-user-select:text;user-select:text}
 #modal a{color:var(--blue2)}
 #modal .x{display:flex;justify-content:flex-end;margin-top:auto}
@@ -222,6 +222,8 @@ legend{padding:0 3px;background:var(--face)}
 <script src="vendor/ShaderPass.js"></script>
 <script src="vendor/MaskPass.js"></script>
 <script src="vendor/UnrealBloomPass.js"></script>
+<script src="vendor/SMAAShader.js"></script>
+<script src="vendor/SMAAPass.js"></script>
 <script src="vendor/GLTFExporter.js"></script>
 <script>window.MI_DATA=/*__DATA__*/;</script>
 <script>
@@ -310,6 +312,7 @@ const MAT = {
   paper: new THREE.MeshStandardMaterial({ color: 0xf6f3ea, roughness: 0.8, side: THREE.DoubleSide })
 };
 MAT.grass.color.set(0xd6dcc4);
+MAT.sand.color.set(0xeadcc2); // v5: the sand rendered paper white in the sun; a warm tint reads as a beach
 MAT.lime = pbr('lime', 1, { roughness: 0.95 }); MAT.lime.userData.wuv = 2.4; MAT.bankstone = MAT.lime;
 MAT.brick = pbr('brick', 1, { roughness: 0.95 }); MAT.brick.userData.wuv = 1.4;
 MAT.terr = pbr('terr', 1, { roughness: 0.5 });
@@ -318,6 +321,8 @@ MAT.road = pbr('asph', 60, { roughness: 1, polygonOffset: true, polygonOffsetFac
 MAT.water.normalMap = tex('assets/ocean_n.webp', 90, false); MAT.water.normalScale.set(0.55, 0.55); MAT.water.roughness = 0.06; MAT.water.metalness = 0.25;
 MAT.brain.color.set(0xead0d2); MAT.brain.roughness = 0.75;
 [MAT.stone, MAT.conc, MAT.wood].forEach(m => { m.map.repeat.set(1, 1); m.normalMap.repeat.set(1, 1); });
+// v5: the plain white and bone blocks get the limestone's relief (colour unchanged), so the sun finds a surface on them
+(function () { const n = tex('assets/lime_n.webp', 1, false); [MAT.white, MAT.bone].forEach(m => { m.normalMap = n; m.normalScale = new THREE.Vector2(0.5, 0.5); m.userData.wuv = 2.4; }); })();
 
 /* world-space UVs on any geometry: texture density in metres, not per face */
 function worldUV(geo, scale, axis) {
@@ -369,12 +374,106 @@ terrain.receiveShadow = true; scene.add(terrain);
 const lawn = new THREE.Mesh(polarGrid(0, 104, 48, 160, (x, z) => ground(x, z) + 0.035, 5, 3.2), MAT.grass);
 lawn.receiveShadow = true; scene.add(lawn);
 
-/* sea: displaced plane, waves in animate() */
-const seaG = new THREE.PlaneGeometry(2600, 2600, 120, 120); seaG.rotateX(-PI / 2);
+/* ---------------- v5 THE SEA ----------------
+   The ocean is a shader now, not a plane moved on the CPU. Gerstner swells roll the surface on the GPU (three long ones
+   move the geometry, three short ones only light it, per pixel); the water turns turquoise over the island's own shelf;
+   a breathing waterline and lines of white water roll in on the beach; light shines through the crests when you look
+   toward the sun. It stays a MeshStandardMaterial underneath, so the sky reflection, the shadows, the fog, the weather
+   and the time of day all keep working through it. The geometry is a polar grid, fine at the shore and coarse far out. */
+const OCEAN = { u: { uTime: { value: 0 }, uShore: { value: SHORE }, uChop: { value: 1 }, uFoam: { value: 1 }, uShallow: { value: new THREE.Color(0x33c6b6) }, uSunDir: { value: new V3(0, 1, 0) }, uSunCol: { value: new THREE.Color(1, 1, 1) } }, SHALLOW: new THREE.Color(0x33c6b6) };
+const OCEAN_GLSL = `
+uniform float uTime, uShore, uChop;
+varying vec3 vOW; varying float vCrest;
+void gwave(vec2 p, vec2 d, float L, float A, float Q, inout vec3 D, inout vec3 dT, inout vec3 dB) {
+  float k = 6.2831853 / L, c = sqrt(9.8 / k), f = k * (dot(d, p) - c * uTime), s = sin(f), co = cos(f), q = Q / k;
+  D += vec3(d.x * q * co, A * s, d.y * q * co);
+  dT += vec3(-Q * d.x * d.x * s, A * k * d.x * co, -Q * d.x * d.y * s);
+  dB += vec3(-Q * d.x * d.y * s, A * k * d.y * co, -Q * d.y * d.y * s);
+}
+void oceanWaves(vec2 p, float m, bool full, inout vec3 D, inout vec3 dT, inout vec3 dB) {
+  float a = m * uChop;
+  gwave(p, vec2(0.8, 0.6), 64.0, 0.30 * a, 0.14 * m, D, dT, dB);
+  gwave(p, vec2(-0.3486, 0.9373), 37.0, 0.18 * a, 0.14 * m, D, dT, dB);
+  gwave(p, vec2(0.9684, -0.2496), 21.0, 0.10 * a, 0.12 * m, D, dT, dB);
+  if (full) {
+    gwave(p, vec2(-0.6, -0.8), 9.0, 0.045 * a, 0.10 * m, D, dT, dB);
+    gwave(p, vec2(0.1999, 0.9798), 5.3, 0.026 * a, 0.08 * m, D, dT, dB);
+    gwave(p, vec2(-0.9138, 0.4062), 3.1, 0.015 * a, 0.06 * m, D, dT, dB);
+  }
+}
+float oceanDamp(float r) { return mix(0.28, 1.0, smoothstep(uShore - 2.0, uShore + 45.0, r)); }
+`;
+MAT.water.onBeforeCompile = sh => {
+  Object.assign(sh.uniforms, OCEAN.u); OCEAN.sh = sh;
+  sh.vertexShader = sh.vertexShader
+    .replace('#include <common>', '#include <common>\n' + OCEAN_GLSL)
+    .replace('#include <beginnormal_vertex>', `vec3 gD = vec3(0.0), gT = vec3(0.0), gB = vec3(0.0);
+      oceanWaves(position.xz, oceanDamp(length(position.xz)), false, gD, gT, gB);
+      vec3 objectNormal = normalize(cross(vec3(0.0, 0.0, 1.0) + gB, vec3(1.0, 0.0, 0.0) + gT));
+      #ifdef USE_TANGENT
+        vec3 objectTangent = vec3(tangent.xyz);
+      #endif`)
+    .replace('#include <begin_vertex>', 'vec3 transformed = position + gD; vCrest = gD.y; vOW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+  sh.fragmentShader = sh.fragmentShader
+    .replace('#include <common>', '#include <common>\n' + OCEAN_GLSL + 'uniform vec3 uShallow, uSunDir, uSunCol; uniform float uFoam;\n')
+    .replace('#include <color_fragment>', `#include <color_fragment>
+      float oR = length(vOW.xz);
+      vec3 oD = vec3(0.0), oT = vec3(0.0), oB = vec3(0.0);
+      oceanWaves(vOW.xz, oceanDamp(oR), true, oD, oT, oB);
+      vec3 oceanN = normalize(cross(vec3(0.0, 0.0, 1.0) + oB, vec3(1.0, 0.0, 0.0) + oT));
+      float oShallow = 1.0 - smoothstep(uShore - 4.0, uShore + 38.0, oR);
+      diffuseColor.rgb = mix(diffuseColor.rgb, uShallow, oShallow * 0.85);
+      diffuseColor.rgb += uShallow * 0.18 * smoothstep(0.16, 0.5, vCrest);
+      float oAng = atan(vOW.z, vOW.x);
+      float oNz = texture2D(normalMap, vOW.xz * 0.045 + vec2(uTime * 0.011, -uTime * 0.007)).r * 0.6 + texture2D(normalMap, vOW.xz * 0.11 - vec2(uTime * 0.017, uTime * 0.013)).g * 0.4;
+      float oSwash = sin(uTime * 0.5 + oAng * 5.0) * 0.9 + sin(uTime * 0.83 - oAng * 3.0) * 0.6;
+      float oBig = texture2D(normalMap, vOW.xz * 0.0085 + vec2(uTime * 0.0031, uTime * 0.0017)).b;
+      float oLine = smoothstep(1.8, 0.0, abs(oR - (uShore - 2.2 + oSwash + (oBig - 0.5) * 3.0))) * smoothstep(0.38, 0.72, oBig) * 0.8;
+      float oOut = oR - uShore;
+      float oRoll = pow(1.0 - fract(oOut / 11.0 + uTime * 0.07 + oBig * 0.35), 7.0) * smoothstep(23.0, 4.0, oOut) * step(0.0, oOut) * smoothstep(0.42, 0.75, oBig + oNz * 0.3);
+      float oFoam = clamp((oLine + oRoll * 0.85) * smoothstep(0.36, 0.62, oNz + oLine * 0.16), 0.0, 1.0) * uFoam;
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.93, 0.95, 0.94), oFoam);
+      diffuseColor.a = mix(mix(diffuseColor.a, 0.62, oShallow), 1.0, oFoam);`)
+    .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor, 0.85, oFoam);')
+    .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor = mix(metalnessFactor, 0.0, oFoam);')
+    .replace('#include <normal_fragment_begin>', '#include <normal_fragment_begin>\nnormal = normalize((viewMatrix * vec4(oceanN, 0.0)).xyz);')
+    .replace('#include <normal_fragment_maps>', `vec3 mapN = texture2D(normalMap, vUv).xyz * 2.0 - 1.0;
+      vec3 mapN2 = texture2D(normalMap, vUv * 0.31 + vec2(-uTime * 0.0021, uTime * 0.0033)).xyz * 2.0 - 1.0;
+      mapN = vec3(mapN.xy + mapN2.xy, mapN.z * mapN2.z);
+      mapN.xy *= normalScale * (1.0 - oFoam * 0.7) / (1.0 + length(vViewPosition) * 0.004);
+      normal = perturbNormal2Arb(-vViewPosition, normal, normalize(mapN), faceDirection);`)
+    .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      vec3 oV = normalize(vOW - cameraPosition);
+      float oSSS = pow(max(dot(oV, normalize(vec3(uSunDir.x, 0.15, uSunDir.z))), 0.0), 4.0) * smoothstep(-0.05, 0.4, vCrest);
+      totalEmissiveRadiance += uShallow * uSunCol * oSSS * 0.35 * (1.0 - oFoam);`);
+};
+MAT.water.customProgramCacheKey = () => 'mi-ocean-v5';
+const seaG = (function () {
+  const radii = [96, 104, 112];   // v8: no sea under the island, it is never seen there for (let r = 116; r < 230; r += 1.25) radii.push(r);
+  for (let r = 230; r < 1320;) { r = Math.min(r * 1.06, 1320); radii.push(r); }
+  const as = 256, pos = [], nrm = [], uv = [], idx = [];
+  radii.forEach(R => { for (let j = 0; j <= as; j++) { const a = j / as * PI * 2, x = Math.cos(a) * R, z = Math.sin(a) * R; pos.push(x, 0, z); nrm.push(0, 1, 0); uv.push(x / 2600 + 0.5, z / 2600 + 0.5); } });
+  for (let i = 0; i < radii.length - 1; i++) for (let j = 0; j < as; j++) { const a = i * (as + 1) + j, b = a + as + 1; idx.push(a, a + 1, b, a + 1, b + 1, b); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeBoundingSphere(); g.boundingSphere.radius += 2; return g;
+})();
 const sea = new THREE.Mesh(seaG, MAT.water); sea.receiveShadow = true; scene.add(sea);
-const seaBase = Float32Array.from(seaG.attributes.position.array);
-const foam = new THREE.Mesh(new THREE.RingGeometry(SHORE - 1.2, SHORE + 2.2, 160, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, depthWrite: false }));
-foam.rotation.x = -PI / 2; foam.position.y = 0.06; scene.add(foam);
+function updateOcean() {
+  const u = OCEAN.u, s = L.sea; u.uTime.value = T;
+  u.uShallow.value.copy(OCEAN.SHALLOW).multiplyScalar(clamp((s.r + s.g + s.b) / 1.316, 0.12, 1.15));
+  u.uSunDir.value.copy(L.dir); u.uSunCol.value.copy(L.sun).multiplyScalar(clamp(L.sunI / 1.6, 0, 1));
+  u.uChop.value = 1 + 0.9 * ((typeof WX !== 'undefined' && WX.wet) || 0);
+}
+
+/* wet sand: the last ten metres of beach go dark and glossy where the sea has just been */
+MAT.sand.onBeforeCompile = sh => {
+  sh.uniforms.uShore = OCEAN.u.uShore;
+  sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSW;').replace('#include <project_vertex>', '#include <project_vertex>\nvSW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+  sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vSW; uniform float uShore;')
+    .replace('#include <color_fragment>', '#include <color_fragment>\nfloat sWet = smoothstep(uShore - 11.0, uShore - 2.5, length(vSW.xz));\ndiffuseColor.rgb *= mix(1.0, 0.58, sWet);')
+    .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor, 0.3, sWet);');
+};
+MAT.sand.customProgramCacheKey = () => 'mi-wetsand-v5';
 
 /* panorama: one FLORA photograph wrapped twice, mirrored at the folds, Manhattan due south and due north */
 const PANO_TEX = ['pano', 'pano_dawn', 'pano_day', 'pano_night'].map(n => { const t = TL.load(`assets/${n}.webp`); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t; });
@@ -596,10 +695,17 @@ function collide(p, feet) {
 }
 
 /* ---------------- signs: Abloh owns all text ---------------- */
-/* typography: Archivo Narrow for plaque titles, IBM Plex Mono for the small print, Instrument Serif for the
-   display moments. Text is only ever Evil Eye Blue, Ink or white; the plate decides which of them reads. */
-const TYPE = { title: '"Archivo Narrow","Helvetica Neue",Arial,sans-serif', mono: '"IBM Plex Mono",Menlo,monospace', serif: '"Instrument Serif",Georgia,serif' };
+/* v11 typography, MLow's own N3W house type (N3W CUSTOM LOGOS 2026-11-18):
+   titles in N3W REDACTED, Anton with the first and last letter of each word struck by the MLOW bar and every letter
+   between slit at its own clean height (N3W_Y, the best_y table from n3w_type.py), the evil eye as every O and @;
+   second lines in Archivo Expanded (the mlow.xyz face at width 125); numbers and screens in JetBrains Mono; anything
+   handwritten (gm, WELCOME) in Permanent Marker. NEW YORKERS is always written N3W YORKERS. */
+const TYPE = { n3w: 'Anton,Impact,"Arial Narrow",sans-serif', wide: '"Archivo Expanded",Archivo,"Helvetica Neue",Arial,sans-serif', mono: '"JetBrains Mono",Menlo,monospace', hand: '"Permanent Marker","Marker Felt",cursive' };
+TYPE.title = TYPE.n3w; TYPE.serif = TYPE.hand;
 const TXT = { blue: '#2962FF', ink: '#0D0D0D', white: '#FFFFFF' };
+const N3W_Y = {"A":[0.6,0.53],"B":[0.615,0.6],"C":[0.58,0.51],"D":[0.58,0.55],"E":[0.58,0.64],"F":[0.58,0.61],"G":[0.58,0.4],"H":[0.58,0.55],"I":[0.58,0.55],"J":[0.58,0.47],"K":[0.595,0.585],"L":[0.58,0.55],"M":[0.61,0.525],"N":[0.59,0.58],"P":[0.58,0.665],"Q":[0.58,0.55],"R":[0.525,0.51],"S":[0.575,0.56],"T":[0.58,0.55],"U":[0.58,0.55],"V":[0.585,0.57],"W":[0.57,0.55],"X":[0.57,0.495],"Y":[0.59,0.605],"Z":[0.56,0.545],"0":[0.58,0.55],"1":[0.58,0.55],"2":[0.605,0.565],"3":[0.625,0.565],"4":[0.6,0.615],"5":[0.615,0.59],"6":[0.605,0.355],"7":[0.61,0.57],"8":[0.62,0.605],"9":[0.625,0.645],"&":[0.54,0.43],"#":[0.56,0.55],"$":[0.615,0.625],"%":[0.62,0.735],"!":[0.575,0.735],"?":[0.565,0.68]};
+const N3W = { BAR: 0.15, SLIT: 0.12, OV: 0.13, TRACK: 0.075, GAP: 0.30, cap: 0.735 };
+const n3wBrand = t => String(t).toUpperCase().replace(/\bNEW(\s+)YORKER/g, 'N3W$1YORKER');
 const lum = hex => { const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex || ''); if (!m) return 0; let h = m[1]; if (h.length === 3) h = h.split('').map(x => x + x).join(''); const v = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 function textColor(c, bg, accent) {
   const dark = bg ? lum(bg) < 0.45 : true, blueBg = bg && /2962ff/i.test(bg);
@@ -609,26 +715,81 @@ function textColor(c, bg, accent) {
   if (k === '#0d0d0d' || k === '#000' || k === '#000000') return TXT.ink;
   if (k === '#ffffff' || k === '#fff' || k === '#f0f4f8') return dark ? TXT.white : TXT.ink;
   if (k === '#ff6b00' || accent) return blueBg ? TXT.white : (bg && /ff6b00|ff7a1a|ffd400/i.test(bg)) ? TXT.ink : TXT.blue;
+  if (/^#(e8f0ff|ffe2b0)$/.test(k)) return c;
   return dark ? TXT.white : TXT.ink; // greys, browns, creams: the plate decides
 }
-const SIGNS = [];
+/* measure Anton's cap height once the face is in (a fallback face gives a different number, so redo on load) */
+function n3wCap(c) { try { c.font = '400 200px ' + TYPE.n3w; const m = c.measureText('H'); if (m && m.actualBoundingBoxAscent > 40) N3W.cap = m.actualBoundingBoxAscent / 200; } catch (e) { } return N3W.cap; }
+/* lay out one line of N3W REDACTED at cap height capH: per character its x, width and form */
+function n3wLayout(c, t, capH) {
+  const fs = capH / N3W.cap; c.font = '400 ' + fs + 'px ' + TYPE.n3w; if ('letterSpacing' in c) c.letterSpacing = '0px';
+  const items = []; let x = 0;
+  t.split(' ').forEach((w, wi) => {
+    if (wi) x += capH * N3W.GAP;
+    const cut = [...w].map(ch => !!N3W_Y[ch]), first = cut.indexOf(true), last = cut.lastIndexOf(true);
+    [...w].forEach((ch, i) => {
+      if (ch === 'O' || ch === '@') { const d = capH; items.push({ ch, form: 'eye', x, w: d }); x += d + capH * N3W.TRACK; return; }
+      const gw = (c.measureText(ch).width) || capH * 0.5, form = !cut[i] ? 'plain' : (i === first || i === last) ? 'struck' : 'slit';
+      const ext = form === 'struck' ? capH * (N3W.OV + 0.035) : form === 'slit' ? capH * 0.01 : 0;
+      x += ext; items.push({ ch, form, x, w: gw }); x += gw + capH * N3W.TRACK + ext;
+    });
+  });
+  return { items, width: Math.max(1, x - capH * N3W.TRACK), fs };
+}
+const n3wScratch = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+/* draw it centred on (cx, cy) with the given ink; the eyes keep their own blue whatever the ink */
+function n3wDraw(c, L, capH, cx, cy, ink) {
+  const pad = Math.ceil(capH * 0.4), W = Math.ceil(L.width + pad * 2), H = Math.ceil(capH * 1.8), sc = n3wScratch;
+  if (!sc || !sc.getContext) return; sc.width = W; sc.height = H; const o = sc.getContext('2d'); if (!o || !o.fillText) return;
+  const top = (H - capH) / 2, base = top + capH;
+  o.clearRect(0, 0, W, H); o.font = '400 ' + L.fs + 'px ' + TYPE.n3w; o.textBaseline = 'alphabetic'; o.textAlign = 'left'; o.fillStyle = ink;
+  L.items.forEach(it => { if (it.form !== 'eye') o.fillText(it.ch, pad + it.x, base); });
+  o.globalCompositeOperation = 'destination-out';
+  L.items.forEach(it => { if (it.form === 'slit') { const y = top + capH * N3W_Y[it.ch][1]; o.fillRect(pad + it.x - 1, y - capH * N3W.SLIT / 2, it.w + 2, capH * N3W.SLIT); } });
+  o.globalCompositeOperation = 'source-over'; o.fillStyle = ink;
+  L.items.forEach(it => { if (it.form === 'struck') { const y = top + capH * N3W_Y[it.ch][0]; o.fillRect(pad + it.x - capH * N3W.OV, y - capH * N3W.BAR / 2, it.w + capH * N3W.OV * 2, capH * N3W.BAR); } });
+  L.items.forEach(it => { if (it.form !== 'eye' || !o.arc) return; const ex = pad + it.x + it.w / 2, ey = top + capH / 2, r = it.w / 2;
+    [[1, '#1E77E3'], [0.575, '#FFFFFF'], [0.395, '#08DEFF']].forEach(([k, col]) => { o.fillStyle = col; o.beginPath(); o.arc(ex, ey, r * k, 0, Math.PI * 2); o.fill(); });
+    o.globalCompositeOperation = 'destination-out'; o.beginPath(); o.arc(ex, ey, r * 0.30, 0, Math.PI * 2); o.fill(); o.globalCompositeOperation = 'source-over'; });
+  try { c.drawImage(sc, cx - W / 2, cy - H / 2); } catch (e) { }
+}
+const SIGNS = []; window.__SIGNS = SIGNS;
 function signCanvas(lines, w, h, bg, fg, cv) {
   cv = cv || document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   c.clearRect(0, 0, w, h); if (bg) { c.fillStyle = bg; c.fillRect(0, 0, w, h); }
   const plate = !!bg && h >= 160 && lines.length > 1 && !/2962ff|ff6b00|ffd400|ffffff/i.test(bg);
   if (plate) { const m = Math.round(h * 0.045); c.strokeStyle = lum(bg) < 0.45 ? 'rgba(255,255,255,0.9)' : TXT.ink; c.lineWidth = Math.max(2, h * 0.006); c.strokeRect(m, m, w - 2 * m, h - 2 * m); }
-  const style = (l, i) => { const serif = /georgia|serif/i.test(l.f || '') && !/courier|mono/i.test(l.f || ''), mono = /courier|mono/i.test(l.f || '') || (l.b === false && !serif) || (i > 0 && !serif && !l.f);
-    return serif ? { fam: TYPE.serif, wt: '400', sp: 0, up: false } : mono ? { fam: TYPE.mono, wt: i > 0 && l.b !== false ? '600' : '400', sp: 0.08, up: true } : { fam: TYPE.title, wt: '700', sp: 0.02, up: true }; };
-  const sized = lines.map((l, i) => { const st = style(l, i); let sz = (l.s || 0.3) * h * (st.fam === TYPE.mono ? 0.86 : st.fam === TYPE.serif ? 1.12 : 1.06); const t = st.up ? l.t.toUpperCase() : l.t;
+  n3wCap(c);
+  const kind = (l, i) => {
+    const f = l.f || '';
+    if (/georgia|serif/i.test(f) && !/courier|mono/i.test(f)) return i === 0 && l.t.length >= 10 && l.t === l.t.toUpperCase() ? 'n3w' : 'hand';
+    if (/courier|mono/i.test(f)) return 'mono';
+    if (!/[A-Za-z0-9]/.test(l.t)) return 'wide';
+    if (i === 0 && l.b !== false) return l.t.split(' ').length <= 5 && l.t.length <= 30 ? 'n3w' : 'wide';
+    return /\d{3,}|\d+\s*(ETH|TDH|%|GWEI)/i.test(l.t) && l.t.length < 40 ? 'mono' : 'wide';
+  };
+  const maxW = w * (plate ? 0.84 : 0.9);
+  const sized = lines.map((l, i) => {
+    const k = kind(l, i); let t = k === 'hand' ? l.t : n3wBrand(l.t); if (k === 'n3w') t = t.replace(/^["\u201c]+|["\u201d]+$/g, '');
+    if (k === 'n3w') { let capH = (l.s || 0.3) * h * 0.72, L = n3wLayout(c, t, capH);
+      if (L.width > maxW) { capH *= maxW / L.width; L = n3wLayout(c, t, capH); }
+      return { l, k, t, capH, L, sz: capH / 0.72, lead: 1.22 }; }
+    const st = k === 'hand' ? { fam: TYPE.hand, wt: '400', sp: 0, f: 1.05 } : k === 'mono' ? { fam: TYPE.mono, wt: i > 0 && l.b !== false ? '700' : '500', sp: 0.04, f: 0.86 }
+      : { fam: TYPE.wide, wt: i === 0 ? '800' : l.b === false ? '500' : '700', sp: i === 0 ? 0.01 : 0.05, f: i === 0 ? 0.9 : 0.74 };
+    let sz = (l.s || 0.3) * h * st.f;
     const font = f => `${st.wt} ${f}px ${st.fam}`; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px';
-    while (c.measureText(t).width > w * (plate ? 0.84 : 0.9) && sz > 8) { sz *= 0.94; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px'; }
-    return { l, i, st, t, sz, font: font(sz), lead: st.fam === TYPE.mono ? 1.5 : 1.1 }; });
+    while (c.measureText(t).width > maxW && sz > 8) { sz *= 0.94; c.font = font(sz); if ('letterSpacing' in c) c.letterSpacing = (st.sp * sz) + 'px'; }
+    return { l, k, t, st, sz, font: font(sz), lead: k === 'mono' ? 1.5 : k === 'hand' ? 1.15 : 1.35 };
+  });
   const rule = plate && sized.length > 1 ? h * 0.05 : 0, total = sized.reduce((a, x) => a + x.sz * x.lead, 0) + rule; let y = (h - total) / 2;
   sized.forEach((x, k) => {
-    c.font = x.font; if ('letterSpacing' in c) c.letterSpacing = (x.st.sp * x.sz) + 'px'; c.textAlign = 'center'; c.textBaseline = 'middle';
-    c.fillStyle = textColor(x.l.c || (k === 0 ? fg : null), bg, x.l.c === '#FF6B00'); c.fillText(x.t, w / 2, y + x.sz * x.lead / 2); y += x.sz * x.lead;
+    const ink = textColor(x.l.c || (k === 0 ? fg : null), bg, x.l.c === '#FF6B00'), cy = y + x.sz * x.lead / 2;
+    if (x.k === 'n3w') n3wDraw(c, x.L, x.capH, w / 2, cy, ink);
+    else { c.font = x.font; if ('letterSpacing' in c) c.letterSpacing = (x.st.sp * x.sz) + 'px'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = ink; c.fillText(x.t, w / 2, cy); }
+    y += x.sz * x.lead;
     if (k === 0 && rule) { c.fillStyle = TXT.blue; const rw = Math.min(w * 0.18, 220); c.fillRect((w - rw) / 2, y + rule * 0.25, rw, Math.max(3, h * 0.012)); y += rule; }
   });
+  if ('letterSpacing' in c) c.letterSpacing = '0px';
   return cv;
 }
 function signTex(lines, w = 1024, h = 512, bg = '#0D0D0D', fg) {
@@ -636,9 +797,10 @@ function signTex(lines, w = 1024, h = 512, bg = '#0D0D0D', fg) {
   SIGNS.push({ cv, t, lines, w, h, bg, fg }); return t;
 }
 /* the web fonts arrive after the first draw: redraw every sign once they are in */
-if (document.fonts && document.fonts.load) Promise.all(['700 40px "Archivo Narrow"', '400 40px "IBM Plex Mono"', '600 40px "IBM Plex Mono"', '400 40px "Instrument Serif"'].map(f => document.fonts.load(f))).then(() => {
+if (document.fonts && document.fonts.load) Promise.all(['400 40px Anton', '800 40px "Archivo Expanded"', '500 40px "Archivo Expanded"', '700 40px "Archivo Expanded"', '500 40px "JetBrains Mono"', '700 40px "JetBrains Mono"', '400 40px "Permanent Marker"'].map(f => document.fonts.load(f))).then(() => {
   SIGNS.forEach(s => { signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; });
   try { LHS.cur = -1; MINTSIGN.redraw && MINTSIGN.redraw(); COD.redraw && SKY.t && COD.redraw(SKY.t); WHALE.draw && WHALE.draw(WHALE.on ? 'ONE WHALE' : 'NO WHALES'); } catch (e) { }
+  try { window.dispatchEvent(new Event('n3wfonts')); } catch (e) { }
   window.__fontsReady = true;
 }).catch(() => { window.__fontsReady = true; });
 function plane(W, H, mat, x, y, z, ry = 0, rx = 0) {
@@ -691,7 +853,7 @@ function buildCards() {
     b.mats.forEach((m, i) => im.setMatrixAt(i, m)); im.frustumCulled = false; im.userData.atlas = a;
     scene.add(im); b.mesh = im; cardMats.push(mat); cardMeshes.push(im);
   });
-  frameMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), MAT.ink, frameMats.length);
+  frameMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), MAT.frame || MAT.ink, frameMats.length);   // v9: MAT.frame is the framer's back
   frameMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); frameMats.forEach((m, i) => frameMesh.setMatrixAt(i, m));
   frameMesh.castShadow = true; frameMesh.receiveShadow = true; frameMesh.frustumCulled = false; scene.add(frameMesh);
 }
@@ -1029,9 +1191,7 @@ const wheel = { cards: [], cx: 62, cz: 0, hub: 0, R: 16, a: 0, speed: 0.06, rim:
 /* --- 9. THE CENSUS FERRY: NEW YORKERS on holiday, docked at the pier --- */
 (function () {
   const fx = 12, fz = 158, L = 34, Wd = 9;
-  const hullMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.55 });
-  const hull = box(Wd, 3.2, L, hullMat, fx, 0.6, fz); boxWalls(fx, fz, Wd, L);
-  box(Wd - 1.2, 3, L - 6, MAT.white, fx, 3.7, fz); box(Wd - 2.6, 2.4, L - 12, MAT.white, fx, 6.4, fz); box(1, 3.4, 1, MAT.ink, fx, 9.2, fz + 4);
+  v8Ferry(fx, fz, L, Wd); boxWalls(fx, fz, Wd, L);   // v8: a lofted double ended hull, two decks, windows, rails, funnel
   sign([{ t: 'THE CENSUS FERRY', s: 0.42, f: 'Georgia,serif', b: false }, { t: 'NEW YORKERS by MLow · NOW BOARDING NOBODY', s: 0.16 }], fx - Wd / 2 - 0.02, fz, -PI / 2, 10, 1.4, { y: 1.3, post: false, bg: '#FF7A1A', fg: '#0D0D0D' });
   let i = 0; const ny = NY_FERRY;
   [-1, 1].forEach(s => { for (let k = 0; k < 12 && i < ny.length; k++) hang('ny', ny[i++].n, fx + s * (Wd / 2 - 0.55), 3.9, fz - L / 2 + 4.4 + k * 2.27, s * PI / 2, 1.75); });
@@ -1203,7 +1363,7 @@ const cars = []; let tollArm = null, tollCD = 0;
   scene.add(lp); scene.add(lb);
   // traffic
   const cc = [0xff6b00, 0x2962ff, 0xf0efea, 0x111111, 0xffd400, 0x7b3f32];
-  for (let i = 0; i < 9; i++) { const c = new THREE.Group(); const b = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.8, 4), cm(cc[i % cc.length])); b.position.y = 0.75; b.castShadow = true; c.add(b); const t = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 2), MAT.glass); t.position.set(0, 1.4, -0.2); c.add(t); scene.add(c); cars.push({ g: c, a: i / 9 * PI * 2, lane: i % 2 ? 98 : 102, v: (i % 2 ? 1 : -1) * (0.035 + rnd() * 0.02) }); }
+  for (let i = 0; i < 9; i++) { const c = v8Car(cc[i % cc.length]); scene.add(c); cars.push({ g: c, a: i / 9 * PI * 2, lane: i % 2 ? 98 : 102, v: (i % 2 ? 1 : -1) * (0.035 + rnd() * 0.02) }); }
   // toll booth
   [-5.5, 5.5].forEach(x => { box(2, 3, 3, MAT.white, x, ground(x, 100) + 1.5, 100); boxWalls(x, 100, 2, 3); box(2.4, 0.3, 3.4, MAT.orange, x, ground(x, 100) + 3.15, 100); });
   tollArm = new THREE.Group(); tollArm.position.set(-4.4, ground(0, 100) + 1.2, 100); scene.add(tollArm);
@@ -1266,23 +1426,23 @@ const colossus = { lenses: null, lasers: [], t: 0 };
 })();
 
 /* --- 18. palms, scattered signs, residents, agents --- */
+const PALM_SPOTS = [];
 (function palms() {
-  const N = 70, trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.18, 0.32, 1, 7), MAT.trunk, N), lg = new THREE.ConeGeometry(0.55, 4.2, 4, 1); lg.rotateX(PI / 2); lg.translate(0, 0, 2.1); lg.scale(1, 0.18, 1);
-  const leaves = new THREE.InstancedMesh(lg, MAT.leaf, N * 7); let k = 0, n = 0; const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  // v6: the spots and sizes are drawn exactly as before (the island's random sequence must not move), the palms themselves are built by PALM
+  const N = 70; let n = 0;
   let tries = 0; while (n < N && tries++ < 2000) {
     const a = rnd() * 360, r = 110 + rnd() * 22, [x, z] = P2(a, r);
     if (Math.abs(x) < 10 || (z < -100 && Math.abs(x) < 18) || (x > 0 && x < 30 && z > 120)) continue;
     const g = ground(x, z), h = 6 + rnd() * 4, lean = (rnd() - 0.5) * 0.25;
-    q.setFromEuler(e.set(lean, 0, lean * 0.6)); m.compose(new V3(x, g + h / 2, z), q, new V3(1, h, 1)); trunks.setMatrixAt(n, m); post(x, z, 0.35);
-    for (let i = 0; i < 7; i++) { q.setFromEuler(e.set(0.35 + rnd() * 0.35, i / 7 * PI * 2 + rnd() * 0.3, 0, 'YXZ')); m.compose(new V3(x + lean * h * 0.5, g + h, z - lean * h * 0.3), q, new V3(1, 1, 1)); leaves.setMatrixAt(k++, m); }
+    PALM_SPOTS.push({ x, z, g, h: h * 1.15, lean }); post(x, z, 0.35);
+    for (let i = 0; i < 7; i++) { rnd(); rnd(); }
     n++;
   }
-  trunks.count = n; leaves.count = k; trunks.castShadow = leaves.castShadow = true; scene.add(trunks); scene.add(leaves);
 })();
 [['PLEASE DO NOT RIGHT CLICK THE OCEAN.', 30, 128, 0.25], ['YOU ARE EARLY. THE STAIRS ARE NOT HERE.', -20, -20, 0.8], ['TOTAL DAYS HELD. TOTAL NIGHTS AWAKE.', 22, 22, -0.8], ['DECENTRALIZE EVERYTHING. INCLUDING THIS QUEUE.', -22, 22, 0.8], ['ANOTHER HISTORIC FIRST SUNRISE.', 26, 118, 0.2], ['SZN14. STILL LEARNING TO SAY GM.', -40, 120, -0.3], ['THIS IS NOT A ROADMAP. IT IS A ROUNDABOUT.', 74, 62, -2.3]]
   .forEach(([t, x, z, ry]) => sign([{ t: Q(t), s: 0.2 }], x, z, ry, 3.6, 0.7));
 
-const residents = [], agents = [];
+const residents = [], agents = [], SHRUB_SPOTS = [];
 const RING = []; for (let i = 0; i < 8; i++) RING.push(P2(i * 45 + 22.5, 40));
 const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
 (function () {
@@ -1326,7 +1486,7 @@ const BEACH = [[0, 110], [-22, 116], [22, 116], [0, 88]];
   bs.count = bb.count = k; bl.count = k * 2; [bs, bb, bl].forEach(o => { o.castShadow = o.receiveShadow = true; scene.add(o); });
   const sh = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.7, 0), MAT.shrub, 120); let n = 0;
   for (let i = 0; i < 12; i++) { const a0 = (i + 0.5) / 12 * 360 + 7; for (let j = 0; j < 10; j++) { const [x, z] = P2(a0 + (rnd() - 0.5) * 9, 46 + rnd() * 4.5); const s = 0.6 + rnd() * 0.9; m.compose(new V3(x, ground(x, z) + s * 0.4, z), q.setFromEuler(new THREE.Euler(rnd(), rnd() * 3, 0)), new V3(s, s * 0.8, s)); sh.setMatrixAt(n++, m); } }
-  sh.count = n; sh.castShadow = true; scene.add(sh);
+  sh.count = n; sh.castShadow = true; for (let i = 0; i < n; i++) { const mm = new THREE.Matrix4(); sh.getMatrixAt(i, mm); SHRUB_SPOTS.push([mm.elements[12], mm.elements[14]]); } // v6: real shrubs stand here instead
   // GM beach loungers, three groups of four
   const lo = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.12, 2), cm(0xDDD5C7), 12), lb2 = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.9, 0.1), cm(0xDDD5C7), 12); k = 0;
   [[-26, 127], [12, 128], [28, 124]].forEach(([gx, gz]) => { for (let i = 0; i < 4; i++) { const x = gx + i * 1.2, z = gz, g = ground(x, z); m.compose(new V3(x, g + 0.32, z), q.identity(), new V3(1, 1, 1)); lo.setMatrixAt(k, m); m.compose(new V3(x, g + 0.62, z - 0.9), q.setFromEuler(new THREE.Euler(-0.6, 0, 0)), new V3(1, 1, 1)); lb2.setMatrixAt(k++, m); post(x, z, 0.5, -10, 0.9); } });
@@ -1388,12 +1548,12 @@ function endRide() { RIDE.on = false; wheel.speed = wheelBase; teleport(wheel.cx
 function issueReceipt() {
   const cv = document.createElement('canvas'); cv.width = 600; cv.height = 900; const c = cv.getContext('2d');
   c.fillStyle = '#F6F3EA'; c.fillRect(0, 0, 600, 900); c.fillStyle = '#0D0D0D'; c.textAlign = 'center';
-  c.font = '700 34px "Courier New",monospace'; c.fillText('6529 BODEGA', 300, 80); c.font = '400 20px "Courier New",monospace'; c.fillText('MEME ISLAND · OPEN BEFORE AND AFTER THE CYCLE', 300, 116);
-  c.fillText('--------------------------------', 300, 160); c.font = '700 30px "Courier New",monospace'; c.fillText('PROOF OF TOUCHING GRASS', 300, 220);
-  c.font = '400 22px "Courier New",monospace'; c.textAlign = 'left';
+  c.font = '400 46px Anton,Impact,sans-serif'; c.fillText('6529 BODEGA', 300, 80); c.font = '500 17px "JetBrains Mono",Menlo,monospace'; c.fillText('MEME ISLAND · OPEN BEFORE AND AFTER THE CYCLE', 300, 116);
+  c.fillText('--------------------------------', 300, 160); c.font = '800 26px "Archivo Expanded",Arial,sans-serif'; c.fillText('PROOF OF TOUCHING GRASS', 300, 220);
+  c.font = '500 20px "JetBrains Mono",Menlo,monospace'; c.textAlign = 'left';
   [['GRASS TOUCHED', '1'], ['SECONDS HELD', '10'], ['GAS USED', '0'], ['WALLET CONNECTED', 'NO'], ['SEED PHRASE ASKED', 'NEVER'], ['TDH AT TIME OF TOUCH', String(Math.floor(state.tdh))], ['GM SAID TODAY', String(state.gm)], ['KEYS HELD', state.keys + '/6']].forEach(([k, v], i) => { c.fillText(k, 60, 290 + i * 46); c.textAlign = 'right'; c.fillText(v, 540, 290 + i * 46); c.textAlign = 'left'; });
-  c.textAlign = 'center'; c.fillText('--------------------------------', 300, 680); c.font = '700 26px "Courier New",monospace'; c.fillText('TOTAL:PRICELESS', 300, 730);
-  c.font = '400 18px "Courier New",monospace'; c.fillText('THIS RECEIPT IS NOT A TOKEN. IT IS A RECEIPT.', 300, 780); c.fillText('MEME ISLAND by MLow', 300, 830);
+  c.textAlign = 'center'; c.fillText('--------------------------------', 300, 680); c.font = '800 24px "JetBrains Mono",Menlo,monospace'; c.fillText('TOTAL:PRICELESS', 300, 730);
+  c.font = '500 15px "JetBrains Mono",Menlo,monospace'; c.fillText('THIS RECEIPT IS NOT A TOKEN. IT IS A RECEIPT.', 300, 780); c.fillText('MEME ISLAND by MLow', 300, 830);
   saveCanvas(cv, 'proof-of-touching-grass.png'); toast('PROOF OF TOUCHING GRASS ISSUED.', 'blue'); chime(880);
 }
 function saveCanvas(cv, name) { // downloads are blocked inside artifacts, so show the image to save by hand
@@ -1403,8 +1563,8 @@ function saveCanvas(cv, name) { // downloads are blocked inside artifacts, so sh
 function postcard() {
   frame(0); const src = renderer.domElement, W = 1600, H = Math.round(1600 * src.height / src.width), cv = document.createElement('canvas'); cv.width = W + 80; cv.height = H + 200; const c = cv.getContext('2d');
   c.fillStyle = '#F2EBDD'; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(src, 40, 40, W, H);
-  c.fillStyle = '#0D0D0D'; c.font = '400 54px Georgia,serif'; c.textAlign = 'left'; c.fillText('Greetings from MEME ISLAND', 40, H + 120);
-  c.font = '700 22px "Helvetica Neue",Helvetica,Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 527 CARDS', 40, H + 168);
+  c.fillStyle = '#0D0D0D'; c.font = '400 58px "Permanent Marker",cursive'; c.textAlign = 'left'; c.fillText('Greetings from Meme Island', 40, H + 120);
+  c.font = '800 20px "Archivo Expanded",Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 527 CARDS', 40, H + 168);
   c.fillStyle = '#0D0D0D'; c.textAlign = 'right'; c.fillText('MLow', W + 40, H + 168);
   saveCanvas(cv, 'meme-island-postcard.png'); toast('POSTCARD READY. SAVE IT, POST IT, TAG A FRIEND WHO SAYS GN.', 'blue');
 }
@@ -1506,7 +1666,7 @@ function updateCalendar(t) {
   if (newDay) {
     // seasons tint the lawn: spring green, high summer, a gold autumn, a tired winter
     const doy = daysFromCivil(t.y, t.mo, t.d) - daysFromCivil(t.y, 1, 1);
-    SEASON.grass.set(doy < 59 || doy > 340 ? 0xcfcab4 : doy < 140 ? 0xd2e0bc : doy < 245 ? 0xdce6b6 : doy < 300 ? 0xe4d9a8 : 0xdacb9c);
+    SEASON.grass.set(doy < 59 || doy > 340 ? 0xe2e0d2 : doy < 140 ? 0xeef6e2 : doy < 245 ? 0xf4f8e4 : doy < 300 ? 0xf6f0d6 : 0xf0e8d2); // v6: lighter, the scanned lawn carries its own colour
     CAL.cod = CARDS[(Math.imul(t.days, 7919) >>> 0) % CARDS.length].n; if (COD.mesh) { setPlaneUV(COD.mesh, 'meme', CAL.cod, 3.4); COD.mesh.userData.card = CAL.cod; COD.redraw(t); }
     MINTSIGN.redraw && MINTSIGN.redraw();
   }
@@ -1574,7 +1734,7 @@ const GRASS = { mesh: null, shader: null };
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
   const mat = new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.9, color: 0xd6dcc4 });
   mat.onBeforeCompile = sh => { sh.uniforms.uTime = { value: 0 }; GRASS.shader = sh; sh.vertexShader = 'uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvec4 ip = instanceMatrix[3];\n\ttransformed.x += sin(uTime * 1.6 + ip.x * 0.31 + ip.z * 0.23) * 0.07 * uv.y;\n\ttransformed.z += cos(uTime * 1.3 + ip.z * 0.27) * 0.04 * uv.y;'); };
-  const N = isMobile ? 4000 : 9000, mesh = new THREE.InstancedMesh(geo, mat, N), m = new THREE.Matrix4(); let k = 0, tries = 0;
+  const N = isMobile ? 2500 : 5000, mesh = new THREE.InstancedMesh(geo, mat, N), m = new THREE.Matrix4(); let k = 0, tries = 0;
   while (k < N && tries++ < N * 6) {
     const a = rnd() * PI * 2, r = Math.sqrt(rnd()) * 101, x = Math.cos(a) * r, z = Math.sin(a) * r, g = ground(x, z);
     if (Math.abs(x) < 17.5 && Math.abs(z) < 17.5) continue; if (r > 36.5 && r < 43.5) continue; if (Math.abs(x) < 3 && Math.abs(z) > 16) continue; if (Math.abs(z) < 3 && Math.abs(x) > 16) continue;
@@ -1674,25 +1834,137 @@ function clockHud() {
    v4: the show. Bloom and grade, gulls, boats, the gm blimp, and camera rails (tour mode and the film)
    ================================================================ */
 
-/* --- post chain: bloom that wakes up at night, a quiet grade, a vignette, a whisper of grain --- */
-const POST = { on: false, comp: null, bloom: null, grade: null };
+/* --- post chain: bloom that wakes up at night, then the v5 grade.
+   v5: the composer used to draw into plain render targets, which threw away the canvas's antialiasing: every edge on the
+   island was jagged. Desktops now finish with SMAA (?aa=0 to compare); 4x multisampling of the scene draw is there
+   behind ?msaa=1 but cost about eight milliseconds a frame in testing. The grade is a real one: cool
+   shadows and warm highlights taken from the sky and the sun of the minute, a soft S curve, a trace of lens fringing at
+   the corners, the vignette and the grain. Phones keep the old cost (no multisampling). --- */
+const POST = { on: false, comp: null, bloom: null, grade: null, msaa: 0 };
+const _gl = new THREE.Color(), _gg = new THREE.Color(), _gw = new THREE.Color(1, 1, 1);
 function setupPost() {
   if (!THREE.EffectComposer || !THREE.UnrealBloomPass || !THREE.GammaCorrectionShader) return;
   try {
-    const sz = renderer.getSize(new THREE.Vector2()), comp = new THREE.EffectComposer(renderer);
-    comp.addPass(new THREE.RenderPass(scene, camera));
+    const sz = renderer.getSize(new THREE.Vector2()), pr = renderer.getPixelRatio();
+    // v8: a stencil buffer makes r128 allocate DEPTH24_STENCIL8; the default target gets DEPTH_COMPONENT16, which from the
+    // aerial (200 m up) is metres coarse and let the sea draw through the island in horizontal stripes
+    const crt = new THREE.WebGLRenderTarget(Math.round(sz.x * pr), Math.round(sz.y * pr), { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBuffer: true });
+    const comp = new THREE.EffectComposer(renderer, crt);
+    let scenePass = new THREE.RenderPass(scene, camera);
+    if (!isMobile && renderer.capabilities.isWebGL2 && THREE.WebGLMultisampleRenderTarget && /msaa=1/.test(location.search)) {
+      // only the scene draw is multisampled; it resolves and is copied into the composer's plain buffers
+      const ms = new THREE.WebGLMultisampleRenderTarget(Math.round(sz.x * pr), Math.round(sz.y * pr), { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBuffer: true });
+      ms.samples = 4; POST.msaa = 4; POST.msRT = ms;
+      const copy = new THREE.FullScreenQuad(new THREE.ShaderMaterial(THREE.CopyShader)); copy.material.uniforms.tDiffuse.value = ms.texture;
+      scenePass = new THREE.Pass(); scenePass.needsSwap = false;
+      scenePass.render = (r, writeBuffer, readBuffer) => { r.setRenderTarget(ms); r.clear(); r.render(scene, camera); r.setRenderTarget(readBuffer); copy.render(r); };
+      scenePass.setSize = (w, h) => ms.setSize(w, h);
+    }
+    comp.addPass(scenePass);
     const bloom = new THREE.UnrealBloomPass(new THREE.Vector2(sz.x, sz.y), 0.4, 0.55, 0.88); comp.addPass(bloom);
     const grade = new THREE.ShaderPass({
-      uniforms: { tDiffuse: { value: null }, uVig: { value: 0.28 }, uSat: { value: 1.08 }, uTime: { value: 0 }, uGrain: { value: 0.018 } },
+      uniforms: { tDiffuse: { value: null }, uVig: { value: 0.3 }, uSat: { value: 1.1 }, uTime: { value: 0 }, uGrain: { value: 0.016 }, uCA: { value: 0.002 }, tAO: { value: null }, uAO: { value: 0 }, uCurve: { value: 0.22 }, uLift: { value: new THREE.Color(1, 1, 1) }, uGain: { value: new THREE.Color(1, 1, 1) } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-      fragmentShader: 'uniform sampler2D tDiffuse; uniform float uVig, uSat, uTime, uGrain; varying vec2 vUv;\nfloat h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }\nvoid main(){ vec4 c = texture2D(tDiffuse, vUv); float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722)); c.rgb = mix(vec3(l), c.rgb, uSat); vec2 d = vUv - 0.5; c.rgb *= 1.0 - uVig * dot(d, d) * 2.2; c.rgb += (h(vUv * 997.0 + uTime) - 0.5) * uGrain * (0.3 + l); gl_FragColor = c; }'
+      fragmentShader: [
+        'uniform sampler2D tDiffuse, tAO; uniform float uVig, uSat, uTime, uGrain, uCA, uCurve, uAO; uniform vec3 uLift, uGain; varying vec2 vUv;',
+        'float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }',
+        'void main(){',
+        '  vec2 d = vUv - 0.5; float r2 = dot(d, d);',
+        '  vec4 c = texture2D(tDiffuse, vUv);',
+        '  c.r = texture2D(tDiffuse, vUv - d * uCA * r2 * 4.0).r; c.b = texture2D(tDiffuse, vUv + d * uCA * r2 * 4.0).b;',
+        '  c.rgb *= mix(1.0, texture2D(tAO, vUv).r, uAO);',
+        '  float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));',
+        '  c.rgb = mix(vec3(l), c.rgb, uSat);',
+        '  c.rgb *= mix(uLift, uGain, smoothstep(0.02, 0.5, l));',
+        '  vec3 g = pow(max(c.rgb, 0.0), vec3(1.0 / 2.2)); g = mix(g, g * g * (3.0 - 2.0 * g), uCurve * step(g, vec3(1.0))); c.rgb = pow(g, vec3(2.2));',
+        '  c.rgb *= 1.0 - uVig * r2 * 2.2;',
+        '  c.rgb += (h(vUv * 997.0 + uTime) - 0.5) * uGrain * (0.3 + l);',
+        '  gl_FragColor = c; }'].join('\n')
     }); comp.addPass(grade);
     comp.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
+    // edges: SMAA on desktops (about a millisecond); true 4x multisampling measured near eight, so it waits behind ?msaa=1
+    if (!isMobile && !POST.msaa && THREE.SMAAPass && !/aa=0/.test(location.search)) { const sm = new THREE.SMAAPass(sz.x * pr, sz.y * pr); comp.addPass(sm); POST.smaa = sm; }
     POST.comp = comp; POST.bloom = bloom; POST.grade = grade; POST.on = true; panoMat.uniforms.uLin.value = 1;
+    grade.uniforms.tAO.value = AO.white; setupAO(sz, pr);
   } catch (e) { POST.on = false; panoMat.uniforms.uLin.value = 0; }
 }
+
+/* --- v5 ambient occlusion: the soft dark where things meet. Every building, plinth, column and sculpture on the island
+   was lit as if it floated; now corners, feet and undersides darken the way real ones do. A half resolution depth pass
+   (the scene drawn again with colour off), an alchemy style estimate from that depth, a depth aware blur, multiplied in
+   by the grade. Desktop only, ?ao=0 to switch it off. Additive light, sky and skinned bodies sit out of the depth pass. --- */
+const AO = { on: false, white: (() => { const t = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, THREE.RGBAFormat); t.needsUpdate = true; return t; })(), hide: [], hideT: 0 };
+function setupAO(sz, pr) {
+  if (isMobile || /ao=0/.test(location.search) || !THREE.FullScreenQuad || !(renderer.capabilities.isWebGL2 || renderer.extensions.get('WEBGL_depth_texture'))) return;
+  const w = Math.max(2, Math.round(sz.x * pr / 2)), h = Math.max(2, Math.round(sz.y * pr / 2));
+  const dt = new THREE.DepthTexture(); dt.type = THREE.UnsignedIntType;
+  AO.depth = new THREE.WebGLRenderTarget(w, h, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat, depthTexture: dt });
+  AO.a = new THREE.WebGLRenderTarget(w, h, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, depthBuffer: false });
+  AO.b = AO.a.clone();
+  AO.over = new THREE.MeshBasicMaterial({ colorWrite: false });
+  const common = `uniform sampler2D tDepth; uniform mat4 uInvProj; varying vec2 vUv;
+    vec3 vpos(vec2 uv) { float d = texture2D(tDepth, uv).x; vec4 v = uInvProj * vec4(uv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0); return v.xyz / v.w; }`;
+  const vs = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+  AO.mat = new THREE.ShaderMaterial({ extensions: { derivatives: true }, depthTest: false, depthWrite: false,
+    uniforms: { tDepth: { value: dt }, uInvProj: { value: new THREE.Matrix4() }, uProjY: { value: 1 }, uRes: { value: new THREE.Vector2(w, h) }, uR: { value: 2.2 }, uK: { value: 2.4 } },
+    vertexShader: vs, fragmentShader: common + `
+    uniform float uProjY, uR, uK; uniform vec2 uRes;
+    void main() {
+      if (texture2D(tDepth, vUv).x >= 0.99999) { gl_FragColor = vec4(1.0); return; }
+      vec3 P = vpos(vUv); vec3 N = normalize(cross(dFdx(P), dFdy(P))); float dist = -P.z;
+      float rp = min(uR * uProjY * 0.5 * uRes.y / dist, 48.0);
+      if (rp < 1.5 || dist > 150.0) { gl_FragColor = vec4(1.0); return; }
+      float a0 = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) * 6.2831853, occ = 0.0;
+      for (int i = 0; i < 14; i++) {
+        float t = (float(i) + 0.5) / 14.0, a = a0 + t * 6.2831853 * 2.618;
+        vec3 v = vpos(vUv + vec2(cos(a), sin(a)) * t * rp / uRes) - P; float vv = dot(v, v);
+        occ += max(0.0, 1.0 - vv / (uR * uR)) * max(0.0, dot(v, N) / sqrt(vv + 1e-4) - 0.08);
+      }
+      float ao = clamp(1.0 - uK * occ / 14.0, 0.0, 1.0);
+      gl_FragColor = vec4(vec3(mix(ao, 1.0, smoothstep(70.0, 150.0, dist))), 1.0);
+    }` });
+  AO.blur = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false,
+    uniforms: { tDepth: { value: dt }, tAO: { value: AO.a.texture }, uInvProj: AO.mat.uniforms.uInvProj, uPx: { value: new THREE.Vector2(1 / w, 1 / h) } },
+    vertexShader: vs, fragmentShader: common + `
+    uniform sampler2D tAO; uniform vec2 uPx;
+    void main() {
+      float z0 = vpos(vUv).z, s = 0.0, ws = 0.0;
+      for (int x = -2; x <= 2; x++) for (int y = -2; y <= 2; y++) {
+        vec2 o = vec2(float(x), float(y)) * uPx * 1.5; float z = vpos(vUv + o).z;
+        float wt = max(0.0, 1.0 - abs(z - z0) / (0.04 * abs(z0) + 0.05));
+        s += texture2D(tAO, vUv + o).r * wt; ws += wt;
+      }
+      gl_FragColor = vec4(vec3(ws > 0.0 ? s / ws : 1.0), 1.0);
+    }` });
+  AO.quad = new THREE.FullScreenQuad(AO.mat);
+  AO.on = true; POST.grade.uniforms.uAO.value = 0.9;
+  const setAO = POST.comp.setSize.bind(POST.comp); POST.comp.setSize = (W, H) => { setAO(W, H); const p2 = renderer.getPixelRatio(), w2 = Math.max(2, Math.round(W * p2 / 2)), h2 = Math.max(2, Math.round(H * p2 / 2)); [AO.depth, AO.a, AO.b].forEach(r => r.setSize(w2, h2)); AO.mat.uniforms.uRes.value.set(w2, h2); AO.blur.uniforms.uPx.value.set(1 / w2, 1 / h2); };
+}
+function renderAO() {
+  if (!AO.on) return;
+  if ((AO.hideT -= 1) <= 0) { AO.hideT = 90; AO.hide.length = 0;
+    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || m.alphaTest > 0 || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
+  const vis = AO.hide.map(o => o.visible); AO.hide.forEach(o => o.visible = false);
+  const bg = scene.background, cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
+  try { scene.overrideMaterial = AO.over; renderer.setRenderTarget(AO.depth); renderer.clear(); renderer.render(scene, camera); }
+  catch (e) { AO.fail = (AO.fail || 0) + 1; AO.hideT = 0; if (AO.fail > 3) { AO.on = false; POST.grade.uniforms.uAO.value = 0; console.warn('MEME ISLAND: ambient occlusion off,', e.message); } }
+  finally { scene.overrideMaterial = null; AO.hide.forEach((o, i) => o.visible = vis[i]); }
+  if (!AO.on) { renderer.setRenderTarget(null); return; }
+  AO.mat.uniforms.uInvProj.value.copy(camera.projectionMatrixInverse); AO.mat.uniforms.uProjY.value = camera.projectionMatrix.elements[5];
+  AO.quad.material = AO.mat; renderer.setRenderTarget(AO.a); AO.quad.render(renderer);
+  AO.quad.material = AO.blur; renderer.setRenderTarget(AO.b); AO.quad.render(renderer);
+  renderer.setRenderTarget(null); renderer.setClearColor(cc, ca);
+  POST.grade.uniforms.tAO.value = AO.b.texture;
+}
+// a colour pushed toward white by (1 - k), normalised so its brightest channel is 1: a tint, never a dimmer
+function tint(out, c, k) { const m = Math.max(c.r, c.g, c.b, 1e-4); out.setRGB(c.r / m, c.g / m, c.b / m); return out.lerp(_gw, 1 - k); }
 function renderFrame() {
-  if (POST.on) { POST.grade.uniforms.uTime.value = (T * 60) % 1000; POST.bloom.strength = 0.28 + 0.62 * L.lamps; POST.bloom.threshold = 0.9 - 0.18 * L.lamps; POST.comp.render(); }
+  if (POST.on) {
+    const u = POST.grade.uniforms; u.uTime.value = (T * 60) % 1000;
+    tint(u.uGain.value, L.sun, 0.16 * (1 - 0.6 * L.lamps)); tint(u.uLift.value, L.sky, 0.2);
+    const gn = u.uGain.value, lf = u.uLift.value, k = 3 / (gn.r + gn.g + gn.b + lf.r + lf.g + lf.b) * 2; gn.multiplyScalar(Math.min(k, 1.12)); lf.multiplyScalar(Math.min(k, 1.12));
+    POST.bloom.strength = 0.28 + 0.62 * L.lamps; POST.bloom.threshold = 0.9 - 0.18 * L.lamps; renderAO(); POST.comp.render();
+  }
   else renderer.render(scene, camera);
 }
 
@@ -1708,10 +1980,7 @@ const GULLS = (function () {
 const BOATS = (function () {
   const list = [];
   for (let i = 0; i < 6; i++) {
-    const g = new THREE.Group(), hull = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.8, 5.5), cm(i % 2 ? 0xf0efea : 0x1b2a4a)); hull.position.y = 0.3; g.add(hull);
-    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 7, 6), MAT.white); mast.position.y = 3.8; g.add(mast);
-    const sail = new THREE.Mesh(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute([0, 0.8, -2.2, 0, 7, -0.1, 0, 0.8, 1.6], 3)), new THREE.MeshStandardMaterial({ color: i === 2 ? 0x2962ff : i === 4 ? 0xff6b00 : 0xfafaf5, side: THREE.DoubleSide, roughness: 0.7 }));
-    sail.geometry.computeVertexNormals(); g.add(sail); g.traverse(o => o.castShadow = true); scene.add(g);
+    const g = v8Sloop(i); scene.add(g);   // v8: lofted hull, main and jib with belly
     list.push({ g, r: 180 + i * 22, a: i * 1.1, v: (i % 2 ? 1 : -1) * (0.012 + rnd() * 0.01) });
   }
   return list;
@@ -2016,10 +2285,8 @@ let tollOpen = 0;
 /* ---------------- world updates ---------------- */
 const _q = new THREE.Quaternion(), _p = new V3();
 function updateWorld(dt, t) {
-  // sea
-  const pa = seaG.attributes.position.array;
-  for (let i = 0; i < pa.length; i += 3) { const x = seaBase[i], z = seaBase[i + 2]; pa[i + 1] = Math.sin(x * 0.03 + t * 0.9) * 0.18 + Math.cos(z * 0.025 - t * 0.7) * 0.16 + Math.sin((x + z) * 0.08 + t * 1.7) * 0.05; }
-  seaG.attributes.position.needsUpdate = true; foam.material.opacity = 0.25 + 0.15 * Math.sin(t * 1.3);
+  // sea: the waves run on the GPU now (v5 THE SEA)
+  updateOcean();
   // lighthouse
   lhBeam.rotation.y = t * 0.6; if (TIME.gmT <= 0 && !state.vault) LHS.draw(Math.floor(t / 4) % 4);
   // conveyor
@@ -2118,7 +2385,7 @@ function frame(dt) {
   if (GRASS.shader) GRASS.shader.uniforms.uTime.value = T; MAT.water.normalMap.offset.set(T * 0.004, T * 0.0025);
   lhBeam.visible = L.lamps > 0.25;
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
-  updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
+  natFrame(dt); archFrame(dt); landFrame(dt); detFrame(dt); bodegaFrame(); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
   // camera
   const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
@@ -2156,6 +2423,12 @@ addEventListener('blur', () => { POWER.blurred = true; }); addEventListener('foc
 function powerBudget() { return POWER.blurred ? 160 : performance.now() - POWER.last < 20000 ? 15.5 : 32; }
 window.__POWER = POWER; window.__powerBudget = powerBudget;
 function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFrame(loop); return; } POWER.drawn = now; POWER.frames++; const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
+
+/*__V6_NATURE__*/
+/*__V7_ARCH__*/
+/*__V8_LAND__*/
+/*__V9_DETAIL__*/
+/*__V10_INTERIORS__*/
 
 /* ---------------- boot ---------------- */
 buildCards();

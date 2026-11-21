@@ -1,6 +1,10 @@
-@font-face{font-family:'Archivo Narrow';font-style:normal;font-weight:500;font-display:block;src:url(fonts/ArchivoNarrow-500.woff2) format('woff2')}
-@font-face{font-family:'Archivo Narrow';font-style:normal;font-weight:700;font-display:block;src:url(fonts/ArchivoNarrow-700.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:block;src:url(fonts/IBMPlexMono-400.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:block;src:url(fonts/IBMPlexMono-600.woff2) format('woff2')}
-@font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:block;src:url(fonts/InstrumentSerif-400i.woff2) format('woff2')}
-@font-face{font-family:'Instrument Serif';font-style:normal;font-weight:400;font-display:block;src:url(fonts/InstrumentSerif-400.woff2) format('woff2')}
+@font-face{font-family:'Archivo Narrow';font-style:normal;font-weight:500;font-display:block;src:url(ArchivoNarrow-500.woff2) format('woff2')}
+@font-face{font-family:'Archivo Narrow';font-style:normal;font-weight:700;font-display:block;src:url(ArchivoNarrow-700.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:block;src:url(IBMPlexMono-400.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:block;src:url(IBMPlexMono-600.woff2) format('woff2')}
+@font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:block;src:url(InstrumentSerif-400i.woff2) format('woff2')}
+@font-face{font-family:'Instrument Serif';font-style:normal;font-weight:400;font-display:block;src:url(InstrumentSerif-400.woff2) format('woff2')}
+@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:block;src:url(Anton-400.woff2) format('woff2')}
+@font-face{font-family:'Archivo Expanded';font-style:normal;font-weight:500 900;font-display:block;src:url(ArchivoExpanded.woff2) format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:block;src:url(JetBrainsMono.woff2) format('woff2')}
+@font-face{font-family:'Permanent Marker';font-style:normal;font-weight:400;font-display:block;src:url(PermanentMarker-400.woff2) format('woff2')}

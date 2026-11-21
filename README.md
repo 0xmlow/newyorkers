@@ -80,3 +80,111 @@ agents stay static: they hurry at 1.6 m/s, twice the walk the rig was made for.
 - Film: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_rollout/island_rig.mp4`.
 - `_build/harness_island.js` stops at `c.strokeRect is not a function` (its canvas stub lacks strokeRect) on the
   committed page too, before and after this change, so it was not a check here. Not seen on a real phone.
+
+## v5 the finish, 2026-11-21
+
+A look pass, all in `_build/island.html` (search `v5`). No new assets beyond two vendored three.js r128 files.
+
+- **The sea is a shader.** Gerstner swells on the GPU (three long ones move the geometry, three short ones light it per
+  pixel), a second scrolling normal layer, turquoise shallows over the island's shelf, a breathing waterline and broken
+  lines of white water rolling onto the beach, light through the crests toward the sun. Still a MeshStandardMaterial
+  (`onBeforeCompile`), so sky reflection, shadows, fog, weather (`uChop` grows with rain) and time of day work through
+  it. The geometry is a polar grid, 1.25 m rings at the shore, coarse far out. The old CPU wave loop and foam ring are gone.
+- **Wet sand:** the last ten metres of beach darken and turn glossy. The sand is tinted warm (0xeadcc2): it rendered
+  paper white in the sun.
+- **Relief on the white blocks:** MAT.white and MAT.bone take the limestone normal map in world UVs, colour unchanged.
+- **Ambient occlusion** (desktop, `?ao=0` to compare): half resolution depth pass, an alchemy style estimate, a depth
+  aware blur, multiplied in by the grade. Additive light, the sky, skinned bodies, shader materials and anything with a
+  missing attribute sit out of the depth pass; after three render errors it switches itself off.
+- **Antialiasing** (desktop, `?aa=0` to compare): SMAA at the end of the chain (`site/vendor/SMAAPass.js`,
+  `SMAAShader.js`, from three r128). The composer had been throwing the canvas's antialiasing away since v4. True 4x
+  multisampling of the scene draw is behind `?msaa=1`: in headless Chrome on an M5 Pro it cost about eight ms a frame.
+- **Grade:** cool shadows and warm highlights taken from the sky and sun of the minute, a soft S curve in gamma space,
+  a trace of lens fringing at the corners, then the old vignette and grain.
+- **Cost:** headless Chrome, M5 Pro, 1440x810, gm beach rail, mean of 20 frames: v4 10.9 and 11.9 ms, v5 11.1 and
+  11.7 ms. The GPU waves pay for the occlusion. Phones get the sea, the sand and the grade; no AO, no SMAA.
+- **Not verified:** a real phone, a non Apple GPU, Safari, and the photoreal film and hype cuts (not re-rendered).
+- Harness mock gained `strokeRect` (it failed at HEAD without it).
+
+## v6 nature, 2026-11-21 (later)
+
+MLow: v5 still looked bad; "next level", better textures, realistic assets, flowers. All CC0 from Poly Haven, no paid
+generation. Code in `_build/v6_nature.js`, inlined by `build.py` at `/*__V6_NATURE__*/`.
+
+- **Scanned surfaces** (`site/assets/ph/*_c|n|r.webp`): coast_sand_01 (beach), leafy_grass (lawn), weathered_planks
+  (boardwalk, decks), concrete_floor_02, white_stucco (white and bone blocks), hexagonal_concrete_paving (the plaza ring
+  and paths, which now get world UVs). Sand and lawn break their repeat with a rotated second read and a slow brightness
+  field, and are remapped (sand paler, lawn greener). Cloud shadows drift across both when the weather is SCATTERED.
+  The season tints were lightened because the scan carries its own colour.
+- **Plants and rocks** (`site/assets/ph/ph_*.glb`, 14 files): gazania, periwinkle, ursinia, dandelion, fern, shrub,
+  bermuda tufts, dune grass, ice plant, two island trees, boulders, beach rocks, coastal rocks, conch shells. Lineups
+  were split into single plants and decimated in headless Blender (scratch scripts `ph_get.py`, `ph_pass.py`,
+  `ph_split.py`, not kept in the repo; the recipe is: fetch the 1k glTF from api.polyhaven.com with a User-Agent, join,
+  separate loose parts, cluster by plan overlap, decimate per plant, base at origin, export GLB with AUTO images).
+  Plants are sized by a target height per species, not by their scan.
+- **Placement** (`natScatter`): 120 flower drifts of one or two species, 1,500 tufts, ferns and shrubs, real shrubs at
+  the old icosahedron spots, 26 trees in open lawn (with a collision post each), dune grass and ice plant on the beach,
+  shells at the tide line, boulders and coastal rocks half in the sea around the shore. A cell is free when it is not
+  on a pad, in a wall or post, or on a path. Its own seeded random, so the island's shared sequence does not move.
+- **Instancing and culling:** one InstancedMesh per species, variant, part and 44 m cell, culled per frame by distance
+  (per species range) and frustum. Phones get 40 percent of the scatter and no plant shadows.
+- **Wind:** one shader sway for every plant, rising with height squared and with the rain.
+- **Palms rebuilt:** ringed, tapered, curved trunks with the palm_bark scan; nine to eleven pinnate fronds per palm
+  from a painted canvas, drooping, swaying; coconuts. Same spots and heights as before (the random calls are kept).
+- **Butterflies:** forty, working the flower drifts in sun.
+- **Removed:** the jacaranda (24 m, 8 MB after decimation); the dark rooibos bush (read as black blots).
+- **Cost:** headless Chrome M5 Pro 1440x810 gm beach rail, about 14 to 15 ms a frame (v5 about 11). 20 MB of new assets,
+  loaded after Enter for the plants, before Enter for the textures.
+- **Not verified:** a real phone, Safari, a non Apple GPU. The aerial still shows horizontal stripes across the island
+  that were there in v4 and v5 too; not diagnosed.
+
+## v7 architecture, 2026-11-21 (later still)
+
+MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, inlined at `/*__V7_ARCH__*/`.
+
+- **Weathering on every building material** (white, bone, concrete, corrugated iron, brick, limestone, bunker, sandstone,
+  caps, plinths): grime in the first 1.5 m above the ground, rain streaks under edges on vertical faces only, a slow dirt
+  field. One shader chunk, chained onto any existing `onBeforeCompile`.
+- **Caps and plinths on every wall:** any unrotated wall box at least 2.3 m tall and 2.4 m long gets a concrete coping
+  and (if it reaches the ground) a 55 cm plinth, merged into two meshes (two draws for the whole island).
+- **The Meme Factory:** corrugated iron cladding (MAT.red), clerestory windows with steel frames and mullions on three
+  sides that glow at night, a half raised roller shutter and drum under the lintel, downpipes and gutters, a 19 m brick
+  chimney with steel bands that smokes (points, drifting with the wind), and a yard of barrels, crates, a generator,
+  bags, AC units, a duct and wall lamps.
+- **SURVIVE:** board formed concrete (concrete_wall_004), tyres, barrels, utility boxes.
+- **The bank:** fluted columns (24 flutes), capitals and bases, planters on the steps.
+- **The crane:** a lattice mast and jib of instanced struts replace the orange boxes; a cab.
+- **The bodega:** a striped canvas awning with a valance, crates, gas bottles, a cafe table, a bin, an AC unit, a meter box.
+- **Streets:** 16 lamps round the plaza ring and lamps, bins and hydrants down the four avenues; their bulbs follow the
+  island's lamp level. Picnic tables and benches in the lawn. Lifebuoys on the pier; buoys riding the swell in the harbour.
+- **The Colossus plinth** in white sandstone blocks.
+- **Dropped** from v6: the bermuda tufts (their alpha rendered black at a distance).
+- **Cost:** about 15 ms a frame on the gm beach rail (v6 about 14). 28 MB in `site/assets/ph` all told.
+- **Not verified:** a phone, Safari, a non Apple GPU; interiors were not reworked; the lighthouse, the toll booths, the
+  ferry and the Summer.jpg house were left as they were.
+
+## v8 landmarks and water (2026-11-21)
+- The aerial stripes are fixed. The post chain's render targets had a 16 bit depth buffer (three r128's default without a stencil), which from 200 m up is metres coarse, so the sea drew through the island. The composer now gets a target with `stencilBuffer: true`, which allocates 24 bit depth. The sea also has no geometry under the island any more.
+- `_build/v8_land.js` (inlined at `/*__V8_LAND__*/`): `v8Loft` builds hulls from cross sections. The Census Ferry is a double ended harbour boat with two decks, wrapped window bands that light at night, railings, two wheelhouses, an oval funnel, a spinning radar and a flag. The sailboats are lofted sloops with a main and jib that billow. The traffic is bevelled cars with glass, wheels and lamps.
+- Toll plaza: canopy on four columns, light panels, glass booths, a striped arm with a counterweight, rumble strips, Poly Haven road barriers and a wet floor sign. The lighthouse has a gallery, railing, mullions, a vent ball, a rod and a red beacon. SUMMER.JPG has striped canvas umbrellas with ribs, plus chairs. The harbour has two lateral sea markers and a tall ship at anchor (ship_pinnace, 16k tris, 2 MB).
+- Prop loading in v7 now starts a microtask later so v8 can add to `PROP_FILES`; `landBuild()` runs after `archBuildProps()`.
+- About 16 ms a frame on the gm beach rail (v7: 15).
+
+## v9 detail (2026-11-21)
+- `_build/v9_detail.js` (inlined at `/*__V9_DETAIL__*/`).
+- The Colossus stands on a real sea rock: a noise-displaced icosahedron with seaside_rock projected on three axes, darker and glossier at the waterline, and 26 boulders round it. The 2030 stepping stones are rough cut in rock_boulder_dry.
+- The TAP basin is sandstone with a concrete coping. The brain, wagmi and lighthouse platforms are poured concrete instead of the old lumpy white stone (the Arsham plinths keep it on purpose).
+- Every card has a framer's back: a black frame, a kraft paper dust cover, a label and a hanging wire (`MAT.frame`, set before `buildCards()`).
+- The TAP runs water: a scrolling stream, a rippled pool, a splash of droplets and a foam ring.
+- The factory has steel roof trusses, 15 Poly Haven hanging lamps and painted safety lines.
+- three's polyhedra are non-indexed, so `v9Smooth` welds normals by position or the rock reads faceted.
+
+## v10 the bodega (2026-11-21)
+- `_build/v10_interiors.js` (inlined at `/*__V10_INTERIORS__*/`) turns the 6529 Bodega into a New York bodega:
+  - a worn checker floor and a drop ceiling with six flickering fluorescent panels;
+  - a lit three-door glass cooler with about 400 bottles;
+  - a two-sided shelving aisle of boxes and cans;
+  - a laminate counter with a register, the lotto ticket rack, a tip jar and candy, plus shelves behind it;
+  - an ATM and a door mat.
+- No new downloads: every texture is drawn on a canvas.
+- Fix: the v8 ferry and sloop vertex colours are now converted to linear, so the ferry reads orange, not tan.
