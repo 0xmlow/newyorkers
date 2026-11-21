@@ -2324,7 +2324,7 @@ function frame(dt) {
   if (GRASS.shader) GRASS.shader.uniforms.uTime.value = T; MAT.water.normalMap.offset.set(T * 0.004, T * 0.0025);
   lhBeam.visible = L.lamps > 0.25;
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
-  natFrame(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
+  natFrame(dt); archFrame(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
   // camera
   const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
@@ -2364,6 +2364,7 @@ window.__POWER = POWER; window.__powerBudget = powerBudget;
 function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFrame(loop); return; } POWER.drawn = now; POWER.frames++; const dt = clamp((now - last) / 1000, 0, 0.05); last = now; if (!window.__pauseLoop) frame(dt); requestAnimationFrame(loop); } // rAF's first timestamp can be earlier than the boot clock
 
 /*__V6_NATURE__*/
+/*__V7_ARCH__*/
 
 /* ---------------- boot ---------------- */
 buildCards();

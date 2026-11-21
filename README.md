@@ -137,3 +137,28 @@ generation. Code in `_build/v6_nature.js`, inlined by `build.py` at `/*__V6_NATU
   loaded after Enter for the plants, before Enter for the textures.
 - **Not verified:** a real phone, Safari, a non Apple GPU. The aerial still shows horizontal stripes across the island
   that were there in v4 and v5 too; not diagnosed.
+
+## v7 architecture, 2026-11-21 (later still)
+
+MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, inlined at `/*__V7_ARCH__*/`.
+
+- **Weathering on every building material** (white, bone, concrete, corrugated iron, brick, limestone, bunker, sandstone,
+  caps, plinths): grime in the first 1.5 m above the ground, rain streaks under edges on vertical faces only, a slow dirt
+  field. One shader chunk, chained onto any existing `onBeforeCompile`.
+- **Caps and plinths on every wall:** any unrotated wall box at least 2.3 m tall and 2.4 m long gets a concrete coping
+  and (if it reaches the ground) a 55 cm plinth, merged into two meshes (two draws for the whole island).
+- **The Meme Factory:** corrugated iron cladding (MAT.red), clerestory windows with steel frames and mullions on three
+  sides that glow at night, a half raised roller shutter and drum under the lintel, downpipes and gutters, a 19 m brick
+  chimney with steel bands that smokes (points, drifting with the wind), and a yard of barrels, crates, a generator,
+  bags, AC units, a duct and wall lamps.
+- **SURVIVE:** board formed concrete (concrete_wall_004), tyres, barrels, utility boxes.
+- **The bank:** fluted columns (24 flutes), capitals and bases, planters on the steps.
+- **The crane:** a lattice mast and jib of instanced struts replace the orange boxes; a cab.
+- **The bodega:** a striped canvas awning with a valance, crates, gas bottles, a cafe table, a bin, an AC unit, a meter box.
+- **Streets:** 16 lamps round the plaza ring and lamps, bins and hydrants down the four avenues; their bulbs follow the
+  island's lamp level. Picnic tables and benches in the lawn. Lifebuoys on the pier; buoys riding the swell in the harbour.
+- **The Colossus plinth** in white sandstone blocks.
+- **Dropped** from v6: the bermuda tufts (their alpha rendered black at a distance).
+- **Cost:** about 15 ms a frame on the gm beach rail (v6 about 14). 28 MB in `site/assets/ph` all told.
+- **Not verified:** a phone, Safari, a non Apple GPU; interiors were not reworked; the lighthouse, the toll booths, the
+  ferry and the Summer.jpg house were left as they were.

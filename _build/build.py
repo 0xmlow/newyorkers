@@ -6,7 +6,7 @@ import json
 d = json.load(open(os.path.join(H, '..', 'site', 'assets', 'data.json')))
 d['sculpts'] = json.load(open(os.path.join(H, '..', 'site', 'assets', 'sculpts.json')))
 data = json.dumps(d, separators=(',', ':'))
-out = src.replace('/*__DATA__*/', data).replace('/*__V6_NATURE__*/', open(os.path.join(H, 'v6_nature.js')).read())
+out = src.replace('/*__DATA__*/', data).replace('/*__V6_NATURE__*/', open(os.path.join(H, 'v6_nature.js')).read()).replace('/*__V7_ARCH__*/', open(os.path.join(H, 'v7_arch.js')).read())
 open(os.path.join(H, '..', 'site', 'index.html'), 'w').write(out)
 print('site/index.html', len(out) // 1024, 'KB')
 

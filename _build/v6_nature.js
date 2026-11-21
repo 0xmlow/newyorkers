@@ -144,7 +144,8 @@ function natScatter() {
     for (let i = 0; i < n; i++) { const a = R() * PI * 2, r = Math.sqrt(R()) * rad, x = p[0] + Math.cos(a) * r, z = p[1] + Math.sin(a) * r; if (!natLawn(x, z) || natBlocked(x, z, 0.15)) continue; natAdd(R() < 0.75 ? sp : sp2, x, z, 2.4 + R() * 1.6); }
   }
   // grass tufts everywhere on the lawn, ferns and shrubs where the lawn meets things
-  for (let i = 0; i < Math.round(1500 * NAT_LIGHT); i++) { const p = lawnPt(0.2); if (p) natAdd('tuft', p[0], p[1], 0.9 + R() * 0.9); }
+  // (bermuda tufts dropped 2026-11-21: their alpha rendered black at a distance; the canvas grass covers the lawn)
+  for (let i = 0; i < Math.round(1500 * NAT_LIGHT); i++) lawnPt(0.2); // keep the sequence
   for (let i = 0; i < Math.round(260 * NAT_LIGHT); i++) { const p = lawnPt(0.6); if (!p) continue; const k = R(); natAdd(k < 0.45 ? 'fern' : k < 0.75 ? 'shrub' : 'periwinkle', p[0], p[1], k < 0.45 ? 1.0 + R() * 0.6 : k < 0.75 ? 2.6 + R() * 1.8 : 3 + R() * 1.5); }
   // real shrubs where the old green icosahedra stood
   SHRUB_SPOTS.forEach(([x, z], i) => { const k = R(); natAdd(k < 0.6 ? 'shrub' : 'fern', x, z, k < 0.6 ? 3 + R() * 2 : 1.2 + R() * 0.5); });
@@ -169,7 +170,7 @@ function natBuild() {
     va.parts.forEach(pt => {
       const im = new THREE.InstancedMesh(pt.g, pt.m, list.length);
       list.forEach((p, i) => { q.setFromEuler(e.set((natRnd() - 0.5) * 0.08, p.ry, (natRnd() - 0.5) * 0.08)); m4.compose(new V3(p.x, p.y, p.z), q, new V3(p.s, p.s * (0.9 + natRnd() * 0.2), p.s)); im.setMatrixAt(i, m4); });
-      im.castShadow = a.shadow && !isMobile; im.receiveShadow = true; im.frustumCulled = false; im.userData.nat = { c: new V3(cx, list[0].y + va.h * 0.5, cz), r: rad, range: a.range };
+      im.castShadow = a.shadow && !isMobile; im.receiveShadow = true; im.frustumCulled = false; im.userData.nat = { c: new V3(cx, list[0].y + va.h * 0.5, cz), r: rad, range: a.range, id };
       scene.add(im); NAT.meshes.push(im);
     });
   });
@@ -182,7 +183,7 @@ function natFrame(dt) {
   if (!NAT.ready) return;
   camera.updateMatrixWorld(); _natM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); _natFr.setFromProjectionMatrix(_natM);
   const cp = camera.position;
-  for (const im of NAT.meshes) { const u = im.userData.nat; _natS.center.copy(u.c); _natS.radius = u.r; im.visible = cp.distanceTo(u.c) - u.r < u.range && _natFr.intersectsSphere(_natS); }
+  for (const im of NAT.meshes) { const u = im.userData.nat; _natS.center.copy(u.c); _natS.radius = u.r; im.visible = cp.distanceTo(u.c) - u.r < u.range && _natFr.intersectsSphere(_natS) && u.id !== window.__natHide; }
   BFLY.step(dt);
 }
 
