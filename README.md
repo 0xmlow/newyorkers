@@ -178,3 +178,13 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - The TAP runs water: a scrolling stream, a rippled pool, a splash of droplets and a foam ring.
 - The factory has steel roof trusses, 15 Poly Haven hanging lamps and painted safety lines.
 - three's polyhedra are non-indexed, so `v9Smooth` welds normals by position or the rock reads faceted.
+
+## v10 the bodega (2026-11-21)
+- `_build/v10_interiors.js` (inlined at `/*__V10_INTERIORS__*/`) turns the 6529 Bodega into a New York bodega:
+  - a worn checker floor and a drop ceiling with six flickering fluorescent panels;
+  - a lit three-door glass cooler with about 400 bottles;
+  - a two-sided shelving aisle of boxes and cans;
+  - a laminate counter with a register, the lotto ticket rack, a tip jar and candy, plus shelves behind it;
+  - an ATM and a door mat.
+- No new downloads: every texture is drawn on a canvas.
+- Fix: the v8 ferry and sloop vertex colours are now converted to linear, so the ferry reads orange, not tan.

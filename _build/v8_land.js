@@ -61,6 +61,7 @@ function v8Rail(pts, h, mat, closed, step) {
 /* ---- the census ferry: a double ended harbour boat ---- */
 function v8Ferry(fx, fz, L, Wd) {
   const orange = new THREE.Color(0xf26a1b), boot = new THREE.Color(0x1d1d1f), anti = new THREE.Color(0x7a2418), trim = new THREE.Color(0xf4f1ea);
+  [orange, boot, anti, trim].forEach(c => c.convertSRGBToLinear());   // vertex colours are linear in r128
   const H = v8Loft(L, {
     halfW: zn => Wd / 2 * (0.3 + 0.7 * Math.sqrt(Math.max(0, 1 - Math.pow(Math.abs(zn), 3.2)))),
     deck: zn => 2.2 + 0.55 * zn * zn, keel: zn => -1.1 + 0.9 * Math.pow(Math.abs(zn), 4), round: 3.2,
@@ -144,7 +145,7 @@ function v8Sail(a, b, c, belly, mat) {
 }
 function v8Sloop(i) {
   const g = new THREE.Group(), dark = i % 2 === 1;
-  const hc = new THREE.Color(dark ? 0xf4f2ec : 0x14233f), bt = new THREE.Color(0x8a1f1f), wl = new THREE.Color(0xd8d4c8);
+  const hc = new THREE.Color(dark ? 0xf4f2ec : 0x14233f), bt = new THREE.Color(0x8a1f1f), wl = new THREE.Color(0xd8d4c8); [hc, bt, wl].forEach(c => c.convertSRGBToLinear());
   const H = v8Loft(6.4, { ns: 26, nk: 6,
     halfW: zn => 1.15 * (zn > 0 ? Math.sqrt(Math.max(0, 1 - zn * zn)) : 0.62 + 0.38 * (1 - zn * zn)),
     deck: zn => 0.85 + 0.18 * zn * zn + 0.06 * zn, keel: zn => -0.35 + 0.55 * Math.pow(Math.max(0, zn), 2) + 0.2 * Math.max(0, -zn), round: 2,
