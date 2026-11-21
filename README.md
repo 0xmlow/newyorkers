@@ -80,3 +80,28 @@ agents stay static: they hurry at 1.6 m/s, twice the walk the rig was made for.
 - Film: `UPGRADE ALL ROOMS 2026-10-28/shots/rig_rollout/island_rig.mp4`.
 - `_build/harness_island.js` stops at `c.strokeRect is not a function` (its canvas stub lacks strokeRect) on the
   committed page too, before and after this change, so it was not a check here. Not seen on a real phone.
+
+## v5 the finish, 2026-11-21
+
+A look pass, all in `_build/island.html` (search `v5`). No new assets beyond two vendored three.js r128 files.
+
+- **The sea is a shader.** Gerstner swells on the GPU (three long ones move the geometry, three short ones light it per
+  pixel), a second scrolling normal layer, turquoise shallows over the island's shelf, a breathing waterline and broken
+  lines of white water rolling onto the beach, light through the crests toward the sun. Still a MeshStandardMaterial
+  (`onBeforeCompile`), so sky reflection, shadows, fog, weather (`uChop` grows with rain) and time of day work through
+  it. The geometry is a polar grid, 1.25 m rings at the shore, coarse far out. The old CPU wave loop and foam ring are gone.
+- **Wet sand:** the last ten metres of beach darken and turn glossy. The sand is tinted warm (0xeadcc2): it rendered
+  paper white in the sun.
+- **Relief on the white blocks:** MAT.white and MAT.bone take the limestone normal map in world UVs, colour unchanged.
+- **Ambient occlusion** (desktop, `?ao=0` to compare): half resolution depth pass, an alchemy style estimate, a depth
+  aware blur, multiplied in by the grade. Additive light, the sky, skinned bodies, shader materials and anything with a
+  missing attribute sit out of the depth pass; after three render errors it switches itself off.
+- **Antialiasing** (desktop, `?aa=0` to compare): SMAA at the end of the chain (`site/vendor/SMAAPass.js`,
+  `SMAAShader.js`, from three r128). The composer had been throwing the canvas's antialiasing away since v4. True 4x
+  multisampling of the scene draw is behind `?msaa=1`: in headless Chrome on an M5 Pro it cost about eight ms a frame.
+- **Grade:** cool shadows and warm highlights taken from the sky and sun of the minute, a soft S curve in gamma space,
+  a trace of lens fringing at the corners, then the old vignette and grain.
+- **Cost:** headless Chrome, M5 Pro, 1440x810, gm beach rail, mean of 20 frames: v4 10.9 and 11.9 ms, v5 11.1 and
+  11.7 ms. The GPU waves pay for the occlusion. Phones get the sea, the sand and the grade; no AO, no SMAA.
+- **Not verified:** a real phone, a non Apple GPU, Safari, and the photoreal film and hype cuts (not re-rendered).
+- Harness mock gained `strokeRect` (it failed at HEAD without it).

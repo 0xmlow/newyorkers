@@ -7,7 +7,7 @@ const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1
 scripts.forEach(s => acorn.parse(s, { ecmaVersion: 2022 })); console.log('PASS 1 parse', scripts.length, 'scripts');
 const dom = new JSDOM(html.replace(/<script[\s\S]*?<\/script>/g, ''), { pretendToBeVisual: true, runScripts: 'outside-only', url: 'https://local.test/' });
 const w = dom.window; global.window = w; global.document = w.document;
-w.HTMLCanvasElement.prototype.getContext = function (t) { if (t === '2d') return { fillStyle: '', font: '', textAlign: '', textBaseline: '', fillRect() { }, fillText() { }, drawImage() { }, clearRect() { }, getImageData: () => ({ data: [0, 0, 0, 255] }), measureText: s => ({ width: String(s).length * 10 }) }; return null; };
+w.HTMLCanvasElement.prototype.getContext = function (t) { if (t === '2d') return { fillStyle: '', font: '', textAlign: '', textBaseline: '', fillRect() { }, strokeRect() { }, fillText() { }, drawImage() { }, clearRect() { }, getImageData: () => ({ data: [0, 0, 0, 255] }), measureText: s => ({ width: String(s).length * 10 }) }; return null; };
 const R = THREE.WebGLRenderer; let renders = 0;
 w.THREE = Object.assign({}, THREE, { WebGLRenderer: function () { return { setPixelRatio() { }, setSize() { }, render() { renders++; }, setClearColor() { }, shadowMap: {}, capabilities: { getMaxAnisotropy: () => 8 }, domElement: w.document.createElement('canvas') }; } });
 w.matchMedia = () => ({ matches: false }); w.requestAnimationFrame = () => 0; w.performance = { now: () => 0 };
