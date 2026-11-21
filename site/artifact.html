@@ -421,7 +421,7 @@ MAT.water.onBeforeCompile = sh => {
       float oNz = texture2D(normalMap, vOW.xz * 0.045 + vec2(uTime * 0.011, -uTime * 0.007)).r * 0.6 + texture2D(normalMap, vOW.xz * 0.11 - vec2(uTime * 0.017, uTime * 0.013)).g * 0.4;
       float oSwash = sin(uTime * 0.5 + oAng * 5.0) * 0.9 + sin(uTime * 0.83 - oAng * 3.0) * 0.6;
       float oBig = texture2D(normalMap, vOW.xz * 0.0085 + vec2(uTime * 0.0031, uTime * 0.0017)).b;
-      float oLine = smoothstep(2.6, 0.0, abs(oR - (uShore - 2.2 + oSwash))) * mix(0.35, 1.0, smoothstep(0.3, 0.7, oBig));
+      float oLine = smoothstep(1.8, 0.0, abs(oR - (uShore - 2.2 + oSwash + (oBig - 0.5) * 3.0))) * smoothstep(0.38, 0.72, oBig) * 0.8;
       float oOut = oR - uShore;
       float oRoll = pow(1.0 - fract(oOut / 11.0 + uTime * 0.07 + oBig * 0.35), 7.0) * smoothstep(23.0, 4.0, oOut) * step(0.0, oOut) * smoothstep(0.42, 0.75, oBig + oNz * 0.3);
       float oFoam = clamp((oLine + oRoll * 0.85) * smoothstep(0.36, 0.62, oNz + oLine * 0.16), 0.0, 1.0) * uFoam;
@@ -1835,7 +1835,7 @@ function setupAO(sz, pr) {
     vec3 vpos(vec2 uv) { float d = texture2D(tDepth, uv).x; vec4 v = uInvProj * vec4(uv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0); return v.xyz / v.w; }`;
   const vs = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
   AO.mat = new THREE.ShaderMaterial({ extensions: { derivatives: true }, depthTest: false, depthWrite: false,
-    uniforms: { tDepth: { value: dt }, uInvProj: { value: new THREE.Matrix4() }, uProjY: { value: 1 }, uRes: { value: new THREE.Vector2(w, h) }, uR: { value: 1.4 }, uK: { value: 1.35 } },
+    uniforms: { tDepth: { value: dt }, uInvProj: { value: new THREE.Matrix4() }, uProjY: { value: 1 }, uRes: { value: new THREE.Vector2(w, h) }, uR: { value: 2.2 }, uK: { value: 2.4 } },
     vertexShader: vs, fragmentShader: common + `
     uniform float uProjY, uR, uK; uniform vec2 uRes;
     void main() {
@@ -1866,7 +1866,7 @@ function setupAO(sz, pr) {
       gl_FragColor = vec4(vec3(ws > 0.0 ? s / ws : 1.0), 1.0);
     }` });
   AO.quad = new THREE.FullScreenQuad(AO.mat);
-  AO.on = true; POST.grade.uniforms.uAO.value = 0.75;
+  AO.on = true; POST.grade.uniforms.uAO.value = 0.9;
   const setAO = POST.comp.setSize.bind(POST.comp); POST.comp.setSize = (W, H) => { setAO(W, H); const p2 = renderer.getPixelRatio(), w2 = Math.max(2, Math.round(W * p2 / 2)), h2 = Math.max(2, Math.round(H * p2 / 2)); [AO.depth, AO.a, AO.b].forEach(r => r.setSize(w2, h2)); AO.mat.uniforms.uRes.value.set(w2, h2); AO.blur.uniforms.uPx.value.set(1 / w2, 1 / h2); };
 }
 function renderAO() {
