@@ -169,3 +169,12 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - Toll plaza: canopy on four columns, light panels, glass booths, a striped arm with a counterweight, rumble strips, Poly Haven road barriers and a wet floor sign. The lighthouse has a gallery, railing, mullions, a vent ball, a rod and a red beacon. SUMMER.JPG has striped canvas umbrellas with ribs, plus chairs. The harbour has two lateral sea markers and a tall ship at anchor (ship_pinnace, 16k tris, 2 MB).
 - Prop loading in v7 now starts a microtask later so v8 can add to `PROP_FILES`; `landBuild()` runs after `archBuildProps()`.
 - About 16 ms a frame on the gm beach rail (v7: 15).
+
+## v9 detail (2026-11-21)
+- `_build/v9_detail.js` (inlined at `/*__V9_DETAIL__*/`).
+- The Colossus stands on a real sea rock: a noise-displaced icosahedron with seaside_rock projected on three axes, darker and glossier at the waterline, and 26 boulders round it. The 2030 stepping stones are rough cut in rock_boulder_dry.
+- The TAP basin is sandstone with a concrete coping. The brain, wagmi and lighthouse platforms are poured concrete instead of the old lumpy white stone (the Arsham plinths keep it on purpose).
+- Every card has a framer's back: a black frame, a kraft paper dust cover, a label and a hanging wire (`MAT.frame`, set before `buildCards()`).
+- The TAP runs water: a scrolling stream, a rippled pool, a splash of droplets and a foam ring.
+- The factory has steel roof trusses, 15 Poly Haven hanging lamps and painted safety lines.
+- three's polyhedra are non-indexed, so `v9Smooth` welds normals by position or the rock reads faceted.
