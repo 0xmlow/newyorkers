@@ -6037,6 +6037,384 @@ window.__FRAMES.push(dt => { try { govFrame(dt); } catch (e) { if (!GOV.err) { G
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v46 THE MURMURATION (2026-11-22)
+   A flock of pigeons that wheels over the island at dawn and dusk (New York sun), folding and stretching like one
+   animal, darker where it is thick. Each bird chases a point on a slowly twisting sheet, with its own lag, so the
+   flock pours rather than marches. CLAP or FLOCK sends it up any time of day; at night it roosts out of sight.
+   One InstancedMesh, no lights.
+   ================================================================ */
+const FLOCK = { N: isMobile ? 160 : 380, k: 0, call: 0, t: 0, b: [] };
+window.__FLOCK = FLOCK;
+(function build() {
+  const g = new THREE.BufferGeometry();
+  // a pigeon from below: body, two swept wings, a fan tail (flat, both sides)
+  const v = [0, 0, 0.22, -0.05, 0, -0.05, 0.05, 0, -0.05, /* L wing */ -0.04, 0, 0.06, -0.42, 0.02, -0.06, -0.04, 0, -0.06, /* R wing */ 0.04, 0, 0.06, 0.04, 0, -0.06, 0.42, 0.02, -0.06, /* tail */ -0.05, 0, -0.05, 0, 0, -0.24, 0.05, 0, -0.05];
+  g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.computeVertexNormals();
+  const m = new THREE.MeshBasicMaterial({ color: 0x24252b, side: THREE.DoubleSide });
+  const im = new THREE.InstancedMesh(g, m, FLOCK.N); im.frustumCulled = false; im.visible = false; scene.add(im); FLOCK.im = im;
+  for (let i = 0; i < FLOCK.N; i++) FLOCK.b.push({ u: Math.random(), v: Math.random(), p: new THREE.Vector3(0, -50, 0), vel: new THREE.Vector3(), ph: Math.random() * 9, lag: 0.6 + Math.random() * 1.6, s: 0.85 + Math.random() * 0.35 });
+})();
+const flockSecret = secret('murmuration', () => { FLOCK.call = 40; toast('THE PIGEONS GO UP ALL AT ONCE. THEY HAVE BEEN WAITING FOR AN EXCUSE.', 'blue'); try { [0, 0.05, 0.1].forEach(w => beep(90 + Math.random() * 40, 0.12, 'triangle', 0.05, w)); } catch (e) { } }, ['clap', 'flock', 'murmuration']);
+const _fm = new THREE.Matrix4(), _fq = new THREE.Quaternion(), _fs = new THREE.Vector3(), _fT = new THREE.Vector3(), _fUp = new THREE.Vector3(0, 1, 0), _fd = new THREE.Vector3(), _fo = new THREE.Object3D();
+function flockFrame(dt) {
+  const el = SKY.el === undefined ? 20 : SKY.el, golden = el > -5 && el < 9; FLOCK.call = Math.max(0, FLOCK.call - dt);
+  const want = golden || FLOCK.call > 0 ? 1 : 0; FLOCK.k += (want - FLOCK.k) * Math.min(1, dt * 0.35);
+  if (FLOCK.k < 0.01 && !want) { FLOCK.im.visible = false; FLOCK.b.forEach(b => b.p.set(-150, 10, -60)); return; }
+  FLOCK.im.visible = true; FLOCK.t += dt; const t = FLOCK.t;
+  // the flock's centre rides a slow loop over the island; when it is leaving it climbs away north west
+  const cx = Math.sin(t * 0.07) * 55 + Math.sin(t * 0.19) * 12, cz = Math.cos(t * 0.05) * 45 - 10, cy = 34 + Math.sin(t * 0.13) * 8;
+  const away = 1 - FLOCK.k, ax = cx - away * 220, ay = cy + away * 60, az = cz - away * 160;
+  const A = t * 0.21, B = t * 0.13, stretch = 1 + 0.6 * Math.sin(t * 0.31), fold = Math.sin(t * 0.17) * 1.4;
+  const ca = Math.cos(A), sa = Math.sin(A), cb = Math.cos(B), sb = Math.sin(B);
+  const near = Math.hypot(P.x - cx, P.z - cz) < 60;
+  for (let i = 0; i < FLOCK.N; i++) { const b = FLOCK.b[i];
+    // a point on a sheet that folds over itself (a twisted ribbon), then turned in space
+    const u = (b.u - 0.5) * 2, w = (b.v - 0.5) * 2, x0 = u * 26 * stretch, y0 = Math.sin(u * 2.2 + t * 0.6 + fold) * 7 + w * 3, z0 = w * 9 + Math.cos(u * 1.7 - t * 0.4) * 6 * fold;
+    const x1 = x0 * ca - z0 * sa, z1 = x0 * sa + z0 * ca, y1 = y0 * cb - z1 * sb * 0.35, z2 = z1 * cb + y0 * sb * 0.35;
+    _fT.set(ax + x1, Math.max(8, ay + y1), az + z2);
+    // chase the point with a per bird lag, so the flock pours
+    _fd.subVectors(_fT, b.p); const acc = Math.min(1, dt * 1.6 / b.lag); b.vel.lerp(_fd.multiplyScalar(1.2 / b.lag), acc); const sp = b.vel.length(); if (sp > 26) b.vel.multiplyScalar(26 / sp);
+    b.p.addScaledVector(b.vel, dt);
+    _fo.position.copy(b.p); _fd.copy(b.vel); if (_fd.lengthSq() < 0.01) _fd.set(1, 0, 0); _fo.lookAt(_fT.copy(b.p).add(_fd)); _fo.rotateZ(Math.max(-0.7, Math.min(0.7, -b.vel.x * 0.02)));
+    const flap = window.__CALM ? 0.8 : 0.35 + 0.65 * Math.abs(Math.cos(t * 13 * (0.8 + 0.2 * b.s) + b.ph)); _fs.set(flap * b.s * 1.4, b.s * 1.4, b.s * 1.4);
+    _fo.scale.copy(_fs); _fo.updateMatrix(); FLOCK.im.setMatrixAt(i, _fo.matrix); }
+  FLOCK.im.instanceMatrix.needsUpdate = true;
+  // the sound of a lot of wings when it passes low and close
+  if (near && FLOCK.k > 0.5 && Math.random() < dt * 0.25) try { beep(70 + Math.random() * 30, 0.25, 'triangle', 0.025); } catch (e) { }
+}
+window.__FRAMES.push(dt => { try { flockFrame(dt); } catch (e) { if (!FLOCK.err) { FLOCK.err = e; console.warn('v46 flock', e); } } });
+
+/* ================================================================
+   v47 THE HANDBALL WALL (2026-11-22)
+   A free standing park handball wall at (-78, -21), the kind every New York playground has, already carrying a
+   few tags (N3W, an Open Eye Flower, gm, MLOW). E picks up a can: hold the mouse (or a finger) to spray where you
+   look, R changes colour (the Impermanent Vision palette: cobalt, cyan, hot pink, bone, copper, ink), E puts the
+   can down. Heavy paint runs: drips crawl down the wall under the stroke. Your wall is kept in this browser.
+   ================================================================ */
+const WALLP = { on: false, col: 0, drips: [], spray: false, cool: 0, dirty: 0, strokes: 0 };
+window.__WALLP = WALLP;
+const WALL_AT = { x: -78, z: -21 };
+WALLP.cols = ['#2962FF', '#08DEFF', '#ff3fa4', '#efe8da', '#c8743a', '#0d0d0d'];
+WALLP.names = ['COBALT', 'CYAN', 'HOT PINK', 'BONE', 'COPPER', 'INK'];
+(function handballWall() {
+  const ry = Math.atan2(-WALL_AT.x, -WALL_AT.z);                  // the painted face looks at the middle of the island
+  const W = 7.2, H = 4.4, D = 0.45, g0 = ground(WALL_AT.x, WALL_AT.z);
+  const G = new THREE.Group(); G.position.set(WALL_AT.x, g0, WALL_AT.z); G.rotation.y = ry; scene.add(G); WALLP.G = G; WALLP.ry = ry;
+  const conc = new THREE.MeshStandardMaterial({ color: 0x9a948a, roughness: 0.92 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), conc); body.position.y = H / 2 - 0.1; body.castShadow = body.receiveShadow = true; G.add(body);
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(W + 0.12, 0.12, D + 0.12), new THREE.MeshStandardMaterial({ color: 0x8f8a80, roughness: 0.8 })); cap.position.y = H - 0.04; G.add(cap);
+  // the painted face: a canvas the size of the wall
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 626; const c = cv.getContext('2d'); WALLP.cv = cv; WALLP.c = c;
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; WALLP.tex = t;
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(W, H - 0.1), new THREE.MeshStandardMaterial({ map: t, roughness: 0.85 })); face.position.set(0, H / 2 - 0.1, D / 2 + 0.006); face.receiveShadow = true; G.add(face); WALLP.face = face;
+  // the back gets the old handball line and a faded mural ghost
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(W, H - 0.1), new THREE.MeshStandardMaterial({ map: signTex([{ t: 'NO BALL PLAYING AFTER DARK', s: 0.1 }, { t: 'NYC PARKS', s: 0.07 }], 1024, 626, '#a9a398', '#5b564e'), roughness: 0.9 }));
+  back.position.set(0, H / 2 - 0.1, -D / 2 - 0.006); back.rotation.y = PI; G.add(back);
+  // collision: the wall itself
+  const cs = Math.cos(ry), sn = Math.sin(ry); boxWalls(WALL_AT.x, WALL_AT.z, W, D, ry, -5, 6);
+  // a drift of cans at the foot
+  const canM = WALLP.cols.map(h => new THREE.MeshStandardMaterial({ color: h, roughness: 0.35, metalness: 0.5 }));
+  for (let i = 0; i < 6; i++) { const can = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.2, 10), canM[i]); const lx = -1.6 + i * 0.22 + (i > 2 ? 0.6 : 0), lz = D / 2 + 0.25 + (i % 2) * 0.1; can.position.set(lx, 0.1, lz); if (i === 4) { can.rotation.z = PI / 2; can.position.y = 0.04; } G.add(can); }
+  WALLP.fx = WALL_AT.x + sn * 2.4; WALLP.fz = WALL_AT.z + cs * 2.4;   // where you stand to paint
+  wallBase(); wallLoad();
+  // the tags are in Permanent Marker: draw them again once the island's fonts have arrived (unless you have already painted)
+  if (!window.__fontsReady) addEventListener('n3wfonts', () => { if (!WALLP.loaded && !WALLP.strokes) { wallBase(); wallLoad(); } }, { once: true });
+  interact(WALLP.fx, WALLP.fz, 2.4, 'E · PICK UP A CAN AND TAG THE WALL', () => wallToggle());
+  const lab = signTex([{ t: 'THE HANDBALL WALL', s: 0.36 }, { t: 'PICK UP A CAN · E', s: 0.14 }], 1024, 256, '#2f4a3a', '#FFFFFF');
+  const sg = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.4), new THREE.MeshBasicMaterial({ map: lab, toneMapped: false, side: THREE.DoubleSide }));
+  sg.position.set(WALL_AT.x + cs * 4.6 + sn * 1.2, g0 + 1.9, WALL_AT.z - sn * 4.6 + cs * 1.2); sg.rotation.y = ry; scene.add(sg);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.9, 6), new THREE.MeshStandardMaterial({ color: 0x1d2b24, metalness: 0.5, roughness: 0.5 })); pole.position.set(sg.position.x, g0 + 0.95, sg.position.z); scene.add(pole);
+})();
+function wallBase() {
+  const c = WALLP.c, W = 1024, H = 626; if (!c || !c.beginPath || !c.createRadialGradient || !c.strokeText) return; c.fillStyle = '#bdb6aa'; c.fillRect(0, 0, W, H);
+  // concrete: speckle, board seams, a rain stain from the cap
+  for (let i = 0; i < 2400; i++) { const v = 150 + Math.random() * 60 | 0; c.fillStyle = `rgba(${v},${v - 4},${v - 10},${0.15 + Math.random() * 0.2})`; c.fillRect(Math.random() * W, Math.random() * H, 1 + Math.random() * 2, 1 + Math.random() * 2); }
+  c.strokeStyle = 'rgba(90,85,78,.25)'; c.lineWidth = 2; for (let x = 128; x < W; x += 128) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
+  const st = c.createLinearGradient(0, 0, 0, 160); st.addColorStop(0, 'rgba(60,58,52,.35)'); st.addColorStop(1, 'rgba(60,58,52,0)'); c.fillStyle = st; c.fillRect(0, 0, W, 160);
+  // the court line at 0.9 m, in old red paint
+  c.fillStyle = 'rgba(176,52,40,.8)'; c.fillRect(0, H - 0.9 / 4.3 * H, W, 5);
+  // the tags that were already here
+  c.save(); c.translate(150, 360); c.rotate(-0.08); c.font = '400 120px "Permanent Marker",cursive'; c.lineWidth = 10; c.strokeStyle = '#0d0d0d'; c.strokeText('N3W', 0, 0); c.fillStyle = '#2962FF'; c.fillText('N3W', 0, 0); c.restore();
+  c.save(); c.translate(760, 170); c.rotate(0.06); c.font = '400 70px "Permanent Marker",cursive'; c.fillStyle = '#ff3fa4'; c.fillText('gm', 0, 0); c.restore();
+  c.save(); c.translate(820, 520); c.font = '400 44px "Permanent Marker",cursive'; c.fillStyle = '#0d0d0d'; c.fillText('MLOW', 0, 0); c.restore();
+  const img = new Image(); img.onload = () => { if (WALLP.loaded) return; c.globalAlpha = 0.95; c.drawImage(img, 520, 250, 220, 220); c.globalAlpha = 1; wallDrips(560, 470, 6, '#2962FF'); WALLP.tex.needsUpdate = true; }; img.src = 'assets/iv_flower.webp';
+  wallDrips(170, 370, 5, '#2962FF'); WALLP.tex.needsUpdate = true;
+}
+function wallDrips(x, y, n, col) { const c = WALLP.c; c.fillStyle = col; for (let i = 0; i < n; i++) { const dx = x + Math.random() * 180, L = 20 + Math.random() * 70; c.fillRect(dx, y, 3, L); c.beginPath(); c.arc(dx + 1.5, y + L, 3, 0, PI * 2); c.fill(); } }
+function wallLoad() { try { const d = localStorage.getItem('meme-island-wall'); if (!d) return; const img = new Image(); img.onload = () => { WALLP.loaded = true; WALLP.c.drawImage(img, 0, 0, 1024, 626); WALLP.tex.needsUpdate = true; }; img.src = d; } catch (e) { } }
+function wallSave() { try { const s = document.createElement('canvas'); s.width = 768; s.height = 470; s.getContext('2d').drawImage(WALLP.cv, 0, 0, 768, 470); localStorage.setItem('meme-island-wall', s.toDataURL('image/jpeg', 0.72)); } catch (e) { } }
+const wallSecret = secret('tag', () => { toast('YOUR FIRST TAG. THE PARKS DEPARTMENT WILL PAINT OVER IT IN 2031.', 'blue'); });
+function wallToggle(force) {
+  if (WALLP.cool > 0) return; WALLP.cool = 0.4; WALLP.on = force === undefined ? !WALLP.on : force;
+  if (WALLP.on) toast(isMobile ? 'HOLD A FINGER TO SPRAY WHERE YOU LOOK · TAP E TO STOP' : 'HOLD THE MOUSE TO SPRAY WHERE YOU LOOK · R COLOUR · E DONE'), toast('YOU HAVE ' + WALLP.names[WALLP.col] + '.');
+  else { WALLP.spray = false; if (WALLP.dirty) { wallSave(); WALLP.dirty = 0; toast('YOU PUT THE CAN DOWN. THE WALL REMEMBERS.'); } }
+}
+addEventListener('pointerdown', e => { if (WALLP.on && !e.target.closest('button,.win,#chat')) WALLP.spray = true; });
+addEventListener('pointerup', () => { WALLP.spray = false; }); addEventListener('pointercancel', () => { WALLP.spray = false; });
+addEventListener('keydown', e => { if (!WALLP.on || $('chat').style.display === 'block' || e.repeat) return;
+  if (e.code === 'KeyR') { WALLP.col = (WALLP.col + 1) % WALLP.cols.length; toast('YOU HAVE ' + WALLP.names[WALLP.col] + '.'); }
+  if (e.code === 'Escape') wallToggle(false); });
+const _wr = new THREE.Raycaster(), _wc = new THREE.Vector2(0, 0);
+let wallHiss = null;
+function wallFrame(dt) {
+  WALLP.cool = Math.max(0, WALLP.cool - dt);
+  if (WALLP.on && Math.hypot(P.x - WALLP.fx, P.z - WALLP.fz) > 6) wallToggle(false);
+  const spraying = WALLP.on && WALLP.spray;
+  if (spraying) { _wr.setFromCamera(_wc, camera); _wr.far = 7; const h = _wr.intersectObject(WALLP.face, false)[0];
+    if (h && h.uv) { const c = WALLP.c, x = h.uv.x * 1024, y = (1 - h.uv.y) * 626, d = h.distance, r = 6 + d * 7, col = WALLP.cols[WALLP.col];
+      // a soft core and an overspray halo, wider from further away
+      const gr = c.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(0.55, col); gr.addColorStop(1, col + '00'); c.globalAlpha = 0.55; c.fillStyle = gr; c.beginPath(); c.arc(x, y, r, 0, PI * 2); c.fill();
+      c.globalAlpha = 0.5; for (let i = 0; i < 6; i++) { const a = Math.random() * PI * 2, q = r * (1 + Math.random() * 0.8); c.fillRect(x + Math.cos(a) * q, y + Math.sin(a) * q, 1.5, 1.5); } c.globalAlpha = 1;
+      WALLP.lastHit = (WALLP.lastHit || 0) + dt; if (WALLP.lastHit > 0.9 && Math.random() < dt * 2.5 && WALLP.drips.length < 40) { WALLP.drips.push({ x: x + (Math.random() - 0.5) * r, y: y + r * 0.6, len: 0, max: 30 + Math.random() * 90, col }); }
+      WALLP.dirty = 1; WALLP.tex.needsUpdate = true; WALLP.strokes += dt; if (WALLP.strokes > 1.2) wallSecret();
+      if (!wallHiss && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) try { const n = AC.sampleRate * 0.5, buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = Math.random() * 2 - 1;
+        const s = AC.createBufferSource(); s.buffer = buf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 3500; const g = AC.createGain(); g.gain.value = 0.05; s.connect(f); f.connect(g); g.connect(AC.destination); s.start(); wallHiss = { s, g }; } catch (e) { }
+    } else WALLP.lastHit = 0;
+  } else WALLP.lastHit = 0;
+  if (wallHiss && !spraying) { try { wallHiss.s.stop(); } catch (e) { } wallHiss = null; }
+  // runs crawl down under heavy paint
+  if (WALLP.drips.length) { const c = WALLP.c; WALLP.drips = WALLP.drips.filter(d => { const step = Math.min(d.max - d.len, dt * (40 + 30 * Math.random())); c.fillStyle = d.col; c.fillRect(d.x - 1.5, d.y + d.len, 3, step + 1); d.len += step; if (d.len >= d.max) { c.beginPath(); c.arc(d.x, d.y + d.len, 3, 0, PI * 2); c.fill(); return false; } return true; }); WALLP.tex.needsUpdate = true; }
+}
+window.__FRAMES.push(dt => { try { wallFrame(dt); } catch (e) { if (!WALLP.err) { WALLP.err = e; console.warn('v47 wall', e); } } });
+WALLP.toggle = wallToggle;
+
+/* ================================================================
+   v48 THREE CARD MONTE (2026-11-22)
+   A hustler at a cardboard box on the corner by (48, -9), a lookout leaning on the lamp post. E to play: he shows
+   you the eye (the evil eye card), turns the three cards over and runs them. The shuffle is honest, every swap is
+   on screen, so a careful eye can follow it. Look at the card you want and press E (or tap). Win and he pays five
+   TDH and speeds up; win three times and the lookout calls it and they pack up and walk off for a minute.
+   ================================================================ */
+const MONTE = { phase: 'idle', t: 0, wins: 0, streak: 0, pos: [0, 1, 2], eye: 1, swaps: [], gone: 0, hi: -1 };
+window.__MONTE = MONTE;
+const MONTE_AT = { x: 48, z: -9 };
+(function monteTable() {
+  const x = MONTE_AT.x, z = MONTE_AT.z, g0 = ground(x, z), ry = Math.atan2(-x, -z);   // he faces the middle of the island
+  const G = new THREE.Group(); G.position.set(x, g0, z); G.rotation.y = ry; scene.add(G); MONTE.G = G; MONTE.ry = ry;
+  const card = new THREE.MeshStandardMaterial({ color: 0x55391b, roughness: 0.95 });
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.62, 0.46), card); box.position.y = 0.31; G.add(box); MONTE.box = box;
+  const flap = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.2), card); flap.position.set(0, 0.52, 0.235); flap.rotation.x = 0.35; G.add(flap);
+  const scrawl = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.16), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'FIND THE EYE', s: 0.5 }], 512, 160, '#a5875c', '#1b1b1b'), toneMapped: false })); scrawl.position.set(0, 0.34, 0.231); G.add(scrawl);
+  // the cards: a navy back with the eye mark, one face is the evil eye
+  const bcv = document.createElement('canvas'); bcv.width = 128; bcv.height = 180; let c = bcv.getContext('2d');
+  if (c && c.beginPath && c.ellipse && c.fillText) { c.fillStyle = '#efe8da'; c.fillRect(0, 0, 128, 180); c.fillStyle = '#16213f'; c.fillRect(6, 6, 116, 168); c.strokeStyle = '#08DEFF'; c.lineWidth = 2; for (let i = 0; i < 9; i++) { c.beginPath(); c.ellipse(64, 90, 10 + i * 7, 14 + i * 9, 0, 0, PI * 2); c.stroke(); } c.fillStyle = '#efe8da'; c.font = '700 14px "Archivo Expanded",Arial'; c.textAlign = 'center'; c.fillText('N3W', 64, 168); }
+  const fcv = document.createElement('canvas'); fcv.width = 128; fcv.height = 180; c = fcv.getContext('2d');
+  if (c && c.beginPath && c.ellipse && c.fillText) { c.fillStyle = '#efe8da'; c.fillRect(0, 0, 128, 180); [[38, '#1E77E3'], [24, '#ffffff'], [17, '#08DEFF'], [10, '#111111']].forEach(([r, col]) => { c.fillStyle = col; c.beginPath(); c.arc(64, 86, r, 0, PI * 2); c.fill(); }); c.fillStyle = '#1b1b1b'; c.font = '400 20px Anton,Impact'; c.textAlign = 'center'; c.fillText('THE EYE', 64, 160); }
+  const blank = document.createElement('canvas'); blank.width = 128; blank.height = 180; c = blank.getContext('2d');
+  const drawBlank = () => { const c = blank.getContext('2d'); if (!c || !c.fillText) return; c.fillStyle = '#efe8da'; c.fillRect(0, 0, 128, 180); c.fillStyle = '#c03a2b'; c.font = '400 54px "Permanent Marker",cursive'; c.textAlign = 'center'; c.fillText('ngmi', 64, 106); if (MONTE.noTex) MONTE.noTex.needsUpdate = true; };
+  drawBlank(); if (!window.__fontsReady) addEventListener('n3wfonts', drawBlank, { once: true });
+  const mk = cv => { const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; return t; };
+  const backM = new THREE.MeshStandardMaterial({ map: mk(bcv), roughness: 0.5 }), eyeM = new THREE.MeshStandardMaterial({ map: mk(fcv), roughness: 0.5 }), noM = new THREE.MeshStandardMaterial({ map: mk(blank), roughness: 0.5 }); MONTE.noTex = noM.map;
+  MONTE.hiM = new THREE.MeshStandardMaterial({ map: backM.map, roughness: 0.5, emissive: 0x2962FF, emissiveIntensity: 0.35 }); MONTE.backM = backM;
+  MONTE.cards = [0, 1, 2].map(i => { const cg = new THREE.Group(); const geo = new THREE.PlaneGeometry(0.11, 0.155);
+    const b = new THREE.Mesh(geo, backM); b.rotation.x = -PI / 2; b.position.y = 0.0012; cg.add(b);
+    const f = new THREE.Mesh(geo, i === 1 ? eyeM : noM); f.rotation.x = PI / 2; f.rotation.z = PI; cg.add(f);
+    cg.position.set((i - 1) * 0.17, 0.622, 0.02); G.add(cg); return { g: cg, back: b }; });
+  // the hustler behind the box and the lookout on the post
+  const hx = x - Math.sin(ry) * 0.62, hz = z - Math.cos(ry) * 0.62; const h = person(0x2c2c30, 0x1d1d22, SKIN[0], 'wiseguy'); h.g.position.set(hx, g0 - 0.35, hz); h.g.rotation.y = ry; MONTE.hustler = h;
+  const lx = x + Math.cos(ry) * 3.2 - Math.sin(ry) * 0.6, lz = z - Math.sin(ry) * 3.2 - Math.cos(ry) * 0.6; const L = person(0x7b2f2a, 0x22324f, SKIN[5], 'cabbie'); L.g.position.set(lx, g0 - 0.35, lz); L.g.rotation.y = ry + 1.2; MONTE.look = L;
+  const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 4.2, 8), new THREE.MeshStandardMaterial({ color: 0x1c2a22, metalness: 0.6, roughness: 0.5 })); lamp.position.set(lx + Math.cos(ry + 1.2) * -0.5, g0 + 2.1, lz + Math.sin(ry + 1.2) * 0.5); scene.add(lamp);
+  if (typeof CIRCS !== 'undefined') CIRCS.push(MONTE.col = { x, z, r: 0.45, y0: -5, y1: 3, on: true });
+  MONTE.ix = x + Math.sin(ry) * 1.1; MONTE.iz = z + Math.cos(ry) * 1.1;
+  interact(MONTE.ix, MONTE.iz, 1.6, 'E · FIND THE EYE (FIVE TDH)', () => monteE());
+})();
+const monteSecret = secret('monte', () => { });
+const monteWin = secret('montewin', () => { toast('YOU FOUND THE EYE. HE LOOKS AT YOU LIKE YOU ARE A PROBLEM.', 'blue'); });
+const monteCops = secret('montecops', () => { });
+function monteE() {
+  if (MONTE.gone > 0) return;
+  if (MONTE.phase === 'pick') { if (MONTE.hi >= 0) monteResolve(MONTE.hi); else toast('LOOK RIGHT AT THE CARD YOU WANT, THEN E.'); return; }
+  if (MONTE.phase !== 'idle') return; monteSecret();
+  MONTE.phase = 'show'; MONTE.t = 0; MONTE.applied = 0; MONTE.pos = [0, 1, 2]; MONTE.eye = 1; toast('THERE IS THE EYE. KEEP YOUR EYE ON THE EYE.');
+  try { talk('Find the eye, find the eye. Easy money.'); } catch (e) { }
+  const n = 5 + MONTE.streak * 3; MONTE.swaps = []; for (let i = 0; i < n; i++) { const a = Math.random() * 3 | 0; let b = Math.random() * 2 | 0; if (b >= a) b++; MONTE.swaps.push([a, b]); }
+  MONTE.sw = 0.62 - Math.min(0.32, MONTE.streak * 0.11);   // seconds a swap takes
+}
+function monteResolve(slot) {
+  const card = MONTE.pos.indexOf(slot), right = card === MONTE.eye; MONTE.phase = 'reveal'; MONTE.t = 0; MONTE.pick = slot;
+  if (right) { MONTE.streak++; MONTE.wins++; state.tdh = (state.tdh || 0) + 5; monteWin(); if (MONTE.streak >= 3) { MONTE.phase = 'cops'; MONTE.t = 0; toast('THE LOOKOUT: FIVE OH! FIVE OH! THEY FOLD THE BOX AND WALK.'); try { talk('Five oh! Five oh!'); } catch (e) { } monteCops(); MONTE.streak = 0; } }
+  else { MONTE.streak = 0; state.tdh = Math.max(0, (state.tdh || 0) - 5); toast(['NGMI. HE TAKES YOUR FIVE TDH WITH GREAT RESPECT.', 'IT WAS NEVER UNDER THAT ONE. IT IS NEVER UNDER THAT ONE.', 'THE LOOKOUT SAYS HE ALMOST HAD IT TOO, ONCE, IN 2019.'][Math.random() * 3 | 0]); }
+  try { hud(); } catch (e) { }
+}
+const _mv = new THREE.Vector3();
+function monteFrame(dt) {
+  const T = MONTE; T.t += dt; const C = T.cards;
+  if (T.gone > 0) { T.gone -= dt; if (T.gone <= 0) { T.G.visible = T.hustler.g.visible = T.look.g.visible = true; T.col.on = true; } return; }
+  const slotX = s => (s - 1) * 0.17;
+  const flipTo = (cg, up, k) => { k = Math.max(0, Math.min(1, k)); cg.rotation.z = up ? PI * Math.min(1, k) : PI * (1 - Math.min(1, k)); cg.position.y = 0.622 + Math.sin(Math.min(1, k) * PI) * 0.06; };
+  if (T.phase === 'idle') { C.forEach((cd, i) => { cd.g.rotation.z = 0; cd.g.position.set(slotX(T.pos[i]), 0.622, 0.02); }); }
+  else if (T.phase === 'show') { const k = T.t / 0.3; flipTo(C[T.eye].g, true, k); if (T.t > 1.6) flipTo(C[T.eye].g, false, (T.t - 1.6) / 0.3); if (T.t > 2.1) { C[T.eye].g.rotation.z = 0; C[T.eye].g.position.y = 0.622; T.phase = 'run'; T.t = 0; } }
+  else if (T.phase === 'run') { const i = Math.floor(T.t / T.sw), k = (T.t - i * T.sw) / T.sw;
+    while ((T.applied || 0) < Math.min(i, T.swaps.length)) { const [a, b] = T.swaps[T.applied]; const ca = T.pos.indexOf(a), cb = T.pos.indexOf(b); T.pos[ca] = b; T.pos[cb] = a; T.applied++; if (Math.hypot(P.x - MONTE_AT.x, P.z - MONTE_AT.z) < 8) beep(900, 0.02, 'square', 0.02); }
+    if (i >= T.swaps.length) { T.phase = 'pick'; T.t = 0; T.applied = 0; C.forEach((cd, j) => cd.g.position.set(slotX(T.pos[j]), 0.622, 0.02)); toast('WHERE IS THE EYE? LOOK AT IT AND PRESS E.'); }
+    else { const [a, b] = T.swaps[i]; const ca = T.pos.indexOf(a), cb = T.pos.indexOf(b);
+      C.forEach((cd, j) => { if (j !== ca && j !== cb) { cd.g.position.set(slotX(T.pos[j]), 0.622, 0.02); } });
+      const e = k * k * (3 - 2 * k); const ax = slotX(a), bx = slotX(b);
+      C[ca].g.position.set(ax + (bx - ax) * e, 0.622, 0.02 + Math.sin(e * PI) * 0.07); C[cb].g.position.set(bx + (ax - bx) * e, 0.622, 0.02 - Math.sin(e * PI) * 0.07);
+      T.hustler.g.rotation.z = Math.sin(T.t * 22) * 0.03; } }
+  else if (T.phase === 'pick') {
+    // which card is the player looking at
+    let best = -1, bd = 0.3; C.forEach((cd, j) => { cd.g.getWorldPosition(_mv); _mv.project(camera); const d = Math.hypot(_mv.x, _mv.y * (innerHeight / innerWidth)); if (_mv.z < 1 && d < bd) { bd = d; best = T.pos[j]; } });
+    T.hi = best; C.forEach((cd, j) => { cd.back.material = T.pos[j] === best ? T.hiM : T.backM; });
+    if (T.t > 25) { T.phase = 'idle'; T.hi = -1; C.forEach(cd => cd.back.material = T.backM); toast('HE GETS BORED AND RUNS IT FOR SOMEONE ELSE.'); } }
+  else if (T.phase === 'reveal' || T.phase === 'cops') { C.forEach(cd => cd.back.material = T.backM); C.forEach((cd, j) => flipTo(cd.g, true, (T.t - (T.pos[j] === T.pick ? 0 : 0.4)) / 0.3));
+    if (T.t > 2.6) { if (T.phase === 'cops') { T.G.visible = T.hustler.g.visible = T.look.g.visible = false; T.col.on = false; T.gone = 60; } T.phase = 'idle'; T.hi = -1; } }
+}
+window.__FRAMES.push(dt => { try { monteFrame(dt); } catch (e) { if (!MONTE.err) { MONTE.err = e; console.warn('v48 monte', e); } } });
+MONTE.e = monteE;
+
+/* ================================================================
+   v49 THE OPEN HYDRANT (2026-11-22)
+   A red fire hydrant at (75, 30) with a spray cap. E (or HYDRANT) opens it: a fan of water arcs over the sidewalk,
+   a puddle spreads, two kids run through it screaming, and when the sun is behind you a small rainbow stands in the
+   mist. Walk through it and you are soaked. After forty five seconds a firefighter caps it.
+   ================================================================ */
+const HYD = { on: 0, puddle: 0, N: isMobile ? 220 : 520, d: [], kids: [], soak: 0 };
+window.__HYD = HYD;
+const HYD_AT = { x: 75, z: 30 };
+(function hydrant() {
+  const x = HYD_AT.x, z = HYD_AT.z, g0 = ground(x, z); HYD.g0 = g0; HYD.ry = Math.atan2(-x, -z);
+  const red = new THREE.MeshStandardMaterial({ color: 0x8e1812, roughness: 0.5, metalness: 0.25 }), cap = new THREE.MeshStandardMaterial({ color: 0xd9d4c8, roughness: 0.4, metalness: 0.5 });
+  const G = new THREE.Group(); G.position.set(x, g0, z); G.rotation.y = HYD.ry; scene.add(G);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.08, 14), red); base.position.y = 0.04; G.add(base);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.15, 0.62, 14), red); body.position.y = 0.39; G.add(body);
+  const top = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 8, 0, PI * 2, 0, PI / 2), red); top.position.y = 0.7; G.add(top);
+  const nut = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.08, 5), cap); nut.position.y = 0.86; G.add(nut);
+  [-1, 1].forEach(s => { const n = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.12, 10), red); n.rotation.z = PI / 2; n.position.set(s * 0.18, 0.5, 0); G.add(n); });
+  const out = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.14, 12), cap); out.rotation.x = PI / 2; out.position.set(0, 0.45, 0.17); G.add(out);   // the spray cap faces the street
+  post(x, z, 0.25, -5, 1);
+  // the puddle: a dark wet disc that grows (no new reflections, just wet paving)
+  const pm = new THREE.MeshStandardMaterial({ color: 0x1b2730, roughness: 0.06, metalness: 0.4, transparent: true, opacity: 0, depthWrite: false });
+  const pd = new THREE.Mesh(new THREE.CircleGeometry(1, 40), pm); pd.rotation.x = -PI / 2; pd.position.set(x + Math.sin(HYD.ry) * 3.4, g0 + 0.03, z + Math.cos(HYD.ry) * 3.4); pd.scale.setScalar(0.01); scene.add(pd); HYD.pd = pd;
+  // the water: one Points cloud, each drop a ballistic arc out of the cap
+  const geo = new THREE.BufferGeometry(), pos = new Float32Array(HYD.N * 3).fill(-999); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xdcecf5, size: 0.16, map: LIFE.soft, transparent: true, opacity: 0.85, depthWrite: false })); pts.frustumCulled = false; pts.visible = false; scene.add(pts); HYD.pts = pts;
+  for (let i = 0; i < HYD.N; i++) HYD.d.push({ t: Math.random() * 1.4, vx: 0, vy: 0, vz: 0 });
+  // a small rainbow in the mist (a canvas arc), shown only with the sun behind you
+  const rc = document.createElement('canvas'); rc.width = 256; rc.height = 128; const c = rc.getContext('2d');
+  if (c && c.beginPath && c.arc) { ['#ff3030', '#ff9a2a', '#ffe94a', '#5fe36a', '#3aa0ff', '#6a4cff', '#b04cff'].forEach((col, i) => { c.strokeStyle = col; c.globalAlpha = 0.5; c.lineWidth = 6; c.filter = 'blur(3px)'; c.beginPath(); c.arc(128, 128, 110 - i * 5, PI, 0); c.stroke(); }); }
+  const rt = new THREE.CanvasTexture(rc); const rb = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.7), new THREE.MeshBasicMaterial({ map: rt, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, side: THREE.DoubleSide }));
+  rb.position.set(x + Math.sin(HYD.ry) * 3.0, g0 + 0.2, z + Math.cos(HYD.ry) * 3.0); scene.add(rb); HYD.rb = rb;
+  // two kids in swimsuits who wait on the stoop
+  [[0x2a9dd8, -2.2], [0xe8559a, -2.8]].forEach(([shirt, o], i) => { const k = person(shirt, shirt, SKIN[(i * 4 + 1) % SKIN.length], i ? 'actress' : 'cabbie'); k.g.scale.setScalar(0.62); const bx = x + Math.cos(HYD.ry) * o, bz = z - Math.sin(HYD.ry) * o; k.g.position.set(bx, g0 - 0.22, bz); HYD.kids.push({ P: k, bx, bz, ph: i * 1.7 }); });
+  interact(x + Math.cos(HYD.ry) * 0.9, z - Math.sin(HYD.ry) * 0.9, 1.5, 'E · OPEN THE HYDRANT', () => hydOpen());
+})();
+const hydSecret = secret('hydrant', () => { }), soakSecret = secret('soaked', () => { toast('YOU ARE SOAKED. THIS IS THE MOST NEW YORK THING THAT HAS HAPPENED TO YOU TODAY.', 'blue'); });
+EGGS.hydrant = () => hydOpen(); EGGS.hydrant.__s = true;
+let hydHiss = null;
+function hydOpen() {
+  if (HYD.on > 0) { toast('IT IS ALREADY OPEN. THE KIDS SAY THANK YOU.'); return; } hydSecret(); HYD.on = 45; HYD.pts.visible = true; toast('A WRENCH, A QUARTER TURN, AND SUMMER COMES OUT OF THE SIDEWALK.');
+  if (AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) try { const n = AC.sampleRate, buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = Math.random() * 2 - 1;
+    const s = AC.createBufferSource(); s.buffer = buf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1200; f.Q.value = 0.6; const g = AC.createGain(); g.gain.value = 0; s.connect(f); f.connect(g); g.connect(AC.destination); s.start(); hydHiss = { s, g }; } catch (e) { }
+}
+const _hf = new THREE.Vector3();
+function hydFrame(dt) {
+  const T = HYD, x = HYD_AT.x, z = HYD_AT.z, fx = Math.sin(T.ry), fz = Math.cos(T.ry), rx = Math.cos(T.ry), rz = -Math.sin(T.ry);
+  const was = T.on; T.on = Math.max(0, T.on - dt); if (was > 0 && T.on === 0) { toast('A FIREFIGHTER CAPS THE HYDRANT. HE SAYS HAVE A GOOD SUMMER. IT IS NOVEMBER.'); }
+  const open = T.on > 0; T.puddle += ((open ? 1 : 0) - T.puddle) * dt * (open ? 0.08 : 0.02);
+  T.pd.scale.setScalar(0.01 + T.puddle * 3.2); T.pd.material.opacity = Math.min(0.85, T.puddle * 1.4);
+  const dist = Math.hypot(P.x - x, P.z - z); if (hydHiss) { hydHiss.g.gain.value = open ? Math.max(0, 0.08 - dist * 0.003) : 0; if (!open) { try { hydHiss.s.stop(); } catch (e) { } hydHiss = null; } }
+  if (!open && !T.pts.visible) { T.rb.material.opacity = 0; T.kids.forEach(k => { k.P.g.position.set(k.bx, T.g0 - 0.22, k.bz); }); return; }
+  const pos = T.pts.geometry.attributes.position.array; let alive = 0; const ox = x + fx * 0.25, oy = T.g0 + 0.45, oz = z + fz * 0.25;
+  for (let i = 0; i < T.N; i++) { const d = T.d[i]; d.t += dt;
+    if (d.t > 1.4) { if (!open) { pos[i * 3 + 1] = -999; continue; } d.t = Math.random() * 0.05; const sp = 6.5 + Math.random() * 1.8, fan = (Math.random() - 0.5) * 0.55, up = 0.28 + Math.random() * 0.22;
+      d.vx = (fx * Math.cos(fan) + rx * Math.sin(fan)) * sp; d.vz = (fz * Math.cos(fan) + rz * Math.sin(fan)) * sp; d.vy = up * sp; }
+    let px = ox + d.vx * d.t, py = oy + d.vy * d.t - 4.9 * d.t * d.t, pz = oz + d.vz * d.t; if (py < T.g0 + 0.03) { py = T.g0 + 0.03 + Math.random() * 0.15; }
+    pos[i * 3] = px; pos[i * 3 + 1] = py; pos[i * 3 + 2] = pz; alive++; }
+  T.pts.geometry.attributes.position.needsUpdate = true; if (!open && alive === 0) T.pts.visible = false;
+  // the rainbow: in the mist when the sun is low enough and behind the viewer
+  let rbk = 0; if (open && SKY.sunDir && SKY.el > 6) { camera.getWorldDirection(_hf); const back = -_hf.dot(_hf.clone().copy(SKY.sunDir).normalize()); rbk = Math.max(0, Math.min(1, (back - 0.2) * 2)) * Math.min(1, (SKY.el - 6) / 10) * (1 - (WX.wet || 0)); T.rb.lookAt(camera.position.x, T.rb.position.y, camera.position.z); }
+  T.rb.material.opacity += (rbk * 0.28 - T.rb.material.opacity) * Math.min(1, dt * 2);
+  // kids run back and forth through the spray
+  T.kids.forEach((k, i) => { if (!open) { k.P.g.position.set(k.bx, T.g0 - 0.22, k.bz); return; } const s = Math.sin(LIFE.t * 0.9 + k.ph); const along = 1.6 + 1.4 * Math.abs(Math.sin(LIFE.t * 0.35 + k.ph)), across = s * 2.6;
+    k.P.g.position.set(x + fx * along + rx * across, T.g0 - 0.22 + Math.abs(Math.sin(LIFE.t * 9 + k.ph)) * 0.08, z + fz * along + rz * across); k.P.g.rotation.y = T.ry + (Math.cos(LIFE.t * 0.9 + k.ph) > 0 ? PI / 2 : -PI / 2); });
+  // soaked: standing in the arc
+  if (open) { const lx = P.x - ox, lz = P.z - oz, a = lx * fx + lz * fz, b = lx * rx + lz * rz; if (a > 0.8 && a < 5.5 && Math.abs(b) < 0.6 + a * 0.3) { T.soak += dt; if (T.soak > 0.8) soakSecret(); } }
+}
+window.__FRAMES.push(dt => { try { hydFrame(dt); } catch (e) { if (!HYD.err) { HYD.err = e; console.warn('v49 hydrant', e); } } });
+
+/* ================================================================
+   v50 THE MAP AND THE PASSPORT (2026-11-22)
+   N (pressed alone), MAP, or the MAP button on phones opens a map of the island: a real photograph of it taken
+   from straight above by the engine (one frame, an orthographic camera, no fog), with every place named, you as an
+   arrow, and the places you have walked to stamped blue. Click a name to go there. The passport counts the places
+   you have actually visited, kept in this browser; visit them all and it counts as a secret.
+   ================================================================ */
+const MAP = { open: false, img: null, span: 215, vis: new Set() };
+window.__MAP = MAP;
+// [name, label x, label z, land x, land z] (land null: you can see it, not walk to it)
+MAP.places = [
+  ['THE FLOOR', 0, 0, 0, 24], ['SCULPTURE ROWS', 0, -40, 0, -22], ['THE FACTORY', 0, -64, 0, -48], ['THE BRAIN', 50, -52, 36, -36], ['LIGHTHOUSE', 0, -126, 0, -100],
+  ['OPEN METAVERSE', 30, -80, 30, -66], ['WAGMI WHEEL', 62, 0, 50, 10], ['SURVIVE', 44, 44, 18, 44], ['THE BANK', -60, 0, -42, 2], ['SUMMER.JPG', -48, 52, -30, 60],
+  ['CENSUS WALK', -12, 66, -2.5, 58], ['THE BODEGA', 20, 66, 8, 68], ['GM BEACH', 0, 112, 0, 118], ['THE PIER', 0, 168, 0, 160], ['N3W SQUARE', 81, 10, 70, 8],
+  ['CHESS', 74, -21, 72, -16], ['N3W COURT', -66, 24, -58, 24], ['N3W LINE', 26, 26, 23, 30], ['N3W AIR', -72, -39, -64, -33], ['THE CUT', -42, -69, -36, -61],
+  ['HANDBALL WALL', -78, -21, WALLP.fx, WALLP.fz], ['FIND THE EYE', 48, -9, MONTE.ix, MONTE.iz], ['THE HYDRANT', 75, 30, HYD_AT.x + Math.sin(HYD.ry) * -2, HYD_AT.z + Math.cos(HYD.ry) * -2],
+  ['THE OBSERVER', 0.5, -137.5, null, null], ['THE WITNESS', 0, -205, null, null], ['THE GREAT WAVE', -30, 156, null, null], ['THE COLOSSUS', 58, 205, null, null]
+];
+MAP.leftOf = new Set(['CENSUS WALK', 'THE GREAT WAVE', 'THE CUT', 'N3W LINE']);
+try { (JSON.parse(localStorage.getItem('meme-island-passport') || '[]') || []).forEach(k => MAP.vis.add(k)); } catch (e) { }
+(function mapWindow() {
+  const el = document.createElement('div'); el.className = 'win'; el.id = 'mapwin';
+  el.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,94vw);z-index:58;display:none;flex-direction:column';
+  el.innerHTML = '<div class="title"><img src="assets/eye.png" alt=""><span>MAP.EXE</span><div class="tbtns"><button id="mX" aria-label="Close">&#215;</button></div></div><div class="inner" style="padding:8px"><div id="mTop" class="small" style="display:flex;justify-content:space-between;margin-bottom:6px;font:500 12px/1.2 \'JetBrains Mono\',Menlo,monospace"><span id="mCount"></span><span>CLICK A PLACE TO GO THERE</span></div><canvas id="mapcv" width="1100" height="1100" style="width:100%;aspect-ratio:1/1;display:block;background:#0b1a26;cursor:pointer"></canvas></div>';
+  document.body.appendChild(el); MAP.el = el; MAP.cv = el.querySelector('#mapcv') || document.createElement('canvas'); const mx0 = el.querySelector('#mX'); if (mx0) mx0.onclick = () => mapToggle(false);
+  MAP.cv.addEventListener('click', e => { const r = MAP.cv.getBoundingClientRect(), mx = (e.clientX - r.left) / r.width * 1100, my = (e.clientY - r.top) / r.height * 1100; let best = null, bd = 34;
+    MAP.places.forEach(p => { const [x, y] = mapXY(p[1], p[2]); const d = Math.hypot(x - mx, y - my); if (d < bd) { bd = d; best = p; } }); if (best) mapGo(best); });
+  const sm = document.querySelector('#startmenu .items'); if (sm) { const b = document.createElement('button'); b.innerHTML = '<img src="assets/eye.png" alt="" style="width:16px;height:16px"> Map'; b.onclick = () => mapToggle(true); sm.appendChild(b); }
+  const box = $('mbtn'); if (box) { const b = document.createElement('button'); b.className = 'b'; b.textContent = 'MAP'; b.style.cssText = 'width:64px;height:40px;font-weight:700;font-size:10px'; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); mapToggle(); }); box.appendChild(b); }
+})();
+const mapXY = (x, z) => [(x + MAP.span) / (2 * MAP.span) * 1100, (z + MAP.span) / (2 * MAP.span) * 1100];
+function mapShot() {
+  // one frame from straight above, into the main canvas, copied out before the next frame replaces it
+  const W = renderer.domElement.width, H = renderer.domElement.height, asp = W / H, s = MAP.span;
+  const cam = new THREE.OrthographicCamera(-s * asp, s * asp, s, -s, 1, 1200); cam.position.set(0, 600, 0); cam.up.set(0, 0, -1); cam.lookAt(0, 0, 0); cam.updateMatrixWorld();
+  const fog = scene.fog, hidden = []; scene.fog = null;
+  scene.traverse(o => { if (o.visible && (o.isMesh || o.isPoints) && o.geometry) { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; const ms = Array.isArray(o.material) ? o.material : [o.material]; if (bs && bs.radius * Math.max(o.scale.x, o.scale.y, o.scale.z) > 700 && ms.some(m => m && m.side === THREE.BackSide)) { hidden.push(o); o.visible = false; } } });
+  try { renderer.setRenderTarget(null); renderer.render(scene, cam); const c = document.createElement('canvas'); c.width = c.height = 1100; const x = c.getContext('2d'); x.drawImage(renderer.domElement, (W - H) / 2, 0, H, H, 0, 0, 1100, 1100); MAP.img = c; MAP.night = (L.lamps || 0) > 0.5; } catch (e) { console.warn('v50 map shot', e); }
+  scene.fog = fog; hidden.forEach(o => o.visible = true);
+}
+const mapSecret = secret('map', () => { }, ['map', 'whereami']), passSecret = secret('passport', () => { toast('EVERY STAMP IN THE PASSPORT. YOU HAVE SEEN THE WHOLE ISLAND. THE ISLAND HAS SEEN YOU.', 'blue'); });
+function mapToggle(on) {
+  MAP.open = on === undefined ? !MAP.open : on; MAP.el.style.display = MAP.open ? 'flex' : 'none';
+  if (MAP.open) { mapSecret(); if (!MAP.img || MAP.age > 120) { mapShot(); MAP.age = 0; } try { document.exitPointerLock && document.exitPointerLock(); } catch (e) { } mapDraw(); }
+}
+function mapGo(p) {
+  if (p[3] === null) { toast(p[0] + ': YOU CAN SEE IT FROM HERE. WALK OVER.'); return; }
+  let x = p[3], z = p[4]; for (let i = 0; i < 12; i++) { const f = floorAt(x, z, 5); if (f.f !== null && !f.block) break; const r = Math.hypot(x, z) || 1; x -= x / r * 3; z -= z / r * 3; }
+  const yaw = Math.atan2(-(p[1] - x), -(p[2] - z)); teleport(x, z, yaw, 5); mapToggle(false); toast(p[0] + '.');
+}
+function mapDraw() {
+  const c = MAP.cv.getContext('2d'); if (!c || !c.beginPath || !c.measureText) return; c.fillStyle = '#0b1a26'; c.fillRect(0, 0, 1100, 1100);
+  if (MAP.img) { c.save(); c.filter = MAP.night ? 'brightness(1.9) saturate(.8)' : 'saturate(1.05)'; c.drawImage(MAP.img, 0, 0); c.restore(); }
+  c.strokeStyle = 'rgba(239,232,218,.12)'; c.lineWidth = 1; for (let i = 0; i <= 1100; i += 110) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i, 1100); c.stroke(); c.beginPath(); c.moveTo(0, i); c.lineTo(1100, i); c.stroke(); }
+  c.font = '600 19px "JetBrains Mono",Menlo,monospace'; c.textBaseline = 'middle';
+  MAP.places.forEach(p => { const [x, y] = mapXY(p[1], p[2]), v = MAP.vis.has(p[0]);
+    c.beginPath(); c.arc(x, y, 8, 0, PI * 2); c.fillStyle = v ? '#2962FF' : 'rgba(13,13,13,.75)'; c.fill(); c.lineWidth = 2.5; c.strokeStyle = '#efe8da'; c.stroke();
+    const tw = c.measureText(p[0]).width, left = MAP.leftOf.has(p[0]) || x > 820; const tx = left ? x - 14 - tw : x + 14; c.fillStyle = 'rgba(13,13,13,.72)'; c.fillRect(tx - 5, y - 13, tw + 10, 26); c.fillStyle = v ? '#9fc0ff' : '#efe8da'; c.fillText(p[0], tx, y + 1); });
+  // you
+  const [px, py] = mapXY(P.x, P.z), a = P.yaw; c.save(); c.translate(px, py); c.rotate(-a); c.beginPath(); c.moveTo(0, -22); c.lineTo(13, 14); c.lineTo(0, 7); c.lineTo(-13, 14); c.closePath(); c.fillStyle = '#ff3fa4'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#0d0d0d'; c.stroke(); c.restore();
+  c.fillStyle = 'rgba(13,13,13,.72)'; c.fillRect(1040, 14, 46, 54); c.fillStyle = '#efe8da'; c.font = '400 30px Anton,Impact,sans-serif'; c.textAlign = 'center'; c.fillText('N', 1063, 34); c.font = '400 20px Anton,Impact'; c.fillText('↑', 1063, 56); c.textAlign = 'left';
+  const walkable = MAP.places.filter(p => p[3] !== null), n = walkable.filter(p => MAP.vis.has(p[0])).length; if ($('mCount')) $('mCount').textContent = 'PASSPORT: ' + n + ' OF ' + walkable.length + ' PLACES VISITED';
+}
+let mapKeyT = null;
+addEventListener('keydown', e => { if ($('chat').style.display === 'block' || e.repeat) return; if (mapKeyT) { clearTimeout(mapKeyT); mapKeyT = null; if (e.key.length === 1) return; }
+  if (e.code === 'KeyN') mapKeyT = setTimeout(() => { mapKeyT = null; mapToggle(); }, 420); if (e.code === 'Escape' && MAP.open) mapToggle(false); });
+let mapAcc = 0;
+function mapFrame(dt) {
+  MAP.age = (MAP.age || 0) + dt; mapAcc += dt; if (MAP.open && mapAcc > 0.1) { mapAcc = 0; mapDraw(); }
+  if (Math.floor(LIFE.t * 2) !== Math.floor((LIFE.t - dt) * 2)) { const walkable = MAP.places.filter(p => p[3] !== null); let add = false;
+    walkable.forEach(p => { if (!MAP.vis.has(p[0]) && (Math.hypot(P.x - p[1], P.z - p[2]) < 11 || Math.hypot(P.x - p[3], P.z - p[4]) < 4)) { MAP.vis.add(p[0]); add = true; if (state.started) toast('PASSPORT STAMPED: ' + p[0], 'blue'); } });
+    if (add) { try { localStorage.setItem('meme-island-passport', JSON.stringify([...MAP.vis])); } catch (e) { } if (walkable.every(p => MAP.vis.has(p[0]))) passSecret(); } }
+}
+window.__FRAMES.push(dt => { try { mapFrame(dt); } catch (e) { if (!MAP.err) { MAP.err = e; console.warn('v50 map', e); } } });
+MAP.toggle = mapToggle; MAP.go = mapGo;
+
+/*__V51_X__*/
+/*__V52_X__*/
+/*__V53_X__*/
+/*__V54_X__*/
+/*__V55_X__*/
 
 /* ---------------- boot ---------------- */
 buildCards();

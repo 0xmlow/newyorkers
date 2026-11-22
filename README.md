@@ -255,3 +255,15 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v34 SECRETS.EXE (J, Start menu, BOOK): 75 secrets with hints and tallies; phone buttons TYPE, RADIO, PHOTO, BOOK.
 - v35: the island says 577 cards, the help line lists the new keys, the site's island page describes it as it is.
 - About 15 to 16 ms a frame on the beach rail at 1440x810.
+
+## v36 to v45 (2026-11-22), `_build/v36.js` to `_build/v45.js`
+- v36 Impermanent Vision pass two: paint pools on the paths, THE OBSERVER on the north rocks (0.5, -137.5), veins in the sky dome after dark.
+- v37 god rays: a screen space pass after bloom, desktops only, strongest when the sun is low and you face it.
+- v38 LIVE MINT: a vitrine by the factory (-3.4, -37.5) polls the 6529 API every 10 minutes; a new Meme shows there, on a N3W Square screen and on the ARRIVALS board without a rebuild.
+- v39 Top of the Square: an elevator up the N3W Square tower (81, 10) to a deck with two coin op viewers.
+- v40 chess tables at (74, -21) with hustlers and a pigeon lady.
+- v41 the back room: knock on the middle cooler in the bodega and type fren; a speakeasy 9 m under the island with a jukebox (switches the radio to jazz), a bar and a private wall of the 15 newest cards. `window.__UNDER` lets floorAt stand you below the terrain.
+- v42 the drone show: 600 drones fly the evil eye, N3W YORKERS, gm, a pizza slice and an Open Eye Flower over the harbour at the top of every hour after dark, or type drones.
+- v43 sea life: crabs on GM Beach that dig in when you come close, fish that jump with a ring where they land, jellyfish round the pier that glow after dark, starfish.
+- v44 smooth on every screen: a quality governor steps down sharpness, then AO and god rays, then live shadows when frames run late and back up when there is room. `?lite=1` and `?hq=1`, or type LITE and HQ. Reduced motion turns off the head bob and drone twinkle. The welcome counts secrets live.
+- v45 the new tour: nine stops for everything since v26 (N3W Square, the top deck, chess, the Press, THE CUT, the Observer, the Witness, the El, the back room). A tour stop can carry `pre()`.
