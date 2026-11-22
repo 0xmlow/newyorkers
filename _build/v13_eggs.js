@@ -18,7 +18,7 @@ function talk(t) { try { if (window.speechSynthesis && window.SpeechSynthesisUtt
 /* register a secret: its words go into EGGS (typed or in chat) and the first find is counted */
 function secret(key, fn, words) {
   PLAY.total++; const run = (...a) => { if (!PLAY.found.has(key)) { PLAY.found.add(key); setTimeout(() => toast(`SECRET ${PLAY.found.size} OF ${PLAY.total} FOUND`, 'blue'), 1600); try { localStorage.setItem('meme-island-secrets', JSON.stringify([...PLAY.found])); } catch (e) { } } return fn(...a); };
-  (words || []).forEach(w => { EGGS[w] = run; }); return run;
+  run.__s = true; (words || []).forEach(w => { EGGS[w] = run; }); return run;
 }
 try { (JSON.parse(localStorage.getItem('meme-island-secrets') || '[]') || []).forEach(k => PLAY.found.add(k)); } catch (e) { }
 /* a timed body change that undoes itself (the room only undoes what it did) */
