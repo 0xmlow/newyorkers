@@ -188,3 +188,25 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
   - an ATM and a door mat.
 - No new downloads: every texture is drawn on a canvas.
 - Fix: the v8 ferry and sloop vertex colours are now converted to linear, so the ferry reads orange, not tan.
+
+## v11 the N3W house type on every sign (2026-11-21)
+- MLow's own type from `N3W CUSTOM LOGOS 2026-11-18`: titles in N3W REDACTED (Anton; the first and last letter of each word struck by the MLOW bar, the letters between slit at their own clean height from `best_y` in `n3w_type.py`, copied as the `N3W_Y` table; every O and @ is the blue evil eye). Second lines in Archivo Expanded (width 125), screens and numbers in JetBrains Mono, handwriting (gm, WELCOME, Cards on the Bridge) in Permanent Marker. NEW YORKERS is always written N3W YORKERS.
+- `site/fonts/` gained Anton, Archivo Expanded, JetBrains Mono and Permanent Marker as subset woff2. `fonts.css` used to point at `fonts/fonts/...`, so before v11 none of the web fonts loaded and every sign fell back to Helvetica and Menlo.
+- `window.__SIGNS` lists every sign texture (the sign contact sheet script uses it).
+
+## v12 the island moves (2026-11-21), `_build/v12_life.js`
+- Pigeons on the beach, the Census Walk and by the toll: they peck, scatter when you walk at them, circle and glide back. Gulls over the harbour. Five Con Ed steam stacks on the ring road. A jet with a contrail, a harbour helicopter, fireflies after dark, newspapers blowing round the ring road. The island's own FW fireworks now also go off now and then after dark, with a soft sprite.
+
+## v13 things to play with (2026-11-21), `_build/v13_eggs.js`
+- A yellow cab with an N3W YORKERS topper circles the ring road; type TAXI and it stops for you, E to ride a lap. PIZZA (the Pizza Rat), WHALE (a breach off the pier), DISCO (a mirror ball and beams over the Floor, with a kick drum), MOON, SHRINK, GROW, FIREWORKS, N3W, SNOW, SUS, BODEGA, 420.
+- A sidewalk clock on the beach on New York time; it goes off at 4:20. A pay phone that rings and talks (speechSynthesis). A hot dog cart (N3W DOGS) that feeds the pigeons. Pet the bodega cat.
+- `secret(key, fn, words)` registers a secret and counts the first find: SECRETS n OF 39, kept in localStorage.
+- Player hooks: `window.__GRAV`, `__EYE`, `__SPD` (each mode resets only what it set).
+
+## v14 secrets (2026-11-21), `_build/v14_secrets.js`
+- The golden slice hunt: nine slices (top of the Floor, the bodega, the lighthouse roof, the 2030 pathway, under the wheel, Summer.jpg, BUIDL, behind the Great Wave, the toll). All nine set off the harbour and raise a SLICE KING plaque. SLICES gives a clue. Progress in localStorage.
+- X marks the spot on GM Beach (stand on it 4.2 seconds). Three messages in bottles at the waterline. A banner plane towing N3W YORKERS · BY MLOW. The tall ship glows green at 3 a.m. New York time. HELP gives hints.
+
+## v15 polish (2026-11-21)
+- The sky dome no longer streaks overhead: the skirt now closes to a point and blurs the panorama sideways as it climbs (the night photograph's top rows were stretched stars), with procedural stars at night. The flat cap disc is off.
+- The enter card mentions the slices, the cab, the phone and HELP.

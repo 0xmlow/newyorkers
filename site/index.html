@@ -140,7 +140,7 @@ legend{padding:0 3px;background:var(--face)}
   <div class="inner">
     <div class="banner"><img src="assets/logo_white.png" alt="MLOW"><b>MEME ISLAND 98</b></div>
     <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
-    <p>All 527 cards of The Memes by 6529 and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys. There is a vault. Say gm.</p>
+    <p>All 527 cards of The Memes by 6529 and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys, a vault and nine golden slices. A cab circles the ring road. The phone by the pier rings. Type words a New Yorker would say and see what happens; type HELP if you get stuck. Say gm.</p>
     <div id="bar" class="sunken"><i></i></div>
     <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER chat</div>
     <div class="btns"><button class="b" id="go" disabled>Loading...</button></div>
@@ -478,27 +478,34 @@ MAT.sand.customProgramCacheKey = () => 'mi-wetsand-v5';
 /* panorama: one FLORA photograph wrapped twice, mirrored at the folds, Manhattan due south and due north */
 const PANO_TEX = ['pano', 'pano_dawn', 'pano_day', 'pano_night'].map(n => { const t = TL.load(`assets/${n}.webp`); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t; });
 const panoMat = new THREE.ShaderMaterial({
-  uniforms: { t0: { value: PANO_TEX[0] }, t1: { value: PANO_TEX[1] }, t2: { value: PANO_TEX[2] }, t3: { value: PANO_TEX[3] }, w: { value: new THREE.Vector4(1, 0, 0, 0) }, tint: { value: new THREE.Color(1, 1, 1) }, uLin: { value: 0 } },
-  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-  fragmentShader: 'uniform sampler2D t0, t1, t2, t3; uniform vec4 w; uniform vec3 tint; uniform float uLin; varying vec2 vUv; void main(){ vec3 c = texture2D(t0, vUv).rgb * w.x + texture2D(t1, vUv).rgb * w.y + texture2D(t2, vUv).rgb * w.z + texture2D(t3, vUv).rgb * w.w; c *= tint; c = mix(c, pow(c, vec3(2.2)), uLin); gl_FragColor = vec4(c, 1.0); }',
+  uniforms: { t0: { value: PANO_TEX[0] }, t1: { value: PANO_TEX[1] }, t2: { value: PANO_TEX[2] }, t3: { value: PANO_TEX[3] }, w: { value: new THREE.Vector4(1, 0, 0, 0) }, tint: { value: new THREE.Color(1, 1, 1) }, uLin: { value: 0 }, capc: { value: new THREE.Color(0xa7bfce) } },
+  vertexShader: 'attribute float sk; varying vec2 vUv; varying float vSk; varying vec3 vP; void main(){ vUv = uv; vSk = sk; vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: 'uniform sampler2D t0, t1, t2, t3; uniform vec4 w; uniform vec3 tint; uniform float uLin; uniform vec3 capc; varying vec2 vUv; varying float vSk; varying vec3 vP;\n' +
+    'vec3 pano(vec2 q){ vec3 c = vec3(0.0); if (w.x > 0.002) c += texture2D(t0, q).rgb * w.x; if (w.y > 0.002) c += texture2D(t1, q).rgb * w.y; if (w.z > 0.002) c += texture2D(t2, q).rgb * w.z; if (w.w > 0.002) c += texture2D(t3, q).rgb * w.w; return c; }\n' +
+    'float h3(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }\n' +
+    'void main(){ vec3 c = pano(vUv);\n' +
+    '  float bl = vSk > 0.0005 ? 1.0 : smoothstep(0.84, 0.99, vUv.y);\n' +
+    '  if (bl > 0.0) { vec2 q = vec2(vUv.x, min(vUv.y, 0.9)); float sp = 0.003 + vSk * 0.05; float jt = h3(vec3(gl_FragCoord.xy, 1.0)) - 0.5; vec3 acc = vec3(0.0); for (int i = -4; i <= 4; i++) acc += pano(q + vec2((float(i) + jt) * sp * 2.2, 0.0)); acc /= 9.0;\n' +
+    '    c = mix(c, acc, bl); vec3 d = normalize(vP); vec3 cell = floor(d * 520.0); float st = step(0.9965, h3(cell)) * (0.5 + 0.5 * h3(cell + 3.1)); c += vec3(st) * w.w * bl * 1.4; }\n' +
+    '  c *= tint; c = mix(c, pow(c, vec3(2.2)), uLin); gl_FragColor = vec4(c, 1.0); }',
   side: THREE.DoubleSide, depthWrite: false
 });
 const PANO = { mesh: null, cap: null };
 (function () {
   const R = 1150, segs = 128, H = R * PI * 1344 / 3168, top = 0.58 * H, bot = top - H;
-  const pos = [], uv = [], idx = [];
+  const pos = [], uv = [], idx = [], sk = [];
   for (let i = 0; i <= segs; i++) {
     const th = i / segs * PI * 2, t = i / (segs / 2), u = t <= 1 ? t : 2 - t;
     const x = R * Math.cos(th), z = R * Math.sin(th);
-    const x2 = x * 0.35, z2 = z * 0.35; // a skirt that leans in overhead, stretching the photograph's top row so no seam shows
-    pos.push(x, top, z, x, bot, z, x2, top + 900, z2); uv.push(u, 0.999, u, 0, u, 0.999);
+    const x2 = x * 0.0, z2 = z * 0.0; // a skirt that leans in overhead, stretching the photograph's top row so no seam shows
+    pos.push(x, top, z, x, bot, z, x2, top + 900, z2); uv.push(u, 0.999, u, 0, u, 0.999); sk.push(0, 0, 1);
   }
   for (let i = 0; i < segs; i++) { const a = i * 3; idx.push(a, a + 1, a + 3, a + 1, a + 4, a + 3, a + 2, a, a + 5, a, a + 3, a + 5); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setAttribute('sk', new THREE.Float32BufferAttribute(sk, 1)); g.setIndex(idx);
   const m = new THREE.Mesh(g, panoMat); m.renderOrder = -10; m.frustumCulled = false; scene.add(m); PANO.mesh = m;
   const cap = new THREE.Mesh(new THREE.CircleGeometry(R, 64), new THREE.MeshBasicMaterial({ color: 0xa7bfce, side: THREE.DoubleSide, fog: false, depthWrite: false, toneMapped: false }));
-  cap.rotation.x = PI / 2; cap.position.y = top + 899; cap.scale.setScalar(0.36); cap.renderOrder = -10; scene.add(cap); PANO.cap = cap;
+  cap.rotation.x = PI / 2; cap.position.y = top + 899; cap.scale.setScalar(0.36); cap.renderOrder = -10; cap.visible = false; scene.add(cap); PANO.cap = cap;
 })();
 
 /* ---------------- light ---------------- */
@@ -519,7 +526,7 @@ const L = { dir: new V3() }; COLOR_KEYS.forEach(k => L[k] = new THREE.Color(PRES
 function applyLight() {
   sun.color.copy(L.sun); sun.intensity = L.sunI; hemi.color.copy(L.sky); hemi.groundColor.copy(L.gnd); hemi.intensity = L.hemiI * (ENV.on ? 0.42 : 1);
   scene.fog.color.copy(L.fog); scene.fog.near = L.near; scene.fog.far = L.far; renderer.setClearColor(L.fog);
-  PANO.cap.material.color.copy(L.cap); MAT.water.color.copy(L.sea);
+  PANO.cap.material.color.copy(L.cap); panoMat.uniforms.capc.value.copy(L.cap); MAT.water.color.copy(L.sea);
   renderer.toneMappingExposure = L.exp;
   cardMats.forEach(m => m.color.setScalar(L.card));
   MAT.bulb.color.setRGB(1, 0.85, 0.62).multiplyScalar(0.35 + 0.65 * L.lamps);
@@ -1864,7 +1871,7 @@ function setupPost() {
     const bloom = new THREE.UnrealBloomPass(new THREE.Vector2(sz.x, sz.y), 0.4, 0.55, 0.88); comp.addPass(bloom);
     const grade = new THREE.ShaderPass({
       uniforms: { tDiffuse: { value: null }, uVig: { value: 0.3 }, uSat: { value: 1.1 }, uTime: { value: 0 }, uGrain: { value: 0.016 }, uCA: { value: 0.002 }, tAO: { value: null }, uAO: { value: 0 }, uCurve: { value: 0.22 }, uLift: { value: new THREE.Color(1, 1, 1) }, uGain: { value: new THREE.Color(1, 1, 1) } },
-      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      vertexShader: 'attribute float sk; varying vec2 vUv; varying float vSk; void main(){ vUv = uv; vSk = sk; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
       fragmentShader: [
         'uniform sampler2D tDiffuse, tAO; uniform float uVig, uSat, uTime, uGrain, uCA, uCurve, uAO; uniform vec3 uLift, uGain; varying vec2 vUv;',
         'float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }',
@@ -3880,7 +3887,7 @@ try { (JSON.parse(localStorage.getItem('meme-island-slices') || '[]') || []).for
     const g = new THREE.Group(); const s = new THREE.Mesh(geo, goldM); g.add(s); const c = new THREE.Mesh(crust, crustM); c.position.set(0, 0.36, 0); g.add(c);
     [[-0.08, -0.05], [0.1, 0.06], [-0.02, 0.18], [0.04, -0.2]].forEach(([px, py]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.03, 10), crustM); p.rotation.x = PI / 2; p.position.set(px, py, 0.05); g.add(p); });
     g.position.set(x, y + 1.0, z); scene.add(g);
-    const l = practical(x, y + 1.6, z, 0xffc23a, 2.5, 5); l.userData.alwaysOn = 0.6;
+    const l = new THREE.Sprite(new THREE.SpriteMaterial({ map: LIFE.soft, color: 0xffc23a, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending })); l.scale.setScalar(2.2); l.position.set(x, y + 1.0, z); scene.add(l);
     const got = HUNT.got.has(i); g.visible = !got; l.visible = !got;
     HUNT.slices.push({ i, name, g, l, x, y: y + 1.0, z, got });
   });

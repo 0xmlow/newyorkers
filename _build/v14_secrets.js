@@ -27,7 +27,7 @@ try { (JSON.parse(localStorage.getItem('meme-island-slices') || '[]') || []).for
     const g = new THREE.Group(); const s = new THREE.Mesh(geo, goldM); g.add(s); const c = new THREE.Mesh(crust, crustM); c.position.set(0, 0.36, 0); g.add(c);
     [[-0.08, -0.05], [0.1, 0.06], [-0.02, 0.18], [0.04, -0.2]].forEach(([px, py]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.03, 10), crustM); p.rotation.x = PI / 2; p.position.set(px, py, 0.05); g.add(p); });
     g.position.set(x, y + 1.0, z); scene.add(g);
-    const l = practical(x, y + 1.6, z, 0xffc23a, 2.5, 5); l.userData.alwaysOn = 0.6;
+    const l = new THREE.Sprite(new THREE.SpriteMaterial({ map: LIFE.soft, color: 0xffc23a, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending })); l.scale.setScalar(2.2); l.position.set(x, y + 1.0, z); scene.add(l);
     const got = HUNT.got.has(i); g.visible = !got; l.visible = !got;
     HUNT.slices.push({ i, name, g, l, x, y: y + 1.0, z, got });
   });
