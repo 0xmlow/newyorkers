@@ -140,9 +140,9 @@ legend{padding:0 3px;background:var(--face)}
   <div class="inner">
     <div class="banner"><img src="assets/logo_white.png" alt="MLOW"><b>MEME ISLAND 98</b></div>
     <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
-    <p>All 527 cards of The Memes by 6529 and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys, a vault and nine golden slices. A cab circles the ring road. The phone by the pier rings. Type words a New Yorker would say and see what happens; type HELP if you get stuck. Say gm.</p>
+    <p>All 577 cards of The Memes by 6529 (the newest fifty fresh off the press at the factory) and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys, a vault and nine golden slices. A cab circles the ring road. The phone by the pier rings. Type words a New Yorker would say and see what happens; type HELP if you get stuck. Say gm.</p>
     <div id="bar" class="sunken"><i></i></div>
-    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER chat</div>
+    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER type a word · M radio · O photo · J secrets</div>
     <div class="btns"><button class="b" id="go" disabled>Loading...</button></div>
   </div>
 </div></div>
@@ -1571,7 +1571,7 @@ function postcard() {
   frame(0); const src = renderer.domElement, W = 1600, H = Math.round(1600 * src.height / src.width), cv = document.createElement('canvas'); cv.width = W + 80; cv.height = H + 200; const c = cv.getContext('2d');
   c.fillStyle = '#F2EBDD'; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(src, 40, 40, W, H);
   c.fillStyle = '#0D0D0D'; c.font = '400 58px "Permanent Marker",cursive'; c.textAlign = 'left'; c.fillText('Greetings from Meme Island', 40, H + 120);
-  c.font = '800 20px "Archivo Expanded",Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 527 CARDS', 40, H + 168);
+  c.font = '800 20px "Archivo Expanded",Arial,sans-serif'; c.fillStyle = '#FF6B00'; c.fillText(Q(zoneName) + '   ·   POPULATION: 577 CARDS', 40, H + 168);
   c.fillStyle = '#0D0D0D'; c.textAlign = 'right'; c.fillText('MLow', W + 40, H + 168);
   saveCanvas(cv, 'meme-island-postcard.png'); toast('POSTCARD READY. SAVE IT, POST IT, TAG A FRIEND WHO SAYS GN.', 'blue');
 }
@@ -1999,7 +1999,7 @@ const BLIMP = (function () {
   [[0, 5, -14, 0], [0, -5, -14, 0], [5, 0, -14, PI / 2], [-5, 0, -14, PI / 2]].forEach(([x, y, z, r]) => { const f = new THREE.Mesh(new THREE.BoxGeometry(0.3, 4, 4), MAT.blue); f.position.set(x * 0.7, y * 0.7, z); f.rotation.z = r; g.add(f); });
   const gond = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 6), MAT.ink); gond.position.y = -5.6; g.add(gond);
   const eye = new THREE.Mesh(new THREE.CircleGeometry(2.2, 32), new THREE.MeshBasicMaterial({ map: tex('assets/eye.png'), transparent: true, toneMapped: false })); eye.position.set(0, 0, 17.05); g.add(eye);
-  const bt = signTex([{ t: 'gm', s: 0.62, f: 'Georgia,serif', b: false }, { t: 'MEME ISLAND · POPULATION 527 CARDS', s: 0.16 }], 1024, 384, '#2962FF', '#FFFFFF');
+  const bt = signTex([{ t: 'gm', s: 0.62, f: 'Georgia,serif', b: false }, { t: 'MEME ISLAND · POPULATION 577 CARDS', s: 0.16 }], 1024, 384, '#2962FF', '#FFFFFF');
   [-1, 1].forEach(sd => { const p = new THREE.Mesh(new THREE.PlaneGeometry(16, 6), new THREE.MeshBasicMaterial({ map: bt, toneMapped: false })); p.position.set(sd * 5.05, 0, 0); p.rotation.y = sd * PI / 2; g.add(p); });
   g.traverse(o => o.castShadow = true); scene.add(g); return { g, a: 0 };
 })();
@@ -2060,7 +2060,7 @@ function stopTour() { tourIdx = -1; RAIL.on = false; RAIL.done = null; teleport(
 const state = { keys: 0, gm: 0, seized: 0, seen: new Set(), hung: 0, tdh: 0, idle: 0, brain: 0, started: false, zone: '', vault: false, eggs: new Set() };
 const $ = id => document.getElementById(id);
 function toast(t, cls) { const d = document.createElement('div'); d.className = 'toast' + (cls ? ' ' + cls : ''); d.textContent = t; $('toasts').appendChild(d); setTimeout(() => d.remove(), 4200); while ($('toasts').children.length > 4) $('toasts').firstChild.remove(); }
-function hud() { $('sKeys').textContent = state.keys + '/6'; $('sGm').textContent = state.gm; $('sSeized').textContent = state.seized; $('sSeen').textContent = state.seen.size + '/527'; $('sHung').textContent = state.hung + '/12'; $('sTdh').textContent = Math.floor(state.tdh); }
+function hud() { $('sKeys').textContent = state.keys + '/6'; $('sGm').textContent = state.gm; $('sSeized').textContent = state.seized; $('sSeen').textContent = state.seen.size + '/' + (CARDS.length + ((D.fresh || []).length)); $('sHung').textContent = state.hung + '/12'; $('sTdh').textContent = Math.floor(state.tdh); }
 function flash(c = '#fff') { const f = $('flash'); f.style.background = c; f.style.opacity = 0.7; setTimeout(() => f.style.opacity = 0, 120); }
 
 /* teleports */
@@ -2469,7 +2469,7 @@ updateSky(1); applyLight(); syncTimeButtons();
 scene.traverse(o => { const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; ms.forEach(m => { if (m.isMeshStandardMaterial) m.envMapIntensity = m === MAT.water ? 1.0 : m.metalness > 0.5 ? 0.9 : 0.4; }); });
 addEventListener('resize', () => { if (window.__lockSize) return; camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (POST.on) POST.comp.setSize(innerWidth, innerHeight); });
 setupPost();
-$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 527 CARDS. SIX KEYS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
+$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 577 CARDS. SIX KEYS, NINE GOLDEN SLICES AND 75 SECRETS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
 requestAnimationFrame(loop);
 hud();
 

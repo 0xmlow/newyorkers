@@ -242,3 +242,16 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 ## v25 the parade, `_build/v25_parade.js`
 - All November (and on PARADE): a four storey parade balloon of an eye flower New Yorker in a blue suit and orange tie, waving, with an N3W YORKERS sash, held by eight handlers on ropes, circling the ring road. Confetti on PARADE, a toast on Thanksgiving.
 - About 16 to 17 ms a frame on the beach rail at 1440x810.
+
+## v26 to v35 (2026-11-22), `_build/v26.js` to `_build/v35.js` (build.py inlines any that exist)
+- v26 THE N3W EL: a viaduct ringing the harbour at r 165, 12 m up, over the pier; a four car train with lit windows; E at the pier stair rides a lap.
+- v27 N3W SQUARE at (81, 10): twelve screens cutting between cards (half of them the new fifty), two LED tickers with live island news, a ball that drops on NEWYEAR or at 23:59:50 on 31 December.
+- v28 night sky: shooting stars (WISH), satellites, METEORS, STARS draws an evil eye constellation.
+- v29 IMPERMANENT VISION (apply-mlow-impermanent-vision): a world space contour field chained into the concrete, sandstone, bunker, cap and plinth materials, crowding toward the thresholds (navy underneath, every fifth line hot pink; whisper by day, electric at night); physical paint drips; THE WITNESS, MLow's painted Open Eye Flower (from the skill's motif sheet, site/assets/iv_flower.webp) on a 40 m stem in the north harbour, watching and blinking (BLINK, and when the El passes); THE CUT at (-42, -69), a doorway onto a painted void that drops you on the lighthouse roof.
+- v30 photoreal: grime and roughness breakup on the flat painted materials, 4096 sun shadows on desktops, aerial perspective by day (window.__FOGN / __FOGF), a calmer grade.
+- v31 FRESH OFF THE PRESS: `fetch_new_memes.py` pulls The Memes minted after the 527 snapshot from the 6529 API (528 to 577 on 2026-11-22) into `memes4.jpg` (atlas slot 5) and `data.json` fresh. They hang on the factory front wall, a press reprints one every few seconds, a split flap ARRIVALS board over the pier, FRESH. Rerun the script and the build to take in later mints (the racks hold 25 a side; past 50 the layout needs a third rack).
+- v32 airdropped crates from the blimp with a new card inside (collect all 50), new cards as ads on the El, type 528 to 577 to open a card.
+- v33 N3W RADIO (M), a bucket drummer at the subway, PHOTO MODE (O, K saves a framed PNG). M, O, K and J act only when pressed alone, so typed words do not trigger them.
+- v34 SECRETS.EXE (J, Start menu, BOOK): 75 secrets with hints and tallies; phone buttons TYPE, RADIO, PHOTO, BOOK.
+- v35: the island says 577 cards, the help line lists the new keys, the site's island page describes it as it is.
+- About 15 to 16 ms a frame on the beach rail at 1440x810.
