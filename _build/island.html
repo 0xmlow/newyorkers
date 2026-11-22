@@ -2384,7 +2384,7 @@ let last = performance.now(), T = 0, aimT = 0, zoneName = '';
 function frame(dt) {
   dt = dt > 0 ? Math.min(dt, 0.1) : 0;
   T += dt;
-  if (state.started && !RIDE.on && !RAIL.on) stepPlayer(dt);
+  if (state.started && !RIDE.on && !RAIL.on && !window.__DRIVE) stepPlayer(dt);
   if (RAIL.on && tourIdx >= 0 && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || keys.ArrowUp || keys.ArrowDown || joy.x || joy.y)) stopTour();
   if (RIDE.on && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y)) { RIDE.top = false; endRide(); }
   // light: the real sky over the harbour, then weather and the calendar
@@ -2392,7 +2392,7 @@ function frame(dt) {
   if (GRASS.shader) GRASS.shader.uniforms.uTime.value = T; MAT.water.normalMap.offset.set(T * 0.004, T * 0.0025);
   lhBeam.visible = L.lamps > 0.25;
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
-  natFrame(dt); archFrame(dt); landFrame(dt); detFrame(dt); bodegaFrame(); lifeFrame(dt); playFrame(dt); secretsFrame(dt); streetFrame(dt); if (typeof neonFrame === 'function') neonFrame(dt); if (typeof wxFrame === 'function') wxFrame(dt); if (typeof gamesFrame === 'function') gamesFrame(dt); if (typeof finaleFrame === 'function') finaleFrame(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
+  natFrame(dt); archFrame(dt); landFrame(dt); detFrame(dt); bodegaFrame(); lifeFrame(dt); playFrame(dt); secretsFrame(dt); streetFrame(dt); if (typeof neonFrame === 'function') neonFrame(dt); if (typeof wxFrame === 'function') wxFrame(dt); if (typeof gamesFrame === 'function') gamesFrame(dt); if (typeof finaleFrame === 'function') finaleFrame(dt); for (const f of (window.__FRAMES || [])) f(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
   // camera
   const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 * (window.__EYE || 1) + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
@@ -2445,6 +2445,11 @@ function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFr
 /*__V18_WEATHER__*/
 /*__V19_GAMES__*/
 /*__V20_FINALE__*/
+/*__V21_HARBOUR__*/
+/*__V22_FOOD__*/
+/*__V23_SKY__*/
+/*__V24_ANIMALS__*/
+/*__V25_PARADE__*/
 
 /* ---------------- boot ---------------- */
 buildCards();
