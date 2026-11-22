@@ -142,7 +142,7 @@ legend{padding:0 3px;background:var(--face)}
     <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
     <p>All 577 cards of The Memes by 6529 (the newest fifty fresh off the press at the factory) and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys, a vault and nine golden slices. A cab circles the ring road. The phone by the pier rings. Type words a New Yorker would say and see what happens; type HELP if you get stuck. Say gm.</p>
     <div id="bar" class="sunken"><i></i></div>
-    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER type a word · M radio · O photo · J secrets · N map</div>
+    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER type a word · M radio · O photo · J secrets · N map · B bell</div>
     <div class="btns"><button class="b" id="go" disabled>Loading...</button></div>
   </div>
 </div></div>
@@ -1951,7 +1951,7 @@ function setupAO(sz, pr) {
 function renderAO() {
   if (!AO.on) return;
   if ((AO.hideT -= 1) <= 0) { AO.hideT = 90; AO.hide.length = 0;
-    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || m.alphaTest > 0 || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
+    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || o.instanceColor || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || m.alphaTest > 0 || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
   const vis = AO.hide.map(o => o.visible); AO.hide.forEach(o => o.visible = false);
   const bg = scene.background, cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
   try { scene.overrideMaterial = AO.over; renderer.setRenderTarget(AO.depth); renderer.clear(); renderer.render(scene, camera); }
@@ -2262,7 +2262,7 @@ function stepPlayer(dt) {
   if (keys.PageUp) P.pitch = clamp(P.pitch + 1.6 * dt, -1.35, 1.35); if (keys.PageDown) P.pitch = clamp(P.pitch - 1.6 * dt, -1.35, 1.35);
   const len = Math.hypot(fx, fz); const moving = len > 0.05;
   if (moving) { fx /= Math.max(1, len); fz /= Math.max(1, len); }
-  const spd = (keys.ShiftLeft || keys.ShiftRight ? 8 : 4.4) * (window.__SPD || 1);
+  const spd = (keys.ShiftLeft || keys.ShiftRight ? 8 : 4.4) * (window.__SPD || 1) * (window.__BIKE || 1);
   const s = Math.sin(P.yaw), c = Math.cos(P.yaw);
   const dx = (fx * c + fz * s) * spd * dt, dz = (-fx * s + fz * c) * spd * dt;
   const tryMove = (nx, nz) => { const f = floorAt(nx, nz, P.y); if (f.block) return false; if (f.f === null && P.ground) return false; return true; };
@@ -6607,6 +6607,590 @@ try { Object.assign(SECRET_NAMES, {
   try { const ry = HYD.ry, hx = HYD_AT.x, hz = HYD_AT.z, gy = ground(hx, hz); const sx = hx + Math.sin(ry) * 2.5, sz = hz + Math.cos(ry) * 2.5; add.push({ name: 'the open hydrant', dur: 7, pos: [[sx + Math.cos(ry) * 8, gy + 1.6, sz - Math.sin(ry) * 8], [sx + Math.cos(ry) * 5 + Math.sin(ry) * 2, gy + 1.4, sz - Math.sin(ry) * 5 + Math.cos(ry) * 2]], look: [[sx, gy + 0.8, sz], [sx, gy + 0.6, sz]], pre: () => { try { if (HYD.on <= 0) { HYD.on = 30; HYD.pts.visible = true; } } catch (e) { } } }); } catch (e) { }
   try { const x0 = WATCH_AT.x, z0 = WATCH_AT.z, gy = ground(x0, z0), ry = Math.atan2(-x0, -z0); add.push({ name: 'the watchers', dur: 8, pos: [[x0 + Math.sin(ry + 0.9) * 12, gy + 2.6, z0 + Math.cos(ry + 0.9) * 12], [x0 + Math.sin(ry) * 7, gy + 2.2, z0 + Math.cos(ry) * 7]], look: [[x0, gy + 2, z0], [x0, gy + 1.8, z0]] }); } catch (e) { }
   try { const s = SHIPS.list[0]; add.push({ name: 'the south channel', dur: 8, pos: [[-30, 6, 176], [30, 9, 186]], look: [[0, 6, 320], [40, 8, 320]], pre: () => { try { s.t = s.dur * 0.47; } catch (e) { } } }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+
+/* ================================================================
+   v56 THE STEAM (2026-11-22)
+   The most New York thing a street does: two orange and white striped stacks at (-20, 30) pour steam from the mains
+   below, and two manhole covers beside them breathe a puff every few seconds. Real soft plumes, each puff growing,
+   rising, leaning with the breeze and thinning out; grey in the day, lit warm by the street lamps at night. Walk
+   through the plume and you have been steamed. STEAM or CONEDISON finds them.
+   ================================================================ */
+const STEAM = { N: isMobile ? 170 : 420, p: [], em: [], k: 0 };
+window.__STEAM = STEAM;
+const STEAM_AT = { x: -20, z: 30 };
+(function steam() {
+  const x0 = STEAM_AT.x, z0 = STEAM_AT.z, g0 = ground(x0, z0); STEAM.g0 = g0;
+  // the stacks: a striped sleeve (canvas bands, a stencilled N3W on one band), open top, dark inside
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 512; const c = cv.getContext('2d');
+  if (c && c.fillRect) { for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#e9e4da' : '#e2581c'; c.fillRect(0, i * 64, 256, 64); }
+    if (c.fillText) { c.fillStyle = '#e2581c'; c.font = '700 34px "Archivo Black", Impact, sans-serif'; c.textAlign = 'center'; c.fillText('N3W', 128, 3 * 64 + 44); c.fillText('EDISON', 128, 5 * 64 + 44); }
+    c.fillStyle = 'rgba(40,30,20,.18)'; for (let i = 0; i < 40; i++) c.fillRect(Math.random() * 256, Math.random() * 512, 2 + Math.random() * 3, 10 + Math.random() * 40); }
+  const st = new THREE.CanvasTexture(cv); st.encoding = THREE.sRGBEncoding; st.anisotropy = ANISO;
+  const sleeve = new THREE.MeshStandardMaterial({ map: st, roughness: 0.55, side: THREE.DoubleSide }), inner = new THREE.MeshStandardMaterial({ color: 0x15130f, roughness: 1, side: THREE.BackSide });
+  const iron = new THREE.MeshStandardMaterial({ color: 0x2a2826, roughness: 0.55, metalness: 0.6 });
+  [[0, 0, 2.7], [2.2, 0.9, 2.2]].forEach(([dx, dz, h]) => { const x = x0 + dx, z = z0 + dz, gy = ground(x, z);
+    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, h, 24, 1, true), sleeve); s.position.set(x, gy + h / 2, z); s.castShadow = true; scene.add(s);
+    const s2 = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.39, h, 24, 1, true), inner); s2.position.copy(s.position); scene.add(s2);
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.025, 6, 24), iron); lip.rotation.x = PI / 2; lip.position.set(x, gy + h, z); scene.add(lip);
+    const cover = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.03, 24), iron); cover.position.set(x, gy + 0.015, z); scene.add(cover);
+    post(x, z, 0.45, -5, h + 0.2); STEAM.em.push({ x, z, y: gy + h, rate: 40, r: 0.22, v: 1.25, big: 1, stack: true }); });
+  // two manholes that breathe
+  const mt = (() => { const m = document.createElement('canvas'); m.width = m.height = 256; const q = m.getContext('2d'); if (q && q.arc) { q.fillStyle = '#2b2927'; q.beginPath(); q.arc(128, 128, 126, 0, PI * 2); q.fill(); q.strokeStyle = '#1a1917'; q.lineWidth = 7; for (let r = 30; r < 120; r += 22) { q.beginPath(); q.arc(128, 128, r, 0, PI * 2); q.stroke(); } for (let a = 0; a < 12; a++) { q.save(); q.translate(128, 128); q.rotate(a * PI / 6); q.fillRect(-3, 30, 6, 90); q.restore(); } if (q.fillText) { q.fillStyle = '#3b3835'; q.font = '700 22px "Archivo Black", Impact, sans-serif'; q.textAlign = 'center'; q.fillText('N3W YORK', 128, 136); } } const t = new THREE.CanvasTexture(m); t.encoding = THREE.sRGBEncoding; return t; })();
+  [[-3.2, 2.4], [4.6, -2.8]].forEach(([dx, dz], i) => { const x = x0 + dx, z = z0 + dz, gy = ground(x, z);
+    const m = new THREE.Mesh(new THREE.CircleGeometry(0.42, 28), new THREE.MeshStandardMaterial({ map: mt, roughness: 0.4, metalness: 0.55, polygonOffset: true, polygonOffsetFactor: -2 })); m.rotation.x = -PI / 2; m.position.set(x, gy + 0.02, z); scene.add(m);
+    STEAM.em.push({ x, z, y: gy + 0.05, rate: 0, r: 0.3, v: 0.9, big: 0.8, puff: 0, next: 2 + i * 3 }); });
+  // a sawhorse with a blinking amber lamp
+  const saw = new THREE.Group(), stripe = (() => { const m = document.createElement('canvas'); m.width = 256; m.height = 32; const q = m.getContext('2d'); if (q && q.fillRect && q.moveTo && q.beginPath) { q.fillStyle = '#efe9dd'; q.fillRect(0, 0, 256, 32); q.fillStyle = '#e2581c'; for (let i = -2; i < 12; i++) { q.beginPath(); q.moveTo(i * 28, 32); q.lineTo(i * 28 + 14, 32); q.lineTo(i * 28 + 30, 0); q.lineTo(i * 28 + 16, 0); q.fill(); } } const t = new THREE.CanvasTexture(m); t.encoding = THREE.sRGBEncoding; return t; })();
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.2, 0.04), new THREE.MeshStandardMaterial({ map: stripe, roughness: 0.6 })); bar.position.y = 0.85; saw.add(bar);
+  [-0.75, 0.75].forEach(dx => [-1, 1].forEach(s => { const l = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.95, 0.05), iron); l.position.set(dx, 0.45, s * 0.14); l.rotation.x = s * 0.28; saw.add(l); }));
+  const amber = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffa020, toneMapped: false })); amber.position.set(0.75, 1.02, 0); saw.add(amber); STEAM.amber = amber;
+  saw.position.set(x0 - 1.6, ground(x0 - 1.6, z0 - 1.8), z0 - 1.8); saw.rotation.y = 0.5; scene.add(saw);
+  // the plume: one Points cloud with its own size and alpha per puff
+  const geo = new THREE.BufferGeometry(), pos = new Float32Array(STEAM.N * 3).fill(-999), sz = new Float32Array(STEAM.N), al = new Float32Array(STEAM.N);
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('aSize', new THREE.BufferAttribute(sz, 1)); geo.setAttribute('aAlpha', new THREE.BufferAttribute(al, 1));
+  const mat = new THREE.ShaderMaterial({ uniforms: { map: { value: LIFE.soft }, uCol: { value: new THREE.Color(0xdde2e6) }, uScale: { value: innerHeight * 0.55 } }, transparent: true, depthWrite: false,
+    vertexShader: 'attribute float aSize; attribute float aAlpha; varying float vA; uniform float uScale; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); vA = aAlpha; gl_PointSize = min(512.0, aSize * uScale / max(0.5, -mv.z)); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform sampler2D map; uniform vec3 uCol; varying float vA; void main(){ vec4 t = texture2D(map, gl_PointCoord); float a = t.a * vA; if (a < 0.004) discard; gl_FragColor = vec4(uCol, a); }' });
+  const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; pts.renderOrder = 3; scene.add(pts); STEAM.pts = pts; STEAM.mat = mat;
+  for (let i = 0; i < STEAM.N; i++) STEAM.p.push({ t: 99, life: 1, e: null, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, s0: 0.5 });
+  STEAM.cur = 0;
+  if (window.__MAP) MAP.places.push(['THE STEAM', x0, z0, x0 + 3, z0 + 5]);
+})();
+const steamSecret = secret('steam', () => { toast('YOU WALKED THROUGH THE STEAM. YOU ARE NOW A NEW YORKER. ALSO DAMP.', 'blue'); });
+EGGS.conedison = EGGS.manhole = () => { teleport(STEAM_AT.x + 4, STEAM_AT.z + 7, Math.atan2(4, 7)); toast('FOLLOW THE ORANGE STRIPES. THE CITY IS EXHALING.'); }; EGGS.conedison.__s = true;
+function steamEmit(e, n) { for (let k = 0; k < n; k++) { const s = STEAM.p[STEAM.cur]; STEAM.cur = (STEAM.cur + 1) % STEAM.N; const a = Math.random() * PI * 2, r = Math.random() * e.r;
+  s.e = e; s.t = 0; s.life = (4 + Math.random() * 2.5) * (e.stack ? 1 : 0.7); s.x = e.x + Math.cos(a) * r; s.z = e.z + Math.sin(a) * r; s.y = e.y; s.vx = (Math.random() - 0.5) * 0.3; s.vz = (Math.random() - 0.5) * 0.3; s.vy = e.v * (0.8 + Math.random() * 0.4); s.s0 = (0.35 + Math.random() * 0.3) * e.big; } }
+function steamFrame(dt) {
+  const d = Math.hypot(P.x - STEAM_AT.x, P.z - STEAM_AT.z), near = d < 160; STEAM.pts.visible = near; if (!near) return;
+  const night = Math.min(1, (L.lamps || 0) * 1.4), day = Math.max(0, Math.min(1, ((SKY.el || 0) + 4) / 18));
+  const lit = 0.18 + 0.72 * day; STEAM.mat.uniforms.uCol.value.setRGB(0.87 * lit + 0.22 * night, 0.89 * lit + 0.17 * night, 0.91 * lit + 0.12 * night);
+  STEAM.mat.uniforms.uScale.value = innerHeight * 0.55 * (camera.fov ? 55 / camera.fov : 1);
+  STEAM.amber.visible = Math.sin(LIFE.t * 5) > 0; const wx = 0.45 + Math.sin(LIFE.t * 0.13) * 0.3, wz = 0.18 + Math.cos(LIFE.t * 0.09) * 0.2;
+  STEAM.em.forEach(e => { if (e.stack) { e.acc = (e.acc || 0) + dt * e.rate * (isMobile ? 0.45 : 1); const n = Math.floor(e.acc); e.acc -= n; if (n) steamEmit(e, n); }
+    else { e.next -= dt; if (e.next <= 0) { e.puff = 1.2 + Math.random() * 0.8; e.next = 4 + Math.random() * 5; } if (e.puff > 0) { e.puff -= dt; e.acc = (e.acc || 0) + dt * 22 * (isMobile ? 0.45 : 1); const n = Math.floor(e.acc); e.acc -= n; if (n) steamEmit(e, n); } } });
+  const pos = STEAM.pts.geometry.attributes.position.array, sz = STEAM.pts.geometry.attributes.aSize.array, al = STEAM.pts.geometry.attributes.aAlpha.array;
+  let inPlume = false;
+  for (let i = 0; i < STEAM.N; i++) { const s = STEAM.p[i]; if (s.t >= s.life) { if (al[i] !== 0) { al[i] = 0; pos[i * 3 + 1] = -999; } continue; }
+    s.t += dt; const k = s.t / s.life; s.vy *= 1 - dt * 0.35; s.vx += (wx - s.vx) * dt * 0.5 * k; s.vz += (wz - s.vz) * dt * 0.5 * k;
+    s.x += s.vx * dt; s.y += s.vy * dt; s.z += s.vz * dt; pos[i * 3] = s.x; pos[i * 3 + 1] = s.y; pos[i * 3 + 2] = s.z;
+    sz[i] = s.s0 * (1.4 + k * 6); al[i] = Math.min(1, s.t * 3) * Math.pow(1 - k, 1.4) * (0.5 - 0.22 * Math.min(1, (L.lamps || 0) * 1.4));
+    if (!inPlume && k < 0.6 && Math.abs(s.x - P.x) < 0.5 && Math.abs(s.z - P.z) < 0.5 && Math.abs(s.y - P.y - 1.4) < 0.9) inPlume = true; }
+  const g = STEAM.pts.geometry.attributes; g.position.needsUpdate = g.aSize.needsUpdate = g.aAlpha.needsUpdate = true;
+  if (inPlume) { STEAM.k += dt; if (STEAM.k > 0.6) steamSecret(); }
+}
+window.__FRAMES.push(dt => { try { steamFrame(dt); } catch (e) { if (!STEAM.err) { STEAM.err = e; console.warn('v56 steam', e); } } });
+
+/* ================================================================
+   v57 N3W BIKE (2026-11-22)
+   A bike share dock at (-18, 84), on the way down to GM BEACH: six evil eye blue bikes in a row and a kiosk. E takes
+   one out and you ride: a little over twice walking speed, the bars and the basket in front of you swaying as you
+   pedal, B rings the bell. E at the dock again puts it back. BIKE (or CITIBIKE) finds you one leaning on a pole.
+   ================================================================ */
+const BIKE = { on: false, dist: 0, docked: [], lx: 0, lz: 0, sway: 0 };
+window.__BIKE_ = BIKE;
+const BIKE_AT = { x: -5, z: 76 };
+function bikeModel(scale) {
+  const g = new THREE.Group(), blue = new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.35, metalness: 0.3 }), black = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.7 }), chrome = new THREE.MeshStandardMaterial({ color: 0xbfc3c7, roughness: 0.25, metalness: 0.9 });
+  const tube = (a, b, r, m) => { const d = new THREE.Vector3().subVectors(b, a), L = d.length(); const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, L, 8), m); c.position.copy(a).addScaledVector(d, 0.5); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); g.add(c); return c; };
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const wheels = [-0.52, 0.52].map(x => { const w = new THREE.Group(); w.position.set(x, 0.33, 0); const t = new THREE.Mesh(new THREE.TorusGeometry(0.31, 0.035, 8, 28), black); w.add(t);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 16), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.4, transparent: true, opacity: 0.85 })); hub.rotation.x = PI / 2; w.add(hub); g.add(w); return w; });
+  tube(V(-0.52, 0.33, 0), V(-0.1, 0.36, 0), 0.03, blue); tube(V(-0.1, 0.36, 0), V(0.42, 0.78, 0), 0.04, blue); tube(V(-0.52, 0.33, 0), V(-0.22, 0.8, 0), 0.025, blue);
+  tube(V(-0.1, 0.36, 0), V(-0.24, 0.86, 0), 0.035, blue); tube(V(0.52, 0.33, 0), V(0.42, 0.95, 0), 0.03, chrome);
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.06, 0.13), black); seat.position.set(-0.26, 0.9, 0); g.add(seat);
+  tube(V(0.4, 0.98, -0.28), V(0.4, 0.98, 0.28), 0.018, chrome);
+  const basket = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.18, 0.34), new THREE.MeshStandardMaterial({ color: 0x1a1c20, roughness: 0.6, wireframe: false })); basket.position.set(0.66, 0.86, 0); g.add(basket);
+  const chainring = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.012, 6, 16), chrome); chainring.position.set(-0.1, 0.36, 0.05); g.add(chainring);
+  g.scale.setScalar(scale || 1); g.traverse(m => { if (m.isMesh) m.castShadow = true; }); g.userData.wheels = wheels; return g;
+}
+(function bikeDock() {
+  const x0 = BIKE_AT.x, z0 = BIKE_AT.z, g0 = ground(x0, z0), ry = PI / 2; BIKE.ry = ry;
+  const steel = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, roughness: 0.45, metalness: 0.7 });
+  const base = new THREE.Mesh(new THREE.BoxGeometry(7.6, 0.08, 0.5), steel); base.position.set(x0, g0 + 0.04, z0); base.rotation.y = ry; scene.add(base);
+  const fx = Math.sin(ry), fz = Math.cos(ry), rx = Math.cos(ry), rz = -Math.sin(ry);
+  for (let i = 0; i < 6; i++) { const o = -3 + i * 1.2 + 0.6, x = x0 + rx * o, z = z0 + rz * o;
+    const pst = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.62, 0.22), steel); pst.position.set(x, g0 + 0.35, z); pst.rotation.y = ry; scene.add(pst);
+    const b = bikeModel(1); b.position.set(x + fx * 0.75, g0, z + fz * 0.75); b.rotation.y = ry + PI / 2; scene.add(b); BIKE.docked.push(b); }
+  // the kiosk: a blue pillar with a lit screen and a map
+  const k = new THREE.Group(); k.position.set(x0 + rx * 4.3, g0, z0 + rz * 4.3); k.rotation.y = ry; scene.add(k);
+  const pill = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.7, 0.36), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.4 })); pill.position.y = 0.85; k.add(pill);
+  const scr = signTex([{ t: 'N3W BIKE', s: 0.3 }, { t: 'E TO RIDE', s: 0.16 }, { t: 'B RINGS THE BELL', s: 0.12 }], 512, 512, '#0D0D0D', '#efe8da');
+  const sm = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.38), new THREE.MeshBasicMaterial({ map: scr, toneMapped: false })); sm.position.set(0, 1.3, 0.181); k.add(sm);
+  post(x0 + rx * 4.3, z0 + rz * 4.3, 0.35, -5, 2);
+  interact(x0 + fx * 1.4, z0 + fz * 1.4, 4.2, 'E · N3W BIKE (RIDE OR DOCK)', () => { BIKE.on ? bikeDockIt() : bikeRent(); });
+  // the bars in front of you while riding (children of the camera)
+  const bars = new THREE.Group(), chrome = new THREE.MeshStandardMaterial({ color: 0xc9cdd1, roughness: 0.25, metalness: 0.9 }), grip = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.8 });
+  const hb = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.62, 10), chrome); hb.rotation.z = PI / 2; bars.add(hb);
+  [-0.29, 0.29].forEach(x => { const gr = new THREE.Mesh(new THREE.CylinderGeometry(0.019, 0.019, 0.12, 10), grip); gr.rotation.z = PI / 2; gr.position.x = x; bars.add(gr); });
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.3, 8), chrome); stem.position.set(0, -0.15, -0.03); bars.add(stem);
+  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.14, 0.22), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5 })); bk.position.set(0, -0.14, -0.24); bars.add(bk);
+  const bell = new THREE.Mesh(new THREE.SphereGeometry(0.025, 10, 8, 0, PI * 2, 0, PI / 2), chrome); bell.position.set(0.18, 0.02, 0); bars.add(bell);
+  const fwheel = new THREE.Mesh(new THREE.TorusGeometry(0.31, 0.035, 8, 28, PI * 0.7), grip); fwheel.rotation.set(0, PI / 2, PI * 0.15); fwheel.position.set(0, -0.5, -0.36); bars.add(fwheel);
+  bars.position.set(0, -0.36, -0.6); bars.visible = false; BIKE.bars = bars; bars.traverse(m => { if (m.isMesh) m.frustumCulled = false; });
+  if (!camera.parent) scene.add(camera); camera.add(bars);
+  if (window.__MAP) MAP.places.push(['N3W BIKE', x0, z0, x0 + fx * 2, z0 + fz * 2]);
+})();
+const bikeSecret = secret('bike', () => { }, []); BIKE.dock = () => bikeDockIt();
+function bikeRent(found) {
+  if (BIKE.on) return; const b = BIKE.docked.find(b => b.visible); if (b && !found) b.visible = false; BIKE.from = found ? null : b;
+  BIKE.on = true; BIKE.bars.visible = true; window.__BIKE = 2.15; BIKE.lx = P.x; BIKE.lz = P.z; bikeSecret();
+  toast(found ? 'A N3W BIKE WAS LEANING ON A POLE. NOBODY SAW. RETURN IT TO THE DOCK ON THE BEACH PATH.' : 'BIKE UNLOCKED. FIRST 45 MINUTES FREE. THE ISLAND IS FOUR MINUTES WIDE.', 'blue'); bikeBell();
+}
+function bikeDockIt() { if (!BIKE.on) return; BIKE.on = false; BIKE.bars.visible = false; window.__BIKE = 1; const b = BIKE.docked.find(b => !b.visible); if (b) b.visible = true;
+  toast('DOCKED. YOU RODE ' + (BIKE.dist / 1000).toFixed(2) + ' KM. THE DOCK BEEPS THE GREEN BEEP.'); BIKE.dist = 0; try { beep(1320, 0.08, 'square', 0.04); beep(1760, 0.1, 'square', 0.04, 0.1); } catch (e) { } }
+function bikeBell() { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return;
+  try { [0, 0.16].forEach(w => { const t0 = AC.currentTime + w, g = AC.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.06, t0 + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.6); g.connect(AC.destination);
+    [2093, 2637, 4180].forEach((f, i) => { const o = AC.createOscillator(); o.type = 'sine'; o.frequency.value = f; const gg = AC.createGain(); gg.gain.value = [1, 0.5, 0.25][i]; o.connect(gg); gg.connect(g); o.start(t0); o.stop(t0 + 0.62); }); }); } catch (e) { }
+  BIKE.ring = 0.25; }
+EGGS.bike = EGGS.citibike = EGGS.n3wbike = () => { BIKE.on ? toast('YOU ARE ALREADY ON A BIKE. LOOK DOWN.') : bikeRent(true); }; EGGS.bike.__s = true;
+addEventListener('keydown', e => { if (!BIKE.on || e.code !== 'KeyB' || e.repeat || $('chat').style.display === 'block') return; bikeBell(); });
+function bikeFrame(dt) {
+  if (!BIKE.on) return; const d = Math.hypot(P.x - BIKE.lx, P.z - BIKE.lz); BIKE.lx = P.x; BIKE.lz = P.z; if (d < 5) BIKE.dist += d;
+  const v = d / Math.max(dt, 1e-3); BIKE.sway += dt * (1.2 + v * 0.35);
+  const s = Math.min(1, v / 9); BIKE.ring = Math.max(0, (BIKE.ring || 0) - dt);
+  BIKE.bars.position.set(Math.sin(BIKE.sway) * 0.012 * s, -0.36 + Math.abs(Math.cos(BIKE.sway)) * 0.008 * s, -0.6); BIKE.bars.rotation.set(0.06, Math.sin(BIKE.sway) * 0.03 * s, Math.sin(BIKE.sway) * 0.025 * s + (BIKE.ring > 0 ? Math.sin(LIFE.t * 80) * 0.01 : 0));
+  if (window.__BIKE !== 2.15) window.__BIKE = 2.15;
+}
+window.__FRAMES.push(dt => { try { bikeFrame(dt); } catch (e) { if (!BIKE.err) { BIKE.err = e; console.warn('v57 bike', e); } } });
+
+/* ================================================================
+   v58 THE SKATE SPOT (2026-11-22)
+   A concrete pad at (-74, 86) with a granite ledge, a kicker and a flat rail, and three skaters who never go home.
+   Each one pushes off, rolls the line and throws a trick at the kicker: ollie, kickflip, heelflip, shove it, tre flip,
+   a boardslide down the ledge, and now and then a bail where the board shoots off on its own. Pop and land clack
+   when you are close. KICKFLIP (or E at the pad) calls a tre flip from the nearest one.
+   ================================================================ */
+const SK = { s: [], call: 0 };
+window.__SK = SK;
+const SK_AT = { x: -74, z: 86 };
+(function skateSpot() {
+  const x0 = SK_AT.x, z0 = SK_AT.z, g0 = ground(x0, z0), ry = 0.35; SK.g0 = g0; SK.ry = ry;
+  const ax = Math.cos(ry), az = -Math.sin(ry), bx = Math.sin(ry), bz = Math.cos(ry); SK.ax = ax; SK.az = az; SK.bx = bx; SK.bz = bz;
+  const L2W = (u, v) => [x0 + ax * u + bx * v, z0 + az * u + bz * v]; SK.L2W = L2W;
+  // the pad: smooth grey concrete with saw cut joints and old wax marks
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 640; const c = cv.getContext('2d');
+  if (c && c.fillRect) { c.fillStyle = '#8f8c86'; c.fillRect(0, 0, 1024, 640); for (let i = 0; i < 2600; i++) { const v = 120 + Math.random() * 40 | 0; c.fillStyle = `rgba(${v},${v - 3},${v - 8},.25)`; c.fillRect(Math.random() * 1024, Math.random() * 640, 2, 2); }
+    c.fillStyle = 'rgba(40,38,34,.55)'; for (let i = 1; i < 4; i++) c.fillRect(i * 256, 0, 3, 640); c.fillRect(0, 320, 1024, 3);
+    c.fillStyle = 'rgba(20,18,16,.18)'; for (let i = 0; i < 30; i++) c.fillRect(380 + Math.random() * 300, 230 + Math.random() * 40, 30 + Math.random() * 90, 2); }
+  const pt = new THREE.CanvasTexture(cv); pt.encoding = THREE.sRGBEncoding; pt.anisotropy = ANISO;
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(16, 0.12, 10), new THREE.MeshStandardMaterial({ map: pt, roughness: 0.78 })); pad.position.set(x0, g0 + 0.0, z0); pad.rotation.y = ry; pad.receiveShadow = true; scene.add(pad);
+  const granite = new THREE.MeshStandardMaterial({ color: 0x55575c, roughness: 0.35 }), steel = new THREE.MeshStandardMaterial({ color: 0xb8bcc0, roughness: 0.3, metalness: 0.85 });
+  // the ledge along v = -2.6, the kicker at u = 0, the rail along v = 2.8
+  const ledge = new THREE.Mesh(new THREE.BoxGeometry(5, 0.45, 0.6), granite); const [lx, lz] = L2W(1.5, -2.6); ledge.position.set(lx, g0 + 0.28, lz); ledge.rotation.y = ry; ledge.castShadow = true; scene.add(ledge);
+  const cop = new THREE.Mesh(new THREE.BoxGeometry(5, 0.03, 0.06), steel); cop.position.set(lx + bx * 0.27, g0 + 0.51, lz + bz * 0.27); cop.rotation.y = ry; scene.add(cop);
+  boxWalls(lx, lz, 5, 0.6, ry, -1, 0.5);
+  const kick = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.4, 1.6), new THREE.MeshStandardMaterial({ color: 0x3a3c40, roughness: 0.6 })); const kp = kick.geometry.attributes.position;
+  for (let i = 0; i < kp.count; i++) { if (kp.getY(i) > 0 && kp.getX(i) < 0) kp.setY(i, -0.2); } kp.needsUpdate = true; kick.geometry.computeVertexNormals();
+  const [kx, kz] = L2W(-0.6, 0); kick.position.set(kx, g0 + 0.26, kz); kick.rotation.y = ry; kick.castShadow = true; scene.add(kick);
+  const [rx0, rz0] = L2W(1, 2.8); const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 4.4, 10), steel); rail.rotation.z = PI / 2; const rg = new THREE.Group(); rg.add(rail); rg.position.set(rx0, g0 + 0.42, rz0); rg.rotation.y = ry; scene.add(rg);
+  [-2, 2].forEach(u => { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.4, 8), steel); leg.position.set(u, -0.2, 0); rg.add(leg); });
+  // a sticker bombed bench of a sign
+  const sg = signTex([{ t: 'N3W SKATE', s: 0.36 }, { t: 'NO SKATING (WE SKATE)', s: 0.12 }], 1024, 256, '#efe8da', '#0D0D0D'); const [sx, sz] = L2W(-7.4, -4.6);
+  const sm = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.45), new THREE.MeshBasicMaterial({ map: sg, toneMapped: false, side: THREE.DoubleSide })); sm.position.set(sx, ground(sx, sz) + 1.8, sz); sm.rotation.y = ry; scene.add(sm);
+  const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.9, 8), steel); sp.position.set(sx, ground(sx, sz) + 0.95, sz); scene.add(sp); post(sx, sz, 0.12, -5, 3);
+  // three skaters, each with a board
+  const deckTex = (() => { const m = document.createElement('canvas'); m.width = 256; m.height = 64; const q = m.getContext('2d'); if (q && q.fillRect) { q.fillStyle = '#e9e4da'; q.fillRect(0, 0, 256, 64); q.fillStyle = '#2962FF'; q.fillRect(20, 0, 60, 64); q.fillStyle = '#ff3fa4'; q.fillRect(176, 0, 30, 64); if (q.fillText) { q.fillStyle = '#0D0D0D'; q.font = '700 30px "Archivo Black", Impact, sans-serif'; q.fillText('MLOW', 92, 44); } } const t = new THREE.CanvasTexture(m); t.encoding = THREE.sRGBEncoding; return t; })();
+  const grip = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, roughness: 0.95 }), under = new THREE.MeshStandardMaterial({ map: deckTex, roughness: 0.6 }), wheelM = new THREE.MeshStandardMaterial({ color: 0xf2eee2, roughness: 0.5 });
+  const mkBoard = () => { const b = new THREE.Group(), d = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.025, 0.21), [under, under, grip, under, under, under]); d.position.y = 0.075; b.add(d);
+    [-0.27, 0.27].forEach(x => [-0.08, 0.08].forEach(z => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.03, 10), wheelM); w.rotation.x = PI / 2; w.position.set(x, 0.03, z); b.add(w); })); b.traverse(m => { if (m.isMesh) m.castShadow = true; }); scene.add(b); return b; };
+  [[0x2a2d33, 0x3b4a5c, 'writer', -2.6, 0], [0xb33b2e, 0x1d1f24, 'cabbie', 0, 2.3], [0x2962FF, 0x6b5b45, 'editor', 1.7, 4.6]].forEach(([sh, pa, cast, v, ph], i) => {
+    const p = person(sh, pa, SKIN[(i * 2 + 3) % SKIN.length], cast); SK.s.push({ P: p, b: mkBoard(), v: i === 0 ? -1.2 : (i === 1 ? 0.3 : 1.8), t: ph, dur: 7 + i * 0.6, trick: null, bail: 0, dir: i % 2 ? -1 : 1, popped: false }); });
+  interact(x0, z0, 7.5, 'E · CALL A TRICK', () => skCall());
+  if (window.__MAP) MAP.places.push(['SKATE SPOT', x0, z0, x0 + bx * 7, z0 + bz * 7]);
+})();
+const skSecret = secret('kickflip', () => skCall(true), ['kickflip', 'skate', 'treflip']);
+function skCall(fromWord) {
+  let best = SK.s[0], bd = 1e9; SK.s.forEach(s => { const d = Math.hypot(s.P.g.position.x - P.x, s.P.g.position.z - P.z); if (d < bd) { bd = d; best = s; } });
+  best.forced = 'tre'; if (!fromWord) skSecret(); toast(bd > 30 ? 'SOMEONE AT THE SKATE SPOT HEARD YOU. TRE FLIP INCOMING. GO WATCH.' : 'TRE FLIP. HE SAYS FILM IT NEXT TIME.', 'blue');
+}
+function skClack(x, z, loud) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; const d = Math.hypot(x - P.x, z - P.z); if (d > 26) return;
+  try { const n = Math.floor(AC.sampleRate * 0.06), buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 6);
+    const s = AC.createBufferSource(); s.buffer = buf; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = loud ? 900 : 1900; f.Q.value = 1.2; const g = AC.createGain(); g.gain.value = Math.min(0.12, 2.2 / (d + 2)) * (loud ? 1.3 : 0.8); s.connect(f); f.connect(g); g.connect(AC.destination); s.start(); } catch (e) { } }
+const SK_TRICKS = ['ollie', 'kickflip', 'heelflip', 'shove', 'tre', 'slide', 'ollie', 'kickflip', 'bail'];
+function skFrame(dt) {
+  const near = Math.hypot(P.x - SK_AT.x, P.z - SK_AT.z) < 120; if (!near) return;
+  SK.s.forEach((s, i) => {
+    s.t += dt; if (s.t > s.dur) { s.t = 0; s.dir = -s.dir; s.trick = s.forced || SK_TRICKS[Math.floor(Math.random() * SK_TRICKS.length)]; s.forced = null; s.popped = s.landed = false; }
+    const k = s.t / s.dur, travel = 13; // ride the line from one end of the pad to the other, slowing at the ends to turn
+    const e = k < 0.12 ? 0 : (k > 0.9 ? 1 : (k - 0.12) / 0.78); const ue = (e - 0.5) * travel * s.dir;
+    let v = s.v, hy = 0, roll = 0, spin = 0, by = 0, bailing = false;
+    const trick = s.trick, tkr = (ue * s.dir + 1.1) / 2.2, tk = (e > 0 && e < 1) ? tkr : -1; // 0..1 across the kicker
+    if (trick === 'slide') { v = -2.48; const sk = (ue + 1) / 5, pre = s.dir > 0 ? -sk : sk - 1, post = s.dir > 0 ? sk - 1 : -sk; if (sk > 0 && sk < 1) { hy = 0.53; spin = PI / 2; if (!s.popped) { s.popped = true; const w = SK.L2W(ue, v); skClack(w[0], w[1], false); } } else if (pre >= 0 && pre < 0.07) hy = 0.53 * Math.sin((1 - pre / 0.07) * PI / 2); else if (post >= 0 && post < 0.07) { hy = 0.53 * (1 - post / 0.07) * (1 - post / 0.07); if (!s.landed && post > 0.05) { s.landed = true; const w = SK.L2W(ue, v); skClack(w[0], w[1], true); } } }
+    else if (tk >= 0 && tk <= 1 && trick) { const a = Math.sin(tk * PI); hy = a * (trick === 'ollie' ? 0.55 : 0.75); by = hy;
+      if (trick === 'kickflip') roll = tk * PI * 2; if (trick === 'heelflip') roll = -tk * PI * 2; if (trick === 'shove') spin = tk * PI; if (trick === 'tre') { roll = tk * PI * 2; spin = tk * PI * 2; }
+      if (!s.popped) { s.popped = true; const w = SK.L2W(ue, v); skClack(w[0], w[1], false); }
+      if (trick === 'bail' && tk > 0.55) { bailing = true; } }
+    if (trick !== 'slide' && tkr > 1 && s.popped && !s.landed) { s.landed = true; const w = SK.L2W(ue, v); skClack(w[0], w[1], true); if (trick === 'bail') s.bail = 2.6; }
+    const [x, z] = SK.L2W(ue, v), gy = SK.g0 + 0.06, head = SK.ry + (s.dir > 0 ? 0 : PI);
+    // the board
+    if (s.bail > 0) { s.bail -= dt; const bk = 1 - s.bail / 2.6; const [bxw, bzw] = SK.L2W(ue + s.dir * bk * 5, v + 0.6); s.b.position.set(bxw, gy, bzw); s.b.rotation.set(0, head + bk * 3, 0);
+      s.P.g.position.set(x, gy - 0.35, z); s.P.g.rotation.set(0, head + PI / 2, Math.min(0.5, bk * 2) * (bk < 0.4 ? 1 : (1 - bk) * 1.6)); s.t = Math.min(s.t, s.dur * 0.9); return; }
+    s.b.position.set(x, gy + (trick === 'slide' ? hy : by * 0.92), z); s.b.rotation.set(0, head + spin, 0); s.b.rotateX(roll);
+    const push = (k < 0.12 || k > 0.9) ? 0 : Math.max(0, Math.sin(LIFE.t * 4 + i)) * 0.04 * (e < 0.3 ? 1 : 0);
+    s.P.g.position.set(x, gy - 0.35 + 0.1 + hy + push, z); s.P.g.rotation.set(0, head + PI / 2 + (trick === 'slide' && hy > 0.4 ? 0.2 : 0), bailing ? 0.25 : 0);
+  });
+}
+window.__FRAMES.push(dt => { try { skFrame(dt); } catch (e) { if (!SK.err) { SK.err = e; console.warn('v58 skate', e); } } });
+
+/* ================================================================
+   v59 THE GRATE (2026-11-22)
+   A subway vent grate in the ring path at (30, -28). Look down through the bars and there is a shaft, and a long way
+   down a train goes by about once a minute: the rumble comes up through your shoes, light from the car windows
+   strobes up through the slats, and the updraft throws the litter in the air. Stand on it when one passes and it
+   lifts you a little and your coat does the famous thing. GRATE calls the next train.
+   ================================================================ */
+const GR = { t: 0, next: 20 + Math.random() * 30, train: 0, papers: [], k: 0 };
+window.__GR = GR;
+const GR_AT = { x: 30, z: -28 };
+(function grate() {
+  const x0 = GR_AT.x, z0 = GR_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0) + PI / 2; GR.g0 = g0; GR.ry = ry;
+  const W = 3.2, D = 1.5;
+  // the bars: an alpha tested canvas, steel slats across, two bearers
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.clearRect) { c.clearRect(0, 0, 512, 256); c.fillStyle = '#fff'; for (let i = 0; i < 512; i += 16) c.fillRect(i, 0, 7, 256); c.fillRect(0, 0, 512, 14); c.fillRect(0, 242, 512, 14); c.fillRect(0, 121, 512, 12); c.fillRect(0, 0, 12, 256); c.fillRect(500, 0, 12, 256); }
+  const at = new THREE.CanvasTexture(cv);
+  const gm = new THREE.MeshStandardMaterial({ color: 0x3a3936, roughness: 0.45, metalness: 0.75, alphaMap: at, alphaTest: 0.5, side: THREE.DoubleSide });
+  const gr = new THREE.Mesh(new THREE.PlaneGeometry(W, D), gm); gr.rotation.set(-PI / 2, 0, ry); gr.position.set(x0, g0 + 0.1, z0); scene.add(gr); GR.mesh = gr;
+  // the shaft below: dark walls, a light strip at the bottom that becomes passing windows
+  const sh = new THREE.Group(); sh.position.set(x0, g0, z0); sh.rotation.y = ry; scene.add(sh);
+  const wall = new THREE.MeshStandardMaterial({ color: 0x14130f, roughness: 1, side: THREE.BackSide });
+  const box = new THREE.Mesh(new THREE.BoxGeometry(W - 0.02, 4, D - 0.02), wall); box.position.y = -2.0; sh.add(box);
+  // (a depth masked shaft was tried; the path paving draws over it, so the shaft stays hidden)
+  box.visible = false; const mask = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.04, D - 0.04), new THREE.MeshBasicMaterial({ colorWrite: false, depthTest: false })); mask.rotation.x = -PI / 2; mask.position.y = 0.085; mask.visible = false; sh.add(mask);
+  const wc = document.createElement('canvas'); wc.width = 512; wc.height = 64; const q = wc.getContext('2d');
+  if (q && q.fillRect) { q.fillStyle = '#0a0a0a'; q.fillRect(0, 0, 512, 64); for (let i = 0; i < 512; i += 64) { q.fillStyle = '#ffe9b8'; q.fillRect(i + 8, 12, 40, 30); q.fillStyle = '#c33'; q.fillRect(i + 52, 44, 8, 6); } }
+  const wt = new THREE.CanvasTexture(wc); wt.wrapS = THREE.RepeatWrapping; wt.repeat.set(1.5, 1); GR.wt = wt;
+  const strip = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.1, D - 0.1), new THREE.MeshBasicMaterial({ map: wt, toneMapped: false, color: 0x000000 })); strip.rotation.x = -PI / 2; strip.position.y = 0.085; sh.add(strip); GR.strip = strip;   // no hole in the paving, so the dark and the passing windows sit just under the bars
+  // a shaft of light that stands up out of the grate at night while a train passes
+  const sc = document.createElement('canvas'); sc.width = 64; sc.height = 256; const s = sc.getContext('2d');
+  if (s && s.createLinearGradient) { const g = s.createLinearGradient(0, 256, 0, 0); g.addColorStop(0, 'rgba(255,230,180,.55)'); g.addColorStop(1, 'rgba(255,230,180,0)'); s.fillStyle = g; s.fillRect(0, 0, 64, 256); }
+  const beamM = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false });
+  [0, PI / 2].forEach(a => { const b = new THREE.Mesh(new THREE.PlaneGeometry(a ? D : W, 6), beamM); b.position.y = 3; b.rotation.y = a; sh.add(b); }); GR.beam = beamM;
+  // litter: a cup lid, receipts, a flyer, a leaf
+  const cols = [0xefe8da, 0xf4f1e8, 0xffd84a, 0x8a6a3a, 0xefe8da, 0xff3fa4];
+  for (let i = 0; i < 6; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.16 + Math.random() * 0.1, 0.1 + Math.random() * 0.12), new THREE.MeshStandardMaterial({ color: cols[i], roughness: 0.9, side: THREE.DoubleSide }));
+    const a = Math.random() * PI * 2, r = 0.3 + Math.random() * 0.9; const hx = x0 + Math.cos(a) * r, hz = z0 + Math.sin(a) * r * 0.5;
+    m.position.set(hx, g0 + 0.11, hz); m.rotation.set(-PI / 2, 0, Math.random() * 6); scene.add(m); GR.papers.push({ m, hx, hz, y: 0, vy: 0, vx: 0, vz: 0, sp: (Math.random() - 0.5) * 8 }); }
+  if (window.__MAP) MAP.places.push(['THE GRATE', x0, z0, x0 + Math.sin(ry - PI / 2) * 3, z0 + Math.cos(ry - PI / 2) * 3]);
+})();
+const grSecret = secret('updraft', () => { toast('A TRAIN WENT UNDER YOU AND YOUR COAT DID THE FAMOUS THING. THE CITY APPLAUDS, QUIETLY.', 'blue'); });
+EGGS.grate = EGGS.subwaygrate = () => { GR.next = GR.t + 1.5; toast('YOU HEAR IT BEFORE YOU SEE IT. STAND ON THE GRATE.'); }; EGGS.grate.__s = true;
+let grRumble = null;
+function grOnGrate() { const lx = P.x - GR_AT.x, lz = P.z - GR_AT.z, c = Math.cos(GR.ry), s = Math.sin(GR.ry); const u = lx * c - lz * s, v = lx * s + lz * c; return Math.abs(u) < 1.7 && Math.abs(v) < 0.85 && P.y < GR.g0 + 0.5; }
+function grFrame(dt) {
+  GR.t += dt; const d = Math.hypot(P.x - GR_AT.x, P.z - GR_AT.z);
+  if (GR.train <= 0 && GR.t > GR.next) { GR.train = 6; GR.next = GR.t + 55 + Math.random() * 35; GR.lifted = false;
+    if (d < 40 && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) try { const n = AC.sampleRate * 2, buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); let last = 0; for (let i = 0; i < n; i++) { last = last * 0.985 + (Math.random() * 2 - 1) * 0.015; ch[i] = last * 6 + (Math.random() * 2 - 1) * 0.04; }
+      const src = AC.createBufferSource(); src.buffer = buf; src.loop = true; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 260; const g = AC.createGain(); g.gain.value = 0; src.connect(f); f.connect(g); g.connect(AC.destination); src.start(); grRumble = { src, g }; } catch (e) { } }
+  const on = GR.train > 0; if (on) GR.train -= dt; const k = on ? Math.sin(Math.min(1, (6 - GR.train) / 6) * PI) : 0;   // 0 -> 1 -> 0 over the pass
+  if (grRumble) { grRumble.g.gain.value = Math.max(0, k * 0.16 - d * 0.003); if (!on) { try { grRumble.src.stop(); } catch (e) { } grRumble = null; } }
+  // the windows below
+  GR.wt.offset.x += dt * (on ? 2.4 : 0); GR.strip.material.color.setScalar(on ? Math.min(1, k * 1.6) * (0.65 + 0.35 * Math.abs(Math.sin(GR.t * 31))) : 0.02);
+  const night = Math.min(1, (L.lamps || 0) * 1.4); GR.beam.opacity = on ? k * (0.15 + 0.6 * night) * (0.7 + 0.3 * Math.abs(Math.sin(GR.t * 27))) : 0;
+  // the updraft
+  GR.papers.forEach(p => { if (on && k > 0.25) { p.vy += (5.5 * k - p.y * 1.4) * dt + (Math.random() - 0.5) * dt * 6; p.vx += (Math.random() - 0.5) * dt * 5; p.vz += (Math.random() - 0.5) * dt * 5; }
+    else { p.vy -= 3.2 * dt; p.vx *= 1 - dt; p.vz *= 1 - dt; }
+    p.y = Math.max(0, p.y + p.vy * dt); if (p.y === 0) { p.vy = 0; p.vx *= 0.8; p.vz *= 0.8; p.hx += (GR_AT.x - p.hx) * dt * 0.05; p.hz += (GR_AT.z - p.hz) * dt * 0.05; }
+    p.hx += p.vx * dt; p.hz += p.vz * dt; p.m.position.set(p.hx, GR.g0 + 0.11 + p.y, p.hz); if (p.y > 0) { p.m.rotation.x += p.sp * dt; p.m.rotation.y += p.sp * 0.7 * dt; } else p.m.rotation.set(-PI / 2, 0, p.m.rotation.z); });
+  // standing on it
+  if (on && k > 0.6 && grOnGrate()) { GR.k += dt; if (!GR.lifted && P.ground) { GR.lifted = true; P.ground = false; P.fallFrom = P.y; P.vy = 4.2; } if (GR.k > 0.3) grSecret(); }
+}
+window.__FRAMES.push(dt => { try { grFrame(dt); } catch (e) { if (!GR.err) { GR.err = e; console.warn('v59 grate', e); } } });
+
+/* ================================================================
+   v60 THE HOLE (2026-11-22), apply-mlow-impermanent-vision, Bloom
+   A street chalk anamorphosis at (-41, 0), where the west path meets the ring: stand on the painted footprints and the pavement opens into a shaft
+   five metres deep, its walls running with navy paint and liquid contour lines (cyan, every fifth one hot pink),
+   bone white drips sliding over the broken edge, a ladder going down, and at the bottom an Open Eye Flower the size
+   of a car with one small figure standing beside it, looking up at you. Take one step and it is chalk.
+   How: the shaft is a real little scene, rendered once from the footprints into a texture, and that texture is
+   projected back onto the flat pavement from the same eye. From the footprints it is exact; from anywhere else it
+   smears into a long painted stain, which is how the real ones look too.
+   ================================================================ */
+const HOLE = { k: 0, chalk: 0 };
+window.__HOLE = HOLE;
+const HOLE_AT = { x: -41, z: 0 };
+(function theHole() {
+  const x0 = HOLE_AT.x, z0 = HOLE_AT.z, g0 = ground(x0, z0) + 0.07, ry = Math.atan2(-x0, -z0); HOLE.g0 = g0; HOLE.ry = ry;
+  const bx = Math.sin(ry), bz = Math.cos(ry), fx = -bx, fz = -bz, rx = Math.cos(ry), rz = -Math.sin(ry);   // b: toward the viewer, f: away, r: across
+  const V = { x: x0 + bx * 6.2, z: z0 + bz * 6.2 }; HOLE.V = V; const ff = floorAt(V.x, V.z, 3); const eye = new THREE.Vector3(V.x, (ff.f === null ? ground(V.x, V.z) : ff.f) + 1.7, V.z); HOLE.eye = eye;
+  const S = new THREE.Scene(); HOLE.scene = S;
+  const Wd = 3.2, Ln = 4.4, Dp = 4.6;   // across, along, deep
+  const at = (u, v, y) => new THREE.Vector3(x0 + rx * u + fx * v, g0 + y, z0 + rz * u + fz * v);
+  // the paving with the opening cut out: depth only, so the far walls hide where the ground would cover them
+  const sh = new THREE.Shape(); sh.moveTo(-20, -20); sh.lineTo(20, -20); sh.lineTo(20, 20); sh.lineTo(-20, 20); sh.lineTo(-20, -20);
+  const hole = new THREE.Path(); hole.moveTo(-Wd / 2, -Ln / 2); hole.lineTo(-Wd / 2, Ln / 2); hole.lineTo(Wd / 2, Ln / 2); hole.lineTo(Wd / 2, -Ln / 2); hole.lineTo(-Wd / 2, -Ln / 2); sh.holes.push(hole);
+  const occ = new THREE.Mesh(new THREE.ShapeGeometry(sh), new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide })); occ.renderOrder = -1;
+  occ.rotation.order = 'YXZ'; occ.rotation.set(-PI / 2, ry, 0); occ.position.set(x0, g0, z0); S.add(occ);
+  // the walls: navy paint, strata of contour lines that warp as they go down, a concrete band at the top, drips
+  const wallTex = (seed) => { const cv = document.createElement('canvas'); cv.width = 512; cv.height = 1024; const c = cv.getContext('2d');
+    if (c && c.createLinearGradient && c.beginPath) { const g = c.createLinearGradient(0, 0, 0, 1024); g.addColorStop(0, '#243670'); g.addColorStop(0.45, '#101a3c'); g.addColorStop(1, '#020309'); c.fillStyle = g; c.fillRect(0, 0, 512, 1024);
+      for (let i = 0; i < 46; i++) { const y = 70 + i * 21 + Math.pow(i, 1.25) * 0.6; const fade = Math.max(0, 1 - i / 46); c.beginPath(); for (let x = 0; x <= 512; x += 8) { const w = Math.sin(x * 0.012 + i * 0.5 + seed) * (6 + i * 0.5) + Math.sin(x * 0.031 - i * 0.3 + seed * 2) * 4; x ? c.lineTo(x, y + w) : c.moveTo(x, y + w); }
+        c.lineWidth = i % 5 === 4 ? 3.4 : 1.8; c.strokeStyle = i % 5 === 4 ? `rgba(255,63,164,${0.9 * fade})` : `rgba(8,222,255,${0.85 * fade})`; c.stroke(); }
+      c.fillStyle = '#8b8780'; c.beginPath(); c.moveTo(0, 0); c.lineTo(512, 0); for (let x = 512; x >= 0; x -= 16) c.lineTo(x, 38 + Math.random() * 16); c.closePath(); c.fill();
+      c.fillStyle = 'rgba(60,57,52,.6)'; c.fillRect(0, 0, 512, 6);
+      for (let i = 0; i < 7; i++) { const x = 30 + Math.random() * 450, L = 120 + Math.random() * 420, w = 5 + Math.random() * 7; c.fillStyle = 'rgba(239,232,218,.85)'; c.fillRect(x - w / 2, 40, w, L); c.beginPath(); c.arc(x, 40 + L, w * 0.9, 0, PI * 2); c.fill(); } }
+    const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t; };
+  const wallM = s => new THREE.MeshBasicMaterial({ map: wallTex(s), side: THREE.DoubleSide, toneMapped: false });
+  const wall = (w, u, v, rot, s) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, Dp), wallM(s)); const p = at(u, v, -Dp / 2); m.position.copy(p); m.rotation.order = 'YXZ'; m.rotation.set(0, ry + rot, 0); S.add(m); return m; };
+  wall(Wd, 0, Ln / 2, 0, 1.1); wall(Wd, 0, -Ln / 2, PI, 2.3); wall(Ln, Wd / 2, 0, -PI / 2, 3.7); wall(Ln, -Wd / 2, 0, PI / 2, 5.2);
+  // the floor: a navy void with a cyan glow round the flower
+  const fc = document.createElement('canvas'); fc.width = fc.height = 512; const q = fc.getContext('2d');
+  if (q && q.createRadialGradient) { const g = q.createRadialGradient(256, 256, 20, 256, 256, 300); g.addColorStop(0, '#0a5d8a'); g.addColorStop(0.35, '#08163a'); g.addColorStop(1, '#010206'); q.fillStyle = g; q.fillRect(0, 0, 512, 512); }
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(Wd, Ln), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(fc), toneMapped: false })); floor.rotation.order = 'YXZ'; floor.rotation.set(-PI / 2, ry, 0); floor.position.copy(at(0, 0, -Dp)); S.add(floor);
+  const ft = tex('assets/iv_flower.webp'); const fl = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 2.3), new THREE.MeshBasicMaterial({ map: ft, transparent: true, alphaTest: 0.4, toneMapped: false })); fl.rotation.order = 'YXZ'; fl.rotation.set(-PI / 2 + 0.5, ry, 0); fl.position.copy(at(0.1, 0.35, -Dp + 0.6)); S.add(fl);
+  // one small figure beside it, looking up
+  const ink = new THREE.MeshBasicMaterial({ color: 0x050505, toneMapped: false }); const fig = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 0.62, 10), ink); body.position.y = 0.62; fig.add(body);
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 8), ink); hd.position.set(0, 1.04, -0.03); fig.add(hd);
+  [-0.06, 0.06].forEach(x => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.36, 6), ink); l.position.set(x, 0.18, 0); fig.add(l); });
+  fig.position.copy(at(-0.85, -0.9, -Dp)); fig.rotation.y = ry; S.add(fig);
+  // a ladder down the near side wall
+  const rung = new THREE.MeshBasicMaterial({ color: 0x8a8f96, toneMapped: false });
+  for (let i = 0; i < 11; i++) { const y = -0.4 - i * 0.37, k = 1 - i / 13; const r = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.035, 0.035), new THREE.MeshBasicMaterial({ color: new THREE.Color(0x8a8f96).multiplyScalar(0.25 + 0.75 * k), toneMapped: false })); r.position.copy(at(-Wd / 2 + 0.08, -0.6, y)); r.rotation.y = ry + PI / 2; S.add(r); }
+  [-0.85, -0.35].forEach(v => { const s = new THREE.Mesh(new THREE.BoxGeometry(0.04, Dp, 0.04), rung); s.position.copy(at(-Wd / 2 + 0.08, v, -Dp / 2)); S.add(s); });
+  // a chalk rim and broken paving round the edge, drawn at ground level
+  const rimM = new THREE.MeshBasicMaterial({ color: 0x8e8a83, toneMapped: false }), lip = new THREE.MeshBasicMaterial({ color: 0x55524d, toneMapped: false });
+  [[0, Ln / 2 + 0.06, Wd + 0.24, 0.12], [0, -Ln / 2 - 0.06, Wd + 0.24, 0.12], [Wd / 2 + 0.06, 0, 0.12, Ln], [-Wd / 2 - 0.06, 0, 0.12, Ln]].forEach(([u, v, w, d]) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), rimM); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, ry, 0); m.position.copy(at(u, v, 0.002)); S.add(m);
+    const e = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(w, d) === w ? w : 0.03, Math.max(w, d) === w ? 0.03 : d), lip); e.rotation.order = 'YXZ'; e.rotation.set(-PI / 2, ry, 0); e.position.copy(at(u * 0.985, v * 0.985, 0.003)); S.add(e); });
+  // the camera that paints it, standing where the footprints are
+  const res = isMobile ? 768 : 1536; const rt = new THREE.WebGLRenderTarget(res, res, { format: THREE.RGBAFormat }); HOLE.rt = rt;
+  const pc = new THREE.PerspectiveCamera(72, 1, 0.05, 60); pc.position.copy(eye); pc.lookAt(at(0, 0.2, -1.6)); pc.updateMatrixWorld(); pc.updateProjectionMatrix(); HOLE.pc = pc;
+  const pv = new THREE.Matrix4().multiplyMatrices(pc.projectionMatrix, pc.matrixWorldInverse);
+  const dm = new THREE.ShaderMaterial({ uniforms: { map: { value: rt.texture }, uPV: { value: pv }, uLight: { value: 1 }, uNight: { value: 0 } }, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4,
+    vertexShader: 'uniform mat4 uPV; varying vec4 vP; void main(){ vec4 wp = modelMatrix * vec4(position, 1.0); vP = uPV * wp; gl_Position = projectionMatrix * viewMatrix * wp; }',
+    fragmentShader: 'uniform sampler2D map; uniform float uLight, uNight; varying vec4 vP; void main(){ if (vP.w <= 0.0) discard; vec2 uv = vP.xy / vP.w * 0.5 + 0.5; if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) discard; vec4 c = texture2D(map, uv); if (c.a < 0.02) discard;' +
+      ' float glow = max(c.b - c.r, 0.0); vec3 col = c.rgb * uLight + c.rgb * glow * uNight * 1.4; gl_FragColor = vec4(col, c.a); gl_FragColor = linearToOutputTexel(gl_FragColor); }' });
+  const decal = new THREE.Mesh(new THREE.PlaneGeometry(Wd + 1.2, Ln + 2.4, 1, 1), dm); decal.rotation.order = 'YXZ'; decal.rotation.set(-PI / 2, ry, 0); decal.position.copy(at(0, 0.2, 0)); decal.renderOrder = 2; scene.add(decal); HOLE.decal = decal; HOLE.dm = dm;
+  // the footprints
+  const pcv = document.createElement('canvas'); pcv.width = 512; pcv.height = 512; const p2 = pcv.getContext('2d');
+  if (p2 && p2.ellipse && p2.fillText) { p2.fillStyle = 'rgba(239,232,218,.92)'; [[200, 0.08], [312, -0.08]].forEach(([x, a]) => { p2.save(); p2.translate(x, 250); p2.rotate(a); p2.beginPath(); p2.ellipse(0, -40, 38, 70, 0, 0, PI * 2); p2.fill(); p2.beginPath(); p2.ellipse(0, 75, 30, 38, 0, 0, PI * 2); p2.fill(); p2.restore(); });
+    p2.font = '700 42px "Archivo Black", Impact, sans-serif'; p2.textAlign = 'center'; p2.fillText('STAND HERE', 256, 430); p2.font = '400 34px "Permanent Marker", "Archivo Black", sans-serif'; p2.fillText('look down', 256, 478); p2.fillText('THE HOLE', 256, 70); }
+  const fpt = new THREE.CanvasTexture(pcv); fpt.encoding = THREE.sRGBEncoding;
+  const fp = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), new THREE.MeshStandardMaterial({ map: fpt, transparent: true, roughness: 0.95, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3 })); fp.rotation.order = 'YXZ'; fp.rotation.set(-PI / 2, ry, 0);
+  fp.position.set(V.x, (ff.f === null ? ground(V.x, V.z) : ff.f) + 0.03, V.z); scene.add(fp); HOLE.fp = fp;
+  HOLE.Wd = Wd; HOLE.Ln = Ln; HOLE.at = at; HOLE.paint = () => { if (!renderer.getRenderTarget || !renderer.getClearAlpha) return; const r = renderer, old = r.getRenderTarget(), oc = r.getClearColor(new THREE.Color()), oa = r.getClearAlpha(), sm = r.shadowMap.autoUpdate;
+    try { r.shadowMap.autoUpdate = false; r.setRenderTarget(rt); r.setClearColor(0x000000, 0); r.clear(true, true, true); r.render(S, pc); } finally { r.setRenderTarget(old); r.setClearColor(oc, oa); r.shadowMap.autoUpdate = sm; } };
+  HOLE.paint(); HOLE.last = 0;
+  if (window.__MAP) MAP.places.push(['THE HOLE', x0, z0, V.x, V.z]);
+})();
+const holeSecret = secret('thehole', () => { toast('FROM HERE IT GOES ALL THE WAY DOWN. SOMEONE DOWN THERE IS LOOKING UP. TAKE ONE STEP AND IT IS CHALK.', 'blue'); });
+EGGS.hole = EGGS.anamorphic = () => { const V = HOLE.V; teleport(V.x, V.z, HOLE.ry); P.pitch = -0.62; toast('STAND STILL. LOOK DOWN. DO NOT STEP FORWARD (YOU CAN, IT IS CHALK).'); }; EGGS.hole.__s = true;
+const _hv = new THREE.Vector3(), _hw = new THREE.Vector3();
+function holeFrame(dt) {
+  const d = Math.hypot(P.x - HOLE_AT.x, P.z - HOLE_AT.z); HOLE.decal.visible = HOLE.fp.visible = d < 140; if (d > 140) return;
+  HOLE.last += dt; if (HOLE.last > 1.5 && d < 70) { HOLE.last = 0; HOLE.paint(); }
+  const day = Math.max(0, Math.min(1, ((SKY.el || 0) + 4) / 18)), night = Math.min(1, (L.lamps || 0) * 1.4);
+  HOLE.dm.uniforms.uLight.value = 0.16 + 0.84 * day + 0.12 * night; HOLE.dm.uniforms.uNight.value = night;
+  // the trick seen: on the footprints, looking into it
+  const dv = Math.hypot(P.x - HOLE.V.x, P.z - HOLE.V.z);
+  if (dv < 0.75) { camera.getWorldDirection(_hw); _hv.copy(HOLE.at(0, 0, -1)).sub(camera.position).normalize(); if (_hv.dot(_hw) > 0.93) { HOLE.k += dt; if (HOLE.k > 1) holeSecret(); } else HOLE.k = 0; } else HOLE.k = 0;
+  // stepping on it
+  const lx = P.x - HOLE_AT.x, lz = P.z - HOLE_AT.z, u = lx * Math.cos(HOLE.ry) - lz * Math.sin(HOLE.ry), v = -(lx * Math.sin(HOLE.ry) + lz * Math.cos(HOLE.ry));
+  const inside = Math.abs(u) < HOLE.Wd / 2 && Math.abs(v) < HOLE.Ln / 2; if (inside && !HOLE.chalk) { HOLE.chalk = 1; toast('IT IS CHALK. IT WAS ALWAYS CHALK.'); } if (!inside && HOLE.chalk && d > 6) HOLE.chalk = 0;
+}
+window.__FRAMES.push(dt => { try { holeFrame(dt); } catch (e) { if (!HOLE.err) { HOLE.err = e; console.warn('v60 hole', e); } } });
+
+/* ================================================================
+   v61 THE DOG WALKER (2026-11-22)
+   A professional dog walker makes slow laps of the ring path round THE FLOOR with six dogs on six leashes: a greyhound, a corgi, a
+   doodle, a pug, a husky and a little black mutt that will not stop sniffing. The leashes sag and tighten, tails go,
+   somebody always stops to sniff. Walk up and E: she stops, the dogs pile round you, someone barks.
+   ================================================================ */
+const DOGW = { dogs: [], t: 0, stop: 0, pets: 0 };
+window.__DOGW = DOGW;
+const DOGW_AT = { x: 0, z: 0, r: 41 };
+(function dogWalker() {
+  const kinds = [ // body len, height, colour, ear, tail, name
+    [0.75, 0.62, 0x9a8b78, 'fold', 'thin', 'THE GREYHOUND'], [0.5, 0.28, 0xd18a3c, 'up', 'stub', 'THE CORGI'], [0.62, 0.48, 0xd9c3a0, 'flop', 'fluff', 'THE DOODLE'],
+    [0.36, 0.26, 0xcbb08a, 'fold', 'curl', 'THE PUG'], [0.66, 0.52, 0x8d9299, 'up', 'fluff', 'THE HUSKY'], [0.4, 0.3, 0x1c1a19, 'flop', 'thin', 'THE MUTT']];
+  kinds.forEach(([len, h, col, ear, tail, name], i) => {
+    const g = new THREE.Group(), m = new THREE.MeshStandardMaterial({ color: col, roughness: 0.95 }), dark = new THREE.MeshStandardMaterial({ color: 0x141210, roughness: 0.6 });
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(h * 0.32, h * 0.3, len, 10), m); body.rotation.z = PI / 2; body.position.y = h * 0.78; g.add(body);
+    const head = new THREE.Group(); head.position.set(len * 0.55, h * 1.02, 0); g.add(head);
+    const skull = new THREE.Mesh(new THREE.SphereGeometry(h * 0.27, 12, 10), m); head.add(skull);
+    const snout = new THREE.Mesh(new THREE.BoxGeometry(h * (i === 3 ? 0.12 : 0.34), h * 0.18, h * 0.22), m); snout.position.set(h * 0.28, -h * 0.06, 0); head.add(snout);
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(h * 0.055, 8, 6), dark); nose.position.set(h * (i === 3 ? 0.36 : 0.46), -h * 0.03, 0); head.add(nose);
+    [-1, 1].forEach(s => { const e = new THREE.Mesh(new THREE.BoxGeometry(h * 0.08, h * (ear === 'up' ? 0.26 : 0.22), h * 0.14), m); e.position.set(-h * 0.04, ear === 'up' ? h * 0.27 : h * 0.06, s * h * 0.2); e.rotation.x = ear === 'up' ? s * -0.25 : s * 1.2; head.add(e);
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(h * 0.035, 6, 5), dark); eye.position.set(h * 0.2, h * 0.08, s * h * 0.12); head.add(eye); });
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(h * 0.22, h * 0.03, 6, 14), new THREE.MeshStandardMaterial({ color: [0x2962FF, 0xff3fa4, 0x08deff, 0xe2581c, 0x2962FF, 0xff3fa4][i], roughness: 0.5 })); collar.rotation.y = PI / 2; collar.position.set(len * 0.42, h * 0.9, 0); g.add(collar);
+    const legs = [[0.35, 1], [0.35, -1], [-0.35, 1], [-0.35, -1]].map(([x, s]) => { const p = new THREE.Group(); p.position.set(x * len, h * 0.62, s * h * 0.17); const l = new THREE.Mesh(new THREE.CylinderGeometry(h * 0.06, h * 0.05, h * 0.62, 6), m); l.position.y = -h * 0.31; p.add(l); g.add(p); return p; });
+    const tl = new THREE.Group(); tl.position.set(-len * 0.5, h * 0.92, 0); g.add(tl);
+    const tm = new THREE.Mesh(tail === 'stub' ? new THREE.SphereGeometry(h * 0.08, 6, 5) : new THREE.CylinderGeometry(h * (tail === 'fluff' ? 0.09 : 0.035), h * 0.02, h * (tail === 'curl' ? 0.25 : 0.55), 6), m); tm.position.y = h * 0.22; tm.rotation.z = tail === 'curl' ? 0.9 : 0; tl.add(tm); tl.rotation.z = -0.7;
+    g.traverse(o => { if (o.isMesh) o.castShadow = true; }); scene.add(g);
+    DOGW.dogs.push({ g, head, legs, tl, h, len, name, ox: 0.9 + (i % 3) * 0.55, oz: (i - 2.5) * 0.55, x: DOGW_AT.x, z: DOGW_AT.z + DOGW_AT.r, yaw: 0, ph: Math.random() * 6, sniff: 0, wag: 1, stride: 0 });
+  });
+  const w = person(0x3f5c3a, 0x2a2f45, SKIN[2], 'workgirl'); DOGW.w = w;
+  // the leashes: one line per dog with a sag
+  const geo = new THREE.BufferGeometry(), pos = new Float32Array(6 * 10 * 2 * 3); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const lines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x1a1a1a })); lines.frustumCulled = false; scene.add(lines); DOGW.lines = lines;
+  if (window.__MAP) MAP.places.push(['DOG WALKER', -29, 29, -28, 31]);
+})();
+const dogSecret = secret('dogwalker', () => { toast('SIX DOGS. TWELVE EARS. ONE OF THEM IS SITTING ON YOUR FOOT. SHE SAYS THEY LIKE YOU, WHICH THEY SAY ABOUT EVERYONE.', 'blue'); });
+function dogBark(x, z) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; const d = Math.hypot(x - P.x, z - P.z); if (d > 30) return;
+  try { [0, 0.22].forEach(w => { const t0 = AC.currentTime + w, o = AC.createOscillator(), g = AC.createGain(), f = AC.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.setValueAtTime(520, t0); o.frequency.exponentialRampToValueAtTime(260, t0 + 0.12);
+    f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 2; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.min(0.08, 1.5 / (d + 3)), t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.15); o.connect(f); f.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + 0.16); }); } catch (e) { } }
+function dogPet() { DOGW.stop = 9; DOGW.pets++; dogSecret(); const d = DOGW.dogs[Math.floor(Math.random() * 6)]; dogBark(d.x, d.z); if (DOGW.pets > 1) toast(d.name + ' WOULD LIKE A WORD.'); }
+// the walker moves, so the E prompt is re-placed every frame
+const dogInter = { x: DOGW_AT.x, z: DOGW_AT.z, r: 2.6, label: 'E · SAY HI TO THE DOGS', fn: () => dogPet() }; INTER.push(dogInter);
+const _dl = new THREE.Vector3();
+function dogFrame(dt) {
+  const near = Math.hypot(P.x - DOGW.w.g.position.x, P.z - DOGW.w.g.position.z) < 90; DOGW.lines.visible = near; if (!near) return;
+  const W = DOGW.w.g, wx = W.position.x, wz = W.position.z; const pd = Math.hypot(P.x - wx, P.z - wz);
+  if (DOGW.stop > 0) DOGW.stop -= dt; else DOGW.t += dt * 1.05 / DOGW_AT.r * (pd < 1.6 ? 0.2 : 1);   // she slows when you are in her way
+  const a = DOGW.t, nx = DOGW_AT.x + Math.sin(a) * DOGW_AT.r, nz = DOGW_AT.z + Math.cos(a) * DOGW_AT.r, gy = ground(nx, nz);
+  const hx = Math.cos(a), hz = -Math.sin(a);   // her heading along the circle
+  W.position.set(nx, gy - 0.35, nz); W.rotation.y = Math.atan2(hx, hz); dogInter.x = nx; dogInter.z = nz;
+  const hand = _dl.set(nx + hx * 0.35 - hz * 0.25, gy + 0.95, nz + hz * 0.35 + hx * 0.25);
+  const pos = DOGW.lines.geometry.attributes.position.array; let k = 0;
+  DOGW.dogs.forEach((d, i) => {
+    let tx, tz; if (DOGW.stop > 0 && pd < 6) { const aa = i / 6 * PI * 2 + LIFE.t * 0.1; tx = P.x + Math.cos(aa) * 0.8; tz = P.z + Math.sin(aa) * 0.8; } else { tx = nx + hx * d.ox - hz * d.oz; tz = nz + hz * d.ox + hx * d.oz; }
+    // sniffing: stop for a moment, nose down
+    d.ph += dt; if (d.sniff <= 0 && Math.random() < dt * 0.06) d.sniff = 1.5 + Math.random() * 2; if (d.sniff > 0) d.sniff -= dt;
+    const want = d.sniff > 0 && DOGW.stop <= 0 ? 0.3 : 4.5; const dx = tx - d.x, dz = tz - d.z, dd = Math.hypot(dx, dz);
+    const lim = 2.4, sp = Math.min(dd, dt * want * (dd > lim ? 3 : 1)); if (dd > 0.02) { d.x += dx / dd * sp; d.z += dz / dd * sp; const ty = Math.atan2(-dz, dx); let dy = Math.atan2(Math.sin(ty - d.yaw), Math.cos(ty - d.yaw)); d.yaw += dy * Math.min(1, dt * 6); }
+    if (DOGW.stop > 0 && pd < 6) { const ty = Math.atan2(-(P.z - d.z), P.x - d.x); let dy = Math.atan2(Math.sin(ty - d.yaw), Math.cos(ty - d.yaw)); d.yaw += dy * Math.min(1, dt * 5); }
+    const g = ground(d.x, d.z); d.stride += sp * 9 / Math.max(0.3, d.h); d.g.position.set(d.x, g, d.z); d.g.rotation.y = d.yaw;
+    const sw = Math.sin(d.stride) * Math.min(1, sp / dt / 1.2) * 0.6; d.legs[0].rotation.z = sw; d.legs[3].rotation.z = sw; d.legs[1].rotation.z = -sw; d.legs[2].rotation.z = -sw;
+    d.head.rotation.z = d.sniff > 0 ? -0.6 : Math.sin(d.ph * 0.7) * 0.08; d.head.rotation.y = Math.sin(d.ph * 0.4 + i) * 0.25;
+    const wag = DOGW.stop > 0 ? 16 : 8; d.tl.rotation.x = Math.sin(d.ph * wag) * (DOGW.stop > 0 ? 0.7 : 0.35);
+    // the leash: hand to collar, sagging when slack
+    const cx = d.x + Math.cos(d.yaw) * d.len * 0.42, cz = d.z - Math.sin(d.yaw) * d.len * 0.42, cy = g + d.h * 0.9; const span = Math.hypot(cx - hand.x, cz - hand.z), sag = Math.max(0, 2.6 - span) * 0.22;
+    let px = hand.x, py = hand.y, pz = hand.z; for (let s = 1; s <= 10; s++) { const u = s / 10, x = hand.x + (cx - hand.x) * u, y = hand.y + (cy - hand.y) * u - Math.sin(u * PI) * sag, z = hand.z + (cz - hand.z) * u;
+      pos[k++] = px; pos[k++] = py; pos[k++] = pz; pos[k++] = x; pos[k++] = y; pos[k++] = z; px = x; py = y; pz = z; } });
+  DOGW.lines.geometry.attributes.position.needsUpdate = true;
+  if (DOGW.stop <= 0 && Math.random() < dt * 0.02) { const d = DOGW.dogs[Math.floor(Math.random() * 6)]; dogBark(d.x, d.z); }
+}
+window.__FRAMES.push(dt => { try { dogFrame(dt); } catch (e) { if (!DOGW.err) { DOGW.err = e; console.warn('v61 dogs', e); } } });
+
+/* ================================================================
+   v62 HARBOUR FOG (2026-11-22)
+   On some mornings (one in three, decided by the date) a fog bank sits on the harbour round the island from first
+   light until the sun is up: long soft walls of it lying on the water, drifting, thinning as they come near the
+   shore, and the lighthouse answers with a two tone foghorn every half minute. FOG rolls it in at any hour.
+   ================================================================ */
+const FOGB = { b: [], k: 0, want: 0, until: 0, t: 0, horn: 12 };
+window.__FOGB = FOGB;
+(function fogBank() {
+  const n = isMobile ? 26 : 54;
+  for (let i = 0; i < n; i++) { const a = i / n * PI * 2 + Math.random() * 0.1, r = 112 + Math.random() * 70, w = 50 + Math.random() * 60, h = 9 + Math.random() * 10;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: LIFE.soft, transparent: true, opacity: 0, depthWrite: false, color: 0xd8dde0, fog: false }));
+    m.renderOrder = 4; m.visible = false; scene.add(m); FOGB.b.push({ m, a, r, y: h * 0.32 + Math.random() * 3, sp: (Math.random() - 0.5) * 0.004, ph: Math.random() * 6, o: 0.6 + Math.random() * 0.3 }); }
+})();
+const fogSecret = secret('fog', () => { FOGB.until = FOGB.t + 120; toast('THE HARBOUR PULLS A BLANKET OVER ITSELF. THE LIGHTHOUSE STARTS COMPLAINING.', 'blue'); }, ['fog', 'foghorn', 'fogbank']);
+function fogHorn() { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; const d = Math.hypot(P.x - 0, P.z + 126), vol = Math.max(0.015, Math.min(0.1, 30 / (d + 10)));
+  try { [[175, 0, 1.6], [131, 1.7, 2.2]].forEach(([hz, w, len]) => { const t0 = AC.currentTime + w + Math.min(1, d / 343), o = AC.createOscillator(), o2 = AC.createOscillator(), f = AC.createBiquadFilter(), g = AC.createGain();
+    o.type = 'sawtooth'; o2.type = 'square'; o.frequency.value = hz; o2.frequency.value = hz * 1.005; f.type = 'lowpass'; f.frequency.value = 420; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.3); g.gain.setValueAtTime(vol, t0 + len - 0.4); g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+    o.connect(f); o2.connect(f); f.connect(g); g.connect(AC.destination); o.start(t0); o2.start(t0); o.stop(t0 + len + 0.05); o2.stop(t0 + len + 0.05); }); } catch (e) { } }
+function fogFrame(dt) {
+  FOGB.t += dt; const h = (SKY.t && SKY.t.h) || 12, el = SKY.el || 0, d = SKY.t && SKY.t.d ? SKY.t.d : (new Date()).getDate();
+  const morning = h >= 4 && h < 11 && el < 12 && (d % 3 === 0); FOGB.want = (morning ? Math.min(1, (12 - el) / 8) : 0); if (FOGB.until > FOGB.t) FOGB.want = 1;
+  if (window.__CALM) FOGB.want *= 0.6; FOGB.k += (FOGB.want - FOGB.k) * Math.min(1, dt * 0.25);
+  const on = FOGB.k > 0.01; const day = Math.max(0, Math.min(1, (el + 6) / 16)), night = Math.min(1, (L.lamps || 0) * 1.4);
+  const cr = 0.3 + 0.6 * day, cg = 0.32 + 0.6 * day, cb = 0.38 + 0.56 * day;
+  FOGB.b.forEach(b => { b.m.visible = on; if (!on) return; b.a += b.sp * dt; const r = b.r + Math.sin(FOGB.t * 0.02 + b.ph) * 14, x = Math.sin(b.a) * r, z = Math.cos(b.a) * r;
+    b.m.position.set(x, b.y + Math.sin(FOGB.t * 0.05 + b.ph) * 0.6, z); b.m.lookAt(camera.position.x, b.m.position.y, camera.position.z);
+    const dc = Math.hypot(camera.position.x - x, camera.position.z - z), near = Math.min(1, Math.max(0, (dc - 12) / 35));   // thin out when you are in it
+    b.m.material.opacity = b.o * FOGB.k * near; b.m.material.color.setRGB(cr + 0.1 * night, cg + 0.08 * night, cb + 0.04 * night); });
+  if (on && FOGB.k > 0.35) { FOGB.horn -= dt; if (FOGB.horn <= 0) { FOGB.horn = 30; fogHorn(); } } else FOGB.horn = Math.min(FOGB.horn, 6);
+}
+window.__FRAMES.push(dt => { try { fogFrame(dt); } catch (e) { if (!FOGB.err) { FOGB.err = e; console.warn('v62 fog', e); } } });
+
+/* ================================================================
+   v63 THE BUBBLE MAN (2026-11-22)
+   A man with two sticks and a loop of rope at (26, 50) draws giant soap bubbles out of a bucket, the kind that
+   wobble and drift off over the crowd. Each one is a thin film: clear in the middle, swirling bands of colour at the
+   edges that slide as it turns, a hard highlight from the sun. Walk into one, or look at it and click, and it pops
+   into mist. Pop ten and the island counts it. BUBBLES makes him go faster.
+   ================================================================ */
+const BUB = { b: [], next: 1, pops: 0, rush: 0 };
+window.__BUB = BUB;
+const BUB_AT = { x: 26, z: 50 };
+const BUB_VS = 'uniform float uT, uSeed; varying vec3 vN, vV, vW; void main(){ vec3 p = position; float w = sin(p.y * 3.1 + uT * 2.3 + uSeed) * 0.045 + sin(p.x * 2.7 - uT * 1.7 + uSeed * 2.0) * 0.035; p += normal * w;' +
+  ' vec4 wp = modelMatrix * vec4(p, 1.0); vW = wp.xyz; vN = normalize(mat3(modelMatrix) * normal); vV = normalize(cameraPosition - wp.xyz); gl_Position = projectionMatrix * viewMatrix * wp; }';
+const BUB_FS = 'uniform float uT, uSeed, uA, uLight; uniform vec3 uSun; varying vec3 vN, vV, vW; void main(){ vec3 n = normalize(vN), v = normalize(vV); float c = abs(dot(n, v)), f = 1.0 - c;' +
+  ' float th = 0.5 + 0.5 * sin(vW.y * 4.0 + uT * 0.9 + uSeed + sin(vW.x * 3.0 + uT * 0.6) * 1.4); float hue = th * 1.6 + f * 1.3 + uSeed;' +
+  ' vec3 film = 0.5 + 0.5 * cos(6.2831 * (hue + vec3(0.0, 0.33, 0.67))); float spec = pow(max(dot(reflect(-v, n), normalize(uSun)), 0.0), 90.0);' +
+  ' float a = (0.035 + pow(f, 2.2) * 0.55) * uA; vec3 col = film * (0.35 + 0.65 * uLight) * (0.4 + f) + vec3(spec) * 1.6 * uLight;' +
+  ' gl_FragColor = vec4(col, min(1.0, a + spec * 0.8 * uA)); gl_FragColor = linearToOutputTexel(gl_FragColor); }';
+(function bubbleMan() {
+  const x0 = BUB_AT.x, z0 = BUB_AT.z, g0 = ground(x0, z0); BUB.g0 = g0; BUB.ry = Math.atan2(-x0, -z0);
+  const p = person(0xe9e4da, 0x3b4a5c, SKIN[5], 'writer'); p.g.position.set(x0, g0 - 0.35, z0); p.g.rotation.y = BUB.ry; BUB.man = p;
+  const wood = new THREE.MeshStandardMaterial({ color: 0x8a6a42, roughness: 0.8 });
+  const wand = new THREE.Group(); wand.position.set(x0, g0 + 1.5, z0); wand.rotation.y = BUB.ry; scene.add(wand); BUB.wand = wand;
+  [-0.35, 0.35].forEach(s => { const st = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.02, 1.4, 6), wood); st.position.set(s, 0.3, 0.35); st.rotation.x = 0.7; wand.add(st); });
+  const rope = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.008, 4, 32), new THREE.MeshStandardMaterial({ color: 0xd9d2c0, roughness: 1 })); rope.position.set(0, 0.62, 0.95); rope.scale.set(0.75, 1, 1); wand.add(rope); BUB.rope = rope;
+  const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.17, 0.32, 16, 1, true), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5, side: THREE.DoubleSide })); bucket.position.set(x0 + Math.cos(BUB.ry) * 0.7, g0 + 0.16, z0 - Math.sin(BUB.ry) * 0.7); scene.add(bucket);
+  const sg = signTex([{ t: 'BUBBLES', s: 0.36 }, { t: 'TIPS FOR SOAP', s: 0.14 }], 512, 256, '#efe8da', '#0D0D0D');
+  const card = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.3), new THREE.MeshBasicMaterial({ map: sg, toneMapped: false, side: THREE.DoubleSide })); card.position.set(bucket.position.x, g0 + 0.36, bucket.position.z); card.rotation.set(-0.35, BUB.ry, 0, 'YXZ'); scene.add(card);
+  post(x0, z0, 0.4, -5, 2.2);
+  BUB.geo = new THREE.SphereGeometry(1, isMobile ? 24 : 40, isMobile ? 16 : 28);
+  // mist for pops
+  const mg = new THREE.BufferGeometry(), mp = new Float32Array(240 * 3).fill(-999); mg.setAttribute('position', new THREE.BufferAttribute(mp, 3));
+  BUB.mist = new THREE.Points(mg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: 0.8, depthWrite: false })); BUB.mist.frustumCulled = false; scene.add(BUB.mist); BUB.md = []; for (let i = 0; i < 240; i++) BUB.md.push({ t: 9, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0 }); BUB.mc = 0;
+  interact(x0 + Math.sin(BUB.ry) * 1.6, z0 + Math.cos(BUB.ry) * 1.6, 2.4, 'E · TIP THE BUBBLE MAN', () => { state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } BUB.rush = 25; toast('ONE TDH IN THE BUCKET. HE GOES BIGGER.'); });
+  if (window.__MAP) MAP.places.push(['BUBBLES', x0, z0, x0 + Math.sin(BUB.ry) * 4, z0 + Math.cos(BUB.ry) * 4]);
+})();
+const bubSecret = secret('bubbles', () => { toast('TEN BUBBLES POPPED. A CHILD NEARBY IS FURIOUS WITH YOU.', 'blue'); });
+EGGS.bubble = EGGS.bubbleman = () => { BUB.rush = 30; toast('THE BUBBLE MAN HEARD THAT. HE DIPS THE ROPE.'); }; EGGS.bubble.__s = true;
+function bubMake() {
+  if (BUB.b.length >= (isMobile ? 6 : 12)) return; const s = (0.45 + Math.random() * 0.9) * (BUB.rush > 0 ? 1.4 : 1);
+  const m = new THREE.Mesh(BUB.geo, new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 }, uSeed: { value: Math.random() * 6 }, uA: { value: 0 }, uLight: { value: 1 }, uSun: { value: new THREE.Vector3(0.3, 0.8, 0.2) } }, vertexShader: BUB_VS, fragmentShader: BUB_FS, transparent: true, depthWrite: false }));
+  m.renderOrder = 5; const w = BUB.wand, fx = Math.sin(BUB.ry), fz = Math.cos(BUB.ry); m.position.set(w.position.x + fx * 1.2, w.position.y + 0.7, w.position.z + fz * 1.2); m.scale.setScalar(0.05); scene.add(m);
+  BUB.b.push({ m, s, t: 0, life: 7 + Math.random() * 8, vx: fx * (0.4 + Math.random() * 0.4) + (Math.random() - 0.5) * 0.5, vy: 0.12 + Math.random() * 0.2, vz: fz * (0.4 + Math.random() * 0.4) + (Math.random() - 0.5) * 0.5, sx: 1 + Math.random() * 0.12 });
+}
+function bubPop(b, byYou) { b.dead = true; scene.remove(b.m); b.m.material.dispose(); const r = b.s * b.m.scale.x / b.s;
+  for (let i = 0; i < 20; i++) { const d = BUB.md[BUB.mc]; BUB.mc = (BUB.mc + 1) % BUB.md.length; const a = Math.random() * PI * 2, e = Math.acos(Math.random() * 2 - 1); d.t = 0; d.x = b.m.position.x + Math.sin(e) * Math.cos(a) * b.s; d.y = b.m.position.y + Math.cos(e) * b.s; d.z = b.m.position.z + Math.sin(e) * Math.sin(a) * b.s; d.vx = (d.x - b.m.position.x) * 1.5; d.vy = (d.y - b.m.position.y) * 1.5; d.vz = (d.z - b.m.position.z) * 1.5; }
+  if (byYou) { BUB.pops++; if (BUB.pops >= 10) bubSecret(); if (AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) try { beep(1900 + Math.random() * 600, 0.03, 'triangle', 0.04); } catch (e) { } } }
+const _br = new THREE.Raycaster();
+addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('button,.win,#chat') || !BUB.b.length || (window.__WALLP && __WALLP.on)) return; if (Math.hypot(P.x - BUB_AT.x, P.z - BUB_AT.z) > 60) return;
+  const lk = document.pointerLockElement === renderer.domElement; const x = lk ? 0 : (e.clientX / innerWidth) * 2 - 1, y = lk ? 0 : -(e.clientY / innerHeight) * 2 + 1; _br.setFromCamera({ x, y }, camera);
+  let best = null, bd = 1e9; BUB.b.forEach(b => { if (b.dead) return; const c = b.m.position, r = b.m.scale.x; const oc = c.clone().sub(_br.ray.origin), tca = oc.dot(_br.ray.direction); if (tca < 0) return; const d2 = oc.lengthSq() - tca * tca; if (d2 < r * r && tca < bd) { bd = tca; best = b; } });
+  if (best && bd < 25) bubPop(best, true); });
+function bubFrame(dt) {
+  const d = Math.hypot(P.x - BUB_AT.x, P.z - BUB_AT.z); if (d > 140) return;
+  BUB.rush = Math.max(0, BUB.rush - dt); BUB.next -= dt * (BUB.rush > 0 ? 2.2 : 1); const k = Math.max(0, Math.min(1, 1 - BUB.next / 1.2));
+  BUB.wand.rotation.x = -k * 0.5; BUB.rope.scale.set(0.75 + k * 0.4, 1 + k * 0.2, 1);
+  if (BUB.next <= 0) { BUB.next = 3.2 + Math.random() * 2.5; bubMake(); }
+  const day = Math.max(0, Math.min(1, ((SKY.el || 0) + 4) / 18)), sun = SKY.sunDir || null;
+  BUB.b.forEach(b => { b.t += dt; const grow = Math.min(1, b.t / 1.2), fade = Math.min(1, (b.life - b.t) / 0.4); b.vy += (Math.sin(b.t * 0.7 + b.sx * 9) * 0.06 - b.vy * 0.2) * dt;
+    b.m.position.x += (b.vx + Math.sin(LIFE.t * 0.2) * 0.15) * dt; b.m.position.y += b.vy * dt; b.m.position.z += b.vz * dt;
+    const r = b.s * (0.2 + 0.8 * grow); b.m.scale.set(r * b.sx, r * (2 - b.sx), r); b.m.rotation.y += dt * 0.3;
+    const u = b.m.material.uniforms; u.uT.value = LIFE.t; u.uA.value = grow * Math.max(0, fade); u.uLight.value = 0.25 + 0.75 * day; if (sun) u.uSun.value.copy(sun);
+    const cd = camera.position.distanceTo(b.m.position); if (cd < r + 0.25) bubPop(b, true);
+    else if (b.t > b.life || b.m.position.y < ground(b.m.position.x, b.m.position.z) + r * 0.6) bubPop(b, false); });
+  BUB.b = BUB.b.filter(b => !b.dead);
+  const mp = BUB.mist.geometry.attributes.position.array; let any = false; BUB.md.forEach((m, i) => { if (m.t > 0.7) { if (mp[i * 3 + 1] !== -999) mp[i * 3 + 1] = -999; return; } any = true; m.t += dt; m.vy -= 4 * dt; m.x += m.vx * dt; m.y += m.vy * dt; m.z += m.vz * dt; mp[i * 3] = m.x; mp[i * 3 + 1] = m.y; mp[i * 3 + 2] = m.z; });
+  BUB.mist.geometry.attributes.position.needsUpdate = true; BUB.mist.visible = any;
+}
+window.__FRAMES.push(dt => { try { bubFrame(dt); } catch (e) { if (!BUB.err) { BUB.err = e; console.warn('v63 bubbles', e); } } });
+
+/* ================================================================
+   v64 THE BOOK CATCHES UP AGAIN (2026-11-22)
+   SECRETS.EXE names and hints for v56 to v63, so the book reads as the island does.
+   ================================================================ */
+try { Object.assign(SECRET_NAMES, {
+  steam: ['STEAMED', 'walk through the orange stripes'], bike: ['N3W BIKE', 'the dock above GM BEACH'], kickflip: ['TRE FLIP', 'ask the skate spot'],
+  updraft: ['THE FAMOUS THING', 'stand on the grate when a train goes by'], thehole: ['THE HOLE', 'stand on the footprints and look down'],
+  dogwalker: ['SIX DOGS', 'say hi when she comes round'], fog: ['THE FOG', 'some mornings, or ask for it'], bubbles: ['TEN BUBBLES', 'pop them']
+}); } catch (e) { }
+
+/* ================================================================
+   v65 THE TOUR TAKES THE BIKE LANE (2026-11-22)
+   Five more tour stops before the aerial: the steam stacks, the skate spot (a tre flip for the camera), the grate
+   (a train arrives on cue), the hole (seen from the footprints, then from the side, so the trick shows itself) and
+   the bubble man.
+   ================================================================ */
+(function tourV65() {
+  const add = [];
+  try { const x = STEAM_AT.x, z = STEAM_AT.z, gy = ground(x, z); add.push({ name: 'the steam', dur: 7, pos: [[x + 9, gy + 1.7, z + 7], [x + 5, gy + 1.6, z + 4.5]], look: [[x, gy + 3.2, z], [x, gy + 3.6, z]] }); } catch (e) { }
+  try { const [ax, az] = SK.L2W(0, 0), gy = SK.g0; add.push({ name: 'the skate spot', dur: 8, pos: [[ax + SK.bx * 9 - SK.ax * 4, gy + 1.4, az + SK.bz * 9 - SK.az * 4], [ax + SK.bx * 6 + SK.ax * 2, gy + 1.1, az + SK.bz * 6 + SK.az * 2]], look: [[ax, gy + 0.6, az], [ax, gy + 0.5, az]], pre: () => { try { SK.s[1].forced = 'tre'; SK.s[1].t = SK.s[1].dur - 0.2; } catch (e) { } } }); } catch (e) { }
+  try { const x = GR_AT.x, z = GR_AT.z, gy = GR.g0; const ox = Math.sin(GR.ry - PI / 2), oz = Math.cos(GR.ry - PI / 2); add.push({ name: 'the grate', dur: 7, pos: [[x + ox * 6, gy + 1.8, z + oz * 6], [x + ox * 3.5, gy + 1.6, z + oz * 3.5]], look: [[x, gy, z], [x, gy + 0.6, z]], pre: () => { try { GR.next = GR.t + 0.8; } catch (e) { } } }); } catch (e) { }
+  try { const V = HOLE.V, e = HOLE.eye, c = HOLE.at(0, 0, 0), sx = HOLE.at(6, 0, 0); add.push({ name: 'the hole', dur: 9, pos: [[e.x, e.y, e.z], [e.x, e.y, e.z], [sx.x, e.y + 0.4, sx.z]], look: [[c.x, c.y - 2, c.z], [c.x, c.y - 2, c.z], [c.x, c.y, c.z]] }); } catch (e) { }
+  try { const x = BUB_AT.x, z = BUB_AT.z, gy = BUB.g0, ry = BUB.ry; add.push({ name: 'the bubble man', dur: 8, pos: [[x + Math.sin(ry) * 9 + Math.cos(ry) * 4, gy + 1.7, z + Math.cos(ry) * 9 - Math.sin(ry) * 4], [x + Math.sin(ry) * 6, gy + 1.6, z + Math.cos(ry) * 6]], look: [[x, gy + 2, z], [x, gy + 2.4, z]], pre: () => { try { BUB.rush = 20; BUB.next = 0; } catch (e) { } } }); } catch (e) { }
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 

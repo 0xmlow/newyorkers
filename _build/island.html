@@ -142,7 +142,7 @@ legend{padding:0 3px;background:var(--face)}
     <img class="bb" src="assets/billboard.webp" alt="Welcome to MEME ISLAND">
     <p>All 577 cards of The Memes by 6529 (the newest fifty fresh off the press at the factory) and 66 of MLow's meme sculptures, on an island that keeps New York time. The sky, the weather and the calendar are real. There are six keys, a vault and nine golden slices. A cab circles the ring road. The phone by the pier rings. Type words a New Yorker would say and see what happens; type HELP if you get stuck. Say gm.</p>
     <div id="bar" class="sunken"><i></i></div>
-    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER type a word · M radio · O photo · J secrets · N map</div>
+    <div class="small">WASD walk · SHIFT stride · SPACE jump · drag or arrows to look · E interact · click any card · ENTER type a word · M radio · O photo · J secrets · N map · B bell</div>
     <div class="btns"><button class="b" id="go" disabled>Loading...</button></div>
   </div>
 </div></div>
@@ -1951,7 +1951,7 @@ function setupAO(sz, pr) {
 function renderAO() {
   if (!AO.on) return;
   if ((AO.hideT -= 1) <= 0) { AO.hideT = 90; AO.hide.length = 0;
-    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || m.alphaTest > 0 || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
+    scene.traverse(o => { const m = o.material; if (o === PANO.mesh || o === PANO.cap || o.isPoints || o.isSprite || o.isLine || o.isSkinnedMesh || o.instanceColor || (o.geometry && o.geometry.attributes && Object.values(o.geometry.attributes).some(a => !a)) || (m && (m.isShaderMaterial || !Array.isArray(m) && (m.depthWrite === false || m.blending === THREE.AdditiveBlending || m.alphaTest > 0 || (m.transparent && m.opacity < 0.6))))) AO.hide.push(o); }); }
   const vis = AO.hide.map(o => o.visible); AO.hide.forEach(o => o.visible = false);
   const bg = scene.background, cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
   try { scene.overrideMaterial = AO.over; renderer.setRenderTarget(AO.depth); renderer.clear(); renderer.render(scene, camera); }
@@ -2262,7 +2262,7 @@ function stepPlayer(dt) {
   if (keys.PageUp) P.pitch = clamp(P.pitch + 1.6 * dt, -1.35, 1.35); if (keys.PageDown) P.pitch = clamp(P.pitch - 1.6 * dt, -1.35, 1.35);
   const len = Math.hypot(fx, fz); const moving = len > 0.05;
   if (moving) { fx /= Math.max(1, len); fz /= Math.max(1, len); }
-  const spd = (keys.ShiftLeft || keys.ShiftRight ? 8 : 4.4) * (window.__SPD || 1);
+  const spd = (keys.ShiftLeft || keys.ShiftRight ? 8 : 4.4) * (window.__SPD || 1) * (window.__BIKE || 1);
   const s = Math.sin(P.yaw), c = Math.cos(P.yaw);
   const dx = (fx * c + fz * s) * spd * dt, dz = (-fx * s + fz * c) * spd * dt;
   const tryMove = (nx, nz) => { const f = floorAt(nx, nz, P.y); if (f.block) return false; if (f.f === null && P.ground) return false; return true; };
@@ -2481,6 +2481,16 @@ function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFr
 /*__V53_X__*/
 /*__V54_X__*/
 /*__V55_X__*/
+/*__V56_X__*/
+/*__V57_X__*/
+/*__V58_X__*/
+/*__V59_X__*/
+/*__V60_X__*/
+/*__V61_X__*/
+/*__V62_X__*/
+/*__V63_X__*/
+/*__V64_X__*/
+/*__V65_X__*/
 
 /* ---------------- boot ---------------- */
 buildCards();

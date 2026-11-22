@@ -267,3 +267,26 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v43 sea life: crabs on GM Beach that dig in when you come close, fish that jump with a ring where they land, jellyfish round the pier that glow after dark, starfish.
 - v44 smooth on every screen: a quality governor steps down sharpness, then AO and god rays, then live shadows when frames run late and back up when there is room. `?lite=1` and `?hq=1`, or type LITE and HQ. Reduced motion turns off the head bob and drone twinkle. The welcome counts secrets live.
 - v45 the new tour: nine stops for everything since v26 (N3W Square, the top deck, chess, the Press, THE CUT, the Observer, the Witness, the El, the back room). A tour stop can carry `pre()`.
+
+## v46 to v55 (2026-11-22), `_build/v46.js` to `_build/v55.js`
+- v46 the murmuration: a pigeon flock (380 birds, 160 on phones, one InstancedMesh) wheels over the island at dawn and dusk; CLAP or FLOCK any time.
+- v47 the handball wall at (-78, -21): E picks up a can, hold the mouse or a finger to spray where you look, R colour (cobalt, cyan, hot pink, bone, copper, ink), E done. Heavy paint drips. Saved in localStorage (`meme-island-wall`). Tags redraw on the `n3wfonts` event.
+- v48 three card monte at (48, -9): an honest shuffle, look at a card and press E. Win five TDH; three in a row and the lookout calls FIVE OH and they leave for a minute.
+- v49 the open hydrant at (75, 30): E or HYDRANT, a water fan, a puddle, kids, a small rainbow with the sun behind you, SOAKED.
+- v50 the map and passport: N alone, MAP, the Start menu or the phone MAP button. One orthographic frame from above (sky dome hidden, fog off), click a place to go there, places you walk to get stamped (`meme-island-passport`).
+- v51 THE WATCHERS at (-27, -66): nineteen Open Eye Flowers in a navy contour pool that follow you while you are not looking and shut when you do; turn fast and catch one (that also starts a short MELT).
+- v52 MELT (MELT, BRAINMELT): a last screen pass, liquid warp, drips, colour split, navy darks, cyan and pink contour lines; disabled when not running.
+- v53 harbour traffic: a container ship in the south channel (z 320) and a tug with a gravel barge in the west channel (x -300), running lights at night, horns as they pass; HORN.
+- v54 SECRETS.EXE names and hints for everything since v36. v55 five tour stops (the wall, monte, the hydrant, the Watchers, the south channel).
+
+## v56 to v65 (2026-11-22)
+- v56 THE STEAM at (-20, 30): two striped N3W EDISON stacks pouring steam and two manholes that breathe; grey by day, lamp lit at night; walk through it (STEAM, CONEDISON).
+- v57 N3W BIKE: a dock of six evil eye blue bikes beside the south path at (-5, 76). E rides (2.15x walking, bars and basket in view, B rings the bell), E at the dock returns it; BIKE finds one anywhere.
+- v58 THE SKATE SPOT at (-74, 86): ledge, kicker, rail, three skaters throwing ollies, flips, shove its, boardslides and the odd bail; KICKFLIP calls a tre flip.
+- v59 THE GRATE on the ring path at (30, -28): a train passes below about once a minute, light strobes up through the bars, litter flies, and standing on it lifts you (GRATE calls a train).
+- v60 THE HOLE where the west path meets the ring: a chalk anamorphosis. The shaft is a small scene rendered from the painted footprints and projected back onto the paving, exact from there and a stain from anywhere else (Impermanent Vision: contour walls, drips, an Open Eye Flower and one small figure at the bottom).
+- v61 THE DOG WALKER: six dogs on sagging leashes doing laps of the ring path; E and they pile round you.
+- v62 HARBOUR FOG: on one morning in three a fog bank sits on the water until the sun is up, with a two tone foghorn from the lighthouse; FOG rolls it in.
+- v63 THE BUBBLE MAN at (26, 50): giant thin film bubbles that wobble and drift; walk into or click them to pop, ten counts.
+- v64 SECRETS.EXE names for the new secrets. v65 five tour stops (steam, skate spot, grate, the hole from the footprints then the side, bubbles).
+- Fix: colour instanced meshes (the v53 container boxes) are left out of the ambient occlusion depth pass; r128 shared the override program between instanced meshes with and without colour and AO switched itself off.
