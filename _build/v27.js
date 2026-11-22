@@ -40,7 +40,7 @@ function drawTicker() { const c = SQ.tcv.getContext('2d'); if (!c || !c.fillText
 drawTicker();
 const ballSecret = secret('balldrop', () => { if (SQ.drop < 0) { SQ.drop = 0; toast('TEN SECONDS TO MIDNIGHT IN N3W SQUARE. LOOK EAST.'); } }, ['newyear', 'balldrop', 'countdown']);
 function squareFrame(dt) {
-  SQ.screens.forEach(s => { s.t -= dt; if (s.t <= 0) { s.t = 5 + Math.random() * 3; const pool = (window.__FRESH && __FRESH.length && Math.random() < 0.5) ? __FRESH : CARDS, card = pool[(Math.random() * pool.length) | 0]; try { const I = info('meme', card.n), asp = I.uv[5]; setPlaneUV(s.m, 'meme', card.n); const hh = Math.min(s.h, s.w / asp); s.m.scale.set(hh * asp, hh, 1); } catch (e) { } } });
+  SQ.screens.forEach(s => { if (s.live) return; s.t -= dt; if (s.t <= 0) { s.t = 5 + Math.random() * 3; const pool = (window.__FRESH && __FRESH.length && Math.random() < 0.5) ? __FRESH : CARDS, card = pool[(Math.random() * pool.length) | 0]; try { const I = info('meme', card.n), asp = I.uv[5]; setPlaneUV(s.m, 'meme', card.n); const hh = Math.min(s.h, s.w / asp); s.m.scale.set(hh * asp, hh, 1); } catch (e) { } } });
   SQ.ttex.offset.x = (LIFE.t * 0.02) % 1; SQ.tT = (SQ.tT || 0) - dt; if (SQ.tT <= 0) { SQ.tT = 10; drawTicker(); }
   SQ.ball.rotation.y += dt * 0.4; SQ.ball.material.emissive.setHSL((LIFE.t * 0.05) % 1, 0.8, 0.5); SQ.ball.material.emissiveIntensity = 0.25 + 0.6 * Math.min(1, (L.lamps || 0) * 1.3);
   const t = SKY.t; if (t && t.mo === 12 && t.d === 31 && t.h === 23 && t.m === 59 && (t.sec % 60) >= 50 && SQ.drop < 0 && SQ.year !== t.y) { SQ.year = t.y; SQ.drop = 0; }

@@ -5035,7 +5035,7 @@ function drawTicker() { const c = SQ.tcv.getContext('2d'); if (!c || !c.fillText
 drawTicker();
 const ballSecret = secret('balldrop', () => { if (SQ.drop < 0) { SQ.drop = 0; toast('TEN SECONDS TO MIDNIGHT IN N3W SQUARE. LOOK EAST.'); } }, ['newyear', 'balldrop', 'countdown']);
 function squareFrame(dt) {
-  SQ.screens.forEach(s => { s.t -= dt; if (s.t <= 0) { s.t = 5 + Math.random() * 3; const pool = (window.__FRESH && __FRESH.length && Math.random() < 0.5) ? __FRESH : CARDS, card = pool[(Math.random() * pool.length) | 0]; try { const I = info('meme', card.n), asp = I.uv[5]; setPlaneUV(s.m, 'meme', card.n); const hh = Math.min(s.h, s.w / asp); s.m.scale.set(hh * asp, hh, 1); } catch (e) { } } });
+  SQ.screens.forEach(s => { if (s.live) return; s.t -= dt; if (s.t <= 0) { s.t = 5 + Math.random() * 3; const pool = (window.__FRESH && __FRESH.length && Math.random() < 0.5) ? __FRESH : CARDS, card = pool[(Math.random() * pool.length) | 0]; try { const I = info('meme', card.n), asp = I.uv[5]; setPlaneUV(s.m, 'meme', card.n); const hh = Math.min(s.h, s.w / asp); s.m.scale.set(hh * asp, hh, 1); } catch (e) { } } });
   SQ.ttex.offset.x = (LIFE.t * 0.02) % 1; SQ.tT = (SQ.tT || 0) - dt; if (SQ.tT <= 0) { SQ.tT = 10; drawTicker(); }
   SQ.ball.rotation.y += dt * 0.4; SQ.ball.material.emissive.setHSL((LIFE.t * 0.05) % 1, 0.8, 0.5); SQ.ball.material.emissiveIntensity = 0.25 + 0.6 * Math.min(1, (L.lamps || 0) * 1.3);
   const t = SKY.t; if (t && t.mo === 12 && t.d === 31 && t.h === 23 && t.m === 59 && (t.sec % 60) >= 50 && SQ.drop < 0 && SQ.year !== t.y) { SQ.year = t.y; SQ.drop = 0; }
@@ -5591,10 +5591,206 @@ window.__FRAMES.push(dt => { try {
   if (IV2.obs && !IV2.obsDone && IV2.obs.g.userData.slot && IV2.obs.g.userData.slot.children.length) { IV2.obsDone = true; IV2.obs.g.userData.slot.traverse(o => { if (o.isMesh) o.material = IV2.obsMat; }); }
 } catch (e) { if (!IV2.err) { IV2.err = e; console.warn('v36 iv2', e); } } });
 
-/*__V37_X__*/
-/*__V38_X__*/
-/*__V39_X__*/
-/*__V40_X__*/
+/* ================================================================
+   v37 PHOTOREAL, SECOND PASS: LIGHT IN THE AIR (2026-11-22)
+   God rays: a screen space pass after the bloom that smears the brightest sky pixels away from the sun's position on
+   screen, so light shafts come through the clouds, the Ferris wheel spokes, the El girders and the palms. Strongest
+   when the sun is low, gone at night and in fog, off on phones. A faint lens ghost on the far side of the frame.
+   ================================================================ */
+const RAYS = { pass: null };
+window.__RAYS = RAYS;
+function raysSetup() {
+  if (RAYS.pass || isMobile || !POST || !POST.comp || !POST.on) return;
+  const pass = new THREE.ShaderPass({
+    uniforms: { tDiffuse: { value: null }, uSun: { value: new THREE.Vector2(0.5, 0.5) }, uK: { value: 0 }, uAsp: { value: 1 }, uTint: { value: new THREE.Color(1, 0.9, 0.75) } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `uniform sampler2D tDiffuse; uniform vec2 uSun; uniform float uK, uAsp; uniform vec3 uTint; varying vec2 vUv;
+      void main(){ vec4 base = texture2D(tDiffuse, vUv); if (uK < 0.002) { gl_FragColor = base; return; }
+        vec2 d = (vUv - uSun) * (1.0 / 28.0) * 1.0; vec2 uv = vUv; float decay = 1.0, acc = 0.0;
+        for (int i = 0; i < 28; i++) { uv -= d; vec3 s = texture2D(tDiffuse, clamp(uv, 0.001, 0.999)).rgb; float l = max(0.0, dot(s, vec3(0.299, 0.587, 0.114)) - 0.5); acc += l * decay; decay *= 0.97; }
+        acc /= 28.0; vec2 dd = (vUv - uSun) * vec2(uAsp, 1.0); float fall = 1.0 / (1.0 + dot(dd, dd) * 3.0);
+        vec3 col = base.rgb + uTint * acc * uK * 1.8 * fall;
+        vec2 g = 1.0 - uSun; vec2 gd = (vUv - g) * vec2(uAsp, 1.0); col += uTint * vec3(0.4, 0.7, 1.0) * smoothstep(0.06, 0.0, length(gd)) * 0.05 * uK;
+        gl_FragColor = vec4(col, base.a); }` });
+  const idx = POST.comp.passes.indexOf(POST.bloom); POST.comp.insertPass(pass, idx >= 0 ? idx + 1 : 1); RAYS.pass = pass;
+}
+const _rv = new THREE.Vector3();
+function raysFrame() {
+  raysSetup(); const p = RAYS.pass; if (!p) return; const u = p.uniforms;
+  if (!SKY.sunDir || SKY.el < -2) { u.uK.value = 0; return; }
+  _rv.copy(SKY.sunDir).normalize().multiplyScalar(800).add(camera.position).project(camera);
+  const onScreen = _rv.z < 1 && Math.abs(_rv.x) < 1.6 && Math.abs(_rv.y) < 1.6; const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const facing = fwd.dot(SKY.sunDir.clone().normalize());
+  u.uSun.value.set(_rv.x * 0.5 + 0.5, _rv.y * 0.5 + 0.5); u.uAsp.value = innerWidth / Math.max(1, innerHeight);
+  const low = 1 - Math.min(1, Math.max(0, (SKY.el - 4) / 40)), clear = 1 - Math.max(WX.fog || 0, WX.wet || 0, WX.snow || 0) * 0.85;
+  u.uK.value = onScreen && facing > 0.1 ? Math.min(1, (facing - 0.1) * 1.6) * (0.35 + 0.65 * low) * clear * Math.min(1, (SKY.el + 2) / 6) : 0;
+  u.uTint.value.setRGB(1, 0.86 + 0.1 * (1 - low), 0.66 + 0.25 * (1 - low));
+}
+window.__FRAMES.push(dt => { try { raysFrame(); } catch (e) { if (!RAYS.err) { RAYS.err = e; console.warn('v37 rays', e); } } });
+
+/* ================================================================
+   v38 LIVE MEMES (2026-11-22)
+   The island now asks the 6529 API itself, from the visitor's browser (api.6529.io allows any origin, and the card
+   images come from the 6529 CDN with CORS), for the newest Memes, every ten minutes:
+   - LIVE MINT: a lit vitrine beside the factory press with the newest card on a turntable, its title, artist,
+     mint date and edition size, and a red LIVE light.
+   - N3W Square gives its top front screen to the newest card.
+   - Anything minted after this build (after card 577) joins the ARRIVALS board's first row and gets a toast the
+     first time you see it: NEW MEME JUST MINTED. The island keeps up without anyone rebuilding it.
+   If the API cannot be reached the vitrine shows the newest card from the build instead.
+   ================================================================ */
+const LIVE = { latest: null, newer: [], tex: null, ok: false, t: 0 };
+window.__LIVE = LIVE;
+const LIVE_API = 'https://api.6529.io/api/nfts?contract=0x33FD426905F149f8376e227d0C9D3340AaD17aF1&page_size=12&sort_direction=DESC';
+(function vitrine() {
+  const x = -3.4, z = -37.5, g0 = ground(x, z), G = new THREE.Group(); G.position.set(x, g0, z); G.rotation.y = 0.5; scene.add(G); LIVE.g = G;
+  const base = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.0, 1.5), new THREE.MeshStandardMaterial({ color: 0x0d0d0d, roughness: 0.4, metalness: 0.3 })); base.position.y = 0.5; G.add(base);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.0, 1.4), new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.02, metalness: 0, transmission: 0.9, transparent: true, opacity: 0.25, depthWrite: false })); glass.position.y = 2.0; G.add(glass);
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.12, 1.5), base.material); cap.position.y = 3.06; G.add(cap);
+  const card = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ toneMapped: false, side: THREE.DoubleSide })); card.position.y = 1.95; G.add(card); LIVE.card = card;
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff2020, toneMapped: false })); lamp.position.set(0.55, 3.18, 0.55); G.add(lamp); LIVE.lamp = lamp;
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 320; LIVE.lcv = cv; const lt = new THREE.CanvasTexture(cv); lt.encoding = THREE.sRGBEncoding; LIVE.ltex = lt;
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(1.44, 0.45), new THREE.MeshBasicMaterial({ map: lt, toneMapped: false })); label.position.set(0, 0.62, 0.76); G.add(label);
+  if (typeof CIRCS !== 'undefined') CIRCS.push({ x, z, r: 1.05, y0: -5, y1: 5, on: true });
+  interact(x, z, 2.6, 'E · OPEN THE LIVE MINT', () => { if (LIVE.latest) { if (byN[LIVE.latest.n]) openCard({ kind: 'meme', n: LIVE.latest.n }); else window.open('https://seize.io/the-memes/' + LIVE.latest.n, '_blank', 'noopener'); } });
+})();
+function liveLabel() { const c = LIVE.lcv.getContext('2d'); if (!c || !c.fillText) return; const L = LIVE.latest; c.fillStyle = '#0D0D0D'; c.fillRect(0, 0, 1024, 320);
+  c.fillStyle = '#ff2020'; c.beginPath && (c.beginPath(), c.arc(46, 52, 14, 0, PI * 2), c.fill()); c.font = '800 34px "Archivo Expanded",Arial'; c.fillStyle = '#ffffff'; c.textBaseline = 'middle'; c.fillText(LIVE.ok ? 'LIVE MINT' : 'LATEST MINT', 76, 54);
+  if (L) { c.font = '400 70px Anton,Impact,sans-serif'; let t = ('#' + L.n + '  ' + L.t).toUpperCase(); while (c.measureText(t).width > 960 && t.length > 8) t = t.slice(0, -2); c.fillText(t, 40, 150);
+    c.font = '600 30px "JetBrains Mono",Menlo,monospace'; c.fillStyle = '#c9ced3'; c.fillText(`BY ${(L.a || '').toUpperCase()} · ${L.mint || ''} · EDITION ${L.sup || '?'}`.slice(0, 58), 40, 236); }
+  LIVE.ltex.needsUpdate = true; }
+function liveShow(L) {
+  LIVE.latest = L; liveLabel(); const setScale = (a) => { const h = 1.5, w = Math.min(1.2, h * a); LIVE.card.scale.set(w, w / a, 1); };
+  if (byN[L.n] && byN[L.n].uv) { try { setPlaneUV(LIVE.card, 'meme', L.n); setScale(byN[L.n].uv[5]); } catch (e) { } return; }
+  if (!L.thumb) return; const ld = new THREE.TextureLoader(); ld.setCrossOrigin('anonymous');
+  ld.load(L.thumb, t => { t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; LIVE.card.material.map = t; LIVE.card.material.needsUpdate = true; const uv = LIVE.card.geometry.attributes.uv; uv.setXY(0, 0, 1); uv.setXY(1, 1, 1); uv.setXY(2, 0, 0); uv.setXY(3, 1, 0); uv.needsUpdate = true; setScale(t.image.width / t.image.height); LIVE.tex = t;
+    if (window.__SQ && SQ.screens[1]) { const s = SQ.screens[1]; s.live = true; s.m.material.map = t; s.m.material.needsUpdate = true; const u2 = s.m.geometry.attributes.uv; u2.setXY(0, 0, 1); u2.setXY(1, 1, 1); u2.setXY(2, 0, 0); u2.setXY(3, 1, 0); u2.needsUpdate = true; const a = t.image.width / t.image.height, hh = Math.min(s.h, s.w / a); s.m.scale.set(hh * a, hh, 1); } }, undefined, () => { });
+}
+async function liveFetch() {
+  try { const r = await fetch(LIVE_API, { cache: 'no-store' }); const j = await r.json(); const rows = (j.data || []).map(d => ({ n: d.id, t: d.name || '', a: d.artist_seize_handle || d.artist || '', mint: (d.mint_date || '').slice(0, 10), sup: d.supply, thumb: d.thumbnail || d.scaled || d.image }));
+    if (!rows.length) throw 0; LIVE.ok = true; const top = FRESH.length ? FRESH[FRESH.length - 1].n : 527; LIVE.newer = rows.filter(r => r.n > top).sort((a, b) => a.n - b.n); liveShow(rows[0]);
+    if (LIVE.newer.length && !LIVE.told) { LIVE.told = true; const L = LIVE.newer[LIVE.newer.length - 1]; setTimeout(() => toast(`NEW MEME JUST MINTED: #${L.n} ${L.t.toUpperCase()} BY ${(L.a || '').toUpperCase()}. IT IS IN THE LIVE MINT VITRINE BY THE FACTORY.`, 'blue'), 6000); }
+    if (LIVE.newer.length && typeof FLAP !== 'undefined' && FLAP.cv) { const orig = flapRows; flapRows = () => { const r = orig(); const L = LIVE.newer[LIVE.newer.length - 1]; r[0] = [String(L.n), L.t.toUpperCase().slice(0, 24), (L.a || '').toUpperCase().slice(0, 16), 'LIVE']; return r; }; }
+  } catch (e) { LIVE.ok = false; if (!LIVE.latest && FRESH.length) { const f = FRESH[FRESH.length - 1]; liveShow({ n: f.n, t: f.t, a: f.a, mint: f.mint, sup: f.sup }); } }
+}
+setTimeout(liveFetch, 2500);
+window.__FRAMES.push(dt => { try { LIVE.t += dt; if (LIVE.t > 600) { LIVE.t = 0; liveFetch(); } if (LIVE.card) LIVE.card.rotation.y += dt * 0.5; if (LIVE.lamp) LIVE.lamp.visible = LIVE.ok && (LIVE.t % 1.4) < 0.9; } catch (e) { } });
+
+/* ================================================================
+   v39 TOP OF THE SQUARE (2026-11-22)
+   An elevator door in the base of N3W Square (the island side): E and it takes you up, with a ding, to a railed
+   observation deck on the crown, under the mast and the ball. Two coin-op tower viewers on the deck: E to look
+   through them (the view narrows to a circle and zooms on the Witness, or on the Colossus). E at the deck's
+   elevator door goes back down.
+   ================================================================ */
+const TOP = {};
+window.__TOP = TOP;
+(function deck() {
+  if (!window.__SQ) return; const x = SQ.x, z = SQ.z, g0 = ground(x, z), H = 44, top = g0 + H + 3.02; TOP.top = top; TOP.x = x; TOP.z = z;
+  const steel = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, metalness: 0.85, roughness: 0.3 }), dark = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.4 });
+  // the elevator door at the base, island side (-x face)
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 2.6), new THREE.MeshStandardMaterial({ color: 0xc9a23a, metalness: 0.95, roughness: 0.25 })); door.position.set(x - 4.62, g0 + 1.3, z); door.rotation.y = -PI / 2; scene.add(door);
+  const seam = new THREE.Mesh(new THREE.PlaneGeometry(0.02, 2.6), dark); seam.position.set(x - 4.63, g0 + 1.3, z); seam.rotation.y = -PI / 2; scene.add(seam);
+  const lab = signTex([{ t: 'TOP OF THE SQUARE', s: 0.4 }, { t: 'OBSERVATION DECK · FREE · NO GAS', s: 0.15 }], 1024, 256, '#0D0D0D', '#FFFFFF');
+  const ls = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.6), new THREE.MeshBasicMaterial({ map: lab, toneMapped: false })); ls.position.set(x - 4.63, g0 + 3.0, z); ls.rotation.y = -PI / 2; scene.add(ls);
+  // the deck: floor pad, railings, a small door hut
+  const half = 3.5; padRect(x - half, x + half, z - half, z + half, top);
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(half * 2, 0.08, half * 2), MAT.wood || steel); floor.position.set(x, top - 0.04, z); scene.add(floor);
+  [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([sx, sz]) => { const len = half * 2, rx = x + sx * half, rz = z + sz * half;
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(sx ? 0.06 : len, 0.06, sz ? 0.06 : len), steel); rail.position.set(rx, top + 1.05, rz); scene.add(rail);
+    const rail2 = rail.clone(); rail2.position.y = top + 0.55; scene.add(rail2);
+    for (let k = -3; k <= 3; k++) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.05, 0.05), steel); p.position.set(rx + (sx ? 0 : k), top + 0.52, rz + (sz ? 0 : k)); scene.add(p); }
+    wall(sx ? rx : x - half, sz ? rz : z - half, sx ? rx : x + half, sz ? rz : z + half, top - 1, top + 3); });
+  post(x, z, 0.4, top - 1, top + 20);
+  const hut = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.4, 1.6), dark); hut.position.set(x - half + 0.75, top + 1.2, z + 2.2); scene.add(hut); post(x - half + 0.75, z + 2.2, 0.85, top - 1, top + 3);
+  const hd = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.0), door.material); hd.position.set(x - half + 1.46, top + 1.0, z + 2.2); hd.rotation.y = PI / 2; scene.add(hd);
+  // two coin-op tower viewers
+  TOP.viewers = [[x + 2.6, z - 2.6, new THREE.Vector3(0, 63, -215), 'THE WITNESS'], [x + 2.6, z + 2.6, new THREE.Vector3(58, 30, 262), 'THE COLOSSUS OF 6529']].map(([vx, vz, tgt, name]) => {
+    const g = new THREE.Group(); g.position.set(vx, top, vz); scene.add(g);
+    const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.16, 1.1, 10), new THREE.MeshStandardMaterial({ color: 0x2c6b4a, metalness: 0.6, roughness: 0.4 })); ped.position.y = 0.55; g.add(ped);
+    const head = new THREE.Group(); head.position.y = 1.25; g.add(head); const body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.36, 0.42), ped.material); head.add(body);
+    [-0.12, 0.12].forEach(o => { const e = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.2, 12), dark); e.rotation.x = PI / 2; e.position.set(o, 0.04, -0.28); head.add(e); });
+    head.lookAt(new THREE.Vector3(tgt.x, top + 1.25, tgt.z)); head.rotateY(PI);
+    post(vx, vz, 0.3, top - 1, top + 2); return { vx, vz, tgt, name };
+  });
+})();
+const topSecret = secret('topofsquare', () => { }), viewSecret = secret('binoculars', () => { });
+function ride(up) {
+  if (RAIL.on) return; const { x, z, top } = TOP, g0 = ground(x, z); beep(880, 0.15, 'sine', 0.05); flash('#0D0D0D');
+  const from = up ? [x - 5.6, g0 + 1.7, z] : [x - 2.2, top + 1.7, z + 2.2], to = up ? [x - 1.6, top + 1.7, z + 2.2] : [x - 6.5, g0 + 1.7, z];
+  playRail({ pos: [from, [x - 6, (g0 + top) / 2 + 6, z - 3], to], look: [[x, up ? g0 + 10 : top, z], [x + 30, 30, z - 20], [x + 40, up ? top - 6 : g0 + 1, z]], dur: 6, done: () => { teleport(to[0], to[2], up ? -PI / 2 : PI / 2, up ? top + 2 : 3); beep(1320, 0.2, 'sine', 0.05); if (up) { topSecret(); toast('TOP OF THE SQUARE. THE WHOLE ISLAND, THE EL, THE HARBOUR AND THE WITNESS. TWO VIEWERS ON THE DECK.'); } } });
+}
+if (TOP.top) { interact(TOP.x - 5.6, TOP.z, 2.4, 'E · TAKE THE ELEVATOR UP', () => ride(true));
+  interact(TOP.x - 2.2, TOP.z + 2.2, 1.6, 'E · ELEVATOR DOWN', () => { if (P.y > TOP.top - 1) ride(false); });
+  TOP.viewers.forEach(v => interact(v.vx, v.vz, 1.3, 'E · LOOK THROUGH THE VIEWER', () => { if (P.y < TOP.top - 1 || RAIL.on) return; viewSecret(); const eye = [v.vx - Math.sign(v.tgt.x - v.vx) * 0.1, TOP.top + 1.35, v.vz];
+    beep(400, 0.05, 'square', 0.03); beep(600, 0.05, 'square', 0.03, 0.07); toast('ONE QUARTER. ' + v.name + '.'); viewerMask(true);
+    playRail({ pos: [eye, [eye[0], eye[1], eye[2] + 0.001]], look: [[v.tgt.x, v.tgt.y, v.tgt.z], [v.tgt.x, v.tgt.y, v.tgt.z]], fov: [38, 9], dur: 8, done: () => { viewerMask(false); teleport(v.vx - 1.2, v.vz, -PI / 2, TOP.top + 2); } }); }));
+}
+(function mask() { const el = document.createElement('div'); el.style.cssText = 'position:fixed;inset:0;z-index:55;pointer-events:none;display:none;background:radial-gradient(circle 40vh at 50% 50%, transparent 93%, #000 96%)'; document.body.appendChild(el); TOP.mask = el; })();
+function viewerMask(on) { if (TOP.mask) TOP.mask.style.display = on ? 'block' : 'none'; }
+
+/* ================================================================
+   v40 PARK LIFE (2026-11-22)
+   THE CHESS TABLES: three stone tables with inlaid boards in the eastern park, two hustlers waiting. E at a table
+   plays a game of speed chess: the pieces move, the clock slaps, and you mostly lose (he wants five dollars, he
+   accepts TDH). Beat him and it counts. A pigeon lady on the bench beside them throws crumbs every so often and
+   the whole flock comes running.
+   ================================================================ */
+const CHESS = { tables: [], wins: 0, games: 0 };
+window.__CHESS = CHESS;
+const CHESS_AT = { x: 74, z: -21 };
+(function chessTables() {
+  const stone = new THREE.MeshStandardMaterial({ color: 0x8e8a82, roughness: 0.8 }), white = new THREE.MeshStandardMaterial({ color: 0xefe9dc, roughness: 0.4 }), black = new THREE.MeshStandardMaterial({ color: 0x1a1a1c, roughness: 0.35 });
+  const bcv = document.createElement('canvas'); bcv.width = bcv.height = 256; const c = bcv.getContext('2d'); if (c) for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { c.fillStyle = (i + j) % 2 ? '#2b2a28' : '#d8d0bd'; c.fillRect(i * 32, j * 32, 32, 32); }
+  const bt = new THREE.CanvasTexture(bcv); bt.encoding = THREE.sRGBEncoding;
+  const pawn = new THREE.CylinderGeometry(0.018, 0.026, 0.06, 8), king = new THREE.CylinderGeometry(0.022, 0.03, 0.1, 8);
+  [[-3.2, 0], [0, 0], [3.2, 0]].forEach(([dx, dz], ti) => {
+    const x = CHESS_AT.x + dx, z = CHESS_AT.z + dz, g0 = ground(x, z), G = new THREE.Group(); G.position.set(x, g0, z); scene.add(G);
+    const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.28, 0.72, 12), stone); ped.position.y = 0.36; G.add(ped);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.07, 0.9), stone); top.position.y = 0.75; G.add(top);
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.6), new THREE.MeshStandardMaterial({ map: bt, roughness: 0.5 })); board.rotation.x = -PI / 2; board.position.y = 0.786; G.add(board);
+    [-0.85, 0.85].forEach(sz => { const st = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.45, 12), stone); st.position.set(0, 0.225, sz); G.add(st); });
+    const pieces = []; for (let side = 0; side < 2; side++) for (let i = 0; i < 16; i++) { const m = new THREE.Mesh(i === 4 ? king : pawn, side ? black : white); const col = i % 8, row = (i < 8 ? 1 : 0); const rr = side ? 7 - row : row;
+      m.position.set(-0.2625 + col * 0.075, 0.79 + (i === 4 ? 0.05 : 0.03), -0.2625 + rr * 0.075); G.add(m); pieces.push(m); }
+    const clock = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.1, 0.08), black); clock.position.set(0.36, 0.83, 0); G.add(clock);
+    let hustler = null; if (ti !== 1) { hustler = person(ti ? 0x6b5b45 : 0x2a2f45, 0x1d1d22, SKIN[(ti * 3) % SKIN.length], ti ? 'wiseguy' : 'cabbie'); hustler.g.position.set(x, g0 - 0.35, z - 0.85); hustler.g.rotation.y = 0; }
+    if (typeof CIRCS !== 'undefined') CIRCS.push({ x, z, r: 0.6, y0: -5, y1: 3, on: true });
+    const T = { x, z, G, pieces, clock, hustler, game: 0 }; CHESS.tables.push(T);
+    if (hustler) interact(x, z + 1.3, 1.6, 'E · PLAY HIM AT SPEED CHESS', () => playChess(T));
+  });
+  const lab = signTex([{ t: 'THE CHESS TABLES', s: 0.38 }, { t: 'SPEED CHESS · HE HAS NOT LOST SINCE 2021', s: 0.13 }], 1024, 256, '#2f4a3a', '#FFFFFF');
+  const sg = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 0.55), new THREE.MeshBasicMaterial({ map: lab, toneMapped: false, side: THREE.DoubleSide })); sg.position.set(CHESS_AT.x, ground(CHESS_AT.x, CHESS_AT.z) + 2.4, CHESS_AT.z - 2.2); scene.add(sg);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), stone); pole.position.set(CHESS_AT.x, ground(CHESS_AT.x, CHESS_AT.z) + 1.1, CHESS_AT.z - 2.25); scene.add(pole);
+})();
+const chessWin = secret('chesswin', () => { toast('YOU BEAT HIM. HE SAYS RUN IT BACK. HE SAYS IT EVERY TIME.', 'blue'); });
+const chessPlay = secret('chess', () => { });
+function playChess(T) {
+  if (T.game > 0) return; chessPlay(); T.game = 9; CHESS.games++; toast('HE OPENS WITH E4. HE SLAPS THE CLOCK BEFORE YOU SIT DOWN.');
+  const r = Math.random(); T.result = r < 0.2 ? 'win' : r < 0.3 ? 'draw' : 'lose';
+}
+function chessFrame(dt) {
+  CHESS.tables.forEach(T => { if (T.game <= 0) return; const prev = T.game; T.game -= dt;
+    if (Math.floor(prev * 2) !== Math.floor(T.game * 2) && T.game > 0.5) { const p = T.pieces[(Math.random() * T.pieces.length) | 0]; if (p.visible) { p.position.x = Math.max(-0.26, Math.min(0.26, p.position.x + (Math.random() - 0.5) * 0.15)); p.position.z = Math.max(-0.26, Math.min(0.26, p.position.z + (Math.random() - 0.5) * 0.15)); if (Math.random() < 0.18) p.visible = false; }
+      if (Math.hypot(P.x - T.x, P.z - T.z) < 12) beep(160, 0.05, 'square', 0.04); T.clock.position.y = 0.83 - 0.01; setTimeout(() => T.clock.position.y = 0.83, 80); }
+    if (T.hustler) T.hustler.g.rotation.z = Math.sin(LIFE.t * 6) * 0.02;
+    if (T.game <= 0) { if (T.result === 'win') { CHESS.wins++; chessWin(); } else if (T.result === 'draw') toast('A DRAW. HE SAYS YOU GOT LUCKY. HE IS TECHNICALLY CORRECT.'); else { toast('CHECKMATE IN NINE. HE WANTS FIVE DOLLARS. HE ACCEPTS TDH.'); state.tdh = Math.max(0, state.tdh - 5); try { hud(); } catch (e) { } }
+      T.pieces.forEach((p, i) => { p.visible = true; const col = i % 16 % 8, row = (i % 16) < 8 ? 1 : 0, side = i >= 16 ? 1 : 0, rr = side ? 7 - row : row; p.position.x = -0.2625 + col * 0.075; p.position.z = -0.2625 + rr * 0.075; }); } });
+}
+
+/* the pigeon lady */
+const LADY = { t: 6 };
+(function pigeonLady() {
+  const x = CHESS_AT.x - 7, z = CHESS_AT.z + 3, g0 = ground(x, z); const wood = MAT.wood || new THREE.MeshStandardMaterial({ color: 0x6b4a2a }), iron = new THREE.MeshStandardMaterial({ color: 0x1d2b24, metalness: 0.6, roughness: 0.5 });
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.08, 0.5), wood); seat.position.set(x, g0 + 0.45, z); scene.add(seat);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.45, 0.06), wood); back.position.set(x, g0 + 0.75, z - 0.25); scene.add(back);
+  [-0.9, 0.9].forEach(o => { const l = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.45, 0.5), iron); l.position.set(x + o, g0 + 0.22, z); scene.add(l); });
+  const lady = person(0x7b3f32, 0x2a2f45, SKIN[4], 'rosemary' in (CROWD.parts || {}) ? 'rosemary' : 'actress'); lady.g.position.set(x + 0.3, g0 - 0.35, z - 0.05); LADY.P = lady; LADY.x = x; LADY.z = z;
+  const bag = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.12), new THREE.MeshStandardMaterial({ color: 0xc9b089, roughness: 0.9 })); bag.position.set(x - 0.3, g0 + 0.62, z); scene.add(bag);
+  if (typeof CIRCS !== 'undefined') CIRCS.push({ x, z, r: 1.0, y0: -5, y1: 3, on: true });
+  interact(x, z + 1.0, 1.8, 'E · SIT WITH THE PIGEON LADY', secret('pigeonlady', () => { toast('SHE SAYS THE PIGEONS WERE HERE FIRST. SHE IS RIGHT.'); LIFE.feed && LIFE.feed(LADY.x, LADY.z + 2.5); }));
+})();
+function ladyFrame(dt) { LADY.t -= dt; if (LADY.t <= 0) { LADY.t = 22 + Math.random() * 12; if (LIFE.feed && Math.hypot(P.x - LADY.x, P.z - LADY.z) < 60) LIFE.feed(LADY.x, LADY.z + 2.5); } if (LADY.P) LADY.P.g.rotation.y = Math.sin(LIFE.t * 0.4) * 0.3; }
+window.__FRAMES.push(dt => { try { chessFrame(dt); ladyFrame(dt); } catch (e) { if (!CHESS.err) { CHESS.err = e; console.warn('v40 park', e); } } });
+
 /*__V41_X__*/
 /*__V42_X__*/
 /*__V43_X__*/
