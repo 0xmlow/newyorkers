@@ -670,6 +670,7 @@ function padRect(x0, x1, z0, z1, y, y0) { PADS.push({ t: 'r', x0, x1, z0, z1, y,
 function padCirc(x, z, r, y, y0) { PADS.push({ t: 'c', x, z, r, y, y0: y0 === undefined ? -10 : y0 }); }
 let plazaTops = null; const PL = { n: 23, pitch: 1.4 }; PL.half = PL.n * PL.pitch / 2;
 function floorAt(x, z, curY) {
+  if (window.__UNDER && curY < -2) { const u = window.__UNDER(x, z, curY); if (u) return u; }   // v41: rooms below the terrain
   let f = -Infinity, block = false; const r = Math.hypot(x, z);
   if (r < SHORE) f = ground(x, z);
   const reach = curY + 0.66, head = curY + 1.7;
