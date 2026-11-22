@@ -56,7 +56,7 @@ const PHOTO = { on: false, el: null };
   document.body.appendChild(el); PHOTO.el = el;
 })();
 const photoSecret = secret('photo', () => { });
-function photoMode() { PHOTO.on = !PHOTO.on; ['hud', 'taskbar', 'toasts', 'prompt', 'aim', 'mbtn', 'joy', 'cross'].forEach(id => { const e = $(id); if (e) e.style.visibility = PHOTO.on ? 'hidden' : ''; }); PHOTO.el.style.display = PHOTO.on ? 'block' : 'none';
+function photoMode() { PHOTO.on = !PHOTO.on; ['hud', 'taskbar', 'toasts', 'prompt', 'aim', 'mbtn', 'joy', 'cross', 'journal', 'modal'].forEach(id => { const e = $(id); if (e) e.style.visibility = PHOTO.on ? 'hidden' : ''; }); PHOTO.el.style.display = PHOTO.on ? 'block' : 'none';
   if (PHOTO.on) { photoSecret(); const t = SKY.t || { h: 0, m: 0 }; $('phPlace').textContent = (zoneName || 'MEME ISLAND').replace(/^"|"$/g, ''); $('phTime').textContent = `N3W YORK ${pad2(t.h)}:${pad2(t.m)} · N3W YORKERS by MLow`; } }
 function photoSave() {
   try { if (POST && POST.on) POST.comp.render(); else renderer.render(scene, camera); const src = renderer.domElement, W = src.width, H = src.height, b = Math.round(Math.min(W, H) * 0.018), cap = Math.round(H * 0.08);
