@@ -2052,7 +2052,7 @@ const TOUR = [
   { name: 'aerial', dur: 14, ease: false, pos: [[0, 120, 190], [170, 110, 60], [150, 100, -140], [-60, 110, -190], [-190, 120, 20], [-60, 120, 190]], look: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]] }
 ];
 let tourIdx = -1;
-function nextTour() { tourIdx = (tourIdx + 1) % TOUR.length; const r = TOUR[tourIdx]; if (r.name === 'vault' && !state.vault) openVault(); playRail(Object.assign({}, r, { done: () => { if (tourIdx >= 0) nextTour(); } })); toast('TOUR: ' + Q(r.name.toUpperCase()) + '. ANY MOVE KEY TO GET OFF.', 'blue'); }
+function nextTour() { tourIdx = (tourIdx + 1) % TOUR.length; const r = TOUR[tourIdx]; if (r.name === 'vault' && !state.vault) openVault(); if (r.pre) try { r.pre(); } catch (e) { } playRail(Object.assign({}, r, { done: () => { if (tourIdx >= 0) nextTour(); } })); toast('TOUR: ' + Q(r.name.toUpperCase()) + '. ANY MOVE KEY TO GET OFF.', 'blue'); }
 function stopTour() { tourIdx = -1; RAIL.on = false; RAIL.done = null; teleport(camera.position.x, camera.position.z, P.yaw); }
 
 /* ================================================================

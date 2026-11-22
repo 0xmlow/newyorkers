@@ -67,5 +67,5 @@ window.__FRAMES.push(dt => { try {
   juke.label = BACK.inside ? 'E · PICK A RECORD ON THE JUKEBOX' : ''; juke.fn = () => { if (window.__RADIO) { radioNext(); if (__RADIO.st === 0) radioNext(); } };
   barI.label = BACK.inside ? 'E · ORDER WHAT THE BARTENDER RECOMMENDS' : ''; barI.fn = () => { const d = ['AN OLD FASHIONED, BUT THE ORANGE IS A JPEG.', 'A NEGRONI. HE SAYS THE CAMPARI IS ON CHAIN.', 'THE HOUSE SPECIAL: GM AND TONIC.', 'SELTZER WITH LIME. HE RESPECTS IT.'][(Math.random() * 4) | 0]; toast(d); };
   if (BACK.inside) { if (P.y > BACK.fy + 3) BACK.inside = false; BACK.jb.material.emissiveIntensity = 0.3 + 0.15 * Math.sin(LIFE.t * 6); if (BACK.keep) BACK.keep.g.rotation.y = -PI / 2 + Math.sin(LIFE.t * 0.5) * 0.4; }
-  if (!BACK.inside && BACK.g.visible && P.y > BACK.fy + 3) { BACK.g.visible = false; }
+  if (!BACK.inside && BACK.g.visible && P.y > BACK.fy + 3 && !(BACK.show > LIFE.t)) { BACK.g.visible = false; }
 } catch (e) { if (!BACK.err) { BACK.err = e; console.warn('v41 back room', e); } } });
