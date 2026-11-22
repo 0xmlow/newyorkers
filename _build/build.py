@@ -7,7 +7,7 @@ d = json.load(open(os.path.join(H, '..', 'site', 'assets', 'data.json')))
 d['sculpts'] = json.load(open(os.path.join(H, '..', 'site', 'assets', 'sculpts.json')))
 data = json.dumps(d, separators=(',', ':'))
 out = src.replace('/*__DATA__*/', data).replace('/*__V6_NATURE__*/', open(os.path.join(H, 'v6_nature.js')).read()).replace('/*__V7_ARCH__*/', open(os.path.join(H, 'v7_arch.js')).read()).replace('/*__V8_LAND__*/', open(os.path.join(H, 'v8_land.js')).read()).replace('/*__V9_DETAIL__*/', open(os.path.join(H, 'v9_detail.js')).read()).replace('/*__V10_INTERIORS__*/', open(os.path.join(H, 'v10_interiors.js')).read())
-for _mk, _fn in [('V12_LIFE', 'v12_life.js'), ('V13_EGGS', 'v13_eggs.js'), ('V14_SECRETS', 'v14_secrets.js'), ('V15_POLISH', 'v15_polish.js')]:
+for _mk, _fn in [('V12_LIFE', 'v12_life.js'), ('V13_EGGS', 'v13_eggs.js'), ('V14_SECRETS', 'v14_secrets.js'), ('V15_POLISH', 'v15_polish.js'), ('V16_STREET', 'v16_street.js'), ('V17_NEON', 'v17_neon.js'), ('V18_WEATHER', 'v18_weather.js'), ('V19_GAMES', 'v19_games.js'), ('V20_FINALE', 'v20_finale.js')]:
     if os.path.exists(os.path.join(H, _fn)): out = out.replace('/*__%s__*/' % _mk, open(os.path.join(H, _fn)).read())
 open(os.path.join(H, '..', 'site', 'index.html'), 'w').write(out)
 print('site/index.html', len(out) // 1024, 'KB')
