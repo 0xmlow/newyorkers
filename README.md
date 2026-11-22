@@ -226,3 +226,19 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 ## v20 the finale, `_build/v20_finale.js`
 - 5,200 sparks rise in four rockets and fly into N3W YORKERS in the house type over the Colossus, hold, shimmer and fall. Midnight New York time, the ninth golden slice, or FINALE / SHOW. Targets are sampled evenly from the drawn type (sampling the first N rows cut the bottom off the letters); x is negated because the viewer on the pier faces +z.
 - About 15 ms a frame on the beach rail at 1440x810 (v15 was 10, v10 was 15 to 17).
+
+## v21 the harbour, `_build/v21_harbour.js`
+- A jet ski west of the pier you drive: E on, W throttle, S brake, A D or the mouse to steer, E to tie up. Spray, wake, swell, engine note; kept off the beach, the pier and the Colossus rock. Dolphins leap in the harbour and beside you when you ride. `window.__DRIVE` skips the walking step; `window.__FRAMES` is the frame hook from v21 on.
+
+## v22 street food, `_build/v22_food.js`
+- N3W HALAL (smoking grill) and N3W COFFEE (blue Greek key cup) parked on the ring road; an ice cream truck with its own jingle on the inner lane that pulls over on ICECREAM. Purchases are held in hand for a while.
+
+## v23 the sky, `_build/v23_sky.js`
+- N3W AIR TOURS helipad at (-72, -39): E for a 42 second flight round the island and the Colossus. Kites over GM Beach, two striped hot air balloons over the harbour.
+
+## v24 animals, `_build/v24_animals.js`
+- A fetch dog on GM Beach (E throws the stick), two loose dogs that chase pigeons, seven squirrels, and an orange stray on PSPSPS or KITTY.
+
+## v25 the parade, `_build/v25_parade.js`
+- All November (and on PARADE): a four storey parade balloon of an eye flower New Yorker in a blue suit and orange tie, waving, with an N3W YORKERS sash, held by eight handlers on ropes, circling the ring road. Confetti on PARADE, a toast on Thanksgiving.
+- About 16 to 17 ms a frame on the beach rail at 1440x810.
