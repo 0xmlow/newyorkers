@@ -2395,7 +2395,7 @@ function frame(dt) {
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
   natFrame(dt); archFrame(dt); landFrame(dt); detFrame(dt); bodegaFrame(); lifeFrame(dt); playFrame(dt); secretsFrame(dt); streetFrame(dt); if (typeof neonFrame === 'function') neonFrame(dt); if (typeof wxFrame === 'function') wxFrame(dt); if (typeof gamesFrame === 'function') gamesFrame(dt); if (typeof finaleFrame === 'function') finaleFrame(dt); for (const f of (window.__FRAMES || [])) f(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
   // camera
-  const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
+  const bob = state.started && !window.__CALM && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 * (window.__EYE || 1) + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
   if (RIDE.on) { RIDE.t += dt; const a = RIDE.a0 + RIDE.t / RIDE.dur * PI * 2; camera.position.set(wheel.cx - 2.6, wheel.hub - Math.sin(a + PI / 2) * wheel.R - 0.6, wheel.cz + Math.cos(a + PI / 2) * wheel.R); P.x = camera.position.x; P.z = camera.position.z;
     if (RIDE.t > RIDE.dur * 0.48 && !RIDE.top) { RIDE.top = true; toast('STILL EARLY.', 'blue'); } if (RIDE.t >= RIDE.dur) { RIDE.top = false; endRide(); } }
@@ -2480,7 +2480,7 @@ updateSky(1); applyLight(); syncTimeButtons();
 scene.traverse(o => { const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; ms.forEach(m => { if (m.isMeshStandardMaterial) m.envMapIntensity = m === MAT.water ? 1.0 : m.metalness > 0.5 ? 0.9 : 0.4; }); });
 addEventListener('resize', () => { if (window.__lockSize) return; camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (POST.on) POST.comp.setSize(innerWidth, innerHeight); });
 setupPost();
-$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 577 CARDS. SIX KEYS, NINE GOLDEN SLICES AND 75 SECRETS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
+$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 577 CARDS. SIX KEYS, NINE GOLDEN SLICES AND ' + PLAY.total + ' SECRETS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
 requestAnimationFrame(loop);
 hud();
 

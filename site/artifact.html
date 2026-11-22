@@ -2388,7 +2388,7 @@ function frame(dt) {
   practicals.forEach(p => { if (p.userData.alwaysOn) p.intensity = Math.max(p.intensity, p.userData.alwaysOn * 10); });
   natFrame(dt); archFrame(dt); landFrame(dt); detFrame(dt); bodegaFrame(); lifeFrame(dt); playFrame(dt); secretsFrame(dt); streetFrame(dt); if (typeof neonFrame === 'function') neonFrame(dt); if (typeof wxFrame === 'function') wxFrame(dt); if (typeof gamesFrame === 'function') gamesFrame(dt); if (typeof finaleFrame === 'function') finaleFrame(dt); for (const f of (window.__FRAMES || [])) f(dt); updateWorld(dt, T); updatePeople(dt, T); updateDelights(dt, T); updateLife(dt, T); flushCards();
   // camera
-  const bob = state.started && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
+  const bob = state.started && !window.__CALM && P.ground && (keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y) ? Math.sin(T * 9) * 0.035 : 0;
   camera.position.set(P.x, P.y + 1.7 * (window.__EYE || 1) + bob, P.z); camera.rotation.set(P.pitch, P.yaw, tilt);
   if (RIDE.on) { RIDE.t += dt; const a = RIDE.a0 + RIDE.t / RIDE.dur * PI * 2; camera.position.set(wheel.cx - 2.6, wheel.hub - Math.sin(a + PI / 2) * wheel.R - 0.6, wheel.cz + Math.cos(a + PI / 2) * wheel.R); P.x = camera.position.x; P.z = camera.position.z;
     if (RIDE.t > RIDE.dur * 0.48 && !RIDE.top) { RIDE.top = true; toast('STILL EARLY.', 'blue'); } if (RIDE.t >= RIDE.dur) { RIDE.top = false; endRide(); } }
@@ -5917,7 +5917,7 @@ function droneFrame(dt) {
       const ax = q ? C.x - q[0] * Wd : d.x, ay = q ? C.y + q[1] * Hd : d.y; tx = q ? ax + (C.x - p[0] * Wd - ax) * e : C.x - p[0] * Wd; ty = q ? ay + (C.y + p[1] * Hd - ay) * e + Math.sin(e * PI) * 6 : C.y + p[1] * Hd; tz = C.z + Math.sin(e * PI) * (i % 7 - 3);
       r = p[2]; g = p[3]; b = p[4]; if (r + g + b < 0.3) { r = 0.25; g = 0.3; b = 0.5; } }
     const sp = Math.min(1, dt * 2.2); d.x += (tx - d.x) * sp; d.y += (ty - d.y) * sp; d.z += (tz - d.z) * sp; d.r += (r - d.r) * sp; d.g += (g - d.g) * sp; d.b += (b - d.b) * sp;
-    pos[i * 3] = d.x; pos[i * 3 + 1] = d.y + Math.sin(LIFE.t * 1.3 + d.ph) * 0.08; pos[i * 3 + 2] = d.z; const tw = 1.4 + 0.2 * Math.sin(LIFE.t * 3 + d.ph); col[i * 3] = d.r * tw; col[i * 3 + 1] = d.g * tw; col[i * 3 + 2] = d.b * tw; });
+    pos[i * 3] = d.x; pos[i * 3 + 1] = d.y + Math.sin(LIFE.t * 1.3 + d.ph) * 0.08; pos[i * 3 + 2] = d.z; const tw = window.__CALM ? 1.4 : 1.4 + 0.2 * Math.sin(LIFE.t * 3 + d.ph); col[i * 3] = d.r * tw; col[i * 3 + 1] = d.g * tw; col[i * 3 + 2] = d.b * tw; });
   DRONES.pts.geometry.attributes.position.needsUpdate = DRONES.pts.geometry.attributes.color.needsUpdate = true;
   if (DRONES.t > total) { DRONES.t = -1; DRONES.pts.visible = false; }
 }
@@ -5971,7 +5971,43 @@ function seaFrame(dt) {
 }
 window.__FRAMES.push(dt => { try { seaFrame(dt); } catch (e) { if (!SEA.err) { SEA.err = e; console.warn('v43 sea', e); } } });
 
-/*__V44_X__*/
+/* ================================================================
+   v44 SMOOTH ON EVERY SCREEN (2026-11-22)
+   A quality governor: it watches how late frames arrive and, when the island cannot keep up, steps down one tier at
+   a time (sharpness, then ambient occlusion and god rays, then live shadows), and steps back up when there is room.
+   ?lite=1 starts at the lightest tier, ?hq=1 pins the highest. Typing LITE or HQ does the same from inside. People
+   who ask their system for reduced motion get no head bob and no drone twinkle.
+   ================================================================ */
+const GOV = { tier: 0, max: 3, slow: 0, fast: 0, t: 0, gap: 16.7, last: 0, pin: /hq=1/.test(location.search) ? 0 : null, log: [] };
+window.__GOV = GOV;
+GOV.calm = matchMedia('(prefers-reduced-motion: reduce)').matches; window.__CALM = GOV.calm;
+GOV.basePR = Math.min(devicePixelRatio, 1.5);
+function govApply(t) {
+  t = Math.max(0, Math.min(GOV.max, t)); if (t === GOV.tier && GOV.applied) return; GOV.tier = t; GOV.applied = true; GOV.log.push([Math.round(performance.now() / 1000), t]);
+  const pr = [GOV.basePR, Math.min(GOV.basePR, 1.15), Math.min(GOV.basePR, 1), Math.min(GOV.basePR, 0.85)][t];
+  try { if (Math.abs(renderer.getPixelRatio() - pr) > 0.01) { renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight); if (POST.comp) { if (POST.comp.setPixelRatio) POST.comp.setPixelRatio(pr); POST.comp.setSize(innerWidth, innerHeight); } } } catch (e) { }
+  try { if (t >= 2) { if (AO.on) { GOV.aoWas = true; AO.on = false; POST.grade.uniforms.uAO.value = 0; } } else if (GOV.aoWas && !AO.on) { AO.on = true; POST.grade.uniforms.uAO.value = 0.9; GOV.aoWas = false; } } catch (e) { }
+  try { if (window.__RAYS && __RAYS.pass) __RAYS.pass.enabled = t < 2; } catch (e) { }
+  try { renderer.shadowMap.autoUpdate = t < 3; if (t >= 3) renderer.shadowMap.needsUpdate = true; } catch (e) { }
+}
+function govFrame(dt) {
+  const now = performance.now(), gap = GOV.last ? now - GOV.last : 16.7; GOV.last = now;
+  if (window.__RAYS && __RAYS.pass && __RAYS.pass.enabled !== (GOV.tier < 2)) __RAYS.pass.enabled = GOV.tier < 2;   // the rays pass is made late
+  if (!state.started || (window.__POWER && __POWER.blurred) || document.hidden || gap > 250) return;
+  const budget = window.__powerBudget ? Math.max(16.7, __powerBudget()) : 16.7; GOV.gap += (gap / budget - GOV.gap) * 0.05;   // 1.0 = on time
+  GOV.t += dt; if (GOV.tier >= 3) GOV.shT = (GOV.shT || 0) + dt, GOV.shT > 0.5 && (GOV.shT = 0, renderer.shadowMap.needsUpdate = true);
+  if (GOV.pin !== null || GOV.t < 8) return;
+  if (GOV.gap > 1.45) { GOV.slow += dt; GOV.fast = 0; } else if (GOV.gap < 1.08) { GOV.fast += dt; GOV.slow = 0; } else { GOV.slow = Math.max(0, GOV.slow - dt); GOV.fast = 0; }
+  if (GOV.slow > 3 && GOV.tier < GOV.max) { govApply(GOV.tier + 1); GOV.slow = 0; GOV.gap = 1.2; GOV.t = 5; if (GOV.tier === 2) toast('MEME ISLAND EASED OFF A LITTLE SO IT RUNS SMOOTHLY HERE. TYPE HQ FOR FULL QUALITY.'); }
+  else if (GOV.fast > 12 && GOV.tier > (GOV.floor || 0)) { govApply(GOV.tier - 1); GOV.fast = 0; GOV.t = 5; }
+}
+if (/lite=1/.test(location.search)) { GOV.floor = 3; govApply(3); } else if (isMobile) { GOV.floor = 1; govApply(1); }
+const govLite = () => { GOV.pin = null; GOV.floor = 3; govApply(3); toast('LITE MODE: LIGHTER SHADOWS AND EFFECTS, SAME ISLAND.'); };
+['lite', 'lowpower', 'potato'].forEach(w => EGGS[w] = govLite);   // settings, not secrets: never counted
+const govHQ = () => { GOV.pin = 0; GOV.floor = 0; govApply(0); toast('FULL QUALITY, PINNED. TYPE LITE IF IT STUTTERS.'); };
+['hq', 'ultra', 'fullquality'].forEach(w => EGGS[w] = govHQ);
+window.__FRAMES.push(dt => { try { govFrame(dt); } catch (e) { if (!GOV.err) { GOV.err = e; console.warn('v44 gov', e); } } });
+
 /*__V45_X__*/
 
 /* ---------------- boot ---------------- */
@@ -5982,7 +6018,7 @@ updateSky(1); applyLight(); syncTimeButtons();
 scene.traverse(o => { const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; ms.forEach(m => { if (m.isMeshStandardMaterial) m.envMapIntensity = m === MAT.water ? 1.0 : m.metalness > 0.5 ? 0.9 : 0.4; }); });
 addEventListener('resize', () => { if (window.__lockSize) return; camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (POST.on) POST.comp.setSize(innerWidth, innerHeight); });
 setupPost();
-$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 577 CARDS. SIX KEYS, NINE GOLDEN SLICES AND 75 SECRETS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
+$('go').onclick = () => { $('enter').style.display = 'none'; state.started = true; toast('WELCOME TO MEME ISLAND. POPULATION: 577 CARDS. SIX KEYS, NINE GOLDEN SLICES AND ' + PLAY.total + ' SECRETS ARE HIDDEN HERE.', 'blue'); setTimeout(() => toast('TRY TYPING gm.'), 2600); if (!isMobile) { try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { } } };
 requestAnimationFrame(loop);
 hud();
 

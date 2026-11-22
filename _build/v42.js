@@ -51,7 +51,7 @@ function droneFrame(dt) {
       const ax = q ? C.x - q[0] * Wd : d.x, ay = q ? C.y + q[1] * Hd : d.y; tx = q ? ax + (C.x - p[0] * Wd - ax) * e : C.x - p[0] * Wd; ty = q ? ay + (C.y + p[1] * Hd - ay) * e + Math.sin(e * PI) * 6 : C.y + p[1] * Hd; tz = C.z + Math.sin(e * PI) * (i % 7 - 3);
       r = p[2]; g = p[3]; b = p[4]; if (r + g + b < 0.3) { r = 0.25; g = 0.3; b = 0.5; } }
     const sp = Math.min(1, dt * 2.2); d.x += (tx - d.x) * sp; d.y += (ty - d.y) * sp; d.z += (tz - d.z) * sp; d.r += (r - d.r) * sp; d.g += (g - d.g) * sp; d.b += (b - d.b) * sp;
-    pos[i * 3] = d.x; pos[i * 3 + 1] = d.y + Math.sin(LIFE.t * 1.3 + d.ph) * 0.08; pos[i * 3 + 2] = d.z; const tw = 1.4 + 0.2 * Math.sin(LIFE.t * 3 + d.ph); col[i * 3] = d.r * tw; col[i * 3 + 1] = d.g * tw; col[i * 3 + 2] = d.b * tw; });
+    pos[i * 3] = d.x; pos[i * 3 + 1] = d.y + Math.sin(LIFE.t * 1.3 + d.ph) * 0.08; pos[i * 3 + 2] = d.z; const tw = window.__CALM ? 1.4 : 1.4 + 0.2 * Math.sin(LIFE.t * 3 + d.ph); col[i * 3] = d.r * tw; col[i * 3 + 1] = d.g * tw; col[i * 3 + 2] = d.b * tw; });
   DRONES.pts.geometry.attributes.position.needsUpdate = DRONES.pts.geometry.attributes.color.needsUpdate = true;
   if (DRONES.t > total) { DRONES.t = -1; DRONES.pts.visible = false; }
 }
