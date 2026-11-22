@@ -210,3 +210,19 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 ## v15 polish (2026-11-21)
 - The sky dome no longer streaks overhead: the skirt now closes to a point and blurs the panorama sideways as it climbs (the night photograph's top rows were stretched stars), with procedural stars at night. The flat cap disc is off.
 - The enter card mentions the slices, the cab, the phone and HELP.
+
+## v16 street life (2026-11-21), `_build/v16_street.js`
+- A sax busker on the path to the toll (a slow blues in F that swells as you walk up; E tips him), a breakdance circle on GM Beach with a boombox, a crowd and a headspin (E cheers), a silver living statue north of the Floor that moves only when you look away. City sound under the island's mute: ring road traffic, horns, gulls.
+
+## v17 neon night, `_build/v17_neon.js`
+- Neon panels (canvas tubes, additive, untonemapped, so the bloom pass does it): N3W YORKERS on the island side of the toll canopy, gm on GM Beach, OPEN (flickers) and COLD JPGs on the bodega, MEME ISLAND at the pier end. Festoon lights across GM Beach, two searchlights behind the Floor. No scene lights added.
+
+## v18 weather, `_build/v18_weather.js`
+- Rain brings lightning (forked bolt, flash, thunder late by distance), puddles (placed by raycast on the paving) with drop rings, and umbrellas on the residents. A rainbow after rain in daylight. A snowman with an evil eye button when it snows. A foghorn in harbour fog. STORM, RAINBOW, SNOWMAN.
+
+## v19 games, `_build/v19_games.js`
+- The N3W COURT at (-66, 24), the emptiest clearing on the island: E picks up, E shoots, odds by distance, three in a row is on fire; grass and flowers are cleared off it once the nature layer loads. The N3W LINE subway entrance at (26, 26): PLEASE SWIPE AGAIN twice, then the train drops you somewhere. CATCH: thirty seconds of falling JPGs.
+
+## v20 the finale, `_build/v20_finale.js`
+- 5,200 sparks rise in four rockets and fly into N3W YORKERS in the house type over the Colossus, hold, shimmer and fall. Midnight New York time, the ninth golden slice, or FINALE / SHOW. Targets are sampled evenly from the drawn type (sampling the first N rows cut the bottom off the letters); x is negated because the viewer on the pier faces +z.
+- About 15 ms a frame on the beach rail at 1440x810 (v15 was 10, v10 was 15 to 17).
