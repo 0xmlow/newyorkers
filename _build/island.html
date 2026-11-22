@@ -525,7 +525,7 @@ const COLOR_KEYS = ['sun', 'sky', 'gnd', 'fog', 'pano', 'cap', 'sea'], NUM_KEYS 
 const L = { dir: new V3() }; COLOR_KEYS.forEach(k => L[k] = new THREE.Color(PRESETS.golden[k])); NUM_KEYS.forEach(k => L[k] = PRESETS.golden[k]); L.dir.set(...PRESETS.golden.dir).normalize();
 function applyLight() {
   sun.color.copy(L.sun); sun.intensity = L.sunI; hemi.color.copy(L.sky); hemi.groundColor.copy(L.gnd); hemi.intensity = L.hemiI * (ENV.on ? 0.42 : 1);
-  scene.fog.color.copy(L.fog); scene.fog.near = L.near; scene.fog.far = L.far; renderer.setClearColor(L.fog);
+  scene.fog.color.copy(L.fog); scene.fog.near = L.near * (window.__FOGN || 1); scene.fog.far = L.far * (window.__FOGF || 1); renderer.setClearColor(L.fog);
   PANO.cap.material.color.copy(L.cap); panoMat.uniforms.capc.value.copy(L.cap); MAT.water.color.copy(L.sea);
   renderer.toneMappingExposure = L.exp;
   cardMats.forEach(m => m.color.setScalar(L.card));
