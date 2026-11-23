@@ -13,7 +13,7 @@ window.__NS2 = NS2;
   const x0 = NEWS_AT.x, z0 = NEWS_AT.z, g0 = ground(x0, z0), ry = NEWS.ry, cs = Math.cos(ry), sn = Math.sin(ry);
   const W = (lx, lz) => [x0 + cs * lx + sn * lz, z0 - sn * lx + cs * lz];
   const put = (key, lx, y, lz, sx, sy, sz, rot) => { const [x, z] = W(lx, lz); facPut(key, x, g0 + y, z, sx, sy, sz, ry + (rot || 0)); };
-  FACM.nsGreen = FACM.nsGreen || new THREE.MeshStandardMaterial({ color: 0x1f3a2a, roughness: 0.5, metalness: 0.3 });
+  FACM.nsGreen = FACM.nsGreen || new THREE.MeshStandardMaterial({ color: 0x1f3a2a, roughness: 0.72, metalness: 0.0, envMapIntensity: 0.4 });
   FACM.inox = FACM.inox || new THREE.MeshStandardMaterial({ color: 0xc4c8cc, roughness: 0.28, metalness: 0.9 });
   FACM.paper = FACM.paper || new THREE.MeshStandardMaterial({ color: 0xe9e5db, roughness: 0.9 });
   // the old body reads mint in daylight: give it the kiosk's own enamel green

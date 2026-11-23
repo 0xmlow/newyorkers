@@ -479,3 +479,36 @@ water tower building's street front, beside One N3W Place (?hardware=0). v215 ve
 other ring road lamp, instanced (?banners=0). v216 three tour stops, and shadows every other frame after dark.
 Frame rate: synced frame time at the pier 25 ms (no worse than before); real fps readings were unreliable this
 round because the Mac was busy with the Drive recovery copy.
+
+## v217 to v226 (2026-11-23): the parks
+v217 the handball wall gets its court: green asphalt with side, short, service and long lines, a three metre chain
+link fence with a gate, end piers and a footing on the wall, a bench and a cast iron fountain; CHAINM and
+chainPanel() are shared from here (?court=0). v218 the rink gets dasher boards: a yellow kick plate, eight rink
+board ads inside and out, glass at both ends, a rubber mat, the SKATE RENTAL hut and the N3W-BONI (?rinkboards=0).
+v219 the skate spot becomes a plaza: a second slab with a quarter pipe, a manual pad, a three stair block with a
+rail and a bank; wax and grind marks on the ledge, a red curb, a bench (?plaza=0). v220 the newsstand rebuilt as a
+steel Midtown kiosk: deep roof with a lit fascia, shutter housing, counter of gum, wire magazine racks down both
+sides, paper bundles, a N3W POST lightbox on the roof (?newsstand=0). v221 the dog run gets a parks fountain with a
+dog bowl, a gravel border, a bench, a tyre jump and an A frame, a bag dispenser, the rules sign, tennis balls
+(?dogrun2=0). v222 tall LED poles over the court, the plaza and the dog run with painted pools of light at night
+(no real lights added) (?parklights=0). v223 every tour stop photographed at start, middle and end; ten that began
+inside something now begin or end in the clear, the bodega and bank flags get new paths. v224 the census walk hung
+like a museum wall: brass picture lights over all 48 portraits with a wash at night, a cut letter frieze along the
+curve, a coping (?censuswalk=0). v225 N3W PARKS signs (green enamel, the Open Eye Flower for the leaf) at the court,
+the plaza, the rink and the dog run (?parksigns=0). v226 four tour stops.
+Frame rate: synced frame time rose about 0.6 ms in the new areas (about 120 more draw calls); pier and aerial, the
+heaviest views, unchanged.
+
+## v227 to v236 (2026-11-23): the block
+v227 two floors of brick apartments over the 6529 BODEGA: windows with sills and lintels, rooms at night, belt
+course, full cornice, a fire escape down the front, bulkhead and condensers on the roof; the old roof gear inside
+the new floors is hidden by blkHideIn(); tenementAbove() is shared (?block=0). v228 the same over the laundromat,
+v229 over the N3W DROP shop. v230 inside SPIN CYCLE 420: orange chairs at the window, a TV with three channels,
+change and detergent machines, a cork board, laundry bags, the sign over the dryers (?laundin=0). v231 real
+Staunton chess sets turned on a lathe, granite tables, CHESS $5 signs (?chessset=0). v232 the poet's corner: chair,
+market umbrella, rug, crate of paper, lamp, a line of poems turning in the wind (?poet2=0). v233 a residential door
+for each new building (transom with the number, surround, step, intercom) and bins and bags at the kerb. v234 two
+lifeguard chairs at the ends of GM Beach with flags and NO LIFEGUARD ON DUTY boards (?lifeguard=0). v235 every tour
+stop's end frame checked; five fixed, wash day gets a new path. v236 five tour stops. The three buildings flush
+their instanced parts once (v233) to keep draw calls down; the bodega view costs about 2 ms more than before.
+Also: the newsstand's green is now matte (less sky reflection).

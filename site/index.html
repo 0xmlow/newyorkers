@@ -12750,7 +12750,7 @@ window.__NS2 = NS2;
   const x0 = NEWS_AT.x, z0 = NEWS_AT.z, g0 = ground(x0, z0), ry = NEWS.ry, cs = Math.cos(ry), sn = Math.sin(ry);
   const W = (lx, lz) => [x0 + cs * lx + sn * lz, z0 - sn * lx + cs * lz];
   const put = (key, lx, y, lz, sx, sy, sz, rot) => { const [x, z] = W(lx, lz); facPut(key, x, g0 + y, z, sx, sy, sz, ry + (rot || 0)); };
-  FACM.nsGreen = FACM.nsGreen || new THREE.MeshStandardMaterial({ color: 0x1f3a2a, roughness: 0.5, metalness: 0.3 });
+  FACM.nsGreen = FACM.nsGreen || new THREE.MeshStandardMaterial({ color: 0x1f3a2a, roughness: 0.72, metalness: 0.0, envMapIntensity: 0.4 });
   FACM.inox = FACM.inox || new THREE.MeshStandardMaterial({ color: 0xc4c8cc, roughness: 0.28, metalness: 0.9 });
   FACM.paper = FACM.paper || new THREE.MeshStandardMaterial({ color: 0xe9e5db, roughness: 0.9 });
   // the old body reads mint in daylight: give it the kiosk's own enamel green
@@ -12970,6 +12970,326 @@ window.__PKS = PKS;
   try { if (window.__RB2 && RB2.ok) { const x = RINK_AT.x, z = RINK_AT.z, g = RINK.g0, gx = Math.cos(RINK.gapA), gz = Math.sin(RINK.gapA); add.push({ name: 'the rink boards', dur: 7, pos: [[x + gx * 15 - gz * 8, g + 2.8, z + gz * 15 + gx * 8], [x + gx * 10 + gz * 3, g + 2.0, z + gz * 10 - gx * 3]], look: [[x, g + 0.8, z], [x, g + 0.8, z]] }); } } catch (e) { }
   try { if (window.__SK2 && SK2.ok) { const W = SK.L2W, g = SK.g0, a = W(-10, -1), b = W(-8, 3), l = W(1, 7); add.push({ name: 'the skate plaza', dur: 7, pos: [[a[0], g + 2.2, a[1]], [b[0], g + 1.8, b[1]]], look: [[l[0], g + 0.6, l[1]], [l[0], g + 0.6, l[1]]] }); } } catch (e) { }
   try { if (window.__CW2 && CW2.ok) { const g = ground(-6, 60); add.push({ name: 'the picture lights', dur: 7, pos: [[-3, g + 2.0, 50], [-3.5, g + 2.0, 60]], look: [[-11, g + 3.4, 56], [-11, g + 3.4, 66]] }); } } catch (e) { }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
+
+/* ================================================================
+   v227 THE LOOK: THE BLOCK GROWS, THE BODEGA (2026-11-23)
+   Every bodega in New York has a building on top of it. The 6529 BODEGA was a one storey box with a sign; now
+   two floors of apartments stand over it in the same brick as the walk up: stone sills and lintels, a window
+   unit here and there, rooms behind the lit windows at night (v209), a belt course at the floor line, a full
+   cornice with brackets and dentils, a black fire escape down the front over the sign, and a stair bulkhead,
+   condensers and a vent on the new roof. The rooftop gear that sat on the old flat roof moves up with it.
+   tenementAbove() is shared: v228 and v229 use it for the laundromat and the N3W DROP shop.
+   ?block=0 turns it off.
+   ================================================================ */
+const BLK = { n: 0, hidden: 0 };
+window.__BLK = BLK;
+const BLK_ON = FAC_ON && !/block=0/.test(location.search);
+// hide anything already standing inside a box (the old roof gear), FAC instanced parts and small meshes only
+function blkHideIn(xa, xb, za, zb, ya, yb) {
+  const facMats = new Set(Object.values(FACM)), v = new THREE.Vector3(), m4 = new THREE.Matrix4(), zero = new THREE.Matrix4().makeScale(0, 0, 0);
+  const inside = p => p.x > xa && p.x < xb && p.z > za && p.z < zb && p.y > ya && p.y < yb;
+  scene.traverse(o => { if (!o.isMesh) return;
+    if (o.isInstancedMesh) { if (!facMats.has(o.material)) return; let hit = 0; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); v.setFromMatrixPosition(m4); if (inside(v)) { o.setMatrixAt(i, zero); hit++; } } if (hit) { o.instanceMatrix.needsUpdate = true; BLK.hidden += hit; } return; }
+    if (o.parent !== scene || !o.geometry || !o.geometry.parameters) return; const p = o.geometry.parameters; if ((p.height || 0) > 2 || (p.width || 0) > 2) return;
+    o.getWorldPosition(v); if (inside(v)) { o.visible = false; BLK.hidden++; } });
+}
+// two (or more) floors of brick apartments over a shop: centre cx cz, w along x, d along z, from y0, front normal fn
+function tenementAbove(o) {
+  const { cx, cz, w, d, y0, floors = 2, fh = 3.2, fn = [-1, 0], escape = true, roofGear = true } = o, H = floors * fh, top = y0 + H;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, H, d), MAT.brick); body.position.set(cx, y0 + H / 2, cz); body.castShadow = body.receiveShadow = true; scene.add(body);
+  const winY = f => y0 + 1.6 + f * fh;
+  const faces = [[1, 0, w / 2, d], [-1, 0, w / 2, d], [0, 1, d / 2, w], [0, -1, d / 2, w]];
+  faces.forEach(([nx, nz, hd, fw]) => { const F = facFace(cx, cz, nx, nz, hd), n = Math.max(2, Math.floor(fw / 2.6)), sp = fw / n;
+    for (let f = 0; f < floors; f++) for (let k = 0; k < n; k++) facWindow(F, -fw / 2 + sp * (k + 0.5), winY(f), Math.min(1.15, sp * 0.45), 1.8, { ac: 0.22, litP: 0.5 }); });
+  facBelts(cx, cz, w, d, [y0 + 0.08].concat(Array.from({ length: floors - 1 }, (_, f) => y0 + (f + 1) * fh - 0.05)));
+  facCornice(cx, cz, w, d, top + 0.1, { big: true });
+  if (escape) { const [nx, nz] = fn, hd = Math.abs(nx) ? w / 2 : d / 2, fw = Math.abs(nx) ? d : w, F = facFace(cx, cz, nx, nz, hd), tx = nz, tz = -nx, LW = Math.min(4.2, fw - 1.2), uL = -LW / 2, uR = LW / 2;
+    const W = (u, y, ww) => new THREE.Vector3(cx + nx * (hd + ww) + tx * u, y, cz + nz * (hd + ww) + tz * u);
+    for (let f = 0; f < floors; f++) { const y = winY(f) - 0.98;
+      F.at(0, y, 0.62, LW, 0.05, 1.15, 'steel'); F.at(0, y + 0.95, 1.17, LW, 0.04, 0.04, 'steel'); F.at(0, y + 0.5, 1.17, LW, 0.03, 0.03, 'steel');
+      [uL, uR].forEach(u => { F.at(u, y + 0.48, 0.62, 0.04, 0.04, 1.1, 'steel'); F.at(u, y + 0.95, 0.62, 0.04, 0.04, 1.1, 'steel'); F.at(u, y + 0.48, 0.62, 0.04, 0.95, 0.04, 'steel'); });
+      for (let u = uL; u <= uR + 0.01; u += 0.26) F.at(u, y + 0.48, 1.17, 0.025, 0.95, 0.025, 'steel');
+      [uL + 0.2, uR - 0.2].forEach(u => facBar(FACM.steel, W(u, y - 0.6, 0), W(u, y - 0.02, 1.0), 0.05, 0.05));
+      if (f < floors - 1) { const y2 = winY(f + 1) - 0.98; for (let s = 1; s < 9; s++) { const t = s / 9; F.at(uL + 0.4 + t * 1.7, y + t * (y2 - y), 0.92, 0.24, 0.03, 0.5, 'steel'); }
+        [0.66, 1.16].forEach(ww => facBar(FACM.steel, W(uL + 0.4, y, ww), W(uL + 2.1, y2, ww), 0.07, 0.035)); }
+      else { F.at(uR - 0.6, y + 1.0 + (top - y) / 2 - 0.4, 0.3, 0.04, top - y - 0.2, 0.04, 'steel'); F.at(uR - 0.2, y + 1.0 + (top - y) / 2 - 0.4, 0.3, 0.04, top - y - 0.2, 0.04, 'steel');
+        for (let s = 0; s < 6; s++) F.at(uR - 0.4, y + 1.2 + s * 0.3, 0.3, 0.4, 0.03, 0.03, 'steel'); } }
+    // the drop ladder, folded up under the first landing
+    const y1 = winY(0) - 0.98; [uR - 0.6, uR - 0.2].forEach(u => F.at(u, y1 - 0.65, 1.05, 0.04, 1.3, 0.04, 'steel')); for (let s = 0; s < 4; s++) F.at(uR - 0.4, y1 - 0.25 - s * 0.3, 1.05, 0.4, 0.03, 0.03, 'steel'); }
+  if (roofGear) { const r = top + 0.12; const [nx, nz] = fn;
+    // stair bulkhead toward the back, two condensers, a vent
+    facPut('stoneD', cx - nx * (w / 2 - 1.6), r + 1.2, cz - nz * (d / 2 - 1.6) + (nx ? d / 4 : 0), 2.2, 2.4, 2.2); facPut('stone', cx - nx * (w / 2 - 1.6), r + 2.45, cz - nz * (d / 2 - 1.6) + (nx ? d / 4 : 0), 2.4, 0.12, 2.4);
+    [[0.6, -1.2], [0.6, 0.3]].forEach(([a, b]) => { const x = cx + (nx ? a : b), z = cz + (nx ? b : a); facPut('ac', x, r + 0.42, z, 1.0, 0.84, 0.72, nx ? 0 : PI / 2); facPut('frameK', x, r + 0.86, z, 0.62, 0.04, 0.62, nx ? 0 : PI / 2); facPut('steel', x, r + 0.04, z, 1.1, 0.08, 0.8, nx ? 0 : PI / 2); });
+    facPut('steel', cx + 1.2 * (nx ? 0 : 1), r + 0.5, cz - 1.4 * (nx ? 1 : 0) - 1.4 * (nz ? 0 : 0), 0.18, 1.0, 0.18, 0);
+    facPut('tar', cx, r - 0.06, cz, w - 0.6, 0.02, d - 0.6, 0); }
+  BLK.n++; return { top, body };
+}
+window.tenementAbove = tenementAbove;
+(function bodegaUpstairs() {
+  if (!BLK_ON) return;
+  FACM.tar = FACM.tar || new THREE.MeshStandardMaterial({ color: 0x2a2826, roughness: 0.95 });
+  const bx = 17, bz = 66, w = 10, d = 14, bg = ground(bx, bz) + 0.02;
+  blkHideIn(bx - w / 2 + 0.1, bx + w / 2 - 0.1, bz - d / 2 + 0.1, bz + d / 2 - 0.1, bg + 4.88, bg + 12);
+  const r = tenementAbove({ cx: bx, cz: bz, w, d, y0: bg + 4.96, floors: 2, fn: [-1, 0] });
+  BLK.bodega = r.top;   // flushed once, with v228, v229 and v233
+})();
+
+/* ================================================================
+   v228 THE LOOK: THE BLOCK GROWS, THE LAUNDROMAT (2026-11-23)
+   SPIN CYCLE 420 gets the two floors of apartments every laundromat has over it: same brick, stone sills and
+   lintels, rooms behind the lit windows, a full cornice, the fire escape down its glass front, a bulkhead and
+   condensers on the roof. Built with v227's tenementAbove().
+   ?block=0 turns it off.
+   ================================================================ */
+(function laundromatUpstairs() {
+  if (!BLK_ON || !window.__LAUND || LAUND.g0 == null) return;
+  const g0 = LAUND.g0; blkHideIn(-86 - 2.4, -86 + 2.4, -4 - 3.9, -4 + 3.9, g0 + 3.84, g0 + 11);
+  const r = tenementAbove({ cx: -86, cz: -4, w: 5, d: 8, y0: g0 + 3.86, floors: 2, fn: [1, 0] }); BLK.laund = r.top;
+})();
+
+/* ================================================================
+   v229 THE LOOK: THE BLOCK GROWS, THE N3W DROP SHOP (2026-11-23)
+   The shopfront where the line waits for something nobody can name gets its building too: two floors over the
+   black awning, the fire escape down the front above the line, the cornice and the roof gear. With v227 and v228
+   the island now has three proper New York corner buildings instead of three one storey boxes.
+   ?block=0 turns it off.
+   ================================================================ */
+(function dropUpstairs() {
+  if (!BLK_ON || !window.__LINE || LINE.g0 == null) return;
+  const g0 = LINE.g0; blkHideIn(-62 - 3.4, -62 + 3.4, 80 - 1.9, 80 + 1.9, g0 + 4.55, g0 + 11);
+  const r = tenementAbove({ cx: -62, cz: 80, w: 7, d: 4, y0: g0 + 4.6, floors: 2, fn: [0, -1] }); BLK.drop = r.top;
+})();
+
+/* ================================================================
+   v230 THE LOOK: INSIDE SPIN CYCLE 420 (2026-11-23)
+   The laundromat had machines and a folding table and a lot of empty floor. Now it has what they all have: a row
+   of moulded orange chairs along the window, a TV high on the wall nobody chose the channel for, the change
+   machine and the detergent machine, a cork board of notices (ROOM FOR RENT, LOST SOCK, GUITAR LESSONS), laundry
+   bags slumped by the table, and the sign over the dryers.
+   ?laundin=0 turns it off.
+   ================================================================ */
+const LIN = { tv: null };
+window.__LIN = LIN;
+(function laundromatInside() {
+  if (!FAC_ON || /laundin=0/.test(location.search) || !window.__LAUND || LAUND.g0 == null) return;
+  const x0 = -86, z0 = -4, g0 = LAUND.g0, D = 5, W = 8;
+  FACM.chair = FACM.chair || new THREE.MeshStandardMaterial({ color: 0xd8641e, roughness: 0.45 });
+  FACM.cork = FACM.cork || new THREE.MeshStandardMaterial({ color: 0xa47c52, roughness: 0.95 });
+  FACM.vend = FACM.vend || new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5 });
+  // ---- chairs along the window, facing in
+  for (let i = 0; i < 3; i++) { const z = z0 - 3.3 + i * 0.52, x = x0 + D / 2 - 0.55;
+    facPut('chair', x, g0 + 0.45, z, 0.44, 0.05, 0.44, 0); facPut('chair', x + 0.21, g0 + 0.72, z, 0.04, 0.5, 0.44, 0);
+    facPut('steel', x, g0 + 0.22, z, 0.04, 0.44, 0.04, 0); facPut('steel', x, g0 + 0.02, z, 0.4, 0.03, 0.4, 0); }
+  facPut('steel', x0 + D / 2 - 0.55, g0 + 0.36, z0 - 2.8, 0.5, 0.04, 1.6, 0);
+  // ---- the TV on the side wall, high, with its bracket
+  { const z = z0 - W / 2 + 0.3, x = x0 + 0.8; facPut('frameK', x, g0 + 2.75, z + 0.06, 1.1, 0.66, 0.06, 0); facPut('steel', x, g0 + 2.75, z + 0.0, 0.1, 0.1, 0.12, 0);
+    const cv = document.createElement('canvas'); cv.width = 256; cv.height = 144; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; LIN.cv = cv; LIN.c = c; LIN.t = t;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.56), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); m.position.set(x, g0 + 2.75, z + 0.095); scene.add(m); LIN.tv = m; }
+  // ---- the change machine and the detergent machine by the door end
+  { const z = z0 + W / 2 - 0.55, x = x0 + 1.2; facPut('ac', x, g0 + 0.85, z, 0.6, 1.7, 0.42, 0); facPut('frameK', x, g0 + 1.25, z - 0.215, 0.4, 0.3, 0.01, 0); facPut('lit', x, g0 + 1.25, z - 0.218, 0.32, 0.16, 0.01, 0);
+    facPut('vend', x - 0.7, g0 + 0.8, z, 0.62, 1.6, 0.45, 0); facPut('glass', x - 0.7, g0 + 1.05, z - 0.23, 0.48, 0.8, 0.01, 0);
+    for (let r = 0; r < 3; r++) for (let k = 0; k < 4; k++) facPut('white', x - 0.88 + k * 0.12, g0 + 0.78 + r * 0.25, z - 0.18, 0.08, 0.14, 0.06, 0); }
+  // ---- cork board of notices on the side wall
+  { const z = z0 + W / 2 - 0.29, x = x0 - 0.6; facPut('cork', x, g0 + 1.7, z, 1.2, 0.8, 0.02, 0);
+    const notes = signTex([{ t: 'ROOM FOR RENT · NO JPEG HOARDERS', s: 0.07 }, { t: 'LOST: ONE SOCK (BLUE)', s: 0.07 }, { t: 'GUITAR LESSONS · ASK FOR SAL', s: 0.07 }, { t: 'FOUND: ONE SOCK (BLUE)', s: 0.07 }, { t: 'DOG WALKER · MEMES OK', s: 0.07 }], 512, 340, '#efe8da', '#1b1b1b');
+    const n = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.66), new THREE.MeshStandardMaterial({ map: notes, roughness: 0.9 })); n.position.set(x, g0 + 1.7, z - 0.015); n.rotation.y = PI; scene.add(n); }
+  // ---- the sign over the dryers
+  { const sg = signTex([{ t: 'NO DYEING · NO SNEAKERS IN THE DRYERS', s: 0.12 }, { t: 'ATTENDANT ON DUTY · NOT RESPONSIBLE FOR SOCKS', s: 0.09 }], 1024, 200, '#12302a', '#f2e6c8');
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 0.7), new THREE.MeshStandardMaterial({ map: sg, roughness: 0.7 })); s.position.set(x0 - D / 2 + 0.31, g0 + 3.0, z0 - 0.3); s.rotation.y = PI / 2; scene.add(s); }
+  // ---- laundry bags slumped by the table
+  { const bm = [new THREE.MeshStandardMaterial({ color: 0xe9e4d8, roughness: 0.95 }), new THREE.MeshStandardMaterial({ color: 0x3b5a8a, roughness: 0.9 }), new THREE.MeshStandardMaterial({ color: 0x8a2f3a, roughness: 0.9 })];
+    [[x0 + 1.15, z0 - 1.9, 0], [x0 + 1.05, z0 - 1.3, 1], [x0 + 1.3, z0 + 0.6, 2]].forEach(([x, z, k]) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.26, 12, 9), bm[k]); b.scale.set(1, 1.25, 0.9); b.position.set(x, g0 + 0.3, z); b.castShadow = true; scene.add(b);
+      const n = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.16, 8), bm[k]); n.position.set(x, g0 + 0.66, z); scene.add(n); }); }
+  facFlush();
+  LIN.ok = true;
+})();
+// the TV: whatever is on, the weather, then the Memes, then a cooking show nobody asked for
+window.__FRAMES.push(dt => { try { if (!LIN.tv || !LIN.c || !LIN.c.fillRect) return; if (Math.hypot(P.x + 86, P.z + 4) > 30) return; LIN.tt = (LIN.tt || 0) + dt; if (LIN.tt < 0.25) return; LIN.tt = 0;
+  const c = LIN.c, k = Math.floor(LIFE.t / 8) % 3, t = LIFE.t; c.fillStyle = ['#1c3f7a', '#0d0d0d', '#6a3a1c'][k]; c.fillRect(0, 0, 256, 144);
+  c.fillStyle = '#ffffff'; c.font = '700 20px Arial,sans-serif'; c.fillText(['N3W 1 WEATHER', 'THE MEMES LIVE', 'COOKING WITH SAL'][k], 12, 28);
+  c.fillStyle = ['#f2d230', '#2962FF', '#ff7a1a'][k]; c.fillRect(12 + (t * 40 % 180), 60, 50, 50); c.fillStyle = '#ffffff'; c.fillRect(0, 124, 256, 20); c.fillStyle = '#0d0d0d'; c.font = '400 13px Arial,sans-serif'; c.fillText('GM GM GM · SOCK FOUND ON 4TH ST · ', 6 - (t * 30 % 120), 138);
+  LIN.t.needsUpdate = true; } catch (e) { } });
+
+/* ================================================================
+   v231 THE LOOK: REAL CHESS SETS (2026-11-23)
+   The chess tables played with little cylinders. Now every board has a real Staunton set, turned on a lathe:
+   pawns, rooks with their battlements, bishops with the mitre cut, a knight's head, the queen's coronet, the
+   king's cross, in bone and ebony, standing where they should on the back rank. The tables get polished granite
+   tops and pedestals, and the two hustlers each tape up a cardboard sign.
+   ?chessset=0 turns it off.
+   ================================================================ */
+const CS2 = {};
+window.__CS2 = CS2;
+(function chessSets() {
+  if (!LOOK.on || /chessset=0/.test(location.search) || !window.__CHESS || !CHESS.tables.length) return;
+  const S = 0.075;   // one square
+  const lathe = pts => { const g = new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r * S, y * S)), 14); g.computeVertexNormals(); return g; };
+  const base = [[0, 0], [0.34, 0], [0.34, 0.06], [0.3, 0.1], [0.22, 0.14]];
+  const G = {
+    pawn: lathe(base.concat([[0.13, 0.22], [0.1, 0.5], [0.17, 0.54], [0.1, 0.58], [0.13, 0.66], [0.13, 0.76], [0.08, 0.83], [0, 0.85]])),
+    rook: lathe(base.concat([[0.17, 0.2], [0.15, 0.7], [0.22, 0.74], [0.22, 0.95], [0.16, 0.95], [0.16, 0.88], [0, 0.88]])),
+    bishop: lathe(base.concat([[0.13, 0.22], [0.09, 0.62], [0.18, 0.66], [0.1, 0.7], [0.15, 0.82], [0.14, 0.98], [0.07, 1.08], [0.05, 1.12], [0.06, 1.15], [0, 1.18]])),
+    queen: lathe(base.concat([[0.15, 0.24], [0.1, 0.8], [0.2, 0.85], [0.12, 0.9], [0.2, 1.12], [0.24, 1.2], [0.12, 1.2], [0.1, 1.26], [0.06, 1.3], [0, 1.34]])),
+    king: lathe(base.concat([[0.15, 0.24], [0.1, 0.84], [0.2, 0.9], [0.12, 0.95], [0.2, 1.18], [0.12, 1.24], [0, 1.26]])),
+    knight: lathe(base.concat([[0.2, 0.2], [0.16, 0.36], [0, 0.38]])) };
+  const cross = new THREE.BoxGeometry(0.03 * S * 2, 0.22 * S, 0.03 * S * 2), crossH = new THREE.BoxGeometry(0.16 * S, 0.05 * S, 0.06 * S);
+  const head = new THREE.BoxGeometry(0.22 * S, 0.5 * S, 0.44 * S);
+  const back = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
+  const granite = new THREE.MeshStandardMaterial({ color: 0x55524e, roughness: 0.3, metalness: 0.05 }); CS2.granite = granite;
+  const sign = signTex([{ t: 'CHESS $5', s: 0.36 }, { t: 'SPEED · 5 MIN · I PLAY ANYBODY', s: 0.12 }], 512, 256, '#c9a77a', '#1b1b1b');
+  CHESS.tables.forEach((T, ti) => {
+    T.G.children.forEach(o => { if (o.isMesh && o.geometry && (o.geometry.type === 'CylinderGeometry' && o.geometry.parameters.height > 0.3 || o.geometry.type === 'BoxGeometry' && o.geometry.parameters.width > 0.8)) o.material = granite; });
+    // a bevelled lip round the top and a foot under the pedestal
+    const lip = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.03, 0.96), granite); lip.position.y = 0.72; T.G.add(lip);
+    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, 0.06, 14), granite); foot.position.y = 0.03; T.G.add(foot);
+    T.pieces.forEach((p, i) => { const k = i % 16, col = k % 8, isPawn = k < 8, type = isPawn ? 'pawn' : back[col];
+      p.geometry = G[type]; p.position.y = 0.787; p.rotation.set(0, 0, 0); p.castShadow = true;
+      if (type === 'knight') { const h = new THREE.Mesh(head, p.material); h.position.set(0, 0.6 * S, 0.06 * S); h.rotation.x = -0.35; p.add(h); const sn = new THREE.Mesh(head, p.material); sn.scale.set(0.9, 0.5, 0.9); sn.position.set(0, 0.78 * S, 0.24 * S); sn.rotation.x = 0.6; p.add(sn);
+        if (i >= 16) p.rotation.y = PI; }
+      if (type === 'king') { const c1 = new THREE.Mesh(cross, p.material); c1.position.y = 1.36 * S; p.add(c1); const c2 = new THREE.Mesh(crossH, p.material); c2.position.y = 1.38 * S; p.add(c2); } });
+    if (T.hustler) { const s = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 0.18), new THREE.MeshStandardMaterial({ map: sign, roughness: 0.95, side: THREE.DoubleSide })); s.position.set(0, 0.68, 0.455); s.rotation.y = 0; T.G.add(s); }
+  });
+  CS2.ok = true;
+})();
+
+/* ================================================================
+   v232 THE LOOK: THE POET'S CORNER (2026-11-23)
+   The poet sat on a floating seat at a bare table in the grass. Now his corner looks like a pitch somebody has
+   kept for years: a folding chair with a back and legs, a canvas market umbrella, a worn rug under the table, a
+   milk crate of paper and carbon, a little battery lamp that comes on at dusk, and behind him a line strung
+   between two poles with finished poems pegged to it, turning in the wind.
+   ?poet2=0 turns it off.
+   ================================================================ */
+const PO2 = { sheets: [], lamp: null };
+window.__PO2 = PO2;
+(function poetCorner() {
+  if (!LOOK.on || /poet2=0/.test(location.search) || !window.__POET || !POET.g) return;
+  const g = POET.g, M = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
+  const steel = new THREE.MeshStandardMaterial({ color: 0x8a9096, roughness: 0.4, metalness: 0.7 }), canvas = new THREE.MeshStandardMaterial({ color: 0xd9cdb2, roughness: 0.9, side: THREE.DoubleSide });
+  // the chair's back and legs
+  M(new THREE.BoxGeometry(0.42, 0.36, 0.03), steel, 0, 0.66, -0.36); [[-0.19, -0.33], [0.19, -0.33], [-0.19, 0.03], [0.19, 0.03]].forEach(([x, z]) => M(new THREE.BoxGeometry(0.025, 0.45, 0.025), steel, x, 0.225, z));
+  // the umbrella
+  M(new THREE.CylinderGeometry(0.02, 0.02, 2.3, 8), new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 0.6 }), 0.62, 1.15, 0.2);
+  const can = M(new THREE.ConeGeometry(1.25, 0.42, 8, 1, true), canvas, 0.62, 2.18, 0.2); can.castShadow = true;
+  M(new THREE.CylinderGeometry(0.035, 0.05, 0.12, 8), steel, 0.62, 0.06, 0.2);
+  // the rug
+  const rc = document.createElement('canvas'); rc.width = 256; rc.height = 160; const c = rc.getContext('2d');
+  if (c && c.fillRect && c.beginPath && c.strokeRect && c.arc) { c.fillStyle = "#7a2a2a"; c.fillRect(0, 0, 256, 160); c.strokeStyle = '#d9b77a'; c.lineWidth = 8; c.strokeRect(14, 14, 228, 132); c.fillStyle = '#1f3a5a'; c.fillRect(40, 40, 176, 80); c.fillStyle = '#d9b77a'; for (let i = 0; i < 5; i++) { c.beginPath(); c.arc(64 + i * 32, 80, 9, 0, PI * 2); c.fill(); }
+    for (let i = 0; i < 300; i++) { c.fillStyle = `rgba(0,0,0,${Math.random() * 0.15})`; c.fillRect(Math.random() * 256, Math.random() * 160, 3, 3); } }
+  const rt = new THREE.CanvasTexture(rc); rt.encoding = THREE.sRGBEncoding;
+  const rug = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 1.3), new THREE.MeshStandardMaterial({ map: rt, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 })); rug.rotation.x = -PI / 2; rug.position.set(0, 0.03, 0.15); rug.receiveShadow = true; g.add(rug);
+  // the crate of paper
+  M(new THREE.BoxGeometry(0.36, 0.3, 0.3), new THREE.MeshStandardMaterial({ color: 0x2a5a9a, roughness: 0.6 }), -0.72, 0.15, 0.05); M(new THREE.BoxGeometry(0.3, 0.12, 0.24), new THREE.MeshStandardMaterial({ color: 0xf2efe6, roughness: 0.9 }), -0.72, 0.31, 0.05);
+  // the lamp
+  M(new THREE.CylinderGeometry(0.04, 0.05, 0.14, 10), steel, -0.42, 0.83, 0.5); PO2.lamp = new THREE.MeshStandardMaterial({ color: 0x302820, emissive: 0xffd9a0, emissiveIntensity: 0 }); M(new THREE.SphereGeometry(0.05, 10, 8), PO2.lamp, -0.42, 0.93, 0.5);
+  // the line of finished poems behind him
+  [-1.3, 1.3].forEach(x => M(new THREE.CylinderGeometry(0.02, 0.025, 1.9, 6), steel, x, 0.95, -0.9));
+  M(new THREE.CylinderGeometry(0.004, 0.004, 2.6, 4), new THREE.MeshBasicMaterial({ color: 0x222222 }), 0, 1.8, -0.9).rotation.z = PI / 2;
+  const pt = signTex([{ t: 'the island', s: 0.1, f: 'Courier New, monospace', b: false }, { t: 'keeps its lights', s: 0.08, f: 'Courier New, monospace', b: false }, { t: 'on for nobody', s: 0.08, f: 'Courier New, monospace', b: false }, { t: 'and for you', s: 0.08, f: 'Courier New, monospace', b: false }], 256, 330, '#f4f2ea', '#2a2a2a');
+  const pm = new THREE.MeshStandardMaterial({ map: pt, roughness: 0.9, side: THREE.DoubleSide });
+  for (let i = 0; i < 6; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.26), pm); const piv = new THREE.Group(); piv.position.set(-1.05 + i * 0.42, 1.79, -0.9); s.position.y = -0.14; piv.add(s); g.add(piv); PO2.sheets.push({ piv, ph: i * 1.3 }); }
+  PO2.ok = true;
+})();
+window.__FRAMES.push(() => { try { if (!PO2.ok) return; if (Math.hypot(P.x - POET.X, P.z - POET.Z) > 40) return; PO2.sheets.forEach(s => { s.piv.rotation.x = Math.sin(LIFE.t * 1.7 + s.ph) * 0.18; s.piv.rotation.y = Math.sin(LIFE.t * 0.9 + s.ph) * 0.25; }); PO2.lamp.emissiveIntensity = 2.0 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v233 THE LOOK: THE BLOCK AT STREET LEVEL (2026-11-23)
+   The three new buildings (v227 to v229) need a way in for the people who live upstairs. Each gets its
+   residential door round the side: a black door under a lit transom with the house number, a stone surround, a
+   step, a brass intercom panel, and at the kerb the black bins and tied bags that go out every night.
+   ?block=0 turns it off.
+   ================================================================ */
+(function blockStreet() {
+  if (!BLK_ON || !BLK.n) return;
+  FACM.bin = FACM.bin || new THREE.MeshStandardMaterial({ color: 0x1a1b1d, roughness: 0.6 });
+  FACM.brass = FACM.brass || new THREE.MeshStandardMaterial({ color: 0xb08a3e, roughness: 0.3, metalness: 0.9 });
+  const binG = new THREE.CylinderGeometry(0.32, 0.27, 0.95, 14), bagG = new THREE.SphereGeometry(0.28, 10, 8), bagM = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: 0.25, metalness: 0.1 });
+  const door = (cx, cz, nx, nz, hd, u, g, num) => { const F = facFace(cx, cz, nx, nz, hd), tx = nz, tz = -nx;
+    F.at(u, g + 1.15, 0.03, 1.0, 2.2, 0.06, 'frameK'); F.at(u, g + 2.5, 0.03, 1.0, 0.36, 0.04, 'lit');
+    [-0.62, 0.62].forEach(d => F.at(u + d, g + 1.4, 0.1, 0.24, 2.8, 0.2, 'stone')); F.at(u, g + 2.9, 0.14, 1.6, 0.22, 0.3, 'stone'); F.at(u, g + 3.04, 0.16, 1.7, 0.06, 0.34, 'stoneD');
+    F.at(u, g + 0.08, 0.35, 1.5, 0.16, 0.6, 'stoneD'); F.at(u + 0.85, g + 1.35, 0.04, 0.16, 0.32, 0.03, 'brass'); F.at(u + 0.18, g + 1.1, 0.07, 0.04, 0.16, 0.04, 'brass');
+    // the house number on the transom
+    const t = signTex([{ t: String(num), s: 0.6, f: 'Georgia, serif' }], 256, 96, '#00000000', '#f2e6c8'); const m = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.19), new THREE.MeshBasicMaterial({ map: t, transparent: true, toneMapped: false }));
+    m.position.set(cx + nx * (hd + 0.065) + tx * u, g + 2.5, cz + nz * (hd + 0.065) + tz * u); m.rotation.y = Math.atan2(nx, nz); scene.add(m);
+    // bins and bags at the kerb, a little along the wall
+    [[1.6, 0.6], [2.3, 0.6]].forEach(([du, dw]) => { const b = new THREE.Mesh(binG, FACM.bin); b.position.set(cx + nx * (hd + dw) + tx * (u + du), g + 0.48, cz + nz * (hd + dw) + tz * (u + du)); b.castShadow = true; scene.add(b); post(b.position.x, b.position.z, 0.32, -5, g + 1); });
+    [[2.9, 0.5, 1], [3.3, 0.7, 0.85], [3.05, 0.95, 0.9]].forEach(([du, dw, s]) => { const b = new THREE.Mesh(bagG, bagM); b.scale.set(s, s * 0.85, s); b.position.set(cx + nx * (hd + dw) + tx * (u + du), g + 0.22 * s, cz + nz * (hd + dw) + tz * (u + du)); b.castShadow = true; scene.add(b); }); };
+  try { const g = ground(17, 66) + 0.02; door(17, 66, 0, 1, 7.2, -3.0, g, 420); } catch (e) { }
+  try { if (BLK.laund) door(-86, -4, 0, -1, 4, -1.3, LAUND.g0, 69); } catch (e) { }
+  try { if (BLK.drop) door(-62, 80, 1, 0, 3.5, 0.7, LINE.g0, 6529); } catch (e) { }
+  facFlush();
+})();
+
+/* ================================================================
+   v234 THE LOOK: LIFEGUARD STANDS (2026-11-23)
+   GM Beach is full of art already, so it gets the one thing every city beach from Coney Island to the Rockaways
+   has and nothing else: two tall white wooden lifeguard chairs at its ends, facing the water, a red rescue can on
+   the rail, a flag on a pole, and a board that says what it always says in November.
+   ?lifeguard=0 turns it off.
+   ================================================================ */
+const LGD = { flags: [] };
+window.__LGD = LGD;
+(function lifeguards() {
+  if (!FAC_ON || /lifeguard=0/.test(location.search) || typeof shoreZ !== 'function') return;
+  FACM.lgWood = FACM.lgWood || new THREE.MeshStandardMaterial({ color: 0xefece4, roughness: 0.75 });
+  FACM.lgRed = FACM.lgRed || new THREE.MeshStandardMaterial({ color: 0xc8241e, roughness: 0.5 });
+  const board = signTex([{ t: 'NO LIFEGUARD ON DUTY', s: 0.15 }, { t: 'SWIMMING PROHIBITED · SEE YOU IN MAY', s: 0.09 }], 512, 256, '#c8241e', '#ffffff');
+  const flagM = new THREE.MeshStandardMaterial({ color: 0xe8b819, roughness: 0.8, side: THREE.DoubleSide });
+  [-22, 22].forEach(x => { const zs = shoreZ(x), z = zs - 5.5, g = ground(x, z), ry = 0;   // facing +z, the water
+    const V = THREE.Vector3;
+    // four raked legs, cross braces, the platform, the seat with back and arms, a ladder
+    [[-0.7, -0.7], [0.7, -0.7], [-0.7, 0.7], [0.7, 0.7]].forEach(([a, b]) => facBar(FACM.lgWood, new V(x + a * 1.3, g, z + b * 1.3), new V(x + a * 0.8, g + 2.0, z + b * 0.8), 0.14, 0.14));
+    [0.6, 1.3].forEach(y => { const k = 1.3 - (1.3 - 0.8) * y / 2.0; facPut('lgWood', x, g + y, z - 0.7 * k, 1.4 * k + 0.1, 0.08, 0.06, 0); facPut('lgWood', x, g + y, z + 0.7 * k, 1.4 * k + 0.1, 0.08, 0.06, 0);
+      facPut('lgWood', x - 0.7 * k, g + y, z, 0.06, 0.08, 1.4 * k + 0.1, 0); facPut('lgWood', x + 0.7 * k, g + y, z, 0.06, 0.08, 1.4 * k + 0.1, 0); });
+    facPut('lgWood', x, g + 2.05, z, 1.4, 0.08, 1.4, 0);
+    facPut('lgWood', x, g + 2.5, z - 0.55, 1.1, 0.07, 0.45, 0); facPut('lgWood', x, g + 2.95, z - 0.78, 1.1, 0.85, 0.07, 0);
+    [-0.55, 0.55].forEach(d => { facPut('lgWood', x + d, g + 2.75, z - 0.45, 0.07, 0.07, 0.7, 0); facPut('lgWood', x + d, g + 2.4, z - 0.15, 0.07, 0.7, 0.07, 0); });
+    [-0.25, 0.25].forEach(d => facBar(FACM.lgWood, new V(x + d, g, z - 2.0), new V(x + d, g + 2.05, z - 0.75), 0.06, 0.05));
+    for (let s = 1; s < 7; s++) { const t = s / 7; facPut('lgWood', x, g + t * 2.05, z - 2.0 + t * 1.25, 0.56, 0.04, 0.12, 0); }
+    // the rescue can on the rail, the board on the front legs
+    facPut('lgRed', x + 0.45, g + 2.25, z + 0.72, 0.7, 0.18, 0.12, 0);
+    const b = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.5), new THREE.MeshStandardMaterial({ map: board, roughness: 0.6 })); b.position.set(x, g + 1.0, z + 1.02); scene.add(b);
+    const b2 = b.clone(); b2.position.z = z - 1.02; b2.rotation.y = PI; scene.add(b2);
+    // the flag pole and a yellow flag (caution) that flaps
+    facPut('steel', x + 1.0, g + 3.6, z + 0.7, 0.05, 3.2, 0.05, 0);
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.5, 6, 1), flagM); const piv = new THREE.Group(); piv.position.set(x + 1.0, g + 4.9, z + 0.7); fl.position.x = 0.42; piv.add(fl); scene.add(piv); LGD.flags.push({ piv, fl, base: fl.geometry.attributes.position.array.slice() });
+    post(x, z, 1.0, -5, g + 3.2);
+  });
+  facFlush();
+  LGD.ok = true;
+})();
+window.__FRAMES.push(() => { try { if (!LGD.ok || Math.abs(P.z - 120) > 80) return; LGD.flags.forEach((f, i) => { const a = f.fl.geometry.attributes.position, b = f.base; for (let k = 0; k < a.count; k++) { const x = b[k * 3]; a.array[k * 3 + 2] = Math.sin(LIFE.t * 5 + x * 6 + i) * 0.08 * (x + 0.4); } a.needsUpdate = true; f.piv.rotation.y = 0.6 + Math.sin(LIFE.t * 0.4 + i) * 0.2; }); } catch (e) { } });
+
+/* ================================================================
+   v235 THE TOUR, CHECKED AT THE END (2026-11-23)
+   v223 checked where every tour stop begins. This pass photographed where each of the 90 ends. Five ended badly:
+   both sidewalk shed stops on a green panel at arm's length, the bank between two columns, the steel in a tree,
+   N3W HARDWARE on a canopy pole, and wash day stayed under a dark shed looking up. Those now stop short of the
+   obstacle, and wash day watches the clotheslines from the street.
+   ================================================================ */
+(function tourCheckedEnd() {
+  const T = (window.__game && __game.TOUR) || (typeof TOUR !== 'undefined' ? TOUR : null); if (!T) return;
+  const lerp = (A, t) => { if (A.length === 1) return A[0].slice(); const f = t * (A.length - 1), i = Math.min(A.length - 2, Math.floor(f)), u = f - i; return A[i].map((v, k) => v + (A[i + 1][k] - v) * u); };
+  const trim = (name, a, b) => T.filter(r => r.name === name).forEach(s => { const P = s.pos, L = s.look;
+    s.pos = [lerp(P, a), lerp(P, (a + b) / 2), lerp(P, b)]; s.look = [lerp(L, a), lerp(L, (a + b) / 2), lerp(L, b)]; s.dur = Math.max(4, s.dur * (b - a) + 1.5); });
+  trim('the sidewalk shed', 0, 0.55); trim('bank', 0, 0.6); trim('the steel', 0, 0.5); trim('n3w hardware', 0, 0.45);
+  try { const s = T.find(r => r.name === 'wash day'); if (s && window.__WASH) { const y = WASH.g0; s.pos = [[-49, y + 1.8, -64], [-51, y + 2.0, -62.5]]; s.look = [[-58, y + 6, -56], [-58, y + 6.5, -55.5]]; } } catch (e) { }
+})();
+
+/* ================================================================
+   v236 THE TOUR: THE BLOCK (2026-11-23)
+   Five more stops before the aerial: the bodega building from across the street, the laundromat building, the
+   N3W DROP building over the line, inside SPIN CYCLE 420, and the chess sets close up.
+   ================================================================ */
+(function tourV236() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  try { if (window.__BLK && BLK.bodega) { const g = ground(17, 66); add.push({ name: 'the bodega building', dur: 8, pos: [[5.5, g + 3.6, 74.5], [5, g + 3.2, 76]], look: [[17, g + 6.5, 64], [17, g + 7.5, 65]] }); } } catch (e) { }
+  try { if (window.__BLK && BLK.laund) { const g = LAUND.g0; add.push({ name: 'the laundromat building', dur: 7, pos: [[-72, g + 9, -14], [-76, g + 6, -12]], look: [[-86, g + 5, -4], [-86, g + 5, -4]] }); } } catch (e) { }
+  try { if (window.__BLK && BLK.drop) { const g = LINE.g0; add.push({ name: 'the drop building', dur: 7, pos: [[-62, g + 12, 64], [-60, g + 8, 68]], look: [[-62, g + 5, 80], [-62, g + 6, 80]] }); } } catch (e) { }
+  try { if (window.__LIN && LIN.ok) { const g = LAUND.g0; add.push({ name: 'spin cycle', dur: 7, pos: [[-81, g + 1.7, -2], [-82.5, g + 1.6, -3]], look: [[-87.5, g + 1.3, -4], [-87.5, g + 1.4, -5]] }); } } catch (e) { }
+  try { if (window.__CS2 && CS2.ok) { const g = ground(74, -21); add.push({ name: 'the chess sets', dur: 6, pos: [[75.6, g + 1.9, -19.4], [75.0, g + 1.6, -19.9]], look: [[74, g + 0.8, -21], [74, g + 0.8, -21]] }); } } catch (e) { }
   const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
 })();
 
