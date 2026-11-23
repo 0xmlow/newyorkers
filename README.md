@@ -407,3 +407,10 @@ water table plinth; a full cornice (frieze, dentils, brackets, crown) on the wal
 sides and back and a black fire escape with stairs and a drop ladder; windows on every side of the water tower
 building; cornices on the bodega, the laundromat and the N3W DROP shop; painted tongue and groove boards on the
 market kiosk backs. About 1,270 pieces in a dozen instanced draw calls. ?facades=0 turns it off.
+
+## v174 (2026-11-23): THE LOOK, fifth pass (the big three)
+The bank gets a rusticated base, tall windows in moulded surrounds with hoods, keystones and bronze grids, a full
+entablature with dentils and modillions, fluted columns, a raking cornice with the Open Eye in the pediment and a
+bronze transom over the door. N3W SQUARE gets a glass curtain wall above the screens (offices lit at night), a
+parapet, and a bronze storefront with a lit marquee at its foot. The factory gets a brick base with a coping, steel
+I beam pilasters, a steel coping and a faded painted sign on its back wall. ?facades=0 turns it off with v173.

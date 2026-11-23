@@ -52,13 +52,13 @@ function facWindow(F, u, y, ww, wh, o) { o = o || {}; const fr = o.frame || 'fra
 }
 // stone courses and a cornice round a w (x) by d (z) footprint
 function facRing(cx, cz, w, d, fn) { [[1, 0, w / 2, d], [-1, 0, w / 2, d], [0, 1, d / 2, w], [0, -1, d / 2, w]].forEach(([nx, nz, hd, fw]) => fn(facFace(cx, cz, nx, nz, hd), fw)); }
-function facCornice(cx, cz, w, d, top, o) { o = o || {}; const big = o.big !== false;
+function facCornice(cx, cz, w, d, top, o) { o = o || {}; const big = o.big !== false, K = o.key || 'stone', KD = o.keyD || 'stoneD';
   facRing(cx, cz, w, d, (F, fw) => {
-    if (big) F.at(0, top - 0.55, 0.04, fw + 0.08, 0.5, 0.08, 'stone');                                  // frieze
-    const dy = top - (big ? 0.24 : 0.2); for (let u = -fw / 2 + 0.16; u <= fw / 2 - 0.12; u += 0.3) F.at(u, dy, 0.1, 0.14, 0.16, 0.2, 'stone');   // dentils
-    if (big) for (let u = -fw / 2 + 0.3; u <= fw / 2 - 0.2; u += 1.15) F.at(u, top - 0.42, 0.2, 0.2, 0.55, 0.4, 'stone');                    // brackets
-    F.at(0, top - 0.05, big ? 0.22 : 0.12, fw + (big ? 0.9 : 0.5), big ? 0.22 : 0.16, big ? 0.48 : 0.3, 'stone');                          // crown
-    F.at(0, top + 0.08, big ? 0.3 : 0.16, fw + (big ? 1.0 : 0.56), 0.05, big ? 0.36 : 0.2, 'stoneD');
+    if (big) F.at(0, top - 0.55, 0.04, fw + 0.08, 0.5, 0.08, K);                                  // frieze
+    const dy = top - (big ? 0.24 : 0.2); for (let u = -fw / 2 + 0.16; u <= fw / 2 - 0.12; u += 0.3) F.at(u, dy, 0.1, 0.14, 0.16, 0.2, K);   // dentils
+    if (big) for (let u = -fw / 2 + 0.3; u <= fw / 2 - 0.2; u += 1.15) F.at(u, top - 0.42, 0.2, 0.2, 0.55, 0.4, K);                    // brackets
+    F.at(0, top - 0.05, big ? 0.22 : 0.12, fw + (big ? 0.9 : 0.5), big ? 0.22 : 0.16, big ? 0.48 : 0.3, K);                          // crown
+    F.at(0, top + 0.08, big ? 0.3 : 0.16, fw + (big ? 1.0 : 0.56), 0.05, big ? 0.36 : 0.2, KD);
   });
 }
 function facPlinth(cx, cz, w, d, g, h, skip) { facRing(cx, cz, w, d, (F, fw) => F.at(0, g + h / 2, 0.04, fw + 0.08, h, 0.08, 'stoneD')); }
