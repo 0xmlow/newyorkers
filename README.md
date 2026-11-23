@@ -351,3 +351,20 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v124 SECRETS.EXE names. v125 six tour stops.
 - Fixes: ROAD_R is 100 (the road ring is 96 to 104), so the bus, riders, crosswalk and shelters sit on the real road; the walk up moved from (78, -56), where it overlapped the road and the neon bus prop, to (-64, -54).
 - Duplicates resolved (2026-11-23): v12's five Con Ed stacks (they stood in the ring road's outer lane) and its paper W gulls, and v16's beach breakdance circle and living statue, are retired in place (early returns, commented). v56 THE STEAM, v70 SHOWTIME and v96 THE LIVING STATUE stay; the statue moved to v16's spot (4.8, 30) and carries the 'statue' secret, Showtime carries 'cheer', and v83 gained twelve circling harbour gulls built from its own bird.
+
+## v126 to v145 (2026-11-23): the neighbours
+- v126 LADDER 420: a ladder truck laps the ring road every five minutes or so with siren (Doppler shifted) and lights; all traffic and the cab pull to the curb and stop. SIREN calls it.
+- v127 NEW YORK'S STRONGEST: bag piles at the curb from 7 pm; the sanitation truck runs 5 to 8 am as a real car in TRAF (traffic queues behind it), crew sling the bags, the packer groans. GARBAGE sends it.
+- v128 THE POND at (18.5, -1): mallards, a mother with five ducklings who follows you round the rim, a heron that strikes and flies off when you get close, lily pads, reeds, peas (E).
+- v129 THE PIGEON MAN at (-52, -27): fourteen rigged pigeons eating his seed, lifting off together; stand still beside him and one lands on your shoulder.
+- v130 THE MURMURATION: 1,800 starlings (600 on phones) over the south west harbour at sunset, October to March. MURMURATION calls them. (Bats were the first idea; they hibernate in November.)
+- v131 SPIN CYCLE 420 at (-86, -4): laundromat with washers on their own cycles, the attendant, a cat on the dryers, strip light at night; E does a load.
+- v132 SKYTYPING: seven planes type a dot matrix word in the sky on clear days ten to four. SKYWRITER orders one.
+- v133 THE LIFEGUARD CHAIR at (43, 111): flags by weather, guard only in season (Memorial Day to Labor Day), buoy line, E climbs.
+- v134 THE BUNKER RUN: fish boils off the beach with gulls plunging in, April to November. v135 THE KAYAKERS: four kayaks east of the pier on fair days.
+- v136 PAPER PLANES: F throws a folded Meme card on a small flight model. v137 REAR WINDOW: lit walk up windows show eight lives at night.
+- v138 THE CAROUSEL at (-36, 30): eight CC0 horses on poles, band organ, E to ride. v139 DOUBLE DUTCH at (-28, -55): step in and jump the ropes.
+- v140 BREATH in the cold (people and you). v141 RAIN ON THE LENS (refracting drops, ?lens=0). v142 SUN SHAFTS: depth aware god rays from the AO depth pass; supersedes v37's brightness only rays, which stay as the fallback with ?ao=0.
+- v143 THE BELL TOWER at (55, 33): Westminster quarters and the hour, synthesised bells, climbable belfry. BELLS rings it.
+- v144 SECRETS.EXE for 16 new secrets. v145 six tour stops.
+- Help line now ends "F paper plane". Note: v52 MELT fires when a camera catches a Watcher, so headless shots should hold __MELT off.
