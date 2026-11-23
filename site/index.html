@@ -12526,6 +12526,453 @@ window.__FRAMES.push(dt => { try { BANNERS2.u.uBT.value += dt; } catch (e) { } }
 // already does this when frames run late; this makes it the rule after dark)
 window.__FRAMES.push(() => { try { if (!window.__SHH || (window.__GOV && __GOV.tier >= 3)) return; if ((L.lamps || 0) > 0.6) { renderer.shadowMap.autoUpdate = false; if (((__SHH.nf = (__SHH.nf || 0) + 1) & 1) === 0) renderer.shadowMap.needsUpdate = true; } else if (!__SHH.on && !renderer.shadowMap.autoUpdate) renderer.shadowMap.autoUpdate = true; } catch (e) { } });
 
+/* ================================================================
+   v217 THE LOOK: THE HANDBALL COURT (2026-11-23)
+   The handball wall stood alone on the grass. Now it has the court every New York wall has in front of it: green
+   asphalt with the white side lines, the short line and the service line, a long line at the back, ball scuffs
+   in front of the wall. A three metre chain link fence runs down both sides and across the back with a gate,
+   the wall gets end piers and a footing, the back gets its board form joints, and there is a park bench and a
+   cast iron drinking fountain by the gate. Shared here: CHAINM, the chain link material later versions reuse.
+   ?court=0 turns it off.
+   ================================================================ */
+const HB2 = {};
+window.__HB2 = HB2;
+// chain link: one diamond mesh canvas, uv scaled per panel so the weave keeps its size
+const CHAINM = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d');
+  if (c && c.beginPath && c.stroke) { c.clearRect(0, 0, 64, 64); c.strokeStyle = 'rgba(178,182,184,1)'; c.lineWidth = 3; c.beginPath(); c.moveTo(0, 32); c.lineTo(32, 0); c.lineTo(64, 32); c.lineTo(32, 64); c.closePath(); c.stroke();
+    c.strokeStyle = 'rgba(120,124,128,1)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(0, 32); c.lineTo(32, 0); c.stroke(); }
+  const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = ANISO;
+  return new THREE.MeshStandardMaterial({ map: t, alphaTest: 0.35, transparent: false, side: THREE.DoubleSide, roughness: 0.45, metalness: 0.75, color: 0xffffff }); })();
+window.__CHAINM = CHAINM;
+// a chain link panel between two ground points, h tall, with a top rail and line posts (facPut 'galv')
+FACM.galv = FACM.galv || new THREE.MeshStandardMaterial({ color: 0x9a9fa3, roughness: 0.4, metalness: 0.8 });
+function chainPanel(ax, az, bx, bz, h, gy, opt) { opt = opt || {}; const L0 = Math.hypot(bx - ax, bz - az); if (L0 < 0.05) return; const ry = Math.atan2(-(bz - az), bx - ax);
+  const geo = new THREE.PlaneGeometry(L0, h - 0.06); const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * L0 / 0.06, uv.getY(i) * (h - 0.06) / 0.06); uv.needsUpdate = true;
+  const m = new THREE.Mesh(geo, CHAINM); m.position.set((ax + bx) / 2, gy + (h - 0.06) / 2 + 0.03, (az + bz) / 2); m.rotation.y = ry; m.castShadow = true; scene.add(m);
+  facPut('galv', (ax + bx) / 2, gy + h, (az + bz) / 2, L0, 0.045, 0.045, ry); facPut('galv', (ax + bx) / 2, gy + 0.05, (az + bz) / 2, L0, 0.03, 0.03, ry);
+  const n = Math.max(1, Math.round(L0 / 3)); for (let i = 0; i <= n; i++) { const u = i / n; facPut('galv', ax + (bx - ax) * u, gy + h / 2, az + (bz - az) * u, 0.06, h + 0.04, 0.06, 0); }
+  if (opt.solid !== false) wall(ax, az, bx, bz, -5, gy + h); }
+window.chainPanel = chainPanel;
+(function handballCourt() {
+  if (!FAC_ON || /court=0/.test(location.search) || !window.__WALLP || WALLP.ry == null) return;
+  const ry = WALLP.ry, X = WALL_AT.x, Z = WALL_AT.z, g0 = ground(X, Z), cs = Math.cos(ry), sn = Math.sin(ry), W = 7.2, H = 4.4, D = 0.45;
+  const L2W = (lx, lz) => [X + cs * lx + sn * lz, Z - sn * lx + cs * lz]; HB2.L2W = L2W;
+  const CL = 9.4, CW = 7.6, z0c = D / 2;           // court length out from the wall face, width
+  // ---- the court surface
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 640; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.beginPath) { c.fillStyle = '#3f5a48'; c.fillRect(0, 0, 512, 640);
+    for (let i = 0; i < 5000; i++) { const v = Math.random(); c.fillStyle = v < 0.5 ? `rgba(20,30,24,${0.12 + Math.random() * 0.2})` : `rgba(140,160,145,${0.06 + Math.random() * 0.12})`; c.fillRect(Math.random() * 512, Math.random() * 640, 1 + Math.random() * 2.5, 1 + Math.random() * 2.5); }
+    // worn patches where people stand
+    [[256, 210, 120], [256, 420, 90], [160, 300, 70], [350, 280, 70]].forEach(([x, y, r]) => { const gr = c.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(70,80,74,.45)'); gr.addColorStop(1, 'rgba(70,80,74,0)'); c.fillStyle = gr; c.fillRect(x - r, y - r, r * 2, r * 2); });
+    const px = 512 / CW, pz = 640 / CL, ln = (x0, y0, x1, y1) => { c.fillRect(Math.min(x0, x1), Math.min(y0, y1), Math.max(4, Math.abs(x1 - x0)), Math.max(4, Math.abs(y1 - y0))); };
+    c.fillStyle = 'rgba(236,236,228,.88)'; const sx = (CW - 6.1) / 2 * px; ln(sx, 0, sx, 640); ln(512 - sx - 4, 0, 512 - sx - 4, 640);
+    ln(sx, 4.9 * pz, 512 - sx, 4.9 * pz); ln(sx, 2.75 * pz, 512 - sx, 2.75 * pz); ln(sx, 8.9 * pz, 512 - sx, 8.9 * pz);
+    // ball scuffs near the wall, old paint at the wall foot
+    for (let i = 0; i < 60; i++) { c.fillStyle = `rgba(30,32,40,${0.1 + Math.random() * 0.2})`; c.beginPath(); c.arc(80 + Math.random() * 350, 6 + Math.random() * 80, 2 + Math.random() * 4, 0, PI * 2); c.fill(); }
+    c.save(); c.translate(256, 5.9 * pz); c.font = '700 34px "Archivo Black",Impact,sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(236,236,228,.5)'; c.fillText('N3W PARKS', 0, 0); c.restore(); }
+  const ct = new THREE.CanvasTexture(cv); ct.encoding = THREE.sRGBEncoding; ct.anisotropy = ANISO;
+  const court = new THREE.Mesh(new THREE.PlaneGeometry(CW, CL), new THREE.MeshStandardMaterial({ map: ct, roughness: 0.88, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
+  court.rotation.order = 'YXZ'; court.rotation.set(-PI / 2, ry, 0); const [cx, cz] = L2W(0, z0c + CL / 2); court.position.set(cx, Math.max(g0, ground(cx, cz)) + 0.035, cz); court.receiveShadow = true; scene.add(court); HB2.court = court;
+  // asphalt edge: a low curb round the court
+  FACM.curbA = FACM.curbA || new THREE.MeshStandardMaterial({ color: 0x6f6c66, roughness: 0.9 });
+  [[-CW / 2 - 0.08, z0c + CL / 2, 0.16, CL], [CW / 2 + 0.08, z0c + CL / 2, 0.16, CL], [0, z0c + CL + 0.08, CW + 0.32, 0.16]].forEach(([lx, lz, w, d]) => { const [x, z] = L2W(lx, lz); facPut('curbA', x, g0 + 0.03, z, w, 0.1, d, ry); });
+  // ---- the wall: end piers, a footing, a chamfered coping, board form joints on the back
+  const F = (lx, y, lz, sx, sy, sz, key) => { const [x, z] = L2W(lx, lz); facPut(key, x, y, z, sx, sy, sz, ry); };
+  [-1, 1].forEach(s => { F(s * (W / 2 + 0.16), g0 + H / 2 - 0.08, 0, 0.36, H + 0.1, D + 0.24, 'conc'); F(s * (W / 2 + 0.16), g0 + H + 0.02, 0, 0.44, 0.1, D + 0.32, 'stoneD'); });
+  F(0, g0 + 0.08, 0, W + 0.8, 0.26, D + 0.4, 'conc'); F(0, g0 + H + 0.06, 0, W + 0.24, 0.06, D + 0.2, 'stoneD');
+  for (let lx = -W / 2 + 0.6; lx < W / 2; lx += 0.6) F(lx, g0 + H / 2, -D / 2 - 0.012, 0.03, H - 0.4, 0.02, 'concJ');
+  [g0 + 1.4, g0 + 2.8].forEach(y => F(0, y, -D / 2 - 0.012, W - 0.1, 0.03, 0.02, 'concJ'));
+  // ---- chain link: down both sides and across the back, a 2 m gate in the back
+  const gy = g0, fz0 = z0c + 0.3, fz1 = z0c + CL + 0.4, fx = CW / 2 + 0.35, FH = 3.0;
+  const P = (lx, lz) => L2W(lx, lz);
+  [[-fx, fz0, -fx, fz1], [fx, fz0, fx, fz1], [-fx, fz1, -1.1, fz1], [1.1, fz1, fx, fz1]].forEach(([a, b, c2, d]) => { const [ax, az] = P(a, b), [bx, bz] = P(c2, d); chainPanel(ax, az, bx, bz, FH, gy); });
+  // the gate standing open, and its posts
+  { const [ax, az] = P(1.1, fz1), [bx, bz] = P(1.1 + 0.15, fz1 + 1.95); chainPanel(ax, az, bx, bz, 2.2, gy, { solid: false }); }
+  [-1.1, 1.1].forEach(lx => { const [x, z] = P(lx, fz1); facPut('galv', x, gy + FH / 2 + 0.1, z, 0.09, FH + 0.2, 0.09, 0); });
+  // the wall's fence: behind the wall the fence returns to the piers
+  [[-fx, fz0, -W / 2 - 0.34, 0.3], [fx, fz0, W / 2 + 0.34, 0.3]].forEach(([a, b, c2, d]) => { const [ax, az] = P(a, b), [bx, bz] = P(c2, d); chainPanel(ax, az, bx, bz, FH, gy); });
+  // ---- a bench and a cast iron fountain by the gate
+  FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 });
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  { const bl = 2.0, lx = fx + 1.2, lz = z0c + 5.0; for (let k = 0; k < 3; k++) F(lx + (k - 1) * 0.12, g0 + 0.45, lz, 0.1, 0.04, bl, 'benchW'); for (let k = 0; k < 2; k++) F(lx + 0.2, g0 + 0.62 + k * 0.14, lz, 0.04, 0.1, bl, 'benchW');
+    [-0.8, 0.8].forEach(d => { F(lx, g0 + 0.22, lz + d, 0.4, 0.44, 0.06, 'iron'); F(lx + 0.2, g0 + 0.6, lz + d, 0.05, 0.4, 0.06, 'iron'); }); boxWalls(...L2W(lx, lz), 0.5, bl, ry, -5, g0 + 0.5); }
+  { const [x, z] = L2W(-1.9, fz1 + 1.4); const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 0.85, 12), FACM.iron); ped.position.set(x, g0 + 0.43, z); ped.castShadow = true; scene.add(ped);
+    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.14, 16), FACM.iron); bowl.position.set(x, g0 + 0.92, z); scene.add(bowl);
+    const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.1, 8), FACM.galv); sp.position.set(x, g0 + 1.02, z); scene.add(sp); post(x, z, 0.3, -5, g0 + 1); }
+  facFlush();
+  HB2.ok = true;
+})();
+
+/* ================================================================
+   v218 THE LOOK: THE RINK BOARDS (2026-11-23)
+   The rink was a ring of plain white panels. Now it has real dasher boards: a yellow kick plate along the ice, a
+   row of rink board ads on the inside and the outside (N3W PARKS, 6529 BODEGA, THE MEMES, DAILY GM, N3W HARDWARE,
+   HOT CIDER, FLOOR ST JOURNAL, GM BEACH), glass shields round both ends on steel stanchions, a black rubber mat
+   from the gap to the skate rental hut, and the island's ice resurfacer, the N3W-BONI, parked by the gate.
+   ?rinkboards=0 turns it off.
+   ================================================================ */
+const RB2 = {};
+window.__RB2 = RB2;
+(function rinkBoards() {
+  if (!FAC_ON || /rinkboards=0/.test(location.search) || !window.__RINK || RINK.g0 == null) return;
+  const x0 = RINK_AT.x, z0 = RINK_AT.z, A = RINK_AT.a, Bz = RINK_AT.b, g0 = RINK.g0, gapA = RINK.gapA, n = 44;
+  // ---- the ads: eight panels in one atlas
+  const ADS = [['N3W PARKS', '#2f4a3a', '#efe8da'], ['6529 BODEGA', '#f2d230', '#c8102e'], ['THE MEMES', '#0d0d0d', '#efe8da'], ['DAILY GM', '#2962FF', '#ffffff'], ['N3W HARDWARE', '#1f5a3a', '#f2d230'], ['HOT CIDER', '#7a1f2a', '#f6e7c8'], ['FLOOR ST JOURNAL', '#efe8da', '#0d0d0d'], ['GM BEACH', '#08a5c8', '#ffffff']];
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.fillText) ADS.forEach(([t, bg, fg], i) => { const x = (i % 4) * 256, y = (i >> 2) * 256; c.fillStyle = '#f4f4f0'; c.fillRect(x, y, 256, 256); c.fillStyle = bg; c.fillRect(x + 8, y + 40, 240, 176);
+    c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `900 ${t.length > 11 ? 26 : 36}px "Archivo Black",Impact,sans-serif`; c.fillText(t, x + 128, y + 128); });
+  const at = new THREE.CanvasTexture(cv); at.encoding = THREE.sRGBEncoding; at.anisotropy = ANISO;
+  // ---- one merged mesh of ad quads, inside and outside, and the glass panes at both ends
+  const P = [], U = [], N = [], GP = [], GU = [], GN = [];
+  const quad = (arrP, arrU, arrN, ax, az, bx, bz, y0, y1, cell, nx, nz, flip) => { let u0 = cell == null ? 0 : (cell % 4) / 4, u1 = cell == null ? 1 : u0 + 0.25; if (flip) { const t = u0; u0 = u1; u1 = t; } const _q = 0, v1 = cell == null ? 1 : 1 - (cell >> 2) / 2 - 0.1, v0 = cell == null ? 0 : v1 - 0.3;
+    arrP.push(ax, y0, az, bx, y0, bz, bx, y1, bz, ax, y0, az, bx, y1, bz, ax, y1, az); arrU.push(u0, v0, u1, v0, u1, v1, u0, v0, u1, v1, u0, v1); for (let k = 0; k < 6; k++) arrN.push(nx, 0, nz); };
+  let k = 0;
+  for (let i = 0; i < n; i++) { const a0 = i / n * PI * 2, a1 = (i + 1) / n * PI * 2, am = (a0 + a1) / 2; const da = Math.atan2(Math.sin(am - gapA), Math.cos(am - gapA)); if (Math.abs(da) < 0.11) continue;
+    const pt = (a, r) => [x0 + Math.cos(a) * (A + r), z0 + Math.sin(a) * (Bz + r)];
+    const [iax, iaz] = pt(a0, 0.05), [ibx, ibz] = pt(a1, 0.05), [oax, oaz] = pt(a0, 0.155), [obx, obz] = pt(a1, 0.155);
+    const nx = Math.cos(am) / A, nz = Math.sin(am) / Bz, nl = Math.hypot(nx, nz), ux = nx / nl, uz = nz / nl;
+    const cell = (k++) % 8;
+    // inside face, wound to face the ice; outside face, wound to face out
+    quad(P, U, N, ibx, ibz, iax, iaz, g0 + 0.32, g0 + 0.9, cell, -ux, -uz);
+    quad(P, U, N, oax, oaz, obx, obz, g0 + 0.32, g0 + 0.9, (cell + 3) % 8, ux, uz, true);
+    // kick plate along the ice
+    const len = Math.hypot(ibx - iax, ibz - iaz), ry = Math.atan2(-(ibz - iaz), ibx - iax), [kx, kz] = pt(am, 0.045);
+    facPut('kick', kx, g0 + 0.2, kz, len + 0.02, 0.24, 0.02, ry);
+    // glass at the two ends of the long axis, stanchions every panel
+    if (Math.abs(Math.cos(am)) > 0.72) { const [gax, gaz] = pt(a0, 0.1), [gbx, gbz] = pt(a1, 0.1); quad(GP, GU, GN, gax, gaz, gbx, gbz, g0 + 1.06, g0 + 2.35, null, ux, uz);
+      facPut('galv', gax, g0 + 1.7, gaz, 0.05, 1.3, 0.05, 0); facPut('galv', (gax + gbx) / 2, g0 + 2.37, (gaz + gbz) / 2, len + 0.02, 0.04, 0.06, ry); } }
+  const mk = (p, u, nn) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(u, 2)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nn, 3)); return g; };
+  const ads = new THREE.Mesh(mk(P, U, N), new THREE.MeshStandardMaterial({ map: at, roughness: 0.45, side: THREE.DoubleSide })); ads.receiveShadow = true; scene.add(ads); RB2.ads = ads;
+  const glass = new THREE.Mesh(mk(GP, GU, GN), new THREE.MeshStandardMaterial({ color: 0xd8e6ec, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false })); glass.renderOrder = 3; scene.add(glass); RB2.glass = glass;
+  // ---- the mat, the rental hut, the N3W-BONI, outside the gap
+  const gx = Math.cos(gapA), gz = Math.sin(gapA), out = (r, t) => [x0 + gx * (A + r) - gz * t, z0 + gz * (Bz + r) + gx * t], gry = Math.atan2(gx, gz);
+  FACM.mat = FACM.mat || new THREE.MeshStandardMaterial({ color: 0x1a1a1c, roughness: 0.95 });
+  { const [mx, mz] = out(2.3, 0); facPut('mat', mx, g0 + 0.02, mz, 1.3, 0.04, 4.2, gry); }
+  { const [hx, hz] = out(4.6, -3.2), hr = gry; RB2.hut = [hx, hz];
+    facPut('green', hx, g0 + 1.25, hz, 2.6, 2.5, 2.0, hr); facPut('stoneD', hx, g0 + 2.58, hz, 3.0, 0.16, 2.4, hr);
+    const sg = signTex([{ t: 'SKATE RENTAL', s: 0.34 }, { t: 'ALL SIZES · HOT COCOA · NO REFUNDS', s: 0.13 }], 1024, 256, '#efe8da', '#2b4a32');
+    const sm = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.6), new THREE.MeshStandardMaterial({ map: sg, roughness: 0.6, emissive: 0xffffff, emissiveMap: sg, emissiveIntensity: 0.1 })); const fx = hx + Math.sin(hr) * 1.01, fz = hz + Math.cos(hr) * 1.01; sm.position.set(fx, g0 + 2.1, fz); sm.rotation.y = hr; scene.add(sm); RB2.sign = sm;
+    const win = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.9), FACM.lit); win.position.set(hx + Math.sin(hr) * 1.012, g0 + 1.3, hz + Math.cos(hr) * 1.012); win.rotation.y = hr; scene.add(win);
+    // the counter and a row of skates hung inside the window
+    facPut('benchW', hx + Math.sin(hr) * 1.15, g0 + 0.85, hz + Math.cos(hr) * 1.15, 1.8, 0.06, 0.3, hr);
+    for (let i = 0; i < 6; i++) { const t = -0.6 + i * 0.24; facPut(i % 2 ? 'white' : 'steel', hx + Math.sin(hr) * 1.03 + Math.cos(hr) * t, g0 + 1.45, hz + Math.cos(hr) * 1.03 - Math.sin(hr) * t, 0.08, 0.2, 0.06, hr); }
+    boxWalls(hx, hz, 2.6, 2.0, hr, -5, g0 + 2.6); }
+  { const [bx, bz] = out(4.0, 3.4), br = gry + PI / 2; FACM.boni = FACM.boni || new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.4, metalness: 0.3 });
+    const B = (u, y, w, sx, sy, sz, key) => facPut(key, bx + Math.sin(br) * w + Math.cos(br) * u, g0 + y, bz + Math.cos(br) * w - Math.sin(br) * u, sx, sy, sz, br);
+    B(0, 0.75, 0, 1.5, 0.9, 2.6, 'boni'); B(0, 1.25, -0.55, 1.3, 0.3, 0.9, 'white'); B(0, 1.55, 0.35, 1.0, 0.9, 0.06, 'glass'); B(0, 2.05, 0.1, 1.5, 0.06, 1.4, 'white');
+    [-0.5, 0.5].forEach(u => B(u, 1.55, 0.6, 0.04, 1.0, 0.04, 'steel')); B(0, 0.25, 1.4, 1.6, 0.18, 0.3, 'steel');
+    [[-0.78, -0.8], [0.78, -0.8], [-0.78, 0.8], [0.78, 0.8]].forEach(([u, w]) => B(u, 0.28, w, 0.18, 0.56, 0.56, 'mat'));
+    const lab = signTex([{ t: 'N3W-BONI', s: 0.42 }], 512, 128, '#2962FF', '#ffffff'); const lm = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.3), new THREE.MeshBasicMaterial({ map: lab }));
+    lm.position.set(bx + Math.cos(br) * 0.76, g0 + 0.85, bz - Math.sin(br) * 0.76); lm.rotation.y = br + PI / 2; scene.add(lm);
+    boxWalls(bx, bz, 1.6, 2.8, br, -5, g0 + 2); RB2.boni = [bx, bz]; }
+  FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 });
+  FACM.kick = FACM.kick || new THREE.MeshStandardMaterial({ color: 0xe8b819, roughness: 0.6 });
+  facFlush();
+  RB2.ok = true;
+})();
+
+/* ================================================================
+   v219 THE LOOK: THE SKATE PLAZA (2026-11-23)
+   The skate spot was a bare pad with one ledge, a kicker and a rail. It grows into a plaza: a second slab along
+   its side with a steel edged quarter pipe, a manual pad with angle iron edges, a three stair block with a
+   handrail, and a bank. The old ledge gets wax and black grind marks down its coping, the pad gets a red painted
+   curb along its edge, there are stickers on the rail post, and a park bench where the ones who are not skating
+   sit. The skaters keep their lines on the old pad; the new pieces are for looking at (and walking round).
+   ?plaza=0 turns it off.
+   ================================================================ */
+const SK2 = {};
+window.__SK2 = SK2;
+(function skatePlaza() {
+  if (!FAC_ON || /plaza=0/.test(location.search) || !window.__SK || !SK.L2W) return;
+  const L2W = SK.L2W, g0 = SK.g0, ry = SK.ry;
+  const put = (key, u, v, y, su, sy, sv) => { const [x, z] = L2W(u, v); facPut(key, x, g0 + y, z, su, sy, sv, ry); };
+  FACM.skConc = FACM.skConc || new THREE.MeshStandardMaterial({ color: 0x9a968e, roughness: 0.72 });
+  FACM.skConcD = FACM.skConcD || new THREE.MeshStandardMaterial({ color: 0x7c7972, roughness: 0.8 });
+  FACM.wax = FACM.wax || new THREE.MeshStandardMaterial({ color: 0x15140f, roughness: 0.25, transparent: true, opacity: 0.6, depthWrite: false });
+  FACM.redCurb = FACM.redCurb || new THREE.MeshStandardMaterial({ color: 0xa8332a, roughness: 0.7 });
+  FACM.angle = FACM.angle || new THREE.MeshStandardMaterial({ color: 0x8a8d90, roughness: 0.35, metalness: 0.85 });
+  // ---- the second slab along v 5 .. 11
+  const V0 = 5.0, V1 = 11.0;
+  put('skConcD', 0, (V0 + V1) / 2, 0.0, 16, 0.12, V1 - V0);
+  for (let u = -6; u <= 6.01; u += 4) put('concJ', u, (V0 + V1) / 2, 0.065, 0.03, 0.01, V1 - V0 - 0.1);
+  put('concJ', 0, 8, 0.065, 15.9, 0.01, 0.03);
+  // red curb along the old pad's other edge
+  put('redCurb', 0, -5.06, 0.1, 16.1, 0.2, 0.14);
+  // ---- the quarter pipe at the far edge, its lip a steel coping
+  { const R = 1.6, Wd = 5.2, sh = new THREE.Shape(); sh.moveTo(0, 0); for (let i = 0; i <= 12; i++) { const a = i / 12 * PI / 2; sh.lineTo(R - Math.cos(a) * R + 0.0, R - Math.sin(a) * R); }
+    // the curve runs from the floor (0,0)... build as: floor point (0,0) -> lip (R, R) -> back (R+0.3, R) -> (R+0.3, 0)
+    const s2 = new THREE.Shape(); s2.moveTo(0, 0); for (let i = 0; i <= 14; i++) { const a = i / 14 * PI / 2; s2.lineTo(R * Math.sin(a), R - R * Math.cos(a)); } s2.lineTo(R + 0.35, R); s2.lineTo(R + 0.35, 0); s2.closePath();
+    const geo = new THREE.ExtrudeGeometry(s2, { depth: Wd, bevelEnabled: false, curveSegments: 14 }); geo.translate(0, 0, -Wd / 2);
+    const m = new THREE.Mesh(geo, FACM.skConc); const [qx, qz] = L2W(1.5, V1 - R - 0.4); m.position.set(qx, g0 + 0.06, qz); m.rotation.y = ry - PI / 2; m.castShadow = m.receiveShadow = true; scene.add(m); SK2.qp = m;
+    // coping pipe along the lip, deck plate behind
+    const cop = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, Wd, 10), FACM.angle); const [cx, cz] = L2W(1.5, V1 - 0.4); cop.position.set(cx, g0 + 0.06 + R, cz); cop.rotation.set(0, ry, PI / 2); scene.add(cop);
+    put('angle', 1.5, V1 - 0.22, R + 0.05, Wd, 0.02, 0.36);
+    boxWalls(...L2W(1.5, V1 - 1.2), Wd, 1.6, ry, -1, g0 + R); }
+  // ---- a manual pad with angle iron edges
+  { const u0 = -4.6, v0 = 7.2; put('skConc', u0, v0, 0.2, 3.2, 0.3, 1.4); put('angle', u0, v0 - 0.7, 0.35, 3.2, 0.03, 0.03); put('angle', u0, v0 + 0.7, 0.35, 3.2, 0.03, 0.03);
+    put('wax', u0, v0 - 0.69, 0.368, 2.6, 0.004, 0.06); boxWalls(...L2W(u0, v0), 3.2, 1.4, ry, -1, g0 + 0.35); }
+  // ---- a three stair block with a handrail (up from the slab to a little deck and down the other side)
+  { const u0 = 5.6, v0 = 7.6;
+    for (let i = 0; i < 3; i++) put('skConc', u0 - 1.2 + i * 0.32, v0, 0.12 + i * 0.16 / 2 + 0.04, 2.4 - i * 0.64, 0.16 * (i + 1), 2.0);
+    put('skConc', u0 + 0.6, v0, 0.32, 1.2, 0.48, 2.0);
+    // the rail down the steps
+    const [ax, az] = L2W(u0 - 1.4, v0), [bx, bz] = L2W(u0 - 0.1, v0); facBar(FACM.angle, new THREE.Vector3(ax, g0 + 0.82, az), new THREE.Vector3(bx, g0 + 1.3, bz), 0.05, 0.05);
+    [[u0 - 1.3, 0.8], [u0 - 0.2, 1.28]].forEach(([u, h]) => put('angle', u, v0, h / 2, 0.05, h, 0.05)); put('angle', u0 + 0.6, v0, 1.3, 1.2, 0.05, 0.05); put('angle', u0 + 1.18, v0, 0.9, 0.05, 0.8, 0.05);
+    boxWalls(...L2W(u0, v0), 3.0, 2.0, ry, -1, g0 + 0.5); }
+  // ---- a bank against the slab's end
+  { const geo = new THREE.BoxGeometry(2.4, 0.9, 3.0); const p = geo.attributes.position; for (let i = 0; i < p.count; i++) if (p.getY(i) > 0 && p.getX(i) < 0) p.setY(i, -0.45); p.needsUpdate = true; geo.computeVertexNormals();
+    const m = new THREE.Mesh(geo, FACM.skConc); const [x, z] = L2W(-7.0, 7.8); m.position.set(x, g0 + 0.5, z); m.rotation.y = ry + PI; m.castShadow = m.receiveShadow = true; scene.add(m); boxWalls(x, z, 2.4, 3.0, ry, -1, g0 + 0.9); }
+  // ---- wax and grind marks on the old ledge, stickers on the rail legs
+  put('wax', 1.5, -2.33, 0.512, 4.6, 0.004, 0.08); put('wax', 1.5, -2.3, 0.4, 4.4, 0.18, 0.004);
+  for (let i = 0; i < 9; i++) put('wax', -0.3 + Math.random() * 3.6, -2.29, 0.25 + Math.random() * 0.2, 0.2 + Math.random() * 0.5, 0.01, 0.003);
+  const stick = ['#2962FF', '#ff3fa4', '#f2d230', '#efe8da'];
+  [-1, 3].forEach(u => stick.forEach((col, i) => { const [x, z] = L2W(u + (i % 2 ? 0.02 : -0.02), 2.8); facPut('white', x, g0 + 0.1 + i * 0.07, z, 0.055, 0.05, 0.055, ry, col); }));
+  // ---- the bench for the ones who are not skating
+  FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 }); FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  { const u0 = -1.5, v0 = 10.3; for (let k = 0; k < 3; k++) put('benchW', u0, v0 + (k - 1) * 0.12, 0.45, 2.0, 0.04, 0.1); for (let k = 0; k < 2; k++) put('benchW', u0, v0 + 0.22, 0.62 + k * 0.14, 2.0, 0.1, 0.04);
+    [-0.8, 0.8].forEach(d => { put('iron', u0 + d, v0, 0.22, 0.06, 0.44, 0.4); }); boxWalls(...L2W(u0, v0), 2.0, 0.5, ry, -1, g0 + 0.5); }
+  facFlush();
+  SK2.ok = true;
+})();
+
+/* ================================================================
+   v220 THE LOOK: THE NEWSSTAND (2026-11-23)
+   The newsstand was a green box with a sign. Now it reads like the steel kiosks on every Midtown corner: a deep
+   roof with a lit fascia, a rolled up shutter over the window, a steel counter with gum and mints along it, a
+   stainless kick band and corner posts, wire magazine racks full of covers down both sides, tied bundles of
+   today's papers stacked at the front, and a lightbox on the roof for N3W POST that glows after dark.
+   ?newsstand=0 turns it off.
+   ================================================================ */
+const NS2 = { mats: [] };
+window.__NS2 = NS2;
+(function newsstandRebuild() {
+  if (!FAC_ON || /newsstand=0/.test(location.search) || !window.__NEWS || NEWS.ry == null) return;
+  const x0 = NEWS_AT.x, z0 = NEWS_AT.z, g0 = ground(x0, z0), ry = NEWS.ry, cs = Math.cos(ry), sn = Math.sin(ry);
+  const W = (lx, lz) => [x0 + cs * lx + sn * lz, z0 - sn * lx + cs * lz];
+  const put = (key, lx, y, lz, sx, sy, sz, rot) => { const [x, z] = W(lx, lz); facPut(key, x, g0 + y, z, sx, sy, sz, ry + (rot || 0)); };
+  FACM.nsGreen = FACM.nsGreen || new THREE.MeshStandardMaterial({ color: 0x1f3a2a, roughness: 0.5, metalness: 0.3 });
+  FACM.inox = FACM.inox || new THREE.MeshStandardMaterial({ color: 0xc4c8cc, roughness: 0.28, metalness: 0.9 });
+  FACM.paper = FACM.paper || new THREE.MeshStandardMaterial({ color: 0xe9e5db, roughness: 0.9 });
+  // the old body reads mint in daylight: give it the kiosk's own enamel green
+  try { scene.traverse(o => { const p = o.geometry && o.geometry.parameters; if (o.isMesh && p && p.width === 3.0 && p.height === 2.6 && p.depth === 2.0 && o.parent && o.parent.position && Math.hypot(o.parent.position.x - x0, o.parent.position.z - z0) < 0.5) { o.material = FACM.nsGreen; NS2.body = o; } }); } catch (e) { }
+  // ---- roof and fascia
+  put('nsGreen', 0, 2.78, 0.35, 3.9, 0.14, 3.1); put('nsGreen', 0, 2.68, 1.88, 3.9, 0.26, 0.06); [-1, 1].forEach(s => put('nsGreen', s * 1.93, 2.68, 0.35, 0.06, 0.26, 3.1));
+  put('lit', 0, 2.68, 1.92, 3.6, 0.08, 0.012);
+  // ---- shutter housing, counter, gum rack, kick band, corner posts
+  put('inox', 0, 2.06, 1.1, 1.8, 0.22, 0.22); for (let i = 0; i < 4; i++) put('nsGreen', 0, 1.97 - i * 0.004, 1.215, 1.7, 0.012, 0.004);
+  put('inox', 0, 1.13, 1.16, 1.7, 0.04, 0.32);
+  const gum = [0xd8304a, 0x2962FF, 0xf2d230, 0x2f8a4a, 0xefe8da, 0xff7a1a];
+  for (let i = 0; i < 14; i++) { const [x, z] = W(-0.72 + i * 0.11, 1.22); facPut('white', x, g0 + 1.2, z, 0.09, 0.1, 0.12, ry, gum[i % gum.length]); }
+  [-1.5, 1.5].forEach(lx => [-1.0, 1.0].forEach(lz => put('inox', lx, 1.3, lz, 0.08, 2.6, 0.08)));
+  put('inox', 0, 0.1, 1.02, 3.04, 0.2, 0.02); put('inox', 0, 0.1, -1.02, 3.04, 0.2, 0.02); [-1, 1].forEach(s => put('inox', s * 1.52, 0.1, 0, 0.02, 0.2, 2.04));
+  // ---- wire magazine racks down both sides, covers in them
+  [-1, 1].forEach(s => { const lx = s * 1.72;
+    for (let t = 0; t < 3; t++) { const y = 0.75 + t * 0.48; put('galv', lx, y - 0.2, 0, 0.22, 0.015, 1.8); put('galv', lx + s * 0.1, y, 0, 0.015, 0.015, 1.8); }
+    [-0.9, 0.9].forEach(lz => put('galv', lx, 1.0, lz, 0.02, 1.6, 0.02));
+    for (let t = 0; t < 3; t++) for (let i = 0; i < 4; i++) { const m = memeMesh(MEME_NS[(t * 4 + i) * 37 % MEME_NS.length + (s > 0 ? 11 : 0)], 0.34); if (!m) continue;
+      const [x, z] = W(lx + s * 0.06, -0.66 + i * 0.44); m.position.set(x, g0 + 0.8 + t * 0.48, z); m.rotation.set(0, ry + s * PI / 2, 0); m.rotateX(-0.18); scene.add(m); } });
+  // ---- bundles of today's papers at the front, tied with twine
+  [[-1.15, 1.6, 0], [-0.75, 1.62, 0.3], [-1.05, 1.62, 1], [1.1, 1.58, 0.1], [0.75, 1.65, -0.2]].forEach(([lx, lz, rr], i) => {
+    const h = i === 2 ? 0.3 : 0.24, y = i === 2 ? 0.24 + h / 2 : h / 2; put('paper', lx, y, lz, 0.42, h, 0.3, rr); put('steel', lx, y, lz, 0.43, h + 0.005, 0.012, rr); put('steel', lx, y, lz, 0.012, h + 0.005, 0.31, rr); });
+  // ---- the lightbox on the roof
+  { const sg = signTex([{ t: 'N3W POST', s: 0.44 }, { t: 'DAILY GM · TODAY\'S MEMES', s: 0.14 }], 1024, 256, '#efe8da', '#0D0D0D');
+    const m = new THREE.MeshStandardMaterial({ map: sg, roughness: 0.5, emissive: 0xffffff, emissiveMap: sg, emissiveIntensity: 0.05 }); NS2.mats.push(m);
+    put('inox', 0, 3.17, 0.4, 2.5, 0.62, 0.32); [0.565, 0.235].forEach((lz, k) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.56), m); const [x, z] = W(0, lz); p.position.set(x, g0 + 3.17, z); p.rotation.y = ry + (k ? PI : 0); scene.add(p); });
+    [-0.9, 0.9].forEach(lx => put('inox', lx, 2.94, 0.4, 0.05, 0.2, 0.05)); }
+  facFlush();
+  NS2.ok = true;
+})();
+window.__FRAMES.push(() => { try { if (!NS2.mats.length) return; const k = Math.min(1, (L.lamps || 0) * 1.3); NS2.mats[0].emissiveIntensity = 0.05 + 0.9 * k; } catch (e) { } });
+
+/* ================================================================
+   v221 THE LOOK: THE DOG RUN (2026-11-23)
+   The dog run gets what the ones in Tompkins Square and Washington Square have: a parks drinking fountain by the
+   gate with a dog bowl at its foot, a pea gravel border round the fence, a bench inside along the back, a tyre
+   jump and a little A frame in the corners, a bag dispenser on a post, tennis balls nobody will ever pick up, and
+   the green parks sign with the rules.
+   ?dogrun2=0 turns it off.
+   ================================================================ */
+const DR2 = {};
+window.__DR2 = DR2;
+(function dogRunDress() {
+  if (!FAC_ON || /dogrun2=0/.test(location.search) || !window.__DRUN || DRUN.g0 == null) return;
+  const x0 = DRUN_AT.x, z0 = DRUN_AT.z, hx = DRUN_AT.w / 2, hz = DRUN_AT.l / 2, g0 = DRUN.g0;
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 });
+  FACM.gravel = FACM.gravel || new THREE.MeshStandardMaterial({ color: 0x6a645b, roughness: 1 });
+  FACM.tyre = FACM.tyre || new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+  FACM.agil = FACM.agil || new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.6 });
+  // ---- pea gravel border
+  const b = 0.6; [[0, -hz - b / 2, DRUN_AT.w + 2 * b, b], [0, hz + b / 2, DRUN_AT.w + 2 * b, b], [-hx - b / 2, 0, b, DRUN_AT.l], [hx + b / 2, -hz / 2 - 0.4, b, hz - 0.8], [hx + b / 2, hz / 2 + 0.4, b, hz - 0.8]]
+    .forEach(([u, v, w, d]) => facPut('gravel', x0 + u, g0 + 0.02, z0 + v, w, 0.04, d, 0));
+  // ---- the bench inside along the back fence
+  { const x = x0 - hx + 0.4; for (let k = 0; k < 3; k++) facPut('benchW', x + (k - 1) * 0.12, g0 + 0.45, z0, 0.1, 0.04, 2.2, 0); for (let k = 0; k < 2; k++) facPut('benchW', x - 0.2, g0 + 0.62 + k * 0.14, z0, 0.04, 0.1, 2.2, 0);
+    [-0.9, 0.9].forEach(d => facPut('iron', x, g0 + 0.22, z0 + d, 0.4, 0.44, 0.06, 0)); }
+  // ---- a tyre jump in one corner, an A frame in the other
+  { const x = x0 + hx - 1.3, z = z0 - hz + 1.2, t = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 8, 18), FACM.tyre); t.position.set(x, g0 + 0.62, z); t.rotation.y = PI / 2; t.castShadow = true; scene.add(t);
+    [-0.5, 0.5].forEach(d => facPut('agil', x, g0 + 0.5, z + d, 0.05, 1.0, 0.05, 0)); facPut('agil', x, g0 + 1.0, z, 0.05, 0.05, 1.05, 0);
+    [-0.25, 0.25].forEach(d => facPut('galv', x, g0 + 0.95 - 0.0, z + d, 0.01, 0.1, 0.01, 0)); }
+  { const x = x0 + hx - 1.4, z = z0 + hz - 1.4, L2 = 1.3, h = 0.75, a = Math.atan2(h, L2);
+    [-1, 1].forEach(s => { const m = new THREE.Mesh(FAC_BOX, FACM.agil); m.scale.set(Math.hypot(L2, h), 0.04, 0.8); m.position.set(x + s * L2 / 2, g0 + h / 2, z); m.rotation.z = -s * a; m.castShadow = true; scene.add(m);
+      for (let i = 1; i < 4; i++) { const sx = x + s * (L2 * i / 4); facPut('white', sx, g0 + h * (1 - i / 4) + 0.03, z, 0.03, 0.01, 0.8, 0); } }); }
+  // ---- the fountain outside the gate, with a dog bowl at its foot
+  { const x = x0 + hx + 1.3, z = z0 + 2.4; const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 0.85, 12), FACM.iron); ped.position.set(x, g0 + 0.43, z); ped.castShadow = true; scene.add(ped);
+    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.13, 0.13, 16), FACM.iron); bowl.position.set(x, g0 + 0.91, z); scene.add(bowl);
+    const db = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.18, 0.08, 16), FACM.iron); db.position.set(x + 0.32, g0 + 0.05, z); scene.add(db);
+    const wat = new THREE.Mesh(new THREE.CircleGeometry(0.18, 16), new THREE.MeshStandardMaterial({ color: 0x3a5866, roughness: 0.04, metalness: 0.3 })); wat.rotation.x = -PI / 2; wat.position.set(x + 0.32, g0 + 0.085, z); scene.add(wat);
+    post(x, z, 0.3, -5, g0 + 1); }
+  // ---- bag dispenser on a post, the parks sign
+  { const x = x0 + hx + 1.1, z = z0 - 1.6; facPut('iron', x, g0 + 0.7, z, 0.06, 1.4, 0.06, 0); facPut('agil', x + 0.06, g0 + 1.2, z, 0.12, 0.3, 0.2, 0); facPut('white', x + 0.13, g0 + 1.08, z, 0.01, 0.05, 0.08, 0); post(x, z, 0.1, -5, g0 + 1.4);
+    const sg = signTex([{ t: 'N3W PARKS · DOG RUN', s: 0.2 }, { t: 'DOGS OFF LEASH INSIDE ONLY', s: 0.11 }, { t: 'CLEAN UP AFTER YOUR DOG', s: 0.11 }, { t: 'CLOSE BOTH GATES', s: 0.11 }], 768, 512, '#2b4a32', '#efe8da');
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), new THREE.MeshStandardMaterial({ map: sg, roughness: 0.6, side: THREE.DoubleSide })); m.position.set(x, g0 + 1.75, z); m.rotation.y = PI / 2; scene.add(m);
+    facPut('iron', x - 0.01, g0 + 1.5, z, 0.02, 0.9, 0.04, 0); }
+  // ---- tennis balls nobody will pick up
+  { const bm = new THREE.MeshStandardMaterial({ color: 0xd8f03a, roughness: 0.75 }), bg = new THREE.SphereGeometry(0.034, 10, 8), im = new THREE.InstancedMesh(bg, bm, 7), o = new THREE.Object3D();
+    [[-3.6, -3.7], [-3.9, 3.5], [3.5, 0.6], [-1.2, -3.9], [2.0, 3.9], [-3.95, 1.0], [3.8, -3.2]].forEach(([u, v], i) => { o.position.set(x0 + u, g0 + 0.035, z0 + v); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
+    im.castShadow = true; scene.add(im); }
+  facFlush();
+  DR2.ok = true;
+})();
+
+/* ================================================================
+   v222 THE LOOK: PARK LIGHTS (2026-11-23)
+   The handball court, the skate plaza and the dog run go dark at night like nobody uses them. Now each has the
+   tall galvanised poles with flat LED heads that light every New York park court, and after dusk a cool white
+   pool of light lies on the asphalt under them. No real lights are added (the v177 light budget stays at eight):
+   the heads glow and the pools are painted on, additive, faded in with the street lamps.
+   ?parklights=0 turns it off.
+   ================================================================ */
+const PLT = { heads: null, pool: null, n: 0 };
+window.__PLT = PLT;
+(function parkLights() {
+  if (!FAC_ON || /parklights=0/.test(location.search)) return;
+  const head = new THREE.MeshStandardMaterial({ color: 0x2a2c2e, roughness: 0.4, emissive: 0xe8f0ff, emissiveIntensity: 0 }); PLT.heads = head; FACM.ledHead = head;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient) { const g = c.createRadialGradient(64, 64, 2, 64, 64, 64); g.addColorStop(0, 'rgba(225,235,255,0.85)'); g.addColorStop(0.45, 'rgba(200,215,245,0.4)'); g.addColorStop(1, 'rgba(180,200,240,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); }
+  const pool = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, polygonOffset: true, polygonOffsetFactor: -4 }); PLT.pool = pool;
+  // pole at (x,z), arm toward (tx,tz), pool of radius r at the target
+  const pole = (x, z, tx, tz, r) => { const gy = ground(x, z), H = 6.4, ry = Math.atan2(tx - x, tz - z);
+    facPut('galv', x, gy + H / 2, z, 0.14, H, 0.14, 0); facPut('galv', x, gy + 0.3, z, 0.3, 0.6, 0.3, 0);
+    facPut('galv', x + Math.sin(ry) * 0.5, gy + H - 0.1, z + Math.cos(ry) * 0.5, 0.06, 0.06, 1.0, ry);
+    facPut('ledHead', x + Math.sin(ry) * 1.05, gy + H - 0.18, z + Math.cos(ry) * 1.05, 0.62, 0.08, 0.36, ry);
+    const tg = ground(tx, tz), p = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2), pool); p.rotation.x = -PI / 2; p.position.set(tx, Math.max(tg, gy) + 0.08, tz); p.renderOrder = 4; scene.add(p); PLT.n++; };
+  try { if (window.__HB2 && HB2.L2W) { const W = HB2.L2W; [-1, 1].forEach(s => { const [x, z] = W(s * 4.75, 3.6), [tx, tz] = W(s * 1.2, 4.4); pole(x, z, tx, tz, 4.2); }); } } catch (e) { }
+  try { if (window.__SK2 && SK2.ok) { const W = SK.L2W; [[-8.6, -3.5, -4, -1], [8.6, 4.4, 4, 4.5], [-8.6, 8.6, -4.5, 8]].forEach(([u, v, tu, tv]) => { const [x, z] = W(u, v), [tx, tz] = W(tu, tv); pole(x, z, tx, tz, 4.6); }); } } catch (e) { }
+  try { if (window.__DR2 && DR2.ok) { const x = DRUN_AT.x - DRUN_AT.w / 2 - 1.0, z = DRUN_AT.z - DRUN_AT.l / 2 - 1.0; pole(x, z, DRUN_AT.x - 1, DRUN_AT.z - 1, 4.4); } } catch (e) { }
+  facFlush();
+})();
+window.__FRAMES.push(() => { try { if (!PLT.pool) return; const k = Math.min(1, (L.lamps || 0) * 1.3); PLT.heads.emissiveIntensity = 0.05 + 2.4 * k; PLT.pool.opacity = 0.42 * k; PLT.pool.visible = k > 0.01; } catch (e) { } });
+
+/* ================================================================
+   v223 THE TOUR, CHECKED (2026-11-23)
+   Every one of the 82 tour stops was photographed at its start, middle and end. Ten opened inside something: a
+   sculpture, a billboard, the new crane's lattice, a white wall, a tree. Those stops now begin (or end) where the
+   view is clear; the bodega and the bank flags get new camera paths altogether.
+   ================================================================ */
+(function tourChecked() {
+  const T = (window.__game && __game.TOUR) || (typeof TOUR !== 'undefined' ? TOUR : null); if (!T) return;
+  const lerp = (A, t) => { if (A.length === 1) return A[0].slice(); const f = t * (A.length - 1), i = Math.min(A.length - 2, Math.floor(f)), u = f - i; return A[i].map((v, k) => v + (A[i + 1][k] - v) * u); };
+  // keep only the part of a stop between a and b (0..1), resampled to three points
+  const trim = (name, a, b) => { const s = T.find(r => r.name === name); if (!s) return; const P = s.pos, L = s.look;
+    s.pos = [lerp(P, a), lerp(P, (a + b) / 2), lerp(P, b)]; s.look = [lerp(L, a), lerp(L, (a + b) / 2), lerp(L, b)]; s.dur = Math.max(4, s.dur * (b - a) + 1.5); };
+  trim('the ripples', 0.45, 1); trim('the watchers', 0.4, 1); trim('fresh off the press', 0.4, 1); trim('the impermanent wall', 0.45, 1);
+  trim('the cut', 0.45, 1); trim('survive bunker', 0, 0.7); trim('the pond', 0.4, 1);
+  try { const s = T.find(r => r.name === 'the bodega'); if (s) { const g = ground(17, 66); s.pos = [[5.2, g + 1.8, 67.8], [6.4, g + 1.7, 64.4]]; s.look = [[11.7, g + 3, 66.5], [11.7, g + 2.8, 66]]; } } catch (e) { }
+  try { const s = T.find(r => r.name === 'the flags'); if (s) { const g = ground(-50, -10); s.pos = [[-36, g + 6.5, -2], [-39, g + 5.5, -5]]; s.look = [[-50.6, g + 10, -10.6], [-50.6, g + 10.5, -10.6]]; } } catch (e) { }
+})();
+
+/* ================================================================
+   v224 THE LOOK: THE CENSUS WALK, HUNG PROPERLY (2026-11-23)
+   The Hadid ribbon carries 48 NEW YORKERS in two rows, and above them three metres of blank wall. Now it is hung
+   like a museum wall: a brass picture light on an arm over every portrait, a cut letter frieze running the whole
+   curve (NEW YORKERS · BY MLOW · THE PEOPLE BUILT THE PLACE), and a slim coping along its top edge. After dusk the
+   picture lights come on and each one throws a soft wash down its portrait (painted light, no lamps added).
+   ?censuswalk=0 turns it off.
+   ================================================================ */
+const CW2 = { wash: null, shade: null };
+window.__CW2 = CW2;
+(function censusWalkHang() {
+  if (!FAC_ON || /censuswalk=0/.test(location.search)) return;
+  const pts = []; for (let i = 0; i <= 24; i++) { const z = 46 + i * 1.6; pts.push([-11 - 2.2 * Math.sin(i / 24 * PI * 2), z]); }
+  const shade = new THREE.MeshStandardMaterial({ color: 0x8a6a36, roughness: 0.3, metalness: 0.9, emissive: 0xfff0d0, emissiveIntensity: 0 }); CW2.shade = shade; FACM.cwShade = shade;
+  // the wash: a soft cone of light down the wall, one instanced plane per portrait
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 128; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient) { const g = c.createRadialGradient(32, 0, 2, 32, 0, 128); g.addColorStop(0, 'rgba(255,236,200,0.9)'); g.addColorStop(0.5, 'rgba(255,226,180,0.35)'); g.addColorStop(1, 'rgba(255,220,170,0)'); c.fillStyle = g; c.fillRect(0, 0, 64, 128); }
+  const wash = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, polygonOffset: true, polygonOffsetFactor: -2 }); CW2.wash = wash;
+  const wim = new THREE.InstancedMesh(new THREE.PlaneGeometry(1.7, 2.0), wash, 48), o = new THREE.Object3D(); let wk = 0;
+  // the frieze: one long canvas of cut letters, laid along the curve by cumulative length
+  const segs = []; let total = 0; for (let i = 0; i < 24; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], len = Math.hypot(bx - ax, bz - az); segs.push({ ax, az, bx, bz, len, s0: total }); total += len; }
+  const fcv = document.createElement('canvas'); fcv.width = 4096; fcv.height = 96; const f = fcv.getContext('2d');
+  if (f && f.fillText) { f.clearRect(0, 0, 4096, 96); f.fillStyle = '#2b2620'; f.textBaseline = 'middle'; f.font = '700 52px "Archivo Black",Impact,sans-serif';
+    const msg = 'NEW YORKERS  ·  BY MLOW  ·  THE PEOPLE BUILT THE PLACE  ·  ONE THOUSAND ONE HUNDRED AND ELEVEN  ·  '; let x = 20; const sp = 6;
+    while (x < 4080) { for (const ch of msg) { if (x > 4080) break; f.fillText(ch, x, 50); x += f.measureText(ch).width + sp; } } }
+  const ft = new THREE.CanvasTexture(fcv); ft.encoding = THREE.sRGBEncoding; ft.anisotropy = ANISO;
+  const P = [], U = [], N = [];
+  segs.forEach((s, i) => { const nx = (s.bz - s.az) / s.len, nz = -(s.bx - s.ax) / s.len, mx = (s.ax + s.bx) / 2, mz = (s.az + s.bz) / 2, gg = ground(mx, mz), fr = Math.atan2(nx, nz), ry = Math.atan2(-(s.bz - s.az), s.bx - s.ax);
+    const hh = 6.2 + Math.sin(i / 24 * PI) * 2.4;
+    // two picture lights per segment (one per portrait row's top painting: lights sit above the upper row and between rows)
+    [[3.5, 4.55], [1.6, 2.62]].forEach(([py, ly]) => { const ox = mx + nx * 0.27, oz = mz + nz * 0.27;
+      facPut('bronze', mx + nx * 0.42, gg + ly + 0.04, mz + nz * 0.42, 0.03, 0.03, 0.34, fr);
+      facPut('cwShade', mx + nx * 0.6, gg + ly, mz + nz * 0.6, 0.62, 0.07, 0.11, ry);
+      o.position.set(mx + nx * 0.262, gg + py + 0.2, mz + nz * 0.262); o.rotation.set(0, fr, 0); o.scale.set(1, 1, 1); o.updateMatrix(); if (wk < 48) wim.setMatrixAt(wk++, o.matrix); });
+    // coping along the top, and the frieze band
+    facPut('stoneD', mx, gg + hh + 0.03, mz, s.len + 0.1, 0.08, 0.62, ry);
+    const ya = gg + 5.15, yb = gg + 5.55, u0 = s.s0 / total, u1 = (s.s0 + s.len) / total, o2 = 0.256;
+    const A = [s.ax + nx * o2, s.az + nz * o2], B = [s.bx + nx * o2, s.bz + nz * o2], ga = ground(s.ax, s.az) * 0 + gg;
+    P.push(A[0], ya, A[1], B[0], ya, B[1], B[0], yb, B[1], A[0], ya, A[1], B[0], yb, B[1], A[0], yb, A[1]); U.push(1 - u0, 0, 1 - u1, 0, 1 - u1, 1, 1 - u0, 0, 1 - u1, 1, 1 - u0, 1); for (let k = 0; k < 6; k++) N.push(nx, 0, nz); });
+  wim.count = wk; wim.renderOrder = 4; wim.frustumCulled = false; scene.add(wim); CW2.wim = wim;
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3));
+  const fm = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ map: ft, transparent: true, alphaTest: 0.3, roughness: 0.7, side: THREE.DoubleSide })); scene.add(fm); CW2.frieze = fm;
+  facFlush();
+  CW2.ok = true;
+})();
+window.__FRAMES.push(() => { try { if (!CW2.wash) return; const k = Math.min(1, (L.lamps || 0) * 1.3); CW2.shade.emissiveIntensity = 0.02 + 1.8 * k; CW2.wash.opacity = 0.5 * k; CW2.wim.visible = k > 0.01; } catch (e) { } });
+
+/* ================================================================
+   v225 THE LOOK: N3W PARKS SIGNS (2026-11-23)
+   Every New York park feature has the same green sign on a post at its gate. The island's get their own version:
+   enamel green, a white rule, the Open Eye Flower where the city puts its leaf, N3W PARKS over the name of the
+   place. At the handball court, the skate plaza, the rink and the dog run.
+   ?parksigns=0 turns it off.
+   ================================================================ */
+const PKS = { n: 0 };
+window.__PKS = PKS;
+(function parksSigns() {
+  if (!FAC_ON || /parksigns=0/.test(location.search)) return;
+  const make = (name, sub) => { const cv = document.createElement('canvas'); cv.width = 768; cv.height = 384; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+    if (!c || !c.fillText || !c.strokeRect) return t;
+    const draw = img => { c.fillStyle = '#244232'; c.fillRect(0, 0, 768, 384); c.strokeStyle = '#efe8da'; c.lineWidth = 6; c.strokeRect(16, 16, 736, 352);
+      if (img) c.drawImage(img, 40, 92, 200, 200); else { c.fillStyle = '#efe8da'; c.beginPath(); c.arc(140, 192, 70, 0, PI * 2); c.fill(); }
+      c.fillStyle = '#efe8da'; c.textBaseline = 'middle'; c.font = '700 44px "Archivo Black",Impact,sans-serif'; c.fillText('N3W PARKS', 270, 118);
+      c.fillRect(270, 152, 440, 4); c.font = `900 ${name.length > 12 ? 46 : 58}px "Archivo Black",Impact,sans-serif`; c.fillText(name, 270, 214);
+      c.font = '400 26px "Archivo",Helvetica,sans-serif'; c.fillText(sub, 270, 280); t.needsUpdate = true; };
+    draw(null); const im = new Image(); im.onload = () => { try { draw(im); } catch (e) { } }; im.src = 'assets/iv_flower.webp'; return t; };
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  const sign = (x, z, rot, name, sub) => { const gy = ground(x, z), m = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.6), new THREE.MeshStandardMaterial({ map: make(name, sub), roughness: 0.5, metalness: 0.1 }));
+    m.position.set(x + Math.sin(rot) * 0.03, gy + 1.85, z + Math.cos(rot) * 0.03); m.rotation.y = rot; scene.add(m);
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.6), FACM.iron); back.position.set(x - Math.sin(rot) * 0.0, gy + 1.85, z - Math.cos(rot) * 0.0); back.rotation.y = rot + PI; scene.add(back);
+    facPut('iron', x - Math.sin(rot) * 0.04, gy + 1.15, z - Math.cos(rot) * 0.04, 0.07, 2.3, 0.07, rot); post(x, z, 0.12, -5, gy + 2.2); PKS.n++; };
+  try { if (window.__HB2 && HB2.L2W) { const [x, z] = HB2.L2W(-2.7, 0.225 + 9.4 + 1.2); sign(x, z, WALLP.ry, 'HANDBALL', 'COURTS OPEN DAWN TO DUSK · BRING YOUR OWN BALL'); } } catch (e) { }
+  try { if (window.__SK2 && SK2.ok) { const [x, z] = SK.L2W(-9.2, 1.5); sign(x, z, SK.ry - PI / 2, 'SKATE PLAZA', 'HELMETS RECOMMENDED · WAX IS NOT A CRIME'); } } catch (e) { }
+  try { if (window.__RB2 && RB2.ok) { const gx = Math.cos(RINK.gapA), gz = Math.sin(RINK.gapA), x = RINK_AT.x + gx * (RINK_AT.a + 3.4) + gz * 1.6, z = RINK_AT.z + gz * (RINK_AT.b + 3.4) - gx * 1.6; sign(x, z, Math.atan2(gx, gz), 'THE RINK', 'SKATE COUNTERCLOCKWISE · NO HOCKEY STICKS'); } } catch (e) { }
+  try { if (window.__DR2 && DR2.ok) { const x = DRUN_AT.x + DRUN_AT.w / 2 + 1.4, z = DRUN_AT.z + 1.2; sign(x, z, PI / 2, 'DOG RUN', 'SMALL DOGS WELCOME · BIG DOGS ALSO WELCOME'); } } catch (e) { }
+  facFlush();
+})();
+
+/* ================================================================
+   v226 THE TOUR: THE PARKS (2026-11-23)
+   Four more stops before the aerial: the handball court, the rink boards, the skate plaza and the census walk's
+   picture lights.
+   ================================================================ */
+(function tourV226() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  try { if (window.__HB2 && HB2.L2W) { const W = HB2.L2W, g = ground(WALL_AT.x, WALL_AT.z); const a = W(3.2, 14), b = W(0, 13.2), l = W(0, 0); add.push({ name: 'the handball court', dur: 7, pos: [[a[0], g + 2.4, a[1]], [b[0], g + 1.9, b[1]]], look: [[l[0], g + 1.8, l[1]], [l[0], g + 2, l[1]]] }); } } catch (e) { }
+  try { if (window.__RB2 && RB2.ok) { const x = RINK_AT.x, z = RINK_AT.z, g = RINK.g0, gx = Math.cos(RINK.gapA), gz = Math.sin(RINK.gapA); add.push({ name: 'the rink boards', dur: 7, pos: [[x + gx * 15 - gz * 8, g + 2.8, z + gz * 15 + gx * 8], [x + gx * 10 + gz * 3, g + 2.0, z + gz * 10 - gx * 3]], look: [[x, g + 0.8, z], [x, g + 0.8, z]] }); } } catch (e) { }
+  try { if (window.__SK2 && SK2.ok) { const W = SK.L2W, g = SK.g0, a = W(-10, -1), b = W(-8, 3), l = W(1, 7); add.push({ name: 'the skate plaza', dur: 7, pos: [[a[0], g + 2.2, a[1]], [b[0], g + 1.8, b[1]]], look: [[l[0], g + 0.6, l[1]], [l[0], g + 0.6, l[1]]] }); } } catch (e) { }
+  try { if (window.__CW2 && CW2.ok) { const g = ground(-6, 60); add.push({ name: 'the picture lights', dur: 7, pos: [[-3, g + 2.0, 50], [-3.5, g + 2.0, 60]], look: [[-11, g + 3.4, 56], [-11, g + 3.4, 66]] }); } } catch (e) { }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
+
 
 /* ---------------- boot ---------------- */
 buildCards();
