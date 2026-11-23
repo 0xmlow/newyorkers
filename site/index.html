@@ -11845,7 +11845,7 @@ window.__PIER2 = PIER2;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPW; varying float vPU;').replace('#include <project_vertex>', '#include <project_vertex>\n{ vec4 pw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\npw = instanceMatrix * pw;\n#endif\nvPW = (modelMatrix * pw).xyz; vPU = normalize(mat3(modelMatrix) * objectNormal).y; }');
       sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vPW; varying float vPU; float pwH(float x){ return fract(sin(x * 91.7) * 43758.5); }').replace('#include <color_fragment>', `#include <color_fragment>
         if (vPU > 0.9 && abs(vPW.x) < 3.05 && vPW.z > 125.5 && vPW.z < 182.5 && vPW.y > 0.45 && vPW.y < 0.65) { float b = vPW.z / 0.18, bi = floor(b), f = fract(b);
-          diffuseColor.rgb *= 0.82 + 0.3 * pwH(bi); float seam = 1.0 - smoothstep(0.0, 0.06, min(f, 1.0 - f)); diffuseColor.rgb *= 1.0 - 0.6 * seam;
+          diffuseColor.rgb *= vec3(2.3, 2.1, 1.9) * (0.82 + 0.3 * pwH(bi)); float seam = 1.0 - smoothstep(0.0, 0.06, min(f, 1.0 - f)); diffuseColor.rgb *= 1.0 - 0.6 * seam;
           float jx = mod(vPW.x + 3.0, 1.5); float nail = (1.0 - smoothstep(0.012, 0.022, length(vec2(jx - 0.75, (f - 0.5) * 0.18)))); diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.08, 0.07, 0.06), nail * 0.8); }`); };
     m.customProgramCacheKey = () => pk + '-pier187'; m.needsUpdate = true; }
   const iron = new THREE.MeshStandardMaterial({ color: 0x1b1d1f, roughness: 0.5, metalness: 0.6 }), orange = new THREE.MeshStandardMaterial({ color: 0xff6b00, roughness: 0.55 }), white = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.6 });
@@ -12069,6 +12069,240 @@ window.__FRAMES.push(dt => { try { if (!FLAGS.list) return; FLAGS.u.uFT.value +=
   try { const { x, z } = BIKES.at, g = ground(x, z); add.push({ name: 'n3w bike', dur: 7, pos: [[x - 2, g + 1.7, z - 6], [x, g + 1.6, z - 4]], look: [[x, g + 0.8, z], [x + 1, g + 0.8, z]] }); } catch (e) { }
   try { const g = ground(17, 66); add.push({ name: 'the bodega', dur: 7, pos: [[4, g + 1.7, 58], [6, g + 1.7, 62]], look: [[11, g + 3, 66], [11, g + 3, 66]] }); } catch (e) { }
   try { const g = ground(-66, 0); add.push({ name: 'the flags', dur: 7, pos: [[-38, g + 1.7, -14], [-42, g + 1.7, -12]], look: [[-50.6, g + 11, -10.6], [-50.6, g + 11.5, -10.6]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+
+/* ================================================================
+   v197 THE LOOK: SHADOW FILL (2026-11-23)
+   v166 took the fill light down hard for contrast, and in the long autumn shadows (the pier behind the docked
+   ferry, the foot of the walk up, under the market roofs) dark materials went almost black. Real shade on a
+   clear day is lit by the whole blue sky. The sky fill comes back up a fifth by day, at golden hour and at dawn,
+   and the ground half of the light probe a little, so shade reads as shade, with colour and texture, not as
+   holes. Night is untouched. ?fill=0 off.
+   ================================================================ */
+(function shadowFill() {
+  if (!LOOK.on || /fill=0/.test(location.search)) return;
+  try { PRESETS.day.hemiI = 0.56; PRESETS.golden.hemiI = 0.53; PRESETS.dawn.hemiI = 0.53; LOOK.envGround = 0.56; } catch (e) { }
+})();
+
+/* ================================================================
+   v198 THE LOOK: BUIDL IN STEEL (2026-11-23)
+   The unfinished building was thin poles holding up planks. It is now what a New York site really looks like
+   halfway up: wide flange columns in red oxide primer, steel beams framing every floor that has been decked,
+   X bracing in the end bays, a yellow guardrail round each open floor edge and orange safety netting hung down
+   the north face. Same grid, same heights, same floors, still never finished. ?buidl=0 off.
+   ================================================================ */
+const BUIDL2 = {};
+window.__BUIDL2 = BUIDL2;
+(function buidlSteel() {
+  if (!FAC_ON || /buidl=0/.test(location.search)) return; let pm = null;
+  scene.traverse(o => { if (o.isInstancedMesh && o.material === MAT.steel && o.geometry && o.geometry.parameters && o.geometry.parameters.radiusTop === 0.07 && o.count > 10 && o.count <= 40) pm = o; });
+  if (!pm) return; FACM.primer = new THREE.MeshStandardMaterial({ color: 0x7e3324, roughness: 0.7, metalness: 0.25 }); FACM.rail = new THREE.MeshStandardMaterial({ color: 0xe8b819, roughness: 0.55 });
+  const cols = new Map(), m4 = new THREE.Matrix4(), p = new V3(), q = new THREE.Quaternion(), s = new V3();
+  for (let i = 0; i < pm.count; i++) { pm.getMatrixAt(i, m4); m4.decompose(p, q, s); cols.set(Math.round(p.x) + ',' + Math.round(p.z), { x: p.x, z: p.z, top: p.y + s.y / 2, bot: p.y - s.y / 2 }); }
+  pm.visible = false; const g = ground(-48, -47), x0 = -56, x1 = -40, z0 = -54, z1 = -40;
+  cols.forEach(c => { const h = c.top - c.bot, y = (c.top + c.bot) / 2; facPut('primer', c.x - 0.11, y, c.z, 0.03, h, 0.24); facPut('primer', c.x + 0.11, y, c.z, 0.03, h, 0.24); facPut('primer', c.x, y, c.z, 0.22, h, 0.025); facPut('primer', c.x, c.bot + 0.03, c.z, 0.45, 0.06, 0.45); });
+  const C = (x, z) => cols.get(Math.round(x) + ',' + Math.round(z));
+  [4, 8, 12].forEach((yy, li) => { const xEnd = x1 - li * 4; for (let x = x0; x <= xEnd + 0.01; x += 4) for (let z = z0; z <= z1 + 0.01; z += 3.5) { const a = C(x, z); if (!a || a.top < g + yy) continue;
+      const b = C(x + 4, z); if (b && b.top >= g + yy && x + 4 <= xEnd + 0.01) facPut('primer', x + 2, g + yy - 0.2, z, 4, 0.28, 0.16);
+      const c = C(x, z + 3.5); if (c && c.top >= g + yy) facPut('primer', x, g + yy - 0.2, z + 1.75, 0.16, 0.28, 3.5); }
+    // guardrail round the open edge of this floor
+    const xa = x0 - 0.2, xb = xEnd + 4 - 0.2, za = z0 - 0.4, zb = z1 + 0.4; [0.55, 1.05].forEach(h => { facPut('rail', (xa + xb) / 2, g + yy + h, za, xb - xa, 0.05, 0.05); facPut('rail', (xa + xb) / 2, g + yy + h, zb, xb - xa, 0.05, 0.05); facPut('rail', xb, g + yy + h, (za + zb) / 2, 0.05, 0.05, zb - za); });
+    for (let x = xa; x <= xb; x += 2) { facPut('rail', x, g + yy + 0.55, za, 0.05, 1.1, 0.05); facPut('rail', x, g + yy + 0.55, zb, 0.05, 1.1, 0.05); } });
+  // X bracing in the west end bays
+  [[x0, z0, x0, z0 + 3.5], [x0, z1 - 3.5, x0, z1]].forEach(([ax, az, bx, bz]) => { [[g + 0.3, g + 4], [g + 4, g + 8]].forEach(([ya, yb]) => { facBar(FACM.primer, new V3(ax, ya, az), new V3(bx, yb, bz), 0.05, 0.05); facBar(FACM.primer, new V3(ax, yb, az), new V3(bx, ya, bz), 0.05, 0.05); }); });
+  // safety netting down the north face (z0), upper floors
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'); if (c && c.fillRect) { c.clearRect(0, 0, 64, 64); c.fillStyle = '#fff'; for (let i = 0; i < 64; i += 8) { c.fillRect(i, 0, 2, 64); c.fillRect(0, i, 64, 2); } }
+  const nt = new THREE.CanvasTexture(cv); nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.repeat.set(40, 16);
+  const net = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0 + 0.6, 8), new THREE.MeshStandardMaterial({ color: 0xff6b1a, alphaMap: nt, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.8 })); net.position.set((x0 + x1) / 2, g + 8.5, z0 - 0.55); net.rotation.y = PI; scene.add(net);
+  facFlush(); BUIDL2.n = cols.size;
+})();
+
+/* ================================================================
+   v199 THE LOOK: THE TOWER CRANE (2026-11-23)
+   The crane over BUIDL was an orange post with an orange beam. It is now a lattice tower crane: a square mast of
+   four chords laced with diagonals, a slewing cab at the top, a triangular lattice jib running out to the hook
+   and a counter jib with its concrete blocks, all turning together as before. ?crane=0 off.
+   ================================================================ */
+(function towerCrane() {
+  if (!FAC_ON || /crane=0/.test(location.search) || typeof crane === 'undefined' || !crane) return;
+  const cxr = -34, czr = -58, cg = ground(cxr, czr), H = 26, M = MAT.orange, a = 0.55;
+  scene.traverse(o => { const p = o.isMesh && o.geometry && o.geometry.parameters; if (p && p.width === 1.2 && p.height === 26 && Math.abs(o.position.x - cxr) < 0.1) o.visible = false; });
+  crane.children.forEach(ch => { const p = ch.geometry && ch.geometry.parameters; if (p && p.width === 30) ch.visible = false; });
+  const bars = [], localBars = [];
+  const bar = (list, A, B, t) => list.push([A, B, t]);
+  [[-a, -a], [a, -a], [a, a], [-a, a]].forEach(([x, z]) => bar(bars, new V3(cxr + x, cg, czr + z), new V3(cxr + x, cg + H, czr + z), 0.12));
+  for (let y = 0; y < H - 0.1; y += 1.6) { const y1 = Math.min(H, y + 1.6); [[[-a, -a], [a, -a]], [[a, -a], [a, a]], [[a, a], [-a, a]], [[-a, a], [-a, -a]]].forEach(([[ax, az], [bx, bz]], k) => {
+    bar(bars, new V3(cxr + ax, cg + y, czr + az), new V3(cxr + bx, cg + y, czr + bz), 0.06); bar(bars, new V3(cxr + ax, cg + (k % 2 ? y : y1), czr + az), new V3(cxr + bx, cg + (k % 2 ? y1 : y), czr + bz), 0.05); }); }
+  // jib: triangular truss along local +x from -9 (counter jib) to 24, apex up
+  const top = (x) => new V3(x, 1.4, 0), bl = (x) => new V3(x, 0, -0.5), br = (x) => new V3(x, 0, 0.5);
+  bar(localBars, bl(-1), bl(24), 0.08); bar(localBars, br(-1), br(24), 0.08); bar(localBars, top(-1), top(22), 0.08);
+  for (let x = -1; x < 24 - 0.1; x += 1.5) { const x1 = x + 1.5; bar(localBars, bl(x), br(x), 0.05); bar(localBars, bl(x), top(x1 > 22 ? 22 : x1), 0.045); bar(localBars, br(x), top(x1 > 22 ? 22 : x1), 0.045); }
+  bar(localBars, new V3(-9, 0, -0.5), new V3(-1, 0, -0.5), 0.1); bar(localBars, new V3(-9, 0, 0.5), new V3(-1, 0, 0.5), 0.1); bar(localBars, new V3(0, 3.5, 0), new V3(-8.5, 0.1, 0), 0.04); bar(localBars, new V3(0, 3.5, 0), new V3(22, 1.45, 0), 0.04);
+  bar(localBars, new V3(0, 0, 0), new V3(0, 3.5, 0), 0.14);
+  const mk = (list, parent) => { const im = new THREE.InstancedMesh(FAC_BOX, M, list.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), X = new V3(1, 0, 0);
+    list.forEach(([A, B, t], i) => { const v = new V3().subVectors(B, A); q.setFromUnitVectors(X, v.clone().normalize()); m4.compose(A.clone().addScaledVector(v, 0.5), q, new V3(v.length(), t, t)); im.setMatrixAt(i, m4); }); im.castShadow = true; parent.add(im); return im; };
+  mk(bars, scene); mk(localBars, crane);
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.5, 1.3), new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.5 })); cab.position.set(1.0, -0.6, 1.0); crane.add(cab);
+  const win = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.8), new THREE.MeshStandardMaterial({ color: 0x1a2a33, roughness: 0.1, metalness: 0.6 })); win.position.set(1.71, -0.4, 1.0); win.rotation.y = PI / 2; crane.add(win);
+})();
+
+/* ================================================================
+   v200 THE LOOK: WIND ON THE SAND (2026-11-23)
+   The beach sand was one smooth tone. Wind lays sand into ripples a hand's width apart, crests catching the low
+   sun and troughs holding shadow, broken by footfall into patches; damp sand toward the water is darker and
+   smoother. The sand shader now draws ripples in its normal and its colour, running across the prevailing wind.
+   ?ripples=0 off.
+   ================================================================ */
+(function sandRipples() {
+  if (!LOOK.on || /ripples=0/.test(location.search) || !MAT.sand) return; const m = MAT.sand, prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+  m.onBeforeCompile = (sh, r) => { if (prev) prev.call(m, sh, r);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vRP;').replace('#include <project_vertex>', '#include <project_vertex>\n{ vec4 rp = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\nrp = instanceMatrix * rp;\n#endif\nvRP = (modelMatrix * rp).xyz; }');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+      varying vec3 vRP; float rpH(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5); }
+      float rpN(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(rpH(i), rpH(i + vec2(1, 0)), f.x), mix(rpH(i + vec2(0, 1)), rpH(i + vec2(1, 1)), f.x), f.y); }
+      float rpW(vec2 p){ float w = dot(p, vec2(0.86, 0.5)) * 9.5 + rpN(p * 0.6) * 3.0 + rpN(p * 2.2) * 0.8; return sin(w) * 0.5 + 0.5; }`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        float rpm = smoothstep(0.35, 0.75, rpN(vRP.xz * 0.18)) * smoothstep(0.75, 1.1, vRP.y + 0.9); float rw = rpW(vRP.xz);
+        diffuseColor.rgb *= 1.0 + (rw - 0.5) * 0.22 * rpm; float damp = 1.0 - smoothstep(-0.55, 0.35, vRP.y); diffuseColor.rgb *= 1.0 - 0.28 * damp;`)
+      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
+        { float e = 0.02; float h0 = rpW(vRP.xz), hx = rpW(vRP.xz + vec2(e, 0.0)), hz = rpW(vRP.xz + vec2(0.0, e)); float rpm2 = smoothstep(0.35, 0.75, rpN(vRP.xz * 0.18)) * smoothstep(0.75, 1.1, vRP.y + 0.9);
+          vec3 dn = vec3(-(hx - h0) / e, 0.0, -(hz - h0) / e) * 0.012 * rpm2; normal = normalize(normal + (viewMatrix * vec4(dn, 0.0)).xyz); }`); };
+  m.customProgramCacheKey = () => pk + '-ripple200'; m.needsUpdate = true;
+})();
+
+/* ================================================================
+   v201 THE LOOK: N3W LINK (2026-11-23)
+   The slim street kiosks that replaced New York's payphones, here as N3W LINK: three metre steel slabs on the
+   promenade, a screen on each face cycling the island's own feed: New York time and the weather, the next
+   Meme card, a GM, and a public service notice. Four of them, at the four quarters. ?link=0 off.
+   ================================================================ */
+const LINK = { list: [], t: 0, i: 0 };
+window.__LINK = LINK;
+(function linkKiosks() {
+  if (!LOOK.on || /link=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 512; const tx = new THREE.CanvasTexture(cv); tx.encoding = THREE.sRGBEncoding; LINK.cv = cv; LINK.tex = tx;
+  const body = new THREE.MeshStandardMaterial({ color: 0x2c2f33, roughness: 0.35, metalness: 0.7 }), scr = new THREE.MeshBasicMaterial({ map: tx, toneMapped: false });
+  [45, 135, 225, 315].forEach(a => { const [x, z] = P2(a + 4, 43.1), g = 0.665, ry = Math.atan2(-x, -z);
+    const k = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.9, 0.3), body); k.position.set(x, g + 1.45, z); k.rotation.y = ry; k.castShadow = true; scene.add(k);
+    [0, PI].forEach(s => { const p = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 1.2), scr); p.position.set(x + Math.sin(ry + s) * 0.152, g + 1.9, z + Math.cos(ry + s) * 0.152); p.rotation.y = ry + s; scene.add(p); });
+    const top = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.08, 0.32), new THREE.MeshStandardMaterial({ color: 0x2962ff, roughness: 0.4 })); top.position.set(x, g + 2.92, z); top.rotation.y = ry; scene.add(top);
+    if (typeof post === 'function') post(x, z, 0.45); LINK.list.push(k); });
+  LINK.draw = () => { const c = cv.getContext('2d'); if (!c || !c.fillRect || !c.fillText) return; const t = nycTime(TIME.utc), W = (WX.override || WX.cur || 'CLEAR'); const pg = LINK.i % 4;
+    c.fillStyle = pg === 3 ? '#FF6B00' : '#0D0D0D'; c.fillRect(0, 0, 256, 512); c.fillStyle = '#2962FF'; c.fillRect(0, 0, 256, 40); c.fillStyle = '#F0F4F8'; c.font = '700 22px "JetBrains Mono", Menlo, monospace'; c.textAlign = 'center'; c.fillText('N3W LINK', 128, 28);
+    const pad = n => (n < 10 ? '0' : '') + n;
+    if (pg === 0) { c.font = '400 92px Anton, Impact, sans-serif'; c.fillText(((t.h + 11) % 12 + 1) + ':' + pad(t.m), 128, 200); c.font = '700 26px "JetBrains Mono", Menlo, monospace'; c.fillText(t.h < 12 ? 'AM' : 'PM', 128, 240); c.fillText(W, 128, 320); c.font = '400 18px "JetBrains Mono", Menlo, monospace'; c.fillText('NEW YORK HARBOR', 128, 360); }
+    else if (pg === 1) { c.font = '400 70px Anton, Impact, sans-serif'; c.fillText('GM', 128, 230); c.font = '400 20px "JetBrains Mono", Menlo, monospace'; c.fillText('FREE WIFI. FREE CALLS.', 128, 300); c.fillText('NO SEED PHRASES.', 128, 330); }
+    else if (pg === 2) { c.font = '400 44px Anton, Impact, sans-serif'; c.fillText('THE MEMES', 128, 200); c.fillText('BY 6529', 128, 250); c.font = '400 20px "JetBrains Mono", Menlo, monospace'; c.fillText('577 CARDS ON THIS', 128, 320); c.fillText('ISLAND. FIND THEM.', 128, 348); }
+    else { c.fillStyle = '#0D0D0D'; c.font = '400 46px Anton, Impact, sans-serif'; c.fillText('IF YOU SEE', 128, 190); c.fillText('SOMETHING', 128, 240); c.fillText('MINT', 128, 290); c.fillText('SOMETHING', 128, 340); }
+    tx.needsUpdate = true; };
+  LINK.draw();
+})();
+window.__FRAMES.push(dt => { try { if (!LINK.draw) return; LINK.t += dt; if (LINK.t > 6) { LINK.t = 0; LINK.i++; LINK.draw(); } } catch (e) { } });
+
+/* ================================================================
+   v202 THE LOOK: PIGEONS ON THE LEDGES (2026-11-23)
+   Every cornice in New York has its pigeons. A row sits along the walk up's cornice, more on the bank's, a few on
+   the water tower building's parapet: grey blue, each its own shade, heads bobbing, now and then one turning
+   round or shuffling along the ledge. ?ledges=0 off.
+   ================================================================ */
+const LEDGE = { birds: [] };
+window.__LEDGE = LEDGE;
+(function ledgePigeons() {
+  if (!FAC_ON || /ledges=0/.test(location.search)) return; const spots = [];
+  if (window.__BROWN && BROWN.H) { const y = BROWN.g0 + BROWN.H + 0.11, x = BROWN_AT.x - 3.5 - 0.32; for (let i = 0; i < 9; i++) spots.push([x, y, BROWN_AT.z - 3.6 + Math.random() * 7.2, -PI / 2 + (Math.random() - 0.5)]); }
+  { const g = ground(-66, 0) + 0.02, y = g + 10.3 + 0.11; for (let i = 0; i < 8; i++) spots.push([-66 - 4 + Math.random() * 10, y, -9.3 - 0.32, PI + (Math.random() - 0.5)]); for (let i = 0; i < 6; i++) spots.push([-74.3 - 0.32, y, -6 + Math.random() * 12, -PI / 2 + (Math.random() - 0.5)]); }
+  if (window.__WT && WT.top) { const y = WT.top + 0.7 + 0.01; for (let i = 0; i < 5; i++) spots.push([WT_AT.x - 3 + Math.random() * 6, y, WT_AT.z + 3.5 + 0.02, Math.random() * PI * 2]); }
+  const N = spots.length; if (!N) return;
+  const body = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 10, 8), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }), N), head = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshStandardMaterial({ color: 0x5a6068, roughness: 0.7 }), N), tail = new THREE.InstancedMesh(new THREE.BoxGeometry(0.06, 0.015, 0.1), new THREE.MeshStandardMaterial({ color: 0x3e434a, roughness: 0.8 }), N);
+  const c = new THREE.Color(); spots.forEach((s, i) => { body.setColorAt(i, c.setHSL(0.62, 0.08 + Math.random() * 0.06, 0.2 + Math.random() * 0.12)); LEDGE.birds.push({ x: s[0], y: s[1], z: s[2], ry: s[3], ph: Math.random() * 10, t: Math.random() * 8 }); });
+  [body, head, tail].forEach(o => { o.castShadow = true; o.frustumCulled = false; scene.add(o); }); LEDGE.body = body; LEDGE.head = head; LEDGE.tail = tail;
+})();
+const _lgq = new THREE.Quaternion(), _lgm = new THREE.Matrix4(), _lgv = new V3(), _lgy = new V3(0, 1, 0);
+window.__FRAMES.push(dt => { try { if (!LEDGE.body) return; const T0 = LIFE.t;
+  LEDGE.birds.forEach((b, i) => { b.t -= dt; if (b.t < 0) { b.t = 3 + Math.random() * 9; if (Math.random() < 0.5) b.ry += (Math.random() - 0.5) * 2.4; }
+    _lgq.setFromAxisAngle(_lgy, b.ry); const f = new V3(Math.sin(b.ry), 0, Math.cos(b.ry));
+    _lgm.compose(_lgv.set(b.x, b.y + 0.07, b.z), _lgq, new V3(0.085, 0.075, 0.14)); LEDGE.body.setMatrixAt(i, _lgm);
+    const bob = Math.max(0, Math.sin(T0 * 6 + b.ph)) * 0.025; _lgm.compose(_lgv.set(b.x + f.x * (0.12 + bob), b.y + 0.15, b.z + f.z * (0.12 + bob)), _lgq, new V3(1, 1, 1)); LEDGE.head.setMatrixAt(i, _lgm);
+    _lgm.compose(_lgv.set(b.x - f.x * 0.16, b.y + 0.06, b.z - f.z * 0.16), _lgq, new V3(1, 1, 1)); LEDGE.tail.setMatrixAt(i, _lgm); });
+  [LEDGE.body, LEDGE.head, LEDGE.tail].forEach(o => o.instanceMatrix.needsUpdate = true); } catch (e) { } });
+
+/* ================================================================
+   v203 THE LOOK: TAGS (2026-11-23)
+   Concrete in New York does not stay clean. The SURVIVE walls and the factory's long sides carry a handful of
+   spray painted tags at arm height between the buttresses: bubble letters and fast handstyles, outlined, filled,
+   a drip or two, some half buffed out with grey paint that does not match. ?tags=0 off.
+   ================================================================ */
+const TAGS = { n: 0 };
+window.__TAGS = TAGS;
+(function tags() {
+  if (!LOOK.on || /tags=0/.test(location.search)) return;
+  const words = [['N3W', '#ff4fa3', '#111'], ['GM', '#2fd0e8', '#0d0d0d'], ['SZN', '#ffd400', '#1a1a1a'], ['HODL', '#ffffff', '#2962ff'], ['4:20', '#7dff6a', '#111'], ['WAGMI', '#ff6b00', '#0d0d0d'], ['NGMI', '#c9c9c9', '#222'], ['SEIZE', '#ff3b3b', '#111']];
+  const mk = (w, fill, line, buff) => { const cv = document.createElement('canvas'); cv.width = 512; cv.height = 256; const c = cv.getContext('2d'); if (!c || !c.fillText || !c.save) return null;
+    c.clearRect(0, 0, 512, 256); if (buff) { c.fillStyle = 'rgba(120,118,112,0.85)'; c.fillRect(20, 40, 470, 170); }
+    c.save(); c.translate(256, 140); c.rotate(-0.08 + Math.random() * 0.16); c.font = `400 ${w.length > 4 ? 150 : 200}px "Permanent Marker", Anton, Impact, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
+    c.lineWidth = 26; c.strokeStyle = line; c.strokeText(w, 0, 0); c.fillStyle = fill; c.fillText(w, 0, 0); c.lineWidth = 4; c.strokeStyle = 'rgba(255,255,255,0.7)'; c.strokeText(w, -3, -4);
+    c.fillStyle = fill; for (let i = 0; i < 4; i++) { const x = -150 + Math.random() * 300, l = 20 + Math.random() * 60; c.fillRect(x, 30, 4, l); c.beginPath && (c.beginPath(), c.arc(x + 2, 30 + l, 3.5, 0, PI * 2), c.fill()); } c.restore();
+    const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t; };
+  const put = (x, y, z, ry, i, buff) => { const [w, f, l] = words[i % words.length], t = mk(w, f, l, buff); if (!t) return; const m = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 1.4), new THREE.MeshStandardMaterial({ map: t, transparent: true, depthWrite: false, roughness: 0.85, polygonOffset: true, polygonOffsetFactor: -3 }));
+    m.position.set(x, y, z); m.rotation.y = ry; m.renderOrder = 2; scene.add(m); TAGS.n++; };
+  const gB = 0.6; put(28, gB + 1.6, 39.86, PI, 0, false); put(40, gB + 1.8, 39.86, PI, 1, false); put(52, gB + 1.5, 39.86, PI, 2, false); put(34, gB + 1.7, 48.14, 0, 3, false); put(46, gB + 1.6, 48.14, 0, 4, false);
+  try { const g = ground(0, -64) + 0.02; put(16.3, g + 2.4, -71.6, PI / 2, 5, false); put(16.3, g + 2.6, -62.0, PI / 2, 6, false); put(-16.3, g + 2.5, -58.8, -PI / 2, 7, false); } catch (e) { }
+})();
+
+/* ================================================================
+   v204 THE LOOK: CELLAR DOORS (2026-11-23)
+   The steel doors set into the sidewalk in front of New York shops, where the deliveries go down: two leaves of
+   diamond plate in an angle iron frame, hinges along the outside edges, worn bright down the middle where everyone
+   walks over them. In front of the bodega and the laundromat. ?cellar=0 off.
+   ================================================================ */
+(function cellarDoors() {
+  if (!LOOK.on || /cellar=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.save) { c.fillStyle = '#4a4b4c'; c.fillRect(0, 0, 256, 256); for (let y = 0; y < 256; y += 16) for (let x = 0; x < 256; x += 16) { const o = (y / 16) % 2 ? 8 : 0; c.save(); c.translate(x + o, y + 8); c.rotate((y / 16) % 2 ? 0.8 : -0.8); c.fillStyle = '#8b8c8d'; c.fillRect(-6, -1.5, 12, 3); c.restore(); }
+    const g = c.createLinearGradient(0, 0, 256, 0); if (g) { g.addColorStop(0, 'rgba(0,0,0,0.25)'); g.addColorStop(0.5, 'rgba(255,255,255,0.18)'); g.addColorStop(1, 'rgba(0,0,0,0.25)'); c.fillStyle = g; c.fillRect(0, 0, 256, 256); } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const plate = new THREE.MeshStandardMaterial({ map: t, roughness: 0.45, metalness: 0.75 }), frame = new THREE.MeshStandardMaterial({ color: 0x2a2b2c, roughness: 0.5, metalness: 0.7 });
+  const door = (x, z, ry) => { const g = new THREE.Group(); g.position.set(x, ground(x, z) + 0.13, z); g.rotation.y = ry; scene.add(g);
+    [-0.36, 0.36].forEach(s => { const p = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.03, 1.4), plate); p.position.set(s, 0.015, 0); p.receiveShadow = true; g.add(p); const h = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.18), frame); [-0.45, 0.45].forEach(zz => { const hh = h.clone(); hh.position.set(s * 1.97, 0.03, zz); g.add(hh); }); });
+    const f = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.035, 1.5), frame); f.position.y = 0.0; g.add(f); };
+  door(10.6, 62.2, PI / 2); door(-82.2, -6.6, PI / 2);
+})();
+
+/* ================================================================
+   v205 THE LOOK: CALL BOXES AND PARKING SIGNS (2026-11-23)
+   The red fire alarm call box on its post, with the glass globe on top that glows at night, at four corners of
+   the island; and on every third lamp post of the ring road a NO STANDING ANYTIME plate, red on white, the sign
+   no New York driver reads. ?callbox=0 off.
+   ================================================================ */
+const CALLBOX = { glow: null };
+window.__CALLBOX = CALLBOX;
+(function callBoxes() {
+  if (!LOOK.on || /callbox=0/.test(location.search)) return;
+  const red = new THREE.MeshStandardMaterial({ color: 0xb3171f, roughness: 0.45, metalness: 0.4 }), glow = new THREE.MeshStandardMaterial({ color: 0x401010, emissive: 0xff3030, emissiveIntensity: 0, roughness: 0.2 }); CALLBOX.glow = glow;
+  [[8.5, 74], [-52.5, 12.5], [44, 33], [-71.5, -45.5]].forEach(([x, z]) => { const g = ground(x, z);
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 1.5, 10), red); p.position.set(x, g + 0.75, z); p.castShadow = true; scene.add(p);
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.38, 0.22), red); b.position.set(x, g + 1.5, z); b.castShadow = true; scene.add(b);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.12, 10), red); cap.position.set(x, g + 1.75, z); scene.add(cap);
+    const gl = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), glow); gl.position.set(x, g + 1.9, z); scene.add(gl);
+    const lb = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.12), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'FIRE', s: 0.5 }], 128, 64, '#b3171f', '#ffffff') })); lb.position.set(x, g + 1.55, z + 0.112); scene.add(lb);
+    if (typeof post === 'function') post(x, z, 0.25); });
+  const pt = signTex([{ t: 'NO', s: 0.16, c: '#c8102e' }, { t: 'STANDING', s: 0.14, c: '#c8102e' }, { t: 'ANYTIME', s: 0.12, c: '#c8102e' }], 192, 288, '#f7f6f1', '#c8102e');
+  const pm = new THREE.MeshStandardMaterial({ map: pt, roughness: 0.5 });
+  for (let i = 1; i < 36; i += 3) { const a = (i + 0.5) / 36 * 360, [x, z] = P2(a, 94.5), g = ground(x, z), out = Math.atan2(x, z); const s = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.45), pm); s.position.set(x + Math.sin(out) * 0.13, g + 2.5, z + Math.cos(out) * 0.13); s.rotation.y = out; scene.add(s); }
+})();
+window.__FRAMES.push(() => { try { if (CALLBOX.glow) CALLBOX.glow.emissiveIntensity = 0.15 + 2.2 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v206 THE TOUR MEETS THE SITE (2026-11-23)
+   Three more stops before the aerial: the steel of BUIDL and its tower crane, the wind ripples on GM beach, and
+   an N3W LINK kiosk on the promenade.
+   ================================================================ */
+(function tourV206() {
+  const add = [];
+  try { const g = ground(-48, -47); add.push({ name: 'the steel', dur: 8, pos: [[-30, g + 1.7, -36], [-32, g + 2.2, -40]], look: [[-46, g + 7, -47], [-40, g + 18, -56]] }); } catch (e) { }
+  add.push({ name: 'the ripples', dur: 7, pos: [[14, 1.4, 112], [18, 1.2, 116]], look: [[22, 0, 122], [26, 0, 126]] });
+  try { const [x, z] = P2(49, 43.1); add.push({ name: 'n3w link', dur: 6, pos: [[x * 0.86, 1.7, z * 0.86], [x * 0.9, 1.7, z * 0.9]], look: [[x, 2.0, z], [x, 2.0, z]] }); } catch (e) { }
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 

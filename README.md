@@ -455,3 +455,15 @@ the coping at night (?ribbon=0). v194 the bodega's striped canvas awning on a st
 valance (?awning=0). v195 two flagpoles at the bank, the Stars and Stripes and the N3W flag, waving with the wind
 (?flags=0). v196 four tour stops. Still 60 fps at full quality on the M5 Pro at retina.
 Known: in the afternoon the docked ferry shades the pier deck almost black.
+
+## v197 to v206 (2026-11-23): the site, the sand, the street
+v197 sky fill raised a fifth by day, golden hour and dawn (?fill=0; small visible change). v198 BUIDL rebuilt in
+red oxide wide flange steel: columns, beams under every deck, X bracing, yellow guardrails, orange safety netting
+(?buidl=0). v199 the tower crane as a lattice: four chord mast with lacing, triangular jib and counter jib, cab
+(?crane=0). v200 wind ripples and damp sand on the beach (?ripples=0). v201 four N3W LINK kiosks on the promenade
+cycling New York time and weather, GM, the Memes and IF YOU SEE SOMETHING MINT SOMETHING (?link=0). v202 pigeons on
+the walk up, bank and water tower ledges, bobbing and turning (?ledges=0). v203 spray painted tags between the
+SURVIVE buttresses and on the factory sides (?tags=0). v204 diamond plate cellar doors in front of the bodega and
+laundromat (?cellar=0). v205 red fire alarm call boxes with globes lit at night, NO STANDING ANYTIME plates on the
+ring road lamps (?callbox=0). v206 three tour stops. Also: the pier deck (v187) was nearly black at every hour; the
+plank texture there is lifted to weathered grey brown wood.

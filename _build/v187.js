@@ -13,7 +13,7 @@ window.__PIER2 = PIER2;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPW; varying float vPU;').replace('#include <project_vertex>', '#include <project_vertex>\n{ vec4 pw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\npw = instanceMatrix * pw;\n#endif\nvPW = (modelMatrix * pw).xyz; vPU = normalize(mat3(modelMatrix) * objectNormal).y; }');
       sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vPW; varying float vPU; float pwH(float x){ return fract(sin(x * 91.7) * 43758.5); }').replace('#include <color_fragment>', `#include <color_fragment>
         if (vPU > 0.9 && abs(vPW.x) < 3.05 && vPW.z > 125.5 && vPW.z < 182.5 && vPW.y > 0.45 && vPW.y < 0.65) { float b = vPW.z / 0.18, bi = floor(b), f = fract(b);
-          diffuseColor.rgb *= 0.82 + 0.3 * pwH(bi); float seam = 1.0 - smoothstep(0.0, 0.06, min(f, 1.0 - f)); diffuseColor.rgb *= 1.0 - 0.6 * seam;
+          diffuseColor.rgb *= vec3(2.3, 2.1, 1.9) * (0.82 + 0.3 * pwH(bi)); float seam = 1.0 - smoothstep(0.0, 0.06, min(f, 1.0 - f)); diffuseColor.rgb *= 1.0 - 0.6 * seam;
           float jx = mod(vPW.x + 3.0, 1.5); float nail = (1.0 - smoothstep(0.012, 0.022, length(vec2(jx - 0.75, (f - 0.5) * 0.18)))); diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.08, 0.07, 0.06), nail * 0.8); }`); };
     m.customProgramCacheKey = () => pk + '-pier187'; m.needsUpdate = true; }
   const iron = new THREE.MeshStandardMaterial({ color: 0x1b1d1f, roughness: 0.5, metalness: 0.6 }), orange = new THREE.MeshStandardMaterial({ color: 0xff6b00, roughness: 0.55 }), white = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.6 });
