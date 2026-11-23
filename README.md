@@ -420,3 +420,9 @@ The Colossus pedestal gets a stepped plinth, rustication, corner piers, pilaster
 the manner of Liberty's (most of it sits behind the rock, so the gain is small). The SURVIVE walls get board form
 concrete buttresses, a coping, scuppers with rust stains and form joints. The bell tower gets corner boards, a water
 table, a belt course, louvred openings with pediments and a pedimented door. ?facades=0 turns it off.
+
+## v176 (2026-11-23): THE LOOK, seventh pass (street structures)
+The welcome billboard becomes a real New York billboard: steel frame, catwalk and railing, gooseneck lamps lit at
+dusk, steel stringers on the back, steel jackets and kickers on the legs. The Open Wall gets a green sidewalk shed
+(posts, beams, deck, fascia with a permit board, bulbs underneath) and stud framing with raking braces behind. The
+lighthouse vault floor gets a bronze portal round the PORT door, steel bands, a stone plinth and steps. ?facades=0.
