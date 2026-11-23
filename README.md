@@ -394,3 +394,8 @@ MLow asked for huge, premium upgrades rather than more features. Diagnosis from 
 - v170 THE LAWN: up to 90,000 grass blades in a 46 m square that travels with the player (each blade fixed to its world spot), lit and shadowed by the scene's sun, leaning in the wind, fading at the edge. A top-down render of the island (grass white, everything else black, surface height in G and B) tells the blades where lawn is, so nothing grows through paths or props; it is retaken at 6, 25 and 70 seconds as props load. Desktop only, ?grass=0.
 - v171 LAMPLIGHT ON THE GROUND: the walkable materials (grass, sand, paving, concrete, road, stone, lime, pier wood) compute the light of up to 48 lamps per pixel, so the ground's own texture lights up warm under each lamp; v112's flat discs dimmed to a faint glow.
 - v146 flare: the two ring ghosts toned down (they read as a circle drawn on the screen).
+
+## v172 (2026-11-23): THE LOOK, third pass (buildings and props)
+- v172 WEATHERING: every material used on a mesh over 2 m (people and animals excluded, ground and metals skipped) gets world space mottling in colour and roughness, grime rising from the ground, rain streaks on tall walls and a faint sun bleach on tops; 479 materials. ?weather=0.
+- Window glow by day: warm emissive on dark untextured surfaces (market stall fronts, windows) now follows the lamps (12% by day), so those faces take sunlight and shadow instead of glowing flat.
+- Finding: the remaining cheapness on buildings is geometry (flat boxes, painted windows, no trim), which needs per building rebuilds, not a global pass.
