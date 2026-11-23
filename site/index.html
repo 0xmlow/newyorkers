@@ -12306,6 +12306,226 @@ window.__FRAMES.push(() => { try { if (CALLBOX.glow) CALLBOX.glow.emissiveIntens
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v207 THE LOOK: THE MARKET'S GOODS (2026-11-23)
+   The five kiosks had empty brown counters. Each now sells what its sign says: HOT CIDER has a steaming kettle and
+   a row of paper cups; EYE BAUBLES hangs blue and white glass eyes on strings across its front; N3W PRINTS has
+   print bins of cards; KNITS has a row of bobble hats and scarves hung on the frame; CHURROS has paper cones of
+   churros and a sugar tray. Every kiosk gets shelves of stock on its back wall. ?goods=0 off.
+   ================================================================ */
+const GOODS = {};
+window.__GOODS = GOODS;
+(function marketGoods() {
+  if (!LOOK.on || /goods=0/.test(location.search) || !window.__MKT || !MKT.k || !MKT.k.length) return;
+  const M = c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.6 }), parts = new Map(), put = (geo, mat, x, y, z, s, rx) => { const k = geo.uuid + mat.uuid; if (!parts.has(k)) parts.set(k, { geo, mat, list: [] }); parts.get(k).list.push([x, y, z, s || 1, rx || 0]); };
+  const cup = new THREE.CylinderGeometry(0.045, 0.035, 0.11, 10), ball = new THREE.SphereGeometry(0.055, 12, 10), hat = new THREE.SphereGeometry(0.09, 12, 8, 0, PI * 2, 0, PI / 2), box = new THREE.BoxGeometry(1, 1, 1), stick = new THREE.CylinderGeometry(0.013, 0.013, 0.24, 6), cone = new THREE.ConeGeometry(0.05, 0.14, 10), str = new THREE.CylinderGeometry(0.003, 0.003, 1, 3);
+  const white = M(0xf2efe8), red = M(0x9a2430), blue = new THREE.MeshStandardMaterial({ color: 0x2962ff, roughness: 0.15, metalness: 0.2 }), glassW = new THREE.MeshStandardMaterial({ color: 0xf0f4f8, roughness: 0.15 }), brown = M(0xa8692c), sugar = M(0xe9dcc0), kraft = M(0xb89466), ink = M(0x1a1a1a);
+  const knits = [0x9a2430, 0x2f4a33, 0xd9b45a, 0x2962ff, 0xefe8da, 0x6b4a8a].map(M), stock = [0x9a2430, 0xd9b45a, 0x2f4a33, 0xefe8da, 0x2962ff, 0xb06a1c, 0x5a3f28].map(M);
+  MKT.k.forEach((k, i) => { const gy = ground(k.x, k.z), fz = k.z - 0.85, top = gy + 1.0;   // kiosks face -z; the counter top is at 1.0
+    if (i === 0) { for (let j = 0; j < 8; j++) put(cup, j % 2 ? white : red, k.x - 1.2 + j * 0.16, top + 0.055, fz + 0.05); put(new THREE.CylinderGeometry(0.16, 0.18, 0.3, 16), ink, k.x + 0.9, top + 0.15, fz + 0.02); }
+    if (i === 1) for (let j = 0; j < 14; j++) { const x = k.x - 1.45 + j * 0.22, y = gy + 2.15 - (j % 3) * 0.18; put(str, ink, x, y + 0.2, fz - 0.45, 1); put(ball, j % 2 ? blue : glassW, x, y, fz - 0.45); }
+    if (i === 2) [-0.9, -0.3, 0.3, 0.9].forEach(x => { put(box, kraft, k.x + x, top + 0.12, fz + 0.02, [0.5, 0.24, 0.32]); for (let c = 0; c < 6; c++) put(box, stock[(c + i) % stock.length], k.x + x - 0.18 + c * 0.07, top + 0.27, fz + 0.02, [0.012, 0.22, 0.28], -0.25); });
+    if (i === 3) { for (let j = 0; j < 9; j++) put(hat, knits[j % knits.length], k.x - 1.25 + j * 0.31, top, fz + 0.03); for (let j = 0; j < 5; j++) put(box, knits[(j + 2) % knits.length], k.x - 1.3 + j * 0.65, gy + 1.75, fz - 0.42, [0.18, 0.75, 0.02]); }
+    if (i === 4) { for (let j = 0; j < 7; j++) { const x = k.x - 1.1 + j * 0.3; put(cone, white, x, top + 0.07, fz + 0.05, 1, PI); for (let s = 0; s < 3; s++) put(stick, brown, x - 0.02 + s * 0.02, top + 0.2, fz + 0.05); } put(box, sugar, k.x + 1.0, top + 0.03, fz + 0.03, [0.4, 0.05, 0.25]); }
+    // shelves of stock on the back wall (world z + 1.0)
+    [1.3, 1.75].forEach(y => { put(box, kraft, k.x, gy + y, k.z + 0.92, [2.9, 0.035, 0.28]); for (let s = 0; s < 14; s++) put(box, stock[(s * 3 + i + (y > 1.5 ? 2 : 0)) % stock.length], k.x - 1.3 + s * 0.2, gy + y + 0.1, k.z + 0.9, [0.12, 0.16 + (s % 3) * 0.03, 0.12]); }); });
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(); let n = 0;
+  parts.forEach(({ geo, mat, list }) => { const im = new THREE.InstancedMesh(geo, mat, list.length); list.forEach(([x, y, z, s, rx], j) => { const sc = Array.isArray(s) ? new V3(s[0], s[1], s[2]) : new V3(s, geo === str ? (s === 1 ? 0.3 : s) : s, s); m4.compose(new V3(x, y, z), q.setFromEuler(e.set(rx, 0, 0)), sc); im.setMatrixAt(j, m4); }); im.castShadow = true; scene.add(im); n += list.length; });
+  GOODS.n = n;
+})();
+
+/* ================================================================
+   v208 THE LOOK: THE MARKET AT NIGHT (2026-11-23)
+   At night the kiosks were dark boxes under the string lights. Now each glows from inside the way a winter market
+   does: a warm light panel under the roof, the back wall and the goods lit up, a soft pool of light spilling onto
+   the ground in front of each counter, and the string light bulbs a little bigger and brighter. ?marketnight=0 off.
+   ================================================================ */
+const MNIGHT = { mats: [] };
+window.__MNIGHT = MNIGHT;
+(function marketNight() {
+  if (!LOOK.on || /marketnight=0/.test(location.search) || !window.__MKT || !MKT.k) return;
+  const panel = new THREE.MeshStandardMaterial({ color: 0x2a2016, emissive: 0xffc98a, emissiveIntensity: 0 }); MNIGHT.mats.push(panel);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d'); if (c && c.createRadialGradient) { const g = c.createRadialGradient(64, 64, 4, 64, 64, 64); g.addColorStop(0, 'rgba(255,200,140,0.9)'); g.addColorStop(1, 'rgba(255,170,100,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); }
+  const pool = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }); MNIGHT.pool = pool;
+  MKT.k.forEach(k => { const gy = ground(k.x, k.z); const p = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 1.9), panel); p.rotation.x = PI / 2; p.position.set(k.x, gy + 2.44, k.z); scene.add(p);
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 3.2), pool); pl.rotation.x = -PI / 2; pl.position.set(k.x, gy + 0.05, k.z - 2.2); pl.renderOrder = 4; scene.add(pl); });
+  try { if (MKT.warm) MNIGHT.warm = MKT.warm; } catch (e) { }
+})();
+window.__FRAMES.push(() => { try { if (!MNIGHT.pool) return; const k = Math.min(1, (L.lamps || 0) * 1.3); MNIGHT.mats.forEach(m => m.emissiveIntensity = 0.15 + 1.6 * k); MNIGHT.pool.opacity = 0.55 * k; } catch (e) { } });
+
+/* ================================================================
+   v209 THE LOOK: ROOMS BEHIND THE WINDOWS (2026-11-23)
+   A lit window in New York is a glimpse of a room: a ceiling light, the top of a bookcase, a plant, a lampshade,
+   a curtain edge. The lit windows on the rebuilt buildings were flat orange. They now show one of three rooms,
+   chosen per window, warm at the ceiling and darker toward the sill. ?rooms=0 off.
+   ================================================================ */
+(function rooms() {
+  if (!FAC_ON || /rooms=0/.test(location.search) || !FACM.lit) return;
+  const cv = document.createElement('canvas'); cv.width = 384; cv.height = 192; const c = cv.getContext('2d'); if (!c || !c.fillRect || !c.createLinearGradient) return;
+  for (let r = 0; r < 3; r++) { const x0 = r * 128, g = c.createLinearGradient(0, 0, 0, 192); g.addColorStop(0, ['#ffd9a0', '#ffe8c4', '#ffc98a'][r]); g.addColorStop(0.55, ['#e8a868', '#d9b890', '#c88a54'][r]); g.addColorStop(1, '#4a3424'); c.fillStyle = g; c.fillRect(x0, 0, 128, 192);
+    c.fillStyle = 'rgba(255,250,230,0.9)'; c.fillRect(x0 + 50, 6, 28, 6);
+    c.fillStyle = 'rgba(40,26,16,0.85)';
+    if (r === 0) { c.fillRect(x0 + 8, 90, 46, 102); for (let s = 0; s < 4; s++) c.fillRect(x0 + 8, 92 + s * 24, 46, 3); c.fillRect(x0 + 92, 120, 6, 72); if (c.ellipse) { c.beginPath(); c.ellipse(x0 + 95, 112, 16, 22, 0, 0, PI * 2); c.fill(); } }
+    if (r === 1) { c.fillRect(x0 + 14, 150, 100, 42); c.fillRect(x0 + 18, 128, 30, 24); c.fillStyle = 'rgba(255,240,200,0.9)'; c.beginPath && (c.beginPath(), c.moveTo(x0 + 86, 100), c.lineTo(x0 + 110, 100), c.lineTo(x0 + 104, 82), c.lineTo(x0 + 92, 82), c.fill()); c.fillStyle = 'rgba(40,26,16,0.85)'; c.fillRect(x0 + 96, 100, 4, 50); }
+    if (r === 2) { c.fillStyle = 'rgba(120,40,30,0.55)'; c.fillRect(x0, 0, 26, 192); c.fillRect(x0 + 102, 0, 26, 192); c.fillStyle = 'rgba(40,26,16,0.8)'; c.fillRect(x0 + 40, 60, 48, 36); c.fillStyle = 'rgba(60,140,180,0.6)'; c.fillRect(x0 + 44, 64, 40, 28); } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const m = FACM.lit; m.emissiveMap = t; m.emissive.setHex(0xffffff); m.color.setHex(0x0e0b08);
+  m.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <uv_vertex>', `#include <uv_vertex>
+    #ifdef USE_INSTANCING
+      { vec3 ip = instanceMatrix[3].xyz; float h = fract(sin(dot(ip, vec3(12.9898, 78.233, 37.719))) * 43758.5453); vUv.x = vUv.x / 3.0 + floor(h * 3.0) / 3.0; }
+    #endif`); };
+  m.customProgramCacheKey = () => 'mi-rooms-v209'; m.needsUpdate = true;
+})();
+
+/* ================================================================
+   v210 THE LOOK: NEON IN THE WINDOWS (2026-11-23)
+   The bodega's windows get the neon every corner store has: OPEN in red with a blue border, ATM, LOTTO and
+   COLD JPGs; the laundromat gets a blue WASH DRY FOLD. Glass tubes that buzz on at dusk and flicker now and then,
+   left on all night. ?neon2=0 off.
+   ================================================================ */
+const NEON2 = { list: [] };
+window.__NEON2 = NEON2;
+(function windowNeon() {
+  if (!LOOK.on || /neon2=0/.test(location.search)) return;
+  const mk = (lines, w, h) => { const cv = document.createElement('canvas'); cv.width = 512; cv.height = Math.round(512 * h / w); const c = cv.getContext('2d'); if (!c || !c.fillText || !c.strokeText || !c.strokeRect) return null; c.clearRect(0, 0, cv.width, cv.height);
+    c.lineJoin = 'round'; c.textAlign = 'center'; c.textBaseline = 'middle'; const H = cv.height;
+    lines.forEach(([t, col, y, s, box]) => { c.font = `700 ${s}px "Arial Rounded MT Bold", "Helvetica Neue", Arial, sans-serif`; c.shadowColor = col; c.shadowBlur = 18; c.strokeStyle = col; c.lineWidth = 7; c.strokeText(t, 256, y * H); c.shadowBlur = 0; c.strokeStyle = '#fff'; c.lineWidth = 2; c.strokeText(t, 256, y * H);
+      if (box) { c.shadowColor = box; c.shadowBlur = 16; c.strokeStyle = box; c.lineWidth = 6; c.strokeRect(14, 14, 484, H - 28); c.shadowBlur = 0; } });
+    const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; return t; };
+  const add = (tex, w, h, x, y, z, ry) => { if (!tex) return; const m = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, opacity: 0 }); const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m); p.position.set(x, y, z); p.rotation.y = ry; p.renderOrder = 5; scene.add(p); NEON2.list.push({ m, f: Math.random() * 20 }); };
+  const bg = ground(17, 66) + 0.02, fx = 17 - 5 - 0.24;
+  add(mk([['OPEN', '#ff2a3a', 0.5, 130, '#2a7bff']], 1.1, 0.55), 1.1, 0.55, fx, bg + 2.2, 63.2, -PI / 2);
+  add(mk([['ATM', '#36ff7a', 0.5, 150]], 0.7, 0.35), 0.7, 0.35, fx, bg + 1.75, 61.8, -PI / 2);
+  add(mk([['LOTTO', '#ffd400', 0.5, 120]], 0.9, 0.35), 0.9, 0.35, fx, bg + 2.2, 69.0, -PI / 2);
+  add(mk([['COLD', '#2fd0ff', 0.32, 110], ['JPGs', '#ff4fd8', 0.72, 110]], 0.9, 0.7), 0.9, 0.7, fx, bg + 1.8, 70.4, -PI / 2);
+  try { if (window.__LAUND && LAUND.g0 != null) add(mk([['WASH · DRY · FOLD', '#3aa8ff', 0.5, 64, '#ff4fa3']], 1.8, 0.45), 1.8, 0.45, LAUND.fx + 0.02, LAUND.g0 + 2.35, LAUND.z0 + 2.2, PI / 2); } catch (e) { }
+})();
+window.__FRAMES.push(dt => { try { if (!NEON2.list.length) return; const k = Math.min(1, Math.max(0, ((L.lamps || 0) - 0.05) * 2)); NEON2.list.forEach(n => { n.f -= dt; let fl = 1; if (n.f < 0) { fl = Math.random() < 0.5 ? 0.15 : 1; if (n.f < -0.25) n.f = 8 + Math.random() * 25; } n.m.opacity = k * fl * 0.95; }); } catch (e) { } });
+
+/* ================================================================
+   v211 THE LOOK: HONOR BOXES (2026-11-23)
+   The row of coin operated newspaper boxes chained together on a New York corner, each a different colour and
+   each with its paper in the window: THE MEME TIMES, N3W POST, DAILY GM, THE FLOOR STREET JOURNAL and a free real
+   estate weekly. At (-13, 75), by the census walk. ?honor=0 off.
+   ================================================================ */
+(function honorBoxes() {
+  if (!LOOK.on || /honor=0/.test(location.search)) return; const x0 = -13, z0 = 75, g = ground(x0, z0) + 0.02, ry = 0;
+  const papers = [['THE MEME TIMES', '#1f4fd8'], ['N3W POST', '#c8102e'], ['DAILY GM', '#f2c200'], ['FLOOR ST JOURNAL', '#2f4a33'], ['FREE: REAL ESTATE', '#e9e4da']];
+  const leg = new THREE.MeshStandardMaterial({ color: 0x222426, roughness: 0.5, metalness: 0.6 });
+  papers.forEach(([nm, col], i) => { const x = x0 - 1.6 + i * 0.8; const body = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.85, 0.5), new THREE.MeshStandardMaterial({ color: col, roughness: 0.5, metalness: 0.25 })); body.position.set(x, g + 0.55 + 0.42, z0); body.castShadow = true; scene.add(body);
+    const lid = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.06, 0.52), leg); lid.position.set(x, g + 1.42, z0); scene.add(lid);
+    const st = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, 0.4), leg); st.position.set(x, g + 0.28, z0); scene.add(st);
+    const pg = signTex([{ t: nm, s: 0.12, f: 'Georgia, serif' }, { t: 'MEME ISLAND EDITION', s: 0.07 }, { t: '25¢', s: 0.1 }], 256, 200, '#f4f1e8', '#111111');
+    const win = new THREE.Mesh(new THREE.PlaneGeometry(0.46, 0.34), new THREE.MeshStandardMaterial({ map: pg, roughness: 0.2, metalness: 0.1 })); win.position.set(x, g + 1.12, z0 - 0.252); win.rotation.y = PI; scene.add(win); });
+  const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 3.9, 4), leg); chain.rotation.z = PI / 2; chain.position.set(x0, g + 0.6, z0 + 0.27); scene.add(chain);
+  boxWalls(x0, z0, 4.0, 0.55, 0, -5, g + 1.4);
+})();
+
+/* ================================================================
+   v212 THE LOOK: LIFE ON THE FIRE ESCAPE (2026-11-23)
+   In summer and in November alike, New Yorkers live on their fire escapes. The walk up's landings now hold pots of
+   herbs and geraniums, a folding chair, a milk crate, a towel over the rail and, on the top landing, a small
+   string of lights that comes on at dusk. ?escape=0 off.
+   ================================================================ */
+const ESCLIFE = {};
+window.__ESCLIFE = ESCLIFE;
+(function escapeLife() {
+  if (!FAC_ON || /escape=0/.test(location.search) || !window.__BROWN || !BROWN.H) return;
+  const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = BROWN.g0, xb = x0 + 3.5;   // back face, landings out to +1.17
+  const winY = f => g0 + 1.9 + f * 3.1, pot = new THREE.MeshStandardMaterial({ color: 0xb0603a, roughness: 0.8 }), leaf = new THREE.MeshStandardMaterial({ color: 0x3f6b2e, roughness: 0.8 }), red = new THREE.MeshStandardMaterial({ color: 0xd8312a, roughness: 0.7 });
+  const add = (geo, mat, x, y, z, rx, ry, rz) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx || 0, ry || 0, rz || 0); m.castShadow = true; scene.add(m); return m; };
+  const P = new THREE.CylinderGeometry(0.11, 0.08, 0.18, 10), B = new THREE.SphereGeometry(0.14, 8, 6);
+  for (let f = 1; f < 4; f++) { const y = winY(f) - 1.03 + 0.03;   // landing deck top
+    [[0.85, -2.9], [0.95, -2.5]].forEach(([w, zz], j) => { add(P, pot, xb + w, y + 0.09, z0 + zz + f * 0.1); const b = add(B, j ? red : leaf, xb + w, y + 0.26, z0 + zz + f * 0.1); b.scale.set(1, 0.8, 1); });
+    if (f === 1) { const seat = add(new THREE.BoxGeometry(0.4, 0.03, 0.4), new THREE.MeshStandardMaterial({ color: 0x4a6a8a, roughness: 0.5, metalness: 0.4 }), xb + 0.7, y + 0.45, z0 + 0.6); [[-0.18, -0.18], [0.18, -0.18], [-0.18, 0.18], [0.18, 0.18]].forEach(([a, b]) => add(new THREE.CylinderGeometry(0.012, 0.012, 0.45, 4), seat.material, xb + 0.7 + a, y + 0.22, z0 + 0.6 + b)); add(new THREE.BoxGeometry(0.4, 0.4, 0.03), seat.material, xb + 0.7, y + 0.68, z0 + 0.8); }
+    if (f === 2) { add(new THREE.BoxGeometry(0.33, 0.28, 0.33), new THREE.MeshStandardMaterial({ color: 0x1f5fbf, roughness: 0.6 }), xb + 0.6, y + 0.14, z0 + 0.5); const tw = add(new THREE.PlaneGeometry(0.5, 0.7), new THREE.MeshStandardMaterial({ color: 0xe89a3a, roughness: 0.9, side: THREE.DoubleSide }), xb + 1.19, y + 0.65, z0 - 1.2, 0, PI / 2); }
+    if (f === 3) { const bulbs = new THREE.MeshStandardMaterial({ color: 0x3a3020, emissive: 0xffd28a, emissiveIntensity: 0 }); ESCLIFE.bulbs = bulbs; for (let k = 0; k < 10; k++) add(new THREE.SphereGeometry(0.035, 6, 5), bulbs, xb + 1.17, y + 0.95 - Math.sin(k / 9 * PI) * 0.12, z0 + 0.75 - k * 0.39); } }
+})();
+window.__FRAMES.push(() => { try { if (ESCLIFE.bulbs) ESCLIFE.bulbs.emissiveIntensity = 0.1 + 2.4 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v213 THE LOOK: THE STOOP (2026-11-23)
+   The walk up's stoop gets what stoops get: pots of chrysanthemums on the steps for the season (pumpkins after
+   October, a little tree in December), a doormat at the top, and a brass lantern beside the door that lights at
+   dusk. ?stoop2=0 off.
+   ================================================================ */
+const STOOP2 = {};
+window.__STOOP2 = STOOP2;
+(function stoopLife() {
+  if (!LOOK.on || /stoop2=0/.test(location.search) || !window.__BROWN || !BROWN.H) return;
+  const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = BROWN.g0, D = 7, fx = x0 - D / 2, zs = z0 - 2.4;
+  const pot = new THREE.MeshStandardMaterial({ color: 0x3c3a36, roughness: 0.7 }), mums = [0xd98a1e, 0xb8332a, 0xe8c447].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.8 })), pumpkin = new THREE.MeshStandardMaterial({ color: 0xe06d17, roughness: 0.6 });
+  const mo = (() => { try { return nycTime(TIME.utc).mo; } catch (e) { return 11; } })();
+  for (let s = 1; s < 7; s += 2) { const sx = fx - 0.4 - (6 - s) * 0.36 - 0.6, y = g0 + 0.2 * (s + 1); [-0.62, 0.62].forEach((o, j) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.12, 0.22, 12), pot); p.position.set(sx, y + 0.11, zs + o); scene.add(p);
+      const top = mo >= 11 && s === 1 ? new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 8), pumpkin) : new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8), mums[(s + j) % 3]); top.scale.set(1, 0.75, 1); top.position.set(sx, y + 0.32, zs + o); top.castShadow = true; scene.add(top); }); }
+  const mat = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.015, 0.9), new THREE.MeshStandardMaterial({ color: 0x4a3a2a, roughness: 1 })); mat.position.set(fx - 0.45, g0 + 1.41, zs); scene.add(mat);
+  const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.3, 0.16), new THREE.MeshStandardMaterial({ color: 0x3a2e1a, emissive: 0xffc070, emissiveIntensity: 0, roughness: 0.4, metalness: 0.6 })); lamp.position.set(fx - 0.1, g0 + 3.3, zs + 0.85); scene.add(lamp); STOOP2.lamp = lamp.material;
+})();
+window.__FRAMES.push(() => { try { if (STOOP2.lamp) STOOP2.lamp.emissiveIntensity = 0.05 + 2.0 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v214 THE LOOK: N3W HARDWARE (2026-11-23)
+   The water tower building's ground floor on the street side becomes a shop, the hardware store every New York
+   block has: a deep green awning, a sign band reading N3W HARDWARE · KEYS CUT · PAINT · SINCE 2021, and a window
+   of brooms, paint cans, rope and a rack of keys. ?hardware=0 off.
+   ================================================================ */
+(function hardware() {
+  if (!FAC_ON || /hardware=0/.test(location.search) || !window.__WT || !WT.top) return;
+  const x0 = WT_AT.x + 1.8, z0 = WT_AT.z, S = 7, g0 = WT.top - 7, fz = z0 + S / 2 + 0.19;   // the right half: One N3W Place's canopy (v88) holds the left
+  const band = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 0.5), new THREE.MeshStandardMaterial({ map: signTex([{ t: 'N3W HARDWARE', s: 0.46, f: 'Georgia, serif' }, { t: 'KEYS CUT · PAINT · SINCE 2021', s: 0.2 }], 768, 116, '#1f3a2a', '#efe8da'), roughness: 0.6 })); band.position.set(x0, g0 + 3.05, fz + 0.05); scene.add(band);
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 1.9), new THREE.MeshStandardMaterial({ color: 0x1a2228, roughness: 0.05, metalness: 0.2, envMapIntensity: 0.8, transparent: true, opacity: 0.32, depthWrite: false })); glass.position.set(x0, g0 + 1.55, fz + 0.03); scene.add(glass);
+  const awn = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 1.1), new THREE.MeshStandardMaterial({ color: 0x1f4a32, roughness: 0.85, side: THREE.DoubleSide })); awn.position.set(x0, g0 + 2.62, fz + 0.5); awn.rotation.x = -PI / 2 + 0.55; awn.castShadow = true; scene.add(awn);
+  const val = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 0.22), awn.material); val.position.set(x0, g0 + 2.22, fz + 0.97); scene.add(val);
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 1.9), new THREE.MeshStandardMaterial({ color: 0x2a2620, emissive: 0xffd9a0, emissiveIntensity: 0.18, roughness: 0.9 })); back.position.set(x0, g0 + 1.55, fz - 0.4); scene.add(back);
+  const M = c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.6, metalness: 0.2 });
+  [0xd8d0c0, 0x2962ff, 0xc8102e, 0xf2c200, 0x2f4a33].forEach((c, i) => { const can = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.2, 14), M(c)); can.position.set(x0 - 1.3 + i * 0.26, g0 + 0.7, fz - 0.18); scene.add(can); });
+  for (let i = 0; i < 4; i++) { const br = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.4, 6), M(0xb08a58)); br.position.set(x0 + 0.7 + i * 0.16, g0 + 1.3, fz - 0.2); br.rotation.z = 0.08 * (i - 1.5); scene.add(br); const bh = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.22, 0.05), M(0xc23a24)); bh.position.set(x0 + 0.7 + i * 0.16, g0 + 0.62, fz - 0.2); scene.add(bh); }
+  const rope = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.06, 8, 18), M(0xc8a46a)); rope.position.set(x0 - 0.7, g0 + 1.6, fz - 0.15); scene.add(rope);
+  const keys = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.6), new THREE.MeshStandardMaterial({ map: signTex([{ t: 'KEYS', s: 0.3 }, { t: '· · · · · · · ·', s: 0.2, c: '#d9b45a' }], 256, 192, '#1a1a1a', '#efe8da'), roughness: 0.5 })); keys.position.set(x0 + 0.1, g0 + 1.75, fz - 0.12); scene.add(keys);
+})();
+
+/* ================================================================
+   v215 THE LOOK: STREET BANNERS (2026-11-23)
+   The vertical banners New York hangs from its lamp posts for a season or a show. Every other lamp on the ring road
+   now flies a pair on steel arms: MEME ISLAND on Evil Eye Blue, and THE MEMES BY 6529 on ink, an Open Eye between
+   them, lifting and settling in the wind. ?banners=0 off.
+   ================================================================ */
+const BANNERS2 = { u: { uBT: { value: 0 } } };
+window.__BANNERS2 = BANNERS2;
+(function banners() {
+  if (!LOOK.on || /banners=0/.test(location.search)) return;
+  const mk = (bg, fg, top, bot) => { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 640; const c = cv.getContext('2d'); if (c && c.fillRect) { c.fillStyle = bg; c.fillRect(0, 0, 256, 640);
+      if (c.arc) { c.fillStyle = '#F0F4F8'; c.beginPath(); c.arc(128, 320, 70, 0, PI * 2); c.fill(); c.fillStyle = '#2962FF'; c.beginPath(); c.arc(128, 320, 40, 0, PI * 2); c.fill(); c.fillStyle = '#0D0D0D'; c.beginPath(); c.arc(128, 320, 18, 0, PI * 2); c.fill(); }
+      if (c.fillText) { c.fillStyle = fg; c.textAlign = 'center'; c.font = '400 58px Anton, Impact, sans-serif'; top.forEach((t, i) => c.fillText(t, 128, 90 + i * 62)); c.font = '700 26px "JetBrains Mono", Menlo, monospace'; bot.forEach((t, i) => c.fillText(t, 128, 470 + i * 36)); } }
+    const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t; };
+  const tA = mk('#2962FF', '#F0F4F8', ['MEME', 'ISLAND'], ['NEW YORK', 'HARBOR']), tB = mk('#0D0D0D', '#F0F4F8', ['THE MEMES', 'BY 6529'], ['577 CARDS', 'ON VIEW']);
+  const mat = t => { const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.75, side: THREE.DoubleSide }); m.onBeforeCompile = sh => { Object.assign(sh.uniforms, BANNERS2.u); sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform float uBT;').replace('#include <begin_vertex>', '#include <begin_vertex>\nfloat bu = clamp(position.x / 0.62, 0.0, 1.0); transformed.z += bu * 0.08 * sin(uBT * 2.2 + position.y * 1.7 + modelMatrix[3].x * 0.3);'); }; m.customProgramCacheKey = () => 'mi-banner-v215'; return m; };
+  const mA = mat(tA), mB = mat(tB), arm = FACM.steel || MAT.steel; const geo = new THREE.PlaneGeometry(0.62, 1.55, 6, 6); geo.translate(0.31, 0, 0);
+  const lamps = []; for (let i = 0; i < 36; i += 2) lamps.push(i); const iA = new THREE.InstancedMesh(geo, mA, lamps.length), iB = new THREE.InstancedMesh(geo, mB, lamps.length), iR = new THREE.InstancedMesh(new THREE.BoxGeometry(0.72, 0.03, 0.03), arm, lamps.length * 4);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), Y = new V3(0, 1, 0), one = new V3(1, 1, 1); let r = 0;
+  lamps.forEach((i, k) => { const a = (i + 0.5) / 36 * 360, [x, z] = P2(a, 94.5), g = ground(x, z), tang = -(a * PI / 180);
+    [[iA, tang], [iB, tang + PI]].forEach(([im, ry]) => { q.setFromAxisAngle(Y, ry); m4.compose(new V3(x + Math.cos(ry) * 0.1, g + 4.55, z - Math.sin(ry) * 0.1), q, one); im.setMatrixAt(k, m4);
+      [5.3, 3.8].forEach(y => { m4.compose(new V3(x + Math.cos(ry) * 0.42, g + y, z - Math.sin(ry) * 0.42), q, one); iR.setMatrixAt(r++, m4); }); }); });
+  [iA, iB, iR].forEach(o => { o.castShadow = o === iR; scene.add(o); });
+  mA.onBeforeCompile = mB.onBeforeCompile = sh => { Object.assign(sh.uniforms, BANNERS2.u); sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform float uBT;').replace('#include <begin_vertex>', '#include <begin_vertex>\nfloat bu = clamp(position.x / 0.62, 0.0, 1.0); float ph = 0.0;\n#ifdef USE_INSTANCING\nph = instanceMatrix[3].x * 0.3 + instanceMatrix[3].z * 0.2;\n#endif\ntransformed.z += bu * 0.08 * sin(uBT * 2.2 + position.y * 1.7 + ph);'); };
+})();
+window.__FRAMES.push(dt => { try { BANNERS2.u.uBT.value += dt; } catch (e) { } });
+
+/* ================================================================
+   v216 THE TOUR AFTER DARK (2026-11-23)
+   Three more stops before the aerial: the market's goods, the bodega's neon and the hardware store.
+   ================================================================ */
+(function tourV216() {
+  const add = [];
+  try { const x = MKT_AT.x, z = MKT_AT.z, g = ground(x, z); add.push({ name: 'the market stalls', dur: 7, pos: [[x - 6, g + 1.6, z - 5], [x - 2, g + 1.6, z - 4]], look: [[x - 4, g + 1.2, z - 0.8], [x, g + 1.2, z - 0.8]] }); } catch (e) { }
+  try { const g = ground(17, 66); add.push({ name: 'the neon', dur: 6, pos: [[5, g + 1.7, 64], [7, g + 1.7, 65]], look: [[11.7, g + 2, 66], [11.7, g + 2, 66]] }); } catch (e) { }
+  try { const x = WT_AT.x, z = WT_AT.z, g = WT.top - 7; add.push({ name: 'n3w hardware', dur: 6, pos: [[x - 3, g + 1.7, z + 10], [x - 1, g + 1.7, z + 8]], look: [[x, g + 1.8, z + 3.5], [x, g + 1.8, z + 3.5]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+// at night the only shadows are the moon's, soft and slow: draw them every other frame (v177's late frame rule
+// already does this when frames run late; this makes it the rule after dark)
+window.__FRAMES.push(() => { try { if (!window.__SHH || (window.__GOV && __GOV.tier >= 3)) return; if ((L.lamps || 0) > 0.6) { renderer.shadowMap.autoUpdate = false; if (((__SHH.nf = (__SHH.nf || 0) + 1) & 1) === 0) renderer.shadowMap.needsUpdate = true; } else if (!__SHH.on && !renderer.shadowMap.autoUpdate) renderer.shadowMap.autoUpdate = true; } catch (e) { } });
+
 
 /* ---------------- boot ---------------- */
 buildCards();

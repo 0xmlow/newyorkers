@@ -467,3 +467,15 @@ SURVIVE buttresses and on the factory sides (?tags=0). v204 diamond plate cellar
 laundromat (?cellar=0). v205 red fire alarm call boxes with globes lit at night, NO STANDING ANYTIME plates on the
 ring road lamps (?callbox=0). v206 three tour stops. Also: the pier deck (v187) was nearly black at every hour; the
 plank texture there is lifted to weathered grey brown wood.
+
+## v207 to v216 (2026-11-23): shops, rooms and night
+v207 goods on every market counter and stock on the back shelves (?goods=0). v208 the market glows at night: light
+panels under the roofs and pools of light in front (?marketnight=0). v209 lit windows on the rebuilt buildings show
+one of three rooms (?rooms=0). v210 neon in the bodega's windows (OPEN, ATM, LOTTO, COLD JPGs) and WASH DRY FOLD
+at the laundromat, flickering now and then (?neon2=0). v211 a row of five honor boxes at (-13, 75) (?honor=0).
+v212 pots, a chair, a crate, a towel and fairy lights on the walk up's fire escape (?escape=0). v213 mums (pumpkins
+from November) on the stoop, a doormat and a door lantern (?stoop2=0). v214 N3W HARDWARE on the right half of the
+water tower building's street front, beside One N3W Place (?hardware=0). v215 vertical street banners on every
+other ring road lamp, instanced (?banners=0). v216 three tour stops, and shadows every other frame after dark.
+Frame rate: synced frame time at the pier 25 ms (no worse than before); real fps readings were unreliable this
+round because the Mac was busy with the Drive recovery copy.
