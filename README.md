@@ -399,3 +399,11 @@ MLow asked for huge, premium upgrades rather than more features. Diagnosis from 
 - v172 WEATHERING: every material used on a mesh over 2 m (people and animals excluded, ground and metals skipped) gets world space mottling in colour and roughness, grime rising from the ground, rain streaks on tall walls and a faint sun bleach on tops; 479 materials. ?weather=0.
 - Window glow by day: warm emissive on dark untextured surfaces (market stall fronts, windows) now follows the lamps (12% by day), so those faces take sunlight and shadow instead of glowing flat.
 - Finding: the remaining cheapness on buildings is geometry (flat boxes, painted windows, no trim), which needs per building rebuilds, not a global pass.
+
+## v173 (2026-11-23): THE LOOK, fourth pass (buildings rebuilt)
+The buildings were boxes with dark rectangles on them. v173 builds them out of real pieces: every window in a deep
+reveal with a stone lintel, a projecting sill and a meeting rail, some with a window AC unit; stone belt courses and a
+water table plinth; a full cornice (frieze, dentils, brackets, crown) on the walk up, which also gets windows on its
+sides and back and a black fire escape with stairs and a drop ladder; windows on every side of the water tower
+building; cornices on the bodega, the laundromat and the N3W DROP shop; painted tongue and groove boards on the
+market kiosk backs. About 1,270 pieces in a dozen instanced draw calls. ?facades=0 turns it off.
