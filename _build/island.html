@@ -1816,14 +1816,14 @@ const ENVC = document.createElement('canvas'); ENVC.width = 512; ENVC.height = 2
 function updateEnv(dt, force) {
   if (ENV.disabled) return;
   ENV.t -= dt; if (!force && ENV.t > 0) return; ENV.t = 1.5;
-  const w = SKY.w; if (!force && ENV.w && Math.abs(w.x - ENV.w.x) + Math.abs(w.y - ENV.w.y) + Math.abs(w.z - ENV.w.z) + Math.abs(w.w - ENV.w.w) < 0.05) return;
+  const w = SKY.w, sm = SKY.sun ? Math.abs((SKY.sun.el || 0) - (ENV.el || 0)) + Math.abs((SKY.sun.az || 0) - (ENV.az || 0)) * 0.3 : 0; if (!force && ENV.w && sm < 2.5 && Math.abs(w.x - ENV.w.x) + Math.abs(w.y - ENV.w.y) + Math.abs(w.z - ENV.w.z) + Math.abs(w.w - ENV.w.w) < 0.05) return; if (SKY.sun) { ENV.el = SKY.sun.el; ENV.az = SKY.sun.az; }
   try {
     // an equirectangular sky from the same four photographs: cap colour above, the blended band at the horizon, sea below
     const c = ENVC.getContext('2d'); if (!c || !c.drawImage) return; const imgs = PANO_TEX.map(t => t.image); if (imgs.some(i => !i || !i.width)) return;
     c.globalAlpha = 1; c.fillStyle = '#' + PANO.cap.material.color.getHexString(); c.fillRect(0, 0, 512, 256);
     const ws = [w.x, w.y, w.z, w.w]; let acc = 0;
     ws.forEach((wi, i) => { if (wi < 0.01) return; acc += wi; c.globalAlpha = wi / acc; c.drawImage(imgs[i], 0, 0, imgs[i].width, imgs[i].height, 0, 40, 256, 216); c.drawImage(imgs[i], 0, 0, imgs[i].width, imgs[i].height, 512, 40, -256, 216); });
-    c.globalAlpha = 1;
+    c.globalAlpha = 1; if (window.__ENVSUN) try { window.__ENVSUN(c); } catch (e) { }   // v113: the sun baked into the light probe
     if (!ENV.tex) { ENV.tex = new THREE.CanvasTexture(ENVC); ENV.tex.mapping = THREE.EquirectangularReflectionMapping; ENV.tex.encoding = THREE.sRGBEncoding; } else ENV.tex.needsUpdate = true;
     if (!ENV.pmrem) ENV.pmrem = new THREE.PMREMGenerator(renderer);
     const rt = ENV.pmrem.fromEquirectangular(ENV.tex); if (ENV.rt) ENV.rt.dispose(); ENV.rt = rt; scene.environment = rt.texture; ENV.on = true; ENV.w = w.clone(); ENV.probe = 3;
@@ -1970,7 +1970,7 @@ function renderFrame() {
   if (POST.on) {
     const u = POST.grade.uniforms; u.uTime.value = (T * 60) % 1000;
     tint(u.uGain.value, L.sun, 0.16 * (1 - 0.6 * L.lamps)); tint(u.uLift.value, L.sky, 0.2);
-    const gn = u.uGain.value, lf = u.uLift.value, k = 3 / (gn.r + gn.g + gn.b + lf.r + lf.g + lf.b) * 2; gn.multiplyScalar(Math.min(k, 1.12)); lf.multiplyScalar(Math.min(k, 1.12));
+    const gn = u.uGain.value, lf = u.uLift.value, k = 3 / (gn.r + gn.g + gn.b + lf.r + lf.g + lf.b) * 2; gn.multiplyScalar(Math.min(k, 1.12)); lf.multiplyScalar(Math.min(k, 1.12)); if (window.__GRADE) try { window.__GRADE(u); } catch (e) { }
     POST.bloom.strength = 0.28 + 0.62 * L.lamps; POST.bloom.threshold = 0.9 - 0.18 * L.lamps; renderAO(); POST.comp.render();
   }
   else renderer.render(scene, camera);
@@ -2401,7 +2401,7 @@ function frame(dt) {
     if (RIDE.t > RIDE.dur * 0.48 && !RIDE.top) { RIDE.top = true; toast('STILL EARLY.', 'blue'); } if (RIDE.t >= RIDE.dur) { RIDE.top = false; endRide(); } }
   applyRail(dt);
   // sun shadow follows the visitor on a 4 m grid
-  const sx = Math.round(P.x / 4) * 4, sz = Math.round(P.z / 4) * 4; sun.target.position.set(sx, 0, sz); sun.position.set(sx + L.dir.x * 160, L.dir.y * 160 + 2, sz + L.dir.z * 160);
+  const fw = window.__SHADOW_AHEAD || 0, sx = Math.round((P.x - Math.sin(P.yaw) * fw) / 4) * 4, sz = Math.round((P.z - Math.cos(P.yaw) * fw) / 4) * 4; sun.target.position.set(sx, 0, sz);   // v111: the shadow box sits ahead of you sun.position.set(sx + L.dir.x * 160, L.dir.y * 160 + 2, sz + L.dir.z * 160);
   // zone + interact prompt + aim tooltip
   let zn = 'THE ISLAND'; for (const z of ZONES) if (Math.hypot(P.x - z.x, P.z - z.z) < z.r) { zn = z.name; break; }
   if (zn !== zoneName) { zoneName = zn; $('zone').textContent = Q(zn); }
@@ -2531,6 +2531,26 @@ function loop(now) { if (now - POWER.drawn < powerBudget()) { requestAnimationFr
 /*__V103_X__*/
 /*__V104_X__*/
 /*__V105_X__*/
+/*__V106_X__*/
+/*__V107_X__*/
+/*__V108_X__*/
+/*__V109_X__*/
+/*__V110_X__*/
+/*__V111_X__*/
+/*__V112_X__*/
+/*__V113_X__*/
+/*__V114_X__*/
+/*__V115_X__*/
+/*__V116_X__*/
+/*__V117_X__*/
+/*__V118_X__*/
+/*__V119_X__*/
+/*__V120_X__*/
+/*__V121_X__*/
+/*__V122_X__*/
+/*__V123_X__*/
+/*__V124_X__*/
+/*__V125_X__*/
 
 /* ---------------- boot ---------------- */
 buildCards();

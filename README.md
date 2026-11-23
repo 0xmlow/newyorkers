@@ -333,3 +333,20 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v103 THE OUTLINE at (-40, -78): an empty lot where a tenement comes back as glowing lines after dark.
 - v104 SECRETS.EXE names. v105 six tour stops.
 - Fix: v72's huntFrame shadowed v14's huntFrame (the slice hunt) since build 20261123-041455; renamed flowerHuntFrame.
+
+## v106 to v125 (2026-11-23): real animals, real cars, a lighting rebake
+- CC0 assets: assets/glb/cc0 holds Quaternius models (Public Domain, from poly.pizza, see LICENSE.txt there): shiba, husky, wolf, deer, stag, horse (Animated Animal Pack), pigeon, rat, taxi, car_b.
+- v106 REAL ANIMALS: CC0.make / CC0.dress (RigCrowd.cloneSkinned, per clone mixer, walk/run/idle/eat chosen from speed). The fetch dog, the pigeon chasing dogs and the dog walker's six are rigged dogs now.
+- v107 REAL PIGEONS: the nearest 18 (8 on phones) of v12's flock are rigged pigeons, the instanced ones are hidden where a rigged one stands in.
+- v108 REAL RATS: the Pizza Rat is the rigged rat (with his slice); rats run the curb of the ring road at night.
+- v109 REAL CARS: the N3W cab and the two parked cars are the CC0 taxi and car (wheels re-centred and spun on their axles); six cars of traffic on the ring road, keeping gaps, slowing behind the bus and the cab, stopping for the crosswalk.
+- v110 HORSES: a carriage horse with a hansom cab laps the ring path (E for a ride); a mounted officer patrols GM BEACH.
+- v111 SHARPER SHADOWS: the shadow box sits 20 m ahead of the view and is 84 m across at 4096 px on desktop; mid size meshes now cast.
+- v112 LAMPLIGHT: light pools under the 36 street lamps and the new pieces at night, with halos.
+- v113 THE LIGHT PROBE REBAKE: the sun is drawn into the environment probe and the probe rebakes as the sun moves; golden and blue hour grade tweaks (window.__GRADE hook in renderFrame).
+- v114 CONTACT SHADOWS: soft instanced shadows under every person, animal and car within 60 m.
+- v115 THE DOG RUN at (-86, 13). v116 THE COYOTE (after midnight) AND THE DEER (dawn, west beach). v117 CHRISTMAS TREES FOR SALE (Nov 20 to Dec 24) at (65, 63).
+- v118 THE HOLIDAY WINDOWS (dancing rigged pigeons in the walk up's ground floor). v119 PROJECTION MAPPING on the walk up's south wall at night.
+- v120 THE STATEN ISLAND FERRY. v121 TRAFFIC LIGHTS at the crosswalk. v122 EVERYBODY DANCE (DANCE). v123 WET STREETS (asphalt and paving go dark and glossy in rain, dry slowly).
+- v124 SECRETS.EXE names. v125 six tour stops.
+- Fixes: ROAD_R is 100 (the road ring is 96 to 104), so the bus, riders, crosswalk and shelters sit on the real road; the walk up moved from (78, -56), where it overlapped the road and the neon bus prop, to (-64, -54).

@@ -6,7 +6,7 @@
    ================================================================ */
 const RIDE5 = { r: [] };
 window.__RIDERS = RIDE5;
-const ROAD_R = 96.5;
+const ROAD_R = 100;   // the road ring runs from 96 to 104 (island.html, RingGeometry(96, 104))
 (function riders() {
   const bagC = [0xe2581c, 0x2f4a33, 0x2962FF, 0x15161a];
   for (let i = 0; i < 4; i++) { const g = new THREE.Group(); scene.add(g); const b = bikeModel(1); b.rotation.y = 0; g.add(b);

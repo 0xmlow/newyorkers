@@ -20,7 +20,7 @@ window.__BUS = BUS;
   const door = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.0, 0.04), glass); door.position.set(L / 2 - 1.0, 1.5, -W / 2 - 0.02); g.add(door); BUS.door = door;
   g.traverse(o => { if (o.isMesh) o.castShadow = true; });
   // the shelters, on the inner shoulder at each stop
-  BUS.shel = BUS.stops.map(a => { const R = ROAD_R - 4.4, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), sg = new THREE.Group(); sg.position.set(x, gy, z); sg.rotation.y = a; scene.add(sg);
+  BUS.shel = BUS.stops.map(a => { const R = ROAD_R - 5.6, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), sg = new THREE.Group(); sg.position.set(x, gy, z); sg.rotation.y = a; scene.add(sg);
     const steel = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.4, metalness: 0.7 }), gl = new THREE.MeshStandardMaterial({ color: 0xbcd0d8, roughness: 0.05, transparent: true, opacity: 0.2, depthWrite: false });
     const roof = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.1, 1.6), steel); roof.position.y = 2.5; sg.add(roof);
     const back = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.2, 0.04), gl); back.position.set(0, 1.25, -0.75); sg.add(back);

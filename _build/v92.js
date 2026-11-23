@@ -1,13 +1,13 @@
 /* ================================================================
    v92 THE STOOP (2026-11-22)
-   A four storey brick walk up at (78, -56), facing the island: old red brick, tall windows with white trim, a cornice,
+   A four storey brick walk up at (-64, -54), facing west toward the water: old red brick, tall windows with white trim, a cornice,
    and a stoop of seven steps up to a black door with a brass number. E on the stoop sits you down: the camera
    drops to a seated eye and the day goes by about two hundred times faster while you sit, clouds and shadows
    and the sky turning, until you get up (any move key). Sit long enough to see an hour pass and it counts.
    ================================================================ */
 const BROWN = {};
 window.__BROWN = BROWN;
-const BROWN_AT = { x: 78, z: -56 };
+const BROWN_AT = { x: -64, z: -54 };
 (function brownstone() {
   const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = ground(x0, z0), W = 8, D = 7, Hf = 3.1, F = 4, H = Hf * F + 0.6; BROWN.g0 = g0; BROWN.H = H; BROWN.fx = x0 - D / 2;   // the front faces west, toward the island
   const stone = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [3, 4]), color: 0x5e4334, roughness: 0.85 });

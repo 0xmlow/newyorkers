@@ -1809,14 +1809,14 @@ const ENVC = document.createElement('canvas'); ENVC.width = 512; ENVC.height = 2
 function updateEnv(dt, force) {
   if (ENV.disabled) return;
   ENV.t -= dt; if (!force && ENV.t > 0) return; ENV.t = 1.5;
-  const w = SKY.w; if (!force && ENV.w && Math.abs(w.x - ENV.w.x) + Math.abs(w.y - ENV.w.y) + Math.abs(w.z - ENV.w.z) + Math.abs(w.w - ENV.w.w) < 0.05) return;
+  const w = SKY.w, sm = SKY.sun ? Math.abs((SKY.sun.el || 0) - (ENV.el || 0)) + Math.abs((SKY.sun.az || 0) - (ENV.az || 0)) * 0.3 : 0; if (!force && ENV.w && sm < 2.5 && Math.abs(w.x - ENV.w.x) + Math.abs(w.y - ENV.w.y) + Math.abs(w.z - ENV.w.z) + Math.abs(w.w - ENV.w.w) < 0.05) return; if (SKY.sun) { ENV.el = SKY.sun.el; ENV.az = SKY.sun.az; }
   try {
     // an equirectangular sky from the same four photographs: cap colour above, the blended band at the horizon, sea below
     const c = ENVC.getContext('2d'); if (!c || !c.drawImage) return; const imgs = PANO_TEX.map(t => t.image); if (imgs.some(i => !i || !i.width)) return;
     c.globalAlpha = 1; c.fillStyle = '#' + PANO.cap.material.color.getHexString(); c.fillRect(0, 0, 512, 256);
     const ws = [w.x, w.y, w.z, w.w]; let acc = 0;
     ws.forEach((wi, i) => { if (wi < 0.01) return; acc += wi; c.globalAlpha = wi / acc; c.drawImage(imgs[i], 0, 0, imgs[i].width, imgs[i].height, 0, 40, 256, 216); c.drawImage(imgs[i], 0, 0, imgs[i].width, imgs[i].height, 512, 40, -256, 216); });
-    c.globalAlpha = 1;
+    c.globalAlpha = 1; if (window.__ENVSUN) try { window.__ENVSUN(c); } catch (e) { }   // v113: the sun baked into the light probe
     if (!ENV.tex) { ENV.tex = new THREE.CanvasTexture(ENVC); ENV.tex.mapping = THREE.EquirectangularReflectionMapping; ENV.tex.encoding = THREE.sRGBEncoding; } else ENV.tex.needsUpdate = true;
     if (!ENV.pmrem) ENV.pmrem = new THREE.PMREMGenerator(renderer);
     const rt = ENV.pmrem.fromEquirectangular(ENV.tex); if (ENV.rt) ENV.rt.dispose(); ENV.rt = rt; scene.environment = rt.texture; ENV.on = true; ENV.w = w.clone(); ENV.probe = 3;
@@ -1963,7 +1963,7 @@ function renderFrame() {
   if (POST.on) {
     const u = POST.grade.uniforms; u.uTime.value = (T * 60) % 1000;
     tint(u.uGain.value, L.sun, 0.16 * (1 - 0.6 * L.lamps)); tint(u.uLift.value, L.sky, 0.2);
-    const gn = u.uGain.value, lf = u.uLift.value, k = 3 / (gn.r + gn.g + gn.b + lf.r + lf.g + lf.b) * 2; gn.multiplyScalar(Math.min(k, 1.12)); lf.multiplyScalar(Math.min(k, 1.12));
+    const gn = u.uGain.value, lf = u.uLift.value, k = 3 / (gn.r + gn.g + gn.b + lf.r + lf.g + lf.b) * 2; gn.multiplyScalar(Math.min(k, 1.12)); lf.multiplyScalar(Math.min(k, 1.12)); if (window.__GRADE) try { window.__GRADE(u); } catch (e) { }
     POST.bloom.strength = 0.28 + 0.62 * L.lamps; POST.bloom.threshold = 0.9 - 0.18 * L.lamps; renderAO(); POST.comp.render();
   }
   else renderer.render(scene, camera);
@@ -2394,7 +2394,7 @@ function frame(dt) {
     if (RIDE.t > RIDE.dur * 0.48 && !RIDE.top) { RIDE.top = true; toast('STILL EARLY.', 'blue'); } if (RIDE.t >= RIDE.dur) { RIDE.top = false; endRide(); } }
   applyRail(dt);
   // sun shadow follows the visitor on a 4 m grid
-  const sx = Math.round(P.x / 4) * 4, sz = Math.round(P.z / 4) * 4; sun.target.position.set(sx, 0, sz); sun.position.set(sx + L.dir.x * 160, L.dir.y * 160 + 2, sz + L.dir.z * 160);
+  const fw = window.__SHADOW_AHEAD || 0, sx = Math.round((P.x - Math.sin(P.yaw) * fw) / 4) * 4, sz = Math.round((P.z - Math.cos(P.yaw) * fw) / 4) * 4; sun.target.position.set(sx, 0, sz);   // v111: the shadow box sits ahead of you sun.position.set(sx + L.dir.x * 160, L.dir.y * 160 + 2, sz + L.dir.z * 160);
   // zone + interact prompt + aim tooltip
   let zn = 'THE ISLAND'; for (const z of ZONES) if (Math.hypot(P.x - z.x, P.z - z.z) < z.r) { zn = z.name; break; }
   if (zn !== zoneName) { zoneName = zn; $('zone').textContent = Q(zn); }
@@ -7613,7 +7613,7 @@ EGGS.canalstreet = EGGS.bootleg = () => { teleport(BOOT_AT.x + Math.sin(BOOT.ry)
    ================================================================ */
 const RIDE5 = { r: [] };
 window.__RIDERS = RIDE5;
-const ROAD_R = 96.5;
+const ROAD_R = 100;   // the road ring runs from 96 to 104 (island.html, RingGeometry(96, 104))
 (function riders() {
   const bagC = [0xe2581c, 0x2f4a33, 0x2962FF, 0x15161a];
   for (let i = 0; i < 4; i++) { const g = new THREE.Group(); scene.add(g); const b = bikeModel(1); b.rotation.y = 0; g.add(b);
@@ -8062,7 +8062,7 @@ window.__BUS = BUS;
   const door = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.0, 0.04), glass); door.position.set(L / 2 - 1.0, 1.5, -W / 2 - 0.02); g.add(door); BUS.door = door;
   g.traverse(o => { if (o.isMesh) o.castShadow = true; });
   // the shelters, on the inner shoulder at each stop
-  BUS.shel = BUS.stops.map(a => { const R = ROAD_R - 4.4, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), sg = new THREE.Group(); sg.position.set(x, gy, z); sg.rotation.y = a; scene.add(sg);
+  BUS.shel = BUS.stops.map(a => { const R = ROAD_R - 5.6, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), sg = new THREE.Group(); sg.position.set(x, gy, z); sg.rotation.y = a; scene.add(sg);
     const steel = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.4, metalness: 0.7 }), gl = new THREE.MeshStandardMaterial({ color: 0xbcd0d8, roughness: 0.05, transparent: true, opacity: 0.2, depthWrite: false });
     const roof = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.1, 1.6), steel); roof.position.y = 2.5; sg.add(roof);
     const back = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.2, 0.04), gl); back.position.set(0, 1.25, -0.75); sg.add(back);
@@ -8226,14 +8226,14 @@ window.__FRAMES.push(dt => { try { domFrame(dt); } catch (e) { if (!DOM.err) { D
 
 /* ================================================================
    v92 THE STOOP (2026-11-22)
-   A four storey brick walk up at (78, -56), facing the island: old red brick, tall windows with white trim, a cornice,
+   A four storey brick walk up at (-64, -54), facing west toward the water: old red brick, tall windows with white trim, a cornice,
    and a stoop of seven steps up to a black door with a brass number. E on the stoop sits you down: the camera
    drops to a seated eye and the day goes by about two hundred times faster while you sit, clouds and shadows
    and the sky turning, until you get up (any move key). Sit long enough to see an hour pass and it counts.
    ================================================================ */
 const BROWN = {};
 window.__BROWN = BROWN;
-const BROWN_AT = { x: 78, z: -56 };
+const BROWN_AT = { x: -64, z: -54 };
 (function brownstone() {
   const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = ground(x0, z0), W = 8, D = 7, Hf = 3.1, F = 4, H = Hf * F + 0.6; BROWN.g0 = g0; BROWN.H = H; BROWN.fx = x0 - D / 2;   // the front faces west, toward the island
   const stone = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [3, 4]), color: 0x5e4334, roughness: 0.85 });
@@ -8710,6 +8710,571 @@ try { Object.assign(SECRET_NAMES, {
   try { const x = DOM_AT.x, z = DOM_AT.z, gy = DOM.g0; add.push({ name: 'dominoes', dur: 6, pos: [[x + 4, gy + 1.8, z - 3], [x + 2, gy + 1.5, z - 1.8]], look: [[x, gy + 0.8, z], [x, gy + 0.8, z]] }); } catch (e) { }
   try { add.push({ name: 'gone fishing', dur: 7, pos: [[6, 3, 168], [3, 2.2, 176]], look: [[-1, 1, 182], [0, 0.6, 186]] }); } catch (e) { }
   try { const x = GHOST_AT.x, z = GHOST_AT.z, gy = GHOST.g0; add.push({ name: 'the outline', dur: 7, pos: [[x + 4, gy + 2, z + 16], [x - 1, gy + 3, z + 10]], look: [[x, gy + 6, z], [x, gy + 8, z]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+
+/* ================================================================
+   v106 REAL ANIMALS (2026-11-23)
+   The hand built dogs become real rigged animals. Every animal and car from here on is a CC0 model by Quaternius
+   (Public Domain, from poly.pizza: the Animated Animal Pack, the Pigeon, the Rat, the Taxi and the Car), loaded
+   from assets/glb/cc0, cloned with its own skeleton (RigCrowd.cloneSkinned) and driven by its own clips: it walks
+   when it moves, gallops when it is fast, idles and eats when it stops, and its feet keep pace with the ground.
+   CC0.dress(group, name, opts) hides an old hand built model and puts the real one inside the same group, so all
+   the old behaviour (fetch, chasing pigeons, the leashes) keeps working untouched.
+   ================================================================ */
+const CC0 = { a: {}, live: [], face: { shiba: 0, husky: 0, horse: 0, pigeon: 0, rat: 0, taxi: 0, car_b: 0, cow: 0, donkey: 0, alpaca: 0, wolf: 0, deer: 0, stag: 0 } };
+window.__CC0 = CC0;
+CC0.load = name => CC0.a[name] || (CC0.a[name] = new Promise(res => {
+  if (!gltfLoader) return res(null);
+  gltfLoader.load('assets/glb/cc0/' + name + '.glb', g => { try { g.scene.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g.scene); g.size = bb.getSize(new THREE.Vector3()); g.min = bb.min.clone(); g.center = bb.getCenter(new THREE.Vector3());
+    g.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } }); } catch (e) { } res(g); }, undefined, () => { (window.__propFail = window.__propFail || []).push(name); res(null); });
+}));
+const CC0_CLIPS = { walk: /(^|\|)(Rat_)?Walk$/, run: /(^|\|)(Gallop|Rat_Run)$/, idle: /(^|\|)(Rat_)?Idle$/, eat: /(^|\|)Eating$/, jump: /(^|\|)(Rat_)?Jump$/, peck: /Bite_Front$/, attack: /(^|\|)(Rat_)?Attack(_Headbutt)?$/, dance: /\|Dance$/, leap: /(^|\|)Gallop_Jump$/ };
+CC0.make = (name, opts) => {
+  opts = opts || {}; const h = { name, root: new THREE.Group(), opts, st: '', sp: 0, last: null, mixer: null, acts: {}, wheels: [], ready: false };
+  (opts.parent || scene).add(h.root); if (opts.pos) h.root.position.copy(opts.pos);
+  CC0.load(name).then(g => { if (!g) return; const skinned = g.animations && g.animations.length; const m = skinned && window.RigCrowd ? RigCrowd.cloneSkinned(g.scene) : g.scene.clone(true);
+    const s = opts.h ? opts.h / g.size.y : opts.len ? opts.len / Math.max(g.size.x, g.size.z) : (opts.scale || 1); m.scale.setScalar(s); m.position.set(-g.center.x * s, -g.min.y * s, -g.center.z * s);
+    const wrap = new THREE.Group(); wrap.rotation.y = (opts.yaw || 0) + (CC0.face[name] || 0); wrap.add(m); h.root.add(wrap); h.model = m; h.wrap = wrap;
+    if (opts.tint !== undefined) { const t = new THREE.Color(opts.tint); m.traverse(o => { if (o.isMesh && o.material) { o.material = Array.isArray(o.material) ? o.material.map(q => q.clone()) : o.material.clone(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(q => { if (q.color && !/Eye|Black|Window|Light|Pupil/i.test(q.name)) q.color.multiply(t); }); } }); }
+    // wheels: re-centre each wheel mesh on its own hub and spin it about its axle (the one bbox axis unlike the other two)
+    m.traverse(o => { if (!/Wheel/i.test(o.name || '') || !o.isMesh || !o.geometry) return; o.geometry = o.geometry.clone(); o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox, c = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3());
+      o.geometry.translate(-c.x, -c.y, -c.z); o.position.add(c.clone().multiply(o.scale).applyQuaternion(o.quaternion)); const d = [Math.abs(sz.x - (sz.y + sz.z) / 2), Math.abs(sz.y - (sz.x + sz.z) / 2), Math.abs(sz.z - (sz.x + sz.y) / 2)];
+      o.userData.axle = d[0] >= d[1] && d[0] >= d[2] ? 'x' : d[1] >= d[2] ? 'y' : 'z'; o.userData.q0 = o.quaternion.clone(); o.userData.spin = 0; h.wheels.push(o); });
+    if (name === 'pigeon') m.traverse(o => { if (o.isMesh && o.material) { o.material = o.material.clone(); if (/Main/.test(o.material.name)) o.material.color.setHex([0x4e535c, 0x5d626b, 0x454a52, 0x6a6f77][Math.floor(Math.random() * 4)]); if (/Secondary/.test(o.material.name)) o.material.color.setHex(0x3a4a48); o.material.roughness = 0.8; } });
+    if (skinned) { h.mixer = new THREE.AnimationMixer(m); for (const k in CC0_CLIPS) { const c = g.animations.find(a => CC0_CLIPS[k].test(a.name)); if (c) h.acts[k] = h.mixer.clipAction(c); } }
+    h.ready = true; if (opts.onReady) opts.onReady(h); });
+  CC0.live.push(h); return h;
+};
+CC0.dress = (group, name, opts) => { opts = Object.assign({}, opts || {}); group.traverse(o => { if (o.isMesh && !(opts.keep && opts.keep(o))) o.visible = false; }); opts.parent = group; return CC0.make(name, opts); };
+CC0.play = (h, st, fade) => { if (!h.mixer || h.st === st) return; const a = h.acts[st] || h.acts.idle; if (!a) return; const prev = h.acts[h.st]; a.reset(); a.enabled = true; a.setEffectiveWeight(1); a.play(); if (prev && prev !== a) prev.crossFadeTo(a, fade || 0.25, false); h.st = st; };
+const _cw = new THREE.Vector3(), _cq = new THREE.Quaternion(), _ax = new THREE.Vector3();
+function cc0Visible(o) { while (o) { if (!o.visible) return false; o = o.parent; } return true; }
+function cc0Frame(dt) {
+  CC0.live.forEach(h => { if (!h.ready) return; h.root.getWorldPosition(_cw); const d = _cw.distanceTo(camera.position);
+    if (h.last) { const v = Math.hypot(_cw.x - h.last.x, _cw.z - h.last.z) / Math.max(dt, 1e-3); h.sp += (Math.min(v, 30) - h.sp) * Math.min(1, dt * 6); } else h.last = new THREE.Vector3(); h.last.copy(_cw);
+    if (h.wheels.length) h.wheels.forEach(w => { w.userData.spin += h.sp / 0.35 * dt; const ax = w.userData.axle; w.quaternion.copy(w.userData.q0).multiply(_cq.setFromAxisAngle(ax === 'x' ? _ax.set(1, 0, 0) : ax === 'y' ? _ax.set(0, 1, 0) : _ax.set(0, 0, 1), w.userData.spin)); });
+    if (!h.mixer || d > (h.opts.far || 90) || !cc0Visible(h.root)) return;
+    let st = h.force || (h.sp > (h.opts.runAt || 3.2) ? 'run' : h.sp > 0.18 ? 'walk' : (h.opts.idleAlt && Math.sin(LIFE.t * 0.13 + h.root.id) > 0.6 ? h.opts.idleAlt : 'idle')); CC0.play(h, st);
+    const a = h.acts[h.st]; if (a) a.timeScale = h.st === 'walk' ? Math.max(0.5, Math.min(2, h.sp / (h.opts.walkSp || 1.2))) : h.st === 'run' ? Math.max(0.7, Math.min(1.6, h.sp / (h.opts.runSp || 6))) : 1;
+    h.mixer.update(dt); });
+}
+window.__FRAMES.push(dt => { try { cc0Frame(dt); } catch (e) { if (!CC0.err) { CC0.err = e; console.warn('v106 cc0', e); } } });
+// the dogs: the fetch dog, the two that chase pigeons, and the dog walker's six
+(function realDogs() {
+  try { if (FETCH && FETCH.d) CC0.dress(FETCH.d.g, 'shiba', { h: 0.62 / 1.35, idleAlt: 'eat', walkSp: 1.0, runSp: 5 }); } catch (e) { }
+  try { ZOO.dogs.forEach((o, i) => CC0.dress(o.d.g, i ? 'husky' : 'shiba', { h: (i ? 0.75 : 0.6) / (i ? 1.1 : 0.9), tint: i ? undefined : 0x3a3a3a, idleAlt: 'eat' })); } catch (e) { }
+  try { const kinds = [['husky', 0.8, 0xb0a698], ['shiba', 0.42, undefined], ['husky', 0.62, 0xf0dcb8], ['shiba', 0.36, 0xd8c09a], ['husky', 0.7, undefined], ['shiba', 0.45, 0x2a2622]];
+    DOGW.dogs.forEach((d, i) => { const [n, hh, tint] = kinds[i]; CC0.dress(d.g, n, { h: hh, yaw: PI / 2, tint, walkSp: 1.1, idleAlt: 'eat' }); }); } catch (e) { }
+})();
+
+/* ================================================================
+   v107 REAL PIGEONS (2026-11-23)
+   The island's pigeons (the flocks on THE FLOOR, the Census Walk and GM BEACH, still run by v12: they peck about,
+   scatter when you come close and glide back) are now Quaternius' rigged CC0 pigeon. The nearest eighteen (eight
+   on a phone) are full rigged birds that walk, idle, peck and flap; the rest of the flock stays the light
+   instanced bird out past where you can tell the difference. Feeding and the dogs chasing them still work.
+   ================================================================ */
+const PIGR = { pool: [], K: isMobile ? 8 : 18, t: 0, im: null };
+window.__PIGR = PIGR;
+(function realPigeons() {
+  scene.traverse(o => { if (o.isInstancedMesh && o.count === 44 && o.material && o.material.color && (o.material.color.getHex() === 0x8a8f99 || o.material.color.getHex() === 0x6f7480)) (o.material.color.getHex() === 0x8a8f99 ? (PIGR.im = o) : (PIGR.w = (PIGR.w || []).concat(o))); });
+  for (let i = 0; i < PIGR.K; i++) { const h = CC0.make('pigeon', { h: 0.3, walkSp: 0.35, far: 60, tint: [0xffffff, 0xd8d8d8, 0xb8b8c0, 0xefe9e0][i % 4] }); h.root.visible = false; h.idx = -1; PIGR.pool.push(h); }
+})();
+const _pz = new THREE.Matrix4().makeScale(0, 0, 0), _pm = new THREE.Matrix4();
+function pigrFrame(dt) {
+  const B = LIFE.pigeons; if (!B || !PIGR.pool.length) return; PIGR.t -= dt;
+  if (PIGR.t <= 0) { PIGR.t = 0.5; const order = B.map((b, i) => [Math.hypot(b.x - P.x, b.z - P.z), i]).sort((a, b) => a[0] - b[0]).slice(0, PIGR.K); PIGR.pool.forEach((h, k) => { h.idx = order[k] && order[k][0] < 70 ? order[k][1] : -1; }); }
+  const used = new Set();
+  PIGR.pool.forEach(h => { if (h.idx < 0 || !h.ready) { h.root.visible = false; return; } const b = B[h.idx]; used.add(h.idx); h.root.visible = true;
+    h.root.position.set(b.x, b.y + (b.st === 0 ? 0 : 0.05), b.z); h.root.rotation.y = b.yaw; h.force = b.st === 0 ? (Math.sin(LIFE.t * 0.7 + h.idx) > 0.5 ? 'peck' : null) : 'jump'; });
+  // hide the instanced bird wherever a rigged one stands in
+  if (PIGR.im) { used.forEach(i => PIGR.im.setMatrixAt(i, _pz)); PIGR.im.instanceMatrix.needsUpdate = true; }
+  if (PIGR.w) PIGR.w.forEach(w => { used.forEach(i => w.setMatrixAt(i, _pz)); w.instanceMatrix.needsUpdate = true; });
+}
+window.__FRAMES.push(dt => { try { pigrFrame(dt); } catch (e) { if (!PIGR.err) { PIGR.err = e; console.warn('v107 pigeons', e); } } });
+
+/* ================================================================
+   v108 REAL RATS (2026-11-23)
+   The Pizza Rat (PIZZA) is now the rigged CC0 rat, running with his slice. And after dark, rats come out along the
+   curb of the ring road: a few at a time, scurrying in short dashes, stopping to sniff, darting off again when you
+   get close. They never come onto the paths. They are New Yorkers too.
+   ================================================================ */
+const RATS = { r: [] };
+window.__RATS = RATS;
+(function realRats() {
+  try { CC0.dress(RAT.g, 'rat', { h: 0.17, keep: o => o.material && o.material.color && (o.material.color.getHex() === 0xf2c14e || o.material.color.getHex() === 0xa8321e), runAt: 1.5, runSp: 4 }); } catch (e) { }
+  for (let i = 0; i < (isMobile ? 4 : 8); i++) { const h = CC0.make('rat', { h: 0.15, runAt: 1.2, runSp: 3.5, far: 50, tint: [0xffffff, 0xc8beb4, 0x8a8078][i % 3] }); h.root.visible = false;
+    RATS.r.push({ h, a: Math.random() * PI * 2, side: Math.random() < 0.5 ? -1 : 1, t: Math.random() * 3, run: 0, dir: Math.random() < 0.5 ? -1 : 1 }); }
+})();
+function ratsFrame(dt) {
+  const night = (L.lamps || 0) > 0.5;
+  RATS.r.forEach(r => { r.h.root.visible = night; if (!night) return; const R = 100 + r.side * 4.4, x = Math.sin(r.a) * R, z = Math.cos(r.a) * R, d = Math.hypot(P.x - x, P.z - z);
+    r.t -= dt; if (r.t <= 0) { r.run = r.run > 0 ? 0 : 0.6 + Math.random() * 1.6; r.t = r.run || (0.8 + Math.random() * 2.5); if (Math.random() < 0.3) r.dir = -r.dir; }
+    if (d < 4 && r.run <= 0) { r.run = 1.4; r.t = 1.4; r.dir = Math.sign(Math.sin(r.a) * (P.z - z) - Math.cos(r.a) * (P.x - x)) || 1; }
+    const sp = r.run > 0 ? 2.6 : 0; r.a += r.dir * sp / R * dt; r.h.root.position.set(x, ground(x, z) + 0.02, z); r.h.root.rotation.y = r.a + (r.dir > 0 ? PI / 2 : -PI / 2); });
+}
+window.__FRAMES.push(dt => { try { ratsFrame(dt); } catch (e) { if (!RATS.err) { RATS.err = e; console.warn('v108 rats', e); } } });
+
+/* ================================================================
+   v109 REAL CARS (2026-11-23)
+   The N3W cab (TAXI) is now Quaternius' CC0 taxi with its wheels turning, still wearing the N3W YORKERS topper;
+   the two parked cars of v81 (the car alarm) are now the CC0 car and taxi; and the ring road finally has traffic:
+   six cars, three each way, in four paint jobs, keeping their distance, slowing behind the bus and the cab, and
+   stopping for the crosswalk when it says walk.
+   ================================================================ */
+const TRAF = { c: [] };
+window.__TRAF = TRAF;
+(function realCars() {
+  try { CC0.dress(CAB.g, 'taxi', { len: 4.7, keep: o => o.position.y > 1.85 }); } catch (e) { }
+  try { CARS.c.forEach((c, i) => CC0.dress(c.g, i ? 'taxi' : 'car_b', { len: c.L, yaw: PI / 2, tint: i ? undefined : 0x2a3a4a })); } catch (e) { }
+  const paints = [0xffffff, 0x8a2b1e, 0x2f4a33, 0x1b1d22, 0xd9d4c8, 0x2962FF];
+  for (let i = 0; i < 6; i++) { const inner = i < 3, kind = i === 2 || i === 5 ? 'taxi' : 'car_b'; const h = CC0.make(kind, { len: 4.4, tint: kind === 'taxi' ? undefined : paints[i] });
+    TRAF.c.push({ h, inner, b: (i % 3) * (PI * 2 / 3) + (inner ? 0.4 : 1.4), dir: inner ? 1 : -1, sp: 0, max: 8 + Math.random() * 3, R: inner ? 98.3 : 101.7 }); }
+})();
+const angAhead = (from, to, dir) => { let d = (to - from) * dir; d = ((d % (2 * PI)) + 2 * PI) % (2 * PI); return d; };
+function trafFrame(dt) {
+  const others = { 1: [], '-1': [] };   // b angles of every vehicle in each lane
+  try { others[1].push(Math.atan2(BUS.g.position.x, BUS.g.position.z)); } catch (e) { }
+  try { others[-1].push(Math.atan2(CAB.g.position.x, CAB.g.position.z)); } catch (e) { }
+  TRAF.c.forEach(c => others[c.dir].push(c.b));
+  TRAF.c.forEach(c => { let gap = 99; others[c.dir].forEach(b => { if (b === c.b) return; const a = angAhead(c.b, b, c.dir) * c.R; if (a > 0.1 && a < gap) gap = a; });
+    const cross = angAhead(c.b, 0, c.dir) * c.R; let want = c.max; if (gap < 18) want = Math.min(want, (gap - 7) * 0.8); if (window.__XWALK_PED && cross > 4 && cross < 14) want = Math.min(want, (cross - 5) * 0.8);
+    want = Math.max(0, want); c.sp += (want - c.sp) * Math.min(1, dt * (want < c.sp ? 3 : 1.2)); c.b += c.dir * c.sp / c.R * dt;
+    const x = Math.sin(c.b) * c.R, z = Math.cos(c.b) * c.R; c.h.root.position.set(x, ground(x, z) + 0.02, z); const tx = Math.cos(c.b) * c.dir, tz = -Math.sin(c.b) * c.dir; c.h.root.rotation.y = Math.atan2(tx, tz); });
+}
+window.__FRAMES.push(dt => { try { trafFrame(dt); } catch (e) { if (!TRAF.err) { TRAF.err = e; console.warn('v109 cars', e); } } });
+
+/* ================================================================
+   v110 HORSES (2026-11-23)
+   Two real horses (CC0, rigged). A carriage horse in a red plume pulls a black hansom cab with a driver in a top hat
+   slowly round the ring path, the other way from the dog walker; its walk is the real walk, hooves clopping when
+   you are close. And a mounted police officer patrols GM BEACH at a walk, turning at each end. E at the carriage
+   when it pulls in at the south of the ring takes a lap.
+   ================================================================ */
+const HORSE = { a: 1.8, R: 42.6, wait: 0, ride: false };
+window.__HORSE = HORSE;
+(function horses() {
+  const g = new THREE.Group(); scene.add(g); HORSE.g = g;
+  HORSE.h = CC0.make('horse', { h: 1.7, parent: g, walkSp: 1.4, far: 120 }); HORSE.h.root.position.set(0, 0, 2.6);
+  const black = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: 0.35, metalness: 0.3 }), red = new THREE.MeshStandardMaterial({ color: 0x7a1f2a, roughness: 0.8 }), brass = new THREE.MeshStandardMaterial({ color: 0xb08a3e, roughness: 0.3, metalness: 0.9 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.8, 1.6), black); body.position.set(0, 1.05, -0.6); g.add(body);
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.18, 0.7), red); seat.position.set(0, 1.55, -0.8); g.add(seat);
+  const hood = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 1.3, 16, 1, true, -PI / 2, PI * 0.7), black); hood.rotation.z = PI / 2; hood.position.set(0, 1.75, -1.15); g.add(hood);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.3, 0.5), black); box.position.set(0, 1.55, 0.35); g.add(box);
+  [[-0.78, -0.9, 0.62], [0.78, -0.9, 0.62], [-0.72, 0.5, 0.45], [0.72, 0.5, 0.45]].forEach(([x, z, r]) => { const w = new THREE.Mesh(new THREE.TorusGeometry(r, 0.035, 6, 24), black); w.rotation.y = PI / 2; w.position.set(x, r, z); g.add(w); const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 8), brass); hub.rotation.z = PI / 2; hub.position.set(x, r, z); g.add(hub); (HORSE.wheels = HORSE.wheels || []).push({ w, r }); });
+  [-0.45, 0.45].forEach(x => { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 2.4, 6), black); s.rotation.x = PI / 2 - 0.08; s.position.set(x, 1.0, 1.4); g.add(s); });
+  const drv = person(0x15161a, 0x15161a, SKIN[3], 'wiseguy'); scene.remove(drv.g); drv.g.position.set(0, 1.62 - 0.35 - 0.5, 0.35); drv.g.scale.setScalar(0.95); g.add(drv.g);
+  const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.28, 14), black); hat.position.set(0, 2.32, 0); drv.g.add(hat);
+  const plume = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.35, 8), new THREE.MeshStandardMaterial({ color: 0xc8202a, roughness: 0.9 })); plume.position.set(0, 1.95, 3.15); g.add(plume); HORSE.plume = plume;
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  interact(0, 42.6, 3, 'E · TAKE A CARRIAGE RIDE', () => horseRide());
+  // the mounted officer on the beach
+  const mg = new THREE.Group(); scene.add(mg); HORSE.mg = mg; HORSE.m = CC0.make('horse', { h: 1.7, parent: mg, tint: 0x5a3a24, walkSp: 1.3 }); HORSE.mx = -30; HORSE.md = 1;
+  const cop = person(0x1f2a44, 0x1f2a44, SKIN[0], 'cabbie'); scene.remove(cop.g); cop.g.position.set(0, -0.12, -0.15); cop.g.scale.setScalar(0.9); mg.add(cop.g);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.14, 0.12, 14), new THREE.MeshStandardMaterial({ color: 0x1f2a44, roughness: 0.6 })); cap.position.set(0, 2.2, 0); cop.g.add(cap);
+  if (window.__MAP) MAP.places.push(['CARRIAGE', 0, 42.6, 0, 44.5]);
+})();
+const horseSecret = secret('carriage', () => { toast('ONE LAP IN A HANSOM CAB. THE DRIVER POINTS AT THINGS AND MAKES UP FACTS ABOUT THEM. ALL OF THEM ARE WRONG. YOU TIP ANYWAY.', 'blue'); });
+function horseRide() { if (HORSE.ride) return; const d = Math.hypot(HORSE.g.position.x - P.x, HORSE.g.position.z - P.z); if (d > 6) { toast('THE CARRIAGE IS ON ITS WAY ROUND. IT STOPS AT THE SOUTH OF THE RING.'); return; } HORSE.ride = true; HORSE.rideA = 0; HORSE.wait = 0; toast('YOU CLIMB IN. THE DRIVER CLICKS HIS TONGUE. ANY MOVE KEY TO GET OFF.', 'blue'); }
+let clopT = 0;
+function horseFrame(dt) {
+  const stopB = 0; if (HORSE.wait > 0) HORSE.wait -= dt; else { const prev = HORSE.a; HORSE.a -= 1.5 / HORSE.R * dt; const d0 = Math.atan2(Math.sin(prev - stopB), Math.cos(prev - stopB)), d1 = Math.atan2(Math.sin(HORSE.a - stopB), Math.cos(HORSE.a - stopB)); if (!HORSE.ride && d0 > 0 && d1 <= 0) HORSE.wait = 14; if (HORSE.ride) HORSE.rideA += 1.5 / HORSE.R * dt; }
+  const a = HORSE.a, x = Math.sin(a) * HORSE.R, z = Math.cos(a) * HORSE.R; HORSE.g.position.set(x, ground(x, z), z); const tx = -Math.cos(a), tz = Math.sin(a); HORSE.g.rotation.y = Math.atan2(tx, tz);
+  const moving = HORSE.wait <= 0; if (moving) HORSE.wheels.forEach(o => o.w.rotation.x -= 1.5 / o.r * dt); HORSE.plume.rotation.z = Math.sin(LIFE.t * 3) * 0.15;
+  if (HORSE.ride) { const moveKey = keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y; if (moveKey && HORSE.rideA > 0.3) { HORSE.ride = false; toast('YOU HOP OFF. THE HORSE DOES NOT LOOK BACK.'); }
+    else { P.x = x - tx * 0.8; P.z = z - tz * 0.8; P.y = ground(x, z) + 1.1; P.vy = 0; P.ground = true; if (HORSE.rideA > PI * 2) { HORSE.ride = false; horseSecret(); } } }
+  const d = Math.hypot(P.x - x, P.z - z); clopT -= dt; if (moving && d < 22 && clopT <= 0 && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) { clopT = 0.36; try { beep(380 + Math.random() * 60, 0.03, 'triangle', Math.min(0.05, 0.8 / (d + 3))); } catch (e) { } }
+  // the officer: up and down the beach
+  HORSE.mx += HORSE.md * 1.2 * dt; if (HORSE.mx > 34 || HORSE.mx < -34) HORSE.md = -HORSE.md; const mz = 110; HORSE.mg.position.set(HORSE.mx, ground(HORSE.mx, mz), mz); HORSE.mg.rotation.y = HORSE.md > 0 ? PI / 2 : -PI / 2;
+}
+window.__FRAMES.push(dt => { try { horseFrame(dt); } catch (e) { if (!HORSE.err) { HORSE.err = e; console.warn('v110 horses', e); } } });
+
+/* ================================================================
+   v111 SHARPER SHADOWS (2026-11-23)
+   The sun's shadow map used to be a 110 metre box centred on your feet, so half of it was always behind you. It now
+   sits twenty metres ahead of where you look and is tighter (84 m on a computer, 4096 px), so the shadows you can see
+   are about twice as crisp: railings, chair legs, the dogs' legs, the leaves. Softer penumbra, less acne. Phones keep
+   the old box. Everything new on the island (the CC0 animals and cars, the market, the walk up, the threshold)
+   casts and receives.
+   ================================================================ */
+(function shadows() {
+  if (isMobile || !sun || !sun.shadow) return; window.__SHADOW_AHEAD = 20;
+  Object.assign(sun.shadow.camera, { left: -42, right: 42, top: 42, bottom: -42 }); sun.shadow.camera.updateProjectionMatrix();
+  sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.03; if ('radius' in sun.shadow) sun.shadow.radius = 2.5;
+  // cast from the bigger new pieces too
+  setTimeout(() => { try { scene.traverse(o => { if (!o.isMesh || o.castShadow || o.isInstancedMesh || !o.geometry || (o.material && (o.material.transparent || o.material.isShaderMaterial || o.material.isMeshBasicMaterial))) return; if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const r = o.geometry.boundingSphere.radius * Math.max(o.scale.x, o.scale.y, o.scale.z); if (r > 0.5 && r < 9) o.castShadow = true; }); } catch (e) { } }, 4000);
+})();
+
+/* ================================================================
+   v112 LAMPLIGHT (2026-11-23)
+   After dark the street lamps finally light the ground: a warm pool of light on the paving under each of the
+   thirty six lamps round the ring road and the paths, falling off softly, with a faint halo round every bulb, and
+   smaller pools under the market, the shed and the stoop. They come up with the lamps at dusk and go at dawn.
+   ================================================================ */
+const LAMP = { pools: null, halos: null, n: 0 };
+window.__LAMP = LAMP;
+(function lamplight() {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient) { const g = c.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,214,150,1)'); g.addColorStop(0.35, 'rgba(255,190,120,.45)'); g.addColorStop(1, 'rgba(255,170,100,0)'); c.fillStyle = g; c.fillRect(0, 0, 128, 128); }
+  const tx = new THREE.CanvasTexture(cv);
+  const pts = []; scene.traverse(o => { if (o.isInstancedMesh && o.material === MAT.bulb && o.count <= 60) { const m = new THREE.Matrix4(), v = new THREE.Vector3(); for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m); v.setFromMatrixPosition(m); pts.push([v.x, v.y, v.z, 6.5]); } } });
+  [[MKT_AT.x, MKT_AT.z - 2, 3.1, 5], [SHED_AT.x, SHED_AT.z, 3, 4], [BROWN.fx - 2, BROWN_AT.z - 2.4, 2.5, 3.5], [BUS.shel[0].x, BUS.shel[0].z, 2.5, 3], [BUS.shel[1].x, BUS.shel[1].z, 2.5, 3], [NEWS_AT.x, NEWS_AT.z, 2.5, 3.5], [LINE_AT.x - 4, LINE_AT.z - 3, 3, 4]].forEach(([x, z, y, r]) => pts.push([x, ground(x, z) + y, z, r]));
+  LAMP.n = pts.length; const N = pts.length;
+  const pools = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: tx, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -4 }), N);
+  const halos = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: tx, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }), N);
+  const o = new THREE.Object3D(); pts.forEach(([x, y, z, r], i) => { const f = floorAt(x, z, y - 0.5); const gy = (f.f === null ? ground(x, z) : f.f) + 0.08; o.position.set(x, gy, z); o.rotation.set(-PI / 2, 0, 0); o.scale.set(r * 2, r * 2, 1); o.updateMatrix(); pools.setMatrixAt(i, o.matrix); });
+  pools.frustumCulled = halos.frustumCulled = false; pools.renderOrder = 3; halos.renderOrder = 6; scene.add(pools); scene.add(halos); LAMP.pools = pools; LAMP.halos = halos; LAMP.pts = pts; LAMP.o = o;
+})();
+function lampFrame(dt) {
+  const k = Math.min(1, Math.max(0, ((L.lamps || 0) - 0.15) * 1.4)); LAMP.pools.visible = LAMP.halos.visible = k > 0.01; if (k <= 0.01) return;
+  LAMP.pools.material.opacity = 0.42 * k; LAMP.halos.material.opacity = 0.5 * k;
+  const o = LAMP.o; LAMP.pts.forEach(([x, y, z], i) => { o.position.set(x, y, z); o.quaternion.copy(camera.quaternion); o.scale.setScalar(1.1 + Math.sin(LIFE.t * 1.7 + i) * 0.04); o.updateMatrix(); LAMP.halos.setMatrixAt(i, o.matrix); }); LAMP.halos.instanceMatrix.needsUpdate = true;
+}
+window.__FRAMES.push(dt => { try { lampFrame(dt); } catch (e) { if (!LAMP.err) { LAMP.err = e; console.warn('v112 lamps', e); } } });
+
+/* ================================================================
+   v113 THE LIGHT PROBE REBAKE (2026-11-23)
+   The island's reflections and soft sky light come from a light probe baked from the sky photographs. Until now it
+   had no sun in it, so metal, glass, water and car paint reflected an even sky at every hour. The sun is now baked
+   into the probe where it really is (a hot core and a wide warm glow, coloured by the sun's height: white at noon,
+   amber at golden hour, rose at the horizon), and the probe rebakes whenever the sun moves two and a half degrees,
+   not only when the weather changes. Golden hour reads as golden on every surface; noon gets crisp highlights.
+   The grade follows: a touch more warmth in the highlights at golden hour and a cool lift at blue hour.
+   ================================================================ */
+window.__ENVSUN = c => {
+  if (!SKY.sun || SKY.sun.el < -3 || !c.createRadialGradient) return; const az = SKY.sun.az * PI / 180, el = SKY.sun.el * PI / 180;
+  const dx = Math.cos(el) * Math.sin(az), dy = Math.sin(el), dz = -Math.cos(el) * Math.cos(az); const u = Math.atan2(dz, dx) / (2 * PI) + 0.5, v = Math.asin(Math.max(-1, Math.min(1, dy))) / PI + 0.5;
+  const x = u * 512, y = (1 - v) * 256, e = SKY.sun.el, warm = Math.max(0, Math.min(1, 1 - e / 25)), clouds = Math.min(1, (WX.wet || 0) * 1.5 + (WX.cur === 'CLOUDY' || WX.cur === 'OVERCAST' ? 0.6 : 0));
+  const col = [255, Math.round(250 - 70 * warm), Math.round(235 - 140 * warm)], a = (1 - clouds * 0.85) * Math.min(1, (e + 3) / 6);
+  [[60, 0.35], [18, 0.9], [6, 1]].forEach(([r, k]) => { for (const off of [0, -512, 512]) { const g = c.createRadialGradient(x + off, y, 0, x + off, y, r); g.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},${a * k})`); g.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},0)`); c.fillStyle = g; c.fillRect(x + off - r, y - r, r * 2, r * 2); } });
+};
+(function rebakeNow() { try { updateEnv(0, true); } catch (e) { } })();
+window.__GRADE = u => {
+  const e = (SKY.sun && SKY.sun.el) || 0;
+  const golden = Math.max(0, 1 - Math.abs(e - 5) / 9), blue = Math.max(0, 1 - Math.abs(e + 5) / 4);
+  u.uGain.value.r *= 1 + 0.035 * golden; u.uGain.value.b *= 1 - 0.04 * golden; u.uLift.value.b *= 1 + 0.06 * blue; u.uLift.value.r *= 1 - 0.03 * blue;
+};
+
+/* ================================================================
+   v114 CONTACT SHADOWS (2026-11-23)
+   The sun's shadow map is too coarse to ground anything small, so people, dogs, pigeons and cars used to look as if
+   they hovered a centimetre over the paving. Now everything that moves gets a soft dark contact shadow right under
+   it, the kind ambient occlusion gives in a real render: tight and dark under the feet, fading out in a hand's
+   width, stronger in the day, gentler at night. One instanced layer for the whole island, updated every frame for
+   whatever is within sixty metres.
+   ================================================================ */
+const BLOB = { t: [], N: 220 };
+window.__BLOB = BLOB;
+(function contactShadows() {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient) { const g = c.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(0,0,0,.75)'); g.addColorStop(0.45, 'rgba(0,0,0,.4)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(0, 0, 64, 64); }
+  const im = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c ? cv : document.createElement('canvas')), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, opacity: 0.8 }), BLOB.N);
+  im.frustumCulled = false; im.renderOrder = 2; im.count = 0; scene.add(im); BLOB.im = im; BLOB.o = new THREE.Object3D();
+  // who gets one: every person (residents, crowds, vendors), every CC0 animal and car
+  setTimeout(() => { try { scene.traverse(o => { if (o.isGroup && o.userData && o.userData.cast) BLOB.t.push({ o, r: 0.55 }); }); } catch (e) { } }, 3000);
+})();
+const _bw = new THREE.Vector3(), _bd = new THREE.Vector3();
+function blobFrame(dt) {
+  const list = BLOB.t.concat(CC0.live.filter(h => h.ready).map(h => ({ o: h.root, r: h.name === 'taxi' || h.name === 'car_b' ? 2.6 : h.name === 'horse' ? 1.3 : h.name === 'pigeon' ? 0.22 : h.name === 'rat' ? 0.18 : 0.5, car: h.name === 'taxi' || h.name === 'car_b' })));
+  const day = Math.max(0, Math.min(1, ((SKY.el || 0) + 4) / 18)); BLOB.im.material.opacity = 0.45 + 0.4 * day;
+  let n = 0; const o = BLOB.o;
+  for (const t of list) { if (n >= BLOB.N) break; if (t.o.userData && t.o.userData.cast && t.o.parent !== scene) continue; if (!cc0Visible(t.o)) continue; t.o.getWorldPosition(_bw); if (Math.abs(_bw.x - P.x) > 60 || Math.abs(_bw.z - P.z) > 60) continue;
+    const f = floorAt(_bw.x, _bw.z, _bw.y + 1.0); let gy = f.f === null ? ground(_bw.x, _bw.z) : f.f; if (t.o.userData && t.o.userData.cast) gy = Math.max(gy, _bw.y + 0.35 - 0.05); if (_bw.y - gy > 1.5) continue;
+    o.position.set(_bw.x, gy + 0.04, _bw.z); let yaw = 0; if (t.car) { t.o.getWorldDirection(_bd); yaw = Math.atan2(_bd.x, _bd.z); } o.rotation.set(-PI / 2, yaw, 0, 'YXZ'); o.scale.set(t.car ? t.r * 0.75 : t.r, t.r * (t.car ? 1.6 : 1), 1); o.updateMatrix(); BLOB.im.setMatrixAt(n++, o.matrix); }
+  BLOB.im.count = n; BLOB.im.instanceMatrix.needsUpdate = true;
+}
+window.__FRAMES.push(dt => { try { blobFrame(dt); } catch (e) { if (!BLOB.err) { BLOB.err = e; console.warn('v114 blobs', e); } } });
+
+/* ================================================================
+   v115 THE DOG RUN (2026-11-23)
+   A fenced dog run on the west grass at (-86, 13): wood chips, a double gate, a water bowl, a bench, and four real
+   dogs (CC0, rigged) who never stop: one chases a ball someone keeps throwing, two chase each other in loops, one
+   lies by the bowl eating until it decides it is time to gallop. E at the gate throws the ball yourself.
+   ================================================================ */
+const DRUN = { d: [], ball: null, bx: 0, bz: 0, by: 0, vx: 0, vz: 0, vy: 0, t: 0 };
+window.__DRUN = DRUN;
+const DRUN_AT = { x: -86, z: 13, w: 9, l: 9 };
+(function dogRun() {
+  const x0 = DRUN_AT.x, z0 = DRUN_AT.z, g0 = ground(x0, z0), W = DRUN_AT.w, Lz = DRUN_AT.l; DRUN.g0 = g0;
+  const chips = new THREE.Mesh(new THREE.PlaneGeometry(W, Lz), new THREE.MeshStandardMaterial({ map: tex('assets/sand_c.webp', [3, 3]), color: 0x8a6a48, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 })); chips.rotation.x = -PI / 2; chips.position.set(x0, g0 + 0.03, z0); chips.receiveShadow = true; scene.add(chips);
+  const iron = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.5, metalness: 0.6 });
+  const fence = (ax, az, bx, bz) => { const L2 = Math.hypot(bx - ax, bz - az), ry = Math.atan2(-(bz - az), bx - ax); const top = new THREE.Mesh(new THREE.BoxGeometry(L2, 0.05, 0.05), iron); top.position.set((ax + bx) / 2, g0 + 1.1, (az + bz) / 2); top.rotation.y = ry; scene.add(top);
+    for (let u = 0; u <= 1.0001; u += 0.5 / L2) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.025, 1.1, 0.025), iron); p.position.set(ax + (bx - ax) * u, g0 + 0.55, az + (bz - az) * u); scene.add(p); } wall(ax, az, bx, bz, -5, g0 + 1.15); };
+  const hx = W / 2, hz = Lz / 2; fence(x0 - hx, z0 - hz, x0 + hx, z0 - hz); fence(x0 - hx, z0 + hz, x0 + hx, z0 + hz); fence(x0 - hx, z0 - hz, x0 - hx, z0 + hz); fence(x0 + hx, z0 - hz, x0 + hx, z0 - 0.8); fence(x0 + hx, z0 + 0.8, x0 + hx, z0 + hz);   // the gate gap faces the island
+  const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.16, 0.08, 16), new THREE.MeshStandardMaterial({ color: 0xc9cdd1, metalness: 0.9, roughness: 0.2 })); bowl.position.set(x0 - hx + 0.8, g0 + 0.05, z0 + hz - 0.8); scene.add(bowl); DRUN.bowl = [bowl.position.x, bowl.position.z];
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), new THREE.MeshStandardMaterial({ color: 0xd8f03a, roughness: 0.7 })); ball.castShadow = true; scene.add(ball); DRUN.ball = ball; DRUN.bx = x0; DRUN.bz = z0;
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.4), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'DOG RUN', s: 0.42 }, { t: 'CLOSE THE GATE', s: 0.16 }], 512, 170, '#2f4a33', '#efe8da'), side: THREE.DoubleSide })); sign.position.set(x0 + hx + 0.05, g0 + 1.5, z0 - 1.4); sign.rotation.y = PI / 2; scene.add(sign);
+  [['shiba', 0.6, undefined, 'ball'], ['husky', 0.74, undefined, 'chase'], ['shiba', 0.5, 0x2a2622, 'chase'], ['husky', 0.68, 0xd9c3a0, 'bowl']].forEach(([n, h, tint, role], i) => { const hh = CC0.make(n, { h, tint, runAt: 2.4, runSp: 6, walkSp: 1.1, idleAlt: 'eat' }); DRUN.d.push({ h: hh, role, x: x0 + (i - 1.5) * 1.5, z: z0, yaw: 0, ph: i * 1.9, t: 0 }); });
+  interact(x0 + hx + 1.0, z0, 1.8, 'E · THROW THE BALL', () => drunThrow(true));
+  if (window.__MAP) MAP.places.push(['DOG RUN', x0, z0, x0 + hx + 2, z0]);
+})();
+const drunSecret = secret('dogrun', () => { toast('THE SHIBA BRINGS IT BACK AND DROPS IT AT YOUR FEET AND LOOKS AT YOU LIKE YOU ARE THE ONLY PERSON ON EARTH. THROW IT AGAIN.', 'blue'); });
+function drunThrow(you) { const a = Math.random() * PI * 2, sp = 6 + Math.random() * 3; DRUN.bx = you ? DRUN_AT.x + DRUN_AT.w / 2 - 0.5 : DRUN.bx; DRUN.bz = you ? DRUN_AT.z : DRUN.bz; DRUN.by = 1.2; DRUN.vx = -Math.abs(Math.cos(a)) * sp; DRUN.vz = Math.sin(a) * sp * 0.6; DRUN.vy = 4; DRUN.you = you; DRUN.t = 0; }
+function drunFrame(dt) {
+  const d0 = Math.hypot(P.x - DRUN_AT.x, P.z - DRUN_AT.z); if (d0 > 110) return; const hx = DRUN_AT.w / 2 - 0.5, hz = DRUN_AT.l / 2 - 0.5, X0 = DRUN_AT.x, Z0 = DRUN_AT.z;
+  // the ball
+  DRUN.vy -= 12 * dt; DRUN.bx += DRUN.vx * dt; DRUN.bz += DRUN.vz * dt; DRUN.by += DRUN.vy * dt; if (DRUN.by < 0.07) { DRUN.by = 0.07; DRUN.vy *= -0.45; DRUN.vx *= 0.8; DRUN.vz *= 0.8; }
+  if (Math.abs(DRUN.bx - X0) > hx) { DRUN.bx = X0 + Math.sign(DRUN.bx - X0) * hx; DRUN.vx *= -0.5; } if (Math.abs(DRUN.bz - Z0) > hz) { DRUN.bz = Z0 + Math.sign(DRUN.bz - Z0) * hz; DRUN.vz *= -0.5; }
+  DRUN.t += dt; if (DRUN.t > 9) drunThrow(false);
+  DRUN.d.forEach((d, i) => { d.t += dt; let tx = d.x, tz = d.z, sp = 0;
+    if (d.role === 'ball') { tx = DRUN.bx; tz = DRUN.bz; sp = 6.2; if (Math.hypot(tx - d.x, tz - d.z) < 0.35 && DRUN.by < 0.3) { DRUN.vx = DRUN.vz = 0; if (DRUN.you && DRUN.t > 1) { DRUN.you = false; drunSecret(); } DRUN.bx = d.x + Math.sin(d.yaw) * 0.35; DRUN.bz = d.z + Math.cos(d.yaw) * 0.35; DRUN.by = 0.3; sp = 0; } }
+    else if (d.role === 'chase') { const a = LIFE.t * 0.9 + d.ph, r = 2.6 + Math.sin(LIFE.t * 0.3 + i) * 0.8; tx = X0 + Math.cos(a) * r; tz = Z0 + Math.sin(a * 1.3) * Math.min(r, hz); sp = 5.5; }
+    else { const k = (LIFE.t * 0.05) % 1; if (k < 0.7) { tx = DRUN.bowl[0] + 0.4; tz = DRUN.bowl[1] - 0.4; sp = 1.2; } else { const a = LIFE.t * 1.2; tx = X0 + Math.cos(a) * 3; tz = Z0 + Math.sin(a) * 3; sp = 6; } }
+    const dx = tx - d.x, dz = tz - d.z, dd = Math.hypot(dx, dz); if (dd > 0.25) { const st = Math.min(dd, sp * dt); d.x += dx / dd * st; d.z += dz / dd * st; const ty = Math.atan2(dx, dz); let dy = Math.atan2(Math.sin(ty - d.yaw), Math.cos(ty - d.yaw)); d.yaw += dy * Math.min(1, dt * 7); }
+    d.x = Math.max(X0 - hx, Math.min(X0 + hx, d.x)); d.z = Math.max(Z0 - hz, Math.min(Z0 + hz, d.z)); d.h.root.position.set(d.x, DRUN.g0 + 0.03, d.z); d.h.root.rotation.y = d.yaw; });
+  DRUN.ball.position.set(DRUN.bx, DRUN.g0 + DRUN.by, DRUN.bz);
+}
+window.__FRAMES.push(dt => { try { drunFrame(dt); } catch (e) { if (!DRUN.err) { DRUN.err = e; console.warn('v115 dog run', e); } } });
+
+/* ================================================================
+   v116 THE COYOTE AND THE DEER (2026-11-23)
+   Two true New York wildlife stories. After midnight a coyote (they really do live in this city) trots the edge
+   of the beach, stops when it notices you, looks at you for a long second and lopes off. And at dawn a doe and a
+   stag (Staten Island is full of them) graze on the west beach; walk closer than ten metres and they bolt.
+   All three are rigged CC0 animals. COYOTE and DEER bring them out at any hour.
+   ================================================================ */
+const WILD = { coy: null, ca: 0.4, cst: 'trot', ct: 0, deer: [], until: { coy: 0, deer: 0 } };
+window.__WILD = WILD;
+(function wildlife() {
+  WILD.coy = CC0.make('wolf', { h: 0.62, tint: 0xc9a77a, runAt: 3, runSp: 7, walkSp: 1.3, far: 120 }); WILD.coy.root.visible = false;
+  [['deer', 1.25, -58, 108], ['stag', 1.45, -61, 111]].forEach(([n, h, x, z], i) => { const hh = CC0.make(n, { h, runAt: 2.8, runSp: 8, idleAlt: 'eat', far: 120 }); hh.root.visible = false; WILD.deer.push({ h: hh, hx: x, hz: z, x, z, yaw: 2.2 + i * 0.4, flee: 0, ph: i * 3 }); });
+})();
+const coySecret = secret('coyote', () => { toast('A COYOTE. IN NEW YORK. IT LOOKED AT YOU LIKE YOU WERE THE ONE WHO DID NOT BELONG.', 'blue'); });
+const deerSecret = secret('deer', () => { toast('THE DEER BOLT DOWN THE BEACH. STATEN ISLAND HAS THOUSANDS. NOBODY KNOWS WHAT TO DO ABOUT IT.', 'blue'); });
+EGGS.coyote = () => { WILD.until.coy = LIFE.t + 180; WILD.ca = Math.atan2(P.x, P.z) + 0.4; toast('SOMETHING IS MOVING ALONG THE BEACH.'); }; EGGS.coyote.__s = true;
+EGGS.deer = () => { WILD.until.deer = LIFE.t + 180; toast('THE DEER ARE ON THE WEST BEACH.'); }; EGGS.deer.__s = true;
+function wildFrame(dt) {
+  const h = SKY.t ? SKY.t.hours : 12; const coyOn = h < 4.5 || h >= 23.5 || WILD.until.coy > LIFE.t, deerOn = (h >= 5.5 && h < 8.5) || WILD.until.deer > LIFE.t;
+  const C = WILD.coy; C.root.visible = coyOn;
+  if (coyOn) { const R = 128, x = Math.sin(WILD.ca) * R, z = Math.cos(WILD.ca) * R, d = Math.hypot(P.x - x, P.z - z); WILD.ct -= dt;
+    if (WILD.cst === 'trot') { WILD.ca += 1.6 / R * dt; if (d < 18) { WILD.cst = 'look'; WILD.ct = 2.2; } }
+    else if (WILD.cst === 'look') { if (WILD.ct <= 0) { WILD.cst = 'run'; WILD.ct = 6; coySecret(); } }
+    else { WILD.ca += 7 / R * dt; if (WILD.ct <= 0) WILD.cst = 'trot'; }
+    C.root.position.set(x, ground(x, z), z); const ty = WILD.cst === 'look' ? Math.atan2(P.x - x, P.z - z) : Math.atan2(Math.cos(WILD.ca), -Math.sin(WILD.ca)); C.root.rotation.y = ty; }
+  WILD.deer.forEach(D => { D.h.root.visible = deerOn; if (!deerOn) return; const d = Math.hypot(P.x - D.x, P.z - D.z);
+    if (d < 10 && D.flee <= 0) { D.flee = 5; D.fy = Math.atan2(D.x - P.x, D.z - P.z); deerSecret(); }
+    if (D.flee > 0) { D.flee -= dt; D.x += Math.sin(D.fy) * 8 * dt; D.z += Math.cos(D.fy) * 8 * dt; D.yaw = D.fy; if (Math.hypot(D.x, D.z) > 134) { D.fy += PI * 0.6 * dt; } }
+    else { const dx = D.hx - D.x, dz = D.hz - D.z, dd = Math.hypot(dx, dz); if (dd > 0.5) { D.x += dx / dd * 0.6 * dt; D.z += dz / dd * 0.6 * dt; D.yaw = Math.atan2(dx, dz); } else D.yaw += Math.sin(LIFE.t * 0.2 + D.ph) * 0.1 * dt; }
+    D.h.root.position.set(D.x, ground(D.x, D.z), D.z); D.h.root.rotation.y = D.yaw; });
+}
+window.__FRAMES.push(dt => { try { wildFrame(dt); } catch (e) { if (!WILD.err) { WILD.err = e; console.warn('v116 wild', e); } } });
+
+/* ================================================================
+   v117 CHRISTMAS TREES FOR SALE (2026-11-23)
+   From the Friday before Thanksgiving to Christmas Eve, the sidewalk tree sellers arrive, the way they do on every
+   avenue: a long row of Fraser firs leaning on a timber rack along the road at (65, 63), a string of bulbs over
+   them, a little camper trailer where the sellers sleep, a fire barrel, a hand painted price sign, and the smell
+   you can almost see. E buys a tree (it gets tied on top of a passing cab, figuratively). Out of season: a bare lot.
+   ================================================================ */
+const XMAS = {};
+window.__XMAS = XMAS;
+(function treeSellers() {
+  const b = 0.8, R = 91, x0 = Math.sin(b) * R, z0 = Math.cos(b) * R, g0 = ground(x0, z0), ry = b; XMAS.x = x0; XMAS.z = z0; XMAS.ry = ry;
+  const g = new THREE.Group(); g.position.set(x0, g0, z0); g.rotation.y = ry; scene.add(g); XMAS.g = g;
+  const wood = new THREE.MeshStandardMaterial({ color: 0x6b5236, roughness: 0.9 }), fir = new THREE.MeshStandardMaterial({ color: 0x1f3a26, roughness: 0.95 }), fir2 = new THREE.MeshStandardMaterial({ color: 0x2a4a2e, roughness: 0.95 });
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(14, 0.1, 0.1), wood); rail.position.set(0, 1.6, 0.6); g.add(rail);
+  [-7, -3.5, 0, 3.5, 7].forEach(x => { const p = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2.6, 0.1), wood); p.position.set(x, 1.3, 0.6); g.add(p); });
+  for (let i = 0; i < 18; i++) { const x = -6.6 + i * 0.78, h = 1.7 + Math.random() * 0.8; const t = new THREE.Group(); t.position.set(x, 0, 0.1); t.rotation.x = 0.28; g.add(t);
+    for (let k = 0; k < 3; k++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.42 - k * 0.1, h * 0.55, 9), k % 2 ? fir2 : fir); c.position.y = 0.35 + k * h * 0.26 + h * 0.2; c.castShadow = true; t.add(c); }
+    const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.4, 6), wood); tr.position.y = 0.2; t.add(tr); }
+  const bulbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.05, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffe2a8, toneMapped: false }), 40); const o = new THREE.Object3D();
+  for (let i = 0; i < 40; i++) { const u = i / 39; o.position.set(-7 + u * 14, 2.55 - Math.sin((u * 4 % 1) * PI) * 0.35, 0.6); o.updateMatrix(); bulbs.setMatrixAt(i, o.matrix); } g.add(bulbs); XMAS.bulbs = bulbs;
+  const trailer = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.0, 1.9), new THREE.MeshStandardMaterial({ color: 0xe9e4da, roughness: 0.6 })); trailer.position.set(9.5, 1.3, -0.4); g.add(trailer);
+  const tw = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.5), new THREE.MeshStandardMaterial({ color: 0x15171c, emissive: 0xffc77a, emissiveIntensity: 0.8 })); tw.position.set(9.0, 1.6, -1.36); tw.rotation.y = PI; g.add(tw);
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.8, 14, 1, true), new THREE.MeshStandardMaterial({ color: 0x3a3532, roughness: 0.7, metalness: 0.4, side: THREE.DoubleSide })); barrel.position.set(7.6, 0.4, -1.4); g.add(barrel);
+  const fire = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.5, 8), new THREE.MeshBasicMaterial({ color: 0xff8a20, transparent: true, opacity: 0.85, toneMapped: false })); fire.position.set(7.6, 0.95, -1.4); g.add(fire); XMAS.fire = fire;
+  if (window.__STEAM) STEAM.em.push({ x: x0 + Math.cos(ry) * 7.6 - Math.sin(ry) * 1.4, z: z0 - Math.sin(ry) * 7.6 - Math.cos(ry) * 1.4, y: g0 + 1.1, rate: 4, r: 0.12, v: 0.8, big: 0.4, stack: true });
+  const sg = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'XMAS TREES', s: 0.3 }, { t: 'FRASER · BALSAM · FROM VERMONT', s: 0.11 }, { t: 'ASK FOR PRICE', s: 0.14 }], 512, 256, '#efe8da', '#7a1f2a'), side: THREE.DoubleSide })); sg.position.set(-8.2, 1.2, -0.6); sg.rotation.y = PI; g.add(sg);
+  const seller = person(0x7a1f2a, 0x2a2f45, SKIN[2], 'cabbie'); scene.remove(seller.g); seller.g.position.set(6.2, -0.35, -1.6); seller.g.rotation.y = PI; g.add(seller.g);
+  const hat = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8, 0, PI * 2, 0, PI / 2), new THREE.MeshStandardMaterial({ color: 0xe2581c, roughness: 1 })); hat.position.y = 2.15; seller.g.add(hat);
+  boxWalls(x0, z0, 18, 2.2, ry, -5, g0 + 2.6);
+  interact(x0 - Math.sin(b) * 2.8, z0 - Math.cos(b) * 2.8, 3.5, 'E · BUY A TREE', () => { xmasSecret(); toast(['A SIX FOOT FRASER. THE SELLER SAYS SEVENTY. YOU SAY FIFTY. YOU PAY SEVENTY. HE THROWS IN THE NETTING.', 'ANOTHER TREE? FOR THE OFFICE? HE LIKES YOU NOW.'][Math.min(1, (XMAS.n = (XMAS.n || 0) + 1) - 1)]); });
+  if (window.__MAP) MAP.places.push(['XMAS TREES', x0, z0, x0 - Math.sin(b) * 3.5, z0 - Math.cos(b) * 3.5]);
+})();
+const xmasSecret = secret('xmastree', () => { }, []);
+window.__FRAMES.push(dt => { try { const t = SKY.t; const on = !t || (t.mo === 11 && t.d >= 20) || (t.mo === 12 && t.d <= 24); XMAS.g.visible = on; if (!on) return; const night = Math.min(1, (L.lamps || 0) * 1.4); XMAS.bulbs.material.color.setRGB(0.5 + 0.5 * night, (0.5 + 0.5 * night) * 0.88, (0.5 + 0.5 * night) * 0.66); XMAS.fire.scale.y = 0.8 + Math.random() * 0.4; XMAS.fire.material.opacity = 0.6 + Math.random() * 0.35; } catch (e) { } });
+
+/* ================================================================
+   v118 THE HOLIDAY WINDOWS (2026-11-23)
+   The walk up's two ground floor windows become holiday displays, the kind people queue on Fifth Avenue to see: deep
+   glass vitrines lit warm from inside, a snowfield floor, a navy backdrop of contour lines with an Open Eye Flower
+   moon, and in each one a little troupe of real rigged pigeons in red party hats doing a dance on a loop while
+   flakes drift down. Stand and watch a whole dance and it counts.
+   ================================================================ */
+const HWIN = { p: [], flakes: null, k: 0 };
+window.__HWIN = HWIN;
+(function holidayWindows() {
+  const fx = BROWN.fx, g0 = BROWN.g0, z0 = BROWN_AT.z;
+  const back = (() => { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 384; const c = cv.getContext('2d'); if (c && c.createLinearGradient && c.beginPath) { const g = c.createLinearGradient(0, 0, 0, 384); g.addColorStop(0, '#0b1430'); g.addColorStop(1, '#1d2f66'); c.fillStyle = g; c.fillRect(0, 0, 256, 384);
+    for (let i = 0; i < 14; i++) { c.beginPath(); for (let x = 0; x <= 256; x += 8) { const y = 120 + i * 18 + Math.sin(x * 0.03 + i) * 8; x ? c.lineTo(x, y) : c.moveTo(x, y); } c.lineWidth = i % 5 === 4 ? 2.4 : 1.2; c.strokeStyle = i % 5 === 4 ? 'rgba(255,63,164,.8)' : 'rgba(8,222,255,.7)'; c.stroke(); }
+    c.fillStyle = 'rgba(255,255,255,.8)'; for (let i = 0; i < 60; i++) c.fillRect(Math.random() * 256, Math.random() * 384, 2, 2); } const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; return t; })();
+  const ft = tex('assets/iv_flower.webp'), frame = new THREE.MeshStandardMaterial({ color: 0x1f3326, roughness: 0.4, metalness: 0.4 });
+  [z0, z0 + 2.4].forEach((z, i) => { const g = new THREE.Group(); g.position.set(fx - 0.45, g0, z); scene.add(g);
+    const W = 1.5, H = 2.1, D = 0.85; const glass = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshStandardMaterial({ color: 0xcfe0ea, roughness: 0.02, metalness: 0.2, transparent: true, opacity: 0.1, depthWrite: false })); glass.position.set(-D / 2, 0.55 + H / 2, 0); glass.rotation.y = -PI / 2; g.add(glass);
+    [[0, 0.5, 0, D + 0.1, 0.1, W + 0.1], [0, 0.6 + H, 0, D + 0.1, 0.12, W + 0.1], [0, 0.55 + H / 2, -W / 2, D + 0.1, H, 0.06], [0, 0.55 + H / 2, W / 2, D + 0.1, H, 0.06]].forEach(([x, y, zz, w, h, d]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), frame); m.position.set(x, y, zz); g.add(m); });
+    const bg = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshBasicMaterial({ map: back })); bg.position.set(D / 2 - 0.02, 0.55 + H / 2, 0); bg.rotation.y = -PI / 2; g.add(bg);
+    const moon = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), new THREE.MeshBasicMaterial({ map: ft, transparent: true, alphaTest: 0.4 })); moon.position.set(D / 2 - 0.04, 0.55 + H - 0.4, 0.3 * (i ? -1 : 1)); moon.rotation.y = -PI / 2; g.add(moon);
+    const snow = new THREE.Mesh(new THREE.BoxGeometry(D, 0.12, W), new THREE.MeshStandardMaterial({ color: 0xf2f4f6, roughness: 0.9 })); snow.position.set(0, 0.62, 0); g.add(snow);
+    const light = new THREE.Mesh(new THREE.BoxGeometry(D - 0.05, 0.02, W - 0.1), new THREE.MeshBasicMaterial({ color: 0xffe2b0, toneMapped: false })); light.position.set(0, 0.55 + H - 0.02, 0); g.add(light);
+    for (let k = 0; k < 3; k++) { const h = CC0.make('pigeon', { h: 0.36, parent: g, far: 40, tint: [0xffffff, 0xd8d8e0, 0xe8e0d0][k] }); h.root.position.set(0.05, 0.68, -0.45 + k * 0.45); h.root.rotation.y = -PI / 2; h.force = 'dance';
+      const hat = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.13, 10), new THREE.MeshStandardMaterial({ color: 0xc8202a, roughness: 0.7 })); hat.position.set(0, 0.36, 0); h.root.add(hat); HWIN.p.push(h); }
+    boxWalls(fx - 0.45, z, D + 0.1, W + 0.1, 0, -5, g0 + 2.8); });
+  const fg = new THREE.BufferGeometry(), fp = new Float32Array(160 * 3); for (let i = 0; i < 160; i++) { const w = i % 2; fp[i * 3] = fx - 0.45 + (Math.random() - 0.5) * 0.75; fp[i * 3 + 1] = g0 + 0.7 + Math.random() * 1.9; fp[i * 3 + 2] = z0 + w * 2.4 + (Math.random() - 0.5) * 1.4; }
+  fg.setAttribute('position', new THREE.BufferAttribute(fp, 3)); HWIN.flakes = new THREE.Points(fg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.025, transparent: true, opacity: 0.9 })); scene.add(HWIN.flakes); HWIN.g0 = g0;
+})();
+const hwinSecret = secret('windows', () => { toast('YOU WATCHED THE WHOLE DANCE. THE PIGEONS IN THE WINDOW BOW. NOBODY ELSE ON THE SIDEWALK NOTICES. THEIR LOSS.', 'blue'); });
+function hwinFrame(dt) {
+  const d = Math.hypot(P.x - (BROWN.fx - 2), P.z - (BROWN_AT.z + 1.2)); if (d > 60) return; const a = HWIN.flakes.geometry.attributes.position.array;
+  for (let i = 0; i < a.length; i += 3) { a[i + 1] -= dt * 0.25; if (a[i + 1] < HWIN.g0 + 0.68) a[i + 1] = HWIN.g0 + 2.6; } HWIN.flakes.geometry.attributes.position.needsUpdate = true;
+  if (d < 4.5) { HWIN.k += dt; if (HWIN.k > 8) hwinSecret(); } else HWIN.k = 0;
+}
+window.__FRAMES.push(dt => { try { hwinFrame(dt); } catch (e) { if (!HWIN.err) { HWIN.err = e; console.warn('v118 windows', e); } } });
+
+/* ================================================================
+   v119 PROJECTION MAPPING (2026-11-23), apply-mlow-impermanent-vision, Melt
+   After dark a projector on a tripod across the way throws light onto the walk up's blank south wall: liquid contour
+   lines (cyan, every fifth hot pink) flow up the brick and wrap round the windows, paint drips run down from the
+   cornice, the whole wall breathes, and every half minute the lines part and a Meme card blooms in the middle and
+   melts away again. A faint beam stands in the air between the lens and the wall.
+   ================================================================ */
+const PROJ = { t: 0, k: 0, card: null, n: 0 };
+window.__PROJ = PROJ;
+(function projection() {
+  const x0 = BROWN_AT.x, zf = BROWN_AT.z + 4 + 0.03, g0 = BROWN.g0, W = 7, H = BROWN.H;
+  const m = new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 }, uK: { value: 0 }, uOpen: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform float uT, uK, uOpen; varying vec2 vUv; float h(float n){ return fract(sin(n*12.9898)*43758.5453); }' +
+      ' void main(){ vec2 p = vUv * vec2(7.0, 13.0); float warp = sin(p.y * 0.9 + uT * 0.7) * 0.6 + sin(p.x * 1.3 - uT * 0.5) * 0.4; vec2 c = vec2(3.5, 6.5); float r = length((p - c) * vec2(1.0, 0.8));' +
+      ' float f = p.y * 1.6 + warp * 1.4 - uT * 0.9 + uOpen * 6.0 / (0.6 + r); float iso = abs(fract(f) - 0.5); float line = smoothstep(0.09, 0.0, 0.5 - iso); vec3 col = mod(floor(f), 5.0) < 0.5 ? vec3(1.0, 0.25, 0.64) : vec3(0.03, 0.87, 1.0);' +
+      ' float col_i = floor(vUv.x * 40.0); float drip = step(h(col_i), 0.18) * smoothstep(1.0 - fract(uT * 0.05 + h(col_i + 3.0)) , 1.0, vUv.y) * step(abs(fract(vUv.x * 40.0) - 0.5), 0.12);' +
+      ' float hole = smoothstep(1.6, 2.4, r) + (1.0 - uOpen); float edge = smoothstep(0.0, 0.06, vUv.x) * smoothstep(1.0, 0.94, vUv.x) * smoothstep(0.0, 0.04, vUv.y);' +
+      ' vec3 o = (col * line * 0.9 * min(1.0, hole) + vec3(0.94, 0.91, 0.85) * drip * 0.5 + vec3(0.04, 0.06, 0.16) * 0.6) * uK * edge; gl_FragColor = vec4(o, 1.0); }' });
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(W, H), m); plane.position.set(x0, g0 + H / 2, zf); scene.add(plane); PROJ.m = m; PROJ.plane = plane;
+  // the projector and its beam
+  const px = x0, pz = zf + 10, pg = ground(px, pz); const tri = new THREE.Group(); tri.position.set(px, pg, pz); scene.add(tri);
+  const black = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.5, metalness: 0.4 }); [0, 2.1, 4.2].forEach(a => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.7, 6), black); l.position.set(Math.cos(a) * 0.35, 0.8, Math.sin(a) * 0.35); l.rotation.set(Math.sin(a) * 0.2, 0, -Math.cos(a) * 0.2); tri.add(l); });
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.25, 0.5), black); box.position.y = 1.7; tri.add(box); const lens = new THREE.Mesh(new THREE.CircleGeometry(0.07, 14), new THREE.MeshBasicMaterial({ color: 0xbfefff, toneMapped: false })); lens.position.set(0, 1.7, -0.26); lens.rotation.y = PI; tri.add(lens);
+  post(px, pz, 0.4, -5, 2);
+  const bg = new THREE.ConeGeometry(1, 1, 24, 1, true); bg.translate(0, -0.5, 0); bg.rotateX(-PI / 2);
+  const beam = new THREE.Mesh(bg, new THREE.MeshBasicMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false }));
+  beam.position.set(px, pg + 1.7, pz); const dist = 10; beam.scale.set(W / 2, H / 2 * 0.95, dist); beam.lookAt(x0, g0 + H / 2, zf); scene.add(beam); PROJ.beam = beam;
+  PROJ.cardSlot = new THREE.Group(); PROJ.cardSlot.position.set(x0, g0 + H / 2, zf + 0.01); scene.add(PROJ.cardSlot);
+})();
+const projSecret = secret('projection', () => { }, []);
+function projFrame(dt) {
+  const night = Math.min(1, Math.max(0, ((L.lamps || 0) - 0.3) * 2)); PROJ.k += (night - PROJ.k) * Math.min(1, dt); const on = PROJ.k > 0.02; PROJ.plane.visible = PROJ.beam.visible = on; PROJ.cardSlot.visible = on; if (!on) return;
+  PROJ.t += dt; const cyc = PROJ.t % 30, open = cyc < 20 ? 0 : Math.sin((cyc - 20) / 10 * PI); PROJ.m.uniforms.uT.value = PROJ.t; PROJ.m.uniforms.uK.value = PROJ.k; PROJ.m.uniforms.uOpen.value = open; PROJ.beam.material.opacity = 0.035 * PROJ.k;
+  if (cyc < 20.05 && cyc > 19.95 || !PROJ.card) { if (PROJ.card) { PROJ.cardSlot.remove(PROJ.card); } PROJ.card = memeMesh(MEME_NS[(PROJ.n++ * 97 + 13) % MEME_NS.length], 3.2, {}); if (PROJ.card) { PROJ.card.material = new THREE.MeshBasicMaterial({ map: PROJ.card.material.map, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }); PROJ.cardSlot.add(PROJ.card); } }
+  if (PROJ.card) PROJ.card.material.opacity = open * 0.85 * PROJ.k;
+  if (open > 0.8 && Math.hypot(P.x - BROWN_AT.x, P.z - (BROWN_AT.z + 10)) < 12) projSecret();
+}
+window.__FRAMES.push(dt => { try { projFrame(dt); } catch (e) { if (!PROJ.err) { PROJ.err = e; console.warn('v119 projection', e); } } });
+
+/* ================================================================
+   v120 THE STATEN ISLAND FERRY (2026-11-23)
+   A big orange ferry, the kind that has crossed this harbour for a century for free, makes the crossing out past
+   the south channel every eight minutes: a long orange hull, three white decks with rows of lit windows, the name
+   on the side, a wake behind, a deep two note horn as it passes the island. At night every window is lit.
+   ================================================================ */
+const FERRY = { t: Math.random() * 480, dur: 480 };
+window.__FERRY = FERRY;
+(function ferry() {
+  const g = new THREE.Group(); scene.add(g); FERRY.g = g; const L = 90, B = 20;
+  const orange = new THREE.MeshStandardMaterial({ color: 0xe0601c, roughness: 0.5 }), white = new THREE.MeshStandardMaterial({ color: 0xece8e0, roughness: 0.5 }), dark = new THREE.MeshStandardMaterial({ color: 0x1b1d22, roughness: 0.6 });
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(L, 5, B), orange); hull.position.y = 1.5; g.add(hull);
+  [0, 1].forEach(s => { const cap = new THREE.Mesh(new THREE.CylinderGeometry(B / 2, B / 2, 5, 20, 1, false, s ? 0 : PI, PI), orange); cap.scale.set(0.5, 1, 1); cap.position.set(s ? L / 2 : -L / 2, 1.5, 0); g.add(cap); });
+  const winM = new THREE.MeshStandardMaterial({ color: 0x12161c, roughness: 0.1, metalness: 0.4, emissive: 0xffe2b0, emissiveIntensity: 0 }); FERRY.win = winM;
+  [[L - 8, 4.2, 6.3], [L - 22, 3.6, 10.2], [L - 40, 3, 13.6]].forEach(([w, h, y]) => { const d = new THREE.Mesh(new THREE.BoxGeometry(w, h, B - 2), white); d.position.y = y; g.add(d); const wn = new THREE.Mesh(new THREE.BoxGeometry(w - 1, 1.1, B - 1.9), winM); wn.position.y = y + 0.4; g.add(wn); });
+  const bridge = new THREE.Mesh(new THREE.BoxGeometry(6, 2.4, 8), white); bridge.position.set(0, 16.2, 0); g.add(bridge); const stack = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.4, 4, 14), dark); stack.position.set(0, 19, 0); g.add(stack);
+  const nm = signTex([{ t: 'N3W YORKERS', s: 0.5 }], 2048, 220, null, '#ffffff'); [-1, 1].forEach(s => { const p = new THREE.Mesh(new THREE.PlaneGeometry(30, 3.2), new THREE.MeshBasicMaterial({ map: nm, transparent: true })); p.position.set(0, 2.2, s * (B / 2 + 0.05)); if (s < 0) p.rotation.y = PI; g.add(p); });
+  const wk = wakeMesh ? wakeMesh(140, 26) : null; if (wk) { wk.position.set(-L / 2 - 66, -0.5, 0); g.add(wk); }
+  g.traverse(o => { if (o.isMesh) o.castShadow = false; });
+})();
+const ferrySecret = secret('ferry', () => { toast('THE FERRY ANSWERS. IT IS FREE, IT HAS ALWAYS BEEN FREE, AND IT IS STILL THE BEST VIEW IN THE CITY.', 'blue'); }, ['ferry', 'statenisland']);
+function ferryFrame(dt) {
+  FERRY.t = (FERRY.t + dt) % FERRY.dur; const k = FERRY.t / FERRY.dur, x = 560 - k * 1120, z = 255; FERRY.g.position.set(x, 0.1 + Math.sin(LIFE.t * 0.35) * 0.2, z); FERRY.g.rotation.y = PI; FERRY.g.rotation.z = Math.sin(LIFE.t * 0.27) * 0.006;
+  FERRY.win.emissiveIntensity = Math.min(1, (L.lamps || 0) * 1.4) * 1.1;
+  const mid = Math.abs(k - 0.5) < 0.01; if (mid && !FERRY.honked) { FERRY.honked = true; try { shipHorn({ g: FERRY.g, horn: [70, 105] }); } catch (e) { } } if (!mid) FERRY.honked = false;
+}
+window.__FRAMES.push(dt => { try { ferryFrame(dt); } catch (e) { if (!FERRY.err) { FERRY.err = e; console.warn('v120 ferry', e); } } });
+
+/* ================================================================
+   v121 TRAFFIC LIGHTS (2026-11-23)
+   Real traffic signals over the ring road at the crosswalk: a pole with a mast arm on each side and a three lamp
+   head facing each lane, red, amber, green, in step with the pedestrian signal (the cars get red while it says
+   walk, amber for the last four seconds of their green). The lamps glow and throw a little colour on the road at
+   night.
+   ================================================================ */
+const TLIGHT = { heads: [] };
+window.__TLIGHT = TLIGHT;
+(function trafficLights() {
+  const steel = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.4, metalness: 0.7 }), yel = new THREE.MeshStandardMaterial({ color: 0xc9a227, roughness: 0.5 });
+  [-1, 1].forEach(s => { const x = s * 5.2, z = ROAD_R + s * 5.2, gy = ground(x, z); const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 6.2, 10), steel); pole.position.set(x, gy + 3.1, z); scene.add(pole); post(x, z, 0.16, -5, 6.4);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 4.2, 8), steel); arm.rotation.x = PI / 2; arm.position.set(x, gy + 6.0, z - s * 2.1); scene.add(arm);
+    const head = new THREE.Group(); head.position.set(x, gy + 5.3, z - s * 3.4); scene.add(head); const box = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.2, 0.36), yel); head.add(box);
+    const lamps = [0xff2a1a, 0xffb020, 0x30ff70].map((c, i) => { const m = new THREE.Mesh(new THREE.CircleGeometry(0.13, 16), new THREE.MeshBasicMaterial({ color: 0x111111, toneMapped: false })); m.position.set(s * 0.22, 0.38 - i * 0.38, 0); m.rotation.y = s * PI / 2; head.add(m); return { m, c }; });
+    TLIGHT.heads.push(lamps); });
+})();
+function tlightFrame(dt) {
+  if (!window.__XWALK) return; const k = XWALK.t % 50, st = k < 33 ? 'red' : (k > 46 ? 'amber' : 'green');   // the cars: red while people walk or count down
+  TLIGHT.heads.forEach(L3 => L3.forEach((l, i) => l.m.material.color.setHex((i === 0 && st === 'red') || (i === 1 && st === 'amber') || (i === 2 && st === 'green') ? l.c : 0x141414)));
+}
+window.__FRAMES.push(dt => { try { tlightFrame(dt); } catch (e) { if (!TLIGHT.err) { TLIGHT.err = e; console.warn('v121 lights', e); } } });
+
+/* ================================================================
+   v122 EVERYBODY DANCE (2026-11-23)
+   Type DANCE and every rigged pigeon on the island (the flocks, the holiday windows) breaks into its dance for
+   fifteen seconds, and the dogs leap for joy. The rigs had the clips all along.
+   ================================================================ */
+secret('dance', () => { toast('EVERY PIGEON ON THE ISLAND STARTS DANCING. THE DOGS LEAP. NOBODY CAN EXPLAIN IT.', 'blue'); CC0.dance = LIFE.t + 15; }, ['dance', 'dancedance']);
+window.__FRAMES.push(dt => { try { if (!CC0.dance) return; const on = LIFE.t < CC0.dance;
+  CC0.live.forEach(h => { if (h.name === 'pigeon' && on) h.force = 'dance'; if (h.name === 'shiba' || h.name === 'husky') { if (on && h.sp < 0.3) h.force = 'leap'; else if (h.force === 'leap') h.force = null; } });
+  if (!on) { CC0.dance = 0; HWIN.p.forEach(h => h.force = 'dance'); } } catch (e) { } });
+
+/* ================================================================
+   v123 WET STREETS (2026-11-23)
+   When it rains the island's hard ground gets wet the way a real street does: the asphalt, the paving and the
+   concrete darken and go glossy, so the lamps, the neon and the sky shine back out of them, and afterwards they
+   dry out slowly over about twenty minutes, the high spots first. (Before, only the sea changed.)
+   ================================================================ */
+const WETS = { m: [], k: 0 };
+window.__WETS = WETS;
+(function wetStreets() {
+  const seen = new Set(), add = m => { if (!m || seen.has(m) || !m.isMeshStandardMaterial || m.transparent) return; seen.add(m); WETS.m.push({ m, r: m.roughness, c: m.color.clone(), e: m.envMapIntensity === undefined ? 1 : m.envMapIntensity }); };
+  [MAT.road, MAT.pave, MAT.conc, MAT.stone, MAT.lime, MAT.brick, MAT.terr].forEach(add);
+  setTimeout(() => { try { const bb = new THREE.Box3(), sz = new THREE.Vector3(); scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || !o.material || Array.isArray(o.material) || o.material.roughness < 0.75) return; bb.setFromObject(o); bb.getSize(sz); if (sz.y < 0.4 && sz.x > 3 && sz.z > 3 && bb.max.y < 3) add(o.material); }); } catch (e) { } }, 5000);
+})();
+function wetFrame(dt) {
+  const want = Math.min(1, (WX.wet || 0) * 1.6); WETS.k += (want - WETS.k) * Math.min(1, dt * (want > WETS.k ? 0.25 : 0.0009 * 60 / 60));
+  if (Math.abs(WETS.k - (WETS.last || 0)) < 0.003) return; WETS.last = WETS.k; const k = WETS.k;
+  WETS.m.forEach(w => { w.m.roughness = w.r + (0.14 - w.r) * k * 0.9; w.m.color.copy(w.c).multiplyScalar(1 - 0.42 * k); w.m.envMapIntensity = w.e * (1 + 1.6 * k); });
+}
+window.__FRAMES.push(dt => { try { wetFrame(dt); } catch (e) { if (!WETS.err) { WETS.err = e; console.warn('v123 wet', e); } } });
+
+/* ================================================================
+   v124 THE BOOK MEETS THE ANIMALS (2026-11-23)
+   SECRETS.EXE names and hints for v106 to v123.
+   ================================================================ */
+try { Object.assign(SECRET_NAMES, {
+  carriage: ['THE HANSOM CAB', 'a lap round the ring'], dogrun: ['FETCH', 'throw the ball in the dog run'], coyote: ['THE COYOTE', 'the beach after midnight'], deer: ['THE DEER', 'the west beach at dawn'],
+  xmastree: ['A FRASER FIR', 'the sidewalk sellers, Thanksgiving to Christmas'], windows: ['THE HOLIDAY WINDOWS', 'watch the whole dance'], projection: ['THE WALL BLOOMS', 'the walk up, after dark'],
+  ferry: ['THE FERRY', 'ask for it'], dance: ['EVERYBODY DANCE', 'say the word']
+}); } catch (e) { }
+
+/* ================================================================
+   v125 THE TOUR MEETS THE ANIMALS (2026-11-23)
+   Six more stops before the aerial: the traffic on the ring road, the carriage horse, the dog run, the holiday
+   windows, the Christmas tree sellers and the ferry.
+   ================================================================ */
+(function tourV125() {
+  const add = [];
+  try { add.push({ name: 'the ring road', dur: 7, pos: [[-14, 2.2, 90], [14, 2.6, 92]], look: [[-30, 1, 99], [30, 1, 99]] }); } catch (e) { }
+  try { add.push({ name: 'the carriage', dur: 8, pos: [[8, 2.6, 36], [-6, 2.2, 36]], look: [[0, 1.4, 42.6], [-4, 1.4, 42.6]], pre: () => { try { HORSE.a = 0.35; HORSE.wait = 0; } catch (e) { } } }); } catch (e) { }
+  try { const x = DRUN_AT.x, z = DRUN_AT.z, gy = DRUN.g0; add.push({ name: 'the dog run', dur: 7, pos: [[x + 9, gy + 2.4, z - 4], [x + 7, gy + 2, z + 4]], look: [[x, gy + 0.4, z], [x, gy + 0.4, z]], pre: () => { try { drunThrow(false); } catch (e) { } } }); } catch (e) { }
+  try { const x = BROWN.fx, z = BROWN_AT.z + 1.2, gy = BROWN.g0; add.push({ name: 'the holiday windows', dur: 7, pos: [[x - 6, gy + 1.7, z - 2], [x - 3, gy + 1.5, z + 0.5]], look: [[x, gy + 1.5, z], [x, gy + 1.4, z]] }); } catch (e) { }
+  try { const x = XMAS.x, z = XMAS.z, b = 0.8; add.push({ name: 'the christmas trees', dur: 7, pos: [[x - Math.sin(b) * 10 - Math.cos(b) * 6, ground(x, z) + 2, z - Math.cos(b) * 10 + Math.sin(b) * 6], [x - Math.sin(b) * 6, ground(x, z) + 1.7, z - Math.cos(b) * 6]], look: [[x, ground(x, z) + 1.4, z], [x, ground(x, z) + 1.3, z]] }); } catch (e) { }
+  try { add.push({ name: 'the ferry', dur: 8, pos: [[-20, 6, 176], [20, 8, 178]], look: [[0, 8, 255], [30, 9, 255]], pre: () => { try { FERRY.t = FERRY.dur * 0.47; } catch (e) { } } }); } catch (e) { }
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 
