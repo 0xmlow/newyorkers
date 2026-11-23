@@ -368,3 +368,16 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v143 THE BELL TOWER at (55, 33): Westminster quarters and the hour, synthesised bells, climbable belfry. BELLS rings it.
 - v144 SECRETS.EXE for 16 new secrets. v145 six tour stops.
 - Help line now ends "F paper plane". Note: v52 MELT fires when a camera catches a Watcher, so headless shots should hold __MELT off.
+
+## v146 to v165 (2026-11-23): the beach and the block
+- v146 LENS FLARE: starburst, streak and ghosts on the sun, occluded by the AO depth under the sun's disc (replaces v37's ghost). ?flare=0.
+- v147 DUST IN THE LIGHT: motes around you that light up between you and a low sun. v163 THE GLITTER PATH: the sun's (and moon's) road of glints on the water, following your eye.
+- v148 FOOTPRINTS in the sand (and in settled snow anywhere); the waterline wipes them. v149 SPLASH: your steps splash in the rain.
+- v150 SANDERLINGS chase the swash east of the pier (Aug to May); shoreZ(x) in v150 is the shared waterline helper.
+- v151 THE DETECTORIST on the west beach. v152 SEA GLASS: 24 pieces a day on the wet sand, one cobalt.
+- v153 THE TELESCOPE at (-52, -64): E shows the moon at its real phase, Saturn when it is down, the sun through a filter by day.
+- v154 MORNING TAI CHI at (-72, 24), 7 to 9:30, on the N3W COURT. v155 SHOE SHINE at (36, 54), weekdays. v156 BOCCE at (9, -84), afternoons, real rolling physics (a payphone was planned, but v13 already has one).
+- v157 WASH DAY: clotheslines from the walk up's east wall to a pole, cloth that billows; a sock blows off now and then.
+- v158 THE RACCOON at the garbage piles, 11 pm to 4 am. v159 THE MAIL CARRIER on the ring path, six blue boxes. v160 THE KETTLE: a sidewalk Santa by the tree sellers, Nov 20 to Dec 24.
+- v161 THE GULL takes food out of your hand on the beach or pier. v162 POEMS WHILE YOU WAIT at (52, 16), 11 to 8: a typed poem about the moment.
+- v164 SECRETS.EXE for 13 new secrets. v165 five tour stops.
