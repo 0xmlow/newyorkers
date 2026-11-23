@@ -7187,6 +7187,822 @@ try { Object.assign(SECRET_NAMES, {
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v66 THE WATER TOWER (2026-11-22)
+   The shape on every New York roofline: a squat brick building at (-64, -72) with a wooden water tank on steel legs
+   on its roof, cedar staves held by black hoops, a witch hat roof, N3W stencilled on the side. E at the ladder
+   takes you up; the roof is yours, with the whole island laid out. WATERTOWER puts you there.
+   Also here: memeMesh(n, h), one Meme card cut out of the atlas as a plain mesh, for the pieces that follow.
+   ================================================================ */
+function memeMesh(n, h, opts) {
+  const I = byN[n]; if (!I) return null; const u = I.uv, w = h * u[5], g = new THREE.PlaneGeometry(w, h), uv = g.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, u[1] + (u[3] - u[1]) * uv.getX(i), (1 - u[4]) + (u[4] - u[2]) * uv.getY(i));
+  return new THREE.Mesh(g, new THREE.MeshStandardMaterial(Object.assign({ map: ATL[u[0]], roughness: 0.8 }, opts || {})));
+}
+const MEME_NS = Object.keys(byN).map(Number).filter(n => byN[n] && byN[n].uv);
+const WT = {};
+window.__WT = WT;
+const WT_AT = { x: -64, z: -72 };
+(function waterTower() {
+  const x0 = WT_AT.x, z0 = WT_AT.z, g0 = ground(x0, z0), H = 7, S = 7; WT.top = g0 + H;
+  const bt = tex('assets/brick_c.webp', [2.2, 2.2]); const brick = new THREE.MeshStandardMaterial({ map: bt, roughness: 0.9, color: 0xb59a8a });
+  const bld = new THREE.Mesh(new THREE.BoxGeometry(S, H, S), brick); bld.position.set(x0, g0 + H / 2, z0); bld.castShadow = bld.receiveShadow = true; scene.add(bld);
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(S + 0.3, 0.25, S + 0.3), new THREE.MeshStandardMaterial({ color: 0x8c8780, roughness: 0.8 })); cap.position.set(x0, g0 + H + 0.12, z0); scene.add(cap);
+  const roofM = new THREE.MeshStandardMaterial({ color: 0x3b3936, roughness: 0.95 }); const roof = new THREE.Mesh(new THREE.BoxGeometry(S - 0.2, 0.05, S - 0.2), roofM); roof.position.set(x0, g0 + H + 0.26, z0); scene.add(roof);
+  // parapet
+  [[0, S / 2], [0, -S / 2], [S / 2, 0], [-S / 2, 0]].forEach(([dx, dz]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(dx ? 0.3 : S + 0.3, 0.7, dx ? S + 0.3 : 0.3), brick); m.position.set(x0 + dx, g0 + H + 0.35, z0 + dz); scene.add(m); });
+  boxWalls(x0, z0, S, S, 0, -5, g0 + H - 0.4); padRect(x0 - S / 2 + 0.3, x0 + S / 2 - 0.3, z0 - S / 2 + 0.3, z0 + S / 2 - 0.3, g0 + H + 0.28, g0 + H - 0.2);
+  // windows (dark, lit at night) on the street side
+  const winM = new THREE.MeshStandardMaterial({ color: 0x15171c, roughness: 0.2, metalness: 0.4, emissive: 0xffc77a, emissiveIntensity: 0 }); WT.win = winM;
+  for (let fl = 0; fl < 2; fl++) for (let k = -1; k <= 1; k++) { const w = new THREE.Mesh(new THREE.PlaneGeometry(1, 1.4), winM); w.position.set(x0 + k * 2, g0 + 2 + fl * 3, z0 + S / 2 + 0.01); scene.add(w); }
+  // the tank: cedar staves, hoops, a witch hat roof, legs
+  const tc = document.createElement('canvas'); tc.width = 512; tc.height = 256; const c = tc.getContext('2d');
+  if (c && c.fillRect) { for (let i = 0; i < 32; i++) { const v = 95 + Math.random() * 35 | 0; c.fillStyle = `rgb(${v + 30},${v},${v - 30})`; c.fillRect(i * 16, 0, 15, 256); c.fillStyle = 'rgba(20,12,6,.5)'; c.fillRect(i * 16 + 15, 0, 1, 256); }
+    for (let i = 0; i < 40; i++) { c.fillStyle = 'rgba(50,40,30,.25)'; c.fillRect(Math.random() * 512, Math.random() * 256, 2, 30 + Math.random() * 80); }
+    if (c.fillText) { c.fillStyle = 'rgba(239,232,218,.85)'; c.font = '700 70px "Archivo Black", Impact, sans-serif'; c.textAlign = 'center'; c.fillText('N3W', 128, 150); } }
+  const tt = new THREE.CanvasTexture(tc); tt.encoding = THREE.sRGBEncoding; tt.anisotropy = ANISO;
+  const tank = new THREE.Group(); tank.position.set(x0 + 0.6, WT.top + 3.2, z0 - 0.4); scene.add(tank); WT.tank = tank;
+  const steel = new THREE.MeshStandardMaterial({ color: 0x1d1e20, roughness: 0.6, metalness: 0.6 });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(2.1, 2.25, 4.2, 32, 1, true), new THREE.MeshStandardMaterial({ map: tt, roughness: 0.85, side: THREE.DoubleSide })); body.position.y = 2.1; body.castShadow = true; tank.add(body);
+  for (let i = 0; i < 6; i++) { const h = new THREE.Mesh(new THREE.TorusGeometry(2.17 + i * 0.012, 0.03, 6, 40), steel); h.rotation.x = PI / 2; h.position.y = 0.3 + i * 0.7; tank.add(h); }
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(2.35, 1.5, 32), new THREE.MeshStandardMaterial({ color: 0x5b4836, roughness: 0.9 })); hat.position.y = 4.95; hat.castShadow = true; tank.add(hat);
+  const fin = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), steel); fin.position.y = 5.75; tank.add(fin);
+  const floor = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, 0.15, 32), steel); floor.position.y = -0.05; tank.add(floor);
+  for (let i = 0; i < 4; i++) { const a = i * PI / 2 + PI / 4; const l = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 3.2, 8), steel); l.position.set(Math.cos(a) * 1.6, -1.6, Math.sin(a) * 1.6); tank.add(l);
+    const br = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 3.2, 6), steel); br.position.set(Math.cos(a + PI / 4) * 1.13, -1.6, Math.sin(a + PI / 4) * 1.13); br.rotation.set(0, -(a + PI / 4), 0.78); tank.add(br); }
+  post(x0 + 0.6, z0 - 0.4, 2.0, WT.top - 1, WT.top + 9);
+  // the ladders: up the street wall, and a little one up the tank
+  const rail = (x, y, z, h, ry) => { const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; scene.add(g); [-0.22, 0.22].forEach(s => { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, h, 6), steel); r.position.set(s, h / 2, 0); g.add(r); });
+    for (let y2 = 0.3; y2 < h; y2 += 0.35) { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.44, 6), steel); r.rotation.z = PI / 2; r.position.set(0, y2, 0); g.add(r); } };
+  rail(x0 + 2.2, g0, z0 + S / 2 + 0.12, H + 1.2, 0); rail(x0 + 0.6, WT.top, z0 - 0.4 + 2.3, 7.6, 0);
+  interact(x0 + 2.2, z0 + S / 2 + 0.9, 1.6, 'E · CLIMB TO THE ROOF', () => wtUp());
+  interact(x0 + 2.2, z0 + S / 2 - 0.9, 1.4, 'E · CLIMB DOWN', () => { teleport(x0 + 2.2, z0 + S / 2 + 1.6, 0, g0 + 1); }, WT.top);
+  if (window.__MAP) MAP.places.push(['WATER TOWER', x0, z0, x0 + 2.2, z0 + S / 2 + 1.6]);
+})();
+const wtSecret = secret('watertower', () => { }, []);
+function wtUp() { teleport(WT_AT.x + 2.2, WT_AT.z + 2.4, PI, WT.top + 1); wtSecret(); toast('EVERY ROOF IN NEW YORK HAS ONE OF THESE. NOW YOU KNOW WHY. THE VIEW.', 'blue'); }
+EGGS.watertower = EGGS.roof = () => wtUp(); EGGS.watertower.__s = true;
+window.__FRAMES.push(dt => { try { WT.win.emissiveIntensity = Math.min(1, (L.lamps || 0) * 1.6) * 0.9; } catch (e) { } });
+
+/* ================================================================
+   v67 THE SIDEWALK SHED (2026-11-22)
+   New York's most permanent temporary structure: sixteen metres of scaffold shed at (-8, -88) on the north side,
+   green plywood deck on galvanised pipe, a bare bulb every bay that is never switched off, and a plywood fence
+   pasted three deep with Meme posters and a POST NO BILLS stencil nobody reads. Walk through underneath. E at the
+   fence pastes another one.
+   ================================================================ */
+const SHED = { posters: 0 };
+window.__SHED = SHED;
+const SHED_AT = { x: -8, z: -88 };
+(function sidewalkShed() {
+  const x0 = SHED_AT.x, z0 = SHED_AT.z, g0 = ground(x0, z0), L = 16, W = 2.8, H = 3.2;
+  const pipe = new THREE.MeshStandardMaterial({ color: 0x9da3a8, roughness: 0.4, metalness: 0.8 }), green = new THREE.MeshStandardMaterial({ color: 0x2f4a33, roughness: 0.85 });
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(L, 0.25, W + 0.3), green); deck.position.set(x0, g0 + H, z0); deck.castShadow = true; scene.add(deck);
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(L, 0.8, 0.06), green); lip.position.set(x0, g0 + H + 0.45, z0 + W / 2 + 0.15); scene.add(lip);
+  const bulbs = [];
+  for (let i = 0; i <= 8; i++) { const x = x0 - L / 2 + i * L / 8;
+    [-1, 1].forEach(s => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, H, 8), pipe); p.position.set(x, g0 + H / 2, z0 + s * W / 2); scene.add(p); post(x, z0 + s * W / 2, 0.08, -5, H); });
+    const cross = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, W, 6), pipe); cross.rotation.x = PI / 2; cross.position.set(x, g0 + H - 0.2, z0); scene.add(cross);
+    if (i < 8) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffd9a0, toneMapped: false })); b.position.set(x + L / 16, g0 + H - 0.3, z0); scene.add(b); bulbs.push(b);
+      const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.18, 4), new THREE.MeshBasicMaterial({ color: 0x111111 })); cord.position.set(x + L / 16, g0 + H - 0.2, z0); scene.add(cord); } }
+  SHED.bulbs = bulbs;
+  // the fence on the north side, plywood, with posters
+  const ply = (() => { const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 256; const c = cv.getContext('2d'); if (c && c.fillRect) { c.fillStyle = '#2f4a33'; c.fillRect(0, 0, 1024, 256); for (let i = 0; i < 8; i++) { c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(i * 128, 0, 2, 256); }
+    if (c.fillText) { c.fillStyle = 'rgba(239,232,218,.9)'; c.font = '700 34px "Archivo Black", Impact, sans-serif'; c.fillText('POST NO BILLS', 40, 236); c.fillText('POST NO BILLS', 560, 236); } } const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return t; })();
+  const fence = new THREE.Mesh(new THREE.BoxGeometry(L, 2.5, 0.05), new THREE.MeshStandardMaterial({ map: ply, roughness: 0.9 })); fence.position.set(x0, g0 + 1.25, z0 - W / 2 - 0.05); scene.add(fence);
+  boxWalls(x0, z0 - W / 2 - 0.05, L, 0.12, 0, -5, 2.6 + g0);
+  SHED.fz = z0 - W / 2 + 0.0; SHED.g0 = g0; SHED.L = L; SHED.x0 = x0;
+  const pick = () => MEME_NS[Math.floor(Math.random() * MEME_NS.length)];
+  for (let i = 0; i < 14; i++) shedPaste(pick(), true);
+  try { const n = +(localStorage.getItem('meme-island-shed') || 0); for (let i = 0; i < Math.min(n, 30); i++) shedPaste(pick(), true); } catch (e) { }
+  interact(x0, z0 - 0.4, 3.2, 'E · PASTE A POSTER', () => { shedPaste(pick()); });
+  if (window.__MAP) MAP.places.push(['THE SHED', x0, z0, x0, z0 + 3]);
+})();
+function shedPaste(n, quiet) {
+  const m = memeMesh(n, 0.9 + Math.random() * 0.35, { roughness: 0.95 }); if (!m) return; const k = SHED.posters++;
+  const x = SHED.x0 - SHED.L / 2 + 0.7 + Math.random() * (SHED.L - 1.4), y = SHED.g0 + 0.9 + Math.random() * 0.75;
+  m.position.set(x, y, SHED.fz - 0.02 + 0.0015 * (k % 40)); m.rotation.z = (Math.random() - 0.5) * 0.06; m.material.polygonOffset = true; m.material.polygonOffsetFactor = -1 - (k % 40); scene.add(m);
+  if (!quiet) { shedSecret(); toast('PASTED. IT WILL BE COVERED BY TUESDAY. THAT IS THE POINT.'); try { localStorage.setItem('meme-island-shed', String(Math.max(0, SHED.posters - 14))); } catch (e) { } }
+}
+const shedSecret = secret('wheatpaste', () => { }, []);
+window.__FRAMES.push(dt => { try { const night = Math.min(1, (L.lamps || 0) * 1.4); SHED.bulbs.forEach((b, i) => { const v = 0.55 + 0.45 * night - (i === 5 && Math.sin(LIFE.t * 23) > 0.7 ? 0.4 : 0); b.material.color.setRGB(v, v * 0.85, v * 0.63); }); } catch (e) { } });
+
+/* ================================================================
+   v68 THE RINK (2026-11-22)
+   A small outdoor ice rink at (-78, 35): scuffed white ice with the blue line, white boards with a rail, a gap to
+   walk in, string lights over it, and five skaters going round counterclockwise like they do. On the ice you keep
+   your momentum: you push, you glide, you take a while to stop. Glide thirty metres and the island counts it.
+   ICESKATE puts you on the ice.
+   ================================================================ */
+const RINK = { s: [], vx: 0, vz: 0, px: 0, pz: 0, on: false, glide: 0 };
+window.__RINK = RINK;
+const RINK_AT = { x: -78, z: 35, a: 7.2, b: 4.6 };
+(function rink() {
+  const x0 = RINK_AT.x, z0 = RINK_AT.z, A = RINK_AT.a, Bz = RINK_AT.b, g0 = ground(x0, z0); RINK.g0 = g0;
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 660; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.beginPath) { c.fillStyle = '#e8eef2'; c.fillRect(0, 0, 1024, 660); for (let i = 0; i < 900; i++) { c.strokeStyle = `rgba(150,170,185,${Math.random() * 0.25})`; c.lineWidth = 1; c.beginPath(); const x = Math.random() * 1024, y = Math.random() * 660, a = Math.random() * 6, l = 20 + Math.random() * 120; c.moveTo(x, y); c.quadraticCurveTo && c.quadraticCurveTo(x + Math.cos(a) * l * 0.5 + 10, y + Math.sin(a) * l * 0.5, x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke(); }
+    c.fillStyle = 'rgba(41,98,255,.55)'; c.fillRect(330, 0, 14, 660); c.fillRect(680, 0, 14, 660); c.fillStyle = 'rgba(200,40,60,.5)'; c.fillRect(508, 0, 8, 660);
+    c.strokeStyle = 'rgba(200,40,60,.5)'; c.lineWidth = 6; c.beginPath(); c.arc(512, 330, 90, 0, PI * 2); c.stroke(); }
+  const it = new THREE.CanvasTexture(cv); it.encoding = THREE.sRGBEncoding; it.anisotropy = ANISO;
+  const ice = new THREE.Mesh(new THREE.CircleGeometry(1, 64), new THREE.MeshStandardMaterial({ map: it, roughness: 0.08, metalness: 0.15 })); ice.scale.set(A, Bz, 1); ice.rotation.x = -PI / 2; ice.position.set(x0, g0 + 0.06, z0); ice.receiveShadow = true; scene.add(ice);
+  // boards: an ellipse of short white panels, with a gap facing the island
+  const white = new THREE.MeshStandardMaterial({ color: 0xf2f2ee, roughness: 0.5 }), railM = new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.4 });
+  const gapA = Math.atan2(-z0, -x0 * Bz / A); const n = 44;
+  for (let i = 0; i < n; i++) { const a0 = i / n * PI * 2, a1 = (i + 1) / n * PI * 2, am = (a0 + a1) / 2; let da = Math.atan2(Math.sin(am - gapA), Math.cos(am - gapA)); if (Math.abs(da) < 0.11) continue;
+    const xA = x0 + Math.cos(a0) * (A + 0.1), zA = z0 + Math.sin(a0) * (Bz + 0.1), xB = x0 + Math.cos(a1) * (A + 0.1), zB = z0 + Math.sin(a1) * (Bz + 0.1);
+    const len = Math.hypot(xB - xA, zB - zA), ry = Math.atan2(-(zB - zA), xB - xA);
+    const p = new THREE.Mesh(new THREE.BoxGeometry(len + 0.02, 1.0, 0.08), white); p.position.set((xA + xB) / 2, g0 + 0.5, (zA + zB) / 2); p.rotation.y = ry; scene.add(p);
+    const r = new THREE.Mesh(new THREE.BoxGeometry(len + 0.02, 0.06, 0.14), railM); r.position.set((xA + xB) / 2, g0 + 1.02, (zA + zB) / 2); r.rotation.y = ry; scene.add(r);
+    wall(xA, zA, xB, zB, -5, g0 + 1.05); }
+  // string lights on four poles
+  const poles = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sz]) => [x0 + sx * (A + 1.4), z0 + sz * (Bz + 1.4)]); const pm = new THREE.MeshStandardMaterial({ color: 0x1b1d20, roughness: 0.5, metalness: 0.5 });
+  poles.forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 5, 8), pm); p.position.set(x, ground(x, z) + 2.5, z); scene.add(p); post(x, z, 0.12, -5, 6); });
+  const bulbG = new THREE.SphereGeometry(0.07, 8, 6), bulbs = new THREE.InstancedMesh(bulbG, new THREE.MeshBasicMaterial({ color: 0xffe2a8, toneMapped: false }), 120); const o = new THREE.Object3D(); let k = 0;
+  [[0, 2], [1, 3], [0, 1], [2, 3], [1, 2], [3, 0]].forEach(([a, b]) => { const [ax, az] = poles[a], [bx2, bz2] = poles[b]; for (let i = 0; i < 20 && k < 120; i++) { const u = (i + 0.5) / 20; o.position.set(ax + (bx2 - ax) * u, g0 + 4.9 - Math.sin(u * PI) * 1.1, az + (bz2 - az) * u); o.updateMatrix(); bulbs.setMatrixAt(k++, o.matrix); } });
+  bulbs.count = k; scene.add(bulbs); RINK.bulbs = bulbs;
+  // skaters
+  [[0x7a1f2a, 0x15161a, 'actress'], [0x2a4a6a, 0x2a2f45, 'editor'], [0xefe8da, 0x3b4a5c, 'workgirl'], [0x2f4a33, 0x15161a, 'writer'], [0xe2581c, 0x2a2f45, 'cabbie']].forEach(([sh, pa, cast], i) => {
+    const p = person(sh, pa, SKIN[(i * 3 + 2) % SKIN.length], cast); RINK.s.push({ P: p, a: i / 5 * PI * 2, sp: 0.16 + Math.random() * 0.06, r: 0.62 + Math.random() * 0.25, ph: Math.random() * 6 }); });
+  if (window.__MAP) MAP.places.push(['THE RINK', x0, z0, x0 + Math.cos(gapA) * (A + 2), z0 + Math.sin(gapA) * (Bz + 2)]);
+  RINK.gapA = gapA;
+})();
+const rinkSecret = secret('iceskate', () => { toast('THIRTY METRES OF GLIDE. YOUR ANKLES WILL REMEMBER THIS.', 'blue'); }, []);
+EGGS.iceskate = EGGS.rink = () => { teleport(RINK_AT.x, RINK_AT.z, 0); toast('ON THE ICE. PUSH, THEN LET GO.'); }; EGGS.iceskate.__s = true;
+const rinkIn = (x, z) => ((x - RINK_AT.x) / (RINK_AT.a - 0.2)) ** 2 + ((z - RINK_AT.z) / (RINK_AT.b - 0.2)) ** 2 < 1;
+function rinkFrame(dt) {
+  const d = Math.hypot(P.x - RINK_AT.x, P.z - RINK_AT.z); if (d > 120) return;
+  const night = Math.min(1, (L.lamps || 0) * 1.4); RINK.bulbs.material.color.setRGB(0.55 + 0.45 * night, (0.55 + 0.45 * night) * 0.88, (0.55 + 0.45 * night) * 0.66);
+  RINK.s.forEach((s, i) => { s.a += s.sp * dt * 1.6; const x = RINK_AT.x + Math.cos(s.a) * RINK_AT.a * s.r, z = RINK_AT.z + Math.sin(s.a) * RINK_AT.b * s.r;
+    s.P.g.position.set(x, RINK.g0 - 0.35 + 0.06, z); const tx = -Math.sin(s.a) * RINK_AT.a, tz = Math.cos(s.a) * RINK_AT.b; s.P.g.rotation.set(0, Math.atan2(tx, tz), Math.sin(LIFE.t * 1.8 + s.ph) * 0.12); });
+  // your glide: what the walk did this frame becomes a push, and the ice keeps what you had
+  const on = rinkIn(P.x, P.z) && P.ground && !RAIL.on;
+  if (on && RINK.on) { const ix = (P.x - RINK.px) / Math.max(dt, 1e-3), iz = (P.z - RINK.pz) / Math.max(dt, 1e-3), push = Math.hypot(ix, iz) > 0.3;
+    const k = push ? Math.min(1, dt * 1.6) : Math.min(1, dt * 0.25); RINK.vx += (ix - RINK.vx) * k * (push ? 1 : 1); RINK.vz += (iz - RINK.vz) * k;
+    if (!push) { RINK.vx *= 1 - dt * 0.25; RINK.vz *= 1 - dt * 0.25; }
+    const nx = RINK.px + RINK.vx * dt, nz = RINK.pz + RINK.vz * dt; if (rinkIn(nx, nz)) { P.x = nx; P.z = nz; } else { RINK.vx *= -0.3; RINK.vz *= -0.3; }
+    const sp = Math.hypot(RINK.vx, RINK.vz); if (!push && sp > 1.2) { RINK.glide += sp * dt; if (RINK.glide > 30) rinkSecret(); } }
+  else { RINK.vx = RINK.vz = 0; }
+  RINK.on = on; RINK.px = P.x; RINK.pz = P.z;
+}
+window.__FRAMES.push(dt => { try { rinkFrame(dt); } catch (e) { if (!RINK.err) { RINK.err = e; console.warn('v68 rink', e); } } });
+
+/* ================================================================
+   v69 THE MARKET (2026-11-22)
+   A row of five glass kiosks at (52, 24), the kind that go up in a park every winter: dark green steel frames, warm
+   light inside, a hand painted sign each. HOT CIDER, EYE BAUBLES (Open Eye Flower ornaments), N3W PRINTS (Meme
+   cards on a rail), KNITS and CHURROS, with a vendor in each and a canopy of string lights. E at the cider buys one.
+   ================================================================ */
+const MKT = { k: [] };
+window.__MKT = MKT;
+const MKT_AT = { x: 52, z: 24 };
+(function market() {
+  const x0 = MKT_AT.x, z0 = MKT_AT.z, steel = new THREE.MeshStandardMaterial({ color: 0x1f3326, roughness: 0.5, metalness: 0.4 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0xbcd0d8, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.18, depthWrite: false });
+  const warm = new THREE.MeshStandardMaterial({ color: 0x2a1d12, roughness: 0.8, emissive: 0xffb764, emissiveIntensity: 0.35 }); MKT.warm = warm;
+  const names = [['HOT CIDER', '#7a1f2a'], ['EYE BAUBLES', '#2962FF'], ['N3W PRINTS', '#0D0D0D'], ['KNITS', '#2f4a33'], ['CHURROS', '#b06a1c']];
+  names.forEach(([nm, col], i) => { const x = x0 - 8 + i * 4, z = z0, gy = ground(x, z); const g = new THREE.Group(); g.position.set(x, gy, z); g.rotation.y = PI; scene.add(g);
+    const W = 3.2, D = 2.2, H = 2.5;
+    const back = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.06), warm); back.position.set(0, H / 2, -D / 2); g.add(back);
+    [-W / 2, W / 2].forEach(sx => { const s = new THREE.Mesh(new THREE.BoxGeometry(0.06, H, D), glass); s.position.set(sx, H / 2, 0); g.add(s); });
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(W + 0.3, 0.14, D + 0.4), steel); roof.position.set(0, H + 0.07, 0.1); g.add(roof);
+    const gable = new THREE.Mesh(new THREE.CylinderGeometry(0.01, (D + 0.4) / 2 * 1.02, W + 0.3, 3, 1), steel); gable.rotation.z = PI / 2; gable.scale.set(1, 1, 0.45); gable.position.set(0, H + 0.35, 0.1); g.add(gable);
+    [[-W / 2, D / 2], [W / 2, D / 2], [-W / 2, -D / 2], [W / 2, -D / 2]].forEach(([px, pz]) => { const p = new THREE.Mesh(new THREE.BoxGeometry(0.08, H, 0.08), steel); p.position.set(px, H / 2, pz); g.add(p); });
+    const counter = new THREE.Mesh(new THREE.BoxGeometry(W - 0.1, 1.0, 0.5), new THREE.MeshStandardMaterial({ color: 0x5a3f28, roughness: 0.7 })); counter.position.set(0, 0.5, D / 2 - 0.25); g.add(counter);
+    const sg = signTex([{ t: nm, s: 0.42 }], 1024, 200, col, '#efe8da'); const sign = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, 0.55), new THREE.MeshBasicMaterial({ map: sg, toneMapped: false })); sign.position.set(0, H - 0.15, D / 2 + 0.22); g.add(sign);
+    const v = person([0x7a1f2a, 0x2962FF, 0x15161a, 0x2f4a33, 0xb06a1c][i], 0x2a2f45, SKIN[(i * 2 + 1) % SKIN.length]); v.g.position.set(x, gy - 0.35, z + 0.3); v.g.rotation.y = PI; MKT.k.push({ v, x, z });
+    boxWalls(x, z, W, D, 0, -5, gy + H);
+    // what each sells
+    if (i === 0) for (let j = 0; j < 6; j++) { const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.12, 10), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.6 })); cup.position.set(-0.9 + j * 0.32, 1.06, D / 2 - 0.2); g.add(cup); }
+    if (i === 1) { const ft = tex('assets/iv_flower.webp'); for (let j = 0; j < 14; j++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 10), new THREE.MeshStandardMaterial({ color: [0x2962FF, 0x08deff, 0xff3fa4, 0xefe8da][j % 4], roughness: 0.15, metalness: 0.6 })); b.position.set(-1.3 + (j % 7) * 0.43, 1.75 - Math.floor(j / 7) * 0.45, -D / 2 + 0.3); g.add(b); }
+      const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), new THREE.MeshBasicMaterial({ map: ft, transparent: true, alphaTest: 0.4, toneMapped: false })); fl.position.set(0, 1.25, -D / 2 + 0.05); g.add(fl); }
+    if (i === 2) for (let j = 0; j < 6; j++) { const m = memeMesh(MEME_NS[(j * 37 + 11) % MEME_NS.length], 0.55); if (m) { m.position.set(-1.2 + j * 0.48, 1.6, -D / 2 + 0.05); g.add(m); } }
+    if (i === 3) for (let j = 0; j < 5; j++) { const h = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.3, 12), new THREE.MeshStandardMaterial({ color: [0x7a1f2a, 0x2962FF, 0xefe8da, 0x2f4a33, 0xb06a1c][j], roughness: 1 })); h.position.set(-1 + j * 0.5, 1.75, -D / 2 + 0.2); g.add(h); }
+    if (i === 4) for (let j = 0; j < 8; j++) { const ch = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.4, 6), new THREE.MeshStandardMaterial({ color: 0xc98a3a, roughness: 0.8 })); ch.position.set(-0.6 + j * 0.12, 1.15, D / 2 - 0.25); ch.rotation.z = 0.3; g.add(ch); }
+  });
+  // string lights from roof to roof and out to two poles
+  const bulbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.06, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd9a0, toneMapped: false }), 160); const o = new THREE.Object3D(); let k = 0;
+  const gy = ground(x0, z0); const pts = [[x0 - 11, z0 - 4], [x0 - 8, z0 - 1.4], [x0 - 4, z0 - 1.4], [x0, z0 - 1.4], [x0 + 4, z0 - 1.4], [x0 + 8, z0 - 1.4], [x0 + 11, z0 - 4]];
+  for (let s = 0; s < pts.length - 1; s++) { const [ax, az] = pts[s], [bx, bz] = pts[s + 1]; for (let i = 0; i < 14; i++) { const u = (i + 0.5) / 14; o.position.set(ax + (bx - ax) * u, gy + 3.1 - Math.sin(u * PI) * 0.4, az + (bz - az) * u); o.updateMatrix(); bulbs.setMatrixAt(k++, o.matrix); } }
+  [[x0 - 11, z0 - 4], [x0 + 11, z0 - 4]].forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 3.2, 8), steel); p.position.set(x, ground(x, z) + 1.6, z); scene.add(p); post(x, z, 0.1, -5, 4); });
+  bulbs.count = k; scene.add(bulbs); MKT.bulbs = bulbs;
+  interact(x0 - 8, z0 - 2.2, 1.8, 'E · BUY A HOT CIDER (1 TDH)', () => { state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } ciderSecret(); MKT.cups = (MKT.cups || 0) + 1; toast(['HOT CIDER. CINNAMON STICK INCLUDED. IT IS TOO HOT TO DRINK FOR NINE MINUTES.', 'ANOTHER CIDER. THE VENDOR NODS.', 'THREE CIDERS. YOU ARE A REGULAR NOW.'][Math.min(MKT.cups, 3) - 1]); });
+  interact(x0, z0 - 2.2, 1.8, 'E · LOOK AT THE PRINTS', () => { toast('N3W PRINTS: MEMES ON PAPER, SIGNED, ONE OF EACH. THE VENDOR SAYS THE REAL ONES ARE ON CHAIN.'); });
+  if (window.__MAP) MAP.places.push(['THE MARKET', x0, z0, x0, z0 - 4]);
+})();
+const ciderSecret = secret('cider', () => { }, []);
+window.__FRAMES.push(dt => { try { const night = Math.min(1, (L.lamps || 0) * 1.4); MKT.warm.emissiveIntensity = 0.3 + 0.9 * night; MKT.bulbs.material.color.setRGB(0.55 + 0.45 * night, (0.55 + 0.45 * night) * 0.85, (0.55 + 0.45 * night) * 0.62); } catch (e) { } });
+
+/* ================================================================
+   v70 SHOWTIME (2026-11-22)
+   Three dancers and a boombox where the east path meets the ring. Walk up and one of them yells SHOWTIME: the box
+   drops a beat, one throws back flips, one goes upside down and spins on his head, one hits poses on the beat, and
+   the crowd of residents nearby stops to look. Then the hat comes round: E puts a TDH in it. SHOWTIME starts one.
+   ================================================================ */
+const SHOW = { d: [], t: 0, on: 0, cool: 0, beat: 0, next: 0 };
+window.__SHOW = SHOW;
+const SHOW_AT = { x: 41, z: 0 };
+(function showtime() {
+  const x0 = SHOW_AT.x, z0 = SHOW_AT.z, g0 = ground(x0, z0); SHOW.g0 = g0; SHOW.ry = Math.atan2(-x0, -z0);
+  [[0xe2581c, 0x15161a, 'cabbie'], [0x15161a, 0x2a2f45, 'writer'], [0x2962FF, 0x15161a, 'editor']].forEach(([sh, pa, cast], i) => {
+    const p = person(sh, pa, SKIN[(i * 2 + 5) % SKIN.length], cast); const a = SHOW.ry + PI + (i - 1) * 0.9, r = i === 1 ? 0 : 1.8;
+    SHOW.d.push({ P: p, bx: x0 + Math.sin(a) * r, bz: z0 + Math.cos(a) * r, role: ['flips', 'headspin', 'poses'][i] }); });
+  const box = new THREE.Group(); box.position.set(x0 + Math.sin(SHOW.ry) * 1.2, g0, z0 + Math.cos(SHOW.ry) * 1.2); box.rotation.y = SHOW.ry; scene.add(box);
+  const bm = new THREE.MeshStandardMaterial({ color: 0x1a1b1e, roughness: 0.5, metalness: 0.3 }); const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.38, 0.2), bm); body.position.y = 0.19; box.add(body);
+  [-0.2, 0.2].forEach(x => { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 20), new THREE.MeshStandardMaterial({ color: 0x3a3c40, roughness: 0.9 })); s.rotation.x = PI / 2; s.position.set(x, 0.19, 0.105); box.add(s); SHOW.cones = (SHOW.cones || []).concat(s); });
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.02, 6, 16, PI), new THREE.MeshStandardMaterial({ color: 0xbfc3c7, metalness: 0.9, roughness: 0.3 })); handle.position.y = 0.38; box.add(handle);
+  const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.12, 0.08, 16, 1, true), new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.9, side: THREE.DoubleSide })); hat.position.set(x0 + Math.sin(SHOW.ry) * 1.5 + Math.cos(SHOW.ry) * 0.6, g0 + 0.04, z0 + Math.cos(SHOW.ry) * 1.5 - Math.sin(SHOW.ry) * 0.6); scene.add(hat);
+  interact(x0 + Math.sin(SHOW.ry) * 2, z0 + Math.cos(SHOW.ry) * 2, 2.6, 'E · TIP THE CREW (1 TDH)', () => { state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } showSecret(); toast('THEY SAY THANK YOU, EVERYBODY, NO PHOTOS WITHOUT A DOLLAR, THANK YOU.'); });
+  if (window.__MAP) MAP.places.push(['SHOWTIME', x0, z0, x0 + Math.sin(SHOW.ry) * 4, z0 + Math.cos(SHOW.ry) * 4]);
+})();
+const showSecret = secret('showtime', () => { }, []);
+function showStart(word) { if (SHOW.on > 0) return; SHOW.on = 22; SHOW.t = 0; SHOW.next = 0; SHOW.beat = 0; toast(word ? 'SHOWTIME! (YOU ASKED.)' : 'WHAT TIME IS IT? SHOWTIME!', 'blue'); }
+EGGS.showtime = () => showStart(true); EGGS.showtime.__s = true;
+function showDrum(type, t0, vol) { if (!AC) return; try { if (type === 'k') { const o = AC.createOscillator(), g = AC.createGain(); o.frequency.setValueAtTime(140, t0); o.frequency.exponentialRampToValueAtTime(42, t0 + 0.14); g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + 0.25); }
+  else { const n = Math.floor(AC.sampleRate * (type === 's' ? 0.16 : 0.04)), b = AC.createBuffer(1, n, AC.sampleRate), ch = b.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, type === 's' ? 2 : 4);
+    const s = AC.createBufferSource(); s.buffer = b; const f = AC.createBiquadFilter(); f.type = type === 's' ? 'bandpass' : 'highpass'; f.frequency.value = type === 's' ? 1800 : 7000; const g = AC.createGain(); g.gain.value = vol * (type === 's' ? 0.9 : 0.35); s.connect(f); f.connect(g); g.connect(AC.destination); s.start(t0); } } catch (e) { } }
+function showFrame(dt) {
+  const d = Math.hypot(P.x - SHOW_AT.x, P.z - SHOW_AT.z); if (d > 90) return;
+  SHOW.cool = Math.max(0, SHOW.cool - dt); if (SHOW.on <= 0 && d < 8 && SHOW.cool <= 0) showStart(false);
+  const on = SHOW.on > 0; if (on) { SHOW.on -= dt; SHOW.t += dt; if (SHOW.on <= 0) { SHOW.cool = 50; toast('THE HAT COMES ROUND. E TO TIP.'); } }
+  const bpm = 98, spb = 60 / bpm, bt = SHOW.t / spb;
+  // the beat, scheduled a little ahead, only if sound is on and you are close
+  if (on && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0 && d < 30) { const vol = Math.min(0.12, 2 / (d + 3)); while (SHOW.next < SHOW.t + 0.25) { const step = Math.round(SHOW.next / (spb / 2)), t0 = AC.currentTime + (SHOW.next - SHOW.t);
+      if (t0 >= AC.currentTime) { if (step % 8 === 0 || step % 8 === 5) showDrum('k', t0, vol); if (step % 4 === 2) showDrum('s', t0, vol); showDrum('h', t0, vol * 0.8); } SHOW.next += spb / 2; } }
+  if (SHOW.cones) SHOW.cones.forEach(c => c.scale.setScalar(on ? 1 + Math.max(0, Math.cos(bt * PI * 2)) * 0.12 : 1));
+  SHOW.d.forEach((s, i) => { const g = s.P.g; let y = SHOW.g0 - 0.35, rx = 0, ry = SHOW.ry + PI, rz = 0;
+    if (!on) { ry += Math.sin(LIFE.t * 0.5 + i) * 0.2; y += Math.abs(Math.sin(LIFE.t * 2 + i)) * 0.02; }
+    else if (s.role === 'flips') { const ph = (bt / 4) % 1; if (ph < 0.35) { const u = ph / 0.35; rx = -u * PI * 2; y += Math.sin(u * PI) * 1.2 + 0.9 * (1 - Math.cos(rx)); } else y += Math.abs(Math.sin(bt * PI)) * 0.06; }
+    else if (s.role === 'headspin') { const ph = (SHOW.t % 11) / 11; if (ph > 0.15 && ph < 0.85) { rx = PI; y += 1.9; ry += SHOW.t * 9; } else y += Math.abs(Math.sin(bt * PI)) * 0.08; }
+    else { ry += Math.round(bt / 2) % 2 ? 0.7 : -0.7; rz = Math.round(bt) % 2 ? 0.12 : -0.12; y += Math.abs(Math.sin(bt * PI)) * 0.1; }
+    g.position.set(s.bx, y, s.bz); g.rotation.set(rx, ry, rz, 'YXZ'); });
+}
+window.__FRAMES.push(dt => { try { showFrame(dt); } catch (e) { if (!SHOW.err) { SHOW.err = e; console.warn('v70 showtime', e); } } });
+
+/* ================================================================
+   v71 THE GLOWING SEA (2026-11-22), apply-mlow-impermanent-vision, Whisper
+   After dark the harbour round the island lights up where it moves: plankton in the surf line flashing cyan, a few
+   hot pink, brightest where the waves break and in the wakes of the ships, fading in and out like breath. It sits
+   on the water from the shore out about twelve metres. PLANKTON (or BIOLUMINESCENCE) lights it any hour.
+   ================================================================ */
+const GLOW = { N: isMobile ? 1400 : 3600, k: 0, until: 0, t: 0 };
+window.__GLOW = GLOW;
+(function glowingSea() {
+  const N = GLOW.N, pos = new Float32Array(N * 3), ph = new Float32Array(N), col = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) { const a = Math.random() * PI * 2, r = SHORE + 0.5 + Math.pow(Math.random(), 1.8) * 12; pos[i * 3] = Math.cos(a) * r; pos[i * 3 + 1] = 0.32; pos[i * 3 + 2] = Math.sin(a) * r; ph[i] = Math.random() * 100;
+    const pink = Math.random() < 0.07; col[i * 3] = pink ? 1 : 0.03; col[i * 3 + 1] = pink ? 0.25 : 0.87; col[i * 3 + 2] = pink ? 0.64 : 1; }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('aPh', new THREE.BufferAttribute(ph, 1)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 }, uK: { value: 0 }, map: { value: LIFE.soft }, uScale: { value: innerHeight * 0.5 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'attribute float aPh; attribute vec3 color; uniform float uT, uK, uScale; varying vec3 vC; varying float vA; void main(){ vec3 p = position; float r = length(p.xz); float wave = sin(r * 0.9 - uT * 1.3 + aPh * 0.05);' +
+      ' p.y += wave * 0.12; float surf = smoothstep(0.4, 1.0, wave) * (1.0 - smoothstep(137.5, 150.0, r) * 0.6); float tw = 0.5 + 0.5 * sin(uT * (1.5 + fract(aPh) * 3.0) + aPh); vA = uK * (0.4 + 0.6 * surf) * (0.35 + 0.65 * tw); vC = color;' +
+      ' vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_PointSize = min(64.0, (0.55 + surf * 0.7) * uScale / max(1.0, -mv.z)); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform sampler2D map; varying vec3 vC; varying float vA; void main(){ float a = texture2D(map, gl_PointCoord).a * vA; if (a < 0.01) discard; gl_FragColor = vec4(vC * a * 2.4, a); }' });
+  const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; pts.renderOrder = 2; pts.visible = false; scene.add(pts); GLOW.pts = pts; GLOW.mat = mat;
+  // wake sparkle that follows the ships
+  const wn = 220, wp = new Float32Array(wn * 3).fill(-999), wg = new THREE.BufferGeometry(); wg.setAttribute('position', new THREE.BufferAttribute(wp, 3));
+  const wake = new THREE.Points(wg, new THREE.PointsMaterial({ color: 0x22e6ff, size: 0.5, map: LIFE.soft, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false })); wake.frustumCulled = false; scene.add(wake); GLOW.wake = wake; GLOW.wd = [];
+  for (let i = 0; i < wn; i++) GLOW.wd.push({ t: 9, x: 0, z: 0 }); GLOW.wc = 0;
+})();
+const glowSecret = secret('plankton', () => { GLOW.until = GLOW.t + 90; toast('THE HARBOUR LIGHTS UP WHERE IT MOVES. NOBODY IN THIS CITY BELIEVES YOU.', 'blue'); }, ['plankton', 'bioluminescence', 'glow']);
+function glowFrame(dt) {
+  GLOW.t += dt; const night = Math.min(1, Math.max(0, ((L.lamps || 0) - 0.3) * 2)), want = Math.max(night, GLOW.until > GLOW.t ? 1 : 0); GLOW.k += (want - GLOW.k) * Math.min(1, dt * 0.5);
+  const on = GLOW.k > 0.01; GLOW.pts.visible = on; GLOW.wake.visible = on; if (!on) return;
+  GLOW.mat.uniforms.uT.value = GLOW.t; GLOW.mat.uniforms.uK.value = GLOW.k; GLOW.mat.uniforms.uScale.value = innerHeight * 0.5;
+  // seeing it from the beach at night counts too
+  if (night > 0.5 && Math.hypot(P.x, P.z) > SHORE - 14) { GLOW.seen = (GLOW.seen || 0) + dt; if (GLOW.seen > 4) glowSecret(); }
+  if (window.__SHIPS) SHIPS.list.forEach(s => { if (Math.random() < dt * 30) { const d = GLOW.wd[GLOW.wc]; GLOW.wc = (GLOW.wc + 1) % GLOW.wd.length; const a = s.g.rotation.y; d.t = 0; d.x = s.g.position.x - Math.cos(a) * (8 + Math.random() * 30) + (Math.random() - 0.5) * 6; d.z = s.g.position.z + Math.sin(a) * (8 + Math.random() * 30) + (Math.random() - 0.5) * 6; } });
+  const wp = GLOW.wake.geometry.attributes.position.array; GLOW.wd.forEach((d, i) => { d.t += dt; if (d.t > 6) { wp[i * 3 + 1] = -999; return; } wp[i * 3] = d.x; wp[i * 3 + 1] = 0.15; wp[i * 3 + 2] = d.z; });
+  GLOW.wake.geometry.attributes.position.needsUpdate = true; GLOW.wake.material.opacity = 0.8 * GLOW.k;
+}
+window.__FRAMES.push(dt => { try { glowFrame(dt); } catch (e) { if (!GLOW.err) { GLOW.err = e; console.warn('v71 glow', e); } } });
+
+/* ================================================================
+   v72 THE FLOWER FHUNT (2026-11-22), apply-mlow-impermanent-vision, Whisper
+   Twelve Open Eye Flowers painted small on the ground round the island, each in a pool of navy with one contour
+   ring: on the water tower roof, under the shed, on the ice, behind the market, on the pier, on the beach, in the
+   corners. Walk over one and it is yours (it shuts its eye and stays shut). Find all twelve. FLOWERS tells you how
+   many are left and which way the nearest one is.
+   ================================================================ */
+const FHUNT = { f: [], got: new Set() };
+window.__HUNT = FHUNT;
+(function flowerHunt() {
+  try { (JSON.parse(localStorage.getItem('meme-island-hunt') || '[]') || []).forEach(k => FHUNT.got.add(k)); } catch (e) { }
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient && c.arc) { const g = c.createRadialGradient(128, 128, 10, 128, 128, 128); g.addColorStop(0, 'rgba(22,34,74,.95)'); g.addColorStop(0.75, 'rgba(11,20,48,.9)'); g.addColorStop(1, 'rgba(11,20,48,0)'); c.fillStyle = g; c.fillRect(0, 0, 256, 256);
+    c.strokeStyle = 'rgba(8,222,255,.85)'; c.lineWidth = 3; c.beginPath(); c.arc(128, 128, 100, 0, PI * 2); c.stroke(); c.strokeStyle = 'rgba(255,63,164,.85)'; c.lineWidth = 2; c.beginPath(); c.arc(128, 128, 112, 0, PI * 2); c.stroke(); }
+  const pool = new THREE.CanvasTexture(cv); pool.encoding = THREE.sRGBEncoding; const ft = tex('assets/iv_flower.webp');
+  const spots = [['the water tower roof', WT_AT.x - 2, WT_AT.z + 2, WT.top + 1], ['under the shed', SHED_AT.x - 5, SHED_AT.z, 3], ['on the ice', RINK_AT.x + 3, RINK_AT.z - 1, 3], ['behind the market', MKT_AT.x + 2, MKT_AT.z + 2.4, 3],
+    ['the east shoulder', 86, -12, 3], ['the west grass', -85, -40, 3], ['the north east corner', 58, -80, 3], ['beside the oracle', -22, 6, 3], ['the end of the pier', 1.2, 172, 3], ['GM BEACH', 22, 118, 3], ['past the shed', -30, -78, 3], ['by the sculpture rows', -31, -51, 3]];
+  spots.forEach(([name, x, z, cy], i) => { const f = floorAt(x, z, cy); const y = (f.f === null ? ground(x, z) : f.f) + 0.05; const key = 'f' + i;
+    const g = new THREE.Group(); g.position.set(x, y, z); scene.add(g);
+    const pm = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshBasicMaterial({ map: pool, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3 })); pm.rotation.x = -PI / 2; g.add(pm);
+    const fm = new THREE.MeshStandardMaterial({ map: ft, transparent: true, alphaTest: 0.4, emissive: 0xffffff, emissiveMap: ft, emissiveIntensity: 0.2, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4 });
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.6), fm); fl.rotation.x = -PI / 2; fl.position.y = 0.01; g.add(fl);
+    FHUNT.f.push({ name, x, z, y, g, fl, fm, key, got: FHUNT.got.has(key) }); if (FHUNT.got.has(key)) { fl.scale.set(1, 0.08, 1); fm.color.setScalar(0.5); } });
+})();
+const huntSecret = secret('flowerhunt', () => { toast('ALL TWELVE. EVERY FLOWER ON THE ISLAND HAS SEEN YOU, AND NOW IT HAS SHUT ITS EYE FOR YOU.', 'blue'); });
+EGGS.flowers = EGGS.flowerhunt = () => { const left = FHUNT.f.filter(f => !f.got); if (!left.length) { toast('ALL TWELVE FOUND. THEY ARE RESTING.'); return; } let b = left[0], bd = 1e9; left.forEach(f => { const d = Math.hypot(f.x - P.x, f.z - P.z); if (d < bd) { bd = d; b = f; } });
+  const a = Math.atan2(b.x - P.x, -(b.z - P.z)) * 180 / PI, dirs = ['NORTH', 'NORTH EAST', 'EAST', 'SOUTH EAST', 'SOUTH', 'SOUTH WEST', 'WEST', 'NORTH WEST']; toast(left.length + ' FLOWERS LEFT. THE NEAREST IS ' + Math.round(bd) + ' M ' + dirs[((Math.round(a / 45) % 8) + 8) % 8] + '.'); }; EGGS.flowers.__s = true;
+function huntFrame(dt) {
+  const night = Math.min(1, (L.lamps || 0) * 1.4);
+  FHUNT.f.forEach(f => { if (f.got) return; const d = Math.hypot(P.x - f.x, P.z - f.z); f.fm.emissiveIntensity = 0.15 + night * 0.7 + Math.sin(LIFE.t * 2 + f.x) * 0.08;
+    if (d < 1.1 && Math.abs(P.y - f.y) < 1.2) { f.got = true; FHUNT.got.add(f.key); try { localStorage.setItem('meme-island-hunt', JSON.stringify([...FHUNT.got])); } catch (e) { }
+      f.fl.scale.set(1, 0.08, 1); f.fm.color.setScalar(0.5); f.fm.emissiveIntensity = 0; try { beep(880, 0.08, 'sine', 0.05); beep(1320, 0.12, 'sine', 0.05, 0.09); } catch (e) { }
+      const n = FHUNT.f.filter(q => q.got).length; toast('FLOWER ' + n + ' OF 12: ' + f.name.toUpperCase() + '.', n === 12 ? 'blue' : ''); if (n === 12) huntSecret(); } });
+}
+window.__FRAMES.push(dt => { try { huntFrame(dt); } catch (e) { if (!FHUNT.err) { FHUNT.err = e; console.warn('v72 hunt', e); } } });
+
+/* ================================================================
+   v73 THE N3W ORACLE (2026-11-22), apply-mlow-impermanent-vision, Bloom
+   A fortune machine at (-19, 9): a tall dark wood cabinet, brass trim, a marquee, and behind the glass an Open
+   Eye Flower in a navy fog of contour lines, asleep. E (1 TDH) and it wakes: the eye opens, the case glows, it
+   hums, and a card slides out of the slot with your fortune. Thirty fortunes.
+   ================================================================ */
+const ORA = { t: 0, on: 0, n: 0 };
+window.__ORA = ORA;
+const ORA_AT = { x: -19, z: 9 };
+const ORA_SAYS = ['YOUR NEXT MINT WILL BE ON TIME. THAT ALONE IS A MIRACLE.', 'A STRANGER WILL SAY GM. SAY IT BACK.', 'THE FLOOR IS LAVA. THE FLOOR IS ALSO A PRICE. BOTH WILL MOVE.', 'YOU WILL FIND A SEAT ON THE TRAIN. DO NOT LOOK AT ANYONE.',
+  'SOMETHING YOU SOLD WILL BE WORTH MORE. YOU WILL BE HAPPY FOR THEM.', 'THE BODEGA CAT HAS CHOSEN YOU. ACT NATURAL.', 'A JPEG WILL MAKE YOU CRY THIS WEEK. A GOOD CRY.', 'YOU ARE EARLY. YOU HAVE ALWAYS BEEN EARLY. IT IS EXHAUSTING.',
+  'DIAMOND HANDS ARE MOSTLY JUST HANDS THAT FORGOT THE PASSWORD.', 'THE PIZZA RAT RESPECTS YOU.', 'LOOK UP. THE CITY PUT SOMETHING ON A ROOF FOR YOU.', 'YOU WILL WALK PAST THE SAME CORNER FOR TEN YEARS AND THEN NOTICE IT.',
+  'WAGMI. NOT EVERYONE. BUT YOU, PROBABLY.', 'THE NEXT TAXI WILL STOP. ENJOY IT. IT WILL NOT HAPPEN AGAIN.', 'THE WATCHERS SAW WHAT YOU DID. THEY THOUGHT IT WAS COOL.', 'YOU WILL BE TAGGED IN SOMETHING YOU DID NOT MAKE. TAKE THE COMPLIMENT.',
+  'A FLOWER IS LOOKING AT YOU RIGHT NOW. NOT THIS ONE.', 'YOUR WALLET IS FINE. YOUR SLEEP SCHEDULE IS NOT.', 'THE MEMES ARE THE MEANS. SEIZE THEM GENTLY.', 'DO NOT CHASE THE GREEN CANDLE. WALK. IT WILL WAIT.',
+  'SOMEONE WILL ASK WHAT YOU DO. YOU WILL SAY ART. YOU WILL BE RIGHT.', 'A SUBWAY GRATE IS IN YOUR FUTURE. WEAR TROUSERS.', 'YOU WILL DROP A SLICE CHEESE SIDE DOWN AND LEARN NOTHING.', 'THE ISLAND REMEMBERS EVERY PATH YOU WALKED. IT IS FLATTERED.',
+  'BUY THE DIP. THE DIP IS A HOT DOG. IT IS ALWAYS A GOOD TIME.', 'PATIENCE. THE HOLE IS ONLY CHALK.', 'GOOD NEWS ARRIVES BY BIKE, IN AN INSULATED BAG.', 'A FOG WILL ROLL IN AND YOU WILL FINALLY SLOW DOWN.', 'YOU ARE THE NEW YORKER NOW. THIS WAS ALWAYS THE PLAN.', 'THE ORACLE IS ALSO JUST A FLOWER IN A BOX. AND YET.'];
+(function oracle() {
+  const x0 = ORA_AT.x, z0 = ORA_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); ORA.ry = ry;
+  const g = new THREE.Group(); g.position.set(x0, g0, z0); g.rotation.y = ry; scene.add(g); ORA.g = g;
+  const wood = new THREE.MeshStandardMaterial({ color: 0x3a2416, roughness: 0.55 }), brass = new THREE.MeshStandardMaterial({ color: 0xb08a3e, roughness: 0.3, metalness: 0.9 });
+  const base = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.0, 0.9), wood); base.position.y = 0.5; g.add(base);
+  const top = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.35, 0.95), wood); top.position.y = 2.45; g.add(top);
+  [-0.62, 0.62].forEach(x => { const p = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.3, 0.9), wood); p.position.set(x, 1.65, 0); g.add(p); });
+  const backP = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.3, 0.05), wood); backP.position.set(0, 1.65, -0.42); g.add(backP);
+  // the case: navy contour fog behind the flower
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.beginPath && c.createRadialGradient) { const gr = c.createRadialGradient(128, 128, 10, 128, 128, 180); gr.addColorStop(0, '#1d2f66'); gr.addColorStop(1, '#050816'); c.fillStyle = gr; c.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 16; i++) { c.beginPath(); for (let a = 0; a <= 1.001; a += 1 / 90) { const t = a * PI * 2, r = 14 + i * 9 + Math.sin(t * 3 + i) * 4; const px = 128 + Math.cos(t) * r, py = 128 + Math.sin(t) * r; a ? c.lineTo(px, py) : c.moveTo(px, py); } c.lineWidth = i % 5 === 4 ? 2.4 : 1.2; c.strokeStyle = i % 5 === 4 ? 'rgba(255,63,164,.8)' : 'rgba(8,222,255,.7)'; c.stroke(); } }
+  const ct = new THREE.CanvasTexture(cv); ct.encoding = THREE.sRGBEncoding; const caseM = new THREE.MeshStandardMaterial({ map: ct, emissive: 0xffffff, emissiveMap: ct, emissiveIntensity: 0.25, roughness: 0.9 }); ORA.caseM = caseM;
+  const inside = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 1.25), caseM); inside.position.set(0, 1.65, -0.39); g.add(inside);
+  const ft = tex('assets/iv_flower.webp'); const fm = new THREE.MeshStandardMaterial({ map: ft, transparent: true, alphaTest: 0.4, emissive: 0xffffff, emissiveMap: ft, emissiveIntensity: 0.1, side: THREE.DoubleSide }); ORA.fm = fm;
+  const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.85, 0.85), fm); fl.position.set(0, 1.7, -0.1); g.add(fl); ORA.fl = fl;
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(1.16, 1.3), new THREE.MeshStandardMaterial({ color: 0xcfe0ea, roughness: 0.02, metalness: 0.2, transparent: true, opacity: 0.12, depthWrite: false })); glass.position.set(0, 1.65, 0.44); g.add(glass);
+  [[0, 1.0], [0, 2.28]].forEach(([x, y]) => { const t = new THREE.Mesh(new THREE.BoxGeometry(1.32, 0.05, 0.05), brass); t.position.set(x, y, 0.46); g.add(t); });
+  const mq = signTex([{ t: 'N3W ORACLE', s: 0.4 }, { t: 'ONE TDH · ONE TRUTH', s: 0.14 }], 1024, 256, '#0D0D0D', '#e9c46a'); const marquee = new THREE.Mesh(new THREE.PlaneGeometry(1.25, 0.31), new THREE.MeshBasicMaterial({ map: mq, toneMapped: false })); marquee.position.set(0, 2.45, 0.48); g.add(marquee);
+  const slot = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.02), new THREE.MeshBasicMaterial({ color: 0x050505 })); slot.position.set(0.3, 0.8, 0.455); g.add(slot);
+  const card = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.14), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.9 })); card.position.set(0.3, 0.8, 0.46); card.rotation.x = -PI / 2; card.scale.set(1, 0.01, 1); g.add(card); ORA.card = card;
+  boxWalls(x0, z0, 1.3, 0.95, ry, -5, g0 + 2.6);
+  interact(x0 + Math.sin(ry) * 1.3, z0 + Math.cos(ry) * 1.3, 1.6, 'E · ASK THE ORACLE (1 TDH)', () => oraAsk());
+  if (window.__MAP) MAP.places.push(['THE ORACLE', x0, z0, x0 + Math.sin(ry) * 2.2, z0 + Math.cos(ry) * 2.2]);
+})();
+const oraSecret = secret('oracle', () => { }, []);
+function oraAsk() { if (ORA.on > 0) return; state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } ORA.on = 3.2; ORA.n++; oraSecret();
+  const say = ORA_SAYS[Math.floor(Math.random() * ORA_SAYS.length)]; ORA.say = say; if (AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) try { beep(110, 1.8, 'sine', 0.05); beep(165, 1.8, 'sine', 0.03); beep(1760, 0.08, 'triangle', 0.03, 2.6); } catch (e) { } }
+EGGS.oracle = EGGS.fortune = () => { teleport(ORA_AT.x + Math.sin(ORA.ry) * 1.8, ORA_AT.z + Math.cos(ORA.ry) * 1.8, ORA.ry + PI); toast('THE ORACLE HAS BEEN EXPECTING YOU. IT COSTS ONE TDH ANYWAY.'); }; EGGS.oracle.__s = true;
+function oraFrame(dt) {
+  const d = Math.hypot(P.x - ORA_AT.x, P.z - ORA_AT.z); if (d > 70) return; const night = Math.min(1, (L.lamps || 0) * 1.4);
+  if (ORA.on > 0) { ORA.on -= dt; const u = 1 - ORA.on / 3.2; ORA.fl.scale.set(1, 0.3 + 0.7 * Math.min(1, u * 3), 1); ORA.fl.rotation.z = Math.sin(LIFE.t * 3) * 0.05; ORA.caseM.emissiveIntensity = 0.25 + 1.2 * Math.sin(u * PI); ORA.fm.emissiveIntensity = 0.1 + 1.1 * Math.sin(u * PI);
+    ORA.card.scale.set(1, Math.min(1, Math.max(0.01, (u - 0.75) * 4)), 1); ORA.card.position.z = 0.46 + Math.max(0, (u - 0.75) * 4) * 0.08; if (ORA.on <= 0) { toast('THE CARD SAYS: ' + ORA.say, 'blue'); } }
+  else { ORA.fl.scale.set(1, 0.3 + Math.sin(LIFE.t * 0.4) * 0.03, 1); ORA.caseM.emissiveIntensity = 0.2 + night * 0.5; ORA.fm.emissiveIntensity = 0.08 + night * 0.25; ORA.card.scale.y = Math.max(0.01, ORA.card.scale.y - dt * 0.2); }
+}
+window.__FRAMES.push(dt => { try { oraFrame(dt); } catch (e) { if (!ORA.err) { ORA.err = e; console.warn('v73 oracle', e); } } });
+
+/* ================================================================
+   v74 THE CANAL STREET TABLE (2026-11-22)
+   A folding table at (-16, -28) under a beach umbrella, covered in knockoffs: plush PEEPE frogs, a DOGGE in a
+   box, ROLEKS watches on a card, sunglasses, and a stack of framed JPEGs that are just printouts. The man behind
+   it says bags, watches, jpegs. E haggles. Haggle three times and you walk away with a BORED APE (BOOTLEG).
+   ================================================================ */
+const BOOT = { h: 0 };
+window.__BOOT = BOOT;
+const BOOT_AT = { x: -16, z: -28 };
+(function bootlegTable() {
+  const x0 = BOOT_AT.x, z0 = BOOT_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); BOOT.ry = ry;
+  const g = new THREE.Group(); g.position.set(x0, g0, z0); g.rotation.y = ry; scene.add(g);
+  const steel = new THREE.MeshStandardMaterial({ color: 0x8a8f96, roughness: 0.4, metalness: 0.7 });
+  const top = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.04, 0.8), new THREE.MeshStandardMaterial({ color: 0xe9e4da, roughness: 0.8 })); top.position.y = 0.75; g.add(top);
+  const cloth = new THREE.Mesh(new THREE.BoxGeometry(1.92, 0.5, 0.82), new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 1 })); cloth.position.y = 0.52; g.add(cloth);
+  [[-0.85, -0.35], [0.85, -0.35], [-0.85, 0.35], [0.85, 0.35]].forEach(([x, z]) => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.75, 6), steel); l.position.set(x, 0.37, z); g.add(l); });
+  // umbrella
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 2.3, 6), steel); pole.position.set(-0.7, 1.15, -0.5); g.add(pole);
+  const canopy = new THREE.Mesh(new THREE.ConeGeometry(1.25, 0.45, 8, 1, true), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.8, side: THREE.DoubleSide })); canopy.position.set(-0.7, 2.3, -0.5); g.add(canopy);
+  // the goods
+  const frog = (x, z, s) => { const f = new THREE.Group(); const m = new THREE.MeshStandardMaterial({ color: 0x5d9b3a, roughness: 1 }); const b = new THREE.Mesh(new THREE.SphereGeometry(0.11 * s, 12, 10), m); b.scale.set(1, 0.85, 1); f.add(b);
+    [-1, 1].forEach(k => { const e = new THREE.Mesh(new THREE.SphereGeometry(0.045 * s, 10, 8), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 })); e.position.set(k * 0.05 * s, 0.08 * s, 0.07 * s); f.add(e); const p = new THREE.Mesh(new THREE.SphereGeometry(0.02 * s, 8, 6), new THREE.MeshBasicMaterial({ color: 0x111111 })); p.position.set(k * 0.05 * s, 0.08 * s, 0.11 * s); f.add(p); });
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.05 * s, 0.012 * s, 6, 12, PI), new THREE.MeshStandardMaterial({ color: 0xb04a3a })); lip.position.set(0, -0.01 * s, 0.1 * s); lip.rotation.z = PI; f.add(lip); f.position.set(x, 0.86, z); g.add(f); };
+  frog(-0.6, 0.15, 1); frog(-0.35, 0.2, 0.8); frog(-0.5, -0.1, 0.9);
+  const lab = (t, sub, col) => signTex([{ t, s: 0.4 }, { t: sub, s: 0.15 }], 512, 320, col, '#0D0D0D');
+  const boxM = (t, sub, col) => new THREE.MeshStandardMaterial({ map: lab(t, sub, col), roughness: 0.7 });
+  const dog = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.18), [boxM('DOGGE', 'MUCH OFFICIAL', '#e9c46a'), boxM('DOGGE', 'MUCH OFFICIAL', '#e9c46a'), boxM('DOGGE', '', '#e9c46a'), boxM('DOGGE', '', '#e9c46a'), boxM('DOGGE', 'WOW', '#e9c46a'), boxM('DOGGE', 'WOW', '#e9c46a')]); dog.position.set(0.0, 0.87, 0.1); g.add(dog);
+  const watch = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.26), new THREE.MeshStandardMaterial({ map: lab('ROLEKS', 'GENUINE REAL', '#efe8da'), roughness: 0.7 })); watch.rotation.x = -PI / 2 + 0.35; watch.position.set(0.45, 0.8, 0.2); g.add(watch);
+  for (let i = 0; i < 4; i++) { const s = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 12), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3, metalness: 0.4 })); s.position.set(0.3 + i * 0.12, 0.79, -0.15); s.rotation.x = PI / 2; g.add(s); const s2 = s.clone(); s2.position.x += 0.075; g.add(s2); }
+  for (let i = 0; i < 3; i++) { const m = memeMesh(MEME_NS[(i * 53 + 7) % MEME_NS.length], 0.34); if (m) { m.position.set(0.75, 0.95 + i * 0.01, 0.0 - i * 0.12); m.rotation.x = -0.6; g.add(m); } }
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.3), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'BAGS WATCHES JPEGS', s: 0.17 }, { t: 'ALL REAL', s: 0.22 }], 512, 220, '#efe8da', '#0D0D0D'), toneMapped: false, side: THREE.DoubleSide })); sign.position.set(0, 0.55, 0.42); g.add(sign);
+  const v = person(0x15161a, 0x2a2f45, SKIN[1], 'wiseguy'); v.g.position.set(x0 - Math.sin(ry) * 0.9, g0 - 0.35, z0 - Math.cos(ry) * 0.9); v.g.rotation.y = ry; BOOT.v = v;
+  boxWalls(x0, z0, 1.95, 0.85, ry, -5, g0 + 0.8);
+  interact(x0 + Math.sin(ry) * 1.2, z0 + Math.cos(ry) * 1.2, 1.7, 'E · HAGGLE', () => bootHaggle());
+  if (window.__MAP) MAP.places.push(['CANAL ST TABLE', x0, z0, x0 + Math.sin(ry) * 2, z0 + Math.cos(ry) * 2]);
+})();
+const bootSecret = secret('bootleg', () => { toast('YOU BOUGHT A BORED APE (BOOTLEG). IT IS A PRINTOUT IN A FRAME. THE FRAME IS NICE. PROVENANCE: THIS TABLE.', 'blue'); });
+function bootHaggle() { BOOT.h++; const lines = ['HE SAYS FORTY. YOU SAY TEN. HE LAUGHS LIKE YOU INSULTED HIS MOTHER.', 'HE SAYS TWENTY FIVE, FINAL. HE SAYS FINAL TWICE.', 'HE SAYS FINE, FIFTEEN, BUT YOU DID NOT GET IT HERE.'];
+  if (BOOT.h <= 3) toast(lines[BOOT.h - 1]); if (BOOT.h === 3) setTimeout(() => bootSecret(), 2200); if (BOOT.h > 3) toast(['HE SAYS COME BACK TOMORROW, NEW STOCK.', 'HE IS ON THE PHONE. HE HOLDS UP ONE FINGER.', 'HE SAYS YOU AGAIN.'][BOOT.h % 3]); }
+EGGS.canalstreet = EGGS.bootleg = () => { teleport(BOOT_AT.x + Math.sin(BOOT.ry) * 2, BOOT_AT.z + Math.cos(BOOT.ry) * 2, BOOT.ry + PI); toast('PSST. BAGS. WATCHES. JPEGS.'); }; EGGS.canalstreet.__s = true;
+
+/* ================================================================
+   v75 THE DELIVERY RIDERS (2026-11-22)
+   Four e-bike delivery riders lap the ring road day and night, an insulated cube bag on every back, a white front
+   light and a red one behind, two going each way. They are fast, they ring once when they pass you, and they lean
+   round you if you are in the lane. Stand still and let one go by within a metre and the island counts it.
+   ================================================================ */
+const RIDE5 = { r: [] };
+window.__RIDERS = RIDE5;
+const ROAD_R = 96.5;
+(function riders() {
+  const bagC = [0xe2581c, 0x2f4a33, 0x2962FF, 0x15161a];
+  for (let i = 0; i < 4; i++) { const g = new THREE.Group(); scene.add(g); const b = bikeModel(1); b.rotation.y = 0; g.add(b);
+    const p = person([0x2a2d33, 0x3b4a5c, 0x15161a, 0x5a1712][i], 0x15161a, SKIN[(i * 3 + 1) % SKIN.length], ['cabbie', 'writer', 'editor', 'wiseguy'][i]);
+    scene.remove(p.g); p.g.position.set(-0.22, 0.45 - 0.35, 0); p.g.rotation.y = PI / 2; p.g.scale.setScalar(0.92); g.add(p.g);
+    const bag = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), new THREE.MeshStandardMaterial({ color: bagC[i], roughness: 0.7 })); bag.position.set(-0.42, 1.7, 0); g.add(bag);
+    const fl = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false })); fl.position.set(0.72, 0.95, 0); g.add(fl);
+    const rl = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff2020, toneMapped: false })); rl.position.set(-0.62, 0.7, 0); g.add(rl);
+    const dir = i % 2 ? -1 : 1; RIDE5.r.push({ g, wheels: b.userData.wheels, a: i * PI / 2 + 0.3, dir, lane: dir > 0 ? -1.7 : 1.7, sp: 7 + Math.random() * 2.5, off: 0, rang: false }); }
+})();
+const nearMiss = secret('nearmiss', () => { toast('A DELIVERY BIKE MISSED YOU BY A HAND. HE DID NOT EVEN LOOK. THAT IS RESPECT.', 'blue'); });
+function ridersFrame(dt) {
+  RIDE5.r.forEach(r => { const R = ROAD_R + r.lane + r.off; r.a += r.dir * r.sp / R * dt; const x = Math.sin(r.a) * R, z = Math.cos(r.a) * R, gy = ground(x, z);
+    // lean out round the player if in the lane ahead
+    const dx = P.x - x, dz = P.z - z, d = Math.hypot(dx, dz), tx = Math.cos(r.a) * r.dir, tz = -Math.sin(r.a) * r.dir, ahead = dx * tx + dz * tz, side = -(dx * Math.sin(r.a) + dz * Math.cos(r.a));
+    const want = ahead > 0 && ahead < 10 && Math.abs(side) < 1.6 ? (side > 0 ? -1.4 : 1.4) : 0; r.off += (want - r.off) * Math.min(1, dt * 3);
+    r.g.position.set(x, gy, z); r.g.rotation.set(0, Math.atan2(-tz, tx), -r.dir * 0.05 + (want ? -Math.sign(want) * 0.12 : 0), 'YXZ');
+    r.wheels.forEach(w => w.rotation.z -= r.sp / 0.33 * dt);
+    if (d < 6 && !r.rang) { r.rang = true; try { if (AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) beep(2300, 0.12, 'sine', 0.035); } catch (e) { } }
+    if (d > 12) r.rang = false; if (d < 1.1 && P.ground) nearMiss(); });
+}
+window.__FRAMES.push(dt => { try { ridersFrame(dt); } catch (e) { if (!RIDE5.err) { RIDE5.err = e; console.warn('v75 riders', e); } } });
+
+/* ================================================================
+   v76 THE STREET SWEEPER (2026-11-22)
+   After ten at night a sweeper truck crawls the ring road: a boxy white cab, an orange beacon turning on the roof,
+   two round brushes spinning under the front, a mist of water ahead of them, and a dark wet stripe left behind on
+   the asphalt that dries over a couple of minutes. It hums and hisses as it passes. In the day it sits parked on
+   the shoulder. SWEEPER sends it round now.
+   ================================================================ */
+const SWEEP = { a: -0.9, on: false, trail: [], ti: 0, until: 0, t: 0 };
+window.__SWEEP = SWEEP;
+(function sweeper() {
+  const g = new THREE.Group(); scene.add(g); SWEEP.g = g;
+  const white = new THREE.MeshStandardMaterial({ color: 0xe8e6e0, roughness: 0.45, metalness: 0.2 }), dark = new THREE.MeshStandardMaterial({ color: 0x1b1c1f, roughness: 0.7 }), orange = new THREE.MeshStandardMaterial({ color: 0xe2581c, roughness: 0.5 });
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.7, 1.9), white); cab.position.set(1.4, 1.35, 0); g.add(cab);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.8, 1.7), new THREE.MeshStandardMaterial({ color: 0x1a2430, roughness: 0.1, metalness: 0.5, emissive: 0xffd28a, emissiveIntensity: 0 })); glass.position.set(2.21, 1.6, 0); g.add(glass); SWEEP.glass = glass;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.9, 2.0), white); body.position.set(-0.8, 1.45, 0); g.add(body);
+  const stripe = new THREE.Mesh(new THREE.BoxGeometry(4.25, 0.18, 2.03), orange); stripe.position.set(0.25, 0.85, 0); g.add(stripe);
+  const sg = signTex([{ t: 'N3W SANITATION', s: 0.3 }], 1024, 160, '#e8e6e0', '#0D0D0D'); [-1, 1].forEach(s => { const m = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 0.36), new THREE.MeshBasicMaterial({ map: sg })); m.position.set(-0.8, 1.6, s * 1.01); if (s < 0) m.rotation.y = PI; g.add(m); });
+  [[1.4, 1], [1.4, -1], [-1.4, 1], [-1.4, -1]].forEach(([x, s]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.3, 16), dark); w.rotation.x = PI / 2; w.position.set(x, 0.42, s * 0.95); g.add(w); });
+  SWEEP.brushes = [-1, 1].map(s => { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.12, 14), new THREE.MeshStandardMaterial({ color: 0x2b2a28, roughness: 1 })); b.position.set(2.3, 0.08, s * 0.85); g.add(b);
+    for (let k = 0; k < 10; k++) { const br = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.02), new THREE.MeshStandardMaterial({ color: 0x5a3f28 })); br.rotation.y = k * PI / 5; br.position.y = -0.06; b.add(br); } return b; });
+  const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.18, 12), new THREE.MeshBasicMaterial({ color: 0xffa020, toneMapped: false })); beacon.position.set(1.4, 2.3, 0); g.add(beacon); SWEEP.beacon = beacon;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false })); [-0.7, 0.7].forEach(z => { const h = head.clone(); h.position.set(2.22, 0.8, z); g.add(h); });
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  // the mist ahead of the brushes
+  const mg = new THREE.BufferGeometry(), mp = new Float32Array(160 * 3).fill(-999); mg.setAttribute('position', new THREE.BufferAttribute(mp, 3));
+  SWEEP.mist = new THREE.Points(mg, new THREE.PointsMaterial({ color: 0xdfe8ee, size: 0.08, transparent: true, opacity: 0.6, depthWrite: false })); SWEEP.mist.frustumCulled = false; scene.add(SWEEP.mist); SWEEP.md = []; for (let i = 0; i < 160; i++) SWEEP.md.push({ t: 9 });
+  // the wet stripe: a ring of dark tiles laid where it has been
+  const wm = new THREE.MeshStandardMaterial({ color: 0x0b0d10, roughness: 0.05, metalness: 0.6, transparent: true, opacity: 0, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  for (let i = 0; i < 70; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 2.2), wm.clone()); m.rotation.order = 'YXZ'; m.visible = false; scene.add(m); SWEEP.trail.push({ m, t: 999 }); }
+})();
+EGGS.sweeper = EGGS.streetsweeper = () => { SWEEP.until = SWEEP.t + 240; toast('THE SWEEPER IS COMING ROUND. MOVE YOUR CAR. ALTERNATE SIDE PARKING IS IN EFFECT.'); }; EGGS.sweeper.__s = true;
+let sweepHum = null;
+function sweepFrame(dt) {
+  SWEEP.t += dt; const h = (SKY.t && SKY.t.h) || 12; const on = h >= 22 || h < 5 || SWEEP.until > SWEEP.t; SWEEP.on = on;
+  const R = ROAD_R + 2.0; if (on) SWEEP.a += 2.2 / R * dt; const a = on ? SWEEP.a : -0.9, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z);
+  const tx = Math.cos(a), tz = -Math.sin(a); SWEEP.g.position.set(x, gy, z); SWEEP.g.rotation.set(0, Math.atan2(-tz, tx), 0);
+  SWEEP.brushes.forEach((b, i) => b.rotation.y += (on ? 9 : 0) * dt * (i ? 1 : -1)); SWEEP.beacon.visible = on && Math.sin(SWEEP.t * 8) > 0; const night = Math.min(1, (L.lamps || 0) * 1.4); SWEEP.glass.material.emissiveIntensity = on ? 0.4 * night : 0;
+  const d = Math.hypot(P.x - x, P.z - z);
+  if (on && d < 50 && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) { if (!sweepHum) try { const n = AC.sampleRate * 2, b = AC.createBuffer(1, n, AC.sampleRate), ch = b.getChannelData(0); let l = 0; for (let i = 0; i < n; i++) { l = l * 0.97 + (Math.random() * 2 - 1) * 0.03; ch[i] = l * 3 + Math.sin(i / AC.sampleRate * PI * 2 * 55) * 0.15 + (Math.random() * 2 - 1) * 0.05; }
+      const s = AC.createBufferSource(); s.buffer = b; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900; const gg = AC.createGain(); gg.gain.value = 0; s.connect(f); f.connect(gg); gg.connect(AC.destination); s.start(); sweepHum = { s, g: gg }; } catch (e) { }
+    if (sweepHum) sweepHum.g.gain.value = Math.max(0, 0.07 - d * 0.0014); }
+  else if (sweepHum) { try { sweepHum.s.stop(); } catch (e) { } sweepHum = null; }
+  // mist and the wet trail
+  const mp = SWEEP.mist.geometry.attributes.position.array; SWEEP.md.forEach((m, i) => { if (on && m.t > 0.8 && Math.random() < dt * 12) { m.t = 0; const s = (Math.random() - 0.5) * 2; m.x = x + tx * 2.6 + tz * s; m.z = z + tz * 2.6 - tx * s; m.y = gy + 0.2; m.vy = 0.5 + Math.random() * 0.6; }
+    if (m.t > 0.8) { mp[i * 3 + 1] = -999; return; } m.t += dt; m.y += m.vy * dt; m.vy -= 1.5 * dt; mp[i * 3] = m.x; mp[i * 3 + 1] = m.y; mp[i * 3 + 2] = m.z; });
+  SWEEP.mist.geometry.attributes.position.needsUpdate = true; SWEEP.mist.visible = on;
+  if (on) { SWEEP.lay = (SWEEP.lay || 0) + dt; if (SWEEP.lay > 0.7) { SWEEP.lay = 0; const T = SWEEP.trail[SWEEP.ti]; SWEEP.ti = (SWEEP.ti + 1) % SWEEP.trail.length; T.t = 0; T.m.position.set(x - tx * 2.6, gy + 0.045, z - tz * 2.6); T.m.rotation.set(-PI / 2, Math.atan2(-tz, tx), 0); T.m.visible = true; } }
+  SWEEP.trail.forEach(T => { if (T.t > 150) { T.m.visible = false; return; } T.t += dt; T.m.material.opacity = 0.55 * Math.max(0, 1 - T.t / 150); });
+}
+window.__FRAMES.push(dt => { try { sweepFrame(dt); } catch (e) { if (!SWEEP.err) { SWEEP.err = e; console.warn('v76 sweeper', e); } } });
+
+/* ================================================================
+   v77 THE IMPERMANENT WALL (2026-11-22), apply-mlow-impermanent-vision, Melt
+   A ten metre mural wall at (58, -80) that paints itself over the day, in New York time, and is whitewashed at six
+   every morning. At dawn it is primer. Through the morning a navy ground spreads and the first contour lines
+   arrive; by noon an Open Eye Flower has opened in the middle and the lines crowd toward it; through the
+   afternoon cyan and hot pink build and drips start to run; by night it is finished and the lines glow. The
+   strokes come from the date, so everyone on the island sees the same painting on the same day, and tomorrow's
+   is different. Stand in front of it finished, after dark, and the island counts it.
+   ================================================================ */
+const IWALL = { n: 0, key: '', k: 0 };
+window.__IWALL = IWALL;
+const IWALL_AT = { x: 58, z: -80 };
+(function impermanentWall() {
+  const x0 = IWALL_AT.x, z0 = IWALL_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); IWALL.ry = ry;
+  const W = 10, H = 4;
+  const cv = document.createElement('canvas'); cv.width = 1536; cv.height = 614; IWALL.cv = cv; IWALL.c = cv.getContext('2d');
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; IWALL.tex = t;
+  const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.85, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0 }); IWALL.m = m;
+  const g = new THREE.Group(); g.position.set(x0, g0, z0); g.rotation.y = ry; scene.add(g);
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(W + 0.4, H + 0.4, 0.4), new THREE.MeshStandardMaterial({ map: tex('assets/conc_c.webp', [3, 1.2]), roughness: 0.9 })); wall.position.set(0, (H + 0.4) / 2, -0.21); wall.castShadow = true; g.add(wall);
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(W, H), m); face.position.set(0, H / 2 + 0.2, 0.001); g.add(face);
+  const lab = signTex([{ t: 'THE IMPERMANENT WALL', s: 0.3 }, { t: 'PAINTS ITSELF EVERY DAY · WHITEWASHED AT SIX', s: 0.12 }], 1024, 200, '#efe8da', '#0D0D0D');
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.31), new THREE.MeshBasicMaterial({ map: lab, toneMapped: false })); pl.position.set(W / 2 - 0.9, 0.45, 0.01); g.add(pl);
+  boxWalls(x0 - Math.sin(ry) * 0.21, z0 - Math.cos(ry) * 0.21, W + 0.4, 0.4, ry, -5, g0 + H + 0.4);
+  IWALL.flower = new Image(); IWALL.flower.src = 'assets/iv_flower.webp';
+  if (window.__MAP) MAP.places.push(['THE IMPERMANENT WALL', x0, z0, x0 + Math.sin(ry) * 6, z0 + Math.cos(ry) * 6]);
+})();
+const iwSecret = secret('impermanentwall', () => { toast('FINISHED, FOR TONIGHT. AT SIX IT GOES WHITE AND STARTS AGAIN. THAT IS THE WHOLE IDEA.', 'blue'); });
+// a seeded stroke list for the day, drawn in order; how many are drawn depends on the time since six
+function iwRand(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+function iwStrokes(day) {
+  const r = iwRand(day * 7919 + 13), S = [], cx = 768 + (r() - 0.5) * 500, cy = 300 + (r() - 0.5) * 120;
+  S.push({ k: 'ground' });
+  for (let i = 0; i < 40; i++) S.push({ k: 'line', i, cx, cy, ph: r() * 6, pink: i % 5 === 4, w: 2 + r() * 2.2 });
+  S.push({ k: 'flower', cx, cy, s: 230 + r() * 80 });
+  for (let i = 0; i < 26; i++) S.push({ k: 'drip', x: r() * 1536, y: 40 + r() * 300, L: 60 + r() * 260, w: 5 + r() * 9, col: r() < 0.25 ? '#ff3fa4' : (r() < 0.5 ? '#08deff' : '#efe8da') });
+  for (let i = 0; i < 18; i++) S.push({ k: 'pour', x: r() * 1536, y: r() * 614, rr: 40 + r() * 130, col: ['#2962FF', '#6a4cff', '#08deff', '#ff3fa4'][Math.floor(r() * 4)] });
+  return S;
+}
+function iwDraw(s) { const c = IWALL.c; if (!c || !c.fillRect || !c.beginPath) return;
+  if (s.k === 'ground') { const g = c.createRadialGradient ? c.createRadialGradient(768, 307, 40, 768, 307, 900) : null; if (g) { g.addColorStop(0, '#1d2f66'); g.addColorStop(1, '#060a1c'); c.fillStyle = g; } else c.fillStyle = '#0b1430'; c.fillRect(0, 0, 1536, 614); }
+  else if (s.k === 'line') { const R = 40 + s.i * 26; c.beginPath(); for (let a = 0; a <= 1.001; a += 1 / 160) { const t = a * PI * 2, w = Math.sin(t * 3 + s.ph) * (8 + s.i * 0.8) + Math.sin(t * 7 - s.i * 0.3) * 5, px = s.cx + Math.cos(t) * (R + w) * 1.35, py = s.cy + Math.sin(t) * (R + w) * 0.8; a ? c.lineTo(px, py) : c.moveTo(px, py); }
+    c.lineWidth = s.pink ? s.w + 1.5 : s.w; c.strokeStyle = s.pink ? 'rgba(255,63,164,.9)' : 'rgba(8,222,255,.8)'; c.stroke(); }
+  else if (s.k === 'flower') { if (IWALL.flower.complete && IWALL.flower.naturalWidth) c.drawImage(IWALL.flower, s.cx - s.s / 2, s.cy - s.s / 2, s.s, s.s); else IWALL.redo = true; }
+  else if (s.k === 'drip') { c.fillStyle = s.col; c.globalAlpha = 0.85; c.fillRect(s.x - s.w / 2, s.y, s.w, s.L); c.beginPath(); c.arc(s.x, s.y + s.L, s.w * 0.85, 0, PI * 2); c.fill(); c.globalAlpha = 1; }
+  else if (s.k === 'pour') { c.globalAlpha = 0.28; c.fillStyle = s.col; c.beginPath(); c.ellipse ? c.ellipse(s.x, s.y, s.rr, s.rr * 0.55, 0, 0, PI * 2) : c.arc(s.x, s.y, s.rr, 0, PI * 2); c.fill(); c.globalAlpha = 1; } }
+function iwFrame(dt) {
+  const d = Math.hypot(P.x - IWALL_AT.x, P.z - IWALL_AT.z); if (d > 130 || !SKY.t) return;
+  const T = SKY.t, hrs = T.hours, day = T.days - (hrs < 6 ? 1 : 0), since = (hrs - 6 + 24) % 24, frac = Math.min(1, since / 15);   // six in the morning to nine at night
+  const key = String(day); if (key !== IWALL.key) { IWALL.key = key; IWALL.S = iwStrokes(day); IWALL.n = 0; const c = IWALL.c; if (c && c.fillRect) { c.fillStyle = '#ece8df'; c.fillRect(0, 0, 1536, 614); } IWALL.tex.needsUpdate = true; }
+  const want = Math.floor(frac * IWALL.S.length); if (want < IWALL.n || IWALL.redo && IWALL.flower.complete) { IWALL.redo = false; IWALL.n = 0; const c = IWALL.c; if (c && c.fillRect) { c.fillStyle = '#ece8df'; c.fillRect(0, 0, 1536, 614); } }
+  let k = 0; while (IWALL.n < want && k < 6) { iwDraw(IWALL.S[IWALL.n++]); k++; } if (k) IWALL.tex.needsUpdate = true;
+  const night = Math.min(1, (L.lamps || 0) * 1.4); IWALL.m.emissiveIntensity = night * 0.45 * frac;
+  if (frac >= 1 && night > 0.5 && d < 14) { IWALL.k += dt; if (IWALL.k > 2) iwSecret(); }
+}
+window.__FRAMES.push(dt => { try { iwFrame(dt); } catch (e) { if (!IWALL.err) { IWALL.err = e; console.warn('v77 wall', e); } } });
+
+/* ================================================================
+   v78 THE MEME CONSTELLATIONS (2026-11-22)
+   Four new constellations in the night sky over the island, made of brighter stars than the rest: THE EYE (a ring
+   with a pupil, high in the south), THE SLICE (a pizza wedge, east), THE APPLE (with its leaf, north) and THE
+   PIGEON (west, mid flight). Look straight at one for a moment and its lines draw themselves in and its name
+   appears. Find all four. STARGAZE tells you where to look.
+   ================================================================ */
+const CONST = { c: [] };
+window.__CONST = CONST;
+(function constellations() {
+  const R = 850, defs = [
+    ['THE EYE', 180, 52, [[-1, 0], [-0.7, 0.55], [0, 0.75], [0.7, 0.55], [1, 0], [0.7, -0.55], [0, -0.75], [-0.7, -0.55], [0, 0]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0]], 'high in the south'],
+    ['THE SLICE', 95, 38, [[0, -1], [-0.8, 0.8], [0.8, 0.8], [-0.2, 0.3], [0.3, 0.2], [0, 0.6]], [[0, 1], [1, 2], [2, 0]], 'over the east'],
+    ['THE APPLE', 2, 34, [[0, 0.75], [-0.75, 0.45], [-0.9, -0.2], [-0.45, -0.85], [0, -0.7], [0.45, -0.85], [0.9, -0.2], [0.75, 0.45], [0.1, 1.15], [0.45, 1.35]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0], [0, 8], [8, 9]], 'low in the north'],
+    ['THE PIGEON', 275, 30, [[-1, 0], [-0.4, 0.15], [0.3, 0.05], [0.8, 0.25], [1.05, 0.2], [0.2, 0.7], [-0.1, 0.9], [0.1, -0.5], [-0.3, -0.75]], [[0, 1], [1, 2], [2, 3], [3, 4], [1, 5], [5, 6], [2, 7], [7, 8]], 'in the west, flying']];
+  const up = new THREE.Vector3(0, 1, 0);
+  defs.forEach(([name, az, el, pts, edges, hint]) => {
+    const dir = dirAzEl(az, el), right = new THREE.Vector3().crossVectors(dir, up).normalize(), vup = new THREE.Vector3().crossVectors(right, dir).normalize(), sc = 85;
+    const world = pts.map(([u, v]) => dir.clone().multiplyScalar(R).addScaledVector(right, u * sc).addScaledVector(vup, v * sc));
+    const sg = new THREE.BufferGeometry().setFromPoints(world); const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xfff6e0, size: 7, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false, map: LIFE.soft }));
+    stars.frustumCulled = false; stars.renderOrder = -5; scene.add(stars);
+    const lp = []; edges.forEach(([a, b]) => { lp.push(world[a], world[b]); }); const lg = new THREE.BufferGeometry().setFromPoints(lp);
+    const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: 0x08deff, transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false })); lines.frustumCulled = false; lines.renderOrder = -5; scene.add(lines);
+    const lab = new THREE.Sprite(new THREE.SpriteMaterial({ map: signTex([{ t: name, s: 0.5 }], 1024, 160, null, '#efe8da'), transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false }));
+    lab.position.copy(dir).multiplyScalar(R).addScaledVector(vup, -sc * 1.35); lab.scale.set(200, 31, 1); lab.renderOrder = -5; scene.add(lab);
+    CONST.c.push({ name, hint, dir, stars, lines, lab, look: 0, found: false, k: 0 }); });
+  try { (JSON.parse(localStorage.getItem('meme-island-stars') || '[]') || []).forEach(n => { const c = CONST.c.find(q => q.name === n); if (c) c.found = true; }); } catch (e) { }
+})();
+const constSecret = secret('constellations', () => { toast('ALL FOUR. THE EYE, THE SLICE, THE APPLE AND THE PIGEON. ASTRONOMERS HAVE NOT BEEN INFORMED.', 'blue'); });
+EGGS.stargaze = EGGS.constellations = () => { const left = CONST.c.filter(c => !c.found); toast(left.length ? 'AFTER DARK, LOOK FOR ' + left.map(c => c.name + ' ' + c.hint.toUpperCase()).join(', ') + '.' : 'YOU FOUND ALL FOUR. THEY ARE ALWAYS UP THERE NOW.'); }; EGGS.stargaze.__s = true;
+const _cv = new THREE.Vector3();
+function constFrame(dt) {
+  const night = Math.min(1, Math.max(0, ((L.lamps || 0) - 0.4) * 2.5)) * (1 - Math.min(1, (WX.wet || 0) * 1.5)); camera.getWorldDirection(_cv);
+  CONST.c.forEach(c => { const vis = night > 0.02; c.stars.visible = c.lines.visible = c.lab.visible = vis; if (!vis) return;
+    c.stars.position.copy(camera.position); c.lines.position.copy(camera.position); c.lab.position.copy(camera.position).addScaledVector(c.dir, 850); c.lab.position.y -= 85 * 1.3;
+    const looking = _cv.dot(c.dir) > 0.975; c.look = looking ? c.look + dt : 0;
+    if (looking && c.look > 1.2 && !c.found) { c.found = true; try { localStorage.setItem('meme-island-stars', JSON.stringify(CONST.c.filter(q => q.found).map(q => q.name))); } catch (e) { } toast('YOU FOUND ' + c.name + '.', 'blue'); if (CONST.c.every(q => q.found)) constSecret(); }
+    const want = c.found ? (looking ? 1 : 0.35) : (looking ? Math.min(1, c.look / 1.2) : 0); c.k += (want - c.k) * Math.min(1, dt * 2.5);
+    c.stars.material.opacity = night * (0.75 + 0.25 * Math.sin(LIFE.t * 1.3 + c.dir.x * 9)); c.lines.material.opacity = night * c.k * 0.7; c.lab.material.opacity = night * c.k; });
+}
+window.__FRAMES.push(dt => { try { constFrame(dt); } catch (e) { if (!CONST.err) { CONST.err = e; console.warn('v78 stars', e); } } });
+
+/* ================================================================
+   v79 NUTS 4 N3W (2026-11-22)
+   The candied nut cart, on the east side at (86, -12): a steel cart under a striped umbrella, a copper kettle with
+   sugar steam coming off it, paper cones in a rack, and the smell you can almost see. E buys a cone for half a TDH.
+   ================================================================ */
+const NUTS = {};
+window.__NUTS = NUTS;
+const NUTS_AT = { x: 86, z: -12 };
+(function nutsCart() {
+  const x0 = NUTS_AT.x, z0 = NUTS_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); NUTS.ry = ry;
+  const g = new THREE.Group(); g.position.set(x0, g0, z0); g.rotation.y = ry; scene.add(g);
+  const steel = new THREE.MeshStandardMaterial({ color: 0xc9cdd1, roughness: 0.3, metalness: 0.85 }), copper = new THREE.MeshStandardMaterial({ color: 0xb06a3a, roughness: 0.3, metalness: 0.9 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.8), steel); body.position.y = 0.75; g.add(body);
+  const sg = signTex([{ t: 'NUTS 4 N3W', s: 0.42 }, { t: 'HONEY ROASTED · HOT', s: 0.16 }], 1024, 300, '#7a1f2a', '#efe8da'); const s = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.44), new THREE.MeshBasicMaterial({ map: sg })); s.position.set(0, 0.75, 0.405); g.add(s);
+  [[-0.65, 0.3], [0.65, 0.3]].forEach(([x]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.06, 18), new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.7 })); w.rotation.x = PI / 2; w.position.set(x, 0.22, 0.42); g.add(w); });
+  const kettle = new THREE.Mesh(new THREE.SphereGeometry(0.28, 18, 10, 0, PI * 2, PI / 2, PI / 2), copper); kettle.position.set(-0.3, 1.45, 0); g.add(kettle);
+  const nuts = new THREE.Mesh(new THREE.CircleGeometry(0.26, 18), new THREE.MeshStandardMaterial({ color: 0x8a5a2a, roughness: 0.4 })); nuts.rotation.x = -PI / 2; nuts.position.set(-0.3, 1.43, 0); g.add(nuts);
+  for (let i = 0; i < 6; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.16, 10, 1, true), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.9, side: THREE.DoubleSide })); c.rotation.x = PI; c.position.set(0.25 + (i % 3) * 0.13, 1.3 + Math.floor(i / 3) * 0.05, -0.1 + Math.floor(i / 3) * 0.2); g.add(c); }
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 2, 6), steel); pole.position.set(0.6, 1.2, -0.3); g.add(pole);
+  const um = (() => { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 32; const c = cv.getContext('2d'); if (c && c.fillRect) for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#efe8da' : '#2962FF'; c.fillRect(i * 32, 0, 32, 32); } const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; return t; })();
+  const can = new THREE.Mesh(new THREE.ConeGeometry(1.1, 0.4, 16, 1, true), new THREE.MeshStandardMaterial({ map: um, roughness: 0.8, side: THREE.DoubleSide })); can.position.set(0.6, 2.25, -0.3); g.add(can);
+  const v = person(0x2a2d33, 0x2a2f45, SKIN[6], 'cabbie'); v.g.position.set(x0 - Math.sin(ry) * 0.8, g0 - 0.35, z0 - Math.cos(ry) * 0.8); v.g.rotation.y = ry;
+  boxWalls(x0, z0, 1.6, 0.8, ry, -5, g0 + 1.3);
+  // sugar steam off the kettle, through the v56 plume system
+  const kx = x0 + Math.cos(ry) * -0.3, kz = z0 - Math.sin(ry) * -0.3; if (window.__STEAM) STEAM.em.push({ x: kx, z: kz, y: g0 + 1.5, rate: 7, r: 0.15, v: 0.5, big: 0.35, stack: true });
+  interact(x0 + Math.sin(ry) * 1.2, z0 + Math.cos(ry) * 1.2, 1.6, 'E · BUY A CONE (0.5 TDH)', () => { state.tdh = Math.max(0, state.tdh - 0.5); try { hud(); } catch (e) { } nutsSecret(); toast(['WARM HONEY ROASTED NUTS IN A PAPER CONE. YOUR HANDS ARE STICKY FOR THE REST OF THE DAY.', 'ANOTHER CONE. HE GIVES YOU THE ONES FROM THE BOTTOM, THE GOOD ONES.'][Math.min(1, (NUTS.n = (NUTS.n || 0) + 1) - 1)]); });
+  if (window.__MAP) MAP.places.push(['NUTS 4 N3W', x0, z0, x0 + Math.sin(ry) * 2, z0 + Math.cos(ry) * 2]);
+})();
+const nutsSecret = secret('nuts', () => { }, []);
+
+/* ================================================================
+   v80 THE LINE (2026-11-22)
+   A shopfront at (-62, 80) with a black awning that says N3W DROP, a velvet rope, a bouncer with a clipboard, and a
+   line of twelve people down the block for something nobody can quite name. Every so often the door opens and
+   the line shuffles up one. E at the back joins it; stay close and you move up with everyone (faster than real
+   life). When you reach the door it is sold out. The island counts that, because of course it does.
+   ================================================================ */
+const LINE = { q: [], you: -1, t: 0, step: 14 };
+window.__LINE = LINE;
+const LINE_AT = { x: -62, z: 80 };
+(function theLine() {
+  const x0 = LINE_AT.x, z0 = LINE_AT.z, g0 = ground(x0, z0); LINE.g0 = g0;
+  const W = 7, D = 4, H = 4.4;
+  const brick = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [2, 1.4]), roughness: 0.9, color: 0x6a5a55 });
+  const shop = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), brick); shop.position.set(x0, g0 + H / 2, z0); shop.castShadow = true; scene.add(shop); boxWalls(x0, z0, W, D, 0, -5, g0 + H);
+  const black = new THREE.MeshStandardMaterial({ color: 0x0d0d0d, roughness: 0.6 });
+  const win = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2), new THREE.MeshStandardMaterial({ color: 0x0d0f12, roughness: 0.05, metalness: 0.5, emissive: 0xfff0d8, emissiveIntensity: 0.18 })); win.position.set(x0 + 1.2, g0 + 1.6, z0 - D / 2 - 0.01); win.rotation.y = PI; scene.add(win); LINE.win = win;
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 2.3), black); door.position.set(x0 - 2.2, g0 + 1.15, z0 - D / 2 - 0.01); door.rotation.y = PI; scene.add(door); LINE.door = door;
+  const aw = new THREE.Mesh(new THREE.BoxGeometry(W, 0.12, 1.3), black); aw.position.set(x0, g0 + 2.9, z0 - D / 2 - 0.65); aw.rotation.x = -0.18; scene.add(aw);
+  const sg = signTex([{ t: 'N3W DROP', s: 0.5 }], 1024, 160, '#0D0D0D', '#efe8da'); const sm = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 0.56), new THREE.MeshBasicMaterial({ map: sg, toneMapped: false })); sm.position.set(x0, g0 + 3.15, z0 - D / 2 - 1.32); sm.rotation.y = PI; scene.add(sm);
+  const ws = signTex([{ t: 'SOON', s: 0.6 }], 512, 256, null, '#efe8da'); const wl = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), new THREE.MeshBasicMaterial({ map: ws, transparent: true, toneMapped: false })); wl.position.set(x0 + 1.2, g0 + 1.7, z0 - D / 2 - 0.02); wl.rotation.y = PI; scene.add(wl);
+  // the rope: brass posts and red velvet, running west along the shop front
+  const brass = new THREE.MeshStandardMaterial({ color: 0xb08a3e, roughness: 0.3, metalness: 0.9 }), velvet = new THREE.MeshStandardMaterial({ color: 0x7a1f2a, roughness: 0.9 });
+  for (let i = 0; i < 6; i++) { const x = x0 - 2.9 - i * 1.6, z = z0 - D / 2 - 1.6; const p = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.95, 8), brass); p.position.set(x, ground(x, z) + 0.48, z); scene.add(p);
+    if (i < 5) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.025, 6, 16, PI), velvet); r.position.set(x - 0.8, ground(x, z) + 0.88, z); r.rotation.z = PI; r.scale.set(1, 0.25, 1); scene.add(r); } }
+  // the slots: along the shop front, then round the corner of the rope
+  LINE.slots = []; for (let i = 0; i < 16; i++) { const x = x0 - 2.6 - i * 0.85, z = z0 - D / 2 - 0.85; LINE.slots.push([x, z]); }
+  const bouncer = person(0x0d0d0d, 0x0d0d0d, SKIN[0], 'wiseguy'); bouncer.g.position.set(x0 - 1.4, g0 - 0.35, z0 - D / 2 - 0.9); bouncer.g.rotation.y = -PI / 2;
+  const shirts = [0x2962FF, 0xe2581c, 0x2f4a33, 0xefe8da, 0x7a1f2a, 0x15161a, 0x5a1712, 0x3b4a5c, 0xb06a1c, 0x2a2d33, 0xff3fa4, 0x1f4f7a];
+  for (let i = 0; i < 12; i++) { const p = person(shirts[i], 0x2a2f45, SKIN[i % SKIN.length]); LINE.q.push({ P: p, slot: i, x: LINE.slots[i][0], z: LINE.slots[i][1], ph: Math.random() * 6 }); }
+  interact(LINE.slots[12][0] - 0.6, LINE.slots[12][1], 1.8, 'E · JOIN THE LINE', () => lineJoin());
+  if (window.__MAP) MAP.places.push(['THE LINE', x0, z0, LINE.slots[13][0], LINE.slots[13][1] - 1]);
+})();
+const lineSecret = secret('theline', () => { toast('YOU REACH THE DOOR. THE BOUNCER LOOKS AT HIS CLIPBOARD. SOLD OUT. HE SAYS NEXT DROP IS SOON. THE WINDOW SAYS SOON.', 'blue'); });
+function lineJoin() { if (LINE.you >= 0) { toast('YOU ARE ALREADY IN THE LINE. DO NOT LOSE YOUR PLACE.'); return; } LINE.you = LINE.q.length; const [x, z] = LINE.slots[Math.min(LINE.you, 15)]; teleport(x, z, -PI / 2); LINE.t = LINE.step - 2; toast('YOU ARE NUMBER ' + (LINE.you + 1) + ' IN LINE. NOBODY KNOWS WHAT FOR.'); }
+function lineFrame(dt) {
+  const d = Math.hypot(P.x - LINE_AT.x, P.z - LINE_AT.z); if (d > 100) return;
+  LINE.t += dt; const fast = LINE.you >= 0 ? 4 : LINE.step;
+  if (LINE.t > fast) { LINE.t = 0; LINE.doorT = 1.2; const front = LINE.q.shift(); if (front) { front.slot = 11; LINE.q.push(front); const [x, z] = LINE.slots[11]; front.x = x - 6; front.z = z; }   // the front one goes in and comes back round to the end, nobody notices
+    LINE.q.forEach((p, i) => { p.slot = i; });
+    if (LINE.you >= 0) { LINE.you--; if (LINE.you < 0) { lineSecret(); LINE.you = -1; } else { const [x, z] = LINE.slots[Math.min(LINE.you, 15)]; LINE.goal = [x, z]; } } }
+  LINE.doorT = Math.max(0, (LINE.doorT || 0) - dt); LINE.door.material.color.setHex(LINE.doorT > 0 ? 0xffe9c0 : 0x0d0d0d); const night = Math.min(1, (L.lamps || 0) * 1.4); LINE.win.material.emissiveIntensity = 0.18 + night * 0.7;
+  LINE.q.forEach((p, i) => { const s = LINE.you >= 0 && i >= LINE.you ? i + 1 : i; const [tx, tz] = LINE.slots[Math.min(s, 15)]; p.x += (tx - p.x) * Math.min(1, dt * 1.5); p.z += (tz - p.z) * Math.min(1, dt * 1.5);
+    p.P.g.position.set(p.x, ground(p.x, p.z) - 0.35, p.z); p.P.g.rotation.y = PI / 2 + Math.sin(LIFE.t * 0.3 + p.ph) * 0.4; });
+  // you, moving up when the line does; walk off and you lose your place
+  if (LINE.you >= 0) { const [gx, gz] = LINE.slots[Math.min(LINE.you, 15)]; const off = Math.hypot(P.x - gx, P.z - gz); if (off > 4) { LINE.you = -1; toast('YOU LEFT THE LINE. SOMEONE TOOK YOUR PLACE IMMEDIATELY.'); } else if (LINE.goal) { P.x += (gx - P.x) * Math.min(1, dt * 2); P.z += (gz - P.z) * Math.min(1, dt * 2); if (off < 0.05) LINE.goal = null; } }
+}
+window.__FRAMES.push(dt => { try { lineFrame(dt); } catch (e) { if (!LINE.err) { LINE.err = e; console.warn('v80 line', e); } } });
+
+/* ================================================================
+   v81 THE CAR ALARM (2026-11-22)
+   Two cars parked on the outer shoulder of the ring road, a black sedan and a dented green hatchback. Brush past one
+   and its alarm goes off: the full New York cycle (whoop, honk, two tone, chirp), hazards flashing, for twelve
+   seconds, and then somebody yells down from somewhere. It stops on its own. Nobody ever comes for the car.
+   ================================================================ */
+const CARS = { c: [] };
+window.__CARS = CARS;
+(function parkedCars() {
+  [[0.656, 0x141518, 'sedan'], [-2.25, 0x2f4a33, 'hatch']].forEach(([a, col, kind]) => { const R = ROAD_R + 3.0, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), heading = Math.atan2(Math.sin(a), Math.cos(a)) + PI / 2;
+    const g = new THREE.Group(); g.position.set(x, gy, z); g.rotation.y = Math.atan2(-(-Math.sin(a)), Math.cos(a)); scene.add(g);
+    const paint = new THREE.MeshStandardMaterial({ color: col, roughness: 0.25, metalness: 0.6 }), glassM = new THREE.MeshStandardMaterial({ color: 0x10151c, roughness: 0.05, metalness: 0.6 }), tyre = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+    const L = kind === 'sedan' ? 4.6 : 3.8, Wd = 1.8; const body = new THREE.Mesh(new THREE.BoxGeometry(L, 0.75, Wd), paint); body.position.y = 0.65; g.add(body);
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(kind === 'sedan' ? 2.3 : 2.4, 0.6, Wd - 0.12), glassM); cab.position.set(kind === 'sedan' ? -0.2 : -0.5, 1.3, 0); g.add(cab);
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(kind === 'sedan' ? 2.0 : 2.2, 0.06, Wd - 0.14), paint); roof.position.set(kind === 'sedan' ? -0.2 : -0.5, 1.62, 0); g.add(roof);
+    [[L / 2 - 0.8, 1], [L / 2 - 0.8, -1], [-L / 2 + 0.8, 1], [-L / 2 + 0.8, -1]].forEach(([wx, s]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.25, 16), tyre); w.rotation.x = PI / 2; w.position.set(wx, 0.36, s * (Wd / 2 - 0.05)); g.add(w); });
+    const hz = []; [[L / 2 + 0.01, 0.62, 0.65, 0xffa020], [L / 2 + 0.01, 0.62, -0.65, 0xffa020], [-L / 2 - 0.01, 0.65, 0.65, 0xff6010], [-L / 2 - 0.01, 0.65, -0.65, 0xff6010]].forEach(([lx, ly, lz, c]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.12, 0.3), new THREE.MeshBasicMaterial({ color: 0x331a08, toneMapped: false })); m.position.set(lx, ly, lz); g.add(m); hz.push({ m, c }); });
+    if (kind === 'hatch') { const dent = new THREE.Mesh(new THREE.SphereGeometry(0.4, 10, 8), new THREE.MeshStandardMaterial({ color: 0x24392a, roughness: 0.5 })); dent.scale.set(1, 0.4, 0.15); dent.position.set(0.6, 0.7, Wd / 2); g.add(dent); }
+    g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    boxWalls(x, z, L, Wd, g.rotation.y, -5, gy + 1.5);
+    CARS.c.push({ g, x, z, ry: g.rotation.y, L, Wd, hz, on: 0, cool: 0 }); });
+})();
+const carSecret = secret('caralarm', () => { }, []);
+let carOsc = null;
+function carAlarmSound(c) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; try { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'square'; o.frequency.value = 800; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 2400; g.gain.value = 0; o.connect(f); f.connect(g); g.connect(AC.destination); o.start(); carOsc = { o, g, c }; } catch (e) { } }
+function carsFrame(dt) {
+  CARS.c.forEach(c => { c.cool = Math.max(0, c.cool - dt);
+    const lx = P.x - c.x, lz = P.z - c.z, cs = Math.cos(c.ry), sn = Math.sin(c.ry), u = lx * cs - lz * sn, v = lx * sn + lz * cs; const touch = Math.abs(u) < c.L / 2 + 0.55 && Math.abs(v) < c.Wd / 2 + 0.55;
+    if (touch && c.on <= 0 && c.cool <= 0) { c.on = 12; c.yelled = false; carSecret(); toast('YOU BRUSHED A PARKED CAR. IT HAS OPINIONS.'); if (!carOsc) carAlarmSound(c); }
+    if (c.on > 0) { c.on -= dt; const t = 12 - c.on, ph = Math.floor(t / 3) % 4, flash = Math.sin(t * 9) > 0; c.hz.forEach(h => h.m.material.color.setHex(flash ? h.c : 0x331a08));
+      if (carOsc && carOsc.c === c) { const d = Math.hypot(P.x - c.x, P.z - c.z), vol = Math.max(0, 0.05 - d * 0.0008); let f = 800;
+        if (ph === 0) f = 600 + 500 * ((t * 2) % 1); else if (ph === 1) f = (t * 4) % 1 < 0.5 ? 420 : 0; else if (ph === 2) f = (t * 3) % 1 < 0.5 ? 950 : 700; else f = (t * 10) % 1 < 0.3 ? 1700 : 0;
+        carOsc.o.frequency.setTargetAtTime(Math.max(40, f), AC.currentTime, 0.01); carOsc.g.gain.setTargetAtTime(f ? vol : 0, AC.currentTime, 0.01); }
+      if (t > 6.5 && !c.yelled) { c.yelled = true; toast(['SOMEBODY UPSTAIRS: WHOSE CAR IS THAT', 'A VOICE FROM A WINDOW: I AM CALLING SOMEBODY', 'SOMEONE ON A FIRE ESCAPE: EVERY NIGHT. EVERY NIGHT.'][Math.floor(Math.random() * 3)]); }
+      if (c.on <= 0) { c.cool = 8; c.hz.forEach(h => h.m.material.color.setHex(0x331a08)); if (carOsc && carOsc.c === c) { try { carOsc.o.stop(); } catch (e) { } carOsc = null; } } } });
+}
+window.__FRAMES.push(dt => { try { carsFrame(dt); } catch (e) { if (!CARS.err) { CARS.err = e; console.warn('v81 cars', e); } } });
+
+/* ================================================================
+   v82 ISLANDHENGE (2026-11-22)
+   Manhattan has Manhattanhenge, when the setting sun lines up with the street grid. The island has its own: the
+   west path runs due west from THE FLOOR, so on the few evenings around each equinox when the real sun sets due
+   west over New York, it goes down exactly at the end of the path, and the path fills with gold for a few
+   minutes. The sun here is the real one, so it only happens on those real evenings. HENGE jumps the clock to
+   the next one.
+   ================================================================ */
+const HENGE = { k: 0 };
+window.__HENGE = HENGE;
+(function islandhenge() {
+  // a long strip of warm light laid down the west path
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 512; const c = cv.getContext('2d');
+  if (c && c.createLinearGradient) { const g = c.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, 'rgba(255,190,90,0)'); g.addColorStop(0.5, 'rgba(255,190,90,.55)'); g.addColorStop(1, 'rgba(255,190,90,.9)'); c.fillStyle = g; c.fillRect(0, 0, 64, 512);
+    const h = c.createLinearGradient(0, 0, 64, 0); h.addColorStop(0, 'rgba(0,0,0,1)'); h.addColorStop(0.5, 'rgba(0,0,0,0)'); h.addColorStop(1, 'rgba(0,0,0,1)'); c.globalCompositeOperation = 'destination-out'; c.fillStyle = h; c.fillRect(0, 0, 64, 512); }
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(4, 88), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -3 }));
+  m.rotation.x = -PI / 2; m.rotation.z = -PI / 2; m.position.set(-50, ground(-50, 0) + 0.09, 0); m.visible = false; scene.add(m); HENGE.strip = m;
+})();
+const hengeSecret = secret('henge', () => { toast('ISLANDHENGE. THE SUN IS SETTING EXACTLY DOWN THE WEST PATH. IT DOES THIS TWICE A YEAR, FOR A FEW MINUTES. YOU ARE HERE FOR IT.', 'blue'); });
+// the next evening when the sun sets within a degree of due west, from the real sun
+function hengeNext(fromUtc) { const t0 = fromUtc || TIME.utc; for (let dd = 0; dd < 400; dd++) { const day = Math.floor(t0 / 86400) + dd; let lo = day * 86400 + 20 * 3600, hi = day * 86400 + 26 * 3600;   // 15:00 to 21:00 in New York, in UTC seconds
+    if (sunPos(lo).el < 0.5 || sunPos(hi).el > 0.5) continue; for (let k = 0; k < 24; k++) { const mid = (lo + hi) / 2; if (sunPos(mid).el > 0.5) lo = mid; else hi = mid; }
+    if (Math.abs(sunPos(lo).az - 270) < 1.0 && lo > t0) return lo; } return null; }
+EGGS.henge = EGGS.islandhenge = EGGS.manhattanhenge = () => { const t = hengeNext(); if (!t) { toast('NO HENGE THIS YEAR. THE SUN HAS OTHER PLANS.'); return; } TIME.mode = 'fixed'; TIME.utc = t - 360; try { syncTimeButtons(); } catch (e) { }
+  teleport(-16, 0, PI / 2); P.pitch = 0.02; const T = nycTime(t); toast('JUMPING TO ' + T.mo + '/' + T.d + '/' + T.y + ', A FEW MINUTES BEFORE SUNSET. LOOK WEST DOWN THE PATH.'); }; EGGS.henge.__s = true;
+function hengeFrame(dt) {
+  const s = SKY.sun; if (!s) return; const off = Math.abs(((s.az - 270 + 540) % 360) - 180), want = (off < 3 && s.el > -0.6 && s.el < 5) ? Math.min(1, (3 - off) / 0.8) * Math.min(1, (5 - s.el) / 2) : 0;
+  HENGE.k += (want - HENGE.k) * Math.min(1, dt * 0.8); HENGE.strip.visible = HENGE.k > 0.01; HENGE.strip.material.opacity = HENGE.k * 0.85;
+  if (HENGE.k > 0.5 && Math.abs(P.z) < 4 && P.x < -2 && P.x > -95) hengeSecret();
+}
+window.__FRAMES.push(dt => { try { hengeFrame(dt); } catch (e) { if (!HENGE.err) { HENGE.err = e; console.warn('v82 henge', e); } } });
+
+/* ================================================================
+   v83 THE GULLS (2026-11-22)
+   Eight herring gulls stand on bollards along the pier, white and grey with yellow beaks, turning their heads.
+   Walk up to one and it takes off with a cry, wheels out over the water for a while and comes back to the same
+   bollard. Clear all eight off the pier at once and the island counts it.
+   ================================================================ */
+const GULL = { g: [] };
+window.__GULL = GULL;
+(function gulls() {
+  const white = new THREE.MeshStandardMaterial({ color: 0xf2f1ec, roughness: 0.7 }), grey = new THREE.MeshStandardMaterial({ color: 0x8e959c, roughness: 0.7 }), yellow = new THREE.MeshStandardMaterial({ color: 0xe9c43a, roughness: 0.5 }), dark = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, roughness: 0.6 });
+  const wood = new THREE.MeshStandardMaterial({ color: 0x4a3a2a, roughness: 0.9 });
+  let i = 0; for (let z = 135; z <= 177; z += 6) { const x = (i % 2 ? 2.65 : -2.65), deck = 0.55; const b = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.55, 10), wood); b.position.set(x, deck + 0.27, z); scene.add(b); post(x, z, 0.2, -5, 1.2);
+    const g = new THREE.Group(); scene.add(g); const body = new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 10), white); body.scale.set(1.5, 0.95, 0.9); body.position.y = 0.17; g.add(body);
+    const head = new THREE.Group(); head.position.set(0.22, 0.32, 0); g.add(head); head.add(new THREE.Mesh(new THREE.SphereGeometry(0.085, 10, 8), white));
+    const beak = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.11, 6), yellow); beak.rotation.z = -PI / 2; beak.position.set(0.11, -0.01, 0); head.add(beak);
+    [-1, 1].forEach(s => { const e = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 4), dark); e.position.set(0.05, 0.03, s * 0.06); head.add(e); });
+    const wings = [-1, 1].map(s => { const w = new THREE.Group(); w.position.set(0, 0.22, s * 0.12); const m = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.025, 0.42), grey); m.position.set(-0.04, 0, s * 0.2); w.add(m); const tip = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.022, 0.12), dark); tip.position.set(-0.12, 0, s * 0.4); w.add(tip); g.add(w); return w; });
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.14), white); tail.position.set(-0.27, 0.18, 0); g.add(tail);
+    [-0.05, 0.05].forEach(s => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.12, 4), yellow); l.position.set(0, 0.0, s); g.add(l); });
+    const perch = new THREE.Vector3(x, deck + 0.6, z); g.position.copy(perch); g.rotation.y = x < 0 ? 0 : PI;
+    GULL.g.push({ g, head, wings, perch, ry: g.rotation.y, state: 'sit', t: Math.random() * 5, a: 0, cx: 0, cz: 0, R: 0 }); i++; }
+})();
+const gullSecret = secret('gulls', () => { toast('ALL EIGHT GULLS ARE IN THE AIR AND THEY ALL BLAME YOU.', 'blue'); });
+function gullCry(x, z) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; const d = Math.hypot(x - P.x, z - P.z); if (d > 40) return;
+  try { for (let k = 0; k < 3; k++) { const t0 = AC.currentTime + k * 0.22, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(1500, t0); o.frequency.exponentialRampToValueAtTime(800, t0 + 0.18); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.min(0.05, 1.2 / (d + 4)), t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + 0.22); } } catch (e) { } }
+function gullFrame(dt) {
+  if (P.z < 90) return; let flying = 0;
+  GULL.g.forEach(b => { b.t += dt; const d = Math.hypot(P.x - b.perch.x, P.z - b.perch.z);
+    if (b.state === 'sit') { b.g.position.copy(b.perch); b.g.rotation.set(0, b.ry, 0); b.head.rotation.y = Math.sin(b.t * 0.7) * 0.6 * (Math.sin(b.t * 0.23) > 0 ? 1 : -0.4); b.wings.forEach(w => w.rotation.x = 0);
+      if (d < 3.2) { b.state = 'fly'; b.t = 0; b.R = 14 + Math.random() * 10; b.cx = b.perch.x + (b.perch.x < 0 ? -b.R - 4 : b.R + 4); b.cz = b.perch.z + (Math.random() - 0.5) * 10; b.a = Math.atan2(b.perch.z - b.cz, b.perch.x - b.cx); b.dur = 14 + Math.random() * 10; gullCry(b.perch.x, b.perch.z); } }
+    else { flying++; b.a += dt * 0.55 * (b.perch.x < 0 ? 1 : -1); const rise = Math.min(1, b.t / 1.2), home = Math.max(0, (b.t - b.dur) / 3);
+      const fx = b.cx + Math.cos(b.a) * b.R, fz = b.cz + Math.sin(b.a) * b.R, fy = 4 + Math.sin(b.t * 0.4) * 1.5;
+      const x = THREE.MathUtils.lerp(THREE.MathUtils.lerp(b.perch.x, fx, rise), b.perch.x, Math.min(1, home)), z = THREE.MathUtils.lerp(THREE.MathUtils.lerp(b.perch.z, fz, rise), b.perch.z, Math.min(1, home)), y = THREE.MathUtils.lerp(THREE.MathUtils.lerp(b.perch.y, fy, rise), b.perch.y, Math.min(1, home));
+      const vx = x - b.g.position.x, vz = z - b.g.position.z; if (Math.abs(vx) + Math.abs(vz) > 1e-4) b.g.rotation.set(0, Math.atan2(-vz, vx), (b.perch.x < 0 ? -0.35 : 0.35) * (1 - home));
+      b.g.position.set(x, y, z); const flap = Math.sin(b.t * (rise < 1 || home > 0 ? 18 : 6)) * (Math.sin(b.t * 0.5) > -0.3 ? 0.7 : 0.15); b.wings.forEach((w, k) => w.rotation.x = (k ? -1 : 1) * flap);
+      if (home >= 1 && d > 3.5) { b.state = 'sit'; b.t = 0; } else if (home >= 1) { b.t = b.dur - 0.5; } } });
+  if (flying === GULL.g.length) gullSecret();
+}
+window.__FRAMES.push(dt => { try { gullFrame(dt); } catch (e) { if (!GULL.err) { GULL.err = e; console.warn('v83 gulls', e); } } });
+
+/* ================================================================
+   v84 THE BOOK, TWENTY PAGES LONGER (2026-11-22)
+   SECRETS.EXE names and hints for v66 to v83.
+   ================================================================ */
+try { Object.assign(SECRET_NAMES, {
+  watertower: ['THE ROOF', 'a ladder by the brick building'], wheatpaste: ['POST NO BILLS', 'paste one on the shed'], iceskate: ['THE GLIDE', 'let the ice carry you'], cider: ['HOT CIDER', 'the market'],
+  showtime: ['SHOWTIME', 'tip the crew'], plankton: ['THE GLOWING SEA', 'the shore after dark'], flowerhunt: ['ALL TWELVE FLOWERS', 'they are painted on the ground'], oracle: ['THE ORACLE', 'one TDH, one truth'],
+  bootleg: ['THE BOOTLEG', 'haggle three times'], nearmiss: ['NEAR MISS', 'stand in the bike lane'], impermanentwall: ['THE FINISHED WALL', 'come back after dark'], constellations: ['FOUR CONSTELLATIONS', 'look up, then STARGAZE'],
+  nuts: ['A PAPER CONE', 'the east side'], theline: ['SOLD OUT', 'join the line'], caralarm: ['THE CAR ALARM', 'brush a parked car'], henge: ['ISLANDHENGE', 'sunset down the west path, twice a year'], gulls: ['EIGHT GULLS', 'clear the pier']
+}); } catch (e) { }
+
+/* ================================================================
+   v85 THE TOUR GOES UP ON THE ROOF (2026-11-22)
+   Six more tour stops before the aerial: the water tower, the shed, the rink, the market, Showtime (it starts for
+   the camera) and the impermanent wall.
+   ================================================================ */
+(function tourV85() {
+  const add = [];
+  try { const x = WT_AT.x, z = WT_AT.z, gy = ground(x, z); add.push({ name: 'the water tower', dur: 7, pos: [[x + 14, gy + 3, z + 14], [x + 9, gy + 9, z + 10]], look: [[x, gy + 8, z], [x, gy + 10, z]] }); } catch (e) { }
+  try { const x = SHED_AT.x, z = SHED_AT.z, gy = ground(x, z); add.push({ name: 'the sidewalk shed', dur: 7, pos: [[x + 10, gy + 1.7, z + 0.2], [x - 6, gy + 1.7, z + 0.2]], look: [[x, gy + 1.6, z - 1.5], [x - 10, gy + 1.6, z - 1]] }); } catch (e) { }
+  try { const x = RINK_AT.x, z = RINK_AT.z, gy = ground(x, z); add.push({ name: 'the rink', dur: 7, pos: [[x + 10, gy + 3, z - 6], [x + 7, gy + 2.2, z + 6]], look: [[x, gy, z], [x, gy, z]] }); } catch (e) { }
+  try { const x = MKT_AT.x, z = MKT_AT.z, gy = ground(x, z); add.push({ name: 'the market', dur: 7, pos: [[x - 12, gy + 2, z - 7], [x + 8, gy + 1.8, z - 6]], look: [[x - 4, gy + 1.5, z], [x + 4, gy + 1.5, z]] }); } catch (e) { }
+  try { const x = SHOW_AT.x, z = SHOW_AT.z, gy = SHOW.g0, ry = SHOW.ry; add.push({ name: 'showtime', dur: 8, pos: [[x + Math.sin(ry + 0.6) * 7, gy + 1.7, z + Math.cos(ry + 0.6) * 7], [x + Math.sin(ry - 0.6) * 6, gy + 1.5, z + Math.cos(ry - 0.6) * 6]], look: [[x, gy + 1.3, z], [x, gy + 1.3, z]], pre: () => { try { showStart(true); } catch (e) { } } }); } catch (e) { }
+  try { const x = IWALL_AT.x, z = IWALL_AT.z, gy = ground(x, z), ry = IWALL.ry; add.push({ name: 'the impermanent wall', dur: 7, pos: [[x + Math.sin(ry) * 12 + Math.cos(ry) * 5, gy + 2, z + Math.cos(ry) * 12 - Math.sin(ry) * 5], [x + Math.sin(ry) * 8, gy + 2, z + Math.cos(ry) * 8]], look: [[x, gy + 2.2, z], [x, gy + 2.2, z]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+
 
 /* ---------------- boot ---------------- */
 buildCards();

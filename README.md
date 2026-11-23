@@ -290,3 +290,24 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v63 THE BUBBLE MAN at (26, 50): giant thin film bubbles that wobble and drift; walk into or click them to pop, ten counts.
 - v64 SECRETS.EXE names for the new secrets. v65 five tour stops (steam, skate spot, grate, the hole from the footprints then the side, bubbles).
 - Fix: colour instanced meshes (the v53 container boxes) are left out of the ambient occlusion depth pass; r128 shared the override program between instanced meshes with and without colour and AO switched itself off.
+
+## v66 to v85 (2026-11-22)
+- v66 THE WATER TOWER at (-64, -72): a brick building with a cedar tank on legs; E climbs to the roof (WATERTOWER). Adds memeMesh(n, h) for cutting single Meme cards out of the atlas.
+- v67 THE SIDEWALK SHED at (-8, -88): sixteen metres of scaffold shed, bulbs that never go off, a plywood fence pasted with Meme posters; E pastes another.
+- v68 THE RINK at (-78, 35): ice with real momentum, boards, string lights, five skaters (ICESKATE).
+- v69 THE MARKET at (52, 24): five glass kiosks (cider, eye baubles, N3W prints, knits, churros) under string lights.
+- v70 SHOWTIME where the east path meets the ring: three dancers, a boombox beat, flips, a headspin; E tips (SHOWTIME).
+- v71 THE GLOWING SEA: plankton in the surf line and the ship wakes after dark (PLANKTON).
+- v72 THE FLOWER HUNT: twelve Open Eye Flowers painted on the ground round the island; FLOWERS points to the nearest.
+- v73 THE N3W ORACLE at (-19, 9): a fortune cabinet with a flower that wakes for one TDH; thirty fortunes.
+- v74 THE CANAL STREET TABLE at (-16, -28): bootlegs; haggle three times.
+- v75 THE DELIVERY RIDERS: four e-bikes lapping the ring road, ringing as they pass.
+- v76 THE STREET SWEEPER: after ten at night, brushes, mist and a wet stripe that dries (SWEEPER).
+- v77 THE IMPERMANENT WALL at (58, -80): a mural that paints itself from six in the morning to nine at night from the date, whitewashed every morning.
+- v78 THE MEME CONSTELLATIONS: THE EYE, THE SLICE, THE APPLE, THE PIGEON; look at one to draw it (STARGAZE).
+- v79 NUTS 4 N3W at (86, -12): the candied nut cart, kettle steam through the v56 plume system.
+- v80 THE LINE at (-62, 80): N3W DROP, a velvet rope and a queue; join it and it is sold out at the door.
+- v81 THE CAR ALARM: two parked cars on the ring road shoulder; brush one.
+- v82 ISLANDHENGE: the real sun sets due west down the west path around each equinox and the path fills with gold (HENGE jumps there).
+- v83 THE GULLS: eight gulls on pier bollards that fly off and come back.
+- v84 SECRETS.EXE names. v85 six tour stops.
