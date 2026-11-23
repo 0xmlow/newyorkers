@@ -25,11 +25,11 @@ window.__HUNT = FHUNT;
 const huntSecret = secret('flowerhunt', () => { toast('ALL TWELVE. EVERY FLOWER ON THE ISLAND HAS SEEN YOU, AND NOW IT HAS SHUT ITS EYE FOR YOU.', 'blue'); });
 EGGS.flowers = EGGS.flowerhunt = () => { const left = FHUNT.f.filter(f => !f.got); if (!left.length) { toast('ALL TWELVE FOUND. THEY ARE RESTING.'); return; } let b = left[0], bd = 1e9; left.forEach(f => { const d = Math.hypot(f.x - P.x, f.z - P.z); if (d < bd) { bd = d; b = f; } });
   const a = Math.atan2(b.x - P.x, -(b.z - P.z)) * 180 / PI, dirs = ['NORTH', 'NORTH EAST', 'EAST', 'SOUTH EAST', 'SOUTH', 'SOUTH WEST', 'WEST', 'NORTH WEST']; toast(left.length + ' FLOWERS LEFT. THE NEAREST IS ' + Math.round(bd) + ' M ' + dirs[((Math.round(a / 45) % 8) + 8) % 8] + '.'); }; EGGS.flowers.__s = true;
-function huntFrame(dt) {
+function flowerHuntFrame(dt) {
   const night = Math.min(1, (L.lamps || 0) * 1.4);
   FHUNT.f.forEach(f => { if (f.got) return; const d = Math.hypot(P.x - f.x, P.z - f.z); f.fm.emissiveIntensity = 0.15 + night * 0.7 + Math.sin(LIFE.t * 2 + f.x) * 0.08;
     if (d < 1.1 && Math.abs(P.y - f.y) < 1.2) { f.got = true; FHUNT.got.add(f.key); try { localStorage.setItem('meme-island-hunt', JSON.stringify([...FHUNT.got])); } catch (e) { }
       f.fl.scale.set(1, 0.08, 1); f.fm.color.setScalar(0.5); f.fm.emissiveIntensity = 0; try { beep(880, 0.08, 'sine', 0.05); beep(1320, 0.12, 'sine', 0.05, 0.09); } catch (e) { }
       const n = FHUNT.f.filter(q => q.got).length; toast('FLOWER ' + n + ' OF 12: ' + f.name.toUpperCase() + '.', n === 12 ? 'blue' : ''); if (n === 12) huntSecret(); } });
 }
-window.__FRAMES.push(dt => { try { huntFrame(dt); } catch (e) { if (!FHUNT.err) { FHUNT.err = e; console.warn('v72 hunt', e); } } });
+window.__FRAMES.push(dt => { try { flowerHuntFrame(dt); } catch (e) { if (!FHUNT.err) { FHUNT.err = e; console.warn('v72 hunt', e); } } });

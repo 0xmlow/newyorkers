@@ -19,7 +19,7 @@ const ROAD_R = 96.5;
 })();
 const nearMiss = secret('nearmiss', () => { toast('A DELIVERY BIKE MISSED YOU BY A HAND. HE DID NOT EVEN LOOK. THAT IS RESPECT.', 'blue'); });
 function ridersFrame(dt) {
-  RIDE5.r.forEach(r => { const R = ROAD_R + r.lane + r.off; r.a += r.dir * r.sp / R * dt; const x = Math.sin(r.a) * R, z = Math.cos(r.a) * R, gy = ground(x, z);
+  RIDE5.r.forEach(r => { const R = ROAD_R + r.lane + r.off, toX = Math.atan2(Math.sin(-r.a), Math.cos(-r.a)) * r.dir, hold = window.__XWALK_PED && toX > 0.035 && toX < 0.09; if (!hold) r.a += r.dir * r.sp / R * dt; const x = Math.sin(r.a) * R, z = Math.cos(r.a) * R, gy = ground(x, z);
     // lean out round the player if in the lane ahead
     const dx = P.x - x, dz = P.z - z, d = Math.hypot(dx, dz), tx = Math.cos(r.a) * r.dir, tz = -Math.sin(r.a) * r.dir, ahead = dx * tx + dz * tz, side = -(dx * Math.sin(r.a) + dz * Math.cos(r.a));
     const want = ahead > 0 && ahead < 10 && Math.abs(side) < 1.6 ? (side > 0 ? -1.4 : 1.4) : 0; r.off += (want - r.off) * Math.min(1, dt * 3);

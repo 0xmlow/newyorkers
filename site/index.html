@@ -7509,14 +7509,14 @@ window.__HUNT = FHUNT;
 const huntSecret = secret('flowerhunt', () => { toast('ALL TWELVE. EVERY FLOWER ON THE ISLAND HAS SEEN YOU, AND NOW IT HAS SHUT ITS EYE FOR YOU.', 'blue'); });
 EGGS.flowers = EGGS.flowerhunt = () => { const left = FHUNT.f.filter(f => !f.got); if (!left.length) { toast('ALL TWELVE FOUND. THEY ARE RESTING.'); return; } let b = left[0], bd = 1e9; left.forEach(f => { const d = Math.hypot(f.x - P.x, f.z - P.z); if (d < bd) { bd = d; b = f; } });
   const a = Math.atan2(b.x - P.x, -(b.z - P.z)) * 180 / PI, dirs = ['NORTH', 'NORTH EAST', 'EAST', 'SOUTH EAST', 'SOUTH', 'SOUTH WEST', 'WEST', 'NORTH WEST']; toast(left.length + ' FLOWERS LEFT. THE NEAREST IS ' + Math.round(bd) + ' M ' + dirs[((Math.round(a / 45) % 8) + 8) % 8] + '.'); }; EGGS.flowers.__s = true;
-function huntFrame(dt) {
+function flowerHuntFrame(dt) {
   const night = Math.min(1, (L.lamps || 0) * 1.4);
   FHUNT.f.forEach(f => { if (f.got) return; const d = Math.hypot(P.x - f.x, P.z - f.z); f.fm.emissiveIntensity = 0.15 + night * 0.7 + Math.sin(LIFE.t * 2 + f.x) * 0.08;
     if (d < 1.1 && Math.abs(P.y - f.y) < 1.2) { f.got = true; FHUNT.got.add(f.key); try { localStorage.setItem('meme-island-hunt', JSON.stringify([...FHUNT.got])); } catch (e) { }
       f.fl.scale.set(1, 0.08, 1); f.fm.color.setScalar(0.5); f.fm.emissiveIntensity = 0; try { beep(880, 0.08, 'sine', 0.05); beep(1320, 0.12, 'sine', 0.05, 0.09); } catch (e) { }
       const n = FHUNT.f.filter(q => q.got).length; toast('FLOWER ' + n + ' OF 12: ' + f.name.toUpperCase() + '.', n === 12 ? 'blue' : ''); if (n === 12) huntSecret(); } });
 }
-window.__FRAMES.push(dt => { try { huntFrame(dt); } catch (e) { if (!FHUNT.err) { FHUNT.err = e; console.warn('v72 hunt', e); } } });
+window.__FRAMES.push(dt => { try { flowerHuntFrame(dt); } catch (e) { if (!FHUNT.err) { FHUNT.err = e; console.warn('v72 hunt', e); } } });
 
 /* ================================================================
    v73 THE N3W ORACLE (2026-11-22), apply-mlow-impermanent-vision, Bloom
@@ -7633,7 +7633,7 @@ const ROAD_R = 96.5;
 })();
 const nearMiss = secret('nearmiss', () => { toast('A DELIVERY BIKE MISSED YOU BY A HAND. HE DID NOT EVEN LOOK. THAT IS RESPECT.', 'blue'); });
 function ridersFrame(dt) {
-  RIDE5.r.forEach(r => { const R = ROAD_R + r.lane + r.off; r.a += r.dir * r.sp / R * dt; const x = Math.sin(r.a) * R, z = Math.cos(r.a) * R, gy = ground(x, z);
+  RIDE5.r.forEach(r => { const R = ROAD_R + r.lane + r.off, toX = Math.atan2(Math.sin(-r.a), Math.cos(-r.a)) * r.dir, hold = window.__XWALK_PED && toX > 0.035 && toX < 0.09; if (!hold) r.a += r.dir * r.sp / R * dt; const x = Math.sin(r.a) * R, z = Math.cos(r.a) * R, gy = ground(x, z);
     // lean out round the player if in the lane ahead
     const dx = P.x - x, dz = P.z - z, d = Math.hypot(dx, dz), tx = Math.cos(r.a) * r.dir, tz = -Math.sin(r.a) * r.dir, ahead = dx * tx + dz * tz, side = -(dx * Math.sin(r.a) + dz * Math.cos(r.a));
     const want = ahead > 0 && ahead < 10 && Math.abs(side) < 1.6 ? (side > 0 ? -1.4 : 1.4) : 0; r.off += (want - r.off) * Math.min(1, dt * 3);
@@ -8007,6 +8007,716 @@ try { Object.assign(SECRET_NAMES, {
   try { const x = MKT_AT.x, z = MKT_AT.z, gy = ground(x, z); add.push({ name: 'the market', dur: 7, pos: [[x - 12, gy + 2, z - 7], [x + 8, gy + 1.8, z - 6]], look: [[x - 4, gy + 1.5, z], [x + 4, gy + 1.5, z]] }); } catch (e) { }
   try { const x = SHOW_AT.x, z = SHOW_AT.z, gy = SHOW.g0, ry = SHOW.ry; add.push({ name: 'showtime', dur: 8, pos: [[x + Math.sin(ry + 0.6) * 7, gy + 1.7, z + Math.cos(ry + 0.6) * 7], [x + Math.sin(ry - 0.6) * 6, gy + 1.5, z + Math.cos(ry - 0.6) * 6]], look: [[x, gy + 1.3, z], [x, gy + 1.3, z]], pre: () => { try { showStart(true); } catch (e) { } } }); } catch (e) { }
   try { const x = IWALL_AT.x, z = IWALL_AT.z, gy = ground(x, z), ry = IWALL.ry; add.push({ name: 'the impermanent wall', dur: 7, pos: [[x + Math.sin(ry) * 12 + Math.cos(ry) * 5, gy + 2, z + Math.cos(ry) * 12 - Math.sin(ry) * 5], [x + Math.sin(ry) * 8, gy + 2, z + Math.cos(ry) * 8]], look: [[x, gy + 2.2, z], [x, gy + 2.2, z]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+
+/* ================================================================
+   v86 THE PIGEON COOP (2026-11-22)
+   On the water tower roof, a wooden pigeon coop with a wire front and a flag on a bamboo pole, the old rooftop
+   hobby. E on the roof lets the birds out: twenty pigeons spiral up together, circle the roof in a wide loop
+   for half a minute, and drop back into the coop one by one. COOP takes you up there.
+   ================================================================ */
+const COOP = { b: [], t: 0, out: 0 };
+window.__COOP = COOP;
+(function coop() {
+  const x0 = WT_AT.x - 2.2, z0 = WT_AT.z - 2.2, y0 = WT.top + 0.28; COOP.x = x0; COOP.z = z0; COOP.y = y0;
+  const wood = new THREE.MeshStandardMaterial({ color: 0x6b5236, roughness: 0.9 }), wire = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, roughness: 0.5, metalness: 0.7, wireframe: true });
+  const box = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.3, 1.2), wood); box.position.set(x0, y0 + 0.85, z0); scene.add(box);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.08, 1.5), new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.9 })); roof.position.set(x0, y0 + 1.55, z0 + 0.05); roof.rotation.x = 0.12; scene.add(roof);
+  const front = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 1.1, 16, 10), wire); front.position.set(x0, y0 + 0.85, z0 + 0.61); scene.add(front);
+  [[-0.95, -0.55], [0.95, -0.55], [-0.95, 0.55], [0.95, 0.55]].forEach(([dx, dz]) => { const l = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.08), wood); l.position.set(x0 + dx, y0 + 0.1, z0 + dz); scene.add(l); });
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 3.4, 6), new THREE.MeshStandardMaterial({ color: 0xc9b07a, roughness: 0.8 })); pole.position.set(x0 - 1.3, y0 + 1.7, z0 - 0.3); scene.add(pole);
+  const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.45, 8, 1), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.8, side: THREE.DoubleSide })); flag.position.set(x0 - 0.95, y0 + 3.15, z0 - 0.3); scene.add(flag); COOP.flag = flag;
+  boxWalls(x0, z0, 2.0, 1.2, 0, y0 - 1, y0 + 1.5);
+  const bodyG = new THREE.SphereGeometry(0.11, 8, 6), wingG = new THREE.BoxGeometry(0.06, 0.012, 0.22);
+  const cols = [0x6d7480, 0x8a8f96, 0x4b5058, 0xe6e3dc, 0x7a6a5a];
+  for (let i = 0; i < 20; i++) { const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({ color: cols[i % 5], roughness: 0.8 }); const b = new THREE.Mesh(bodyG, m); b.scale.set(1.5, 0.9, 0.9); g.add(b);
+    const wings = [-1, 1].map(s => { const w = new THREE.Mesh(wingG, m); w.position.set(0, 0.04, s * 0.12); g.add(w); return w; }); g.visible = false; scene.add(g); COOP.b.push({ g, wings, ph: i / 20 * PI * 2, r: 7 + Math.random() * 6, h: 4 + Math.random() * 5, lag: i * 0.25 }); }
+  interact(x0, z0 + 1.6, 1.8, 'E · LET THE BIRDS OUT', () => coopRelease(), y0);
+  if (window.__MAP) MAP.places.push(['THE COOP', x0, z0, null, null]);
+})();
+const coopSecret = secret('coop', () => { }, []);
+function coopRelease() { if (COOP.out > 0) { toast('THEY ARE ALREADY UP. LOOK.'); return; } COOP.out = 32; COOP.t = 0; coopSecret(); toast('THE DOOR OPENS AND TWENTY PIGEONS GO UP LIKE ONE THOUGHT.', 'blue'); }
+EGGS.coop = EGGS.pigeoncoop = () => { teleport(COOP.x + 0.5, COOP.z + 2.0, 0, COOP.y + 1); toast('THE COOP. THE OWNER SAYS DO NOT TOUCH THE FLAG.'); }; EGGS.coop.__s = true;
+function coopFrame(dt) {
+  if (Math.hypot(P.x - COOP.x, P.z - COOP.z) > 160) return; COOP.flag.rotation.y = Math.sin(LIFE.t * 2) * 0.25;
+  if (COOP.out <= 0) { COOP.b.forEach(b => b.g.visible = false); return; } COOP.out -= dt; COOP.t += dt;
+  COOP.b.forEach(b => { const t = COOP.t - b.lag, home = COOP.out < 6 ? Math.min(1, (6 - COOP.out) / 5 + b.lag / 20) : 0; if (t < 0) { b.g.visible = false; return; } b.g.visible = home < 0.98;
+    const a = b.ph + t * 0.9, rise = Math.min(1, t / 3), r = b.r * rise * (1 - home), x = COOP.x + Math.cos(a) * r, z = COOP.z + Math.sin(a) * r, y = COOP.y + 1 + (b.h + Math.sin(t * 0.7 + b.ph) * 1.2) * rise * (1 - home);
+    b.g.position.set(x, y, z); b.g.rotation.set(0, -a - PI / 2, -0.3 * (1 - home)); const f = Math.sin(t * 22 + b.ph) * 0.8; b.wings[0].rotation.x = f; b.wings[1].rotation.x = -f; });
+}
+window.__FRAMES.push(dt => { try { coopFrame(dt); } catch (e) { if (!COOP.err) { COOP.err = e; console.warn('v86 coop', e); } } });
+
+/* ================================================================
+   v87 THE BUS (2026-11-22)
+   The N3W crosstown bus: a long blue and white city bus that laps the ring road and stops at two shelters, one on
+   the south east and one on the north. It kneels, the doors open, it waits, it goes. E at a shelter while the
+   bus is in rides it to the other one. The sign on the front says N3W NOT IN SERVICE half the time anyway.
+   ================================================================ */
+const BUS = { a: 0.2, wait: 0, stops: [0.42, 0.42 + PI], next: 0, ride: false };
+window.__BUS = BUS;
+(function bus() {
+  const g = new THREE.Group(); scene.add(g); BUS.g = g;
+  const white = new THREE.MeshStandardMaterial({ color: 0xeceae4, roughness: 0.4, metalness: 0.2 }), blue = new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.4 }), glass = new THREE.MeshStandardMaterial({ color: 0x141a22, roughness: 0.05, metalness: 0.6, emissive: 0xfff2d6, emissiveIntensity: 0 }), tyre = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+  BUS.glass = glass; const L = 12, W = 2.55, H = 3.0;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(L, H - 0.5, W), white); body.position.y = 0.5 + (H - 0.5) / 2; g.add(body);
+  const band = new THREE.Mesh(new THREE.BoxGeometry(L + 0.02, 0.45, W + 0.02), blue); band.position.y = 0.9; g.add(band);
+  const win = new THREE.Mesh(new THREE.BoxGeometry(L - 1.2, 1.0, W + 0.03), glass); win.position.set(-0.3, 2.05, 0); g.add(win);
+  const ws = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.4, W - 0.2), glass); ws.position.set(L / 2 + 0.01, 1.9, 0); g.add(ws);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.28), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'N3W CROSSTOWN', s: 0.5 }], 1024, 160, '#0D0D0D', '#ffb84a'), toneMapped: false })); sign.position.set(L / 2 + 0.04, 2.75, 0); sign.rotation.y = PI / 2; g.add(sign); BUS.sign = sign;
+  BUS.signs = [signTex([{ t: 'N3W CROSSTOWN', s: 0.5 }], 1024, 160, '#0D0D0D', '#ffb84a'), signTex([{ t: 'NOT IN SERVICE', s: 0.5 }], 1024, 160, '#0D0D0D', '#ffb84a')];
+  [[-L / 2 + 1.6, 1], [-L / 2 + 1.6, -1], [L / 2 - 2.2, 1], [L / 2 - 2.2, -1]].forEach(([x, s]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.3, 18), tyre); w.rotation.x = PI / 2; w.position.set(x, 0.5, s * (W / 2 - 0.08)); g.add(w); });
+  const door = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.0, 0.04), glass); door.position.set(L / 2 - 1.0, 1.5, -W / 2 - 0.02); g.add(door); BUS.door = door;
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  // the shelters, on the inner shoulder at each stop
+  BUS.shel = BUS.stops.map(a => { const R = ROAD_R - 4.4, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), sg = new THREE.Group(); sg.position.set(x, gy, z); sg.rotation.y = a; scene.add(sg);
+    const steel = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.4, metalness: 0.7 }), gl = new THREE.MeshStandardMaterial({ color: 0xbcd0d8, roughness: 0.05, transparent: true, opacity: 0.2, depthWrite: false });
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.1, 1.6), steel); roof.position.y = 2.5; sg.add(roof);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.2, 0.04), gl); back.position.set(0, 1.25, -0.75); sg.add(back);
+    [-1.75, 1.75].forEach(px => { const p = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2.5, 0.08), steel); p.position.set(px, 1.25, -0.75); sg.add(p); });
+    const ad = memeMesh(MEME_NS[Math.floor(Math.random() * MEME_NS.length)], 1.6); if (ad) { ad.position.set(1.0, 1.35, -0.72); sg.add(ad); }
+    const bench = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.06, 0.4), steel); bench.position.set(-0.7, 0.5, -0.45); sg.add(bench);
+    const mark = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.55), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'BUS', s: 0.5 }, { t: 'N3W', s: 0.3 }], 256, 256, '#2962FF', '#efe8da'), toneMapped: false, side: THREE.DoubleSide })); mark.position.set(1.95, 2.3, 0.3); sg.add(mark);
+    boxWalls(x - Math.sin(a) * 0.75, z - Math.cos(a) * 0.75, 3.6, 0.1, a, -5, gy + 2.5);
+    interact(x, z, 2.4, 'E · RIDE THE BUS', () => busRide(a));
+    return { a, x, z }; });
+  if (window.__MAP) { MAP.places.push(['BUS STOP', BUS.shel[0].x, BUS.shel[0].z, BUS.shel[0].x, BUS.shel[0].z]); }
+})();
+const busSecret = secret('bus', () => { }, []);
+function busRide(fromA) { const here = Math.abs(Math.atan2(Math.sin(BUS.a - fromA), Math.cos(BUS.a - fromA))) < 0.06 && BUS.wait > 0; if (!here) { toast('THE BUS IS NOT HERE. THE SIGN SAYS 2 MIN. THE SIGN HAS SAID 2 MIN FOR A WHILE.'); return; }
+  const to = BUS.shel.find(s => s.a !== fromA); busSecret(); flash && flash('#0D0D0D'); teleport(to.x + Math.sin(to.a) * 1.0, to.z + Math.cos(to.a) * 1.0, to.a + PI); BUS.a = to.a + 0.001; BUS.wait = 6; toast('YOU TAP IN, SIT DOWN, LOOK AT YOUR PHONE, AND YOU ARE THERE. THAT IS THE CROSSTOWN.', 'blue'); }
+EGGS.bus = EGGS.crosstown = () => { const s = BUS.shel[0]; teleport(s.x + Math.sin(s.a) * 1.0, s.z + Math.cos(s.a) * 1.0, s.a + PI); toast('THE BUS STOP. WAIT FOR IT.'); }; EGGS.bus.__s = true;
+function busFrame(dt) {
+  const R = ROAD_R - 1.7; const toX = Math.atan2(Math.sin(-BUS.a), Math.cos(-BUS.a)); if (BUS.wait > 0) { BUS.wait -= dt; } else if (window.__XWALK_PED && toX > 0.07 && toX < 0.14) { } else { const prev = BUS.a; BUS.a += 9 / R * dt; BUS.stops.forEach(s => { const d0 = Math.atan2(Math.sin(s - prev), Math.cos(s - prev)), d1 = Math.atan2(Math.sin(s - BUS.a), Math.cos(s - BUS.a)); if (d0 > 0 && d1 <= 0) { BUS.a = s; BUS.wait = 10; } }); }
+  const a = BUS.a, x = Math.sin(a) * R, z = Math.cos(a) * R, gy = ground(x, z), kneel = BUS.wait > 0 ? 0.12 * Math.min(1, BUS.wait, 10 - BUS.wait) : 0; BUS.g.position.set(x, gy - kneel, z); BUS.g.rotation.y = a;   // tangent of (sin a, cos a) is (cos a, -sin a)
+  BUS.door.position.x = 12 / 2 - 1.0 - (BUS.wait > 0 ? Math.min(1, BUS.wait, 10 - BUS.wait) * 1.0 : 0);
+  const night = Math.min(1, (L.lamps || 0) * 1.4); BUS.glass.emissiveIntensity = night * 0.5; const s = Math.floor(LIFE.t / 20) % 2; if (BUS.sign.material.map !== BUS.signs[s]) BUS.sign.material.map = BUS.signs[s];
+}
+window.__FRAMES.push(dt => { try { busFrame(dt); } catch (e) { if (!BUS.err) { BUS.err = e; console.warn('v87 bus', e); } } });
+
+/* ================================================================
+   v88 THE DOORMAN (2026-11-22)
+   The water tower building gets a front door: a dark green canvas awning out to the curb on brass poles, the
+   address in white script, a strip of carpet, and a doorman in a long coat and cap who touches the brim when you
+   come up the carpet and says something different depending on the hour. He never lets you in. Nobody gets in.
+   ================================================================ */
+const DOOR = { said: 0 };
+window.__DOOR = DOOR;
+(function doorman() {
+  const x0 = WT_AT.x - 1.6, z0 = WT_AT.z + 3.5, g0 = ground(x0, z0); DOOR.x = x0; DOOR.z = z0;
+  const green = new THREE.MeshStandardMaterial({ color: 0x1f3326, roughness: 0.85, side: THREE.DoubleSide }), brass = new THREE.MeshStandardMaterial({ color: 0xb08a3e, roughness: 0.3, metalness: 0.9 });
+  const aw = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 4.2, 16, 1, true, -PI / 2, PI), green); aw.rotation.x = -PI / 2; aw.position.set(x0, g0 + 2.55, z0 + 2.1); aw.scale.set(1, 1, 0.5); scene.add(aw);
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(0.75, 16, 0, PI), green); cap.position.set(x0, g0 + 2.55, z0 + 4.2); cap.scale.set(1, 0.5, 1); scene.add(cap);
+  const addr = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.34), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'One N3W Place', s: 0.5, f: '"Permanent Marker", Georgia, serif' }], 512, 128, null, '#efe8da'), transparent: true })); addr.position.set(x0, g0 + 2.75, z0 + 4.21); scene.add(addr);
+  [-0.72, 0.72].forEach(dx => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.55, 8), brass); p.position.set(x0 + dx, g0 + 1.27, z0 + 4.15); scene.add(p); post(x0 + dx, z0 + 4.15, 0.06, -5, 3); });
+  const carpet = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 4.2), new THREE.MeshStandardMaterial({ color: 0x5a1712, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 })); carpet.rotation.x = -PI / 2; carpet.position.set(x0, g0 + 0.03, z0 + 2.1); scene.add(carpet);
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 2.3), new THREE.MeshStandardMaterial({ color: 0x0d0f12, roughness: 0.1, metalness: 0.6 })); door.position.set(x0, g0 + 1.15, WT_AT.z + 3.51); scene.add(door);
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.5, 0.06), brass); frame.position.set(x0, g0 + 1.25, WT_AT.z + 3.49); scene.add(frame);
+  const dm = person(0x1f3326, 0x15161a, SKIN[4], 'editor'); dm.g.position.set(x0 + 0.95, g0 - 0.35, z0 + 0.5); dm.g.rotation.y = 0; DOOR.dm = dm;
+  const capM = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.08, 14), new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.6 })); capM.position.set(0, 2.24, 0); dm.g.add(capM);
+})();
+function doorLine() { const h = (SKY.t && SKY.t.h) || 12; return h < 5 ? 'LATE ONE. GET HOME SAFE.' : h < 12 ? 'GOOD MORNING. PACKAGE CAME FOR YOU. NO IT DID NOT, I AM KIDDING.' : h < 17 ? 'AFTERNOON. NICE DAY FOR IT, WHATEVER IT IS.' : h < 21 ? 'GOOD EVENING. THEY ARE EXPECTING YOU. NOT HERE, BUT SOMEWHERE.' : 'EVENING. THE ELEVATOR IS OUT AGAIN. JOKE. THERE IS NO ELEVATOR.'; }
+const doorSecret = secret('doorman', () => { }, []);
+window.__FRAMES.push(dt => { try { const d = Math.hypot(P.x - DOOR.x, P.z - (DOOR.z + 1.5)); if (d < 2.2 && LIFE.t - DOOR.said > 40) { DOOR.said = LIFE.t; doorSecret(); toast('THE DOORMAN TOUCHES HIS CAP. ' + doorLine()); } } catch (e) { } });
+
+/* ================================================================
+   v89 THE TOURISTS (2026-11-22)
+   A tour group of four in matching blue caps, led by a guide holding up a flag on a stick, walks the ring path
+   from landmark to landmark (THE FLOOR, the wheel, the lighthouse, the water tower, the steam, the market) and stops at each for photos.
+   Cameras flash. Get in the frame when they are shooting and one of them says sorry, can you, actually, stay.
+   ================================================================ */
+const TOUR4 = { p: [], i: 0, t: 0, phase: 'walk', x: 0, z: 30 };
+window.__TOURISTS = TOUR4;
+(function tourists() {
+  TOUR4.stops = [[0.15, 0, 0], [1.35, 62, 0], [2.6, 0, -126], [-2.45, WT_AT.x, WT_AT.z], [-0.75, STEAM_AT.x, STEAM_AT.z], [0.75, MKT_AT.x, MKT_AT.z]].map(([a, lx, lz]) => [Math.sin(a) * 41, Math.cos(a) * 41, lx, lz, a]);   // stops on the ring path, each looking at a landmark
+  const guide = person(0xe2581c, 0x2a2f45, SKIN[3], 'writer'); const flag = new THREE.Group(); const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.4, 6), new THREE.MeshStandardMaterial({ color: 0x8a6a42 })); stick.position.y = 0.7; flag.add(stick);
+  const f = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.28), new THREE.MeshBasicMaterial({ color: 0xffd84a, side: THREE.DoubleSide })); f.position.set(0.2, 1.3, 0); flag.add(f); flag.position.set(0.3, 1.6, 0); guide.g.add(flag);
+  TOUR4.p.push({ P: guide, ox: 0, oz: 0, guide: true });
+  const blueCap = new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.6 }); [[0xefe8da, 1.2, 1.0], [0x8a2b1e, -1.0, 1.4], [0x2f4a33, 0.4, 2.2], [0x15161a, -0.6, 2.6]].forEach(([sh, ox, oz], i) => {
+    const p = person(sh, 0x3b4a5c, SKIN[(i * 2 + 4) % SKIN.length], ['actress', 'editor', 'workgirl', 'annieh'][i]); const c = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.16, 0.07, 12), blueCap); c.position.y = 2.22; p.g.add(c);
+    const cam = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.07), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 })); cam.position.set(0, 1.95, 0.22); p.g.add(cam);
+    const fl = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false })); fl.position.set(0, 1.97, 0.27); fl.visible = false; p.g.add(fl);
+    TOUR4.p.push({ P: p, ox, oz, fl, ft: 0 }); });
+  const s0 = TOUR4.stops[0]; TOUR4.x = s0[0]; TOUR4.z = s0[1]; TOUR4.a = s0[4];
+})();
+const touristSecret = secret('tourists', () => { toast('A TOURIST LOWERS THE CAMERA: SORRY, CAN YOU, ACTUALLY, STAY. YOU ARE NOW IN THEIR HOLIDAY PHOTOS FOREVER.', 'blue'); });
+function touristFrame(dt) {
+  const T = TOUR4, s = T.stops[T.i], nx = T.stops[(T.i + 1) % T.stops.length]; T.t += dt;
+  if (T.phase === 'shoot' && T.t > 14) { T.phase = 'walk'; T.t = 0; T.i = (T.i + 1) % T.stops.length; }
+  const tgt = T.phase === 'walk' ? T.stops[T.i] : s; let hx = 0, hz = 1;
+  if (T.phase === 'walk') { if (T.a === undefined) T.a = s[4]; const da = Math.atan2(Math.sin(tgt[4] - T.a), Math.cos(tgt[4] - T.a)); if (Math.abs(da) < 0.01) { T.phase = 'shoot'; T.t = 0; } else { const st = Math.sign(da) * Math.min(Math.abs(da), 1.3 / 41 * dt); T.a += st; T.x = Math.sin(T.a) * 41; T.z = Math.cos(T.a) * 41; hx = Math.cos(T.a) * Math.sign(da); hz = -Math.sin(T.a) * Math.sign(da); } }
+  if (T.phase === 'shoot') { hx = s[2] - T.x; hz = s[3] - T.z; const l = Math.hypot(hx, hz) || 1; hx /= l; hz /= l; }
+  const near = Math.hypot(P.x - T.x, P.z - T.z) < 120; const yaw = Math.atan2(hx, hz);
+  T.p.forEach((q, i) => { const x = T.x + (q.guide ? 0 : hz * q.ox - hx * q.oz), z = T.z + (q.guide ? 0 : -hx * q.ox - hz * q.oz);
+    q.P.g.position.set(x, ground(x, z) - 0.35 + (T.phase === 'walk' ? Math.abs(Math.sin(LIFE.t * 5 + i)) * 0.03 : 0), z); q.P.g.rotation.y = yaw + (q.guide && T.phase === 'shoot' ? PI : 0);
+    if (q.fl && near) { if (T.phase === 'shoot' && Math.random() < dt * 0.35) { q.ft = 0.08;
+        // you in the shot: between this camera and what it is pointed at
+        const cx = x, cz = z, vx = s[2] - cx, vz = s[3] - cz, vl = Math.hypot(vx, vz) || 1, px = P.x - cx, pz = P.z - cz, along = (px * vx + pz * vz) / vl, side = Math.abs(px * vz - pz * vx) / vl; if (along > 1 && along < vl && side < 2.5) touristSecret(); }
+      q.ft -= dt; q.fl.visible = q.ft > 0; } });
+}
+window.__FRAMES.push(dt => { try { touristFrame(dt); } catch (e) { if (!TOUR4.err) { TOUR4.err = e; console.warn('v89 tourists', e); } } });
+
+/* ================================================================
+   v90 FALL (2026-11-22)
+   From September to early December the island has leaves: rust, ochre and brown drifts heaped along the ring path,
+   a few always coming down and tumbling across the paving in the wind. Run through a pile and it bursts and
+   scatters and settles again. The rest of the year they are gone. LEAVES brings them out any time.
+   ================================================================ */
+const LEAF = { piles: [], fall: [], k: 0, force: 0, t: 0 };
+window.__LEAF = LEAF;
+(function fall() {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d');
+  if (c && c.beginPath && c.quadraticCurveTo) { c.fillStyle = '#fff'; c.beginPath(); c.moveTo(32, 2); c.quadraticCurveTo(62, 22, 32, 62); c.quadraticCurveTo(2, 22, 32, 2); c.fill(); c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(32, 6); c.lineTo(32, 60); c.stroke(); }
+  const lt = new THREE.CanvasTexture(cv); const cols = [0xa8461c, 0xc27a2a, 0x7a3a18, 0xd19a3a, 0x6b4a2a, 0x8e2a16];
+  const geo = new THREE.PlaneGeometry(0.16, 0.16), mat = new THREE.MeshStandardMaterial({ map: lt, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.9 });
+  const N = isMobile ? 500 : 1400, im = new THREE.InstancedMesh(geo, mat, N); im.frustumCulled = false; scene.add(im); LEAF.im = im; const col = new THREE.Color();
+  // piles along the ring path edge, and loose leaves on the paving
+  const piles = 14; for (let p = 0; p < piles; p++) { const a = p / piles * PI * 2 + 0.2, r = 43.4 + Math.random() * 0.6; LEAF.piles.push({ x: Math.sin(a) * r, z: Math.cos(a) * r, burst: 0 }); }
+  for (let i = 0; i < N; i++) { const pile = i < N * 0.7 ? LEAF.piles[i % piles] : null; let x, z; if (pile) { const a = Math.random() * PI * 2, rr = Math.pow(Math.random(), 0.7) * 1.3; x = pile.x + Math.cos(a) * rr; z = pile.z + Math.sin(a) * rr; } else { const a = Math.random() * PI * 2, r = 38 + Math.random() * 7; x = Math.sin(a) * r; z = Math.cos(a) * r; }
+    const h = pile ? Math.max(0, 0.35 - Math.hypot(x - pile.x, z - pile.z) * 0.25) * Math.random() : 0;
+    LEAF.fall.push({ x, z, y: h, hx: x, hz: z, hy: h, vx: 0, vy: 0, vz: 0, rx: Math.random() * 6, ry: Math.random() * 6, spin: 0, pile }); im.setColorAt(i, col.setHex(cols[i % cols.length]).multiplyScalar(0.8 + Math.random() * 0.3)); }
+  im.instanceColor.needsUpdate = true; LEAF.o = new THREE.Object3D();
+})();
+EGGS.leaves = EGGS.autumn = () => { LEAF.force = LEAF.t + 300; toast('IT IS FALL NOW. THE CITY SMELLS LIKE ROASTED NUTS AND WET PAPER.'); }; EGGS.leaves.__s = true;
+const leafSecret = secret('leafpile', () => { toast('YOU RAN THROUGH A LEAF PILE. SOMEONE RAKED THAT.', 'blue'); });
+function leafFrame(dt) {
+  LEAF.t += dt; const mo = SKY.t ? SKY.t.mo : 11, d = SKY.t ? SKY.t.d : 1, season = (mo >= 9 && mo <= 11) || (mo === 12 && d <= 8); const want = (season || LEAF.force > LEAF.t) ? 1 : 0; LEAF.k += (want - LEAF.k) * Math.min(1, dt * 0.5);
+  LEAF.im.visible = LEAF.k > 0.02; if (!LEAF.im.visible || Math.hypot(P.x, P.z) > 120) return;
+  const o = LEAF.o, wind = 0.6 + Math.sin(LEAF.t * 0.3) * 0.4, ps = Math.hypot(P.x - (LEAF.px || P.x), P.z - (LEAF.pz || P.z)) / Math.max(dt, 1e-3); LEAF.px = P.x; LEAF.pz = P.z;
+  LEAF.piles.forEach(p => { if (Math.hypot(P.x - p.x, P.z - p.z) < 1.3 && ps > 2 && p.burst <= 0) { p.burst = 8; leafSecret(); } p.burst = Math.max(0, p.burst - dt); });
+  LEAF.fall.forEach((L2, i) => { const p = L2.pile;
+    if (p && p.burst > 7.6) { L2.vx += (L2.x - p.x) * 6 * dt + (Math.random() - 0.5) * 3; L2.vz += (L2.z - p.z) * 6 * dt + (Math.random() - 0.5) * 3; L2.vy += 9 * dt * Math.random(); L2.spin = 8; }
+    else if (!p && Math.random() < dt * 0.02 * wind) { L2.vx += wind * 1.2; L2.vz += wind * 0.6; L2.spin = 4; }
+    L2.vy -= 3 * dt; L2.x += L2.vx * dt; L2.y += L2.vy * dt; L2.z += L2.vz * dt; L2.vx *= 1 - dt * 2.5; L2.vz *= 1 - dt * 2.5;
+    if (L2.y < 0) { L2.y = 0; L2.vy = 0; L2.spin *= 0.9; if (p && p.burst <= 0) { L2.x += (L2.hx - L2.x) * dt * 0.3; L2.z += (L2.hz - L2.z) * dt * 0.3; L2.y = L2.hy * Math.min(1, 1 - p.burst / 8); } }
+    if (!p && Math.hypot(L2.x, L2.z) > 46) { const a = Math.random() * PI * 2, r = 38 + Math.random() * 3; L2.x = Math.sin(a) * r; L2.z = Math.cos(a) * r; }
+    L2.rx += L2.spin * dt; L2.ry += L2.spin * 0.7 * dt; if (L2.gy === undefined || (i + Math.floor(LEAF.t * 60)) % 30 === 0) L2.gy = ground(L2.x, L2.z); o.position.set(L2.x, L2.gy + 0.07 + L2.y, L2.z); o.rotation.set(L2.y > 0.01 ? L2.rx : -PI / 2 + Math.sin(L2.rx) * 0.2, L2.ry, 0); o.scale.setScalar(LEAF.k); o.updateMatrix(); LEAF.im.setMatrixAt(i, o.matrix); });
+  LEAF.im.instanceMatrix.needsUpdate = true;
+}
+window.__FRAMES.push(dt => { try { leafFrame(dt); } catch (e) { if (!LEAF.err) { LEAF.err = e; console.warn('v90 leaves', e); } } });
+
+/* ================================================================
+   v91 DOMINOES (2026-11-22)
+   A card table at (-48, 28) with four men on folding chairs playing dominoes the uptown way: tiles slapped down
+   hard enough to make the table jump, a radio on the ground, somebody always arguing the count. E pulls up a chair
+   and watches a hand; they slam, they shout CAPICUA, and someone wins.
+   ================================================================ */
+const DOM = { men: [], tiles: [], t: 0, slam: 3, hand: 0, watch: 0 };
+window.__DOM = DOM;
+const DOM_AT = { x: -48, z: 28 };
+(function dominoes() {
+  const x0 = DOM_AT.x, z0 = DOM_AT.z, g0 = ground(x0, z0); DOM.g0 = g0;
+  const table = new THREE.Group(); table.position.set(x0, g0, z0); scene.add(table); DOM.table = table;
+  const top = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, 0.95), new THREE.MeshStandardMaterial({ color: 0x2f4a33, roughness: 0.9 })); top.position.y = 0.74; table.add(top);
+  [[-0.42, -0.42], [0.42, -0.42], [-0.42, 0.42], [0.42, 0.42]].forEach(([x, z]) => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.74, 6), new THREE.MeshStandardMaterial({ color: 0x8a8f96, metalness: 0.7, roughness: 0.4 })); l.position.set(x, 0.37, z); table.add(l); });
+  const tileM = new THREE.MeshStandardMaterial({ color: 0xf2efe6, roughness: 0.35 }), dotM = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  for (let i = 0; i < 14; i++) { const t = new THREE.Group(); const b = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.05), tileM); t.add(b); for (let k = 0; k < 3; k++) { const d = new THREE.Mesh(new THREE.CircleGeometry(0.006, 6), dotM); d.rotation.x = -PI / 2; d.position.set(-0.03 + k * 0.012, 0.011, (k % 2) * 0.012 - 0.006); t.add(d); } t.visible = false; t.position.y = 0.77; table.add(t); DOM.tiles.push(t); }
+  [[0, -0.75, 0], [0.75, 0, -PI / 2], [0, 0.75, PI], [-0.75, 0, PI / 2]].forEach(([dx, dz, ry], i) => { const p = person([0xefe8da, 0x2962FF, 0x7a1f2a, 0x15161a][i], 0x2a2f45, SKIN[(i * 2 + 1) % SKIN.length], ['wiseguy', 'cabbie', 'writer', 'editor'][i]);
+    p.g.position.set(x0 + dx, g0 - 0.35 - 0.42, z0 + dz); p.g.rotation.y = ry; DOM.men.push(p);
+    const ch = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.42), new THREE.MeshStandardMaterial({ color: 0x5a3f28, roughness: 0.8 })); ch.position.set(x0 + dx * 1.05, g0 + 0.45, z0 + dz * 1.05); scene.add(ch); });
+  const radio = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.22, 0.14), new THREE.MeshStandardMaterial({ color: 0x8a2b1e, roughness: 0.5 })); radio.position.set(x0 + 1.1, g0 + 0.11, z0 + 0.7); scene.add(radio);
+  boxWalls(x0, z0, 1.9, 1.9, 0, -5, g0 + 1.0);
+  interact(x0 + 1.6, z0 - 1.2, 1.8, 'E · WATCH A HAND', () => { DOM.watch = 25; DOM.hand = 0; DOM.tiles.forEach(t => t.visible = false); toast('YOU PULL UP A MILK CRATE. NOBODY LOOKS UP. THAT MEANS YOU CAN STAY.'); });
+  if (window.__MAP) MAP.places.push(['DOMINOES', x0, z0, x0 + 1.6, z0 - 1.6]);
+})();
+const domSecret = secret('dominoes', () => { toast('CAPICUA. THE MAN IN WHITE WINS THE HAND AND TELLS EVERYONE ABOUT IT FOR TEN MINUTES.', 'blue'); });
+function domFrame(dt) {
+  const d = Math.hypot(P.x - DOM_AT.x, P.z - DOM_AT.z); if (d > 80) return; DOM.slam -= dt * (DOM.watch > 0 ? 1.8 : 1);
+  DOM.table.position.y = DOM.g0 + Math.max(0, DOM.jump || 0) * 0.02; DOM.jump = (DOM.jump || 0) - dt * 8;
+  if (DOM.slam <= 0) { DOM.slam = 2.5 + Math.random() * 3; const k = DOM.hand % 14; const t = DOM.tiles[k]; const along = k - 7; t.visible = true; t.position.set(along * 0.055, 0.77, (k % 2) * 0.03 - 0.015); t.rotation.y = k % 3 ? 0 : PI / 2; DOM.hand++; DOM.jump = 1;
+    if (d < 25 && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) try { const n = Math.floor(AC.sampleRate * 0.05), b = AC.createBuffer(1, n, AC.sampleRate), ch = b.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 5); const s = AC.createBufferSource(); s.buffer = b; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1400; const g = AC.createGain(); g.gain.value = Math.min(0.14, 2.5 / (d + 2)); s.connect(f); f.connect(g); g.connect(AC.destination); s.start(); } catch (e) { }
+    if (DOM.hand % 14 === 0) { DOM.tiles.forEach(q => q.visible = false); if (DOM.watch > 0) domSecret(); else if (d < 15) toast('SOMEONE AT THE DOMINOES TABLE: CAPICUA!'); } }
+  if (DOM.watch > 0) DOM.watch -= dt;
+  DOM.men.forEach((m, i) => { m.g.rotation.z = Math.sin(LIFE.t * 0.8 + i) * 0.03 + ((DOM.hand % 4) === i && DOM.jump > 0 ? 0.08 : 0); });
+}
+window.__FRAMES.push(dt => { try { domFrame(dt); } catch (e) { if (!DOM.err) { DOM.err = e; console.warn('v91 dominoes', e); } } });
+
+/* ================================================================
+   v92 THE STOOP (2026-11-22)
+   A four storey brick walk up at (78, -56), facing the island: old red brick, tall windows with white trim, a cornice,
+   and a stoop of seven steps up to a black door with a brass number. E on the stoop sits you down: the camera
+   drops to a seated eye and the day goes by about two hundred times faster while you sit, clouds and shadows
+   and the sky turning, until you get up (any move key). Sit long enough to see an hour pass and it counts.
+   ================================================================ */
+const BROWN = {};
+window.__BROWN = BROWN;
+const BROWN_AT = { x: 78, z: -56 };
+(function brownstone() {
+  const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = ground(x0, z0), W = 8, D = 7, Hf = 3.1, F = 4, H = Hf * F + 0.6; BROWN.g0 = g0; BROWN.H = H; BROWN.fx = x0 - D / 2;   // the front faces west, toward the island
+  const stone = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [3, 4]), color: 0x5e4334, roughness: 0.85 });
+  const b = new THREE.Mesh(new THREE.BoxGeometry(D, H, W), stone); b.position.set(x0, g0 + H / 2, z0); b.castShadow = b.receiveShadow = true; scene.add(b);
+  boxWalls(x0, z0, D, W, 0, -5, g0 + H - 0.3); padRect(x0 - D / 2 + 0.2, x0 + D / 2 - 0.2, z0 - W / 2 + 0.2, z0 + W / 2 - 0.2, g0 + H + 0.05, g0 + H - 0.5);
+  const roofM = new THREE.Mesh(new THREE.BoxGeometry(D - 0.1, 0.05, W - 0.1), new THREE.MeshStandardMaterial({ color: 0x3b3936, roughness: 0.95 })); roofM.position.set(x0, g0 + H + 0.03, z0); scene.add(roofM);
+  const corn = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, W + 0.4), new THREE.MeshStandardMaterial({ color: 0x4a3a30, roughness: 0.7 })); corn.position.set(x0 - D / 2 - 0.1, g0 + H - 0.1, z0); scene.add(corn);
+  const winM = new THREE.MeshStandardMaterial({ color: 0x12151a, roughness: 0.1, metalness: 0.5, emissive: 0xffd28a, emissiveIntensity: 0 }), trim = new THREE.MeshStandardMaterial({ color: 0xe9e4da, roughness: 0.6 }); BROWN.winM = winM; BROWN.wins = [];
+  for (let f = 0; f < F; f++) for (let k = 0; k < 3; k++) { if (f === 0 && k === 0) continue; const y = g0 + 1.9 + f * Hf, z = z0 - 2.4 + k * 2.4; const wm = winM.clone(); const w = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.9), wm); w.position.set(x0 - D / 2 - 0.01, y, z); w.rotation.y = -PI / 2; scene.add(w); BROWN.wins.push({ m: wm, f, k, on: Math.random() < 0.5, t: Math.random() * 60 });
+    const tr = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 1.35), trim); tr.position.set(x0 - D / 2 - 0.04, y + 1.02, z); scene.add(tr); const sill = tr.clone(); sill.position.y = y - 1.0; scene.add(sill); }
+  // the door and the stoop, on the left bay (k = 0), ground floor raised 1.4 m
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 2.3), new THREE.MeshStandardMaterial({ color: 0x0d0d0d, roughness: 0.3 })); door.position.set(x0 - D / 2 - 0.01, g0 + 1.4 + 1.15, z0 - 2.4); door.rotation.y = -PI / 2; scene.add(door);
+  const num = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.2), new THREE.MeshBasicMaterial({ map: signTex([{ t: '420', s: 0.6, f: 'Georgia, serif' }], 256, 128, null, '#d9b45a'), transparent: true })); num.position.set(x0 - D / 2 - 0.02, g0 + 4.0, z0 - 2.4); num.rotation.y = -PI / 2; scene.add(num);
+  const stoneM = new THREE.MeshStandardMaterial({ color: 0x6e4f3c, roughness: 0.9 });
+  for (let s = 0; s < 7; s++) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.2 * (s + 1), 1.6), stoneM); const sx = x0 - D / 2 - 0.4 - (6 - s) * 0.36 - 0.6; st.position.set(sx, g0 + 0.1 * (s + 1), z0 - 2.4); scene.add(st); padRect(sx - 0.19, sx + 0.19, z0 - 3.2, z0 - 1.6, g0 + 0.2 * (s + 1)); }
+  const landing = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.4, 1.6), stoneM); landing.position.set(x0 - D / 2 - 0.5, g0 + 0.7, z0 - 2.4); scene.add(landing); padRect(x0 - D / 2 - 1.0, x0 - D / 2, z0 - 3.2, z0 - 1.6, g0 + 1.4);
+  [-1, 1].forEach(s => { const r = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.05, 0.05), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4, metalness: 0.6 })); r.position.set(x0 - D / 2 - 1.9, g0 + 1.5, z0 - 2.4 + s * 0.82); r.rotation.z = -0.38; scene.add(r); });
+  BROWN.seat = [x0 - D / 2 - 1.5, z0 - 2.4, g0 + 0.8];
+  interact(x0 - D / 2 - 2.6, z0 - 2.4, 1.8, 'E · SIT ON THE STOOP', () => stoopSit());
+  if (window.__MAP) MAP.places.push(['THE WALK UP', x0, z0, x0 - D / 2 - 3.5, z0 - 2.4]);
+})();
+const stoopSecret = secret('stoop', () => { toast('AN HOUR WENT BY ON THE STOOP. THIS IS THE ENTIRE POINT OF A STOOP.', 'blue'); });
+function stoopSit() { if (BROWN.sit) return; const [x, z, y] = BROWN.seat; teleport(x, z, PI / 2, y + 0.5); BROWN.sit = true; BROWN.lapsed = 0; BROWN.prevEye = window.__EYE || 1; window.__EYE = 0.62; if (TIME.mode === 'live') TIME.mode = 'fixed'; toast('YOU SIT. THE DAY STARTS GOING BY. ANY MOVE KEY TO GET UP.'); }
+function stoopFrame(dt) {
+  const night = Math.min(1, (L.lamps || 0) * 1.4); BROWN.wins.forEach(w => { w.t -= dt; if (w.t < 0) { w.t = 30 + Math.random() * 90; w.on = Math.random() < 0.6; } w.m.emissiveIntensity = w.on ? night * 0.9 : 0; });
+  if (!BROWN.sit) return; const moving = keys.KeyW || keys.KeyS || keys.KeyA || keys.KeyD || joy.x || joy.y; if (moving) { BROWN.sit = false; window.__EYE = BROWN.prevEye; toast('YOU GET UP. YOUR KNEES MAKE A NOISE.'); return; }
+  TIME.utc += dt * 200; BROWN.lapsed += dt * 200; if (BROWN.lapsed > 3600) stoopSecret();
+}
+window.__FRAMES.push(dt => { try { stoopFrame(dt); } catch (e) { if (!BROWN.err) { BROWN.err = e; console.warn('v92 stoop', e); } } });
+
+/* ================================================================
+   v93 THE FIRE ESCAPE (2026-11-22)
+   Black iron zigzag down the front of the brownstone: three slatted landings with railings, stairs between them,
+   a drop ladder hanging over the sidewalk and a gooseneck ladder to the roof. E under the drop ladder pulls you
+   up; on each landing E goes up one more (the front end) or down one (the back end). Plants and a folding chair
+   on the second landing, because that is what fire escapes are actually for.
+   ================================================================ */
+const FIRE = { l: [] };
+window.__FIRE = FIRE;
+(function fireEscape() {
+  const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = BROWN.g0, fx = BROWN.fx, iron = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.55, metalness: 0.6 });
+  const zA = z0 - 0.4, zB = z0 + 3.2, xA = fx - 1.3, xB = fx - 0.02, slat = (() => { const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128; const c = cv.getContext('2d'); if (c && c.fillRect && c.clearRect) { c.clearRect(0, 0, 128, 128); c.fillStyle = '#fff'; for (let i = 0; i < 128; i += 12) c.fillRect(i, 0, 7, 128); c.fillRect(0, 0, 128, 6); c.fillRect(0, 122, 128, 6); } return new THREE.CanvasTexture(cv); })();
+  const deckM = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.55, metalness: 0.6, alphaMap: slat, alphaTest: 0.5, side: THREE.DoubleSide });
+  for (let f = 1; f <= 3; f++) { const y = g0 + f * 3.1 + 0.85; FIRE.l.push(y);
+    const deck = new THREE.Mesh(new THREE.PlaneGeometry(xB - xA, zB - zA), deckM); deck.rotation.x = -PI / 2; deck.position.set((xA + xB) / 2, y, (zA + zB) / 2); scene.add(deck);
+    padRect(xA, xB, zA, zB, y + 0.02, y - 0.3);
+    // railing: top rail and balusters on the open sides
+    const rail = (ax, az, bx, bz) => { const L = Math.hypot(bx - ax, bz - az), m = new THREE.Mesh(new THREE.BoxGeometry(L, 0.04, 0.04), iron); m.position.set((ax + bx) / 2, y + 0.95, (az + bz) / 2); m.rotation.y = Math.atan2(-(bz - az), bx - ax); scene.add(m);
+      for (let u = 0; u <= 1.0001; u += 0.1) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.95, 0.02), iron); b.position.set(ax + (bx - ax) * u, y + 0.47, az + (bz - az) * u); scene.add(b); } wall(ax, az, bx, bz, y - 0.2, y + 1.0); };
+    rail(xA, zA, xA, zB); rail(xA, zA, xB, zA); rail(xA, zB, xB, zB);
+    // stairs down to the landing below, along the facade
+    if (f > 1) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, Math.hypot(3.1, zB - zA - 1.2)), iron); st.position.set(xB - 0.4, y - 1.55, (zA + zB) / 2); st.rotation.x = Math.atan2(3.1, zB - zA - 1.2) * (f % 2 ? 1 : -1); scene.add(st); }
+    interact(xA + 0.5, zB - 0.6, 1.1, 'E · UP', () => { const ny = f < 3 ? FIRE.l[f] : BROWN.H + g0; teleport(f < 3 ? xA + 0.5 : x0, f < 3 ? zB - 0.9 : z0, PI / 2, ny + 1); if (f === 3) fireSecret(); }, y);
+    interact(xA + 0.5, zA + 0.6, 1.1, 'E · DOWN', () => { if (f === 1) teleport(xA - 0.8, zA + 1.5, -PI / 2, g0 + 1); else teleport(xA + 0.5, zA + 0.9, PI / 2, FIRE.l[f - 2] + 1); }, y);
+    if (f === 2) { [0, 0.5, 1.0].forEach((dz, i) => { const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.22, 10), new THREE.MeshStandardMaterial({ color: 0xa0522d, roughness: 0.9 })); pot.position.set(xB - 0.25, y + 0.11, zA + 0.5 + dz); scene.add(pot);
+        const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), new THREE.MeshStandardMaterial({ color: [0x2f6a3a, 0x3e7a3a, 0x2a5a30][i], roughness: 0.9 })); leaf.scale.y = 1.3; leaf.position.set(xB - 0.25, y + 0.42, zA + 0.5 + dz); scene.add(leaf); });
+      const chair = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.04, 0.4), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.6 })); chair.position.set(xA + 0.5, y + 0.42, (zA + zB) / 2 + 0.6); scene.add(chair); } }
+  // the drop ladder from the first landing, and the gooseneck to the roof
+  const lad = (x, z, ya, yb) => { [-0.2, 0.2].forEach(s => { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, yb - ya, 6), iron); r.position.set(x, (ya + yb) / 2, z + s); scene.add(r); }); for (let y = ya + 0.2; y < yb; y += 0.3) { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.4, 6), iron); r.rotation.x = PI / 2; r.position.set(x, y, z); scene.add(r); } };
+  lad(xA + 0.3, zA + 1.5, g0 + 2.2, FIRE.l[0] + 0.95); lad(xB - 0.2, zB - 0.6, FIRE.l[2], BROWN.H + g0 + 1.0);
+  interact(xA - 0.4, zA + 1.5, 1.4, 'E · PULL DOWN THE LADDER', () => teleport(xA + 0.6, zA + 1.5, PI / 2, FIRE.l[0] + 1));
+})();
+const fireSecret = secret('fireescape', () => { toast('UP THE FIRE ESCAPE AND ONTO THE ROOF. THE LANDLORD WOULD LIKE A WORD. THE LANDLORD IS NOT HERE.', 'blue'); });
+
+/* ================================================================
+   v94 THE ROOF AND THE SOPRANO (2026-11-22)
+   Two things the brownstone does after dark. On the roof: a party, string lights on bamboo poles, a cooler, five
+   people swaying, a speaker leaking bass you can feel from the street. In the third floor window: the neighbour
+   who practises opera, a silhouette behind the curtain, singing scales up and down every evening from seven
+   until eleven. Stand under the window and listen for a while.
+   ================================================================ */
+const ROOF = { p: [] };
+window.__ROOF = ROOF;
+(function roofAndSoprano() {
+  const x0 = BROWN_AT.x, z0 = BROWN_AT.z, y = BROWN.g0 + BROWN.H + 0.05; ROOF.y = y; const grp = new THREE.Group(); scene.add(grp); ROOF.grp = grp;
+  const poles = [[-3, -3.6], [3, -3.6], [3, 3.6], [-3, 3.6]].map(([dx, dz]) => [x0 + dx, z0 + dz]);
+  poles.forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 2.4, 6), new THREE.MeshStandardMaterial({ color: 0xc9b07a, roughness: 0.8 })); p.position.set(x, y + 1.2, z); grp.add(p); });
+  const bulbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.05, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd9a0, toneMapped: false }), 80); const o = new THREE.Object3D(); let k = 0;
+  for (let s = 0; s < 4; s++) { const [ax, az] = poles[s], [bx, bz] = poles[(s + 1) % 4]; for (let i = 0; i < 20; i++) { const u = (i + 0.5) / 20; o.position.set(ax + (bx - ax) * u, y + 2.35 - Math.sin(u * PI) * 0.5, az + (bz - az) * u); o.updateMatrix(); bulbs.setMatrixAt(k++, o.matrix); } }
+  grp.add(bulbs);
+  const cooler = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.4, 0.4), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5 })); cooler.position.set(x0 + 1.5, y + 0.2, z0 + 2); grp.add(cooler);
+  const spk = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.7, 0.35), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.6 })); spk.position.set(x0 + 2.4, y + 0.35, z0 - 2.5); grp.add(spk); ROOF.spk = spk;
+  [0x7a1f2a, 0xefe8da, 0x2f4a33, 0xff3fa4, 0x15161a].forEach((sh, i) => { const p = person(sh, 0x2a2f45, SKIN[(i * 3) % SKIN.length], ['actress', 'writer', 'workgirl', 'editor', 'annieh'][i]); const a = i / 5 * PI * 2; p.g.position.set(x0 + Math.cos(a) * 1.8, y - 0.35, z0 + Math.sin(a) * 2.2); p.g.rotation.y = -a - PI / 2; ROOF.p.push({ P: p, ph: i * 1.3, a }); });
+  // the soprano: a lit curtain on the third floor, middle bay, with a silhouette
+  const fx = BROWN.fx, wy = BROWN.g0 + 1.9 + 2 * 3.1; ROOF.win = { x: fx - 0.5, z: z0, y: wy };
+  const cur = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 1.75), new THREE.MeshBasicMaterial({ color: 0xffd9a0, toneMapped: false, transparent: true, opacity: 0 })); cur.position.set(fx - 0.03, wy, z0); cur.rotation.y = -PI / 2; scene.add(cur); ROOF.cur = cur;
+  const sil = new THREE.Group(); const sm = new THREE.MeshBasicMaterial({ color: 0x2a1a10, transparent: true, opacity: 0 }); ROOF.silM = sm;
+  const torso = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.75), sm); torso.position.y = -0.25; sil.add(torso); const head = new THREE.Mesh(new THREE.CircleGeometry(0.14, 14), sm); head.position.y = 0.3; sil.add(head);
+  const arm = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.5), sm); arm.position.set(0.28, 0.0, 0); arm.rotation.z = -0.9; sil.add(arm); ROOF.arm = arm;
+  sil.position.set(fx - 0.04, wy, z0 + 0.1); sil.rotation.y = -PI / 2; scene.add(sil); ROOF.sil = sil;
+})();
+const sopranoSecret = secret('soprano', () => { toast('THE NEIGHBOUR HITS THE HIGH ONE. SOMEONE ACROSS THE STREET CLAPS. SOMEONE ELSE YELLS AGAIN WITH THE SINGING.', 'blue'); });
+let roofBass = null, sopV = null;
+function roofFrame(dt) {
+  const h = (SKY.t && SKY.t.hours) || 12, night = Math.min(1, (L.lamps || 0) * 1.4), party = night > 0.5, d = Math.hypot(P.x - BROWN_AT.x, P.z - BROWN_AT.z);
+  ROOF.grp.visible = party; ROOF.p.forEach(q => q.P.g.visible = party); if (party) ROOF.p.forEach((q, i) => { q.P.g.rotation.z = Math.sin(LIFE.t * 2.1 + q.ph) * 0.08; q.P.g.position.y = ROOF.y - 0.35 + Math.abs(Math.sin(LIFE.t * 4.2 + q.ph)) * 0.04; });
+  const audio = AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0;
+  if (party && audio && d < 45) { if (!roofBass) try { const o = AC.createOscillator(), g = AC.createGain(), f = AC.createBiquadFilter(); o.type = 'sine'; o.frequency.value = 52; f.type = 'lowpass'; f.frequency.value = 120; g.gain.value = 0; o.connect(f); f.connect(g); g.connect(AC.destination); o.start(); roofBass = { o, g }; } catch (e) { }
+    if (roofBass) { const beat = (LIFE.t * 2.05) % 1; roofBass.g.gain.setTargetAtTime(Math.max(0, 0.06 - d * 0.0012) * (beat < 0.25 ? 1 : 0.15), AC.currentTime, 0.02); } }
+  else if (roofBass) { try { roofBass.o.stop(); } catch (e) { } roofBass = null; }
+  // the soprano, seven to eleven
+  const sing = h >= 19 && h < 23; ROOF.cur.material.opacity += ((sing ? 0.85 : 0) - ROOF.cur.material.opacity) * Math.min(1, dt * 2); ROOF.silM.opacity = ROOF.cur.material.opacity * 0.9;
+  if (sing) { ROOF.sil.position.z = BROWN_AT.z + 0.1 + Math.sin(LIFE.t * 0.4) * 0.12; ROOF.arm.rotation.z = -0.9 + Math.sin(LIFE.t * 1.3) * 0.5; }
+  const wd = Math.hypot(P.x - ROOF.win.x, P.z - ROOF.win.z);
+  if (sing && audio && wd < 35) { if (!sopV) try { const o = AC.createOscillator(), vib = AC.createOscillator(), vg = AC.createGain(), f1 = AC.createBiquadFilter(), f2 = AC.createBiquadFilter(), g = AC.createGain(); o.type = 'sawtooth'; vib.frequency.value = 5.5; vg.gain.value = 6; vib.connect(vg); vg.connect(o.frequency);
+      f1.type = 'bandpass'; f1.frequency.value = 800; f1.Q.value = 6; f2.type = 'bandpass'; f2.frequency.value = 1150; f2.Q.value = 8; o.connect(f1); o.connect(f2); f1.connect(g); f2.connect(g); g.gain.value = 0; g.connect(AC.destination); o.start(); vib.start(); sopV = { o, vib, g }; } catch (e) { }
+    if (sopV) { const scale = [523, 587, 659, 698, 784, 880, 988, 1047, 988, 880, 784, 698, 659, 587], n = Math.floor(LIFE.t * 1.6) % (scale.length + 4); const f = n < scale.length ? scale[n] : 0; sopV.o.frequency.setTargetAtTime(f || 523, AC.currentTime, 0.04); sopV.g.gain.setTargetAtTime(f ? Math.max(0, 0.05 - wd * 0.0013) : 0, AC.currentTime, 0.05); }
+    if (wd < 12) { ROOF.listen = (ROOF.listen || 0) + dt; if (ROOF.listen > 12) sopranoSecret(); } }
+  else if (sopV) { try { sopV.o.stop(); sopV.vib.stop(); } catch (e) { } sopV = null; }
+}
+window.__FRAMES.push(dt => { try { roofFrame(dt); } catch (e) { if (!ROOF.err) { ROOF.err = e; console.warn('v94 roof', e); } } });
+
+/* ================================================================
+   v95 THE NEWSSTAND (2026-11-22)
+   A green newsstand kiosk at (40, 32): magazines clipped up the front (Meme covers), papers in a rack, gum, a
+   little TV inside, and a man who has seen everything. E buys a scratch-off for one TDH: scratch it (it takes a
+   second) and win nothing, a little, or, very rarely, the big one. Hitting the big one counts.
+   ================================================================ */
+const NEWS = { n: 0 };
+window.__NEWS = NEWS;
+const NEWS_AT = { x: 40, z: 32 };
+(function newsstand() {
+  const x0 = NEWS_AT.x, z0 = NEWS_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); NEWS.ry = ry;
+  const g = new THREE.Group(); g.position.set(x0, g0, z0); g.rotation.y = ry; scene.add(g);
+  const green = new THREE.MeshStandardMaterial({ color: 0x1f3a2a, roughness: 0.6, metalness: 0.2 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(3.0, 2.6, 2.0), green); body.position.y = 1.3; g.add(body);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.12, 2.6), green); roof.position.set(0, 2.66, 0.25); g.add(roof);
+  const win = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.8), new THREE.MeshStandardMaterial({ color: 0x0c0e11, roughness: 0.1, emissive: 0xffe2b0, emissiveIntensity: 0.3 })); win.position.set(0, 1.55, 1.01); g.add(win); NEWS.win = win;
+  const sg = signTex([{ t: 'NEWS · LOTTO · GUM', s: 0.34 }], 1024, 140, '#1f3a2a', '#efe8da'); const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 0.4), new THREE.MeshBasicMaterial({ map: sg })); sign.position.set(0, 2.4, 1.01); g.add(sign);
+  for (let i = 0; i < 10; i++) { const m = memeMesh(MEME_NS[(i * 41 + 3) % MEME_NS.length], 0.36); if (m) { const side = i < 5 ? -1 : 1, k = i % 5; m.position.set(side * (0.95 + (k % 2) * 0.32), 0.6 + Math.floor(k / 2) * 0.42, 1.02); g.add(m); } }
+  const rack = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.5, 0.35), new THREE.MeshStandardMaterial({ color: 0xe9e4da, roughness: 0.8 })); rack.position.set(0, 0.55, 1.2); g.add(rack);
+  const man = person(0x2a2d33, 0x2a2f45, SKIN[1], 'cabbie'); man.g.position.set(x0 + Math.cos(ry) * 1.9 + Math.sin(ry) * 0.5, g0 - 0.35, z0 - Math.sin(ry) * 1.9 + Math.cos(ry) * 0.5); man.g.rotation.y = ry; man.g.scale.setScalar(0.92);
+  boxWalls(x0, z0, 3.0, 2.0, ry, -5, g0 + 2.7);
+  interact(x0 + Math.sin(ry) * 1.9, z0 + Math.cos(ry) * 1.9, 1.7, 'E · BUY A SCRATCH-OFF (1 TDH)', () => newsScratch());
+  if (window.__MAP) MAP.places.push(['NEWSSTAND', x0, z0, x0 + Math.sin(ry) * 2.6, z0 + Math.cos(ry) * 2.6]);
+})();
+const newsSecret = secret('jackpot', () => { toast('THREE EYES IN A ROW. JACKPOT: 420 TDH. THE MAN AT THE NEWSSTAND HAS NEVER SEEN THIS AND HE HAS SEEN EVERYTHING.', 'blue'); });
+function newsScratch() { if (NEWS.busy) return; NEWS.busy = true; state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } NEWS.n++; toast('YOU SCRATCH WITH A QUARTER...');
+  setTimeout(() => { NEWS.busy = false; const r = Math.random(), big = r < 0.02 || NEWS.n === 50; if (big) { state.tdh += 420; newsSecret(); } else if (r < 0.22) { state.tdh += 2; toast('TWO EYES. YOU WIN 2 TDH. YOU ARE UP ONE. DO NOT DO THE MATH ON THE OTHERS.'); } else if (r < 0.3) { state.tdh += 5; toast('FIVE TDH. THE MAN SAYS NICE, LIKE HE MEANS IT.'); } else toast(['NOTHING. THE MAN SAYS NEXT ONE.', 'NOTHING. ONE EYE, ONE SLICE, ONE PIGEON.', 'NOTHING. SO CLOSE. IT IS ALWAYS SO CLOSE.'][NEWS.n % 3]); try { hud(); } catch (e) { } }, 1300); }
+window.__FRAMES.push(dt => { try { NEWS.win.material.emissiveIntensity = 0.3 + Math.min(1, (L.lamps || 0) * 1.4) * 0.6 + Math.sin(LIFE.t * 7) * 0.05; } catch (e) { } });
+
+/* ================================================================
+   v96 THE LIVING STATUE (2026-11-22)
+   On the west grass at (-88, 0), a street performer painted head to toe in silver stands on a silver box holding a
+   silver torch, perfectly still, a hat at their feet. Stand and look: nothing. Look away and back: they have moved,
+   a little. E drops a TDH in the hat and they come alive for a moment, a slow robot bow and a wink.
+   ================================================================ */
+const LSTAT = { pose: 0, t: 0, bow: 0, looked: false };
+window.__LIVE = LSTAT;
+const LSTAT_AT = { x: -88, z: 0 };
+(function livingStatue() {
+  const x0 = LSTAT_AT.x, z0 = LSTAT_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); LSTAT.ry = ry;
+  const silver = new THREE.MeshStandardMaterial({ color: 0xc9ccd0, roughness: 0.28, metalness: 0.95 });
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.8), silver); box.position.set(x0, g0 + 0.3, z0); scene.add(box); post(x0, z0, 0.55, -5, 2.6);
+  const p = person(0xc9ccd0, 0xc9ccd0, 0xc9ccd0, 'editor'); p.g.position.set(x0, g0 + 0.6 - 0.35, z0); p.g.rotation.y = ry; LSTAT.p = p;
+  p.g.traverse(o => { if (o.isMesh) o.material = silver; }); LSTAT.silver = silver;
+  // repaint the body silver once the cast arrives
+  const paint = () => p.g.traverse(o => { if (o.isMesh && o.material !== silver) o.material = silver; }); if (CROWD.loaded) paint(); else CROWD.wait.push(paint); LSTAT.paint = paint;
+  const torch = new THREE.Group(); const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.5, 8), silver); torch.add(stick); const fl = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 8), silver); fl.position.y = 0.32; torch.add(fl); torch.position.set(0.32, 2.35, 0.05); p.g.add(torch);
+  const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.1, 16, 1, true), new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.9, side: THREE.DoubleSide })); hat.position.set(x0 + Math.sin(ry) * 0.75, g0 + 0.05, z0 + Math.cos(ry) * 0.75); scene.add(hat);
+  interact(x0 + Math.sin(ry) * 1.5, z0 + Math.cos(ry) * 1.5, 1.8, 'E · TIP THE STATUE (1 TDH)', () => { state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } LSTAT.bow = 3; liveSecret(); toast('THE STATUE BOWS, SLOWLY, LIKE A MACHINE THAT LIKES YOU. THEN A WINK. THEN STONE AGAIN.'); });
+  if (window.__MAP) MAP.places.push(['LIVING STATUE', x0, z0, x0 + Math.sin(ry) * 2.5, z0 + Math.cos(ry) * 2.5]);
+})();
+const liveSecret = secret('livingstatue', () => { }, []);
+const _lv = new THREE.Vector3(), _lw = new THREE.Vector3();
+function liveFrame(dt) {
+  const d = Math.hypot(P.x - LSTAT_AT.x, P.z - LSTAT_AT.z); if (d > 60) return; const g = LSTAT.p.g;
+  camera.getWorldDirection(_lw); _lv.set(LSTAT_AT.x - camera.position.x, g.position.y + 1.2 - camera.position.y, LSTAT_AT.z - camera.position.z).normalize(); const looking = _lv.dot(_lw) > 0.9;
+  if (!looking && LSTAT.looked && d < 25) { LSTAT.pose = (LSTAT.pose + 1) % 4; }   // you looked away: they shift
+  LSTAT.looked = looking;
+  const poses = [[0, 0, 0], [0.35, 0, 0.05], [-0.3, 0, -0.04], [0.1, 0.12, 0]]; const [yy, xx, zz] = poses[LSTAT.pose];
+  if (LSTAT.bow > 0) { LSTAT.bow -= dt; const b = Math.sin((3 - LSTAT.bow) / 3 * PI); g.rotation.set(b * 0.5, LSTAT.ry, 0, 'YXZ'); } else g.rotation.set(xx, LSTAT.ry + yy, zz, 'YXZ');
+}
+window.__FRAMES.push(dt => { try { liveFrame(dt); } catch (e) { if (!LSTAT.err) { LSTAT.err = e; console.warn('v96 statue', e); } } });
+
+/* ================================================================
+   v97 THE CROSSWALK (2026-11-22)
+   Where the south path crosses the ring road to the beach: zebra stripes, and a pedestrian signal on a pole at
+   each side. The white walking figure, then the flashing hand with a countdown from fifteen, then the solid red
+   hand, on a fifty second cycle, with the tick tick of the accessible push button. The delivery riders and the
+   bus stop for the walk sign. Cross on the walk and you have done the one law abiding thing in this city.
+   ================================================================ */
+const XWALK = { t: 0 };
+window.__XWALK = XWALK;
+(function crosswalk() {
+  const zc = ROAD_R, g0 = ground(0, zc); XWALK.z = zc;
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.clearRect) { c.clearRect(0, 0, 512, 256); c.fillStyle = 'rgba(240,238,230,.92)'; for (let i = 0; i < 9; i++) c.fillRect(i * 58, 0, 34, 256); }
+  const st = new THREE.Mesh(new THREE.PlaneGeometry(9, 4), new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, roughness: 0.6, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3 }));
+  st.rotation.x = -PI / 2; st.rotation.z = PI / 2; st.position.set(0, g0 + 0.05, zc); scene.add(st);
+  // the signal faces: canvas with the walker, the hand and the count
+  XWALK.faces = [-1, 1].map(s => { const cv2 = document.createElement('canvas'); cv2.width = 128; cv2.height = 192; const t = new THREE.CanvasTexture(cv2); t.encoding = THREE.sRGBEncoding;
+    const x = 2.6, z = zc + s * 4.6, gy = ground(x, z), pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 3.0, 8), new THREE.MeshStandardMaterial({ color: 0x1b1d20, roughness: 0.5, metalness: 0.5 })); pole.position.set(x, gy + 1.5, z); scene.add(pole); post(x, z, 0.12, -5, 3.2);
+    const box = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.62, 0.22), new THREE.MeshStandardMaterial({ color: 0xc9a227, roughness: 0.5 })); box.position.set(x, gy + 2.7, z - s * 0.12); scene.add(box);
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 0.54), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); face.position.set(x, gy + 2.7, z - s * 0.235); face.rotation.y = s > 0 ? PI : 0; scene.add(face);
+    const btn = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.2, 0.06), new THREE.MeshStandardMaterial({ color: 0x2b2b2b })); btn.position.set(x, gy + 1.1, z - s * 0.08); scene.add(btn);
+    return { cv: cv2, c: cv2.getContext('2d'), t, last: '' }; });
+  XWALK.side = 0;
+})();
+function xwState(t) { const k = t % 50; return k < 18 ? ['walk', 0] : k < 33 ? ['flash', Math.ceil(33 - k)] : ['stop', 0]; }
+const xwSecret = secret('crosswalk', () => { toast('YOU CROSSED ON THE WALK SIGNAL. NOBODY SAW. IT STILL COUNTS.', 'blue'); });
+function xwDraw(F, st, n) { const c = F.c; if (!c || !c.fillRect || !c.save) return; const key = st + n; if (key === F.last) return; F.last = key; c.fillStyle = '#050505'; c.fillRect(0, 0, 128, 192);
+  if (st === 'walk') { c.fillStyle = '#f2f2ea'; c.beginPath && (c.beginPath(), c.arc(64, 40, 12, 0, PI * 2), c.fill()); c.fillRect(56, 54, 16, 50); c.save(); c.translate(60, 104); c.rotate(0.35); c.fillRect(-5, 0, 10, 44); c.restore(); c.save(); c.translate(68, 104); c.rotate(-0.35); c.fillRect(-5, 0, 10, 44); c.restore(); c.save(); c.translate(58, 60); c.rotate(0.5); c.fillRect(-4, 0, 8, 36); c.restore(); c.save(); c.translate(70, 60); c.rotate(-0.5); c.fillRect(-4, 0, 8, 36); c.restore(); }
+  else if (st === 'stop' || (st === 'flash' && Math.floor(XWALK.t * 2) % 2 === 0)) { c.fillStyle = '#ff5a1a'; c.fillRect(40, 50, 48, 56); for (let i = 0; i < 4; i++) c.fillRect(40 + i * 12, 22, 9, 30); c.fillRect(24, 70, 18, 10); }
+  if (st === 'flash' && c.fillText) { c.fillStyle = '#ff5a1a'; c.font = '700 44px "JetBrains Mono", monospace'; c.textAlign = 'center'; c.fillText(String(n), 64, 176); } F.t.needsUpdate = true; }
+function xwFrame(dt) {
+  XWALK.t += dt; const [st, n] = xwState(XWALK.t); window.__XWALK_PED = st !== 'stop';
+  if (Math.hypot(P.x, P.z - XWALK.z) > 80) return; XWALK.faces.forEach(F => xwDraw(F, st, n + (st === 'flash' && Math.floor(XWALK.t * 2) % 2 ? '' : ' ')));
+  if (Math.hypot(P.x, P.z - XWALK.z) < 30 && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0) { const per = st === 'walk' ? 0.25 : 1; XWALK.tick = (XWALK.tick || 0) - dt; if (XWALK.tick <= 0) { XWALK.tick = per; try { beep(st === 'walk' ? 1700 : 880, 0.02, 'square', 0.02); } catch (e) { } } }
+  // crossing: from one side of the road to the other while it says walk
+  const inX = Math.abs(P.x) < 4.5; const side = P.z < XWALK.z - 4 ? -1 : P.z > XWALK.z + 4 ? 1 : 0;
+  if (inX && side !== 0) { if (XWALK.side && side !== XWALK.side && XWALK.ok) xwSecret(); XWALK.side = side; XWALK.ok = true; } else if (inX && side === 0) { if (st === 'stop') XWALK.ok = false; } else { XWALK.side = 0; }
+}
+window.__FRAMES.push(dt => { try { xwFrame(dt); } catch (e) { if (!XWALK.err) { XWALK.err = e; console.warn('v97 crosswalk', e); } } });
+
+/* ================================================================
+   v98 THE SANDCASTLE (2026-11-22)
+   A bucket and a spade on GM BEACH at (44, 122). E builds: a mound, then a keep, then four towers, a wall, a moat,
+   and an Open Eye Flower flag on the top, one stage per press. Leave it and the tide takes it overnight; it is
+   gone by morning and the bucket is waiting again. Finish all six stages and the island counts it.
+   ================================================================ */
+const SAND = { stage: 0, parts: [] };
+window.__SAND = SAND;
+const SAND_AT = { x: 44, z: 122 };
+(function sandcastle() {
+  const x0 = SAND_AT.x, z0 = SAND_AT.z, g0 = ground(x0, z0); SAND.g0 = g0;
+  const sm = new THREE.MeshStandardMaterial({ map: tex('assets/sand_c.webp', [1, 1]), color: 0xd9c49a, roughness: 1 }), wet = new THREE.MeshStandardMaterial({ color: 0x8a7a5a, roughness: 0.4 });
+  const add = (mesh, stage) => { mesh.visible = false; mesh.castShadow = true; scene.add(mesh); SAND.parts.push({ mesh, stage }); return mesh; };
+  const mound = new THREE.Mesh(new THREE.SphereGeometry(1.0, 20, 10, 0, PI * 2, 0, PI / 2), sm); mound.scale.y = 0.4; mound.position.set(x0, g0, z0); add(mound, 1);
+  const keep = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.6, 16), sm); keep.position.set(x0, g0 + 0.6, z0); add(keep, 2);
+  const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.44, 0.44, 0.12, 16, 1, true), sm); crown.position.set(x0, g0 + 0.96, z0); add(crown, 2);
+  [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([sx, sz]) => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.22, 0.55, 12), sm); t.position.set(x0 + sx * 0.85, g0 + 0.27, z0 + sz * 0.85); add(t, 3); const c = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.25, 12), sm); c.position.set(x0 + sx * 0.85, g0 + 0.67, z0 + sz * 0.85); add(c, 3); });
+  [[0, 0.85, 1.7, 0.12], [0, -0.85, 1.7, 0.12], [0.85, 0, 0.12, 1.7], [-0.85, 0, 0.12, 1.7]].forEach(([dx, dz, w, d]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.3, d), sm); m.position.set(x0 + dx, g0 + 0.15, z0 + dz); add(m, 4); });
+  const moat = new THREE.Mesh(new THREE.RingGeometry(1.35, 1.7, 32), new THREE.MeshStandardMaterial({ color: 0x3a5a6a, roughness: 0.05, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -2 })); moat.rotation.x = -PI / 2; moat.position.set(x0, g0 + 0.03, z0); add(moat, 5);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.7, 2.0, 32), new THREE.MeshStandardMaterial({ color: 0xa8946a, roughness: 1, polygonOffset: true, polygonOffsetFactor: -1 })); ring.rotation.x = -PI / 2; ring.position.set(x0, g0 + 0.025, z0); add(ring, 5);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.5, 4), new THREE.MeshStandardMaterial({ color: 0xc9b07a })); pole.position.set(x0, g0 + 1.27, z0); add(pole, 6);
+  const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.22), new THREE.MeshBasicMaterial({ map: tex('assets/iv_flower.webp'), transparent: true, alphaTest: 0.4, side: THREE.DoubleSide, toneMapped: false })); fl.position.set(x0 + 0.12, g0 + 1.42, z0); add(fl, 6); SAND.flag = fl;
+  const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.12, 0.22, 14, 1, true), new THREE.MeshStandardMaterial({ color: 0xff3fa4, roughness: 0.6, side: THREE.DoubleSide })); bucket.position.set(x0 + 2.3, g0 + 0.11, z0 + 0.5); scene.add(bucket);
+  const spade = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.4, 0.02), new THREE.MeshStandardMaterial({ color: 0x2962FF })); spade.position.set(x0 + 2.5, g0 + 0.2, z0 + 0.2); spade.rotation.z = 0.5; scene.add(spade);
+  interact(x0 + 2.2, z0 + 0.8, 2.6, 'E · BUILD THE SANDCASTLE', () => sandBuild());
+  try { const s = JSON.parse(localStorage.getItem('meme-island-sand') || 'null'); if (s && s.day === Math.floor(Date.now() / 86400000)) SAND.stage = s.stage; } catch (e) { }
+  SAND.parts.forEach(p => p.mesh.visible = p.stage <= SAND.stage);
+  if (window.__MAP) MAP.places.push(['SANDCASTLE', x0, z0, x0 + 2.5, z0 + 1]);
+})();
+const sandSecret = secret('sandcastle', () => { toast('THE SANDCASTLE IS FINISHED. THE FLOWER FLIES FROM THE KEEP. THE TIDE IS ALREADY THINKING ABOUT IT.', 'blue'); });
+const SAND_SAY = ['', 'A MOUND. EVERY EMPIRE STARTS AS A MOUND.', 'THE KEEP. PACK IT WET.', 'FOUR TOWERS. A CHILD NEARBY IS NOW INVOLVED.', 'THE WALL. NOBODY GETS IN WITHOUT TDH.', 'THE MOAT. IT FILLS ITSELF, WHICH IS THE GOOD PART.', 'THE FLAG.'];
+function sandBuild() { if (SAND.stage >= 6) { toast('IT IS FINISHED. LEAVE IT FOR THE TIDE.'); return; } SAND.stage++; SAND.parts.forEach(p => p.mesh.visible = p.stage <= SAND.stage); toast(SAND_SAY[SAND.stage]); if (SAND.stage === 6) sandSecret();
+  try { localStorage.setItem('meme-island-sand', JSON.stringify({ stage: SAND.stage, day: Math.floor(Date.now() / 86400000) })); } catch (e) { } }
+window.__FRAMES.push(dt => { try { const h = SKY.t ? SKY.t.h : 12; if (SAND.stage > 0 && h >= 3 && h < 5) { SAND.stage = 0; SAND.parts.forEach(p => p.mesh.visible = false); } if (SAND.flag.visible) SAND.flag.rotation.y = Math.sin(LIFE.t * 3) * 0.3; } catch (e) { } });
+
+/* ================================================================
+   v99 GONE FISHING (2026-11-22)
+   Two old men fish off the end of the pier with long rods, a bucket and a radio, lines out, floats bobbing. Now
+   and then one of them reels something in. E at the end of the pier casts your own line: wait for the float to
+   dip, and see what the harbour gives you (a striper, a shopping trolley wheel, a boot, a bottle with a JPEG in it,
+   and once in a while a Meme card, soaking wet). The first catch counts.
+   ================================================================ */
+const FISH = { m: [], wait: 0, cast: false };
+window.__FISH = FISH;
+(function fishing() {
+  const deck = 0.55, rodM = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.4, metalness: 0.4 }), lineM = new THREE.LineBasicMaterial({ color: 0xdddddd, transparent: true, opacity: 0.6 });
+  [[-2.2, 180.5, 0x3b4a5c], [2.3, 179.5, 0x7a1f2a]].forEach(([x, z, sh], i) => { const p = person(sh, 0x2a2f45, SKIN[(i * 3 + 2) % SKIN.length], i ? 'wiseguy' : 'cabbie'); p.g.position.set(x, deck - 0.35, z); p.g.rotation.y = x < 0 ? -0.5 : 0.5;
+    const tip = new THREE.Vector3(x + (x < 0 ? -1.3 : 1.3), deck + 3.0, z + 2.6), base = new THREE.Vector3(x + (x < 0 ? -0.2 : 0.2), deck + 1.1, z + 0.35); const d = new THREE.Vector3().subVectors(tip, base), L = d.length();
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.02, L, 6), rodM); rod.position.copy(base).addScaledVector(d, 0.5); rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); scene.add(rod);
+    const floatM = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff3020 })); const fp = new THREE.Vector3(tip.x + (x < 0 ? -1.5 : 1.5), 0.1, tip.z + 4); floatM.position.copy(fp); scene.add(floatM);
+    const lg = new THREE.BufferGeometry().setFromPoints([tip, fp]); const line = new THREE.Line(lg, lineM); scene.add(line);
+    FISH.m.push({ p, floatM, fp, tip, line, next: 20 + Math.random() * 40, reel: 0 }); });
+  const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.3, 12, 1, true), new THREE.MeshStandardMaterial({ color: 0xe9e4da, roughness: 0.7, side: THREE.DoubleSide })); bucket.position.set(-1.4, deck + 0.15, 179.6); scene.add(bucket);
+  // your line, hidden until you cast
+  const yl = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), lineM); yl.visible = false; scene.add(yl); FISH.yl = yl;
+  const yf = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff3020 })); yf.visible = false; scene.add(yf); FISH.yf = yf;
+  interact(0, 180.5, 1.8, 'E · CAST A LINE', () => fishCast());
+  if (window.__MAP) MAP.places.push(['GONE FISHING', 0, 181, null, null]);
+})();
+const fishSecret = secret('fishing', () => { }, []);
+const FISH_CATCH = ['A STRIPED BASS, ABOUT THIS BIG. YOU LET IT GO. IT LOOKS RELIEVED.', 'ONE WHEEL OFF A SHOPPING TROLLEY. THE REST IS DOWN THERE SOMEWHERE.', 'A BOOT. SIZE ELEVEN. LEFT.', 'A BOTTLE WITH A JPEG IN IT. THE JPEG IS A SCREENSHOT. PROVENANCE: UNCLEAR.', 'A BLUE CRAB. IT IS VERY ANGRY. YOU PUT IT BACK FAST.', 'SEAWEED, AND A METROCARD WITH TWO DOLLARS ON IT.', 'NOTHING. THE BAIT IS GONE. THE HARBOUR SAYS THANKS.'];
+function fishCast() { if (FISH.cast) { toast('YOUR LINE IS ALREADY OUT. WATCH THE FLOAT.'); return; } FISH.cast = true; FISH.wait = 4 + Math.random() * 7; FISH.bite = 0; const tip = new THREE.Vector3(P.x, 2.6, P.z + 1.2), fp = new THREE.Vector3(P.x + (Math.random() - 0.5) * 3, 0.1, P.z + 7); FISH.ytip = tip; FISH.yfp = fp;
+  FISH.yl.geometry.setFromPoints([tip, fp]); FISH.yl.visible = FISH.yf.visible = true; FISH.yf.position.copy(fp); toast('YOU CAST. THE FLOAT LANDS. NOW YOU WAIT, LIKE EVERYONE ELSE ON THIS PIER.'); }
+function fishFrame(dt) {
+  if (P.z < 120) return;
+  FISH.m.forEach(f => { f.next -= dt; const bob = Math.sin(LIFE.t * 1.7 + f.fp.x) * 0.04; let y = 0.1 + bob; if (f.next < 2 && f.next > 0) y -= Math.abs(Math.sin(LIFE.t * 14)) * 0.08; if (f.next <= 0) { f.next = 30 + Math.random() * 60; f.reel = 1.4; if (Math.hypot(P.x - f.fp.x, P.z - f.fp.z) < 25) toast('ONE OF THE OLD MEN REELS SOMETHING IN, LOOKS AT IT, THROWS IT BACK.'); }
+    if (f.reel > 0) { f.reel -= dt; y += Math.sin(f.reel * 8) * 0.06; } f.floatM.position.y = y; const a = f.line.geometry.attributes.position; a.setY(1, y); a.needsUpdate = true; });
+  if (FISH.cast) { FISH.wait -= dt; let y = 0.1 + Math.sin(LIFE.t * 1.9) * 0.04; if (FISH.wait < 1.5) y -= Math.abs(Math.sin(LIFE.t * 16)) * 0.1; FISH.yf.position.y = y; const a = FISH.yl.geometry.attributes.position; a.setY(1, y); a.needsUpdate = true;
+    if (FISH.wait <= 0) { FISH.cast = false; FISH.yl.visible = FISH.yf.visible = false; fishSecret(); if (Math.random() < 0.12) { const n = MEME_NS[Math.floor(Math.random() * MEME_NS.length)], I = byN[n]; toast('A MEME CARD, SOAKING WET: ' + (I && I.t ? I.t.toUpperCase() : 'UNTITLED') + '. YOU HANG IT UP TO DRY.', 'blue'); } else toast(FISH_CATCH[Math.floor(Math.random() * FISH_CATCH.length)]); }
+    if (Math.hypot(P.x - FISH.ytip.x, P.z - (FISH.ytip.z - 1.2)) > 4) { FISH.cast = false; FISH.yl.visible = FISH.yf.visible = false; toast('YOU WALKED OFF AND LEFT YOUR LINE. SOMEONE ELSE WILL CATCH YOUR FISH.'); } }
+}
+window.__FRAMES.push(dt => { try { fishFrame(dt); } catch (e) { if (!FISH.err) { FISH.err = e; console.warn('v99 fishing', e); } } });
+
+/* ================================================================
+   v100 THE THRESHOLD (2026-11-22), apply-mlow-impermanent-vision, Melt
+   The hundredth upgrade is a door. A tall freestanding doorway across the south path at (0, 52): two thick posts
+   and a lintel in navy paint with liquid contour lines running round every face (cyan, every fifth hot pink),
+   bone white drips sliding off the lintel, and in the opening a slow shimmer like heat over a road. An Open Eye
+   Flower sits on top, watching who comes through. Walk through it and the island lets go for twenty seconds (the
+   v52 MELT) with a low chord. At night the paint and the shimmer glow.
+   ================================================================ */
+const THR = { k: 0, last: 0, side: 0 };
+window.__THR = THR;
+const THR_AT = { x: 0, z: 52 };
+(function threshold() {
+  const x0 = THR_AT.x, z0 = THR_AT.z, g0 = ground(x0, z0), W = 3.2, H = 5.2, T = 0.7; THR.g0 = g0;
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 1024; const c = cv.getContext('2d');
+  if (c && c.createLinearGradient && c.beginPath) { const g = c.createLinearGradient(0, 0, 0, 1024); g.addColorStop(0, '#1d2f66'); g.addColorStop(1, '#070b1e'); c.fillStyle = g; c.fillRect(0, 0, 512, 1024);
+    for (let i = 0; i < 60; i++) { const y = i * 18 + 8; c.beginPath(); for (let x = 0; x <= 512; x += 8) { const w = Math.sin(x * 0.02 + i * 0.6) * 9 + Math.sin(x * 0.051 - i * 0.4) * 4; x ? c.lineTo(x, y + w) : c.moveTo(x, y + w); } c.lineWidth = i % 5 === 4 ? 3.2 : 1.6; c.strokeStyle = i % 5 === 4 ? 'rgba(255,63,164,.9)' : 'rgba(8,222,255,.8)'; c.stroke(); }
+    for (let i = 0; i < 9; i++) { const x = 20 + Math.random() * 470, L = 80 + Math.random() * 380, w = 6 + Math.random() * 8; c.fillStyle = 'rgba(239,232,218,.9)'; c.fillRect(x - w / 2, 0, w, L); c.beginPath(); c.arc(x, L, w * 0.9, 0, PI * 2); c.fill(); } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.35, metalness: 0.1, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.1 }); THR.m = m;
+  [-1, 1].forEach(s => { const p = new THREE.Mesh(new THREE.BoxGeometry(T, H, T), m); p.position.set(x0 + s * (W / 2 + T / 2), g0 + H / 2, z0); p.castShadow = true; scene.add(p); post(x0 + s * (W / 2 + T / 2), z0, T * 0.6, -5, H); });
+  const lin = new THREE.Mesh(new THREE.BoxGeometry(W + 2 * T + 0.3, T, T + 0.1), m); lin.position.set(x0, g0 + H + T / 2, z0); lin.castShadow = true; scene.add(lin);
+  // the shimmer in the opening
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 }, uK: { value: 0.3 } }, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform float uT, uK; varying vec2 vUv; void main(){ float b = sin(vUv.y * 40.0 - uT * 2.0 + sin(vUv.x * 6.0 + uT) * 2.0); float l = smoothstep(0.92, 1.0, b); float e = smoothstep(0.0, 0.08, vUv.x) * smoothstep(1.0, 0.92, vUv.x) * smoothstep(0.0, 0.05, vUv.y);' +
+      ' vec3 c = mix(vec3(0.03, 0.87, 1.0), vec3(1.0, 0.25, 0.64), step(0.8, fract(vUv.y * 8.0 + uT * 0.1))); gl_FragColor = vec4(c, (0.04 + l * 0.35) * uK * e); }' }));
+  sh.position.set(x0, g0 + H / 2, z0); scene.add(sh); THR.sh = sh;
+  const ft = tex('assets/iv_flower.webp'); const fl = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), new THREE.MeshStandardMaterial({ map: ft, transparent: true, alphaTest: 0.4, emissive: 0xffffff, emissiveMap: ft, emissiveIntensity: 0.2, side: THREE.DoubleSide })); fl.position.set(x0, g0 + H + T + 0.7, z0); scene.add(fl); THR.fl = fl;
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.28), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'THE THRESHOLD', s: 0.34 }, { t: 'NUMBER ONE HUNDRED', s: 0.13 }], 1024, 200, '#efe8da', '#0D0D0D'), toneMapped: false, side: THREE.DoubleSide })); pl.position.set(x0 + W / 2 + T + 0.9, g0 + 1.2, z0 + 0.4); scene.add(pl);
+  const pp = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.2, 6), new THREE.MeshStandardMaterial({ color: 0x15161a })); pp.position.set(x0 + W / 2 + T + 0.9, g0 + 0.6, z0 + 0.4); scene.add(pp);
+  if (window.__MAP) MAP.places.push(['THE THRESHOLD', x0, z0, x0, z0 + 4]);
+})();
+const thrSecret = secret('threshold', () => { toast('YOU WALKED THROUGH THE HUNDREDTH DOOR. THE ISLAND LETS GO OF ITSELF FOR A MOMENT. IT WILL PULL ITSELF TOGETHER. PROBABLY.', 'blue'); });
+function thrChord() { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; try { const t0 = AC.currentTime, g = AC.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.06, t0 + 1.2); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 9); g.connect(AC.destination);
+  [55, 82.4, 110, 164.8, 207.7].forEach(f => { const o = AC.createOscillator(); o.type = 'sine'; o.frequency.value = f; o.connect(g); o.start(t0); o.stop(t0 + 9.2); }); } catch (e) { } }
+function thrFrame(dt) {
+  const d = Math.hypot(P.x - THR_AT.x, P.z - THR_AT.z); if (d > 120) return; const night = Math.min(1, (L.lamps || 0) * 1.4);
+  THR.sh.material.uniforms.uT.value = LIFE.t; THR.sh.material.uniforms.uK.value = 0.35 + 0.65 * night; THR.m.emissiveIntensity = 0.08 + night * 0.55; THR.fl.lookAt(camera.position.x, THR.fl.position.y, camera.position.z); THR.fl.material.emissiveIntensity = 0.15 + night * 0.6;
+  // passing through: crossing z0 inside the opening
+  const side = P.z < THR_AT.z ? -1 : 1, inside = Math.abs(P.x - THR_AT.x) < 1.6 && P.y < THR.g0 + 4;
+  if (THR.side && side !== THR.side && inside && LIFE.t - THR.last > 25) { THR.last = LIFE.t; thrSecret(); thrChord(); try { window.__MELT && __MELT.go(20, true); } catch (e) { } }
+  THR.side = side;
+}
+window.__FRAMES.push(dt => { try { thrFrame(dt); } catch (e) { if (!THR.err) { THR.err = e; console.warn('v100 threshold', e); } } });
+
+/* ================================================================
+   v101 SUNRISE YOGA (2026-11-22)
+   On GM BEACH at (-52, 120), from first light until about nine, a class of six on mats facing the water with the
+   teacher in front, moving together through a slow sequence: mountain, raised arms, forward fold, warrior, tree,
+   and back. E joins: you get a mat and the camera settles; stay for a full round and the island counts it.
+   ================================================================ */
+const YOGA = { p: [], t: 0 };
+window.__YOGA = YOGA;
+const YOGA_AT = { x: -52, z: 120 };
+(function yoga() {
+  const x0 = YOGA_AT.x, z0 = YOGA_AT.z, g0 = ground(x0, z0); YOGA.g0 = g0; const cols = [0x2962FF, 0xff3fa4, 0x08deff, 0x6a4cff, 0xe9c46a, 0x2f4a33, 0xefe8da];
+  const spots = [[0, 3.9, 'T'], [-2.4, 0], [0, 0], [2.4, 0], [-1.2, 1.8], [1.2, 1.8], [3.6, 1.8]];
+  spots.forEach(([dx, dz, tch], i) => { const x = x0 + dx, z = z0 + dz; const mat = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 1.8), new THREE.MeshStandardMaterial({ color: cols[i], roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -2 })); mat.rotation.x = -PI / 2; mat.position.set(x, ground(x, z) + 0.03, z); scene.add(mat);
+    if (i === 6) { YOGA.you = [x, z]; return; } const p = person([0xefe8da, 0x15161a, 0x7a1f2a, 0x3b4a5c, 0xe2581c, 0x2f4a33][i], 0x15161a, SKIN[(i * 2) % SKIN.length], ['workgirl', 'actress', 'annieh', 'editor', 'writer', 'cabbie'][i]);
+    p.g.position.set(x, ground(x, z) - 0.35, z); p.g.rotation.y = tch ? PI : 0; YOGA.p.push({ P: p, x, z, ph: i * 0.08, teacher: !!tch }); });
+  interact(YOGA.you[0], YOGA.you[1] + 1.4, 1.8, 'E · JOIN THE CLASS', () => yogaJoin());
+  if (window.__MAP) MAP.places.push(['SUNRISE YOGA', x0, z0, x0 + 2, z0 + 3.5]);
+})();
+const yogaSecret = secret('yoga', () => { toast('ONE FULL ROUND. THE TEACHER SAYS NAMASTE. THE GULLS SAY SOMETHING ELSE.', 'blue'); });
+function yogaJoin() { if (!YOGA.on) { toast('THE CLASS IS AT SUNRISE. COME BACK AT DAWN. OR TYPE YOGA AND PRETEND.'); return; } teleport(YOGA.you[0], YOGA.you[1], PI, YOGA.g0 + 1); YOGA.joined = 0.001; toast('YOU UNROLL A MAT. BREATHE IN. NOBODY IS LOOKING. EVERYONE IS LOOKING.'); }
+EGGS.yoga = () => { YOGA.force = LIFE.t + 240; toast('CLASS IS IN SESSION. GM BEACH.'); }; EGGS.yoga.__s = true;
+function yogaFrame(dt) {
+  const h = SKY.t ? SKY.t.hours : 12, el = SKY.el || 0; YOGA.on = (h >= 5 && h < 9 && el > -6) || (YOGA.force > LIFE.t);
+  YOGA.p.forEach(q => q.P.g.visible = YOGA.on); if (!YOGA.on || Math.hypot(P.x - YOGA_AT.x, P.z - YOGA_AT.z) > 90) return;
+  YOGA.t += dt; const seq = 30, k = (YOGA.t % seq) / seq;
+  YOGA.p.forEach(q => { const u = (k + q.ph * 0.02) % 1; let rx = 0, y = 0, rz = 0, s = 1;   // pose from the sequence position
+    if (u < 0.2) { } else if (u < 0.35) { y = 0.05; } else if (u < 0.5) { rx = 1.2; y = 0.9 * (1 - Math.cos(1.2)); } else if (u < 0.7) { rz = 0.15; y = -0.25; s = 0.95; } else if (u < 0.85) { rz = -0.06; y = 0.02; } else { }
+    q.P.g.rotation.set(rx, q.teacher ? PI : 0, rz, 'YXZ'); q.P.g.position.y = ground(q.x, q.z) - 0.35 + y; q.P.g.scale.set(1, s, 1); });
+  if (YOGA.joined) { if (Math.hypot(P.x - YOGA.you[0], P.z - YOGA.you[1]) > 2.5) YOGA.joined = 0; else { YOGA.joined += dt; if (YOGA.joined > seq) yogaSecret(); } }
+}
+window.__FRAMES.push(dt => { try { yogaFrame(dt); } catch (e) { if (!YOGA.err) { YOGA.err = e; console.warn('v101 yoga', e); } } });
+
+/* ================================================================
+   v102 THE BALLOON MAN (2026-11-22)
+   A balloon seller on the west grass at (-86, -24) with a big bunch of eye balloons (evil eye blue, white iris,
+   black pupil) bobbing on strings over his head. E buys one for a TDH: it rides along above your shoulder,
+   tugging in the wind, wherever you go. Press E again anywhere (when nothing else is near) or type LETGO and it
+   floats away up into the sky until it is a dot. The island counts the first one you let go.
+   ================================================================ */
+const BALL = { bunch: [], mine: null, free: [] };
+window.__BALL = BALL;
+const BALL_AT = { x: -86, z: -24 };
+function eyeBalloon() { const g = new THREE.Group(); const m = new THREE.Mesh(new THREE.SphereGeometry(0.32, 18, 14), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.2, metalness: 0.1 })); m.scale.y = 1.15; g.add(m);
+  const w = new THREE.Mesh(new THREE.CircleGeometry(0.16, 18), new THREE.MeshBasicMaterial({ color: 0xffffff })); w.position.z = 0.31; g.add(w); const c = new THREE.Mesh(new THREE.CircleGeometry(0.09, 16), new THREE.MeshBasicMaterial({ color: 0x5ab8ff })); c.position.z = 0.315; g.add(c);
+  const p = new THREE.Mesh(new THREE.CircleGeometry(0.045, 12), new THREE.MeshBasicMaterial({ color: 0x050505 })); p.position.z = 0.32; g.add(p); return g; }
+(function balloonMan() {
+  const x0 = BALL_AT.x, z0 = BALL_AT.z, g0 = ground(x0, z0); BALL.g0 = g0;
+  const man = person(0xe2581c, 0x2a2f45, SKIN[5], 'wiseguy'); man.g.position.set(x0, g0 - 0.35, z0); man.g.rotation.y = Math.atan2(-x0, -z0);
+  const lineM = new THREE.LineBasicMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.7 }); const hand = new THREE.Vector3(x0 + 0.3, g0 + 1.3, z0);
+  for (let i = 0; i < 9; i++) { const b = eyeBalloon(); const a = i / 9 * PI * 2, r = 0.45 + (i % 3) * 0.2; const base = new THREE.Vector3(x0 + 0.3 + Math.cos(a) * r, g0 + 3.0 + (i % 3) * 0.35, z0 + Math.sin(a) * r); b.position.copy(base); scene.add(b);
+    const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([hand, base]), lineM); scene.add(l); BALL.bunch.push({ b, l, base, ph: Math.random() * 6 }); }
+  BALL.hand = hand; post(x0, z0, 0.4, -5, 2);
+  interact(x0 + Math.sin(Math.atan2(-x0, -z0)) * 1.4, z0 + Math.cos(Math.atan2(-x0, -z0)) * 1.4, 1.8, 'E · BUY A BALLOON (1 TDH)', () => ballBuy());
+  const ml = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), lineM); ml.frustumCulled = false; ml.visible = false; scene.add(ml); BALL.ml = ml;
+  if (window.__MAP) MAP.places.push(['BALLOONS', x0, z0, x0 + 1.5, z0 + 0.5]);
+})();
+const balloonSecret = secret('letgo', () => { toast('YOU LET IT GO. IT GETS SMALLER AND SMALLER AND THEN IT IS SOMEONE ELSES SKY.', 'blue'); });
+function ballBuy() { if (BALL.mine) { ballLetGo(); return; } state.tdh = Math.max(0, state.tdh - 1); try { hud(); } catch (e) { } const b = eyeBalloon(); scene.add(b); BALL.mine = { b, x: P.x, y: P.y + 3, z: P.z }; BALL.ml.visible = true; toast('ONE EYE BALLOON. IT FOLLOWS YOU. E AGAIN OR TYPE LETGO TO LET IT GO.'); }
+function ballLetGo() { if (!BALL.mine) return; BALL.free.push({ b: BALL.mine.b, vy: 1.2, vx: 0.6, t: 0 }); BALL.mine = null; BALL.ml.visible = false; balloonSecret(); }
+EGGS.letgo = () => { BALL.mine ? ballLetGo() : toast('YOU ARE NOT HOLDING ANYTHING. THE BALLOON MAN IS ON THE WEST GRASS.'); }; EGGS.letgo.__s = true;
+addEventListener('keydown', e => { if (e.code !== 'KeyE' || e.repeat || !BALL.mine || $('chat').style.display === 'block') return; if (typeof nearest !== 'undefined' && nearest) return; ballLetGo(); });
+function ballFrame(dt) {
+  BALL.bunch.forEach(q => { q.b.position.set(q.base.x + Math.sin(LIFE.t * 0.9 + q.ph) * 0.12, q.base.y + Math.sin(LIFE.t * 1.3 + q.ph) * 0.08, q.base.z + Math.cos(LIFE.t * 0.7 + q.ph) * 0.12); q.b.rotation.y = Math.sin(LIFE.t * 0.4 + q.ph) * 0.4; const a = q.l.geometry.attributes.position; a.setXYZ(1, q.b.position.x, q.b.position.y - 0.36, q.b.position.z); a.needsUpdate = true; });
+  if (BALL.mine) { const m = BALL.mine, tx = P.x + Math.cos(P.yaw) * 0.5, tz = P.z - Math.sin(P.yaw) * 0.5, ty = P.y + 3.2; m.x += (tx - m.x) * Math.min(1, dt * 2.5); m.y += (ty - m.y) * Math.min(1, dt * 2.5); m.z += (tz - m.z) * Math.min(1, dt * 2.5);
+    m.b.position.set(m.x + Math.sin(LIFE.t * 1.1) * 0.1, m.y, m.z + Math.cos(LIFE.t * 0.9) * 0.1); m.b.lookAt(camera.position.x, m.b.position.y, camera.position.z); const a = BALL.ml.geometry.attributes.position; a.setXYZ(0, tx, P.y + 1.2, tz); a.setXYZ(1, m.b.position.x, m.b.position.y - 0.36, m.b.position.z); a.needsUpdate = true; }
+  BALL.free = BALL.free.filter(f => { f.t += dt; f.b.position.y += f.vy * dt; f.b.position.x += f.vx * dt * (1 + Math.sin(f.t * 0.5)); f.vy = Math.min(3, f.vy + dt * 0.1); if (f.t > 120) { scene.remove(f.b); return false; } return true; });
+}
+window.__FRAMES.push(dt => { try { ballFrame(dt); } catch (e) { if (!BALL.err) { BALL.err = e; console.warn('v102 balloons', e); } } });
+
+/* ================================================================
+   v103 THE OUTLINE (2026-11-22), apply-mlow-impermanent-vision, Whisper
+   An empty lot at (-40, -78): a chain link fence, rubble, a weed tree, a FOR LEASE sign, and on the neighbouring
+   wall the ghost of a staircase where a building used to lean. After dark the building comes back as a drawing:
+   a five storey tenement in glowing cyan lines standing where it stood, windows, fire escape, cornice, one window
+   lit pink, and a plaque: THIS WAS 1904 TO 2019. Walk inside the lines at night and the island counts it.
+   ================================================================ */
+const GHOST = { k: 0 };
+window.__GHOST = GHOST;
+const GHOST_AT = { x: -40, z: -78 };
+(function outline() {
+  const x0 = GHOST_AT.x, z0 = GHOST_AT.z, g0 = ground(x0, z0), W = 10, D = 6, H = 15; GHOST.g0 = g0;
+  // the lot
+  const dirt = new THREE.Mesh(new THREE.PlaneGeometry(W + 1, D + 1), new THREE.MeshStandardMaterial({ color: 0x5a4c3e, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 })); dirt.rotation.x = -PI / 2; dirt.position.set(x0, g0 + 0.03, z0); scene.add(dirt);
+  const rub = new THREE.MeshStandardMaterial({ color: 0x7a6a5a, roughness: 1 }); for (let i = 0; i < 26; i++) { const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.15 + Math.random() * 0.35, 0), rub); r.position.set(x0 + (Math.random() - 0.5) * W * 0.9, g0 + 0.05, z0 + (Math.random() - 0.5) * D * 0.9); r.rotation.set(Math.random() * 3, Math.random() * 3, 0); r.scale.y = 0.5; scene.add(r); }
+  const fenceTex = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'); if (c && c.clearRect && c.beginPath) { c.clearRect(0, 0, 64, 64); c.strokeStyle = '#fff'; c.lineWidth = 3; c.beginPath(); c.moveTo(0, 0); c.lineTo(64, 64); c.moveTo(64, 0); c.lineTo(0, 64); c.stroke(); } const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(W * 3, 6); return t; })();
+  const fm = new THREE.MeshStandardMaterial({ color: 0xaab0b6, metalness: 0.7, roughness: 0.4, alphaMap: fenceTex, alphaTest: 0.5, side: THREE.DoubleSide });
+  const fence = new THREE.Mesh(new THREE.PlaneGeometry(W + 1, 2.2), fm); fence.position.set(x0, g0 + 1.1, z0 + D / 2 + 0.5); scene.add(fence);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.6), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'FOR LEASE', s: 0.36 }, { t: 'AS IS', s: 0.18 }], 512, 256, '#e2581c', '#0D0D0D') })); sign.position.set(x0 + 2.5, g0 + 1.5, z0 + D / 2 + 0.52); scene.add(sign);
+  // the gate is open
+  const gate = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 2.2), fm); gate.position.set(x0 - 3.2, g0 + 1.1, z0 + D / 2 + 1.3); gate.rotation.y = 1.1; scene.add(gate);
+  wall(x0 - W / 2 - 0.5, z0 + D / 2 + 0.5, x0 - 4.3, z0 + D / 2 + 0.5, -5, g0 + 2.2); wall(x0 - 2.3, z0 + D / 2 + 0.5, x0 + W / 2 + 0.5, z0 + D / 2 + 0.5, -5, g0 + 2.2);
+  const tree = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.08, 2.4, 6), new THREE.MeshStandardMaterial({ color: 0x4a3a2a })); tree.position.set(x0 + 3, g0 + 1.2, z0 - 1); tree.rotation.z = 0.2; scene.add(tree);
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(0.9, 8, 6), new THREE.MeshStandardMaterial({ color: 0x3e6a32, roughness: 1 })); crown.position.set(x0 + 3.3, g0 + 2.6, z0 - 1); scene.add(crown);
+  // the neighbour wall with the ghost of the stairs
+  const nw = new THREE.Mesh(new THREE.BoxGeometry(0.5, 9, D + 1), new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [2, 3]), color: 0x8a6a5a, roughness: 0.9 })); nw.position.set(x0 - W / 2 - 0.8, g0 + 4.5, z0); scene.add(nw); boxWalls(x0 - W / 2 - 0.8, z0, 0.5, D + 1, 0, -5, g0 + 9);
+  const sc = document.createElement('canvas'); sc.width = 256; sc.height = 512; const s2 = sc.getContext('2d'); if (s2 && s2.beginPath) { s2.strokeStyle = 'rgba(40,30,25,.55)'; s2.lineWidth = 6; s2.beginPath(); let x = 20, y = 500; s2.moveTo(x, y); for (let i = 0; i < 9; i++) { x += i % 2 ? -200 : 200; y -= 55; s2.lineTo(x, y); } s2.stroke(); s2.fillStyle = 'rgba(200,190,170,.25)'; for (let i = 0; i < 4; i++) s2.fillRect(30, 380 - i * 110, 196, 60); }
+  const ghostStairs = new THREE.Mesh(new THREE.PlaneGeometry(D, 9), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true })); ghostStairs.position.set(x0 - W / 2 - 0.54, g0 + 4.5, z0); ghostStairs.rotation.y = PI / 2; scene.add(ghostStairs);
+  // the building, as glowing lines
+  const pts = []; const L = (ax, ay, az, bx, by, bz) => pts.push(new THREE.Vector3(x0 + ax, g0 + ay, z0 + az), new THREE.Vector3(x0 + bx, g0 + by, z0 + bz));
+  const hx = W / 2, hz = D / 2; [[-hx, -hz], [hx, -hz], [hx, hz], [-hx, hz]].forEach(([a, b], i, arr) => { const [c, d] = arr[(i + 1) % 4]; L(a, 0, b, a, H, b); L(a, H, b, c, H, d); L(a, 0, b, c, 0, d); });
+  for (let f = 1; f < 5; f++) L(-hx, f * 3, hz, hx, f * 3, hz);
+  for (let f = 0; f < 5; f++) for (let k = 0; k < 4; k++) { const wx = -hx + 1.3 + k * 2.5, wy = f * 3 + 0.9; L(wx, wy, hz, wx + 1.1, wy, hz); L(wx + 1.1, wy, hz, wx + 1.1, wy + 1.6, hz); L(wx + 1.1, wy + 1.6, hz, wx, wy + 1.6, hz); L(wx, wy + 1.6, hz, wx, wy, hz); }
+  L(-hx - 0.4, H + 0.6, hz + 0.4, hx + 0.4, H + 0.6, hz + 0.4); L(-hx - 0.4, H, hz + 0.4, -hx - 0.4, H + 0.6, hz + 0.4); L(hx + 0.4, H, hz + 0.4, hx + 0.4, H + 0.6, hz + 0.4);
+  for (let f = 1; f < 5; f++) { const y = f * 3 + 0.2; L(0.2, y, hz, 0.2, y, hz + 1.1); L(0.2, y, hz + 1.1, 3.2, y, hz + 1.1); L(3.2, y, hz + 1.1, 3.2, y, hz); if (f < 4) L(0.4, y, hz + 0.8, 3.0, y + 3, hz + 0.8); }
+  const lg = new THREE.BufferGeometry().setFromPoints(pts); const lm = new THREE.LineBasicMaterial({ color: 0x08deff, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const lines = new THREE.LineSegments(lg, lm); lines.visible = false; scene.add(lines); GHOST.lines = lines;
+  const pink = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.6), new THREE.MeshBasicMaterial({ color: 0xff3fa4, transparent: true, opacity: 0, toneMapped: false, depthWrite: false })); pink.position.set(x0 - hx + 1.3 + 2 * 2.5 + 0.55, g0 + 2 * 3 + 0.9 + 0.8, z0 + hz + 0.01); scene.add(pink); GHOST.pink = pink;
+  const plq = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.45), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'THIS WAS', s: 0.22 }, { t: '1904 TO 2019', s: 0.3 }], 512, 160, null, '#08deff'), transparent: true, opacity: 0, toneMapped: false, depthWrite: false })); plq.position.set(x0 + 1.5, g0 + 2.6, z0 + hz + 0.6); scene.add(plq); GHOST.plq = plq;
+  if (window.__MAP) MAP.places.push(['THE OUTLINE', x0, z0, x0 - 3.2, z0 + D / 2 + 2.5]);
+})();
+const ghostSecret = secret('outline', () => { toast('YOU ARE STANDING IN A BUILDING THAT IS NOT THERE. FOR A HUNDRED AND FIFTEEN YEARS SOMEONE COOKED DINNER RIGHT HERE.', 'blue'); });
+function outlineFrame(dt) {
+  const night = Math.min(1, Math.max(0, ((L.lamps || 0) - 0.2) * 1.6)); GHOST.k += (night - GHOST.k) * Math.min(1, dt * 0.5); const on = GHOST.k > 0.02; GHOST.lines.visible = on;
+  const fl = 0.85 + Math.sin(LIFE.t * 1.3) * 0.1 + (Math.random() < 0.01 ? -0.4 : 0); GHOST.lines.material.opacity = GHOST.k * fl; GHOST.pink.material.opacity = GHOST.k * 0.7; GHOST.plq.material.opacity = GHOST.k;
+  if (on && GHOST.k > 0.6 && Math.abs(P.x - GHOST_AT.x) < 5 && Math.abs(P.z - GHOST_AT.z) < 3) ghostSecret();
+}
+window.__FRAMES.push(dt => { try { outlineFrame(dt); } catch (e) { if (!GHOST.err) { GHOST.err = e; console.warn('v103 outline', e); } } });
+
+/* ================================================================
+   v104 THE BOOK, ON PAGE ONE HUNDRED (2026-11-22)
+   SECRETS.EXE names and hints for v86 to v103.
+   ================================================================ */
+try { Object.assign(SECRET_NAMES, {
+  coop: ['THE COOP', 'on the water tower roof'], bus: ['THE CROSSTOWN', 'wait at a shelter'], doorman: ['THE DOORMAN', 'walk up the carpet'], tourists: ['IN THE SHOT', 'stand in front of the cameras'],
+  leafpile: ['THE LEAF PILE', 'run through one'], dominoes: ['CAPICUA', 'watch a hand'], stoop: ['AN HOUR ON THE STOOP', 'sit down'], fireescape: ['THE FIRE ESCAPE', 'climb to the roof'],
+  soprano: ['THE SOPRANO', 'under her window, seven to eleven'], jackpot: ['THE JACKPOT', 'keep scratching'], livingstatue: ['THE STATUE MOVES', 'tip it'], crosswalk: ['ON THE WALK', 'cross when it says so'],
+  sandcastle: ['THE SANDCASTLE', 'all six stages'], fishing: ['A CATCH', 'cast off the end of the pier'], threshold: ['THE HUNDREDTH DOOR', 'walk through it'], yoga: ['ONE FULL ROUND', 'the beach at sunrise'],
+  letgo: ['LET IT GO', 'buy a balloon first'], outline: ['THE BUILDING THAT IS NOT THERE', 'stand inside the lines at night']
+}); } catch (e) { }
+
+/* ================================================================
+   v105 THE TOUR CLIMBS THE FIRE ESCAPE (2026-11-22)
+   Six more stops before the aerial: the brownstone and its stoop, the threshold (walked through), the newsstand,
+   the dominoes, the pier with the fishermen and the gulls, and the outline.
+   ================================================================ */
+(function tourV105() {
+  const add = [];
+  try { const x = BROWN.fx, z = BROWN_AT.z, gy = BROWN.g0; add.push({ name: 'the walk up', dur: 8, pos: [[x - 14, gy + 2, z - 8], [x - 7, gy + 5, z + 1]], look: [[x, gy + 4, z], [x, gy + 7, z]] }); } catch (e) { }
+  try { const x = THR_AT.x, z = THR_AT.z, gy = THR.g0; add.push({ name: 'the threshold', dur: 8, pos: [[x, gy + 1.7, z + 12], [x, gy + 1.7, z - 4]], look: [[x, gy + 2.6, z], [x, gy + 2, z - 20]] }); } catch (e) { }
+  try { const x = NEWS_AT.x, z = NEWS_AT.z, gy = ground(x, z), ry = NEWS.ry; add.push({ name: 'the newsstand', dur: 6, pos: [[x + Math.sin(ry) * 7 + Math.cos(ry) * 3, gy + 1.7, z + Math.cos(ry) * 7 - Math.sin(ry) * 3], [x + Math.sin(ry) * 4, gy + 1.6, z + Math.cos(ry) * 4]], look: [[x, gy + 1.4, z], [x, gy + 1.4, z]] }); } catch (e) { }
+  try { const x = DOM_AT.x, z = DOM_AT.z, gy = DOM.g0; add.push({ name: 'dominoes', dur: 6, pos: [[x + 4, gy + 1.8, z - 3], [x + 2, gy + 1.5, z - 1.8]], look: [[x, gy + 0.8, z], [x, gy + 0.8, z]] }); } catch (e) { }
+  try { add.push({ name: 'gone fishing', dur: 7, pos: [[6, 3, 168], [3, 2.2, 176]], look: [[-1, 1, 182], [0, 0.6, 186]] }); } catch (e) { }
+  try { const x = GHOST_AT.x, z = GHOST_AT.z, gy = GHOST.g0; add.push({ name: 'the outline', dur: 7, pos: [[x + 4, gy + 2, z + 16], [x - 1, gy + 3, z + 10]], look: [[x, gy + 6, z], [x, gy + 8, z]] }); } catch (e) { }
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 

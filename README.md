@@ -311,3 +311,25 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v82 ISLANDHENGE: the real sun sets due west down the west path around each equinox and the path fills with gold (HENGE jumps there).
 - v83 THE GULLS: eight gulls on pier bollards that fly off and come back.
 - v84 SECRETS.EXE names. v85 six tour stops.
+
+## v86 to v105 (2026-11-23)
+- v86 THE PIGEON COOP on the water tower roof; E lets twenty birds out (COOP).
+- v87 THE BUS: the N3W crosstown laps the ring road and stops at two shelters; E rides it across (BUS).
+- v88 THE DOORMAN: an awning, a carpet and a doorman at the water tower building who greets you by the hour.
+- v89 THE TOURISTS: a guided group walks the ring path landmark to landmark with flashing cameras; get in the shot.
+- v90 FALL: leaf piles and drifting leaves on the ring path from September to early December; run through a pile (LEAVES).
+- v91 DOMINOES at (-48, 28): four men slamming tiles; E watches a hand.
+- v92 THE WALK UP at (78, -56): a brick walk up with a stoop; sitting runs the day 200 times faster.
+- v93 THE FIRE ESCAPE: three landings, a drop ladder and a gooseneck to the roof, E up and down.
+- v94 THE ROOF AND THE SOPRANO: a rooftop party after dark and an opera neighbour in the third floor window, seven to eleven.
+- v95 THE NEWSSTAND at (40, 32): Meme covers and scratch-offs (one jackpot).
+- v96 THE LIVING STATUE at (-88, 0): silver, still, shifts when you look away, bows for a tip.
+- v97 THE CROSSWALK where the south path meets the road: walk, countdown, hand; riders and the bus stop for it.
+- v98 THE SANDCASTLE at (44, 122): six stages, gone by morning.
+- v99 GONE FISHING: two fishermen on the pier end; cast your own line.
+- v100 THE THRESHOLD across the south path at (0, 52): an Impermanent Vision doorway; walking through starts MELT.
+- v101 SUNRISE YOGA at (-52, 120) from five to nine (YOGA).
+- v102 THE BALLOON MAN at (-86, -24): eye balloons that follow you until you let go (LETGO).
+- v103 THE OUTLINE at (-40, -78): an empty lot where a tenement comes back as glowing lines after dark.
+- v104 SECRETS.EXE names. v105 six tour stops.
+- Fix: v72's huntFrame shadowed v14's huntFrame (the slice hunt) since build 20261123-041455; renamed flowerHuntFrame.
