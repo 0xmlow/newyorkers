@@ -414,3 +414,9 @@ entablature with dentils and modillions, fluted columns, a raking cornice with t
 bronze transom over the door. N3W SQUARE gets a glass curtain wall above the screens (offices lit at night), a
 parapet, and a bronze storefront with a lit marquee at its foot. The factory gets a brick base with a coping, steel
 I beam pilasters, a steel coping and a faded painted sign on its back wall. ?facades=0 turns it off with v173.
+
+## v175 (2026-11-23): THE LOOK, sixth pass (pedestal, SURVIVE, bell tower)
+The Colossus pedestal gets a stepped plinth, rustication, corner piers, pilasters, a loggia band and a cornice in
+the manner of Liberty's (most of it sits behind the rock, so the gain is small). The SURVIVE walls get board form
+concrete buttresses, a coping, scuppers with rust stains and form joints. The bell tower gets corner boards, a water
+table, a belt course, louvred openings with pediments and a pedimented door. ?facades=0 turns it off.
