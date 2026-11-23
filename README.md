@@ -443,3 +443,15 @@ green street blades on every third lamp (?lamps=0). v183 painted roll down gates
 they close, an Open Eye Flower in a navy contour field (?gates=0). v184 curtains, blinds and window boxes on the
 walk up (?livedin=0). v185 rooftop condensers, vents, a dish, tar patches and the bank skylight (?roofs=0).
 v186 four tour stops. Also: v171 lamp light on the ground capped so it cannot burn to white.
+
+## v187 to v196 (2026-11-23): street furniture and finishes
+v187 the pier deck in boards with seams, nails and per board shade; cast iron bollards and three life rings (?pier=0).
+v188 the promenade benches rebuilt as New York park benches, slats and cast iron ends (?benches=0). v189 the
+promenade shrubs, twenty sided dice before, now lumpy mounds shaded inside and at the foot (?shrubs=0). v190 green
+wire litter baskets by the benches and on the pier (?baskets=0). v191 N3W BIKE, a bike share dock at (9.5, 48.5):
+six blue step through bikes, eight docks lit green at night, a kiosk (?bikes=0). v192 a second cedar water tank on the
+walk up's roof. v193 the census ribbon gets a metal coping, a shadow gap at its foot and a warm line of light under
+the coping at night (?ribbon=0). v194 the bodega's striped canvas awning on a steel frame with a lettered scalloped
+valance (?awning=0). v195 two flagpoles at the bank, the Stars and Stripes and the N3W flag, waving with the wind
+(?flags=0). v196 four tour stops. Still 60 fps at full quality on the M5 Pro at retina.
+Known: in the afternoon the docked ferry shades the pier deck almost black.

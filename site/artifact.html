@@ -11823,6 +11823,248 @@ window.__LIVED = LIVED;
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v187 THE LOOK: THE PIER (2026-11-23)
+   The pier deck was one dark slab. It is now boards: a seam every eighteen centimetres, each board its own shade,
+   nail heads where the boards cross the joists, darker along the seams where the water sits. Cast iron bollards
+   stand along both edges, and three life rings hang on posts. ?pier=0 off.
+   ================================================================ */
+const PIER2 = {};
+window.__PIER2 = PIER2;
+(function pier() {
+  if (!LOOK.on || /pier=0/.test(location.search)) return;
+  const m = MAT.wood; if (m) { const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+    m.onBeforeCompile = (sh, r) => { if (prev) prev.call(m, sh, r);
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPW; varying float vPU;').replace('#include <project_vertex>', '#include <project_vertex>\n{ vec4 pw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\npw = instanceMatrix * pw;\n#endif\nvPW = (modelMatrix * pw).xyz; vPU = normalize(mat3(modelMatrix) * objectNormal).y; }');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vPW; varying float vPU; float pwH(float x){ return fract(sin(x * 91.7) * 43758.5); }').replace('#include <color_fragment>', `#include <color_fragment>
+        if (vPU > 0.9 && abs(vPW.x) < 3.05 && vPW.z > 125.5 && vPW.z < 182.5 && vPW.y > 0.45 && vPW.y < 0.65) { float b = vPW.z / 0.18, bi = floor(b), f = fract(b);
+          diffuseColor.rgb *= 0.82 + 0.3 * pwH(bi); float seam = 1.0 - smoothstep(0.0, 0.06, min(f, 1.0 - f)); diffuseColor.rgb *= 1.0 - 0.6 * seam;
+          float jx = mod(vPW.x + 3.0, 1.5); float nail = (1.0 - smoothstep(0.012, 0.022, length(vec2(jx - 0.75, (f - 0.5) * 0.18)))); diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.08, 0.07, 0.06), nail * 0.8); }`); };
+    m.customProgramCacheKey = () => pk + '-pier187'; m.needsUpdate = true; }
+  const iron = new THREE.MeshStandardMaterial({ color: 0x1b1d1f, roughness: 0.5, metalness: 0.6 }), orange = new THREE.MeshStandardMaterial({ color: 0xff6b00, roughness: 0.55 }), white = new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.6 });
+  const bol = new THREE.LatheGeometry([[0, 0], [0.16, 0], [0.16, 0.06], [0.12, 0.1], [0.12, 0.42], [0.18, 0.5], [0.16, 0.58], [0, 0.6]].map(([r, y]) => new THREE.Vector2(r, y)), 16);
+  const pts = []; for (let z = 131; z <= 180; z += 7) [-2.8, 2.8].forEach(x => pts.push([x, z])); const bi = new THREE.InstancedMesh(bol, iron, pts.length), m4 = new THREE.Matrix4();
+  pts.forEach(([x, z], i) => { m4.makeTranslation(x, 0.55, z); bi.setMatrixAt(i, m4); if (typeof post === 'function') post(x, z, 0.18); }); bi.castShadow = true; scene.add(bi);
+  [[2.75, 142], [-2.75, 158], [2.75, 172]].forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.3, 8), iron); p.position.set(x, 1.2, z); scene.add(p);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.075, 10, 24), orange); ring.position.set(x - Math.sign(x) * 0.09, 1.55, z); ring.rotation.y = PI / 2; ring.castShadow = true; scene.add(ring);
+    for (let k = 0; k < 4; k++) { const band = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.078, 6, 4, 0.22), white); band.position.copy(ring.position); band.rotation.set(0, PI / 2, k * PI / 2 + 0.67); scene.add(band); } });
+  PIER2.n = pts.length;
+})();
+
+/* ================================================================
+   v188 THE LOOK: PARK BENCHES (2026-11-23)
+   The promenade benches were two planks on two blocks. They are rebuilt as the classic New York park bench:
+   five slats in the seat, three in a back that leans away, cast iron ends with a front leg, a raked back leg and an
+   armrest, the same places and the same way round. ?benches=0 off.
+   ================================================================ */
+const BENCH = { n: 0 };
+window.__BENCH = BENCH;
+(function benches() {
+  if (!LOOK.on || /benches=0/.test(location.search)) return; let seat = null; const hide = [];
+  scene.traverse(o => { if (!o.isInstancedMesh || !o.geometry || !o.geometry.parameters) return; const p = o.geometry.parameters;
+    if (p.width === 2.4 && p.height === 0.12 && p.depth === 0.55) { seat = o; hide.push(o); } else if (p.width === 2.4 && p.height === 0.5 && p.depth === 0.08) hide.push(o); else if (p.width === 0.1 && p.height === 0.45 && p.depth === 0.5) hide.push(o); });
+  if (!seat || hide.length < 3) return; hide.forEach(o => o.visible = false);
+  const wood = new THREE.MeshStandardMaterial({ color: 0x7b5a3c, roughness: 0.75 }), iron = new THREE.MeshStandardMaterial({ color: 0x1d2a22, roughness: 0.45, metalness: 0.55 });
+  const parts = []; // [material, sx, sy, sz, x, y, z, rx]
+  [-0.2, -0.1, 0, 0.1, 0.2].forEach(z => parts.push([wood, 2.3, 0.035, 0.08, 0, 0.45, z, 0]));
+  [0.6, 0.72, 0.84].forEach((y, i) => parts.push([wood, 2.3, 0.095, 0.035, 0, y, -0.27 - i * 0.035, -0.28]));
+  [-1.05, 1.05].forEach(x => { parts.push([iron, 0.05, 0.44, 0.05, x, 0.22, 0.2, 0]); parts.push([iron, 0.05, 0.95, 0.05, x, 0.45, -0.28, -0.22]); parts.push([iron, 0.06, 0.04, 0.5, x, 0.64, -0.02, 0]); parts.push([iron, 0.05, 0.05, 0.48, x, 0.42, -0.03, 0]); parts.push([iron, 0.05, 0.22, 0.05, x, 0.53, 0.2, 0]); });
+  const n = seat.count, m4 = new THREE.Matrix4(), b4 = new THREE.Matrix4(), l4 = new THREE.Matrix4(), pos = new V3(), q = new THREE.Quaternion(), sc = new V3(), e = new THREE.Euler();
+  const byMat = new Map(); parts.forEach(p => { if (!byMat.has(p[0])) byMat.set(p[0], []); byMat.get(p[0]).push(p); });
+  byMat.forEach((ps, mat) => { const im = new THREE.InstancedMesh(FAC_BOX, mat, ps.length * n); let k = 0;
+    for (let i = 0; i < n; i++) { seat.getMatrixAt(i, m4); m4.decompose(pos, q, sc); b4.compose(new V3(pos.x, pos.y - 0.45, pos.z), q, new V3(1, 1, 1));
+      ps.forEach(([, sx, sy, sz, x, y, z, rx]) => { l4.compose(new V3(x, y, z), new THREE.Quaternion().setFromEuler(e.set(rx, 0, 0)), new V3(sx, sy, sz)); im.setMatrixAt(k++, new THREE.Matrix4().multiplyMatrices(b4, l4)); }); }
+    im.castShadow = im.receiveShadow = true; scene.add(im); });
+  BENCH.n = n;
+})();
+
+/* ================================================================
+   v189 THE LOOK: SHRUBS (2026-11-23)
+   The shrubs along the promenade were twenty sided dice. Every one is now a lumpy, irregular mound of foliage,
+   darker and cooler deep inside and at the foot, lighter where the top catches the sky, each a little different
+   in colour. Same plants, same places. ?shrubs=0 off.
+   ================================================================ */
+const SHRUB = { n: 0 };
+window.__SHRUB = SHRUB;
+(function shrubs() {
+  if (!LOOK.on || /shrubs=0/.test(location.search) || !MAT.shrub) return;
+  const geo = new THREE.IcosahedronGeometry(0.7, 3), p = geo.attributes.position, v = new V3(), col = new Float32Array(p.count * 3);
+  const h3 = (x, y, z) => { const s = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453; return s - Math.floor(s); };
+  const noise = (x, y, z) => Math.sin(x * 3.1 + z * 1.7) * 0.5 + Math.sin(y * 4.3 + x * 2.2) * 0.3 + Math.sin(z * 5.9 - y * 3.3) * 0.2;
+  for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const n = v.clone().normalize(); let r = 0.7 * (1 + 0.16 * noise(n.x * 2, n.y * 2, n.z * 2) + 0.08 * (h3(n.x, n.y, n.z) - 0.5));
+    v.copy(n).multiplyScalar(r); if (v.y < -0.32) v.y = -0.32 - (v.y + 0.32) * 0.1; p.setXYZ(i, v.x, v.y, v.z);
+    const up = (n.y + 1) / 2, k = 0.45 + 0.6 * up * (0.85 + 0.3 * h3(n.z, n.x, n.y)); col[i * 3] = k * 0.92; col[i * 3 + 1] = k; col[i * 3 + 2] = k * 0.8; }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); geo.computeVertexNormals();
+  const mat = MAT.shrub.clone(); mat.vertexColors = true; mat.flatShading = false; if (mat.color) mat.color.multiplyScalar(1.15);
+  scene.traverse(o => { if (o.isInstancedMesh && o.material === MAT.shrub && o.geometry && o.geometry.type === 'IcosahedronGeometry' && o.geometry.parameters.detail === 0) { o.geometry = geo; o.material = mat; SHRUB.n += o.count; } });
+})();
+
+/* ================================================================
+   v190 THE LOOK: LITTER BASKETS (2026-11-23)
+   The green wire litter basket, on every corner in the city. Woven steel mesh you can see through, a rolled rim,
+   a liner bag inside, beside every other bench on the promenade and along the pier. ?baskets=0 off.
+   ================================================================ */
+const BASKET = { n: 0 };
+window.__BASKET = BASKET;
+(function baskets() {
+  if (!LOOK.on || /baskets=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.beginPath) { c.clearRect(0, 0, 128, 128); c.strokeStyle = '#fff'; c.lineWidth = 7; for (let i = -128; i < 256; i += 32) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i + 128, 128); c.stroke(); c.beginPath(); c.moveTo(i + 128, 0); c.lineTo(i, 128); c.stroke(); } }
+  const at = new THREE.CanvasTexture(cv); at.wrapS = at.wrapT = THREE.RepeatWrapping; at.repeat.set(6, 3);
+  const mesh = new THREE.MeshStandardMaterial({ color: 0x2f5a3a, roughness: 0.5, metalness: 0.5, alphaMap: at, alphaTest: 0.5, transparent: false, side: THREE.DoubleSide });
+  const rimM = new THREE.MeshStandardMaterial({ color: 0x2a4f34, roughness: 0.4, metalness: 0.6 }), bag = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.35 });
+  const spots = []; for (let i = 0; i < 18; i += 2) { const a = (i + 0.5) / 18 * 360; if (Math.abs(((a + 22.5) % 45) - 22.5) < 6) continue; spots.push(P2(a + 2.6, 43.75)); }
+  [[2.55, 136], [-2.55, 152], [2.55, 168]].forEach(s => spots.push(s));
+  const g1 = new THREE.CylinderGeometry(0.31, 0.26, 0.85, 20, 1, true), g2 = new THREE.TorusGeometry(0.31, 0.025, 6, 24), g3 = new THREE.CylinderGeometry(0.27, 0.22, 0.62, 14, 1, true);
+  const im1 = new THREE.InstancedMesh(g1, mesh, spots.length), im2 = new THREE.InstancedMesh(g2, rimM, spots.length * 2), im3 = new THREE.InstancedMesh(g3, bag, spots.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion().setFromAxisAngle(new V3(1, 0, 0), PI / 2);
+  spots.forEach(([x, z], i) => { const g = Math.max(ground(x, z), z > 125 ? 0.55 : 0.665); m4.makeTranslation(x, g + 0.43, z); im1.setMatrixAt(i, m4); m4.makeTranslation(x, g + 0.36, z); im3.setMatrixAt(i, m4);
+    m4.compose(new V3(x, g + 0.85, z), q, new V3(1, 1, 1)); im2.setMatrixAt(i * 2, m4); m4.compose(new V3(x, g + 0.03, z), q, new V3(0.84, 0.84, 0.84)); im2.setMatrixAt(i * 2 + 1, m4); if (typeof post === 'function') post(x, z, 0.32); });
+  [im1, im2, im3].forEach(o => { o.castShadow = true; scene.add(o); }); BASKET.n = spots.length;
+})();
+
+/* ================================================================
+   v191 THE LOOK: N3W BIKE (2026-11-23)
+   A bike share dock at (9.5, 48.5), just off the promenade: a concrete pad, a kiosk with a map, and eight docks,
+   six of them holding a heavy step through bike in Evil Eye Blue with a basket on the front. At night the dock
+   lights glow green where a bike is ready. E at the kiosk: TWENTY MINUTES FREE. THE ISLAND IS SIX MINUTES ACROSS.
+   ================================================================ */
+const BIKES = { at: { x: 9.5, z: 48.5 }, leds: [] };
+window.__BIKES = BIKES;
+(function bikeDock() {
+  if (!LOOK.on || /bikes=0/.test(location.search)) return; const { x: x0, z: z0 } = BIKES.at, g = ground(x0, z0) + 0.02;
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(9.4, 0.1, 2.6), MAT.conc || new THREE.MeshStandardMaterial({ color: 0x9a968c })); pad.position.set(x0, g + 0.05, z0); pad.receiveShadow = true; scene.add(pad);
+  const blue = new THREE.MeshStandardMaterial({ color: 0x2962ff, roughness: 0.45, metalness: 0.3 }), dark = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.6 }), steel = new THREE.MeshStandardMaterial({ color: 0x8a9096, roughness: 0.35, metalness: 0.8 }), led = new THREE.MeshStandardMaterial({ color: 0x0a2a10, emissive: 0x3dff6a, emissiveIntensity: 0.2 });
+  BIKES.led = led; const T = (r, t) => new THREE.TorusGeometry(r, t, 8, 28), C = (r, h) => new THREE.CylinderGeometry(r, r, h, 8);
+  const bar = (grp, mat, a, b, r) => { const v = new V3().subVectors(b, a), m = new THREE.Mesh(C(r, v.length()), mat); m.quaternion.setFromUnitVectors(new V3(0, 1, 0), v.clone().normalize()); m.position.copy(a).addScaledVector(v, 0.5); m.castShadow = true; grp.add(m); };
+  for (let i = 0; i < 8; i++) { const x = x0 - 3.85 + i * 1.1, z = z0 - 0.2;
+    const dock = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.85, 0.3), dark); dock.position.set(x, g + 0.52, z + 0.75); dock.castShadow = true; scene.add(dock); const l = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.02), led); l.position.set(x, g + 0.82, z + 0.59); scene.add(l);
+    if (i === 2 || i === 6) continue; const b = new THREE.Group(); b.position.set(x, g + 0.1, z); b.rotation.y = PI / 2; scene.add(b);
+    [-0.52, 0.52].forEach(zz => { const w = new THREE.Mesh(T(0.33, 0.035), dark); w.position.set(zz, 0.35, 0); b.add(w); const hub = new THREE.Mesh(C(0.05, 0.08), steel); hub.rotation.x = PI / 2; hub.position.set(zz, 0.35, 0); b.add(hub); });
+    const P = (x1, y1) => new V3(x1, y1, 0); bar(b, blue, P(-0.52, 0.35), P(0.05, 0.42), 0.045); bar(b, blue, P(0.05, 0.42), P(0.42, 0.95), 0.045); bar(b, blue, P(-0.52, 0.35), P(-0.25, 0.8), 0.04); bar(b, blue, P(-0.25, 0.8), P(0.05, 0.42), 0.045);
+    bar(b, steel, P(0.42, 0.95), P(0.52, 0.35), 0.025); bar(b, dark, P(-0.25, 0.8), P(-0.25, 0.95), 0.02); const s = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 0.14), dark); s.position.set(-0.27, 0.98, 0); b.add(s);
+    bar(b, dark, new V3(0.4, 1.0, -0.28), new V3(0.4, 1.0, 0.28), 0.018); const bk = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.36), blue); bk.position.set(0.6, 0.92, 0); b.add(bk);
+    const fender = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.02, 4, 16, PI * 0.6), blue); fender.position.set(-0.52, 0.35, 0); fender.rotation.z = PI * 0.25; b.add(fender); }
+  const k = new THREE.Mesh(new THREE.BoxGeometry(0.55, 2.1, 0.4), blue); k.position.set(x0 + 4.4, g + 1.05, z0 + 0.4); k.castShadow = true; scene.add(k);
+  const sc = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), new THREE.MeshBasicMaterial({ map: signTex([{ t: 'N3W BIKE', s: 0.2 }, { t: 'TAP', s: 0.12 }, { t: 'TO RIDE', s: 0.1 }], 256, 360, '#2962FF', '#F0F4F8'), toneMapped: false })); sc.position.set(x0 + 4.4, g + 1.5, z0 + 0.19); sc.rotation.y = PI; scene.add(sc);
+  boxWalls(x0, z0 + 0.3, 9.2, 1.6, 0, -5, g + 1.2);
+  interact(x0 + 4.4, z0 - 0.6, 1.8, 'E · N3W BIKE', () => toast('TWENTY MINUTES FREE. THE ISLAND IS SIX MINUTES ACROSS. DOCK IT WHERE YOU FOUND IT.'));
+  if (window.__MAP) MAP.places.push(['N3W BIKE', x0, z0, x0, z0 - 2.5]);
+})();
+window.__FRAMES.push(() => { try { if (BIKES.led) BIKES.led.emissiveIntensity = 0.25 + 1.6 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v192 THE LOOK: A SECOND WATER TOWER (2026-11-23)
+   No New York roofline has just one. The walk up now carries its own small cedar tank on a steel stand, a ladder
+   up its side, hoops and a conical roof, beside the condensers. Seen from the plaza the two tanks make the skyline
+   of the west side. ?roofs=0 off with v185.
+   ================================================================ */
+(function tank2() {
+  if (!FAC_ON || /roofs=0/.test(location.search) || !window.__BROWN || !BROWN.H) return;
+  const x = BROWN_AT.x - 1.0, z = BROWN_AT.z, y0 = BROWN.g0 + BROWN.H + 0.05, legH = 2.2, R = 1.05, Ht = 2.4;
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 128; const c = cv.getContext('2d');
+  if (c && c.fillRect) for (let i = 0; i < 24; i++) { const v = 80 + Math.random() * 40 | 0; c.fillStyle = `rgb(${v + 28},${v},${v - 26})`; c.fillRect(i * 11, 0, 10, 128); c.fillStyle = 'rgba(15,10,5,.55)'; c.fillRect(i * 11 + 10, 0, 1, 128); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.wrapS = THREE.RepeatWrapping; t.repeat.set(2, 1);
+  const steel = FACM.steel, wood = new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 }), roof = new THREE.MeshStandardMaterial({ color: 0x4b3d30, roughness: 0.9 });
+  [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => facPut('steel', x + a * 0.72, y0 + legH / 2, z + b * 0.72, 0.1, legH, 0.1));
+  [0.7, 1.5].forEach(h => { facPut('steel', x, y0 + h, z - 0.72, 1.5, 0.05, 0.05); facPut('steel', x, y0 + h, z + 0.72, 1.5, 0.05, 0.05); facPut('steel', x - 0.72, y0 + h, z, 0.05, 0.05, 1.5); facPut('steel', x + 0.72, y0 + h, z, 0.05, 0.05, 1.5); });
+  facPut('steel', x, y0 + legH + 0.04, z, 1.7, 0.08, 1.7);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R * 1.04, Ht, 28, 1, true), wood); body.position.set(x, y0 + legH + 0.08 + Ht / 2, z); body.castShadow = true; scene.add(body);
+  const lid = new THREE.Mesh(new THREE.CircleGeometry(R, 28), roof); lid.rotation.x = -PI / 2; lid.position.set(x, y0 + legH + 0.08 + Ht - 0.02, z); scene.add(lid);
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(R * 1.12, 0.8, 28), roof); hat.position.set(x, y0 + legH + 0.08 + Ht + 0.4, z); hat.castShadow = true; scene.add(hat);
+  for (let i = 0; i < 4; i++) { const h = new THREE.Mesh(new THREE.TorusGeometry(R * 1.02 + i * 0.008, 0.02, 5, 28), steel); h.rotation.x = PI / 2; h.position.set(x, y0 + legH + 0.4 + i * 0.6, z); scene.add(h); }
+  facPut('steel', x + R + 0.06, y0 + (legH + Ht) / 2 + 0.1, z - 0.22, 0.04, legH + Ht, 0.04); facPut('steel', x + R + 0.06, y0 + (legH + Ht) / 2 + 0.1, z + 0.22, 0.04, legH + Ht, 0.04);
+  for (let r = 0.3; r < legH + Ht; r += 0.3) facPut('steel', x + R + 0.06, y0 + r, z, 0.03, 0.03, 0.44);
+  facFlush();
+})();
+
+/* ================================================================
+   v193 THE LOOK: THE RIBBON'S EDGES (2026-11-23)
+   The census walk's long curving wall ended in a raw cut at the top and stood straight on the grass. It now has
+   a thin metal coping that follows its rise and fall, a shadow gap at its foot so it seems to float a finger's
+   width above the ground, and a warm line of light tucked under the coping on both faces that comes up at
+   dusk and draws the curve across the island at night. ?ribbon=0 off.
+   ================================================================ */
+(function ribbonEdges() {
+  if (!FAC_ON || /ribbon=0/.test(location.search)) return;
+  FACM.cope = new THREE.MeshStandardMaterial({ color: 0x8e8b84, roughness: 0.35, metalness: 0.7 }); FACM.gap = new THREE.MeshStandardMaterial({ color: 0x0b0b0c, roughness: 1 });
+  FACM.led = new THREE.MeshStandardMaterial({ color: 0x2a241c, emissive: 0xffd7a0, emissiveIntensity: 0 }); window.__RIBLED = FACM.led;
+  const pts = []; for (let i = 0; i <= 24; i++) { const z = 46 + i * 1.6; pts.push([-11 - 2.2 * Math.sin(i / 24 * PI * 2), z]); }
+  for (let i = 0; i < pts.length - 1; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], mx = (ax + bx) / 2, mz = (az + bz) / 2, dx = bx - ax, dz = bz - az, len = Math.hypot(dx, dz);
+    const gg = ground(mx, mz), hh = 6.2 + Math.sin(i / 24 * PI) * 2.4, ry = Math.atan2(-dz, dx), nx = dz / len, nz = -dx / len;
+    facPut('cope', mx, gg + hh + 0.05, mz, len + 0.1, 0.1, 0.62, ry); facPut('gap', mx, gg + 0.06, mz, len + 0.09, 0.12, 0.52, ry);
+    [-1, 1].forEach(s => facPut('led', mx + nx * s * 0.272, gg + hh - 0.06, mz + nz * s * 0.272, len + 0.06, 0.035, 0.03, ry)); }
+  facFlush();
+})();
+window.__FRAMES.push(() => { try { if (window.__RIBLED) __RIBLED.emissiveIntensity = 2.2 * Math.min(1, Math.max(0, (L.lamps || 0) - 0.1) * 1.4); } catch (e) { } });
+
+/* ================================================================
+   v194 THE LOOK: THE BODEGA AWNING (2026-11-23)
+   The 6529 Bodega's awning was a red plank. It is now a real one: a striped canvas sloping out on a steel frame
+   with three arms, and a scalloped valance along the front lettered 6529 BODEGA · DELI · GROCERY · ATM · LOTTO ·
+   COLD JPGs, the way every corner store in the city announces itself. ?awning=0 off.
+   ================================================================ */
+(function awning() {
+  if (!LOOK.on || /awning=0/.test(location.search)) return; const bx = 17, bz = 66, w = 10, d = 14, g = ground(bx, bz) + 0.02;
+  scene.traverse(o => { const p = o.isMesh && o.geometry && o.geometry.parameters; if (p && p.width === 2.4 && p.height === 0.15 && p.depth === 14 && Math.abs(o.position.x - (bx - w / 2 - 1.1)) < 0.2) o.visible = false; });
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 1024; const c = cv.getContext('2d');
+  if (c && c.fillRect) for (let i = 0; i < 32; i++) { c.fillStyle = i % 2 ? '#efe6d4' : '#b8231c'; c.fillRect(0, i * 32, 256, 32); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const slope = 0.36, L0 = 2.3, xw = bx - w / 2 - 0.2, yTop = g + 3.62;
+  const geo = new THREE.PlaneGeometry(L0, d - 0.4); geo.rotateX(-PI / 2); geo.rotateZ(slope); geo.translate(xw - L0 / 2 * Math.cos(slope), yTop - L0 / 2 * Math.sin(slope), bz);
+  const can = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: t, roughness: 0.85, side: THREE.DoubleSide })); can.castShadow = can.receiveShadow = true; scene.add(can);
+  const ox = xw - L0 * Math.cos(slope), oy = yTop - L0 * Math.sin(slope);
+  const vc = document.createElement('canvas'); vc.width = 2048; vc.height = 96; const v = vc.getContext('2d');
+  if (v && v.fillRect) { v.clearRect(0, 0, 2048, 96); v.fillStyle = '#b8231c'; v.fillRect(0, 0, 2048, 66); if (v.arc) for (let x = 0; x < 2048; x += 64) { v.beginPath(); v.arc(x + 32, 64, 32, 0, PI); v.fill(); }
+    if (v.fillText) { v.fillStyle = '#f6efdf'; v.font = '700 40px "Archivo Black", Impact, sans-serif'; v.textAlign = 'center'; v.textBaseline = 'middle'; v.fillText('6529 BODEGA  ·  DELI  ·  GROCERY  ·  ATM  ·  LOTTO  ·  COLD JPGs', 1024, 36); } }
+  const vt = new THREE.CanvasTexture(vc); vt.encoding = THREE.sRGBEncoding; vt.anisotropy = ANISO;
+  const val = new THREE.Mesh(new THREE.PlaneGeometry(d - 0.4, 0.42), new THREE.MeshStandardMaterial({ map: vt, alphaTest: 0.5, transparent: false, roughness: 0.85, side: THREE.DoubleSide })); val.position.set(ox - 0.01, oy - 0.2, bz); val.rotation.y = -PI / 2; scene.add(val);
+  facPut('steel', ox, oy, bz, 0.05, 0.05, d - 0.3); [-1, 0, 1].forEach(s => { const z = bz + s * (d / 2 - 0.6); facBar(FACM.steel, new V3(xw, g + 2.9, z), new V3(ox + 0.05, oy - 0.02, z), 0.04, 0.04); });
+  facFlush();
+})();
+
+/* ================================================================
+   v195 THE LOOK: FLAGS AT THE BANK (2026-11-23)
+   A bank on a New York street flies flags. Two twelve metre poles stand either side of the First National Bank
+   of JPGs' steps, gilt balls on top: the Stars and Stripes, and the N3W flag, the Open Eye on Evil Eye Blue. Both
+   ripple in the island's wind, harder when it blows. ?flags=0 off.
+   ================================================================ */
+const FLAGS = { u: { uFT: { value: 0 }, uFW: { value: 0.5 } } };
+window.__FLAGS = FLAGS;
+(function flags() {
+  if (!LOOK.on || /flags=0/.test(location.search)) return; const g = ground(-66, 0) + 0.32;
+  const us = document.createElement('canvas'); us.width = 760; us.height = 400; let c = us.getContext('2d');
+  if (c && c.fillRect) { for (let i = 0; i < 13; i++) { c.fillStyle = i % 2 ? '#f4f1ea' : '#b22234'; c.fillRect(0, i * 400 / 13, 760, 400 / 13 + 1); } c.fillStyle = '#3c3b6e'; c.fillRect(0, 0, 304, 400 * 7 / 13);
+    if (c.arc) { c.fillStyle = '#f4f1ea'; for (let r = 0; r < 9; r++) for (let k = 0; k < (r % 2 ? 5 : 6); k++) { c.beginPath(); c.arc(25 + k * 50 + (r % 2 ? 25 : 0), 18 + r * 23.5, 6, 0, PI * 2); c.fill(); } } }
+  const nw = document.createElement('canvas'); nw.width = 760; nw.height = 400; c = nw.getContext('2d');
+  const tUS = new THREE.CanvasTexture(us), tN = new THREE.CanvasTexture(nw); [tUS, tN].forEach(t => { t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; });
+  const drawN = img => { if (!c || !c.fillRect) return; c.fillStyle = '#2962FF'; c.fillRect(0, 0, 760, 400); if (img && c.drawImage) c.drawImage(img, 380 - 150, 200 - 150, 300, 300); else if (c.arc) { c.fillStyle = '#F0F4F8'; c.beginPath(); c.arc(380, 200, 120, 0, PI * 2); c.fill(); c.fillStyle = '#0D0D0D'; c.beginPath(); c.arc(380, 200, 50, 0, PI * 2); c.fill(); } tN.needsUpdate = true; };
+  drawN(null); const im = new Image(); im.onload = () => drawN(im); im.src = 'assets/eye.png';
+  const mk = tex => { const geo = new THREE.PlaneGeometry(2.6, 1.37, 26, 8); geo.translate(1.3, 0, 0); const m = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.8, side: THREE.DoubleSide });
+    m.onBeforeCompile = sh => { Object.assign(sh.uniforms, FLAGS.u); sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform float uFT, uFW;').replace('#include <begin_vertex>', `#include <begin_vertex>
+      float fx = position.x / 2.6; transformed.z += fx * (0.16 + 0.22 * uFW) * sin(position.x * 2.4 - uFT * (3.0 + 2.0 * uFW) + position.y * 0.6); transformed.y -= fx * fx * 0.25 * (1.0 - uFW);`); };
+    m.customProgramCacheKey = () => 'mi-flag-v195'; const f = new THREE.Mesh(geo, m); f.castShadow = true; return f; };
+  [[tUS, -10.6], [tN, 10.6]].forEach(([t, z]) => { const x = -50.6; const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 12, 10), FACM.steel || MAT.steel); pole.position.set(x, g + 6, z); pole.castShadow = true; scene.add(pole);
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 10), MAT.gold || FACM.bronze); ball.position.set(x, g + 12.1, z); scene.add(ball);
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.36, 0.5, 14), FACM.lime || FACM.stone); base.position.set(x, g + 0.25, z); scene.add(base); if (typeof post === 'function') post(x, z, 0.36);
+    const f = mk(t); f.position.set(x, g + 11.2, z); scene.add(f); (FLAGS.list = FLAGS.list || []).push(f); });
+})();
+window.__FRAMES.push(dt => { try { if (!FLAGS.list) return; FLAGS.u.uFT.value += dt; const w = 0.35 + 0.4 * Math.sin(LIFE.t * 0.05) + (WX.wet || 0) * 0.4; FLAGS.u.uFW.value += (Math.min(1, Math.max(0, w)) - FLAGS.u.uFW.value) * Math.min(1, dt);
+  const a = Math.atan2(0.8, 0.45); FLAGS.list.forEach(f => f.rotation.y = -a + Math.sin(LIFE.t * 0.03) * 0.3); } catch (e) { } });
+
+/* ================================================================
+   v196 THE TOUR MEETS THE STREET (2026-11-23)
+   Four more stops before the aerial: the pier's boards and bollards, the N3W BIKE dock, the bodega's awning and
+   the flags over the bank.
+   ================================================================ */
+(function tourV196() {
+  const add = [];
+  add.push({ name: 'the pier', dur: 7, pos: [[1.5, 1.7, 138], [1.2, 1.6, 146]], look: [[2.8, 0.6, 152], [2.8, 0.6, 160]] });
+  try { const { x, z } = BIKES.at, g = ground(x, z); add.push({ name: 'n3w bike', dur: 7, pos: [[x - 2, g + 1.7, z - 6], [x, g + 1.6, z - 4]], look: [[x, g + 0.8, z], [x + 1, g + 0.8, z]] }); } catch (e) { }
+  try { const g = ground(17, 66); add.push({ name: 'the bodega', dur: 7, pos: [[4, g + 1.7, 58], [6, g + 1.7, 62]], look: [[11, g + 3, 66], [11, g + 3, 66]] }); } catch (e) { }
+  try { const g = ground(-66, 0); add.push({ name: 'the flags', dur: 7, pos: [[-38, g + 1.7, -14], [-42, g + 1.7, -12]], look: [[-50.6, g + 11, -10.6], [-50.6, g + 11.5, -10.6]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
+
 
 /* ---------------- boot ---------------- */
 buildCards();
