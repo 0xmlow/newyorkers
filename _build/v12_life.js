@@ -88,10 +88,12 @@ function lifeMerge(list) { const pa = [], na = []; list.forEach(g => { g = g.ind
     S.set(1.3, 1.3 * f, 1.3); M.compose(Pp, Q, S); im.setMatrixAt(i, M);
   });
   LIFE.gullMesh = im;
+  im.visible = false; LIFE.gullFrame = () => { };   // retired 2026-11-23: v83's gulls (perched and circling) replace these
 })();
 
 /* ---------- Con Ed steam: orange and white stacks on the streets, and the plume ---------- */
 (function steam() {
+  LIFE.steamFrame = () => { }; return;   // retired 2026-11-23: these five stacks stood in the ring road's outer lane; v56 THE STEAM replaces them
   const vents = [30, 75, 140, 215, 320].map(a => [Math.cos(a * Math.PI / 180) * 100.5, Math.sin(a * Math.PI / 180) * 100.5]);
   const stripe = (() => { const cv = document.createElement('canvas'); cv.width = 16; cv.height = 64; const c = cv.getContext('2d'); if (c) for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#f4f2ee' : '#f26b1d'; c.fillRect(0, i * 8, 16, 8); } const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.wrapS = THREE.RepeatWrapping; return t; })();
   const smat = new THREE.MeshStandardMaterial({ map: stripe, roughness: 0.6 }), cap = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.7 });

@@ -19,11 +19,16 @@ window.__GULL = GULL;
     [-0.05, 0.05].forEach(s => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.12, 4), yellow); l.position.set(0, 0.0, s); g.add(l); });
     const perch = new THREE.Vector3(x, deck + 0.6, z); g.position.copy(perch); g.rotation.y = x < 0 ? 0 : PI;
     GULL.g.push({ g, head, wings, perch, ry: g.rotation.y, state: 'sit', t: Math.random() * 5, a: 0, cx: 0, cz: 0, R: 0 }); i++; }
+  // 2026-11-23: the circling gulls over the harbour (they replace v12's paper Ws), clones of the same bird
+  const src = GULL.g[0], wi = src.wings.map(w => src.g.children.indexOf(w)); GULL.sky = [];
+  for (let k = 0; k < 12; k++) { const c = src.g.clone(true); c.scale.setScalar(1.15); scene.add(c); GULL.sky.push({ g: c, wings: wi.map(j => c.children[j]), cx: (k % 3 - 1) * 60 + 10, cz: 170 + (k % 4) * 30, r: 14 + (k * 7) % 20, h: 12 + (k * 5) % 14, sp: (0.18 + (k % 5) * 0.03) * (k % 2 ? 1 : -1), ph: k * 1.7 }); }
 })();
 const gullSecret = secret('gulls', () => { toast('ALL EIGHT GULLS ARE IN THE AIR AND THEY ALL BLAME YOU.', 'blue'); });
 function gullCry(x, z) { if (!AC || AC.state !== 'running' || !oceanGain || oceanGain.gain.value === 0) return; const d = Math.hypot(x - P.x, z - P.z); if (d > 40) return;
   try { for (let k = 0; k < 3; k++) { const t0 = AC.currentTime + k * 0.22, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(1500, t0); o.frequency.exponentialRampToValueAtTime(800, t0 + 0.18); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(Math.min(0.05, 1.2 / (d + 4)), t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + 0.22); } } catch (e) { } }
 function gullFrame(dt) {
+  GULL.sky.forEach(q => { const a = LIFE.t * q.sp + q.ph, s = Math.sign(q.sp); q.g.position.set(q.cx + Math.cos(a) * q.r, q.h + Math.sin(LIFE.t * 0.4 + q.ph) * 2, q.cz + Math.sin(a) * q.r); q.g.rotation.set(0, Math.atan2(-s * Math.cos(a), -s * Math.sin(a)), -0.35 * s);   // the bird faces +x; turn it along its circle
+    const glide = Math.sin(LIFE.t * 0.7 + q.ph) > 0.3, f = Math.sin(LIFE.t * (glide ? 2 : 7) + q.ph) * (glide ? 0.12 : 0.6); q.wings[0].rotation.x = f; q.wings[1].rotation.x = -f; });
   if (P.z < 90) return; let flying = 0;
   GULL.g.forEach(b => { b.t += dt; const d = Math.hypot(P.x - b.perch.x, P.z - b.perch.z);
     if (b.state === 'sit') { b.g.position.copy(b.perch); b.g.rotation.set(0, b.ry, 0); b.head.rotation.y = Math.sin(b.t * 0.7) * 0.6 * (Math.sin(b.t * 0.23) > 0 ? 1 : -0.4); b.wings.forEach(w => w.rotation.x = 0);

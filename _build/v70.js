@@ -21,7 +21,8 @@ const SHOW_AT = { x: 41, z: 0 };
   if (window.__MAP) MAP.places.push(['SHOWTIME', x0, z0, x0 + Math.sin(SHOW.ry) * 4, z0 + Math.cos(SHOW.ry) * 4]);
 })();
 const showSecret = secret('showtime', () => { }, []);
-function showStart(word) { if (SHOW.on > 0) return; SHOW.on = 22; SHOW.t = 0; SHOW.next = 0; SHOW.beat = 0; toast(word ? 'SHOWTIME! (YOU ASKED.)' : 'WHAT TIME IS IT? SHOWTIME!', 'blue'); }
+const cheerSecret = secret('cheer', () => { }, []);   // v16's breakdance circle is retired; its secret lives here now
+function showStart(word) { if (SHOW.on > 0) return; if (!word) cheerSecret(); SHOW.on = 22; SHOW.t = 0; SHOW.next = 0; SHOW.beat = 0; toast(word ? 'SHOWTIME! (YOU ASKED.)' : 'WHAT TIME IS IT? SHOWTIME!', 'blue'); }
 EGGS.showtime = () => showStart(true); EGGS.showtime.__s = true;
 function showDrum(type, t0, vol) { if (!AC) return; try { if (type === 'k') { const o = AC.createOscillator(), g = AC.createGain(); o.frequency.setValueAtTime(140, t0); o.frequency.exponentialRampToValueAtTime(42, t0 + 0.14); g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + 0.25); }
   else { const n = Math.floor(AC.sampleRate * (type === 's' ? 0.16 : 0.04)), b = AC.createBuffer(1, n, AC.sampleRate), ch = b.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, type === 's' ? 2 : 4);

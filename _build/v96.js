@@ -1,12 +1,12 @@
 /* ================================================================
    v96 THE LIVING STATUE (2026-11-22)
-   On the west grass at (-88, 0), a street performer painted head to toe in silver stands on a silver box holding a
+   By the south path at (4.8, 30), a street performer painted head to toe in silver stands on a silver box holding a
    silver torch, perfectly still, a hat at their feet. Stand and look: nothing. Look away and back: they have moved,
    a little. E drops a TDH in the hat and they come alive for a moment, a slow robot bow and a wink.
    ================================================================ */
 const LSTAT = { pose: 0, t: 0, bow: 0, looked: false };
 window.__LIVE = LSTAT;
-const LSTAT_AT = { x: -88, z: 0 };
+const LSTAT_AT = { x: 4.8, z: 30 };   // moved 2026-11-23 to the spot of v16's statue, which it replaces
 (function livingStatue() {
   const x0 = LSTAT_AT.x, z0 = LSTAT_AT.z, g0 = ground(x0, z0), ry = Math.atan2(-x0, -z0); LSTAT.ry = ry;
   const silver = new THREE.MeshStandardMaterial({ color: 0xc9ccd0, roughness: 0.28, metalness: 0.95 });
@@ -25,7 +25,8 @@ const _lv = new THREE.Vector3(), _lw = new THREE.Vector3();
 function liveFrame(dt) {
   const d = Math.hypot(P.x - LSTAT_AT.x, P.z - LSTAT_AT.z); if (d > 60) return; const g = LSTAT.p.g;
   camera.getWorldDirection(_lw); _lv.set(LSTAT_AT.x - camera.position.x, g.position.y + 1.2 - camera.position.y, LSTAT_AT.z - camera.position.z).normalize(); const looking = _lv.dot(_lw) > 0.9;
-  if (!looking && LSTAT.looked && d < 25) { LSTAT.pose = (LSTAT.pose + 1) % 4; }   // you looked away: they shift
+  if (!looking && LSTAT.looked && d < 25) { LSTAT.pose = (LSTAT.pose + 1) % 4; LSTAT.changed = true; }   // you looked away: they shift
+  if (looking && LSTAT.changed && d < 12) { LSTAT.changed = false; try { statueCaught(); } catch (e) { } }   // and you caught it (v16's secret, carried over)
   LSTAT.looked = looking;
   const poses = [[0, 0, 0], [0.35, 0, 0.05], [-0.3, 0, -0.04], [0.1, 0.12, 0]]; const [yy, xx, zz] = poses[LSTAT.pose];
   if (LSTAT.bow > 0) { LSTAT.bow -= dt; const b = Math.sin((3 - LSTAT.bow) / 3 * PI); g.rotation.set(b * 0.5, LSTAT.ry, 0, 'YXZ'); } else g.rotation.set(xx, LSTAT.ry + yy, zz, 'YXZ');

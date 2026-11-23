@@ -67,6 +67,7 @@ function streetMusic() {
 
 /* ---------- the breakdance circle on GM Beach ---------- */
 (function breakers() {
+  STREET.breakers = null; return;   // retired 2026-11-23: v70 SHOWTIME replaces the beach circle
   const cx = -30, cz = 124, g0 = ground(cx, cz);
   const mat = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, 0.04, 32), new THREE.MeshStandardMaterial({ color: 0x7a5a3a, roughness: 0.85 })); mat.position.set(cx, g0 + 0.02, cz); scene.add(mat);
   const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d'); if (c) { c.fillStyle = '#c9a77a'; c.fillRect(0, 0, 256, 256); c.strokeStyle = '#8a6a44'; c.lineWidth = 3; for (let i = 0; i < 256; i += 32) { c.beginPath && (c.beginPath(), c.moveTo(i, 0), c.lineTo(i, 256), c.stroke()); } }
@@ -94,6 +95,7 @@ function breakFrame(dt) {
 
 /* ---------- the living statue: moves only when you are not looking ---------- */
 (function statue() {
+  return;   // retired 2026-11-23: v96 THE LIVING STATUE stands here now and carries the 'statue' secret
   const x = 4.8, z = 30, P0 = person(0xb8bcc2, 0xb8bcc2, 0xb8bcc2, 'wiseguy'); P0.g.position.set(x, ground(x, z) + 0.45, z); P0.g.rotation.y = -PI / 2;
   const box = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.45, 0.8), new THREE.MeshStandardMaterial({ color: 0xb8bcc2, metalness: 0.9, roughness: 0.35 })); box.position.set(x, ground(x, z) + 0.225, z); scene.add(box);
   if (typeof CIRCS !== 'undefined') CIRCS.push({ x, z, r: 0.55, y0: -5, y1: 5, on: true });
@@ -118,7 +120,7 @@ function streetFrame(dt) {
       const muted = !oceanGain || oceanGain.gain.value === 0; STREET.out.gain.value = muted ? 0 : 1; streetMusic();
       const r = Math.hypot(P.x, P.z); STREET.traffic.gain.value = 0.22 * Math.max(0, 1 - Math.abs(r - 100) / 40);
       const dS = Math.hypot(P.x - B.x, P.z - B.z); STREET.sax.gain.value = Math.max(0, 1 - dS / 28) ** 2 * ((STREET.tipped || 0) > 0 ? 1.4 : 1);
-      const BR = STREET.breakers, dB = Math.hypot(P.x - BR.cx, P.z - BR.cz); STREET.box.gain.value = Math.max(0, 1 - dB / 30) ** 2 * 0.9;
+      const BR = STREET.breakers, dB = BR ? Math.hypot(P.x - BR.cx, P.z - BR.cz) : 999; STREET.box.gain.value = BR ? Math.max(0, 1 - dB / 30) ** 2 * 0.9 : 0;
       if (STREET.tipped > 0) STREET.tipped -= dt;
       if (Math.random() < dt * 0.05 && Math.abs(r - 100) < 30) { const t0 = AC.currentTime; sNote(STREET.out, 392, t0, 0.35, 'square', 0.02, false); sNote(STREET.out, 494, t0, 0.35, 'square', 0.02, false); }
       if (Math.random() < dt * 0.08 && r > 105) { const t0 = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(1800, t0); o.frequency.exponentialRampToValueAtTime(900, t0 + 0.35); g.gain.setValueAtTime(0.025, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.4); o.connect(g); g.connect(STREET.out); o.start(t0); o.stop(t0 + 0.45); }

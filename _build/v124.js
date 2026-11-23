@@ -5,5 +5,5 @@
 try { Object.assign(SECRET_NAMES, {
   carriage: ['THE HANSOM CAB', 'a lap round the ring'], dogrun: ['FETCH', 'throw the ball in the dog run'], coyote: ['THE COYOTE', 'the beach after midnight'], deer: ['THE DEER', 'the west beach at dawn'],
   xmastree: ['A FRASER FIR', 'the sidewalk sellers, Thanksgiving to Christmas'], windows: ['THE HOLIDAY WINDOWS', 'watch the whole dance'], projection: ['THE WALL BLOOMS', 'the walk up, after dark'],
-  ferry: ['THE FERRY', 'ask for it'], dance: ['EVERYBODY DANCE', 'say the word']
+  ferry: ['THE FERRY', 'ask for it'], cheer: ['THE CIRCLE', 'walk up to the Showtime crew'], statue: ['THE STATUE MOVED', 'look away from the silver statue, look back'], dance: ['EVERYBODY DANCE', 'say the word']
 }); } catch (e) { }
