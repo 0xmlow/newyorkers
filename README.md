@@ -426,3 +426,20 @@ The welcome billboard becomes a real New York billboard: steel frame, catwalk an
 dusk, steel stringers on the back, steel jackets and kickers on the legs. The Open Wall gets a green sidewalk shed
 (posts, beams, deck, fascia with a permit board, bulbs underneath) and stud framing with raking braces behind. The
 lighthouse vault floor gets a bronze portal round the PORT door, steel bands, a stone plinth and steps. ?facades=0.
+
+## v177 to v186 (2026-11-23): SMOOTH, then the street
+v177 SMOOTH. Measured on an M5 Pro at retina size (2160 x 1350) the island drew 26 to 40 million triangles in
+6,000 to 11,000 draw calls and ran 13 to 20 fps; the governor had to drop sharpness and ambient occlusion and still
+only reached 47 to 49 fps. Now it holds 60 fps at full quality at the plaza, walk up, market, pier and bank. How:
+only the 8 nearest of 36 lamp lights are live (always 8, no recompiles); objects still for two seconds stop
+rebuilding their matrices and the scene graph updates once a frame; objects under 3 px are left out of every pass,
+under 10 px out of shadows and depth; sculptures load their light model (59k triangles) and swap the full one in
+within 30 m; still meshes sharing a material are merged per 40 m cell (1,892 meshes into 303 draws), released the
+moment one moves or hides; shadows redraw every other frame only when frames run late. ?smooth=0, ?batch=0.
+v178 grass wears to soil at every edge and blades thin there; paving collects grime along the grass (?edges=0).
+v179 gum, stains, oil down the lanes and tyre polish (?wear=0). v180 granite kerbs on the ring road and edging on the
+promenade (?kerbs=0). v181 cast iron manhole covers (?manholes=0). v182 cast iron lamp bases, collars and caps, and
+green street blades on every third lamp (?lamps=0). v183 painted roll down gates on the laundromat and N3W DROP when
+they close, an Open Eye Flower in a navy contour field (?gates=0). v184 curtains, blinds and window boxes on the
+walk up (?livedin=0). v185 rooftop condensers, vents, a dish, tar patches and the bank skylight (?roofs=0).
+v186 four tour stops. Also: v171 lamp light on the ground capped so it cannot burn to white.

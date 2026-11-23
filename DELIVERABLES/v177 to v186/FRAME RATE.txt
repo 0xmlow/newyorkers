@@ -1,0 +1,8 @@
+Frame rate, M5 Pro, headless Chrome on Metal, 1440 x 900 window at 2x (canvas 2160 x 1350), full quality
+
+before v177: governor fell to tier 2 (no ambient occlusion, pixel ratio 1): plaza 49, walk up 60, market 60, pier 47.5, bank 60
+after v186:  tier 0 (full quality, pixel ratio 1.5):                         plaza 60, walk up 60, market 60, pier 60, bank 60
+(60 is the island's own cap)
+
+GPU synced frame time at 2160 x 1350, plaza: 56 ms before, 23 ms after. Aerial: 93 ms before, 27 ms after.
+Not measured: an Intel or older Mac, any phone.

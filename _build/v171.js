@@ -17,7 +17,7 @@ window.__LAMPL = LAMPL;
       sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLW; uniform vec4 uLamps[48]; uniform float uLampN, uLampK; uniform vec3 uLampC;')
         .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
           if (uLampK > 0.001) { float lsum = 0.0; for (int i = 0; i < 48; i++) { if (float(i) >= uLampN) break; vec4 Lp = uLamps[i]; vec3 dv = Lp.xyz - vLW; float d2 = dot(dv, dv); float r2 = Lp.w * Lp.w; if (d2 < r2) { float a = 1.0 - d2 / r2; lsum += a * a * (2.2 / (1.0 + d2 * 0.18)); } }
-            totalEmissiveRadiance += diffuseColor.rgb * uLampC * lsum * uLampK; }`);
+            totalEmissiveRadiance += diffuseColor.rgb * uLampC * min(lsum, 1.0) * uLampK; }`);
     };
     m.customProgramCacheKey = () => prevKey + '-lampl171'; m.needsUpdate = true; });
 })();

@@ -11036,7 +11036,7 @@ window.__LAMPL = LAMPL;
       sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLW; uniform vec4 uLamps[48]; uniform float uLampN, uLampK; uniform vec3 uLampC;')
         .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
           if (uLampK > 0.001) { float lsum = 0.0; for (int i = 0; i < 48; i++) { if (float(i) >= uLampN) break; vec4 Lp = uLamps[i]; vec3 dv = Lp.xyz - vLW; float d2 = dot(dv, dv); float r2 = Lp.w * Lp.w; if (d2 < r2) { float a = 1.0 - d2 / r2; lsum += a * a * (2.2 / (1.0 + d2 * 0.18)); } }
-            totalEmissiveRadiance += diffuseColor.rgb * uLampC * lsum * uLampK; }`);
+            totalEmissiveRadiance += diffuseColor.rgb * uLampC * min(lsum, 1.0) * uLampK; }`);
     };
     m.customProgramCacheKey = () => prevKey + '-lampl171'; m.needsUpdate = true; });
 })();
@@ -11439,6 +11439,396 @@ window.__FAC4 = FAC4;
   if (typeof weathMat === 'function') [FACM.green, FACM.stud].forEach(m => { try { weathMat(m); } catch (e) { } });
 })();
 window.__FRAMES.push(dt => { try { if (!FAC_ON) return; FACM.bulb.emissiveIntensity = 0.05 + 2.2 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v177 SMOOTH (2026-11-23)
+   Measured on an M5 Pro at retina size, the island was drawing 26 to 40 million triangles in 6,000 to 11,000 draw
+   calls a frame, with every one of its 36 lamp lights computed for every pixel, all day: 13 to 20 frames a second.
+   This pass changes nothing you can see and most of what it costs:
+   - LIGHT BUDGET: only the eight lamps nearest you are live (always eight, so no shader ever recompiles); the rest
+     are off, and their pools of light on the ground (v171) still glow, so you cannot tell from where you stand.
+   - STILL THINGS STAY STILL: anything that has not moved for two seconds stops having its matrix rebuilt every
+     frame; the scene graph is updated once a frame instead of once per pass. Anything that moves again is caught
+     the same frame.
+   - DETAIL DISTANCE: small objects that would cover fewer than three pixels are left out of every pass (picture,
+     shadows, depth), and come back before they are big enough to notice.
+   - SCULPTURE LOD: every sculpture loads its light model first (59k triangles on average instead of 145k), and the
+     full detail model is fetched and swapped in only for the ones within thirty metres of you.
+   ?smooth=0 turns all of it off.
+   ================================================================ */
+const SMOOTH = { on: !/smooth=0/.test(location.search), nLights: isMobile ? 4 : 8, t: 0, lt: 0, frozen: [], fset: new WeakSet(), moved: 0, cull: [], cset: new WeakSet(), ci: 0, culled: 0, hi: 0 };
+window.__SMOOTH = SMOOTH;
+const CULL_LAYER = 3, MAIN_ONLY = 4;   // layer 4: drawn in the picture, left out of shadows and the depth pass
+// ---------- light budget
+function smoothLights() {
+  const cp = camera.position, L0 = practicals.filter(l => l && l.parent); if (L0.length <= SMOOTH.nLights) return;
+  const sc = L0.map(l => { l.getWorldPosition(_smv); return [l, _smv.distanceTo(cp) - (l.distance || 30) * 0.6 - (l.intensity > 0 ? 8 : 0)]; }).sort((a, b) => a[1] - b[1]);
+  sc.forEach(([l], i) => { l.visible = i < SMOOTH.nLights; });
+}
+const _smv = new V3();
+// ---------- still things: freeze matrices, compare once a frame
+function smoothScan() {
+  const now = performance.now();
+  scene.traverse(o => { if (o === scene || o.isCamera || SMOOTH.fset.has(o) || !o.matrixAutoUpdate) return; const u = o.userData;
+    const sig = o.position.x + o.position.y * 3.1 + o.position.z * 7.3 + o.quaternion.x * 11 + o.quaternion.y * 13 + o.quaternion.z * 17 + o.quaternion.w * 19 + o.scale.x * 23 + o.scale.y * 29 + o.scale.z * 31;
+    if (u.__sg === sig) { u.__sn = (u.__sn || 0) + 1; if (u.__sn >= 2 && !u.__nofreeze) { SMOOTH.fset.add(o); o.updateMatrix(); o.matrixAutoUpdate = false; SMOOTH.frozen.push(o, o.position.x, o.position.y, o.position.z, o.quaternion.x, o.quaternion.y, o.quaternion.z, o.quaternion.w, o.scale.x, o.scale.y, o.scale.z); } }
+    else { u.__sg = sig; u.__sn = 0; } });
+}
+function smoothCompare() {
+  const F = SMOOTH.frozen; let w = 0;
+  for (let i = 0; i < F.length; i += 11) { const o = F[i], p = o.position, q = o.quaternion, s = o.scale;
+    if (p.x !== F[i + 1] || p.y !== F[i + 2] || p.z !== F[i + 3] || q.x !== F[i + 4] || q.y !== F[i + 5] || q.z !== F[i + 6] || q.w !== F[i + 7] || s.x !== F[i + 8] || s.y !== F[i + 9] || s.z !== F[i + 10]) {
+      o.matrixAutoUpdate = true; o.updateMatrix(); o.userData.__nofreeze = true; SMOOTH.moved++; continue; }   // it moves: hand it back for good
+    if (!o.parent) continue;
+    if (w !== i) for (let k = 0; k < 11; k++) F[w + k] = F[i + k]; w += 11; }
+  F.length = w;
+}
+// ---------- detail distance (layers, so every pass skips them)
+function smoothCullScan() {
+  scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || !o.frustumCulled || SMOOTH.cset.has(o) || !o.geometry) return; if (o.layers.mask !== 1) return;
+    if (o.castShadow && o.geometry.boundingSphere && o.geometry.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis() < 0.18) o.castShadow = false;
+    if (!o.geometry.boundingSphere) { try { o.geometry.computeBoundingSphere(); } catch (e) { return; } } if (!o.geometry.boundingSphere || !(o.geometry.boundingSphere.radius > 0)) return;
+    SMOOTH.cset.add(o); SMOOTH.cull.push(o); });
+}
+const _scc = new V3();
+function smoothCullStep() {
+  const C = SMOOTH.cull, n = C.length; if (!n) return; const cp = camera.position, focal = renderer.domElement.height / 2 / Math.tan(camera.fov * PI / 360), per = Math.min(n, 1800);
+  for (let k = 0; k < per; k++) { SMOOTH.ci = (SMOOTH.ci + 1) % n; const o = C[SMOOTH.ci]; if (!o.parent || o.layers.mask === 0) continue; const bs = o.geometry.boundingSphere; if (!bs) continue;
+    _scc.copy(bs.center).applyMatrix4(o.matrixWorld); const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis(); if (r > 8) { if (o.layers.mask !== 1) o.layers.mask = 1; continue; }
+    const d = _scc.distanceTo(cp), px = r / Math.max(0.1, d) * focal, m = o.layers.mask;   // 1 = everything, 16 = picture only, 8 = nothing
+    const want = m === 8 ? (px > 4 || d < 28 ? (px > 13 || d < 26 ? 1 : 16) : 8) : m === 16 ? (px < 3 && d > 30 ? 8 : px > 13 || d < 26 ? 1 : 16) : (px < 3 && d > 30 ? 8 : px < 10 && d > 30 ? 16 : 1);
+    if (want !== m) o.layers.mask = want; }
+}
+// ---------- sculpture LOD
+if (SMOOTH.on && typeof SCL !== 'undefined') SCL.dir = 'sculpt';
+function smoothHiPlace(s, obj) {
+  obj.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(obj), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());
+  const target = s.size * s.scale, k = s.mode === 'm' ? target / Math.max(sz.x, sz.y, sz.z) : target / Math.max(0.001, sz.y);
+  const inner = new THREE.Group(); inner.add(obj); obj.position.set(-c.x, -bb.min.y, -c.z); inner.scale.setScalar(k); inner.visible = false; s.root.add(inner); s.hiG = inner;
+  obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; o.userData.sculpt = s.i; PICK_EXTRA.push(o);
+    const ms = Array.isArray(o.material) ? o.material : [o.material]; ms.forEach(mt => { if (mt) { mt.envMapIntensity = 0.75; if (mt.map) mt.map.anisotropy = ANISO; } }); });
+}
+function smoothHiDrop(s) {
+  const g = s.hiG; if (!g) return; s.hiG = null; s.hiState = null; if (g.parent) g.parent.remove(g); SMOOTH.hi--;
+  g.traverse(o => { if (!o.isMesh) return; const i = PICK_EXTRA.indexOf(o); if (i >= 0) PICK_EXTRA.splice(i, 1); o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (!m) return; ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap'].forEach(k => m[k] && m[k].dispose()); m.dispose(); }); });
+}
+function smoothLod() {
+  if (!gltfLoader || typeof SC === 'undefined') return; const cp = camera.position;
+  SC.forEach(s => { if (!s.root || s.state !== 'ready') return; const d = Math.hypot(cp.x - s.root.position.x, cp.z - s.root.position.z), lo = s.root.children[0];
+    if (s.hiG) { const near = s.hiG.visible ? d < 42 : d < 34; s.hiG.visible = near; if (lo && lo !== s.hiG) lo.visible = !near; if (d > 90) { smoothHiDrop(s); if (lo) lo.visible = true; } return; }
+    if (d < 30 && !s.hiState && SMOOTH.hiLoading < 2) { s.hiState = 'loading'; SMOOTH.hiLoading++; SMOOTH.hi++;
+      gltfLoader.load('assets/sculpt_hi/' + s.key + '.gltf.json', g => { SMOOTH.hiLoading--; if (s.hiState !== 'loading') return; s.hiState = 'ready'; smoothHiPlace(s, g.scene); }, undefined, () => { SMOOTH.hiLoading--; s.hiState = 'error'; SMOOTH.hi--; }); } });
+}
+SMOOTH.hiLoading = 0;
+// ---------- wiring: compare + one scene graph update right before the frame is drawn
+if (SMOOTH.on) {
+  const _rf = renderFrame;
+  renderFrame = function () {
+    try { smoothCompare(); scene.updateMatrixWorld(); } catch (e) { if (!SMOOTH.err) { SMOOTH.err = e; console.warn('v177 smooth', e); } }
+    const au = scene.autoUpdate, mau = scene.matrixWorldAutoUpdate; scene.autoUpdate = false; if (mau !== undefined) scene.matrixWorldAutoUpdate = false;
+    try { _rf(); } finally { scene.autoUpdate = au; if (mau !== undefined) scene.matrixWorldAutoUpdate = mau; }
+  };
+  try { if (window.__LAWN && LAWN.cam) { LAWN.cam.layers.enable(CULL_LAYER); LAWN.cam.layers.enable(MAIN_ONLY); } } catch (e) { }
+  camera.layers.enable(MAIN_ONLY);
+  const _ao = renderAO; renderAO = function () { camera.layers.disable(MAIN_ONLY); try { _ao(); } finally { camera.layers.enable(MAIN_ONLY); } };
+  window.__FRAMES.push(dt => { try {
+    SMOOTH.t += dt; SMOOTH.lt -= dt;
+    if (SMOOTH.lt <= 0) { SMOOTH.lt = 0.25; smoothLights(); smoothLod(); }
+    if ((SMOOTH.scanT = (SMOOTH.scanT || 0) - dt) <= 0) { SMOOTH.scanT = 1.0; smoothScan(); if ((SMOOTH.cs = (SMOOTH.cs || 0) + 1) % 3 === 1) smoothCullScan(); }
+    smoothCullStep();
+  } catch (e) { if (!SMOOTH.err2) { SMOOTH.err2 = e; console.warn('v177 smooth', e); } } });
+}
+// ---------- STATIC BATCHING: still meshes that share a material are merged per 40 m cell into one draw.
+// The originals stay in the scene, untouched, on no layer (so nothing draws them); if one moves, is hidden or is
+// removed, its cell is rebuilt without it and it goes back to drawing itself.
+const BATCH = { cells: new Map(), of: new Map(), t: 0, n: 0, merged: 0, rebuilds: 0, dirty: new Set(), on: SMOOTH.on && !/batch=0/.test(location.search) };
+window.__BATCH = BATCH;
+function batchEligible(o) {
+  if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || o.matrixAutoUpdate || o.userData.__nofreeze || BATCH.of.has(o)) return false;
+  const m = o.material, g = o.geometry; if (o.userData.__single || o.renderOrder) return false; if (!m || Array.isArray(m) || m.transparent || !g || !g.isBufferGeometry || g.morphAttributes && Object.keys(g.morphAttributes).length) return false;
+  if (!g.attributes.position || g.attributes.position.count > 6000 || g.attributes.tangent || g.isInstancedBufferGeometry) return false;
+  if (o.onBeforeRender !== THREE.Object3D.prototype.onBeforeRender || o.userData.sculpt !== undefined || o.userData.slot !== undefined || o.userData.kind || o.userData.n !== undefined) return false;
+  if (o.layers.mask !== 1 && o.layers.mask !== 16 && o.layers.mask !== 8) return false; if (PICK_EXTRA.indexOf(o) >= 0) return false;
+  for (let p = o; p; p = p.parent) { if (!p.visible) return false; if (p !== o && p.matrixAutoUpdate && p !== scene) return false; if (p.parent === null && p !== scene) return false; }
+  for (const k in g.attributes) { const a = g.attributes[k]; if (a.isInterleavedBufferAttribute || !(a.array instanceof Float32Array)) return false; }
+  return true;
+}
+function batchKey(o) { const g = o.geometry, at = Object.keys(g.attributes).sort().map(k => k + g.attributes[k].itemSize).join(','); return o.material.uuid + '|' + at + '|' + (g.index ? 1 : 0) + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0) + '|' + (o.renderOrder || 0); }
+const _bn = new THREE.Matrix3(), _bv = new V3();
+function batchBuild(cell) {
+  if (cell.mesh) { scene.remove(cell.mesh); cell.mesh.geometry.dispose(); cell.mesh = null; }
+  const mem = cell.members.filter(o => o.parent); cell.members = mem; if (mem.length < 2) { mem.forEach(o => { o.userData.__single = true; batchRelease(o, null); }); cell.members = []; return; }
+  const g0 = mem[0].geometry, keys = Object.keys(g0.attributes), indexed = !!g0.index; let nv = 0, ni = 0;
+  mem.forEach(o => { nv += o.geometry.attributes.position.count; if (indexed) ni += o.geometry.index.count; });
+  const out = new THREE.BufferGeometry(), arrs = {}; keys.forEach(k => { const a = g0.attributes[k]; arrs[k] = new Float32Array(nv * a.itemSize); });
+  const idx = indexed ? (nv > 65535 ? new Uint32Array(ni) : new Uint16Array(ni)) : null; let vo = 0, io = 0;
+  mem.forEach(o => { const g = o.geometry, mw = o.matrixWorld, nc = g.attributes.position.count; _bn.getNormalMatrix(mw);
+    keys.forEach(k => { const a = g.attributes[k], s = a.itemSize, dst = arrs[k];
+      for (let i = 0; i < nc; i++) { if (k === 'position') { _bv.fromBufferAttribute(a, i).applyMatrix4(mw); dst[(vo + i) * 3] = _bv.x; dst[(vo + i) * 3 + 1] = _bv.y; dst[(vo + i) * 3 + 2] = _bv.z; }
+        else if (k === 'normal') { _bv.fromBufferAttribute(a, i).applyMatrix3(_bn).normalize(); dst[(vo + i) * 3] = _bv.x; dst[(vo + i) * 3 + 1] = _bv.y; dst[(vo + i) * 3 + 2] = _bv.z; }
+        else for (let c = 0; c < s; c++) dst[(vo + i) * s + c] = a.getComponent ? a.getComponent(i, c) : a.array[i * s + c]; } });
+    if (indexed) { const ia = g.index.array; for (let i = 0; i < ia.length; i++) idx[io + i] = ia[i] + vo; io += ia.length; }
+    vo += nc; });
+  keys.forEach(k => out.setAttribute(k, new THREE.BufferAttribute(arrs[k], g0.attributes[k].itemSize, g0.attributes[k].normalized))); if (idx) out.setIndex(new THREE.BufferAttribute(idx, 1));
+  out.computeBoundingSphere(); out.computeBoundingBox();
+  const m = new THREE.Mesh(out, mem[0].material); m.castShadow = mem[0].castShadow; m.receiveShadow = mem[0].receiveShadow; m.renderOrder = mem[0].renderOrder; m.matrixAutoUpdate = false; m.userData.__batch = true; m.userData.__nofreeze = true;
+  scene.add(m); cell.mesh = m; mem.forEach(o => { o.userData.__bmask = o.userData.__bmask || o.layers.mask; o.layers.mask = 0; });
+}
+function batchRelease(o, cell) { BATCH.of.delete(o); if (o.layers.mask === 0) o.layers.mask = 1; delete o.userData.__bmask; if (cell) { const i = cell.members.indexOf(o); if (i >= 0) cell.members.splice(i, 1); BATCH.dirty.add(cell); } }
+function batchScan() {
+  const add = new Map();
+  scene.traverse(o => { if (!batchEligible(o)) return; o.updateMatrixWorld(); const c = _bv.setFromMatrixPosition(o.matrixWorld), key = batchKey(o) + '|' + Math.floor(c.x / 40) + ',' + Math.floor(c.z / 40);
+    let cell = BATCH.cells.get(key); if (!cell) { cell = { key, members: [], mesh: null }; BATCH.cells.set(key, cell); } cell.members.push(o); BATCH.of.set(o, cell); add.set(cell, 1); });
+  // a cell is worth a draw of its own only if it saves draws
+  add.forEach((_, cell) => BATCH.dirty.add(cell));
+}
+function batchCheck() {
+  // anything merged that moved, was hidden, was removed or changed material goes back to drawing itself
+  BATCH.of.forEach((cell, o) => { let ok = !!o.parent && !o.matrixAutoUpdate && (!cell.material0 || o.material === cell.material0);
+    if (ok) for (let p = o; p; p = p.parent) { if (!p.visible || (p !== scene && p.parent === null)) { ok = false; break; } }
+    if (!ok) { batchRelease(o, cell); BATCH.rebuilds++; } });
+}
+function batchFlush() { if (!BATCH.dirty.size) return; let budget = 12; for (const cell of BATCH.dirty) { if (budget-- <= 0) break; BATCH.dirty.delete(cell); cell.material0 = cell.members[0] && cell.members[0].material; batchBuild(cell); } BATCH.merged = 0; BATCH.n = 0; BATCH.cells.forEach(c => { if (c.mesh) { BATCH.n++; BATCH.merged += c.members.length; } }); }
+if (BATCH.on) window.__FRAMES.push(dt => { try {
+  BATCH.t += dt; if (BATCH.t < 12) return;
+  if ((BATCH.st = (BATCH.st || 0) - dt) <= 0) { BATCH.st = 6; batchScan(); }
+  if ((BATCH.ct = (BATCH.ct || 0) - dt) <= 0) { BATCH.ct = 0.2; batchCheck(); }
+  batchFlush();
+} catch (e) { if (!BATCH.err) { BATCH.err = e; console.warn('v177 batch', e); } } });
+window.__BDBG = { elig: batchEligible, pick: o => PICK_EXTRA.indexOf(o) >= 0 };
+// ---------- shadows at half rate when frames run late (before the governor has to give up sharpness)
+const SHH = { ema: 16.7, last: 0, on: false, f: 0 };
+window.__SHH = SHH;
+if (SMOOTH.on) window.__FRAMES.push(() => { try {
+  const now = performance.now(), gap = SHH.last ? now - SHH.last : 16.7; SHH.last = now; if (gap > 200 || !state.started) return;
+  SHH.ema += (gap - SHH.ema) * 0.05; if (window.__GOV && __GOV.tier >= 3) { SHH.on = false; return; }
+  if (!SHH.on && SHH.ema > 17.6) SHH.on = true; else if (SHH.on && SHH.ema < 16.4 && (SHH.calm = (SHH.calm || 0) + 1) > 600) { SHH.on = false; SHH.calm = 0; renderer.shadowMap.autoUpdate = true; }
+  if (SHH.on) { renderer.shadowMap.autoUpdate = false; if ((SHH.f++ & 1) === 0) renderer.shadowMap.needsUpdate = true; }
+} catch (e) { } });
+
+/* ================================================================
+   v178 THE LOOK: WHERE GROUND MEETS GROUND (2026-11-23)
+   Grass met paving, plinths, buildings and paths along a hard computer line. Nothing real does that: the lawn
+   wears down to bare soil where people step off the path and where it meets a wall, and the paving collects dirt
+   and moss in its joints along the grass. The lawn's own top down map (v170) already knows where every edge is;
+   the grass and the paving now read it, eight samples round each pixel, and blend in a band of trodden soil on
+   the grass side and grime on the paving side, broken up by noise so no edge is a line. Desktop; ?edges=0 off.
+   ================================================================ */
+const GEDGE = { u: { uGMask: { value: null }, uGOn: { value: 0 } } };
+window.__GEDGE = GEDGE;
+(function groundEdges() {
+  if (!LOOK.on || isMobile || /edges=0/.test(location.search) || !window.__LAWN || !LAWN.rt) return; GEDGE.u.uGMask.value = LAWN.rt.texture;
+  const GL = `varying vec3 vGE; uniform sampler2D uGMask; uniform float uGOn;
+    vec2 geUV(vec2 p){ return vec2((p.x + 110.0) / 220.0, (110.0 - p.y) / 220.0); }
+    float geH(vec2 p){ return fract(sin(dot(p, vec2(41.3, 289.1))) * 43758.5); }
+    float geN(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(geH(i), geH(i + vec2(1, 0)), f.x), mix(geH(i + vec2(0, 1)), geH(i + vec2(1, 1)), f.x), f.y); }
+    float geRing(vec2 p, float r){ float s = 0.0; for (int i = 0; i < 8; i++) { float a = float(i) * 0.7854 + 0.3; s += texture2D(uGMask, geUV(p + vec2(cos(a), sin(a)) * r)).r; } return s / 8.0; }`;
+  const add = (m, grass) => { if (!m) return; const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+    m.onBeforeCompile = (sh, r) => { if (prev) prev.call(m, sh, r); Object.assign(sh.uniforms, GEDGE.u);
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vGE;').replace('#include <project_vertex>', '#include <project_vertex>\n{ vec4 gw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\ngw = instanceMatrix * gw;\n#endif\nvGE = (modelMatrix * gw).xyz; }');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + GL).replace('#include <color_fragment>', `#include <color_fragment>
+        if (uGOn > 0.5 && abs(vGE.x) < 109.0 && abs(vGE.z) < 109.0) { vec2 p = vGE.xz; float c = texture2D(uGMask, geUV(p)).r; float n1 = geRing(p, 0.42), n2 = geRing(p, 1.0); float nz = geN(p * 2.3) * 0.6 + geN(p * 7.1) * 0.4;
+          ${grass ? `if (c > 0.5) { float e = 1.0 - (n1 * 0.6 + n2 * 0.4); float soil = smoothstep(0.08 + 0.25 * nz, 0.55 + 0.2 * nz, e); diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.2, 0.15, 0.1) * (0.75 + 0.5 * nz), soil * 0.8); diffuseColor.rgb *= 1.0 - 0.18 * smoothstep(0.0, 0.5, 1.0 - n2) * (1.0 - soil); }`
+                  : `if (c < 0.5) { float g = n1 * 0.65 + n2 * 0.35; float dirt = smoothstep(0.05, 0.6, g) * (0.55 + 0.45 * nz); diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.58, 0.6, 0.48), dirt * 0.75); }`} }`);
+    };
+    m.customProgramCacheKey = () => pk + '-gedge178'; m.needsUpdate = true; };
+  add(MAT.grass, true); add(MAT.pave, false); if (MAT.conc) add(MAT.conc, false);
+})();
+window.__FRAMES.push(() => { try { if (window.__LAWN && GEDGE.u.uGMask.value) GEDGE.u.uGOn.value = LAWN.shots > 0 ? 1 : 0; } catch (e) { } });
+// the blades thin out near every edge so the trodden band shows between the lawn and the paving
+try { if (window.__LAWN && LAWN.mat && GEDGE.u.uGMask.value) { const prevL = LAWN.mat.onBeforeCompile;
+  LAWN.mat.onBeforeCompile = (sh, r) => { prevL(sh, r); sh.vertexShader = sh.vertexShader.replace('float on = mk.r * step(0.5, mk2.r) * step(0.5, mk3.r);', `float on = mk.r * step(0.5, mk2.r) * step(0.5, mk3.r);
+    { float rr = 0.45 + 0.75 * aRnd.y; on *= step(0.5, texture2D(uMask, lawnUV(wxz + vec2(rr, 0.0))).r) * step(0.5, texture2D(uMask, lawnUV(wxz - vec2(rr, 0.0))).r) * step(0.5, texture2D(uMask, lawnUV(wxz + vec2(0.0, rr))).r) * step(0.5, texture2D(uMask, lawnUV(wxz - vec2(0.0, rr))).r); }`); };
+  LAWN.mat.customProgramCacheKey = () => 'mi-lawn-v170-edge178'; LAWN.mat.needsUpdate = true; } } catch (e) { }
+
+/* ================================================================
+   v179 THE LOOK: SIDEWALK WEAR (2026-11-23)
+   New York pavement is a record of everyone who walked it. The paving and the concrete now carry flattened gum
+   (the black dots on every Manhattan sidewalk), old stains and darker patches, and the ring road gets the oil
+   that drips down the middle of every lane and the tyre polish either side of it. All in the shader, in world
+   space, so it never repeats. ?wear=0 off.
+   ================================================================ */
+(function sidewalkWear() {
+  if (!LOOK.on || /wear=0/.test(location.search)) return;
+  const H = `varying vec3 vSW; float swH(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float swN(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(swH(i), swH(i + vec2(1, 0)), f.x), mix(swH(i + vec2(0, 1)), swH(i + vec2(1, 1)), f.x), f.y); }`;
+  const inj = (m, body, key) => { if (!m) return; const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+    m.onBeforeCompile = (sh, r) => { if (prev) prev.call(m, sh, r);
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSW;').replace('#include <project_vertex>', '#include <project_vertex>\n{ vec4 sw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\nsw = instanceMatrix * sw;\n#endif\nvSW = (modelMatrix * sw).xyz; }');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + H).replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n' + body); };
+    m.customProgramCacheKey = () => pk + key; m.needsUpdate = true; };
+  const walk = `{ vec2 p = vSW.xz; vec2 cell = floor(p / 0.45); vec2 o = vec2(swH(cell), swH(cell + 7.3)); float has = step(swH(cell + 3.1), 0.3);
+      float r = 0.04 + 0.05 * swH(cell + 9.2); float gd = length(p - (cell + 0.2 + 0.6 * o) * 0.45); float gum = has * (1.0 - smoothstep(r * 0.7, r, gd));
+      float st = smoothstep(0.62, 0.9, swN(p * 0.35)) * 0.3 + smoothstep(0.66, 0.95, swN(p * 1.3 + 4.0)) * 0.18;
+      diffuseColor.rgb *= (1.0 - st) * (1.0 - 0.7 * gum); roughnessFactor = mix(roughnessFactor, 0.55, gum); }`;
+  inj(MAT.pave, walk, '-wear179'); inj(MAT.conc, walk, '-wear179');
+  inj(MAT.road, `{ float rr = length(vSW.xz), ang = atan(vSW.z, vSW.x); if (rr > 95.0 && rr < 105.0) { float oil = 0.0, pol = 0.0;
+      for (int k = 0; k < 2; k++) { float lc = k == 0 ? 98.0 : 102.0; float d = rr - lc; oil += exp(-d * d / 0.18) * (0.45 + 0.55 * swN(vec2(ang * 260.0, lc))); pol += exp(-pow(abs(d) - 0.85, 2.0) / 0.05); }
+      diffuseColor.rgb *= 1.0 - 0.35 * oil - 0.12 * pol; roughnessFactor = clamp(roughnessFactor - 0.25 * oil - 0.2 * pol, 0.25, 1.0); } }`, '-wear179');
+})();
+
+/* ================================================================
+   v180 THE LOOK: KERBS (2026-11-23)
+   The ring road ran into the grass with no edge at all. It now has granite kerbs on both sides, the way every New
+   York street does: a dressed top, a rounded arris, a face standing a few inches proud of the asphalt, in stone
+   that weathers. The promenade ring gets a flush granite edging on its inner side. ?kerbs=0 off.
+   ================================================================ */
+const KERB = {};
+window.__KERB = KERB;
+(function kerbs() {
+  if (!LOOK.on || /kerbs=0/.test(location.search)) return;
+  const gran = new THREE.MeshStandardMaterial({ color: 0x6f6c66, roughness: 0.86 }); KERB.m = gran;
+  const ring = (rIn, rOut, y0, y1, seg) => { const pts = [[rIn, y0], [rIn, y1 - 0.02], [rIn + 0.02, y1], [rOut - 0.02, y1], [rOut, y1 - 0.02], [rOut, y0]].map(([r, y]) => new THREE.Vector2(r, y));
+    const m = new THREE.Mesh(new THREE.LatheGeometry(pts, seg), gran); m.receiveShadow = true; m.castShadow = false; scene.add(m); return m; };
+  KERB.inner = ring(95.62, 96.0, 0.5, 0.79, 360); KERB.outer = ring(104.0, 104.38, 0.5, 0.79, 380);
+  const e = new THREE.Mesh(new THREE.RingGeometry(37.25, 37.5, 200, 1), new THREE.MeshStandardMaterial({ color: 0x76736c, roughness: 0.85, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
+  e.rotation.x = -PI / 2; e.position.y = 0.67; e.receiveShadow = true; scene.add(e); KERB.edge = e;
+  if (typeof weathMat === 'function') try { weathMat(gran); } catch (er) { }
+})();
+
+/* ================================================================
+   v181 THE LOOK: MANHOLES (2026-11-23)
+   Cast iron covers in the ring road and the promenade: a rim, a waffle of raised squares worn shiny where the
+   tyres go, and N3W YORK SEWER cast round the edge. ?manholes=0 off.
+   ================================================================ */
+const MANH = { list: [] };
+window.__MANH = MANH;
+(function manholes() {
+  if (!LOOK.on || /manholes=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 512; const c = cv.getContext('2d');
+  if (c && c.fillRect && c.arc) { c.fillStyle = '#1b1a19'; c.fillRect(0, 0, 512, 512); c.translate(256, 256);
+    c.fillStyle = '#2b2927'; c.beginPath(); c.arc(0, 0, 250, 0, PI * 2); c.fill(); c.strokeStyle = '#4a4642'; c.lineWidth = 14; c.beginPath(); c.arc(0, 0, 236, 0, PI * 2); c.stroke();
+    c.save(); c.beginPath(); c.arc(0, 0, 160, 0, PI * 2); c.clip(); for (let x = -170; x < 170; x += 26) for (let y = -170; y < 170; y += 26) { const w = Math.hypot(x, y) < 90 ? 0.25 : 0; c.fillStyle = `rgba(${110 + w * 300 | 0},${104 + w * 280 | 0},${96 + w * 260 | 0},1)`; c.fillRect(x + 3, y + 3, 18, 18); } c.restore();
+    c.strokeStyle = '#4a4642'; c.lineWidth = 8; c.beginPath(); c.arc(0, 0, 166, 0, PI * 2); c.stroke();
+    if (c.fillText) { c.fillStyle = '#6d6862'; c.font = '700 34px "Archivo Black", Impact, sans-serif'; c.textAlign = 'center'; const s = 'N3W YORK SEWER · N3W YORK SEWER · '; for (let i = 0; i < s.length; i++) { const a = i / s.length * PI * 2; c.save(); c.rotate(a); c.fillText(s[i], 0, -192); c.restore(); } } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.55, metalness: 0.55, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+  const spots = []; for (let k = 0; k < 8; k++) spots.push([P2(12 + k * 45, k % 2 ? 98 : 102), 0.665 + 0.012, 0.42]); for (let k = 0; k < 4; k++) spots.push([P2(30 + k * 90, 40), 0.665 + 0.012, 0.36]);
+  spots.forEach(([[x, z], y, r]) => { const m = new THREE.Mesh(new THREE.CircleGeometry(r, 40), mat); m.rotation.x = -PI / 2; m.rotation.z = Math.random() * PI; m.position.set(x, y, z); m.receiveShadow = true; scene.add(m); MANH.list.push(m); });
+})();
+
+/* ================================================================
+   v182 THE LOOK: LAMP POSTS AND STREET SIGNS (2026-11-23)
+   The thirty six lamps on the inner kerb were plain poles with a ball on top. Each now stands on a fluted cast
+   iron base with collars up the shaft and a lantern cap over the globe, and every third one carries a pair of
+   green New York street blades at the corner: MEME ST, 6529 WAY, GM AVE, HODL PL, SEIZE ST, WAGMI BLVD and
+   friends, white letters, rounded ends, the cross street turned square to the first. ?lamps=0 off.
+   ================================================================ */
+const POSTS2 = {};
+window.__POSTS2 = POSTS2;
+(function lampPosts() {
+  if (!LOOK.on || /lamps=0/.test(location.search)) return;
+  const iron = new THREE.MeshStandardMaterial({ color: 0x1e2124, roughness: 0.45, metalness: 0.6 }), N = 36;
+  const parts = [[new THREE.CylinderGeometry(0.17, 0.24, 1.1, 12), 0.55], [new THREE.CylinderGeometry(0.2, 0.2, 0.08, 12), 1.12], [new THREE.CylinderGeometry(0.13, 0.13, 0.07, 10), 2.2], [new THREE.CylinderGeometry(0.12, 0.12, 0.07, 10), 4.6], [new THREE.CylinderGeometry(0.14, 0.1, 0.2, 10), 5.72], [new THREE.ConeGeometry(0.42, 0.34, 12), 6.62], [new THREE.SphereGeometry(0.06, 8, 6), 6.86]];
+  const fl = new THREE.CylinderGeometry(0.03, 0.03, 0.95, 4); const m4 = new THREE.Matrix4();
+  parts.forEach(([geo, y]) => { const im = new THREE.InstancedMesh(geo, iron, N); for (let i = 0; i < N; i++) { const [x, z] = P2((i + 0.5) / N * 360, 94.5); m4.makeTranslation(x, ground(x, z) + y, z); im.setMatrixAt(i, m4); } im.castShadow = true; scene.add(im); });
+  const fi = new THREE.InstancedMesh(fl, iron, N * 8); let k = 0; for (let i = 0; i < N; i++) { const [x, z] = P2((i + 0.5) / N * 360, 94.5), g = ground(x, z); for (let j = 0; j < 8; j++) { const a = j / 8 * PI * 2; m4.makeTranslation(x + Math.cos(a) * 0.2, g + 0.55, z + Math.sin(a) * 0.2); fi.setMatrixAt(k++, m4); } } fi.castShadow = true; scene.add(fi);
+  // street blades
+  const names = ['MEME ST', '6529 WAY', 'GM AVE', 'HODL PL', 'SEIZE ST', 'WAGMI BLVD', 'SUMMER ST', 'BODEGA AVE', 'CENSUS WALK', 'PUNK PL', 'N3W AVE', 'FLOOR ST', 'KEYS WAY', 'BRAIN ST', 'PIER AVE', 'BELL ST', 'MLOW WAY', 'GALLERY ST', 'EYE PL', 'CYCLE AVE', 'LOTTO ST', 'TIDE ST', 'JPG BLVD', 'LIBERTY AVE'];
+  const tx = {}; const bladeTex = nm => { if (tx[nm]) return tx[nm]; const cv = document.createElement('canvas'); cv.width = 512; cv.height = 96; const c = cv.getContext('2d');
+    if (c && c.fillRect) { c.fillStyle = '#0f6b3a'; c.fillRect(0, 0, 512, 96); c.strokeStyle = '#f4f4ee'; c.lineWidth = 4; c.strokeRect(8, 8, 496, 80); if (c.fillText) { c.fillStyle = '#f7f7f2'; c.font = '600 56px "Helvetica Neue", Helvetica, Arial, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(nm, 256, 52); } }
+    const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; return tx[nm] = t; };
+  const edge = new THREE.MeshStandardMaterial({ color: 0x0f6b3a, roughness: 0.5 }); let ni = 0; POSTS2.blades = 0;
+  for (let i = 0; i < N; i += 3) { const a = (i + 0.5) / N * 360, [x, z] = P2(a, 94.5), g = ground(x, z), tang = -(a * PI / 180);
+    [[tang, g + 3.55], [tang + PI / 2, g + 3.3]].forEach(([ry, y]) => { const nm = names[ni++ % names.length], ft = new THREE.MeshStandardMaterial({ map: bladeTex(nm), roughness: 0.45 });
+      const b = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.2, 0.025), [edge, edge, edge, edge, ft, ft]); b.position.set(x + Math.cos(ry) * 0.55, y, z - Math.sin(ry) * 0.55); b.rotation.y = ry; b.castShadow = true; scene.add(b); POSTS2.blades++; });
+    const cl = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.5, 8), iron); cl.position.set(x, g + 3.42, z); scene.add(cl); }
+})();
+
+/* ================================================================
+   v183 THE LOOK: GATES DOWN (2026-11-23)
+   When a New York shop closes, the roll down gate comes down, and the good ones are painted. The laundromat
+   (closed eleven at night to six) and the N3W DROP shop (closed four in the morning to noon) now pull down
+   corrugated steel gates painted by MLow: a navy field of contour lines crowding in toward an Open Eye Flower,
+   the witness on duty while the shop sleeps. The gate rolls down and up on the hour, out of a steel housing
+   that stays put. The bodega never closes, so it never gets one. ?gates=0 off.
+   ================================================================ */
+const GATES = { list: [] };
+window.__GATES = GATES;
+(function gates() {
+  if (!LOOK.on || /gates=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; GATES.tex = t;
+  const draw = img => { const c = cv.getContext('2d'); if (!c || !c.fillRect) return; c.fillStyle = '#0d1733'; c.fillRect(0, 0, 1024, 512);
+    if (c.beginPath && c.ellipse) for (let i = 1; i < 34; i++) { const r = i * 17; c.strokeStyle = i % 5 === 0 ? 'rgba(80,220,255,0.75)' : i % 2 ? 'rgba(41,98,255,0.55)' : 'rgba(150,120,255,0.35)'; c.lineWidth = i % 5 === 0 ? 3 : 2; c.beginPath();
+      for (let s = 0; s <= 96; s++) { const a = s / 96 * PI * 2, w = 1 + 0.12 * Math.sin(a * 3 + i * 0.4) + 0.06 * Math.sin(a * 7 - i); const x = 512 + Math.cos(a) * r * 1.5 * w, y = 256 + Math.sin(a) * r * 0.9 * w; s ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+    if (img && c.drawImage) { c.drawImage(img, 512 - 190, 256 - 190, 380, 380); }
+    c.fillStyle = 'rgba(0,0,0,0.28)'; for (let y = 0; y < 512; y += 14) c.fillRect(0, y, 1024, 3); c.fillStyle = 'rgba(255,255,255,0.06)'; for (let y = 5; y < 512; y += 14) c.fillRect(0, y, 1024, 2);
+    if (c.fillText) { c.fillStyle = 'rgba(240,244,248,0.7)'; c.font = '700 22px "JetBrains Mono", Menlo, monospace'; c.textAlign = 'right'; c.fillText('MLOW', 1000, 490); } t.needsUpdate = true; };
+  draw(null); const im = new Image(); im.onload = () => draw(im); im.src = 'assets/iv_flower.webp';
+  const gm = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.45 }), hm = new THREE.MeshStandardMaterial({ color: 0x55595e, roughness: 0.4, metalness: 0.7 });
+  const add = (x, z, ry, w, top, closed) => { const geo = new THREE.PlaneGeometry(w, top.h); geo.translate(0, -top.h / 2, 0); const g = new THREE.Mesh(geo, gm); g.position.set(x, top.y, z); g.rotation.y = ry; g.scale.y = 0.02; g.receiveShadow = true; scene.add(g);
+    const hs = new THREE.Mesh(new THREE.BoxGeometry(w + 0.2, 0.32, 0.32), hm); hs.position.set(x - Math.sin(ry) * 0.12, top.y + 0.16, z - Math.cos(ry) * 0.12); hs.rotation.y = ry; hs.castShadow = true; scene.add(hs);
+    GATES.list.push({ g, closed, k: 0.02 }); };
+  try { if (window.__LAUND && LAUND.g0 != null) add(LAUND.fx + 0.14, LAUND.z0, PI / 2, 7.6, { y: LAUND.g0 + 2.95, h: 2.95 }, h => h >= 23 || h < 6); } catch (e) { }
+  try { if (window.__LINE && LINE.g0 != null) add(LINE_AT.x, LINE_AT.z - 2 - 0.12, PI, 6.6, { y: LINE.g0 + 2.75, h: 2.75 }, h => h >= 4 && h < 12); } catch (e) { }
+})();
+window.__FRAMES.push(dt => { try { if (!GATES.list.length) return; const h = nycTime(TIME.utc).h; GATES.list.forEach(G => { const want = G.closed(h) ? 1 : 0.02; G.k += Math.sign(want - G.k) * Math.min(Math.abs(want - G.k), dt * 0.25); G.g.scale.y = G.k; G.g.visible = G.k > 0.03; }); } catch (e) { } });
+
+/* ================================================================
+   v184 THE LOOK: LIVED IN (2026-11-23)
+   The walk up looked empty from the street. Its front windows now have curtains drawn back or blinds half down,
+   no two alike, and window boxes of red geraniums and white alyssum hang under a few sills. ?livedin=0 off.
+   ================================================================ */
+const LIVED = {};
+window.__LIVED = LIVED;
+(function livedIn() {
+  if (!LOOK.on || /livedin=0/.test(location.search) || !window.__BROWN || !BROWN.H) return;
+  const x0 = BROWN_AT.x, z0 = BROWN_AT.z, g0 = BROWN.g0, fx = x0 - 3.5;
+  const cloths = [0xe9e1cf, 0xd8c7a3, 0xb8c4c9, 0xe4d2c8, 0xcfd6c2].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.9, side: THREE.DoubleSide })), blind = new THREE.MeshStandardMaterial({ color: 0xeee8da, roughness: 0.8 });
+  const folds = (w, h) => { const g = new THREE.PlaneGeometry(w, h, 6, 1), p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) / w * PI * 6) * 0.018); g.computeVertexNormals(); return g; };
+  let n = 0;
+  for (let f = 0; f < 4; f++) for (let k = 0; k < 3; k++) { if (f === 0 && k === 0) continue; const y = g0 + 1.9 + f * 3.1, z = z0 - 2.4 + k * 2.4, r = (f * 7 + k * 3) % 5;
+    if (r < 3) { const m = cloths[(f + k * 2) % cloths.length]; [-1, 1].forEach(s => { const c = new THREE.Mesh(folds(0.3, 1.8), m); c.position.set(fx - 0.014, y, z + s * 0.4); c.rotation.y = -PI / 2; scene.add(c); n++; }); }
+    else { const bh = 0.5 + (f % 2) * 0.4, b = new THREE.Mesh(new THREE.PlaneGeometry(1.06, bh), blind); b.position.set(fx - 0.014, y + 0.95 - bh / 2, z); b.rotation.y = -PI / 2; scene.add(b); n++; } }
+  // window boxes
+  const box = new THREE.MeshStandardMaterial({ color: 0x2b3a2a, roughness: 0.7 }), leaf = new THREE.MeshStandardMaterial({ color: 0x3f6b2e, roughness: 0.8 });
+  const flowers = [new THREE.MeshStandardMaterial({ color: 0xd8312a, roughness: 0.7 }), new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.8 })];
+  const spots = [[1, 1], [1, 2], [2, 1], [3, 0], [3, 2]]; const fg = new THREE.SphereGeometry(0.06, 6, 5), lg = new THREE.SphereGeometry(0.1, 6, 5);
+  const imF = flowers.map(m => new THREE.InstancedMesh(fg, m, spots.length * 14)), imL = new THREE.InstancedMesh(lg, leaf, spots.length * 10), m4 = new THREE.Matrix4(); let fi = [0, 0], li = 0;
+  spots.forEach(([f, k]) => { const y = g0 + 1.9 + f * 3.1 - 0.95 - 0.28, z = z0 - 2.4 + k * 2.4; const b = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.24, 1.2), box); b.position.set(fx - 0.3, y, z); b.castShadow = true; scene.add(b);
+    for (let i = 0; i < 10; i++) { m4.makeTranslation(fx - 0.3 + (Math.random() - 0.5) * 0.14, y + 0.15 + Math.random() * 0.06, z - 0.52 + i * 0.115); imL.setMatrixAt(li++, m4); }
+    for (let i = 0; i < 14; i++) { const t = (f + k + i) % 3 === 0 ? 1 : 0; m4.makeTranslation(fx - 0.3 + (Math.random() - 0.5) * 0.18, y + 0.24 + Math.random() * 0.1, z - 0.55 + Math.random() * 1.1); imF[t].setMatrixAt(fi[t]++, m4); } });
+  imF.forEach((m, i) => { m.count = fi[i]; scene.add(m); }); imL.count = li; scene.add(imL); LIVED.n = n;
+})();
+
+/* ================================================================
+   v185 THE LOOK: ROOFTOPS (2026-11-23)
+   From the water tower, the bell tower or the Ferris wheel the roofs were empty slabs. New York roofs are busy:
+   condenser units with their fans, vent stacks, a roof hatch, a satellite dish, tar patches, and on the bank a
+   glazed skylight over the banking hall. ?roofs=0 off.
+   ================================================================ */
+(function rooftops() {
+  if (!FAC_ON || /roofs=0/.test(location.search)) return;
+  FACM.tar = new THREE.MeshStandardMaterial({ color: 0x1d1c1b, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  FACM.sky = new THREE.MeshStandardMaterial({ color: 0x8fa9b4, roughness: 0.1, metalness: 0.5, envMapIntensity: 1.2 });
+  const unit = (x, y, z, ry) => { facPut('ac', x, y + 0.42, z, 1.0, 0.84, 0.72, ry); facPut('frameK', x, y + 0.86, z, 0.62, 0.04, 0.62, ry); facPut('steel', x, y + 0.04, z, 1.1, 0.08, 0.8, ry); };
+  const vent = (x, y, z, h) => { const v = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, h, 10), FACM.steel); v.position.set(x, y + h / 2, z); v.castShadow = true; scene.add(v); const c = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.16, 10), FACM.steel); c.position.set(x, y + h + 0.1, z); scene.add(c); };
+  const tar = (x, y, z, w, d, ry) => facPut('tar', x, y + 0.004, z, w, 0.008, d, ry);
+  if (window.__BROWN && BROWN.H) { const x0 = BROWN_AT.x, z0 = BROWN_AT.z, y = BROWN.g0 + BROWN.H + 0.05;
+    unit(x0 - 1.8, y, z0 - 2.4, 0.1); unit(x0 + 0.4, y, z0 - 2.6, -0.05); vent(x0 - 2.4, y, z0 + 1.2, 0.9); vent(x0 - 0.6, y, z0 + 2.4, 0.7); facPut('frameK', x0 + 1.2, y + 0.22, z0 + 0.6, 0.95, 0.44, 0.95, 0);
+    tar(x0 - 0.5, y, z0 + 0.2, 2.2, 1.4, 0.3); tar(x0 + 1.6, y, z0 - 1.6, 1.4, 0.9, -0.4);
+    const dish = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 8, 0, PI * 2, 0, PI / 4), FACM.ac); dish.position.set(x0 + 2.6, y + 0.9, z0 - 3.2); dish.rotation.set(-0.9, 0.6, 0); scene.add(dish);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9, 6), FACM.steel); arm.position.set(x0 + 2.6, y + 0.45, z0 - 3.2); scene.add(arm); }
+  if (window.__WT && WT.top) { const x0 = WT_AT.x, z0 = WT_AT.z, y = WT.top + 0.31; unit(x0 - 2.5, y, z0 + 2.4, PI / 2); vent(x0 + 2.6, y, z0 + 2.6, 0.8); tar(x0 - 1.8, y, z0 - 2.0, 1.6, 1.2, 0.2); }
+  try { const bg = ground(17, 66) + 0.02, y = bg + 4.85; unit(19, y, 62, 0); unit(19, y, 64.2, 0); vent(14, y, 70, 0.8); vent(15.2, y, 70.4, 0.6); tar(16, y, 67, 3, 2, 0.1); } catch (e) { }
+  { const g = ground(-66, 0) + 0.02, y = g + 10 + 0.3; facPut('lime', -66, y + 0.25, 0, 6.4, 0.5, 6.4); facPut('sky', -66, y + 0.62, 0, 5.6, 0.25, 5.6);
+    for (let i = -2; i <= 2; i++) { facPut('bronze', -66 + i * 1.12, y + 0.76, 0, 0.05, 0.05, 5.6); facPut('bronze', -66, y + 0.76, i * 1.12, 5.6, 0.05, 0.05); } unit(-71, y, -6, 0); unit(-71, y, 6, 0); vent(-60.5, y, -6.8, 1.0); }
+  facFlush();
+})();
+
+/* ================================================================
+   v186 THE TOUR MEETS THE BUILDINGS (2026-11-23)
+   Four more stops before the aerial for the rebuilt city: the walk up's fire escape, the sidewalk shed at the
+   Open Wall, the bank's portico and its Open Eye, and the lamp posts and street signs on the ring road.
+   ================================================================ */
+(function tourV186() {
+  const add = [];
+  try { const x = BROWN_AT.x, z = BROWN_AT.z, y = BROWN.g0; add.push({ name: 'the fire escape', dur: 7, pos: [[x + 12, y + 1.7, z - 6], [x + 9, y + 2.2, z - 3]], look: [[x + 3.6, y + 7, z - 1], [x + 3.6, y + 8, z - 1]] }); } catch (e) { }
+  try { const g = ground(-51, -34); add.push({ name: 'the sidewalk shed', dur: 7, pos: [[-42, g + 1.7, -24], [-46, g + 1.7, -27]], look: [[-52, g + 3.2, -33], [-53, g + 3.4, -33]] }); } catch (e) { }
+  try { const g = ground(-66, 0); add.push({ name: 'the bank', dur: 8, pos: [[-36, g + 1.7, 8], [-42, g + 1.9, 3]], look: [[-54, g + 8, 0], [-54, g + 12, 0]] }); } catch (e) { }
+  try { const [x, z] = P2(16, 94.5), g = ground(x, z); add.push({ name: 'the ring road', dur: 7, pos: [[x + 3, g + 1.6, z + 4], [x + 2, g + 1.7, z + 2.5]], look: [[x, g + 3.3, z], [x, g + 3.5, z]] }); } catch (e) { }
+  const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
+})();
 
 
 /* ---------------- boot ---------------- */
