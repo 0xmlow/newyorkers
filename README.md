@@ -381,3 +381,11 @@ MLow: "buildings next". All CC0 Poly Haven again. Code in `_build/v7_arch.js`, i
 - v158 THE RACCOON at the garbage piles, 11 pm to 4 am. v159 THE MAIL CARRIER on the ring path, six blue boxes. v160 THE KETTLE: a sidewalk Santa by the tree sellers, Nov 20 to Dec 24.
 - v161 THE GULL takes food out of your hand on the beach or pier. v162 POEMS WHILE YOU WAIT at (52, 16), 11 to 8: a typed poem about the moment.
 - v164 SECRETS.EXE for 13 new secrets. v165 five tour stops.
+
+## v166 to v169 (2026-11-23): THE LOOK, first pass
+MLow asked for huge, premium upgrades rather than more features. Diagnosis from eight hero frames: flat light (the light probe painted from the bright panorama lit everything from below too), a milky peach haze, pool coloured water with white rings round the whole island, a night that looked like blue daytime.
+- v166 LIGHT: probe ground half darkened, stronger sun and weaker fill, haze pushed far out and tinted by the sky, S curve grade with cool shadows and warm highlights, a real night. All numbers in window.__LOOK; ?look=0 turns the whole pass off.
+- v167 THE HARBOUR: slate and bottle green water, white water only on the south beach, a clearer, more mirror like surface.
+- v168 REFLECTIONS: screen space reflections on open water off the AO depth (water is the flat y=0 plane in that pass); ?ssr=0.
+- v169 SKY DEPTH: 48 lit noise cumulus between 400 and 900 m in front of the painted panorama, coverage by weather; ?clouds=0.
+- v140's own breath puff removed (a white smudge in first person).

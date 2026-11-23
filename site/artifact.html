@@ -10007,7 +10007,7 @@ function breathFrame(dt) {
   BREATH.scan -= dt; if (BREATH.scan <= 0) { BREATH.scan = 3; BREATH.heads.length = 0; const cp = camera.position; scene.traverse(o => { if (o.isMesh && o.geometry === PG.head && BREATH.heads.length < 40) { o.getWorldPosition(_brw); if (_brw.distanceToSquared(cp) < 30 * 30) BREATH.heads.push({ o, ph: Math.random() * 4 }); } }); }
   BREATH.heads.forEach(h => { h.ph -= dt; if (h.ph > 0) return; h.ph = 3 + Math.random() * 1.5; let o = h.o, vis = true; while (o) { if (!o.visible) { vis = false; break; } o = o.parent; } if (!vis) return;
     h.o.getWorldPosition(_brw); (h.o.parent || h.o).getWorldDirection(_brd); _brd.y = 0; _brd.normalize(); breathPuff(_brw.x + _brd.x * 0.17, _brw.y - 0.05, _brw.z + _brd.z * 0.17, _brd.x * 0.8, -0.05, _brd.z * 0.8); });
-  BREATH.mine -= dt; if (BREATH.mine <= 0) { BREATH.mine = 3.6 + Math.random(); const f = _brd.set(0, 0, -1).applyQuaternion(camera.quaternion); const c = camera.position; breathPuff(c.x + f.x * 0.4, c.y - 0.16 + f.y * 0.3, c.z + f.z * 0.4, f.x * 0.7, -0.03, f.z * 0.7); }
+  // 2026-11-23: the camera's own breath is gone: in first person it could only ever read as a smudge on the lens
 }
 window.__FRAMES.push(dt => { try { breathFrame(dt); } catch (e) { if (!BREATH.err) { BREATH.err = e; console.warn('v140 breath', e); } } });
 
@@ -10813,6 +10813,140 @@ try { Object.assign(SECRET_NAMES, {
   try { const x = POET.X, z = POET.Z, r = POET.ry; add.push({ name: 'the poet', dur: 7, pos: [[x + Math.sin(r) * 3 + Math.cos(r) * 1.5, 1.7, z + Math.cos(r) * 3 - Math.sin(r) * 1.5], [x + Math.sin(r) * 2.2, 1.6, z + Math.cos(r) * 2.2]], look: [[x, 1.1, z], [x, 1.1, z]] }); } catch (e) { }
   const at = TOUR.findIndex(r => r.name === 'aerial'); TOUR.splice(at < 0 ? TOUR.length : at, 0, ...add);
 })();
+
+/* ================================================================
+   v166 THE LOOK: LIGHT (2026-11-23)
+   MLow: "huge upgrades to make this look really great and really premium". The island was lit evenly from every
+   direction: the light probe is painted from the bright panorama, below the horizon included, so every surface
+   got the same flat fill and nothing had shape. This pass relights it like a photograph:
+   - the probe keeps its sky but its lower half (the ground bounce) goes dark, so undersides and shadow sides fall off;
+   - the sun gets stronger and the sky fill weaker, so shadows have weight and sunlit faces glow;
+   - the peach haze that filled the middle distance becomes thin aerial perspective, pushed far out and tinted by the sky;
+   - a filmic grade: an S curve, cool shadows and warm highlights at golden hour, a deeper vignette;
+   - night is night: dark blue ambient, the lamps and windows carry the island.
+   Every number lives in window.__LOOK so it can be tuned live.
+   ================================================================ */
+const LOOK = window.__LOOK = { envGround: 0.45, envSky: 0.95, curve: 0.32, sat: 1.06, vig: 0.42, split: 0.05, on: !/look=0/.test(location.search) };
+(function lookLight() {
+  if (!LOOK.on) return;
+  const P2 = { golden: { sun: 0xffb36b, sunI: 2.35, sky: 0xa8bcd6, gnd: 0x4a3c30, hemiI: 0.42, fog: 0xc6bcb4, near: 240, far: 1500, exp: 1.2, sea: 0x163640 },
+    day: { sun: 0xfff3e2, sunI: 2.55, sky: 0xb4cce8, gnd: 0x5a5040, hemiI: 0.45, fog: 0xbcd0e2, near: 300, far: 1800, exp: 1.04, sea: 0x1a4654 },
+    dawn: { sun: 0xff8f62, sunI: 1.5, sky: 0xc8a8c4, gnd: 0x3a3038, hemiI: 0.45, fog: 0xc2a2a6, near: 220, far: 1300, exp: 1.15, sea: 0x1e3448 },
+    night: { sun: 0x8ea4dc, sunI: 0.32, sky: 0x2c4272, gnd: 0x12161f, hemiI: 0.46, fog: 0x0b111e, near: 140, far: 1000, exp: 1.12, sea: 0x061220, lamps: 1, pano: 0x2a3466 } };
+  for (const k in P2) { Object.assign(PRESETS[k], P2[k]); COLOR_KEYS.forEach(c => { if (PCOL[k] && PCOL[k][c] && P2[k][c] !== undefined) PCOL[k][c].set(P2[k][c]); }); }
+  // the probe: keep the sky, darken the ground bounce (drawn before v113 paints the sun in)
+  const prevSun = window.__ENVSUN; window.__ENVSUN = c => { try { const H = c.canvas.height, W = c.canvas.width, g = c.createLinearGradient(0, 0, 0, H); const sk = 1 - LOOK.envSky, gr = 1 - LOOK.envGround;
+      g.addColorStop(0, `rgba(0,0,0,${sk})`); g.addColorStop(0.46, `rgba(0,0,0,${sk})`); g.addColorStop(0.54, `rgba(0,0,0,${gr * 0.8})`); g.addColorStop(1, `rgba(0,0,0,${gr})`); c.globalAlpha = 1; c.fillStyle = g; c.fillRect(0, 0, W, H); } catch (e) { } if (prevSun) prevSun(c); };
+  try { updateEnv(0, true); } catch (e) { }
+  // the grade
+  const prevG = window.__GRADE; window.__GRADE = u => { if (prevG) prevG(u); u.uCurve.value = LOOK.curve; u.uSat.value = LOOK.sat; u.uVig.value = LOOK.vig;
+    const gold = SKY.w ? SKY.w.x + SKY.w.y * 0.6 : 0, s = LOOK.split * (0.4 + gold); u.uLift.value.r *= 1 - s; u.uLift.value.b *= 1 + s * 0.8; u.uGain.value.r *= 1 + s * 0.6; u.uGain.value.b *= 1 - s * 0.7; };
+})();
+
+/* ================================================================
+   v167 THE LOOK: THE HARBOUR (2026-11-23)
+   The sea was a Caribbean pool: turquoise over the island's shelf and rings of white water rolling in on every
+   side of a round island, which from the air read as a target. New York Harbour is green grey and deep: this
+   pass gives it the harbour's colour (dark slate offshore, a muted bottle green over the shallows), keeps the
+   breaking white water to the beach on the south side only (the other sides are bulkhead and riprap, where the
+   water just slaps), and makes the surface clearer and more mirror-like so the sky and the skyline sit in it.
+   ================================================================ */
+(function lookHarbour() {
+  if (!LOOK.on) return;
+  OCEAN.SHALLOW.set(0x3d6258); OCEAN.u.uShallow.value.set(0x3d6258);
+  const prev = MAT.water.onBeforeCompile;
+  MAT.water.onBeforeCompile = sh => { prev(sh);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('float oOut = oR - uShore;', 'float oOut = oR - uShore; float oBeach = smoothstep(0.55, 0.85, sin(oAng));')
+      .replace('float oFoam = clamp((oLine + oRoll * 0.85)', 'float oFoam = clamp((oLine * mix(0.25, 1.0, oBeach) + oRoll * 0.85 * oBeach)')
+      .replace('diffuseColor.rgb = mix(diffuseColor.rgb, uShallow, oShallow * 0.85);', 'diffuseColor.rgb = mix(diffuseColor.rgb, uShallow, oShallow * 0.55);');
+  };
+  MAT.water.customProgramCacheKey = () => 'mi-ocean-v167'; MAT.water.roughness = 0.035; MAT.water.metalness = 0.1; MAT.water.envMapIntensity = 1.35; MAT.water.opacity = 0.96; MAT.water.normalScale.set(0.42, 0.42); MAT.water.needsUpdate = true;
+  // the weather code resets roughness every frame from WX.wet; keep the clear surface as its floor
+  window.__FRAMES.push(() => { try { MAT.water.roughness = Math.max(0.035, 0.035 + 0.2 * (WX.wet || 0)); } catch (e) { } });
+})();
+
+/* ================================================================
+   v168 THE LOOK: REFLECTIONS (2026-11-23)
+   The harbour mirrors the island. A screen space reflection pass: for every pixel of open water it reflects the
+   view ray off the surface (bent a little by the swell), marches it back across the depth the ambient occlusion
+   pass already draws, and where it meets something (the pier, the Ferris wheel, the palms, the bus, the skyline,
+   the lights at night) it lays that colour onto the water, strong at grazing angles and faint looking straight
+   down (Fresnel), wobbling with the waves, fading where the ray leaves the screen. The sky part of the reflection
+   stays the light probe's, so nothing is lost where the ray misses. Desktop only (it needs the depth pass);
+   ?ssr=0 turns it off.
+   ================================================================ */
+const SSR = { pass: null, k: 0 };
+window.__SSR = SSR;
+function ssrSetup() {
+  if (SSR.pass || !POST.comp || !AO.on || !AO.depth || !THREE.ShaderPass || /ssr=0/.test(location.search) || !LOOK.on) return;
+  const pass = new THREE.ShaderPass({ uniforms: { tDiffuse: { value: null }, tDepth: { value: AO.depth.depthTexture }, uProj: { value: new THREE.Matrix4() }, uInvProj: { value: new THREE.Matrix4() }, uView: { value: new THREE.Matrix4() }, uInvView: { value: new THREE.Matrix4() }, uK: { value: 1 }, uT: { value: 0 }, uNight: { value: 0 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: [
+      'uniform sampler2D tDiffuse, tDepth; uniform mat4 uProj, uInvProj, uView, uInvView; uniform float uK, uT, uNight; varying vec2 vUv;',
+      'vec3 vpos(vec2 uv, float d){ vec4 v = uInvProj * vec4(uv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0); return v.xyz / v.w; }',
+      'float nz(vec2 p){ return sin(p.x * 0.9 + uT * 1.3) * 0.5 + sin(p.y * 1.3 - uT * 1.1) * 0.35 + sin((p.x + p.y) * 2.7 + uT * 2.1) * 0.15; }',
+      'void main(){ vec4 c = texture2D(tDiffuse, vUv); if (uK < 0.01) { gl_FragColor = c; return; }',
+      '  float d = texture2D(tDepth, vUv).x; vec3 ro = (uInvView * vec4(0.0, 0.0, 0.0, 1.0)).xyz; vec3 rdv = normalize(vpos(vUv, 1.0)); vec3 rd = normalize((uInvView * vec4(rdv, 0.0)).xyz); vec3 P;',
+      '  if (d >= 0.99999) { if (rd.y > -0.002) { gl_FragColor = c; return; } float t = (0.0 - ro.y) / rd.y; P = ro + rd * t; }',
+      '  else { P = (uInvView * vec4(vpos(vUv, d), 1.0)).xyz; }',
+      '  float dist0 = length(P - ro); if (abs(P.y) > 0.025 + dist0 * 0.0004 || length(P.xz) < 96.0) { gl_FragColor = c; return; }',
+      '  float dist = length(P - ro); vec2 w = vec2(nz(P.xz * 0.35), nz(P.zx * 0.41 + 3.0)) * 0.045 / (1.0 + dist * 0.004);',
+      '  vec3 r = normalize(vec3(rd.x + w.x, -rd.y, rd.z + w.y)); vec3 q = P + r * 0.6; float st = 0.9 + dist * 0.004; vec3 hit = vec3(0.0); float found = 0.0; vec2 huv = vec2(0.0);',
+      '  for (int i = 0; i < 56; i++) { q += r * st; st *= 1.075; vec4 cl = uProj * uView * vec4(q, 1.0); if (cl.w <= 0.0) break; vec2 uv = cl.xy / cl.w * 0.5 + 0.5; if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) break;',
+      '    float sd = texture2D(tDepth, uv).x; if (sd >= 0.99999) continue; float zs = vpos(uv, sd).z, zr = (uView * vec4(q, 1.0)).z; if (zr < zs && zs - zr < 1.5 + st * 1.8) { found = 1.0; huv = uv; break; } }',
+      '  if (found < 0.5) { gl_FragColor = c; return; }',
+      '  vec2 e = min(huv, 1.0 - huv); float edge = smoothstep(0.0, 0.08, min(e.x, e.y)); float fres = 0.04 + 0.96 * pow(1.0 - max(0.0, -rd.y), 5.0); float far = 1.0 - smoothstep(380.0, 700.0, dist);',
+      '  vec3 refl = texture2D(tDiffuse, huv).rgb; float k = clamp(fres * 1.15, 0.0, 0.92) * edge * far * uK; vec3 tint = mix(vec3(0.78, 0.86, 0.86), vec3(0.85, 0.9, 1.0), uNight);',
+      '  gl_FragColor = vec4(mix(c.rgb, refl * tint, k), c.a); }'].join('\n') });
+  const bi = POST.comp.passes.indexOf(POST.bloom); POST.comp.passes.splice(bi >= 0 ? bi : 1, 0, pass); SSR.pass = pass;
+  const prevG = window.__GRADE; window.__GRADE = g => { if (prevG) prevG(g); try { const u = pass.uniforms; u.uProj.value.copy(camera.projectionMatrix); u.uInvProj.value.copy(camera.projectionMatrixInverse); u.uView.value.copy(camera.matrixWorldInverse); u.uInvView.value.copy(camera.matrixWorld); } catch (e) { } };
+}
+function ssrFrame(dt) { ssrSetup(); if (!SSR.pass) return; const u = SSR.pass.uniforms; u.uT.value += dt; u.uK.value = 1 - 0.6 * (WX.fog || 0); u.uNight.value = L.lamps || 0; u.tDepth.value = AO.depth.depthTexture; SSR.pass.enabled = AO.on; }
+window.__FRAMES.push(dt => { try { ssrFrame(dt); } catch (e) { if (!SSR.err) { SSR.err = e; console.warn('v168 reflections', e); } } });
+
+/* ================================================================
+   v169 THE LOOK: SKY DEPTH (2026-11-23)
+   MLow's painted panorama stays exactly as it is (the eye, the painted clouds, the skyline). In front of it, a
+   real layer of cumulus now sits over the harbour between 400 and 900 metres out: forty eight soft clouds, each a
+   volume of noise lit from the sun's real direction (bright tops and sun sides, grey blue bellies, a silver rim
+   when the sun is behind them, peach and rose at golden hour, moonlit grey at night), drifting slowly on the wind
+   so they slide past the painting and give the sky parallax and depth. Clear days get a few, scattered skies
+   more, rain and fog a low grey deck. ?clouds=0 turns them off.
+   ================================================================ */
+const CLOUDS = { list: [], k: 0, cover: 0.3 };
+window.__CLOUDS = CLOUDS;
+(function clouds() {
+  if (!LOOK.on || /clouds=0/.test(location.search)) return;
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: false, uniforms: { uT: { value: 0 }, uSun: { value: new V3(0, 1, 0) }, uLit: { value: new THREE.Color(1, 1, 1) }, uShade: { value: new THREE.Color(0.6, 0.65, 0.75) }, uRim: { value: new THREE.Color(1, 0.9, 0.7) }, uCover: { value: 0.3 }, uA: { value: 1 } },
+    vertexShader: 'attribute float aSeed; attribute float aOn; varying vec2 vUv; varying float vSeed; varying float vOn; varying vec3 vW; void main(){ vUv = uv; vSeed = aSeed; vOn = aOn; vec4 w = modelMatrix * instanceMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: ['uniform float uT, uCover, uA; uniform vec3 uSun, uLit, uShade, uRim; varying vec2 vUv; varying float vSeed; varying float vOn; varying vec3 vW;',
+      'float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); } float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }',
+      'float fbm(vec2 p){ float s = 0.0, a = 0.5; for (int i = 0; i < 5; i++) { s += n(p) * a; p = p * 2.03 + 1.7; a *= 0.5; } return s; }',
+      'void main(){ if (vOn < 0.5) discard; vec2 p = vUv * vec2(3.2, 1.6) + vSeed * 17.0 + vec2(uT * 0.004, 0.0); vec2 c = (vUv - vec2(0.5, 0.42)) * vec2(1.0, 1.9);',
+      '  float shape = 1.0 - smoothstep(0.15, 0.62, length(c) + (0.5 - vUv.y) * 0.35 * step(vUv.y, 0.42) * 0.0); float base = smoothstep(0.05, 0.3, vUv.y);',
+      '  float den = fbm(p) * 1.25 + fbm(p * 2.2 + 5.0) * 0.35; den = smoothstep(0.55 - uCover * 0.25, 1.05, den * shape * 1.25) * base; if (den < 0.01) discard;',
+      '  float top = smoothstep(0.2, 0.9, vUv.y); vec3 v = normalize(vW - cameraPosition); float fwd = pow(max(0.0, dot(v, normalize(uSun))), 6.0); float side = 0.5 + 0.5 * dot(normalize(vec3(uSun.x, 0.0, uSun.z)), normalize(vec3(-v.x, 0.0, -v.z)));',
+      '  float lit = clamp(top * 0.65 + side * 0.35 + (1.0 - den) * 0.25, 0.0, 1.0); vec3 col = mix(uShade, uLit, lit) + uRim * fwd * (1.0 - den) * 1.6;',
+      '  gl_FragColor = vec4(col, den * uA); }'].join('\n') });
+  const N = 48, geo = new THREE.PlaneGeometry(1, 1); const seed = new Float32Array(N), on = new Float32Array(N); for (let i = 0; i < N; i++) { seed[i] = Math.random(); on[i] = 1; }
+  geo.setAttribute('aSeed', new THREE.InstancedBufferAttribute(seed, 1)); geo.setAttribute('aOn', new THREE.InstancedBufferAttribute(on, 1));
+  const mesh = new THREE.InstancedMesh(geo, mat, N); mesh.frustumCulled = false; mesh.renderOrder = -5; scene.add(mesh); CLOUDS.mesh = mesh; CLOUDS.mat = mat; CLOUDS.on = on;
+  for (let i = 0; i < N; i++) { const a = i / N * PI * 2 + Math.random() * 0.12, R = 420 + Math.random() * 480, w = 140 + Math.random() * 180; CLOUDS.list.push({ a, R, y: 110 + Math.random() * 150 + R * 0.06, w, h: w * (0.42 + Math.random() * 0.2), rank: Math.random() }); }
+})();
+const _co = new THREE.Object3D();
+function cloudsFrame(dt) {
+  if (!CLOUDS.mesh) return; const W = WX.override || WX.cur, cover = W === 'CLEAR' ? 0.22 : W === 'SCATTERED' ? 0.55 : W === 'RAIN' || W === 'SNOW' ? 0.95 : W === 'HARBOR FOG' ? 0.7 : 0.45; CLOUDS.cover += (cover - CLOUDS.cover) * Math.min(1, dt * 0.2);
+  const u = CLOUDS.mat.uniforms; u.uT.value += dt; u.uCover.value = CLOUDS.cover; u.uSun.value.copy(SKY.el > -4 ? SKY.sunDir : SKY.moonDir);
+  const night = L.lamps || 0, gold = SKY.w ? SKY.w.x + SKY.w.y : 0, s = L.sun;
+  u.uLit.value.setRGB(1, 1, 1).lerp(_cl1.setRGB(1, 0.78 + 0.1 * s.g, 0.62), gold * 0.8).lerp(_cl1.setRGB(0.32, 0.36, 0.48), night); u.uShade.value.copy(L.sky).multiplyScalar(0.62).lerp(_cl1.setRGB(0.07, 0.09, 0.15), night); if (gold > 0.2) u.uShade.value.lerp(_cl1.setRGB(0.55, 0.42, 0.5), gold * 0.4);
+  u.uRim.value.copy(s).multiplyScalar(1 - night * 0.7); const dark = W === 'RAIN' || W === 'SNOW' ? 0.55 : 1; u.uLit.value.multiplyScalar(dark); u.uA.value = 0.92;
+  const c = camera.position, drift = u.uT.value * 0.0016;
+  CLOUDS.list.forEach((q, i) => { const a = q.a + drift, x = Math.sin(a) * q.R, z = Math.cos(a) * q.R; _co.position.set(c.x * 0.3 + x, q.y, c.z * 0.3 + z); _co.lookAt(c.x, q.y, c.z); _co.scale.set(q.w * (0.9 + CLOUDS.cover * 0.4), q.h * (0.85 + CLOUDS.cover * 0.5), 1); _co.updateMatrix(); CLOUDS.mesh.setMatrixAt(i, _co.matrix); CLOUDS.on[i] = q.rank < 0.25 + CLOUDS.cover * 0.85 ? 1 : 0; });
+  CLOUDS.mesh.instanceMatrix.needsUpdate = true; CLOUDS.mesh.geometry.attributes.aOn.needsUpdate = true;
+}
+const _cl1 = new THREE.Color();
+window.__FRAMES.push(dt => { try { cloudsFrame(dt); } catch (e) { if (!CLOUDS.err) { CLOUDS.err = e; console.warn('v169 clouds', e); } } });
 
 
 /* ---------------- boot ---------------- */

@@ -23,6 +23,6 @@ function breathFrame(dt) {
   BREATH.scan -= dt; if (BREATH.scan <= 0) { BREATH.scan = 3; BREATH.heads.length = 0; const cp = camera.position; scene.traverse(o => { if (o.isMesh && o.geometry === PG.head && BREATH.heads.length < 40) { o.getWorldPosition(_brw); if (_brw.distanceToSquared(cp) < 30 * 30) BREATH.heads.push({ o, ph: Math.random() * 4 }); } }); }
   BREATH.heads.forEach(h => { h.ph -= dt; if (h.ph > 0) return; h.ph = 3 + Math.random() * 1.5; let o = h.o, vis = true; while (o) { if (!o.visible) { vis = false; break; } o = o.parent; } if (!vis) return;
     h.o.getWorldPosition(_brw); (h.o.parent || h.o).getWorldDirection(_brd); _brd.y = 0; _brd.normalize(); breathPuff(_brw.x + _brd.x * 0.17, _brw.y - 0.05, _brw.z + _brd.z * 0.17, _brd.x * 0.8, -0.05, _brd.z * 0.8); });
-  BREATH.mine -= dt; if (BREATH.mine <= 0) { BREATH.mine = 3.6 + Math.random(); const f = _brd.set(0, 0, -1).applyQuaternion(camera.quaternion); const c = camera.position; breathPuff(c.x + f.x * 0.4, c.y - 0.16 + f.y * 0.3, c.z + f.z * 0.4, f.x * 0.7, -0.03, f.z * 0.7); }
+  // 2026-11-23: the camera's own breath is gone: in first person it could only ever read as a smudge on the lens
 }
 window.__FRAMES.push(dt => { try { breathFrame(dt); } catch (e) { if (!BREATH.err) { BREATH.err = e; console.warn('v140 breath', e); } } });
