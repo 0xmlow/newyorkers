@@ -21,7 +21,7 @@ function flareSetup() {
       '  float K = uK * vis; if (K < 0.002) { gl_FragColor = c; return; }',
       '  vec2 ax = vec2(0.5) - uSun; vec3 f = vec3(0.0);',
       '  f += ghost(uSun + ax * 0.45, 0.022, vec3(0.35, 0.55, 1.0), 0.0); f += ghost(uSun + ax * 0.75, 0.06, vec3(0.55, 0.3, 0.9), 0.0); f += ghost(uSun + ax * 1.1, 0.018, vec3(1.0, 0.65, 0.3), 0.0);',
-      '  f += ghost(uSun + ax * 1.35, 0.1, vec3(0.25, 0.85, 0.6), 1.0) * 0.6; f += ghost(uSun + ax * 1.7, 0.045, vec3(0.9, 0.4, 0.6), 0.0); f += ghost(uSun + ax * 2.15, 0.17, vec3(0.4, 0.6, 1.0), 1.0) * 0.4;',
+      '  f += ghost(uSun + ax * 1.35, 0.1, vec3(0.25, 0.85, 0.6), 1.0) * 0.18; f += ghost(uSun + ax * 1.7, 0.045, vec3(0.9, 0.4, 0.6), 0.0); f += ghost(uSun + ax * 2.15, 0.17, vec3(0.4, 0.6, 1.0), 1.0) * 0.12;',
       '  vec2 d = (vUv - uSun) * vec2(uAsp, 1.0); float l = length(d), a = atan(d.y, d.x);',
       '  float rays = pow(abs(sin(a * 6.0 + 0.3)), 36.0) * 0.6 + pow(abs(sin(a * 9.0 + 1.1)), 60.0) * 0.4; f += uCol * (rays * exp(-l * 8.0) * 1.3 + exp(-l * 26.0) * 0.9);',
       '  f += uCol * exp(-abs(d.y) * 140.0) * exp(-abs(d.x) * 2.6) * 0.3;',

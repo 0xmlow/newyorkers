@@ -389,3 +389,8 @@ MLow asked for huge, premium upgrades rather than more features. Diagnosis from 
 - v168 REFLECTIONS: screen space reflections on open water off the AO depth (water is the flat y=0 plane in that pass); ?ssr=0.
 - v169 SKY DEPTH: 48 lit noise cumulus between 400 and 900 m in front of the painted panorama, coverage by weather; ?clouds=0.
 - v140's own breath puff removed (a white smudge in first person).
+
+## v170 to v171 (2026-11-23): THE LOOK, second pass
+- v170 THE LAWN: up to 90,000 grass blades in a 46 m square that travels with the player (each blade fixed to its world spot), lit and shadowed by the scene's sun, leaning in the wind, fading at the edge. A top-down render of the island (grass white, everything else black, surface height in G and B) tells the blades where lawn is, so nothing grows through paths or props; it is retaken at 6, 25 and 70 seconds as props load. Desktop only, ?grass=0.
+- v171 LAMPLIGHT ON THE GROUND: the walkable materials (grass, sand, paving, concrete, road, stone, lime, pier wood) compute the light of up to 48 lamps per pixel, so the ground's own texture lights up warm under each lamp; v112's flat discs dimmed to a faint glow.
+- v146 flare: the two ring ghosts toned down (they read as a circle drawn on the screen).
