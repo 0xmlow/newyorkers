@@ -14526,15 +14526,127 @@ window.kitTex = kitTex;
   const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v297 WALLPAPER: THE COURT (2026-11-24)
+   New York lets artists paint its basketball courts. N3W COURT (v19) is painted now in a Firefly piece made from
+   MLow's own references: a giant Open Eye Flower in the centre circle and contour rivers to every corner, with the
+   court's white lines laid back over the paint the way the parks department does it. ?wallpaper=0 off.
+   ================================================================ */
+(function courtMural() {
+  if (!WALLS.on || typeof COURT === 'undefined') return; const { x, z } = COURT, g0 = ground(x, z) + 0.06, W = 13, D = 11;
+  const cv = document.createElement('canvas'); cv.width = 1300; cv.height = 1100; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const lines = () => { if (!c || !c.strokeRect || !c.arc) return; c.strokeStyle = 'rgba(244,242,236,.92)'; c.lineWidth = 7; c.strokeRect(14, 14, 1272, 1072);
+    c.strokeRect(650 - 245, 14, 490, 580); c.beginPath(); c.arc(650, 594, 180, 0, PI); c.stroke(); c.beginPath(); c.moveTo(80, 14); c.lineTo(80, 300); c.arc(650, 160, 675, PI - 0.06, 0.06, true); c.lineTo(1220, 14); c.stroke();
+    c.beginPath(); c.arc(650, 1086, 180, PI, 0); c.stroke(); t.needsUpdate = true; };
+  const im = new Image(); im.onload = () => { try { c.drawImage(im, (im.width - im.height * 13 / 11) / 2, 0, im.height * 13 / 11, im.height, 0, 0, 1300, 1100); lines(); } catch (e) { } }; im.src = 'assets/wall/court.webp';
+  if (c && c.fillRect) { c.fillStyle = '#16233f'; c.fillRect(0, 0, 1300, 1100); lines(); }
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ map: t, roughness: 0.82, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
+  m.rotation.x = -PI / 2; m.rotation.z = COURT.ry || 0; m.position.set(x, g0 + 0.014, z); m.receiveShadow = true; scene.add(m); WALLS.n++; WALLS.court = m;
+})();
 
+/* ================================================================
+   v298 WALLPAPER: THE FACTORY (2026-11-24)
+   SEIZE THE MEMES OF PRODUCTION's long red steel walls were bare. They carry the Firefly factory mural now: gears and
+   a conveyor dissolving into MLow's contour rivers, an Open Eye Flower in the biggest gear, paint running down the
+   corrugations, round all three outside walls. ?wallpaper=0 off.
+   ================================================================ */
+(function factoryMural() {
+  if (!WALLS.on) return; const cx = 0, cz = -64, w = 32, d = 28, h = 9, g = ground(cx, cz) + 0.02;
+  const put = (x, z, ry, len, rep) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(len, h - 0.2), wallMat('factory', rep, 1)); m.position.set(x, g + h / 2, z); m.rotation.y = ry; m.receiveShadow = true; scene.add(m); WALLS.n++; };
+  put(cx, cz - d / 2 - 0.265, PI, w, 2); put(cx - w / 2 - 0.265, cz, -PI / 2, d, 2); put(cx + w / 2 + 0.265, cz, PI / 2, d, 2);
+})();
 
+/* ================================================================
+   v299 WALLPAPER: ASPHALT ART (2026-11-24)
+   New York's asphalt art program lets artists paint intersections. Where the four diagonal paths meet the freeway
+   loop, the road itself is painted now: the Firefly asphalt piece, contour rivers with eye flowers floating in them,
+   the asphalt grain and cracks showing through, the cars driving over it. ?wallpaper=0 off.
+   ================================================================ */
+(function asphaltArt() {
+  if (!WALLS.on) return; const mat = wallMat('asphalt', 1, 1, { rough: 0.85 }); mat.polygonOffsetFactor = -3; mat.polygonOffsetUnits = -3;
+  [45, 135, 225, 315].forEach(deg => { const a = deg * PI / 180, m = new THREE.Mesh(new THREE.PlaneGeometry(14, 7.8), mat); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, -a, 0); m.position.set(Math.cos(a) * 100, 0.66 + 0.012, Math.sin(a) * 100); m.receiveShadow = true; scene.add(m); WALLS.n++; });
+})();
 
+/* ================================================================
+   v300 WALLPAPER: EYES ON THE ROOFS (2026-11-24)
+   From the air the island's flat roofs were plain tar. Each new tenement roof (bodega, laundromat, DROP shop) now has
+   the Firefly rooftop eye painted on it: one huge Open Eye Flower with contour rings rippling out across the tar, the
+   kind of thing you only find from a helicopter or the top of the Ferris wheel. ?wallpaper=0 off.
+   ================================================================ */
+(function roofEyes() {
+  if (!WALLS.on || !window.__BLK) return; const mat = wallMat('roofeye', 1, 1, { rough: 0.9 }); mat.polygonOffsetFactor = -4; mat.polygonOffsetUnits = -4;
+  const roof = (x, z, w, d, top, rot) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, rot || 0, 0); m.position.set(x, top + 0.135, z); m.receiveShadow = true; scene.add(m); WALLS.n++; };
+  try { if (BLK.bodega) roof(17, 66, 13.6, 9.6, BLK.bodega, PI / 2); } catch (e) { }
+  try { if (BLK.laund) roof(-86, -4, 7.6, 4.6, BLK.laund, PI / 2); } catch (e) { }
+  try { if (BLK.drop) roof(-62, 80, 6.6, 3.6, BLK.drop, 0); } catch (e) { }
+})();
 
+/* ================================================================
+   v301 WALLPAPER: THE VAULT'S STEEL (2026-11-24)
+   The hardware wallet lighthouse's vault floor (v176) gets its casing engraved: the Firefly steel panels, riveted,
+   with cobalt and cyan contour lines etched across them toward an engraved Open Eye Flower, on both side walls, like
+   the shell of a precious device. ?wallpaper=0 off.
+   ================================================================ */
+(function vaultSteel() {
+  if (!WALLS.on || typeof LH === 'undefined' || LH.g == null) return; const { x, z, w, d } = LH, g0 = LH.g, rh = 5.6;
+  [-1, 1].forEach(s => { const m = new THREE.Mesh(new THREE.PlaneGeometry(d + 0.6, rh - 0.4), wallMat('steel', 1, 1, { rough: 0.45 })); m.material.metalness = 0.55; m.position.set(x + s * (w / 2 + 0.38), g0 + rh / 2, z); m.rotation.y = s * PI / 2; m.receiveShadow = true; scene.add(m); WALLS.n++; });
+})();
 
+/* ================================================================
+   v302 WALLPAPER: THE LIGHTHOUSE'S BACK (2026-11-24)
+   The forty metre back of the hardware wallet lighthouse faces the open sea and every aerial shot, and it was blank.
+   It carries the Firefly tower piece now: three tall rivers of contour lines climbing it, three Open Eye Flowers
+   stacked up each one like floors, paint falling. ?wallpaper=0 off.
+   ================================================================ */
+(function lighthouseBack() {
+  if (!WALLS.on || typeof LH === 'undefined' || LH.g == null) return; const { x, z, w, d, H } = LH, g0 = LH.g;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.6, H - 8), wallMat('tower', 1, 2, { rough: 0.6 })); m.position.set(x, g0 + 5.6 + (H - 8) / 2, z - d / 2 - 0.4); m.rotation.y = PI; m.receiveShadow = true; scene.add(m); WALLS.n++; WALLS.lhBack = m;
+})();
 
+/* ================================================================
+   v303 THE NEW MURALS AFTER DARK (2026-11-24)
+   The factory walls, the vault and the lighthouse's back get the same warm wash from below at night as v252's murals.
+   ================================================================ */
+(function moreUplights() {
+  if (!window.__WNIGHT || !WNIGHT.mat) return;
+  scene.traverse(o => { if (!o.isMesh || !o.material || !o.material.userData || !['factory', 'steel', 'tower'].includes(o.material.userData.wall) || o.geometry.type !== 'PlaneGeometry' || o.userData.__wn) return; o.userData.__wn = 1;
+    const p = o.geometry.parameters, w = new THREE.Mesh(new THREE.PlaneGeometry(p.width, Math.min(p.height, 9)), WNIGHT.mat); w.position.copy(o.position); w.quaternion.copy(o.quaternion); w.translateZ(0.01); w.translateY(-(p.height - Math.min(p.height, 9)) / 2); w.renderOrder = 5; scene.add(w); WNIGHT.mats.push(w); });
+})();
 
+/* ================================================================
+   v304 THE TOUR: ROUND TWO OF THE WALLS (2026-11-24)
+   Four stops before the aerial: the painted court, the factory's mural, the asphalt art under the traffic, and the
+   lighthouse's painted back from the sea.
+   ================================================================ */
+(function tourV304() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (typeof COURT !== 'undefined') add.push({ name: 'the painted court', dur: 7, pos: [[COURT.x + 10, 9, COURT.z + 9], [COURT.x + 6, 12, COURT.z + 3]], look: [[COURT.x, 0.6, COURT.z], [COURT.x, 0.6, COURT.z]] });
+  add.push({ name: 'the factory mural', dur: 7, pos: [[26, 3, -70], [24, 3.4, -58]], look: [[16, 4.5, -68], [16, 4.5, -58]] });
+  add.push({ name: 'asphalt art', dur: 7, pos: [[62, 6, 62], [66, 8, 74]], look: [[70.7, 0.6, 70.7], [70.7, 0.6, 70.7]] });
+  if (typeof LH !== 'undefined') add.push({ name: 'the lighthouse back', dur: 8, pos: [[10, 4, -170], [-8, 14, -160]], look: [[0, 20, -130], [0, 26, -130]] });
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
 
+/* ================================================================
+   v305 THE TOUR: ROOFS FROM THE WHEEL (2026-11-24)
+   One stop high over the bodega block, looking down on its painted roof eye with the laundromat's and the DROP shop's
+   further off, the way you see them from the top of the Ferris wheel.
+   ================================================================ */
+(function tourV305() {
+  const T = (window.__game && __game.TOUR) || TOUR; if (!window.__BLK || !BLK.bodega) return; const at = T.findIndex(r => r.name === 'aerial');
+  T.splice(at < 0 ? T.length : at, 0, { name: 'roof eyes', dur: 7, pos: [[4, 34, 50], [10, 30, 56]], look: [[17, 11, 66], [17, 11, 66]] });
+})();
 
+/* ================================================================
+   v306 FRAME RATE: ONE MATERIAL PER MURAL (2026-11-24)
+   wallMat() made a new material for every wall even when two walls carry the same mural and repeat, which costs a
+   program switch each. Same mural, same repeat, same roughness now share one material (and one texture, v247's
+   cache already did that).
+   ================================================================ */
+(function shareWallMats() {
+  if (!window.wallMat || window.__wallMatShared) return; window.__wallMatShared = true; const cache = {}, base = window.wallMat;
+  window.wallMat = (name, rx, ry, o) => { const k = [name, rx || 1, ry || 1, (o && o.rough) || 0].join('|'); return cache[k] || (cache[k] = base(name, rx, ry, o)); };
+})();
 
 
 
