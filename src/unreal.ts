@@ -3,58 +3,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { Architecture } from './architecture/primitives';
 import { buildSoho } from './soho';
 import { everythingBagel } from './bagel';
+import { scan, scanMetric, fontsReady } from './scan';
 
-// Authored height fields describe surface relief, not estimated photographic scene depth.
-function surface(kind: 'oak' | 'stone') {
-  const n = 256,
-    colors = new Uint8Array(n * n * 4),
-    heights = new Uint8Array(n * n * 4),
-    rough = new Uint8Array(n * n * 4);
-  for (let y = 0; y < n; y++)
-    for (let x = 0; x < n; x++) {
-      const i = (y * n + x) * 4,
-        noise = (Math.sin(x * 127.1 + y * 311.7) * 43758.5453) % 1;
-      const grain =
-        Math.sin(y * 0.23 + Math.sin(x * 0.028) * 3) +
-        Math.sin(y * 1.2 + x * 0.02) * 0.25;
-      const seam =
-        kind === 'oak' &&
-        (y % 64 < 2 || (x + (Math.floor(y / 64) % 2) * 128) % 256 < 2);
-      const v =
-        kind === 'oak'
-          ? seam
-            ? 0.25
-            : 0.7 + grain * 0.09 + noise * 0.025
-          : 0.82 +
-            Math.sin(x * 0.08 + Math.sin(y * 0.035) * 4) * 0.035 +
-            noise * 0.055;
-      const rgb = kind === 'oak' ? [168, 116, 66] : [221, 208, 184];
-      for (let c = 0; c < 3; c++) {
-        colors[i + c] = rgb[c] * v;
-        heights[i + c] = seam ? 35 : 180 + grain * 12 + noise * 18;
-        rough[i + c] = kind === 'oak' ? 160 + noise * 15 : 210 + noise * 20;
-      }
-      colors[i + 3] = heights[i + 3] = rough[i + 3] = 255;
-    }
-  const tex = (data: Uint8Array) => {
-    const t = new T.DataTexture(data, n, n);
-    t.wrapS = t.wrapT = T.RepeatWrapping;
-    t.magFilter = T.LinearFilter;
-    t.minFilter = T.LinearMipmapLinearFilter;
-    t.generateMipmaps = true;
-    t.needsUpdate = true;
-    return t;
-  };
-  const map = tex(colors);
-  map.colorSpace = T.SRGBColorSpace;
-  return new T.MeshStandardMaterial({
-    map,
-    bumpMap: tex(heights),
-    bumpScale: kind === 'oak' ? 0.018 : 0.035,
-    roughnessMap: tex(rough),
-    roughness: 0.85,
-  });
-}
 function label(
   a: Architecture,
   lines: string[],
@@ -67,20 +17,28 @@ function label(
   ink = '#24251f',
 ) {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = Math.round((1024 * h) / w);
+  canvas.width = 2048;
+  canvas.height = Math.round((2048 * h) / w);
   const c = canvas.getContext('2d')!;
-  c.fillStyle = background;
-  c.fillRect(0, 0, canvas.width, canvas.height);
-  c.fillStyle = ink;
-  c.textAlign = 'center';
-  c.textBaseline = 'middle';
-  lines.forEach((line, i) => {
-    c.font = `${i === 0 ? '600' : '400'} ${Math.floor(Math.min(66, (850 / Math.max(line.length, 1)) * 1.65))}px sans-serif`;
-    c.fillText(line, 512, (canvas.height * (i + 1)) / (lines.length + 1));
-  });
   const tex = new T.CanvasTexture(canvas);
   tex.colorSpace = T.SRGBColorSpace;
+  tex.anisotropy = 8;
+  // the house type (Archivo, IBM Plex Mono), redrawn once the webfonts are in
+  const draw = () => {
+    c.fillStyle = background;
+    c.fillRect(0, 0, canvas.width, canvas.height);
+    c.fillStyle = ink;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    lines.forEach((line, i) => {
+      const px = Math.floor(Math.min(132, (1700 / Math.max(line.length, 1)) * 1.65) * (i === 0 ? 1 : 0.8));
+      c.font = i === 0 ? `700 ${px}px Archivo, 'Arial Narrow', sans-serif` : `400 ${Math.round(px * 0.62)}px Plex, monospace`;
+      c.fillText(i === 0 ? line : line.toUpperCase(), 1024, (canvas.height * (i + 1)) / (lines.length + 1), 1960);
+    });
+    tex.needsUpdate = true;
+  };
+  draw();
+  fontsReady().then(draw);
   return a.mesh(
     new T.PlaneGeometry(w, h),
     new T.MeshBasicMaterial({ map: tex, toneMapped: false }),
@@ -94,30 +52,15 @@ export function buildUnreal(scene: T.Scene) {
     a = new Architecture(scene);
   const ink = a.material(0x24241f, 0.25, 0.45),
     acid = a.material(0xdce552, 0, 0.5),
-    violet = a.material(0xa095c5, 0.15, 0.4),
-    stone = surface('stone');
-  const oak = surface('oak');
-  for (const t of [oak.map, oak.bumpMap, oak.roughnessMap])
-    t!.repeat.set(7, 16);
-  const floor = a.mesh(new T.PlaneGeometry(14, 32), oak, 0, 0.023, -6);
-  floor.rotation.x = -Math.PI / 2;
+    violet = a.material(0xa095c5, 0.15, 0.4);
+  // (2026-11-23) the boards are a scan now: Poly Haven wood_floor_worn (CC0), 2 m a tile, laid along the loft
+  const boards = scan('floor', 2.0, 32, 14, { normal: 1.1, color: 0xeae3dc });
+  a.mesh(new T.PlaneGeometry(32, 14).rotateX(-Math.PI / 2).rotateY(Math.PI / 2), boards, 0, 0.023, -6);
+  const marble = scanMetric('marble', 1.5, { color: 0xf6f1e8 });
   // Human-scale installations remain outside the two continuous circulation lanes.
-  a.rounded(2.15, 0.7, 1.65, 1.25, 0.37, -2.9, stone, 0.07);
+  a.rounded(2.15, 0.7, 1.65, 1.25, 0.37, -2.9, marble, 0.07);
   const bagel = everythingBagel(scene, new T.Vector3(1.25, 1.86, -2.9), new T.Euler(0.16, -0.32, -0.1));
-  label(
-    a,
-    ['01 / THE EVERYTHING BAGEL', 'Includes your security deposit.'],
-    1.55,
-    0.3,
-    1.25,
-    0.48,
-    -2.065,
-  );
-  const relief = stone.clone();
-  relief.displacementMap = stone.bumpMap;
-  relief.displacementScale = 0.022;
-  relief.displacementBias = -0.012;
-  a.mesh(new T.PlaneGeometry(2.12, 0.67, 96, 32), relief, 1.25, 0.37, -2.07);
+  // the plinth's face carries the asking price now, as an agamograph, and a brass plaque its title (upgrade.ts)
   // Tapered corridor uses real converging geometry: 7m reads like a much longer hall.
   const dark = a.material(0x242326, 0, 0.65),
     pale = a.material(0xf5ecdb, 0, 0.68);
@@ -255,7 +198,7 @@ export function buildUnreal(scene: T.Scene) {
       slat.rotation.z = layer ? 0.06 : -0.06;
     }
   }
-  label(a, ['04 / THE COMMUTE', 'You move. The city changes. Sit if you like.'], 2.7, 0.34, 4.6, 3.55, -21.55);
+  // the commute's title is a black enamel station sign now (upgrade.ts)
   label(
     a,
     [
@@ -271,23 +214,7 @@ export function buildUnreal(scene: T.Scene) {
     '#dce552',
   );
   label(a, ['REALITY IS RENT-STABILIZED.'], 2.5, 0.22, 1.7, 0.6, 8.81);
-  // Low bollards protect plinth while keeping the original art approach positions open.
-  for (const x of [-0.1, 2.6])
-    for (const z of [-1.8, -4])
-      a.lathe(
-        [
-          [0.08, 0],
-          [0.08, 0.04],
-          [0.024, 0.08],
-          [0.024, 0.52],
-          [0.055, 0.55],
-        ],
-        x,
-        0,
-        z,
-        ink,
-        12,
-      );
+  // the black code bollards became brass rope stanchions (upgrade.ts), on the same footprint
   a.batch();
   scene.traverse((o) => {
     if (o instanceof T.Mesh) {
@@ -300,6 +227,7 @@ export function buildUnreal(scene: T.Scene) {
   // The bagel turns, slowly, like a deli display case. Reduced motion holds it still.
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   return {
+    bagel,
     tick: (t: number) => {
       if (!still) bagel.rotation.y = -0.32 + Math.sin(t * 0.25) * 0.5;
     },

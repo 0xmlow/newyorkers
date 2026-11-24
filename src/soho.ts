@@ -1,12 +1,15 @@
 import * as T from 'three';
 import { Architecture } from './architecture/primitives';
+import { triplanar } from './scan';
 
 /** Fictional second-floor SoHo loft. One unit = one metre; see docs/SOHO-REFERENCES.md. */
 export function buildSoho(scene: T.Scene, unreal = false) {
   const a = new Architecture(scene);
   scene.background = new T.Color(0xdde8ef);
   scene.fog = null;
-  const plaster = a.material(0xf3f0e9, 0, 0.88);
+  // THE BIG UPGRADE: every wall, blade and slab now carries a scanned plaster (Poly Haven painted_plaster_wall, CC0)
+  // at its real size in world space, so no white face is one flat colour any more
+  const plaster = triplanar(a.material(0xf3f0e9, 0, 0.88), 'plaster', 2.0, 1.3, 0.375);
   const iron = a.material(0xe1dfd8, 0.18, 0.48);
   const black = a.material(0x24272a, 0.48, 0.42);
   const stone = a.material(0xd0cbc0, 0, 0.48);
@@ -154,20 +157,11 @@ export function buildSoho(scene: T.Scene, unreal = false) {
     scene.add(spot, spot.target);
   }
   // Gallery reception and reading bench stay outside the main movement corridor.
-  a.rounded(2.2, 0.85, 0.75, 1.7, 0.425, 8.4, plaster, 0.05);
-  a.box(2.25, 0.04, 0.8, 1.7, 0.87, 8.4, stone);
-  a.box(0.65, 0.025, 0.4, 1.7, 0.91, 8.4, black);
-  a.rounded(
-    0.8,
-    0.42,
-    2.5,
-    5.4,
-    0.42,
-    -20.3,
-    a.material(0x61584c, 0, 0.85),
-    0.09,
-  );
-  for (const z of [-21.2, -19.4]) a.box(0.55, 0.22, 0.08, 5.4, 0.11, z, black);
+  // (2026-11-23) the code desk and the code bench went: a real steel desk and a slatted bench stand there now (upgrade.ts)
+  if (!unreal) {
+    a.rounded(2.2, 0.85, 0.75, 1.7, 0.425, 8.4, plaster, 0.05);
+    a.box(2.25, 0.04, 0.8, 1.7, 0.87, 8.4, stone);
+  }
   // MLow threshold installation; faithful supplied flower texture in an architectural niche.
   let live = true;
   if (!unreal) {

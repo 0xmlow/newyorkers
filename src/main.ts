@@ -1,6 +1,8 @@
 import * as T from 'three';
 import { buildUnreal, constrainUnreal, prepareUnrealReflections } from './unreal';
 import { constrainSoho } from './soho';
+import { upgrade } from './upgrade';
+import { makeLook, bakeProbe, finish } from './look';
 
 // DEPARTMENT OF UNREAL ESTATE: the ChatGPT venue (fictional SoHo loft) as its own page on n3wyorkers.com.
 // Walk, look, click art, jump to the four installation viewpoints, page through four sets of twelve New Yorkers.
@@ -45,11 +47,20 @@ function start(renderer: T.WebGLRenderer) {
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.shadowMap.type = T.PCFShadowMap;
   canvasHost.appendChild(renderer.domElement);
 
   const world = buildUnreal(scene);
   prepareUnrealReflections(scene, renderer);
+  // THE BIG UPGRADE (2026-11-23): real models, scans, mouldings, signs and illusions (upgrade.ts), then THE LOOK
+  // (look.ts): once everything is in, the loft photographs itself for its reflections, and a soft AO and grade finish it
+  const up = upgrade(scene, world.bagel, () => arts);
+  const lens = makeLook(renderer, scene, camera);
+  let probed = false;
+  up.ready.then(() => setTimeout(() => {
+    finish(renderer, scene); bakeProbe(renderer, scene, v(1.25, 1.75, -6)); probed = true; wake();
+    document.body.dataset.ready = '1';
+  }, 2600));
 
   // the hang
   const loader = new T.TextureLoader();
@@ -185,7 +196,7 @@ function start(renderer: T.WebGLRenderer) {
   addEventListener('blur', () => { front = false; });
   function resize() {
     const w = canvasHost.clientWidth, h = canvasHost.clientHeight;
-    renderer.setSize(w, h); camera.aspect = w / h;
+    renderer.setSize(w, h); lens.setSize(w, h); camera.aspect = w / h;
     camera.fov = w < h ? 68 : 55; camera.updateProjectionMatrix(); wake();
   }
   addEventListener('resize', resize); resize();
@@ -219,14 +230,18 @@ function start(renderer: T.WebGLRenderer) {
     }
     camera.rotation.set(pitch, yaw, 0, 'YXZ');
     world.tick(now / 1000);
-    renderer.render(scene, camera);
+    up.tick(now / 1000);
+    lens.render();
     const info = renderer.info.render;
     renderer.domElement.dataset.renderStats = JSON.stringify({ calls: info.calls, triangles: info.triangles });
   }
   requestAnimationFrame(frame);
   (window as unknown as Record<string, unknown>).unreal = { go: (i: number) => go(VIEWS[i].at, VIEWS[i].look),
     // jump(i): no flight, for headless review (a hidden pane starves requestAnimationFrame)
-    jump: (i: number) => { const l = look(VIEWS[i].at, VIEWS[i].look); camera.position.copy(VIEWS[i].at); yaw = l.y; pitch = l.p; fly = null; camera.rotation.set(pitch, yaw, 0, 'YXZ'); renderer.render(scene, camera); }, focus, camera, set: (n: number) => { set = n; hang(); } };
+    jump: (i: number) => { const l = look(VIEWS[i].at, VIEWS[i].look); camera.position.copy(VIEWS[i].at); yaw = l.y; pitch = l.p; fly = null; camera.rotation.set(pitch, yaw, 0, 'YXZ'); lens.render(); },
+    // view(at, target): stand anywhere looking anywhere, for before and after stills
+    view: (at: number[], target: number[]) => { const l = look(v(at[0], at[1], at[2]), v(target[0], target[1], target[2])); camera.position.set(at[0], at[1], at[2]); yaw = l.y; pitch = l.p; fly = null; wake(); },
+    probed: () => probed, focus, camera, set: (n: number) => { set = n; hang(); } };
 
   fetch('art.json').then((r) => r.json()).then((a: Art[]) => { arts = a; hang(); index(); });
   // ?shot=N : no interface, standing at viewpoint N (or the entrance for -1), for stills (tools/shots.sh)
