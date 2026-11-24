@@ -26,7 +26,7 @@ function tenementAbove(o) {
   const body = new THREE.Mesh(new THREE.BoxGeometry(w, H, d), MAT.brick); body.position.set(cx, y0 + H / 2, cz); body.castShadow = body.receiveShadow = true; scene.add(body);
   const winY = f => y0 + 1.6 + f * fh;
   const faces = [[1, 0, w / 2, d], [-1, 0, w / 2, d], [0, 1, d / 2, w], [0, -1, d / 2, w]];
-  faces.forEach(([nx, nz, hd, fw]) => { const F = facFace(cx, cz, nx, nz, hd), n = Math.max(2, Math.floor(fw / 2.6)), sp = fw / n;
+  const blank = o.blank || []; faces.forEach(([nx, nz, hd, fw]) => { if (blank.some(b => b[0] === nx && b[1] === nz)) { (BLK.party = BLK.party || []).push({ cx, cz, nx, nz, hd, fw, y0, H }); return; } const F = facFace(cx, cz, nx, nz, hd), n = Math.max(2, Math.floor(fw / 2.6)), sp = fw / n;
     for (let f = 0; f < floors; f++) for (let k = 0; k < n; k++) facWindow(F, -fw / 2 + sp * (k + 0.5), winY(f), Math.min(1.15, sp * 0.45), 1.8, { ac: 0.22, litP: 0.5 }); });
   facBelts(cx, cz, w, d, [y0 + 0.08].concat(Array.from({ length: floors - 1 }, (_, f) => y0 + (f + 1) * fh - 0.05)));
   facCornice(cx, cz, w, d, top + 0.1, { big: true });
@@ -57,6 +57,6 @@ window.tenementAbove = tenementAbove;
   FACM.tar = FACM.tar || new THREE.MeshStandardMaterial({ color: 0x2a2826, roughness: 0.95 });
   const bx = 17, bz = 66, w = 10, d = 14, bg = ground(bx, bz) + 0.02;
   blkHideIn(bx - w / 2 + 0.1, bx + w / 2 - 0.1, bz - d / 2 + 0.1, bz + d / 2 - 0.1, bg + 4.88, bg + 12);
-  const r = tenementAbove({ cx: bx, cz: bz, w, d, y0: bg + 4.96, floors: 2, fn: [-1, 0] });
+  const r = tenementAbove({ cx: bx, cz: bz, w, d, y0: bg + 4.96, floors: 2, fn: [-1, 0], blank: [[1, 0]] });
   BLK.bodega = r.top;   // flushed once, with v228, v229 and v233
 })();

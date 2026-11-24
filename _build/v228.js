@@ -8,5 +8,5 @@
 (function laundromatUpstairs() {
   if (!BLK_ON || !window.__LAUND || LAUND.g0 == null) return;
   const g0 = LAUND.g0; blkHideIn(-86 - 2.4, -86 + 2.4, -4 - 3.9, -4 + 3.9, g0 + 3.84, g0 + 11);
-  const r = tenementAbove({ cx: -86, cz: -4, w: 5, d: 8, y0: g0 + 3.86, floors: 2, fn: [1, 0] }); BLK.laund = r.top;
+  const r = tenementAbove({ cx: -86, cz: -4, w: 5, d: 8, y0: g0 + 3.86, floors: 2, fn: [1, 0], blank: [[-1, 0]] }); BLK.laund = r.top;
 })();

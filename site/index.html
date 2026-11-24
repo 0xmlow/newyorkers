@@ -9608,7 +9608,7 @@ const LAUND = { m: [], load: 0, cat: null };
 window.__LAUND = LAUND;
 (function laundromat() {
   const x0 = -86, z0 = -4, D = 5, W = 8, H = 3.6, g0 = ground(x0, z0), fx = x0 + D / 2; LAUND.g0 = g0; LAUND.fx = fx; LAUND.z0 = z0;
-  const wallM = new THREE.MeshStandardMaterial({ color: 0xd9e4dc, roughness: 0.8, emissive: 0xffffff, emissiveIntensity: 0 }), outM = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [2, 2]), color: 0x7a6a5e, roughness: 0.85 });
+  const wallM = new THREE.MeshStandardMaterial({ color: 0xd9e4dc, roughness: 0.8, emissive: 0xffffff, emissiveIntensity: 0 }); LAUND.wallM = wallM; const _wm0 = 0, outM = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [2, 2]), color: 0x7a6a5e, roughness: 0.85 });
   const B = (w, h, d, m, x, y, z, ry) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); if (ry) o.rotation.y = ry; o.castShadow = o.receiveShadow = true; scene.add(o); return o; };
   B(0.25, H, W, outM, x0 - D / 2 + 0.12, g0 + H / 2, z0); [-1, 1].forEach(s => B(D, H, 0.25, outM, x0, g0 + H / 2, z0 + s * (W / 2 - 0.12))); B(D, 0.3, W, outM, x0, g0 + H + 0.15, z0);
   B(0.04, H - 0.2, W - 0.5, wallM, x0 - D / 2 + 0.27, g0 + H / 2, z0); B(D - 0.3, 0.04, W - 0.5, wallM, x0, g0 + H - 0.05, z0);
@@ -11755,7 +11755,7 @@ window.__GATES = GATES;
     c.fillStyle = 'rgba(0,0,0,0.28)'; for (let y = 0; y < 512; y += 14) c.fillRect(0, y, 1024, 3); c.fillStyle = 'rgba(255,255,255,0.06)'; for (let y = 5; y < 512; y += 14) c.fillRect(0, y, 1024, 2);
     if (c.fillText) { c.fillStyle = 'rgba(240,244,248,0.7)'; c.font = '700 22px "JetBrains Mono", Menlo, monospace'; c.textAlign = 'right'; c.fillText('MLOW', 1000, 490); } t.needsUpdate = true; };
   draw(null); const im = new Image(); im.onload = () => draw(im); im.src = 'assets/iv_flower.webp';
-  const gm = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.45 }), hm = new THREE.MeshStandardMaterial({ color: 0x55595e, roughness: 0.4, metalness: 0.7 });
+  const gm = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.45 }); GATES.gm = gm; const _gm0 = 0, hm = new THREE.MeshStandardMaterial({ color: 0x55595e, roughness: 0.4, metalness: 0.7 });
   const add = (x, z, ry, w, top, closed) => { const geo = new THREE.PlaneGeometry(w, top.h); geo.translate(0, -top.h / 2, 0); const g = new THREE.Mesh(geo, gm); g.position.set(x, top.y, z); g.rotation.y = ry; g.scale.y = 0.02; g.receiveShadow = true; scene.add(g);
     const hs = new THREE.Mesh(new THREE.BoxGeometry(w + 0.2, 0.32, 0.32), hm); hs.position.set(x - Math.sin(ry) * 0.12, top.y + 0.16, z - Math.cos(ry) * 0.12); hs.rotation.y = ry; hs.castShadow = true; scene.add(hs);
     GATES.list.push({ g, closed, k: 0.02 }); };
@@ -13001,7 +13001,7 @@ function tenementAbove(o) {
   const body = new THREE.Mesh(new THREE.BoxGeometry(w, H, d), MAT.brick); body.position.set(cx, y0 + H / 2, cz); body.castShadow = body.receiveShadow = true; scene.add(body);
   const winY = f => y0 + 1.6 + f * fh;
   const faces = [[1, 0, w / 2, d], [-1, 0, w / 2, d], [0, 1, d / 2, w], [0, -1, d / 2, w]];
-  faces.forEach(([nx, nz, hd, fw]) => { const F = facFace(cx, cz, nx, nz, hd), n = Math.max(2, Math.floor(fw / 2.6)), sp = fw / n;
+  const blank = o.blank || []; faces.forEach(([nx, nz, hd, fw]) => { if (blank.some(b => b[0] === nx && b[1] === nz)) { (BLK.party = BLK.party || []).push({ cx, cz, nx, nz, hd, fw, y0, H }); return; } const F = facFace(cx, cz, nx, nz, hd), n = Math.max(2, Math.floor(fw / 2.6)), sp = fw / n;
     for (let f = 0; f < floors; f++) for (let k = 0; k < n; k++) facWindow(F, -fw / 2 + sp * (k + 0.5), winY(f), Math.min(1.15, sp * 0.45), 1.8, { ac: 0.22, litP: 0.5 }); });
   facBelts(cx, cz, w, d, [y0 + 0.08].concat(Array.from({ length: floors - 1 }, (_, f) => y0 + (f + 1) * fh - 0.05)));
   facCornice(cx, cz, w, d, top + 0.1, { big: true });
@@ -13032,7 +13032,7 @@ window.tenementAbove = tenementAbove;
   FACM.tar = FACM.tar || new THREE.MeshStandardMaterial({ color: 0x2a2826, roughness: 0.95 });
   const bx = 17, bz = 66, w = 10, d = 14, bg = ground(bx, bz) + 0.02;
   blkHideIn(bx - w / 2 + 0.1, bx + w / 2 - 0.1, bz - d / 2 + 0.1, bz + d / 2 - 0.1, bg + 4.88, bg + 12);
-  const r = tenementAbove({ cx: bx, cz: bz, w, d, y0: bg + 4.96, floors: 2, fn: [-1, 0] });
+  const r = tenementAbove({ cx: bx, cz: bz, w, d, y0: bg + 4.96, floors: 2, fn: [-1, 0], blank: [[1, 0]] });
   BLK.bodega = r.top;   // flushed once, with v228, v229 and v233
 })();
 
@@ -13046,7 +13046,7 @@ window.tenementAbove = tenementAbove;
 (function laundromatUpstairs() {
   if (!BLK_ON || !window.__LAUND || LAUND.g0 == null) return;
   const g0 = LAUND.g0; blkHideIn(-86 - 2.4, -86 + 2.4, -4 - 3.9, -4 + 3.9, g0 + 3.84, g0 + 11);
-  const r = tenementAbove({ cx: -86, cz: -4, w: 5, d: 8, y0: g0 + 3.86, floors: 2, fn: [1, 0] }); BLK.laund = r.top;
+  const r = tenementAbove({ cx: -86, cz: -4, w: 5, d: 8, y0: g0 + 3.86, floors: 2, fn: [1, 0], blank: [[-1, 0]] }); BLK.laund = r.top;
 })();
 
 /* ================================================================
@@ -13059,7 +13059,7 @@ window.tenementAbove = tenementAbove;
 (function dropUpstairs() {
   if (!BLK_ON || !window.__LINE || LINE.g0 == null) return;
   const g0 = LINE.g0; blkHideIn(-62 - 3.4, -62 + 3.4, 80 - 1.9, 80 + 1.9, g0 + 4.55, g0 + 11);
-  const r = tenementAbove({ cx: -62, cz: 80, w: 7, d: 4, y0: g0 + 4.6, floors: 2, fn: [0, -1] }); BLK.drop = r.top;
+  const r = tenementAbove({ cx: -62, cz: 80, w: 7, d: 4, y0: g0 + 4.6, floors: 2, fn: [0, -1], blank: [[-1, 0]] }); BLK.drop = r.top;
 })();
 
 /* ================================================================
@@ -13575,15 +13575,309 @@ window.__FRAMES.push(() => { try { if (!CRED.mat) return; CRED.mat.emissiveInten
   const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v247 WALLPAPER: THE FIREFLY MURALS (2026-11-23)
+   MLow's wallpapering technique, finally on the island. Seven murals and papers were painted in Adobe Firefly
+   (Gemini 3.1 on MLow's Firefly account, his own Impermanent Vision paintings given as the two style references,
+   2K, 16:9) and hung where the island had blank walls:
+   - the back of the handball wall carries THE WITNESS: an Open Eye Flower radiating liquid contour rivers;
+   - both long faces of SURVIVE get the concrete mural, the eye streaming across the board form, painted on the
+     wall behind the buttresses so they stand in front of it like a real painted wall;
+   - the census walk's long back wall carries the panorama: three eye flowers rising like suns over contour hills.
+   The art is in assets/wall. wallTex(name, rx) loads one with repeats. ?wallpaper=0 turns them off.
+   ================================================================ */
+const WALLS = { on: LOOK.on && !/wallpaper=0/.test(location.search), n: 0, tex: {} };
+window.__WALLS = WALLS;
+function wallTex(name, rx, ry) { const k = name + (rx || 1) + 'x' + (ry || 1); if (WALLS.tex[k]) return WALLS.tex[k]; const t = tex('assets/wall/' + name + '.webp'); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  if (rx || ry) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx || 1, ry || 1); } return WALLS.tex[k] = t; }
+function wallMat(name, rx, ry, o) { o = o || {}; const m = new THREE.MeshStandardMaterial({ map: wallTex(name, rx, ry), roughness: o.rough || 0.82, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }); m.userData.wall = name; return m; }
+window.wallTex = wallTex; window.wallMat = wallMat;
+(function fireflyMurals() {
+  if (!WALLS.on) return;
+  // the handball wall's back
+  try { if (window.__WALLP && WALLP.G) WALLP.G.children.forEach(o => { if (o.isMesh && o.geometry.type === 'PlaneGeometry' && Math.abs(o.rotation.y - PI) < 1e-3) { o.material = wallMat('mural_eye'); WALLS.n++; } }); } catch (e) { }
+  // SURVIVE: both long faces, x 22 to 66, from y 0.6 to 7.0, behind the buttresses
+  try { [[39.9, -1, 'concrete'], [48.1, 1, 'hoarding']].forEach(([zf, s, nm]) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(43.6, 6.2), wallMat(nm, 3, 1)); m.position.set(44, 0.6 + 3.1, zf + s * 0.012); m.rotation.y = s < 0 ? PI : 0; m.receiveShadow = true; scene.add(m); WALLS.n++; }); } catch (e) { }
+  // the census walk's back: a strip along the ribbon, on the side away from the portraits
+  try { const pts = []; for (let i = 0; i <= 24; i++) { const z = 46 + i * 1.6; pts.push([-11 - 2.2 * Math.sin(i / 24 * PI * 2), z]); }
+    const P = [], U = [], I = []; let s = 0;
+    for (let i = 0; i < pts.length; i++) { const [x, z] = pts[i], [x2, z2] = pts[Math.min(24, i + 1)], [x1, z1] = pts[Math.max(0, i - 1)]; const dx = x2 - x1, dz = z2 - z1, l = Math.hypot(dx, dz); const nx = -dz / l, nz = dx / l;
+      if (i) s += Math.hypot(x - pts[i - 1][0], z - pts[i - 1][1]); const g = ground(x, z), ox = x + nx * 0.262, oz = z + nz * 0.262;
+      P.push(ox, g + 0.2, oz, ox, g + 6.1, oz); U.push(s / 38.4 * 2, 0, s / 38.4 * 2, 1); if (i) I.push(i * 2 - 2, i * 2, i * 2 - 1, i * 2 - 1, i * 2, i * 2 + 1); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); g.setIndex(I); g.computeVertexNormals();
+    const mt = wallMat('hoarding', 1, 1); mt.side = THREE.DoubleSide; mt.map.wrapS = THREE.RepeatWrapping; const m = new THREE.Mesh(g, mt); m.receiveShadow = true; scene.add(m); WALLS.n++; } catch (e) { }
+})();
 
+/* ================================================================
+   v248 WALLPAPER: GATES AND THE LAUNDROMAT (2026-11-23)
+   The two roll down gates (v183) now wear the Firefly shutter piece: contour rivers running across the slats to an
+   Open Eye Flower, sprayed on corrugated steel. Inside SPIN CYCLE 420 the walls are papered in MLow's laundromat
+   paper: soap bubbles that are eye flowers, coat hangers, water swirling like the inside of a drum. ?wallpaper=0 off.
+   ================================================================ */
+(function gatesAndLaundry() {
+  if (!WALLS.on) return;
+  try { if (window.__GATES && GATES.gm) { GATES.gm.map = wallTex('shutter'); GATES.gm.needsUpdate = true; WALLS.n++; } } catch (e) { }
+  try { if (window.__LAUND && LAUND.wallM) { LAUND.wallM.map = wallTex('laundrypaper', 2, 1); LAUND.wallM.color.setHex(0xffffff); LAUND.wallM.needsUpdate = true; WALLS.n++; } } catch (e) { }
+})();
 
+/* ================================================================
+   v249 WALLPAPER: GHOST SIGNS (2026-11-23)
+   A New York tenement next to a lower building shows a blank brick party wall, and on it, very often, the ghost of
+   an old painted advertisement. The three new buildings (v227 to v229) now have one blank party wall each (the
+   bodega's east side, the laundromat's sea side, the DROP shop's west side), and on each a faded MLow mural from
+   Firefly: an Open Eye Flower and contour waves painted straight onto the brick decades ago, flaking. ?wallpaper=0 off.
+   ================================================================ */
+(function ghostSigns() {
+  if (!WALLS.on || !window.__BLK || !BLK.party) return;
+  BLK.party.forEach(p => { const { cx, cz, nx, nz, hd, fw, y0, H } = p; const m = new THREE.Mesh(new THREE.PlaneGeometry(fw, H), wallMat('ghostbrick', 1, 1, { rough: 0.92 }));
+    m.position.set(cx + nx * (hd + 0.012), y0 + H / 2, cz + nz * (hd + 0.012)); m.rotation.y = Math.atan2(nx, nz); m.receiveShadow = true; scene.add(m); WALLS.n++; });
+})();
 
+/* ================================================================
+   v250 WHEATPASTE: THE MEMES ON THE STREET (2026-11-23)
+   MLow's wheatpaste technique, the way he pasted Marks across fifteen New York walls: real 6529 Memes cards
+   printed as posters and pasted up in layers on the bodega's east wall and the laundromat's back wall. Two staggered
+   rows, each sheet a little crooked, torn edges, glue sheen, a few ripped half off so older paper shows under them,
+   corners lifting. The cards are the island's own (cropped from its card atlas), different on each wall, and each
+   set is pasted again when the atlas has loaded. ?wheatpaste=0 turns it off.
+   ================================================================ */
+const PASTE = { walls: [], done: 0 };
+window.__PASTE = PASTE;
+(function wheatpaste() {
+  if (!LOOK.on || /wheatpaste=0/.test(location.search)) return;
+  const mk = (x, z, ry, w, h, seed) => { const cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * h / w); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: t, transparent: true, alphaTest: 0.05, roughness: 0.62, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
+    m.position.set(x, ground(x, z) + 0.35 + h / 2, z); m.rotation.y = ry; m.receiveShadow = true; scene.add(m); PASTE.walls.push({ cv, t, seed, done: false }); };
+  try { const g = ground(17, 66); mk(22.22, 66, PI / 2, 11, 2.9, 7); } catch (e) { }
+  try { if (window.__LAUND) mk(-88.52, -4, -PI / 2, 7.2, 2.7, 41); } catch (e) { }
+})();
+function pasteDraw(W) {
+  const c = W.cv.getContext('2d'); if (!c || !c.drawImage || !c.beginPath || !c.clip) return true; const Wd = W.cv.width, Hd = W.cv.height; let s = W.seed * 9301 + 49297; const R = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const pool = CARDS.filter(cd => cd.uv && cd.uv[5] > 0.55 && cd.uv[5] < 1.5); c.clearRect(0, 0, Wd, Hd);
+  const sheet = (cx, cy, hh, rot, n, torn) => { const cc = cropCanvas('meme', n, 420); if (cc.width < 16) return false; const ww = hh * cc.width / cc.height;
+    c.save(); c.translate(cx, cy); c.rotate(rot); c.beginPath(); const jag = (x0, y0, x1, y1, k) => { const steps = 14; for (let i = 0; i <= steps; i++) { const u = i / steps; c.lineTo(x0 + (x1 - x0) * u + (R() - 0.5) * k, y0 + (y1 - y0) * u + (R() - 0.5) * k); } };
+    const hw = ww / 2 + 10, hh2 = hh / 2 + 10; c.moveTo(-hw, -hh2); jag(-hw, -hh2, hw, -hh2, 6); jag(hw, -hh2, hw, hh2 * (torn ? 0.2 : 1), 6); if (torn) jag(hw, hh2 * 0.2, -hw * 0.3, hh2, 40); else jag(hw, hh2, -hw, hh2, 6); jag(-hw * (torn ? 0.3 : 1), hh2, -hw, -hh2, 6); c.closePath(); c.clip();
+    c.fillStyle = '#f2eee4'; c.fillRect(-hw, -hh2, hw * 2, hh2 * 2); c.drawImage(cc, -ww / 2, -hh / 2, ww, hh);
+    // wrinkles and glue sheen
+    for (let i = 0; i < 6; i++) { c.strokeStyle = `rgba(255,255,255,${0.05 + R() * 0.08})`; c.lineWidth = 2 + R() * 3; c.beginPath(); const y = -hh2 + R() * hh2 * 2; c.moveTo(-hw, y); c.bezierCurveTo(-hw / 3, y + (R() - 0.5) * 30, hw / 3, y + (R() - 0.5) * 30, hw, y + (R() - 0.5) * 20); c.stroke(); }
+    const g = c.createLinearGradient(-hw, -hh2, hw, hh2); g.addColorStop(0, 'rgba(255,255,240,0.10)'); g.addColorStop(0.5, 'rgba(255,255,240,0)'); g.addColorStop(1, 'rgba(0,0,0,0.12)'); c.fillStyle = g; c.fillRect(-hw, -hh2, hw * 2, hh2 * 2);
+    c.restore(); return true; };
+  let ok = true; const rowH = Hd * 0.5, per = Math.ceil(Wd / (rowH * 0.62));
+  for (let row = 0; row < 2; row++) for (let i = 0; i < per + 1; i++) { const n = pool[Math.floor(R() * pool.length)].n; const x = (i + (row ? 0.5 : 0)) * (Wd / per), y = rowH * (row + 0.5) + (R() - 0.5) * 20;
+    ok = sheet(x, y, rowH * (0.86 + R() * 0.12), (R() - 0.5) * 0.07, n, R() < 0.18) && ok; }
+  // a few ripped scraps of older paper on top
+  for (let i = 0; i < 8; i++) { c.fillStyle = `rgba(236,230,214,${0.7 + R() * 0.3})`; c.beginPath(); const x = R() * Wd, y = R() * Hd; c.moveTo(x, y); for (let k = 0; k < 7; k++) c.lineTo(x + (R() - 0.3) * 90, y + (R() - 0.3) * 70); c.closePath(); c.fill(); }
+  W.t.needsUpdate = true; return ok;
+}
+window.__FRAMES.push(dt => { try { if (!PASTE.walls.length) return; PASTE.t = (PASTE.t || 0) + dt; if (PASTE.t < 3 || PASTE.walls.every(w => w.done)) return; if ((PASTE.k = (PASTE.k || 0) + dt) < 1.5) return; PASTE.k = 0;
+  PASTE.walls.forEach(w => { if (!w.done) { w.done = pasteDraw(w); if (w.done) PASTE.done++; } }); } catch (e) { if (!PASTE.err) { PASTE.err = e; console.warn('v250 wheatpaste', e); } } });
 
+/* ================================================================
+   v251 WALLPAPER: THE BACK ROOM'S DAMASK (2026-11-23)
+   The speakeasy behind the bodega (v41) had walls painted near black. They are papered now in the Firefly damask:
+   white Open Eye Flowers in a lattice of fine contour lines on deep navy, dimmed by the room's low light, the way a
+   bar's wallpaper reads at one in the morning. ?wallpaper=0 off.
+   ================================================================ */
+(function backRoomDamask() {
+  if (!WALLS.on || !window.__BACK || !BACK.g) return; let n = 0;
+  const m = new THREE.MeshStandardMaterial({ map: wallTex('damask', 3, 1), color: 0x6f6878, roughness: 0.7 });
+  BACK.g.children.forEach(o => { if (o.isMesh && o.geometry.type === 'PlaneGeometry' && o.material && o.material.color && o.material.color.getHex() === 0x14070a) { o.material = m; n++; } });
+  WALLS.n += n; WALLS.damask = n;
+})();
 
+/* ================================================================
+   v252 WALLPAPER AFTER DARK (2026-11-23)
+   A painted wall in the city at night is lit from below by whatever is near it. Each Firefly mural (v247, v249) now
+   gets a wash of warm light thrown up its face after dusk, brightest at the foot and fading by the top, painted
+   on as additive light so the light budget does not change. ?wallpaper=0 off.
+   ================================================================ */
+const WNIGHT = { mats: [] };
+window.__WNIGHT = WNIGHT;
+(function muralUplights() {
+  if (!WALLS.on) return;
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.createLinearGradient) { const g = c.createLinearGradient(0, 256, 0, 0); g.addColorStop(0, 'rgba(255,214,160,0.85)'); g.addColorStop(0.25, 'rgba(255,200,140,0.25)'); g.addColorStop(0.6, 'rgba(255,190,130,0)'); c.fillStyle = g; c.fillRect(0, 0, 64, 256); }
+  const t = new THREE.CanvasTexture(cv); const mat = new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 }); WNIGHT.mat = mat;
+  scene.traverse(o => { if (!o.isMesh || !o.material || !o.material.userData || !o.material.userData.wall) return; if (o.geometry.type !== 'PlaneGeometry') return;
+    const p = o.geometry.parameters; const w = new THREE.Mesh(new THREE.PlaneGeometry(p.width, p.height), mat); w.position.copy(o.position); w.quaternion.copy(o.quaternion); w.translateZ(0.01); w.renderOrder = 5; scene.add(w); WNIGHT.mats.push(w); });
+})();
+window.__FRAMES.push(() => { try { if (!WNIGHT.mat) return; const k = Math.min(1, (L.lamps || 0) * 1.3); WNIGHT.mat.opacity = 0.2 * k; WNIGHT.mat.visible = k > 0.01; } catch (e) { } });
 
+/* ================================================================
+   v253 ILLUSION: THE EYE FROM ONE SPOT (2026-11-23)
+   An anamorphic painting in the manner of Felice Varini, in MLow's language. Cobalt and cyan rings and the outline
+   of an Open Eye Flower are painted across everything between the promenade and the bodega block: the brick, the
+   cornices, the fire escape, the sign, the pavement, the lamp posts, the people's benches. From anywhere else it is
+   a scatter of curved fragments on unrelated things. From one spot on the ring, marked by a pair of painted
+   footprints, it closes into a single flat eye floating in the air, looking straight back at you.
+   How: a projector camera at that spot. The island is drawn once from it into a depth texture; then every surface
+   it can see gets an overlay that looks the projector's image up in its own clip space and keeps a fragment only
+   where the projector saw that surface first (so hidden faces stay bare, the way a real projected painting is).
+   Meshes and instanced meshes alike, one overlay each. ?anamorph=0 turns it off.
+   ================================================================ */
+const ANA = { V: new THREE.Vector3(0.7, 0.665 + 1.62, 50.5), T: new THREE.Vector3(16, 3.4, 66), fov: 52, overlays: 0, ready: false, stand: false };
+window.__ANA = ANA;
+(function anamorph() {
+  if (!LOOK.on || /anamorph=0/.test(location.search) || isMobile && /lite/.test(location.search)) return;
+  // the painting: rings and an eye flower, flat paint with clean edges
+  const cv = document.createElement('canvas'); cv.width = cv.height = 2048; const c = cv.getContext('2d'); if (!c || !c.arc || !c.stroke || !c.ellipse) return;
+  c.clearRect(0, 0, 2048, 2048); c.lineCap = 'round';
+  const ring = (r, w, col) => { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.arc(1024, 1024, r, 0, PI * 2); c.stroke(); };
+  ring(960, 34, '#2962FF'); ring(860, 22, '#08DEFF'); ring(780, 34, '#2962FF');
+  // twelve petals, outlined
+  for (let i = 0; i < 12; i++) { const a = i / 12 * PI * 2; c.save(); c.translate(1024, 1024); c.rotate(a); c.strokeStyle = '#efe8da'; c.lineWidth = 26; c.beginPath(); c.ellipse(0, -470, 120, 250, 0, 0, PI * 2); c.stroke(); c.restore(); }
+  // the eye: white almond, cobalt iris, ink pupil
+  c.fillStyle = '#efe8da'; c.beginPath(); c.moveTo(1024 - 300, 1024); c.quadraticCurveTo(1024, 1024 - 260, 1024 + 300, 1024); c.quadraticCurveTo(1024, 1024 + 260, 1024 - 300, 1024); c.fill();
+  c.fillStyle = '#2962FF'; c.beginPath(); c.arc(1024, 1024, 128, 0, PI * 2); c.fill(); c.fillStyle = '#08DEFF'; c.beginPath(); c.arc(1024, 1024, 74, 0, PI * 2); c.fill();
+  c.fillStyle = '#0D0D0D'; c.beginPath(); c.arc(1024, 1024, 46, 0, PI * 2); c.fill(); c.fillStyle = '#ffffff'; c.beginPath(); c.arc(1044, 1000, 14, 0, PI * 2); c.fill();
+  const art = new THREE.CanvasTexture(cv); art.encoding = THREE.sRGBEncoding; art.anisotropy = ANISO;
+  const cam = new THREE.PerspectiveCamera(ANA.fov, 1, 0.5, 90); cam.position.copy(ANA.V); cam.lookAt(ANA.T); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); ANA.cam = cam;
+  const VP = new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
+  const rt = new THREE.WebGLRenderTarget(1024, 1024); rt.depthTexture = new THREE.DepthTexture(1024, 1024); rt.depthTexture.type = THREE.UnsignedIntType; ANA.rt = rt;
+  const U = { uVP: { value: VP }, uArt: { value: art }, uDepth: { value: rt.depthTexture }, uP: { value: ANA.V.clone() }, uOn: { value: 0 }, uDbg: { value: 0 } };
+  const mat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -6, toneMapped: true });
+  mat.onBeforeCompile = sh => { Object.assign(sh.uniforms, U);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform mat4 uVP; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
+      .replace('#include <project_vertex>', `#include <project_vertex>
+        { vec4 wp = vec4(transformed, 1.0); vec3 wn = normal;
+        #ifdef USE_INSTANCING
+          wp = instanceMatrix * wp; wn = mat3(instanceMatrix) * wn;
+        #endif
+          wp = modelMatrix * wp; vPw = wp.xyz; vNw = normalize(mat3(modelMatrix) * wn); vPj = uVP * wp; }`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D uArt, uDepth; uniform vec3 uP; uniform float uOn, uDbg; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
+      .replace('#include <map_fragment>', `
+        if (vPj.w <= 0.0) discard; vec3 nd = vPj.xyz / vPj.w; vec2 puv = nd.xy * 0.5 + 0.5;
+        if (puv.x < 0.0 || puv.x > 1.0 || puv.y < 0.0 || puv.y > 1.0) discard;
+        float sd = texture2D(uDepth, puv).x; float fd = nd.z * 0.5 + 0.5; if (uDbg < 0.5 && fd > sd + 0.0008) discard; if (uDbg > 1.5) { diffuseColor = vec4(puv, sd, 1.0); } else {
+        vec4 a = texture2D(uArt, puv); if (a.a < 0.5) discard;
+        float face = dot(normalize(vNw), normalize(uP - vPw)); if (face < 0.03) discard;
+        diffuseColor.rgb = a.rgb; diffuseColor.a = uOn; }`);
+  };
+  mat.customProgramCacheKey = () => 'ana253';
+  ANA.mat = mat; ANA.U = U;
+  // footprints at the spot
+  const fc = document.createElement('canvas'); fc.width = 256; fc.height = 256; const f = fc.getContext('2d');
+  if (f && f.ellipse && f.fill) { f.clearRect(0, 0, 256, 256); f.fillStyle = '#2962FF'; [[96, 130, -0.1], [160, 126, 0.1]].forEach(([x, y, r]) => { f.save(); f.translate(x, y); f.rotate(r); f.beginPath(); f.ellipse(0, 0, 26, 52, 0, 0, PI * 2); f.fill(); f.beginPath(); f.ellipse(0, -66, 18, 16, 0, 0, PI * 2); f.fill(); f.restore(); });
+    f.fillStyle = '#efe8da'; f.font = '700 22px "Archivo Black",Impact,sans-serif'; f.textAlign = 'center'; f.fillText('STAND HERE', 128, 232); }
+  const ft = new THREE.CanvasTexture(fc); ft.encoding = THREE.sRGBEncoding;
+  const fp = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshStandardMaterial({ map: ft, transparent: true, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -7, polygonOffsetUnits: -7 }));
+  fp.rotation.x = -PI / 2; fp.rotation.z = Math.atan2(ANA.T.x - ANA.V.x, ANA.T.z - ANA.V.z) + PI; fp.position.set(ANA.V.x, 0.665 + 0.03, ANA.V.z); fp.renderOrder = 4; scene.add(fp); ANA.fp = fp;
+})();
+// after the island has settled: draw its depth from the spot once, then overlay what the projector sees
+function anaBuild() {
+  const cam = ANA.cam; cam.updateMatrixWorld(); const fr = new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse));
+  const wasT = renderer.getRenderTarget(), wasMask = cam.layers.mask; cam.layers.mask = camera.layers.mask | 1; renderer.setRenderTarget(ANA.rt); renderer.clear(); renderer.render(scene, cam); renderer.setRenderTarget(wasT);
+  const list = []; const sph = new THREE.Sphere();
+  scene.traverse(o => { if (!o.isMesh || o.isSkinnedMesh || !o.visible || o.layers.mask === 0 || !o.geometry || o.userData.__ana || o.material === ANA.mat) return; const m = o.material; if (!m || Array.isArray(m) || m.transparent || m.isShaderMaterial) return;
+    if (!o.geometry.attributes.normal) return; if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); if (!o.geometry.boundingSphere) return;
+    if (o.isInstancedMesh) { if (o.count > 600) return; let hit = false; const m4 = new THREE.Matrix4(), r0 = o.geometry.boundingSphere.radius; for (let i = 0; i < o.count && !hit; i++) { o.getMatrixAt(i, m4); sph.center.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); sph.radius = r0 * Math.max(m4.getMaxScaleOnAxis(), 0.01); if (fr.intersectsSphere(sph) && sph.center.distanceTo(ANA.V) < 85) hit = true; } if (!hit) return; o.userData.__anaD = 0; }
+    else { sph.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld); if (!fr.intersectsSphere(sph) || sph.center.distanceTo(ANA.V) > 85) return; o.userData.__anaD = Math.max(0, sph.center.distanceTo(ANA.V) - sph.radius); }
+    list.push(o); });
+  list.sort((a, b) => a.userData.__anaD - b.userData.__anaD); ANA.cands = list.length;
+  list.slice(0, 340).forEach(o => { let ov;
+    if (o.isInstancedMesh) { ov = new THREE.InstancedMesh(o.geometry, ANA.mat, o.count); ov.instanceMatrix = o.instanceMatrix; ov.frustumCulled = false; }
+    else ov = new THREE.Mesh(o.geometry, ANA.mat);
+    ov.matrixAutoUpdate = false; ov.matrix.copy(o.matrixWorld); ov.matrixWorld.copy(o.matrixWorld); ov.userData.__ana = true; ov.userData.__single = true; ov.userData.__nofreeze = true; ov.renderOrder = 3; ov.castShadow = false; ov.receiveShadow = false; scene.add(ov); ANA.overlays++; });
+  ANA.ready = true;
+}
+const anaSecret = secret('anamorph', () => { toast('FROM HERE IT CLOSES. TWENTY PIECES OF PAINT ON TWENTY UNRELATED THINGS, AND FROM ONE SPOT THEY ARE ONE EYE LOOKING BACK AT YOU.', 'blue'); });
+window.__FRAMES.push(dt => { try { if (!ANA.mat) return; ANA.t = (ANA.t || 0) + dt;
+  if (!ANA.ready && ANA.t > 14 && window.__BATCH && (BATCH.t || 0) > 13) anaBuild();
+  if (!ANA.ready) return; ANA.U.uOn.value = Math.min(1, ANA.U.uOn.value + dt * 0.5);
+  const d = Math.hypot(P.x - ANA.V.x, P.z - ANA.V.z); const st = d < 0.7; if (st && !ANA.stand) { const f = new THREE.Vector3(); camera.getWorldDirection(f); const to = ANA.T.clone().sub(camera.position).normalize(); if (f.dot(to) > 0.93) { ANA.stand = true; anaSecret(); } } if (d > 2) ANA.stand = false;
+} catch (e) { if (!ANA.err) { ANA.err = e; console.warn('v253 anamorph', e); } } });
 
+/* ================================================================
+   v254 ILLUSION: THE HOLLOW EYE (2026-11-23)
+   Beside the east spoke of the meme river stands an Open Eye Flower on a stone plinth, and its eye is not a ball:
+   it is a hollow bowl, painted inside, iris at the bottom. Your brain refuses a concave face and reads it as
+   convex, so as you walk along the path the eye seems to turn and follow you, faster than you move (the hollow
+   face illusion, the one in the dragon postcards). Nothing in it moves. ?hollow=0 turns it off.
+   ================================================================ */
+const HOLLOW = {};
+window.__HOLLOW = HOLLOW;
+(function hollowEye() {
+  if (!LOOK.on || /hollow=0/.test(location.search)) return;
+  const X = 21, Z = 6.8, g0 = ground(X, Z), G = new THREE.Group(); G.position.set(X, g0, Z); G.rotation.y = PI + 0.25; scene.add(G); HOLLOW.G = G;
+  const stone = new THREE.MeshStandardMaterial({ color: 0xcfc6b6, roughness: 0.7 });
+  const pl = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.1, 1.0), stone); pl.position.y = 0.55; pl.castShadow = pl.receiveShadow = true; G.add(pl);
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.12, 1.2), stone); cap.position.y = 1.16; G.add(cap);
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 1.1, 12), new THREE.MeshStandardMaterial({ color: 0x2f5a3a, roughness: 0.6 })); stem.position.y = 1.75; G.add(stem);
+  // the petals: a ring of white petals round an open centre, on a shallow back dish
+  const pc = document.createElement('canvas'); pc.width = pc.height = 1024; const c = pc.getContext('2d'); const pt = new THREE.CanvasTexture(pc); pt.encoding = THREE.sRGBEncoding;
+  if (c && c.ellipse && c.fill) { c.clearRect(0, 0, 1024, 1024); for (let i = 0; i < 14; i++) { const a = i / 14 * PI * 2; c.save(); c.translate(512, 512); c.rotate(a); const gr = c.createLinearGradient(0, -170, 0, -500); gr.addColorStop(0, '#d9dce4'); gr.addColorStop(1, '#ffffff'); c.fillStyle = gr; c.beginPath(); c.ellipse(0, -330, 95, 180, 0, 0, PI * 2); c.fill(); c.strokeStyle = 'rgba(41,98,255,.35)'; c.lineWidth = 4; c.stroke(); c.restore(); }
+    c.globalCompositeOperation = 'destination-out'; c.beginPath(); c.arc(512, 512, 150, 0, PI * 2); c.fill(); c.globalCompositeOperation = 'source-over'; c.strokeStyle = '#2962FF'; c.lineWidth = 14; c.beginPath(); c.arc(512, 512, 156, 0, PI * 2); c.stroke(); }
+  const petals = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4), new THREE.MeshStandardMaterial({ map: pt, transparent: true, alphaTest: 0.4, roughness: 0.5, side: THREE.DoubleSide })); petals.position.set(0, 2.9, 0.02); petals.castShadow = true; G.add(petals);
+  // the hollow: a hemisphere seen from inside, pole pointing back, iris painted at its bottom
+  const ec = document.createElement('canvas'); ec.width = 512; ec.height = 512; const e = ec.getContext('2d'); const et = new THREE.CanvasTexture(ec); et.encoding = THREE.sRGBEncoding;
+  if (e && e.fillRect && e.createLinearGradient) { const gr = e.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#05070d'); gr.addColorStop(0.1, '#05070d'); gr.addColorStop(0.11, '#08DEFF'); gr.addColorStop(0.2, '#2962FF'); gr.addColorStop(0.31, '#14307a'); gr.addColorStop(0.33, '#f4f1ea'); gr.addColorStop(1, '#ffffff'); e.fillStyle = gr; e.fillRect(0, 0, 512, 512);
+    e.strokeStyle = 'rgba(200,40,50,.25)'; e.lineWidth = 2; for (let i = 0; i < 18; i++) { const x = Math.random() * 512; e.beginPath(); e.moveTo(x, 512); e.bezierCurveTo(x + 20, 400, x - 20, 300, x + 10, 190); e.stroke(); }
+    e.fillStyle = 'rgba(255,255,255,.85)'; e.fillRect(40, 18, 60, 20); }
+  const R = 0.62, bowl = new THREE.Mesh(new THREE.SphereGeometry(R, 48, 24, 0, PI * 2, 0, PI / 2), new THREE.MeshStandardMaterial({ map: et, roughness: 0.25, side: THREE.BackSide }));
+  bowl.rotation.x = -PI / 2; bowl.position.set(0, 2.9, 0.0); G.add(bowl);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(R + 0.03, 0.04, 10, 48), new THREE.MeshStandardMaterial({ color: 0x8a6a36, roughness: 0.3, metalness: 0.9 })); rim.position.set(0, 2.9, 0.01); G.add(rim);
+  const back = new THREE.Mesh(new THREE.CircleGeometry(1.0, 40), stone); back.position.set(0, 2.9, -R - 0.02); back.rotation.y = PI; G.add(back);
+  boxWalls(X, Z, 1.4, 1.1, G.rotation.y, -5, g0 + 1.2);
+  const lab = signTex([{ t: 'THE HOLLOW EYE', s: 0.3 }, { t: 'WALK PAST IT. IT WATCHES YOU. IT IS A BOWL.', s: 0.12 }], 1024, 256, '#16233f', '#efe8da');
+  const lm = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.3), new THREE.MeshStandardMaterial({ map: lab, roughness: 0.6 })); lm.position.set(0, 0.7, 0.505); G.add(lm);
+  HOLLOW.ok = true;
+})();
 
+/* ================================================================
+   v255 ILLUSION: THE IMPOSSIBLE TRIANGLE (2026-11-23)
+   High over the centre of the island hangs a Penrose triangle nine metres a side, in cobalt, cyan and bone. It is three straight
+   beams in a zig zag that never meet: from almost everywhere you can see it is an open, crooked thing. From one
+   spot on the promenade ring (the painted footprints), the last beam's far end lines up exactly in front of the
+   first beam's start and the three close into the triangle that cannot exist. An Open Eye Flower sits on the
+   corner that is not there. ?penrose=0 turns it off.
+   ================================================================ */
+const PEN = { stand: false };
+window.__PEN = PEN;
+(function penrose() {
+  if (!LOOK.on || /penrose=0/.test(location.search)) return;
+  const C = new THREE.Vector3(0, 15.5, 0), a0 = (window.__PEN_A != null ? __PEN_A : -2.35), V = new THREE.Vector3(Math.cos(a0) * 39.4, 0.665 + 1.62, Math.sin(a0) * 39.4); PEN.V = V; PEN.C = C;
+  const L = 9.0, t = 1.05, loc = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(L, 0, 0), new THREE.Vector3(L, L, 0), new THREE.Vector3(L, L, L)];
+  const cen = new THREE.Vector3(); loc.forEach(p => cen.add(p)); cen.multiplyScalar(0.25);
+  const axis = new THREE.Vector3(1, 1, 1).normalize(); let q = new THREE.Quaternion(), P0 = C.clone();
+  // orient so that local (1,1,1) points from P0 to the viewer, choosing the roll that stands it upright, then re-centre (iterate)
+  let best = null;
+  for (let roll = 0; roll < 24; roll++) { let p0 = C.clone(), qq = new THREE.Quaternion();
+    for (let k = 0; k < 6; k++) { const dir = V.clone().sub(p0).normalize(); qq.setFromUnitVectors(axis, dir); const qr = new THREE.Quaternion().setFromAxisAngle(dir, roll / 24 * PI * 2); qq.premultiply(qr); p0 = C.clone().sub(cen.clone().applyQuaternion(qq)); }
+    const ys = loc.map(p => p.clone().applyQuaternion(qq).add(p0).y); const lo = Math.min(...ys); if (!best || lo > best.lo) best = { lo, q: qq.clone(), p0 }; }
+  q = best.q; P0 = best.p0;
+  const W = loc.map(p => p.clone().applyQuaternion(q).add(P0)); PEN.W = W;
+  const mats = [new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.35, metalness: 0.2 }), new THREE.MeshStandardMaterial({ color: 0x08b8e0, roughness: 0.35, metalness: 0.2 }), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.45 })];
+  const beam = (A, B, m) => { const len = A.distanceTo(B) + t, mesh = new THREE.Mesh(new THREE.BoxGeometry(t, t, len), m); mesh.position.copy(A).add(B).multiplyScalar(0.5); mesh.up.set(0, 1, 0).applyQuaternion(q); mesh.lookAt(B); mesh.castShadow = mesh.receiveShadow = true; scene.add(mesh); return mesh; };
+  beam(W[0], W[1], mats[0]); beam(W[1], W[2], mats[1]); beam(W[2], W[3], mats[2]);
+  // a slim steel post holds it from the lowest corner, and an eye flower on the corner that is not there
+  const low = W.reduce((m, p) => p.y < m.y ? p : m, W[0]); const gy = ground(low.x, low.z); const post2 = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, Math.max(0.2, low.y - gy), 10), new THREE.MeshStandardMaterial({ color: 0x55595e, metalness: 0.8, roughness: 0.35 })); post2.position.set(low.x, (low.y + gy) / 2, low.z); scene.add(post2); post(low.x, low.z, 0.4, -5, low.y);
+  const fl = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshBasicMaterial({ map: tex('assets/iv_flower.webp'), transparent: true, alphaTest: 0.4, side: THREE.DoubleSide })); fl.position.copy(W[0]).lerp(V, 0.0); fl.lookAt(V); fl.translateZ(t * 0.7); scene.add(fl);
+  // footprints
+  const fc = document.createElement('canvas'); fc.width = fc.height = 256; const f = fc.getContext('2d');
+  if (f && f.ellipse && f.fill) { f.clearRect(0, 0, 256, 256); f.fillStyle = '#08DEFF'; [[96, 130, -0.1], [160, 126, 0.1]].forEach(([x, y, r]) => { f.save(); f.translate(x, y); f.rotate(r); f.beginPath(); f.ellipse(0, 0, 26, 52, 0, 0, PI * 2); f.fill(); f.beginPath(); f.ellipse(0, -66, 18, 16, 0, 0, PI * 2); f.fill(); f.restore(); }); }
+  const fm = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 1.0), new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(fc), transparent: true, polygonOffset: true, polygonOffsetFactor: -7, polygonOffsetUnits: -7 }));
+  fm.rotation.x = -PI / 2; fm.rotation.z = Math.atan2(C.x - V.x, C.z - V.z) + PI; fm.position.set(V.x, 0.665 + 0.03, V.z); fm.renderOrder = 4; scene.add(fm);
+  PEN.ok = true;
+})();
+const penSecret = secret('penrose', () => { toast('IT CLOSES. THREE BEAMS THAT NEVER TOUCH, AND FROM HERE THEY ARE A TRIANGLE THAT CANNOT EXIST.', 'blue'); });
+window.__FRAMES.push(() => { try { if (!PEN.ok) return; const d = Math.hypot(P.x - PEN.V.x, P.z - PEN.V.z); if (d < 0.7 && !PEN.stand) { const f = new THREE.Vector3(); camera.getWorldDirection(f); if (f.dot(PEN.C.clone().sub(camera.position).normalize()) > 0.95) { PEN.stand = true; penSecret(); } } if (d > 2) PEN.stand = false; } catch (e) { } });
 
+/* ================================================================
+   v256 THE TOUR: WALLS AND ILLUSIONS (2026-11-23)
+   Six stops before the aerial: the Firefly mural on SURVIVE, the wheatpaste on the bodega, a ghost sign, the
+   anamorphic eye from its spot (then a step off it), the hollow eye walked past, and the impossible triangle from
+   its footprints.
+   ================================================================ */
+(function tourV256() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__WALLS && WALLS.n) { add.push({ name: 'the survive mural', dur: 7, pos: [[30, 2.2, 31], [44, 2.4, 31]], look: [[34, 3.6, 39.9], [46, 3.6, 39.9]] });
+    add.push({ name: 'the ghost sign', dur: 7, pos: [[33, 5, 70], [30, 6, 64]], look: [[22, 8, 66], [22, 8.4, 66]] }); }
+  if (window.__PASTE && PASTE.walls.length) add.push({ name: 'the wheatpaste', dur: 7, pos: [[27.5, 1.7, 63], [26.5, 1.7, 70]], look: [[22.2, 1.9, 63], [22.2, 1.9, 69]] });
+  if (window.__ANA && ANA.mat) add.push({ name: 'the eye from one spot', dur: 10, pos: [[ANA.V.x, ANA.V.y, ANA.V.z], [ANA.V.x, ANA.V.y, ANA.V.z + 0.01], [ANA.V.x - 2.5, ANA.V.y, ANA.V.z + 0.5]], look: [[ANA.T.x, ANA.T.y, ANA.T.z], [ANA.T.x, ANA.T.y, ANA.T.z], [ANA.T.x, ANA.T.y, ANA.T.z]] });
+  if (window.__HOLLOW && HOLLOW.ok) add.push({ name: 'the hollow eye', dur: 8, pos: [[15, 1.7, -0.6], [23, 1.7, -0.6]], look: [[21, 2.9, 6.8], [21, 2.9, 6.8]] });
+  if (window.__PEN && PEN.ok) add.push({ name: 'the impossible triangle', dur: 9, pos: [[PEN.V.x - 6, PEN.V.y, PEN.V.z + 3], [PEN.V.x, PEN.V.y, PEN.V.z], [PEN.V.x, PEN.V.y, PEN.V.z + 0.01]], look: [[PEN.C.x, PEN.C.y, PEN.C.z], [PEN.C.x, PEN.C.y, PEN.C.z], [PEN.C.x, PEN.C.y, PEN.C.z]] });
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
 
 
 

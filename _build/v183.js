@@ -18,7 +18,7 @@ window.__GATES = GATES;
     c.fillStyle = 'rgba(0,0,0,0.28)'; for (let y = 0; y < 512; y += 14) c.fillRect(0, y, 1024, 3); c.fillStyle = 'rgba(255,255,255,0.06)'; for (let y = 5; y < 512; y += 14) c.fillRect(0, y, 1024, 2);
     if (c.fillText) { c.fillStyle = 'rgba(240,244,248,0.7)'; c.font = '700 22px "JetBrains Mono", Menlo, monospace'; c.textAlign = 'right'; c.fillText('MLOW', 1000, 490); } t.needsUpdate = true; };
   draw(null); const im = new Image(); im.onload = () => draw(im); im.src = 'assets/iv_flower.webp';
-  const gm = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.45 }), hm = new THREE.MeshStandardMaterial({ color: 0x55595e, roughness: 0.4, metalness: 0.7 });
+  const gm = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.45 }); GATES.gm = gm; const _gm0 = 0, hm = new THREE.MeshStandardMaterial({ color: 0x55595e, roughness: 0.4, metalness: 0.7 });
   const add = (x, z, ry, w, top, closed) => { const geo = new THREE.PlaneGeometry(w, top.h); geo.translate(0, -top.h / 2, 0); const g = new THREE.Mesh(geo, gm); g.position.set(x, top.y, z); g.rotation.y = ry; g.scale.y = 0.02; g.receiveShadow = true; scene.add(g);
     const hs = new THREE.Mesh(new THREE.BoxGeometry(w + 0.2, 0.32, 0.32), hm); hs.position.set(x - Math.sin(ry) * 0.12, top.y + 0.16, z - Math.cos(ry) * 0.12); hs.rotation.y = ry; hs.castShadow = true; scene.add(hs);
     GATES.list.push({ g, closed, k: 0.02 }); };

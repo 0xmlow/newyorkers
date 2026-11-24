@@ -10,7 +10,7 @@ const LAUND = { m: [], load: 0, cat: null };
 window.__LAUND = LAUND;
 (function laundromat() {
   const x0 = -86, z0 = -4, D = 5, W = 8, H = 3.6, g0 = ground(x0, z0), fx = x0 + D / 2; LAUND.g0 = g0; LAUND.fx = fx; LAUND.z0 = z0;
-  const wallM = new THREE.MeshStandardMaterial({ color: 0xd9e4dc, roughness: 0.8, emissive: 0xffffff, emissiveIntensity: 0 }), outM = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [2, 2]), color: 0x7a6a5e, roughness: 0.85 });
+  const wallM = new THREE.MeshStandardMaterial({ color: 0xd9e4dc, roughness: 0.8, emissive: 0xffffff, emissiveIntensity: 0 }); LAUND.wallM = wallM; const _wm0 = 0, outM = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [2, 2]), color: 0x7a6a5e, roughness: 0.85 });
   const B = (w, h, d, m, x, y, z, ry) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); if (ry) o.rotation.y = ry; o.castShadow = o.receiveShadow = true; scene.add(o); return o; };
   B(0.25, H, W, outM, x0 - D / 2 + 0.12, g0 + H / 2, z0); [-1, 1].forEach(s => B(D, H, 0.25, outM, x0, g0 + H / 2, z0 + s * (W / 2 - 0.12))); B(D, 0.3, W, outM, x0, g0 + H + 0.15, z0);
   B(0.04, H - 0.2, W - 0.5, wallM, x0 - D / 2 + 0.27, g0 + H / 2, z0); B(D - 0.3, 0.04, W - 0.5, wallM, x0, g0 + H - 0.05, z0);
