@@ -35,7 +35,7 @@ export async function expandBodega(ctx){
  for(const [file,x,w]of [['logo_white.png',-1.1,1.3],['blossom_03_white.png',1.1,.55]]){const tx=getTex('brand/'+file);const image=new Image();image.src='assets/brand/'+file;await new Promise(resolve=>{image.onload=resolve;image.onerror=resolve;if(image.complete)resolve()});const ar=(image.naturalWidth||1)/(image.naturalHeight||1);obj(store,new THREE.PlaneGeometry(w,w/ar),new THREE.MeshBasicMaterial({map:tx,transparent:true,toneMapped:false}),[x,4.97,8.47],[1,1,1],[0,0,0],false)}
  // Build 12 genuine collection-product labels: preserve art ratio and draw exact type separately.
  const products=[['1','MATRIARCH','HOUSE COFFEE'],['550','NINE LIVES','CAT TREATS'],['548','PIZZA RAT','MIDNIGHT CRACKERS'],['868','SELTZER MAN','COSMIC FIZZ'],['932','EVERYTHING','BAGEL MIX'],['779','DELI CUP','INSTANT WARMTH'],['767','RAT KING','SEWER SAUCE'],['1117','BODEGA ROSES','PETAL TEA'],['818','SPIN CYCLE','MEMORY SOAP'],['3','SUBWAY SPIRIT','NIGHT TRAIN MINTS'],['780','RAINBOW BAGEL','AFTER HOURS'],['4200','END OF TIME','EMERGENCY BISCUITS']];
- const labels=[];for(const [id,name,kind]of products){const a=artById.get(id);const im=new Image();im.src='assets/'+a.file;await new Promise(resolve=>{im.onload=resolve;im.onerror=()=>{errors.push(a.file);resolve()};if(im.complete)resolve()});const tex=texture(512,768,(c,w,h)=>{c.fillStyle='#e7ddbd';c.fillRect(0,0,w,h);c.fillStyle='#163b32';c.fillRect(0,0,w,125);c.fillStyle='#e7ddbd';c.textAlign='center';c.font='bold 37px Arial';c.fillText(name,256,55,480);c.font='16px Arial';c.fillText('NEW YORKERS // BY MLOW',256,93);let ih=480/a.aspect;if(im.naturalWidth)c.drawImage(im,16,150,480,ih);c.fillStyle='#173b31';c.font='bold 27px Arial';c.fillText(kind,256,650,480);c.font='17px monospace';c.fillText('ARCHIVE '+id+' / KEEP FOREVER',256,690);for(let k=20;k<490;k+=7)c.fillRect(k,715,2,26);});labels.push(new THREE.MeshStandardMaterial({map:tex,roughness:.55}));}
+ const labels=[];for(const [id,name,kind]of products){const a=artById.get(id);const im=new Image();im.src='assets/'+a.file;await new Promise(resolve=>{im.onload=resolve;im.onerror=()=>{errors.push(a.file);resolve()};if(im.complete)resolve()});const tex=texture(512,768,(c,w,h)=>{c.fillStyle='#e7ddbd';c.fillRect(0,0,w,h);c.fillStyle='#163b32';c.fillRect(0,0,w,125);c.fillStyle='#e7ddbd';c.textAlign='center';c.font='700 40px "Archivo Narrow", Arial';c.fillText(name,256,55,480);c.font='500 17px "JetBrains Mono", monospace';c.fillText('NEW YORKERS // BY MLOW',256,93);let ih=480/a.aspect;if(im.naturalWidth)c.drawImage(im,16,150,480,ih);c.fillStyle='#173b31';c.font='700 29px "Archivo Narrow", Arial';c.fillText(kind,256,650,480);c.font='400 16px "JetBrains Mono", monospace';c.fillText('ARCHIVE '+id+' / KEEP FOREVER',256,690);for(let k=20;k<490;k+=7)c.fillRect(k,715,2,26);});labels.push(new THREE.MeshStandardMaterial({map:tex,roughness:.55}));}
  ctx.solids.push([-5.15,-.25,6.12,6.8]);
  // Replaces anonymous pantry packaging with collection-driven products while retaining batch efficiency.
  let pi=0;baseWorld.traverse(o=>{if(o.isInstancedMesh&&o.material?.map&&o.material.map.image?.width===256){o.material=labels[pi++%labels.length]}});
@@ -115,10 +115,10 @@ export async function expandBodega(ctx){
  for(const a of mailEggs)egg(mail,...a);box(mail,[-1.9,.3,.2],[.9,.6,.8],paper);panel(mail,'FRAGILE',[-1.9,.35,.61],.7,.25,{size:30});panel(mail,'HOME',[1.8,1.6,.7],.8,.18,{size:35});
  gate(mail,'RETURN TO THE BODEGA',[3.4,0,6.8],'walk',Math.PI);
  // Room 03: the roof is a place to nurture a universe, not merely to watch it end.
- const bedSwaps=[];const roof=makeRoom('roof','The Garden of the Next Universe','Somebody has to water tomorrow.',[0,0,38],[-8.4,8.4,-7.4,7.4],[0,1.72,6]);
+ const bedSwaps=[],seeds={id:'roof',group:new THREE.Group(),batches:new Map()};const roof=makeRoom('roof','The Garden of the Next Universe','Somebody has to water tomorrow.',[0,0,38],[-8.4,8.4,-7.4,7.4],[0,1.72,6]);
  box(roof,[0,-.15,0],[18,.3,16],'#5a5c55');for(let x of [-8.8,8.8])box(roof,[x,.55,0],[.4,1.1,16],brick);for(let z of [-7.8,7.8])box(roof,[0,.55,z],[18,1.1,.4],brick);
  roomLight(roof,'#b4cce8',35,[0,5,0]);roomLight(roof,'#f2c885',25,[3,2,-1]);
- for(let x of [-4.8,4.8])for(let z of [-2.6,1.4]){const bed=[box(roof,[x,.45,z],[3.7,.9,2.7],copper,[0,0,0],false),box(roof,[x,.93,z],[3.45,.07,2.45],soil,[0,0,0],false)];bedSwaps.push([bed,x,z]);roof.blocks.push([x-2,x+2,z-1.5,z+1.5]);for(let i=0;i<15;i++){let px=x-1.35+(i%5)*.67,pz=z-.8+Math.floor(i/5)*.75,h=.4+(i%3)*.18;cyl(roof,[px,1+h/2,pz],[.035,h,.035],'#506f45');for(let side of [-1,1])ball(roof,[px+side*.12,1.1+h*.4,pz],[.3,.09,.2],'#7d9a54',[0,0,side*.4]);ball(roof,[px,1+h,pz],[.12,.14,.12],i%5===0?warm:mat('#a7b47b'))}}
+ for(let x of [-4.8,4.8])for(let z of [-2.6,1.4]){const bed=[box(roof,[x,.45,z],[3.7,.9,2.7],copper,[0,0,0],false),box(roof,[x,.93,z],[3.45,.07,2.45],soil,[0,0,0],false)];bedSwaps.push([bed,x,z]);roof.blocks.push([x-2,x+2,z-1.5,z+1.5]);for(let i=0;i<15;i++){let px=x-1.35+(i%5)*.67,pz=z-.8+Math.floor(i/5)*.75,h=.4+(i%3)*.18;cyl(seeds,[px,1+h/2,pz],[.035,h,.035],'#506f45');for(let side of [-1,1])ball(seeds,[px+side*.12,1.1+h*.4,pz],[.3,.09,.2],'#7d9a54',[0,0,side*.4]);ball(seeds,[px,1+h,pz],[.12,.14,.12],i%5===0?warm:mat('#a7b47b'))}}
  // Each bed is three Poly Haven planter boxes (planter_box_02, CC0) in a row, one per row of seedlings, soil just under the rim.
  for(const [bed,x,z] of bedSwaps)swap(bed,[-1.01,0,1.01].map(dz=>model(roof,'planter_box_02.glb',[x,0,z+dz],.98)),()=>{for(const dz of [-1.01,0,1.01])box(roof,[x,.975,z+dz],[2.5,.05,.85],soil,[0,0,0],false)});
  model(roof,'water_tower.glb',[-5.8,0,-5.7],6.1);roof.blocks.push([-7.8,-3.8,-7.4,-4.3]);model(roof,'fire_escape.glb',[8.6,-1,4.6],3.2,Math.PI/2);model(roof,'quiet_bench.glb',[4.7,0,5.2],.85);model(roof,'mlow_eye_monument.glb',[0,.2,-4.5],2.6);model(roof,'blossom_03.glb',[0,.2,-4.5],.7);model(roof,'lamppost.glb',[7.3,0,-6.4],4.5);
@@ -136,7 +136,7 @@ export async function expandBodega(ctx){
  // Rain chain, tiny seed catalog, telescope, apiary, water gauge and the last rose.
  for(let y=.3;y<3.8;y+=.18)obj(roof,new THREE.TorusGeometry(.07,.012,5,12),copper,[7.7,y,1.5],[1,1,1],[0,y*4,0],false);
  for(let k=0;k<3;k++){box(roof,[6.4,.6+k*.38,-5.5],[1.5,.34,1.2],paper);box(roof,[6.4,.6+k*.38,-4.87],[1.3,.025,.03],dark)}roof.blocks.push([5.5,7.2,-6.3,-4.7]);
- cyl(roof,[-3.3,1.25,5.5],[.15,2.1,.15],metal,[.9,0,.4]);for(let dx of [-.5,.5])cyl(roof,[-3.3+dx,.5,5.5],[.035,1.2,.035],metal,[0,0,dx]);
+ const scopeParts=[cyl(roof,[-3.3,1.25,5.5],[.15,2.1,.15],metal,[.9,0,.4],false)];for(let dx of [-.5,.5])scopeParts.push(cyl(roof,[-3.3+dx,.5,5.5],[.035,1.2,.035],metal,[0,0,dx],false));
  cyl(roof,[2.4,.35,5.6],[.6,.7,.6],copper);cyl(roof,[2.4,1.05,5.6],[.025,.8,.025],'#607a46');for(let i=0;i<7;i++){let a=i*Math.PI*2/7;ball(roof,[2.4+Math.cos(a)*.12,1.45,5.6+Math.sin(a)*.12],[.25,.1,.18],'#c08b85',[0,a,0])}
  art(roof,2942,[-8.5,2.2,-.5],3.5,Math.PI/2);art(roof,2142,[8.5,2.2,-.5],3.5,-Math.PI/2);art(roof,76,[-2.9,2,7.55],2.6,Math.PI);art(roof,5333,[3.2,2,7.55],2.6,Math.PI);art(roof,79,[5.7,2,-7.55],2.5);
  const roofEggs=[
@@ -153,8 +153,8 @@ export async function expandBodega(ctx){
  if(ctx.found.has('first-light')){reborn=true;seedOrb.material.color.set('#ffdf95');bloomLight.intensity=80;sunset.material.opacity=1;}
  gate(roof,'TAKE THE STAIRS HOME',[0,0,7.55],'walk',Math.PI);
  // Finish each room as independent batches; only the active room is rendered or raycast.
- for(const r of [store,laundry,mail,roof])finish(r);
+ for(const r of [store,laundry,mail,roof,seeds])finish(r);roof.group.add(seeds.group);
  function setRoom(id){baseWorld.visible=['store','archive','overview','walk'].includes(id);for(const r of Object.values(rooms))r.group.visible=r.id===id;}
  function tick(t){drumMat.uniforms.time.value=t;for(const a of moving){a.o.rotation.y=t*.17+a.i;a.o.rotation.z=t*.09+a.i*.4}if(reborn)seedOrb.scale.setScalar(1+Math.sin(t*.7)*.05);}
- return {rooms,extra,products,errors,modelStats,pending,setRoom,tick,allReady:Promise.all(pending),materials:{enamel,brick,ivory}};
+ return {rooms,extra,products,errors,modelStats,pending,setRoom,tick,allReady:Promise.all(pending),materials:{enamel,brick,ivory,copper,metal},parts:{seeds:seeds.group,scopeParts,orbits:moving.map(a=>a.o),seedOrb,drums}};
 }

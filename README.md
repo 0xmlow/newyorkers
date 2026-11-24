@@ -6,7 +6,7 @@ A corner store at the end of the universe, still open.
 The shelves are stocked with New Yorkers. The freezer opens onto an archive.
 Behind the shop: a laundromat that washes yesterday, a post office for letters that never arrived,
 and a roof garden where somebody is growing the next universe.
-Forty secrets. Three brass words. One immortal cat.
+Forty one secrets. Three brass words. One immortal cat.
 
 **Walk it:** [n3wyorkers.com/bodega](https://n3wyorkers.com/bodega)
 
@@ -26,12 +26,23 @@ Forty secrets. Three brass words. One immortal cat.
 - **The Midnight Laundromat**: washers with drums that never stop turning, lost socks, the impossible fold
 - **The Office of Lost Letters**: cubbies, pneumatic tubes, a pigeon postmaster, a corridor that cheats perspective
 - **The Garden of the Next Universe**: planters, a water tower, a telescope, an apiary, and a terrarium that waits for three words
-- 44 New Yorkers in all, and 40 secrets kept on a receipt
+- 44 New Yorkers in all, and 41 secrets kept on a receipt
 
 ## How it is made
 
-Plain three.js, vendored, no build step. Every wall, shelf and machine is built in code; materials are canvas drawn or
-generated. Food props are from Kenney's Food Kit (CC0, license alongside); the rest of the models are NEW YORKERS assets.
+Plain three.js, vendored, no build step. Shelves, machines and the rooms' shells are built in code. Since THE BIG
+UPGRADE (2026-11-23) the surfaces are Poly Haven scans (CC0) laid in metres, the rooms have ceilings, upper walls and
+mouldings, and the things you walk towards are real models: our own (the N3W BELL payphone, the MLOW AM radio, the mail
+cart, the armillary, the brass viewer, rope lines, benches) and Poly Haven CC0 props (light fittings, fans, chairs,
+baskets, plants, cans, boxes). Food props are from Kenney's Food Kit (CC0, license alongside).
+
+- `site/look.js`: the look, desktop only. Each room photographs itself into a reflection probe, full anisotropy, screen
+  space ambient occlusion and a calm grade; the artworks are masked out of the grade. `?look=0` turns it all off.
+- `site/upgrade.js`: the rebuilt rooms. Code objects that a model replaces stay built and hide only once it loads.
+  Rooms past the shop load their models on first entry. Firefly plates (`assets/textures/ff_*.webp`, queued in the
+  site repo's `_build/museum/FIREFLY_QUEUE.md`) are invisible until their file exists.
+- One illusion per room: STILL HERE in the shop, the bending floor in the freezer, WASH YESTERDAY painted down the
+  laundromat aisle (stand on the brass marker), the corridor of shrinking doors, the impossible triangle on the roof.
 
 | Path | What it is |
 |---|---|
@@ -39,7 +50,9 @@ generated. Food props are from Kenney's Food Kit (CC0, license alongside); the r
 | `site/expansion.js` | the laundromat, the letters office, the roof and the ending |
 | `site/assets/art.json`, `site/assets/expanded-art.json` | the New Yorkers hang |
 | `site/assets/props/`, `site/assets/textures/` | models and materials |
-| `checks/` | `node checks/scene-smoke.mjs`, `python3 checks/assets-check.py` |
+| `site/look.js`, `site/upgrade.js` | the look and the 2026-11-23 rebuild |
+| `site/assets/tex/`, `site/assets/fonts/` | scanned materials, the house fonts |
+| `checks/` | `node checks/scene-smoke.mjs`, `python3 checks/assets-check.py`, `python3 checks/shots.py OUT SUFFIX` (headless views) |
 
 Run it locally from `site/` with any static server, for example `python3 -m http.server`, then open the address it prints.
 

@@ -1,13 +1,15 @@
 {
   "result": "passed",
-  "nodes": 583,
-  "instances": 1688,
-  "triangles": 360731,
+  "nodes": 840,
+  "instances": 1651,
+  "triangles": 623636,
   "artworks": 44,
-  "secrets": 40,
-  "interactiveTargets": 90,
-  "modelsLoaded": 22,
-  "uniqueModels": 18,
+  "secrets": 41,
+  "interactiveTargets": 91,
+  "modelsLoaded": 44,
+  "upgradeModelsLoaded": 94,
+  "upgradeDracoSkipped": 17,
+  "uniqueModels": 24,
   "navigation": [
     {
       "room": "laundry",

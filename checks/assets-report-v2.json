@@ -1,16 +1,94 @@
 {
   "models": [
     {
+      "file": "ph_WetFloorSign_01.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 76076
+    },
+    {
+      "file": "nyb_payphone.glb",
+      "meshes": 4,
+      "images": 6,
+      "bytes": 397512
+    },
+    {
+      "file": "ph_plastic_bottle_gallon.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 108728
+    },
+    {
+      "file": "museum_bench.glb",
+      "meshes": 1,
+      "images": 0,
+      "bytes": 14888
+    },
+    {
+      "file": "ph_flower_gazania.glb",
+      "meshes": 8,
+      "images": 3,
+      "bytes": 416136
+    },
+    {
+      "file": "ph_television_02.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 171812
+    },
+    {
+      "file": "ph_vintage_wooden_drawer_01.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 318828
+    },
+    {
+      "file": "cat.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 723252
+    },
+    {
       "file": "stoop.glb",
       "meshes": 1,
       "images": 3,
       "bytes": 959092
     },
     {
+      "file": "nyb_miracle_mailcart.glb",
+      "meshes": 6,
+      "images": 6,
+      "bytes": 533040
+    },
+    {
+      "file": "ph_plastic_monobloc_chair_01.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 249704
+    },
+    {
+      "file": "pigeon.glb",
+      "meshes": 1,
+      "images": 1,
+      "bytes": 340116
+    },
+    {
+      "file": "ph_cardboard_box_01.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 143224
+    },
+    {
       "file": "water_tower.glb",
       "meshes": 1,
       "images": 3,
       "bytes": 425816
+    },
+    {
+      "file": "ph_hanging_industrial_lamp.glb",
+      "meshes": 1,
+      "images": 5,
+      "bytes": 496868
     },
     {
       "file": "mlow_eye_monument.glb",
@@ -31,6 +109,30 @@
       "bytes": 14352
     },
     {
+      "file": "rope_stanchion.glb",
+      "meshes": 1,
+      "images": 0,
+      "bytes": 4964
+    },
+    {
+      "file": "ts_amesscope.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 279336
+    },
+    {
+      "file": "ph_ceiling_fan.glb",
+      "meshes": 1,
+      "images": 5,
+      "bytes": 244200
+    },
+    {
+      "file": "ph_security_camera_01.glb",
+      "meshes": 1,
+      "images": 4,
+      "bytes": 605036
+    },
+    {
       "file": "hydrant.glb",
       "meshes": 1,
       "images": 3,
@@ -41,6 +143,24 @@
       "meshes": 1,
       "images": 1,
       "bytes": 11360
+    },
+    {
+      "file": "armillary.glb",
+      "meshes": 1,
+      "images": 0,
+      "bytes": 25116
+    },
+    {
+      "file": "ph_wicker_basket_01.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 280924
+    },
+    {
+      "file": "ph_mounted_fluorescent_lights.glb",
+      "meshes": 1,
+      "images": 4,
+      "bytes": 177904
     },
     {
       "file": "food-bottle-ketchup.glb",
@@ -61,16 +181,64 @@
       "bytes": 920804
     },
     {
+      "file": "ph_stationery_supplies.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 229448
+    },
+    {
+      "file": "nyb_walking_radio.glb",
+      "meshes": 2,
+      "images": 8,
+      "bytes": 498632
+    },
+    {
+      "file": "CashRegister_01.glb",
+      "meshes": 1,
+      "images": 6,
+      "bytes": 886596
+    },
+    {
+      "file": "ph_watering_can_metal_01.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 253572
+    },
+    {
+      "file": "plastic_crate_02.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 569356
+    },
+    {
       "file": "food-bread.glb",
       "meshes": 1,
       "images": 1,
       "bytes": 9468
     },
     {
+      "file": "planter_box_02.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 751300
+    },
+    {
       "file": "food-cup-coffee.glb",
       "meshes": 1,
       "images": 1,
       "bytes": 7872
+    },
+    {
+      "file": "trashbag.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 425960
+    },
+    {
+      "file": "ph_fern_02.glb",
+      "meshes": 4,
+      "images": 3,
+      "bytes": 410680
     },
     {
       "file": "fire_escape.glb",
@@ -91,6 +259,18 @@
       "bytes": 14888
     },
     {
+      "file": "ph_metal_trash_can.glb",
+      "meshes": 1,
+      "images": 6,
+      "bytes": 446356
+    },
+    {
+      "file": "ph_caged_hanging_light.glb",
+      "meshes": 1,
+      "images": 4,
+      "bytes": 349232
+    },
+    {
       "file": "food-loaf-baguette.glb",
       "meshes": 1,
       "images": 1,
@@ -103,13 +283,25 @@
       "bytes": 443776
     },
     {
+      "file": "ph_planter_pot_clay.glb",
+      "meshes": 1,
+      "images": 3,
+      "bytes": 156696
+    },
+    {
+      "file": "ph_exterior_aircon_unit.glb",
+      "meshes": 1,
+      "images": 12,
+      "bytes": 766304
+    },
+    {
       "file": "lantern.glb",
       "meshes": 1,
       "images": 3,
       "bytes": 481944
     }
   ],
-  "models_valid": 18,
+  "models_valid": 50,
   "artworks_valid": 44,
   "module_dependencies_valid": true,
   "note": "GLB containers, buffer/image references and local files checked. Image pixel decoding and GPU rendering not checked."
