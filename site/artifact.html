@@ -16579,12 +16579,79 @@ window.__FRAMES.push(dt => { try { const F = SIDE.feet; if (!F) return; F.t += d
   try { const s = SIGNS.find(q => q.lines && q.lines[0] && /^\d+ ILLUSIONS/.test(q.lines[0].t)); if (s) { s.lines[0].t = '28 ILLUSIONS · 577 CARDS · 472 ARTISTS'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } } catch (e) { }
 })();
 
-/*__V419_X__*/
-/*__V420_X__*/
-/*__V421_X__*/
-/*__V422_X__*/
-/*__V423_X__*/
-/*__V424_X__*/
+/* ================================================================
+   v419 THE NEW WALLS ARE SIGNED, AND SIT DOWN (2026-11-24)
+   The murals painted on since v330 signed the others (N3W CUTS' sea wall and ghost sign, the camera obscura's boards,
+   the sideshow backs) get the same small MLOW 2026 in bone paint, bottom right. And the shop, the five sideshow
+   boards and the zoetrope get soft contact shadows where they meet the sand, like the scanned props (v367).
+   ================================================================ */
+(function signAndSit() {
+  try { if (window.__WALLS && WALLS.on) { const t = signTex([{ t: 'MLOW', s: 0.55, f: '"Permanent Marker",cursive' }, { t: '2026', s: 0.22, f: '"Permanent Marker",cursive' }], 256, 160, '#00000000', '#efe8da');
+    const mat = new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 }); let n = 0;
+    scene.traverse(o => { if (!o.isMesh || !o.material || !o.material.userData || !o.material.userData.wall || o.geometry.type !== 'PlaneGeometry' || o.userData.__signed) return; const p = o.geometry.parameters; if (p.height < 2 || Math.abs(o.rotation.x) > 0.1) return; o.userData.__signed = 1; n++;
+      const s = Math.min(1.2, p.width * 0.08), m = new THREE.Mesh(new THREE.PlaneGeometry(s, s * 0.625), mat); m.position.copy(o.position); m.quaternion.copy(o.quaternion); m.translateX(p.width / 2 - s * 0.7); m.translateY(-p.height / 2 + s * 0.5); m.translateZ(0.015); m.renderOrder = 6; scene.add(m); });
+    WALLS.signed2 = n; } } catch (e) { }
+  try { const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; const c = cv.getContext('2d'); if (!c || !c.createRadialGradient) return;
+    const gr = c.createRadialGradient(32, 32, 4, 32, 32, 32); gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(0.55, 'rgba(0,0,0,.28)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
+    const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
+    const put = (x, z, w, d, ry) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, ry, 0); m.position.set(x, ground(x, z) + 0.015, z); m.renderOrder = 3; scene.add(m); };
+    if (window.__CUTS && CUTS.ok) put(CUTS.c[0], CUTS.c[2], CUTS.W + 1.4, CUTS.D + 1.4, CUTS.ry);
+    if (window.__SIDE) SIDE.list.forEach(B => put(B.x, B.z, 2.9, 0.9, B.ry));
+    if (window.__ZOE && ZOE.ok) put(ZOE.P[0], ZOE.P[2], 1.0, 1.0, 0); } catch (e) { }
+})();
+
+/* ================================================================
+   v420 SNOW ON THE BOARDWALK (2026-11-24)
+   When it snows, the snow layer (v374) now settles on everything built this round too: N3W CUTS' roof, cornice and
+   awning, the sideshow boards' headers, the zoetrope's rim, the camera obscura's new cornice.
+   ================================================================ */
+setTimeout(() => { try { if (!window.__SNOWL || !SNOWL.add) return; const add = SNOWL.add;
+  if (window.__CUTS && CUTS.body) { add(CUTS.body.material); scene.traverse(o => { if (o.isMesh && o.material && o.material.map && o.material.side === THREE.DoubleSide && o.position.distanceTo(CUTS.body.position) < 6) add(o.material); }); }
+  if (window.__SIDE) scene.traverse(o => { if (o.isMesh && o.geometry && o.geometry.type === 'BoxGeometry' && o.material && o.material.color && o.material.color.getHex() === 0x16233f) add(o.material); });
+  if (window.__ZOE && ZOE.drum) ZOE.drum.traverse(o => { if (o.isMesh) add(o.material); }); } catch (e) { } }, 31000);
+
+/* ================================================================
+   v421 RAIN ON THE BRASS (2026-11-24)
+   When it rains, the 577 brass plaques of the Memes Walk go wet with the paving: the brass darkens a little and
+   turns glassy, the enamel cards shine, and the lamps and sky slide across them; they dry with the puddles (v368).
+   ================================================================ */
+(function wetBrass() {
+  if (!window.__MWALK || !MWALK.ims) return; MWALK.wet = { value: 0 };
+  MWALK.ims.forEach(im => { const m = im.material, prev = m.onBeforeCompile; m.onBeforeCompile = (sh, r) => { prev(sh, r); sh.uniforms.uWet = MWALK.wet;
+    sh.fragmentShader = sh.fragmentShader.replace('uniform float uWave;', 'uniform float uWave, uWet;').replace('roughnessFactor = plR;', 'roughnessFactor = mix(plR, 0.06, uWet); diffuseColor.rgb *= 1.0 - 0.25 * uWet;'); };
+    m.customProgramCacheKey = () => 'mwalk-wet'; m.needsUpdate = true; });
+})();
+window.__FRAMES.push(() => { try { if (MWALK.wet && window.__PUD) MWALK.wet.value = Math.min(1, PUD.w || 0); } catch (e) { } });
+
+/* ================================================================
+   v422 THE BARBER POLE AT NIGHT (2026-11-24)
+   A lit barber pole throws its colour on the wall behind it. After dusk a soft halo of red, bone and cobalt spreads
+   on N3W CUTS' pilaster round the pole, pulsing faintly as the stripes turn.
+   ================================================================ */
+(function poleHalo() {
+  if (!window.__CUTS || !CUTS.pole) return; const cv = document.createElement('canvas'); cv.width = 128; cv.height = 256; const c = cv.getContext('2d'); if (!c || !c.createRadialGradient) return;
+  const gr = c.createRadialGradient(64, 128, 4, 64, 128, 64); gr.addColorStop(0, 'rgba(255,200,200,.9)'); gr.addColorStop(0.5, 'rgba(160,120,255,.35)'); gr.addColorStop(1, 'rgba(80,110,255,0)'); c.save(); c.scale(1, 2); c.translate(0, -64); c.fillStyle = gr; c.fillRect(0, 0, 128, 256); c.restore();
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 2.2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  const [x, z] = CUTS.at(-CUTS.W / 2 + 0.25, CUTS.D / 2 + 0.25); m.position.set(x, CUTS.g + 2.05, z); m.rotation.y = CUTS.ry; scene.add(m); CUTS.halo = m;
+})();
+window.__FRAMES.push(() => { try { if (!CUTS.halo) return; const k = Math.min(1, (L.lamps || 0) * 1.3); CUTS.halo.visible = k > 0.02; CUTS.halo.material.opacity = k * (0.5 + 0.08 * Math.sin(performance.now() / 300)); } catch (e) { } });
+
+/* ================================================================
+   v423 THE TOUR STARTS THE WAVE (2026-11-24)
+   When the tour reaches the Memes Walk it sets off the wave (v413), so everyone who takes the tour sees the
+   collection light up in mint order from #1, not only those here at 6:52 in the evening.
+   ================================================================ */
+(function tourWave() { [((window.__game && __game.TOUR) || TOUR), window.__TOURFULL].forEach(R => { if (!R) return; const s = R.find(q => q.name === 'the memes walk'); if (s && !s.pre) s.pre = () => { try { if (window.__MWAVE && MWAVE.go) MWAVE.go(); } catch (e) { } }; }); })();
+
+/* ================================================================
+   v424 THE PIER BOARD, UPDATED (2026-11-24)
+   The AND NOW panel at the pier (v392) gains the newest: the wave at 6:52:29 (or type WAVE), the rooms behind the
+   windows, the barber, the two new sideshow boards.
+   ================================================================ */
+(function andNow2() { try { const s = SIGNS.find(q => q.lines && q.lines[0] && q.lines[0].t === 'AND NOW'); if (!s) return;
+  s.lines = [{ t: 'AND NOW', s: 0.08 }].concat(['N3W CUTS · THE WEST BEACH: THE INFINITE BARBERSHOP, THE POLE', 'MAGIC EYE AND THE ZOETROPE · BY THE SHOP', 'THE SIDESHOW ROW · FIVE BOARDS OF TRICKS', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · 577 PLAQUES ROUND THE RIVER', 'THE WAVE · 6:52:29 PM, OR TYPE WAVE', 'AFTER DARK · SOMEONE HOME IN THE WINDOWS'].map(r => ({ t: r, s: 0.033, b: false })));
+  signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } catch (e) { } })();
+
 /*__V425_X__*/
 /*__V426_X__*/
 /*__V427_X__*/
