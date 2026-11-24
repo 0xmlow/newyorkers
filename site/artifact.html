@@ -14224,15 +14224,148 @@ window.__FRAMES.push(dt => { try { if (!CBAN.list.length) return; CBAN.t -= dt; 
    ================================================================ */
 window.__FRAMES.push(dt => { try { if (!window.__CBAN || !CBAN.list.length) return; const near = Math.hypot(P.x, P.z) < 110; if (!near) CBAN.t = Math.max(CBAN.t, 5); } catch (e) { } });
 
+/* ================================================================
+   v277 REAL PROPS: STOOP PLANTS (2026-11-23)
+   Scanned potted plants (big leaved, terracotta pots) stand either side of each new tenement's front door (v233),
+   and a scanned planter with an Open Eye Flower on its face sits under the bodega's window. ?props=0 off.
+   ================================================================ */
+(function stoopPlants() {
+  if (!PH.on) return; const L0 = [];
+  const pair = (cx, cz, nx, nz, hd, u, g) => { const tx = nz, tz = -nx; [-0.95, 0.95].forEach(d => { const x = cx + nx * (hd + 0.55) + tx * (u + d), z = cz + nz * (hd + 0.55) + tz * (u + d); L0.push([x, g + 0.16, z, Math.random() * 6, 0.9]); }); };
+  try { pair(17, 66, 0, 1, 7.2, -3.0, ground(17, 66) + 0.02); } catch (e) { }
+  try { if (BLK.laund) pair(-86, -4, 0, -1, 4, -1.3, LAUND.g0); } catch (e) { }
+  try { if (BLK.drop) pair(-62, 80, 1, 0, 3.5, 0.7, LINE.g0); } catch (e) { }
+  phPlace('isl_pot', L0); try { const g = ground(17, 66) + 0.02; phPlace('isl_planter', [[11.45, g, 66, -PI / 2, 1.1]]); } catch (e) { }
+})();
 
+/* ================================================================
+   v278 REAL PROPS: MARKET STOCK (2026-11-23)
+   Behind each market kiosk (v69), a stack of scanned wooden crates with a 6529 card pasted on the end, where the
+   stall keeps its stock. ?props=0 off.
+   ================================================================ */
+(function marketStock() {
+  if (!PH.on || !window.__MKT || !MKT.k) return; const L0 = [];
+  MKT.k.forEach((k, i) => { const g = ground(k.x, k.z), x = k.x + 1.9, z = k.z + 0.8; L0.push([x, g, z, 0.1 * i, 1], [x + 0.05, g + 0.35, z + 0.02, -0.1, 1]); if (i % 2) L0.push([x, g, z - 0.5, 0.3, 1]); });
+  phPlace('isl_crate', L0);
+})();
 
+/* ================================================================
+   v279 THE BANNERS AT NIGHT (2026-11-23)
+   The card banners at the river crossings (v273) are backlit after dusk like the lightbox banners on Fifth Avenue,
+   so the card at each crossing still reads at midnight.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (!window.__CBAN || !CBAN.list.length) return; const k = Math.min(1, (L.lamps || 0) * 1.3);
+  CBAN.list.forEach(b => { const m = b.m.material; if (!m.emissiveMap) { m.emissiveMap = m.map; m.emissive = new THREE.Color(0xffffff); m.needsUpdate = true; } m.emissiveIntensity = 0.02 + 0.75 * k; }); } catch (e) { } });
 
+/* ================================================================
+   v280 ILLUSION: THE DISC THAT TURNS (2026-11-23)
+   A four metre disc on a navy pole on the west lawn, painted in rings of little teardrop cells in MLow's colours
+   (ink, cobalt, bone, cyan, in that order round every cell). It does not move. Look at it and the rings turn, each
+   the opposite way to the next, and stop dead wherever you look straight at them, the peripheral drift that Akiyoshi
+   Kitaoka found in his rotating snakes. An Open Eye Flower sits in the middle, watching it not move. ?snakes=0 off.
+   ================================================================ */
+const SNAKE = {};
+window.__SNAKE = SNAKE;
+(function snakes() {
+  if (!LOOK.on || /snakes=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 1024; const c = cv.getContext('2d'); if (!c || !c.beginPath || !c.arc || !c.fill) return;
+  c.fillStyle = '#7f8a99'; c.fillRect(0, 0, 1024, 1024); const cols = ['#0d0d0d', '#2962FF', '#efe8da', '#08DEFF'];
+  for (let ring = 0; ring < 7; ring++) { const r0 = 90 + ring * 60, n = 12 + ring * 6, dir = ring % 2 ? 1 : -1;
+    for (let i = 0; i < n; i++) { const a0 = i / n * PI * 2; for (let k = 0; k < 4; k++) { const a = a0 + dir * k * (PI * 2 / n) * 0.2, w = (PI * 2 / n) * 0.24; c.fillStyle = cols[k]; c.beginPath(); c.arc(512, 512, r0 + 26, a, a + w); c.arc(512, 512, r0 - 26, a + w, a, true); c.closePath(); c.fill(); } } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const X = -58.5, Z = 24.5, g = ground(X, Z), ry = Math.atan2(-X, -Z);
+  const m = new THREE.Mesh(new THREE.CircleGeometry(2.1, 96), new THREE.MeshStandardMaterial({ map: t, roughness: 0.6, side: THREE.DoubleSide })); m.position.set(X, g + 3.2, Z); m.rotation.y = ry; m.castShadow = true; scene.add(m);
+  const fl = new THREE.Mesh(new THREE.CircleGeometry(0.42, 40), new THREE.MeshBasicMaterial({ map: tex('assets/iv_flower.webp'), transparent: true, alphaTest: 0.4 })); fl.position.copy(m.position); fl.rotation.y = ry; fl.translateZ(0.01); scene.add(fl);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(2.12, 0.06, 10, 96), new THREE.MeshStandardMaterial({ color: 0x122039, roughness: 0.5, metalness: 0.5 })); rim.position.copy(m.position); rim.rotation.y = ry; scene.add(rim);
+  facPut('iron', X, g + 0.55, Z, 0.16, 1.1, 0.16, 0); facPut('iron', X, g + 0.06, Z, 0.7, 0.12, 0.7, 0); facFlush(); post(X, Z, 0.3, -5, 2);
+  SNAKE.ok = true; SNAKE.P = [X, g + 3.2, Z];
+})();
 
+/* ================================================================
+   v281 ILLUSION: THE WALL THAT LEANS (2026-11-23)
+   The laundromat's blank north side is tiled, floor to cornice, in the café wall pattern (first seen on a café in
+   Bristol): rows of navy and bone tiles, each row shifted half a tile, with thin grey mortar between. Every row is
+   dead level. Every row looks like a wedge leaning against the next. ?cafewall=0 off.
+   ================================================================ */
+(function cafeWall() {
+  if (!LOOK.on || /cafewall=0/.test(location.search) || !window.__LAUND || LAUND.g0 == null) return;
+  const W = 5.0, H = 3.5, cv = document.createElement('canvas'); cv.width = 1000; cv.height = 700; const c = cv.getContext('2d'); if (!c || !c.fillRect) return;
+  c.fillStyle = '#8c8f94'; c.fillRect(0, 0, 1000, 700); const tw = 100, th = 70, mort = 6;
+  for (let r = 0; r < 10; r++) { const off = [0, 25, 50, 25][r % 4]; for (let i = -1; i < 11; i++) { c.fillStyle = (i % 2 === 0) ? '#16233f' : '#efe8da'; c.fillRect(i * tw + off, r * th + mort / 2, tw, th - mort); } }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.1, H - 0.2), new THREE.MeshStandardMaterial({ map: t, roughness: 0.35, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  m.position.set(-86, LAUND.g0 + H / 2 + 0.05, -4 + 4 + 0.012); m.receiveShadow = true; scene.add(m); window.__CAFE = { ok: true };
+})();
 
+/* ================================================================
+   v282 HOW THE TRICKS WORK (2026-11-23)
+   Each illusion gets a small navy enamel plaque in the island's livery, at hand height, saying in two lines what is
+   going on, so nobody leaves thinking it was a glitch: the eye from one spot, the hollow eye, the impossible
+   triangle, the well, the card that stands up, the disc that turns, the wall that leans.
+   ================================================================ */
+(function trickPlaques() {
+  const mk = (x, z, ry, title, l1, l2) => { const t = signTex([{ t: title, s: 0.26 }, { t: l1, s: 0.1 }, { t: l2, s: 0.1 }], 1024, 384, '#16233f', '#efe8da'); const g = ground(x, z);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.375), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.15 })); m.position.set(x, g + 1.05, z); m.rotation.y = ry; m.rotation.x = -0.35; scene.add(m);
+    facPut('iron', x - Math.sin(ry) * 0.05, g + 0.5, z - Math.cos(ry) * 0.05, 0.06, 1.0, 0.06, ry); post(x, z, 0.12, -5, 1.2); };
+  const face = (x, z, tx, tz) => Math.atan2(tx - x, tz - z);
+  try { if (window.__ANA && ANA.V) { const x = ANA.V.x - 1.2, z = ANA.V.z - 0.4; mk(x, z, face(x, z, ANA.V.x - 4, ANA.V.z - 4), 'THE EYE FROM ONE SPOT', 'PAINT ON TWENTY THINGS AT TWENTY DISTANCES.', 'FROM THE FOOTPRINTS IT IS ONE FLAT EYE.'); } } catch (e) { }
+  try { if (window.__PEN && PEN.V) { const x = PEN.V.x + 1.1, z = PEN.V.z + 0.6; mk(x, z, face(x, z, 0, 0) + PI, 'THE IMPOSSIBLE TRIANGLE', 'THREE BEAMS THAT NEVER TOUCH.', 'FROM THE FOOTPRINTS THE GAP HIDES BEHIND ITSELF.'); } } catch (e) { }
+  try { if (window.__WELL && WELL.P) { const [x0, , z0] = WELL.P; mk(x0 + 2.2, z0 + 1.6, face(x0 + 2.2, z0 + 1.6, x0 + 6, z0 + 6), 'THE WELL', 'A FLAT DISC. A SHADER WORKS OUT WHAT', 'A SHAFT BELOW IT WOULD SHOW YOUR EYE.'); } } catch (e) { }
+  try { if (window.__STAND && STAND.V) { const V = STAND.V; mk(V.x + 0.9, V.z + 0.2, face(V.x, V.z, STAND.Q.x, STAND.Q.z) + PI, 'THE CARD THAT STANDS UP', 'PAINTED FLAT ON THE ASPHALT, STRETCHED.', 'FROM THE EYE AT YOUR FEET IT STANDS.'); } } catch (e) { }
+  try { if (window.__SNAKE && SNAKE.ok) { const [x0, , z0] = SNAKE.P; mk(x0 + 2.6, z0 + 1.4, face(x0, z0, 0, 0) + PI, 'THE DISC THAT TURNS', 'NOTHING MOVES. THE ORDER OF THE COLOURS', 'TELLS THE EDGE OF YOUR EYE THAT IT DOES.'); } } catch (e) { }
+  try { if (window.__CAFE) mk(-83.6, 0.9, PI * 0.25, 'THE WALL THAT LEANS', 'EVERY ROW IS LEVEL. THE GREY MORTAR', 'AND THE HALF TILE SHIFT BEND THEM.'); } catch (e) { }
+  facFlush();
+})();
 
+/* ================================================================
+   v283 THE MAP KNOWS (2026-11-23)
+   The island map (v50) gains the new places so you can click straight to them: THE MEME RIVER, THE CREDITS, THE
+   WELL, THE EYE FROM ONE SPOT, THE HOLLOW EYE, THE IMPOSSIBLE TRIANGLE, THE CARD THAT STANDS UP, THE DISC THAT
+   TURNS, THE PAINTED TANK and the handball court.
+   ================================================================ */
+(function mapPlaces() {
+  if (!window.__MAP || !MAP.places) return; const add = (n, x, z, tx, tz) => MAP.places.push([n, x, z, tx == null ? x : tx, tz == null ? z : tz]);
+  add('THE MEME RIVER', 0, 60, 1.5, 70); try { if (window.__CRED && CRED.mesh) add('THE CREDITS', 0, 116.6, 0, 108); } catch (e) { }
+  try { if (WELL.P) add('THE WELL', WELL.P[0], WELL.P[2], 2, -24); } catch (e) { }
+  try { if (ANA.V) add('THE EYE FROM ONE SPOT', ANA.T.x, ANA.T.z, ANA.V.x, ANA.V.z); } catch (e) { }
+  try { if (HOLLOW.ok) add('THE HOLLOW EYE', 21, 6.8, 20, -0.5); } catch (e) { }
+  try { if (PEN.V) add('THE IMPOSSIBLE TRIANGLE', PEN.C.x, PEN.C.z, PEN.V.x, PEN.V.z); } catch (e) { }
+  try { if (STAND.V) add('THE CARD THAT STANDS UP', STAND.Q.x, STAND.Q.z, STAND.V.x, STAND.V.z); } catch (e) { }
+  try { if (SNAKE.ok) add('THE DISC THAT TURNS', SNAKE.P[0], SNAKE.P[2], SNAKE.P[0] + 5, SNAKE.P[2] + 3); } catch (e) { }
+  try { if (WT.painted) add('THE PAINTED TANK', WT_AT.x, WT_AT.z, WT_AT.x + 10, WT_AT.z + 10); } catch (e) { }
+})();
 
+/* ================================================================
+   v284 FRAME RATE: ONE PASS FOR THE PAINT (2026-11-23)
+   The wheatpaste walls (v250) and the credits (v242) were redrawn as canvases at load and again when the fonts
+   arrived; they are now drawn once the fonts are in, never twice, and their textures drop their CPU copies after
+   upload. The Firefly murals share one texture per image and repeat however many walls carry it (v247's cache).
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (window.__PASTE && PASTE.walls.every(w => w.done) && !PASTE.freed) { PASTE.freed = true; } } catch (e) { } });
 
+/* ================================================================
+   v285 THE TOUR: THE LAST TRICKS (2026-11-23)
+   Three stops before the aerial: the disc that turns, the wall that leans, and the stoop plants at the bodega's
+   side door.
+   ================================================================ */
+(function tourV285() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__SNAKE && SNAKE.ok) { const [x, y, z] = SNAKE.P; add.push({ name: 'the disc that turns', dur: 8, pos: [[x + 7, y - 1.4, z + 4], [x + 5.5, y - 1.4, z + 3.2]], look: [[x, y, z], [x, y, z]] }); }
+  if (window.__CAFE) add.push({ name: 'the wall that leans', dur: 7, pos: [[-80, 1.8, 6], [-82.5, 1.8, 5]], look: [[-86, 1.9, 0], [-86.5, 1.9, 0]] });
+  try { const g = ground(17, 66); add.push({ name: 'the stoop', dur: 6, pos: [[16, g + 1.7, 79], [14.5, g + 1.6, 77]], look: [[14, g + 1.2, 73.2], [14, g + 1.2, 73.2]] }); } catch (e) { }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
 
+/* ================================================================
+   v286 THE WHOLE ISLAND, TIED TOGETHER (2026-11-23)
+   The last stop before the aerial rises from the pier along the meme river and climbs until the river's ring and
+   its spokes, the card backs round the freeway, the painted tanks and the murals all sit in one frame: one
+   drawing in MLow's hand holding 577 cards by 472 artists.
+   ================================================================ */
+(function tourV286() {
+  const T = (window.__game && __game.TOUR) || TOUR; const at = T.findIndex(r => r.name === 'aerial');
+  T.splice(at < 0 ? T.length : at, 0, { name: 'tied together', dur: 12, pos: [[0, 2.2, 112], [0, 14, 96], [18, 62, 108]], look: [[0, 1, 90], [0, 1, 40], [0, 0, 0]] });
+})();
 
 
 /* ---------------- boot ---------------- */
