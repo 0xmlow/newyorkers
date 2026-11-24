@@ -16652,18 +16652,206 @@ window.__FRAMES.push(() => { try { if (!CUTS.halo) return; const k = Math.min(1,
   s.lines = [{ t: 'AND NOW', s: 0.08 }].concat(['N3W CUTS · THE WEST BEACH: THE INFINITE BARBERSHOP, THE POLE', 'MAGIC EYE AND THE ZOETROPE · BY THE SHOP', 'THE SIDESHOW ROW · FIVE BOARDS OF TRICKS', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · 577 PLAQUES ROUND THE RIVER', 'THE WAVE · 6:52:29 PM, OR TYPE WAVE', 'AFTER DARK · SOMEONE HOME IN THE WINDOWS'].map(r => ({ t: r, s: 0.033, b: false })));
   signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } catch (e) { } })();
 
-/*__V425_X__*/
-/*__V426_X__*/
-/*__V427_X__*/
-/*__V428_X__*/
-/*__V429_X__*/
-/*__V430_X__*/
-/*__V431_X__*/
-/*__V432_X__*/
-/*__V433_X__*/
-/*__V434_X__*/
-/*__V435_X__*/
-/*__V436_X__*/
+/* ================================================================
+   v425 THE N3W BOARDWALK (2026-11-24)
+   N3W CUTS, the zoetrope and the five sideshow boards stood on bare sand. They now share a boardwalk, the thing that
+   makes a row of shops and tricks on a beach into Coney Island: a 35 degree arc of weathered planks laid across the
+   walk, silver grey and brown, with dark gaps, nail heads and the odd replaced board, from the ring road's edge back
+   to the shopfronts. ?boardwalk=0 off.
+   ================================================================ */
+const BWALK = { ok: false };
+window.__BWALK = BWALK;
+(function boardwalk() {
+  if (!LOOK.on || /boardwalk=0/.test(location.search) || !window.__CUTS || !CUTS.ok) return;
+  const a0 = 223.5 * PI / 180, a1 = 260.8 * PI / 180, r0 = 104.5, r1 = 110.6, segs = 160;
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = Math.min(ANISO, 4); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  if (c && c.fillRect && c.beginPath) { let sd = 4207; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647; let x = 0;
+    while (x < 1024) { const w = 34 + Math.floor(rnd() * 8), v = rnd(), base = rnd() < 0.08 ? [150, 118, 84] : [112 + v * 36, 101 + v * 30, 88 + v * 24]; c.fillStyle = `rgb(${base.map(Math.round).join(',')})`; c.fillRect(x, 0, w, 512);
+      for (let i = 0; i < 26; i++) { c.strokeStyle = `rgba(${rnd() < 0.5 ? '40,32,24' : '200,190,170'},${0.08 + rnd() * 0.12})`; c.lineWidth = 2 + rnd() * 2; c.beginPath(); const gx = x + 2 + rnd() * (w - 4); c.moveTo(gx, 0); c.bezierCurveTo(gx + rnd() * 6 - 3, 170, gx + rnd() * 6 - 3, 340, gx + rnd() * 4 - 2, 512); c.stroke(); }
+      c.fillStyle = 'rgba(30,24,18,.6)'; c.fillRect(x + w - 4, 0, 4, 512); const cut = rnd() * 512; c.fillRect(x, cut, w, 2);
+      c.fillStyle = 'rgba(30,26,22,.8)'; [64, 192, 320, 448].forEach(y => { c.beginPath(); c.arc(x + 7, y, 2.2, 0, PI * 2); c.arc(x + w - 9, y, 2.2, 0, PI * 2); c.fill(); }); x += w; }
+    try { const tmp = document.createElement('canvas'); tmp.width = 1024; tmp.height = 512; const q = tmp.getContext('2d'); q.filter = 'blur(1.2px)'; q.drawImage(cv, 0, 0); c.drawImage(tmp, 0, 0); } catch (e) { }
+  const gr = c.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, 'rgba(0,0,0,.10)'); gr.addColorStop(0.5, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.12)'); c.fillStyle = gr; c.fillRect(0, 0, 1024, 512); }
+  // an arc strip with uv u along the walk (metres / 4) and v across it (metres / 4), so the planks lie across the walk
+  const pos = [], uv = [], idx = [];
+  for (let i = 0; i <= segs; i++) { const a = a0 + (a1 - a0) * i / segs; [r0, r1].forEach((r, j) => { const x = Math.sin(a) * r, z = Math.cos(a) * r; pos.push(x, Math.max(ground(x, z), 0.5) + 0.045, z); uv.push((a - a0) * 107.5 / 4, j ? (r1 - r0) / 4 : 0); }); if (i) { const b = (i - 1) * 2; idx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); } }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
+  if (geo.attributes.normal.array[1] < 0) { idx.reverse(); geo.setIndex(idx); geo.computeVertexNormals(); }
+  const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.86, metalness: 0, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+  
+  const deck = new THREE.Mesh(geo, mat); deck.receiveShadow = true; scene.add(deck); BWALK.deck = deck; BWALK.mat = mat;
+  // the kerb: a low timber edge along the road side
+  const kp = [], ki = []; for (let i = 0; i <= segs; i++) { const a = a0 + (a1 - a0) * i / segs, x = Math.sin(a) * r0, z = Math.cos(a) * r0, y = Math.max(ground(x, z), 0.5); kp.push(x, y - 0.05, z, x, y + 0.08, z); if (i) { const b = (i - 1) * 2; ki.push(b, b + 2, b + 1, b + 1, b + 2, b + 3); } }
+  const kg = new THREE.BufferGeometry(); kg.setAttribute('position', new THREE.Float32BufferAttribute(kp, 3)); kg.setIndex(ki); kg.computeVertexNormals();
+  const kerb = new THREE.Mesh(kg, new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 0.9, side: THREE.DoubleSide })); scene.add(kerb);
+  BWALK.ok = true; BWALK.a = [a0, a1]; BWALK.r = [r0, r1];
+  try { if (window.__SNOWL && SNOWL.add) setTimeout(() => SNOWL.add(mat), 32000); } catch (e) { }
+  if (window.__MAP) MAP.places.push(['THE N3W BOARDWALK', Math.sin(240 * PI / 180) * 107, Math.cos(240 * PI / 180) * 107, Math.sin(240 * PI / 180) * 100, Math.cos(240 * PI / 180) * 100]);
+})();
+
+/* ================================================================
+   v426 THE BOARDWALK: BENCHES, LAMPS AND ITS NAME (2026-11-24)
+   Scanned park benches (the island's CC0 seating, v240) along the road edge of the boardwalk facing the shops, three
+   of the scanned street lamps in the island's navy with their globes lit after dusk, and at each end a green N3W
+   street blade on a post: N3W BOARDWALK, and under it SIDESHOW ROW.
+   ================================================================ */
+(function boardwalkDress() {
+  if (!window.__BWALK || !BWALK.ok || !window.__PH || !PH.on) return;
+  const at = (deg, r) => { const a = deg * PI / 180; return [Math.sin(a) * r, Math.cos(a) * r, Math.atan2(Math.sin(a), Math.cos(a))]; };
+  const benches = [230.5, 235.5, 245.5, 250.5].map(d => { const [x, z, a] = at(d, 105.3); return [x, ground(x, z) + 0.045, z, a + PI, 1.0]; }); phPlace('isl_seating', benches);
+  const lamps = [226, 240.5, 255.5].map(d => { const [x, z, a] = at(d, 104.9); post(x, z, 0.15, -5, 4); return [x, ground(x, z) + 0.045, z, a, 1.0]; }); phPlace('isl_lamp', lamps);
+  // the globes after dark
+  const glow = new THREE.InstancedMesh(new THREE.SphereGeometry(0.16, 14, 10), new THREE.MeshBasicMaterial({ color: 0xffd9a0, toneMapped: false, transparent: true, opacity: 0 }), lamps.length); BWALK.glow = glow;
+  phLoad('isl_lamp').then(A => { const o = new THREE.Object3D(); lamps.forEach((l, i) => { o.position.set(l[0], l[1] + A.size.y * 0.93, l[2]); o.updateMatrix(); glow.setMatrixAt(i, o.matrix); }); glow.instanceMatrix.needsUpdate = true; scene.add(glow); }).catch(() => { });
+  // the street blades
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  const blade = (deg) => { const [x, z, a] = at(deg, 104.9), g = ground(x, z); facPut('iron', x, g + 1.6, z, 0.07, 3.2, 0.07, 0); post(x, z, 0.12, -5, 3.3);
+    [['N3W BOARDWALK', 3.0, 0], ['SIDESHOW ROW', 2.72, PI / 2]].forEach(([txt, y, rot]) => { const t = signTex([{ t: txt, s: 0.5 }], 1024, 160, '#1f6b46', '#ffffff'); const m = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.2), new THREE.MeshStandardMaterial({ map: t, roughness: 0.45, side: THREE.DoubleSide })); m.position.set(x, g + y, z); m.rotation.y = a + PI / 2 + rot; scene.add(m); }); };
+  blade(223.8); blade(260.5); facFlush();
+})();
+window.__FRAMES.push(() => { try { if (!BWALK.glow) return; const k = Math.min(1, (L.lamps || 0) * 1.3); BWALK.glow.material.opacity = k; BWALK.glow.visible = k > 0.02; } catch (e) { } });
+
+/* ================================================================
+   v427 THE TOUR WALKS THE BOARDWALK (2026-11-24)
+   One stroll replaces the separate boardwalk stops in the highlights tour: down the N3W Boardwalk from the first
+   sideshow board past N3W CUTS' window to the last board, about twenty seconds. The full tour (Shift T) keeps the
+   close stops (the pole, the magic eye, the zoetrope).
+   ================================================================ */
+(function tourBoardwalk() { const T = (window.__game && __game.TOUR) || TOUR; if (!window.__BWALK || !BWALK.ok) return;
+  const P = (deg, r, y) => { const a = deg * PI / 180; return [Math.sin(a) * r, y, Math.cos(a) * r]; }, g = ground(Math.sin(4.2) * 106, Math.cos(4.2) * 106);
+  const stop = { name: 'the n3w boardwalk', dur: 20, pos: [P(222, 105.6, g + 1.7), P(232, 105.8, g + 1.7), P(240, 105.9, g + 1.7), P(250, 105.8, g + 1.7), P(259, 105.6, g + 1.7)], look: [P(228, 109.6, g + 1.8), P(236, 110, g + 1.8), P(240.5, 111, g + 1.7), P(253, 109.6, g + 1.8), P(262, 108, g + 1.6)] };
+  const drop = ['the barber pole', 'magic eye', 'the zoetrope', 'the sideshow row'], at = T.findIndex(q => q.name === 'the infinite barbershop');
+  for (let i = T.length - 1; i >= 0; i--) if (drop.includes(T[i].name)) T.splice(i, 1);
+  const at2 = T.findIndex(q => q.name === 'the infinite barbershop'); T.splice(at2 < 0 ? T.length - 1 : at2 + 1, 0, stop);
+  if (window.__TOURFULL && __TOURFULL !== T) { const k = __TOURFULL.findIndex(q => q.name === 'the sideshow row'); __TOURFULL.splice(k < 0 ? __TOURFULL.length - 1 : k + 1, 0, stop); }
+})();
+
+/* ================================================================
+   v428 THE BOARDWALK'S STRING LIGHTS (2026-11-24)
+   Festoon lights swag along the N3W Boardwalk from lamp post to shopfront to lamp post, warm bulbs on a sagging
+   black cable, the way Coney Island's walk is strung. Dark by day, on at dusk, the odd bulb gone.
+   ================================================================ */
+(function festoon() {
+  if (!window.__BWALK || !BWALK.ok) return; const P = (deg, r, y) => { const a = deg * PI / 180; return new THREE.Vector3(Math.sin(a) * r, y, Math.cos(a) * r); };
+  const g = ground(P(240, 106, 0).x, P(240, 106, 0).z), anchors = [P(223.8, 104.9, g + 3.6), P(226, 104.9, g + 3.9), P(233, 107.6, g + 3.3), P(240.5, 104.9, g + 3.9), P(248, 107.6, g + 3.3), P(255.5, 104.9, g + 3.9), P(260.5, 104.9, g + 3.6)];
+  const pts = [], cable = []; for (let i = 0; i < anchors.length - 1; i++) { const a = anchors[i], b = anchors[i + 1], L = a.distanceTo(b), n = Math.round(L / 0.55);
+    for (let k = 0; k <= n; k++) { const t = k / n, p = a.clone().lerp(b, t); p.y -= Math.sin(t * PI) * L * 0.07; cable.push(p.clone()); if (k > 0 && k < n) pts.push(p); } }
+  const cg = new THREE.BufferGeometry().setFromPoints(cable); scene.add(new THREE.Line(cg, new THREE.LineBasicMaterial({ color: 0x111111 })));
+  const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.05, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), pts.length), o = new THREE.Object3D(), c = new THREE.Color();
+  pts.forEach((p, i) => { o.position.set(p.x, p.y - 0.07, p.z); o.updateMatrix(); im.setMatrixAt(i, o.matrix); im.setColorAt(i, c.set(0x4a4236)); }); im.instanceMatrix.needsUpdate = true; scene.add(im);
+  BWALK.fest = im; BWALK.fn = pts.length; BWALK.dead = new Set(pts.map((_, i) => i).filter(i => (i * 37) % 23 === 0));
+})();
+window.__FRAMES.push(dt => { try { if (!BWALK.fest) return; const k = Math.min(1, (L.lamps || 0) * 1.3); if (Math.abs(k - (BWALK.fk || -1)) < 0.02) return; BWALK.fk = k; const on = new THREE.Color(0x3a3226).lerp(new THREE.Color(1.0, 0.82, 0.52), k), off = new THREE.Color(0x3a3226);
+  for (let i = 0; i < BWALK.fn; i++) BWALK.fest.setColorAt(i, BWALK.dead.has(i) ? off : on); BWALK.fest.instanceColor.needsUpdate = true; } catch (e) { } });
+
+/* ================================================================
+   v429 N3W CUTS FLIES A FLAG (2026-11-24)
+   A pole on N3W CUTS' roof with a navy flag carrying the Open Eye Flower, snapping in the island's wind: the cloth
+   waves in the vertex shader, fastest at the free edge, so it reads from the road and from the water.
+   ================================================================ */
+(function cutsFlag() {
+  if (!window.__CUTS || !CUTS.ok) return; const [x, z] = CUTS.at(CUTS.W / 2 - 0.6, -CUTS.D / 2 + 0.6), y = CUTS.g + CUTS.H;
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 3.2, 10), new THREE.MeshStandardMaterial({ color: 0xdedede, roughness: 0.25, metalness: 0.9 })); pole.position.set(x, y + 1.6, z); scene.add(pole);
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 320; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const draw = img => { if (!c || !c.fillRect) return; c.fillStyle = '#16233f'; c.fillRect(0, 0, 512, 320); c.fillStyle = '#2962FF'; c.fillRect(0, 280, 512, 40); if (img) c.drawImage(img, 156, 40, 200, 200); t.needsUpdate = true; };
+  draw(null); const im = new Image(); im.onload = () => { try { draw(im); } catch (e) { } }; im.src = 'assets/iv_flower.webp';
+  const geo = new THREE.PlaneGeometry(1.6, 1.0, 24, 12); geo.translate(0.8, 0, 0); const U = { uT: { value: 0 } };
+  const mat = new THREE.MeshStandardMaterial({ map: t, side: THREE.DoubleSide, roughness: 0.8 });
+  mat.onBeforeCompile = sh => { sh.uniforms.uT = U.uT; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', 'vec3 transformed = position; float k = position.x / 1.6; transformed.z += sin(position.x * 4.0 - uT * 7.0) * 0.12 * k + sin(position.y * 3.0 + uT * 5.0) * 0.04 * k; transformed.y -= k * k * 0.06;'); };
+  mat.customProgramCacheKey = () => 'flag429';
+  const f = new THREE.Mesh(geo, mat); f.position.set(x, y + 2.7, z); f.rotation.y = CUTS.ry + PI * 0.6; f.castShadow = true; scene.add(f); CUTS.flag = { f, U };
+})();
+window.__FRAMES.push(dt => { try { if (CUTS.flag) CUTS.flag.U.uT.value += dt; } catch (e) { } });
+
+/* ================================================================
+   v430 THE MEMES WALK AT NIGHT (2026-11-24)
+   After dark the enamel cards on the walk give back a little light, as if lit from below the glass, so from the
+   promenade at night and from the air the ring of 577 reads as a faint necklace round the river.
+   ================================================================ */
+(function walkNight() {
+  if (!window.__MWALK || !MWALK.ims) return; MWALK.nightU = { value: 0 };
+  MWALK.ims.forEach(im => { const m = im.material, prev = m.onBeforeCompile; m.onBeforeCompile = (sh, r) => { prev(sh, r); sh.uniforms.uWN = MWALK.nightU;
+    sh.fragmentShader = sh.fragmentShader.replace('uniform float uWave, uWet;', 'uniform float uWave, uWet, uWN;').replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n if (plM < 0.5) totalEmissiveRadiance += diffuseColor.rgb * 0.55 * uWN;'); };
+    m.customProgramCacheKey = () => 'mwalk-night'; m.needsUpdate = true; });
+})();
+window.__FRAMES.push(() => { try { if (MWALK.nightU) MWALK.nightU.value = Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v431 ILLUSION: THE FLOATING DISC (2026-11-24)
+   A sixth sideshow board at the end of the boardwalk: a field of fine horizontal stripes with a disc of vertical
+   stripes in it. Walk past, or just move your head, and the disc slides and floats on its own, out of step with
+   the board (the Ouchi illusion, Hajime Ouchi, 1977: the eye cannot read motion along the stripes, so the two
+   patterns seem to move differently). ?sideshow=0 off.
+   ================================================================ */
+(function ouchi() {
+  if (!LOOK.on || /sideshow=0/.test(location.search) || typeof sideBooth !== 'function') return;
+  const B = sideBooth(258, 'THE FLOATING DISC', 'WALK PAST IT, OR MOVE YOUR HEAD. THE DISC SLIDES ON ITS OWN.');
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  if (c && c.fillRect && c.beginPath && c.arc && c.save && c.clip) { const s = 20; for (let y = 0; y < 1024; y += s) for (let x = 0; x < 1024; x += s * 4) { c.fillStyle = ((y / s + x / (s * 4)) % 2) ? '#0b0b0b' : '#f2ede2'; c.fillRect(x, y, s * 4, s); }
+    c.save(); c.beginPath(); c.arc(512, 512, 250, 0, PI * 2); c.clip(); for (let x = 0; x < 1024; x += s) for (let y = 0; y < 1024; y += s * 4) { c.fillStyle = ((x / s + y / (s * 4)) % 2) ? '#0b0b0b' : '#f2ede2'; c.fillRect(x, y, s, s * 4); } c.restore(); }
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); const [x, z] = B.at(0, 0.06); p.position.set(x, B.g + 1.75, z); p.rotation.y = B.ry; scene.add(p);
+  if (SIDE.panels) SIDE.panels.push(p.material); try { if (SIDE.backs) SIDE.backs(); } catch (e) { }
+  if (window.__MAP) MAP.places.push(['THE FLOATING DISC', B.x, B.z, ...B.at(0, 3)]);
+})();
+
+/* ================================================================
+   v432 SIX BOARDS, 29 ILLUSIONS (2026-11-24)
+   The floating disc gets its marquee bulbs like the other five, the full tour's sideshow stop walks all six, and the
+   pier count reads 29 ILLUSIONS.
+   ================================================================ */
+(function sideSix() {
+  if (!window.__SIDE || SIDE.list.length < 6) return; const B = SIDE.list[SIDE.list.length - 1];
+  try { if (SIDE.bulbs) { const extra = []; for (let i = 0; i < 14; i++) { const u = -1.12 + i * 2.24 / 13; [3.72, 3.12].forEach(y => { const [x, z] = B.at(u, 0.1); extra.push([x, B.g + y, z]); }); }
+    const im = new THREE.InstancedMesh(SIDE.bulbs.geometry, SIDE.bulbs.material, SIDE.bn + extra.length), M = new THREE.Matrix4(), o = new THREE.Object3D(), c = new THREE.Color(0x3a3226);
+    for (let i = 0; i < SIDE.bn; i++) { SIDE.bulbs.getMatrixAt(i, M); im.setMatrixAt(i, M); im.setColorAt(i, c); } extra.forEach((p, j) => { o.position.set(p[0], p[1], p[2]); o.updateMatrix(); im.setMatrixAt(SIDE.bn + j, o.matrix); im.setColorAt(SIDE.bn + j, c); });
+    im.instanceMatrix.needsUpdate = true; scene.remove(SIDE.bulbs); scene.add(im); SIDE.bulbs = im; SIDE.bn += extra.length; } } catch (e) { }
+  try { const L = SIDE.list.slice().sort((a, b) => Math.atan2(a.x, a.z) - Math.atan2(b.x, b.z)), p = (Q, d) => { const q = Q.at(0, d); return [q[0], Q.g + 1.7, q[1]]; }, l = Q => { const q = Q.at(0, 0); return [q[0], Q.g + 1.8, q[1]]; };
+    if (window.__TOURFULL) { const s = __TOURFULL.find(q => q.name === 'the sideshow row'); if (s) { s.pos = L.map(Q => p(Q, 4.5)); s.look = L.map(l); s.dur = 18; } } } catch (e) { }
+  try { const s = SIGNS.find(q => q.lines && q.lines[0] && /^\d+ ILLUSIONS/.test(q.lines[0].t)); if (s) { s.lines[0].t = '29 ILLUSIONS · 577 CARDS · 472 ARTISTS'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } } catch (e) { }
+})();
+
+/* ================================================================
+   v433 THE TOUR SEES THE BOARDWALK LIT (2026-11-24)
+   After the island at night, the tour drifts down the N3W Boardwalk under its string lights: the marquee bulbs
+   chasing, OPEN buzzing in the barbershop door, the barber pole glowing, the lit windows across the road.
+   ================================================================ */
+(function tourBoardwalkNight() { if (!window.__BWALK || !BWALK.ok) return; const P = (deg, r, y) => { const a = deg * PI / 180; return [Math.sin(a) * r, y, Math.cos(a) * r]; }, g = 0.6;
+  const stop = { name: 'the boardwalk at night', dur: 10, pos: [P(258, 103.2, g + 2.6), P(244, 103.4, g + 2.2)], look: [P(246, 108.5, g + 2.4), P(236, 109, g + 2.2)] };
+  [((window.__game && __game.TOUR) || TOUR), window.__TOURFULL].forEach(R => { if (!R) return; const k = R.findIndex(q => q.name === 'the island tonight'); if (k >= 0 && !R.some(q => q === stop)) R.splice(k + 1, 0, stop); });
+})();
+
+/* ================================================================
+   v434 SMOOTH: THE BOARDWALK SLEEPS WHEN YOU ARE FAR (2026-11-24)
+   The small, numerous things built this round (marquee bulbs, string lights, the stepping feet, the zoetrope, the
+   flag, the barber pole and its halo, the OPEN sign, the spill of light) stop drawing and stop animating once you
+   are more than 140 metres away, where they would be under a pixel.
+   ================================================================ */
+(function boardwalkSleep() {
+  const list = () => [window.__SIDE && SIDE.bulbs, window.__BWALK && BWALK.fest, window.__BWALK && BWALK.glow, window.__ZOE && ZOE.drum, window.__CUTS && CUTS.flag && CUTS.flag.f, window.__CUTS && CUTS.pole, window.__CUTS && CUTS.halo, window.__CUTS && CUTS.neon, window.__CUTS && CUTS.spill].concat(window.__SIDE && SIDE.feet ? SIDE.feet.bars.map(b => b.m) : []).filter(Boolean);
+  const c = Math.sin(240 * PI / 180) * 107, z = Math.cos(240 * PI / 180) * 107; let t = 0, far = false;
+  window.__FRAMES.push(dt => { try { t -= dt; if (t > 0) return; t = 0.5; const f = Math.hypot(camera.position.x - c, camera.position.z - z) > 140 && camera.position.y < 60; if (f === far) return; far = f; list().forEach(o => { if (far) { o.userData.__wasVis = o.visible; o.visible = false; } else o.visible = o.userData.__wasVis !== undefined ? o.userData.__wasVis : true; }); } catch (e) { } });
+})();
+
+/* ================================================================
+   v435 THE HIGHLIGHTS TOUR KEEPS TO FOUR MINUTES (2026-11-24)
+   This round added stops to the highlights tour. If they push it past four and a half minutes, every stop added
+   since the round began is shortened in proportion so the whole tour still fits, ending at dusk as before (v382).
+   ================================================================ */
+(function tourFits() { const T = (window.__game && __game.TOUR) || TOUR; if (/fulltour/.test(location.search)) return;
+  const ours = ['the infinite barbershop', 'the n3w boardwalk', 'the floating crosswalk', 'the memes walk', 'the boardwalk at night'];
+  const tot = T.reduce((s, r) => s + (r.dur || 8), 0), cap = 270; if (tot <= cap) return; const mine = T.filter(r => ours.includes(r.name)), m = mine.reduce((s, r) => s + r.dur, 0), k = Math.max(0.6, 1 - (tot - cap) / Math.max(1, m)); mine.forEach(r => r.dur = Math.round(r.dur * k * 10) / 10);
+  window.__TOURLEN = T.reduce((s, r) => s + (r.dur || 8), 0); })();
+
+/* ================================================================
+   v436 THE BOARDWALK'S CREDIT PLATE (2026-11-24)
+   An enamel plate on the boardwalk's first street blade post says where everything here came from, in the spirit of
+   the island: ART · MLOW. CARDS · THE MEMES BY 6529, CC0. SCANNED PROPS · POLY HAVEN, CC0 (the barber chair, the
+   chalkboard, the condensers, the camera, the duck, the benches, the lamps).
+   ================================================================ */
+(function creditPlate() { if (!window.__BWALK || !BWALK.ok) return; const a = 223.8 * PI / 180, x = Math.sin(a) * 104.9, z = Math.cos(a) * 104.9, g = ground(x, z);
+  const t = signTex([{ t: 'N3W BOARDWALK', s: 0.2 }, { t: 'ART · MLOW', s: 0.09 }, { t: 'CARDS · THE MEMES BY 6529, CC0', s: 0.09 }, { t: 'SCANNED PROPS · POLY HAVEN, CC0', s: 0.09 }], 1024, 512, '#16233f', '#efe8da');
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.35), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.2 })); m.position.set(x - Math.sin(a) * 0.05, g + 1.55, z - Math.cos(a) * 0.05); m.rotation.y = a + PI; scene.add(m); })();
+
 
 /* ---------------- boot ---------------- */
 buildCards();
