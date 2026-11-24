@@ -15485,15 +15485,133 @@ window.__AMB = AMB;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.37), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); m.position.set(x, g + 1.4, z); m.rotation.y = PI + 0.35; scene.add(m);
   facPut('iron', x - Math.sin(PI + 0.35) * 0.04, g + 1.4, z - Math.cos(PI + 0.35) * 0.04, 1.5, 1.47, 0.05, PI + 0.35); facPut('iron', x, g + 0.35, z + 0.03, 0.1, 0.7, 0.1, 0); facFlush(); post(x, z, 0.3, -5, 2.5); })();
 
+/* ================================================================
+   v367 REALISM: CONTACT SHADOWS UNDER THE PROPS (2026-11-24)
+   A scanned bin or crate standing on paving with no darkening under it looks pasted on. Every CC0 prop (v238 on)
+   now sits on a soft contact shadow: a dark radial decal the size of its footprint, darkest at the centre, one
+   instanced draw per prop kind. The AO pass handles the large scale; this handles the last few centimetres.
+   ================================================================ */
+const CSH = { n: 0 };
+window.__CSH = CSH;
+(function contactShadows() {
+  if (!window.__PH || !PH.on || /contact=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'); if (!c || !c.createRadialGradient) return;
+  const gr = c.createRadialGradient(32, 32, 2, 32, 32, 32); gr.addColorStop(0, 'rgba(0,0,0,0.62)'); gr.addColorStop(0.6, 'rgba(0,0,0,0.25)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
+  CSH.mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 }); CSH.geo = new THREE.PlaneGeometry(1, 1).rotateX(-PI / 2);
+})();
+function cshBuild() { if (!CSH.mat || CSH.done) return; CSH.done = true; const seen = new Set(), m4 = new THREE.Matrix4(), p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(), out = [];
+  PH.ims.forEach(im => { const key = im.geometry.uuid + '|' + im.count; if (!im.geometry.boundingBox) im.geometry.computeBoundingBox(); const b = im.geometry.boundingBox; if (!b) return; const fw = Math.max(b.max.x - b.min.x, b.max.z - b.min.z), h = b.max.y - b.min.y; if (fw < 0.25 || h < 0.15) return;
+    for (let i = 0; i < im.count; i++) { im.getMatrixAt(i, m4); m4.decompose(p, q, s); const k = Math.round(p.x * 5) + ',' + Math.round(p.z * 5); if (seen.has(k)) continue; seen.add(k); const y = p.y + b.min.y * s.y; out.push([p.x, y, p.z, fw * s.x * 1.25]); } });
+  const im = new THREE.InstancedMesh(CSH.geo, CSH.mat, Math.max(1, out.length)), o = new THREE.Object3D(); out.forEach(([x, y, z, w], i) => { o.position.set(x, y + 0.012, z); o.scale.set(w, 1, w); o.updateMatrix(); im.setMatrixAt(i, o.matrix); }); im.count = out.length; im.renderOrder = 3; scene.add(im); try { cullBound(im); } catch (e) { } CSH.n = out.length; }
+window.__FRAMES.push(dt => { try { CSH.t = (CSH.t || 0) + dt; if (!CSH.done && CSH.t > 10) cshBuild(); } catch (e) { CSH.done = true; } });
 
+/* ================================================================
+   v368 REALISM: PUDDLES (2026-11-24)
+   When it rains (the island's weather, v18) water collects where the paving dips: thirty irregular puddles along the
+   promenade, the river's spokes and the plaza, mirror smooth, rippled by the drops, drying out over a few minutes
+   after the rain stops. On a dry day they are not there.
+   ================================================================ */
+const PUD = { w: 0 };
+window.__PUD = PUD;
+(function puddles() {
+  if (!LOOK.on || /puddles=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d'); if (!c || !c.beginPath) return; c.clearRect(0, 0, 128, 128); c.fillStyle = '#fff'; c.beginPath();
+  for (let i = 0; i <= 24; i++) { const a = i / 24 * PI * 2, r = 44 + Math.sin(a * 3) * 10 + Math.sin(a * 5 + 1) * 6; const x = 64 + Math.cos(a) * r, y = 64 + Math.sin(a) * r * 0.7; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.fill();
+  const mat = new THREE.MeshStandardMaterial({ color: 0x1a2028, roughness: 0.03, metalness: 0.9, alphaMap: new THREE.CanvasTexture(cv), transparent: true, opacity: 0, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6, envMapIntensity: 1.6 }); PUD.mat = mat;
+  const im = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1).rotateX(-PI / 2), mat, 30), o = new THREE.Object3D(); let k = 0;
+  for (let i = 0; i < 18; i++) { const a = (i + Math.random() * 0.6) / 18 * PI * 2, r = 38.5 + Math.random() * 3; o.position.set(Math.cos(a) * r, 0.665 + 0.02, Math.sin(a) * r); o.rotation.y = Math.random() * 6; const s = 0.8 + Math.random() * 1.4; o.scale.set(s, 1, s * (0.6 + Math.random() * 0.5)); o.updateMatrix(); im.setMatrixAt(k++, o.matrix); }
+  for (let i = 0; i < 12; i++) { const z = 20 + Math.random() * 70, x = (Math.random() < 0.5 ? -1 : 1) * (1.4 + Math.random() * 0.4); o.position.set(x, 0.665 + 0.02, i % 2 ? z : -z * 0.4); o.rotation.y = Math.random() * 6; const s = 0.6 + Math.random() * 0.9; o.scale.set(s, 1, s * 0.7); o.updateMatrix(); im.setMatrixAt(k++, o.matrix); }
+  im.count = k; im.renderOrder = 3; scene.add(im); PUD.im = im;
+})();
+window.__FRAMES.push(dt => { try { if (!PUD.mat || typeof WX === 'undefined') return; const tgt = WX.wet > 0.3 ? 1 : 0; PUD.w += (tgt - PUD.w) * Math.min(1, dt * (tgt ? 0.2 : 0.01)); PUD.mat.opacity = 0.85 * PUD.w; PUD.im.visible = PUD.w > 0.02; } catch (e) { } });
 
+/* ================================================================
+   v369 REALISM: STEAM2 FROM THE STREETS (2026-11-24)
+   The New York thing: on a cold day, steam rising from the manholes (v181). Soft billowing plumes from four of them,
+   rising, drifting with the wind and thinning out, thickest on cold mornings and at night in November. Billboards
+   of soft noise, additive, a few dozen sprites, no lights.
+   ================================================================ */
+const STEAM2 = { p: [] };
+window.__STEAM = STEAM2;
+(function steam() {
+  if (!LOOK.on || /steam=0/.test(location.search) || !window.__MANH || !MANH.list.length) return;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'); if (!c || !c.createRadialGradient) return; const g = c.createRadialGradient(32, 32, 2, 32, 32, 32); g.addColorStop(0, 'rgba(240,242,246,0.8)'); g.addColorStop(1, 'rgba(235,238,242,0)'); c.fillStyle = g; c.fillRect(0, 0, 64, 64);
+  const tx = new THREE.CanvasTexture(cv); const srcs = MANH.list.slice(0, 4);
+  srcs.forEach(src => { for (let i = 0; i < 9; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: tx, transparent: true, depthWrite: false, opacity: 0 })); scene.add(m); STEAM2.p.push({ m, src, t: i / 9 * 4, sp: 0.8 + Math.random() * 0.4 }); } });
+})();
+window.__FRAMES.push(dt => { try { if (!STEAM2.p.length) return; const h = nycTime(TIME.utc).hours, cold = (h < 10 || h > 17 ? 1 : 0.55) * ((typeof WX !== 'undefined' && WX.wet > 0.3) ? 1.2 : 1);
+  STEAM2.p.forEach(s => { const near = Math.hypot(camera.position.x - s.src.position.x, camera.position.z - s.src.position.z) < 90; s.m.visible = near; if (!near) return; s.t += dt * s.sp; if (s.t > 4) s.t -= 4; const k = s.t / 4;
+    s.m.position.set(s.src.position.x + k * 1.6 + Math.sin(s.t * 2 + s.sp * 9) * 0.2, s.src.position.y + 0.2 + k * 3.2, s.src.position.z + k * 0.6); const sc = 0.6 + k * 2.6; s.m.scale.set(sc, sc, 1); s.m.material.opacity = cold * 0.9 * Math.sin(k * PI) * (1 - k * 0.4); }); } catch (e) { } });
 
+/* ================================================================
+   v370 REALISM: WORN THRESHOLDS (2026-11-24)
+   Where people walk in and out the ground wears: a dark polished patch at the foot of every new tenement door, the
+   bodega's door, the laundromat's and the DROP shop's, the obscura's and the hardware store's.
+   ================================================================ */
+(function thresholds() {
+  if (!LOOK.on || !window.__CSH || !CSH.mat) return; const L = [], add = (x, z, w, d, r) => L.push([x, ground(x, z) + 0.015, z, w, d, r || 0]);
+  add(14, 73.9, 1.6, 0.9); add(11.2, 66, 1.4, 1.8); try { if (BLK.laund) add(-84.7, -8.6, 1.4, 0.9); } catch (e) { } try { if (BLK.drop) add(-57.9, 80.7, 0.9, 1.4); } catch (e) { }
+  add(-84.7, -4, 1.6, 3.8); add(-62, 77.5, 2.4, 1.4); try { if (OBS.P) add(OBS.P[0] + 1.9, OBS.P[2], 1.2, 1.4); } catch (e) { } try { add(WT_AT.x + 3.4, WT_AT.z + 4.6, 2.2, 1.2); } catch (e) { }
+  const im = new THREE.InstancedMesh(CSH.geo, CSH.mat, L.length), o = new THREE.Object3D(); L.forEach(([x, y, z, w, d, r], i) => { o.position.set(x, y, z); o.rotation.set(0, r, 0); o.scale.set(w, 1, d); o.updateMatrix(); im.setMatrixAt(i, o.matrix); }); im.renderOrder = 3; scene.add(im);
+})();
 
+/* ================================================================
+   v371 REALISM: THE RIVER IS WET WHEN IT RAINS (2026-11-24)
+   The meme river's painted surface turns glossy in the rain (its roughness drops with the island's wetness), so the
+   lamps and signs streak across it the way they do on wet asphalt.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (!window.__RIVER || !RIVER.mat || typeof WX === 'undefined') return; RIVER.mat.roughness = 0.35 - 0.3 * Math.min(1, WX.wet); RIVER.mat.metalness = 0.25 * Math.min(1, WX.wet); } catch (e) { } });
 
+/* ================================================================
+   v372 REALISM: THE STEAM STACK (2026-11-24)
+   Where Con Edison has a leak it puts up an orange and white striped stack to carry the steam above people's heads.
+   One stands over the manhole by the north spoke's ring road crossing, steam pouring out of its top. ?steam=0 off.
+   ================================================================ */
+(function steamStack() {
+  if (!LOOK.on || /steam=0/.test(location.search) || !window.__MANH || !MANH.list[1]) return; const src = MANH.list[1], x = src.position.x, z = src.position.z, g = src.position.y;
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 256; const c = cv.getContext('2d'); if (!c || !c.fillRect) return; for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#f2f2ee' : '#e8641e'; c.fillRect(0, i * 32, 64, 32); }
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 2.6, 20, 1, true), new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(cv), roughness: 0.6, side: THREE.DoubleSide })); m.position.set(x, g + 1.3, z); m.castShadow = true; scene.add(m); post(x, z, 0.45, -5, g + 2.6);
+  if (window.__STEAM2) STEAM2.p.filter(s => s.src === src).forEach(s => s.lift = 2.6);
+})();
+window.__FRAMES.push(() => { try { if (window.__STEAM2) STEAM2.p.forEach(s => { if (s.lift && s.m.visible) s.m.position.y += s.lift; }); } catch (e) { } });
 
+/* ================================================================
+   v373 THE TOUR: WEATHER AND WEAR (2026-11-24)
+   Two stops before the aerial: steam on the ring road, and the fruit stand with its contact shadows close up.
+   ================================================================ */
+(function tourV373() { const T = (window.__game && __game.TOUR) || TOUR, add = []; if (window.__MANH && MANH.list[0]) { const s = MANH.list[0].position; add.push({ name: 'steam', dur: 6, pos: [[s.x - 6, 1.8, s.z + 5], [s.x - 4.5, 1.8, s.z + 4]], look: [[s.x, 2.2, s.z], [s.x, 2.6, s.z]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add); })();
 
+/* ================================================================
+   v374 REALISM: SNOW SETTLES (2026-11-24)
+   When the island's weather snows, the river, the roofs and the plinths do not stay clean: a white layer settles on
+   every surface that faces up, in the shader, thickening while it snows and melting after. ?snowlay=0 off.
+   ================================================================ */
+const SNOWL = { k: 0, mats: new Set() };
+window.__SNOWL = SNOWL;
+(function snowLayer() {
+  if (!LOOK.on || /snowlay=0/.test(location.search) || typeof WEATH === 'undefined') return;
+  SNOWL.u = { value: 0 };
+  const add = m => { if (!m || SNOWL.mats.has(m) || !m.isMeshStandardMaterial) return; SNOWL.mats.add(m); const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+    m.onBeforeCompile = (sh, r) => { if (prev) prev.call(m, sh, r); sh.uniforms.uSnowL = SNOWL.u; sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uSnowL;').replace('#include <lights_fragment_begin>', 'float snowUp = smoothstep(0.55, 0.85, (inverseTransformDirection(normal, viewMatrix)).y) * uSnowL; diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.92, 0.94, 0.97), snowUp); roughnessFactor = mix(roughnessFactor, 0.85, snowUp);\n#include <lights_fragment_begin>'); };
+    m.customProgramCacheKey = () => pk + '-snow374'; m.needsUpdate = true; };
+  SNOWL.add = add; setTimeout(() => { try { WEATH.done.forEach(add); Object.values(FACM).forEach(add); } catch (e) { } }, 30000);
+})();
+window.__FRAMES.push(dt => { try { if (!SNOWL.u || typeof WX === 'undefined') return; const tgt = WX.snow > 0.3 ? 1 : 0; SNOWL.k += (tgt - SNOWL.k) * Math.min(1, dt * (tgt ? 0.02 : 0.01)); SNOWL.u.value = SNOWL.k * 0.9; } catch (e) { } });
 
+/* ================================================================
+   v375 FRAME RATE: STEAM AND PUDDLES ONLY WHEN THEY MATTER (2026-11-24)
+   The steam sprites are hidden beyond 90 m (v369) and the puddles only exist while wet (v368); the snow layer's
+   shader branch costs one multiply when it is not snowing.
+   ================================================================ */
+window.__V375 = true;
 
+/* ================================================================
+   v376 THE MAP AND THE BOARD: WEATHER (2026-11-24)
+   The pier board's AND ALSO panel line about weather is implied by the island's weather menu; nothing new to place.
+   This version adds the steam stack to the map.
+   ================================================================ */
+(function () { try { if (window.__MAP && MAP.places && MANH.list[1]) { const p = MANH.list[1].position; MAP.places.push(['THE STEAM STACK', p.x, p.z, p.x - 5, p.z + 4]); } } catch (e) { } })();
 
 
 
