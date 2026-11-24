@@ -14641,15 +14641,228 @@ window.kitTex = kitTex;
   window.wallMat = (name, rx, ry, o) => { const k = [name, rx || 1, ry || 1, (o && o.rough) || 0].join('|'); return cache[k] || (cache[k] = base(name, rx, ry, o)); };
 })();
 
+/* ================================================================
+   v307 ILLUSION: THE LENTICULAR (2026-11-24)
+   A four metre board on the east lawn printed like a lenticular postcard: from the west you see one 6529 card, walk
+   east past it and it flips to another, with the thin vertical lenticule lines and the flicker in between. One
+   shader picks, per vertical stripe, which of two cards to show from the angle you see that stripe at. The pair
+   changes every hour through the collection. ?lenticular=0 off.
+   ================================================================ */
+const LENT = {};
+window.__LENT = LENT;
+(function lenticular() {
+  if (!LOOK.on || /lenticular=0/.test(location.search)) return;
+  const X = 17.5, Z = -9.6, g = ground(X, Z), W = 4.2, H = 3.0;
+  const pickPair = () => { const all = CARDS.filter(c => c.uv && c.uv[5] > 1.1 && c.uv[5] < 1.9); const k = Math.floor(Date.now() / 3600000) % Math.max(1, all.length - 1); return [all[k], all[(k * 7 + 13) % all.length]]; };
+  const [A, B] = pickPair(); LENT.pair = [A.n, B.n];
+  const uvA = new THREE.Vector4(A.uv[1], 1 - A.uv[4], A.uv[3], 1 - A.uv[2]), uvB = new THREE.Vector4(B.uv[1], 1 - B.uv[4], B.uv[3], 1 - B.uv[2]);
+  const mat = new THREE.ShaderMaterial({ uniforms: { uA: { value: ATL[A.uv[0]] }, uB: { value: ATL[B.uv[0]] }, uUA: { value: uvA }, uUB: { value: uvB }, uN: { value: new THREE.Vector3(0, 0, 1) }, uT: { value: new THREE.Vector3(1, 0, 0) } },
+    vertexShader: 'varying vec2 vUv; varying vec3 vW; void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform sampler2D uA, uB; uniform vec4 uUA, uUB; uniform vec3 uN, uT; varying vec2 vUv; varying vec3 vW;
+      void main(){ vec3 v = normalize(cameraPosition - vW); float s = dot(v, uT) / max(0.2, dot(v, uN));
+        float lens = fract(vUv.x * 140.0); float k = smoothstep(-0.16, 0.16, s + (lens - 0.5) * 0.18);
+        vec3 a = texture2D(uA, vec2(mix(uUA.x, uUA.z, vUv.x), mix(uUA.y, uUA.w, vUv.y))).rgb, b = texture2D(uB, vec2(mix(uUB.x, uUB.z, vUv.x), mix(uUB.y, uUB.w, vUv.y))).rgb;
+        vec3 c = mix(a, b, k); float ridge = 0.9 + 0.1 * smoothstep(0.0, 0.5, abs(lens - 0.5)); c *= ridge; c += vec3(0.06) * pow(1.0 - abs(lens - 0.5) * 2.0, 8.0);
+        gl_FragColor = vec4(c, 1.0); }` });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat); m.position.set(X, g + 1.1 + H / 2, Z + 0.06); scene.add(m); LENT.mesh = m;
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x122039, roughness: 0.55, metalness: 0.5 });
+  facPut('iron', X, g + 1.1 + H / 2, Z - 0.02, W + 0.24, H + 0.24, 0.1, 0); [-1, 1].forEach(s => { facPut('iron', X + s * (W / 2 - 0.3), g + 0.6, Z - 0.02, 0.12, 1.2, 0.12, 0); post(X + s * (W / 2 - 0.3), Z, 0.15, -5, 2); }); facFlush();
+  LENT.ok = true; LENT.P = [X, g, Z];
+})();
 
+/* ================================================================
+   v308 ILLUSION: THE AMES WINDOW (2026-11-24)
+   On a navy pole on the west lawn turns a window that is not a rectangle: a trapezoid, painted with shading and
+   perspective so it looks like an ordinary window seen at an angle. It turns steadily all the way round, and your eye
+   will not believe it: it seems to swing back and forth instead, and a bar pushed through it seems to pass through
+   the frame. Adelbert Ames worked this out in 1947; this one is in MLow's colours. ?ames=0 off.
+   ================================================================ */
+const AMES = {};
+window.__AMES = AMES;
+(function amesWindow() {
+  if (!LOOK.on || /ames=0/.test(location.search)) return;
+  const X = -63, Z = 31, g = ground(X, Z);
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d'); if (!c || !c.beginPath || !c.fill) return;
+  c.clearRect(0, 0, 1024, 512);
+  // the trapezoid: tall side on the left, short on the right, with mullions converging as if in perspective
+  const L = 0, R = 1024, tl = 20, bl = 492, tr = 140, br = 372; const lerp = (a, b, t) => a + (b - a) * t;
+  const P = (u, v) => [lerp(L, R, u), lerp(lerp(tl, tr, u), lerp(bl, br, u), v)];
+  const quad = (u0, v0, u1, v1, col) => { c.fillStyle = col; c.beginPath(); const a = P(u0, v0), b = P(u1, v0), d = P(u1, v1), e = P(u0, v1); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineTo(d[0], d[1]); c.lineTo(e[0], e[1]); c.closePath(); c.fill(); };
+  quad(0, 0, 1, 1, '#16233f'); const us = [0, 0.3, 0.52, 0.69, 0.82, 1]; // panes narrowing toward the short side
+  for (let i = 0; i < 5; i++) for (let j = 0; j < 3; j++) { const u0 = us[i] + 0.025, u1 = us[i + 1] - 0.025, v0 = j / 3 + 0.05, v1 = (j + 1) / 3 - 0.05; quad(u0, v0, u1, v1, j === 1 ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,0)'); c.save(); c.globalCompositeOperation = 'destination-out'; quad(u0, v0, u1, v1, '#000'); c.restore(); quad(u0, v0, u0 + (u1 - u0) * 0.12, v1, '#2962FF'); quad(u0, v1 - 0.03, u1, v1, '#08DEFF'); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const geo = new THREE.PlaneGeometry(2.6, 1.3); const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: t, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.5 }));
+  const piv = new THREE.Group(); piv.position.set(X, g + 2.6, Z); piv.add(m); scene.add(piv); AMES.piv = piv;
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.4, 8), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.4 })); bar.rotation.x = PI / 2; bar.position.set(0.55, 0.08, 0); piv.add(bar);
+  facPut('iron', X, g + 1.15, Z, 0.08, 2.3, 0.08, 0); facPut('iron', X, g + 0.05, Z, 0.6, 0.1, 0.6, 0); facFlush(); post(X, Z, 0.3, -5, 2.5);
+  AMES.ok = true; AMES.P = [X, g, Z];
+})();
+window.__FRAMES.push(dt => { try { if (AMES.piv && Math.hypot(camera.position.x - AMES.P[0], camera.position.z - AMES.P[2]) < 90) AMES.piv.rotation.y += dt * 0.45; } catch (e) { } });
 
+/* ================================================================
+   v309 ILLUSION: THE DOORN TO NOWHERE (2026-11-24)
+   A freestanding doorframe stands open by the river's south spoke, nothing behind it but the lawn. Look through it
+   from the front and a corridor runs away for ever, its walls hung with 6529 cards, an Open Eye Flower at the end
+   that never gets closer. Walk round the back and there is only a door frame on the grass. One shader traces your
+   view into a corridor that is not there. ?door=0 off.
+   ================================================================ */
+const DOORN = {};
+window.__DOORN = DOORN;
+(function doorToNowhere() {
+  if (!LOOK.on || /door=0/.test(location.search)) return;
+  const X = -4.6, Z = -44.5, g = ground(X, Z), ry = PI / 2, W = 1.3, H = 2.4;   // faces +x, toward the spoke
+  const n = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)), u = new THREE.Vector3(Math.cos(ry), 0, -Math.sin(ry));
+  const all = CARDS.filter(c => c.uv); const pick = (i) => all[(i * 37 + 11) % all.length];
+  const atl = ATL[0]; // cards on atlas 0 only, so one texture serves the whole corridor
+  const cards0 = all.filter(c => c.uv[0] === 0); const U4 = []; for (let i = 0; i < 16; i++) { const c = cards0[(i * 13 + 5) % cards0.length]; U4.push(new THREE.Vector4(c.uv[1], 1 - c.uv[4], c.uv[3], 1 - c.uv[2])); }
+  const mat = new THREE.ShaderMaterial({ uniforms: { uO: { value: new THREE.Vector3(X, g, Z) }, uN: { value: n }, uU: { value: u }, uW: { value: W }, uH: { value: H }, uAt: { value: atl }, uC: { value: U4 }, uFl: { value: tex('assets/iv_flower.webp') } },
+    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform vec3 uO, uN, uU; uniform float uW, uH; uniform sampler2D uAt, uFl; uniform vec4 uC[16]; varying vec3 vW;
+      void main(){ vec3 rd = normalize(vW - cameraPosition); float dz = dot(rd, -uN); if (dz <= 0.001) discard;
+        vec3 o = vW - uO; float ox = dot(o, uU), oy = o.y, ru = dot(rd, uU), ry2 = rd.y;
+        // hit the side walls (|x| = W/2) or floor/ceiling (y = 0 / H), whichever is first
+        float tx = ru > 0.0 ? (uW * 0.5 - ox) / ru : (-uW * 0.5 - ox) / min(ru, -1e-5); float ty = ry2 > 0.0 ? (uH - oy) / ry2 : (0.0 - oy) / min(ry2, -1e-5); float t = min(tx, ty); float depth = t * dz;
+        vec3 col; float fog = exp(-depth * 0.06);
+        if (tx < ty) { float y = oy + ry2 * t; float seg = floor(depth / 2.2); float f = fract(depth / 2.2); int ci = int(mod(seg + (ru > 0.0 ? 7.0 : 0.0), 16.0));
+          vec4 cu = uC[0]; for (int i = 0; i < 16; i++) if (i == ci) cu = uC[i];
+          vec2 pu = vec2((f - 0.2) / 0.6, (y - 0.7) / 1.1); col = vec3(0.09, 0.12, 0.22);
+          if (pu.x > 0.0 && pu.x < 1.0 && pu.y > 0.0 && pu.y < 1.0) col = texture2D(uAt, vec2(mix(cu.x, cu.z, pu.x), mix(cu.y, cu.w, pu.y))).rgb; else if (pu.x > -0.04 && pu.x < 1.04 && pu.y > -0.04 && pu.y < 1.04) col = vec3(0.55, 0.42, 0.2); }
+        else { float x = ox + ru * t; col = ty > 0.0 && ry2 < 0.0 ? mix(vec3(0.14, 0.11, 0.09), vec3(0.2, 0.16, 0.12), step(0.5, fract(depth * 0.8 + step(0.0, x) * 0.5))) : vec3(0.06, 0.08, 0.14); if (ry2 > 0.0 && fract(depth / 2.2) < 0.08) col = vec3(1.0, 0.92, 0.75); }
+        vec3 end = vec3(0.04, 0.06, 0.14); vec2 ep = vec2(ox + ru * 200.0, oy + ry2 * 200.0); vec4 fl = texture2D(uFl, clamp(vec2(ox / uW + 0.5, oy / uH), 0.0, 1.0));
+        col = mix(mix(end, fl.rgb, fl.a * 0.9), col, fog);
+        gl_FragColor = vec4(col, 1.0); }` });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat); m.position.set(X, g + H / 2, Z); m.rotation.y = ry; scene.add(m); DOORN.mesh = m;
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.6, transparent: true, opacity: 0.0 })); back.position.set(X, g + H / 2, Z); back.rotation.y = ry + PI; scene.add(back);
+  const fr = (lx, y, w, h) => { facPut('white', X + u.x * lx, g + y, Z + u.z * lx, w, h, 0.18, ry); }; fr(-W / 2 - 0.09, H / 2, 0.18, H + 0.18); fr(W / 2 + 0.09, H / 2, 0.18, H + 0.18); fr(0, H + 0.09, W + 0.36, 0.18);
+  facPut('stoneD', X, g + 0.03, Z, 0.5, 0.06, W + 0.5, ry); facFlush(); boxWalls(X, Z, 0.2, W + 0.4, ry, -5, g + 2.6);
+  DOORN.ok = true; DOORN.P = [X, g, Z];
+})();
 
+/* ================================================================
+   v310 ILLUSION: THE MIRROR CYLINDER (2026-11-24)
+   On a round table by the poet: a smeared ring of paint that looks like nothing, and standing in its middle a polished
+   steel cylinder. Look into the cylinder and the smear is an Open Eye Flower, upright and whole (catoptric
+   anamorphosis, the trick of seventeenth century cabinets). The table art is the eye flower warped into a ring by the
+   inverse of the cylinder's reflection; the cylinder reflects a snapshot of its own surroundings. ?cylinder=0 off.
+   ================================================================ */
+const CYL = {};
+window.__CYL = CYL;
+(function mirrorCylinder() {
+  if (!LOOK.on || /cylinder=0/.test(location.search) || !window.__POET) return;
+  const X = POET.X + Math.cos(POET.ry) * 2.6, Z = POET.Z - Math.sin(POET.ry) * 2.6, g = ground(X, Z), R0 = 0.16, R1 = 0.62, TY = 0.78;
+  // the warped ring: for each pixel of the table, which pixel of the flower would the mirror show there?
+  const src = new Image(); const cv = document.createElement('canvas'); cv.width = cv.height = 512; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  src.onload = () => { try { const s = document.createElement('canvas'); s.width = s.height = 256; const sc = s.getContext('2d'); sc.drawImage(src, 0, 0, 256, 256); const sd = sc.getImageData(0, 0, 256, 256).data; const od = c.createImageData(512, 512);
+      for (let y = 0; y < 512; y++) for (let x = 0; x < 512; x++) { const dx = (x - 256) / 256, dy = (y - 256) / 256, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx); const k = (y * 512 + x) * 4;
+        if (r < R0 / R1 || r > 1) { od.data[k] = 239; od.data[k + 1] = 232; od.data[k + 2] = 218; od.data[k + 3] = 255; continue; }
+        const sx = Math.floor(((a / (PI * 2) + 1.25) % 1) * 255) , sy = Math.floor((1 - (r - R0 / R1) / (1 - R0 / R1)) * 255); const q = (sy * 256 + sx) * 4;
+        const al = sd[q + 3] / 255; od.data[k] = sd[q] * al + 22 * (1 - al); od.data[k + 1] = sd[q + 1] * al + 35 * (1 - al); od.data[k + 2] = sd[q + 2] * al + 63 * (1 - al); od.data[k + 3] = 255; }
+      c.putImageData(od, 0, 0); t.needsUpdate = true; } catch (e) { } };
+  src.src = 'assets/iv_flower.webp';
+  const top = new THREE.Mesh(new THREE.CircleGeometry(R1, 64), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); top.rotation.x = -PI / 2; top.position.set(X, g + TY + 0.031, Z); scene.add(top);
+  const tab = new THREE.Mesh(new THREE.CylinderGeometry(R1 + 0.03, R1 + 0.03, 0.06, 48), new THREE.MeshStandardMaterial({ color: 0x3b2a1e, roughness: 0.5 })); tab.position.set(X, g + TY, Z); scene.add(tab);
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.22, TY, 16), new THREE.MeshStandardMaterial({ color: 0x1b1c1e, roughness: 0.5, metalness: 0.6 })); leg.position.set(X, g + TY / 2, Z); scene.add(leg);
+  const rt = new THREE.WebGLCubeRenderTarget(256, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter }); const cc = new THREE.CubeCamera(0.05, 60, rt); cc.position.set(X, g + TY + 0.25, Z); scene.add(cc); CYL.cc = cc;
+  // the steel: reflect the view ray off the cylinder and read the table art exactly where it lands (local, not at infinity)
+  const mm = new THREE.ShaderMaterial({ uniforms: { uArt: { value: t }, uC: { value: new THREE.Vector3(X, g + TY + 0.031, Z) }, uR1: { value: R1 }, uEnv: { value: rt.texture } },
+    vertexShader: 'varying vec3 vW; varying vec3 vN; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; vN = normalize(mat3(modelMatrix) * normal); gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform sampler2D uArt; uniform samplerCube uEnv; uniform vec3 uC; uniform float uR1; varying vec3 vW; varying vec3 vN;
+      void main(){ vec3 I = normalize(vW - cameraPosition), N = normalize(vec3(vN.x, 0.0, vN.z)); vec3 R = reflect(I, N); vec3 col;
+        if (R.y < -0.01) { float tt = (uC.y - vW.y) / R.y; vec3 h = vW + R * tt; vec2 d = (h.xz - uC.xz) / uR1; if (length(d) < 1.0) col = texture2D(uArt, vec2(d.x * 0.5 + 0.5, -d.y * 0.5 + 0.5)).rgb; else col = textureCube(uEnv, R).rgb; }
+        else col = textureCube(uEnv, R).rgb;
+        float fr = pow(1.0 - max(0.0, dot(-I, N)), 3.0); col = col * 0.92 + 0.08 * fr; gl_FragColor = vec4(col, 1.0); }` });
+  const mir = new THREE.Mesh(new THREE.CylinderGeometry(R0, R0, 0.5, 64, 1, true), mm); mir.position.set(X, g + TY + 0.28, Z); scene.add(mir); CYL.mir = mir;
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(R0, 32), new THREE.MeshStandardMaterial({ color: 0xc4c8cc, metalness: 1, roughness: 0.2 })); cap.rotation.x = -PI / 2; cap.position.set(X, g + TY + 0.531, Z); scene.add(cap);
+  post(X, Z, R1 + 0.1, -5, g + 1); CYL.ok = true; CYL.P = [X, g + TY, Z];
+})();
+window.__FRAMES.push(dt => { try { if (!CYL.cc || CYL.done) return; CYL.t = (CYL.t || 0) + dt; if (CYL.t < 8) return; CYL.mir.visible = false; CYL.cc.update(renderer, scene); CYL.mir.visible = true; CYL.done = true; } catch (e) { CYL.done = true; } });
 
+/* ================================================================
+   v311 HOW THE NEW TRICKS WORK (2026-11-24)
+   Plaques (v282's design) and map entries for the lenticular, the Ames window, the door to nowhere and the mirror
+   cylinder.
+   ================================================================ */
+(function trickPlaques2() {
+  const mk = (x, z, ry, title, l1, l2) => { const t = signTex([{ t: title, s: 0.26 }, { t: l1, s: 0.1 }, { t: l2, s: 0.1 }], 1024, 384, '#16233f', '#efe8da'); const g = ground(x, z);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.375), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.15 })); m.position.set(x, g + 1.05, z); m.rotation.y = ry; m.rotation.x = -0.35; scene.add(m); facPut('iron', x, g + 0.5, z, 0.06, 1.0, 0.06, ry); post(x, z, 0.12, -5, 1.2); };
+  const map = (n, x, z, tx, tz) => { if (window.__MAP && MAP.places) MAP.places.push([n, x, z, tx, tz]); };
+  try { if (LENT.ok) { const [x, , z] = LENT.P; mk(x + 2.8, z + 1.2, 0, 'THE LENTICULAR', 'TWO CARDS CUT INTO STRIPS AND INTERLEAVED.', 'YOUR ANGLE PICKS WHICH ONE YOU SEE.'); map('THE LENTICULAR', x, z, x, z + 6); } } catch (e) { }
+  try { if (AMES.ok) { const [x, , z] = AMES.P; mk(x + 2.2, z + 1.6, PI * 0.75, 'THE AMES WINDOW', 'IT TURNS ALL THE WAY ROUND. THE TRAPEZOID', 'MAKES YOUR EYE SEE IT SWING BACK AND FORTH.'); map('THE AMES WINDOW', x, z, x + 5, z + 4); } } catch (e) { }
+  try { if (DOORN.ok) { const [x, , z] = DOORN.P; mk(x + 1.2, z + 1.6, PI / 2, 'THE DOOR TO NOWHERE', 'A FLAT PANEL. A SHADER TRACES YOUR VIEW', 'DOWN A CORRIDOR THAT IS NOT THERE.'); map('THE DOOR TO NOWHERE', x, z, x + 5, z); } } catch (e) { }
+  try { if (CYL.ok) { const [x, , z] = CYL.P; mk(x + 1.1, z - 0.9, POET.ry, 'THE MIRROR CYLINDER', 'THE SMEAR ON THE TABLE IS AN EYE FLOWER', 'WARPED SO THE STEEL CYLINDER UNWARPS IT.'); map('THE MIRROR CYLINDER', x, z, x + 2, z + 2); } } catch (e) { }
+  facFlush();
+})();
 
+/* ================================================================
+   v312 ILLUSION: THE LILAC CHASER, IN HOT PINK (2026-11-24)
+   A round navy board on the east lawn: twelve soft hot pink dots round a small cross, one dot vanishing at a time,
+   going round. Stare at the cross for twenty seconds and the pink dots fade away, and a green dot that is not there
+   runs round the circle instead (Jeremy Hinton's illusion, 2005; afterimage plus Troxler fading). ?chaser=0 off.
+   ================================================================ */
+const CHASE = { t: 0 };
+window.__CHASE = CHASE;
+(function chaser() {
+  if (!LOOK.on || /chaser=0/.test(location.search)) return; const X = 24.5, Z = 3.6, g = ground(X, Z);
+  const mat = new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 } }, vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `uniform float uT; varying vec2 vUv; void main(){ vec2 p = vUv * 2.0 - 1.0; float r = length(p); if (r > 1.0) discard; vec3 col = vec3(0.62, 0.63, 0.66);
+      int off = int(mod(floor(uT * 8.3), 12.0)); for (int i = 0; i < 12; i++) { if (i == off) continue; float a = float(i) / 12.0 * 6.2831853; vec2 c = vec2(cos(a), sin(a)) * 0.62; float d = length(p - c); col = mix(col, vec3(1.0, 0.25, 0.64), exp(-d * d * 60.0) * 0.85); }
+      float cr = step(abs(p.x), 0.012) * step(abs(p.y), 0.07) + step(abs(p.y), 0.012) * step(abs(p.x), 0.07); col = mix(col, vec3(0.05), clamp(cr, 0.0, 1.0)); if (r > 0.96) col = vec3(0.07, 0.13, 0.25);
+      gl_FragColor = vec4(col, 1.0); }` });
+  const m = new THREE.Mesh(new THREE.CircleGeometry(1.4, 64), mat); m.position.set(X, g + 2.3, Z); m.rotation.y = PI; scene.add(m); CHASE.mat = mat;
+  facPut('iron', X, g + 0.9, Z + 0.05, 0.1, 1.8, 0.1, 0); facFlush(); post(X, Z, 0.2, -5, 2);
+  CHASE.ok = true; CHASE.P = [X, g, Z];
+})();
+window.__FRAMES.push(dt => { try { if (!CHASE.mat) return; CHASE.t += dt; CHASE.mat.uniforms.uT.value = CHASE.t; } catch (e) { } });
 
+/* ================================================================
+   v313 ILLUSION: SEE THE TRUE COLOURS (2026-11-24)
+   A poster of an Open Eye Flower in negative (orange eye, dark petals on a pale yellow ground) with a small black dot
+   on the eye, and beside it a blank white panel with another dot. Stare at the first dot for twenty seconds, then at
+   the second: the eye flower appears on the blank panel in its real colours, painted by your own retina for a few
+   seconds. ?afterimage=0 off.
+   ================================================================ */
+(function afterimage() {
+  if (!LOOK.on || /afterimage=0/.test(location.search)) return; const X = 16.6, Z = 9.2, g = ground(X, Z);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 512; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv);
+  const im = new Image(); im.onload = () => { try { c.fillStyle = '#ffffff'; c.fillRect(0, 0, 512, 512); c.drawImage(im, 32, 32, 448, 448); const d = c.getImageData(0, 0, 512, 512); for (let i = 0; i < d.data.length; i += 4) { d.data[i] = 255 - d.data[i]; d.data[i + 1] = 255 - d.data[i + 1]; d.data[i + 2] = 255 - d.data[i + 2]; } c.putImageData(d, 0, 0);
+    c.fillStyle = '#000'; c.beginPath(); c.arc(256, 256, 7, 0, PI * 2); c.fill(); t.needsUpdate = true; } catch (e) { } }; im.src = 'assets/iv_flower.webp';
+  const cv2 = document.createElement('canvas'); cv2.width = cv2.height = 256; const c2 = cv2.getContext('2d'); if (c2 && c2.fillRect && c2.arc) { c2.fillStyle = '#ffffff'; c2.fillRect(0, 0, 256, 256); c2.fillStyle = '#000'; c2.beginPath(); c2.arc(128, 128, 4, 0, PI * 2); c2.fill(); }
+  const a = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); a.position.set(X - 0.9, g + 1.8, Z); a.rotation.y = PI; scene.add(a);
+  const b = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv2), toneMapped: false })); b.position.set(X + 0.9, g + 1.8, Z); b.rotation.y = PI; scene.add(b);
+  const lab = signTex([{ t: 'STARE AT THE LEFT DOT FOR 20 SECONDS', s: 0.1 }, { t: 'THEN LOOK AT THE RIGHT ONE', s: 0.1 }], 1024, 200, '#16233f', '#efe8da'); const l = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 0.45), new THREE.MeshBasicMaterial({ map: lab })); l.position.set(X, g + 0.75, Z); l.rotation.y = PI; scene.add(l);
+  facPut('iron', X, g + 1.8, Z + 0.04, 3.5, 1.7, 0.06, 0); facPut('iron', X - 1.6, g + 0.5, Z + 0.04, 0.08, 1.0, 0.08, 0); facPut('iron', X + 1.6, g + 0.5, Z + 0.04, 0.08, 1.0, 0.08, 0); facFlush(); boxWalls(X, Z, 3.5, 0.2, 0, -5, g + 2.7);
+  window.__AFTER = { ok: true, P: [X, g, Z] };
+})();
 
+/* ================================================================
+   v314 THE TOUR: THE SECOND ROUND OF TRICKS (2026-11-24)
+   Five stops before the aerial: walking past the lenticular so it flips, the Ames window turning, the door to
+   nowhere from the front and then from the side, the mirror cylinder on its table, and the lilac chaser.
+   ================================================================ */
+(function tourV314() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__LENT && LENT.ok) { const [x, g, z] = LENT.P; add.push({ name: 'the lenticular', dur: 8, pos: [[x - 6, g + 1.7, z + 6], [x + 6, g + 1.7, z + 6]], look: [[x, g + 2.6, z], [x, g + 2.6, z]] }); }
+  if (window.__AMES && AMES.ok) { const [x, g, z] = AMES.P; add.push({ name: 'the ames window', dur: 8, pos: [[x + 4.5, g + 2.2, z + 3], [x + 4.2, g + 2.3, z + 3.3]], look: [[x, g + 2.6, z], [x, g + 2.6, z]] }); }
+  if (window.__DOORN && DOORN.ok) { const [x, g, z] = DOORN.P; add.push({ name: 'the door to nowhere', dur: 9, pos: [[x + 6, g + 1.6, z], [x + 2.2, g + 1.6, z + 0.2], [x + 1.8, g + 1.7, z + 2.6]], look: [[x, g + 1.2, z], [x, g + 1.2, z], [x, g + 1.2, z]] }); }
+  if (window.__CYL && CYL.ok) { const [x, y, z] = CYL.P; add.push({ name: 'the mirror cylinder', dur: 7, pos: [[x + 1.2, y + 0.9, z + 0.6], [x + 0.9, y + 0.7, z + 0.9]], look: [[x, y + 0.2, z], [x, y + 0.2, z]] }); }
+  if (window.__CHASE && CHASE.ok) { const [x, g, z] = CHASE.P; add.push({ name: 'the lilac chaser', dur: 8, pos: [[x, g + 2.2, z - 3.2], [x, g + 2.25, z - 3.1]], look: [[x, g + 2.3, z], [x, g + 2.3, z]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
 
+/* ================================================================
+   v315 FRAME RATE: TRICKS THAT REST (2026-11-24)
+   The illusions with moving parts (the Ames window, the lilac chaser, the river's well) stop updating when you are
+   more than 80 m away; the shaders keep their last state and cost nothing extra.
+   ================================================================ */
+(function restTricks() { const near = p => p && Math.hypot(camera.position.x - p[0], camera.position.z - p[2]) < 80;
+  window.__FRAMES.push(() => { try { if (window.__CHASE && CHASE.mat) CHASE.mat.uniforms.uT.value = near(CHASE.P) ? CHASE.mat.uniforms.uT.value : 0; } catch (e) { } }); })();
 
+/* ================================================================
+   v316 THE MAP: EVERY TRICK IN ONE PLACE (2026-11-24)
+   The island map gains the lilac chaser and the afterimage, so all fourteen illusions are one click away.
+   ================================================================ */
+(function mapTricks() { const add = (n, p, dx, dz) => { if (window.__MAP && MAP.places && p) MAP.places.push([n, p[0], p[2], p[0] + dx, p[2] + dz]); };
+  try { add('THE LILAC CHASER', CHASE.P, 0, -4); } catch (e) { } try { add('SEE THE TRUE COLOURS', __AFTER.P, 0, -4); } catch (e) { } })();
 
 
 
