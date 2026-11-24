@@ -574,3 +574,20 @@ busiest views over the whole v237 to v336 run.
   river, settling snow (v367 to v376).
 - Frame rate and tour: shader prewarm, a four minute highlights tour (Shift T or ?fulltour for all 144 stops),
   anisotropy by height, the tour ends at dusk, counts on the pier board (v377 to v386).
+
+## v387 to v436 (2026-11-24): round four
+- N3W CUTS, a barbershop on the west beach: the barber pole (it only turns), THE INFINITE BARBERSHOP window (a ray
+  traced shop folded between two mirrors, a barber at work), a magic eye wall, a zoetrope, the shop after dark, its
+  sidewalk of scanned props (barber chair, chalkboard, camera) and a flag (v387 to v391, v399, v410, v414, v422, v429).
+- THE FLOATING CROSSWALK at the north kerb: seven slabs projected from the footprints' eye onto the road (v389).
+- THE MEMES WALK: 577 brass plaques in mint order on both banks of the meme river, SZN bars, stand on one to hear
+  whose it is, click to open it, the card of the hour, the 6:52:29 pm wave (type WAVE), wet in rain, glowing at
+  night (v394 to v396, v400, v407, v413, v421, v423, v430).
+- The sideshow row and the N3W BOARDWALK: six boards (spinning dancer, stare then look, the colours that leave,
+  the dots that blink, the stepping feet, the floating disc), marquee bulbs, planks, benches, lamps, string lights,
+  street blades, a credit plate (v402 to v406, v416 to v418, v425 to v436). 29 illusions in all.
+- The look: grass lit on both faces (the dark spiky lawn fixed), rooms behind every window (interior mapping) with
+  someone home at night, Firefly paint on new walls, every unsigned mural signed (v397, v398, v408, v411, v415, v419).
+- Frame rate: a far model for every sculpture (sculpt_far, gltf-transform simplify, 8.4k triangles), 27 to 48
+  percent fewer triangles a frame; scanned rooftop condensers; the boardwalk sleeps when you are far (v401, v409, v434).
+- Firefly round four did not run: Claude in Chrome was not connected all session; new walls reuse earlier pieces.

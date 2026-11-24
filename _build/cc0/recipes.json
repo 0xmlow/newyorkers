@@ -518,5 +518,13 @@
  "isl_duck": {
   "src": "ph_rubber_duck_toy",
   "tris": 800
+ },
+ "isl_bust": {
+  "src": "ph_marble_bust_01",
+  "tris": 9000
+ },
+ "isl_bchair": {
+  "src": "ph_dining_chair_02",
+  "tris": 4000
  }
 }

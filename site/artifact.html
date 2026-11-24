@@ -16852,6 +16852,543 @@ window.__FRAMES.push(() => { try { if (MWALK.nightU) MWALK.nightU.value = Math.m
   const t = signTex([{ t: 'N3W BOARDWALK', s: 0.2 }, { t: 'ART · MLOW', s: 0.09 }, { t: 'CARDS · THE MEMES BY 6529, CC0', s: 0.09 }, { t: 'SCANNED PROPS · POLY HAVEN, CC0', s: 0.09 }], 1024, 512, '#16233f', '#efe8da');
   const m = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.35), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.2 })); m.position.set(x - Math.sin(a) * 0.05, g + 1.55, z - Math.cos(a) * 0.05); m.rotation.y = a + PI; scene.add(m); })();
 
+/* ================================================================
+   v437 THE LOOK: A COAST, NOT A TARGET (2026-11-24)
+   From the air the island still read as a bullseye: the white water at the waterline was drawn on a perfect circle
+   at one radius, while the sand seen through the clear shallows ran on past it in a ragged edge, so a thin white
+   ring floated a few metres off a beach that did not touch it. The waterline foam now follows a coast: its radius
+   wanders in and out in coves and points (three long swells of the angle, never a circle), it breaks into patches
+   of surf and slack water, and the shallows lose their glass clarity faster, so the sea goes from wet sand to
+   bottle green to deep slate in the first twenty metres instead of forty, which is how New York Harbour looks
+   off a real beach. ?coast=0 off.
+   ================================================================ */
+(function lookCoast() {
+  if (!LOOK.on || /coast=0/.test(location.search)) return;
+  const prev = MAT.water.onBeforeCompile;
+  MAT.water.onBeforeCompile = sh => { prev(sh);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('float oShallow = 1.0 - smoothstep(uShore - 4.0, uShore + 38.0, oR);', 'float oShallow = 1.0 - smoothstep(uShore - 4.0, uShore + 21.0, oR);')
+      .replace('mix(diffuseColor.a, 0.62, oShallow)', 'mix(diffuseColor.a, 0.84, oShallow)')
+      .replace('float oRoll = pow(1.0 - fract(oOut / 11.0', 'float oRoll = smoothstep(-0.2, 0.6, sin(oAng * 13.0 + oBig * 4.0)) * pow(1.0 - fract((oOut - oCove * 0.8) / 11.0')
+      .replace('float oLine = smoothstep(1.8, 0.0, abs(oR - (uShore - 2.2 + oSwash',
+        'float oCove = 2.6 * sin(oAng * 3.0 + 1.3) + 1.7 * sin(oAng * 7.0 - 0.7) + 0.9 * sin(oAng * 17.0 + 2.1);\n      float oLine = smoothstep(0.9, 1.7, oBig * 1.4 + 0.55 * sin(oAng * 29.0 + uTime * 0.05)) * smoothstep(1.8, 0.0, abs(oR - oCove - (uShore - 2.2 + oSwash');
+  };
+  MAT.water.customProgramCacheKey = () => 'mi-ocean-v437'; MAT.water.needsUpdate = true;
+})();
+
+/* ================================================================
+   v438 THE LOOK: HAZE (2026-11-24)
+   Real distance has air in it. Until now the island was as crisp and saturated three hundred metres away as at
+   your feet, so the far shore, the bridge and the island seen from the air all sat on one flat plane like a
+   model on a table. Aerial perspective: every pixel is pushed toward the colour of the air by how far away it is
+   (the depth the ambient occlusion pass already draws, read back as metres), very little in the first hundred
+   metres, a soft veil by the far side of the island, a real haze by the horizon. Blue grey by day, gold at the
+   golden hour, deep blue at night, thicker in fog, rain and snow, and the near world stays untouched, so the
+   island separates from the water and the water from the sky. Desktop (it needs the depth pass). ?air=0 off.
+   ================================================================ */
+const HAZE = { pass: null, k: 1 };
+window.__HAZE = HAZE;
+function hazeSetup() {
+  if (HAZE.pass || !POST.comp || !AO.on || !AO.depth || !THREE.ShaderPass || /air=0/.test(location.search)) return;
+  const pass = new THREE.ShaderPass({ uniforms: { tDiffuse: { value: null }, tDepth: { value: AO.depth.depthTexture }, uInvProj: { value: new THREE.Matrix4() }, uCol: { value: new THREE.Color(0.7, 0.78, 0.86) }, uK: { value: 1 / 700 }, uMax: { value: 0.6 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: [
+      'uniform sampler2D tDiffuse, tDepth; uniform mat4 uInvProj; uniform vec3 uCol; uniform float uK, uMax; varying vec2 vUv;',
+      'void main(){ vec4 c = texture2D(tDiffuse, vUv); float d = texture2D(tDepth, vUv).x; if (d >= 0.99999) { gl_FragColor = c; return; }',
+      '  vec4 v = uInvProj * vec4(vUv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0); float dist = length(v.xyz / v.w);',
+      '  float f = (1.0 - exp(-max(dist - 60.0, 0.0) * uK)) * uMax;',
+      '  float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722)); vec3 col = mix(c.rgb, vec3(l), f * 0.5);',
+      '  gl_FragColor = vec4(mix(col, uCol, f), c.a); }'].join('\n') });
+  const bi = POST.comp.passes.indexOf(POST.bloom); POST.comp.passes.splice(bi >= 0 ? bi : 1, 0, pass); HAZE.pass = pass;
+}
+function hazeFrame() {
+  hazeSetup(); if (!HAZE.pass) return; const u = HAZE.pass.uniforms; HAZE.pass.enabled = AO.on;
+  u.tDepth.value = AO.depth.depthTexture; u.uInvProj.value.copy(camera.projectionMatrixInverse);
+  // the air takes the fog's colour (the time of day already sets it), lifted a little toward the sky
+  u.uCol.value.copy(scene.fog.color); if (L.sky) u.uCol.value.lerp(L.sky, 0.25);
+  const thick = Math.max(WX.fog || 0, (WX.wet || 0) * 0.6, (WX.snow || 0) * 0.8);
+  u.uK.value = (1 / 650) * (1 + thick * 4); u.uMax.value = Math.min(0.8, 0.42 + thick * 0.35) * HAZE.k;
+}
+window.__FRAMES.push(() => { try { hazeFrame(); } catch (e) { if (!HAZE.err) { HAZE.err = e; console.warn('v438 air', e); } } });
+
+/* ================================================================
+   v439 THE LOOK: A LENS FOR THE TOUR (2026-11-24)
+   The guided tour and every camera rail now shoot like a film camera: the thing the shot is about stays sharp and
+   the world behind it melts into soft discs of light (a golden angle bokeh, sixteen taps, wider the further past
+   the subject a pixel is), so each stop reads as a composed shot instead of a game screenshot. Focus follows the
+   rail's look point as it moves. Walking about keeps everything sharp, and so do the aerial and the long survey rails. Desktop (it needs the depth pass).
+   ?dof=0 off, ?dof=1 keeps it on while you walk.
+   ================================================================ */
+const DOF = { pass: null, k: 0, focus: 20 };
+window.__DOF = DOF;
+const _dofA = new V3(), _dofB = new V3();
+function dofSetup() {
+  if (DOF.pass || !POST.comp || !AO.on || !AO.depth || !THREE.ShaderPass || /dof=0/.test(location.search)) return;
+  const pass = new THREE.ShaderPass({ uniforms: { tDiffuse: { value: null }, tDepth: { value: AO.depth.depthTexture }, uInvProj: { value: new THREE.Matrix4() }, uFocus: { value: 20 }, uK: { value: 0 }, uPx: { value: new THREE.Vector2(1 / 1280, 1 / 720) } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: [
+      'uniform sampler2D tDiffuse, tDepth; uniform mat4 uInvProj; uniform float uFocus, uK; uniform vec2 uPx; varying vec2 vUv;',
+      'float dist(vec2 uv){ float d = texture2D(tDepth, uv).x; if (d >= 0.99999) return 5000.0; vec4 v = uInvProj * vec4(uv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0); return length(v.xyz / v.w); }',
+      'float coc(float z){ return clamp((abs(z - uFocus) / max(z, 0.5) - 0.3) * 1.4, 0.0, 1.0) * uK * (z < uFocus ? 0.55 : 1.0); }',
+      'void main(){ vec4 c = texture2D(tDiffuse, vUv); if (uK < 0.01) { gl_FragColor = c; return; }',
+      '  float z0 = dist(vUv), r0 = coc(z0) * 5.0; if (r0 < 0.4) { gl_FragColor = c; return; }',
+      '  vec3 acc = c.rgb; float ws = 1.0;',
+      '  for (int i = 1; i < 17; i++) { float t = float(i) / 16.0, a = float(i) * 2.39996; vec2 o = vec2(cos(a), sin(a)) * sqrt(t) * r0 * uPx;',
+      '    float z = dist(vUv + o); float rz = coc(z) * 5.0; float w = z < z0 ? clamp(rz / max(r0, 0.01), 0.0, 1.0) : 1.0; vec3 s = texture2D(tDiffuse, vUv + o).rgb;',
+      '    w *= 1.0 + 2.0 * smoothstep(0.9, 2.0, dot(s, vec3(0.3, 0.59, 0.11))); acc += s * w; ws += w; }',
+      '  gl_FragColor = vec4(acc / ws, c.a); }'].join('\n') });
+  const bi = POST.comp.passes.indexOf(POST.bloom); POST.comp.passes.splice(bi >= 0 ? bi : 1, 0, pass); DOF.pass = pass;
+}
+function dofFrame(dt) {
+  dofSetup(); if (!DOF.pass) return; const u = DOF.pass.uniforms;
+  const want = (RAIL.on && RAIL.look && RAIL.dur < 60 && camera.position.y < 30 ? 1 : 0) || (/dof=1/.test(location.search) ? 1 : 0);
+  if (RAIL.on && RAIL.look) { const lin = Math.min(1, RAIL.t / RAIL.dur), e = RAIL.ease ? lin * lin * (3 - 2 * lin) : lin; _dofA.fromArray(RAIL.look[0]); _dofB.fromArray(RAIL.look[1]); _dofA.lerp(_dofB, e); DOF.focus = Math.max(2, camera.position.distanceTo(_dofA)); }
+  DOF.k += (want - DOF.k) * Math.min(1, dt * 2.5); u.uK.value = DOF.k; u.uFocus.value = DOF.focus; DOF.pass.enabled = DOF.k > 0.01 && AO.on;
+  u.tDepth.value = AO.depth.depthTexture; u.uInvProj.value.copy(camera.projectionMatrixInverse);
+  const s = renderer.getDrawingBufferSize(_dofSz); u.uPx.value.set(1 / s.x, 1 / s.y);
+}
+const _dofSz = new THREE.Vector2();
+window.__FRAMES.push(dt => { try { dofFrame(dt); } catch (e) { if (!DOF.err) { DOF.err = e; console.warn('v439 dof', e); } } });
+
+/* ================================================================
+   v440 THE LOOK: SHARP (2026-11-24)
+   The anti aliasing and the half resolution passes left every texture a touch soft, the brick, the paving, the
+   lettering on the signs. A contrast adaptive sharpen (after AMD's FidelityFX CAS) runs last: it sharpens fine
+   detail by how much local contrast there is, so flat sky and smooth water stay smooth and edges never ring.
+   About a third of a millisecond. Desktop. ?sharp=0 off.
+   ================================================================ */
+const SHARP = { pass: null };
+window.__SHARP = SHARP;
+function sharpSetup() {
+  if (SHARP.pass || SHARP.no || isMobile || !POST.comp || !THREE.ShaderPass || /sharp=0/.test(location.search)) return;
+  const pass = new THREE.ShaderPass({ uniforms: { tDiffuse: { value: null }, uPx: { value: new THREE.Vector2(1 / 1280, 1 / 720) }, uAmt: { value: 0.55 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: [
+      'uniform sampler2D tDiffuse; uniform vec2 uPx; uniform float uAmt; varying vec2 vUv;',
+      'void main(){ vec3 e = texture2D(tDiffuse, vUv).rgb;',
+      '  vec3 b = texture2D(tDiffuse, vUv + vec2(0.0, -uPx.y)).rgb, d = texture2D(tDiffuse, vUv + vec2(-uPx.x, 0.0)).rgb, f = texture2D(tDiffuse, vUv + vec2(uPx.x, 0.0)).rgb, h = texture2D(tDiffuse, vUv + vec2(0.0, uPx.y)).rgb;',
+      '  vec3 mn = min(e, min(min(b, d), min(f, h))), mx = max(e, max(max(b, d), max(f, h)));',
+      '  vec3 amp = sqrt(clamp(min(mn, 1.0 - mx) / max(mx, 1e-4), 0.0, 1.0));',
+      '  vec3 w = amp * -1.0 / mix(8.0, 5.0, uAmt);',
+      '  vec3 o = (e + (b + d + f + h) * w) / (1.0 + 4.0 * w);',
+      '  gl_FragColor = vec4(clamp(o, 0.0, 1.0), 1.0); }'].join('\n') });
+  POST.comp.addPass(pass); SHARP.pass = pass;
+  const sz = new THREE.Vector2(); const fit = () => { renderer.getDrawingBufferSize(sz); pass.uniforms.uPx.value.set(1 / sz.x, 1 / sz.y); }; fit(); addEventListener('resize', fit);
+}
+window.__FRAMES.push(() => { try { sharpSetup(); } catch (e) { SHARP.no = true; console.warn('v440 sharp', e); } });
+
+/* ================================================================
+   v441 THE LOOK: SUN ON THE WATER (2026-11-24)
+   Look toward a low sun across real water and the path of light is not a smooth smear, it is thousands of
+   separate sparks, each one a wave facet tilted just right for an instant. The harbour now glitters: every
+   facet (a cell of a fine moving grid, its tilt jittered by the swell) flashes when it would mirror the sun into
+   your eye, brightest in the golden hour, thinning to a scatter at noon, silver under a high moon, and gone under
+   cloud, fog and rain. The bloom pass turns each spark into a point of light. ?glitter=0 off.
+   ================================================================ */
+(function lookGlitter() {
+  if (!LOOK.on || /glitter=0/.test(location.search)) return;
+  OCEAN.u.uGlint = { value: 1 };
+  const prev = MAT.water.onBeforeCompile;
+  MAT.water.onBeforeCompile = sh => { prev(sh); sh.uniforms.uGlint = OCEAN.u.uGlint;
+    sh.fragmentShader = sh.fragmentShader.replace('uniform float uFoam;', 'uniform float uFoam, uGlint;')
+      .replace('totalEmissiveRadiance += uShallow * uSunCol * oSSS * 0.35 * (1.0 - oFoam);', `totalEmissiveRadiance += uShallow * uSunCol * oSSS * 0.35 * (1.0 - oFoam);
+      { vec2 gc = floor(vOW.xz * 3.2); float gt = floor(uTime * 9.0 + fract(sin(dot(gc, vec2(7.13, 3.71))) * 91.7) * 9.0);
+        float gh1 = fract(sin(dot(gc + gt, vec2(12.9898, 78.233))) * 43758.5453), gh2 = fract(sin(dot(gc - gt, vec2(39.346, 11.135))) * 24634.6345);
+        vec3 gN = normalize(oceanN + vec3(gh1 - 0.5, 0.0, gh2 - 0.5) * 0.5);
+        vec3 gR = reflect(oV, gN); float gS = max(dot(gR, normalize(uSunDir)), 0.0);
+        float gl = pow(gS, 650.0) * step(0.42, gh1) * smoothstep(0.0, 0.06, uSunDir.y) * uGlint * (1.0 - oFoam) * (1.0 - oShallow * 0.6);
+        totalEmissiveRadiance += uSunCol * gl * 9.0; }`);
+  };
+  MAT.water.customProgramCacheKey = () => 'mi-ocean-v441'; MAT.water.needsUpdate = true;
+  window.__FRAMES.push(() => { try { const W = WX.override || WX.cur; OCEAN.u.uGlint.value = (W === 'CLEAR' ? 1 : W === 'SCATTERED' ? 0.6 : 0.05) * (1 - Math.max(WX.fog || 0, WX.wet || 0)); } catch (e) { } });
+})();
+
+/* ================================================================
+   v442 THE LOOK: CAR PAINT (2026-11-24)
+   Every car on the island (the six in traffic, the N3W cab, the parked pair, the bus) was painted in the scan
+   kit's flat matte, roughness 0.9 on everything, so the cars read as plastic toys in every street shot. They now
+   wear real finishes: a clear coat over the paint (the sky and the buildings slide across the bonnet and the
+   doors as they drive), metallic flake in the colours that would have it, dark mirrored glass, bright work on
+   the trim, rubber that stays matte. After dusk the headlights burn warm and the tail lights red.
+   ?carpaint=0 off.
+   ================================================================ */
+const CPAINT = { lamps: [] };
+window.__CPAINT = CPAINT;
+(function carPaint() {
+  if (!LOOK.on || /carpaint=0/.test(location.search) || !THREE.MeshPhysicalMaterial) return;
+  const done = new Map();
+  const swap = m => { if (done.has(m)) return done.get(m); let n = m; const nm = (m.name || '').toLowerCase();
+    if (/window|glass/.test(nm)) { n = new THREE.MeshPhysicalMaterial({ color: 0x0c0f13, roughness: 0.04, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.4 }); }
+    else if (/head/.test(nm)) { n = new THREE.MeshStandardMaterial({ color: 0xf2efe6, roughness: 0.2, metalness: 0.3, emissive: 0xffd9a0, emissiveIntensity: 0 }); CPAINT.lamps.push([n, 2.2]); }
+    else if (/tail/.test(nm)) { n = new THREE.MeshStandardMaterial({ color: 0x8a0d0b, roughness: 0.25, metalness: 0.1, emissive: 0xff1a10, emissiveIntensity: 0 }); CPAINT.lamps.push([n, 1.6]); }
+    else if (/black|tyre|tire|rubber/.test(nm)) { n = m.clone(); n.roughness = 0.82; }
+    else if (/grey|gray|material\.00|chrome|silver/.test(nm)) { n = new THREE.MeshPhysicalMaterial({ color: m.color.clone().lerp(new THREE.Color(0xd8dde3), 0.6), roughness: 0.22, metalness: 0.95, clearcoat: 0.5 }); }
+    else if (m.color) { const c = m.color.clone(), l = c.r * 0.3 + c.g * 0.59 + c.b * 0.11, cab = /yellow/.test(nm);
+      n = new THREE.MeshPhysicalMaterial({ color: c, roughness: cab ? 0.42 : 0.34, metalness: cab || l > 0.75 ? 0.05 : 0.55, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.2, map: m.map || null }); }
+    if (n !== m) n.name = m.name; done.set(m, n); return n; };
+  const dress = g => { if (!g) return; g.traverse(o => { if (!o.isMesh || o.userData.cpaint) return; o.userData.cpaint = 1; o.material = Array.isArray(o.material) ? o.material.map(swap) : swap(o.material); }); };
+  const all = () => { try { TRAF.c.forEach(c => dress(c.h.root)); } catch (e) { } try { dress(CAB.g); } catch (e) { } try { CARS.c.forEach(c => dress(c.g)); } catch (e) { } try { dress(BUS.g); } catch (e) { } };
+  // the scans load in the background: dress again for the first minute as their meshes arrive
+  all(); let n = 0; const iv = setInterval(() => { all(); if (++n > 20) clearInterval(iv); }, 3000); CPAINT.all = all;
+})();
+window.__FRAMES.push(() => { try { const k = Math.min(1, (L.lamps || 0) * 1.4); CPAINT.lamps.forEach(([m, s]) => m.emissiveIntensity = k * s); } catch (e) { } });
+
+/* ================================================================
+   v443 THE LOOK: A KEPT LAWN (2026-11-24)
+   The lawn was one even green from edge to edge, the same tile repeated, which is how a game lawn looks and a
+   real one never does. It is now a park the Parks Department mows: broad stripes laid north to south where the
+   mower went up and back (the grass bent toward you reads lighter, away from you darker, so the stripes swap as
+   you walk round them, like Sheep Meadow), and under the stripes a slow drift of richer and tireder greens,
+   drier patches toward the sand and lusher ones by the paths. Seen from the air the island now has a lawn, not a
+   green disc. ?mow=0 off.
+   ================================================================ */
+(function lookMow() {
+  if (!LOOK.on || /mow=0/.test(location.search) || !MAT.grass) return;
+  const m = MAT.grass, prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+  m.onBeforeCompile = sh => { if (prev) prev(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vMowW;').replace('#include <project_vertex>', '#include <project_vertex>\nvMowW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vMowW;')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+      { float mwBand = floor(vMowW.x / 3.6); float mwDir = mod(mwBand, 2.0) * 2.0 - 1.0;
+        vec3 mwCam = normalize(cameraPosition - vMowW); float mwFace = mwDir * mwCam.z;
+        float mwEdge = smoothstep(0.0, 0.25, fract(vMowW.x / 3.6)) * smoothstep(1.0, 0.75, fract(vMowW.x / 3.6));
+        float mwK = 1.0 + 0.16 * mwFace * mix(0.6, 1.0, mwEdge);
+        float mwM = sin(vMowW.x * 0.043 + 1.1) * cos(vMowW.z * 0.051 - 0.3) + 0.5 * sin(vMowW.x * 0.11 - vMowW.z * 0.09);
+        float mwR = length(vMowW.xz); float mwDry = clamp(mwM * 0.35 + smoothstep(80.0, 103.0, mwR) * 0.45, 0.0, 1.0);
+        diffuseColor.rgb *= mwK; diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.12, 1.05, 0.78), mwDry * 0.55);
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.88, 1.06, 0.9), clamp(-mwM, 0.0, 1.0) * 0.4); }`);
+  };
+  m.customProgramCacheKey = () => pk + '-mow443'; m.needsUpdate = true;
+})();
+
+/* ================================================================
+   v444 THE LOOK: THE TIDE LINE (2026-11-24)
+   Every real beach has a line where the last high tide gave up: a ragged band of dried seaweed, eel grass, sticks
+   and the odd bit of driftwood, a metre or two up the sand from the wet. Without it the sand ran from the lawn to
+   the sea as one clean colour. Now the wrack line runs right round the island (wavering in and out, thick in
+   places, gone in others, kept clear of the pier, the boardwalk and the paths), dark olive and bleached brown,
+   with grey driftwood every so often. ?wrack=0 off.
+   ================================================================ */
+const WRACK = {};
+window.__WRACK = WRACK;
+(function wrackLine() {
+  if (!LOOK.on || /wrack=0/.test(location.search)) return;
+  let sd = 9161; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  // one strand: a thin wavy ribbon, flat on the sand
+  const strand = (() => { const p = [], ix = []; const n = 6; for (let i = 0; i <= n; i++) { const t = i / n, x = (t - 0.5), w = 0.5 * (1 - Math.abs(t - 0.5) * 1.2), y = Math.sin(t * 6.0) * 0.18; p.push(x, 0, y - w * 0.5, x, 0, y + w * 0.5); if (i) { const b = (i - 1) * 2; ix.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); } } const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); g.setIndex(ix); g.computeVertexNormals(); return g; })();
+  const N = 2600, mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const im = new THREE.InstancedMesh(strand, mat, N); im.frustumCulled = false; const o = new THREE.Object3D(), c = new THREE.Color();
+  const pals = [0x3b3a22, 0x4a4628, 0x2c2b1a, 0x6b5a3c, 0x8a7a5a, 0x564a30];
+  const keepOut = a => { const d = a * 180 / PI; const deg = ((d % 360) + 360) % 360; return (deg > 222 && deg < 262) || (deg > 172 && deg < 188); };
+  let k = 0;
+  for (let i = 0; i < N * 3 && k < N; i++) { const a = rnd() * PI * 2; if (keepOut(a)) continue;
+    const thick = 0.5 + 0.5 * Math.sin(a * 5 + 1.7) * Math.sin(a * 11 - 0.4); if (rnd() > thick + 0.15) continue;
+    const r = SHORE - 5.2 + 1.3 * Math.sin(a * 9 + 0.5) + 0.8 * Math.sin(a * 23) + (rnd() - 0.5) * 1.4 * (0.5 + thick);
+    const x = Math.sin(a) * r, z = Math.cos(a) * r; o.position.set(x, ground(x, z) + 0.035, z); o.rotation.set(0, rnd() * PI, 0); const s = 0.3 + rnd() * 0.9; o.scale.set(s, 1, s * (0.6 + rnd() * 0.6)); o.updateMatrix(); im.setMatrixAt(k, o.matrix);
+    c.setHex(pals[(rnd() * pals.length) | 0]).convertSRGBToLinear(); im.setColorAt(k, c); k++; }
+  im.count = k; im.receiveShadow = true; scene.add(im); WRACK.im = im;
+  // driftwood: grey sticks and the odd log
+  const wood = new THREE.MeshStandardMaterial({ color: 0x9a948a, roughness: 0.9 }), wg = new THREE.CylinderGeometry(0.05, 0.07, 1, 6); wg.rotateZ(PI / 2);
+  const W = 70, wm = new THREE.InstancedMesh(wg, wood, W); wm.frustumCulled = false; let j = 0;
+  for (let i = 0; i < 400 && j < W; i++) { const a = rnd() * PI * 2; if (keepOut(a)) continue; const r = SHORE - 5.5 + (rnd() - 0.5) * 3, x = Math.sin(a) * r, z = Math.cos(a) * r, L2 = 0.6 + rnd() * (rnd() < 0.15 ? 2.6 : 1.0), th = L2 > 2 ? 2.6 : 1;
+    o.position.set(x, ground(x, z) + 0.05 * th, z); o.rotation.set(0, rnd() * PI, (rnd() - 0.5) * 0.1); o.scale.set(L2, th, th); o.updateMatrix(); wm.setMatrixAt(j++, o.matrix); }
+  wm.count = j; wm.castShadow = true; wm.receiveShadow = true; scene.add(wm); WRACK.wood = wm;
+  try { if (window.__SNOWL && SNOWL.add) setTimeout(() => { SNOWL.add(mat); SNOWL.add(wood); }, 32000); } catch (e) { }
+})();
+
+/* ================================================================
+   v445 THE LOOK: THE CITY GLOW (2026-11-24)
+   New York never has a dark sky. After dusk the horizon behind the painted skyline now carries the city's glow:
+   a broad sodium orange and pink haze rising off Manhattan to the south and the north, strongest right over the
+   towers and fading up into the night blue, brighter under low cloud (which the city lights from below) and
+   softer on a clear night. Painted sky untouched; the glow sits in front of it as light. ?cityglow=0 off.
+   ================================================================ */
+const CGLOW = {};
+window.__CGLOW = CGLOW;
+(function cityGlow() {
+  if (!LOOK.on || /cityglow=0/.test(location.search)) return;
+  const geo = new THREE.CylinderGeometry(1050, 1050, 260, 96, 1, true);
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.BackSide, fog: false,
+    uniforms: { uK: { value: 0 }, uCol: { value: new THREE.Color(1.0, 0.55, 0.28) } },
+    vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform float uK; uniform vec3 uCol; varying vec3 vP; void main(){ float h = (vP.y + 130.0) / 260.0; float a = atan(vP.x, vP.z);' +
+      ' float city = pow(abs(cos(a)), 3.0) * (0.75 + 0.25 * sin(a * 9.0)) + 0.12;' +
+      ' float v = smoothstep(0.0, 0.18, h) * (1.0 - smoothstep(0.12, 0.62, h)); vec3 c = mix(uCol, vec3(0.9, 0.45, 0.6), smoothstep(0.25, 0.8, h));' +
+      ' gl_FragColor = vec4(c * v * city * uK, 1.0); }' });
+  const m = new THREE.Mesh(geo, mat); m.position.y = 90; m.renderOrder = 6; m.frustumCulled = false; scene.add(m); CGLOW.m = m; CGLOW.mat = mat;
+})();
+window.__FRAMES.push(() => { try { if (!CGLOW.m) return; const W = WX.override || WX.cur, cloud = W === 'CLEAR' ? 0.65 : W === 'SCATTERED' ? 0.85 : 1.15;
+  const k = Math.min(1, (L.lamps || 0) * 1.2) * 0.85 * cloud; CGLOW.mat.uniforms.uK.value = k; CGLOW.m.visible = k > 0.005; CGLOW.m.position.x = camera.position.x; CGLOW.m.position.z = camera.position.z; } catch (e) { } });
+
+/* ================================================================
+   v446 THE LOOK: HEADLIGHTS (2026-11-24)
+   At night the traffic drove dark. Each car on the ring road now throws two pools of warm light down the asphalt
+   ahead of it (soft at the edges, longest straight ahead) and a red wash behind, so you see the cars coming round
+   the bend before you see the cars, and the road shines where they pass. Light, not lamps: additive pools on the
+   road, no extra light sources. ?headlights=0 off.
+   ================================================================ */
+const HEADL = { p: [] };
+window.__HEADL = HEADL;
+(function headlights() {
+  if (!LOOK.on || /headlights=0/.test(location.search)) return;
+  const cv = document.createElement('canvas'); cv.width = 128; cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient) { c.save(); c.translate(64, 128); c.scale(1, 2); const g = c.createRadialGradient(0, 0, 0, 0, 0, 62); g.addColorStop(0, 'rgba(255,240,215,1)'); g.addColorStop(0.4, 'rgba(255,225,180,0.5)'); g.addColorStop(0.75, 'rgba(255,210,160,0.15)'); g.addColorStop(1, 'rgba(255,200,150,0)'); c.fillStyle = g; c.fillRect(-64, -64, 128, 128); c.restore(); }
+  const t = new THREE.CanvasTexture(cv);
+  const mk = (col, w, l) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, l), new THREE.MeshBasicMaterial({ map: t, color: col, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4, fog: false })); m.rotation.x = -PI / 2; m.visible = false; scene.add(m); return m; };
+  try { TRAF.c.forEach(car => HEADL.p.push({ car, f: mk(0xffe2b0, 4.2, 11), r: mk(0xff2a18, 2.4, 2.6) })); } catch (e) { }
+})();
+const _hl = new V3();
+window.__FRAMES.push(() => { try { if (!HEADL.p.length) return; const k = Math.min(1, (L.lamps || 0) * 1.3), on = k > 0.02;
+  HEADL.p.forEach(h => { h.f.visible = h.r.visible = on; if (!on) return; const root = h.car.h.root, ry = root.rotation.y, fx = Math.sin(ry), fz = Math.cos(ry), x = root.position.x, z = root.position.z, y = ground(x, z) + 0.06;
+    h.f.position.set(x + fx * 6.8, y, z + fz * 6.8); h.f.rotation.z = ry + PI; h.f.material.opacity = 0.3 * k;
+    h.r.position.set(x - fx * 3.1, y, z - fz * 3.1); h.r.rotation.z = ry; h.r.material.opacity = 0.22 * k; }); } catch (e) { } });
+
+/* ================================================================
+   v447 THE EAST BEACH ILLUSIONS, AND THE HOLLOW FACE (2026-11-24)
+   The sideshow row filled the west boardwalk; the east beach was bare sand. It now holds a second walk of
+   illusions, the ones that need real space and real depth, each with a navy lectern and a gold plaque.
+   The first: a marble head (Poly Haven's bust, CC0) turns slowly on a column. Only its face is there: a shell,
+   hollow behind. When the face turns away you are looking into the inside of a mask, and your brain refuses it:
+   the hollow pops out into a second face that turns the wrong way and seems to follow you (Richard Gregory's
+   hollow mask; we have seen convex faces all our lives and never a concave one). eastLabel() and eastFeet() are
+   shared by v448 to v453. ?eastbeach=0 off.
+   ================================================================ */
+const EASTB = { list: [] };
+window.__EASTB = EASTB;
+function eastAt(deg, r) { const a = deg * PI / 180, x = Math.sin(a) * r, z = Math.cos(a) * r, nx = -Math.sin(a), nz = -Math.cos(a); return { x, z, g: ground(x, z), nx, nz, tx: nz, tz: -nx, ry: Math.atan2(nx, nz), a }; }
+function eastLabel(deg, r, title, line) {
+  const P = eastAt(deg, r); EASTB.navy = EASTB.navy || new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.55, metalness: 0.2 });
+  const t = signTex([{ t: title, s: 0.3 }, { t: line, s: 0.12 }], 1024, 384, '#16233f', '#c9a24a');
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 1.0, 8), EASTB.navy); pole.position.set(P.x, P.g + 0.5, P.z); scene.add(pole);
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.35 })); pl.rotation.order = 'YXZ'; pl.rotation.set(-0.7, P.ry + PI, 0); pl.position.set(P.x, P.g + 1.05, P.z); scene.add(pl);
+  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.4, 0.03), EASTB.navy); bk.rotation.order = 'YXZ'; bk.rotation.set(-0.7, P.ry + PI, 0); bk.position.set(P.x - P.nx * 0.02, P.g + 1.04, P.z - P.nz * 0.02); scene.add(bk);
+  post(P.x, P.z, 0.25, -5, 1.3); EASTB.list.push({ deg, title }); return P;
+}
+function eastFeet(x, z, ry) {
+  if (!EASTB.feetT) { const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128; const c = cv.getContext('2d'); if (c && c.ellipse) { c.fillStyle = '#c9a24a'; [[44, 1], [84, -1]].forEach(([fx, s]) => { c.beginPath(); c.ellipse(fx, 70, 15, 30, s * 0.08, 0, PI * 2); c.fill(); c.beginPath(); c.ellipse(fx + s * 2, 30, 11, 12, 0, 0, PI * 2); c.fill(); }); } EASTB.feetT = new THREE.CanvasTexture(cv); }
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), new THREE.MeshStandardMaterial({ map: EASTB.feetT, transparent: true, roughness: 0.6, metalness: 0.5, polygonOffset: true, polygonOffsetFactor: -3 })); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, ry, 0); m.position.set(x, ground(x, z) + 0.04, z); scene.add(m); return m;
+}
+(function hollowFace() {
+  if (!LOOK.on || /eastbeach=0/.test(location.search) || !window.__PH || !PH.on) return;
+  const P = eastAt(40, 120); eastLabel(43, 115.5, 'WHICH WAY IS SHE LOOKING?', 'ONLY THE FRONT OF THIS FACE EXISTS. WATCH THE BACK COME ROUND.');
+  const stone = new THREE.MeshStandardMaterial({ color: 0xd9d4c8, roughness: 0.7 });
+  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.38, 1.25, 24), stone); col.position.set(P.x, P.g + 0.625, P.z); col.castShadow = col.receiveShadow = true; scene.add(col); post(P.x, P.z, 0.5, -5, 3);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.08, 24), stone); cap.position.set(P.x, P.g + 1.29, P.z); scene.add(cap);
+  phLoad('isl_bust').then(A => {
+    // keep only the front half: the face shell, hollow behind
+    const box = new THREE.Box3(); A.parts.forEach(pt => { const g = pt.geo.clone(); g.applyMatrix4(pt.m4); g.computeBoundingBox(); box.union(g.boundingBox); });
+    const c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()), cut = c.z + sz.z * 0.05;
+    const G = new THREE.Group(), s = 1.25 / sz.y;
+    A.parts.forEach(pt => { const g = pt.geo.clone(); g.applyMatrix4(pt.m4); const ng = g.index ? g.toNonIndexed() : g, p = ng.attributes.position, keep = [];
+      for (let i = 0; i < p.count; i += 3) { const zc = (p.getZ(i) + p.getZ(i + 1) + p.getZ(i + 2)) / 3; if (zc > cut) keep.push(i); }
+      const out = new THREE.BufferGeometry(); Object.keys(ng.attributes).forEach(k => { const a = ng.attributes[k], n = a.itemSize, arr = new Float32Array(keep.length * 3 * n); keep.forEach((i, j) => { for (let v = 0; v < 3; v++) for (let q = 0; q < n; q++) arr[(j * 3 + v) * n + q] = a.array[(i + v) * n + q]; }); out.setAttribute(k, new THREE.BufferAttribute(arr, n)); });
+      out.translate(-c.x, -box.min.y, -c.z); const m = pt.mat.clone(); m.side = THREE.DoubleSide; const mesh = new THREE.Mesh(out, m); mesh.castShadow = true; G.add(mesh); });
+    G.scale.setScalar(s); G.position.set(P.x, P.g + 1.33, P.z); G.rotation.y = P.ry + PI; scene.add(G); EASTB.face = G; EASTB.faceRy = P.ry + PI;
+  }).catch(e => { EASTB.err = e; console.warn('v447', e); });
+})();
+window.__FRAMES.push(dt => { try { if (EASTB.face && camera.position.distanceTo(EASTB.face.position) < 60) EASTB.face.rotation.y += dt * 0.32; } catch (e) { } });
+
+/* ================================================================
+   v448 THE CHAIR THAT IS NOT THERE (2026-11-24)
+   A Beuchet chair. Stand on the gold footprints and there is one wooden chair on a plinth in front of you. Take
+   one step to the side and it comes apart: the legs are the chair you thought, but the seat and the back are a
+   second, giant piece three times the size and seven metres further down the beach, held up in the air on a
+   steel post. From the footprints the two line up exactly (the far piece is the near chair scaled about your
+   eye), so your brain glues them into one ordinary chair. Poly Haven's dining chair, CC0. ?eastbeach=0 off.
+   ================================================================ */
+(function beuchetChair() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search) || !window.__PH || !PH.on) return;
+  const V = eastAt(55, 112), E = new V3(V.x, V.g + 1.65, V.z), out = new V3(-V.nx, 0, -V.nz), side = new V3(V.tx, 0, V.tz);
+  eastFeet(V.x, V.z, V.ry + PI); eastLabel(52.5, 112.5, 'STAND ON THE FEET. THEN STEP ASIDE.', 'ONE CHAIR, UNTIL YOU MOVE.');
+  const d1 = 5, k = 2.6, near = E.clone().addScaledVector(out, d1); near.y = 0; const ng = ground(near.x, near.z);
+  const stone = new THREE.MeshStandardMaterial({ color: 0xd9d4c8, roughness: 0.7 }), PLH = 1.12;
+  const pl = new THREE.Mesh(new THREE.BoxGeometry(0.9, PLH, 0.9), stone); pl.position.set(near.x, ng + PLH / 2, near.z); pl.rotation.y = V.ry; pl.castShadow = pl.receiveShadow = true; scene.add(pl); post(near.x, near.z, 0.6, -5, 3);
+  phLoad('isl_bchair').then(A => {
+    const box = new THREE.Box3(); const geos = A.parts.map(pt => { const g = pt.geo.clone(); g.applyMatrix4(pt.m4); g.computeBoundingBox(); box.union(g.boundingBox); return [g, pt.mat]; });
+    const c = box.getCenter(new V3()), sz = box.getSize(new V3()), s = 0.95 / sz.y, seatY = box.min.y + sz.y * 0.47;
+    const legs = new THREE.Group(), top = new THREE.Group();
+    geos.forEach(([g, m]) => { const ng2 = g.index ? g.toNonIndexed() : g, p = ng2.attributes.position, lo = [], hi = [];
+      for (let i = 0; i < p.count; i += 3) { const yc = (p.getY(i) + p.getY(i + 1) + p.getY(i + 2)) / 3; (yc < seatY ? lo : hi).push(i); }
+      [[lo, legs], [hi, top]].forEach(([list, grp]) => { if (!list.length) return; const o = new THREE.BufferGeometry(); Object.keys(ng2.attributes).forEach(kk => { const a = ng2.attributes[kk], n = a.itemSize, arr = new Float32Array(list.length * 3 * n); list.forEach((i, j) => { for (let v = 0; v < 3; v++) for (let q = 0; q < n; q++) arr[(j * 3 + v) * n + q] = a.array[(i + v) * n + q]; }); o.setAttribute(kk, new THREE.BufferAttribute(arr, n)); });
+        o.translate(-c.x, -box.min.y, -c.z); const mesh = new THREE.Mesh(o, m); mesh.castShadow = true; grp.add(mesh); }); });
+    // the near chair (legs only) on the plinth, facing the footprints
+    legs.scale.setScalar(s); legs.position.set(near.x, ng + PLH, near.z); legs.rotation.y = V.ry; scene.add(legs);
+    // the far piece: the same chair top, scaled by k about the eye
+    const pos = new V3(near.x, ng + PLH, near.z).sub(E).multiplyScalar(k).add(E); top.scale.setScalar(s * k); top.position.copy(pos); top.rotation.y = V.ry; scene.add(top);
+    const sy = pos.y + seatY * 0 , postH = pos.y + (seatY - box.min.y) * s * k - ground(pos.x, pos.z);
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, postH, 8), new THREE.MeshStandardMaterial({ color: 0x23272d, roughness: 0.4, metalness: 0.8 })); st.position.set(pos.x, ground(pos.x, pos.z) + postH / 2, pos.z); st.castShadow = true; scene.add(st); post(pos.x, pos.z, 0.3, -5, 8);
+    EASTB.chair = { legs, top, pos };
+  }).catch(e => console.warn('v448', e));
+})();
+
+/* ================================================================
+   v449 THE TRIANGLE THAT IS NOT THERE (2026-11-24)
+   Three black discs, each with a wedge cut out, stand on thin white posts at three different distances (six,
+   nine and thirteen metres) against a white wall at the back. From anywhere else they are three bitten discs at
+   random. From the gold footprints their sizes and their bites line up, and a bright white triangle appears
+   between them, whiter than the wall behind it, with edges you can see. There are no edges. Gaetano Kanizsa,
+   1955, here built in depth so it only exists from one spot. ?eastbeach=0 off.
+   ================================================================ */
+(function kanizsa() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return;
+  const V = eastAt(70, 111.5), E = new V3(V.x, V.g + 1.65, V.z), out = new V3(-V.nx, 0, -V.nz), right = new V3(-V.tx, 0, -V.tz), up = new V3(0, 1, 0);
+  eastFeet(V.x, V.z, V.ry + PI); eastLabel(67.5, 112.2, 'THE WHITEST TRIANGLE ON THE BEACH', 'STAND ON THE FEET. IT IS NOT THERE.');
+  const D0 = 9, C = E.clone().addScaledVector(out, D0).addScaledVector(up, 0.55), R = 1.05, rD = 0.48;
+  const white = new THREE.MeshBasicMaterial({ color: 0xf4f1ea }), black = new THREE.MeshBasicMaterial({ color: 0x0b0b0c, side: THREE.DoubleSide });
+  const wallD = 17, wc = E.clone().addScaledVector(out, wallD).addScaledVector(up, 0.4); const wall = new THREE.Mesh(new THREE.PlaneGeometry(9, 6.5), white); wall.position.copy(wc); wall.position.y = Math.max(wall.position.y, ground(wc.x, wc.z) + 3.25); wall.lookAt(E.x, wall.position.y, E.z); scene.add(wall);
+  const wb = new THREE.Mesh(new THREE.BoxGeometry(9.1, 6.6, 0.12), new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.6 })); wb.position.copy(wall.position).addScaledVector(out, 0.08); wb.quaternion.copy(wall.quaternion); scene.add(wb);
+  [[-4.4], [4.4]].forEach(([u]) => { const p = wall.position.clone().addScaledVector(right, u); post(p.x, p.z, 0.3, -5, 8); });
+  const Ds = [6, 9, 13], angs = [90, 210, 330].map(d => d * PI / 180), postM = new THREE.MeshBasicMaterial({ color: 0xf0ede6 });
+  Ds.forEach((D, i) => { const Pv = C.clone().addScaledVector(right, Math.cos(angs[i]) * R).addScaledVector(up, Math.sin(angs[i]) * R), k = D / D0, Pw = Pv.clone().sub(E).multiplyScalar(k).add(E);
+    const m = new THREE.Object3D(); m.position.copy(Pw); m.lookAt(E); m.updateMatrixWorld(true); const X = new V3().setFromMatrixColumn(m.matrixWorld, 0), Y = new V3().setFromMatrixColumn(m.matrixWorld, 1);
+    const toC = C.clone().sub(Pv), th = Math.atan2(toC.dot(Y), toC.dot(X)), gap = PI / 3;
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(rD * k, 64, th + gap / 2, PI * 2 - gap), black); disc.position.copy(Pw); disc.quaternion.copy(m.quaternion); scene.add(disc);
+    const gy = ground(Pw.x, Pw.z), ph = Pw.y - rD * k - gy; if (ph > 0.05) { const st = new THREE.Mesh(new THREE.CylinderGeometry(0.02 * k, 0.025 * k, ph, 6), postM); st.position.set(Pw.x, gy + ph / 2, Pw.z); scene.add(st); }
+    post(Pw.x, Pw.z, 0.3, -5, 6); });
+  EASTB.kanizsa = true;
+})();
+
+/* ================================================================
+   v450 THE CUBE THAT FLIPS (2026-11-24)
+   A Necker cube in neon: twelve white tubes of light on a post, nothing solid, every edge the same brightness and
+   thickness, turning slowly. Which face is in front? Look at it long enough and it turns inside out, and when it
+   does it seems to spin the other way. Louis Albert Necker, 1832, who saw it in a drawing of a crystal.
+   ?eastbeach=0 off.
+   ================================================================ */
+(function neckerCube() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return;
+  const P = eastAt(89, 121); eastLabel(91.5, 116, 'WHICH FACE IS IN FRONT?', 'STARE AT IT. IT TURNS INSIDE OUT, THEN SPINS THE OTHER WAY.');
+  const G = new THREE.Group(), S = 2.1, h = S / 2, neon = new THREE.MeshBasicMaterial({ color: 0xe8f4ff, toneMapped: false });
+  const edges = []; [-h, h].forEach(a => [-h, h].forEach(b => { edges.push([[-h, a, b], [h, a, b]], [[a, -h, b], [a, h, b]], [[a, b, -h], [a, b, h]]); }));
+  edges.forEach(([p, q]) => { const A = new V3(...p), B = new V3(...q), L2 = A.distanceTo(B), m = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, L2 + 0.08, 8), neon); m.position.copy(A).add(B).multiplyScalar(0.5); m.quaternion.setFromUnitVectors(new V3(0, 1, 0), B.clone().sub(A).normalize()); G.add(m); });
+  G.position.set(P.x, P.g + 3.4, P.z); G.rotation.x = 0.42; scene.add(G);
+  const st = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 2.2, 8), new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.5 })); st.position.set(P.x, P.g + 1.1, P.z); scene.add(st); post(P.x, P.z, 0.4, -5, 4);
+  EASTB.cube = G;
+})();
+window.__FRAMES.push(dt => { try { if (EASTB.cube) EASTB.cube.rotation.y += dt * 0.25; } catch (e) { } });
+
+/* ================================================================
+   v451 THE POLE THAT NEVER STOPS RISING (2026-11-24)
+   The barber pole is a visual illusion (the stripes only go round; they look as if they climb). With the sound
+   on, it now has a twin you hear: a Shepard tone, a chord of tones an octave apart, every one sliding up, the
+   top ones fading out as new ones fade in at the bottom, so it rises for ever and never gets any higher. Roger
+   Shepard, 1964. Loudest under the pole, gone twelve metres away. ?shepard=0 off.
+   ================================================================ */
+const SHEP = { on: false, ph: 0, osc: [], g: [] };
+window.__SHEP = SHEP;
+function shepFrame(dt) {
+  if (/shepard=0/.test(location.search) || !window.__CUTS || !CUTS.pole) return;
+  const live = typeof AC !== 'undefined' && AC && AC.state === 'running' && oceanGain && oceanGain.gain.value > 0;
+  const wp = CUTS.pole.getWorldPosition(_shp), d = camera.position.distanceTo(wp), want = live ? Math.max(0, 1 - d / 12) : 0;
+  if (!SHEP.on) { if (want <= 0) return; SHEP.master = AC.createGain(); SHEP.master.gain.value = 0; SHEP.master.connect(AC.destination);
+    for (let i = 0; i < 8; i++) { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; g.gain.value = 0; o.connect(g); g.connect(SHEP.master); o.start(); SHEP.osc.push(o); SHEP.g.push(g); } SHEP.on = true; }
+  SHEP.ph = (SHEP.ph + dt * 0.06) % 1; const t = AC.currentTime;
+  for (let i = 0; i < 8; i++) { const oc = i + SHEP.ph, f = 27.5 * Math.pow(2, oc), x = (oc - 4) / 1.6, a = Math.exp(-x * x); SHEP.osc[i].frequency.setTargetAtTime(f, t, 0.02); SHEP.g[i].gain.setTargetAtTime(a * 0.12, t, 0.02); }
+  SHEP.master.gain.setTargetAtTime(want * want * 0.5, t, 0.15);
+}
+const _shp = new V3();
+window.__FRAMES.push(dt => { try { shepFrame(dt); } catch (e) { if (!SHEP.err) { SHEP.err = e; console.warn('v451 shepard', e); } } });
+
+/* ================================================================
+   v452 THE TWO BARS ON THE TRACK (2026-11-24)
+   A length of railway runs down the east beach toward the sea, its rails closing in toward the vanishing point
+   the way every track does. Two yellow bars lie across it, one near, one far. The far one is plainly longer.
+   They are the same length to the centimetre (walk out and stand between them). Mario Ponzo, 1911: the rails tell
+   your brain the far bar is further away, so it scales it up. ?eastbeach=0 off.
+   ================================================================ */
+(function ponzo() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return;
+  const V = eastAt(100, 110.5), out = new V3(-V.nx, 0, -V.nz), right = new V3(-V.tx, 0, -V.tz);
+  eastLabel(97.5, 111, 'WHICH YELLOW BAR IS LONGER?', 'THEY ARE THE SAME LENGTH. GO AND CHECK.');
+  const steel = new THREE.MeshStandardMaterial({ color: 0x9a9088, roughness: 0.3, metalness: 0.7 }), wood = new THREE.MeshStandardMaterial({ color: 0x4a3a2c, roughness: 0.9 }), yel = new THREE.MeshStandardMaterial({ color: 0xffc400, roughness: 0.45, emissive: 0x4a3200, emissiveIntensity: 0.5 });
+  const L2 = 19, w0 = 1.45, w1 = 0.18, at = (d, u) => { const p = new V3(V.x, 0, V.z).addScaledVector(out, d).addScaledVector(right, u); p.y = ground(p.x, p.z); return p; };
+  [-1, 1].forEach(sd => { const a = at(0.5, sd * w0 / 2), b = at(L2, sd * w1 / 2), m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.11, a.distanceTo(b)), steel); m.position.copy(a).add(b).multiplyScalar(0.5); m.position.y += 0.1; m.lookAt(b.x, m.position.y, b.z); m.castShadow = true; scene.add(m); });
+  for (let d = 0.8; d < L2; d += 0.9) { const w = w0 + (w1 - w0) * (d / L2), p = at(d, 0), m = new THREE.Mesh(new THREE.BoxGeometry(w + 0.5 * (w / w0), 0.07, 0.2 * (0.4 + 0.6 * w / w0)), wood); m.position.copy(p); m.position.y += 0.035; m.rotation.y = V.ry; m.receiveShadow = true; scene.add(m); }
+  [2.6, 11.5].forEach(d => { const p = at(d, 0), m = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 0.22), yel); m.position.copy(p); m.position.y += 0.21; m.rotation.y = V.ry; m.castShadow = true; scene.add(m); });
+  EASTB.ponzo = true;
+})();
+
+/* ================================================================
+   v453 THE FENCE THAT LEANS (2026-11-24)
+   A length of snow fence, the slatted kind that stands on every New York beach in winter, along the east dunes.
+   Its four long rails are dead level and parallel. They look as if they tilt toward and away from each other,
+   because the short slats across each rail slant one way on one rail and the other way on the next. Johann
+   Zöllner, 1860, who noticed it in a fabric pattern. ?eastbeach=0 off.
+   ================================================================ */
+(function zollner() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return;
+  const P = eastAt(118, 124.5); eastLabel(118, 117.5, 'ARE THE RAILS LEVEL?', 'PUT A STRAIGHT EDGE ON THEM. THEY ARE. ALL FOUR.');
+  const along = new V3(P.tx, 0, P.tz), L2 = 11, rails = [0.55, 1.0, 1.45, 1.9];
+  const white = new THREE.MeshStandardMaterial({ color: 0xece6da, roughness: 0.7 }), blk = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.6 });
+  rails.forEach(y => { const m = new THREE.Mesh(new THREE.BoxGeometry(L2, 0.07, 0.05), white); m.position.set(P.x, P.g + y, P.z); m.rotation.y = P.ry + PI / 2; m.castShadow = true; scene.add(m); });
+  const n = 0; const slat = new THREE.BoxGeometry(0.035, 0.36, 0.03); let cnt = 0; const im = new THREE.InstancedMesh(slat, blk, 4 * 40), o = new THREE.Object3D();
+  rails.forEach((y, ri) => { const tilt = (ri % 2 ? 1 : -1) * 0.75; for (let i = 0; i < 40; i++) { const u = -L2 / 2 + 0.2 + i * (L2 - 0.4) / 39, p = new V3(P.x, P.g + y, P.z).addScaledVector(along, u); o.position.copy(p).addScaledVector(new V3(P.nx, 0, P.nz), 0.04); o.rotation.set(0, P.ry, tilt); o.updateMatrix(); im.setMatrixAt(cnt++, o.matrix); } });
+  im.castShadow = true; scene.add(im);
+  [-L2 / 2, -L2 / 6, L2 / 6, L2 / 2].forEach(u => { const p = new V3(P.x, 0, P.z).addScaledVector(along, u), m = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 2.3, 6), new THREE.MeshStandardMaterial({ color: 0x6a5a48, roughness: 0.9 })); m.position.set(p.x, P.g + 1.1, p.z); scene.add(m); post(p.x, p.z, 0.2, -5, 3); });
+  for (let u = -L2 / 2; u <= L2 / 2; u += 1.2) { const p = new V3(P.x, 0, P.z).addScaledVector(along, u); CIRCS.push({ x: p.x, z: p.z, r: 0.35, y0: -5, y1: 3, on: true }); }
+  EASTB.fence = true;
+})();
+
+/* ================================================================
+   v454 THE EAST BEACH: GATE, TOUR, MAP, 36 ILLUSIONS (2026-11-24)
+   A navy and gold gate on two iron posts at the north end of the east beach names it (N3W ILLUSION BEACH, SEVEN
+   THINGS THAT ARE NOT THERE) with marquee bulbs that chase after dark; the map gets the beach; the tour walks it
+   from the hollow face to the chair and stops dead on the Kanizsa footprints, so the triangle appears on screen;
+   and the pier count goes to 36 ILLUSIONS.
+   ================================================================ */
+(function eastBeachGate() {
+  if (!window.__EASTB || !EASTB.list.length) return;
+  const P = eastAt(33, 112.5), at = (u, d) => [P.x + P.tx * u + P.nx * d, P.z + P.tz * u + P.nz * d];
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  [-2.1, 2.1].forEach(u => { const [x, z] = at(u, 0); facPut('iron', x, P.g + 1.9, z, 0.12, 3.8, 0.12, P.ry); post(x, z, 0.15, -5, 4); });
+  const t = signTex([{ t: 'N3W ILLUSION BEACH', s: 0.42 }, { t: 'SEVEN THINGS THAT ARE NOT THERE', s: 0.17 }], 1024, 220, '#16233f', '#c9a24a');
+  const [hx, hz] = at(0, 0); const hm = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.9), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide })); hm.position.set(hx, P.g + 3.55, hz); hm.rotation.y = P.ry + PI; scene.add(hm);
+  facPut('iron', hx, P.g + 4.03, hz, 4.4, 0.07, 0.1, P.ry); facPut('iron', hx, P.g + 3.07, hz, 4.4, 0.07, 0.1, P.ry); facFlush();
+  const B = [], n = 22; for (let i = 0; i < n; i++) { const u = -2.1 + i * 4.2 / (n - 1); [4.03, 3.07].forEach(y => { const [x, z] = at(u, -0.07); B.push([x, P.g + y, z]); }); }
+  const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), B.length), o = new THREE.Object3D(), c = new THREE.Color(0x3a3226);
+  B.forEach((p, i) => { o.position.set(p[0], p[1], p[2]); o.updateMatrix(); im.setMatrixAt(i, o.matrix); im.setColorAt(i, c); }); scene.add(im); EASTB.bulbs = im; EASTB.bn = B.length;
+  if (window.__MAP) { const m = eastAt(75, 118); MAP.places.push(['N3W ILLUSION BEACH', m.x, m.z, eastAt(75, 106).x, eastAt(75, 106).z]); }
+  // the tour: along the beach, ending on the Kanizsa footprints
+  try { const E3 = (deg, r, y) => { const q = eastAt(deg, r); return [q.x, q.g + y, q.z]; }, kz = eastAt(70, 120.5);
+    const stop = { name: 'the illusion beach', dur: 14, pos: [E3(37, 112, 2.1), E3(70, 111.5, 1.65)], look: [E3(40, 120, 1.9), [kz.x, kz.g + 1.65 + 0.55, kz.z]] };
+    [((window.__game && __game.TOUR) || TOUR), window.__TOURFULL].forEach(R => { if (!R) return; if (R.some(q => q.name === stop.name)) return; let k = R.findIndex(q => q.name === 'the sideshow row'); if (k < 0) k = R.findIndex(q => q.name === 'the n3w boardwalk'); R.splice(k >= 0 ? k + 1 : R.length - 1, 0, R === window.__TOURFULL ? stop : Object.assign({}, stop, { dur: 10 })); }); } catch (e) { }
+  try { const s = SIGNS.find(q => q.lines && q.lines[0] && /^\d+ ILLUSIONS/.test(q.lines[0].t)); if (s) { s.lines[0].t = '36 ILLUSIONS · 577 CARDS · 472 ARTISTS'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } } catch (e) { }
+})();
+window.__FRAMES.push(() => { try { if (!EASTB.bulbs) return; const k = Math.min(1, (L.lamps || 0) * 1.3), t = performance.now() / 1000, c = EASTB.c || (EASTB.c = new THREE.Color());
+  for (let i = 0; i < EASTB.bn; i++) { const on = ((i >> 1) + Math.floor(t * 5)) % 3 === 0; const v = 0.23 + k * (on ? 1.6 : 0.5); c.setRGB(v * 1.0, v * 0.82, v * 0.55); EASTB.bulbs.setColorAt(i, c); } EASTB.bulbs.instanceColor.needsUpdate = true; } catch (e) { } });
+
+/*__V455_X__*/
+/*__V456_X__*/
+/*__V457_X__*/
+/*__V458_X__*/
+/*__V459_X__*/
+/*__V460_X__*/
+/*__V461_X__*/
+/*__V462_X__*/
+/*__V463_X__*/
+/*__V464_X__*/
+/*__V465_X__*/
+/*__V466_X__*/
+/*__V467_X__*/
+/*__V468_X__*/
+/*__V469_X__*/
+/*__V470_X__*/
+/*__V471_X__*/
+/*__V472_X__*/
+/*__V473_X__*/
+/*__V474_X__*/
+/*__V475_X__*/
+/*__V476_X__*/
+/*__V477_X__*/
+/*__V478_X__*/
+/*__V479_X__*/
+/*__V480_X__*/
+/*__V481_X__*/
+/*__V482_X__*/
+/*__V483_X__*/
+/*__V484_X__*/
+/*__V485_X__*/
+/*__V486_X__*/
 
 /* ---------------- boot ---------------- */
 buildCards();
