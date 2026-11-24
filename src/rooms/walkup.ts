@@ -1,5 +1,6 @@
 import * as T from 'three';
-import { pbr, tex } from '../core/assets';
+import { pbr, tex, scan } from '../core/assets';
+import { instProp, ffTex } from '../core/up';
 import { box, sign, v3, seeded, type Rect } from '../core/kit';
 import { contour, drips, addThreshold } from '../core/mlow';
 import { clickables } from '../core/hang';
@@ -21,13 +22,27 @@ export function buildWalkup(ctx: Ctx): Room {
   let climbed = 0;
 
   const plaster = contour(pbr('plaster', 2, { color: 0x2b3350 }), { coverage: 1, density: 16, glow: 0.85, ground: 0.8, scale: 0.26 });
-  const wains = pbr('planks', 0.8, { color: 0x3a2618, roughness: 0.6 });
+  // THE BIG UPGRADE: the wainscot and the stair wood as a scanned dark panelled oak (Poly Haven dark_paneled_wood)
+  const wains = scan('dark_paneled_wood', 0.9, { color: 0x8a6a58, roughness: 0.55 });
   const marble = pbr('marble', 0.9, { color: 0xd8d4cc, roughness: 0.3 });
-  const tile = pbr('terrazzo', 0.6, { color: 0x9c958a });
+  // the landings: small square mosaic tile, the tenement floor (Poly Haven rounded_square_tiled_wall, scanned)
+  const tile = scan('rounded_square_tiled_wall', 0.7, { color: 0xb8b0a2, roughness: 0.5 });
   const iron = new T.MeshStandardMaterial({ color: 0x0e0f12, metalness: 0.8, roughness: 0.4 });
   const doorM = pbr('planks', 0.6, { color: 0x2a1a12, roughness: 0.45 });
   const brass = new T.MeshStandardMaterial({ color: 0xc9a050, metalness: 1, roughness: 0.25 });
   const K = [-3, -2, -1, 0, 1, 2, 3];
+  // the landing inlay: a mosaic 5 set in the floor of every landing (a Firefly plate; a code mosaic stands in)
+  const mc = document.createElement('canvas'); mc.width = mc.height = 512; const mx = mc.getContext('2d')!;
+  for (let i = 0; i < 32; i++) for (let j = 0; j < 32; j++) {
+    const dx = i - 15.5, dy = j - 15.5, r = Math.hypot(dx, dy);
+    mx.fillStyle = r > 15 ? '#d9d2c2' : r > 13.6 ? '#1a3a7a' : r > 12.6 ? '#c9a050' : ['#e9e3d4', '#ddd6c6', '#e4ddcc'][(i * 7 + j * 3) % 3];
+    mx.fillRect(i * 16 + 1, j * 16 + 1, 14, 14);
+  }
+  mx.fillStyle = '#1a3a7a'; mx.font = '800 300px Archivo, Arial Narrow, sans-serif'; mx.textAlign = 'center'; mx.textBaseline = 'middle'; mx.fillText('5', 256, 270);
+  mx.strokeStyle = '#d9d2c2'; mx.lineWidth = 2;
+  for (let i = 0; i <= 32; i++) { mx.beginPath(); mx.moveTo(i * 16, 0); mx.lineTo(i * 16, 512); mx.stroke(); mx.beginPath(); mx.moveTo(0, i * 16); mx.lineTo(512, i * 16); mx.stroke(); }
+  const inlay = new T.MeshStandardMaterial({ map: ffTex('tex/ff/landing_mosaic.webp', mc), roughness: 0.45, polygonOffset: true, polygonOffsetFactor: -2 });
+  const sockets: { p: T.Vector3 }[] = [];
 
   // walls, the full height of the shaft: plaster painted with the field, a wainscot, the end walls
   const top = K[K.length - 1] * FH + FH + 1, bot = K[0] * FH - 1, H = top - bot, yc = (top + bot) / 2;
@@ -72,6 +87,17 @@ export function buildWalkup(ctx: Ctx): Room {
       const knob = new T.Mesh(new T.SphereGeometry(0.035, 12, 8), brass); knob.position.set(-2.11, y0 + 1.0, z + (z < 0 ? 0.36 : -0.36)); g.add(knob);
     }
     box(g, 0.08, 2.2, 1.0, 5.4, y0 + HALF + 1.1, 0, doorM);
+    // THE BIG UPGRADE, built not painted: a casing either side of each apartment door (the doors are portals, so
+    // nothing may sit in the opening),
+    // a turned newel at the foot of each flight, the landing inlay, a chair rail, the pull chain socket
+    for (const z of [-0.72, 0.72]) {
+      box(g, 0.1, 2.35, 0.08, -2.15, y0 + 1.17, z - 0.58, wains, false); box(g, 0.1, 2.35, 0.08, -2.15, y0 + 1.17, z + 0.58, wains, false); // casings, clear of the doorway (a portal)
+    }
+    const turned = new T.LatheGeometry([[0.07, 0], [0.07, 0.12], [0.05, 0.16], [0.045, 0.5], [0.06, 0.62], [0.035, 0.7], [0.04, 0.95], [0.065, 1.0], [0.065, 1.08], [0.04, 1.14], [0, 1.18]].map(([r, y]) => new T.Vector2(r, y)), 16);
+    for (const z of [-0.52, 0.52]) { const n = new T.Mesh(turned, wains); n.position.set(0.02, y0, z); n.castShadow = true; g.add(n); }
+    const inl = new T.Mesh(new T.PlaneGeometry(1.3, 1.3), inlay); inl.rotation.x = -Math.PI / 2; inl.position.set(-1.1, y0 + 0.004, 0); inl.receiveShadow = true; g.add(inl);
+    box(g, 0.05, 0.06, 3.0, -2.19, y0 + 0.95, 0, wains, false);
+    sockets.push({ p: v3(-1.1, y0 + 2.6, 0) });
     sign(g, ['ROOF', 'ALARM WILL NOT SOUND'], 0.7, 0.3, v3(5.35, y0 + HALF + 2.45, 0), -Math.PI / 2, { bg: '#c8102e', ink: '#fff', glow: 1.2 });
     // FLOOR 5, stencilled, every floor
     sign(g, ['5'], 1.2, 1.4, v3(-1.1, y0 + 1.6, 1.49), Math.PI, { ink: '#f0f4f8', font: 'Archivo' });
@@ -85,6 +111,7 @@ export function buildWalkup(ctx: Ctx): Room {
   }
   const instM = (list: T.Matrix4[], mat: T.Material) => { const im = new T.InstancedMesh(new T.BoxGeometry(1, 1, 1), mat, list.length); list.forEach((x, i) => im.setMatrixAt(i, x)); im.castShadow = true; im.receiveShadow = true; g.add(im); };
   instM(tread, marble); instM(riser, marble); instM(bal, iron);
+  instProp(g, 'ph_pull_chain_light_socket', 0.17, sockets.map((s) => ({ p: s.p })), { shadow: false });
 
   // the hang: six frames a floor on every copy; textures are reassigned as you climb
   type Slot = { mat: T.MeshBasicMaterial; k: number; i: number; mesh: T.Mesh; art: Piece | null };

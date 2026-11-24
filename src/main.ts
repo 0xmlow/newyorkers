@@ -36,7 +36,10 @@ renderer.toneMapping = T.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = T.PCFSoftShadowMap;
-setAniso(Math.min(8, renderer.capabilities.getMaxAnisotropy()));
+// THE LOOK (2026-11-24, ?look=0 turns it off): full anisotropy, a reflection probe of each room as its own
+// environment, and a calmer display space grade. Desktop only; phones keep their budget.
+const lookOn = !(matchMedia('(pointer: coarse)').matches || innerWidth < 760) && !params.has('lite') && params.get('look') !== '0';
+setAniso(lookOn ? renderer.capabilities.getMaxAnisotropy() : Math.min(8, renderer.capabilities.getMaxAnisotropy()));
 renderer.info.autoReset = false; // the stats below count the whole frame: portals, mirror, AO, bloom
 $('#scene').appendChild(renderer.domElement);
 
@@ -72,7 +75,21 @@ if (!lite) {
 const bloom = new UnrealBloomPass(new T.Vector2(512, 512), 0.42, 0.45, 0.95);
 if (!lite) composer.addPass(bloom);
 composer.addPass(new OutputPass());
-const grade = new ShaderPass({
+const grade = new ShaderPass(lookOn ? {
+  // display space: a soft S curve, cool shadows and warm highlights, a wide soft vignette, grain that lives in the mids
+  uniforms: { tDiffuse: { value: null }, uTime: shared.time },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime; varying vec2 vUv;
+    float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + uTime) * 43758.5453); }
+    void main(){ vec4 c = texture2D(tDiffuse, vUv); vec3 x = clamp(c.rgb, 0.0, 1.0);
+      x = mix(x, x * x * (3.0 - 2.0 * x), 0.2);
+      float l = dot(x, vec3(0.2126, 0.7152, 0.0722));
+      x += mix(vec3(-0.010, 0.002, 0.020), vec3(0.022, 0.010, -0.016), smoothstep(0.12, 0.7, l)) * (1.0 - l * 0.5);
+      vec2 d = (vUv - 0.5) * vec2(1.0, 0.82);
+      x *= mix(1.0, 0.72, smoothstep(0.2, 0.7, length(d) * 1.25));
+      x += (h(vUv * 900.0) - 0.5) * 0.03 * (1.0 - abs(l - 0.45) * 1.6);
+      gl_FragColor = vec4(x, c.a); }`,
+} : {
   uniforms: { tDiffuse: { value: null }, uTime: shared.time },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime; varying vec2 vUv;
@@ -87,7 +104,7 @@ composer.addPass(grade);
 async function boot() {
   const m = await manifest();
   const ctx: Ctx = { scene, m, still, mobile, renderer };
-  hdr('hdri/night.hdr', renderer, (env) => { scene.environment = env; scene.environmentIntensity = here?.env ?? 0.08; });
+  hdr('hdri/night.hdr', renderer, (env) => { hdrEnv = env; if (here) [scene.environment, scene.environmentIntensity] = envFor(here); });
   const all = [buildBlock(ctx), ...ROOM_BUILDERS.map((b) => b(ctx))];
   const keep = new Set(clickables.map((c) => c.mesh));
   for (const r of all) { rooms.set(r.id, r); r.group.visible = false; r.group.userData.batched = batchStatic(r.group, keep); }
@@ -113,19 +130,39 @@ async function boot() {
   requestAnimationFrame(frame);
 }
 
+// ---------- the reflection probe: each room reflects itself, not the night skyline HDRI ----------
+const probes = new Map<string, T.Texture>();
+let hdrEnv: T.Texture | null = null, probeWait = 0;
+const pmrem = new T.PMREMGenerator(renderer);
+function envFor(r: Room): [T.Texture | null, number] {
+  const p = probes.get(r.id);
+  return p && r.probe !== 0 ? [p, r.probe ?? 0.55] : [hdrEnv, r.env ?? 0.08];
+}
+function bakeProbe(r: Room) {
+  const rt = new T.WebGLCubeRenderTarget(256, { type: T.HalfFloatType });
+  const cc = new T.CubeCamera(0.1, 500, rt);
+  cc.position.copy(r.probeAt ?? r.spawn.at);
+  const restore = show(r.id);
+  scene.environment = hdrEnv; scene.environmentIntensity = r.env ?? 0.08;
+  scene.add(cc); cc.update(renderer, scene); scene.remove(cc);
+  restore();
+  probes.set(r.id, pmrem.fromCubemap(rt.texture).texture); rt.dispose();
+  if (r === here) [scene.environment, scene.environmentIntensity] = envFor(r);
+}
+
 // ---------- rooms and visibility ----------
 function show(id: string) {
   const prevVis = [...rooms.values()].map((r) => r.group.visible);
-  const prevBg = scene.background, prevFog = scene.fog, prevEnv = scene.environmentIntensity;
+  const prevBg = scene.background, prevFog = scene.fog, prevEnv = scene.environmentIntensity, prevMap = scene.environment;
   const r = rooms.get(id)!;
-  scene.environmentIntensity = r.env ?? 0.08;
+  [scene.environment, scene.environmentIntensity] = envFor(r);
   for (const x of rooms.values()) x.group.visible = x === r;
   scene.background = r.bg; scene.fog = r.fog;
   focusThresholds(r.origin);
   mainOnly.forEach((o) => (o.visible = false));
   return () => {
     [...rooms.values()].forEach((x, i) => (x.group.visible = prevVis[i]));
-    scene.background = prevBg; scene.fog = prevFog; scene.environmentIntensity = prevEnv;
+    scene.background = prevBg; scene.fog = prevFog; scene.environmentIntensity = prevEnv; scene.environment = prevMap;
     focusThresholds(here.origin);
     mainOnly.forEach((o) => (o.visible = true));
   };
@@ -136,7 +173,7 @@ function enter(r: Room, first = false) {
   for (const x of rooms.values()) x.group.visible = x === r;
   scene.background = r.bg; scene.fog = r.fog;
   renderer.toneMappingExposure = r.exposure ?? 1;
-  scene.environmentIntensity = r.env ?? 0.08;
+  [scene.environment, scene.environmentIntensity] = envFor(r); probeWait = 0;
   focusThresholds(r.origin);
   mainOnly.length = 0;
   r.group.traverse((o) => { if ((o as unknown as { isReflector?: boolean }).isReflector) mainOnly.push(o); });
@@ -336,6 +373,8 @@ function step(now: number) {
   const budgetPasses = mobile ? 1 : 2;
   want.slice(0, budgetPasses).forEach(({ p }) => p.render(renderer, scene, camera, show));
   want.slice(budgetPasses).forEach(({ p }, i) => { if ((frameNo + i) % 6 === 0) p.render(renderer, scene, camera, show); });
+  // bake this room's probe once everything it shows has loaded (and half a second after arriving)
+  if (lookOn && here.probe !== 0 && !probes.has(here.id) && loading.done >= loading.total && (probeWait += dt) > 0.5) bakeProbe(here);
   composer.render(dt);
   const info = renderer.info.render;
   el.dataset.renderStats = JSON.stringify({ room: here.id, calls: info.calls, triangles: info.triangles, portals: want.length, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries });
@@ -345,7 +384,7 @@ function step(now: number) {
 (window as unknown as Record<string, unknown>).inside = {
   // advance(ms, key): run the world without requestAnimationFrame (headless review; a hidden tab gets no frames)
   advance(ms: number, key?: string) { if (key) keys.add(key); const t0 = last; for (let t = 16; t <= ms; t += 16) step(t0 + t); if (key) keys.delete(key); return { at: camera.position.toArray(), room: here.id }; },
-  rig: RIGSTAT, rooms, portals, camera, go, jump, enter: (id: string) => enter(rooms.get(id)!, true), loading, THREE: T, scene,
+  rig: RIGSTAT, probes, rooms, portals, camera, go, jump, enter: (id: string) => enter(rooms.get(id)!, true), loading, THREE: T, scene,
   view: (i: number) => { const v = here.views[i]; if (v) jump(v.at, v.look); },
 };
 boot();

@@ -58,3 +58,21 @@ Reduced motion: no animation (time frozen: steam, drum, roll, cabs, flowers, fli
 2. Generate the missing plates when ImageGen is back (`python3 tools/concepts.py`), rerun `make_assets.py`.
 3. Sound: the block at night, the bodega hum, the train.
 4. More of the block: the far side of the hoarding, a fire escape you can climb to the roof.
+
+## THE BIG UPGRADE (2026-11-24)
+
+- THE LOOK (desktop, `?look=0` off): each indoor room bakes a reflection probe of itself once loaded
+  (`Room.probe`, default 0.55; `probe: 0` keeps the night HDRI, used by the block and the roof), full anisotropy, a
+  display space grade. Phones and `?lite` keep the old path.
+- `src/core/up.ts`: `put` / `instProp` place or instance a CC0 GLB from `public/glb/up` (pick a variant by material
+  name, `=name` exact), `cut` splits an exploded kit, `ffTex` shows a code canvas until a Firefly plate exists.
+  `scan()` in assets.ts loads Poly Haven WebP sets from `public/tex/ph`. GLBs are Draco; the decoder is `public/draco`.
+- Rooms: real fire escapes (Poly Haven kit cut and stacked), window ACs, shutters, trash on the block; stocked
+  shelves, checker floor and drop ceiling in the bodega; mosaic landings in the walk-up; Poly Haven furniture warped
+  with the Ames room in 5A (`wprop`); built dryers and scanned tile in the laundromat; scanned station tile and seat
+  backs in the subway; tar, chimneys, skylight and roof furniture on the roof.
+- Firefly plates waiting (`public/tex/ff/`): ghost_sign, landing_mosaic, suds_frieze, station_tablet. Drop a file
+  in, `npm run build`. A paid 3D washer and dryer stack is queued (`3D PAID OK`).
+- Dense props were decimated in Blender (0.5k to 4k tris). Fixed on the way: the studio hall stopped 25 cm short
+  of the warped room, so you could not walk in.
+- Shots and notes: `/Volumes/mlow2026/GALLERY UPGRADE 2026-11-23/inside/`.

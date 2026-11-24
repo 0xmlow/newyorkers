@@ -1,5 +1,6 @@
 import * as T from 'three';
-import { pbr, prop } from '../core/assets';
+import { pbr, prop, scan } from '../core/assets';
+import { instProp, put, ffTex } from '../core/up';
 import { box, floorPlane, sign, v3, seeded, type Rect } from '../core/kit';
 import { contour, drips, addThreshold, shared, INK } from '../core/mlow';
 import { hang, poster, sticker } from '../core/hang';
@@ -17,7 +18,9 @@ export function buildLaundromat(ctx: Ctx): Room {
   const O = ORIGINS.laundromat, g = new T.Group(); g.position.copy(O); ctx.scene.add(g);
   const rnd = seeded(71), art = ctx.m.art.laundromat, at = (x: number, y: number, z: number) => O.clone().add(v3(x, y, z));
 
-  const floor = pbr('terrazzo', 0.8, { color: 0x8f8a80, roughness: 0.8 });
+  // THE BIG UPGRADE: a scanned grey stone tile floor (Poly Haven large_floor_tiles_02), white tile to dado height
+  const floor = scan('large_floor_tiles_02', 1.4, { color: 0xffffff, roughness: 0.45 });
+  const wtile = scan('long_white_tiles', 0.9, { color: 0xd8dade, roughness: 0.35 });
   const wall = contour(pbr('plaster', 2, { color: 0x7d8ca6 }), { coverage: 0.15, density: 14, glow: 1.2 });
   const steel = pbr('steel', 1, { metalness: 0.85, roughness: 0.32, color: 0xd5dae0 });
   floorPlane(g, 10, 15, floor, 0, 0, -7);
@@ -34,8 +37,14 @@ export function buildLaundromat(ctx: Ctx): Room {
   drips(g, v3(-1.4, 3.0, -13.85), v3(1.4, 3.0, -13.85), 40, 77, 2.1);
   addThreshold(at(0, 1.65, -14), 3.4);
 
+  // the tiled dado on the right and front walls
+  box(g, 0.04, 1.3, 14.6, 4.88, 0.65, -7.1, wtile, false);
+  box(g, 4.2, 1.3, 0.04, -2.8, 0.65, -0.02, wtile, false); box(g, 4.2, 1.3, 0.04, 2.8, 0.65, -0.02, wtile, false);
+  box(g, 0.06, 0.05, 14.6, 4.86, 1.32, -7.1, new T.MeshStandardMaterial({ color: 0x1a3a7a, roughness: 0.4 }), false);
   // the dryers: a stack of seven on the left wall, upper row; their windows are the portholes (built in index.ts)
-  const dryerFace = new T.MeshStandardMaterial({ color: 0xb9c0c9, metalness: 0.55, roughness: 0.3 });
+  const dryerFace = pbr('steel', 0.8, { metalness: 0.55, roughness: 0.3, color: 0xc9d0d8 }); dryerFace.map = null; // brushed: the scan's relief, the enamel's colour
+  const panelM = new T.MeshStandardMaterial({ color: 0x1b1f26, roughness: 0.4, metalness: 0.3 });
+  const slotM = new T.MeshStandardMaterial({ color: 0x0a0a0c, metalness: 0.9, roughness: 0.3 });
   const dryers: T.Vector3[] = [];
   for (let i = 0; i < 7; i++) {
     const z = -1.8 - i * 1.5;
@@ -45,19 +54,34 @@ export function buildLaundromat(ctx: Ctx): Room {
     const glassLow = new T.Mesh(new T.CircleGeometry(0.29, 32), new T.MeshStandardMaterial({ color: 0x0b1530, roughness: 0.05, metalness: 0.3, emissive: 0x0a1a3a })); glassLow.position.set(-4.045, 0.8, z); glassLow.rotation.y = Math.PI / 2; g.add(glassLow);
     sign(g, [String(i + 1).padStart(2, '0') + ' . ' + DRYERS[i].toUpperCase()], 0.7, 0.13, v3(-4.04, 2.75, z), Math.PI / 2, { bg: '#0a0f1e', ink: '#00e5ff', glow: 1.4, font: 'Plex, monospace' });
     dryers.push(at(-4.03, 2.05 - 0.34, z));
+    // built detail: a control strip with coin slot and timer on every dryer, a hinge, a lint door at the foot
+    box(g, 0.03, 0.16, 1.2, -4.04, 1.48, z, panelM, false);
+    box(g, 0.02, 0.05, 0.12, -4.02, 1.48, z + 0.4, slotM, false);
+    const dial = new T.Mesh(new T.CylinderGeometry(0.045, 0.045, 0.03, 20), steel); dial.rotation.z = Math.PI / 2; dial.position.set(-4.02, 1.48, z - 0.38); g.add(dial);
+    box(g, 0.03, 0.18, 0.06, -4.03, 2.05, z + 0.4, steel, false); box(g, 0.03, 0.15, 0.06, -4.03, 0.8, z + 0.36, steel, false);
+    box(g, 0.02, 0.12, 0.6, -4.04, 0.28, z, panelM, false);
   }
   // washers on the right wall, the folding table, the chairs, the change machine
   for (let i = 0; i < 6; i++) {
     const z = -2 - i * 1.6;
     box(g, 0.8, 1.0, 0.75, 4.55, 0.5, z, dryerFace);
     const d = new T.Mesh(new T.CircleGeometry(0.22, 28), new T.MeshStandardMaterial({ color: 0x1b3a7a, roughness: 0.1, emissive: 0x0a1f4a })); d.position.set(4.14, 0.62, z); d.rotation.y = -Math.PI / 2; g.add(d);
+    const dr = new T.Mesh(new T.TorusGeometry(0.24, 0.035, 12, 36), steel); dr.position.set(4.14, 0.62, z); dr.rotation.y = Math.PI / 2; g.add(dr);
+    box(g, 0.7, 0.16, 0.7, 4.6, 1.08, z, panelM, false); box(g, 0.02, 0.06, 0.16, 4.24, 1.08, z - 0.2, slotM, false);
   }
   box(g, 1.1, 0.06, 3.6, 0.9, 0.9, -7.5, new T.MeshStandardMaterial({ color: 0xe9e6df, roughness: 0.5 }));
   box(g, 0.9, 0.86, 0.06, 0.9, 0.44, -9.2, new T.MeshStandardMaterial({ color: 0x4a4f58 }));
   const chair = new T.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.5 });
-  for (let i = 0; i < 5; i++) { box(g, 0.48, 0.05, 0.45, 3.6, 0.46, -2.3 - i * 1.25, chair); box(g, 0.05, 0.45, 0.45, 3.85, 0.7, -2.3 - i * 1.25, chair); }
+  // the chairs: Poly Haven's monobloc (CC0), five in a row facing the dryers
+  instProp(g, 'ph_plastic_monobloc_chair_01', 0.88, Array.from({ length: 5 }, (_, i) => ({ p: v3(3.65, 0, -2.3 - i * 1.25), ry: -Math.PI / 2 + (rnd() - 0.5) * 0.25 })));
+  void chair;
   box(g, 0.5, 1.7, 0.6, 4.6, 0.85, -12.6, new T.MeshStandardMaterial({ color: 0x9aa2ad, metalness: 0.6, roughness: 0.4 }));
   sign(g, ['CHANGE', 'ALSO DIMENSIONS'], 0.48, 0.3, v3(4.29, 1.4, -12.6), -Math.PI / 2, { bg: '#c8102e', ink: '#fff', glow: 1.2 });
+  // on the folding table a wicker basket, detergent on the washers, a wet floor sign, the clock
+  put(g, 'ph_wicker_basket_01', 0, 1.0, 0.93, -8.6, 0.3, undefined, 0.5);
+  instProp(g, 'ph_plastic_bottle_gallon', 0.3, [[4.55, -2.2], [4.7, -2.05], [4.55, -5.4], [4.6, -8.6], [4.5, -10.0]].map(([x, z], i) => ({ p: v3(x, 1.16, z), ry: i * 1.3 })));
+  put(g, 'ph_WetFloorSign_01', 0.62, -1.6, 0, -9.6, 0.6);
+  put(g, 'ph_wall_clock', 0.36, 4.87, 3.05, -1.3, -Math.PI / 2);
   // folded laundry, as a stack of coloured slabs
   for (let i = 0; i < 6; i++) box(g, 0.38, 0.06, 0.3, 0.75 + (i % 2) * 0.35, 0.96 + Math.floor(i / 2) * 0.06, -7 - (i % 3) * 0.4, new T.MeshStandardMaterial({ color: [0xff2e63, 0x2962ff, 0xf0f4f8, 0x6f23a8, 0xffd84a, 0x00a86b][i], roughness: 0.9 }), false);
   // the hang: six over the washers, six on the bulletin wall by the door
@@ -106,6 +130,16 @@ export function buildLaundromat(ctx: Ctx): Room {
   // light
   const tubes: [number, number][] = [[-2, -3], [2, -3], [-2, -8], [2, -8], [-2, -12], [2, -12]];
   for (const [x, z] of tubes) box(g, 0.12, 0.04, 1.5, x, 3.48, z, new T.MeshStandardMaterial({ color: 0xffffff, emissive: 0xeaf6ff, emissiveIntensity: 1.1 }), false);
+  instProp(g, 'ph_mounted_fluorescent_lights', 0, tubes.map(([x, z]) => ({ p: v3(x, 3.44, z), ry: 0 })), { fit: 1.6, shadow: false });
+  // the frieze over the dryers: a Firefly plate (tex/ff/suds_frieze.webp); a code frieze of suds and type stands in
+  const fc = document.createElement('canvas'); fc.width = 2048; fc.height = 112; const fx = fc.getContext('2d')!;
+  fx.fillStyle = '#0b2a66'; fx.fillRect(0, 0, 2048, 112);
+  for (let i = 0; i < 160; i++) { const r = 4 + rnd() * 22; fx.strokeStyle = `rgba(0,229,255,${0.3 + rnd() * 0.5})`; fx.lineWidth = 2; fx.beginPath(); fx.arc(rnd() * 2048, 10 + rnd() * 92, r, 0, Math.PI * 2); fx.stroke(); }
+  fx.fillStyle = '#f0f4f8'; fx.font = '700 56px Archivo, Arial Narrow, sans-serif'; fx.textAlign = 'center'; fx.textBaseline = 'middle';
+  fx.fillText('SUDS & SPACE . WASH . DRY . FOLD . EVERY DRYER GOES SOMEWHERE ELSE', 1024, 58);
+  const ft = ffTex('tex/ff/suds_frieze.webp', fc);
+  const frieze = new T.Mesh(new T.PlaneGeometry(13.2, 0.72), new T.MeshStandardMaterial({ map: ft, emissiveMap: ft, roughness: 0.6, emissive: 0xffffff, emissiveIntensity: 0.35 }));
+  frieze.position.set(-4.88, 3.15, -6.8); frieze.rotation.y = Math.PI / 2; g.add(frieze);
   for (const z of [-3, -10]) { const l = new T.PointLight(0xeaf6ff, 7, 12, 1.6); l.position.set(0, 3.1, z); g.add(l); }
   const vl = new T.PointLight(0x2962ff, 12, 14, 1.4); vl.position.set(0, 2.2, -22); g.add(vl);
   g.add(new T.HemisphereLight(0xc8d6f0, 0x30302a, 0.32));
@@ -128,7 +162,7 @@ export function buildLaundromat(ctx: Ctx): Room {
     doors: { street: { pos: at(0, 0, 0), rotY: Math.PI }, roof: { pos: at(0, 0.62, -36.95), rotY: 0 }, cam: { pos: at(0, 1.7, -0.6), rotY: Math.PI },
       ...Object.fromEntries(dryers.map((p, i) => [`dryer${i}`, { pos: p, rotY: Math.PI / 2 }])) },
     walk, block,
-    bg: new T.Color(0x0a0f1c), fog: new T.FogExp2(0x0b1120, 0.01), exposure: 0.8,
+    bg: new T.Color(0x0a0f1c), fog: new T.FogExp2(0x0b1120, 0.01), exposure: 0.8, probe: 0.9,
     floorY: (x, z) => (z - O.z < -13.9 ? O.y + 0.65 : O.y),
     tick(_t, dt) { if (!ctx.still) { spin += dt * 0.9; drumMat.uniforms.uSpin.value = spin; } },
   };

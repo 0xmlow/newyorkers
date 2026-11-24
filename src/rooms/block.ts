@@ -8,6 +8,9 @@ import { wetStreet } from '../core/wet';
 import { skyDome } from '../core/sky';
 import { ORIGINS, type Ctx, type Room } from '../core/room';
 import { mlowCab } from '../core/cab';
+import { scan } from '../core/assets';
+import { glb } from '../core/assets';
+import { instProp, put as putUp, cut, ffTex } from '../core/up';
 
 // THE BLOCK. One Lower East Side block at night, 56 metres of street between two corners that are the same corner:
 // walk off either end and you come back in at the other (two live portals, recursive). Every door on it is a live
@@ -31,7 +34,7 @@ export function buildBlock(ctx: Ctx): Room {
 
   // ---------- ground ----------
   const asphalt = pbr('asphalt', 3, { roughness: 0.75, color: 0x6a6e78 });
-  const walkMat = pbr('pavers', 1.5, { color: 0x8a8f99 });
+  const walkMat = scan('concrete_pavement', 2.4, { color: 0x9a9ea6, roughness: 0.9 }); // Poly Haven CC0 scan: real NYC sidewalk flags
   const curb = pbr('concrete', 1, { color: 0x9aa0a8 });
   floorPlane(g, 10, 64, asphalt, 0, 0, -18);
   for (const s of [-1, 1]) {
@@ -57,6 +60,9 @@ export function buildBlock(ctx: Ctx): Room {
   const stone = pbr('concrete', 1.5, { color: 0xb4ad9e });
   const iron = new T.MeshStandardMaterial({ color: 0x15171c, metalness: 0.75, roughness: 0.5 });
   const wins: Win[] = [];
+  const fe = new T.Group(); g.add(fe);
+  const escapes: { x: number; z: number; side: number; floors: number }[] = [];
+  const acs: { p: T.Vector3; ry: number }[] = [];
   type B = { side: -1 | 1; z0: number; z1: number; floors: number; mat: T.Material; shop?: (x: number, zc: number, w: number) => void };
   function building(b: B) {
     const w = b.z0 - b.z1, zc = (b.z0 + b.z1) / 2, H = b.floors * 3.2 + 1.2, xf = b.side * 8, rot = b.side < 0 ? Math.PI / 2 : -Math.PI / 2;
@@ -73,19 +79,23 @@ export function buildBlock(ctx: Ctx): Room {
       wins.push({ pos: v3(xf - b.side * 0.02, y, z), rotY: rot, w: 1.05, h: 1.6, room: Math.floor(rnd() * 9), lit: rnd() < 0.62 ? 0.75 + rnd() * 0.5 : 0 });
       box(g, 0.22, 0.14, 1.3, xf - b.side * 0.1, y + 0.9, z, stone, false);
       box(g, 0.26, 0.08, 1.25, xf - b.side * 0.12, y - 0.84, z, stone, false);
+      // a window unit air conditioner in about one window in five, on its sill, sticking out over the street
+      if (rnd() < 0.22 && !(w > 7 && Math.abs(z - zc) < 2.9)) acs.push({ p: v3(xf - b.side * 0.16, y - 0.8, z), ry: rot });
     }
-    // fire escape: a platform per floor, railings, a drop ladder, the diagonal stair between
+    // fire escape: a platform per floor, railings, a drop ladder, the diagonal stair between. The code one is the
+    // stand in (its own group, hidden when the Poly Haven kit below has loaded)
     if (w > 7) {
       const fz = zc, fw = Math.min(5.2, w - 1.5);
+      escapes.push({ x: xf - b.side * 0.75, z: fz, side: b.side, floors: b.floors });
       for (let f = 1; f < b.floors; f++) {
         const y = f * 3.2 + 1.05, x = xf - b.side * 0.75;
-        box(g, 1.3, 0.05, fw, x, y, fz, iron);
-        box(g, 0.04, 0.04, fw, x - b.side * 0.63, y + 0.95, fz, iron, false);
-        box(g, 0.04, 0.04, fw, x - b.side * 0.63, y + 0.45, fz, iron, false);
-        for (let k = 0; k <= 10; k++) box(g, 0.025, 0.95, 0.025, x - b.side * 0.63, y + 0.48, fz - fw / 2 + (fw * k) / 10, iron, false);
+        box(fe, 1.3, 0.05, fw, x, y, fz, iron);
+        box(fe, 0.04, 0.04, fw, x - b.side * 0.63, y + 0.95, fz, iron, false);
+        box(fe, 0.04, 0.04, fw, x - b.side * 0.63, y + 0.45, fz, iron, false);
+        for (let k = 0; k <= 10; k++) box(fe, 0.025, 0.95, 0.025, x - b.side * 0.63, y + 0.48, fz - fw / 2 + (fw * k) / 10, iron, false);
         if (f < b.floors - 1) {
           const dir = f % 2 ? 1 : -1, ang = Math.atan2(3.2, 3.0), len = Math.hypot(3.2, 3.0);
-          const stair = new T.Group(); stair.position.set(x, y + 1.6, fz); stair.rotation.x = dir * ang; g.add(stair);
+          const stair = new T.Group(); stair.position.set(x, y + 1.6, fz); stair.rotation.x = dir * ang; fe.add(stair);
           for (const sx of [-0.3, 0.3]) box(stair, 0.04, 0.12, len, sx, 0, 0, iron, false);
           for (let k = 0; k < 13; k++) { const tr = box(stair, 0.6, 0.02, 0.16, 0, 0.02, -len / 2 + 0.15 + k * (len - 0.3) / 12, iron, false); tr.rotation.x = -dir * ang; }
         }
@@ -171,6 +181,49 @@ export function buildBlock(ctx: Ctx): Room {
     sign(g, ['INSIDE AVE'], 1.6, 0.36, v3(5.6, 4.8, -45.2), -Math.PI / 2, { bg: '#0b6e3f', ink: '#fff' });
   } });
   windows(g, wins);
+  batchStatic(fe, new Set()); fe.userData.dynamic = true;
+  fireEscapes(g, fe, escapes);
+  // the window units: Poly Haven's exterior air conditioner (clean and rusted), 0.62 m wide, on the sills
+  instProp(g, 'ph_exterior_aircon_unit', 0, acs.filter((_, i) => i % 2).map((a) => ({ p: a.p, ry: a.ry })), { pick: 'exterior_aircon_unit_0', fit: 0.66 });
+  instProp(g, 'ph_exterior_aircon_unit', 0, acs.filter((_, i) => !(i % 2)).map((a) => ({ p: a.p, ry: a.ry })), { pick: 'rusted', fit: 0.66 });
+
+  // ---------- THE BIG UPGRADE: built shopfronts, real street furniture, a ghost sign ----------
+  // cast iron pilasters at every party wall, ground floor, with a capital and a base (the Lower East Side shopfront)
+  const castIron = new T.MeshStandardMaterial({ color: 0x1c2026, metalness: 0.55, roughness: 0.45 });
+  for (const s of [-1, 1]) for (const z of s < 0 ? [10, 0.5, -9, -18.5, -30.5, -46] : [10, -1, -11, -23, -34, -46]) {
+    const x = s * 8 - s * 0.14;
+    box(g, 0.28, 3.7, 0.42, x, 2.0, z, castIron);
+    box(g, 0.4, 0.22, 0.56, x - s * 0.04, 3.86, z, castIron, false);
+    box(g, 0.38, 0.3, 0.52, x - s * 0.03, 0.3, z, castIron, false);
+    for (let k = 0; k < 3; k++) box(g, 0.05, 3.0, 0.05, x - s * 0.15, 2.1, z - 0.12 + k * 0.12, castIron, false); // fluting
+  }
+  // the closed shop at the far right: two roller shutters (Poly Haven, the tagged one and a clean one) down over
+  // the FOR RENT window, real slats you can read from the curb
+  putUp(g, 'ph_rollershutter_window_01', 0, 7.86, 0.15, -26.5, -Math.PI / 2, undefined, 3.3, '=rollershutter_window_01');
+  putUp(g, 'ph_rollershutter_window_01', 0, 7.86, 0.15, -30.4, -Math.PI / 2, undefined, 3.3, 'rollershutter_window_01_graffiti');
+  // trash night: cans and bags at the curb, three piles
+  instProp(g, 'ph_trashbag', 0.62, [[-5.7, 2.2, 0.3], [-5.5, 2.7, 1.9], [-5.9, 3.0, 4.1], [-5.6, -27.6, 1], [-5.8, -28.3, 2.6], [5.7, -4.2, 0.4], [5.5, -3.6, 2.2], [5.8, -4.9, 5.0]]
+    .map(([x, z, r]) => ({ p: v3(x, 0.15, z), ry: r, s: 0.85 + (r % 1) * 0.3 })));
+  instProp(g, 'ph_metal_trash_can', 0.82, [[-5.9, 1.4, 0.2], [5.85, -5.6, 2.1], [-5.95, -26.8, 4]].map(([x, z, r]) => ({ p: v3(x, 0.15, z), ry: r })), { pick: 'metal_trash_can' });
+  // the N3W BELL payphone and the stickered utility box (our own museum pack), a camera over the subway door
+  putUp(g, 'nyb_payphone', 0.78, 5.75, 1.05, -14.2, -Math.PI / 2);
+  box(g, 0.08, 1.05, 0.08, 5.78, 0.67, -14.2, castIron, false);
+  putUp(g, 'nyb_walking_newsbox', 1.15, -6.9, 0.15, -6.6, Math.PI / 2);
+  putUp(g, 'ph_security_camera_01', 0.32, 7.6, 3.05, -18.9, -Math.PI / 2 - 0.5);
+  // the ghost sign on the blank party wall over the hoarding (a Firefly plate; the code paint stands in)
+  const gc = document.createElement('canvas'); gc.width = 1024; gc.height = 1400; const gx = gc.getContext('2d')!;
+  gx.fillStyle = 'rgba(0,0,0,0)'; gx.clearRect(0, 0, 1024, 1400);
+  gx.globalAlpha = 0.82; gx.fillStyle = '#e8dcc2'; gx.textAlign = 'center';
+  gx.font = '700 210px Archivo, Arial Narrow, sans-serif'; gx.fillText('ROOMS', 512, 300); gx.fillText('BIGGER', 512, 540);
+  gx.font = '700 120px Archivo, Arial Narrow, sans-serif'; gx.fillText('ON THE INSIDE', 512, 720);
+  gx.globalAlpha = 0.7; gx.fillStyle = '#b8442c'; gx.fillRect(110, 800, 804, 150); gx.fillStyle = '#e8dcc2';
+  gx.font = '600 92px Archivo, Arial Narrow, sans-serif'; gx.fillText('ASK FOR 5A', 512, 905);
+  gx.globalAlpha = 0.75; gx.font = '500 70px Archivo, Arial Narrow, sans-serif'; gx.fillText('ELDRIDGE ST . SINCE 1897', 512, 1060);
+  // weather it: knock the paint back in brick sized patches
+  gx.globalCompositeOperation = 'destination-out';
+  for (let i = 0; i < 2600; i++) { gx.globalAlpha = rnd() * 0.5; gx.fillRect(Math.floor(rnd() * 32) * 32 + (Math.floor(rnd() * 2) * 16), Math.floor(rnd() * 140) * 10, 30 + rnd() * 20, 9); }
+  const ghost = new T.Mesh(new T.PlaneGeometry(7.4, 10.1), new T.MeshStandardMaterial({ map: ffTex('tex/ff/ghost_sign.webp', gc), transparent: true, roughness: 0.95, depthWrite: false }));
+  ghost.position.set(-7.98, 10.4, -24.5); ghost.rotation.y = Math.PI / 2; g.add(ghost);
 
   // water towers on the roofs, cut against the sky
   for (const [x, z, y] of [[-12, -4, 17.2], [-13, -26, 19], [12, -16, 20.4], [12, -40, 20.4]] as const) {
@@ -286,7 +339,7 @@ export function buildBlock(ctx: Ctx): Room {
     ],
     doors: Object.fromEntries(Object.entries(BLOCK_DOORS).map(([k, d]) => [k, { pos: wall(d.pos.x, d.pos.z), rotY: d.rotY }])),
     walk, block,
-    bg: new T.Color(INK.void), fog: new T.FogExp2(0x040817, 0.014), exposure: 0.82, env: 0.35,
+    bg: new T.Color(INK.void), fog: new T.FogExp2(0x040817, 0.014), exposure: 0.82, env: 0.35, probe: 0,
     floorY: (x, z) => (Math.abs(x - O.x) > 5.1 && z - O.z < 10.5 && z - O.z > -46.5 ? O.y + 0.15 : O.y),
     tick(t, dt, cam, active) {
       flower.tick(cam.position, t, dt, ctx.still);
@@ -311,4 +364,50 @@ export function buildBlock(ctx: Ctx): Room {
       while (p) { if (p === flower.object) { flower.blink(); return 'It blinked. It has been watching the whole time.'; } p = p.parent; }
     },
   };
+}
+
+/** The Poly Haven modular fire escape (CC0) comes as an exploded kit in one file: two platforms with brackets, a
+ * railing, a stair and a drop ladder laid out side by side. Cut it into its parts by where each part lies in the file,
+ * then stack them up the facades, one storey at a time, the stair switching back every floor. One draw call per part. */
+function fireEscapes(g: T.Group, stand: T.Group, list: { x: number; z: number; side: number; floors: number }[]) {
+  glb('up/ph_modular_fire_escape').then((src) => {
+    const part = (keep: (c: T.Vector3, m: string) => boolean) => {
+      const bits = cut(src, keep); if (!bits.length) return null;
+      const box = new T.Box3(); bits.forEach((b) => { b.geo.computeBoundingBox(); box.union(b.geo.boundingBox!); });
+      return { bits, box };
+    };
+    const plat = part((c, m) => m === 'modular_fire_escape_02' && c.y < 3);
+    const rail = part((_c, m) => m === 'modular_fire_escape_01.001');
+    const stair = part((c, m) => m === 'modular_fire_escape_01' && c.x < 1.5 && c.y > 2.5 && c.y < 7.2);
+    const ladder = part((c, m) => m === 'modular_fire_escape_01' && c.x >= 1.5 && c.y < 8.2);
+    if (!plat || !rail || !stair || !ladder) return;
+    const P: T.Matrix4[] = [], R: T.Matrix4[] = [], S: T.Matrix4[] = [], L: T.Matrix4[] = [];
+    const pc = plat.box.getCenter(new T.Vector3()), pw = plat.box.max.x - plat.box.min.x;
+    const rc = rail.box.getCenter(new T.Vector3());
+    const sh = stair.box.max.y - stair.box.min.y;
+    for (const e of list) {
+      const ry = e.side < 0 ? Math.PI / 2 : -Math.PI / 2, q = new T.Quaternion().setFromEuler(new T.Euler(0, ry, 0));
+      const at = (y: number) => new T.Matrix4().compose(new T.Vector3(e.x, y, e.z), q, new T.Vector3(1, 1, 1));
+      for (let f = 1; f < e.floors; f++) {
+        const deck = f * 3.2 + 1.05;
+        P.push(at(deck).multiply(new T.Matrix4().makeTranslation(-pc.x, -plat.box.max.y, -pc.z)));
+        R.push(at(deck).multiply(new T.Matrix4().makeTranslation(-rc.x, -rail.box.min.y, -rc.z)));
+        if (f < e.floors - 1) {
+          // the stair from this deck to the next: scaled to the 3.2 m storey, mirrored every other floor
+          const k = 3.2 / sh, dir = f % 2 ? 1 : -1;
+          const m = at(deck).multiply(new T.Matrix4().makeTranslation(dir * (-pw / 2 + 0.25), 0, 0))
+            .multiply(new T.Matrix4().makeScale(dir * k, k, k)).multiply(new T.Matrix4().makeTranslation(-stair.box.min.x, -stair.box.min.y, -pc.z));
+          S.push(m);
+        }
+        if (f === 1) L.push(at(deck).multiply(new T.Matrix4().makeTranslation(pw / 2 - 0.45, 0, 0)).multiply(new T.Matrix4().makeScale(0.55, 0.55, 0.55))
+          .multiply(new T.Matrix4().makeTranslation(-(ladder.box.min.x + ladder.box.max.x) / 2, -ladder.box.max.y, -(ladder.box.min.z + ladder.box.max.z) / 2)));
+      }
+    }
+    for (const [pt, list2] of [[plat, P], [rail, R], [stair, S], [ladder, L]] as const)
+      for (const b of pt.bits) {
+        const im = new T.InstancedMesh(b.geo, b.mat, list2.length);
+        list2.forEach((m, i) => im.setMatrixAt(i, m)); im.castShadow = true; im.receiveShadow = true; im.computeBoundingSphere(); g.add(im);
+      }
+    stand.visible = false;
+  }).catch(() => {});
 }

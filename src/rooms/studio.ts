@@ -1,5 +1,5 @@
 import * as T from 'three';
-import { prop, tex, pbr } from '../core/assets';
+import { prop, tex, pbr, scan, glb } from '../core/assets';
 import { box, sign, v3, seeded } from '../core/kit';
 import { drips, addThreshold, INK } from '../core/mlow';
 import { clickables } from '../core/hang';
@@ -60,6 +60,27 @@ function wallpaper(seed: number) {
   const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; return t;
 }
 
+/** THE BIG UPGRADE: a real model, put in the rectangle at (x, z) facing ry, `h` metres tall (or `fit` on its long
+ * side), then every vertex warped with the room like the walls, so from the peephole it sits square and true and the
+ * furniture is part of the trick. Normals are kept from the model (the warp is gentle). Poly Haven, CC0. */
+function wprop(parent: T.Object3D, name: string, h: number, x: number, z: number, ry: number, fit = 0, y = 0) {
+  glb('up/' + name).then((src) => {
+    src.updateMatrixWorld(true);
+    const box = new T.Box3().setFromObject(src), size = box.getSize(new T.Vector3()), c = box.getCenter(new T.Vector3());
+    const k = h ? h / size.y : fit / Math.max(size.x, size.z);
+    const place = new T.Matrix4().compose(v3(x, y, z), new T.Quaternion().setFromEuler(new T.Euler(0, ry, 0)), v3(k, k, k))
+      .multiply(new T.Matrix4().makeTranslation(-c.x, -box.min.y, -c.z));
+    src.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh) return;
+      const geo = m.geometry.clone().applyMatrix4(place.clone().multiply(m.matrixWorld));
+      const p = geo.attributes.position, v = new T.Vector3();
+      for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const kk = s(v.x); v.sub(E).multiplyScalar(kk).add(E); p.setXYZ(i, v.x, v.y, v.z); }
+      geo.computeBoundingSphere();
+      const mesh = new T.Mesh(geo, m.material); mesh.castShadow = mesh.receiveShadow = true; parent.add(mesh);
+    });
+  }).catch(() => {});
+}
+
 export function buildStudio(ctx: Ctx): Room {
   const O = ORIGINS.studio, g = new T.Group(); g.position.copy(O); ctx.scene.add(g);
   const at = (x: number, y: number, z: number) => O.clone().add(v3(x, y, z));
@@ -86,7 +107,7 @@ export function buildStudio(ctx: Ctx): Room {
   const hall = pbr('plaster', 1.5, { color: 0x1c2240 });
   box(g, 0.1, 2.9, 1.95, -0.75, 1.45, -0.35, hall); box(g, 0.1, 2.9, 1.95, 0.75, 1.45, -0.35, hall);
   box(g, 1.6, 0.1, 1.95, 0, 2.95, -0.35, hall, false);
-  const hallFloor = new T.Mesh(new T.PlaneGeometry(1.5, 1.6), pbr('planks', 0.8, { color: 0x4a3324 })); hallFloor.rotation.x = -Math.PI / 2; hallFloor.position.set(0, 0, -0.3); g.add(hallFloor);
+  const hallFloor = new T.Mesh(new T.PlaneGeometry(1.5, 1.6), scan('herringbone_parquet', 0.9, { color: 0x9a7a5a, roughness: 0.5 })); hallFloor.rotation.x = -Math.PI / 2; hallFloor.position.set(0, 0, -0.3); g.add(hallFloor);
 
   // the window on the back wall: the skyline, lit
   const winM = new T.MeshBasicMaterial({ map: tex('plates/skyline.jpg'), toneMapped: false, color: new T.Color(0.75, 0.75, 0.8) });
@@ -95,10 +116,19 @@ export function buildStudio(ctx: Ctx): Room {
   // furniture, all warped with the room: the Murphy bed half down, the radiator, the kitchen with the tub in it
   const wood = new T.MeshStandardMaterial({ color: 0x5a3b26, roughness: 0.6 }), white = new T.MeshStandardMaterial({ color: 0xe9eef5, roughness: 0.3 });
   wbox(g, wood, v3(-2.75, 1.2, -4.6), 0.4, 2.4, 1.4);
-  wbox(g, white, v3(-1.9, 0.35, -4.6), 1.9, 0.3, 1.3);
+  // the bed, half down out of the Murphy cabinet: Poly Haven's old iron bed frame, warped with the room
+  wprop(g, 'ph_old_bed_frame', 0, -1.85, -4.6, Math.PI / 2, 2.0);
+  wbox(g, white, v3(-1.85, 0.5, -4.6), 1.8, 0.16, 0.82);
   wbox(g, new T.MeshStandardMaterial({ color: 0xc9a050, metalness: 0.9, roughness: 0.3 }), v3(2.6, 0.45, -5.0), 0.25, 0.9, 1.2);
   wbox(g, white, v3(2.35, 0.32, -2.6), 0.7, 0.64, 1.5);
   wbox(g, new T.MeshStandardMaterial({ color: 0x9fd0ff, roughness: 0.05, transparent: true, opacity: 0.7 }), v3(2.35, 0.6, -2.6), 0.56, 0.02, 1.34);
+  // the rest of the 900 square feet, every piece warped with the room (Poly Haven, CC0): the stove next to the tub,
+  // an armchair and a side table with the television in the far right corner's company, a plant on the sill
+  wprop(g, 'ph_electric_stove', 0.86, 2.6, -3.85, -Math.PI / 2);
+  wprop(g, 'ph_ArmChair_01', 1.02, 1.15, -6.55, Math.PI + 0.5);
+  wprop(g, 'ph_side_table_01', 0.55, 0.15, -7.4, 0);
+  wprop(g, 'ph_television_02', 0.38, 0.15, -7.4, 0.3, 0, 0.55);
+  wprop(g, 'ph_potted_plant_04', 0.3, 0.55, -7.85, 0, 0, 0.96);
   sign(g, ['TUB IN THE KITCHEN', 'A NEW YORK CLASSIC'], 0.9, 0.3, warp(v3(2.95, 1.3, -2.6)), -Math.PI / 2, { bg: '#f0f4f8', ink: '#06163a' });
   // the two figures: identical, unscaled, standing on the warped floor in the far corners
   const left = warp(v3(-2.35, 0, -7.35)), right = warp(v3(2.35, 0, -7.35));
@@ -156,9 +186,9 @@ export function buildStudio(ctx: Ctx): Room {
     tick() {},
     // standing: the hall, or inside the rectangle once un warped
     stand: (lx: number, lz: number) => {
-      if (lz > -1.0) return Math.abs(lx) < 0.55 && lz < 0.9 && lz > -1.2;
+      if (lz > -1.45) return Math.abs(lx) < 0.55 && lz < 0.9; // the hall runs on until the warped room takes over (it stopped 25 cm short)
       const u = unwarp(lx, lz);
-      return u.x > X0 + 0.35 && u.x < X1 - 0.35 && u.z < Z0 - 0.15 && u.z > Z1 + 0.35 && !(u.x < -0.8 && u.z < -3.8 && u.z > -5.4) && !(u.x > 1.9 && u.z > -3.5);
+      return u.x > X0 + 0.35 && u.x < X1 - 0.35 && u.z < Z0 - 0.15 && u.z > Z1 + 0.35 && !(u.x < -0.8 && u.z < -3.8 && u.z > -5.4) && !(u.x > 1.9 && u.z > -4.2) && !(u.x > 0.5 && u.z < -6.0 && u.x < 1.8) && !(u.x > -0.3 && u.x < 0.6 && u.z < -7.0);
     },
   };
 }

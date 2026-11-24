@@ -1,5 +1,6 @@
 import * as T from 'three';
-import { pbr, prop } from '../core/assets';
+import { pbr, prop, scan } from '../core/assets';
+import { instProp, put } from '../core/up';
 import { box, floorPlane, sign, v3, seeded, type Rect } from '../core/kit';
 import { contour, drips, eyeFlower, addThreshold, shared, INK } from '../core/mlow';
 import { hang } from '../core/hang';
@@ -20,9 +21,10 @@ export function buildRooftop(ctx: Ctx): Room {
   const rnd = seeded(113), art = ctx.m.art.rooftop, at = (x: number, y: number, z: number) => O.clone().add(v3(x, y, z));
 
   // ---------- the roof ----------
-  const tar = pbr('asphalt', 1.5, { color: 0x2a2a30, roughness: 0.55 });
+  // THE BIG UPGRADE: tar beach as a scanned tar roof (Poly Haven), the parapet coping as a scanned capstone
+  const tar = scan('tar', 2.2, { color: 0x6a6c72, roughness: 0.62 });
   const brick = contour(pbr('brick', 2, { color: 0x7d5c55 }), { coverage: 0.0, density: 9, glow: 2 });
-  const cap = pbr('concrete', 1, { color: 0x9a948a });
+  const cap = scan('parapet', 1.2, { color: 0xc8c2b6 });
   floorPlane(g, 18, 18, tar, 0, 0, 0);
   for (const [w, d, x, z] of [[18.4, 0.3, 0, -9.05], [18.4, 0.3, 0, 9.05], [0.3, 18.4, -9.05, 0], [0.3, 18.4, 9.05, 0]] as const) {
     box(g, w, 1.05, d, x, 0.52, z, brick); box(g, w + 0.1, 0.08, d + 0.12, x, 1.08, z, cap);
@@ -35,6 +37,24 @@ export function buildRooftop(ctx: Ctx): Room {
   // paint runs down the hut corners, not across the doorways (a doorway is a portal: whatever hangs in it shows on the far side)
   drips(g, v3(-7.82, 2.7, 5.6), v3(-7.82, 2.7, 6.6), 10, 117, 1.8); drips(g, v3(-4.58, 2.7, 5.6), v3(-4.58, 2.7, 6.6), 10, 119, 1.8); drips(g, v3(7.82, 2.5, 6.0), v3(7.82, 2.5, 7.0), 10, 118, 1.6);
   addThreshold(at(-6.2, 1.2, 5.5), 2.4); addThreshold(at(6.6, 1.2, 5.9), 2.4);
+  // what is really on a tenement roof (Poly Haven, CC0, and built): two condensers by the bulkhead, a bistro set and
+  // a warming barrel by the benches, a propane tank, planters on the parapet, a flood light on the bulkhead,
+  // chimney stacks with clay flues, a skylight with wired glass
+  instProp(g, 'ph_exterior_aircon_unit', 0, [{ p: v3(-3.6, 0, 7.9), ry: Math.PI }, { p: v3(-2.6, 0, 7.9), ry: Math.PI }], { pick: 'exterior_aircon_unit_0|rusted', fit: 1.6 });
+  put(g, 'ph_outdoor_table_chair_set_01', 0.86, 5.5, 0, -1.2, 0.7);
+  put(g, 'ph_barrel_stove', 0.86, -1.6, 0, -3.4, 0.3);
+  put(g, 'ph_propane_tank', 0.55, -0.85, 0, -3.9, 0.5);
+  instProp(g, 'ph_planter_box_01', 0, [[-3, 8.6, 0], [0.6, 8.6, 0], [8.55, 2.5, Math.PI / 2]].map(([x, z, r]) => ({ p: v3(x, 0, z), ry: r })), { fit: 1.0 });
+  put(g, 'ph_security_light', 0.42, -6.2, 2.1, 5.32, Math.PI);
+  const clay = new T.MeshStandardMaterial({ color: 0x9a4a2e, roughness: 0.7 });
+  for (const [x, z] of [[-8.2, -8.2], [2.8, 8.3]] as const) {
+    box(g, 1.1, 1.9, 0.8, x, 0.95, z, brick); box(g, 1.2, 0.1, 0.9, x, 1.92, z, cap);
+    for (const dx of [-0.25, 0.25]) { const f = new T.Mesh(new T.CylinderGeometry(0.11, 0.13, 0.45, 14), clay); f.position.set(x + dx, 2.2, z); f.castShadow = true; g.add(f); }
+  }
+  const skyF = new T.MeshStandardMaterial({ color: 0x2a3a2c, metalness: 0.5, roughness: 0.5 });
+  box(g, 2.4, 0.5, 1.6, -4.2, 0.25, -1.0, brick);
+  for (const s2 of [-1, 1]) { const pane = box(g, 2.4, 0.03, 0.9, -4.2, 0.75, -1.0 + s2 * 0.4, new T.MeshStandardMaterial({ color: 0x24323e, roughness: 0.08, metalness: 0.6, transparent: true, opacity: 0.8 }), false); pane.rotation.x = s2 * 0.32; }
+  box(g, 2.5, 0.06, 0.06, -4.2, 0.98, -1.0, skyF, false);
   // the water tower, the witness, the garden, the chairs, the string lights
   const wt = prop('water_tower', 8); wt.position.set(5.6, 0, -5.4); g.add(wt);
   const witness = prop('bronze_figure', 1.75); witness.position.set(0.4, 0, -7.6); witness.rotation.y = Math.PI; g.add(witness);
@@ -154,7 +174,8 @@ export function buildRooftop(ctx: Ctx): Room {
   void INK;
 
   const walk: Rect[] = [[-8.8, -8.8, 8.8, 8.8]];
-  const block: Rect[] = [[-7.8, 5.8, -4.6, 8.8], [5.4, 6.2, 7.8, 8.8], [4.0, -7.0, 7.2, -3.8], [-7.9, -3.7, -6.7, 4.3], [0.1, -7.9, 0.7, -7.3]];
+  const block: Rect[] = [[-7.8, 5.8, -4.6, 8.8], [5.4, 6.2, 7.8, 8.8], [4.0, -7.0, 7.2, -3.8], [-7.9, -3.7, -6.7, 4.3], [0.1, -7.9, 0.7, -7.3],
+    [-4.4, 7.4, -1.8, 8.8], [4.8, -2.0, 6.2, -0.4], [-2.0, -3.8, -1.2, -3.0], [-1.15, -4.2, -0.55, -3.6], [-5.4, -1.8, -3.0, -0.2], [-8.8, -8.8, -7.6, -7.7], [2.2, 7.8, 3.4, 8.8]];
   return {
     id: 'rooftop', name: 'Tar beach', line: 'The city does not stop at the horizon. Look up.',
     origin: O, group: g,
@@ -167,7 +188,7 @@ export function buildRooftop(ctx: Ctx): Room {
     ],
     doors: { stairs: { pos: at(-6.2, 0, 5.48), rotY: Math.PI }, chute: { pos: at(6.6, 0, 5.88), rotY: Math.PI }, cam: { pos: at(0, 1.7, 6.5), rotY: Math.PI } },
     walk, block,
-    bg: new T.Color(INK.void), fog: new T.FogExp2(0x070d24, 0.0015), exposure: 0.9, env: 0.3,
+    bg: new T.Color(INK.void), fog: new T.FogExp2(0x070d24, 0.0015), exposure: 0.9, env: 0.3, probe: 0,
     floorY: () => O.y,
     tick(t, dt, cam) { if (!ctx.still) placeCabs(t); flower.tick(cam.position, t, dt, ctx.still); },
     interact(o) {

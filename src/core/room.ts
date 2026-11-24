@@ -23,6 +23,8 @@ export interface Room {
   bg: T.Color; fog: T.FogExp2;
   exposure?: number;
   env?: number;            // how much of the night city HDRI shows in reflections (outdoors 0.35; rooms far less)
+  probe?: number;          // with THE LOOK on: the strength of the room's own reflection probe (default 0.55; 0 = keep the night HDRI, for the outdoor rooms)
+  probeAt?: T.Vector3;     // where that probe is taken (default the spawn point)
   /** Floor height (world y of the floor under x,z), given the current eye y for rooms with several levels. */
   floorY(x: number, z: number, eyeY: number): number;
   /** Per frame. cam is the real camera, or the portal camera when this room is drawn through a doorway. */

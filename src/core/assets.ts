@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 // One loader for everything, with caches, a load counter for the curtain, and failures recorded on window.inside.
 
@@ -51,18 +52,34 @@ export function pbr(name: string, tile = 1, opts: Partial<T.MeshStandardMaterial
   });
 }
 
+/** A scanned CC0 surface from Poly Haven, 1k WebP in public/tex/ph (THE BIG UPGRADE, 2026-11-24). Until the scan
+ * arrives the material shows `color` at its plain tint, so nothing flashes white or mirror bright on a slow phone. */
+export function scan(name: string, tile = 1, opts: Partial<T.MeshStandardMaterialParameters> = {}, tileY = tile) {
+  const r: [number, number] = [1 / tile, 1 / tileY];
+  return new T.MeshStandardMaterial({
+    map: tex(`tex/ph/${name}_c.webp`, true, r),
+    normalMap: tex(`tex/ph/${name}_n.webp`, false, r),
+    roughnessMap: tex(`tex/ph/${name}_r.webp`, false, r),
+    ...opts,
+  });
+}
+
 const gltf = new GLTFLoader();
+// the CC0 props of THE BIG UPGRADE (public/glb/up) come Draco packed, as the museum and ON LOCATION ship them
+const draco = new DRACOLoader(); draco.setDecoderPath('draco/'); gltf.setDRACOLoader(draco);
 const glbCache = new Map<string, Promise<T.Group>>();
+/** The loaded scene of public/glb/<name>.glb, cached (clone it before you add it). */
+export function glb(name: string): Promise<T.Group> {
+  let p = glbCache.get(name);
+  if (!p) { p = track(gltf.loadAsync(`glb/${name}.glb`).then((g) => g.scene), name); glbCache.set(name, p); }
+  return p;
+}
+
 /** A clone of a prop from the museum pack, scaled to a height in metres, its base on y = 0, centred on x and z. */
 export function prop(name: string, height?: number, cb?: (g: T.Group) => void): T.Group {
   const holder = new T.Group();
   holder.name = name;
-  let p = glbCache.get(name);
-  if (!p) {
-    p = track(gltf.loadAsync(`glb/${name}.glb`).then((g) => g.scene), name);
-    glbCache.set(name, p);
-  }
-  p.then((src) => {
+  glb(name).then((src) => {
     const g = src.clone(true);
     const box = new T.Box3().setFromObject(g), size = box.getSize(new T.Vector3()), c = box.getCenter(new T.Vector3());
     const k = height ? height / Math.max(1e-3, size.y) : 1;

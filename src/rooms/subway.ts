@@ -1,5 +1,7 @@
 import * as T from 'three';
-import { pbr, prop } from '../core/assets';
+import { pbr, prop, scan } from '../core/assets';
+import { instProp, put, ffTex } from '../core/up';
+import { signTexture } from '../core/kit';
 import { castProp } from '../core/rig';
 import { box, floorPlane, sign, v3, seeded, type Rect } from '../core/kit';
 import { contour, drips, addThreshold, shared } from '../core/mlow';
@@ -24,8 +26,10 @@ export function buildSubway(ctx: Ctx): Room {
   for (let y = 0; y <= 256; y += 32) { tx.beginPath(); tx.moveTo(0, y); tx.lineTo(256, y); tx.stroke(); }
   for (let y = 0; y < 256; y += 32) for (let x = (y / 32) % 2 ? 32 : 0; x <= 256; x += 64) { tx.beginPath(); tx.moveTo(x, y); tx.lineTo(x, y + 32); tx.stroke(); }
   const tileT = new T.CanvasTexture(tileC); tileT.colorSpace = T.SRGBColorSpace; tileT.wrapS = tileT.wrapT = T.RepeatWrapping; tileT.repeat.set(0.75, 0.75);
-  const tile = contour(new T.MeshStandardMaterial({ map: tileT, roughness: 0.25 }), { coverage: 0, density: 10, glow: 1.8, ground: 0.5 });
-  floorPlane(g, 6, 6.6, pbr('concrete', 1.2, { color: 0x8a8d90 }), 0, 0, 3.1);
+  // THE BIG UPGRADE: the station's glazed white tile and its worn concrete floor as Poly Haven scans
+  const tile = contour(scan('long_white_tiles', 0.75, { color: 0xe6e8e4, roughness: 0.22 }), { coverage: 0, density: 10, glow: 1.8, ground: 0.5 });
+  void tileT;
+  floorPlane(g, 6, 6.6, scan('concrete_floor_worn_001', 2, { color: 0xa8aaac, roughness: 0.7 }), 0, 0, 3.1);
   box(g, 0.2, 3.2, 6.6, -3, 1.6, 3.1, tile); box(g, 0.2, 3.2, 6.6, 3, 1.6, 3.1, tile);
   box(g, 6.2, 0.2, 6.6, 0, 3.2, 3.1, new T.MeshStandardMaterial({ color: 0x1a1d22 }), false);
   box(g, 2.4, 3.2, 0.2, -1.8, 1.6, 6.4, tile); box(g, 2.4, 3.2, 0.2, 1.8, 1.6, 6.4, tile); box(g, 1.2, 0.9, 0.2, 0, 2.75, 6.4, tile);
@@ -36,10 +40,20 @@ export function buildSubway(ctx: Ctx): Room {
   const steel = pbr('steel', 1, { metalness: 0.9, roughness: 0.25, color: 0xd5dae0 });
   const hatchRing = new T.Mesh(new T.TorusGeometry(1.0, 0.07, 16, 72), steel); hatchRing.position.set(0, AX, 0.22); g.add(hatchRing);
   // the mosaic name tablet, MTA style, and the signs
-  sign(g, ['BIGGER ON THE INSIDE ST'], 3.2, 0.42, v3(-2.88, 2.35, 3.0), Math.PI / 2, { bg: '#7a2e1c', ink: '#f2ead8', border: '#c9a050', font: 'Archivo' });
+  // the name tablet: a Firefly mosaic (tex/ff/station_tablet.webp, queued); the painted tablet stands in, set in a
+  // built frame of tile
+  const tab = signTexture(['BIGGER ON THE INSIDE ST'], 3.2, 0.42, { bg: '#7a2e1c', ink: '#f2ead8', border: '#c9a050', font: 'Archivo' });
+  const tabM = new T.MeshStandardMaterial({ map: ffTex('tex/ff/station_tablet.webp', tab.image as HTMLCanvasElement), roughness: 0.35 });
+  const tabP = new T.Mesh(new T.PlaneGeometry(3.2, 0.42), tabM); tabP.position.set(-2.855, 2.35, 3.0); tabP.rotation.y = Math.PI / 2; g.add(tabP);
+  box(g, 0.03, 0.56, 3.34, -2.885, 2.35, 3.0, new T.MeshStandardMaterial({ color: 0x5a6a3a, roughness: 0.3 }), false);
   sign(g, ['ALL TRAINS', 'ALL DIRECTIONS . AT ONCE'], 2.2, 0.55, v3(2.88, 2.4, 3.6), -Math.PI / 2, { bg: '#0a0a0a', ink: '#fff', glow: 1.3 });
   sign(g, ['STAND CLEAR OF THE CLOSING REALITY'], 2.4, 0.22, v3(0, 2.95, 0.25), 0, { bg: '#0a0a0a', ink: '#ffd84a', glow: 1.3, font: 'Plex, monospace' });
   for (const x of [-1.6, 0, 1.6]) { const t = prop('penn_turnstile', 1.05); t.position.set(x, 0, 3.4); g.add(t); }
+  // the station's furniture (Poly Haven, CC0): fixtures on the ceiling, a can by the machine, a camera on the door
+  instProp(g, 'ph_mounted_fluorescent_lights', 0, [[-1.4, 1.6], [1.4, 1.6], [-1.4, 4.8], [1.4, 4.8]].map(([x, z]) => ({ p: v3(x, 3.06, z), ry: 0 })), { fit: 1.5, shadow: false });
+  for (const [x, z] of [[-1.4, 1.6], [1.4, 1.6], [-1.4, 4.8], [1.4, 4.8]]) box(g, 0.1, 0.03, 1.3, x, 3.07, z, new T.MeshStandardMaterial({ color: 0xffffff, emissive: 0xf4f8ff, emissiveIntensity: 1.4 }), false);
+  instProp(g, 'ph_metal_trash_can', 0.82, [{ p: v3(2.45, 0, 2.2), ry: 0.4 }], { pick: '=metal_trash_can' });
+  put(g, 'ph_security_camera_01', 0.3, -2.7, 2.85, 0.6, 0.8);
   const mvm = new T.MeshStandardMaterial({ color: 0x2a2f38, metalness: 0.5, roughness: 0.4 });
   box(g, 0.7, 1.7, 0.5, 2.55, 0.85, 1.2, mvm);
   sign(g, ['METROCARD', 'SINGLE RIDE . UNLIMITED . ROUND TRIP TO NOWHERE'], 0.6, 0.35, v3(2.29, 1.35, 1.2), -Math.PI / 2, { bg: '#ffd84a', ink: '#0a0a0a' });
@@ -54,7 +68,7 @@ export function buildSubway(ctx: Ctx): Room {
   // ---------- the train, which rolls ----------
   const roller = new T.Group(); roller.userData.dynamic = true; roller.position.set(0, AX, 0); g.add(roller);
   const wallM = new T.MeshStandardMaterial({ color: 0x7d848c, metalness: 0.75, roughness: 0.4 });
-  const floorM = pbr('concrete', 0.6, { color: 0x4a4d52, roughness: 0.8 });
+  const floorM = scan('tar', 1.2, { color: 0x8a8c90, roughness: 0.75 }); // the speckled floor of a subway car
   const ceilM = new T.MeshStandardMaterial({ color: 0x5a6068, roughness: 0.6 });
   const seatM = new T.MeshStandardMaterial({ color: 0xff8a1a, roughness: 0.4 });
   const seatM2 = new T.MeshStandardMaterial({ color: 0xffc21a, roughness: 0.4 });
@@ -99,6 +113,14 @@ export function buildSubway(ctx: Ctx): Room {
   }
   const inst = (list: T.Matrix4[], mat: T.Material, geo: T.BufferGeometry = new T.BoxGeometry(1, 1, 1)) => { const im = new T.InstancedMesh(geo, mat, list.length); list.forEach((x, i) => im.setMatrixAt(i, x)); roller.add(im); return im; };
   inst(seats, seatM); inst(seats2, seatM2);
+  // seat backs and a stainless kick panel under every bench, so the benches read as the moulded ones they are
+  const backs: T.Matrix4[] = [], kicks: T.Matrix4[] = [];
+  for (const sm of [...seats, ...seats2]) {
+    const p = new T.Vector3().setFromMatrixPosition(sm), sx = Math.sign(p.x);
+    m.compose(v3(sx * (HW - 0.05), p.y + 0.3, p.z), q, v3(0.06, 0.55, 2.2)); backs.push(m.clone());
+    m.compose(v3(p.x - sx * 0.2, FLOOR + 0.2, p.z), q, v3(0.03, 0.4, 2.2)); kicks.push(m.clone());
+  }
+  inst(backs.slice(0, seats.length), seatM); inst(backs.slice(seats.length), seatM2); inst(kicks, steel);
   const poleMesh = inst(poles, steel, new T.CylinderGeometry(1, 1, 1, 12));
   inst(wins, winMat);
   inst(lights, new T.MeshStandardMaterial({ color: 0xffffff, emissive: 0xf4f8ff, emissiveIntensity: 1.2 }));

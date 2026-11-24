@@ -1,5 +1,6 @@
 import * as T from 'three';
-import { pbr, prop } from '../core/assets';
+import { pbr, prop, scan } from '../core/assets';
+import { instProp, put } from '../core/up';
 import { box, floorPlane, sign, v3, seeded, type Rect } from '../core/kit';
 import { contour, drips, addThreshold, INK } from '../core/mlow';
 import { hang, poster, sticker } from '../core/hang';
@@ -16,9 +17,17 @@ export function buildBodega(ctx: Ctx): Room {
   const rnd = seeded(23), art = ctx.m.art.bodega, at = (x: number, y: number, z: number) => O.clone().add(v3(x, y, z));
   const L = 262;
 
-  const floor = pbr('terrazzo', 1.2, { color: 0xb9b3a6, roughness: 0.35 });
+  // THE BIG UPGRADE: the bodega's checkerboard floor as a Poly Haven scan (worn stone checker, 40 cm squares)
+  const floor = scan('floor_tiles_06', 1.6, { color: 0xc4beb2, roughness: 0.55 });
   const wallM = contour(pbr('plaster', 2, { color: 0x31384a }), { coverage: 0.25, density: 10, glow: 1.7, ground: 0.6 });
-  const ceil = new T.MeshStandardMaterial({ color: 0x15181f, roughness: 0.9 });
+  // a drop ceiling: 60 cm fissured acoustic tiles in a grey T bar grid (canvas), every metre of the mile
+  const cc = document.createElement('canvas'); cc.width = cc.height = 256; const cx = cc.getContext('2d')!;
+  cx.fillStyle = '#d9d6cc'; cx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 2200; i++) { cx.fillStyle = `rgba(90,86,76,${0.08 + rnd() * 0.22})`; cx.fillRect(rnd() * 256, rnd() * 256, 1 + rnd() * 3, 1); }
+  cx.fillStyle = '#7d8086'; cx.fillRect(0, 0, 256, 7); cx.fillRect(0, 0, 7, 256);
+  cx.fillStyle = 'rgba(0,0,0,0.18)'; cx.fillRect(7, 7, 249, 4); cx.fillRect(7, 7, 4, 249);
+  const ct = new T.CanvasTexture(cc); ct.colorSpace = T.SRGBColorSpace; ct.wrapS = ct.wrapT = T.RepeatWrapping; ct.repeat.set(1 / 0.6, 1 / 0.6); ct.anisotropy = 8;
+  const ceil = new T.MeshStandardMaterial({ map: ct, roughness: 0.92, color: 0x9a9890 });
   floorPlane(g, 5, L + 8, floor, 0, 0, -L / 2 + 2);
   box(g, 0.2, 3.3, L + 8, -2.6, 1.65, -L / 2 + 2, wallM);
   box(g, 0.2, 3.3, L + 8, 2.6, 1.65, -L / 2 + 2, wallM);
@@ -75,6 +84,7 @@ export function buildBodega(ctx: Ctx): Room {
     const z0 = -7 - u * 2 - 0.95;
     for (let ti = 0; ti < tiers.length; ti++) {
       if (artSlots.has(`${s}:${u}`) && (ti === 2 || ti === 3)) continue;
+      if (u < 4) continue; // the first eight metres are stocked with real (scanned) products below
       const y = tiers[ti] + 0.015;
       let z = z0 + 0.04;
       const kind = (u * 7 + ti * 3 + (s > 0 ? 1 : 0)) % 5;
@@ -99,6 +109,27 @@ export function buildBodega(ctx: Ctx): Room {
     g.add(im); return im;
   };
   fill(new T.BoxGeometry(1, 1, 1), prodM, boxes);
+  // THE BIG UPGRADE: the first four units each side stocked with Poly Haven scans (CC0), instanced: gallon jugs on
+  // the bottom, cleaner tins, cardboard cases, bread. Price strips on every shelf edge, the whole mile.
+  const jugs: { p: T.Vector3; ry: number }[] = [], tins: typeof jugs = [], cases: typeof jugs = [], buns: typeof jugs = [];
+  for (const s of [-1, 1]) for (let u = 0; u < 4; u++) {
+    const z0 = -7 - u * 2 - 0.95, art = artSlots.has(`${s}:${u}`);
+    for (let z = z0 + 0.12; z < z0 + 1.85; z += 0.2) for (const d of [0.12, 0.34]) jugs.push({ p: v3(s * (2.05 - 0.4 + d), tiers[0] + 0.015, z), ry: s * Math.PI / 2 + (rnd() - 0.5) * 0.3 });
+    for (let z = z0 + 0.08; z < z0 + 1.9; z += 0.11) for (const d of [0.08, 0.2, 0.32]) tins.push({ p: v3(s * (2.05 - 0.42 + d), tiers[1] + 0.015, z), ry: rnd() * 6 });
+    if (!art) for (let z = z0 + 0.3; z < z0 + 1.8; z += 0.42) cases.push({ p: v3(s * (2.05 - 0.2), tiers[2] + 0.015, z), ry: s * Math.PI / 2 + (rnd() - 0.5) * 0.2 });
+    if (!art) for (let z = z0 + 0.15; z < z0 + 1.85; z += 0.13) buns.push({ p: v3(s * (2.05 - 0.25 + (rnd() - 0.5) * 0.2), tiers[3] + 0.015, z), ry: rnd() * 6 });
+  }
+  instProp(g, 'ph_plastic_bottle_gallon', 0.27, jugs);
+  instProp(g, 'ph_cleaner_tin_01', 0.13, tins);
+  instProp(g, 'ph_cardboard_box_01', 0.4, cases);
+  instProp(g, 'ph_hamburger_buns', 0, buns, { fit: 0.36 });
+  const strip: T.Matrix4[] = [];
+  for (const s of [-1, 1]) for (let u = 0; u < units; u++) for (const y of tiers) { m.compose(v3(s * (2.05 - 0.53), y - 0.005, -7 - u * 2), q, v3(0.012, 0.045, 1.98)); strip.push(m.clone()); }
+  const sc = document.createElement('canvas'); sc.width = 512; sc.height = 32; const sx = sc.getContext('2d')!;
+  sx.fillStyle = '#f2efe4'; sx.fillRect(0, 0, 512, 32); sx.fillStyle = '#ffd84a';
+  for (let i = 0; i < 6; i++) { sx.fillRect(10 + i * 84, 3, 52, 26); sx.fillStyle = '#06163a'; sx.font = '700 18px Archivo, sans-serif'; sx.fillText(`$${(1 + ((i * 7) % 9) + 0.49).toFixed(2)}`, 13 + i * 84, 23); sx.fillStyle = '#ffd84a'; }
+  const stT = new T.CanvasTexture(sc); stT.colorSpace = T.SRGBColorSpace;
+  inst(new T.BoxGeometry(1, 1, 1), new T.MeshStandardMaterial({ map: stT, roughness: 0.6 }), strip);
   fill(new T.CylinderGeometry(1, 1, 1, 8), canM, cans);
 
   // the New Yorkers on the shelves, at eye level, between the products
@@ -113,6 +144,17 @@ export function buildBodega(ctx: Ctx): Room {
   inst(new T.BoxGeometry(1, 1, 1), new T.MeshStandardMaterial({ color: 0xffffff, emissive: 0xeaf6ff, emissiveIntensity: 3.2 }), tubes);
   for (const z of [-2, -9, -18]) { const l = new T.PointLight(0xeaf6ff, 16, 12, 1.6); l.position.set(0, 2.9, z); g.add(l); }
   g.add(new T.HemisphereLight(0xdfe8ff, 0x3a3328, 0.95));
+  // real fixtures over the first 40 m (Poly Haven mounted fluorescents, CC0), the code tubes glow inside them
+  const fx: { p: T.Vector3; ry: number }[] = [];
+  for (let z = -1; z > -42; z -= 2.4) for (const x of [-0.6, 0.6]) fx.push({ p: v3(x, 3.13, z), ry: 0 });
+  instProp(g, 'ph_mounted_fluorescent_lights', 0, fx, { fit: 1.55, shadow: false });
+  // the front of the store: a crate of bananas and a stack of cases by the door, bread on the counter, a clock
+  put(g, 'ph_plastic_crate_02', 0, -1.7, 0, -5.6, 0.2, undefined, 0.55);
+  put(g, 'ph_plastic_crate_02', 0, -1.7, 0.26, -5.6, -0.1, undefined, 0.55);
+  put(g, 'ph_bananas', 0, -1.72, 0.52, -5.62, 0.3, undefined, 0.42);
+  put(g, 'ph_cardboard_box_01', 0.34, 1.0, 0, -5.4, 0.4); put(g, 'ph_cardboard_box_01', 0.34, 1.05, 0.34, -5.45, -0.2);
+  put(g, 'ph_hamburger_buns', 0, 1.7, 1.1, -4.4, 0.4, undefined, 0.3);
+  put(g, 'ph_wall_clock', 0.32, 2.47, 2.95, -2.6, -Math.PI / 2);
   // hanging aisle signs with distance markers
   const SIGNS = [['AISLE 1 OF 1', 'EVERYTHING'], ['OAT MILK', 'ALSO REGULAR MILK . ALSO A BOAT'], ['100 FT', 'KEEP GOING'], ['CAT FOOD', 'DOG FOOD . RAT FOOD (DO NOT ASK)'],
     ['500 FT', 'STILL THE SAME STORE'], ['PAPER TOWELS', 'AND THE LAST ROLL OF 1987'], ['1/4 MILE', 'NO WE DO NOT HAVE A BATHROOM'], ['THE BACK', 'IS FURTHER BACK'], ['1/2 MILE', 'WE HAVE IT. SOMEWHERE']];
