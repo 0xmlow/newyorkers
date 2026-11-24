@@ -9,6 +9,9 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { MeshBVH } from 'three-mesh-bvh';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import './assets/rig/rigcast.js?v=face1028';   // FACE table: five rig files turned to +Z
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { makeLook } from './look.js?v=up1123';
+import { takeOut, buildUpgrade } from './upgrade.js?v=up1123';
 
 const SUN_DIR = new THREE.Vector3(-0.8, 0.16, 0.58).normalize();    // low golden sun (about 9 degrees) from the west south west
 const EYE = 1.65, RADIUS = 0.35, STEP = 0.5, GRAVITY = 22;
@@ -27,7 +30,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.shadowMap.autoUpdate = false;           // redrawn a few times a second, not every frame
 document.body.prepend(renderer.domElement);
-const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+const ANISO = renderer.capabilities.getMaxAnisotropy();   // full anisotropy (2026-11-23): the boardwalk and the paving stay sharp to the far end
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0xe4c4a0, 600, 3200);
@@ -80,25 +83,41 @@ manager.onProgress = (_u, done, total) => { $('prog').style.width = `${Math.roun
 const [meta, art] = await Promise.all([fetch('assets/scene.json').then((r) => r.json()), fetch('assets/art.json').then((r) => r.json())]);
 const texLoader = new THREE.TextureLoader(manager);
 
-// tileable maps, metres per repeat, and whether the map carries full colour (else it tints the brand colour)
+// tileable maps, metres per repeat, whether the map carries full colour (else it tints the brand colour), normal
+// strength, and (2026-11-23) a roughness map with its multiplier. The ph/ sets are Poly Haven scans (CC0, 1k), real
+// surfaces in place of the generated maps: weathered boardwalk planks, a race track's asphalt, poured terrazzo, beach
+// sand, leaf litter, concrete pavers. The lawn keeps its own mown colour and takes the scan's relief. The last number is a
+// gain on the colour (the linear mean of the generated map over the scan's), so a tinted set keeps the brand colour's
+// brightness: the plaza stays the plaza's blue, not a darker one.
+const PH = (id) => [`ph/${id}_c.webp`, `ph/${id}_n.webp`, `ph/${id}_r.webp`];
 const SETS = {
-  turf: ['turf_a', 'turf_n', 6, true, 0.9], pavers: ['pavers_a', 'pavers_n', 3, false, 0.8],
-  planks: ['planks_a', 'planks_n', 2.4, true, 0.85], asphalt: ['asphalt_a', 'asphalt_n', 4, true, 0.8],
+  turf: ['turf_a', 'ph/leafy_grass_n.webp', 6, true, 0.7, 'ph/leafy_grass_r.webp', 1],
+  pavers: [...PH('patterned_concrete_pavers').slice(0, 2), 3, false, 0.9, PH('patterned_concrete_pavers')[2], 1, 2.8],
+  planks: [...PH('weathered_brown_planks').slice(0, 2), 2.2, true, 1.0, PH('weathered_brown_planks')[2], 1, 1.7],
+  asphalt: [...PH('asphalt_track').slice(0, 2), 4, true, 0.9, PH('asphalt_track')[2], 1],
   concrete: ['concrete_d', 'concrete_n', 3, false, 0.6], metal: ['metal_d', 'metal_n', 2, false, 0.35],
-  foliage: ['foliage_d', 'foliage_n', 2.5, false, 1.0], wood: ['wood_d', 'wood_n', 1.5, false, 0.6],
-  terrazzo: ['terrazzo_a', 'terrazzo_n', 2, false, 0.4], sand: ['sand_a', 'sand_n', 2, true, 0.8],
-  mulch: ['mulch_a', 'mulch_n', 1.5, true, 1.0],
+  foliage: ['foliage_d', 'foliage_n', 2.5, false, 1.0],
+  wood: ['wood_d', 'wood_n', 1.5, false, 0.6],
+  terrazzo: [...PH('terrazzo_tiles').slice(0, 2), 2.4, true, 0.5, PH('terrazzo_tiles')[2], 0.32, 2.2],
+  sand: [...PH('coast_sand_01').slice(0, 2), 3, true, 0.9, PH('coast_sand_01')[2], 1, 2.4],
+  mulch: [...PH('brown_mud_leaves_01').slice(0, 2), 2, true, 1.0, PH('brown_mud_leaves_01')[2], 1],
 };
+if (new URLSearchParams(location.search).get('up') === '0') Object.assign(SETS, {      // the park as it was, for comparing
+  turf: ['turf_a', 'turf_n', 6, true, 0.9], pavers: ['pavers_a', 'pavers_n', 3, false, 0.8], planks: ['planks_a', 'planks_n', 2.4, true, 0.85],
+  asphalt: ['asphalt_a', 'asphalt_n', 4, true, 0.8], wood: ['wood_d', 'wood_n', 1.5, false, 0.6], terrazzo: ['terrazzo_a', 'terrazzo_n', 2, false, 0.4],
+  sand: ['sand_a', 'sand_n', 2, true, 0.8], mulch: ['mulch_a', 'mulch_n', 1.5, true, 1.0] });
 const texCache = {};
 function tex(name, color) {
   if (texCache[name]) return texCache[name];
-  const t = texLoader.load(`assets/tex/${name}.jpg`);
+  const t = texLoader.load(`assets/tex/${name.includes('.') ? name : name + '.jpg'}`);
   t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = ANISO;
   t.colorSpace = color ? THREE.SRGBColorSpace : THREE.NoColorSpace;
   return (texCache[name] = t);
 }
 const waterN = tex('water_n', false);
 
+const draco = new DRACOLoader().setDecoderPath('vendor/draco/');
+const propLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).setDRACOLoader(draco);
 const gltf = await new Promise((res, rej) => {
   const l = new GLTFLoader(manager); l.setMeshoptDecoder(MeshoptDecoder);
   l.load('assets/gardens.glb', res, (e) => {
@@ -107,6 +126,7 @@ const gltf = await new Promise((res, rej) => {
 });
 scene.add(gltf.scene);
 gltf.scene.updateMatrixWorld(true);
+const replaced = takeOut(gltf.scene);              // the hexagon trees, pole lamps and box benches, replaced in upgrade.js
 
 // ----------------------------------------------------------- classification
 function classify(name) {
@@ -147,13 +167,14 @@ function upgrade(src) {
   } else if (kind === 'image' || emissiveStrong) {
     m = src;                                     // logos, icons, lamps, signs keep their own look
   } else if (SETS[kind]) {
-    const [a, nrm, scale, full, ns] = SETS[kind];
+    const [a, nrm, scale, full, ns, rmap, rmul, gain = 1] = SETS[kind];
     m = new THREE.MeshStandardMaterial({
-      color: full ? 0xffffff : src.color, map: tex(a, true), normalMap: tex(nrm, false),
+      color: (full ? new THREE.Color(0xffffff) : src.color.clone()).multiplyScalar(gain), map: tex(a, true), normalMap: tex(nrm, false),
       normalScale: new THREE.Vector2(ns, ns),
-      roughness: Math.max(src.roughness ?? 0.7, kind === 'metal' ? 0.28 : 0.55), metalness: src.metalness ?? 0,
-      emissive: src.emissive || new THREE.Color(0), emissiveIntensity: src.emissiveIntensity || 0, envMapIntensity: 0.9,
+      roughness: rmap ? rmul : Math.max(src.roughness ?? 0.7, kind === 'metal' ? 0.28 : 0.55), metalness: src.metalness ?? 0,
+      emissive: src.emissive || new THREE.Color(0), emissiveIntensity: src.emissiveIntensity || 0, envMapIntensity: rmap && rmul < 0.5 ? 1.4 : 0.9,
     });
+    if (rmap) m.roughnessMap = tex(rmap, false);
     m.userData.uvScale = scale;
     if (kind === 'turf') turfShader(m);
   } else {
@@ -292,12 +313,22 @@ for (const o of statics) o.parent?.remove(o);
 }
 
 const bvh = new MeshBVH(mergeGeometries(colGeos, false));
+let bvh2 = null;                                   // the upgrade's own colliders (props, plinths, the carousel drum)
 const ray = new THREE.Ray();
 function cast(origin, dir, far) {
   ray.origin.copy(origin); ray.direction.copy(dir);
-  const hit = bvh.raycastFirst(ray, THREE.DoubleSide);
+  let hit = bvh.raycastFirst(ray, THREE.DoubleSide);
+  if (bvh2) { const h2 = bvh2.raycastFirst(ray, THREE.DoubleSide); if (h2 && (!hit || h2.distance < hit.distance)) hit = h2; }
   return hit && hit.distance <= far ? hit : null;
 }
+
+// ------------------------------------------------------------ THE BIG UPGRADE (2026-11-23)
+const lookFx = makeLook(renderer, scene, camera, { phone: touch });
+$('ltext').textContent = 'building the park…';
+const UPG = await buildUpgrade({ scene, renderer, camera, touch, loader: propLoader, recs: replaced, cast, ANISO, waterN,
+  ph: (id) => ({ c: tex(`ph/${id}_c.webp`, true), n: tex(`ph/${id}_n.webp`, false), r: tex(`ph/${id}_r.webp`, false) }),
+  shadowDirty: () => { renderer.shadowMap.needsUpdate = true; } });
+if (UPG.colliders.length) bvh2 = new MeshBVH(mergeGeometries(UPG.colliders, false));
 
 // ---------------------------------------------------------- the rigged cast (2026-10-28)
 // The three grandstands round the eye circuit held 368 spectators built as a box with a ball on top. They become
@@ -589,8 +620,13 @@ function tick(dt) {
     }
   }
   rig?.update(dt);
-  renderer.render(scene, camera);
+  UPG.update(dt);
+  // the reflection probe: the park itself, captured at head height when the walker arrives in a new zone
+  const zone = zoneOf(camera.position);
+  if (zone !== probeZone && !P.ride && !P.fly) { probeZone = zone; lookFx.capture(tmpV.copy(camera.position)); }
+  lookFx.render(dt);
 }
+let probeZone = '';
 
 // ---------- power ----------
 // The loop draws at most 60 a second, 30 once nothing has been touched for twenty seconds, and about
@@ -606,11 +642,11 @@ function frame() {
   if (nowMs - POWER.drawn < powerBudget()) { requestAnimationFrame(frame); return; }
   POWER.drawn = nowMs; POWER.frames++; tick(Math.min(clock.getDelta(), 0.05)); requestAnimationFrame(frame);
 }
-addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); lookFx.resize(); });
 
 goTo(spots[0]);
 $('loading').style.display = 'none';
 $('start').style.display = 'flex';
-window.__walk = { rig: () => rig, P, scene, camera, renderer, spots, goTo, cast, meta, slots, startRide, endRide, mixer, merged,
+window.__walk = { rig: () => rig, P, scene, lookFx, UPG, probe: (p) => lookFx.capture(p || camera.position), keys, cast2: (o, d, far) => { if (!bvh2) return null; ray.origin.copy(o); ray.direction.copy(d); const h = bvh2.raycastFirst(ray, THREE.DoubleSide); return h && h.distance <= far ? h : null; }, camera, renderer, spots, goTo, cast, meta, slots, startRide, endRide, mixer, merged,
   tick: (dt = 1 / 60, n = 1) => { for (let i = 0; i < n; i++) tick(dt); } };
 frame();

@@ -53,3 +53,24 @@ Run it locally from `site/` with any static server, for example `python3 -m http
 WASD walk, SHIFT run, mouse to look, E to see a piece, R to ride, F to fly, 1 to 9 to jump.
 
 Art and code by MLow.
+
+## THE BIG UPGRADE (2026-11-23)
+
+Real models, scanned surfaces, built detail and one trick per zone, on top of the generated park. Nothing in the
+park GLB changed: `site/upgrade.js` takes out the code built trees, lamps, benches and tyre walls by name before the
+park is merged and builds the rest; `site/look.js` is the reflection probe, ambient occlusion and grade.
+
+| Zone | What is new | The trick |
+|---|---|---|
+| Everywhere | 293 real trees (full models near, impostors far), Poly Haven scans underfoot | |
+| The gate | chasing marquee bulbs, plinths, a hanging sign, carts | STEP RIGHT UP stands up from the arrival spot |
+| The boardwalk | cast iron lamps, painted benches, franks stands, gulls | a lenticular board: one line in, another out |
+| The plaza | a working carousel, twenty carved horses | the eye stands up off the paving from the plaza spot |
+| LUNA HALL | polished terrazzo, brass inlay, rails, the Million Lights, a fountain, the Delacorte animals | the end walls open onto lights that never end |
+| The eye wheel | a marquee over the queue, rope lines | the eye on the marquee follows you |
+| BLOSSOM GP | fifteen garages, team boards, real tyre walls, pit kit | BLOSSOM GP stands up across the track from the grid |
+
+Switches: `?up=0` is the park as it was, `?look=0` the old frame. Firefly plates go in `site/assets/ff/` and are drawn
+once listed in `site/assets/ff/manifest.json` (queued in the site's `_build/museum/FIREFLY_QUEUE.md`, room gardens).
+Checks: `python3 tools/check.py` (add `--mobile`), frames: `python3 tools/shot.py OUT --suffix after`. Models are
+from the NEW YORKERS library and Poly Haven (CC0); scans are Poly Haven (CC0); fonts are SIL OFL.
