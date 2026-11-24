@@ -29,7 +29,7 @@ window.__ANA = ANA;
   const cam = new THREE.PerspectiveCamera(ANA.fov, 1, 0.5, 90); cam.position.copy(ANA.V); cam.lookAt(ANA.T); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); ANA.cam = cam;
   const VP = new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
   const rt = new THREE.WebGLRenderTarget(1024, 1024); rt.depthTexture = new THREE.DepthTexture(1024, 1024); rt.depthTexture.type = THREE.UnsignedIntType; ANA.rt = rt;
-  const U = { uVP: { value: VP }, uArt: { value: art }, uDepth: { value: rt.depthTexture }, uP: { value: ANA.V.clone() }, uOn: { value: 0 }, uDbg: { value: 0 } };
+  const U = { uVP: { value: VP }, uArt: { value: art }, uDepth: { value: rt.depthTexture }, uP: { value: ANA.V.clone() }, uOn: { value: 0 }, uDbg: { value: 0 }, uDim: { value: 0 } };
   const mat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -6, toneMapped: true });
   mat.onBeforeCompile = sh => { Object.assign(sh.uniforms, U);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform mat4 uVP; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
@@ -39,14 +39,14 @@ window.__ANA = ANA;
           wp = instanceMatrix * wp; wn = mat3(instanceMatrix) * wn;
         #endif
           wp = modelMatrix * wp; vPw = wp.xyz; vNw = normalize(mat3(modelMatrix) * wn); vPj = uVP * wp; }`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D uArt, uDepth; uniform vec3 uP; uniform float uOn, uDbg; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D uArt, uDepth; uniform vec3 uP; uniform float uOn, uDbg, uDim; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
       .replace('#include <map_fragment>', `
         if (vPj.w <= 0.0) discard; vec3 nd = vPj.xyz / vPj.w; vec2 puv = nd.xy * 0.5 + 0.5;
         if (puv.x < 0.0 || puv.x > 1.0 || puv.y < 0.0 || puv.y > 1.0) discard;
         float sd = texture2D(uDepth, puv).x; float fd = nd.z * 0.5 + 0.5; if (uDbg < 0.5 && fd > sd + 0.0008) discard; if (uDbg > 1.5) { diffuseColor = vec4(puv, sd, 1.0); } else {
         vec4 a = texture2D(uArt, puv); if (a.a < 0.5) discard;
         float face = dot(normalize(vNw), normalize(uP - vPw)); if (face < 0.03) discard;
-        diffuseColor.rgb = a.rgb; diffuseColor.a = uOn; }`);
+        diffuseColor.rgb = a.rgb * (1.0 - 0.72 * uDim); diffuseColor.a = uOn; }`);
   };
   mat.customProgramCacheKey = () => 'ana253';
   ANA.mat = mat; ANA.U = U;

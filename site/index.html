@@ -13743,7 +13743,7 @@ window.__ANA = ANA;
   const cam = new THREE.PerspectiveCamera(ANA.fov, 1, 0.5, 90); cam.position.copy(ANA.V); cam.lookAt(ANA.T); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); ANA.cam = cam;
   const VP = new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
   const rt = new THREE.WebGLRenderTarget(1024, 1024); rt.depthTexture = new THREE.DepthTexture(1024, 1024); rt.depthTexture.type = THREE.UnsignedIntType; ANA.rt = rt;
-  const U = { uVP: { value: VP }, uArt: { value: art }, uDepth: { value: rt.depthTexture }, uP: { value: ANA.V.clone() }, uOn: { value: 0 }, uDbg: { value: 0 } };
+  const U = { uVP: { value: VP }, uArt: { value: art }, uDepth: { value: rt.depthTexture }, uP: { value: ANA.V.clone() }, uOn: { value: 0 }, uDbg: { value: 0 }, uDim: { value: 0 } };
   const mat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -6, toneMapped: true });
   mat.onBeforeCompile = sh => { Object.assign(sh.uniforms, U);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform mat4 uVP; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
@@ -13753,14 +13753,14 @@ window.__ANA = ANA;
           wp = instanceMatrix * wp; wn = mat3(instanceMatrix) * wn;
         #endif
           wp = modelMatrix * wp; vPw = wp.xyz; vNw = normalize(mat3(modelMatrix) * wn); vPj = uVP * wp; }`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D uArt, uDepth; uniform vec3 uP; uniform float uOn, uDbg; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D uArt, uDepth; uniform vec3 uP; uniform float uOn, uDbg, uDim; varying vec4 vPj; varying vec3 vPw; varying vec3 vNw;')
       .replace('#include <map_fragment>', `
         if (vPj.w <= 0.0) discard; vec3 nd = vPj.xyz / vPj.w; vec2 puv = nd.xy * 0.5 + 0.5;
         if (puv.x < 0.0 || puv.x > 1.0 || puv.y < 0.0 || puv.y > 1.0) discard;
         float sd = texture2D(uDepth, puv).x; float fd = nd.z * 0.5 + 0.5; if (uDbg < 0.5 && fd > sd + 0.0008) discard; if (uDbg > 1.5) { diffuseColor = vec4(puv, sd, 1.0); } else {
         vec4 a = texture2D(uArt, puv); if (a.a < 0.5) discard;
         float face = dot(normalize(vNw), normalize(uP - vPw)); if (face < 0.03) discard;
-        diffuseColor.rgb = a.rgb; diffuseColor.a = uOn; }`);
+        diffuseColor.rgb = a.rgb * (1.0 - 0.72 * uDim); diffuseColor.a = uOn; }`);
   };
   mat.customProgramCacheKey = () => 'ana253';
   ANA.mat = mat; ANA.U = U;
@@ -15087,6 +15087,166 @@ window.__V335 = true;
    ================================================================ */
 (function tourV336() { const T = (window.__game && __game.TOUR) || TOUR, at = T.findIndex(r => r.name === 'aerial'); if (!window.__CRED || !CRED.mesh) return; const y = ground(0, 108);
   T.splice(at < 0 ? T.length : at, 0, { name: 'the credits again', dur: 9, pos: [[2.2, y + 1.7, 90], [0.6, y + 1.8, 101], [0.2, y + 2.2, 106]], look: [[0, y + 1.5, 96], [0, y + 6, 116], [0, y + 9, 117]] }); })();
+
+/* ================================================================
+   v337 WALLPAPER: THE SKY OVER THE CENSUS (2026-11-24)
+   Above the two rows of portraits and the lettered frieze, the census walk's Hadid ribbon rose two to four metres in
+   blank bone. It carries Firefly's sky river now: contour lines flowing like wind, clouds drawn as contour rings, five
+   Open Eye Flowers rising across it like suns, following the ribbon's own rise and fall. ?wallpaper=0 off.
+   ================================================================ */
+(function censusSky() {
+  if (!WALLS.on) return; const pts = []; for (let i = 0; i <= 24; i++) { const z = 46 + i * 1.6; pts.push([-11 - 2.2 * Math.sin(i / 24 * PI * 2), z]); }
+  const P = [], U = [], I = []; let s = 0, total = 0; for (let i = 1; i < pts.length; i++) total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+  for (let i = 0; i < pts.length; i++) { const [x, z] = pts[i], [x2, z2] = pts[Math.min(24, i + 1)], [x1, z1] = pts[Math.max(0, i - 1)]; const dx = x2 - x1, dz = z2 - z1, l = Math.hypot(dx, dz), nx = dz / l, nz = -dx / l;
+    if (i) s += Math.hypot(x - pts[i - 1][0], z - pts[i - 1][1]); const g = ground(x, z), hh = 6.2 + Math.sin(Math.min(i, 23.5) / 24 * PI) * 2.4, ox = x + nx * 0.259, oz = z + nz * 0.259;
+    P.push(ox, g + 5.72, oz, ox, g + hh - 0.12, oz); const u = 1 - s / total * 1.6; U.push(u, 0.07, u, 0.93); if (i) I.push(i * 2 - 2, i * 2 - 1, i * 2, i * 2 - 1, i * 2 + 1, i * 2); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); g.setIndex(I); g.computeVertexNormals();
+  const mt = wallMat('skyriver', 1, 1, { rough: 0.75 }); const m = new THREE.Mesh(g, mt); mt.side = THREE.DoubleSide; mt.map.wrapS = THREE.RepeatWrapping; m.receiveShadow = true; scene.add(m); WALLS.n++; WALLS.sky = m;
+})();
+
+/* ================================================================
+   v338 WALLPAPER: THE SKATE PLAZA'S PIECES (2026-11-24)
+   Every skatepark's concrete is painted over by the people who skate it. The plaza's quarter pipe and bank (v219)
+   carry Firefly's skatepark piece: an Open Eye Flower throw up and contour lines sprayed across the concrete, with
+   wheel marks and wax scuffed over the paint. ?wallpaper=0 off.
+   ================================================================ */
+(function skatePieces() {
+  if (!WALLS.on || !window.__SK2 || !SK2.ok) return; const mt = wallMat('skategraf', 1, 1, { rough: 0.7 });
+  if (SK2.qp) { SK2.qp.material = mt; const uv = SK2.qp.geometry.attributes.uv, pos = SK2.qp.geometry.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, pos.getZ(i) / 5.2 + 0.5, pos.getY(i) / 1.8); uv.needsUpdate = true; WALLS.n++; }
+  scene.traverse(o => { if (o.isMesh && o.geometry && o.geometry.type === 'BoxGeometry' && o.material === FACM.skConc && Math.abs(o.geometry.parameters.width - 2.4) < 1e-3 && Math.abs(o.geometry.parameters.depth - 3.0) < 1e-3) { o.material = mt; WALLS.n++; } });
+})();
+
+/* ================================================================
+   v339 THE ROOFTOP BILLBOARD (2026-11-24)
+   The most New York thing a roof can carry: a billboard on a steel frame with a catwalk and gooseneck lamps. The
+   bodega tenement's roof (v227) gets one, turned to the plaza, and on it Firefly's piece made for it: the island
+   itself, small, a ferris wheel and a lighthouse, under an enormous Open Eye Flower rising out of a sky of contour
+   lines, with N3W 6529 MEME ISLAND along the foot. Lit at night. ?wallpaper=0 off.
+   ================================================================ */
+const RBB = {};
+window.__RBB = RBB;
+(function roofBillboard() {
+  if (!WALLS.on || !window.__BLK || !BLK.bodega) return; const top = BLK.bodega + 0.12, x = 20.2, z = 69.2, W = 8.4, H = 4.7, y0 = top + 2.6, ry = -PI / 2;
+  const cv = document.createElement('canvas'); cv.width = 2048; cv.height = 1146; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const band = () => { if (!c || !c.fillText) return; c.fillStyle = 'rgba(11,20,48,.92)'; c.fillRect(0, 1146 - 150, 2048, 150); c.fillStyle = '#efe8da'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '900 84px "Archivo Black",Impact,sans-serif'; c.fillText('N3W 6529 MEME ISLAND', 1024, 1146 - 88); c.font = '500 30px "Archivo",Helvetica,sans-serif'; c.fillStyle = '#9fbcff'; c.fillText('THE MEMES BY 6529 · BY MLOW · N3WYORKERS.COM/ISLAND', 1024, 1146 - 30); t.needsUpdate = true; };
+  const im = new Image(); im.onload = () => { try { c.drawImage(im, 0, 0, 2048, 1146); band(); } catch (e) { } }; im.src = 'assets/wall/billboard.webp'; if (c && c.fillRect) { c.fillStyle = '#16233f'; c.fillRect(0, 0, 2048, 1146); band(); }
+  const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.6, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.0 }); RBB.mat = mat;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat); m.position.set(x - 0.2, y0 + H / 2, z); m.rotation.y = ry; m.castShadow = true; scene.add(m); RBB.mesh = m;
+  const V = THREE.Vector3; facPut('steel', x - 0.02, y0 + H / 2, z, 0.12, H + 0.25, W + 0.25, 0);
+  [-1, 1].forEach(s => { facBar(FACM.steel, new V(x + 0.4, top, z + s * 3.4), new V(x + 0.1, y0 + H, z + s * 3.4), 0.14, 0.14); facBar(FACM.steel, new V(x + 2.2, top, z + s * 3.4), new V(x + 0.15, y0 + H * 0.6, z + s * 3.4), 0.1, 0.1); });
+  facPut('steel', x - 0.75, y0 - 0.12, z, 1.1, 0.06, W + 0.4, 0); facPut('steel', x - 1.28, y0 + 0.35, z, 0.04, 0.04, W + 0.4, 0);
+  for (let i = 0; i < 5; i++) { const zz = z - W / 2 + 0.8 + i * (W - 1.6) / 4; facPut('steel', x - 0.9, y0 + H + 0.25, zz, 0.7, 0.05, 0.05, 0); facPut('bulb', x - 1.2, y0 + H + 0.18, zz, 0.3, 0.12, 0.36, 0); }
+  facFlush(); WALLS.n++;
+})();
+window.__FRAMES.push(() => { try { if (RBB.mat) RBB.mat.emissiveIntensity = 0.55 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v340 WALLPAPER: THE MARKET'S BOARDS (2026-11-24)
+   The market kiosks' tongue and groove backs (v173) are painted now, like the backs of the holiday market stalls in
+   Bryant Park: Firefly's green boards with contour lines and three small Open Eye Flowers running across them, the
+   joints and grain showing through. ?wallpaper=0 off.
+   ================================================================ */
+(function marketBoards() {
+  if (!WALLS.on || !window.__MKT || !MKT.k) return; const mt = wallMat('boards', 1, 1, { rough: 0.8 });
+  MKT.k.forEach(k => { const gy = ground(k.x, k.z), m = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2.5), mt); m.position.set(k.x, gy + 1.25, k.z + 1.1 + 0.075); m.receiveShadow = true; scene.add(m); WALLS.n++; });
+})();
+
+/* ================================================================
+   v341 THE PAINTED EYE AT NIGHT (2026-11-24)
+   The anamorphic eye (v253) is painted with an unlit material, so after dark its rings glowed on the bodega block like
+   neon. Paint does not glow: it now darkens with the daylight, the way the real walls round it do.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (window.__ANA && ANA.U && ANA.U.uDim) ANA.U.uDim.value = Math.min(1, (L.lamps || 0) * 1.2); } catch (e) { } });
+
+/* ================================================================
+   v342 THE TOUR: ROUND THREE OF THE WALLS (2026-11-24)
+   Four stops before the aerial: the sky over the census walk, the skate plaza's pieces, the rooftop billboard over the
+   bodega, the market's painted boards.
+   ================================================================ */
+(function tourV342() { const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__WALLS && WALLS.sky) add.push({ name: 'the sky over the census', dur: 8, pos: [[-2, 2.6, 50], [-2.5, 3.2, 72]], look: [[-11, 6.8, 54], [-11, 7, 76]] });
+  try { const [x, z] = SK.L2W(-12, 3); add.push({ name: 'skate pieces', dur: 6, pos: [[x, SK.g0 + 2.2, z], [x + 2, SK.g0 + 2, z + 2]], look: [[SK.L2W(-4, 8)[0], SK.g0 + 0.5, SK.L2W(-4, 8)[1]], [SK.L2W(0, 9)[0], SK.g0 + 0.6, SK.L2W(0, 9)[1]]] }); } catch (e) { }
+  if (window.__RBB && RBB.mesh) add.push({ name: 'the rooftop billboard', dur: 7, pos: [[-6, 8, 62], [-2, 10, 66]], look: [[20, 9.5, 69], [20, 10, 69]] });
+  if (window.__MKT && MKT.k && MKT.k[0]) { const k = MKT.k[0], gy = ground(k.x, k.z); add.push({ name: 'the market boards', dur: 6, pos: [[k.x - 2, gy + 1.7, k.z + 6], [k.x + 4, gy + 1.7, k.z + 6]], look: [[k.x, gy + 1.3, k.z + 1.2], [k.x + 4, gy + 1.3, k.z + 1.2]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add); })();
+
+/* ================================================================
+   v343 THE NEW MURALS ARE SIGNED (2026-11-24)
+   v330's MLOW 2026 signature reaches the murals painted since: the factory, the vault, the lighthouse back, the
+   market boards.
+   ================================================================ */
+(function signAgain() {
+  if (!window.__WALLS || !WALLS.on) return; const t = signTex([{ t: 'MLOW', s: 0.55, f: '"Permanent Marker",cursive' }, { t: '2026', s: 0.22, f: '"Permanent Marker",cursive' }], 256, 160, '#00000000', '#efe8da');
+  const mat = new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 });
+  scene.traverse(o => { if (!o.isMesh || !o.material || !o.material.userData || !o.material.userData.wall || o.geometry.type !== 'PlaneGeometry' || o.userData.__signed) return; const p = o.geometry.parameters; if (p.height < 2 || Math.abs(o.rotation.x) > 0.1) return; o.userData.__signed = 1;
+    const s = Math.min(1.2, p.width * 0.08), m = new THREE.Mesh(new THREE.PlaneGeometry(s, s * 0.625), mat); m.position.copy(o.position); m.quaternion.copy(o.quaternion); m.translateX(p.width / 2 - s * 0.7); m.translateY(-p.height / 2 + s * 0.5); m.translateZ(0.015); m.renderOrder = 6; scene.add(m); });
+})();
+
+/* ================================================================
+   v344 WALLPAPER: THE HUT AND THE NEWSSTAND (2026-11-24)
+   The skate rental hut by the rink and the newsstand's back wall get the painted boards too (Firefly, v340), so every
+   small wooden structure on the island is painted the same hand.
+   ================================================================ */
+(function hutBoards() {
+  if (!WALLS.on) return; const mt = wallMat('boards', 1, 1, { rough: 0.8 });
+  try { if (window.__RB2 && RB2.hut) { const [hx, hz] = RB2.hut, g = RINK.g0, gx = Math.cos(RINK.gapA), gz = Math.sin(RINK.gapA), hr = Math.atan2(gx, gz);
+    [[0, -1.01], [PI / 2, -1.31], [-PI / 2, -1.31]].forEach(([dr, d]) => { const r = hr + PI + dr, m = new THREE.Mesh(new THREE.PlaneGeometry(dr ? 2.0 : 2.6, 2.4), mt); m.position.set(hx + Math.sin(r) * -d * (dr ? 1 : 1), g + 1.25, hz + Math.cos(r) * -d); m.rotation.y = r + PI; scene.add(m); WALLS.n++; }); } } catch (e) { }
+  try { if (window.__NEWS) { const x0 = NEWS_AT.x, z0 = NEWS_AT.z, ry = NEWS.ry, g0 = ground(x0, z0), m = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 2.5), mt); m.position.set(x0 - Math.sin(ry) * 1.015, g0 + 1.3, z0 - Math.cos(ry) * 1.015); m.rotation.y = ry + PI; scene.add(m); WALLS.n++; } } catch (e) { }
+})();
+
+/* ================================================================
+   v345 THE ROOFTOP BILLBOARD'S LAMPS (2026-11-24)
+   The billboard's gooseneck lamps (v339) light with the street lamps, like the welcome billboard's (v176).
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (FACM.bulb) FACM.bulb.emissiveIntensity = Math.max(FACM.bulb.emissiveIntensity, 0.05 + 2.2 * Math.min(1, (L.lamps || 0) * 1.3)); } catch (e) { } });
+
+/* ================================================================
+   v346 THE MAP: THE PAINTED PLACES (2026-11-24)
+   The island map gains the painted places as stops of their own: the factory mural, the painted court, the rooftop
+   billboard, the sky over the census, the lighthouse back.
+   ================================================================ */
+(function mapWalls() { if (!window.__MAP || !MAP.places) return; const A = (n, x, z, tx, tz) => MAP.places.push([n, x, z, tx, tz]);
+  A('THE FACTORY MURAL', 16, -64, 26, -64); try { A('THE PAINTED COURT', COURT.x, COURT.z, COURT.x + 8, COURT.z + 6); } catch (e) { } A('THE ROOFTOP BILLBOARD', 20, 69, 0, 62); A('THE SKY OVER THE CENSUS', -11, 66, -2, 62); A('THE LIGHTHOUSE BACK', 0, -130, 0, -150); })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* ---------------- boot ---------------- */
