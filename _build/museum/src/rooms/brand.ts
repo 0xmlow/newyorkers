@@ -62,7 +62,7 @@ export function blossomGarden(k: Kit, cx: number, y: number, cz: number, r = 6, 
     const a = (i / 7) * PI * 2;
     const x = cx + Math.cos(a) * r, z = cz + Math.sin(a) * r;
     k.box(1.2, 0.5, 1.2, x, y + 0.25, z, k.flat(accents[i], 0.1, 0.5));
-    k.prop(`blossom_0${i + 1}`, x, y + 0.5, z, { height, rotY: -a + PI / 2, keepOut: 0.9 }).then((o) => { if (!o) return; o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.color.set(i % 2 ? 0x0d0d0d : 0xf0f4f8); m.roughness = 0.35; m.metalness = 0.1; c.material = m; } }); });
+    k.prop(`blossom_0${i + 1}_lo`, x, y + 0.5, z, { height, rotY: -a + PI / 2, keepOut: 0.9 }).then((o) => { if (!o) return; o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.color.set(i % 2 ? 0x0d0d0d : 0xf0f4f8); m.roughness = 0.35; m.metalness = 0.1; c.material = m; } }); });
   }
   k.sign('B L O S S O M', 4, 0.5, cx, y + 0.28, cz, 'transparent', '#f0f4f8', 60, 0).rotation.set(-PI / 2, 0, 0);
 }

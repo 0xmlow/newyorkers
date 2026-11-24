@@ -26,8 +26,29 @@ import { street, blockFront, hsign, paintTex } from './f';
 import { mlowBanner, blossomFlag, donorWall, eyeMedallion } from './brand';
 import { fireflyPlate } from './a';
 import type { Kit } from '../kit';
+import { anamorphTex } from './f';
 const PI = Math.PI;
 void blockFront;
+
+/* ---------- THE BIG UPGRADE, wave 5d (2026-11-24): helpers for mcny2 only (the Dakota's helpers below are wave 4c's) ----------
+   Instanced thin boxes for ribs, joints and reveals; anamorphic floor type in a house font; small props kept out of the
+   shadow pass. mcny2 also uses the file's scanned surface helper `sc` and the model placer `many` as they stand. */
+function mcBars(k: Kit, m: T.Material, rows: number[][]) {
+  if (!rows.length) return;
+  const g = new T.BoxGeometry(1, 1, 1), q = new T.Quaternion();
+  k.instances(g, m, rows.map(([x, y, z, sx, sy, sz]) => new T.Matrix4().compose(new T.Vector3(x, y, z), q, new T.Vector3(sx, sy, sz))));
+}
+function mcNoShadow(o: T.Object3D) { o.traverse((c) => { c.castShadow = false; }); }
+function mcTint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.5) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+function mcTrick(k: Kit, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number) {
+  if (typeof document === 'undefined') return;
+  const font = 'W2 Archivo Expanded', w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const t = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let sz = h * 0.8; g.font = `800 ${sz}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { sz *= (w * 0.94) / tw; g.font = `800 ${sz}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, t, ex, ez, eh, floor, yaw, D, W, H);
+}
 
 /* ---------- THE BIG UPGRADE, wave 4c (2026-11-24): helpers for the Dakota (dakota2 only; mcny2 is a later wave's) ----------
    As in m.ts and p.ts, local to this file: scanned CC0 surfaces (Poly Haven, assets/museum/tex/dakota/) wearing a sensible
@@ -88,13 +109,17 @@ export const mcny2: RoomDef = {
   description: 'The red brick Georgian building on Fifth at 103rd with Hamilton and Clinton in their niches, the marble rotunda with its twin curving stairs, the timeline gallery with its wall of screens changing, school groups following a guide, and the works hung round the rotunda and down the gallery telling the city\'s own story.',
   signatures: 'The Colonial Revival red brick and marble front with its portico and cupola, the entrance rotunda with two sweeping marble staircases, the New York at its core gallery with its wall of screens, the terrace on Fifth.',
   build(k, ctx) {
-    k.sky({ top: 0x7fa0d0, horizon: 0xe8e8e0, ground: 0x5a5a55, fog: 0.0022, sun: { az: 3.4, el: 0.7, color: 0xfff4e6, size: 12 }, env: 0.9 });
-    k.hemi(0xfff0dc, 0x4a4038, 0.7);
-    k.sun(0xfff0d8, 1.8, 30, 60, 40, true, 70);
-    const brick = k.pbr('mcBrick', X.brick(0x8a3a2e, 310), 0.28), marble = k.pbr('mcMarble', X.marble(0xe8e4dc, 0x9a948a, 21), 0.5, { roughness: 0.3 }), lime = k.pbr('mcLime', X.ashlar(0xd8d0bc, 311, 4), 0.25),
-      floorT = k.pbr('mcFloor', X.terrazzo(0xc8c0b0, 172), 0.4, { roughness: 0.3 }), dark = k.flat(0x1a1c20, 0.5, 0.6), glass = k.glass(0xdcecf6, 0.14, 0.04), bronze = k.flat(0x4a3a28, 0.8, 0.4), screen = k.glow(0x3a6aff, 0.8), white = k.pbr('mcWhite', X.plaster(0xf4f4f2, 173), 0.4);
+    /* 2026-11-24 (wave 5d): a deeper sky and thinner haze over Museum Mile */
+    k.sky({ top: 0x4a7fca, horizon: 0xd6dee4, ground: 0x5a5a55, fog: 0.0011, sun: { az: 3.4, el: 0.7, color: 0xfff4e6, size: 12 }, env: 0.95 });
+    k.hemi(0xfff0dc, 0x4a4038, 0.75);
+    k.sun(0xfff0d8, 2.1, 30, 60, 40, true, 70);
+    /* wave 5d: scanned CC0 surfaces (Poly Haven, in assets/museum/tex/mcny/): red brick, smooth white stucco for the
+       marble trim and the stairs (every marble scan we hold is beige), a marble tile floor, white stucco walls, limestone, lawn */
+    const brick = sc(k, 'mcny', 'brick', 1.3, () => X.brick(0x8a3a2e, 310), { roughness: 0.85 }, 0x7a3a2e), marble = sc(k, 'mcny', 'stucco', 2.5, () => X.marble(0xe8e4dc, 0x9a948a, 21), { roughness: 0.3, color: 0xf2f0ec }, 0xdcd8d0), lime = sc(k, 'mcny', 'lime', 2.2, () => X.ashlar(0xd8d0bc, 311, 4), { roughness: 0.8 }, 0xc8c0ac),
+      floorT = sc(k, 'mcny', 'floor', 1.8, () => X.terrazzo(0xc8c0b0, 172), { roughness: 0.35 }, 0xb0a898), dark = k.flat(0x1a1c20, 0.5, 0.6), glass = k.glass(0x30404c, 0.5, 0.05), bronze = k.flat(0x4a3a28, 0.8, 0.4), screen = k.glow(0x3a6aff, 0.8), white = sc(k, 'mcny', 'stucco', 3, () => X.plaster(0xf4f4f2, 173), { roughness: 0.9, color: 0xfaf8f4 }, 0xe6e4de),
+      gilt = k.flat(0xc8a050, 0.85, 0.35);
     street(k, { w: 12, len: 160, z: 40, x: 7 });
-    k.box(160, 0.4, 200, 100, -0.2, 0, k.pbr('mcLawn', X.grass(0x3a5a2a, 174), 0.06)); k.rail(18, 0, 160, dark, 1.0, 'z', 2.4); k.block(17.6, 18.4, -80, 80);
+    k.box(160, 0.4, 200, 100, -0.2, 0, sc(k, 'mcny', 'lawn', 4, () => X.grass(0x3a5a2a, 174), { roughness: 0.95, color: 0xb8b090 }, 0x4a5a34)); k.rail(18, 0, 160, dark, 1.0, 'z', 2.4); k.block(17.6, 18.4, -80, 80);
     const rnd = X.mulberry(101); for (let i = 0; i < 30; i++) k.tree(24 + rnd() * 60, 0, -80 + rnd() * 160, { kind: 'round', h: 8 + rnd() * 6, r: 3 + rnd() * 2, leaf: 0x4a7a3c, seed: i });
     const BX = -30, BZ = 0, BW = 34, BD = 40;
     /* hollow: the old room was one 34 by 16 by 40 solid box with the rotunda inside it */
@@ -127,8 +152,14 @@ export const mcny2: RoomDef = {
     const RW = BW - 1.2, RD = 20;
     k.box(RW, 0.3, RD, BX, 0.15, BZ, floorT);
     k.block(BX - RW / 2 - 0.6, BX - RW / 2 + 0.2, BZ - RD / 2, BZ + RD / 2);
-    k.box(RW, 0.4, RD, BX, 12, BZ, white);
-    k.mesh(new T.SphereGeometry(8, 32, 12, 0, PI * 2, 0, PI / 2), k.pbr('mcDome', X.plaster(0xe8e2d4, 175), 0.3, { side: T.BackSide }), BX, 11.8, BZ).scale.y = 0.5;
+    /* wave 5d: the ceiling slab hid the dome; it now has an oculus with a gilt ring, the corners closed by a ring, and a
+       crystal chandelier hangs from the crown (Poly Haven, CC0) */
+    mcBars(k, white, [[BX - 12.2, 12, BZ, RW / 2 - 8 + 0.4, 0.4, RD], [BX + 12.2, 12, BZ, RW / 2 - 8 + 0.4, 0.4, RD], [BX, 12, BZ + 9, 16, 0.4, 2], [BX, 12, BZ - 9, 16, 0.4, 2]]);
+    { const cap = k.mesh(new T.RingGeometry(7.95, 11.5, 48), white, BX, 11.82, BZ); cap.rotation.x = PI / 2; const ring = k.mesh(new T.TorusGeometry(8, 0.2, 8, 64), gilt, BX, 11.8, BZ); ring.rotation.x = PI / 2; }
+    k.mesh(new T.SphereGeometry(8, 32, 12, 0, PI * 2, 0, PI / 2), sc(k, 'mcny', 'stucco', 4, () => X.plaster(0xe8e2d4, 175), { roughness: 0.9, color: 0xf0ebe0, side: T.BackSide }, 0xe0dace), BX, 11.8, BZ).scale.y = 0.5;
+    { const rib: number[][] = []; void rib; for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2, pts: T.Vector3[] = []; for (let j = 0; j <= 10; j++) { const b = (j / 10) * (PI / 2) * 0.96; pts.push(v(BX + Math.cos(a) * Math.cos(b) * 7.9, 11.8 + Math.sin(b) * 3.95, BZ + Math.sin(a) * Math.cos(b) * 7.9)); } k.curve(pts, 0.09, gilt, 12); } }
+    k.beam(v(BX, 15.7, BZ), v(BX, 11.4, BZ), 0.03, gilt, 5);
+    many(k, 'mcny/ph_Chandelier_01', { height: 2.2 }, [[BX, 9.2, BZ, 0]], mcNoShadow);
     k.point(BX, 9, BZ, 0xfff4e6, 60, 30);
     for (const s of [-1, 1]) { const arc: T.Vector3[] = []; for (let i = 0; i <= 40; i++) { const t = i / 40; const a = PI / 2 + s * t * PI * 0.5; arc.push(v(BX - 2 + Math.cos(a) * 8, 0.2 + t * 5.4, BZ + Math.sin(a) * 8 * s * s)); } const sp = k.spline(arc, false, 0.5); const pts = sp.getSpacedPoints(60); const tg = new T.BoxGeometry(2.2, 0.14, 0.32), tm: T.Matrix4[] = []; const tan = new T.Vector3(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0); for (let i = 0; i < 60; i++) { const p = pts[i]; sp.getTangentAt(i / 60, tan); q.setFromAxisAngle(up, Math.atan2(tan.x, tan.z)); tm.push(new T.Matrix4().compose(p.clone().add(v(0, -0.15, 0)), q, new T.Vector3(1, 1, 1))); } k.instances(tg, marble, tm); k.curve(pts.filter((_, i) => i % 2 === 0).map((p) => v(BX - 2 + (p.x - BX + 2) * 1.14, p.y + 0.95, BZ + (p.z - BZ) * 1.14)), 0.035, bronze, 30); }
     k.box(RW - 4, 0.4, 6, BX - 4, 5.6, BZ, marble); k.block(BX - RW / 2, BX + RW / 2 - 4, BZ - 3, BZ + 3);
@@ -141,7 +172,24 @@ export const mcny2: RoomDef = {
     for (let i = 0; i < 10; i++) { const s = k.mesh(new T.PlaneGeometry(2.6, 0.8), screen, BX - 13.5 + i * 3, 5.15, TZ - 6.6); void s; }
     for (let i = 0; i < 10; i++) k.point(BX - 13.5 + i * 3, 5, TZ - 5, 0x3a6aff, 4, 5);
     k.censusWall({ x: BX, y: 3.4, z: TZ - 6.62, rotY: 0, cols: 40, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(0, 160), pieces: ctx.all, backing: dark });
-    k.prop('vitrine', BX - 8, 0.15, TZ, { height: 1.7, keepOut: 1.2 }); k.prop('vitrine', BX + 8, 0.15, TZ, { height: 1.7, keepOut: 1.2 }); k.prop('globe_stand', BX, 0.15, TZ + 4, { height: 2, keepOut: 1 });
+    k.prop('vitrine', BX - 8, 0.15, TZ, { height: 1.7, keepOut: 1.2 }); k.prop('vitrine', BX + 8, 0.15, TZ, { height: 1.7, keepOut: 1.2 });
+    /* wave 5d: the toy globe is a real one now, a tall case clock keeps the gallery's time, marble busts on plinths greet
+       the door (Poly Haven and our own models, CC0); real lamps and benches on Fifth; the gallery is named over its door */
+    many(k, 'mcny/nyb_hudsucker_globe', { height: 1.7 }, [[BX, 0.3, TZ - 3, 0.4]]); k.keepOut.push({ x: BX, z: TZ - 3, r: 0.8 });
+    many(k, 'mcny/ph_vintage_grandfather_clock_01', { height: 2.5 }, [[BX - RW / 2 + 0.7, 0.3, TZ - 6.1, PI / 2]]); k.keepOut.push({ x: BX - RW / 2 + 0.7, z: TZ - 6.1, r: 0.6 });
+    mcBars(k, marble, [[BX + RW / 2 - 2.2, 0.875, BZ - 3.4, 0.62, 1.15, 0.62], [BX + RW / 2 - 2.2, 0.875, BZ + 3.4, 0.62, 1.15, 0.62]]); k.keepOut.push({ x: BX + RW / 2 - 2.2, z: BZ - 3.4, r: 0.6 }, { x: BX + RW / 2 - 2.2, z: BZ + 3.4, r: 0.6 });
+    many(k, 'mcny/ph_marble_bust_01', { height: 0.85 }, [[BX + RW / 2 - 2.2, 1.45, BZ - 3.4, -PI / 2], [BX + RW / 2 - 2.2, 1.45, BZ + 3.4, -PI / 2]], (o) => { mcTint(o, 0xeee8de, 0.45, 0); });
+    many(k, 'mcny/ph_street_lamp_01', { height: 5.2 }, [[16, 0, -40, -PI / 2], [16, 0, -16, -PI / 2], [16, 0, 8, -PI / 2], [16, 0, 32, -PI / 2], [16, 0, 56, -PI / 2], [16, 0, 80, -PI / 2], [-2.4, 0, -20, PI / 2], [-2.4, 0, 22, PI / 2]], mcNoShadow);
+    for (const [x, z] of [[16, -40], [16, -16], [16, 8], [16, 32], [16, 56], [16, 80], [-2.4, -20], [-2.4, 22]]) k.keepOut.push({ x, z, r: 0.4 });
+    many(k, 'mcny/ph_painted_wooden_bench', { width: 2.2 }, [[17, 0, -40, -PI / 2], [17, 0, -2, -PI / 2], [17, 0, 27, -PI / 2], [17, 0, 58, -PI / 2]], (o) => mcTint(o, 0x2f4a32, 0.6, 0.3)); for (const z of [-40, -2, 27, 58]) k.keepOut.push({ x: 17, z, r: 1.2 });
+    hsign(k, 'NEW YORK AT ITS CORE', 7, 0.7, BX, 5.6, BZ - RD / 2 + 0.04, 0, { fg: '#2a2418', bg: '#efe6d2', border: '#8a6a3a', size: 0.5 });
+    { k.cyl(0.06, 3.6, 0.4, 1.8, 24, dark, 0.06, 8); hsign(k, '5 AV', 1.3, 0.32, 0.4, 3.4, 24, PI / 4, { fg: '#ffffff', bg: '#1e5a36', size: 0.62 }); hsign(k, 'E 103 ST', 1.6, 0.32, 0.4, 3.02, 24, -PI / 4, { fg: '#ffffff', bg: '#1e5a36', size: 0.62 }); k.keepOut.push({ x: 0.4, z: 24, r: 0.3 }); }
+    /* wave 5d: brick quoins, a limestone belt course and window reveals on Fifth; marble skirting round the rotunda */
+    mcBars(k, lime, [[FX + 0.05, 4.4, BZ, 0.2, 0.3, HZ1 - HZ0], [BX, 0.3, BZ - RD / 2 + 0.05, RW, 0.3, 0.12], [BX, 0.3, BZ + RD / 2 - 0.05, RW, 0.3, 0.12]]);
+    /* the one trick: NEW YORK AT ITS CORE painted long on the gallery floor stands up from the rotunda doorway */
+    mcTrick(k, 'NEW YORK AT ITS CORE', '#2a2418', BX, BZ - RD / 2 + 1.5, 3, 0.31, 0, 4, 6, 1.2);
+    /* Firefly plate queued: a painted panorama of the harbour and the old city high on the rotunda's north wall */
+    fireflyPlate(k, 'assets/museum/tex/mcny/ff_city_panorama.webp', 24, 3.6, BX, 8.6, BZ + RD / 2 - 0.02, PI, white);
     k.crowd([v(-4, 0, 20), v(BX + 12, 0.15, BZ + 4), v(BX - 4, 0.15, BZ + 6), v(BX - 10, 0.15, TZ)], 14, { seed: 139, speed: 0.35, spread: 2, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a] });
     // the works: the rotunda walls under the stairs, the mezzanine, the timeline gallery's side walls
     const mounts: Mount[] = [];
@@ -167,7 +215,7 @@ export const mcny2: RoomDef = {
     const guide = new T.Group(); { const b = new T.Mesh(new T.CapsuleGeometry(0.2, 0.82, 3, 8), new T.MeshStandardMaterial({ color: 0x1f3f6a })); b.position.y = 0.76; personTag(b, 'auto', 1.25); const h = personTag(new T.Mesh(new T.SphereGeometry(0.125, 8, 6), new T.MeshStandardMaterial({ color: 0x8d5a3b })), 'part'); h.position.y = 1.5; const flag = new T.Mesh(new T.BoxGeometry(0.02, 0.3, 0.4), new T.MeshBasicMaterial({ color: 0xff4a2a })); flag.position.set(0, 2.3, 0.2); const pole = new T.Mesh(new T.CylinderGeometry(0.015, 0.015, 1.2, 5), new T.MeshStandardMaterial({ color: 0x2a2a2a })); pole.position.set(0, 1.75, 0); guide.add(b, h, pole, flag); }
     k.add(guide);
     const tcars: { g: T.Group; dir: number; off: number }[] = [];
-    for (let i = 0; i < 6; i++) { const g = new T.Group(), dir = i % 2 ? -1 : 1; const body = new T.Mesh(new T.BoxGeometry(1.8, 0.75, 4.4), new T.MeshStandardMaterial({ color: [0xf2b705, 0x1a1c20, 0xd8d4cc, 0x2a3f6a, 0xf2b705, 0x8a2a2a][i], metalness: 0.4, roughness: 0.4 })); body.position.y = 0.6; const cab = new T.Mesh(new T.BoxGeometry(1.6, 0.6, 2.2), new T.MeshStandardMaterial({ color: 0x22303a, metalness: 0.6, roughness: 0.2 })); cab.position.y = 1.28; g.add(body, cab); g.position.x = dir > 0 ? 4.5 : 9.5; k.add(g); tcars.push({ g, dir, off: i * 30 }); }
+    for (let i = 0; i < 6; i++) { const g = new T.Group(), dir = i % 2 ? -1 : 1; const body = new T.Mesh(new T.BoxGeometry(1.8, 0.75, 4.4), new T.MeshStandardMaterial({ color: [0xf2b705, 0x1a1c20, 0xd8d4cc, 0x2a3f6a, 0xf2b705, 0x8a2a2a][i], metalness: 0.4, roughness: 0.4 })); body.position.y = 0.6; body.userData.car = true; /* wave 5d: the kit casts every tagged box as a real car */ const cab = new T.Mesh(new T.BoxGeometry(1.6, 0.6, 2.2), new T.MeshStandardMaterial({ color: 0x22303a, metalness: 0.6, roughness: 0.2 })); cab.position.y = 1.28; g.add(body, cab); g.position.x = dir > 0 ? 4.5 : 9.5; k.add(g); tcars.push({ g, dir, off: i * 30 }); }
     const screenCol = new T.Color();
     if (!ctx.reduced) k.ticks.push((t) => {
       screenCol.setHSL((0.6 + 0.08 * Math.sin(t * 0.3)) % 1, 0.8, 0.45 + 0.1 * Math.sin(t * 1.3));
@@ -182,6 +230,7 @@ export const mcny2: RoomDef = {
     k.egg(v(FX + 4.1, 6.2, BZ), { id: 'dedicated-1932', title: 'Built on Fifth, 1929 to 1930', year: '1932', text: 'Joseph H. Freedlander designed the building on Fifth Avenue between 103rd and 104th Streets in red brick with marble trim. It went up in 1929 and 1930 and was dedicated on January 11, 1932.', clue: 'Read the name over the portico.', source: src }, { r: 3 });
     k.egg(statues[0], { id: 'hamilton-and-clinton', title: 'Two New Yorkers in the niches', text: 'The statues of Alexander Hamilton and DeWitt Clinton on the front are by the sculptor Adolph Alexander Weinman. They stand in niches, facing Central Park.', clue: 'Look for the two figures on the front, one either side of the door.', source: src }, { r: 2 });
     k.egg(v(BX, 18, BZ), { id: 'landmark-1967', title: 'A landmark in 1967', year: '1967', text: 'The building was designated a New York City landmark on January 24, 1967.', clue: 'Look up at the copper on the roof.', source: src }, { r: 3 });
+    k.egg(v(BX, 0.6, BZ - RD / 2 - 4), { id: 'mcny-core-floor', title: 'The city in its own words', year: '1923', text: 'Henry Collins Brown founded the museum in 1923 to present the history of the city and its people. The name of the gallery is painted long on its floor, so it only stands up straight from the rotunda doorway.', clue: 'Stand in the rotunda doorway and look down the gallery floor.', source: src }, { r: 1.6 });
     k.egg(v(BX + RW / 2 - 2, 3, TZ + 2), { id: 'the-pavilion', title: 'A glass room added', year: '2008', text: 'Ground was broken for an extension on August 2, 2006, and it was finished in February 2008: a glass pavilion by the Polshek Partnership that added 3,000 square feet of galleries on two levels.', clue: 'The newest part of the building is at the end of the timeline gallery.', source: src }, { r: 2.4 });
 
     return { mounts, spawn: v(2, 3, 18), look: v(BX + BW / 2, 10, BZ), eye: 3, bounds: [BX - RW / 2 + 0.8, 17, TZ - 6.2, 60], style: 'gilt', floorY: (x, z) => { const dx = x - (BX - 2), dz = z - BZ; const d = Math.hypot(dx, dz); if (d > 6.6 && d < 9.4 && dx < 0.5) { const a = Math.atan2(Math.abs(dz), dx); const t = Math.min(1, Math.max(0, (a - PI / 2) / (PI * 0.5))); return 0.2 + t * 5.4; } if (Math.abs(dz) < 3 && x < BX + RW / 2 - 4 && x > BX - RW / 2 && x < BX - 2) return 5.8; return 0; } };
