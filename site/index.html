@@ -16136,11 +16136,118 @@ window.__FRAMES.push(dt => { try { if (!MWALK.ok) return; const x = camera.posit
   if (window.__TOURFULL && __TOURFULL !== T) { const m2 = __TOURFULL.findIndex(q => q.name === 'the meme river'); if (m2 >= 0) __TOURFULL.splice(m2 + 1, 0, stop); else ins(__TOURFULL, 'aerial'); }
 })();
 
-/*__V397_X__*/
-/*__V398_X__*/
-/*__V399_X__*/
-/*__V400_X__*/
-/*__V401_X__*/
+/* ================================================================
+   v397 THE LOOK: GRASS THAT CATCHES THE LIGHT (2026-11-24)
+   The lawn's blades (v170) are two sided, and the lighting lit every blade's back face as if it faced away from
+   the sun, so half the field rendered near black: the dark spiky look at eye level in every shot. Now both faces
+   take the lit side's light, and a blade with the sun behind it glows a little at the tip the way real grass
+   does (light through a thin leaf), the base colour comes up from near black to a deep green, and broad patches
+   drift between lush and a touch of dry straw so the lawn is not one green. ?grasslight=0 off.
+   ================================================================ */
+(function grassLight() {
+  if (!window.__LAWN && typeof LAWN === 'undefined') return; if (/grasslight=0/.test(location.search)) return;
+  const W = typeof LAWN !== 'undefined' ? LAWN : window.__LAWN; if (!W || !W.mat || !W.u) return;
+  W.u.uBase.value.set(0x2b4718); W.u.uTip.value.set(0xa2bd58); W.u.uSun = W.u.uSun || { value: new THREE.Vector3(0.5, 0.7, 0.3) }; W.u.uDry = { value: new THREE.Color(0xb3a25e) };
+  const prev = W.mat.onBeforeCompile;
+  W.mat.onBeforeCompile = sh => { prev(sh); sh.uniforms.uDry = W.u.uDry; sh.uniforms.uSun = W.u.uSun;
+    sh.vertexShader = sh.vertexShader.replace('uniform vec3 uBase, uTip;', 'uniform vec3 uBase, uTip, uDry, uSun; varying float vTipK; varying float vBack;')
+      .replace('vGrass = mix(uBase,', 'float dry = smoothstep(0.35, 0.85, 0.5 + 0.5 * sin(wxz.x * 0.11 + sin(wxz.y * 0.07) * 2.0) * sin(wxz.y * 0.09 + 1.3)); vTipK = v; vec3 tipC = mix(uTip, uDry, dry * 0.55);\n        vBack = clamp(-dot(normalize(vec3(dir.x, 0.25, dir.y)), normalize(uSun)), 0.0, 1.0);\n        vGrass = mix(uBase,')
+      .replace('uTip * (0.8 + 0.4 * aRnd.w)', 'tipC * (0.8 + 0.4 * aRnd.w)');
+    sh.fragmentShader = sh.fragmentShader.replace('varying vec3 vGrass;', 'varying vec3 vGrass; varying float vTipK; varying float vBack;')
+      .split(': vLightBack').join(': vLightFront').split(': vIndirectBack').join(': vIndirectFront')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n totalEmissiveRadiance += vGrass * vec3(1.0, 1.05, 0.7) * 0.22 * vBack * vTipK * vTipK;');
+  };
+  W.mat.customProgramCacheKey = () => 'mi-lawn-v397b'; W.mat.needsUpdate = true;
+})();
+window.__FRAMES.push(() => { try { const W = typeof LAWN !== 'undefined' ? LAWN : null; if (!W || !W.u || !W.u.uSun) return; W.u.uSun.value.copy(sun.position).sub(sun.target.position).normalize(); } catch (e) { } });
+
+/* ================================================================
+   v398 WALLPAPER: THE BOARDWALK SHOP AND THE DARK HUT (2026-11-24)
+   Two new blank faces get MLow's Firefly paint. N3W CUTS' back wall faces the open sea and the ferry: it carries the
+   eye mural, rivers of contour lines to an Open Eye Flower; its north wall, a ghost sign. The camera obscura (v357)
+   was a plain navy box; its four outer walls now wear the painted boards, with a black cornice round the roof and a
+   brass ring round the pinhole so you can find it from outside. ?wallpaper=0 off.
+   ================================================================ */
+(function wallpaper4() {
+  if (!WALLS.on || /wallpaper=0/.test(location.search)) return;
+  const plane = (w, h, mat, x, y, z, ry) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat); m.position.set(x, y, z); m.rotation.y = ry; m.receiveShadow = true; scene.add(m); WALLS.n++; return m; };
+  try { if (window.__CUTS && CUTS.ok) { const [cx, g, cz] = CUTS.c, [nx, nz] = CUTS.n, [tx, tz] = CUTS.t, d = CUTS.D / 2 + 0.012, hw = CUTS.W / 2 + 0.012;
+    plane(CUTS.W - 0.3, CUTS.H - 0.7, wallMat('mural_eye'), cx - nx * d, g + 0.25 + (CUTS.H - 0.7) / 2, cz - nz * d, Math.atan2(-nx, -nz));
+    plane(CUTS.D - 0.6, CUTS.H - 1.2, wallMat('ghostbrick'), cx + tx * hw, g + 1.0 + (CUTS.H - 1.2) / 2, cz + tz * hw, Math.atan2(tx, tz)); } } catch (e) { console.warn('v398 cuts', e); }
+  try { if (window.__OBS && OBS.ok) { const [X, g, Z] = OBS.P, W = 3.2, D = 3.2, H = 2.6, o = 0.088, M = wallMat('boards');
+    plane(W, H, M, X, g + H / 2, Z - D / 2 - o, PI); plane(W, H, M, X, g + H / 2, Z + D / 2 + o, 0); plane(D, H, M, X - W / 2 - o, g + H / 2, Z, -PI / 2);
+    const side = (D - 1.1) / 2; plane(side, H, M, X + W / 2 + o, g + H / 2, Z - 0.55 - side / 2, PI / 2); plane(side, H, M, X + W / 2 + o, g + H / 2, Z + 0.55 + side / 2, PI / 2);
+    FACM.frameK && [[0, -D / 2 - 0.1, W + 0.5, 0.2], [0, D / 2 + 0.1, W + 0.5, 0.2]].forEach(([dx, dz, w, d]) => facPut('frameK', X + dx, g + H + 0.12, Z + dz, w, 0.22, d, 0));
+    [[-W / 2 - 0.1, 0], [W / 2 + 0.1, 0]].forEach(([dx]) => facPut('frameK', X + dx, g + H + 0.12, Z, 0.2, 0.22, D + 0.1, 0)); facFlush();
+    const brass = new THREE.MeshStandardMaterial({ color: 0xb8913e, roughness: 0.3, metalness: 0.95 }); const ring = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.022, 10, 28), brass); ring.position.set(X - W / 2 - 0.1, g + 1.6, Z); ring.rotation.y = PI / 2; scene.add(ring);
+    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.05, 16), new THREE.MeshBasicMaterial({ color: 0x000000 })); hole.position.set(X - W / 2 - 0.101, g + 1.6, Z); hole.rotation.y = -PI / 2; scene.add(hole); } } catch (e) { console.warn('v398 obscura', e); }
+})();
+
+/* ================================================================
+   v399 N3W CUTS AFTER DARK (2026-11-24)
+   At dusk the barbershop's window throws a warm fan of light across the sand in front of it, and an OPEN sign in
+   red neon comes on in the door glass, buzzing now and then the way old tubes do. Dawn puts both out.
+   ================================================================ */
+(function cutsNight() {
+  if (!window.__CUTS || !CUTS.ok) return;
+  const [cx, g, cz] = CUTS.c, [nx, nz] = CUTS.n, w = CUTS.win;
+  const sp = document.createElement('canvas'); sp.width = 256; sp.height = 256; const c = sp.getContext('2d');
+  if (c && c.createLinearGradient && c.createRadialGradient) { const gr = c.createRadialGradient(128, 0, 6, 128, 0, 230); gr.addColorStop(0, 'rgba(255,214,150,.9)'); gr.addColorStop(0.35, 'rgba(255,190,120,.35)'); gr.addColorStop(1, 'rgba(255,180,110,0)'); c.fillStyle = gr; c.fillRect(0, 0, 256, 256);
+    c.globalCompositeOperation = 'destination-in'; const hz = c.createLinearGradient(0, 0, 256, 0); hz.addColorStop(0, 'rgba(0,0,0,0)'); hz.addColorStop(0.3, 'rgba(0,0,0,1)'); hz.addColorStop(0.7, 'rgba(0,0,0,1)'); hz.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = hz; c.fillRect(0, 0, 256, 256); c.globalCompositeOperation = 'source-over'; }
+  const st = new THREE.CanvasTexture(sp); const spill = new THREE.Mesh(new THREE.PlaneGeometry(w.w + 2.5, 4.2), new THREE.MeshBasicMaterial({ map: st, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4 }));
+  const [sx, sz] = CUTS.at(w.u, CUTS.D / 2 + 2.15); spill.position.set(sx, g + 0.04, sz); spill.rotation.order = 'YXZ'; spill.rotation.set(-PI / 2, CUTS.ry, 0); scene.add(spill); CUTS.spill = spill;
+  const nv = document.createElement('canvas'); nv.width = 512; nv.height = 192; const n = nv.getContext('2d');
+  if (n && n.fillText && n.strokeText) { n.clearRect(0, 0, 512, 192); n.font = '700 120px "Archivo",Helvetica,sans-serif'; n.textAlign = 'center'; n.textBaseline = 'middle'; n.shadowColor = '#ff3030'; n.shadowBlur = 30; n.strokeStyle = '#ff5a4a'; n.lineWidth = 9; n.strokeText('OPEN', 256, 100); n.shadowBlur = 0; n.strokeStyle = '#ffe1d8'; n.lineWidth = 3; n.strokeText('OPEN', 256, 100); }
+  const nt = new THREE.CanvasTexture(nv); const neon = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.23), new THREE.MeshBasicMaterial({ map: nt, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  const [ox, oz] = CUTS.at(CUTS.door.u, CUTS.D / 2 + 0.06); neon.position.set(ox, g + 1.72, oz); neon.rotation.y = CUTS.ry; scene.add(neon); CUTS.neon = neon; CUTS.nightOk = true;
+})();
+window.__FRAMES.push(dt => { try { if (!CUTS.nightOk) return; const k = Math.min(1, (L.lamps || 0) * 1.3); CUTS.spill.material.opacity = 0.4 * k; CUTS.spill.visible = k > 0.01;
+  let f = 1; if (Math.random() < 0.012) CUTS.buzz = 0.12; if (CUTS.buzz > 0) { CUTS.buzz -= dt; f = Math.random() < 0.5 ? 0.25 : 1; } CUTS.neon.material.opacity = k * f; CUTS.neon.visible = k > 0.01; } catch (e) { } });
+
+/* ================================================================
+   v400 THE MEMES WALK: CARD OF THE HOUR (2026-11-24)
+   Every hour one plaque on the walk is lit from inside: a ring of warm light round it that breathes, so there is
+   always one card to go and find. The pier marker (v395) names it. It moves on the hour, through all 577 in about
+   24 days.
+   ================================================================ */
+(function cardOfHour() {
+  if (!window.__MWALK || !MWALK.ok) return;
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 256; const c = cv.getContext('2d');
+  if (c && c.createRadialGradient) { const gr = c.createRadialGradient(128, 128, 40, 128, 128, 128); gr.addColorStop(0, 'rgba(255,220,150,0)'); gr.addColorStop(0.55, 'rgba(255,214,140,.9)'); gr.addColorStop(0.75, 'rgba(255,200,120,.35)'); gr.addColorStop(1, 'rgba(255,200,120,0)'); c.fillStyle = gr; c.fillRect(0, 0, 256, 256); }
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  m.geometry.rotateX(-PI / 2); m.renderOrder = 4; scene.add(m); MWALK.glow = m;
+  const t = signTex([{ t: 'CARD OF THE HOUR', s: 0.3 }, { t: '…', s: 0.16 }], 1024, 256, '#16233f', '#c9a24a'); MWALK.hourT = t;
+  try { if (MWALK.sign) { const [x, g, z] = MWALK.sign, p = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.275), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4 })); p.position.set(x, g + 1.42, z + 0.02); scene.add(p); } } catch (e) { }
+  MWALK.hourK = -1;
+})();
+window.__FRAMES.push(() => { try { if (!MWALK.glow) return; const now = Date.now(), k = Math.floor(now / 3600000) % MWALK.pos.length;
+  if (k !== MWALK.hourK) { MWALK.hourK = k; const [a, r, cd] = MWALK.pos[k]; MWALK.glow.position.set(Math.sin(a) * r, MWALK.PY + 0.004, Math.cos(a) * r); MWALK.glow.rotation.y = a + PI;
+    const s = SIGNS.find(q => q.t === MWALK.hourT); if (s) { s.lines[1].t = '#' + cd.n + '  ' + String(cd.t || '').toUpperCase().slice(0, 30); signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } }
+  MWALK.glow.material.opacity = 0.55 + 0.35 * Math.sin(now / 700); } catch (e) { } });
+
+/* ================================================================
+   v401 SMOOTH: A FAR MODEL FOR EVERY SCULPTURE (2026-11-24)
+   The 61 meme sculptures were the island's biggest cost: about 60,000 triangles each, 3.8 million together, drawn
+   in full however far away they stood. Each now has a third, far model (assets/sculpt_far, made with gltf-transform:
+   meshoptimizer simplify to about 8,400 triangles, textures at 512, meshopt packed, 13 MB for all 66) that stands
+   in beyond fifty metres, where the difference is under a pixel. Near: the full model (v177). Middle: the light
+   model. Far: this. ?farlod=0 off.
+   ================================================================ */
+const FARL = { on: SMOOTH.on && !/farlod=0/.test(location.search), loading: 0, n: 0, t: 0 };
+window.__FARL = FARL;
+function farPlace(s, obj) {
+  obj.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(obj), sz = bb.getSize(new V3()), c = bb.getCenter(new V3());
+  const target = s.size * s.scale, k = s.mode === 'm' ? target / Math.max(sz.x, sz.y, sz.z) : target / Math.max(0.001, sz.y);
+  const inner = new THREE.Group(); inner.add(obj); obj.position.set(-c.x, -bb.min.y, -c.z); inner.scale.setScalar(k); inner.visible = false; s.root.add(inner); s.farG = inner; FARL.n++;
+  obj.traverse(o => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; o.userData.sculpt = s.i; const ms = Array.isArray(o.material) ? o.material : [o.material]; ms.forEach(mt => { if (mt) { mt.envMapIntensity = 0.75; if (mt.map) mt.map.anisotropy = ANISO; } }); });
+}
+window.__FRAMES.push(dt => { try { if (!FARL.on || typeof SC === 'undefined' || !gltfLoader) return; FARL.t -= dt; if (FARL.t > 0) return; FARL.t = 0.25; const cp = camera.position;
+  SC.forEach(s => { if (!s.root || s.state !== 'ready') return; const d = Math.hypot(cp.x - s.root.position.x, cp.z - s.root.position.z), lo = s.root.children[0];
+    if (!s.farState && FARL.loading < 3) { s.farState = 'loading'; FARL.loading++; gltfLoader.load('assets/sculpt_far/' + s.key + '.glb', g => { FARL.loading--; s.farState = 'ready'; try { farPlace(s, g.scene); } catch (e) { s.farState = 'error'; } }, undefined, () => { FARL.loading--; s.farState = 'error'; }); }
+    if (!s.farG) return;
+    if (s.hiG && s.hiG.visible) { s.farG.visible = false; return; }
+    const far = s.farG.visible ? d > 46 : d > 54; s.farG.visible = far; if (lo && lo !== s.farG && lo !== s.hiG) lo.visible = !far; }); } catch (e) { if (!FARL.err) { FARL.err = e; console.warn('v401 farlod', e); } } });
+
 /*__V402_X__*/
 /*__V403_X__*/
 /*__V404_X__*/
