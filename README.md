@@ -72,3 +72,27 @@ From the audit in `UPGRADE ALL ROOMS 2026-10-28/audit/galleries_other.md`.
 - **Checked:** `node _build/harness.js site/index.html` passes (soak 900 frames, 0 errors). Headless Chrome stills
   before and after in `UPGRADE ALL ROOMS 2026-10-28/shots/basement/`.
 - **Not verified:** a real phone, and a real GPU (the stills are SwiftShader).
+
+## V3, THE BIG UPGRADE, 2026-11-24
+
+Brief: `NEW YORKERS SITE/_build/GALLERY_UPGRADE_2026-11-23.md`. One layer, `_build/v3.js`, built after v2.js; assets in
+`site/assets/v3/` (manifest with source and licence in `v3_assets.json`, refetch with `_build/v3_assets.py`).
+
+- **Two old bugs fixed:** fonts.css pointed at `fonts/fonts/` so every sign was in a fallback face; the hallway walls were
+  black because their texture was cloned before it loaded (`U3.hallFix`).
+- **Scans** (Poly Haven CC0, 1k) swapped into the shared V1 materials when they land: concrete floors, linoleum, stair
+  planks, plaster, brick, diamond plate, plank subfloor. Scans are darker than the old flat paint; `boost` compensates.
+- **Real models** (`u3place`, cloned per placement, streamed by distance): the Odd Couple poker table inside `W.table`, the
+  sewers Rat King inside `V2.rat` (the crown and nod eggs now move him), a porcelain pull chain socket on every bulb, shop
+  lights, clocks, fire alarm pull, camera, mousetrap, jugs, plunger, cement bag, hand truck.
+- **Built architecture:** joists with blocking, red oxide girders on lally columns (laundry, court), T bar grids with lit
+  diffusers, crown moulding, door casings, stair nosings and skirt boards.
+- **Signs and notes** in Archivo Expanded, JetBrains Mono and Permanent Marker (`u3sign`, `u3note`).
+- **Tricks** (`u3anam`, a texture projected from one eye onto several surfaces, orange footprints at the eye, egg
+  `anamorph_<room>`): MOM IS UPSTAIRS on the stairs, ALL IN in the card room corner, CAUTION CREAM CHEESE at the bagel door,
+  ALL RISE over the court runner, SHE KNEW in the cold room.
+- **Look** (desktop, `?look=0` off): a cube camera probe per zone, full anisotropy, a split tone grade.
+- **Queued:** three Firefly plates (`site/assets/v3/ff/`) and five paid 3D models (washer and dryer, boiler, water heater,
+  chest freezer, the 12 m bagel), in `NEW YORKERS SITE/_build/museum/FIREFLY_QUEUE.md`.
+- **Checked:** harness passes; headless Chrome desktop and touch emulation load with no errors and every GLB. **Not checked:**
+  a real GPU or phone; probe cost on a laptop. Before and after stills: `/Volumes/mlow2026/GALLERY UPGRADE 2026-11-23/basement/`.

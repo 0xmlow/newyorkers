@@ -14,7 +14,7 @@ crash = """<script id="crashjs">
 })();
 </script>"""
 vendor = ''.join(f'<script src="vendor/{v}"></script>\n' for v in ['three.min.js', 'GLTFLoader.js', 'meshopt_decoder.js', 'CopyShader.js', 'LuminosityHighPassShader.js', 'GammaCorrectionShader.js', 'EffectComposer.js', 'RenderPass.js', 'ShaderPass.js', 'MaskPass.js', 'UnrealBloomPass.js', 'GLTFExporter.js'])
-js = rd('engine.js') + '\n' + rd('world.js') + '\n' + rd('systems.js') + '\n' + rd('v2.js')
+js = rd('engine.js') + '\n' + rd('world.js') + '\n' + rd('systems.js') + '\n' + rd('v2.js') + '\n' + rd('v3.js')
 page = f"""<!doctype html>
 <html lang="en">
 <head>
