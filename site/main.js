@@ -9,6 +9,7 @@ import { Sky } from 'three/addons/objects/Sky.js';
 import { MeshBVH } from 'three-mesh-bvh';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import './assets/rig/rigcast.js?v=face1028';   // FACE table: five rig files turned to +Z
+import { upgrade } from './upgrade.js?v=up1124';   // THE BIG UPGRADE (2026-11-24): scans, look, real models, signs, illusions
 
 const SUN_DIR = new THREE.Vector3(-0.551, 0.276, -0.787).normalize();   // bake sun: elev 16°, az 215°
 const EYE = 1.65, RADIUS = 0.35, STEP = 0.5, GRAVITY = 22;
@@ -162,7 +163,7 @@ scene.add(mergedRoot);   // originals stay (hidden) as the collision source
 // 20 (8 on a phone) breathe, shift and glance on their own mixer and turn their head to you; the rest are the
 // same figures as one instanced draw call per character. The primitives are hidden only once every file has
 // loaded, so a failed load leaves the terminal as it was. ?rig=off keeps the primitives.
-let rig = null;
+let rig = null, travellerSpots = [];
 if (new URLSearchParams(location.search).get('rig') !== 'off' && window.RigCast) {
   const CAST = ['workgirl', 'writer', 'annieh', 'editor', 'loretta', 'hustler', 'oscar', 'cabbie', 'susan', 'wiseguy'];
   const parts = [], spotsR = [], m4 = new THREE.Matrix4(), w4 = new THREE.Matrix4();
@@ -177,6 +178,7 @@ if (new URLSearchParams(location.search).get('rig') !== 'off' && window.RigCast)
       spotsR.push({ pos, ry: Math.atan2(e[8], e[10]), s: 0.9 * (0.96 + rnd() * 0.08), cast: CAST[Math.floor(rnd() * CAST.length)] });
     }
   }
+  travellerSpots = spotsR.map((t) => ({ x: t.pos.x, y: t.pos.y, z: t.pos.z, ry: t.ry }));
   if (spotsR.length) {
     rig = window.RigCast({ THREE, loader: new GLTFLoader(), clone: cloneSkinned, base: 'assets/rig/', spots: spotsR, parent: scene,
       camera, phone: touch, cap: 20, capPhone: 8, near: 30, nearPhone: 18,
@@ -197,8 +199,13 @@ for (const m of collide) {
   g.applyMatrix4(m.matrixWorld);
   geos.push(g.index ? g.toNonIndexed() : g);
 }
-const colGeo = mergeGeometries(geos, false);
-const bvh = new MeshBVH(colGeo);
+let bvh = new MeshBVH(mergeGeometries(geos, false));
+// the upgrade's models (benches, palms, lamps, totems) join the collision once they land: their footprint boxes
+function addSolids(extra) {
+  const list = extra.map((g) => (g.index ? g.toNonIndexed() : g));
+  for (const g of list) { g.deleteAttribute('normal'); g.deleteAttribute('uv'); }
+  geos.push(...list); bvh = new MeshBVH(mergeGeometries(geos, false));
+}
 const ray = new THREE.Ray();
 function cast(origin, dir, far) {
   ray.origin.copy(origin); ray.direction.copy(dir);
@@ -379,7 +386,8 @@ function tick(dt) {
     }
   }
   rig?.update(dt);
-  renderer.render(scene, camera);
+  up?.update(dt);
+  if (up?.render) up.render(); else renderer.render(scene, camera);
 }
 // ---------- power ----------
 // A visitor wrote that the site turned their fans into a jet engine. A gallery that draws 120 frames a second at two
@@ -395,11 +403,16 @@ function frame() { const nowMs = performance.now(); if (nowMs - POWER.drawn < po
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
+  up?.resize?.();
 });
+// the upgrade loads on top of the terminal as it is; if any of it fails the terminal still opens
+let up = null;
+try { up = await upgrade({ scene, renderer, camera, gltf, mergedRoot, envMap, touch, cast, lightmaps, travellers: travellerSpots, addSolids }); }
+catch (e) { console.warn('upgrade failed', e); }
 goTo(spots[0]);
 $('loading').style.display = 'none';
 $('start').style.display = 'flex';
 // harness hook: tick() renders a frame on demand (rAF pauses while the tab is hidden, so
 // screenshots of a hidden pane are stale unless the harness ticks first)
-window.__walk = { rig: () => rig, P, scene, camera, renderer, spots, goTo, cast, meta, tick: (dt = 1 / 60, n = 1) => { for (let i = 0; i < n; i++) tick(dt); } };
+window.__walk = { up: () => up, rig: () => rig, P, scene, camera, renderer, spots, goTo, cast, meta, tick: (dt = 1 / 60, n = 1) => { for (let i = 0; i < n; i++) tick(dt); } };
 frame();
