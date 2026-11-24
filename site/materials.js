@@ -28,6 +28,8 @@ export function createMaterials(loader,errors){
  if(opts.wash){shader.uniforms.washColor={value:m.userData.washColor};shader.uniforms.washAmount=washAmount;shader.fragmentShader='uniform vec3 washColor;uniform float washAmount;\n'+shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb=mix(diffuseColor.rgb,washColor*(.9+.1*diffuseColor.r),washAmount);')}
  m.userData.shaderPatched=true;m.userData.reliefUniform=shader.uniforms.reliefScale;
  };m.customProgramCacheKey=()=>`mlow-relief-v2-${name}-${depth}-${opts.wash?'wash':''}`;return m}
+ // Scanned sets with colour, normal and roughness only (marble and plaster, Poly Haven CC0, 2026-11-23). No relief.
+ function scan(name,repeat=[1,1],{color=0xffffff,rough=1,normal=.8,metal=0}={}){const m=new T.MeshStandardMaterial({color,map:map(name,'color',repeat),normalMap:map(name,'normal',repeat),normalScale:new T.Vector2(normal,normal),roughnessMap:map(name,'roughness',repeat),roughness:rough,metalness:metal});m.userData.surface=name;return m}
  let relief=true,wash=0;function apply(){for(const m of materials){const k=washed.includes(m)?1-.85*wash:1;if(m.userData.reliefUniform)m.userData.reliefUniform.value=relief?m.userData.depthScale*k:0;m.normalScale.setScalar(.7*k)}}
- return {pbr,materials,setRelief(enabled){relief=enabled;apply()},setWash(a){if(Math.abs(a-wash)<.002)return;wash=washAmount.value=a;apply()},wood:pbr('wood',[6,5.5],.013),brick:pbr('brick',[5,1.5],.028),concrete:pbr('concrete',[5,5],.012)};
+ return {pbr,scan,map,materials,setRelief(enabled){relief=enabled;apply()},setWash(a){if(Math.abs(a-wash)<.002)return;wash=washAmount.value=a;apply()},wood:pbr('wood',[6,5.5],.013),brick:pbr('brick',[5,1.5],.028),concrete:pbr('concrete',[5,5],.012)};
 }

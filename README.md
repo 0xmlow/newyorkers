@@ -51,3 +51,18 @@ Ported from ChatGPT's downstream copy and opened in a browser for the first time
 - `tools/shots.py` renders the stills in `site/assets/shots/` and `site/assets/poster.jpg`.
 
 Not verified: a person walking it end to end in a live browser, a real phone, shader compile on mobile GPUs. The checks/ scripts are ChatGPT's and were written for the v2 layout.
+
+
+## THE BIG UPGRADE (Claude Code, 2026-11-23)
+
+- `look.js`: each room is its own reflection probe (cube capture, PMREM), full anisotropy; `atmosphere.js` grades after the
+  OutputPass (soft curve, warm highlights, cool shadows, vignette, grain). Desktop only; `?look=0` and phones keep the old path.
+- Signs, labels and the Rebrand draw in the house fonts (Archivo, JetBrains Mono, Permanent Marker).
+- 27 GLBs added in `site/assets/props/` (Poly Haven CC0 from ON LOCATION's `work/glb_pass`, plus our own pigeon, wrecking ball,
+  rope stanchion and the COMING SOON A frame) and Poly Haven marble_01 and plastered_wall_04 in `site/assets/pbr/`. Every model
+  that replaces a built object goes through `swapIn` (the built one is the fallback); `prop()` adds the rest, and decorative
+  ones are skipped on coarse pointers.
+- Five Firefly plates are wired as placeholders under `site/assets/ff/` (queued in NEW YORKERS SITE/_build/museum/FIREFLY_QUEUE.md):
+  `sales_lightbox.webp`, `sales_wallpaper.webp`, `holdouts_banner.webp`, `roof_mural.webp`, `loft_view.webp`. Drop the file in.
+- `tools/upgrade_shots.py before|after`: the fixed before and after views (port 4303, Chrome on 9403).
+- `checks/scene-smoke.mjs` still targets ChatGPT's `dist/` layout and 24 works, so it was not rerun.

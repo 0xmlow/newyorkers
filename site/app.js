@@ -4,6 +4,12 @@ import {atmosphere} from './atmosphere.js';
 import {addInstallations} from './installations.js';
 import {RoundedBoxGeometry} from './vendor/addons/geometries/RoundedBoxGeometry.js';
 import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
+import {createLook} from './look.js';
+// THE BIG UPGRADE (2026-11-23): the house fonts on every painted sign (Archivo, JetBrains Mono, Permanent Marker). Canvas signs
+// are drawn once at build time, so the fonts are awaited first, for at most 2.5 s; after that Arial stands in as before.
+const FONT={sans:'Archivo, Arial, sans-serif',mono:'"JetBrains Mono", Menlo, monospace',hand:'"Permanent Marker", Archivo, sans-serif'};
+await Promise.race([Promise.all(['700 40px Archivo','900 40px Archivo','500 40px "JetBrains Mono"','40px "Permanent Marker"'].map(f=>document.fonts.load(f).catch(()=>{}))),new Promise(r=>setTimeout(r,2500))]);
+const LOOK=new URLSearchParams(location.search).get('look')!=='0'&&!matchMedia('(pointer:coarse)').matches;let look=null;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const canvas=$('#world');canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();modal('The graphics engine needs a moment.','<p>Reload this page to restart the 3D view, or <a href="collection.html">continue with the artwork collection</a>.</p>')});let renderer;
 try{renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(e){$('#loading').innerHTML='This device could not open the 3D museum.<a href="collection.html">Visit the artwork collection</a>';throw e}
@@ -18,29 +24,47 @@ function mat(c,r=.8,m=0){let k=c+r+m;if(!shared.has(k))shared.set(k,new T.MeshSt
 const lightMat=c=>new T.MeshBasicMaterial({color:c,toneMapped:false});
 function tex(w,h,draw){let c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);let t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());return t}
 let seed=882;function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
-const materialLibrary=createMaterials(textures,errors);const {wood,brick,concrete}=materialLibrary;
+const materialLibrary=createMaterials(textures,errors);
+// The sky (2026-11-23): a soft gradient behind every window and over the roof instead of one flat grey; the fog meets its horizon.
+if(LOOK){scene.background=tex(4,256,(c,W,H)=>{const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#8ea2b4');g.addColorStop(.55,'#c3c6c0');g.addColorStop(.72,'#d8d0bf');g.addColorStop(1,'#cbc5b6');c.fillStyle=g;c.fillRect(0,0,W,H)});scene.fog.color.set('#d2cbbb')}const {wood,brick,concrete}=materialLibrary;
 const metal=mat('#344b45',.5,.65),gold=mat('#b69d65',.3,.7),black=mat('#232d29'),paper=mat('#e6d9b8'),glass=new T.MeshStandardMaterial({color:'#b9d4cd',transparent:true,opacity:.2,roughness:.2,depthWrite:false});
 function room(id,title,sub,w,d){const g=new T.Group();g.name=id;scene.add(g);g.visible=id==='loft';rooms[id]={id,g,title,sub,w,d,blocks:[],batch:new Map(),spawn:[0,1.68,d/2-2],yaw:0};return rooms[id]}
 const loft=room('loft','The working floor','BEFORE IT WAS A DESTINATION',24,22),sales=room('sales','The sales suite','AUTHENTICITY, NOW WITH A CONCIERGE',20,18),basement=room('basement','The holdouts','THE ART DID NOT LEAVE. IT WAS MOVED.',20,18),roof=room('roof','Common ground','SOME THINGS ONLY GROW TOGETHER',23,21);
 function shape(r,geo,ma,p,s,rot=[0,0,0],batch=true){ma=typeof ma==='string'?mat(ma):ma;if(batch){let k=geo.uuid+ma.uuid;if(!r.batch.has(k))r.batch.set(k,{geo,ma,items:[]});r.batch.get(k).items.push({p,s,rot});return null}let m=new T.Mesh(geo,ma);m.position.set(...p);m.scale.set(...s);m.rotation.set(...rot);m.castShadow=!ma.transparent;m.receiveShadow=true;r.g.add(m);return m}
 const box=(r,p,s,m,rot=[0,0,0],batch=true)=>shape(r,bgeo,m,p,s,rot,batch),cyl=(r,p,s,m,rot=[0,0,0],batch=true)=>shape(r,cgeo,m,p,s,rot,batch),ball=(r,p,s,m,rot=[0,0,0],batch=true)=>shape(r,sgeo,m,p,s,rot,batch);
-function sign(r,lines,p,w,h,{bg='#e8dfc9',fg='#283c33',size=45,ry=0,rx=0}={}){p=[...p];if(Math.abs(ry)<.01&&p[2]<-r.d/2+.29)p[2]=-r.d/2+.29;if(Math.abs(ry-Math.PI/2)<.01&&p[0]<-r.w/2+.29)p[0]=-r.w/2+.29;const ts=tex(1024,Math.round(1024*h/w),(c,W,H)=>{c.fillStyle=bg;c.fillRect(0,0,W,H);c.fillStyle=fg;c.textAlign='center';c.textBaseline='middle';let ls=Array.isArray(lines)?lines:[lines];c.font=`600 ${Math.min(size*W/600,H/(ls.length+1)*.95)}px Arial`;ls.forEach((l,i)=>c.fillText(l,W/2,H/2+(i-(ls.length-1)/2)*H/(ls.length+1),W-50))});let o=shape(r,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:ts,side:T.DoubleSide,toneMapped:false}),p,[1,1,1],[rx,ry,0],false);return o}
+function sign(r,lines,p,w,h,{bg='#e8dfc9',fg='#283c33',size=45,ry=0,rx=0,font=FONT.sans,weight=700}={}){p=[...p];if(Math.abs(ry)<.01&&p[2]<-r.d/2+.29)p[2]=-r.d/2+.29;if(Math.abs(ry-Math.PI/2)<.01&&p[0]<-r.w/2+.29)p[0]=-r.w/2+.29;const ts=tex(1024,Math.round(1024*h/w),(c,W,H)=>{c.fillStyle=bg;c.fillRect(0,0,W,H);c.fillStyle=fg;c.textAlign='center';c.textBaseline='middle';let ls=Array.isArray(lines)?lines:[lines];c.font=`${weight} ${Math.min(size*W/600,H/(ls.length+1)*.95)}px ${font}`;ls.forEach((l,i)=>c.fillText(l,W/2,H/2+(i-(ls.length-1)/2)*H/(ls.length+1),W-50))});let o=shape(r,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:ts,side:T.DoubleSide,toneMapped:false}),p,[1,1,1],[rx,ry,0],false);return o}
 function target(r,o,title,fn){targets.push({r:r.id,o,title,fn});return o}
 function note(r,title,body,p,w=.8,h=.6,opt={}){const o=sign(r,title.toUpperCase(),p,w,h,{size:30,...opt});return target(r,o,title,()=>modal(title,`<p>${esc(body)}</p>`, 'FOUND IN THE BUILDING'))}
-function clue(r,id,title,body,p,opt={}){let o=sign(r,['TENANT FILE',title.toUpperCase()],p,1.05,.7,{size:25,bg:'#d8ba53',...opt});target(r,o,title,()=>{evidence.add(id);try{localStorage.setItem('mlow-tenants-v1',JSON.stringify([...evidence]))}catch{}updateUI();modal(title,`<p>${esc(body)}</p><p><strong>Added to the tenant file. ${evidence.size}/6 pieces recovered.</strong></p>`,'EVIDENCE OF A LIFE HERE')});}
+function clue(r,id,title,body,p,opt={}){let o=sign(r,['TENANT FILE',title.toUpperCase()],p,1.05,.7,{size:25,bg:'#d8ba53',font:FONT.mono,...opt});target(r,o,title,()=>{evidence.add(id);try{localStorage.setItem('mlow-tenants-v1',JSON.stringify([...evidence]))}catch{}updateUI();modal(title,`<p>${esc(body)}</p><p><strong>Added to the tenant file. ${evidence.size}/6 pieces recovered.</strong></p>`,'EVIDENCE OF A LIFE HERE')});}
 function block(r,x,z,w,d){r.blocks.push([x-w/2-.3,x+w/2+.3,z-d/2-.3,z+d/2+.3])}
 // GLB props (2026-10-28): fitted to a height, base on p, turned by ry. The primitives they replace stay built and are hidden
 // only when every model of a set loads; if one fails the others are removed and the room is as it was. Poly Haven files keep their ids.
 let glbLoader;const glbCache=new Map();
-function glb(r,file,p,height,ry=0){glbLoader??=new GLTFLoader(new T.LoadingManager());if(!glbCache.has(file))glbCache.set(file,glbLoader.loadAsync('assets/props/'+file));return glbCache.get(file).then(g=>{const o=g.scene.clone(true),b=new T.Box3().setFromObject(o),c=b.getCenter(new T.Vector3()),h=new T.Group();o.position.set(-c.x,-b.min.y,-c.z);o.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true}});h.add(o);h.scale.setScalar(height/(b.max.y-b.min.y));h.rotation.y=ry;h.position.set(...p);h.name=file;r.g.add(h);return h}).catch(e=>{console.warn('Model failed, keeping the built one:',file,e);return null})}
+function glb(r,file,p,height,ry=0){glbLoader??=new GLTFLoader(new T.LoadingManager());if(!glbCache.has(file))glbCache.set(file,glbLoader.loadAsync('assets/props/'+file));return glbCache.get(file).then(g=>{const o=g.scene.clone(true),b=new T.Box3().setFromObject(o),c=b.getCenter(new T.Vector3()),h=new T.Group();o.position.set(-c.x,-b.min.y,-c.z);o.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true}});h.add(o);h.scale.setScalar(height/(b.max.y-b.min.y));h.rotation.y=ry;h.position.set(...p);h.name=file;r.g.add(h);look?.dirty(r.id,()=>roomId);return h}).catch(e=>{console.warn('Model failed, keeping the built one:',file,e);return null})}
 function swapIn(parts,tasks,done){return Promise.all(tasks).then(hs=>{if(hs.every(Boolean)){parts.forEach(o=>o&&(o.visible=false));done?.(hs)}else hs.forEach(h=>h?.removeFromParent())})}
-function shell(r,floor=wood,height=6){
+// THE BIG UPGRADE (2026-11-23) helpers. LITE: coarse pointers skip the purely decorative models (phones keep their budget).
+const LITE=matchMedia('(pointer:coarse)').matches;
+// Poly Haven glass uses KHR_materials_transmission, which costs a whole extra scene pass in three; it becomes plain see-through glass.
+function fixGlass(h){h.traverse(o=>{const m=o.material;if(m&&m.transmission>0){m.transmission=0;m.transparent=true;m.opacity=.35;m.depthWrite=false;m.needsUpdate=true}});return h}
+// A model added outright (no built twin to hide), optionally blocking the walk. Decorative ones are skipped on phones.
+function prop(r,file,p,height,ry=0,{blockXZ=null,deco=false}={}){if(deco&&LITE)return Promise.resolve(null);if(blockXZ)block(r,p[0],p[2],...blockXZ);return glb(r,file,p,height,ry).then(h=>h&&fixGlass(h))}
+// Models that stand in the loft take the Rebrand's paint like the rest of the room. The projector is defined further
+// down, so a model that lands before it exists waits and tries again.
+function rebrandable(h){if(!h)return;try{h.traverse(o=>{if(o.isMesh)projector.patch(o.material)});projector.dirty=true}catch{setTimeout(()=>rebrandable(h),400)}}
+// An invisible box that makes a model inspectable (targets are raycast without recursion, so a model needs a proxy).
+const hitMat=new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,colorWrite:false});
+function story(r,title,body,p,s,eyebrow='FOUND IN THE BUILDING'){const o=new T.Mesh(bgeo,hitMat);o.position.set(...p);o.scale.set(...s);r.g.add(o);return target(r,o,title,()=>modal(title,`<p>${esc(body)}</p>`,eyebrow))}
+// Firefly plates (queued in NEW YORKERS SITE/_build/museum/FIREFLY_QUEUE.md): the file replaces the placeholder the moment it exists.
+const quiet=new T.TextureLoader();function plate(url,material,{show=false}={}){quiet.load(url,t=>{t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;material.map=t;material.color?.set('#ffffff');material.needsUpdate=true;if(show)show.visible=true},undefined,()=>{})}
+// The shelf levels of a model, found by casting down through it: every surface that has at least `clear` metres above it.
+function shelves(h,x,z,clear=.36){h.updateMatrixWorld(true);const rc=new T.Raycaster(new T.Vector3(x,30,z),new T.Vector3(0,-1,0));const ys=rc.intersectObject(h,true).map(i=>i.point.y).filter((y,i,a)=>i===0||a[i-1]-y>.05);const out=[];for(let i=0;i<ys.length;i++){const above=i?ys[i-1]:99;if(above-ys[i]>=clear)out.push(ys[i])}return out}
+function shell(r,floor=wood,height=6,{walls=null,ceil=null}={}){
  // Estimated meter-scale industrial shell, with true window openings and wall returns.
  const floorShape=new T.Shape();floorShape.moveTo(-r.w/2,-r.d/2);floorShape.lineTo(r.w/2,-r.d/2);floorShape.lineTo(r.w/2,r.d/2);floorShape.lineTo(-r.w/2,r.d/2);floorShape.closePath();
  if(r.id==='sales'){const hole=new T.Path();hole.moveTo(-7,-1.7);hole.lineTo(-7,1.7);hole.lineTo(-3.6,1.7);hole.lineTo(-3.6,-1.7);hole.closePath();floorShape.holes.push(hole)}
  const floorMesh=new T.Mesh(new T.ExtrudeGeometry(floorShape,{depth:.28,bevelEnabled:false,steps:1}),floor);floorMesh.rotation.x=-Math.PI/2;floorMesh.position.y=-.25;
  const uv=floorMesh.geometry.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)/r.w+.5,uv.getY(i)/r.d+.5);floorMesh.receiveShadow=true;floorMesh.castShadow=true;r.g.add(floorMesh);
- const wash=r.id==='loft'?{wash:'#efece4'}:{},back=materialLibrary.pbr('brick',[r.w/.78,height/.78],.03,wash),side=materialLibrary.pbr('brick',[r.d/.78,height/.78],.03,wash);for(const b of [back,side])b.color.set(r.id==='basement'?'#d39c88':'#e2b2a0');
+ const wash=r.id==='loft'?{wash:'#efece4'}:{},back=walls?walls(r.w,height):materialLibrary.pbr('brick',[r.w/.78,height/.78],.03,wash),side=walls?walls(r.d,height):materialLibrary.pbr('brick',[r.d/.78,height/.78],.03,wash);if(!walls)for(const b of [back,side])b.color.set(r.id==='basement'?'#d39c88':'#e2b2a0');
  box(r,[0,height/2,-r.d/2],[r.w,height,.52],back);
  box(r,[-r.w/2,height/2,0],[.52,height,r.d],side);
  // Right-hand daylight bays: masonry below, above and between the real voids.
@@ -53,7 +77,7 @@ function shell(r,floor=wood,height=6){
  }
  for(let z=-r.d/2;z<=r.d/2;z+=r.d/4){box(r,[0,height,z],[r.w,.3,.22],metal);for(let y of [.16,height-.18])box(r,[-r.w/2+.3,y,z+span/2],[.12,.1,span],metal)}
  const ceiling=new T.Group();ceiling.name='ceiling';r.g.add(ceiling);r.ceiling=ceiling;
- for(let x of [-r.w*.34,0,r.w*.34]){const panel=new T.Mesh(new T.BoxGeometry(r.w*.29,.16,r.d),mat('#827b69'));panel.position.set(x,height+.12,0);panel.castShadow=true;panel.receiveShadow=true;ceiling.add(panel)}
+ for(let x of [-r.w*.34,0,r.w*.34]){const panel=new T.Mesh(new T.BoxGeometry(r.w*.29,.16,r.d),ceil||mat('#827b69'));panel.position.set(x,height+.12,0);panel.castShadow=true;panel.receiveShadow=true;ceiling.add(panel)}
  for(let x of [-r.w*.17,r.w*.17]){const roofGlass=new T.Mesh(new T.PlaneGeometry(r.w*.05,r.d),glass);roofGlass.rotation.x=-Math.PI/2;roofGlass.position.set(x,height+.17,0);ceiling.add(roofGlass)}
  for(let z=-r.d/2+.3;z<r.d/2;z+=1.5)box(r,[0,height-.25,z],[r.w,.14,.08],metal);
  // Baseboards, conduit, sockets, end plates and radiator detail at visitor height.
@@ -62,19 +86,44 @@ function shell(r,floor=wood,height=6){
  for(let i=0;i<12;i++)cyl(r,[r.w/2-.65,.65,-r.d/2+1.1+i*.16],[.1,.9,.1],mat('#a4a495',.6,.3));
 }
 loft.spawn=[-1.5,1.68,9.4];loft.yaw=-.12;sales.spawn=[3.9,1.68,8.3];sales.yaw=.26;basement.spawn=[1.2,1.68,7.6];basement.yaw=.16;roof.spawn=[-3.2,1.68,8.8];roof.yaw=-.1;
-shell(loft,materialLibrary.pbr('wood',[6,5.5],.013,{wash:'#c4c0b6'}));shell(sales,materialLibrary.pbr('concrete',[5,4],.005),5.5);shell(basement,concrete,4.2);
+// THE BIG UPGRADE (2026-11-23): the loft's ceiling is a timber deck between the steel, the sales suite is Poly Haven marble_01
+// underfoot and plastered_wall_04 on the walls (both CC0, 1k, from the museum's set), the basement's soffit is poured concrete.
+const deck=materialLibrary.pbr('wood',[1.75,5.5],0);deck.color.set('#dcc6a6');deck.emissive.set('#2a1f14');
+const plasterWalls=[],plaster=(len,h)=>{const m=materialLibrary.scan('plaster',[len/2.2,h/2.2],{color:'#efe8dc',normal:.6});m.userData.tile=[len/1.2,h/1.2];plasterWalls.push(m);return m};
+const marble=materialLibrary.scan('marble',[20/2.4,18/2.4],{rough:.55,normal:.35});
+const soffit=materialLibrary.pbr('concrete',[2,5],0);soffit.color.set('#a9a69d');
+shell(loft,materialLibrary.pbr('wood',[6,5.5],.013,{wash:'#c4c0b6'}),6,{ceil:deck});const salesCeil=materialLibrary.scan('plaster',[3,6],{color:'#f3efe8',normal:.4});salesCeil.emissive.set('#6b665d');shell(sales,marble,5.5,{walls:plaster,ceil:salesCeil});shell(basement,concrete,4.2,{ceil:soffit});
 // Warehouse: steel structural rhythm, deep industrial windows, clerestories and a cutaway street edge.
 for(let x of [-6,6])for(let z of [-6,2]){cyl(loft,[x,3,z],[.28,6,.28],metal);cyl(loft,[x,.22,z],[.55,.35,.55],metal);box(loft,[x,5.8,z],[1.2,.22,.6],metal);block(loft,x,z,.4,.4)}
 for(let x of [-7,0,7]){for(let z=-9;z<=7;z+=2)box(loft,[x,6.5,z],[4.9,.07,.07],metal)}
-for(let x of [-7,0,7])for(let z of [-7,0,7]){box(loft,[x,5.5,z],[2,.08,.32],'#b6b9a4');box(loft,[x,5.44,z],[1.85,.025,.2],lightMat('#fff2c6'));cyl(loft,[x,5.87,z],[.02,.65,.02],metal)}
+// The working floor's light (2026-11-23): nine Poly Haven hanging_industrial_lamp pendants (CC0) on their cords from the deck,
+// over the code fluorescent bars that stay built as the fallback (and on phones, where the pendants are skipped).
+for(let x of [-7,0,7])for(let z of [-7,0,7]){const bars=[box(loft,[x,5.5,z],[2,.08,.32],'#b6b9a4',[0,0,0],false),box(loft,[x,5.44,z],[1.85,.025,.2],lightMat('#fff2c6'),[0,0,0],false),cyl(loft,[x,5.87,z],[.02,.65,.02],metal,[0,0,0],false)];if(!LITE)swapIn(bars,[glb(loft,'ph_hanging_industrial_lamp.glb',[x,4.62,z],1.45)],([h])=>{fixGlass(h);rebrandable(h)})}
 box(loft,[0,.03,12.4],[25,.17,2.5],concrete);box(loft,[0,3.1,11],[24.5,.72,.38],'#34453a');sign(loft,['THE WORKING FLOOR / ARTISTS IN RESIDENCE'],[0,3.12,11.21],21,.52,{bg:'#34453a',fg:'#ece5ca',size:30});
 // A table still carrying the work; blocks are collision-tested in walking mode.
-box(loft,[-6,1,-1],[4,.16,2],wood);for(let x of [-7.6,-4.4])for(let z of [-1.7,-.3])box(loft,[x,.5,z],[.11,1,.11],metal);block(loft,-6,-1,4,2);
-for(let i=0;i<8;i++){cyl(loft,[-7.5+i*.38,1.2,-1.5],[.2,.3,.2],['#c56545','#d6b755','#566c65'][i%3]);box(loft,[-7+rnd()*2,1.1,-.7+rnd()*.4],[.7,.025,.5],paper,[0,rnd(),0])}
+const worktable=[box(loft,[-6,1,-1],[4,.16,2],wood,[0,0,0],false)];for(let x of [-7.6,-4.4])for(let z of [-1.7,-.3])worktable.push(box(loft,[x,.5,z],[.11,1,.11],metal,[0,0,0],false));block(loft,-6,-1,4,2);
+for(let i=0;i<8;i++){worktable.push(cyl(loft,[-7.5+i*.38,1.2,-1.5],[.2,.3,.2],['#c56545','#d6b755','#566c65'][i%3],[0,0,0],false));box(loft,[-7+rnd()*2,1.1,-.7+rnd()*.4],[.7,.025,.5],paper,[0,rnd(),0])}
+// The worktable (2026-11-23): Poly Haven WoodenTable_01 (CC0) at standing height, 3.5 m, with real paint on it: rusted cans,
+// an oil tin and spray paint, all Poly Haven CC0. The paper sketches stay. Built table and paint pots are the fallback.
+swapIn(worktable.slice(0,5),[glb(loft,'ph_WoodenTable_01.glb',[-6,0,-1],1.08)],([h])=>{rebrandable(h);const cans=worktable.slice(5);
+ Promise.all([['ph_can_rusted.glb',-7.55,-1.45,.16,.3],['ph_can_rusted.glb',-7.2,-1.6,.16,1.2],['ph_oil_tin.glb',-6.75,-1.5,.24,.4],['ph_spray_paint_bottles.glb',-5.4,-1.5,.24,-.3],['ph_can_rusted.glb',-4.95,-1.45,.16,2],['ph_oil_tin.glb',-4.6,-1.55,.24,-.9]].map(([f,x,z,ht,ry])=>glb(loft,f,[x,1.08,z],ht,ry))).then(hs=>{if(hs.every(Boolean)){cans.forEach(c=>c.visible=false);hs.forEach(rebrandable)}else hs.forEach(o=>o?.removeFromParent())})});
 const couchParts=[box(loft,[7,.55,5],[3.2,1.1,1.5],'#576b55',[0,0,0],false),box(loft,[7,1.2,5.55],[3.2,.65,.28],'#576b55',[0,0,0],false),...[5.35,8.65].map(x=>box(loft,[x,.95,5],[.25,.6,1.5],'#4b5c4a',[0,0,0],false))];block(loft,7,5,3.5,1.6);
 // The tenants' sofa: Poly Haven Sofa_01 (CC0), a thrifted Victorian couch, 1.1 m high and 2.2 m long; it faces +Z, so it turns PI to face the room.
 swapIn(couchParts,[glb(loft,'Sofa_01.glb',[7,0,5.05],1.1,Math.PI)],([h])=>{h.traverse(o=>{if(o.isMesh)projector.patch(o.material)});loft.g.traverse(o=>{if(o.name==='couch-cushion')o.visible=false});projector.dirty=true});
-for(let i=0;i<5;i++)box(loft,[10.3,.3+i*.36,9.5],[1.4,.3,1.1],i%2?'#916c47':'#71634d');
+const crates=[];for(let i=0;i<5;i++)crates.push(box(loft,[10.3,.3+i*.36,9.5],[1.4,.3,1.1],i%2?'#916c47':'#71634d',[0,0,0],false));block(loft,10.4,9.2,1.7,2);
+// The crate stack (2026-11-23): Poly Haven wooden_crate_01 three high and a wooden_crate_02 beside it (CC0).
+swapIn(crates,[glb(loft,'ph_wooden_crate_01.glb',[10.3,0,9.5],.42,.05),glb(loft,'ph_wooden_crate_01.glb',[10.25,.42,9.45],.42,-.12),glb(loft,'ph_wooden_crate_01.glb',[10.35,.84,9.55],.42,.2),glb(loft,'ph_wooden_crate_02.glb',[10.9,0,8.3],.5,.15)],hs=>hs.forEach(rebrandable));
+// The artists' heat: Poly Haven barrel_stove (CC0) by the sofa with its flue to the deck, and a step ladder left at the windows.
+prop(loft,'ph_barrel_stove.glb',[4.4,0,4.4],.86,.6,{blockXZ:[.7,.7]}).then(rebrandable);cyl(loft,[4.4,3.42,4.4],[.15,5.1,.15],mat('#1d1f1c',.55,.6));cyl(loft,[4.4,.95,4.4],[.2,.12,.2],mat('#1d1f1c',.55,.6));
+prop(loft,'ph_wooden_ladder.glb',[10.5,0,-4.6],2.1,.35,{blockXZ:[1,1.2]}).then(rebrandable);
+// Sprinkler mains along the deck, painted red, with a head every three metres: a loft is a code built building.
+for(const x of [-3.5,3.5]){cyl(loft,[x,5.78,0],[.09,22,.09],mat('#9b2f22',.45,.4),[Math.PI/2,0,0]);for(let z=-9.5;z<=9.5;z+=3){cyl(loft,[x,5.66,z],[.035,.2,.035],gold);cyl(loft,[x,5.55,z],[.09,.025,.09],gold)}}
+// The redevelopment's wrecking ball (penn_wrecking_ball.glb, our own, from the museum's Penn Station room) swings outside the
+// open street side of the floor once the partitions arrive, on a cable from a crane you never see. It throws its shadow into the loft.
+const wreck=new T.Group();wreck.position.set(8.5,15,17.5);wreck.visible=false;loft.g.add(wreck);{const cable=cyl(loft,[0,-5,0],[.05,10,.05],mat('#1d1f1c',.5,.7),[0,0,0],false);cable.removeFromParent();wreck.add(cable)}
+glb(loft,'penn_wrecking_ball.glb',[0,0,0],3,0).then(h=>{if(!h)return;h.removeFromParent();h.position.set(0,-13,0);wreck.add(h)});
+// A Firefly painted view out of the daylight bays (queued): Williamsburg rooftops and water tanks, invisible until the plate exists.
+{const vm=new T.MeshBasicMaterial({fog:false,toneMapped:false}),view=new T.Mesh(new T.PlaneGeometry(48,16),vm);view.position.set(26,5,0);view.rotation.y=-Math.PI/2;view.visible=false;loft.g.add(view);plate('assets/ff/loft_view.webp',vm,{show:view})}
 clue(loft,'lease','The original lease','The first lease was signed by twelve artists. The rent was small enough to leave room for failure. On the back: “No one gets a smaller studio because they make quieter work.”',[-10.98,2.2,-10.79]);
 clue(loft,'negative','A photograph without a logo','A contact sheet shows the first show: extension cords, borrowed chairs, twenty-seven people. No brand activation. No neighborhood discovery campaign. Just people looking carefully.',[-11.79,.86,6.3],{ry:Math.PI/2});
 note(loft,'The unpaid invoice','Invoice #001: making this neighborhood interesting. Amount due: one lifetime of affordable space.',[-11.78,.82,-2.1],1.1,.6,{ry:Math.PI/2,size:26});
@@ -95,15 +144,47 @@ const vinyl=[];for(const z of [-8.25,-2.75,2.75,8.25]){const v=sign(loft,['NOW L
 const coopSign=sign(loft,['THIS BUILDING IS A COOPERATIVE','TWELVE ARTISTS. ONE LEASE. NO EXIT.'],[0,4.95,1],8,1.0,{bg:'#3e5a45',fg:'#efe6c8',size:27});coopSign.visible=false;
 const leasingSign=sign(loft,['THE RESIDENCES AT THE FORMER MUSEUM','CULTURE WAS HERE. NOW YOU CAN BE.'],[2.6,4.72,-8.9],9,1.25,{bg:'#e6dfc8',fg:'#675b3b',size:27});leasingSign.visible=false;
 // Sales suite: model building under glass, brochure wall, banquette and absurd amenities.
-box(sales,[0,.65,0],[6,1.3,4],'#b9ac8a');box(sales,[0,1.35,0],[6.2,.12,4.2],'#ece8d8');block(sales,0,0,6.3,4.3);
-for(let x of [-1.7,0,1.7])for(let z of [-.9,.9]){box(sales,[x,2.25,z],[1.2,1.8,1.2],'#d5d5c5');for(let y=1.6;y<3.1;y+=.27)for(let dx of [-.4,0,.4])box(sales,[x+dx,y,z+.61],[.21,.12,.02],lightMat('#a9b9ad'))}box(sales,[0,2.5,0],[6,2.4,4],glass,[0,0,0],false);
+// The scale model (2026-11-23), made the way an architect's model is made: a walnut plinth (the scanned wood), white foam
+// massing at six heights with lit windows front and back, a row of model trees, the cedar tank from the roof in miniature on
+// the tallest tower, and a brass framed vitrine. A real built model would be paid 3D; it is in the queue.
+const walnut=materialLibrary.pbr('wood',[2,1],0);walnut.color.set('#ffffff');const foam=mat('#f1efe9',.92);
+box(sales,[0,.65,0],[6,1.3,4],walnut);box(sales,[0,1.35,0],[6.2,.12,4.2],'#ece8d8');block(sales,0,0,6.3,4.3);
+const towerH={'-1.7,-0.9':1.5,'0,-0.9':2,'1.7,-0.9':1.2,'-1.7,0.9':1,'0,0.9':1.7,'1.7,0.9':1.35};
+for(let x of [-1.7,0,1.7])for(let z of [-.9,.9]){const th=towerH[x+','+z];box(sales,[x,1.41+th/2,z],[1.2,th,1.2],foam);for(let y=1.6;y<1.41+th-.15;y+=.27)for(let dx of [-.4,0,.4])for(const f of [.61,-.61])box(sales,[x+dx,y,z+f],[.21,.12,.02],lightMat('#c9d6cc'))}
+for(let x=-2.75;x<=2.76;x+=.55)for(const z of [-1.92,1.92]){cyl(sales,[x,1.48,z],[.02,.14,.02],'#5b4a38');ball(sales,[x,1.62,z],[.17,.2,.17],mat('#7d9466',.85))}
+box(sales,[0,2.5,0],[6,2.4,4],glass,[0,0,0],false);for(const x of [-3,3])for(const z of [-2,2])cyl(sales,[x,2.5,z],[.05,2.42,.05],gold);for(const z of [-2,2])box(sales,[0,3.71,z],[6.05,.05,.05],gold);for(const x of [-3,3])box(sales,[x,3.71,0],[.05,.05,4.05],gold);
+glb(sales,'tower.glb',[0,3.41,-.9],.26,-Math.PI/2);
 sign(sales,['THE RESIDENCES','AT THE FORMER MUSEUM'],[0,4.86,-8.78],7.2,1.0,{size:37,bg:'#d4ccb5',fg:'#5e573f'});
 note(sales,'The scale model','Every apartment comes with a view of where an artist used to work. The model has no basement. The people downstairs noticed.',[0,1.5,2.2],3,.6,{size:24});
 note(sales,'The amenity menu','Included: a podcast sauna, a private public plaza, an authenticity concierge, a meditation booth with surge pricing, and a pet wash larger than your former studio.',[-9.78,2.3,0],3,2,{ry:Math.PI/2,size:28});
 note(sales,'The naming meeting','“The Foundry” was taken. “The Atelier” tested well. “The Eviction” was deemed too literal. They settled on “The Former.”',[-9.78,2.3,5],2,1.4,{ry:Math.PI/2});
 clue(sales,'letter','The unsent letter','Dear future neighbor: the mural you loved in the brochure was painted by someone who cannot afford to live here. Please do not confuse the photograph of a community with a community.',[-8.86,1.9,-8.77]);
-for(let x of [-6,6]){box(sales,[x,.5,5],[3.5,.8,1.5],'#b2ae98');box(sales,[x,1,5.6],[3.5,.65,.3],'#b2ae98');block(sales,x,5,3.5,1.5);cyl(sales,[x,1.05,2.6],[1.3,.08,1.3],gold);cyl(sales,[x,.52,2.6],[.1,1,.1],gold)}
-for(let i=0;i<7;i++)box(sales,[7.8,.12+i*.065,-6],[1.3,.05,.8],paper,[0,i*.03,0]);
+// The lounge (2026-11-23): each banquette becomes two Poly Haven mid_century_lounge_chair (CC0) facing the model across a
+// modern_coffee_table_01 (CC0); the built banquettes are the fallback.
+for(let x of [-6,6]){const banq=[box(sales,[x,.5,5],[3.5,.8,1.5],'#b2ae98',[0,0,0],false),box(sales,[x,1,5.6],[3.5,.65,.3],'#b2ae98',[0,0,0],false)];block(sales,x,5,3.5,1.5);cyl(sales,[x,1.05,2.6],[1.3,.08,1.3],gold);cyl(sales,[x,.52,2.6],[.1,1,.1],gold);
+ swapIn(banq,[glb(sales,'ph_mid_century_lounge_chair.glb',[x-1,0,5.1],1.05,Math.PI+.28),glb(sales,'ph_mid_century_lounge_chair.glb',[x+1,0,5.1],1.05,Math.PI-.28),glb(sales,'ph_modern_coffee_table_01.glb',[x,0,5.3],.45,Math.PI/2)])}
+const brochures=[];for(let i=0;i<7;i++)brochures.push(box(sales,[7.8,.12+i*.065,-6],[1.3,.05,.8],paper,[0,i*.03,0],false));
+// Reception: Poly Haven ClassicConsole_01 (CC0), the authentic antique every sales office buys; the brochures move onto it.
+prop(sales,'ph_ClassicConsole_01.glb',[7.8,0,-6.75],1,0,{blockXZ:[1.8,1.3]}).then(h=>{if(!h)return;brochures.forEach((b,i)=>{b.position.set(7.55,1.02+i*.03,-6.75);b.scale.set(.62,.025,.42)})});
+// Pendants over the model, a plant in three corners, velvet ropes front and back of the model (rope_stanchion.glb, our own).
+for(const x of [-2.2,0,2.2])prop(sales,'ph_modern_ceiling_lamp_01.glb',[x,3.95,0],1.5,0,{deco:true});
+for(const [x,z] of [[-8.9,8],[8.9,7.9],[-8.9,-8.3]])prop(sales,'ph_potted_plant_02.glb',[x,0,z],1.3,x*z,{blockXZ:[.9,.9]});
+for(const z of [2.55,-2.55])for(const x of [-1.5,0,1.5])prop(sales,'rope_stanchion.glb',[x,0,z],1,0);
+// COMING SOON: YOU, the A frame outside every building on the block (nyb_lobby_easel.glb, ON LOCATION's edit of Poly Haven's
+// standing chalkboard, CC0), now inside the sales suite.
+prop(sales,'nyb_lobby_easel.glb',[1.5,0,7.3],1.45,-.35,{blockXZ:[1,.9]});story(sales,'The sandwich board','COMING SOON: YOU. The sign has stood outside every building on the block. It has never once been wrong about who is coming, only about who gets to stay.',[1.5,.75,7.3],[.95,1.45,.8]);
+// THE HERITAGE OBJECT: the redevelopment's own wrecking ball, gold plated, hung over a plinth as sculpture (penn_wrecking_ball.glb).
+box(sales,[-2.6,.45,7.6],[1.1,.9,1.1],mat('#f1ede4',.6));block(sales,-2.6,7.6,1.2,1.2);sign(sales,['HERITAGE OBJECT','THE ORIGINAL DEVELOPER, ON LOAN'],[-2.6,.6,8.16],.9,.26,{size:40,bg:'#f1ede4',fg:'#6c5f3e'});cyl(sales,[-2.6,4.2,7.6],[.025,2.6,.025],gold);
+glb(sales,'penn_wrecking_ball.glb',[-2.6,1.25,7.6],1.65,.4).then(h=>{if(!h)return;const g=new T.MeshStandardMaterial({color:'#d3ad62',metalness:1,roughness:.22});h.traverse(o=>{if(o.isMesh)o.material=g})});
+story(sales,'The heritage object','The developers had the wrecking ball gold plated and hung in the sales suite as sculpture. The card says it is on loan. Nobody has asked from whom.',[-2.6,2.1,7.6],[1.1,1.7,1.1]);
+// Built plaster detail: a tall skirting, a picture rail and a crown on the two solid walls.
+for(const [p,s] of [[[0,.11,-8.7],[20,.22,.06]],[[0,3.05,-8.72],[20,.06,.05]],[[0,5.4,-8.68],[20,.18,.14]]])box(sales,p,s,mat('#f4f0e8',.55));for(const [p,s] of [[[-9.7,.11,0],[.06,.22,18]],[[-9.72,3.05,0],[.05,.06,18]],[[-9.68,5.4,0],[.14,.18,18]]])box(sales,p,s,mat('#f4f0e8',.55));
+// A Firefly lightbox of the tower that will replace this building (queued); a drawn placeholder until the plate exists.
+{const lb=new T.MeshBasicMaterial({map:tex(512,1024,(c,W,H)=>{const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#2d3a52');g.addColorStop(.6,'#c98f6a');g.addColorStop(1,'#efd2a8');c.fillStyle=g;c.fillRect(0,0,W,H);c.fillStyle='#1c2230';c.fillRect(W*.3,H*.18,W*.4,H*.82);c.fillStyle='#f4d9a0';for(let y=H*.22;y<H*.97;y+=H*.035)for(let x=W*.33;x<W*.67;x+=W*.06)if((x*y)%7>2)c.fillRect(x,y,W*.035,H*.018);c.fillStyle='#f3efe6';c.font=`800 46px ${FONT.sans}`;c.textAlign='center';c.fillText('THE FORMER',W/2,H*.1)}),toneMapped:false});
+ const box1=box(sales,[9.25,1.55,4.6],[.12,2.5,1.4],mat('#1d1f1c',.4,.6),[0,0,0],false),face=new T.Mesh(new T.PlaneGeometry(1,1),lb);face.scale.set(1.25,2.32,1);face.position.set(9.18,1.55,4.6);face.rotation.y=-Math.PI/2;sales.g.add(face);block(sales,9.25,4.6,.4,1.5);plate('assets/ff/sales_lightbox.webp',lb);
+ story(sales,'The lightbox','A rendering of the tower that will stand where you are standing. In the rendering it is always sunset and nobody is carrying anything.',[9.15,1.55,4.6],[.2,2.4,1.4])}
+// Firefly wallpaper for the two solid walls (queued): the plaster's colour map is swapped for a 1.2 m tile when it exists.
+quiet.load('assets/ff/sales_wallpaper.webp',t=>{t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=8;for(const m of plasterWalls){const u=t.clone();u.repeat.set(...m.userData.tile);u.needsUpdate=true;m.map=u;m.color.set('#ffffff');m.needsUpdate=true}},undefined,()=>{});
 note(sales,'The square footage trick','The brochure includes the volume of your hopes in the listed square footage. The apartment itself remains the same size.',[7.8,.65,-6],1.8,.7);
 // Basement archive: low ceiling pipes, dense salon hanging, community folding table and heater.
 for(let x of [-7,-3,3,7])cyl(basement,[x,3.9,0],[.14,18,.14],x===3?'#b19b66':'#6d7970',[Math.PI/2,0,0]);
@@ -117,15 +198,35 @@ swapIn(chairParts,chairAt.map(([x,z],i)=>glb(basement,'plastic_monobloc_chair_01
 sign(basement,['THE HOLDOUTS','NO ONE IS A HISTORICAL FOOTNOTE.'],[0,3,-8.76],7,.9,{bg:'#ae412e',fg:'#f0e3c7',size:29});
 clue(basement,'petition','The petition','Eighty-three signatures. Some are shaky. Some are first names only. One is a paw print. The demand is simple: a place to keep making things.',[-1,.88,1],{rx:-Math.PI/2});
 clue(basement,'key','The spare key','A key labeled EVERYBODY. It opened the studio, the supply cupboard, and the door for the neighbor who needed somewhere warm. Ownership was never the whole story.',[-9.78,2,7.55],{ry:Math.PI/2});
-note(basement,'The pigeon union rep','The pigeon has negotiated lifetime access to the loading dock. It refuses to cross a picket line, unless the picket line is made of bread.',[7,1.3,5],1.5,.8);
-ball(basement,[7,.75,5],[.55,.65,.8],'#6a7977');ball(basement,[7,1.1,5.2],[.32,.35,.32],'#657c74');shape(basement,new T.ConeGeometry(.09,.24,8),mat('#b89565'),[7,1.1,5.44],[1,1,1],[Math.PI/2,0,0]);
-for(let z of [-6,-3.2]){box(basement,[8.1,.6,z],[1.2,1.2,1.5],'#786344');for(let y of [.2,.6,1])box(basement,[7.49,y,z],[.02,.04,1.45],'#c4ad80');block(basement,8.1,z,1.2,1.5)}
+const repNote=note(basement,'The pigeon union rep','The pigeon has negotiated lifetime access to the loading dock. It refuses to cross a picket line, unless the picket line is made of bread.',[7,1.3,5],1.5,.8);
+const birdParts=[ball(basement,[7,.75,5],[.55,.65,.8],'#6a7977',[0,0,0],false),ball(basement,[7,1.1,5.2],[.32,.35,.32],'#657c74',[0,0,0],false),shape(basement,new T.ConeGeometry(.09,.24,8),mat('#b89565'),[7,1.1,5.44],[1,1,1],[Math.PI/2,0,0],false)];block(basement,7,4.6,1,1);
+// The union rep (2026-11-23): the Tripo pigeon MLow made for THE LAST BODEGA (pigeon.glb, our own) at 1.15 m, turned to the door;
+// its card becomes a picket sign on a stake beside it. The ball pigeon is the fallback.
+swapIn(birdParts,[glb(basement,'pigeon.glb',[7,0,4.5],1.15,2.05)],()=>{repNote.position.set(8.15,1.35,5.35);repNote.rotation.set(0,-.55,0);repNote.scale.setScalar(.7);cyl(basement,[8.15,.55,5.33],[.04,1.1,.04],wood,[0,-.55,0],false)});
+const shelfParts=[];for(let z of [-6,-3.2]){shelfParts.push(box(basement,[8.1,.6,z],[1.2,1.2,1.5],'#786344',[0,0,0],false));for(let y of [.2,.6,1])shelfParts.push(box(basement,[7.49,y,z],[.02,.04,1.45],'#c4ad80',[0,0,0],false));block(basement,8.1,z,1.2,1.5)}
+// The archive (2026-11-23): two Poly Haven steel_frame_shelves_03 (CC0) end to end against the windows, every level found by
+// casting down through the model and filled with Poly Haven cardboard_box_01 (CC0), the boxes the art came down in.
+swapIn(shelfParts,[glb(basement,'ph_steel_frame_shelves_03.glb',[8.85,0,-5.95],2.3,-Math.PI/2),glb(basement,'ph_steel_frame_shelves_03.glb',[8.85,0,-3.6],2.3,-Math.PI/2)],hs=>{if(LITE)return;let k=0;for(const [i,z0] of [[0,-5.95],[1,-3.6]])for(const y of shelves(hs[i],8.85,z0+.55))for(const dz of [-.75,0,.75]){if((k++)%4===3)continue;glb(basement,'ph_cardboard_box_01.glb',[8.85+((k%3)-1)*.04,y,z0+dz],.3,Math.PI/2+((k*1.7)%.5-.25))}});
+// The meeting notice: Poly Haven standing_chalkboard_01 (CC0) with chalk in Permanent Marker.
+prop(basement,'ph_standing_chalkboard_01.glb',[-2.7,0,7.7],1.5,.45,{blockXZ:[.9,.9]}).then(h=>{if(!h)return;const t=tex(512,512,(c,W,H)=>{c.clearRect(0,0,W,H);c.fillStyle='#f1eee4';c.textAlign='center';c.font=`64px ${FONT.hand}`;['TENANTS','MEETING','TONIGHT 7','BRING A CHAIR'].forEach((l,i)=>{c.font=`${i===3?44:66}px ${FONT.hand}`;c.fillText(l,W/2,110+i*105,W-40)})}),m=new T.Mesh(new T.PlaneGeometry(.66,.66),new T.MeshBasicMaterial({map:t,transparent:true,toneMapped:false,opacity:.88}));m.position.set(0,.95,.19);m.rotation.x=-.245;h.children[0].add(m)});
+story(basement,'The meeting notice','Tenants meeting tonight at seven. Bring a chair. Everyone brought the same white chair, and nobody can remember whose is whose, which is the point.',[-2.7,.8,7.7],[.9,1.5,.7]);
+// The heat down here: a Poly Haven barrel_stove (CC0) by the community table with its flue up through the soffit, a breaker
+// panel (power_box_01, CC0) on the back wall past the corridor, and a hand truck (CC0) left by the shelves.
+prop(basement,'ph_barrel_stove.glb',[-6.6,0,6.4],.86,1.1,{blockXZ:[.7,.7]});cyl(basement,[-6.6,2.55,6.4],[.15,3.3,.15],mat('#1d1f1c',.55,.6));
+prop(basement,'ph_power_box_01.glb',[8.95,1.05,-8.5],.55,0);cyl(basement,[8.95,2.85,-8.62],[.04,2.6,.04],metal);
+prop(basement,'ph_hand_truck.glb',[9.1,0,-1.4],1.3,-1.1,{blockXZ:[.8,.8]});
+// A Firefly bedsheet banner beside THE HOLDOUTS sign (queued); painted in Permanent Marker until the plate exists.
+{const bm=new T.MeshStandardMaterial({roughness:.95,side:T.DoubleSide,map:tex(1024,300,(c,W,H)=>{c.fillStyle='#ece6d6';c.fillRect(0,0,W,H);c.fillStyle='#ae412e';c.textAlign='center';c.textBaseline='middle';c.font=`110px ${FONT.hand}`;c.fillText('WE WERE HERE FIRST',W/2,H*.55,W-60)})});const b=new T.Mesh(new T.PlaneGeometry(3.4,1),bm);b.position.set(-6.55,3.15,-8.68);basement.g.add(b);for(const x of [-8.2,-4.9])cyl(basement,[x,3.62,-8.66],[.03,.1,.03],metal);plate('assets/ff/holdouts_banner.webp',bm)}
 note(basement,'The emergency exhibition','If the upstairs museum closes, this room remains a museum. A museum begins when someone decides that something deserves to be seen.',[0,1.02,1],1.3,.6,{rx:-Math.PI/2});
 // Rooftop commons: raised planting beds, rain barrels, water tank and a growing alternative.
 box(roof,[0,-.3,0],[23,.6,21],concrete);for(let x of [-11.5,11.5])box(roof,[x,.65,0],[.4,1.3,21],brick);box(roof,[0,.65,-10.5],[23,1.3,.4],brick);
-const bedSwaps=[];for(let x of [-7,7])for(let z of [-5,1,6]){bedSwaps.push([[box(roof,[x,.4,z],[4,.8,2.6],wood,[0,0,0],false),box(roof,[x,.82,z],[3.75,.08,2.35],'#423d2b',[0,0,0],false)],x,z]);block(roof,x,z,4,2.6);for(let i=0;i<10;i++){const px=x-1.5+(i%5)*.75,pz=z-.7+Math.floor(i/5)*1.3;cyl(roof,[px,1.12,pz],[.035,.6,.035],'#5a7044');for(let a=0;a<3;a++){const leaf=shape(roof,new T.SphereGeometry(.5,12,8),mat(a%2?'#82944d':'#496949'),[px+Math.sin(a*2)*.2,1.25+a*.12,pz+Math.cos(a*2)*.2],[.5,.09,.24],[0,a*2,.3],false);movables.push({o:leaf,base:leaf.rotation.z})}}}
+const bedSwaps=[],bedPlants=[];for(let x of [-7,7])for(let z of [-5,1,6]){bedSwaps.push([[box(roof,[x,.4,z],[4,.8,2.6],wood,[0,0,0],false),box(roof,[x,.82,z],[3.75,.08,2.35],'#423d2b',[0,0,0],false)],x,z]);block(roof,x,z,4,2.6);const seedlings=[];bedPlants.push(seedlings);for(let i=0;i<10;i++){const px=x-1.5+(i%5)*.75,pz=z-.7+Math.floor(i/5)*1.3;seedlings.push(cyl(roof,[px,1.12,pz],[.035,.6,.035],'#5a7044',[0,0,0],false));for(let a=0;a<3;a++){const leaf=shape(roof,new T.SphereGeometry(.5,12,8),mat(a%2?'#82944d':'#496949'),[px+Math.sin(a*2)*.2,1.25+a*.12,pz+Math.cos(a*2)*.2],[.5,.09,.24],[0,a*2,.3],false);seedlings.push(leaf);movables.push({o:leaf,base:leaf.rotation.z})}}}
 // Each bed is four Poly Haven planter_box_01 (CC0), two per row of seedlings, soil just under the rim.
-for(const [bed,x,z] of bedSwaps){const at=[];for(const dx of [-.86,.86])for(const dz of [-.65,.65])at.push([x+dx,z+dz]);swapIn(bed,at.map(([px,pz])=>glb(roof,'planter_box_01.glb',[px,0,pz],.8)),()=>{for(const [px,pz] of at)box(roof,[px,.78,pz],[1.56,.04,.64],'#423d2b',[0,0,0],false)})}
+for(const [bed,x,z] of bedSwaps){const at=[];for(const dx of [-.86,.86])for(const dz of [-.65,.65])at.push([x+dx,z+dz]);const plants=bedPlants[bedSwaps.findIndex(b=>b[0]===bed)];swapIn(bed,at.map(([px,pz])=>glb(roof,'planter_box_01.glb',[px,0,pz],.8)),()=>{for(const [px,pz] of at)box(roof,[px,.78,pz],[1.56,.04,.64],'#423d2b',[0,0,0],false);
+ // What grows (2026-11-23): a row of Poly Haven periwinkle_plant (CC0, eight real seedlings) in every planter replaces the code leaves.
+ if(!LITE)swapIn(plants,at.flatMap(([px,pz],i)=>[-.16,.16].map((dz,j)=>glb(roof,'ph_periwinkle_plant.glb',[px+(j?.08:-.08),.8,pz+dz],.62,(i+j)%2?Math.PI:0))))})}
+// The garden gnome, an egg: Poly Haven garden_gnome (CC0) at the end of one row.
+prop(roof,'ph_garden_gnome.glb',[8.62,.8,6.65],.36,-.5);story(roof,'The garden gnome','Listed by the developer as a heritage tenant. Rent stabilised since 1974. He has outlived three landlords and fully intends to outlive this one.',[8.62,1,6.65],[.25,.4,.25]);
 // The water tank: the primitive tank is built unbatched as the fallback and hidden only once the real one loads,
 // tower.glb, the cedar tank with the N3W YORKERS mural from THE MARKS (EVICTION's roof has it too), mural turned to the stairs, fitted to the old tank's 7.3 m from roof to cap.
 const tankParts=[];for(let x of [-2,2])for(let z of [-8,-5])tankParts.push(box(roof,[x,1.8,z],[.13,3.6,.13],metal,[0,0,0],false));tankParts.push(cyl(roof,[0,4.3,-6.5],[4.5,3.6,4.5],wood,[0,0,0],false),shape(roof,new T.ConeGeometry(2.6,1.2,32),mat('#4d5c50'),[0,6.7,-6.5],[1,1,1],[0,0,0],false));for(let y of [2.8,3.5,4.3,5.1,5.8]){tankParts.push(shape(roof,new T.TorusGeometry(2.27,.045,6,48),metal,[0,y,-6.5],[1,1,1],[Math.PI/2,0,0],false))}block(roof,0,-6.5,4.6,4.6);
@@ -136,16 +237,27 @@ const picnicParts=[box(roof,[0,.8,3],[4,.15,2],wood,[0,0,0],false),...[-1.6,1.6]
 // The commons table: Poly Haven wooden_picnic_table (CC0), long side along the roof; the seed envelope moves down onto its top.
 swapIn(picnicParts,[glb(roof,'wooden_picnic_table.glb',[0,0,3],.8,Math.PI/2)],()=>{const t=targets.find(t=>t.title==='The seed envelope');if(t)t.o.position.y=.815});
 clue(roof,'seed','The seed envelope','Seeds saved from the garden the developer called vacant. Instructions: plant after the last frost. Share what grows. Leave the gate unlocked.',[0,.9,3],{rx:-Math.PI/2});
-note(roof,'The private public bench','This bench used to require a reservation. Someone removed the sign. Its capacity immediately doubled.',[-4,.7,8],1.5,.65);
-box(roof,[-4,.5,8],[3,.14,.8],wood);for(let x of [-5,-3])box(roof,[x,.25,8],[.12,.5,.6],metal);
+const benchNote=note(roof,'The private public bench','This bench used to require a reservation. Someone removed the sign. Its capacity immediately doubled.',[-4,.7,8],1.5,.65);
+const benchParts=[box(roof,[-4,.5,8],[3,.14,.8],wood,[0,0,0],false),...[-5,-3].map(x=>box(roof,[x,.25,8],[.12,.5,.6],metal,[0,0,0],false))];block(roof,-4,8,3,.9);
+// The bench (2026-11-23): two Poly Haven painted_wooden_bench (CC0) end to end; the card stands up behind them.
+swapIn(benchParts,[glb(roof,'ph_painted_wooden_bench.glb',[-4.62,0,8],.9,0),glb(roof,'ph_painted_wooden_bench.glb',[-3.38,0,8],.9,0)],()=>{benchNote.position.set(-4,1.25,8.32)});
+// Roof plant (2026-11-23): two pairs of Poly Haven exterior_aircon_unit (CC0) at the back corners, two rusted drums (barrel_stove,
+// CC0) catching rain by the tank.
+prop(roof,'ph_exterior_aircon_unit.glb',[10.5,0,-8.9],.93,-Math.PI/2,{blockXZ:[.6,1.9]});prop(roof,'ph_exterior_aircon_unit.glb',[-10.5,0,-8.9],.93,Math.PI/2,{blockXZ:[.6,1.9]});
+for(const x of [-3.4,3.4])prop(roof,'ph_barrel_stove.glb',[x,0,-4.5],.86,x,{blockXZ:[.7,.7]});
 const reclaimSign=sign(roof,['RECLAIM THE BUILDING','SIX STORIES. ONE COMMON FUTURE.'],[0,2.1,-4.15],3.5,1.3,{size:26,bg:'#b3452d',fg:'#f0e7cb'});
 target(roof,reclaimSign,'Reclaim the building',()=>{if(evidence.size<6){modal('A building is more than its deed.',`<p>Find all six pieces of tenant history before calling the assembly. You have ${evidence.size}/6.</p><p>Look for ochre TENANT FILE labels: two on the working floor, one in the sales suite, two in the basement, and one on the rooftop table.</p>`,'THE ROOFTOP ASSEMBLY');return}reclaimed=true;pressure=0;updateWorld();modal('The building belongs to its stories.', '<p>The tenants form a cooperative. The partitions retreat. The art returns to the walls. The rooftop stays open.</p><p>This ending is a possibility, not a prediction. A neighborhood survives through the people who keep making room for one another.</p><button id="return-floor" class="primary">See the working floor again</button>','THE COMMONS');$('#return-floor').onclick=()=>{$('#modal').close();go('loft')}});
 // Small neighboring masses provide a street context without claiming a real address or skyline.
-for(const r of Object.values(rooms)){for(let i=0;i<8;i++){const x=-24+i*7,h=6+(i%3)*3,z=-24-(i%2)*4;box(r,[x,h/2-1,z],[5,h,6],['#c2bca9','#b1b3a5','#c9c4b6'][i%3]);for(let y=1;y<h-1;y+=2.2)for(let dx of [-1.4,0,1.4])box(r,[x+dx,y,z+3.03],[.65,1.1,.04],'#8f9b91')}}
+// 2026-11-23: the neighbours are scanned brick in three tints with stone sills, dark glass and a cornice, and three of them carry
+// the cedar tank on the roof view. A Firefly mural (queued) waits for the blank wall of the fifth.
+const nbBrick=['#c9a48c','#b49384','#d2b39a'].map(c=>{const m=materialLibrary.pbr('brick',[4,7],0);m.color.set(c);return m}),nbGlass=mat('#2f3a3c',.22,.4),nbStone=mat('#d8d0bd',.8);
+for(const r of Object.values(rooms)){for(let i=0;i<8;i++){const x=-24+i*7,h=6+(i%3)*3,z=-24-(i%2)*4;box(r,[x,h/2-1,z],[5,h,6],nbBrick[i%3]);box(r,[x,h-1.05,z],[5.35,.32,6.35],nbStone);if(i===4)continue;for(let y=1;y<h-1;y+=2.2)for(let dx of [-1.4,0,1.4]){box(r,[x+dx,y,z+3.03],[.65,1.1,.04],nbGlass);box(r,[x+dx,y-.6,z+3.06],[.8,.08,.14],nbStone)}}}
+if(!LITE)for(const i of [1,4,6]){const x=-24+i*7,h=6+(i%3)*3,z=-24-(i%2)*4;glb(roof,'tower.glb',[x+.8,h-1,z-.5],3.4,i)}
+{const mm=new T.MeshStandardMaterial({roughness:.9}),mural=new T.Mesh(new T.PlaneGeometry(4.4,6),mm);mural.position.set(4,3.4,-20.93);mural.visible=false;roof.g.add(mural);plate('assets/ff/roof_mural.webp',mm,{show:mural})}
 const art=await fetch('assets/art.json').then(r=>{if(!r.ok)throw Error('Artwork catalog unavailable');return r.json()}).catch(e=>{errors.push(e.message);return []});
 const washTex=tex(256,256,(c,W,H)=>{const g=c.createRadialGradient(W/2,0,0,W/2,0,H*.95);g.addColorStop(0,'rgba(255,226,180,.9)');g.addColorStop(.45,'rgba(255,214,160,.32)');g.addColorStop(1,'rgba(255,210,150,0)');c.fillStyle=g;c.fillRect(0,0,W,H)}),washMat=new T.MeshBasicMaterial({map:washTex,transparent:true,depthWrite:false,blending:T.AdditiveBlending,toneMapped:false,opacity:.55,polygonOffset:true,polygonOffsetFactor:-2}),frameMat=mat('#1b1814',.45,.1),filletMat=mat('#b39a63',.35,.75),brassMat=mat('#a88a52',.3,.8),stripMat=lightMat('#fff1d2');
 const planeGeo=new T.PlaneGeometry(1,1);
-function label(a,w=.92){const t=tex(512,104,(c,W,H)=>{c.fillStyle='#ece6d6';c.fillRect(0,0,W,H);c.fillStyle='#8b7f66';c.font='600 21px Arial';c.fillText(('NEW YORKERS #'+a.number+(a.place?'  ·  '+a.place:'')).toUpperCase(),22,34,W-44);c.fillStyle='#1d2621';c.font='700 34px Arial';c.fillText(a.title,22,78,W-44)});const m=new T.Mesh(planeGeo,new T.MeshBasicMaterial({map:t,toneMapped:false}));m.scale.set(w,w*104/512,1);return m}
+function label(a,w=.92){const t=tex(512,104,(c,W,H)=>{c.fillStyle='#ece6d6';c.fillRect(0,0,W,H);c.fillStyle='#8b7f66';c.font=`500 19px ${FONT.mono}`;c.fillText(('NEW YORKERS #'+a.number+(a.place?'  ·  '+a.place:'')).toUpperCase(),22,34,W-44);c.fillStyle='#1d2621';c.font=`700 34px ${FONT.sans}`;c.fillText(a.title,22,78,W-44)});const m=new T.Mesh(planeGeo,new T.MeshBasicMaterial({map:t,toneMapped:false}));m.scale.set(w,w*104/512,1);return m}
 function mount(r,a,p,w,ry=0,{lit=true,tag=true,board=null}={}){const g=new T.Group();g.position.set(...p);g.rotation.y=ry;r.g.add(g);let h=w/a.aspect;
  const frame=new T.Mesh(bgeo,frameMat);frame.scale.set(w+.15,h+.15,.075);frame.position.z=.0375;frame.castShadow=true;frame.receiveShadow=true;g.add(frame);
  const fillet=new T.Mesh(planeGeo,filletMat);fillet.scale.set(w+.035,h+.035,1);fillet.position.z=.077;g.add(fillet);
@@ -169,7 +281,7 @@ const boardMat=wood;hang.roof.forEach((a,i)=>{if(i<2){mount(roof,a,[i?7:-7,2.45,
 // Repeated architecture and furnishings share GPU batches.
 for(const r of Object.values(rooms)){for(const {geo,ma,items} of r.batch.values()){let m=new T.InstancedMesh(geo,ma,items.length);items.forEach((v,i)=>{dummy.position.set(...v.p);dummy.scale.set(...v.s);dummy.rotation.set(...v.rot);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)});m.computeBoundingSphere();m.castShadow=!ma.transparent;m.receiveShadow=true;r.g.add(m)}r.batch.clear()}
 const projector=(()=>{const cam=new T.PerspectiveCamera(44,2,.4,40);cam.position.set(-7.6,1.68,9.6);cam.lookAt(2.6,2.9,-10.7);cam.updateMatrixWorld();
- const brand=tex(2048,1024,(c,W,H)=>{c.clearRect(0,0,W,H);c.fillStyle='#c4362a';c.textAlign='center';c.textBaseline='middle';c.font='900 330px "Arial Black",Arial';c.fillText('THE FORMER',W/2,H*.43,W*.9);c.font='800 92px Arial';c.fillText('LUXURY LOFT RESIDENCES',W/2,H*.72,W*.8);c.lineWidth=26;c.strokeStyle='#c4362a';c.strokeRect(W*.04,H*.12,W*.92,H*.76)});
+ const brand=tex(2048,1024,(c,W,H)=>{c.clearRect(0,0,W,H);c.fillStyle='#c4362a';c.textAlign='center';c.textBaseline='middle';c.font=`900 330px ${FONT.sans}`;c.fillText('THE FORMER',W/2,H*.43,W*.9);c.font=`800 92px ${FONT.sans}`;c.fillText('LUXURY LOFT RESIDENCES',W/2,H*.72,W*.8);c.lineWidth=26;c.strokeStyle='#c4362a';c.strokeRect(W*.04,H*.12,W*.92,H*.76)});
  const rt=new T.WebGLRenderTarget(1024,512,{depthTexture:new T.DepthTexture(1024,512)});const u={map:{value:brand},depth:{value:rt.depthTexture},vp:{value:new T.Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse)},amount:{value:0}};
  const patched=new Set();function patch(m){if(patched.has(m)||!(m.isMeshStandardMaterial)||m.transparent)return;patched.add(m);const prev=m.onBeforeCompile,key=m.customProgramCacheKey;
   m.onBeforeCompile=(sh,r)=>{if(prev&&prev!==T.Material.prototype.onBeforeCompile)prev.call(m,sh,r);sh.uniforms.projMap=u.map;sh.uniforms.projDepth=u.depth;sh.uniforms.projVP=u.vp;sh.uniforms.projAmount=u.amount;
@@ -179,7 +291,7 @@ const projector=(()=>{const cam=new T.PerspectiveCamera(44,2,.4,40);cam.position
  return {cam,u,amount:u.amount,dirty:true,patch,render(){if(!this.dirty||u.amount.value<=0)return;this.dirty=false;const was=renderer.shadowMap.autoUpdate;renderer.shadowMap.autoUpdate=false;const ceil=loft.ceiling.visible;loft.ceiling.visible=true;renderer.setRenderTarget(rt);renderer.render(scene,cam);renderer.setRenderTarget(null);loft.ceiling.visible=ceil;renderer.shadowMap.autoUpdate=was}}})();
 const installations=addInstallations({T,scene,rooms,renderer,camera,materialLibrary,targets,sign,box,cyl,ball,shape,mat,metal,gold,glass,wood,concrete,target,note,modal,toast,go,setMode,lookAt:focusCamera});
 loft.g.traverse(o=>{if(o.isMesh&&o.material)projector.patch(o.material)});installations.features.push({id:'rebrand',room:'loft',title:'The Rebrand',body:'Once the developers arrive, their name is painted across the working floor: brick, columns, beams, floor and sculpture, in one red stroke. From the gallery entrance it reads as flat letters. One step and it shatters into the building it is painted on. Generate some buzz first; the paint arrives with the partitions.',pos:projector.cam.position.toArray(),aim:[2.6,2.9,-10.7],before(){if(!reclaimed&&pressure<51){pressure=51;updateWorld();toast('The developers have arrived. So has the paint.')}}});
-let effects;try{effects=atmosphere(renderer,scene,camera)}catch(e){errors.push('Postprocessing: '+e.message);effects={render:()=>renderer.render(scene,camera),resize(){},quality(){}};toast('Advanced effects could not start. The gallery is running in basic lighting mode.');}
+let effects;try{effects=atmosphere(renderer,scene,camera,{look:LOOK})}catch(e){errors.push('Postprocessing: '+e.message);effects={render:()=>renderer.render(scene,camera),resize(){},quality(){}};toast('Advanced effects could not start. The gallery is running in basic lighting mode.');}
 function toast(s){$('#toast').textContent=s;$('#toast').classList.add('on');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('on'),4400)}
 let modalReturn=null;function modal(title,html,eyebrow='NEW YORKERS // BY MLOW'){modalReturn=document.activeElement;$('#modal-body').innerHTML=`<div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(title)}</h2>${html}`;if(!$('#modal').open)$('#modal').showModal();$('#close').focus();keys.clear()}
 $('#close').onclick=()=>$('#modal').close();$('#modal').addEventListener('close',()=>modalReturn?.focus?.());$('#modal').addEventListener('click',e=>{if(e.target===$('#modal')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});
@@ -193,14 +305,14 @@ function corridor(it,i,stage){const tw=stage>1?.92:1.5,gap=.1,row=i<10?0:1;retur
 function updateWorld(){const loftArt=artMeshes.filter(a=>a.r==='loft');loftArt.forEach((it,i)=>{if(reclaimed||pressure<34)it.to={p:it.base.clone(),ry:it.baseRy,s:1};else it.to=corridor(it,i,pressure<67?1:2)});updateUI()}
 function animateWorld(dt){const target=reclaimed?0:pressure,before=shown;shown+=(target-shown)*Math.min(1,dt*1.6);if(Math.abs(target-shown)<.05)shown=target;const moving=Math.abs(shown-before)>.001;
  const wash=smooth(22,70,shown),build=smooth(30,48,shown),full=smooth(62,90,shown);materialLibrary.setWash(wash);
- luxury.visible=build>.01;luxury.scale.set(1,Math.max(.01,build),1);luxury.position.x=PART.x2+(PART.x3-PART.x2)*full;leasingSign.visible=build>.5;
+ luxury.visible=build>.01;wreck.visible=build>.3&&roomId==='loft';if(wreck.visible)wreck.rotation.z=Math.sin(performance.now()*.0009)*.14;luxury.scale.set(1,Math.max(.01,build),1);luxury.position.x=PART.x2+(PART.x3-PART.x2)*full;leasingSign.visible=build>.5;
  vinyl.forEach((v,i)=>{const o=smooth(34+i*6,50+i*6,shown);v.visible=o>.01;v.material.opacity=o*.92});coopSign.visible=reclaimed;
  sunlight.color.copy(tmpC.copy(warmSun).lerp(coldSun,wash));fill.intensity=.4+wash*.9;
  let still=!moving;for(const it of artMeshes){if(it.r!=='loft')continue;const k=Math.min(1,dt*3.2);it.g.position.lerp(it.to.p,k);it.g.rotation.y+=(it.to.ry-it.g.rotation.y)*k;const sc=it.g.scale.x+(it.to.s-it.g.scale.x)*k;it.g.scale.setScalar(sc);if(it.g.position.distanceTo(it.to.p)>.002||Math.abs(sc-it.to.s)>.001)still=false}
  if(!still)projector.dirty=true;projector.amount.value=roomId==='loft'?smooth(36,58,shown):0;return !still}
 $('#hype').onclick=()=>{pressure=Math.min(100,pressure+17);if(pressure>99)pressure=100;updateWorld();toast(pressure<34?'A listicle calls the building “undiscovered.”':pressure<67?'The first partition arrives. Art makes room for amenities.':pressure<100?'The exhibition is relocated to a corridor.':'100% desirable. Almost no room left for the people who made it so.')};
 const roomViews={loft:[.58,.62,34],sales:[.48,.62,30],basement:[.55,.64,29],roof:[.55,.7,34]};
-function go(id){roomId=id;Object.values(rooms).forEach(r=>r.g.visible=r.id===id);$$('[data-room]').forEach(b=>b.classList.toggle('active',b.dataset.room===id));$('#room-title').textContent=rooms[id].title;$('#room-sub').textContent=rooms[id].sub;[orbit,elevation,distance]=roomViews[id];if(mode==='walk'){camera.position.set(...rooms[id].spawn);yaw=rooms[id].yaw;pitch=0}hover=null;$('#hint').hidden=true;started=true;document.body.classList.add('started');canvas.focus();updateCamera()}
+function go(id){roomId=id;Object.values(rooms).forEach(r=>r.g.visible=r.id===id);look?.use(id);$$('[data-room]').forEach(b=>b.classList.toggle('active',b.dataset.room===id));$('#room-title').textContent=rooms[id].title;$('#room-sub').textContent=rooms[id].sub;[orbit,elevation,distance]=roomViews[id];if(mode==='walk'){camera.position.set(...rooms[id].spawn);yaw=rooms[id].yaw;pitch=0}hover=null;$('#hint').hidden=true;started=true;document.body.classList.add('started');canvas.focus();updateCamera()}
 function setMode(m){mode=m;started=true;document.body.classList.add('started');document.body.classList.toggle('walking',m==='walk');$('#overview').classList.toggle('selected',m==='overview');$('#walk').classList.toggle('selected',m==='walk');$('#cross').hidden=m!=='walk';$('#touch').hidden=!(m==='walk'&&matchMedia('(pointer:coarse)').matches);if(m==='walk'){camera.position.set(...rooms[roomId].spawn);yaw=rooms[roomId].yaw;pitch=0;toast('Drag to look · WASD / arrows to move · Q / R to turn · E to inspect')}canvas.focus();updateCamera()}
 function updateCamera(){for(const r of Object.values(rooms))if(r.ceiling)r.ceiling.visible=mode==='walk'||!started;if(!started){camera.position.set(-3.8,1.9,8.5);camera.lookAt(.1,2.3,-3)}else if(mode==='overview'){camera.position.set(Math.sin(orbit)*Math.cos(elevation)*distance,Math.sin(elevation)*distance,Math.cos(orbit)*Math.cos(elevation)*distance);camera.lookAt(0,1.6,0)}else{camera.rotation.order='YXZ';camera.rotation.set(pitch,yaw,0)}}
 function focusCamera(id,pos,aim){go(id);setMode('walk');camera.position.set(...pos);camera.lookAt(...aim);const e=new T.Euler().setFromQuaternion(camera.quaternion,'YXZ');yaw=e.y;pitch=e.x;updateCamera();canvas.focus()}
@@ -219,6 +331,7 @@ function clear(x,z){const r=rooms[roomId];if(Math.abs(x)>r.w/2-.55||Math.abs(z)>
 const POWER=window.__POWER={last:0,touched:performance.now(),focused:true,busy:false};for(const ev of ['keydown','pointerdown','pointermove','wheel','touchstart'])addEventListener(ev,()=>POWER.touched=performance.now(),{passive:true});addEventListener('blur',()=>POWER.focused=false);addEventListener('focus',()=>POWER.focused=true);
 const clock=new T.Clock();let frames=0;function tick(now=performance.now()){requestAnimationFrame(tick);const budget=!POWER.focused?166:(!POWER.busy&&!keys.size&&now-POWER.touched>20000)?33:15.5;if(now-POWER.last<budget)return;POWER.last=now;const dt=Math.min(clock.getDelta(),.04);POWER.busy=animateWorld(dt);epoch+=dt;if(mode==='walk'&&!$('#modal').open){if(keys.has('q'))yaw+=dt*1.2;if(keys.has('r'))yaw-=dt*1.2;let f=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0),s=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),len=Math.hypot(f,s)||1;const dx=(-Math.sin(yaw)*f+Math.cos(yaw)*s)*dt*3/len,dz=(-Math.cos(yaw)*f-Math.sin(yaw)*s)*dt*3/len;if(clear(camera.position.x+dx,camera.position.z))camera.position.x+=dx;if(clear(camera.position.x,camera.position.z+dz))camera.position.z+=dz;updateCamera();if(frames%8===0){hover=hit(innerWidth/2,innerHeight/2);$('#hint').hidden=!hover;$('#hint').textContent=hover?'E · '+hover.title:''}}if(motion&&roomId==='roof')movables.forEach((m,i)=>m.o.rotation.z=m.base+Math.sin(epoch*.7+i)*.045);installations.update(epoch,motion,roomId);projector.render();effects.render();frames++}
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);effects.resize();updateCamera()});
+look=LOOK?createLook({renderer,scene,rooms,hide:()=>installations.mirrors}):null;look?.use(roomId);
 updateUI();updateCamera();tick();T.DefaultLoadingManager.itemEnd('gallery-scene');
 // Read-only diagnostics for scene and renderer verification.
-window.galleryDebug={scene,renderer,camera,rooms,targets,art,errors,go,setMode,look:focusCamera,hype:()=>$("#hype").click(),materialLibrary,installations,effects,getState:()=>({roomId,mode,pressure,reclaimed,evidence:[...evidence]}),getStats:()=>({...renderer.info.render,memory:{...renderer.info.memory}})};
+window.galleryDebug={scene,renderer,camera,rooms,targets,art,errors,go,setMode,look:focusCamera,hype:()=>$("#hype").click(),materialLibrary,installations,effects,getState:()=>({roomId,mode,pressure,reclaimed,evidence:[...evidence]}),probe:()=>look,getStats:()=>({...renderer.info.render,memory:{...renderer.info.memory}})};
