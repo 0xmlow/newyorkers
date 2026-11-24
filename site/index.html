@@ -16396,7 +16396,7 @@ window.__ROOMS = ROOMS;
     #endif
     mat4 rM = modelMatrix * rIM; vec3 rs = vec3(length(rM[0].xyz), length(rM[1].xyz), length(rM[2].xyz));
     vec3 cl = (inverse(rM) * vec4(cameraPosition, 1.0)).xyz; vRP = position * rs; vRD = vRP - cl * rs; vRS = rs; vRW = rM[3].xyz; }`;
-  const FS_PARS = 'varying vec3 vRP; varying vec3 vRD; varying vec3 vRS; varying vec3 vRW; uniform float uRoomNight; float rFront; vec3 rLamp;\n float rH(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }';
+  const FS_PARS = 'varying vec3 vRP; varying vec3 vRD; varying vec3 vRS; varying vec3 vRW; uniform float uRoomNight, uRoomT; float rFront; vec3 rLamp;\n float rH(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }';
   const FS = `{ rFront = step(vRS.z * 0.4, vRP.z) * step(0.25, min(vRS.x, vRS.y)); rLamp = vec3(0.0);
     if (rFront > 0.5) { vec3 d = normalize(vRD); vec3 p = vRP; float s1 = rH(floor(vRW * 2.0)), s2 = rH(floor(vRW * 2.0) + 7.1), s3 = rH(floor(vRW * 2.0) + 3.7);
       float hw = vRS.x * 0.5 + 0.9, fl = -vRS.y * 0.5 - 0.95, ce = vRS.y * 0.5 + 0.55, back = vRP.z - 3.2; d.z = min(d.z, -1e-4);
@@ -16404,31 +16404,90 @@ window.__ROOMS = ROOMS;
       float t = min(tx, min(ty, tz)); vec3 h = p + d * t;
       vec3 wall = mix(mix(vec3(0.62, 0.55, 0.45), vec3(0.32, 0.38, 0.48), step(0.5, s1)), vec3(0.55, 0.3, 0.26), step(0.82, s1));
       vec3 c;
-      if (t == tz) { c = wall; float pic = step(abs(h.x - (s2 - 0.5) * hw), 0.35) * step(abs(h.y - 0.35), 0.28); c = mix(c, vec3(0.15, 0.2, 0.4) * (0.6 + s3), pic * step(0.35, s2)); }
+      float sil = 0.0; if (t == tz) { c = wall; if (s3 > 0.72) { float px = (s1 - 0.5) * hw; vec2 q = vec2(h.x - px, h.y); sil = max(step(length(q - vec2(0.0, 0.42)), 0.13), step(abs(q.x), 0.2 - max(0.0, q.y - 0.1) * 0.3) * step(-1.2, q.y) * step(q.y, 0.3)); } float pic = step(abs(h.x - (s2 - 0.5) * hw), 0.35) * step(abs(h.y - 0.35), 0.28); c = mix(c, vec3(0.15, 0.2, 0.4) * (0.6 + s3), pic * step(0.35, s2)); }
       else if (t == tx) c = wall * 0.78;
       else if (d.y < 0.0) { c = mix(vec3(0.33, 0.22, 0.14), vec3(0.42, 0.3, 0.2), step(0.5, fract(h.z * 3.0 + h.x * 0.2))); if (s2 > 0.6) c = mix(c, vec3(0.5, 0.12, 0.12) * 0.8, step(abs(h.x), hw * 0.5) * step(abs(h.z - back - 1.4), 0.8)); }
       else { c = vec3(0.78, 0.76, 0.72); }
       float depthK = clamp(1.0 + (h.z - vRP.z) / 4.0, 0.35, 1.0); c *= depthK;
       float blind = 0.25 + s3 * 0.7; float by = (vRP.y / vRS.y) + 0.5; float isBlind = step(1.0 - blind * step(0.45, s3), by); c = mix(c, vec3(0.86, 0.83, 0.76) * 0.9, isBlind);
       vec2 lp = vec2(h.x, h.z - (back + 1.6)); float lampK = (t == ty && d.y > 0.0) ? smoothstep(0.7, 0.0, length(lp)) : 0.0;
-      vec3 warm = vec3(1.0, 0.78, 0.5) * (0.55 + 0.45 * depthK) + vec3(1.0, 0.9, 0.7) * lampK; if (s2 < 0.12) warm = vec3(0.35, 0.5, 1.0) * (0.6 + 0.4 * depthK);
+      vec3 warm = vec3(1.0, 0.78, 0.5) * (0.55 + 0.45 * depthK) + vec3(1.0, 0.9, 0.7) * lampK; if (s2 < 0.12) warm = vec3(0.35, 0.5, 1.0) * (0.6 + 0.4 * depthK) * (0.7 + 0.3 * sin(uRoomT * 11.0 + s1 * 40.0) * sin(uRoomT * 6.3 + s3 * 20.0)); warm *= 1.0 - sil * 0.92;
       rLamp = c * warm * mix(1.0, 0.5, isBlind) + vec3(1.0, 0.85, 0.6) * isBlind * 0.35;
       diffuseColor.rgb = c * 0.38; } }`;
   const patch = (m, key) => { if (!m || m.userData.rooms) return; m.userData.rooms = true; const prev = m.onBeforeCompile; const pk = m.customProgramCacheKey ? m.customProgramCacheKey.bind(m) : null;
-    m.onBeforeCompile = (sh, r) => { if (prev) prev(sh, r); sh.uniforms.uRoomNight = ROOMS.u;
+    m.onBeforeCompile = (sh, r) => { if (prev) prev(sh, r); sh.uniforms.uRoomNight = ROOMS.u; sh.uniforms.uRoomT = ROOMS.t;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + VS_PARS).replace('#include <project_vertex>', '#include <project_vertex>\n' + VS);
       sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + FS_PARS).replace('#include <color_fragment>', '#include <color_fragment>\n' + (key === 'brown' ? FS.replace('step(vRS.z * 0.4, vRP.z)', '1.0') : FS))
         .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n if (rFront > 0.5) totalEmissiveRadiance = rLamp * length(totalEmissiveRadiance) * 0.9;'); };
     m.customProgramCacheKey = () => (pk ? pk() : '') + '|rooms-' + key; m.metalness = Math.min(m.metalness, 0.12); m.roughness = 0.06; m.needsUpdate = true; ROOMS.n++; };
-  ROOMS.u = { value: 0 }; ROOMS.patch = patch;
+  ROOMS.u = { value: 0 }; ROOMS.t = { value: 0 }; ROOMS.patch = patch;
   patch(FACM.glass, 'glass'); patch(FACM.lit, 'lit');
   try { if (window.__BROWN && BROWN.wins) BROWN.wins.forEach(w => w && w.m && patch(w.m, 'brown')); } catch (e) { }
 })();
 
-/*__V409_X__*/
-/*__V410_X__*/
-/*__V411_X__*/
-/*__V412_X__*/
+/* ================================================================
+   v409 REAL PROPS: THE ROOFTOP CONDENSERS (2026-11-24)
+   The rooftop air conditioners on the bodega block, the laundromat and the line's building were grey boxes with a
+   lid. Each pair is now Poly Haven's scanned outdoor unit (exterior_aircon_unit, CC0, through the wrap tool as
+   isl_ac): fan grilles, rust runs, the copper lines. The window units stay (the scan is a split condenser, not a
+   window unit). ?props=0 keeps the boxes.
+   ================================================================ */
+(function roofCondensers() {
+  if (!window.__PH || !PH.on || !window.__FAC || !FAC.acMesh) return;
+  const m = FAC.acMesh, k = FAC.frameKMesh, p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(), M = new THREE.Matrix4(), e = new THREE.Euler(), Z = new THREE.Matrix4().makeScale(0, 0, 0), roof = [];
+  for (let i = 0; i < m.count; i++) { m.getMatrixAt(i, M); M.decompose(p, q, s); if (Math.abs(s.x - 1) < 0.01 && Math.abs(s.y - 0.84) < 0.01) { e.setFromQuaternion(q); roof.push({ i, x: p.x, y: p.y - s.y / 2, z: p.z, ry: e.y }); } }
+  if (!roof.length) return;
+  phLoad('isl_ac').then(A => { const w = Math.max(A.size.x, A.size.z), sc = 2.3 / w, list = [], used = new Set();
+    roof.forEach(a => { if (used.has(a.i)) return; const b = roof.find(o => o !== a && !used.has(o.i) && Math.hypot(o.x - a.x, o.z - a.z) < 1.8 && Math.abs(o.y - a.y) < 0.2); used.add(a.i); if (b) used.add(b.i);
+      const c = b ? [(a.x + b.x) / 2, a.y, (a.z + b.z) / 2] : [a.x, a.y, a.z], dx = b ? b.x - a.x : 1, dz = b ? b.z - a.z : 0; list.push([c[0], c[1], c[2], Math.atan2(-dz, dx), b ? sc : sc * 0.55]); });
+    roof.forEach(a => m.setMatrixAt(a.i, Z)); m.instanceMatrix.needsUpdate = true;
+    if (k) { for (let j = 0; j < k.count; j++) { k.getMatrixAt(j, M); M.decompose(p, q, s); if (Math.abs(s.x - 0.62) < 0.01 && Math.abs(s.y - 0.04) < 0.01 && roof.some(a => Math.hypot(a.x - p.x, a.z - p.z) < 0.05 && Math.abs(a.y + 0.86 - p.y) < 0.1)) k.setMatrixAt(j, Z); } k.instanceMatrix.needsUpdate = true; }
+    return phPlace('isl_ac', list); }).catch(e => console.warn('v409', e));
+})();
+
+/* ================================================================
+   v410 N3W CUTS: THE SIDEWALK (2026-11-24)
+   Real scanned things out front of the barbershop (Poly Haven, CC0, through the wrap tool): a tufted barber chair
+   brought out onto the boardwalk for the shave with a view, a chalkboard A frame by the door with today's prices
+   in chalk, and a security camera on the corner watching the door. ?props=0 off.
+   ================================================================ */
+(function cutsSidewalk() {
+  if (!window.__CUTS || !CUTS.ok || !window.__PH || !PH.on) return;
+  const g = CUTS.g, ry = CUTS.ry, w = CUTS.win, d = CUTS.door, D2 = CUTS.D / 2;
+  const [bx, bz] = CUTS.at(w.u - 1.0, D2 + 1.75); phPlace('isl_barberchair', [[bx, g, bz, ry + 0.35, 1.0]]); post(bx, bz, 0.45, -5, g + 1.3);
+  const [cx, cz] = CUTS.at(d.u + 0.15, D2 + 1.55); phPlace('isl_chalk', [[cx, g, cz, ry, 1.0]]).then(ims => { try { phLoad('isl_chalk').then(A => {
+      const t = signTex([{ t: 'N3W CUTS', s: 0.16, f: '"Permanent Marker", cursive' }, { t: 'FADE  25', s: 0.12, f: '"Permanent Marker", cursive' }, { t: 'SHAVE  20', s: 0.12, f: '"Permanent Marker", cursive' }, { t: 'HOT TOWEL  FREE', s: 0.09, f: '"Permanent Marker", cursive' }, { t: 'THE CARDS CHANGE ON THE HOUR', s: 0.06, f: '"Permanent Marker", cursive' }], 512, 720, '#1d2321', '#eeeae0');
+      const h = A.size.y, wd = Math.min(A.size.x, A.size.z) > 0.3 ? A.size.x : A.size.x, pw = wd * 0.74, ph = h * 0.5;
+      [1, -1].forEach(sd => { const m = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), new THREE.MeshStandardMaterial({ map: t, roughness: 0.9, transparent: true, opacity: 0.96 })); m.rotation.order = 'YXZ'; m.rotation.set(-Math.atan2(A.size.z * 0.5, h), ry + (sd < 0 ? PI : 0), 0);
+        const off = A.size.z * 0.5 * (1 - 0.58) + 0.07; m.position.set(cx + CUTS.n[0] * sd * off, g + h * 0.58, cz + CUTS.n[1] * sd * off); scene.add(m); CUTS['chalk' + sd] = m; }); }); } catch (e) { } });
+  post(cx, cz, 0.35, -5, g + 1.2);
+  const [kx, kz] = CUTS.at(CUTS.W / 2 - 0.15, D2 + 0.18); phPlace('isl_seccam', [[kx, g + 3.25, kz, ry + PI * 0.75, 1.0]], { shadow: false });
+  CUTS.side = true;
+})();
+
+/* ================================================================
+   v411 THE ROOMS AT NIGHT: SOMEONE HOME (2026-11-24)
+   The rooms behind the windows (v408) get their people. In about a quarter of them someone is standing at the back
+   of the room, a dark figure against the lamplight you only see once their window is lit; and the rooms lit blue
+   flicker with a television. Nothing more, the way you see your neighbours across the street. The shader code is
+   in v408; this keeps its clock.
+   ================================================================ */
+window.__FRAMES.push(dt => { try { if (window.__ROOMS && ROOMS.t) ROOMS.t.value += dt; } catch (e) { } });
+
+/* ================================================================
+   v412 THE POND: ONE OF THESE DUCKS IS NOT LIKE THE OTHERS (2026-11-24)
+   A yellow rubber duck (Poly Haven's scan, CC0) has joined the real ducks on the pond. It bobs, turns slowly in the
+   wind and drifts its own lazy loop, and the real ducks keep their distance.
+   ================================================================ */
+const RDUCK = {};
+window.__RDUCK = RDUCK;
+(function rubberDuck() {
+  if (!window.__PH || !PH.on || !window.__POND || POND.y == null) return;
+  phLoad('isl_duck').then(A => { const G = new THREE.Group(), s = 0.32 / Math.max(A.size.x, A.size.z); A.parts.forEach(pt => { const m = new THREE.Mesh(pt.geo, pt.mat); m.applyMatrix4(pt.m4); m.castShadow = true; G.add(m); }); G.scale.setScalar(s); scene.add(G); RDUCK.G = G; RDUCK.t = 0; }).catch(e => console.warn('v412', e));
+})();
+window.__FRAMES.push(dt => { try { if (!RDUCK.G) return; RDUCK.t += dt; const t = RDUCK.t * 0.05, x = POND.x + Math.cos(t) * POND.rx * 0.45, z = POND.z + Math.sin(t * 1.3) * POND.rz * 0.4;
+  RDUCK.G.position.set(x, POND.y - 0.02 + Math.sin(RDUCK.t * 2.1) * 0.012, z); RDUCK.G.rotation.set(Math.sin(RDUCK.t * 1.7) * 0.06, -t * 2 + Math.sin(RDUCK.t * 0.3) * 0.6, Math.sin(RDUCK.t * 2.3) * 0.05); } catch (e) { } });
+
 /*__V413_X__*/
 /*__V414_X__*/
 /*__V415_X__*/

@@ -490,5 +490,33 @@
     "size": 0.28
    }
   ]
+ },
+ "isl_barberchair": {
+  "src": "ph_BarberShopChair_01",
+  "tris": 6000
+ },
+ "isl_ac": {
+  "src": "ph_exterior_aircon_unit",
+  "tris": 2000
+ },
+ "isl_seccam": {
+  "src": "ph_security_camera_01",
+  "tris": 1200,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2c4370",
+    "dark": "#0b1220",
+    "k": 0.5
+   }
+  ]
+ },
+ "isl_chalk": {
+  "src": "ph_standing_chalkboard_01",
+  "tris": 1500
+ },
+ "isl_duck": {
+  "src": "ph_rubber_duck_toy",
+  "tris": 800
  }
 }
