@@ -13,7 +13,7 @@
   try { if (window.__XW3 && XW3.ok) { const [x, , z] = XW3.V; mk(x + 1.3, z + 0.3, PI, 'THE FLOATING CROSSWALK', 'STAND ON THE FOOTPRINTS. THE SLABS ARE PAINT, PROJECTED', 'FROM YOUR EYE ONTO THE ROAD. STEP OFF AND THEY MELT.'); } } catch (e) { }
   facFlush();
   try { if (window.__LOOKFOR) { const [x0, g, z0] = __LOOKFOR.P, x = x0 - 1.75, z = z0 + 0.6;
-    const rows = ['N3W CUTS · THE WEST BEACH, ACROSS THE ROAD', 'THE INFINITE BARBERSHOP · LOOK IN THE WINDOW', 'THE BARBER POLE · WHICH WAY IS IT GOING', 'MAGIC EYE · THE SHOP\'S SOUTH WALL', 'THE ZOETROPE · BESIDE THE SHOP', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · BOTH BANKS OF THE RIVER'];
+    const rows = ['N3W CUTS · THE WEST BEACH, ACROSS THE ROAD', 'THE INFINITE BARBERSHOP · LOOK IN THE WINDOW', 'THE BARBER POLE · WHICH WAY IS IT GOING', 'MAGIC EYE · THE SHOP\'S SOUTH WALL', 'THE ZOETROPE · BESIDE THE SHOP', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · BOTH BANKS OF THE RIVER', 'THE SIDESHOW ROW · THREE BOARDS BY THE SHOP'];
     const t = signTex([{ t: 'AND NOW', s: 0.08 }].concat(rows.map(r => ({ t: r, s: 0.035, b: false }))), 1024, 1000, '#16233f', '#efe8da');
     const m = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.37), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); m.position.set(x, g + 1.4, z); m.rotation.y = PI - 0.35; scene.add(m);
     facPut('iron', x - Math.sin(PI - 0.35) * 0.04, g + 1.4, z - Math.cos(PI - 0.35) * 0.04, 1.5, 1.47, 0.05, PI - 0.35); facPut('iron', x, g + 0.35, z + 0.03, 0.1, 0.7, 0.1, 0); facFlush(); post(x, z, 0.3, -5, 2.5); } } catch (e) { }

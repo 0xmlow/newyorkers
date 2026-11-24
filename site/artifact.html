@@ -16012,7 +16012,7 @@ window.__FRAMES.push(() => { try { if (!ZOE.ok) return; const d = Math.hypot(cam
   try { if (window.__XW3 && XW3.ok) { const [x, , z] = XW3.V; mk(x + 1.3, z + 0.3, PI, 'THE FLOATING CROSSWALK', 'STAND ON THE FOOTPRINTS. THE SLABS ARE PAINT, PROJECTED', 'FROM YOUR EYE ONTO THE ROAD. STEP OFF AND THEY MELT.'); } } catch (e) { }
   facFlush();
   try { if (window.__LOOKFOR) { const [x0, g, z0] = __LOOKFOR.P, x = x0 - 1.75, z = z0 + 0.6;
-    const rows = ['N3W CUTS · THE WEST BEACH, ACROSS THE ROAD', 'THE INFINITE BARBERSHOP · LOOK IN THE WINDOW', 'THE BARBER POLE · WHICH WAY IS IT GOING', 'MAGIC EYE · THE SHOP\'S SOUTH WALL', 'THE ZOETROPE · BESIDE THE SHOP', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · BOTH BANKS OF THE RIVER'];
+    const rows = ['N3W CUTS · THE WEST BEACH, ACROSS THE ROAD', 'THE INFINITE BARBERSHOP · LOOK IN THE WINDOW', 'THE BARBER POLE · WHICH WAY IS IT GOING', 'MAGIC EYE · THE SHOP\'S SOUTH WALL', 'THE ZOETROPE · BESIDE THE SHOP', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · BOTH BANKS OF THE RIVER', 'THE SIDESHOW ROW · THREE BOARDS BY THE SHOP'];
     const t = signTex([{ t: 'AND NOW', s: 0.08 }].concat(rows.map(r => ({ t: r, s: 0.035, b: false }))), 1024, 1000, '#16233f', '#efe8da');
     const m = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.37), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); m.position.set(x, g + 1.4, z); m.rotation.y = PI - 0.35; scene.add(m);
     facPut('iron', x - Math.sin(PI - 0.35) * 0.04, g + 1.4, z - Math.cos(PI - 0.35) * 0.04, 1.5, 1.47, 0.05, PI - 0.35); facPut('iron', x, g + 0.35, z + 0.03, 0.1, 0.7, 0.1, 0); facFlush(); post(x, z, 0.3, -5, 2.5); } } catch (e) { }
@@ -16241,11 +16241,119 @@ window.__FRAMES.push(dt => { try { if (!FARL.on || typeof SC === 'undefined' || 
     if (s.hiG && s.hiG.visible) { s.farG.visible = false; return; }
     const far = s.farG.visible ? d > 46 : d > 54; s.farG.visible = far; if (lo && lo !== s.farG && lo !== s.hiG) lo.visible = !far; }); } catch (e) { if (!FARL.err) { FARL.err = e; console.warn('v401 farlod', e); } } });
 
-/*__V402_X__*/
-/*__V403_X__*/
-/*__V404_X__*/
-/*__V405_X__*/
-/*__V406_X__*/
+/* ================================================================
+   v402 THE SIDESHOW ROW, AND THE SPINNING DANCER (2026-11-24)
+   Coney Island's boardwalk had a row of sideshow boards; N3W CUTS gets three neighbours in the gaps between the beach
+   billboards, each a navy board with a gold rule on two iron posts and a cast header. The first: a black dancer
+   turns on one toe in front of a lit panel, one leg out, one arm up. Which way is it turning? Watch long enough
+   and it reverses on you, though nothing changes: a silhouette carries no depth, so your brain picks a direction
+   and sometimes changes its mind (the kinetic depth effect; Nobuyuki Kayahara's 2003 dancer made it famous).
+   booth(angle, title, line) is shared by v403 and v404. ?sideshow=0 off.
+   ================================================================ */
+const SIDE = { ok: false, list: [] };
+window.__SIDE = SIDE;
+function sideBooth(deg, title, line) {
+  const a = deg * PI / 180, R = 109.6, x = Math.sin(a) * R, z = Math.cos(a) * R, g = ground(x, z), nx = -Math.sin(a), nz = -Math.cos(a), ry = Math.atan2(nx, nz), tx = nz, tz = -nx;
+  const at = (u, d) => [x + tx * u + nx * d, z + tz * u + nz * d];
+  const navy = new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.55, metalness: 0.2 });
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.7, 0.08), navy); back.position.set(x, g + 1.75, z); back.rotation.y = ry; back.castShadow = true; scene.add(back);
+  [-1.2, 1.2].forEach(u => { const [px, pz] = at(u, -0.02); facPut('frameK', px, g + 1.6, pz, 0.1, 3.2, 0.1, ry); post(px, pz, 0.12, -5, 3.3); });
+  const [hx, hz] = at(0, 0.06); const ht = signTex([{ t: title, s: 0.42 }, { t: line, s: 0.16 }], 1024, 256, '#16233f', '#c9a24a');
+  const hm = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 0.575), new THREE.MeshStandardMaterial({ map: ht, roughness: 0.4, metalness: 0.3 })); hm.position.set(hx, g + 3.42, hz); hm.rotation.y = ry; scene.add(hm);
+  facPut('frameK', hx, g + 3.72, hz - nz * 0.04, 2.45, 0.06, 0.12, ry); facPut('frameK', hx, g + 3.12, hz - nz * 0.04, 2.45, 0.06, 0.12, ry);
+  const gold = new THREE.MeshStandardMaterial({ color: 0xc9a24a, roughness: 0.35, metalness: 0.9 }); [[0, 3.08, 2.3, 0.03], [0, 0.42, 2.3, 0.03], [-1.13, 1.75, 0.03, 2.66], [1.13, 1.75, 0.03, 2.66]].forEach(([u, y, w, h]) => { const [qx, qz] = at(u, 0.045); const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), gold); m.position.set(qx, g + y, qz); m.rotation.y = ry; scene.add(m); });
+  facFlush(); const B = { x, z, g, ry, nx, nz, tx, tz, at }; SIDE.list.push(B); return B;
+}
+(function spinningDancer() {
+  if (!LOOK.on || /sideshow=0/.test(location.search)) return;
+  const B = sideBooth(233, 'WHICH WAY IS IT TURNING?', 'WATCH IT FOR A WHILE. IT WILL CHANGE ITS MIND.');
+  const [px, pz] = B.at(0, 0.05); const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.4), new THREE.MeshBasicMaterial({ color: 0xf3ead2, toneMapped: false })); panel.position.set(px, B.g + 1.8, pz); panel.rotation.y = B.ry; scene.add(panel);
+  const blk = new THREE.MeshBasicMaterial({ color: 0x050505 }), D = new THREE.Group(), cap = (r0, r1, L, x0, y0, z0, rx, rz) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r0, L, 12), blk); m.position.set(x0, y0, z0); m.rotation.set(rx || 0, 0, rz || 0); D.add(m); return m; };
+  cap(0.045, 0.06, 0.82, 0, 0.42, 0); const k = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), blk); k.position.y = 0.84; D.add(k);
+  cap(0.04, 0.065, 0.8, 0.3, 0.98, 0.05, 0, -1.25);                       // the raised leg, out to one side
+  cap(0.11, 0.15, 0.56, 0, 1.13, 0); cap(0.05, 0.11, 0.16, 0, 0.88, 0);     // torso and hips
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(0.105, 14, 12), blk); hd.position.set(0, 1.55, 0); hd.scale.set(0.9, 1.1, 1); D.add(hd);
+  const bun = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), blk); bun.position.set(-0.02, 1.66, -0.07); D.add(bun);
+  cap(0.025, 0.035, 0.6, -0.1, 1.62, 0.02, 0, 0.35);                      // one arm over the head
+  cap(0.025, 0.035, 0.58, 0.34, 1.33, 0.02, 0, -1.35);                    // one arm out
+  const [dx, dz] = B.at(0, 0.7); D.position.set(dx, B.g + 0.62, dz); D.scale.setScalar(1.05); scene.add(D); SIDE.dancer = D;
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.4, 0.6, 32), new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.5 })); plinth.position.set(dx, B.g + 0.3, dz); scene.add(plinth); post(dx, dz, 0.4, -5, 1.0);
+  SIDE.ok = true; SIDE.dancerB = B;
+  if (window.__MAP) MAP.places.push(['THE SPINNING DANCER', B.x, B.z, ...B.at(0, 3)]);
+})();
+window.__FRAMES.push(dt => { try { if (SIDE.dancer) SIDE.dancer.rotation.y += dt * PI * 2 * 0.42; } catch (e) { } });
+
+/* ================================================================
+   v403 ILLUSION: STARE, THEN LOOK AT THE SHOP (2026-11-24)
+   The second sideshow board: a spiral of MLow's contour colours turning slowly inward round an Open Eye Flower.
+   Stare at the eye for thirty seconds, then look at N3W CUTS beside it: the shop swells and breathes toward you for
+   a few seconds. The motion detectors that were tuned to the inward pull are tired, and the still world reads as
+   moving the other way (the motion aftereffect; Aristotle saw it in a river, Robert Addams at the Falls of Foyers
+   in 1834). ?sideshow=0 off.
+   ================================================================ */
+(function spiral() {
+  if (!LOOK.on || /sideshow=0/.test(location.search) || typeof sideBooth !== 'function') return;
+  const B = sideBooth(243, 'STARE, THEN LOOK AT THE SHOP', 'THIRTY SECONDS ON THE EYE. THEN LOOK AT N3W CUTS. IT BREATHES.');
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const draw = img => { if (!c || !c.createImageData || !c.putImageData || !c.arc || !c.beginPath) return; const im = c.createImageData(1024, 1024), d = im.data, cols = [[22, 35, 63], [41, 98, 255], [8, 222, 255], [239, 232, 218], [255, 79, 163], [41, 98, 255]];
+    for (let y = 0; y < 1024; y++) for (let x = 0; x < 1024; x++) { const dx = x - 512, dy = y - 512, r = Math.hypot(dx, dy) / 512, i = (y * 1024 + x) * 4; if (r > 1) { d[i + 3] = 0; continue; }
+      const th = Math.atan2(dy, dx), s = (th / (PI * 2) * 4 + Math.log(r + 0.02) * 2.6) % 1, k = Math.floor(((s + 1) % 1) * 6), cc = cols[k]; d[i] = cc[0]; d[i + 1] = cc[1]; d[i + 2] = cc[2]; d[i + 3] = 255; }
+    c.putImageData(im, 0, 0); c.fillStyle = '#16233f'; c.beginPath(); c.arc(512, 512, 120, 0, PI * 2); c.fill(); if (img) c.drawImage(img, 412, 412, 200, 200); t.needsUpdate = true; };
+  draw(null); const im = new Image(); im.onload = () => { try { draw(im); } catch (e) { } }; im.src = 'assets/iv_flower.webp';
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(0.95, 96), new THREE.MeshBasicMaterial({ map: t, transparent: true, alphaTest: 0.5, toneMapped: false })); const [x, z] = B.at(0, 0.06); disc.position.set(x, B.g + 1.75, z); disc.rotation.y = B.ry; scene.add(disc); SIDE.spiral = disc;
+  if (window.__MAP) MAP.places.push(['STARE, THEN LOOK', B.x, B.z, ...B.at(0, 3)]);
+})();
+window.__FRAMES.push(dt => { try { if (SIDE.spiral) SIDE.spiral.rotateZ(-dt * 0.9); } catch (e) { } });
+
+/* ================================================================
+   v404 ILLUSION: THE COLOURS THAT LEAVE (2026-11-24)
+   The third sideshow board: soft clouds of cobalt, pink, cyan and bone on grey, with a small black dot in the
+   middle. Hold your eyes on the dot without moving them and within twenty seconds the colours fade into the grey
+   and are gone; blink and they come back. Edges this soft never refresh the retina, so the brain stops reporting
+   them (Troxler fading, 1804). ?sideshow=0 off.
+   ================================================================ */
+(function troxler() {
+  if (!LOOK.on || /sideshow=0/.test(location.search) || typeof sideBooth !== 'function') return;
+  const B = sideBooth(248, 'THE COLOURS THAT LEAVE', 'KEEP YOUR EYES ON THE DOT. DO NOT MOVE THEM. THEY GO.');
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  if (c && c.fillRect && c.beginPath && c.arc) { c.fillStyle = '#8f8d88'; c.fillRect(0, 0, 1024, 1024); c.filter = 'blur(70px)';
+    [['#2962FF', 250, 300], ['#ff4fa3', 760, 270], ['#08DEFF', 300, 760], ['#efe8da', 740, 740], ['#7f6bff', 520, 140], ['#c9a24a', 140, 520], ['#ff4fa3', 880, 560]].forEach(([col, x, y]) => { c.fillStyle = col; c.globalAlpha = 0.8; c.beginPath(); c.arc(x, y, 150, 0, PI * 2); c.fill(); });
+    c.filter = 'none'; c.globalAlpha = 1; c.fillStyle = '#000'; c.beginPath(); c.arc(512, 512, 9, 0, PI * 2); c.fill(); }
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); const [x, z] = B.at(0, 0.06); p.position.set(x, B.g + 1.75, z); p.rotation.y = B.ry; scene.add(p);
+  SIDE.trox = p; if (window.__MAP) MAP.places.push(['THE COLOURS THAT LEAVE', B.x, B.z, ...B.at(0, 3)]);
+})();
+
+/* ================================================================
+   v405 THE SIDESHOW AFTER DARK (2026-11-24)
+   Marquee bulbs round every sideshow header, warm white, that come on at dusk and chase, one in three lit and
+   stepping along like the old Coney Island fronts. The illusion panels are printed, not lit: after dark they drop to
+   what the bulbs would light, instead of glowing like screens.
+   ================================================================ */
+(function sideBulbs() {
+  if (!window.__SIDE || !SIDE.list.length) return;
+  const pts = []; SIDE.list.forEach(B => { for (let i = 0; i < 14; i++) { const u = -1.12 + i * 2.24 / 13; [3.72, 3.12].forEach(y => { const [x, z] = B.at(u, 0.1); pts.push([x, B.g + y, z]); }); } [3.27, 3.42, 3.57].forEach(y => [-1.22, 1.22].forEach(u => { const [x, z] = B.at(u, 0.1); pts.push([x, B.g + y, z]); })); });
+  const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.035, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), pts.length); const o = new THREE.Object3D(), c = new THREE.Color(0x3a3226);
+  pts.forEach((p, i) => { o.position.set(p[0], p[1], p[2]); o.updateMatrix(); im.setMatrixAt(i, o.matrix); im.setColorAt(i, c); }); im.instanceMatrix.needsUpdate = true; im.instanceColor.needsUpdate = true; scene.add(im);
+  SIDE.bulbs = im; SIDE.bn = pts.length; SIDE.bt = 0; SIDE.step = 0;
+  SIDE.panels = [SIDE.dancerB && null, SIDE.spiral, SIDE.trox].filter(Boolean).map(m => m.material); try { scene.children.forEach(m => { if (m.isMesh && m.material && m.material.color && m.material.color.getHex() === 0xf3ead2) SIDE.panels.push(m.material); }); } catch (e) { }
+})();
+window.__FRAMES.push(dt => { try { if (!SIDE.bulbs) return; const k = Math.min(1, (L.lamps || 0) * 1.3); SIDE.panels.forEach(m => { const v = 1 - 0.55 * k; if (m.userData.base == null) m.userData.base = m.color.getHex(); m.color.setHex(m.userData.base).multiplyScalar(v); });
+  SIDE.bt += dt; if (SIDE.bt < 0.18) return; SIDE.bt = 0; SIDE.step = (SIDE.step + 1) % 3; const on = new THREE.Color(1.0, 0.86, 0.6), off = new THREE.Color(0x3a3226), mid = new THREE.Color(0.55, 0.45, 0.32);
+  for (let i = 0; i < SIDE.bn; i++) SIDE.bulbs.setColorAt(i, k < 0.05 ? off : ((i + SIDE.step) % 3 === 0 ? on : mid.clone().lerp(off, 1 - k))); SIDE.bulbs.instanceColor.needsUpdate = true; } catch (e) { } });
+
+/* ================================================================
+   v406 THE TOUR AND THE COUNT MEET THE SIDESHOW (2026-11-24)
+   One tour stop walks the sideshow row past the dancer, the spiral and the colours that leave. The count over the
+   pier board now reads 26 ILLUSIONS (18, the five at N3W CUTS and the crossing, the three sideshow boards).
+   ================================================================ */
+(function tourV406() { const T = (window.__game && __game.TOUR) || TOUR; if (!window.__SIDE || SIDE.list.length < 3) return;
+  const [a, b, c] = SIDE.list, p = (B, d) => { const q = B.at(0, d); return [q[0], B.g + 1.7, q[1]]; }, l = B => { const q = B.at(0, 0); return [q[0], B.g + 1.8, q[1]]; };
+  const stop = { name: 'the sideshow row', dur: 12, pos: [p(a, 4.5), p(b, 4.5), p(c, 4.5)], look: [l(a), l(b), l(c)] };
+  const ins = (L, before) => { let at = L.findIndex(q => q.name === before); if (at < 0) at = L.findIndex(q => q.name === 'aerial'); L.splice(at < 0 ? L.length : at, 0, stop); };
+  ins(T, 'tied together'); if (window.__TOURFULL && __TOURFULL !== T) ins(__TOURFULL, 'aerial');
+})();
+(function counts26() { try { const s = SIGNS.find(q => q.lines && q.lines[0] && /^18 ILLUSIONS/.test(q.lines[0].t)); if (!s) return; s.lines[0].t = '26 ILLUSIONS · 577 CARDS · 472 ARTISTS'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } catch (e) { } })();
+
 /*__V407_X__*/
 /*__V408_X__*/
 /*__V409_X__*/
