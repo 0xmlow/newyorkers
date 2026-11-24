@@ -6,7 +6,7 @@
    river twice is a walk through the whole collection, season by season. Stand still on one and it tells you
    whose it is. 577 plaques in six draws (one per card atlas). ?memeswalk=0 off.
    ================================================================ */
-const MWALK = { ok: false, list: [], pos: [] };
+const MWALK = { ok: false, list: [], pos: [], wave: { value: -1 } };
 window.__MWALK = MWALK;
 (function memesWalk() {
   if (!LOOK.on || /memeswalk=0/.test(location.search)) return;
@@ -25,9 +25,9 @@ window.__MWALK = MWALK;
   const o = new THREE.Object3D();
   Object.keys(byAtl).forEach(ai => { const L = byAtl[ai], n = L.length, aUv = new Float32Array(n * 4), aNum = new Float32Array(n), aAsp = new Float32Array(n);
     const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.5 });
-    mat.onBeforeCompile = sh => { sh.uniforms.uAt = { value: ATL[ai] }; sh.uniforms.uDig = { value: dt };
+    mat.onBeforeCompile = sh => { sh.uniforms.uAt = { value: ATL[ai] }; sh.uniforms.uDig = { value: dt }; sh.uniforms.uWave = MWALK.wave;
       sh.vertexShader = 'attribute vec4 aUv; attribute float aNum; attribute float aAsp; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n vUvR = aUv; vNum = aNum; vAsp = aAsp; vPl = uv;');
-      sh.fragmentShader = 'uniform sampler2D uAt, uDig; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl; float plM = 0.9, plR = 0.32;\n' + sh.fragmentShader
+      sh.fragmentShader = 'uniform float uWave; uniform sampler2D uAt, uDig; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl; float plM = 0.9, plR = 0.32;\n' + sh.fragmentShader
         .replace('#include <map_fragment>', `{ vec2 p = vPl; vec3 brass = vec3(0.62, 0.43, 0.16), enamel = vec3(0.012, 0.02, 0.05); vec3 col = brass;
           float ex = step(0.06, p.x) * step(p.x, 0.94), ey = step(0.045, p.y) * step(p.y, 0.955);
           if (ex * ey > 0.5) { col = enamel; plM = 0.0; plR = 0.18;
@@ -41,7 +41,7 @@ window.__MWALK = MWALK;
                 if (a > 0.5) { col = brass; plM = 0.9; plR = 0.3; } } } }
           diffuseColor.rgb = col; }`)
         .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = plR;')
-        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = plM;'); };
+        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = plM;').replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n totalEmissiveRadiance += vec3(1.0, 0.72, 0.36) * (plM > 0.5 ? 1.4 : 0.25) * (1.0 - smoothstep(0.0, 0.012, abs(vNum / 577.0 - uWave)));'); };
     mat.customProgramCacheKey = () => 'mwalk';
     const im = new THREE.InstancedMesh(geo, mat, n);
     L.forEach(([cd, s], i) => { const x = Math.sin(s.a) * s.r, z = Math.cos(s.a) * s.r; o.position.set(x, PY, z); o.rotation.set(0, s.a + PI, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix);

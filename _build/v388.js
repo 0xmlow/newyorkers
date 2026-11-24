@@ -38,7 +38,7 @@
     c.fillStyle = '#efe8da'; c.textAlign = 'center'; c.font = '900 44px "Archivo Black",Impact,sans-serif'; c.fillText('N3W CUTS', X(-1.1), Y(3.2)); c.fillText('N3W CUTS', X(1.1), Y(3.2));
   }
   // the chairs from behind: an empty one, and one with a customer under a cape
-  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 500; const k = cv.getContext('2d'); const ctex = new THREE.CanvasTexture(cv); ctex.encoding = THREE.sRGBEncoding;
+  const cv = document.createElement('canvas'); cv.width = 768; cv.height = 500; const k = cv.getContext('2d'); const ctex = new THREE.CanvasTexture(cv); ctex.encoding = THREE.sRGBEncoding;
   const CW = 0.9, CH = 1.75, cX = (o, u) => o + (u / CW + 0.5) * 256, cY = y => (CH - y) / CH * 500;
   const chair = (o, cape) => { if (!k || !k.fillRect || !k.createLinearGradient || !k.ellipse || !k.clip || !k.beginPath) return;
     const chromeG = k.createLinearGradient(cX(o, -0.3), 0, cX(o, 0.3), 0); chromeG.addColorStop(0, '#6d7074'); chromeG.addColorStop(0.4, '#f2f2f2'); chromeG.addColorStop(0.6, '#c9cbce'); chromeG.addColorStop(1, '#55585c');
@@ -57,6 +57,16 @@
       k.fillStyle = 'rgba(18,18,18,.5)'; k.fillRect(cX(o, -0.098), cY(1.58), 0.196 * 256 / CW, 0.03 * 500 / CH); }
   };
   chair(0, false); chair(256, true);
+  // v414: the barber, standing at the customer's right shoulder, clippers up (a 0.6 m wide cell)
+  if (k && k.fillRect && k.beginPath && k.ellipse) { const o = 512, bX = u => o + (u / 0.6 + 0.5) * 256, bY = y => (1.75 - y) / 1.75 * 500, sx = 256 / 0.6, sy = 500 / 1.75;
+    k.fillStyle = '#1b1d22'; k.fillRect(bX(-0.13), bY(0.86), 0.11 * sx, 0.86 * sy); k.fillRect(bX(0.02), bY(0.86), 0.11 * sx, 0.86 * sy);
+    k.fillStyle = '#0d0d0d'; k.fillRect(bX(-0.15), bY(0.06), 0.14 * sx, 0.06 * sy); k.fillRect(bX(0.01), bY(0.06), 0.14 * sx, 0.06 * sy);
+    k.fillStyle = '#efe8da'; k.beginPath(); k.moveTo(bX(-0.2), bY(1.42)); k.lineTo(bX(0.2), bY(1.42)); k.lineTo(bX(0.22), bY(0.8)); k.lineTo(bX(-0.22), bY(0.8)); k.closePath(); k.fill();
+    k.fillStyle = '#16233f'; k.fillRect(bX(-0.22), bY(0.86), 0.44 * sx, 0.04 * sy);
+    k.strokeStyle = '#efe8da'; k.lineWidth = 0.08 * sx; k.lineCap = 'round'; k.beginPath(); k.moveTo(bX(-0.17), bY(1.36)); k.lineTo(bX(-0.3), bY(1.18)); k.lineTo(bX(-0.36), bY(1.42)); k.stroke();
+    k.fillStyle = '#7a553c'; k.beginPath(); k.arc(bX(-0.36), bY(1.44), 0.035 * sx, 0, PI * 2); k.fill(); k.fillStyle = '#c9cbce'; k.fillRect(bX(-0.4), bY(1.53), 0.06 * sx, 0.09 * sy);
+    k.fillStyle = '#5e4030'; k.fillRect(bX(-0.04), bY(1.5), 0.08 * sx, 0.08 * sy); k.beginPath(); k.ellipse(bX(0), bY(1.6), 0.1 * sx, 0.12 * sy, 0, 0, PI * 2); k.fill();
+    k.fillStyle = '#141414'; k.beginPath(); k.ellipse(bX(0), bY(1.66), 0.1 * sx, 0.08 * sy, 0, PI, PI * 2); k.fill(); }
   const all = CARDS.filter(c => c.uv && c.uv[0] === 0); const U = [0, 1, 2].map(() => new THREE.Vector4());
   const pick = hr => [0, 1, 2].forEach(i => { const cd = all[(hr * 7 + i * 31 + 3) % all.length], u = cd.uv; U[i].set(u[1], 1 - u[4], u[3], 1 - u[2]); }); pick(new Date().getHours());
   const mat = new THREE.ShaderMaterial({ uniforms: { uO: { value: O }, uN: { value: new THREE.Vector3(nx, 0, nz) }, uT: { value: new THREE.Vector3(tx, 0, tz) }, uRW: { value: RW }, uD: { value: DD }, uH: { value: HC }, uDC: { value: DC }, uWall: { value: wt }, uChair: { value: ctex }, uAt: { value: ATL[0] }, uC: { value: U }, uL: { value: 1 } },
@@ -71,7 +81,8 @@
         float tc = (uDC - d0) / rdd;
         if (tc < t) { float uc = u0 + ru * tc, yc = y0 + ry * tc; float uf = fold(uc); float idx = floor((uf + 1.1) / 2.2); float lu = uf - idx * 2.2;
           vec2 sp = vec2(lu / 0.9 + 0.5, yc / 1.75);
-          if (sp.x > 0.0 && sp.x < 1.0 && sp.y > 0.0 && sp.y < 1.0) { vec4 s = texture2D(uChair, vec2((sp.x + (idx == 0.0 ? 1.0 : 0.0)) * 0.5, sp.y)); if (s.a > 0.5) { col = s.rgb; k = refl(uc); done = true; t = tc; } } }
+          if (sp.x > 0.0 && sp.x < 1.0 && sp.y > 0.0 && sp.y < 1.0) { vec4 s = texture2D(uChair, vec2((sp.x + (idx == 0.0 ? 1.0 : 0.0)) / 3.0, sp.y)); if (s.a > 0.5) { col = s.rgb; k = refl(uc); done = true; t = tc; } }
+          if (!done && idx == 0.0) { vec2 bp = vec2((lu - 0.66) / 0.6 + 0.5, yc / 1.75); if (bp.x > 0.0 && bp.x < 1.0 && bp.y > 0.0 && bp.y < 1.0) { vec4 b = texture2D(uChair, vec2((bp.x + 2.0) / 3.0, bp.y)); if (b.a > 0.5) { col = b.rgb; k = refl(uc); done = true; t = tc; } } } }
         if (!done) {
           if (tb < ty) { float uh = u0 + ru * tb, y = y0 + ry * tb; float uf = fold(uh); k = refl(uh); col = texture2D(uWall, vec2(uf / uRW + 0.5, y / uH)).rgb;
             float idx = floor((uf + 1.1) / 2.2); float lu = uf - idx * 2.2; vec2 pc = vec2((lu + 0.19) / 0.38, (y - 2.47) / 0.5);

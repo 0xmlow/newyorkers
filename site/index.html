@@ -15819,7 +15819,7 @@ window.__FRAMES.push(dt => { try { if (!CUTS.ok) return; CUTS.poleT.offset.y = (
     c.fillStyle = '#efe8da'; c.textAlign = 'center'; c.font = '900 44px "Archivo Black",Impact,sans-serif'; c.fillText('N3W CUTS', X(-1.1), Y(3.2)); c.fillText('N3W CUTS', X(1.1), Y(3.2));
   }
   // the chairs from behind: an empty one, and one with a customer under a cape
-  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 500; const k = cv.getContext('2d'); const ctex = new THREE.CanvasTexture(cv); ctex.encoding = THREE.sRGBEncoding;
+  const cv = document.createElement('canvas'); cv.width = 768; cv.height = 500; const k = cv.getContext('2d'); const ctex = new THREE.CanvasTexture(cv); ctex.encoding = THREE.sRGBEncoding;
   const CW = 0.9, CH = 1.75, cX = (o, u) => o + (u / CW + 0.5) * 256, cY = y => (CH - y) / CH * 500;
   const chair = (o, cape) => { if (!k || !k.fillRect || !k.createLinearGradient || !k.ellipse || !k.clip || !k.beginPath) return;
     const chromeG = k.createLinearGradient(cX(o, -0.3), 0, cX(o, 0.3), 0); chromeG.addColorStop(0, '#6d7074'); chromeG.addColorStop(0.4, '#f2f2f2'); chromeG.addColorStop(0.6, '#c9cbce'); chromeG.addColorStop(1, '#55585c');
@@ -15838,6 +15838,16 @@ window.__FRAMES.push(dt => { try { if (!CUTS.ok) return; CUTS.poleT.offset.y = (
       k.fillStyle = 'rgba(18,18,18,.5)'; k.fillRect(cX(o, -0.098), cY(1.58), 0.196 * 256 / CW, 0.03 * 500 / CH); }
   };
   chair(0, false); chair(256, true);
+  // v414: the barber, standing at the customer's right shoulder, clippers up (a 0.6 m wide cell)
+  if (k && k.fillRect && k.beginPath && k.ellipse) { const o = 512, bX = u => o + (u / 0.6 + 0.5) * 256, bY = y => (1.75 - y) / 1.75 * 500, sx = 256 / 0.6, sy = 500 / 1.75;
+    k.fillStyle = '#1b1d22'; k.fillRect(bX(-0.13), bY(0.86), 0.11 * sx, 0.86 * sy); k.fillRect(bX(0.02), bY(0.86), 0.11 * sx, 0.86 * sy);
+    k.fillStyle = '#0d0d0d'; k.fillRect(bX(-0.15), bY(0.06), 0.14 * sx, 0.06 * sy); k.fillRect(bX(0.01), bY(0.06), 0.14 * sx, 0.06 * sy);
+    k.fillStyle = '#efe8da'; k.beginPath(); k.moveTo(bX(-0.2), bY(1.42)); k.lineTo(bX(0.2), bY(1.42)); k.lineTo(bX(0.22), bY(0.8)); k.lineTo(bX(-0.22), bY(0.8)); k.closePath(); k.fill();
+    k.fillStyle = '#16233f'; k.fillRect(bX(-0.22), bY(0.86), 0.44 * sx, 0.04 * sy);
+    k.strokeStyle = '#efe8da'; k.lineWidth = 0.08 * sx; k.lineCap = 'round'; k.beginPath(); k.moveTo(bX(-0.17), bY(1.36)); k.lineTo(bX(-0.3), bY(1.18)); k.lineTo(bX(-0.36), bY(1.42)); k.stroke();
+    k.fillStyle = '#7a553c'; k.beginPath(); k.arc(bX(-0.36), bY(1.44), 0.035 * sx, 0, PI * 2); k.fill(); k.fillStyle = '#c9cbce'; k.fillRect(bX(-0.4), bY(1.53), 0.06 * sx, 0.09 * sy);
+    k.fillStyle = '#5e4030'; k.fillRect(bX(-0.04), bY(1.5), 0.08 * sx, 0.08 * sy); k.beginPath(); k.ellipse(bX(0), bY(1.6), 0.1 * sx, 0.12 * sy, 0, 0, PI * 2); k.fill();
+    k.fillStyle = '#141414'; k.beginPath(); k.ellipse(bX(0), bY(1.66), 0.1 * sx, 0.08 * sy, 0, PI, PI * 2); k.fill(); }
   const all = CARDS.filter(c => c.uv && c.uv[0] === 0); const U = [0, 1, 2].map(() => new THREE.Vector4());
   const pick = hr => [0, 1, 2].forEach(i => { const cd = all[(hr * 7 + i * 31 + 3) % all.length], u = cd.uv; U[i].set(u[1], 1 - u[4], u[3], 1 - u[2]); }); pick(new Date().getHours());
   const mat = new THREE.ShaderMaterial({ uniforms: { uO: { value: O }, uN: { value: new THREE.Vector3(nx, 0, nz) }, uT: { value: new THREE.Vector3(tx, 0, tz) }, uRW: { value: RW }, uD: { value: DD }, uH: { value: HC }, uDC: { value: DC }, uWall: { value: wt }, uChair: { value: ctex }, uAt: { value: ATL[0] }, uC: { value: U }, uL: { value: 1 } },
@@ -15852,7 +15862,8 @@ window.__FRAMES.push(dt => { try { if (!CUTS.ok) return; CUTS.poleT.offset.y = (
         float tc = (uDC - d0) / rdd;
         if (tc < t) { float uc = u0 + ru * tc, yc = y0 + ry * tc; float uf = fold(uc); float idx = floor((uf + 1.1) / 2.2); float lu = uf - idx * 2.2;
           vec2 sp = vec2(lu / 0.9 + 0.5, yc / 1.75);
-          if (sp.x > 0.0 && sp.x < 1.0 && sp.y > 0.0 && sp.y < 1.0) { vec4 s = texture2D(uChair, vec2((sp.x + (idx == 0.0 ? 1.0 : 0.0)) * 0.5, sp.y)); if (s.a > 0.5) { col = s.rgb; k = refl(uc); done = true; t = tc; } } }
+          if (sp.x > 0.0 && sp.x < 1.0 && sp.y > 0.0 && sp.y < 1.0) { vec4 s = texture2D(uChair, vec2((sp.x + (idx == 0.0 ? 1.0 : 0.0)) / 3.0, sp.y)); if (s.a > 0.5) { col = s.rgb; k = refl(uc); done = true; t = tc; } }
+          if (!done && idx == 0.0) { vec2 bp = vec2((lu - 0.66) / 0.6 + 0.5, yc / 1.75); if (bp.x > 0.0 && bp.x < 1.0 && bp.y > 0.0 && bp.y < 1.0) { vec4 b = texture2D(uChair, vec2((bp.x + 2.0) / 3.0, bp.y)); if (b.a > 0.5) { col = b.rgb; k = refl(uc); done = true; t = tc; } } } }
         if (!done) {
           if (tb < ty) { float uh = u0 + ru * tb, y = y0 + ry * tb; float uf = fold(uh); k = refl(uh); col = texture2D(uWall, vec2(uf / uRW + 0.5, y / uH)).rgb;
             float idx = floor((uf + 1.1) / 2.2); float lu = uf - idx * 2.2; vec2 pc = vec2((lu + 0.19) / 0.38, (y - 2.47) / 0.5);
@@ -16050,7 +16061,7 @@ window.__FRAMES.push(() => { try { if (!ZOE.ok) return; const d = Math.hypot(cam
    river twice is a walk through the whole collection, season by season. Stand still on one and it tells you
    whose it is. 577 plaques in six draws (one per card atlas). ?memeswalk=0 off.
    ================================================================ */
-const MWALK = { ok: false, list: [], pos: [] };
+const MWALK = { ok: false, list: [], pos: [], wave: { value: -1 } };
 window.__MWALK = MWALK;
 (function memesWalk() {
   if (!LOOK.on || /memeswalk=0/.test(location.search)) return;
@@ -16069,9 +16080,9 @@ window.__MWALK = MWALK;
   const o = new THREE.Object3D();
   Object.keys(byAtl).forEach(ai => { const L = byAtl[ai], n = L.length, aUv = new Float32Array(n * 4), aNum = new Float32Array(n), aAsp = new Float32Array(n);
     const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.5 });
-    mat.onBeforeCompile = sh => { sh.uniforms.uAt = { value: ATL[ai] }; sh.uniforms.uDig = { value: dt };
+    mat.onBeforeCompile = sh => { sh.uniforms.uAt = { value: ATL[ai] }; sh.uniforms.uDig = { value: dt }; sh.uniforms.uWave = MWALK.wave;
       sh.vertexShader = 'attribute vec4 aUv; attribute float aNum; attribute float aAsp; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n vUvR = aUv; vNum = aNum; vAsp = aAsp; vPl = uv;');
-      sh.fragmentShader = 'uniform sampler2D uAt, uDig; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl; float plM = 0.9, plR = 0.32;\n' + sh.fragmentShader
+      sh.fragmentShader = 'uniform float uWave; uniform sampler2D uAt, uDig; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl; float plM = 0.9, plR = 0.32;\n' + sh.fragmentShader
         .replace('#include <map_fragment>', `{ vec2 p = vPl; vec3 brass = vec3(0.62, 0.43, 0.16), enamel = vec3(0.012, 0.02, 0.05); vec3 col = brass;
           float ex = step(0.06, p.x) * step(p.x, 0.94), ey = step(0.045, p.y) * step(p.y, 0.955);
           if (ex * ey > 0.5) { col = enamel; plM = 0.0; plR = 0.18;
@@ -16085,7 +16096,7 @@ window.__MWALK = MWALK;
                 if (a > 0.5) { col = brass; plM = 0.9; plR = 0.3; } } } }
           diffuseColor.rgb = col; }`)
         .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = plR;')
-        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = plM;'); };
+        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = plM;').replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n totalEmissiveRadiance += vec3(1.0, 0.72, 0.36) * (plM > 0.5 ? 1.4 : 0.25) * (1.0 - smoothstep(0.0, 0.012, abs(vNum / 577.0 - uWave)));'); };
     mat.customProgramCacheKey = () => 'mwalk';
     const im = new THREE.InstancedMesh(geo, mat, n);
     L.forEach(([cd, s], i) => { const x = Math.sin(s.a) * s.r, z = Math.cos(s.a) * s.r; o.position.set(x, PY, z); o.rotation.set(0, s.a + PI, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix);
@@ -16488,12 +16499,93 @@ window.__RDUCK = RDUCK;
 window.__FRAMES.push(dt => { try { if (!RDUCK.G) return; RDUCK.t += dt; const t = RDUCK.t * 0.05, x = POND.x + Math.cos(t) * POND.rx * 0.45, z = POND.z + Math.sin(t * 1.3) * POND.rz * 0.4;
   RDUCK.G.position.set(x, POND.y - 0.02 + Math.sin(RDUCK.t * 2.1) * 0.012, z); RDUCK.G.rotation.set(Math.sin(RDUCK.t * 1.7) * 0.06, -t * 2 + Math.sin(RDUCK.t * 0.3) * 0.6, Math.sin(RDUCK.t * 2.3) * 0.05); } catch (e) { } });
 
-/*__V413_X__*/
-/*__V414_X__*/
-/*__V415_X__*/
-/*__V416_X__*/
-/*__V417_X__*/
-/*__V418_X__*/
+/* ================================================================
+   v413 THE 6:52:29 WAVE (2026-11-24)
+   Once a day, at 6:52 and 29 seconds in the evening, New York time, a wave of light runs round the Memes Walk:
+   plaque #1 lights, then #2, and on through every card in mint order to the newest, both banks, in about forty
+   seconds, like a stadium standing up for the collection. Type WAVE to send one yourself.
+   ================================================================ */
+const MWAVE = { t: -1, last: '' };
+window.__MWAVE = MWAVE;
+(function memesWave() {
+  if (!window.__MWALK || !MWALK.ok) return;
+  MWAVE.go = () => { MWAVE.t = 0; toast('6529 · THE MEMES WAVE · #1 TO #' + MWALK.pos.length, 'blue'); };
+  try { secret('memeswave', () => MWAVE.go(), ['wave']); } catch (e) { }
+})();
+window.__FRAMES.push(dt => { try { if (!window.__MWALK || !MWALK.ok) return; MWAVE.ck = (MWAVE.ck || 0) - dt;
+  if (MWAVE.ck <= 0) { MWAVE.ck = 1; const s = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: false }); if (s.slice(0, 8) === '18:52:29' && MWAVE.last !== new Date().toDateString()) { MWAVE.last = new Date().toDateString(); MWAVE.go(); } }
+  if (MWAVE.t < 0) { MWALK.wave.value = -1; return; } MWAVE.t += dt; const k = MWAVE.t / 40; MWALK.wave.value = k * 1.03 - 0.01; if (k > 1.05) MWAVE.t = -1; } catch (e) { } });
+
+/* ================================================================
+   v414 THE INFINITE BARBERSHOP: THE BARBER (2026-11-24)
+   The customer in the middle chair now has someone working on him: a barber in a white tunic at his right shoulder,
+   clippers raised, repeated with him down both mirrors for ever. Drawn into the same shader as the chairs (v388).
+   ================================================================ */
+
+/* ================================================================
+   v415 WALLPAPER: THE BACKS OF THE SIDESHOW (2026-11-24)
+   The sideshow boards (v402 to v404) turn their backs to the sea and the ferry, and the backs were plain navy. They
+   carry MLow's Firefly wheatpaste now, the hoarding paper of contour rivers and eye flowers, the way the backs of
+   real boardwalk signs collect posters. ?wallpaper=0 off.
+   ================================================================ */
+(function sideBacks() {
+  if (!WALLS.on || /wallpaper=0/.test(location.search) || !window.__SIDE) return; const M = wallMat('hoarding');
+  const go = () => SIDE.list.forEach(B => { if (B.backed) return; B.backed = true; const [x, z] = B.at(0, -0.05), m = new THREE.Mesh(new THREE.PlaneGeometry(2.26, 2.66), M); m.position.set(x, B.g + 1.75, z); m.rotation.y = B.ry + PI; m.receiveShadow = true; scene.add(m); WALLS.n++; });
+  go(); SIDE.backs = go;
+})();
+
+/* ================================================================
+   v416 ILLUSION: THE DOTS THAT BLINK (2026-11-24)
+   A fourth sideshow board: a navy grid on black with a small bone disc at every crossing. Let your eyes wander over
+   it and black dots flash in the white discs, never in the one you are looking straight at (the scintillating
+   grid, Schrauf, Lingelbach and Wist, 1997). ?sideshow=0 off.
+   ================================================================ */
+(function blinkGrid() {
+  if (!LOOK.on || /sideshow=0/.test(location.search) || typeof sideBooth !== 'function') return;
+  const B = sideBooth(228, 'THE DOTS THAT BLINK', 'LET YOUR EYES WANDER. COUNT THE BLACK DOTS. THERE ARE NONE.');
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  if (c && c.fillRect && c.beginPath && c.arc) { c.fillStyle = '#060708'; c.fillRect(0, 0, 1024, 1024); c.fillStyle = '#4a5a7a'; const N = 11, st = 1024 / N, w = 14;
+    for (let i = 0; i <= N; i++) { c.fillRect(i * st - w / 2 + st / 2, 0, w, 1024); c.fillRect(0, i * st - w / 2 + st / 2, 1024, w); }
+    c.fillStyle = '#f4efe4'; for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) { c.beginPath(); c.arc(i * st + st / 2, j * st + st / 2, 12, 0, PI * 2); c.fill(); } }
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); const [x, z] = B.at(0, 0.06); p.position.set(x, B.g + 1.75, z); p.rotation.y = B.ry; scene.add(p);
+  SIDE.grid = p; if (SIDE.panels) SIDE.panels.push(p.material); if (window.__MAP) MAP.places.push(['THE DOTS THAT BLINK', B.x, B.z, ...B.at(0, 3)]);
+})();
+
+/* ================================================================
+   v417 ILLUSION: THE STEPPING FEET (2026-11-24)
+   A fifth sideshow board: black and bone stripes, and across them two bars, one cobalt and one bone, gliding side by
+   side at exactly the same steady speed. Watch them and they walk: one steps forward while the other waits, then
+   the other. Their contrast with the stripes under them keeps changing, and your eye reads contrast as speed
+   (the footsteps illusion, Stuart Anstis, 2001). ?sideshow=0 off.
+   ================================================================ */
+(function steppingFeet() {
+  if (!LOOK.on || /sideshow=0/.test(location.search) || typeof sideBooth !== 'function') return;
+  const B = sideBooth(253, 'THE STEPPING FEET', 'BOTH BARS MOVE AT ONE STEADY SPEED. WATCH THEM WALK.');
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 64; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  if (c && c.fillRect) { for (let i = 0; i < 32; i++) { c.fillStyle = i % 2 ? '#0a0a0a' : '#f1ece1'; c.fillRect(i * 32, 0, 32, 64); } }
+  const [x, z] = B.at(0, 0.06), bg = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0), new THREE.MeshBasicMaterial({ map: t, toneMapped: false })); bg.position.set(x, B.g + 1.75, z); bg.rotation.y = B.ry; scene.add(bg);
+  const bars = [[0x2962ff, 0.35], [0xf1d36a, -0.35]].map(([col, dy]) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.2), new THREE.MeshBasicMaterial({ color: col, toneMapped: false })); scene.add(m); return { m, dy }; });
+  SIDE.feet = { B, bars, t: 0 }; if (SIDE.panels) SIDE.panels.push(bg.material); if (window.__MAP) MAP.places.push(['THE STEPPING FEET', B.x, B.z, ...B.at(0, 3)]);
+})();
+window.__FRAMES.push(dt => { try { const F = SIDE.feet; if (!F) return; F.t += dt; const u = ((F.t * 0.22) % 1.9) - 0.95, B = F.B;
+  F.bars.forEach(b => { const [x, z] = B.at(u, 0.075); b.m.position.set(x, B.g + 1.75 + b.dy, z); b.m.rotation.y = B.ry; }); } catch (e) { } });
+
+/* ================================================================
+   v418 THE SIDESHOW ROW, FIVE BOARDS (2026-11-24)
+   The two new boards get bulbs and painted backs like the first three, the sideshow tour stop now walks all five,
+   and the pier count reads 28 ILLUSIONS.
+   ================================================================ */
+(function sideFive() {
+  if (!window.__SIDE) return; try { if (SIDE.backs) SIDE.backs(); } catch (e) { }
+  try { if (SIDE.bulbs && SIDE.list.length > 3) { const extra = []; SIDE.list.slice(3).forEach(B => { for (let i = 0; i < 14; i++) { const u = -1.12 + i * 2.24 / 13; [3.72, 3.12].forEach(y => { const [x, z] = B.at(u, 0.1); extra.push([x, B.g + y, z]); }); } });
+    const im = new THREE.InstancedMesh(SIDE.bulbs.geometry, SIDE.bulbs.material, SIDE.bn + extra.length), M = new THREE.Matrix4(), o = new THREE.Object3D(), c = new THREE.Color(0x3a3226);
+    for (let i = 0; i < SIDE.bn; i++) { SIDE.bulbs.getMatrixAt(i, M); im.setMatrixAt(i, M); im.setColorAt(i, c); } extra.forEach((p, j) => { o.position.set(p[0], p[1], p[2]); o.updateMatrix(); im.setMatrixAt(SIDE.bn + j, o.matrix); im.setColorAt(SIDE.bn + j, c); });
+    im.instanceMatrix.needsUpdate = true; scene.remove(SIDE.bulbs); scene.add(im); SIDE.bulbs = im; SIDE.bn += extra.length; } } catch (e) { console.warn('v418', e); }
+  try { const T = (window.__game && __game.TOUR) || TOUR, L = SIDE.list.slice().sort((a, b) => Math.atan2(a.x, a.z) - Math.atan2(b.x, b.z)), p = (B, d) => { const q = B.at(0, d); return [q[0], B.g + 1.7, q[1]]; }, l = B => { const q = B.at(0, 0); return [q[0], B.g + 1.8, q[1]]; };
+    [T, window.__TOURFULL].forEach(R => { if (!R) return; const s = R.find(q => q.name === 'the sideshow row'); if (s) { s.pos = L.map(B => p(B, 4.5)); s.look = L.map(l); s.dur = 16; } }); } catch (e) { }
+  try { const s = SIGNS.find(q => q.lines && q.lines[0] && /^\d+ ILLUSIONS/.test(q.lines[0].t)); if (s) { s.lines[0].t = '28 ILLUSIONS · 577 CARDS · 472 ARTISTS'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } } catch (e) { }
+})();
+
 /*__V419_X__*/
 /*__V420_X__*/
 /*__V421_X__*/
