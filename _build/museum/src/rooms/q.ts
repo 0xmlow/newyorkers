@@ -7,9 +7,83 @@ import type { Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
 import { libertyFigure, LIBERTY_CREDIT } from './b';
-import { standIn } from './heroes';
+import { standIn, hero, hide, heroInstances } from './heroes';
+import { hsign, paintTex, anamorphTex } from './f';
+import { anamorph, fireflyPlate } from './a';
+import type { Kit } from '../kit';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 4d (2026-11-24): helpers for rooms 77 to 81 ----------
+   Same pattern as wave 3d (m.ts), kept local: scanned CC0 surfaces from assets/museum/tex/<room>/ that wear a sensible
+   colour until their maps land, real models from assets/museum/props/<room>/ placed many at once (seven or more become
+   instanced parts), and painted canvases. Safe in node: the audit builds with no DOM, so scans fall back to paint. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w4d = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w4d-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w4d.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w4d.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w4d-${room}-${id}`, e.s, 1 / metres, p);
+  if (!m.userData.w4d) {
+    m.userData.w4d = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]. */
+function many(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
+/* Recolour every material of a loaded model without touching the source cache. */
+function tint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.5) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Painted lettering for an anamorphic floor piece, in a house font. */
+function floorType(text: string, fg: string, w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  return paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+}
+/* A flag of thirteen stripes and a starred canton, painted once, hung flat (no DOM: a plain red). */
+let flagTex: T.Texture | null = null;
+function flagMat(k: Kit) {
+  if (!HAS_DOM) return k.flat(0xb8202a, 0, 0.8);
+  if (!flagTex) flagTex = paintTex(760, 400, (g) => {
+    for (let i = 0; i < 13; i++) { g.fillStyle = i % 2 ? '#f2eee4' : '#a8202c'; g.fillRect(0, (i * 400) / 13, 760, 400 / 13 + 1); }
+    g.fillStyle = '#1f2f5e'; g.fillRect(0, 0, 304, (7 * 400) / 13);
+    g.fillStyle = '#f2eee4'; for (let r = 0; r < 9; r++) for (let c = 0; c < (r % 2 ? 5 : 6); c++) { g.beginPath(); g.arc(25 + c * 50 + (r % 2 ? 25 : 0), 16 + r * 23.5, 6, 0, PI * 2); g.fill(); }
+  });
+  return new T.MeshStandardMaterial({ map: flagTex, roughness: 0.9, side: T.DoubleSide });
+}
 
 /* ---------------- 77 ELLIS ISLAND ---------------- */
 export const ellis: RoomDef = {
@@ -21,25 +95,30 @@ export const ellis: RoomDef = {
   description: 'The ferry slip and the red brick palace with its four towers, then the great hall: the tiled vault, the flags, the long benches, the stair of separation, the works where the inspectors stood.',
   signatures: 'The French Renaissance main building in red brick and limestone with copper domed towers, the registry room with its Guastavino tile vault and three great arched windows, the iron railings, the American flags, the benches in rows.',
   build(k, ctx) {
-    k.sky({ top: 0x6f9ad8, horizon: 0xf0e8dc, ground: 0x4a5a5c, fog: 0.0018, sun: { az: 2.2, el: 0.5, color: 0xfff6e8, size: 12 }, env: 1.0 });
+    /* 2026-11-24 (wave 4d): the horizon washed the harbour white; a deeper sky and thinner haze */
+    k.sky({ top: 0x4a7fca, horizon: 0xd6dee4, ground: 0x4a5a5c, fog: 0.0011, sun: { az: 2.2, el: 0.5, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xeef4ff, 0x3a4a48, 0.9);
     k.sun(0xfff0dc, 2.4, 60, 60, 60, true, 120);
-    const brick = k.pbr('eiBrick', X.brick(0x8a4a3a, 231), 0.28),
-      lime = k.pbr('eiLime', X.ashlar(0xd8d0bc, 232, 3), 0.22),
-      tile = k.pbr('eiTile', X.brick(0xcbb894, 233), 0.16, { roughness: 0.55, stretch: 0.5, side: T.BackSide }),
-      floorT = k.pbr('eiFloor', X.terrazzo(0xb8b0a0, 106), 0.4, { roughness: 0.4 }),
+    /* 2026-11-24 (wave 4d): scanned CC0 surfaces (Poly Haven): red brick, limestone block, the Guastavino vault as buff
+       herringbone tile, the registry floor as red quarry tile, dark wood */
+    const brick = sc(k, 'ellis', 'brick', 1.3, () => X.brick(0x8a4a3a, 231), { roughness: 0.85 }, 0x7a4a3c),
+      lime = sc(k, 'ellis', 'lime', 2.2, () => X.ashlar(0xd8d0bc, 232, 3), { roughness: 0.8 }, 0xc8c0ac),
+      tile = sc(k, 'ellis', 'hb2', 0.8, () => X.brick(0xcbb894, 233), { roughness: 0.6, stretch: 0.5, side: T.BackSide }, 0xb8a888),
+      floorT = sc(k, 'ellis', 'terracotta', 1.6, () => X.terrazzo(0xb8b0a0, 106), { roughness: 0.45 }, 0x7a3a2a),
       copper = k.pbr('eiCopper', X.patina(0x5f9a8c), 0.6, { roughness: 0.6, metalness: 0.3 }),
       iron = k.flat(0x1a1c20, 0.7, 0.45),
-      wood = k.pbr('eiBench', X.planks(0x6a4a30, 4, 234), 1.0),
+      wood = sc(k, 'ellis', 'wood', 1.2, () => X.planks(0x6a4a30, 4, 234), { roughness: 0.6 }, 0x5a3a24),
       glass = k.glass(0xe8f4f8, 0.12, 0.04),
       redF = k.flat(0xb8202a, 0, 0.7), whiteF = k.flat(0xf4f0e8, 0, 0.7), blueF = k.flat(0x1d2f5c, 0, 0.7),
       dark = k.flat(0x1a1c20, 0.5, 0.6);
     // the harbor, the island, the ferry slip with a ferry arriving
     k.water({ y: -1.2, color: 0x30586a, w: 900, d: 900, amp: 1.2 });
-    k.box(120, 2, 160, 0, -0.9, -20, k.pbr('eiGround', X.pavers(0x9a9a94, 107), 0.4));
-    k.box(30, 1.6, 60, -75, -0.6, 20, k.pbr('eiSlip', X.concrete(0x8a8a84, 108), 0.3));
+    k.box(120, 2, 160, 0, -0.9, -20, sc(k, 'ellis', 'pavers', 2.4, () => X.pavers(0x9a9a94, 107), { roughness: 0.9 }, 0x8a8880));
+    k.box(30, 1.6, 60, -75, -0.6, 20, sc(k, 'ellis', 'quay', 4, () => X.concrete(0x8a8a84, 108), { roughness: 0.9 }, 0x5a5a58));
     for (let z = -8; z <= 48; z += 8) k.cyl(0.4, 4, -61, 0.6, z, iron, 0.4, 8);
     const ferry = new T.Group(); const hull = new T.Mesh(new T.BoxGeometry(9, 3, 30), k.flat(0xf1c531, 0.2, 0.6)); hull.position.y = 1.2; ferry.add(hull); const cab = new T.Mesh(new T.BoxGeometry(7, 3, 20), k.flat(0xe6e2da, 0.2, 0.6)); cab.position.y = 4.2; ferry.add(cab); k.add(ferry);
+    /* 2026-11-24 (wave 4d): the yellow box ferry becomes the museum's own ferry model, riding the same spline */
+    void hero(k, 'ellis/h_ferry', { length: 34 }).then((h) => { if (!h || !k.live) return; hull.visible = cab.visible = false; h.position.y = -0.4; ferry.add(h); });
     if (!ctx.reduced) k.rider(ferry, k.spline([v(-66, -0.8, 20), v(-120, -0.8, 80), v(-200, -0.8, 40), v(-160, -0.8, -40), v(-90, -0.8, -20)], true), 3, 0);
     k.skyline({ z: -300, count: 40, spacing: 9, scale: 4.2, base: -1.2, seed: 235, lit: 0.25, glow: 0.5, tint: 0x6e7684, spires: true });
     /* 2026-10-28: the lathed cone across the water is the stand in for Gravity Jack's Liberty (CC BY 4.0, b.ts), credit by the spawn */
@@ -49,7 +128,7 @@ export const ellis: RoomDef = {
     // the main building: brick with limestone trim, four corner towers with copper domes, three arched windows on the front
     const BX = 0, BZ = -20, BW = 60, BD = 30, BH = 21;
     k.box(BW, BH, BD, BX, BH / 2, BZ, brick);
-    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], BW + 0.4, BX, BH - 0.5, BZ + BD / 2 + 0.05, lime, 0);
+    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], BW + 0.4, BX, BH - 0.5, BZ + BD / 2 + 0.05, lime, -PI / 2); /* wave 4d: rotated, it ran 60 m along z through the roof */
     k.box(BW + 0.4, 2.4, BD + 0.4, BX, 1.2, BZ, lime);
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const x = BX + sx * (BW / 2 - 4), z = BZ + sz * (BD / 2 - 4); k.box(9, BH + 8, 9, x, (BH + 8) / 2, z, brick); k.box(9.4, 1.0, 9.4, x, BH + 7.6, z, lime); k.mesh(new T.SphereGeometry(4.6, 16, 10, 0, PI * 2, 0, PI / 2), copper, x, BH + 8, z); k.cyl(0.12, 3, x, BH + 13.6, z, copper, 0.02, 6); }
     for (let i = 0; i < 3; i++) { const x = BX - 14 + i * 14; k.arch(7, 11, 1.4, x, 4, BZ + BD / 2, lime, false, 0.8); k.box(6.2, 9.6, 0.1, x, 8.8, BZ + BD / 2 + 0.1, glass); k.box(6.4, 10, 0.16, x, 8.8, BZ + BD / 2 - 0.05, k.flat(0x1a1c20, 0.6, 0.4)); for (let r = 0; r < 3; r++) k.box(0.1, 9.6, 0.1, x - 2 + r * 2, 8.8, BZ + BD / 2 + 0.12, iron); }
@@ -75,7 +154,8 @@ export const ellis: RoomDef = {
     for (const s of [-1, 1]) { k.box(0.6, 6, RD, BX + s * (RW / 2 - 4.2), RY + 3, BZ, brick); k.block(BX + s * (RW / 2 - 4.2) - 0.5, BX + s * (RW / 2 - 4.2) + 0.5, BZ - RD / 2, BZ + RD / 2); k.block(BX + s * (RW / 2 - 4.2), BX + s * (RW / 2 + 2), BZ - RD / 2, BZ + RD / 2); }
     k.block(BX - RW / 2, BX + RW / 2, BZ - RD / 2 - 0.6, BZ - RD / 2 + 0.6);
     for (let i = 0; i < 3; i++) { const x = BX - 14 + i * 14; k.point(x, RY + 8, BZ + 4, 0xfff0e0, 40, 24); }
-    for (let r = 0; r < 6; r++) for (const s of [-1, 1]) { const x = BX + s * 9, z = BZ - 6 + r * 2.4; k.box(10, 0.1, 0.5, x, RY + 0.5, z, wood); k.box(10, 0.5, 0.06, x, RY + 0.75, z - 0.24, wood); for (const dx of [-4.8, 0, 4.8]) k.box(0.12, 0.5, 0.5, x + dx, RY + 0.25, z, iron); k.block(x - 5, x + 5, z - 0.4, z + 0.4); }
+    /* 2026-11-24 (wave 4d): the plank and box benches are now rows of a real wooden bench (Poly Haven, CC0) */
+    { const at: number[][] = []; for (let r = 0; r < 6; r++) for (const s of [-1, 1]) { const x = BX + s * 9, z = BZ - 6 + r * 2.4; for (const dx of [-3.75, -1.25, 1.25, 3.75]) at.push([x + dx, RY + 0.15, z, 0]); k.block(x - 5, x + 5, z - 0.4, z + 0.4); } many(k, 'ellis/ph_painted_wooden_bench', { box: [2.4, 0.95, 0.6] }, at, (o) => tint(o, 0x8a6a4c, 0.7, 0)); }
     for (let i = 0; i < 6; i++) k.box(0.06, 1.0, RD - 10, BX, RY + 0.5, BZ + 0 - 1, iron), void i;
     for (const s of [-1, 1]) { for (let st = 0; st < 12; st++) k.box(3, 0.3, 0.9, BX + s * 20, RY + 0.15 + st * 0.3, BZ - RD / 2 + 2 + st * 0.9, lime); k.rail(BX + s * 20 - s * 1.6, BZ - RD / 2 + 7, 11, iron, 1.0, 'z', 1.5); }
     for (const s of [-1, 1]) k.point(BX + s * 20, RY + 6, BZ - RD / 2 + 8, 0xfff0e0, 14, 10);
@@ -84,10 +164,53 @@ export const ellis: RoomDef = {
     // the works: the inspectors' desks wall, between the benches on the side aisles, the side walls under the windows, the front
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = BZ - 8 + i * 6; mounts.push({ position: v(BX + s * (RW / 2 - 4.54), RY + 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(BX + s * (RW / 2 - 12), RY + 3, z), width: 4.2, height: 2.5, style: 'gilt', wash: true }); }
-    for (let i = 0; i < 5; i++) { const x = BX - 16 + i * 8; mounts.push({ position: v(x, RY + 3.2, BZ - RD / 2 + 0.36), rotation: 0, target: v(x, RY + 2.5, BZ - 6), width: 2.4, height: 1.5, style: 'gilt', wash: false }); }
+    for (let i = 0; i < 5; i++) { const x = BX - 16 + i * 8; mounts.push({ position: v(x, RY + 3.2, BZ - RD / 2 + 0.36), rotation: 0, target: v(x, RY + 2.5, BZ - 7.2), width: 2.4, height: 1.5, style: 'gilt', wash: false }); }
     k.box(RW - 10, 3, 0.5, BX, RY + 1.5, BZ - RD / 2 + 3, wood); k.block(BX - RW / 2 + 5, BX + RW / 2 - 5, BZ - RD / 2 + 2.6, BZ - RD / 2 + 3.4);
-    for (let i = 0; i < 4; i++) { const x = BX - 12 + i * 8; mounts.push({ position: v(x, RY + 2.4, BZ - RD / 2 + 3.28), rotation: PI, target: v(x, RY + 2, BZ - 4), width: 3.2, height: 1.4, style: 'gilt', wash: false }); }
+    for (let i = 0; i < 4; i++) { const x = BX - 12 + i * 8; mounts.push({ position: v(x, RY + 2.4, BZ - RD / 2 + 3.28), rotation: 0, target: v(x, RY + 2, BZ - 4), width: 3.2, height: 1.4, style: 'gilt', wash: false }); }
     for (let i = 0; i < 2; i++) { const x = BX - 20 + i * 40; mounts.push({ position: v(x + (i ? -3.6 : 3.6), 5, BZ + BD / 2 + 0.36), rotation: 0, target: v(x, 3, BZ + BD / 2 + 12), width: 4.2, height: 2.5, style: 'gilt', wash: false }); }
+    /* ---- 2026-11-24 (wave 4d): the registry room closed, furnished and hung ----
+       The vault was open at both ends, so the Manhattan skyline stood inside the hall. Now a brick lunette wall with its
+       great arched window closes the back and a limestone proscenium frames the front; a gallery with an iron railing
+       runs both sides as it does in the real room; iron chandeliers hang from the tiles; two flags on the back wall. */
+    const y0 = RY + 4, VH = VR * VF;
+    const endWall = (z: number, m: T.Material, hw: number, hy0: number, hy1: number, hr: number) => {
+      const sh = new T.Shape(); sh.moveTo(-VR - 0.6, y0 - 0.01); sh.lineTo(VR + 0.6, y0 - 0.01); sh.absellipse(0, y0, VR + 0.6, VH + 0.6, 0, PI, false); sh.closePath();
+      const hole = new T.Path(); hole.moveTo(-hw, hy0); hole.lineTo(hw, hy0); hole.lineTo(hw, hy1); hole.absellipse(0, hy1, hw, hr, 0, PI, false); hole.lineTo(-hw, hy0); sh.holes.push(hole);
+      const g = new T.ExtrudeGeometry(sh, { depth: 0.6, bevelEnabled: false, curveSegments: 28 }); g.translate(0, 0, -0.3);
+      k.mesh(g, m, BX, 0, z);
+      const ring: T.Vector3[] = []; for (let j = 0; j <= 20; j++) { const a = (j / 20) * PI; ring.push(v(BX + Math.cos(a) * (hw + 0.25), hy1 + Math.sin(a) * (hr + 0.25), z + (z < BZ ? 0.34 : -0.34))); } k.curve(ring, 0.22, lime, 20);
+      for (const sx of [-1, 1]) k.box(0.5, hy1 - hy0, 0.5, BX + sx * (hw + 0.25), (hy0 + hy1) / 2, z + (z < BZ ? 0.34 : -0.34), lime);
+    };
+    const backZ = BZ - RD / 2 - 0.1, frontZ = BZ + (RD - 2) / 2 + 0.3;
+    endWall(backZ, brick, 8, y0 + 3, y0 + 6, 6.5);
+    k.box(2 * VR, y0 - RY, 0.6, BX, (RY + y0) / 2, backZ - 0.1, brick);
+    endWall(frontZ, lime, 14, y0 + 0.6, y0 + 4, 7.5);
+    // the great window: iron mullions over a pale harbour light (Firefly plate queued: the harbour from the window, 1907)
+    fireflyPlate(k, 'assets/museum/tex/ellis/ff_ellis_lunette.webp', 16.4, 13, BX, y0 + 6.4, backZ - 0.5, 0, k.glow(0xe8eef0), true);
+    for (let i = -3; i <= 3; i++) k.box(0.1, 6.5 + Math.sqrt(Math.max(0, 1 - (i / 4) ** 2)) * 6.5, 0.1, BX + i * 2, y0 + 3 + (6.5 + Math.sqrt(Math.max(0, 1 - (i / 4) ** 2)) * 6.5) / 2 - 0.05, backZ + 0.05, iron);
+    for (const yy of [y0 + 4.5, y0 + 6, y0 + 8.5]) { const half = yy <= y0 + 6 ? 8 : 8 * Math.sqrt(1 - ((yy - y0 - 6) / 6.5) ** 2); k.box(2 * half, 0.1, 0.1, BX, yy, backZ + 0.05, iron); }
+    // the gallery on both sides, on limestone corbels, with its iron railing
+    for (const s of [-1, 1]) {
+      const gx = BX + s * (RW / 2 - 4.2 - 1.1);
+      k.box(2.2, 0.26, RD - 4, gx, RY + 6.2, BZ, lime);
+      k.box(0.12, 0.08, RD - 4, gx - s * 1.08, RY + 7.33, BZ, iron);
+      k.box(0.06, 0.06, RD - 4, gx - s * 1.08, RY + 6.8, BZ, iron);
+      for (let z = BZ - (RD - 4) / 2; z <= BZ + (RD - 4) / 2 + 0.01; z += 0.6) k.box(0.04, 1.0, 0.04, gx - s * 1.08, RY + 6.83, z, iron);
+      for (let z = BZ - (RD - 4) / 2 + 1; z < BZ + (RD - 4) / 2; z += 2.4) k.box(0.5, 0.7, 0.32, BX + s * (RW / 2 - 4.2 - 0.55), RY + 5.75, z, lime);
+      k.box(0.3, 0.3, RD - 4, BX + s * (RW / 2 - 4.2 - 0.2), RY + 0.15, BZ, lime); // skirting
+    }
+    // two flags on the back wall either side of the window
+    for (const s of [-1, 1]) { const f = k.mesh(new T.PlaneGeometry(5.4, 2.85), flagMat(k), BX + s * 16.8, RY + 6.2, backZ + 0.36, true); f.rotation.y = 0; k.box(0.06, 0.06, 0.5, BX + s * 16.8, RY + 7.7, backZ + 0.3, iron); }
+    // iron chandeliers on rods from the tiles (Poly Haven, CC0)
+    { const at: number[][] = []; for (const x of [-8, 8]) for (const z of [BZ - 8, BZ, BZ + 8]) { at.push([BX + x, RY + 9.4, z, 0]); k.beam(v(BX + x, RY + 12, z), v(BX + x, RY + 4 + VF * Math.sqrt(VR * VR - x * x), z), 0.03, iron, 4); } many(k, 'ellis/ph_Chandelier_03', { height: 2.8 }, at); }
+    // the plaza: the luggage they carried, street lamps, the ferry slip sign
+    { const r = X.mulberry(2341), sa: number[][] = [], la: number[][] = []; for (const s of [-1, 1]) for (let i = 0; i < 9; i++) { const x = BX + s * (14 + r() * 6), z = BZ + BD / 2 + 15 + r() * 3.4; (i % 2 ? la : sa).push([x, 0.1 + (i % 3 === 2 ? 0.35 : 0), z, r() * PI * 2]); } many(k, 'ellis/ph_vintage_suitcase', { width: 0.7 }, sa); many(k, 'ellis/penn_luggage', { width: 0.9 }, la); for (const s of [-1, 1]) k.block(BX + s * 14 - 0.5, BX + s * 20 + 0.5, BZ + BD / 2 + 14.6, BZ + BD / 2 + 18.8); }
+    many(k, 'ellis/ph_street_lamp_01', { height: 4.6 }, [[-23, 0.1, 12, PI / 2], [23, 0.1, 12, -PI / 2], [-23, 0.1, 24, PI / 2], [23, 0.1, 24, -PI / 2], [-23, 0.1, 36, PI / 2], [23, 0.1, 36, -PI / 2]]);
+    hsign(k, 'FERRY  TO THE BATTERY', 7, 0.9, -61.2, 2.6, 4, PI / 2, { fg: '#f2eee4', bg: '#1f3a2e', border: '#c8b47a' });
+    hsign(k, 'REGISTRY ROOM', 6, 0.8, BX, RY + 5.2, frontZ - 0.36, PI, { fg: '#2a2418', bg: '#e8dcc0', border: '#8a6a3a' });
+    hsign(k, 'REGISTRY ROOM', 6, 0.8, BX, RY + 5.2, frontZ + 0.36, 0, { fg: '#2a2418', bg: '#e8dcc0', border: '#8a6a3a' });
+    // the one trick: TWELVE MILLION painted on the tiles stands up for whoever reaches the top of the stairs
+    anamorph(k, 'TWELVE MILLION', BX, BZ + BD / 2 - 10.6, RY + 3.15, RY + 0.16, 5, 5, 1.3, '#f2e6c8', 150);
     // landmark eggs
     k.egg(v(BX, RY + 15, BZ), { id: 'ellis-vault', title: 'After Black Tom', year: '1916', text: 'In 1916 the Black Tom explosion collapsed the registry room roof. By 1918 it had been replaced with the arched ceiling of Guastavino tile that is still overhead. The room is 200 by 100 feet with a 56 foot ceiling.', clue: 'Stand in the middle of the hall and look up at the tiles.', source: { name: 'Ellis Island, Wikipedia', url: 'https://en.wikipedia.org/wiki/Ellis_Island' } }, { r: 2.4 });
     k.egg(v(BX, RY + 1.2, BZ + BD / 2 - 9.6), { id: 'ellis-sixseconds', title: 'Six seconds', text: 'Public Health Service doctors ran the line inspection as long lines moved through the registry room, and sometimes had only six seconds to scan each immigrant. They watched people climbing the stairs for a limp or laboured breathing. About ten percent were held for a fuller examination, and in the end all but one percent were allowed to enter.', clue: 'Stop at the top of the stairs where the doctors stood watching.', source: { name: 'Historic Medical Inspection, 2nd Floor, National Park Service', url: 'https://www.nps.gov/places/000/historic-medical-inspection-2nd-floor.htm' } }, { r: 1.6 });
@@ -95,6 +218,7 @@ export const ellis: RoomDef = {
     k.egg(v(-62, 1.4, 20), { id: 'ellis-annie', title: 'The first one through', year: '1892', text: 'The immigration station opened on January 1, 1892, and its first immigrant was Annie Moore, a 17 year old from Cork, Ireland. About 12 million immigrants passed through before the island closed on November 12, 1954.', clue: 'Look west from the plaza to the ferry slip where the boats came in.', source: { name: 'Ellis Island, Wikipedia', url: 'https://en.wikipedia.org/wiki/Ellis_Island' } }, { r: 2 });
     k.egg(v(BX, BH - 2, BZ + BD / 2 + 0.4), { id: 'ellis-fire', title: 'The building that burned', year: '1897', text: 'On June 15, 1897 a fire of unknown origin razed the first, wooden station. No one died, but immigration records going back to 1855 were destroyed. The present brick and limestone building opened on December 17, 1900, without ceremony, and processed 2,251 immigrants that day.', clue: 'Read the lettering high on the front of the building.', source: { name: 'Ellis Island, Wikipedia', url: 'https://en.wikipedia.org/wiki/Ellis_Island' } }, { r: 2 });
     k.egg(v(-22, 0.6, 40), { id: 'ellis-landfill', title: 'An island that grew', year: '1906', text: 'Ellis Island was almost doubled to 6 acres while the first station was built, then grew with landfill to 11 acres by the end of 1892, 14 acres by 1896 and 20.25 acres in 1906. Today it covers 27.5 acres.', clue: 'Walk to the far west corner of the plaza and look at the ground under you.', source: { name: 'Ellis Island, Wikipedia', url: 'https://en.wikipedia.org/wiki/Ellis_Island' } }, { r: 2 });
+    k.egg(v(BX, RY + 0.4, BZ + BD / 2 - 18.5), { id: 'ellis-twelve', title: 'Twelve million', year: '1954', text: 'About 12 million immigrants passed through Ellis Island between 1892 and 1954. The letters on the floor are painted long and thin, so they only stand up straight from one spot: the top of the stairs, where every arrival first saw the room.', clue: 'Climb the stairs into the hall and look at the floor ahead.', source: { name: 'Ellis Island, Wikipedia', url: 'https://en.wikipedia.org/wiki/Ellis_Island' } }, { r: 1.6 });
     return { mounts, spawn: v(-4, 3, BZ + BD / 2 + 26), look: v(BX, 14, BZ), eye: 3, bounds: [-RW / 2 + 4.6, RW / 2 - 4.6, BZ - RD / 2 + 1, BZ + BD / 2 + 40], style: 'gilt', floorY: (x, z) => { void x; if (z < BZ + BD / 2 - 0.4 && z > BZ + BD / 2 - 10.6) return Math.min(RY, ((BZ + BD / 2 - 0.4 - z) / 10) * RY); if (z <= BZ + BD / 2 - 10.6 && z > BZ - RD / 2) return RY; return 0; } };
   },
 };
@@ -109,11 +233,13 @@ export const marathon: RoomDef = {
   description: 'The upper deck of the bridge at the start: fifty thousand runners pouring over the crest toward Brooklyn, the harbor on both sides, the towers, the fireboat below, the works on the tower legs.',
   signatures: 'The two steel towers rising from the Narrows, the upper roadway packed curb to curb with runners in colour, the cables sweeping down, the fireboat spraying, Fort Wadsworth at the Staten Island end, Bay Ridge ahead, helicopters.',
   build(k, ctx) {
-    k.sky({ top: 0x5f8fd0, horizon: 0xe8ecf0, ground: 0x2c3a44, fog: 0.0014, sun: { az: 2.3, el: 0.45, color: 0xfff4e6, size: 12 }, env: 1.0 });
+    /* 2026-11-24 (wave 4d): a deeper November sky and thinner haze, the harbour no longer a white wall */
+    k.sky({ top: 0x447cc8, horizon: 0xd2dce6, ground: 0x2c3a44, fog: 0.0009, sun: { az: 2.3, el: 0.45, color: 0xfff4e6, size: 12 }, env: 1.0 });
     k.hemi(0xeef4ff, 0x2a323a, 0.95);
     k.sun(0xfff0dc, 2.4, 80, 60, 40, true, 120);
-    const steel = k.pbr('vzSteel', X.steel(0x8a8e94, true, 236), 0.6, { metalness: 0.7, roughness: 0.45 }),
-      asphalt = k.pbr('vzRoad', X.asphalt(0x2a2d31), 0.11),
+    /* 2026-11-24 (wave 4d): scanned weathered plate steel on the towers and deck, scanned asphalt, pavers, grass (Poly Haven, CC0) */
+    const steel = sc(k, 'marathon', 'steel', 3.2, () => X.steel(0x8a8e94, true, 236), { metalness: 0.45, roughness: 0.55, color: 0xc8d0d8 }, 0x8a9098),
+      asphalt = sc(k, 'marathon', 'road', 5, () => X.asphalt(0x2a2d31), { roughness: 0.9 }, 0x3a3c40),
       cable = k.flat(0x3a3a3c, 0.6, 0.55),
       white = k.flat(0xf4f0e8, 0, 0.6), blueL = k.flat(0x1e56b4, 0, 0.6),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
@@ -121,12 +247,14 @@ export const marathon: RoomDef = {
     const RIVER = -70, TZ = [-90, 90];
     // the Narrows, both shores, the fort, Bay Ridge, the fireboat
     k.water({ y: RIVER, color: 0x30506a, w: 800, d: 900, amp: 1.4 });
-    k.box(300, 8, 120, 0, RIVER + 4, 230, k.pbr('vzShore', X.grass(0x4a6a3a, 109), 0.06));
-    k.box(300, 8, 120, 0, RIVER + 4, -230, k.pbr('vzShoreS', X.grass(0x4a6a3a, 110), 0.06));
+    k.box(300, 8, 120, 0, RIVER + 4, 230, sc(k, 'marathon', 'grass', 6, () => X.grass(0x4a6a3a, 109), { roughness: 1 }, 0x4a5a3a));
+    k.box(300, 8, 120, 0, RIVER + 4, -230, sc(k, 'marathon', 'grass', 6, () => X.grass(0x4a6a3a, 110), { roughness: 1 }, 0x4a5a3a));
     k.skyline({ z: 260, count: 30, spacing: 10, scale: 1.6, base: RIVER + 8, seed: 237, lit: 0.2, glow: 0.4, tint: 0x8a7a6e, rows: 1 });
     k.mesh(new T.CylinderGeometry(18, 20, 10, 8), k.pbr('vzFort', X.ashlar(0x7a7268, 238, 2), 0.2), -60, RIVER + 13, -200);
     k.skyline({ z: -420, count: 40, spacing: 9, scale: 3.6, base: RIVER, seed: 239, lit: 0.2, glow: 0.4, tint: 0x7a8494, x: 140, rows: 1, spires: true });
     const boat = new T.Group(); const bh = new T.Mesh(new T.BoxGeometry(6, 2.4, 20), k.flat(0xc62828, 0.2, 0.6)); bh.position.y = 1; boat.add(bh); const bc = new T.Mesh(new T.BoxGeometry(4, 2.4, 8), white); bc.position.set(0, 3.2, 0); boat.add(bc); for (let i = 0; i < 3; i++) { const jet = new T.Mesh(new T.CylinderGeometry(0.1, 0.6, 14, 6), water); jet.position.set(-2 + i * 2, 9, -2); jet.rotation.z = (i - 1) * 0.5; boat.add(jet); } k.add(boat);
+    /* wave 4d: the box hull is now the museum's own tug model under the fireboat's jets */
+    void hero(k, 'marathon/h_tug_lo', { length: 22 }).then((h) => { if (!h || !k.live) return; bh.visible = bc.visible = false; h.position.y = -0.6; boat.add(h); });
     if (!ctx.reduced) k.rider(boat, k.spline([v(-80, RIVER + 0.3, 20), v(0, RIVER + 0.3, 50), v(80, RIVER + 0.3, 20), v(0, RIVER + 0.3, -10)], true), 2.5, 0);
     const heli = new T.Group(); const hb = new T.Mesh(new T.BoxGeometry(2.4, 2, 6), dark); heli.add(hb); const rotor = new T.Mesh(new T.BoxGeometry(0.3, 0.06, 10), dark); rotor.position.y = 1.4; heli.add(rotor); k.add(heli);
     if (!ctx.reduced) { k.rider(heli, k.spline([v(-120, 60, -60), v(60, 70, -120), v(140, 55, 60), v(-40, 65, 120)], true), 14, 0); k.ticks.push((t) => { rotor.rotation.y = t * 20; }); }
@@ -135,7 +263,7 @@ export const marathon: RoomDef = {
     k.box(32, 0.3, 600, 0, 0.1, 0, asphalt);
     // the upper deck carries seven lanes, so six dashed lines
     for (let z = -290; z <= 290; z += 8) for (let l = 1; l < 7; l++) k.box(0.2, 0.012, 3, -16 + l * (32 / 7), 0.28, z, white);
-    for (const s of [-1, 1]) { k.box(1.2, 1.2, 600, s * 16.6, 0.6, 0, k.pbr('vzCurb', X.concrete(0x9a9a94, 111), 0.3)); k.rail(s * 16.6, 0, 600, dark, 1.2, 'z', 3); k.block(s * 16.6 - 1, s * 16.6 + 1, -300, 300); }
+    for (const s of [-1, 1]) { k.box(1.2, 1.2, 600, s * 16.6, 0.6, 0, sc(k, 'marathon', 'curb', 2, () => X.concrete(0x9a9a94, 111), { roughness: 0.9 }, 0x8a8a84)); k.rail(s * 16.6, 0, 600, dark, 1.2, 'z', 3); k.block(s * 16.6 - 1, s * 16.6 + 1, -300, 300); }
     for (const tz of TZ) { for (const s of [-1, 1]) { k.box(6, 130, 8, s * 14, RIVER + 65, tz, steel); for (let y = 10; y < 130; y += 24) k.box(28, 4, 8, 0, RIVER + y, tz, steel); } k.box(34, 6, 10, 0, RIVER + 132, tz, steel); k.block(-17, -11, tz - 4.5, tz + 4.5); k.block(11, 17, tz - 4.5, tz + 4.5); }
     const sag = (z: number, z0: number, z1: number, top: number, low: number) => { const t = (z - z0) / (z1 - z0); return low + (top - low) * (2 * t - 1) ** 2; };
     // four main cables, a pair on each side
@@ -154,6 +282,22 @@ export const marathon: RoomDef = {
     const mounts: Mount[] = [];
     for (const tz of TZ) for (const s of [-1, 1]) for (const d of [-1, 1]) mounts.push({ position: v(s * 10.95, 4, tz + d * 4.02), rotation: d > 0 ? 0 : PI, target: v(s * 4, 3, tz + d * 14), width: 4.6, height: 2.7, style: 'steel', wash: false });
     for (let i = 0; i < 10; i++) { const z = -180 + i * 40; const s = i % 2 ? 1 : -1; if (Math.abs(z - TZ[0]) < 8 || Math.abs(z - TZ[1]) < 8) continue; k.box(0.3, 3.2, 4.6, s * 15.9, 2.6, z, dark); mounts.push({ position: v(s * 15.72, 2.7, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 2.5, z), width: 4.2, height: 2.5, style: 'steel', wash: false }); }
+    /* ---- 2026-11-24 (wave 4d): built towers, real lamps and barriers, signs, one trick ----
+       The tower legs were plain boxes; the real legs are riveted cellular steel with recessed vertical panels, so each face
+       gets its battens and each strut its flange. Deck lamps and jersey barriers are real models (Poly Haven, CC0). */
+    for (const tz of TZ) for (const s of [-1, 1]) {
+      for (const dz of [-4.12, 4.12]) for (const dx of [-2, 0, 2]) k.box(0.45, 130, 0.25, s * 14 + dx, RIVER + 65, tz + dz, steel);
+      for (const dx of [-3.12, 3.12]) for (const dz of [-2.6, 0, 2.6]) k.box(0.25, 130, 0.45, s * 14 + dx, RIVER + 65, tz + dz, steel);
+      for (let y = 10; y < 130; y += 24) for (const dz of [-4.15, 4.15]) k.box(28, 0.35, 0.3, 0, RIVER + y + 2.1, tz + dz, steel), k.box(28, 0.35, 0.3, 0, RIVER + y - 2.1, tz + dz, steel);
+    }
+    { const at: number[][] = []; for (let z = -270; z <= 270; z += 30) for (const s of [-1, 1]) { if (TZ.some((t) => Math.abs(z - t) < 8)) continue; at.push([s * 16.6, 1.2, z, s < 0 ? PI / 2 : -PI / 2]); } many(k, 'marathon/ph_street_lamp_01', { height: 7 }, at); }
+    { const at: number[][] = []; for (let z = -262; z <= -206; z += 3.2) for (const s of [-1, 1]) at.push([s * 15, 0.25, z, PI / 2]); many(k, 'marathon/ph_concrete_road_barrier', { length: 3.1 }, at.map(([x, y, z]) => [x, y, z, 0])); }
+    hsign(k, 'VERRAZZANO  NARROWS', 20, 1.7, 0, RIVER + 82, TZ[0] - 4.35, PI, { fg: '#f2eee4', bg: '#1d4f8a', border: '#f2eee4' });
+    hsign(k, 'BROOKLYN  BAY RIDGE', 20, 1.7, 0, RIVER + 82, TZ[1] - 4.35, PI, { fg: '#f2eee4', bg: '#1f6a3a', border: '#f2eee4' });
+    // the Bay Ridge shore plate (Firefly, queued) waits invisible over the far shore
+    fireflyPlate(k, 'assets/museum/tex/marathon/ff_bayridge_shore.webp', 320, 44, 0, RIVER + 30, 196, PI, k.flat(0xb8bcb8, 0, 1, { transparent: true, opacity: 0 }));
+    // the one trick: 26.2 painted long on the road stands up for a runner at the start
+    if (HAS_DOM) anamorphTex(k, floorType('26.2 MILES', '#f4f0e8'), -8, -170, 3, 0.26, PI, 12, 7, 1.6);
     // landmark eggs
     k.egg(v(-11.5, 3, TZ[1] - 5), { id: 'marathon-curvature', title: 'Towers that lean apart', year: '1964', text: 'The two towers are 693 feet tall and not parallel: their tops are one and five eighths inches farther apart than their bases, to allow for the curvature of the Earth.', clue: 'Stand at the foot of the Brooklyn tower and look up its leg.', source: { name: 'Verrazzano Narrows Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Verrazzano-Narrows_Bridge' } }, { r: 1.8 });
     k.egg(v(-15, 4.6, 0), { id: 'marathon-cables', title: '142,520 miles of wire', text: 'The bridge hangs from four main cables, each 36 inches across. Each cable holds 26,108 wires, and all the wire together runs 142,520 miles.', clue: 'At mid span, find where the main cables dip lowest beside the railing.', source: { name: 'Verrazzano Narrows Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Verrazzano-Narrows_Bridge' } }, { r: 1.6 });
@@ -161,6 +305,7 @@ export const marathon: RoomDef = {
     k.egg(v(-4, 1.5, -120), { id: 'marathon-decks', title: 'Both decks, closed', text: 'The race starts at Fort Wadsworth on Staten Island. The bridge is closed to traffic and runners use both sides of the upper level and the westbound lower level. In 2025 the race had 59,135 finishers, the largest marathon anywhere in the world.', clue: 'Run with the crowd on the upper deck.', source: { name: 'New York City Marathon, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_York_City_Marathon' } }, { r: 2 });
     k.egg(v(12, 1.2, 24), { id: 'marathon-summer', title: 'Twelve feet lower in summer', text: 'The steel cables expand in the heat, so the upper roadway hangs about 12 feet lower in summer than in winter. Ships pass with 228 feet of clearance at mean high water.', clue: 'Look over the railing at mid span and down to the water.', source: { name: 'Verrazzano Narrows Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Verrazzano-Narrows_Bridge' } }, { r: 1.6 });
     k.egg(v(0, 8, 59.6), { id: 'marathon-zz', title: 'The second z', year: '2018', text: 'The upper deck opened on November 21, 1964, and its 4,260 foot main span was the longest suspension span in the world until the Humber Bridge in 1981. The name was spelled with one z until a 2018 state law added the second one.', clue: 'Read the mile one banner over the road.', source: { name: 'Verrazzano Narrows Bridge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Verrazzano-Narrows_Bridge' } }, { r: 2 });
+    k.egg(v(-8, 0.6, -150), { id: 'marathon-262', title: '26.2 miles', text: 'The course runs 26.2 miles through all five boroughs, from Fort Wadsworth on Staten Island over this bridge into Brooklyn, then Queens, Manhattan, the Bronx and back to Central Park. The numbers on the road are painted long and thin so that they only stand up from the start line behind you.', clue: 'Stand at the start and look down the road.', source: { name: 'New York City Marathon, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_York_City_Marathon' } }, { r: 2 });
     return { mounts, spawn: v(-14, 3, -170), look: v(0, 30, 90), eye: 3, bounds: [-15.4, 15.4, -260, 260], style: 'steel' };
   },
 };
@@ -183,7 +328,7 @@ export const halloween: RoomDef = {
       orange = k.glow(0xff8a2a), purple = k.glow(0x8a3ad8), green = k.glow(0x4ad86a),
       bone = k.flat(0xf4f0e8, 0, 0.7),
       sheet = k.flat(0xf4f0e8, 0, 0.9, { side: T.DoubleSide }),
-      brick = k.pbr('hwBrick', X.brick(0x8a4a3a, 240), 0.28),
+      brick = sc(k, 'halloween', 'brick', 1.3, () => X.brick(0x8a4a3a, 240), { roughness: 0.85 }, 0x6a3a2c),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
       cloth = [k.flat(0xf08a2a, 0, 0.8), k.flat(0x8a3ad8, 0, 0.8), k.flat(0x3aa06a, 0, 0.8), k.flat(0xe83a3a, 0, 0.8)];
     // the avenue, the blocks, the courthouse tower
@@ -191,7 +336,9 @@ export const halloween: RoomDef = {
     blockFront(k, { x: -13, z0: 100, count: 24, face: 1, seed: 241, h: [12, 22] });
     blockFront(k, { x: 13, z0: 100, count: 24, face: -1, seed: 242, h: [12, 22] });
     k.box(10, 40, 10, -22, 20, -60, brick); k.mesh(new T.ConeGeometry(7, 10, 6), k.pbr('hwSlate', X.steel(0x3a3a40, false, 243), 0.4), -22, 45, -60); k.mesh(new T.CircleGeometry(2, 24), k.glow(0xffe8b0), -16.95, 32, -60).rotation.y = PI / 2;
-    for (let z = 90; z >= -90; z -= 20) for (const s of [-1, 1]) { k.lamp(s * 13.5, z, 6.2, dark, 0xff9a50, 30); for (let i = 0; i < 6; i++) k.sphere(0.12, s * 13.4, 4 + i * 0.5, z + 1 + (i % 2) * 0.4, i % 2 ? orange : purple, 5); }
+    /* wave 4d: the lathed lamp stubs are real street lamps (Poly Haven, CC0); the lights stay where the heads are */
+    { const at: number[][] = []; for (let z = 90; z >= -90; z -= 20) for (const s of [-1, 1]) { at.push([s * 12.45, 0.15, z, s < 0 ? -PI / 2 : PI / 2]); k.point(s * 11.9, 6.6, z, 0xff9a50, 30, 16); k.keepOut.push({ x: s * 12.45, z, r: 0.4 }); } many(k, 'halloween/ph_street_lamp_01', { height: 7 }, at); }
+    for (let z = 90; z >= -90; z -= 20) for (const s of [-1, 1]) { for (let i = 0; i < 6; i++) k.sphere(0.12, s * 13.4, 4 + i * 0.5, z + 1 + (i % 2) * 0.4, i % 2 ? orange : purple, 5); }
     for (let z = 96; z >= -96; z -= 2.4) for (const s of [-1, 1]) { k.box(2.2, 1.0, 0.06, s * 11.5, 0.55, z, steel); for (const dx of [-1.05, 1.05]) k.box(0.06, 1.05, 0.06, s * 11.5 + dx, 0.52, z, steel); }
     // the puppets: rod puppets on poles carried up the avenue, swaying; skeleton banners; a float with a skull
     const puppet = (kind: number) => { const g = new T.Group(); const pole = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 7, 6), dark); pole.position.y = 3.5; g.add(pole); const body = new T.Mesh(new T.ConeGeometry(1.8, 4, 8, 1, true), cloth[kind % 4]); body.position.y = 6.2; g.add(body); const head = new T.Mesh(new T.SphereGeometry(0.9, 12, 8), bone); head.position.y = 8.8; g.add(head); const e1 = new T.Mesh(new T.SphereGeometry(0.2, 6, 5), black); e1.position.set(-0.3, 8.9, 0.8); g.add(e1); const e2 = e1.clone(); e2.position.x = 0.3; g.add(e2); for (const s of [-1, 1]) { const arm = new T.Mesh(new T.CylinderGeometry(0.12, 0.2, 3.4, 6), cloth[(kind + 1) % 4]); arm.position.set(s * 2.2, 7.4, 0); arm.rotation.z = s * 1.1; g.add(arm); const hand = new T.Mesh(new T.SphereGeometry(0.35, 8, 6), bone); hand.position.set(s * 3.6, 8.4, 0); g.add(hand); } return g; };
@@ -219,6 +366,30 @@ export const halloween: RoomDef = {
     for (let i = 0; i < 6; i++) { const z = 70 - i * 28; const s = i % 2 ? 1 : -1; k.box(0.14, 2.2, 3.2, s * 11.3, 1.9, z, dark); mounts.push({ position: v(s * 11.2, 2.0, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(0, 2, z), width: 2.8, height: 1.7, style: 'black', wash: false }); }
     for (let i = 0; i < 4; i++) { const x = -8 + i * 5.4; mounts.push({ position: v(x, 4, -99.66), rotation: 0, target: v(x, 3, -90), width: 4.4, height: 2.6, style: 'neon', wash: true }); }
     k.box(26, 10, 0.6, 0, 5, -100, brick); k.block(-13, 13, -100.6, -99.4);
+    /* ---- 2026-11-24 (wave 4d): a skeleton you can see from Spring Street, the Jefferson Market tower built, the street dressed ----
+       The parade's biggest puppets are skeletons carried on poles; the museum's own T. rex skeleton (Blender kit) now walks up
+       the avenue on eight poles above the marchers. */
+    { const rex = new T.Group(); rex.position.set(3, 0, 62); k.add(rex);
+      for (let i = 0; i < 8; i++) { const pole = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 4.6, 6), dark); pole.position.set(i % 2 ? 0.7 : -0.7, 2.3, -4.5 + Math.floor(i / 2) * 3); rex.add(pole); }
+      void hero(k, 'halloween/trex_skeleton', { length: 19 }).then((h) => { if (!h || !k.live) return; tint(h, 0xece6d6, 0.7, 0); h.position.y = 4.2; h.rotation.y = PI; rex.add(h); });
+      if (!ctx.reduced) k.ticks.push((t, dt) => { rex.position.z -= 0.9 * Math.min(dt, 0.1); if (rex.position.z < -100) rex.position.z = 100; rex.rotation.y = 0.08 * Math.sin(t * 0.7); rex.position.y = 0.25 * Math.abs(Math.sin(t * 1.6)); }); }
+    // Jefferson Market: bands of limestone, pointed windows, the belfry, clocks on two faces
+    { const lime = k.flat(0xd8ccb0, 0, 0.8);
+      for (let y = 6; y < 40; y += 7) k.box(10.4, 0.5, 10.4, -22, y, -60, lime);
+      for (let y = 8; y < 32; y += 7) for (const dz of [-2.4, 2.4]) { const w = k.arch(1.4, 3.6, 0.3, -16.95, y, -60 + dz, k.glow(0xffc070, 0.8), true, 0.6); w.rotation.y = PI / 2; }
+      for (const dz of [-3, 0, 3]) { const b = k.arch(1.8, 5, 0.4, -16.9, 34, -60 + dz, black, true, 0.6); b.rotation.y = PI / 2; }
+      k.mesh(new T.CircleGeometry(2, 24), k.glow(0xffe8b0), -22, 32, -54.95);
+      k.mesh(new T.RingGeometry(2, 2.35, 32), lime, -16.92, 32, -60).rotation.y = PI / 2; }
+    // trash cans and hydrants at the kerbs (Poly Haven, CC0)
+    many(k, 'halloween/ph_metal_trash_can', { height: 0.95 }, [[-11.9, 0.15, 74, 0], [11.9, 0.15, 46, 0], [-11.9, 0.15, -22, 0], [11.9, 0.15, -58, 0]]);
+    many(k, 'halloween/ph_fire_hydrant', { height: 0.8 }, [[-11.8, 0.15, 58, PI / 2], [11.8, 0.15, 12, -PI / 2], [-11.8, 0.15, -46, PI / 2]]);
+    // the parade banner over the avenue on two cables
+    for (const s of [-1, 1]) k.beam(v(s * 12.6, 11, 70), v(s * 9.6, 9.6, 70), 0.03, dark, 4);
+    hsign(k, 'VILLAGE HALLOWEEN PARADE', 19, 1.9, 0, 9.4, 70, 0, { fg: '#ff9a40', bg: '#140c1e', border: '#ff9a40' });
+    // a painted skeleton procession over the end wall (Firefly, queued; dark until it lands)
+    fireflyPlate(k, 'assets/museum/tex/halloween/ff_parade_banner.webp', 24, 3, 0, 8.4, -99.66, 0, k.flat(0x1a1218, 0, 0.9), true);
+    // the one trick: SPRING TO 16TH painted on the asphalt stands up for whoever arrives at the south end
+    anamorph(k, 'SPRING TO 16TH', 6, 92, 3, 0.05, 14, 9, 1.5, '#ff9a40', 150);
     // landmark eggs
     k.egg(v(0, 8, 70), { id: 'halloween-ralphlee', title: 'A puppeteer\'s idea', year: '1974', text: 'The parade was started by the puppeteer and mask maker Ralph Lee on October 31, 1974, in Greenwich Village. Large puppets carried by hundreds of volunteers are still its signature, and Processional Arts Workshop have been its official puppet designers since 1998.', clue: 'Look up at the first giant puppet coming up the avenue.', source: { name: 'Village Halloween Parade, Wikipedia', url: 'https://en.wikipedia.org/wiki/Village_Halloween_Parade' } }, { r: 2.4 });
     k.egg(v(10.6, 1.2, 40), { id: 'halloween-nighttime', title: 'Just show up', text: 'It is billed as the largest Halloween parade in the world and the only major nighttime parade in the United States, with about 50,000 costumed marchers and 2 million spectators. Anyone in costume can join at the start without registering or paying.', clue: 'Lean on the barricade with the spectators.', source: { name: 'Village Halloween Parade, Wikipedia', url: 'https://en.wikipedia.org/wiki/Village_Halloween_Parade' } }, { r: 1.6 });
@@ -226,6 +397,7 @@ export const halloween: RoomDef = {
     k.egg(v(-3, 2.4, -20), { id: 'halloween-bands', title: 'Fifty bands', text: 'More than 50 marching bands play the parade each year. It usually steps off at 7 PM on Halloween night and lasts two to three hours.', clue: 'Walk with the drummers in the middle of the avenue.', source: { name: 'Village Halloween Parade, Wikipedia', url: 'https://en.wikipedia.org/wiki/Village_Halloween_Parade' } }, { r: 2 });
     k.egg(v(-8, 3, 96), { id: 'halloween-route', title: 'Spring to 16th', text: 'The parade runs up Sixth Avenue from Spring Street to 16th Street, about 1.4 miles, with Jeanne Fleming as its artistic and producing director.', clue: 'Turn around at the south end of the avenue where it begins.', source: { name: 'Village Halloween Parade, Wikipedia', url: 'https://en.wikipedia.org/wiki/Village_Halloween_Parade' } }, { r: 2 });
     k.egg(v(-16.9, 32, -60), { id: 'halloween-oljeff', title: 'Ol\' Jeff', year: '1877', text: 'The clock tower belongs to the Jefferson Market Library, built from 1874 to 1877 as a courthouse to a design by Frederick Clarke Withers. It held the country\'s first night court and became a library in 1967. Its fire bell, Ol\' Jeff, regained its voice in 1996 after 135 years of silence and strikes the hours from 9 am to 10 pm.', clue: 'Look west over the rooftops for the clock tower.', source: { name: 'Jefferson Market Library, Wikipedia', url: 'https://en.wikipedia.org/wiki/Jefferson_Market_Library' } }, { r: 2.4 });
+    k.egg(v(6, 0.6, 80), { id: 'halloween-route-floor', title: 'Spring to 16th, painted long', text: 'The parade runs up Sixth Avenue from Spring Street to 16th Street. The words on the asphalt are stretched toward the north so that they only stand up from the south end, where the marchers start.', clue: 'Stand where the parade begins and look at the road ahead.', source: { name: 'Village Halloween Parade, Wikipedia', url: 'https://en.wikipedia.org/wiki/Village_Halloween_Parade' } }, { r: 1.8 });
     return { mounts, spawn: v(6, 3, 92), look: v(-2, 8, -20), eye: 3, bounds: [-11, 11, -98, 98], style: 'neon' };
   },
 };
@@ -243,18 +415,19 @@ export const easternparkway: RoomDef = {
     k.sky({ top: 0x5f94d8, horizon: 0xf0ecdc, ground: 0x5a5a48, fog: 0.0018, sun: { az: 3.1, el: 0.95, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xf6f6ff, 0x5a5048, 1.0);
     k.sun(0xfff2dc, 2.6, 10, 90, 40, true, 120);
-    const granite = k.pbr('epGranite', X.ashlar(0xa8a090, 244, 3), 0.22),
-      lime = k.pbr('epLime', X.ashlar(0xd8d0bc, 245, 3), 0.22),
+    /* 2026-11-24 (wave 4d): scanned granite ashlar, limestone block, lawn, asphalt and the parkway's hexagonal pavers (Poly Haven, CC0) */
+    const granite = sc(k, 'easternparkway', 'granite', 2.6, () => X.ashlar(0xa8a090, 244, 3), { roughness: 0.85 }, 0x9a9488),
+      lime = sc(k, 'easternparkway', 'lime', 2.2, () => X.ashlar(0xd8d0bc, 245, 3), { roughness: 0.8 }, 0xc8c0ac),
       bronze = k.flat(0x3a4a3a, 0.7, 0.45),
       gold = k.pbr('epGold', X.gilt(0xd0a852), 2, { metalness: 0.85, roughness: 0.3 }),
-      lawn = k.pbr('epLawn', X.grass(0x4a7a3a, 112), 0.06),
-      asphalt = k.pbr('epRoad', X.asphalt(0x2a2d31), 0.11),
+      lawn = sc(k, 'easternparkway', 'lawn', 5, () => X.grass(0x4a7a3a, 112), { roughness: 1 }, 0x4a5a3a),
+      asphalt = sc(k, 'easternparkway', 'road', 5, () => X.asphalt(0x2a2d31), { roughness: 0.9 }, 0x3a3c40),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
       feathers = [0xf1c531, 0xe83a3a, 0x3a8ad8, 0x3aa06a, 0xf05aa0, 0xf08a2a, 0x8a3ad8, 0xf4f0e8].map((c) => k.flat(c, 0, 0.7));
     // the plaza oval, the arch, the fountain, the museum and the library, the parkway with its elm malls
     k.box(300, 0.4, 300, 0, -0.2, 0, lawn);
     k.mesh(new T.CylinderGeometry(50, 50, 0.5, 64), asphalt, 0, 0.05, -20).scale.set(1, 1, 0.8);
-    k.mesh(new T.CylinderGeometry(30, 30, 0.6, 64), k.pbr('epPave', X.pavers(0x9a9a94, 113), 0.4), 0, 0.15, -20).scale.set(1, 1, 0.8);
+    k.mesh(new T.CylinderGeometry(30, 30, 0.6, 64), sc(k, 'easternparkway', 'hex', 1.8, () => X.pavers(0x9a9a94, 113), { roughness: 0.9 }, 0x9a9488), 0, 0.15, -20).scale.set(1, 1, 0.8);
     const AX = 0, AZ = -20;
     /* The arch is 80 ft (24 m) high with a 50 ft (15 m) by 35 ft opening, so the piers, attic and
        cornice are cut down from a 31 m top to 24 m, and MacMonnies' quadriga sits on the cornice. */
@@ -263,13 +436,29 @@ export const easternparkway: RoomDef = {
     k.arch(10, 15.2, 8, AX, 0, AZ, granite, false, 0.8);
     k.box(26, 6, 8, AX, 27 + DY, AZ, granite);
     k.box(27, 0.8, 9, AX, 30.4 + DY, AZ, lime);
+    const quadMark = k.objects.length;
     for (let i = 0; i < 4; i++) k.box(1.2, 2.2, 3, AX - 6 + i * 4, 32 + DY, AZ - 1, bronze); const quad = k.box(4, 3, 3, AX, 32.4 + DY, AZ + 1, bronze); k.cyl(0.4, 2, AX, 34.4 + DY, AZ + 1, bronze, 0.3, 8); k.sphere(0.5, AX, 35.6 + DY, AZ + 1, bronze, 8); k.beam(v(AX, 35.6 + DY, AZ + 1), v(AX + 3, 37 + DY, AZ + 1), 0.08, bronze, 4);
+    void quad;
+    /* wave 4d: the four boxes were MacMonnies' horses; now four cast bronze horses (Poly Haven horse statue, CC0, patinated)
+       draw a chariot with Columbia standing in it */
+    { const old = standIn(k, quadMark), patina = 0x56664e;
+      const car = new T.Group(); car.position.set(AX, 30.8 + DY, AZ - 1.6); k.add(car);
+      const body = new T.Mesh(new T.CylinderGeometry(1.3, 1.1, 1.5, 16, 1, true, -PI / 2, PI), bronze); body.position.y = 1.4; car.add(body);
+      for (const s of [-1, 1]) { const wh = new T.Mesh(new T.TorusGeometry(0.75, 0.1, 6, 20), bronze); wh.position.set(s * 1.35, 0.85, 0); wh.rotation.y = PI / 2; car.add(wh); }
+      const fig = new T.Mesh(new T.CapsuleGeometry(0.42, 1.8, 4, 10), bronze); fig.position.set(0, 2.9, 0); car.add(fig);
+      const hd = new T.Mesh(new T.SphereGeometry(0.3, 10, 8), bronze); hd.position.set(0, 4.15, 0); car.add(hd);
+      const arm = new T.Mesh(new T.CylinderGeometry(0.09, 0.09, 2.6, 6), bronze); arm.position.set(0.55, 4.6, 0); arm.rotation.z = -0.35; car.add(arm);
+      const staff = new T.Mesh(new T.CylinderGeometry(0.04, 0.04, 4.2, 6), bronze); staff.position.set(-0.7, 3.8, 0.1); car.add(staff);
+      many(k, 'easternparkway/ph_horse_statue_01', { height: 6.4 }, [-4.8, -1.6, 1.6, 4.8].map((x, i) => [AX + x, 30.8 + DY, AZ + 0.9, PI / 2 + (i % 2 ? 0.08 : -0.08)]), (o) => { tint(o, patina, 0.42, 0.65); hide(old); }); }
     k.block(AX - 13, AX - 5, AZ - 4, AZ + 4); k.block(AX + 5, AX + 13, AZ - 4, AZ + 4);
     k.sign('TO THE DEFENDERS OF THE UNION  ·  1861  ·  1865', 16, 0.8, AX, 29.4 + DY, AZ + 4.06, 'transparent', '#e8dcc0', 70, 0);
     k.point(AX, 12, AZ, 0xfff0e0, 20, 16);
+    const fMark = k.objects.length;
     k.mesh(new T.CylinderGeometry(6, 6.4, 0.9, 32), granite, 0, 0.45, -60); k.mesh(new T.CylinderGeometry(5.4, 5.4, 0.3, 32), k.flat(0x88aacc, 0.3, 0.2, { transparent: true, opacity: 0.6 }), 0, 0.95, -60); k.keepOut.push({ x: 0, z: -60, r: 6.6 });
     const jets: T.Mesh[] = []; for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; jets.push(k.mesh(new T.CylinderGeometry(0.05, 0.14, 4, 6), k.flat(0x88aacc, 0.3, 0.2, { transparent: true, opacity: 0.6 }), Math.cos(a) * 3, 3, -60 + Math.sin(a) * 3, true)); }
     if (!ctx.reduced) k.ticks.push((t) => jets.forEach((j, i) => { j.scale.y = 0.6 + 0.4 * Math.sin(t * 1.4 + i); }));
+    /* wave 4d: the Bailey Fountain is a real tiered fountain model (our own, from Central Park) in place of the drum */
+    { const old = standIn(k, fMark); void hero(k, 'easternparkway/cp_fountain', { width: 12.4 }).then((h) => { if (!h || !k.live) return; hide(old); h.position.set(0, 0, -60); k.add(h); }); }
     /* The Brooklyn Museum and the Central Library are both on the south side of Eastern Parkway
        (minus x here, with the parkway running east along plus z). The museum used to stand on the
        north side facing the plaza; it now fronts the parkway further east, its colonnade facing north. */
@@ -283,7 +472,7 @@ export const easternparkway: RoomDef = {
     k.block(LX - 25, LX + 25, LZ - 15, LZ + 15);
     k.sign('BROOKLYN PUBLIC LIBRARY', 10, 1.0, LX, 15, LZ - 14 - 0.4, 'transparent', '#5a5040', 90, PI);
     k.box(40, 0.3, 200, 0, 0.05, 120, asphalt);
-    for (const s of [-1, 1]) { k.box(10, 0.3, 200, s * 26, 0.05, 120, k.pbr('epMall', X.pavers(0x8e8b84, 114), 0.42)); for (let z = 30; z < 220; z += 14) k.tree(s * 26, 0, z, { kind: 'round', h: 12, r: 6, leaf: 0x4a7a3c, seed: z, species: 'elm' }); } /* Olmsted planted elms along the main road */
+    for (const s of [-1, 1]) { k.box(10, 0.3, 200, s * 26, 0.05, 120, sc(k, 'easternparkway', 'hex', 1.8, () => X.pavers(0x8e8b84, 114), { roughness: 0.9 }, 0x9a9488)); for (let z = 30; z < 220; z += 14) k.tree(s * 26, 0, z, { kind: 'round', h: 12, r: 6, leaf: 0x4a7a3c, seed: z, species: 'elm' }); } /* Olmsted planted elms along the main road */
     for (const s of [-1, 1]) for (let z = 30; z < 220; z += 2.4) { k.box(2.2, 1.0, 0.06, s * 20.5, 0.55, z, dark); }
     // the parade: masqueraders in feathers and a sound truck rolling up the parkway toward the arch, flags on the malls
     const mas = (x: number, z: number, i: number) => { const g = new T.Group(); const body = new T.Mesh(new T.CapsuleGeometry(0.22, 0.9, 3, 8), k.flat(0x4a2a1a, 0, 0.8)); body.position.y = 0.9; g.add(personTag(body, 'auto', 1.25)); const head = new T.Mesh(new T.SphereGeometry(0.14, 8, 6), k.flat(0x5a3a26, 0, 0.7)); head.position.y = 1.7; g.add(personTag(head, 'part')); const n = 14 + (i % 3) * 6; for (let f = 0; f < n; f++) { const a = -PI * 0.15 + (f / (n - 1)) * PI * 1.3; const plume = new T.Mesh(new T.ConeGeometry(0.16, 2.4 + (f % 3) * 0.6, 5), feathers[(i + f) % 8]); plume.position.set(Math.cos(a) * 1.8, 1.6 + Math.sin(a) * 1.8, -0.4); plume.rotation.z = -a + PI / 2; g.add(plume); } for (let f = 0; f < 8; f++) { const a = (f / 8) * PI * 2; const p2 = new T.Mesh(new T.ConeGeometry(0.1, 1.2, 5), feathers[(i + f + 3) % 8]); p2.position.set(Math.cos(a) * 0.4, 2.0, Math.sin(a) * 0.4); p2.rotation.z = -Math.cos(a) * 0.5; p2.rotation.x = Math.sin(a) * 0.5; g.add(p2); } g.position.set(x, 0, z); k.add(g); return g; };
@@ -299,17 +488,36 @@ export const easternparkway: RoomDef = {
     // the works: the arch piers on both faces, the museum colonnade, the library front, the mall screens
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (const d of [-1, 1]) mounts.push({ position: v(AX + s * 9, 5, AZ + d * 4.06), rotation: d > 0 ? 0 : PI, target: v(AX + s * 4, 3, AZ + d * 16), width: 5, height: 3, style: 'gilt', wash: true });
-    for (const s of [-1, 1]) mounts.push({ position: v(AX + s * 4.94, 4.4, AZ), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(AX, 3, AZ), width: 3.4, height: 2.0, style: 'gilt', wash: false });
+    for (const s of [-1, 1]) mounts.push({ position: v(AX + s * 4.94, 4.4, AZ), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(AX, 3, AZ), width: 3.4, height: 2.0, style: 'gilt', wash: false });
     for (let i = 0; i < 4; i++) { const z = MZ - 18 + i * 12; mounts.push({ position: v(MX + 21.66, 4, z), rotation: PI / 2, target: v(MX + 34, 3, z), width: 4.6, height: 2.7, style: 'steel', wash: true }); }
     for (const s of [-1, 1]) for (let i = 0; i < 2; i++) { const x = LX + s * (8 + i * 8); mounts.push({ position: v(x, 4, LZ - 14 - 0.36), rotation: PI, target: v(x, 3, LZ - 28), width: 4.4, height: 2.6, style: 'gilt', wash: true }); }
-    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = 50 + i * 40; k.box(0.3, 3.2, 4.6, s * 25, 2.0, z, dark); mounts.push({ position: v(s * (25 - s * 0.18), 2.1, z), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(s * 12, 2, z), width: 4.2, height: 2.5, style: 'black', wash: false }); }
+    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { const z = 50 + i * 40; k.box(0.3, 3.2, 4.6, s * 25, 2.0, z, dark); mounts.push({ position: v(s * 24.82, 2.1, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 12, 2, z), width: 4.2, height: 2.5, style: 'black', wash: false }); }
+    /* ---- 2026-11-24 (wave 4d): the arch carved, the parkway furnished, signs and one trick ---- */
+    // rusticated piers: a sunk joint every course on both faces, a keystone, the attic frieze and cornice mouldings
+    { const joint = k.flat(0x5a564e, 0, 0.9);
+      for (const s of [-1, 1]) for (const d of [-1, 1]) for (let y = 1.2; y < 11; y += 1.2) k.box(8.02, 0.08, 0.04, AX + s * 9, y, AZ + d * 4.0, joint);
+      for (const d of [-1, 1]) { k.box(1.6, 2.6, 0.5, AX, 14.4, AZ + d * 4.1, granite); k.moulding([[0, 0], [0.5, 0], [0.6, 0.25], [0.35, 0.45], [0.45, 0.7], [0, 0.8]], 27, AX, 29.2 + DY, AZ + d * 4.0, lime, d > 0 ? -PI / 2 : PI / 2); k.box(26.4, 0.35, 0.3, AX, 24 + DY, AZ + d * 4.05, lime); }
+      for (const d of [-1, 1]) fireflyPlate(k, 'assets/museum/tex/easternparkway/ff_arch_relief.webp', 4.4, 2.6, AX + d * 4.97, 8.6, AZ, d < 0 ? PI / 2 : -PI / 2, bronze); }
+    // the parkway malls: lamps and benches (Poly Haven, CC0)
+    { const lat: number[][] = [], bat: number[][] = []; for (const s of [-1, 1]) { for (let z = 44; z < 220; z += 28) lat.push([s * 21.4, 0.2, z, s < 0 ? -PI / 2 : PI / 2]); for (let z = 37; z < 220; z += 28) bat.push([s * 30.4, 0.2, z, s < 0 ? PI / 2 : -PI / 2]); }
+      many(k, 'easternparkway/ph_street_lamp_01', { height: 4.8 }, lat); many(k, 'easternparkway/ph_painted_wooden_bench', { box: [2.2, 0.9, 0.6] }, bat, (o) => tint(o, 0x2e4a34, 0.7, 0.1));
+      for (const [x, , z] of bat) k.block(x - 0.5, x + 0.5, z - 1.2, z + 1.2); }
+    // street signs and the carnival banner across the road
+    for (const s of [-1, 1]) k.box(0.12, 9, 0.12, s * 19.6, 4.5, 104, dark);
+    hsign(k, 'LABOR DAY CARNIVAL  ·  EASTERN PKWY', 38, 2, 0, 8, 104, 0, { fg: '#141414', bg: '#f1c531', border: '#e83a3a' });
+    k.box(0.1, 3.4, 0.1, 15, 1.7, 4, dark);
+    hsign(k, 'EASTERN PKWY', 2.6, 0.42, 15, 3.2, 4.06, 0, { fg: '#ffffff', bg: '#1f6a3a', border: '#ffffff' });
+    hsign(k, 'GRAND ARMY PLAZA', 3.2, 0.42, 15, 2.7, 4.06, 0, { fg: '#ffffff', bg: '#1f6a3a', border: '#ffffff' });
+    // the one trick: GRAND ARMY PLAZA painted on the road stands up from where the parade arrives
+    anamorph(k, 'GRAND ARMY PLAZA', -6, 60, 3, 0.21, 10, 9, 1.6, '#f1c531', 150);
     // landmark eggs
     k.egg(v(AX, 16, AZ + 4.2), { id: 'easternparkway-arch', title: 'Eighty feet of granite', year: '1892', text: 'John H. Duncan won the design competition for the Soldiers\' and Sailors\' Arch. Its cornerstone was laid on October 30, 1889 and it was dedicated on October 21, 1892. It stands 80 feet high on a footprint of 80 by 50 feet, with an opening 50 feet tall and 35 feet wide, darker Quincy granite at the base and lighter granite above.', clue: 'Stand under the arch and look up at the top of the opening.', source: { name: 'Soldiers\' and Sailors\' Arch, Wikipedia', url: 'https://en.wikipedia.org/wiki/Soldiers%27_and_Sailors%27_Arch' } }, { r: 2.4 });
     k.egg(v(AX - 4.6, 8.4, AZ), { id: 'easternparkway-reliefs', title: 'A painter\'s horses', year: '1895', text: 'Inside the archway, bronze reliefs show Lincoln and Grant on horseback. The painter Thomas Eakins designed the horses and William Rudolf O\'Donovan the riders; the reliefs are dated 1893 to 1894 and were installed in 1895.', clue: 'Look at the inner walls of the archway, above the works.', source: { name: 'Soldiers\' and Sailors\' Arch, Wikipedia', url: 'https://en.wikipedia.org/wiki/Soldiers%27_and_Sailors%27_Arch' } }, { r: 1.6 });
-    k.egg(quad, { id: 'easternparkway-quadriga', title: 'Stairs inside the piers', year: '1898', text: 'Each abutment hides a spiral stairway of iron steps leading to an observation deck on the roof, and the room in the attic over the opening was planned as a war museum. Frederick MacMonnies\' quadriga on top, about 25 feet tall, was in place by the end of 1898.', clue: 'Look up at the chariot on top of the arch.', source: { name: 'Soldiers\' and Sailors\' Arch, Wikipedia', url: 'https://en.wikipedia.org/wiki/Soldiers%27_and_Sailors%27_Arch' } }, { r: 2.6 });
+    k.egg(v(AX, 33.4 + DY, AZ + 1), { id: 'easternparkway-quadriga', title: 'Stairs inside the piers', year: '1898', text: 'Each abutment hides a spiral stairway of iron steps leading to an observation deck on the roof, and the room in the attic over the opening was planned as a war museum. Frederick MacMonnies\' quadriga on top, about 25 feet tall, was in place by the end of 1898.', clue: 'Look up at the chariot on top of the arch.', source: { name: 'Soldiers\' and Sailors\' Arch, Wikipedia', url: 'https://en.wikipedia.org/wiki/Soldiers%27_and_Sailors%27_Arch' } }, { r: 2.6 });
     k.egg(v(-26, 4, 72), { id: 'easternparkway-first', title: 'The first parkway', year: '1874', text: 'Frederick Law Olmsted and Calvert Vaux built Eastern Parkway from 1870 to 1874, and the city credits it as the world\'s first parkway. Olmsted planted elms along the main road and mostly maples on the service roads, about 1,100 trees in all, and it became a scenic landmark on August 22, 1978.', clue: 'Walk the south mall under the elms.', source: { name: 'Eastern Parkway, Wikipedia', url: 'https://en.wikipedia.org/wiki/Eastern_Parkway' } }, { r: 2.2 });
     k.egg(v(0, 0.8, 150), { id: 'easternparkway-subway', title: 'Two decks of subway below', year: '1920', text: 'The IRT Eastern Parkway Line runs under the parkway; it opened in 1920 and most of its tunnel is double decked. On Labor Day the West Indian Day Parade fills the road above with an estimated one to three million people.', clue: 'Stand in the middle of the parkway with the parade.', source: { name: 'Eastern Parkway, Wikipedia', url: 'https://en.wikipedia.org/wiki/Eastern_Parkway' } }, { r: 2 });
     k.egg(v(0, 2.4, -60), { id: 'easternparkway-fountain', title: 'The fourth fountain', year: '1932', text: 'Olmsted and Vaux put the Fountain of the Golden Spray here in 1867. It was followed by a lighted fountain in 1873 and an exhibition fountain from 1897 to 1915, before the Bailey Fountain arrived in 1932; it was renovated in 2006.', clue: 'Walk past the arch to the fountain.', source: { name: 'Grand Army Plaza, Wikipedia', url: 'https://en.wikipedia.org/wiki/Grand_Army_Plaza' } }, { r: 2.2 });
+    k.egg(v(-6, 0.6, 44), { id: 'easternparkway-anamorph', title: 'Painted for one spot', text: 'Grand Army Plaza was laid out by Olmsted and Vaux as the grand entrance to Prospect Park, and Eastern Parkway runs east from it. The yellow letters on the road are stretched so that they stand up only from where the parade comes in.', clue: 'Stand on the parkway facing the arch and look at the road.', source: { name: 'Grand Army Plaza, Wikipedia', url: 'https://en.wikipedia.org/wiki/Grand_Army_Plaza' } }, { r: 1.8 });
     return { mounts, spawn: v(-6, 3, 60), look: v(AX, 20, AZ), eye: 3, /* easternparkway: six works stand out along the parkway at x 52 to 78, well outside the old strip */ bounds: [-84, 84, -70, 200], style: 'gilt' };
   },
 };
@@ -328,23 +536,34 @@ export const manhattanhenge: RoomDef = {
     k.sky({ top: 0x2a4a8a, horizon: 0xffb060, ground: 0x2a2226, fog: 0.0022, sun: { az: 4.712, el: 0.02, color: 0xffb040, size: 34 }, haze: 0.6, env: 0.9 });
     k.hemi(0xffc890, 0x2a2228, 0.7);
     k.sun(0xffa040, 3.2, -300, 6, 0, true, 160);
-    const asphalt = k.pbr('mhRoad', X.asphalt(0x2a2d31), 0.11),
+    /* 2026-11-24 (wave 4d): scanned asphalt, pavers, granite and the Tudor City brick (Poly Haven, CC0) */
+    const asphalt = sc(k, 'manhattanhenge', 'road', 5, () => X.asphalt(0x2a2d31), { roughness: 0.85 }, 0x3a3c40),
       facade = k.pbr('mhFacade', X.windows(246, 0.35, 0x6a6058, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.6, roughness: 0.55, stretch: 0.42 }),
       facadeB = k.pbr('mhFacadeB', X.windows(247, 0.3, 0x4a5058, false), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.5, roughness: 0.4, metalness: 0.4, stretch: 0.42 }),
-      granite = k.pbr('mhGranite', X.ashlar(0x8a8480, 248, 2), 0.2),
+      granite = sc(k, 'manhattanhenge', 'granite', 2.4, () => X.ashlar(0x8a8480, 248, 2), { roughness: 0.85 }, 0x8a8480),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
       yellow = k.flat(0xf1c531, 0.2, 0.5),
       glow = k.glow(0xffe0a0),
-      brick = k.pbr('mhTudor', X.brick(0x6a4a3a, 249), 0.28);
+      brick = sc(k, 'manhattanhenge', 'brick', 1.3, () => X.brick(0x6a4a3a, 249), { roughness: 0.85, color: 0xc8a890 }, 0x5a3a2c);
     // the canyon: 42nd Street running west along -x, the crosstown blocks both sides, the sun at the end
     const road = k.box(400, 0.3, 24, -150, -0.15, 0, asphalt); void road;
-    for (const s of [-1, 1]) k.box(400, 0.28, 5, -150, 0, s * 14.5, k.pbr('mhWalk', X.pavers(0x8e8b84, 115), 0.42));
-    for (let x = -30; x >= -340; x -= 30) for (const s of [-1, 1]) { const h = 40 + ((-x / 30) % 4) * 25; k.box(26, h, 30, x, h / 2, s * 32, ((-x / 30) % 2) ? facade : facadeB); k.box(27, 0.8, 31, x, h + 0.4, s * 32, dark); }
+    for (const s of [-1, 1]) k.box(400, 0.28, 5, -150, 0, s * 14.5, sc(k, 'manhattanhenge', 'walk', 2.4, () => X.pavers(0x8e8b84, 115), { roughness: 0.85 }, 0x7a7870));
+    for (let x = -30; x >= -340; x -= 30) for (const s of [-1, 1]) { const h = 40 + ((-x / 30) % 4) * 25; k.box(26, h, 30, x, h / 2, s * 32, ((-x / 30) % 2) ? facade : facadeB); k.box(27, 0.8, 31, x, h + 0.4, s * 32, dark);
+      /* wave 4d: each block built, not painted: a granite base with lit shopfronts, a sill course, a setback tower on top */
+      const f = s * 17;
+      k.box(26.4, 6, 0.6, x, 3, f - s * 0.3, granite); k.box(26.8, 0.5, 0.9, x, 5.9, f - s * 0.45, granite);
+      for (let i = 0; i < 4; i++) k.box(5, 3.4, 0.1, x - 9.6 + i * 6.4, 2.2, f - s * 0.62, k.glow(i % 2 ? 0xffd9a0 : 0xffe8c8, 0.85));
+      k.box(18, h * 0.2, 20, x, h + 0.8 + h * 0.1, s * 34, ((-x / 30) % 2) ? facadeB : facade); k.box(18.6, 0.6, 20.6, x, h + 0.8 + h * 0.2 + 0.3, s * 34, dark); }
+    fireflyPlate(k, 'assets/museum/tex/manhattanhenge/ff_42nd_facade.webp', 26, 70, -30, 35, -16.99, 0, facade);
+    fireflyPlate(k, 'assets/museum/tex/manhattanhenge/ff_42nd_facade.webp', 26, 70, -30, 35, 16.99, PI, facade);
     /* 2026-10-28: this used to call k.lamp 24 times at height 0 and intensity 0, all at (+-13.5, 0): no light, but 24
        lathed stubs and glowing bulbs stacked on the pavement at one spot. The posts below are the lamps; they get their
        heads, lit by emission only (24 point lights would cost more than the canyon shows). */
-    for (let x = -22; x >= -340; x -= 28) for (const s of [-1, 1]) { k.box(0.16, 7, 0.16, x, 3.5, s * 13.6, dark); k.box(0.9, 0.12, 0.16, x, 7.0, s * 13.2, dark); k.box(0.5, 0.14, 0.34, x, 6.9, s * 12.85, glow); }
+    /* wave 4d: the posts are real street lamps (Poly Haven, CC0); the glowing heads stay */
+    { const at: number[][] = []; for (let x = -22; x >= -340; x -= 28) for (const s of [-1, 1]) { at.push([x, 0.14, s * 13.6, s < 0 ? PI / 2 : -PI / 2]); k.box(0.5, 0.14, 0.34, x, 6.9, s * 12.85, glow); } many(k, 'manhattanhenge/ph_street_lamp_01', { height: 7.2 }, at); }
+    many(k, 'manhattanhenge/ph_fire_hydrant', { height: 0.8 }, [[-34, 0.14, 12.6, 0], [-92, 0.14, -12.6, PI], [-150, 0.14, 12.6, 0]]);
+    many(k, 'manhattanhenge/ph_metal_trash_can', { height: 0.95 }, [[-48, 0.14, -12.7, 0], [-76, 0.14, 12.7, 0], [-120, 0.14, -12.7, 0]]);
     for (let x = -14; x >= -330; x -= 12) k.box(4, 0.012, 0.6, x - 150 + 150, 0.01, 0, yellow);
     const cars: T.Mesh[] = [];
     for (let i = 0; i < 24; i++) { const c = k.mesh(new T.BoxGeometry(4.2, 1.4, 1.8), i % 3 ? yellow : k.flat(0x1a1a1a, 0.4, 0.4), -20 - i * 13, 0.7, (i % 4 - 1.5) * 5, true); c.userData.car = true; cars.push(c); const l = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 1.4), glow); l.position.set(2.1, 0, 0); c.add(l); }
@@ -383,9 +602,16 @@ export const manhattanhenge: RoomDef = {
     // the works: on the overpass parapets facing in (they catch the sun), on the Tudor City walls, on the canyon fronts
     const mounts: Mount[] = [];
     for (let i = 0; i < 5; i++) { const x = -3 + i * 5.2; for (const s of [-1, 1]) { k.box(3.6, 1.4, 0.16, x, OY + 1.9, s * 5.5, dark); mounts.push({ position: v(x, OY + 1.9, s * 5.42), rotation: s > 0 ? PI : 0, target: v(x, OY + 2, 0), width: 3.2, height: 1.2, style: 'steel', wash: false }); } }
-    for (let i = 0; i < 3; i++) { const x = 30 + i * 0; const z = -12 + 0.02; mounts.push({ position: v(14 + i * 6, OY + 4.5, z), rotation: 0, target: v(14 + i * 6, OY + 3, 0), width: 4.2, height: 2.5, style: 'steel', wash: false }); void x; }
-    for (let i = 0; i < 3; i++) mounts.push({ position: v(14 + i * 6, OY + 4.5, 12 - 0.02), rotation: PI, target: v(14 + i * 6, OY + 3, 0), width: 4.2, height: 2.5, style: 'steel', wash: false });
+    for (let i = 0; i < 3; i++) { const x = 30 + i * 0; const z = -12 + 0.02; mounts.push({ position: v(13 + i * 4.6, OY + 4.5, z), rotation: 0, target: v(13 + i * 4.6, OY + 3, 0), width: 4.2, height: 2.5, style: 'steel', wash: false }); void x; }
+    for (let i = 0; i < 3; i++) mounts.push({ position: v(13 + i * 4.6, OY + 4.5, 12 - 0.02), rotation: PI, target: v(13 + i * 4.6, OY + 3, 0), width: 4.2, height: 2.5, style: 'steel', wash: false });
     for (let i = 0; i < 6; i++) { const x = -40 - i * 30; const s = i % 2 ? 1 : -1; mounts.push({ position: v(x, 8, s * 16.98), rotation: s > 0 ? PI : 0, target: v(x, 4, 0), width: 5.6, height: 3.4, style: 'neon', wash: true }); }
+    /* ---- 2026-11-24 (wave 4d): the overpass in stone, the Tudor City roof sign, one trick ---- */
+    for (const s of [-1, 1]) { k.box(30, 0.24, 0.56, 8, OY + 1.2, s * 5.78, granite); for (const x of [-6.4, -0.4, 4.8, 10, 15.2, 20.6]) k.box(0.6, 1.3, 0.6, x, OY + 0.75, s * 5.78, granite); }
+    for (const z of [-24, 24]) for (const s of [-1, 1]) k.box(0.6, 50, 0.6, 12.1, 25, z + s * 11.8, granite);
+    k.box(0.2, 3, 0.2, 18, 54.5, -12.6, dark); k.box(0.2, 3, 0.2, 30, 54.5, -12.6, dark);
+    hsign(k, 'TUDOR CITY', 16, 2.6, 24, 56.5, -12.4, 0, { fg: '#ff3a2a', lit: true });
+    // the one trick: MANHATTANHENGE painted long down 42nd stands up from the overpass rail
+    if (HAS_DOM) anamorphTex(k, floorType('MANHATTANHENGE', '#ffd27a'), -2, 0, OY + 3.2, 0.02, PI / 2, 40, 14, 4);
     // landmark eggs
     k.egg(v(-6.4, OY + 1.6, 0), { id: 'manhattanhenge-tyson', title: 'Named after Stonehenge', year: '1997', text: 'The astrophysicist Neil deGrasse Tyson claims to have coined the name, by analogy with Stonehenge. He described the alignment in Natural History magazine in 1997, though not yet by that name.', clue: 'Lean on the west rail of the overpass and face the sun.', source: { name: 'Manhattanhenge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Manhattanhenge' } }, { r: 1.6 });
     k.egg(v(-40, 0.8, 0), { id: 'manhattanhenge-29', title: 'Twenty nine degrees', year: '1811', text: 'The Commissioners\' Plan of 1811 laid the street grid rotated 29 degrees clockwise from true east west, so the sun sets straight down the cross streets when it sets at an azimuth of about 299 degrees: around May 28 and July 13. The sunrise lines up the other way around December 5 and January 8.', clue: 'Stand in the crosswalk in the middle of 42nd Street.', source: { name: 'Manhattanhenge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Manhattanhenge' } }, { r: 2 });
@@ -393,6 +619,7 @@ export const manhattanhenge: RoomDef = {
     k.egg(v(22, 3.5, 11), { id: 'manhattanhenge-overpass', title: 'Once a tunnel', year: '1952', text: 'Tudor City Place crosses 42nd Street on this overpass. It replaced an earlier tunnel in 1952, when 42nd Street was widened.', clue: 'Take the stairs down from the overpass.', source: { name: 'Tudor City, Wikipedia', url: 'https://en.wikipedia.org/wiki/Tudor_City' } }, { r: 1.8 });
     k.egg(v(12, 18, 18), { id: 'manhattanhenge-tudor', title: 'No windows to the east', year: '1927', text: 'The Fred F. French Company began Tudor City in 1926 and finished its first twelve buildings between 1927 and 1930, one of the first residential skyscraper complexes in the world. The towers had very few east facing windows, because First Avenue was lined with abattoirs, meatpacking houses and a gasworks.', clue: 'Look at the brick towers beside the overpass.', source: { name: 'Tudor City, Wikipedia', url: 'https://en.wikipedia.org/wiki/Tudor_City' } }, { r: 2.4 });
     k.egg(v(-100, 168, -110), { id: 'manhattanhenge-chrysler', title: 'The secret spire', year: '1929', text: 'William Van Alen had the Chrysler Building\'s spire built inside the frame so rivals could not learn how tall it would be. On October 23, 1929 it was hoisted into place and riveted within about 90 minutes, making the building, at 1,046 feet, the tallest in the world until the Empire State Building surpassed it on May 1, 1931.', clue: 'Look north to the steel crown catching the sun.', source: { name: 'Chrysler Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Chrysler_Building' } }, { r: 10 });
+    k.egg(v(-45, 0.6, 0), { id: 'manhattanhenge-anamorph', title: 'Painted for the overpass', text: 'Tudor City Place crosses 42nd Street on the overpass where crowds gather twice a year to watch the sun set down the street. The letters on the road are stretched so far that they only stand up when seen from that rail.', clue: 'Lean on the west rail of the overpass and look down at the road.', source: { name: 'Manhattanhenge, Wikipedia', url: 'https://en.wikipedia.org/wiki/Manhattanhenge' } }, { r: 2 });
     return { mounts, spawn: v(18, OY + 3, 0), look: v(-380, 10, 0), eye: 3, /* manhattanhenge: six works recede down the avenue to x -190, which is the whole point of the room and was entirely out of reach */ bounds: [-200, 22.6, -5.2, 5.2], style: 'steel', floorY: () => OY + 0.2 };
   },
 };

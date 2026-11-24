@@ -21,11 +21,63 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
-import { standIn, hide } from './heroes';
-import { street, blockFront } from './f';
+import { standIn, hide, hero, heroInstances } from './heroes';
+import { street, blockFront, hsign, paintTex } from './f';
 import { mlowBanner, blossomFlag, donorWall, eyeMedallion } from './brand';
+import { fireflyPlate } from './a';
+import type { Kit } from '../kit';
 const PI = Math.PI;
 void blockFront;
+
+/* ---------- THE BIG UPGRADE, wave 4c (2026-11-24): helpers for the Dakota (dakota2 only; mcny2 is a later wave's) ----------
+   As in m.ts and p.ts, local to this file: scanned CC0 surfaces (Poly Haven, assets/museum/tex/dakota/) wearing a sensible
+   colour until their maps land, and real models from assets/museum/props/dakota/ fitted once and set many times. In node
+   (the audit) a scan falls back to its painted surface. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w4cD = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w4c-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w4cD.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w4cD.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w4c-${room}-${id}-${metres}-${(p.color as number | undefined) ?? 0}`, e.s, 1 / metres, p);
+  if (!m.userData.w4c) {
+    m.userData.w4c = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function many(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
 
 export const mcny2: RoomDef = {
   id: 'mcny',
@@ -148,13 +200,15 @@ export const dakota2: RoomDef = {
     k.sky({ top: 0x3a4a86, horizon: 0xf0b890, ground: 0x2a2a30, fog: 0.0024, sun: { az: 4.75, el: 0.06, color: 0xffb070, size: 20 }, haze: 0.4, stars: 120, env: 0.8 });
     k.hemi(0xffdcc0, 0x2a2c34, 0.7);
     k.sun(0xffc08a, 1.8, -70, 16, -20, true, 90);
-    const stone = k.pbr('dkStone', X.ashlar(0xb8a888, 206, 3), 0.22),
-      brick = k.pbr('dkBrick', X.brick(0x8a5a48, 207), 0.28),
-      slate = k.pbr('dkSlate', X.steel(0x3a3a40, false, 208), 0.4, { metalness: 0.2, roughness: 0.8 }),
+    /* 2026-11-24 (wave 4c): the Dakota is buff brick with Nova Scotia sandstone trim under a slate roof, not red brick: all
+       Poly Haven scans now (CC0), with the courtyard's Belgian block and the park's hexagonal pavers */
+    const stone = sc(k, 'dakota', 'white_sandstone_blocks_02', 2.6, () => X.ashlar(0xb8a888, 206, 3), { color: 0xe6d6b4, roughness: 0.85 }, 0x9a8c74),
+      brick = sc(k, 'dakota', 'yellow_bricks', 1.25, () => X.brick(0x8a5a48, 207), { color: 0xe8cfa0, roughness: 0.88 }, 0x9a8462),
+      slate = sc(k, 'dakota', 'roof_slates_02', 2.2, () => X.steel(0x3a3a40, false, 208), { color: 0x9a9aa4, roughness: 0.75 }, 0x4a4a52),
       iron = k.flat(0x1a1c20, 0.7, 0.45),
-      cobble = k.pbr('dkCobble', X.cobble(0x6f6c68, 96), 0.9),
+      cobble = sc(k, 'dakota', 'square_cobblestone', 2, () => X.cobble(0x6f6c68, 96), { color: 0xa8a49c, roughness: 0.9 }, 0x5a5856),
       lawn = k.pbr('dkLawn', X.grass(0x3a5a2a, 97), 0.06),
-      pave = k.pbr('dkPave', X.pavers(0x8e8b84, 98), 0.4),
+      pave = sc(k, 'dakota', 'hexagonal_concrete_paving', 1.6, () => X.pavers(0x8e8b84, 98), { color: 0xb0aca4, roughness: 0.85 }, 0x6a6864),
       black = k.flat(0x141416, 0, 0.5), white = k.flat(0xf4f0e8, 0, 0.5),
       glass = k.glass(0xffe0b0, 0.3, 0.1), waterM = k.flat(0x88aacc, 0.3, 0.2, { transparent: true, opacity: 0.6 }),
       warm = k.glow(0xffd8a0);
@@ -165,7 +219,9 @@ export const dakota2: RoomDef = {
     k.block(17.6, 18.4, -80, -6); k.block(17.6, 18.4, 6, 80);
     const rnd = X.mulberry(72);
     for (let i = 0; i < 40; i++) { const x = 24 + rnd() * 80, z = -90 + rnd() * 180; if (Math.hypot(x - 34, z) < 14) continue; k.tree(x, 0, z, { kind: 'bare', h: 8 + rnd() * 6, r: 3 + rnd() * 2, seed: i }); }
-    for (const z of [-60, -20, 20, 60]) for (const s of [-1, 1]) k.lamp(s * 13.5, z, 6.2, iron, 0xffd9a8, 30);
+    /* the avenue's lamps are a real cast iron street lamp now (Poly Haven street_lamp_01, CC0), with their light */
+    many(k, 'dakota/ph_street_lamp_01', { height: 4.8 }, [-60, -20, 20, 60].flatMap((z) => [-1, 1].map((s) => [s * 13.5, 0, z, s < 0 ? PI / 2 : -PI / 2])));
+    for (const z of [-60, -20, 20, 60]) for (const s of [-1, 1]) { k.point(s * 13.5, 4.4, z, 0xffd9a8, 30, 16); k.keepOut.push({ x: s * 13.5, z, r: 0.5 }); }
     // the building: a square block around a courtyard, gables and dormers, the carriage arch on 72nd
     const BX = -34, BZ = 0, BW = 44, BH = 30;
     for (const [x, z, w, d] of [[BX, BZ - BW / 2 + 5, BW, 10], [BX - 12.25, BZ + BW / 2 - 5, 19.5, 10], [BX + 12.25, BZ + BW / 2 - 5, 19.5, 10], [BX - BW / 2 + 5, BZ, 10, BW - 20], [BX + BW / 2 - 5, BZ, 10, BW - 20]]) { k.box(w, BH, d, x, BH / 2, z, brick); k.box(w + 0.4, 3, d + 0.4, x, 1.5, z, stone); k.box(w + 0.4, 0.8, d + 0.4, x, BH - 0.4, z, stone); }
@@ -196,8 +252,11 @@ export const dakota2: RoomDef = {
     for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2; k.mesh(new T.RingGeometry(0.4, 0.6, 12), black, MX + Math.cos(a) * 2.1, 0.285, MZ + Math.sin(a) * 2.1).rotation.x = -PI / 2; }
     /* the word lies in the pavement; the old room rotated whatever mesh was built last, which was not the sign */
     const word = k.sign('IMAGINE', 2.4, 0.5, MX, 0.3, MZ, 'transparent', '#141416', 70, 0); word.rotation.set(-PI / 2, 0, 0);
-    for (let i = 0; i < 30; i++) { const a = (i / 30) * PI * 2; k.sphere(0.14, MX + Math.cos(a) * 2.8, 0.36, MZ + Math.sin(a) * 2.8, [k.flat(0xe83a3a, 0, 0.7), k.flat(0xf1c531, 0, 0.7), k.flat(0xf4f0e8, 0, 0.7)][i % 3], 6); }
-    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2; k.bench(MX + Math.cos(a) * 8, MZ + Math.sin(a) * 8, -a + PI / 2, k.pbr('dkBench', X.planks(0x6a5a45, 3, 209), 1.2), iron, 2.2); }
+    /* the flowers round the mosaic are real flowers (Poly Haven flower_gazania, CC0), and the benches round it a real
+       painted slat bench (Poly Haven, CC0), two to a place as the long park benches are */
+    many(k, 'dakota/ph_flower_gazania', { width: 0.6 }, Array.from({ length: 10 }, (_, i) => { const a = (i / 10) * PI * 2 + 0.1; return [MX + Math.cos(a) * 2.85, 0.27, MZ + Math.sin(a) * 2.85, a * 3.1]; }));
+    many(k, 'dakota/ph_painted_wooden_bench', { width: 1.2 }, Array.from({ length: 12 }, (_, j) => { const i = j >> 1, a = (i / 6) * PI * 2, o = (j & 1 ? 0.62 : -0.62), r0 = 8.2; return [MX + Math.cos(a) * r0 - Math.sin(a) * o, 0.05, MZ + Math.sin(a) * r0 + Math.cos(a) * o, -a - PI / 2]; }));
+    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2; k.keepOut.push({ x: MX + Math.cos(a) * 8.2, z: MZ + Math.sin(a) * 8.2, r: 1.1 }); }
     k.keepOut.push({ x: MX, z: MZ, r: 3.4 });
     k.box(16, 0.3, 0.1, MX - 8 - 4, 0.05, MZ, pave); k.box(6, 0.3, 40, MX - 14, 0.05, MZ, pave);
     k.crowd([v(MX - 14, 0, -30), v(MX - 14, 0, 30)], 12, { seed: 82, speed: 0.5, spread: 1.6, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x151517, 0xd8d0c0] });
@@ -232,7 +291,7 @@ export const dakota2: RoomDef = {
     const guitar = new T.Group(); { const body = new T.Mesh(new T.CylinderGeometry(0.22, 0.26, 0.1, 12), new T.MeshStandardMaterial({ color: 0x9a5a2a })); body.rotation.x = PI / 2; const neck = new T.Mesh(new T.BoxGeometry(0.06, 0.06, 0.7), new T.MeshStandardMaterial({ color: 0x3a2a1a })); neck.position.set(0.35, 0, 0); neck.rotation.y = PI / 2; guitar.add(body, neck); }
     guitar.position.set(0.1, 0.95, 0.24); busker.add(guitar);
     const strum = new T.Mesh(new T.BoxGeometry(0.08, 0.36, 0.08), new T.MeshStandardMaterial({ color: 0x5a3a2a })); strum.position.set(-0.05, 1.0, 0.3); busker.add(strum);
-    for (let i = 0; i < 12; i++) { const a = 0.3 + i * 0.5; k.sphere(0.12, MX + Math.cos(a) * 1.4, 0.34, MZ + Math.sin(a) * 1.4, [k.flat(0xe83a3a, 0, 0.7), k.flat(0xf4f0e8, 0, 0.7), k.flat(0xf1c531, 0, 0.7)][i % 3], 6); }
+    many(k, 'dakota/ph_flower_gazania', { width: 0.36 }, Array.from({ length: 3 }, (_, i) => { const a = 0.3 + i * 1.3; return [MX + Math.cos(a) * 1.4, 0.29, MZ + Math.sin(a) * 1.4, a]; }));
     for (let i = 0; i < 5; i++) { const a = 2.6 + i * 0.35; const p = person([0x24262c, 0x8a3a3a, 0x151517, 0xd8d0c0, 0x33477f][i]); p.position.set(MX + Math.cos(a) * 4.6, 0, MZ + Math.sin(a) * 4.6); p.rotation.y = -a - PI / 2; k.add(p); }
     const acars: { g: T.Group; dir: number; off: number }[] = [];
     for (let i = 0; i < 6; i++) { const g = new T.Group(), dir = i % 2 ? -1 : 1; const body = new T.Mesh(new T.BoxGeometry(1.8, 0.75, 4.4), new T.MeshStandardMaterial({ color: [0xf2b705, 0x1a1c20, 0xd8d4cc, 0xf2b705, 0x2a3f6a, 0x8a2a2a][i], metalness: 0.4, roughness: 0.4 })); body.position.y = 0.6; const cab = new T.Mesh(new T.BoxGeometry(1.6, 0.6, 2.2), new T.MeshStandardMaterial({ color: 0x22303a, metalness: 0.6, roughness: 0.2 })); cab.position.y = 1.28; const tl = new T.Mesh(new T.BoxGeometry(1.2, 0.18, 0.06), new T.MeshBasicMaterial({ color: 0xff3a2a })); tl.position.set(0, 0.7, -2.22); g.add(body, cab, tl); g.position.x = dir > 0 ? 3.5 : -3.5; k.add(g); acars.push({ g, dir, off: i * 28 }); }
@@ -242,6 +301,57 @@ export const dakota2: RoomDef = {
       doorman.rotation.y = 0.6 * Math.sin(t * 0.2);
       for (const c of acars) { const s = (t * 9 + c.off) % 170; c.g.position.z = c.dir > 0 ? -85 + s : 85 - s; c.g.rotation.y = c.dir > 0 ? 0 : PI; }
     });
+
+    /* ---- THE BIG UPGRADE, wave 4c (2026-11-24) ----
+       The building was a flat brick box with five cones on one side. The Dakota's whole skyline is its roof: a steep
+       slate roof round all four wings, dormers on every slope (outside and over the courtyard), copper finials and tall
+       chimneys; sandstone string courses and the windows of the 72nd Street front; the face over the arch; the street
+       signs at the corner; fountains with an upper bowl and a falling veil; iron gates at the park. */
+    const patina = k.flat(0x5f9a8c, 0.45, 0.55), lit = k.glow(0xffd8a0), dk = k.glass(0x2a3038, 0.85, 0.1), trim = k.flat(0xd6c6a2, 0, 0.85);
+    { const prof = new T.Shape(); prof.moveTo(-5.3, 0); prof.lineTo(5.3, 0); prof.lineTo(2.1, 6); prof.lineTo(-2.1, 6); prof.closePath();
+      const run = (x: number, z: number, len: number, alongX: boolean) => { const g = new T.ExtrudeGeometry(prof, { depth: len, bevelEnabled: false }); g.translate(0, 0, -len / 2); const m = k.mesh(g, slate, x, BH + 0.2, z); if (alongX) m.rotation.y = PI / 2; k.box(alongX ? len : 4.3, 0.25, alongX ? 4.3 : len, x, BH + 6.3, z, iron); };
+      run(BX, BZ - BW / 2 + 5, BW, true); run(BX, BZ + BW / 2 - 5, BW, true); run(BX - BW / 2 + 5, BZ, BW - 20, false); run(BX + BW / 2 - 5, BZ, BW - 20, false);
+      /* dormers: a stone box with a slate cap and a window, on both slopes of every wing, all instanced */
+      const at: [number, number, number][] = [];
+      for (let x = BX - 18; x <= BX + 18; x += 4.5) for (const n of [-1, 1]) { at.push([x, BZ - BW / 2 + 5 + n * 3.9, n < 0 ? PI : 0]); if (Math.abs(x - BX) > 3) at.push([x, BZ + BW / 2 - 5 + n * 3.9, n < 0 ? PI : 0]); }
+      for (const z of [-8, -4, 0, 4, 8]) for (const n of [-1, 1]) at.push([BX - BW / 2 + 5 + n * 3.9, z, n * PI / 2]);
+      for (const z of [-12, -4, 4, 12]) for (const n of [-1, 1]) at.push([BX + BW / 2 - 5 + n * 3.9, z, n * PI / 2]);
+      const body: T.Matrix4[] = [], cap: T.Matrix4[] = [], winL: T.Matrix4[] = [], winD: T.Matrix4[] = [], q = new T.Quaternion(), up = new T.Vector3(0, 1, 0), one = new T.Vector3(1, 1, 1), rr = X.mulberry(7212);
+      for (const [x, z, r] of at) { q.setFromAxisAngle(up, r); const f = v(Math.sin(r), 0, Math.cos(r)); body.push(new T.Matrix4().compose(v(x, BH + 2.1, z), q, one)); cap.push(new T.Matrix4().compose(v(x, BH + 3.75, z), new T.Quaternion().setFromAxisAngle(up, r + PI / 4), one)); (rr() > 0.45 ? winL : winD).push(new T.Matrix4().compose(v(x + f.x * 0.82, BH + 2.0, z + f.z * 0.82), q, one)); }
+      k.instances(new T.BoxGeometry(1.7, 2.3, 1.6), trim, body); k.instances(new T.ConeGeometry(1.35, 1.3, 4), slate, cap);
+      const wg = new T.PlaneGeometry(0.9, 1.4); k.instances(wg, lit, winL); k.instances(wg, dk, winD);
+      /* copper finials on the gables and the corners and along the ridges, and the chimneys */
+      const fin: T.Matrix4[] = [], ball: T.Matrix4[] = [];
+      const finAt: [number, number, number][] = [...[-16, -8, 0, 8, 16].map((z) => [BX + BW / 2 - 5, BH + 6, BZ + z] as [number, number, number]), ...[BX - 20, BX - 10, BX + 10, BX + 20].flatMap((x) => [[x, BH + 6.4, BZ - BW / 2 + 5], [x, BH + 6.4, BZ + BW / 2 - 5]] as [number, number, number][]), ...[-8, 8].map((z) => [BX - BW / 2 + 5, BH + 6.4, z] as [number, number, number])];
+      for (const [x, y, z] of finAt) { fin.push(new T.Matrix4().compose(v(x, y + 1.1, z), new T.Quaternion(), one)); ball.push(new T.Matrix4().compose(v(x, y + 0.3, z), new T.Quaternion(), one)); }
+      k.instances(new T.ConeGeometry(0.22, 2.2, 8), patina, fin); k.instances(new T.SphereGeometry(0.32, 10, 8), patina, ball);
+      for (const [x, z] of [[BX - 12, BZ - 17], [BX + 12, BZ - 17], [BX - 12, BZ + 17], [BX + 12, BZ + 17], [BX - 17, BZ - 6], [BX - 17, BZ + 6]]) { k.box(1.3, 4.2, 2.2, x, BH + 7.3, z, brick); k.box(1.6, 0.35, 2.5, x, BH + 9.5, z, stone); } }
+    /* the 72nd Street front: its windows (instanced), and sandstone string courses on both street fronts */
+    { const SZf = BZ + BW / 2, frame: T.Matrix4[] = [], wl: T.Matrix4[] = [], wd: T.Matrix4[] = [], one = new T.Vector3(1, 1, 1), q = new T.Quaternion(), rr = X.mulberry(7213);
+      for (let f = 0; f < 7; f++) for (let x = BX - 19.8; x <= BX + 19.9; x += 4.4) { if (Math.abs(x - BX) < 4.5) continue; const y = 4 + f * 3.6; frame.push(new T.Matrix4().compose(v(x, y, SZf + 0.06), q, one)); (rr() > 0.55 ? wl : wd).push(new T.Matrix4().compose(v(x, y, SZf + 0.17), q, one)); }
+      k.instances(new T.BoxGeometry(1.5, 2.3, 0.22), trim, frame); const wg = new T.PlaneGeometry(1.1, 1.9); k.instances(wg, lit, wl); k.instances(wg, dk, wd);
+      for (const y of [9.7, 16.9, 24.1]) { k.box(BW + 0.6, 0.42, 0.5, BX, y, SZf + 0.05, stone); k.box(0.5, 0.42, BW + 0.6, BX + BW / 2 + 0.05, y, BZ, stone); }
+      /* the frieze under the cornice: sandstone now, a terracotta frieze when the Firefly plate lands (FIREFLY_QUEUE.md, dakota) */
+      fireflyPlate(k, 'assets/museum/tex/dakota/ff_terracotta_frieze.webp', 25.6, 1.6, BX, 28.5, SZf + 0.32, 0, stone);
+      fireflyPlate(k, 'assets/museum/tex/dakota/ff_terracotta_frieze.webp', 25.6, 1.6, BX + BW / 2 + 0.32, 28.5, BZ, PI / 2, stone);
+      hsign(k, '1 WEST 72ND STREET', 1.6, 0.3, BX - 3.4, 2.6, SZf + 0.26, 0, { fg: '#e8d8a8', bg: '#4a3a22', border: '#c8a868', font: 'W2 Archivo Expanded', size: 0.6, lit: false }); }
+    /* the corner of Central Park West and 72nd: the green street blades on their pole */
+    { const px = BX + BW / 2 - 0.8, pz = BZ + BW / 2 + 2.8; k.cyl(0.06, 4.2, px, 2.1, pz, k.flat(0x2a3a2e, 0.6, 0.5), 0.07, 8); k.keepOut.push({ x: px, z: pz, r: 0.3 });
+      for (const r of [0, PI]) hsign(k, 'W 72 ST', 1.5, 0.3, px + 0.75, 3.95, pz + (r ? -0.012 : 0.012), r, { fg: '#f4f4f0', bg: '#1f6b3a', border: '#f4f4f0', font: 'W2 Archivo Narrow', size: 0.62, lit: false });
+      for (const r of [PI / 2, -PI / 2]) hsign(k, 'CENTRAL PARK W', 1.7, 0.3, px + (r > 0 ? 0.012 : -0.012), 3.6, pz - 0.85, r, { fg: '#f4f4f0', bg: '#1f6b3a', border: '#f4f4f0', font: 'W2 Archivo Narrow', size: 0.62, lit: false });
+      k.cyl(0.04, 1.3, 19.4, 0.65, 8.2, k.flat(0x2a3a2e, 0.6, 0.5), 0.04, 6); hsign(k, 'STRAWBERRY FIELDS', 1.6, 0.32, 19.35, 1.25, 8.2, -PI / 2, { fg: '#f4f0e8', bg: '#2f4a2a', font: 'W2 Archivo Expanded', size: 0.56, lit: false }); }
+    /* iron gates stand open at the park entrance (Poly Haven large_iron_gate, CC0) */
+    many(k, 'dakota/ph_large_iron_gate', { width: 2.4 }, [[19.2, 0, -6.05, 0], [19.2, 0, 6.05, PI]]);
+    /* the courtyard fountains get their upper bowl and a falling veil of water */
+    for (const dz of [-5, 5]) { k.lathe([[0.0, 0], [0.28, 0], [0.2, 0.5], [0.16, 0.9], [0.3, 1.0], [0.95, 1.12], [1.0, 1.3], [0.92, 1.32], [0, 1.2]], BX, 0.7, BZ + dz, stone, 24); k.torus(2.45, 0.12, BX, 0.72, BZ + dz, stone, 32).rotation.x = PI / 2;
+      const veil = k.mesh(new T.CylinderGeometry(0.98, 1.5, 1.05, 24, 1, true), k.flat(0xcfe2ee, 0.1, 0.1, { transparent: true, opacity: 0.32, side: T.DoubleSide, depthWrite: false }), BX, 1.48, BZ + dz, true);
+      if (!ctx.reduced) k.ticks.push((t) => { veil.scale.set(1 + 0.03 * Math.sin(t * 5 + dz), 1, 1 + 0.03 * Math.cos(t * 5 + dz)); }); }
+    /* the illusion: the face over the arch. A marble head (Poly Haven marble_bust_01, CC0) set as the keystone mask and
+       drawn from the inside only, so what you see is the hollow of its face; the eye insists it stands out, and as you
+       walk along 72nd Street it seems to turn and follow you (the hollow face illusion) */
+    { const hz = BZ + BW / 2; k.box(1.5, 1.7, 0.4, BX, 9.0, hz + 0.18, stone);
+      void hero(k, 'dakota/ph_marble_bust_01', { height: 1.05 }).then((h) => { if (!h || !k.live) return; h.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.side = T.BackSide; m.color.multiplyScalar(1.1); c.material = m; } }); h.position.set(BX, 8.45, hz + 0.62); h.rotation.y = PI; k.add(h); });
+      k.egg(v(BX, 9, hz + 0.6), { id: 'dakota-hollow', title: 'The face that follows you', text: 'The mask over the arch is not standing out of the stone. You are looking into the hollow inside of a face, and the brain refuses to read a face as hollow, so it builds a solid one; then, as you walk along 72nd Street, that face seems to turn and follow you. It is the hollow face illusion, which the psychologist Richard Gregory used to show how much of seeing is the brain\'s guess.', clue: 'Walk slowly along 72nd Street past the carriage arch and watch the face over it.', source: { name: 'Hollow-Face illusion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hollow-Face_illusion' } }, { r: 1.6 }); }
 
     /* eggs */
     const dsrc = { name: 'The Dakota, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Dakota' };

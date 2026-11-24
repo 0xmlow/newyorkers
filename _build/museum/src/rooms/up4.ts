@@ -19,6 +19,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { scn, many } from './n';
+import { hsign } from './f';
+import { fireflyPlate } from './a';
+import { hero } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const ONE = new T.Vector3(1, 1, 1);
@@ -306,20 +310,22 @@ export const carnegie2: RoomDef = {
   build(k, ctx) {
     k.sky({ top: 0x141a2e, horizon: 0x4a4050, ground: 0x0e0e12, fog: 0.003, stars: 140, env: 0.55 });
     k.hemi(0xffe4c8, 0x1a1418, 0.5);
-    const brick = k.pbr('ch2Brick', X.brick(0x6a4436, 168), 0.28),
-      terra = k.pbr('ch2Terra', X.ashlar(0xb89a7a, 169, 3), 0.2),
-      cream = k.pbr('ch2Cream', X.plaster(0xece2cf, 81), 0.35),
+    /* 2026-11-24 (wave 4a): scanned Roman brick, terracotta stone, cream plaster, marble tile, oak stage boards and red
+       velour (Poly Haven, CC0), each in a dark version of its colour until its maps arrive */
+    const brick = scn(k, 'carnegie', 'brown_brick_02', 2.2, () => X.brick(0x6a4436, 168), { color: 0xc89478 }, 0x4a3228),
+      terra = scn(k, 'carnegie', 'sandstone_blocks_05', 2.6, () => X.ashlar(0xb89a7a, 169, 3), { color: 0xe0b894 }, 0x6a5440),
+      cream = scn(k, 'carnegie', 'plastered_wall', 3, () => X.plaster(0xece2cf, 81), { color: 0xf4ead8 }, 0x7a7468),
       gold = k.pbr('ch2Gold', X.gilt(0xd0a852), 2, { metalness: 0.85, roughness: 0.3 }),
-      red = k.pbr('ch2Seats', X.velvet(0x9a1a22), 0.4, { roughness: 0.95 }),
+      red = scn(k, 'carnegie', 'velour_velvet', 0.8, () => X.velvet(0x9a1a22), { color: 0xc03038, roughness: 0.95 }, 0x4a1014),
       carpet = k.pbr('ch2Carpet', X.carpet(0x6a1a22, 0xc79a4a), 0.5),
-      stage = k.pbr('ch2Stage', X.planks(0xb89a6a, 6, 170), 1.2, { roughness: 0.6 }),
-      marble = k.pbr('ch2Marble', X.marble(0xe8e0d0, 0x9a8f80, 189), 0.3),
+      stage = scn(k, 'carnegie', 'oak_wood_planks', 2.2, () => X.planks(0xb89a6a, 6, 170), { color: 0xd8b890, roughness: 0.6 }, 0x5a4a34),
+      marble = scn(k, 'carnegie', 'marble_tiles', 2.4, () => X.marble(0xe8e0d0, 0x9a8f80, 189), { color: 0xf0e8dc, roughness: 0.25 }, 0x6a6660),
       wood = k.pbr('ch2Wood', X.planks(0x6a3a1a, 2, 190), 1),
       dark = k.flat(0x121216, 0.5, 0.7),
       glass = k.glass(0xffe0b0, 0.3, 0.1),
       warm = k.glow(0xffe0b0),
       /* curved shells are seen from inside and out: open cylinders and rings need both faces */
-      creamIn = k.pbr('ch2Cream', X.plaster(0xece2cf, 81), 0.35, { side: T.DoubleSide }),
+      creamIn = scn(k, 'carnegie', 'plastered_wall', 3, () => X.plaster(0xece2cf, 81), { color: 0xf4ead8, side: T.DoubleSide }, 0x7a7468),
       goldIn = k.pbr('ch2Gold', X.gilt(0xd0a852), 2, { metalness: 0.85, roughness: 0.3, side: T.DoubleSide });
 
     /* ---- 57th Street across the front ---- */
@@ -340,7 +346,7 @@ export const carnegie2: RoomDef = {
     k.box(FW, FH - 6, 0.8, 0, 6 + (FH - 6) / 2, FZ - 0.4, brick);
     for (let t = 0; t < 3; t++) for (let i = 0; i < 7; i++) { const x = -24 + i * 8, y = 9 + t * 6.6; k.arch(3, 4.6, 0.3, x, y - 2.3, FZ + 0.05, terra, false, 0.75); k.box(2.6, 4.0, 0.1, x, y - 0.1, FZ + 0.02, glass); }
     for (const y of [6.3, 13.2, 19.8, 26.4]) k.box(FW + 0.4, 0.4, 0.5, 0, y, FZ + 0.1, terra);
-    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], FW + 0.4, 0, FH - 1, FZ + 0.05, terra, 0);
+    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], FW + 0.4, 0, FH - 1, FZ + 0.05, terra, -PI / 2);   // 2026-11-24: kit.moulding runs along z unless turned; this cornice stood out over 57th Street as a pole
     for (const s of [-1, 1]) k.box(0.8, FH, 44, s * (FW / 2 - 0.4), FH / 2, FZ - 22, brick);
     k.box(14, 18, 14, 22, FH + 9, FZ - 8, brick);
     for (let y = FH + 2; y < FH + 17; y += 3) for (let x = 16.5; x < 28; x += 2.6) k.box(1.2, 1.6, 0.1, x, y, FZ - 0.95, k.glow(0xffe0b0, 0.7));
@@ -349,6 +355,13 @@ export const carnegie2: RoomDef = {
     const nameSign = k.sign('CARNEGIE HALL', 12, 1.2, 0, 7.5, FZ + 4.46, '#14090a', '#f4e4b0', 130, 0, { border: true });
     for (let i = 0; i < 6; i++) k.sphere(0.14, -10 + i * 4, 6.35, FZ + 4.2, warm, 8);
     k.point(0, 5.6, FZ + 3, 0xffe0b0, 40, 14);
+    /* the street front, built out: terracotta pilasters between the bays, a sill course, brass poster cases between the
+       doors with tonight's bill (the posters are queued, FIREFLY_QUEUE.md carnegie; a dark bill shows until they land),
+       and the street signs at the corner */
+    for (let i = 0; i < 8; i++) { const x = -28 + i * 8; k.box(1.1, FH - 7, 0.5, x, 6.4 + (FH - 7) / 2, FZ + 0.2, terra); k.box(1.4, 0.6, 0.7, x, FH - 1.3, FZ + 0.25, terra); }
+    for (const y of [8.2, 14.8, 21.4]) k.box(FW, 0.25, 0.4, 0, y, FZ + 0.25, terra);
+    for (const x of [-4, 4]) { k.box(1.7, 2.5, 0.2, x, 2.0, FZ + 0.1, gold); fireflyPlate(k, `assets/museum/tex/carnegie/ff_poster_${x < 0 ? 1 : 2}.webp`, 1.45, 2.2, x, 2.0, FZ + 0.21, 0, k.flat(0x1a1416, 0, 0.6)); hsign(k, 'TONIGHT', 1.4, 0.3, x, 2.85, FZ + 0.23, 0, { fg: '#f4e4b0', bg: '#14090a', font: 'W2 Archivo Expanded', size: 0.55, lit: false }); }
+    for (const [t, y] of [['W 57 ST', 4.4], ['7 AV', 4.05]] as const) hsign(k, t, 1.6, 0.32, -30, y, FZ + 5.2, 0, { fg: '#f4f0e8', bg: '#1f5a36', font: 'W2 Archivo Expanded', size: 0.6 });
 
     /* ---- the lobby ---- */
     const LB = FZ - 12.6, LW = 14;
@@ -365,6 +378,22 @@ export const carnegie2: RoomDef = {
     k.box(3, 1.2, 1, 9, 0.6, FZ - 2.5, wood); k.box(3.2, 0.1, 1.2, 9, 1.25, FZ - 2.5, marble); k.block(7.4, 10.6, FZ - 3.1, FZ - 1.9);
     const clerk = personGroup(0x1a1a20); clerk.position.set(9, 0, FZ - 3.4); clerk.rotation.y = 0; k.add(clerk);
     k.point(0, 5.8, (FZ + LB) / 2, 0xffe6c0, 34, 16);
+    /* two real chandeliers down the lobby (Poly Haven Chandelier_01, CC0), and the hall's name over its door */
+    many(k, 'carnegie/ph_Chandelier_01', { height: 1.5 }, [[0, 4.75, FZ - 3.4, 0], [0, 4.75, LB + 3.6, 0.4]]);
+    for (const z of [FZ - 3.4, LB + 3.6]) k.point(0, 5.0, z, 0xffe0b0, 14, 9);
+    hsign(k, 'STERN AUDITORIUM', 4.6, 0.5, 0, 4.0, LB + 0.04, 0, { fg: '#d0a852', font: 'W2 Archivo Expanded', size: 0.62, lit: false });
+    /* the illusion: two marble busts in gilt niches on the back wall. The left one is a bust. The right one is the same
+       bust turned to face the wall and drawn from inside, so what you see is the hollow of its face; the eye insists on a
+       face that stands out, and as you walk across the lobby it turns to follow you (Poly Haven marble_bust_01, CC0). */
+    for (const x of [-12.2, 12.2]) { k.box(1.6, 3.4, 0.2, x, 2.4, LB + 0.12, gold); k.box(1.3, 3.0, 0.1, x, 2.4, LB + 0.24, k.flat(0x2a1a14, 0, 0.8)); k.box(0.8, 1.1, 0.6, x, 0.55, LB + 0.6, marble); k.keepOut.push({ x, z: LB + 0.7, r: 0.7 }); }
+    void hero(k, 'carnegie/ph_marble_bust_01', { height: 0.9 }).then((h) => {
+      if (!h || !k.live) return;
+      h.position.set(-12.2, 1.1, LB + 0.62); k.add(h);
+      const hol = h.clone(); const mats = new Map<T.Material, T.Material>();
+      hol.traverse((c) => { if (c instanceof T.Mesh) { let m = mats.get(c.material as T.Material); if (!m) { const n = (c.material as T.MeshStandardMaterial).clone(); n.side = T.BackSide; n.color.multiplyScalar(1.1); m = n; mats.set(c.material as T.Material, m); } c.material = m; } });
+      hol.position.set(12.2, 1.1, LB + 0.72); hol.rotation.y = PI; k.add(hol);
+    });
+    k.egg(v(12.2, 1.6, LB + 0.7), { id: 'carnegie-hollow', title: 'The bust that watches you', text: 'Of the two marble busts on the lobby wall, only the left one is what it looks like. The right one faces the wall: you are looking into the hollow back of its face, the inside of a mask, and the brain refuses to read a face as hollow, so it builds a solid one; then, as you cross the lobby, that face turns and follows you. It is the hollow face illusion, which the psychologist Richard Gregory used to show how much of seeing is the brain\'s guess.', clue: 'Walk across the lobby past the two marble busts and watch the one on the right.', source: { name: 'Hollow-Face illusion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hollow-Face_illusion' } }, { r: 1.4 });
 
     /* ---- the hall: a horseshoe, parquet plus four tiers, round the stage ---- */
     const RW = 19.6, R0 = 16, CZ = LB - RW, STF = CZ - 14, SB = STF - 12.8, HH = 22;
@@ -433,6 +462,10 @@ export const carnegie2: RoomDef = {
     for (const s of [-1, 1]) k.box(0.6, 12, STF - SB, s * 13.3, 6, (STF + SB) / 2, cream);
     k.box(RW * 2 + 1.2, HH + 0.3, 0.6, 0, (HH + 0.3) / 2, SB - 0.3, cream);
     for (const [w, h, x, y] of [[22, 0.3, 0, 15.5], [22, 0.3, 0, 6.5], [0.3, 9, -11, 11], [0.3, 9, 11, 11]] as const) k.box(w, h, 0.2, x, y, SB, gold);
+    /* the stage wall: cream pilasters with gilt capitals either side of the panel, and the panel itself, an ornamental plaster
+       relief queued as a Firefly plate (FIREFLY_QUEUE.md, carnegie); plain cream until it lands */
+    fireflyPlate(k, 'assets/museum/tex/carnegie/ff_stage_relief.webp', 21.6, 8.6, 0, 11, SB + 0.12, 0, cream);
+    for (const x of [-12.4, 12.4, -9.6 - 6, 9.6 + 6]) { k.box(1.0, 15, 0.5, x, 7.5, SB + 0.25, cream); k.box(1.3, 0.5, 0.7, x, 15.2, SB + 0.3, gold); k.box(1.2, 0.3, 0.6, x, 0.15 + 1.2, SB + 0.3, gold); }
     k.point(0, 14, STF - 6, 0xfff0d8, 70, 26);
     const pod = k.box(1.2, 0.3, 1.2, 0, 1.35, STF - 1.4, wood);
     const conductor = personGroup(0x0e0e10); conductor.position.set(0, 1.5, STF - 1.4); conductor.rotation.y = PI; k.add(conductor);
