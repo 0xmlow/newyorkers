@@ -337,5 +337,89 @@
  "isl_jerry": {
   "src": "ph_metal_jerrycan",
   "tris": 2000
+ },
+ "isl_bananas": {
+  "src": "ph_bananas",
+  "tris": 1500
+ },
+ "isl_apple": {
+  "src": "ph_food_apple_01",
+  "tris": 600
+ },
+ "isl_lime": {
+  "src": "ph_food_lime_01",
+  "tris": 500
+ },
+ "isl_lemon": {
+  "src": "ph_lemon",
+  "tris": 500
+ },
+ "isl_pomegranate": {
+  "src": "ph_food_pomegranate_01",
+  "tris": 600
+ },
+ "isl_onion": {
+  "src": "ph_yellow_onion",
+  "tris": 500
+ },
+ "isl_display": {
+  "src": "ph_wooden_display_shelves_01",
+  "tris": 3000
+ },
+ "isl_toolcart": {
+  "src": "ph_tool_cart",
+  "tris": 3000
+ },
+ "isl_toolbox": {
+  "src": "ph_metal_toolbox",
+  "tris": 2000
+ },
+ "isl_sledge": {
+  "src": "ph_sledgehammer_01",
+  "tris": 1200
+ },
+ "isl_spade": {
+  "src": "ph_rusted_spade_01",
+  "tris": 1200
+ },
+ "isl_broom": {
+  "src": "ph_wooden_broom",
+  "tris": 1200
+ },
+ "isl_propane": {
+  "src": "ph_propane_tank",
+  "tris": 2000
+ },
+ "isl_spray": {
+  "src": "ph_spray_paint_bottles_02",
+  "tris": 2500
+ },
+ "isl_wine": {
+  "src": "ph_wine_bottles_01",
+  "tris": 3000
+ },
+ "isl_barrel": {
+  "src": "ph_wine_barrel_01",
+  "tris": 2500
+ },
+ "isl_basket": {
+  "src": "ph_wicker_basket_01",
+  "tris": 2000
+ },
+ "isl_bowl": {
+  "src": "ph_wooden_bowl_01",
+  "tris": 800
+ },
+ "isl_vase": {
+  "src": "ph_ceramic_vase_01",
+  "tris": 1500
+ },
+ "isl_stool": {
+  "src": "ph_metal_stool_01",
+  "tris": 1500
+ },
+ "isl_cardboard": {
+  "src": "ph_cardboard_box_01",
+  "tris": 800
  }
 }

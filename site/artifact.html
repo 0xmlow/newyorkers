@@ -14700,7 +14700,7 @@ window.__AMES = AMES;
 window.__FRAMES.push(dt => { try { if (AMES.piv && Math.hypot(camera.position.x - AMES.P[0], camera.position.z - AMES.P[2]) < 90) AMES.piv.rotation.y += dt * 0.45; } catch (e) { } });
 
 /* ================================================================
-   v309 ILLUSION: THE DOORN TO NOWHERE (2026-11-24)
+   v309 ILLUSION: THE DOOR TO NOWHERE (2026-11-24)
    A freestanding doorframe stands open by the river's south spoke, nothing behind it but the lawn. Look through it
    from the front and a corridor runs away for ever, its walls hung with 6529 cards, an Open Eye Flower at the end
    that never gets closer. Walk round the back and there is only a door frame on the grass. One shader traces your
@@ -14864,15 +14864,124 @@ window.__FRAMES.push(dt => { try { if (!CHASE.mat) return; CHASE.t += dt; CHASE.
 (function mapTricks() { const add = (n, p, dx, dz) => { if (window.__MAP && MAP.places && p) MAP.places.push([n, p[0], p[2], p[0] + dx, p[2] + dz]); };
   try { add('THE LILAC CHASER', CHASE.P, 0, -4); } catch (e) { } try { add('SEE THE TRUE COLOURS', __AFTER.P, 0, -4); } catch (e) { } })();
 
+/* ================================================================
+   v317 REAL PROPS: THE BODEGA'S FRUIT STAND (2026-11-24)
+   Every bodega puts its fruit out on the sidewalk under the awning. Three scanned wooden crates tilted toward the
+   street, heaped with scanned apples, limes, lemons, onions and pomegranates (each fruit a CC0 scan, instanced, so a
+   few hundred cost a handful of draws), a bunch of bananas across the top. ?props=0 off.
+   ================================================================ */
+(function fruitStand() {
+  if (!PH.on) return; const g = ground(17, 66) + 0.02, x = 10.95, rows = [[60.5, 'isl_apple'], [61.45, 'isl_lime'], [62.4, 'isl_lemon']], R = (a, b) => a + Math.random() * (b - a);
+  phPlace('isl_crate', rows.map(([z]) => [x, g + 0.32, z, PI / 2, 1]).concat(rows.map(([z]) => [x + 0.05, g, z, PI / 2, 1])));
+  const fruit = {}; const pile = (name, z, n, top) => { const L = fruit[name] || (fruit[name] = []); for (let i = 0; i < n; i++) { const lz = R(-0.36, 0.36), lx = R(-0.14, 0.14), h = top + R(0, 0.06) + (0.16 - Math.abs(lz) * 0.2); L.push([x + lx, h, z + lz, R(0, 6.28), R(0.9, 1.1)]); } };
+  rows.forEach(([z, f]) => pile(f, z, 22, g + 0.62));
+  pile('isl_onion', 60.5, 8, g + 0.3); pile('isl_pomegranate', 62.4, 6, g + 0.3);
+  Object.keys(fruit).forEach(k => phPlace(k, fruit[k], { shadow: false }));
+  phPlace('isl_bananas', [[x, g + 0.82, 61.45, PI / 2, 1]], { shadow: false });
+})();
 
+/* ================================================================
+   v318 REAL PROPS: HARDWARE ON THE SIDEWALK (2026-11-24)
+   N3W HARDWARE (v214) does what every city hardware store does at opening time: half the shop comes out onto the
+   sidewalk. A scanned green tool cart with a toolbox on it, two propane tanks, brooms and a spade leaning on the
+   wall, a sledgehammer, a step ladder. ?props=0 off.
+   ================================================================ */
+(function hardwareOut() {
+  if (!PH.on || !window.__WT) return; const x0 = WT_AT.x + 1.8, z = WT_AT.z + 3.5 + 0.19 + 0.55, g = WT.top - 7 + 0.02, G = (x, zz) => ground(x, zz);
+  phPlace('isl_toolcart', [[x0 + 0.6, G(x0 + 0.6, z), z + 0.1, 0, 1]]); phPlace('isl_toolbox', [[x0 + 0.6, G(x0 + 0.6, z) + 0.86, z + 0.1, 0.2, 1]]);
+  phPlace('isl_propane', [[x0 + 1.7, G(x0 + 1.7, z), z, 0.4, 1], [x0 + 2.15, G(x0 + 2.15, z), z + 0.1, 1.7, 1]]);
+  phPlace('isl_broom', [[x0 + 2.8, G(x0 + 2.8, z - 0.3), z - 0.32, 0.15, 1], [x0 + 3.0, G(x0 + 3.0, z - 0.3), z - 0.32, -0.1, 1]]);
+  phPlace('isl_spade', [[x0 + 3.25, G(x0 + 3.25, z - 0.3), z - 0.32, 0.05, 1]]); phPlace('isl_sledge', [[x0 + 1.2, G(x0 + 1.2, z), z + 0.35, 1.3, 1]]);
+  phPlace('isl_ladder', [[x0 - 0.5, G(x0 - 0.5, z), z - 0.1, 0, 0.8]]);
+})();
 
+/* ================================================================
+   v319 REAL PROPS: THE SPEAKEASY'S STOCK (2026-11-24)
+   Scanned wine bottles along the back bar's shelves and three oak barrels stacked in the speakeasy's far corner,
+   seen only when you are down there (they hide with the room). ?props=0 off.
+   ================================================================ */
+(function speakeasyStock() {
+  if (!PH.on || !window.__BACK) return; const cx = BACK.cx, cz = BACK.cz, fy = BACK.fy, ims = []; const keep = p => p.then(a => { ims.push(...a); a.forEach(im => im.visible = !!(BACK.g && BACK.g.visible)); });
+  const W = []; [1.35, 1.85, 2.35].forEach(y => { for (let i = 0; i < 4; i++) W.push([cx + 4.55, fy + y + 0.02, cz - 2.4 + i * 1.6, PI / 2 + Math.random() * 0.4, 0.9]); }); keep(phPlace('isl_wine', W, { shadow: false }));
+  keep(phPlace('isl_barrel', [[cx - 3.4, fy, cz + 2.9, 0.2, 1], [cx - 2.6, fy, cz + 2.9, -0.3, 1], [cx - 3.0, fy + 0.95, cz + 2.9, PI / 2, 1]], { shadow: false }));
+  window.__FRAMES.push(() => { try { const v = !!(BACK.g && BACK.g.visible); ims.forEach(im => im.visible = v); } catch (e) { } });
+})();
 
+/* ================================================================
+   v320 REAL PROPS: THE MARKET'S WARES (2026-11-24)
+   Every market kiosk (v69) gets scanned wares at the ends of its counter: a wicker basket, turned wooden bowls, a
+   white ceramic vase, so the stalls look like they sell things you could pick up. ?props=0 off.
+   ================================================================ */
+(function marketWares() {
+  if (!PH.on || !window.__MKT || !MKT.k) return; const B = [], O = [], V = [];
+  MKT.k.forEach((k, i) => { const gy = ground(k.x, k.z), y = gy + 1.02, z = k.z - 0.85; B.push([k.x - 1.15, y, z, 0.2 * i, 0.8]); O.push([k.x + 1.1, y, z, 0.5 * i, 0.9], [k.x + 1.32, y, z + 0.08, 1.3 * i, 0.7]); if (i % 2 === 0) V.push([k.x + 0.85, y, z + 0.05, 0, 0.7]); });
+  phPlace('isl_basket', B, { shadow: false }); phPlace('isl_bowl', O, { shadow: false }); phPlace('isl_vase', V, { shadow: false });
+})();
 
+/* ================================================================
+   v321 REAL PROPS: CANS AND DELIVERIES (2026-11-24)
+   Scanned spray cans (the real thing, labels and drips) at the foot of the handball wall where the island tags it,
+   and taped cardboard delivery boxes stacked by the bodega's side door and the DROP shop, waiting to be carried in.
+   ?props=0 off.
+   ================================================================ */
+(function cansDeliveries() {
+  if (!PH.on) return;
+  try { if (window.__HB2) { const [x, z] = HB2.L2W(-2.4, 0.75), g = ground(WALL_AT.x, WALL_AT.z); phPlace('isl_spray', [[x, g, z, WALLP.ry + 0.4, 1]], { shadow: false }); } } catch (e) { }
+  const C = [], g = ground(17, 66) + 0.02; C.push([12.9, g, 72.9, 0.1, 1], [12.95, g + 0.36, 72.9, -0.2, 0.9]);
+  try { if (window.__LINE) C.push([-58.1, LINE.g0, 81.6, 0.3, 1], [-58.1, LINE.g0 + 0.36, 81.6, 0.1, 0.85], [-58.0, LINE.g0, 80.7, -0.4, 1]); } catch (e) { }
+  phPlace('isl_cardboard', C);
+})();
 
+/* ================================================================
+   v322 THE FRUIT STAND'S PRICE CARDS (2026-11-24)
+   Hand lettered price cards on sticks stuck into each crate, the fluorescent card stock every bodega uses: APPLES 3
+   FOR $2, LIMES 4 FOR $1, LEMONS 2 FOR $1, written in marker, a little crooked.
+   ================================================================ */
+(function priceCards() {
+  if (!PH.on) return; const g = ground(17, 66) + 0.02, x = 10.95;
+  [[60.5, 'APPLES', '3 FOR $2', '#f2ff4a'], [61.45, 'LIMES', '4 FOR $1', '#ff7ad1'], [62.4, 'LEMONS', '2 FOR $1', '#7affb1']].forEach(([z, a, b, col], i) => {
+    const t = signTex([{ t: a, s: 0.3, f: '"Permanent Marker",cursive' }, { t: b, s: 0.36, f: '"Permanent Marker",cursive' }], 256, 192, col, '#111111');
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.165), new THREE.MeshStandardMaterial({ map: t, roughness: 0.8, side: THREE.DoubleSide })); m.position.set(x - 0.22, g + 0.98, z + 0.12); m.rotation.set(0, -PI / 2, (i - 1) * 0.08); scene.add(m);
+    facPut('stud', x - 0.2, g + 0.8, z + 0.12, 0.012, 0.3, 0.012, 0); });
+  facFlush();
+})();
 
+/* ================================================================
+   v323 FRAME RATE: THE SMALLEST THINGS GO FIRST (2026-11-24)
+   v260's distance rule gave every prop at least 45 m. Fruit, bottles, bowls, cans and stools are under half a
+   metre: they now switch off beyond 28 m, the size of a crate beyond 40 m, everything else as before.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (!window.__PH || !PCULL) return; if ((PCULL.t2 = (PCULL.t2 || 0) + 1) % 15) return; const cp = camera.position;
+  PH.ims.forEach(im => { const s = im.geometry.boundingSphere; if (!s || !im.userData.__sz) { if (!im.userData.__sz) { im.geometry.computeBoundingBox && !im.geometry.boundingBox && im.geometry.computeBoundingBox(); const b = im.geometry.boundingBox; im.userData.__sz = b ? Math.max(b.max.x - b.min.x, b.max.y - b.min.y, b.max.z - b.min.z) : 1; } return; }
+    const sz = im.userData.__sz; if (sz > 0.9) return; const far = sz < 0.5 ? 28 : 40; if (s.center.distanceTo(cp) - s.radius > far) im.visible = false; }); } catch (e) { } });
 
+/* ================================================================
+   v324 THE FRUIT STAND AT NIGHT (2026-11-24)
+   A scanned caged work light hangs under the bodega's awning over the fruit stand, and after dusk it is a real cool
+   light on the fruit (one more practical, inside v177's nearest eight budget). ?props=0 off.
+   ================================================================ */
+(function standLight() { if (!PH.on) return; const g = ground(17, 66) + 0.02; phPlace('isl_caged', [[10.7, g + 2.6, 61.45, PI / 2, 0.6]], { shadow: false }); practical(10.7, g + 2.2, 61.45, 0xf0f6ff, 5, 6); })();
 
+/* ================================================================
+   v325 THE TOUR: THE GOODS (2026-11-24)
+   Three stops before the aerial: the bodega's fruit stand, the hardware store's sidewalk, and the market counters.
+   ================================================================ */
+(function tourV325() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [], g = ground(17, 66);
+  add.push({ name: 'the fruit stand', dur: 6, pos: [[9.2, g + 1.75, 64.6], [9.6, g + 1.6, 63.6]], look: [[11, g + 0.8, 61.5], [11, g + 0.8, 61.5]] });
+  if (window.__WT) { const x0 = WT_AT.x + 1.8, z = WT_AT.z + 4.24; add.push({ name: 'the hardware sidewalk', dur: 6, pos: [[x0 + 1.5, ground(x0, z) + 1.7, z + 4.5], [x0 + 2.2, ground(x0, z) + 1.6, z + 3.2]], look: [[x0 + 1.5, ground(x0, z) + 0.6, z], [x0 + 1.5, ground(x0, z) + 0.6, z]] }); }
+  if (window.__MKT && MKT.k && MKT.k[0]) { const k = MKT.k[0], gy = ground(k.x, k.z); add.push({ name: 'the market counters', dur: 6, pos: [[k.x - 2.5, gy + 1.7, k.z - 3.2], [k.x + 2.5, gy + 1.7, k.z - 3.2]], look: [[k.x, gy + 1.1, k.z - 0.8], [k.x + 3, gy + 1.1, k.z - 0.8]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
 
+/* ================================================================
+   v326 THE TOUR: DOWN THE BACK STAIRS (2026-11-24)
+   One stop inside the speakeasy under the bodega, to see its damask, its stools, its bottles and its barrels.
+   ================================================================ */
+(function tourV326() {
+  const T = (window.__game && __game.TOUR) || TOUR; if (!window.__BACK) return; const at = T.findIndex(r => r.name === 'aerial'), br = BACK.fy + 1.6;
+  T.splice(at < 0 ? T.length : at, 0, { name: 'the speakeasy', dur: 8, pre: () => { try { BACK.g.visible = true; BACK.show = LIFE.t + 8.5; } catch (e) { } }, pos: [[BACK.cx - 3, br, BACK.cz + 2.5], [BACK.cx - 1.5, br, BACK.cz - 1]], look: [[BACK.cx + 3.5, br - 0.3, BACK.cz], [BACK.cx + 4, br, BACK.cz - 2]] });
+})();
 
 
 
