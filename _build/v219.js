@@ -56,7 +56,7 @@ window.__SK2 = SK2;
   [-1, 3].forEach(u => stick.forEach((col, i) => { const [x, z] = L2W(u + (i % 2 ? 0.02 : -0.02), 2.8); facPut('white', x, g0 + 0.1 + i * 0.07, z, 0.055, 0.05, 0.055, ry, col); }));
   // ---- the bench for the ones who are not skating
   FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 }); FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
-  { const u0 = -1.5, v0 = 10.3; for (let k = 0; k < 3; k++) put('benchW', u0, v0 + (k - 1) * 0.12, 0.45, 2.0, 0.04, 0.1); for (let k = 0; k < 2; k++) put('benchW', u0, v0 + 0.22, 0.62 + k * 0.14, 2.0, 0.1, 0.04);
+  { const [bqx, bqz] = L2W(-1.5, 10.3); (window.BENCHQ = window.BENCHQ || []).push([bqx, g0, bqz, ry + PI]); } if (!LOOK.on || /props=0/.test(location.search)) { const u0 = -1.5, v0 = 10.3; for (let k = 0; k < 3; k++) put('benchW', u0, v0 + (k - 1) * 0.12, 0.45, 2.0, 0.04, 0.1); for (let k = 0; k < 2; k++) put('benchW', u0, v0 + 0.22, 0.62 + k * 0.14, 2.0, 0.1, 0.04);
     [-0.8, 0.8].forEach(d => { put('iron', u0 + d, v0, 0.22, 0.06, 0.44, 0.4); }); boxWalls(...L2W(u0, v0), 2.0, 0.5, ry, -1, g0 + 0.5); }
   facFlush();
   SK2.ok = true;

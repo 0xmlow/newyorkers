@@ -15,7 +15,7 @@ window.__LIN = LIN;
   FACM.cork = FACM.cork || new THREE.MeshStandardMaterial({ color: 0xa47c52, roughness: 0.95 });
   FACM.vend = FACM.vend || new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5 });
   // ---- chairs along the window, facing in
-  for (let i = 0; i < 3; i++) { const z = z0 - 3.3 + i * 0.52, x = x0 + D / 2 - 0.55;
+  LIN.chairs = []; for (let i = 0; i < 3; i++) { const z = z0 - 3.3 + i * 0.52, x = x0 + D / 2 - 0.55; LIN.chairs.push([x, g0, z, -PI / 2]); if (LOOK.on && !/props=0/.test(location.search)) continue;
     facPut('chair', x, g0 + 0.45, z, 0.44, 0.05, 0.44, 0); facPut('chair', x + 0.21, g0 + 0.72, z, 0.04, 0.5, 0.44, 0);
     facPut('steel', x, g0 + 0.22, z, 0.04, 0.44, 0.04, 0); facPut('steel', x, g0 + 0.02, z, 0.4, 0.03, 0.4, 0); }
   facPut('steel', x0 + D / 2 - 0.55, g0 + 0.36, z0 - 2.8, 0.5, 0.04, 1.6, 0);

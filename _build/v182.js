@@ -9,7 +9,7 @@ const POSTS2 = {};
 window.__POSTS2 = POSTS2;
 (function lampPosts() {
   if (!LOOK.on || /lamps=0/.test(location.search)) return;
-  const iron = new THREE.MeshStandardMaterial({ color: 0x1e2124, roughness: 0.45, metalness: 0.6 }), N = 36;
+  const iron = new THREE.MeshStandardMaterial({ color: 0x1e2124, roughness: 0.45, metalness: 0.6 }), N = 36; POSTS2.iron = iron;
   const parts = [[new THREE.CylinderGeometry(0.17, 0.24, 1.1, 12), 0.55], [new THREE.CylinderGeometry(0.2, 0.2, 0.08, 12), 1.12], [new THREE.CylinderGeometry(0.13, 0.13, 0.07, 10), 2.2], [new THREE.CylinderGeometry(0.12, 0.12, 0.07, 10), 4.6], [new THREE.CylinderGeometry(0.14, 0.1, 0.2, 10), 5.72], [new THREE.ConeGeometry(0.42, 0.34, 12), 6.62], [new THREE.SphereGeometry(0.06, 8, 6), 6.86]];
   const fl = new THREE.CylinderGeometry(0.03, 0.03, 0.95, 4); const m4 = new THREE.Matrix4();
   parts.forEach(([geo, y]) => { const im = new THREE.InstancedMesh(geo, iron, N); for (let i = 0; i < N; i++) { const [x, z] = P2((i + 0.5) / N * 360, 94.5); m4.makeTranslation(x, ground(x, z) + y, z); im.setMatrixAt(i, m4); } im.castShadow = true; scene.add(im); });

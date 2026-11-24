@@ -66,7 +66,7 @@ window.chainPanel = chainPanel;
   // ---- a bench and a cast iron fountain by the gate
   FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 });
   FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
-  { const bl = 2.0, lx = fx + 1.2, lz = z0c + 5.0; for (let k = 0; k < 3; k++) F(lx + (k - 1) * 0.12, g0 + 0.45, lz, 0.1, 0.04, bl, 'benchW'); for (let k = 0; k < 2; k++) F(lx + 0.2, g0 + 0.62 + k * 0.14, lz, 0.04, 0.1, bl, 'benchW');
+  { const [bqx, bqz] = L2W(fx + 1.2, z0c + 5.0); (window.BENCHQ = window.BENCHQ || []).push([bqx, g0, bqz, ry - PI / 2]); } if (!LOOK.on || /props=0/.test(location.search)) { const bl = 2.0, lx = fx + 1.2, lz = z0c + 5.0; for (let k = 0; k < 3; k++) F(lx + (k - 1) * 0.12, g0 + 0.45, lz, 0.1, 0.04, bl, 'benchW'); for (let k = 0; k < 2; k++) F(lx + 0.2, g0 + 0.62 + k * 0.14, lz, 0.04, 0.1, bl, 'benchW');
     [-0.8, 0.8].forEach(d => { F(lx, g0 + 0.22, lz + d, 0.4, 0.44, 0.06, 'iron'); F(lx + 0.2, g0 + 0.6, lz + d, 0.05, 0.4, 0.06, 'iron'); }); boxWalls(...L2W(lx, lz), 0.5, bl, ry, -5, g0 + 0.5); }
   { const [x, z] = L2W(-1.9, fz1 + 1.4); const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 0.85, 12), FACM.iron); ped.position.set(x, g0 + 0.43, z); ped.castShadow = true; scene.add(ped);
     const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.14, 16), FACM.iron); bowl.position.set(x, g0 + 0.92, z); scene.add(bowl);

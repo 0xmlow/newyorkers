@@ -1,0 +1,217 @@
+{
+ "isl_seating": {
+  "src": "ph_modular_street_seating",
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2c4370",
+    "dark": "#0d1424",
+    "k": 0.92,
+    "mat": "supports|connectors|armrests"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "isl_parks",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.62,
+    "size": 0.3
+   }
+  ],
+  "keepfrac": [
+   0,
+   0.44
+  ],
+  "keepmat": "timber|supports"
+ },
+ "isl_bin": {
+  "src": "ph_metal_trash_can",
+  "keepmat": "^metal_trash_can$",
+  "tris": 3000,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2c4370",
+    "dark": "#0b1220",
+    "k": 0.85
+   }
+  ],
+  "stickers": [
+   {
+    "img": "isl_dsny",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.36
+   }
+  ]
+ },
+ "isl_hydrant": {
+  "src": "ph_fire_hydrant",
+  "keepmat": "^fire_hydrant$",
+  "tris": 3000,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2962FF",
+    "dark": "#0b1a4a",
+    "k": 0.9,
+    "rough": 0.45
+   }
+  ],
+  "adds": [
+   {
+    "type": "disc",
+    "img": "eyeflower",
+    "size": 0.11,
+    "lift": 0.01
+   }
+  ]
+ },
+ "isl_lamp": {
+  "src": "ph_street_lamp_01",
+  "tris": 4000,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#24375c",
+    "dark": "#0b1220",
+    "k": 0.9,
+    "mat": "street_lamp_01$"
+   }
+  ]
+ },
+ "isl_monobloc": {
+  "src": "ph_plastic_monobloc_chair_01",
+  "tris": 1500,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#d8641e",
+    "dark": "#5a1e06",
+    "k": 0.95
+   }
+  ]
+ },
+ "isl_planter": {
+  "src": "ph_planter_box_01",
+  "tris": 2500,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2c4370",
+    "dark": "#0d1424",
+    "k": 0.6
+   }
+  ],
+  "stickers": [
+   {
+    "img": "eyeflower_gold",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.16
+   }
+  ]
+ },
+ "isl_trashbag": {
+  "src": "ph_trashbag",
+  "tris": 1500,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#26282c",
+    "dark": "#050506",
+    "k": 0.95,
+    "rough": 0.28
+   }
+  ]
+ },
+ "isl_utility": {
+  "src": "ph_utility_box_01",
+  "tris": 2000,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#5b6b5e",
+    "dark": "#1b211c",
+    "k": 0.7
+   }
+  ],
+  "stickers": [
+   {
+    "img": "m_9",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.6,
+    "size": 0.32
+   },
+   {
+    "img": "eyeflower_cyan",
+    "face": "-Y",
+    "u": 0.3,
+    "v": 0.2,
+    "size": 0.09
+   }
+  ]
+ },
+ "isl_crate": {
+  "src": "ph_wooden_crate_01",
+  "tris": 2500,
+  "stickers": [
+   {
+    "img": "m_20",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.22
+   }
+  ]
+ },
+ "isl_barrier": {
+  "src": "ph_concrete_road_barrier",
+  "tris": 3000,
+  "stickers": [
+   {
+    "img": "m_37",
+    "face": "-Y",
+    "u": 0.32,
+    "v": 0.5,
+    "size": 0.32
+   },
+   {
+    "img": "eyeflower_cyan",
+    "face": "-Y",
+    "u": 0.72,
+    "v": 0.45,
+    "size": 0.18
+   }
+  ]
+ },
+ "isl_seclight": {
+  "src": "ph_security_light",
+  "tris": 1500,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#3a3d42",
+    "dark": "#0c0d0f",
+    "k": 0.8,
+    "mat": "security_light$"
+   }
+  ]
+ },
+ "isl_pot": {
+  "src": "ph_potted_plant_02",
+  "tris": 4000
+ },
+ "isl_shutter": {
+  "src": "ph_rollershutter_door",
+  "keepmat": "^rollershutter_door$"
+ },
+ "isl_buoy": {
+  "src": "ph_ocean_buoy",
+  "tris": 3000
+ }
+}

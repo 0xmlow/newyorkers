@@ -11,7 +11,7 @@ window.__BASKET = BASKET;
   if (c && c.fillRect && c.beginPath) { c.clearRect(0, 0, 128, 128); c.strokeStyle = '#fff'; c.lineWidth = 7; for (let i = -128; i < 256; i += 32) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i + 128, 128); c.stroke(); c.beginPath(); c.moveTo(i + 128, 0); c.lineTo(i, 128); c.stroke(); } }
   const at = new THREE.CanvasTexture(cv); at.wrapS = at.wrapT = THREE.RepeatWrapping; at.repeat.set(6, 3);
   const mesh = new THREE.MeshStandardMaterial({ color: 0x2f5a3a, roughness: 0.5, metalness: 0.5, alphaMap: at, alphaTest: 0.5, transparent: false, side: THREE.DoubleSide });
-  const rimM = new THREE.MeshStandardMaterial({ color: 0x2a4f34, roughness: 0.4, metalness: 0.6 }), bag = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.35 });
+  const rimM = new THREE.MeshStandardMaterial({ color: 0x2a4f34, roughness: 0.4, metalness: 0.6 }), bag = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.35 }); BASKET.mesh = mesh; BASKET.rim = rimM;
   const spots = []; for (let i = 0; i < 18; i += 2) { const a = (i + 0.5) / 18 * 360; if (Math.abs(((a + 22.5) % 45) - 22.5) < 6) continue; spots.push(P2(a + 2.6, 43.75)); }
   [[2.55, 136], [-2.55, 152], [2.55, 168]].forEach(s => spots.push(s));
   const g1 = new THREE.CylinderGeometry(0.31, 0.26, 0.85, 20, 1, true), g2 = new THREE.TorusGeometry(0.31, 0.025, 6, 24), g3 = new THREE.CylinderGeometry(0.27, 0.22, 0.62, 14, 1, true);

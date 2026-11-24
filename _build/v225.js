@@ -11,7 +11,7 @@ window.__PKS = PKS;
   if (!FAC_ON || /parksigns=0/.test(location.search)) return;
   const make = (name, sub) => { const cv = document.createElement('canvas'); cv.width = 768; cv.height = 384; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
     if (!c || !c.fillText || !c.strokeRect) return t;
-    const draw = img => { c.fillStyle = '#244232'; c.fillRect(0, 0, 768, 384); c.strokeStyle = '#efe8da'; c.lineWidth = 6; c.strokeRect(16, 16, 736, 352);
+    const draw = img => { c.fillStyle = '#16233f'; c.fillRect(0, 0, 768, 384); c.strokeStyle = '#efe8da'; c.lineWidth = 6; c.strokeRect(16, 16, 736, 352);
       if (img) c.drawImage(img, 40, 92, 200, 200); else { c.fillStyle = '#efe8da'; c.beginPath(); c.arc(140, 192, 70, 0, PI * 2); c.fill(); }
       c.fillStyle = '#efe8da'; c.textBaseline = 'middle'; c.font = '700 44px "Archivo Black",Impact,sans-serif'; c.fillText('N3W PARKS', 270, 118);
       c.fillRect(270, 152, 440, 4); c.font = `900 ${name.length > 12 ? 46 : 58}px "Archivo Black",Impact,sans-serif`; c.fillText(name, 270, 214);

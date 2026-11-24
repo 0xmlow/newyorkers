@@ -20,7 +20,7 @@ window.__DR2 = DR2;
   const b = 0.6; [[0, -hz - b / 2, DRUN_AT.w + 2 * b, b], [0, hz + b / 2, DRUN_AT.w + 2 * b, b], [-hx - b / 2, 0, b, DRUN_AT.l], [hx + b / 2, -hz / 2 - 0.4, b, hz - 0.8], [hx + b / 2, hz / 2 + 0.4, b, hz - 0.8]]
     .forEach(([u, v, w, d]) => facPut('gravel', x0 + u, g0 + 0.02, z0 + v, w, 0.04, d, 0));
   // ---- the bench inside along the back fence
-  { const x = x0 - hx + 0.4; for (let k = 0; k < 3; k++) facPut('benchW', x + (k - 1) * 0.12, g0 + 0.45, z0, 0.1, 0.04, 2.2, 0); for (let k = 0; k < 2; k++) facPut('benchW', x - 0.2, g0 + 0.62 + k * 0.14, z0, 0.04, 0.1, 2.2, 0);
+  (window.BENCHQ = window.BENCHQ || []).push([x0 - hx + 0.45, g0, z0, PI / 2]); if (!LOOK.on || /props=0/.test(location.search)) { const x = x0 - hx + 0.4; for (let k = 0; k < 3; k++) facPut('benchW', x + (k - 1) * 0.12, g0 + 0.45, z0, 0.1, 0.04, 2.2, 0); for (let k = 0; k < 2; k++) facPut('benchW', x - 0.2, g0 + 0.62 + k * 0.14, z0, 0.04, 0.1, 2.2, 0);
     [-0.9, 0.9].forEach(d => facPut('iron', x, g0 + 0.22, z0 + d, 0.4, 0.44, 0.06, 0)); }
   // ---- a tyre jump in one corner, an A frame in the other
   { const x = x0 + hx - 1.3, z = z0 - hz + 1.2, t = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 8, 18), FACM.tyre); t.position.set(x, g0 + 0.62, z); t.rotation.y = PI / 2; t.castShadow = true; scene.add(t);

@@ -4,7 +4,7 @@
    five slats in the seat, three in a back that leans away, cast iron ends with a front leg, a raked back leg and an
    armrest, the same places and the same way round. ?benches=0 off.
    ================================================================ */
-const BENCH = { n: 0 };
+const BENCH = { n: 0, ims: [], seat: null };
 window.__BENCH = BENCH;
 (function benches() {
   if (!LOOK.on || /benches=0/.test(location.search)) return; let seat = null; const hide = [];
@@ -21,6 +21,6 @@ window.__BENCH = BENCH;
   byMat.forEach((ps, mat) => { const im = new THREE.InstancedMesh(FAC_BOX, mat, ps.length * n); let k = 0;
     for (let i = 0; i < n; i++) { seat.getMatrixAt(i, m4); m4.decompose(pos, q, sc); b4.compose(new V3(pos.x, pos.y - 0.45, pos.z), q, new V3(1, 1, 1));
       ps.forEach(([, sx, sy, sz, x, y, z, rx]) => { l4.compose(new V3(x, y, z), new THREE.Quaternion().setFromEuler(e.set(rx, 0, 0)), new V3(sx, sy, sz)); im.setMatrixAt(k++, new THREE.Matrix4().multiplyMatrices(b4, l4)); }); }
-    im.castShadow = im.receiveShadow = true; scene.add(im); });
-  BENCH.n = n;
+    im.castShadow = im.receiveShadow = true; scene.add(im); BENCH.ims.push(im); });
+  BENCH.n = n; BENCH.seat = seat;
 })();

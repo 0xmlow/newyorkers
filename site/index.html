@@ -11718,7 +11718,7 @@ const POSTS2 = {};
 window.__POSTS2 = POSTS2;
 (function lampPosts() {
   if (!LOOK.on || /lamps=0/.test(location.search)) return;
-  const iron = new THREE.MeshStandardMaterial({ color: 0x1e2124, roughness: 0.45, metalness: 0.6 }), N = 36;
+  const iron = new THREE.MeshStandardMaterial({ color: 0x1e2124, roughness: 0.45, metalness: 0.6 }), N = 36; POSTS2.iron = iron;
   const parts = [[new THREE.CylinderGeometry(0.17, 0.24, 1.1, 12), 0.55], [new THREE.CylinderGeometry(0.2, 0.2, 0.08, 12), 1.12], [new THREE.CylinderGeometry(0.13, 0.13, 0.07, 10), 2.2], [new THREE.CylinderGeometry(0.12, 0.12, 0.07, 10), 4.6], [new THREE.CylinderGeometry(0.14, 0.1, 0.2, 10), 5.72], [new THREE.ConeGeometry(0.42, 0.34, 12), 6.62], [new THREE.SphereGeometry(0.06, 8, 6), 6.86]];
   const fl = new THREE.CylinderGeometry(0.03, 0.03, 0.95, 4); const m4 = new THREE.Matrix4();
   parts.forEach(([geo, y]) => { const im = new THREE.InstancedMesh(geo, iron, N); for (let i = 0; i < N; i++) { const [x, z] = P2((i + 0.5) / N * 360, 94.5); m4.makeTranslation(x, ground(x, z) + y, z); im.setMatrixAt(i, m4); } im.castShadow = true; scene.add(im); });
@@ -11864,7 +11864,7 @@ window.__PIER2 = PIER2;
    five slats in the seat, three in a back that leans away, cast iron ends with a front leg, a raked back leg and an
    armrest, the same places and the same way round. ?benches=0 off.
    ================================================================ */
-const BENCH = { n: 0 };
+const BENCH = { n: 0, ims: [], seat: null };
 window.__BENCH = BENCH;
 (function benches() {
   if (!LOOK.on || /benches=0/.test(location.search)) return; let seat = null; const hide = [];
@@ -11881,8 +11881,8 @@ window.__BENCH = BENCH;
   byMat.forEach((ps, mat) => { const im = new THREE.InstancedMesh(FAC_BOX, mat, ps.length * n); let k = 0;
     for (let i = 0; i < n; i++) { seat.getMatrixAt(i, m4); m4.decompose(pos, q, sc); b4.compose(new V3(pos.x, pos.y - 0.45, pos.z), q, new V3(1, 1, 1));
       ps.forEach(([, sx, sy, sz, x, y, z, rx]) => { l4.compose(new V3(x, y, z), new THREE.Quaternion().setFromEuler(e.set(rx, 0, 0)), new V3(sx, sy, sz)); im.setMatrixAt(k++, new THREE.Matrix4().multiplyMatrices(b4, l4)); }); }
-    im.castShadow = im.receiveShadow = true; scene.add(im); });
-  BENCH.n = n;
+    im.castShadow = im.receiveShadow = true; scene.add(im); BENCH.ims.push(im); });
+  BENCH.n = n; BENCH.seat = seat;
 })();
 
 /* ================================================================
@@ -11919,7 +11919,7 @@ window.__BASKET = BASKET;
   if (c && c.fillRect && c.beginPath) { c.clearRect(0, 0, 128, 128); c.strokeStyle = '#fff'; c.lineWidth = 7; for (let i = -128; i < 256; i += 32) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i + 128, 128); c.stroke(); c.beginPath(); c.moveTo(i + 128, 0); c.lineTo(i, 128); c.stroke(); } }
   const at = new THREE.CanvasTexture(cv); at.wrapS = at.wrapT = THREE.RepeatWrapping; at.repeat.set(6, 3);
   const mesh = new THREE.MeshStandardMaterial({ color: 0x2f5a3a, roughness: 0.5, metalness: 0.5, alphaMap: at, alphaTest: 0.5, transparent: false, side: THREE.DoubleSide });
-  const rimM = new THREE.MeshStandardMaterial({ color: 0x2a4f34, roughness: 0.4, metalness: 0.6 }), bag = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.35 });
+  const rimM = new THREE.MeshStandardMaterial({ color: 0x2a4f34, roughness: 0.4, metalness: 0.6 }), bag = new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.35 }); BASKET.mesh = mesh; BASKET.rim = rimM;
   const spots = []; for (let i = 0; i < 18; i += 2) { const a = (i + 0.5) / 18 * 360; if (Math.abs(((a + 22.5) % 45) - 22.5) < 6) continue; spots.push(P2(a + 2.6, 43.75)); }
   [[2.55, 136], [-2.55, 152], [2.55, 168]].forEach(s => spots.push(s));
   const g1 = new THREE.CylinderGeometry(0.31, 0.26, 0.85, 20, 1, true), g2 = new THREE.TorusGeometry(0.31, 0.025, 6, 24), g3 = new THREE.CylinderGeometry(0.27, 0.22, 0.62, 14, 1, true);
@@ -12594,7 +12594,7 @@ window.chainPanel = chainPanel;
   // ---- a bench and a cast iron fountain by the gate
   FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 });
   FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
-  { const bl = 2.0, lx = fx + 1.2, lz = z0c + 5.0; for (let k = 0; k < 3; k++) F(lx + (k - 1) * 0.12, g0 + 0.45, lz, 0.1, 0.04, bl, 'benchW'); for (let k = 0; k < 2; k++) F(lx + 0.2, g0 + 0.62 + k * 0.14, lz, 0.04, 0.1, bl, 'benchW');
+  { const [bqx, bqz] = L2W(fx + 1.2, z0c + 5.0); (window.BENCHQ = window.BENCHQ || []).push([bqx, g0, bqz, ry - PI / 2]); } if (!LOOK.on || /props=0/.test(location.search)) { const bl = 2.0, lx = fx + 1.2, lz = z0c + 5.0; for (let k = 0; k < 3; k++) F(lx + (k - 1) * 0.12, g0 + 0.45, lz, 0.1, 0.04, bl, 'benchW'); for (let k = 0; k < 2; k++) F(lx + 0.2, g0 + 0.62 + k * 0.14, lz, 0.04, 0.1, bl, 'benchW');
     [-0.8, 0.8].forEach(d => { F(lx, g0 + 0.22, lz + d, 0.4, 0.44, 0.06, 'iron'); F(lx + 0.2, g0 + 0.6, lz + d, 0.05, 0.4, 0.06, 'iron'); }); boxWalls(...L2W(lx, lz), 0.5, bl, ry, -5, g0 + 0.5); }
   { const [x, z] = L2W(-1.9, fz1 + 1.4); const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 0.85, 12), FACM.iron); ped.position.set(x, g0 + 0.43, z); ped.castShadow = true; scene.add(ped);
     const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.14, 16), FACM.iron); bowl.position.set(x, g0 + 0.92, z); scene.add(bowl);
@@ -12729,7 +12729,7 @@ window.__SK2 = SK2;
   [-1, 3].forEach(u => stick.forEach((col, i) => { const [x, z] = L2W(u + (i % 2 ? 0.02 : -0.02), 2.8); facPut('white', x, g0 + 0.1 + i * 0.07, z, 0.055, 0.05, 0.055, ry, col); }));
   // ---- the bench for the ones who are not skating
   FACM.benchW = FACM.benchW || new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.75 }); FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
-  { const u0 = -1.5, v0 = 10.3; for (let k = 0; k < 3; k++) put('benchW', u0, v0 + (k - 1) * 0.12, 0.45, 2.0, 0.04, 0.1); for (let k = 0; k < 2; k++) put('benchW', u0, v0 + 0.22, 0.62 + k * 0.14, 2.0, 0.1, 0.04);
+  { const [bqx, bqz] = L2W(-1.5, 10.3); (window.BENCHQ = window.BENCHQ || []).push([bqx, g0, bqz, ry + PI]); } if (!LOOK.on || /props=0/.test(location.search)) { const u0 = -1.5, v0 = 10.3; for (let k = 0; k < 3; k++) put('benchW', u0, v0 + (k - 1) * 0.12, 0.45, 2.0, 0.04, 0.1); for (let k = 0; k < 2; k++) put('benchW', u0, v0 + 0.22, 0.62 + k * 0.14, 2.0, 0.1, 0.04);
     [-0.8, 0.8].forEach(d => { put('iron', u0 + d, v0, 0.22, 0.06, 0.44, 0.4); }); boxWalls(...L2W(u0, v0), 2.0, 0.5, ry, -1, g0 + 0.5); }
   facFlush();
   SK2.ok = true;
@@ -12806,7 +12806,7 @@ window.__DR2 = DR2;
   const b = 0.6; [[0, -hz - b / 2, DRUN_AT.w + 2 * b, b], [0, hz + b / 2, DRUN_AT.w + 2 * b, b], [-hx - b / 2, 0, b, DRUN_AT.l], [hx + b / 2, -hz / 2 - 0.4, b, hz - 0.8], [hx + b / 2, hz / 2 + 0.4, b, hz - 0.8]]
     .forEach(([u, v, w, d]) => facPut('gravel', x0 + u, g0 + 0.02, z0 + v, w, 0.04, d, 0));
   // ---- the bench inside along the back fence
-  { const x = x0 - hx + 0.4; for (let k = 0; k < 3; k++) facPut('benchW', x + (k - 1) * 0.12, g0 + 0.45, z0, 0.1, 0.04, 2.2, 0); for (let k = 0; k < 2; k++) facPut('benchW', x - 0.2, g0 + 0.62 + k * 0.14, z0, 0.04, 0.1, 2.2, 0);
+  (window.BENCHQ = window.BENCHQ || []).push([x0 - hx + 0.45, g0, z0, PI / 2]); if (!LOOK.on || /props=0/.test(location.search)) { const x = x0 - hx + 0.4; for (let k = 0; k < 3; k++) facPut('benchW', x + (k - 1) * 0.12, g0 + 0.45, z0, 0.1, 0.04, 2.2, 0); for (let k = 0; k < 2; k++) facPut('benchW', x - 0.2, g0 + 0.62 + k * 0.14, z0, 0.04, 0.1, 2.2, 0);
     [-0.9, 0.9].forEach(d => facPut('iron', x, g0 + 0.22, z0 + d, 0.4, 0.44, 0.06, 0)); }
   // ---- a tyre jump in one corner, an A frame in the other
   { const x = x0 + hx - 1.3, z = z0 - hz + 1.2, t = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 8, 18), FACM.tyre); t.position.set(x, g0 + 0.62, z); t.rotation.y = PI / 2; t.castShadow = true; scene.add(t);
@@ -12941,7 +12941,7 @@ window.__PKS = PKS;
   if (!FAC_ON || /parksigns=0/.test(location.search)) return;
   const make = (name, sub) => { const cv = document.createElement('canvas'); cv.width = 768; cv.height = 384; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
     if (!c || !c.fillText || !c.strokeRect) return t;
-    const draw = img => { c.fillStyle = '#244232'; c.fillRect(0, 0, 768, 384); c.strokeStyle = '#efe8da'; c.lineWidth = 6; c.strokeRect(16, 16, 736, 352);
+    const draw = img => { c.fillStyle = '#16233f'; c.fillRect(0, 0, 768, 384); c.strokeStyle = '#efe8da'; c.lineWidth = 6; c.strokeRect(16, 16, 736, 352);
       if (img) c.drawImage(img, 40, 92, 200, 200); else { c.fillStyle = '#efe8da'; c.beginPath(); c.arc(140, 192, 70, 0, PI * 2); c.fill(); }
       c.fillStyle = '#efe8da'; c.textBaseline = 'middle'; c.font = '700 44px "Archivo Black",Impact,sans-serif'; c.fillText('N3W PARKS', 270, 118);
       c.fillRect(270, 152, 440, 4); c.font = `900 ${name.length > 12 ? 46 : 58}px "Archivo Black",Impact,sans-serif`; c.fillText(name, 270, 214);
@@ -13079,7 +13079,7 @@ window.__LIN = LIN;
   FACM.cork = FACM.cork || new THREE.MeshStandardMaterial({ color: 0xa47c52, roughness: 0.95 });
   FACM.vend = FACM.vend || new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.5 });
   // ---- chairs along the window, facing in
-  for (let i = 0; i < 3; i++) { const z = z0 - 3.3 + i * 0.52, x = x0 + D / 2 - 0.55;
+  LIN.chairs = []; for (let i = 0; i < 3; i++) { const z = z0 - 3.3 + i * 0.52, x = x0 + D / 2 - 0.55; LIN.chairs.push([x, g0, z, -PI / 2]); if (LOOK.on && !/props=0/.test(location.search)) continue;
     facPut('chair', x, g0 + 0.45, z, 0.44, 0.05, 0.44, 0); facPut('chair', x + 0.21, g0 + 0.72, z, 0.04, 0.5, 0.44, 0);
     facPut('steel', x, g0 + 0.22, z, 0.04, 0.44, 0.04, 0); facPut('steel', x, g0 + 0.02, z, 0.4, 0.03, 0.4, 0); }
   facPut('steel', x0 + D / 2 - 0.55, g0 + 0.36, z0 - 2.8, 0.5, 0.04, 1.6, 0);
@@ -13214,8 +13214,8 @@ window.__FRAMES.push(() => { try { if (!PO2.ok) return; if (Math.hypot(P.x - POE
     const t = signTex([{ t: String(num), s: 0.6, f: 'Georgia, serif' }], 256, 96, '#00000000', '#f2e6c8'); const m = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.19), new THREE.MeshBasicMaterial({ map: t, transparent: true, toneMapped: false }));
     m.position.set(cx + nx * (hd + 0.065) + tx * u, g + 2.5, cz + nz * (hd + 0.065) + tz * u); m.rotation.y = Math.atan2(nx, nz); scene.add(m);
     // bins and bags at the kerb, a little along the wall
-    [[1.6, 0.6], [2.3, 0.6]].forEach(([du, dw]) => { const b = new THREE.Mesh(binG, FACM.bin); b.position.set(cx + nx * (hd + dw) + tx * (u + du), g + 0.48, cz + nz * (hd + dw) + tz * (u + du)); b.castShadow = true; scene.add(b); post(b.position.x, b.position.z, 0.32, -5, g + 1); });
-    [[2.9, 0.5, 1], [3.3, 0.7, 0.85], [3.05, 0.95, 0.9]].forEach(([du, dw, s]) => { const b = new THREE.Mesh(bagG, bagM); b.scale.set(s, s * 0.85, s); b.position.set(cx + nx * (hd + dw) + tx * (u + du), g + 0.22 * s, cz + nz * (hd + dw) + tz * (u + du)); b.castShadow = true; scene.add(b); }); };
+    [[1.6, 0.6], [2.3, 0.6]].forEach(([du, dw]) => { const b = new THREE.Mesh(binG, FACM.bin); (BLK.bins = BLK.bins || []).push(b); b.position.set(cx + nx * (hd + dw) + tx * (u + du), g + 0.48, cz + nz * (hd + dw) + tz * (u + du)); b.castShadow = true; scene.add(b); post(b.position.x, b.position.z, 0.32, -5, g + 1); });
+    [[2.9, 0.5, 1], [3.3, 0.7, 0.85], [3.05, 0.95, 0.9]].forEach(([du, dw, s]) => { const b = new THREE.Mesh(bagG, bagM); (BLK.bags = BLK.bags || []).push(b); b.scale.set(s, s * 0.85, s); b.position.set(cx + nx * (hd + dw) + tx * (u + du), g + 0.22 * s, cz + nz * (hd + dw) + tz * (u + du)); b.castShadow = true; scene.add(b); }); };
   try { const g = ground(17, 66) + 0.02; door(17, 66, 0, 1, 7.2, -3.0, g, 420); } catch (e) { }
   try { if (BLK.laund) door(-86, -4, 0, -1, 4, -1.3, LAUND.g0, 69); } catch (e) { }
   try { if (BLK.drop) door(-62, 80, 1, 0, 3.5, 0.7, LINE.g0, 6529); } catch (e) { }
@@ -13292,6 +13292,328 @@ window.__FRAMES.push(() => { try { if (!LGD.ok || Math.abs(P.z - 120) > 80) retu
   try { if (window.__CS2 && CS2.ok) { const g = ground(74, -21); add.push({ name: 'the chess sets', dur: 6, pos: [[75.6, g + 1.9, -19.4], [75.0, g + 1.6, -19.9]], look: [[74, g + 0.8, -21], [74, g + 0.8, -21]] }); } } catch (e) { }
   const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
 })();
+
+/* ================================================================
+   v237 FRAME RATE: THE FACADES CULL (2026-11-23)
+   Every instanced facade part since v173 (windows, cornices, fire escapes, signs, benches, kerbs, rooftop gear)
+   was drawn every frame and into every shadow map, even behind you, because an InstancedMesh in three r128 culls
+   against its one unit box and so had culling switched off. Each of those meshes now gets its own bounding sphere
+   round the instances it actually holds and culls like everything else: the parts of the island you are not
+   looking at cost nothing, in the main pass and in the shadow pass. facFlush() does it for every flush from here
+   on. ?cull=0 turns it off.
+   ================================================================ */
+const CULL = { n: 0, skipped: 0 };
+window.__CULL = CULL;
+function cullBound(im) {
+  if (!im || !im.isInstancedMesh || im.userData.__culled) return false;
+  const g = im.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); const r0 = g.boundingSphere.radius, c0 = g.boundingSphere.center;
+  const m4 = new THREE.Matrix4(), p = new THREE.Vector3(), s = new THREE.Vector3(), q = new THREE.Quaternion(), box = new THREE.Box3(); let maxR = 0;
+  for (let i = 0; i < im.count; i++) { im.getMatrixAt(i, m4); m4.decompose(p, q, s); const sc = Math.max(s.x, s.y, s.z); if (sc === 0) continue; p.add(c0.clone().multiply(s).applyQuaternion(q)); box.expandByPoint(p); maxR = Math.max(maxR, r0 * sc); }
+  if (box.isEmpty()) return false;
+  const sph = new THREE.Sphere(); box.getBoundingSphere(sph); sph.radius += maxR;
+  if (sph.radius > 140) { CULL.skipped++; return false; }   // island wide: culling buys nothing
+  const ng = g.clone(); ng.boundingSphere = sph; ng.boundingBox = null; im.geometry = ng; im.frustumCulled = true; im.userData.__culled = true; CULL.n++; return true;
+}
+window.cullBound = cullBound;
+(function facadesCull() {
+  if (/cull=0/.test(location.search) || typeof FACM === 'undefined') return;
+  const facMats = new Set(Object.values(FACM));
+  scene.traverse(o => { if (o.isInstancedMesh && !o.frustumCulled && (facMats.has(o.material) || o.geometry === FAC_BOX)) cullBound(o); });
+  // every later flush: bound the meshes it adds
+  const _ff = facFlush; facFlush = function () { const n0 = scene.children.length; _ff(); for (let i = n0; i < scene.children.length; i++) cullBound(scene.children[i]); };
+})();
+
+/* ================================================================
+   v238 REAL PROPS: THE CC0 LIBRARY ON THE ISLAND (2026-11-23)
+   The island's street furniture was mostly built in code out of boxes, and it looked it. From here it comes from
+   MLow's CC0 library instead: scanned Poly Haven models (the ON LOCATION set), pushed through his wrap tool
+   (_build/cc0/island_brand.py, the ON LOCATION brand_pass adapted) to wear the island's own livery: navy enamel,
+   bone lettering, cobalt, an Open Eye Flower medallion, and real 6529 Memes cards pressed onto them like stickers.
+   The models live in assets/glb/ph and are drawn as instanced meshes, one draw per part however many copies.
+   phPlace(name, list) puts a model at [x, y, z, ry, scale] each; phLoad(name) gives its parts and its size.
+   Later versions use these to replace the boxy props one kind at a time. ?props=0 turns the library off.
+   ================================================================ */
+const PH = { cache: {}, base: 'assets/glb/ph/', placed: 0, ims: [], on: LOOK.on && !/props=0/.test(location.search) };
+window.__PH = PH;
+function phLoad(name) {
+  if (PH.cache[name]) return PH.cache[name];
+  PH.cache[name] = new Promise((res, rej) => { if (!gltfLoader) return rej(new Error('no loader'));
+    gltfLoader.load(PH.base + name + '.glb', g => { const parts = [], box = new THREE.Box3(); g.scene.updateMatrixWorld(true);
+      g.scene.traverse(o => { if (!o.isMesh) return; const m = o.material; if (m) { m.envMapIntensity = 1.0; if (m.map) m.map.anisotropy = ANISO; }
+        parts.push({ geo: o.geometry, mat: m, m4: o.matrixWorld.clone() }); box.expandByObject(o); });
+      res({ parts, size: box.getSize(new THREE.Vector3()), min: box.min.clone() }); }, undefined, rej); });
+  return PH.cache[name];
+}
+// list: [[x, y, z, ry, s], ...]; s a number or [sx, sy, sz]. Returns a promise of the instanced meshes.
+function phPlace(name, list, opt) { opt = opt || {};
+  if (!PH.on || !list.length) return Promise.resolve([]);
+  return phLoad(name).then(M => { const out = [], base = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), s3 = new THREE.Vector3(), p3 = new THREE.Vector3();
+    M.parts.forEach(pt => { const im = new THREE.InstancedMesh(pt.geo, pt.mat, list.length);
+      list.forEach((L, i) => { const s = L[4] == null ? 1 : L[4]; Array.isArray(s) ? s3.set(s[0], s[1], s[2]) : s3.setScalar(s);
+        base.compose(p3.set(L[0], L[1], L[2]), q.setFromEuler(e.set(0, L[3] || 0, 0)), s3); im.setMatrixAt(i, new THREE.Matrix4().multiplyMatrices(base, pt.m4)); });
+      im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
+    PH.placed += list.length; return out; }).catch(e => { if (!PH.err) { PH.err = e; console.warn('v238 props', name, e); } return []; });
+}
+window.phPlace = phPlace; window.phLoad = phLoad;
+
+/* ================================================================
+   v239 REAL PROPS: BENCHES (2026-11-23)
+   Every bench on the island is now the same scanned park bench: hardwood slats on cast steel supports, with a
+   small N3W PARKS plaque pressed into the backrest by the wrap tool. It replaces the slat-and-box benches of v188
+   along the promenade and the pier, and the coded ones by the handball court, at the skate plaza and in the dog
+   run. Same places, same way round. ?props=0 brings the old ones back.
+   ================================================================ */
+(function benchesCC0() {
+  if (!PH.on) return; const list = [];
+  try { if (window.__BENCH && BENCH.seat && BENCH.ims.length) { const m4 = new THREE.Matrix4(), p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(), e = new THREE.Euler();
+      for (let i = 0; i < BENCH.seat.count; i++) { BENCH.seat.getMatrixAt(i, m4); m4.decompose(p, q, s); e.setFromQuaternion(q, 'YXZ'); list.push([p.x, p.y - 0.45, p.z, e.y]); } } } catch (e) { }
+  (window.BENCHQ || []).forEach(b => list.push(b.slice()));
+  if (!list.length) return;
+  phLoad('isl_seating').then(M => { const k = 2.2 / Math.max(0.5, M.size.x); list.forEach(L => L[4] = k);
+    return phPlace('isl_seating', list).then(ims => { if (ims.length && window.__BENCH) BENCH.ims.forEach(o => o.visible = false); }); }).catch(() => { });
+})();
+
+/* ================================================================
+   v240 REAL PROPS: THE STREET (2026-11-23)
+   More of the coded street furniture gives way to the scanned, re-skinned CC0 set:
+   - the bins and black bags at the three tenement doors (v233) are a real dented can in the island's navy with a
+     N3W SANITATION plate, and real knotted bin bags;
+   - the chairs along the laundromat window are moulded monobloc chairs in laundromat orange;
+   - planters with an Open Eye Flower on the front flank the laundromat door and the bodega's side door;
+   - wooden crates with a 6529 card pasted on stand by the bodega, a utility box with The Institutions Are Coming
+     wheatpasted on it by the handball court and the skate plaza;
+   - two red navigation buoys mark the channel either side of the pier.
+   ?props=0 brings the old ones back.
+   ================================================================ */
+(function streetCC0() {
+  if (!PH.on) return; const R = (a, b) => a + Math.random() * (b - a);
+  try { if (BLK.bins && BLK.bins.length) { phPlace('isl_bin', BLK.bins.map(b => [b.position.x, b.position.y - 0.48, b.position.z, R(0, 6.28), 0.95])).then(ims => { if (ims.length) BLK.bins.forEach(b => b.visible = false); }); } } catch (e) { }
+  try { if (BLK.bags && BLK.bags.length) { phPlace('isl_trashbag', BLK.bags.map(b => [b.position.x, b.position.y - 0.22 * b.scale.x, b.position.z, R(0, 6.28), 1.2 * b.scale.x])).then(ims => { if (ims.length) BLK.bags.forEach(b => b.visible = false); }); } } catch (e) { }
+  try { if (window.__LIN && LIN.chairs) phPlace('isl_monobloc', LIN.chairs.map(c => [c[0], c[1] + 0.02, c[2], c[3] + R(-0.12, 0.12), 0.95])); } catch (e) { }
+  const planters = [], crates = [], util = [];
+  try { if (window.__LAUND) { const g = LAUND.g0; planters.push([-82.7, g, -7.3, PI / 2], [-82.7, g, -0.7, PI / 2]); } } catch (e) { }
+  try { const g = ground(17, 66) + 0.02; planters.push([12.9, g, 73.75, 0]); crates.push([11.0, g, 58.6, -PI / 2 + 0.2], [11.1, g + 0.35, 58.7, -PI / 2 - 0.1], [10.9, g, 59.5, -PI / 2]); } catch (e) { }
+  try { if (window.__HB2 && HB2.L2W) { const [x, z] = HB2.L2W(4.9, 10.4); util.push([x, ground(x, z), z, WALLP.ry]); } } catch (e) { }
+  try { if (window.__SK) { const [x, z] = SK.L2W(9.4, -4.4); util.push([x, ground(x, z), z, SK.ry - PI / 2]); } } catch (e) { }
+  phPlace('isl_planter', planters); phPlace('isl_crate', crates); phPlace('isl_utility', util);
+  [[-13, 150], [13, 150]].forEach(([x, z]) => phPlace('isl_buoy', [[x, -0.9, z, R(0, 6.28), 1.1]], { shadow: false }).then(ims => ims.forEach(im => (window.__BUOYS2 = window.__BUOYS2 || []).push(im))));
+  // the buoys ride the swell
+  window.__FRAMES.push(() => { try { (window.__BUOYS2 || []).forEach((im, i) => { im.position.y = Math.sin(LIFE.t * 0.9 + i) * 0.12; im.rotation.z = Math.sin(LIFE.t * 0.7 + i * 2) * 0.05; }); } catch (e) { } });
+})();
+
+/* ================================================================
+   v241 THE MEME RIVER (2026-11-23)
+   The thing that ties the island together. A river of MLow's liquid contour lines is inlaid down the middle of
+   every main walkway: round the promenade ring and in along the four spokes, all of it flowing toward THE FLOOR,
+   the grid of 6529 Memes at the centre. Navy ground, contour lines in cobalt, cyan, bone and a little hot pink
+   that bend and braid as they flow, and Open Eye Flowers drifting on the current, turning slowly, watching.
+   From the ground it is a painted path; from the air it is one drawing that holds every zone in its loop. After
+   dusk the lines glow. ?river=0 turns it off.
+   ================================================================ */
+const RIVER = { mat: null, t: 0 };
+window.__RIVER = RIVER;
+(function memeRiver() {
+  if (!LOOK.on || /river=0/.test(location.search)) return;
+  const PY = 0.665 + 0.012, P = [], U = [], I = []; let vi = 0;
+  // a strip from a list of centre points: uv.x = metres along (s), uv.y = -1..1 across
+  const strip = (pts, w, s0, dir) => { let s = s0; for (let i = 0; i < pts.length; i++) { const [x, z] = pts[i], [x2, z2] = pts[Math.min(pts.length - 1, i + 1)], [x1, z1] = pts[Math.max(0, i - 1)];
+      let tx = x2 - x1, tz = z2 - z1; const l = Math.hypot(tx, tz) || 1; tx /= l; tz /= l; const nx = -tz, nz = tx;
+      if (i > 0) s += Math.hypot(x - pts[i - 1][0], z - pts[i - 1][1]) * dir;
+      P.push(x + nx * w / 2, PY, z + nz * w / 2, x - nx * w / 2, PY, z - nz * w / 2); U.push(s, 1, s, -1);
+      if (i > 0) I.push(vi - 2, vi - 1, vi, vi - 1, vi + 1, vi); vi += 2; } };
+  // the ring, flowing round
+  { const pts = []; for (let i = 0; i <= 320; i++) { const a = i / 320 * PI * 2; pts.push([Math.cos(a) * 40, Math.sin(a) * 40]); } strip(pts, 2.4, 0, 1); }
+  // the spokes, flowing inward (s decreasing toward the centre so the flow runs in)
+  const spoke = (ax, az, bx, bz, w) => { const n = Math.max(2, Math.round(Math.hypot(bx - ax, bz - az) / 1.5)), pts = []; for (let i = 0; i <= n; i++) pts.push([ax + (bx - ax) * i / n, az + (bz - az) * i / n]); strip(pts, w, 0, -1); };
+  spoke(0, 96, 0, 42.4, 2.2); spoke(0, 37.6, 0, 16.4, 2.0); spoke(0, -50, 0, -42.4, 2.0); spoke(0, -37.6, 0, -16.4, 2.0);
+  spoke(53, 0, 42.4, 0, 2.0); spoke(37.6, 0, 16.4, 0, 2.0); spoke(-55.5, 0, -42.4, 0, 2.0); spoke(-37.6, 0, -16.4, 0, 2.0);
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); g.setIndex(I); g.computeVertexNormals();
+  const flower = tex('assets/iv_flower.webp');
+  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0.0, transparent: true, side: THREE.DoubleSide, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+  mat.onBeforeCompile = sh => { sh.uniforms.uT = { value: 0 }; sh.uniforms.uNight = { value: 0 }; sh.uniforms.uFl = { value: flower }; RIVER.sh = sh;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vRv;').replace('#include <uv_vertex>', '#include <uv_vertex>\nvRv = uv;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+      varying vec2 vRv; uniform float uT, uNight; uniform sampler2D uFl;
+      float rh(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float rn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(rh(i), rh(i + vec2(1, 0)), f.x), mix(rh(i + vec2(0, 1)), rh(i + vec2(1, 1)), f.x), f.y); }`)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        float s = vRv.x, t = vRv.y, fl = s - uT * 0.9;
+        // a flow field: the across coordinate bent by slow noise, so the contours braid as they travel
+        float bend = (rn(vec2(fl * 0.16, 1.3)) - 0.5) * 3.2 + (rn(vec2(fl * 0.5, 7.1)) - 0.5) * 0.9 + (rn(vec2(fl * 0.3, t * 1.5 + 4.0)) - 0.5) * 1.2;
+        float f = t * 2.2 + bend + 0.35 * sin(fl * 0.7 + t * 1.3);
+        float k = fract(f * 3.2); float d = min(k, 1.0 - k); float w = fwidth(f * 3.2) * 1.1 + 0.01; float line = 1.0 - smoothstep(0.045, 0.045 + w, d);
+        float band = floor(f * 3.2 + 0.5); float pick = rh(vec2(band, 3.0));
+        vec3 navy = vec3(0.035, 0.06, 0.16), cob = vec3(0.16, 0.38, 1.0), cy = vec3(0.03, 0.87, 1.0), bone = vec3(0.94, 0.91, 0.85), pink = vec3(1.0, 0.25, 0.64);
+        vec3 lc = pick < 0.45 ? cob : pick < 0.75 ? cy : pick < 0.93 ? bone : pink;
+        vec3 col = mix(navy, lc, line * 0.95);
+        // Open Eye Flowers drifting on the current, one every 13 metres, each turning
+        float cell = floor(fl / 13.0); float lx = fract(fl / 13.0) * 13.0 - 6.5; float ly = t * 1.15 - (rh(vec2(cell, 9.0)) - 0.5) * 0.9;
+        float ang = uT * 0.35 + cell * 2.1; vec2 q = mat2(cos(ang), -sin(ang), sin(ang), cos(ang)) * vec2(lx, ly) / 1.35 + 0.5;
+        vec4 fc = (q.x > 0.0 && q.x < 1.0 && q.y > 0.0 && q.y < 1.0) ? texture2D(uFl, q) : vec4(0.0);
+        col = mix(col, fc.rgb, fc.a);
+        float edge = smoothstep(1.0, 0.78, abs(t));
+        diffuseColor.rgb = col; diffuseColor.a = edge * 0.92;
+        totalEmissiveRadiance += (lc * line * (0.1 + 0.85 * uNight) + fc.rgb * fc.a * 0.6 * uNight) * edge;`)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>');
+    // totalEmissiveRadiance is declared before color_fragment in r128's standard fragment, so the add above is legal
+  };
+  mat.customProgramCacheKey = () => 'river241';
+  const m = new THREE.Mesh(g, mat); m.receiveShadow = true; m.renderOrder = 2; m.frustumCulled = false; m.userData.__nofreeze = true; m.userData.__single = true; scene.add(m); RIVER.mesh = m; RIVER.mat = mat;
+})();
+window.__FRAMES.push(dt => { try { if (!RIVER.sh) return; RIVER.t += dt; RIVER.sh.uniforms.uT.value = RIVER.t; RIVER.sh.uniforms.uNight.value = Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v242 THE CREDITS (2026-11-23)
+   Every artist whose 6529 Memes card is on the island, by name, on the back of the welcome billboard: the side you
+   face as you walk back down to the pier, like the end of a film. Navy enamel with MLow's contour field running
+   faint behind the type, the Open Eye Flower, and every name in bone, alphabetical, collaborations as signed.
+   At dusk the board is lit by its gooseneck lamps (v176) and glows a little on its own. ?credits=0 turns it off.
+   ================================================================ */
+const CRED = { names: [] };
+window.__CRED = CRED;
+(function credits() {
+  if (!LOOK.on || /credits=0/.test(location.search)) return;
+  const set = new Set(); CARDS.concat(D.fresh || []).forEach(c => { const a = (c.art || c.a || '').trim(); if (a) set.add(a); });
+  const names = [...set].sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' })); CRED.names = names;
+  const W = 4096, H = 2304, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO; CRED.tex = t;
+  const draw = img => { if (!c || !c.fillText || !c.beginPath || !c.stroke) return;
+    c.fillStyle = '#0b1430'; c.fillRect(0, 0, W, H);
+    // the contour field, faint
+    c.lineWidth = 3; for (let i = 0; i < 70; i++) { c.strokeStyle = ['rgba(41,98,255,.22)', 'rgba(8,222,255,.14)', 'rgba(239,232,218,.08)'][i % 3]; c.beginPath();
+      for (let x = 0; x <= W; x += 32) { const y = i * 36 - 200 + Math.sin(x * 0.0021 + i * 0.37) * 120 + Math.sin(x * 0.0057 + i) * 40; x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+    if (img) { c.globalAlpha = 0.95; c.drawImage(img, 90, 60, 230, 230); c.globalAlpha = 1; }
+    c.fillStyle = '#efe8da'; c.textBaseline = 'alphabetic'; c.font = '900 120px "Archivo Black",Impact,sans-serif'; c.fillText('THE CREDITS', 360, 190);
+    c.font = '500 46px "Archivo",Helvetica,sans-serif'; c.fillStyle = '#7fb0ff'; c.fillText('N3W 6529 MEME ISLAND, BY MLOW · EVERY ARTIST WHOSE THE MEMES BY 6529 CARD LIVES ON THIS ISLAND · ' + names.length + ' ARTISTS · CC0', 364, 262);
+    c.fillStyle = '#2962FF'; c.fillRect(90, 318, W - 180, 6);
+    // the names: as many columns as it takes at a readable size
+    const top = 380, bottom = H - 70, cols = 9, colW = (W - 180) / cols; let fs = 34; const rows = Math.ceil(names.length / cols); const rh = (bottom - top) / rows; fs = Math.min(40, rh * 0.78);
+    c.font = `500 ${fs}px "Archivo",Helvetica,sans-serif`; c.fillStyle = '#efe8da';
+    names.forEach((n, i) => { const col = Math.floor(i / rows), row = i % rows; let s = n.toUpperCase(); while (c.measureText(s).width > colW - 24 && s.length > 4) s = s.slice(0, -2) + '…'; c.fillText(s, 90 + col * colW, top + (row + 0.8) * rh); });
+    t.needsUpdate = true; };
+  draw(null); const im = new Image(); im.onload = () => { try { draw(im); } catch (e) { } }; im.src = 'assets/iv_flower.webp';
+  if (!window.__fontsReady) addEventListener('n3wfonts', () => { try { draw(im.complete ? im : null); } catch (e) { } }, { once: true });
+  const by = ground(0, 117) + 4.4 + 4.5;
+  const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.55, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.06 }); CRED.mat = mat;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(16, 9), mat); m.position.set(0, by, 116.62); m.rotation.y = PI; m.receiveShadow = true; scene.add(m); CRED.mesh = m;
+})();
+window.__FRAMES.push(() => { try { if (!CRED.mat) return; CRED.mat.emissiveIntensity = 0.06 + 0.45 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v243 THE MEME RIVER: MEDALLIONS AND THE MOUTH (2026-11-23)
+   Where each spoke of the river crosses the promenade ring, a 3.4 metre Open Eye Flower medallion is set into the
+   paving, navy enamel in a bronze rim, like the seals in a New York plaza. Where the four spokes pour into THE
+   FLOOR, a bronze band runs round the Floor's edge with its lettering inlaid: THE MEMES BY 6529 · N3W MEME
+   ISLAND · BY MLOW · ALL CC0, repeating round the circle. ?river=0 turns them off with the river.
+   ================================================================ */
+(function riverMouth() {
+  if (!window.__RIVER || !RIVER.mesh) return; const PY = 0.665 + 0.02;
+  const fl = tex('assets/iv_flower.webp');
+  const disc = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.1, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 });
+  const dc = document.createElement('canvas'); dc.width = dc.height = 512; const c = dc.getContext('2d'); const dt = new THREE.CanvasTexture(dc); dt.encoding = THREE.sRGBEncoding; disc.map = dt;
+  const drawDisc = img => { if (!c || !c.arc || !c.fill) return; c.fillStyle = '#0b1430'; c.fillRect(0, 0, 512, 512); c.lineWidth = 3;
+    for (let r = 60; r < 250; r += 14) { c.strokeStyle = r % 28 ? 'rgba(41,98,255,.55)' : 'rgba(8,222,255,.45)'; c.beginPath(); for (let a = 0; a <= 64; a++) { const t = a / 64 * PI * 2, rr = r + Math.sin(t * 3 + r * 0.05) * 6; const x = 256 + Math.cos(t) * rr, y = 256 + Math.sin(t) * rr; a ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+    if (img) c.drawImage(img, 136, 136, 240, 240); dt.needsUpdate = true; };
+  drawDisc(null); const im = new Image(); im.onload = () => { try { drawDisc(im); } catch (e) { } }; im.src = 'assets/iv_flower.webp';
+  const bronze = new THREE.MeshStandardMaterial({ color: 0x8a6a36, roughness: 0.32, metalness: 0.92, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
+  [0, 90, 180, 270].forEach(deg => { const a = deg * PI / 180, x = Math.cos(a) * 40, z = Math.sin(a) * 40;
+    const d = new THREE.Mesh(new THREE.CircleGeometry(1.6, 48), disc); d.rotation.x = -PI / 2; d.rotation.z = -a; d.position.set(x, PY + 0.004, z); d.renderOrder = 3; scene.add(d);
+    const r = new THREE.Mesh(new THREE.RingGeometry(1.6, 1.78, 48), bronze); r.rotation.x = -PI / 2; r.position.set(x, PY + 0.005, z); r.renderOrder = 3; scene.add(r); });
+  // the bronze band round the Floor with its lettering
+  const lc = document.createElement('canvas'); lc.width = 2048; lc.height = 64; const l = lc.getContext('2d'); const lt = new THREE.CanvasTexture(lc); lt.encoding = THREE.sRGBEncoding; lt.wrapS = THREE.RepeatWrapping; lt.repeat.set(4, 1); lt.anisotropy = ANISO;
+  const drawBand = () => { if (!l || !l.fillText) return; l.fillStyle = '#6e5228'; l.fillRect(0, 0, 2048, 64); l.fillStyle = '#e9cf8e'; l.textBaseline = 'middle'; l.font = '700 36px "Archivo Black",Impact,sans-serif';
+    l.fillText('THE MEMES BY 6529  ·  N3W MEME ISLAND  ·  BY MLOW  ·  ALL CC0  ·  ', 24, 34); l.fillStyle = 'rgba(0,0,0,.35)'; l.fillRect(0, 0, 2048, 3); l.fillRect(0, 61, 2048, 3); lt.needsUpdate = true; };
+  drawBand(); if (!window.__fontsReady) addEventListener('n3wfonts', drawBand, { once: true });
+  const bm = new THREE.MeshStandardMaterial({ map: lt, roughness: 0.35, metalness: 0.85, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
+  const band = new THREE.Mesh(new THREE.RingGeometry(16.5, 17.3, 160, 1), bm); band.rotation.x = -PI / 2; band.position.y = PY + 0.003; band.renderOrder = 3; scene.add(band);
+  // RingGeometry's uv is planar: give it uv along the circle so the lettering runs round
+  const pos = band.geometry.attributes.position, uv = band.geometry.attributes.uv; for (let i = 0; i < pos.count; i++) { const x = pos.getX(i), y = pos.getY(i); uv.setXY(i, (Math.atan2(y, x) / (PI * 2) + 0.5), Math.hypot(x, y) > 16.9 ? 1 : 0); } uv.needsUpdate = true;
+  RIVER.mouth = true;
+})();
+
+/* ================================================================
+   v244 REAL PROPS: HYDRANTS (2026-11-23)
+   A real scanned fire hydrant, re-skinned by the wrap tool in the island's cobalt with an Open Eye Flower on its
+   bonnet, stands at the kerb by each of the new buildings and at the corners where the river's spokes meet the
+   ring road. (The red hydrant that opens, v49, stays red: that one is on duty.) ?props=0 turns them off.
+   ================================================================ */
+(function hydrantsCC0() {
+  if (!PH.on) return; const L0 = [];
+  const at = (x, z, ry) => L0.push([x, ground(x, z), z, ry, 1]);
+  try { at(11.4, 74.2, 0.3); } catch (e) { }
+  try { if (BLK.laund) at(-82.9, -8.7, 1.2); } catch (e) { }
+  try { if (BLK.drop) at(-57.9, 77.4, -0.4); } catch (e) { }
+  [[3.6, 60], [-3.6, -46], [46, -3.6], [-48, 3.6]].forEach(([x, z]) => at(x, z, Math.random() * 6));
+  phPlace('isl_hydrant', L0);
+})();
+
+/* ================================================================
+   v245 THE ISLAND LIVERY (2026-11-23)
+   One island, one set of colours for everything that belongs to it: the lamp posts (v182), the litter baskets
+   (v190), the cast iron of benches, fountains and fences, and the park signs (v225) all take MLow's navy enamel,
+   the same navy as the meme river, the CC0 benches' supports and bins, with bone lettering. Real New York does
+   this borough by borough; the island does it in its own colours. ?livery=0 turns it off.
+   ================================================================ */
+(function livery() {
+  if (!LOOK.on || /livery=0/.test(location.search)) return; const navy = 0x1a2a4c, navyD = 0x122039;
+  try { if (window.__POSTS2 && POSTS2.iron) POSTS2.iron.color.setHex(navyD); } catch (e) { }
+  try { if (window.__BASKET && BASKET.mesh) { BASKET.mesh.color.setHex(navy); BASKET.rim.color.setHex(navyD); } } catch (e) { }
+  try { if (FACM.iron) FACM.iron.color.setHex(navyD); } catch (e) { }
+  window.__LIVERY = { on: true };
+})();
+
+/* ================================================================
+   v246 THE TOUR: THE RIVER (2026-11-23)
+   Three stops before the aerial: down the north spoke on the meme river to the Floor, the credits on the back of
+   the welcome billboard, and the river from above.
+   ================================================================ */
+(function tourV246() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__RIVER && RIVER.mesh) { add.push({ name: 'the meme river', dur: 9, pos: [[0.6, 1.5, 70], [0.4, 1.4, 44], [0.3, 1.6, 22]], look: [[0.2, 0.4, 58], [0.1, 0.5, 32], [0, 0.6, 8]] });
+    add.push({ name: 'the river from above', dur: 8, pos: [[60, 70, 60], [0, 80, 72]], look: [[0, 0, 0], [0, 0, 6]] }); }
+  if (window.__CRED && CRED.mesh) { const y = ground(0, 112); add.push({ name: 'the credits', dur: 8, pos: [[-4, y + 2.4, 103], [2, y + 3.2, 106]], look: [[0, y + 8.6, 117], [0, y + 9, 117]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* ---------------- boot ---------------- */
