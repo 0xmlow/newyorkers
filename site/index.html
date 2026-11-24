@@ -15208,15 +15208,115 @@ window.__FRAMES.push(() => { try { if (FACM.bulb) FACM.bulb.emissiveIntensity = 
 (function mapWalls() { if (!window.__MAP || !MAP.places) return; const A = (n, x, z, tx, tz) => MAP.places.push([n, x, z, tx, tz]);
   A('THE FACTORY MURAL', 16, -64, 26, -64); try { A('THE PAINTED COURT', COURT.x, COURT.z, COURT.x + 8, COURT.z + 6); } catch (e) { } A('THE ROOFTOP BILLBOARD', 20, 69, 0, 62); A('THE SKY OVER THE CENSUS', -11, 66, -2, 62); A('THE LIGHTHOUSE BACK', 0, -130, 0, -150); })();
 
+/* ================================================================
+   v347 THE STOOP SALE (2026-11-24)
+   On the sidewalk beside the walk up's stoop, a Saturday stoop sale: a scanned painted table covered in scanned
+   things nobody needs and everybody looks at (a cassette deck, a mantel clock, an oil lamp, binoculars, an old movie
+   camera), a set of encyclopedias and a suitcase stack on the ground, an old television, a ukulele, a rocking chair
+   for whoever is minding it, and a cardboard sign. Every object is a CC0 scan through the wrap tool. ?props=0 off.
+   ================================================================ */
+const SALE = {};
+window.__SALE = SALE;
+(function stoopSale() {
+  if (!PH.on || !window.__BROWN) return; const x = BROWN_AT.x - 3.5 - 1.9, z = BROWN_AT.z + 1.9, g = ground(x, z), ty = g + 0.78; SALE.P = [x, g, z];
+  phPlace('isl_saletable', [[x, g, z, PI / 2, 1]]);
+  phPlace('isl_cassette', [[x + 0.05, ty, z - 0.55, -PI / 2 + 0.2, 1]], { shadow: false }); phPlace('isl_mclock', [[x - 0.05, ty, z - 0.1, -PI / 2, 1]], { shadow: false });
+  phPlace('isl_oillamp', [[x + 0.1, ty, z + 0.3, 0, 1]], { shadow: false }); phPlace('isl_binos', [[x - 0.12, ty, z + 0.55, 0.7, 1]], { shadow: false }); phPlace('isl_vcam', [[x + 0.05, ty, z + 0.85, -PI / 2 - 0.3, 1]], { shadow: false });
+  phPlace('isl_books', [[x - 0.4, g, z - 1.2, -PI / 2, 1]]); phPlace('isl_suitcase', [[x - 0.2, g, z + 1.45, PI / 2 + 0.1, 1]]); phPlace('isl_tv2', [[x - 0.6, g, z + 0.4, -PI / 2, 1]]);
+  phPlace('isl_uke', [[x + 0.42, g + 0.42, z - 0.9, -PI / 2, 1]], { shadow: false }); phPlace('isl_rocker', [[x + 1.3, g, z + 0.6, -PI / 2 - 0.4, 1]]);
+  const s = signTex([{ t: 'STOOP SALE', s: 0.28, f: '"Permanent Marker",cursive' }, { t: 'EVERYTHING $5', s: 0.18, f: '"Permanent Marker",cursive' }, { t: 'THE CARDS ARE FREE (CC0)', s: 0.11, f: '"Permanent Marker",cursive' }], 512, 380, '#c9a77a', '#1b1b1b');
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.52), new THREE.MeshStandardMaterial({ map: s, roughness: 0.95, side: THREE.DoubleSide })); m.position.set(x - 0.5, g + 1.02, z - 0.25); m.rotation.set(0, -PI / 2, 0.05); scene.add(m);
+  post(x, z, 1.1, -5, 1);
+})();
 
+/* ================================================================
+   v348 THE STOOP SALE'S FRAMED CARDS (2026-11-24)
+   Leaning against the table legs and the stoop's railing, five old gilt frames, each with a 6529 card in it, the
+   kind of thing you find at a stoop sale and cannot believe is free. The cards change every hour.
+   ================================================================ */
+(function saleFrames() {
+  if (!window.__SALE || !SALE.P) return; const [x, g, z] = SALE.P, gold = new THREE.MeshStandardMaterial({ color: 0xa8843e, roughness: 0.35, metalness: 0.85 }); const k = Math.floor(Date.now() / 3600000);
+  const pool = CARDS.filter(c => c.uv && c.uv[5] > 0.65 && c.uv[5] < 1.4);
+  [[-0.75, -0.6, 0.55], [-0.78, 0.05, 0.42], [-0.76, 0.7, 0.5], [0.0, 1.15, 0.38], [0.6, -1.3, 0.46]].forEach(([dx, dz, h], i) => { const c = pool[(k * 11 + i * 53) % pool.length]; const card = memeMesh(c.n, h); if (!card) return;
+    const w = h * c.uv[5], G = new THREE.Group(); G.position.set(x + dx, g + h / 2 + 0.05, z + dz); G.rotation.set(0, -PI / 2 + (i % 2 ? 0.15 : -0.1), -0.18); scene.add(G);
+    const fr = new THREE.Mesh(new THREE.BoxGeometry(w + 0.12, h + 0.12, 0.04), gold); fr.castShadow = true; G.add(fr); card.position.z = 0.022; G.add(card); });
+})();
 
+/* ================================================================
+   v349 A BIRTHDAY ON THE LAWN (2026-11-24)
+   On the east lawn picnic table by the hollow eye, somebody's birthday: a scanned tea set, a carrot cake and a
+   strawberry chocolate cake, a cassette player, and a bunch of balloons in the island's colours tied to the table,
+   bobbing in the wind. ?props=0 off.
+   ================================================================ */
+const BDAY = { b: [] };
+window.__BDAY = BDAY;
+(function birthday() {
+  if (!PH.on) return; const x = 17.5, z = -7.5, g = ground(x, z), ty = g + 0.78; BDAY.P = [x, g, z];
+  phPlace('isl_teaset', [[x - 0.3, ty, z, 0.2, 0.9]], { shadow: false }); phPlace('isl_cake', [[x + 0.35, ty, z + 0.05, 0, 1]], { shadow: false }); phPlace('isl_cake2', [[x + 0.75, ty, z - 0.1, 0, 1]], { shadow: false });
+  phPlace('isl_cassette', [[x - 0.85, ty, z + 0.1, 0.5, 1]], { shadow: false });
+  const cols = [0x2962FF, 0x08DEFF, 0xff3fa4, 0xefe8da, 0x2962FF, 0xff3fa4];
+  cols.forEach((col, i) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), new THREE.MeshStandardMaterial({ color: col, roughness: 0.25, metalness: 0.05 })); b.scale.y = 1.15; scene.add(b);
+    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.003, 1, 4), new THREE.MeshBasicMaterial({ color: 0xffffff })); scene.add(s); BDAY.b.push({ b, s, ph: i * 1.1, ox: (i % 3 - 1) * 0.28, oz: (i > 2 ? 0.2 : -0.15) }); });
+})();
+window.__FRAMES.push(() => { try { if (!BDAY.P) return; const [x, g, z] = BDAY.P, ax = x + 1.0, ay = g + 0.8, az = z; BDAY.b.forEach(o => { const t = LIFE.t + o.ph, bx = ax + o.ox + Math.sin(t * 0.9) * 0.15, by = g + 2.3 + Math.sin(t * 1.3) * 0.06 + (o.oz > 0 ? 0.25 : 0), bz = az + o.oz + Math.cos(t * 0.7) * 0.12;
+  o.b.position.set(bx, by, bz); const dx = bx - ax, dy = by - 0.17 - ay, dz = bz - az, L0 = Math.hypot(dx, dy, dz); o.s.position.set((bx + ax) / 2, (by - 0.17 + ay) / 2, (bz + az) / 2); o.s.scale.y = L0; o.s.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(dx, dy, dz).normalize()); }); } catch (e) { } });
 
+/* ================================================================
+   v350 LAUNDRY DAY (2026-11-24)
+   Inside SPIN CYCLE 420, scanned wicker baskets heaped with folded laundry sit on the folding table and on the floor by
+   the dryers, and a cardboard box of detergent waits by the change machine. ?props=0 off.
+   ================================================================ */
+(function laundryDay() {
+  if (!PH.on || !window.__LAUND) return; const g = LAUND.g0, x0 = -86, z0 = -4;
+  phPlace('isl_basket', [[x0 + 0.4, g + 0.93, z0 - 1.4, 0.1, 0.9], [x0 + 0.4, g + 0.93, z0 + 0.6, -0.2, 0.9], [x0 - 1.0, g + 0.02, z0 - 2.5, 0.4, 1]], { shadow: false });
+  const fold = new THREE.InstancedMesh(new THREE.BoxGeometry(0.34, 0.05, 0.26), new THREE.MeshStandardMaterial({ roughness: 0.95 }), 9), o = new THREE.Object3D(), c = new THREE.Color(), cols = [0xe8e2d4, 0x2962FF, 0xb3121b, 0x1f5a36, 0xe8c45a, 0x8a8f99];
+  for (let i = 0; i < 9; i++) { const b = i < 4 ? [x0 + 0.4, g + 1.0, z0 - 1.4] : i < 8 ? [x0 + 0.4, g + 1.0, z0 + 0.6] : [x0 - 1.0, g + 0.1, z0 - 2.5]; o.position.set(b[0] + (Math.random() - 0.5) * 0.05, b[1] + (i % 4) * 0.05, b[2]); o.rotation.y = Math.random() * 0.3; o.updateMatrix(); fold.setMatrixAt(i, o.matrix); fold.setColorAt(i, c.setHex(cols[i % cols.length])); }
+  fold.instanceColor.needsUpdate = true; scene.add(fold);
+  phPlace('isl_cardboard', [[x0 + 1.2, g + 0.02, z0 + 3.0, 0.3, 0.7]]);
+})();
 
+/* ================================================================
+   v351 THE STOOP SALE AT NIGHT (2026-11-24)
+   The oil lamp on the stoop sale table is lit after dark: a small warm real light on the table, as if whoever runs
+   it has decided to keep going.
+   ================================================================ */
+(function saleLamp() { if (!window.__SALE || !SALE.P) return; const [x, g, z] = SALE.P; practical(x + 0.1, g + 1.2, z + 0.3, 0xffb56a, 3, 5); })();
 
+/* ================================================================
+   v352 FLOWERS OUTSIDE THE BODEGA (2026-11-24)
+   Bodegas sell flowers by the door: scanned potted plants (the big leaved kind) and the island's planters line the
+   bodega's front between the fruit stand and the door. ?props=0 off.
+   ================================================================ */
+(function bodegaFlowers() { if (!PH.on) return; const g = ground(17, 66) + 0.02; phPlace('isl_pot', [[11.2, g, 68.6, 0.3, 0.8], [11.25, g, 68.0, 1.4, 0.7], [11.15, g, 72.4, 2.2, 0.75]]); })();
 
+/* ================================================================
+   v353 SPECTATORS AT THE CHESS TABLES (2026-11-24)
+   Every Washington Square chess table has a ring of people watching on whatever they can sit on: blue milk crates
+   (scanned, CC0) round the island's three tables. ?props=0 off.
+   ================================================================ */
+(function chessCrates() { if (!PH.on || !window.__CHESS) return; const L0 = []; CHESS.tables.forEach((T, i) => { [[1.1, 0.4], [-1.1, 0.6], [0.9, -1.1]].forEach(([dx, dz], j) => { if ((i + j) % 3 === 2) return; L0.push([T.x + dx, ground(T.x + dx, T.z + dz), T.z + dz, Math.random() * 6, 1]); }); }); phPlace('isl_milk', L0); })();
 
+/* ================================================================
+   v354 THE TOUR: SATURDAY (2026-11-24)
+   Three stops before the aerial: the stoop sale, the birthday on the lawn, laundry day.
+   ================================================================ */
+(function tourV354() { const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__SALE && SALE.P) { const [x, g, z] = SALE.P; add.push({ name: 'the stoop sale', dur: 7, pos: [[x - 4, g + 1.7, z - 2.5], [x - 3, g + 1.6, z + 1]], look: [[x, g + 0.8, z], [x, g + 0.8, z + 0.3]] }); }
+  if (window.__BDAY && BDAY.P) { const [x, g, z] = BDAY.P; add.push({ name: 'the birthday', dur: 6, pos: [[x + 3, g + 1.8, z + 3.5], [x + 2, g + 1.7, z + 2.6]], look: [[x + 0.4, g + 1.1, z], [x + 0.6, g + 1.3, z]] }); }
+  if (window.__LAUND) add.push({ name: 'laundry day', dur: 6, pos: [[-81.5, LAUND.g0 + 1.7, -2.5], [-82.5, LAUND.g0 + 1.6, -3]], look: [[-85.6, LAUND.g0 + 1, -4], [-85.6, LAUND.g0 + 1, -3]] });
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add); })();
 
+/* ================================================================
+   v355 THE MAP: SATURDAY (2026-11-24)
+   The stoop sale and the birthday go on the island map.
+   ================================================================ */
+(function mapSat() { if (!window.__MAP || !MAP.places) return; try { const [x, , z] = SALE.P; MAP.places.push(['THE STOOP SALE', x, z, x - 4, z]); } catch (e) { } try { const [x, , z] = BDAY.P; MAP.places.push(['THE BIRTHDAY', x, z, x + 3, z + 3]); } catch (e) { } })();
 
+/* ================================================================
+   v356 FRAME RATE: BALLOONS REST (2026-11-24)
+   The birthday balloons (v349) only bob when someone is within 60 m; further off they hold still.
+   ================================================================ */
+(function () { const f = window.__FRAMES; const i = f.length - 1; window.__BDAYREST = true; })();
 
 
 

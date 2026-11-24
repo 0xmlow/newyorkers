@@ -421,5 +421,74 @@
  "isl_cardboard": {
   "src": "ph_cardboard_box_01",
   "tris": 800
+ },
+ "isl_saletable": {
+  "src": "ph_painted_wooden_table",
+  "tris": 2500
+ },
+ "isl_suitcase": {
+  "src": "ph_vintage_suitcase",
+  "tris": 2000
+ },
+ "isl_oillamp": {
+  "src": "ph_vintage_oil_lamp",
+  "tris": 1500
+ },
+ "isl_mclock": {
+  "src": "ph_mantel_clock_01",
+  "tris": 1500
+ },
+ "isl_vcam": {
+  "src": "ph_vintage_video_camera",
+  "tris": 2000
+ },
+ "isl_books": {
+  "src": "ph_book_encyclopedia_set_01",
+  "tris": 2500
+ },
+ "isl_cassette": {
+  "src": "ph_cassette_player",
+  "tris": 1500
+ },
+ "isl_teaset": {
+  "src": "ph_tea_set_01",
+  "tris": 2500
+ },
+ "isl_cake": {
+  "src": "ph_carrot_cake",
+  "tris": 1200
+ },
+ "isl_cake2": {
+  "src": "ph_strawberry_chocolate_cake",
+  "tris": 1200
+ },
+ "isl_tv2": {
+  "src": "ph_television_02",
+  "tris": 2500
+ },
+ "isl_rocker": {
+  "src": "ph_Rockingchair_01",
+  "tris": 3000
+ },
+ "isl_uke": {
+  "src": "ph_Ukulele_01",
+  "tris": 1500
+ },
+ "isl_binos": {
+  "src": "ph_vintage_binocular",
+  "tris": 1200
+ },
+ "isl_frame": {
+  "src": "ph_fancy_picture_frame_01",
+  "tris": 2500,
+  "stickers": [
+   {
+    "img": "m_29",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.28
+   }
+  ]
  }
 }
