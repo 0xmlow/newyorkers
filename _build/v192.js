@@ -14,7 +14,7 @@
   [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => facPut('steel', x + a * 0.72, y0 + legH / 2, z + b * 0.72, 0.1, legH, 0.1));
   [0.7, 1.5].forEach(h => { facPut('steel', x, y0 + h, z - 0.72, 1.5, 0.05, 0.05); facPut('steel', x, y0 + h, z + 0.72, 1.5, 0.05, 0.05); facPut('steel', x - 0.72, y0 + h, z, 0.05, 0.05, 1.5); facPut('steel', x + 0.72, y0 + h, z, 0.05, 0.05, 1.5); });
   facPut('steel', x, y0 + legH + 0.04, z, 1.7, 0.08, 1.7);
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R * 1.04, Ht, 28, 1, true), wood); body.position.set(x, y0 + legH + 0.08 + Ht / 2, z); body.castShadow = true; scene.add(body);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R * 1.04, Ht, 28, 1, true), wood); body.position.set(x, y0 + legH + 0.08 + Ht / 2, z); body.castShadow = true; scene.add(body); window.__TANK2 = body;
   const lid = new THREE.Mesh(new THREE.CircleGeometry(R, 28), roof); lid.rotation.x = -PI / 2; lid.position.set(x, y0 + legH + 0.08 + Ht - 0.02, z); scene.add(lid);
   const hat = new THREE.Mesh(new THREE.ConeGeometry(R * 1.12, 0.8, 28), roof); hat.position.set(x, y0 + legH + 0.08 + Ht + 0.4, z); hat.castShadow = true; scene.add(hat);
   for (let i = 0; i < 4; i++) { const h = new THREE.Mesh(new THREE.TorusGeometry(R * 1.02 + i * 0.008, 0.02, 5, 28), steel); h.rotation.x = PI / 2; h.position.set(x, y0 + legH + 0.4 + i * 0.6, z); scene.add(h); }
