@@ -561,3 +561,16 @@ in situ stills). Nothing has been sent.
 - Tours: v296, v304, v305, v314, v325, v326, v333, v334, v336.
 Frame time could not be measured cleanly (other work loaded the Mac); draw calls rose by about 250 to 400 in the
 busiest views over the whole v237 to v336 run.
+
+## v337 to v386 (2026-11-24): round three
+- Firefly round three (`_build/firefly/island_wallpapers_firefly_3.jpg`): the sky river over the census portraits,
+  skate plaza pieces, a rooftop billboard on the bodega (the island under a rising eye), painted boards on the market,
+  the rental hut and the newsstand (v337 to v346, v383).
+- Saturday: a stoop sale of CC0 finds with framed 6529 cards, a birthday on the lawn with balloons, laundry day,
+  flowers at the bodega, crates round the chess tables (v347 to v356).
+- Illusions round three: camera obscura, Sugihara's round or square, the moiré fence, Adelson's shadow checker,
+  which eye is bigger; plaques, map, a second pier board (v357 to v366). 18 illusions in all.
+- Realism: contact shadows under every prop, rain puddles, manhole steam and a Con Ed stack, worn thresholds, a wet
+  river, settling snow (v367 to v376).
+- Frame rate and tour: shader prewarm, a four minute highlights tour (Shift T or ?fulltour for all 144 stops),
+  anisotropy by height, the tour ends at dusk, counts on the pier board (v377 to v386).

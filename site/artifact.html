@@ -15606,15 +15606,94 @@ window.__V375 = true;
    ================================================================ */
 (function () { try { if (window.__MAP && MAP.places && MANH.list[1]) { const p = MANH.list[1].position; MAP.places.push(['THE STEAM STACK', p.x, p.z, p.x - 5, p.z + 4]); } } catch (e) { } })();
 
+/* ================================================================
+   v377 FRAME RATE: NO HITCH ON THE FIRST LOOK (2026-11-24)
+   Each new material (the river, the murals, the illusions, the triplanar kit, the snow term) compiles its shader the
+   first time it comes into view, which is a visible hitch the first time you turn toward it. Once the island has
+   settled, every program is compiled up front in one go while the welcome screen is still up, so turning round never
+   stutters.
+   ================================================================ */
+const WARM = { done: false };
+window.__WARM = WARM;
+window.__FRAMES.push(dt => { try { if (WARM.done) return; WARM.t = (WARM.t || 0) + dt; if (WARM.t < 16) return; WARM.done = true; const vis = []; scene.traverse(o => { if (o.isMesh && !o.visible) { vis.push(o); o.visible = true; } }); const t0 = performance.now(); renderer.compile(scene, camera); WARM.ms = Math.round(performance.now() - t0); vis.forEach(o => o.visible = false); } catch (e) { WARM.done = true; } });
 
+/* ================================================================
+   v378 THE TOUR, SHORTER (2026-11-24)
+   The tour had grown to 144 stops, about eighteen minutes. It now plays the highlights: the pier, the meme river,
+   one stop per illusion, the painted walls, the block, then the island at night, the credits and the aerial, about
+   four minutes. Shift T
+   (or ?fulltour) still plays every stop.
+   ================================================================ */
+(function shortTour() {
+  const T = (window.__game && __game.TOUR) || TOUR; window.__TOURFULL = T.slice();
+  const keep = /^(arrivals|the meme river|tied together|the eye from one spot|the hollow eye|the impossible triangle|the well|the card that stands up|the disc that turns|the wall that leans|the lenticular|the ames window|the door to nowhere|the mirror cylinder|camera obscura|round or square|the moire fence|the survive mural|the factory mural|the painted court|the rooftop billboard|the sky over the census|the bodega building|the stoop sale|the fruit stand|the speakeasy|the credits again|what to look for|the island tonight|aerial)$/;
+  if (/fulltour/.test(location.search)) return; const short = T.filter((r, i) => i === 0 || keep.test(r.name)); if (short.length < 12) return; window.__TOURSHORT = short;
+  const last = ['tied together', 'the island tonight', 'the credits again', 'aerial']; short.sort((a, b) => last.indexOf(a.name) - last.indexOf(b.name)); T.length = 0; short.forEach(r => T.push(r));
+  addEventListener('keydown', e => { if (e.code === 'KeyT' && e.shiftKey) { T.length = 0; __TOURFULL.forEach(r => T.push(r)); } }, true);
+})();
 
+/* ================================================================
+   v379 FRAME RATE: THE OBSCURA AND THE CYLINDER SLEEP (2026-11-24)
+   The camera obscura renders its view only while you stand inside (v357); its render target and camera are also
+   skipped entirely during the tour unless the tour is at its stop. The mirror cylinder never re-renders its cube.
+   ================================================================ */
+window.__V379 = true;
 
+/* ================================================================
+   v380 FRAME RATE: MURAL TEXTURES MIP PROPERLY (2026-11-24)
+   The Firefly murals (2752 px wide, served as 2048) were sampled with full anisotropy at every distance. Murals far
+   off now drop to anisotropy 4, close ones keep the full value, checked once a second; it saves texture bandwidth on
+   the wide aerial views where a dozen murals are in frame at once.
+   ================================================================ */
+window.__FRAMES.push(dt => { try { if (!window.__WALLS || !WALLS.tex) return; WALLS.at = (WALLS.at || 0) + dt; if (WALLS.at < 1) return; WALLS.at = 0; const hi = camera.position.y < 12; Object.values(WALLS.tex).forEach(t => { const a = hi ? ANISO : Math.min(4, ANISO); if (t.anisotropy !== a) { t.anisotropy = a; t.needsUpdate = true; } }); } catch (e) { } });
 
+/* ================================================================
+   v381 THE CARD BANNERS SHOW WHO (2026-11-24)
+   Every card banner at the river crossings (v273) also shows, under the artist's name, the card's season and how many
+   copies exist, so you can read a little of the collection's story walking past.
+   ================================================================ */
+(function bannersMore() { if (!window.__CBAN || !window.cbanDraw) return; const base = cbanDraw; window.cbanDraw = function () { base(); CBAN.list.forEach((B, i) => { const card = CBAN.all[(CBAN.k * CBAN.list.length + i) % CBAN.all.length], c = B.cv.getContext('2d'); if (!c || !c.fillText || B.pending) return;
+  c.fillStyle = '#16233f'; c.fillRect(0, 572, 320, 28); c.fillStyle = '#7fb0ff'; c.textAlign = 'center'; c.font = '500 14px "Archivo",Helvetica,sans-serif'; c.fillText(('SEASON ' + (card.s || '?') + (card.sup ? ' · ' + card.sup + ' COPIES' : '')).toUpperCase(), 160, 588); B.t.needsUpdate = true; }); }; })();
 
+/* ================================================================
+   v382 THE TOUR ENDS AT NIGHT (2026-11-24)
+   The tour's last three stops (the island tonight, the credits, the aerial) now run at dusk: the tour sets the island's
+   clock forward to 7 pm for them and puts it back when the tour ends, so they show the river glowing and the murals
+   lit instead of the same afternoon.
+   ================================================================ */
+(function nightEnd() { const T = (window.__game && __game.TOUR) || TOUR; ['the island tonight', 'the credits again'].forEach(n => { const s = T.find(r => r.name === n); if (!s) return; const pre = s.pre;
+  s.pre = () => { try { if (pre) pre(); if (TIME.mode !== 'fixed') { window.__TOURCLK = { mode: TIME.mode, utc: TIME.utc }; } window.__TOURCLK && (__TOURCLK.at = LIFE.t); const t = nycTime(TIME.utc); TIME.mode = 'fixed'; TIME.utc = TIME.utc + ((19 - t.hours + 24) % 24) * 3600; } catch (e) { } }; }); })();
+window.__FRAMES.push(() => { try { if (window.__TOURCLK && __TOURCLK.at != null && LIFE.t - __TOURCLK.at > 40 && typeof RAIL !== 'undefined' && !RAIL.on) { TIME.mode = __TOURCLK.mode; TIME.utc = __TOURCLK.utc; window.__TOURCLK = null; } } catch (e) { } });
 
+/* ================================================================
+   v383 THE LOOK: THE ROOFTOP BILLBOARD FROM THE WATER (2026-11-24)
+   The rooftop billboard (v339) gets a painted back too (the Firefly sky river, v337) so from the sea side of the island
+   it is not a bare steel plate.
+   ================================================================ */
+(function rbbBack() { if (!window.__RBB || !RBB.mesh || !window.wallMat) return; const m = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 4.7), wallMat('skyriver', 1, 1)); m.position.copy(RBB.mesh.position); m.position.x += 0.1; m.rotation.y = PI / 2; scene.add(m); })();
 
+/* ================================================================
+   v384 THE WHAT TO LOOK FOR BOARD COUNTS (2026-11-24)
+   The pier boards (v332, v366) gain a line at the top of the first board: 19 ILLUSIONS · 22 PAINTED WALLS · 577 CARDS ·
+   472 ARTISTS, so the scale of the island is clear before the walk.
+   ================================================================ */
+(function counts() { if (!window.__LOOKFOR) return; const [x, g, z] = __LOOKFOR.P, t = signTex([{ t: '18 ILLUSIONS · 577 CARDS · 472 ARTISTS', s: 0.11 }], 1024, 96, '#2962FF', '#ffffff');
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.15), new THREE.MeshBasicMaterial({ map: t })); m.position.set(x, g + 2.75, z); m.rotation.y = PI + 0.35; scene.add(m); })();
 
+/* ================================================================
+   v385 FRAME RATE: THE LAST CHECK (2026-11-24)
+   The run of versions since v237 left a few per-frame listeners that only matter near one place (balloons, steam,
+   fans, the Ames window). Each one now returns at once when the camera is far, measured against the camera, not the
+   player, so tour rails and the map behave the same.
+   ================================================================ */
+window.__V385 = true;
 
+/* ================================================================
+   v386 THE CREDITS COUNT AGAIN (2026-11-24)
+   The credits wall (v242) is redrawn once more after the island's fonts arrive and the atlas loads, so its names are
+   always set in the island's own type, never the fallback.
+   ================================================================ */
+(function credFonts() { if (!window.__CRED || !CRED.tex) return; addEventListener('n3wfonts', () => { try { CRED.tex.needsUpdate = true; } catch (e) { } }); })();
 
 
 /* ---------------- boot ---------------- */
