@@ -276,5 +276,66 @@
  "isl_handtruck": {
   "src": "ph_hand_truck",
   "tris": 2500
+ },
+ "isl_sconce": {
+  "src": "ph_industrial_wall_sconce",
+  "tris": 2500
+ },
+ "isl_caged": {
+  "src": "ph_caged_hanging_light",
+  "tris": 2500
+ },
+ "isl_milk": {
+  "src": "ph_plastic_crate_01",
+  "tris": 2500,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2962FF",
+    "dark": "#0b1a4a",
+    "k": 0.9
+   }
+  ]
+ },
+ "isl_duct": {
+  "src": "ph_modular_airduct_rectangular_01",
+  "tris": 4000
+ },
+ "isl_shelves": {
+  "src": "ph_steel_frame_shelves_03",
+  "tris": 4000
+ },
+ "isl_register": {
+  "src": "ph_CashRegister_01",
+  "tris": 3000
+ },
+ "isl_fan": {
+  "src": "ph_ceiling_fan",
+  "tris": 3000
+ },
+ "isl_barstool": {
+  "src": "ph_bar_chair_round_01",
+  "tris": 2500
+ },
+ "isl_boombox": {
+  "src": "ph_boombox",
+  "tris": 3000,
+  "stickers": [
+   {
+    "img": "eyeflower_cyan",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.75,
+    "size": 0.06
+   }
+  ]
+ },
+ "isl_tyre": {
+  "src": "ph_old_tyre",
+  "tris": 2500
+ },
+ "isl_jerry": {
+  "src": "ph_metal_jerrycan",
+  "tris": 2000
  }
 }
