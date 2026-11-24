@@ -15702,6 +15702,480 @@ window.__V385 = true;
    ================================================================ */
 (function credFonts() { if (!window.__CRED || !CRED.tex) return; addEventListener('n3wfonts', () => { try { CRED.tex.needsUpdate = true; } catch (e) { } }); })();
 
+/* ================================================================
+   v387 N3W CUTS: A BARBERSHOP ON THE BOARDWALK (2026-11-24)
+   A one storey brick shop on the west beach, facing the island across the ring road, the way the old Coney Island
+   strip faces the boardwalk: red brick, stone pilasters, a cast iron storefront with a big plate window and a glass
+   door, a striped awning, a sign band (N3W CUTS, EST. 6529), a cornice with dentils. On the left pilaster a real
+   barber pole turns: red, bone and cobalt stripes under a glass sleeve with chrome caps, lit at night. The stripes
+   only go round, but your eye reads them climbing (the barber pole illusion: a moving edge seen through a narrow
+   window can only show the motion across it). The window is v388. ?barber=0 off.
+   ================================================================ */
+const CUTS = { ok: false };
+window.__CUTS = CUTS;
+(function barbershop() {
+  if (!LOOK.on || !FAC_ON || /barber=0/.test(location.search)) return;
+  const a = 238 * PI / 180, R = 111.2, cx = Math.sin(a) * R, cz = Math.cos(a) * R, g = ground(cx, cz);
+  const nx = -Math.sin(a), nz = -Math.cos(a), ry = Math.atan2(nx, nz), tx = nz, tz = -nx;   // front faces the island
+  const W = 7.2, D = 5.0, H = 4.5; CUTS.c = [cx, g, cz]; CUTS.n = [nx, nz]; CUTS.t = [tx, tz]; CUTS.ry = ry; CUTS.W = W; CUTS.D = D; CUTS.H = H; CUTS.g = g;
+  const at = (u, d) => [cx + nx * d + tx * u, cz + nz * d + tz * u];   // u along the front, d out from the centre
+  // the body: red brick, the front face left to the storefront kit
+  const brick = new THREE.MeshStandardMaterial({ map: tex('assets/brick_c.webp', [3, 2]), color: 0x8a4334, roughness: 0.86 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), brick); body.position.set(cx, g + H / 2, cz); body.rotation.y = ry; body.castShadow = body.receiveShadow = true; scene.add(body); CUTS.body = body;
+  boxWalls(cx, cz, W, D, ry, -5, g + H); padRect(cx - 3, cx + 3, cz - 3, cz + 3, g + H + 0.05, g + H - 0.5);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(W - 0.1, 0.06, D - 0.1), new THREE.MeshStandardMaterial({ color: 0x34322f, roughness: 0.95 })); roof.position.set(cx, g + H + 0.03, cz); roof.rotation.y = ry; scene.add(roof);
+  const F0 = facFace(cx, cz, nx, nz, D / 2), F = { ry: F0.ry, at: (u, y, w, sx, sy, sz, key, col) => F0.at(u, g + y, w, sx, sy, sz, key, col) }, hw = W / 2;   // facFace takes world heights
+  // pilasters, base and cornice
+  [-hw + 0.25, hw - 0.25, 1.75].forEach(u => { F.at(u, H / 2 - 0.25, 0.12, u === 1.75 ? 0.3 : 0.5, H - 0.5, 0.24, 'stone'); F.at(u, 0.25, 0.15, (u === 1.75 ? 0.3 : 0.5) + 0.1, 0.5, 0.3, 'stoneD'); });
+  F.at(0, H - 0.12, 0.25, W + 0.5, 0.26, 0.5, 'stone'); F.at(0, H - 0.35, 0.18, W + 0.3, 0.12, 0.36, 'stone');
+  for (let i = 0; i < 30; i++) F.at(-hw + 0.1 + i * (W - 0.2) / 29, H - 0.47, 0.2, 0.09, 0.1, 0.12, 'stone');
+  // the storefront: kick plate, mullions, transom, the sign band
+  const wL = -hw + 0.5, wR = 1.6, wc = (wL + wR) / 2, ww = wR - wL; CUTS.win = { u: wc, w: ww - 0.12, y0: 0.62, y1: 2.95 };
+  F.at(wc, 0.31, 0.06, ww, 0.62, 0.1, 'steel'); F.at(wc, 0.64, 0.1, ww, 0.06, 0.2, 'frameK'); F.at(wc, 2.98, 0.08, ww, 0.08, 0.16, 'frameK');
+  [wL + 0.03, wR - 0.03].forEach(u => F.at(u, 1.8, 0.08, 0.06, 2.4, 0.16, 'frameK'));
+  F.at(wc, 3.18, 0.03, ww, 0.34, 0.03, 'lit'); F.at(wc, 3.37, 0.07, ww, 0.05, 0.14, 'frameK');
+  for (let i = 1; i < 5; i++) F.at(wL + i * ww / 5, 3.18, 0.07, 0.04, 0.36, 0.12, 'frameK');
+  // the door, right of the middle pilaster
+  const dc = (1.9 + hw - 0.5) / 2, dw = hw - 0.5 - 1.9; CUTS.door = { u: dc, w: dw - 0.16, y0: 0.15, y1: 2.35 };
+  F.at(dc, 1.25, 0.07, dw, 0.08, 0.14, 'frameK'); [1.94, hw - 0.54].forEach(u => F.at(u, 1.45, 0.08, 0.08, 2.9, 0.16, 'frameK')); F.at(dc, 2.42, 0.08, dw, 0.1, 0.16, 'frameK'); F.at(dc, 0.08, 0.08, dw, 0.16, 0.16, 'frameK');
+  F.at(dc, 2.7, 0.03, dw, 0.42, 0.03, 'lit'); F.at(dc + dw / 2 - 0.12, 1.15, 0.12, 0.04, 0.32, 0.05, 'stone');
+  F.at(dc, 0.04, 0.45, dw + 0.4, 0.08, 0.7, 'stoneD');
+  // the sign band
+  const sg = document.createElement('canvas'); sg.width = 2048; sg.height = 256; const c = sg.getContext('2d'); const st = new THREE.CanvasTexture(sg); st.encoding = THREE.sRGBEncoding; st.anisotropy = ANISO;
+  const drawSign = () => { if (!c || !c.fillText || !c.strokeRect) return; c.fillStyle = '#16233f'; c.fillRect(0, 0, 2048, 256); c.strokeStyle = '#c9a24a'; c.lineWidth = 8; c.strokeRect(14, 14, 2020, 228); c.strokeStyle = 'rgba(201,162,74,.5)'; c.lineWidth = 3; c.strokeRect(30, 30, 1988, 196);
+    c.fillStyle = '#efe8da'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '900 150px "Archivo Black",Impact,sans-serif'; c.fillText('N3W CUTS', 1024, 118);
+    c.fillStyle = '#c9a24a'; c.font = '500 34px "Archivo",Helvetica,sans-serif'; c.fillText('EST. 6529  ·  FADES  ·  HOT TOWEL SHAVES  ·  CARDS ON THE WALL', 1024, 210);
+    c.font = '900 64px "Archivo Black",Impact,sans-serif'; c.fillText('✂', 180, 120); c.fillText('✂', 1868, 120); st.needsUpdate = true; };
+  drawSign(); addEventListener('n3wfonts', () => { try { drawSign(); } catch (e) { } }, { once: true });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.6, 0.72), new THREE.MeshStandardMaterial({ map: st, roughness: 0.45, metalness: 0.1, emissive: 0xffffff, emissiveMap: st, emissiveIntensity: 0.04 })); const [sx, sz] = at(0, D / 2 + 0.2); sign.position.set(sx, g + 3.82, sz); sign.rotation.y = ry; scene.add(sign); CUTS.signM = sign.material;
+  F.at(0, 3.82, 0.13, W - 0.4, 0.86, 0.12, 'frameK');
+  // the awning: bone and navy stripes over the window, a scalloped valance with the name
+  const aw = document.createElement('canvas'); aw.width = 1024; aw.height = 256; const ac = aw.getContext('2d'); const atx = new THREE.CanvasTexture(aw); atx.encoding = THREE.sRGBEncoding; atx.anisotropy = ANISO;
+  if (ac && ac.fillRect) { for (let i = 0; i < 16; i++) { ac.fillStyle = i % 2 ? '#16233f' : '#efe8da'; ac.fillRect(i * 64, 0, 64, 256); } ac.fillStyle = 'rgba(0,0,0,.12)'; ac.fillRect(0, 0, 1024, 30); }
+  const awM = new THREE.MeshStandardMaterial({ map: atx, roughness: 0.9, side: THREE.DoubleSide });
+  const slope = new THREE.Mesh(new THREE.PlaneGeometry(ww + 0.3, 1.35), awM); const [ax, az] = at(wc, D / 2 + 0.6); slope.position.set(ax, g + 2.95, az); slope.rotation.order = 'YXZ'; slope.rotation.set(-1.05, ry, 0); slope.castShadow = true; scene.add(slope);
+  const vl = document.createElement('canvas'); vl.width = 1024; vl.height = 96; const vc = vl.getContext('2d'); const vt = new THREE.CanvasTexture(vl); vt.encoding = THREE.sRGBEncoding;
+  const drawVal = () => { if (!vc || !vc.fillText || !vc.beginPath || !vc.arc) return; vc.clearRect(0, 0, 1024, 96); vc.fillStyle = '#16233f'; vc.fillRect(0, 0, 1024, 64); for (let i = 0; i < 32; i++) { vc.beginPath(); vc.arc(16 + i * 32, 62, 16, 0, PI); vc.fill(); }
+    vc.fillStyle = '#efe8da'; vc.textAlign = 'center'; vc.textBaseline = 'middle'; vc.font = '700 40px "Archivo",Helvetica,sans-serif'; vc.fillText('N3W CUTS  ·  WALK INS WELCOME', 512, 34); vt.needsUpdate = true; };
+  drawVal(); addEventListener('n3wfonts', () => { try { drawVal(); } catch (e) { } }, { once: true });
+  const val = new THREE.Mesh(new THREE.PlaneGeometry(ww + 0.3, 0.3), new THREE.MeshStandardMaterial({ map: vt, transparent: true, alphaTest: 0.4, roughness: 0.9, side: THREE.DoubleSide })); const [vx, vz] = at(wc, D / 2 + 1.18); val.position.set(vx, g + 2.48, vz); val.rotation.y = ry; scene.add(val);
+  // the barber pole on the left pilaster
+  const pc = document.createElement('canvas'); pc.width = 128; pc.height = 128; const pctx = pc.getContext('2d'); const pt = new THREE.CanvasTexture(pc); pt.encoding = THREE.sRGBEncoding; pt.wrapS = pt.wrapT = THREE.RepeatWrapping; pt.repeat.set(1, 3); pt.anisotropy = ANISO;
+  if (pctx && pctx.createImageData) { const im = pctx.createImageData(128, 128), cols = [[200, 26, 32], [239, 232, 218], [41, 98, 255]];
+    for (let y = 0; y < 128; y++) for (let x = 0; x < 128; x++) { const k = Math.floor(((x + y) / 128) * 6) % 3, cc = cols[k], i = (y * 128 + x) * 4, e = Math.min(1, Math.abs(((x + y) / 128 * 6) % 1 - 0.5) * 8); im.data[i] = cc[0]; im.data[i + 1] = cc[1]; im.data[i + 2] = cc[2]; im.data[i + 3] = 255; }
+    pctx.putImageData(im, 0, 0); }
+  const poleM = new THREE.MeshStandardMaterial({ map: pt, roughness: 0.35, emissive: 0xffffff, emissiveMap: pt, emissiveIntensity: 0 }); CUTS.poleM = poleM; CUTS.poleT = pt;
+  const chrome = new THREE.MeshStandardMaterial({ color: 0xdedede, roughness: 0.18, metalness: 1.0 });
+  const [px, pz] = at(-hw + 0.25, D / 2 + 0.52), PG = new THREE.Group(); PG.position.set(px, g + 2.05, pz); scene.add(PG); CUTS.pole = PG;
+  const core = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 1.0, 32, 1, true), poleM); PG.add(core);
+  const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 1.04, 32, 1, true), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.04, metalness: 0.1, transparent: true, opacity: 0.16, depthWrite: false })); PG.add(sleeve);
+  [[0.56, 1], [-0.56, -1]].forEach(([y, s]) => { const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.08, 32), chrome); ring.position.y = y; PG.add(ring);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 12, 0, PI * 2, 0, PI / 2), chrome); dome.position.y = y + s * 0.04; dome.scale.y = 0.9 * s; PG.add(dome); });
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), chrome); knob.position.y = 0.72; PG.add(knob);
+  [0.35, -0.35].forEach(y => { const br = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.44), chrome); br.position.set(0, y, -0.3); PG.add(br); }); PG.rotation.y = ry;
+  CUTS.ok = true; CUTS.at = at; CUTS.F = F;
+  if (window.__MAP) MAP.places.push(['N3W CUTS', cx, cz, ...at(0, D / 2 + 3)]);
+  facFlush();
+})();
+window.__FRAMES.push(dt => { try { if (!CUTS.ok) return; CUTS.poleT.offset.y = (CUTS.poleT.offset.y - dt * 0.35) % 1; const n = Math.min(1, (L.lamps || 0) * 1.3); CUTS.poleM.emissiveIntensity = 0.05 + 0.9 * n; CUTS.signM.emissiveIntensity = 0.04 + 0.4 * n; } catch (e) { } });
+
+/* ================================================================
+   v388 ILLUSION: THE INFINITE BARBERSHOP (2026-11-24)
+   Look in N3W CUTS' window: three cobalt leather chairs face three mirrors, a 6529 card framed over each station,
+   white tile, a checker floor, and the side walls are mirrors too, so the shop runs away left and right for ever,
+   chair after chair, each reflection a little darker and greener, the cards reading backwards in every other one,
+   one customer under a striped cape repeated to the horizon. There is no room behind the glass. One shader
+   traces your view into a shop that is not there and folds it between two mirrors that are not there either, so
+   the parallax is exact from every step along the boardwalk. The door glass looks into the same shop. The cards
+   change on the hour. ?barber=0 off.
+   ================================================================ */
+(function infiniteBarbershop() {
+  if (!window.__CUTS || !CUTS.ok) return;
+  const [cx, g, cz] = CUTS.c, [nx, nz] = CUTS.n, [tx, tz] = CUTS.t, hw = CUTS.W / 2;
+  const RW = CUTS.W - 0.5, DD = CUTS.D - 0.25, HC = 3.3, DC = DD - 1.35;
+  const O = new THREE.Vector3(cx + nx * CUTS.D / 2, g, cz + nz * CUTS.D / 2);
+  // the back wall: tile, counters, mirrors, sconces, frames (the cards themselves are drawn by the shader)
+  const wv = document.createElement('canvas'); wv.width = 2048; wv.height = 1024; const c = wv.getContext('2d'); const wt = new THREE.CanvasTexture(wv); wt.encoding = THREE.sRGBEncoding; wt.anisotropy = ANISO;
+  const PX = 2048 / RW, PY = 1024 / HC, X = u => (u + RW / 2) * PX, Y = y => (HC - y) * PY;
+  if (c && c.fillRect && c.createLinearGradient && c.createRadialGradient && c.ellipse && c.strokeRect && c.beginPath) {
+    const gr = c.createLinearGradient(0, 0, 0, 1024); gr.addColorStop(0, '#1a2440'); gr.addColorStop(1, '#22305a'); c.fillStyle = gr; c.fillRect(0, 0, 2048, 1024);
+    c.strokeStyle = 'rgba(239,232,218,.05)'; c.lineWidth = 2; for (let x = 0; x < 2048; x += 22) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, Y(1.05)); c.stroke(); }
+    c.fillStyle = '#e8e2d4'; c.fillRect(0, Y(1.02), 2048, 1024 - Y(1.02)); c.strokeStyle = 'rgba(120,112,100,.55)'; c.lineWidth = 2;
+    for (let y = 0; y < 1.02; y += 0.075) { c.beginPath(); c.moveTo(0, Y(y)); c.lineTo(2048, Y(y)); c.stroke(); const row = Math.round(y / 0.075); for (let u = -RW / 2 + (row % 2) * 0.075; u < RW / 2; u += 0.15) { c.beginPath(); c.moveTo(X(u), Y(y)); c.lineTo(X(u), Y(y + 0.075)); c.stroke(); } }
+    c.fillStyle = '#121a30'; c.fillRect(0, Y(1.1), 2048, Y(1.02) - Y(1.1)); c.fillStyle = '#0f1526'; c.fillRect(0, Y(HC), 2048, Y(3.15) - Y(HC));
+    [-2.2, 0, 2.2].forEach(u => {
+      c.fillStyle = '#4a2f1e'; c.fillRect(X(u - 0.78), Y(0.9), 1.56 * PX, 0.9 * PY); c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 3; c.strokeRect(X(u - 0.74), Y(0.86), 0.72 * PX, 0.78 * PY); c.strokeRect(X(u + 0.02), Y(0.86), 0.72 * PX, 0.78 * PY);
+      const mg = c.createLinearGradient(0, Y(1.0), 0, Y(0.9)); mg.addColorStop(0, '#f4f1ea'); mg.addColorStop(1, '#b9b4aa'); c.fillStyle = mg; c.fillRect(X(u - 0.82), Y(1.0), 1.64 * PX, 0.1 * PY);
+      // the mirror: gold frame, a dark glass with a soft warm reflection
+      c.fillStyle = '#b8913e'; c.fillRect(X(u - 0.7), Y(2.34), 1.4 * PX, 1.22 * PY); const gl = c.createLinearGradient(X(u - 0.64), Y(2.28), X(u + 0.64), Y(1.18)); gl.addColorStop(0, '#2b3a44'); gl.addColorStop(0.45, '#4a5d63'); gl.addColorStop(0.55, '#5c6f72'); gl.addColorStop(1, '#1e2a31');
+      c.fillStyle = gl; c.fillRect(X(u - 0.64), Y(2.28), 1.28 * PX, 1.1 * PY); c.fillStyle = 'rgba(255,214,150,.18)'; c.beginPath(); c.ellipse(X(u), Y(1.9), 0.3 * PX, 0.22 * PY, 0, 0, PI * 2); c.fill();
+      // things on the counter: a cobalt jar of combs, a spray bottle, clippers
+      c.fillStyle = 'rgba(41,98,255,.85)'; c.fillRect(X(u - 0.55), Y(1.22), 0.12 * PX, 0.22 * PY); c.fillStyle = '#0d0d0d'; for (let i = 0; i < 4; i++) c.fillRect(X(u - 0.53 + i * 0.025), Y(1.3), 6, 0.12 * PY);
+      c.fillStyle = '#c94040'; c.fillRect(X(u + 0.42), Y(1.2), 0.06 * PX, 0.2 * PY); c.fillStyle = '#e9e9e9'; c.fillRect(X(u + 0.43), Y(1.27), 0.04 * PX, 0.07 * PY); c.fillStyle = '#222'; c.fillRect(X(u + 0.15), Y(1.04), 0.16 * PX, 0.04 * PY);
+      // sconces and the gold frame for the card above
+      [-0.86, 0.86].forEach(s => { const sg = c.createRadialGradient(X(u + s), Y(1.95), 2, X(u + s), Y(1.95), 0.22 * PX); sg.addColorStop(0, 'rgba(255,236,200,1)'); sg.addColorStop(0.25, 'rgba(255,210,150,.55)'); sg.addColorStop(1, 'rgba(255,200,140,0)'); c.fillStyle = sg; c.fillRect(X(u + s) - 0.25 * PX, Y(2.2), 0.5 * PX, 0.5 * PY); });
+      c.fillStyle = '#b8913e'; c.fillRect(X(u - 0.25), Y(3.06), 0.5 * PX, 0.62 * PY); c.fillStyle = '#0d0d0d'; c.fillRect(X(u - 0.21), Y(3.02), 0.42 * PX, 0.54 * PY);
+    });
+    c.fillStyle = '#efe8da'; c.textAlign = 'center'; c.font = '900 44px "Archivo Black",Impact,sans-serif'; c.fillText('N3W CUTS', X(-1.1), Y(3.2)); c.fillText('N3W CUTS', X(1.1), Y(3.2));
+  }
+  // the chairs from behind: an empty one, and one with a customer under a cape
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 500; const k = cv.getContext('2d'); const ctex = new THREE.CanvasTexture(cv); ctex.encoding = THREE.sRGBEncoding;
+  const CW = 0.9, CH = 1.75, cX = (o, u) => o + (u / CW + 0.5) * 256, cY = y => (CH - y) / CH * 500;
+  const chair = (o, cape) => { if (!k || !k.fillRect || !k.createLinearGradient || !k.ellipse || !k.clip || !k.beginPath) return;
+    const chromeG = k.createLinearGradient(cX(o, -0.3), 0, cX(o, 0.3), 0); chromeG.addColorStop(0, '#6d7074'); chromeG.addColorStop(0.4, '#f2f2f2'); chromeG.addColorStop(0.6, '#c9cbce'); chromeG.addColorStop(1, '#55585c');
+    k.fillStyle = chromeG; k.beginPath(); k.ellipse(cX(o, 0), cY(0.04), 0.3 * 256 / CW, 0.035 * 500 / CH, 0, 0, PI * 2); k.fill(); k.fillRect(cX(o, -0.06), cY(0.42), 0.12 * 256 / CW, 0.38 * 500 / CH);
+    k.fillStyle = '#16181c'; k.fillRect(cX(o, -0.36), cY(0.52), 0.72 * 256 / CW, 0.1 * 500 / CH);
+    k.fillStyle = chromeG; k.fillRect(cX(o, -0.42), cY(0.68), 0.84 * 256 / CW, 0.035 * 500 / CH);
+    if (!cape) { const lg = k.createLinearGradient(cX(o, -0.28), 0, cX(o, 0.28), 0); lg.addColorStop(0, '#1b3a8a'); lg.addColorStop(0.5, '#2f5fd0'); lg.addColorStop(1, '#183277'); k.fillStyle = lg;
+      k.beginPath(); k.roundRect ? k.roundRect(cX(o, -0.28), cY(1.22), 0.56 * 256 / CW, 0.68 * 500 / CH, 18) : k.rect(cX(o, -0.28), cY(1.22), 0.56 * 256 / CW, 0.68 * 500 / CH); k.fill();
+      k.strokeStyle = 'rgba(8,16,40,.45)'; k.lineWidth = 2; for (let i = -3; i <= 3; i++) { k.beginPath(); k.moveTo(cX(o, i * 0.09 - 0.2), cY(1.2)); k.lineTo(cX(o, i * 0.09 + 0.2), cY(0.56)); k.stroke(); k.beginPath(); k.moveTo(cX(o, i * 0.09 + 0.2), cY(1.2)); k.lineTo(cX(o, i * 0.09 - 0.2), cY(0.56)); k.stroke(); }
+      k.fillStyle = chromeG; k.fillRect(cX(o, -0.02), cY(1.3), 0.04 * 256 / CW, 0.08 * 500 / CH); k.fillStyle = '#2a50b8'; k.fillRect(cX(o, -0.14), cY(1.42), 0.28 * 256 / CW, 0.13 * 500 / CH); }
+    else { k.fillStyle = '#efe8da'; k.beginPath(); k.moveTo(cX(o, -0.1), cY(1.36)); k.lineTo(cX(o, 0.1), cY(1.36)); k.lineTo(cX(o, 0.4), cY(0.5)); k.lineTo(cX(o, -0.4), cY(0.5)); k.closePath(); k.fill();
+      k.save(); k.clip(); k.fillStyle = '#16233f'; for (let i = -6; i < 7; i++) k.fillRect(cX(o, i * 0.07), 0, 0.03 * 256 / CW, 500); k.restore();
+      k.fillStyle = '#6b4a35'; k.fillRect(cX(o, -0.05), cY(1.44), 0.1 * 256 / CW, 0.09 * 500 / CH);
+      k.fillStyle = '#7a553c'; k.beginPath(); k.ellipse(cX(o, 0), cY(1.56), 0.1 * 256 / CW, 0.13 * 500 / CH, 0, 0, PI * 2); k.fill();
+      k.fillStyle = '#121212'; k.beginPath(); k.ellipse(cX(o, 0), cY(1.62), 0.1 * 256 / CW, 0.09 * 500 / CH, 0, PI, PI * 2); k.fill(); k.fillRect(cX(o, -0.1), cY(1.62), 0.2 * 256 / CW, 0.04 * 500 / CH);
+      k.fillStyle = 'rgba(18,18,18,.5)'; k.fillRect(cX(o, -0.098), cY(1.58), 0.196 * 256 / CW, 0.03 * 500 / CH); }
+  };
+  chair(0, false); chair(256, true);
+  const all = CARDS.filter(c => c.uv && c.uv[0] === 0); const U = [0, 1, 2].map(() => new THREE.Vector4());
+  const pick = hr => [0, 1, 2].forEach(i => { const cd = all[(hr * 7 + i * 31 + 3) % all.length], u = cd.uv; U[i].set(u[1], 1 - u[4], u[3], 1 - u[2]); }); pick(new Date().getHours());
+  const mat = new THREE.ShaderMaterial({ uniforms: { uO: { value: O }, uN: { value: new THREE.Vector3(nx, 0, nz) }, uT: { value: new THREE.Vector3(tx, 0, tz) }, uRW: { value: RW }, uD: { value: DD }, uH: { value: HC }, uDC: { value: DC }, uWall: { value: wt }, uChair: { value: ctex }, uAt: { value: ATL[0] }, uC: { value: U }, uL: { value: 1 } },
+    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform vec3 uO, uN, uT; uniform float uRW, uD, uH, uDC, uL; uniform sampler2D uWall, uChair, uAt; uniform vec4 uC[3]; varying vec3 vW;
+      float fold(float u){ float m = mod(u + 0.5 * uRW, 2.0 * uRW); return (m < uRW ? m : 2.0 * uRW - m) - 0.5 * uRW; }
+      float refl(float u){ return floor((u + 0.5 * uRW) / uRW); }
+      void main(){ vec3 rd = normalize(vW - cameraPosition); float rdd = dot(rd, -uN); if (rdd <= 0.001) discard;
+        vec3 o = vW - uO; float u0 = dot(o, uT), d0 = dot(o, -uN), y0 = o.y, ru = dot(rd, uT), ry = rd.y;
+        float tb = (uD - d0) / rdd; float ty = ry > 0.0 ? (uH - y0) / ry : -y0 / min(ry, -1e-5); float t = min(tb, ty);
+        vec3 col = vec3(0.0); float k = 0.0; bool done = false;
+        float tc = (uDC - d0) / rdd;
+        if (tc < t) { float uc = u0 + ru * tc, yc = y0 + ry * tc; float uf = fold(uc); float idx = floor((uf + 1.1) / 2.2); float lu = uf - idx * 2.2;
+          vec2 sp = vec2(lu / 0.9 + 0.5, yc / 1.75);
+          if (sp.x > 0.0 && sp.x < 1.0 && sp.y > 0.0 && sp.y < 1.0) { vec4 s = texture2D(uChair, vec2((sp.x + (idx == 0.0 ? 1.0 : 0.0)) * 0.5, sp.y)); if (s.a > 0.5) { col = s.rgb; k = refl(uc); done = true; t = tc; } } }
+        if (!done) {
+          if (tb < ty) { float uh = u0 + ru * tb, y = y0 + ry * tb; float uf = fold(uh); k = refl(uh); col = texture2D(uWall, vec2(uf / uRW + 0.5, y / uH)).rgb;
+            float idx = floor((uf + 1.1) / 2.2); float lu = uf - idx * 2.2; vec2 pc = vec2((lu + 0.19) / 0.38, (y - 2.47) / 0.5);
+            if (pc.x > 0.0 && pc.x < 1.0 && pc.y > 0.0 && pc.y < 1.0) { vec4 cu = idx < 0.0 ? uC[0] : idx > 0.0 ? uC[2] : uC[1]; col = texture2D(uAt, vec2(mix(cu.x, cu.z, pc.x), mix(cu.y, cu.w, pc.y))).rgb; } }
+          else { float uh = u0 + ru * t, dh = d0 + rdd * t; float uf = fold(uh); k = refl(uh);
+            if (ry < 0.0) { float ch = mod(floor((uf + 10.0) / 0.35) + floor(dh / 0.35), 2.0); col = mix(vec3(0.07, 0.07, 0.08), vec3(0.86, 0.84, 0.79), ch); col *= 0.75 + 0.25 * smoothstep(uD, 0.5, dh); }
+            else { col = vec3(0.09, 0.1, 0.13); vec2 q = vec2(fract((uf + 10.0) / 2.2) - 0.5, dh - 2.2); float r = length(q * vec2(2.2, 1.0)); col += vec3(1.0, 0.86, 0.62) * smoothstep(0.16, 0.1, r); col += vec3(1.0, 0.8, 0.55) * 0.12 * smoothstep(1.0, 0.0, r); } } }
+        float a = abs(k); col *= pow(0.8, a) * (0.85 + 0.15 * exp(-t * 0.1)); col = mix(col, col * vec3(0.82, 0.98, 0.9), min(a, 1.0));
+        float fr = pow(1.0 - rdd, 3.0); col = mix(col * uL, vec3(0.55, 0.62, 0.7), fr * 0.5 + 0.04);
+        gl_FragColor = vec4(col, 1.0); }` });
+  const pane = (u, w, y0, y1) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, y1 - y0), mat); m.position.set(cx + nx * (CUTS.D / 2 + 0.03) + tx * u, g + (y0 + y1) / 2, cz + nz * (CUTS.D / 2 + 0.03) + tz * u); m.rotation.y = CUTS.ry; scene.add(m); return m; };
+  CUTS.pane = pane(CUTS.win.u, CUTS.win.w, CUTS.win.y0, CUTS.win.y1); pane(CUTS.door.u, CUTS.door.w, 1.32, CUTS.door.y1); pane(CUTS.door.u, CUTS.door.w, CUTS.door.y0 + 0.12, 1.18);
+  CUTS.mat = mat; CUTS.pick = pick; CUTS.hr = new Date().getHours(); CUTS.inf = true;
+})();
+window.__FRAMES.push(() => { try { if (!CUTS.inf) return; const h = new Date().getHours(); if (h !== CUTS.hr) { CUTS.hr = h; CUTS.pick(h); } CUTS.mat.uniforms.uL.value = 0.82 + 0.25 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
+
+/* ================================================================
+   v389 ILLUSION: THE FLOATING CROSSWALK (2026-11-24)
+   Where the lighthouse path crosses the ring road on the north side, a ladder crosswalk whose bars float: from the
+   footprints on the kerb, seven white slabs hang a hand above the asphalt, lit on top, shaded on their faces, their
+   shadows on the road beneath them. Step off the footprints and they slide into long painted wedges. It is paint,
+   worked out the way the 3D crossings in Iceland and India are: every corner of seven imaginary floating slabs is
+   projected from the footprints' eye height down onto the road, and the paint goes where the corners land.
+   ?xwalk3d=0 off.
+   ================================================================ */
+const XW3 = { ok: false };
+window.__XW3 = XW3;
+(function floatingCrosswalk() {
+  if (!LOOK.on || /xwalk3d=0/.test(location.search)) return;
+  const z0 = -ROAD_R, gr = Math.max(ground(0, z0), 0.66) + 0.003, V = { x: 0, y: 0, z: -92.6 }; V.y = ground(V.x, V.z) + 1.62 - gr;   // the eye, over the footprints on the kerb path
+  const X0 = -4.5, X1 = 4.5, Z0 = -104, Z1 = -96, S = 112, Wc = (X1 - X0) * S, Hc = (Z1 - Z0) * S;
+  const cv = document.createElement('canvas'); cv.width = Wc; cv.height = Hc; const c = cv.getContext('2d');
+  const toC = (x, z) => [(x - X0) * S, (z - Z0) * S];
+  const proj = (x, y, z) => { const k = V.y / (V.y - y); return toC(V.x + (x - V.x) * k, V.z + (z - V.z) * k); };   // the road point behind (x, y, z) from the eye
+  const poly = (pts, fill) => { c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); c.fillStyle = fill; c.fill(); };
+  if (c && c.fillRect && c.beginPath) {
+    c.clearRect(0, 0, Wc, Hc);
+    // the flat ladder rails: the real paint, the reference the slabs float over
+    [-3.9, 3.9].forEach(x => poly([toC(x - 0.12, -103.7), toC(x + 0.12, -103.7), toC(x + 0.12, -96.3), toC(x - 0.12, -96.3)], 'rgba(238,236,228,.93)'));
+    const bars = [-3, -2, -1, 0, 1, 2, 3].map(x => ({ x0: x - 0.28, x1: x + 0.28, zN: -96.75, zF: -101.6, yb: 0.11, yt: 0.25 }));
+    // shadows first, soft, straight under each slab and a little to the east and north (the noon sun from the south west)
+    c.save(); c.filter = 'blur(6px)'; bars.forEach(b => poly([toC(b.x0 + 0.09, b.zF - 0.05), toC(b.x1 + 0.09, b.zF - 0.05), toC(b.x1 + 0.09, b.zN - 0.05), toC(b.x0 + 0.09, b.zN - 0.05)], 'rgba(8,9,12,.62)')); c.restore();
+    // then each slab, far ones first: its visible side, its near face, its top
+    bars.sort((a, b) => Math.abs(b.x0 + b.x1) - Math.abs(a.x0 + a.x1)).forEach(b => {
+      if (V.x < b.x0) poly([proj(b.x0, b.yb, b.zN), proj(b.x0, b.yb, b.zF), proj(b.x0, b.yt, b.zF), proj(b.x0, b.yt, b.zN)], 'rgba(150,147,140,.97)');
+      if (V.x > b.x1) poly([proj(b.x1, b.yb, b.zN), proj(b.x1, b.yb, b.zF), proj(b.x1, b.yt, b.zF), proj(b.x1, b.yt, b.zN)], 'rgba(150,147,140,.97)');
+      poly([proj(b.x0, b.yb, b.zN), proj(b.x1, b.yb, b.zN), proj(b.x1, b.yt, b.zN), proj(b.x0, b.yt, b.zN)], 'rgba(196,193,184,.98)');
+      poly([proj(b.x0, b.yt, b.zN), proj(b.x1, b.yt, b.zN), proj(b.x1, b.yt, b.zF), proj(b.x0, b.yt, b.zF)], 'rgba(244,242,235,.98)');
+    });
+  }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(X1 - X0, Z1 - Z0), new THREE.MeshStandardMaterial({ map: t, transparent: true, roughness: 0.55, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
+  m.rotation.x = -PI / 2; m.position.set((X0 + X1) / 2, gr + 0.02, (Z0 + Z1) / 2); m.receiveShadow = true; scene.add(m); XW3.mesh = m;
+  // a paved landing on the kerb with the footprints, so there is somewhere to stand
+  const gp = ground(V.x, V.z), fp = document.createElement('canvas'); fp.width = 256; fp.height = 256; const f = fp.getContext('2d');
+  if (f && f.fillRect && f.ellipse && f.beginPath) { f.fillStyle = '#8e8478'; f.fillRect(0, 0, 256, 256); f.strokeStyle = 'rgba(40,36,32,.5)'; f.lineWidth = 3; for (let i = 0; i <= 4; i++) { f.beginPath(); f.moveTo(i * 64, 0); f.lineTo(i * 64, 256); f.stroke(); f.beginPath(); f.moveTo(0, i * 64); f.lineTo(256, i * 64); f.stroke(); }
+    f.fillStyle = '#efe8da'; [[100, 1], [156, -1]].forEach(([x, s]) => { f.beginPath(); f.ellipse(x, 120, 17, 40, s * 0.08, 0, PI * 2); f.fill(); f.beginPath(); f.ellipse(x + s * 2, 178, 14, 18, 0, 0, PI * 2); f.fill(); }); }
+  const ft = new THREE.CanvasTexture(fp); ft.encoding = THREE.sRGBEncoding;
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.08, 1.6), [0, 0, new THREE.MeshStandardMaterial({ map: ft, roughness: 0.85 }), 0, 0, 0].map(x => x || FACM.stoneD)); pad.position.set(V.x, gp + 0.04, V.z + 0.1); pad.receiveShadow = true; scene.add(pad);
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 3.2), FACM.stoneD); strip.position.set(V.x, gp + 0.03, -94.5); strip.receiveShadow = true; scene.add(strip);
+  XW3.ok = true; XW3.V = [V.x, gr + V.y, V.z]; XW3.P = [0, gr, z0];
+  if (window.__MAP) MAP.places.push(['THE FLOATING CROSSWALK', 0, z0, 0, -92]);
+})();
+
+/* ================================================================
+   v390 ILLUSION: THE MAGIC EYE WALL (2026-11-24)
+   On N3W CUTS' south wall, a poster of confetti in MLow's colours: navy, cobalt, cyan, pink and bone. Relax your eyes
+   and look through the wall, as if at something a metre behind it, until the pattern doubles and locks: an Open
+   Eye Flower rises out of it, and 6529 under it, deeper. It is an autostereogram (Christopher Tyler, 1979): every
+   column repeats the one a fixed step to its left, and where the step shortens the repeat your two eyes fuse it
+   nearer. E at the poster shows the hidden picture for anyone who cannot see it. ?magiceye=0 off.
+   ================================================================ */
+const MEYE = { ok: false };
+window.__MEYE = MEYE;
+(function magicEye() {
+  if (!window.__CUTS || !CUTS.ok || /magiceye=0/.test(location.search)) return;
+  const [cx, g, cz] = CUTS.c, [nx, nz] = CUTS.n, [tx, tz] = CUTS.t, hw = CUTS.W / 2;
+  const W = 1700, H = 1150, P0 = 170, DS = 26, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+  const dv = document.createElement('canvas'); dv.width = W; dv.height = H; const d = dv.getContext('2d'); const dt = new THREE.CanvasTexture(dv); dt.encoding = THREE.sRGBEncoding;
+  const build = img => { if (!c || !c.getImageData || !c.createImageData || !d || !d.getImageData || !d.drawImage || !d.fillText) return;
+    // the hidden picture as depth: the eye flower near, 6529 a step behind it
+    d.fillStyle = '#000'; d.fillRect(0, 0, W, H);
+    if (img) { const s = 640, ix = W / 2 - s / 2, iy = 70; const tmp = document.createElement('canvas'); tmp.width = s; tmp.height = s; const q = tmp.getContext('2d'); q.drawImage(img, 0, 0, s, s); q.globalCompositeOperation = 'source-in'; q.fillStyle = '#e6e6e6'; q.fillRect(0, 0, s, s); d.drawImage(tmp, ix, iy); }
+    d.fillStyle = '#8a8a8a'; d.textAlign = 'center'; d.textBaseline = 'middle'; d.font = '900 330px "Archivo Black",Impact,sans-serif'; d.fillText('6529', W / 2, 900);
+    const dep = d.getImageData(0, 0, W, H).data;
+    // the confetti tile, one period wide
+    const pt = document.createElement('canvas'); pt.width = P0; pt.height = 256; const p = pt.getContext('2d'); p.fillStyle = '#16233f'; p.fillRect(0, 0, P0, 256);
+    const pal = ['#2962FF', '#08DEFF', '#efe8da', '#ff4fa3', '#7f6bff', '#1b2b55', '#c9a24a']; let sd = 6529; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 520; i++) { p.fillStyle = pal[Math.floor(rnd() * pal.length)]; const x = rnd() * P0, y = rnd() * 256, r = 1.5 + rnd() * 6; for (const ox of [0, -P0, P0]) { p.beginPath(); p.arc(x + ox, y, r, 0, PI * 2); p.fill(); } }
+    const pat = p.getImageData(0, 0, P0, 256).data, out = c.createImageData(W, H), o = out.data;
+    for (let y = 0; y < H; y++) { const row = y * W; for (let x = 0; x < W; x++) { const i = (row + x) * 4, s = P0 - Math.round(dep[i] / 255 * DS);
+      if (x < s) { const j = ((y % 256) * P0 + (x % P0)) * 4; o[i] = pat[j]; o[i + 1] = pat[j + 1]; o[i + 2] = pat[j + 2]; } else { const j = i - s * 4; o[i] = o[j]; o[i + 1] = o[j + 1]; o[i + 2] = o[j + 2]; } o[i + 3] = 255; } }
+    c.putImageData(out, 0, 0); t.needsUpdate = true;
+    d.globalCompositeOperation = 'source-over'; const pic = d.getImageData(0, 0, W, H); for (let i = 0; i < pic.data.length; i += 4) { const v = pic.data[i] / 255; pic.data[i] = 22 + v * 200; pic.data[i + 1] = 35 + v * 190; pic.data[i + 2] = 63 + v * 170; } d.putImageData(pic, 0, 0); dt.needsUpdate = true; };
+  const im = new Image(); im.onload = () => { try { build(im); } catch (e) { console.warn('v390', e); } }; im.onerror = () => { try { build(null); } catch (e) { } };
+  const go = () => { im.src = 'assets/iv_flower.webp'; }; if (window.__fontsReady) go(); else addEventListener('n3wfonts', go, { once: true });
+  const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.62 }); MEYE.mat = mat; MEYE.t = t; MEYE.dt = dt;
+  const ry = Math.atan2(-tx, -tz), px = cx - tx * (hw + 0.035), pz = cz - tz * (hw + 0.035), PWm = 3.4, PHm = PWm * H / W;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(PWm, PHm), mat); m.position.set(px, g + 1.85, pz); m.rotation.y = ry; scene.add(m); MEYE.mesh = m;
+  const Fs0 = facFace(cx, cz, -tx, -tz, hw), Fs = { at: (u, y, w, sx, sy, sz, key) => Fs0.at(u, g + y, w, sx, sy, sz, key) }; Fs.at(0, 1.85 + PHm / 2 + 0.04, 0.03, PWm + 0.16, 0.08, 0.06, 'frameK'); Fs.at(0, 1.85 - PHm / 2 - 0.04, 0.03, PWm + 0.16, 0.08, 0.06, 'frameK'); Fs.at(-PWm / 2 - 0.04, 1.85, 0.03, 0.08, PHm + 0.16, 0.06, 'frameK'); Fs.at(PWm / 2 + 0.04, 1.85, 0.03, 0.08, PHm + 0.16, 0.06, 'frameK');
+  const cap = signTex([{ t: 'MAGIC EYE', s: 0.3 }, { t: 'LOOK THROUGH THE WALL, NOT AT IT. LET THE DOTS DOUBLE AND LOCK.', s: 0.075 }, { t: 'AN OPEN EYE FLOWER RISES OUT, AND 6529 BEHIND IT.  E SHOWS YOU.', s: 0.075 }], 1024, 256, '#16233f', '#efe8da');
+  const cm = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.4), new THREE.MeshStandardMaterial({ map: cap, roughness: 0.5 })); cm.position.set(cx - tx * (hw + 0.04), g + 0.42, cz - tz * (hw + 0.04)); cm.rotation.y = ry; scene.add(cm);
+  facFlush();
+  interact(cx - tx * (hw + 2.0), cz - tz * (hw + 2.0), 2.4, 'E · SHOW ME THE HIDDEN PICTURE', () => { MEYE.show = 4; });
+  MEYE.ok = true; MEYE.P = [px, g, pz]; MEYE.V = [cx - tx * (hw + 3.2), g + 1.7, cz - tz * (hw + 3.2)];
+  if (window.__MAP) MAP.places.push(['MAGIC EYE', px, pz, cx - tx * (hw + 3), cz - tz * (hw + 3)]);
+})();
+window.__FRAMES.push(dt => { try { if (!MEYE.ok) return; if (MEYE.show > 0) { MEYE.show -= dt; if (MEYE.mat.map !== MEYE.dt) { MEYE.mat.map = MEYE.dt; MEYE.mat.needsUpdate = true; } } else if (MEYE.mat.map !== MEYE.t) { MEYE.mat.map = MEYE.t; MEYE.mat.needsUpdate = true; } } catch (e) { } });
+
+/* ================================================================
+   v391 ILLUSION: THE ZOETROPE (2026-11-24)
+   Beside N3W CUTS, on a cast iron pedestal, a brass and black drum with twelve slits round its rim and twelve
+   pictures inside: an Open Eye Flower breathing and turning. Look down through the slits and the flower moves.
+   The drum turns about once a second, stepping exactly one slit for every four frames your screen draws, so
+   every slit is always where the last one was and each look through it lands on the next picture:
+   the 1834 toy, done with the frame rate instead of your eye's persistence. ?zoetrope=0 off.
+   ================================================================ */
+const ZOE = { ok: false, f: 0 };
+window.__ZOE = ZOE;
+(function zoetrope() {
+  if (!window.__CUTS || !CUTS.ok || /zoetrope=0/.test(location.search)) return;
+  const N = 12, R = 0.42, Hd = 0.34, [x, z] = CUTS.at(CUTS.W / 2 + 2.6, CUTS.D / 2 + 1.8), g = ground(x, z), top = 1.02;
+  const iron = new THREE.MeshStandardMaterial({ color: 0x1b1c1e, roughness: 0.45, metalness: 0.6 }), brass = new THREE.MeshStandardMaterial({ color: 0xb8913e, roughness: 0.3, metalness: 0.95 });
+  const prof = [[0.0, 0], [0.32, 0], [0.32, 0.05], [0.22, 0.1], [0.12, 0.2], [0.08, 0.5], [0.1, 0.62], [0.07, 0.7], [0.07, 0.92], [0.16, 0.96], [0.2, 1.0], [0.0, 1.0]].map(([a, b]) => new THREE.Vector2(a, b));
+  const ped = new THREE.Mesh(new THREE.LatheGeometry(prof, 40), iron); ped.position.set(x, g, z); ped.castShadow = ped.receiveShadow = true; scene.add(ped); post(x, z, 0.4, -5, g + 1.4);
+  // the drum's two skins: outside black with the slits, inside the pictures under the slits
+  const mk = (pics) => { const cv = document.createElement('canvas'); cv.width = 2048; cv.height = 256; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = ANISO;
+    const draw = img => { if (!c || !c.fillRect || !c.clearRect || !c.beginPath || !c.strokeRect || !c.save) return; c.clearRect(0, 0, 2048, 256); c.fillStyle = pics ? '#0f1526' : '#111214'; c.fillRect(0, 0, 2048, 256);
+      if (!pics) { c.strokeStyle = '#b8913e'; c.lineWidth = 6; c.beginPath(); c.moveTo(0, 250); c.lineTo(2048, 250); c.stroke(); c.beginPath(); c.moveTo(0, 6); c.lineTo(2048, 6); c.stroke(); }
+      for (let i = 0; i < N; i++) { const cx = (i + 0.5) * 2048 / N; c.clearRect(cx - 7, 14, 14, 96);   // the slits, upper band
+        if (pics) { const k = i / N, s = 110 * (0.72 + 0.28 * Math.sin(k * PI * 2)), rot = k * PI * 2 / 3;
+          c.fillStyle = '#efe8da'; c.fillRect(cx - 80, 128, 160, 120); c.save(); c.translate(cx, 188); c.rotate(rot); if (img) c.drawImage(img, -s / 2, -s / 2, s, s); else { c.fillStyle = '#2962FF'; c.beginPath(); c.arc(0, 0, s / 3, 0, PI * 2); c.fill(); } c.restore(); } }
+      t.needsUpdate = true; };
+    draw(null); if (pics) { const im = new Image(); im.onload = () => { try { draw(im); } catch (e) { } }; im.src = 'assets/iv_flower.webp'; } return t; };
+  const D = new THREE.Group(); D.position.set(x, g + top, z); scene.add(D); ZOE.drum = D;
+  const out = new THREE.Mesh(new THREE.CylinderGeometry(R, R, Hd, 96, 1, true), new THREE.MeshStandardMaterial({ map: mk(false), roughness: 0.4, metalness: 0.3, alphaTest: 0.5, side: THREE.FrontSide })); out.position.y = Hd / 2; D.add(out);
+  const inn = new THREE.Mesh(new THREE.CylinderGeometry(R - 0.004, R - 0.004, Hd, 96, 1, true), new THREE.MeshBasicMaterial({ map: mk(true), alphaTest: 0.5, side: THREE.BackSide })); inn.position.y = Hd / 2; D.add(inn); ZOE.innM = inn.material;
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(R, 48), new THREE.MeshStandardMaterial({ color: 0x0f1526, roughness: 0.8 })); floor.rotation.x = -PI / 2; floor.position.y = 0.005; D.add(floor);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(R, 0.012, 8, 96), brass); rim.rotation.x = PI / 2; rim.position.y = Hd; D.add(rim);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.12, 12), brass); hub.position.y = 0.06; D.add(hub);
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 8), brass); cap.position.y = 0.13; D.add(cap);
+  const lab = signTex([{ t: 'THE ZOETROPE', s: 0.26 }, { t: 'LOOK DOWN THROUGH THE SLITS. IT STEPS ONE SLIT FOR EVERY', s: 0.085 }, { t: 'FOUR FRAMES YOUR SCREEN DRAWS, SO THE SLITS NEVER MOVE.', s: 0.085 }], 1024, 256, '#16233f', '#efe8da');
+  const lm = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.225), new THREE.MeshStandardMaterial({ map: lab, roughness: 0.5 })); const nx = CUTS.n[0], nz = CUTS.n[1];
+  lm.position.set(x + nx * 0.34, g + 0.62, z + nz * 0.34); lm.rotation.y = CUTS.ry; lm.rotation.x = 0; scene.add(lm);
+  ZOE.ok = true; ZOE.P = [x, g, z];
+  if (window.__MAP) MAP.places.push(['THE ZOETROPE', x, z, x + nx * 2.5, z + nz * 2.5]);
+})();
+// one slit per drawn frame, held for four frames: at 60 frames a second, fifteen pictures a second
+window.__FRAMES.push(() => { try { if (!ZOE.ok) return; const d = Math.hypot(camera.position.x - ZOE.P[0], camera.position.z - ZOE.P[2]); if (d > 40) return; ZOE.f++; if (ZOE.f % 4) return; ZOE.drum.rotation.y += PI * 2 / 12; } catch (e) { } });
+
+/* ================================================================
+   v392 HOW THE BOARDWALK TRICKS WORK (2026-11-24)
+   Plaques (the v282 design) for the barber pole and the infinite barbershop at N3W CUTS, and for the floating
+   crosswalk at its footprints; the magic eye and the zoetrope carry their own. A third WHAT TO LOOK FOR panel at the
+   pier lists all five.
+   ================================================================ */
+(function plaques4() {
+  const mk = (x, z, ry, title, l1, l2) => { const t = signTex([{ t: title, s: 0.26 }, { t: l1, s: 0.1 }, { t: l2, s: 0.1 }], 1024, 384, '#16233f', '#efe8da'); const g = ground(x, z);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.375), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.15 })); m.position.set(x, g + 1.05, z); m.rotation.y = ry; m.rotation.x = -0.35; scene.add(m); facPut('iron', x, g + 0.5, z, 0.06, 1.0, 0.06, ry); post(x, z, 0.12, -5, 1.2); };
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
+  try { if (window.__CUTS && CUTS.ok) { const [x, z] = CUTS.at(-CUTS.W / 2 - 0.6, CUTS.D / 2 + 2.4); mk(x, z, CUTS.ry, 'THE INFINITE BARBERSHOP', 'THERE IS NO ROOM BEHIND THE GLASS. A SHADER TRACES', 'YOUR VIEW INTO IT AND FOLDS IT BETWEEN TWO MIRRORS.');
+    const [x2, z2] = CUTS.at(-CUTS.W / 2 - 1.8, CUTS.D / 2 + 1.0); mk(x2, z2, CUTS.ry, 'THE BARBER POLE', 'THE STRIPES ONLY GO ROUND. A STRIPE SEEN IN A SLOT', 'CAN ONLY SHOW MOTION ACROSS IT, SO IT CLIMBS.'); } } catch (e) { }
+  try { if (window.__XW3 && XW3.ok) { const [x, , z] = XW3.V; mk(x + 1.3, z + 0.3, PI, 'THE FLOATING CROSSWALK', 'STAND ON THE FOOTPRINTS. THE SLABS ARE PAINT, PROJECTED', 'FROM YOUR EYE ONTO THE ROAD. STEP OFF AND THEY MELT.'); } } catch (e) { }
+  facFlush();
+  try { if (window.__LOOKFOR) { const [x0, g, z0] = __LOOKFOR.P, x = x0 - 1.75, z = z0 + 0.6;
+    const rows = ['N3W CUTS · THE WEST BEACH, ACROSS THE ROAD', 'THE INFINITE BARBERSHOP · LOOK IN THE WINDOW', 'THE BARBER POLE · WHICH WAY IS IT GOING', 'MAGIC EYE · THE SHOP\'S SOUTH WALL', 'THE ZOETROPE · BESIDE THE SHOP', 'THE FLOATING CROSSWALK · THE NORTH KERB', 'THE MEMES WALK · BOTH BANKS OF THE RIVER'];
+    const t = signTex([{ t: 'AND NOW', s: 0.08 }].concat(rows.map(r => ({ t: r, s: 0.035, b: false }))), 1024, 1000, '#16233f', '#efe8da');
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.37), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); m.position.set(x, g + 1.4, z); m.rotation.y = PI - 0.35; scene.add(m);
+    facPut('iron', x - Math.sin(PI - 0.35) * 0.04, g + 1.4, z - Math.cos(PI - 0.35) * 0.04, 1.5, 1.47, 0.05, PI - 0.35); facPut('iron', x, g + 0.35, z + 0.03, 0.1, 0.7, 0.1, 0); facFlush(); post(x, z, 0.3, -5, 2.5); } } catch (e) { }
+})();
+
+/* ================================================================
+   v393 THE TOUR GOES TO THE BOARDWALK (2026-11-24)
+   Five stops, in the highlights and in the full tour (Shift T), before the island at night: walking past N3W CUTS'
+   window so the mirrored shop slides, the barber pole close, the magic eye, the zoetrope from above, and the
+   floating crosswalk from its footprints and then from the side.
+   ================================================================ */
+(function tourV393() { const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  try { if (window.__CUTS && CUTS.ok) { const g = CUTS.g, e = g + 1.62, w = CUTS.win, a = CUTS.at(w.u - 2.6, CUTS.D / 2 + 3.2), b = CUTS.at(w.u + 2.2, CUTS.D / 2 + 2.6), la = CUTS.at(w.u - 0.6, CUTS.D / 2 - 1), lb = CUTS.at(w.u + 0.6, CUTS.D / 2 - 1);
+    add.push({ name: 'the infinite barbershop', dur: 9, pos: [[a[0], e, a[1]], [b[0], e, b[1]]], look: [[la[0], g + 1.6, la[1]], [lb[0], g + 1.6, lb[1]]] });
+    const p = CUTS.at(-CUTS.W / 2 + 0.25, CUTS.D / 2 + 2.2), pl = CUTS.at(-CUTS.W / 2 + 0.25, CUTS.D / 2 + 0.52); add.push({ name: 'the barber pole', dur: 5, pos: [[p[0], g + 1.9, p[1]], [p[0], g + 2.0, p[1]]], look: [[pl[0], g + 2.05, pl[1]], [pl[0], g + 2.05, pl[1]]] }); } } catch (e) { }
+  try { if (window.__MEYE && MEYE.ok) { const [vx, vy, vz] = MEYE.V, [px, py, pz] = MEYE.P; add.push({ name: 'magic eye', dur: 6, pos: [[vx, vy, vz], [vx * 0.97 + px * 0.03, vy, vz * 0.97 + pz * 0.03]], look: [[px, py + 1.85, pz], [px, py + 1.85, pz]] }); } } catch (e) { }
+  try { if (window.__ZOE && ZOE.ok) { const [x, g, z] = ZOE.P, [nx, nz] = CUTS.n; add.push({ name: 'the zoetrope', dur: 6, pos: [[x + nx * 1.1, g + 1.75, z + nz * 1.1], [x + nx * 0.8, g + 1.65, z + nz * 0.8]], look: [[x, g + 1.12, z], [x, g + 1.12, z]] }); } } catch (e) { }
+  try { if (window.__XW3 && XW3.ok) { const [x, y, z] = XW3.V, gr = XW3.P[1]; add.push({ name: 'the floating crosswalk', dur: 10, pos: [[x, y, z], [x, y, z - 0.2], [x - 7, gr + 2.2, z - 3]], look: [[0, gr + 0.2, -99.5], [0, gr + 0.2, -99.6], [0, gr, -100]] }); } } catch (e) { }
+  const ins = (L, before) => { let at = L.findIndex(r => r.name === before); if (at < 0) at = L.findIndex(r => r.name === 'aerial'); L.splice(at < 0 ? L.length : at, 0, ...add); };
+  ins(T, 'tied together'); if (window.__TOURFULL && __TOURFULL !== T) ins(__TOURFULL, 'aerial');
+})();
+
+/* ================================================================
+   v394 THE MEMES WALK (2026-11-24)
+   Every 6529 Memes card on the island, in mint order, set into the promenade ring like stars in a pavement: a brass
+   plaque for each, the card in enamel, its number cast below. They line both banks of the meme river, #1 on the
+   outer bank at the pier spoke and east round the ring, then on along the inner bank to the newest, so a walk round the
+   river twice is a walk through the whole collection, season by season. Stand still on one and it tells you
+   whose it is. 577 plaques in six draws (one per card atlas). ?memeswalk=0 off.
+   ================================================================ */
+const MWALK = { ok: false, list: [], pos: [] };
+window.__MWALK = MWALK;
+(function memesWalk() {
+  if (!LOOK.on || /memeswalk=0/.test(location.search)) return;
+  const seen = new Set(), list = CARDS.concat(D.fresh || []).filter(c => c.uv && !seen.has(c.n) && seen.add(c.n)).sort((a, b) => a.n - b.n); MWALK.list = list;
+  const PY = 0.665 + 0.012, banks = [{ r: 41.86 }, { r: 38.14 }], gap = 1.6, PW = 0.48, PL = 0.62;
+  // arc left on each bank once the four spoke crossings are skipped, and how many cards each bank takes
+  const usable = r => 2 * PI * r - 4 * 2 * gap; const tot = usable(banks[0].r) + usable(banks[1].r); banks[0].n = Math.round(list.length * usable(banks[0].r) / tot); banks[1].n = list.length - banks[0].n;
+  const spots = []; banks.forEach((b, bi) => { const seg = (PI / 2) - 2 * gap / b.r, per = b.n / 4; let k = 0;
+    for (let q = 0; q < 4; q++) { const n = Math.round(per * (q + 1)) - Math.round(per * q), a0 = q * PI / 2 + gap / b.r; for (let i = 0; i < n; i++) { const a = a0 + (i + 0.5) / n * seg; spots.push({ a, r: b.r, bank: bi }); k++; } } });
+  // the digits, cast in brass
+  const dg = document.createElement('canvas'); dg.width = 1024; dg.height = 128; const dc = dg.getContext('2d'); const dt = new THREE.CanvasTexture(dg); dt.encoding = THREE.sRGBEncoding; dt.anisotropy = ANISO;
+  const drawD = () => { if (!dc || !dc.fillText) return; dc.clearRect(0, 0, 1024, 128); dc.fillStyle = '#fff'; dc.textAlign = 'center'; dc.textBaseline = 'middle'; dc.font = '900 112px "Archivo Black",Impact,sans-serif'; for (let i = 0; i < 10; i++) dc.fillText(String(i), i * 102.4 + 51.2, 68); dt.needsUpdate = true; };
+  drawD(); addEventListener('n3wfonts', () => { try { drawD(); } catch (e) { } }, { once: true });
+  const byAtl = {}; list.forEach((cd, i) => { const s = spots[i]; if (!s) return; (byAtl[cd.uv[0]] = byAtl[cd.uv[0]] || []).push([cd, s]); MWALK.pos.push([s.a, s.r, cd]); });
+  const geo = new THREE.PlaneGeometry(PW, PL); geo.rotateX(-PI / 2);
+  const o = new THREE.Object3D();
+  Object.keys(byAtl).forEach(ai => { const L = byAtl[ai], n = L.length, aUv = new Float32Array(n * 4), aNum = new Float32Array(n), aAsp = new Float32Array(n);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.5 });
+    mat.onBeforeCompile = sh => { sh.uniforms.uAt = { value: ATL[ai] }; sh.uniforms.uDig = { value: dt };
+      sh.vertexShader = 'attribute vec4 aUv; attribute float aNum; attribute float aAsp; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n vUvR = aUv; vNum = aNum; vAsp = aAsp; vPl = uv;');
+      sh.fragmentShader = 'uniform sampler2D uAt, uDig; varying vec4 vUvR; varying float vNum; varying float vAsp; varying vec2 vPl; float plM = 0.9, plR = 0.32;\n' + sh.fragmentShader
+        .replace('#include <map_fragment>', `{ vec2 p = vPl; vec3 brass = vec3(0.62, 0.43, 0.16), enamel = vec3(0.012, 0.02, 0.05); vec3 col = brass;
+          float ex = step(0.06, p.x) * step(p.x, 0.94), ey = step(0.045, p.y) * step(p.y, 0.955);
+          if (ex * ey > 0.5) { col = enamel; plM = 0.0; plR = 0.18;
+            if (p.y > 0.24 && p.y < 0.93 && p.x > 0.1 && p.x < 0.9) { vec2 q = vec2((p.x - 0.1) / 0.8, (p.y - 0.24) / 0.69); float ar = (0.8 * ${PW.toFixed(2)}) / (0.69 * ${PL.toFixed(2)});
+              vec2 s = vAsp > ar ? vec2(1.0, ar / vAsp) : vec2(vAsp / ar, 1.0); vec2 c = (q - 0.5) / s + 0.5;
+              if (c.x > 0.0 && c.x < 1.0 && c.y > 0.0 && c.y < 1.0) { col = sRGBToLinear(texture2D(uAt, vec2(mix(vUvR.x, vUvR.z, c.x), mix(vUvR.y, vUvR.w, c.y)))).rgb; plR = 0.24; } }
+            if (p.y > 0.07 && p.y < 0.21) { float nd = vNum >= 100.0 ? 3.0 : vNum >= 10.0 ? 2.0 : 1.0; float cw = 0.14, x0 = 0.5 - nd * cw * 0.5 - cw * 0.5;
+              float slot = floor((p.x - x0) / cw); float fx = fract((p.x - x0) / cw);
+              if (slot >= 0.0 && slot <= nd) { float dgt = -1.0; if (slot == 0.0) { col = mix(col, brass, 0.0); } else { float pw = pow(10.0, nd - slot); dgt = mod(floor(vNum / pw), 10.0); }
+                float a = 0.0; if (dgt >= 0.0) a = texture2D(uDig, vec2((dgt + fx) / 10.0, (p.y - 0.07) / 0.14)).a; else { vec2 h = vec2(fx, (p.y - 0.07) / 0.14); a = step(abs(h.x - 0.5), 0.32) * (step(abs(h.y - 0.38), 0.05) + step(abs(h.y - 0.62), 0.05)) + step(abs(h.y - 0.5), 0.34) * (step(abs(h.x - 0.4), 0.05) + step(abs(h.x - 0.6), 0.05)); a = clamp(a, 0.0, 1.0); }
+                if (a > 0.5) { col = brass; plM = 0.9; plR = 0.3; } } } }
+          diffuseColor.rgb = col; }`)
+        .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = plR;')
+        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = plM;'); };
+    mat.customProgramCacheKey = () => 'mwalk';
+    const im = new THREE.InstancedMesh(geo, mat, n);
+    L.forEach(([cd, s], i) => { const x = Math.sin(s.a) * s.r, z = Math.cos(s.a) * s.r; o.position.set(x, PY, z); o.rotation.set(0, s.a + PI, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix);
+      const u = cd.uv; aUv.set([u[1], 1 - u[4], u[3], 1 - u[2]], i * 4); aNum[i] = cd.n; aAsp[i] = u[5]; });
+    const g2 = geo.clone(); g2.setAttribute('aUv', new THREE.InstancedBufferAttribute(aUv, 4)); g2.setAttribute('aNum', new THREE.InstancedBufferAttribute(aNum, 1)); g2.setAttribute('aAsp', new THREE.InstancedBufferAttribute(aAsp, 1)); im.geometry = g2;
+    im.instanceMatrix.needsUpdate = true; im.receiveShadow = true; im.frustumCulled = false; im.renderOrder = 3; scene.add(im); });
+  MWALK.ok = true; MWALK.PY = PY; MWALK.banks = banks;
+  if (window.__MAP) MAP.places.push(['THE MEMES WALK', 0, 41.9, 0, 46]);
+})();
+// stand still on a plaque and it tells you whose card it is
+window.__FRAMES.push(dt => { try { if (!MWALK.ok) return; const x = camera.position.x, z = camera.position.z, r = Math.hypot(x, z); if (r < 37 || r > 43) { MWALK.cur = -1; return; }
+  const a = (Math.atan2(x, z) + PI * 2) % (PI * 2); let best = -1, bd = 0.36; for (let i = 0; i < MWALK.pos.length; i++) { const p = MWALK.pos[i]; if (Math.abs(p[1] - r) > 0.45) continue; const d = Math.abs(((a - p[0] + PI * 3) % (PI * 2)) - PI) * p[1]; if (d < bd) { bd = d; best = i; } }
+  if (best !== MWALK.cur) { MWALK.cur = best; MWALK.t = 0; return; } if (best < 0 || MWALK.told === best) return; MWALK.t += dt; if (MWALK.t < 0.9) return; MWALK.told = best;
+  const c = MWALK.pos[best][2]; toast('THE MEMES WALK · #' + c.n + ' ' + String(c.t || '').toUpperCase() + ' · ' + String(c.art || c.a || '').toUpperCase() + ' · SZN ' + c.s); } catch (e) { } });
+
+/* ================================================================
+   v395 THE MEMES WALK: SEASONS AND THE START (2026-11-24)
+   A brass bar cast with SZN 2, SZN 3 and so on sits in the joint before the first card of every season, so the walk
+   reads like chapters; and a bronze marker on a post at the pier spoke says where to start and which way to go.
+   ================================================================ */
+(function memesWalkSeasons() {
+  if (!window.__MWALK || !MWALK.ok) return;
+  const P = MWALK.pos, brass = new THREE.MeshStandardMaterial({ color: 0xb8913e, roughness: 0.32, metalness: 0.95 });
+  for (let i = 0; i < P.length; i++) { const [a, r, cd] = P[i], prev = P[i - 1]; if (i > 0 && prev[2].s === cd.s) continue;
+    const am = prev && prev[1] === r && Math.abs(a - prev[0]) < 0.9 / r ? (a + prev[0]) / 2 : a - 0.42 / r;
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 256; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+    const draw = () => { if (!c || !c.fillText || !c.rotate) return; c.fillStyle = '#9c7a33'; c.fillRect(0, 0, 64, 256); c.fillStyle = '#2a1e0c'; c.save(); c.translate(32, 128); c.rotate(-PI / 2); c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '900 34px "Archivo Black",Impact,sans-serif'; c.fillText('SZN ' + cd.s, 0, 2); c.restore(); t.needsUpdate = true; };
+    draw(); addEventListener('n3wfonts', () => { try { draw(); } catch (e) { } }, { once: true });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.62), new THREE.MeshStandardMaterial({ map: t, roughness: 0.35, metalness: 0.85 })); m.geometry.rotateX(-PI / 2);
+    m.position.set(Math.sin(am) * r, MWALK.PY + 0.001, Math.cos(am) * r); m.rotation.y = am + PI; m.renderOrder = 3; scene.add(m); }
+  // the marker at the pier spoke
+  const x = 2.6, z = 43.3, g = ground(x, z), t = signTex([{ t: 'THE MEMES WALK', s: 0.24 }, { t: 'EVERY CARD, IN MINT ORDER. #1 STARTS ON THE OUTER BANK', s: 0.085 }, { t: 'AND RUNS EAST FROM THE PIER; THE INNER BANK PICKS UP AT #' + (MWALK.banks[0].n + 1) + '.', s: 0.085 }, { t: 'STAND ON ONE AND IT TELLS YOU WHOSE IT IS.', s: 0.085 }], 1024, 420, '#16233f', '#efe8da');
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.45), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.2 })); m.position.set(x, g + 1.05, z); m.rotation.order = 'YXZ'; m.rotation.set(-0.35, 0, 0); scene.add(m);
+  const p = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 1.0, 10), brass); p.position.set(x, g + 0.5, z); scene.add(p); post(x, z, 0.12, -5, 1.2);
+  MWALK.sign = [x, g, z];
+})();
+
+/* ================================================================
+   v396 THE TOUR WALKS THE MEMES WALK (2026-11-24)
+   A stop at the start of the walk: down at the pier spoke, reading the first plaques, #1 Seize the Memes of
+   Production onward, gliding east along the outer bank at a slow walk with the river beside you.
+   ================================================================ */
+(function tourV396() { const T = (window.__game && __game.TOUR) || TOUR; if (!window.__MWALK || !MWALK.ok) return;
+  const r = 41.86, y = MWALK.PY, P = a => [Math.sin(a) * (r - 1.4), y + 1.55, Math.cos(a) * (r - 1.4)], Lk = a => [Math.sin(a + 0.05) * r, y, Math.cos(a + 0.05) * r];
+  const a0 = 0.045, a1 = 0.2, stop = { name: 'the memes walk', dur: 12, pos: [P(a0), P((a0 + a1) / 2), P(a1)], look: [Lk(a0), Lk((a0 + a1) / 2), Lk(a1)] };
+  const ins = (L, before) => { let at = L.findIndex(q => q.name === before); if (at < 0) at = L.findIndex(q => q.name === 'aerial'); L.splice(at < 0 ? L.length : at, 0, stop); };
+  const mr = T.findIndex(q => q.name === 'the meme river'); if (mr >= 0) T.splice(mr + 1, 0, stop); else ins(T, 'tied together');
+  if (window.__TOURFULL && __TOURFULL !== T) { const m2 = __TOURFULL.findIndex(q => q.name === 'the meme river'); if (m2 >= 0) __TOURFULL.splice(m2 + 1, 0, stop); else ins(__TOURFULL, 'aerial'); }
+})();
+
+/*__V397_X__*/
+/*__V398_X__*/
+/*__V399_X__*/
+/*__V400_X__*/
+/*__V401_X__*/
+/*__V402_X__*/
+/*__V403_X__*/
+/*__V404_X__*/
+/*__V405_X__*/
+/*__V406_X__*/
+/*__V407_X__*/
+/*__V408_X__*/
+/*__V409_X__*/
+/*__V410_X__*/
+/*__V411_X__*/
+/*__V412_X__*/
+/*__V413_X__*/
+/*__V414_X__*/
+/*__V415_X__*/
+/*__V416_X__*/
+/*__V417_X__*/
+/*__V418_X__*/
+/*__V419_X__*/
+/*__V420_X__*/
+/*__V421_X__*/
+/*__V422_X__*/
+/*__V423_X__*/
+/*__V424_X__*/
+/*__V425_X__*/
+/*__V426_X__*/
+/*__V427_X__*/
+/*__V428_X__*/
+/*__V429_X__*/
+/*__V430_X__*/
+/*__V431_X__*/
+/*__V432_X__*/
+/*__V433_X__*/
+/*__V434_X__*/
+/*__V435_X__*/
+/*__V436_X__*/
 
 /* ---------------- boot ---------------- */
 buildCards();
