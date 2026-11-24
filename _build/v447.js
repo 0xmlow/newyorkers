@@ -15,8 +15,8 @@ function eastLabel(deg, r, title, line) {
   const P = eastAt(deg, r); EASTB.navy = EASTB.navy || new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.55, metalness: 0.2 });
   const t = signTex([{ t: title, s: 0.3 }, { t: line, s: 0.12 }], 1024, 384, '#16233f', '#c9a24a');
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 1.0, 8), EASTB.navy); pole.position.set(P.x, P.g + 0.5, P.z); scene.add(pole);
-  const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.35 })); pl.rotation.order = 'YXZ'; pl.rotation.set(-0.7, P.ry + PI, 0); pl.position.set(P.x, P.g + 1.05, P.z); scene.add(pl);
-  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.4, 0.03), EASTB.navy); bk.rotation.order = 'YXZ'; bk.rotation.set(-0.7, P.ry + PI, 0); bk.position.set(P.x - P.nx * 0.02, P.g + 1.04, P.z - P.nz * 0.02); scene.add(bk);
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.35 })); pl.rotation.order = 'YXZ'; pl.rotation.set(-0.7, P.ry, 0); pl.position.set(P.x, P.g + 1.05, P.z); scene.add(pl);
+  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.4, 0.03), EASTB.navy); bk.rotation.order = 'YXZ'; bk.rotation.set(-0.7, P.ry, 0); bk.position.set(P.x - P.nx * 0.02, P.g + 1.04, P.z - P.nz * 0.02); scene.add(bk);
   post(P.x, P.z, 0.25, -5, 1.3); EASTB.list.push({ deg, title }); return P;
 }
 function eastFeet(x, z, ry) {

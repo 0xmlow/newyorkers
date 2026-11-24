@@ -11,7 +11,7 @@
   FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
   [-2.1, 2.1].forEach(u => { const [x, z] = at(u, 0); facPut('iron', x, P.g + 1.9, z, 0.12, 3.8, 0.12, P.ry); post(x, z, 0.15, -5, 4); });
   const t = signTex([{ t: 'N3W ILLUSION BEACH', s: 0.42 }, { t: 'SEVEN THINGS THAT ARE NOT THERE', s: 0.17 }], 1024, 220, '#16233f', '#c9a24a');
-  const [hx, hz] = at(0, 0); const hm = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.9), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide })); hm.position.set(hx, P.g + 3.55, hz); hm.rotation.y = P.ry + PI; scene.add(hm);
+  const [hx, hz] = at(0, 0); const hm = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.9), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide })); hm.position.set(hx, P.g + 3.55, hz); hm.rotation.y = P.ry; scene.add(hm);
   facPut('iron', hx, P.g + 4.03, hz, 4.4, 0.07, 0.1, P.ry); facPut('iron', hx, P.g + 3.07, hz, 4.4, 0.07, 0.1, P.ry); facFlush();
   const B = [], n = 22; for (let i = 0; i < n; i++) { const u = -2.1 + i * 4.2 / (n - 1); [4.03, 3.07].forEach(y => { const [x, z] = at(u, -0.07); B.push([x, P.g + y, z]); }); }
   const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), B.length), o = new THREE.Object3D(), c = new THREE.Color(0x3a3226);

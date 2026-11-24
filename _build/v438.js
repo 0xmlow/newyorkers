@@ -24,7 +24,7 @@ function hazeSetup() {
   const bi = POST.comp.passes.indexOf(POST.bloom); POST.comp.passes.splice(bi >= 0 ? bi : 1, 0, pass); HAZE.pass = pass;
 }
 function hazeFrame() {
-  hazeSetup(); if (!HAZE.pass) return; const u = HAZE.pass.uniforms; HAZE.pass.enabled = AO.on;
+  hazeSetup(); if (!HAZE.pass) return; const u = HAZE.pass.uniforms; HAZE.pass.enabled = AO.on && !HAZE.off;
   u.tDepth.value = AO.depth.depthTexture; u.uInvProj.value.copy(camera.projectionMatrixInverse);
   // the air takes the fog's colour (the time of day already sets it), lifted a little toward the sky
   u.uCol.value.copy(scene.fog.color); if (L.sky) u.uCol.value.lerp(L.sky, 0.25);

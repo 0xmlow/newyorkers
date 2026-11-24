@@ -591,3 +591,23 @@ busiest views over the whole v237 to v336 run.
 - Frame rate: a far model for every sculpture (sculpt_far, gltf-transform simplify, 8.4k triangles), 27 to 48
   percent fewer triangles a frame; scanned rooftop condensers; the boardwalk sleeps when you are far (v401, v409, v434).
 - Firefly round four did not run: Claude in Chrome was not connected all session; new walls reuse earlier pieces.
+
+## v437 to v486 (2026-11-24): round five, the look and the illusion beach
+- The look, every frame: the coast stops being a target (the waterline foam wanders in coves and breaks into
+  patches, the shallows go deep sooner), aerial perspective from the depth pass, a film lens on the tour (bokeh
+  focused on each stop's subject), contrast adaptive sharpening, sun glitter on the harbour, car paint with a clear
+  coat, a mown lawn whose blades follow the stripes, a tide line of wrack and driftwood, the city glow behind the
+  skyline at night, headlight pools (longer on a wet road), the el repainted as dark iron, white water round every
+  pile and rock and a wet line on them, glowing surf after dark, whitecaps when it blows, night streaks, red
+  aviation lights on the towers (v437 to v446, v455, v456, v462, v467 to v470, v474, v481).
+- N3W ILLUSION BEACH on the east sand: the hollow face (Gregory), the chair that is not there (Beuchet), the
+  triangle that is not there (Kanizsa), the cube that flips (Necker), the two bars on the track (Ponzo), the fence
+  that leans (Zöllner), the wheel that goes backwards, the spiral that isn't (Fraser), and the Shepard tone at the
+  barber pole; a gate, lecterns, footprints, duckboards, lamps, benches, night light, a credit plate, the tour, and
+  a nine out of nine count. 38 illusions in all (v447 to v454, v464 to v466, v472, v473, v477 to v480, v482, v484 to v486).
+- The 6529 Memes: the v42 drone show relit (real point sizes, halos), it writes 6529 in gold and flies the card of
+  the hour as a 600 drone portrait with a toast naming it, the card's plaque on the Memes Walk blazes while it hangs
+  in the sky, the show reflects in the harbour, and the highlights tour now ends on it; a 6529 card hangs on the
+  wall of every other room behind the windows (v457 to v461, v463, v475, v483).
+- Safety: a governor turns the new full screen passes off one by one if a machine falls under about 33 fps (v471).
+- Found and kept out: a second drone show was written before the v42 one was noticed; it became the upgrade instead.

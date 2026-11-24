@@ -30,7 +30,7 @@ function dofFrame(dt) {
   dofSetup(); if (!DOF.pass) return; const u = DOF.pass.uniforms;
   const want = (RAIL.on && RAIL.look && RAIL.dur < 60 && camera.position.y < 30 ? 1 : 0) || (/dof=1/.test(location.search) ? 1 : 0);
   if (RAIL.on && RAIL.look) { const lin = Math.min(1, RAIL.t / RAIL.dur), e = RAIL.ease ? lin * lin * (3 - 2 * lin) : lin; _dofA.fromArray(RAIL.look[0]); _dofB.fromArray(RAIL.look[1]); _dofA.lerp(_dofB, e); DOF.focus = Math.max(2, camera.position.distanceTo(_dofA)); }
-  DOF.k += (want - DOF.k) * Math.min(1, dt * 2.5); u.uK.value = DOF.k; u.uFocus.value = DOF.focus; DOF.pass.enabled = DOF.k > 0.01 && AO.on;
+  DOF.k += (want - DOF.k) * Math.min(1, dt * 2.5); u.uK.value = DOF.k; u.uFocus.value = DOF.focus; DOF.pass.enabled = DOF.k > 0.01 && AO.on && !DOF.off;
   u.tDepth.value = AO.depth.depthTexture; u.uInvProj.value.copy(camera.projectionMatrixInverse);
   const s = renderer.getDrawingBufferSize(_dofSz); u.uPx.value.set(1 / s.x, 1 / s.y);
 }

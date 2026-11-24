@@ -16902,7 +16902,7 @@ function hazeSetup() {
   const bi = POST.comp.passes.indexOf(POST.bloom); POST.comp.passes.splice(bi >= 0 ? bi : 1, 0, pass); HAZE.pass = pass;
 }
 function hazeFrame() {
-  hazeSetup(); if (!HAZE.pass) return; const u = HAZE.pass.uniforms; HAZE.pass.enabled = AO.on;
+  hazeSetup(); if (!HAZE.pass) return; const u = HAZE.pass.uniforms; HAZE.pass.enabled = AO.on && !HAZE.off;
   u.tDepth.value = AO.depth.depthTexture; u.uInvProj.value.copy(camera.projectionMatrixInverse);
   // the air takes the fog's colour (the time of day already sets it), lifted a little toward the sky
   u.uCol.value.copy(scene.fog.color); if (L.sky) u.uCol.value.lerp(L.sky, 0.25);
@@ -16943,7 +16943,7 @@ function dofFrame(dt) {
   dofSetup(); if (!DOF.pass) return; const u = DOF.pass.uniforms;
   const want = (RAIL.on && RAIL.look && RAIL.dur < 60 && camera.position.y < 30 ? 1 : 0) || (/dof=1/.test(location.search) ? 1 : 0);
   if (RAIL.on && RAIL.look) { const lin = Math.min(1, RAIL.t / RAIL.dur), e = RAIL.ease ? lin * lin * (3 - 2 * lin) : lin; _dofA.fromArray(RAIL.look[0]); _dofB.fromArray(RAIL.look[1]); _dofA.lerp(_dofB, e); DOF.focus = Math.max(2, camera.position.distanceTo(_dofA)); }
-  DOF.k += (want - DOF.k) * Math.min(1, dt * 2.5); u.uK.value = DOF.k; u.uFocus.value = DOF.focus; DOF.pass.enabled = DOF.k > 0.01 && AO.on;
+  DOF.k += (want - DOF.k) * Math.min(1, dt * 2.5); u.uK.value = DOF.k; u.uFocus.value = DOF.focus; DOF.pass.enabled = DOF.k > 0.01 && AO.on && !DOF.off;
   u.tDepth.value = AO.depth.depthTexture; u.uInvProj.value.copy(camera.projectionMatrixInverse);
   const s = renderer.getDrawingBufferSize(_dofSz); u.uPx.value.set(1 / s.x, 1 / s.y);
 }
@@ -17160,8 +17160,8 @@ function eastLabel(deg, r, title, line) {
   const P = eastAt(deg, r); EASTB.navy = EASTB.navy || new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.55, metalness: 0.2 });
   const t = signTex([{ t: title, s: 0.3 }, { t: line, s: 0.12 }], 1024, 384, '#16233f', '#c9a24a');
   const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 1.0, 8), EASTB.navy); pole.position.set(P.x, P.g + 0.5, P.z); scene.add(pole);
-  const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.35 })); pl.rotation.order = 'YXZ'; pl.rotation.set(-0.7, P.ry + PI, 0); pl.position.set(P.x, P.g + 1.05, P.z); scene.add(pl);
-  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.4, 0.03), EASTB.navy); bk.rotation.order = 'YXZ'; bk.rotation.set(-0.7, P.ry + PI, 0); bk.position.set(P.x - P.nx * 0.02, P.g + 1.04, P.z - P.nz * 0.02); scene.add(bk);
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.35 })); pl.rotation.order = 'YXZ'; pl.rotation.set(-0.7, P.ry, 0); pl.position.set(P.x, P.g + 1.05, P.z); scene.add(pl);
+  const bk = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.4, 0.03), EASTB.navy); bk.rotation.order = 'YXZ'; bk.rotation.set(-0.7, P.ry, 0); bk.position.set(P.x - P.nx * 0.02, P.g + 1.04, P.z - P.nz * 0.02); scene.add(bk);
   post(P.x, P.z, 0.25, -5, 1.3); EASTB.list.push({ deg, title }); return P;
 }
 function eastFeet(x, z, ry) {
@@ -17342,7 +17342,7 @@ window.__FRAMES.push(dt => { try { shepFrame(dt); } catch (e) { if (!SHEP.err) {
   FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x1d2b24, roughness: 0.55, metalness: 0.5 });
   [-2.1, 2.1].forEach(u => { const [x, z] = at(u, 0); facPut('iron', x, P.g + 1.9, z, 0.12, 3.8, 0.12, P.ry); post(x, z, 0.15, -5, 4); });
   const t = signTex([{ t: 'N3W ILLUSION BEACH', s: 0.42 }, { t: 'SEVEN THINGS THAT ARE NOT THERE', s: 0.17 }], 1024, 220, '#16233f', '#c9a24a');
-  const [hx, hz] = at(0, 0); const hm = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.9), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide })); hm.position.set(hx, P.g + 3.55, hz); hm.rotation.y = P.ry + PI; scene.add(hm);
+  const [hx, hz] = at(0, 0); const hm = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.9), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide })); hm.position.set(hx, P.g + 3.55, hz); hm.rotation.y = P.ry; scene.add(hm);
   facPut('iron', hx, P.g + 4.03, hz, 4.4, 0.07, 0.1, P.ry); facPut('iron', hx, P.g + 3.07, hz, 4.4, 0.07, 0.1, P.ry); facFlush();
   const B = [], n = 22; for (let i = 0; i < n; i++) { const u = -2.1 + i * 4.2 / (n - 1); [4.03, 3.07].forEach(y => { const [x, z] = at(u, -0.07); B.push([x, P.g + y, z]); }); }
   const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), B.length), o = new THREE.Object3D(), c = new THREE.Color(0x3a3226);
@@ -17357,38 +17357,552 @@ window.__FRAMES.push(dt => { try { shepFrame(dt); } catch (e) { if (!SHEP.err) {
 window.__FRAMES.push(() => { try { if (!EASTB.bulbs) return; const k = Math.min(1, (L.lamps || 0) * 1.3), t = performance.now() / 1000, c = EASTB.c || (EASTB.c = new THREE.Color());
   for (let i = 0; i < EASTB.bn; i++) { const on = ((i >> 1) + Math.floor(t * 5)) % 3 === 0; const v = 0.23 + k * (on ? 1.6 : 0.5); c.setRGB(v * 1.0, v * 0.82, v * 0.55); EASTB.bulbs.setColorAt(i, c); } EASTB.bulbs.instanceColor.needsUpdate = true; } catch (e) { } });
 
-/*__V455_X__*/
-/*__V456_X__*/
-/*__V457_X__*/
-/*__V458_X__*/
-/*__V459_X__*/
-/*__V460_X__*/
-/*__V461_X__*/
-/*__V462_X__*/
-/*__V463_X__*/
-/*__V464_X__*/
-/*__V465_X__*/
-/*__V466_X__*/
-/*__V467_X__*/
-/*__V468_X__*/
-/*__V469_X__*/
-/*__V470_X__*/
-/*__V471_X__*/
-/*__V472_X__*/
-/*__V473_X__*/
-/*__V474_X__*/
-/*__V475_X__*/
-/*__V476_X__*/
-/*__V477_X__*/
-/*__V478_X__*/
-/*__V479_X__*/
-/*__V480_X__*/
-/*__V481_X__*/
-/*__V482_X__*/
-/*__V483_X__*/
-/*__V484_X__*/
-/*__V485_X__*/
-/*__V486_X__*/
+/* ================================================================
+   v455 THE LOOK: WHERE THE WATER MEETS THINGS (2026-11-24)
+   Every leg of the ring bridge, every pile of the piers and every rock off the beach went into the harbour as if
+   into glass: a clean line and nothing else. Real water piles up against what stands in it. Each of the two
+   hundred odd things standing in the sea now wears a collar of moving white water, broken and breathing, wider
+   on the big rocks and thin round the bridge legs, stronger when the wind is up and faint on a calm night.
+   Found by itself after load (anything whose bounds cross the waterline beyond the beach), one instanced draw.
+   ?collars=0 off.
+   ================================================================ */
+const COLLAR = { done: 0, n: 0 };
+window.__COLLAR = COLLAR;
+function collarBuild() {
+  const b = new THREE.Box3(), M = new THREE.Matrix4(), pts = []; scene.updateMatrixWorld(true);
+  scene.traverse(o => { if (!o.isMesh || !o.visible || !o.geometry || o === COLLAR.im || o.isSkinnedMesh) return; if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); const n = o.isInstancedMesh ? Math.min(o.count, 3000) : 1;
+    for (let i = 0; i < n; i++) { if (o.isInstancedMesh) { o.getMatrixAt(i, M); M.premultiply(o.matrixWorld); } else M.copy(o.matrixWorld); b.copy(o.geometry.boundingBox).applyMatrix4(M);
+      if (b.min.y < -0.15 && b.max.y > 0.25) { const cx = (b.min.x + b.max.x) / 2, cz = (b.min.z + b.max.z) / 2, sx = b.max.x - b.min.x, sz = b.max.z - b.min.z, r = Math.max(sx, sz) / 2;
+        if (sx < 6 && sz < 6 && Math.hypot(cx, cz) > SHORE - 2 && (o.isInstancedMesh || r < 0.75)) pts.push([cx, cz, r]); } } });
+  const N = pts.length; if (!N) return 0;
+  const geo = new THREE.RingGeometry(0.5, 1.0, 40, 1); geo.rotateX(-PI / 2);
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: true, uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uT: { value: 0 }, uK: { value: 1 }, uCol: { value: new THREE.Color(0.9, 0.93, 0.92) } }]),
+    vertexShader: '#include <fog_pars_vertex>\nattribute vec3 aC; varying vec2 vP; varying float vR, vS; void main(){ vec3 p = position; float r = length(p.xz); float R = aC.z; vec3 q = vec3(normalize(p.xz).x * (R * 0.92 + (r - 0.5) * 2.0 * (0.35 + R * 0.55)), 0.0, normalize(p.xz).y * (R * 0.92 + (r - 0.5) * 2.0 * (0.35 + R * 0.55))); vR = (r - 0.5) * 2.0; vP = normalize(p.xz); vS = aC.x * 0.37 + aC.y * 0.71; vec4 mvPosition = modelViewMatrix * vec4(q + vec3(aC.x, 0.06, aC.y), 1.0); gl_Position = projectionMatrix * mvPosition;\n#include <fog_vertex>\n}',
+    fragmentShader: '#include <common>\n#include <fog_pars_fragment>\nuniform float uT, uK; uniform vec3 uCol; varying vec2 vP; varying float vR, vS;\nvoid main(){ float a = atan(vP.y, vP.x); float n = 0.5 + 0.25 * sin(a * 7.0 + uT * 1.3 + vS) + 0.25 * sin(a * 13.0 - uT * 2.1 + vS * 2.0); float breath = 0.6 + 0.4 * sin(uT * 0.9 + vS);\n float band = smoothstep(0.0, 0.12, vR) * (1.0 - smoothstep(0.2, 1.0 - n * 0.35, vR)); float al = band * smoothstep(0.25, 0.7, n * breath + 0.2) * uK * 0.85; gl_FragColor = vec4(uCol, al);\n#include <fog_fragment>\n}' });
+  const ig = new THREE.InstancedBufferGeometry(); ig.index = geo.index; ig.attributes.position = geo.attributes.position; const ac = new Float32Array(N * 3); pts.forEach((p, i) => { ac[i * 3] = p[0]; ac[i * 3 + 1] = p[1]; ac[i * 3 + 2] = p[2]; }); ig.setAttribute('aC', new THREE.InstancedBufferAttribute(ac, 3)); ig.instanceCount = N;
+  if (COLLAR.im) { scene.remove(COLLAR.im); } const m = new THREE.Mesh(ig, mat); m.frustumCulled = false; m.renderOrder = 3; scene.add(m); COLLAR.im = m; COLLAR.mat = mat; COLLAR.n = N; return N;
+}
+window.__FRAMES.push(dt => { try { if (!LOOK.on || /collars=0/.test(location.search)) return; COLLAR.done++; if (COLLAR.done === 400 || COLLAR.done === 2400) collarBuild();
+  if (!COLLAR.mat) return; const u = COLLAR.mat.uniforms; u.uT.value += dt; const W = WX.override || WX.cur; u.uK.value = (0.55 + 0.45 * Math.min(1, (WX.wet || 0) + (W === 'CLEAR' ? 0 : 0.4))) * (1 - 0.5 * (L.lamps || 0)) * (camera.position.y < 60 ? 1 : 0.6); } catch (e) { if (!COLLAR.err) { COLLAR.err = e; console.warn('v455', e); } } });
+
+/* ================================================================
+   v456 THE LOOK: THE EL IN PAINTED IRON (2026-11-24)
+   The viaduct that rings the harbour is in almost every outdoor frame, and it read as a white plastic toy track:
+   its steel was 70 percent metallic, so it mirrored the bright painted sky and came out white. A New York el is
+   painted iron, dark green grey, chalky where the sun bakes it, rust bleeding from every rivet line. The girders,
+   the pillars and the deck are now that: a painted, mostly non metallic finish in the el's colour, a darker
+   underside, rust streaks running down from the deck in world space, and only the running rails keep a polished
+   steel shine. ?elpaint=0 off.
+   ================================================================ */
+(function elPaint() {
+  if (!LOOK.on || /elpaint=0/.test(location.search)) return;
+  const seen = new Set();
+  scene.traverse(o => { if (!o.isMesh || !o.material || Array.isArray(o.material)) return; const m = o.material; if (seen.has(m) || !m.color) return; const h = m.color.getHexString();
+    if ((h === '3d4a52' && m.metalness > 0.6) || (h === '5a4436' && m.metalness > 0.3)) { seen.add(m); const rusty = h === '5a4436';
+      m.color.set(rusty ? 0x4a3a2e : 0x34453d); m.metalness = rusty ? 0.15 : 0.22; m.roughness = rusty ? 0.85 : 0.62; m.envMapIntensity = 0.55;
+      const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
+      m.onBeforeCompile = sh => { if (prev) prev(sh);
+        sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vElW; varying vec3 vElN;').replace('#include <project_vertex>', '#include <project_vertex>\nvec4 elw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\nelw = instanceMatrix * elw;\n#endif\nelw = modelMatrix * elw; vElW = elw.xyz; vElN = normalize(mat3(modelMatrix) * objectNormal);');
+        sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vElW; varying vec3 vElN;')
+          .replace('#include <color_fragment>', `#include <color_fragment>
+          { float ea = atan(vElW.z, vElW.x) * 165.0; float streak = smoothstep(0.55, 0.95, sin(ea * 2.3 + sin(ea * 0.31) * 3.0) * 0.5 + 0.5) * smoothstep(12.5, 8.0, vElW.y) * smoothstep(0.0, 6.0, vElW.y);
+            float chalk = smoothstep(0.3, 0.9, vElN.y) * 0.25; float under = smoothstep(-0.2, -0.8, vElN.y);
+            diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.36, 0.2, 0.11), streak * 0.45); diffuseColor.rgb *= (1.0 + chalk) * (1.0 - under * 0.45); }`);
+      };
+      m.customProgramCacheKey = () => pk + '-elpaint456'; m.needsUpdate = true; } });
+})();
+
+/* ================================================================
+   v457 THE DRONE SHOW, RELIT (2026-11-24)
+   The v42 show (six hundred drones on the hour after dark) drew every drone as a flat sprite of one fixed size, so
+   near drones and far drones looked the same and the pictures read as dots on glass. Each drone is now a point of
+   light with a hot core and a soft halo, sized by its real distance (the near edge of a picture is bigger than the
+   far one), brighter as the night gets darker, so the bloom pass turns the swarm into a glowing picture in the
+   sky and its depth shows when it pours from one picture to the next. ?dronelook=0 off.
+   ================================================================ */
+(function droneRelight() {
+  if (!window.__DRONES || !DRONES.pts || /dronelook=0/.test(location.search)) return;
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, vertexColors: true, uniforms: { uPx: { value: 1 }, uK: { value: 1 } },
+    vertexShader: 'uniform float uPx; varying vec3 vC; void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = clamp(2.6 * uPx / -mv.z, 2.0, 40.0); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform float uK; varying vec3 vC; void main(){ vec2 d = gl_PointCoord - 0.5; float r = length(d) * 2.0; float core = smoothstep(0.32, 0.0, r), halo = smoothstep(1.0, 0.0, r); float a = (core * 1.05 + halo * halo * 0.4) * uK; if (a < 0.01) discard; gl_FragColor = vec4(vC * a, 1.0); }' });
+  DRONES.pts.material = mat; DRONES.relit = mat;
+})();
+window.__FRAMES.push(() => { try { if (!DRONES.relit || !DRONES.pts.visible) return; const u = DRONES.relit.uniforms; u.uPx.value = renderer.getDrawingBufferSize(_dpx).y / (2 * Math.tan(camera.fov * PI / 360)); u.uK.value = 0.55 + 0.75 * Math.min(1, (L.lamps || 0) * 1.2); } catch (e) { } });
+const _dpx = new THREE.Vector2();
+
+/* ================================================================
+   v458 THE DRONE SHOW FLIES 6529 (2026-11-24)
+   The show draws the eye, N3W YORKERS, gm, a slice and an Open Eye Flower. It now also writes 6529 in gold across
+   the harbour (after N3W YORKERS) and closes on a red heart before the eye comes back and they land.
+   ================================================================ */
+(function drone6529() {
+  if (!window.__DRONES || typeof droneForm !== 'function') return;
+  DRONES.extra = () => { const a = droneForm((c, W, H) => { c.fillStyle = '#ffc23a'; let fs = 150; c.font = `900 ${fs}px "Archivo", "Arial Black", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('6529', W / 2, H / 2 + 6); });
+    const h = droneForm((c, W, H) => { c.fillStyle = '#ff2a3a'; c.beginPath(); for (let i = 0; i <= 64; i++) { const t = i / 64 * PI * 2, x = 16 * Math.pow(Math.sin(t), 3), y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t); c.lineTo(W / 2 + x * 5.4, H / 2 - y * 5.4 - 6); } c.closePath(); c.fill(); });
+    return { a, h }; };
+})();
+window.__FRAMES.push(() => { try { if (!DRONES.extra || DRONES.v458 || !DRONES.forms || DRONES.forms.length < 2) return; DRONES.v458 = true; const { a, h } = DRONES.extra(); if (a) DRONES.forms.splice(2, 0, a); if (h) DRONES.forms.push(h); } catch (e) { } });
+
+/* ================================================================
+   v459 THE DRONE SHOW FLIES THE CARD OF THE HOUR (2026-11-24)
+   The middle of every show is now a 6529 card, flown as a portrait: the card of the hour (the plaque lit on the
+   Memes Walk, v400) is read from the island's card atlas and cut into a grid of six hundred cells in the card's
+   own proportions; every drone takes one cell and its colour, so for a few seconds a Meme hangs eighty metres tall
+   over the harbour in coloured light, and a toast names it. Rebuilt every show, so it follows the hour.
+   ================================================================ */
+function droneCardForm() {
+  if (!window.__MWALK || !MWALK.pos || !MWALK.pos.length) return null;
+  const k = Math.floor(Date.now() / 3600000) % MWALK.pos.length, cd = MWALK.pos[k][2], u = cd.uv, img = atlasImg(u[0]); if (!img || !img.width) return null;
+  const N = DRONES.N, asp = u[5] || 0.75, gy = Math.floor(Math.sqrt(N / asp)), gx = Math.floor(gy * asp), cv = document.createElement('canvas'); cv.width = gx; cv.height = gy; const g = cv.getContext('2d'); if (!g || !g.getImageData) return null;
+  g.drawImage(img, u[1] * img.width, u[2] * img.height, (u[3] - u[1]) * img.width, (u[4] - u[2]) * img.height, 0, 0, gx, gy); let d; try { d = g.getImageData(0, 0, gx, gy).data; } catch (e) { return null; }
+  // the show's frame is 150 x 82 m in normalised units: keep the card's aspect, about the frame's full height
+  const hN = 0.98, wN = hN * (82 / 150) * asp, out = [];
+  for (let i = 0; i < N; i++) { const j = Math.min(gx * gy - 1, Math.floor(i * gx * gy / N)), x = j % gx, y = Math.floor(j / gx), q = j * 4;
+    out.push([((x + 0.5) / gx - 0.5) * wN, (0.5 - (y + 0.5) / gy) * hN, Math.pow(d[q] / 255, 1.8) * 0.7 + 0.02, Math.pow(d[q + 1] / 255, 1.8) * 0.7 + 0.02, Math.pow(d[q + 2] / 255, 1.8) * 0.7 + 0.02]); }
+  out.card = cd; return out;
+}
+window.__FRAMES.push(() => { try { if (!window.__DRONES || !DRONES.forms || DRONES.forms.length < 2) return;
+  // at the start of each show, swap in this hour's card after 6529 (or after N3W YORKERS)
+  if (DRONES.t >= 0 && DRONES.t < 0.5 && !DRONES.cardIn) { DRONES.cardIn = true; const f = droneCardForm(); if (f) { const old = DRONES.forms.findIndex(q => q.card); if (old >= 0) DRONES.forms.splice(old, 1); DRONES.forms.splice(Math.min(3, DRONES.forms.length - 1), 0, f); DRONES.cardIdx = DRONES.forms.indexOf(f); DRONES.cardToast = false; } }
+  if (DRONES.t < 0) DRONES.cardIn = false;
+  if (DRONES.t > 0 && DRONES.cardIdx != null && !DRONES.cardToast && Math.floor((DRONES.t - 4) / 9) === DRONES.cardIdx) { DRONES.cardToast = true; const cd = DRONES.forms[DRONES.cardIdx].card; if (cd) toast('IN THE SKY: THE MEMES #' + cd.n + (cd.t ? ' · ' + String(cd.t).toUpperCase().slice(0, 40) : '') + ' · THE CARD OF THE HOUR', 'blue'); } } catch (e) { if (!DRONES.cerr) { DRONES.cerr = e; console.warn('v459', e); } } });
+
+/* ================================================================
+   v460 THE DRONE SHOW IN THE WATER (2026-11-24)
+   The harbour mirrors the show: every drone gets a reflection in the water below it, pulled into a short
+   wavering streak by the swell and dimmer than the drone, so each picture hangs over a rippling copy of itself.
+   A second draw of the same points, folded under the surface in the vertex shader. ?dronelook=0 off.
+   ================================================================ */
+(function droneMirror() {
+  if (!window.__DRONES || !DRONES.pts || /dronelook=0/.test(location.search)) return;
+  const g = DRONES.pts.geometry, geo = new THREE.BufferGeometry(); geo.setAttribute('position', g.attributes.position); geo.setAttribute('color', g.attributes.color);
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, vertexColors: true, uniforms: { uPx: { value: 1 }, uK: { value: 0 }, uT: { value: 0 } },
+    vertexShader: 'uniform float uPx, uT; varying vec3 vC; varying float vA; void main(){ vC = color; vec3 p = position; float h = p.y; p.y = -h + 0.15; p.x += sin(uT * 1.7 + h * 0.31 + p.z * 0.2) * (0.5 + h * 0.015); vA = smoothstep(2.0, 10.0, h); vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_PointSize = clamp(3.2 * uPx / -mv.z, 2.0, 40.0); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform float uK; varying vec3 vC; varying float vA; void main(){ vec2 d = gl_PointCoord - 0.5; d.y *= 0.3; float r = length(d) * 2.0; float a = smoothstep(1.0, 0.0, r) * uK * vA; if (a < 0.01) discard; gl_FragColor = vec4(vC * a * 0.4, 1.0); }' });
+  const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; pts.visible = false; scene.add(pts); DRONES.mir = pts;
+})();
+window.__FRAMES.push(dt => { try { if (!DRONES.mir) return; DRONES.mir.visible = DRONES.pts.visible; const u = DRONES.mir.material.uniforms; u.uT.value += dt; u.uPx.value = renderer.getDrawingBufferSize(_dpx).y / (2 * Math.tan(camera.fov * PI / 360)); u.uK.value = 0.4 + 0.6 * Math.min(1, (L.lamps || 0) * 1.2); } catch (e) { } });
+
+/* ================================================================
+   v461 THE FULL TOUR WATCHES THE DRONES (2026-11-24)
+   After the boardwalk at night, the full tour (Shift T) stands on the south beach and sends the drones up, then
+   watches the eye, N3W YORKERS, 6529 and the card of the hour come together over the harbour. The highlights
+   tour keeps its four minutes.
+   ================================================================ */
+(function tourDrones() {
+  try { if (window.__DRONES && typeof droneGo === "function") DRONES.go = droneGo; } catch (e) { }
+  if (!window.__DRONES || !window.__TOURFULL || typeof droneGo !== 'function') return;
+  const stop = { name: 'the drone show', dur: 36, pos: [[22, 2.4, 126], [16, 2.2, 129]], look: [[10, 70, 236], [10, 76, 236]], pre: () => { try { droneGo('THE TOUR SENDS THE DRONES UP. LOOK SOUTH.'); } catch (e) { } } };
+  if (__TOURFULL.some(q => q.name === stop.name)) return; const k = __TOURFULL.findIndex(q => q.name === 'the boardwalk at night'); __TOURFULL.splice(k >= 0 ? k + 1 : __TOURFULL.length - 1, 0, stop);
+})();
+
+/* ================================================================
+   v462 THE LOOK: SURF THAT GLOWS (2026-11-24)
+   On dark nights the breaking water at the beach and the white water round the rocks and the bridge legs glow a
+   faint electric blue, the way plankton light up the surf on a warm night at Rockaway: only the foam, only after
+   dark, strongest in the moving edge of each wave, gone when the moon is bright and gone by day. ?glowsurf=0 off.
+   ================================================================ */
+(function glowSurf() {
+  if (!LOOK.on || /glowsurf=0/.test(location.search)) return;
+  OCEAN.u.uBio = { value: 0 };
+  const prev = MAT.water.onBeforeCompile;
+  MAT.water.onBeforeCompile = sh => { prev(sh); sh.uniforms.uBio = OCEAN.u.uBio;
+    sh.fragmentShader = sh.fragmentShader.replace('uniform float uFoam', 'uniform float uBio; uniform float uFoam')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n      totalEmissiveRadiance += vec3(0.05, 0.55, 0.9) * uBio * oFoam * (0.6 + 0.4 * sin(uTime * 2.3 + oAng * 40.0 + oR));');
+  };
+  MAT.water.customProgramCacheKey = () => 'mi-ocean-v462'; MAT.water.needsUpdate = true;
+  window.__FRAMES.push(() => { try { const n = Math.min(1, Math.max(0, (L.lamps || 0) * 1.3 - 0.3)); OCEAN.u.uBio.value = n * 0.9;
+    if (window.__COLLAR && COLLAR.mat) COLLAR.mat.uniforms.uCol.value.setRGB(0.9 - 0.75 * n, 0.93 - 0.35 * n, 0.92 + 0.08 * n); } catch (e) { } });
+})();
+
+/* ================================================================
+   v463 THE MEMES IN THE WINDOWS (2026-11-24)
+   The rooms behind the island's windows (v408) each had a dark blue rectangle on the back wall, a picture with
+   nothing in it. They now have a 6529 card on the wall: two out of three rooms hang one, chosen from the first
+   atlas of the collection by the room's own position, in its real proportions, in a thin black frame, lamplit at
+   night like everything else in the room. Walk down any street and look in: the island's neighbours collect.
+   ?roomcards=0 off.
+   ================================================================ */
+(function roomCards() {
+  if (!window.__ROOMS || !ROOMS.n || /roomcards=0/.test(location.search) || typeof ATL === 'undefined' || !ATL[0]) return;
+  const list = CARDS.filter(c => c.uv && c.uv[0] === 0).slice(0, 32); if (list.length < 4) return;
+  const uvs = []; for (let i = 0; i < 32; i++) { const u = list[i % list.length].uv; uvs.push(new THREE.Vector4(u[1], 1 - u[4], u[3], 1 - u[2])); }
+  const asp = []; for (let i = 0; i < 32; i++) asp.push(list[i % list.length].uv[5] || 0.75);
+  const U = { uRoomAtl: { value: ATL[0] }, uRoomUV: { value: uvs }, uRoomAsp: { value: asp } }; ROOMS.cardU = U;
+  const OLD = 'float pic = step(abs(h.x - (s2 - 0.5) * hw), 0.35) * step(abs(h.y - 0.35), 0.28); c = mix(c, vec3(0.15, 0.2, 0.4) * (0.6 + s3), pic * step(0.35, s2));';
+  const NEW = `{ int ci = int(floor(fract(s2 * 7.31 + s1 * 3.17) * 32.0)); vec4 cr = uRoomUV[ci]; float ca = uRoomAsp[ci]; float ph = 0.66, pw = ph * ca; vec2 pc = vec2((s2 - 0.5) * hw * 0.8, 0.32);
+          vec2 q = (h.xy - pc) / vec2(pw, ph) + 0.5; float inP = step(0.0, q.x) * step(q.x, 1.0) * step(0.0, q.y) * step(q.y, 1.0); vec2 qf = (h.xy - pc) / vec2(pw + 0.06, ph + 0.06) + 0.5; float inF = step(0.0, qf.x) * step(qf.x, 1.0) * step(0.0, qf.y) * step(qf.y, 1.0);
+          float show = step(0.33, s2); c = mix(c, vec3(0.02), inF * show); vec3 art = pow(texture2D(uRoomAtl, vec2(mix(cr.x, cr.z, q.x), mix(cr.y, cr.w, q.y))).rgb, vec3(2.2)); c = mix(c, art * 1.15, inP * show); }`;
+  [FACM.glass, FACM.lit].forEach(m => { if (!m) return; const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey.bind(m) : null;
+    m.onBeforeCompile = (sh, r) => { if (prev) prev(sh, r); Object.assign(sh.uniforms, U); if (sh.fragmentShader.indexOf(OLD) < 0) return;
+      sh.fragmentShader = sh.fragmentShader.replace('uniform float uRoomNight, uRoomT;', 'uniform float uRoomNight, uRoomT; uniform sampler2D uRoomAtl; uniform vec4 uRoomUV[32]; uniform float uRoomAsp[32];').replace(OLD, NEW); };
+    m.customProgramCacheKey = () => (pk ? pk() : '') + '|roomcards463'; m.needsUpdate = true; });
+})();
+
+/* ================================================================
+   v464 THE WHEEL THAT GOES BACKWARDS (2026-11-24)
+   A bicycle wheel on a stand, spun by a motor that speeds up and slows down. As it gets fast it seems to slow,
+   stop dead and then turn backwards, though it never does: your screen (like a film camera, or your eye under
+   street lights) samples it a set number of times a second, and when a spoke moves almost one spoke gap between
+   looks, the nearest spoke appears to have crept back. The wagon wheel effect, from every western ever filmed.
+   ?eastbeach=0 off.
+   ================================================================ */
+(function wagonWheel() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return;
+  const P = eastAt(134, 121); eastLabel(136.5, 116, 'WHICH WAY IS IT TURNING?', 'IT ONLY EVER TURNS ONE WAY. WATCH IT SPEED UP.');
+  const G = new THREE.Group(), steel = new THREE.MeshStandardMaterial({ color: 0xd8dde3, roughness: 0.25, metalness: 0.9 }), tyre = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: 0.8 }), R = 1.25;
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(R, 0.035, 8, 64), steel), ty = new THREE.Mesh(new THREE.TorusGeometry(R + 0.05, 0.05, 8, 64), tyre); G.add(rim, ty);
+  for (let i = 0; i < 24; i++) { const a = i / 24 * PI * 2, s = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, R, 4), steel); s.position.set(Math.cos(a) * R / 2, Math.sin(a) * R / 2, 0); s.rotation.z = a - PI / 2; G.add(s); }
+  // one spoke painted red, so you can follow it at low speed
+  const red = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, R, 4), new THREE.MeshStandardMaterial({ color: 0xd8231a, roughness: 0.5 })); red.position.set(0, R / 2, 0.01); G.add(red);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.16, 16), steel); hub.rotation.x = PI / 2; G.add(hub);
+  const W = new THREE.Group(); W.add(G); W.position.set(P.x, P.g + 1.9, P.z); W.rotation.y = P.ry; scene.add(W);
+  const navy = EASTB.navy; [-1, 1].forEach(s => { const f = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.9, 0.06), navy); f.position.set(P.x + P.nx * 0.12 * s, P.g + 0.95, P.z + P.nz * 0.12 * s); scene.add(f); }); post(P.x, P.z, 0.5, -5, 3.4);
+  EASTB.wheel = { G, t: 0, a: 0 };
+})();
+window.__FRAMES.push(dt => { try { const w = EASTB.wheel; if (!w || camera.position.distanceTo(w.G.parent.position) > 70) return; w.t += dt; const sp = 17 * (0.5 - 0.5 * Math.cos(w.t * 2 * PI / 24)); w.a -= sp * dt; w.G.rotation.z = w.a; } catch (e) { } });
+
+/* ================================================================
+   v465 THE SPIRAL THAT ISN'T (2026-11-24)
+   A round mosaic five metres across tilted up off the sand on a low frame, black and white and gold: a spiral
+   winding into the middle. There is no spiral. It is a set of separate circles, each drawn as a twisted cord, on a
+   chequered ground that leans the same way, and your brain joins the leaning pieces into one path. Follow a ring
+   round with your eye and you come back to where you started. James Fraser, 1908. ?eastbeach=0 off.
+   ================================================================ */
+(function fraserSpiral() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return;
+  const P = eastAt(150, 120.5); eastLabel(150, 114.8, 'FOLLOW THE SPIRAL IN', 'THERE IS NO SPIRAL. EVERY RING CLOSES ON ITSELF.');
+  const S = 1024, cv = document.createElement('canvas'); cv.width = S; cv.height = S; const c = cv.getContext('2d');
+  if (c && c.arc && c.save) { const cx = S / 2; c.fillStyle = '#16233f'; c.fillRect(0, 0, S, S);
+    // the chequered ground: wedges by rings, alternating, leaning
+    for (let r = 0; r < 12; r++) { const r0 = 30 + r * 40, r1 = r0 + 40; for (let k = 0; k < 48; k++) { const a0 = k / 48 * PI * 2 + r * 0.06, a1 = a0 + PI * 2 / 48; c.fillStyle = (k + r) % 2 ? '#c9a24a' : '#e9e2d0'; c.beginPath(); c.arc(cx, cx, r1, a0, a1); c.arc(cx, cx, r0, a1, a0, true); c.closePath(); c.fill(); } }
+    // the twisted cords: short tilted dashes along each circle, alternating black and white
+    for (let r = 1; r < 12; r++) { const rr = 30 + r * 40; const n = Math.round(rr * 0.42); for (let k = 0; k < n; k++) { const a = k / n * PI * 2; c.save(); c.translate(cx + Math.cos(a) * rr, cx + Math.sin(a) * rr); c.rotate(a + PI / 2 + 0.45); c.fillStyle = k % 2 ? '#0b0b0c' : '#ffffff'; c.fillRect(-7, -3.2, 14, 6.4); c.restore(); } }
+    c.beginPath(); c.arc(cx, cx, 30, 0, PI * 2); c.fillStyle = '#16233f'; c.fill(); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = Math.min(ANISO, 8);
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(2.5, 96), new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 })); disc.rotation.order = 'YXZ'; disc.rotation.set(-0.45, P.ry, 0); disc.position.set(P.x, P.g + 1.7, P.z); scene.add(disc);
+  const back = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.6, 0.08, 96), EASTB.navy); back.rotation.order = 'YXZ'; back.rotation.set(-0.45 + PI / 2, P.ry, 0); back.position.set(P.x - P.nx * 0.05, P.g + 1.7 - 0.02, P.z - P.nz * 0.05); scene.add(back);
+  [-1.6, 1.6].forEach(u => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 0.1), EASTB.navy); m.position.set(P.x + P.tx * u - P.nx * 0.5, P.g + 0.6, P.z + P.tz * u - P.nz * 0.5); scene.add(m); });
+  post(P.x, P.z, 2.4, -5, 4); EASTB.fraser = disc;
+})();
+
+/* ================================================================
+   v466 THE ILLUSION BEACH: NINE THINGS, 38 ILLUSIONS (2026-11-24)
+   With the wheel and the spiral the east beach holds nine: the gate says NINE THINGS THAT ARE NOT THERE, the pier
+   says 38 ILLUSIONS, and the full tour's beach walk runs on past the cube to the spiral before it stops on the
+   Kanizsa footprints.
+   ================================================================ */
+(function eastNine() {
+  if (!window.__EASTB) return;
+  try { const s = SIGNS.find(q => q.lines && q.lines[0] && q.lines[0].t === 'N3W ILLUSION BEACH'); if (s) { s.lines[1].t = 'NINE THINGS THAT ARE NOT THERE'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } } catch (e) { }
+  try { const s = SIGNS.find(q => q.lines && q.lines[0] && /^\d+ ILLUSIONS/.test(q.lines[0].t)); if (s) { s.lines[0].t = '38 ILLUSIONS · 577 CARDS · 472 ARTISTS'; signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } } catch (e) { }
+  try { if (window.__TOURFULL) { const st = __TOURFULL.find(q => q.name === 'the illusion beach'); if (st) { const E3 = (deg, r, y) => { const q = eastAt(deg, r); return [q.x, q.g + y, q.z]; }, kz = eastAt(70, 120.5);
+    st.pos = [E3(37, 112, 2.1), E3(60, 111, 2.0), E3(100, 111, 2.0), E3(140, 112, 2.0), E3(110, 110.5, 1.9), E3(70, 111.5, 1.65)]; st.look = [E3(40, 120, 1.9), E3(70, 121, 2.2), E3(110, 121, 2.4), E3(150, 120.5, 1.7), E3(90, 121, 3.0), [kz.x, kz.g + 1.65 + 0.55, kz.z]]; st.dur = 30; } } } catch (e) { }
+})();
+
+/* ================================================================
+   v467 THE LOOK: NIGHT STREAKS (2026-11-24)
+   Shot at night through a cinema lens, every hard light (a street lamp, a headlight, the drones, the marquee
+   bulbs) throws a thin horizontal streak of blue light across the frame, the anamorphic flare that says
+   "film" before anything else does. Only the brightest pixels streak, only after dusk, fading with distance from
+   the light. Desktop. ?streaks=0 off.
+   ================================================================ */
+const STREAK = { pass: null };
+window.__STREAK = STREAK;
+function streakSetup() {
+  if (STREAK.pass || STREAK.no || isMobile || !POST.comp || !THREE.ShaderPass || /streaks=0/.test(location.search)) return;
+  const pass = new THREE.ShaderPass({ uniforms: { tDiffuse: { value: null }, uPx: { value: 1 / 1280 }, uK: { value: 0 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: [
+      'uniform sampler2D tDiffuse; uniform float uPx, uK; varying vec2 vUv;',
+      'void main(){ vec4 c = texture2D(tDiffuse, vUv); if (uK < 0.01) { gl_FragColor = c; return; } vec3 acc = vec3(0.0);',
+      '  for (int i = 1; i <= 24; i++) { float o = float(i) * float(i) * 0.9 * uPx; float w = 1.0 - float(i) / 25.0; vec3 a = texture2D(tDiffuse, vUv + vec2(o, 0.0)).rgb, b = texture2D(tDiffuse, vUv - vec2(o, 0.0)).rgb;',
+      '    acc += (max(a - 0.78, 0.0) + max(b - 0.78, 0.0)) * w * w; }',
+      '  float l = dot(acc, vec3(0.3, 0.59, 0.11)); gl_FragColor = vec4(c.rgb + vec3(0.35, 0.55, 1.0) * l * 0.09 * uK, c.a); }'].join('\n') });
+  const bi = POST.comp.passes.indexOf(POST.bloom); POST.comp.passes.splice(bi >= 0 ? bi : 1, 0, pass); STREAK.pass = pass;
+}
+const _stsz = new THREE.Vector2();
+window.__FRAMES.push(() => { try { streakSetup(); if (!STREAK.pass) return; if (STREAK.no) { STREAK.pass.enabled = false; return; } const k = Math.min(1, Math.max(0, (L.lamps || 0) * 1.5 - 0.3)); STREAK.pass.enabled = k > 0.01; STREAK.pass.uniforms.uK.value = k; renderer.getDrawingBufferSize(_stsz); STREAK.pass.uniforms.uPx.value = 1 / _stsz.x; } catch (e) { STREAK.no = true; } });
+
+/* ================================================================
+   v468 THE LOOK: THE WET LINE (2026-11-24)
+   Everything that stands in the harbour now carries the mark of the water: a band of darker, glossier stone or
+   steel from the waterline up to where the waves reach, a thin green line of weed at the bottom of it, so the
+   rocks, the bridge legs and the piles look as if they have been in the sea for years instead of placed on top of
+   it. Applied to the materials of whatever the v455 collars found. ?wetline=0 off.
+   ================================================================ */
+const WETL = { done: false };
+window.__WETL = WETL;
+function wetLineApply() {
+  const mats = new Set(), b = new THREE.Box3(), M = new THREE.Matrix4(); scene.updateMatrixWorld(true);
+  scene.traverse(o => { if (!o.isMesh || !o.visible || !o.geometry || o.isSkinnedMesh || !o.material || Array.isArray(o.material) || !o.material.isMeshStandardMaterial) return; if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); const n = o.isInstancedMesh ? Math.min(o.count, 200) : 1;
+    for (let i = 0; i < n; i++) { if (o.isInstancedMesh) { o.getMatrixAt(i, M); M.premultiply(o.matrixWorld); } else M.copy(o.matrixWorld); b.copy(o.geometry.boundingBox).applyMatrix4(M); if (b.min.y < -0.15 && b.max.y > 0.25 && Math.hypot((b.min.x + b.max.x) / 2, (b.min.z + b.max.z) / 2) > SHORE - 2) { mats.add(o.material); break; } } });
+  mats.forEach(m => { if (m.userData.wetline || m === MAT.water) return; m.userData.wetline = true; const prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey.bind(m) : null;
+    m.onBeforeCompile = (sh, r) => { if (prev) prev(sh, r);
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWlW;').replace('#include <project_vertex>', '#include <project_vertex>\nvec4 wlw = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\nwlw = instanceMatrix * wlw;\n#endif\nvWlW = (modelMatrix * wlw).xyz;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWlW;')
+        .replace('#include <color_fragment>', '#include <color_fragment>\nfloat wlR = length(vWlW.xz); float wlK = step(' + (SHORE - 2).toFixed(1) + ', wlR) * (1.0 - smoothstep(0.25, 0.75 + 0.15 * sin(vWlW.x * 3.1 + vWlW.z * 2.3), vWlW.y)); float wlG = wlK * (1.0 - smoothstep(-0.05, 0.12, vWlW.y));\ndiffuseColor.rgb *= mix(1.0, 0.52, wlK); diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.08, 0.12, 0.05), wlG * 0.7);')
+        .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor, 0.18, wlK * (1.0 - wlG));'); };
+    m.customProgramCacheKey = () => (pk ? pk() : '') + '|wetline468'; m.needsUpdate = true; });
+  WETL.n = mats.size;
+}
+window.__FRAMES.push(() => { try { if (WETL.done || !LOOK.on || /wetline=0/.test(location.search) || !window.__COLLAR || COLLAR.done < 2400) return; WETL.done = true; wetLineApply(); } catch (e) { WETL.err = e; WETL.done = true; console.warn('v468', e); } });
+
+/* ================================================================
+   v469 THE LOOK: RED LIGHTS ON THE TOWERS (2026-11-24)
+   Every tall thing in New York wears red at night: the aviation lights on the tops of towers, slow blinking, the
+   one detail that makes a night skyline read as real. The island's tall structures (anything over thirty metres:
+   the screen tower, the dark tower, the cranes, the eye) now carry one, blinking out of step with each other,
+   only after dusk. ?redlights=0 off.
+   ================================================================ */
+const REDL = { list: [] };
+window.__REDL = REDL;
+function redLightsBuild() {
+  const b = new THREE.Box3(), tops = []; scene.updateMatrixWorld(true);
+  scene.traverse(o => { if (!o.isMesh || !o.visible || !o.geometry || o.isInstancedMesh || o === PANO.mesh || (o.material && o.material.isShaderMaterial)) return; b.setFromObject(o); if (!isFinite(b.max.y)) return; const sx = b.max.x - b.min.x, sz = b.max.z - b.min.z;
+    if (b.max.y > 30 && b.max.y < 160 && sx < 40 && sz < 40 && b.min.y < 25 && Math.hypot((b.min.x + b.max.x) / 2, (b.min.z + b.max.z) / 2) < 150) tops.push([(b.min.x + b.max.x) / 2, b.max.y + 0.4, (b.min.z + b.max.z) / 2]); });
+  const keep = []; tops.sort((a, c) => c[1] - a[1]).forEach(t => { if (!keep.some(k => Math.hypot(k[0] - t[0], k[2] - t[2]) < 8)) keep.push(t); });
+  const N = Math.min(keep.length, 16); if (!N) return;
+  const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.35, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), N), o = new THREE.Object3D(), c = new THREE.Color(0);
+  for (let i = 0; i < N; i++) { o.position.set(keep[i][0], keep[i][1], keep[i][2]); o.updateMatrix(); im.setMatrixAt(i, o.matrix); im.setColorAt(i, c); }
+  im.frustumCulled = false; scene.add(im); REDL.im = im; REDL.n = N; REDL.ph = keep.slice(0, N).map((k, i) => i * 0.37);
+}
+window.__FRAMES.push(() => { try { if (/redlights=0/.test(location.search)) return; if (!REDL.built) { REDL.f = (REDL.f || 0) + 1; if (REDL.f < 900) return; REDL.built = true; redLightsBuild(); } if (!REDL.im) return;
+  const k = Math.min(1, Math.max(0, (L.lamps || 0) * 1.5 - 0.2)), t = performance.now() / 1000, c = REDL.c || (REDL.c = new THREE.Color()); REDL.im.visible = k > 0.01; if (!REDL.im.visible) return;
+  for (let i = 0; i < REDL.n; i++) { const p = (t / 1.6 + REDL.ph[i]) % 1, on = p < 0.45 ? 1 : 0.06; c.setRGB(4 * on * k, 0.15 * on * k, 0.1 * on * k); REDL.im.setColorAt(i, c); } REDL.im.instanceColor.needsUpdate = true; } catch (e) { if (!REDL.err) { REDL.err = e; console.warn('v469', e); } } });
+
+/* ================================================================
+   v470 THE LOOK: THE BLADES FOLLOW THE MOWER (2026-11-24)
+   The mown stripes (v443) were in the lawn's surface; the living blades of grass that grow round you (v170) did not
+   know about them, so up close the stripes vanished under a uniform carpet. The blades now lean with the mower:
+   in each stripe they are combed one way and the next stripe the other, and their tips catch the light or turn
+   from it the same way the stripe does, so the pattern runs right up to your feet. ?mow=0 off.
+   ================================================================ */
+(function bladesMow() {
+  if (!window.__LAWN || !LAWN.mesh || /mow=0/.test(location.search)) return;
+  const m = LAWN.mesh.material, prev = m.onBeforeCompile, pk = m.customProgramCacheKey ? m.customProgramCacheKey.bind(m) : null;
+  m.onBeforeCompile = (sh, r) => { if (prev) prev(sh, r);
+    sh.vertexShader = sh.vertexShader.replace('vec2 side = vec2(-dir.y, dir.x);', 'float bS = mod(floor(wxz.x / 3.6), 2.0) * 2.0 - 1.0; dir = normalize(mix(dir, vec2(0.0, bS), 0.7)); vec2 side = vec2(-dir.y, dir.x);')
+      .replace('* (0.75 + 0.5 * clump);', '* (0.75 + 0.5 * clump) * (1.0 + 0.16 * bS * sign(cameraPosition.z - wxz.y));');
+  };
+  m.customProgramCacheKey = () => (pk ? pk() : '') + '|mow470'; m.needsUpdate = true;
+})();
+
+/* ================================================================
+   v471 THE LOOK PASSES KEEP THE FRAME RATE (2026-11-24)
+   This round added four full screen passes (air, the tour lens, sharpening, night streaks). On a machine that
+   cannot carry them they now step aside by themselves: if frames average slower than 30 ms for five seconds of
+   walking, the streaks go first, then the sharpening, then the air, then the tour lens, one at a time, ten
+   seconds apart, and a quiet note goes to the console. A fast machine never notices. ?governor=0 off.
+   ================================================================ */
+const GOVN = { acc: 0, n: 0, wait: 8, drop: [] };
+window.__GOVN = GOVN;
+window.__FRAMES.push(dt => { try { if (/governor=0/.test(location.search) || window.__cap || isMobile) return; GOVN.wait -= dt; if (GOVN.wait > 0) return;
+  GOVN.acc += dt; GOVN.n++; if (GOVN.acc < 5) return; const ms = GOVN.acc / GOVN.n * 1000; GOVN.acc = 0; GOVN.n = 0; GOVN.ms = ms; if (ms < 30) return;
+  const steps = [['streaks', () => { STREAK.no = true; if (STREAK.pass) STREAK.pass.enabled = false; }], ['sharp', () => { if (SHARP.pass) { SHARP.pass.enabled = false; SHARP.no = true; } }], ['air', () => { HAZE.k = 0; if (HAZE.pass) HAZE.pass.enabled = false; HAZE.off = true; }], ['lens', () => { if (DOF.pass) { DOF.pass.enabled = false; } DOF.off = true; }]];
+  const s = steps.find(q => !GOVN.drop.includes(q[0])); if (!s) return; s[1](); GOVN.drop.push(s[0]); GOVN.wait = 10; console.info('MEME ISLAND: frame time ' + ms.toFixed(1) + ' ms, turned off', s[0]); } catch (e) { } });
+
+/* ================================================================
+   v472 THE ILLUSION BEACH AFTER DARK (2026-11-24)
+   At night the east beach went black. Now its gold plaques glow softly enough to read, the Kanizsa wall is lit
+   from the front (so the triangle still appears after dark, whiter than ever), the spiral glows on its frame and
+   the wheel's rim catches a small spotlight, so the walk of illusions stays a walk at night.
+   ================================================================ */
+(function eastNight() {
+  if (!window.__EASTB) return; const mats = []; scene.traverse(o => { if (o.isMesh && o.material && o.material.map && o.material.map.image && SIGNS.some(s => s.t === o.material.map && s.lines && s.lines[0] && EASTB.list.some(e => e.title === s.lines[0].t))) mats.push(o.material); });
+  mats.forEach(m => { m.emissive = new THREE.Color(0xffffff); m.emissiveMap = m.map; m.emissiveIntensity = 0; m.needsUpdate = true; }); EASTB.nightM = mats;
+  try { if (EASTB.fraser) { const m = EASTB.fraser.material; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = m.map; m.emissiveIntensity = 0; m.needsUpdate = true; EASTB.nightM.push(m); } } catch (e) { }
+})();
+window.__FRAMES.push(() => { try { if (!EASTB.nightM) return; const k = Math.min(1, Math.max(0, (L.lamps || 0) * 1.4 - 0.2)); EASTB.nightM.forEach(m => m.emissiveIntensity = k * 0.55); } catch (e) { } });
+
+/* ================================================================
+   v473 THE HOLLOW FACE, LIT FROM BELOW (2026-11-24)
+   The hollow mask works best lit from underneath, because a real face lit from below looks wrong and the brain
+   works harder to keep it convex. A warm uplight sits in the column's cap: a soft pool on the marble and a glow
+   under the chin at night, faint by day. ?eastbeach=0 off.
+   ================================================================ */
+(function faceUplight() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return; const P = eastAt(40, 120);
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; const c = cv.getContext('2d'); if (c && c.createRadialGradient) { const g = c.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,220,170,1)'); g.addColorStop(1, 'rgba(255,200,140,0)'); c.fillStyle = g; c.fillRect(0, 0, 64, 64); }
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), color: 0xffd9a8, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 })); sp.scale.set(1.6, 1.6, 1); sp.position.set(P.x + P.nx * 0.35, P.g + 1.45, P.z + P.nz * 0.35); scene.add(sp); EASTB.up = sp;
+  const lens = new THREE.Mesh(new THREE.CircleGeometry(0.07, 16), new THREE.MeshBasicMaterial({ color: 0xffe2b8, toneMapped: false })); lens.rotation.x = -PI / 2; lens.position.set(P.x + P.nx * 0.3, P.g + 1.335, P.z + P.nz * 0.3); scene.add(lens);
+})();
+window.__FRAMES.push(() => { try { if (!EASTB.up) return; const k = Math.min(1, (L.lamps || 0) * 1.3); EASTB.up.material.opacity = 0.12 + 0.6 * k; if (EASTB.face) EASTB.face.children.forEach(m => { if (m.material && m.material.emissive) { m.material.emissive.setRGB(0.25, 0.17, 0.1); m.material.emissiveIntensity = k * 0.5; } }); } catch (e) { } });
+
+/* ================================================================
+   v474 THE LOOK: WHITECAPS (2026-11-24)
+   When the wind is up the harbour breaks white far out, not only on the beach: scattered whitecaps flicker on
+   the crests across the open water, each a few metres long, forming and dying in a couple of seconds, thicker in
+   rain and storms, none on a calm clear day. From the air the sea stops being a smooth sheet. ?whitecaps=0 off.
+   ================================================================ */
+(function whitecaps() {
+  if (!LOOK.on || /whitecaps=0/.test(location.search)) return;
+  OCEAN.u.uCaps = { value: 0 };
+  const prev = MAT.water.onBeforeCompile;
+  MAT.water.onBeforeCompile = sh => { prev(sh); sh.uniforms.uCaps = OCEAN.u.uCaps;
+    sh.fragmentShader = sh.fragmentShader.replace('uniform float uFoam', 'uniform float uCaps; uniform float uFoam')
+      .replace('diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.93, 0.95, 0.94), oFoam);', `{ vec2 cc = floor(vOW.xz / 7.0); float ch = fract(sin(dot(cc, vec2(41.3, 17.9))) * 9131.7); float life = fract(uTime * 0.23 + ch * 7.0);
+        vec2 cl = fract(vOW.xz / 7.0) - 0.5; float shape = smoothstep(0.32, 0.0, length(cl * vec2(1.0, 2.6))) * smoothstep(0.0, 0.2, life) * smoothstep(1.0, 0.45, life);
+        float caps = shape * step(1.0 - uCaps * 0.35, ch) * smoothstep(0.1, 0.35, vCrest + oNz * 0.3) * smoothstep(uShore + 20.0, uShore + 60.0, oR) * smoothstep(0.35, 0.65, oNz + 0.2);
+        oFoam = max(oFoam, caps * 0.85); }
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.93, 0.95, 0.94), oFoam);`);
+  };
+  MAT.water.customProgramCacheKey = () => 'mi-ocean-v474'; MAT.water.needsUpdate = true;
+  window.__FRAMES.push(() => { try { const W = WX.override || WX.cur; OCEAN.u.uCaps.value = Math.min(1, (W === 'CLEAR' ? 0.15 : W === 'SCATTERED' ? 0.4 : 0.7) + (WX.wet || 0) * 0.5); } catch (e) { } });
+})();
+
+/* ================================================================
+   v475 THE HIGHLIGHTS TOUR ENDS ON THE DRONES (2026-11-24)
+   The highlights tour already ends in the dark (v382: the island tonight, then the credits). Between the two it now
+   stands on the south beach and sends the drone show up, so the four minute tour closes on the eye, 6529 and the
+   card of the hour over the harbour. Stops added this round are trimmed to keep it near four and a half minutes.
+   ================================================================ */
+(function tourFinale() {
+  const T = (window.__game && __game.TOUR) || TOUR; if (!window.__DRONES || !DRONES.go || /fulltour/.test(location.search)) return;
+  const stop = { name: 'the drone show', dur: 24, pos: [[22, 2.4, 126], [16, 2.2, 129]], look: [[10, 70, 236], [10, 76, 236]], pre: () => { try { DRONES.go('THE TOUR SENDS THE DRONES UP. LOOK SOUTH.'); } catch (e) { } } };
+  if (T.some(q => q.name === stop.name)) return; const k = T.findIndex(q => q.name === 'the credits again'); T.splice(k >= 0 ? k : T.length, 0, stop);
+  const ours = ['the illusion beach', 'the n3w boardwalk', 'the infinite barbershop', 'the memes walk', 'the boardwalk at night'], tot = T.reduce((s, r) => s + (r.dur || 8), 0), cap = 285;
+  if (tot > cap) { const mine = T.filter(r => ours.includes(r.name)), m = mine.reduce((s, r) => s + r.dur, 0), f = Math.max(0.6, 1 - (tot - cap) / Math.max(1, m)); mine.forEach(r => r.dur = Math.round(r.dur * f * 10) / 10); }
+  window.__TOURLEN = T.reduce((s, r) => s + (r.dur || 8), 0);
+})();
+
+/* ================================================================
+   v476 THE PIER BOARD, ROUND FIVE (2026-11-24)
+   The AND NOW panel at the pier lists what this round added: the illusion beach and its nine, the drone show's
+   card of the hour, cards in the windows, the glowing surf.
+   ================================================================ */
+(function andNow3() { try { const s = SIGNS.find(q => q.lines && q.lines[0] && q.lines[0].t === 'AND NOW'); if (!s) return;
+  s.lines = [{ t: 'AND NOW', s: 0.08 }].concat(['N3W ILLUSION BEACH · THE EAST SAND: NINE THINGS THAT ARE NOT THERE', 'THE HOLLOW FACE · THE CHAIR · THE TRIANGLE · THE CUBE · THE WHEEL', 'THE DRONE SHOW FLIES THE CARD OF THE HOUR · ON THE HOUR AFTER DARK', 'N3W CUTS AND THE BOARDWALK · THE WEST BEACH', 'THE MEMES WALK · 577 PLAQUES · THE WAVE AT 6:52:29 PM', 'AFTER DARK · CARDS ON THE WALLS IN THE WINDOWS, THE SURF GLOWS'].map(r => ({ t: r, s: 0.031, b: false })));
+  signCanvas(s.lines, s.w, s.h, s.bg, s.fg, s.cv); s.t.needsUpdate = true; } catch (e) { } })();
+
+/* ================================================================
+   v477 THE ILLUSION BEACH DUCKBOARDS (2026-11-24)
+   A path of grey duckboards (the slatted walkways laid over beach sand at Rockaway and Coney) runs from the gate
+   along the east beach past all nine illusions, a metre and a half wide, gently wandering, so the walk is clear
+   and nobody has to guess where to stand. Same weathered plank texture as the boardwalk. ?eastbeach=0 off.
+   ================================================================ */
+(function duckboards() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search) || !window.__BWALK || !BWALK.mat) return;
+  const d0 = 33, d1 = 152, segs = 220, w = 0.75, pos = [], uv = [], idx = []; let L2 = 0, prev = null;
+  for (let i = 0; i <= segs; i++) { const d = d0 + (d1 - d0) * i / segs, r = 111.2 + 0.6 * Math.sin(d * 0.21), a = d * PI / 180, cx = Math.sin(a) * r, cz = Math.cos(a) * r, nx = Math.sin(a), nz = Math.cos(a);
+    if (prev) L2 += Math.hypot(cx - prev[0], cz - prev[1]); prev = [cx, cz];
+    [-w, w].forEach((o, j) => { const x = cx + nx * o, z = cz + nz * o; pos.push(x, ground(x, z) + 0.06, z); uv.push(L2 / 4, j ? 1.5 / 4 : 0); });
+    if (i) { const b = (i - 1) * 2; idx.push(b, b + 2, b + 1, b + 1, b + 2, b + 3); } }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  if (g.attributes.normal.array[1] < 0) { idx.reverse(); g.setIndex(idx); g.computeVertexNormals(); }
+  const m = new THREE.Mesh(g, BWALK.mat); m.receiveShadow = true; scene.add(m); EASTB.path = m;
+})();
+
+/* ================================================================
+   v478 LAMPS ON THE ILLUSION BEACH (2026-11-24)
+   Four of the scanned street lamps (Poly Haven, CC0, in the island's navy) stand along the duckboards, their globes
+   lit after dusk like the boardwalk's, so the east beach walk has light to walk by.
+   ================================================================ */
+(function eastLamps() {
+  if (!window.__EASTB || !window.__PH || !PH.on || /eastbeach=0/.test(location.search)) return;
+  const L4 = [46, 78, 108, 143].map(d => { const P = eastAt(d, 109.6); post(P.x, P.z, 0.15, -5, 4); return [P.x, P.g + 0.02, P.z, P.ry, 1.0]; }); phPlace('isl_lamp', L4);
+  const glow = new THREE.InstancedMesh(new THREE.SphereGeometry(0.16, 14, 10), new THREE.MeshBasicMaterial({ color: 0xffd9a0, toneMapped: false, transparent: true, opacity: 0 }), L4.length); EASTB.glow = glow;
+  phLoad('isl_lamp').then(A => { const o = new THREE.Object3D(); L4.forEach((l, i) => { o.position.set(l[0], l[1] + A.size.y * 0.93, l[2]); o.updateMatrix(); glow.setMatrixAt(i, o.matrix); }); glow.instanceMatrix.needsUpdate = true; scene.add(glow); }).catch(() => { });
+})();
+window.__FRAMES.push(() => { try { if (!EASTB.glow) return; const k = Math.min(1, (L.lamps || 0) * 1.3); EASTB.glow.material.opacity = k; EASTB.glow.visible = k > 0.02; } catch (e) { } });
+
+/* ================================================================
+   v479 BENCHES FOR STARING (2026-11-24)
+   Most of the east beach illusions need you to look for a while (the cube flips after a minute, the wheel takes
+   twenty seconds to reverse, the head turns slowly). Three of the scanned park benches (CC0) now face them from
+   the island side of the duckboards: one at the cube, one at the wheel, one at the hollow face.
+   ================================================================ */
+(function eastBenches() {
+  if (!window.__EASTB || !window.__PH || !PH.on || /eastbeach=0/.test(location.search)) return;
+  const B = [37.5, 89, 131.5].map(d => { const P = eastAt(d, 108.6); return [P.x, P.g + 0.02, P.z, P.ry + PI, 1.0]; }); phPlace('isl_seating', B);
+  B.forEach(b => CIRCS.push({ x: b[0], z: b[2], r: 0.8, y0: -5, y1: 1.2, on: true }));
+})();
+
+/* ================================================================
+   v480 THE ILLUSION BEACH SITS DOWN (2026-11-24)
+   Soft contact shadows under every east beach piece where it meets the sand (the column, the plinth, the wall, the
+   cube's post, the wheel, the spiral's frame, the fence), the way v419 sat the sideshow down, and snow settles on
+   the duckboards like the boardwalk's.
+   ================================================================ */
+(function eastSit() {
+  if (!window.__EASTB) return; const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; const c = cv.getContext('2d'); if (!c || !c.createRadialGradient) return;
+  const gr = c.createRadialGradient(32, 32, 4, 32, 32, 32); gr.addColorStop(0, 'rgba(0,0,0,.5)'); gr.addColorStop(0.55, 'rgba(0,0,0,.25)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
+  const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
+  const put = (deg, r, w, d) => { const P = eastAt(deg, r), m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, P.ry, 0); m.position.set(P.x, P.g + 0.02, P.z); m.renderOrder = 3; scene.add(m); };
+  put(40, 120, 1.4, 1.4); put(89, 121, 0.7, 0.7); put(134, 121, 1.0, 0.8); put(150, 120.5, 4.2, 1.6); put(118, 124.5, 11.8, 1.0);
+  try { if (window.__SNOWL && SNOWL.add && EASTB.path) setTimeout(() => SNOWL.add(EASTB.path.material), 33000); } catch (e) { }
+})();
+
+/* ================================================================
+   v481 THE LOOK: HEADLIGHTS ON A WET ROAD (2026-11-24)
+   A wet road at night mirrors every headlight into a long bright smear toward you. When it rains (or the road is
+   still wet after), the headlight pools (v446) stretch out ahead of each car, brighten, and pick up a thin bright
+   core, and the tail lights drag red streaks behind. ?headlights=0 off.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (!window.__HEADL || !HEADL.p.length) return; const w = Math.min(1, WX.wet || 0), k = Math.min(1, (L.lamps || 0) * 1.3); if (k < 0.02) return;
+  HEADL.p.forEach(h => { h.f.scale.set(1 - 0.35 * w, 1 + 1.4 * w, 1); h.f.material.opacity = (0.3 + 0.3 * w) * k; h.r.scale.set(1, 1 + 2.5 * w, 1); h.r.material.opacity = (0.22 + 0.25 * w) * k;
+    if (w > 0.01) { const root = h.car.h.root, ry = root.rotation.y, fx = Math.sin(ry), fz = Math.cos(ry); h.f.position.x = root.position.x + fx * (6.8 + 7 * w); h.f.position.z = root.position.z + fz * (6.8 + 7 * w); h.r.position.x = root.position.x - fx * (3.1 + 3 * w); h.r.position.z = root.position.z - fz * (3.1 + 3 * w); } }); } catch (e) { } });
+
+/* ================================================================
+   v482 THE SPIRAL THAT FLOWS (2026-11-24)
+   The Fraser spiral now turns very slowly on its frame. Turning, the leaning cords seem to pour inward along a
+   spiral that is still not there, which makes the lie stronger: the rings never move toward the middle at all.
+   ================================================================ */
+window.__FRAMES.push(dt => { try { if (!EASTB.fraser || camera.position.distanceTo(EASTB.fraser.position) > 60) return; EASTB.fraser.material.map.rotation = (EASTB.fraser.material.map.rotation || 0) - dt * 0.12; EASTB.fraser.material.map.center.set(0.5, 0.5); } catch (e) { } });
+
+/* ================================================================
+   v483 THE SKY POINTS AT THE WALK (2026-11-24)
+   While the drone show holds the card of the hour over the harbour, that card's plaque on the Memes Walk blazes:
+   its ring of light (v400) doubles in size and brightness, so anyone on the island can look up, then down, and
+   find the card in the river.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (!window.__MWALK || !MWALK.glow || !window.__DRONES) return; const on = DRONES.t > 0 && DRONES.cardIdx != null && Math.floor((DRONES.t - 4) / 9) === DRONES.cardIdx;
+  const s = on ? 2.0 : 1.0; MWALK.glow.scale.lerp(_cdS.set(s, s, s), 0.08); if (on) MWALK.glow.material.opacity = 1.0; } catch (e) { } });
+const _cdS = new V3();
+
+/* ================================================================
+   v484 THE FOOTPRINTS TELL YOU WHAT TO DO (2026-11-24)
+   Step onto any of the gold footprints on the illusion beach and a toast says what to look for: the chair is one
+   chair, now step aside; the triangle is there, now look for its edges. Once per visit to each.
+   ================================================================ */
+const FEET = { said: {} };
+window.__FEET = FEET;
+(function feetHints() {
+  if (!window.__EASTB) return; const s = (deg, r, msg) => { const P = eastAt(deg, r); return { x: P.x, z: P.z, msg }; };
+  FEET.list = [s(55, 112, 'ONE CHAIR. NOW TAKE ONE STEP TO THE SIDE.'), s(70, 111.5, 'A WHITE TRIANGLE. LOOK FOR ITS EDGES. THEN STEP OFF THE FEET.')];
+})();
+window.__FRAMES.push(() => { try { if (!FEET.list || !state.started) return; FEET.list.forEach((f, i) => { const d = Math.hypot(P.x - f.x, P.z - f.z); if (d < 0.6 && !FEET.said[i]) { FEET.said[i] = true; toast(f.msg, 'blue'); } if (d > 4) FEET.said[i] = false; }); } catch (e) { } });
+
+/* ================================================================
+   v485 THE ILLUSION BEACH'S CREDIT PLATE (2026-11-24)
+   An enamel plate on the gate's left post says whose ideas these are: Richard Gregory's hollow mask, the Beuchet
+   chair, Kanizsa 1955, Necker 1832, Ponzo 1911, Zöllner 1860, Fraser 1908, Shepard 1964 (at the barber pole), the
+   wagon wheel, and the scans: Poly Haven, CC0. ART · MLOW.
+   ================================================================ */
+(function eastCredit() {
+  if (!window.__EASTB) return; const P = eastAt(33, 112.5), x = P.x + P.tx * -2.1 + P.nx * 0.09, z = P.z + P.tz * -2.1 + P.nz * 0.09;
+  const t = signTex([{ t: 'N3W ILLUSION BEACH', s: 0.17 }, { t: 'ART · MLOW', s: 0.075 }, { t: 'GREGORY · BEUCHET · KANIZSA 1955 · NECKER 1832', s: 0.06 }, { t: 'PONZO 1911 · ZÖLLNER 1860 · FRASER 1908 · SHEPARD 1964', s: 0.06 }, { t: 'HEAD, CHAIR, LAMPS, BENCHES · POLY HAVEN, CC0', s: 0.06 }], 1024, 512, '#16233f', '#efe8da');
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.4), new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.2 })); m.position.set(x, P.g + 1.55, z); m.rotation.y = P.ry; scene.add(m);
+})();
+
+/* ================================================================
+   v486 NINE OUT OF NINE (2026-11-24)
+   The illusion beach keeps count. Each of the nine things counts as seen once you have stood within a few metres
+   of it; a small toast ticks it off (4 OF 9 THINGS THAT ARE NOT THERE), and the ninth says you have seen them all.
+   Kept in this browser only. ?eastbeach=0 off.
+   ================================================================ */
+const SEEN9 = { got: {} };
+window.__SEEN9 = SEEN9;
+(function seenNine() {
+  if (!window.__EASTB || /eastbeach=0/.test(location.search)) return; const p = (deg, r, n) => { const Q = eastAt(deg, r); return { x: Q.x, z: Q.z, n }; };
+  SEEN9.list = [p(40, 117, 'THE HOLLOW FACE'), p(55, 113, 'THE CHAIR'), p(70, 113, 'THE TRIANGLE'), p(89, 117, 'THE CUBE'), p(100, 113, 'THE TWO BARS'), p(118, 119, 'THE FENCE'), p(134, 117, 'THE WHEEL'), p(150, 116, 'THE SPIRAL')];
+  try { SEEN9.got = JSON.parse(localStorage.getItem('mi_seen9') || '{}'); } catch (e) { SEEN9.got = {}; }
+})();
+window.__FRAMES.push(() => { try { if (!SEEN9.list || !state.started) return; const add = n => { if (SEEN9.got[n]) return; SEEN9.got[n] = 1; try { localStorage.setItem('mi_seen9', JSON.stringify(SEEN9.got)); } catch (e) { } const k = Object.keys(SEEN9.got).length; toast(k >= 9 ? 'NINE OUT OF NINE. YOU HAVE SEEN EVERYTHING THAT IS NOT THERE.' : n + ' · ' + k + ' OF 9 THINGS THAT ARE NOT THERE', 'blue'); };
+  SEEN9.list.forEach(s => { if (Math.hypot(P.x - s.x, P.z - s.z) < 5) add(s.n); });
+  // the ninth is the one you hear: the barber pole's Shepard tone, with the sound on
+  if (window.__SHEP && SHEP.master && SHEP.master.gain.value > 0.05) add('THE ENDLESS TONE'); } catch (e) { } });
+
 
 /* ---------------- boot ---------------- */
 buildCards();
