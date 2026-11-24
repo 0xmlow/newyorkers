@@ -29,4 +29,13 @@ function phPlace(name, list, opt) { opt = opt || {};
       im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false && Math.max(M.size.x, M.size.y, M.size.z) * (Array.isArray(list[0][4]) ? 1 : (list[0][4] || 1)) > 1.15; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
     PH.placed += list.length; return out; }).catch(e => { if (!PH.err) { PH.err = e; console.warn('v238 props', name, e); } return []; });
 }
+// v327: calls made while the page script runs are queued and placed together, one set of meshes per model per 60 m
+// cell, so twenty crates placed by five versions in one block cost one draw per part instead of five.
+const _phPlaceNow = phPlace; PH.q = new Map(); PH.qOn = true;
+phPlace = function (name, list, opt) { if (!PH.on || !list.length) return Promise.resolve([]); if (!PH.qOn) return _phPlaceNow(name, list, opt);
+  const out = []; let res; const pr = new Promise(r => res = r); const byCell = new Map();
+  list.forEach(L => { const k = name + '|' + Math.floor(L[0] / 60) + '|' + Math.floor(L[2] / 60) + '|' + (opt && opt.shadow === false ? 0 : 1); if (!byCell.has(k)) byCell.set(k, []); byCell.get(k).push(L); });
+  let left = byCell.size; byCell.forEach((L, k) => { if (!PH.q.has(k)) { PH.q.set(k, { name, list: [], opt, cbs: [] }); } const e = PH.q.get(k); e.list.push(...L); e.cbs.push(ims => { out.push(...ims); if (--left === 0) res(out); }); });
+  if (!PH.qT) PH.qT = Promise.resolve().then(() => { PH.qOn = false; PH.q.forEach(e => _phPlaceNow(e.name, e.list, e.opt).then(ims => e.cbs.forEach(cb => cb(ims)))); PH.q.clear(); });
+  return pr; };
 window.phPlace = phPlace; window.phLoad = phLoad;

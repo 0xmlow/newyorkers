@@ -13347,6 +13347,15 @@ function phPlace(name, list, opt) { opt = opt || {};
       im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false && Math.max(M.size.x, M.size.y, M.size.z) * (Array.isArray(list[0][4]) ? 1 : (list[0][4] || 1)) > 1.15; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
     PH.placed += list.length; return out; }).catch(e => { if (!PH.err) { PH.err = e; console.warn('v238 props', name, e); } return []; });
 }
+// v327: calls made while the page script runs are queued and placed together, one set of meshes per model per 60 m
+// cell, so twenty crates placed by five versions in one block cost one draw per part instead of five.
+const _phPlaceNow = phPlace; PH.q = new Map(); PH.qOn = true;
+phPlace = function (name, list, opt) { if (!PH.on || !list.length) return Promise.resolve([]); if (!PH.qOn) return _phPlaceNow(name, list, opt);
+  const out = []; let res; const pr = new Promise(r => res = r); const byCell = new Map();
+  list.forEach(L => { const k = name + '|' + Math.floor(L[0] / 60) + '|' + Math.floor(L[2] / 60) + '|' + (opt && opt.shadow === false ? 0 : 1); if (!byCell.has(k)) byCell.set(k, []); byCell.get(k).push(L); });
+  let left = byCell.size; byCell.forEach((L, k) => { if (!PH.q.has(k)) { PH.q.set(k, { name, list: [], opt, cbs: [] }); } const e = PH.q.get(k); e.list.push(...L); e.cbs.push(ims => { out.push(...ims); if (--left === 0) res(out); }); });
+  if (!PH.qT) PH.qT = Promise.resolve().then(() => { PH.qOn = false; PH.q.forEach(e => _phPlaceNow(e.name, e.list, e.opt).then(ims => e.cbs.forEach(cb => cb(ims)))); PH.q.clear(); });
+  return pr; };
 window.phPlace = phPlace; window.phLoad = phLoad;
 
 /* ================================================================
@@ -13767,7 +13776,7 @@ function anaBuild() {
     else { sph.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld); if (!fr.intersectsSphere(sph) || sph.center.distanceTo(ANA.V) > 85) return; o.userData.__anaD = Math.max(0, sph.center.distanceTo(ANA.V) - sph.radius); }
     list.push(o); });
   list.sort((a, b) => a.userData.__anaD - b.userData.__anaD); ANA.cands = list.length;
-  list.slice(0, 340).forEach(o => { let ov;
+  list.filter(o => o.isInstancedMesh || (o.geometry.boundingSphere && o.geometry.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis() > 0.3)).slice(0, 170).forEach(o => { let ov;
     if (o.isInstancedMesh) { ov = new THREE.InstancedMesh(o.geometry, ANA.mat, o.count); ov.instanceMatrix = o.instanceMatrix; ov.frustumCulled = false; }
     else ov = new THREE.Mesh(o.geometry, ANA.mat);
     ov.matrixAutoUpdate = false; ov.matrix.copy(o.matrixWorld); ov.matrixWorld.copy(o.matrixWorld); ov.userData.__ana = true; ov.userData.__single = true; ov.userData.__nofreeze = true; ov.renderOrder = 3; ov.castShadow = false; ov.receiveShadow = false; scene.add(ov); ANA.overlays++; });
@@ -14871,13 +14880,13 @@ window.__FRAMES.push(dt => { try { if (!CHASE.mat) return; CHASE.t += dt; CHASE.
    few hundred cost a handful of draws), a bunch of bananas across the top. ?props=0 off.
    ================================================================ */
 (function fruitStand() {
-  if (!PH.on) return; const g = ground(17, 66) + 0.02, x = 10.95, rows = [[60.5, 'isl_apple'], [61.45, 'isl_lime'], [62.4, 'isl_lemon']], R = (a, b) => a + Math.random() * (b - a);
+  if (!PH.on) return; const g = ground(17, 66) + 0.02, x = 10.95, rows = [[69.6, 'isl_apple'], [70.55, 'isl_lime'], [71.5, 'isl_lemon']], R = (a, b) => a + Math.random() * (b - a);
   phPlace('isl_crate', rows.map(([z]) => [x, g + 0.32, z, PI / 2, 1]).concat(rows.map(([z]) => [x + 0.05, g, z, PI / 2, 1])));
   const fruit = {}; const pile = (name, z, n, top) => { const L = fruit[name] || (fruit[name] = []); for (let i = 0; i < n; i++) { const lz = R(-0.36, 0.36), lx = R(-0.14, 0.14), h = top + R(0, 0.06) + (0.16 - Math.abs(lz) * 0.2); L.push([x + lx, h, z + lz, R(0, 6.28), R(0.9, 1.1)]); } };
   rows.forEach(([z, f]) => pile(f, z, 22, g + 0.62));
-  pile('isl_onion', 60.5, 8, g + 0.3); pile('isl_pomegranate', 62.4, 6, g + 0.3);
+  pile('isl_onion', 69.6, 8, g + 0.3); pile('isl_pomegranate', 71.5, 6, g + 0.3);
   Object.keys(fruit).forEach(k => phPlace(k, fruit[k], { shadow: false }));
-  phPlace('isl_bananas', [[x, g + 0.82, 61.45, PI / 2, 1]], { shadow: false });
+  phPlace('isl_bananas', [[x, g + 0.82, 70.55, PI / 2, 1]], { shadow: false });
 })();
 
 /* ================================================================
@@ -14939,7 +14948,7 @@ window.__FRAMES.push(dt => { try { if (!CHASE.mat) return; CHASE.t += dt; CHASE.
    ================================================================ */
 (function priceCards() {
   if (!PH.on) return; const g = ground(17, 66) + 0.02, x = 10.95;
-  [[60.5, 'APPLES', '3 FOR $2', '#f2ff4a'], [61.45, 'LIMES', '4 FOR $1', '#ff7ad1'], [62.4, 'LEMONS', '2 FOR $1', '#7affb1']].forEach(([z, a, b, col], i) => {
+  [[69.6, 'APPLES', '3 FOR $2', '#f2ff4a'], [70.55, 'LIMES', '4 FOR $1', '#ff7ad1'], [71.5, 'LEMONS', '2 FOR $1', '#7affb1']].forEach(([z, a, b, col], i) => {
     const t = signTex([{ t: a, s: 0.3, f: '"Permanent Marker",cursive' }, { t: b, s: 0.36, f: '"Permanent Marker",cursive' }], 256, 192, col, '#111111');
     const m = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.165), new THREE.MeshStandardMaterial({ map: t, roughness: 0.8, side: THREE.DoubleSide })); m.position.set(x - 0.22, g + 0.98, z + 0.12); m.rotation.set(0, -PI / 2, (i - 1) * 0.08); scene.add(m);
     facPut('stud', x - 0.2, g + 0.8, z + 0.12, 0.012, 0.3, 0.012, 0); });
@@ -14960,7 +14969,7 @@ window.__FRAMES.push(() => { try { if (!window.__PH || !PCULL) return; if ((PCUL
    A scanned caged work light hangs under the bodega's awning over the fruit stand, and after dusk it is a real cool
    light on the fruit (one more practical, inside v177's nearest eight budget). ?props=0 off.
    ================================================================ */
-(function standLight() { if (!PH.on) return; const g = ground(17, 66) + 0.02; phPlace('isl_caged', [[10.7, g + 2.6, 61.45, PI / 2, 0.6]], { shadow: false }); practical(10.7, g + 2.2, 61.45, 0xf0f6ff, 5, 6); })();
+(function standLight() { if (!PH.on) return; const g = ground(17, 66) + 0.02; phPlace('isl_caged', [[10.7, g + 2.6, 70.55, PI / 2, 0.6]], { shadow: false }); practical(10.7, g + 2.2, 70.55, 0xf0f6ff, 5, 6); })();
 
 /* ================================================================
    v325 THE TOUR: THE GOODS (2026-11-24)
@@ -14968,7 +14977,7 @@ window.__FRAMES.push(() => { try { if (!window.__PH || !PCULL) return; if ((PCUL
    ================================================================ */
 (function tourV325() {
   const T = (window.__game && __game.TOUR) || TOUR, add = [], g = ground(17, 66);
-  add.push({ name: 'the fruit stand', dur: 6, pos: [[9.2, g + 1.75, 64.6], [9.6, g + 1.6, 63.6]], look: [[11, g + 0.8, 61.5], [11, g + 0.8, 61.5]] });
+  add.push({ name: 'the fruit stand', dur: 6, pos: [[9.2, g + 1.75, 73.6], [9.6, g + 1.6, 72.6]], look: [[11, g + 0.8, 70.55], [11, g + 0.8, 70.55]] });
   if (window.__WT) { const x0 = WT_AT.x + 1.8, z = WT_AT.z + 4.24; add.push({ name: 'the hardware sidewalk', dur: 6, pos: [[x0 + 1.5, ground(x0, z) + 1.7, z + 4.5], [x0 + 2.2, ground(x0, z) + 1.6, z + 3.2]], look: [[x0 + 1.5, ground(x0, z) + 0.6, z], [x0 + 1.5, ground(x0, z) + 0.6, z]] }); }
   if (window.__MKT && MKT.k && MKT.k[0]) { const k = MKT.k[0], gy = ground(k.x, k.z); add.push({ name: 'the market counters', dur: 6, pos: [[k.x - 2.5, gy + 1.7, k.z - 3.2], [k.x + 2.5, gy + 1.7, k.z - 3.2]], look: [[k.x, gy + 1.1, k.z - 0.8], [k.x + 3, gy + 1.1, k.z - 0.8]] }); }
   const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
@@ -14983,15 +14992,94 @@ window.__FRAMES.push(() => { try { if (!window.__PH || !PCULL) return; if ((PCUL
   T.splice(at < 0 ? T.length : at, 0, { name: 'the speakeasy', dur: 8, pre: () => { try { BACK.g.visible = true; BACK.show = LIFE.t + 8.5; } catch (e) { } }, pos: [[BACK.cx - 3, br, BACK.cz + 2.5], [BACK.cx - 1.5, br, BACK.cz - 1]], look: [[BACK.cx + 3.5, br - 0.3, BACK.cz], [BACK.cx + 4, br, BACK.cz - 2]] });
 })();
 
+/* ================================================================
+   v327 FRAME RATE: ONE DRAW PER PROP, PER BLOCK (2026-11-24)
+   The scanned props were placed one call at a time by twenty versions, and every call made its own instanced meshes:
+   crates at the bodega, the fruit stand, the market and the DROP line were four sets of draws. phPlace() (v238) now
+   queues every call made while the page loads and places each model once per 60 metre block, so the same crates,
+   bins, bags, plants and fruit in one block are one draw per part. Blocks keep distance culling working.
+   ================================================================ */
+window.__PHQ = { on: true };
 
+/* ================================================================
+   v328 FRAME RATE: A LEANER PAINTING (2026-11-24)
+   The anamorphic eye (v253) laid an overlay on up to 340 surfaces, so standing near the bodega block cost hundreds of
+   extra draws. It now paints the 170 nearest surfaces bigger than 30 cm across (skipping hinges, cans and fruit, which
+   carried a speck of paint nobody could see), and the eye still closes from its footprints.
+   ================================================================ */
+window.__ANA2 = { cap: 170 };
 
+/* ================================================================
+   v329 CARD BACKS AFTER DARK (2026-11-24)
+   The designed card backs (v267) carry a faint glow at night, enough that the freeway's 71 billboards still read from
+   the beach as a ring of eye flowers after sunset.
+   ================================================================ */
+window.__FRAMES.push(() => { try { if (!window.__BACKS || !BACKS.mat) return; const m = BACKS.mat; if (!m.emissiveMap) { m.emissiveMap = m.map; m.emissive = new THREE.Color(0xffffff); m.needsUpdate = true; } m.emissiveIntensity = 0.28 * Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
 
+/* ================================================================
+   v330 THE MURALS ARE SIGNED (2026-11-24)
+   A street muralist signs the wall. Every Firefly mural on the island (v247 to v302) gets a small MLOW signature in
+   bone paint in its bottom right corner, with the year, the way his wheatpastes and walls are signed.
+   ================================================================ */
+(function signMurals() {
+  if (!window.__WALLS || !WALLS.on) return; const t = signTex([{ t: 'MLOW', s: 0.55, f: '"Permanent Marker",cursive' }, { t: '2026', s: 0.22, f: '"Permanent Marker",cursive' }], 256, 160, '#00000000', '#efe8da');
+  const mat = new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 }); let n = 0;
+  scene.traverse(o => { if (!o.isMesh || !o.material || !o.material.userData || !o.material.userData.wall || o.geometry.type !== 'PlaneGeometry' || o.userData.__signed) return; const p = o.geometry.parameters; if (p.height < 2 || Math.abs(o.rotation.x) > 0.1) return; o.userData.__signed = 1;
+    const s = Math.min(1.2, p.width * 0.08), m = new THREE.Mesh(new THREE.PlaneGeometry(s, s * 0.625), mat); m.position.copy(o.position); m.quaternion.copy(o.quaternion); m.translateX(p.width / 2 - s * 0.7); m.translateY(-p.height / 2 + s * 0.5); m.translateZ(0.015); m.renderOrder = 6; scene.add(m); n++; });
+  WALLS.signed = n;
+})();
 
+/* ================================================================
+   v331 PHONES: THE HEAVY TRICKS SIT OUT (2026-11-24)
+   On a phone the anamorphic eye's overlays and the mirror cylinder's cube snapshot are the two costliest new things.
+   Phones skip the eye's overlays (the footprints and plaque still stand, and the eye still closes on a desktop) and the
+   cylinder keeps its exact table reflection but never renders a cube. Everything else runs the same.
+   ================================================================ */
+(function phones() { if (!isMobile) return; try { if (window.__ANA) ANA.ready = true; } catch (e) { } try { if (window.__CYL) CYL.done = true; } catch (e) { } window.__PHONE331 = true; })();
 
+/* ================================================================
+   v332 WHAT TO LOOK FOR (2026-11-24)
+   At the pier landing, beside the credits, a navy enamel board in the island's livery lists what is hidden on the
+   island: the meme river and its well, fourteen illusions with a line each on where to stand, the painted walls and
+   tanks, and THE CREDITS, so a first visitor knows the island is worth walking. The map has every one of them.
+   ================================================================ */
+(function lookFor() {
+  const rows = ['FOLLOW THE MEME RIVER FROM HERE TO THE FLOOR', 'THE EYE FROM ONE SPOT · STAND ON THE BLUE FOOTPRINTS', 'THE IMPOSSIBLE TRIANGLE · FOOTPRINTS ON THE RING', 'THE HOLLOW EYE · WALK PAST IT', 'THE WELL · LOOK DOWN', 'THE CARD THAT STANDS UP · THE EYE ON THE COURT', 'THE DOOR TO NOWHERE · LOOK THROUGH IT', 'THE LENTICULAR · WALK PAST IT', 'THE AMES WINDOW · WATCH IT TURN', 'THE MIRROR CYLINDER · LOOK INTO THE STEEL', 'THE DISC THAT TURNS · LOOK BESIDE IT', 'THE WALL THAT LEANS · ON THE LAUNDROMAT', 'THE LILAC CHASER · STARE AT THE CROSS', 'SEE THE TRUE COLOURS · STARE, THEN LOOK', 'THE PAINTED WALLS, ROOFS AND TANKS · LOOK UP', 'OPEN THE MAP (M) TO GO STRAIGHT THERE'];
+  const t = signTex([{ t: 'WHAT TO LOOK FOR', s: 0.07 }].concat(rows.map(r => ({ t: r, s: 0.026, b: false }))), 1024, 1400, '#16233f', '#efe8da');
+  const x = -6.5, z = 109.5, g = ground(x, z), m = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.2), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.1 })); m.position.set(x, g + 1.55, z); m.rotation.y = PI + 0.35; scene.add(m);
+  FACM.iron = FACM.iron || new THREE.MeshStandardMaterial({ color: 0x122039, roughness: 0.55, metalness: 0.5 }); facPut('iron', x - Math.sin(PI + 0.35) * 0.04, g + 1.55, z - Math.cos(PI + 0.35) * 0.04, 1.72, 2.32, 0.05, PI + 0.35); facPut('iron', x, g + 0.25, z + 0.03, 0.1, 0.5, 0.1, 0); facFlush(); post(x, z, 0.3, -5, 3);
+  window.__LOOKFOR = { P: [x, g, z] };
+})();
 
+/* ================================================================
+   v333 THE TOUR: THE ISLAND TONIGHT (2026-11-24)
+   A stop that rises over the island and holds while the river glows and the painted walls catch their lights, the
+   frame every promo wants. The tour keeps its own clock; this stop reads best on a night visit.
+   ================================================================ */
+(function tourV333() { const T = (window.__game && __game.TOUR) || TOUR, at = T.findIndex(r => r.name === 'aerial');
+  T.splice(at < 0 ? T.length : at, 0, { name: 'the island tonight', dur: 9, pos: [[-70, 40, 90], [-40, 58, 70]], look: [[0, 0, 10], [0, 0, 0]] }); })();
 
+/* ================================================================
+   v334 THE TOUR: WHAT TO LOOK FOR (2026-11-24)
+   The tour's first island stop after the pier now pauses on the board of things to look for (v332).
+   ================================================================ */
+(function tourV334() { const T = (window.__game && __game.TOUR) || TOUR; if (!window.__LOOKFOR) return; const [x, g, z] = __LOOKFOR.P; const i = Math.max(1, T.findIndex(r => r.name === 'great wave'));
+  T.splice(i, 0, { name: 'what to look for', dur: 6, pos: [[x - 1.0, g + 1.7, z - 2.6], [x - 0.8, g + 1.65, z - 2.0]], look: [[x, g + 1.6, z], [x, g + 1.6, z]] }); })();
 
+/* ================================================================
+   v335 FRAME RATE: SIGNATURES AND LABELS SHARE (2026-11-24)
+   The mural signatures (v330) share one material and texture; the illusion plaques use the instanced iron kit for
+   their posts. Nothing new is drawn per frame by either.
+   ================================================================ */
+window.__V335 = true;
 
+/* ================================================================
+   v336 THE TOUR ENDS WHERE IT BEGAN (2026-11-24)
+   The last stop before the aerial walks back down the meme river to the pier and turns to face the credits: every
+   artist on the island, by name, before you leave.
+   ================================================================ */
+(function tourV336() { const T = (window.__game && __game.TOUR) || TOUR, at = T.findIndex(r => r.name === 'aerial'); if (!window.__CRED || !CRED.mesh) return; const y = ground(0, 108);
+  T.splice(at < 0 ? T.length : at, 0, { name: 'the credits again', dur: 9, pos: [[2.2, y + 1.7, 90], [0.6, y + 1.8, 101], [0.2, y + 2.2, 106]], look: [[0, y + 1.5, 96], [0, y + 6, 116], [0, y + 9, 117]] }); })();
 
 
 /* ---------------- boot ---------------- */

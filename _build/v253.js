@@ -69,7 +69,7 @@ function anaBuild() {
     else { sph.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld); if (!fr.intersectsSphere(sph) || sph.center.distanceTo(ANA.V) > 85) return; o.userData.__anaD = Math.max(0, sph.center.distanceTo(ANA.V) - sph.radius); }
     list.push(o); });
   list.sort((a, b) => a.userData.__anaD - b.userData.__anaD); ANA.cands = list.length;
-  list.slice(0, 340).forEach(o => { let ov;
+  list.filter(o => o.isInstancedMesh || (o.geometry.boundingSphere && o.geometry.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis() > 0.3)).slice(0, 170).forEach(o => { let ov;
     if (o.isInstancedMesh) { ov = new THREE.InstancedMesh(o.geometry, ANA.mat, o.count); ov.instanceMatrix = o.instanceMatrix; ov.frustumCulled = false; }
     else ov = new THREE.Mesh(o.geometry, ANA.mat);
     ov.matrixAutoUpdate = false; ov.matrix.copy(o.matrixWorld); ov.matrixWorld.copy(o.matrixWorld); ov.userData.__ana = true; ov.userData.__single = true; ov.userData.__nofreeze = true; ov.renderOrder = 3; ov.castShadow = false; ov.receiveShadow = false; scene.add(ov); ANA.overlays++; });

@@ -543,3 +543,21 @@ Frame time: readings this session were dominated by load from other work on the 
 numbers barely moved, so the batch costs about 1 to 2 ms in the busiest views.
 Promo: `PROMO 2026-11-24/` (BTS update, three X threads, an article, the artist kit: 472 notes, 376 handles, 441
 in situ stills). Nothing has been sent.
+
+## v287 to v336 (2026-11-24): real material, Firefly round two, more tricks, goods
+- Real material: triplanar scanned texture on every facade kit material (`kitTex`, v287, v294).
+- Firefly round two (`_build/firefly/island_wallpapers_firefly_2.jpg`, split into `site/assets/wall/`): the painted
+  N3W COURT, the factory walls, asphalt art on the freeway at the diagonals, eyes on the three tenement roofs, engraved
+  steel on the vault, three climbing eye rivers on the lighthouse's 40 m back, uplights, shared materials, signatures
+  (v297 to v303, v306, v330).
+- Illusions: the lenticular (v307), the Ames window (v308), the door to nowhere (v309), the mirror cylinder with an
+  exact local reflection shader (v310), the lilac chaser in hot pink (v312), see the true colours (v313); plaques and
+  map entries (v311, v316); a pier board listing every trick (v332).
+- CC0 through the wrap tool: door sconces with lights, blue milk crates and a boombox, speakeasy stools, bottles and
+  barrels, register and fans, tyres, shed lights, the bodega fruit stand with price cards and a light, the hardware
+  sidewalk, market wares, spray cans and deliveries (v288 to v293, v317 to v324).
+- Frame rate: small props go first (v323), prop placement queued per 60 m block (v327), leaner anamorph (v328),
+  resting tricks (v315), phones skip the eye overlays and the cube snapshot (v331).
+- Tours: v296, v304, v305, v314, v325, v326, v333, v334, v336.
+Frame time could not be measured cleanly (other work loaded the Mac); draw calls rose by about 250 to 400 in the
+busiest views over the whole v237 to v336 run.
