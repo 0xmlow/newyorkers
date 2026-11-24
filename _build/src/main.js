@@ -5,12 +5,14 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { makeLook } from './look.js';
 import { ROOMS, W, D, H_IN, PORTAL } from './rooms.js';
 import { Sound } from './sound.js';
 
 const $ = (s) => document.querySelector(s);
 // canvas signs are drawn once at build time, so the house fonts must be in before the rooms are made
-await Promise.race([Promise.all(['900 40px Fraunces', '700 40px "Space Grotesk"', '600 40px "IBM Plex Mono"'].map((f) => document.fonts.load(f))), new Promise((r) => setTimeout(r, 2500))]).catch(() => {});
+await Promise.race([Promise.all(['900 40px Fraunces', '700 40px "Space Grotesk"', '600 40px "IBM Plex Mono"', '700 40px "Archivo Expanded"', '700 40px "Archivo Narrow"', '400 40px "Permanent Marker"', '600 40px "JetBrains Mono"'].map((f) => document.fonts.load(f))), new Promise((r) => setTimeout(r, 2500))]).catch(() => {});
 const Q = new URLSearchParams(location.search);
 const MOBILE = matchMedia('(pointer:coarse)').matches;
 const DATA = window.MARKS;
@@ -35,6 +37,10 @@ const mgr = new THREE.LoadingManager();
 mgr.onProgress = (_u, d, t) => { loading.done = d; loading.total = t; const p = $('#lp'); if (p) p.style.width = (100 * d / Math.max(1, t)).toFixed(0) + '%'; };
 const tex = new THREE.TextureLoader(mgr);
 const gltf = new GLTFLoader(mgr);
+// the movie set and Poly Haven models from the site's library are Draco compressed; the decoder is self hosted
+const draco = new DRACOLoader(); draco.setDecoderPath('assets/draco/'); draco.setDecoderConfig({ type: 'wasm' }); gltf.setDRACOLoader(draco);
+const ANISO = renderer.capabilities.getMaxAnisotropy();
+const LOOK = makeLook(renderer, scene, camera, { MOBILE, Q });
 new HDRLoader(mgr).load('assets/env/night.hdr', (h) => {
   h.mapping = THREE.EquirectangularReflectionMapping;
   const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromEquirectangular(h).texture; h.dispose(); pm.dispose();
@@ -43,10 +49,12 @@ scene.environmentIntensity = 0.35;
 
 // ---------- materials ----------
 const SURF = {};
+const SCAN = new Set(['velvet', 'greenmetal', 'ceiltile', 'tar', 'panel', 'shutter', 'steelplate']);
 function surf(name, rep = 1, tint) {
   const k = name + rep + (tint || '');
   if (SURF[k]) return SURF[k];
-  const ld = (s, srgb) => { const t = tex.load(`assets/tex/${name}_${s}.jpg`); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
+  const dir = SCAN.has(name) ? 'scan' : 'tex';
+  const ld = (s, srgb) => { const t = tex.load(`assets/${dir}/${name}_${s}.jpg`); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = MOBILE ? 4 : ANISO; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
   const m = new THREE.MeshStandardMaterial({ map: ld('c', true), normalMap: ld('n'), roughnessMap: ld('r'), color: tint ? new THREE.Color(tint) : 0xffffff });
   m.userData.rep = rep;
   return (SURF[k] = m);
@@ -155,7 +163,7 @@ function plate(room) {
     const mat = new THREE.MeshBasicMaterial({ map, alphaMap: fade, transparent: true, fog: false, toneMapped: false, side: THREE.DoubleSide, color: new THREE.Color(room.plateTint || 0xffffff) });
     const mesh = new THREE.Mesh(geo, mat); mesh.renderOrder = -1; g.add(mesh);
     g.position.set(room.x0 + W / 2, 0, -D / 2 + PORTAL.dist);
-    room.plateMesh = mesh;
+    room.plateMesh = mesh; LOOK.hideFromAO?.(mesh);
     loading.done++;
   };
   return g;
@@ -198,16 +206,16 @@ for (let i = 0; i < 4; i++) { const l = new THREE.PointLight(0xffffff, 0, 26, 1.
 const hemi = new THREE.HemisphereLight(0x8899bb, 0x221a12, 0.4); scene.add(hemi);
 
 import { buildRoom } from './build.js';
-const ctx = { THREE, scene, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, sound: null, MOBILE, camera, openMark, shake, FONT, SERIF, MONO };
+const ctx = { look: LOOK, renderer, P: null, THREE, scene, surf, slab, sign, canvasTex, glb, wall, post, tick, clickable, hang, plate, tex, egg, toast, say, sound: null, MOBILE, camera, openMark, shake, FONT, SERIF, MONO };
 ROOMS.forEach((r, i) => { r.i = i; r.x0 = i * W; r.prev = ROOMS[i - 1]?.name; r.next = ROOMS[i + 1]?.name; r.last = i === ROOMS.length - 1; });
-window.__clickables = clickables;
+window.__clickables = clickables; window.__colliders = colliders; window.__marks = marksMeshes;   // for _build/audit_walk.js
 // deal the uncounted to rooms in census order, closers to the theater
 let ui = 0; const U = DATA.u.slice().sort((a, b) => a.c - b.c);
 ROOMS.forEach((r) => { r.marks = r.closers ? DATA.c : U.slice(ui, ui += r.count); });
 ROOMS.forEach((r) => buildRoom(ctx, r));
 
 // ---------- player ----------
-const P = { x: ROOMS[0].x0 + W / 2, z: D / 2 - 2.2, yaw: 0, pitch: -0.02, vy: 0, y: 1.62, bob: 0 };
+const P = { x: ROOMS[0].x0 + W / 2, z: D / 2 - 2.2, yaw: 0, pitch: -0.02, vy: 0, y: 1.62, bob: 0 }; ctx.P = P;
 if (Q.get('room')) { const r = ROOMS.find((q) => q.id === Q.get('room')); if (r) P.x = r.x0 + W / 2; }
 if (Q.get('cam')) { const [x, z, yaw, pitch] = Q.get('cam').split(',').map(Number); P.x = x; P.z = z; P.yaw = yaw || 0; P.pitch = pitch || 0; }
 const keys = {};
@@ -257,8 +265,8 @@ function interact(e) { if ($('#card').classList.contains('on')) return; const o 
 
 // ---------- HUD ----------
 let tt; function toast(s, ms = 2600) { const el = $('#toast'); el.textContent = s; el.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('on'), ms); }
-const EGGS = new Set(), EGG_N = 15;
-function egg(id, line) { if (!EGGS.has(id)) { EGGS.add(id); $('#eggs').textContent = `${EGGS.size} / ${EGG_N}`; $('#eggbox').classList.add('pop'); setTimeout(() => $('#eggbox').classList.remove('pop'), 600); sound.ding(); if (EGGS.size === EGG_N) setTimeout(() => toast('You found all twelve. You have been counted. Twice.', 5000), 2800); } if (line) toast(line); }
+const EGGS = new Set(), EGG_N = 22;   // fifteen jokes and, since the big upgrade, one illusion per room
+function egg(id, line) { if (!EGGS.has(id)) { EGGS.add(id); $('#eggs').textContent = `${EGGS.size} / ${EGG_N}`; $('#eggbox').classList.add('pop'); setTimeout(() => $('#eggbox').classList.remove('pop'), 600); sound.ding(); if (EGGS.size === EGG_N) setTimeout(() => toast('You found all twenty two. You have been counted. Twice.', 5000), 2800); } if (line) toast(line); }
 // speech bubbles that follow a 3D anchor
 const bubbles = [];
 function say(anchor, text, ms = 3200, dy = 2.1) { const el = document.createElement('div'); el.className = 'bubble'; el.textContent = text; $('#bubbles').appendChild(el); const b = { anchor, el, until: performance.now() + ms, dy }; bubbles.push(b); return b; }
@@ -270,8 +278,9 @@ function openMark(m) {
   const c = $('#card'); c.classList.add('on'); if (locked) document.exitPointerLock();
   $('#c-t').textContent = m.t; $('#c-no').textContent = `No. ${m.c}`;
   $('#c-p').textContent = [[m.h, m.b].filter(Boolean).join(', '), m.e && `Era ${m.e}`].filter(Boolean).join('  ·  ');
-  $('#c-k').textContent = m.closer ? 'ERA CLOSER · sold by auction' : `MARK ${String(m.n).padStart(3, '0')} OF THE UNCOUNTED`;
+  $('#c-k').textContent = m.closer ? 'ERA CLOSER · ONE OF ONE' : `MARK ${String(m.n).padStart(3, '0')} OF THE UNCOUNTED`;
   $('#c-a').href = `https://n3wyorkers.com/n/${m.c}`;
+  const pr = $('#c-pr'); pr.hidden = !m.pr; if (m.pr) pr.href = m.pr;
   const img = $('#c-img'), v = $('#c-vid'); img.src = `assets/art/th/${m.c}.jpg`;
   if (m.lp) { v.src = `assets/loops/${m.c}.mp4`; v.hidden = false; v.play().catch(() => {}); cardVid = v; } else { v.hidden = true; v.removeAttribute('src'); }
 }
@@ -313,6 +322,18 @@ function enter(i) {
   for (let k = (r.lights || []).length; k < lights.length; k++) lights[k].userData.i = 0;
   sound.room(r.sound);
   r.onEnter && r.onEnter();
+  probe(r);
+}
+
+// ---------- the room's own reflection probe (look.js) ----------
+// taken once the room's textures and models are in, again 4 s later for the stragglers, then kept for the visit
+function probe(r) {
+  if (!LOOK.on) return;
+  const take = () => { if (cur !== r.i) return; const t = LOOK.capture(r, r.x0 + W / 2, 2.2, 0.5); scene.environment = t; scene.environmentIntensity = r.probeI ?? 0.9; };
+  if (r.probe) { scene.environment = r.probe; scene.environmentIntensity = r.probeI ?? 0.9; }
+  if (r.probeN >= 2) return;
+  const first = !r.probeN; r.probeN = (r.probeN || 0) + 1;
+  setTimeout(() => { take(); if (first) setTimeout(() => { r.probeN = 2; take(); }, 4000); }, first ? 1200 : 0);
 }
 
 // ---------- loop ----------
@@ -354,7 +375,7 @@ function frame() {
   // bubbles
   const now = performance.now();
   for (let i = bubbles.length - 1; i >= 0; i--) { const b = bubbles[i]; if (now > b.until) { b.el.remove(); bubbles.splice(i, 1); continue; } b.anchor.getWorldPosition(_w); _w.y += b.dy; _w.project(camera); const on = _w.z < 1 && Math.abs(_w.x) < 1.1; b.el.style.display = on ? 'block' : 'none'; b.el.style.transform = `translate(${(_w.x * 0.5 + 0.5) * innerWidth}px,${(-_w.y * 0.5 + 0.5) * innerHeight}px) translate(-50%,-100%)`; }
-  renderer.render(scene, camera);
+  LOOK.render(t);
   requestAnimationFrame(frame);
 }
 
@@ -365,6 +386,6 @@ setTimeout(() => { $('#go').disabled = false; $('#go').textContent = 'Walk in'; 
 $('#go').onclick = () => { started = true; $('#intro').classList.add('off'); sound.start(); if (!MOBILE && !Q.has('nolock')) lock(); toast(MOBILE ? 'Left thumb walks. Right thumb looks. Tap anything.' : 'WASD to walk. Shift to hurry. Click anything. 1 to 7 jumps rooms.', 4200); };
 if (Q.has('auto')) { started = true; $('#intro').classList.add('off'); }
 $('#snd').onclick = (e) => { e.stopPropagation(); sound.toggle(); $('#snd').textContent = sound.on ? 'SOUND ON' : 'SOUND OFF'; };
-window.__P = P; window.__scene = scene; window.__ready = () => loading.done >= loading.total;
+window.__P = P; window.__scene = scene; window.__settled = () => cur >= 0 && (!LOOK.on || ROOMS[cur].probeN >= 2); window.__ready = () => loading.done >= loading.total;
 enter(Math.max(0, Math.floor(P.x / W)));
 requestAnimationFrame(frame);

@@ -24,6 +24,20 @@ GPT Image 2.5 concept on white, MLow twist written in, then Tripo H3.1 on Krea, 
 `blender/prop_pass.py` into `work/glb_pass`. Tripo faces models any which way: render
 `_build/front_sheet.py` and set `YAW` in main.js so every model's front is three.js +Z.
 
+## The big upgrade (2026-11-24)
+
+`_build/src/upgrade.js` adds, room by room, real models, scanned surfaces, built ceilings and columns, signs in the
+house fonts and one optical illusion each (seven new eggs, 22 in all). `_build/src/look.js` is the engine pass: a
+reflection probe per room, half resolution ambient occlusion and a calm grade, desktop only, `?look=0` turns it off.
+
+- Models are `site/assets/glb/u_*.glb`, copied from the site's own library (movie set kit, museum props) and Poly Haven
+  CC0 (passed through ON LOCATION's `ph_pass.py` at 512 px textures). Many are Draco; the decoder is in `assets/draco`.
+- Scanned surfaces are Poly Haven CC0 at 1k in `site/assets/scan` (`python3 _build/polyhaven_tex.py id=name`).
+- Firefly plates waiting in the site's `FIREFLY_QUEUE.md` live in `site/assets/ff`; the files there are placeholders,
+  replacing a file is all it takes.
+- `_build/audit_walk.js` floods the walkable floor from the first spawn with the gallery's own colliders and lists any
+  Mark whose viewing spot cannot be reached. Run it in the page (it returns a report); it must list none.
+
 ## Build
 
 ```

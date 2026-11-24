@@ -14,6 +14,10 @@
 @font-face{font-family:Fraunces;src:url(fonts/Fraunces.ttf) format("truetype");font-weight:100 900;font-display:swap}
 @font-face{font-family:"Space Grotesk";src:url(fonts/SpaceGrotesk.ttf) format("truetype");font-weight:300 700;font-display:swap}
 @font-face{font-family:"IBM Plex Mono";src:url(fonts/IBMPlexMono-Medium.ttf) format("truetype");font-weight:400 700;font-display:swap}
+@font-face{font-family:"Archivo Expanded";src:url(fonts/ArchivoExpanded.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Archivo Narrow";src:url(fonts/ArchivoNarrow-700.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMono.woff2) format("woff2");font-weight:100 800;font-display:swap}
+@font-face{font-family:"Permanent Marker";src:url(fonts/PermanentMarker-400.woff2) format("woff2");font-weight:400;font-display:swap}
 </style>
 <style>
 :root{--ink:#0b0c10;--paper:#f4ead2;--gold:#f5c542;--pink:#ff4fa3;--cyan:#22d3ee;--blue:#1d4ed8;--mono:"IBM Plex Mono",Menlo,monospace;--sans:"Space Grotesk",system-ui,sans-serif;--serif:Fraunces,Georgia,serif}
@@ -71,6 +75,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 #c-t{font:900 clamp(24px,4vw,40px)/1 var(--serif)}#c-no{font:600 14px var(--mono);color:#cfc6b0;text-align:right}
 #c-p{grid-column:1/-1;color:#cfc6b0;font-size:14px}
 #card .acts{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+[hidden]{display:none!important}
 .btn{display:inline-block;text-decoration:none;border-radius:999px;padding:11px 20px;font:700 13px var(--sans);letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(244,234,210,.3);color:var(--paper);background:transparent}
 .btn.gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 #c-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(11,12,16,.7);font-size:20px;z-index:2}
@@ -113,7 +118,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     <button id="c-x" type="button" aria-label="Close">×</button>
     <div class="media"><img id="c-img" alt=""><video id="c-vid" muted loop playsinline></video></div>
     <div class="meta"><div id="c-k"></div><div id="c-t"></div><div id="c-no"></div><div id="c-p"></div>
-      <div class="acts"><a id="c-a" class="btn gold" target="_blank" rel="noopener">Open the record</a><a class="btn" href="https://n3wyorkers.com/marks" target="_blank" rel="noopener">About THE MARKS</a></div></div>
+      <div class="acts"><a id="c-pr" class="btn gold" target="_blank" rel="noopener" hidden>Collect a print</a><a id="c-a" class="btn" target="_blank" rel="noopener">Open the record</a><a class="btn" href="https://n3wyorkers.com/marks" target="_blank" rel="noopener">About THE MARKS</a></div></div>
   </div>
 </div>
 <div id="finale">
@@ -123,6 +128,6 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="acts"><a class="btn gold" href="https://n3wyorkers.com/marks" target="_blank" rel="noopener">See the release</a><button class="btn" type="button" onclick="document.querySelector('#finale').classList.remove('on')">Keep walking</button></div></div>
 </div>
 <script src="assets/data.js"></script>
-<script type="module" src="assets/gallery.js?v=20261012110345"></script>
+<script type="module" src="assets/gallery.js?v=20261124121226"></script>
 </body>
 </html>

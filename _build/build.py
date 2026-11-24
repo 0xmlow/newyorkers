@@ -31,6 +31,11 @@ def assets():
         if lp: clone(os.path.join(SITE_REPO, "assets", "marks", "loops", f"{n}.mp4"), os.path.join(A, "loops", f"{n}.mp4"))
     for x in m["eraClosers"]:
         C.append({"n": 0, "c": x["census"], "t": x["title"], "e": x.get("era", ""), "closer": True, "lp": False})
+    # each Mark's own print listing on mlow.nyc (the site's _build/api/piece_prints.json), only once it is live
+    pp = json.load(open(os.path.join(SITE_REPO, "_build", "api", "piece_prints.json")))
+    for x in U + C:
+        hd = pp["n"].get(str(x["c"])) if pp["status"] == "live" else None
+        if hd: x["pr"] = f'{pp["shop"]}/products/{hd}'
     for x in U + C:
         clone(os.path.join(SITE_REPO, "assets", "marks", "th", f"{x['c']}.jpg"), os.path.join(A, "art", "th", f"{x['c']}.jpg"))
     walls = sorted(f[:-4] for f in os.listdir(os.path.join(A, "walls")) if f.endswith(".jpg")) if os.path.isdir(os.path.join(A, "walls")) else []

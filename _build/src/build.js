@@ -1,5 +1,6 @@
 // The rooms, one by one. Every label, sign and product in here is a NEW YORKERS brand.
 import { W, D, H_IN, PORTAL } from './rooms.js';
+import { upgradeRoom } from './upgrade.js';
 
 const PI = Math.PI;
 const BRANDS = ['EYE CRUNCH', 'TALLY CHIPS', 'UNCOUNTED', 'NAZAR COLA', 'N3W YORKERS', 'MLow', 'THE MARKS', 'COUNTED OUT', 'BODEGA BLOOM', 'ERA XIX', 'GET COUNTED', 'LEFT OFF'];
@@ -51,6 +52,8 @@ export function buildRoom(c, r) {
 
   // the room's own things
   ROOM[r.id] && ROOM[r.id](c, r, g, X, mats);
+  // the big upgrade (2026-11-24): real models, scanned surfaces, built ceilings, signs, one illusion per room
+  upgradeRoom(c, r, g, X, mats);
   // every room gets drips and an eye flower or two, because it is that kind of night
   dressing(c, r, g);
 }
@@ -60,8 +63,8 @@ function prevName(r) { return r.prev || ''; }
 // ---------- surfaces ----------
 function matsFor(c, r) {
   const { THREE } = c;
-  const m = { floor: c.surf(r.floor, r.floor === 'asphalt' ? 3 : r.floor === 'cobble' ? 1.5 : 2.2, r.floorTint || (r.outdoor ? 0x5a5c66 : 0x9a9a9a)) };
-  m.ceil = r.ceil === 'steel' ? new THREE.MeshStandardMaterial({ color: 0x1b1d1f, metalness: 0.6, roughness: 0.6 }) : r.ceil ? c.surf(r.ceil, 3, 0x5a5650) : null;
+  const m = { floor: c.surf(r.floor, r.floorRep || (r.floor === 'asphalt' ? 3 : r.floor === 'cobble' ? 1.5 : 2.2), r.floorTint || (r.outdoor ? 0x5a5c66 : 0x9a9a9a)) };
+  m.ceil = r.ceil === 'steel' ? new THREE.MeshStandardMaterial({ color: 0x1b1d1f, metalness: 0.6, roughness: 0.6 }) : r.ceil ? c.surf(r.ceil, r.ceilRep || 3, r.ceilTint || 0x5a5650) : null;
   if (r.mural && (window.WALLS || []).includes(r.id)) {   // a Nano Banana wall painted for this room, one image per 10 m of wall, floor to top
     const t = c.tex.load(`assets/walls/${r.id}.jpg`); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.anisotropy = 8;
     m.wall = new THREE.MeshStandardMaterial({ map: t, roughness: 0.82, color: r.muralTint || 0xffffff });
@@ -148,8 +151,9 @@ function slotsFor(r) {
   }
   const hi = r.id === 'deli' ? 3.35 : 2.0;
   row(hi, south, PI, xsS);
-  if (r.id !== 'deli') side(0.14, PI / 2, hi); else S.push(...[-7, -5.3, -3.6, -1.9, 0.2, 6.8].map((z) => ({ x: 0.14, y: 3.5, z, ry: PI / 2, w })));
-  side(W - 0.14, -PI / 2, hi);
+  const sh = r.id === 'archive' ? 3.05 : hi;   // archive: above the card catalogues, which hid half of each Mark before
+  if (r.id !== 'deli') side(0.14, PI / 2, sh); else S.push(...[-7, -5.3, -3.6, -1.9, 0.2, 6.8].map((z) => ({ x: 0.14, y: 3.5, z, ry: PI / 2, w })));
+  side(W - 0.14, -PI / 2, r.id === 'deli' ? hi : sh);
   row(hi, north, 0, [2.0, 18.0]);
   row(hi + 1.5, south, PI, xsS);
   return S;
@@ -210,13 +214,12 @@ const ROOM = {
     const mb = decal(c, 3.4, 1.6, (q, w, h) => { q.fillStyle = '#141414'; q.fillRect(0, 0, w, h); q.fillStyle = '#f4ead2'; q.font = `600 ${h * 0.07}px ${c.MONO}`; ['BACON EGG AND CHEESE ....... 1 TALLY', 'THE UNCOUNTED HERO ......... 5 TALLIES', 'EYE FLOWER TEA ............. ASK THE CAT', 'CHOPPED CHEESE ............. ERA XIV', 'NAZAR COLA ................. 2 FOR 1', 'COFFEE, REGULAR ............ WE ARE HAPPY', '                             TO COUNT YOU'].forEach((s, i) => q.fillText(s, 20, 34 + i * h * 0.12)); for (let i = 0; i < 4; i++) tally(q, w - 140 + (i % 2) * 60, h - 110 + (i > 1 ? 40 : 0), 40, '#f4ead2'); });
     mb.position.set(W - 0.16, 4.0, -4.2); mb.rotation.y = -PI / 2; g.add(mb);
     // fluorescent tubes, one dying a green death
-    const tubes = []; for (const tx of [4, 10, 16]) for (const tz of [-5, 0, 5]) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 2.4), new THREE.MeshBasicMaterial({ color: 0xf2fff4, toneMapped: false })); m.position.set(tx, H_IN - 0.08, tz); g.add(m); tubes.push(m); }
+    const tubes = []; for (const tx of [4, 10, 16]) for (const tz of [-5, 0, 5]) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.03, 1.15), new THREE.MeshBasicMaterial({ color: 0xf2fff4, toneMapped: false })); m.position.set(tx, H_IN - 0.09, tz); g.add(m); tubes.push(m); }
     c.tick((t) => { const f = Math.sin(t * 37) > 0.3 && Math.sin(t * 3.1) > -0.2; tubes[4].material.color.set(f ? 0xb8ffc8 : 0x203020); });
   },
   subway(c, r, g, X) {
     const { THREE } = c;
-    const beam = new THREE.MeshStandardMaterial({ color: 0x0e0f10, metalness: 0.7, roughness: 0.55 });
-    for (const bx of [3.5, 8, 12, 16.5]) for (const bz of [-5.2, 2.6]) { if (Math.abs(bx - 10) < 2.6 && bz < 0) continue; g.add(c.slab(0.3, H_IN, 0.3, beam, bx, H_IN / 2, bz)); c.post(X(bx), bz, 0.28); const tl = decal(c, 0.28, 1.4, (q, w, h) => { for (let i = 0; i < 3; i++) tally(q, 10, 20 + i * 80, 60); }); tl.position.set(bx, 1.4, bz + 0.16); g.add(tl); }
+    for (const bx of [3.5, 8, 12, 16.5]) for (const bz of [-5.2, 2.6]) { if (Math.abs(bx - 10) < 2.6 && bz < 0) continue; c.post(X(bx), bz, 0.28); const tl = decal(c, 0.28, 1.4, (q, w, h) => { for (let i = 0; i < 3; i++) tally(q, 10, 20 + i * 80, 60); }); tl.position.set(bx, 1.4, bz + 0.16); g.add(tl); }
     // the mosaic name band and an eye flower in tile
     const band = decal(c, W - 1, 0.7, (q, w, h) => { q.fillStyle = '#5b2a1a'; q.fillRect(0, 0, w, h); q.fillStyle = '#f2ead6'; q.fillRect(6, 6, w - 12, h - 12); q.fillStyle = '#3a6a3a'; q.fillRect(14, 14, w - 28, h - 28); q.fillStyle = '#f2ead6'; q.font = `700 ${h * 0.5}px ${c.SERIF}`; q.textAlign = 'center'; q.textBaseline = 'middle'; q.fillText('UNCOUNTED ST', w / 2, h / 2); eyeFlower(q, 120, h / 2, h * 0.36); eyeFlower(q, w - 120, h / 2, h * 0.36); });
     band.position.set(W / 2, 4.5, D / 2 - 0.15); band.rotation.y = PI; g.add(band);
@@ -250,12 +253,9 @@ const ROOM = {
   archive(c, r, g, X) {
     const { THREE } = c;
     // cabinets up both side walls, every drawer an era
-    const cab = drawerTex(c);
-    for (const cx of [0.55, W - 0.55]) for (let z = -6.6; z < 1.6; z += 1.0) { const m = c.slab(0.9, 2.2, 0.98, new THREE.MeshStandardMaterial({ map: cab, color: 0x7d8a5a, metalness: 0.5, roughness: 0.5 }), cx, 1.1, z); g.add(m); }
     c.wall(X(1), -7.2, X(1), 1.9); c.wall(X(W - 1), -7.2, X(W - 1), 1.9);
     // the desk and the stamp
-    const oak = c.surf('planks', 1.2, 0x6b4423);
-    g.add(c.slab(3.6, 0.08, 1.6, oak, 10, 0.86, 2.4)); for (const [lx, lz] of [[8.4, 1.8], [11.6, 1.8], [8.4, 3], [11.6, 3]]) g.add(c.slab(0.1, 0.84, 0.1, oak, lx, 0.42, lz)); c.post(X(9.2), 2.4, 1.0); c.post(X(10.8), 2.4, 1.0);
+    c.post(X(9.2), 2.4, 1.0); c.post(X(10.8), 2.4, 1.0);
     let stamped = 0;
     const paper = c.canvasTex(512, 360, (q, w, h) => { q.fillStyle = '#efe6cf'; q.fillRect(0, 0, w, h); q.fillStyle = '#333'; q.font = `600 22px ${c.MONO}`; q.fillText('N3W YORKERS CENSUS FORM', 24, 40); for (let i = 0; i < 7; i++) q.fillRect(24, 70 + i * 36, w - 48, 1); });
     const sheet = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.63), new THREE.MeshStandardMaterial({ map: paper, roughness: 0.9 })); sheet.rotation.x = -PI / 2; sheet.position.set(10.9, 0.905, 2.5); g.add(sheet);
@@ -264,7 +264,7 @@ const ROOM = {
       const iv = setInterval(() => { k++; stamp.position.y = 0.9 + Math.sin(Math.min(1, k / 10) * PI) * 0.9; stamp.position.x = x0 + Math.min(1, k / 10) * 1.6; if (k === 10) { stamp.position.y = 0.9; c.sound.thud(0.9); c.shake(0.06); stamped++; const q = paper.userData.canvas.getContext('2d'); q.save(); q.translate(140 + Math.random() * 240, 120 + Math.random() * 160); q.rotate((Math.random() - 0.5) * 0.6); q.strokeStyle = q.fillStyle = 'rgba(200,20,40,.85)'; q.lineWidth = 6; q.strokeRect(-120, -34, 240, 68); q.font = `900 40px ${c.FONT}`; q.textAlign = 'center'; q.textBaseline = 'middle'; q.fillText(stamped % 3 ? 'UNCOUNTED' : 'COUNTED?', 0, 2); q.restore(); paper.needsUpdate = true; c.toast(stamped === 1 ? 'Stamped. Somewhere a New Yorker feels it.' : `Stamped ${stamped} times. The Department thanks you.`); c.egg('stamp'); } if (k > 10 && k < 22) { stamp.position.x = x0 + (1 - (k - 10) / 12) * 1.6; } if (k >= 22) { stamp.position.x = x0; clearInterval(iv); stamp.userData.busy = 0; } }, 30);
     }, 'The stamp') });
     // banker's lamps
-    for (const lx of [8.6, 11.4]) { const sh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.2, 0.14, 16, 1, true), new THREE.MeshBasicMaterial({ color: 0x2bd46a, toneMapped: false, side: 2 })); sh.position.set(lx, 1.32, 3.0); g.add(sh); g.add(c.slab(0.03, 0.4, 0.03, new THREE.MeshStandardMaterial({ color: 0xc9a227, metalness: 1, roughness: 0.3 }), lx, 1.1, 3.0)); }
+    for (const lx of [9.0, 11.05]) { const sh = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.2, 0.14, 16, 1, true), new THREE.MeshBasicMaterial({ color: 0x2bd46a, toneMapped: false, side: 2 })); sh.position.set(lx, 1.32, 2.78); g.add(sh); g.add(c.slab(0.03, 0.44, 0.03, new THREE.MeshStandardMaterial({ color: 0xc9a227, metalness: 1, roughness: 0.3 }), lx, 1.08, 2.78)); }
     // the census taker, pacing, judging
     const taker = c.glb('taker', { h: 1.76, x: 4, z: -3, parent: g, onload: (o) => c.clickable(o, () => { const L = ['Name? Borough? Era?', 'You are not on my list. Nobody is on my list.', 'I have been counting since 1790.', 'Four strokes and a slash. Every time.', 'Are you a New Yorker or just visiting? Both count. Neither counts.']; c.say(o, L[(Math.random() * L.length) | 0], 3000, 2.05); c.egg('taker'); }, 'The census taker') });
     const path = [[4, -3], [16, -3], [15, 0.6], [5, 0.6]]; let pi = 0, wait = 0, lastSay = 0;
@@ -286,9 +286,6 @@ const ROOM = {
     // lanterns with eyes
     for (let i = 0; i < 7; i++) { const l = new THREE.Mesh(new THREE.SphereGeometry(0.28, 20, 14), new THREE.MeshBasicMaterial({ map: c.canvasTex(256, 128, (q, w, h) => { q.fillStyle = '#e8202a'; q.fillRect(0, 0, w, h); eyeFlower(q, w * 0.25, h / 2, 40, '#ffe0e8', '#ffb000'); eyeFlower(q, w * 0.75, h / 2, 40, '#ffe0e8', '#ffb000'); }), toneMapped: false })); l.scale.y = 1.25; l.position.set(2 + i * 2.66, 4.6 + Math.sin(i) * 0.2, -6.2 + (i % 2) * 1.2); g.add(l); c.tick((t) => { l.rotation.y = t * 0.3 + i; l.position.y = 4.6 + Math.sin(t * 0.9 + i) * 0.06; }); }
     // crates of MLow FARMS produce
-    const crate = c.canvasTex(256, 256, (q, w, h) => { q.fillStyle = '#9b7444'; q.fillRect(0, 0, w, h); q.fillStyle = '#6b4c28'; for (let i = 0; i < 5; i++) q.fillRect(0, i * 52, w, 6); q.fillStyle = '#1b1b1b'; q.font = `800 30px ${c.FONT}`; q.textAlign = 'center'; q.fillText('MLow FARMS', w / 2, 120); q.font = `600 18px ${c.MONO}`; q.fillText('GROWN UNCOUNTED', w / 2, 152); });
-    const cm = new THREE.MeshStandardMaterial({ map: crate, roughness: 0.85 });
-    for (let i = 0; i < 14; i++) { const x = i < 7 ? 1.2 + (i % 3) * 0.7 : W - 1.2 - (i % 3) * 0.7, z = -6.8 + ((i / 3) | 0) % 3 * 0.8, y = 0.25 + (i % 2) * 0.5; g.add(c.slab(0.64, 0.48, 0.48, cm, x, y, z)); }
     c.wall(X(2.8), -7.2, X(2.8), -4.6); c.wall(X(W - 2.8), -7.2, X(W - 2.8), -4.6);
     // three card monte. Nobody picks. Not even MLow.
     const table = c.glb('monte', { h: 0.95, x: 10, z: 0.6, parent: g, onload: (o) => c.clickable(o, () => monte(c, g, table), 'Three card monte') });
@@ -310,7 +307,7 @@ const ROOM = {
     g.add(bulbs); const bc = new THREE.Color();
     c.tick((t) => { for (let i = 0; i < 60; i++) bulbs.setColorAt(i, bc.set(((i + (t * 12 | 0)) % 4) ? 0xffd27a : 0x3a2808)); bulbs.instanceColor.needsUpdate = true; });
     // curtains, gathered
-    for (const side of [-1, 1]) { const cg = new THREE.PlaneGeometry(2.2, H_IN, 40, 1), p = cg.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 9) * 0.12); cg.computeVertexNormals(); const cu = new THREE.Mesh(cg, new THREE.MeshStandardMaterial({ color: 0x8a0f1c, roughness: 0.75, side: 2 })); cu.position.set(W / 2 + side * (PORTAL.w / 2 + 1.5), H_IN / 2, -D / 2 + 0.6); g.add(cu); }
+    for (const side of [-1, 1]) { const cg = new THREE.PlaneGeometry(2.2, H_IN, 40, 1), p = cg.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 9) * 0.12); cg.computeVertexNormals(); const cu = new THREE.Mesh(cg, Object.assign(c.surf('velvet', 1.2, 0xb02a3a).clone(), { side: 2 })); cu.position.set(W / 2 + side * (PORTAL.w / 2 + 1.5), H_IN / 2, -D / 2 + 0.6); g.add(cu); }
     // footlights
     for (let i = 0; i < 14; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffe2a0, toneMapped: false })); b.position.set(W / 2 - PORTAL.w / 2 + 0.3 + i * (PORTAL.w - 0.6) / 13, 0.06, -D / 2 + 0.3); g.add(b); }
     // the mark on the stage: stand on it

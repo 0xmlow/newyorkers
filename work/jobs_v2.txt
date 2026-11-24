@@ -1,0 +1,16 @@
+plate street e78b3aac-42f7-449a-8aca-f96dcd883cd1
+plate deli 91ad21de-afa3-480b-b5db-4445ba5c5da1
+plate subway ada54949-102c-4d1d-bc6d-7859128a5fba
+plate archive 71aa14ef-6614-4089-a34b-f1bf47ba80fc
+plate theater bf21bced-ee73-40ba-bac2-fb0b4a0d1acf
+plate alley 4373183c-b55a-4e6d-96a9-9a516f18a1f9
+plate roof d5a07f22-a15d-43dc-bcb9-1b87e4102cf7
+concept hydrant 6b508305-4293-4215-b281-2c18962fb1a6
+concept dispenser b2e98374-fab8-412b-ba46-dcd20acf78c1
+concept turnstile 88afe930-1a17-4ad5-b3e3-5cae1e562b77
+concept stamp c38dbd8c-9422-478b-9099-81501115e367
+concept taker 5142056a-ea51-4862-b222-d96e3bd3c937
+concept monte 97265ee8-6785-4853-975d-0bcd634da750
+concept tower 44272c9a-dfee-4640-bedb-8b469862014c
+concept seal 55352a42-8430-4d90-a6ac-dd23c79be7e5
+concept cat ab4481b0-8e04-40e8-ac1a-d3a7c2ba81e1

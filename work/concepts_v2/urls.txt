@@ -1,0 +1,9 @@
+hydrant https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/3d1723cc-12e8-41fb-ad2d-eabaa38d21a6-image.png
+dispenser https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/adb76f8e-7123-44dc-9f62-888e68b9aece-image.png
+turnstile https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/adce24ff-7704-402c-acfe-24a4b0f2949d-image.png
+stamp https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/959d3bc6-8828-4cd9-a458-f04713e084b0-image.png
+taker https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/4e8d03ad-a653-4d52-8e78-26ca171abe77-image.png
+monte https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/eb526251-5b23-4809-8ef5-74bf51f6f9a3-image.png
+tower https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/d09f9aca-335f-43fc-b235-b3fcb0e7336e-image.png
+seal https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/2a2a7a7d-c06e-4ec6-b015-a514ecc4f75c-image.png
+cat https://app-uploads.krea.ai/9e916dab-35af-4404-94b2-8be6e11d7f80/bbc768a6-5668-4258-b76d-85a60eca81c1-image.png
