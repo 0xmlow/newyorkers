@@ -30,9 +30,45 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import type { Kit } from '../kit';
+import { hero, heroInstances, standIn, hide } from './heroes';
+import { anamorphTex } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const ONE = new T.Vector3(1, 1, 1);
+
+/* THE BIG UPGRADE wave 3a (2026-11-24): sk() lays a scanned CC0 surface (Poly Haven, 1k webp in
+   assets/museum/tex/liberty/) in world space, `tile` metres a repeat, drawn at its tint times 0.42 until all
+   its maps have arrived. Kept local, as every room file keeps its own helpers. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const skCache = new WeakMap<Kit, Map<string, T.MeshStandardMaterial>>();
+function sk(k: Kit, name: string, tile: number, tint: number, p: { roughness?: number; side?: T.Side; gain?: number } = {}) {
+  let cache = skCache.get(k);
+  if (!cache) { cache = new Map(); skCache.set(k, cache); }
+  const key = name + ':' + tile + ':' + tint + ':' + JSON.stringify(p);
+  const had = cache.get(key); if (had) return had;
+  const { roughness = 0.85, side = T.FrontSide, gain = 1 } = p;
+  const m = new T.MeshStandardMaterial({ color: new T.Color(tint).multiplyScalar(gain), roughness, side });
+  m.userData.density = 1 / tile;
+  cache.set(key, m);
+  if (!texL) return m;
+  m.color.multiplyScalar(0.42);
+  const one = (suf: string, srgb: boolean) => new Promise<T.Texture | null>((res) => {
+    const url = `assets/museum/tex/liberty/${name}_${suf}.webp`;
+    k.used.images.add(url);
+    texL.load(url, (t) => { t.colorSpace = srgb ? T.SRGBColorSpace : T.NoColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8; res(t); }, undefined, () => res(null));
+  });
+  k.pending.push(Promise.all([one('c', true), one('n', false), k.o.quality === 'high' ? one('r', false) : Promise.resolve(null)]).then(([c, n, r]) => {
+    if (!k.live) return;
+    if (c) { m.map = c; m.color.set(tint).multiplyScalar(gain); }
+    if (n) m.normalMap = n;
+    if (r) m.roughnessMap = r;
+    m.needsUpdate = true;
+  }));
+  return m;
+}
 
 function hollowBox(k: K, w: number, h: number, d: number, x: number, y: number, z: number, m: T.Material, t: number) {
   k.box(w, h, t, x, y, z - d / 2 + t / 2, m);
@@ -79,15 +115,15 @@ export const liberty4: RoomDef = {
     k.sun(0xfff0dc, 2.3, 60, 70, 40, true, 130);
     const copper = k.pbr('lbCopper', X.patina(0x5f9a8c), 0.55, { roughness: 0.62, metalness: 0.25, side: T.DoubleSide }),
       copperIn = k.pbr('lbCopperIn', X.patina(0x4a7f74), 0.6, { roughness: 0.75, metalness: 0.2, side: T.BackSide }),
-      granite = k.pbr('lbGranite', X.ashlar(0xa89c88, 88, 3), 0.24),
-      fortS = k.pbr('lbFort', X.ashlar(0x7a7268, 89, 2), 0.2),
+      granite = sk(k, 'granite', 4.0, 0xeadfcc, { gain: 1.2 }),
+      fortS = sk(k, 'fort', 2.4, 0xc8bca8, { gain: 1.1 }),
       iron = k.flat(0x3a2e26, 0.55, 0.62),
       ironL = k.flat(0x5a4a3e, 0.5, 0.6),
       tread = k.pbr('lbTread', X.steel(0x7a7c80, true, 90), 0.8, { metalness: 0.5, roughness: 0.5 }),
       glass = k.glass(0xe8f4f8, 0.1, 0.04),
       glowT = k.glow(0xffd070),
       lawn = k.pbr('lbLawn', X.grass(0x4b6b3a, 47), 0.07),
-      paving = k.pbr('lbPath', X.pavers(0x9a9488, 49), 0.4),
+      paving = sk(k, 'pavers', 1.6, 0xe0dad0, { gain: 1.1 }),
       wood = k.flat(0x5a4632, 0, 0.8),
       hull = k.flat(0x1d2a33, 0.3, 0.6);
     /* the harbour, the island, the fort, the far shores */
@@ -106,12 +142,58 @@ export const liberty4: RoomDef = {
     hollowBox(k, 24, 2, 24, 0, 33, 0, granite, 1.1);
     hollowBox(k, 25.4, 1, 25.4, 0, 34.5, 0, granite, 1.2);
     for (let i = 0; i < 4; i++) { const a = i * PI / 2 + PI / 4; k.column(Math.cos(a) * 13, 14.8, Math.sin(a) * 13, 16, 1.1, granite, false, granite); }
+    /* Hunt's pedestal, built (wave 3a): on each face a loggia high up, a dark recess behind four columns on a
+       balustrade under a cornice, and below it the band of discs where the shields of the states were meant to go */
+    { const shade = k.flat(0x2a2824, 0, 0.9);
+      for (let f = 0; f < 4; f++) {
+        const a = f * PI / 2, nx = Math.sin(a), nz = Math.cos(a), tx = Math.cos(a), tz = -Math.sin(a), at = (u: number, out: number) => [nx * out + tx * u, nz * out + tz * u] as const;
+        { const [x, z] = at(0, 11.02); const o = k.box(9.6, 4.2, 0.1, x, 28.4, z, shade); o.rotation.y = a; }
+        { const [x, z] = at(0, 11.3); const o = k.box(10.6, 0.9, 0.7, x, 26.0, z, granite); o.rotation.y = a; const c = k.box(11.2, 0.7, 0.9, x, 30.9, z, granite); c.rotation.y = a; }
+        for (const u of [-3.6, -1.2, 1.2, 3.6]) { const [x, z] = at(u, 11.45); k.column(x, 26.45, z, 4.1, 0.34, granite, false, granite); }
+        for (let i = 0; i < 8; i++) { const [x, z] = at(-8.05 + i * 2.3, 11.08); const d = k.cyl(0.55, 0.16, x, 20.6, z, granite, 0.55, 20); d.rotation.set(PI / 2, a, 0, 'YXZ'); }
+      }
+    }
     k.skyline({ z: -430, count: 44, spacing: 9, scale: 2.8, base: -1.2, seed: 112, lit: 0.3, glow: 0.7, tint: 0x6e7684, spires: true });
     k.skyline({ z: -330, count: 12, spacing: 12, scale: 0.9, base: -1.2, seed: 113, lit: 0.2, glow: 0.5, tint: 0x8a6a5a, rows: 1, x: -250 });
     /* the walk up from the dock: nothing on the sightline, she is the reason you came */
     k.box(9, 0.4, 44, 0, 1.0, 36, paving);
     for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2, x = Math.cos(a) * 52, z = Math.sin(a) * 52 + 4; if (Math.abs(x) < 17 && z > -6) continue; k.tree(x, 1.0, z, { h: 6.5, r: 3.0, kind: 'round', seed: i, leaf: 0x30582c }); }
-    for (const s of [-1, 1]) for (let i = 0; i < 5; i++) k.bench(s * 9, 44 - i * 7, s > 0 ? -PI / 2 : PI / 2, wood, iron, 2.2);
+    { const at: [number, number, number][] = [], bm = k.objects.length;
+      for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { k.bench(s * 9, 44 - i * 7, s > 0 ? -PI / 2 : PI / 2, wood, iron, 2.2); at.push([s * 9, 44 - i * 7, s > 0 ? -PI / 2 : PI / 2]); }
+      const old = standIn(k, bm);
+      /* the park benches (CC0, our Central Park bench) take the code benches' places when they load */
+      void hero(k, 'liberty/cp_bench', { width: 2.2 }).then((h) => {
+        if (!h || !k.live) return;
+        hide(old);
+        const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+        at.forEach(([x, z, r], i) => ins.setAt(i, m.compose(v(x, 0, z), q.setFromAxisAngle(up, r), ONE)));
+        ins.commit();
+      });
+      /* lanterns along the walk up from the dock (Poly Haven street lamp, CC0) */
+      const lamps: [number, number][] = []; for (let z = 54; z >= 22; z -= 8) for (const s of [-1, 1]) lamps.push([s * 5.4, z]);
+      void hero(k, 'liberty/ph_street_lamp_01', { height: 4.2 }).then((h) => {
+        if (!h || !k.live) return;
+        const ins = heroInstances(k, h, lamps.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+        lamps.forEach(([x, z], i) => ins.setAt(i, m.compose(v(x, 1.2, z), q.setFromAxisAngle(up, x > 0 ? -PI / 2 : PI / 2), ONE)));
+        ins.commit();
+      });
+      for (const [x, z] of lamps) k.keepOut.push({ x, z, r: 0.4 });
+    }
+    /* the signs at the dock, in the brown of the park service, and Emma Lazarus on a stone by the walk */
+    for (const [x, t, sz] of [[-6.2, 'STATUE OF LIBERTY NATIONAL MONUMENT', 44], [6.2, 'LIBERTY ISLAND', 90]] as const) {
+      for (const dx of [-1.5, 1.5]) k.box(0.14, 2.6, 0.14, x + dx, 2.1, 55, wood);
+      k.sign(t, 3.6, 0.8, x, 2.9, 55.08, '#4a3222', '#f2ece0', sz, 0, { border: true, double: true });
+    }
+    k.box(0.5, 1.8, 2.8, -5.0, 2.1, 40, granite);
+    k.box(0.06, 1.3, 2.4, -4.72, 2.3, 40, k.flat(0x5a4a2e, 0.7, 0.45));
+    for (const [y, t, sz] of [[2.75, 'THE NEW COLOSSUS', 70], [2.4, 'GIVE ME YOUR TIRED, YOUR POOR,', 44], [2.15, 'YOUR HUDDLED MASSES YEARNING TO BREATHE FREE', 32], [1.8, 'EMMA LAZARUS  1883', 44]] as const) k.sign(t, 2.3, 0.26, -4.68, y, 40, '#5a4a2e', '#ecd8a4', sz, PI / 2);
+    k.egg(v(-4.6, 2.3, 40), { id: 'the-new-colossus', title: 'The poem on the plaque', year: '1903', text: 'Emma Lazarus wrote The New Colossus in 1883 to raise money for the pedestal. It was forgotten until 1903, when a bronze plaque with the poem was put up inside the pedestal; the mother of exiles and the huddled masses come from it.', clue: 'Read the bronze plate on the stone beside the walk.', source: { name: 'The New Colossus, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_New_Colossus' } }, { r: 1.8 });
+    /* THE TRICK, anamorphic floor type: from the dock end of the walk the date painted along the paving stands up
+       in front of her like a placard; walk on and it lies down into long stretched letters */
+    if (HAS_DOM) anamorphTex(k, X.signText('LIBERTY  1886', 1024, 176, 'transparent', '#f4efe2', 140), 0, 60, 3, 1.21, 0, 6, 7, 1.2, 0.92);
+    k.egg(v(0, 1.6, 48), { id: 'liberty-floor-sign', title: 'Letters lying down', text: 'LIBERTY 1886 is painted flat on the path, stretched so that from the dock end it stands up like a placard. 1886 is the year she was dedicated, ten years late for the centennial she was meant to mark.', clue: 'Stand at the dock end of the walk and look along the paving.', source: { name: 'Statue of Liberty, Wikipedia', url: 'https://en.wikipedia.org/wiki/Statue_of_Liberty' } }, { r: 1.8 });
+    /* a Firefly matte of Lower Manhattan from the island, far behind the code skyline; invisible until it lands */
+    fireflyPlate(k, 'assets/museum/tex/liberty/ff_harbor_backdrop.webp', 760, 190, 0, 70, -470, 0, new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), true);
     { k.cyl(0.14, 20, 24, 11, 22, k.flat(0xd8d2c4, 0.4, 0.5), 0.1, 10);
       const flag = k.mesh(new T.PlaneGeometry(4.2, 2.6), k.flat(0xcf3a3a, 0, 0.85, { side: T.DoubleSide }), 24, 19.4, 22, true);
       flag.geometry.translate(2.1, 0, 0);
@@ -128,6 +210,8 @@ export const liberty4: RoomDef = {
         const cab = new T.Mesh(new T.BoxGeometry(7, 3.4, 16), k.flat(0xe8e2d4, 0.2, 0.6)); cab.position.set(0, 5.3, -2); g.add(cab);
         const stack = new T.Mesh(new T.CylinderGeometry(1.0, 1.1, 4, 10), k.flat(0x8a2a2a, 0.2, 0.7)); stack.position.set(0, 8.4, -4); g.add(stack);
         k.add(g);
+        /* the hero ferry (h_ferry, our own) replaces the boxes when it loads */
+        void hero(k, 'h_ferry', { length: 34 }).then((hf) => { if (!hf || !k.live) return; for (const c of g.children) c.visible = false; hf.position.y = -0.7; g.add(hf); });
         const route = k.spline([v(0, -0.6, 78), v(-90 - i * 30, -0.6, 92), v(-200, -0.6, -60), v(-60, -0.6, -150), v(90 + i * 20, -0.6, -60), v(60, -0.6, 92)], true);
         k.rider(g, route, 5 + i * 1.4, i * 120);
       }
@@ -207,7 +291,7 @@ export const liberty4: RoomDef = {
       k.curve(pts, 0.09, iron, 24);
     }
     for (let h = 2; h < 26; h += 3) { const b = body(h); k.torus(b.r - 0.1, 0.055, b.x, SY + h, b.z, iron, 26).rotation.x = PI / 2; }
-    k.mesh(new T.CylinderGeometry(9.5, 9.5, SY - 4, 26, 1, true), k.pbr('lbInner', X.ashlar(0xb4ada0, 91, 3), 0.7, { side: T.BackSide }), 0, (SY + 4) / 2, 0);
+    k.mesh(new T.CylinderGeometry(9.5, 9.5, SY - 4, 26, 1, true), sk(k, 'granite', 4.0, 0xd8ccb8, { side: T.BackSide, gain: 1.0 }), 0, (SY + 4) / 2, 0);
     k.mesh(new T.CylinderGeometry(9.5, 9.5, 0.4, 26), k.pbr('lbFloor', X.terrazzo(0xb8b0a0, 48), 0.4), 0, 3.8, 0);
     k.arch(4, 6, 3, 0, 4, 11.5, granite, false, 0.7);
     k.block(-12, -2.2, 10, 12); k.block(2.2, 12, 10, 12);

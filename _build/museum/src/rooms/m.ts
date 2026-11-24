@@ -5,10 +5,72 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Mount } from '../kit';
 import type { RoomDef } from './types';
-import { street, blockFront } from './f';
-import { hero, standIn, hide } from './heroes';
+import { street, blockFront, hsign, paintTex, anamorphTex } from './f';
+import { hero, standIn, hide, heroInstances } from './heroes';
+import { anamorph, fireflyPlate } from './a';
+import type { Kit } from '../kit';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 3d (2026-11-24): helpers for rooms 57 to 61 ----------
+   Scanned CC0 surfaces (Poly Haven, assets/museum/tex/<room>/) that wear a sensible colour until all three maps land,
+   real models from assets/museum/props/<room>/ placed many at once, and a few small builders. Safe in node: the audit
+   builds these rooms with no DOM, so a scan falls back to its painted surface and the loaders never resolve. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w3d = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w3d-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w3d.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w3d.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w3d-${room}-${id}`, e.s, 1 / metres, p);
+  if (!m.userData.w3d) {
+    m.userData.w3d = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts (one draw each). */
+function many(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
+/* Recolour every material of a loaded model (rust, weather, a navy grey) without touching the source cache. */
+function tint(o: T.Object3D, hex: number, rough = 0.85, metal = 0.3) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Painted lettering for an anamorphic floor piece, in a house font. */
+function floorType(text: string, fg: string, w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  return paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+}
 
 /* ---------------- 57 ROCKAWAY BEACH ---------------- */
 export const rockaway: RoomDef = {
@@ -20,12 +82,17 @@ export const rockaway: RoomDef = {
   description: 'The concrete boardwalk, the lifeguard chairs, the surfers waiting in the swell, the A train rolling in on the trestle behind the dunes, the works on the beach shacks.',
   signatures: 'The long new concrete boardwalk with its curved shade shelters, the numbered lifeguard chairs, the dune grass and fences, the surf break at the jetties, the elevated A train and the low bungalows.',
   build(k, ctx) {
-    k.sky({ top: 0x6a9ad8, horizon: 0xffd8a8, ground: 0x9a8a70, fog: 0.0016, sun: { az: 1.55, el: 0.1, color: 0xffc080, size: 22 }, haze: 0.4, env: 0.95 });
-    k.hemi(0xfff0e0, 0x6a5a48, 0.9);
-    k.sun(0xffc890, 2.4, 90, 18, -20, true, 120);
-    const conc = k.pbr('rbBoardwalk', X.concrete(0xc8c0b0, 69), 0.3, { roughness: 0.85 }),
-      sand = k.pbr('rbSand', X.concrete(0xe3d5b0, 70), 0.08, { roughness: 1 }),
-      wood = k.pbr('rbWood', X.planks(0xd8c8a8, 4, 142, 0.3), 0.8),
+    /* 2026-11-24 (wave 3d): the whole room read as one white glare (a pale horizon, haze 0.4 and a sand of 0xe3d5b0 under a
+       low sun). A deeper sky, less haze, and every big surface a scan: beach sand, wet sand at the water, the brushed
+       concrete of the 2017 boardwalk, weathered boards on the shelters and fences, clapboard on the bungalows. */
+    k.sky({ top: 0x3f7cc8, horizon: 0xeed6b4, ground: 0x8a7a62, fog: 0.0011, sun: { az: 1.55, el: 0.22, color: 0xffc888, size: 16 }, haze: 0.15, env: 0.85 });
+    k.hemi(0xf4ecdf, 0x6a5a48, 0.75);
+    k.sun(0xffd2a0, 2.1, 90, 30, -20, true, 120);
+    const R = 'rockaway';
+    const conc = sc(k, R, 'brushed_concrete', 2.2, () => X.concrete(0xc8c0b0, 69), { color: 0xc4beb4, roughness: 0.9 }, 0x9a958c),
+      sand = sc(k, R, 'coast_sand_01', 3.2, () => X.concrete(0xe3d5b0, 70), { color: 0xc8b496, roughness: 1 }, 0xb0a084),
+      wetSand = sc(k, R, 'damp_beach_sand', 2.6, () => X.concrete(0x9a8a70, 71), { color: 0x9a8c78, roughness: 0.55 }, 0x7a6e5c),
+      wood = sc(k, R, 'weathered_planks', 2.4, () => X.planks(0xd8c8a8, 4, 142, 0.3), { color: 0xd0c4b0 }, 0x8a7c68),
       white = k.flat(0xf4f0e8, 0, 0.7),
       orange = k.flat(0xf08a2a, 0, 0.7),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
@@ -34,12 +101,16 @@ export const rockaway: RoomDef = {
       foam = k.flat(0xffffff, 0, 0.6, { transparent: true, opacity: 0.7 }),
       grassM = k.flat(0xb8a868, 0, 0.9);
     // the beach and the ocean with a breaking line of foam that rolls in, the jetties
-    k.box(400, 0.4, 120, 0, -0.2, -70, sand);
+    k.box(400, 0.4, 100, 0, -0.2, -60, sand);
+    k.box(400, 0.4, 24, 0, -0.32, -122, wetSand);
     k.water({ y: -0.6, color: 0x2a6a7a, w: 600, d: 300, z: -260, amp: 1.6 });
     const foamLines: T.Mesh[] = [];
     for (let i = 0; i < 4; i++) { const f = k.mesh(new T.BoxGeometry(320, 0.1, 2.4 + i * 0.8), foam, 0, -0.4, -140 - i * 14, true); foamLines.push(f); }
     if (!ctx.reduced) k.ticks.push((t) => foamLines.forEach((f, i) => { const u = ((t * 0.12 + i * 0.25) % 1); f.position.z = -190 + u * 60; (f.material as T.MeshStandardMaterial).opacity = 0.8 * (1 - u) * Math.min(1, u * 4); f.scale.x = 0.7 + 0.3 * Math.sin(t * 0.5 + i); }));
+    const jetMark = k.objects.length;
     for (const x of [-120, 120]) for (let i = 0; i < 14; i++) k.box(3, 1.4, 5, x + (i % 2) * 1.2, 0.2, -110 - i * 6, k.pbr('rbJetty', X.ashlar(0x5a5650, 143, 1), 0.2));
+    /* the groins are real rock now: Poly Haven's coast_rocks_01 scan (CC0) laid out as two long stone jetties into the surf */
+    { const old = standIn(k, jetMark); void hero(k, 'rockaway/ph_coast_rocks_01', { box: [88, 2.6, 10] }).then((h) => { if (!h || !k.live) return; hide(old); for (const x of [-120, 120]) { const c = x < 0 ? h : h.clone(); c.position.set(x, -0.9, -150); c.rotation.y = PI / 2; k.add(c); } }); }
     const surfers: T.Group[] = [];
     for (let i = 0; i < 9; i++) { const g = new T.Group(); const board = new T.Mesh(new T.BoxGeometry(0.5, 0.08, 2.2), i % 2 ? white : orange); g.add(board); const body = new T.Mesh(new T.CapsuleGeometry(0.16, 0.5, 3, 6), dark); body.position.y = 0.45; g.add(personTag(body, 'seat', 1.5)); /* 2026-10-28: sitting on the board, waiting for a wave */ g.position.set(-80 + i * 20, -0.4, -150 - (i % 3) * 8); k.add(g); surfers.push(g); }
     if (!ctx.reduced) k.ticks.push((t) => surfers.forEach((g, i) => { g.position.y = -0.4 + 0.5 * Math.sin(t * 0.9 + i); g.rotation.x = 0.15 * Math.sin(t * 0.9 + i + 1); }));
@@ -66,8 +137,40 @@ export const rockaway: RoomDef = {
     train.position.set(-260, TY + 1.1, TZ);
     k.add(train);
     if (!ctx.reduced) k.ticks.push((t) => { train.position.x = -300 + ((t * 9) % 620); });
-    for (let i = 0; i < 20; i++) { const x = -200 + i * 21 + (i % 2) * 4; k.box(8, 4.5, 8, x, 2.25, 62, [k.flat(0xe6e2da, 0, 0.8), k.flat(0xb8d0e0, 0, 0.8), k.flat(0xe8c8a0, 0, 0.8)][i % 3]); k.mesh(new T.ConeGeometry(6.4, 2.6, 4), k.flat(0x4a4a48, 0, 0.9), x, 5.8, 62).rotation.y = PI / 4; }
+    /* the A is a real stainless car now (h_subway_car_lo, the museum's own R142 type model), six of them, the blue band kept */
+    void hero(k, 'rockaway/h_subway_car_lo', { box: [2.7, 3.4, 15] }).then((h) => {
+      if (!h || !k.live) return;
+      let n = 0;
+      for (const m of [...train.children]) if (m instanceof T.Mesh && (m.geometry as T.BoxGeometry).parameters.height > 1) { m.visible = false; const c = n++ ? h.clone() : h; c.position.set(m.position.x, 0.02, 0); c.rotation.y = PI / 2; train.add(c); }
+    });
+    // the station on the trestle: the platform edge and its black name band
+    k.box(60, 0.4, 4, 12, TY + 0.9, TZ - 4.6, conc);
+    for (const x of [-12, 12, 36]) hsign(k, 'BEACH 98 ST', 7, 0.9, x, TY + 2.2, TZ - 6.65, PI, { fg: '#f4f0e8', bg: '#121314', font: 'W2 Archivo Expanded', size: 0.55 });
+    const siding = [0xe8e2d6, 0xa8c4d8, 0xe4c8a0, 0xc8d8c0].map((c) => sc(k, R, 'weathered_plank_siding', 2.2, () => X.planks(c, 8, 144, 0.2), { color: c }, c));
+    for (let i = 0; i < 20; i++) { const x = -200 + i * 21 + (i % 2) * 4; k.box(8, 4.5, 8, x, 2.25, 62, siding[i % 4]); k.box(1.2, 2.2, 0.1, x - 1.6, 1.1, 57.95, k.flat(0x2a2e34, 0.2, 0.6)); for (const dx of [1.2, 2.8]) k.box(1.0, 1.2, 0.1, x + dx, 2.6, 57.95, k.flat(0x3a4a58, 0.6, 0.2)); k.mesh(new T.ConeGeometry(6.4, 2.6, 4), k.flat(0x4a4a48, 0, 0.9), x, 5.8, 62).rotation.y = PI / 4; }
     k.skyline({ z: -600, count: 20, spacing: 14, scale: 1.0, base: -0.6, seed: 145, lit: 0.1, glow: 0.2, tint: 0xa8a8b0, rows: 1 });
+    /* built boardwalk detail: expansion joints every 6 m and the granite edge kerbs of the 2017 concrete deck */
+    for (let x = -198; x <= 198; x += 6) k.box(0.05, 0.012, 13.4, x, 0.505, 0, k.flat(0x5a5650, 0, 0.9));
+    for (const z of [-6.95, 6.95]) k.box(400, 0.62, 0.3, 0, 0.21, z, k.pbr('rbKerb', X.ashlar(0x8a8680, 145, 2), 0.4));
+    // real things on it: lamp standards along both rails, tables at the shacks, ring buoys on the chairs, channel buoys offshore
+    const lampsAt: number[][] = [];
+    for (let x = -180; x <= 180; x += 25) for (const z of [-6.4, 6.4]) lampsAt.push([x, 0.5, z, z < 0 ? 0 : PI]);
+    many(k, 'rockaway/ph_street_lamp_01', { height: 4.6 }, lampsAt);
+    many(k, 'rockaway/ph_outdoor_table_chair_set_01', { height: 0.86 }, [[-64, 0.5, 4.6, PI / 2], [-56, 0.5, 4.6, PI / 2], [-4, 0.5, 4.6, PI / 2], [4, 0.5, 4.6, PI / 2], [56, 0.5, 4.6, PI / 2], [64, 0.5, 4.6, PI / 2]]);
+    many(k, 'rockaway/ph_lifebuoy', { height: 0.84 }, [0, 1, 2, 3, 4].map((i) => [-140 + i * 70 + 1.05, 1.7, -80, PI / 2]));
+    many(k, 'rockaway/ph_ocean_buoy', { height: 2.7 }, [[-70, -1.1, -215, 0], [30, -1.1, -230, 1], [110, -1.1, -205, 2]]);
+    // signs: the Parks sign at the stair down to the sand, the chair warnings, the surf beach boards
+    k.box(0.12, 3.0, 0.12, 2.6, 1.5, -6.6, k.flat(0x2a4a32, 0.4, 0.5));
+    hsign(k, 'ROCKAWAY BEACH', 3.4, 0.62, 2.6, 3.05, -6.52, 0, { fg: '#f4f0e8', bg: '#1f5a36', font: 'W2 Archivo Expanded', border: '#f4f0e8', size: 0.5 });
+    hsign(k, 'BEACH 97 ST', 3.4, 0.48, 2.6, 2.48, -6.52, 0, { fg: '#f4f0e8', bg: '#1f5a36', font: 'W2 Archivo Expanded', size: 0.5 });
+    for (let i = 0; i < 5; i++) { const x = -140 + i * 70; hsign(k, 'NO SWIMMING WHEN NO LIFEGUARD', 2.0, 0.34, x, 2.2, -80 + 1.42, 0, { fg: '#c8202a', bg: '#f4f0e8', font: 'W2 Archivo Narrow', size: 0.62, lit: false }); }
+    for (const x of [-30, 50]) { k.box(0.14, 2.6, 0.14, x, 1.3, -24, wood); hsign(k, 'SURFING BEACH', 2.6, 0.7, x, 2.4, -23.92, 0, { fg: '#16181c', bg: '#f1c531', font: 'W2 Archivo Expanded', size: 0.55, lit: false }); }
+    /* the illusion (ON LOCATION rule 9, one per room): SURF AT THE END OF THE A is painted flat on the sand, stretched
+       over eighty metres, so that from the spawn on the boardwalk it stands up as a white board over the beach. */
+    anamorph(k, 'SURF AT THE END OF THE A', 12, 4, 3.5, 0.02, 34, 20, 2.5, '#f2eee4', 150);
+    k.egg(v(12, 0.6, -40), { id: 'rockaway-anamorph', title: 'Writing on the sand', text: 'SURF AT THE END OF THE A is painted flat across eighty metres of beach, stretched so that from the boardwalk where you came in it stands up like a board over the surf. Walk down to the sand and it falls back into long smears of paint. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Go back to where you came in on the boardwalk and look out to sea.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2 });
+    // Firefly queue: the surf mural on the shack ends (FIREFLY_QUEUE.md, rockaway); the boarded end wall shows until it lands
+    for (const x of [-65.02, 65.02]) fireflyPlate(k, 'assets/museum/tex/rockaway/ff_surf_mural.webp', 5.6, 3.2, x, 2.2, 10.5, x < 0 ? -PI / 2 : PI / 2, wood);
     const RW = 'https://en.wikipedia.org/wiki/Rockaway_Boardwalk', RN = 'Rockaway Boardwalk, Wikipedia';
     k.egg(v(40, 0.6, -6.8), { id: 'rockaway-sandy', title: 'Rebuilt in concrete', year: '2017', text: 'Hurricane Sandy destroyed much of the wooden boardwalk on October 29, 2012, worst between Beach 80th and 106th Streets. It was rebuilt in concrete for $274 million and finished in May 2017, on piles 30 feet apart driven up to 27 feet into the ground, with a sand retaining wall running underneath.', clue: 'Look over the ocean side rail of the boardwalk.', source: { name: RN, url: RW } }, { r: 1.6 });
     k.egg(v(-82, 0.9, 4.4), { id: 'rockaway-benches', title: 'The old boards', text: 'The modular benches on the new concrete boardwalk are made with wood saved from the old boardwalk that Sandy wrecked. Most of the boardwalk is 40 feet wide, with bump outs of 5 to 15 feet where there are stairs, ramps or benches.', clue: 'Sit on a bench under one of the shade shelters.', source: { name: RN, url: RW } }, { r: 1.4 });
@@ -99,11 +202,14 @@ export const greenwood: RoomDef = {
     k.sky({ top: 0x6a94cc, horizon: 0xf4dcb0, ground: 0x4a4a38, fog: 0.002, sun: { az: 4.0, el: 0.4, color: 0xffe0b0, size: 14 }, env: 0.95 });
     k.hemi(0xf6f0e6, 0x3a3a2a, 0.9);
     k.sun(0xffe0b8, 2.2, -40, 40, 50, true, 120);
-    const brown = k.pbr('gwBrownstone', X.ashlar(0x6a4a3a, 146, 3), 0.2, { roughness: 0.9 }),
-      granite = k.pbr('gwGranite', X.ashlar(0x8a8a86, 147, 2), 0.25),
-      marble = k.pbr('gwMarble', X.marble(0xd8d4cc, 0x9a948a, 12), 0.5),
-      lawn = k.pbr('gwLawn', X.grass(0x5a7a3a, 71), 0.06),
-      pathM = k.pbr('gwPath', X.asphalt(0x3a3a3c), 0.11),
+    /* 2026-11-24 (wave 3d): scans for every big surface. The gate is Portland brownstone, so a red sandstone ashlar scan
+       pulled toward chocolate; granite and marble for the monuments; leafy turf for the hills; worn paving for the drive. */
+    const R = 'greenwood';
+    const brown = sc(k, R, 'red_sandstone_wall', 2.6, () => X.ashlar(0x6a4a3a, 146, 3), { color: 0xa47868, roughness: 0.92 }, 0x5e4034),
+      granite = sc(k, R, 'castle_wall_slates', 2.4, () => X.ashlar(0x8a8a86, 147, 2), { color: 0xd4d4d0 }, 0x84837e),
+      marble = sc(k, R, 'marble_01', 1.5, () => X.marble(0xd8d4cc, 0x9a948a, 12), { color: 0xe6e2da, roughness: 0.6 }, 0xc8c4bc),
+      lawn = sc(k, R, 'leafy_grass', 3.2, () => X.grass(0x5a7a3a, 71), { color: 0xb8c8a0 }, 0x52683a),
+      pathM = sc(k, R, 'concrete_floor_worn_001', 3, () => X.asphalt(0x3a3a3c), { color: 0x8a8884 }, 0x4a4a4a),
       iron = k.flat(0x1f242a, 0.7, 0.45),
       bronze = k.flat(0x4a5a4a, 0.6, 0.5),
       greenP = k.flat(0x5ad84a, 0, 0.8),
@@ -116,10 +222,23 @@ export const greenwood: RoomDef = {
     k.mesh(g, lawn);
     const drive = [v(0, 0, 8), v(0, 0, -10), v(-8, 0, -30), v(-4, 0, -55), v(10, 0, -75), v(0, 0, -100), v(-14, 0, -120), v(-4, 0, -140), v(12, 0, -152)];
     const dc = k.spline(drive, false, 0.5); const dp = dc.getSpacedPoints(160);
-    for (let i = 0; i < dp.length - 1; i++) { const a = dp[i], b = dp[i + 1]; const m = a.clone().lerp(b, 0.5); const seg = k.box(4.6, 0.12, a.distanceTo(b) + 0.4, m.x, H(m.x, m.z) + 0.02, m.z, pathM); seg.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); }
+    /* the drive was 160 flat boxes, one per step, that read as a staircase down the hills: one ribbon laid on the ground */
+    { const pos: number[] = [], idx: number[] = [], across = [-2.3, -1.15, 0, 1.15, 2.3];
+      dp.forEach((p, i) => { const q = dp[Math.min(dp.length - 1, i + 1)], o = dp[Math.max(0, i - 1)]; let nx = -(q.z - o.z), nz = q.x - o.x; const l = Math.hypot(nx, nz) || 1; nx /= l; nz /= l; for (const a of across) { const x = p.x + nx * a, z = p.z + nz * a; pos.push(x, (z > -4 ? 0 : H(x, z)) + 0.05, z); } if (i) for (let j = 0; j < across.length - 1; j++) { const b0 = (i - 1) * across.length + j, b1 = i * across.length + j; idx.push(b0, b1, b0 + 1, b0 + 1, b1, b1 + 1); } });
+      const rg = new T.BufferGeometry(); rg.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); rg.setIndex(idx); rg.computeVertexNormals(); if (rg.attributes.normal.getY(0) < 0) { const ix = rg.index!.array as unknown as number[]; for (let t = 0; t < ix.length; t += 3) { const tmp = ix[t + 1]; ix[t + 1] = ix[t + 2]; ix[t + 2] = tmp; } rg.computeVertexNormals(); } k.mesh(rg, pathM); }
     // the gate: three spired brownstone gothic, two arched carriage ways, the parakeet nests in the spires
     const GZ = 0;
-    k.box(34, 8, 8, 0, 4, GZ, brown);
+    /* the gate was one solid 34 by 8 by 8 block with the two pointed arches drawn on its face, so nobody could walk
+       through it. It is now built: two wings, the middle pier, a wall band over the arches up to 11 m, and the open
+       carriage ways with Poly Haven iron gates (CC0) folded back against their reveals. */
+    for (const [x0, x1] of [[-17, -10.25], [-1.75, 1.75], [10.25, 17]]) k.box(x1 - x0, 11, 8, (x0 + x1) / 2, 5.5, GZ, brown);
+    for (const x of [-6, 6]) { k.box(8.5, 11 - 7.35, 8, x, (11 + 7.35) / 2, GZ, brown); const gab = new T.Shape(); gab.moveTo(-4.4, 0); gab.lineTo(0, 3.4); gab.lineTo(4.4, 0); gab.closePath(); const gg = new T.ExtrudeGeometry(gab, { depth: 0.5, bevelEnabled: false }); for (const s of [-1, 1]) k.mesh(gg, brown, x, 11, GZ + s * 4 - (s > 0 ? 0 : 0.5)); k.mesh(new T.ConeGeometry(0.35, 1.6, 4), brown, x, 14.9, GZ + 4); }
+    for (const x of [-17, 17]) for (const z of [-4, 4]) { k.box(1.2, 12.6, 1.2, x, 6.3, GZ + z, brown); k.mesh(new T.ConeGeometry(0.85, 3.2, 4), brown, x, 14.2, GZ + z).rotation.y = PI / 4; }
+    k.box(35.2, 0.5, 8.6, 0, 11.1, GZ, brown);
+    for (let x = -16.4; x <= 16.4; x += 0.82) if (Math.abs(Math.abs(x) - 6) > 4.4) k.box(0.36, 0.7, 8.4, x, 11.6, GZ, brown);
+    many(k, 'greenwood/ph_large_iron_gate', { box: [2.5, 6.0, 0.12] }, [[-8.3, 0, GZ + 2.7, PI / 2], [-3.7, 0, GZ + 2.7, -PI / 2], [3.7, 0, GZ + 2.7, PI / 2], [8.3, 0, GZ + 2.7, -PI / 2]], (o) => o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.color.setHex(0x40444a); c.material = m; } }));
+    // Moffitt's four sculpted panels over the arches (FIREFLY_QUEUE.md, greenwood): brownstone until the plates land
+    for (const x of [-6, 6]) for (const dx of [-2.1, 2.1]) fireflyPlate(k, `assets/museum/tex/greenwood/ff_moffitt_${x < 0 ? (dx < 0 ? 1 : 2) : dx < 0 ? 3 : 4}.webp`, 3.2, 2.2, x + dx, 9.1, GZ + 4.03, 0, brown);
     for (const x of [-12, 0, 12]) { k.box(5, 14, 6, x, 7, GZ, brown); k.mesh(new T.ConeGeometry(3.2, x === 0 ? 18 : 9, 4), brown, x, 14 + (x === 0 ? 9 : 4.5), GZ).rotation.y = PI / 4; for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + PI / 4; k.mesh(new T.ConeGeometry(0.6, 2.4, 4), brown, x + Math.cos(a) * 2.2, 15, GZ + Math.sin(a) * 2.2); } }
     for (const x of [-6, 6]) { k.arch(5, 6.5, 8, x, 0, GZ, brown, true, 0.85); }
     k.block(-17, -8.6, GZ - 4, GZ + 4); k.block(-3.4, 3.4, GZ - 4, GZ + 4); k.block(8.6, 17, GZ - 4, GZ + 4);
@@ -130,7 +249,8 @@ export const greenwood: RoomDef = {
     k.box(60, 0.3, 12, 0, 0.05, GZ + 12, k.pbr('gwCobble', X.cobble(0x6f6c68, 72), 0.9));
     street(k, { w: 16, len: 100, z: GZ + 26, x: 0 });
     blockFront(k, { x: 40, z0: GZ + 70, count: 6, face: -1, seed: 148, h: [10, 16] });
-    k.sign('GREEN-WOOD  ·  1838', 8, 0.8, 0, 9.2, GZ + 4.1, 'transparent', '#e8dcc0', 80, 0);
+    hsign(k, 'GREEN-WOOD', 3.3, 0.62, 0, 9.2, GZ + 4.04, 0, { fg: '#ecdcbc', font: 'W2 Archivo Expanded', size: 0.7, lit: false });
+    hsign(k, '1838', 1.6, 0.4, 0, 8.55, GZ + 4.04, 0, { fg: '#ecdcbc', font: 'W2 JetBrains Mono', size: 0.7, lit: false });
     // the monuments: instanced obelisks and headstones on the slopes, angels and urns, mausoleums cut into hills
     const obeliskG = new T.ConeGeometry(0.28, 4, 4); obeliskG.translate(0, 2, 0);
     const stoneG = new T.BoxGeometry(0.7, 1.0, 0.12); stoneG.translate(0, 0.5, 0);
@@ -145,8 +265,9 @@ export const greenwood: RoomDef = {
     k.water({ y: -12, color: 0x30506a, w: 800, d: 300, z: -420, amp: 1 });
     k.skyline({ z: -520, count: 40, spacing: 9, scale: 3.6, base: -12, seed: 149, lit: 0.2, glow: 0.4, tint: 0x7a8494, rows: 1, spires: true });
     // the clock in the central tower, both faces
-    const clock = k.mesh(new T.CylinderGeometry(1.5, 1.5, 6.3, 24), marble, 0, 11.5, GZ); clock.rotation.x = PI / 2;
-    for (const s of [-1, 1]) { k.box(0.12, 1.1, 0.06, 0, 11.9, GZ + s * 3.2, iron); k.box(0.8, 0.12, 0.06, 0.35, 11.5, GZ + s * 3.2, iron); }
+    /* the wall band now rises to 11 m, so the clock moves up the tower and stands proud of both faces */
+    const clock = k.mesh(new T.CylinderGeometry(1.5, 1.5, 9.2, 24), marble, 0, 13.4, GZ); clock.rotation.x = PI / 2;
+    for (const s of [-1, 1]) { k.mesh(new T.TorusGeometry(1.55, 0.14, 6, 24), brown, 0, 13.4, GZ + s * 4.6); k.box(0.12, 1.1, 0.06, 0, 13.8, GZ + s * 4.64, iron); k.box(0.8, 0.12, 0.06, 0.35, 13.4, GZ + s * 4.64, iron); }
     // Battle Hill: the Altar to Liberty with Minerva, raising her arm toward the harbor
     const MX = 10, MZ = -150, MY = H(MX, MZ);
     k.box(3.4, 1.0, 2.2, MX, MY + 0.5, MZ, granite); k.box(2.4, 2.4, 1.6, MX, MY + 2.2, MZ, granite);
@@ -168,13 +289,37 @@ export const greenwood: RoomDef = {
     { const gp = dp[90]; const gx = gp.x - 4, gz = gp.z;
       k.box(0.9, 0.1, 2.4, gx, H(gx, gz) + 0.04, gz, k.flat(0x4a3a2a, 0, 1));
       k.egg(v(gx, H(gx, gz) + 0.5, gz), { id: 'greenwood-gravediggers', title: 'Four hours, by hand', text: 'Gravediggers at Green-Wood must pass a 40 day trial period, and must be able to dig a grave 3 by 8 by 5 feet by hand within four hours.', clue: 'Find the freshly turned earth beside the drive.', source: { name: GN, url: GW } }, { r: 1.6 }); }
-    k.censusWall({ x: 0, y: 4.2, z: GZ - 4.1, rotY: PI, cols: 26, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(3800, 78), pieces: ctx.all, backing: iron });
+    /* the census wall rode across the arches once they opened: it hangs on the band above them now */
+    k.censusWall({ x: 0, y: 9.3, z: GZ - 4.1, rotY: PI, cols: 26, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(3800, 78), pieces: ctx.all, backing: iron });
+    /* the monuments that carry the room: three photogrammetry scans of real cemetery angels (Objaverse, CC0: a mourning
+       angel on a rock, a standing angel with a wreath, an angel at an urn on a pier), set beside the drive facing it,
+       and a scanned headstone (CC0) instanced along both verges */
+    const angelAt = (name: string, fit: number, idx: number[]) => many(k, `greenwood/${name}`, { height: fit }, idx.map((j, n) => { const p = dp[j], q = dp[Math.min(dp.length - 1, j + 1)]; const nx = -(q.z - p.z), nz = q.x - p.x, l = Math.hypot(nx, nz) || 1, sd = n % 2 ? 1 : -1; const x = p.x + (nx / l) * 5.2 * sd, z = p.z + (nz / l) * 5.2 * sd; k.keepOut.push({ x, z, r: 1.3 }); return [x, H(x, z) - 0.05, z, Math.atan2(p.x - x, p.z - z)]; }));
+    angelAt('grabengel', 2.5, [10, 58, 104, 146]);
+    angelAt('engel', 2.9, [24, 80, 124]);
+    angelAt('grab_reden', 2.6, [38, 66, 112, 150]);
+    { const at: number[][] = []; for (let j = 4; j < dp.length - 2; j += 3) for (const sd of [-1, 1]) { if (j > 12 && j < 20) continue; const p = dp[j], q = dp[j + 1]; const nx = -(q.z - p.z), nz = q.x - p.x, l = Math.hypot(nx, nz) || 1, off = 3.4 + rnd() * 2.2; const x = p.x + (nx / l) * off * sd, z = p.z + (nz / l) * off * sd; if (z > GZ - 6) continue; at.push([x, H(x, z) - 0.06, z, Math.atan2(p.x - x, p.z - z) + PI / 2 + (rnd() - 0.5) * 0.3, 0.8 + rnd() * 0.5]); } many(k, 'greenwood/gravestone_aba', { height: 1.15 }, at, (o) => o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.color.setRGB(1.9, 1.85, 1.8); m.roughness = 0.9; c.material = m; } })); }
+    many(k, 'greenwood/ph_dead_tree_trunk_02', { height: 1.0 }, [[-30, H(-30, -44) - 0.1, -44, 0.6], [44, H(44, -118) - 0.1, -118, 2.1]]);
+    /* the illusion: the hollow face. A marble bust (Poly Haven, CC0) set in a granite stele facing into the stone and drawn
+       from the inside only, so what you see is the hollow of its face; the eye insists it is a face that stands out, and
+       as you walk past it seems to turn and follow you. */
+    const hp = dp[16], hq = dp[17]; const hnx = -(hq.z - hp.z), hnz = hq.x - hp.x, hl = Math.hypot(hnx, hnz) || 1;
+    const HFX = hp.x + (hnx / hl) * 4.6, HFZ = hp.z + (hnz / hl) * 4.6, HFY = H(HFX, HFZ), hrot = Math.atan2(hp.x - HFX, hp.z - HFZ);
+    { const st = k.box(2.6, 3.4, 0.5, HFX - Math.sin(hrot) * 0.55, HFY + 1.7, HFZ - Math.cos(hrot) * 0.55, granite); st.rotation.y = hrot; k.mesh(new T.ConeGeometry(1.9, 0.9, 4), granite, HFX - Math.sin(hrot) * 0.55, HFY + 3.85, HFZ - Math.cos(hrot) * 0.55).rotation.y = hrot + PI / 4; k.keepOut.push({ x: HFX, z: HFZ, r: 1.4 }); }
+    void hero(k, 'greenwood/ph_marble_bust_01', { height: 1.6 }).then((h) => {
+      if (!h || !k.live) return;
+      h.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.side = T.BackSide; m.color.multiplyScalar(1.1); c.material = m; } });
+      h.position.set(HFX + Math.sin(hrot) * 0.3, HFY + 0.9, HFZ + Math.cos(hrot) * 0.3); h.rotation.y = hrot + PI; k.add(h);
+    });
+    k.egg(v(HFX, HFY + 1.7, HFZ), { id: 'greenwood-hollow', title: 'The face that follows you', text: 'This bust is not standing out of the stone. You are looking into the hollow back of its face, the inside of a mask, and the brain refuses to read a face as hollow, so it builds a solid one; then, as you walk past, that face seems to turn and follow you. It is the hollow face illusion, which the psychologist Richard Gregory used to show how much of seeing is the brain\'s guess.', clue: 'Walk past the marble face in the granite stele by the drive and watch it turn.', source: { name: 'Hollow-Face illusion, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hollow-Face_illusion' } }, { r: 1.8 });
+    // the drive's signs: Green-Wood names its paths and avenues, and posts them at the forks
+    for (const [j, t] of [[6, 'BATTLE AVE'], [60, 'SYLVAN WATER'], [128, 'TO BATTLE HILL']] as [number, string][]) { const p = dp[j]; const x = p.x + 2.8, z = p.z; const y = H(x, z); k.box(0.1, 2.4, 0.1, x, y + 1.2, z, iron); hsign(k, t, 1.8, 0.34, x, y + 2.2, z + 0.06, 0, { fg: '#e8e0cc', bg: '#1c2a22', font: 'W2 Archivo Expanded', size: 0.5, lit: false }); hsign(k, t, 1.8, 0.34, x, y + 2.2, z - 0.06, PI, { fg: '#e8e0cc', bg: '#1c2a22', font: 'W2 Archivo Expanded', size: 0.5, lit: false }); }
     k.crowd(dp.filter((_, i) => i % 20 === 0).map((p) => v(p.x + 1.5, H(p.x, p.z), p.z)), 12, { seed: 60, speed: 0.6, spread: 1.4, animate: !ctx.reduced, colors: [0x24262c, 0x151517, 0x8a3a3a, 0x3a1a2a] });
     // the works: the vault doors (bronze framed), the gate's inner arcade, along the drive on granite stands
     const mounts: Mount[] = [];
     for (const [x, z, rot] of vaults) { const fx = x + Math.sin(rot) * 2.56, fz = z + Math.cos(rot) * 2.56; mounts.push({ position: v(fx, H(x, z) + 2.0, fz), rotation: rot, target: v(x + Math.sin(rot) * 10, H(x, z) + 2, z + Math.cos(rot) * 10), width: 2.2, height: 2.6, style: 'black', wash: false }); }
     for (let i = 0; i < 6; i++) { const p = dp[20 + i * 22]; const s = i % 2 ? 1 : -1; const x = p.x + s * 3.4, z = p.z; const y = H(x, z); k.box(3.2, 2.4, 0.3, x, y + 1.6, z, granite); mounts.push({ position: v(x, y + 1.7, z + 0.18), rotation: 0, target: v(p.x, y + 2, p.z + 4), width: 2.8, height: 1.7, style: 'black', wash: false }); }
-    for (const x of [-6, 6]) mounts.push({ position: v(x, 4.6, GZ - 4.1), rotation: PI, target: v(x, 3, GZ - 12), width: 3.6, height: 2.1, style: 'black', wash: false });
+    for (const x of [-13.6, 13.6]) mounts.push({ position: v(x, 4.6, GZ - 4.1), rotation: PI, target: v(x, 3, GZ - 12), width: 3.6, height: 2.1, style: 'black', wash: false });
     for (const x of [-16.8, 16.8]) mounts.push({ position: v(x, 4.0, GZ), rotation: x < 0 ? -PI / 2 : PI / 2, target: v(x * 1.6, 3, GZ), width: 4.2, height: 2.5, style: 'black', wash: false });
     return { mounts, spawn: v(0, 3, GZ + 34), look: v(0, 10, GZ), eye: 3, bounds: [-110, 110, -210, GZ + 38], style: 'black', floorY: (x, z) => (z < GZ - 4 ? H(x, z) : 0) };
   },
@@ -193,15 +338,17 @@ export const domino: RoomDef = {
     k.sky({ top: 0x5a86c8, horizon: 0xf4c890, ground: 0x3a3a34, fog: 0.0018, sun: { az: 4.7, el: 0.18, color: 0xffc078, size: 20 }, haze: 0.4, env: 0.9 });
     k.hemi(0xffe4c8, 0x3a3028, 0.8);
     k.sun(0xffc890, 2.2, -80, 26, -20, true, 120);
-    const brick = k.pbr('domBrick', X.brick(0x7a4a3a, 150), 0.28),
-      brickD = k.pbr('domBrickD', X.brick(0x5a3a2e, 151), 0.28),
+    /* 2026-11-24 (wave 3d): scanned brick, rust, pavers, lawn and boards (Poly Haven, CC0) in place of the painted ones */
+    const R = 'domino';
+    const brick = sc(k, R, 'red_brick', 1.4, () => X.brick(0x7a4a3a, 150), { color: 0xd8b4a4 }, 0x6e4436),
+      brickD = sc(k, R, 'red_brick', 1.1, () => X.brick(0x5a3a2e, 151), { color: 0x9a7a6c }, 0x4e3228),
       glass = k.glass(0xdcecf6, 0.14, 0.04),
       steel = k.pbr('domSteel', X.steel(0x3a4048, true, 152), 0.6, { metalness: 0.7, roughness: 0.5 }),
-      rust = k.pbr('domRust', X.steel(0x7a4a2a, true, 153), 0.5, { metalness: 0.5, roughness: 0.7 }),
+      rust = sc(k, R, 'rusty_painted_metal', 2.4, () => X.steel(0x7a4a2a, true, 153), { color: 0xe0c8b0, metalness: 0.4 }, 0x6a4430),
       teal = k.flat(0x2a8a8a, 0.2, 0.6),
-      pave = k.pbr('domPave', X.pavers(0x8e8b84, 73), 0.4),
-      lawn = k.pbr('domLawn', X.grass(0x4a7a3a, 74), 0.06),
-      deck = k.pbr('domDeck', X.boardwalk(0x8a6a48), 0.5),
+      pave = sc(k, R, 'concrete_pavement', 2.2, () => X.pavers(0x8e8b84, 73), { color: 0xd4cec4 }, 0x86827a),
+      lawn = sc(k, R, 'leafy_grass', 3.2, () => X.grass(0x4a7a3a, 74), { color: 0xb8c8a0 }, 0x4a6634),
+      deck = sc(k, R, 'weathered_planks', 2.4, () => X.boardwalk(0x8a6a48), { color: 0xc8b49c }, 0x6a5440),
       dark = k.flat(0x1a1c20, 0.5, 0.6);
     // the river and Manhattan, the bridge to the south, the park along the water
     k.water({ y: -1.6, color: 0x2e4a5c, w: 700, d: 500, x: -300, z: 0, amp: 1.0 });
@@ -233,7 +380,8 @@ export const domino: RoomDef = {
     for (let i = 0; i <= 12; i++) { const z = RZ - RD / 2 + 5 + i * ((RD - 10) / 12); const pts: T.Vector3[] = []; for (let j = 0; j <= 16; j++) { const a = (j / 16) * PI; pts.push(v(RX + Math.cos(a) * (RW / 2 - 6), VB + Math.sin(a) * (RW / 2 - 6), z)); } k.curve(pts, 0.14, steel, 16); }
     for (let j = 0; j <= 16; j += 2) { const a = (j / 16) * PI; k.box(0.16, 0.16, RD - 10, RX + Math.cos(a) * (RW / 2 - 6), VB + Math.sin(a) * (RW / 2 - 6), RZ, steel); }
     for (const s of [-1, 1]) { k.box(0.8, 6, RD - 10, RX + s * (RW / 2 - 6), 3, RZ, steel); k.box(0.3, VB - 6, RD - 10, RX + s * (RW / 2 - 6), 6 + (VB - 6) / 2, RZ, glass); for (let y = 9; y <= VB; y += 4.5) k.box(0.5, 0.3, RD - 10, RX + s * (RW / 2 - 6), y, RZ, steel); k.block(RX + s * (RW / 2 - 6) - 0.5, RX + s * (RW / 2 - 6) + 0.5, RZ - RD / 2 + 5, RZ + RD / 2 - 5); }
-    for (let f = 1; f < 6; f++) { for (const s of [-1, 1]) k.box(6, 0.3, RD - 10, RX + s * (RW / 2 - 9), f * 4.5, RZ, deck); }
+    const deckIn = sc(k, R, 'weathered_planks', 2.4, () => X.boardwalk(0x6a5440), { color: 0x7a6a58 }, 0x4a3c30);
+    for (let f = 1; f < 6; f++) { for (const s of [-1, 1]) k.box(6, 0.3, RD - 10, RX + s * (RW / 2 - 9), f * 4.5, RZ, deckIn); }
     for (let i = 0; i < 6; i++) k.point(RX, 12, RZ - 25 + i * 10, 0xffe0b8, 30, 20);
     // the park: the elevated walkway on the old crane rails, the syrup tanks, the gantry cranes, the lawn
     const WY = 6;
@@ -256,6 +404,26 @@ export const domino: RoomDef = {
     // on the plain brick band between the second and third tiers of arches (tops at 24.8, next tier from 26): the arch frames stand
     // 0.7 proud of the wall, so a sign up among the top tier lost the letters behind them
     k.sign('DOMINO  ·  SUGAR  ·  1882', 10, 0.9, RX, 25.4, RZ - RD / 2 - 0.66, 'transparent', '#f4d8a8', 74, PI);
+    /* the sign the refinery is known by: the yellow DOMINO SUGARS letters on their steel lattice on the roof, facing the
+       park and the river; built here on a truss of real members, the letters in Archivo Expanded, lit, so they read at night */
+    { const SY = RH + 0.2, SZ = RZ - RD / 2 + 1.2;
+      for (const x of [-14, -7, 0, 7, 14]) { k.box(0.4, 8, 0.4, RX + x, SY + 4, SZ, steel); k.beam(v(RX + x, SY, SZ + 2.4), v(RX + x, SY + 7, SZ), 0.12, steel, 4); }
+      for (const y of [0.4, 7.6]) k.box(31, 0.35, 0.35, RX, SY + y, SZ, steel);
+      for (let i = 0; i < 8; i++) { const x0 = RX - 15 + i * 3.75; k.beam(v(x0, SY + 0.4, SZ + 0.2), v(x0 + 3.75, SY + 7.6, SZ + 0.2), 0.07, steel, 3); }
+      hsign(k, 'DOMINO SUGARS', 31, 6.4, RX, SY + 4, SZ - 0.45, PI, { fg: '#f6c21a', font: 'W2 Archivo Expanded', size: 0.86 }); }
+    /* real things in the park's artifact walk: a gantry crane (Poly Haven overhead_crane, CC0), barrels by the syrup tanks,
+       a forklift by the big door */
+    /* the bridge crane rides on two teal trestles, as the old crane runway did */
+    many(k, 'domino/ph_overhead_crane', { width: 20 }, [[-30, 1.6, 60, 0]], (o) => tint(o, 0x2a8a8a, 0.6, 0.5));
+    for (const x of [-39.4, -20.6]) { for (const dz of [-2.6, 2.6]) k.box(0.7, 8.6, 0.7, x, 4.3, 60 + dz, teal); k.box(0.9, 0.7, 6.4, x, 8.4, 60, teal); }
+    { const at: number[][] = []; for (const [tx, tz] of [[-90, 10], [-90, 30], [-90, 50]]) for (let i = 0; i < 4; i++) at.push([tx + 5 + (i % 2) * 0.8, 0, tz - 5 + Math.floor(i / 2) * 0.8, i]); many(k, 'domino/ph_barrel_03', { height: 0.93 }, at); }
+    many(k, 'domino/h_forklift', { length: 3.4 }, [[RX + 9, 0, RZ - RD / 2 - 6, 0.6]]);
+    k.keepOut.push({ x: RX + 9, z: RZ - RD / 2 - 6, r: 2.2 });
+    /* the illusion: DOMINO PARK painted flat on the pavers, stretched so it stands up as a sign from where you arrive */
+    if (HAS_DOM) anamorphTex(k, floorType('DOMINO PARK', '#f6c21a'), RX - 6, RZ - RD / 2 - 44, 3, 0.2, PI, 16, 10, 1.6);
+    k.egg(v(RX - 6, 0.6, RZ - RD / 2 - 28), { id: 'domino-anamorph', title: 'Paint that stands up', text: 'DOMINO PARK is painted flat on the pavers and stretched toward the refinery, so that from the spot where you came in it stands up off the ground like a sign. Take a step to the side and it smears back into long yellow paint. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Go back to where you came in and look at the ground toward the big arched door.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.8 });
+    // Firefly queue (domino): the refinery floor as it was, a plate high on the inner back wall over the census
+    fireflyPlate(k, 'assets/museum/tex/domino/ff_refinery_floor.webp', 18, 9, RX, 15, RZ + RD / 2 - 0.62, PI, brickD);
     // the works: the brick piers between the arches inside, the mezzanine edges, the walkway screens, the tank sides
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 5; i++) { const z = RZ - RD / 2 + 10 + i * 10; mounts.push({ position: v(RX + s * (RW / 2 - 0.66), 3.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(RX + s * (RW / 2 - 8), 3, z), width: 4.4, height: 2.6, style: 'steel', wash: true }); }
@@ -276,15 +444,17 @@ export const boatgraveyard: RoomDef = {
   description: 'Staten Island\'s western shore: rusting hulls of tugs and ferries settled in the marsh grass, a kayak route through them, herons on the wrecks, the works on the wheelhouses.',
   signatures: 'Dozens of scuttled tugboats, barges and a ferry sunk to their decks in the tidal marsh, rust and peeling paint, cordgrass and mud at low tide, the New Jersey refineries and cranes across the water, fog.',
   build(k, ctx) {
-    k.sky({ top: 0x9aa4ac, horizon: 0xc8ccc8, ground: 0x5a5e58, fog: 0.0035, sun: { az: 3.0, el: 0.5, color: 0xf0f0e8, size: 10 }, haze: 0.8, env: 0.6 });
+    k.sky({ top: 0x8a98a4, horizon: 0xc4c8c2, ground: 0x5a5e58, fog: 0.0024, sun: { az: 3.0, el: 0.5, color: 0xf0f0e8, size: 10 }, haze: 0.6, env: 0.6 });
     k.hemi(0xd8dce0, 0x3a4038, 0.8);
     k.sun(0xf4f0e8, 1.0, 20, 40, 20, true, 100);
-    const rust = k.pbr('bgRust', X.steel(0x6a3a22, true, 155), 0.5, { metalness: 0.5, roughness: 0.8 }),
-      rustD = k.pbr('bgRustD', X.steel(0x4a2a1a, true, 156), 0.5, { metalness: 0.4, roughness: 0.85 }),
-      paint = k.pbr('bgPaint', X.steel(0x8a6a3a, false, 157), 0.6, { metalness: 0.3, roughness: 0.8 }),
+    /* 2026-11-24 (wave 3d): scanned rust, peeling paint, rotten boards and tidal mud (Poly Haven, CC0) */
+    const R = 'boatgraveyard';
+    const rust = sc(k, R, 'rusty_metal_03', 2.4, () => X.steel(0x6a3a22, true, 155), { color: 0xd8b8a0, metalness: 0.4, roughness: 0.85 }, 0x5e3420),
+      rustD = sc(k, R, 'rusty_metal_03', 1.6, () => X.steel(0x4a2a1a, true, 156), { color: 0x9a7a66, metalness: 0.35, roughness: 0.9 }, 0x40261a),
+      paint = sc(k, R, 'rusty_painted_metal', 2.0, () => X.steel(0x8a6a3a, false, 157), { color: 0xd8c8b0, metalness: 0.25, roughness: 0.85 }, 0x7a6448),
       white = k.pbr('bgWhite', X.plaster(0xb8b4a8, 76), 0.4, { roughness: 0.9 }),
-      wood = k.pbr('bgWood', X.planks(0x4a3a2a, 5, 158, 0.4), 1.0),
-      mud = k.pbr('bgMud', X.concrete(0x4a4438, 77), 0.15, { roughness: 1 }),
+      wood = sc(k, R, 'weathered_brown_planks', 2.2, () => X.planks(0x4a3a2a, 5, 158, 0.4), { color: 0xb8a894 }, 0x4a3a2a),
+      mud = sc(k, R, 'brown_mud_02', 3.4, () => X.concrete(0x4a4438, 77), { color: 0x9a907e, roughness: 0.6 }, 0x4a4438),
       grassM = k.flat(0x8a8a58, 0, 0.9),
       yellow = k.flat(0xe8c040, 0, 0.6),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
@@ -293,7 +463,7 @@ export const boatgraveyard: RoomDef = {
     // the kill: shallow water, mud flats, cordgrass, the industrial shore across
     k.water({ y: 0, color: 0x4a5e5a, w: 500, d: 500, amp: 0.3 });
     for (let i = 0; i < 14; i++) { const x = (rnd() - 0.5) * 200, z = (rnd() - 0.5) * 200; k.mesh(new T.CylinderGeometry(8 + rnd() * 10, 12 + rnd() * 12, 0.6, 12), mud, x, -0.1, z); }
-    for (let i = 0; i < 1200; i++) { const x = (rnd() - 0.5) * 220, z = (rnd() - 0.5) * 220; if (Math.hypot(x, z) < 8) continue; k.beam(v(x, -0.2, z), v(x + (rnd() - 0.5) * 0.5, 0.6 + rnd() * 0.9, z + (rnd() - 0.5) * 0.5), 0.02, grassM, 3); }
+    void grassM; /* the 1,200 single stalks became the cordgrass beds below, once the kayak route is known */
     k.box(400, 4, 60, 0, 1, -170, mud);
     for (let i = 0; i < 10; i++) { const x = -160 + i * 36; k.cyl(6, 14 + (i % 3) * 6, x, 7 + (i % 3) * 3, -180, k.flat(0x8a8e90, 0.6, 0.5), 6, 16); if (i % 2) { k.box(1.2, 30, 1.2, x + 10, 15, -178, dark); k.box(20, 1, 1, x + 10, 30, -178, dark); } }
     k.cyl(1.4, 60, 60, 30, -190, k.flat(0x9a9a98, 0.5, 0.6), 1.8, 12); k.point(60, 61, -190, 0xff6a3a, 200, 60);
@@ -344,6 +514,24 @@ export const boatgraveyard: RoomDef = {
     // the kayak route: a loop through the wrecks; the visitor paddles it
     const route = [v(0, 0, 60), v(-10, 0, 40), v(-42, 0, 10), v(-40, 0, -30), v(-5, 0, -42), v(30, 0, -14), v(30, 0, 30), v(6, 0, 60)];
     const kc = k.spline(route, true, 0.5); const kp = kc.getSpacedPoints(360);
+    /* the marsh: a scatter of single green sticks read as nothing. Dense beds of cordgrass now, each clump two crossed
+       cards of painted blades, two thousand of them in one draw on the flats and the banks, kept off the kayak route */
+    {
+      const a = new T.PlaneGeometry(1.8, 1.5); a.translate(0, 0.72, 0); const b = a.clone(); b.rotateY(PI / 2); const c = a.clone(); c.rotateY(PI / 4);
+      const clump = new T.BufferGeometry(); const pa: number[] = [], ua: number[] = [], ia: number[] = [];
+      for (const g of [a, b, c]) { const o = pa.length / 3; pa.push(...(g.attributes.position.array as Float32Array)); ua.push(...(g.attributes.uv.array as Float32Array)); for (const i of g.index!.array as Uint16Array) ia.push(i + o); }
+      clump.setAttribute('position', new T.Float32BufferAttribute(pa, 3)); clump.setAttribute('uv', new T.Float32BufferAttribute(ua, 2)); clump.setIndex(ia); clump.computeVertexNormals();
+      let gm: T.Material = grassM;
+      if (HAS_DOM) {
+        const cv = document.createElement('canvas'); cv.width = 256; cv.height = 256; const g = cv.getContext('2d')!; const r2 = X.mulberry(601);
+        for (let i = 0; i < 70; i++) { const x0 = 20 + r2() * 216, h = 120 + r2() * 130, lean = (r2() - 0.5) * 70; g.strokeStyle = ['#8a8650', '#a8a060', '#6e7444', '#b8a86a', '#5e6a3a'][i % 5]; g.lineWidth = 2 + r2() * 3; g.beginPath(); g.moveTo(x0, 256); g.quadraticCurveTo(x0 + lean * 0.3, 256 - h * 0.6, x0 + lean, 256 - h); g.stroke(); }
+        const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace;
+        gm = new T.MeshStandardMaterial({ map: t, alphaTest: 0.35, transparent: true, side: T.DoubleSide, roughness: 0.95 }); /* transparent keeps the cards out of the shadow pass, which drew them as squares */
+      }
+      const mats: T.Matrix4[] = [], q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+      for (let i = 0; i < 2600 && mats.length < 2000; i++) { const x = (rnd() - 0.5) * 230, z = (rnd() - 0.5) * 230; if (Math.hypot(x, z - 70) < 10) continue; if (kp.some((p) => Math.hypot(p.x - x, p.z - z) < 4.2)) continue; const sc0 = 0.7 + rnd() * 0.8; mats.push(new T.Matrix4().compose(v(x, -0.25, z), q.setFromAxisAngle(up, rnd() * PI), new T.Vector3(sc0, 0.7 + rnd() * 0.7, sc0))); }
+      k.instances(clump, gm, mats);
+    }
     for (let i = 0; i < 360; i += 12) { const p = kp[i]; k.cyl(0.14, 0.8, p.x + 2.4, 0.3, p.z, yellow, 0.14, 8); k.cyl(0.14, 0.8, p.x - 2.4, 0.3, p.z, k.flat(0x2a6a2a, 0, 0.6), 0.14, 8); }
     const kayak = new T.Group(); const shellK = new T.Mesh(new T.BoxGeometry(0.7, 0.3, 3.4), k.flat(0xe84a2a, 0.1, 0.5)); shellK.position.y = 0.05; kayak.add(shellK); const paddle = new T.Mesh(new T.BoxGeometry(2.2, 0.04, 0.04), wood); paddle.position.set(0, 0.6, 0.4); kayak.add(paddle); k.add(kayak);
     if (!ctx.reduced) { k.rider(kayak, kc, 1.6, 180); k.ticks.push((t) => { paddle.rotation.z = 0.5 * Math.sin(t * 2); }); }
@@ -355,7 +543,32 @@ export const boatgraveyard: RoomDef = {
     const pcg = new T.Group(); pcg.position.set(84, -0.6, -24); pcg.rotation.set(0.04, 0.5, -0.1);
     { const navy = k.flat(0x6a6e70, 0.3, 0.8); const hb = new T.Mesh(new T.BoxGeometry(5.6, 3, 40), navy); hb.position.y = 1.2; pcg.add(hb); const bw = new T.Mesh(new T.ConeGeometry(2.8, 8, 4, 1), navy); bw.rotation.x = PI / 2; bw.rotation.y = PI / 4; bw.position.set(0, 1.2, 24); bw.scale.set(1, 1, 0.6); pcg.add(bw); const br = new T.Mesh(new T.BoxGeometry(3.4, 3, 6), navy); br.position.set(0, 4.2, 6); pcg.add(br); const ms = new T.Mesh(new T.CylinderGeometry(0.15, 0.15, 7, 6), rustD); ms.position.set(0, 8, 4); pcg.add(ms); }
     k.add(pcg); k.keepOut.push({ x: 84, z: -24, r: 12 });
+    /* the real things at the dock and on the flats: a wooden hull scanned where it lies (Objaverse, CC0, the stern of the
+       SS Rifle) settled in the mud by the dock, tyre fenders, anchors, a channel marker, driftwood */
+    many(k, 'boatgraveyard/ss_rifle_stern', { length: 10 }, [[15, -1.5, 75, 0.5]], (o) => o.traverse((c) => { if (c instanceof T.Mesh) c.rotation.z = 0.12; }));
+    k.keepOut.push({ x: 15, z: 75, r: 5 });
+    many(k, 'boatgraveyard/ph_old_tyre', { height: 0.9 }, [[3.6, 0.42, 63, 0.3], [-3.2, 0.42, 69, 1.4], [2.9, 0.32, 86, 0.7], [-2.8, 0.32, 92, 2.2], [14, -0.1, 50, 0.4], [-24, -0.1, 56, 1.1], [26, -0.1, -10, 2.4], [-46, -0.1, -8, 0.9]].map(([x, y, z, r]) => [x, y, z, r]), (o) => o.traverse((c) => { if (c instanceof T.Mesh) c.rotation.x = PI / 2; }));
+    many(k, 'boatgraveyard/anchor', { height: 1.5 }, [[2.2, 0.4, 69, 0.8], [-1.8, 0.3, 80, 2.4]]);
+    many(k, 'boatgraveyard/ph_lateral_sea_marker', { height: 5.6 }, [[46, -0.6, 22, 0], [-50, -0.6, -64, 1]]);
+    many(k, 'boatgraveyard/ph_dead_tree_trunk', { height: 0.3 }, [[18, -0.05, 64, 0.4, 1.6], [-30, -0.05, 46, 1.9, 1.4], [40, -0.05, -40, 2.8, 1.8]]);
+    for (const [x, z, r] of [[4.2, 60, 0], [-4.2, 72, 0], [24, 52, -0.5], [-34, 58, 0.6]] as [number, number, number][]) { k.cyl(0.18, 3.2, x, 1.2, z, wood, 0.2, 8); hsign(k, 'NO TRESPASSING', 1.5, 0.5, x, 2.3, z + 0.2, r, { fg: '#c8202a', bg: '#f2eee4', font: 'W2 Archivo Expanded', size: 0.55, lit: false }); }
+    hsign(k, 'MARINE SCRAP YARD  KEEP OUT', 5.6, 0.8, 0, 2.2, 61.2, 0, { fg: '#f2eee4', bg: '#2a2e30', font: 'W2 Archivo Expanded', border: '#f2eee4', size: 0.5, lit: false });
+    k.box(0.16, 2.6, 0.16, -2.6, 1.3, 61.1, wood); k.box(0.16, 2.6, 0.16, 2.6, 1.3, 61.1, wood);
+    /* the illusion: a Pepper's ghost. A tall ship (Poly Haven dutch_ship_medium, CC0) stands in the fog past the ferry as a
+       faint see through figure, the way the stage ghost is a lit figure reflected in glass. It is there only while
+       you are near the dock and fades as you paddle out toward it. */
+    const ghost = new T.Group(); ghost.position.set(-62, -1.2, -96); ghost.rotation.y = 0.35; k.add(ghost);
+    const ghostMats: T.MeshBasicMaterial[] = [];
+    void hero(k, 'boatgraveyard/ph_dutch_ship_medium', { width: 38 }).then((h) => {
+      if (!h || !k.live) return;
+      h.traverse((c) => { if (c instanceof T.Mesh) { const m = new T.MeshBasicMaterial({ color: 0x46524f, transparent: true, opacity: 0.5, depthWrite: false, fog: false }); ghostMats.push(m); c.material = m; } });
+      ghost.add(h);
+    });
+    if (HAS_DOM) k.ticks.push(() => { const cam = (window as unknown as { __museum?: { camera?: T.Camera } }).__museum?.camera; if (!cam || !ghostMats.length) return; const d = Math.hypot(cam.position.x, cam.position.z - 64); const o = 0.55 * Math.max(0, Math.min(1, 1 - (d - 14) / 36)); for (const m of ghostMats) m.opacity = o; ghost.visible = o > 0.004; });
+    // Firefly queue (boatgraveyard): the New Jersey shore across the kill in fog, behind the code tanks; clear until it lands
+    fireflyPlate(k, 'assets/museum/tex/boatgraveyard/ff_kill_shore.webp', 520, 70, 0, 26, -230, 0, k.flat(0xb8bcb8, 0, 1, { transparent: true, opacity: 0 }));
     const BW = 'https://en.wikipedia.org/wiki/Arthur_Kill_ship_graveyard', BN = 'Arthur Kill ship graveyard, Wikipedia';
+    k.egg(v(0, 1.6, 66), { id: 'boatgraveyard-ghost', title: 'The ship that is not there', text: 'Past the ferry a tall ship stands in the fog, but only while you are at the dock; paddle toward it and it thins away. It is drawn the way the stage ghost of 1862 was made: a lit figure seen as a faint reflection laid over the scene behind it. John Henry Pepper showed it at the Royal Polytechnic in London, and it is still called Pepper\'s ghost.', clue: 'Stand at the end of the dock and look out past the white ferry.', source: { name: 'Pepper\'s ghost, Wikipedia', url: 'https://en.wikipedia.org/wiki/Pepper%27s_ghost' } }, { r: 1.6 });
     k.egg(v(0, 1.2, 70), { id: 'boatgraveyard-witte', title: 'Witte\'s yard', year: '1930', text: 'The graveyard is a working marine scrapyard in Rossville, founded in the 1930s by John J. Witte, who ran it until his death in 1980. It is also called the Witte Marine Scrap Yard and the Tugboat Graveyard, and its official name since 2014 is the Donjon Iron and Metal Scrap Processing Facility.', clue: 'Look around the wooden dock where the route begins.', source: { name: BN, url: BW } }, { r: 1.8 });
     k.egg(wrecks[1].g, { id: 'boatgraveyard-count', title: 'Down from four hundred', text: 'About 100 boats and ships still lie here, down from a high of about 400. Most are cargo ships and tugboats from every decade of the twentieth century, left in the mud and shallows until they are cut up or salvaged. Some have called it an accidental marine museum.', clue: 'Paddle up to a rusted tug and count the hulls around it.', source: { name: BN, url: BW } }, { r: 3 });
     k.egg(pcg, { id: 'boatgraveyard-pc1264', title: 'The sub chaser', text: 'Among the historic vessels brought here was USS PC-1264, a submarine chaser and the first US Navy ship of World War II with a predominantly African American crew.', clue: 'Look for the long narrow grey hull, unlike the tugs.', source: { name: BN, url: BW } }, { r: 4 });
@@ -364,7 +577,9 @@ export const boatgraveyard: RoomDef = {
     k.censusWall({ x: FX - 7.1, y: 5.4, z: FZ, rotY: PI / 2, cols: 26, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(4000, 78), pieces: ctx.all, backing: dark });
     // the works: on the wheelhouses facing the route, on the barge sides, the ferry's flank
     const mounts: Mount[] = [];
-    for (const w of wrecks) { const near = kp.reduce((b, p) => (Math.hypot(p.x - w.x, p.z - w.z) < Math.hypot(b.x - w.x, b.z - w.z) ? p : b), kp[0]); const a = Math.atan2(near.x - w.x, near.z - w.z); const d = 3.2; mounts.push({ position: v(w.x + Math.sin(a) * d, 6.2, w.z + Math.cos(a) * d), rotation: a, target: v(near.x, 3, near.z), width: 3.0, height: 1.8, style: 'black', wash: false }); }
+    /* two wrecks lie within their own 9 m keep out of the route, so their works' viewing spots were inside it: each
+       target now sits just outside the keep out on the same line, still facing the route */
+    for (const w of wrecks) { const near = kp.reduce((b, p) => (Math.hypot(p.x - w.x, p.z - w.z) < Math.hypot(b.x - w.x, b.z - w.z) ? p : b), kp[0]); const a = Math.atan2(near.x - w.x, near.z - w.z); const d = 3.2, td = Math.max(9.6, Math.hypot(near.x - w.x, near.z - w.z)); mounts.push({ position: v(w.x + Math.sin(a) * d, 6.2, w.z + Math.cos(a) * d), rotation: a, target: v(w.x + Math.sin(a) * td, 3, w.z + Math.cos(a) * td), width: 3.0, height: 1.8, style: 'black', wash: false }); }
     for (const [x, z] of [[90, 40], [-100, 0], [30, -90]]) { const near = kp.reduce((b, p) => (Math.hypot(p.x - x, p.z - z) < Math.hypot(b.x - x, b.z - z) ? p : b), kp[0]); const a = Math.atan2(near.x - x, near.z - z); mounts.push({ position: v(x + Math.sin(a) * 6.2, 2.0, z + Math.cos(a) * 6.2), rotation: a, target: v(near.x, 2, near.z), width: 6, height: 3.4, style: 'none', wash: false }); }
     for (let i = 0; i < 4; i++) mounts.push({ position: v(FX + 7.4, 5.4, FZ - 18 + i * 12), rotation: PI / 2, target: v(FX + 16, 3, FZ - 18 + i * 12), width: 5, height: 3, style: 'none', wash: false });
     for (let i = 0; i < 3; i++) { const z = 74 + i * 8; k.box(0.16, 2.2, 3.4, 3.2, 1.6, z, wood); mounts.push({ position: v(3.1, 1.7, z), rotation: -PI / 2, target: v(-2, 2, z), width: 3.0, height: 1.8, style: 'black', wash: false }); }
@@ -386,17 +601,20 @@ export const intrepid: RoomDef = {
     k.sky({ top: 0x5a8ccc, horizon: 0xe6eaea, ground: 0x4a5058, fog: 0.0016, sun: { az: 3.9, el: 0.6, color: 0xfff4e6, size: 12 }, env: 0.95 });
     k.hemi(0xe8f0ff, 0x3a4048, 0.9);
     k.sun(0xfff0dc, 2.4, -40, 70, 40, true, 140);
-    const grey = k.pbr('carrierGrey', X.steel(0x6a7078, true, 159), 0.8, { metalness: 0.5, roughness: 0.6 }),
-      greyD = k.pbr('carrierGreyD', X.steel(0x4a5058, true, 160), 0.8, { metalness: 0.5, roughness: 0.65 }),
-      deck = k.pbr('flightDeck', X.asphalt(0x3a3d40), 0.2, { roughness: 0.9 }),
-      hangar = k.pbr('hangarFloor', X.steel(0x5a5e64, false, 161), 0.6, { metalness: 0.4, roughness: 0.6 }),
+    /* 2026-11-24 (wave 3d): the hull and island wore a procedural steel that tiled into a bathroom grid. Now haze grey
+       painted plate, a non skid deck, worn plate in the hangar and pier concrete, all scans (Poly Haven, CC0). */
+    const R = 'intrepid';
+    const grey = sc(k, R, 'painted_metal_shutter', 3.0, () => X.steel(0x6a7078, true, 159), { color: 0xc0c8d0, metalness: 0.3, roughness: 0.6 }, 0x6a7078),
+      greyD = sc(k, R, 'metal_plate_02', 2.4, () => X.steel(0x4a5058, true, 160), { color: 0x7c848c, metalness: 0.4, roughness: 0.65 }, 0x4a5058),
+      deck = sc(k, R, 'anti_slip_concrete', 2.4, () => X.asphalt(0x3a3d40), { color: 0x6a6e72, roughness: 0.95 }, 0x3a3d40),
+      hangar = sc(k, R, 'metal_plate', 2.4, () => X.steel(0x5a5e64, false, 161), { color: 0x9a9ea4, metalness: 0.35, roughness: 0.55 }, 0x5a5e64),
       white = k.flat(0xf4f0e8, 0, 0.6),
       yellow = k.flat(0xf1c531, 0, 0.6),
       glass = k.glass(0x9fc4d8, 0.4, 0.08),
-      jet = k.flat(0x8a9098, 0.6, 0.4),
-      jetD = k.flat(0x3a4048, 0.6, 0.5),
+      jet = k.flat(0xa4acb4, 0.35, 0.45),
+      jetD = k.flat(0x5a646e, 0.4, 0.5),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
-      pier = k.pbr('pierConc', X.concrete(0x9a9a94, 78), 0.3);
+      pier = sc(k, R, 'concrete_pavement', 2.4, () => X.concrete(0x9a9a94, 78), { color: 0xd0ccc4 }, 0x8a8a84);
     // the river, Pier 86 running out from the shore along the ship, the West Side behind the stern, New Jersey across
     // (the bow points out into the Hudson, west, along -z; Twelfth Avenue and the city lie off the stern at +z)
     k.water({ y: -8, color: 0x2e4a5c, w: 900, d: 760, x: 0, z: -220, amp: 1.2 });
@@ -444,6 +662,15 @@ export const intrepid: RoomDef = {
     k.sign('THE INTREPID  ·  CV 11', 8, 0.9, IX - 4.05, DY + 8, IZ, '#4a5058', '#f4f0e8', 90, -PI / 2, { border: true });
     k.block(IX - 4.5, IX + 5, IZ - 15.5, IZ + 15.5);
     for (let i = 0; i < 6; i++) k.point(IX - 6, DY + 10, IZ - 12 + i * 5, 0xffe0b0, 12, 10);
+    /* the island built out: the big white 11 on its flank, the bridge windows in a dark band, catwalks with rails at each
+       level, the radar dishes and the yardarm on the mast, the funnel cap */
+    hsign(k, '11', 5, 5.4, IX - 4.06, DY + 9.2, IZ + 9, -PI / 2, { fg: '#f4f2ea', font: 'W2 Archivo Expanded', size: 0.95, lit: false });
+    k.box(0.1, 1.0, 12, IX - 5.06, DY + 15, IZ + 2, k.flat(0x16191c, 0.6, 0.15));
+    k.box(0.1, 0.9, 8, IX - 3.06, DY + 17.6, IZ + 2, k.flat(0x16191c, 0.6, 0.15));
+    for (const [y, x0, len] of [[DY + 12, IX - 5.2, 28], [DY + 16, IX - 6.2, 16]] as [number, number, number][]) { k.box(1.2, 0.12, len, x0, y, IZ + 1, greyD); k.box(0.05, 0.05, len, x0 - 0.58, y + 1.0, IZ + 1, dark); for (let z = -len / 2; z <= len / 2; z += 1.4) k.box(0.04, 1.0, 0.04, x0 - 0.58, y + 0.5, IZ + 1 + z, dark); }
+    for (const [y, r, z] of [[DY + 33, 2.4, IZ - 6], [DY + 24, 1.4, IZ + 6]] as [number, number, number][]) { const d = k.mesh(new T.CylinderGeometry(r, r * 0.2, 0.5, 18, 1, true), k.flat(0xc8ccd0, 0.3, 0.5, { side: T.DoubleSide }), IX + 1, y, z); d.rotation.z = PI / 2.4; }
+    k.box(0.2, 0.2, 10, IX + 1, DY + 35, IZ - 6, dark);
+    k.box(2.2, 0.6, 3.6, IX - 1, DY + 27.2, IZ - 10, k.flat(0x1a1c20, 0.4, 0.7));
     // aircraft: jets with swept wings along the starboard side, a helicopter, the shuttle in its pavilion aft
     const plane = (x: number, z: number, rot: number, scale = 1) => {
       const g = new T.Group(); g.position.set(x, DY + 0.2, z); g.rotation.y = rot; g.scale.setScalar(scale);
@@ -492,6 +719,19 @@ export const intrepid: RoomDef = {
     k.block(-HW / 2 + 1, HW / 2 - 1, -111, -109);
     k.crowd([v(-8, DY + 0.2, -120), v(-6, DY + 0.2, -40), v(-8, DY + 0.2, 40), v(-6, DY + 0.2, 90)], 30, { seed: 63, speed: 0.9, spread: 4, animate: !ctx.reduced });
     k.crowd([v(0, HY + 0.3, -104), v(2, HY + 0.3, -75), v(0, HY + 0.3, -46)], 12, { seed: 64, speed: 0.8, spread: 3, animate: !ctx.reduced });
+    /* the illusion: the hull number painted on the flight deck at the bow, stretched so it stands up as a white 11 from
+       where you come aboard, like the number a pilot reads on the approach */
+    anamorph(k, '11', -6, HL / 2 - 70, DY + 3.2, DY + 0.22, 16, 9, 2.6, '#f2f0ea', 420);
+    k.egg(v(-6, DY + 0.6, HL / 2 - 110), { id: 'intrepid-eleven', title: 'The number that stands up', text: 'Carriers paint their hull number on the flight deck. This 11 is laid flat and stretched along the deck so that from where you came aboard it stands upright like a sign; walk forward over it and it collapses into long white stripes. The trick is anamorphosis, the same one street painters use for pavement art.', clue: 'Go back to where you came aboard and look forward along the deck.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.8 });
+    // the deck crew's kit beside the jets: tool chests, hand trucks, spare tyres, the deck edge flood lights (Poly Haven, CC0)
+    many(k, 'intrepid/ph_metal_tool_chest', { height: 0.9 }, [0, 2, 4, 6].map((i) => [HW / 2 - 12, DY + 0.2, -HL / 2 + 26 + i * 14, PI / 2]));
+    many(k, 'intrepid/ph_hand_truck', { height: 1.4 }, [[HW / 2 - 11.6, DY + 0.2, -HL / 2 + 40, 1.2], [HW / 2 - 11.6, DY + 0.2, -HL / 2 + 96, 2.0], [-HW / 2 - 9, DY + 0.2, 52, 0.4]]);
+    many(k, 'intrepid/ph_old_tyre', { height: 1.1 }, [[HW / 2 - 11, DY + 0.2, -HL / 2 + 54, 0], [HW / 2 - 10.4, DY + 0.2, -HL / 2 + 55, 0.5], [-HW / 2 - 9.6, DY + 0.2, 70, 1]]);
+    many(k, 'intrepid/ph_flood_lights', { height: 1.8 }, [[-HW / 2 - 10.6, DY + 0.2, -60, PI / 2], [-HW / 2 - 10.6, DY + 0.2, 10, PI / 2], [HW / 2 + 2.6, DY + 0.2, -40, -PI / 2]]);
+    hsign(k, 'SPACE SHUTTLE PAVILION', 12, 1.2, -4, DY + 12.5, PZ - 20.3, PI, { fg: '#f4f2ea', bg: '#1a2a44', font: 'W2 Archivo Expanded', size: 0.5, lit: false });
+    for (const z of [94, 106]) k.box(0.3, 6, 0.3, 46.2, 3, z, dark);
+    hsign(k, 'PIER 86', 10, 2.2, 46, 5.2, 100, -PI / 2, { fg: '#f4f2ea', bg: '#1a2a44', font: 'W2 Archivo Expanded', border: '#f4f2ea', size: 0.6, lit: false });
+    for (const [i, z] of [[1, -100], [2, -60], [3, 20]] as [number, number][]) hsign(k, `HANGAR BAY ${i}`, 6, 1.0, 0, DY - 1.4, z, 0, { fg: '#f1c531', bg: '#22262a', font: 'W2 JetBrains Mono', size: 0.6, lit: false });
     // the kamikaze plaque set into the flight deck
     const plaque = k.box(1.2, 0.06, 0.8, -2, DY + 0.24, 40, k.flat(0x8a6a3a, 0.8, 0.35));
     const IW = 'https://en.wikipedia.org/wiki/Intrepid_Museum', IN = 'Intrepid Museum, Wikipedia';

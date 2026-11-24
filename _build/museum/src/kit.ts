@@ -4,6 +4,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as SU from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import * as X from './textures';
@@ -43,6 +44,13 @@ const AUDIT = typeof location !== 'undefined' && /[?&]audit=1/.test(location.sea
 const gltf = new GLTFLoader();
 /* meshopt compressed sets (room 182 loads a whole baked terminal) need the decoder; plain GLBs are unaffected */
 gltf.setMeshoptDecoder(MeshoptDecoder);
+/* 2026-11-23: most of the 3,500 models in the other galleries (movies, only, garyvee) are Draco compressed and
+   used to fail here silently; the decoder lives in assets/museum/draco. Browsers only (the node audits have no Worker). */
+if (typeof window !== 'undefined' && typeof Worker !== 'undefined') {
+  const draco = new DRACOLoader();
+  draco.setDecoderPath('assets/museum/draco/');
+  gltf.setDRACOLoader(draco);
+}
 const propCache = new Map<string, Promise<T.Group>>();
 /* The tree kit (2026-10-09): twelve New York species as branching skeletons with photo leaf cards,
    built by blender/build_tree_kit.py into assets/museum/trees/tree_<species>.glb (two variants, a near
@@ -52,6 +60,7 @@ export const TREE_SPECIES = ['plane', 'elm', 'locust', 'oak', 'linden', 'ginkgo'
 export type TreeSpecies = (typeof TREE_SPECIES)[number];
 /* a room that names no species gets a New York street mix, chosen by seed so a row stays one kind */
 const STREET_MIX: TreeSpecies[] = ['plane', 'linden', 'plane', 'locust', 'oak', 'plane'];
+const OLD_SKY = typeof location !== 'undefined' && /[?&]skyline=old/.test(location.search);
 const OLD_TREES = typeof location !== 'undefined' && /[?&]trees=old/.test(location.search);
 const treeCache = new Map<string, Promise<T.Group>>();
 /* Photo surfaces (2026-10-09): Poly Haven CC0 sets in assets/museum/surfaces, their colour normalised to
@@ -339,6 +348,13 @@ export class Kit {
   private skyBase: SkyP | null = null;
   private skyDome: T.Mesh | null = null;
   private envName = '';
+  /* THE LOOK (look.ts): the photographed sky in use, and a hook called whenever the environment changes, so the room probe can rebake */
+  envSky: T.Texture | null = null;
+  onEnv: (() => void) | null = null;
+  /* set once the room probe owns scene.environment */
+  probed = false;
+  /* the environment the probe should match: the HDRI's PMREM and its intensity, kept when the probe takes over */
+  envRef: { tex: T.Texture | null; i: number } = { tex: null, i: 0.5 };
   private hemis: { l: T.HemisphereLight; i: number }[] = [];
   private suns: { l: T.DirectionalLight; color: number; i: number; pos: T.Vector3; auto: boolean }[] = [];
   private lamps: { l: T.PointLight; i: number }[] = [];
@@ -843,6 +859,7 @@ export class Kit {
     this.scene.fog = new T.FogExp2(q.horizon, q.fog ?? 0.004);
     const dome = new T.Mesh(new T.SphereGeometry(700, 48, 24), new T.MeshBasicMaterial({ map: tex, side: T.BackSide, fog: false, depthWrite: false }));
     dome.renderOrder = -10;
+    dome.userData.noProbe = true;
     this.add(dome);
     this.skyDome = dome;
     this.pmrem = new T.PMREMGenerator(this.o.renderer);
@@ -890,7 +907,7 @@ export class Kit {
   private useHdri(env: number) {
     const name = this.night > 0.6 ? 'night' : this.dusk > 0.35 ? 'golden' : 'day';
     const mult = (n: string) => (n === 'night' ? 0.3 : n === 'golden' ? 0.55 : 0.9);
-    if (name === this.envName || typeof window === 'undefined') { if (this.envName) this.scene.environmentIntensity = env * mult(name); return; }
+    if (name === this.envName || typeof window === 'undefined') { if (this.envName) { this.envRef.i = env * mult(name); if (!this.probed) this.scene.environmentIntensity = env * mult(name); } return; }
     this.envName = name;
     void loadHdr(name).then((hdr) => {
       if (!this.live || this.envName !== name) return;
@@ -900,6 +917,9 @@ export class Kit {
       this.rt = rt;
       this.scene.environment = rt.texture;
       this.scene.environmentIntensity = env * mult(name);
+      this.envSky = hdr;
+      this.envRef = { tex: rt.texture, i: env * mult(name) };
+      this.onEnv?.();
     }).catch(() => undefined);
   }
   /* follow the clock: lights, sky and reflections move with New York while the room is open */
@@ -916,6 +936,8 @@ export class Kit {
       (this.scene.background as T.Color).set(q.horizon);
       if (this.scene.fog instanceof T.FogExp2) { this.scene.fog.color.set(q.horizon); this.scene.fog.density = q.fog ?? 0.004; }
       this.useHdri(q.env ?? 0.55);
+      /* the lights moved with the hour, so the room probe has to look again */
+      this.onEnv?.();
     }
   }
   /* every light the kit made, set for the current hour */
@@ -990,7 +1012,13 @@ export class Kit {
     return o;
   }
 
-  /* Distant towers with lit windows, merged into one mesh. */
+  /* Distant towers with lit windows, merged into one mesh.
+     2026-11-23 (THE BIG UPGRADE): every tower used to be the same extruded box with the same window grid,
+     the most repeated cheap read in the museum (144 calls in 47 room files). Now each is a New York type:
+     a brick walk up with a cornice and a water tank, a limestone prewar block with setbacks, an Art Deco
+     tower with a tiered crown, or a glass tower that reflects the sky. Footprints, heights and positions
+     come from the same seeded draws in the same order as before, so no room's composition moves; the type
+     and detail come from a second generator. `?skyline=old` brings the boxes back. */
   skyline(p: { z: number; count?: number; spacing?: number; scale?: number; base?: number; seed?: number; lit?: number; warm?: boolean; tint?: number; glow?: number; spires?: boolean; x?: number; rows?: number }) {
     let { z, count = 28, spacing = 4.6, scale = 1, base = -4, seed = 1, lit = 0.35, warm = true, tint = 0x26313d, glow = 1.3, spires = true, x: x0 = 0, rows = 2 } = p;
     glow = glow * (1 + 2.2 * this.night);
@@ -998,6 +1026,31 @@ export class Kit {
     const r = X.mulberry(seed * 31 + 7);
     const facade = this.pbr('win' + seed + tint + lit, X.windows(seed, lit, tint, warm), 0.11, { emissive: 0xffffff, emissiveIntensity: glow, roughness: 0.6, stretch: 0.42 });
     const roof = this.flat(0x161b22, 0.2, 0.8);
+    if (OLD_SKY) {
+      for (let row = 0; row < rows; row++)
+        for (let i = 0; i < count; i++) {
+          const w = (2.6 + r() * 2.4) * scale, h = (8 + r() * 26 + (Math.abs(i - count / 2) < 4 ? 10 : 0)) * scale, x = x0 + (i - count / 2) * spacing * scale + (r() - 0.5) * 2, zz = z - row * 14 * scale - r() * 6, d = (2.5 + r() * 3) * scale;
+          this.box(w, h, d, x, base + h / 2, zz, facade);
+          this.box(w + 0.1, 0.25, d + 0.1, x, base + h, zz, roof);
+          if (spires && r() > 0.72) {
+            for (let k = 1; k <= 3; k++) this.box(w - k * w * 0.22, 1.6 * scale, d - k * d * 0.22, x, base + h + k * 1.6 * scale, zz, facade);
+            this.cyl(0.05 * scale, 6 * scale, x, base + h + 3 * 1.6 * scale + 3 * scale, zz, roof, 0.03, 6);
+          }
+        }
+      return;
+    }
+    const q = X.mulberry(seed * 97 + 3);
+    /* the room's tint still leads, so a dusk room stays dusk; each type pulls it toward its own material */
+    const mix = (a: number, b: number, t: number) => new T.Color(a).lerp(new T.Color(b), t).getHex();
+    const fac = (kind: string, t: number, l: number, wm: boolean, extra: Partial<T.MeshStandardMaterialParameters> = {}) =>
+      this.pbr('win' + kind + seed + t + l, X.windows(seed + kind.length * 7, l, t, wm), 0.11, { emissive: 0xffffff, emissiveIntensity: glow, roughness: 0.6, stretch: 0.42, ...extra });
+    const brick = fac('brick', mix(tint, 0x5e3b2c, 0.55), lit * 0.9, warm);
+    const stone = fac('stone', mix(tint, 0x8a8070, 0.5), lit, warm);
+    const deco = fac('deco', mix(tint, 0x7a705f, 0.45), lit * 1.1, warm);
+    const glass = fac('glass', mix(tint, 0x1b2a3a, 0.6), lit * 0.75, false, { metalness: 0.65, roughness: 0.35, envMapIntensity: 1.4 });
+    const trim = this.flat(mix(tint, 0x9a9182, 0.55), 0.05, 0.75);
+    const tank = this.flat(0x4a3a2c, 0, 0.9);
+    const steel = this.flat(0x8b8f94, 0.8, 0.35);
     for (let row = 0; row < rows; row++)
       for (let i = 0; i < count; i++) {
         const w = (2.6 + r() * 2.4) * scale,
@@ -1005,13 +1058,48 @@ export class Kit {
           x = x0 + (i - count / 2) * spacing * scale + (r() - 0.5) * 2,
           zz = z - row * 14 * scale - r() * 6,
           d = (2.5 + r() * 3) * scale;
-        this.box(w, h, d, x, base + h / 2, zz, facade);
-        this.box(w + 0.1, 0.25, d + 0.1, x, base + h, zz, roof);
-        if (spires && r() > 0.72) {
-          for (let k = 1; k <= 3; k++) this.box(w - k * w * 0.22, 1.6 * scale, d - k * d * 0.22, x, base + h + k * 1.6 * scale, zz, facade);
-          this.cyl(0.05 * scale, 6 * scale, x, base + h + 3 * 1.6 * scale + 3 * scale, zz, roof, 0.03, 6);
+        const spireRoll = spires ? r() : 0; // consumed exactly as the old code did, so later towers stay put
+        const hs = h / scale, y0 = base;
+        const pick = q();
+        if (hs < 15) {
+          /* brick walk up: cornice, a parapet, and a water tank on most roofs */
+          this.box(w, h, d, x, y0 + h / 2, zz, brick);
+          this.box(w + 0.35 * scale, 0.45 * scale, d + 0.35 * scale, x, y0 + h - 0.1 * scale, zz, trim);
+          this.box(w * 1.02, 0.12 * scale, d * 1.02, x, y0 + h * 0.08, zz, trim);
+          if (pick < 0.7) {
+            const tx = x + (q() - 0.5) * w * 0.5, tz = zz + (q() - 0.5) * d * 0.4, tr = 0.42 * scale, th = 1.1 * scale;
+            for (const [lx, lz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) this.box(0.06 * scale, 0.7 * scale, 0.06 * scale, tx + lx * tr * 0.6, y0 + h + 0.35 * scale, tz + lz * tr * 0.6, steel);
+            this.cyl(tr, th, tx, y0 + h + 0.7 * scale + th / 2, tz, tank, tr, 10);
+            this.cyl(0.02, 0.5 * scale, tx, y0 + h + 0.7 * scale + th + 0.22 * scale, tz, tank, tr * 1.05, 10);
+          }
+        } else if (hs < 28 && pick < 0.75) {
+          /* limestone prewar block: base course, two setbacks, cornices at each */
+          const h1 = h * 0.68, h2 = h * 0.2, h3 = h - h1 - h2;
+          this.box(w, h1, d, x, y0 + h1 / 2, zz, stone);
+          this.box(w + 0.3 * scale, 0.35 * scale, d + 0.3 * scale, x, y0 + h1, zz, trim);
+          this.box(w * 1.03, 1.2 * scale, d * 1.03, x, y0 + 0.6 * scale, zz, trim);
+          this.box(w * 0.82, h2, d * 0.82, x, y0 + h1 + h2 / 2, zz, stone);
+          this.box(w * 0.82 + 0.2 * scale, 0.25 * scale, d * 0.82 + 0.2 * scale, x, y0 + h1 + h2, zz, trim);
+          this.box(w * 0.6, h3, d * 0.6, x, y0 + h1 + h2 + h3 / 2, zz, stone);
+          this.box(w * 0.6 + 0.15 * scale, 0.2 * scale, d * 0.6 + 0.15 * scale, x, y0 + h, zz, roof);
+        } else if (pick < 0.55 || hs < 28) {
+          /* Art Deco: three setbacks and a stepped crown, a needle when the room allows spires */
+          const h1 = h * 0.55, h2 = h * 0.25, h3 = h * 0.2;
+          this.box(w, h1, d, x, y0 + h1 / 2, zz, deco);
+          this.box(w * 0.78, h2, d * 0.78, x, y0 + h1 + h2 / 2, zz, deco);
+          this.box(w * 0.56, h3, d * 0.56, x, y0 + h1 + h2 + h3 / 2, zz, deco);
+          for (const [f, yy] of [[1, h1], [0.78, h1 + h2]] as const) this.box(w * f + 0.18 * scale, 0.22 * scale, d * f + 0.18 * scale, x, y0 + yy, zz, trim);
+          for (let k = 1; k <= 3; k++) this.box(w * 0.56 * (1 - k * 0.24), 1.3 * scale, d * 0.56 * (1 - k * 0.24), x, y0 + h + (k - 0.5) * 1.3 * scale, zz, k === 3 ? steel : deco);
+          if (spires && spireRoll > 0.45) this.cyl(0.04 * scale, 7 * scale, x, y0 + h + 3.9 * scale + 3.5 * scale, zz, steel, 0.12 * scale, 6);
+        } else {
+          /* glass tower: a curtain wall that takes the sky, a mechanical crown, a thin parapet */
+          this.box(w, h, d, x, y0 + h / 2, zz, glass);
+          this.box(w * 0.86, 1.6 * scale, d * 0.86, x, y0 + h + 0.8 * scale, zz, roof);
+          this.box(w + 0.08 * scale, 0.18 * scale, d + 0.08 * scale, x, y0 + h, zz, steel);
+          if (spires && spireRoll > 0.8) this.cyl(0.05 * scale, 5 * scale, x, y0 + h + 1.6 * scale + 2.5 * scale, zz, steel, 0.05 * scale, 6);
         }
       }
+    void facade;
   }
   water(p: { y: number; color?: number; w?: number; d?: number; x?: number; z?: number; amp?: number }) {
     const { y, color = 0x2a4d63, w = 320, d = 260, x = 0, z = -70, amp = 1 } = p;

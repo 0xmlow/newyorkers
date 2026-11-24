@@ -16,6 +16,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { scan } from './a';
+import { paintTex, fit, hsign, anamorphTex } from './f';
+import { hero } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const ONE = new T.Vector3(1, 1, 1);
@@ -94,12 +97,14 @@ export const bleachers2: RoomDef = {
     k.sky({ top: 0x050811, horizon: 0x18213c, ground: 0x080b11, fog: 0.0026, stars: 520, env: 0.4 });
     k.hemi(0x7f96c8, 0x2a3420, 0.95);
     k.sun(0xdde6ff, 0.5, 30, 120, 30, true, 95);
-    const grassA = k.pbr('bpGrassA', X.grass(0x2f6b34, 9), 0.18, { roughness: 0.95 }),
-      grassB = k.pbr('bpGrassB', X.grass(0x255829, 10), 0.18, { roughness: 0.95 }),
-      dirt = k.pbr('bpDirt', X.concrete(0x8a5a3c, 11), 0.32, { roughness: 1 }),
-      track = k.pbr('bpTrack', X.concrete(0x7c4a2e, 13), 0.36, { roughness: 1 }),
-      navy = k.pbr('bpPad', X.plaster(0x15325e, 17), 0.5, { roughness: 0.88 }),
-      conc = k.pbr('bpConc', X.concrete(0x84847e, 12), 0.2),
+    /* 2026-11-23 (wave 2a): the grass in two mowing tints, the raked infield skin, the warning track, the padded
+       wall and the concrete decks are Poly Haven scans (CC0) at their real size */
+    const grassA = scan(k, 'bleachers', 'leafy_grass', 2, () => X.grass(0x2f6b34, 9), { color: 0x7fb06a, roughness: 0.95 }),
+      grassB = scan(k, 'bleachers', 'leafy_grass', 2, () => X.grass(0x255829, 10), { color: 0x5c8e4c, roughness: 0.95 }, 1.57),
+      dirt = scan(k, 'bleachers', 'raked_dirt', 2, () => X.concrete(0x8a5a3c, 11), { color: 0xe0a47a, roughness: 1 }),
+      track = scan(k, 'bleachers', 'red_laterite_soil_stones', 2, () => X.concrete(0x7c4a2e, 13), { color: 0xc89a80, roughness: 1 }),
+      navy = scan(k, 'bleachers', 'fabric_leather_02', 0.8, () => X.plaster(0x15325e, 17), { color: 0x5876c8, roughness: 0.55 }),
+      conc = scan(k, 'bleachers', 'concrete_floor_02', 2, () => X.concrete(0x84847e, 12), { color: 0xc4c2bc }),
       granite = k.pbr('bpGran', X.ashlar(0x6f675c, 15, 4), 0.35),
       steelW = k.flat(0xe6e9e4, 0.5, 0.45),
       dark = k.flat(0x11141a, 0.4, 0.6),
@@ -287,6 +292,53 @@ export const bleachers2: RoomDef = {
     }
     { const a = wallAt(0);
       k.censusWall({ x: a.x + a.nx * 0.34, y: 3.1, z: a.z + a.nz * 0.34, rotY: a.rot, cols: 24, rows: 4, tile: 0.44, gap: 0.04, start: ctx.wallStart(4900, 96), pieces: ctx.all, backing: dark });
+    }
+    /* ---- THE BIG UPGRADE, wave 2a (2026-11-23) ---- */
+    {
+      /* the distances on the wall, the way the park paints them: 318 down the left field line, 399 in left centre,
+         408 to dead centre, 385 in right centre, 314 down the right field line */
+      for (const [t, d] of [[-FOUL + 0.03, '318'], [-0.45, '399'], [0, '408'], [0.45, '385'], [FOUL - 0.03, '314']] as [number, string][]) {
+        const a = wallAt(t), y = Math.abs(t) < 0.16 ? 5.35 : 3.05;
+        hsign(k, d, 1.9, 0.95, a.x + a.nx * 0.38, y, a.z + a.nz * 0.38, a.rot, { fg: '#f4f6f2', bg: '#15325e', font: 'W2 Archivo Expanded', size: 0.7 });
+      }
+      /* LED ribbon boards along the fascia of the second and third decks, running the census lines round the bowl */
+      const ribbonTex = paintTex(2048, 96, (g, w, h) => {
+        g.fillStyle = '#0c2350'; g.fillRect(0, 0, w, h); g.fillStyle = '#f1c531'; g.fillRect(0, 0, w, 6); g.fillRect(0, h - 6, w, 6);
+        const parts = ['NEW YORKERS', 'THE CENSUS', 'ALL RISE', 'BOTTOM OF THE NINTH', 'MLOW'];
+        g.textBaseline = 'middle'; g.textAlign = 'left';
+        let x = 30;
+        parts.forEach((p2, pi) => { fit(g, p2, 'W2 Archivo Expanded', h * 0.7, w, '800'); g.fillStyle = pi % 2 ? '#bfe8ff' : '#fff0b8'; g.fillText(p2, x, h / 2); x += g.measureText(p2).width + 90; g.fillStyle = '#ff5a4a'; g.fillRect(x - 55, h / 2 - 6, 12, 12); });
+      });
+      ribbonTex.wrapS = T.RepeatWrapping;
+      const ribbonMat = new T.MeshBasicMaterial({ map: ribbonTex, side: T.DoubleSide });
+      for (const [r0, y0] of [[11, 15.7], [23, 30.2]] as [number, number][]) {
+        const steps = 220, pos: number[] = [], uv: number[] = [], idx: number[] = [];
+        let arc = 0, prev: T.Vector3 | null = null;
+        for (let i2 = 0; i2 <= steps; i2++) {
+          const t = -PI + (i2 / steps) * PI * 2, d = dir(t), rad = innerR(t) + r0 - 0.25, p0 = v(d.x * rad, y0, d.z * rad);
+          if (prev) arc += prev.distanceTo(p0);
+          prev = p0;
+          pos.push(p0.x, y0 - 0.5, p0.z, p0.x, y0 + 0.5, p0.z); uv.push(arc / 22, 0, arc / 22, 1);
+          if (i2 < steps) { const o = i2 * 2; idx.push(o, o + 2, o + 1, o + 1, o + 2, o + 3); }
+        }
+        const g = new T.BufferGeometry();
+        g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+        k.mesh(g, ribbonMat, 0, 0, 0, true);
+      }
+      if (!ctx.reduced) k.ticks.push((_t, dt) => { ribbonTex.offset.x -= dt * 0.12; });
+      /* the bat in the batter's hands */
+      void hero(k, 'bleachers/ph_baseball_bat', { height: 0.95 }).then((h) => { if (!h || !k.live) return; h.position.set(0.3, 0.92, 0.12); h.rotation.set(0.5, 0, -0.9); k.add(h); });
+      /* the trick: NEW YORKERS painted on the outfield grass, flat and stretched, standing up from where you arrive */
+      const sp = dir(0.44).multiplyScalar(wallR(0.44) - 6.5), look = v(-8, 0, -26), yaw = Math.atan2(-(look.x - sp.x), -(look.z - sp.z));
+      const paintG = paintTex(1024, 220, (g, w, h) => {
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        fit(g, 'NEW YORKERS', 'W2 Archivo Expanded', h * 0.72, w * 0.94, '800');
+        g.fillStyle = 'rgba(244,247,240,0.92)'; g.fillText('NEW YORKERS', w / 2, h / 2);
+        g.fillRect(w * 0.03, h * 0.06, w * 0.94, h * 0.05); g.fillRect(w * 0.03, h * 0.89, w * 0.94, h * 0.05);
+      }, ['W2 Archivo Expanded']);
+      anamorphTex(k, paintG, sp.x, sp.z, 3, 0.04, yaw, 9, 9, 1.8, 0.85);
+      const mid = sp.clone().add(v(-Math.sin(yaw), 0, -Math.cos(yaw)).multiplyScalar(14));
+      k.egg(v(mid.x, 0.4, mid.z), { id: 'bleachers-anamorph', title: 'The grass that stands up', text: 'From the spot on the warning track where you arrive, the letters painted flat on the outfield grass stand up like a sign. Walk along the wall and they stretch out into long white smears. It is anamorphosis, a picture distorted so it only comes right from a single point of view.', clue: 'Look across the outfield grass from where you came in.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.2 });
     }
     /* what the park knows */
     const src = { name: 'Yankee Stadium, Wikipedia', url: 'https://en.wikipedia.org/wiki/Yankee_Stadium' };

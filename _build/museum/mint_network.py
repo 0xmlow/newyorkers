@@ -145,6 +145,14 @@ def build_network(recs, graph):
         put(os.path.join(SITE, rel), os.path.join(NET, rel))
     for p in glob.glob(os.path.join(SITE, "assets/atlas/*")):
         put(p, os.path.join(NET, "assets/atlas", os.path.basename(p)))
+    # THE BIG UPGRADE (2026-11-23): rooms load scanned materials and plates from assets/museum/tex/<id>/ and
+    # props from assets/museum/props/<id>/ by their own loaders, which the export record does not list; ship them whole
+    for sub in ("assets/museum/tex", "assets/museum/hdri", "assets/museum/draco"):
+        for p in glob.glob(os.path.join(SITE, sub, "**", "*"), recursive=True):
+            if os.path.isfile(p):
+                put(p, os.path.join(NET, os.path.relpath(p, SITE)))
+    for p in glob.glob(os.path.join(SITE, "assets/museum/props", "*", "*.glb")):
+        put(p, os.path.join(NET, os.path.relpath(p, SITE)))
     for p in glob.glob(os.path.join(SITE, "assets/museum/rooms/*.jpg")):
         put(p, os.path.join(NET, "assets/museum/rooms", os.path.basename(p)))
     thumbs, props, images = set(), set(), set()
@@ -172,7 +180,7 @@ def build_network(recs, graph):
 
 def ring_svg(graph):
     R, C = 300, 340
-    col = {w["key"]: c for w, c in zip(PLACES["wings"], ["#79d4e9", "#f2c14e", "#ef6f6c", "#b9a3ff", "#7bd389", "#f5f0e6", "#ff9f43", "#8fd3f4", "#f7a8c4"])}
+    col = {w["key"]: c for w, c in zip(PLACES["wings"], ["#79d4e9", "#f2c14e", "#ef6f6c", "#b9a3ff", "#7bd389", "#f5f0e6", "#ff9f43", "#8fd3f4", "#f7a8c4", "#d9b26a"])}
     wkey = {r["token"]: next(w["key"] for w in PLACES["wings"] if w["from"] <= r["token"] <= w["to"]) for r in graph["rooms"]}
     xy = {r["token"]: (C + R * math.sin(2 * math.pi * (r["token"] - 1) / N), C - R * math.cos(2 * math.pi * (r["token"] - 1) / N)) for r in graph["rooms"]}
     out = [f'<svg viewBox="0 0 {2*C} {2*C}" role="img" aria-label="The network: {N} rooms on a ring, back and forward doors round it, borough and across the city doors through it">']

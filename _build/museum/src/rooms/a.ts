@@ -5,9 +5,114 @@ import { v, loadThumb } from '../kit';
 import type { Kit } from '../kit';
 import { corridorMounts } from './types';
 import type { RoomDef, RoomCtx } from './types';
-import { hero, hide } from './heroes';
+import { hero, hide, heroInstances } from './heroes';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 1a (2026-11-23): helpers for rooms 01 to 06, used here and in b.ts ----------
+   Scanned surfaces, real models instead of code built heroes, Firefly plates that drop in by file name, and the
+   one optical illusion each room carries. Every helper is safe in node (the audits build rooms with no DOM): the
+   scan falls back to the painted surface and the loaders simply never resolve there. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const scanLoader = HAS_DOM ? new T.TextureLoader() : null;
+const scanCache = new Map<string, X.Surface>(), scanReady = new Map<string, Promise<unknown>>();
+/* A Poly Haven scan (CC0) from assets/museum/tex/<room>/<id>_{c,n,r}.webp as a kit material with world UVs at true
+   size: `metres` is the real width of one tile of the photo. `paint` is the procedural stand in for node. */
+export function scan(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, rot = 0) {
+  if (!scanLoader) return k.pbr(`scan-${id}`, paint(), 1 / metres, p);
+  const key = `${room}/${id}${rot ? '@' + rot : ''}`;
+  let s = scanCache.get(key);
+  if (!s) {
+    const low = k.o.quality !== 'high';
+    const waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((res) => (done = res)));
+      const t = scanLoader.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      t.rotation = rot;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    s = { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) };
+    scanCache.set(key, s);
+    const all = Promise.all(waits);
+    scanReady.set(key, all);
+    k.pending.push(all);
+  }
+  const m = k.pbr(`scan-${key}`, s, 1 / metres, p);
+  /* an unloaded roughness map samples as 0, a mirror: the maps go on only once all three have arrived */
+  if (!m.userData.scanWired) {
+    m.userData.scanWired = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap };
+    m.map = m.normalMap = m.roughnessMap = null;
+    void scanReady.get(key)!.then(() => { Object.assign(m, maps); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model, loaded once and fitted (see heroes.ts), placed at each [x, y, z, rotY]. Up to `inst` copies are
+   plain clones; more become instanced parts, one draw each. `then` gets the placed objects. */
+export function glbs(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: [number, number, number, number][], then?: (os: T.Object3D[]) => void, inst = 6) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    if (at.length > inst) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0), one = new T.Vector3(1, 1, 1);
+      at.forEach(([x, y, z, r], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), one)));
+      ins.commit();
+      return;
+    }
+    const os = at.map(([x, y, z, r], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* A Firefly plate that does not exist yet (FIREFLY_QUEUE.md): the mesh shows `standIn` until the file lands at `url`,
+   then wears it. A missing file costs one 404 and nothing else. */
+export function fireflyPlate(k: Kit, url: string, w: number, h: number, x: number, y: number, z: number, rotY: number, standIn: T.Material, lit = false) {
+  const o = k.mesh(new T.PlaneGeometry(w, h), standIn, x, y, z, true);
+  o.rotation.y = rotY;
+  scanLoader?.load(url, (t) => {
+    if (!k.live) { t.dispose(); return; }
+    t.colorSpace = T.SRGBColorSpace;
+    t.anisotropy = 8;
+    o.material = lit ? new T.MeshBasicMaterial({ map: t }) : new T.MeshStandardMaterial({ map: t, roughness: 0.85 });
+  }, undefined, () => {});
+  return o;
+}
+/* Anamorphic floor lettering (ON LOCATION rule 9, one trick a room): text painted flat on the ground, stretched so that
+   from the eye at (ex, eh, ez) looking along -z it stands up as a sign `H` tall and `W` wide whose foot is `D` ahead.
+   A floor point at distance d carries the sign height y where d = D * eh / (eh - y). */
+export function anamorph(k: Kit, text: string, ex: number, ez: number, eh: number, floor: number, D: number, W: number, H: number, fg: string, size: number) {
+  const rows = 40, g = new T.BufferGeometry(), pos: number[] = [], uv: number[] = [], idx: number[] = [];
+  const h = eh - floor;
+  for (let i = 0; i <= rows; i++) {
+    const vv = i / rows, d = (D * h) / (h - vv * H), half = ((W / 2) * d) / D;
+    pos.push(ex - half, floor, ez - d, ex + half, floor, ez - d);
+    uv.push(0, vv, 1, vv);
+    if (i < rows) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  }
+  g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  if (!HAS_DOM) return k.mesh(g, k.glow(0xffffff, 0.5), 0, 0.012, 0, true);
+  const t = X.signText(text, 1024, Math.max(64, Math.round((1024 * H) / W)), 'transparent', fg, size);
+  const m = new T.MeshBasicMaterial({ map: t, transparent: true, opacity: 0.92, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  return k.mesh(g, m, 0, 0.012, 0, true);
+}
+/* A car the kit will cast (kit.ts cabsLater): a box of cab yellow becomes a real taxi with the MLOW topper, any other
+   colour tagged `car` a Camry or an Escape in that paint. Returned as a group so a rider can move it. */
+export function carBox(k: Kit, x: number, z: number, rotY: number, paint: number) {
+  const g = new T.Group(), b = new T.Mesh(new T.BoxGeometry(1.9, 1.5, 4.6), k.flat(paint, 0.4, 0.4));
+  b.position.y = 0.95;
+  if (paint !== 0xf3b81c) b.userData.car = true;
+  g.add(b);
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  k.add(g);
+  return g;
+}
 
 /* Shared: lit billboards filled with the room's own New Yorkers beyond the framed page. */
 export function billboard(k: Kit, ctx: RoomCtx, idx: number, w: number, h: number, x: number, y: number, z: number, rotY: number, frame?: T.Material) {
@@ -49,13 +154,14 @@ export const bowery: RoomDef = {
     k.sky({ top: 0x05070f, horizon: 0x13182a, ground: 0x07090f, fog: 0.011, stars: 900, env: 0.35 });
     k.hemi(0x8fa7d6, 0x14110c, 0.55);
     k.sun(0x9fb4ff, 0.9, -30, 60, 20, true, 70);
-    const asphalt = k.pbr('asphalt', X.asphalt(), 0.11, { roughness: 0.65, metalness: 0.1 }),
-      concrete = k.pbr('sidewalk', X.pavers(0x8e8b84), 0.42),
+    /* 2026-11-23: Poly Haven scans (CC0) at their real size replace the painted asphalt, slabs, brick and cast iron */
+    const asphalt = scan(k, 'bowery', 'asphalt_02', 3, () => X.asphalt(), { metalness: 0.05 }),
+      concrete = scan(k, 'bowery', 'concrete_pavement', 1.8, () => X.pavers(0x8e8b84)),
       granite = k.pbr('granite', X.ashlar(0x8a8a86, 4, 2), 0.35),
-      ironGreen = k.pbr('ironGreen', X.steel(0x2b4a3f, false), 0.5, { metalness: 0.55, roughness: 0.45 }),
+      ironGreen = scan(k, 'bowery', 'green_metal_rust', 1.2, () => X.steel(0x2b4a3f, false), { metalness: 0.45, color: 0x8fa896 }),
       iron = k.flat(0x1f262b, 0.75, 0.45),
       steel = k.pbr('steelplate', X.steel(0x3a444c, true), 0.5, { metalness: 0.8, roughness: 0.45 }),
-      bricks = [k.pbr('brickA', X.brick(0x6f4436, 1), 0.28), k.pbr('brickB', X.brick(0x54372f, 2), 0.28), k.pbr('brickC', X.brick(0x7d5a44, 3), 0.28), k.pbr('brickD', X.brick(0x4a4a52, 4), 0.28)],
+      bricks = [scan(k, 'bowery', 'brick_wall_02', 2, () => X.brick(0x6f4436, 1), { color: 0xc9a594 }), scan(k, 'bowery', 'dark_brick_wall', 1.05, () => X.brick(0x54372f, 2)), scan(k, 'bowery', 'brick_wall_02', 2, () => X.brick(0x7d5a44, 3), { color: 0xffe6d2 }), scan(k, 'bowery', 'dark_brick_wall', 1.05, () => X.brick(0x4a4a52, 4), { color: 0xa8a8b4 })],
       cornice = k.pbr('cornice', X.plaster(0xb8ad9a, 3), 0.6, { roughness: 0.8 }),
       glassDark = k.glass(0x9fc4d8, 0.35, 0.08),
       warm = k.glow(0xffd28a),
@@ -86,7 +192,8 @@ export const bowery: RoomDef = {
         k.moulding([[0, 0], [0.6, 0], [0.7, 0.18], [0.45, 0.3], [0.5, 0.42], [0.2, 0.55], [0, 0.6]], 7.9, face - s * 0.05, 6.2, z, cornice, s > 0 ? PI : 0);
         k.moulding([[0, 0], [0.9, 0], [1.0, 0.25], [0.7, 0.42], [0.8, 0.62], [0.35, 0.85], [0, 0.95]], 8.1, face - s * 0.05, h - 0.5, z, cornice, s > 0 ? PI : 0);
         for (let dz = -3; dz <= 3; dz += 0.75) k.box(0.4, 0.34, 0.16, face - s * 0.18, h - 0.75, z + dz, cornice);
-        const floors = Math.floor((h - 8) / 2.7);
+        const mural = s < 0 && b === 0;   // the Houston Street corner wall: blank brick for the mural plate
+        const floors = mural ? 0 : Math.floor((h - 8) / 2.7);
         for (let f = 0; f < floors; f++)
           for (const dz of [-2.6, 0, 2.6]) {
             const y = 8.3 + f * 2.7;
@@ -99,7 +206,7 @@ export const bowery: RoomDef = {
         if (b % 3 === 1) {
           k.prop('fire_escape', face - s * 1.05, 7.4, z, { height: 3.2, rotY: s > 0 ? PI / 2 : -PI / 2 });
           k.prop('fire_escape', face - s * 1.05, 10.1, z, { height: 3.2, rotY: s > 0 ? PI / 2 : -PI / 2 });
-        } else {
+        } else if (!mural) {
           for (const y of [7.6, 10.3, 13]) {
             if (y > h - 1.5) continue;
             k.box(1.3, 0.08, 3.4, face - s * 0.75, y, z, iron);
@@ -167,6 +274,66 @@ export const bowery: RoomDef = {
     // wheatpaste census walls on the last block
     const start = ctx.wallStart(1200, 40);
     for (const s of [-1, 1]) k.censusWall({ x: s * 9.72, y: 3.5, z: -62, rotY: s < 0 ? PI / 2 : -PI / 2, cols: 10, rows: 4, tile: 0.78, start: start + (s > 0 ? 40 : 0), pieces: ctx.all, backing: k.flat(0x0e1116, 0, 0.9) });
+    /* ---- THE BIG UPGRADE (2026-11-23) ---- */
+    /* the trade signs: the Bowery below Houston is the restaurant supply and lighting row, a lit fascia over every
+       storefront between the column capitals and the cornice (invented trade names, no real business) */
+    const trades = ['RESTAURANT SUPPLY', 'LAMPS  LIGHTING  FIXTURES', 'KITCHEN EQUIPMENT', 'CHINA & GLASSWARE', 'STAINLESS STEEL', 'HOTEL & BAR SUPPLY', 'NEON  SIGNS  REPAIRS', 'COMMERCIAL REFRIGERATION', '315 BOWERY', 'CHANDELIERS', 'WHOLESALE  RETAIL', 'PIZZA OVENS', 'BAKERY EQUIPMENT', 'LIGHTING CENTER', 'FURNITURE  BOOTHS', 'SLICERS  MIXERS', 'GAS RANGES', 'OPEN LATE'];
+    const fasciaInk = ['#f6efe0', '#ffd27a', '#8fe3ff', '#ff8f7a'], fasciaBg = ['#101418', '#14100c', '#0d1513', '#18100f'];
+    const fascia = k.flat(0x0c0f12, 0.5, 0.5);
+    for (const s of [-1, 1])
+      for (let b = 0; b < 9; b++) {
+        const z = 6 - b * 8, face = s * 10, n = b * 2 + (s > 0 ? 1 : 0), t = trades[n % trades.length];
+        if (s < 0 && b === 4) continue;   // the mission keeps its cross instead
+        k.box(0.12, 0.78, 6.9, face - s * 0.5, 5.72, z, fascia);
+        k.box(0.5, 0.06, 6.9, face - s * 0.28, 6.13, z, fascia);
+        k.sign(t, 6.6, 0.6, face - s * 0.57, 5.72, z, fasciaBg[n % 4], fasciaInk[n % 4], Math.min(96, Math.round(1024 / (0.6 * t.length))), s < 0 ? PI / 2 : -PI / 2);
+      }
+    /* the Bowery Mission's red neon cross, JESUS SAVES, over 227 Bowery (the egg at the mission storefront is about it) */
+    {
+      const cx = -8.7, cz = -30, red = k.flat(0x2a0808, 0.3, 0.5), neon = '#ff3b2e';
+      k.box(0.36, 4.7, 0.3, cx, 9.7, cz, red);
+      k.box(2.6, 0.62, 0.3, cx, 10.0, cz, red);
+      k.bar(v(-10, 7.2, cz), v(cx, 7.2, cz), 0.06, 0.06, iron);
+      k.bar(v(-10, 10.9, cz), v(cx, 10.9, cz), 0.06, 0.06, iron);
+      for (const side of [-1, 1]) {
+        const zz = cz + side * 0.16, ry = side > 0 ? 0 : PI;
+        [11.6, 11.0, 9.0, 8.4, 7.8].forEach((y, i) => k.sign('JESUS'[i], 0.34, 0.5, cx, y, zz, '#2a0808', neon, 300, ry));
+        k.sign('SAVES', 2.5, 0.5, cx, 10.0, zz + side * 0.01, '#2a0808', neon, 300, ry);
+      }
+      k.point(cx, 9.6, cz + 0.8, 0xff3b2e, 14, 9);
+    }
+    /* the Third Avenue El's ghost: lattice lacing, ties and rivets on the two girder crossings */
+    for (const z of [-6, -34]) {
+      for (const f of [-0.27, 0.27]) for (let x = -4.4; x < 4.4; x += 0.8) {
+        k.bar(v(x, 8.05, z + f), v(x + 0.8, 8.75, z + f), 0.05, 0.02, iron);
+        k.bar(v(x, 8.75, z + f), v(x + 0.8, 8.05, z + f), 0.05, 0.02, iron);
+      }
+      for (let x = -5; x <= 5; x += 0.45) k.box(0.22, 0.12, 3.2, x, 9.04, z, k.flat(0x2b241e, 0, 0.9));
+      for (const s of [-1, 1]) { k.bar(v(s * 4.6, 5.6, z), v(s * 3.2, 8.0, z), 0.2, 0.2, steel); k.box(0.6, 0.6, 0.62, s * 4.6, 7.7, z, steel); }
+    }
+    /* parked along both curbs: two cabs and five private cars, cast by the kit as real taxis and cars */
+    for (const [x, z, paint] of [[3.85, 1, 0xf3b81c], [3.85, -15, 0x1d1f22], [3.85, -46, 0x8a1c1c], [3.85, -54, 0xf3b81c], [-3.85, -21, 0x2a3440], [-3.85, -44, 0xb8b8b4], [-3.85, -56, 0x334a3a]] as [number, number, number][]) {
+      carBox(k, x, z, x > 0 ? PI : 0, paint);
+      k.keepOut.push({ x, z: z - 1.4, r: 1.0 }, { x, z: z + 1.4, r: 1.0 }, { x, z, r: 1.0 });
+    }
+    /* the curb: city trash cans, black bags, a payphone, a utility box (NEW YORKERS edits of Poly Haven CC0 models) */
+    glbs(k, 'bowery/nyb_trash_dsny', { width: 1.5 }, [[5.7, 0.14, -9, -PI / 2], [-5.7, 0.14, -37, PI / 2], [5.7, 0.14, -41, -PI / 2]]);
+    glbs(k, 'bowery/ph_trashbag', { height: 0.62 }, [[5.5, 0.14, -10.4, 0.3], [5.9, 0.14, -10.9, 1.4], [5.4, 0.14, -11.3, 2.2], [-5.5, 0.14, -35.6, 0.8], [-5.9, 0.14, -35.1, 2.6], [5.6, 0.14, -42.6, 1.1], [5.95, 0.14, -43.1, 0.2], [-5.6, 0.14, -9.5, 1.9]]);
+    glbs(k, 'bowery/nyb_payphone', { height: 2.0 }, [[5.65, 0.14, -27, -PI / 2]]);
+    glbs(k, 'bowery/nyb_walking_newsbox', { height: 1.25 }, [[-5.8, 0.14, 1, PI / 2]]);
+    for (const [x, z] of [[5.7, -9], [-5.7, -37], [5.7, -41], [5.65, -27]]) k.keepOut.push({ x, z, r: 0.9 });
+    /* roll down gates under the party wall: three bays of scanned corrugated steel shut for the night */
+    const shutter = scan(k, 'bowery', 'rusty_metal_shutter', 1.9, () => X.steel(0x6a6e70, false), { metalness: 0.5, color: 0xb0b4b8 });
+    for (const x of [-8, 0, 8]) {
+      k.box(6.4, 4.2, 0.12, x, 2.1, -69.94, shutter);
+      k.box(6.8, 0.5, 0.5, x, 4.45, -69.8, iron);
+      for (const dx of [-3.3, 3.3]) k.box(0.16, 4.2, 0.2, x + dx, 2.1, -69.86, iron);
+    }
+    /* Firefly plate, queued: the Houston Street mural wall (until it lands the wall is plain brick) */
+    fireflyPlate(k, 'assets/museum/tex/bowery/ff_houston_mural.webp', 7.6, 7.6, -9.93, 10.6, 6, PI / 2, new T.MeshBasicMaterial({ visible: false }));
+    /* the trick: anamorphic road paint. Flat on the asphalt, 21 m long, it stands up as a sign from the spawn */
+    anamorph(k, 'AFTER HOURS', 0, 12, 3, 0, 10, 4.2, 1.6, '#f4f1e6', 170);
+    k.egg(v(0, 0.3, 0), { id: 'bowery-anamorph', title: 'Paint that stands up', year: '1533', text: 'Look back from where you came in and the letters in the road stand upright. It is anamorphosis, a picture drawn so it only comes right from one spot. The best known is the stretched skull across the foot of Hans Holbein the Younger\'s The Ambassadors, painted in 1533, which snaps into shape when you look at the canvas from the side.', clue: 'Stand where you arrived and read the road.', source: { name: 'The Ambassadors (Holbein), Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Ambassadors_(Holbein)' } }, { r: 1.8 });
     /* easter eggs: real Bowery history, placed at the thing each one is about */
     const bw = { name: 'Bowery, Wikipedia', url: 'https://en.wikipedia.org/wiki/Bowery' };
     k.egg(v(5.4, 4.6, 6.2), { id: 'bowery-bouwerij', title: 'The farm road', year: '1667', text: 'The name comes from bouwerie, later bouwerij, an old Dutch word for farm: the Dutch called the path the Bouwerie road, and Petrus Stuyvesant, the last Dutch governor of New Amsterdam, retired to his Bowery farm in 1667. It is the oldest thoroughfare on Manhattan Island, older than European settlement, because it began as a Lenape footpath.', clue: 'Read the green street sign at the corner.', source: bw }, { r: 1.6 });
@@ -176,6 +343,7 @@ export const bowery: RoomDef = {
     k.egg(v(-9.6, 1.4, -30), { id: 'bowery-mission', title: 'The mission', year: '1880', text: 'The Bowery Mission was founded in 1880 at 36 Bowery by the Reverend Albert Gleason Ruliffson, and in 1909 it moved up the street to 227 and 229 Bowery. A few doors away, at 235, the New Museum opened almost a century later.', clue: 'Look at the storefront doors halfway down the left hand side.', source: bw }, { r: 1.6 });
     k.egg(v(9.6, 1.4, -46), { id: 'bowery-new-museum', title: 'A stack of white boxes', year: '2007', text: 'On December 1, 2007 the New Museum opened its $50 million building at 235 Bowery: a seven story stack of white boxes by the Tokyo firm Sejima and Nishizawa, SANAA. Putting white boxes on the Bowery was a response to the gentrification of the neighbourhood. Its expansion next door at 231 Bowery, designed by OMA, opened on March 21, 2026.', clue: 'Walk toward the far end of the right hand side and look up.', source: { name: 'New Museum, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_Museum' } }, { r: 1.6 });
     const mounts = corridorMounts({ pairs: 10, x: 9.8, z0: 2, pitch: 6, y: 3.6, width: 5.4, height: 3.1, inset: 4.6, style: 'black' });
+    mounts[6].target = v(-4.6, 3, -17.6);   // the true spot clear of the subway stair's railings
     mounts.push({ position: v(0, 12.5, -69.9), rotation: 0, target: v(0, 3, -50), width: 22, height: 12.4, style: 'none', wash: false });
     return { mounts, spawn: v(0, 3, 12), look: v(0, 3.5, -30), eye: 3, bounds: [-8.4, 8.4, -66, 13], style: 'black' };
   },
@@ -194,12 +362,14 @@ export const subway: RoomDef = {
   build(k, ctx) {
     k.sky({ top: 0x0a0d10, horizon: 0x11161a, ground: 0x0a0d10, fog: 0.012, env: 0.3 });
     k.hemi(0xdfe9df, 0x1a1a14, 0.75);
-    const tile = k.pbr('tile', X.subwayTile(0xe9e6d8, 0x3b3f3b), 0.55, { roughness: 0.25 }),
+    /* 2026-11-23: scanned glazed tile (laid on its side, so the long tiles run level like the IND's), worn platform
+       concrete and painted steel for the columns, all Poly Haven CC0 at their real size */
+    const tile = scan(k, 'subway', 'long_white_tiles', 1.27, () => X.subwayTile(0xe9e6d8, 0x3b3f3b), { roughness: 0.32, color: 0xffffff }, PI / 2),
       tileBand = k.pbr('tileIndBlue', X.subwayTile(0x2b4f96, 0x16244a), 0.55, { roughness: 0.25 }),
       tileBlack = k.flat(0x0d0e10, 0, 0.35),
-      floor = k.pbr('platform', X.concrete(0x8a8a82, 2), 0.35, { roughness: 0.75 }),
+      floor = scan(k, 'subway', 'concrete_floor_worn_001', 3, () => X.concrete(0x8a8a82, 2), { color: 0xd2cec4 }),
       ceiling = k.pbr('ceil', X.concrete(0x5d615e, 5), 0.5),
-      steelG = k.pbr('colIndBlue', X.steel(0x274c86, true), 0.9, { metalness: 0.6, roughness: 0.4 }),
+      steelG = scan(k, 'subway', 'blue_metal_plate', 2.5, () => X.steel(0x274c86, true), { metalness: 0.5, color: 0x9ab4ff }),
       iron = k.flat(0x22272b, 0.75, 0.45),
       silver = k.pbr('car', X.steel(0x9aa5ab, false), 0.35, { metalness: 0.9, roughness: 0.3 }),
       trackBed = k.pbr('ballast', X.cobble(0x3a3a3a, 3), 0.9, { roughness: 1 }),
@@ -354,12 +524,95 @@ export const subway: RoomDef = {
     k.sign('DOWNTOWN & BROOKLYN   ↓', 7, 0.7, 0, 5.4, ZC - L / 2 + 0.7, '#0f1a1c', '#f9f8e9', 80, 0, { border: true });
     k.sign('B   D   F   M', 4, 0.7, 0, 4.4, ZC - L / 2 + 0.7, '#152728', '#ffbc69', 150, 0, { border: true });
     k.sign('EXIT  ↑  HOUSTON STREET', 5, 0.62, 0, 6.2, 11.6, '#8f3a2c', '#ffffff', 80, PI, { border: true });
-    for (const z of [-4, -24, -44]) k.bench(6.3, z, 0, k.pbr('benchwood', X.planks(0x6d4d34, 3, 4), 1.2), iron, 2.4);
+    /* 2026-11-23: the code benches became the real thing, a slatted platform bench with its litter (a NEW YORKERS edit
+       of Poly Haven CC0 models) */
+    glbs(k, 'subway/nyb_pelham_bench', { width: 4.2 }, [[6.55, 0, -4, -PI / 2], [6.55, 0, -28, -PI / 2], [6.55, 0, -46, -PI / 2]]);
+    for (const z of [-4, -28, -46]) k.keepOut.push({ x: 6.4, z: z - 1.2, r: 0.9 }, { x: 6.4, z: z + 1.2, r: 0.9 });
     k.box(6, 0.5, L, 3, 8.3, ZC, ceiling);
     // stair up at the far end
     for (let i = 0; i < 14; i++) k.box(5, 0.32, 0.9, 4, 0.16 + i * 0.32, ZC - L / 2 + 1.5 - i * 0.9 + 14, floor);
     k.box(0.1, 1.1, 13, 1.45, 3.0, ZC - L / 2 + 8, iron);
     k.keepOut.push({ x: 4, z: ZC - L / 2 + 8, r: 5 });
+    /* ---- THE BIG UPGRADE (2026-11-23) ---- */
+    const Z1 = ZC - L / 2, dark = k.flat(0x161818, 0, 0.9);
+    /* the far end was open fog: now a tiled end wall with the tunnel mouth over the track */
+    k.box(18.8, 13.6, 0.6, -0.1, 5.2, Z1 - 0.6, tile);
+    k.box(0.8, 13.6, 0.6, -14.9, 5.2, Z1 - 0.6, tile);
+    k.box(5, 7.8, 0.6, -12, 8.1, Z1 - 0.6, tile);
+    k.box(5.4, 0.4, 0.7, -12, 4.3, Z1 - 0.55, tileBlack);
+    /* and the entrance end, behind the exit sign, was open too */
+    k.box(24.6, 13.6, 0.6, -3, 5.2, 12.2, tile);
+    /* the trick: a forced perspective tunnel. Nine portals, each 0.86 the size of the last and set closer, converge on
+       one point, so 8.7 m of tunnel reads as a long run of track with its signals going on into the dark */
+    {
+      const n = 10, vx = -12, vy = 1.1, xs: number[][] = [];
+      let z = Z1 - 0.9, f = 1;
+      for (let i = 0; i < n; i++) {
+        const w = 2.5 * f, yb = vy - (vy + 1.4) * f, yt = vy + (4.1 - vy) * f;
+        xs.push([vx - w, vx + w, yb, yt, z]);
+        if (i < n - 1) {
+          k.box(0.25 * f, yt - yb, 0.25 * f, vx - w + 0.12 * f, (yb + yt) / 2, z, dark);
+          k.box(0.25 * f, yt - yb, 0.25 * f, vx + w - 0.12 * f, (yb + yt) / 2, z, dark);
+          k.box(2 * w, 0.25 * f, 0.25 * f, vx, yt - 0.12 * f, z, dark);
+          if (i % 2 === 1) {
+            const lamp = i % 4 === 1 ? 0x48ff7a : 0xff4630;
+            k.box(0.22 * f, 0.5 * f, 0.12 * f, vx + w - 0.4 * f, yb + 1.9 * f, z + 0.1, iron);
+            k.sphere(0.07 * f, vx + w - 0.4 * f, yb + 1.95 * f, z + 0.18 * f, k.glow(lamp), 8);
+          }
+          k.sphere(0.05 * f, vx, yt - 0.3 * f, z + 0.2, k.glow(0xfff1c8), 6);
+        }
+        z -= 1.6 * f;
+        f *= 0.86;
+      }
+      const g = new T.BufferGeometry(), pos: number[] = [];
+      const quad = (a: number[], b: number[], c: number[], d: number[]) => pos.push(...a, ...b, ...c, ...a, ...c, ...d);
+      for (let i = 0; i < n - 1; i++) {
+        const [l0, r0, b0, t0, z0] = xs[i], [l1, r1, b1, t1, z1] = xs[i + 1];
+        quad([l0, b0, z0], [r0, b0, z0], [r1, b1, z1], [l1, b1, z1]);
+        quad([l0, t0, z0], [l1, t1, z1], [r1, t1, z1], [r0, t0, z0]);
+        quad([l0, b0, z0], [l1, b1, z1], [l1, t1, z1], [l0, t0, z0]);
+        quad([r0, b0, z0], [r0, t0, z0], [r1, t1, z1], [r1, b1, z1]);
+        for (const dx of [-0.72, 0.72]) k.bar(v(vx + dx * (r0 - vx) / 2.5, b0 + 0.08, z0), v(vx + dx * (r1 - vx) / 2.5, b1 + 0.08, z1), 0.07 * (r1 - vx) / 2.5, 0.06, k.flat(0x6a6660, 0.8, 0.35));
+      }
+      g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+      g.computeVertexNormals();
+      k.mesh(g, new T.MeshStandardMaterial({ color: 0x2a2b2a, roughness: 0.95, side: T.DoubleSide }), 0, 0, 0, true);
+      const end = xs[n - 1];
+      k.box(end[1] - end[0], end[3] - end[2], 0.05, vx, (end[2] + end[3]) / 2, end[4], k.glow(0x050606));
+      k.sphere(0.035, vx + 0.08, end[2] + 0.2, end[4] + 0.06, k.glow(0xfff4d0), 6);
+      k.egg(v(vx, 1.4, Z1 - 3), { id: 'subway-forced-tunnel', title: 'A tunnel nine metres long', year: '1653', text: 'The tunnel past the end of the platform is a forced perspective: every portal is a little smaller and a little closer than the last, so a few metres read as a long run of track. Francesco Borromini built the classic one at the Palazzo Spada in Rome in 1652 and 1653, a colonnade about 8.8 metres long that looks four times longer, with a sculpture at its end far smaller than it seems.', clue: 'Look down the track past the end of the train.', source: { name: 'Palazzo Spada, Wikipedia', url: 'https://en.wikipedia.org/wiki/Palazzo_Spada' } }, { r: 2.2 });
+    }
+    /* the ceiling: column line girders, conduit and cable runs the length of the station */
+    for (const x of [-7.4, 6.4]) { k.box(0.5, 0.06, L, x, 8.12, ZC, steelG); k.box(0.08, 0.55, L, x, 7.82, ZC, steelG); k.box(0.5, 0.06, L, x, 7.54, ZC, steelG); }
+    for (const [x, y, r] of [[1.6, 7.95, 0.05], [1.8, 7.95, 0.04], [2.0, 7.95, 0.06], [-4.2, 7.95, 0.05], [8.7, 7.2, 0.07], [8.7, 7.4, 0.05]]) k.beam(v(x, y, 10), v(x, y, Z1), r, k.flat(0x5f6460, 0.7, 0.45), 6);
+    for (let z = 8; z > Z1; z -= 2) for (const x of [1.8, -4.2]) k.box(0.36, 0.04, 0.05, x, 7.99, z, iron);
+    /* hung station signs, IND black with the Sixth Avenue line's orange bullets */
+    const bullet = k.glow(0xff6319);
+    for (const z of [-7, -35]) {
+      for (const dx of [-2.2, 2.2]) k.beam(v(dx, 6.9, z), v(dx, 8.1, z), 0.025, iron, 5);
+      k.box(5.6, 1.1, 0.12, 0, 6.6, z, k.flat(0x0b0c0e, 0.3, 0.5));
+      for (const [side, txt] of [[1, 'DOWNTOWN & BROOKLYN'], [-1, 'UPTOWN & QUEENS']] as [number, string][]) {
+        k.sign(txt, 5.2, 0.48, 0, 6.85, z + side * 0.07, '#0b0c0e', '#ffffff', 72, side > 0 ? 0 : PI);
+        ['B', 'D', 'F', 'M'].forEach((ch, i) => {
+          const bx = (i - 1.5) * 0.62 * side;
+          k.mesh(new T.CircleGeometry(0.24, 24), bullet, bx, 6.33, z + side * 0.07).rotation.y = side > 0 ? 0 : PI;
+          k.sign(ch, 0.36, 0.36, bx, 6.33, z + side * 0.075, 'transparent', '#ffffff', 300, side > 0 ? 0 : PI);
+        });
+      }
+    }
+    /* platform furniture: the hanging clock, city trash cans, a wet floor sign; a rat works the track past the train */
+    k.beam(v(0, 7.0, -21), v(0, 8.1, -21), 0.03, iron, 5);
+    glbs(k, 'subway/nyb_pelham_clock', { height: 0.62 }, [[0, 6.4, -20.97, 0], [0, 6.4, -21.03, PI]]);
+    glbs(k, 'subway/ph_metal_trash_can', { width: 1.5 }, [[7.3, 0, -16, -PI / 2], [7.3, 0, -40, -PI / 2]]);
+    for (const z of [-16, -40]) k.keepOut.push({ x: 7.3, z, r: 0.95 });
+    glbs(k, 'subway/ph_WetFloorSign_01', { height: 0.7 }, [[2.2, 0, -37, 0.6]]);
+    const rat = new T.Group();
+    k.add(rat);
+    glbs(k, 'subway/ph_street_rat', { length: 0.3 }, [[0, 0, 0, 0]], (os) => { k.scene.remove(os[0]); rat.add(os[0]); });
+    const ratPath = k.spline([v(-11.2, -1.36, -62.6), v(-10.9, -1.36, -64.5), v(-11.5, -1.36, -66.4), v(-11.0, -1.36, -67.6), v(-11.4, -1.36, -64.2)], true);
+    if (!ctx.reduced) k.rider(rat, ratPath, 0.55); else rat.position.set(-11.2, -1.36, -64);
+    /* Firefly plate, queued: a ceramic mosaic over the end wall's frame (until it lands, the wall is tile) */
+    fireflyPlate(k, 'assets/museum/tex/subway/ff_mosaic_panel.webp', 8, 2.6, -2.5, 7.4, Z1 - 0.28, 0, new T.MeshBasicMaterial({ visible: false }));
     /* easter eggs: real details of Broadway, Lafayette Street */
     const stn = { name: 'Broadway, Lafayette Street station, Wikipedia', url: 'https://en.wikipedia.org/wiki/Broadway%E2%80%93Lafayette_Street_station' };
     k.egg(v(8.5, 5.35, -10), { id: 'subway-1936', title: 'New Year\'s Day, 1936', year: '1936', text: 'The IND station at Broadway and Lafayette Street opened on January 1, 1936, as one of the first four stations on the Houston, Essex Street Line. It is an express stop with four tracks and two island platforms, and the D and F stop here at all times.', clue: 'Read the black name plate on the wall.', source: stn }, { r: 1.6 });

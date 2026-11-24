@@ -19,9 +19,11 @@ import * as T from 'three';
 import { personTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
-import { v, type Mount } from '../kit';
+import { v, type Mount, type Kit } from '../kit';
+import { glbs, anamorph, carBox } from './a';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { hero, heroInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const ONE = new T.Vector3(1, 1, 1);
@@ -52,6 +54,94 @@ function seatedGeo() {
 const mod = (a: number, n: number) => ((a % n) + n) % n;
 const at = (x: number, y: number, z: number, ry = 0, s = ONE) => new T.Matrix4().compose(v(x, y, z), new T.Quaternion().setFromEuler(new T.Euler(0, ry, 0)), s);
 
+/* ---------- THE BIG UPGRADE, wave 3c (2026-11-24): helpers for rooms 15 and 54 ----------
+   Poly Haven scans (CC0) that wear a sensible colour until their maps land, boards painted in the house fonts,
+   and Firefly plates that appear when their file does. Safe in node: the audits build rooms with no DOM. */
+const HAS_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const scans = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+/* A scan from assets/museum/tex/<room>/<id>_{c,n,r}.webp, world UVs at true size (`metres` is one tile of the photo).
+   Until all three maps arrive the surface wears `wait`, about the colour the scan reads as. */
+function scan(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x888888, ext = 'webp') {
+  if (!texL) return k.pbr(`w3c3-${room}-${id}`, paint(), 1 / metres, p);
+  let e = scans.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.${ext}`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    const s: X.Surface = { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) };
+    e = { s, ready: Promise.all(waits) };
+    scans.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w3c3-${room}-${id}`, e.s, 1 / metres, p);
+  if (!m.userData.w3c3) {
+    m.userData.w3c3 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+const FONTS = ['900 40px "Archivo"', '800 40px "Archivo Expanded"', '700 40px "JetBrains Mono"', '400 40px "Permanent Marker"'];
+/* A painted board: `draw` gets a canvas sized to the board and runs again once the house fonts have loaded. */
+function board(k: Kit, w: number, h: number, x: number, y: number, z: number, rotY: number, draw: (g: CanvasRenderingContext2D, W: number, H: number) => void, o: { px?: number; lit?: boolean; double?: boolean } = {}) {
+  const W = o.px ?? 1024, H = Math.max(32, Math.round((W * h) / w));
+  let m: T.Material;
+  if (!HAS_DOM) m = k.flat(0x777777);
+  else {
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const g = c.getContext('2d')!;
+    const t = new T.CanvasTexture(c);
+    t.colorSpace = T.SRGBColorSpace;
+    t.anisotropy = 8;
+    const paint = () => { g.clearRect(0, 0, W, H); g.textAlign = 'center'; g.textBaseline = 'middle'; draw(g, W, H); t.needsUpdate = true; };
+    paint();
+    if (document.fonts) void Promise.all(FONTS.map((f) => document.fonts.load(f))).then(paint).catch(() => undefined);
+    const side = o.double ? T.DoubleSide : T.FrontSide;
+    m = o.lit ? new T.MeshBasicMaterial({ map: t, side }) : new T.MeshStandardMaterial({ map: t, roughness: 0.75, side });
+  }
+  const p = k.mesh(new T.PlaneGeometry(w, h), m, x, y, z, true);
+  p.rotation.y = rotY;
+  return p;
+}
+/* Lines of type centred on a board: [text, font size as a share of the board height, font, colour]. */
+function lines(g: CanvasRenderingContext2D, W: number, H: number, bg: string, rows: [string, number, string, string][], rule?: string) {
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  if (rule) { g.strokeStyle = rule; g.lineWidth = Math.max(3, H * 0.025); g.strokeRect(H * 0.06, H * 0.06, W - H * 0.12, H - H * 0.12); }
+  const tot = rows.reduce((a, r) => a + r[1] * 1.25, 0);
+  let y = H / 2 - (tot * H) / 2;
+  for (const [t, s, f, c] of rows) {
+    let px = s * H;
+    g.font = `${f.replace('PX', String(Math.round(px)))}`;
+    while (px > 8 && g.measureText(t).width > W * 0.9) { px -= 2; g.font = f.replace('PX', String(Math.round(px))); }
+    g.fillStyle = c; y += s * H * 0.625; g.fillText(t, W / 2, y); y += s * H * 0.625;
+  }
+}
+const ARCH = '900 PXpx "Archivo", sans-serif', EXP = '800 PXpx "Archivo Expanded", "Archivo", sans-serif', MONO = '700 PXpx "JetBrains Mono", monospace', MARK = '400 PXpx "Permanent Marker", cursive';
+/* A Firefly plate that does not exist yet (FIREFLY_QUEUE.md): hidden until the file lands, then it shows. */
+function ffPlate(k: Kit, url: string, w: number, h: number, x: number, y: number, z: number, rotY: number, lit = true) {
+  const o = k.mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: 0x000000 }), x, y, z, true);
+  o.rotation.y = rotY;
+  o.visible = false;
+  texL?.load(url, (t) => {
+    if (!k.live) { t.dispose(); return; }
+    t.colorSpace = T.SRGBColorSpace;
+    t.anisotropy = 8;
+    o.material = lit ? new T.MeshBasicMaterial({ map: t, fog: false }) : new T.MeshStandardMaterial({ map: t, roughness: 0.85 });
+    o.visible = true;
+  }, undefined, () => undefined);
+  return o;
+}
 /* ---------------- 54 THE MARKET HALL (rebuild) ---------------- */
 export const arthuravenue2: RoomDef = {
   id: 'arthuravenue',
@@ -65,10 +155,11 @@ export const arthuravenue2: RoomDef = {
     k.sky({ top: 0x5f8cc8, horizon: 0xc9d4de, ground: 0x6a6660, fog: 0.0011, sun: { az: 2.6, el: 0.75, color: 0xfff4e6, size: 12 }, env: 0.9 });
     k.hemi(0xf2eee6, 0x8a8478, 0.9);
     k.sun(0xfff0d8, 2.1, 40, 60, 30, true, 90);
-    const brick = k.pbr('aa2Brick', X.brick(0x8e5a44, 129), 0.28),
+    /* 2026-11-24 wave 3c: scans (CC0) at true size for the hall's brick and its terrazzo floor */
+    const brick = scan(k, 'arthuravenue', 'red_brick', 2.4, () => X.brick(0x8e5a44, 129), { color: 0xf0e0d8 }, 0x7e4e3c),
       coping = k.pbr('aa2Coping', X.ashlar(0xd8ceb8, 134, 1), 0.4),
       cream = k.pbr('aa2Cream', X.plaster(0xe8dcc0, 62), 0.3),
-      floorC = k.pbr('aa2Floor', X.terrazzo(0xb9b2a4, 63), 0.25),
+      floorC = scan(k, 'arthuravenue', 'terrazzo_tiles', 2.0, () => X.terrazzo(0xb9b2a4, 63), { roughness: 0.6 }, 0xa8a298),
       steel = k.flat(0x3e464e, 0.7, 0.45),
       glass = k.glass(0xeaf2f6, 0.18, 0.05),
       wood = k.pbr('aa2Wood', X.planks(0x7a5a3a, 5, 131), 1.0),
@@ -126,17 +217,18 @@ export const arthuravenue2: RoomDef = {
     }
     /* lamps, a hydrant, the corner pole with the street's name */
     const post = k.flat(0x2a3a2e, 0.6, 0.5);
-    for (const [x, z] of [[7.8, 34], [7.8, -18], [-7.8, 30], [-7.8, -52]]) k.lamp(x, z, 5.2, post, 0xffd7a0, k.night > 0.5 ? 60 : 10);
-    k.cyl(0.18, 0.7, 8.2, 0.45, 8, k.flat(0xb8202a, 0.3, 0.5), 0.18, 10); k.keepOut.push({ x: 8.2, z: 8, r: 0.4 });
+    // 2026-11-24: the lamp standards and the hydrant as models (Poly Haven street_lamp_01, fire_hydrant, CC0)
+    glbs(k, 'arthuravenue/ph_street_lamp_01', { height: 5.4 }, [[7.8, 0, 34, -PI / 2], [7.8, 0, -18, -PI / 2], [-7.8, 0, 30, PI / 2], [-7.8, 0, -52, PI / 2]]);
+    for (const [x, z] of [[7.8, 34], [7.8, -18], [-7.8, 30], [-7.8, -52]]) { k.point(x - Math.sign(x) * 0.6, 5.1, z, 0xffd7a0, k.night > 0.5 ? 60 : 10, 16); k.keepOut.push({ x, z, r: 0.4 }); }
+    glbs(k, 'arthuravenue/ph_fire_hydrant', { height: 0.8 }, [[8.2, 0.1, 8, -PI / 2]]); k.keepOut.push({ x: 8.2, z: 8, r: 0.4 });
     k.cyl(0.06, 4.2, -7.7, 2.1, 18, post, 0.06, 8); k.keepOut.push({ x: -7.7, z: 18, r: 0.35 });
     k.sign('ARTHUR AV', 1.9, 0.34, -7.7, 4.0, 18, '#1e6a3a', '#ffffff', 90, PI / 2, { double: true });
 
     /* parked cars at both curbs, a van double parked outside the market */
     const carCols = [0x8a2a2a, 0x2a3f6a, 0xd8d4cc, 0x1a1c20, 0x6a6a6e, 0x3a5a3a, 0xc9a25a];
+    /* 2026-11-24: the parked cars are cast by the kit as real Camrys and Escapes in these paints (a.ts carBox) */
     const car = (x: number, z: number, c: number, len = 4.4) => {
-      k.box(1.8, 0.75, len, x, 0.62, z, k.flat(c, 0.5, 0.35));
-      k.box(1.6, 0.6, len * 0.5, x, 1.3, z - len * 0.05, k.flat(0x22303a, 0.6, 0.2));
-      for (const dz of [-len * 0.33, len * 0.33]) for (const dx of [-0.85, 0.85]) k.cyl(0.33, 0.24, x + dx, 0.33, z + dz, dark, 0.33, 10).rotation.z = PI / 2;
+      carBox(k, x, z, x > 0 ? PI : 0, c);
       k.block(x - 1.0, x + 1.0, z - len / 2 - 0.1, z + len / 2 + 0.1);
     };
     for (let i = 0; i < 9; i++) { car(5.6, 58 - i * 11 - (i % 2) * 2, carCols[i % carCols.length]); if (i !== 5 && i !== 6) car(-5.6, 54 - i * 12, carCols[(i + 3) % carCols.length]); }
@@ -195,7 +287,9 @@ export const arthuravenue2: RoomDef = {
       for (const x of [-37.7, -29.5, -25.5, -17.3]) k.box(0.3, MH - 0.2, 0.3, x, (MH - 0.2) / 2, zc, steel);
     }
     // light: pendants down the aisles, a few real lamps
-    for (const a of aisles) for (let x = HX0 + 5; x < HX1 - 2; x += 7) { k.beam(v(x, MH - 0.1, a), v(x, 5.3, a), 0.015, steel, 3); k.cyl(0.05, 0.3, x, 5.2, a, shade, 0.34, 12); }
+    // 2026-11-24: the aisle pendants as a model (Poly Haven hanging_industrial_lamp, CC0), with a glowing bulb under each
+    { const at: [number, number, number, number][] = []; aisles.forEach((a, ai) => { for (let x = HX0 + 5; x < HX1 - 2; x += 7) { if (ai % 2) { k.beam(v(x, MH - 0.1, a), v(x, 5.3, a), 0.015, steel, 3); k.cyl(0.05, 0.3, x, 5.2, a, shade, 0.34, 12); continue; } at.push([x, MH - 1.5, a, 0]); k.sphere(0.07, x, MH - 1.42, a, shade, 8); } });
+      glbs(k, 'arthuravenue/ph_hanging_industrial_lamp', { height: 1.4 }, at); }
     const lampI = k.night > 0.5 ? 55 : 26;
     for (const a of [-0.76, -12, -23.24]) k.point(-27.5, 5.6, a, 0xffe8c8, lampI, 22);
     k.point(-14.8, 5.2, DOOR, 0xffe8c8, lampI * 0.8, 16); k.point(-40, 5.2, -12, 0xffe8c8, lampI * 0.8, 18);
@@ -222,7 +316,7 @@ export const arthuravenue2: RoomDef = {
     const goods = (kind: Kind, cx: number, len: number, zf: number, face: 1 | -1) => {
       // zf is the front edge of the counter; face is the way the customer stands
       const zc = zf - face * 0.6;
-      if (kind === 0) { for (let i = 0; i < Math.floor(len / 0.7); i++) { const x = cx - len / 2 + 0.4 + i * 0.7; k.box(0.6, 0.3, 0.9, x, 1.2, zc, crate); const col = fruitCols[Math.floor(rnd() * fruitCols.length)]; for (let j = 0; j < 8; j++) { fruitM.push(at(x - 0.18 + (j % 3) * 0.18, 1.42, zc - 0.3 + Math.floor(j / 3) * 0.3)); fruitC.push(col); } } }
+      if (kind === 0) { for (let i = 0; i < Math.floor(len / 0.7); i++) { const x = cx - len / 2 + 0.4 + i * 0.7; if (i % 2 === 0) crateAt.push([x, 1.07, zc, PI / 2]); else k.box(0.36, 0.3, 0.7, x, 1.22, zc, crate); const col = fruitCols[Math.floor(rnd() * fruitCols.length)]; for (let j = 0; j < 8; j++) { fruitM.push(at(x - 0.18 + (j % 3) * 0.18, 1.42, zc - 0.3 + Math.floor(j / 3) * 0.3)); fruitC.push(col); } } }
       if (kind === 1) { hangRail(cx, len - 0.6, 3.05, zf - face * 0.35, 1); for (let i = 0; i < 4; i++) k.box(0.9, 0.12, 0.5, cx - len / 2 + 1.2 + i * 2.1, 1.14, zc, k.flat(0xc86a6a, 0, 0.6)); }
       if (kind === 2) { hangRail(cx, len - 0.6, 3.05, zf - face * 0.35, 2); for (let i = 0; i < Math.floor(len / 0.6); i++) wheelM.push(at(cx - len / 2 + 0.35 + i * 0.6, 1.17, zc)); }
       if (kind === 3) { k.box(len - 0.4, 0.2, 1.2, cx, 1.15, zc, ice); for (let i = 0; i < Math.floor(len / 0.35); i++) fishM.push(new T.Matrix4().compose(v(cx - len / 2 + 0.4 + i * 0.35, 1.3, zc + (i % 2 ? 0.25 : -0.25)), new T.Quaternion().setFromEuler(new T.Euler(0, PI / 2 + (i % 3) * 0.2, PI / 2)), v(1, 1, 0.45))); }
@@ -230,6 +324,7 @@ export const arthuravenue2: RoomDef = {
       k.sign(LABEL[kind], 3.4, 0.46, cx, 2.62, zf + face * 0.03, '#1a1c20', '#e8dcc0', Math.min(76, Math.floor(1024 / (0.62 * LABEL[kind].length))), face > 0 ? 0 : PI, { border: true });
     };
     const coats = [0xe6e2da, 0xd8d0c0, 0xf0ece4];
+    const crateAt: [number, number, number, number][] = [], tillAt: [number, number, number, number][] = [];
     const mounts: Mount[] = [];
     const half = (cx: number, zc: number, kinds: [Kind, Kind], len = 9) => {
       k.box(len, 1.0, 5, cx, 0.5, zc, wood);
@@ -240,6 +335,7 @@ export const arthuravenue2: RoomDef = {
         const kind = face > 0 ? kinds[0] : kinds[1];
         const can = k.box(len, 0.06, 2.75, cx, 3.3, zc + face * 1.35, hallAwnings[mod(Math.round(cx) + Math.round(zc) + face, hallAwnings.length)]); can.rotation.x = face * 0.22;
         goods(kind, cx, len, zc + face * 2.5, face);
+        if (face > 0) tillAt.push([cx + len / 2 - 0.7, 1.08, zc + 1.2, PI]);
         figure(k, cx + (face > 0 ? -1.8 : 2.1), 0, zc + face * 1.2, coats[(Math.abs(Math.round(cx + zc)) + face + 3) % 3], { rotY: face > 0 ? 0 : PI });
         mounts.push({ position: v(cx, 4.7, zc + face * 0.17), rotation: face > 0 ? 0 : PI, target: v(cx, 3, zc + face * (2.5 + AW / 2)), width: 3.4, height: 1.9, style: 'oak', wash: true });
       }
@@ -288,9 +384,11 @@ export const arthuravenue2: RoomDef = {
     const slicerMan = personGroup(0xf0ece4); slicerMan.position.set(-31, 0, islands[0] - 1.1); slicerMan.rotation.y = PI; k.add(slicerMan);
     // a hand truck of crates, up and down the fourth aisle all morning
     const truck = new T.Group();
-    { const base = new T.Mesh(new T.BoxGeometry(1.0, 0.1, 0.7), steel); base.position.y = 0.2; truck.add(base);
+    { const base = new T.Mesh(new T.BoxGeometry(1.0, 0.1, 0.7), steel); base.position.y = 0.2; truck.add(base); const handT = base;
       for (let i = 0; i < 3; i++) { const c = new T.Mesh(new T.BoxGeometry(0.6, 0.35, 0.5), crate); c.position.set(0.1, 0.45 + i * 0.37, 0); truck.add(c); }
       const handle = new T.Mesh(new T.BoxGeometry(0.06, 1.3, 0.6), steel); handle.position.set(-0.45, 0.8, 0); truck.add(handle);
+      /* 2026-11-24: the hand truck itself is a model (Poly Haven hand_truck, CC0); the box stand in stays if it fails */
+      void hero(k, 'arthuravenue/ph_hand_truck', { height: 1.4 }).then((h) => { if (!h || !k.live) return; handT.visible = handle.visible = false; h.rotation.y = -PI / 2; h.position.x = -0.1; truck.add(h); });
       const pusher = personGroup(0x33477f); pusher.position.x = -1.0; truck.add(pusher);
       truck.position.set(-27, 0, aisles[3]); k.add(truck); }
     // shoppers in the aisles, and on the avenue
@@ -305,6 +403,27 @@ export const arthuravenue2: RoomDef = {
     k.beam(v(-9.6, 1.2, 6.5), v(-9.6, 1.0, 7.6), 0.04, wood, 4);
     produce(-9.6, 5.5, 3);
     k.block(-10.3, -8.9, 4.4, 7.7);
+
+    /* ---- 2026-11-24 wave 3c: real goods, real tills, the avenue's banner, the trick ---- */
+    // the produce in real wooden crates (Poly Haven wooden_crate_01, CC0), a till on every island (CashRegister_01)
+    glbs(k, 'arthuravenue/ph_wooden_crate_01', { height: 0.3 }, crateAt);
+    glbs(k, 'arthuravenue/ph_CashRegister_01', { height: 0.42 }, tillAt);
+    // wine barrels either side of the market door, bottles and a basket of cornetti on the coffee bar, bananas on the pushcart
+    glbs(k, 'arthuravenue/ph_wine_barrel_01', { height: 0.95 }, [[-11.0, 0.15, DOOR - 4.2, 0], [-11.0, 0.15, DOOR + 4.2, 1.2]]);
+    for (const dz of [-4.2, 4.2]) k.keepOut.push({ x: -11.0, z: DOOR + dz, r: 0.6 });
+    glbs(k, 'arthuravenue/ph_wine_bottles_01', { width: 0.7 }, [[-16.4, 1.16, 12.4, PI / 2]]);
+    glbs(k, 'arthuravenue/ph_wicker_basket_01', { width: 0.42 }, [[-16.2, 1.16, 9.9, 0.3]]);
+    { const at: [number, number, number, number][] = []; for (let i = 0; i < 8; i++) at.push([-16.2 + ((i % 3) - 1) * 0.1, 1.2 + Math.floor(i / 3) * 0.03, 9.8 + ((i * 7) % 5) * 0.06 - 0.1, i * 0.8]); glbs(k, 'arthuravenue/ph_croissant', { length: 0.09 }, at, undefined, 2); }
+    glbs(k, 'arthuravenue/ph_bananas', { width: 0.5 }, [[-9.6, 1.25, 4.9, 0.4], [-9.6, 1.25, 6.1, -0.3]]);
+    glbs(k, 'arthuravenue/ph_CheeseBox_01', { width: 0.3 }, [[-21.5 + 3.2, 1.08, islands[0] + 1.2, 0], [-21.5 - 3.4, 1.08, islands[1] - 1.2, 0.5]]);
+    // the banner strung across the avenue between two poles, both faces, in the house type
+    for (const x of [-7.7, 7.7]) { k.cyl(0.09, 8.2, x, 4.1, 44, post, 0.09, 8); k.keepOut.push({ x, z: 44, r: 0.35 }); }
+    board(k, 12.6, 1.5, 0, 7.2, 44, 0, (g, W, H) => { lines(g, W, H, '#b8202a', [['BELMONT  ·  LITTLE ITALY IN THE BRONX', 0.46, EXP, '#f4ead2']]); g.fillStyle = '#2e6a3a'; g.fillRect(0, 0, W, H * 0.1); g.fillRect(0, H * 0.9, W, H * 0.1); }, { double: true });
+    // the trick: at the middle of the avenue the street's name stands up off the asphalt (anamorphic road type)
+    anamorph(k, 'ARTHUR AVENUE', 0, 30, 1.7, 0.03, 3.4, 2.2, 0.75, '#f4ead2', 150);
+    k.egg(v(0, 0.3, 24), { id: 'arthur-road-type', title: 'The street that signs itself', text: 'Arthur Avenue runs 1.2 miles through Belmont, and the stretch around the market is the heart of the Bronx\'s Little Italy. The name painted on the asphalt here is stretched along the road, so that from one spot in the middle of the avenue it stands up like a sign.', clue: 'Stand in the middle of the avenue just north of the market, and look south.', source: { name: 'Arthur Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/Arthur_Avenue' } }, { r: 2 });
+    // Firefly (FIREFLY_QUEUE.md): the pushcart market of the 1930s as a painted plate over the door, inside the hall
+    ffPlate(k, 'assets/museum/tex/arthuravenue/ff_pushcart_mural.webp', 9.6, 2.4, -12.64, 5.6, 6.6, -PI / 2, false);
 
     /* the census wall on the back wall of the hall */
     k.censusWall({ x: HX0 + 0.05, y: 4.1, z: (HZ0 + HZ1) / 2, rotY: PI / 2, cols: 36, rows: 5, tile: 0.55, gap: 0.05, start: ctx.wallStart(6500, 180), pieces: ctx.all, backing: dark });
@@ -338,6 +457,36 @@ export const arthuravenue2: RoomDef = {
   },
 };
 
+/* 2026-11-24: book spines painted on a canvas, 1.6 m of shelf by 0.8 m per tile: cloth and leather bindings in a
+   library's colours, gilt bands and labels, uneven heights, the dark of the case behind. Stands in for a Firefly plate. */
+const spineMats = new Map<number, T.MeshStandardMaterial>();
+function spines(seed: number) {
+  let m = spineMats.get(seed);
+  if (m) return m;
+  m = new T.MeshStandardMaterial({ color: 0x6a4a34, roughness: 0.8 });
+  if (HAS_DOM) {
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 512;
+    const g = c.getContext('2d')!, r = X.mulberry(seed);
+    g.fillStyle = '#1a120c'; g.fillRect(0, 0, 1024, 512);
+    const cols = ['#5a1a16', '#6e2a1e', '#1f2f4a', '#24402e', '#3a2a1a', '#7a5a2e', '#2a2a2a', '#4a1e2e', '#8a6a3e', '#2e4a4a', '#6a4a2a', '#1e2a3a'];
+    let x = 0;
+    while (x < 1024) {
+      const w = 16 + Math.floor(r() * 26), h = 512 * (0.6 + r() * 0.34), col = cols[Math.floor(r() * cols.length)];
+      g.fillStyle = col; g.fillRect(x, 512 - h, w - 1, h);
+      const grd = g.createLinearGradient(x, 0, x + w, 0); grd.addColorStop(0, 'rgba(0,0,0,0.35)'); grd.addColorStop(0.4, 'rgba(255,255,255,0.08)'); grd.addColorStop(1, 'rgba(0,0,0,0.4)');
+      g.fillStyle = grd; g.fillRect(x, 512 - h, w - 1, h);
+      g.fillStyle = r() > 0.4 ? '#c9a552' : '#d8c8a0';
+      for (const f of [0.1, 0.16, 0.82]) if (r() > 0.25) g.fillRect(x + 2, 512 - h + h * f, w - 5, 3);
+      if (r() > 0.5) { g.fillStyle = '#e8dcc0'; g.fillRect(x + 3, 512 - h * 0.35, w - 7, h * 0.08); }
+      x += w + (r() > 0.93 ? 6 + r() * 20 : 0);
+    }
+    const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.wrapS = T.RepeatWrapping; t.anisotropy = 8;
+    m = new T.MeshStandardMaterial({ map: t, roughness: 0.82 });
+  }
+  spineMats.set(seed, m);
+  return m;
+}
+
 /* ---------------- 15 THE ROSE READING ROOM (rebuild) ---------------- */
 export const library2: RoomDef = {
   id: 'library',
@@ -352,9 +501,11 @@ export const library2: RoomDef = {
     k.sky({ top: 0x86a8d4, horizon: 0xe8dcc8, ground: 0x6b5f4d, fog: 0.0016, sun: { az: 4.5, el: 0.42, color: 0xffe0b0, size: 16 }, env: 0.6 });
     k.hemi(0xfff0dc, 0x8a8478, 0.7);
     k.sun(0xffdcae, 2.4, -60, 34, -20, true, 110);
-    const oak = k.pbr('lb2Oak', X.planks(0x7a5334, 8, 12), 0.6, { roughness: 0.55 }),
-      oakDark = k.pbr('lb2OakDark', X.planks(0x5c3d26, 4, 13), 1.0, { roughness: 0.5 }),
-      plaster = k.pbr('lb2Plaster', X.plaster(0xd9c9a8, 12), 0.4, { roughness: 0.8 }),
+    /* 2026-11-24 wave 3c: wave 1's staged scans (CC0) put to work: herringbone parquet on the floor, oak veneer on
+       every table, shelf and panel, a warm plaster on the walls */
+    const oak = scan(k, 'library', 'herringbone_parquet', 1.8, () => X.planks(0x7a5334, 8, 12), { roughness: 1, color: 0x9a7a62 }, 0x5a3e2a, 'jpg'),
+      oakDark = scan(k, 'library', 'oak_veneer_01', 1.4, () => X.planks(0x5c3d26, 4, 13), { roughness: 0.5, color: 0x8a6448 }, 0x5c3d26, 'jpg'),
+      plaster = scan(k, 'library', 'beige_wall_001', 2.6, () => X.plaster(0xd9c9a8, 12), { roughness: 0.8, color: 0xf0e2c4 }, 0xc8b898, 'jpg'),
       ochre = k.pbr('lb2Ochre', X.plaster(0xa8804a, 14), 0.4, { roughness: 0.7 }),
       gold = k.pbr('lb2Gold', X.gilt(0xc9a552), 2, { metalness: 0.8, roughness: 0.35 }),
       bronze = k.flat(0x6b4f2a, 0.85, 0.35),
@@ -406,7 +557,14 @@ export const library2: RoomDef = {
         const len = z1 - z0, zc = (z0 + z1) / 2;
         k.box(0.1, tiers * 1.0 + 0.3, len, s * (XW - 0.05), y0 + (tiers * 1.0 + 0.3) / 2, zc, oakDark);
         for (let j = 0; j <= tiers; j++) k.box(0.6, 0.07, len, s * (XW - 0.3), y0 + 0.1 + j * 1.0, zc, oakDark);
-        for (let j = 0; j < tiers; j++) k.box(0.46, 0.8, len - 0.1, s * (XW - 0.3), y0 + 0.55 + j * 1.0, zc, [books, books2, books3][mod(j + Math.round(z0), 3)]);
+        for (let j = 0; j < tiers; j++) {
+          k.box(0.46, 0.8, len - 0.1, s * (XW - 0.3), y0 + 0.55 + j * 1.0, zc, [books, books2, books3][mod(j + Math.round(z0), 3)]);
+          // the spines, on the face of each row of books (u runs one tile per 1.6 m of shelf)
+          const pg = new T.PlaneGeometry(len - 0.1, 0.8), uv = pg.attributes.uv;
+          for (let q = 0; q < uv.count; q++) uv.setX(q, uv.getX(q) * ((len - 0.1) / 1.6) + mod(j * 0.37 + z0 * 0.13, 1));
+          const pl = k.mesh(pg, spines(701 + mod(j + Math.round(z0) + (s > 0 ? 1 : 0), 3)), s * (XW - 0.535), y0 + 0.55 + j * 1.0, zc);
+          pl.rotation.y = s > 0 ? -PI / 2 : PI / 2;
+        }
         for (let zz = z1 - 0.04; zz > z0; zz -= 1.3) k.box(0.62, tiers * 1.0 + 0.2, 0.08, s * (XW - 0.31), y0 + (tiers * 1.0 + 0.2) / 2, Math.max(z0 + 0.04, zz), oakDark);
       };
       for (const [a, b] of runs) shelf(a, b, 0, 5);
@@ -448,7 +606,18 @@ export const library2: RoomDef = {
       for (const x of [-XW + 0.3, -4.2, 4.2, XW - 0.3]) rosettes.push(v(x, H - 0.95, z));
     }
     for (const x of [-8.1, 8.1]) for (let z = Z1 - 4.2; z > Z0; z -= 8.4) { k.box(7.0, 0.1, 7.6, x, H - 0.05, z, ochre); k.torus(0.9, 0.12, x, H - 0.2, z, gold, 12).rotation.x = PI / 2; }
-    for (const [za, zb] of panels) k.box(8.2, 0.1, zb - za, 0, H - 0.06, (za + zb) / 2, skyPanel);
+    /* 2026-11-23 Firefly: the painted 1911 skies (ceiling_sky_1..3) on the two ceiling panels, under the drifting clouds;
+       the box's underside UVs run 0..1 across 8.2 m by 25 m, so the 2:1 plate is turned a quarter to run along the hall */
+    panels.forEach(([za, zb], i) => {
+      const m = new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, emissive: 0x8a9ab0, emissiveIntensity: 0.35 });
+      m.map = (skyPanel as T.MeshStandardMaterial).map; m.emissiveMap = m.map;
+      k.pending.push(new T.TextureLoader().loadAsync(`assets/museum/tex/library/ceiling_sky_${i + 1}.jpg`).then((t) => {
+        if (!k.live) return;
+        t.colorSpace = T.SRGBColorSpace; t.center.set(0.5, 0.5); t.rotation = Math.PI / 2; t.anisotropy = 8;
+        m.map = t; m.emissiveMap = t; m.needsUpdate = true;
+      }).catch(() => undefined));
+      k.box(8.2, 0.1, zb - za, 0, H - 0.06, (za + zb) / 2, m);
+    });
     for (const [za, zb] of [[Z1, 3.6], [-21.6, -44.9], [-70.1, Z0]]) if (za - zb > 0.5) for (let z = za - 4.2; z > zb; z -= 8.4) { k.box(7.6, 0.1, 7.6, 0, H - 0.05, z, ochre); k.torus(1.0, 0.12, 0, H - 0.2, z, gold, 12).rotation.x = PI / 2; }
     { const g = new T.LatheGeometry([new T.Vector2(0.01, 0), new T.Vector2(0.45, 0.05), new T.Vector2(0.35, 0.2), new T.Vector2(0.15, 0.35), new T.Vector2(0.01, 0.4)], 10); g.rotateX(PI); k.instances(g, gold, rosettes.map((p) => at(p.x, p.y + 0.4, p.z))); }
     // clouds in the painted skies, drifting slowly
@@ -471,26 +640,25 @@ export const library2: RoomDef = {
     const chand = [7.8, -9, -25.8, -40.7, -57.5, -74.3];
     for (const z of chand) {
       k.beam(v(0, H - 0.9, z), v(0, 9.6, z), 0.04, bronze, 5);
-      k.torus(1.3, 0.07, 0, 9.3, z, bronze, 28).rotation.x = PI / 2;
-      k.torus(0.7, 0.06, 0, 9.9, z, bronze, 20).rotation.x = PI / 2;
-      k.lathe([[0.01, 0], [0.4, 0.2], [0.3, 0.7], [0.08, 1.1], [0.01, 1.2]], 0, 8.9, z, bronze, 12);
-      for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.sphere(0.13, Math.cos(a) * 1.3, 9.5, z + Math.sin(a) * 1.3, opal, 8); }
+      for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; k.sphere(0.11, Math.cos(a) * 0.95, 8.15, z + Math.sin(a) * 0.95, opal, 8); }
       k.point(0, 8.8, z, 0xffe2b0, k.night > 0.5 ? 90 : 55, 26);
     }
 
+    // 2026-11-24: the chandeliers themselves are a model (Poly Haven Chandelier_03, CC0), hung from the rods at real size
+    glbs(k, 'library/chandelier', { height: 2.4 }, chand.map((z) => [0, 7.2, z, 0] as [number, number, number, number]));
+
     /* ---- tables, lamps, chairs, readers ---- */
+    const tableAt: [number, number, number, number][] = [], lampAt: [number, number, number, number][] = [], lampGlow: T.Matrix4[] = [];
     const seatM: T.Matrix4[] = [], seatC: number[] = [], seatSide: number[] = [], rnd = X.mulberry(152);
     const readerCols = [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x4a6a3a, 0x151517, 0xc9a25a, 0x6a4a8a, 0xe6e2da, 0x2b5f6e];
     const TX = 4.2;
     for (const s of [-1, 1]) for (const z of bayZ) {
       const x = s * TX;
-      k.rounded(1.8, 0.12, 6.6, x, 0.98, z, oakDark, 0.05);
-      for (const dz of [-3.0, 3.0]) for (const dx of [-0.7, 0.7]) k.box(0.14, 0.92, 0.14, x + dx, 0.46, z + dz, oakDark);
-      k.box(0.24, 0.3, 6.4, x, 1.19, z, oakDark);
-      for (const dz of [-2.2, 0, 2.2]) {
-        k.lathe([[0.16, 0], [0.16, 0.05], [0.04, 0.08], [0.04, 0.46], [0.22, 0.5]], x, 1.34, z + dz, bronze, 10);
-        k.box(0.5, 0.14, 0.34, x, 1.9, z + dz, opal);
-      }
+      /* 2026-11-24: each long table is three real oak tables butted end to end (Poly Haven dining_table, CC0) under one
+         raised lamp spine, with a real brass lamp at each end of it (Poly Haven vintage_oil_lamp, CC0) */
+      for (const dz of [-2.2, 0, 2.2]) tableAt.push([x, 0, z + dz, PI / 2]);
+      k.box(0.3, 0.16, 6.5, x, 0.94, z, oakDark);
+      for (const dz of [-1.6, 1.6]) { lampAt.push([x, 1.02, z + dz, 0]); lampGlow.push(at(x, 1.42, z + dz)); }
       for (const dx of [-1.35, 1.35]) for (const dz of [-2.4, -0.8, 0.8, 2.4]) {
         const cx = x + dx, back = dx > 0 ? 0.24 : -0.24;
         k.box(0.48, 0.06, 0.48, cx, 0.58, z + dz, oakDark);
@@ -500,12 +668,51 @@ export const library2: RoomDef = {
       }
       k.block(x - 1.9, x + 1.9, z - 3.5, z + 3.5);
     }
+    /* the Poly Haven table wears a gingham cloth: its material is swapped for the room's scanned oak before instancing */
+    void hero(k, 'library/ph_dining_table', { box: [2.2, 0.86, 1.6] }).then((h) => {
+      if (!h || !k.live) return;
+      h.traverse((c) => { if (c instanceof T.Mesh) c.material = oakDark; });
+      const ins = heroInstances(k, h, tableAt.length), mm = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+      tableAt.forEach(([x, y, z, r], i) => ins.setAt(i, mm.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), ONE)));
+      ins.commit();
+    });
+    glbs(k, 'library/ph_vintage_oil_lamp', { height: 0.62 }, lampAt);
+    k.instances(new T.SphereGeometry(0.06, 8, 6), opal, lampGlow);
     const readers = k.instances(seatedGeo(), new T.MeshStandardMaterial({ roughness: 0.85 }), seatM);
     readers.frustumCulled = false;
     { const c = new T.Color(); seatC.forEach((col, i) => readers.setColorAt(i, c.set(col))); if (readers.instanceColor) readers.instanceColor.needsUpdate = true; }
     const readerPos = seatM.map((m) => new T.Vector3().setFromMatrixPosition(m));
     // open books on the table in front of each reader, toward the table's middle
-    k.instances(new T.BoxGeometry(0.3, 0.03, 0.22), k.flat(0xf0e8d4, 0, 0.9), readerPos.map((p, i) => at(p.x - seatSide[i] * 0.72, 1.06, p.z)));
+    k.instances(new T.BoxGeometry(0.3, 0.03, 0.22), k.flat(0xf0e8d4, 0, 0.9), readerPos.map((p, i) => at(p.x - seatSide[i] * 0.72, 0.875, p.z)));
+
+    /* ---- 2026-11-24 wave 3c: the carved frame of the ceiling, the call board, the trick ---- */
+    // stepped gilt mouldings under the four long beams, a dentil course over the cornice, carved corbels on every pier
+    for (const x of [-XW + 0.3, -4.2, 4.2, XW - 0.3]) for (const s2 of [-1, 1]) if (Math.abs(x) < XW - 1 || s2 === Math.sign(-x)) k.moulding([[0, 0], [0.22, 0], [0.22, 0.08], [0.12, 0.16], [0.08, 0.3], [0, 0.34]], L, x + s2 * 0.3, H - 1.24, ZC, gold, s2 > 0 ? 0 : PI);
+    { const dent: T.Matrix4[] = [], corb: T.Matrix4[] = [];
+      for (const s2 of [-1, 1]) { for (let z = Z0 + 0.2; z < Z1; z += 0.36) dent.push(at(s2 * (XW - 0.12), H - 1.4, z)); for (let i = 0; i <= 11; i++) corb.push(at(s2 * (XW - 0.32), H - 1.85, Z1 - i * 8.4)); }
+      for (const zz of [Z0, Z1]) for (let x = -XW + 0.2; x < XW; x += 0.36) dent.push(at(x, H - 1.4, zz + (zz > ZC ? -0.12 : 0.12)));
+      k.instances(new T.BoxGeometry(0.16, 0.2, 0.16), gold, dent);
+      const cg = new T.LatheGeometry([new T.Vector2(0.01, 0), new T.Vector2(0.22, 0.05), new T.Vector2(0.3, 0.3), new T.Vector2(0.18, 0.55), new T.Vector2(0.34, 0.8), new T.Vector2(0.01, 0.82)], 8);
+      k.instances(cg, gold, corb); }
+    // a gilt frame round every ochre coffer
+    for (const [za, zb, xs, w] of [[Z1, Z0, [-8.1, 8.1], 7.0], [Z1, 3.6, [0], 7.6], [-21.6, -44.9, [0], 7.6], [-70.1, Z0, [0], 7.6]] as [number, number, number[], number][])
+      for (const x of xs) for (let z = za - 4.2; z > zb; z -= 8.4) { for (const dz of [-w / 2, w / 2]) k.box(w + 0.2, 0.12, 0.14, x, H - 0.16, z + dz, gold); for (const dx of [-w / 2, w / 2]) k.box(0.14, 0.12, w, x + dx, H - 0.16, z, gold); }
+    // the call board over the delivery desk: the numbers of the books that have come up from the stacks
+    for (const f of [-1, 1]) board(k, 6.2, 1.2, 0, 8.3, ZC + f * 0.36, f > 0 ? 0 : PI, (g, W, H) => {
+      g.fillStyle = '#120c08'; g.fillRect(0, 0, W, H); g.strokeStyle = '#c9a552'; g.lineWidth = 6; g.strokeRect(4, 4, W - 8, H - 8);
+      g.font = '700 22px "JetBrains Mono", monospace'; g.fillStyle = '#c9a552'; g.fillText('BOOKS READY  ·  CALL NUMBERS', W / 2, H * 0.17);
+      const nums = ['112', '127', '134', '141', '158', '163', '176', '189', '203', '214', '228', '237', '245', '251', '266', '279'];
+      g.font = '700 34px "JetBrains Mono", monospace';
+      nums.forEach((n, i) => { const cx = W * (0.08 + (i % 8) * 0.12), cy = H * (0.48 + Math.floor(i / 8) * 0.3); g.fillStyle = (i * 7) % 3 ? '#ffcf7a' : '#4a3a26'; g.fillText(n, cx, cy); });
+    }, { lit: true });
+    k.box(6.4, 1.4, 0.6, 0, 8.3, ZC, oakDark);
+    // the trick: from the door end of the north hall the words on the floor stand up between the tables
+    anamorph(k, 'QUIET PLEASE', 0, 10.5, 1.7, 0.02, 3.0, 1.6, 0.6, '#e8d8b0', 150);
+    k.egg(v(0, 0.3, 4.5), { id: 'library-quiet-please', title: 'The floor that asks for quiet', text: 'The Rose Main Reading Room seats hundreds of readers at its long oak tables, and the room is kept for silent reading. The words laid into this floor are stretched along the aisle so that from one spot at the end of the hall they stand upright.', clue: 'Stand at the north end of the centre aisle and look down the room.', source: { name: 'Stephen A. Schwarzman Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Stephen_A._Schwarzman_Building' } }, { r: 2 });
+    // Firefly (FIREFLY_QUEUE.md): book spines as a seamless plate for the cases (canvas spines stand in, see spines());
+    // the north and south end walls get a painted plate of the stacks seen through the arch over the census wall
+    ffPlate(k, 'assets/museum/tex/library/ff_stacks_arch.webp', 7.6, 3.2, 0, 11.6, Z0 + 0.62, 0, false);
+    ffPlate(k, 'assets/museum/tex/library/ff_stacks_arch.webp', 7.6, 3.2, 0, 11.6, Z1 - 0.62, PI, false);
 
     /* ---- the delivery desk between the halls ---- */
     k.rounded(12, 1.25, 5.4, 0, 0.62, ZC, oakDark, 0.05);
@@ -518,6 +725,10 @@ export const library2: RoomDef = {
     k.sign('ROSE MAIN READING ROOM', 8.6, 0.6, 0, 5.5, ZC + 0.32, '#3a2616', '#f4e6c8', 42, 0, { border: true });
     k.sign('ROSE MAIN READING ROOM', 8.6, 0.6, 0, 5.5, ZC - 0.32, '#3a2616', '#f4e6c8', 42, PI, { border: true });
     k.block(-6.4, 6.4, ZC - 3, ZC + 3);
+    // 2026-11-24: wave 1's staged pieces at the desk: card catalog cabinets at both ends, reference sets on the counter (our ON LOCATION library set, Poly Haven based, CC0 sources)
+    glbs(k, 'library/catalog', { width: 1.3 }, [[-7.4, 0, ZC - 1.4, PI / 2], [-7.4, 0, ZC + 1.4, PI / 2], [7.4, 0, ZC - 1.4, -PI / 2], [7.4, 0, ZC + 1.4, -PI / 2]]);
+    k.block(-8.0, -6.8, ZC - 2.2, ZC + 2.2); k.block(6.8, 8.0, ZC - 2.2, ZC + 2.2);
+    glbs(k, 'library/ph_book_encyclopedia_set_01', { width: 0.6 }, [[-4.4, 1.35, ZC + 2.4, 0], [3.8, 1.35, ZC - 2.4, PI], [0.6, 1.35, ZC + 2.4, 0]]);
     k.point(0, 3.2, ZC + 4.2, 0xffe2b0, 22, 10);
     for (let i = 0; i < 4; i++) { figure(k, -1.2 + (i % 2) * 2.2, 0, ZC + 4.0 + i * 0.9, readerCols[i + 2], { rotY: PI }); figure(k, 1.4 - (i % 2) * 2.4, 0, ZC - 4.0 - i * 0.9, readerCols[i + 5], { rotY: 0 }); }
     // a librarian with a book truck, working the west aisle

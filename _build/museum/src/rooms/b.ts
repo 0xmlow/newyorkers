@@ -5,7 +5,7 @@ import { v } from '../kit';
 import type { Kit } from '../kit';
 import { corridorMounts } from './types';
 import type { RoomDef } from './types';
-import { billboard } from './a';
+import { billboard, scan, glbs, fireflyPlate, carBox } from './a';
 import { hero, standIn, hide } from './heroes';
 
 const PI = Math.PI;
@@ -79,9 +79,9 @@ export const met: RoomDef = {
     k.sky({ top: 0x5f7fae, horizon: 0xf2bb8c, ground: 0x4c4640, fog: 0.0022, sun: { az: 4.9, el: 0.12, color: 0xffc27a, size: 26 }, haze: 0.35, env: 0.85 });
     k.hemi(0xffe1bd, 0x3d4a3a, 0.7);
     k.sun(0xffcf94, 2.6, -60, 22, -10, true, 70);
-    const lime = k.pbr('limestone', X.ashlar(0xc3b8a2, 3, 3), 0.22),
-      pav = k.pbr('terrace', X.pavers(0xb9b1a0, 4), 0.28, { roughness: 0.7 }),
-      bronze = k.flat(0x5c4a2c, 0.9, 0.35),
+    /* 2026-11-23: scanned limestone block and stone paving (Poly Haven CC0) at true size for the painted ones */
+    const lime = scan(k, 'met', 'white_sandstone_blocks_02', 2, () => X.ashlar(0xc3b8a2, 3, 3), { color: new T.Color(1.08, 1.02, 0.93) }),
+      pav = scan(k, 'met', 'granite_tile', 2.3, () => X.pavers(0xb9b1a0, 4), { color: new T.Color(1.9, 1.82, 1.66) }),
       iron = k.flat(0x22262a, 0.7, 0.45),
       teak = k.pbr('teak', X.planks(0x8a6640, 4, 7), 1.2, { roughness: 0.6 }),
       hedge = k.flat(0x3f5f38, 0, 0.95),
@@ -107,12 +107,12 @@ export const met: RoomDef = {
     k.prop('water_tower', 0, 0.98, -14, { height: 7.5 });
     k.plinth(0, -36, 4.2, 0.9, 4.2, lime);
     k.prop('tree', 0, 0.98, -36, { height: 6.8 });
-    k.plinth(0, -52, 3, 0.9, 3, lime);
-    k.prop('hydrant', 0, 0.98, -52, { height: 2.6 });
     k.plinth(0, -26, 3.2, 0.7, 3.2, lime);
-    const knot = k.mesh(new T.TorusKnotGeometry(1.1, 0.16, 120, 14), bronze, 0, 2.5, -26);
+    /* 2026-11-23: the code torus knot is a real sculpture now, Poly Haven's horse statue (CC0, a scan) cast large */
+    const knot = v(0, 2.5, -26);
+    glbs(k, 'met/ph_horse_statue_01', { height: 3.1 }, [[0, 0.78, -26, PI * 0.15]]);
     /* eggs: real details of the Iris and B. Gerald Cantor Roof Garden */
-    k.egg(knot, { id: 'met-one-artist-a-summer', title: 'One artist a summer', year: '1998', text: 'Every summer since 1998 the roof garden has hosted a single artist exhibition. Ellsworth Kelly opened the series in 1998, followed by Magdalena Abakanowicz, David Smith and Joel Shapiro, and later Roy Lichtenstein in 2003, Sol LeWitt in 2005, Jeff Koons in 2008 and Huma Bhabha in 2018.', clue: 'Walk round the bronze knot on its plinth in the middle of the terrace.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.6 });
+    k.egg(knot, { id: 'met-one-artist-a-summer', title: 'One artist a summer', year: '1998', text: 'Every summer since 1998 the roof garden has hosted a single artist exhibition. Ellsworth Kelly opened the series in 1998, followed by Magdalena Abakanowicz, David Smith and Joel Shapiro, and later Roy Lichtenstein in 2003, Sol LeWitt in 2005, Jeff Koons in 2008 and Huma Bhabha in 2018.', clue: 'Walk round the rearing horse on its plinth in the middle of the terrace.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.6 });
     k.egg(v(0, 4.2, -36), { id: 'met-big-bambu', title: 'A climbable bamboo forest', year: '2010', text: 'From April to October 2010 the roof held Big Bambu by Doug and Mike Starn, built from 3,200 bamboo poles to about 100 feet long, 50 feet wide and 50 feet high. Visitors could climb through it, as long as they wore rubber soled, closed toe shoes, and the artists built it with a team of twenty rock climbers.', clue: 'Look up into the tree on its plinth halfway down the terrace.', source: { name: 'Big Bambu (artwork), Wikipedia', url: 'https://en.wikipedia.org/wiki/Big_Bamb%C3%BA_(artwork)' } }, { r: 1.8 });
     k.egg(v(0, 5, -14), { id: 'met-psychobarn', title: 'The Psycho house on the roof', year: '2016', text: 'In 2016 Cornelia Parker became the first woman commissioned to make a new work for the Roof Garden. Transitional Object (PsychoBarn) was a scaled down facade of the house from Hitchcock\'s Psycho, built from a salvaged red barn, a nod to Edward Hopper\'s House by the Railroad, which Hitchcock used as the model for that house.', clue: 'Stand under the water tower on its plinth: another rooftop building once stood on this roof.', source: { name: 'Cornelia Parker, Wikipedia', url: 'https://en.wikipedia.org/wiki/Transitional_Object_(PsychoBarn)' } }, { r: 1.8 });
     // hedges, planters, tables, benches
@@ -123,16 +123,17 @@ export const met: RoomDef = {
         for (let j = -1.4; j <= 1.4; j += 0.7) k.sphere(0.62, s * 12.4, 1.45, z + j, hedge, 10);
         k.prop('lantern', s * 12.4, 0.95, z + 2.6, { height: 0.9 });
       }
+    /* the café: real table and chair sets (Poly Haven CC0) under square canvas umbrellas */
+    const canvas = k.flat(0xe9e1cf, 0, 0.85), cafe: [number, number, number, number][] = [];
     for (const z of [-6, -26, -46]) for (const s of [-1, 1]) {
       const x = s * 5.6;
-      k.lathe([[0.36, 0], [0.36, 0.08], [0.09, 0.12], [0.06, 1.0], [0.8, 1.06], [0.8, 1.1]], x, 0, z, iron, 20);
-      for (const dz of [-1.4, 1.4]) {
-        k.rounded(0.62, 0.05, 0.62, x, 0.72, z + dz, teak);
-        for (const dx of [-0.22, 0.22]) k.beam(v(x + dx, 0.1, z + dz - 0.22), v(x + dx, 1.4, z + dz + 0.26), 0.025, iron, 5);
-        k.rounded(0.64, 0.36, 0.05, x, 1.16, z + dz + 0.26, teak);
-      }
+      cafe.push([x, 0, z, PI / 2]);
+      k.cyl(0.04, 2.6, x, 1.3, z, iron);
+      k.mesh(new T.ConeGeometry(1.9, 0.55, 4, 1, true), canvas, x, 2.75, z).rotation.y = PI / 4;
+      k.box(0.06, 0.06, 0.06, x, 3.05, z, iron);
       k.keepOut.push({ x, z, r: 1.7 });
     }
+    glbs(k, 'met/ph_outdoor_table_chair_set_01', { height: 0.92 }, cafe);
     for (const z of [-16, -40]) { k.bench(-6.4, z, 0, teak, iron, 2.4); k.bench(6.4, z, PI, teak, iron, 2.4); }
     // the bar pergola at the entrance carries the census ledger
     for (const x of [-9, -3, 3, 9]) k.box(0.3, 4.2, 0.3, x, 2.1, 12, iron);
@@ -141,6 +142,22 @@ export const met: RoomDef = {
     k.censusWall({ x: 0, y: 2.3, z: 12.6, rotY: PI, cols: 30, rows: 3, tile: 0.62, gap: 0.05, start: ctx.wallStart(4500, 90), pieces: ctx.all, backing: lime });
     k.egg(v(0, 3.8, 10.6), { id: 'met-roof-1987', title: 'The best view in Manhattan', year: '1987', text: 'The Iris and B. Gerald Cantor Roof Garden opened to the public on August 1, 1987, on the roof near the southwestern corner of the museum. Its views of Central Park and the Manhattan skyline have been called the best in Manhattan, and on Friday and Saturday evenings the café and bar drew elevator lines.', clue: 'Stand under the bar pergola at the entrance.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.6 });
     k.egg(v(0, 5.4, ZC - L / 2 + 5.5), { id: 'met-roof-closed', title: 'Closed for five years', year: '2025', text: 'In 2025 the Met announced that the roof garden would close for five years starting that October. The museum meanwhile has a new Tang Wing for Modern Art set for completion in 2030.', clue: 'Look at the top of the limestone wall at the far end of the terrace.', source: { name: 'The Met Fifth Avenue, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Met_Fifth_Avenue' } }, { r: 1.8 });
+    /* ---- THE BIG UPGRADE (2026-11-23) ---- */
+    /* the trick: a two way mirror pavilion in the hedges, after the roof's 2014 commission. Half silvered glass on an
+       S curve reflects the terrace and the sky and shows the people on the other side at once */
+    {
+      const pz = -50, mirror = new T.MeshPhysicalMaterial({ color: 0xaab8c0, metalness: 1, roughness: 0.03, transparent: true, opacity: 0.62, side: T.DoubleSide, envMapIntensity: 1.6 });
+      for (const [cx, start] of [[-1.2, 0], [1.2, PI]] as [number, number][]) {
+        const arc = k.mesh(new T.CylinderGeometry(1.3, 1.3, 2.3, 32, 1, true, start, PI), mirror, cx, 1.15, pz, true);
+        arc.rotation.y = PI / 2;
+        for (const y of [0.04, 2.3]) { const r = k.mesh(new T.TorusGeometry(1.3, 0.035, 6, 32, PI), k.flat(0x8d9296, 0.9, 0.3), cx, y, pz, true); r.rotation.set(PI / 2, 0, start === 0 ? PI : 0); }
+      }
+      for (const s of [-1, 1]) for (let z = pz - 2.4; z <= pz + 2.4; z += 0.8) k.box(0.7, 1.05, 0.82, s * 3.0, 0.52, z, hedge);
+      k.keepOut.push({ x: 0, z: pz, r: 2.9 });
+      k.egg(v(0, 1.6, pz), { id: 'met-two-way-mirror', title: 'Mirror and window at once', year: '2014', text: 'In 2014 the roof garden commission went to Dan Graham, working with the Swiss landscape architect Günther Vogt: Hedge Two-Way Mirror Walkabout, a curved pavilion of two way mirror glass between ivy hedges. Half silvered glass is a mirror and a window at the same time, so you see yourself, the sky and the visitor on the far side laid over one another.', clue: 'Walk into the curved glass among the hedges at the far end.', source: { name: 'Dan Graham, Wikipedia', url: 'https://en.wikipedia.org/wiki/Dan_Graham' } }, { r: 1.8 });
+    }
+    /* Firefly plate, queued: a painted golden hour Fifth Avenue and Central Park South backdrop behind the code skyline */
+    fireflyPlate(k, 'assets/museum/tex/met/ff_skyline_backdrop.webp', 640, 160, 0, 60, -260, 0, new T.MeshBasicMaterial({ visible: false }), true);
     // the park below and the city beyond
     k.box(300, 0.4, 200, 0, -7, -140, k.pbr('lawn', X.grass(0x4a6a3b), 0.15));
     /* 2026-10-28: Central Park below the roof was 260 icosahedron blobs on sticks; it is the tree kit now (instanced photo
@@ -173,13 +190,15 @@ export const brooklyn: RoomDef = {
     k.sky({ top: 0x0f1f3d, horizon: 0x4d6f9c, ground: 0x111a26, fog: 0.0035, stars: 300, sun: { az: 0.6, el: 0.5, color: 0xd8e6ff, size: 9 }, env: 0.6 });
     k.hemi(0xa9c4ee, 0x1c2531, 0.7);
     k.sun(0xcfe0ff, 1.4, 20, 40, 30, true, 80);
-    const granite = k.pbr('quay', X.pavers(0x7b7d7c, 6), 0.3),
-      masonry = k.pbr('masonry', X.ashlar(0x8f8674, 7, 4), 0.14),
-      corten = k.pbr('corten', X.steel(0x6b3f2a, false, 3), 0.4, { metalness: 0.4, roughness: 0.7 }),
+    /* 2026-11-23: Poly Haven scans (CC0) at real size: granite setts, dressed granite for the bridge, weathering steel,
+       DUMBO brick and tarred pier timber */
+    const granite = scan(k, 'brooklyn', 'granite_tile_02', 1.88, () => X.pavers(0x7b7d7c, 6), { color: new T.Color(1.15, 1.15, 1.12) }),
+      masonry = scan(k, 'brooklyn', 'granite_wall', 3.2, () => X.ashlar(0x8f8674, 7, 4), { color: new T.Color(1.25, 1.18, 1.05) }),
+      corten = scan(k, 'brooklyn', 'rust_coarse_01', 2.2, () => X.steel(0x6b3f2a, false, 3), { metalness: 0.3 }),
       iron = k.flat(0x1d2327, 0.7, 0.45),
       steelW = k.flat(0xc9ced2, 0.6, 0.4),
-      brick = k.pbr('warehouse', X.brick(0x5f3d33, 6), 0.26),
-      timber = k.pbr('pier', X.planks(0x4d3b2d, 5, 8), 0.8),
+      brick = scan(k, 'brooklyn', 'brick_wall_08', 1.9, () => X.brick(0x5f3d33, 6), { color: new T.Color(1.3, 0.86, 0.72) }),
+      timber = scan(k, 'brooklyn', 'wood_planks_dirt', 2, () => X.planks(0x4d3b2d, 5, 8), { color: 0x9a8a78 }),
       glassDark = k.glass(0x8fb6c9, 0.3, 0.1);
     const L = 78, ZC = 12 - L / 2;
     k.water({ y: -1.6, color: 0x1d3a55, w: 420, d: 360, z: -90, amp: 1.2 });
@@ -201,8 +220,9 @@ export const brooklyn: RoomDef = {
     // river side screens in weathered steel
     for (let i = 0; i < 10; i++) {
       const z = 2 - i * 6.6;
-      k.box(0.35, 4.4, 6.6, -9.4, 2.4, z, corten);
-      k.box(1.0, 0.3, 7, -9.4, 0.15, z, granite);
+      /* 2026-11-23: a metre's gap between screens, so the river and its boats show between them */
+      k.box(0.35, 4.4, 5.6, -9.4, 2.4, z, corten);
+      k.box(1.0, 0.3, 5.9, -9.4, 0.15, z, granite);
     }
     // pier shed at the end with the census wall, lamps, bollards, chains
     k.box(20, 9, 8, 0, 4.5, ZC - L / 2 - 1, corten);
@@ -214,7 +234,9 @@ export const brooklyn: RoomDef = {
       k.lathe([[0.22, 0], [0.22, 0.75], [0.28, 0.85], [0.28, 0.95]], -12.9, 0, z, iron, 14);
       k.curve([v(-12.9, 0.8, z), v(-12.9, 0.55, z - 3), v(-12.9, 0.8, z - 6)], 0.035, iron, 16);
     }
-    for (const z of [6, -14, -34, -54]) k.prop('lamppost', 7.4, 0, z, { height: 6.4, keepOut: 0.45 });
+    /* DUMBO's cast iron gas lamp heads (a NEW YORKERS edit of a Poly Haven CC0 model) for the generic posts */
+    glbs(k, 'brooklyn/nyb_dumbo_gaslamp', { height: 6.4 }, [[7.4, 0, 6, -PI / 2], [7.4, 0, -14, -PI / 2], [7.4, 0, -34, -PI / 2], [7.4, 0, -54, -PI / 2]]);
+    for (const z of [6, -14, -34, -54]) k.keepOut.push({ x: 7.4, z, r: 0.45 });
     for (const z of [6, -14, -34, -54]) k.point(7.4, 6, z, 0xffd0a0, 26, 15);
     k.prop('buoy', -12.2, 0, -2, { height: 1.9, keepOut: 0.8 });
     k.egg(v(-6.5, 0.4, 4), { id: 'brooklyn-granite-prospect', title: 'Steps from another bridge', text: 'The Granite Prospect, the stepped seating at Pier 1 of Brooklyn Bridge Park, is made of over 300 pieces of granite, about 2,000 linear feet of it, salvaged from the reconstruction of the Roosevelt Island Bridge. The park now holds many of its free events on those steps.', clue: 'Look down at the granite underfoot on the river side of the promenade.', source: { name: 'Granite Prospect, Brooklyn Bridge Park', url: 'https://www.brooklynbridgepark.org/places-to-see/granite-prospect/' } }, { r: 1.6 });
@@ -266,6 +288,65 @@ export const brooklyn: RoomDef = {
       k.beam(v(x, 9, bz - 3), v(x + 2.5, 8, bz - 3), 0.05, iron, 5);
     }
     for (let x = -60; x <= 60; x += 6) { k.sphere(0.2, x, 10.4, bz, k.glow(0xfff0c8), 8); }
+    /* ---- THE BIG UPGRADE (2026-11-23) ---- */
+    /* the river works: a ferry crossing under the bridge and a tug pushing up the channel, the museum's own hero models */
+    {
+      const ferryBoat = new T.Group(), tug = new T.Group();
+      k.add(ferryBoat); k.add(tug);
+      glbs(k, 'h_ferry', { length: 34 }, [[0, 0, 0, 0]], (os) => { k.scene.remove(os[0]); ferryBoat.add(os[0]); });
+      glbs(k, 'h_tug_lo', { length: 19 }, [[0, 0, 0, 0]], (os) => { k.scene.remove(os[0]); tug.add(os[0]); });
+      const wy = -1.9;
+      const fr = k.spline([v(-170, wy, -104), v(0, wy, -100), v(170, wy, -104), v(170, wy, -122), v(0, wy, -126), v(-170, wy, -122)], true);
+      const tr = k.spline([v(-42, wy, 60), v(-40, wy, -60), v(-44, wy, -170), v(-62, wy, -170), v(-60, wy, -60), v(-62, wy, 60)], true);
+      if (!ctx.reduced) { k.rider(ferryBoat, fr, 6.5, 30); k.rider(tug, tr, 3.2, 90); }
+      else { ferryBoat.position.set(20, wy, -101); ferryBoat.rotation.y = PI / 2; tug.position.set(-41, wy, -20); }
+    }
+    /* the trick: an etched window. A pane on the pier carries the bridge drawn in white lines, projected from one spot
+       on the promenade; stand on the brass mark and the drawing lies exactly over the real towers and cables, even
+       where the pier shed hides them */
+    {
+      const E = v(-1.5, 3, -50), zg = -52.6, line = k.glow(0xf4f8ff, 0.85);
+      const proj = (p: T.Vector3) => { const t = (zg - E.z) / (p.z - E.z); return v(E.x + t * (p.x - E.x), E.y + t * (p.y - E.y), zg + 0.02); };
+      /* the pane frames the Manhattan tower only; lines outside it are dropped */
+      const box = [proj(v(-bx - 9, 4, bz)).x, proj(v(-bx + 9, 4, bz)).x, proj(v(0, 3.6, bz)).y, proj(v(0, 37, bz)).y];
+      const inside = (p: T.Vector3) => p.x >= box[0] && p.x <= box[1] && p.y >= box[2] && p.y <= box[3];
+      const draw = (pts: T.Vector3[]) => { for (let i = 0; i < pts.length - 1; i++) { const a = proj(pts[i]), b = proj(pts[i + 1]); if (inside(a) && inside(b)) k.beam(a, b, 0.0035, line, 4); } };
+      const cy = (x: number) => (Math.abs(x) <= bx ? 12 + 20 * (x / bx) ** 2 : 32 - 20 * ((Math.abs(x) - bx) / bx));
+      for (const x of [-bx]) {
+        draw([v(x - 7, 4, bz + 3), v(x - 7, 35.2, bz + 3), v(x + 7, 35.2, bz + 3), v(x + 7, 4, bz + 3)]);
+        for (const dx of [-3.3, 3.3]) { const a = []; for (let i = 0; i <= 8; i++) { const u = i / 8; a.push(v(x + dx - 2.1 + 4.2 * u, 19 + 10 * Math.sin(PI * u) ** 0.7, bz + 3)); } draw([v(x + dx - 2.1, 9.5, bz + 3), ...a, v(x + dx + 2.1, 9.5, bz + 3)]); }
+      }
+      { const a = []; for (let x = -bx * 2; x <= bx * 2; x += 1) a.push(v(x, cy(x), bz + 2.5)); draw(a); }
+      { const a = []; for (let x = -bx - 9; x <= -bx + 9; x += 1) a.push(v(x, 9.4, bz + 3)); draw(a); }
+      const xs = [box[0], box[1]], ys = [box[2], box[3]];
+      const pw = xs[1] - xs[0] + 0.12, ph = ys[1] - ys[0] + 0.12, pcx = (xs[0] + xs[1]) / 2, pcy = (ys[0] + ys[1]) / 2;
+      k.mesh(new T.PlaneGeometry(pw, ph), k.glass(0xd6e6f2, 0.16, 0.05), pcx, pcy, zg, true);
+      const steel = k.flat(0x2a3034, 0.8, 0.4);
+      for (const dx of [-pw / 2, pw / 2]) k.box(0.05, pcy + ph / 2, 0.05, pcx + dx, (pcy + ph / 2) / 2, zg, steel);
+      k.box(pw + 0.1, 0.05, 0.06, pcx, pcy + ph / 2, zg, steel);
+      k.box(pw + 0.1, 0.05, 0.06, pcx, pcy - ph / 2, zg, steel);
+      for (let x = pcx - pw / 2; x <= pcx + pw / 2 + 0.01; x += 0.5) k.keepOut.push({ x, z: zg, r: 0.45 });
+      k.cyl(0.32, 0.03, E.x, 0.015, E.z, k.flat(0xb8924a, 0.9, 0.3), 0.32, 24);
+      k.sign('STAND HERE', 0.6, 0.12, E.x, 0.035, E.z + 0.45, 'transparent', '#e6d6a8', 90, 0);
+      k.egg(v(pcx, pcy, zg), { id: 'brooklyn-etched-window', title: 'Drawn from one spot', year: '1420', text: 'The lines on the glass are the bridge, projected onto the pane from the brass mark, so from there and nowhere else they lie over the real towers and cables. It is the oldest trick of linear perspective: Filippo Brunelleschi is credited with showing it around 1415 to 1420, with a painted panel of the Florence Baptistery held up against the building itself and viewed through a hole from one spot.', clue: 'Find the brass mark on the promenade and look through the glass toward the bridge.', source: { name: 'Perspective (graphical), Wikipedia', url: 'https://en.wikipedia.org/wiki/Perspective_(graphical)' } }, { r: 1.6 });
+    }
+    /* festoon lights strung across the promenade from the screens to the warehouses, one zigzag the length of the pier */
+    {
+      const wire = k.flat(0x111111, 0.3, 0.6), bulbs: T.Vector3[] = [];
+      for (let i = 0; i < 10; i++) {
+        const z0 = 2 - i * 6.6 + 3.3, a = v(-9.25, 4.55, z0), b = v(11.85, 6.4, z0 - 3.3), c = v(-9.25, 4.55, z0 - 6.6);
+        for (const [p, q] of [[a, b], [b, c]] as [T.Vector3, T.Vector3][]) {
+          const pts: T.Vector3[] = [];
+          for (let j = 0; j <= 24; j++) { const u = j / 24, pt = p.clone().lerp(q, u); pt.y -= Math.sin(PI * u) * 1.1; pts.push(pt); if (j % 2 === 1) bulbs.push(pt.clone().add(v(0, -0.09, 0))); }
+          k.curve(pts, 0.008, wire, 24);
+        }
+      }
+      const im = new T.InstancedMesh(new T.SphereGeometry(0.06, 8, 6), k.glow(0xffd9a0), bulbs.length), m = new T.Matrix4();
+      bulbs.forEach((p, i) => im.setMatrixAt(i, m.makeTranslation(p.x, p.y, p.z)));
+      k.add(im);
+    }
+    /* Firefly plate, queued: a weathered painted ghost sign high on the second warehouse */
+    fireflyPlate(k, 'assets/museum/tex/brooklyn/ff_ghost_sign.webp', 8, 2.6, 11.93, 15.2, -3, -PI / 2, new T.MeshBasicMaterial({ visible: false }));
     k.skyline({ z: -140, count: 34, spacing: 6.5, scale: 2.2, base: -2, seed: 12, lit: 0.45, glow: 1.5, tint: 0x1f2a3a });
     k.skyline({ z: -185, count: 30, spacing: 8.5, scale: 3, base: -2, seed: 13, lit: 0.35, glow: 1.1, tint: 0x27303d, rows: 1 });
     const mounts = corridorMounts({ pairs: 10, x: 9.2, z0: 2, pitch: 6.6, y: 3.0, width: 5.4, height: 3.1, inset: 4.6, style: 'steel' });
@@ -294,12 +375,13 @@ export const times: RoomDef = {
     k.sky({ top: 0x070914, horizon: 0x1c1a33, ground: 0x0a0a12, fog: 0.007, haze: 0.2, env: 0.5 });
     k.hemi(0xa9b4ff, 0x2a1a2e, 0.55);
     k.sun(0xb9c8ff, 0.5, 0, 60, 10, false);
-    const wet = k.pbr('wet', X.asphalt(0x1c2027), 0.11, { roughness: 0.3, metalness: 0.35 }),
+    /* 2026-11-23: scanned asphalt kept wet (low roughness) and the plaza's concrete pavers, Poly Haven CC0 */
+    const wet = scan(k, 'times', 'asphalt_04', 4, () => X.asphalt(0x1c2027), { roughness: 0.35, metalness: 0.3, color: 0x8a8f99 }),
       facade = k.pbr('facadeT', X.windows(21, 0.3, 0x1c2433, false), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.8, roughness: 0.6, stretch: 0.42 }),
       steel = k.flat(0x2a3038, 0.8, 0.4),
       red = k.pbr('tkts', X.plaster(0xb02a45, 8), 0.5, { roughness: 0.35, metalness: 0.2 }),
       white = k.flat(0xe8e8e2, 0.1, 0.5),
-      pale = k.pbr('plaza', X.concrete(0x5d6068, 9), 0.3, { roughness: 0.7 }),
+      pale = scan(k, 'times', 'concrete_pavers', 1.92, () => X.concrete(0x5d6068, 9), { roughness: 0.8, color: 0x9a9ca4 }),
       neon = [k.glow(0x00e5ff), k.glow(0xff2e63), k.glow(0x7c6bff), k.glow(0xffc857)];
     const L = 80, ZC = 12 - L / 2;
     k.box(30, 0.3, L + 20, 0, -0.15, ZC - 6, wet);
@@ -318,8 +400,8 @@ export const times: RoomDef = {
           if (y + 3.4 > h) break;
           const rot = s > 0 ? -PI / 2 : PI / 2;
           billboard(k, ctx, bb++, 8.6, 5.6, s * 11.9, y, z, rot, steel);
-          k.box(0.12, 6.4, 9.4, s * 11.97, y, z, neon[(j + kk) % 4]);
-          k.box(0.14, 5.9, 9.0, s * 11.96, y, z, k.flat(0x0a0d12, 0.2, 0.6));
+          /* 2026-11-23: the dark backing box stood 1 cm proud of the billboard and hid every one of them; set it behind */
+          k.box(0.05, 6.4, 9.4, s * 11.985, y, z, neon[(j + kk) % 4]);
           k.point(s * 9.5, y, z, [0x53d8ef, 0xff477e, 0x6c68ff, 0xe1b752][(j + kk) % 4], 22, 12);
         }
       }
@@ -354,6 +436,71 @@ export const times: RoomDef = {
     k.prop('hydrant', -7.4, 0, -16, { height: 1.1, keepOut: 0.5 });
     k.prop('hydrant', 7.4, 0, -44, { height: 1.1, keepOut: 0.5 });
     for (const z of [4, -22, -48]) for (const s of [-1, 1]) k.lamp(s * 7, z, 7, steel, 0xf8f4ff, 40);
+    /* ---- THE BIG UPGRADE (2026-11-23) ---- */
+    const TW = ZC - L / 2 - 6.9;   // the tower's face
+    /* traffic: five cabs and two cars crawling the loop, cast by the kit as real taxis with the MLOW topper */
+    {
+      const loop = k.spline([v(-2.6, 0, 16), v(-2.6, 0, -50), v(-1.5, 0, -54), v(1.5, 0, -54), v(2.6, 0, -50), v(2.6, 0, 16), v(1.5, 0, 20), v(-1.5, 0, 20)], true);
+      const fleet: [number, number][] = [[0xf3b81c, 0], [0xf3b81c, 22], [0x1d1f22, 41], [0xf3b81c, 63], [0xf3b81c, 85], [0x8a1c1c, 104], [0xf3b81c, 124]];
+      for (const [paint, off] of fleet) {
+        const car = carBox(k, 0, 0, 0, paint);
+        if (!ctx.reduced) k.rider(car, loop, 2.6, off);
+        else { const len = loop.getLength(); loop.getPointAt((off % len) / len, car.position); }
+      }
+    }
+    /* the zipper: a news ribbon running round the tower, as the Times started it on November 6, 1928 */
+    if (typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined') {
+      const zt = X.signText('NEW YORKERS BY MLOW   +++   THE CENSUS COUNTED EVERY ONE   +++   OPEN AFTER MIDNIGHT   +++   ', 2048, 96, '#050607', '#ffb43a', 64, { align: 'left' });
+      zt.wrapS = T.RepeatWrapping;
+      zt.repeat.x = 0.6;
+      const zm = new T.MeshBasicMaterial({ map: zt });
+      for (const [w, x, z, ry] of [[14.2, 0, TW + 0.12, 0], [10.2, -7.12, ZC - L / 2 - 12, -PI / 2], [10.2, 7.12, ZC - L / 2 - 12, PI / 2]] as [number, number, number, number][]) k.mesh(new T.PlaneGeometry(w, 1.1), zm, x, 11.4, z, true).rotation.y = ry;
+      if (!ctx.reduced) k.ticks.push((_t, dt) => { zt.offset.x = (zt.offset.x + dt * 0.045) % 1; });
+    }
+    k.box(14.6, 1.5, 10.6, 0, 11.4, ZC - L / 2 - 12, steel);
+    /* chase lights round the NEW YORKERS sign on the tower: 96 bulbs, every third lit in turn */
+    {
+      const pts: T.Vector3[] = [];
+      for (let i = 0; i < 32; i++) { const x = -6.4 + (12.8 * i) / 31; pts.push(v(x, 32.4, TW + 0.15), v(x, 23.6, TW + 0.15)); }
+      for (let i = 1; i < 16; i++) { const y = 23.6 + (8.8 * i) / 16; pts.push(v(-6.4, y, TW + 0.15), v(6.4, y, TW + 0.15)); }
+      const bulbs = new T.InstancedMesh(new T.SphereGeometry(0.11, 8, 6), new T.MeshBasicMaterial({ color: 0xffffff }), pts.length);
+      const m = new T.Matrix4(), on = new T.Color(0xfff0c0), off = new T.Color(0x3a2a18);
+      pts.forEach((p, i) => { bulbs.setMatrixAt(i, m.makeTranslation(p.x, p.y, p.z)); bulbs.setColorAt(i, i % 3 ? off : on); });
+      k.add(bulbs);
+      let step = 0;
+      if (!ctx.reduced) k.ticks.push((t) => { const s = Math.floor(t * 6) % 3; if (s === step) return; step = s; for (let i = 0; i < pts.length; i++) bulbs.setColorAt(i, (i + s) % 3 ? off : on); bulbs.instanceColor!.needsUpdate = true; });
+    }
+    /* the trick: a lenticular sign, after the tabula scalata turning pictures. Sixty vertical prism slats carry one
+       message on their left faces and another on their right: walk across the plaza and it turns */
+    {
+      const N = 60, W = 11, H = 3.4, cx = 0, cy = 7.2, z0 = TW + 0.25, w = W / N, d = (w / 2) * Math.tan((38 * PI) / 180);
+      const g = new T.BufferGeometry(), pos: number[] = [], uv: number[] = [];
+      for (let i = 0; i < N; i++) {
+        const x0 = cx - W / 2 + i * w, u0 = i / N, u1 = (i + 1) / N;
+        const L0 = [x0, cy - H / 2, z0], L1 = [x0, cy + H / 2, z0], A0 = [x0 + w / 2, cy - H / 2, z0 + d], A1 = [x0 + w / 2, cy + H / 2, z0 + d], R0 = [x0 + w, cy - H / 2, z0], R1 = [x0 + w, cy + H / 2, z0];
+        pos.push(...L0, ...A0, ...A1, ...L0, ...A1, ...L1);
+        uv.push(u0, 0, u1, 0, u1, 1, u0, 0, u1, 1, u0, 1);
+        pos.push(...A0, ...R0, ...R1, ...A0, ...R1, ...A1);
+        uv.push(u0, 0, u1, 0, u1, 1, u0, 0, u1, 1, u0, 1);
+      }
+      g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+      g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
+      g.computeVertexNormals();
+      for (let i = 0; i < N; i++) { g.addGroup(i * 12, 6, 0); g.addGroup(i * 12 + 6, 6, 1); }
+      const dom = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+      const ta = dom ? new T.MeshBasicMaterial({ map: X.signText('NEW YORKERS', 1024, 316, '#c33064', '#ffffff', 170) }) : k.glow(0xc33064);
+      const tb = dom ? new T.MeshBasicMaterial({ map: X.signText('BY MLOW', 1024, 316, '#2654b9', '#ffffff', 220) }) : k.glow(0x2654b9);
+      k.mesh(g, [ta, tb] as unknown as T.Material, 0, 0, 0, true);
+      k.box(W + 0.4, H + 0.4, 0.3, cx, cy, TW + 0.1, steel);
+      k.egg(v(cx, cy, z0), { id: 'times-lenticular', title: 'The sign that turns', year: '1906', text: 'The red and blue sign over the steps is two signs at once: sixty prism slats show one message to the left of the plaza and another to the right. Corrugated turning pictures, tabula scalata, were popular in England from the sixteenth century, and in 1906 H. C. J. Deeks patented a postcard that did it with fine vertical ridges pressed into photographic paper.', clue: 'Walk from one side of the plaza to the other and watch the sign above the red steps.', source: { name: 'Lenticular printing, Wikipedia', url: 'https://en.wikipedia.org/wiki/Lenticular_printing' } }, { r: 2.2 });
+    }
+    /* the sidewalk: a coffee cart, a newsstand rack and the counted department's barriers (NEW YORKERS edits of CC0 models) */
+    glbs(k, 'times/nyb_coffeecart', { height: 1.9 }, [[-7.6, 0.14, -8, PI / 2]]);
+    glbs(k, 'times/nyb_naked_newsstand', { height: 1.8 }, [[7.9, 0.14, -36, -PI / 2]]);
+    glbs(k, 'times/nyb_barrier', { width: 1.6 }, [[-4.2, 0, -52.5, 0.1], [-2.4, 0, -52.8, -0.05], [4.0, 0, -52.6, 0.08]]);
+    k.keepOut.push({ x: -7.6, z: -8, r: 1.2 }, { x: 7.9, z: -36, r: 0.8 });
+    /* Firefly plate, queued: a lit spectacular high on the first building on the left */
+    fireflyPlate(k, 'assets/museum/tex/times/ff_spectacular.webp', 9.2, 4.2, -11.93, 23.2, 8, PI / 2, new T.MeshBasicMaterial({ visible: false }), true);
     // framed street level light boxes
     const mounts = corridorMounts({ pairs: 10, x: 11.85, z0: 4, pitch: 6.2, y: 3.5, width: 5.6, height: 3.2, inset: 5.6, style: 'neon' });
     mounts.push({ position: v(0, 16, ZC - L / 2 - 6.9), rotation: 0, target: v(0, 3, ZC - L / 2 + 26), width: 13, height: 7.4, style: 'neon', wash: false });
@@ -375,12 +522,12 @@ export const ferry: RoomDef = {
     k.hemi(0xffd9b8, 0x2a3140, 0.7);
     k.sun(0xffb878, 2.4, -80, 12, -20, true, 60);
     const orange = k.pbr('hull', X.steel(0xd4712a, false, 4), 0.35, { metalness: 0.35, roughness: 0.5 }),
-      deck = k.pbr('deck', X.steel(0x5f6a63, true, 5), 0.5, { metalness: 0.3, roughness: 0.75 }),
+      deck = scan(k, 'ferry', 'metal_plate', 0.5, () => X.steel(0x5f6a63, true, 5), { metalness: 0.35, color: 0xb4b8b4 }),   // 2026-11-23: scanned tread plate (Poly Haven CC0)
       white = k.pbr('cabin', X.plaster(0xeeeae0, 6), 0.5, { roughness: 0.6 }),
       rail = k.flat(0xf1eee6, 0.4, 0.5),
       navy = k.flat(0x1a3446, 0.5, 0.5),
       glassDark = k.glass(0x9ec9d8, 0.35, 0.1),
-      teak = k.pbr('teakF', X.planks(0x8a6640, 4, 7), 1.2);
+      teak = scan(k, 'ferry', 'wood_floor_deck', 1.8, () => X.planks(0x8a6640, 4, 7));
     const L = 74, ZC = 8 - L / 2;
     k.water({ y: -3.2, color: 0x2b4558, w: 520, d: 460, z: -120, amp: 1.6 });
     // hull, deck, cabin
@@ -408,7 +555,10 @@ export const ferry: RoomDef = {
       k.box(0.3, 1.0, L, s * 12.85, 0.5, ZC, orange);
       k.rail(s * 12.85, ZC, L, rail, 1.55, 'z', 1.6);
       for (let z = 2; z > ZC - L / 2; z -= 12) k.prop('life_ring', s * 12.85 - s * 0.3, 1.7, z, { height: 0.85, rotY: PI / 2 });
-      for (let z = -6; z > ZC - L / 2 + 8; z -= 16) k.bench(s * 6.4, z, s > 0 ? 0 : PI, teak, navy, 3);
+      /* the real ferry bench (a NEW YORKERS edit of Poly Haven CC0 models) facing the water */
+      const seats: [number, number, number, number][] = [];
+      for (let z = -6; z > ZC - L / 2 + 8; z -= 16) { seats.push([s * 6.6, 0, z, s > 0 ? PI / 2 : -PI / 2]); k.keepOut.push({ x: s * 6.6, z: z - 1.3, r: 0.8 }, { x: s * 6.6, z: z + 1.3, r: 0.8 }); }
+      glbs(k, 'ferry/nyb_ferry_bench', { width: 4.2 }, seats);
       for (let z = 0; z > ZC - L / 2 + 4; z -= 12) k.prop('porthole', s * 4.34, 1.4, z + 0.2, { height: 0.6, rotY: s > 0 ? PI / 2 : -PI / 2 });
       k.point(s * 8.5, 4, -10, 0xffe4c0, 18, 16);
       k.point(s * 8.5, 4, -36, 0xffe4c0, 18, 16);
@@ -431,11 +581,59 @@ export const ferry: RoomDef = {
     k.egg(v(7, 2.3, ZC - L / 2 + 2), { id: 'ferry-vanderbilt', title: 'A sixteen year old\'s ferry', year: '1810', text: 'Cornelius Vanderbilt started a ferry service between Staten Island and Manhattan in 1810, when he was 16.', clue: 'Ring the bell on the bow deck.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.4 });
     k.egg(v(0, 6.6, -5.7), { id: 'ferry-spirit-of-america', title: 'Which boat is this', year: '2006', text: 'The Molinari class boats, the Guy V. Molinari, the Sen. John J. Marchi and the Spirit of America, are 310 feet long and carry up to 4,427 passengers and 30 vehicles, built to recall the classic New York ferryboats. Spirit of America was delivered on September 16, 2005, but did not make its maiden voyage until April 4, 2006. The bigger Barberi class boats carry 6,000.', clue: 'Look up at the wheelhouse windows.', source: { name: 'Staten Island Ferry, Wikipedia', url: 'https://en.wikipedia.org/wiki/Staten_Island_Ferry' } }, { r: 1.8 });
     k.egg(v(0, 11, -22), { id: 'ferry-orange', title: 'Why orange', year: '1926', text: 'The ferries were originally white. In 1926 the colour was changed to a reddish maroon and later to orange, to make the boats easier to see in fog and snow.', clue: 'Look up at the orange funnel.', source: { name: 'The Top 13 Secrets of NYC\'s Staten Island Ferry, Untapped New York', url: 'https://www.untappedcities.com/the-top-13-secrets-of-nycs-staten-island-ferry/' } }, { r: 1.8 });
+    /* ---- THE BIG UPGRADE (2026-11-23) ---- */
+    /* the upper deck overhang: on the real boats the side promenades run under the deck above, white underneath with
+       an orange fascia, carried on stanchions at the rail */
+    for (const s of [-1, 1]) {
+      const x = s * 8.75;
+      k.box(8.3, 0.26, L - 8, x, 4.78, ZC, white);
+      k.box(0.12, 0.62, L - 8, s * 12.86, 4.75, ZC, orange);
+      k.box(0.2, 0.07, L - 2, s * 12.85, 1.6, ZC, teak);   // the scanned teak handrail cap on the rail
+      k.box(0.12, 0.14, L - 8, s * 12.86, 5.12, ZC, rail);
+      for (let z = 6; z > ZC - L / 2 + 4; z -= 6.4) {
+        k.cyl(0.09, 4.4, s * 12.62, 2.42, z, rail, 0.09, 10);
+        k.box(1.2, 0.05, 0.22, x + s * 1.2, 4.64, z - 3.2, k.glow(0xfff2d6));
+      }
+      for (let z = 4; z > ZC - L / 2 + 4; z -= 1.6) k.box(8.2, 0.1, 0.08, x, 4.62, z, k.flat(0xd8d4ca, 0.2, 0.6));
+    }
+    /* a sister boat passes the other way to starboard, and gulls ride the wind over the deck */
+    {
+      const boat = new T.Group();
+      k.add(boat);
+      glbs(k, 'h_ferry', { length: 94 }, [[0, 0, 0, 0]], (os) => { k.scene.remove(os[0]); boat.add(os[0]); });
+      const lane = k.spline([v(85, -3.4, 220), v(82, -3.4, -40), v(85, -3.4, -320), v(260, -3.4, -320), v(260, -3.4, 220)], true);
+      if (!ctx.reduced) k.rider(boat, lane, 7.5, 120); else { boat.position.set(82, -3.4, -60); boat.rotation.y = PI; }
+      glbs(k, 'gull', { width: 1.1 }, [0, 1, 2, 3, 4, 5].map((i) => [i * 3, 11 + i, -20, 0] as [number, number, number, number]), (os) => {
+        if (ctx.reduced) return;
+        k.ticks.push((t) => os.forEach((o, i) => {
+          const a = t * (0.22 + i * 0.03) + i * 1.1, r = 12 + i * 2.2;
+          o.position.set(Math.cos(a) * r, 11 + i * 0.9 + Math.sin(t * 0.7 + i) * 0.8, -20 + Math.sin(a) * r * 1.5);
+          o.rotation.set(0, -a, Math.sin(t * 1.3 + i) * 0.25);
+        }));
+      });
+    }
     // the harbour: Liberty, distant islands, the skyline ahead, buoys
     liberty(k, -64, -3, -120, 1.6, [0, -40]);
     /* the credit her model's licence asks for, on the port rail beside the Liberty egg */
     k.sign(LIBERTY_CREDIT, 3.4, 0.42, -12.2, 1.25, -36, '#1a3446', '#fff3d5', 46, PI / 2);
     for (const [x, z] of [[-40, -60], [50, -90], [30, -40]]) k.prop('buoy', x, -2.9, z, { height: 2.4 });
+    /* the trick: Liberty in a ring. A brass ring on a post by the port rail, sized and placed from one spot on the deck
+       so that from the brass mark the whole figure, 93 m off, stands exactly inside a hoop a hand across */
+    {
+      const E = v(-10.4, 3, -42), L0 = v(-64, 9.8, -120), L1 = v(-64, 29.6, -120), mid = L0.clone().add(L1).multiplyScalar(0.5);
+      const dir = mid.clone().sub(E), dist = dir.length(), at = 2.4, c = E.clone().addScaledVector(dir.normalize(), at);
+      const r = ((L1.y - L0.y) / 2 / dist) * at * 1.08, brass = k.flat(0xc59a4a, 0.9, 0.28);
+      const ring = k.mesh(new T.TorusGeometry(r, 0.022, 8, 40), brass, c.x, c.y, c.z, true);
+      ring.lookAt(E);
+      k.cyl(0.03, c.y - r, c.x, (c.y - r) / 2, c.z, brass);
+      k.keepOut.push({ x: c.x, z: c.z, r: 0.35 });
+      k.cyl(0.3, 0.03, E.x, 0.015, E.z, brass, 0.3, 24);
+      k.sign('STAND HERE', 0.6, 0.12, E.x + 0.4, 0.035, E.z, 'transparent', '#f3e0b0', 90, -PI / 2);
+      k.egg(c, { id: 'ferry-liberty-ring', title: 'A statue in a hoop', year: '1886', text: 'From the brass mark the whole figure stands inside a ring no wider than a hand, because at this distance she covers less of your view than the ring does. The copper statue is 151 feet 1 inch tall, and from the ground to the tip of the torch, pedestal and all, the monument rises 305 feet 1 inch. She was dedicated on October 28, 1886.', clue: 'Find the brass mark near the port rail and look through the ring.', source: { name: 'Statue of Liberty, Wikipedia', url: 'https://en.wikipedia.org/wiki/Statue_of_Liberty' } }, { r: 1.4 });
+    }
+    /* Firefly plate, queued: a painted sunset harbour, Lower Manhattan from the water, behind the code skyline */
+    fireflyPlate(k, 'assets/museum/tex/ferry/ff_harbor_backdrop.webp', 700, 170, 0, 60, -300, 0, new T.MeshBasicMaterial({ visible: false }), true);
+
     k.box(60, 6, 30, -64, -3, -125, k.pbr('island', X.ashlar(0x6f7566, 4, 3), 0.1));
     k.skyline({ z: -190, count: 36, spacing: 6.5, scale: 2.6, base: -3, seed: 15, lit: 0.3, glow: 0.9, tint: 0x4a4f5c });
     k.skyline({ z: -240, count: 30, spacing: 9, scale: 3.4, base: -3, seed: 16, lit: 0.2, glow: 0.6, tint: 0x5b5f6b, rows: 1 });

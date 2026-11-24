@@ -17,9 +17,38 @@ import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
+import { skin, totem } from './i';
+import { glbs, anamorph, fireflyPlate } from './a';
+import { hero, heroInstances } from './heroes';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const ONE = new T.Vector3(1, 1, 1);
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+
+/* THE BIG UPGRADE wave 2d (2026-11-23): lettering painted on uneven ground so that from one eye it stands up as an
+   upright sign. The picture is `W` by `H` metres, its foot `d` metres along `dir` at height `base`; every vertex of a
+   grid over it is carried along its ray from the eye until the ray meets `ground`. */
+function groundAnamorph(k: K, text: string, eye: T.Vector3, dir: T.Vector3, d: number, W: number, H: number, base: number, ground: (x: number, z: number) => number, fg: string, size: number) {
+  const cols = 16, rows = 24, pos: number[] = [], uv: number[] = [], idx: number[] = [];
+  const f = dir.clone().setY(0).normalize(), r = new T.Vector3(-f.z, 0, f.x), p = new T.Vector3(), q = new T.Vector3();
+  for (let j = 0; j <= rows; j++) for (let i = 0; i <= cols; i++) {
+    const u = i / cols, vv = j / rows;
+    p.copy(eye).addScaledVector(f, d).addScaledVector(r, (u - 0.5) * W).setY(base + vv * H);
+    const ray = p.clone().sub(eye);
+    let lo = 0.5, hi = 0.5;
+    for (let t = 0.5; t < 40; t += 0.05) { q.copy(eye).addScaledVector(ray, t); if (q.y <= ground(q.x, q.z) + 0.03) { hi = t; break; } lo = t; hi = t; }
+    for (let b = 0; b < 12; b++) { const m = (lo + hi) / 2; q.copy(eye).addScaledVector(ray, m); if (q.y <= ground(q.x, q.z) + 0.03) hi = m; else lo = m; }
+    q.copy(eye).addScaledVector(ray, hi);
+    pos.push(q.x, ground(q.x, q.z) + 0.03, q.z); uv.push(u, vv);
+  }
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { const a = j * (cols + 1) + i; idx.push(a, a + 1, a + cols + 1, a + 1, a + cols + 2, a + cols + 1); }
+  const g = new T.BufferGeometry();
+  g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  if (!HAS_DOM) return k.mesh(g, k.glow(0xffffff, 0.5), 0, 0, 0, true);
+  const t = X.signText(text, 1024, Math.max(64, Math.round((1024 * H) / W)), 'transparent', fg, size);
+  const m = new T.MeshBasicMaterial({ map: t, transparent: true, opacity: 0.92, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, side: T.DoubleSide });
+  return k.mesh(g, m, 0, 0, 0, true);
+}
 
 function figure(k: K, x: number, y: number, z: number, coat: number, p: { h?: number; rotY?: number; skin?: number } = {}) {
   const { h = 1, rotY = 0, skin = 0xc8a284 } = p;
@@ -78,20 +107,39 @@ export const littleisland2: RoomDef = {
     k.sky({ top: 0x5d85c0, horizon: 0xecc199, ground: 0x4a5040, fog: 0.0014, sun: { az: 4.75, el: 0.2, color: 0xffc38a, size: 18 }, haze: 0.25, env: 0.95 });
     k.hemi(0xffe4c8, 0x6a6458, 0.85);
     k.sun(0xffd2a4, 2.5, -80, 34, 0, true, 110);
-    const conc = k.pbr('liConc', X.concrete(0xbdbab1, 24), 0.22, { roughness: 0.82 }),
-      lawn = k.pbr('liLawn', X.grass(0x4a7a38, 25), 0.16),
-      gravel = k.pbr('liPath', X.pavers(0xa6a094, 26), 0.75),
-      timber = k.pbr('liTimber', X.planks(0x8a6a48, 4, 66), 0.9),
-      deck = k.pbr('liDeck', X.planks(0x6f5336, 6, 67), 1.1),
+    /* THE BIG UPGRADE 2026-11-23 (wave 2d): scanned precast concrete for the tulips, a real lawn, concrete paver paths,
+       oak tiers in the Amph and weathered bridge decks (Poly Haven, CC0); the tulip tops that showed through the lawn as
+       black holes sunk below it; shrubs and grasses along the paths, park benches and lamps as models, gulls as models;
+       wayfinding at the bridges; a map board queued for Firefly; and THE AMPH painted on the stage so that from the top
+       tier it stands upright over the river (the trick). */
+    const conc = skin(k, 'littleisland', 'conc', 2.4, { color: 0xeae6de, roughness: 0.85 }),
+      lawn = skin(k, 'littleisland', 'lawn', 2.0, { color: 0xb4d498 }),
+      gravel = skin(k, 'littleisland', 'path', 1.6, { color: 0xdcd6cc }),
+      timber = skin(k, 'littleisland', 'timber', 1.4, { color: 0xdcc0a0 }),
+      deck = skin(k, 'littleisland', 'deck', 1.3, { color: 0xc8b8a4 }),
       glass = k.glass(0xdcecf6, 0.12, 0.04),
       steel = k.flat(0x9aa4ae, 0.85, 0.3),
       iron = k.flat(0x1f242a, 0.7, 0.45);
     /* the ground: a heightfield clipped to an ellipse, the same one the piles carry */
-    const field = (x: number, z: number) => 4 + 5 * Math.exp(-((x + 18) ** 2 + (z + 22) ** 2) / 500) + 7 * Math.exp(-((x - 20) ** 2 + (z + 40) ** 2) / 700) + 2.5 * Math.sin(x * 0.12) * Math.cos(z * 0.1) - 4 * Math.exp(-((x - 6) ** 2 + (z + 46) ** 2) / 260);
+    const field0 = (x: number, z: number) => 4 + 5 * Math.exp(-((x + 18) ** 2 + (z + 22) ** 2) / 500) + 7 * Math.exp(-((x - 20) ** 2 + (z + 40) ** 2) / 700) + 2.5 * Math.sin(x * 0.12) * Math.cos(z * 0.1) - 4 * Math.exp(-((x - 6) ** 2 + (z + 46) ** 2) / 260);
+    /* 2026-11-23: the Amph's stage and its lower tiers sat three metres under the lawn, so nobody ever saw them. The
+       ground is now carved down to the tiers inside the bowl (stepped under each ring) and to the stage in the middle;
+       everything that stands on the ground, the visitor included, follows the carved ground. */
+    const AX = 6, AZ = -46, AY = field0(AX, AZ);
+    const field = (x: number, z: number) => {
+      const f = field0(x, z), dx = x - AX, dz = z - AZ, r = Math.hypot(dx, dz);
+      if (r > 27) return f;
+      const ph = Math.abs(Math.atan2(dx, dz));
+      if (r < 6.6) return ph < 0.6 * PI ? Math.min(f, AY - 3.36) : f;
+      /* a wedge in front of the stage, blended into the lawn at its sides and around the overlook, which keeps its hill */
+      const w = 1 - (1 - Math.max(0, Math.min(1, (ph - 0.3 * PI) / (0.08 * PI)))) * Math.max(0, Math.min(1, (Math.hypot(x - 18, z + 38) - 7) / 3));
+      if (w >= 1) return f;
+      return Math.min(f, (AY - 3.47 + Math.min(10, Math.floor((r - 6) / 2)) * 0.7) * (1 - w) + f * w);
+    };
     const inside = (x: number, z: number) => (x / 46) ** 2 + ((z + 35) / 38) ** 2;
     /* the river, the esplanade, the city behind */
     k.water({ y: -0.6, color: 0x2e4e62, w: 520, d: 420, z: -70, amp: 1.1 });
-    k.box(170, 1.0, 22, 0, 0.4, 25, k.pbr('liEsp', X.pavers(0x8e8b84, 27), 0.4));
+    k.box(170, 1.0, 22, 0, 0.4, 25, skin(k, 'littleisland', 'esp', 2.6, { color: 0xcac6be }));
     k.rail(0, 14.2, 170, iron, 1.1, 'x', 1.8);
     street(k, { w: 20, len: 170, z: 46, x: 0 });
     blockFront(k, { x: 32, z0: 104, count: 8, face: -1, seed: 71, h: [18, 34] });
@@ -102,7 +150,8 @@ export const littleisland2: RoomDef = {
       const pots: T.Matrix4[] = [], rnd = X.mulberry(132);
       for (let x = -42; x <= 42 && pots.length < 132; x += 6.2) for (let z = -68; z <= -2 && pots.length < 132; z += 6.2) {
         if (inside(x, z) > 1.02) continue;
-        const h = field(x, z) - 0.9;
+        /* sunk a little further than before: on a slope the flat flare stood proud of the lawn and read as a black hole */
+        const h = field(x, z) - 1.7;
         pots.push(new T.Matrix4().compose(v(x, h, z), new T.Quaternion(), v(1, (h + 3) / 2, 1)));
       }
       /* the rim of the park is the rim of a ring of pots, which is what you see from the water */
@@ -123,7 +172,6 @@ export const littleisland2: RoomDef = {
       grid(k, 1, SG, (r, c) => { const p = rim(c); return v(p.x, r ? field(p.x, p.z) - 1.1 : field(p.x, p.z), p.z); }, conc);
     }
     /* the Amph: timber tiers facing the water, a stage, and somebody on it */
-    const AX = 6, AZ = -46, AY = field(AX, AZ);
     for (let i = 0; i < 10; i++) { const r = 6 + i * 2; const ring = k.mesh(new T.RingGeometry(r, r + 1.7, 40, 1, PI * 1.08, PI * 0.84), timber, AX, AY - 3.4 + i * 0.7, AZ); ring.rotation.x = -PI / 2; }
     k.mesh(new T.CylinderGeometry(6, 6, 0.4, 32), deck, AX, AY - 3.5, AZ);
     k.box(15, 6.4, 0.6, AX, AY - 0.4, AZ - 6.6, conc);
@@ -203,10 +251,49 @@ export const littleisland2: RoomDef = {
       const gulls = k.instances(bodyG, k.flat(0xdde2e6, 0, 0.85), Array.from({ length: NG }, () => new T.Matrix4()));
       gulls.frustumCulled = false;
       const st = Array.from({ length: NG }, () => ({ a: rnd() * PI * 2, r: 40 + rnd() * 50, y: 14 + rnd() * 16, w: 0.6 + rnd() * 0.6 }));
+      /* the gulls become the gull model (instanced) once it loads; the cones stay if it does not */
+      let gullIns: ReturnType<typeof heroInstances> | null = null;
+      void hero(k, 'littleisland/gull', { width: 1.0 }).then((h) => { if (!h || !k.live) return; gullIns = heroInstances(k, h, NG); gulls.visible = false; });
       k.ticks.push((t) => {
-        st.forEach((b, i) => { const a = b.a + t * 0.2 * b.w; p.set(Math.cos(a) * b.r, b.y + Math.sin(t * 0.7 + i) * 1.6, -35 + Math.sin(a) * b.r * 0.8); q.setFromAxisAngle(up, -a + PI / 2); m.compose(p, q, ONE); gulls.setMatrixAt(i, m); });
+        st.forEach((b, i) => { const a = b.a + t * 0.2 * b.w; p.set(Math.cos(a) * b.r, b.y + Math.sin(t * 0.7 + i) * 1.6, -35 + Math.sin(a) * b.r * 0.8); q.setFromAxisAngle(up, -a + PI / 2); m.compose(p, q, ONE); gulls.setMatrixAt(i, m); gullIns?.setAt(i, m); });
         gulls.instanceMatrix.needsUpdate = true;
+        gullIns?.commit();
       });
+    }
+    /* shrubs and grasses on the far side of every path from its glass panels, benches and lamps (models, CC0) */
+    {
+      const rnd = X.mulberry(55), sh: [number, number, number, number][][] = [[], [], [], []], gr: [number, number, number, number][] = [], benches: [number, number, number, number][] = [];
+      for (const [x0, z0, x1, z1] of legs) {
+        const ang = Math.atan2(x1 - x0, z1 - z0), px = Math.cos(ang), pz = -Math.sin(ang);
+        for (let i = 0; i < 7; i++) {
+          const t = (i + 0.5) / 7, x = x0 + (x1 - x0) * t, z = z0 + (z1 - z0) * t, o = 2.4 + rnd() * 1.6, gx = x - px * o, gz = z - pz * o;
+          if (inside(gx, gz) > 0.85 || Math.hypot(gx - AX, gz - AZ) < 14 || Math.hypot(gx - OX, gz - OZ) < 7) continue;
+          sh[i % 4].push([gx, field(gx, gz) - 0.1, gz, rnd() * 6]);
+          const hx = x - px * (o + 1.4), hz = z - pz * (o + 1.4);
+          if (inside(hx, hz) < 0.85) gr.push([hx, field(hx, hz) - 0.05, hz, rnd() * 6]);
+        }
+        const bx = (x0 + x1) / 2 - px * 2.0, bz = (z0 + z1) / 2 - pz * 2.0;
+        if (inside(bx, bz) < 0.85) { benches.push([bx, field(bx, bz) - 0.05, bz, ang + PI / 2]); k.keepOut.push({ x: bx, z: bz, r: 0.9 }); }
+      }
+      sh.forEach((list, i) => glbs(k, 'littleisland/shrub_0' + (i + 1), { height: 1.3 }, list));
+      glbs(k, 'littleisland/grass', { height: 0.8 }, gr);
+      glbs(k, 'littleisland/bench', { width: 1.9 }, benches);
+      glbs(k, 'littleisland/street_lamp', { height: 4.2 }, [-60, -40, -20, 20, 40, 60].map((x) => [x, 0.9, 15.6, PI] as [number, number, number, number]));
+    }
+    totem(k, ['LITTLE ISLAND', 'PIER 55', 'HUDSON RIVER PARK'], -18.6, 15, 0, 0.9);
+    totem(k, ['THE AMPH', 'THE OVERLOOK', 'LITTLE ISLAND'], 15.6, 15, 0, 0.9);
+    k.box(0.1, 3.6, 0.1, 22, 2.7, 35.4, k.flat(0x22262a, 0.6, 0.5));
+    k.sign('W 13 ST', 1.6, 0.36, 22, 4.2, 35.4, '#1f6a3a', '#ffffff', 96, 0, { border: true, double: true });
+    k.sign('HUDSON RIVER PARK', 2.6, 0.36, 22, 3.75, 35.4, '#1f6a3a', '#ffffff', 72, PI / 2, { border: true, double: true });
+    /* a painted map of the island at the bridge foot (Firefly plate, queued); a dark board until it lands */
+    k.box(3.2, 2.2, 0.12, -24, 2.3, 14.6, iron); k.box(0.12, 1.2, 0.12, -25.4, 1.5, 14.6, iron); k.box(0.12, 1.2, 0.12, -22.6, 1.5, 14.6, iron);
+    fireflyPlate(k, 'assets/museum/tex/littleisland/ff_map_board.webp', 3.0, 2.0, -24, 2.3, 14.53, PI, k.flat(0x24302a, 0, 0.8));
+    k.keepOut.push({ x: -24, z: 14.6, r: 1.6 });
+    /* THE TRICK: THE AMPH painted on the stage, foreshortened so that from the top tier it stands up over the river */
+    {
+      const stageY = AY - 3.3, ex = AX, ez = AZ + 20, eye = v(ex, field(ex, ez) - 0.15 + 3, ez);
+      groundAnamorph(k, 'THE AMPH', eye, v(0, 0, -1), Math.max(1, ez - (AZ + 5)), 4.2, 3.0, stageY, () => stageY, '#f4ede0', 220);
+      k.egg(v(ex, eye.y - 1.6, ez - 1.5), { id: 'amph-painted', title: 'A sign on the stage', text: 'From up here the words on the stage stand upright, like a banner over the water. They are painted flat across the boards and stretched toward the river, so from the stage itself they are smears. Street painters call it anamorphosis; it only works from one seat.', clue: 'Climb to the top of the Amph and look down at the stage.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
     }
     /* The works: glass panels beside the paths. A panel offset to the side of a path
        has to face back at it, which is rotY = ang - PI/2, not ang + PI/2. */
@@ -258,17 +345,23 @@ export const highline2: RoomDef = {
     k.sky({ top: 0x7fa2cf, horizon: 0xf1d3ad, ground: 0x5b5347, fog: 0.0026, sun: { az: 4.7, el: 0.24, color: 0xffd9a0, size: 18 }, haze: 0.28, env: 0.9 });
     k.hemi(0xffe6c8, 0x6a6458, 0.8);
     k.sun(0xffd7a3, 2.5, -50, 30, 0, true, 70);
-    const plank = k.pbr('hlPlank', X.concrete(0xb5b2a6, 3), 0.4, { roughness: 0.8 }),
-      gravel = k.pbr('hlBallast', X.cobble(0x6a655c, 4), 1.0),
+    /* THE BIG UPGRADE 2026-11-23 (wave 2d): wave 1 upgraded the High Line in c.ts, which is not the live room. Ported
+       here: the scanned concrete planks, ballast, rusted rail, ipe and brick (Poly Haven, CC0, assets/museum/tex/highline);
+       the planting as models (Poly Haven shrubs and grass clumps) in place of the sphere mounds, and the blades made thin;
+       double cornices; the painted wall ad on the sixth building on the left (a Firefly plate, queued); the cross street
+       signs; and the trick, rebuilt for this room's end: through the window over the avenue the rail bed runs on north
+       for blocks, a forced perspective set thirty metres deep that only reads from the top of the steps. */
+    const plank = skin(k, 'highline', 'plank', 1.4, { color: 0xf4efe6, roughness: 0.85, mean: 0.14 }),
+      gravel = skin(k, 'highline', 'ballast', 1.6, { color: 0xb8b0a4, mean: 0.36 }),
       soil = k.flat(0x3d3128, 0, 1),
       grassA = k.flat(0x8a9a5a, 0, 0.95, { side: T.DoubleSide }),
       grassB = k.flat(0x5d7a44, 0, 0.95, { side: T.DoubleSide }),
       grassC = k.flat(0xb9a86a, 0, 0.95, { side: T.DoubleSide }),
       iron = k.flat(0x35302c, 0.6, 0.6),
-      rust = k.pbr('hlRail', X.steel(0x6a4a3a, false, 8), 0.6, { metalness: 0.5, roughness: 0.7 }),
-      ipe = k.pbr('hlIpe', X.planks(0x6b4a30, 5, 5), 1.4, { roughness: 0.55 }),
-      brick = k.pbr('hlBrick', X.brick(0x6b4a3d, 7), 0.28),
-      brick2 = k.pbr('hlBrick2', X.brick(0x4c4650, 8), 0.28),
+      rust = skin(k, 'highline', 'rust', 0.8, { metalness: 0.4, mean: 0.3 }),
+      ipe = skin(k, 'highline', 'ipe', 1.6, { color: 0xe8b890, roughness: 1.0, mean: 0.12 }),
+      brick = skin(k, 'highline', 'brick', 2.4, { color: 0xe0b8a8, mean: 0.07 }),
+      brick2 = skin(k, 'highline', 'brick', 2.4, { color: 0x9a8c94, mean: 0.07 }),
       glassT = k.pbr('hlTower', X.windows(31, 0.22, 0x5c7686, false), 0.11, { emissive: 0xffffff, emissiveIntensity: 0.5, roughness: 0.3, metalness: 0.4, stretch: 0.42 }),
       asphalt = k.pbr('hlStreet', X.asphalt(0x2a2d31), 0.11),
       dark = k.flat(0x14171c, 0.3, 0.7);
@@ -317,7 +410,7 @@ export const highline2: RoomDef = {
     {
       const rnd = X.mulberry(21);
       const mats = [grassA, grassB, grassC];
-      const geos = [new T.PlaneGeometry(0.09, 1.3).translate(0, 0.65, 0), new T.PlaneGeometry(0.15, 0.95).translate(0, 0.48, 0), new T.PlaneGeometry(0.07, 1.6).translate(0, 0.8, 0)];
+      const geos = [new T.PlaneGeometry(0.04, 1.3).translate(0, 0.65, 0), new T.PlaneGeometry(0.06, 0.95).translate(0, 0.48, 0), new T.PlaneGeometry(0.03, 1.6).translate(0, 0.8, 0)];
       const groups = mats.map((mm, gi) => {
         const n = 900;
         const o = k.instances(geos[gi], mm, Array.from({ length: n }, () => new T.Matrix4()));
@@ -339,11 +432,16 @@ export const highline2: RoomDef = {
       };
       place(0);
       if (!ctx.reduced) k.ticks.push(place);
+      /* the beds: Poly Haven shrubs and grass clumps (CC0) where the sphere mounds were */
+      const shrubs: [number, number, number, number][][] = [[], [], [], []], clumps: [number, number, number, number][] = [];
       for (const s of [-1, 1]) for (let z = Z0 - 3; z > Z1 + 4; z -= 7.5) {
         k.box(5.4, 0.25, 6, s * 8.6, 0.1, z, soil);
-        for (let j = 0; j < 3; j++) k.sphere(0.35 + rnd() * 0.3, s * (6.6 + rnd() * 3.4), 0.45, z - 2.4 + rnd() * 4.8, j % 2 ? grassB : k.flat(0x9a8a58, 0, 1), 7);
+        for (let j = 0; j < 3; j++) shrubs[(((j + Math.round(-z)) % 4) + 4) % 4].push([s * (6.6 + rnd() * 3.4), 0.22, z - 2.4 + rnd() * 4.8, rnd() * 6]);
+        clumps.push([s * (6.2 + rnd() * 0.6), 0.1, z + 1.8, rnd() * 6], [s * (9.4 + rnd() * 1.4), 0.22, z - 1.0, rnd() * 6]);
         if (rnd() > 0.45) k.tree(s * 9.0, 0.1, z - 3, { kind: 'column', h: 4.6, r: 1.3, leaf: 0x6f9a52, seed: Math.round(z) + s });
       }
+      shrubs.forEach((list, i) => glbs(k, 'highline/shrub_0' + (i + 1), { height: 1.2 }, list));
+      glbs(k, 'highline/grass', { height: 0.9 }, clumps);
     }
     /* the peel up benches and the sundeck chairs */
     for (const s of [-1, 1]) for (const z of [-3, -27, -49]) {
@@ -368,6 +466,9 @@ export const highline2: RoomDef = {
       if (b % 4 === 3) { k.box(8, h + 13, 8.2, s * 16, (h + 13) / 2 - 9, z, glassT); continue; }
       k.box(8, h + 9, 8.2, s * 16, (h + 9) / 2 - 9, z, mtl);
       k.box(8.3, 0.4, 8.5, s * 16, h, z, k.flat(0x8f857a, 0, 0.8));
+      k.box(8.5, 0.25, 8.7, s * 16, h - 0.6, z, k.flat(0x8f857a, 0, 0.8));
+      /* the painted wall ad on the sixth building on the left (Firefly plate queued; the placeholder is in place) */
+      if (s < 0 && b === 5) { const ad = k.mesh(new T.PlaneGeometry(8.0, 9.6), k.image('assets/museum/tex/highline/mural.webp', { opaque: true, roughness: 0.9 }), -11.94, 11.2, z, true); ad.rotation.y = PI / 2; if (b % 2 === 0) k.prop('water_tower', s * 15.5, h, z, { height: 5 }); k.block(-20, -11.9, z - 4.2, z + 4.2); continue; }
       for (let y = 6; y < h - 1; y += 3) for (const dz of [-2.8, 0, 2.8]) {
         k.box(0.1, 1.9, 1.3, s * 11.98, y, z + dz, k.flat(0xd6d1c3, 0, 0.8));
         k.box(0.05, 1.6, 1.05, s * 11.93, y, z + dz, (b + y) % 3 === 0 ? k.glow(0xffe0b0) : k.glass(0x8fb0c0, 0.4, 0.1));
@@ -392,6 +493,32 @@ export const highline2: RoomDef = {
     k.sign('THE HIGH LINE', 6.4, 0.72, 0, 3.0, SQ - 8.72, 'transparent', '#f2f2de', 96, PI);
     k.block(-13, 13, Z1 - 2, SQ - 8.0);
     for (const s of [-1, 1]) k.block(s > 0 ? 6.5 : -13, s > 0 ? 13 : -6.5, SQ - 8, SQ + 4);
+    /* the cross street signs on posts, as the park marks its blocks */
+    ['GANSEVOORT ST', 'W 14 ST', 'W 16 ST', 'W 18 ST', 'W 20 ST'].forEach((t, i) => { const z = 8 - i * 13, sd = i % 2 ? 1 : -1; k.box(0.08, 2.4, 0.08, sd * 5.45, 1.2, z, iron); k.sign(t, 1.7, 0.34, sd * 5.45, 2.35, z, '#2b2f2c', '#ffffff', 72, sd > 0 ? -PI / 2 : PI / 2, { double: true }); });
+    /* THE TRICK, ported from wave 1 and rebuilt for this end: from the top of the Tenth Avenue steps, through the window,
+       the rail bed seems to run on north for blocks. Each block was built at full size and then pulled toward the eye
+       and shrunk about it, so the whole set is about thirty metres deep and only reads from that spot. */
+    {
+      const fe = v(0, 3, SQ + 3.6), real0 = 14, realN = 420, fake0 = 14, fakeN = 44;
+      const fake = (d: number) => fake0 + (fakeN - fake0) * (1 - real0 / d) / (1 - real0 / realN);
+      const winTex = HAS_DOM ? X.windows(41, 0.25, 0x4c4650, true).map : null;
+      const towerM = new T.MeshStandardMaterial({ map: winTex, color: 0xbfb4aa, roughness: 0.8, emissive: 0xffd9a8, emissiveMap: winTex, emissiveIntensity: 0.35 });
+      const bed = k.flat(0x6a6258, 0, 1), green2 = k.flat(0x6f7f48, 0, 1), green3 = k.flat(0x9a9058, 0, 1), steelR = k.flat(0x4a3a30, 0.5, 0.6), girder = k.flat(0x2f3a3a, 0.6, 0.5);
+      const frnd = X.mulberry(77);
+      const put = (w: number, h: number, dd: number, x: number, y: number, dist: number, m: T.Material) => {
+        const kk = fake(dist) / dist, cx = fe.x + (x - fe.x) * kk, cy = fe.y + (y - fe.y) * kk, cz = fe.z - dist * kk;
+        return k.mesh(new T.BoxGeometry(w * kk, h * kk, dd * kk), m, cx, cy, cz, true);
+      };
+      for (let dist = real0; dist < realN; dist += 10) {
+        put(12, 0.3, 10, 0, -0.15, dist + 5, bed);
+        put(24, 1.6, 10, 0, -1.1, dist + 5, girder);
+        if ((dist / 10) % 2 === 0) for (const x of [-9, 9]) put(1, 8, 1, x, -5.9, dist + 5, girder);
+        for (const x of [-0.75, 0.75]) put(0.12, 0.16, 10, x, 0.08, dist + 5, steelR);
+        for (let j = 0; j < 6; j++) put(0.6 + frnd() * 1.2, 0.25 + frnd() * 0.6, 0.8 + frnd(), (frnd() > 0.5 ? 1 : -1) * (1.8 + frnd() * 3.8), 0.15, dist + frnd() * 10, j % 2 ? green2 : green3);
+        if ((dist / 10) % 2 === 0) for (const sd of [-1, 1]) { const hgt = 10 + frnd() * 26; put(9, hgt + 9, 14, sd * 15.5, hgt / 2 - 4.5, dist + 7, towerM); }
+      }
+      k.egg(v(0, 1.6, SQ - 2), { id: 'highline-forever', title: 'A line that goes on forever', text: 'Through the window the old rail bed seems to run north for blocks, grasses between the rails and towers either side. It is about thirty metres of set. Each block of it was built at full size and then drawn in toward your eye and shrunk, the way film sets fake a long street on a short lot, so it only works from the top of the steps. The real line runs 1.45 miles, from Gansevoort Street to 34th Street.', clue: 'Stand at the top of the steps and look through the window.', source: { name: 'High Line, Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Line' } }, { r: 3 });
+    }
     /* people, strolling both ways all afternoon */
     if (!ctx.reduced) {
       k.crowd([v(0, 0, Z0 - 1), v(1.6, 0, -14), v(-1.4, 0, -34), v(0, 0, SQ + 3)], 22, { seed: 12, speed: 0.55, spread: 2.6, colors: [0xe83a5a, 0x3a8ae8, 0xf0d24a, 0x2a2a34, 0xe8e2d4, 0x8a4ad8, 0xff8c3b, 0x2a8a4a] });

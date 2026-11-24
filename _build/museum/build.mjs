@@ -16,6 +16,9 @@ const opts = {
   outfile: out,
   logLevel: 'info',
   legalComments: 'none',
+  /* DRACOLoader builds its default decoder URLs from import.meta.url at load time; an iife has none, so give it a
+     placeholder (the kit sets the real decoder path, assets/museum/draco/) */
+  define: { 'import.meta.url': '"https://n3wyorkers.com/assets/museum/"' },
 };
 if (watch) {
   const { context } = await import('esbuild');

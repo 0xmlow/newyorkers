@@ -21,12 +21,15 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { LOOK, gradePass } from './look';
 
 export class Fx {
   private composer: EffectComposer;
   private renderPass: RenderPass;
   private gtao: GTAOPass;
   private bloom: UnrealBloomPass | null = null;
+  private grade: ShaderPass | null = null;
 
   constructor(renderer: T.WebGLRenderer, scene: T.Scene, camera: T.PerspectiveCamera, w: number, h: number, debug = '') {
     this.composer = new EffectComposer(renderer);
@@ -78,6 +81,8 @@ export class Fx {
     /* Last, and it is what applies the renderer's tone mapping and colour space
        once the chain has finished working in linear light. */
     this.composer.addPass(new OutputPass());
+    /* THE LOOK: the grade works in display space, after tone mapping */
+    if (LOOK.grade) { this.grade = gradePass(); this.grade.uniforms.uRes.value.set(w, h); this.composer.addPass(this.grade); }
   }
 
   /* The scene is rebuilt for every room, so both passes that hold a reference
@@ -88,6 +93,7 @@ export class Fx {
     if (!this.bloom) return;
     this.bloom.strength = 0.28 * (1 - 0.8 * n);
     this.bloom.radius = 0.5 - 0.25 * n;
+    if (this.grade) this.grade.uniforms.uNight.value = n;
   }
   setScene(scene: T.Scene, camera: T.PerspectiveCamera) {
     this.renderPass.scene = scene;
@@ -106,9 +112,11 @@ export class Fx {
     this.composer.setSize(w, h);
     this.gtao.setSize(w, h);
     this.bloom?.setSize(w, h);
+    this.grade?.uniforms.uRes.value.set(w, h);
   }
 
   render() {
+    if (this.grade) this.grade.uniforms.uTime.value = performance.now() / 1000;
     this.composer.render();
   }
 

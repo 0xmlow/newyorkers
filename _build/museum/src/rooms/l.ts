@@ -2,12 +2,121 @@
 import * as T from 'three';
 import * as X from '../textures';
 import { v } from '../kit';
-import type { Mount } from '../kit';
+import type { Kit, Mount } from '../kit';
 import type { RoomDef } from './types';
 import { street, blockFront } from './f';
 import { hero } from './heroes';
+import { glbs, anamorph } from './a';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 3c (2026-11-24): helpers for rooms 52, 53, 55 and 56 ----------
+   Poly Haven scans (CC0) that wear a sensible colour until their maps land, boards painted in the house fonts,
+   and Firefly plates that appear when their file does. Safe in node: the audits build rooms with no DOM. */
+const HAS_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const scans = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+/* A scan from assets/museum/tex/<room>/<id>_{c,n,r}.webp, world UVs at true size (`metres` is one tile of the photo).
+   Until all three maps arrive the surface wears `wait`, about the colour the scan reads as. */
+function scan(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w3c-${room}-${id}`, paint(), 1 / metres, p);
+  let e = scans.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    const s: X.Surface = { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) };
+    e = { s, ready: Promise.all(waits) };
+    scans.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w3c-${room}-${id}`, e.s, 1 / metres, p);
+  if (!m.userData.w3c) {
+    m.userData.w3c = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+const FONTS = ['900 40px "Archivo"', '800 40px "Archivo Expanded"', '700 40px "JetBrains Mono"', '400 40px "Permanent Marker"'];
+/* A painted board: `draw` gets a canvas sized to the board and runs again once the house fonts have loaded. */
+function board(k: Kit, w: number, h: number, x: number, y: number, z: number, rotY: number, draw: (g: CanvasRenderingContext2D, W: number, H: number) => void, o: { px?: number; lit?: boolean; double?: boolean } = {}) {
+  const W = o.px ?? 1024, H = Math.max(32, Math.round((W * h) / w));
+  let m: T.Material;
+  if (!HAS_DOM) m = k.flat(0x777777);
+  else {
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const g = c.getContext('2d')!;
+    const t = new T.CanvasTexture(c);
+    t.colorSpace = T.SRGBColorSpace;
+    t.anisotropy = 8;
+    const paint = () => { g.clearRect(0, 0, W, H); g.textAlign = 'center'; g.textBaseline = 'middle'; draw(g, W, H); t.needsUpdate = true; };
+    paint();
+    if (document.fonts) void Promise.all(FONTS.map((f) => document.fonts.load(f))).then(paint).catch(() => undefined);
+    const side = o.double ? T.DoubleSide : T.FrontSide;
+    m = o.lit ? new T.MeshBasicMaterial({ map: t, side }) : new T.MeshStandardMaterial({ map: t, roughness: 0.75, side });
+  }
+  const p = k.mesh(new T.PlaneGeometry(w, h), m, x, y, z, true);
+  p.rotation.y = rotY;
+  return p;
+}
+/* Lines of type centred on a board: [text, font size as a share of the board height, font, colour]. */
+function lines(g: CanvasRenderingContext2D, W: number, H: number, bg: string, rows: [string, number, string, string][], rule?: string) {
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  if (rule) { g.strokeStyle = rule; g.lineWidth = Math.max(3, H * 0.025); g.strokeRect(H * 0.06, H * 0.06, W - H * 0.12, H - H * 0.12); }
+  const tot = rows.reduce((a, r) => a + r[1] * 1.25, 0);
+  let y = H / 2 - (tot * H) / 2;
+  for (const [t, s, f, c] of rows) {
+    let px = s * H;
+    g.font = `${f.replace('PX', String(Math.round(px)))}`;
+    while (px > 8 && g.measureText(t).width > W * 0.9) { px -= 2; g.font = f.replace('PX', String(Math.round(px))); }
+    g.fillStyle = c; y += s * H * 0.625; g.fillText(t, W / 2, y); y += s * H * 0.625;
+  }
+}
+const ARCH = '900 PXpx "Archivo", sans-serif', EXP = '800 PXpx "Archivo Expanded", "Archivo", sans-serif', MONO = '700 PXpx "JetBrains Mono", monospace', MARK = '400 PXpx "Permanent Marker", cursive';
+/* A Firefly plate that does not exist yet (FIREFLY_QUEUE.md): hidden until the file lands, then it shows. */
+function ffPlate(k: Kit, url: string, w: number, h: number, x: number, y: number, z: number, rotY: number, lit = true) {
+  const o = k.mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: 0x000000 }), x, y, z, true);
+  o.rotation.y = rotY;
+  o.visible = false;
+  texL?.load(url, (t) => {
+    if (!k.live) { t.dispose(); return; }
+    t.colorSpace = T.SRGBColorSpace;
+    t.anisotropy = 8;
+    o.material = lit ? new T.MeshBasicMaterial({ map: t, fog: false }) : new T.MeshStandardMaterial({ map: t, roughness: 0.85 });
+    o.visible = true;
+  }, undefined, () => undefined);
+  return o;
+}
+/* A rough mound: a tapered cylinder whose rim is pushed in and out by a seeded noise, so a rock reads as rock. */
+function mound(r0: number, r1: number, h: number, seed: number, amp = 0.16, tile = 8) {
+  const g = new T.CylinderGeometry(r0, r1, h, 40, 8), p = g.attributes.position, rnd = X.mulberry(seed);
+  const ph = [rnd() * 6, rnd() * 6, rnd() * 6];
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i), r = Math.hypot(x, z);
+    if (r < 0.01) continue;
+    const a = Math.atan2(z, x), t = (y / h) + 0.5;
+    const n = Math.sin(a * 3 + ph[0]) * 0.5 + Math.sin(a * 7 + t * 4 + ph[1]) * 0.3 + Math.sin(a * 13 + t * 9 + ph[2]) * 0.2;
+    const f = 1 + amp * n * (0.4 + 0.6 * Math.sin(t * PI));
+    p.setX(i, x * f); p.setZ(i, z * f);
+    if (Math.abs(y - h / 2) > 0.01) p.setY(i, y + Math.sin(a * 5 + ph[2]) * h * 0.04);
+  }
+  /* its own wrapped UVs at true size (the batch's world projection smears on slopes), so it is added as dynamic */
+  const uv = g.attributes.uv, rm = (r0 + r1) / 2;
+  for (let i = 0; i < p.count; i++) { const a = Math.atan2(p.getZ(i), p.getX(i)); uv.setXY(i, ((a + PI) * rm) / tile, (p.getY(i) + h / 2 + Math.hypot(p.getX(i), p.getZ(i)) * 0.4) / tile); }
+  g.computeVertexNormals();
+  return g;
+}
 
 /* ---------------- 52 BELVEDERE CASTLE ---------------- */
 export const belvedere: RoomDef = {
@@ -19,20 +128,22 @@ export const belvedere: RoomDef = {
   description: 'Vista Rock, the little castle and its terraces over Turtle Pond and the Great Lawn, the towers of the west side beyond, the works on the ramparts.',
   signatures: 'The granite and schist folly with its tower, the two terraces at different heights, the pond below with turtles and the Delacorte stage, the Great Lawn and the twin towered skyline of Central Park West.',
   build(k, ctx) {
-    k.sky({ top: 0x6f9ad8, horizon: 0xf0e4cc, ground: 0x4a5a3a, fog: 0.002, sun: { az: 4.2, el: 0.45, color: 0xffe6c0, size: 14 }, env: 0.95 });
+    k.sky({ top: 0x6f9ad8, horizon: 0xdcdfd8, ground: 0x4a5a3a, fog: 0.0013, sun: { az: 4.2, el: 0.45, color: 0xffe6c0, size: 14 }, env: 0.95 });
     k.hemi(0xf2f0e8, 0x3a4a2a, 0.9);
     k.sun(0xffe0b8, 2.2, -50, 46, 40, true, 110);
-    const schist = k.pbr('bvSchist', X.ashlar(0x7a7268, 116, 2), 0.18, { roughness: 0.9 }),
-      granite = k.pbr('bvGranite', X.ashlar(0xa8a090, 117, 3), 0.22),
-      lawn = k.pbr('bvLawn', X.grass(0x5a7a3a, 58), 0.06),
-      pathM = k.pbr('bvPath', X.cobble(0xa39a86, 59), 1.1),
-      rock = k.pbr('bvRock', X.ashlar(0x8a847a, 118, 1), 0.12, { roughness: 0.95 }),
+    /* 2026-11-24 wave 3c: Poly Haven scans (CC0) at true size: Manhattan schist in slate courses for the walls, granite
+       blocks for the trim, a real rock face for Vista Rock, stone paths and leafy grass */
+    const schist = scan(k, 'belvedere', 'castle_wall_slates', 2.6, () => X.ashlar(0x7a7268, 116, 2), { roughness: 0.9, color: 0xc8c0b8 }, 0x6e6860),
+      granite = scan(k, 'belvedere', 'medieval_blocks_02', 2.2, () => X.ashlar(0xa8a090, 117, 3), { color: 0xe0dcd4 }, 0x9a958a),
+      lawn = scan(k, 'belvedere', 'lawn', 3.5, () => X.grass(0x5a7a3a, 58), { color: 0x8ec46a }, 0x4e6a34),
+      pathM = scan(k, 'belvedere', 'grey_stone_path', 3, () => X.cobble(0xa39a86, 59), {}, 0x8a8478),
+      rock = scan(k, 'belvedere', 'rock_wall_10', 8, () => X.ashlar(0x8a847a, 118, 1), { roughness: 0.95, color: 0xc8c4bc, normal: 1.4 }, 0x6a655e),
       iron = k.flat(0x1f242a, 0.7, 0.45),
       wood = k.pbr('bvStage', X.planks(0x6a5a45, 6, 119), 1.0);
     // the park: lawn, the rock outcrop the castle stands on, the pond, the lawn beyond, the west side towers
     k.box(300, 0.4, 300, 0, -0.2, 0, lawn);
     const RY = 9;
-    k.mesh(new T.CylinderGeometry(19, 26, RY, 12), rock, 0, RY / 2 - 0.2, 6);
+    k.mesh(mound(19, 26, RY, 52), rock, 0, RY / 2 - 0.2, 6, true);
     k.water({ y: 0.2, color: 0x2e5a4e, w: 70, d: 44, x: 4, z: -40, amp: 0.4 });
     k.mesh(new T.CylinderGeometry(40, 40, 0.5, 48), pathM, 4, -0.05, -40);
     k.box(140, 0.3, 120, 0, 0.05, -120, k.pbr('bvGreat', X.grass(0x6a8a3a, 60), 0.06));
@@ -50,7 +161,7 @@ export const belvedere: RoomDef = {
     // the tower stands at the east end (the planned western tower was never built), on the north corner over the pond
     const TWX = CX + 7, TWZ = CZ - 6;
     k.cyl(3.4, 16, TWX, CY + 8, TWZ, schist, 3.4, 12);
-    k.mesh(new T.ConeGeometry(3.9, 4.5, 12), k.pbr('bvSlate', X.ashlar(0x4a4e58, 131, 4), 0.3, { roughness: 0.7 }), TWX, CY + 18.2, TWZ);
+    k.mesh(new T.ConeGeometry(3.9, 4.5, 12), scan(k, 'belvedere', 'roof_slates_02', 1.6, () => X.ashlar(0x4a4e58, 131, 4), { roughness: 0.7, color: 0x9aa0aa }, 0x4a4e58), TWX, CY + 18.2, TWZ);
     for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.box(0.7, 0.9, 0.7, TWX + Math.cos(a) * 3.3, CY + 16.4, TWZ + Math.sin(a) * 3.3, granite); }
     k.block(TWX - 3.3, TWX + 3.3, TWZ - 3.3, TWZ + 2.6);
     // the weather instruments on the tower: a mast with the flag, the wind vane and the cup anemometer
@@ -71,7 +182,7 @@ export const belvedere: RoomDef = {
     for (let i = 0; i < 13; i++) k.box(0.9, 1.2, 0.9, CX - 12 + i * 2, CY + 0.6, CZ - 19, granite);
     const LY = RY - 4, LX = -18;
     k.box(14, 0.4, 20, LX, LY - 0.2, CZ - 4, granite);
-    k.mesh(new T.CylinderGeometry(9, 12, 6, 10), rock, LX, LY - 3.2, CZ - 4);
+    k.mesh(mound(9, 12, 6, 53, 0.12), rock, LX, LY - 3.2, CZ - 4, true);
     k.rail(LX - 6.8, CZ - 4, 20, iron, 1.05, 'z', 1.6);
     k.rail(LX, CZ - 13.8, 14, iron, 1.05, 'x', 1.6);
     for (let i = 0; i < 10; i++) k.box(2.4, 0.4, 1.0, CX - 12 + -0.4, CY - 0.2 - (i + 1) * 0.4, CZ - 6 - i * 0.2 + 0, granite);
@@ -80,8 +191,11 @@ export const belvedere: RoomDef = {
     for (let i = 0; i < 26; i++) k.box(3, 0.35, 1.2, CX + 9 - i * 0.2, 0.17 + i * 0.35, CZ + 12 + 12 - i * 0.9, pathM);
     k.box(3, 0.3, 8, CX + 9 - 5.2, RY - 0.1, CZ + 4, pathM);
     k.box(40, 0.3, 4, 0, 0.05, CZ + 30, pathM);
-    for (const x of [-16, 16]) k.lamp(x, CZ + 28, 4.2, iron, 0xffe6c8, 18);
-    k.bench(-6, CZ + 32, 0, wood, iron, 2.2); k.bench(6, CZ + 32, 0, wood, iron, 2.2);
+    // 2026-11-24: the park's own cast iron lamps and benches as models (our Central Park kit), not lathes and boxes
+    glbs(k, 'belvedere/cp_gaslamp', { height: 3.6 }, [[-16, 0, CZ + 28, 0], [16, 0, CZ + 28, 0], [CX - 12.4, CY, CZ - 17.6, 0], [CX + 12.4, CY, CZ - 17.6, 0], [LX - 5.6, LY, CZ - 12.6, 0]]);
+    for (const [x, y, z] of [[-16, 0, CZ + 28], [16, 0, CZ + 28], [CX - 12.4, CY, CZ - 17.6], [CX + 12.4, CY, CZ - 17.6], [LX - 5.6, LY, CZ - 12.6]]) { k.point(x, y + 3.5, z, 0xffe6c8, 14, 14); k.keepOut.push({ x, z, r: 0.4 }); }
+    glbs(k, 'belvedere/cp_bench', { box: [2.0, 0.86, 0.66] }, [[-6, 0, CZ + 32, PI], [6, 0, CZ + 32, PI], [CX - 8, CY, CZ - 7.6, 0], [CX + 8, CY, CZ - 7.6, 0]]);
+    for (const [x, z] of [[-6, CZ + 32], [6, CZ + 32], [CX - 8, CZ - 7.6], [CX + 8, CZ - 7.6]]) k.block(x - 1, x + 1, z - 0.35, z + 0.35);
     k.prop('lantern', CX + 12, CY, CZ - 6, { height: 0.9 });
     k.prop('lantern', CX - 12, CY, CZ - 6, { height: 0.9 });
     const turtles: T.Mesh[] = [];
@@ -101,9 +215,33 @@ export const belvedere: RoomDef = {
     k.egg(v(CX + 11, 3.5, CZ + 16), { id: 'belvedere-vista-rock', title: 'The fire tower before it', text: 'The castle caps Vista Rock, a 130 foot outcrop of schist and the second highest natural point in the park, after Summit Rock near 83rd Street. A fire tower run by the Croton Aqueduct board already stood on the rock and was demolished to make room for the castle. The sunken transverse road was tunneled through the same rock.', clue: 'Touch the bare rock beside the steps on the way up.', source: { name: 'Belvedere Castle, Wikipedia', url: 'https://en.wikipedia.org/wiki/Belvedere_Castle' } }, { r: 1.8 });
     k.censusWall({ x: CX, y: CY + 2.6, z: CZ + 5.2, rotY: PI, cols: 16, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(200, 48), pieces: ctx.all, backing: iron });
     k.sign('BELVEDERE  ·  1869  ·  THE WEATHER STATION', 8, 0.6, CX, CY + 4.8, CZ + 5.2, 'transparent', '#e8e0c8', 70, PI);
+    /* ---- 2026-11-24 wave 3c ---- */
+    // Vista Rock breaks out of the lawn as boulders round its foot (Poly Haven boulder_01, CC0), clear of the steps and the west terrace
+    { const at: [number, number, number, number][] = [], r2 = X.mulberry(5201);
+      for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2 + r2() * 0.2, r = 24.5 + r2() * 2.5, x = Math.cos(a) * r, z = 6 + Math.sin(a) * r;
+        if (x > 0 && x < 14 && z > 8) continue; if (x < -6 && z > -14 && z < 22) continue; if (z < -14 && Math.abs(x) < 14) continue;
+        at.push([x, -0.4, z, r2() * 6.3]); k.keepOut.push({ x, z, r: 1.6 }); }
+      glbs(k, 'belvedere/ph_boulder_01', { height: 2.4 }, at); }
+    // the doors: a real oak and iron door in the terrace arch and the east arch (Poly Haven large_castle_door, CC0)
+    glbs(k, 'belvedere/ph_large_castle_door', { height: 3.1 }, [[CX, CY, CZ - 4.75, 0], [CX + 5.75, CY, CZ, PI / 2]]);
+    // crenellations along the front and back parapets, a granite string course, arrow slits in the tower
+    for (const zf of [CZ - 5.2, CZ + 5.2]) for (let i = -5; i <= 5; i += 2) k.box(0.9, 0.95, 0.7, CX + i, CY + 8.98, zf, granite);
+    k.box(12.3, 0.35, 10.3, CX, CY + 6.1, CZ, granite);
+    const slitM = k.flat(0x14161a, 0, 0.9);
+    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2 + 0.3, y = CY + 10 + (i % 2) * 2.6; const sl = k.box(0.12, 1.3, 0.28, TWX + Math.cos(a) * 3.42, y, TWZ + Math.sin(a) * 3.42, slitM); sl.rotation.y = -a; }
+    k.cyl(3.6, 0.4, TWX, CY + 15.7, TWZ, granite, 3.6, 12);
+    // the Parks sign at the foot of the steps, in the house type on Parks green
+    k.box(0.12, 2.4, 0.12, CX + 12.9, 1.2, CZ + 30, iron); k.box(0.12, 2.4, 0.12, CX + 15.1, 1.2, CZ + 30, iron);
+    board(k, 2.6, 1.5, CX + 14, 1.75, CZ + 30.08, 0, (g, W, H) => lines(g, W, H, '#1f4a2e', [['BELVEDERE CASTLE', 0.17, EXP, '#ffffff'], ['VISTA ROCK  ·  130 FT', 0.11, MONO, '#d8e8d0'], ['WEATHER STATION SINCE 1919', 0.09, MONO, '#d8e8d0'], ['CENTRAL PARK', 0.12, ARCH, '#ffffff']], '#ffffff'));
+    k.block(CX + 12.7, CX + 15.3, CZ + 29.8, CZ + 30.2);
+    // the trick: stand in the terrace door and the words on the terrace stand up off the stone (anamorphic floor type)
+    anamorph(k, 'BEAUTIFUL VIEW', CX, CZ - 6.4, CY + 1.7, CY + 0.01, 2.6, 2.2, 0.9, '#f4ead2', 150);
+    k.egg(v(CX, CY + 0.3, CZ - 10.5), { id: 'belvedere-beautiful-view', title: 'Read it from the door', text: 'Belvedere is Italian for beautiful view, and the castle was built as a lookout with nothing to do but frame one. The letters painted on the terrace are stretched so that, from one spot in the doorway, they stand up off the stone as if printed on the air.', clue: 'Stand in the castle door and look out over the terrace.', source: { name: 'Belvedere Castle, Wikipedia', url: 'https://en.wikipedia.org/wiki/Belvedere_Castle' } }, { r: 2 });
+    // Firefly (FIREFLY_QUEUE.md): the Great Lawn and the twin towers of Central Park West as one painted plate past the code skyline
+    ffPlate(k, 'assets/museum/tex/belvedere/ff_cpw_backdrop.webp', 640, 160, 10, 62, -300, 0);
     // the works: the parapet screens on the upper terrace, the lower terrace, the castle walls, the lawn path
     const mounts: Mount[] = [];
-    for (let i = 0; i < 6; i++) { const x = CX - 10 + i * 4; k.box(3.2, 2.2, 0.16, x, CY + 1.5, CZ - 18.5, iron); mounts.push({ position: v(x, CY + 1.6, CZ - 18.4), rotation: PI, target: v(x, CY + 2, CZ - 12), width: 2.8, height: 1.7, style: 'steel', wash: false }); }
+    for (let i = 0; i < 6; i++) { const x = CX - 10 + i * 4; k.box(3.2, 2.2, 0.16, x, CY + 1.5, CZ - 18.5, iron); mounts.push({ position: v(x, CY + 1.6, CZ - 18.4), rotation: 0, target: v(x, CY + 2, CZ - 12), width: 2.8, height: 1.7, style: 'steel', wash: false }); }
     for (const s of [-1, 1]) for (let i = 0; i < 2; i++) { const z = CZ - 15 + i * 5; k.box(0.16, 2.2, 3.2, CX + s * 12.5, CY + 1.5, z, iron); mounts.push({ position: v(CX + s * 12.4, CY + 1.6, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(CX, CY + 2, z), width: 2.8, height: 1.7, style: 'steel', wash: false }); }
     for (let i = 0; i < 4; i++) { const z = CZ - 12 + i * 5; k.box(0.16, 2.2, 3.2, LX - 6.5, LY + 1.5, z, iron); mounts.push({ position: v(LX - 6.4, LY + 1.6, z), rotation: PI / 2, target: v(LX, LY + 2, z), width: 2.8, height: 1.7, style: 'steel', wash: false }); }
     for (const s of [-1, 1]) mounts.push({ position: v(CX + s * 6.2, CY + 4, CZ), rotation: s < 0 ? -PI / 2 : PI / 2, target: v(CX + s * 14, CY + 3, CZ), width: 3.4, height: 2.0, style: 'gilt', wash: false });
@@ -134,9 +272,11 @@ export const highbridge: RoomDef = {
     k.sky({ top: 0x223a6e, horizon: 0xc88a70, ground: 0x1a1e26, fog: 0.0022, sun: { az: 4.9, el: 0.02, color: 0xff9a60, size: 18 }, stars: 160, haze: 0.4, env: 0.7 });
     k.hemi(0xb8c8ee, 0x1a1e26, 0.6);
     k.sun(0xffb890, 1.2, -80, 10, -30, true, 90);
-    const stone = k.pbr('hbStone', X.ashlar(0x8a8070, 122, 3), 0.2, { roughness: 0.9 }),
-      brickW = k.pbr('hbBrick', X.brick(0x8a5a48, 123), 0.28),
-      pave = k.pbr('hbPave', X.brick(0x9a6a58, 124), 0.2, { roughness: 0.8 }),
+    /* 2026-11-24 wave 3c: scans (CC0) at true size: granite ashlar for the 1848 arches and piers, red brick parapets,
+       the herringbone brick walk, a real rock face for the Manhattan cliff */
+    const stone = scan(k, 'highbridge', 'granite_wall', 3.2, () => X.ashlar(0x8a8070, 122, 3), { roughness: 0.9, color: 0xd8d0c4 }, 0x7a7266),
+      brickW = scan(k, 'highbridge', 'red_brick_03', 2.2, () => X.brick(0x8a5a48, 123), {}, 0x7a4a3a),
+      pave = scan(k, 'highbridge', 'herringbone_brick', 1.6, () => X.brick(0x9a6a58, 124), { roughness: 0.8 }, 0x8a5a48),
       iron = k.flat(0x1f242a, 0.7, 0.45),
       steel = k.pbr('hbSteel', X.steel(0x4a5058, true, 125), 0.6, { metalness: 0.7, roughness: 0.45 }),
       lawn = k.pbr('hbLawn', X.grass(0x3a5a2a, 61), 0.06),
@@ -149,7 +289,7 @@ export const highbridge: RoomDef = {
     // the valley: the river under the steel arch, the Drive on the Manhattan shore, the cliff up to the bluff
     k.water({ y: RIVER, color: 0x24405a, w: 600, d: 100, x: 0, z: -10, amp: 0.8 });
     k.box(600, 0.4, 20, 0, 0.25, -70, asphalt);
-    const cliff = k.pbr('hbCliff', X.ashlar(0x5a5650, 126, 1), 0.12, { roughness: 0.95 });
+    const cliff = scan(k, 'highbridge', 'rock_wall_10', 9, () => X.ashlar(0x5a5650, 126, 1), { roughness: 0.95, color: 0xa8a49c }, 0x55524c);
     for (let i = 0; i < 9; i++) { const z0 = -80 - i * 4, z1 = -220; k.box(600, 4, z0 - z1, 0, 2 + i * 4, (z0 + z1) / 2, cliff); }
     k.box(600, 0.4, 104, 0, DY - 0.15, -168, lawn);
     // the Bronx flats: the Hudson Line tracks, the Major Deegan, Sedgwick Avenue
@@ -168,7 +308,10 @@ export const highbridge: RoomDef = {
     k.box(6.4, 0.2, deckLen, 0, DY + 0.1, ZC, pave);
     for (const s of [-1, 1]) { k.box(1.3, 1.2, deckLen, s * 3.85, DY + 0.6, ZC, brickW); k.box(1.4, 0.16, deckLen, s * 3.85, DY + 1.28, ZC, stone); k.rail(s * 3.2, ZC, deckLen, iron, 1.1, 'z', 2.4); }
     k.block(-4.6, -3.1, ZM, ZB); k.block(3.1, 4.6, ZM, ZB);
-    for (let z = -100; z <= 180; z += 40) for (const s of [-1, 1]) k.lamp(s * 2.7, z, 3.6, iron, 0xffd9a8, 22);
+    // 2026-11-24: the walk's cast iron lamp standards as a model (our own lamppost), instanced; one warm light each
+    { const at: [number, number, number, number][] = [];
+      for (let z = -100; z <= 180; z += 40) for (const s of [-1, 1]) { at.push([s * 2.75, DY + 0.2, z, s > 0 ? PI : 0]); k.point(s * 2.6, DY + 4.3, z, 0xffd9a8, 22, 16); k.keepOut.push({ x: s * 2.75, z, r: 0.4 }); }
+      glbs(k, 'highbridge/lamppost', { height: 4.4 }, at); }
     // the steel arch of 1928 over the river, on two big piers
     const arcPts: T.Vector3[] = []; for (let i = 0; i <= 24; i++) { const t = i / 24; arcPts.push(v(0, RIVER + 4 + Math.sin(t * PI) * (DY - 10), -60 + t * 100)); }
     for (const s of [-1, 1]) { k.curve(arcPts.map((p) => v(p.x + s * 4, p.y, p.z)), 0.6, steel, 24); for (let i = 1; i < 24; i++) k.beam(arcPts[i].clone().setX(s * 4), v(s * 4, DY - 2.4, arcPts[i].z), 0.14, steel, 4); }
@@ -196,6 +339,32 @@ export const highbridge: RoomDef = {
     k.crowd([v(-0.6, DY, -110), v(0.6, DY, -20), v(-0.6, DY, 80), v(0.6, DY, 190)], 24, { seed: 53, speed: 1.0, spread: 2.4, animate: !ctx.reduced });
     k.censusWall({ x: -3.22, y: DY + 1.9, z: -20, rotY: PI / 2, cols: 30, rows: 2, tile: 0.55, gap: 0.05, start: ctx.wallStart(1300, 60), pieces: ctx.all, backing: iron });
     k.sign('HIGH BRIDGE  ·  1848  ·  THE CROTON AQUEDUCT', 8, 0.6, 0, DY + 2.6, ZB + 1.5, '#1a1c22', '#e8dcc0', 70, PI, { border: true });
+    /* ---- 2026-11-24 wave 3c: built detail on the masonry, benches, the borough line, the water tower dressed ---- */
+    // a corbelled cornice under both parapets the whole length, and a granite band at the deck line
+    for (const s of [-1, 1]) { k.moulding([[0, 0], [0.5, 0], [0.5, 0.18], [0.32, 0.3], [0.2, 0.55], [0, 0.62]], deckLen, s * 4.5, DY - 0.95, ZC, stone, s > 0 ? 0 : PI); k.box(0.2, 0.4, deckLen, s * 4.55, DY - 2.2, ZC, stone); }
+    { const corb: T.Matrix4[] = []; for (let z = ZM + 2; z < ZB; z += 2.4) for (const s of [-1, 1]) corb.push(new T.Matrix4().makeTranslation(s * 4.72, DY - 1.35, z)); k.instances(new T.BoxGeometry(0.42, 0.5, 0.5), stone, corb); }
+    // cutwaters on the river face of each Bronx pier, and impost bands where the arches spring
+    for (let j = 1; j < 10; j++) { const z = 46 + j * SP; for (const s of [-1, 1]) { const cw = k.mesh(new T.CylinderGeometry(0.01, 2.2, DY - 2, 4, 1), stone, s * 5.3, (DY - 2) / 2, z); cw.rotation.y = PI / 4; cw.scale.set(0.6, 1, 1); } k.box(10, 0.5, 4.2, 0, 29.7 * 0.62 - 0.2, z, stone); }
+    // benches along the walk, against the parapet between the lamps (Poly Haven painted_wooden_bench, CC0)
+    { const at: [number, number, number, number][] = []; for (let z = -80; z <= 160; z += 40) { const s = (Math.round(z / 40) % 2) ? 1 : -1; at.push([s * 2.55, DY + 0.2, z, s > 0 ? -PI / 2 : PI / 2]); k.keepOut.push({ x: s * 2.55, z, r: 0.9 }); }
+      glbs(k, 'highbridge/ph_painted_wooden_bench', { width: 2.0 }, at); }
+    // the borough line across the walk, over the river, with the two names
+    k.box(6.2, 0.02, 0.18, 0, DY + 0.215, -12, k.flat(0xf4ead2, 0, 0.6));
+    board(k, 3.0, 0.7, 3.18, DY + 1.55, -14.5, -PI / 2, (g, W, H) => lines(g, W, H, '#1f4a2e', [['MANHATTAN', 0.42, EXP, '#ffffff']], '#ffffff'));
+    board(k, 3.0, 0.7, 3.18, DY + 1.55, -6, -PI / 2, (g, W, H) => lines(g, W, H, '#1f4a2e', [['THE BRONX', 0.42, EXP, '#ffffff']], '#ffffff'));
+    board(k, 2.4, 1.3, 2.9, DY + 1.0, ZB - 6, -PI / 2, (g, W, H) => lines(g, W, H, '#1f4a2e', [['HIGH BRIDGE', 0.2, EXP, '#ffffff'], ['CROTON AQUEDUCT  ·  1848', 0.11, MONO, '#d8e8d0'], ['HARLEM RIVER  ·  140 FT BELOW', 0.1, MONO, '#d8e8d0']], '#ffffff'));
+    // the water tower: a rusticated base, the arched belvedere openings, a cornice and the lantern on the copper cap
+    k.mesh(new T.CylinderGeometry(6.2, 6.6, 3.2, 8), stone, TX, DY + 1.6, TZ);
+    for (const y of [DY + 14, DY + 28, DY + 40]) k.mesh(new T.CylinderGeometry(5.05, 5.05, 0.6, 8), stone, TX, y, TZ);
+    for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2 + PI / 8; for (const y of [DY + 8, DY + 21, DY + 34]) { const w = k.box(0.25, 2.6, 1.1, TX + Math.cos(a) * 4.72, y, TZ + Math.sin(a) * 4.72, k.flat(0x1a1c22, 0.2, 0.6)); w.rotation.y = -a; } }
+    k.mesh(new T.CylinderGeometry(6.0, 5.6, 0.8, 8), stone, TX, DY + 52.4, TZ);
+    k.mesh(new T.CylinderGeometry(0.9, 1.1, 2.4, 8), k.pbr('hbCopper', X.patina(0x5f9a8c), 0.6), TX, DY + 59, TZ);
+    k.mesh(new T.ConeGeometry(1.1, 2.2, 8), k.pbr('hbCopper', X.patina(0x5f9a8c), 0.6), TX, DY + 61.3, TZ);
+    // the trick: from the borough line the word on the walk ahead stands up like a sign (anamorphic floor type)
+    anamorph(k, 'MANHATTAN', 0, -12, DY + 1.9, DY + 0.22, 3.2, 1.6, 1.0, '#f4ead2', 170);
+    k.egg(v(0, DY + 0.4, -19), { id: 'highbridge-borough-line', title: 'Standing in two boroughs', text: 'The Harlem River is the line between Manhattan and the Bronx, and the High Bridge is the oldest way across it still standing. From the painted line over the water the word on the walk ahead stands up off the bricks; take one step and it lies down flat again.', clue: 'Stand on the white line over the river and look toward the water tower.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 2 });
+    // Firefly (FIREFLY_QUEUE.md): the Harlem River valley at blue hour, behind the code skyline on both banks
+    ffPlate(k, 'assets/museum/tex/highbridge/ff_harlem_valley.webp', 620, 150, 0, 60, -280, 0);
     // the eggs
     k.egg(v(0, DY + 2.2, ZB - 2), { id: 'highbridge-oldest', title: 'The oldest bridge in the city', year: '1848', text: 'Water first flowed across the High Bridge on May 30, 1848, carrying the Croton Aqueduct into Manhattan. It is the oldest surviving major bridge in New York City, and is sometimes cited as the oldest bridge of any kind. It cost $963,427.80.', clue: 'Look up at the sign at the Bronx end of the walk.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 1.8 });
     k.egg(v(7, DY - 1, -10), { id: 'highbridge-steel-arch', title: 'Five arches gone', year: '1928', text: 'The stone piers standing in the river were a hazard to boats, so the five mid river arches were taken out and replaced by a single steel arch, which began carrying water on April 15, 1928. The original bridge had 15 stone arches. None of the river piers remain.', clue: 'Lean over the parapet in the middle of the river and look down at the steel.', source: { name: 'High Bridge (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/High_Bridge_(New_York_City)' } }, { r: 2.4 });
@@ -302,10 +471,12 @@ export const wavehill: RoomDef = {
     k.sky({ top: 0x5f8fd0, horizon: 0xf4d6a8, ground: 0x3a4a34, fog: 0.0016, sun: { az: 4.8, el: 0.16, color: 0xffc888, size: 20 }, haze: 0.35, env: 0.9 });
     k.hemi(0xfff0dc, 0x2a3a24, 0.8);
     k.sun(0xffd0a0, 2.2, -80, 26, 10, true, 100);
-    const lawn = k.pbr('whLawn', X.grass(0x4a7a3a, 64), 0.06),
-      stone = k.pbr('whStone', X.ashlar(0x7a7268, 134, 2), 0.18, { roughness: 0.9 }),
-      timber = k.pbr('whTimber', X.planks(0x8a7a5a, 4, 135, 0.3), 0.8),
-      gravel = k.pbr('whGravel', X.cobble(0xa39a86, 65), 1.1),
+    /* 2026-11-24 wave 3c: scans (CC0) at true size: the fieldstone of the house and terrace walls, weathered timber for
+       the pergola, gravel walks, leafy lawn */
+    const lawn = scan(k, 'wavehill', 'lawn', 3.5, () => X.grass(0x4a7a3a, 64), { color: 0x8ec46a }, 0x4a6a34),
+      stone = scan(k, 'wavehill', 'stacked_stone_wall', 2.6, () => X.ashlar(0x7a7268, 134, 2), { roughness: 0.9 }, 0x7a7064),
+      timber = scan(k, 'wavehill', 'weathered_planks', 2.0, () => X.planks(0x8a7a5a, 4, 135, 0.3), { color: 0xd8c8b0 }, 0x7a6a52),
+      gravel = scan(k, 'wavehill', 'gravel_floor_02', 2.4, () => X.cobble(0xa39a86, 65), { color: 0xb4aa98 }, 0x9a9282),
       glass = k.glass(0xdcecf6, 0.12, 0.04),
       white = k.flat(0xe9e6df, 0.05, 0.6),
       iron = k.flat(0x1f242a, 0.7, 0.45),
@@ -330,7 +501,9 @@ export const wavehill: RoomDef = {
     k.box(PL + 1, 0.3, 0.4, 0, 3.9, PZ - 2, timber); k.box(PL + 1, 0.3, 0.4, 0, 3.9, PZ + 3, timber);
     for (let x = -PL / 2 + 0.6; x < PL / 2; x += 1.2) k.box(0.16, 0.24, 7, x, 4.15, PZ + 0.5, timber);
     for (let i = 0; i < 40; i++) { const x = -PL / 2 + rnd() * PL, z = PZ - 2 + rnd() * 6; k.mesh(new T.SphereGeometry(0.6 + rnd() * 0.5, 7, 5), k.flat(0x4a7a3a, 0, 0.9), x, 4.6 + rnd() * 0.5, z); if (rnd() > 0.5) k.mesh(new T.SphereGeometry(0.25, 6, 4), bloom[i % 5], x, 3.6 + rnd() * 0.6, z); }
-    for (const x of [-20, 0, 20]) k.bench(x, PZ + 1.2, 0, timber, iron, 2.2);
+    // the benches under the pergola (Poly Haven painted_wooden_bench, CC0), facing the river
+    glbs(k, 'wavehill/ph_painted_wooden_bench', { width: 2.0 }, [[-20, 0.6, PZ + 1.4, PI], [0, 0.6, PZ + 1.4, PI], [20, 0.6, PZ + 1.4, PI]]);
+    for (const x of [-20, 0, 20]) k.block(x - 1, x + 1, PZ + 1.05, PZ + 1.75);
     // the flower garden inside a rustic fence, the conservatory, the fieldstone house
     const GZ = -20;
     for (let i = 0; i < 60; i++) { const x = -18 + rnd() * 36, z = GZ - 10 + rnd() * 20; k.box(0.9, 0.5, 0.9, x, 0.25, z, k.flat(0x3a6a2a, 0, 0.9)); for (let j = 0; j < 5; j++) k.sphere(0.12, x + (rnd() - 0.5) * 0.8, 0.6 + rnd() * 0.3, z + (rnd() - 0.5) * 0.8, bloom[Math.floor(rnd() * 5)], 5); }
@@ -344,10 +517,38 @@ export const wavehill: RoomDef = {
     k.block(CX - 6.4, CX + 6.4, CZ - 5.4, CZ + 5.4);
     for (let i = 0; i < 12; i++) k.mesh(new T.SphereGeometry(0.5 + rnd() * 0.4, 7, 5), k.flat(0x3a7a3a, 0, 0.9), CX - 5 + rnd() * 10, 0.8, CZ - 4 + rnd() * 8);
     k.box(24, 8, 14, -40, 4, -20, stone);
-    k.mesh(new T.ConeGeometry(15, 5, 4), k.pbr('whSlate', X.steel(0x3a3a40, false, 137), 0.4), -40, 10.5, -20).rotation.y = PI / 4;
+    k.mesh(new T.ConeGeometry(15, 5, 4), scan(k, 'wavehill', 'roof_slates_02', 1.6, () => X.steel(0x3a3a40, false, 137), { color: 0xa8acb4 }, 0x4a4c52), -40, 10.5, -20).rotation.y = PI / 4;
     for (let i = 0; i < 4; i++) { k.box(1.2, 1.8, 0.2, -48 + i * 5.3, 3.2, -12.9, k.glass(0xffe0b0, 0.3, 0.1)); k.box(1.2, 1.8, 0.2, -48 + i * 5.3, 6.0, -12.9, k.glass(0xffe0b0, 0.3, 0.1)); }
     k.block(-52, -28, -27, -13);
     k.box(6, 0.3, 40, -40, 0.05, 6, gravel);
+    /* ---- 2026-11-24 wave 3c ---- */
+    // Wave Hill's own lawn chairs, set out on the grass facing the river and the Palisades (Poly Haven gallinera_chair, CC0)
+    { const at: [number, number, number, number][] = [];
+      for (const [x, z, r] of [[-30, 6, 0.3], [-27, 7.5, -0.2], [-12, 12, 0.1], [-9.5, 13, -0.3], [26, 4, 0.2], [29, 5.5, -0.1], [40, 14, 0.4], [43, 13, -0.2]]) { at.push([x, 0, z, PI + r]); k.keepOut.push({ x, z, r: 0.5 }); }
+      glbs(k, 'wavehill/ph_gallinera_chair', { height: 1.0 }, at); }
+    // the palms of the Palm House and the potted collection on the conservatory steps and the terrace (CC0 and our Central Park kit)
+    glbs(k, 'wavehill/cp_palm', { height: 5.2 }, [[CX - 3, 0.4, CZ - 1.5, 0], [CX + 3, 0.4, CZ + 1.5, 1.4], [CX, 0.4, CZ + 3.2, 2.2]]);
+    glbs(k, 'wavehill/ph_potted_plant_01', { height: 1.5 }, [[CX - 8, 0, CZ - 4.6, 0], [CX - 8, 0, CZ + 4.6, 1], [-PL / 2 - 3, 0.6, PZ + 4.5, 2], [PL / 2 + 3, 0.6, PZ + 4.5, 0.5]]);
+    glbs(k, 'wavehill/ph_potted_plant_02', { height: 1.0 }, [[CX - 7.6, 0, CZ - 2, 0], [CX - 7.6, 0, CZ + 2, 2], [-PL / 2 - 4.4, 0.6, PZ + 4.5, 1], [PL / 2 + 4.4, 0.6, PZ + 4.5, 3]]);
+    { const at: [number, number, number, number][] = []; for (let i = 0; i < 10; i++) at.push([CX - 7.2, 0.42, CZ - 4.5 + i, i * 0.7]); glbs(k, 'wavehill/ph_planter_pot_clay', { height: 0.34 }, at); }
+    glbs(k, 'wavehill/ph_fern_02', { width: 1.6 }, [[CX - 4, 0.4, CZ + 2.5, 0], [CX + 4, 0.4, CZ - 2.5, 2], [CX + 1, 0.4, CZ - 3.6, 4]]);
+    glbs(k, 'wavehill/ph_watering_can_metal_01', { length: 0.45 }, [[CX - 7.3, 0, CZ + 0.4, 0.6]]);
+    // the flower garden's borders as real shrubs (Poly Haven shrub_02, CC0) along both long sides inside the cedar fence
+    glbs(k, 'wavehill/ph_shrub_02', { length: 2.2 }, [[-12, 0, GZ - 8.6, 0], [12, 0, GZ - 8.6, 0], [-12, 0, GZ + 8.6, PI], [12, 0, GZ + 8.6, PI]]);
+    // the house dressed: window frames with depth, a cornice, two chimneys
+    { const frame = k.flat(0xe8e4da, 0, 0.6); for (let i = 0; i < 4; i++) for (const y of [3.2, 6.0]) { const x = -48 + i * 5.3; k.box(1.5, 0.12, 0.3, x, y - 1.0, -12.85, frame); k.box(1.5, 0.12, 0.3, x, y + 1.0, -12.85, frame); for (const dx of [-0.66, 0.66]) k.box(0.12, 2.0, 0.3, x + dx, y, -12.85, frame); k.box(1.24, 0.06, 0.24, x, y, -12.84, frame); k.box(1.8, 0.16, 0.42, x, y - 1.12, -12.8, stone); }
+      k.box(24.6, 0.4, 14.6, -40, 8.2, -20, frame);
+      for (const x of [-47, -33]) k.box(1.4, 4, 1.4, x, 11.5, -22, stone);
+    }
+    // signs in the house type: the gate board and the conservatory plaque
+    board(k, 2.8, 1.4, -PL / 2 - 6.6, 1.7, PZ + 6.2, PI / 2, (g, W, H) => lines(g, W, H, '#2a3a2a', [['WAVE HILL', 0.24, EXP, '#f4ead2'], ['PUBLIC GARDEN AND CULTURAL CENTER', 0.08, MONO, '#d8e0c8'], ['RIVERDALE  ·  THE BRONX', 0.1, ARCH, '#f4ead2']], '#c8b890'));
+    k.box(0.14, 2.6, 0.14, -PL / 2 - 6.66, 1.3, PZ + 5.0, iron); k.box(0.14, 2.6, 0.14, -PL / 2 - 6.66, 1.3, PZ + 7.4, iron); k.block(-PL / 2 - 6.8, -PL / 2 - 6.5, PZ + 4.8, PZ + 7.6);
+    board(k, 2.6, 0.7, CX - 6.45, 3.3, CZ, -PI / 2, (g, W, H) => lines(g, W, H, '#f4ead2', [['MARCO POLO STUFANO', 0.26, EXP, '#2a3a2a'], ['CONSERVATORY', 0.22, MONO, '#2a3a2a']], '#2a3a2a'));
+    // the trick: stand at the end of the walk and the word on the lawn stands up against the river (anamorphic type)
+    anamorph(k, 'THE HUDSON', 0, 12, 1.7, 0.02, 2.4, 2.0, 0.8, '#f4ead2', 170);
+    k.egg(v(0, 0.3, 6), { id: 'wavehill-the-hudson', title: 'Words on the grass', text: 'Wave Hill sits on a ridge over the Hudson, with the cliffs of the Palisades across the water in New Jersey. The words mown into this lawn are stretched so that from one spot, at the end of the gravel walk, they stand upright like a sign hung over the river.', clue: 'Stand at the end of the gravel walk south of the flower garden and look north.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 2 });
+    // Firefly (FIREFLY_QUEUE.md): the Palisades at sunset as a painted plate on the cliff wall across the river
+    ffPlate(k, 'assets/museum/tex/wavehill/ff_palisades.webp', 620, 120, 0, 18, -488, 0);
     // the great American elm on the lawn, older than the estate
     k.tree(14, 0, 14, { h: 17, r: 8, species: 'elm', seed: 211 });
     k.egg(v(14, 6, 14), { id: 'wavehill-elm', title: 'Older than the estate', year: '1985', text: 'An American elm on the grounds predates the development of the estate itself. It was named a Great Tree of New York City in 1985. Dutch elm disease severely reduced the species in the twentieth century.', clue: 'Find the biggest tree on the lawn and look up into it.', source: { name: 'Wave Hill, Wikipedia', url: 'https://en.wikipedia.org/wiki/Wave_Hill' } }, { r: 3 });
@@ -382,9 +583,11 @@ export const gantry: RoomDef = {
     k.sky({ top: 0x0e1630, horizon: 0x4a4a6a, ground: 0x0a0c14, fog: 0.0016, stars: 320, env: 0.6 });
     k.hemi(0xb8c8ee, 0x0e1018, 0.5);
     k.sun(0xc8d0ff, 0.4, 60, 50, -40, true, 90);
-    const iron = k.pbr('gpIron', X.steel(0x1e2024, true, 138), 0.6, { metalness: 0.7, roughness: 0.5 }),
-      deck = k.pbr('gpDeck', X.boardwalk(0x6a5a48), 0.5),
-      pave = k.pbr('gpPave', X.pavers(0x7a7a76, 67), 0.4),
+    /* 2026-11-24 wave 3c: scans (CC0): the gantries in rusted and blacked steel plate, real decking on the piers,
+       concrete pavers on the esplanade */
+    const iron = scan(k, 'gantry', 'rust_coarse_01', 2.4, () => X.steel(0x1e2024, true, 138), { metalness: 0.45, roughness: 0.65, color: 0x9a8a80 }, 0x3a3430),
+      deck = scan(k, 'gantry', 'wood_floor_deck', 2.5, () => X.boardwalk(0x6a5a48), {}, 0x5a4a3a),
+      pave = scan(k, 'gantry', 'concrete_pavers', 2.5, () => X.pavers(0x7a7a76, 67), {}, 0x6a6a66),
       lawn = k.pbr('gpLawn', X.grass(0x2e4a2a, 68), 0.06),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
       neon = k.glow(0xff3a3a),
@@ -430,7 +633,9 @@ export const gantry: RoomDef = {
     k.box(300, 0.3, 30, 0, 0.05, -4, pave);
     // the piers: four long decks on piles with benches, lounge chairs on the last one
     for (let i = 0; i < 4; i++) { const x = -60 + i * 40; const len = 50 + (i % 2) * 20; k.box(8, 0.5, len, x, 0.3, -18 - len / 2, deck); for (let z = -22; z > -18 - len; z -= 6) for (const s of [-1, 1]) k.cyl(0.4, 6, x + s * 3.4, -3, z, iron, 0.4, 8); k.rail(x - 3.9, -18 - len / 2, len, steel, 1.05, 'z', 2); k.rail(x + 3.9, -18 - len / 2, len, steel, 1.05, 'z', 2); k.rail(x, -18 - len + 0.1, 8, steel, 1.05, 'x', 2); for (let z = -30; z > -18 - len + 6; z -= 12) k.bench(x - 2.4, z, PI / 2, deck, steel, 2.0); for (let z = -26; z > -18 - len; z -= 10) k.lamp(x + 3.2, z, 3.6, dark, 0xffe0b0, 16); }
-    for (let i = 0; i < 6; i++) { const x = 60 - 3 + (i % 2) * 5, z = -40 - Math.floor(i / 2) * 6; const c = k.box(0.7, 0.1, 1.8, x, 0.7, z, deck); c.rotation.x = -0.3; k.box(0.7, 0.1, 0.9, x, 0.45, z + 1.1, deck); k.keepOut.push({ x, z, r: 0.9 }); }
+    // the lounge chairs out on pier 4 as a model (Poly Haven mid_century_lounge_chair, CC0), turned to Midtown
+    { const at: [number, number, number, number][] = []; for (let i = 0; i < 6; i++) { const x = 60 - 3 + (i % 2) * 5, z = -40 - Math.floor(i / 2) * 6; at.push([x, 0.55, z, (i % 2 ? -0.2 : 0.2)]); k.keepOut.push({ x, z, r: 0.9 }); }
+      glbs(k, 'gantry/ph_mid_century_lounge_chair', { height: 1.0 }, at); }
     // the gantries: two black riveted frames, lettered, over the old float bridges
     for (const gx of [-30, 10]) {
       for (const s of [-1, 1]) for (const dz of [-6, 6]) k.box(1.4, 24, 1.4, gx + s * 9, 12, -14 + dz, iron);
@@ -467,6 +672,31 @@ export const gantry: RoomDef = {
     void hero(k, 'h_ferry', { length: 26 }).then((h) => { if (!h) return; for (const m of ferry.children) m.visible = false; h.position.y = -0.9; ferry.add(h); });
     { const route = k.spline([v(-200, -1.2, -100), v(0, -1.2, -80), v(200, -1.2, -110), v(0, -1.2, -140)], true); if (!ctx.reduced) k.rider(ferry, route, 5, 0); else ferry.position.copy(route.getPointAt(0.2)); } // reduced motion: on the river, not at the park's origin
     k.crowd([v(-100, 0, -4), v(-40, 0, -6), v(0, 0, -4), v(50, 0, -6), v(100, 0, -4)], 30, { seed: 57, speed: 0.9, spread: 5, animate: !ctx.reduced });
+    /* ---- 2026-11-24 wave 3c: the gantries' working parts, the esplanade furnished, the river marked ---- */
+    for (const gx of [-30, 10]) {
+      // the hoist: sheave wheels on the top beams, wire ropes down to the apron, the counterweight boxes on the legs
+      for (const s of [-1, 1]) for (const dz of [-6, 6]) { const w = k.torus(1.1, 0.16, gx + s * 6, 25.6, -14 + dz, iron, 20); w.rotation.y = PI / 2; k.beam(v(gx + s * 6, 24.6, -14 + dz), v(gx + s * 6, 1.6, -14 + dz * 0.6), 0.05, k.flat(0x2a2a2a, 0.8, 0.4), 4); }
+      for (const s of [-1, 1]) k.box(2.2, 4, 2.2, gx + s * 9, 16, -21.8, iron);
+      // the apron: the float bridge deck running down from under the frame toward the water
+      const ap = k.box(10, 0.4, 14, gx, -0.6, -27, iron); ap.rotation.x = -0.08;
+      k.sign('LONG ISLAND', 16, 1.8, gx, 24, -7.2, '#0e0e10', '#f4f0e8', 120, 0, { border: true });
+    }
+    // the esplanade's wooden seating (Poly Haven modular_street_seating, CC0) and the cleats and life rings on the piers
+    glbs(k, 'gantry/ph_modular_street_seating', { width: 4.3 }, [-100, -84, 38, 84, 100].map((x) => [x, 0.2, -9, 0] as [number, number, number, number]));
+    for (const x of [-100, -84, 38, 84, 100]) k.block(x - 2.2, x + 2.2, -9.45, -8.55);
+    { const at: [number, number, number, number][] = []; for (let i = 0; i < 4; i++) { const x = -60 + i * 40, len = 50 + (i % 2) * 20; for (const s of [-1, 1]) at.push([x + s * 3.6, 0.55, -18 - len * 0.5, s > 0 ? PI / 2 : -PI / 2]); }
+      glbs(k, 'gantry/cleat', { length: 0.5 }, at); }
+    glbs(k, 'gantry/life_ring', { height: 0.8 }, [-60, -20, 20, 60].map((x, i) => [x + 3.95, 0.6, -24 - (i % 2) * 4, PI / 2] as [number, number, number, number]));
+    glbs(k, 'gantry/ph_lateral_sea_marker', { height: 6.8 }, [[-110, -2.4, -120, 0]]);
+    k.point(-110, 6.6, -120, 0x3aff6a, 30, 30);
+    // the park sign at the way in, in the house type
+    board(k, 3.4, 1.6, -66, 1.9, 13.6, PI, (g, W, H) => lines(g, W, H, '#1f4a2e', [['GANTRY PLAZA', 0.2, EXP, '#ffffff'], ['STATE PARK', 0.13, ARCH, '#ffffff'], ['LONG ISLAND CITY  ·  QUEENS', 0.09, MONO, '#d8e8d0']], '#ffffff'), { lit: true });
+    k.box(0.14, 2.8, 0.14, -67.5, 1.4, 13.7, iron); k.box(0.14, 2.8, 0.14, -64.5, 1.4, 13.7, iron); k.block(-67.8, -64.2, 13.4, 14);
+    // the trick: from the land end of the first pier the river's name stands up on the deck (anamorphic type)
+    anamorph(k, 'EAST RIVER', -60, -20, 1.75, 0.57, 3.0, 2.4, 0.7, '#f4ead2', 170);
+    k.egg(v(-60, 0.8, -25), { id: 'gantry-east-river', title: 'A river that is not a river', text: 'The water in front of the gantries is the East River, which is not a river at all but a tidal strait between Long Island Sound and New York Harbor, running both ways with the tide. From the land end of the first pier the name on the deck stands up like a sign.', clue: 'Stand where the first pier leaves the esplanade and look out along it.', source: { name: 'East River, Wikipedia', url: 'https://en.wikipedia.org/wiki/East_River' } }, { r: 2 });
+    // Firefly (FIREFLY_QUEUE.md): Midtown at night across the water, a painted plate behind the code towers
+    ffPlate(k, 'assets/museum/tex/gantry/ff_midtown_night.webp', 1100, 260, -20, 118, -640, 0);
     // the fish cleaning table on the fishing pier
     const fishTable = k.box(0.8, 0.9, 1.8, 62.4, 0.95, -61, steel);
     const W = 'https://en.wikipedia.org/wiki/Gantry_Plaza_State_Park', WN = 'Gantry Plaza State Park, Wikipedia';

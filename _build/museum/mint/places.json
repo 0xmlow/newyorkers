@@ -54,6 +54,12 @@
    "name": "The City Keeps Time",
    "from": 165,
    "to": 179
+  },
+  {
+   "key": "grandhalls",
+   "name": "The Grand Halls",
+   "from": 180,
+   "to": 183
   }
  ],
  "borough": {
@@ -237,6 +243,8 @@
   "huntspoint": "The Bronx",
   "columbuspark": "Manhattan",
   "mlowintl": "Queens",
-  "honoraries": "The Bronx"
+  "honoraries": "The Bronx",
+  "pennstation": "Manhattan",
+  "crystalpalace": "Manhattan"
  }
 }

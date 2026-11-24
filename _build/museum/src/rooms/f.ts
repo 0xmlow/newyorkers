@@ -5,10 +5,245 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
-import { billboard } from './a';
+import { billboard, scan, glbs, carBox, fireflyPlate } from './a';
 import { hero, heroInstances, standIn, hide } from './heroes';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 2a (2026-11-23): local helpers for rooms 22, 23, 25, 26 ----------
+   Scans, models and Firefly plates go through the wave 1 helpers in a.ts (scan, glbs, fireflyPlate, carBox). What is
+   here is local: signs in the house fonts (Archivo Expanded, Archivo Narrow, JetBrains Mono, Permanent Marker, the
+   woff2 files the gardens already ship), canvas painted surfaces, a scanned street, and anamorphic floor art that can
+   face any way. All of it runs in node too, where the audits build rooms against a stub canvas. */
+const FONTS: Record<string, string> = {
+  'W2 Archivo Expanded': 'assets/gardens/fonts/ArchivoExpanded.woff2',
+  'W2 Archivo Narrow': 'assets/gardens/fonts/ArchivoNarrow-700.woff2',
+  'W2 JetBrains Mono': 'assets/gardens/fonts/JetBrainsMono.woff2',
+  'W2 Permanent Marker': 'assets/gardens/fonts/PermanentMarker-400.woff2',
+};
+const fontReady = new Map<string, Promise<void>>();
+function houseFont(family: string): Promise<void> {
+  if (typeof FontFace === 'undefined' || typeof document === 'undefined' || !(document as Document).fonts) return Promise.resolve();
+  let p = fontReady.get(family);
+  if (!p) {
+    p = new FontFace(family, `url(${FONTS[family]})`).load().then((f) => { (document.fonts as unknown as { add(f: FontFace): void }).add(f); }).catch(() => {});
+    fontReady.set(family, p);
+  }
+  return p;
+}
+type Paint = (g: CanvasRenderingContext2D, w: number, h: number) => void;
+/* A canvas texture painted now with fallback fonts and again once the house fonts it names arrive. */
+export function paintTex(w: number, h: number, paint: Paint, fonts: string[] = [], srgb = true) {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const t = new T.CanvasTexture(c);
+  if (srgb) t.colorSpace = T.SRGBColorSpace;
+  t.anisotropy = 8;
+  const run = () => { const g = c.getContext('2d')!; g.clearRect(0, 0, w, h); paint(g, w, h); t.needsUpdate = true; };
+  run();
+  if (fonts.length) void Promise.all(fonts.map(houseFont)).then(run);
+  return t;
+}
+/* Set the font, shrunk until `text` fits `max` pixels. */
+export function fit(g: CanvasRenderingContext2D, text: string, family: string, size: number, max: number, weight = '700') {
+  const f = (s: number) => `${weight} ${s}px "${family}", "Helvetica Neue", Arial, sans-serif`;
+  g.font = f(size);
+  const w = g.measureText(text).width;
+  if (w > max) { size *= max / w; g.font = f(size); }
+  return size;
+}
+/* A sign in a house font: one line, fitted to the plate, on a coloured ground or none. */
+export function hsign(k: Kit, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, o: { fg: string; bg?: string; font?: string; border?: string; size?: number; lit?: boolean }) {
+  const W = 1024, H = Math.max(64, Math.round((W * h) / w)), fam = o.font ?? 'W2 Archivo Expanded';
+  const t = paintTex(W, H, (g) => {
+    if (o.bg) { g.fillStyle = o.bg; g.fillRect(0, 0, W, H); }
+    if (o.border) { g.strokeStyle = o.border; g.lineWidth = Math.max(3, H * 0.05); g.strokeRect(H * 0.09, H * 0.09, W - H * 0.18, H - H * 0.18); }
+    const s = fit(g, text, fam, H * (o.size ?? 0.6), W * (o.border ? 0.84 : 0.92));
+    g.fillStyle = o.fg; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(text, W / 2, H / 2 + s * 0.05);
+  }, [fam]);
+  const m = o.lit === false ? new T.MeshStandardMaterial({ map: t, transparent: !o.bg, roughness: 0.6 }) : new T.MeshBasicMaterial({ map: t, transparent: !o.bg });
+  const s = k.mesh(new T.PlaneGeometry(w, h), m, x, y, z, true);
+  s.rotation.y = rotY;
+  return s;
+}
+/* Anamorphic floor art (ON LOCATION rule 9): a picture laid flat, stretched so that from the eye at (ex, eh, ez) looking
+   along `yaw` (0 is -z, as the camera) it stands up as a board W wide and H tall whose foot is D ahead. A floor point at
+   distance d carries board height y where d = D * eh / (eh - y). */
+export function anamorphTex(k: Kit, tex: T.Texture, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, opacity = 0.92) {
+  const rows = 40, g = new T.BufferGeometry(), pos: number[] = [], uv: number[] = [], idx: number[] = [], h = eh - floor;
+  for (let i = 0; i <= rows; i++) {
+    const vv = i / rows, d = (D * h) / (h - vv * H), half = ((W / 2) * d) / D;
+    pos.push(-half, 0, -d, half, 0, -d);
+    uv.push(0, vv, 1, vv);
+    if (i < rows) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  }
+  g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  const m = new T.MeshBasicMaterial({ map: tex, transparent: true, opacity, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  const o = k.mesh(g, m, ex, floor + 0.014, ez, true);
+  o.rotation.y = yaw;
+  return o;
+}
+/* Lexington, Fifth, Houston: the shared street() with scanned asphalt, pavement and granite kerbs. */
+function scanStreet(k: Kit, room: string, p: { w: number; len: number; z: number; x?: number; walk?: number }) {
+  const { w, len, z, x = 0, walk = 5 } = p;
+  const asphalt = scan(k, room, 'asphalt_02', 3, () => X.asphalt(0x24282d), { color: 0x9a9a9a, roughness: 0.9 }),
+    pav = scan(k, room, room === 'chrysler' ? 'concrete_floor_02' : 'asphalt_02', 2, () => X.pavers(0x8e8b84, 5), { color: room === 'chrysler' ? 0xb8b4aa : 0xd8d2c6 }),
+    granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35),
+    white = k.flat(0xdedbd2, 0, 0.7),
+    yellow = k.flat(0xe6a626, 0, 0.6);
+  k.box(w, 0.3, len, x, -0.15, z, asphalt);
+  for (const s of [-1, 1]) {
+    k.box(walk, 0.28, len, x + s * (w / 2 + walk / 2), 0.0, z, pav);
+    k.box(0.3, 0.32, len, x + s * (w / 2 + 0.1), 0.02, z, granite);
+  }
+  for (const dx of [-0.14, 0.14]) k.box(0.09, 0.012, len - 6, x + dx, 0.01, z, yellow);
+  for (let cz = z + len / 2 - 6; cz > z - len / 2; cz -= 28) for (let cx = -w / 2 + 1.2; cx <= w / 2 - 1; cx += 1.2) k.box(0.62, 0.014, 2.8, x + cx, 0.012, cz, white);
+}
+const rib0 = (k: Kit) => k.flat(0xf2f5f7, 1, 0.12);
+/* Recolour a loaded model's materials (shared by its clones): bright steel, white marble, painted iron. */
+function steelUp(o: T.Object3D, color: number, metalness = 0.92, roughness = 0.22, keepMap = true) {
+  o.traverse((c) => {
+    if (c instanceof T.Mesh) for (const m of [c.material].flat() as T.MeshStandardMaterial[]) {
+      m.color.setHex(color); m.metalness = metalness; m.roughness = roughness; m.metalnessMap = null;
+      if (!keepMap) m.map = null;
+      m.needsUpdate = true;
+    }
+  });
+}
+/* The Chrysler lobby's lotus doors: a fan of pale veneers opening up from the sill under brass palm fronds. */
+const lotusDoor: Paint = (g, w, h) => {
+  const bg = g.createLinearGradient(0, 0, w, 0); bg.addColorStop(0, '#2e1a10'); bg.addColorStop(0.5, '#4a2c18'); bg.addColorStop(1, '#2e1a10');
+  g.fillStyle = bg; g.fillRect(0, 0, w, h);
+  g.globalAlpha = 0.18; g.strokeStyle = '#1a0e08';
+  for (let x = 4; x < w; x += 7) { g.beginPath(); g.moveTo(x, 0); g.bezierCurveTo(x + 6, h * 0.3, x - 6, h * 0.7, x + 3, h); g.stroke(); }
+  g.globalAlpha = 1;
+  const cx = w / 2, by = h * 0.9, petals = 13;
+  for (let i = 0; i < petals; i++) {
+    const a = -PI * 0.92 + (i / (petals - 1)) * PI * 0.84, len = h * (0.5 + 0.18 * Math.sin((i / (petals - 1)) * PI));
+    g.save(); g.translate(cx, by); g.rotate(a + PI / 2);
+    g.fillStyle = i % 2 ? '#c8935a' : '#a8703c';
+    g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(w * 0.07, -len * 0.55, 0, -len); g.quadraticCurveTo(-w * 0.07, -len * 0.55, 0, 0); g.fill();
+    g.strokeStyle = '#e8c477'; g.lineWidth = 1.6; g.stroke();
+    g.restore();
+  }
+  g.strokeStyle = '#e8c477'; g.lineWidth = 3;
+  for (let i = 0; i < 5; i++) { const y = h * (0.06 + i * 0.035); g.beginPath(); g.moveTo(w * 0.12 + i * 6, y); g.lineTo(cx, y + 18); g.lineTo(w * 0.88 - i * 6, y); g.stroke(); }
+  g.fillStyle = '#d6b066'; g.fillRect(cx - 2, 0, 4, h);
+  g.strokeRect(6, 6, w - 12, h - 12);
+};
+/* The Chrysler lobby ceiling until the Firefly mural: a deco sunburst in ochre, umber and gold leaf. */
+const decoCeiling: Paint = (g, w, h) => {
+  const bg = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, h * 0.6); bg.addColorStop(0, '#d9a85a'); bg.addColorStop(0.6, '#8a5a2e'); bg.addColorStop(1, '#4a2e1a');
+  g.fillStyle = bg; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 72; i++) {
+    const a = (i / 72) * PI * 2; g.fillStyle = i % 2 ? 'rgba(244,214,140,0.22)' : 'rgba(60,32,16,0.18)';
+    g.beginPath(); g.moveTo(w / 2, h / 2); g.lineTo(w / 2 + Math.cos(a) * h, h / 2 + Math.sin(a) * h); g.lineTo(w / 2 + Math.cos(a + PI / 72) * h, h / 2 + Math.sin(a + PI / 72) * h); g.fill();
+  }
+  g.strokeStyle = '#e8c477'; g.lineWidth = 6; g.strokeRect(14, 14, w - 28, h - 28); g.lineWidth = 2; g.strokeRect(30, 30, w - 60, h - 60);
+  for (let y = 60; y < h - 40; y += 48) for (const x of [44, w - 44]) { g.beginPath(); g.moveTo(x, y); g.lineTo(x + (x < w / 2 ? 14 : -14), y + 24); g.lineTo(x, y + 48); g.stroke(); }
+};
+/* Pressed tin, a 24 inch panel: a raised square, a medallion and corner fans, shaded as if lit from the window. */
+const pressedTin: Paint = (g, w, h) => {
+  g.fillStyle = '#b9b4aa'; g.fillRect(0, 0, w, h);
+  const bevel = (x: number, y: number, ww: number, hh: number, d: number) => {
+    g.fillStyle = '#e8e4da'; g.fillRect(x, y, ww, d); g.fillRect(x, y, d, hh);
+    g.fillStyle = '#7e786e'; g.fillRect(x, y + hh - d, ww, d); g.fillRect(x + ww - d, y, d, hh);
+  };
+  bevel(10, 10, w - 20, h - 20, 8);
+  bevel(48, 48, w - 96, h - 96, 6);
+  const cx = w / 2, cy = h / 2;
+  for (let r = 150; r > 20; r -= 26) {
+    const gr = g.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+    gr.addColorStop(0, '#efebe2'); gr.addColorStop(1, '#8a8478');
+    g.fillStyle = gr; g.beginPath();
+    for (let i = 0; i <= 16; i++) { const a = (i / 16) * PI * 2, rr = r * (i % 2 ? 0.86 : 1); g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+    g.fill();
+  }
+  for (const [x, y] of [[48, 48], [w - 48, 48], [48, h - 48], [w - 48, h - 48]]) {
+    for (let i = 0; i < 5; i++) { g.strokeStyle = i % 2 ? '#e4e0d6' : '#837d72'; g.lineWidth = 5; g.beginPath(); g.arc(x, y, 18 + i * 9, 0, PI * 2); g.stroke(); }
+  }
+};
+/* The Houston Street wall: an old painted sign, faded into the brick. */
+const ghostSign: Paint = (g, w, h) => {
+  g.fillStyle = 'rgba(236,226,204,0.85)';
+  g.fillRect(30, 30, w - 60, 8); g.fillRect(30, h - 38, w - 60, 8);
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  fit(g, 'APPETIZING', 'W2 Archivo Expanded', 190, w * 0.9, '800'); g.fillText('APPETIZING', w / 2, h * 0.34);
+  fit(g, 'SMOKED FISH  .  LOX  .  HERRING', 'W2 Archivo Expanded', 64, w * 0.86, '700'); g.fillText('SMOKED FISH  .  LOX  .  HERRING', w / 2, h * 0.66);
+  fit(g, 'SINCE 1914', 'W2 Archivo Expanded', 44, w * 0.5, '700'); g.fillText('SINCE 1914', w / 2, h * 0.83);
+  /* the wear: brick shows through */
+  const rnd = X.mulberry(1914);
+  g.globalCompositeOperation = 'destination-out';
+  for (let i = 0; i < 900; i++) { g.globalAlpha = 0.25 + rnd() * 0.5; g.fillRect(rnd() * w, rnd() * h, 6 + rnd() * 40, 3 + rnd() * 10); }
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+};
+/* A doorway into a stockroom that is barely there: built as a ten metre room seen from four metres away, squeezed
+   into `depth`. Every row u of the virtual room is scaled by s = E / (E + u) toward a vanishing point at head height. */
+function backRoom(k: Kit, cx: number, zBack: number, w0: number, h0: number, depth: number) {
+  const E = 4, U = 10, rows = 14, sEnd = E / (E + U), vy = 2.0, z0 = zBack + depth;
+  const at = (u: number) => { const s = E / (E + u); return { s, z: z0 - (depth - 0.06) * (1 - s) / (1 - sEnd), half: (w0 / 2) * s, floor: vy * (1 - s), ceil: vy + (h0 - vy) * s }; };
+  const checker = paintTex(256, 1024, (g, w, h) => { const n = 4, m = rows * 2; for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) { g.fillStyle = (i + j) % 2 ? '#1c1c1c' : '#e8e2d6'; g.fillRect((i * w) / n, (j * h) / m, w / n + 1, h / m + 1); } });
+  const tiles = paintTex(256, 1024, (g, w, h) => { g.fillStyle = '#eeebe2'; g.fillRect(0, 0, w, h); g.fillStyle = '#b8b2a6'; for (let j = 0; j < rows * 2; j++) g.fillRect(0, (j * h) / (rows * 2), w, 3); for (let i = 1; i < 6; i++) g.fillRect((i * w) / 6, 0, 3, h); g.fillStyle = '#1f4a3a'; g.fillRect(0, h * 0.995, w, 6); });
+  const strip = (edge: (a: ReturnType<typeof at>) => [T.Vector3, T.Vector3], tex: T.Texture, tint = 0xffffff) => {
+    const pos: number[] = [], uv: number[] = [], idx: number[] = [];
+    for (let r = 0; r <= rows; r++) {
+      const u = (r / rows) * U, a = at(u), [p, q] = edge(a);
+      pos.push(p.x, p.y, p.z, q.x, q.y, q.z); uv.push(0, r / rows, 1, r / rows);
+      if (r < rows) { const o = r * 2; idx.push(o, o + 2, o + 1, o + 1, o + 2, o + 3); }
+    }
+    const g = new T.BufferGeometry();
+    g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+    return k.mesh(g, new T.MeshStandardMaterial({ map: tex, color: tint, roughness: 0.5, side: T.DoubleSide }), 0, 0, 0, true);
+  };
+  strip((a) => [v(cx - a.half, a.floor, a.z), v(cx + a.half, a.floor, a.z)], checker);
+  strip((a) => [v(cx - a.half, a.ceil, a.z), v(cx + a.half, a.ceil, a.z)], tiles, 0x9a968c);
+  strip((a) => [v(cx - a.half, a.floor, a.z), v(cx - a.half, a.ceil, a.z)], tiles);
+  strip((a) => [v(cx + a.half, a.floor, a.z), v(cx + a.half, a.ceil, a.z)], tiles);
+  /* shelves of cans down both walls, and a lit door at the far end */
+  const shelf = k.flat(0x6a4a30, 0, 0.6), can = [0xc8a24a, 0x8a2a2a, 0x2a5a8a, 0xe8e2d4];
+  for (let r = 1; r < 9; r++) {
+    const a = at(r * 1.1), b = at(r * 1.1 + 0.9);
+    for (const sd of [-1, 1]) for (const lv of [0.7, 1.4, 2.1]) {
+      const y = a.floor + lv * a.s, x = cx + sd * (a.half - 0.18 * a.s);
+      k.box(0.34 * a.s, 0.04 * a.s, Math.abs(a.z - b.z), x, y, (a.z + b.z) / 2, shelf);
+      k.box(0.22 * a.s, 0.22 * a.s, Math.abs(a.z - b.z) * 0.8, x, y + 0.13 * a.s, (a.z + b.z) / 2, k.flat(can[(r + lv * 10) % 4], 0.3, 0.4));
+    }
+  }
+  const e = at(U);
+  k.box(e.half * 1.3, (e.ceil - e.floor) * 0.86, 0.02, cx, e.floor + (e.ceil - e.floor) * 0.43, e.z - 0.01, k.glow(0xffe2b0));
+  k.point(cx, 2.2, zBack + 0.4, 0xffe2b0, 5, 3);
+  /* the doorframe at the front */
+  const frame = k.flat(0x1f4a3a, 0.1, 0.35);
+  for (const sd of [-1, 1]) k.box(0.16, h0 + 0.1, 0.18, cx + sd * (w0 / 2 + 0.08), (h0 + 0.1) / 2, z0, frame);
+  k.box(w0 + 0.32, 0.16, 0.18, cx, h0 + 0.08, z0, frame);
+}
+/* A Victory for the arch's spandrel: a winged figure in low relief, light from the upper left, until Firefly's. */
+const victoryRelief: Paint = (g, w, h) => {
+  g.fillStyle = '#e4dfd4'; g.fillRect(0, 0, w, h);
+  const shade = (path: () => void, lift: number) => { g.save(); g.translate(-lift, -lift); g.fillStyle = '#f6f2ea'; path(); g.fill(); g.restore(); g.save(); g.translate(lift, lift); g.fillStyle = '#b7b0a2'; path(); g.fill(); g.restore(); g.fillStyle = '#e8e3d8'; path(); g.fill(); };
+  shade(() => { g.beginPath(); g.moveTo(w * 0.3, h * 0.55); g.bezierCurveTo(w * 0.5, h * 0.1, w * 0.85, h * 0.05, w * 0.98, h * 0.08); g.bezierCurveTo(w * 0.8, h * 0.25, w * 0.75, h * 0.45, w * 0.45, h * 0.62); g.closePath(); }, 5);
+  shade(() => { g.beginPath(); g.ellipse(w * 0.32, h * 0.42, w * 0.07, h * 0.08, 0, 0, PI * 2); }, 4);
+  shade(() => { g.beginPath(); g.moveTo(w * 0.26, h * 0.5); g.bezierCurveTo(w * 0.2, h * 0.7, w * 0.05, h * 0.85, w * 0.02, h * 0.98); g.lineTo(w * 0.4, h * 0.98); g.bezierCurveTo(w * 0.42, h * 0.8, w * 0.42, h * 0.65, w * 0.4, h * 0.5); g.closePath(); }, 5);
+  shade(() => { g.beginPath(); g.moveTo(w * 0.36, h * 0.48); g.lineTo(w * 0.7, h * 0.3); g.lineTo(w * 0.72, h * 0.34); g.lineTo(w * 0.4, h * 0.54); g.closePath(); }, 3);
+  g.strokeStyle = '#a8a092'; g.lineWidth = 3;
+  for (let i = 0; i < 9; i++) { g.beginPath(); g.moveTo(w * (0.5 + i * 0.05), h * (0.5 - i * 0.04)); g.quadraticCurveTo(w * (0.6 + i * 0.04), h * (0.3 - i * 0.02), w * (0.62 + i * 0.04), h * (0.12 - i * 0.004)); g.stroke(); }
+};
+/* A green New York street sign pair on a pole: two blades, one each way. */
+function streetSign(k: Kit, x: number, z: number, a: string, b: string, rotY = 0) {
+  const pole = k.flat(0x2c3a30, 0.5, 0.5);
+  k.cyl(0.06, 3.6, x, 1.8, z, pole, 0.07, 8);
+  const s1 = hsign(k, a, 1.5, 0.26, x, 3.42, z, rotY, { fg: '#f4f6f2', bg: '#1d6b45', font: 'W2 Archivo Narrow', border: '#f4f6f2', size: 0.62 });
+  const s2 = hsign(k, a, 1.5, 0.26, x, 3.42, z, rotY + PI, { fg: '#f4f6f2', bg: '#1d6b45', font: 'W2 Archivo Narrow', border: '#f4f6f2', size: 0.62 });
+  const s3 = hsign(k, b, 1.5, 0.26, x, 3.12, z, rotY + PI / 2, { fg: '#f4f6f2', bg: '#1d6b45', font: 'W2 Archivo Narrow', border: '#f4f6f2', size: 0.62 });
+  const s4 = hsign(k, b, 1.5, 0.26, x, 3.12, z, rotY - PI / 2, { fg: '#f4f6f2', bg: '#1d6b45', font: 'W2 Archivo Narrow', border: '#f4f6f2', size: 0.62 });
+  void s1; void s2; void s3; void s4;
+  k.keepOut.push({ x, z, r: 0.3 });
+}
 
 /* ---------- shared street furniture for the exterior rooms ---------- */
 export function street(k: Kit, p: { w: number; len: number; z: number; x?: number; walk?: number; night?: boolean; curbs?: boolean }) {
@@ -67,18 +302,20 @@ export const chrysler: RoomDef = {
     k.sky({ top: 0x2a3d6e, horizon: 0xe8a877, ground: 0x2a2a30, fog: 0.0026, sun: { az: 4.6, el: 0.09, color: 0xffb070, size: 20 }, haze: 0.35, stars: 120, env: 0.8 });
     k.hemi(0xffdcc0, 0x2a2c34, 0.7);
     k.sun(0xffc08a, 2.0, -60, 26, -30, true, 90);
-    const marbleRed = k.pbr('rougeMarble', X.marble(0x8a3a3a, 0xd9b090, 7), 0.3, { roughness: 0.25 }),
-      onyx = k.pbr('onyx', X.marble(0x3a2a22, 0xc9a25a, 8), 0.4, { roughness: 0.2 }),
+    /* 2026-11-23: the lobby's Rouge Flamme and amber onyx are a Poly Haven marble scan (marble_01, CC0) tinted, at its
+       real 1.5 m slab; the floor is a scanned travertine tile (floor_tiles_02) at 4 m */
+    const marbleRed = scan(k, 'chrysler', 'marble_01', 1.5, () => X.marble(0x8a3a3a, 0xd9b090, 7), { color: 0xa8402f, roughness: 0.22 }),
+      onyx = scan(k, 'chrysler', 'marble_01', 1.5, () => X.marble(0x3a2a22, 0xc9a25a, 8), { color: 0x6a4a2a, roughness: 0.18 }, 1.2),
       brass = k.pbr('brassC', X.gilt(0xc9a55a), 2, { metalness: 0.85, roughness: 0.28 }),
       steelCrown = k.pbr('crownSteel', X.steel(0xc7ccd2, false, 25), 0.35, { metalness: 0.95, roughness: 0.22 }),
       facade = k.pbr('chryslerBrick', X.windows(26, 0.4, 0x6b655c, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 1.0, roughness: 0.6, stretch: 0.42 }),
       wood = k.pbr('lotusWood', X.planks(0x5a3a26, 6, 27), 1.4, { roughness: 0.5 }),
-      floorM = k.pbr('lobbyFloor', X.terrazzo(0xd4bc8a, 9), 0.35, { roughness: 0.3 }),
+      floorM = scan(k, 'chrysler', 'floor_tiles_02', 4, () => X.terrazzo(0xd4bc8a, 9), { color: 0xd8b48a, roughness: 0.3 }),
       dark = k.flat(0x1a1a1c, 0.5, 0.6),
       glow = k.glow(0xfff0c8),
       glass = k.glass(0xcfe0e8, 0.18, 0.06);
     // Lexington Avenue and the neighbours
-    street(k, { w: 20, len: 120, z: -20 });
+    scanStreet(k, 'chrysler', { w: 20, len: 120, z: -20 });
     blockFront(k, { x: -15, z0: 30, count: 9, face: 1, seed: 41, h: [16, 30] });
     blockFront(k, { x: 15, z0: 30, count: 3, face: -1, seed: 42, h: [14, 22] });
     for (const z of [26, 6, -46]) for (const s of [-1, 1]) k.lamp(s * 11.6, z, 6.2, dark, 0xffd9a8, 30);
@@ -89,37 +326,60 @@ export const chrysler: RoomDef = {
     k.box(34, 62, 34, TX, 31, TZ, facade);
     for (let i = 0; i < 4; i++) k.box(30 - i * 3, 14, 30 - i * 3, TX, 62 + 7 + i * 14, TZ, facade);
     for (let i = 0; i < 4; i++) k.box(31 - i * 3, 0.8, 31 - i * 3, TX, 62 + i * 14, TZ, steelCrown);
-    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-      const eagle = k.mesh(new T.ConeGeometry(1.4, 4, 5), steelCrown, TX + sx * 15, 62.5, TZ + sz * 15);
-      eagle.rotation.set(PI / 2 * -sz * 0, 0, sx * 1.4);
-      eagle.rotation.x = -PI / 2;
-      eagle.rotation.z = sx * 0.5;
-    }
-    /* 2026-10-09 truth pass: the cones above sit at the top of the base, which is where the real
-       building carries its 31st floor radiator cap gargoyles. The eagles are thirty floors higher,
-       at the 61st floor setback, the foot of the crown: four of them here, each leaning out over
-       the street from a corner. */
+    /* 2026-11-23 (wave 2a): the 31st floor is a frieze of chrome hubcaps on dark brick with winged caps at the
+       corners, the 61st floor carries four steel eagles (real models, Nirosta bright), and the crown is built the way
+       it is: seven tiers of crossed barrel vaults, each face a semicircle ringed with triangular windows, stepping up
+       and in to the needle. The old crown was seven hemispheres. */
     const capCorner = v(TX - 15, 62.5, TZ + 15);
     const eagleCorner = v(TX - 10.5, 118.2, TZ + 10.5);
-    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-      const out = v(sx, -0.35, sz).normalize();
-      const head = k.mesh(new T.ConeGeometry(0.9, 5.2, 6), steelCrown, TX + sx * 10.5 + sx * 2.2, 118.2, TZ + sz * 10.5 + sz * 2.2);
-      head.quaternion.setFromUnitVectors(v(0, 1, 0), out);
-      k.box(1.6, 1.4, 1.6, TX + sx * 10.5, 118.4, TZ + sz * 10.5, steelCrown);
+    const frieze = k.flat(0x2a2a2e, 0.2, 0.6), hubcap = k.flat(0xe9edf0, 1, 0.16);
+    {
+      const caps: T.Matrix4[] = [], q = new T.Quaternion(), one = v(1, 1, 1);
+      for (const [nx, nz] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as [number, number][]) {
+        k.box(nz ? 30.4 : 0.3, 1.6, nz ? 0.3 : 30.4, TX + nx * 15.1, 63.6, TZ + nz * 15.1, frieze);
+        q.setFromUnitVectors(v(0, 1, 0), v(nx, 0, nz));
+        for (let i = -9; i <= 9; i++) caps.push(new T.Matrix4().compose(v(TX + nx * 15.28 + (nz ? i * 1.5 : 0), 63.6, TZ + nz * 15.28 + (nx ? i * 1.5 : 0)), q, one));
+      }
+      k.instances(new T.CylinderGeometry(0.5, 0.56, 0.16, 20), hubcap, caps);
     }
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.box(2.2, 0.9, 2.2, TX + sx * 15.6, 62.9, TZ + sz * 15.6, steelCrown);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.box(2.4, 1.0, 2.4, TX + sx * 11.3, 118.5, TZ + sz * 11.3, steelCrown);
+    /* both sets of birds are one model: the Penn Station eagle (the museum's own kit), made bright steel */
+    const birds: [number, number, number, number][] = [];
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      birds.push([TX + sx * 11.4, 119, TZ + sz * 11.4, Math.atan2(sx, sz)]);
+      birds.push([TX + sx * 15.7, 63.35, TZ + sz * 15.7, Math.atan2(sx, sz)]);
+    }
+    glbs(k, 'chrysler/penn_eagle', { height: 3.4 }, birds, (os) => steelUp(os[0], 0xe4e8ec), 10);
     const cy = 118;
-    for (let i = 0; i < 7; i++) {
-      const r = 14 - i * 1.7, y = cy + i * 6.2;
-      const shell = k.mesh(new T.SphereGeometry(r, 32, 12, 0, PI * 2, 0, PI / 2), steelCrown, TX, y, TZ);
-      shell.scale.y = 0.55;
-      for (let j = 0; j < 24; j++) {
-        const t = (j / 24) * PI * 2, tri = k.mesh(new T.ConeGeometry(0.6, 2.4 - i * 0.2, 3), glow, TX + Math.cos(t) * (r - 0.6), y + 1.6, TZ + Math.sin(t) * (r - 0.6));
-        tri.rotation.y = -t;
+    {
+      /* a flat triangular window in the face plane, its point out along the arc's radius */
+      const tri = new T.ShapeGeometry(new T.Shape([new T.Vector2(-0.42, -0.7), new T.Vector2(0.42, -0.7), new T.Vector2(0, 0.8)])), rib = k.flat(0xf2f5f7, 1, 0.12);
+      const skin = k.pbr('crownSteel2', X.steel(0xe2e7eb, false, 25), 0.35, { metalness: 0.72, roughness: 0.2 }), basis = new T.Matrix4();
+      for (let i = 0; i < 7; i++) {
+        const r = 10.3 - i * 1.32, ys = cy + i * 4.6;
+        k.box(2 * r, 4.6, 2 * r, TX, ys - 2.3, TZ, skin);
+        for (const turn of [0, PI / 2]) {
+          const vault = k.mesh(new T.CylinderGeometry(r, r, 2 * r, 36, 1, false, 0, PI), skin, TX, ys, TZ);
+          vault.rotation.set(0, turn, PI / 2);
+        }
+        for (const [nx, nz] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as [number, number][]) {
+          const lx = -nz, lz = nx;   // the face's own right hand, so arcs run across it
+          const ring = k.mesh(new T.TorusGeometry(r, 0.16, 6, 36, PI), rib, TX + nx * (r + 0.04), ys, TZ + nz * (r + 0.04));
+          ring.rotation.y = Math.atan2(nx, nz);
+          const n = 7 + Math.round(r * 0.5);
+          for (let j = 0; j < n; j++) {
+            const a = 0.16 + ((PI - 0.32) * j) / (n - 1), rr = r - 0.95, dir = v(Math.cos(a) * lx, Math.sin(a), Math.cos(a) * lz);
+            const w = k.mesh(tri, glow, TX + nx * (r + 0.06) + dir.x * rr, ys + dir.y * rr, TZ + nz * (r + 0.06) + dir.z * rr);
+            const n3 = v(nx, 0, nz);
+            w.quaternion.setFromRotationMatrix(basis.makeBasis(dir.clone().cross(n3), dir, n3));
+          }
+        }
       }
     }
     k.point(TX, cy + 30, TZ, 0xfff0c8, 400, 120);
-    k.beam(v(TX, cy + 42, TZ), v(TX, cy + 66, TZ), 0.5, steelCrown, 8);
-    k.cyl(0.08, 4, TX, cy + 68, TZ, glow, 0.02, 6);
+    /* the needle: 185 feet of it, hoisted out of the crown in ninety minutes */
+    k.lathe([[1.5, 0], [1.25, 3], [0.7, 10], [0.28, 20], [0.04, 31], [0, 32]], TX, cy + 29.5, TZ, rib0(k), 12);
     // the lobby: a wedge of red marble on the ground floor, doors onto the avenue
     const LX = 15.3, LZ = -18;
     k.box(0.6, 12, 40, LX, 6, LZ, marbleRed);
@@ -140,14 +400,94 @@ export const chrysler: RoomDef = {
     k.block(LX - 0.4, LX + 0.4, LZ + 8.2, LZ + 20);
     k.box(18, 0.4, 41, LX + 8.5, -0.2, LZ, floorM);
     k.box(18, 0.5, 41, LX + 8.5, 12, LZ, onyx);
-    for (const dz of [-14, 0, 14]) { k.box(17, 0.3, 0.6, LX + 8.5, 11.8, LZ + dz, brass); k.box(3.6, 0.06, 0.3, LX + 8.5, 11.6, LZ + dz, glow); k.point(LX + 8.5, 10.5, LZ + dz, 0xffe0b0, 40, 18); }
+    /* the middle beam crossed the ceiling work; only the outer two stay, and the light */
+    for (const dz of [-14, 0, 14]) { if (dz) { k.box(17, 0.3, 0.6, LX + 8.5, 11.5, LZ + dz, brass); k.box(3.6, 0.06, 0.3, LX + 8.5, 11.33, LZ + dz, glow); } k.point(LX + 8.5, 10.5, LZ + dz, 0xffe0b0, 40, 18); }
     // lotus elevator doors on the back wall, the mural framed overhead
+    /* 2026-11-23: each door wears the lotus: a fan of pale inlaid wood opening upward from the sill with brass palm
+       fronds over it, painted here until the Firefly marquetry plate (FIREFLY_QUEUE.md) drops in by file name */
+    const lotusMat = new T.MeshStandardMaterial({ map: paintTex(256, 512, lotusDoor), roughness: 0.38, metalness: 0.15 });
     for (let i = 0; i < 4; i++) {
       const z = LZ - 12 + i * 8;
       k.rounded(2.6, 4.6, 0.12, LX + 16.6, 2.4, z, wood, 0.05);
-      k.box(0.08, 4.6, 0.06, LX + 16.55, 2.4, z, brass);
-      k.box(0.08, 0.2, 2.8, LX + 16.55, 4.6, z, brass);
-      k.box(0.06, 0.12, 0.6, LX + 16.5, 5.2, z, glow);
+      fireflyPlate(k, 'assets/museum/tex/chrysler/ff_lotus_door.webp', 2.5, 4.5, LX + 16.52, 2.4, z, -PI / 2, lotusMat);
+      for (const s2 of [-1, 1]) { k.box(0.14, 5.2, 0.22, LX + 16.5, 2.6, z + s2 * 1.45, brass); k.box(0.1, 5.6, 0.12, LX + 16.48, 2.8, z + s2 * 1.66, brass); }
+      k.box(0.14, 0.24, 3.1, LX + 16.5, 5.15, z, brass);
+      /* the stepped deco overdoor */
+      for (let st = 0; st < 3; st++) k.box(0.12, 0.22, 2.4 - st * 0.7, LX + 16.48, 5.45 + st * 0.22, z, st === 2 ? glow : brass);
+    }
+    /* ---- THE BIG UPGRADE, wave 2a (2026-11-23): the lobby built, the avenue furnished ---- */
+    {
+      const blackM = k.flat(0x121012, 0.1, 0.14), x0 = LX + 0.3, x1 = LX + 16.7, z0 = LZ - 19.7, z1 = LZ + 19.7;
+      /* amber onyx pilasters with stepped brass capitals, placed between the works */
+      const pil = (x: number, z: number, nx: number, nz: number) => {
+        const w = 0.9, d = 0.36, along = nx !== 0;
+        k.box(along ? d : w, 10.6, along ? w : d, x + nx * d / 2, 5.3, z + nz * d / 2, onyx);
+        k.box(along ? d + 0.08 : w + 0.12, 0.32, along ? w + 0.12 : d + 0.08, x + nx * d / 2, 0.16, z + nz * d / 2, brass);
+        for (let st = 0; st < 3; st++) { const ww = w + 0.15 + st * 0.22, dd = d + 0.06 + st * 0.06; k.box(along ? dd : ww, 0.24, along ? ww : dd, x + nx * dd / 2, 10.7 + st * 0.24, z + nz * dd / 2, brass); }
+      };
+      for (const x of [LX + 1.0, LX + 8.5, LX + 16.0]) { pil(x, z0, 0, 1); pil(x, z1, 0, -1); }
+      for (const dz of [-8, 8, -18.8, 18.8]) pil(x1, LZ + dz, -1, 0);
+      for (const dz of [-12, 0, 12, -18.8, 18.8]) pil(x0, LZ + dz, 1, 0);
+      /* the cornice: a brass band and a black step all round, the skirting in black marble */
+      for (const [x, z, w, d] of [[(x0 + x1) / 2, z0 + 0.1, x1 - x0, 0.22], [(x0 + x1) / 2, z1 - 0.1, x1 - x0, 0.22], [x0 + 0.1, LZ, 0.22, z1 - z0], [x1 - 0.1, LZ, 0.22, z1 - z0]] as [number, number, number, number][]) {
+        k.box(w, 0.34, d, x, 11.25, z, brass);
+        k.box(w + (d < 1 ? 0 : 0.12), 0.2, d + (d < 1 ? 0.12 : 0), x, 11.5, z, blackM);
+        k.box(w, 0.28, d, x, 0.14, z, blackM);
+      }
+      /* the painted ceiling: a deco sunburst in ochre and umber round the ceiling work, until Firefly's mural lands */
+      const ceilMat = new T.MeshStandardMaterial({ map: paintTex(512, 1232, decoCeiling), roughness: 0.82 });
+      const ceil = fireflyPlate(k, 'assets/museum/tex/chrysler/ff_lobby_ceiling.webp', 16.4, 39.4, LX + 8.5, 11.72, LZ, 0, ceilMat);
+      ceil.rotation.x = PI / 2;
+      /* a brass border inlaid in the travertine, a metre in from the walls */
+      for (const [x, z, w, d] of [[(x0 + x1) / 2, z0 + 1.1, x1 - x0 - 2.2, 0.08], [(x0 + x1) / 2, z1 - 1.1, x1 - x0 - 2.2, 0.08], [x0 + 1.1, LZ, 0.08, z1 - z0 - 2.2], [x1 - 1.1, LZ, 0.08, z1 - z0 - 2.2]] as [number, number, number, number][]) k.box(w, 0.012, d, x, 0.006, z, brass);
+      /* torcheres against the pilasters (the museum's own deco floor lamp) */
+      const tor: [number, number, number, number][] = [[LX + 8.5, 0, z0 + 0.75, 0], [LX + 8.5, 0, z1 - 0.75, 0], [x1 - 0.75, 0, LZ - 8, 0], [x1 - 0.75, 0, LZ + 8, 0]];
+      glbs(k, 'chrysler/torchere', { height: 2.7 }, tor);
+      for (const [x, , z] of tor) { k.point(x, 2.9, z, 0xffd7a0, 14, 7); k.keepOut.push({ x, z, r: 0.45 }); }
+      /* one of the 61st floor eagles, brought down to eye level on a black marble plinth */
+      const EX = LX + 12, EZ = LZ - 8;
+      k.box(1.5, 1.2, 1.5, EX, 0.6, EZ, blackM);
+      k.box(1.62, 0.1, 1.62, EX, 1.2, EZ, brass);
+      k.keepOut.push({ x: EX, z: EZ, r: 1.2 });
+      glbs(k, 'chrysler/penn_eagle', { height: 2.3 }, [[EX, 1.25, EZ, -PI / 2]], (os) => steelUp(os[0], 0xe8ecf0, 0.95, 0.16));
+      hsign(k, 'THE EAGLE  .  61ST FLOOR  .  NIROSTA STEEL', 1.3, 0.16, EX - 0.76, 0.86, EZ, -PI / 2, { fg: '#d9b86a', font: 'W2 JetBrains Mono' });
+      k.spot(EX - 3, 7, EZ, EX, 1.8, EZ, 0xfff0d8, 60, 0.35, 0.6, 14);
+      /* the trick: LOOK UP inlaid in the floor, flat and stretched, standing up as a sign from the brass star by the door */
+      const look = paintTex(1024, 330, (g, w, h) => {
+        const s0 = fit(g, 'LOOK UP', 'W2 Archivo Expanded', h * 0.78, w * 0.9, '800');
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.lineWidth = s0 * 0.06; g.strokeStyle = '#3a2410'; g.strokeText('LOOK UP', w / 2, h / 2);
+        const gr = g.createLinearGradient(0, h * 0.2, 0, h * 0.8); gr.addColorStop(0, '#f6dc94'); gr.addColorStop(0.5, '#c9973e'); gr.addColorStop(1, '#8a5f22');
+        g.fillStyle = gr; g.fillText('LOOK UP', w / 2, h / 2);
+      }, ['W2 Archivo Expanded']);
+      anamorphTex(k, look, LX + 1.6, LZ, 3, 0, -PI / 2, 7, 6, 1.5, 0.95);
+      k.mesh(new T.RingGeometry(0.18, 0.3, 8), brass, LX + 1.6, 0.012, LZ).rotation.x = -PI / 2;
+      k.egg(v(LX + 10, 0.4, LZ), { id: 'chrysler-anamorph', title: 'Letters that stand up', year: '1533', text: 'From the brass star just inside the doors the letters in the floor stand upright and tell you where to look. It is anamorphosis, a picture stretched so it only comes right from one spot; the most famous is the long skull across the foot of Hans Holbein the Younger\'s The Ambassadors, painted in 1533.', clue: 'Stand on the brass star inside the doors and read the floor.', source: { name: 'The Ambassadors (Holbein), Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Ambassadors_(Holbein)' } }, { r: 1.6 });
+      /* the avenue doors: black granite portals with the triangular deco heads, the name in brass over them */
+      for (const dz of [-6, 6]) {
+        const zc = LZ + dz;
+        for (const s2 of [-1, 1]) { k.box(0.5, 7.0, 0.7, LX - 0.5, 3.5, zc + s2 * 2.75, blackM); k.box(0.3, 7.6, 0.45, LX - 0.65, 3.8, zc + s2 * 3.25, blackM); }
+        const tri = new T.Shape(); tri.moveTo(-3.5, 0); tri.lineTo(3.5, 0); tri.lineTo(0, 4.4); tri.closePath();
+        const hole = new T.Path(); hole.moveTo(-2.6, 0.35); hole.lineTo(2.6, 0.35); hole.lineTo(0, 3.6); hole.closePath(); tri.holes.push(hole);
+        const head = k.mesh(new T.ExtrudeGeometry(tri, { depth: 0.4, bevelEnabled: false }), blackM, LX - 0.55, 5.1, zc);
+        head.rotation.y = -PI / 2;
+        const pane = new T.Shape(); pane.moveTo(-2.6, 0.35); pane.lineTo(2.6, 0.35); pane.lineTo(0, 3.6); pane.closePath();
+        const g2 = k.mesh(new T.ShapeGeometry(pane), k.glow(0xffe2a8, 0.85), LX - 0.36, 5.1, zc);
+        g2.rotation.y = -PI / 2;
+        for (let r = 0; r < 7; r++) { const a = 0.35 + (r / 6) * (PI - 0.7); k.beam(v(LX - 0.4, 5.45, zc), v(LX - 0.4, 5.45 + Math.sin(a) * 3.0, zc + Math.cos(a) * 2.6), 0.035, brass, 4); }
+        k.box(0.2, 0.3, 7.2, LX - 0.5, 5.0, zc, brass);
+      }
+      hsign(k, 'CHRYSLER BUILDING', 9, 0.95, LX - 0.62, 10.7, LZ, -PI / 2, { fg: '#e4c27a', bg: '#141012', font: 'W2 Archivo Expanded', size: 0.66 });
+      hsign(k, '405 LEXINGTON AVENUE', 4.6, 0.36, LX - 0.62, 9.9, LZ, -PI / 2, { fg: '#c9a55a', font: 'W2 JetBrains Mono' });
+      /* the avenue: cabs and cars (cast by the kit as real models), a newsstand, the corner sign */
+      for (const [x, z, paint, r] of [[8.7, -30, 0xf3b81c, PI], [8.7, -44, 0x1d1f22, PI], [3.2, -16, 0xf3b81c, PI], [-3.2, -40, 0xf3b81c, 0], [-3.2, -58, 0x8a1c1c, 0], [8.7, -58, 0xf3b81c, PI]] as [number, number, number, number][]) {
+        carBox(k, x, z, r, paint);
+        k.keepOut.push({ x, z: z - 1.4, r: 1.0 }, { x, z: z + 1.4, r: 1.0 }, { x, z, r: 1.0 });
+      }
+      glbs(k, 'chrysler/penn_newsstand', { height: 2.6 }, [[-12.7, 0.14, -32, PI / 2]]);
+      k.keepOut.push({ x: -12.7, z: -32, r: 1.3 });
+      hsign(k, 'NEWS  .  PAPERS  .  MAGAZINES', 2.2, 0.3, -11.6, 2.95, -32, PI / 2, { fg: '#f2e6c8', bg: '#7a1c1c', font: 'W2 Archivo Narrow' });
+      streetSign(k, -10.5, 31, 'LEXINGTON AV', 'E 42 ST', PI / 2);
     }
     /* landmark eggs, every fact from the Chrysler Building article on Wikipedia */
     const CSRC = { name: 'Chrysler Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Chrysler_Building' };
@@ -167,7 +507,7 @@ export const chrysler: RoomDef = {
     }
     for (const z of [LZ - 19.68, LZ + 19.68]) for (const x of [LX + 4.5, LX + 12.5]) mounts.push({ position: v(x, 3.4, z), rotation: z < LZ ? 0 : PI, target: v(x, 3, z < LZ ? z + 5 : z - 5), width: 4.6, height: 2.7, style: 'black' });
     for (let i = 0; i < 3; i++) mounts.push({ position: v(LX + 16.66, 3.4, LZ - 16 + i * 16), rotation: -PI / 2, target: v(LX + 11, 3, LZ - 16 + i * 16), width: 4.6, height: 2.7, style: 'black' });
-    mounts.push({ position: v(LX + 8.5, 11.75, LZ), rotation: 0, tilt: PI / 2, target: v(LX + 8.5, 3, LZ + 6), lookAt: v(LX + 8.5, 11.8, LZ), width: 15, height: 8.4, style: 'gilt', wash: false });
+    mounts.push({ position: v(LX + 8.5, 11.55, LZ), rotation: 0, tilt: PI / 2, target: v(LX + 8.5, 3, LZ + 6), lookAt: v(LX + 8.5, 11.6, LZ), width: 15, height: 8.4, style: 'gilt', wash: false });
     for (let i = 0; i < 4; i++) {
       const z = 20 - i * 10;
       k.box(3, 4.4, 0.6, -11.9, 2.2, z, dark);
@@ -195,12 +535,14 @@ export const flatiron: RoomDef = {
     k.sky({ top: 0x6f9fd4, horizon: 0xe4ebee, ground: 0x6d6a62, fog: 0.0024, sun: { az: 3.2, el: 1.1, color: 0xfff6e8, size: 12 }, env: 0.95 });
     k.hemi(0xf1f6ff, 0x4a4a42, 0.9);
     k.sun(0xfff4e6, 2.6, 20, 70, -10, true, 90);
-    const lime = k.pbr('flatLime', X.ashlar(0xc8bda6, 12, 3), 0.2),
+    /* 2026-11-23: the limestone, the plaza, the gallery's floor and walls are Poly Haven scans (CC0) at real size */
+    const lime = scan(k, 'flatiron', 'white_sandstone_blocks_02', 2, () => X.ashlar(0xc8bda6, 12, 3), { color: 0xe6dccb }),
       terra = k.pbr('flatTerra', X.windows(28, 0.15, 0xb59f82, true), 0.11, { emissive: 0xffffff, emissiveIntensity: 0.45, roughness: 0.65, stretch: 0.42 }),
-      plaza = k.pbr('plazaFlat', X.pavers(0x9a968c, 13), 0.3),
+      plaza = scan(k, 'flatiron', 'gravel_embedded_concrete', 2, () => X.pavers(0x9a968c, 13), { color: 0xc4beb2 }),
       green = k.flat(0x3f6b3a, 0, 0.7),
       iron = k.flat(0x1f242a, 0.7, 0.45),
-      oak = k.pbr('prowFloor', X.planks(0x8a6a48, 8, 28), 0.6, { roughness: 0.55 }),
+      oak = scan(k, 'flatiron', 'wood_floor', 1.7, () => X.planks(0x8a6a48, 8, 28), { color: 0xb49c86, roughness: 0.5 }),
+      /* the gallery's walls stay gallery white: the plaster scan read olive under these lights */
       plaster = k.pbr('prowPlaster', X.plaster(0xe8e2d4, 16), 0.4),
       glass = k.glass(0xd7ecf3, 0.14, 0.06),
       lawn = k.pbr('lawnF', X.grass(0x4c7a3a, 7), 0.15),
@@ -208,8 +550,8 @@ export const flatiron: RoomDef = {
     /* two avenues meeting: the prow points north (+z here) at Madison Square, so east is -x.
        2026-10-09 truth pass: Fifth Avenue runs straight up the west side (+x) and Broadway comes
        in on the diagonal from the east (-x); they were the other way round. */
-    street(k, { w: 16, len: 140, z: -30, x: 22 });
-    const s2 = k.mesh(new T.BoxGeometry(16, 0.3, 140), k.pbr('asphaltS', X.asphalt(0x24282d), 0.11), -22, -0.15, -30);
+    scanStreet(k, 'flatiron', { w: 16, len: 140, z: -30, x: 22 });
+    const s2 = k.mesh(new T.BoxGeometry(16, 0.3, 140), scan(k, 'flatiron', 'asphalt_02', 3, () => X.asphalt(0x24282d), { color: 0x9a9a9a, roughness: 0.9 }), -22, -0.15, -30);
     s2.rotation.y = -0.2;
     k.box(70, 0.28, 30, 0, 0.0, 12, plaza);
     // the building: a triangular prism twenty floors high, rounded at the prow
@@ -267,11 +609,17 @@ export const flatiron: RoomDef = {
     /* the 1909 Fifth Avenue Building clock stands on the Fifth Avenue (west, +x) side */
     const CLX = 12, CLZ = 22;
     k.lathe([[0.5, 0], [0.5, 0.3], [0.2, 0.5], [0.16, 5.2], [0.4, 5.5], [0.4, 5.8]], CLX, 0, CLZ, iron, 16);
+    /* 2026-11-23: the code faces are the stand in for a real four faced post clock head (the museum's own kit) */
+    const clockMark = k.objects.length;
     for (const s of [-1, 1]) { const face = k.mesh(new T.CircleGeometry(0.9, 36), opal, CLX, 7, CLZ + s * 0.16); face.rotation.y = s > 0 ? 0 : PI; }
     k.torus(0.9, 0.08, CLX, 7, CLZ, iron, 36);
+    {
+      const old = standIn(k, clockMark);
+      glbs(k, 'flatiron/moynihan_clock', { height: 2.6 }, [[CLX, 5.55, CLZ, 0]], () => hide(old));
+    }
     k.keepOut.push({ x: CLX, z: CLZ, r: 0.8 });
     /* the Worth Monument: a 51 foot granite obelisk north of the building, where the avenues cross */
-    const graniteW = k.pbr('worthGranite', X.ashlar(0x9a958c, 46, 2), 0.3);
+    const graniteW = scan(k, 'flatiron', 'granite_wall', 1.9, () => X.ashlar(0x9a958c, 46, 2), { color: 0xc8c4bc });
     k.box(2.4, 1.2, 2.4, 0, 0.6, 40, graniteW);
     k.box(1.7, 1.6, 1.7, 0, 2.0, 40, graniteW);
     k.lathe([[0.7, 0], [0.42, 8.2], [0.0, 9.0]], 0, 2.8, 40, graniteW, 4);
@@ -352,6 +700,61 @@ export const flatiron: RoomDef = {
       const x = -15 + i * 6, z = 28;
       k.box(4.6, 4.2, 0.4, x, 2.1, z, lime);
       mounts.push({ position: v(x, 2.6, z - 0.22), rotation: PI, target: v(x, 3, z - 5), width: 4.2, height: 2.5, style: 'steel', wash: false });
+    }
+    /* ---- THE BIG UPGRADE, wave 2a (2026-11-23) ---- */
+    {
+      /* oriel bays: five a side between the 5th and 16th floors, the shallow bowed windows that ripple the long walls */
+      const len = Math.hypot(13, 60), dx = 13 / len, dz = -60 / len;
+      for (const s3 of [-1, 1]) {
+        /* the side runs (s3 dx, dz) from the point; its outward normal is (s3 * -dz, dx) */
+        const rot = Math.atan2(-dz, s3 * dx), nx = s3 * -dz, nz = dx;
+        const at = (t: number, off: number): [number, number] => [s3 * 13 * t + nx * off, -6 - 60 * t + nz * off];
+        for (const t of [0.3, 0.44, 0.58, 0.72, 0.86]) {
+          const [bx, bz] = at(t, 0.45);
+          k.box(3.0, 34, 0.9, bx, 31, bz, terra).rotation.y = rot;
+          k.box(3.3, 0.5, 1.1, bx, 48.2, bz, lime).rotation.y = rot;
+          k.box(3.3, 0.7, 1.1, bx, 13.8, bz, lime).rotation.y = rot;
+        }
+        /* a heavy cornice the length of each side, and a balustrade band two floors down */
+        const [cx, cz] = at(0.5, 0.6), [bx2, bz2] = at(0.5, 0.25);
+        k.box(len * 0.98, 1.4, 1.6, cx, H - 0.2, cz, lime).rotation.y = rot;
+        k.box(len * 0.98, 0.5, 0.7, bx2, H - 7.2, bz2, lime).rotation.y = rot;
+      }
+      /* inside the prow: a beamed ceiling with schoolhouse pendants, an oak skirting and a picture rail */
+      const beamM = k.flat(0xe9e4da, 0, 0.8), skirt = k.flat(0x3a2a1e, 0, 0.6), cord = k.flat(0x1c1c1c, 0.4, 0.5), globe = k.glow(0xfff1d8);
+      for (let z = -14; z > -62; z -= 4) {
+        const half = halfAt(z) + 0.4;
+        k.box(half * 2, 0.45, 0.4, 0, 10.98, z, beamM);
+        if (z % 8 === 2 || z === -14) for (const px of [-half * 0.35, half * 0.35]) { k.box(0.02, 1.0, 0.02, px, 10.3, z + 2, cord); k.sphere(0.22, px, 9.7, z + 2, globe, 12); }
+      }
+      for (const s3 of [-1, 1]) {
+        const ry = -s3 * 0.21, lx = Math.cos(ry), lz = -Math.sin(ry);
+        for (const [y, hgt, dep] of [[0.13, 0.26, 0.06], [5.6, 0.08, 0.05]] as [number, number, number][]) {
+          const b = k.box(dep, hgt, L - 8, s3 * 6.9 - s3 * 0.28 * lx, y, -36 - s3 * 0.28 * lz, skirt); b.rotation.y = ry;
+        }
+      }
+      /* the plaza: wooden planters with box hedges at the edges, a coffee cart, the corner signs */
+      glbs(k, 'flatiron/ph_planter_box_01', { width: 2.6 }, [[-22, 0.14, 6, 0], [22, 0.14, 6, 0], [-26, 0.14, 16, PI / 2], [26, 0.14, 16, PI / 2]]);
+      for (const [x, z] of [[-22, 6], [22, 6], [-26, 16], [26, 16]]) { k.tree(x, 1.2, z, { kind: 'round', h: 1.6, r: 0.9, leaf: 0x3d6a32, seed: x * 3 + z }); k.keepOut.push({ x, z, r: 1.4 }); }
+      glbs(k, 'flatiron/nyb_coffeecart', { width: 2.2 }, [[-11, 0.14, 15, 0.5]]);
+      k.keepOut.push({ x: -11, z: 15, r: 1.4 });
+      streetSign(k, 13.6, 27, '5 AV', 'E 23 ST', 0);
+      streetSign(k, -13.6, 27, 'BROADWAY', 'E 23 ST', 0);
+      hsign(k, 'FLATIRON PLAZA', 3.2, 0.42, -4.53, 2.38, 6.06, 0.5, { fg: '#f2ede2', bg: '#1d4a32', font: 'W2 Archivo Expanded', size: 0.5 });
+      /* traffic on both avenues, cast by the kit as real cabs and cars */
+      for (const [x, z, paint, r] of [[18, -20, 0xf3b81c, 0], [26, -36, 0xf3b81c, 0], [18, -54, 0x2a3440, 0], [26, 6, 0xb8b8b4, 0], [-24, -20.2, 0xf3b81c, -0.2], [-27.6, -2, 0x1d1f22, -0.2], [-20.4, -44, 0xf3b81c, -0.2]] as [number, number, number, number][]) {
+        carBox(k, x, z, r, paint);
+        k.keepOut.push({ x, z: z - 1.4, r: 1.0 }, { x, z: z + 1.4, r: 1.0 }, { x, z, r: 1.0 });
+      }
+      /* the trick: 23 SKIDOO painted flat on the plaza, standing up as a board from where you arrive */
+      const sk = paintTex(1024, 360, (g, w, h) => {
+        fit(g, '23 SKIDOO', 'W2 Archivo Expanded', h * 0.8, w * 0.92, '800');
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillStyle = '#2f6b45'; g.fillText('23 SKIDOO', w / 2 + 8, h / 2 + 8);
+        g.fillStyle = '#f3efe4'; g.fillText('23 SKIDOO', w / 2, h / 2);
+      }, ['W2 Archivo Expanded']);
+      anamorphTex(k, sk, 0, 22, 3, 0.14, 0, 8, 6.4, 1.6, 0.9);
+      k.egg(v(0, 0.5, 11), { id: 'flatiron-anamorph', title: 'Paint that stands up', text: 'From where you arrive, the letters painted flat across the plaza stand upright like a board. Walk to one side and they collapse into long smears. Street painters call it 3D pavement art; the trick is anamorphosis, a picture stretched so it only comes right from one point, used since the Renaissance.', clue: 'Look back at the plaza paint from where you came in.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
     }
     const FSRC = { name: 'Flatiron Building, Wikipedia', url: 'https://en.wikipedia.org/wiki/Flatiron_Building' };
     k.egg(v(0, 34, -5.5), { id: 'flatiron-tip', title: 'Six feet wide at the point', text: 'At its vertex the triangular tower is only about 6 feet wide, and the Broadway and Fifth Avenue walls meet at an angle of about 25 degrees. The steel frame was designed to stand four times the strongest wind the area was expected to see.', clue: 'Look up the rounded point of the building from the plaza.', source: FSRC }, { r: 3 });
@@ -492,25 +895,32 @@ export const deli: RoomDef = {
     k.sky({ top: 0x7fa6d3, horizon: 0xe6e9e6, ground: 0x5f5a52, fog: 0.003, sun: { az: 1.0, el: 0.5, color: 0xfff1d8, size: 14 }, env: 0.9 });
     k.hemi(0xfff3e0, 0x4a4238, 0.85);
     k.sun(0xfff0d4, 2.0, 30, 40, 30, true, 60);
-    const tin = k.pbr('tinCeiling', X.ashlar(0xe6e2d8, 15, 6), 1.6, { metalness: 0.5, roughness: 0.4 }),
-      tile = k.pbr('deliTile', X.subwayTile(0xefece2, 0x2a2c2a), 1.1, { roughness: 0.25 }),
-      floorT = k.pbr('deliFloor', X.pavers(0x8a8478, 16), 1.4, { roughness: 0.6 }),
-      marble = k.pbr('counterMarble', X.marble(0xe8e4dc, 0x9a948a, 9), 0.6, { roughness: 0.25 }),
-      wood = k.pbr('deliWood', X.planks(0x6a4a30, 5, 29), 1.2, { roughness: 0.55 }),
+    /* 2026-11-23: pressed tin painted in the browser (24 inch panels), the rest Poly Haven scans (CC0) at real size:
+       a checkerboard floor, white glazed wall tile, a marble counter, dark oak, the building's brick */
+    const tinTex = paintTex(512, 512, pressedTin, [], true);
+    tinTex.wrapS = tinTex.wrapT = T.RepeatWrapping;
+    const tin = k.pbr('tinCeilingW2', { map: tinTex }, 1 / 1.22, { color: 0xf4f0e6, metalness: 0.55, roughness: 0.38 }),
+      tile = scan(k, 'deli', 'long_white_tiles', 1.27, () => X.subwayTile(0xefece2, 0x2a2c2a), { color: 0xf6f4ee, roughness: 0.2 }),
+      floorT = scan(k, 'deli', 'floor_tiles_06', 3, () => X.pavers(0x8a8478, 16), { color: 0xe2ddd2, roughness: 0.45 }),
+      marble = scan(k, 'deli', 'marble_01', 1.5, () => X.marble(0xe8e4dc, 0x9a948a, 9), { color: 0xf2eee8, roughness: 0.2 }),
+      wood = scan(k, 'deli', 'wood_floor', 1.7, () => X.planks(0x6a4a30, 5, 29), { color: 0x8a6448, roughness: 0.5 }),
       steel = k.flat(0xc8ccd0, 0.85, 0.3),
-      brick = k.pbr('deliBrick', X.brick(0x6b4a3d, 30), 0.28),
+      brick = scan(k, 'deli', 'brick_wall_02', 2, () => X.brick(0x6b4a3d, 30), { color: 0xc8a89a }),
       awning = k.pbr('awning', X.velvet(0x8a2a2a), 0.5, { roughness: 0.9 }),
       glass = k.glass(0xdcecf2, 0.16, 0.05),
       salami = k.flat(0xb07a34, 0.15, 0.5),   /* 2026-10-09: golden smoked fish, not salami: an appetizing store sells fish and dairy, never meat */
       neon = k.glow(0xff5a4a),
       neonB = k.glow(0x7ad0ff),
       warm = k.glow(0xffe7c0);
+    const SZ_BACK = 12 - 26;
     // the corner: Houston meets Orchard, the store on the corner lot
-    street(k, { w: 18, len: 110, z: -20 });
+    scanStreet(k, 'deli', { w: 18, len: 110, z: -20 });
     const s2 = k.mesh(new T.BoxGeometry(110, 0.3, 14), k.pbr('asphaltS', X.asphalt(0x24282d), 0.11), 0, -0.15, 22);
     void s2;
     blockFront(k, { x: -14, z0: -2, count: 6, face: 1, seed: 51, h: [14, 20] });
-    blockFront(k, { x: 14, z0: -2, count: 6, face: -1, seed: 52, h: [14, 20] });
+    /* 2026-11-23: this block started at z -2 and so stood inside the store, a brick wall across the counter and the
+       photo wall; it starts behind the store now */
+    blockFront(k, { x: 14, z0: SZ_BACK - 6, count: 4, face: -1, seed: 52, h: [14, 20] });
     k.prop('hydrant', -10.8, 0, 8, { height: 1.1, keepOut: 0.5 });
     k.prop('mailbox', 10.8, 0, 2, { height: 1.5, rotY: -PI / 2, keepOut: 0.6 });
     for (const z of [10, -30]) for (const s of [-1, 1]) k.lamp(s * 10.5, z, 6, k.flat(0x1f262b, 0.75, 0.45), 0xffd9a8, 28);
@@ -554,15 +964,100 @@ export const deli: RoomDef = {
     k.box(1.3, 0.06, D - 5.8, CX, 2.32, SZ - D / 2, steel);
     k.block(CX - 0.8, CX + 0.8, SZ - D + 3, SZ - 3);
     for (let i = 0; i < 10; i++) { const z = SZ - D + 4 + i * 2; k.point(CX, 1.7, z, 0xfff0d0, 3, 2.2); }
-    for (let i = 0; i < 14; i++) { const z = SZ - D + 2.5 + i * 1.5; k.cyl(0.07, 1.3 + (i % 3) * 0.2, CX + 1.6, 4.4, z, salami, 0.2, 8); k.beam(v(CX + 1.6, 5.1, z), v(CX + 1.6, 5.5, z), 0.02, steel, 4); }
+    /* 2026-11-23: whole smoked whitefish and sides of salmon, hung by the tail, in place of the gold sticks */
+    {
+      const fishG = new T.LatheGeometry([[0, 0], [0.05, 0.04], [0.1, 0.16], [0.12, 0.32], [0.1, 0.48], [0.05, 0.62], [0.025, 0.7]].map(([a, b]) => new T.Vector2(a, b)), 10);
+      fishG.scale(1, 1, 0.55);
+      const tail = new T.ShapeGeometry(new T.Shape([new T.Vector2(0, 0.66), new T.Vector2(-0.13, 0.9), new T.Vector2(0.13, 0.9)]));
+      const sideG = new T.BoxGeometry(0.34, 0.95, 0.05);
+      const fishM: T.Matrix4[] = [], tailM: T.Matrix4[] = [], sideM: T.Matrix4[] = [], q = new T.Quaternion(), one = v(1, 1, 1);
+      for (let i = 0; i < 14; i++) {
+        const z = SZ - D + 2.5 + i * 1.5, sc = 1.3 + (i % 3) * 0.2;
+        k.beam(v(CX + 1.6, 5.1, z), v(CX + 1.6, 5.5, z), 0.02, steel, 4);
+        if (i % 3 === 1) sideM.push(new T.Matrix4().compose(v(CX + 1.6, 4.55, z), q.setFromAxisAngle(v(0, 1, 0), PI / 2), one));
+        else {
+          const m = new T.Matrix4().compose(v(CX + 1.6, 5.08 - 0.9 * sc * 0.55, z), q.setFromAxisAngle(v(0, 1, 0), PI / 2), v(sc * 0.55, sc * 0.55, sc * 0.55));
+          fishM.push(m); tailM.push(m.clone());
+        }
+      }
+      k.instances(fishG, k.flat(0xb8823e, 0.35, 0.32), fishM);
+      k.instances(tail, k.flat(0x8a5a26, 0.2, 0.5, { side: T.DoubleSide }), tailM);
+      k.instances(sideG, k.flat(0xe0784a, 0.05, 0.38), sideM);
+    }
     k.box(0.06, 0.06, D - 4, CX + 1.6, 5.5, SZ - D / 2, steel);
-    for (const z of [SZ - 7, SZ - 19]) { const fan = new T.Group(); fan.position.set(CX + 5, 5.2, z); for (let b = 0; b < 4; b++) { const bl = new T.Mesh(new T.BoxGeometry(1.4, 0.04, 0.3), k.flat(0x3a2a20, 0.2, 0.7)); bl.position.x = 0.8; const pivot = new T.Group(); pivot.rotation.y = (b * PI) / 2; pivot.add(bl); fan.add(pivot); } k.add(fan); if (!ctx.reduced) k.ticks.push((t) => { fan.rotation.y = t * 3; }); }
+    /* the fans are Poly Haven's Ceiling Fan (CC0) once it loads; the code fans stand in until then */
+    const fans: T.Group[] = [];
+    for (const z of [SZ - 7, SZ - 19]) { const fan = new T.Group(); fan.position.set(CX + 5, 5.2, z); for (let b = 0; b < 4; b++) { const bl = new T.Mesh(new T.BoxGeometry(1.4, 0.04, 0.3), k.flat(0x3a2a20, 0.2, 0.7)); bl.position.x = 0.8; const pivot = new T.Group(); pivot.rotation.y = (b * PI) / 2; pivot.add(bl); fan.add(pivot); } k.add(fan); fans.push(fan); if (!ctx.reduced) k.ticks.push((t) => { fan.rotation.y = t * 3; }); }
+    void hero(k, 'deli/ph_ceiling_fan', { width: 1.8 }).then((h) => {
+      if (!h || !k.live) return;
+      const hh = (h.userData.size as T.Vector3).y;
+      fans.forEach((f, i) => { f.clear(); const c2 = i ? h.clone() : h; c2.position.y = 0.4 - hh; f.add(c2); });
+    });
     k.box(0.4, 0.5, 0.3, SX + 2, 1.4, SZ - 2.5, k.flat(0xb02a2a, 0.3, 0.5));
     k.box(0.1, 0.1, 0.1, SX + 2, 1.65, SZ - 2.5, steel);
     const served = k.sign('NOW SERVING  7541', 3.2, 0.7, SX + W / 2, 4.6, SZ - D + 0.32, '#111', '#ff5a4a', 120, 0);
     if (!ctx.reduced) { let n = 7541, last = 0; k.ticks.push((t) => { if (t - last > 5) { last = t; n++; (served.material as T.MeshBasicMaterial).map = X.signText('NOW SERVING  ' + n, 1024, 224, '#111', '#ff5a4a', 120); (served.material as T.MeshBasicMaterial).needsUpdate = true; } }); }
     k.box(6, 0.8, 0.4, SX + 13, 0.4, SZ - D + 0.4, wood);
-    for (let i = 0; i < 3; i++) { k.cyl(0.05, 0.75, SX + 3.5 + i * 3, 0.38, SZ - D / 2 + 9, steel, 0.05, 8); k.cyl(0.32, 0.06, SX + 3.5 + i * 3, 0.78, SZ - D / 2 + 9, k.flat(0xb02a2a, 0.3, 0.5), 0.32, 16); k.keepOut.push({ x: SX + 3.5 + i * 3, z: SZ - D / 2 + 9, r: 0.45 }); }
+    /* 2026-11-23: the three stools stood inside the counter, and one sat on a case work's viewing spot; they stand
+       along the customer side now, between the cases */
+    for (let i = 0; i < 3; i++) { const zs = SZ - D / 2 - 6 + i * 6; k.cyl(0.05, 0.75, CX - 2.1, 0.38, zs, steel, 0.05, 8); k.cyl(0.32, 0.06, CX - 2.1, 0.78, zs, k.flat(0xb02a2a, 0.3, 0.5), 0.32, 16); k.keepOut.push({ x: CX - 2.1, z: zs, r: 0.45 }); }
+    /* ---- THE BIG UPGRADE, wave 2a (2026-11-23): the counter dressed, the room finished, the back room ---- */
+    {
+      const green = k.flat(0x1f4a3a, 0.1, 0.3), brass = k.flat(0xc9a55a, 0.85, 0.3), cream = k.flat(0xf3ede0, 0, 0.5);
+      /* a green tile band and a cornice round the two tiled walls; a brass foot rail along the counter */
+      k.box(0.04, 0.16, D, SX + W - 0.32, 1.06, SZ - D / 2, green);
+      k.box(W, 0.16, 0.04, SX + W / 2, 1.06, SZ - D + 0.32, green);
+      k.moulding([[0, 0], [0.22, 0], [0.26, 0.08], [0.16, 0.16], [0.2, 0.26], [0, 0.3]], D, SX + W - 0.3, 5.15, SZ - D / 2, cream, PI);
+      k.moulding([[0, 0], [0.22, 0], [0.26, 0.08], [0.16, 0.16], [0.2, 0.26], [0, 0.3]], W, SX + W / 2, 5.15, SZ - D + 0.3, cream, -PI / 2);
+      k.beam(v(CX - 0.72, 0.28, SZ - D + 3.2), v(CX - 0.72, 0.28, SZ - 3.2), 0.035, brass, 8);
+      /* the back counter: the slicing boards, the register, a scale, jars and bagels */
+      const BX = CX + 1.4;
+      k.box(0.8, 1.0, 16, BX, 0.5, SZ - D / 2, wood);
+      k.box(0.86, 0.06, 16.1, BX, 1.03, SZ - D / 2, marble);
+      k.block(BX - 0.45, BX + 0.45, SZ - D / 2 - 8.1, SZ - D / 2 + 8.1);
+      glbs(k, 'deli/ph_wooden_cutting_board', { width: 0.7 }, [[BX, 1.06, SZ - D / 2 - 5, PI / 2], [BX, 1.06, SZ - D / 2 - 1, PI / 2], [BX, 1.06, SZ - D / 2 + 3, PI / 2]]);
+      glbs(k, 'deli/ph_cash_register', { height: 0.55 }, [[BX, 1.06, SZ - D / 2 + 6.6, -PI / 2]]);
+      k.box(0.36, 0.1, 0.3, BX, 1.11, SZ - D / 2 + 1.2, steel); k.cyl(0.12, 0.05, BX, 1.32, SZ - D / 2 + 1.2, k.flat(0xf4f0e6, 0.1, 0.3), 0.12, 18).rotation.z = PI / 2;
+      {
+        const jar = new T.CylinderGeometry(0.09, 0.09, 0.24, 12), fill = [0xe8d8b0, 0xd9935a, 0xf2efe6, 0xa8b878, 0xe0c090], rnd = X.mulberry(25), byCol: T.Matrix4[][] = fill.map(() => []);
+        for (let n = 0; n < 34; n++) byCol[n % fill.length].push(new T.Matrix4().makeTranslation(BX + (rnd() - 0.5) * 0.4, 1.18, SZ - D / 2 - 7.4 + n * 0.42 + (n > 16 ? 1.2 : 0)));
+        byCol.forEach((ms, ci) => k.instances(jar, k.flat(fill[ci], 0, 0.25), ms));
+        const bagel = new T.TorusGeometry(0.065, 0.032, 6, 12); bagel.rotateX(PI / 2);
+        const bm: T.Matrix4[] = [];
+        for (let n = 0; n < 40; n++) bm.push(new T.Matrix4().makeTranslation(BX - 0.18 + (n % 4) * 0.12, 1.1 + Math.floor(n / 20) * 0.05, SZ - D / 2 + 4.2 + Math.floor((n % 20) / 4) * 0.14));
+        k.instances(bagel, k.flat(0xb8803c, 0, 0.6), bm);
+      }
+      /* the menu boards over the counter: white letters pressed into black felt */
+      const items = [['NOVA SCOTIA SALMON', 'GASPE NOVA', 'BELLY LOX', 'SABLE'], ['WHITEFISH SALAD', 'PICKLED HERRING', 'SMOKED TROUT', 'KIPPERED SALMON'], ['SCALLION CREAM CHEESE', 'BIALYS  BAGELS', 'BABKA  RUGELACH', 'EGG CREAM']];
+      items.forEach((rows, bi) => {
+        const t = paintTex(768, 300, (g, w, h) => {
+          g.fillStyle = '#121212'; g.fillRect(0, 0, w, h);
+          g.globalAlpha = 0.12; g.fillStyle = '#fff'; for (let y = 6; y < h; y += 9) g.fillRect(0, y, w, 1); g.globalAlpha = 1;
+          g.fillStyle = '#f2efe6'; g.textBaseline = 'middle';
+          rows.forEach((r, ri) => { fit(g, r, 'W2 JetBrains Mono', 44, w * 0.9, '700'); g.textAlign = 'center'; g.fillText(r, w / 2, 44 + ri * 70); });
+          g.strokeStyle = '#7a5a3a'; g.lineWidth = 12; g.strokeRect(0, 0, w, h);
+        }, ['W2 JetBrains Mono']);
+        const z = SZ - D / 2 - 6 + bi * 6;
+        const b = k.mesh(new T.PlaneGeometry(2.6, 1.0), new T.MeshBasicMaterial({ map: t }), CX + 0.9, 3.9, z, true);
+        b.rotation.y = -PI / 2;
+        k.beam(v(CX + 0.9, 4.4, z - 1), v(CX + 0.9, 5.6, z - 1), 0.012, steel, 4); k.beam(v(CX + 0.9, 4.4, z + 1), v(CX + 0.9, 5.6, z + 1), 0.012, steel, 4);
+      });
+      /* pickle barrels by the far end, the wall clock, gold leaf on the window, the awning's valance */
+      glbs(k, 'deli/nyb_katz_pickles', { height: 0.95 }, [[19.2, 0.0, SZ - D + 1.4, 0.4], [20.3, 0.0, SZ - D + 1.2, 2.2]]);
+      for (const [x, z] of [[19.2, SZ - D + 1.4], [20.3, SZ - D + 1.2]]) k.keepOut.push({ x, z, r: 0.5 });
+      glbs(k, 'deli/nyb_katz_clock', { height: 0.8 }, [[SX + W - 3, 3.8, SZ - D + 0.32, 0]]);
+      hsign(k, 'SMOKED FISH  .  CAVIAR  .  BAGELS', 9, 0.32, SX - 0.08, 3.82, SZ - D / 2 - 1.5, -PI / 2, { fg: '#e6c06a', font: 'W2 Archivo Expanded' });
+      hsign(k, 'APPETIZING  .  SMOKED FISH  .  CREAM CHEESE', 18, 0.4, SX - 2.58, 4.05, SZ - D / 2, -PI / 2, { fg: '#f6eedc', bg: '#7e2424', font: 'W2 Archivo Expanded', size: 0.55 });
+      /* the ghost sign on the Houston Street wall, painted out and coming back through the brick, until Firefly's */
+      const ghost = new T.MeshStandardMaterial({ map: paintTex(1024, 512, ghostSign, ['W2 Archivo Expanded']), transparent: true, opacity: 0.62, roughness: 0.95, depthWrite: false });
+      fireflyPlate(k, 'assets/museum/tex/deli/ff_ghost_sign.webp', 18, 9, SX + W / 2, 12.6, SZ + 0.04, 0, ghost);
+      /* the trick: a back room that is not there. The doorway is a metre and a quarter deep; the floor climbs, the
+         ceiling drops, the walls close in and the shelves shrink, so it reads as ten metres of stockroom */
+      backRoom(k, SX + W - 2.4, SZ - D + 0.3, 2.0, 3.0, 1.3);
+      k.block(SX + W - 3.5, SX + W - 1.3, SZ - D, SZ - D + 1.7);
+      k.egg(v(SX + W - 2.4, 1.6, SZ - D + 1.0), { id: 'deli-backroom', title: 'The stockroom that is not there', text: 'The doorway at the back leads into a room barely a metre deep. Its floor rises, its ceiling falls, its walls close in and its shelves shrink, so your eye reads distance that is not there. Theatre and film call it forced perspective; stage designers have built false depth this way since the Renaissance.', clue: 'Look through the lit doorway in the back corner, then walk up to it.', source: { name: 'Forced perspective, Wikipedia', url: 'https://en.wikipedia.org/wiki/Forced_perspective' } }, { r: 1.2 });
+      hsign(k, 'EMPLOYEES ONLY', 1.6, 0.22, SX + W - 2.4, 3.3, SZ - D + 1.62, 0, { fg: '#f2efe6', bg: '#1f4a3a', font: 'W2 Archivo Narrow' });
+    }
     /* landmark eggs: real New York appetizing history, each from its cited page */
     k.egg(v(CX + 1.6, 4.4, SZ - D / 2 + 1), { id: 'deli-nomeat', title: 'Fish and dairy, never meat', text: 'An appetizing store sells smoked and pickled fish, fish spreads, cream cheese and other dairy, and no meat. A kosher deli is the reverse: kashrut forbids selling meat and dairy together, so New York grew two kinds of shop.', clue: 'Look at what hangs on the rail over the counter.', source: { name: 'Appetizing store, Wikipedia', url: 'https://en.wikipedia.org/wiki/Appetizing_store' } }, { r: 1.3 });
     k.egg(v(SX - 0.6, 7.2, SZ - D / 2 - 3), { id: 'deli-fivehundred', title: 'Five hundred, then ten', text: 'About 500 appetizing stores were open in New York City in 1930, and a similar number in 1950. By 2015 fewer than ten were left. When Shelsky\'s opened in Cobble Hill in 2011, it was the first appetizing store in Brooklyn in 60 years.', clue: 'Read the neon over the awning from the street.', source: { name: 'Appetizing store, Wikipedia', url: 'https://en.wikipedia.org/wiki/Appetizing_store' } }, { r: 1.6 });
@@ -577,7 +1072,8 @@ export const deli: RoomDef = {
     for (let i = 0; i < 10; i++) { const z = SZ - D + 4 + i * 2; mounts.push({ position: v(CX, 1.72, z), rotation: -PI / 2, target: v(CX - 3, 3, z), width: 1.7, height: 0.95, style: 'none', wash: false, lookAt: v(CX, 1.7, z) }); }
     for (let i = 0; i < 6; i++) { const z = SZ - D + 4 + i * 3.6; mounts.push({ position: v(SX + W - 0.34, 3.6, z), rotation: -PI / 2, target: v(SX + W - 5, 3, z), width: 3.2, height: 1.9, style: 'oak' }); }
     for (const x of [SX + 4, SX + 10, SX + 16]) mounts.push({ position: v(x, 3.5, SZ - D + 0.34), rotation: 0, target: v(x, 3, SZ - D + 5), width: 4.4, height: 2.6, style: 'oak' });
-    for (const z of [SZ - 18, SZ - 12, SZ - 6]) mounts.push({ position: v(SX - 0.34, 2.6, z), rotation: PI / 2, target: v(SX - 5, 3, z), width: 3.6, height: 2.1, style: 'black', wash: false });
+    /* 2026-11-23: the window works faced into the shop while their viewing spot is on the pavement; they face the street */
+    for (const z of [SZ - 18, SZ - 12, SZ - 6]) mounts.push({ position: v(SX - 0.34, 2.6, z), rotation: -PI / 2, target: v(SX - 5, 3, z), width: 3.6, height: 2.1, style: 'black', wash: false });
     return { mounts, spawn: v(1, 3, -3), look: v(SX, 3.2, SZ - 11), eye: 3, bounds: [-10.4, SX + W - 0.6, SZ - D + 0.6, 18], style: 'oak' };
   },
 };
@@ -595,16 +1091,18 @@ export const washington: RoomDef = {
     k.sky({ top: 0x6f9dd2, horizon: 0xe7ebe7, ground: 0x556546, fog: 0.0026, sun: { az: 1.2, el: 0.75, color: 0xfff3dc, size: 14 }, env: 0.95 });
     k.hemi(0xf0f6ff, 0x40503a, 0.95);
     k.sun(0xfff2d8, 2.5, 30, 60, 20, true, 90);
-    const marble = k.pbr('archMarble', X.marble(0xece8e0, 0xb8b2a6, 10), 0.25, { roughness: 0.35 }),
-      hex = k.pbr('hexPavers', X.pavers(0x9a968c, 18), 0.35),
-      lawn = k.pbr('lawnW', X.grass(0x4a7a3a, 12), 0.15),
-      granite = k.pbr('basinGranite', X.ashlar(0x8c8c88, 19, 3), 0.3),
+    /* 2026-11-23: the arch's coursed marble, the hexagonal park pavers, the granite, the lawn and the Row's brick are
+       Poly Haven scans (CC0) at their real size */
+    const marble = scan(k, 'washington', 'white_sandstone_blocks_02', 2, () => X.marble(0xece8e0, 0xb8b2a6, 10), { color: 0xf6f3ee, roughness: 0.5 }),
+      hex = scan(k, 'washington', 'hexagonal_concrete_paving', 1.6, () => X.pavers(0x9a968c, 18), { color: 0xc8c4bc }),
+      lawn = scan(k, 'washington', 'leafy_grass', 2, () => X.grass(0x4a7a3a, 12), { color: 0xb4c69a }),
+      granite = scan(k, 'washington', 'granite_tile', 2.3, () => X.ashlar(0x8c8c88, 19, 3), { color: 0xd0ccc4 }),
       water = k.flat(0x3a6a78, 0.6, 0.15, { transparent: true, opacity: 0.9 }),
       iron = k.flat(0x1f242a, 0.7, 0.45),
-      brickRow = k.pbr('rowBrick', X.brick(0x8a3f34, 31), 0.28),
+      brickRow = scan(k, 'washington', 'red_brick_03', 1, () => X.brick(0x8a3f34, 31), { color: 0xd09888 }),
       stoneRow = k.pbr('rowStone', X.ashlar(0xb9ad97, 20, 3), 0.22),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
-      glow = k.glow(0xdff4ff);
+      glow = new T.MeshBasicMaterial({ color: 0xeef8ff, transparent: true, opacity: 0.6, depthWrite: false });
     // the square: lawn, hex paving, paths radiating from the fountain
     k.box(160, 0.4, 160, 0, -0.2, -30, lawn);
     k.mesh(new T.CylinderGeometry(24, 24, 0.3, 64), hex, 0, 0.0, -30);
@@ -637,7 +1135,7 @@ export const washington: RoomDef = {
     k.block(-11.5, -3.9, AZ - 2.7, AZ + 2.7);
     k.block(3.9, 11.5, AZ - 2.7, AZ + 2.7);
     k.point(0, 10, AZ, 0xfff4e0, 30, 22);
-    street(k, { w: 14, len: 120, z: AZ + 70 });
+    scanStreet(k, 'washington', { w: 14, len: 120, z: AZ + 70 });
     k.skyline({ z: 160, count: 26, spacing: 7, scale: 2.4, base: -2, seed: 61, lit: 0.12, glow: 0.3, tint: 0x7e8290, rows: 1 });
     // the Row on the north side, the university red brick south and east
     for (let i = 0; i < 10; i++) { const x = -45 + i * 10; if (Math.abs(x) < 16) continue; k.box(9.6, 16, 12, x, 8, AZ + 12, brickRow); k.box(9.8, 0.6, 12.4, x, 16, AZ + 12, stoneRow); for (let y = 3; y < 14; y += 3.2) for (const dx of [-3, 0, 3]) k.box(1.3, 2, 0.1, x + dx, y, AZ + 5.95, y < 6 ? k.glow(0xffe0b0) : k.glass(0x8fb0c0, 0.4, 0.1)); k.prop('stoop', x, 0, AZ + 5.2, { height: 2, rotY: PI }); }
@@ -645,9 +1143,13 @@ export const washington: RoomDef = {
     // trees, benches, chess tables, the players' corner, lamps
     const rnd = X.mulberry(26);
     for (let i = 0; i < 60; i++) { const a = rnd() * PI * 2, r = 38 + rnd() * 30, x = Math.cos(a) * r, z = -30 + Math.sin(a) * r; if (z > AZ - 8 && Math.abs(x) < 16) continue; if (Math.abs(x) < 4 || Math.abs(z + 30) < 4) continue; k.tree(x, 0, z, { kind: rnd() > 0.5 ? 'round' : 'column', h: 5 + rnd() * 4, r: 2.6 + rnd() * 2, leaf: 0x3f6b36, seed: i }); }
-    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; k.bench(Math.cos(a) * 20, -30 + Math.sin(a) * 20, -a + PI / 2, k.pbr('benchW', X.planks(0x5d4939, 3, 32), 1.2), iron, 2.4); }
+    /* the park benches: the code benches stand in until the cast iron model (the museum's own kit) arrives */
+    const benches: T.Object3D[] = [], benchAt: [number, number, number, number][] = [];
+    for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; benches.push(k.bench(Math.cos(a) * 20, -30 + Math.sin(a) * 20, -a + PI / 2, k.pbr('benchW', X.planks(0x5d4939, 3, 32), 1.2), iron, 2.4)); benchAt.push([Math.cos(a) * 20, 0.02, -30 + Math.sin(a) * 20, -a - PI / 2]); }
+    glbs(k, 'washington/cp_bench', { width: 2.4 }, benchAt, () => hide(benches), 12);
     /* the chess tables are in the southwest corner; north is +z here, so west is +x (they were in the southeast) */
-    for (let i = 0; i < 8; i++) { const x = 26.5 + (i % 4) * 3.5, z = -62 + Math.floor(i / 4) * 4; k.cyl(0.32, 0.9, x, 0.45, z, granite, 0.32, 12); k.box(1.2, 0.08, 1.2, x, 0.94, z, k.pbr('chess', X.subwayTile(0xe8e4d8, 0x2a2a2a), 3.2, { roughness: 0.4 })); for (const s of [-1, 1]) k.box(0.5, 0.06, 0.5, x + s * 0.9, 0.5, z, granite); k.keepOut.push({ x, z, r: 0.9 }); }
+    const chessAt: [number, number, number, number][] = [];
+    for (let i = 0; i < 8; i++) { const x = 26.5 + (i % 4) * 3.5, z = -62 + Math.floor(i / 4) * 4; k.cyl(0.32, 0.9, x, 0.45, z, granite, 0.32, 12); k.box(1.2, 0.08, 1.2, x, 0.94, z, granite); chessAt.push([x, 0.98, z, (i % 3) * 0.6]); for (const s of [-1, 1]) k.box(0.5, 0.06, 0.5, x + s * 0.9, 0.5, z, granite); k.keepOut.push({ x, z, r: 0.9 }); }
     for (const a of [0.4, 1.2, 2.0, 2.8, 3.6, 4.4, 5.2, 6.0]) k.lamp(Math.cos(a) * 26, -30 + Math.sin(a) * 26, 5.5, iron, 0xffe0b0, 24);
     k.prop('lamppost', 14, 0, AZ - 8, { height: 6 });
     k.prop('lamppost', -14, 0, AZ - 8, { height: 6 });
@@ -658,6 +1160,61 @@ export const washington: RoomDef = {
     /* the Hangman's Elm, an English elm over 300 years old, in the northwest corner */
     k.tree(44, 0, 12, { h: 15, r: 7, species: 'elm', seed: 1679 });
     k.keepOut.push({ x: 44, z: 12, r: 1.0 });
+    /* ---- THE BIG UPGRADE, wave 2a (2026-11-23) ---- */
+    {
+      /* Philip Martiny's keystone eagles, both faces (the Penn Station eagle from the museum's kit, in marble) */
+      k.box(1.6, 2.0, 5.6, 0, 14.9, AZ, marble);
+      glbs(k, 'washington/penn_eagle', { height: 1.9 }, [[0, 13.95, AZ - 2.95, PI], [0, 13.95, AZ + 2.95, 0]], (os) => steelUp(os[0], 0xf2efe8, 0, 0.6));
+      for (const sz of [-1, 1]) k.box(1.3, 0.25, 0.6, 0, 13.85, AZ + sz * 2.75, marble);
+      /* dentils under the cornice */
+      { const dm: T.Matrix4[] = []; for (const sz of [-1, 1]) for (let x = -11.4; x <= 11.4; x += 0.42) dm.push(new T.Matrix4().makeTranslation(x, 15.6, AZ + sz * 3.12)); k.instances(new T.BoxGeometry(0.22, 0.3, 0.2), marble, dm); }
+      /* the winged Victories in the spandrels, as relief plates until Firefly's carving lands */
+      const vic = new T.MeshStandardMaterial({ map: paintTex(512, 512, victoryRelief), roughness: 0.7 });
+      for (const sz of [-1, 1]) for (const sx of [-1, 1]) {
+        const o = fireflyPlate(k, 'assets/museum/tex/washington/ff_spandrel_victory.webp', 3.0, 3.0, sx * 3.75, 13.1, AZ + sz * 2.54, sz < 0 ? PI : 0, vic);
+        if (sx * sz > 0) o.scale.x = -1;
+      }
+      /* Washington at War and Washington at Peace stand in front of the piers on the Fifth Avenue face (stand in
+         figures from the museum's kit, not likenesses of MacNeil's and Calder's statues) */
+      for (const s3 of [-1, 1]) { k.box(3.4, 1.8, 2.0, s3 * 8.6, 0.9, AZ + 3.6, marble); k.block(s3 * 8.6 - 1.8, s3 * 8.6 + 1.8, AZ + 2.6, AZ + 4.7); }
+      glbs(k, 'washington/cp_statue', { height: 4.4 }, [[-8.6, 1.8, AZ + 3.6, 0], [8.6, 1.8, AZ + 3.6, 0]], (os) => steelUp(os[0], 0xf4f1ea, 0, 0.55));
+      /* the Row: white marble doorways, lintels, iron railings at the stoops */
+      const trim = k.flat(0xece8de, 0, 0.6);
+      for (let i = 0; i < 10; i++) {
+        const x = -45 + i * 10; if (Math.abs(x) < 16) continue;
+        k.box(2.0, 3.3, 0.3, x, 3.4, AZ + 5.9, trim); k.box(1.2, 2.5, 0.1, x, 3.2, AZ + 5.75, k.flat(0x1a1c1e, 0.2, 0.4));
+        for (let y = 3; y < 14; y += 3.2) for (const dx of [-3, 0, 3]) { if (y < 6 && dx === 0) continue; k.box(1.6, 0.22, 0.2, x + dx, y + 1.12, AZ + 5.92, trim); k.box(1.5, 0.1, 0.25, x + dx, y - 1.05, AZ + 5.9, trim); }
+        k.rail(x - 1.3, AZ + 4.4, 1.8, iron, 1.0, 'z', 0.3); k.rail(x + 1.3, AZ + 4.4, 1.8, iron, 1.0, 'z', 0.3);
+      }
+      /* the university's buildings east and west: windows, not blank brick */
+      { const wm: T.Matrix4[] = [], lm: T.Matrix4[] = [], rnd = X.mulberry(2026);
+        for (const s3 of [-1, 1]) for (let i = 0; i < 6; i++) { const z = -70 + i * 14; for (let y = 3; y < 21; y += 3.4) for (const dz of [-4, -1.3, 1.3, 4]) (rnd() > 0.8 ? lm : wm).push(new T.Matrix4().makeTranslation(s3 * 55.95, y, z + dz)); }
+        k.instances(new T.BoxGeometry(0.12, 1.9, 1.3), k.flat(0x3a4a56, 0.6, 0.15), wm);
+        k.instances(new T.BoxGeometry(0.12, 1.9, 1.3), k.glow(0xffe2b0), lm);
+      }
+      /* the chess corner: real chess sets on the granite, a sign, a hot dog cart by the fountain */
+      glbs(k, 'washington/ph_chess_set', { width: 0.62 }, chessAt);
+      glbs(k, 'washington/nyb_bobbyfischer_sign', { height: 1.5 }, [[24.2, 0.0, -56.2, -PI / 2]]);
+      k.keepOut.push({ x: 24.2, z: -56.2, r: 0.6 });
+      glbs(k, 'washington/hotdog', { height: 2.5 }, [[-17, 0.0, -9, 2.4]]);
+      k.keepOut.push({ x: -17, z: -9, r: 1.3 });
+      /* the trick: a chalk drawing on the path by the chess tables that stands up as a board from the chalk feet */
+      const chalk = paintTex(1024, 360, (g, w, h) => {
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        fit(g, 'CHECKMATE', 'W2 Permanent Marker', h * 0.78, w * 0.92, '400');
+        const cols = ['#f6d36b', '#7ad0ff', '#ff8fb0', '#a8f08a', '#ffffff'];
+        g.lineWidth = 10; g.strokeStyle = 'rgba(30,40,60,0.55)'; g.strokeText('CHECKMATE', w / 2 + 10, h / 2 + 10);
+        const gr = g.createLinearGradient(0, 0, w, 0); cols.forEach((c2, ci) => gr.addColorStop(ci / (cols.length - 1), c2));
+        g.fillStyle = gr; g.fillText('CHECKMATE', w / 2, h / 2);
+        const rnd = X.mulberry(7); g.globalCompositeOperation = 'destination-out';
+        for (let n = 0; n < 2600; n++) { g.globalAlpha = 0.2 + rnd() * 0.5; g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 5, 1 + rnd() * 2); }
+        g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+      }, ['W2 Permanent Marker']);
+      anamorphTex(k, chalk, 31.5, -46, 3, 0, 0, 6, 4.6, 1.3, 0.9);
+      const feet = paintTex(512, 256, (g, w, h) => { g.fillStyle = 'rgba(255,255,255,0.85)'; g.textAlign = 'center'; g.textBaseline = 'middle'; fit(g, 'STAND HERE', 'W2 Permanent Marker', 70, w * 0.9, '400'); g.fillText('STAND HERE', w / 2, h * 0.75); for (const fx of [-50, 50]) { g.beginPath(); g.ellipse(w / 2 + fx, h * 0.3, 22, 44, 0, 0, PI * 2); g.fill(); } });
+      k.mesh(new T.PlaneGeometry(1.4, 0.7), new T.MeshBasicMaterial({ map: feet, transparent: true, depthWrite: false }), 31.5, 0.02, -45.6, true).rotation.x = -PI / 2;
+      k.egg(v(31.5, 0.5, -54), { id: 'washington-chalk', title: 'The chalk that stands up', text: 'Stand on the chalk feet and the word drawn flat on the path rises off the ground. Pavement artists draw these stretched pictures so they only come right from one spot; the trick is anamorphosis, a picture distorted so it resolves from a single point of view.', clue: 'Find the chalk feet on the path by the chess tables and stand on them.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
+    }
     /* landmark eggs */
     const ARCH = { name: 'Washington Square Arch, Wikipedia', url: 'https://en.wikipedia.org/wiki/Washington_Square_Arch' };
     k.egg(v(0, 20, AZ), { id: 'washington-arch', title: 'First in wood', year: '1895', text: 'A temporary arch of plaster and wood went up over Fifth Avenue in 1889 for the centennial of Washington\'s inauguration. Stanford White\'s permanent arch of white Tuckahoe marble, modelled on the Arch of Titus in Rome, followed and was dedicated in 1895: 77 feet high, its piers 30 feet apart. The flying figures in the spandrels are winged victories by Frederick MacMonnies, the keystone eagles are by Philip Martiny.', clue: 'Look up at the top of the arch.', source: ARCH }, { r: 3 });
@@ -667,12 +1224,15 @@ export const washington: RoomDef = {
     k.egg(v(-22, 0.6, -78), { id: 'washington-pottersfield', title: 'Twenty thousand underfoot', text: 'Before it was a park this was a potter\'s field, a burial ground for yellow fever victims and the city\'s poor, with an estimated 10,000 to 22,000 burials between 1789 and 1823. The remains of more than 20,000 people still rest under the square.', clue: 'Walk out onto the south lawn and look down.', source: WSP }, { r: 1.6 });
     k.egg(v(0, 3, -30), { id: 'washington-fountain', title: 'A fountain that moved', year: '2009', text: 'The first fountain here was finished in 1852 and replaced in 1872. A $2.5 million gift named it the Tisch Fountain in 2005, and the redesign that followed shifted it off its old centre so it lines up with the arch and Fifth Avenue.', clue: 'Look along Fifth Avenue through the arch to the fountain jet.', source: WSP }, { r: 2 });
     k.egg(v(44, 4, 12), { id: 'washington-elm', title: 'The tree nobody was hanged from', text: 'The Hangman\'s Elm in the northwest corner is an English elm, estimated in 1989 at 310 years old and considered the oldest tree in Manhattan. No public record exists of a hanging from it; the only recorded execution nearby was Rose Butler\'s, in 1820, about 500 feet away in the potter\'s field.', clue: 'Find the giant elm in the northwest corner of the park.', source: { name: 'Hangman\'s Elm, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hangman%27s_Elm' } }, { r: 2.4 });
+    const easelM = k.flat(0xe2ded6, 0.05, 0.65);
     // the works: steel easels around the fountain ring, the arch piers, plinths on the axes
     const mounts: Mount[] = [];
     for (let i = 0; i < 12; i++) {
       const a = (i / 12) * PI * 2 + PI / 24, r = 15.5, x = Math.cos(a) * r, z = -30 + Math.sin(a) * r;
-      k.box(0.3, 4.2, 5.6, 0, 0, 0, steel).position.set(x, 2.2, z);
+      /* 2026-11-23: a slim board on two legs, not a slab that hid the fountain */
+      k.box(0.12, 3.3, 5.3, 0, 0, 0, easelM).position.set(x, 2.6, z);
       k.objects[k.objects.length - 1].rotation.y = -a - PI / 2;
+      for (const sd of [-1, 1]) { const tx = -Math.sin(a) * sd * 2.3, tz = Math.cos(a) * sd * 2.3; k.box(0.14, 1.0, 0.14, x + tx, 0.5, z + tz, iron); }
       k.box(1.0, 0.25, 6, 0, 0, 0, granite).position.set(x, 0.12, z);
       k.objects[k.objects.length - 1].rotation.y = -a - PI / 2;
       mounts.push({ position: v(x + Math.cos(a) * 0.2, 2.6, z + Math.sin(a) * 0.2), rotation: -a + PI / 2, target: v(Math.cos(a) * (r + 4.5), 3, -30 + Math.sin(a) * (r + 4.5)), width: 4.8, height: 2.8, style: 'steel', wash: false });

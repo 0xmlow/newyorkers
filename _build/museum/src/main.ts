@@ -3,6 +3,7 @@ import { LANDMARK_ROOMS } from './rooms/y';
 import * as T from 'three';
 import { Kit } from './kit';
 import { Fx } from './fx';
+import { LOOK, Probe, finish } from './look';
 import { P, C, ERAS, FAMILIES, SETS, famName, thumb, fmt, era, hangList, hangLabel, atlasLoader, perAtlas, wallStart, placeCount, indexOf, DAY, CLOCK, HOUR, MINT, DEFAULT_HANG, trimAtlases, COLLECTOR } from './data';
 import type { Hang, Piece } from './data';
 import { textureBudget, beginRoom, trimCache } from './textures';
@@ -886,6 +887,7 @@ function loadRoom(openN?: string | null): Promise<void> {
       mountsFilled.push(kit!.hang(m, p, m.style || build!.style, i, thumb(p), cap));
     });
     kit.batch();
+    armLook(kit, build.spawn.clone());
     kit.markEggs((id) => eggFound.has(def.id + ':' + id));
     marker = new T.Mesh(new T.RingGeometry(0.28, 0.4, 40), new T.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0, depthWrite: false }));
     marker.rotation.x = -Math.PI / 2;
@@ -1257,6 +1259,34 @@ function download(name: string, blob: Blob) {
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 8000);
+}
+/* THE LOOK (look.ts, 2026-11-23): once the room has loaded, polish its surfaces and photograph it into its own
+   reflections. Rebakes whenever the kit changes the environment (the hour moved, the HDRI swapped). */
+let probe: Probe | null = null;
+let lookFor: Kit | null = null;
+function armLook(k: Kit, at: T.Vector3) {
+  probe?.dispose(); probe = null; lookFor = k;
+  const sc = scene;
+  if (!sc || quality !== 'high' || !renderer || (!LOOK.probe && !LOOK.finish)) return;
+  void (async () => {
+    await k.settled();
+    await wait(250);
+    if (lookFor !== k || !k.live) return;
+    if (LOOK.finish) finish(renderer!, sc);
+    if (!LOOK.probe) return;
+    probe = new Probe(renderer!, sc);
+    let busy = false;
+    const bake = () => {
+      if (lookFor !== k || !k.live || !probe || busy || !k.envRef.tex) return;
+      busy = true;
+      try { probe.bake(at, k.envSky, k.envRef.tex, k.envRef.i); k.probed = true; } catch (e) { console.warn('look probe', e); }
+      busy = false;
+    };
+    k.onEnv = () => setTimeout(bake, 60);
+    /* the HDRI may still be loading; bake when it lands, or now if it already has */
+    if (k.envRef.tex) bake();
+    (window as unknown as { __look: unknown }).__look = { bake, at, k };
+  })();
 }
 async function exportRoom(post?: string | null) {
   if (!kit || !build || !renderer) return null;

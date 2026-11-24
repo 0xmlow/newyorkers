@@ -119,6 +119,7 @@ def main():
         for name in used.get("props", []):
             p = os.path.join(SITE, f"assets/museum/props/{name}.glb")
             if os.path.exists(p):
+                os.makedirs(os.path.dirname(os.path.join(assets, "museum/props", f"{name}.glb")), exist_ok=True)
                 shutil.copy2(p, os.path.join(assets, "museum/props", f"{name}.glb"))
         # the page, locked to this room and pinned to the export day
         pin = f"<script>window.NY_MINT={json.dumps({'room': d['id'], 'day': info.get('day', TODAY), 'token': i})};</script>\n"
