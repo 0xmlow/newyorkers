@@ -512,3 +512,34 @@ lifeguard chairs at the ends of GM Beach with flags and NO LIFEGUARD ON DUTY boa
 stop's end frame checked; five fixed, wash day gets a new path. v236 five tour stops. The three buildings flush
 their instanced parts once (v233) to keep draw calls down; the bodega view costs about 2 ms more than before.
 Also: the newsstand's green is now matte (less sky reflection).
+
+## v237 to v286 (2026-11-23): one island, MLow's hand, the 6529 Memes
+Fifty versions, shipped in five batches of ten.
+- Real props: the CC0 library. Poly Haven models from MLow's ON LOCATION set go through his wrap tool
+  (`_build/cc0/island_brand.py`, ON LOCATION's brand_pass adapted: keepmat, keepfrac, decimate, base at origin,
+  recipes in `_build/cc0/recipes.json`, stickers in `_build/cc0/stickers` incl. real 6529 cards cropped from the
+  atlas) into `site/assets/glb/ph`, placed as instanced meshes by `phPlace()` (v238). They replace the boxy coded
+  furniture: benches, bins, bags, monobloc chairs, planters, crates, utility boxes, buoys, hydrants, payphones,
+  bistro sets, picnic tables, the BUIDL site kit, stoop plants and market stock (v239, v240, v244, v257 to v259,
+  v277, v278).
+- Tying it together: the meme river, MLow's liquid contour field inlaid along the ring and every spoke and flowing
+  to THE FLOOR, from the pier landing in (v241, v243, v265). The island livery: navy enamel on everything that
+  belongs to the island (v245). Every hung card has a designed MLow card back (v267). Card banners at the river
+  crossings cycle through all 577 cards with each artist's name (v273, v279). The credits wall names every artist
+  (v242).
+- Wallpaper: seven pieces painted in Adobe Firefly (Gemini 3.1, MLow's Impermanent Vision paintings as style
+  references, `_build/firefly/`, split into `site/assets/wall/`): SURVIVE, the census back, the handball wall back,
+  ghost signs on new party walls, gates, laundromat paper, back room damask, the BUIDL hoarding, three painted water
+  tanks (v247 to v249, v251, v252, v269 to v271, v274). Wheatpasted 6529 cards on two walls (v250).
+- The block: apartments over the bodega, the laundromat and the DROP shop, with doors, bins and a laundromat
+  interior (v227 to v233 in the batch before; v271 roof tank).
+- Illusions, each with a plaque (v282) and a map entry (v283): the eye from one spot (projector + depth texture,
+  v253), the hollow eye (v254), the impossible triangle over the centre (v255), the well (ray traced shaft in one
+  shader, v261), the card that stands up (3D street art on the court, v262), the disc that turns (peripheral drift,
+  v280), the wall that leans (café wall, v281).
+- Frame rate: facade instanced meshes now cull (v237); props switch off with distance (v260); small props cast no
+  shadow (v263); the anamorph skips vegetation and switches off beyond 60 m (v263, v268).
+Frame time: readings this session were dominated by load from other work on the Mac; with every new feature off the
+numbers barely moved, so the batch costs about 1 to 2 ms in the busiest views.
+Promo: `PROMO 2026-11-24/` (BTS update, three X threads, an article, the artist kit: 472 notes, 376 handles, 441
+in situ stills). Nothing has been sent.
