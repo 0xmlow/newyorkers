@@ -15318,15 +15318,172 @@ window.__FRAMES.push(() => { try { if (!BDAY.P) return; const [x, g, z] = BDAY.P
    ================================================================ */
 (function () { const f = window.__FRAMES; const i = f.length - 1; window.__BDAYREST = true; })();
 
+/* ================================================================
+   v357 ILLUSION: THE CAMERA OBSCURA (2026-11-24)
+   A small dark hut west of the handball court, navy enamel, a door on the island side and a pinhole in the wall that
+   faces the sea. Step inside and the back wall is a live picture of the harbour outside, upside down and mirrored,
+   moving: the boats, the El, the water, the sky. Before photography this was how painters traced the world. The
+   pinhole is a camera rendering into a texture a few times a second, only while someone is inside. ?obscura=0 off.
+   ================================================================ */
+const OBS = { on: false, t: 0 };
+window.__OBS = OBS;
+(function obscura() {
+  if (!LOOK.on || /obscura=0/.test(location.search)) return; const X = -69, Z = -27, g = ground(X, Z), W = 3.2, D = 3.2, H = 2.6; OBS.P = [X, g, Z];
+  const navy = new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.6, metalness: 0.2 }), dark = new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 1 });
+  const B = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; scene.add(o); return o; };
+  // walls: pinhole wall on -x (sea side), door on +x (island side), roof
+  B(0.15, H, D, navy, X - W / 2, g + H / 2, Z); B(W, H, 0.15, navy, X, g + H / 2, Z - D / 2); B(W, H, 0.15, navy, X, g + H / 2, Z + D / 2);
+  B(0.15, H, (D - 1.1) / 2, navy, X + W / 2, g + H / 2, Z - D / 4 - 0.275); B(0.15, H, (D - 1.1) / 2, navy, X + W / 2, g + H / 2, Z + D / 4 + 0.275); B(0.15, H - 2.1, 1.1, navy, X + W / 2, g + 2.1 + (H - 2.1) / 2, Z);
+  B(W + 0.3, 0.14, D + 0.3, navy, X, g + H + 0.07, Z); const fl = B(W, 0.04, D, dark, X, g + 0.02, Z);
+  wall(X - W / 2, Z - D / 2, X - W / 2, Z + D / 2, -5, g + H); wall(X - W / 2, Z - D / 2, X + W / 2, Z - D / 2, -5, g + H); wall(X - W / 2, Z + D / 2, X + W / 2, Z + D / 2, -5, g + H);
+  wall(X + W / 2, Z - D / 2, X + W / 2, Z - 0.55, -5, g + H); wall(X + W / 2, Z + 0.55, X + W / 2, Z + D / 2, -5, g + H);
+  // inside: the screen is the inner face of the door wall's opposite... the image lands on the wall facing the pinhole: the +x wall's inside
+  const rt = new THREE.WebGLRenderTarget(320, 240); OBS.rt = rt; const cam = new THREE.PerspectiveCamera(70, 4 / 3, 0.5, 900); cam.position.set(X - W / 2 - 0.1, g + 1.6, Z); cam.lookAt(X - 60, g + 1.0, Z); OBS.cam = cam;
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 2.1), new THREE.MeshBasicMaterial({ map: rt.texture, toneMapped: false })); scr.position.set(X - W / 2 + 0.09, g + 1.3, Z); scr.rotation.y = PI / 2; scr.scale.set(-1, -1, 1); scene.add(scr); OBS.scr = scr;
+  // the pinhole, seen from outside
+  const ph = new THREE.Mesh(new THREE.CircleGeometry(0.03, 12), new THREE.MeshBasicMaterial({ color: 0x000000 })); ph.position.set(X - W / 2 - 0.08, g + 1.6, Z); ph.rotation.y = -PI / 2; scene.add(ph);
+  const lab = signTex([{ t: 'CAMERA OBSCURA', s: 0.28 }, { t: 'STEP IN. THE HARBOUR IS ON THE WALL, UPSIDE DOWN.', s: 0.1 }], 1024, 256, '#16233f', '#efe8da'); const l = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.45), new THREE.MeshBasicMaterial({ map: lab })); l.position.set(X + W / 2 + 0.08, g + 2.35, Z); l.rotation.y = PI / 2; scene.add(l);
+  OBS.ok = true;
+})();
+// the screen is drawn from the scene in the room's own frame
+window.__FRAMES.push(dt => { try { if (!OBS.ok) return; const d = Math.hypot(camera.position.x - OBS.P[0], camera.position.z - OBS.P[2]); const inside = d < 2.6; if (!inside && OBS.drawn) return; OBS.t -= dt; if (OBS.t > 0) return; OBS.t = inside ? 0.12 : 2;
+  const was = renderer.getRenderTarget(); OBS.scr.visible = false; renderer.setRenderTarget(OBS.rt); renderer.render(scene, OBS.cam); renderer.setRenderTarget(was); OBS.scr.visible = true; OBS.drawn = true; } catch (e) { if (!OBS.err) { OBS.err = e; console.warn('v357 obscura', e); } } });
 
+/* ================================================================
+   v358 ILLUSION: ROUND FROM HERE, SQUARE FROM THERE (2026-11-24)
+   A cobalt ribbon wall about two metres across stands on a plinth by the river's west spoke. From the footprints on
+   one side its rim is a perfect circle. Walk round to the footprints opposite and the same rim is a perfect square.
+   It is one shape (Kokichi Sugihara's ambiguous cylinder): its plan and its height are solved so that seen from 45
+   degrees above on one side the top edge projects to a circle and from the other side to a square. ?ambiguous=0 off.
+   ================================================================ */
+const AMB = {};
+window.__AMB = AMB;
+(function ambiguous() {
+  if (!LOOK.on || /ambiguous=0/.test(location.search)) return; const X = 11, Z = 45, g = ground(X, Z), R = 0.95, base = g + 0.9; AMB.P = [X, g, Z];
+  const n = 160, P = [], I = [];
+  for (let i = 0; i <= n; i++) { const th = i / n * PI * 2, x = Math.cos(th), sA = Math.sin(th), sB = Math.sin(th) >= 0 ? 1 : -1;
+    // view A from -z looking +z down 45 degrees sees y_s = h - z; view B from +z sees y_s = h + z (unit units, times R)
+    const h = (sA + sB) / 2, z = (sB - sA) / 2; P.push(X + x * R, base + (h + 1.2) * R * 0.7071, Z + z * R, X + x * R, base, Z + z * R); if (i) I.push(i * 2 - 2, i * 2 - 1, i * 2, i * 2 - 1, i * 2 + 1, i * 2); }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); geo.setIndex(I); geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.35, metalness: 0.15, side: THREE.DoubleSide })); m.castShadow = true; scene.add(m);
+  const rim = [], rp = []; for (let i = 0; i <= n; i++) rp.push(new THREE.Vector3(P[i * 6], P[i * 6 + 1], P[i * 6 + 2])); const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rp, true), 240, 0.035, 8, true), new THREE.MeshStandardMaterial({ color: 0xefe8da, roughness: 0.4 })); scene.add(tube);
+  const pl = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.5, 0.9, 32), new THREE.MeshStandardMaterial({ color: 0xcfc6b6, roughness: 0.7 })); pl.position.set(X, g + 0.45, Z); pl.castShadow = pl.receiveShadow = true; scene.add(pl); post(X, Z, 1.5, -5, g + 3);
+  // footprints for the two views: 45 degrees above the rim means standing about 2.4 m away at eye height
+  const fc = document.createElement('canvas'); fc.width = fc.height = 128; const f = fc.getContext('2d'); if (f && f.ellipse) { f.fillStyle = '#08DEFF'; [[48, 66], [80, 62]].forEach(([x, y]) => { f.beginPath(); f.ellipse(x, y, 13, 26, 0, 0, PI * 2); f.fill(); }); }
+  const ft = new THREE.CanvasTexture(fc); [[-1, 0], [1, PI]].forEach(([s, r]) => { const fm = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), new THREE.MeshStandardMaterial({ map: ft, transparent: true, polygonOffset: true, polygonOffsetFactor: -6 })); fm.rotation.x = -PI / 2; fm.rotation.z = r; fm.position.set(X, ground(X, Z + s * 2.6) + 0.03, Z + s * 2.6); scene.add(fm); });
+  AMB.V = [[X, g + 1.62, Z - 2.6], [X, g + 1.62, Z + 2.6]]; AMB.ok = true;
+})();
 
+/* ================================================================
+   v359 ILLUSION: THE MOIRÉ FENCE (2026-11-24)
+   Along the skate plaza's sea edge, a fence of two layers of fine navy slats thirty centimetres apart. Standing still
+   it is a fence. Walk along it and broad dark waves sweep through it faster than you walk, bending as you change
+   distance: moiré, the interference of two fine gratings. ?moire=0 off.
+   ================================================================ */
+(function moire() {
+  if (!LOOK.on || /moire=0/.test(location.search) || !window.__SK) return; const L = 9, H = 1.6, n = 150, im = new THREE.InstancedMesh(new THREE.BoxGeometry(0.022, H, 0.012), new THREE.MeshStandardMaterial({ color: 0x16233f, roughness: 0.5, metalness: 0.4 }), n * 2), o = new THREE.Object3D(); let k = 0;
+  [[0, 0.06], [0.3, 0.0645]].forEach(([dv, pitch]) => { for (let i = 0; i < n; i++) { const u = -L / 2 + i * pitch * (L / (n * 0.06)) * 0.06 / pitch * pitch / 0.06; const uu = -L / 2 + i * pitch; if (uu > L / 2) continue; const [x, z] = SK.L2W(uu, -6.2 - dv); o.position.set(x, SK.g0 + H / 2 + 0.05, z); o.rotation.set(0, SK.ry, 0); o.updateMatrix(); im.setMatrixAt(k++, o.matrix); } });
+  im.count = k; im.castShadow = true; scene.add(im); try { cullBound(im); } catch (e) { }
+  const [ax, az] = SK.L2W(-L / 2, -6.35), [bx, bz] = SK.L2W(L / 2, -6.35); wall(ax, az, bx, bz, -5, SK.g0 + H);
+  window.__MOIRE = { ok: true, P: SK.L2W(0, -6.35) };
+})();
 
+/* ================================================================
+   v360 ILLUSION: THE SHADOW CHECKER (2026-11-24)
+   A painted checkerboard of navy and bone tiles on a low plinth, a real cobalt cylinder standing on it and a painted
+   soft shadow falling across the board. Two tiles are marked A and B: A looks dark, B in the shadow looks light. They
+   are the exact same paint (Edward Adelson, 1995). A strip of that same paint runs between them to prove it.
+   ?adelson=0 off.
+   ================================================================ */
+(function adelson() {
+  if (!LOOK.on || /adelson=0/.test(location.search)) return; const X = -44, Z = -5.6, g = ground(X, Z);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 640; const c = cv.getContext('2d'); if (!c || !c.fillRect || !c.createRadialGradient) return;
+  const T = 80, dark = [70, 80, 110], light = [175, 185, 205];
+  for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { const base = (i + j) % 2 ? dark : light, sx = i * T + T / 2, sy = j * T + T / 2; const sh = Math.max(0, 1 - Math.hypot(sx - 470, sy - 470) / 230) * 0.55;
+    const col = base.map(v => Math.round(v * (1 - sh))); c.fillStyle = `rgb(${col})`; c.fillRect(i * T, j * T, T, T); }
+  // A sits outside the shadow on a dark tile, B inside the shadow on a light tile, and they are painted the same
+  const A = [2, 3], Bt = [5, 6]; const same = 'rgb(70,80,110)'; c.fillStyle = same; c.fillRect(A[0] * T, A[1] * T, T, T);
+  const shB = Math.max(0, 1 - Math.hypot(Bt[0] * T + 40 - 470, Bt[1] * T + 40 - 470) / 230) * 0.55; c.fillStyle = same; c.fillRect(Bt[0] * T, Bt[1] * T, T, T);
+  c.fillStyle = '#efe8da'; c.font = '700 40px Arial'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('A', A[0] * T + 40, A[1] * T + 40); c.fillText('B', Bt[0] * T + 40, Bt[1] * T + 40);
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const top = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), new THREE.MeshBasicMaterial({ map: t })); top.rotation.x = -PI / 2; top.position.set(X, g + 0.62, Z); scene.add(top);
+  const pl = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.6, 2.6), new THREE.MeshStandardMaterial({ color: 0xcfc6b6, roughness: 0.7 })); pl.position.set(X, g + 0.3, Z); pl.castShadow = pl.receiveShadow = true; scene.add(pl); boxWalls(X, Z, 2.6, 2.6, 0, -5, g + 0.6);
+  const cy = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.9, 24), new THREE.MeshStandardMaterial({ color: 0x2962FF, roughness: 0.4 })); cy.position.set(X + 0.75, g + 1.07, Z + 0.75); cy.castShadow = true; scene.add(cy);
+  window.__ADEL = { ok: true, P: [X, g, Z] };
+})();
 
+/* ================================================================
+   v361 ILLUSION: WHICH EYE IS BIGGER (2026-11-24)
+   On a panel by the river's west spoke, two Open Eye Flowers exactly the same size: one ringed by six big eye flowers,
+   one by eight tiny ones. The one among the small looks much bigger (the Ebbinghaus illusion).
+   ================================================================ */
+(function ebbinghaus() {
+  if (!LOOK.on) return; const X = -44, Z = -1.6, g = ground(X, Z);
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d'); const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const im = new Image(); im.onload = () => { try { c.fillStyle = '#16233f'; c.fillRect(0, 0, 1024, 512); const F = (x, y, r) => c.drawImage(im, x - r, y - r, r * 2, r * 2);
+    F(256, 256, 48); for (let i = 0; i < 6; i++) { const a = i / 6 * PI * 2; F(256 + Math.cos(a) * 150, 256 + Math.sin(a) * 150, 80); }
+    F(768, 256, 48); for (let i = 0; i < 8; i++) { const a = i / 8 * PI * 2; F(768 + Math.cos(a) * 78, 256 + Math.sin(a) * 78, 18); } t.needsUpdate = true; } catch (e) { } }; im.src = 'assets/iv_flower.webp';
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 1.5), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); m.position.set(X, g + 1.6, Z); m.rotation.y = PI / 2; scene.add(m);
+  facPut('iron', X - 0.04, g + 1.6, Z, 0.05, 1.6, 3.1, 0); facPut('iron', X - 0.04, g + 0.4, Z - 1.3, 0.08, 0.8, 0.08, 0); facPut('iron', X - 0.04, g + 0.4, Z + 1.3, 0.08, 0.8, 0.08, 0); facFlush(); boxWalls(X, Z, 0.2, 3.1, 0, -5, g + 2.4);
+  window.__EBB = { ok: true, P: [X, g, Z] };
+})();
 
+/* ================================================================
+   v362 HOW THE NEWEST TRICKS WORK (2026-11-24)
+   Plaques (v282 design) and map entries for the camera obscura, round from here square from there, the moiré fence,
+   the shadow checker and which eye is bigger, and the WHAT TO LOOK FOR board learns them (by name on the map).
+   ================================================================ */
+(function plaques3() {
+  const mk = (x, z, ry, title, l1, l2) => { const t = signTex([{ t: title, s: 0.26 }, { t: l1, s: 0.1 }, { t: l2, s: 0.1 }], 1024, 384, '#16233f', '#efe8da'); const g = ground(x, z);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.375), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, metalness: 0.15 })); m.position.set(x, g + 1.05, z); m.rotation.y = ry; m.rotation.x = -0.35; scene.add(m); facPut('iron', x, g + 0.5, z, 0.06, 1.0, 0.06, ry); post(x, z, 0.12, -5, 1.2); };
+  const map = (n, p, dx, dz) => { if (window.__MAP && MAP.places && p) MAP.places.push([n, p[0], p[2], p[0] + dx, p[2] + dz]); };
+  try { if (OBS.ok) { const [x, , z] = OBS.P; mk(x + 2.4, z + 1.9, PI / 2, 'CAMERA OBSCURA', 'A PINHOLE IN THE SEA WALL THROWS THE', 'HARBOUR ONTO THE BACK WALL, UPSIDE DOWN.'); map('CAMERA OBSCURA', OBS.P, 4, 0); } } catch (e) { }
+  try { if (AMB.ok) { const [x, , z] = AMB.P; mk(x + 1.9, z - 2.2, 0, 'ROUND FROM HERE, SQUARE FROM THERE', 'ONE SHAPE. ITS EDGE IS SOLVED TO LOOK LIKE', 'A CIRCLE FROM ONE SIDE, A SQUARE FROM THE OTHER.'); map('ROUND OR SQUARE', AMB.P, 0, -3); } } catch (e) { }
+  try { if (window.__MOIRE) { const [x, z] = __MOIRE.P; mk(x + 1.5, z + 1.8, SK.ry + PI, 'THE MOIRÉ FENCE', 'TWO LAYERS OF FINE SLATS, A HAIR APART IN PITCH.', 'WALK ALONG IT AND THE WAVES RUN.'); map('THE MOIRÉ FENCE', [x, 0, z], 2, 2); } } catch (e) { }
+  try { if (window.__ADEL) { const [x, , z] = __ADEL.P; mk(x + 1.9, z - 1.6, PI / 2, 'THE SHADOW CHECKER', 'TILE A AND TILE B ARE THE SAME PAINT.', 'YOUR EYE SUBTRACTS THE SHADOW.'); map('THE SHADOW CHECKER', __ADEL.P, 3, 0); } } catch (e) { }
+  try { if (window.__EBB) { const [x, , z] = __EBB.P; mk(x + 1.6, z + 1.9, PI / 2, 'WHICH EYE IS BIGGER', 'BOTH CENTRE EYES ARE THE SAME SIZE.', 'THE COMPANY THEY KEEP CHANGES THEM.'); map('WHICH EYE IS BIGGER', __EBB.P, 3, 0); } } catch (e) { }
+  facFlush();
+})();
 
+/* ================================================================
+   v363 THE TOUR: ROUND THREE OF TRICKS (2026-11-24)
+   Five stops before the aerial: inside the camera obscura, round then square, walking the moiré fence, the shadow
+   checker, which eye is bigger.
+   ================================================================ */
+(function tourV363() { const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__OBS && OBS.ok) { const [x, g, z] = OBS.P; add.push({ name: 'camera obscura', dur: 8, pos: [[x + 3.5, g + 1.6, z], [x + 0.9, g + 1.6, z]], look: [[x - 1.6, g + 1.3, z], [x - 1.6, g + 1.3, z]] }); }
+  if (window.__AMB && AMB.ok) { const [a, b] = AMB.V, c = [AMB.P[0], AMB.P[1] + 1.4, AMB.P[2]]; add.push({ name: 'round or square', dur: 10, pos: [a, [a[0] + 2.6, a[1], AMB.P[2]], b], look: [c, c, c] }); }
+  if (window.__MOIRE) { const [x, z] = __MOIRE.P; add.push({ name: 'the moire fence', dur: 7, pos: [[x - 5, SK.g0 + 1.6, z + 3], [x + 5, SK.g0 + 1.6, z + 3]], look: [[x - 3, SK.g0 + 1, z], [x + 3, SK.g0 + 1, z]] }); }
+  if (window.__ADEL) { const [x, g, z] = __ADEL.P; add.push({ name: 'the shadow checker', dur: 6, pos: [[x + 2.6, g + 2.2, z - 1], [x + 2.2, g + 2.0, z - 0.6]], look: [[x, g + 0.6, z], [x, g + 0.6, z]] }); }
+  if (window.__EBB) { const [x, g, z] = __EBB.P; add.push({ name: 'which eye is bigger', dur: 6, pos: [[x + 4, g + 1.7, z], [x + 3.2, g + 1.7, z]], look: [[x, g + 1.6, z], [x, g + 1.6, z]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add); })();
 
+/* ================================================================
+   v364 THE OBSCURA IS DARK INSIDE (2026-11-24)
+   A camera obscura only works in the dark. The hut's door gets a heavy black curtain on a rail, pulled aside, and the
+   inside walls and ceiling are matte black so the image on the back wall is the only light in the room.
+   ================================================================ */
+(function obscuraDark() { if (!window.__OBS || !OBS.ok) return; const [X, g, Z] = OBS.P, blk = new THREE.MeshStandardMaterial({ color: 0x020203, roughness: 1 });
+  [[0, 1.3, -1.5, 3.0, 2.6, 0.02], [0, 1.3, 1.5, 3.0, 2.6, 0.02], [0, 2.52, 0, 3.0, 0.02, 3.0]].forEach(([dx, y, dz, w, h, d]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), blk); m.position.set(X + dx, g + y, Z + dz); scene.add(m); });
+  const cur = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.1, 0.5), new THREE.MeshStandardMaterial({ color: 0x0a0a0c, roughness: 1 })); cur.position.set(X + 1.5, g + 1.05, Z - 0.42); scene.add(cur); })();
 
+/* ================================================================
+   v365 THE OBSCURA AT NIGHT (2026-11-24)
+   At night the obscura shows the harbour at night: the El's lights, the ferry, the moon on the water. Nothing to
+   change; this version only lets the pinhole camera see past the sky dome so the moon shows.
+   ================================================================ */
+(function () { if (window.__OBS && OBS.cam) { OBS.cam.far = 2000; OBS.cam.updateProjectionMatrix(); } })();
 
+/* ================================================================
+   v366 THE PIER BOARD LEARNS THE NEW TRICKS (2026-11-24)
+   A second WHAT TO LOOK FOR panel beside v332's lists the round three tricks: the camera obscura, round or square,
+   the moiré fence, the shadow checker, which eye is bigger, the stoop sale and the birthday.
+   ================================================================ */
+(function lookFor2() { if (!window.__LOOKFOR) return; const [x0, g, z0] = __LOOKFOR.P, x = x0 + 1.75, z = z0 + 0.6;
+  const rows = ['CAMERA OBSCURA · STEP INSIDE THE NAVY HUT', 'ROUND OR SQUARE · TWO SETS OF FOOTPRINTS', 'THE MOIRÉ FENCE · WALK ALONG IT', 'THE SHADOW CHECKER · TILE A AND TILE B', 'WHICH EYE IS BIGGER · BY THE WEST SPOKE', 'THE STOOP SALE · BY THE WALK UP', 'A BIRTHDAY · ON THE EAST LAWN'];
+  const t = signTex([{ t: 'AND ALSO', s: 0.08 }].concat(rows.map(r => ({ t: r, s: 0.035, b: false }))), 1024, 1000, '#16233f', '#efe8da');
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.37), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 })); m.position.set(x, g + 1.4, z); m.rotation.y = PI + 0.35; scene.add(m);
+  facPut('iron', x - Math.sin(PI + 0.35) * 0.04, g + 1.4, z - Math.cos(PI + 0.35) * 0.04, 1.5, 1.47, 0.05, PI + 0.35); facPut('iron', x, g + 0.35, z + 0.03, 0.1, 0.7, 0.1, 0); facFlush(); post(x, z, 0.3, -5, 2.5); })();
 
 
 
