@@ -26,7 +26,7 @@ function phPlace(name, list, opt) { opt = opt || {};
     M.parts.forEach(pt => { const im = new THREE.InstancedMesh(pt.geo, pt.mat, list.length);
       list.forEach((L, i) => { const s = L[4] == null ? 1 : L[4]; Array.isArray(s) ? s3.set(s[0], s[1], s[2]) : s3.setScalar(s);
         base.compose(p3.set(L[0], L[1], L[2]), q.setFromEuler(e.set(0, L[3] || 0, 0)), s3); im.setMatrixAt(i, new THREE.Matrix4().multiplyMatrices(base, pt.m4)); });
-      im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
+      im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false && Math.max(M.size.x, M.size.y, M.size.z) * (Array.isArray(list[0][4]) ? 1 : (list[0][4] || 1)) > 1.15; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
     PH.placed += list.length; return out; }).catch(e => { if (!PH.err) { PH.err = e; console.warn('v238 props', name, e); } return []; });
 }
 window.phPlace = phPlace; window.phLoad = phLoad;

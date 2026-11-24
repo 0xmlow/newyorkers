@@ -213,5 +213,68 @@
  "isl_buoy": {
   "src": "ph_ocean_buoy",
   "tris": 3000
+ },
+ "isl_payphone": {
+  "src": "nyb_payphone",
+  "tris": 5000
+ },
+ "isl_coffeecart": {
+  "src": "ph_CoffeeCart_01",
+  "tris": 8000,
+  "paint": [
+   {
+    "op": "paint",
+    "color": "#2c4370",
+    "dark": "#0d1424",
+    "k": 0.75,
+    "mat": "(?i)cart|body|metal|paint"
+   }
+  ],
+  "stickers": [
+   {
+    "img": "isl_cocoa",
+    "face": "-Y",
+    "u": 0.5,
+    "v": 0.55,
+    "size": 0.7
+   }
+  ]
+ },
+ "isl_cafe": {
+  "src": "ph_outdoor_table_chair_set_01",
+  "tris": 6000
+ },
+ "isl_picnic": {
+  "src": "ph_wooden_picnic_table",
+  "tris": 4000,
+  "stickers": [
+   {
+    "img": "eyeflower",
+    "face": "+Z",
+    "u": 0.5,
+    "v": 0.5,
+    "size": 0.18
+   }
+  ]
+ },
+ "isl_generator": {
+  "src": "ph_portable_generator",
+  "tris": 4000
+ },
+ "isl_searchlight": {
+  "src": "ph_portable_searchlight",
+  "tris": 4000
+ },
+ "isl_cement": {
+  "src": "ph_cement_bag",
+  "tris": 1200
+ },
+ "isl_ladder": {
+  "src": "ph_wooden_ladder",
+  "tris": 2000
+ },
+ "isl_handtruck": {
+  "src": "ph_hand_truck",
+  "tris": 2500
  }
 }

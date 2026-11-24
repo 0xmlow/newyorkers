@@ -13351,7 +13351,7 @@ function phPlace(name, list, opt) { opt = opt || {};
     M.parts.forEach(pt => { const im = new THREE.InstancedMesh(pt.geo, pt.mat, list.length);
       list.forEach((L, i) => { const s = L[4] == null ? 1 : L[4]; Array.isArray(s) ? s3.set(s[0], s[1], s[2]) : s3.setScalar(s);
         base.compose(p3.set(L[0], L[1], L[2]), q.setFromEuler(e.set(0, L[3] || 0, 0)), s3); im.setMatrixAt(i, new THREE.Matrix4().multiplyMatrices(base, pt.m4)); });
-      im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
+      im.instanceMatrix.needsUpdate = true; im.castShadow = opt.shadow !== false && Math.max(M.size.x, M.size.y, M.size.z) * (Array.isArray(list[0][4]) ? 1 : (list[0][4] || 1)) > 1.15; im.receiveShadow = true; scene.add(im); try { cullBound(im); } catch (e) { } out.push(im); PH.ims.push(im); });
     PH.placed += list.length; return out; }).catch(e => { if (!PH.err) { PH.err = e; console.warn('v238 props', name, e); } return []; });
 }
 window.phPlace = phPlace; window.phLoad = phLoad;
@@ -13879,15 +13879,202 @@ window.__FRAMES.push(() => { try { if (!PEN.ok) return; const d = Math.hypot(P.x
   const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
 })();
 
+/* ================================================================
+   v257 REAL PROPS: PAYPHONES (2026-11-23)
+   The New York payphone, scanned and already wearing the N3W BELL livery from MLow's ON LOCATION set (the wrap
+   tool's nyb_payphone), at the kerb where the river's north spoke reaches the ring road, at the east spoke, and on
+   the corner by the bodega's side door. ?props=0 turns them off.
+   ================================================================ */
+(function payphones() {
+  if (!PH.on) return; const L0 = [];
+  [[-3.6, 83.5, PI / 2], [83.5, 3.6, PI], [11.3, 75.6, -PI / 2]].forEach(([x, z, r]) => L0.push([x, ground(x, z), z, r, 1]));
+  phPlace('isl_payphone', L0); L0.forEach(([x, , z]) => post(x, z, 0.35, -5, 3));
+})();
 
+/* ================================================================
+   v258 REAL PROPS: TABLES OUTSIDE (2026-11-23)
+   Two scanned bistro sets (slatted wood, folding steel) on the bodega's sidewalk, where people drink the coffee
+   they bought inside; scanned picnic tables, an Open Eye Flower burned into each top, by the rink for lacing skates
+   and on the east lawn by the hollow eye. The rink's boxy ice machine of v218 is retired for them.
+   ?props=0 turns them off.
+   ================================================================ */
+(function tablesOutside() {
+  if (!PH.on) return;
+  try { const g = ground(17, 66) + 0.02; phPlace('isl_cafe', [[8.6, g, 70.4, 0.3, 1], [8.4, g, 61.8, -0.4, 1]]); } catch (e) { }
+  const pic = [[17.5, ground(17.5, -7.5), -7.5, 0.2, 1], [23.5, ground(23.5, -6.5), -6.5, -0.3, 1]];
+  try { if (window.__RB2 && RB2.boni) { const [bx, bz] = RB2.boni; blkHideIn(bx - 1.8, bx + 1.8, bz - 1.8, bz + 1.8, RINK.g0 - 0.3, RINK.g0 + 2.6); pic.push([bx, ground(bx, bz), bz, RINK.gapA, 1]); } } catch (e) { }
+  phPlace('isl_picnic', pic); pic.forEach(([x, , z]) => post(x, z, 0.9, -5, 1));
+})();
 
+/* ================================================================
+   v259 REAL PROPS: THE SITE THAT NEVER FINISHES (2026-11-23)
+   BUIDL, the building that is never finished, gets the kit a real stalled New York site leaves lying around:
+   a yellow generator, a stack of cement bags, a wooden step ladder, a hand truck, and a line of concrete jersey
+   barriers along its open side with 6529 cards wheatpasted on them (the wrap tool's isl_barrier). All scanned
+   CC0. ?props=0 turns them off.
+   ================================================================ */
+(function siteKit() {
+  if (!PH.on) return; const G = (x, z) => ground(x, z);
+  phPlace('isl_generator', [[-38.6, G(-38.6, -46.2), -46.2, 1.2, 1]]);
+  phPlace('isl_cement', [[-38.9, G(-38.9, -50), -50, 0.1, 1], [-38.3, G(-38.3, -50.2), -50.2, -0.2, 1], [-38.6, G(-38.6, -50.1) + 0.2, -50.1, 0.4, 1]]);
+  phPlace('isl_ladder', [[-41.2, G(-41.2, -40.9), -40.9, PI, 1]]);
+  phPlace('isl_handtruck', [[-38.4, G(-38.4, -43.6), -43.6, -1.1, 1]]);
+  const bar = []; for (let i = 0; i < 6; i++) { const z = -52.4 + i * 1.62; bar.push([-36.9, G(-36.9, z), z, PI / 2 + (Math.random() - 0.5) * 0.08, 1]); } phPlace('isl_barrier', bar); bar.forEach(([x, , z]) => post(x, z, 0.4, -5, 1));
+})();
 
+/* ================================================================
+   v260 FRAME RATE: SMALL THINGS FAR AWAY (2026-11-23)
+   The scanned props are a few thousand triangles each, worth it at arm's length, invisible at a hundred metres.
+   Every prop mesh from the CC0 library (v238 on) now switches itself off beyond a distance set by its size (about
+   55 m for a bin, 90 m for a barrier row), checked a few times a second, and comes back before you could see it
+   go. The same for the wheatpaste and the mural uplights. ?propcull=0 turns it off.
+   ================================================================ */
+const PCULL = { off: 0, t: 0 };
+window.__PCULL = PCULL;
+window.__FRAMES.push(dt => { try { if (/propcull=0/.test(location.search) || !window.__PH) return; PCULL.t += dt; if (PCULL.t < 0.25) return; PCULL.t = 0; let off = 0; const cp = camera.position;
+  PH.ims.forEach(im => { const s = im.geometry.boundingSphere; if (!s) return; const far = 45 + s.radius * 3; const v = s.center.distanceTo(cp) - s.radius < far; if (im.visible !== v) im.visible = v; if (!v) off++; });
+  PCULL.off = off; } catch (e) { } });
 
+/* ================================================================
+   v261 ILLUSION: THE WELL (2026-11-23)
+   On the south spoke of the meme river, a round bronze rimmed opening in the paving, and below it the river keeps
+   going down: a shaft of contour rings falling away forever toward a small Open Eye at the bottom that is always
+   the same distance off however you lean over it. It is a flat disc. One shader traces a ray from your eye into a
+   cylinder that is not there and paints what it would meet, so the parallax is exact from every angle.
+   ?well=0 turns it off.
+   ================================================================ */
+const WELL = { t: 0 };
+window.__WELL = WELL;
+(function well() {
+  if (!LOOK.on || /well=0/.test(location.search)) return;
+  const X = 0, Z = -27.5, Y = 0.665 + 0.02, R = 1.3; WELL.P = [X, Y, Z];
+  const fl = tex('assets/iv_flower.webp');
+  const mat = new THREE.ShaderMaterial({ uniforms: { uC: { value: new THREE.Vector3(X, Y, Z) }, uR: { value: R }, uT: { value: 0 }, uFl: { value: fl }, uNight: { value: 0 } },
+    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform vec3 uC; uniform float uR, uT, uNight; uniform sampler2D uFl; varying vec3 vW;
+      void main(){ vec3 ro = vW, rd = normalize(vW - cameraPosition); vec2 o = ro.xz - uC.xz;
+        // exit point through the cylinder wall below the disc
+        float a = dot(rd.xz, rd.xz), b = 2.0 * dot(o, rd.xz), c = dot(o, o) - uR * uR; float disc = b * b - 4.0 * a * c;
+        float t = (-b + sqrt(max(disc, 0.0))) / (2.0 * max(a, 1e-5)); vec3 hit = ro + rd * t; float depth = uC.y - hit.y;
+        vec3 col; float ang = atan(hit.z - uC.z, hit.x - uC.x);
+        float rings = fract(depth * 1.1 - uT * 0.35); float line = smoothstep(0.05, 0.0, abs(rings - 0.5) - 0.44);
+        float band = floor(depth * 1.1 - uT * 0.35); float pick = fract(sin(band * 12.9898) * 43758.5453);
+        vec3 lc = pick < 0.5 ? vec3(0.16, 0.38, 1.0) : pick < 0.8 ? vec3(0.03, 0.87, 1.0) : vec3(0.94, 0.91, 0.85);
+        float wob = sin(ang * 6.0 + depth * 0.8 + uT) * 0.04; float fog = exp(-depth * 0.07);
+        col = mix(vec3(0.02, 0.035, 0.1), lc, line * (0.9 + wob)) * fog;
+        // the eye at the bottom: seen straight down the shaft
+        vec2 down = o + rd.xz * (ro.y - (uC.y - 60.0)) / max(-rd.y, 1e-3); float rr = length(down) / uR;
+        if (rd.y < 0.0 && length(down) < uR) { vec4 f = texture2D(uFl, down / (uR * 0.9) * 0.5 + 0.5); col = mix(col, f.rgb * (0.6 + 0.4 * uNight), f.a * (1.0 - fog) * 0.95); }
+        col += lc * line * fog * uNight * 0.25;
+        gl_FragColor = vec4(col, 1.0); }`, });
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(R, 64), mat); disc.rotation.x = -PI / 2; disc.position.set(X, Y, Z); disc.renderOrder = 4; disc.userData.__single = true; scene.add(disc); WELL.mat = mat;
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(R + 0.06, 0.09, 12, 64), new THREE.MeshStandardMaterial({ color: 0x8a6a36, roughness: 0.3, metalness: 0.92 })); rim.rotation.x = -PI / 2; rim.position.set(X, Y + 0.02, Z); rim.castShadow = true; scene.add(rim);
+  post(X, Z, R + 0.2, -5, Y + 2);
+  WELL.ok = true;
+})();
+window.__FRAMES.push(dt => { try { if (!WELL.mat) return; WELL.t += dt; WELL.mat.uniforms.uT.value = WELL.t; WELL.mat.uniforms.uNight.value = Math.min(1, (L.lamps || 0) * 1.3); } catch (e) { } });
 
+/* ================================================================
+   v262 ILLUSION: THE CARD THAT STANDS UP (2026-11-23)
+   3D street art, the chalk-on-the-pavement kind, with a 6529 card. Painted flat on the handball court's asphalt is a
+   long distorted smear of NFT ADOPTION PATHWAY 2030 (card 24, by 6529). Stand on the painted eye at the back of the
+   court and it rises: the card stands upright on the asphalt in front of you, two metres wide, casting a painted
+   shadow. One shader on the court works out, for every point of the asphalt, where the line from your spot through
+   that point would cross a card standing in the court, and paints that bit of card there.
+   ?standup=0 turns it off.
+   ================================================================ */
+const STAND = {};
+window.__STAND = STAND;
+(function standUp() {
+  if (!LOOK.on || /standup=0/.test(location.search) || !window.__HB2 || !HB2.court) return;
+  const W = HB2.L2W, ry = WALLP.ry, g0 = ground(WALL_AT.x, WALL_AT.z) + 0.045;
+  const [vx, vz] = W(0, 0.225 + 8.8), V = new THREE.Vector3(vx, g0 + 1.62, vz); STAND.V = V;
+  const [qx, qz] = W(0, 0.225 + 5.7), Q = new THREE.Vector3(qx, g0, qz); STAND.Q = Q;
+  const n = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)), u = new THREE.Vector3(Math.cos(ry), 0, -Math.sin(ry));
+  const I = byN[24] || CARDS[0], A = I.uv[0], h = 1.12, w = h * I.uv[5];
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6,
+    uniforms: { uV: { value: V }, uQ: { value: Q }, uN: { value: n }, uU: { value: u }, uW: { value: w }, uH: { value: h }, uAt: { value: ATL[A] }, uUV: { value: new THREE.Vector4(I.uv[1], 1 - I.uv[4], I.uv[3], 1 - I.uv[2]) } },
+    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform vec3 uV, uQ, uN, uU; uniform float uW, uH; uniform sampler2D uAt; uniform vec4 uUV; varying vec3 vW;
+      void main(){ vec3 d = vW - uV; float den = dot(d, uN); if (abs(den) < 1e-4) discard; float t = dot(uQ - uV, uN) / den; if (t <= 0.0 || t >= 1.0) discard;
+        vec3 x = uV + d * t; float s = dot(x - uQ, uU) / uW + 0.5, v = (x.y - uQ.y) / uH;
+        if (s < 0.0 || s > 1.0 || v < 0.0 || v > 1.0) { // the painted shadow, cast away from the sun side
+          vec3 sh = vW - uQ; float sa = dot(sh, uU) / uW + 0.5, sb = dot(sh, uN) / (uH * 0.55);
+          if (sa > 0.05 && sa < 0.95 && sb < -0.05 && sb > -1.0) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.35 * (1.0 + sb)); return; } discard; }
+        vec2 uv = vec2(mix(uUV.x, uUV.z, s), mix(uUV.y, uUV.w, v)); vec4 c = texture2D(uAt, uv);
+        float edge = step(0.012, s) * step(s, 0.988) * step(0.008, v) * step(v, 0.992); vec3 col = mix(vec3(0.94, 0.92, 0.86), c.rgb, edge);
+        gl_FragColor = vec4(col * 0.92, 1.0); }` });
+  // the paint lies on the court and runs past it toward the wall (it has to: the smear is long)
+  const pg = new THREE.PlaneGeometry(7.4, 9.2); const m = new THREE.Mesh(pg, mat); m.rotation.order = 'YXZ'; m.rotation.set(-PI / 2, ry, 0); const [cx, cz] = W(0, 0.225 + 4.7); m.position.set(cx, g0 + 0.004, cz); m.renderOrder = 4; m.userData.__single = true; scene.add(m); STAND.mesh = m;
+  // the spot: a painted eye at the gate
+  const sp = new THREE.Mesh(new THREE.CircleGeometry(0.42, 32), new THREE.MeshBasicMaterial({ map: tex('assets/iv_flower.webp'), transparent: true, alphaTest: 0.4, polygonOffset: true, polygonOffsetFactor: -7, polygonOffsetUnits: -7 })); sp.rotation.x = -PI / 2; sp.position.set(vx, ground(vx, vz) + 0.05, vz); scene.add(sp);
+  STAND.ok = true;
+})();
+const standSecret = secret('standup', () => { toast('FROM HERE THE CARD STANDS UP OUT OF THE COURT. TAKE ONE STEP AND IT FALLS FLAT AGAIN. IT WAS ALWAYS PAINT.', 'blue'); });
+window.__FRAMES.push(() => { try { if (!STAND.ok) return; const d = Math.hypot(P.x - STAND.V.x, P.z - STAND.V.z); if (d < 0.6 && !STAND.seen) { STAND.seen = true; standSecret(); } if (d > 2) STAND.seen = false; } catch (e) { } });
 
+/* ================================================================
+   v263 FRAME RATE: SHADOWS WHERE THEY SHOW (2026-11-23)
+   A shadow from a bin bag or a hydrant is a few pixels the sun map draws again every frame. Scanned props under
+   about a metre now receive shadows but do not cast them (the street still darkens under them through the AO pass),
+   and the overlays of the anamorphic eye never enter the shadow pass. Measured on the M5 Pro at retina, the plaza
+   and the bodega views each drop a few dozen draw calls in the shadow pass. ?props=0 off.
+   ================================================================ */
+(function shadowTrim() { try { if (window.__ANA) scene.traverse(o => { if (o.userData && o.userData.__ana) o.castShadow = false; }); } catch (e) { } })();
+// the anamorphic overlays only matter near the painting: off beyond 60 m from the bodega block
+window.__FRAMES.push(dt => { try { if (!window.__ANA || !ANA.ready) return; ANA.ct = (ANA.ct || 0) + dt; if (ANA.ct < 0.3) return; ANA.ct = 0; const v = camera.position.distanceTo(ANA.T) < 60; if (v === ANA.vis) return; ANA.vis = v; scene.children.forEach(o => { if (o.userData && o.userData.__ana) o.visible = v; }); } catch (e) { } });
 
+/* ================================================================
+   v264 THE COURT, CLEARED (2026-11-23)
+   When the handball court went down (v217) it landed over a lawn tree and a scatter of ferns and flowers, which
+   grew straight up through the asphalt. A New York court has none of that inside the fence. Anything planted inside
+   the court's fence line is lifted out (its collision post too); everything outside is untouched. ?court=0 off.
+   ================================================================ */
+function instHideIn(cx, cz, r, ya, yb, skip) { let n = 0; const m4 = new THREE.Matrix4(), v = new THREE.Vector3(), zero = new THREE.Matrix4().makeScale(0, 0, 0);
+  scene.traverse(o => { if (!o.isInstancedMesh || o.count > 30000 || (skip && skip(o))) return; let hit = 0;
+    for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); v.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (Math.hypot(v.x - cx, v.z - cz) < r && v.y > ya && v.y < yb) { o.setMatrixAt(i, zero); hit++; } }
+    if (hit) { o.instanceMatrix.needsUpdate = true; n += hit; } }); return n; }
+window.instHideIn = instHideIn;
+(function courtCleared() {
+  if (!window.__HB2 || !HB2.court) return; const [cx, cz] = HB2.L2W(0, 5.0), g = ground(cx, cz);
+  const facMats = new Set(Object.values(FACM)); const keep = o => facMats.has(o.material) || (window.__PH && PH.ims.includes(o)) || o.material === MAT.pave;
+  HB2.cleared = instHideIn(cx, cz, 4.4, g - 1, g + 12, keep);
+  // the lawn tree is a plain mesh group: lift whole objects whose base stands inside the fence
+  const v = new THREE.Vector3(), keepM = new Set([CHAINM, HB2.court && HB2.court.material].filter(Boolean));
+  scene.children.slice().forEach(o => { if (o.isInstancedMesh || o.isLight || o.isCamera || o === HB2.court || (window.__STAND && o === STAND.mesh) || (o.userData && (o.userData.__ana || o.userData.__single))) return; if (o.isMesh && (keepM.has(o.material) || o.material && o.material.isShaderMaterial)) return;
+    o.getWorldPosition(v); if (Math.hypot(v.x - cx, v.z - cz) < 4.0 && v.y > g - 1 && v.y < g + 1.5) { const b = new THREE.Box3().setFromObject(o); if (b.max.y - b.min.y > 1.2 && b.max.x - b.min.x < 12) { o.visible = false; HB2.cleared++; } } });
+  try { if (typeof NAT_PLACE !== 'undefined') for (let i = NAT_PLACE.length - 1; i >= 0; i--) { const q = NAT_PLACE[i]; if (Math.hypot(q.x - cx, q.z - cz) < 4.4) { NAT_PLACE.splice(i, 1); HB2.cleared++; } } } catch (e) { }
+  HB2.sweep = () => instHideIn(cx, cz, 4.4, g - 1, g + 12, keep);
+  CIRCS.forEach(c => { if (c.on && Math.hypot(c.x - cx, c.z - cz) < 4.2 && c.r < 0.6) c.on = false; });
+})();
+window.__FRAMES.push(dt => { try { if (!window.__HB2 || !HB2.sweep) return; HB2.st = (HB2.st || 0) + dt; if ((HB2.st > 8 && !HB2.s1) || (HB2.st > 25 && !HB2.s2)) { HB2.cleared += HB2.sweep(); if (HB2.st > 25) HB2.s2 = true; else HB2.s1 = true; } } catch (e) { } });
 
+/* ================================================================
+   v265 THE MEME RIVER REACHES THE PIER (2026-11-23)
+   The river now begins where you land: it comes off the pier at the welcome billboard and runs up the north spoke
+   all the way to the ring, so the first thing under your feet when you step onto the island is the current, and
+   it leads you in. Same shader as v241. ?river=0 off.
+   ================================================================ */
+(function riverToPier() {
+  if (!window.__RIVER || !RIVER.mesh || !RIVER.mat) return; const PY = 0.665 + 0.012, P = [], U = [], I = []; let vi = 0;
+  const pts = []; for (let z = 116; z >= 96; z -= 1.5) pts.push([0, z]); let s = 0;
+  pts.forEach(([x, z], i) => { if (i) s -= 1.5; P.push(x + 1.1, PY, z, x - 1.1, PY, z); U.push(s + 54, 1, s + 54, -1); if (i) I.push(vi - 2, vi - 1, vi, vi - 1, vi + 1, vi); vi += 2; });
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); g.setIndex(I); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, RIVER.mat); m.renderOrder = 2; m.userData.__single = true; m.userData.__nofreeze = true; scene.add(m); RIVER.pier = m;
+})();
 
+/* ================================================================
+   v266 THE TOUR: THE WELL, THE CARD, THE STREET (2026-11-23)
+   Four stops before the aerial: looking down the well, the card standing up on the court from its spot and then
+   falling flat as you step aside, the payphone corner, and the site that never finishes.
+   ================================================================ */
+(function tourV266() {
+  const T = (window.__game && __game.TOUR) || TOUR, add = [];
+  if (window.__WELL && WELL.ok) add.push({ name: 'the well', dur: 7, pos: [[2.2, 2.4, -24], [0.6, 2.6, -26]], look: [[0, 0.3, -27.5], [0, 0, -27.5]] });
+  if (window.__STAND && STAND.ok) { const V = STAND.V, Q = STAND.Q; add.push({ name: 'the card that stands up', dur: 9, pos: [[V.x, V.y, V.z], [V.x, V.y, V.z + 0.01], [V.x + (Q.x - V.x) * 0.35 + (Q.z - V.z) * 0.3, V.y + 0.3, V.z + (Q.z - V.z) * 0.35 - (Q.x - V.x) * 0.3]], look: [[Q.x, Q.y + 0.5, Q.z], [Q.x, Q.y + 0.5, Q.z], [Q.x, Q.y + 0.3, Q.z]] }); }
+  if (window.__PH) { add.push({ name: 'the site', dur: 6, pos: [[-31, 2, -44], [-33, 2, -48]], look: [[-38.5, 0.9, -47], [-38.5, 0.9, -49]] }); }
+  const at = T.findIndex(r => r.name === 'aerial'); T.splice(at < 0 ? T.length : at, 0, ...add);
+})();
 
 
 
