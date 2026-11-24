@@ -47,7 +47,7 @@ window.__MWALK = MWALK;
     L.forEach(([cd, s], i) => { const x = Math.sin(s.a) * s.r, z = Math.cos(s.a) * s.r; o.position.set(x, PY, z); o.rotation.set(0, s.a + PI, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix);
       const u = cd.uv; aUv.set([u[1], 1 - u[4], u[3], 1 - u[2]], i * 4); aNum[i] = cd.n; aAsp[i] = u[5]; });
     const g2 = geo.clone(); g2.setAttribute('aUv', new THREE.InstancedBufferAttribute(aUv, 4)); g2.setAttribute('aNum', new THREE.InstancedBufferAttribute(aNum, 1)); g2.setAttribute('aAsp', new THREE.InstancedBufferAttribute(aAsp, 1)); im.geometry = g2;
-    im.instanceMatrix.needsUpdate = true; im.receiveShadow = true; im.frustumCulled = false; im.renderOrder = 3; scene.add(im); });
+    im.instanceMatrix.needsUpdate = true; im.receiveShadow = true; im.frustumCulled = false; im.renderOrder = 3; scene.add(im); im.userData.ns = L.map(q => q[0].n); (MWALK.ims = MWALK.ims || []).push(im); });
   MWALK.ok = true; MWALK.PY = PY; MWALK.banks = banks;
   if (window.__MAP) MAP.places.push(['THE MEMES WALK', 0, 41.9, 0, 46]);
 })();
