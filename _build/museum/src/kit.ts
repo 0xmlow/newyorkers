@@ -52,6 +52,64 @@ if (typeof window !== 'undefined' && typeof Worker !== 'undefined') {
   gltf.setDRACOLoader(draco);
 }
 const propCache = new Map<string, Promise<T.Group>>();
+
+/* ---------- who casts a shadow (2026-11-25) ----------
+   What the kit did: batch() switched castShadow on for every mesh in `dynamic` after the room had built, which undid any
+   room that had switched it off; prop() switched it on for every mesh of every GLB as it arrived; swapCabs laid instanced
+   cab and car bodies (4k to 14k triangles each) that all cast. The debug counter sums the shadow pass, so a room was
+   paid for two or three times, and rooms grew their own timed trims (w8dShadowTrim, w9ShadowTrim, g9ShadowTrim,
+   shadowDiet, shadowTrim) to switch it off again 1.5 to 30 s after load. Those trims only ever switch shadows off, so
+   they keep working and now mostly find nothing to do.
+   The rule now:
+   1. A room's choice wins. castShadow set to false by room code (tracked by the accessor below, which tells a deliberate
+      false from the constructor's default), userData.noShadow on the mesh or any parent, or a transparent (no alphaTest)
+      or additive material: the kit never switches that mesh on. userData.keepShadow on a mesh or parent: the kit never
+      switches it off.
+   2. The kit's sweep (shadowSweep, after batch, after each GLB arrives, and at 2, 6, 15 and 32 s) switches off:
+      - small things: the object (the whole loaded prop, or the top group under the scene) is under SHADOW_SMALL_R metres
+        in bounding radius, about 1.2 m across: chairs, busts, hydrants, bins, vases, cakes. GTAO already darkens their
+        contact with the floor, and at 2048 over 120 m the sun's map gives them a smudge of a few texels anyway.
+      - crowds: an InstancedMesh of SHADOW_CROWD_N or more copies, each under SHADOW_CROWD_R metres in radius: fence bars,
+        pigeons, chairs, planting, figures. Instanced meshes are mostly frustumCulled = false, so every copy is drawn into
+        the shadow map wherever it stands; this was the largest single cost.
+      - the kit's cabs and cars (userData.cab).
+      Big things keep their shadows: buildings, columns, trees, hero GLBs, anything a visitor reads as standing in light.
+   Three already skips casters outside the sun's shadow box when they are frustum culled, which covers "far from the
+   light" for ordinary meshes. */
+const SHADOW_SMALL_R = 0.6;
+const SHADOW_CROWD_N = 6;
+const SHADOW_CROWD_R = 2.5;
+const CAST_V = Symbol('cast'), CAST_OFF = Symbol('castOff');
+type Tracked = T.Object3D & { [CAST_V]?: boolean; [CAST_OFF]?: boolean };
+/* true while the kit itself writes castShadow, so its own defaults never count as a room's choice */
+let kitWriting = false;
+if (!Object.getOwnPropertyDescriptor(T.Object3D.prototype, 'castShadow')) {
+  Object.defineProperty(T.Object3D.prototype, 'castShadow', {
+    configurable: true,
+    get(this: Tracked) { return this[CAST_V] === true; },
+    set(this: Tracked, val: boolean) {
+      const first = this[CAST_V] === undefined;   // the Object3D constructor's own `castShadow = false`
+      this[CAST_V] = !!val;
+      if (!first && !kitWriting) this[CAST_OFF] = !val;
+    },
+  });
+  /* clone() and copy() carry the choice with the value (copy's own assignment would otherwise read as a choice) */
+  const copy = T.Object3D.prototype.copy;
+  T.Object3D.prototype.copy = function (this: Tracked, src: T.Object3D, recursive?: boolean) {
+    const r = copy.call(this, src, recursive);
+    this[CAST_OFF] = (src as Tracked)[CAST_OFF];
+    return r;
+  } as typeof copy;
+}
+const kitCast = (o: T.Object3D, on: boolean) => { kitWriting = true; o.castShadow = on; kitWriting = false; };
+const flagUp = (o: T.Object3D | null, key: string) => { for (let p = o; p; p = p.parent) if (p.userData[key]) return true; return false; };
+const clearMat = (m: T.Material) => (m.transparent && !(m.alphaTest > 0)) || m.blending === T.AdditiveBlending;
+/* the room (or a parent) said no, or the material cannot cast a true shadow */
+function shadowOptOut(c: T.Mesh) {
+  if ((c as Tracked)[CAST_OFF] || flagUp(c, 'noShadow')) return true;
+  const ms = [c.material].flat() as T.Material[];
+  return ms.length > 0 && ms.every(clearMat);
+}
 /* The tree kit (2026-10-09): twelve New York species as branching skeletons with photo leaf cards,
    built by blender/build_tree_kit.py into assets/museum/trees/tree_<species>.glb (two variants, a near
    and a far version of each). k.tree queues trees; plantSpecies instances them per species. ?trees=old
@@ -1380,13 +1438,17 @@ export class Kit {
           for (const material of (Array.isArray(c.material) ? c.material : [c.material])) {
             for (const value of Object.values(material)) if (value instanceof T.Texture) markShared(value);
           }
-          c.castShadow = c.receiveShadow = this.o.quality === 'high';
+          /* the kit's default, not a choice: the sweep judges it once the room has scaled and placed the model */
+          kitCast(c, this.o.quality === 'high' && !shadowOptOut(c));
+          c.receiveShadow = this.o.quality === 'high';
           const m = c.material as T.MeshStandardMaterial;
           if (m && 'envMapIntensity' in m) m.envMapIntensity = 1.2;
         }
       });
+      o.userData.propRoot = true;
       this.scene.add(o);
       this.dynamic.add(o);
+      this.shadowSoon();
       return o;
     }).catch(() => null);
   }
@@ -1716,6 +1778,7 @@ export class Kit {
       step();
       this.ticks.push(step);
     }
+    this.shadowSoon();
   }
   /* the taxi: an NYC hybrid cab (Tripo from MLow's own cab photo) with the MLOW topper on its rails;
      the topper's two screens show the MLOW mark, then a painting, like the real digital toppers */
@@ -2002,15 +2065,19 @@ export class Kit {
     this.cabsLater();
     this.peopleCollect();
     this.castLater();
-    const groups = new Map<T.Material, T.Mesh[]>();
+    /* merged per material, and per shadow choice: pieces a room set castShadow = false on merge into their own mesh
+       that does not cast (they used to vanish into one that did) */
+    const groups = new Map<T.Material, T.Mesh[]>(), quiet = new Map<T.Material, T.Mesh[]>();
     for (const o of this.objects) {
       if (Array.isArray(o.material)) continue;
-      const a = groups.get(o.material) || [];
+      const into = shadowOptOut(o) ? quiet : groups;
+      const a = into.get(o.material) || [];
       a.push(o);
-      groups.set(o.material, a);
+      into.set(o.material, a);
     }
     const high = this.o.quality === 'high';
-    for (const [m, ms] of groups) {
+    const all = [...[...groups].map(([m, ms]) => [m, ms, true] as const), ...[...quiet].map(([m, ms]) => [m, ms, false] as const)];
+    for (const [m, ms, casts] of all) {
       const density = (m as T.MeshStandardMaterial).userData?.density as number | undefined;
       const gs = ms.map((o) => {
         o.updateMatrixWorld();
@@ -2029,7 +2096,7 @@ export class Kit {
       if (merged) {
         const mesh = new T.Mesh(merged, m);
         const transparent = (m as T.Material).transparent;
-        mesh.castShadow = high && !transparent;
+        kitCast(mesh, high && !transparent && casts);
         mesh.receiveShadow = high;
         this.scene.add(mesh);
         this.extras.push(mesh);
@@ -2037,13 +2104,64 @@ export class Kit {
       if (gs.length > 1) gs.forEach((g) => g.dispose());
     }
     this.objects = [];
+    /* everything the room placed itself: shadows on by default, except where the room (or the material) said no.
+       This loop used to set castShadow = high on all of them, which is what undid the rooms' own castShadow = false. */
     for (const o of this.dynamic)
       o.traverse((c) => {
         if (c instanceof T.Mesh && !(c.material as T.Material).transparent) {
-          c.castShadow = high;
+          kitCast(c, high && !shadowOptOut(c));
           c.receiveShadow = high;
         }
       });
+    this.shadowSweep();
+    if (high && typeof window !== 'undefined') for (const ms of [2000, 6000, 15000, 32000]) setTimeout(() => this.shadowSweep(), ms);
+  }
+  /* ---------- the shadow sweep (see "who casts a shadow" at the top) ---------- */
+  private sweepT: ReturnType<typeof setTimeout> | null = null;
+  /* a sweep shortly after the last GLB arrives, once the room's own .then has scaled and placed it */
+  shadowSoon(ms = 300) {
+    if (this.o.quality !== 'high' || typeof window === 'undefined') return;
+    if (this.sweepT) clearTimeout(this.sweepT);
+    this.sweepT = setTimeout(() => { this.sweepT = null; this.shadowSweep(); }, ms);
+  }
+  /* Switch off shadows the kit's rule refuses. Only ever switches off, so it can run any number of times. Returns how
+     many meshes it switched off. */
+  shadowSweep() {
+    if (!this.live) return 0;
+    const sizes = new Map<T.Object3D, number>(), box = new T.Box3(), s = new T.Vector3(), mm = new T.Matrix4(), ws = new T.Vector3();
+    const rootOf = (c: T.Object3D) => {
+      let top = c;
+      for (let p: T.Object3D | null = c; p && p !== this.scene; p = p.parent) { if (p.userData.propRoot) return p; top = p; }
+      return top;
+    };
+    const radius = (o: T.Object3D) => {
+      let r = sizes.get(o);
+      if (r === undefined) { box.setFromObject(o); r = box.isEmpty() ? 0 : box.getSize(s).length() / 2; sizes.set(o, r); }
+      return r;
+    };
+    /* one copy of an instanced mesh: its geometry's radius at the largest of the first sixteen copies' scales */
+    const instR = (im: T.InstancedMesh) => {
+      if (!im.geometry.boundingSphere) im.geometry.computeBoundingSphere();
+      im.getWorldScale(ws);
+      let sc = 0;
+      for (let i = 0; i < Math.min(im.count, 16); i++) { im.getMatrixAt(i, mm); s.setFromMatrixScale(mm); sc = Math.max(sc, s.x, s.y, s.z); }
+      return im.geometry.boundingSphere!.radius * sc * Math.max(ws.x, ws.y, ws.z);
+    };
+    this.scene.updateMatrixWorld();
+    let off = 0;
+    kitWriting = true;
+    this.scene.traverse((o) => {
+      const c = o as T.Mesh;
+      if (!c.isMesh || !c.castShadow || flagUp(c, 'keepShadow')) return;
+      let drop = shadowOptOut(c) || flagUp(c, 'cab');
+      if (!drop && (c as T.InstancedMesh).isInstancedMesh) {
+        const im = c as T.InstancedMesh, r = instR(im);
+        drop = r < SHADOW_SMALL_R || (im.count >= SHADOW_CROWD_N && r < SHADOW_CROWD_R);
+      } else if (!drop) drop = radius(rootOf(c)) < SHADOW_SMALL_R;
+      if (drop) { c.castShadow = false; off++; }
+    });
+    kitWriting = false;
+    return off;
   }
   tick(t: number, dt: number) {
     for (const f of this.ticks) f(t, dt);
@@ -2148,7 +2266,8 @@ function heroLikeInstances(k: Kit, g: T.Group, n: number, slots?: number[], pain
       }
       const im = new T.InstancedMesh(geo, painted ? paintable(c.material as T.Material, true) : c.material, n);
       if (painted) for (let i = 0; i < n; i++) im.setColorAt(i, new T.Color(1, 1, 1));
-      im.castShadow = k.o.quality === 'high'; im.receiveShadow = true; im.frustumCulled = false;
+      /* no shadow: 4k to 14k triangles a car, frustumCulled off, so a fleet in the shadow pass cost more than the street */
+      kitCast(im, false); im.receiveShadow = true; im.frustumCulled = false;
       im.userData.cab = true;
       k.scene.add(im); k.dynamic.add(im);
       parts.push({ im, local: c.matrixWorld.clone() });

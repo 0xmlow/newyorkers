@@ -30,6 +30,8 @@ import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
 import { standIn, hide } from './heroes';
+import { scan, fireflyPlate } from './a';
+import { paintTex, hsign } from './f';
 import { HONOR_N, HONOR_PER, HONOR_COLS, HONOR_CAT_NAMES } from '../honor';
 const PI = Math.PI, TAU = PI * 2;
 type K = Parameters<RoomDef['build']>[0];
@@ -123,13 +125,13 @@ function pmat(k: K, name: string, tile: number, p: Partial<T.MeshStandardMateria
   if (maps.includes('r')) texLoad(k, PH + name + '_r.webp', false, (t) => { on(t); m.roughnessMap = t; m.needsUpdate = true; });
   return m;
 }
-function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void) {
+/* fonts: house faces (f.ts) the canvas is painted again with once they arrive */
+function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, fonts: string[] = []) {
   if (!HAS_DOM) return new T.Texture();
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  draw(c.getContext('2d')!);
-  const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8;
-  return t;
+  return paintTex(w, h, (g) => draw(g), fonts);
 }
+const AX = 'W2 Archivo Expanded', AN = 'W2 Archivo Narrow', JB = 'W2 JetBrains Mono';
+const font = (weight: number, px: number, fam: string) => `${weight} ${px}px "${fam}", Arial, sans-serif`;
 
 /* ---------------- geometry helpers ---------------- */
 function flip(g: T.BufferGeometry) {
@@ -219,6 +221,31 @@ function propMany(k: K, name: string, at: { x: number; y: number; z: number; ry?
   });
 }
 
+/* THE BIG UPGRADE wave 10, the triangle budget: the colonnade is about 200 m out on its own arc and its repeated parts
+   were one instanced draw each (and the arches merged into the room's stone), so the rotunda drew and shadowed all
+   of it. They are now instanced in runs along the arc, and each run is drawn only within FAR_NEAR metres of the
+   visitor; work that belongs to the whole colonnade (c null) is drawn once the visitor is out of the rotunda. */
+const FAR_NEAR = 95;
+type Far = { o: T.Object3D; c: T.Vector3 | null };
+function farTick(k: K, far: Far[]) {
+  let acc = 1;
+  const run = () => {
+    const c = museum()?.camera?.position || v(5.95, EYE, 5.95), out = Math.hypot(c.x, c.z) > 60;
+    for (const f of far) f.o.visible = f.c ? f.c.distanceTo(c) < FAR_NEAR : out;
+  };
+  run();
+  k.ticks.push((_t, dt) => { acc += dt; if (acc < 0.4) return; acc = 0; run(); });
+}
+/* instance `mats` in runs of `per` by their angle round the rotunda, each run its own InstancedMesh with its own bounds */
+function runs(k: K, g: T.BufferGeometry, m: T.Material, mats: T.Matrix4[], far: Far[], cast = true, per = 24) {
+  const p = new T.Vector3(), keyed = mats.map((mt) => { p.setFromMatrixPosition(mt); return { mt, a: Math.atan2(p.z, p.x), c: p.clone() }; }).sort((x, y) => x.a - y.a);
+  for (let i = 0; i < keyed.length; i += per) {
+    const part = keyed.slice(i, i + per), o = k.instances(g, m, part.map((x) => x.mt));
+    o.castShadow = cast && o.castShadow;
+    far.push({ o, c: part.reduce((s, x) => s.add(x.c), v(0, 0, 0)).multiplyScalar(1 / part.length) });
+  }
+}
+
 type HonorRow = { id: string; n: string; h: string; t: string; c: string; l: string; ar: number; b?: string };
 
 /* ================================================================== */
@@ -234,6 +261,7 @@ export const honoraries: RoomDef = {
   signatures: 'Sixteen freestanding green Connemara marble columns with gilt Corinthian capitals, the sixteen sided drum in oxblood damask with a salon hang in three tiers, two galleries with iron railings and glass floors, the coffered saucer dome with gilt rosettes, the round Tiffany laylight in its eye, reading tables with green glass lamps, the bronze laurel in the floor that calls the roll, the Guastavino vaulted passage, the curving colonnade of limestone columns with a granite parapet and herringbone tile vault, Tiffany style bronze tablets under every bay, brass picture lights, the laurel pedestal at the end of the walk, the Harlem River, Inwood Hill and the Palisades to the west.',
   build(k, ctx) {
     const P = plan(HONOR_N);
+    const far: Far[] = [];
     const { slots, rIn, bayPhi, dPhi, gap, phiMin, phiMax } = P;
     const rCol = rIn + C_DEPTH, rOut = rCol + 0.75;
     const hour0 = typeof k.o.hour === 'number' && Number.isFinite(k.o.hour) ? k.o.hour : 16;
@@ -311,10 +339,10 @@ export const honoraries: RoomDef = {
         const gr = g.createLinearGradient(-40, 0, 40, 0); gr.addColorStop(0, '#6f5130'); gr.addColorStop(0.5, '#e0bd7c'); gr.addColorStop(1, '#6f5130');
         g.fillStyle = gr; g.beginPath(); g.ellipse(0, 0, 54, 17, 0, 0, TAU); g.fill(); g.restore();
       }
-      g.fillStyle = '#c9a160'; g.font = '700 74px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText('HONORARY', c, c - 52); g.fillText('NEW YORKERS', c, c + 46);
-      g.font = '500 30px Georgia, serif'; g.fillStyle = '#a8865a'; g.fillText('STAND HERE AND THE DOME CALLS A NAME', c, c + 150);
-    });
+      g.fillStyle = '#c9a160'; g.font = font(800, 58, AX); g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText('HONORARY', c, c - 52, 560); g.fillText('NEW YORKERS', c, c + 40, 600);
+      g.font = font(500, 22, JB); g.fillStyle = '#a8865a'; g.fillText('STAND HERE AND THE DOME CALLS A NAME', c, c + 150, 560);
+    }, [AX, JB]);
     const laurel = new T.Mesh(new T.CircleGeometry(1.45, 64).rotateX(-PI / 2), new T.MeshStandardMaterial({ map: laurelT, metalness: 0.75, roughness: 0.4 }));
     laurel.position.y = 0.006; k.add(laurel);
 
@@ -351,11 +379,11 @@ export const honoraries: RoomDef = {
     k.mesh(arcRing(DOME_R, R + 0.2, CORNICE + 1.05, 0, TAU, 64, true), plaster);
     const friezeT = canvasTex(4096, 128, (g) => {
       g.fillStyle = '#e7dcc6'; g.fillRect(0, 0, 4096, 128);
-      g.fillStyle = '#8a6a3a'; g.font = '600 64px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillStyle = '#8a6a3a'; g.font = font(700, 50, AX); g.textAlign = 'center'; g.textBaseline = 'middle';
       const line = 'THE CITY KEEPS ITS OWN  ·  ONE ARTIST, EVERY FACE ON THESE WALLS  ·  HONORARY NEW YORKERS BY MLOW  ·  ';
-      g.fillText(line, 2048, 68, 4000);
+      g.fillText(line, 2048, 66, 4000);
       g.fillStyle = '#b8955a'; g.fillRect(0, 6, 4096, 4); g.fillRect(0, 118, 4096, 4);
-    });
+    }, [AX]);
     friezeT.wrapS = T.RepeatWrapping; friezeT.repeat.set(-2, 1);   /* negative: an inward facing cylinder reads its texture mirrored */
     const frieze = new T.Mesh(arcWall(R - 0.12, CORNICE + 0.12, CORNICE + 0.72, 0, TAU, 96, true), new T.MeshStandardMaterial({ map: friezeT, roughness: 0.8 }));
     k.add(frieze);
@@ -375,7 +403,7 @@ export const honoraries: RoomDef = {
         const a = bayAng(b), c = dir(a).multiplyScalar(GAL_IN), tan = v(-Math.sin(a), 0, Math.cos(a));
         for (let i = 0; i < 4; i++) { const p = c.clone().addScaledVector(tan, (i - 1.5) * (chord / 4)); rails.push({ x: p.x, y: y + 0.02, z: p.z, ry: -a }); }
       }
-      propMany(k, 'hf_railing', rails, 1.02, (ims) => ims.forEach((m) => { m.castShadow = false; }));
+      propMany(k, 'honoraries/hf_railing_lo', rails, 1.02, (ims) => ims.forEach((m) => { m.castShadow = false; }));
     }
     /* sixteen Connemara columns, a gilt Corinthian capital on each (Tripo), an entablature ring over them */
     const colH = CORNICE - 1.35;
@@ -394,7 +422,7 @@ export const honoraries: RoomDef = {
     /* the capital: a lathe bell straight away, the Tripo model over it when it lands */
     const bells: T.Mesh[] = [];
     for (const c of capsAt) bells.push(k.lathe([[0.45, 0], [0.5, 0.4], [0.62, 0.9], [0.8, 1.15], [0.8, 1.25]], c.x, c.y, c.z, gilt, 20));
-    propMany(k, 'hf_capital', capsAt.map((c) => ({ ...c, y: c.y - 0.02 })), 1.3);
+    propMany(k, 'honoraries/hf_capital_lo', capsAt.map((c) => ({ ...c, y: c.y - 0.02 })), 1.3, (ims) => ims.forEach((m) => { m.castShadow = false; }));
 
     /* the dome: a saucer shell, coffers from ribs, gilt rosettes, the Tiffany laylight in the eye */
     {
@@ -422,7 +450,7 @@ export const honoraries: RoomDef = {
         const nrm = p.clone().sub(v(0, cy, 0)).normalize();
         ros.push(new T.Matrix4().compose(p, new T.Quaternion().setFromUnitVectors(v(0, 1, 0), nrm.negate()), v(s, s * 0.45, s)));
       }
-      k.instances(new T.SphereGeometry(0.16, 10, 6), gilt, ros);
+      k.instances(new T.SphereGeometry(0.16, 8, 5), gilt, ros).castShadow = false;
       /* the laylight: unlit, its brightness follows the sky */
       const sky = (1 - k.night) * (1 - 0.45 * k.dusk);
       const tm = new T.MeshBasicMaterial({ color: new T.Color(0.25, 0.27, 0.3).lerp(new T.Color(1.15, 1.1, 0.98), sky), toneMapped: false, side: T.DoubleSide });
@@ -547,26 +575,27 @@ export const honoraries: RoomDef = {
     ]);
     const colLime = pmat(k, 'limestone', 0, { roughness: 1, normal: 0.8, rep: [1, 2] });
     {
-      const cm: T.Matrix4[] = [], q = new T.Quaternion();
+      const cm: T.Matrix4[] = [], am: T.Matrix4[] = [], q = new T.Quaternion();
       const lines: number[] = [];
       for (const s of [1, -1]) for (let j = 0; j <= P.bays / 2; j++) lines.push(PI + s * (gap / 2 + j * dPhi));
       for (const ph of lines) {
         const c = dir(ph).multiplyScalar(rCol);
         cm.push(new T.Matrix4().compose(v(c.x, 0, c.z), q.setFromAxisAngle(UP, -ph), v(1, 1, 1)));
-        const arch = new T.TorusGeometry(C_DEPTH / 2, 0.15, 6, 24, PI); arch.rotateY(-ph); const m = dir(ph).multiplyScalar(rIn + C_DEPTH / 2); arch.translate(m.x, C_SPRING, m.z);
-        k.mesh(arch, lime);
+        const m = dir(ph).multiplyScalar(rIn + C_DEPTH / 2);
+        am.push(new T.Matrix4().compose(v(m.x, C_SPRING, m.z), new T.Quaternion().setFromAxisAngle(UP, -ph), v(1, 1, 1)));
         const w = dir(ph).multiplyScalar(rIn + 0.1); const pil = k.box(0.42, C_SPRING, 0.22, w.x, C_SPRING / 2, w.z, lime); pil.rotation.y = -ph + PI / 2;
         k.keepOut.push({ x: c.x, z: c.z, r: 0.5 });
       }
-      k.instances(colG, colLime, cm);
+      runs(k, colG, colLime, cm, far);
+      runs(k, new T.TorusGeometry(C_DEPTH / 2, 0.15, 6, 20, PI), colLime, am, far);
     }
     /* lanterns over the walk every fourth bay; two point lights follow the visitor along them */
     const lanterns: T.Vector3[] = [];
     bayPhi.forEach((ph, i) => { if (i % 8 < 2) { const p = dir(ph).multiplyScalar(rIn + C_DEPTH / 2); lanterns.push(v(p.x, C_SPRING + 0.6, p.z)); } });
     {
       const lg = mergeGeometries([new T.CylinderGeometry(0.16, 0.12, 0.42, 8).toNonIndexed(), new T.ConeGeometry(0.2, 0.18, 8).translate(0, 0.3, 0).toNonIndexed(), new T.CylinderGeometry(0.01, 0.01, 1.2, 4).translate(0, 0.98, 0).toNonIndexed()]);
-      k.instances(lg, bronze, lanterns.map((p) => new T.Matrix4().makeTranslation(p.x, p.y, p.z)));
-      k.instances(new T.SphereGeometry(0.11, 10, 6), k.glow(0xffd9a0, 0.4 + 0.6 * Math.max(k.night, k.dusk)), lanterns.map((p) => new T.Matrix4().makeTranslation(p.x, p.y - 0.02, p.z)));
+      runs(k, lg, bronze, lanterns.map((p) => new T.Matrix4().makeTranslation(p.x, p.y, p.z)), far, false, 8);
+      runs(k, new T.SphereGeometry(0.11, 8, 5), k.glow(0xffd9a0, 0.4 + 0.6 * Math.max(k.night, k.dusk)), lanterns.map((p) => new T.Matrix4().makeTranslation(p.x, p.y - 0.02, p.z)), far, false, 8);
       const lit = 3 + 11 * Math.max(k.night, k.dusk * 0.7);
       const pts = [k.point(lanterns[0]?.x ?? -rIn, C_SPRING, lanterns[0]?.z ?? 0, 0xffd1a0, lit, 11, 1.5), k.point(lanterns[1]?.x ?? -rIn, C_SPRING, lanterns[1]?.z ?? 0, 0xffd1a0, lit, 11, 1.5)];
       let acc = 1;
@@ -608,7 +637,7 @@ export const honoraries: RoomDef = {
     }
 
     /* ================= THE HANG ================= */
-    hangHonor(k, ctx, slots, giltUV, walnutUV, bronze);
+    hangHonor(k, ctx, slots, giltUV, walnutUV, bronze, far);
     colonnadeTablets(k, slots, P.rotN, bronze);
     namePlates(k, slots);
 
@@ -625,6 +654,9 @@ export const honoraries: RoomDef = {
     }
 
     /* no painted visitors here: Astra's critique, they read as illustration against the photographed stone */
+
+    /* ================= THE BIG UPGRADE, wave 10: the grand portrait hall ================= */
+    grandHall(k, v(5.95, EYE, 5.95), { marble, gilt, lime, bronze, blackMarble });
 
     /* ================= THE ROLL CALL ================= */
     rollCall(k, ctx, slots);
@@ -647,13 +679,186 @@ export const honoraries: RoomDef = {
     const vt = dir(PI - gap / 2 - 6.5 * dPhi).multiplyScalar(rIn + C_DEPTH / 2);
     k.egg(v(vt.x, C_SPRING + 1.9, vt.z), { id: 'honoraries-guastavino', title: 'Tile overhead, stone underfoot', text: 'The colonnade\'s ceiling is Guastavino tile under a roof of red Spanish tile. Its parapets are Massachusetts granite; its pedestals and columns are Indiana limestone.', clue: 'Look up in the colonnade.', source: HOF }, { r: 1.6 });
 
+    if (HAS_DOM) farTick(k, far);
     const spawn = v(5.95, EYE, 5.95), look = v(-9, 3.6, -9);
     return { mounts, spawn, look, eye: EYE, bounds: BOUNDS, style: 'gilt' as FrameStyle };
   },
 };
 
+/* ---------------- THE BIG UPGRADE, wave 10 (2026-11-25): the grand portrait hall ----------------
+   Real models, no code built heroes: two Poly Haven Chandelier_01 (CC0) on gilt chains over the reading tables,
+   Poly Haven brass_vase_02 (CC0) on scanned marble plinths at the west door, and the museum's own gilt torcheres
+   and brass and velvet rope stanchions. Scans (Poly Haven, CC0) in tex/honoraries: velour_velvet for the runner
+   and the ropes, marble_01 for the plinths. Built: a door case on the rotunda side of the west door
+   with Connemara half columns, gilt capitals and a dentilled entablature under the first gallery, the room's name
+   in bronze on the gallery fascia over it, and a
+   sixteen point star of green marble inlaid round the laurel.
+   The illusion (one trick a room): eight loose pieces of a gilt laurel wreath hang in the air at different
+   distances, and only from the spot where the visitor arrives do they close into one wreath round the first bay
+   of portraits. Every piece is sized by its distance, so each subtends the same angle from that eye. */
+function grandHall(k: K, eye: T.Vector3, M: { marble: T.Material; gilt: T.Material; lime: T.Material; bronze: T.Material; blackMarble: T.Material }) {
+  const velvet = scan(k, 'honoraries', 'velour_velvet', 0.45, () => X.velvet(0x7a1f2b), { color: 0x9c3a46, roughness: 1, normal: 0.7 });
+  const marbleS = scan(k, 'honoraries', 'marble_01', 1.4, () => X.marble(0xe6e2da), { color: 0xf2eee6, roughness: 0.3, normal: 0.4 });
+  const quiet = <O extends T.Object3D>(o: O) => { o.castShadow = false; return o; };   /* flat floor work and small trim: no shadow pass */
+  const flipUp = (g: T.BufferGeometry) => { g.computeVertexNormals(); const n = g.attributes.normal; let sy = 0; for (let i = 0; i < n.count; i++) sy += n.getY(i); return sy < 0 ? flip(g) : g; };
+
+  /* ---- the inlaid star: sixteen long green rays at the columns, sixteen short ones between, from the laurel's ring ---- */
+  {
+    const pos: number[] = [];
+    for (let i = 0; i < NB; i++) {
+      const a = bayAng(i) + DA / 2;
+      for (const [ang, r1, hw] of [[a, 9.15, 0.36], [a + DA / 2, 6.2, 0.2]]) {
+        const d = dir(ang), t = v(-Math.sin(ang), 0, Math.cos(ang)), r0 = 2.8;
+        const p0 = d.clone().multiplyScalar(r0).addScaledVector(t, hw), p1 = d.clone().multiplyScalar(r0).addScaledVector(t, -hw), p2 = d.clone().multiplyScalar(r1);
+        pos.push(p0.x, 0.005, p0.z, p2.x, 0.005, p2.z, p1.x, 0.005, p1.z);
+      }
+    }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+    quiet(k.mesh(flipUp(g), M.marble));
+    quiet(k.mesh(arcRing(2.75, 2.82, 0.006, 0, TAU, 96), M.gilt));
+  }
+
+  /* ---- the velvet runner from the west door to the laurel, with brass rods along its edges ---- */
+  const RX0 = -R + 0.1, RX1 = -2.85, RW = 1.5, rMid = (RX0 + RX1) / 2, rLen = RX1 - RX0;
+  quiet(k.box(rLen, 0.014, RW, rMid, 0.007, 0, velvet));
+  for (const s of [-1, 1]) quiet(k.box(rLen, 0.018, 0.035, rMid, 0.012, s * (RW / 2 + 0.01), M.gilt));
+  quiet(k.box(0.035, 0.018, RW + 0.06, RX1, 0.012, 0, M.gilt));
+
+  /* ---- rope lines along the runner, the museum's brass stanchions with the velvet scan on the rope; a gap at the columns ---- */
+  {
+    const at: { x: number; y: number; z: number; ry?: number }[] = [];
+    for (const x of [-4.05, -6.3, -8.55, -12.6]) for (const s of [-1, 1]) at.push({ x, y: 0, z: s * 1.12 });
+    propMany(k, 'rope_stanchion', at, 0.98, (ims) => ims.forEach((m) => {
+      m.castShadow = false;
+      if (/rope|velvet/i.test((m.material as T.Material).name)) m.material = velvet;
+    }));
+  }
+
+  /* ---- two chandeliers over the reading tables on long gilt chains from the dome ---- */
+  {
+    const CH = 2.0, CY = 4.4;
+    propMany(k, 'honoraries/ph_Chandelier_01', [{ x: 0, y: CY, z: -6.2 }, { x: 0, y: CY, z: 6.2, ry: PI / 2 }], CH, (ims) => ims.forEach((m) => {
+      m.castShadow = false;
+      const mt = m.material as T.MeshStandardMaterial;
+      if (/lamp/i.test(mt.name)) { mt.emissive = new T.Color(0xffd9a0); mt.emissiveIntensity = 0.6 + 1.4 * Math.max(k.night, k.dusk * 0.6); }
+    }));
+    for (const z of [-6.2, 6.2]) {
+      quiet(k.cyl(0.022, DOME_TOP - 0.6 - (CY + CH), 0, (DOME_TOP - 0.6 + CY + CH) / 2, z, M.gilt, 0.022, 6));
+      quiet(k.lathe([[0.0, 0], [0.16, 0.02], [0.2, 0.08], [0.06, 0.16], [0.03, 0.2]], 0, CY + CH - 0.02, z, M.gilt, 16));
+    }
+  }
+
+  /* ---- gilt torcheres either side of the four benches ---- */
+  {
+    const at: { x: number; y: number; z: number }[] = [];
+    for (const b of [3, 5, 11, 13]) {
+      const a = bayAng(b), c = dir(a).multiplyScalar(12.25), t = v(-Math.sin(a), 0, Math.cos(a));
+      for (const s of [-1, 1]) { const p = c.clone().addScaledVector(t, s * 1.75); at.push({ x: p.x, y: 0.16, z: p.z }); k.keepOut.push({ x: p.x, z: p.z, r: 0.4 }); }
+    }
+    for (const p of at) quiet(k.box(0.62, 0.16, 0.62, p.x, 0.08, p.z, marbleS));
+    propMany(k, 'torchere', at, 2.3, (ims) => ims.forEach((m) => { m.castShadow = false; }));
+  }
+
+  /* ---- the west door case, on the rotunda side: half columns, gilt capitals, a dentilled entablature under the gallery ---- */
+  {
+    const fx = -R + 0.13;                              /* the face of the drum at the door */
+    const put = (o: T.Mesh, x: number) => { o.position.x = x; return o; };
+    for (const s of [-1, 1]) {
+      const z = s * 2.72;
+      k.box(0.72, 0.42, 0.72, fx + 0.22, 0.21, z, M.lime);
+      k.lathe([[0.3, 0], [0.3, 0.06], [0.26, 0.12], [0.27, 0.18], [0.24, 0.26]], fx + 0.22, 0.42, z, M.lime, 24);
+      k.lathe([[0.245, 0], [0.25, 1.2], [0.235, 2.3], [0.22, 2.87]], fx + 0.22, 0.68, z, M.marble, 28);
+      k.lathe([[0.23, 0], [0.28, 0.16], [0.34, 0.32], [0.36, 0.4]], fx + 0.22, 3.55, z, M.gilt, 24);
+      /* brass vases on scanned marble plinths in front of the columns */
+      quiet(k.box(0.56, 1.05, 0.56, fx + 1.55, 0.525, s * 3.25, marbleS));
+      quiet(k.box(0.66, 0.06, 0.66, fx + 1.55, 1.08, s * 3.25, marbleS));
+      k.keepOut.push({ x: fx + 1.55, z: s * 3.25, r: 0.5 });
+    }
+    propMany(k, 'honoraries/ph_brass_vase_02', [-1, 1].map((s) => ({ x: fx + 1.55, y: 1.11, z: s * 3.25, ry: s * 0.6 })), 0.72, (ims) => ims.forEach((m) => { m.castShadow = false; }));
+    /* the entablature fits under the first gallery (its iron slab is at 4.58): architrave, frieze, dentilled cornice */
+    put(k.box(0.5, 0.2, 6.3, 0, 4.05, 0, M.lime), fx + 0.2);
+    put(k.box(0.42, 0.32, 6.1, 0, 4.31, 0, M.lime), fx + 0.16);
+    put(k.box(0.6, 0.1, 6.6, 0, 4.52, 0, M.lime), fx + 0.25);
+    {
+      const dm: T.Matrix4[] = [];
+      for (let z = -3.0; z <= 3.01; z += 0.2) dm.push(new T.Matrix4().makeTranslation(fx + 0.41, 4.43, z));
+      quiet(k.instances(new T.BoxGeometry(0.06, 0.07, 0.09), M.lime, dm));
+    }
+    /* a painted laurel panel in the frieze, invisible until Firefly delivers it (FIREFLY_QUEUE.md) */
+    if (HAS_DOM) fireflyPlate(k, 'assets/museum/tex/honoraries/ff_hon_tympanum.webp', 1.36, 0.3, fx + 0.375, 4.31, 0, PI / 2, new T.MeshBasicMaterial({ visible: false }));
+    /* the room's name in bronze on the gallery fascia over the door, where the whole rotunda can read it */
+    if (HAS_DOM) quiet(hsign(k, 'THE HONORARIES', 3.0, 0.32, -GAL_IN + 0.11, GAL[0] - 0.22, 0, PI / 2, { fg: '#e6c77f', bg: '#2b2016', border: '#a88450', font: AX, size: 0.6 }));
+  }
+
+  /* ---- the standing sign at the arrival, in the house fonts ---- */
+  if (HAS_DOM) {
+    const f = v(-1, 0, -1).normalize(), right = v(-f.z, 0, f.x);
+    const p = eye.clone().addScaledVector(f, 4.2).addScaledVector(right, 1.9), ry = Math.atan2(-f.x, -f.z) - 0.42;
+    const t = paintTex(768, 1024, (g, W, H) => {
+      g.fillStyle = '#14110d'; g.fillRect(0, 0, W, H);
+      g.strokeStyle = '#b8955a'; g.lineWidth = 6; g.strokeRect(22, 22, W - 44, H - 44); g.lineWidth = 2; g.strokeRect(36, 36, W - 72, H - 72);
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillStyle = '#e3c58e'; g.font = font(800, 64, AX); g.fillText('THE', W / 2, 170, W - 120); g.fillText('HONORARIES', W / 2, 250, W - 110);
+      g.fillStyle = '#b8955a'; g.fillRect(W / 2 - 120, 320, 240, 3);
+      g.fillStyle = '#efe4cc'; g.font = font(700, 34, AN);
+      ['EVERY PORTRAIT IN THIS HALL', 'IS A GIFT FROM MLOW', 'TO A CREATOR OR COLLECTOR', 'WHO MADE THIS CITY THEIRS'].forEach((l, i) => g.fillText(l, W / 2, 410 + i * 54, W - 120));
+      g.fillStyle = '#b8955a'; g.fillRect(W / 2 - 120, 660, 240, 3);
+      g.fillStyle = '#c9a160'; g.font = font(500, 26, JB);
+      ['STAND ON THE LAUREL', 'AND THE DOME CALLS A NAME'].forEach((l, i) => g.fillText(l, W / 2, 740 + i * 44, W - 120));
+      g.fillStyle = '#8a6a3a'; g.font = font(500, 22, JB); g.fillText('HALL OF FAME FOR GREAT AMERICANS  ·  THE BRONX', W / 2, 900, W - 110);
+    }, [AX, AN, JB]);
+    const board = k.mesh(new T.PlaneGeometry(0.72, 0.96), new T.MeshStandardMaterial({ map: t, roughness: 0.55 }), p.x, 1.32, p.z, true);
+    board.rotation.y = ry;
+    const back = k.box(0.8, 1.04, 0.04, 0, 0, 0, M.bronze); back.position.set(p.x - Math.sin(ry) * 0.025, 1.32, p.z - Math.cos(ry) * 0.025); back.rotation.y = ry;
+    for (const s of [-1, 1]) k.cyl(0.018, 1.62, p.x + Math.cos(ry) * s * 0.32 - Math.sin(ry) * 0.05, 0.81, p.z - Math.sin(ry) * s * 0.32 - Math.cos(ry) * 0.05, M.gilt, 0.018, 8);
+    k.cyl(0.2, 0.03, p.x - Math.sin(ry) * 0.05, 0.015, p.z - Math.cos(ry) * 0.05, M.gilt, 0.2, 20);
+    k.keepOut.push({ x: p.x, z: p.z, r: 0.45 });
+  }
+
+  /* ---- the illusion: a gilt laurel wreath in eight loose pieces that only closes from the arrival ---- */
+  {
+    const hc = dir(bayAng(HERO)).multiplyScalar(R - 0.02).setY(TIERS[0].y0 + TIERS[0].dy);
+    const c = hc.clone().sub(eye).normalize(), u = new T.Vector3().crossVectors(c, UP).normalize(), w = new T.Vector3().crossVectors(u, c).normalize();
+    const A = 0.1;                                       /* tan of the wreath's angular radius: it rings the first tier, inside the columns */
+    const ray = (th: number) => c.clone().addScaledVector(u, Math.cos(th) * A).addScaledVector(w, Math.sin(th) * A).normalize();
+    const DEP = [5.4, 11.8, 6.6, 13.6, 5.9, 10.6, 12.8, 7.0];   /* skips the laurel, where the roll call is stood for */
+    const top = 0.34, span = PI - top;                    /* two branches from the tie at the bottom, open at the top */
+    const stems: T.BufferGeometry[] = [], leaf: T.Matrix4[] = [], berry: T.Matrix4[] = [];
+    const m4 = new T.Matrix4(), q = new T.Quaternion();
+    for (let b = 0; b < 2; b++) for (let f = 0; f < 4; f++) {
+      const s = b ? -1 : 1, d = DEP[b * 4 + f];
+      const ta = -PI / 2 + s * (span * f) / 4, tb = -PI / 2 + s * (span * (f + 1)) / 4;
+      const pts: T.Vector3[] = [];
+      for (let i = 0; i <= 10; i++) pts.push(eye.clone().addScaledVector(ray(ta + ((tb - ta) * i) / 10), d));
+      stems.push(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 12, 0.0026 * d, 5).toNonIndexed());
+      for (let i = 0; i < 7; i++) {
+        const th = ta + ((tb - ta) * (i + 0.5)) / 7, p = eye.clone().addScaledVector(ray(th), d);
+        const fwd = ray(th), n = u.clone().multiplyScalar(Math.cos(th)).addScaledVector(w, Math.sin(th)), t = u.clone().multiplyScalar(-Math.sin(th)).addScaledVector(w, Math.cos(th)).multiplyScalar(s);
+        for (const side of [-1, 1]) {
+          const a = t.clone().multiplyScalar(Math.cos(0.62)).addScaledVector(n, side * Math.sin(0.62)).normalize();
+          const bb = new T.Vector3().crossVectors(fwd, a).normalize(), L = 0.0165 * d * (1 - 0.25 * (i / 7)), Wd = 0.0062 * d;
+          m4.makeBasis(a.clone().multiplyScalar(L), bb.multiplyScalar(Wd), fwd.clone().multiplyScalar(0.0012 * d));
+          m4.setPosition(p.clone().addScaledVector(a, L * 0.5));
+          leaf.push(m4.clone());
+        }
+        if (i % 3 === 1) berry.push(new T.Matrix4().compose(p.clone().addScaledVector(n, -0.006 * d), q, v(0.0034 * d, 0.0034 * d, 0.0034 * d)));
+      }
+    }
+    const wm = new T.MeshStandardMaterial({ color: 0xe2bd72, metalness: 0.85, roughness: 0.32, emissive: 0x4a3512, emissiveIntensity: 1 });
+    const stem = quiet(k.mesh(mergeGeometries(stems), wm, 0, 0, 0, true)); stems.forEach((g) => g.dispose());
+    const lg = new T.SphereGeometry(0.5, 10, 4);
+    quiet(k.instances(lg, wm, leaf)); quiet(k.instances(new T.SphereGeometry(1, 8, 6), wm, berry));
+    /* the tie at the bottom, on the nearer branch's depth */
+    const tie = eye.clone().addScaledVector(ray(-PI / 2), DEP[0]);
+    quiet(k.mesh(new T.TorusGeometry(0.012 * DEP[0], 0.0035 * DEP[0], 6, 16), wm, tie.x, tie.y, tie.z, true)).lookAt(eye);
+    void stem;
+    const egg = eye.clone().addScaledVector(ray(-PI / 2 + 0.4), DEP[0]);
+    k.egg(egg, { id: 'honoraries-wreath', title: 'A wreath from one spot', text: 'Eight loose pieces of gilt laurel hang in the air of the rotunda at different distances. Only from the spot where you arrive do they close into one wreath round the first bay of portraits; take a step and it falls apart. A picture made to be seen from a single point is an anamorphosis, the trick Hans Holbein hid in The Ambassadors in 1533.', clue: 'Go back to where you came in and look at the first bay.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 0.8 });
+  }
+}
+
 /* ---------------- the portraits: frames, art from the atlases, shadows, picture lights ---------------- */
-function hangHonor(k: K, ctx: C, slots: Slot[], giltUV: T.Material, walnutUV: T.Material, bronze: T.Material) {
+function hangHonor(k: K, ctx: C, slots: Slot[], giltUV: T.Material, walnutUV: T.Material, bronze: T.Material, far: Far[]) {
   const low = ctx.quality === 'low';
   const n = slots.length, AR = 9 / 16;
   /* frames: one instanced draw per profile */
@@ -674,10 +879,11 @@ function hangHonor(k: K, ctx: C, slots: Slot[], giltUV: T.Material, walnutUV: T.
     const o = k.instances(g, cls === 3 ? walnutUV : giltUV, ms);
     o.receiveShadow = !low; o.castShadow = !low && cls >= 2;
     o.userData.frameSlots = clsSlots.get(cls); frames.push(o);
+    if (cls >= 2) far.push({ o, c: null });
     if (cls === 3) {
       /* the gilt sight edge on the walnut frames */
       const sl = frameGeo(W[3] + 0.006, W[3] * AR + 0.006, [[-0.004, 0.034], [0.006, 0.046], [0.012, 0.046]]);
-      k.instances(sl, giltUV, ms);
+      far.push({ o: k.instances(sl, giltUV, ms), c: null });
     }
   }
   /* the soft contact shadow every frame throws on the wall */
@@ -757,7 +963,10 @@ function hangHonor(k: K, ctx: C, slots: Slot[], giltUV: T.Material, walnutUV: T.
     new T.CylinderGeometry(0.035, 0.035, 1, 10).rotateZ(PI / 2).toNonIndexed(),
     new T.BoxGeometry(0.02, 0.2, 0.02).translate(0, 0.05, -0.08).rotateX(0.6).toNonIndexed(),
   ]);
-  k.instances(bar, bronze, barM);
+  /* the rotunda's bars in one draw, the colonnade's with the colonnade */
+  const rotBars = barM.filter((_, i) => lit[i].tier < 3), colBars = barM.filter((_, i) => lit[i].tier >= 3);
+  if (rotBars.length) k.instances(bar, bronze, rotBars).castShadow = false;
+  if (colBars.length) { const o = k.instances(bar, bronze, colBars); o.castShadow = false; far.push({ o, c: null }); }
   const night = Math.max(k.night, k.dusk * 0.6);
   const poolMat = new T.MeshBasicMaterial({ map: X.pool(), color: 0xffd9a8, transparent: true, opacity: 0.06 + 0.16 * night, blending: T.AdditiveBlending, depthWrite: false });
   const pools = k.instances(new T.PlaneGeometry(1, 1), poolMat, poolM);
@@ -826,23 +1035,20 @@ function colonnadeTablets(k: K, slots: Slot[], from: number, bronze: T.Material)
   if (!HAS_DOM) return;
   void fetch(HON + 'hang.json').then((r) => r.json()).then((all: HonorRow[]) => {
     if (!k.live) return;
-    const c = document.createElement('canvas'); c.width = TWpx * PER; c.height = THpx * rows;
-    const g2 = c.getContext('2d')!;
-    lows.forEach(({ i }, j) => {
+    const t = paintTex(TWpx * PER, THpx * rows, (g2) => lows.forEach(({ i }, j) => {
       const x = (j % PER) * TWpx, y = Math.floor(j / PER) * THpx, lo = all[i], up = all[i + 1];
       const gr = g2.createLinearGradient(x, y, x, y + THpx); gr.addColorStop(0, '#5e432a'); gr.addColorStop(0.5, '#4a3320'); gr.addColorStop(1, '#3a2716');
       g2.fillStyle = gr; g2.fillRect(x, y, TWpx, THpx);
       g2.strokeStyle = '#a7834f'; g2.lineWidth = 4; g2.strokeRect(x + 8, y + 8, TWpx - 16, THpx - 16);
       const txt = (s: string, ty: number, size: number, col: string) => {
-        g2.font = `600 ${size}px Georgia, serif`; g2.textAlign = 'center'; g2.textBaseline = 'middle';
+        g2.font = font(700, size, AN); g2.textAlign = 'center'; g2.textBaseline = 'middle';
         g2.fillStyle = '#20160c'; g2.fillText(s, x + TWpx / 2 + 2, y + ty + 2, TWpx - 60);
         g2.fillStyle = col; g2.fillText(s, x + TWpx / 2, y + ty, TWpx - 60);
       };
       const both = (r: HonorRow) => [r.n, r.t].map((x) => (x || '').trim()).filter(Boolean).join('  ·  ').toUpperCase();
       if (lo) txt(both(lo), 44, 34, '#e3c58e');
       if (up && slots[i + 1]?.tier === 4) txt(`ABOVE  ·  ${both(up)}`, 82, 22, '#c4a370');
-    });
-    const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8;
+    }), [AN]);
     m.map = t; m.color.set(0xffffff); m.needsUpdate = true;
   }).catch(() => {});
 }
@@ -887,7 +1093,7 @@ function rollCall(k: K, ctx: C, slots: Slot[]) {
         spot.position.copy(from); spot.target.position.copy(tgt); spot.target.updateMatrixWorld();
         spot.angle = Math.atan((s.w * 0.9) / L); glow = 0;
         const esc = (x: string) => x.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]!));
-        say(`THE ROLL CALL<br><b style="font:600 22px Georgia,serif;letter-spacing:.04em;color:#e8c98a">${esc(r.n)}</b><br>${esc(r.t.toUpperCase())}${r.h ? ' · ' + esc(r.h) : ''}<br><span style="color:#b59655">TAP TO MEET THEM</span>`);
+        say(`THE ROLL CALL<br><b style="font:700 19px 'W2 Archivo Expanded',Arial,sans-serif;letter-spacing:.06em;color:#e8c98a">${esc(r.n)}</b><br>${esc(r.t.toUpperCase())}${r.h ? ' · ' + esc(r.h) : ''}<br><span style="color:#b59655">TAP TO MEET THEM</span>`);
         const entry = ((k as unknown as { honorEntries?: unknown[] }).honorEntries || [])[called];
         if (caption) caption.onclick = () => { const m = museum(); if (m?.openHonor && entry) m.openHonor(entry); };
       }
@@ -923,19 +1129,16 @@ function namePlates(k: K, slots: Slot[]) {
   if (!HAS_DOM) return;
   void fetch(HON + 'hang.json').then((r) => r.json()).then((all: HonorRow[]) => {
     if (!k.live) return;
-    const c = document.createElement('canvas'); c.width = PW * COLS; c.height = PHt * rows;
-    const g2 = c.getContext('2d')!;
-    list.forEach(({ i }, j) => {
+    const t = paintTex(PW * COLS, PHt * rows, (g2) => list.forEach(({ i }, j) => {
       const x = (j % COLS) * PW, y = Math.floor(j / COLS) * PHt, r = all[i];
       const gr = g2.createLinearGradient(x, y, x, y + PHt); gr.addColorStop(0, '#5e432a'); gr.addColorStop(1, '#33220f');
       g2.fillStyle = gr; g2.fillRect(x, y, PW, PHt);
       g2.strokeStyle = '#a7834f'; g2.lineWidth = 2; g2.strokeRect(x + 3, y + 3, PW - 6, PHt - 6);
       if (!r) return;
-      g2.font = '700 17px Georgia, serif'; g2.textAlign = 'center'; g2.textBaseline = 'middle';
+      g2.font = font(700, 19, AN); g2.textAlign = 'center'; g2.textBaseline = 'middle';
       g2.fillStyle = '#1c130a'; g2.fillText(r.n.toUpperCase(), x + PW / 2 + 1, y + PHt / 2 + 1, PW - 18);
       g2.fillStyle = '#ecd29a'; g2.fillText(r.n.toUpperCase(), x + PW / 2, y + PHt / 2, PW - 18);
-    });
-    const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8;
+    }), [AN]);
     m.map = t; m.color.set(0xffffff); m.needsUpdate = true;
   }).catch(() => {});
 }
