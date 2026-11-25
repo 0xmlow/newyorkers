@@ -9,9 +9,102 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
-import { standIn, hide } from './heroes';
+import { standIn, hide, hero, heroInstances } from './heroes';
+import { paintTex, anamorphTex, hsign } from './f';
+import { fireflyPlate } from './a';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 6c (2026-11-24): helpers for rooms 112 to 116 ----------
+   Scanned CC0 surfaces (Poly Haven, assets/museum/tex/<room>/<id>_{c,n,r}.webp) that wear about 40 percent of their
+   colour until all three maps land; real CC0 models from assets/museum/props/<room>/ placed many at once (seven or more
+   become instanced parts); canvas painted floor type for the one illusion a room. Safe in node: the audit builds these
+   rooms with no DOM, so a scan falls back to its painted surface, no canvas is touched and the loaders never resolve. */
+const W6_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w6L = W6_DOM ? new T.TextureLoader() : null;
+const w6S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function scan(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w6L) return k.pbr(`w6c-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w6S.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w6L.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w6S.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w6c-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w6c) {
+    m.userData.w6c = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* One real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function place(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    solid(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      h.traverse((c) => { c.castShadow = false; });
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* Glass in a Poly Haven model comes as KHR transmission, and one transmissive material makes three render the whole
+   room a second time every frame (it doubled the triangles); plain transparency reads the same at this distance. */
+function solid(o: T.Object3D, shadow = false) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = shadow; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+/* Retint every material of a loaded model; `keepMap` multiplies the scan's own colour map by the tint. */
+function retint(o: T.Object3D, hex: number, rough = 0.8, metal = 0, keepMap = true) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); if (!keepMap) n.map = null; n.roughness = rough; n.metalness = metal; n.metalnessMap = null; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Painted lettering for an anamorphic floor piece in a house font, `colors` per letter. Null in node. */
+function w6Type(text: string, colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W6_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`;
+    let tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; tw = g.measureText(text).width; }
+    let x = (w - tw) / 2, n = 0;
+    for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, h / 2); x += g.measureText(ch).width; if (ch === ' ') n--; }
+  }, [font]);
+}
+/* A Firefly plate that stays invisible until its file exists (FIREFLY_QUEUE.md); dropping the file in is all it takes. */
+const W6_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+function w6Plate(k: Kit, url: string, w: number, h: number, x: number, y: number, z: number, rotY: number, lit = false) {
+  return fireflyPlate(k, url, w, h, x, y, z, rotY, W6_HIDDEN, lit);
+}
+/* An enamel or painted sign in a house font (no brand names), lit or not. */
+function w6Sign(k: Kit, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, border?: string) {
+  if (!W6_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, border, size: 0.56 });
+}
+/* A ring of plaster, stone or wood round a drum: `profile` is [inset from the wall, height] pairs, revolved at radius R. */
+function ring(k: Kit, R: number, y: number, profile: [number, number][], m: T.Material, seg = 96) {
+  return k.lathe(profile.map(([d, h]) => [R - d, h]), 0, y, 0, m, seg);
+}
 
 /* ---------- shared street furniture: every interior here has its door on +z ---------- */
 /* A cross street running along x at z: asphalt, both sidewalks, curbs, lane dashes, crosswalks. */
@@ -288,13 +381,16 @@ export const pneumatic: RoomDef = {
     k.hemi(0xfff0dc, 0x4a4238, 0.85);
     k.sun(0xfff0d4, 2.2, 8, 60, 6, true, 40);
     const R = 15, H = 8;
-    const brick = k.pbr('pnBrick', X.brick(0x7a4c3a, 41), 0.28, { side: T.DoubleSide }),
-      brickD = k.pbr('pnBrickD', X.brick(0x5c3a30, 42), 0.28),
-      stone = k.pbr('pnStone', X.ashlar(0xb9ad97, 43, 3), 0.22),
-      plaster = k.pbr('pnDome', X.plaster(0xe8e2d4, 44), 0.4, { side: T.BackSide }),
-      copper = k.pbr('pnCopper', X.patina(0x5f9a8c), 0.5, { metalness: 0.4, roughness: 0.55 }),
-      floorT = k.pbr('pnFloor', X.terrazzo(0xc9b8a2, 45), 0.35, { roughness: 0.35 }),
-      oak = k.pbr('pnOak', X.planks(0x6a4a30, 5, 46), 1.2, { roughness: 0.55 }),
+    /* 2026-11-24 (wave 6c): every big surface is a scan (Poly Haven, CC0): red brick for the drum, coursed stone for the
+       base and porch, hand floated plaster in the dome, verdigris copper outside, terrazzo underfoot, oak veneer desks */
+    const RM = 'pneumatic';
+    const brick = scan(k, RM, 'red_brick_03', 2.6, () => X.brick(0x7a4c3a, 41), { side: T.DoubleSide, color: 0xf0e2dc, roughness: 0.9 }, 0x5a3a30),
+      brickD = scan(k, RM, 'red_brick_03', 2.6, () => X.brick(0x5c3a30, 42), { color: 0xb09a90, roughness: 0.9 }, 0x4a3028, 'd'),
+      stone = scan(k, RM, 'stone_brick_wall_001', 3, () => X.ashlar(0xb9ad97, 43, 3), { color: 0xf4ece0, roughness: 0.85 }, 0x8a8272),
+      plaster = scan(k, RM, 'white_plaster_02', 3, () => X.plaster(0xe8e2d4, 44), { side: T.BackSide, color: 0xf6efe0, roughness: 0.9 }, 0x958d80),
+      copper = scan(k, RM, 'green_metal_rust', 2, () => X.patina(0x5f9a8c), { color: 0x9ad8c4, metalness: 0.35, roughness: 0.6 }, 0x3f6a60),
+      floorT = scan(k, RM, 'terrazzo_tiles', 2.4, () => X.terrazzo(0xc9b8a2, 45), { color: 0xf2ebe2, roughness: 0.4 }, 0x847a70),
+      oak = scan(k, RM, 'oak_veneer_01', 1.4, () => X.planks(0x6a4a30, 5, 46), { color: 0xb88a62, roughness: 0.5 }, 0x4a3420),
       brass = k.pbr('pnBrass', X.gilt(0xc9a55a), 2, { metalness: 0.85, roughness: 0.3 }),
       iron = k.flat(0x2a2e33, 0.7, 0.45),
       canvas = k.flat(0xb9a98a, 0, 0.95),
@@ -492,6 +588,7 @@ export const pneumatic: RoomDef = {
     flag(k, ctx, 3.34, 9.1, R + 3.6, 0, 1.9, 1.05);
     traffic(k, ctx, { z: R + 15, w: 16, len: 130, n: 10, seed: 44 });
     flock(k, ctx, { x: 0, y: 9, z: R + 9, r: 7, n: 12, seed: 45, perch: [-2.8, -1.6, -0.2, 1.1, 2.5].map((x) => v(x, 5.8, R + 3.7)) });
+    w6Pneumatic(k, ctx, R, H, bays, { brick, stone, oak, brass, iron, copper, dark });
     return { mounts, spawn: v(1.2, 2.3, R - 3.6), look: v(0.8, 3.6, -R + 2), eye: 2.3, bounds: [-R + 0.9, R - 0.9, -R + 0.9, R + 9.5], style: 'black' };
   },
 };
@@ -510,12 +607,15 @@ export const garment: RoomDef = {
     k.hemi(0xfff2e0, 0x4a4238, 0.9);
     k.sun(0xfff4e6, 1.9, 6, 42, -70, true, 70);
     const W = 30, D = 52, FZ = 14, ZB = FZ - D;
-    const brick = k.pbr('gmBrick', X.brick(0x8a5a44, 51), 0.28),
-      brickD = k.pbr('gmBrickD', X.brick(0x5e3e34, 52), 0.28),
-      maple = k.pbr('gmFloor', X.planks(0xb08a5a, 8, 53), 0.32, { roughness: 0.6 }),
-      bone = k.pbr('gmRoof', X.plaster(0xe4dfd2, 54), 0.5, { side: T.DoubleSide }),
-      oakT = k.pbr('gmOak', X.planks(0x7a5638, 4, 55), 1.4, { roughness: 0.5 }),
-      steel = k.pbr('gmSteel', X.steel(0x4a525a, true, 56), 0.4, { metalness: 0.7, roughness: 0.45 }),
+    /* 2026-11-24 (wave 6c): scans (Poly Haven, CC0): factory brick, a worn plank loft floor, rough plaster under the
+       sawtooth, worn table tops, plate steel for the trusses and the elevator */
+    const RM = 'garment';
+    const brick = scan(k, RM, 'factory_brick', 2.6, () => X.brick(0x8a5a44, 51), { color: 0xf2e4dc, roughness: 0.9 }, 0x5e4034),
+      brickD = scan(k, RM, 'factory_brick', 2.6, () => X.brick(0x5e3e34, 52), { color: 0xa89088, roughness: 0.9 }, 0x4a3028, 'd'),
+      maple = scan(k, RM, 'old_wooden_floor_02', 2.4, () => X.planks(0xb08a5a, 8, 53), { color: 0x9c7c5c, roughness: 0.7 }, 0x5a4030),
+      bone = scan(k, RM, 'white_plaster_rough_01', 3, () => X.plaster(0xe4dfd2, 54), { side: T.DoubleSide, color: 0xf6f1e6, roughness: 0.92 }, 0x918c82),
+      oakT = scan(k, RM, 'wood_table_worn', 1.6, () => X.planks(0x7a5638, 4, 55), { color: 0xd8b48c, roughness: 0.5 }, 0x5a4028),
+      steel = scan(k, RM, 'metal_plate', 2, () => X.steel(0x4a525a, true, 56), { color: 0x9aa2aa, metalness: 0.7, roughness: 0.45 }, 0x3a4048),
       iron = k.flat(0x22262b, 0.7, 0.45),
       ironG = k.flat(0x2e4a3a, 0.5, 0.5),
       glass = k.glass(0xdfeeff, 0.2, 0.06),
@@ -615,14 +715,14 @@ export const garment: RoomDef = {
     k.box(0.9, 0.06, 20, 12.9, 0.78, -19, oakT);
     for (const z of [-9.5, -19, -28.5]) for (const dx of [-0.35, 0.35]) k.box(0.06, 0.76, 0.06, 12.9 + dx, 0.39, z, iron);
     k.block(12.3, 13.5, -29.2, -8.8);
-    const needles: T.Matrix4[] = [];
+    const needles: T.Matrix4[] = [], stools: number[][] = [];
     for (let i = 0; i < 8; i++) {
       const z = -10.5 + i * 2.4;
       k.box(0.18, 0.12, 0.5, 12.9, 0.87, z, black);
       k.box(0.14, 0.14, 0.42, 12.9, 1.13, z, black);
       k.box(0.14, 0.32, 0.14, 12.9, 0.97, z + 0.16, black);
       k.cyl(0.14, 0.03, 12.9, 1.02, z - 0.28, chrome, 0.14, 14).rotation.x = PI / 2;
-      k.cyl(0.2, 0.2, 12.3, 0.55, z, oakT, 0.2, 10);
+      stools.push([12.25, 0, z, PI / 2]);
       k.keepOut.push({ x: 12.3, z, r: 0.4 });
       needles.push(new T.Matrix4().makeTranslation(12.9, 1.02, z + 0.16));
     }
@@ -634,7 +734,7 @@ export const garment: RoomDef = {
       for (let j = 0; j < 3; j++) { const a = (j / 3) * 2 * PI; k.beam(v(x, 0.9, z), v(x + Math.cos(a) * 0.32, 0, z + Math.sin(a) * 0.32), 0.015, iron, 5); }
       k.keepOut.push({ x, z, r: 0.5 });
     };
-    for (const [x, z] of [[-10.5, 1], [10.5, 0], [-10.5, -17.5], [10.5, -35], [-2.2, -35.5], [2.6, 2]]) form(x, z);
+    for (const [x, z] of [[-10.5, 1], [10.5, 0], [-10.5, -17.5], [10.5, -35], [-2.2, -35.5], [2.8, -5]]) form(x, z);
     const garmentG = new T.BoxGeometry(0.46, 1.1, 0.05);
     garmentG.translate(0, -0.6, 0);
     const rack = (n: number) => {
@@ -665,9 +765,11 @@ export const garment: RoomDef = {
     if (!ctx.reduced) k.ticks.push((t) => { bulb.visible = Math.sin(t * 4) > -0.2; });
     k.point(0, 4.3, ZB + 1.2, 0xff6a5a, 10, 6);
     // ceiling fans, pendant lamps down both aisles and warm light at the tables
+    const fans: T.Mesh[] = [];
     for (const z of [-8, -20, -32]) {
       const blades = mergeGeometries(Array.from({ length: 4 }, (_, b) => new T.BoxGeometry(1.5, 0.04, 0.32).translate(0.85, 0, 0).rotateY((b * PI) / 2)))!;
       const fan = new T.Mesh(blades, k.flat(0x3a2a20, 0.2, 0.7));
+      fans.push(fan);
       fan.position.set(0, 6.3, z);
       k.add(fan);
       k.cyl(0.14, 0.7, 0, 6.65, z, iron, 0.06, 10);
@@ -675,7 +777,7 @@ export const garment: RoomDef = {
     }
     const shades: T.Matrix4[] = [], bulbs: T.Matrix4[] = [];
     for (const x of [-10.5, 10.5]) for (let i = 0; i < 6; i++) { const z = FZ - (i + 0.5) * bay; shades.push(new T.Matrix4().makeTranslation(x, 4.6, z)); bulbs.push(new T.Matrix4().makeTranslation(x, 4.45, z)); k.beam(v(x, 4.6, z), v(x, 7, z), 0.015, iron, 4); if (i % 2 === 0) k.point(x, 4.3, z, 0xffe6c0, 22, 13); }
-    k.instances(new T.ConeGeometry(0.34, 0.26, 14, 1, true), ironG, shades);
+    const shadeInst = k.instances(new T.ConeGeometry(0.34, 0.26, 14, 1, true), ironG, shades);
     k.instances(new T.SphereGeometry(0.07, 8, 6), glowW, bulbs);
     for (const z of [-9, -27]) k.point(0, 5.5, z, 0xfff0d8, 26, 16);
     // cutters and finishers moving between the tables
@@ -764,6 +866,7 @@ export const garment: RoomDef = {
     traffic(k, ctx, { z: FZ + 13, w: 16, len: 130, n: 10, seed: 83 });
     const top = bw(0, 2.3, 0);
     flock(k, ctx, { x: BX, y: 8, z: FZ + 21, r: 5, n: 10, seed: 84, perch: [v(top.x, top.y + 0.1, top.z), v(top.x + 0.5, top.y + 0.02, top.z), v(GW + 0.9, 0.58, GZ + 0.45), v(GW - 0.9, 0.58, GZ - 0.4)] });
+    w6Garment(k, ctx, { W, D, FZ, ZB, bay }, { brick, brickD, oakT, steel, iron, chrome }, { fans, shadeInst, shades, stools });
     return { mounts, spawn: v(0, 2.3, 10), look: v(0, 3.8, -36), eye: 2.3, bounds: [-13.6, 13.6, ZB + 0.9, FZ + 11], style: 'black' };
   },
 };
@@ -783,14 +886,17 @@ export const diamond: RoomDef = {
     k.hemi(0xdfe4ff, 0x1a1418, 0.62);
     k.sun(0xb8c6ff, 0.5, -30, 50, 20, false, 60);
     const W = 26, D = 44, FZ = 10, ZB = FZ - D, H = 6.6;
-    const walnut = k.pbr('dxWalnut', X.planks(0x3e2618, 5, 61), 1.2, { roughness: 0.45 }),
-      cream = k.pbr('dxCream', X.plaster(0xe8dcc8, 62), 0.4),
-      carpet = k.pbr('dxCarpet', X.carpet(0x1e3a2e, 0xc79a4a), 0.5),
-      velvet = k.pbr('dxVelvet', X.velvet(0x8a1a22), 0.4, { roughness: 0.95 }),
-      velvetK = k.pbr('dxVelvetK', X.velvet(0x141418), 0.4, { roughness: 0.95 }),
+    /* 2026-11-24 (wave 6c): scans (Poly Haven, CC0): black walnut veneer panelling, a plastered upper wall, a green
+       jacquard carpet, red and black velour in the niches and cases, plate steel for the vault, sandstone outside */
+    const RM = 'diamondexchange';
+    const walnut = scan(k, RM, 'black_walnut_veneer_01', 1.4, () => X.planks(0x3e2618, 5, 61), { color: 0xb08a6a, roughness: 0.42 }, 0x2e1c12),
+      cream = scan(k, RM, 'plastered_wall_04', 3, () => X.plaster(0xe8dcc8, 62), { color: 0xe2ddd0, roughness: 0.85 }, 0x8a8070),
+      carpet = scan(k, RM, 'quatrefoil_jacquard_fabric', 1.1, () => X.carpet(0x1e3a2e, 0xc79a4a), { color: 0x5a9a78, roughness: 0.95 }, 0x1a3428),
+      velvet = scan(k, RM, 'velour_velvet', 1, () => X.velvet(0x8a1a22), { color: 0xd8303a, roughness: 0.95 }, 0x5a1218),
+      velvetK = scan(k, RM, 'velour_velvet', 1, () => X.velvet(0x141418), { color: 0x2a2a30, roughness: 0.95 }, 0x101014, 'k'),
       brass = k.pbr('dxBrass', X.gilt(0xc9a55a), 2, { metalness: 0.85, roughness: 0.3 }),
-      steel = k.pbr('dxSteel', X.steel(0x8a9098, true, 63), 0.3, { metalness: 0.9, roughness: 0.3 }),
-      stone = k.pbr('dxStone', X.ashlar(0xb0a898, 64, 3), 0.22),
+      steel = scan(k, RM, 'metal_plate_02', 2, () => X.steel(0x8a9098, true, 63), { color: 0xd8dde2, metalness: 0.85, roughness: 0.35 }, 0x5a6068),
+      stone = scan(k, RM, 'white_sandstone_bricks', 3, () => X.ashlar(0xb0a898, 64, 3), { color: 0xf0e8dc, roughness: 0.85 }, 0x7a7266),
       dark = k.flat(0x121216, 0.5, 0.7),
       glass = k.glass(0xdcecf2, 0.16, 0.05),
       chrome = k.flat(0xc9ccd0, 0.9, 0.25),
@@ -824,7 +930,7 @@ export const diamond: RoomDef = {
     k.moulding([[0, 0], [0.3, 0], [0.34, 0.1], [0.2, 0.2], [0.26, 0.32], [0, 0.4]], D, W / 2 - 0.26, H - 0.5, FZ - D / 2, brass, PI);
     k.moulding([[0, 0], [0.3, 0], [0.34, 0.1], [0.2, 0.2], [0.26, 0.32], [0, 0.4]], D, -W / 2 + 0.26, H - 0.5, FZ - D / 2, brass, 0);
     // the booths: five a side against the walls, a spine of four a side back to back down the middle
-    const stones: T.Matrix4[] = [];
+    const stones: T.Matrix4[] = [], stools: number[][] = [];
     const booth = (x: number, z: number, face: 1 | -1, len: number) => {
       k.box(1.0, 0.9, len, x, 0.45, z, walnut);
       k.box(1.1, 0.06, len + 0.1, x, 0.93, z, brass);
@@ -841,8 +947,7 @@ export const diamond: RoomDef = {
       k.cyl(0.02, 0.5, sx, 1.21, sz, brass, 0.02, 6);
       k.box(0.5, 0.02, 0.02, sx, 1.46, sz, brass);
       for (const d of [-0.22, 0.22]) k.cyl(0.07, 0.015, sx + d, 1.3, sz, brass, 0.07, 10);
-      k.cyl(0.05, 0.6, x + face * 0.95, 0.3, z, chrome, 0.05, 8);
-      k.cyl(0.22, 0.1, x + face * 0.95, 0.65, z, leather, 0.22, 12);
+      stools.push([x + face * 0.95, 0, z, face > 0 ? -PI / 2 : PI / 2]);
       k.keepOut.push({ x: x + face * 0.95, z, r: 0.35 });
     };
     for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const z = 3 - i * 6.2; booth(s * 11.5, z, s < 0 ? 1 : -1, 5.4); }
@@ -894,6 +999,7 @@ export const diamond: RoomDef = {
     k.point(0, 5.4, ZB - 3.3, 0xffffff, 26, 9);
     k.point(0, 5.4, ZB + 2.5, 0xffe6c0, 20, 10);
     // two chandeliers turning, the banker's lamps breathing, warm light down both aisles
+    const chs: T.Group[] = [];
     for (const cx of [-6.5, 6.5]) {
       const z = -15;
       const ch = new T.Group();
@@ -907,6 +1013,7 @@ export const diamond: RoomDef = {
       drops.forEach((m, i) => di.setMatrixAt(i, m));
       ch.add(di);
       k.add(ch);
+      chs.push(ch);
       k.cyl(0.03, 0.5, cx, 6.35, z, brass, 0.03, 6);
       k.point(cx, 4.6, z, 0xfff2d8, 40, 18);
       if (!ctx.reduced) k.ticks.push((t) => { ch.rotation.y = t * 0.12; });
@@ -981,6 +1088,7 @@ export const diamond: RoomDef = {
     // 47th Street at night: headlights, and dealers walking the block
     traffic(k, ctx, { z: FZ + 13, w: 14, len: 130, n: 8, seed: 92, lights: true });
     k.crowd([v(-40, 0, FZ + 4.3), v(40, 0, FZ + 4.3)], 10, { seed: 93, speed: 1.0, spread: 0.6, animate: !ctx.reduced, colors: [0x111113, 0x1a1a1f, 0x24262c, 0x3a3a42, 0x8a8478] });
+    w6Diamond(k, ctx, { W, D, FZ, ZB, H }, { walnut, brass, cream, velvetK, glass, stoneW }, { chs, stools });
     return { mounts, spawn: v(0, 2.3, 5.5), look: v(0, 3.4, -30), eye: 2.3, bounds: [-11.8, 11.8, ZB - 6.2, FZ + 11], style: 'gilt' };
   },
 };
@@ -999,12 +1107,16 @@ export const steam: RoomDef = {
     k.hemi(0xffeedd, 0x3a3230, 0.75);
     k.sun(0xfff0d8, 1.8, -50, 48, -30, true, 90);
     const W = 36, D = 70, FZ = 16, ZB = FZ - D, H = 20;
-    const brick = k.pbr('stBrick', X.brick(0x5a3c32, 101), 0.28),
-      steelR = k.pbr('stSteel', X.steel(0x4a4f56, true, 102), 0.4, { metalness: 0.75, roughness: 0.45 }),
-      steelD = k.pbr('stSteelD', X.steel(0x2e3238, true, 103), 0.4, { metalness: 0.7, roughness: 0.5 }),
-      boiler = k.pbr('stBoiler', X.steel(0x6b4a3c, true, 104), 0.5, { metalness: 0.65, roughness: 0.5 }),
-      concrete = k.pbr('stFloor', X.concrete(0x8a8a84, 105), 0.35, { roughness: 0.8 }),
-      grate = k.pbr('stGrate', X.steel(0x3a3e44, false, 106), 0.6, { metalness: 0.8, roughness: 0.5 }),
+    /* 2026-11-24 (wave 6c): scans (Poly Haven, CC0): dark engine house brick, rusted steel for the frame and the risers,
+       plate steel above the brick, rust stained painted plate for the boiler shells, a hangar concrete floor, a rusted
+       grating for the catwalk */
+    const RM = 'steamworks';
+    const brick = scan(k, RM, 'dark_brick_wall', 2.6, () => X.brick(0x5a3c32, 101), { color: 0xe8dcd4, roughness: 0.9 }, 0x4a3028),
+      steelR = scan(k, RM, 'rusty_metal_02', 2, () => X.steel(0x4a4f56, true, 102), { color: 0xb8b0a8, metalness: 0.6, roughness: 0.55 }, 0x3a3634),
+      steelD = scan(k, RM, 'metal_plate', 2.5, () => X.steel(0x2e3238, true, 103), { color: 0x7a8088, metalness: 0.65, roughness: 0.5 }, 0x2a2e34),
+      boiler = scan(k, RM, 'rusty_painted_metal', 2.5, () => X.steel(0x6b4a3c, true, 104), { color: 0xc89a82, metalness: 0.5, roughness: 0.55 }, 0x4a3428),
+      concrete = scan(k, RM, 'hangar_concrete_floor', 4, () => X.concrete(0x8a8a84, 105), { color: 0xd8d6d0, roughness: 0.8 }, 0x6a6a66),
+      grate = scan(k, RM, 'metal_grate_rusty', 1.2, () => X.steel(0x3a3e44, false, 106), { color: 0xb0a8a0, metalness: 0.7, roughness: 0.55 }, 0x3a3634),
       iron = k.flat(0x22262b, 0.7, 0.45),
       brass = k.pbr('stBrass', X.gilt(0xc9a55a), 2, { metalness: 0.85, roughness: 0.3 }),
       red = k.flat(0x9a2a22, 0.4, 0.5),
@@ -1119,7 +1231,7 @@ export const steam: RoomDef = {
       if (i % 2 === 0) k.point(-W / 2 + 3, 5.4, z, 0xffe0b8, 14, 10);
     }
     k.instances(new T.SphereGeometry(0.1, 8, 6), bulbGlow, bulbs);
-    k.instances(new T.CylinderGeometry(0.16, 0.13, 0.36, 8, 1, true), iron, cages);
+    const cageInst = k.instances(new T.CylinderGeometry(0.16, 0.13, 0.36, 8, 1, true), iron, cages);
     if (!ctx.reduced) k.ticks.push((t) => { bulbGlow.opacity = 0.86 + 0.1 * Math.sin(t * 11) * Math.sin(t * 0.9) + 0.04 * Math.sin(t * 37); });
     k.box(0.06, 1.1, D - 4, -W / 2 + 4.2, 0.55, FZ - D / 2, yellow);
     for (let z = FZ - 3; z > ZB + 2; z -= 3) k.box(0.06, 1.1, 0.06, -W / 2 + 4.2, 0.55, z, iron);
@@ -1180,6 +1292,7 @@ export const steam: RoomDef = {
     traffic(k, ctx, { z: FZ + 13, w: 18, len: 130, n: 10, seed: 143 });
     flock(k, ctx, { x: 0, y: 24, z: ZB - 40, r: 12, n: 10, color: 0xe8e8e4, seed: 144, size: 1.6 });
     flock(k, ctx, { x: -4, y: 7, z: FZ + 8, r: 6, n: 7, seed: 145, perch: [v(-10, 0.23, FZ + 3.5), v(-9.4, 0.23, FZ + 3.1), v(-8.7, 0.23, FZ + 3.8), v(12, 0.23, FZ + 2.6)] });
+    w6Steam(k, ctx, { W, D, FZ, ZB, H, boilers }, { brick, steelR, steelD, iron, red, white, yellow, concrete }, { cageInst, cages });
     return { mounts, spawn: v(0, 2.3, FZ - 4.5), look: v(0, 6, ZB), eye: 2.3, bounds: [-W / 2 + 1, W / 2 - 1, ZB + 1, FZ + 11], style: 'steel' };
   },
 };
@@ -1199,15 +1312,18 @@ export const newsprint: RoomDef = {
     k.hemi(0xe0dcff, 0x1a1410, 0.62);
     k.sun(0xb8c6ff, 0.45, 40, 50, -30, false, 70);
     const W = 34, D = 60, FZ = 14, ZB = FZ - D, H = 11;
-    const brick = k.pbr('npBrick', X.brick(0x6a4a3c, 121), 0.28),
-      planks = k.pbr('npFloor', X.planks(0x6a4a30, 7, 122, 0.4), 0.8, { roughness: 0.7 }),
-      plaster = k.pbr('npPlaster', X.plaster(0xd8cfbb, 123), 0.4),
-      ironG = k.pbr('npIron', X.steel(0x2e4a3a, true, 124), 0.5, { metalness: 0.6, roughness: 0.5 }),
+    /* 2026-11-24 (wave 6c): scans (Poly Haven, CC0): old red brick, a worn plank press floor, worn plaster for the frieze
+       and the gallery wall, green painted iron gone to rust for the columns and the presses, dark wood, a marble stone */
+    const RM = 'newsprint';
+    const brick = scan(k, RM, 'red_bricks_04', 2.6, () => X.brick(0x6a4a3c, 121), { color: 0xe8d8d0, roughness: 0.9 }, 0x4e3428),
+      planks = scan(k, RM, 'old_wood_floor', 2.6, () => X.planks(0x6a4a30, 7, 122, 0.4), { color: 0xc8a888, roughness: 0.7 }, 0x4a3424),
+      plaster = scan(k, RM, 'worn_plaster_wall', 3, () => X.plaster(0xd8cfbb, 123), { color: 0xf0e6d4, roughness: 0.9 }, 0x8a8270),
+      ironG = scan(k, RM, 'green_metal_rust', 2, () => X.steel(0x2e4a3a, true, 124), { color: 0x7aa890, metalness: 0.55, roughness: 0.55 }, 0x22382c),
       steel = k.flat(0x9aa0a6, 0.9, 0.3),
       iron = k.flat(0x22262b, 0.7, 0.45),
       ink = k.flat(0x0c0c10, 0.3, 0.35),
-      oak = k.pbr('npOak', X.planks(0x5a3a22, 5, 125), 1.2, { roughness: 0.5 }),
-      marble = k.pbr('npStone', X.marble(0xd8d4cc, 0x8d8a80, 126), 0.5, { roughness: 0.3 }),
+      oak = scan(k, RM, 'dark_wood', 1.6, () => X.planks(0x5a3a22, 5, 125), { color: 0xb08a68, roughness: 0.5 }, 0x3a2618),
+      marble = scan(k, RM, 'marble_01', 1.5, () => X.marble(0xd8d4cc, 0x8d8a80, 126), { color: 0xf2eee6, roughness: 0.3 }, 0x8a8680),
       paper = k.flat(0xf1ecdf, 0, 0.9, { side: T.DoubleSide }),
       paperR = k.flat(0xe9e3d3, 0, 0.9),
       brass = k.pbr('npBrass', X.gilt(0xc9a55a), 2, { metalness: 0.85, roughness: 0.3 }),
@@ -1341,7 +1457,7 @@ export const newsprint: RoomDef = {
     // pendant lamps down both aisles, the composing room lit warm, the reels lit
     const shades: T.Matrix4[] = [], bulbs: T.Matrix4[] = [];
     for (const x of [-11, 0, 12.5]) for (let i = 0; i < 7; i++) { const z = FZ - (i + 0.5) * (D / 7); shades.push(new T.Matrix4().makeTranslation(x, 4.5, z)); bulbs.push(new T.Matrix4().makeTranslation(x, 4.35, z)); k.beam(v(x, 4.5, z), v(x, H, z), 0.015, iron, 4); if (i % 2 === 0 || x <= 0) k.point(x, 4.2, z, 0xffe6c0, 30, 15); }
-    k.instances(new T.ConeGeometry(0.36, 0.28, 14, 1, true), shadeG, shades);
+    const shadeInst = k.instances(new T.ConeGeometry(0.36, 0.28, 14, 1, true), shadeG, shades);
     k.instances(new T.SphereGeometry(0.07, 8, 6), glowW, bulbs);
     // pressmen and compositors, a runner to the door
     k.crowd([v(-12, 0, 8), v(-12, 0, -40), v(-7, 0, -42), v(-7, 0, 6)], 10, { seed: 132, speed: 0.55, spread: 1.4, animate: !ctx.reduced, closed: true, colors: [0x24262c, 0x3a3a3a, 0xd8d0c0, 0x8a6a3a, 0x151517, 0x6a4a3a] });
@@ -1417,6 +1533,345 @@ export const newsprint: RoomDef = {
     k.block(PX - 3.95, PX - 1.2, -37.15, -36.45);
     // streetcars on Park Row, lamps lit
     traffic(k, ctx, { z: FZ + 13, w: 16, len: 130, n: 4, kind: 'trolley', lights: true, seed: 135, speed: 4.5, colors: [0x8a2a22, 0x2a5a3a, 0xc9a25a] });
+    w6News(k, ctx, { W, D, FZ, ZB, H, PX }, { brick, oak, plaster, ironG, iron, ink, paperR, brass }, { shadeInst, shades });
     return { mounts, spawn: v(-1, 2.3, 10), look: v(0, 4, ZB), eye: 2.3, bounds: [-W / 2 + 1, W / 2 - 1, ZB + 1, FZ + 11], style: 'oak' };
   },
 };
+
+/* ---------------- wave 6c (2026-11-24): THE PNEUMATIC MAIL, built out ----------------
+   The air that moved the mail: a real compressor (Poly Haven old_military_compressor, CC0) on its plinth with the air
+   main rising to the hub; card cabinets between the bays, chairs at the desks, letter baskets and parcel stacks, a hand
+   truck by the carrier trolley, pendant lamps over the hub ring (all Poly Haven CC0). Built architecture: an oak dado
+   and a moulded stone cornice round the drum, a gilt ring and a stone impost at the foot of the dome, brick pilasters
+   between the bays. Enamel destination plates over every bay. One trick: SEND IT painted flat on the terrazzo. */
+function w6Pneumatic(k: Kit, ctx: RoomCtx, R: number, H: number, bays: number[], m: Record<string, T.Material>) {
+  const RM = 'pneumatic';
+  const stoneD = scan(k, RM, 'stone_brick_wall_001', 3, () => X.ashlar(0xb9ad97, 43, 3), { color: 0xe8dccb, roughness: 0.85, side: T.DoubleSide }, 0x8a8272, 'ds'),
+    oakD = scan(k, RM, 'oak_veneer_01', 1.4, () => X.planks(0x6a4a30, 5, 46), { color: 0x9a7050, roughness: 0.5, side: T.DoubleSide }, 0x4a3420, 'ds'),
+    gold = k.flat(0xc9a55a, 0.85, 0.3, { side: T.DoubleSide }),
+    enamel = k.flat(0x1d3f8a, 0.1, 0.35);
+  // the drum, built: an oak dado with its rail, a moulded stone cornice under the dome, a gilt ring at the springing
+  ring(k, R, 0, [[0.02, 0], [0.08, 0], [0.08, 1.05], [0.14, 1.1], [0.14, 1.18], [0.02, 1.22]], oakD);
+  ring(k, R, 0, [[0.02, 0], [0.16, 0], [0.16, 0.18], [0.02, 0.2]], stoneD);
+  ring(k, R, H - 0.75, [[0.02, 0], [0.12, 0.05], [0.16, 0.2], [0.34, 0.32], [0.4, 0.5], [0.52, 0.62], [0.55, 0.75], [0.02, 0.78]], stoneD);
+  ring(k, R, H + 0.02, [[0.02, 0], [0.22, 0], [0.26, 0.08], [0.22, 0.16], [0.02, 0.16]], gold);
+  // brick pilasters between the bays, a stone cap each, and card cabinets between them (none at the door or the board)
+  const mids = Array.from({ length: 10 }, (_, i) => (i / 10) * 2 * PI).filter((a) => Math.abs(Math.sin(a)) > 0.2);
+  const pil: T.Matrix4[] = [], caps: T.Matrix4[] = [], cab: number[][] = [];
+  for (const a of mids) {
+    const q = new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 1, 0), a);
+    for (const s of [-1, 1]) {
+      const b = a + s * 0.155, x = Math.sin(b) * (R - 0.22), z = Math.cos(b) * (R - 0.22);
+      const qb = new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 1, 0), b);
+      pil.push(new T.Matrix4().compose(v(x, (H - 0.75) / 2, z), qb, v(1, 1, 1)));
+      caps.push(new T.Matrix4().compose(v(x, H - 0.85, z), qb, v(1, 1, 1)));
+    }
+    if (Math.abs(Math.sin(a)) > 0.9) cab.push([Math.sin(a) * (R - 0.5), 0, Math.cos(a) * (R - 0.5), a + PI]);
+    void q;
+  }
+  k.instances(new T.BoxGeometry(0.62, H - 0.75, 0.3), m.brick, pil);
+  k.instances(new T.BoxGeometry(0.8, 0.22, 0.42), m.stone, caps);
+  place(k, `${RM}/ph_drawer_cabinet`, { height: 1.9 }, cab, (o) => retint(o, 0x8a6a4a, 0.55, 0));
+  // chairs pulled up to every desk, letter pads on every other desk
+  const chairs: number[][] = [], cards: number[][] = [];
+  bays.forEach((a, i) => {
+    const sx = Math.sin(a), sz = Math.cos(a);
+    chairs.push([sx * (R - 2.05), 0, sz * (R - 2.05), a + PI]);
+    if (i % 2 === 0) cards.push([sx * (R - 1.2) + Math.cos(a) * 0.4, 0.97, sz * (R - 1.2) - Math.sin(a) * 0.4, a + PI / 2]);
+    k.keepOut.push({ x: sx * (R - 2.05), z: sz * (R - 2.05), r: 0.4 });
+  });
+  place(k, `${RM}/ph_SchoolChair_01`, { height: 0.95 }, chairs, (o) => retint(o, 0x6a4a30, 0.6, 0.1));
+  place(k, `${RM}/ph_office_notepads`, { width: 0.5 }, cards);
+  // parcels and the hand truck on the dispatch floor by the carrier trolley, parcels at the porch
+  place(k, `${RM}/ph_cardboard_box_01`, { height: 0.42 }, [[-4.9, 0, -4.5, 0.3], [-4.95, 0.42, -4.45, 0.9], [4.4, 0, 9.3, 0.4], [4.6, 0.42, 9.1, 0.1]], (o) => retint(o, 0xc8a878, 0.85, 0));
+  place(k, `${RM}/ph_hand_truck`, { height: 1.3 }, [[-5.4, 0, -6.5, 0.9]]);
+  k.keepOut.push({ x: -5.2, z: -5.4, r: 1.0 }, { x: 4.6, z: 9.1, r: 0.8 });
+  // the compressor that filled the tubes, on a stone plinth, its air main rising to the hub with brass flanges and a gauge
+  const CX = 3.4, CZ = -6.2;
+  k.box(1.6, 0.3, 3.2, CX, 0.15, CZ, m.stone);
+  k.block(CX - 0.9, CX + 0.9, CZ - 1.7, CZ + 1.7);
+  place(k, `${RM}/ph_old_military_compressor`, { length: 2.8 }, [[CX, 0.3, CZ, 0]], (o) => retint(o, 0x3a5a48, 0.55, 0.45));
+  const main = [v(CX, 1.2, CZ - 1.5), v(CX, 2.6, CZ - 1.7), v(CX * 0.8, 6.5, CZ * 0.6), v(1.6, 9.2, -1.6), v(1.2, 9.85, -1.2)];
+  k.curve(main, 0.13, m.copper, 40);
+  for (const u of [0.1, 0.35, 0.6, 0.85]) { const c = new T.CatmullRomCurve3(main), p = c.getPointAt(u), t = c.getTangentAt(u); const f = k.torus(0.17, 0.05, p.x, p.y, p.z, m.brass, 16); f.quaternion.setFromUnitVectors(new T.Vector3(0, 0, 1), t); }
+  k.cyl(0.24, 0.08, CX - 0.85, 1.6, CZ, k.flat(0xf1ecdf, 0, 0.6), 0.24, 20).rotation.z = PI / 2;
+  k.torus(0.24, 0.035, CX - 0.9, 1.6, CZ, m.brass, 20).rotation.y = PI / 2;
+  k.egg(v(CX, 1.4, CZ), { id: 'pneumatic-compressor', title: 'Air, not steam', year: '1897', text: 'The carriers were blown and sucked through the tubes by air. Rotary compressors in the stations pushed it out along one tube and drew it back along its twin, and the operators at each end fired and caught the carriers by hand.', clue: 'Something on a plinth beside the hub is breathing for the whole room.', source: { name: 'USPS Postal History, The Pneumatic Mail Tubes', url: 'https://about.usps.com/who-we-are/postal-history/pneumatic-tubes.pdf' } }, { r: 1.6 });
+  // pendant lamps on the hub ring (Poly Haven hanging_industrial_lamp, CC0), hung from the dome
+  const lamps: number[][] = [];
+  for (let i = 0; i < 8; i++) { const a = (i / 8) * 2 * PI + PI / 8; lamps.push([Math.sin(a) * 5.4, 6.0, Math.cos(a) * 5.4, a]); k.beam(v(Math.sin(a) * 5.4, 7.3, Math.cos(a) * 5.4), v(Math.sin(a) * 5.4, 15.9, Math.cos(a) * 5.4), 0.012, m.iron, 4); }
+  place(k, `${RM}/ph_hanging_industrial_lamp`, { height: 1.3 }, lamps);
+  // the enamel destination plates over every bay (Brooklyn has its own)
+  const names = ['GRAND CENTRAL', 'MADISON SQUARE', '', 'COOPER UNION', 'WALL STREET', 'CITY HALL', 'HERALD SQUARE', 'TIMES SQUARE', 'MURRAY HILL', 'HARLEM'];
+  bays.forEach((a, i) => { if (!names[i]) return; const x = Math.sin(a) * (R - 0.33), z = Math.cos(a) * (R - 0.33); w6Sign(k, names[i], 2.0, 0.34, x, 6.0, z, a + PI, '#f4f1ea', '#1d3f8a', 'W2 Archivo Expanded', false, '#f4f1ea'); k.box(2.1, 0.42, 0.04, x + Math.sin(a) * 0.03, 6.0, z + Math.cos(a) * 0.03, enamel).rotation.y = a; });
+  w6Sign(k, 'POST OFFICE DEPARTMENT', 6.0, 0.5, 0, H - 0.38, -R + 0.9, 0, '#c9a55a', '#14161a', 'W2 Archivo Expanded', false);
+  w6Sign(k, 'PNEUMATIC TUBE SERVICE   STATION 4', 6.4, 0.5, 0, 5.96, R + 3.86, 0, '#f2e6c8', '#1d3f8a', 'W2 Archivo Expanded', false, '#f2e6c8');
+  // Firefly: the enamel route map of the tube network inside the porch header (invisible until the file exists)
+  w6Plate(k, 'assets/museum/tex/pneumatic/ff_route_map.webp', 5.6, 1.25, 0, 4.4, R - 0.63, PI);
+  // the illusion (one trick a room): SEND IT painted flat on the terrazzo, stretched toward the hub, so that from the
+  // spot where you arrive it stands up off the floor like a sign; walk onto it and it falls back into smears of brass
+  { const t = w6Type('SEND IT', ['#c9a55a', '#1d3f8a']); if (t) anamorphTex(k, t, 1.2, R - 3.6, 2.3, 0.0, 0, 6, 3.6, 0.66, 0.85); }
+  k.egg(v(1.2, 0.4, R - 9.6), { id: 'pneumatic-anamorph', title: 'A sign that is not there', text: 'SEND IT is painted flat on the terrazzo, stretched toward the hub, so that from the doorway it stands up off the floor like a sign. Walk onto it and it falls back into long smears of brass and blue. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Go back to the door and look along the floor toward the hub.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+  void ctx;
+}
+
+/* ---------------- wave 6c (2026-11-24): THE CUTTING LOFT, built out ----------------
+   Real ceiling fans and pendant lamps (Poly Haven ceiling_fan and hanging_industrial_lamp, CC0) take the place of the
+   code ones; metal stools at the machine row; steel shelving of parcels, a hand truck, crates and pattern cabinets by
+   the freight elevator (all Poly Haven CC0). Built architecture: a moulded plaster cornice and an oak skirting down both
+   long walls, stone sills and brick arches over the side windows, steel tie rods across the bays. Department signs in
+   the house fonts. One trick: MEASURE TWICE painted flat down the centre aisle. */
+function w6Garment(k: Kit, ctx: RoomCtx, g: { W: number; D: number; FZ: number; ZB: number; bay: number }, m: Record<string, T.Material>, o: { fans: T.Mesh[]; shadeInst: T.InstancedMesh; shades: T.Matrix4[]; stools: number[][] }) {
+  const RM = 'garment', { W, D, FZ, ZB, bay } = g;
+  const plaster = scan(k, RM, 'white_plaster_rough_01', 3, () => X.plaster(0xe4dfd2, 54), { color: 0xeee6d8, roughness: 0.92 }, 0x918c82, 'c'),
+    sill = k.flat(0xb8b0a0, 0, 0.85);
+  // the fans: the real model hangs from each code fan's rod and turns with it; the code blades go empty
+  void hero(k, `${RM}/ph_ceiling_fan`, { width: 2.5 }).then((h) => {
+    if (!h || !k.live) return;
+    solid(h);
+    o.fans.forEach((f, i) => { const c = i ? h.clone() : h; c.position.y = -0.55; f.add(c); f.geometry = new T.BufferGeometry(); });
+  });
+  // the pendants: one real lamp at every code shade, the cones hide when it lands
+  const pos = new T.Vector3();
+  place(k, `${RM}/ph_hanging_industrial_lamp`, { height: 1.15 }, o.shades.map((mm, i) => { pos.setFromMatrixPosition(mm); return [pos.x, pos.y - 0.5, pos.z, i * 0.7]; }), undefined, () => { o.shadeInst.visible = false; });
+  place(k, `${RM}/ph_metal_stool_01`, { height: 0.62 }, o.stools);
+  // shelving, parcels, crates and the pattern files by the freight elevator; a hand truck waiting at the gate
+  place(k, `${RM}/ph_steel_frame_shelves_03`, { height: 2.3 }, [[-8.6, 0, ZB + 0.75, 0], [-11.3, 0, ZB + 0.75, 0]]);
+  k.block(-12.6, -7.3, ZB + 0.3, ZB + 1.2);
+  place(k, `${RM}/ph_cardboard_box_01`, { height: 0.42 }, [[-9.2, 0, ZB + 1.55, 0.05], [-8.3, 0, ZB + 1.6, -0.3], [-9.0, 0.42, ZB + 1.55, 0.25], [-11.9, 2.31, ZB + 0.75, -0.15], [-10.95, 2.31, ZB + 0.76, 0.1], [-11.4, 2.73, ZB + 0.74, 0.4], [-12.2, 0, ZB + 1.5, 0.2]], (h) => retint(h, 0xc8a878, 0.85, 0));
+  k.keepOut.push({ x: -8.8, z: ZB + 1.6, r: 0.8 }, { x: -12.2, z: ZB + 1.5, r: 0.5 });
+  place(k, `${RM}/ph_hand_truck`, { height: 1.3 }, [[6.6, 0, ZB + 1.1, -0.4]]);
+  k.keepOut.push({ x: 6.6, z: ZB + 1.1, r: 0.7 });
+  place(k, `${RM}/ph_drawer_cabinet`, { height: 1.9 }, [[11.4, 0, ZB + 0.55, 0], [12.7, 0, ZB + 0.55, 0]], (h) => retint(h, 0x5a6a5a, 0.55, 0.3));
+  k.block(10.7, 13.4, ZB + 0.2, ZB + 0.9);
+  place(k, `${RM}/ph_wooden_crate_01`, { width: 1.0 }, [[-12.4, 0, FZ - 1.6, 0.1], [-12.5, 0.43, FZ - 1.62, -0.1], [-12.3, 0, FZ - 2.4, 0.05]]);
+  k.keepOut.push({ x: -12.4, z: FZ - 2, r: 0.9 });
+  place(k, `${RM}/ph_SchoolChair_01`, { height: 0.95 }, [[-3.6, 0, -13, -PI / 2], [3.6, 0, -5, PI / 2], [-3.6, 0, -30, -PI / 2], [3.6, 0, -24, PI / 2]], (h) => retint(h, 0x5a4a3a, 0.6, 0.1));
+  // the long walls, built: oak skirting, a moulded plaster cornice under the roof (it runs along z, as the walls do)
+  for (const s of [-1, 1]) {
+    k.box(0.08, 0.28, D - 1, s * (W / 2 - 0.29), 0.14, FZ - D / 2, m.oakT);
+    k.moulding([[0, 0], [0.18, 0.04], [0.22, 0.16], [0.36, 0.26], [0.42, 0.42], [0, 0.46]], D - 1, s * (W / 2 - 0.25), 6.58, FZ - D / 2, plaster, s > 0 ? PI : 0);
+  }
+  // the side windows: stone sills, brick soldier arches, and steel tie rods across every bay at the eaves
+  const sills: T.Matrix4[] = [], heads: T.Matrix4[] = [];
+  for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const z = FZ - (i + 0.5) * bay; sills.push(new T.Matrix4().makeTranslation(s * (W / 2 - 0.3), 2.94, z)); heads.push(new T.Matrix4().makeTranslation(s * (W / 2 - 0.3), 6.72, z)); }
+  k.instances(new T.BoxGeometry(0.5, 0.14, 4.7), sill, sills);
+  k.instances(new T.BoxGeometry(0.42, 0.36, 4.8), m.brickD, heads);
+  for (let i = 1; i < 6; i++) { const z = FZ - i * bay; k.beam(v(-W / 2 + 0.5, 6.85, z), v(W / 2 - 0.5, 6.85, z), 0.035, m.iron, 6); for (const s of [-1, 1]) k.cyl(0.12, 0.06, s * (W / 2 - 0.45), 6.85, z, m.iron, 0.12, 10).rotation.z = PI / 2; }
+  // signs: the departments in painted lettering, the floor number stencilled big over the freight gate
+  const hung = (t: string, w: number, x: number, z: number, r: number) => {
+    w6Sign(k, t, w, 0.5, x, 5.9, z, r, '#f2e6c8', '#1e1a18', 'W2 Archivo Expanded', false, '#f2e6c8');
+    const ax = Math.cos(r) * (w / 2 - 0.2), az = -Math.sin(r) * (w / 2 - 0.2);
+    for (const s of [-1, 1]) k.beam(v(x + s * ax, 6.15, z + s * az), v(x + s * ax, 6.9, z + s * az), 0.01, m.iron, 4);
+  };
+  hung('CUTTING', 3.0, -5.5, -18, 0);
+  hung('CUTTING', 3.0, 5.5, -18, 0);
+  hung('OPERATORS', 3.4, 12.9, FZ - 3.5 * bay, -PI / 2);
+  hung('PIECE GOODS', 3.6, -13.0, FZ - 2.5 * bay, PI / 2);
+  w6Sign(k, 'NO SMOKING', 1.6, 0.4, -4.6, 2.4, ZB + 0.3, 0, '#ffffff', '#b0241c', 'W2 Archivo Expanded', false, '#ffffff');
+  w6Sign(k, '7', 1.6, 2.2, 0, 8.3, ZB + 0.28, 0, '#f2e6c8', '', 'W2 Archivo Expanded', false);
+  // Firefly: a wall of brown paper patterns pinned to the brick over the front door (invisible until the file exists)
+  w6Plate(k, 'assets/museum/tex/garment/ff_pattern_wall.webp', 8.4, 2.8, 0, 7.6, FZ - 0.28, PI);
+  // the illusion (one trick a room): MEASURE TWICE painted flat down the centre aisle in tailor's chalk, stretched toward
+  // the freight elevator, so that from the door it stands up off the floor like a sign
+  { const t = w6Type('MEASURE TWICE', ['#f4f0e8', '#d8b050']); if (t) anamorphTex(k, t, 0, 10, 2.3, 0.0, 0, 7, 3.6, 1.1, 0.8); }
+  k.egg(v(0, 0.4, 0), { id: 'garment-anamorph', title: 'A sign that is not there', text: 'MEASURE TWICE is chalked flat on the planks, stretched toward the freight elevator, so that from the front door it stands up off the floor like a sign. Walk onto it and it falls back into long smears of chalk. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Stand just inside the front door and look down the centre aisle.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+  void ctx;
+}
+
+/* ---------------- wave 6c (2026-11-24): THE DIAMOND EXCHANGE, built out ----------------
+   Real crystal chandeliers (Poly Haven Chandelier_03 turning where the code rings turned, Chandelier_01 over both ends of
+   the aisles), round bar chairs at every booth, gem microscopes on the cases, pocket watches in the street windows, a
+   cashier's register, brass urns at the door and cameras in the corners (all Poly Haven CC0). Built architecture: walnut
+   pilasters with gilt capitals between the niches, gilt rosettes at the coffer crossings, plaster medallions over the
+   chandeliers, a marble vestibule floor. Booth numbers in brass. One trick: FLAWLESS painted flat inside the door. */
+function w6Diamond(k: Kit, ctx: RoomCtx, g: { W: number; D: number; FZ: number; ZB: number; H: number }, m: Record<string, T.Material>, o: { chs: T.Group[]; stools: number[][] }) {
+  const RM = 'diamondexchange', { W, FZ, ZB, H } = g;
+  const marble = scan(k, RM, 'marble_01', 1.6, () => X.marble(0xe8e4dc, 0x8d8a80, 66), { color: 0xf6f2ec, roughness: 0.25 }, 0x8a8680),
+    gilt = k.flat(0xd8b050, 0.85, 0.28), plasterM = k.flat(0xefe6d6, 0, 0.8);
+  // the chandeliers: a real crystal chandelier inside each turning group, the code rings and drops hide when it lands
+  void hero(k, `${RM}/ph_Chandelier_03`, { height: 2.1 }).then((h) => {
+    if (!h || !k.live) return;
+    solid(h);
+    o.chs.forEach((ch, i) => { for (const c of ch.children) c.visible = false; const c = i ? h.clone() : h; c.position.y = H - 0.25 - 5.6 - 2.1; ch.add(c); });
+  });
+  const ends: number[][] = [];
+  for (const x of [-6.5, 6.5]) for (const z of [-3.5, -27]) { ends.push([x, H - 0.3 - 1.7, z, 0]); k.cyl(0.02, 0.3, x, H - 0.15, z, m.brass, 0.02, 6); k.point(x, H - 2.2, z, 0xfff0d0, 18, 10); }
+  place(k, `${RM}/ph_Chandelier_01`, { height: 1.7 }, ends);
+  // plaster ceiling medallions over all six, gilt rosettes at the coffer crossings
+  for (const [x, z] of [[-6.5, -15], [6.5, -15], [-6.5, -3.5], [6.5, -3.5], [-6.5, -27], [6.5, -27]]) k.lathe([[0, 0], [0.9, 0], [0.86, -0.05], [0.7, -0.08], [0.5, -0.14], [0.2, -0.16], [0, -0.16]], x, H - 0.01, z, plasterM, 32);
+  const ros: T.Matrix4[] = [];
+  for (let z = FZ - 2; z > ZB; z -= 4) for (const x of [-8.5, -4.25, 0, 4.25, 8.5]) ros.push(new T.Matrix4().makeTranslation(x, H - 0.42, z));
+  k.instances(new T.SphereGeometry(0.11, 10, 6, 0, 2 * PI, PI / 2, PI / 2), gilt, ros);
+  // walnut pilasters with gilt capitals between the jewel niches
+  const pil: T.Matrix4[] = [], cap: T.Matrix4[] = [];
+  for (const s of [-1, 1]) for (let i = 0; i <= 6; i++) { const z = 3 + 3.1 - i * 6.2; if (z > FZ - 0.6) continue; pil.push(new T.Matrix4().makeTranslation(s * (W / 2 - 0.42), 3.1, z)); cap.push(new T.Matrix4().makeTranslation(s * (W / 2 - 0.45), 5.85, z)); }
+  k.instances(new T.BoxGeometry(0.3, 6.2, 0.5), m.walnut, pil);
+  k.instances(new T.BoxGeometry(0.4, 0.3, 0.66), gilt, cap);
+  // a marble vestibule inside the door
+  k.box(W - 1, 0.02, 3.6, 0, 0.01, FZ - 2.2, marble);
+  for (const s of [-1, 1]) k.box(0.06, 0.025, 3.6, s * (W / 2 - 0.5), 0.013, FZ - 2.2, gilt);
+  k.box(W - 1, 0.025, 0.06, 0, 0.013, FZ - 4.0, gilt);
+  // round bar chairs at every booth (Poly Haven bar_chair_round_01)
+  place(k, `${RM}/ph_bar_chair_round_01`, { height: 0.78 }, o.stools, (h) => retint(h, 0x3a2418, 0.5, 0.2));
+  // gem microscopes on the glass cases, pocket watches in the street windows
+  const scopes: number[][] = [];
+  for (const s of [-1, 1]) for (const i of [0, 4]) scopes.push([s * 11.5, 1.46, 3 - i * 6.2 + 1.4, s > 0 ? -PI / 2 : PI / 2]);
+  place(k, `${RM}/ph_vintage_microscope`, { height: 0.42 }, scopes);
+  const watches: number[][] = [];
+  for (const s of [-1, 1]) for (let j = 0; j < 5; j++) watches.push([s * 8 - 1.8 + j * 0.9, 1.76, FZ + 0.25, 0]);
+  place(k, `${RM}/ph_vintage_pocket_watch`, { height: 0.13 }, watches);
+  // the cashier's window inside the door, its register; brass urns either side of the door; cameras in the corners
+  k.box(1.7, 0.95, 0.75, 4.4, 0.475, FZ - 2.6, m.walnut);
+  k.box(1.8, 0.05, 0.85, 4.4, 0.97, FZ - 2.6, m.brass);
+  k.block(3.45, 5.35, FZ - 3.1, FZ - 2.1);
+  place(k, `${RM}/ph_CashRegister_01`, { height: 0.55 }, [[4.4, 0.995, FZ - 2.6, PI]]);
+  w6Sign(k, 'CASHIER', 1.6, 0.36, 4.4, 2.6, FZ - 2.6, PI, '#d8b050', '#0b0b10', 'W2 Archivo Expanded', false, '#d8b050');
+  for (const sx of [-1, 1]) k.beam(v(4.4 + sx * 0.6, 2.78, FZ - 2.6), v(4.4 + sx * 0.6, H - 0.4, FZ - 2.6), 0.01, m.brass, 4);
+  place(k, `${RM}/ph_brass_vase_01`, { height: 1.05 }, [[-2.5, 0, FZ - 0.7, 0], [2.5, 0, FZ - 0.7, 0]]);
+  k.keepOut.push({ x: -2.5, z: FZ - 0.7, r: 0.4 }, { x: 2.5, z: FZ - 0.7, r: 0.4 });
+  place(k, `${RM}/ph_security_camera_01`, { length: 0.5 }, [[-12.3, 5.7, FZ - 0.7, -2.4], [12.3, 5.7, FZ - 0.7, 2.4], [-12.3, 5.7, ZB + 0.8, -0.7], [12.3, 5.7, ZB + 0.8, 0.7]]);
+  // booth numbers in brass on the dado under every niche, the spine's ends named
+  for (const s of [-1, 1]) for (let i = 0; i < 6; i++) w6Sign(k, `BOOTH ${s < 0 ? i + 1 : i + 7}`, 1.3, 0.24, s * (W / 2 - 0.42), 2.22, 3 - i * 6.2, s < 0 ? PI / 2 : -PI / 2, '#0b0b10', '#d8b050', 'W2 Archivo Expanded', false);
+  w6Sign(k, 'CERTIFIED SCALES', 2.0, 0.3, 0, 5.4, -5.38, 0, '#d8b050', '#0b0b10', 'W2 Archivo Expanded', false, '#d8b050');
+  w6Sign(k, 'SAFE DEPOSIT VAULT', 2.0, 0.3, 0, 5.4, -28.62, PI, '#d8b050', '#0b0b10', 'W2 Archivo Expanded', false, '#d8b050');
+  // Firefly: a painted coffered ceiling between the walnut beams (invisible until the file exists)
+  const ceil = w6Plate(k, 'assets/museum/tex/diamondexchange/ff_ceiling.webp', W - 1, g.D - 1, 0, H - 0.005, FZ - g.D / 2, 0);
+  ceil.rotation.x = PI / 2;
+  // the illusion (one trick a room): FLAWLESS painted flat inside the door, stretched toward the vault, so that from the
+  // spot where you arrive it stands up off the carpet like a sign in gold
+  { const t = w6Type('FLAWLESS', ['#d8b050', '#f6f6ff']); if (t) anamorphTex(k, t, 0, 5.5, 2.3, 0.0, 0, 3.2, 3.0, 0.75, 0.85); }
+  k.egg(v(0, 0.3, 1.6), { id: 'diamond-anamorph', title: 'A sign that is not there', text: 'FLAWLESS is painted flat on the carpet, stretched toward the vault, so that from the door it stands up off the floor like a sign in gold. Walk onto it and it falls back into long smears. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Just inside the door, look along the carpet toward the vault.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
+  void ctx;
+}
+
+/* ---------------- wave 6c (2026-11-24): THE STEAM PLANT, built out ----------------
+   A real gantry crane (Poly Haven overhead_crane, CC0) rolls the length of the west floor on its rails over a spare
+   boiler course; two compressors on plinths at the far end, a bank of industrial pipework against the far wall, a
+   workshop of tool chest, tool cart, welding cart, gas bottles and oil drums, caged sconces in place of the code cages
+   (all Poly Haven CC0). Built architecture: a concrete plinth course down both long walls, rivets on every boiler
+   collar, stone sills under the clerestories. Enamel danger plates and boiler numbers. One trick: PRESSURE HELD
+   painted flat down the centre walk. */
+function w6Steam(k: Kit, ctx: RoomCtx, g: { W: number; D: number; FZ: number; ZB: number; H: number; boilers: number[] }, m: Record<string, T.Material>, o: { cageInst: T.InstancedMesh; cages: T.Matrix4[] }) {
+  const RM = 'steamworks', { W, D, FZ, ZB, boilers } = g;
+  const plinthM = scan(k, RM, 'hangar_concrete_floor', 3, () => X.concrete(0x8a8a84, 105), { color: 0xb8b4ac, roughness: 0.85 }, 0x5a5a56, 'p'),
+    rivet = k.flat(0x3a2a22, 0.6, 0.45), timber = k.flat(0x4a3424, 0, 0.8);
+  // the gantry crane on its floor rails, rolling slowly up and down the west floor over a spare boiler course
+  const CX = -4.5;
+  for (const dx of [-1.92, 1.92]) k.box(0.16, 0.05, 38, CX + dx, 0.025, -27, m.steelD);
+  k.mesh(new T.CylinderGeometry(1.0, 1.0, 5, 28, 1, true).rotateX(PI / 2), m.steelR, CX, 1.25, -27);
+  for (const dz of [-1.8, 1.8]) { k.box(2.4, 0.3, 0.4, CX, 0.15, -27 + dz, timber); k.torus(1.05, 0.06, CX, 1.25, -27 + dz * 1.2, rivet, 28); }
+  k.block(CX - 1.2, CX + 1.2, -29.8, -24.2);
+  const crane = new T.Group();
+  crane.position.set(CX, 0, -27);
+  k.add(crane);
+  void hero(k, `${RM}/ph_overhead_crane`, { width: 12 }).then((h) => { if (!h || !k.live) return; h.rotation.y = PI / 2; retint(h, 0xd8a028, 0.55, 0.45); crane.add(h); });
+  const roll = (t: number) => { crane.position.z = -27 + 11 * Math.sin(t * 0.06); };
+  roll(8);
+  if (!ctx.reduced) k.ticks.push((t) => roll(t));
+  // compressors on plinths at the far end, a bank of pipework along the far wall below the great window
+  for (const x of [-6.2, -2.8]) { k.box(1.3, 0.3, 3.0, x, 0.15, -44, plinthM); k.block(x - 0.7, x + 0.7, -45.6, -42.4); }
+  place(k, `${RM}/ph_old_military_compressor`, { length: 2.6 }, [[-6.2, 0.3, -44, 0], [-2.8, 0.3, -44, PI]], (h) => retint(h, 0x5a6a5a, 0.5, 0.5));
+  const pipes: number[][] = [];
+  for (let x = -9.5; x <= 4; x += 2.15) pipes.push([x, 0, ZB + 0.55, 0]);
+  place(k, `${RM}/ph_modular_industrial_pipes_01`, { height: 3.2 }, pipes);
+  k.block(-10.7, 4.6, ZB + 0.3, ZB + 0.9);
+  // the workshop inside the door on the west side
+  place(k, `${RM}/ph_metal_tool_chest`, { height: 1.0 }, [[-7.0, 0, 4.2, PI / 2]], (h) => retint(h, 0xa02a22, 0.45, 0.5));
+  place(k, `${RM}/ph_retro_multimeter`, { height: 0.26 }, [[-7.0, 1.0, 4.0, PI / 2]]);
+  place(k, `${RM}/ph_tool_cart`, { width: 1.3 }, [[-6.2, 0, 1.6, 0.3]]);
+  place(k, `${RM}/ph_portable_welding_cart`, { height: 1.55 }, [[-5.0, 0, 3.6, -0.6]]);
+  place(k, `${RM}/ph_propane_tank`, { height: 0.9 }, [[-7.3, 0, 6.2, 0], [-6.6, 0, 6.5, 1]]);
+  place(k, `${RM}/ph_oil_tin`, { height: 0.25 }, [[-5.8, 0.97, 1.8, 0.4], [-6.6, 0, 2.8, 1.1]]);
+  place(k, `${RM}/ph_hand_truck`, { height: 1.3 }, [[-4.6, 0, 6.0, 0.5]]);
+  place(k, `${RM}/ph_ladder_sectioned_01`, { height: 4.2 }, [[-W / 2 + 1.05, 0, FZ - D / 9, PI / 2]]);
+  place(k, `${RM}/ph_old_gas_mask`, { height: 0.5 }, [[-12.3, 2.0, FZ - 2.2, 0]]);
+  k.keepOut.push({ x: -6.1, z: 3.8, r: 2.2 });
+  // oil drums between the boiler bays, under the catwalk (instanced)
+  const drums: number[][] = [];
+  for (const [x, z] of [[3.0, -12.2], [3.7, -12.9], [3.1, -13.6], [4.4, -12.4], [4.3, -13.5], [3.2, -30.6], [3.9, -31.2], [3.1, -31.9], [4.6, -30.8], [4.5, -31.9], [3.8, -32.4]]) drums.push([x, 0, z, (x * 7 + z) % 3]);
+  place(k, `${RM}/ph_Barrel_01`, { height: 0.9 }, drums, (h) => retint(h, 0x2a3a52, 0.6, 0.4));
+  k.block(2.6, 5.0, -14.0, -11.8);
+  k.block(2.6, 5.0, -32.8, -30.2);
+  // caged sconces (Poly Haven industrial_caged_sconce) where the code cages hung; the cages hide when they land
+  const pos = new T.Vector3();
+  place(k, `${RM}/ph_industrial_caged_sconce`, { height: 0.55 }, o.cages.map((mm) => { pos.setFromMatrixPosition(mm); return [pos.x - 0.2, pos.y - 0.32, pos.z, PI / 2]; }), undefined, () => { o.cageInst.visible = false; });
+  // a concrete plinth course down both long walls, stone sills under the clerestories, rivets on every boiler collar
+  for (const s of [-1, 1]) k.box(0.2, 0.9, D - 0.4, s * (W / 2 - 0.38), 0.45, FZ - D / 2, plinthM);
+  const sills: T.Matrix4[] = [];
+  for (const s of [-1, 1]) for (let i = 0; i < 9; i++) sills.push(new T.Matrix4().makeTranslation(s * (W / 2 - 0.4), 10.9, FZ - (i + 0.5) * (D / 9)));
+  k.instances(new T.BoxGeometry(0.5, 0.18, 5.8), plinthM, sills);
+  const rv: T.Matrix4[] = [];
+  for (const zc of boilers) for (const dz of [-6, -2, 2, 6]) for (let j = 0; j < 56; j++) { const a = (j / 56) * 2 * PI; for (const e of [-0.13, 0.13]) rv.push(new T.Matrix4().makeTranslation(11 + Math.cos(a) * 4.27, 5.2 + Math.sin(a) * 4.27, zc + dz + e)); }
+  k.instances(new T.SphereGeometry(0.045, 5, 3), rivet, rv).castShadow = false;
+  // enamel plates: the boiler numbers on their flanks, danger under the catwalk, the safety plate by the panel
+  boilers.forEach((zc, i) => w6Sign(k, `BOILER No. ${i + 1}`, 2.6, 0.55, 7.45, 7.7, zc, -PI / 2, '#f4f1ea', '#1a1c22', 'W2 Archivo Expanded', false, '#f4f1ea'));
+  w6Sign(k, 'DANGER   HIGH PRESSURE STEAM', 3.8, 0.55, 3.2, 7.75, -1.5, 0, '#ffffff', '#b0241c', 'W2 Archivo Expanded', false, '#ffffff');
+  for (const dx of [-1.6, 1.6]) k.beam(v(3.2 + dx, 8.02, -1.5), v(3.2 + dx, 8.45, -1.5), 0.012, m.iron, 4);
+  w6Sign(k, 'NO SMOKING', 1.8, 0.42, -16.0, 2.9, FZ - 0.32, PI, '#ffffff', '#b0241c', 'W2 Archivo Expanded', false, '#ffffff');
+  // Firefly: a 1940s style safety poster on the front wall beside the panel (invisible until the file exists)
+  w6Plate(k, 'assets/museum/tex/steamworks/ff_safety_poster.webp', 2.4, 3.2, -13.5, 4.6, FZ - 0.32, PI);
+  // the illusion (one trick a room): PRESSURE HELD painted flat down the centre walk, stretched toward the great window
+  { const t = w6Type('PRESSURE HELD', ['#e6a626', '#f0efea']); if (t) anamorphTex(k, t, 0, FZ - 4.5, 2.3, 0.0, 0, 6, 3.6, 1.2, 0.85); }
+  k.egg(v(0, 0.4, FZ - 12), { id: 'steamworks-anamorph', title: 'A sign that is not there', text: 'PRESSURE HELD is painted flat on the concrete, stretched toward the great window, so that from the door it stands up off the floor like a sign. Walk onto it and it falls back into long smears of safety yellow. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'From just inside the door, look along the centre walk.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.5 });
+}
+
+/* ---------------- wave 6c (2026-11-24): NEWSPAPER ROW, built out ----------------
+   Real pendant lamps over all three aisles (Poly Haven hanging_industrial_lamp, CC0, in place of the code cones), ink
+   drums at the delivery end, spare reels on chocks with a hand truck by the door, the morgue's shelves of bound
+   volumes and its card cabinets, chairs round the copy desk with an oil lamp, spectacles and a glass on it (all Poly
+   Haven CC0). Built architecture: flared cast iron capitals and girders over the columns, a dark wood dado and a
+   plaster cornice down both long walls. Department signs, LATE CITY EDITION painted over the press. One trick: EXTRA
+   painted flat inside the door. */
+function w6News(k: Kit, ctx: RoomCtx, g: { W: number; D: number; FZ: number; ZB: number; H: number; PX: number }, m: Record<string, T.Material>, o: { shadeInst: T.InstancedMesh; shades: T.Matrix4[] }) {
+  const RM = 'newsprint', { W, D, FZ, ZB, H, PX } = g;
+  const timber = k.flat(0x4a3424, 0, 0.8);
+  // the pendants: a real lamp at every code shade, the cones hide when it lands
+  const pos = new T.Vector3();
+  place(k, `${RM}/ph_hanging_industrial_lamp`, { height: 1.1 }, o.shades.map((mm, i) => { pos.setFromMatrixPosition(mm); return [pos.x, pos.y - 0.45, pos.z, i * 0.9]; }), undefined, () => { o.shadeInst.visible = false; });
+  // ink drums at the delivery end, spare reels on chocks inside the door with a hand truck
+  place(k, `${RM}/ph_Barrel_01`, { height: 0.9 }, [[2.0, 0, -42.6, 0.2], [2.7, 0, -43.2, 1.1], [3.4, 0, -42.5, 2.0], [2.2, 0, -43.9, 0.7], [3.1, 0, -44.1, 1.6], [4.2, 0, -43.4, 0.4]], (h) => retint(h, 0x1a1a1e, 0.45, 0.5));
+  k.block(1.5, 4.7, -44.6, -42.0);
+  for (const z of [3.6, 5.4]) { k.mesh(new T.CylinderGeometry(0.72, 0.72, 1.1, 28).rotateZ(PI / 2), m.paperR, PX + 0.4, 0.86, z); k.cyl(0.12, 1.14, PX + 0.4, 0.86, z, m.iron, 0.12, 10).rotation.z = PI / 2; for (const dz of [-0.55, 0.55]) k.box(1.2, 0.18, 0.2, PX + 0.4, 0.09, z + dz, timber); }
+  k.block(PX - 0.3, PX + 1.1, 2.7, 6.3);
+  place(k, `${RM}/ph_hand_truck`, { height: 1.3 }, [[PX + 1.8, 0, 1.9, -0.5]]);
+  k.keepOut.push({ x: PX + 1.8, z: 1.9, r: 0.6 });
+  // the morgue: bound volumes on worn shelves against the far wall, card cabinets by the composing room
+  place(k, `${RM}/ph_wooden_bookshelf_worn`, { height: 2.1 }, [[9.5, 0, ZB + 0.65, 0], [10.9, 0, ZB + 0.65, 0], [12.3, 0, ZB + 0.65, 0], [13.7, 0, ZB + 0.65, 0]]);
+  k.block(8.8, 14.4, ZB + 0.3, ZB + 1.0);
+  place(k, `${RM}/ph_book_encyclopedia_set_01`, { width: 0.6 }, [[9.5, 2.1, ZB + 0.6, 0], [12.3, 2.1, ZB + 0.6, 0.1], [13.7, 2.1, ZB + 0.6, -0.1]]);
+  place(k, `${RM}/ph_drawer_cabinet`, { height: 1.9 }, [[W / 2 - 0.55, 0, -0.4, -PI / 2], [W / 2 - 0.55, 0, -1.7, -PI / 2]], (h) => retint(h, 0x6a4a30, 0.55, 0));
+  k.block(W / 2 - 0.85, W / 2, -2.4, 0.3);
+  // the copy desk: chairs round it, an oil lamp, spectacles and a reading glass on the copy
+  place(k, `${RM}/ph_SchoolChair_01`, { height: 0.95 }, [[11.6, 0, 4.4, 0], [13.4, 0, 4.4, 0], [11.6, 0, 7.6, PI], [13.4, 0, 7.6, PI]], (h) => retint(h, 0x4a3424, 0.6, 0.1));
+  k.keepOut.push({ x: 12.5, z: 4.4, r: 1.2 }, { x: 12.5, z: 7.6, r: 1.2 });
+  place(k, `${RM}/ph_Lantern_01`, { height: 0.34 }, [[13.6, 0.82, 5.6, 0]]);
+  place(k, `${RM}/ph_round_spectacles`, { width: 0.15 }, [[11.9, 0.86, 6.3, 0.6]]);
+  place(k, `${RM}/ph_magnifying_glass_01`, { height: 0.26 }, [[12.9, 0.82, 6.6, 0.4], [11.6, 0.95, -18.8, -0.5]]);
+  // cast iron capitals and girders over the columns, a dark wood dado and a plaster cornice down both long walls
+  for (const s of [-1, 1]) {
+    for (let i = 1; i < 7; i++) k.lathe([[0, 0], [0.3, 0], [0.32, 0.12], [0.42, 0.42], [0.58, 0.66], [0.62, 0.72], [0.62, 0.82], [0, 0.82]], s * 9.5, H - 1.32, FZ - i * (D / 7), m.ironG, 20);
+    k.box(0.5, 0.55, D - 1, s * 9.5, H - 0.78, FZ - D / 2, m.oak);
+    k.box(0.06, 1.15, D - 1, s * (W / 2 - 0.27), 0.58, FZ - D / 2, m.oak);
+    k.box(0.12, 0.08, D - 1, s * (W / 2 - 0.3), 1.18, FZ - D / 2, m.oak);
+    k.moulding([[0, 0], [0.12, 0.05], [0.16, 0.18], [0.3, 0.28], [0.34, 0.4], [0, 0.44]], D - 1, s * (W / 2 - 0.3), H - 2.45, FZ - D / 2, m.plaster, s > 0 ? PI : 0);
+  }
+  // the signs: the rooms named in painted lettering, LATE CITY EDITION over the press on the gallery wall
+  const hung = (t: string, w: number, x: number, y: number, z: number, r: number) => {
+    w6Sign(k, t, w, 0.48, x, y, z, r, '#f2e6c8', '#1a1410', 'W2 Archivo Expanded', false, '#f2e6c8');
+    const ax = Math.cos(r) * (w / 2 - 0.2), az = -Math.sin(r) * (w / 2 - 0.2);
+    for (const s of [-1, 1]) k.beam(v(x + s * ax, y + 0.24, z + s * az), v(x + s * ax, H - 0.5, z + s * az), 0.01, m.iron, 4);
+  };
+  hung('COMPOSING ROOM', 3.6, 12.2, 5.4, -0.4, 0);
+  hung('CITY DESK', 2.4, 12.5, 3.4, 6, 0);
+  hung('PRESS ROOM', 3.0, -5.5, 5.6, 4.5, 0);
+  w6Sign(k, 'LATE CITY EDITION', 13.0, 1.2, 6.98, 5.45, -18, -PI / 2, '#f2e6c8', '', 'W2 Archivo Expanded', false);
+  w6Sign(k, 'NO ADMITTANCE', 2.2, 0.4, -6.0, 2.6, ZB + 0.33, 0, '#ffffff', '#8a2a22', 'W2 Archivo Expanded', false, '#ffffff');
+  // Firefly: a sign writer's wall advertisement over the front pages board (invisible until the file exists)
+  w6Plate(k, 'assets/museum/tex/newsprint/ff_wall_sign.webp', 7.5, 2.4, W / 2 - 0.27, 7.6, 5.5, -PI / 2);
+  // the illusion (one trick a room): EXTRA painted flat inside the door, stretched toward the end window, so that from
+  // where you arrive it stands up off the planks like a bill posted in the air
+  { const t = w6Type('EXTRA', ['#f2e6c8', '#c9a55a']); if (t) anamorphTex(k, t, -1, 10, 2.3, 0.0, 0, 6.5, 3.2, 1.0, 0.85); }
+  k.egg(v(-1, 0.4, 1.5), { id: 'newsprint-anamorph', title: 'A sign that is not there', text: 'EXTRA is painted flat on the planks, stretched toward the end window, so that from the door it stands up off the floor like a bill posted in the air. Walk onto it and it falls back into long smears of ink. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Stand just inside the door and look along the floor.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+  void ctx;
+}

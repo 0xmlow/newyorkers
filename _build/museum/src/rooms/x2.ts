@@ -8,8 +8,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, personTag, type Kit, type Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
-import { street, blockFront } from './f';
-import { hero, standIn, hide } from './heroes';
+import { street, blockFront, paintTex, hsign, anamorphTex } from './f';
+import { hero, heroInstances, standIn, hide } from './heroes';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 
 /* a wall mount facing a viewing point on the floor */
@@ -109,6 +110,86 @@ function cab(k: Kit, yellow: T.Material, glass: T.Material, dark: T.Material, li
   return g;
 }
 
+/* ---------- THE BIG UPGRADE, wave 6d (2026-11-24): helpers for rooms 117 to 121 ----------
+   The wave 5 pattern (t.ts), kept local: scanned CC0 surfaces (Poly Haven) from assets/museum/tex/<room>/ that wear a
+   sensible colour until their maps land, real CC0 models from assets/museum/props/<room>/ placed once or many at a time
+   (more than six become instanced parts), signs in the house fonts and anamorphic floor type. Safe in node: the audit
+   builds with no DOM, so scans fall back to paint and the canvas work is skipped. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w6d = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w6d-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w6d.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w6d.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w6d-${room}-${id}`, e.s, 1 / metres, p);
+  if (!m.userData.w6d) {
+    m.userData.w6d = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?, rotX?, rotZ?]; more than six become instanced parts.
+   `then` gets the placed copies when they are separate objects (six or fewer), for the ones that move. */
+type At = [number, number, number, number, number?, number?, number?];
+function put(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: At[], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void, shadow = false) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    if (tweak) tweak(h);
+    /* small dressing does not cast: every caster is drawn again in each shadow pass, and the counter is the budget */
+    if (!shadow) h.traverse((c) => { c.castShadow = false; });
+    const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler();
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length);
+      at.forEach(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => ins.setAt(i, m.compose(v(x, y, z), q.setFromEuler(e.set(rx, r, rz, 'YXZ')), v(s, s, s))));
+      ins.commit();
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(rx, r, rz, 'YXZ'); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* Recolour every material of a loaded model, without touching the shared source. */
+function tint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.2) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Painted lettering for an anamorphic floor piece, in a house font, fitted to the canvas. */
+function floorType(text: string, fg: string, w = 1024, h = 256, font = 'W2 Archivo Expanded', stroke?: string) {
+  return paintTex(w, h, (g) => { g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } if (stroke) { g.strokeStyle = stroke; g.lineWidth = s * 0.08; g.lineJoin = 'round'; g.strokeText(text, w / 2, h / 2); } g.fillStyle = fg; g.fillText(text, w / 2, h / 2); }, [font]);
+}
+/* Chain link: a diamond mesh of galvanised wire on a clear ground, tiled in world space (one tile is 0.2 m, four diamonds). */
+let chainT: T.CanvasTexture | null = null;
+function chainLink(k: Kit, tintHex = 0xb8c0c8) {
+  if (!HAS_DOM) return k.flat(tintHex, 0.9, 0.3, { transparent: true, opacity: 0.45 });
+  if (!chainT) {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d')!;
+    g.strokeStyle = '#ffffff'; g.lineWidth = 5; g.lineCap = 'round';
+    for (let i = -2; i <= 2; i++) { g.beginPath(); g.moveTo(i * 64, 0); g.lineTo(i * 64 + 128, 128); g.stroke(); g.beginPath(); g.moveTo(i * 64 + 128, 0); g.lineTo(i * 64, 128); g.stroke(); }
+    chainT = new T.CanvasTexture(c); chainT.wrapS = chainT.wrapT = T.RepeatWrapping; chainT.anisotropy = 8;
+  }
+  return k.pbr('w6d-chainlink', { map: chainT }, 1 / 0.2, { color: tintHex, metalness: 0.85, roughness: 0.35, transparent: true, alphaTest: 0.35, side: T.DoubleSide });
+}
+
 /* ---------------- 112 THE LAUNDROMAT ---------------- */
 export const laundry: RoomDef = {
   id: 'laundry',
@@ -123,11 +204,13 @@ export const laundry: RoomDef = {
     k.sky({ top: 0x070a16, horizon: 0x1c2236, ground: 0x07080c, fog: 0.0035, stars: 320, env: 0.45 });
     k.hemi(0xb8c4e0, 0x141218, 0.42);
     k.sun(0x9fb0e0, 0.35, -40, 50, 30, false, 60);
-    const floorT = k.pbr('lauFloor', X.terrazzo(0xb9b4a6, 401), 1.3, { roughness: 0.5 }),
-      wall = k.pbr('lauWall', X.plaster(0xcfe0d6, 402), 0.5, { roughness: 0.9 }),
-      dado = k.pbr('lauDado', X.subwayTile(0xdad5c4, 0x6a6a62), 0.9, { roughness: 0.3 }),
-      ceil = k.pbr('lauCeil', X.plaster(0xf2f1ec, 404), 0.8, { roughness: 0.95, emissive: 0x8a9098, emissiveIntensity: 0.4 }),
-      brick = k.pbr('lauBrick', X.brick(0x8a5a48, 405), 0.28),
+    /* 2026-11-24 (wave 6d): scanned CC0 surfaces (Poly Haven): the diagonal beige floor tile every laundromat has, long white
+       wall tile below, painted plaster above and over the drop ceiling, red brick outside */
+    const floorT = sc(k, 'laundry', 'interior_tiles', 1.3, () => X.terrazzo(0xb9b4a6, 401), { roughness: 0.42, color: 0xf0e8da }, 0x9a8e7e),
+      wall = sc(k, 'laundry', 'painted_plaster_wall', 2.4, () => X.plaster(0xcfe0d6, 402), { roughness: 0.9, color: 0xd6ece0 }, 0x8a9a92),
+      dado = sc(k, 'laundry', 'long_white_tiles', 1.1, () => X.subwayTile(0xdad5c4, 0x6a6a62), { roughness: 0.28, color: 0xf6f2e8 }, 0xc8c4b8),
+      ceil = sc(k, 'laundry', 'painted_plaster_wall', 1.6, () => X.plaster(0xf2f1ec, 404), { roughness: 0.95, color: 0xffffff, emissive: 0x8a9098, emissiveIntensity: 0.4 }, 0xc8c8c4),
+      brick = sc(k, 'laundry', 'red_brick_03', 1.6, () => X.brick(0x8a5a48, 405), { color: 0xd8b8a8 }, 0x6a4a3e),
       cornice = k.pbr('nbCornice', X.plaster(0xb8ad9a, 3), 0.6),
       gate = k.pbr('lauGate', X.steel(0x6a7078, false, 406), 0.5, { metalness: 0.7, roughness: 0.5, stretch: 0.25 }),
       enamel = k.flat(0xe8e9e5, 0.15, 0.35),
@@ -250,9 +333,10 @@ export const laundry: RoomDef = {
     // the middle: two folding tables, rolling baskets, a bench of orange chairs at the window
     for (const x of [SX + 9, SX + 17]) { k.box(1.1, 0.06, 5, x, 0.9, 0, laminate); k.box(1.0, 0.84, 4.9, x, 0.42, 0, k.flat(0xd8d3c4, 0, 0.6)); k.block(x - 0.6, x + 0.6, -2.5, 2.5); k.box(0.5, 0.18, 0.7, x - 0.2, 1.02, -1.2, blue); k.box(0.6, 0.12, 0.5, x + 0.1, 0.99, 1.4, k.flat(0xf0e8d8, 0, 0.8)); }
     for (const [bx, bz] of [[SX + 6.4, -3.4], [SX + 13, 3.6], [SX + 20.5, -3.6], [SX + 11.2, -3.9]]) { k.box(0.62, 0.7, 0.9, bx, 0.6, bz, wire); for (const dx of [-0.31, 0.31]) for (const dz of [-0.45, 0.45]) k.cyl(0.04, 0.24, bx + dx, 0.12, bz + dz, dark, 0.04, 8); k.box(0.66, 0.03, 0.94, bx, 0.96, bz, chrome); k.keepOut.push({ x: bx, z: bz, r: 0.55 }); }
-    const seats: T.Matrix4[] = [], backs: T.Matrix4[] = [], legs: T.Matrix4[] = [];
-    for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = s * (3.2 + i * 0.95), x = SX + 1.1; seats.push(mat(x, 0.46, z, PI / 2)); backs.push(mat(x - 0.2, 0.78, z, PI / 2, 1, 1, 1, 0, 0.18)); for (const dx of [-0.18, 0.18]) for (const dz of [-0.18, 0.18]) legs.push(mat(x + dx, 0.22, z + dz)); k.keepOut.push({ x, z, r: 0.4 }); }
-    k.instances(new T.BoxGeometry(0.46, 0.05, 0.46), orange, seats); k.instances(new T.BoxGeometry(0.46, 0.5, 0.05), orange, backs); k.instances(new T.CylinderGeometry(0.014, 0.014, 0.44, 5), chrome, legs);
+    /* 2026-11-24 (wave 6d): the orange chairs at the window are real monobloc chairs now (Poly Haven, CC0), tinted the laundromat's orange */
+    const chairsAt: At[] = [];
+    for (const s of [-1, 1]) for (let i = 0; i < 4; i++) { const z = s * (3.2 + i * 0.95), x = SX + 1.1; chairsAt.push([x, 0, z, PI / 2 + (i % 2 ? 0.12 : -0.08)]); k.keepOut.push({ x, z, r: 0.4 }); }
+    put(k, 'laundry/ph_plastic_monobloc_chair_01', { height: 0.86 }, chairsAt, (o) => tint(o, 0xe2622a, 0.55, 0));
     // the change machine, the soap wall, the TV on its bracket, the attendant's counter
     k.box(0.7, 1.8, 0.5, SX + 1.0, 0.9, -D / 2 + 1.0, blue); k.box(0.5, 0.35, 0.02, SX + 1.0, 1.4, -D / 2 + 1.26, k.glow(0xdbe6ff)); k.sign('CHANGE', 0.6, 0.18, SX + 1.0, 1.05, -D / 2 + 1.26, '#0d0d0d', '#f4cf3c', 90, 0); k.keepOut.push({ x: SX + 1.0, z: -D / 2 + 1.0, r: 0.6 });
     k.box(1.3, 1.9, 0.42, SX + 1.0, 0.95, D / 2 - 1.0, enamel); k.box(1.1, 1.3, 0.04, SX + 1.0, 1.1, D / 2 - 1.22, glass);
@@ -313,7 +397,7 @@ export const laundry: RoomDef = {
     const shirts: T.Matrix4[] = []; for (let i = 0; i < 7; i++) shirts.push(mat(SX + 19.9 + i * 0.22, 1.42, -7.2));
     const shirtM = k.instances(new T.BoxGeometry(0.03, 0.62, 0.42), k.flat(0xffffff, 0, 0.8), shirts); shirts.forEach((_, i) => shirtM.setColorAt(i, cc.set([0xf0e8d8, 0x2a4aa8, 0x9a2a2a, 0xd8d0c0, 0x3a3a40, 0xe6b23a, 0xf4f4f0][i])));
     k.keepOut.push({ x: SX + 20.6, z: -7.2, r: 0.9 });
-    for (const s of [-1, 1]) { const p = k.box(0.42, 0.62, 0.02, SX + 4.6, 0.3, -1.0 + s * 0.1, k.flat(0xf2c230, 0, 0.5)); p.rotation.x = s * 0.18; } k.keepOut.push({ x: SX + 4.6, z: -1.0, r: 0.4 });
+    put(k, 'laundry/ph_WetFloorSign_01', { height: 0.66 }, [[SX + 4.6, 0, -1.0, 0.4]]); k.keepOut.push({ x: SX + 4.6, z: -1.0, r: 0.4 });
     for (const [jx, jz, c] of [[SX + 9.2, 1.9, 0xe0402a], [SX + 8.8, 2.1, 0x2a5ac8], [SX + 17.3, -1.8, 0xf2b52a], [SX + 16.8, -2.0, 0x3aa05a]]) k.cyl(0.09, 0.28, jx, 1.07, jz, k.flat(c, 0, 0.5), 0.1, 10);
     // dryer exhaust breathing out of the vents above the sign into the cold
     for (const z of [-6, 6]) k.box(0.3, 0.3, 0.5, SX - 0.15, 6.35, z, chrome);
@@ -333,6 +417,38 @@ export const laundry: RoomDef = {
     k.egg(v(gx, 1.8, gz), { id: 'garden', title: 'The garden apartment', year: '1917', text: 'The Queensboro Corporation coined the term garden apartment in 1917 for its first big Jackson Heights complex, planned around shared gardens. In 1993 the Landmarks Preservation Commission made about 36 blocks of the neighbourhood a historic district, then only the second in Queens.', clue: 'Across the avenue, a gate opens onto green that nobody owns alone.', source: { name: 'Jackson Heights Beautification Group', url: 'https://www.jhbg.org/history-of-jackson-heights' } }, { r: 1.8 });
     k.egg(plaza, { id: 'plaza', title: 'Diversity Plaza', year: '2012', text: 'In fall 2012 the city closed 37th Road to cars between Broadway and 74th Street and opened an interim plaza, now the public square of Jackson Heights. Rebuilt in permanent materials, it reopened in summer 2018.', clue: 'A green street sign at the curb points to the square everyone shares.', source: { name: 'NYC Street Design Manual', url: 'https://www.nycstreetdesign.info/studies/diversity-plaza' } });
     k.egg(globe, { id: 'unisphere', title: 'The globe at the end of the line', year: '1964', room: 'unisphere', text: "Out along the 7, in Flushing Meadows Corona Park, stands the Unisphere, the stainless steel Earth commissioned for the 1964 to 1965 World's Fair. It was designated an official city landmark in 1995.", clue: 'Someone left a tiny world on the drop off counter.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/flushing-meadows-corona-park/highlights/12761' } });
+    /* ---- 2026-11-24 (wave 6d): the laundromat fitted out ----
+       A drop ceiling of white T bar with a housing round every tube, two ceiling fans turning over the folding tables, the
+       window lettered in the house font, hand written notices over the washers, a condenser on the brick, the cans on the
+       sidewalk and a camera in the corner. All models Poly Haven, CC0. One trick (rule 9): SPIN CYCLE painted flat on the
+       tile just inside the door stands up as a sign from the doorway. */
+    {
+      const tbar = k.flat(0xf2f2ee, 0.3, 0.5);
+      for (let z = -D / 2 + 0.6; z < D / 2 - 0.1; z += 0.6) k.box(W - 0.4, 0.025, 0.024, SX + W / 2, H - 0.012, z, tbar);
+      for (let x = SX + 1.2; x < SX + W - 0.2; x += 1.2) k.box(0.024, 0.025, D - 0.4, x, H - 0.012, 0, tbar);
+      const hous: T.Matrix4[] = [];
+      for (let x = SX + 3; x < SX + W - 1; x += 3.5) for (const z of [-6, -2, 2, 6]) hous.push(mat(x, H - 0.01, z));
+      k.instances(new T.BoxGeometry(1.26, 0.02, 0.62), k.flat(0xe8ecee, 0.6, 0.35), hous);
+      // two fans over the folding tables
+      put(k, 'laundry/ph_ceiling_fan', { width: 1.3 }, [[SX + 9, H - 0.48, 0, 0], [SX + 17, H - 0.48, 0, 0.6]], undefined, (os) => { if (!ctx.reduced) k.ticks.push((t) => os.forEach((o, i) => { o.rotation.y = t * (2.2 + i * 0.3); })); });
+      // the window lettered for the street, a hand written card taped in the corner
+      hsign(k, 'SELF SERVICE  ·  DROP OFF  ·  WASH & FOLD', 6.6, 0.42, SX - 0.07, 2.95, -5.3, -PI / 2, { fg: '#f4f2ea', size: 0.62 });
+      hsign(k, 'WASH $4.50  ·  DRY 25¢ / 8 MIN', 6.6, 0.42, SX - 0.07, 2.95, 5.3, -PI / 2, { fg: '#f4f2ea', size: 0.62 });
+      hsign(k, 'attendant on duty', 1.3, 0.34, SX - 0.07, 1.25, 7.6, -PI / 2, { fg: '#1a1a1e', bg: '#f6f2e4', font: 'W2 Permanent Marker', size: 0.6 });
+      hsign(k, 'no dyeing in machines', 1.7, 0.36, SX + W - 0.17, 1.72, -6.2, -PI / 2, { fg: '#1a1a1e', bg: '#f6f2e4', font: 'W2 Permanent Marker', size: 0.6 });
+      hsign(k, 'please take clothes out promptly', 2.1, 0.36, SX + W - 0.17, 1.72, 6.2, -PI / 2, { fg: '#b41d1d', bg: '#f6f2e4', font: 'W2 Permanent Marker', size: 0.56 });
+      // a condenser on the brick between the windows, the cans on the sidewalk, a camera in the back corner
+      put(k, 'laundry/ph_exterior_aircon_unit', { width: 1.1 }, [[SX - 0.2, H + 4.35, -6, -PI / 2], [SX - 0.2, H + 4.35, 3, -PI / 2]]);
+      put(k, 'laundry/ph_metal_trash_can', { width: 1.5 }, [[11.7, 0, -6.6, PI / 2]]); k.keepOut.push({ x: 11.7, z: -6.6, r: 0.9 });
+      put(k, 'laundry/ph_security_camera_01', { height: 0.3 }, [[SX + W - 0.5, H - 0.32, D / 2 - 0.5, PI * 0.75]]);
+      put(k, 'laundry/ph_plastic_crate_01', { height: 0.3 }, [[SX + W - 4.0, 0, -D / 2 + 1.35, 0.2], [SX + W - 4.0, 0.3, -D / 2 + 1.35, -0.1], [SX + W - 4.5, 0, -D / 2 + 1.4, 1.4]], (o) => tint(o, 0x2a5ac8, 0.6, 0));
+      k.keepOut.push({ x: SX + W - 4.2, z: -D / 2 + 1.4, r: 0.5 });
+      // one trick: SPIN CYCLE painted flat on the tile stands up as a sign from the doorway
+      if (HAS_DOM) anamorphTex(k, floorType('SPIN CYCLE', '#f4cf3c', 1024, 256, 'W2 Archivo Expanded', '#1a1a1e'), SX + 1.2, 0, 2.8, 0, -PI / 2, 4, 3.6, 1.0, 0.9);
+      k.egg(v(SX + 6.5, 0.3, 0), { id: 'laundry-spin-cycle', title: 'Letters that stand up', text: 'SPIN CYCLE is painted flat on the floor and stretched along it, so from one spot in the doorway it seems to stand upright. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Stand in the doorway and look down the aisle.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+      // Firefly plate queued: a backlit detergent ad over the change machine (a dim panel until it lands)
+      fireflyPlate(k, 'assets/museum/tex/laundry/ff_lau_lightbox.webp', 1.4, 0.8, SX + 1.0, 3.7, -D / 2 + 0.17, 0, k.glow(0x9ab0c8, 0.9), true);
+    }
     // the hang: enamel panels above the dryers and the washers, the community board over the window, the census as the notice wall
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const x = SX + 3.5 + i * 4.0; mounts.push(M(x, 3.35, s * (D / 2 - 0.2), x, s * 3.0, 3.4, 1.9, 'enamel', true)); }
@@ -356,9 +472,11 @@ export const taxi: RoomDef = {
     k.sky({ top: 0x6f94c4, horizon: 0xf2c896, ground: 0x4a4038, fog: 0.0028, sun: { az: 3.3, el: 0.16, color: 0xffc08a, size: 22 }, haze: 0.5, env: 0.85 });
     k.hemi(0xe8ecff, 0x5a4a3a, 0.95);
     k.sun(0xffb073, 2.6, -34, 22, -90, false, 80);
-    const conc = k.pbr('txFloor', X.concrete(0x8c8d89, 421), 0.3, { roughness: 0.75 }),
-      brick = k.pbr('txBrick', X.brick(0x7a5040, 422), 0.28),
-      block = k.pbr('txBlock', X.ashlar(0xb9b4a4, 423, 2), 0.55, { roughness: 0.95 }),
+    /* 2026-11-24 (wave 6d): scanned CC0 surfaces (Poly Haven): an oil stained garage floor, the old factory brick outside and
+       the same brick painted cream inside, corrugated steel */
+    const conc = sc(k, 'taxidispatch', 'garage_floor', 3.0, () => X.concrete(0x8c8d89, 421), { roughness: 0.72, color: 0xc8c4b8 }, 0x6a6660),
+      brick = sc(k, 'taxidispatch', 'factory_brick', 1.1, () => X.brick(0x7a5040, 422), { color: 0xe0c0a8 }, 0x6a4a3a),
+      block = sc(k, 'taxidispatch', 'factory_brick', 1.1, () => X.ashlar(0xb9b4a4, 423, 2), { roughness: 0.9, color: 0xfff4e0 }, 0x9a9488),
       corr = k.pbr('txDoor', X.steel(0x8a8e92, false, 424), 0.6, { metalness: 0.6, roughness: 0.5, stretch: 0.2 }),
       roofM = k.flat(0x2a2c30, 0.4, 0.7),
       steel = k.flat(0x4a525c, 0.8, 0.45),
@@ -401,7 +519,10 @@ export const taxi: RoomDef = {
     for (const zc of [-18.6, -6, 6, 18.6]) { k.box(0.2, 1.3, 3.2, GX - 0.2, 7.0, zc, cornice); k.box(0.06, 1.1, 3.0, GX - 0.32, 7.0, zc, glassDark); }
     const door = k.mesh(boxUV(new T.BoxGeometry(0.16, 5.0, 6.3), 0.6), corr, GX + 0.1, 2.55, -12, true); k.block(GX - 0.3, GX + 0.3, -15.2, -8.8);
     // the down door rolls up for a cab now and then, and comes back down
-    if (!ctx.reduced) k.ticks.push((t) => { const c = (t % 30) / 30, o = c < 0.1 ? c / 0.1 : c < 0.45 ? 1 : c < 0.55 ? 1 - (c - 0.45) / 0.1 : 0, s = 1 - 0.8 * o; door.scale.y = s; door.position.y = 5.05 - 2.5 * s; });
+    /* 2026-11-24 (wave 6d): the door is a real roller shutter (Poly Haven, CC0) fitted to the opening; the box stands in until it loads */
+    let shutter: T.Object3D | null = null;
+    put(k, 'taxidispatch/ph_rollershutter_door', { box: [6.3, 5.0, 0.2] }, [[GX + 0.1, 0.05, -12, PI / 2]], undefined, (os) => { shutter = os[0]; door.visible = false; }, true);
+    if (!ctx.reduced) k.ticks.push((t) => { const c = (t % 30) / 30, o = c < 0.1 ? c / 0.1 : c < 0.45 ? 1 : c < 0.55 ? 1 - (c - 0.45) / 0.1 : 0, s = 1 - 0.8 * o; door.scale.y = s; door.position.y = 5.05 - 2.5 * s; if (shutter) { shutter.scale.y = s; shutter.position.y = 5.05 - 5.0 * s; } });
     k.moulding([[0, 0], [0.7, 0], [0.8, 0.2], [0.5, 0.35], [0.6, 0.55], [0.25, 0.75], [0, 0.85]], GD + 0.4, GX - 0.05, H + 0.9, 0, cornice, 0);
     k.box(0.3, 1.5, 24, GX - 0.25, H + 2.2, 0, dark);
     k.sign('L.I.C. CAB CORP.  ·  MEDALLION GARAGE  ·  DISPATCH 24 HRS', 22, 1.3, GX - 0.42, H + 2.2, 0, '#141416', '#f2c230', 88, -PI / 2, { border: true });
@@ -413,7 +534,8 @@ export const taxi: RoomDef = {
     k.instances(new T.BoxGeometry(0.08, 1.9, 0.08), steel, diags);
     for (const x of [GX + 8, GX + 20, GX + 32]) k.box(6, 0.06, GD - 3, x, H - 0.02, 0, sky);
     for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) { const x = GX + 6 + i * 9.5, z = -14 + j * 14; shades.push(mat(x, H - 2.3, z)); if ((i + j) % 2 === 0) k.point(x, H - 2.9, z, 0xffe6b0, 30, 22); }
-    k.instances(new T.ConeGeometry(0.55, 0.5, 14, 1, true), steelL, shades);
+    /* 2026-11-24 (wave 6d): the shades are real enamel factory pendants (Poly Haven, CC0) hung from the bottom chords */
+    put(k, 'taxidispatch/ph_hanging_industrial_lamp', { height: 1.0 }, shades.map((m): At => { const p = new T.Vector3().setFromMatrixPosition(m); return [p.x, H - 2.3, p.z, 0]; }));
     // the fan: seven bays on an arc, yellow lines to each, a number hanging over every one
     const CX = 28, R = 22;
     const bays: { x: number; z: number; th: number }[] = [];
@@ -464,19 +586,21 @@ export const taxi: RoomDef = {
         pc.lamp.position.y = pc.y + (h.userData.size as T.Vector3).y + 0.1;
       });
     });
-    const tires: T.Matrix4[] = [];
-    for (const [tx, tz, n] of [[30, -19.5, 5], [32, -19.5, 4], [34, -19.5, 6]]) for (let i = 0; i < n; i++) tires.push(mat(tx, 0.18 + i * 0.24, tz, 0, 1, 1, 1, PI / 2));
-    k.instances(new T.TorusGeometry(0.33, 0.12, 8, 18), rubber, tires);
+    /* 2026-11-24 (wave 6d): the tire stacks are real worn tyres (Poly Haven, CC0), laid flat and stacked a little out of true */
+    const tyres: At[] = [];
+    for (const [tx, tz, n] of [[30, -19.5, 5], [32, -19.5, 4], [34, -19.5, 6]]) for (let i = 0; i < n; i++) { const r = i * 0.9 + tx; tyres.push([tx + Math.sin(r) * 0.04, 0.11 + i * 0.22, tz - 0.41 + Math.cos(r) * 0.04, 0, 1, PI / 2]); }
+    put(k, 'taxidispatch/ph_old_tyre', { width: 0.82 }, tyres);
     for (const [tx, tz] of [[30, -19.5], [32, -19.5], [34, -19.5]]) k.keepOut.push({ x: tx, z: tz, r: 0.6 });
-    k.box(1.4, 1.0, 0.6, 20, 0.5, -19.6, red); k.box(1.4, 0.05, 0.62, 20, 1.03, -19.6, dark); k.keepOut.push({ x: 20, z: -19.6, r: 0.9 });
-    for (let i = 0; i < 4; i++) { k.cyl(0.3, 0.9, 36.5 + i * 0.7, 0.45, 20.5, i % 2 ? dark : k.flat(0x2a5aa8, 0.2, 0.6), 0.3, 12); }
+    put(k, 'taxidispatch/ph_metal_tool_chest', { height: 1.05 }, [[20, 0, -19.7, 0]]); k.keepOut.push({ x: 20, z: -19.6, r: 0.9 });
+    put(k, 'taxidispatch/ph_Barrel_01', { height: 0.92 }, [0, 1, 2, 3].map((i): At => [36.5 + i * 0.7, 0, 20.5, i * 1.3]));
     k.keepOut.push({ x: 37.5, z: 20.5, r: 1.6 });
     // the dispatcher: a glass booth on a step, the radio, the antenna up through the roof, a beacon on top
     const BX = 17.5, BZ = -17.5;
     k.box(4.4, 0.36, 3.6, BX, 0.18, BZ, block);
     k.box(4.0, 1.2, 3.2, BX, 0.96, BZ, dark); k.box(4.0, 1.6, 3.2, BX, 2.36, BZ, glass); k.box(4.2, 0.2, 3.4, BX, 3.26, BZ, dark);
     for (const [dx, dz] of [[-1.95, -1.55], [1.95, -1.55], [-1.95, 1.55], [1.95, 1.55]]) k.box(0.1, 2.9, 0.1, BX + dx, 1.8, BZ + dz, steelL);
-    k.box(0.5, 0.3, 0.3, BX + 1.2, 1.7, BZ, dark); k.box(0.02, 0.18, 0.2, BX + 1.46, 1.72, BZ, k.glow(0x9ad0ff));
+    put(k, 'taxidispatch/ph_vintage_radio_transceiver', { width: 0.52 }, [[BX + 1.25, 1.56, BZ, -PI / 2]]);
+    put(k, 'taxidispatch/ph_metal_stool_01', { height: 0.8 }, [[BX - 0.6, 0.36, BZ + 0.4, 0.3]]);
     k.point(BX, 2.4, BZ, 0xffd090, 8, 5);
     k.sign('"DISPATCH"', 2.6, 0.5, BX, 3.0, BZ + 1.62, 'transparent', '#f2c230', 120, 0);
     k.keepOut.push({ x: BX, z: BZ, r: 2.9 });
@@ -490,6 +614,31 @@ export const taxi: RoomDef = {
     if (!ctx.reduced) { let out = 27, inn = 14, last = 0; k.ticks.push((t) => { if (t - last > 4.5) { last = t; if (Math.sin(t * 1.7) > 0) out++; else inn++; (board.material as T.MeshBasicMaterial).map = X.signText(`SHIFT CHANGE 5:00  ·  OUT ${out}  ·  IN ${inn}`, 1024, 128, '#141416', '#f2c230', 88, { border: true }); (board.material as T.MeshBasicMaterial).needsUpdate = true; } }); }
     k.censusWall({ x: 23, y: 3.4, z: -GD / 2 + 0.24, rotY: 0, cols: 14, rows: 4, tile: 0.5, gap: 0.05, start: ctx.wallStart(6400, 56), pieces: ctx.all, backing: dark });
     k.sign('THE MEDALLION WALL  ·  EVERY DRIVER ON THE FIVE O\'CLOCK', 7.6, 0.5, 23, 5.9, -GD / 2 + 0.24, 'transparent', '#f2c230', 60, 0);
+    /* ---- 2026-11-24 (wave 6d): the garage worked in ----
+       Coil housings over the two open doors, condensers on the brick, NO PARKING plates on the piers for the street, the
+       mechanic's corner by the lift (tool cart, tyre pump, jerry cans, oil tins on the chest, boxes), a ladder, a hand truck,
+       the clock over the medallion wall, the check in plate on the booth. All models Poly Haven, CC0. One trick (rule 9):
+       SHIFT CHANGE painted flat on the oily floor stands up as a sign from the middle door. */
+    {
+      for (const zc of [0, 12]) { const coil = k.cyl(0.34, 6.3, GX + 0.62, 5.3, zc, steel, 0.34, 16); coil.rotation.x = PI / 2; k.box(0.08, 0.8, 6.5, GX + 1.0, 5.3, zc, corr); }
+      put(k, 'taxidispatch/ph_exterior_aircon_unit', { width: 1.2 }, [[GX - 0.42, 6.05, 12, -PI / 2], [GX - 0.42, 6.05, -12, -PI / 2]]);
+      for (const z of [-18.6, 18.6]) hsign(k, 'NO PARKING  ·  GARAGE ENTRANCE', 2.6, 0.62, GX - 0.28, 3.3, z, -PI / 2, { fg: '#b8262a', bg: '#f4f0e8', border: '#b8262a', size: 0.5, lit: false });
+      put(k, 'taxidispatch/ph_tool_cart', { width: 1.1 }, [[27.2, 0, -18.6, 0.2]]); k.keepOut.push({ x: 27.2, z: -18.6, r: 0.8 });
+      put(k, 'taxidispatch/ph_tire_pump', { height: 0.6 }, [[21.6, 0, -18.4, 0.6]]);
+      put(k, 'taxidispatch/ph_metal_jerrycan', { height: 0.48 }, [[25.6, 0, -20.2, 0.1], [25.95, 0, -20.25, -0.2]], (o) => tint(o, 0xb8262a, 0.5, 0.4));
+      put(k, 'taxidispatch/ph_oil_tin', { height: 0.22 }, [[19.75, 1.05, -19.7, 0], [20.05, 1.05, -19.65, 0.8], [20.3, 1.05, -19.75, 2]]);
+      put(k, 'taxidispatch/ph_cardboard_box_01', { width: 0.5 }, [[21.6, 0, -20.6, 0.1], [21.6, 0.44, -20.6, -0.15], [22.2, 0, -20.7, 0.3]]); k.keepOut.push({ x: 21.8, z: -20.6, r: 0.6 });
+      put(k, 'taxidispatch/ph_ladder_sectioned_01', { height: 3.2 }, [[GX + 0.42, 0, -20.4, PI / 2, 1, -0.12]]);
+      put(k, 'taxidispatch/ph_hand_truck', { height: 1.3 }, [[GX + 1.0, 0, 9.4, -PI / 2 + 0.3]]); k.keepOut.push({ x: GX + 1.0, z: 9.4, r: 0.5 });
+      put(k, 'taxidispatch/ph_wall_clock', { width: 0.62 }, [[23, 6.45, -GD / 2 + 0.22, 0]]);
+      hsign(k, 'CHECK IN  ·  CHECK OUT', 3.2, 0.42, BX, 1.0, BZ + 1.62, 0, { fg: '#f2c230', bg: '#141416', size: 0.6 });
+      hsign(k, 'SPEED LIMIT 5 MPH', 2.4, 0.5, GX + GW - 0.24, 5.6, 0, -PI / 2, { fg: '#141416', bg: '#f2c230', border: '#141416', size: 0.55, lit: false });
+      // one trick: SHIFT CHANGE painted flat on the floor stands up as a sign from the middle door
+      if (HAS_DOM) anamorphTex(k, floorType('SHIFT CHANGE', '#f2c230', 1024, 256, 'W2 Archivo Expanded', '#141416'), GX + 1.5, 0, 3, 0, -PI / 2, 4.5, 6, 1.3, 0.88);
+      k.egg(v(GX + 7.5, 0.3, 0), { id: 'taxidispatch-shift-change', title: 'Letters that stand up', text: 'SHIFT CHANGE is painted flat on the garage floor and stretched along it, so from one spot in the middle door it seems to stand upright. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Stand in the middle door and look into the garage.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
+      // Firefly plate queued: a hand painted garage mural over the north door (painted brick until it lands)
+      fireflyPlate(k, 'assets/museum/tex/taxidispatch/ff_tx_mural.webp', 5.6, 1.7, GX + 0.29, 6.45, 12, PI / 2, block);
+    }
     // the people: drivers waiting on their cabs, the sidewalk across the boulevard, a cab pulling in
     k.crowd([v(17, 0, -6), v(24, 0, 2), v(31, 0, -12), v(21, 0, -13)], 9, { seed: 427, speed: 0.3, spread: 1.4, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0x151517, 0xc9a25a, 0x2b5f6e] });
     k.crowd([v(-11, 0, 60), v(-11, 0, -60)], 10, { seed: 428, speed: 0.9, spread: 1.6, animate: !ctx.reduced });
@@ -572,10 +721,12 @@ export const flowercold: RoomDef = {
     k.sky({ top: 0x0a1130, horizon: 0x3c3458, ground: 0x08080c, fog: 0.0034, stars: 260, env: 0.4 });
     k.hemi(0xcfe0ff, 0x101418, 0.5);
     k.sun(0x8090c0, 0.25, -40, 40, 30, false, 60);
-    const floorT = k.pbr('fcFloor', X.concrete(0x6e7478, 441), 0.3, { roughness: 0.32, metalness: 0.1 }),
-      panel = k.pbr('fcPanel', X.steel(0xd6dce0, false, 442), 0.5, { metalness: 0.3, roughness: 0.55 }),
-      panelD = k.pbr('fcPanelD', X.steel(0xb8c0c6, false, 443), 0.5, { metalness: 0.3, roughness: 0.6 }),
-      brick = k.pbr('fcBrick', X.brick(0x6a4a40, 444), 0.28),
+    /* 2026-11-24 (wave 6d): scanned CC0 surfaces (Poly Haven): a wet sealed concrete floor, ribbed steel insulated panels for the
+       cold room, old red brick above the shop */
+    const floorT = sc(k, 'flowercold', 'concrete_floor_02', 2.6, () => X.concrete(0x6e7478, 441), { roughness: 0.22, metalness: 0.1, color: 0xb8c4cc }, 0x5a6064),
+      panel = sc(k, 'flowercold', 'corrugated_iron', 1.4, () => X.steel(0xd6dce0, false, 442), { metalness: 0.3, roughness: 0.5, color: 0xf4f8fa }, 0xb8c0c6),
+      panelD = sc(k, 'flowercold', 'corrugated_iron', 1.4, () => X.steel(0xb8c0c6, false, 443), { metalness: 0.3, roughness: 0.6, color: 0xd8e0e6 }, 0x9aa2a8),
+      brick = sc(k, 'flowercold', 'brick_wall_02', 1.3, () => X.brick(0x6a4a40, 444), { color: 0xc8a898 }, 0x5a4038),
       cornice = k.pbr('nbCornice', X.plaster(0xb8ad9a, 3), 0.6),
       awning = k.pbr('fcAwning', X.velvet(0x1f5a3a), 0.5, { roughness: 0.9 }),
       awningR = k.pbr('fcAwningR', X.velvet(0x8a2a2a), 0.5, { roughness: 0.9 }),
@@ -743,6 +894,32 @@ export const flowercold: RoomDef = {
     const haulAt = (t: number) => { const c = (t * 0.06) % 2, u = c < 1 ? c : 2 - c, s = u * u * (3 - 2 * u), d = c < 1 ? 1 : -1; haul.getPointAt(s, hauler.position); const tg = haul.getTangentAt(s); hauler.rotation.y = Math.atan2(tg.x * d, tg.z * d); };
     haulAt(7);
     if (!ctx.reduced) k.ticks.push((t) => haulAt(t));
+    /* ---- 2026-11-24 (wave 6d): the wholesaler worked in ----
+       The hand truck is a real one now (its buckets ride on it), potted palms and ferns out front, crates and cartons by the
+       dock, a sandwich board, the cold room's thermometer in the window and over the door, a watering can, a broom and
+       rubber boots by the curtain. All models Poly Haven, CC0. One trick (rule 9): KEEP COLD painted flat on the wet floor
+       stands up as a sign from just inside the strip curtain. */
+    {
+      put(k, 'flowercold/ph_hand_truck', { height: 1.35 }, [[0, 0, 0, PI]], undefined, (os) => { truck.add(os[0]); os[0].position.set(0, 0, -0.05); truck.children.slice(0, 4).forEach((c) => { c.visible = false; }); });
+      put(k, 'flowercold/ph_potted_plant_02', { height: 1.1 }, [[11.85, 0, -2.7, 0.3], [11.85, 0, -5.4, 1.9], [11.85, 0, -7.4, 3.1], [-9.7, 0, 34, 0.8]]);
+      for (const z of [-2.7, -5.4, -7.4]) k.keepOut.push({ x: 11.85, z, r: 0.5 });
+      put(k, 'flowercold/ph_plastic_crate_02', { width: 0.56 }, [[11.7, 0, 9.4, 0.1], [11.7, 0.28, 9.4, -0.12], [11.7, 0.56, 9.42, 0.05], [11.65, 0, 10.0, 0.2]], (o) => tint(o, 0x1f5a3a, 0.6, 0));
+      put(k, 'flowercold/ph_wooden_crate_01', { width: 0.84 }, [[11.9, 0, 15.6, PI / 2], [11.9, 0.36, 15.62, PI / 2 + 0.06]]);
+      put(k, 'flowercold/ph_cardboard_box_01', { width: 0.5 }, [[12.2, 0, 16.5, 0.2], [12.25, 0.34, 16.5, -0.1]]);
+      for (const [x, z] of [[11.7, 9.7], [11.9, 15.6], [12.2, 16.5]]) k.keepOut.push({ x, z, r: 0.6 });
+      put(k, 'flowercold/ph_standing_chalkboard_01', { height: 1.3 }, [[11.0, 0, 2.7, -PI / 2]]); k.keepOut.push({ x: 11.0, z: 2.7, r: 0.6 });
+      put(k, 'flowercold/ph_watering_can_metal_01', { height: 0.3 }, [[SX + 1.5, 0, -6.9, 0.7]]);
+      put(k, 'flowercold/ph_plastic_broom', { height: 1.25 }, [[SX + 0.42, 0, -7.4, PI / 2, 1, 0.16]]);
+      put(k, 'flowercold/ph_rubber_boots', { width: 0.6 }, [[SX + 0.9, 0, 7.3, 0.2]]);
+      // the thermometer: a red readout over the door outside and on the panel inside
+      for (const [x, ry] of [[SX - 0.22, -PI / 2], [SX + 0.22, PI / 2]] as const) { k.box(0.06, 0.34, 0.84, x - Math.sign(ry) * 0.01, 4.45, -1.4, dark); hsign(k, '34°F', 0.74, 0.26, x + Math.sign(ry) * 0.025, 4.45, -1.4, ry, { fg: '#ff4a3a', font: 'W2 JetBrains Mono', size: 0.9 }); }
+      hsign(k, 'KEEP DOOR CLOSED', 2.2, 0.3, SX + 0.2, 3.55, 0, PI / 2, { fg: '#0d0d0d', bg: '#f2c230', size: 0.6, lit: false });
+      // one trick: KEEP COLD painted flat on the wet floor stands up as a sign from inside the curtain
+      if (HAS_DOM) anamorphTex(k, floorType('KEEP COLD', '#dff4ff', 1024, 256, 'W2 Archivo Expanded', '#1f5a3a'), SX + 1.0, 0, 2.8, 0, -PI / 2, 3, 3.4, 1.0, 0.85);
+      k.egg(v(SX + 4.6, 0.3, 0), { id: 'flowercold-keep-cold', title: 'Letters that stand up', text: 'KEEP COLD is painted flat on the floor and stretched along it, so from one spot just inside the strip curtain it seems to stand upright. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Step through the curtain and look down the aisle.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+      // Firefly plate queued: a seed catalogue wall of flowers on the panel inside the door (steel panel until it lands)
+      fireflyPlate(k, 'assets/museum/tex/flowercold/ff_fc_catalogue.webp', 4.4, 2.2, SX + 0.18, 3.6, -4.9, PI / 2, panel);
+    }
     // the history of the block
     k.egg(trade, { id: 'bradshaw', title: 'The first wholesale houses', year: '1891', text: 'Wholesale cut flower companies began moving to 28th Street in the late 1870s. George E. Bradshaw and John R. Hartman opened one of the very first wholesale florist houses in 1891, at 53 West 28th Street.', clue: 'The trade announces itself in cream letters under the awning.', source: { name: "New York's Historic Floral District", url: 'https://www.flowermuseum.org/our-history' } });
     k.egg(gutt, { id: 'guttman', title: 'Guttman and Raynor', year: '1894', text: 'Guttman and Raynor, wholesale florists, set up at 101 West 28th Street in 1894. Soon the district counted over 200 wholesalers and suppliers, spread from 23rd Street to 34th Street.', clue: 'Across the street, an old enamel blade still takes orders.', source: { name: "New York's Historic Floral District", url: 'https://www.flowermuseum.org/our-history' } });
@@ -773,16 +950,18 @@ export const handball: RoomDef = {
     k.sky({ top: 0x5f86c0, horizon: 0xf4b978, ground: 0x4a4238, fog: 0.0026, sun: { az: 1.1, el: 0.12, color: 0xffb073, size: 22 }, haze: 0.6, env: 0.9 });
     k.hemi(0xdfe6ff, 0x5a4a3a, 0.8);
     k.sun(0xffb073, 2.7, 70, 15, -46, true, 90);
-    const court = k.pbr('hbCourt', X.asphalt(0x2c3034), 0.15, { roughness: 0.9 }),
-      wallC = k.pbr('hbWall', X.concrete(0xd6d0c0, 461), 0.22, { roughness: 0.85 }),
-      wallB = k.pbr('hbWallB', X.concrete(0xb8b0a0, 462), 0.22, { roughness: 0.9 }),
+    /* 2026-11-24 (wave 6d): scanned CC0 surfaces (Poly Haven): worn asphalt for the courts, rough poured concrete for the walls,
+       hex pavers for the park, old red brick for the tenement; the chain link is a real diamond mesh, not a grey veil */
+    const court = sc(k, 'handball', 'worn_asphalt', 3.0, () => X.asphalt(0x2c3034), { roughness: 0.9, color: 0x9a9ea2 }, 0x2c3034),
+      wallC = sc(k, 'handball', 'rough_concrete', 2.4, () => X.concrete(0xd6d0c0, 461), { roughness: 0.85, color: 0xe4e4e0 }, 0xb8b6b0),
+      wallB = sc(k, 'handball', 'rough_concrete', 2.4, () => X.concrete(0xb8b0a0, 462), { roughness: 0.9, color: 0xc8c8c2 }, 0x9a9890),
       band = k.flat(0x2a4aa8, 0, 0.8),
       white = k.flat(0xf4f0e8, 0, 0.6),
       red = k.flat(0xc83a2a, 0, 0.8),
-      fence = k.flat(0x8c98a4, 0.9, 0.3, { transparent: true, opacity: 0.5 }),
+      fence = chainLink(k),
       steel = k.flat(0x8c98a4, 0.9, 0.3),
       dark = k.flat(0x1f242a, 0.7, 0.45),
-      hex = k.pbr('hexPavers', X.pavers(0x9a968c, 18), 0.35),
+      hex = sc(k, 'handball', 'hexagonal_concrete_paving', 1.4, () => X.pavers(0x9a968c, 18), { color: 0xd8d4cc }, 0x8a867c),
       lawn = k.pbr('hbLawn', X.grass(0x4f7a3a, 463), 0.15),
       wood = k.pbr('hbSlat', X.planks(0x6a4a30, 3, 464), 1.2, { roughness: 0.6 }),
       green = k.flat(0x1f5a3a, 0, 0.7),
@@ -798,7 +977,7 @@ export const handball: RoomDef = {
     for (const z of [26, -26]) for (const s of [-1, 1]) k.lamp(s > 0 ? 12.5 : 29.5, z, 6.5, dark, 0xffd9a8, 20);
     k.prop('mailbox', 12.7, 0, 30, { height: 1.5, rotY: PI / 2, keepOut: 0.6 });
     for (const [x, z, sd] of [[6, -13, 1], [6, 13, 2], [6, -30, 3], [6, 30, 4]]) { k.tree(x, 0, z, { h: 5.5, r: 2.8, seed: sd, leaf: 0x4a7a3a }); k.keepOut.push({ x, z, r: 0.7 }); }
-    for (const z of [-8, 8]) k.bench(4.6, z, PI / 2, wood, dark);
+    for (const z of [-8, 8]) k.prop('cp_bench', 4.6, 0, z, { height: 0.9, rotY: PI / 2, keepOut: 1.0 });
     k.prop('quiet_bench', 5.5, 0, -20, { height: 0.9, rotY: PI / 2, keepOut: 1.2 });
     k.prop('storm_drain', 12.2, 0.02, -2, { height: 0.08 });
     k.prop('utility_pole', 30.5, 0, -18, { height: 9, keepOut: 0.5 });
@@ -848,9 +1027,11 @@ export const handball: RoomDef = {
     k.crowd([v(-14, 0, -19.4), v(-4.5, 0, -19.6)], 7, { seed: 469, speed: 0.12, spread: 1.0, animate: !ctx.reduced });
     k.crowd([v(10.5, 0, 60), v(10.5, 0, -60)], 9, { seed: 470, speed: 0.8, spread: 1.4, animate: !ctx.reduced });
     k.crowd([v(31.5, 0, 60), v(31.5, 0, -60)], 6, { seed: 471, speed: 0.8, spread: 1.4, animate: !ctx.reduced });
-    const pigeons: T.Mesh[] = [];
-    for (let i = 0; i < 7; i++) { const b = k.mesh(new T.ConeGeometry(0.09, 0.4, 4), dark, 0, 8, 0, true); b.rotation.x = PI / 2; pigeons.push(b); }
-    if (!ctx.reduced) k.ticks.push((t) => pigeons.forEach((b, i) => { const a = t * 0.45 + i * 0.9, r = 9 + 3 * Math.sin(t * 0.2 + i); b.position.set(2 + Math.cos(a) * r, 7 + 2 * Math.sin(t * 0.8 + i), Math.sin(a) * r * 1.6); b.rotation.y = -a; }));
+    /* 2026-11-24 (wave 6d): the cone pigeons are real pigeons (our cast model), lined up on the wall caps and pecking at the park */
+    const pr = X.mulberry(497), perch: At[] = [];
+    for (let i = 0; i < 9; i++) perch.push([WX - 0.2 + (pr() - 0.5) * 0.9, 10.0, -19 + i * 4.4 + pr() * 1.8, (pr() - 0.5) * PI * 2]);
+    for (let i = 0; i < 7; i++) perch.push([2.4 + pr() * 3.4, 0.02, -6 + pr() * 12, pr() * PI * 2]);
+    put(k, 'handball/pigeon', { height: 0.28 }, perch);
     // Allen Street's malls: the planted median NYC Parks keeps, trees, benches, the bike path down the middle
     k.box(5.4, 0.3, 150, 21, 0, 0, k.flat(0xa8a49a, 0, 0.85)); k.box(5.0, 0.3, 150, 21, 0.02, 0, hex); k.box(1.4, 0.01, 150, 22.5, 0.18, 0, k.flat(0x3a7a4a, 0, 0.8));
     for (let i = 0; i < 12; i++) if (i !== 9) k.tree(19.7, 0.17, -66 + i * 12, { h: 6, r: 2.4, seed: 490 + i, leaf: 0x4a7a3a });
@@ -861,14 +1042,13 @@ export const handball: RoomDef = {
     const katzSign = twoFaced(k, X.signText('KATZ’S  ·  DELICATESSEN', 1024, 256, '#a8181c', '#f6e9c8', 104, { border: true }), 5.6, 1.4, 30.6, 14, 62, 0);
     k.box(6.2, 0.08, 0.08, 30.9, 14.8, 62, dark); k.box(6.2, 0.08, 0.08, 30.9, 13.2, 62, dark); k.point(30.6, 13.2, 60.6, 0xff6a5a, 22, 14);
     // the tenement row behind the walls: one five storey walk up brought forward, with its cornice and fire escape
-    const tenB = k.pbr('hbTen', X.brick(0x7e4a38, 472), 0.28), tenX = -25.7, tenH = 18.5, tGlass = k.glass(0x9fc4d8, 0.35, 0.08), tWarm = k.glow(0xffd8a0);
+    const tenB = sc(k, 'handball', 'red_bricks_04', 1.4, () => X.brick(0x7e4a38, 472), { color: 0xd0a898 }, 0x6a4232), tenX = -25.7, tenH = 18.5, tGlass = k.glass(0x9fc4d8, 0.35, 0.08), tWarm = k.glow(0xffd8a0);
     k.box(0.6, tenH, 7.8, tenX, tenH / 2, 0, tenB);
     k.box(1.1, 0.9, 8.3, tenX + 0.35, tenH + 0.1, 0, k.flat(0x5e544a, 0.4, 0.6));
     k.box(0.1, 3.4, 7.6, tenX + 0.36, 1.9, 0, k.flat(0x2a2420, 0.3, 0.6));
     for (let f = 0; f < 5; f++) {
       const y = 4.4 + f * 2.9;
       [-2.6, 0, 2.6].forEach((dz, j) => { k.box(0.06, 1.7, 1.1, tenX + 0.32, y, dz, (f * 3 + j) % 4 === 1 ? tWarm : tGlass); k.box(0.14, 0.12, 1.3, tenX + 0.37, y - 0.92, dz, white); k.box(0.12, 0.2, 1.3, tenX + 0.36, y + 0.95, dz, white); });
-      if (f > 0) { k.box(1.2, 0.06, 5.4, tenX + 0.95, y - 1.05, 0, dark); k.box(0.04, 0.9, 5.4, tenX + 1.53, y - 0.6, 0, dark); if (f < 4) k.beam(v(tenX + 1.15, y - 1.0, -2.3), v(tenX + 1.15, y + 1.85, 2.0), 0.03, dark, 4); }
     }
     // the flag over the park, waving
     const FPX = 7.6, FPZ = 2.6;
@@ -890,6 +1070,26 @@ export const handball: RoomDef = {
     tagPeople(bike, bikeBody, bikeHead, 'seat', 1.7);   // 2026-10-28: a seated cast rider
     if (!ctx.reduced) k.rider(bike, k.spline([v(22.9, 0.17, 72), v(22.9, 0.17, -72), v(22.5, 0.17, -74), v(22.1, 0.17, -72), v(22.1, 0.17, 72), v(22.5, 0.17, 74)], true), 4.2);
     else bike.position.set(22.9, 0.17, 10);
+    /* ---- 2026-11-24 (wave 6d): the courts lived in ----
+       A real fire escape on the tenement (Poly Haven modular kit, CC0), a boombox on a milk crate at the fence, the double cans
+       by the gate, a Con Ed box, court numbers on the kick bands, the score in chalk. One trick (rule 9): LAST GAME painted
+       flat on the middle court stands up as a sign from the gate. */
+    {
+      put(k, 'handball/ph_modular_fire_escape', { height: 11 }, [[tenX + 1.15, 3.35, 0, PI / 2]], (o) => tint(o, 0x1e2226, 0.6, 0.6), undefined, true);
+      put(k, 'handball/ph_plastic_crate_01', { height: 0.32 }, [[-2.9, 0.02, 17.4, 0.3]], (o) => tint(o, 0x2a5ad8, 0.6, 0));
+      put(k, 'handball/ph_boombox', { width: 0.6 }, [[-2.9, 0.34, 17.4, PI / 2 + 0.3]]); k.keepOut.push({ x: -2.9, z: 17.4, r: 0.5 });
+      put(k, 'handball/ph_metal_trash_can', { width: 1.5 }, [[-0.85, 0, -3.7, PI / 2]]); k.keepOut.push({ x: -0.85, z: -3.7, r: 0.9 });
+      put(k, 'handball/ph_utility_box_01', { height: 1.15 }, [[-1.1, 0, -12.5, -PI / 2]]); k.keepOut.push({ x: -1.1, z: -12.5, r: 0.5 });
+      walls.forEach((zc, i) => {
+        hsign(k, `COURT ${i + 1}`, 1.7, 0.5, WX + 0.33, 0.55, zc - 4.3, PI / 2, { fg: '#f4f0e8', size: 0.62, lit: false });
+        if (i === 1) { hsign(k, 'winner stays', 1.8, 0.42, WX + 0.31, 1.6, zc + 4.3, PI / 2, { fg: '#f4f0e8', font: 'W2 Permanent Marker', size: 0.66, lit: false }); hsign(k, '21  ·  19', 0.9, 0.36, WX + 0.31, 1.95, zc - 2.4, PI / 2, { fg: '#f4f0e8', font: 'W2 Permanent Marker', size: 0.7, lit: false }); }
+        // Firefly plate queued: a painted mural band across the top of every wall (the wall's own concrete until it lands)
+        fireflyPlate(k, 'assets/museum/tex/handball/ff_hb_mural_band.webp', 11.4, 1.1, WX + 0.32, 8.85, zc, PI / 2, i === 1 ? wallC : wallB);
+      });
+      // one trick: LAST GAME painted flat on the middle court stands up as a sign from the gate
+      if (HAS_DOM) anamorphTex(k, floorType('LAST GAME', '#f4f0e8', 1024, 256, 'W2 Archivo Expanded', '#2a4aa8'), -3.4, 0, 3, 0.02, PI / 2, 9, 6.5, 0.8, 0.9);
+      k.egg(v(-13.5, 0.3, 0), { id: 'handball-last-game', title: 'Letters that stand up', text: 'LAST GAME is painted flat on the court and stretched along it, so from one spot inside the gate it seems to stand upright. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Come in through the gate and look at the middle wall.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
+    }
     // the neighbourhood the game grew up in
     k.egg(shortLine ?? v(WX + 9.7, 0.1, 0), { id: 'shortline', title: 'The short line', text: 'A one wall court is a wall twenty feet wide and sixteen feet high, with the short line drawn sixteen feet out and the service zone behind it. Games are played to twenty one points, best two of three.', clue: 'The most important line on the court is not on the wall.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/barrier-playground/history' } });
     k.egg(parksSign, { id: 'parks', title: 'Handball comes to the parks', year: '1948', text: 'Irish immigrants brought hard handball to New York in the late 19th century. NYC Parks began sponsoring citywide tournaments in 1948, the first at Heckscher Playground in Central Park, and in 2000 set out to renovate 1,500 of its 2,052 courts.', clue: 'Read the green sign over the gate before you play.', source: { name: 'NYC Parks', url: 'https://www.nycgovparks.org/parks/barrier-playground/history' } });
@@ -919,12 +1119,14 @@ export const salt: RoomDef = {
     k.sky({ top: 0x6a9ad8, horizon: 0xe2e6ea, ground: 0x4a5058, fog: 0.0024, sun: { az: 1.3, el: 0.5, color: 0xfff1d8, size: 14 }, env: 0.9 });
     k.hemi(0xeef3ff, 0x4a4e52, 0.85);
     k.sun(0xfff0d4, 2.3, 40, 55, 30, false, 90);
-    const conc = k.pbr('ssShell', X.concrete(0xb9b8b2, 471), 0.09, { roughness: 0.82, flatShading: true }),
-      concIn = k.pbr('ssShellIn', X.concrete(0x8a8c8e, 471), 0.09, { roughness: 0.9, flatShading: true }),
-      base = k.pbr('ssBase', X.concrete(0x8e8e8a, 472), 0.3, { roughness: 0.85 }),
-      floorT = k.pbr('ssFloor', X.concrete(0x6a6c6a, 473), 0.3, { roughness: 0.5 }),
+    /* 2026-11-24 (wave 6d): scanned CC0 surfaces (Poly Haven): formwork concrete (tie holes and panel lines) for the folded shell and its base (the
+       real shed is cast in place), a worn hangar slab for the floor, trodden snow for the salt */
+    const conc = sc(k, 'saltvault', 'concrete_wall_008', 3.2, () => X.concrete(0xb9b8b2, 471), { roughness: 0.82, flatShading: true, color: 0xe6ecf2 }, 0x9a9890),
+      concIn = sc(k, 'saltvault', 'concrete_wall_008', 3.2, () => X.concrete(0x8a8c8e, 471), { roughness: 0.9, flatShading: true, color: 0xc0c6cc }, 0x7a7a78),
+      base = sc(k, 'saltvault', 'concrete_wall_008', 2.2, () => X.concrete(0x8e8e8a, 472), { roughness: 0.85, color: 0xd0d6dc }, 0x7e7e7a),
+      floorT = sc(k, 'saltvault', 'hangar_concrete_floor', 3.0, () => X.concrete(0x6a6c6a, 473), { roughness: 0.55, color: 0xffffff }, 0x4a4c4a),
       apron = k.pbr('ssApron', X.pavers(0x8a8a86, 474), 0.4),
-      saltM = k.pbr('ssSalt', X.plaster(0xf6f4ee, 475), 1.4, { roughness: 1, normal: 1.6 }),
+      saltM = sc(k, 'saltvault', 'snow_01', 3.0, () => X.plaster(0xf6f4ee, 475), { roughness: 1, normal: 1.6, color: 0xcfcdc6 }, 0xbcbab4),
       grain = k.flat(0xf8f7f2, 0, 0.9),
       garage = k.pbr('ssGarage', X.windows(476, 0.2, 0x3a4048, false), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.6, roughness: 0.5, metalness: 0.4, stretch: 0.42 }),
       finM = k.flat(0xc8ccd0, 0.85, 0.35),
@@ -998,7 +1200,11 @@ export const salt: RoomDef = {
     k.mesh(inner, concIn, 0, 0, 0);
     // the salt: the mountain, the grains that keep sliding, the loader, the plow blades against the wall
     const CX = 36, CZ = -1, CR = 11, CH = 9;
-    k.mesh(new T.ConeGeometry(CR, CH, 30, 1), saltM, CX, CH / 2, CZ);
+    /* 2026-11-24 (wave 6d): the pile is no longer a perfect cone: slumps, scoops where the loader bit, and a crusted ridge */
+    { const g = new T.ConeGeometry(CR, CH, 56, 14), pp = g.attributes.position, nr = X.mulberry(491);
+      const bumps = Array.from({ length: 9 }, () => ({ a: nr() * PI * 2, h: nr(), s: (nr() - 0.4) * 1.6 }));
+      for (let i = 0; i < pp.count; i++) { const x = pp.getX(i), y = pp.getY(i), z = pp.getZ(i), r = Math.hypot(x, z); if (r < 1e-3) continue; const a = Math.atan2(z, x), u = 0.5 - y / CH; let d = 0; for (const b of bumps) { const da = Math.atan2(Math.sin(a - b.a), Math.cos(a - b.a)); d += b.s * Math.exp(-(da * da) / 0.08 - ((u - b.h) ** 2) / 0.05); } d += Math.sin(a * 7 + u * 9) * 0.18 + Math.sin(a * 13) * 0.08; const k2 = Math.max(0, (r + d * u) / r); pp.setX(i, x * k2); pp.setZ(i, z * k2); }
+      g.computeVertexNormals(); k.mesh(g, saltM, CX, CH / 2, CZ); }
     k.keepOut.push({ x: CX, z: CZ, r: CR + 0.5 });
     const grainsN = 320, grains = k.instances(new T.SphereGeometry(0.09, 5, 4), grain, Array.from({ length: grainsN }, () => new T.Matrix4()));
     const gr = X.mulberry(481), gs = Array.from({ length: grainsN }, () => ({ a: PI + (gr() - 0.5) * 1.6, u: gr(), sp: 0.05 + gr() * 0.08 }));
@@ -1022,12 +1228,18 @@ export const salt: RoomDef = {
     k.box(1.2, 1.0, 2.6, 19.2, 0.5, 15.0, orange); k.box(1.2, 1.0, 2.6, 20.6, 0.5, 15.0, orange); k.keepOut.push({ x: 19.9, z: 15.2, r: 1.4 });
     for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2; k.point(CX + Math.cos(a) * 15.5, 4.6, CZ + Math.sin(a) * 14.5, 0xffc890, 16, 12); }
     for (const [x, z] of [[26, -8], [46, 8], [36, 12]]) k.point(x, 16, z, 0xdfe8ff, 30, 30);
-    for (const z of [-9, 9]) { k.box(0.4, 0.3, 0.6, BX0 - 0.3, 5.4, z, dark); k.point(BX0 - 1.2, 5.2, z, 0xffc070, 26, 18); }
+    for (const z of [-9, 9]) k.point(BX0 - 1.2, 5.2, z, 0xffc070, 26, 18);
+    put(k, 'saltvault/ph_security_light', { height: 0.5 }, [[BX0 - 0.42, 5.05, -9, -PI / 2], [BX0 - 0.42, 5.05, 9, -PI / 2]]);
     k.sign('"SALT"', 2.0, 0.5, BX0 + 0.24, 5.6, 0, 'transparent', '#f0f0ea', 130, PI / 2);
     // the river life: gulls over the water, the spreader rolling down West Street, walkers on the bikeway
     const gulls: T.Mesh[] = [];
     for (let i = 0; i < 9; i++) { const b = k.mesh(new T.ConeGeometry(0.16, 0.7, 4), gull, 0, 14, 0, true); b.rotation.x = PI / 2; gulls.push(b); }
-    if (!ctx.reduced) k.ticks.push((t) => gulls.forEach((b, i) => { const a = t * 0.22 + i * 0.7, r = 26 + 10 * Math.sin(t * 0.1 + i); b.position.set(-40 + Math.cos(a) * r, 10 + 4 * Math.sin(t * 0.6 + i), Math.sin(a) * r * 1.4); b.rotation.y = -a; }));
+    /* 2026-11-24 (wave 6d): six of the cone gulls become real gulls (our cast model), banking as they turn; the cones go */
+    const gullOs: T.Object3D[] = [];
+    put(k, 'saltvault/gull', { width: 1.3 }, [0, 1, 2, 3, 4, 5].map((i): At => [-40, 12, i * 4, 0]), undefined, (os) => { gullOs.push(...os); gulls.forEach((g) => { g.visible = false; }); });
+    const flyGulls = (t: number) => gulls.forEach((b, i) => { const a = t * 0.22 + i * 0.7, r = 26 + 10 * Math.sin(t * 0.1 + i); b.position.set(-40 + Math.cos(a) * r, 10 + 4 * Math.sin(t * 0.6 + i), Math.sin(a) * r * 1.4); b.rotation.y = -a; const o = gullOs[i]; if (o) { o.position.copy(b.position); o.rotation.set(0, -a, -0.35 + 0.12 * Math.sin(t * 2 + i), 'YXZ'); } });
+    flyGulls(4);
+    if (!ctx.reduced) k.ticks.push((t) => flyGulls(t));
     const truck = new T.Group();
     const tadd = (geo: T.BufferGeometry, m: T.Material, x: number, y: number, z: number) => { const o = new T.Mesh(geo, m); o.position.set(x, y, z); truck.add(o); return o; };
     tadd(new T.BoxGeometry(2.5, 2.4, 5.6), whiteM, 0, 2.0, -1.2); tadd(new T.BoxGeometry(2.5, 2.2, 2.2), whiteM, 0, 1.9, 2.8); tadd(new T.BoxGeometry(2.4, 0.9, 0.1), glassDark, 0, 2.3, 3.92);
@@ -1081,6 +1293,34 @@ export const salt: RoomDef = {
     k.box(24, 26, 24, WTX, 13, WTZ, k.flat(0x9fb6cc, 0.7, 0.18));
     k.mesh(new ConvexGeometry([v(-12, 26, -12), v(12, 26, -12), v(12, 26, 12), v(-12, 26, 12), v(-10.5, 228, 0), v(10.5, 228, 0), v(0, 228, -10.5), v(0, 228, 10.5)]), k.flat(0x9fb6cc, 0.7, 0.19), WTX, 0, WTZ);
     k.cyl(0.5, 62, WTX, 259, WTZ, steelL, 1.3, 8);
+    /* ---- 2026-11-24 (wave 6d): the shed and its corner worked in ----
+       Jersey barriers along the apron, life rings on the river rail, bagged salt and the tools of the night crew inside the
+       door, KEEP CLEAR at the truck door, the corner signs and the greenway plaque. All models Poly Haven, CC0. One trick
+       (rule 9): 5,000 TONS painted flat across West Street stands up as a sign from the bikeway. */
+    {
+      const jb: At[] = [];
+      for (let i = 0; i < 11; i++) jb.push([14.7, 0, -40 + i * 1.6, PI / 2]);
+      for (let i = 0; i < 10; i++) jb.push([14.7, 0, 24 + i * 1.6, PI / 2]);
+      put(k, 'saltvault/ph_concrete_road_barrier', { width: 1.56 }, jb);
+      k.block(14.3, 15.1, -40.8, -23.2); k.block(14.3, 15.1, 23.2, 39.2);
+      for (const z of [-34, 14, 58]) { k.box(0.1, 1.3, 0.1, -22.0, 0.65, z, rail); put(k, 'saltvault/ph_lifebuoy', { height: 0.8 }, [[-21.9, 0.35, z, PI / 2]], (o) => tint(o, 0xf07a20, 0.6, 0)); }
+      const bags: At[] = [];
+      for (let l = 0; l < 3; l++) for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) bags.push([18.2 + i * 0.5, l * 0.18, -11.9 + j * 0.74, (l % 2) * 0.06]);
+      put(k, 'saltvault/ph_cement_bag', { width: 0.46 }, bags, (o) => tint(o, 0xe8e2d4, 0.9, 0));
+      k.keepOut.push({ x: 18.45, z: -11.5, r: 0.9 });
+      put(k, 'saltvault/ph_wooden_broom', { height: 1.45 }, [[BX0 + 0.36, 0, -14.2, PI / 2, 1, 0.14], [BX0 + 0.36, 0, -13.7, PI / 2, 1, 0.1]]);
+      put(k, 'saltvault/ph_rusted_spade_01', { height: 1.1 }, [[BX0 + 0.34, 0, -13.1, PI / 2, 1, 0.12], [BX0 + 0.34, 0, -12.8, PI / 2, 1, 0.16]]);
+      put(k, 'saltvault/ph_power_box_01', { height: 0.5 }, [[BX0 - 0.42, 1.3, -14, -PI / 2]]);
+      for (const z of [-7.2, 7.2]) hsign(k, 'KEEP CLEAR  ·  TRUCK ENTRANCE', 2.8, 0.7, BX0 - 0.22, 2.5, z, -PI / 2, { fg: '#b8262a', bg: '#f4f0e8', border: '#b8262a', size: 0.5, lit: false });
+      hsign(k, 'SALT  ·  5,000 TONS  ·  NO ENTRY', 4.4, 0.5, BX1 - 0.25, 6.6, 0, -PI / 2, { fg: '#f07a20', size: 0.62, lit: false });
+      { const px = 12.8, pz = -21.5; k.cyl(0.06, 4.2, px, 2.1, pz, k.flat(0x1e2a22, 0.6, 0.5), 0.06, 8); k.keepOut.push({ x: px, z: pz, r: 0.3 }); hsign(k, 'WEST ST', 1.4, 0.3, px - 0.04, 3.9, pz, -PI / 2, { fg: '#ffffff', bg: '#1f5a3a', border: '#ffffff', size: 0.62 }); hsign(k, 'SPRING ST', 1.6, 0.3, px, 4.25, pz + 0.04, 0, { fg: '#ffffff', bg: '#1f5a3a', border: '#ffffff', size: 0.62 }); }
+      hsign(k, 'HUDSON RIVER GREENWAY', 2.6, 0.4, -21.98, 1.45, 2, PI / 2, { fg: '#f4f0e8', bg: '#1f5a3a', border: '#f4f0e8', size: 0.55 });
+      // one trick: 5,000 TONS painted flat across West Street stands up as a sign from the bikeway
+      if (HAS_DOM) anamorphTex(k, floorType('5,000 TONS', '#f07a20', 1024, 256, 'W2 Archivo Expanded', '#1c1f24'), -14, 0, 3, 0.0, -PI / 2, 12, 9, 1.4, 0.86);
+      k.egg(v(1, 0.3, 0), { id: 'saltvault-five-thousand', title: 'Letters that stand up', text: '5,000 TONS is painted flat across West Street and stretched along it, so from one spot on the bikeway it seems to stand upright in front of the shed. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Stand on the bikeway facing the shed and look at the road.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.8 });
+      // Firefly plate queued: the Jersey shore across the Hudson on a winter afternoon (nothing shows until it lands)
+      fireflyPlate(k, 'assets/museum/tex/saltvault/ff_ss_jersey_shore.webp', 520, 66, -330, 31.4, 0, PI / 2, new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), true);
+    }
     // what this corner of the river is built on
     k.egg(shedSign, { id: 'shed', title: 'A crystal of salt', text: "Dattner Architects designed the shed with WXY for the Department of Sanitation. Its folded concrete, both structure and finish, rises nearly 70 feet out of a moat of textured glass paving and holds 5,000 tons of the city's road salt.", clue: 'The name is written over the truck door.', source: { name: 'Dattner Architects', url: 'https://www.dattner.com/projects/view/spring-street-salt-shed/' } });
     k.egg(garageSign, { id: 'garage', title: 'The garage in a veil', text: 'Across Spring Street, the Manhattan Districts 1, 2 and 5 Garage holds over 150 sanitation vehicles behind 2,600 perforated aluminum fins that cut glare and hide headlights from the neighbours. A 1.5 acre green roof tops it, and it is certified LEED Gold.', clue: 'Next door, thousands of fins keep a secret from the neighbours.', source: { name: 'Dattner Architects', url: 'https://www.dattner.com/projects/view/manhattan-districts-1-2-5-garage/' } });
