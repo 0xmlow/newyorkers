@@ -30,6 +30,8 @@ import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
 import { KEYSTONE } from '../keystone';
+import { scan, glbs, fireflyPlate } from './a';
+import { anamorphTex, paintTex } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -362,6 +364,48 @@ function nyClock(fallbackHour: number) {
   } catch { return { h: Math.floor(fallbackHour), m: Math.floor((fallbackHour % 1) * 60), s: 0 }; }
 }
 
+
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24) ----------
+   Poly Haven CC0 scans in assets/museum/tex/pennstation/, CC0 models in assets/museum/props/pennstation/. Safe in node:
+   the audit builds the room with no DOM, so painted textures are skipped there. */
+const W9_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const W9_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+/* A Poly Haven model with its glass made plain (KHR transmission draws the room twice) and no shadows. */
+function w9Solid(o: T.Object3D, dither = false) {
+  o.traverse((c) => {
+    if (!(c instanceof T.Mesh)) return; c.castShadow = false;
+    for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) {
+      if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; }
+      if (dither) ditherize(m);
+    }
+  });
+}
+/* The trick: a column drum that is not there. Painted flat on the waiting room floor and stretched so that from the top
+   of the grand stair it stands up as a broken travertine drum taller than a person, with its shadow. */
+function drumTex() {
+  return paintTex(800, 760, (g, W, H) => {
+    g.clearRect(0, 0, W, H);
+    const rnd = X.mulberry(1963), cx = W / 2, r = W * 0.36, top = H * 0.2, bot = H * 0.9, ry = r * 0.22;
+    /* the shadow on the floor, thrown to the right by the lunettes */
+    g.fillStyle = 'rgba(40,30,20,0.42)'; g.beginPath(); g.ellipse(cx + r * 0.55, bot, r * 1.25, ry * 1.1, 0, 0, PI * 2); g.fill();
+    /* the drum: shaded across like a lit cylinder */
+    const sh = g.createLinearGradient(cx - r, 0, cx + r, 0);
+    sh.addColorStop(0, '#8a7656'); sh.addColorStop(0.22, '#e8d6ae'); sh.addColorStop(0.42, '#f4e6c4'); sh.addColorStop(0.75, '#b8a07a'); sh.addColorStop(1, '#5e4e38');
+    g.fillStyle = sh; g.beginPath(); g.moveTo(cx - r, top); g.lineTo(cx - r, bot); g.ellipse(cx, bot, r, ry, 0, PI, 0, true); g.lineTo(cx + r, top); g.closePath(); g.fill();
+    /* travertine: horizontal pits and veins */
+    for (let i = 0; i < 900; i++) { const y = top + rnd() * (bot - top), x = cx - r + rnd() * 2 * r, w = 3 + rnd() * 22; g.fillStyle = `rgba(${rnd() < 0.5 ? '90,70,40' : '255,248,226'},${0.08 + rnd() * 0.16})`; g.fillRect(x, y, w, 1 + rnd() * 2); }
+    /* the bed joint between two drums */
+    g.strokeStyle = 'rgba(70,56,36,0.7)'; g.lineWidth = 3; g.beginPath(); g.ellipse(cx, top + (bot - top) * 0.55, r, ry, 0, 0, PI); g.stroke();
+    /* the broken top: a jagged lit face seen from above */
+    g.fillStyle = '#efe0bc'; g.beginPath();
+    for (let i = 0; i <= 40; i++) { const a = (i / 40) * PI * 2, j = 1 + (rnd() - 0.5) * 0.12; g.lineTo(cx + Math.cos(a) * r * j, top + Math.sin(a) * ry * j - (Math.sin(a) < 0 ? rnd() * 18 : 0)); }
+    g.closePath(); g.fill();
+    g.fillStyle = 'rgba(120,96,62,0.55)'; g.beginPath(); g.ellipse(cx - r * 0.2, top - 2, r * 0.45, ry * 0.5, 0.2, 0, PI * 2); g.fill();
+    /* chips fallen at its foot */
+    for (let i = 0; i < 14; i++) { const x = cx - r * 1.3 + rnd() * r * 2.8, y = bot + (rnd() - 0.3) * ry * 1.6, s = 6 + rnd() * 16; g.fillStyle = rnd() < 0.5 ? '#d8c6a0' : '#a8946e'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + s, y - s * 0.4); g.lineTo(x + s * 0.7, y + s * 0.3); g.closePath(); g.fill(); }
+  });
+}
+
 /* ================================================================== */
 /* ---------------- 180 THE HALL NEW YORK LOST ---------------- */
 export const pennstation: RoomDef = {
@@ -390,12 +434,13 @@ export const pennstation: RoomDef = {
     const trav = photoMat(k, 'travertine.jpg', 0.19, { roughness: 0.78 });
     const travPlain = k.pbr('psTravP', X.plaster(0xd6c49e, 1802), 0.2, { roughness: 0.85 });
     const travDark = photoMat(k, 'travertine.jpg', 0.3, { roughness: 0.82, color: 0xc4b498 });
-    const granite = photoMat(k, 'granite.jpg', 0.18, { roughness: 0.75 });
+    /* wave 9: the Seventh Avenue front in smooth pink ashlar (a scanned stone slab, CC0) instead of the photo that read as brick */
+    const granite = scan(k, 'pennstation', 'marble_01', 4.2, () => X.ashlar(0xc6a596, 1830, 5), { color: 0xfff0ea, roughness: 0.5 });
     const demo = photoMat(k, 'demolition.jpg', 0.22, { roughness: 0.9 });
     const graniteS = k.pbr('psGranS', X.plaster(0xc6a596, 1830), 0.3, { roughness: 0.6 });
     const graniteDk = photoMat(k, 'granite.jpg', 0.3, { roughness: 0.8, color: 0xd8c4bc });
     const marbleF = photoMat(k, 'marble.jpg', 0.32, { roughness: 0.42 });
-    const walk = k.pbr('psWalk', X.pavers(0x9a958a, 1807), 0.5), asph = k.pbr('psAsph', X.asphalt(), 0.3), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8);
+    const walk = scan(k, 'pennstation', 'granite_tile', 2.4, () => X.pavers(0x9a958a, 1807), { color: 0xd6d0c6, roughness: 0.7 }), asph = scan(k, 'pennstation', 'asphalt_02', 3, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.9 }), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8);
     const oak = k.pbr('psOak', X.planks(0x7a5230, 5, 1808), 0.9, { roughness: 0.55 }), oakDk = k.flat(0x3e2616, 0, 0.5);
     const brass = k.flat(0xc8a050, 1, 0.3), bronze = k.flat(0x6e5230, 0.9, 0.4), iron = k.flat(0x1c1c1e, 0.6, 0.5), velvet = k.flat(0x7a1420, 0, 0.75);
     const shopGlass = k.flat(0x2a3038, 0.4, 0.15, { emissive: 0xffd8a0, emissiveIntensity: 0.12 + 0.25 * k.night });
@@ -417,7 +462,9 @@ export const pennstation: RoomDef = {
     /* Seventh Avenue runs one way, south (toward -x) */
     traffic(k, ctx, { lanes: [{ z: 38.2, dir: -1, n: 5, speed: 8 }, { z: 41.6, dir: -1, n: 4, speed: 9 }, { z: 45, dir: -1, n: 4, speed: 7 }], x0: -64, x1: 64, seed: 1814, y: S });
 
-    for (const x of [-30, -12, 12, 30]) { k.cyl(0.09, 5, x, S + 2.5, 35, iron, 0.12, 8); k.sphere(0.28, x, S + 5.1, 35, k.glow(0xffe2b0), 10); if (k.night > 0.4) k.point(x, S + 4.8, 35, 0xffd7a0, 30, 16); k.keepOut.push({ x, z: 35, r: 0.4 }); }
+    /* wave 9: cast iron lantern posts on the curb (Poly Haven, CC0) */
+    glbs(k, 'pennstation/ph_street_lamp_01', { height: 5.2 }, [-30, -12, 12, 30].map((x, i) => [x, S, 34.8, i % 2 ? PI : 0] as [number, number, number, number]), (os) => os.forEach((o) => w9Solid(o)), 99);
+    for (const x of [-30, -12, 12, 30]) { if (k.night > 0.4) k.point(x, S + 4.6, 34.8, 0xffd7a0, 30, 16); k.keepOut.push({ x, z: 34.8, r: 0.45 }); }
 
     /* the colonnade: unfluted Roman Doric columns in pink granite along the whole Seventh Avenue front */
     const CZ = 27.4, CH = 10.4;
@@ -604,7 +651,7 @@ export const pennstation: RoomDef = {
     k.prop('penn_census_desk', DX, 0, DZ, { height: 1.25 });
     k.block(DX - 2.1, DX + 2.1, DZ - 0.75, DZ + 0.75);
     const lampAt = [[-3.4, -2.2], [3.4, -2.2], [-3.4, 2.2], [3.4, 2.2]].map(([x, z]) => ({ x: DX + x, y: 0, z: DZ + z }));
-    propMany(k, 'penn_lamp', lampAt, 4.2);
+    glbs(k, 'pennstation/ph_street_lamp_01', { height: 4.0 }, lampAt.map((p, i) => [p.x, 0, p.z, i * PI / 2] as [number, number, number, number]), (os) => os.forEach((o) => w9Solid(o)), 99);
     for (const p of lampAt) k.keepOut.push({ x: p.x, z: p.z, r: 0.5 });
     const stanAt = [[-2.6, 1.4], [2.6, 1.4], [-2.6, -1.4], [2.6, -1.4]].map(([x, z]) => ({ x: DX + x, y: 0, z: DZ + z }));
     propMany(k, 'penn_stanchion', stanAt, 1.05);
@@ -1058,6 +1105,51 @@ export const pennstation: RoomDef = {
     k.egg(v(0, clockY, clockZ + 0.3), { id: 'pennstation-day-night', title: 'Day and Night', text: 'Above the centre of the entrance, 61 feet above the sidewalk, was a clock with faces 7 feet across. The station carried four pairs of sculptures by Adolph Weinman, each two female personifications, Day and Night, modelled on Audrey Munson, flanking large clocks at the top of each side of the building.', clue: 'Look up over the door at the time. It is the real time in New York.', source: src }, { r: 1.6 });
     k.egg(v(7.8, 1.2, -45.2), { id: 'pennstation-meadowlands', title: 'Columns in the Meadowlands', year: '1963', text: 'Demolition of the station house began on October 28, 1963, and was finished in 1966. Many of its architectural elements were lost or buried in the New Jersey Meadowlands; a New York Times photograph by Eddie Hausner showed Weinman\'s sculpture Day lying in a landfill there. Eighteen of the station\'s 84 columns were supposed to go to Battery Park; the largest piece known to have been saved, a 35 foot Doric column, went upstate to Woodridge.', clue: 'The fallen drums on the side that is coming down.', source: src }, { r: 1.8 });
     k.egg(v(0, 24, -80), { id: 'pennstation-concourse', title: 'Glass on plain steel', year: '1910', text: 'The concourse was covered by glass vaults held up by a plain steel framework, a glass roof 210 by 340 feet. The station opened to all its trains on November 27, 1910, on an eight acre plot from Seventh to Eighth Avenue between 31st and 33rd Streets.', clue: 'Stand under the glass and look up through the grid.', source: src }, { r: 4 });
+
+
+    /* ================= wave 9: the portico lit, porters at the curb, the clock's surround, the concourse clock ================= */
+    {
+      /* iron lanterns hung under the portico between the columns, glowing warm against the granite */
+      const lanX: number[] = []; for (let i = 0; i < colXs.length - 1; i += 2) lanX.push((colXs[i] + colXs[i + 1]) / 2);
+      glbs(k, 'pennstation/ph_lantern_chandelier_01', { height: 1.8 }, lanX.map((x) => [x, S + 8.0, 24.2, 0] as [number, number, number, number]), (os) => os.forEach((o) => w9Solid(o)), 99);
+      for (const x of lanX) { k.cyl(0.025, CH + 1.05 - 9.8, x, S + 9.8 + (CH + 1.05 - 9.8) / 2, 24.2, iron, 0.025, 5); }
+      k.instances(new T.SphereGeometry(0.26, 10, 8), k.glow(0xffd28a), lanX.map((x) => new T.Matrix4().makeTranslation(x, S + 8.7, 24.2)));
+      for (const x of [-25.2, 0, 25.2]) k.point(x, S + 8.4, 24.4, 0xffcf8a, 20 + 40 * k.night, 16, 1.6);
+      /* porters at the curb with their trucks and a stack of trunks and cases */
+      const trucks: [number, number, number, number][] = [[-17.2, S, 33.2, 0.4], [19.4, S, 33.4, -0.5], [-3.4, S, 23.6, 0.2]];
+      glbs(k, 'pennstation/ph_hand_truck', { height: 1.4 }, trucks, (os) => os.forEach((o) => w9Solid(o)), 99);
+      const cases: [number, number, number, number][] = [];
+      for (const [x, y, z, r] of trucks) for (let i = 0; i < 3; i++) cases.push([x + Math.sin(r) * 0.05, y + 0.08 + i * 0.25, z + 0.1, r + PI / 2 + (i - 1) * 0.12]);
+      cases.push([-15.6, S, 33.0, 0.2], [-15.5, S + 0.25, 33.05, 0.1], [21.2, S, 33.6, -0.3]);
+      glbs(k, 'pennstation/ph_vintage_suitcase', { length: 0.32 }, cases, (os) => os.forEach((o) => w9Solid(o)), 99);
+      for (const [x, , z] of trucks) k.keepOut.push({ x, z, r: 0.9 });
+      k.keepOut.push({ x: -15.6, z: 33, r: 0.9 }, { x: 21.2, z: 33.6, r: 0.9 });
+      /* the clock's carved surround: a stone roundel, a bronze bezel and laurel scrolls either side */
+      const stoneDk = graniteDk;
+      { const g = new T.CylinderGeometry(2.05, 2.15, 0.36, 48); g.rotateX(PI / 2); k.mesh(g, stoneDk, 0, clockY, clockZ - 0.2); }
+      k.torus(1.32, 0.09, 0, clockY, clockZ + 0.05, brass, 48);
+      for (const sd of [-1, 1]) {
+        k.curve(Array.from({ length: 9 }, (_, i) => { const a = (i / 8) * PI * 0.9 - PI * 0.45; return v(sd * (2.25 + 0.5 * Math.cos(a * 2)), clockY + Math.sin(a) * 1.7, clockZ - 0.05); }), 0.16, stoneDk, 24);
+        k.lathe([[0.32, 0], [0.42, 0.2], [0.3, 0.6], [0.36, 0.9], [0, 1.1]], sd * 2.6, clockY - 2.3, clockZ - 0.2, stoneDk, 14);
+      }
+      /* a great clock hangs in the concourse again, two faces on a rod from the steel (the model made for the
+         Moynihan hall after the original), dithered like everything there */
+      const cz = -60.5;
+      k.cyl(0.05, 14 - 9.4, 0, 9.4 + (14 - 9.4) / 2, cz, iron, 0.05, 6);
+      void k.prop('pennstation/moynihan_clock', 0, 5.6, cz, { height: 3.6 }).then((o) => { if (o) w9Solid(o, true); });
+      /* trunks waiting on the concourse floor by the gallery walls */
+      const ccase: [number, number, number, number][] = [[-6.6, 0, -82.4, 0.3], [-6.4, 0.25, -82.3, 0.5], [6.8, 0, -79.2, -0.4], [7.0, 0, -88, 1.2]];
+      glbs(k, 'pennstation/ph_vintage_suitcase', { length: 0.34 }, ccase, (os) => os.forEach((o) => w9Solid(o, true)), 99);
+      glbs(k, 'pennstation/ph_hand_truck', { height: 1.4 }, [[7.6, 0, -80.4, -0.6]], (os) => os.forEach((o) => w9Solid(o, true)), 99);
+      for (const [x, z] of [[-6.5, -82.4], [7.2, -79.8], [7.0, -88]]) k.keepOut.push({ x, z, r: 0.8 });
+      /* Jules Guerin's map murals ran high round the waiting room; two painted maps above the entablature at the ends
+         (FIREFLY_QUEUE.md; invisible until the files land) */
+      fireflyPlate(k, 'assets/museum/tex/pennstation/ff_guerin_map_north.webp', 20, 4.6, WX - 0.06, 24.4, WC, -PI / 2, W9_HIDDEN);
+      fireflyPlate(k, 'assets/museum/tex/pennstation/ff_guerin_map_south.webp', 20, 4.6, -WX + 0.06, 24.4, WC, PI / 2, W9_HIDDEN);
+      /* the trick: a broken drum standing at the foot of the stair, painted flat on the floor */
+      if (W9_DOM) { const o = anamorphTex(k, drumTex(), 0, SZ0 - 0.3, S + 3, 0, 0, 9.8, 2.2, 2.1, 1); (o.material as T.MeshBasicMaterial).color.setHex(0xb8a890); }
+      k.egg(v(0, 1.2, -9.5), { id: 'pennstation-drum', title: 'A column that is not there', text: 'Seen from the top of the grand stair a broken drum of travertine stands in the hall; walk down and it lies flat, a painting on the floor. Anamorphic pictures are drawn for one eye at one height. The station had 84 columns; when it came down from October 1963 most were dumped in the Meadowlands.', clue: 'Look down the hall from the top of the stair, then walk to it.', source: src }, { r: 2 });
+    }
 
     /* the waiting room first, so a short hang (a collector's five) lands under the vault, then the
        north end wall, the concourse, the seam and the arcade */

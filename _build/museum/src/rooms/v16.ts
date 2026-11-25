@@ -9,7 +9,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero, standIn, hide } from './heroes';
+import { hero, standIn, hide, heroInstances } from './heroes';
+import { paintTex, anamorphTex, hsign } from './f';
+import { fireflyPlate } from './a';
+import type { Kit } from '../kit';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -130,6 +133,107 @@ function eye(): T.Vector3 | null {
 }
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
 
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): helpers kept local to this file ----------
+   Scanned CC0 surfaces from assets/museum/tex/<room>/ (Poly Haven, 1k webp) that wear a sensible colour until their maps
+   land; real CC0 models from assets/museum/props/<room>/ (Poly Haven, decimated in Blender, 512 px maps) with any glass
+   transmission and prop shadows stripped on load; seven or more copies of one model become instanced parts.
+   Safe in node: the audit builds with no DOM. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w9 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w9b-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w9.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const key = `w9b-${room}-${id}-${p.color ?? ''}-${p.side ?? ''}-${p.roughness ?? ''}-${metres}`;
+  const m = k.pbr(key, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* 2026-11-24 wave 9 shadow diet: the counter is about four times the scene because of the shadow passes, and the walking
+   crowd (cast figures of about 14k triangles each) were the biggest casters. For the first half minute, as models arrive,
+   every cast figure or hero model (crowds, the horseman, the clock animals, far boats) and any instanced group of forty
+   or more stop casting; code built architecture keeps its shadows. */
+function shadowDiet(k: Kit) {
+  let left = 30, next = 0;
+  k.ticks.push((t) => {
+    if (left <= 0 || t < next) return;
+    next = t + 1; left--;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined;
+      if ((mat && mat.name.startsWith('tripo_')) || ((o as T.InstancedMesh).isInstancedMesh && (o as T.InstancedMesh).count >= 40)) m.castShadow = false;
+    });
+  });
+}
+/* No transmission (it makes three.js draw the room twice) and no prop shadows. */
+function clean(o: T.Object3D) {
+  o.traverse((c) => {
+    if (!(c instanceof T.Mesh)) return;
+    c.castShadow = false;
+    for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const s = m as T.MeshPhysicalMaterial; if (s.transmission) { s.transmission = 0; s.transparent = true; s.opacity = Math.min(s.opacity, 0.35); s.depthWrite = false; } }
+  });
+}
+/* One real model from this room's own props folder. */
+function ph(k: Kit, room: string, name: string, x: number, y: number, z: number, p: { height?: number; rotY?: number; keepOut?: number } = {}, tweak?: (o: T.Object3D) => void) {
+  void Promise.resolve(k.prop(`${room}/${name}`, x, y, z, p)).then((o) => { if (o && (o as T.Object3D).isObject3D) { clean(o); if (tweak) tweak(o); } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function many(k: Kit, room: string, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, onDone?: () => void) {
+  if (!at.length || !HAS_DOM) return;
+  void hero(k, `${room}/${name}`, fit).then((h) => {
+    if (!h || !k.live) return;
+    clean(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion();
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      for (const p of ins.parts) p.im.castShadow = false;
+    } else at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+    if (onDone) onDone();
+  });
+}
+/* Recolour every material of a loaded model, keeping its maps' detail. */
+function tintAll(o: T.Object3D, hex: number, rough = 0.5, metal = 0.2) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* One trick a room (rule 9): anamorphic type on the floor that stands up as a sign from one spot. */
+function standUp(k: Kit, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, font = 'W2 Archivo Expanded') {
+  if (!HAS_DOM) return;
+  const w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const tex = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
+}
+/* A green New York street name sign on its post: two blades crossed, both faces lettered. */
+function streetSign(k: Kit, x: number, z: number, y0: number, a: string, b: string, rotY = 0) {
+  const pole = k.flat(0x3a4a3e, 0.6, 0.5);
+  k.cyl(0.05, 3.9, x, y0 + 1.95, z, pole, 0.05, 8);
+  [a, b].forEach((t, i) => { const r = rotY + (i ? PI / 2 : 0), y = y0 + 3.55 + i * 0.3; for (const s of [0, PI]) hsign(k, t, 1.5, 0.24, x + Math.sin(r + s) * 0.012, y, z + Math.cos(r + s) * 0.012, r + s, { fg: '#ffffff', bg: '#0f6b3a', border: '#ffffff', size: 0.62 }); });
+  k.keepOut.push({ x, z, r: 0.3 });
+}
+
 /* ================================================================== */
 /* ---------------- 167 UNION SQUARE ---------------- */
 export const unionsquare: RoomDef = {
@@ -145,13 +249,15 @@ export const unionsquare: RoomDef = {
     k.sky({ top: 0x5a90d2, horizon: 0xdbe5ee, ground: 0x6a6a60, fog: 0.0022, sun: { az: 2.5, el: 0.72, color: 0xfff2dc, size: 8 }, env: 0.6 });
     k.hemi(0xe4e8ec, 0x6a6a60, 0.9);
     k.sun(0xfff0d8, 2.5, -40, 80, -30, true, 110);
-    const pave = k.pbr('usPave', X.pavers(0x9a9488, 167), 0.5),
-      pave2 = k.pbr('usPave2', X.pavers(0x8c8880, 171), 0.5),
-      grass = k.pbr('usGrass', X.grass(0x4b6b3a, 167), 0.4),
-      asph = k.pbr('usAsph', X.asphalt(), 0.3),
-      granite = k.pbr('usGranite', X.ashlar(0x8a8480, 168, 4), 0.6, { normal: 0.3, roughness: 0.8 }),
-      lime = k.pbr('usLime', X.ashlar(0xd6cdb6, 169, 5), 0.6, { normal: 0.3, roughness: 0.85 }),
-      brick = k.pbr('usBrick', X.brick(0x8a5a44, 170), 0.9, { side: T.DoubleSide }),
+    /* 2026-11-24 wave 9: scanned concrete pavers, lawn, asphalt, granite, sandstone and red brick (Poly Haven CC0) */
+    const US = 'unionsquare';
+    const pave = sc(k, US, 'pave', 2.0, () => X.pavers(0x9a9488, 167), { color: 0xe8e4dc, roughness: 0.85 }, 0x9a9488),
+      pave2 = sc(k, US, 'pave', 2.0, () => X.pavers(0x8c8880, 171), { color: 0xc8c2b8, roughness: 0.85 }, 0x8c8880),
+      grass = sc(k, US, 'grass', 2.0, () => X.grass(0x4b6b3a, 167), { color: 0x86c060, roughness: 0.95 }, 0x4b6b3a),
+      asph = sc(k, US, 'asph', 3.0, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.85 }, 0x2a2d31),
+      granite = sc(k, US, 'lime', 2.3, () => X.ashlar(0x8a8480, 168, 4), { color: 0xc4c0ba, roughness: 0.7 }, 0x8a8480),
+      lime = sc(k, US, 'lime', 2.0, () => X.ashlar(0xd6cdb6, 169, 5), { color: 0xfff6e8, roughness: 0.8 }, 0xd6cdb6),
+      brick = sc(k, US, 'brick', 1.0, () => X.brick(0x8a5a44, 170), { color: 0xf0e0d8, side: T.DoubleSide, roughness: 0.85 }, 0x8a5a44),
       concrete = k.pbr('usConc', X.concrete(0xa8a49a, 172), 0.4),
       glow = 1.3 * (1 + 2.2 * k.night),
       facade = k.pbr('usWin', X.windows(1671, 0.3, 0x26313d, true), 0.11, { emissive: 0xffffff, emissiveIntensity: glow, roughness: 0.6, stretch: 0.42 }),
@@ -296,7 +402,8 @@ export const unionsquare: RoomDef = {
       const seated: { x: number; y: number; z: number; ry: number; sit?: boolean }[] = [];
       for (const [x, z] of [[-33, 4], [-33, 9], [-27, 4], [-27, 9]]) {
         k.box(0.8, 0.06, 0.8, x, 0.74, z, k.flat(0xd8d0c0, 0, 0.8)); k.cyl(0.06, 0.72, x, 0.36, z, iron, 0.06, 8);
-        for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) if ((i + j) % 2) k.box(0.09, 0.005, 0.09, x - 0.36 + i * 0.09 + 0.045, 0.775, z - 0.36 + j * 0.09 + 0.045, k.flat(0x2a2a2a, 0, 0.9));
+        /* 2026-11-24 wave 9: a real board and men on every table (Poly Haven CC0 chess set), the painted squares gone */
+        ph(k, US, 'ph_chess_set', x, 0.77, z, { height: 0.11, rotY: PI / 2 });
         for (const s of [-1, 1]) { k.box(0.45, 0.45, 0.45, x + s * 0.85, 0.22, z, wood); seated.push({ x: x + s * 0.85, y: 0.34, z, ry: s > 0 ? -PI / 2 : PI / 2, sit: true }); }
         k.keepOut.push({ x, z, r: 1.5 });
       }
@@ -331,7 +438,10 @@ export const unionsquare: RoomDef = {
     { let i = 0; for (const [x, z] of [[-33, -12], [-33, -20], [-33, -28], [-33, -36], [-33, -44], [33, -12], [33, -20], [33, -28], [33, -36], [33, -44], [-38, 2], [-40, 12], [38, 2], [40, 12], [-14, 2], [14, 2], [-44, -46], [44, -46], [44, -30], [44, -14], [-8, -8], [8, -8], [-20, -8], [20, -8]]) {
       k.tree(x, 0, z, { h: 8.5 + (i % 3), r: 4 + (i % 2) * 0.6, seed: 1681 + i }); k.box(1.6, 0.06, 1.6, x, 0.03, z, iron); k.keepOut.push({ x, z, r: 0.9 }); i++;
     } }
-    for (const [x, z] of [[-28, 4], [28, 4], [-28, -50], [28, -50], [-42, -20], [42, -6], [-16, 17], [16, 17]]) k.lamp(x, z, 4.2, iron, 0xffd7a0, 14 + 22 * k.night);
+    /* 2026-11-24 wave 9: the park lamps are a real cast iron lamp post (Poly Haven CC0), light where the lantern is */
+    const lampAt = [[-28, 4], [28, 4], [-28, -50], [28, -50], [-42, -20], [42, -6], [-16, 17], [16, 17], [-6, 19.5], [6, 19.5], [-44, 19], [44, 19]];
+    for (const [x, z] of lampAt) { k.point(x, 4.0, z, 0xffd7a0, 10 + 22 * k.night, 14); k.keepOut.push({ x, z, r: 0.4 }); }
+    many(k, US, 'ph_street_lamp_01', { height: 4.4 }, lampAt.map(([x, z]) => [x, 0, z, 0]));
     k.egg(v(0, 1.4, 5), { id: 'us-labor-day-1882', title: 'The first Labor Day', year: '1882', text: 'On September 5, 1882, the first Labor Day celebration paraded through Union Square. The park itself was completed and opened in July 1839, and it was named for the union of the two principal roads of the island that met here. It was designated a National Historic Landmark on December 9, 1997.', clue: 'Stand in the middle of the south plaza, where the marchers came through.', source: { name: 'Union Square, Manhattan, Wikipedia', url: 'https://en.wikipedia.org/wiki/Union_Square,_Manhattan' } }, { r: 3.4 });
     k.egg(v(0, 1.6, 28.5), { id: 'us-metronome-1999', title: 'Fifteen digits over 14th Street', year: '1999', text: 'The Metronome on One Union Square South is by Kristin Jones and Andrew Ginzel. Installation began in February 1999 and it was dedicated on October 26, 1999, one of the largest private commissions of public art in the city. Its fifteen digits show the hours, minutes, seconds and tenths since midnight on the left, the same to midnight on the right, hundredths in the middle, and at noon and midnight the hole erupts with a plume of steam. On September 19, 2020 the digits were turned into a climate clock; here they keep the time of day.', clue: 'Go down the steps to the curb and look at the wall across the street. Do not look away for long, the digits will not wait.', source: { name: 'Metronome (public artwork), Wikipedia', url: 'https://en.wikipedia.org/wiki/Metronome_(public_artwork)' } }, { r: 3.2 });
 
@@ -362,6 +472,7 @@ export const unionsquare: RoomDef = {
     for (let i = 0; i < 15; i++) { const z = -43.5 + i * 3.4; stalls.push({ x: -46.5, z, ry: PI / 2, kind: kind++ % 6 }); stalls.push({ x: -38.5, z, ry: -PI / 2, kind: kind++ % 6 }); }
     const canopyM: T.Matrix4[] = [], postM: T.Matrix4[] = [], tableM: T.Matrix4[] = [], skirtM: T.Matrix4[] = [], crateM: T.Matrix4[] = [], crateC: number[] = [], skirtC: number[] = [];
     const vend: { x: number; z: number; ry: number; cur: number }[] = [];
+    const crateAt: number[][] = [], appleAt: number[][] = [], flowerAt: number[][] = [];
     const pal = [[0xb8202a, 0xc83a2a, 0x3d7a2a, 0x2e6a2a], [0x3d7a2a, 0x4a8a3a, 0x8ab040, 0x2e5a2a], [0xe08a20, 0xd06a18, 0xf0b040, 0x8a5a2a], [0xe85a8a, 0xf0d040, 0xf4f0e8, 0xd84070], [0xd8a020, 0xc88a18, 0xe8b830, 0xb87a10], [0xc08a40, 0xa87030, 0xd8a860, 0x8a5a2a]];
     const skirts = [0x2e5a3a, 0xf2f2ee, 0x2a3a6a, 0x8a2a2a, 0xf2f2ee, 0x2e5a3a];
     const rnd = X.mulberry(1682), q = new T.Quaternion(), tmp = new T.Vector3();
@@ -373,7 +484,15 @@ export const unionsquare: RoomDef = {
       tableM.push(new T.Matrix4().compose(local(s, 0, 0.85, 0.9), q, one));
       skirtM.push(new T.Matrix4().compose(local(s, 0, 0.42, 0.9), q, one)); skirtC.push(skirts[s.kind]);
       const n = 4 + Math.floor(rnd() * 3);
-      for (let i = 0; i < n; i++) { crateM.push(new T.Matrix4().compose(local(s, -1.05 + (i / (n - 1)) * 2.1, 1.06, 0.9 + (rnd() - 0.5) * 0.2), q, v(1, 0.8 + rnd() * 0.5, 1))); crateC.push(pal[s.kind][Math.floor(rnd() * 4)]); }
+      /* 2026-11-24 wave 9: real wooden crates on the tables (Poly Haven CC0, instanced), the colour now a heap of produce in
+         each one; real apples on the orchard tables and potted flowers on the flower tables */
+      for (let i = 0; i < n; i++) {
+        const lx = -1.05 + (i / (n - 1)) * 2.1, lz = 0.9 + (rnd() - 0.5) * 0.12, c0 = local(s, lx, 0.88, lz);
+        crateAt.push([c0.x, 0.88, c0.z, s.ry]);
+        if (s.kind === 3) { for (const dx of [-0.12, 0.12]) { const f = local(s, lx + dx, 1.1, lz); flowerAt.push([f.x, 1.06, f.z, rnd() * 6]); } continue; }
+        crateM.push(new T.Matrix4().compose(local(s, lx, 1.07, lz), q, v(0.96, 0.32, 0.8))); crateC.push(pal[s.kind][Math.floor(rnd() * 4)]);
+        if (s.kind === 0 && i % 2 === 0) for (let a = 0; a < 3; a++) for (let b = 0; b < 2; b++) { const f = local(s, lx - 0.13 + a * 0.13, 1.12, lz - 0.06 + b * 0.12); appleAt.push([f.x, 1.11, f.z, rnd() * 6]); }
+      }
       vend.push({ x: local(s, (rnd() - 0.5) * 1.2, 0, -0.4).x, z: local(s, 0, 0, -0.4).z, ry: s.ry, cur: s.ry });
       const w = Math.abs(Math.cos(s.ry)) > 0.5 ? [1.7, 1.6] : [1.6, 1.7];
       k.block(s.x - w[0], s.x + w[0], s.z - w[1], s.z + w[1]);
@@ -383,6 +502,12 @@ export const unionsquare: RoomDef = {
     k.instances(new T.BoxGeometry(2.8, 0.06, 0.8), wood, tableM);
     { const sk = k.instances(new T.BoxGeometry(2.8, 0.8, 0.78), k.flat(0xffffff, 0, 0.9), skirtM); const c = new T.Color(); skirtC.forEach((h, i) => sk.setColorAt(i, c.set(h))); if (sk.instanceColor) sk.instanceColor.needsUpdate = true; }
     { const cr = k.instances(new T.BoxGeometry(0.46, 0.3, 0.36), k.flat(0xffffff, 0, 0.85), crateM); const c = new T.Color(); crateC.forEach((h, i) => cr.setColorAt(i, c.set(h))); if (cr.instanceColor) cr.instanceColor.needsUpdate = true; }
+    many(k, US, 'ph_wooden_crate_01', { width: 0.5 }, crateAt);
+    many(k, US, 'ph_food_apple_01', { height: 0.085 }, appleAt);
+    many(k, US, 'ph_flower_gazania', { width: 0.26 }, flowerAt);
+    /* a chalk price board at the end of each market row, and wicker baskets of sweet potatoes on the west row */
+    for (const [z, dz] of [[-51, 1.8], [-61.5, -1.8]]) for (const sx of [-1, 1]) ph(k, US, 'ph_standing_chalkboard_01', sx * 31.6, 0, z + dz, { height: 1.3, rotY: sx > 0 ? -PI / 2 : PI / 2, keepOut: 0.5 });
+    for (const [x, z] of [[-41.2, -40], [-41.2, -26], [-41.2, -12], [-43.8, -33], [-43.8, -19]]) for (const dz of [-0.3, 0.3]) ph(k, US, 'ph_wicker_basket_01', x, 0, z + dz, { height: 0.12, rotY: dz * 3 });
     /* the vendors: one instanced figure with a tray, and they turn to face a visitor at their table */
     {
       const vg = mergeGeometries([figureGeo(0.2, 0.7, 1.24), part(0.4, 0.06, 0.26, 0, 1.0, 0.3), part(0.5, 0.12, 0.5, 0, 1.72, 0)])!;
@@ -421,6 +546,37 @@ export const unionsquare: RoomDef = {
       hang(mounts, s * 26.22, 1.55, z, s > 0 ? PI / 2 : -PI / 2, 2.2, 1.5, st, 3.2);
     }
 
+    /* ---- 2026-11-24 wave 9: the south plaza dressed for real ---- */
+    /* the iron railing round Washington's pedestal, posts and two rails, one instanced draw for the pickets */
+    { const pk: T.Matrix4[] = []; const RW = 4.4, RD = 5.2;
+      for (let x = -RW; x <= RW + 0.01; x += 0.32) { pk.push(new T.Matrix4().makeTranslation(x, 0.55, 13 - RD), new T.Matrix4().makeTranslation(x, 0.55, 13 + RD)); }
+      for (let z = -RD + 0.32; z < RD; z += 0.32) { pk.push(new T.Matrix4().makeTranslation(-RW, 0.55, 13 + z), new T.Matrix4().makeTranslation(RW, 0.55, 13 + z)); }
+      k.instances(new T.BoxGeometry(0.035, 1.1, 0.035), iron, pk);
+      for (const y of [0.18, 1.08]) { for (const dz of [-RD, RD]) k.box(RW * 2, 0.05, 0.05, 0, y, 13 + dz, iron); for (const dx of [-RW, RW]) k.box(0.05, 0.05, RD * 2, dx, y, 13, iron); }
+      for (const [dx, dz] of [[-RW, -RD], [RW, -RD], [-RW, RD], [RW, RD]]) k.sphere(0.07, dx, 1.16, 13 + dz, gilt, 8); k.block(-RW - 0.1, RW + 0.1, 13 - RD - 0.1, 13 + RD + 0.1); }
+    /* the bronze tablet on the pedestal's north face (public inscription only) */
+    k.box(1.6, 0.9, 0.05, 0, 2.3, 13 - 2.63, bronze); hsign(k, 'WASHINGTON  1856', 1.4, 0.3, 0, 2.3, 13 - 2.66, PI, { fg: '#d8c890', bg: '#3e4a3a', size: 0.55, lit: false });
+    /* park benches (our Central Park cast) round the statue, and real litter bins */
+    for (const [x, z, r] of [[-8.2, 10.5, PI / 2], [-8.2, 15.5, PI / 2], [8.2, 10.5, -PI / 2], [8.2, 15.5, -PI / 2]] as number[][]) { k.prop('cp_bench', x, 0, z, { height: 1.0, rotY: r, keepOut: 1.1 }); }
+    for (const [x, z] of [[-11, 19], [11, 19], [-30, 14], [30, 14]]) ph(k, US, 'ph_metal_trash_can', x, 0, z, { height: 0.9, rotY: PI, keepOut: 1.0 });
+    /* the green street name signs at the corners of 14th Street */
+    streetSign(k, -47.2, 30.0, SY, 'E 14 ST', 'UNION SQ W', 0);
+    streetSign(k, 46.6, 30.0, SY, 'E 14 ST', 'UNION SQ E', 0);
+    streetSign(k, -47.2, 46.2, SY, 'E 14 ST', 'UNIVERSITY PL', 0);
+    /* the market's own banner over the north lane and the park's name board by the steps */
+    k.box(0.12, 4.6, 0.12, -31.6, 2.3, -47.6, iron); k.box(0.12, 4.6, 0.12, 31.6, 2.3, -47.6, iron);
+    hsign(k, 'UNION SQUARE GREENMARKET  ·  MON  WED  FRI  SAT  8 TO 6', 22, 1.1, 0, 4.0, -47.62, 0, { fg: '#1f4a2a', bg: '#f2ede0', border: '#2e6a3a', size: 0.5, lit: false });
+    hsign(k, 'UNION SQUARE GREENMARKET  ·  MON  WED  FRI  SAT  8 TO 6', 22, 1.1, 0, 4.0, -47.68, PI, { fg: '#1f4a2a', bg: '#f2ede0', border: '#2e6a3a', size: 0.5, lit: false });
+    k.box(2.6, 1.1, 0.1, -16, 1.2, 21.0, k.flat(0x1f4a30, 0.1, 0.7)); for (const dx of [-1.1, 1.1]) k.box(0.08, 1.6, 0.08, -16 + dx, 0.8, 21.05, iron);
+    hsign(k, 'UNION SQUARE PARK', 2.4, 0.5, -16, 1.4, 20.94, PI, { fg: '#ffffff', bg: '#1f4a30', size: 0.5, lit: false });
+    hsign(k, 'NYC PARKS  ·  SINCE 1839', 2.4, 0.3, -16, 0.92, 20.94, PI, { fg: '#ffffff', bg: '#1f4a30', size: 0.5, lit: false });
+    k.keepOut.push({ x: -16, z: 21, r: 1.4 });
+    /* the Firefly painted banner on the pavilion's attic over the market (FIREFLY_QUEUE.md): the limestone until the file lands */
+    fireflyPlate(k, 'assets/museum/tex/unionsquare/ff_us_harvest_frieze.webp', 26, 0.72, 0, PY + 6.0, -68.17, 0, lime);
+    /* one trick (rule 9): 86,400 painted on the plaza, stretched so long that it only stands up from where you come in */
+    standUp(k, '86,400', '#ff7a18', -9, 5, 3, 0.0, PI - 0.15, 9, 5, 1.4);
+    k.egg(v(-10, 1.0, 14), { id: 'us-86400', title: 'A number that stands up', text: 'The orange figures on the plaza are painted long and thin, so they only stand up as a sign from the spot where you come in. A picture distorted to come right from one viewpoint is anamorphosis. 86,400 is the number of seconds in a day, the whole count the Metronome across the street runs through between one midnight and the next.', clue: 'Stand where you came in, facing the digits across 14th Street, and look down at the plaza.', source: { name: 'Metronome (public artwork), Wikipedia', url: 'https://en.wikipedia.org/wiki/Metronome_(public_artwork)' } }, { r: 1.4 });
+
     const floorY = (x: number, z: number) => {
       if (z > 25.2) return SY;
       if (z > 22) return SY * clamp01((z - 22) / 3.2);
@@ -428,6 +584,7 @@ export const unionsquare: RoomDef = {
       if (Math.abs(x) < 14.3 && z < -66.5) return PY * clamp01((-66.5 - z) / 2.5);
       return 0;
     };
+    shadowDiet(k);
     return { mounts, spawn: v(-9, 3, 5), look: v(2, 5.5, MZ), eye: 3, floorY, bounds: [-51.5, 47.5, -81.2, 30.4], style: st };
   },
 };
@@ -448,13 +605,15 @@ export const bryantpark: RoomDef = {
     k.hemi(0xe4e8ec, 0x6a6a60, 0.9);
     k.sun(0xfff0d8, 2.4, -30, 80, 50, true, 110);
     const night = k.night > 0.5;
-    const gravel = k.pbr('bpGravel', X.concrete(0xb8ad98, 168), 0.4),
-      grass = k.pbr('bpGrass', X.grass(0x4e7a3c, 168), 0.4),
-      lime = k.pbr('bpLime', X.ashlar(0xd8d0bc, 181, 5), 0.6, { normal: 0.3, roughness: 0.85 }),
-      rust = k.pbr('bpRust', X.ashlar(0xc8bea6, 182, 3), 0.6, { normal: 0.45, roughness: 0.9 }),
-      granite = k.pbr('bpGranite', X.ashlar(0x8a8480, 183, 4), 0.6, { normal: 0.3, roughness: 0.8 }),
-      pink = k.pbr('bpPink', X.marble(0xc8a090, 0x8a6a5a, 184), 0.5, { roughness: 0.55 }),
-      asph = k.pbr('bpAsph', X.asphalt(), 0.3), walk = k.pbr('bpWalk', X.pavers(0x9a968c, 185), 0.5),
+    /* 2026-11-24 wave 9: scanned gravel, lawn, sandstone ashlar, rusticated blocks, granite, pink granite, asphalt (Poly Haven CC0) */
+    const BP = 'bryantpark';
+    const gravel = sc(k, BP, 'gravel', 2.0, () => X.concrete(0xb8ad98, 168), { color: 0xf0e4d0, roughness: 0.95 }, 0xb8ad98),
+      grass = sc(k, BP, 'grass', 2.0, () => X.grass(0x4e7a3c, 168), { color: 0x86c060, roughness: 0.95 }, 0x4e7a3c),
+      lime = sc(k, BP, 'lime', 2.0, () => X.ashlar(0xd8d0bc, 181, 5), { color: 0xfffaf0, roughness: 0.8 }, 0xd8d0bc),
+      rust = sc(k, BP, 'rust', 3.0, () => X.ashlar(0xc8bea6, 182, 3), { color: 0xfff4e4, roughness: 0.9 }, 0xc8bea6),
+      granite = sc(k, BP, 'granite', 2.3, () => X.ashlar(0x8a8480, 183, 4), { color: 0xb8b4b0, roughness: 0.6 }, 0x8a8480),
+      pink = sc(k, BP, 'pink', 1.9, () => X.marble(0xc8a090, 0x8a6a5a, 184), { color: 0xffd8c8, roughness: 0.45 }, 0xc8a090),
+      asph = sc(k, BP, 'asph', 3.0, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.85 }, 0x2a2d31), walk = sc(k, BP, 'walk', 1.8, () => X.pavers(0x9a968c, 185), { color: 0xd8d4cc, roughness: 0.85 }, 0x9a968c),
       glow = 1.3 * (1 + 2.2 * k.night),
       facade = k.pbr('bpWin', X.windows(1681, 0.3, 0x26313d, true), 0.11, { emissive: 0xffffff, emissiveIntensity: glow, roughness: 0.6, stretch: 0.42 }),
       facadeDark = k.pbr('bpWin2', X.windows(1683, 0.3, 0x1a1a1c, true), 0.11, { emissive: 0xffffff, emissiveIntensity: glow, roughness: 0.6, stretch: 0.42 }),
@@ -547,7 +706,10 @@ export const bryantpark: RoomDef = {
 
     /* ---- the London planes on both promenades, in two rows each, and the lamps ---- */
     { let i = 0; for (const s of [-1, 1]) for (let x = -32; x <= 26; x += 5.8) for (const dz of [23.5, 29.5]) { const z = s * dz; if (s > 0 && x > -22 && x < -8) continue; k.tree(x, 0, z, { h: 8.5 + (i % 3) * 0.6, r: 3.8 + (i % 2) * 0.5, seed: 1691 + i }); k.box(1.4, 0.06, 1.4, x, 0.03, z, iron); k.keepOut.push({ x, z, r: 0.8 }); i++; } }
-    for (const [x, z] of [[-34, -21], [-34, 21], [28, -21], [28, 21], [0, -33], [0, 33], [-50, -20], [-50, 20]]) k.lamp(x, z, 4.4, iron, 0xffd7a0, 14 + 22 * k.night);
+    /* 2026-11-24 wave 9: the lamps are a real cast iron lamp post (Poly Haven CC0), the light where its lantern is */
+    const lampAt = [[-34, -21, 0], [-34, 21, 0], [28, -21, 0], [28, 21, 0], [0, -33, 0], [0, 33, 0], [-50, -20, WY], [-50, 20, WY], [-14, -21, 0], [14, -21, 0], [14, 21, 0]];
+    for (const [x, z, y] of lampAt) { k.point(x, y + 3.9, z, 0xffd7a0, 10 + 22 * k.night, 14); k.keepOut.push({ x, z, r: 0.4 }); }
+    many(k, BP, 'ph_street_lamp_01', { height: 4.4 }, lampAt.map(([x, z, y]) => [x, y, z, 0]));
 
     /* ---- the chairs, by the hundred, one instanced mesh, and the little round tables ---- */
     {
@@ -561,7 +723,11 @@ export const bryantpark: RoomDef = {
         for (let i = 0; i < n; i++) { const x = x0 + rnd() * (x1 - x0), z = z0 + rnd() * (z1 - z0); if (!clear(x, z)) continue; cm.push(new T.Matrix4().compose(v(x, y, z), new T.Quaternion().setFromAxisAngle(up, rnd() * PI * 2), one)); }
         for (let i = 0; i < n / 5; i++) { const x = x0 + rnd() * (x1 - x0), z = z0 + rnd() * (z1 - z0); if (!clear(x, z)) continue; tm.push(new T.Matrix4().makeTranslation(x, y, z)); k.keepOut.push({ x, z, r: 0.5 }); }
       }
-      k.instances(chairG, green, cm); k.instances(tableG, greenDark, tm);
+      /* 2026-11-24 wave 9: every chair is the real folding bistro chair (Poly Haven CC0, instanced, decimated); the box
+         chairs stand in until it loads and then go */
+      const boxChairs = k.instances(chairG, green, cm); k.instances(tableG, greenDark, tm);
+      const p0 = new T.Vector3(), q0 = new T.Quaternion(), s0 = new T.Vector3();
+      many(k, BP, 'ph_GreenChair_01', { height: 0.9 }, cm.map((m0) => { m0.decompose(p0, q0, s0); return [p0.x, p0.y, p0.z, new T.Euler().setFromQuaternion(q0, 'YXZ').y + PI]; }), undefined, () => { boxChairs.visible = false; });
       k.egg(v(0, 1.2, -26), { id: 'bp-chairs-1988', title: 'Two thousand chairs', year: '1988', text: 'The movable chairs are the mark of the park: 2,000 of them were put out in the redesign begun in 1988. The park closed for that renovation on July 11, 1988 and soft reopened on April 21, 1992, run by the Bryant Park Restoration Corporation that Dan Biederman founded in 1980.', clue: 'Pick a chair on the north promenade. Nobody will mind if you move it.', source: { name: 'Bryant Park, Wikipedia', url: 'https://en.wikipedia.org/wiki/Bryant_Park' } }, { r: 3.2 });
     }
     /* people: walkers on the promenades, a few sitting on the lawn by day, the film crowd after dark */
@@ -728,6 +894,23 @@ export const bryantpark: RoomDef = {
       });
     }
 
+    /* ---- 2026-11-24 wave 9: the terrace, the corners and the trick ---- */
+    /* planters on the terrace balustrade, real litter bins, the projector lamps on the screen scaffold */
+    { const pl: number[][] = []; for (let z = -33; z <= 33; z += 4.4) { if (Math.abs(z - S1) < 3.4 || Math.abs(z - S2) < 3.4 || z > 26) continue; pl.push([30.2, TY + 0.99, z, PI / 2]); }
+      many(k, BP, 'ph_planter_box_01', { width: 1.0 }, pl); }
+    for (const [x, z, y] of [[-30, -21.5, 0], [24, 21.5, 0], [-8, -33.5, 0]]) ph(k, BP, 'ph_metal_trash_can', x, y, z, { height: 0.9, rotY: z > 0 ? 0 : PI, keepOut: 1.0 });
+    ph(k, BP, 'ph_flood_lights', -33.8, 9.6, 0, { height: 1.2, rotY: PI / 2 });
+    /* the green street name signs at the corners */
+    streetSign(k, -51.6, -36.0, WY, 'W 42 ST', 'AVE OF THE AMERICAS', 0);
+    streetSign(k, -51.6, 36.0, WY, 'W 40 ST', 'AVE OF THE AMERICAS', 0);
+    /* the Firefly engraving of the Crystal Palace on its panel at the north stair (FIREFLY_QUEUE.md): the stone until it lands */
+    k.box(2.9, 2.0, 0.12, 38.4, TY + 1.6, -34.4, k.flat(0x1f4a30, 0.1, 0.7)); for (const dx of [-1.3, 1.3]) k.box(0.1, 2.6, 0.1, 38.4 + dx, TY + 1.3, -34.5, iron);
+    fireflyPlate(k, 'assets/museum/tex/bryantpark/ff_bp_crystal_palace.webp', 2.7, 1.8, 38.4, TY + 1.6, -34.33, 0, lime);
+    k.keepOut.push({ x: 38.4, z: -34.4, r: 1.6 });
+    /* one trick (rule 9): words painted on the lawn, stretched so long that they only stand up from the library terrace */
+    standUp(k, '84 MILES OF BOOKS', '#f6f0e0', 34, 0, TY + 3, 0.05, PI / 2, 14, 9, 2.6);
+    k.egg(v(14, 1.0, 0), { id: 'bp-words-on-the-lawn', title: 'Words that stand up', text: 'The white words on the lawn are painted long and thin, so they only stand up as a sign from the library terrace where you come in. A picture distorted to come right from one viewpoint is anamorphosis. They tell you what is underneath: the library\'s stacks, 84 miles of shelving built under the grass when the park was rebuilt.', clue: 'Stand on the library terrace where you came in and look out over the lawn.', source: { name: 'Bryant Park, Wikipedia', url: 'https://en.wikipedia.org/wiki/Bryant_Park' } }, { r: 1.6 });
+
     const floorY = (x: number, z: number) => {
       if (x >= 30.1 && x < 42) return TY;
       if (x > 27.5 && x < 30.1 && (Math.abs(z - S1) < 2.4 || Math.abs(z - S2) < 2.4)) return TY * clamp01((x - 27.5) / 2.6);
@@ -735,6 +918,7 @@ export const bryantpark: RoomDef = {
       if (x < -33.8 && x >= -36 && Math.abs(Math.abs(z) - 24) < 3.1) return WY * clamp01((-33.8 - x) / 2.2);
       return 0;
     };
+    shadowDiet(k);
     return { mounts, spawn: v(34, TY + 3, 0), look: v(-44, 4, 0), eye: 3, floorY, bounds: [-52.6, 41.6, -37.5, 37.5], style: st };
   },
 };

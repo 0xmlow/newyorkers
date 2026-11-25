@@ -9,8 +9,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
-import { followInstances } from './heroes';
-import { street, blockFront } from './f';
+import { followInstances, hero, heroInstances } from './heroes';
+import { street, blockFront, hsign, paintTex, anamorphTex } from './f';
+import { fireflyPlate } from './a';
+import { standIn as g9StandIn, hide as g9Hide } from './heroes'; // wave 9a, gramercy only
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -85,6 +87,77 @@ function cars(k: K, reduced: boolean, lanes: { x: number; dir: 1 | -1; n: number
   return st;
 }
 
+/* ---------- THE BIG UPGRADE, wave 7a (2026-11-24): helpers for Eldridge Street only ----------
+   Poly Haven scans from assets/museum/tex/eldridge/ wearing a set colour until all three maps land, real models fitted
+   once and placed (seven or more as instanced parts), house font signs. All of it a no-op on canvas in node. */
+const W7E_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w7eL = W7E_DOM ? new T.TextureLoader() : null;
+const w7eS = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w7eScan(k: K, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w7eL) return k.pbr(`w7e-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w7eS.get(id);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w7eL.load(`assets/museum/tex/eldridge/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w7eS.set(id, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w7e-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w7e) {
+    m.userData.w7e = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w7ePlace(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+function w7eSign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6) {
+  if (!W7E_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size });
+}
+const W7E_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+/* Ground floor shops along a row of tenements whose fronts face `face` (+1 looks to +x) at x: glass, a lit interior,
+   an awning, a fascia sign in the house lettering. */
+function w7eShops(k: K, x: number, face: 1 | -1, zs: number[], names: string[], seed: number, awning = true) {
+  const rnd = X.mulberry(seed), glass = k.glass(0x2a3440, 0.55, 0.06), lit = k.glow(0xffe2b0, 0.5), bulk = k.flat(0x1c2024, 0.4, 0.5);
+  const cols = [0xb8262a, 0x1d5a3a, 0xe0a020, 0x1d2a5a, 0x8a1a4a, 0x2a2a2a];
+  zs.forEach((z, i) => {
+    const w = 6.6, fx = x + face * 0.06, c = cols[Math.floor(rnd() * cols.length)];
+    k.box(0.12, 0.6, w, fx, 0.3, z, bulk);
+    k.box(0.05, 2.4, w, fx, 1.8, z, glass);
+    k.box(0.02, 2.2, w - 0.3, fx - face * 0.3, 1.8, z, lit);
+    for (const dz of [-w / 2, w / 2]) k.box(0.16, 3.2, 0.14, fx + face * 0.02, 1.6, z + dz, bulk);
+    k.box(0.22, 1.25, w + 0.6, fx + face * 0.08, 3.62, z, k.flat(c, 0.1, 0.7));
+    w7eSign(k, names[i % names.length], w - 0.4, 0.62, fx + face * 0.21, 3.62, z, face > 0 ? PI / 2 : -PI / 2, '#f6f0e4', '', 'W2 Archivo Expanded', false, 0.62);
+    if (!awning) return;
+    const a = k.box(1.5, 0.05, w + 0.2, fx + face * 0.75, 2.95, z, k.flat(c, 0, 0.85)); a.rotation.z = -face * 0.4;
+    k.box(0.03, 0.26, w + 0.2, fx + face * 1.45, 2.6, z, k.flat(c, 0, 0.85));
+  });
+}
+
 /* ---------------- 124 ELDRIDGE STREET, REBUILT ---------------- */
 export const eldridge2: RoomDef = {
   id: 'eldridge',
@@ -98,13 +171,14 @@ export const eldridge2: RoomDef = {
     k.sky({ top: 0x6f98d0, horizon: 0xe4e0d8, ground: 0x4a4a48, fog: 0.0026, sun: { az: 1.4, el: 0.5, color: 0xfff0d8, size: 12 }, env: 0.75 });
     k.hemi(0xe8ecff, 0x8a8478, 0.75);
     k.sun(0xffe8c8, 1.9, 50, 55, 25, true, 70);
-    const brick = k.pbr('el2Brick', X.brick(0x8e5f44, 1453), 0.3),
+    // 2026-11-24 wave 7a: brick, floors and plaster are Poly Haven scans (tex/eldridge/), the street too
+    const brick = w7eScan(k, 'large_red_bricks', 2.6, () => X.brick(0x8e5f44, 1453), { color: 0xe0b098, roughness: 0.9 }, 0x8e5f44),
       stone = k.pbr('el2Stone', X.ashlar(0xd6c8aa, 1455, 3), 0.25),
       terra = k.flat(0xb87a56, 0, 0.72),
       terraDark = k.flat(0x8a5238, 0, 0.8),
-      floorW = k.pbr('el2Floor', X.planks(0x8a6844, 9, 1456), 0.6, { roughness: 0.65 }),
-      wallS = k.pbr('el2Wall', X.plaster(0xd8a882, 1457), 0.35, { roughness: 0.85 }),
-      wallL = k.pbr('el2Lower', X.plaster(0xe6ded0, 1458), 0.35, { roughness: 0.9 }),
+      floorW = w7eScan(k, 'old_wood_floor', 2.2, () => X.planks(0x8a6844, 9, 1456), { color: 0xd8b088, roughness: 0.65 }, 0x8a6844),
+      wallS = w7eScan(k, 'plastered_wall_04', 2.5, () => X.plaster(0xd8a882, 1457), { color: 0xe8b48a, roughness: 0.85 }, 0xd0a07a),
+      wallL = w7eScan(k, 'plastered_wall_04', 2.5, () => X.plaster(0xe6ded0, 1458), { color: 0xf0e8da, roughness: 0.9 }, 0xe0d8ca, 'L'),
       vaultM = k.flat(0x1f3c86, 0, 0.9, { side: T.BackSide }),
       ceilM = k.flat(0x1f3c86, 0, 0.9),
       marbleCol = k.pbr('el2Marb', X.marble(0xcfb89a, 0x8a6a50, 1459), 0.8, { roughness: 0.4 }),
@@ -114,17 +188,35 @@ export const eldridge2: RoomDef = {
       brass = k.flat(0xc09a48, 0.85, 0.32),
       iron = k.flat(0x1f262b, 0.75, 0.45),
       dark = k.flat(0x16181c, 0.3, 0.7),
-      leaded = k.flat(0x2a3444, 0.5, 0.25),
+      /* 2026-11-24 wave 7a: the windows were black: leaded glass now, amber and cream quarries in a ruby and cobalt border,
+         lit a little from inside so the front reads as stained glass from the street (ShapeGeometry UVs run in metres) */
+      leaded = W7E_DOM ? (() => { const t = paintTex(256, 256, (g, w, h) => {
+        g.fillStyle = '#1a1612'; g.fillRect(0, 0, w, h);
+        const rs = X.mulberry(1887), cols = ['#d8a850', '#e8d0a0', '#c89040', '#f0e0b8'];
+        for (let i = -1; i < 5; i++) for (let j = -1; j < 5; j++) { const cx = i * 64 + (j % 2 ? 32 : 0), cy = j * 64; g.fillStyle = cols[Math.floor(rs() * 4)]; g.beginPath(); g.moveTo(cx, cy - 30); g.lineTo(cx + 30, cy); g.lineTo(cx, cy + 30); g.lineTo(cx - 30, cy); g.closePath(); g.fill(); }
+        g.fillStyle = '#8a1a24'; g.fillRect(0, 0, 18, h); g.fillRect(w - 18, 0, 18, h); g.fillStyle = '#2a4ab0'; g.fillRect(4, 0, 8, h); g.fillRect(w - 12, 0, 8, h);
+      }); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(1.6, 1.6); return new T.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.45, roughness: 0.18, metalness: 0.1, side: T.DoubleSide }); })() : k.flat(0x2a3444, 0.5, 0.25),
       velvet = k.pbr('el2Velvet', X.velvet(0x6a1a28), 0.5, { roughness: 0.9 }),
       globe = k.glow(0xe8d2a8),
       starGold = new T.MeshBasicMaterial({ color: 0xf2c75a }),
       pane = [k.glow(0xd8a850), k.glow(0x3a5ad0), k.glow(0xb84040), k.glow(0x4a9a6a), k.glow(0x8a6ad0), k.glow(0xe8c070)];
     const FX = -8, FI = -8.6, SW = -16.5, EI = -31.4, ZI = 7.4, F0 = -1.2, S0 = 3.5, BY = S0 + 4.4, SY = 14.5, NR = 4.6;
     /* Eldridge Street: narrow, tenements shoulder to shoulder, the Manhattan Bridge side far off */
-    street(k, { w: 9, len: 130, z: 0, x: 0, walk: 3.5 });
+    { // the street in scans: asphalt, concrete flags, granite kerbs (street() of f.ts, re-laid here)
+      const asphalt = w7eScan(k, 'asphalt_02', 4, () => X.asphalt(0x24282d), { color: 0x8c8c8c, roughness: 0.92 }, 0x3a3c40),
+        pav = w7eScan(k, 'concrete_pavement', 2.2, () => X.pavers(0x8e8b84, 5), { color: 0xc8c2b6, roughness: 0.9 }, 0x8e8b84),
+        granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35), yellow = k.flat(0xe6a626, 0, 0.6), white = k.flat(0xdedbd2, 0, 0.7);
+      k.box(9, 0.3, 130, 0, -0.15, 0, asphalt);
+      for (const sd of [-1, 1]) { k.box(3.5, 0.28, 130, sd * 6.25, 0, 0, pav); k.box(0.3, 0.32, 130, sd * 4.6, 0.02, 0, granite); }
+      for (const dx of [-0.14, 0.14]) k.box(0.09, 0.012, 124, dx, 0.01, 0, yellow);
+      for (const cz of [59, 31, 3, -25, -53]) for (let cx = -3.3; cx <= 3.5; cx += 1.2) k.box(0.62, 0.014, 2.8, cx, 0.012, cz, white);
+    }
     blockFront(k, { x: -8, z0: 44, count: 5, face: 1, seed: 1445, h: [15, 21] });
     blockFront(k, { x: -8, z0: -12, count: 5, face: 1, seed: 1446, h: [15, 21] });
     blockFront(k, { x: 8, z0: 44, count: 12, face: -1, seed: 1457, h: [15, 22] });
+    { const names = ['FRUIT  ·  VEGETABLES', 'BAKERY', 'NOODLES', 'HARDWARE', 'TEA  ·  HERBS', 'LAUNDROMAT', 'FISH MARKET', 'DUMPLINGS', 'TAILOR', 'BARBER', 'TRAVEL', 'JEWELRY'];
+      w7eShops(k, -8, 1, [44, 36, 28, 20, 12, -12, -20, -28, -36, -44], names, 1490, false);
+      w7eShops(k, 8, -1, Array.from({ length: 12 }, (_, i) => 44 - i * 8), names.slice(5).concat(names.slice(0, 5)), 1491); }
     k.skyline({ z: -110, count: 20, spacing: 5, scale: 2.2, base: -1, seed: 1482, lit: 0.22, glow: 0.4, tint: 0x5e6674, rows: 2 });
     k.skyline({ z: 110, count: 20, spacing: 5, scale: 2.0, base: -1, seed: 1483, lit: 0.22, glow: 0.4, tint: 0x5e6674, rows: 1 });
     k.block(-60, -8, 7.4, 60); k.block(-60, -8, -60, -7.4);
@@ -384,7 +476,16 @@ export const eldridge2: RoomDef = {
       const gl = mergeGeometries([[r, 0], [r * 0.62, 0.55]].flatMap(([rr, dy], lvl) => { const n = lvl ? Math.round(arms * 0.6) : arms; return Array.from({ length: n }, (_, i) => { const a = (i / n) * PI * 2 + lvl * 0.2; return new T.SphereGeometry(0.075, 8, 6).translate(Math.cos(a) * rr, -drop + dy + 0.14, Math.sin(a) * rr); }); }))!;
       g.add(new T.Mesh(gl, flameGlobes));
       const l = new T.PointLight(0xffd8a0, 26 * r, 14, 2); l.position.y = -drop + 0.3; g.add(l);
-      k.add(g); return g;
+      k.add(g);
+      /* 2026-11-24 wave 7a: a real model takes over from the code rings once it loads (the gilt one under the
+         crossing, brass in the nave); the chain and the light stay */
+      const big = r > 1.5, code = g.children.slice(1, 3);
+      void hero(k, big ? 'eldridge/chandelier_gilt' : 'eldridge/chandelier_brass', { width: big ? 3.4 : 2.4 }).then((h) => {
+        if (!h || !k.live) return;
+        h.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; });
+        const hh = (h.userData.size as T.Vector3).y; h.position.y = -drop + 1.3 - hh; g.add(h); code.forEach((c) => (c.visible = false));
+      });
+      return g;
     };
     const chands = [chand(XC, 0, SY + XR, 7.0, 1.9, 18)];
     for (const x of [-20.8, -29.4]) chands.push(chand(x, 0, SY + NR, 9.6, 1.1, 10));
@@ -408,6 +509,21 @@ export const eldridge2: RoomDef = {
     cars(k, ctx.reduced, [{ x: 1.6, dir: -1, n: 4 }], 130, 1469);
     for (const z of [-30, -18, 20, 32]) { const g = new T.Group(); void g; k.box(1.8, 0.7, 4.3, 3.6, 0.55, z, k.flat([0x2a3a5a, 0xd8dadc, 0x1c1e24, 0x8a1e22][Math.abs(z) % 4], 0.3, 0.4)); k.box(1.6, 0.55, 2.2, 3.6, 1.15, z - 0.2, k.flat(0x1c2430, 0.5, 0.2)); k.block(2.6, 4.6, z - 2.2, z + 2.2); }
     pigeons(k, ctx.reduced, [v(-6.2, 0.14, 14), v(6.3, 0.14, -12), v(-6.0, 0.14, -24), v(6.3, 0.14, 20)], 14, 1464);
+    /* 2026-11-24 wave 7a, the one trick: at the top of the stair a gold star of David stands up in the aisle, painted flat
+       on the pine boards in the perspective of that one spot */
+    if (W7E_DOM) {
+      const t = paintTex(512, 512, (g, w, h) => {
+        const r = w * 0.46, cx = w / 2, cy = h / 2, tri = (rot: number) => { g.beginPath(); for (let i = 0; i < 3; i++) { const a = rot + (i / 3) * PI * 2 - PI / 2; i ? g.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r) : g.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } g.closePath(); };
+        g.lineJoin = 'miter'; g.lineWidth = w * 0.055;
+        for (const rot of [0, PI]) { tri(rot); g.strokeStyle = '#7a5418'; g.lineWidth = w * 0.075; g.stroke(); }
+        for (const rot of [0, PI]) { tri(rot); g.strokeStyle = '#e8c45a'; g.lineWidth = w * 0.05; g.stroke(); }
+        g.fillStyle = '#2f4f9a'; g.beginPath(); g.arc(cx, cy, w * 0.07, 0, PI * 2); g.fill();
+      });
+      anamorphTex(k, t, SW - 0.5, 0, S0 + 3, S0, PI / 2, 2.6, 1.7, 1.7, 0.88);
+    }
+    k.egg(v(SW - 0.5, S0 + 1.2, 0), { id: 'star-in-the-aisle', title: 'The star in the aisle', year: 'an illusion', text: 'Stand at the top of the stair and a gold star of David stands up in the aisle in front of you. It is painted flat on the floorboards and stretched in the perspective of that one spot, the trick called anamorphosis. Walk towards it and it lies down.', clue: 'Climb the stair from the museum and stop at the top.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 0.8 });
+    /* Firefly: the stencilled east wall round the ark (FIREFLY_QUEUE.md), invisible until the file lands */
+    { const o = fireflyPlate(k, 'assets/museum/tex/eldridge/ff_east_wall_stencil.webp', 14.6, 7.4, EI + 0.09, S0 + 3.75, 0, PI / 2, W7E_HIDDEN); void o; }
     /* what the building knows */
     const src = { name: 'Eldridge Street Synagogue, Wikipedia', url: 'https://en.wikipedia.org/wiki/Eldridge_Street_Synagogue' };
     k.egg(v(faceX + 0.3, doorsY + 1.8, 0), { id: 'dedicated-1887', title: 'The crowd on the steps', year: '1887', text: 'Kahal Adath Jeshurun dedicated the synagogue on September 4, 1887. The congregation sent out thousands of invitations and the crowds reportedly overflowed onto the street. The brothers Peter and Francis William Herter designed it, and it cost $91,907.61.', clue: 'Stand at the foot of the stoop, where the crowd spilled out on the first day.', source: src }, { r: 1.8 });
@@ -426,6 +542,75 @@ export const eldridge2: RoomDef = {
   },
 };
 
+/* ---------- THE BIG UPGRADE, wave 9a (2026-11-24): helpers for Gramercy Park only ----------
+   Poly Haven scans from assets/museum/tex/gramercy/ in a set colour until the maps land, models fitted once and
+   placed (more than six as instanced parts). A no-op on canvas in node. */
+const G9_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const g9L = G9_DOM ? new T.TextureLoader() : null;
+const g9S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function g9Scan(k: K, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!g9L) return k.pbr(`g9-${id}${tag}`, paint(), 1 / metres, p);
+  let e = g9S.get(id);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = g9L.load(`assets/museum/tex/gramercy/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    g9S.set(id, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`g9-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.g9) {
+    m.userData.g9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function g9Place(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* wave 9a triangle pass (lead note): the debug counter runs 2.5 to 3x the scene because of the sun's shadow pass. Once the
+   kit has swapped in its cars and figures, stop shadows from instanced crowds of small things (fence bars, bars of gold,
+   planting, pigeons, the cab models the kit lays on traffic, the crowd figures) and from trees further than `near`
+   metres from the point given. The built architecture keeps its shadows. */
+function g9ShadowTrim(k: K, cx: number, cz: number, near = 24) {
+  if (!G9_DOM) return;
+  const run = () => {
+    if (!k.live) return;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined, nm = (mat && mat.name) || '';
+      if ((m as T.InstancedMesh).isInstancedMesh || nm.startsWith('tripo_') || nm.startsWith('MLOW_')) { m.castShadow = false; return; }
+      if (/leaf|bark|twig/.test(nm)) { const p = new T.Vector3(); m.getWorldPosition(p); if (Math.hypot(p.x - cx, p.z - cz) > near) m.castShadow = false; }
+    });
+  };
+  for (const ms of [1500, 5000, 12000]) setTimeout(run, ms);
+}
+function g9Sign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', size = 0.6, border?: string) {
+  if (!G9_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, size, border });
+}
+
 /* ---------------- 164 GRAMERCY PARK ---------------- */
 export const gramercy: RoomDef = {
   id: 'gramercy',
@@ -442,19 +627,20 @@ export const gramercy: RoomDef = {
     k.sun(0xfff0d8, 2.2, 40, 70, -30, true, 110);
     const PXf = 68, PZf = 25, SWk = 3.5, RD = 10, SW2 = 4;
     const NZ = PZf + SWk + RD + SW2, EXb = PXf + SWk + RD + SW2;         // building lines: 42.5 and 85.5
-    const asphalt = k.pbr('grAsph', X.asphalt(0x2a2d31), 0.11, { roughness: 0.7, metalness: 0.08 }),
-      pave = k.pbr('grPave', X.pavers(0x9a968c, 1641), 0.42),
-      curb = k.pbr('grCurb', X.ashlar(0x8a8a86, 1642, 2), 0.35),
-      gravel = k.pbr('grGravel', X.concrete(0xb8ab92, 1643), 0.8, { roughness: 0.95 }),
-      lawn = k.pbr('grLawn', X.grass(0x3f5f32, 1644), 0.5),
+    /* wave 9a: Poly Haven scans for the street, the pavements, kerbs, gravel paths, lawns, granite and brownstone */
+    const asphalt = g9Scan(k, 'asph', 3.2, () => X.asphalt(0x2a2d31), { color: 0x9a9a9a, roughness: 0.85 }, 0x2a2d31),
+      pave = g9Scan(k, 'walk', 2.4, () => X.pavers(0x9a968c, 1641), { color: 0xd8d2c6 }, 0x9a968c),
+      curb = g9Scan(k, 'granite', 1.2, () => X.ashlar(0x8a8a86, 1642, 2), { color: 0xc8c4bc }, 0x8a8a86, '-k'),
+      gravel = g9Scan(k, 'gravel', 2.0, () => X.concrete(0xb8ab92, 1643), { color: 0xe6dcc6, roughness: 0.95 }, 0xb8ab92),
+      lawn = g9Scan(k, 'grass', 2.4, () => X.grass(0x3f5f32, 1644), { color: 0xa8b890 }, 0x3f5f32),
       bed = k.flat(0x2e4424, 0, 0.95),
       iron = k.flat(0x16201c, 0.6, 0.45),
       brass = k.flat(0xd0a850, 0.9, 0.28, { emissive: 0x3a2a08, emissiveIntensity: 0.4 }),
       bronze = k.flat(0x3e5a4c, 0.7, 0.5),
-      granite = k.pbr('grGran', X.ashlar(0x9a968e, 1645, 3), 0.4),
-      brown = k.pbr('grBrown', X.ashlar(0x6a4a3a, 1646, 7), 0.32),
-      brownDk = k.pbr('grBrownDk', X.ashlar(0x57392c, 1647, 7), 0.32),
-      redBrick = k.pbr('grRed', X.brick(0x8a3e2c, 1648), 0.3),
+      granite = g9Scan(k, 'granite', 1.8, () => X.ashlar(0x9a968e, 1645, 3), { color: 0xc8c2b8 }, 0x9a968e),
+      brown = g9Scan(k, 'brown', 2.4, () => X.ashlar(0x6a4a3a, 1646, 7), { color: 0xa88070 }, 0x6a4a3a),
+      brownDk = g9Scan(k, 'brown', 2.4, () => X.ashlar(0x57392c, 1647, 7), { color: 0x8a6658 }, 0x57392c, '-d'),
+      redBrick = g9Scan(k, 'brick', 1.6, () => X.brick(0x8a3e2c, 1648), { color: 0xd89a88 }, 0x8a3e2c),
       tanBrick = k.pbr('grTan', X.brick(0xa88a6a, 1649), 0.3),
       hotelBrick = k.pbr('grHotel', X.brick(0x7a4636, 1650), 0.3),
       lime = k.pbr('grLime', X.ashlar(0xd8d0bc, 1651, 4), 0.3),
@@ -524,6 +710,8 @@ export const gramercy: RoomDef = {
       booth.clear(); booth.add(new T.Mesh(mergeGeometries(parts)!, k.flat(0x3e5a4c, 0.7, 0.5, { side: T.DoubleSide })));
     }
     k.keepOut.push({ x: 0, z: 0, r: 2.6 });
+    /* wave 9a: a cast figure on the pedestal in place of the code built one, in the same bronze (a stand in for Quinn's Booth) */
+    g9Place(k, 'gramercy/cp_statue', { height: 2.3 }, [[0, 3.18, 0, 0.25]], (h) => h.traverse((c) => { if (c instanceof T.Mesh) c.material = k.flat(0x4a6656, 0.75, 0.42); }), () => { for (const c of booth.children) c.visible = false; });
     /* benches along the oval and the paths, the Fantasy Fountain's basin at the east end */
     const slat = k.pbr('grSlat', X.planks(0x6a4a2c, 5, 1655, 0.2), 1.4), benchIron = k.flat(0x1c2420, 0.5, 0.5);
     /* park benches as static boxes, so twelve of them cost two draw calls, not a hundred and fifty */
@@ -535,8 +723,14 @@ export const gramercy: RoomDef = {
       for (const dz of [-0.9, 0.9]) { bx(0.72, 0.06, 0.07, 0.05, 0.6, dz, benchIron); bx(0.06, 0.6, 0.07, -0.28, 0.3, dz, benchIron); bx(0.06, 0.6, 0.07, 0.38, 0.3, dz, benchIron); bx(0.06, 0.65, 0.07, 0.46, 0.95, dz, benchIron); }
       k.keepOut.push({ x, z, r: 0.9 });
     };
-    for (const a of [0.5, 2.64, 3.64, 5.78]) bench(Math.cos(a) * 10.4 * 1.55, Math.sin(a) * 10.4, -a + PI);
-    for (const x of [-50, -20, 20, 50]) for (const s of [-1, 1]) bench(x, s * (PZf - 5.0), s > 0 ? PI / 2 : -PI / 2);
+    /* wave 9a: the twelve benches are the museum's Central Park bench model, instanced; the box benches stand in */
+    const benchAt: number[][] = [];
+    for (const a of [0.5, 2.64, 3.64, 5.78]) benchAt.push([Math.cos(a) * 10.4 * 1.55, Math.sin(a) * 10.4, -a + PI]);
+    for (const x of [-50, -20, 20, 50]) for (const s of [-1, 1]) benchAt.push([x, s * (PZf - 5.0), s > 0 ? PI / 2 : -PI / 2]);
+    const benchMark = k.objects.length;
+    for (const [x, z, ry] of benchAt) bench(x, z, ry);
+    const benchOld = g9StandIn(k, benchMark);
+    g9Place(k, 'gramercy/cp_bench', { width: 2.2 }, benchAt.map(([x, z, ry]) => [x, 0.15, z, ry - PI / 2]), undefined, () => g9Hide(benchOld));
     k.cyl(3.0, 0.5, 34, 0.4, 0, granite, 3.0, 28); k.cyl(2.6, 0.1, 34, 0.62, 0, k.flat(0x3a5a6a, 0.5, 0.15), 2.6, 28); k.cyl(0.25, 1.6, 34, 1.2, 0, bronze, 0.3, 10); k.keepOut.push({ x: 34, z: 0, r: 3.4 });
     for (const [x, z] of [[-34, 0]]) { k.lathe([[0, 0], [0.5, 0], [0.3, 0.3], [0.7, 0.9], [0.8, 1.2], [0.5, 1.3], [0, 1.3]], x, 0.3, z, granite, 16); k.keepOut.push({ x, z, r: 1.2 }); }
     /* ---- the fence: iron bars with spear points on a granite curb, posts with urns, four gates ---- */
@@ -659,6 +853,7 @@ export const gramercy: RoomDef = {
     for (const dx of [-1.6, 1.6]) { k.cyl(0.04, 3.3, AWX + dx, 1.65, NZ - 3.85, brass, 0.04, 6); k.keepOut.push({ x: AWX + dx, z: NZ - 3.85, r: 0.3 }); }
     k.box(2.4, 3.0, 0.1, AWX, 1.6, NZ - 0.02, k.flat(0x2a1a12, 0.2, 0.4));
     k.box(2.0, 2.6, 0.05, AWX, 1.45, NZ - 0.06, k.glass(0xf0d8a0, 0.35, 0.1));
+    fireflyPlate(k, 'assets/museum/tex/gramercy/ff_hotel_lobby.webp', 1.9, 2.5, AWX, 1.45, NZ - 0.078, PI, k.glass(0xf0d8a0, 0.0, 0.1)); // wave 9a
     k.point(AWX, 3.0, NZ - 2, 0xffd9a0, 10, 7);
     const DX = AWX + 2.2, DZ = NZ - 2.3;
     k.box(0.7, 1.15, 0.5, DX, 0.72, DZ, k.pbr('grDesk', X.planks(0x4a2e1a, 3, 1659, 0.2), 1.6, { roughness: 0.45 }));
@@ -739,10 +934,41 @@ export const gramercy: RoomDef = {
       });
     }
     pigeons(k, ctx.reduced, [v(-10, 0.2, -8), v(18, 0.2, 9), v(-40, 0.2, 3), v(40, 0.2, -PZf + 3), v(-30, 0.15, PZf + 1.6), v(24, 0.15, -PZf - 1.8)], 24, 1665);
-    for (const [x, z] of [[-PXf - 1.8, 30], [PXf + 1.8, -30], [-60, PZf + 3.2], [60, -PZf - 3.2], [-10, NZ - 3.2], [30, -NZ + 3.2]]) k.lamp(x, z, 4.6, iron, 0xffd7a0, 16);
+    /* wave 9a: Poly Haven's cast iron street lamp at every corner and along the square, each with its own light */
+    { const lampAt = [[-PXf - 1.8, 30], [PXf + 1.8, -30], [-60, PZf + 3.2], [60, -PZf - 3.2], [-10, NZ - 3.2], [30, -NZ + 3.2], [-36, PZf + 3.2], [36, PZf + 3.2], [-36, -PZf - 3.2], [-PXf - 1.8, -30], [PXf + 1.8, 30]];
+      for (const [x, z] of lampAt) { k.keepOut.push({ x, z, r: 0.4 }); k.point(x, 4.3, z, 0xffd7a0, 6, 14); }
+      g9Place(k, 'gramercy/street_lamp_lo', { height: 4.6 }, lampAt.map(([x, z]) => [x, 0.15, z, 0])); }
+    k.keepOut.push({ x: -5.6, z: 28.0, r: 0.45 }, { x: -24, z: 41.6, r: 0.5 });
+    g9Place(k, 'gramercy/hydrant', { height: 0.8 }, [[-5.6, 0.15, 28.0, 0]]);
+    g9Place(k, 'gramercy/mailbox', { height: 1.3 }, [[-24, 0.15, 41.6, PI]]);
+    /* the corner signs, white on green */
+    for (const [x, z, a, b] of [[-8.6, 28.1, 'LEXINGTON AV', 'GRAMERCY PARK N'], [8.6, -28.1, 'IRVING PL', 'GRAMERCY PARK S']] as [number, number, string, string][]) {
+      k.cyl(0.06, 2.98, x, 1.64, z, k.flat(0x2c3a30, 0.5, 0.5), 0.07, 8); k.keepOut.push({ x, z, r: 0.3 });
+      for (const r0 of [0, PI]) g9Sign(k, a, 1.5, 0.26, x, 3.55, z, r0, '#f4f6f2', '#1d6b45', 'W2 Archivo Narrow', 0.62, '#f4f6f2');
+      for (const r0 of [PI / 2, -PI / 2]) g9Sign(k, b, 1.6, 0.26, x, 3.25, z, r0, '#f4f6f2', '#1d6b45', 'W2 Archivo Narrow', 0.62, '#f4f6f2');
+    }
+    /* the illusion: a chalk key drawn long and thin across Gramercy Park North, which stands up as a key only from
+       under the hotel awning, where the real one hangs */
+    if (G9_DOM) {
+      const chalk = paintTex(512, 1024, (g) => {
+        g.clearRect(0, 0, 512, 1024);
+        g.strokeStyle = 'rgba(250,246,230,0.95)'; g.lineCap = 'round'; g.lineJoin = 'round';
+        g.lineWidth = 26; g.beginPath(); g.ellipse(256, 210, 150, 150, 0, 0, PI * 2); g.stroke();
+        g.lineWidth = 18; g.beginPath(); g.ellipse(256, 210, 70, 70, 0, 0, PI * 2); g.stroke();
+        g.lineWidth = 34; g.beginPath(); g.moveTo(256, 360); g.lineTo(256, 930); g.stroke();
+        g.lineWidth = 26; g.beginPath(); g.moveTo(256, 820); g.lineTo(400, 820); g.lineTo(400, 880); g.lineTo(330, 880); g.moveTo(256, 920); g.lineTo(380, 920); g.lineTo(380, 970); g.stroke();
+        g.strokeStyle = 'rgba(240,200,80,0.9)'; g.lineWidth = 10; g.beginPath(); g.ellipse(256, 210, 112, 112, 0, 0, PI * 2); g.stroke();
+        g.fillStyle = 'rgba(200,40,40,0.85)'; g.fillRect(168, 40, 176, 70);
+        g.fillStyle = 'rgba(250,246,230,0.95)'; g.font = 'bold 44px "W2 JetBrains Mono", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('No. 39', 256, 76);
+      }, ['W2 JetBrains Mono']);
+      const yaw = Math.atan2(-20, 14.5);
+      anamorphTex(k, chalk, -20, NZ - 3.0, 0.15 + 3, 0.0, yaw, 4, 1.5, 2.2, 0.9);
+      k.box(0.9, 0.012, 0.9, -20, 0.16, NZ - 3.0, k.flat(0xf0ead8, 0, 0.9));
+    }
     /* ---- what the square knows ---- */
     const src = { name: 'Gramercy Park, Wikipedia', url: 'https://en.wikipedia.org/wiki/Gramercy_Park' };
     const keyEgg = k.egg(key, { id: 'the-key', title: 'Two keys to a lot', text: 'Since December 31, 1831 the park has been held in common by the owners of the 39 buildings round it, and two keys are allocated to each of the original lots. In 2012 there were 383 keys in circulation, each individually numbered and coded, and the Medeco locks are changed every year. A key cost $350 in 2008, with a $1,000 fee for a lost one. The Gramercy Park Hotel holds twelve. This one opens the north gate.', clue: 'Only the houses round the square hold keys. Ask at the door with the awning across from the gate.', source: src }, { r: 0.9 });
+    k.egg(v(-20, 0.6, NZ - 3.0), { id: 'gramercy-chalk-key', title: 'A key that stands up', text: 'The key chalked across the road is an anamorphosis, a picture stretched so far that it only looks right from one place. Pavement artists draw them this way so a flat drawing seems to rise off the street. Stand on the chalk square under the hotel awning and the key stands upright; anywhere else it is a long smear on the asphalt.', clue: 'Find the chalk square on the pavement under the green awning and look back toward the gate.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
     k.egg(v(-PXf - 0.2, 1.5, 0), { id: 'ruggles-1831', title: 'Laid out in 1831', year: '1831', text: 'Samuel B. Ruggles created the park in 1831, about two acres of it, and it was enclosed by a fence in 1833. By 1839 the paths had been laid out and the trees and shrubs planted. It is still locked, and still opens to the public on Christmas Eve.', clue: 'Read the plaque on the west gate, the one a resident uses.', source: src }, { r: 1.2 });
     k.egg(booth, { id: 'booth-1918', title: 'Edwin Booth, in bronze', year: '1918', text: 'The statue in the middle of the park is of the actor Edwin Booth, one of the neighbourhood\'s most famous residents, by the sculptor Edmond T. Quinn. It was dedicated on November 13, 1918.', clue: 'Find the gate open and walk to the figure in the middle.', source: src }, { r: 1.6 });
     k.egg(v(-32, 6.2, -NZ + 0.5), { id: 'tilden-mansion', title: 'The Tilden mansion', text: 'The National Arts Club occupies No. 15 Gramercy Park South, a Victorian Gothic mansion that belonged to Samuel J. Tilden and was remodelled for him by Calvert Vaux.', clue: 'Look for the brownstone with two bay windows and pointed arches on the south side.', source: src }, { r: 2.0 });
@@ -761,6 +987,7 @@ export const gramercy: RoomDef = {
       if (opened < 0) opened = t;
       const u = Math.min(1, (t - opened) / 1.8); swing(u * u * (3 - 2 * u));
     });
+    g9ShadowTrim(k, -15, 29.8, 18);
     return { mounts, spawn: v(-15, 3, 29.8), look: v(6, 1.6, 8), eye: 3, bounds: [-EXb + 2, EXb - 2, -NZ + 1, NZ - 1], style: 'black' };
   },
 };

@@ -10,7 +10,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
-import { followInstances } from './heroes';
+import { followInstances, hero, heroInstances } from './heroes';
+import { hsign } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const one = new T.Vector3(1, 1, 1);
@@ -180,6 +181,98 @@ function pigeons(k: K, spots: [number, number][], y: number, seed: number, reduc
 }
 const wallBlock = (k: K, x0: number, x1: number, z0: number, z1: number) => k.block(Math.min(x0, x1), Math.max(x0, x1), Math.min(z0, z1), Math.max(z0, z1));
 
+/* ---------- THE BIG UPGRADE, wave 8d (2026-11-24): helpers for the synagogue rooms in this file ----------
+   Poly Haven scans from assets/museum/tex/<room>/ wearing a set colour until all their maps land, real CC0 models from
+   assets/museum/props/<room>/ fitted once and placed (seven or more as instanced parts, glass made plain, no prop
+   shadows), quiet light that falls through a window onto a wall or floor. All of it a no-op on canvas in node. */
+const W8D_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w8dL = W8D_DOM ? new T.TextureLoader() : null;
+const w8dS = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w8dScan(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w8dL) return k.pbr(`w8d-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w8dS.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w8dL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w8dS.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w8d-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w8d) {
+    m.userData.w8d = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w8dPlace(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length || !W8D_DOM) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    h.userData.w8d = true; h.traverse((c) => { c.userData.w8d = true; });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* everything built since `mark`, to hide once a real model has landed in its place */
+const w8dMark = (k: K) => k.objects.length;
+const w8dSince = (k: K, mark: number): T.Object3D[] => { const ms = k.objects.splice(mark); for (const m of ms) k.dynamic.add(m); return ms; };
+const w8dHide = (os: T.Object3D[]) => { for (const o of os) if (o instanceof T.Mesh) o.visible = false; };
+/* warm the metal of a loaded model toward old brass or bronze */
+function w8dTint(o: T.Object3D, hex: number, rough = 0.4, metal = 0.85) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; if (src.transparent) return; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* wave 8d triangle pass (lead note): the kit turns shadows back on after the build, and the shadow pass is most of the debug
+   counter. A few times over the first 30 s, stop shadows from the light patches, the models placed here, and (when `all`) every
+   instanced crowd of small things, the kit's cab models and figures, and trees further than `near` metres from the point given.
+   The built architecture keeps its shadows. */
+function w8dShadowTrim(k: K, all: boolean, cx = 0, cz = 0, near = 24) {
+  if (!W8D_DOM) return;
+  const run = () => {
+    if (!k.live) return;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined, nm = (mat && mat.name) || '';
+      if (m.userData.noShadow || (mat && mat.blending === T.AdditiveBlending)) { m.castShadow = m.receiveShadow = false; return; }
+      let p: T.Object3D | null = m; while (p && !p.userData.w8d) p = p.parent;
+      if (p) { m.castShadow = false; return; }
+      if (!all) return;
+      if ((m as T.InstancedMesh).isInstancedMesh || m.userData.cab || nm.startsWith('tripo_') || nm.startsWith('MLOW_')) { m.castShadow = false; return; }
+      if (/leaf|bark|twig/.test(nm)) { const w = new T.Vector3(); m.getWorldPosition(w); if (Math.hypot(w.x - cx, w.z - cz) > near) m.castShadow = false; }
+    });
+  };
+  for (const ms of [1500, 5000, 12000, 20000, 30000]) setTimeout(run, ms);
+}
+function w8dSign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6) {
+  if (!W8D_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size });
+}
+/* light through a window: a soft additive patch of the window's own colours laid on a surface, breathing with the clouds */
+function w8dLightPatch(k: K, map: T.Texture | null, color: number, w: number, h: number, x: number, y: number, z: number, rx: number, ry: number, opacity: number, skew = 0) {
+  const g = new T.PlaneGeometry(w, h, 1, 1);
+  if (skew) { const p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setX(i, p.getX(i) + p.getY(i) * skew); p.needsUpdate = true; }
+  const m = new T.MeshBasicMaterial({ map, color, transparent: true, opacity, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, toneMapped: false, fog: false });
+  const o = k.mesh(g, m, x, y, z, true); o.rotation.set(rx, ry, 0, 'YXZ'); o.renderOrder = 2; o.castShadow = o.receiveShadow = false; o.userData.noShadow = true;
+  return { o, m };
+}
+
 /* ---------------- 156 TEMPLE EMANU-EL ---------------- */
 export const templeemanuel: RoomDef = {
   id: 'templeemanuel',
@@ -194,19 +287,21 @@ export const templeemanuel: RoomDef = {
     k.sky({ top: 0x4f86cc, horizon: 0xe6dccb, ground: 0x6a6660, fog: 0.0022, sun: { az: -0.5, el: 0.55, color: 0xffe8c8, size: 7 }, env: 0.35 });
     k.hemi(0xf4e6d0, 0x5a4c3e, 0.55);
     k.sun(0xffe6c4, 2.6, -30, 45, 70, true, 70);
-    const lime = k.pbr('teLime', X.ashlar(0xd6cab0, 156, 6), 0.5, { normal: 0.45, roughness: 0.85 }),
+    /* 2026-11-24 (wave 8d): the limestone, the hall's marble, its plaster, the museum's parquet, the street and the park lawn are Poly Haven scans */
+    w8dShadowTrim(k, true, 0, -8);
+    const lime = w8dScan(k, 'templeemanuel', 'white_sandstone_blocks_02', 6.0, () => X.ashlar(0xd6cab0, 156, 6), { roughness: 0.85, color: 0xf2e6cc }, 0xd6cab0),
       limeDark = k.pbr('teLime2', X.ashlar(0xb4a688, 157, 4), 0.55, { normal: 0.4 }),
-      wallM = k.pbr('teWall', X.plaster(0xcbb48e, 158), 0.25, { roughness: 0.9 }),
-      stoneIn = k.pbr('teStoneIn', X.ashlar(0xbfa780, 159, 5), 0.6, { normal: 0.35, roughness: 0.8 }),
-      marbleF = k.pbr('teFloor', X.marble(0xc9bca4, 0x8a7a64, 160), 0.25, { roughness: 0.35 }),
+      wallM = w8dScan(k, 'templeemanuel', 'white_plaster_02', 3.5, () => X.plaster(0xcbb48e, 158), { roughness: 0.9, color: 0xe2c79c }, 0xcbb48e),
+      stoneIn = w8dScan(k, 'templeemanuel', 'white_sandstone_blocks_02', 5.0, () => X.ashlar(0xbfa780, 159, 5), { roughness: 0.8, color: 0xe0c8a0 }, 0xbfa780, 'in'),
+      marbleF = w8dScan(k, 'templeemanuel', 'marble_01', 2.0, () => X.marble(0xc9bca4, 0x8a7a64, 160), { roughness: 0.3, color: 0xeadcc4 }, 0xc9bca4),
       marbleDark = k.pbr('teFloor2', X.marble(0x5a3a30, 0x2a1a16, 161), 0.4, { roughness: 0.3 }),
-      carpet = k.pbr('teCarpet', X.carpet(0x5a1a22, 0x9a7a3a), 0.6, { roughness: 1 }),
+      carpet = w8dScan(k, 'templeemanuel', 'velour_velvet', 1.2, () => X.carpet(0x5a1a22, 0x9a7a3a), { roughness: 1, color: 0xa8303a }, 0x5a1a22),
       oak = k.pbr('teOak', X.planks(0x5a3a22, 5, 162), 0.8, { roughness: 0.6 }), oakDark = k.flat(0x3a2616, 0, 0.6),
       bronze = k.flat(0x7a5a2e, 0.9, 0.38), gilt = k.pbr('teGilt', X.gilt(), 2, { metalness: 0.9, roughness: 0.3 }),
       dark = k.flat(0x14100c, 0, 0.9), iron = k.flat(0x1c1a18, 0.6, 0.5),
-      galleryWall = k.flat(0x33403f, 0, 0.9), oakFloor = k.pbr('teMuseumFloor', X.planks(0x8a6a48, 7, 163), 0.7, { roughness: 0.55 }),
-      pave = k.pbr('tePave', X.pavers(0x9a948a, 164), 0.5), asphalt = k.pbr('teAsph', X.asphalt(), 0.2),
-      parkStone = k.pbr('teParkWall', X.ashlar(0x8a8274, 165, 3), 0.5), grass = k.pbr('teGrass', X.grass(0x4a6a3a, 166), 0.3);
+      galleryWall = k.flat(0x33403f, 0, 0.9), oakFloor = w8dScan(k, 'templeemanuel', 'herringbone_parquet', 2.2, () => X.planks(0x8a6a48, 7, 163), { roughness: 0.55, color: 0xd8b890 }, 0x8a6a48),
+      pave = w8dScan(k, 'templeemanuel', 'concrete_pavement', 2.2, () => X.pavers(0x9a948a, 164), { roughness: 0.9, color: 0xd0cac0 }, 0x9a948a), asphalt = w8dScan(k, 'templeemanuel', 'asphalt_02', 4, () => X.asphalt(), { roughness: 0.92, color: 0x8c8c8c }, 0x3a3c40),
+      parkStone = k.pbr('teParkWall', X.ashlar(0x8a8274, 165, 3), 0.5), grass = w8dScan(k, 'templeemanuel', 'leafy_grass', 3, () => X.grass(0x4a6a3a, 166), { roughness: 1, color: 0xb8c8a8 }, 0x4a6a3a);
     const SX = 12, Z_V = -1.2, Z_S = -8, Z_E = -52, H = 31, BAL = 6.2;
 
     /* ---- the street: pavement, Fifth Avenue going downtown, the Central Park wall and its trees ---- */
@@ -272,7 +367,10 @@ export const templeemanuel: RoomDef = {
     k.mesh(archRing(6.4, 6.0, 5.6, 5.6, 0), gilt, 0, 0.02, Z_S + 0.02);
     for (const sx of [-1, 1]) k.box(SX - 2.3, 0.9, 0.12, sx * (SX + 3.3) / 2, 0.45, Z_S + 0.06, limeDark);
     for (const x of [-6.55, 6.55]) k.box(0.8, BAL, 0.3, x, BAL / 2, Z_S + 0.12, limeDark);
-    for (const x of [-9, -3, 3, 9]) { k.beam(v(x, BAL, -4.6), v(x, BAL - 1.2, -4.6), 0.015, bronze, 4); k.sphere(0.32, x, BAL - 1.45, -4.6, k.glow(0xffd8a0), 12); }
+    { const vmk = w8dMark(k);
+      for (const x of [-9, -3, 3, 9]) { k.beam(v(x, BAL, -4.6), v(x, BAL - 1.2, -4.6), 0.015, bronze, 4); k.sphere(0.32, x, BAL - 1.45, -4.6, k.glow(0xffd8a0), 12); }
+      /* 2026-11-24 (wave 8d): the vestibule lamps as the same bronze lantern, smaller */
+      const old = w8dSince(k, vmk); w8dPlace(k, 'templeemanuel/lantern_chandelier', { height: 1.5 }, [-9, -3, 3, 9].map((x) => [x, 3.95, -4.6, x * 0.1]), (h) => w8dTint(h, 0x8a6a3a, 0.42, 0.85), () => w8dHide(old)); }
     for (const x of [-6, 6]) k.point(x, 4.6, -4.6, 0xffd8a8, 16, 12);
     /* the south end of the vestibule: a plain stone wall for two works */
     /* the north end: the door to the museum */
@@ -295,6 +393,14 @@ export const templeemanuel: RoomDef = {
     const glassPal = [[0x2a4a98, 0x1c3a7a, 0xc89a3a, 0x8a1a22, 0xd8c890, 0x3a6a4a], [0xc89a3a, 0xb8782a, 0x2a4a98, 0x8a1a22, 0x5a2a6a, 0xd8c890], [0x1c3a7a, 0x2a5aa8, 0x3a7a8a, 0xc89a3a, 0x8a1a22]];
     const glassM = [0, 1, 2].map((i) => new T.MeshBasicMaterial({ map: stainedGlass(1570 + i, 176, 528, glassPal[i]), side: T.DoubleSide, color: 0xd0c8c0 }));
     for (const s of [-1, 1]) [-14, -22, -30, -38, -46].forEach((z, i) => k.plane(3.6, 13, s * (SX + 0.5), 10.5 + 6.5, z, glassM[(i + (s > 0 ? 1 : 0)) % 3], PI / 2));
+    /* 2026-11-24 (wave 8d), the room's one trick, a quiet one: the afternoon sun through the 65th Street windows lays each
+       window's colours on the north wall opposite, slanted and soft, drifting as the sun moves and fading when a cloud passes.
+       Stand in the aisle and the wall seems to hold a second row of windows that is only light. */
+    {
+      const pats = [-14, -22, -30, -38, -46].map((z, i) => ({ z, ...w8dLightPatch(k, glassM[(i + 1) % 3].map, 0xffe2b8, 2.5, 5.2, -(SX - 0.28), 4.9, z - 1.0, 0, PI / 2, 0.26, -0.18) }));
+      if (!ctx.reduced) k.ticks.push((t) => { const c = 0.72 + 0.28 * Math.max(0, Math.sin(t * 0.045) * 0.6 + Math.sin(t * 0.11 + 1.3) * 0.4); pats.forEach((p, i) => { p.o.position.z = p.z - 1.0 + Math.sin(t * 0.012 + i * 0.2) * 0.45; p.o.position.y = 4.9 + Math.sin(t * 0.012 + i * 0.2) * 0.3; p.m.opacity = 0.26 * c; }); });
+      k.egg(v(-(SX - 0.4), 4.9, -31), { id: 'window-on-the-wall', title: 'The windows that are only light', year: 'an illusion', text: 'In the afternoon the sun comes through the tall windows on the 65th Street side and lays their colours, stretched and slanted, on the plain wall across the hall. From the aisle it reads as a second row of stained glass. It is nothing but light, and it slides along the wall as the sun moves.', clue: 'Walk into the hall in the afternoon and look at the wall without windows.', source: { name: 'Stained glass, Wikipedia', url: 'https://en.wikipedia.org/wiki/Stained_glass' } }, { r: 2.2 });
+    }
     /* the coffered ceiling: deep blue coffers, red rosettes, gilt ribs */
     const coffer = canvasTex(256, 256, (g) => {
       g.fillStyle = '#6a4a28'; g.fillRect(0, 0, 256, 256);
@@ -306,7 +412,10 @@ export const templeemanuel: RoomDef = {
       g.fillStyle = '#d8b050'; g.beginPath(); g.arc(128, 128, 16, 0, PI * 2); g.fill();
     }, true);
     coffer.repeat.set(8, 15);
-    k.plane(2 * SX, Z_V - Z_E, 0, H, (Z_V + Z_E) / 2, new T.MeshStandardMaterial({ map: coffer, roughness: 0.8, emissive: 0xffffff, emissiveMap: coffer, emissiveIntensity: 0.22 }), 0, PI / 2);
+    const cofM = new T.MeshStandardMaterial({ map: coffer, roughness: 0.8, emissive: 0xffffff, emissiveMap: coffer, emissiveIntensity: 0.22 });
+    k.plane(2 * SX, Z_V - Z_E, 0, H, (Z_V + Z_E) / 2, cofM, 0, PI / 2);
+    /* 2026-11-24 (wave 8d): a painted coffer tile from the Firefly queue replaces the canvas one when the file exists */
+    if (w8dL) w8dL.load('assets/museum/tex/templeemanuel/ff_te_coffer.webp', (t) => { if (!k.live) return; t.colorSpace = T.SRGBColorSpace; t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(8, 15); t.anisotropy = 8; cofM.map = cofM.emissiveMap = t; cofM.needsUpdate = true; }, undefined, () => {});
     for (let z = -4; z > Z_E; z -= 6) k.box(2 * SX, 0.9, 0.7, 0, H - 0.45, z, gilt);
     /* the gallery over the vestibule: tiered seats and a gilt parapet */
     k.box(2 * SX, 1.5, 0.4, 0, BAL + 0.75 + 0.6, -15.5, oakDark); k.box(2 * SX, 0.2, 0.6, 0, BAL + 1.6 + 0.6, -15.5, gilt); k.box(2 * SX, 0.12, 0.44, 0, BAL + 0.75, -15.5, gilt);
@@ -361,6 +470,9 @@ export const templeemanuel: RoomDef = {
       for (let a = -3; a <= 3; a++) k.sphere(0.07, cx + a * 0.35, BIM + 3.05, cz, k.glow(0xffc070), 8);
     }
     nerTamid(k, 0, 8.6, Z_E + 1.4, BIM + AH - 0.4, bronze, ctx.reduced, 1.4);
+    /* 2026-11-24 (wave 8d): brass candlesticks on the two reading desks (Poly Haven, CC0), and the Central Park lamps along the wall across Fifth */
+    w8dPlace(k, 'templeemanuel/ph_brass_candleholders', { height: 0.55 }, [[-3.4, BIM + 1.32, Z_E + 6.2, 0], [3.4, BIM + 1.32, Z_E + 6.2, PI]]);
+    w8dPlace(k, 'templeemanuel/cp_gaslamp', { height: 4.2 }, [-40, -28, -16, -4, 8, 20].map((x) => [x, 0, 24.5, 0]));
     /* lighting: a warm spot on the arch, lanterns down the hall, low fill */
     k.spot(0, H - 2, -30, 0, 10, Z_E, 0xffe2b0, 600, 0.5, 0.6, 60);
     k.point(0, 12, Z_E + 2, 0xffd49a, 60, 22);
@@ -371,8 +483,13 @@ export const templeemanuel: RoomDef = {
         lm.push(new T.Matrix4().makeTranslation(x, 14, z)); gm.push(new T.Matrix4().makeTranslation(x, 13.2, z));
         k.beam(v(x, 14, z), v(x, H, z), 0.03, iron, 4);
       }
-      k.instances(lantern, bronze, lm); k.instances(new T.SphereGeometry(0.42, 12, 8), k.glow(0xffc880), gm);
+      const codeLanterns = [k.instances(lantern, bronze, lm), k.instances(new T.SphereGeometry(0.42, 12, 8), k.glow(0xffc880), gm)];
       for (const z of [-20, -34]) for (const x of [-6, 6]) k.point(x, 12.5, z, 0xffcf96, 55, 22);
+      /* 2026-11-24 (wave 8d): the hall's great hanging lamps as a real model (Poly Haven lantern chandelier, CC0) in old
+         bronze, three pairs on the old chains and two more down the aisle; the code rings hide once it lands */
+      for (const z of [-25, -35]) k.beam(v(0, 14, z), v(0, H, z), 0.03, iron, 4);
+      w8dPlace(k, 'templeemanuel/lantern_chandelier', { height: 3.6 }, [...[-20, -30, -40].flatMap((z) => [[-6, 10.4, z, 0], [6, 10.4, z, 0.4]]), [0, 10.4, -25, 0.2], [0, 10.4, -35, 0.6]],
+        (h) => w8dTint(h, 0x8a6a3a, 0.42, 0.85), () => w8dHide(codeLanterns));
     }
     k.point(0, 4.5, -11.5, 0xffd8a8, 18, 12);
     /* the pews, and a scatter of people sitting quietly */
@@ -553,15 +670,18 @@ export const kehilathjeshurun: RoomDef = {
     k.sky({ top: 0x5a8fd0, horizon: 0xdce4ea, ground: 0x6a6660, fog: 0.004, sun: { az: -1.9, el: 0.7, color: 0xfff0d8, size: 7 }, env: 0.5 });
     k.hemi(0xeef2f8, 0x8a8478, 0.9);
     k.sun(0xfff0d8, 2.4, -70, 60, 30, true, 60);
-    const lime = k.pbr('kjLime', X.ashlar(0xd8ccb2, 170, 5), 0.32, { normal: 0.4, roughness: 0.85 }),
-      limeDark = k.pbr('kjLime2', X.ashlar(0xbcae92, 171, 4), 0.45, { normal: 0.4 }),
-      pave = k.pbr('kjPave', X.pavers(0x9a968e, 172), 0.5), asphalt = k.pbr('kjAsph', X.asphalt(), 0.2),
-      schoolBrick = k.pbr('kjBrick', X.brick(0x8a5a44, 173), 0.7, { normal: 0.5 }),
-      plaster = k.pbr('kjPlaster', X.plaster(0xe8dcc4, 174), 0.3, { roughness: 0.9 }),
-      marbleF = k.pbr('kjFloor', X.marble(0xd8d0c0, 0x8a8478, 175), 0.3, { roughness: 0.35 }),
+    /* 2026-11-24 (wave 8d): limestone, pavements, the road, the school's brick, the plaster, the floor and the oak are Poly Haven scans */
+    const KJ = 'kehilathjeshurun';
+    w8dShadowTrim(k, false);
+    const lime = w8dScan(k, KJ, 'white_sandstone_blocks_02', 5.0, () => X.ashlar(0xd8ccb2, 170, 5), { roughness: 0.85, color: 0xfaf4e8 }, 0xd8ccb2),
+      limeDark = w8dScan(k, KJ, 'white_sandstone_blocks_02', 3.5, () => X.ashlar(0xbcae92, 171, 4), { roughness: 0.8, color: 0xe8dcc4 }, 0xbcae92, 'd'),
+      pave = w8dScan(k, KJ, 'concrete_pavement', 2.2, () => X.pavers(0x9a968e, 172), { roughness: 0.9, color: 0xd0cac0 }, 0x9a968e), asphalt = w8dScan(k, KJ, 'asphalt_02', 4, () => X.asphalt(), { roughness: 0.92, color: 0x8c8c8c }, 0x3a3c40),
+      schoolBrick = w8dScan(k, KJ, 'red_brick_03', 2.4, () => X.brick(0x8a5a44, 173), { roughness: 0.9, color: 0xe8c0a8 }, 0x8a5a44),
+      plaster = w8dScan(k, KJ, 'plastered_wall_04', 3, () => X.plaster(0xe8dcc4, 174), { roughness: 0.9, color: 0xf4ead6 }, 0xe8dcc4),
+      marbleF = w8dScan(k, KJ, 'marble_tiles', 2.4, () => X.marble(0xd8d0c0, 0x8a8478, 175), { roughness: 0.32, color: 0xf0e8dc }, 0xd8d0c0),
       marbleDark = k.pbr('kjMarble2', X.marble(0x6a5048, 0x3a2a24, 176), 0.4, { roughness: 0.3 }),
       terrazzo = k.pbr('kjTerr', X.terrazzo(0xcfc8b8, 177), 0.5, { roughness: 0.5 }),
-      oak = k.pbr('kjOak', X.planks(0x6a4428, 5, 178), 0.8, { roughness: 0.6 }), oakDark = k.flat(0x3a2616, 0, 0.6),
+      oak = w8dScan(k, KJ, 'dark_wood', 1.6, () => X.planks(0x6a4428, 5, 178), { roughness: 0.55, color: 0xc89870 }, 0x6a4428), oakDark = k.flat(0x3a2616, 0, 0.6),
       carpet = k.pbr('kjCarpet', X.carpet(0x2a3a6a, 0xb89a4a), 0.6, { roughness: 1 }),
       brass = k.flat(0xc8a048, 0.9, 0.3), gilt = k.pbr('kjGilt', X.gilt(), 2, { metalness: 0.9, roughness: 0.3 }),
       iron = k.flat(0x1a1a1a, 0.6, 0.5), dark = k.flat(0x14100c, 0, 0.9), cream = k.flat(0xefe6d4, 0, 0.85);
@@ -575,11 +695,20 @@ export const kehilathjeshurun: RoomDef = {
     for (const [x, z] of [[-17, 4.4], [-6.5, 4.4], [15, 4.4], [26, 4.4], [-24, 15.6], [-9, 15.6], [8, 15.6], [22, 15.6]]) { k.tree(x, 0, z, { h: 6.5, r: 2.4, seed: 157 + x, leaf: 0x4a7a3a }); k.box(1.4, 0.06, 1.4, x, 0.01, z, k.flat(0x3a2e24, 0, 1)); k.keepOut.push({ x, z, r: 0.7 }); }
     {
       const parked = [[-30, 6.4, 0x2a3a5a], [-22.5, 6.4, 0x8a8a8a], [-14, 6.4, 0x1c1e22], [20, 6.4, 0xe8e8e8], [28, 6.4, 0x5a1a1a], [-26, 13.6, 0xd8d0c0], [-12, 13.6, 0x2a4a3a], [4, 13.6, 0x1c1e22], [12, 13.6, 0x6a6a70], [26, 13.6, 0x2a3a5a]] as [number, number, number][];
+      const old: T.Object3D[] = [];
       const body = k.instances(new T.BoxGeometry(4.4, 1.2, 1.9), new T.MeshStandardMaterial({ roughness: 0.45, metalness: 0.3 }), parked.map(([x, z]) => new T.Matrix4().makeTranslation(x, 0.5, z)));
       const c = new T.Color(); parked.forEach(([, , col], i) => body.setColorAt(i, c.set(col))); if (body.instanceColor) body.instanceColor.needsUpdate = true;
-      k.instances(new T.BoxGeometry(2.4, 0.6, 1.7), k.flat(0x1a2028, 0.5, 0.2), parked.map(([x, z]) => new T.Matrix4().makeTranslation(x - 0.2, 1.4, z)));
+      old.push(body, k.instances(new T.BoxGeometry(2.4, 0.6, 1.7), k.flat(0x1a2028, 0.5, 0.2), parked.map(([x, z]) => new T.Matrix4().makeTranslation(x - 0.2, 1.4, z))));
+      /* the kit's swapCabs must not lay its own taxis under these: mark the stand ins and the real cars as cabs (as y1.ts) */
+      for (const o of old) o.userData.cab = true;
+      const asCab = (h: T.Object3D) => h.traverse((c) => { c.userData.cab = true; if (c instanceof T.Mesh) c.castShadow = false; });
+      let got = 0; const both = () => { if (++got === 2) w8dHide(old); };
+      w8dPlace(k, 'kehilathjeshurun/h_car_camry_lo', { length: 4.7 }, parked.filter((_, i) => i % 2 === 0).map(([x, z]) => [x, 0, z, z < 10 ? -PI / 2 : PI / 2]), asCab, both);
+      w8dPlace(k, 'kehilathjeshurun/h_car_escape_lo', { length: 4.5 }, parked.filter((_, i) => i % 2 === 1).map(([x, z]) => [x, 0, z, z < 10 ? -PI / 2 : PI / 2]), asCab, both);
     }
-    for (const x of [-20, 4, 24]) k.lamp(x, 4.7, 5.6, iron, 0xffe0b0, 8);
+    { const lmk = w8dMark(k); for (const x of [-20, 4, 24]) k.lamp(x, 4.7, 5.6, iron, 0xffe0b0, 8);
+      /* 2026-11-24 (wave 8d): the street lamps and the parked cars as real models (Poly Haven street lamp, CC0; our own low cars) */
+      const old = w8dSince(k, lmk); w8dPlace(k, 'kehilathjeshurun/ph_street_lamp_01', { height: 5.9 }, [-20, 4, 24].map((x) => [x, 0, 4.7, -PI / 2]), undefined, () => w8dHide(old)); }
     /* the rowhouses either side of the synagogue and all along the north side */
     const texs = [rowhouseTex(1571, '#6a4434', '#8a6a54'), rowhouseTex(1572, '#5a3a2e', '#7a5a48'), rowhouseTex(1573, '#8a5a44', '#c8b8a0'), rowhouseTex(1574, '#b8a88a', '#8a7a64')].map((t) => new T.MeshStandardMaterial({ map: t, roughness: 0.85 }));
     rowhouses(k, -41, 5, 6, 0, 1, 1, texs);
@@ -721,8 +850,18 @@ export const kehilathjeshurun: RoomDef = {
     k.box(2 * FW, 0.6, 0.6, 0, H - 3, ZS0, gilt);
     /* the chandelier over the bimah */
     k.beam(v(0, H + 1, -22), v(0, 11.4, -22), 0.03, brass, 4);
+    { const cmk = w8dMark(k);
     k.torus(1.6, 0.07, 0, 11.2, -22, brass, 32).rotation.x = PI / 2; k.torus(1.0, 0.06, 0, 10.6, -22, brass, 24).rotation.x = PI / 2;
-    { const bm: T.Matrix4[] = []; for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2; bm.push(new T.Matrix4().makeTranslation(Math.cos(a) * 1.6, 11.4, -22 + Math.sin(a) * 1.6)); } k.instances(new T.SphereGeometry(0.1, 8, 6), k.glow(0xffe0a8), bm); }
+      { const bm: T.Matrix4[] = []; for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2; bm.push(new T.Matrix4().makeTranslation(Math.cos(a) * 1.6, 11.4, -22 + Math.sin(a) * 1.6)); } var kjBulbs = k.instances(new T.SphereGeometry(0.1, 8, 6), k.glow(0xffe0a8), bm); }
+      /* 2026-11-24 (wave 8d): the chandelier over the bimah as a real brass model (Poly Haven Chandelier_01, CC0); the code rings hide once it lands */
+      const old = [...w8dSince(k, cmk), kjBulbs]; w8dPlace(k, 'kehilathjeshurun/ph_Chandelier_01', { width: 3.6 }, [[0, 8.3, -22, 0]], (h) => w8dTint(h, 0xc8a050, 0.32, 0.9), () => w8dHide(old)); }
+    /* 2026-11-24 (wave 8d), the room's one trick, a quiet one: the round window over the ark throws its rose onto the bimah,
+       stretched long by the low sun and creeping across the marble through the afternoon */
+    {
+      const rp = w8dLightPatch(k, roseT, 0xffe8c8, 2.3, 3.4, 0.3, 0.885, -19.7, -PI / 2, 0, 0.42);
+      if (!ctx.reduced) k.ticks.push((t) => { rp.o.position.x = 0.3 + Math.sin(t * 0.015) * 0.6; rp.m.opacity = 0.42 * (0.75 + 0.25 * Math.sin(t * 0.07)); });
+      k.egg(v(0, 1.2, -19.2), { id: 'rose-on-the-bimah', title: 'The rose on the bimah', year: 'an illusion', text: 'The round window high over the ark is the only glass on the east wall. When the sun is low its light crosses the whole sanctuary and lays the rose, pulled long into an oval, on the marble of the bimah in the middle of the room. It looks inlaid. It is light, and it creeps across the platform as the day goes.', clue: 'Look down at the bimah, not up at the window.', source: { name: 'Rose window, Wikipedia', url: 'https://en.wikipedia.org/wiki/Rose_window' } }, { r: 2.4 });
+    }
     k.point(0, 10.8, -22, 0xffdcaa, 50, 20);
     for (const z of [-13, -30]) for (const x of [-9.2, 9.2]) k.point(x, 3.8, z, 0xffe4bc, 10, 9);
     /* the bimah in the middle: a raised platform, brass rail, a reading table */
@@ -799,17 +938,20 @@ export const jewishcenter: RoomDef = {
     k.sky({ top: 0x5a8fd0, horizon: 0xdce4ea, ground: 0x6a6660, fog: 0.004, sun: { az: 2.6, el: 0.8, color: 0xfff0d8, size: 7 }, env: 0.5 });
     k.hemi(0xeef2f8, 0x8a8478, 0.85);
     k.sun(0xfff0d8, 2.4, 40, 60, 70, true, 60);
-    const lime = k.pbr('jcLime', X.ashlar(0xd8ccb4, 180, 5), 0.32, { normal: 0.4, roughness: 0.85 }),
-      limeDark = k.pbr('jcLime2', X.ashlar(0xbcae92, 181, 4), 0.45, { normal: 0.4 }),
-      brick = k.pbr('jcBrick', X.brick(0x9a6a4e, 182), 0.8, { normal: 0.5 }),
-      pave = k.pbr('jcPave', X.pavers(0x9a968e, 183), 0.5), asphalt = k.pbr('jcAsph', X.asphalt(), 0.2),
-      plaster = k.pbr('jcPlaster', X.plaster(0xf0e2c4, 184), 0.3, { roughness: 0.9 }),
-      marbleF = k.pbr('jcFloor', X.marble(0xd8d0c0, 0x8a8478, 185), 0.3, { roughness: 0.35 }),
+    /* 2026-11-24 (wave 8d): limestone, brick, pavements, road, plaster, the terrazzo floors, the parquet and the pool tile are Poly Haven scans */
+    const JC = 'jewishcenter';
+    w8dShadowTrim(k, false);
+    const lime = w8dScan(k, JC, 'white_sandstone_blocks_02', 5.0, () => X.ashlar(0xd8ccb4, 180, 5), { roughness: 0.85, color: 0xf4ead6 }, 0xd8ccb4),
+      limeDark = w8dScan(k, JC, 'white_sandstone_blocks_02', 3.5, () => X.ashlar(0xbcae92, 181, 4), { roughness: 0.8, color: 0xd8ccb0 }, 0xbcae92, 'd'),
+      brick = w8dScan(k, JC, 'brown_brick_02', 2.4, () => X.brick(0x9a6a4e, 182), { roughness: 0.9, color: 0xf0d0b8 }, 0x9a6a4e),
+      pave = w8dScan(k, JC, 'concrete_pavement', 2.2, () => X.pavers(0x9a968e, 183), { roughness: 0.9, color: 0xd0cac0 }, 0x9a968e), asphalt = w8dScan(k, JC, 'asphalt_02', 4, () => X.asphalt(), { roughness: 0.92, color: 0x8c8c8c }, 0x3a3c40),
+      plaster = w8dScan(k, JC, 'white_plaster_02', 3, () => X.plaster(0xf0e2c4, 184), { roughness: 0.9, color: 0xf6e8cc }, 0xf0e2c4),
+      marbleF = w8dScan(k, JC, 'terrazzo_tiles', 2.0, () => X.marble(0xd8d0c0, 0x8a8478, 185), { roughness: 0.3, color: 0xf2eadc }, 0xd8d0c0),
       marbleDark = k.pbr('jcMarble2', X.marble(0x4a5a58, 0x2a3432, 186), 0.4, { roughness: 0.3 }),
-      parquet = k.pbr('jcParquet', X.planks(0x8a5a34, 8, 187), 0.9, { roughness: 0.45 }),
+      parquet = w8dScan(k, JC, 'herringbone_parquet', 2.2, () => X.planks(0x8a5a34, 8, 187), { roughness: 0.45, color: 0xd8b088 }, 0x8a5a34),
       oak = k.pbr('jcOak', X.planks(0x5a3a22, 5, 188), 0.8, { roughness: 0.6 }), oakDark = k.flat(0x3a2616, 0, 0.6),
       carpet = k.pbr('jcCarpet', X.carpet(0x6a1a22, 0xb89a4a), 0.6, { roughness: 1 }),
-      tile = k.pbr('jcTile', X.subwayTile(0xe8eef0, 0x8a9aa0), 2.4, { roughness: 0.3 }),
+      tile = w8dScan(k, JC, 'rounded_square_tiled_wall', 1.2, () => X.subwayTile(0xe8eef0, 0x8a9aa0), { roughness: 0.3, color: 0xf4f8f8 }, 0xe8eef0),
       tileBlue = k.pbr('jcTileB', X.subwayTile(0x3a7aa8, 0x2a4a60), 2.4, { roughness: 0.3 }),
       brass = k.flat(0xc8a048, 0.9, 0.3), gilt = k.pbr('jcGilt', X.gilt(), 2, { metalness: 0.9, roughness: 0.3 }),
       iron = k.flat(0x1a1a1a, 0.6, 0.5), dark = k.flat(0x14100c, 0, 0.9), cream = k.flat(0xefe6d4, 0, 0.85);
@@ -830,7 +972,9 @@ export const jewishcenter: RoomDef = {
     for (const z of [5, 16]) k.box(100, 0.2, 0.25, 0, -0.08, z, limeDark);
     for (let x = -46; x < 46; x += 6) k.box(3, 0.02, 0.15, x, -0.17, 10.5, k.flat(0xe8d24a, 0, 0.8));
     for (const [x, z] of [[-18, 4.2], [-7.5, 4.2], [16, 4.2], [27, 4.2], [-22, 16.8], [-8, 16.8], [9, 16.8], [24, 16.8]]) { k.tree(x, 0, z, { h: 7, r: 2.5, seed: 158 + x, leaf: 0x4a7a3a }); k.keepOut.push({ x, z, r: 0.7 }); }
-    for (const x of [-26, 6, 30]) k.lamp(x, 4.6, 5.6, iron, 0xffe0b0, 8);
+    { const lmk = w8dMark(k); for (const x of [-26, 6, 30]) k.lamp(x, 4.6, 5.6, iron, 0xffe0b0, 8);
+      /* 2026-11-24 (wave 8d): the street lamps as a real model (Poly Haven street lamp, CC0) */
+      const old = w8dSince(k, lmk); w8dPlace(k, 'jewishcenter/ph_street_lamp_01', { height: 5.9 }, [-26, 6, 30].map((x) => [x, 0, 4.6, -PI / 2]), undefined, () => w8dHide(old)); }
     const texs = [rowhouseTex(1581, '#6a4434', '#8a6a54'), rowhouseTex(1582, '#b8a88a', '#8a7a64'), rowhouseTex(1583, '#5a3a2e', '#7a5a48'), rowhouseTex(1584, '#8a5a44', '#c8b8a0')].map((t) => new T.MeshStandardMaterial({ map: t, roughness: 0.85 }));
     rowhouses(k, -46, 7, 6, 20.5, -1, 2, texs);
     rowhouses(k, 16, 5, 6, 20.5, -1, 4, texs);
@@ -894,7 +1038,10 @@ export const jewishcenter: RoomDef = {
     }
     k.mesh(holed(2 * FW, LH, 0.6, [{ cx: 0, y0: 0.02, w: 6.4, h: LH - 0.1, square: true }]), plaster, 0, 0, ZL - 0.3);
     for (const sx of [-1, 1]) k.box(FW - 3.2, 1.0, 0.06, sx * (FW + 3.2) / 2, 0.5, ZL + 0.03, oak);
-    for (const x of [-6.5, 6.5]) { k.beam(v(x, LH, -4.5), v(x, LH - 0.9, -4.5), 0.02, brass, 4); k.torus(0.6, 0.05, x, LH - 0.95, -4.5, brass, 20).rotation.x = PI / 2; k.sphere(0.3, x, LH - 1.1, -4.5, k.glow(0xffe8c0), 12); }
+    { const lmk = w8dMark(k); for (const x of [-6.5, 6.5]) { k.torus(0.6, 0.05, x, LH - 0.95, -4.5, brass, 20).rotation.x = PI / 2; k.sphere(0.3, x, LH - 1.1, -4.5, k.glow(0xffe8c0), 12); }
+      /* 2026-11-24 (wave 8d): the lobby's two lamps as a real crystal and brass chandelier (from our movie sets), on short rods */
+      const old = w8dSince(k, lmk); for (const x of [-3.6, 3.6]) k.beam(v(x, LH, -4.5), v(x, LH - 0.5, -4.5), 0.02, brass, 4);
+      w8dPlace(k, 'jewishcenter/nyb_lobby_chandelier', { height: 1.5 }, [[-3.6, LH - 2.0, -4.5, 0], [3.6, LH - 2.0, -4.5, PI]], undefined, () => w8dHide(old)); }
     for (const x of [-6, 6]) k.point(x, 3.6, -4.5, 0xffe4c0, 18, 12);
     k.sign('SOCIAL HALL', 2.4, 0.3, -FW + 1.02, 3.75, -5.5, '#3a2e22', '#e8dcc4', 110, PI / 2);
     k.sign('POOL', 1.4, 0.3, FW - 1.02, 3.75, -5.5, '#1c3a5a', '#e8f0f4', 150, -PI / 2);
@@ -914,7 +1061,9 @@ export const jewishcenter: RoomDef = {
     k.mesh(holed(2 * FW, 5.4, 0.6, [{ cx: -5.4, y0: 0.02, w: 2.2, h: 3.6 }, { cx: 0, y0: 0.02, w: 3.2, h: 4.4 }, { cx: 5.4, y0: 0.02, w: 2.2, h: 3.6 }]), plaster, 0, SY, ZF1 - 0.3);
     k.mesh(archRing(3.8, 4.7, 3.2, 4.4, 0), gilt, 0, SY + 0.02, ZF1 + 0.02);
     k.point(0, SY + 4.2, (ZF0 + ZF1) / 2, 0xffe4c0, 16, 12);
-    k.sphere(0.4, 0, 9.2, (ZF0 + ZF1) / 2, k.glow(0xffe8c0), 12);
+    { const fmk = w8dMark(k); k.sphere(0.4, 0, 9.2, (ZF0 + ZF1) / 2, k.glow(0xffe8c0), 12); const old = w8dSince(k, fmk);
+      k.beam(v(0, 9.8, (ZF0 + ZF1) / 2), v(0, 9.5, (ZF0 + ZF1) / 2), 0.02, brass, 4);
+      w8dPlace(k, 'jewishcenter/ph_Chandelier_03', { height: 1.6 }, [[0, 7.9, (ZF0 + ZF1) / 2, 0]], (h) => w8dTint(h, 0xc8a050, 0.32, 0.9), () => w8dHide(old)); }
 
     /* ---- the sanctuary, a storey up ---- */
     k.box(2 * FW, 0.4, ZF1 - ZS1, 0, SY - 0.2, (ZF1 + ZS1) / 2, marbleF);
@@ -970,7 +1119,10 @@ export const jewishcenter: RoomDef = {
       for (const s of [-1, 1]) { k.box(0.5, 0.45, 20, s * 9.6, GY + 0.45, -31.5, oakDark); const gs: [number, number][] = []; for (let z = -22; z > -41; z -= 0.75) gs.push([s * 9.6, z]); seated(k, gs, 9, 1600 + s, GY + 0.2, -s * PI / 2); }
     }
     /* chandeliers under the gallery and a big one before the ark */
-    for (const z of [-26, -38]) { k.beam(v(0, HS, z), v(0, HS - 3, z), 0.03, brass, 4); k.torus(1.3, 0.06, 0, HS - 3.1, z, brass, 28).rotation.x = PI / 2; k.sphere(0.5, 0, HS - 3.3, z, k.glow(0xffe0b0), 12); k.point(0, HS - 3.6, z, 0xffdcaa, 40, 18); }
+    { const smk = w8dMark(k); for (const z of [-26, -38]) { k.torus(1.3, 0.06, 0, HS - 3.1, z, brass, 28).rotation.x = PI / 2; k.sphere(0.5, 0, HS - 3.3, z, k.glow(0xffe0b0), 12); } const old = w8dSince(k, smk);
+      for (const z of [-26, -38]) { k.beam(v(0, HS, z), v(0, HS - 3, z), 0.03, brass, 4); k.point(0, HS - 3.6, z, 0xffdcaa, 40, 18); }
+      /* 2026-11-24 (wave 8d): the two great chandeliers as a real brass model (Poly Haven Chandelier_03, CC0) */
+      w8dPlace(k, 'jewishcenter/ph_Chandelier_03', { width: 3.0 }, [[0, HS - 3 - 3.9, -26, 0], [0, HS - 3 - 3.9, -38, 0.4]], (h) => w8dTint(h, 0xc8a050, 0.32, 0.9), () => w8dHide(old)); }
     for (const z of [-27, -38]) for (const x of [-10, 10]) k.point(x, SY + 3, z, 0xffe4bc, 8, 8);
 
     /* ---- the social hall off the lobby ---- */
@@ -1024,10 +1176,29 @@ export const jewishcenter: RoomDef = {
     k.box(0.3, PH - PY, PZ0 - PZ1, PX1 + 0.15, (PH + PY) / 2, (PZ0 + PZ1) / 2, tile);
     k.box(0.3, PH - PY, 2.85, PX0 - 0.15, (PH + PY) / 2, (PZ0 - 3.85) / 2, tile); k.box(0.3, PH - PY, 14.85, PX0 - 0.15, (PH + PY) / 2, (PZ1 - 7.15) / 2, tile); k.box(0.3, LH - PH, 3.3, PX0 - 0.15, (LH + PH) / 2, -5.5, tile);
     k.box(PX1 - PX0, 0.8, 0.05, (PX0 + PX1) / 2, PY + 0.4, PZ0 - 0.31, tileBlue); k.box(PX1 - PX0, 0.8, 0.05, (PX0 + PX1) / 2, PY + 0.4, PZ1 + 0.31, tileBlue);
-    k.plane(PX1 - PX0, PZ0 - PZ1, (PX0 + PX1) / 2, PH, (PZ0 + PZ1) / 2, k.flat(0xe8eef0, 0, 0.8), 0, PI / 2);
+    k.plane(PX1 - PX0, PZ0 - PZ1, (PX0 + PX1) / 2, PH, (PZ0 + PZ1) / 2, k.flat(0x8a9aa4, 0, 0.8), 0, PI / 2);
     for (let x = PX0 + 2.5; x < PX1; x += 5) for (const z of [-4, -11.5, -19]) k.box(1.4, 0.05, 1.4, x, PH - 0.03, z, k.glow(0xf0f8ff));
     for (const x of [22, 30]) for (const z of [-7, -16]) k.point(x, PH - 0.8, z, 0xe8f4ff, 22, 14);
     k.point(28, PY - 1.2, -11.5, 0x4ac8ff, 12, 12);
+    /* 2026-11-24 (wave 8d), the room's one trick, a quiet one: the water throws its light up. A net of moving caustics
+       plays over the pool's ceiling and the tile above the water line, two layers drifting against each other, so the
+       still white ceiling reads as rippling. Nothing up there moves but light. */
+    if (W8D_DOM) {
+      const cau = canvasTex(256, 256, (g) => {
+        const im = g.createImageData(256, 256), T2 = (PI * 2) / 256;
+        for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) {
+          const a = Math.sin(x * T2 * 3 + Math.sin(y * T2 * 2) * 2.2) + Math.sin(y * T2 * 4 + Math.sin(x * T2 * 3) * 1.8) + Math.sin((x + y) * T2 * 2 + Math.sin((x - y) * T2) * 2);
+          const l = Math.max(0, 1 - Math.abs(a) * 1.6) ** 2.2 * 255, i = (y * 256 + x) * 4;
+          im.data[i] = l * 0.8; im.data[i + 1] = l * 0.95; im.data[i + 2] = l; im.data[i + 3] = 255;
+        }
+        g.putImageData(im, 0, 0);
+      }, true);
+      const cw = PPX1 - PPX0 + 1, cd = PPZ0 - PPZ1 + 1, cx = (PPX0 + PPX1) / 2, cz = (PPZ0 + PPZ1) / 2;
+      const layers = [0, 1].map((i) => { const t = cau.clone(); t.needsUpdate = true; t.repeat.set(cw / (i ? 3.1 : 4.3), cd / (i ? 3.1 : 4.3)); return { t, ...w8dLightPatch(k, t, 0x9ad8ff, cw, cd, cx, PH - 0.02 - i * 0.01, cz, PI / 2, 0, 0.5) }; });
+      const wall = [PZ0 - 0.32, PZ1 + 0.32].map((z, i) => { const t = cau.clone(); t.needsUpdate = true; t.repeat.set(cw / 3.6, 0.6); return { t, ...w8dLightPatch(k, t, 0x9ad8ff, cw, 1.6, cx, PY + 2.0, z, 0, i ? 0 : PI, 0.18) }; });
+      if (!ctx.reduced) k.ticks.push((t) => { layers[0].t.offset.set(t * 0.011, t * 0.007); layers[1].t.offset.set(-t * 0.009, t * 0.013); for (const w of wall) w.t.offset.set(t * 0.01, Math.sin(t * 0.4) * 0.05); });
+    }
+    k.egg(v(28, PH - 0.4, -4.2), { id: 'light-from-the-water', title: 'The ceiling that ripples', year: 'an illusion', text: 'Water bends the light that passes through it and throws a moving net of bright lines, called caustics, onto anything above or below it. Here the pool lights its own white ceiling from underneath, so the plaster seems to ripple. Nothing up there moves except light.', clue: 'Stand at the edge of the pool and look up.', source: { name: 'Caustic (optics), Wikipedia', url: 'https://en.wikipedia.org/wiki/Caustic_(optics)' } }, { r: 2.6 });
     k.sign('THE JEWISH CENTER POOL', 6, 0.5, (PX0 + PX1) / 2, PY + 3.0, PZ1 + 0.32, '#1c3a5a', '#e8f0f4', 64);
     /* the lifeguard's chair and a bench */
     k.box(0.1, 1.8, 0.1, 37, PY + 0.9, -11, k.flat(0xf0f0f0, 0, 0.5)); k.box(0.7, 0.1, 0.7, 37, PY + 1.8, -11.5, k.flat(0xf0f0f0, 0, 0.5));

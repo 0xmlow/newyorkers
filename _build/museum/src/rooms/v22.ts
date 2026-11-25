@@ -17,6 +17,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { scan, glbs, fireflyPlate } from './a';
+import { anamorphTex, hsign, paintTex } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -149,6 +151,75 @@ function boardTex(seed: number) {
   });
 }
 
+
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): real models, scanned ground, lanterns, the chalk board ----------
+   Poly Haven CC0 scans in assets/museum/tex/columbuspark/, CC0 models in assets/museum/props/columbuspark/. Safe in node:
+   the audit builds the room with no DOM, so every painted texture and sign is skipped there. */
+const W9_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const W9_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+/* A Poly Haven model with its glass made plain (KHR transmission draws the room twice) and no shadows. */
+function w9Solid(o: T.Object3D) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+/* Red paper lanterns strung on a sagging wire between two points: instanced, swaying a little in the morning air. */
+function lanternStrings(k: K, ctx: C, wires: [T.Vector3, T.Vector3][], step = 1.7) {
+  const at: { p: T.Vector3; ph: number }[] = [];
+  const wireM = k.flat(0x1a1a1a, 0.4, 0.6);
+  for (const [a, b] of wires) {
+    const L = a.distanceTo(b), n = Math.max(2, Math.round(L / step)), pts: T.Vector3[] = [];
+    for (let i = 0; i <= 24; i++) { const t = i / 24, p = a.clone().lerp(b, t); p.y -= Math.sin(t * PI) * L * 0.035; pts.push(p); }
+    k.curve(pts, 0.012, wireM, 24);
+    for (let i = 1; i < n; i++) { const t = i / n, p = a.clone().lerp(b, t); p.y -= Math.sin(t * PI) * L * 0.035 + 0.42; at.push({ p, ph: i * 0.9 + a.x * 0.3 }); }
+  }
+  const body = new T.LatheGeometry([[0.02, -0.3], [0.17, -0.26], [0.26, -0.12], [0.28, 0], [0.26, 0.12], [0.17, 0.26], [0.02, 0.3]].map(([x, y]) => new T.Vector2(x, y)), 9);
+  const capG = new T.CylinderGeometry(0.1, 0.1, 0.07, 10), tasG = new T.CylinderGeometry(0.025, 0.05, 0.28, 6);
+  const red = k.flat(0xc8202a, 0, 0.7, { emissive: 0xff3a20, emissiveIntensity: 0.18 + 1.1 * k.night, side: T.DoubleSide });
+  const gold = k.flat(0xd8a43a, 0.8, 0.35), tas = k.flat(0xe8b830, 0, 0.8);
+  const mk = (g: T.BufferGeometry, m: T.Material) => { const o = k.instances(g, m, at.map(() => new T.Matrix4())); o.frustumCulled = false; o.castShadow = false; return o; };
+  const bodies = mk(body, red), caps = mk(capG, gold), caps2 = mk(capG, gold), tassels = mk(tasG, tas);
+  const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(), o = new T.Vector3(), one = new T.Vector3(1, 1, 1);
+  const place = (t: number) => {
+    at.forEach((l, i) => {
+      e.set(0.05 * Math.sin(t * 0.9 + l.ph), t * 0.05 + l.ph, 0.06 * Math.sin(t * 0.7 + l.ph * 1.7), 'YXZ'); q.setFromEuler(e);
+      m.compose(l.p, q, one); bodies.setMatrixAt(i, m);
+      o.set(0, 0.31, 0).applyQuaternion(q).add(l.p); m.compose(o, q, one); caps.setMatrixAt(i, m);
+      o.set(0, -0.31, 0).applyQuaternion(q).add(l.p); m.compose(o, q, one); caps2.setMatrixAt(i, m);
+      o.set(0, -0.48, 0).applyQuaternion(q).add(l.p); m.compose(o, q, one); tassels.setMatrixAt(i, m);
+    });
+    for (const im of [bodies, caps, caps2, tassels]) im.instanceMatrix.needsUpdate = true;
+  };
+  place(0);
+  if (!ctx.reduced) { let acc = 0; k.ticks.push((t, dt) => { acc += dt; if (acc < 0.05) return; acc = 0; place(t); }); }
+  return at.length;
+}
+/* The chalk board on the paving: a xiangqi board, red and yellow discs with no glyphs, drawn in chalk and stretched along
+   the floor so that from one spot (where a visitor comes in) it stands up as a board two metres tall. */
+function chalkBoardTex() {
+  return paintTex(768, 640, (g, W, H) => {
+    g.clearRect(0, 0, W, H);
+    const rnd = X.mulberry(2026);
+    const chalk = (col: string, wdt: number, path: () => void) => { for (let p = 0; p < 3; p++) { g.globalAlpha = 0.35 + rnd() * 0.25; g.strokeStyle = col; g.lineWidth = wdt * (0.8 + rnd() * 0.5); g.beginPath(); path(); g.stroke(); } g.globalAlpha = 1; };
+    /* the board's own face: a dusty ochre wash with a hard edge, as if a slab stood there */
+    g.fillStyle = 'rgba(214,170,96,0.62)'; g.fillRect(40, 40, W - 80, H - 80);
+    for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(255,248,230,${rnd() * 0.12})`; g.fillRect(40 + rnd() * (W - 80), 40 + rnd() * (H - 80), 2 + rnd() * 5, 1 + rnd() * 2); }
+    chalk('#fffaf0', 12, () => g.rect(40, 40, W - 80, H - 80));
+    /* a cast shadow to the lower right sells the slab standing up */
+    g.fillStyle = 'rgba(30,26,22,0.38)'; g.beginPath(); g.moveTo(W - 40, H - 40); g.lineTo(W - 10, H - 18); g.lineTo(W - 10, 62); g.lineTo(W - 40, 40); g.fill();
+    const x0 = 100, y0 = 96, dx = (W - 200) / 8, dy = (H - 192) / 9;
+    for (let i = 0; i < 9; i++) chalk('#fffaf0', 5, () => { const x = x0 + i * dx; g.moveTo(x, y0); g.lineTo(x, y0 + 4 * dy); g.moveTo(x, y0 + 5 * dy); g.lineTo(x, y0 + 9 * dy); });
+    for (let j = 0; j < 10; j++) chalk('#fffaf0', 5, () => { const y = y0 + j * dy; g.moveTo(x0, y); g.lineTo(x0 + 8 * dx, y); });
+    chalk('#fffaf0', 5, () => { g.moveTo(x0, y0 + 4 * dy); g.lineTo(x0, y0 + 5 * dy); g.moveTo(x0 + 8 * dx, y0 + 4 * dy); g.lineTo(x0 + 8 * dx, y0 + 5 * dy); });
+    /* the two palaces' diagonals */
+    for (const yy of [y0, y0 + 7 * dy]) chalk('#fffaf0', 4, () => { g.moveTo(x0 + 3 * dx, yy); g.lineTo(x0 + 5 * dx, yy + 2 * dy); g.moveTo(x0 + 5 * dx, yy); g.lineTo(x0 + 3 * dx, yy + 2 * dy); });
+    /* the river, in blue chalk waves */
+    chalk('#7ab8e8', 6, () => { for (let x = x0 + 10; x < x0 + 8 * dx - 20; x += 46) { g.moveTo(x, y0 + 4.5 * dy); g.quadraticCurveTo(x + 12, y0 + 4.2 * dy, x + 23, y0 + 4.5 * dy); g.quadraticCurveTo(x + 34, y0 + 4.8 * dy, x + 46, y0 + 4.5 * dy); } });
+    /* the pieces where a game opens, red at the foot and yellow at the head, rings and no glyphs */
+    const row = (j: number, cols: number[], col: string) => { for (const i of cols) { const x = x0 + i * dx, y = y0 + j * dy; g.fillStyle = col; g.globalAlpha = 0.85; g.beginPath(); g.arc(x, y, dx * 0.36, 0, PI * 2); g.fill(); g.globalAlpha = 1; chalk('#fffaf0', 4, () => g.arc(x, y, dx * 0.24, 0, PI * 2)); } };
+    row(9, [0, 1, 2, 3, 4, 5, 6, 7, 8], '#d8262a'); row(7, [1, 7], '#d8262a'); row(6, [0, 2, 4, 6, 8], '#d8262a');
+    row(0, [0, 1, 2, 3, 4, 5, 6, 7, 8], '#f2c318'); row(2, [1, 7], '#f2c318'); row(3, [0, 2, 4, 6, 8], '#f2c318');
+  });
+}
+
 /* ================================================================== */
 /* ---------------- 179 COLUMBUS PARK AT SEVEN ---------------- */
 export const columbuspark: RoomDef = {
@@ -169,13 +240,16 @@ export const columbuspark: RoomDef = {
     /* how full the plaza is by the New York hour: thickest before nine, thin by eleven, a few at night */
     const dens = (h: number) => h < 5 ? 0.05 : h < 6.5 ? lerp(0.05, 1, (h - 5) / 1.5) : h < 9 ? 1 : h < 11 ? lerp(1, 0.4, (h - 9) / 2) : h < 17 ? 0.4 : h < 19.5 ? lerp(0.4, 0.15, (h - 17) / 2.5) : h < 23 ? lerp(0.15, 0.05, (h - 19.5) / 3.5) : 0.05;
 
-    const plaza = k.pbr('cpPlaza', X.pavers(0x8e8a80, 179), 0.5), asph = k.pbr('cpAsph', X.asphalt(), 0.3), walk = k.pbr('cpWalk', X.concrete(0xa8a49c, 180), 0.4),
-      turf = k.pbr('cpTurf', X.grass(0x3f7a3a, 181), 0.3, { roughness: 1 }), lawn = k.pbr('cpLawn', X.grass(0x4b6b3a, 184), 0.35, { roughness: 1 }), dirt = k.flat(0x8a7a62, 0, 1),
-      lime = k.pbr('cpLime', X.ashlar(0xcdbfa4, 182, 5), 0.35, { normal: 0.4 }), limeDark = k.flat(0x9a8e76, 0, 0.85), court = k.pbr('cpCourt', X.asphalt(0x2c3036), 0.3),
+    /* wave 9: the ground is scanned now, the park's hexagonal asphalt pavers, the pavement slabs, the street, the lawn */
+    const plaza = scan(k, 'columbuspark', 'hexagonal_concrete_paving', 1.6, () => X.pavers(0x8e8a80, 179), { color: 0xc8c2b6, roughness: 0.85 }),
+      asph = scan(k, 'columbuspark', 'asphalt_02', 3, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.9 }),
+      walk = scan(k, 'columbuspark', 'concrete_pavement', 2.4, () => X.concrete(0xa8a49c, 180), { color: 0xd8d2c6 }),
+      turf = k.pbr('cpTurf', X.grass(0x3f7a3a, 181), 0.3, { roughness: 1 }), lawn = scan(k, 'columbuspark', 'leafy_grass', 2.5, () => X.grass(0x4b6b3a, 184), { color: 0xb8c4a0, roughness: 1 }), dirt = k.flat(0x8a7a62, 0, 1),
+      lime = scan(k, 'columbuspark', 'marble_01', 3.2, () => X.ashlar(0xcdbfa4, 182, 5), { color: 0xe8e0cc, roughness: 0.8 }), limeDark = k.flat(0x9a8e76, 0, 0.85), court = k.pbr('cpCourt', X.asphalt(0x2c3036), 0.3),
       terr = k.pbr('cpTerr', X.concrete(0xb8b2a6, 185), 0.4), cream = k.flat(0xe6dcc6, 0, 0.8), roofM = k.flat(0x5a3a2c, 0.3, 0.6, { side: T.DoubleSide }),
       wood = k.pbr('cpWood', X.planks(0x6a4428, 6, 183), 0.8, { roughness: 0.55 }), woodDark = k.flat(0x3e2616, 0, 0.5),
       iron = k.flat(0x1e2024, 0.6, 0.5), steel = k.flat(0x9aa4ae, 0.8, 0.35), glass = k.glass(0xcfe0ea, 0.3, 0.1), white = k.flat(0xf0f2f0, 0, 0.6), line = k.flat(0xe8e4d8, 0, 0.8),
-      curb = k.flat(0x8a8680, 0, 0.8), concrete = k.pbr('cpConc', X.concrete(0x9c9a92, 186), 0.5), rubber = k.flat(0x7a3a30, 0, 0.95), rubberG = k.flat(0x3a6a4a, 0, 0.95),
+      curb = k.flat(0x8a8680, 0, 0.8), concrete = k.pbr('cpConc', X.concrete(0x9c9a92, 186), 0.5), rubber = scan(k, 'columbuspark', 'rubber_tiles', 1.0, () => X.concrete(0x7a3a30, 187), { color: 0xc89080, roughness: 0.95 }), rubberG = k.flat(0x3a6a4a, 0, 0.95),
       yellow = k.flat(0xf2c318, 0, 0.6), blue = k.flat(0x2a5db8, 0, 0.6), red = k.flat(0xc8262a, 0, 0.6), green = k.flat(0x1f5a2b, 0, 0.7),
       plyGreen = k.flat(0x2f6a3a, 0, 0.9), orange = k.flat(0xe8792a, 0, 0.7), fan = k.flat(0xc8262a, 0, 0.6, { side: T.DoubleSide }), chain = chainLinkMat();
     const mounts: Mount[] = [], st: FrameStyle = 'black';
@@ -313,7 +387,12 @@ export const columbuspark: RoomDef = {
     for (let z = -60; z <= 60; z += 15) { trees.push([33.5, z]); trees.push([-33.5, z + 7]); }
     for (const [x, z] of trees) { k.tree(x, 0, z, { h: 8 + rnd() * 3, r: 3.4 + rnd() * 1.2, seed: 179 + Math.round(x + z), leaf: 0x3f6b3e }); k.box(1.4, 0.06, 1.4, x, 0.03, z, iron); k.keepOut.push({ x, z, r: 0.9 }); }
     /* lamps, dim by day */
-    for (const [x, z] of [[-14, -48], [14, -48], [-14, -10], [14, -10], [-4, 20], [4, 56], [26, 0], [-26, 40]]) k.lamp(x, z, 4.6, iron, 0xffd7a0, k.night > 0.5 ? 60 : 8);
+    /* wave 9: the lamps are a real cast iron street lamp model now (Poly Haven, CC0), lit after dark */
+    {
+      const lampAt = [[-14, -48], [14, -48], [-14, -10], [14, -10], [-4, 20], [4, 56], [26, 0], [-26, 40]];
+      glbs(k, 'columbuspark/ph_street_lamp_01', { height: 4.4 }, lampAt.map(([x, z], i) => [x, 0, z, i * 1.3] as [number, number, number, number]), (os) => os.forEach(w9Solid), 99);
+      for (const [x, z] of lampAt) { k.keepOut.push({ x, z, r: 0.45 }); if (k.night > 0.3) k.point(x, 4.4, z, 0xffd7a0, 50, 16); }
+    }
     /* benches along the plaza's sides and the field paths */
     for (const z of [-42, -34, -26, -18]) { parkBench(k, 26.6, z, PI / 2, wood, iron); parkBench(k, -26.6, z, -PI / 2, wood, iron); }
     for (const z of [30, 38, 46]) { parkBench(k, 28.4, z, PI / 2, wood, iron); parkBench(k, -28.4, z, -PI / 2, wood, iron); }
@@ -541,6 +620,7 @@ export const columbuspark: RoomDef = {
     }
 
     /* ================= Mulberry Street: tenements with fire escapes, plain shop boards, awnings ================= */
+    const shutters: [number, number, number, number][] = [];
     const tenements = (z0: number, z1: number, x: number, facing: number, seed: number) => {
       const r2 = X.mulberry(seed);
       const bricks = [k.pbr('cpTenA' + seed, X.brick(0x7a4032, seed + 1), 0.9), k.pbr('cpTenB' + seed, X.brick(0x9a6a4e, seed + 2), 0.9), k.pbr('cpTenC' + seed, X.brick(0x5e3a30, seed + 3), 0.9), k.pbr('cpTenD' + seed, X.ashlar(0xb8a888, seed + 4, 6), 0.4)];
@@ -558,6 +638,8 @@ export const columbuspark: RoomDef = {
             /* the shop: glazed front, a plain coloured board over it, an awning */
             k.box(0.08, 2.6, w - 1.2, x - facing * 0.03, 1.5, cz, win);
             k.box(0.12, 0.9, w - 0.8, x - facing * 0.1, 3.55, cz, boards[Math.floor(r2() * boards.length)]);
+            /* wave 9: at seven most shutters are still half down */
+            if (r2() < 0.7) shutters.push([x - facing * 0.2, 0, cz, facing > 0 ? PI / 2 : -PI / 2]);
             if (r2() < 0.6) { const aw = k.box(1.6, 0.06, w - 1.4, x - facing * 0.9, 3.0, cz, boards[Math.floor(r2() * boards.length)]); aw.rotation.z = facing * 0.32; }
             continue;
           }
@@ -574,6 +656,7 @@ export const columbuspark: RoomDef = {
       }
     };
     tenements(-70, 70, 50, 1, 1803);
+    glbs(k, 'columbuspark/ph_rollershutter_door', { width: 3.4 }, shutters, (os) => os.forEach(w9Solid), 99);
     /* street signs on the corners, and two water towers on the roofs */
     for (const [x, z, text, r] of [[36.2, -68, 'MULBERRY ST', PI / 2], [36.2, 68, 'MULBERRY ST', PI / 2], [-36.2, -68, 'BAXTER ST', -PI / 2], [-36.2, 68, 'BAXTER ST', -PI / 2], [36.2, -68.8, 'BAYARD ST', PI], [-36.2, 68.8, 'WORTH ST', 0]] as [number, number, string, number][]) {
       k.box(0.08, 3.4, 0.08, x, 1.7, z, iron); k.sign(text, 1.3, 0.26, x + Math.sin(r) * 0.06, 3.1, z + Math.cos(r) * 0.06, '#1f5a2b', '#f4f1e6', 60, r, { double: true });
@@ -610,6 +693,74 @@ export const columbuspark: RoomDef = {
     k.box(30, 60, 30, -70, 30, 100, k.pbr('cpCivic', X.windows(189, 0.2, 0x4a5058, false), 0.1, { emissive: 0xffffff, emissiveIntensity: 0.3 + 1.6 * k.night, roughness: 0.6, stretch: 0.6 }));
     k.skyline({ z: -150, count: 34, spacing: 7, seed: 1806, base: 0, lit: 0.25, x: 0, scale: 1.1 });
     k.skyline({ z: 160, count: 34, spacing: 7, seed: 1807, base: 0, lit: 0.25, x: 0, scale: 1.4, spires: true });
+
+
+    /* ================= wave 9: lanterns, mahjong, street furniture, the chalk board ================= */
+    {
+      /* strings of red lanterns across the plaza between the planes, and along the pavilion's eaves */
+      const wires: [T.Vector3, T.Vector3][] = [];
+      for (const z of [-44, -36, -28, -20]) wires.push([v(-23, 6.6, z), v(23, 6.6, z)]);
+      for (const x of [-23, 23]) wires.push([v(x, 6.4, -44), v(x, 6.4, -20)]);
+      wires.push([v(-14.6, TY + 5.0, PZ + 7.6), v(14.6, TY + 5.0, PZ + 7.6)]);
+      lanternStrings(k, ctx, wires);
+      /* paper lanterns hung under the pavilion roof between the piers (Poly Haven, CC0) */
+      glbs(k, 'columbuspark/ph_chinese_chandelier', { height: 1.1 }, [-10, -2.5, 2.5, 10].map((x) => [x, TY + 3.6, PZ + 0.5, 0] as [number, number, number, number]), (os) => os.forEach(w9Solid), 99);
+      for (const x of [-10, -2.5, 2.5, 10]) k.curve([v(x, TY + 4.75, PZ + 0.5), v(x, TY + 4.9, PZ + 0.5)], 0.015, iron, 2);
+      /* the musicians sit on real stools now */
+      glbs(k, 'columbuspark/ph_chinese_stool', { height: 0.46 }, [-10.5, -9, -7.5, -6, -4.5].map((x, i) => [x, TY, PZ - 1.1, i * 0.4] as [number, number, number, number]), (os) => os.forEach(w9Solid), 99);
+      /* a mahjong game at two tea tables on the west of the plaza, monobloc chairs brought from home, tiles on the cloth */
+      const mj = [{ x: -19.6, z: -44.5 }, { x: -19.4, z: -29.5 }];
+      const chairs: [number, number, number, number][] = [], players: { x: number; y: number; z: number; ry: number; sit?: boolean }[] = [], tiles: T.Matrix4[] = [];
+      for (const t of mj) {
+        for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + PI / 4, cx = t.x + Math.sin(a) * 0.95, cz = t.z + Math.cos(a) * 0.95; chairs.push([cx, 0, cz, a + PI]); players.push({ x: cx, y: 0.05, z: cz, ry: a + PI, sit: true }); }
+        for (let i = 0; i < 4; i++) for (let j = 0; j < 9; j++) { const a = (i / 4) * PI * 2, r = 0.32, off = (j - 4) * 0.045; tiles.push(new T.Matrix4().compose(v(t.x + Math.sin(a) * r + Math.cos(a) * off, 0.78, t.z + Math.cos(a) * r - Math.sin(a) * off), new T.Quaternion().setFromAxisAngle(UP, a), v(1, 1, 1))); }
+        k.keepOut.push({ x: t.x, z: t.z, r: 1.6 });
+      }
+      glbs(k, 'columbuspark/ph_chinese_tea_table', { height: 0.72 }, mj.map((t) => [t.x, 0, t.z, 0] as [number, number, number, number]), (os) => os.forEach(w9Solid), 99);
+      glbs(k, 'columbuspark/ph_plastic_monobloc_chair_01', { height: 0.8 }, chairs, (os) => os.forEach(w9Solid), 99);
+      still(k, players, 1810, [0x1c1e24, 0x6a1e22, 0x2c3a4a, 0x3a3230, 0xe0dcd0, 0x24405a]);
+      k.instances(new T.BoxGeometry(0.035, 0.05, 0.026), k.flat(0xf2eee2, 0, 0.4), tiles);
+      /* hydrants on the pavements, park bins by the gates and benches */
+      glbs(k, 'columbuspark/ph_fire_hydrant', { height: 0.85 }, [[34.6, 0, -50, 0], [34.6, 0, 12, 0], [-34.6, 0, -24, PI], [-34.6, 0, 44, PI]], (os) => os.forEach(w9Solid), 99);
+      for (const [x, z] of [[34.6, -50], [34.6, 12], [-34.6, -24], [-34.6, 44]]) k.keepOut.push({ x, z, r: 0.4 });
+      const bins: [number, number, number, number][] = [[26.9, 0, -30, PI / 2], [-26.9, 0, -30, PI / 2], [-5.8, 0, -12.8, 0], [-5.2, 0, 18.2, 0], [-12, 0, -47.6, 0]];
+      glbs(k, 'columbuspark/ph_metal_trash_can', { height: 0.9 }, bins, (os) => os.forEach(w9Solid), 99);
+      for (const [x, , z] of bins) k.keepOut.push({ x, z, r: 0.95 });
+      /* NYC Parks signs in the house font, green with white, at the plaza and the pavilion stair */
+      if (W9_DOM) {
+        k.box(0.08, 2.2, 0.08, 6.4, 1.1, -12.6, iron);
+        hsign(k, 'COLUMBUS PARK', 1.5, 0.36, 6.4, 2.25, -12.56, 0, { fg: '#f4f1e6', bg: '#1f5a2b', font: 'W2 Archivo Expanded', size: 0.5, lit: false });
+        hsign(k, 'TAI CHI 6 TO 9 AM  /  NO DOGS ON THE PLAZA', 1.5, 0.22, 6.4, 1.92, -12.56, 0, { fg: '#f4f1e6', bg: '#1f5a2b', font: 'JetBrains Mono', size: 0.42, lit: false });
+        hsign(k, 'PAVILION 1897', 2.2, 0.34, 0, TY + 0.55, PZ + 7.32, 0, { fg: '#3a3028', bg: '#d8ccb0', font: 'W2 Archivo Expanded', size: 0.5, border: '#3a3028', lit: false });
+      }
+      /* the community mural on the comfort station's plaza face (FIREFLY_QUEUE.md; invisible until the file lands) */
+      fireflyPlate(k, 'assets/museum/tex/columbuspark/ff_comfort_mural.webp', 7.6, 3.6, -21.75, 2.3, -1.04, PI, W9_HIDDEN);
+      /* the illusion: a chalk xiangqi board on the paving that stands up two metres tall from where a visitor comes in */
+      if (W9_DOM) anamorphTex(k, chalkBoardTex(), 1, -6, 3, 0, 0, 7, 2.4, 2.0, 0.9);
+      k.egg(v(1, 0.6, -16), { id: 'columbuspark-chalk', title: 'The board that stands up', text: 'A chalk drawing on the paving, stretched along the ground so that from one spot it stands up as a xiangqi board two metres tall. Pavement artists call it anamorphic: the picture is drawn for a single eye at a single height, and every step away from that spot lays it flat again. Xiangqi is played on the points where nine lines cross ten, with a river across the middle that the elephants may not cross.', clue: 'Look back from where you came in, then walk onto the board.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
+    }
+
+    /* wave 9: shadows only where they fall on the park. Baxter Street, the courts, the crane and the blocks north and south
+       draw no sun shadow (the sun is in the east), nor do the 2,246 fence pickets: the debug counter is about three
+       times the scene because of the shadow pass, so this is the cheapest cut */
+    {
+      /* the kit turns shadows back on as models arrive, so trim every two seconds for the first thirty: nothing instanced
+         (lanterns, players, crowds, tai chi, onlookers, pickets, tiles, the trees, every one more than 20 m from the spawn)
+         and no loaded model (lamp posts, shutters, chairs, tables, hydrants, bins) draws into the shadow map */
+      let last = -10;
+      const bb = new T.Box3(), dyn = new Set<T.Object3D>();
+      k.ticks.push((t) => {
+        if (t > 32 || t - last < 2) return; last = t;
+        dyn.clear(); for (const d of k.dynamic) d.traverse((c) => { dyn.add(c); });
+        k.scene.traverse((o) => {
+          if (!(o instanceof T.Mesh) || !o.castShadow) return;
+          if (o instanceof T.InstancedMesh || dyn.has(o)) { o.castShadow = false; return; }
+          if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+          bb.copy(o.geometry.boundingBox!).applyMatrix4(o.matrixWorld);
+          if (bb.max.x < -36 || bb.min.z > 72 || bb.max.z < -72) o.castShadow = false;
+        });
+      });
+    }
 
     /* ================= what the park knows ================= */
     const wiki = { name: 'Columbus Park (Manhattan), Wikipedia', url: 'https://en.wikipedia.org/wiki/Columbus_Park_(Manhattan)' };

@@ -4,12 +4,13 @@
    Every moving thing is either one instanced rig updated in place or a single group on k.ticks,
    so a room with six thousand spectators still costs a handful of draw calls. */
 import * as T from 'three';
-import { personTag } from '../kit';
+import { personTag, boxCrowdTag } from '../kit';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
 import { hero, heroInstances } from './heroes';
+import { hsign, paintTex, anamorphTex } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -51,6 +52,84 @@ function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
 }
 const one = new T.Vector3(1, 1, 1);
 
+/* ---------- THE BIG UPGRADE, wave 8a (2026-11-24): helpers for rooms 142 to 146 ----------
+   The wave 7 pattern kept local: Poly Haven scans from assets/museum/tex/<room>/ that wear a set colour until all their
+   maps land, real models from assets/museum/props/<room>/ fitted once and placed (seven or more as instanced parts, glass
+   stripped of transmission and shadows), house font signs and floor type. Safe in node: the audit builds with no DOM. */
+const W8_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w8L = W8_DOM ? new T.TextureLoader() : null;
+const w8S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w8Scan(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w8L) return k.pbr(`w8-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w8S.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const ld = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w8L.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: ld('c', true), normalMap: ld('n', false), roughnessMap: low ? undefined : ld('r', false) }, ready: Promise.all(waits) };
+    w8S.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w8-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w8) {
+    m.userData.w8 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. `then`
+   gets the clones (empty when instanced) or, with `live`, the instancer so a tick can move them. */
+type W8Ins = ReturnType<typeof heroInstances>;
+function w8Place(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[], ins?: W8Ins) => void, inst = 6) {
+  if (!at.length || !W8_DOM) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    if (tweak) tweak(h);
+    if (at.length > inst) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); for (const p of ins.parts) p.im.castShadow = false; then?.([], ins); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* Recolour every material of a loaded model (clones, so the cache stays clean). */
+function w8Tint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.2, keepMap = true) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; if (!keepMap) n.map = null; m = n; cache.set(src, m); } c.material = m; });
+}
+function w8Sign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6, border?: string) {
+  if (!W8_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size, border });
+}
+/* Floor lettering for the one illusion a room, `colors` per letter. Null in node. */
+function w8Type(text: string, colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W8_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`;
+    let tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; tw = g.measureText(text).width; }
+    let x = (w - tw) / 2, n = 0;
+    for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, h / 2); x += g.measureText(ch).width; if (ch === ' ') n--; }
+  }, [font]);
+}
+/* Many copies of one box as a single instanced draw: [x, y, z, rotY?, sx?, sy?, sz?] each. */
+function w8Boxes(k: K, w: number, h: number, d: number, m: T.Material, at: number[][]) {
+  if (!at.length) return null;
+  const q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+  return k.instances(new T.BoxGeometry(w, h, d), m, at.map(([x, y, z, r = 0, sx = 1, sy = 1, sz = 1]) => new T.Matrix4().compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), new T.Vector3(sx, sy, sz))));
+}
+
 /* ---------------- 142 THE NIGHT SESSION ---------------- */
 export const arthurashe: RoomDef = {
   id: 'arthurashe',
@@ -65,12 +144,18 @@ export const arthurashe: RoomDef = {
     k.sky({ top: 0x05070f, horizon: 0x101828, ground: 0x05070a, fog: 0.0022, stars: 700, env: 0.5 });
     k.hemi(0x8aa0d0, 0x1a1c22, 1.15);
     k.sun(0xffffff, 0.3, 40, 90, 20, true, 80);
-    const blue = k.flat(0x2a5db8, 0, 0.92), green = k.flat(0x4c8a48, 0, 0.92), line = k.flat(0xf4f6f8, 0, 0.8),
+    /* 2026-11-24 wave 8a: the court, the walls and the concourse are Poly Haven scans (tex/arthurashe/); the courtside wall is
+       the tournament's dark navy, not grey, with a running LED ribbon on top and a kick board at the foot */
+    const blue = k.flat(0x1f4fae, 0, 0.78), green = k.flat(0x3f7f4c, 0, 0.82),
+      line = k.flat(0xe8ecf0, 0, 0.8),
       seat = k.flat(0x1e4494, 0, 0.8), seatUp = k.flat(0x14295a, 0, 0.85), riser = k.flat(0x3a3f48, 0, 0.9),
-      wall = k.pbr('aaWall', X.concrete(0x8d8f93, 31), 0.5, { roughness: 0.8 }), aisle = k.pbr('aaAisle', X.concrete(0x55585e, 32), 0.6),
-      white = k.flat(0xe8ecf0, 0.1, 0.5), steel = k.flat(0x9aa4ae, 0.8, 0.35), dark = k.flat(0x0e1117, 0.3, 0.7),
-      truss = k.flat(0xdde2e8, 0.3, 0.55), fabric = k.flat(0xd8dde4, 0, 0.9, { side: T.DoubleSide, transparent: true, opacity: 0.86 }),
-      net = k.flat(0x101418, 0, 0.9, { transparent: true, opacity: 0.6, side: T.DoubleSide });
+      wall = w8Scan(k, 'arthurashe', 'concrete_wall_006', 2.5, () => X.concrete(0x23305a, 31), { color: 0x34487e, roughness: 0.75 }, 0x1e2a4a),
+      aisle = w8Scan(k, 'arthurashe', 'concrete_floor_02', 3, () => X.concrete(0x55585e, 32), { color: 0x8a8c92, roughness: 0.8 }, 0x4a4c52),
+      white = k.flat(0xe8ecf0, 0.1, 0.5), steel = k.flat(0x9aa4ae, 0.8, 0.35), dark = k.flat(0x0e1117, 0.3, 0.7), navy = k.flat(0x0f1a36, 0.2, 0.6),
+      truss = k.flat(0x8f98a4, 0.75, 0.4), fabric = k.flat(0xd8dde4, 0, 0.9, { side: T.DoubleSide, transparent: true, opacity: 0.86 }),
+      netTex = W8_DOM ? paintTex(512, 64, (g) => { g.clearRect(0, 0, 512, 64); g.strokeStyle = 'rgba(20,24,28,0.95)'; g.lineWidth = 1.6; for (let x = 0; x <= 512; x += 6) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 64); g.stroke(); } for (let y = 0; y <= 64; y += 6) { g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); } }) : null,
+      net = netTex ? new T.MeshStandardMaterial({ map: netTex, transparent: true, alphaTest: 0.05, side: T.DoubleSide, roughness: 0.9 }) : k.flat(0x101418, 0, 0.9, { transparent: true, opacity: 0.6, side: T.DoubleSide });
+    if (netTex) { netTex.wrapS = T.RepeatWrapping; netTex.repeat.set(4, 1); }
     /* the court: Laykold, blue inside the lines, green to the run off */
     k.box(30, 0.1, 50, 0, -0.06, 0, aisle);
     k.box(20, 0.1, 40, 0, -0.04, 0, green);
@@ -79,37 +164,71 @@ export const arthurashe: RoomDef = {
     L(11, 0.1, 0, 11.9); L(11, 0.1, 0, -11.9);
     for (const x of [-5.45, 5.45, -4.1, 4.1]) L(0.1, 23.8, x, 0);
     L(8.2, 0.1, 0, 6.4); L(8.2, 0.1, 0, -6.4); L(0.1, 12.8, 0, 0); L(0.1, 0.3, 0, 11.75); L(0.1, 0.3, 0, -11.75);
-    for (const x of [-6.4, 6.4]) k.cyl(0.06, 1.1, x, 0.55, 0, steel);
-    k.plane(12.8, 1.0, 0, 0.5, 0, net);
-    k.box(12.8, 0.08, 0.05, 0, 1.03, 0, white);
-    k.box(0.06, 0.95, 0.05, 0, 0.47, 0, white);
+    /* the net: square posts in court green, a mesh you can see through, the white band and the centre strap */
+    for (const x of [-6.4, 6.4]) { k.box(0.09, 1.07, 0.09, x, 0.535, 0, k.flat(0x1f4a2a, 0.3, 0.5)); k.cyl(0.05, 0.08, x, 1.1, 0, steel); }
+    k.plane(12.8, 0.95, 0, 0.5, 0, net);
+    k.box(12.8, 0.07, 0.04, 0, 0.94, 0, white);
+    k.box(0.05, 0.9, 0.04, 0, 0.45, 0, white);
+    k.box(12.8, 0.03, 0.03, 0, 0.04, 0, dark);
     k.block(-10, 10, -20, 20);
     /* the wall at the foot of the bowl: three and a half metres of it, where the works hang */
-    for (const s of [-1, 1]) { k.box(0.6, 3.6, 51.2, s * 14.5, 1.8, 0, wall); k.box(0.7, 0.12, 51.2, s * 14.5, 3.66, 0, steel); k.box(31.2, 3.6, 0.6, 0, 1.8, s * 24.8, wall); k.box(31.2, 0.12, 0.7, 0, 3.66, s * 24.8, steel); k.box(0.64, 0.42, 51.2, s * 14.5, 3.36, 0, blue); k.box(31.2, 0.42, 0.64, 0, 3.36, s * 24.8, blue); k.box(0.64, 0.5, 51.2, s * 14.5, 0.25, 0, blue); k.box(31.2, 0.5, 0.64, 0, 0.25, s * 24.8, blue); }
+    for (const s of [-1, 1]) { k.box(0.6, 3.6, 51.2, s * 14.5, 1.8, 0, wall); k.box(0.7, 0.12, 51.2, s * 14.5, 3.66, 0, steel); k.box(31.2, 3.6, 0.6, 0, 1.8, s * 24.8, wall); k.box(31.2, 0.12, 0.7, 0, 3.66, s * 24.8, steel); k.box(0.64, 0.5, 51.2, s * 14.5, 0.25, 0, navy); k.box(31.2, 0.5, 0.64, 0, 0.25, s * 24.8, navy); }
+    /* the LED ribbon along the top of the courtside wall: one canvas, scrolling, house type */
+    {
+      const rib = W8_DOM ? paintTex(2048, 64, (g) => { g.fillStyle = '#050a18'; g.fillRect(0, 0, 2048, 64); g.textBaseline = 'middle'; g.font = '800 40px "W2 Archivo Expanded", Arial, sans-serif'; const parts = ['ARTHUR ASHE STADIUM', 'NIGHT SESSION', 'QUIET PLEASE', 'NEW YORKERS BY MLOW', 'FLUSHING MEADOWS']; let x = 20; let i = 0; while (x < 2048) { const t = parts[i++ % parts.length]; g.fillStyle = i % 2 ? '#f2f6ff' : '#ffd23a'; g.fillText(t, x, 34); x += g.measureText(t).width + 30; g.fillStyle = '#2f62c4'; g.fillRect(x, 22, 24, 24); x += 54; } }, ['W2 Archivo Expanded']) : null;
+      const ribM = rib ? new T.MeshBasicMaterial({ map: rib, toneMapped: false }) : k.flat(0x102040);
+      if (rib) { rib.wrapS = T.RepeatWrapping; rib.repeat.set(2.6, 1); }
+      const ribG = new T.PlaneGeometry(28.4, 0.42); { const uv = ribG.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * (28.4 / 51.2)); }
+      for (const s of [-1, 1]) { k.mesh(new T.PlaneGeometry(51.2, 0.42), ribM, s * 14.18, 3.36, 0, true).rotation.y = -s * PI / 2; k.mesh(ribG, ribM, 0, 3.36, s * 24.48, true).rotation.y = s > 0 ? PI : 0; }
+      if (rib && !ctx.reduced) k.ticks.push((t) => { rib.offset.x = (t * 0.035) % 1; });
+    }
     k.block(14.2, 15.5, -25.5, 25.5); k.block(-15.5, -14.2, -25.5, 25.5); k.block(-15.5, 15.5, 24.5, 25.5); k.block(-15.5, 15.5, -25.5, -24.5);
     /* the lower bowl: twenty two rows on a rising ring, and a spectator in every seat */
     const ROWS = 22, seatsPos: number[] = [], seatsAng: number[] = [];
+    /* 2026-11-24 wave 8a: stepped aisles cut through the rows (no seats in them), concrete treads and a rail down each */
+    const AZ = [-19, -7, 7, 19], AX = [-10, 0, 10], inAisle = (u: number, list: number[]) => list.some((a) => Math.abs(u - a) < 0.75);
+    const treads: number[][] = [];
     for (let r = 0; r < ROWS; r++) {
       const o = 15.2 + r * 0.95, oz = 25.5 + r * 0.95, y = 3.6 + r * 0.5;
       for (const s of [-1, 1]) {
         k.box(0.95, 0.5, oz * 2 + 0.95, s * o, y - 0.25, 0, r % 2 ? seat : riser);
         k.box(o * 2 + 0.95, 0.5, 0.95, 0, y - 0.25, s * oz, r % 2 ? seat : riser);
-        for (let z = -oz + 0.6; z < oz - 0.4; z += 0.72) { seatsPos.push(s * o, y, z); seatsAng.push(Math.atan2(z, s * o)); }
-        for (let x = -o + 1.2; x < o - 1.0; x += 0.72) { seatsPos.push(x, y, s * oz); seatsAng.push(Math.atan2(s * oz, x)); }
+        for (let z = -oz + 0.6; z < oz - 0.4; z += 0.72) { if (inAisle(z, AZ)) continue; seatsPos.push(s * o, y, z); seatsAng.push(Math.atan2(z, s * o)); }
+        for (let x = -o + 1.2; x < o - 1.0; x += 0.72) { if (inAisle(x, AX)) continue; seatsPos.push(x, y, s * oz); seatsAng.push(Math.atan2(s * oz, x)); }
+        for (const z of AZ) treads.push([s * o, y - 0.24, z, 0]);
+        for (const x of AX) treads.push([x, y - 0.24, s * oz, PI / 2]);
       }
     }
-    /* the promenade, then the upper deck climbing to the light ring */
-    const pO = 15.2 + ROWS * 0.95, pY = 3.6 + ROWS * 0.5;
+    w8Boxes(k, 0.97, 0.52, 1.3, aisle, treads);
+    for (const s of [-1, 1]) {
+      for (const z of AZ) k.beam(v(s * 15.2, 4.6, z), v(s * (15.2 + (ROWS - 1) * 0.95), 4.6 + (ROWS - 1) * 0.5, z), 0.025, steel, 5);
+      for (const x of AX) k.beam(v(x, 4.6, s * 25.5), v(x, 4.6 + (ROWS - 1) * 0.5, s * (25.5 + (ROWS - 1) * 0.95)), 0.025, steel, 5);
+    }
+    /* the promenade, the ring of suites (glass, lit, people at the rail), then the upper deck climbing to the light ring */
+    const pO = 15.2 + ROWS * 0.95, pY = 3.6 + ROWS * 0.5, SU = 4.2;
     for (const s of [-1, 1]) { k.box(3.4, 0.6, (25.5 + ROWS * 0.95) * 2 + 3.4, s * (pO + 1.7), pY - 0.3, 0, riser); k.box((pO + 1.7) * 2 + 3.4, 0.6, 3.4, 0, pY - 0.3, s * (25.5 + ROWS * 0.95 + 1.7), riser); }
+    {
+      const suites = k.pbr('aaSuites', X.windows(97, 0.78, 0x18202c, false), 0.25, { emissive: 0xffffff, emissiveIntensity: 1.25, roughness: 0.25, metalness: 0.4, stretch: 0.6 });
+      const oz0 = 25.5 + ROWS * 0.95;
+      for (const s of [-1, 1]) {
+        k.box(0.3, SU, oz0 * 2 + 6.8, s * (pO + 3.25), pY + SU / 2, 0, suites); k.box(pO * 2 + 6.8, SU, 0.3, 0, pY + SU / 2, s * (oz0 + 3.25), suites);
+        k.box(0.5, 0.35, oz0 * 2 + 6.8, s * (pO + 3.1), pY + SU + 0.1, 0, white); k.box(pO * 2 + 6.8, 0.35, 0.5, 0, pY + SU + 0.1, s * (oz0 + 3.1), white);
+        k.box(0.06, 1.05, oz0 * 2 + 3.4, s * (pO + 0.1), pY + 0.52, 0, k.glass(0xb8d8ff, 0.18, 0.05)); k.box(pO * 2 + 3.4, 1.05, 0.06, 0, pY + 0.52, s * (oz0 + 0.1), k.glass(0xb8d8ff, 0.18, 0.05));
+      }
+    }
     for (let r = 0; r < 18; r++) {
-      const o = pO + 3.4 + r * 1.1, oz = 25.5 + ROWS * 0.95 + 3.4 + r * 1.1, y = pY + 0.3 + r * 0.95;
+      const o = pO + 3.4 + r * 1.1, oz = 25.5 + ROWS * 0.95 + 3.4 + r * 1.1, y = pY + SU + 0.3 + r * 0.95;
       for (const s of [-1, 1]) { k.box(1.1, 0.95, oz * 2 + 1.1, s * o, y - 0.47, 0, seatUp); k.box(o * 2 + 1.1, 0.95, 1.1, 0, y - 0.47, s * oz, seatUp); }
     }
-    const topO = pO + 3.4 + 18 * 1.1, topY = pY + 0.3 + 18 * 0.95;
+    const topO = pO + 3.4 + 18 * 1.1, topY = pY + SU + 0.3 + 18 * 0.95;
     /* the crowd: one instanced figure per lower seat, coloured, and it does the wave */
     const N = seatsPos.length / 3;
-    const crowd = k.instances(figureGeo(0.17, 0.42, 0.98), new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: N }, () => new T.Matrix4()));
-    crowd.frustumCulled = false;
+    /* 2026-11-24 wave 8a: a 32 triangle seated body instead of the capsule, tagged as a box crowd: the nearest sections
+       become the seated cast, the far keep these boxes in their shirt colours (it was 3.5M triangles, every seat a cast body) */
+    const seatedGeo = (() => { const b = new T.BoxGeometry(0.42, 0.6, 0.3); b.translate(0, 0.3, 0); const sh = new T.BoxGeometry(0.5, 0.14, 0.32); sh.translate(0, 0.62, 0); const h = new T.IcosahedronGeometry(0.115, 0); h.translate(0, 0.84, 0.02); return mergeGeometries([b.toNonIndexed(), sh.toNonIndexed(), h])!; })();
+    const crowd = k.instances(seatedGeo, new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: N }, () => new T.Matrix4()));
+    crowd.frustumCulled = false; crowd.castShadow = crowd.receiveShadow = false; boxCrowdTag(crowd, 0, 1.2);
+    k.ticks.push(() => { crowd.castShadow = false; });   // something after the build turns it back on; six thousand boxes in the shadow pass
     {
       const rnd = X.mulberry(97), c = new T.Color(), pal = [0x1c232c, 0xe8e2d4, 0x2a3f6a, 0x8a2a2a, 0xd8c04a, 0x3a5a3a, 0xf0f0f0, 0x6a4a8a, 0x2b5f6e, 0xd07a3a];
       const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), sc = new T.Vector3(), up = new T.Vector3(0, 1, 0);
@@ -136,18 +255,39 @@ export const arthurashe: RoomDef = {
       if (!ctx.reduced) k.ticks.push((t, dt) => { cheer = Math.max(0, cheer - dt * 1.4); place(t); });
       (k as unknown as { __cheer?: () => void }).__cheer = () => { cheer = 1; };
     }
-    /* the roof: an octagon of white trusses, the fabric panels drawn back, the sky in the middle */
+    /* the roof: an octagon of steel trusses, the fabric panels drawn back, the sky in the middle.
+       2026-11-24 wave 8a: the solid white beams became open lattice trusses (two chords, posts and diagonals, all one
+       instanced draw) in painted steel, with real flood light banks (Poly Haven CC0) hung under the inner ring */
     const RY = topY + 8, R1 = topO + 20, R0 = 27;
     const oct = (r: number, i: number) => v(Math.cos((i / 8) * PI * 2 + PI / 8) * r, 0, Math.sin((i / 8) * PI * 2 + PI / 8) * r);
+    const webs: T.Matrix4[] = [], wq = new T.Quaternion(), wy = new T.Vector3(0, 1, 0), ws = new T.Vector3();
+    const web = (p0: T.Vector3, p1: T.Vector3, r = 1) => { const d = p1.clone().sub(p0), L = d.length(); wq.setFromUnitVectors(wy, d.normalize()); webs.push(new T.Matrix4().compose(p0.clone().add(p1).multiplyScalar(0.5), wq, ws.set(r, L, r))); };
+    const lattice = (p0: T.Vector3, p1: T.Vector3, h: number, chord: number) => {
+      const up = v(0, h / 2, 0);
+      k.bar(p0.clone().add(up), p1.clone().add(up), chord, chord, truss); k.bar(p0.clone().sub(up), p1.clone().sub(up), chord, chord, truss);
+      const n = Math.max(2, Math.round(p0.distanceTo(p1) / (h * 1.1)));
+      for (let j = 0; j <= n; j++) {
+        const u = j / n, q0 = p0.clone().lerp(p1, u);
+        web(q0.clone().sub(up), q0.clone().add(up));
+        if (j < n) { const q1 = p0.clone().lerp(p1, (j + 1) / n); web(j % 2 ? q0.clone().add(up) : q0.clone().sub(up), j % 2 ? q1.clone().sub(up) : q1.clone().add(up)); }
+      }
+    };
     for (let i = 0; i < 8; i++) {
       const a = oct(R1, i), b = oct(R1, (i + 1) % 8), c = oct(R0, i), d = oct(R0, (i + 1) % 8);
-      k.bar(v(a.x, RY, a.z), v(b.x, RY, b.z), 2.4, 3.2, truss);
-      k.bar(v(c.x, RY + 3, c.z), v(d.x, RY + 3, d.z), 1.6, 2.2, truss);
-      k.bar(v(a.x, RY, a.z), v(c.x, RY + 3, c.z), 1.4, 2.0, truss);
-      k.bar(v(a.x, RY - 3, a.z), v(c.x, RY + 1, c.z), 0.5, 0.5, truss);
-      k.bar(v(a.x, RY - 3, a.z), v(b.x, RY - 3, b.z), 0.5, 0.5, truss);
-      k.box(3, 6, 3, a.x, RY - 6, a.z, truss);
+      lattice(v(a.x, RY, a.z), v(b.x, RY, b.z), 3.4, 0.7);
+      lattice(v(c.x, RY + 3, c.z), v(d.x, RY + 3, d.z), 2.4, 0.5);
+      lattice(v(a.x, RY + 0.5, a.z), v(c.x, RY + 3, c.z), 2.6, 0.5);
+      k.box(2.4, 6, 2.4, a.x, RY - 6, a.z, truss);
     }
+    { const o = k.instances(new T.CylinderGeometry(0.11, 0.11, 1, 6), truss, webs); o.castShadow = false; }
+    /* the flood light banks: sixteen hung from the inner ring, turned to the court and tipped down */
+    if (W8_DOM) void hero(k, 'arthurashe/ph_flood_lights', { width: 4.2 }).then((h) => {
+      if (!h || !k.live) return;
+      h.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; });
+      const ins = heroInstances(k, h, 16), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2 + PI / 16, r = R0 + 1.5; ins.setAt(i, m.compose(v(Math.cos(a) * r, RY + 0.3, Math.sin(a) * r), q.setFromEuler(e.set(-0.75, Math.atan2(-Math.cos(a), -Math.sin(a)), 0, 'YXZ')), one)); }
+      ins.commit(); for (const p of ins.parts) p.im.castShadow = false;
+    });
     { const g = new T.RingGeometry(R0 + 1, R1 + 3, 64, 1); g.rotateX(-PI / 2); k.mesh(g, fabric, 0, RY + 1.2, 0); }
     /* the outer wall of the bowl from the top row to the roof, and the light ring */
     for (let i = 0; i < 8; i++) {
@@ -155,7 +295,7 @@ export const arthurashe: RoomDef = {
       k.bar(v(a.x, topY - 6, a.z), v(b.x, topY - 6, b.z), 14, 1.2, wall);
     }
     for (let i = 0; i < 64; i++) { const a = (i / 64) * PI * 2, r = topO + 2; k.box(2.2, 0.5, 0.6, Math.cos(a) * r, topY + 3.5, Math.sin(a) * r, k.glow(0xfff7e0, 0.9)).rotation.y = -a; }
-    for (const [x, z] of [[-30, -40], [30, -40], [-30, 40], [30, 40], [-44, 0], [44, 0]]) k.spot(x, topY + 3, z, 0, 0, 0, 0xfff4e0, 1100, 0.42, 0.6, 140);
+    for (const [x, z] of [[-30, -40], [30, -40], [-30, 40], [30, 40], [-44, 0], [44, 0]]) k.spot(x, topY + 3, z, 0, 0, 0, 0xfff4e0, 820, 0.42, 0.6, 140);
     k.point(0, 20, 0, 0xfff0d8, 150, 60);
     /* the big screens, one at each end of the upper deck */
     k.sign('US OPEN  ·  NIGHT SESSION  ·  6  4    5  5', 18, 6, 0, topY + 0.5, -(topO + 5.4), '#08101e', '#f0f4ff', 66, 0);
@@ -167,6 +307,17 @@ export const arthurashe: RoomDef = {
     k.cyl(0.02, 1.4, -7.6, 3.4, 0, steel); k.cyl(0.6, 0.12, -7.6, 4.1, 0, white, 0.05, 12);
     for (const [x, z, ry] of [[-7.5, 12.5, PI / 2], [7.5, 12.5, -PI / 2], [-7.5, -12.5, PI / 2], [7.5, -12.5, -PI / 2], [-3.4, 21.5, PI], [3.4, -21.5, 0]]) figure(k, x, 0, z, 0x1c2a4a, { rotY: ry });
     for (const [x, z] of [[-6.9, 0.9], [6.9, -0.9], [-4.2, 20.5], [4.2, -20.5]]) figure(k, x, 0, z, 0x2a5db8, { h: 0.8, crouch: 0.55 });
+    /* 2026-11-24 wave 8a: the chair gets its ladder, its navy side panels and the scoreboard clock at its foot; the
+       players' benches and the towel boxes either side of it */
+    for (let y = 0.35; y < 1.8; y += 0.3) k.box(0.06, 0.04, 0.62, -8.08, y, 0, steel);
+    for (const dz of [-0.31, 0.31]) k.box(0.05, 1.85, 0.05, -8.08, 0.92, dz, steel);
+    for (const dz of [-0.47, 0.47]) k.box(0.9, 0.55, 0.04, -7.6, 1.55, dz, navy);
+    w8Sign(k, 'SHOT CLOCK  25', 1.2, 0.36, -7.6, 0.45, 0.48, 0, '#ff3a2a', '#050608', 'W2 JetBrains Mono', true, 0.62);
+    for (const z of [-2.6, 2.6]) { k.box(0.55, 0.45, 2.2, -8.6, 0.23, z, navy); k.box(0.12, 0.5, 2.2, -8.85, 0.7, z, navy); k.box(0.5, 0.6, 0.5, -8.4, 0.3, z + (z > 0 ? 1.6 : -1.6), k.flat(0x1a2d5a, 0.1, 0.6)); }
+    k.keepOut.push({ x: -8.4, z: 2.6, r: 1.4 }, { x: -8.4, z: -2.6, r: 1.4 });
+    /* the one illusion: QUIET PLEASE painted long across the run off, so it stands up off the court only from the door */
+    { const tx = w8Type('QUIET PLEASE', ['#f4f6fa'], 1024, 160); if (tx) { anamorphTex(k, tx, 12, 2, 3, 0, 0.7086, 7.2, 5.6, 1.0, 0.85); } }
+    k.egg(v(10.2, 0.4, -2.2), { id: 'quiet-please', title: 'Quiet please', text: 'The two words on the floor are painted long and thin, stretched along your line of sight, so they only stand up straight from the spot where you came in. Walk a step and they fall flat. It is the trick of Holbein\'s skull in The Ambassadors, 1533, and of every bicycle lane arrow and every word painted on a road: drawn for the eye of someone coming towards it.', clue: 'Go back to the door and read the floor again.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
     /* the players and the ball: a rally that never ends, with a point every few strokes */
     const ball = k.mesh(new T.SphereGeometry(0.075, 8, 6), k.glow(0xd8ff2a), 0, 1, 12, true);
     const mkPlayer = (shirt: number, z: number) => {
@@ -262,10 +413,14 @@ export const carousel: RoomDef = {
     k.sky({ top: 0x5a8fd8, horizon: 0xdbe8f2, ground: 0x4a6a3a, fog: 0.004, sun: { az: 3.9, el: 0.5, color: 0xfff2d8, size: 9 }, env: 0.75 });
     k.hemi(0xcfe0ff, 0x4a5a3a, 1.3);
     k.sun(0xfff0d8, 2.2, 30, 60, 20, true, 50);
-    const brick = k.pbr('cpBrick', X.brick(0x8a4a3a, 41), 0.9), brickDark = k.pbr('cpBrick2', X.brick(0x6a3a2e, 42), 0.9),
-      floor = k.pbr('cpFloor', X.pavers(0x8a8478, 43), 0.6), grass = k.pbr('cpGrass', X.grass(0x4b6b3a, 44), 0.35, { roughness: 1 }),
-      path = k.pbr('cpPath', X.pavers(0x9a948a, 45), 0.5), planks = k.pbr('cpPlank', X.planks(0x8a6a44, 8, 46), 0.9, { roughness: 0.55 }),
-      roof = k.flat(0x4a3d34, 0, 0.9, { side: T.DoubleSide }), wood = k.flat(0x5a4632, 0, 0.8), white = k.flat(0xf2efe6, 0, 0.6),
+    /* 2026-11-24 wave 8a: the brick, the floor, the platform boards and the boarded ceiling are Poly Haven scans (tex/carousel/) */
+    const brick = w8Scan(k, 'carousel', 'red_brick_03', 2.2, () => X.brick(0x8a4a3a, 41), { color: 0xd8b0a0, roughness: 0.85 }, 0x7a4a3a),
+      brickDark = w8Scan(k, 'carousel', 'red_brick_03', 2.2, () => X.brick(0x6a3a2e, 42), { color: 0x9c7468, roughness: 0.85 }, 0x5a3a2e, 'd'),
+      floor = w8Scan(k, 'carousel', 'brick_pavement_02', 2.4, () => X.pavers(0x8a8478, 43), { color: 0xc8bcb0, roughness: 0.8 }, 0x7a7068),
+      grass = k.pbr('cpGrass', X.grass(0x4b6b3a, 44), 0.35, { roughness: 1 }),
+      path = w8Scan(k, 'carousel', 'brick_pavement_02', 2.8, () => X.pavers(0x9a948a, 45), { color: 0xb8aca0, roughness: 0.8 }, 0x8a8278, 'p'),
+      planks = w8Scan(k, 'carousel', 'oak_wood_planks', 1.6, () => X.planks(0x8a6a44, 8, 46), { color: 0xc89a6a, roughness: 0.5 }, 0x7a5a3a),
+      roof = w8Scan(k, 'carousel', 'roof_planks', 2.0, () => X.planks(0x4a3d34, 8, 47), { color: 0xb08868, roughness: 0.85, side: T.DoubleSide }, 0x4a3d34), wood = k.flat(0x5a4632, 0, 0.8), white = k.flat(0xf2efe6, 0, 0.6),
       red = k.flat(0xb8222a, 0.1, 0.5), cream = k.flat(0xf4e8c8, 0.05, 0.5), gilt = k.pbr('cpGilt', X.gilt(), 2, { metalness: 0.85, roughness: 0.32 }),
       brass = k.flat(0xc9a25a, 0.9, 0.35), glass = k.glass(0xcfe6f2, 0.3, 0.1), iron = k.flat(0x1c1e22, 0.6, 0.45),
       canopy = k.flat(0xb8222a, 0.05, 0.6, { side: T.DoubleSide }), stripe = k.flat(0xf4e8c8, 0.05, 0.6, { side: T.DoubleSide });
@@ -275,9 +430,12 @@ export const carousel: RoomDef = {
     const A = 14, R = A / Math.cos(PI / 8);
     k.cyl(R + 0.4, 0.14, 0, 0.0, 0, floor, R + 0.4, 8);
     const rnd = X.mulberry(1908);
-    for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2 + rnd() * 0.3, r = 27 + rnd() * 10; k.tree(Math.cos(a) * r, 0, Math.sin(a) * r, { h: 8 + rnd() * 4, r: 3.6 + rnd() * 1.6, kind: 'round', seed: i, leaf: 0x2f5a2a }); }
-    for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2 + 0.5; k.bench(Math.cos(a) * 21.5, Math.sin(a) * 21.5, -a, wood, iron, 2.2); }
-    for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + PI / 4; k.lamp(Math.cos(a) * 22.5, Math.sin(a) * 22.5, 4.2, iron, 0xffd7a0, k.night > 0.5 ? 70 : 20); }
+    for (let i = 0; i < 16; i++) { const a = (i / 16) * PI * 2 + rnd() * 0.3, r = 27 + rnd() * 10; k.tree(Math.cos(a) * r, 0, Math.sin(a) * r, { h: 8 + rnd() * 4, r: 3.6 + rnd() * 1.6, kind: 'round', seed: i, leaf: 0x2f5a2a, species: i % 3 ? 'plane' : 'elm' }); }
+    /* 2026-11-24 wave 8a: Central Park's own slatted benches and its lampposts, real models (our cast, tex/props carousel) */
+    { const bAt: number[][] = [], lAt: number[][] = [];
+      for (let i = 0; i < 6; i++) { const a = (i / 6) * PI * 2 + 0.5; bAt.push([Math.cos(a) * 21.5, 0, Math.sin(a) * 21.5, -a - PI / 2]); k.keepOut.push({ x: Math.cos(a) * 21.5, z: Math.sin(a) * 21.5, r: 1.1 }); }
+      for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + PI / 4; lAt.push([Math.cos(a) * 22.5, 0, Math.sin(a) * 22.5, 0]); k.point(Math.cos(a) * 22.5, 3.9, Math.sin(a) * 22.5, 0xffd7a0, k.night > 0.5 ? 70 : 20, 14); k.keepOut.push({ x: Math.cos(a) * 22.5, z: Math.sin(a) * 22.5, r: 0.4 }); }
+      w8Place(k, 'carousel/cp_bench', { width: 2.2 }, bAt); w8Place(k, 'carousel/cp_gaslamp', { height: 4.2 }, lAt); void wood; }
     /* the pavilion: eight sides, two of them open, six carrying the works; a clerestory over each solid wall */
     const faces: { a: number; c: T.Vector3; tg: T.Vector3; open: boolean }[] = [];
     for (let i = 0; i < 8; i++) {
@@ -311,6 +469,8 @@ export const carousel: RoomDef = {
     k.box(2.2, 2.7, 2.0, f0.c.x * 19.5 + f0.tg.x * 3.5, 1.35, f0.c.z * 19.5 + f0.tg.z * 3.5, brick).rotation.y = -f0.a - PI / 2;
     k.box(2.5, 0.3, 2.3, f0.c.x * 19.5 + f0.tg.x * 3.5, 2.85, f0.c.z * 19.5 + f0.tg.z * 3.5, red).rotation.y = -f0.a - PI / 2;
     k.keepOut.push({ x: f0.c.x * 19.5 + f0.tg.x * 3.5, z: f0.c.z * 19.5 + f0.tg.z * 3.5, r: 1.8 });
+    { const f = faces[0], rot = PI / 2 - f.a; w8Sign(k, 'THE CENTRAL PARK CAROUSEL', 8.6, 0.72, f.c.x * (A + 0.32), 5.08, f.c.z * (A + 0.32), rot, '#f4e8c8', '#8a1a1a', 'W2 Archivo Expanded', false, 0.56, '#c9a25a');
+      w8Sign(k, 'MICHAEL FRIEDSAM MEMORIAL CAROUSEL', 2.6, 0.5, f.c.x * (A + 0.27) + f.tg.x * 4.3, 2.4, f.c.z * (A + 0.27) + f.tg.z * 4.3, rot, '#2a1a0a', '#b08a4a', 'W2 Archivo Narrow', false, 0.42, '#6a4a2a'); }
     k.sign('TICKETS', 1.4, 0.4, f0.c.x * 18.35 + f0.tg.x * 3.5, 2.3, f0.c.z * 18.35 + f0.tg.z * 3.5, '#f4e8c8', '#8a1a1a', 150, PI / 2 - f0.a + PI);
     if (!ctx.reduced) {
       k.crowd([v(f0.c.x * 19 + f0.tg.x * 1.2, 0, f0.c.z * 19 + f0.tg.z * 1.2), v(f0.c.x * 17 + f0.tg.x * 0.4, 0, f0.c.z * 17 + f0.tg.z * 0.4), v(f0.c.x * 15.2, 0, f0.c.z * 15.2), v(f0.c.x * 11.5, 0, f0.c.z * 11.5)], 12, { seed: 12, speed: 0.12, spread: 0.9, colors: [0xe83a5a, 0x3a8ae8, 0xf0d24a, 0x2a2a34, 0xe8e2d4, 0x8a4ad8] });
@@ -396,19 +556,63 @@ export const carousel: RoomDef = {
     /* the top: canopy, rounding board, sweeps, a ring of chasing bulbs */
     const cone = new T.Mesh(new T.CylinderGeometry(0.4, 9.4, 2.7, 24, 1, true), canopy); cone.position.y = 6.35; rig.add(cone);
     for (let j = 0; j < 12; j++) { const st = new T.Mesh(new T.CylinderGeometry(0.4, 9.45, 2.7, 24, 1, true, (j / 12) * PI * 2, PI / 12), stripe); st.position.y = 6.36; rig.add(st); }
-    const board = new T.Mesh(new T.CylinderGeometry(9.5, 9.5, 0.95, 32, 1, true), canopy); board.position.y = 5.0; rig.add(board);
+    /* 2026-11-24 wave 8a: the rounding board is painted, not plain red: scrolls, gilt cartouches and oval scenes round the
+       ring, a stand in for the Firefly panels queued (ff_carousel_rounding.webp swaps in when it exists) */
+    const boardTex = W8_DOM ? paintTex(2048, 128, (g) => {
+      g.fillStyle = '#9a1c24'; g.fillRect(0, 0, 2048, 128);
+      for (let j = 0; j < 8; j++) {
+        const x0 = j * 256, cx = x0 + 128;
+        g.strokeStyle = '#e9c46a'; g.lineWidth = 5; g.beginPath(); g.ellipse(cx, 64, 70, 44, 0, 0, PI * 2); g.stroke();
+        const gr = g.createLinearGradient(cx, 24, cx, 104); gr.addColorStop(0, j % 2 ? '#8fc1e8' : '#f2c48a'); gr.addColorStop(0.6, j % 2 ? '#d8ecf6' : '#f8e2b8'); gr.addColorStop(1, j % 2 ? '#5a8a4a' : '#6a8a5a');
+        g.fillStyle = gr; g.beginPath(); g.ellipse(cx, 64, 66, 40, 0, 0, PI * 2); g.fill();
+        g.fillStyle = '#4a6a3a'; g.beginPath(); g.ellipse(cx - 20, 92, 40, 14, 0, 0, PI * 2); g.ellipse(cx + 26, 96, 34, 10, 0, 0, PI * 2); g.fill();
+        g.strokeStyle = '#e9c46a'; g.lineWidth = 3;
+        for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(cx + sx * 74, 64); g.bezierCurveTo(cx + sx * 96, 20, cx + sx * 118, 30, cx + sx * 112, 58); g.bezierCurveTo(cx + sx * 108, 84, cx + sx * 92, 76, cx + sx * 98, 64); g.stroke(); }
+        g.fillStyle = '#e9c46a'; g.fillRect(x0, 4, 256, 6); g.fillRect(x0, 118, 256, 6);
+      }
+    }) : null;
+    const boardM = boardTex ? new T.MeshStandardMaterial({ map: boardTex, roughness: 0.45, metalness: 0.1, side: T.DoubleSide }) : canopy;
+    if (boardTex) { boardTex.wrapS = T.RepeatWrapping; boardTex.repeat.set(2, 1); if (w8L) w8L.load('assets/museum/tex/carousel/ff_carousel_rounding.webp', (t) => { if (!k.live) return; t.colorSpace = T.SRGBColorSpace; t.wrapS = T.RepeatWrapping; t.repeat.set(2, 1); boardM.map = t; boardM.needsUpdate = true; }, undefined, () => {}); }
+    const board = new T.Mesh(new T.CylinderGeometry(9.5, 9.5, 0.95, 32, 1, true), boardM); board.position.y = 5.0; rig.add(board);
     for (const y of [4.55, 5.45]) { const tr = new T.Mesh(new T.TorusGeometry(9.52, 0.05, 6, 64), gilt); tr.rotation.x = PI / 2; tr.position.y = y; rig.add(tr); }
     for (let j = 0; j < 16; j++) { const a = (j / 16) * PI * 2; const mir = new T.Mesh(new T.PlaneGeometry(0.9, 0.6), k.flat(0xdfe8f0, 1, 0.08)); mir.position.set(Math.cos(a) * 9.53, 5.0, Math.sin(a) * 9.53); mir.rotation.y = PI / 2 - a; rig.add(mir); }
     for (let j = 0; j < 16; j++) {
       const a = (j / 16) * PI * 2, aa = v(Math.cos(a) * 2.5, 6.9, Math.sin(a) * 2.5), bb = v(Math.cos(a) * 9.3, 5.4, Math.sin(a) * 9.3);
       const sw = new T.Mesh(new T.CylinderGeometry(0.06, 0.06, aa.distanceTo(bb), 6), brass); sw.position.copy(aa).add(bb).multiplyScalar(0.5); sw.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), bb.clone().sub(aa).normalize()); rig.add(sw);
     }
+    /* bulbs down every sweep and round the canopy's eaves, all on the rig, one draw */
+    { const at: T.Matrix4[] = []; for (let j = 0; j < 16; j++) { const a = (j / 16) * PI * 2 + PI / 16; for (let u = 0.15; u < 0.96; u += 0.12) { const r = 2.5 + (9.3 - 2.5) * u, y = 6.9 + (5.4 - 6.9) * u - 0.14; at.push(new T.Matrix4().makeTranslation(Math.cos(a) * r, y, Math.sin(a) * r)); } } const sb = new T.InstancedMesh(new T.SphereGeometry(0.075, 6, 5), new T.MeshBasicMaterial({ color: 0xffe2a0 }), at.length); at.forEach((m, i) => sb.setMatrixAt(i, m)); sb.frustumCulled = false; rig.add(sb); }
     const NB = 96;
     const bulbs = new T.InstancedMesh(new T.SphereGeometry(0.1, 6, 5), new T.MeshBasicMaterial({ color: 0xffffff }), NB);
     { const m = new T.Matrix4(), c = new T.Color(); for (let j = 0; j < NB; j++) { const a = (j / NB) * PI * 2; m.setPosition(Math.cos(a) * 9.58, 5.62, Math.sin(a) * 9.58); bulbs.setMatrixAt(j, m); bulbs.setColorAt(j, c.set(0xffd27a)); } bulbs.instanceMatrix.needsUpdate = true; }
     bulbs.frustumCulled = false; rig.add(bulbs);
     /* the centre: a drum that stays put, with the band organ facing the front door */
     k.cyl(2.5, 4.3, 0, 2.15, 0, cream);
+    /* the one illusion: a zoetrope band round the top of the drum. Twelve frames of a galloping horse painted side by side
+       and stepped one frame at a time, so a horse that is only ever twelve still pictures runs round the drum */
+    if (W8_DOM) {
+      const F = 12, zt = paintTex(1536, 128, (g) => {
+        g.fillStyle = '#1a0e08'; g.fillRect(0, 0, 1536, 128);
+        for (let f = 0; f < F; f++) {
+          const cx = f * 128 + 64, ph = (f / F) * PI * 2, lift = 6 * Math.abs(Math.sin(ph));
+          g.fillStyle = '#f4e8c8'; g.strokeStyle = '#f4e8c8'; g.lineCap = 'round';
+          g.beginPath(); g.ellipse(cx, 62 - lift, 30, 13, 0, 0, PI * 2); g.fill();
+          g.lineWidth = 9; g.beginPath(); g.moveTo(cx + 22, 56 - lift); g.lineTo(cx + 36, 36 - lift); g.stroke();
+          g.beginPath(); g.ellipse(cx + 42, 34 - lift, 11, 6, -0.5, 0, PI * 2); g.fill();
+          g.lineWidth = 4; g.beginPath(); g.moveTo(cx - 28, 58 - lift); g.quadraticCurveTo(cx - 44, 60 - lift + 8 * Math.sin(ph), cx - 46, 76 - lift); g.stroke();
+          g.lineWidth = 6;
+          const leg = (x: number, a: number) => { g.beginPath(); g.moveTo(cx + x, 70 - lift); const kx = cx + x + Math.sin(a) * 14, ky = 86 - lift; g.lineTo(kx, ky); g.lineTo(kx + Math.sin(a + 0.8) * 10, 104 - lift * 0.5); g.stroke(); };
+          leg(18, ph); leg(12, ph + 0.7); leg(-18, ph + PI); leg(-24, ph + PI + 0.7);
+          g.fillStyle = '#c9a25a'; g.fillRect(f * 128, 0, 3, 128); g.fillRect(f * 128, 0, 128, 4); g.fillRect(f * 128, 124, 128, 4);
+        }
+      }, []);
+      zt.wrapS = T.RepeatWrapping; zt.repeat.set(1 / F * 6, 1);
+      const zm = new T.MeshBasicMaterial({ map: zt, side: T.DoubleSide });
+      const zband = k.mesh(new T.CylinderGeometry(2.56, 2.56, 0.5, 48, 1, true), zm, 0, 3.86, 0, true);
+      zband.material = zm;
+      if (!ctx.reduced) k.ticks.push((t) => { zt.offset.x = (Math.floor(t * 12) % F) / F; });
+    } else k.cyl(2.56, 0.5, 0, 3.86, 0, cream);
+    k.egg(v(Math.cos(faces[2].a) * 10.2, 3.6, Math.sin(faces[2].a) * 10.2), { id: 'zoetrope', title: 'The horse that only seems to run', year: '1834', text: 'The band round the top of the drum is a zoetrope: twelve still drawings of one horse at twelve moments of its stride, shown one after another fast enough that your eye fills the gaps and sees it gallop. William Horner described the device in 1834. In 1878 Eadweard Muybridge photographed a running horse with a row of cameras to settle whether all four hooves leave the ground at once; they do.', clue: 'Look over the horses at the top of the drum in the middle and count the frames.', source: { name: 'Zoetrope, Wikipedia', url: 'https://en.wikipedia.org/wiki/Zoetrope' } }, { r: 2.4 });
     k.cyl(2.72, 0.3, 0, 4.45, 0, gilt);
     k.cyl(2.72, 0.2, 0, 0.42, 0, gilt);
     for (let j = 0; j < 8; j++) { const a = (j * PI) / 4 + PI / 8; k.box(1.5, 2.4, 0.08, Math.cos(a) * 2.53, 2.3, Math.sin(a) * 2.53, red).rotation.y = PI / 2 - a; k.box(1.2, 2.0, 0.06, Math.cos(a) * 2.58, 2.3, Math.sin(a) * 2.58, k.flat(0xdfe8f0, 1, 0.08)).rotation.y = PI / 2 - a; }
@@ -473,8 +677,10 @@ export const sharks: RoomDef = {
     k.sky({ top: 0x03111f, horizon: 0x0a2a48, ground: 0x02090f, fog: 0.016, stars: 0, env: 0.35 });
     k.hemi(0x3a80c0, 0x061018, 1.4);
     k.sun(0x9ad0ff, 0.9, 10, 40, -20, false);
-    const sand = k.pbr('nyaSand', X.concrete(0xb8a88a, 51), 0.4, { roughness: 1 }), rock = k.flat(0x3e4a52, 0, 0.95), rock2 = k.flat(0x5a5248, 0, 0.95),
-      hallFloor = k.pbr('nyaFloor', X.terrazzo(0x2a2f36, 52), 0.5, { roughness: 0.45 }), hallWall = k.pbr('nyaWall', X.plaster(0x1c2430, 53), 1.4, { roughness: 0.9 }),
+    /* 2026-11-24 wave 8a: the tank sand, the hall's terrazzo and its board formed walls are Poly Haven scans (tex/sharks/) */
+    const sand = w8Scan(k, 'sharks', 'coast_sand_01', 3, () => X.concrete(0xb8a88a, 51), { color: 0x9ab0b8, roughness: 1 }, 0x6a7a80), rock = k.flat(0x3e4a52, 0, 0.95), rock2 = k.flat(0x5a5248, 0, 0.95),
+      hallFloor = w8Scan(k, 'sharks', 'terrazzo_tiles', 2.4, () => X.terrazzo(0x2a2f36, 52), { color: 0x4a5462, roughness: 0.35 }, 0x22272e),
+      hallWall = w8Scan(k, 'sharks', 'concrete_wall_008', 3, () => X.plaster(0x1c2430, 53), { color: 0x34445a, roughness: 0.9 }, 0x1c2430),
       dark = k.flat(0x0b0e14, 0.3, 0.7), glass = k.glass(0x8fd4ff, 0.14, 0.05), rust = k.flat(0x4a3428, 0.3, 0.9), wood = k.flat(0x3a2e24, 0, 0.8), silver = k.flat(0xc8d2dc, 0.6, 0.35),
       sharkSkin = k.flat(0x6b7480, 0.1, 0.8), raySkin = k.flat(0x4a4038, 0.05, 0.85);
     /* the hall: forty six metres of dark floor, the glass on one side, the works on the other */
@@ -503,6 +709,20 @@ export const sharks: RoomDef = {
     k.plane(4.6, 2.5, 22, -1.75, -16.05, glass);
     /* the tank: sand, rock, coral, weed, the wreck, and the light coming down through the water */
     k.box(90, 0.4, 50, 0, -4.2, -25, sand);
+    /* 2026-11-24 wave 8a: the tank is closed, as it is in the building: a back and sides in a deep water gradient and a
+       rippling surface overhead, so the water reads blue at any hour instead of the day sky showing through */
+    {
+      const g = new T.BoxGeometry(92, 14, 50), col: number[] = [], pa = g.attributes.position, top = new T.Color(0x3a8ab8), bot = new T.Color(0x031426), c = new T.Color();
+      for (let i = 0; i < pa.count; i++) { c.copy(bot).lerp(top, Math.max(0, Math.min(1, (pa.getY(i) + 7) / 14)) ** 1.6); col.push(c.r, c.g, c.b); }
+      g.setAttribute('color', new T.Float32BufferAttribute(col, 3));
+      const tank = k.mesh(g, new T.MeshBasicMaterial({ vertexColors: true, side: T.BackSide, fog: false }), 0, 2.6, -25.2, true); tank.castShadow = false; tank.receiveShadow = false;
+      const surf = W8_DOM ? paintTex(256, 256, (q) => { q.fillStyle = '#2f7fb0'; q.fillRect(0, 0, 256, 256); const r = X.mulberry(5); q.strokeStyle = 'rgba(170,220,250,0.22)'; q.lineWidth = 2; for (let i = 0; i < 40; i++) { const x = r() * 256, y = r() * 256, w = 12 + r() * 30; q.beginPath(); q.ellipse(x, y, w, w * 0.6, r() * 3, 0, PI * 2); q.stroke(); } }) : null;
+      if (surf) { surf.wrapS = surf.wrapT = T.RepeatWrapping; surf.repeat.set(10, 6); const sm = new T.MeshBasicMaterial({ map: surf, side: T.DoubleSide, fog: false, transparent: true, opacity: 0.75 }); const o = k.mesh(new T.PlaneGeometry(90, 48), sm, 0, 8.6, -25.2, true); o.rotation.x = PI / 2; if (!ctx.reduced) k.ticks.push((t) => { surf.offset.set(t * 0.01, Math.sin(t * 0.3) * 0.02); }); }
+    }
+    /* reef beds of real coast rock (Poly Haven CC0) behind the code boulders, and the wreck: a three master on her side */
+    w8Place(k, 'sharks/ph_coast_rocks_01', { width: 34 }, [[-18, -4.3, -38, 0.3]], (h) => w8Tint(h, 0x5a6a72, 0.95, 0));
+    w8Place(k, 'sharks/ph_coast_rocks_02', { width: 30 }, [[20, -4.3, -40, 2.1]], (h) => w8Tint(h, 0x5a6268, 0.95, 0));
+    w8Place(k, 'sharks/ph_dutch_ship_medium', { width: 15 }, [[-14, -4.9, -24, 0.35]], (h) => { h.traverse((c) => { if (c instanceof T.Mesh && /sails/.test((c.material as T.Material).name)) c.visible = false; }); w8Tint(h, 0x5a6a62, 0.95, 0.05); }, (os) => { for (const o of os) { o.rotation.set(0.05, 0.35, 0.42); } });
     const rnd = X.mulberry(1896);
     const rocks: { x: number; y: number; z: number; r: number }[] = [];
     for (let i = 0; i < 26; i++) {
@@ -529,10 +749,8 @@ export const sharks: RoomDef = {
       place(0); if (!ctx.reduced) k.ticks.push(place);
     }
     {
-      const hull = k.box(13, 3.4, 4.2, -14, -2.6, -23, rust); hull.rotation.z = 0.28; hull.rotation.y = 0.35;
-      const dh = k.box(4, 1.8, 3, -12.5, -0.4, -23.5, rust); dh.rotation.z = 0.28; dh.rotation.y = 0.35;
-      k.beam(v(-16, -2, -22), v(-17.5, 6.5, -20), 0.18, wood, 6); k.beam(v(-10, -1.5, -24), v(-9, 5.5, -25.5), 0.16, wood, 6);
-      for (let i = 0; i < 7; i++) k.torus(2.0, 0.12, -19.5 + i * 1.6, -3.2, -22.5 + i * 0.4, rust, 16).rotation.y = 0.35;
+      /* 2026-11-24 wave 8a: the code hull and ribs went; the wreck is the model above. Its spill of ribs stays, half buried */
+      for (let i = 0; i < 4; i++) k.torus(1.6, 0.1, -6.5 + i * 1.4, -4.1, -21 + i * 0.4, rust, 14).rotation.set(0.2, 0.35, 0.5);
     }
     const rays: T.Mesh[] = [];
     for (let i = 0; i < 18; i++) {
@@ -548,6 +766,8 @@ export const sharks: RoomDef = {
     /* bubbles from the aerators on the sand */
     if (!ctx.reduced) vapour(k, [v(-24, -4, -14), v(-2, -4, -30), v(12, -4, -12), v(30, -4, -26)], 26, { rise: 11, spread: 0.6, size: 0.06, opacity: 0.35, colour: 0xdff4ff, seed: 7, speed: 0.16, animate: true });
     /* the sharks: seven sand tigers on closed splines, tails working, never touching the glass */
+    const sharkHero = W8_DOM ? hero(k, 'sharks/ph_bronze_shark_statue', { length: 4.2 }).then((h) => { if (h) { w8Tint(h, 0x9a9488, 0.55, 0.05); h.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; }); } return h; }) : null;
+    const rayHero = W8_DOM ? hero(k, 'sharks/ph_bronze_ray_statue', { width: 3.4 }).then((h) => { if (h) { w8Tint(h, 0x6a6052, 0.6, 0.05); h.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; }); } return h; }) : null;
     const mkShark = (scale: number) => {
       const g = new T.Group();
       const bg = new T.LatheGeometry([[0.02, -2.0], [0.15, -1.5], [0.3, -0.6], [0.37, 0.2], [0.31, 1.0], [0.18, 1.6], [0.03, 2.1]].map((p) => new T.Vector2(p[0], p[1])), 14); bg.rotateX(PI / 2);
@@ -559,6 +779,9 @@ export const sharks: RoomDef = {
       const fin = new T.Mesh(new T.BoxGeometry(0.05, 1.15, 0.55), sharkSkin); fin.position.set(0, 0.15, -0.4); fin.rotation.x = 0.5; tail.add(fin);
       g.scale.setScalar(scale);
       k.add(g);
+      /* 2026-11-24 wave 8a: the sand tiger is a real model (Poly Haven bronze shark, CC0, its stand cut off) in a sand tiger's
+         brown grey; the code body hides when it lands, the group still rides and turns */
+      if (sharkHero) void sharkHero.then((h) => { if (!h || !k.live) return; for (const ch of g.children) ch.visible = false; const c = h.clone(); c.position.y = -0.35; g.add(c); });
       return { g, tail };
     };
     const routes = [
@@ -576,7 +799,9 @@ export const sharks: RoomDef = {
         const shape = (s: number) => { const sp = new T.Shape(); sp.moveTo(0, 0.7); sp.lineTo(s * 1.8, -0.1); sp.lineTo(0, -0.8); sp.closePath(); const gg = new T.ShapeGeometry(sp); gg.rotateX(PI / 2); return gg; };
         const wings = [-1, 1].map((s) => { const w = new T.Mesh(shape(s), k.flat(0x4a4038, 0.05, 0.85, { side: T.DoubleSide })); g.add(w); return w; });
         const tl = new T.Mesh(new T.CylinderGeometry(0.02, 0.05, 1.8, 5), raySkin); tl.rotation.x = PI / 2; tl.position.z = -1.6; g.add(tl);
-        g.scale.setScalar(1.3); k.add(g); return { g, wings };
+        g.scale.setScalar(1.3); k.add(g);
+        if (rayHero) void rayHero.then((h) => { if (!h || !k.live) return; for (const ch of g.children) ch.visible = false; g.add(h.clone()); });
+        return { g, wings };
       };
       const rs = [0, 1, 2].map((i) => { const o = mkRay(); k.rider(o.g, k.spline([v(-20 + i * 8, 3.5, -6), v(10 + i * 6, 4.5, -12), v(18, 3.2, -26), v(-16, 2.8, -28), v(-34, 3.8, -14)], true), 1.1 + i * 0.2, i * 30); return o; });
       /* the bait ball: four hundred silver fish around a point that rides its own loop */
@@ -596,6 +821,15 @@ export const sharks: RoomDef = {
         caus.forEach((c, i) => { c.position.x += 0.004 * Math.sin(t * 0.4 + i); c.position.z += 0.004 * Math.cos(t * 0.3 + i); c.rotation.z = i + t * 0.02; });
       });
     } else { mkShark(1.7).g.position.set(-6, 1, -12); }
+    /* 2026-11-24 wave 8a: species panels along the sill, lit from inside, in the house type; a painted plate over the west
+       wall waits for its Firefly mural (ff_sharks_boardwalk.webp) */
+    for (const [x, t] of [[-17, 'SAND TIGER SHARK  CARCHARIAS TAURUS'], [-6, 'COWNOSE RAY  RHINOPTERA BONASUS'], [5, 'ATLANTIC MENHADEN  THE BAIT BALL'], [14, 'THE WRECK  AND THE REEF']] as [number, string][]) {
+      const sg = w8Sign(k, t, 3.2, 0.34, x, 0.62, 0.62, 0, '#bfe3ff', '#06121e', 'W2 JetBrains Mono', true, 0.5); sg.rotation.x = -0.9;
+    }
+    if (W8_DOM) { const ph = k.mesh(new T.PlaneGeometry(8.6, 2.6), k.flat(0x10202e, 0, 0.9), -21.98, 5.45, 4.6, true); ph.rotation.y = PI / 2; w8L?.load('assets/museum/tex/sharks/ff_sharks_boardwalk.webp', (t) => { if (!k.live) return; t.colorSpace = T.SRGBColorSpace; ph.material = new T.MeshStandardMaterial({ map: t, roughness: 0.85 }); }, undefined, () => {}); }
+    /* the one illusion: the gallons written down the tunnel floor, long and thin, upright only from the top of the ramp */
+    { const tx = w8Type('784,000 GALLONS', ['#bfe3ff']); if (tx) anamorphTex(k, tx, 22, -0.3, 3, -3, 0, 7.2, 3.4, 0.9, 0.85); }
+    k.egg(v(22, -2.4, -12.5), { id: 'gallons-floor', title: 'Written for one eye', text: 'The words on the tunnel floor are painted long and thin along the way you walk, so that from the top of the ramp they stand up as if on a sign, and from anywhere else they lie flat. It is anamorphosis, the trick of Holbein\'s skull in The Ambassadors, 1533. The number is the real one: Ocean Wonders holds 784,000 gallons.', clue: 'Read the floor of the tunnel from the top of the ramp, then walk down it.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
     /* the works: the dark wall, and the two short walls */
     const mounts: Mount[] = [];
     for (const x of [-19.5, -14.5, -9.5, -4.5, 0.5, 5.5, 10.5, 15.5]) mounts.push({ position: v(x, 3.0, 8.98), rotation: PI, target: v(x, 3, 6.0), width: 2.6, height: 1.8, style: 'black', wash: true });
@@ -625,10 +859,13 @@ export const astoriapool: RoomDef = {
     k.sky({ top: 0x3f86d8, horizon: 0xb9d6ee, ground: 0x8a8478, fog: 0.0016, sun: { az: 3.5, el: 0.62, color: 0xfff4de, size: 9 }, env: 0.8 });
     k.hemi(0xd8e8ff, 0x8a8478, 1.25);
     k.sun(0xfff0d8, 2.4, 60, 90, -30, true, 90);
-    const deck = k.pbr('apDeck', X.concrete(0xc9c4b8, 61), 0.35), tile = k.pbr('apTile', X.subwayTile(0xdfeef2, 0x9ab8c0), 1.2, { roughness: 0.3 }),
-      brick = k.pbr('apBrick', X.brick(0x8a4a3a, 62), 0.9), stone = k.pbr('apStone', X.ashlar(0xd8cfb8, 63, 4), 0.4), grass = k.pbr('apGrass', X.grass(0x4b6b3a, 64), 0.35, { roughness: 1 }),
+    /* 2026-11-24 wave 8a: deck, basin tile, the bathhouse brick and its limestone are Poly Haven scans (tex/astoriapool/) */
+    const deck = w8Scan(k, 'astoriapool', 'concrete_pavement', 3, () => X.concrete(0xc9c4b8, 61), { color: 0xd8d2c4, roughness: 0.85 }, 0x8c887e),
+      tile = w8Scan(k, 'astoriapool', 'square_tiles', 1.2, () => X.subwayTile(0xdfeef2, 0x9ab8c0), { color: 0xc8e4ec, roughness: 0.3 }, 0x8aa8b0),
+      brick = w8Scan(k, 'astoriapool', 'brick_wall_02', 2.4, () => X.brick(0x8a4a3a, 62), { color: 0xd8a898, roughness: 0.85 }, 0x7a4a3a),
+      stone = w8Scan(k, 'astoriapool', 'white_sandstone_blocks_02', 3, () => X.ashlar(0xd8cfb8, 63, 4), { color: 0xe8e0d0, roughness: 0.8 }, 0xa8a090), grass = k.pbr('apGrass', X.grass(0x4b6b3a, 64), 0.35, { roughness: 1 }),
       chrome = k.flat(0xd8dee4, 1.0, 0.18), white = k.flat(0xf2f4f0, 0.1, 0.5), red = k.flat(0xd83a2a, 0, 0.6), iron = k.flat(0x2a2e34, 0.6, 0.45), wood = k.flat(0x6a4a32, 0, 0.8),
-      concrete = k.pbr('apConc', X.concrete(0x9c9a92, 65), 0.5), steelRed = k.flat(0x7a3a2a, 0.6, 0.55), dark = k.flat(0x161a22, 0.3, 0.7), glass = k.glass(0xcfe6f2, 0.35, 0.1);
+      concrete = w8Scan(k, 'astoriapool', 'concrete_pavement', 2.2, () => X.concrete(0x9c9a92, 65), { color: 0xc4beb2, roughness: 0.85 }, 0x8a8880, 'c'), steelRed = k.flat(0x7a3a2a, 0.6, 0.55), dark = k.flat(0x161a22, 0.3, 0.7), glass = k.glass(0xcfe6f2, 0.35, 0.1);
     /* the park and the river: grass to the east, the bank and the water to the west, both bridges */
     /* the lawn, in four pieces around the deck so nothing lies under the water */
     k.box(171, 0.3, 420, 114.5, -0.18, 0, grass); k.box(31, 0.3, 420, -44.5, -0.18, 0, grass);
@@ -657,7 +894,7 @@ export const astoriapool: RoomDef = {
       k.box(340, 2.4, 14, -160, 21, SZ, dark);
     }
     const rnd = X.mulberry(1936);
-    for (let i = 0; i < 18; i++) { const x = 30 + rnd() * 30, z = -60 + rnd() * 120; k.tree(x, 0, z, { h: 7 + rnd() * 5, r: 3.2 + rnd() * 1.8, kind: 'round', seed: i, leaf: 0x2f5a2a }); }
+    for (let i = 0; i < 18; i++) { const x = 30 + rnd() * 30, z = -60 + rnd() * 120; k.tree(x, 0, z, { h: 7 + rnd() * 5, r: 3.2 + rnd() * 1.8, kind: 'round', seed: i, leaf: 0x2f5a2a, species: 'plane' }); }
     for (let i = 0; i < 6; i++) k.tree(-20 + i * 9, 0, 62, { h: 8, r: 3.6, kind: 'round', seed: 40 + i, leaf: 0x3a6a2a });
     /* the deck and the pool: a tiled basin four feet deep, the water riding on top */
     /* the deck in four strips, so the basin is a hole and not a slab */
@@ -739,12 +976,19 @@ export const astoriapool: RoomDef = {
       k.sphere(0.12, x - 0.72, 0.16, z, k.flat([0xf1d3b5, 0xc8a284, 0x8d5a3b, 0x5a3a26][i % 4], 0, 0.7), 8);
     }
     /* the bathhouse to the west: brick wings, a limestone centre, and the colonnade the works hang in */
-    k.box(14, 7.5, 88, -35, 3.75, 0, brick);
-    k.box(14.6, 12, 18, -35, 6, 0, stone);
-    k.box(15, 0.8, 19, -35, 12.2, 0, k.flat(0x8a8078, 0, 0.9));
-    for (let i = 0; i < 14; i++) for (const s of [-1, 1]) k.box(0.12, 1.6, 1.2, -27.95, 6.3, s * (12 + i * 2.6), glass);
-    for (let i = 0; i < 5; i++) k.box(0.12, 2.2, 1.4, -27.65, 9.4, -6 + i * 3, glass);
-    k.sign('ASTORIA PARK POOL  ·  1936', 8, 0.9, -27.6, 11.3, 0, 'transparent', '#5a4a3a', 60, PI / 2);
+    /* 2026-11-24 wave 8a: the bathhouse stands taller, as it does: brick wings with a row of tall windows in limestone
+       surrounds over the colonnade and a stone coping; the limestone centre rises to fourteen and a half metres with
+       Moderne fins either side of the census wall and the name cut in it */
+    k.box(14, 10, 88, -35, 5, 0, brick);
+    k.box(14.4, 0.45, 88.4, -35, 10.2, 0, stone);
+    k.box(14.6, 14.5, 18, -35, 7.25, 0, stone);
+    k.box(15, 0.8, 19, -35, 14.7, 0, k.flat(0x8a8078, 0, 0.9));
+    { const win: number[][] = [], sur: number[][] = [], sill: number[][] = [];
+      for (let i = 0; i < 13; i++) for (const s of [-1, 1]) { const z = s * (11.5 + i * 2.6); win.push([-27.97, 7.95, z]); sur.push([-27.9, 7.95, z]); sill.push([-27.8, 6.55, z]); }
+      w8Boxes(k, 0.16, 2.6, 1.3, stone, sur); w8Boxes(k, 0.12, 2.36, 1.02, glass, win.map(([x, y, z]) => [x - 0.04, y, z])); w8Boxes(k, 0.4, 0.14, 1.5, stone, sill); }
+    { const fins: number[][] = []; for (const z of [-8.4, -7.4, 7.4, 8.4]) fins.push([-27.45, 7.6, z]); w8Boxes(k, 0.6, 12.6, 0.36, stone, fins); }
+    w8Sign(k, 'ASTORIA POOL', 9.6, 1.25, -27.66, 11.9, 0, PI / 2, '#5a4436', '', 'W2 Archivo Expanded', false, 0.78);
+    w8Sign(k, 'CITY OF NEW YORK  DEPARTMENT OF PARKS  1936', 11, 0.42, -27.66, 10.9, 0, PI / 2, '#6a5444', '', 'W2 Archivo Narrow', false, 0.7);
     for (let i = 0; i <= 12; i++) k.column(-25, 0, -36 + i * 6, 5.2, 0.34, stone, false, stone);
     k.box(4.2, 0.4, 84, -26.3, 5.45, 0, stone);
     k.box(4.6, 0.3, 84.6, -26.3, 5.8, 0, k.flat(0x8a8078, 0, 0.9));
@@ -759,7 +1003,16 @@ export const astoriapool: RoomDef = {
     k.box(1.2, 10.4, 0.6, 0, 5.2, 56.3, concrete);
     for (let i = 0; i < 16; i++) k.box(1.0, 0.08, 0.3, 0, 0.6 + i * 0.62, 56.05, iron);
     k.block(-1.6, 1.6, 52.5, 57);
-    for (let i = 0; i < 8; i++) k.lamp(i % 2 ? 22.5 : -22.5, -38 + Math.floor(i / 2) * 25, 4.5, iron, 0xffd7a0, k.night > 0.5 ? 60 : 18);
+    /* 2026-11-24 wave 8a: real lampposts (Poly Haven CC0) along the deck, life rings on posts by every chair, depth marks
+       cut in the coping, the rules board by the gate */
+    { const at: number[][] = []; for (let i = 0; i < 8; i++) { const x = i % 2 ? 22.5 : -22.5, z = -38 + Math.floor(i / 2) * 25; at.push([x, 0, z, x > 0 ? -PI / 2 : PI / 2]); k.point(x, 4.4, z, 0xffd7a0, k.night > 0.5 ? 60 : 18, 14); k.keepOut.push({ x, z, r: 0.45 }); } w8Place(k, 'astoriapool/ph_street_lamp_01', { height: 4.6 }, at); }
+    { const at: number[][] = []; for (const [x, z] of [[-18.6, -24], [18.6, -24], [-18.6, 24], [18.6, 24], [-18.6, 0], [18.6, 0]]) { k.box(0.12, 1.6, 0.12, x, 0.8, z, white); at.push([x, 0.7, z + 0.09, x > 0 ? -PI / 2 : PI / 2]); k.keepOut.push({ x, z, r: 0.5 }); } w8Place(k, 'astoriapool/ph_lifebuoy', { height: 0.76 }, at); }
+    for (const s of [-1, 1]) for (const z of [-28, -14, 0, 14, 28]) { const m = w8Sign(k, '4 FT', 1.1, 0.4, s * 18.0, 0.13, z, 0, '#1a3a5a', '', 'W2 Archivo Expanded', false, 0.8); m.rotation.set(-PI / 2, 0, -s * PI / 2); }
+    k.box(0.1, 1.9, 0.1, 26.6, 0.95, -23, iron); k.box(0.1, 1.9, 0.1, 26.6, 0.95, -21, iron); k.keepOut.push({ x: 26.6, z: -22, r: 1.2 });
+    w8Sign(k, 'POOL RULES  NO RUNNING  NO DIVING  SWIM AT LIFEGUARD STATIONS ONLY', 2.4, 1.3, 26.55, 1.6, -22, -PI / 2, '#f4f4f0', '#1e5a3a', 'W2 Archivo Narrow', false, 0.15, '#f4f4f0');
+    /* the one illusion: NO DIVING laid long down the east deck, upright only from the gate, the diving tower in the distance */
+    { const tx = w8Type('NO DIVING', ['#c8282a']); if (tx) anamorphTex(k, tx, 20, -30, 3, 0, 3.0, 8.0, 2.0, 0.8, 0.9); }
+    k.egg(v(18.9, 0.4, -21.5), { id: 'no-diving', title: 'No diving, says the floor', text: 'The red words on the deck are drawn long and thin along your line of sight, so they stand up only from the gate where you came in; take a step and they lie down. It is anamorphosis, the trick of Holbein\'s skull in The Ambassadors, 1533. The joke is the tower at the far end: Astoria\'s diving pool was filled in between 2017 and 2019, and the platform was kept.', clue: 'Go back to the gate and read the deck.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
     {
       k.cyl(0.05, 12, 22, 6, -44, chrome, 0.03, 8);
       const flag = k.mesh(new T.PlaneGeometry(2.0, 1.3), k.flat(0xd83a2a, 0, 0.8, { side: T.DoubleSide }), 22, 11.2, -44, true);
@@ -796,9 +1049,13 @@ export const rockcenter: RoomDef = {
     k.sky({ top: 0x05070f, horizon: 0x161a2c, ground: 0x05060a, fog: 0.0038, stars: 500, env: 0.45 });
     k.hemi(0x5a6a9a, 0x14161c, 1.4);
     k.sun(0xaebde8, 0.25, -60, 60, 30, true, 90);
-    const granite = k.pbr('rcGran', X.ashlar(0x6a6a72, 71, 6), 0.45), pave = k.pbr('rcPave', X.pavers(0x77747a, 72), 0.5), lime = k.pbr('rcLime', X.ashlar(0xb9b2a2, 73, 5), 0.32),
-      ice = k.flat(0xdff2ff, 0.35, 0.12, { emissive: 0x9fd0ff, emissiveIntensity: 0.12 }), dark = k.flat(0x0e1117, 0.3, 0.7), gilt = k.pbr('rcGilt', X.gilt(), 2, { metalness: 0.9, roughness: 0.28 }),
-      green = k.flat(0x0f3a1c, 0, 0.95), brass = k.flat(0xc9a25a, 0.9, 0.35), white = k.flat(0xe8ecf0, 0.1, 0.5), redGran = k.pbr('rcRed', X.ashlar(0x5a2a2a, 74, 8), 0.5),
+    /* 2026-11-24 wave 8a: granite, the red granite wall, the limestone of the buildings and the esplanade pavers are Poly
+       Haven scans (tex/rockcenter/), each in a set colour until its maps land */
+    const granite = w8Scan(k, 'rockcenter', 'granite_tile_02', 2.4, () => X.ashlar(0x6a6a72, 71, 6), { color: 0x9c9ca4, roughness: 0.55 }, 0x5a5a62),
+      pave = w8Scan(k, 'rockcenter', 'concrete_pavers', 2.0, () => X.pavers(0x77747a, 72), { color: 0xa8a49e, roughness: 0.7 }, 0x66635e),
+      lime = w8Scan(k, 'rockcenter', 'white_sandstone_blocks_02', 3.2, () => X.ashlar(0xb9b2a2, 73, 5), { color: 0xd6cfbf, roughness: 0.8 }, 0x9c968a),
+      ice = k.flat(0xb8cfe0, 0.3, 0.16, { emissive: 0x9fd0ff, emissiveIntensity: 0.04 }), dark = k.flat(0x0e1117, 0.3, 0.7), gilt = k.pbr('rcGilt', X.gilt(), 2, { metalness: 0.9, roughness: 0.28 }),
+      green = k.flat(0x0f3a1c, 0, 0.95), brass = k.flat(0xc9a25a, 0.9, 0.35), white = k.flat(0xe8ecf0, 0.1, 0.5), redGran = w8Scan(k, 'rockcenter', 'granite_wall', 2.0, () => X.ashlar(0x5a2a2a, 74, 8), { color: 0xb0645a, roughness: 0.45 }, 0x4a2a28),
       wire = new T.MeshBasicMaterial({ color: 0xfff1cc, wireframe: true, transparent: true, opacity: 0.85 }), hedge = k.flat(0x1e3a22, 0, 0.95), iron = k.flat(0x1c1e22, 0.6, 0.45);
     /* the two levels: the esplanade at street level with a hole in it, the rink three and a half metres down */
     for (const [w, d, x, z] of [[30, 70, -35, 0], [50, 70, 45, 0], [40, 25, 0, -22.5], [40, 25, 0, 22.5]]) k.box(w, 0.4, d, x, -0.2, z, pave);
@@ -820,7 +1077,7 @@ export const rockcenter: RoomDef = {
     for (let j = 0; j < 56; j++) { const a = (j / 56) * PI * 2, x = Math.cos(a) * 16.2, z = Math.sin(a) * 7.7, tx = -Math.sin(a) * 16.2, tz = Math.cos(a) * 7.7; const b = k.box(Math.hypot(tx, tz) * (PI * 2 / 56) + 0.1, 0.9, 0.14, x, -3.05, z, white); b.rotation.y = -Math.atan2(tz, tx); }
     for (const x of [-8.5, 0, 8.5]) k.keepOut.push({ x, z: 0, r: 7.4 });
     if (!ctx.reduced) {
-      const NS = 26, sk = k.instances(figureGeo(0.19, 0.74, 1.24), new T.MeshStandardMaterial({ roughness: 0.85 }), Array.from({ length: NS }, () => new T.Matrix4()));
+      const NS = 18, sk = k.instances(figureGeo(0.19, 0.74, 1.24), new T.MeshStandardMaterial({ roughness: 0.85 }), Array.from({ length: NS }, () => new T.Matrix4()));
       sk.frustumCulled = false;
       const rnd = X.mulberry(1936), c = new T.Color(), pal = [0xd82a3a, 0x1c232c, 0xe8e2d4, 0x2a5fb8, 0x2a8a4a, 0xf0c22a, 0x8a4ad8, 0xff8c3b];
       const st = Array.from({ length: NS }, () => { const rx = 2.5 + rnd() * 5, rz = 1.5 + rnd() * 3; return { cx: (rnd() - 0.5) * 2 * (15 - rx), cz: (rnd() - 0.5) * 2 * (6.8 - rz), rx, rz, w: (0.25 + rnd() * 0.3) * (rnd() > 0.5 ? 1 : -1), ph: rnd() * 6.3, h: 0.85 + rnd() * 0.3 }; });
@@ -837,7 +1094,13 @@ export const rockcenter: RoomDef = {
         });
         sk.instanceMatrix.needsUpdate = true;
       });
+      /* 2026-11-24 wave 8a: the skaters are the cast skater model from THE LIGHTINGS (one instanced draw), riding the
+         stand ins' matrices; the capsules hide when it lands */
+      if (W8_DOM) { const mk = new T.Matrix4(); sk.userData.person = undefined; (sk.geometry.userData as Record<string, unknown>).person = undefined; void hero(k, 'rockcenter/lt_skater', { height: 1.72 }).then((h) => { if (!h || !k.live) return; h.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; }); const ins = heroInstances(k, h, NS); sk.visible = false; const copy = () => { for (let i = 0; i < NS; i++) { sk.getMatrixAt(i, mk); ins.setAt(i, mk); } ins.commit(); }; copy(); k.ticks.push(copy); }); }
     }
+    /* the Zamboni, parked in its gate at the east end of the ice */
+    w8Place(k, 'rockcenter/lt_zamboni', { length: 4.2 }, [[17.6, -3.5, 7.9, -PI / 2]]);
+    k.keepOut.push({ x: 17.6, z: 7.9, r: 2.2 });
     /* the flags round the parapet: forty eight of them, each on its own pole, each on its own gust */
     {
       const poles: [number, number][] = [];
@@ -857,7 +1120,11 @@ export const rockcenter: RoomDef = {
     k.box(0.7, 6.4, 12, -20.35, -0.3, 0, redGran);
     k.box(8, 0.8, 3.2, -17.6, -3.1, 0, granite);
     k.box(7.6, 0.3, 2.8, -17.6, -2.72, 0, k.flat(0x2b4d66, 0.6, 0.2));
-    { const fig = k.mesh(new T.CapsuleGeometry(0.4, 1.4, 4, 10), gilt, -18.3, -0.3, 0); fig.rotation.z = 0.55; fig.rotation.y = 0.2; k.sphere(0.3, -17.6, 0.75, 0, gilt, 12); k.beam(v(-18.6, 0.2, 0), v(-17.4, 1.4, 0.4), 0.12, gilt, 6); k.beam(v(-18.2, -1.0, -0.2), v(-17.0, -1.8, -0.5), 0.12, gilt, 6); const ring = k.torus(2.4, 0.14, -18.6, -0.4, 0, gilt, 48); ring.rotation.y = PI / 2; }
+    /* 2026-11-24 wave 8a: Prometheus is a real model now (the rink Prometheus from the movie sets), gilded, flying over
+       the fountain inside his ring of the zodiac; the ring carries its twelve signs as gilt studs */
+    { const ring = k.torus(2.6, 0.16, -18.7, -0.2, 0, gilt, 64); ring.rotation.y = PI / 2; for (let j = 0; j < 12; j++) { const a = (j / 12) * PI * 2; k.sphere(0.22, -18.7, -0.2 + Math.sin(a) * 2.6, Math.cos(a) * 2.6, gilt, 8); } k.box(0.5, 1.6, 0.5, -18.9, -2.2, 0, redGran); }
+    w8Place(k, 'rockcenter/nyb_rink_prometheus', { height: 3.4 }, [[-18.4, -1.6, 0, PI / 2]], (h) => { h.traverse((c) => { if (!(c instanceof T.Mesh)) return; const ms = Array.isArray(c.material) ? c.material : [c.material]; if (ms.some((m) => /nyb_/.test(m.name))) c.visible = false; }); w8Tint(h, 0xd8a640, 0.3, 0.92); });
+    w8Sign(k, 'PROMETHEUS  TEACHER IN EVERY ART  BROUGHT THE FIRE  THAT HATH PROVED TO MORTALS  A MEANS TO MIGHTY ENDS', 11.4, 0.34, -19.98, 2.5, 0, PI / 2, '#e9c46a', '', 'W2 Archivo Expanded', false, 0.62);
     k.spot(-12, 2, 0, -18.3, -0.5, 0, 0xffd27a, 500, 0.5, 0.6, 20);
     if (!ctx.reduced) vapour(k, [v(-16.4, -2.7, -0.8), v(-16.4, -2.7, 0.8), v(-15.6, -2.7, 0)], 16, { rise: 2.6, spread: 0.5, size: 0.08, opacity: 0.3, colour: 0xe8f4ff, seed: 9, speed: 0.4, animate: true });
     /* the tree: seven tiers of spruce, three thousand lights that never all blink at once, the star */
@@ -869,8 +1136,11 @@ export const rockcenter: RoomDef = {
     /* 2026-10-28: tried the kit's pine (k.tree species pine) here; at 25 m it reads as a sparse scrub pine, not the
        dense Norway spruce, and the lights hang in its gaps, so the tiers stay until a spruce is made */
     for (let i = 0; i < 7; i++) { const r = 7.4 - i * 0.95, y = 1 + i * 3.3; tiers.push([r, y]); k.cyl(r, 5.2, TX, y + 2.6, 0, green, 0.3, 14); }
+    /* 2026-11-24 wave 8a: a real spruce silhouette (Poly Haven fir_tree_01, CC0) over the dense tiers: two copies turned
+       90 degrees apart so the branches close round, fitted to the envelope of the tiers */
+    w8Place(k, 'rockcenter/ph_fir_tree_01', { box: [15.6, 25.6, 15.6] }, [[TX, 1.0, 0, 0], [TX, 1.0, 0, PI / 2]], (h) => w8Tint(h, 0x2c5a34, 0.9, 0));
     {
-      const NL = 3000, rnd = X.mulberry(1933), c = new T.Color(), pal = [0xff3b3b, 0x3bff6a, 0x3b8cff, 0xffd23b, 0xffffff, 0xff8c3b];
+      const NL = 2000, rnd = X.mulberry(1933), c = new T.Color(), pal = [0xff3b3b, 0x3bff6a, 0x3b8cff, 0xffd23b, 0xffffff, 0xff8c3b];
       const lights = k.instances(new T.SphereGeometry(0.11, 5, 4), new T.MeshBasicMaterial({ color: 0xffffff }), Array.from({ length: NL }, () => new T.Matrix4()));
       lights.frustumCulled = false;
       const base = new Int32Array(NL), ph = new Float32Array(NL), m = new T.Matrix4();
@@ -880,6 +1150,7 @@ export const rockcenter: RoomDef = {
         base[i] = pal[Math.floor(rnd() * pal.length)]; ph[i] = rnd() * 6.3; lights.setColorAt(i, c.set(base[i]));
       }
       lights.instanceMatrix.needsUpdate = true; if (lights.instanceColor) lights.instanceColor.needsUpdate = true;
+      lights.castShadow = false;   // 2026-11-24 wave 8a: three thousand bulbs in the shadow pass cost more than the tree
       if (!ctx.reduced) k.ticks.push((t) => { for (let i = 0; i < NL; i++) { const b = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * 2.1 + ph[i])); lights.setColorAt(i, c.set(base[i]).multiplyScalar(b)); } if (lights.instanceColor) lights.instanceColor.needsUpdate = true; });
       const star = new T.Group(); star.position.set(TX, tiers[6][1] + 5.9, 0); k.add(star);
       const spikes = new T.InstancedMesh(new T.ConeGeometry(0.09, 1, 5).translate(0, 0.5, 0), k.glow(0xfff6d8), 70);
@@ -901,10 +1172,12 @@ export const rockcenter: RoomDef = {
       k.box(70, 36, 22, 96, 18, 0, facade(34, 0.7));
       k.box(70, 4, 24, 96, 2, 0, lime);
       k.box(24, 0.1, 140, 78, -0.15, 0, k.flat(0x1c1e24, 0, 0.9));
-      const cabs = k.instances(new T.BoxGeometry(1.6, 1.1, 3.6), k.flat(0xf0c22a, 0.2, 0.5), Array.from({ length: 14 }, () => new T.Matrix4()));
-      const tl = k.instances(new T.BoxGeometry(1.4, 0.2, 0.2), k.glow(0xff3322), Array.from({ length: 14 }, () => new T.Matrix4()));
+      /* 2026-11-24 wave 8a: six cabs on Fifth, not fourteen; the kit swaps each box for a 14k triangle taxi with shadows */
+      const NCAB = 6;
+      const cabs = k.instances(new T.BoxGeometry(1.6, 1.1, 3.6), k.flat(0xf0c22a, 0.2, 0.5), Array.from({ length: NCAB }, () => new T.Matrix4()));
+      const tl = k.instances(new T.BoxGeometry(1.4, 0.2, 0.2), k.glow(0xff3322), Array.from({ length: NCAB }, () => new T.Matrix4()));
       cabs.frustumCulled = tl.frustumCulled = false;
-      const rnd = X.mulberry(5), st = Array.from({ length: 14 }, (_, i) => ({ s: rnd() * 140, x: 70 + (i % 3) * 4.2, v: 8 + rnd() * 6 })), m = new T.Matrix4();
+      const rnd = X.mulberry(5), st = Array.from({ length: NCAB }, (_, i) => ({ s: rnd() * 140, x: 70 + (i % 3) * 4.2, v: 8 + rnd() * 6 })), m = new T.Matrix4();
       const place = (_t: number, dt: number) => { st.forEach((a, i) => { a.s = (a.s + a.v * Math.min(dt, 0.1)) % 140; m.setPosition(a.x, 0.55, 70 - a.s); cabs.setMatrixAt(i, m); m.setPosition(a.x, 0.7, 70 - a.s + 1.85); tl.setMatrixAt(i, m); }); cabs.instanceMatrix.needsUpdate = tl.instanceMatrix.needsUpdate = true; };
       place(0, 0); if (!ctx.reduced) k.ticks.push(place);
     }
@@ -919,32 +1192,50 @@ export const rockcenter: RoomDef = {
       win.instanceMatrix.needsUpdate = true; if (win.instanceColor) win.instanceColor.needsUpdate = true;
       blk(20, 72, s * 8.4, s * 40);
     }
-    const angels: T.Group[] = [];
+    /* 2026-11-24 wave 8a: the twelve herald angels are the wire angel model from THE LIGHTINGS, trumpets raised, in pairs
+       facing across each bed; the beds are planted and edged in granite */
+    const angelAt: number[][] = [];
     for (let i = 0; i < 6; i++) {
       const x = 27 + i * 7;
       k.box(4.2, 0.9, 3.2, x, 0.45, 0, granite); k.box(3.8, 0.9, 2.8, x, 1.35, 0, hedge);
       k.keepOut.push({ x, z: 0, r: 2.6 });
       k.point(x, 2.2, 0, 0xffe6b0, 40, 9);
-      for (const s of [-1, 1]) {
-        const g = new T.Group(); g.position.set(x, 1.8, s * 1.0); g.rotation.y = -PI / 2;
-        const body = new T.Mesh(new T.ConeGeometry(0.55, 2.2, 8, 3, true), wire); body.position.y = 1.1; g.add(body);
-        const head = new T.Mesh(new T.SphereGeometry(0.22, 8, 6), wire); head.position.y = 2.42; g.add(head);
-        const halo = new T.Mesh(new T.TorusGeometry(0.3, 0.03, 4, 16), k.glow(0xfff1cc)); halo.position.y = 2.72; halo.rotation.x = PI / 2; g.add(halo);
-        const trumpet = new T.Mesh(new T.CylinderGeometry(0.03, 0.14, 1.6, 8), brass); trumpet.position.set(0.5, 2.5, 0); trumpet.rotation.z = -1.0; g.add(trumpet);
-        for (const w of [-1, 1]) { const wing = new T.Mesh(new T.PlaneGeometry(1.0, 1.6), wire); wing.position.set(-0.3, 1.6, w * 0.5); wing.rotation.y = w * 0.8; g.add(wing); }
-        k.add(g); angels.push(g);
-      }
+      for (const s of [-1, 1]) angelAt.push([x, 1.8, s * 1.0, -PI / 2]);
     }
-    if (!ctx.reduced) k.ticks.push((t) => { angels.forEach((g, i) => { const b = 0.75 + 0.25 * Math.sin(t * 2.4 + i * 0.7); (g.children[0] as T.Mesh).scale.setScalar(1); wire.opacity = 0.7 + 0.25 * Math.sin(t * 1.3); void b; }); });
-    for (let i = 0; i < 6; i++) for (const s of [-1, 1]) k.lamp(-17.5 + i * 7, s * 16.5, 4.4, iron, 0xffd7a0, 40);
-    for (let i = 0; i < 4; i++) for (const s of [-1, 1]) k.spot(s * 22, 5, -6 + i * 4, 0, -3.4, 0, 0xdfeeff, 150, 0.5, 0.7, 40);
+    w8Place(k, 'rockcenter/lt_angel', { height: 3.0 }, angelAt, (h) => h.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.emissive = new T.Color(0xfff1cc); m.emissiveIntensity = 0.16; m.emissiveMap = m.map; c.material = m; } }));
+    void wire;
+    /* 2026-11-24 wave 8a: real street lamps (Poly Haven CC0) round the rink, one instanced draw, each with its light */
+    { const at: number[][] = []; for (let i = 0; i < 6; i++) for (const s of [-1, 1]) { at.push([-17.5 + i * 7, 0, s * 16.5, s > 0 ? PI : 0]); k.point(-17.5 + i * 7, 4.2, s * 16.3, 0xffd7a0, 40, 12); k.keepOut.push({ x: -17.5 + i * 7, z: s * 16.5, r: 0.5 }); } w8Place(k, 'rockcenter/ph_street_lamp_01', { height: 4.8 }, at); void iron; }
+    for (let i = 0; i < 4; i++) for (const s of [-1, 1]) k.spot(s * 22, 5, -6 + i * 4, 0, -3.4, 0, 0xdfeeff, 85, 0.5, 0.7, 40);
+    /* 2026-11-24 wave 8a: built detail on the buildings. 30 Rock's limestone piers running the full height of its east face,
+       the gilt screen over its door, the names of the two Channel Gardens buildings cut over their shop fronts, a granite
+       marker at the Fifth Avenue end */
+    {
+      const piers: number[][] = []; for (let z = -12.25; z <= 12.3; z += 1.75) piers.push([-56.8, 59, z]);
+      w8Boxes(k, 0.7, 118, 0.55, lime, piers);
+      const piers2: number[][] = []; for (let z = -8; z <= 8.1; z += 2) piers2.push([-59.8, 65, z]);
+      w8Boxes(k, 0.6, 130, 0.5, lime, piers2);
+      k.box(0.4, 3.2, 10, -56.6, 7.2, 0, gilt); k.box(0.3, 4.6, 7, -56.6, 2.3, 0, k.glass(0xffe2a8, 0.5, 0.1));
+      k.point(-54, 7, 0, 0xffd27a, 60, 12);
+      w8Sign(k, 'BRITISH EMPIRE BUILDING', 22, 1.1, 45, 23.5, -8.42, 0, '#e9c46a', '', 'W2 Archivo Expanded', false, 0.7);
+      w8Sign(k, 'LA MAISON FRANCAISE', 20, 1.1, 45, 23.5, 8.42, PI, '#e9c46a', '', 'W2 Archivo Expanded', false, 0.7);
+      k.box(2.2, 1.2, 0.8, 67, 0.6, -5.6, granite); w8Sign(k, 'CHANNEL GARDENS', 2.0, 0.36, 67, 0.85, -5.18, 0, '#e9c46a', '#1c1c20', 'W2 Archivo Expanded', false, 0.5);
+      k.keepOut.push({ x: 67, z: -5.6, r: 1.3 });
+    }
+    /* the one illusion: LIGHTS ON laid long down the garden path, in the tree's own colours; it stands up only from the
+       spot by the angels where you came in */
+    { const tx = w8Type('LIGHTS ON', ['#ff3b3b', '#3bff6a', '#3b8cff', '#ffd23b', '#ffffff', '#ff8c3b']); if (tx) anamorphTex(k, tx, 30.5, -5.2, 3, 0, PI / 2, 5.4, 3.6, 1.2, 0.9); }
+    k.egg(v(24.6, 0.4, -5.2), { id: 'lights-on', title: 'Two words lying down', text: 'LIGHTS ON is painted long and thin down the path, stretched along your line of sight, so it only stands upright from the spot where you came in, between the angels. A step to the side and it falls flat on the stone. Artists have hidden pictures this way since the Renaissance; the word for it is anamorphosis.', clue: 'Walk back to the angels and read the ground.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
+    /* 2026-11-24 wave 8a: the kit's taxis and the cast arrive after the build; once they land, none of them casts a shadow
+       (the shadow pass drew every 14k triangle cab a second time). Checked for the first half minute, then dropped. */
+    { let until = -1; const off = (t: number) => { if (until < 0) until = t + 30; if (t > until) return; k.scene.traverse((o) => { const me = o as T.Mesh; if (me.isMesh && (o.userData.cab || o.userData.cast || me.material instanceof T.MeshBasicMaterial)) o.castShadow = false; }); }; k.ticks.push((t) => { if (t <= until || until < 0) off(t); }); }
     /* people on the esplanade, in the gardens and on the rink level */
     if (!ctx.reduced) {
       const winter = [0x1c232c, 0xd82a3a, 0x2a2a34, 0xe8e2d4, 0x2a5fb8, 0x3a3a3a, 0x8a4a2a, 0xf0c22a];
-      k.crowd([v(-24, 0, -13), v(24, 0, -13), v(24, 0, 13), v(-24, 0, 13)], 44, { seed: 51, speed: 0.28, spread: 3.4, closed: true, colors: winter });
-      k.crowd([v(22, 0, -5.2), v(66, 0, -5.2)], 16, { seed: 52, speed: 0.4, spread: 2.0, colors: winter });
-      k.crowd([v(22, 0, 5.2), v(66, 0, 5.2)], 16, { seed: 53, speed: 0.4, spread: 2.0, colors: winter });
-      k.crowd([v(-18.5, -3.5, -8.6), v(18.5, -3.5, -8.6), v(18.5, -3.5, 8.6), v(-18.5, -3.5, 8.6)], 20, { seed: 54, speed: 0.2, spread: 1.2, closed: true, colors: winter });
+      k.crowd([v(-24, 0, -13), v(24, 0, -13), v(24, 0, 13), v(-24, 0, 13)], 28, { seed: 51, speed: 0.28, spread: 3.4, closed: true, colors: winter });
+      k.crowd([v(22, 0, -5.2), v(66, 0, -5.2)], 10, { seed: 52, speed: 0.4, spread: 2.0, colors: winter });
+      k.crowd([v(22, 0, 5.2), v(66, 0, 5.2)], 10, { seed: 53, speed: 0.4, spread: 2.0, colors: winter });
+      k.crowd([v(-18.5, -3.5, -8.6), v(18.5, -3.5, -8.6), v(18.5, -3.5, 8.6), v(-18.5, -3.5, 8.6)], 12, { seed: 54, speed: 0.2, spread: 1.2, closed: true, colors: winter });
     }
     /* the works: the shop fronts of the Channel Gardens, and either side of Prometheus down on the rink */
     const mounts: Mount[] = [];

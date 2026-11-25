@@ -11,10 +11,92 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero, standIn, hide } from './heroes';
+import { hero, heroInstances, standIn, hide } from './heroes';
+import { paintTex, hsign, anamorphTex } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): helpers for this file's rooms ----------
+   The wave 6 pattern (x2.ts), kept local: scanned CC0 surfaces (Poly Haven) from assets/museum/tex/<room>/ that wear a
+   sensible colour until their maps land, real models from assets/museum/props/<room>/ placed once or many at a time
+   (more than six become instanced parts; glass transmission and prop shadows stripped on load), and floor type for the
+   one trick each room gets. Safe in node: the audit builds with no DOM, so scans fall back to paint. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w9 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w9-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w9.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w9-${room}-${id}-${metres}`, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* glass that would make three.js draw the room twice becomes plain transparency */
+function unglass(o: T.Object3D) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const p = m as T.MeshPhysicalMaterial; if (p.transmission) { p.transmission = 0; p.transparent = true; p.opacity = 0.35; p.depthWrite = false; p.needsUpdate = true; } } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?, rotX?, rotZ?]; more than six become instanced parts.
+   `then` gets the placed copies when they are separate objects (six or fewer), for the ones that move. */
+type At = [number, number, number, number, number?, number?, number?];
+function put(k: K, name: string, fit: Parameters<typeof hero>[2], at: At[], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void, shadow = false) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    unglass(h);
+    if (tweak) tweak(h);
+    if (!shadow) h.traverse((c) => { c.castShadow = false; });
+    const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler();
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length);
+      at.forEach(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => ins.setAt(i, m.compose(v(x, y, z), q.setFromEuler(e.set(rx, r, rz, 'YXZ')), v(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(rx, r, rz, 'YXZ'); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* Recolour every material of a loaded model, without touching the shared source. */
+function tint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.2, emissive = 0) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; if (emissive) { n.emissive.setHex(hex); n.emissiveIntensity = emissive; } m = n; cache.set(src, m); } c.material = m; });
+}
+/* wave 9c shadow trim: the debug counter is two to three times the scene because of the sun's shadow pass. After the build,
+   and again every few seconds while models and the cast arrive, every mesh `drop` names stops casting. */
+function shadowTrim(k: K, drop: (o: T.Mesh, c: T.Vector3, r: number) => boolean) {
+  let next = 1.5; const c = new T.Vector3();
+  k.ticks.push((t) => {
+    if (t < next || next > 40) return; next = t + 4;
+    k.scene.traverse((o) => { if (!(o instanceof T.Mesh) || !o.castShadow) return; const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); c.copy(g.boundingSphere!.center).applyMatrix4(o.matrixWorld); if (drop(o, c, g.boundingSphere!.radius)) o.castShadow = false; });
+  });
+}
+/* Painted lettering for an anamorphic floor piece, in a house font, fitted to the canvas. */
+function floorType(text: string, fg: string, w = 1024, h = 256, font = 'W2 Archivo Expanded', stroke?: string) {
+  return paintTex(w, h, (g) => { g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } if (stroke) { g.strokeStyle = stroke; g.lineWidth = s * 0.08; g.lineJoin = 'round'; g.strokeText(text, w / 2, h / 2); } g.fillStyle = fg; g.fillText(text, w / 2, h / 2); }, [font]);
+}
 
 /* ---------------- helpers (v14, v3), with an axis option on traffic and houses ---------------- */
 /* the museum camera, read at tick time; undefined under node (audit and check scripts) */
@@ -188,9 +270,11 @@ export const astorplace: RoomDef = {
     k.sky({ top: 0x4f88d0, horizon: 0xd8e4ee, ground: 0x6a6a68, fog: 0.0024, sun: { az: 2.4, el: 0.7, color: 0xfff4e0, size: 8 }, env: 0.6 });
     k.hemi(0xe8ecf2, 0x6a6a68, 0.95);
     k.sun(0xfff0d8, 2.4, -30, 70, -20, true, 90);
-    const pave = k.pbr('apPave', X.pavers(0x8e8b84, 175), 0.5), asph = k.pbr('apAsph', X.asphalt(), 0.3), walk = k.pbr('apWalk', X.concrete(0x9c9a92, 176), 0.5),
-      curb = k.flat(0x8a8680, 0, 0.8), lineM = k.flat(0xe8e4d8, 0, 0.8), corten = k.flat(0x16171a, 0.55, 0.48), granite = k.pbr('apGran', X.ashlar(0x3a3a3e, 177, 6), 0.6),
-      brown = k.pbr('apBrown', X.ashlar(0x6a4a3a, 178, 6), 0.4, { normal: 0.4 }), brownDark = k.flat(0x44302a, 0.1, 0.7), win = k.flat(0x1a2128, 0.6, 0.18),
+    /* 2026-11-24 (wave 9): scanned CC0 surfaces (Poly Haven): square pavers on the plaza and the walks, worn asphalt, granite
+       tile for the plinths, red sandstone for the brownstone Foundation Building, and plate steel for the cube */
+    const pave = sc(k, 'astorplace', 'square_concrete_pavers', 1.6, () => X.pavers(0x8e8b84, 175), { roughness: 0.85, color: 0xd4d0c8 }, 0x8e8b84), asph = sc(k, 'astorplace', 'asphalt_02', 3.2, () => X.asphalt(), { roughness: 0.9, color: 0x9a9a9a }, 0x2a2c30), walk = sc(k, 'astorplace', 'square_concrete_pavers', 2.0, () => X.concrete(0x9c9a92, 176), { roughness: 0.85, color: 0xe0dcd2 }, 0x9c9a92),
+      curb = k.flat(0x8a8680, 0, 0.8), lineM = k.flat(0xe8e4d8, 0, 0.8), corten = sc(k, 'astorplace', 'metal_plate', 2.3, () => X.steel(0x16171a, false, 1757), { color: 0x2a2b2e, metalness: 0.6, roughness: 0.55 }, 0x16171a), granite = sc(k, 'astorplace', 'granite_tile', 1.2, () => X.ashlar(0x3a3a3e, 177, 6), { color: 0x6a6a70, roughness: 0.6 }, 0x3a3a3e),
+      brown = sc(k, 'astorplace', 'red_sandstone_wall', 2.6, () => X.ashlar(0x6a4a3a, 178, 6), { color: 0xa88a7a, roughness: 0.85 }, 0x6a4a3a), brownDark = k.flat(0x44302a, 0.1, 0.7), win = k.flat(0x1a2128, 0.6, 0.18),
       iron = k.flat(0x1e2a22, 0.6, 0.45), glassM = k.glass(0xb9dde8, 0.25), marble = k.pbr('apMarb', X.ashlar(0xcdc7b8, 180, 5), 0.35, { normal: 0.3 }),
       black = k.flat(0x101214, 0.2, 0.6), steel = k.flat(0x9aa4ae, 0.8, 0.35), wood = k.flat(0x5a4030, 0, 0.7), green = k.flat(0x0b6b3a, 0.1, 0.6),
       darkGlass = k.pbr('apGlass', X.windows(179, 0.25, 0x1c2433, false), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.6, roughness: 0.4, metalness: 0.5, stretch: 0.42 });
@@ -367,6 +451,37 @@ export const astorplace: RoomDef = {
     for (const s of [-1, 1]) k.box(0.12, 3.9, 0.12, -3 + s * 2.85, 1.95, 22.1, iron);
     k.block(-6.0, 0.0, 21.7, 22.5);
 
+    /* ---- 2026-11-24 (wave 9): the corner you arrive on, worked in ----
+       A newsstand on the plaza, a hot dog cart at the corner, a hydrant, a mailbox and the cans (our NYC street kit and Poly
+       Haven, CC0), a plywood hoarding of gig posters on the north side (a Firefly plate queued; bare plywood until it lands),
+       a subway sign on the kiosk, and one trick (rule 9): a second cube painted flat on the pavers, stretched so that from
+       one spot between the boards it stands on its corner like the real one. */
+    {
+      put(k, 'astorplace/nyb_itch_newsstand', { height: 2.3 }, [[-6.9, 0.02, 1.2, PI / 2]]); k.block(-7.6, -6.2, -0.3, 2.7);
+      if (k.o.quality === 'high') put(k, 'astorplace/hotdog', { height: 2.2 }, [[-5.6, 0.02, -6.4, -2.4]]); k.keepOut.push({ x: -5.6, z: -6.4, r: 1.0 });
+      if (k.o.quality === 'high') put(k, 'astorplace/ph_fire_hydrant', { height: 0.8 }, [[-8.5, 0.02, -7.2, 0.4]]); k.keepOut.push({ x: -8.5, z: -7.2, r: 0.4 });
+      if (k.o.quality === 'high') put(k, 'astorplace/mailbox', { height: 1.3 }, [[9.9, 0.02, -7.6, PI]]); k.keepOut.push({ x: 9.9, z: -7.6, r: 0.5 });
+      if (k.o.quality === 'high') put(k, 'astorplace/ph_metal_trash_can', { width: 1.0 }, [[-3.6, 0.02, -7.4, 0], [8.4, 0.02, 18, -PI / 2], [-7.4, 0.02, 31, PI / 2]]);
+      for (const [x, z] of [[-3.6, -7.4], [8.4, 18], [-7.4, 31]]) k.keepOut.push({ x, z, r: 0.6 });
+      /* the hoarding along the north walk, its posters a Firefly plate */
+      const ply = k.pbr('apPly', X.planks(0x9a7a52, 4, 1758), 1.2, { roughness: 0.9 });
+      k.box(12, 2.6, 0.12, 4, 1.3, -15.9, ply); k.block(-2.1, 10.1, -16.1, -15.7);
+      fireflyPlate(k, 'assets/museum/tex/astorplace/ff_ast_poster_wall.webp', 10.8, 2.2, 4, 1.35, -15.83, 0, ply);
+      hsign(k, '6  UPTOWN & THE BRONX', 2.6, 0.32, 6, 2.86, -3 + 3.42, 0, { fg: '#ffffff', bg: '#141414', size: 0.58 });
+      if (HAS_DOM) {
+        const ghost = paintTex(512, 580, (g, w, h) => {
+          const cx = w / 2, R = w * 0.47, cy = h - R * 1.0, P = (a: number) => [cx + R * Math.cos((a * PI) / 180), cy - R * Math.sin((a * PI) / 180)] as const;
+          const C = [cx, cy] as const, V = [90, 30, -30, -90, -150, 150].map(P);
+          g.fillStyle = 'rgba(0,0,0,0.28)'; g.beginPath(); g.ellipse(cx, h - 10, R * 0.55, 9, 0, 0, PI * 2); g.fill();
+          const face = (pts: (readonly [number, number])[], col: string) => { g.fillStyle = col; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fill(); g.strokeStyle = '#4a4c52'; g.lineWidth = 3; g.stroke(); };
+          face([C, V[5], V[0], V[1]], '#2c2e33'); face([C, V[1], V[2], V[3]], '#141518'); face([C, V[3], V[4], V[5]], '#1e2024');
+          for (const [a, b, c2] of [[V[5], V[0], V[1]], [V[1], V[2], V[3]], [V[3], V[4], V[5]]]) { const m = (p: readonly [number, number], q: readonly [number, number]) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2] as const; face([m(C, a), m(a, b), m(b, c2), m(C, c2)], 'rgba(10,10,12,0.55)'); }
+        });
+        anamorphTex(k, ghost, 0, 14, 3, 0, 0, 4, 1.5, 1.7, 0.96);
+      }
+      k.egg(v(0, 0.3, 7), { id: 'ap-second-cube', title: 'The cube that does not turn', text: 'This second cube is paint on the pavers, stretched along the ground so that from one spot between the boards it seems to stand on its corner like the Alamo. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533. Push this one all you like.', clue: 'Stand between the two boards and look towards the real cube.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
+    }
+
     /* ---- what moves: traffic on three streets, skaters round the cube, students everywhere ---- */
     traffic(k, ctx, { along: 'z', lanes: [{ at: -12.6, dir: -1, n: 4, speed: 7 }, { at: -9.6, dir: -1, n: 3, speed: 8 }], s0: -60, s1: 75, seed: 1756 });
     traffic(k, ctx, { along: 'z', lanes: [{ at: 10.9, dir: -1, n: 2, speed: 5, bus: true }, { at: 13.8, dir: -1, n: 3, speed: 7 }], s0: -60, s1: 75, seed: 1757 });
@@ -415,6 +530,8 @@ export const astorplace: RoomDef = {
     k.egg(v(QX0, 9, QCZ), { id: 'ap-41cooper', title: 'The slot in the skin', year: '2009', text: '41 Cooper Square, by Thom Mayne of Morphosis, built 2006 to September 2009: nine storeys and 175,000 square feet behind a perforated stainless steel curtain wall, wrapped round a central atrium the architects call a vertical piazza, with a grand stair from the ground to the fourth floor. It was the first institutional building in New York to reach LEED Platinum. A three ton marble eagle from the 1910 Pennsylvania Station sits on its eighth floor green roof.', clue: 'Follow the gash cut up through the steel skin, south of the arcade.', source: { name: '41 Cooper Square, Wikipedia', url: 'https://en.wikipedia.org/wiki/41_Cooper_Square' } }, { r: 3.5 });
     k.egg(v(-8.6, 3.3, -8.6), { id: 'ap-riot', title: 'Named for Astor, remembered for a riot', year: '1849', text: 'Astor Place was named for John Jacob Astor soon after his death in 1848. On May 10, 1849 the Astor Place Riot, over the rival Macbeths of the American Edwin Forrest and the Englishman William Charles Macready, killed at least 18 people outside the Astor Opera House, which never recovered. The reconstruction begun in 2013 and finished in 2016 widened these plazas and made Fourth Avenue south of East 9th Street bus only.', clue: 'The green sign at the corner where the street meets the plaza.', source: { name: 'Astor Place, Wikipedia', url: 'https://en.wikipedia.org/wiki/Astor_Place' } }, { r: 1.0 });
 
+    /* 2026-11-25 (wave 9c): the buildings round the square, the skyline and the crowds stop casting; the plaza's own things keep theirs */
+    shadowTrim(k, (o, c, r) => (o instanceof T.InstancedMesh && o.count > 300) || r > 12 || c.x > 15 || c.x < -12 || c.z < -14 || c.z > 60 || o.name.startsWith('tripo'));
     return { mounts, spawn: v(-7.5, 3, -13.85), look: v(4, 4.8, 3), eye: 3, bounds: [-19.5, 21.5, -15.5, 58], style: 'gilt' };
   },
 };
@@ -434,9 +551,11 @@ export const nightmarket: RoomDef = {
     k.sky({ top: 0x04060e, horizon: 0x141a2a, ground: 0x05060a, fog: 0.0022, stars: 800, env: 0.4 });
     k.hemi(0x3a4468, 0x0c0d12, 0.7);
     k.sun(0x9fb0e0, 0.18, 40, 80, 30, false, 90);
-    const asph = k.pbr('nmAsph', X.asphalt(0x1e2126), 0.3), lineM = k.flat(0xb8b4a8, 0, 0.9), black = k.flat(0x0e1014, 0.2, 0.7), steel = k.flat(0x7a848e, 0.8, 0.4),
-      poleM = k.flat(0x2a2620, 0.2, 0.8), stageM = k.flat(0x1a1c20, 0.1, 0.8), stageTop = k.flat(0x2a2c30, 0.1, 0.7), fence = k.flat(0x3a3f46, 0.6, 0.5),
-      rocketM = k.flat(0xe6e6e2, 0.1, 0.6, { emissive: 0x2c2c2a }), rocketDark = k.flat(0x1a1a1a, 0.2, 0.6, { emissive: 0x080808 }), concrete = k.pbr('nmConc', X.concrete(0x55585e, 1761), 0.5),
+    /* 2026-11-24 (wave 9): scanned CC0 surfaces (Poly Haven): the worn asphalt of the lot, plate steel on the stage deck,
+       board formed concrete for the museum's back wings */
+    const asph = sc(k, 'nightmarket', 'worn_asphalt', 3.2, () => X.asphalt(0x1e2126), { roughness: 0.85, color: 0x8a8a8a }, 0x1e2126), lineM = k.flat(0xb8b4a8, 0, 0.9), black = k.flat(0x0e1014, 0.2, 0.7), steel = k.flat(0x7a848e, 0.8, 0.4),
+      poleM = k.flat(0x2a2620, 0.2, 0.8), stageM = k.flat(0x1a1c20, 0.1, 0.8), stageTop = sc(k, 'nightmarket', 'metal_plate', 1.6, () => X.steel(0x2a2c30, false, 1768), { color: 0x4a4c50, metalness: 0.6, roughness: 0.5 }, 0x2a2c30), fence = k.flat(0x3a3f46, 0.6, 0.5),
+      rocketM = k.flat(0xe6e6e2, 0.1, 0.6, { emissive: 0x2c2c2a }), rocketDark = k.flat(0x1a1a1a, 0.2, 0.6, { emissive: 0x080808 }), concrete = sc(k, 'nightmarket', 'concrete_wall_008', 3, () => X.concrete(0x55585e, 1761), { color: 0x8a8c90, roughness: 0.9 }, 0x55585e),
       uniM = new T.MeshBasicMaterial({ color: 0x9aa6b4 }), grillM = k.flat(0x141414, 0.5, 0.6), coals = k.glow(0xff6a20);
     const mounts: Mount[] = [];
     const rnd = X.mulberry(1760);
@@ -497,11 +616,12 @@ export const nightmarket: RoomDef = {
       k.box(3.0, 2.4, 0.06, rx, 1.3, Z0 - 1.53, tentM); hang(mounts, rx, 1.45, Z0 - 1.58, PI, 2.2, 1.5, 'white', 3.2);
     });
 
-    /* ---- the crowd: fourteen hundred in the lanes, one instanced figure, walking both ways ---- */
+    /* ---- the crowd: nine hundred in the lanes, one instanced figure, walking both ways (2026-11-25: the two outer lanes, hidden
+       behind the tents from the way in, carry a third of their old share; the main lane and the cross lane are as dense as before) ---- */
     type LaneDef = { axis: 'x' | 'z'; at: number; hw: number; a: number; b: number };
     const lanes: LaneDef[] = [{ axis: 'z', at: -13.7, hw: 2.3, a: -46, b: 18 }, { axis: 'z', at: 0, hw: 3.6, a: -46, b: 18 }, { axis: 'z', at: 13.7, hw: 2.3, a: -46, b: 18 }, { axis: 'x', at: 15.5, hw: 1.6, a: -19, b: 19 }];
     {
-      const N = 1400, lens = lanes.map((l) => l.b - l.a), total = lens.reduce((s, x) => s + x, 0);
+      const N = 900, lens = lanes.map((l) => (l.b - l.a) * (l.axis === 'z' && Math.abs(l.at) > 10 ? 0.35 : 1)), total = lens.reduce((s, x) => s + x, 0);
       const ppl = Array.from({ length: N }, (_, i) => { let li = 0, acc = 0; const pick = (i / N) * total; for (let j = 0; j < lanes.length; j++) { if (pick < acc + lens[j]) { li = j; break; } acc += lens[j]; } const l = lanes[li]; return { l, off: (rnd() - 0.5) * 2 * l.hw, s: l.a + rnd() * (l.b - l.a), dir: rnd() > 0.5 ? 1 : -1, v: 0.35 + rnd() * 0.75, h: 0.9 + rnd() * 0.25, ph: rnd() * 6.3 }; });
       const crowd = k.instances(figureGeo(0.19, 0.6, 1.1, 6), new T.MeshStandardMaterial({ roughness: 0.9 }), Array.from({ length: N }, () => new T.Matrix4()));
       crowd.frustumCulled = false;
@@ -583,7 +703,8 @@ export const nightmarket: RoomDef = {
     k.box(12, 5.4, 0.3, 0, 1.2 + 2.7, SZ - 3.15, black);
     {
       const back = canvasTex(256, 128, (g) => { g.fillStyle = '#12142a'; g.fillRect(0, 0, 256, 128); const pal = ['#ff3a6a', '#ffb020', '#20c0ff', '#a040ff']; for (let i = 0; i < 40; i++) { g.fillStyle = pal[i % 4]; g.globalAlpha = 0.55; g.beginPath(); g.arc((i * 47) % 256, (i * 31) % 128, 6 + (i % 5) * 4, 0, PI * 2); g.fill(); } });
-      k.mesh(new T.PlaneGeometry(10.5, 4.2), new T.MeshStandardMaterial({ map: back, emissive: 0xffffff, emissiveMap: back, emissiveIntensity: 0.7, roughness: 0.9 }), 0, 4.1, SZ - 2.95);
+      /* 2026-11-24 (wave 9): the backdrop is a Firefly plate (queued); the painted confetti stands in until it lands */
+      fireflyPlate(k, 'assets/museum/tex/nightmarket/ff_nmk_stage_backdrop.webp', 10.5, 4.2, 0, 4.1, SZ - 2.95, 0, new T.MeshStandardMaterial({ map: back, emissive: 0xffffff, emissiveMap: back, emissiveIntensity: 0.7, roughness: 0.9 }), true);
     }
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) k.box(0.25, 7.2, 0.25, sx * 6.2, 3.6, SZ + sz * 3.0, steel);
     for (const sz of [-1, 1]) k.box(12.8, 0.28, 0.28, 0, 7.15, SZ + sz * 3.0, steel);
@@ -709,6 +830,43 @@ export const nightmarket: RoomDef = {
     k.block(10.5, 16.5, 17.2, 18.0);
     k.point(0, 4.4, 20, 0xffd9a0, 30, 16, 1.8);
 
+    /* ---- 2026-11-24 (wave 9): the forecourt you come in on, worked in ----
+       Folding tables and red monobloc chairs either side of the way in, two carts at the mouth of the main lane, a propane
+       tank by every grill near the front (Poly Haven, CC0), hand lettered dish banners on the first tents of the main lane
+       in the house fonts, and one trick (rule 9): sixty lanterns at every depth that line up into a heart only from the spot
+       you arrive on. */
+    {
+      const tableAt: At[] = [[-7.0, 0, 21.6, 0.1], [-9.6, 0, 18.4, PI / 2], [-6.4, 0, 17.0, -0.15], [7.2, 0, 21.4, -0.1], [9.4, 0, 21.0, PI / 2 + 0.1]];
+      put(k, 'nightmarket/ph_outdoor_table_chair_set_01', { length: 1.72 }, tableAt);
+      for (const [x, , z] of tableAt) k.keepOut.push({ x, z, r: 1.0 });
+      const chairAt: At[] = [[-4.6, 0, 22.4, 2.2], [-4.4, 0, 20.6, 1.4], [-11.4, 0, 21.8, -1.2], [4.8, 0, 22.6, -2.0], [5.0, 0, 20.4, -1.5], [11.6, 0, 18.8, 1.1], [6.6, 0, 18.6, 0.3], [-8.8, 0, 15.6, 3.0]];
+      put(k, 'nightmarket/ph_plastic_monobloc_chair_01', { height: 0.84 }, chairAt, (o) => tint(o, 0xc8281e, 0.55, 0));
+      for (const [x, , z] of chairAt) k.keepOut.push({ x, z, r: 0.4 });
+      put(k, 'nightmarket/ph_CoffeeCart_01', { width: 2.2 }, [[-5.0, 0, 11.6, PI / 2 + 0.2], [5.2, 0, 11.2, -PI / 2 - 0.15]]);
+      k.keepOut.push({ x: -5.0, z: 11.6, r: 1.3 }, { x: 5.2, z: 11.2, r: 1.3 });
+      if (k.o.quality === 'high') put(k, 'nightmarket/ph_propane_tank', { height: 0.6 }, grills.filter((g) => g.z > -22).map((g, i): At => [g.x, 0, g.z + 0.5, i]));
+      /* dish banners on the eight tents nearest the way in, each side of the main lane */
+      const dishes = ['MOMOS', 'AREPAS', 'TAKOYAKI', 'JOLLOF RICE', 'PIEROGI', 'LECHON', 'HOPPERS', 'KHACHAPURI', 'BAO', 'EMPANADAS', 'SATAY', 'PUPUSAS', 'MOCHI', 'DOUBLES', 'FALAFEL', 'BIRRIA'];
+      const banners = ['#c8281e', '#1e3a7a', '#e8b020', '#1e6a3a', '#f0ece0', '#7a2a8a', '#e86a20', '#101418'];
+      for (const [rx, f] of [[-6, 1], [6, -1]] as [number, number][]) for (let i = 0; i < 8; i++) {
+        const z = ZEND - i * PITCH, j = i * 2 + (f > 0 ? 0 : 1), bg = banners[j % banners.length];
+        hsign(k, dishes[j], 2.6, 0.42, rx + f * 1.55, 2.34, z, f * PI / 2, { fg: bg === '#f0ece0' || bg === '#e8b020' ? '#16181c' : '#f6f2e6', bg, font: j % 3 ? 'W2 Archivo Expanded' : 'W2 Permanent Marker', size: 0.62 });
+      }
+      /* the trick: sixty paper lanterns hung at every depth down the main lane; from the spot under the banner they line up
+         into one heart over the crowd, and from anywhere else they are just lanterns */
+      {
+        const eye = v(0, 3, 24), pts: T.Matrix4[] = [], rr = X.mulberry(1769), cols: number[] = [];
+        for (let i = 0; i < 60; i++) {
+          const a = (i / 60) * PI * 2, hx = 16 * Math.sin(a) ** 3, hy = 13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a);
+          const P = v(hx * 0.16, 11.7 + hy * 0.16, 0), t = 0.62 + rr() * 0.8, at = eye.clone().lerp(P, t);
+          pts.push(new T.Matrix4().compose(at, new T.Quaternion(), v(t, t * 1.15, t))); cols.push([0xff3a1e, 0xff6a20, 0xffb030][i % 3]);
+        }
+        const hm = k.instances(new T.SphereGeometry(0.2, 10, 7), new T.MeshBasicMaterial({ color: 0xffffff }), pts);
+        const c = new T.Color(); cols.forEach((h, i) => hm.setColorAt(i, c.set(h))); if (hm.instanceColor) hm.instanceColor.needsUpdate = true;
+      }
+      k.egg(v(0, 3.2, 21.5), { id: 'nm-heart', title: 'Lanterns that line up', text: 'The red and gold lanterns over the main lane hang at every distance from you, near and far, high and low. Only from the spot under the banner do they line up into one heart; take a step and it comes apart. It is a forced perspective, the trick of hiding the depth of a scene from one single eye point.', clue: 'Stand under the banner and look up the main lane.', source: { name: 'Forced perspective, Wikipedia', url: 'https://en.wikipedia.org/wiki/Forced_perspective' } }, { r: 1.6 });
+    }
+
     /* ---- what the house knows ---- */
     const qnm = { name: 'Queens Night Market, Wikipedia', url: 'https://en.wikipedia.org/wiki/Queens_Night_Market' };
     const nysci = { name: 'New York Hall of Science, Wikipedia', url: 'https://en.wikipedia.org/wiki/New_York_Hall_of_Science' };
@@ -719,6 +877,8 @@ export const nightmarket: RoomDef = {
     k.egg(v(38, 14, -63), { id: 'nm-rockets', title: 'Rocket Park', year: '1964', text: 'The museum\'s Space Park showed three rockets 90 to 110 feet tall along with spacecraft. The rockets were taken down for restoration in August 2001 and later put back.', clue: 'Two white rockets standing behind a fence to the north east.', source: nysci }, { r: 9 });
     k.egg(v(150, 24.5, -30), { id: 'nm-unisphere', title: 'The Unisphere', year: '1964', text: 'Designed by Gilmore D. Clarke and built by U.S. Steel\'s American Bridge division from March to August 1963 in Type 304L stainless steel for the 1964 World\'s Fair: 140 feet tall, 120 feet across, 700,000 pounds, tilted at 23.5 degrees like the Earth. Its three rings are believed to trace Yuri Gagarin, John Glenn and Telstar. It became a city landmark on May 16, 1995.', clue: 'Look east, past the rockets, for the globe lit in the distance.', source: { name: 'Unisphere, Wikipedia', url: 'https://en.wikipedia.org/wiki/Unisphere' } }, { r: 22 });
 
+    /* 2026-11-25 (wave 9c): the crowd, bulbs, tents and the museum, rockets and Unisphere behind stop casting (a night lot under string lights) */
+    shadowTrim(k, (o, _c, r) => o instanceof T.InstancedMesh || r > 12);
     return { mounts, spawn: v(0, 3, 24), look: v(0, 4.2, -20), eye: 3, bounds: [-23, 23, -72, 27], style: 'steel' };
   },
 };

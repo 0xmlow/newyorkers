@@ -17,7 +17,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero, standIn, hide } from './heroes';
+import { hero, heroInstances, standIn, hide } from './heroes';
+import { hsign } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -217,6 +219,92 @@ function wireMesh() {
 /* a small figure geometry translated to stand at a point, for merging into a moving group */
 function standing(x: number, z: number, ry: number) { const g = figureGeo(0.19, 0.62, 1.12); g.rotateY(ry); g.translate(x, 0, z); return g; }
 
+/* ---------- THE BIG UPGRADE, wave 9a (2026-11-24): helpers for the City Hall loop and the gold vault ----------
+   Poly Haven scans from assets/museum/tex/<room>/ wearing a set colour until the maps land, real models
+   fitted once and placed (more than six as instanced parts), house font signs. All a no-op in node. */
+const W9_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w9L = W9_DOM ? new T.TextureLoader() : null;
+const w9S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w9Scan(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w9L) return k.pbr(`w9-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  const key = room + '/' + id;
+  let e = w9S.get(key);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w9L.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9S.set(key, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w9-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w9Place(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* a Firefly plate from FIREFLY_QUEUE.md, once the main session has made it, takes over a material's map; the mask keeps
+   the window's shape. Until then (or if it never comes) the painted canvas stays. */
+function w9Swap(k: K, m: T.MeshBasicMaterial | T.MeshStandardMaterial, url: string, mask?: T.Texture) {
+  if (!w9L) return;
+  w9L.load(url, (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; m.map = t; if (mask) { m.alphaMap = mask; m.transparent = true; m.alphaTest = 0.4; } m.needsUpdate = true; }, undefined, () => {});
+}
+function w9Mask(kind: 'arch' | 'round' | 'oval') {
+  const W = 256, H = kind === 'arch' ? 640 : kind === 'oval' ? 160 : 256;
+  return canvasTex(W, H, (g) => {
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.fillStyle = '#fff'; g.beginPath();
+    if (kind === 'round') g.arc(W / 2, H / 2, W / 2 - 2, 0, PI * 2);
+    else if (kind === 'oval') g.ellipse(W / 2, H / 2, W / 2 - 4, H / 2 - 4, 0, 0, PI * 2);
+    else { g.moveTo(2, H); g.lineTo(2, W / 2); g.arc(W / 2, W / 2, W / 2 - 2, PI, 0); g.lineTo(W - 2, H); g.closePath(); }
+    g.fill();
+  });
+}
+/* wave 9a triangle pass (lead note): the debug counter runs 2.5 to 3x the scene because of the sun's shadow pass. Once the
+   kit has swapped in its cars and figures, stop shadows from instanced crowds of small things (fence bars, bars of gold,
+   planting, pigeons, the cab models the kit lays on traffic, the crowd figures) and from trees further than `near`
+   metres from the point given. The built architecture keeps its shadows. */
+function w9ShadowTrim(k: K, cx: number, cz: number, near = 24) {
+  if (!W9_DOM) return;
+  const run = () => {
+    if (!k.live) return;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined, nm = (mat && mat.name) || '';
+      if ((m as T.InstancedMesh).isInstancedMesh || nm.startsWith('tripo_') || nm.startsWith('MLOW_')) { m.castShadow = false; return; }
+      if (/leaf|bark|twig/.test(nm)) { const p = new T.Vector3(); m.getWorldPosition(p); if (Math.hypot(p.x - cx, p.z - cz) > near) m.castShadow = false; }
+    });
+  };
+  for (const ms of [1500, 5000, 12000]) setTimeout(run, ms);
+}
+function w9Sign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6, border?: string) {
+  if (!W9_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size, border });
+}
+
 /* ================================================================== */
 /* ---------------- 165 THE LOOP UNDER CITY HALL ---------------- */
 export const cityhallloop: RoomDef = {
@@ -234,13 +322,15 @@ export const cityhallloop: RoomDef = {
     const hour0 = baseHour(k);
     k.sky({ top: 0x07080b, horizon: 0x101216, ground: 0x050505, fog: 0.008, env: 0.35 });
     k.hemi(0x9a8a70, 0x201c16, 0.55);
-    const tileW = k.pbr('chWall', X.subwayTile(0xe4dcc6, 0x8a8070), 1.5, { roughness: 0.35, side: T.DoubleSide }),
+    /* wave 9a: Poly Haven scans: long white glazed tile on the walls, herringbone tile in the vaults, worn tile floors, oak */
+    const CH = 'cityhallloop';
+    const tileW = w9Scan(k, CH, 'long_white_tiles', 1.1, () => X.subwayTile(0xe4dcc6, 0x8a8070), { color: 0xf2ead6, roughness: 0.3, side: T.DoubleSide }, 0xe4dcc6),
       vaultM = new T.MeshStandardMaterial({ map: guastavino(165), roughness: 0.6, side: T.DoubleSide }),
       green = k.flat(0x2f5e45, 0, 0.3), tan = k.flat(0xb8925a, 0, 0.35), cream = k.flat(0xe8e0cc, 0, 0.4, { side: T.DoubleSide }),
-      floorM = k.pbr('chFloor', X.concrete(0x8a867e, 165), 0.4, { roughness: 0.85 }), floorM2 = k.pbr('chFloor2', X.concrete(0x9a948a, 167), 0.4, { roughness: 0.8 }),
+      floorM = w9Scan(k, CH, 'worn_tile_floor', 1.6, () => X.concrete(0x8a867e, 165), { color: 0xc8c0b0, roughness: 0.75 }, 0x8a867e), floorM2 = w9Scan(k, CH, 'worn_tile_floor', 1.6, () => X.concrete(0x9a948a, 167), { color: 0xd8d0c0, roughness: 0.7 }, 0x9a948a, '-m'),
       ballast = k.flat(0x2a2724, 0, 1), rail = k.flat(0x9a9ca0, 1, 0.3), rust = k.flat(0x4a3a30, 0.4, 0.8),
       brass = k.flat(0xc8a050, 1, 0.3), bronze = k.flat(0x6e5230, 0.9, 0.45), bronzeDark = k.flat(0x4a3620, 0.9, 0.5),
-      oak = k.pbr('chOak', X.planks(0x6a4428, 6, 166), 0.8, { roughness: 0.55 }), oakDark = k.flat(0x3e2616, 0, 0.5),
+      oak = w9Scan(k, CH, 'oak', 1.2, () => X.planks(0x6a4428, 6, 166), { color: 0xb88a60, roughness: 0.55 }, 0x6a4428), oakDark = k.flat(0x3e2616, 0, 0.5),
       iron = k.flat(0x1c1c1e, 0.6, 0.5), yellow = k.flat(0xd8b020, 0, 0.7), edgeM = k.flat(0x6a6660, 0, 0.9, { side: T.DoubleSide }),
       tunnelM = k.flat(0x0f0d0b, 0, 1, { side: T.DoubleSide }), tieM = k.flat(0x3a2e24, 0, 0.95),
       silver = k.flat(0xd0d4d8, 0.45, 0.42), carDark = k.flat(0x2a2c30, 0.5, 0.6), glassDark = k.flat(0x1a2028, 0.5, 0.2);
@@ -309,16 +399,25 @@ export const cityhallloop: RoomDef = {
       const g = new T.PlaneGeometry(4.4, 2.7); g.rotateX(PI / 2); g.rotateY(a + PI / 2);
       k.mesh(g, m, p.x, p.y, p.z, true);
       skyMats.push(m); skyLights.push(k.point(p.x, p.y - 1.2, p.z, 0xf4ead8, 8, 12));
+      if (W9_DOM) w9Swap(k, m, 'assets/museum/tex/cityhallloop/ff_vault_light.webp', w9Mask('oval'));
     }
-    /* twelve chandeliers, one from the centre of each vault: a chain, a brass hub, a ring of globes */
+    /* twelve chandeliers, one from the centre of each vault: a chain, a brass hub, a ring of globes.
+       wave 9a: Poly Haven's glass globe chandelier, decimated and instanced, takes their place when it lands */
+    const chMark = k.objects.length, chBulbs: { x: number; y: number; z: number }[] = [], chAt: number[][] = [];
     for (let b = 0; b < BAYS; b++) {
       const a = A0 + (b + 0.5) * BA, p = at(38, a, SY + RV * 0.78 - 0.1);
       k.cyl(0.015, 1.05, p.x, p.y - 0.5, p.z, brass, 0.015, 6);
       k.lathe([[0.04, 0], [0.22, -0.1], [0.3, -0.26], [0.1, -0.4], [0.03, -0.5]], p.x, p.y - 1.0, p.z, brass, 14);
       k.torus(0.58, 0.028, p.x, p.y - 1.42, p.z, brass, 36).rotation.x = PI / 2;
-      for (let i = 0; i < 6; i++) { const t = (i / 6) * PI * 2; k.cyl(0.012, 0.42, p.x + Math.cos(t) * 0.5, p.y - 1.2, p.z + Math.sin(t) * 0.5, brass, 0.012, 5); bulbs.push({ x: p.x + Math.cos(t) * 0.58, y: p.y - 1.42, z: p.z + Math.sin(t) * 0.58 }); }
-      bulbs.push({ x: p.x, y: p.y - 1.62, z: p.z });
+      for (let i = 0; i < 6; i++) { const t = (i / 6) * PI * 2; k.cyl(0.012, 0.42, p.x + Math.cos(t) * 0.5, p.y - 1.2, p.z + Math.sin(t) * 0.5, brass, 0.012, 5); chBulbs.push({ x: p.x + Math.cos(t) * 0.58, y: p.y - 1.42, z: p.z + Math.sin(t) * 0.58 }); }
+      chBulbs.push({ x: p.x, y: p.y - 1.62, z: p.z });
+      chAt.push([p.x, p.y - 2.05, p.z, a]);
       if (b % 2 === 0) k.point(p.x, p.y - 1.9, p.z, 0xffd8a0, 13, 16);
+    }
+    {
+      const chOld = standIn(k, chMark);
+      const chGlow = W9_DOM ? k.instances(new T.SphereGeometry(0.07, 8, 6), new T.MeshBasicMaterial({ color: 0xffe2a8 }), chBulbs.map((q) => new T.Matrix4().makeTranslation(q.x, q.y, q.z))) : null;
+      w9Place(k, 'cityhallloop/chandelier_lo', { height: 1.25 }, chAt, undefined, () => { hide(chOld); if (chGlow) chGlow.visible = false; for (const [x, y, z] of chAt) k.cyl(0.015, 0.85, x, y + 1.25 + 0.42, z, brass, 0.015, 6); });
     }
 
     /* ---- the ends: the platform stops at a tiled wall, the track runs on under a portal into the dark ---- */
@@ -337,6 +436,11 @@ export const cityhallloop: RoomDef = {
       for (let i = 1; i < 10; i++) { const a = A1 + 0.35 * i, p = at(RT + 2.6, a, 1.6); bulbs.push({ x: p.x, y: p.y, z: p.z }); const q = at(RT + 2.6, -a, 1.6); bulbs.push({ x: q.x, y: q.y, z: q.z }); }
     }
 
+    /* wave 9a: the tunnels past both ends are capped and walled in black, so no daylight shows over the portals */
+    for (const [a0, a1] of [[A1, A1 + 0.9], [A0 - 0.9, A0]]) {
+      k.mesh(ringUp(30, 46, a0, a1, 24), tunnelM, 0, SY + RV + 0.25, CZ);
+      for (const r of [RPW - 0.3, RTW + 0.9]) k.mesh(new T.CylinderGeometry(r, r, SY + RV + 1.6, 24, 1, true, a0, a1 - a0), tunnelM, 0, (SY + RV + 1.6) / 2 - 1.3, CZ);
+    }
     /* ---- the train: six silver cars with lit windows, the headlight ahead, a red light behind ---- */
     const L = 15.2, cars: T.Group[] = [];
     {
@@ -379,12 +483,42 @@ export const cityhallloop: RoomDef = {
         place();
       });
     }
+    /* wave 9a, the illusion, quiet: a ghost of a 1904 car stands in the tunnel mouth past the end of the platform, the way
+       Pepper's ghost puts a figure in a stage: lit glass seen at an angle. It is there only when you look straight at the
+       tunnel from the platform, and it is gone whenever the real train is near. */
+    if (W9_DOM) {
+      const ga = A1 + 0.12, gp = at(RT, ga, -0.9);
+      const tex = canvasTex(256, 320, (g) => {
+        /* drawn in light only: a pale outline of the car's front end, its lit windows and lamps, on black (additive) */
+        g.fillStyle = '#000'; g.fillRect(0, 0, 256, 320);
+        g.fillStyle = 'rgba(150,180,220,0.35)'; g.beginPath(); g.moveTo(14, 316); g.lineTo(14, 60); g.quadraticCurveTo(128, 6, 242, 60); g.lineTo(242, 316); g.closePath(); g.fill();
+        g.strokeStyle = '#dce8ff'; g.lineWidth = 7; g.stroke();
+        g.fillStyle = '#ffe6b0'; for (const x of [34, 166]) g.fillRect(x, 92, 56, 78);
+        g.fillStyle = '#fff2d0'; g.fillRect(104, 84, 48, 196);
+        g.strokeStyle = '#c8d8f0'; g.lineWidth = 4; g.strokeRect(14, 196, 228, 10);
+        g.fillStyle = '#ffffff'; for (const x of [44, 212]) { g.beginPath(); g.arc(x, 236, 14, 0, PI * 2); g.fill(); }
+      });
+      const gm = new T.MeshBasicMaterial({ map: tex, transparent: true, opacity: ctx.reduced ? 0.5 : 0, blending: T.AdditiveBlending, depthWrite: false, toneMapped: false, side: T.DoubleSide, color: 0xc8dcff });
+      const ghost = k.mesh(new T.PlaneGeometry(2.8, 3.5), gm, gp.x, gp.y + 1.9, gp.z, true);
+      ghost.rotation.y = ga - PI / 2;
+      const fwd = new T.Vector3(), to = new T.Vector3();
+      if (!ctx.reduced) k.ticks.push((t) => {
+        const cam = (window as unknown as { __museum?: { camera?: T.Camera } }).__museum?.camera; if (!cam) return;
+        cam.getWorldDirection(fwd); to.copy(ghost.position).sub(cam.position); const d = to.length(); to.normalize();
+        const look = clamp01((fwd.dot(to) - 0.88) / 0.1), far = clamp01((d - 5) / 5);
+        const clear = cars.every((c) => c.position.distanceTo(ghost.position) > 24) ? 1 : 0;
+        const want = look * far * clear * (0.8 + 0.1 * Math.sin(t * 1.7));
+        gm.opacity += (want - gm.opacity) * 0.04;
+      });
+    }
     /* a rat on the track bed, the whole loop, all night */
     {
       const rat = new T.Group();
       const body = new T.Mesh(new T.SphereGeometry(0.09, 8, 6), k.flat(0x3a3632, 0, 0.9)); body.scale.set(1, 0.8, 2.2); body.position.y = 0.08; rat.add(body);
       const tail = new T.Mesh(new T.CylinderGeometry(0.008, 0.018, 0.3, 5), k.flat(0x8a7a70, 0, 0.9)); tail.rotation.x = PI / 2; tail.position.set(0, 0.06, -0.32); rat.add(tail);
       k.add(rat);
+      /* wave 9a: Poly Haven's scanned street rat rides the loop in place of the capsule */
+      void hero(k, 'cityhallloop/ph_street_rat', { length: 0.42 }).then((h) => { if (!h || !k.live) return; body.visible = tail.visible = false; h.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; }); rat.add(h); });
       const ratLoop = k.spline(Array.from({ length: 36 }, (_, i) => at(RT - 1.25, (i / 36) * PI * 2 + 0.1, -1.05)), true);
       if (!ctx.reduced) k.rider(rat, ratLoop, 2.3, 40); else { ratLoop.getPointAt(0.05, rat.position); }
     }
@@ -447,6 +581,8 @@ export const cityhallloop: RoomDef = {
       for (let i = -3; i <= 3; i++) { const b = k.box(0.03, 1.0, 0.03, x + Math.cos(ry) * i * 0.16, MY + 1.75, z - Math.sin(ry) * i * 0.16, brass); b.rotation.y = ry; }
     }
     k.keepOut.push({ x: 4.4, z: -12.2, r: 1.85 });
+    w9Place(k, 'cityhallloop/ph_wall_clock', { width: 0.7 }, [[-7.02, MY + 2.25, -12.3, PI / 2]]);
+    w9Sign(k, 'TO CITY HALL PARK', 2.0, 0.3, -4.6, MY + 2.72, MZ1 + 0.17, 0, '#16321f', '#e8dcc0', 'W2 Archivo Expanded', false, 0.55, '#16321f');
     k.bench(-4.6, -12.2, PI / 2, oak, iron);
     for (const [x, z] of [[-3.5, -9.4], [-3.5, -15.4], [3.5, -9.4], [3.5, -15.4]]) { bulbs.push({ x, y: MY + 3.0, z }); k.cyl(0.02, 0.5, x, MY + 3.25, z, brass, 0.02, 6); }
     k.point(-2, MY + 3.2, -9.4, 0xffd8a0, 12, 14); k.point(2, MY + 3.2, -15.4, 0xffd8a0, 12, 14); k.point(0, 1.9, -4.4, 0xffd8a0, 8, 10);
@@ -487,6 +623,7 @@ export const cityhallloop: RoomDef = {
     k.egg(at(38, A0 + 6.5 * BA, SY + RV - 0.7), { id: 'cityhall-guastavino', title: 'Twelve vaults of tile', text: 'The ceiling is made of twelve Guastavino vaults, in the Romanesque Revival style. The main consulting architects for the station were Heins and LaFarge, who designed all the other stations of the first subway.', clue: 'Look up at the tile over your head and count the bays.', source: src }, { r: 2.0 });
     k.egg(at(38, A0 + 2.5 * BA, SY + RV - 0.3), { id: 'cityhall-skylights', title: 'A little of the park', text: 'Three of the vaults had leaded glass skylights, which opened upward to vault lights in City Hall Park.', clue: 'Find the glass in the ceiling and think about what is on the other side of it.', source: src }, { r: 1.6 });
     k.egg(at(38, A0 + 9.5 * BA, SY + RV - 1.3), { id: 'cityhall-chandeliers', title: 'Light from the centre of each vault', text: 'Additional lighting came from twelve chandeliers hung from the centre of the vaults, with floral motifs and nickel finishes.', clue: 'Stand under a chandelier near the far end of the platform.', source: src }, { r: 1.1 });
+    k.egg(at(36, A1 - 0.08, 1.6), { id: 'cityhall-ghost-car', title: 'A car that is not there', text: 'Pepper\'s ghost is a theatre illusion first shown in London in 1862: a figure hidden to one side is lit and reflected in a sheet of glass, so it seems to stand in the scene, transparent, and vanishes when the light goes down. Here it puts an old car in the tunnel mouth past the end of the platform, but only when you look straight at it and the real train is far away.', clue: 'Walk to the end of the platform where the track goes into the dark, wait for the 6 to leave, and look into the tunnel.', source: { name: 'Pepper\'s ghost, Wikipedia', url: 'https://en.wikipedia.org/wiki/Pepper%27s_ghost' } }, { r: 1.6 });
     k.egg(at(RT, -0.3, 0.6), { id: 'cityhall-loop', title: 'The loop the 6 still rides', text: 'The station has a single balloon loop track along a concave platform 240 feet long, on a curve with a radius of 147.25 feet, which left two foot gaps between the train doors and the platform. Passengers who stay on the 6 as it travels round the loop to head back uptown can still see the station go by.', clue: 'Look down at the track where it curves away into the dark.', source: src }, { r: 2.2 });
     k.egg(at(RTW - 0.3, 0.32, 1.9), { id: 'cityhall-plaques-landmark', title: 'Bronze on the trackside wall', year: '1979', text: 'On the trackside wall, facing the platform, are three bronze plaques designed by Gutzon Borglum. The city made the station a landmark in 1979 and it joined the National Register of Historic Places in 2004. By the mid 2000s the staff of the Transit Museum were again giving tours of the station, to museum members.', clue: 'Find the bronze across the track and ask who made it.', source: src }, { r: 1.2 });
 
@@ -519,15 +656,18 @@ export const goldvault: RoomDef = {
     k.sky({ top: 0x4f88d0, horizon: 0xd8e4ee, ground: 0x6a665e, fog: 0.0024, sun: { az: 2.4, el: 0.7, color: 0xfff4e0, size: 8 }, env: 0.6 });
     k.hemi(0xe8e4dc, 0x6a665e, 0.9);
     k.sun(0xfff0d8, 2.4, 30, 70, 40, true, 70);
-    const lime = k.pbr('gvLime', X.ashlar(0xc9bfa6, 166, 6), 0.55, { normal: 0.5, roughness: 0.85 }),
-      sand = k.pbr('gvSand', X.ashlar(0xb99f7c, 167, 6), 0.55, { normal: 0.5, roughness: 0.85 }),
-      limeIn = k.pbr('gvLimeIn', X.ashlar(0xd8cfb8, 168, 5), 0.5, { normal: 0.3, roughness: 0.85 }),
-      limeDark = k.flat(0x8a7f68, 0, 0.85), marble = k.pbr('gvMarble', X.marble(0xb4a68a, 0x7a6a50, 169), 0.3, { roughness: 0.4 }),
+    /* wave 9a: Poly Haven scans: sandstone blocks for the palazzo, marble tiles, cast concrete, smooth floor, steel plate */
+    const GV = 'goldvault';
+    const lime = w9Scan(k, GV, 'lime', 6.0, () => X.ashlar(0xc9bfa6, 166, 6), { color: 0xfaf2e0, normal: 0.45, roughness: 0.85 }, 0xc9bfa6),
+      sand = w9Scan(k, GV, 'lime', 6.0, () => X.ashlar(0xb99f7c, 167, 6), { color: 0xeed8b4, normal: 0.45, roughness: 0.85 }, 0xb99f7c, '-s'),
+      limeIn = w9Scan(k, GV, 'lime', 5.0, () => X.ashlar(0xd8cfb8, 168, 5), { color: 0xfff8ea, normal: 0.35, roughness: 0.85 }, 0xd8cfb8, '-i'),
+      limeDark = k.flat(0x8a7f68, 0, 0.85), marble = w9Scan(k, GV, 'marble', 1.6, () => X.marble(0xb4a68a, 0x7a6a50, 169), { color: 0xd8ccb4, roughness: 0.35 }, 0xb4a68a),
       iron = k.flat(0x1a1a1c, 0.6, 0.5), ironWarm = k.flat(0x2a2420, 0.5, 0.6), bronze = k.flat(0x7a5a34, 0.9, 0.4), brass = k.flat(0xc8a050, 1, 0.3),
       glassDark = k.flat(0x1e2830, 0.4, 0.2), glassSky = k.flat(0x9ab8d0, 0.6, 0.15),
-      asph = k.pbr('gvAsph', X.asphalt(), 0.3), walk = k.pbr('gvWalk', X.pavers(0x9a968c, 170), 0.5), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8),
-      concrete = k.pbr('gvConc', X.concrete(0x8c8a84, 171), 0.4, { roughness: 0.9 }), concDark = k.pbr('gvConc2', X.concrete(0x5e5c58, 172), 0.4, { roughness: 0.9 }),
-      steel = k.flat(0x8a9098, 0.55, 0.55), steelDark = k.flat(0x5a6068, 0.5, 0.6), steelBrushed = k.flat(0xb0b6bc, 0.5, 0.5),
+      asph = w9Scan(k, GV, 'asph', 3.2, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.9 }, 0x34363a), walk = w9Scan(k, GV, 'walk', 2.4, () => X.pavers(0x9a968c, 170), { color: 0xd8d2c6 }, 0x9a968c), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8),
+      concrete = w9Scan(k, GV, 'concrete_wall_008', 2.4, () => X.concrete(0x8c8a84, 171), { color: 0xc8c4bc, roughness: 0.9 }, 0x8c8a84), concDark = w9Scan(k, GV, 'concrete_wall_008', 2.4, () => X.concrete(0x5e5c58, 172), { color: 0x8a8680, roughness: 0.9 }, 0x5e5c58, '-d'),
+      vfloor = w9Scan(k, GV, 'smooth_concrete_floor', 2.0, () => X.concrete(0x8c8a84, 174), { color: 0xe4e2dc, roughness: 0.6 }, 0x8c8a84),
+      steel = w9Scan(k, GV, 'metal_plate', 1.4, () => X.steel(0x8a9098), { color: 0xb8c0c8, metalness: 0.7, roughness: 0.45 }, 0x8a9098), steelDark = k.flat(0x5a6068, 0.5, 0.6), steelBrushed = k.flat(0xb0b6bc, 0.5, 0.5),
       gold = k.flat(0xe0b040, 0.85, 0.3, { envMapIntensity: 1.3, emissive: 0x4a3208, emissiveIntensity: 0.55 }), pale = k.flat(0xd8d4cc, 0, 0.9), cool = k.glow(0xdde8ff),
       offices = k.pbr('gvOff', X.windows(173, 0.25, 0x36404a, false), 0.28, { roughness: 0.6 });
     const bulbs: { x: number; y: number; z: number }[] = [];
@@ -546,7 +686,10 @@ export const goldvault: RoomDef = {
     traffic(k, ctx, { lanes: [{ z: 6.8, dir: -1, n: 4, speed: 7 }, { z: 10.6, dir: -1, n: 3, speed: 8 }, { z: 13.0, dir: 0, n: 5 }], x0: -44, x1: 44, seed: 1665 });
     k.crowd([v(-40, 0, 2.6), v(40, 0, 2.6)], 8, { seed: 1666, spread: 1.4, animate: !ctx.reduced, speed: 1.0 });
     k.crowd([v(-40, 0, 16.2), v(40, 0, 16.2)], 7, { seed: 1667, spread: 1.4, animate: !ctx.reduced, speed: 1.1 });
-    for (const x of [-16, 16]) k.lamp(x, 3.9, 6, iron, 0xffd7a0, 22);
+    /* wave 9a: Poly Haven's cast iron street lamps and the museum's hydrant on the Liberty Street kerb */
+    for (const x of [-16, 16, -34, 34]) { k.keepOut.push({ x, z: 3.9, r: 0.4 }); k.point(x, 4.4, 3.9, 0xffd7a0, 8, 16); }
+    w9Place(k, 'goldvault/street_lamp_lo', { height: 4.8 }, [-16, 16, -34, 34].map((x) => [x, 0, 3.9, PI]));
+    k.keepOut.push({ x: -8, z: 3.9, r: 0.45 }); w9Place(k, 'goldvault/hydrant', { height: 0.8 }, [[-8, 0, 3.9, 0]]);
 
     /* ---- the front: rusticated base, seven floors of windows, an arcade on top, the cornice ---- */
     const FW = 44, FH = 52;
@@ -557,7 +700,21 @@ export const goldvault: RoomDef = {
       for (let c = -4.5; c <= 4.5; c += 1) holes.push({ kind: 'arch', cx: c * 4, y0: 40.6, w: 2.0, h: 4.0 });
       k.mesh(holedWall(FW, FH, 1.0, holes), lime, 0, 0, -0.5);
     }
-    for (let y = 0.75; y < 10.2; y += 0.75) { k.box(FW, 0.05, 0.1, 0, y, 0.02, limeDark); if (Math.round(y / 0.75) % 2) k.box(FW, 0.62, 0.05, 0, y + 0.375, 0.02, sand); }
+    /* wave 9a: the rusticated base built, not painted: rough faced blocks standing proud of the joints, courses alternating
+       sandstone and limestone, laid round the arches as the Liberty Street front is */
+    {
+      const arches = [[0, 0, 3.6, 6.4], ...[-6, -12, -18, 6, 12, 18].map((cx) => [cx, 1.2, 3.0, 6.0])];
+      for (let c = 0; c < 13; c++) {
+        const y0 = c * 0.78, off = c % 2 ? 0.8 : 0;
+        for (let x = -FW / 2 + off; x < FW / 2 - 0.2; x += 1.6) {
+          const x0 = Math.max(-FW / 2, x), x1 = Math.min(FW / 2, x + 1.6), cx = (x0 + x1) / 2;
+          if (arches.some(([ax, ay, aw, ah]) => x1 > ax - aw / 2 - 0.12 && x0 < ax + aw / 2 + 0.12 && y0 < ay + ah + 0.3)) continue;
+          k.box(x1 - x0 - 0.06, 0.72, 0.22, cx, y0 + 0.39, 0.09, c % 2 ? sand : lime);
+        }
+      }
+      /* voussoirs round the seven arches */
+      for (const [ax, ay, aw, ah] of arches) { const R = aw / 2, cy = ay + ah - R; for (let i = 0; i < 11; i++) { const t = (i + 0.5) / 11 * PI, seg = k.box(R * PI / 11 + 0.02, 0.62, 0.24, ax + Math.cos(t) * (R + 0.31), cy + Math.sin(t) * (R + 0.31), 0.1, i % 2 ? sand : lime); seg.rotation.z = t + PI / 2; } }
+    }
     k.box(FW + 0.4, 0.6, 0.7, 0, 10.5, 0.05, limeDark);
     k.box(FW + 0.4, 0.5, 0.6, 0, 38.9, 0.05, limeDark);
     k.box(FW + 1.2, 1.4, 1.8, 0, 52.6, -0.4, limeDark);
@@ -571,7 +728,7 @@ export const goldvault: RoomDef = {
     }
     for (let f = 0; f < 7; f++) for (let c = -4.5; c <= 4.5; c += 1) k.plane(1.7, 2.6, c * 4, 12.7 + f * 3.9, -0.2, glassDark);
     for (let c = -4.5; c <= 4.5; c += 1) k.plane(2.0, 4.0, c * 4, 42.6, -0.2, glassDark);
-    k.sign('FEDERAL RESERVE BANK OF NEW YORK', 19, 1.1, 0, 8.7, 0.56, 'transparent', '#1a1610', 54, 0);
+    w9Sign(k, 'FEDERAL RESERVE BANK OF NEW YORK', 19, 1.0, 0, 8.7, 0.56, 0, '#14110c', '', 'W2 Archivo Expanded', false, 0.7);
     k.block(-FW / 2 - 1, -1.9, -1.2, 0.6); k.block(1.9, FW / 2 + 1, -1.2, 0.6);
     /* the entrance: two steps, bronze doors folded back, Yellin's iron lanterns either side */
     for (let s = 0; s < 2; s++) k.box(5.0 - s * 0.6, 0.15, 1.2 - s * 0.4, 0, 0.075 + s * 0.15, 1.0 - s * 0.2, limeDark);
@@ -615,7 +772,10 @@ export const goldvault: RoomDef = {
       for (const s of [-1, 1]) { k.box(8.0, 1.1, 0.8, s * 6.5, 0.55, -16.4, limeDark); k.box(8.2, 0.08, 1.0, s * 6.5, 1.12, -16.4, marble); k.block(s > 0 ? 2.3 : -10.8, s > 0 ? 10.8 : -2.3, -17.0, -15.8); }
     }
     for (const [x, z] of [[-4, -6], [4, -6], [-4, -11], [4, -11], [0, -17.5]]) { k.cyl(0.02, 2.4, x, 7.3, z, iron, 0.02, 5); k.lathe([[0.03, 0], [0.32, -0.2], [0.34, -0.6], [0.06, -0.8]], x, 6.1, z, iron, 8); bulbs.push({ x, y: 5.6, z }); k.point(x, 5.4, z, 0xffe0b8, 14, 16); }
-    k.sign('GOLD VAULT', 2.2, 0.36, 0, 3.15, LZ1 + 0.28, 'transparent', '#3a3630', 96, 0);
+    w9Sign(k, 'GOLD VAULT', 2.2, 0.36, 0, 3.15, LZ1 + 0.28, 0, '#3a3226', '', 'W2 Archivo Expanded', false, 0.62);
+    k.keepOut.push({ x: 11.3, z: -18.8, r: 0.6 }); w9Place(k, 'goldvault/ph_vintage_grandfather_clock_01', { height: 2.4 }, [[11.35, 0.05, -18.8, -PI / 2]]);
+    fireflyPlate(k, 'assets/museum/tex/goldvault/ff_bedrock_section.webp', 2.4, 1.5, 4.6, VY + 1.75, -26.8 - 0.23, PI, k.flat(0x2a4a6a, 0, 0.8));
+    k.keepOut.push({ x: 7.7, z: -32.4, r: 0.5 }); w9Place(k, 'goldvault/ph_hand_truck', { height: 1.3 }, [[7.7, VY, -32.4, -0.6]]);
     k.box(3.6, 0.3, 0.6, 0, 2.85, LZ1 + 0.1, bronze); for (const s of [-1, 1]) k.box(0.25, 2.7, 0.6, s * 1.68, 1.35, LZ1 + 0.1, bronze);
     k.crowd([v(-9, 0, -3), v(-4, 0, -9), v(3, 0, -12), v(8, 0, -4)], 6, { seed: 1668, spread: 1.2, animate: !ctx.reduced, speed: 0.8, colors: [0x1c1e24, 0x2a2e38, 0x1a1a1c, 0x3a3230, 0xe0dcd0, 0x2c3a4a] });
     still(k, [{ x: -7.4, y: 0, z: -15.3, ry: 0 }, { x: 5.2, y: 0, z: -15.3, ry: 0 }], 1669, [0xe8e4dc, 0x2a2e38]);
@@ -661,7 +821,7 @@ export const goldvault: RoomDef = {
     });
 
     /* ---- the corridor on bedrock, and the scale room off it ---- */
-    k.box(4.4, 0.2, DZ * -1 + EZ0 + 1.2, 0, VY - 0.1, (EZ0 + DZ) / 2, concrete);
+    k.box(4.4, 0.2, DZ * -1 + EZ0 + 1.2, 0, VY - 0.1, (EZ0 + DZ) / 2, vfloor);
     wallZ(k, DZ + 0.6, EZ0, -2.0, 3.2, 0.4, concrete, [], VY);
     wallZ(k, DZ + 0.6, EZ0, 2.0, 3.2, 0.4, concrete, [{ c: -30, w: 1.6, h: 2.4 }], VY);
     k.box(4.8, 0.3, DZ * -1 + EZ0 + 1.2, 0, VY + 3.35, (EZ0 + DZ) / 2, concDark);
@@ -724,11 +884,13 @@ export const goldvault: RoomDef = {
     k.keepOut.push({ x: 1.55, z: -34.6, r: 0.4 });
 
     /* ---- the hall of cages: bars and mesh either side of the aisle, the stacked bars behind them ---- */
+    /* wave 9a: a bar is a trapezoid, the top smaller than the base, as poured; the box was a brick */
+    const barGeo = new T.BoxGeometry(0.18, 0.06, 0.08); { const pa = barGeo.attributes.position as T.BufferAttribute; for (let i = 0; i < pa.count; i++) if (pa.getY(i) > 0) pa.setXYZ(i, pa.getX(i) * 0.84, pa.getY(i), pa.getZ(i) * 0.72); barGeo.computeVertexNormals(); }
     const wire = new T.MeshStandardMaterial({ map: wireMesh(), transparent: true, alphaTest: 0.3, side: T.DoubleSide, roughness: 0.6, metalness: 0.5, color: 0xa0a4a8 });
-    k.box(18.8, 0.2, HZ0 - HZ1 + 0.2, 0, VY - 0.1, (HZ0 + HZ1) / 2, concrete);
+    k.box(18.8, 0.2, HZ0 - HZ1 + 0.2, 0, VY - 0.1, (HZ0 + HZ1) / 2, vfloor);
     k.box(4.4, 0.2, 1.4, 0, VY - 0.1, (DZ + HZ0) / 2 - 0.3, concrete);
     wallZ(k, HZ1, HZ0, -9.4, 3.6, 0.4, concrete, [], VY); wallZ(k, HZ1, HZ0, 9.4, 3.6, 0.4, concrete, [], VY);
-    wallX(k, -9.6, 9.6, HZ0, 3.6, 0.4, concrete, [{ c: 0, w: 4.0, h: 3.4 }], VY); wallX(k, -9.6, 9.6, HZ1, 3.6, 0.4, concrete, [], VY);
+    wallX(k, -9.6, 9.6, HZ0, 3.6, 0.4, concrete, [{ c: 0, w: 4.0, h: 3.4 }], VY); k.block(-9.6, 9.6, HZ1 - 0.6, HZ1 + 0.2);
     k.box(19.2, 0.3, HZ0 - HZ1 + 0.4, 0, VY + 3.75, (HZ0 + HZ1) / 2, concDark);
     for (let z = -39; z > HZ1; z -= 3) { k.box(0.16, 0.05, 1.6, 0, VY + 3.56, z, cool); if (Math.round(z) % 6 === 0 || z === -39) k.point(0, VY + 3.2, z, 0xdde8ff, 9, 10); }
     {
@@ -756,7 +918,46 @@ export const goldvault: RoomDef = {
         }
       }
       const bm = k.instances(new T.BoxGeometry(0.035, 3.4, 0.035), steelDark, bars); bm.frustumCulled = false;
-      k.instances(new T.BoxGeometry(0.18, 0.06, 0.08), gold, goldAt);
+      k.instances(barGeo, gold, goldAt);
+    }
+    /* wave 9a, the illusion: the hall does not end where it seems to. Past the last cage the aisle, the cages, the stacks
+       and the lamps go on at a shrinking scale while the floor rises and the ceiling drops, so eight metres read as
+       thirty, the way Borromini's gallery at the Palazzo Spada does it. A closed gate keeps you out of the trick. */
+    {
+      const z0 = HZ1, DP = 8, sc = (u: number) => 1 - 0.64 * u, yf = (u: number) => VY + 0.9 * u, yc = (u: number) => yf(u) + 3.75 * sc(u);
+      const fM = k.flat(0x7a7872, 0, 0.85), wM = k.flat(0x8c8a84, 0, 0.9), cM = k.flat(0x56544f, 0, 0.9);
+      const quad = (pts: number[][], m: T.Material) => { const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pts.flat(), 3)); g.setIndex([0, 1, 2, 0, 2, 3]); g.computeVertexNormals(); k.mesh(g, m, 0, 0, 0); };
+      const zE = z0 - DP, sE = sc(1), W = 9.4;
+      quad([[-W, VY, z0], [W, VY, z0], [W * sE, yf(1), zE], [-W * sE, yf(1), zE]], fM);
+      quad([[-W, yc(0), z0], [-W * sE, yc(1), zE], [W * sE, yc(1), zE], [W, yc(0), z0]], cM);
+      for (const sd of [-1, 1]) quad(sd < 0 ? [[-W, VY, z0], [-W * sE, yf(1), zE], [-W * sE, yc(1), zE], [-W, yc(0), z0]] : [[W, VY, z0], [W, yc(0), z0], [W * sE, yc(1), zE], [W * sE, yf(1), zE]], wM);
+      quad([[-W * sE, yf(1), zE], [W * sE, yf(1), zE], [W * sE, yc(1), zE], [-W * sE, yc(1), zE]], wM);
+      /* aisle bars at shrinking spacing, cage partitions, stacks and lamps along the way */
+      const bars: T.Matrix4[] = [], stacks: T.Matrix4[] = [], lamps: T.Matrix4[] = [], q0 = new T.Quaternion();
+      const uAt = (z: number) => (z0 - z) / DP;
+      let z = z0 - 0.08, bay = 0;
+      while (z > zE + 0.1) {
+        const u = uAt(z), s1 = sc(u);
+        for (const sd of [-1, 1]) bars.push(new T.Matrix4().compose(v(sd * 1.95 * s1, yf(u) + 1.7 * s1, z), q0, v(s1, s1, s1)));
+        z -= 0.16 * s1;
+      }
+      for (z = z0 - 0.5; z > zE + 0.4; bay++) {
+        const u = uAt(z), s1 = sc(u), step = 2.9 * s1;
+        for (const sd of [-1, 1]) {
+          k.plane(7.2 * s1, 3.4 * s1, sd * 5.55 * s1, yf(u) + 1.7 * s1, z, wire, 0);
+          for (const px of [3.4, 6.4]) if ((bay + (px > 5 ? 1 : 0)) % 4 !== 3) for (let y = 0; y < 8; y++) for (let i = 0; i < 9; i++) stacks.push(new T.Matrix4().compose(v(sd * px * s1 + (i - 4) * 0.2 * s1, yf(u - 0.5 * step / DP) + (0.17 + y * 0.064) * s1, z - step / 2), q0, v(s1, s1, s1)));
+        }
+        lamps.push(new T.Matrix4().compose(v(0, yc(u) - 0.2 * s1, z - step / 2), q0, v(s1, s1, s1)));
+        z -= step;
+      }
+      for (const sd of [-1, 1]) k.plane(DP, 3.4, sd * 1.95 * (1 + sE) / 2, (yf(0) + yf(1)) / 2 + 1.7 * (1 + sE) / 2, z0 - DP / 2, wire, PI / 2);
+      const bm = k.instances(new T.BoxGeometry(0.035, 3.4, 0.035), steelDark, bars); bm.frustumCulled = false;
+      k.instances(barGeo, gold, stacks);
+      k.instances(new T.BoxGeometry(0.16, 0.05, 1.6), cool, lamps);
+      k.point(0, yc(0.5) - 0.6, z0 - DP * 0.45, 0xdde8ff, 6, 10);
+      /* the closed gate across the aisle at the last cage */
+      for (let i = -9; i <= 9; i++) k.box(0.04, 3.2, 0.04, i * 0.2, VY + 1.6, z0 + 0.12, steelDark);
+      for (const y of [VY + 0.1, VY + 1.6, VY + 3.15]) k.box(3.9, 0.06, 0.06, 0, y, z0 + 0.12, steelDark);
     }
     /* the cart: bars on a low steel truck, pulled by one figure and pushed by another, from the scale room to the far end and back */
     const cart = new T.Group(); k.add(cart);
@@ -809,6 +1010,7 @@ export const goldvault: RoomDef = {
     k.egg(v(0, 1.6, (EZ0 + EZ1) / 2), { id: 'goldvault-depth', title: 'Eighty feet down, on bedrock', text: 'The vault sits on the bedrock of Manhattan, 80 feet below street level and 50 feet below sea level. It was built during the construction of the building in the early 1920s.', clue: 'Step into the elevator and wait.', source: bank }, { r: 1.5 });
     k.egg(v(0, VY + 1.7, DZ), { id: 'goldvault-cylinder', title: 'The door that turns', text: 'The only way in is through a 90 ton steel cylinder set in a 140 ton steel and concrete frame. The cylinder turns to open a passage through it, and when it is closed the vault is sealed airtight.', clue: 'Wait at the end of the corridor for the steel to turn.', source: bank }, { r: 2.0 });
     k.egg(v(2.6, VY + 1.5, -46), { id: 'goldvault-compartments', title: 'One hundred and twenty two compartments', year: '1973', text: 'Bars are moved into one of the vault\'s 122 compartments. In 2024 the vault housed approximately 507,000 gold bars, about 6,331 metric tons. The holdings peaked in 1973, when the vault held over 12,000 tons.', clue: 'Walk the aisle between the cages and look through the mesh.', source: bank }, { r: 2.2 });
+    k.egg(v(0, VY + 1.7, HZ1 + 1.0), { id: 'goldvault-perspective', title: 'Eight metres that look like thirty', text: 'The far end of the hall is a forced perspective: everything past the gate is built smaller the further it goes, the floor rises and the ceiling drops, so the eye reads a short room as a long one. Francesco Borromini built the classic example at the Palazzo Spada in Rome in the 1650s, a colonnade under nine metres long that seems about four times longer.', clue: 'Walk to the end of the aisle between the cages and look through the gate.', source: { name: 'Palazzo Spada, Wikipedia', url: 'https://en.wikipedia.org/wiki/Palazzo_Spada' } }, { r: 1.6 });
     k.egg(v(6.8, VY + 2.0, -28.9), { id: 'goldvault-scale', title: 'Weighed to a hundredth of an ounce', text: 'Each gold bar weighs approximately 27 pounds. The vault\'s scale can weigh up to 640 pounds and down to as little as one hundredth of an ounce.', clue: 'Find the balance in the little room off the corridor.', source: bank }, { r: 1.5 });
 
     const floorY = (x: number, z: number) => {
@@ -816,6 +1018,7 @@ export const goldvault: RoomDef = {
       if (z <= EZ0 - 0.1) return VY;
       return 0;
     };
+    w9ShadowTrim(k, 0, 4);
     return { mounts, spawn: v(-3, EYE, 15.2), look: v(0.5, 9, -0.5), eye: EYE, floorY, bounds: [-16, 16, HZ1 + 0.3, 17.6], style: st };
   },
 };

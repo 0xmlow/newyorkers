@@ -9,7 +9,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
-import { hero, heroInstances } from './heroes';
+import { hero, heroInstances, standIn, hide } from './heroes';
+import { scan, fireflyPlate } from './a';
+import { paintTex, hsign, anamorphTex, fit } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const one = new T.Vector3(1, 1, 1);
@@ -67,6 +69,57 @@ function loftSurface(key: string, p: { brick: number; frame: string; seed: numbe
   return s;
 }
 
+/* ---------- THE BIG UPGRADE, wave 8b (2026-11-24): helpers for this file ----------
+   Scanned CC0 surfaces go through a.ts `scan` (assets/museum/tex/<room>/), real CC0 models from assets/museum/props/<room>/
+   are fitted once and set at every spot (seven or more become instanced parts), signs are in the house fonts. All of it
+   runs in node too, where the audit builds the room against a stub canvas and the loaders never resolve. */
+const W8_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const W8_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+/* Poly Haven glass comes as KHR transmission, which makes three draw the room a second time; plain transparency instead,
+   and small props stay out of the shadow pass */
+function solid(o: T.Object3D, shadow = false) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = shadow; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+/* the kit switches shadow casting back on for live meshes when it batches; pin it off for small props */
+function w8NoShadow(o: T.Object3D) { Object.defineProperty(o, 'castShadow', { get: () => false, set: () => {}, configurable: true }); }
+/* One real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function place(k: K, name: string, fitTo: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fitTo).then((h) => {
+    if (!h || !k.live) return;
+    solid(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      for (const p of ins.parts) w8NoShadow(p.im);
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); c.traverse((m) => { if (m instanceof T.Mesh) w8NoShadow(m); }); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* A sign in a house font; a flat plate in node. */
+function w8Sign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, border?: string, size = 0.56) {
+  if (!W8_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, border, size });
+}
+/* Painted lettering for an anamorphic floor piece, lines stacked, `colors` per letter. Null in node. */
+function w8Type(lines: string[], colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W8_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    const lh = h / lines.length;
+    lines.forEach((text, li) => {
+      const s = fit(g, text, font, lh * 0.82, w * 0.94, '800');
+      let x = (w - g.measureText(text).width) / 2, n = 0;
+      for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, lh * (li + 0.5) + s * 0.04); x += g.measureText(ch).width; if (ch === ' ') n--; }
+    });
+  }, [font]);
+}
+
 /* ---------------- 149 WASHINGTON STREET ---------------- */
 export const dumbo: RoomDef = {
   id: 'dumbo',
@@ -80,8 +133,9 @@ export const dumbo: RoomDef = {
     k.sky({ top: 0x4f86d0, horizon: 0xcfdcea, ground: 0x7a746c, fog: 0.0006, sun: { az: 3.7, el: 0.7, color: 0xfff2dc, size: 8 }, env: 0.75 });
     k.hemi(0xd6e4ff, 0x8a8478, 1.2);
     k.sun(0xfff0d8, 2.3, 50, 110, 40, true, 90);
-    const cobble = k.pbr('dCobble', X.cobble(0x6c655e, 149), 0.42, { roughness: 0.95 }), walk = k.pbr('dWalk', X.concrete(0xa8a298, 150), 0.35),
-      granite = k.pbr('dGranite', X.ashlar(0x9a958c, 151, 3), 0.3), pave = k.pbr('dPave', X.pavers(0x9c968a, 152), 0.5), grass = k.pbr('dGrass', X.grass(0x4d6c3c, 153), 0.3, { roughness: 1 }),
+    /* w8b: Belgian block, bluestone flags and granite kerbs are Poly Haven scans (CC0) at true size */
+    const cobble = scan(k, 'dumbo', 'square_cobblestone', 1.5, () => X.cobble(0x6c655e, 149), { color: 0xb8b0a6, roughness: 0.9 }), walk = scan(k, 'dumbo', 'stone_pavers', 2.2, () => X.concrete(0xa8a298, 150), { color: 0xc4beb4, roughness: 0.85 }),
+      granite = scan(k, 'dumbo', 'granite_tile', 1.4, () => X.ashlar(0x9a958c, 151, 3), { color: 0xc0bcb4, roughness: 0.7 }), pave = k.pbr('dPave', X.pavers(0x9c968a, 152), 0.5), grass = k.pbr('dGrass', X.grass(0x4d6c3c, 153), 0.3, { roughness: 1 }),
       loftA = k.pbr('dLoftA', loftSurface('a', { brick: 0x8a3e2c, frame: '#1f2a24', seed: 11 }), 1 / 16, { emissive: 0xffffff, emissiveIntensity: 0.02 + 0.3 * k.night, roughness: 0.9 }),
       loftB = k.pbr('dLoftB', loftSurface('b', { brick: 0x9a5a3e, frame: '#e8e2d2', seed: 12, tall: true }), 1 / 16, { emissive: 0xffffff, emissiveIntensity: 0.02 + 0.3 * k.night, roughness: 0.9 }),
       loftC = k.pbr('dLoftC', loftSurface('c', { brick: 0x6e3226, frame: '#3a4a3a', seed: 13 }), 1 / 16, { emissive: 0xffffff, emissiveIntensity: 0.02 + 0.3 * k.night, roughness: 0.9 }),
@@ -274,7 +328,8 @@ export const dumbo: RoomDef = {
       const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), up = new T.Vector3(0, 1, 0), hide = new T.Vector3(0.0001, 0.0001, 0.0001);
       hs.forEach((h, j) => { q.setFromAxisAngle(up, -h.a - PI / 2); p.set(Math.cos(h.a) * h.r, 2.6, Math.sin(h.a) * h.r); m.compose(p, q, one); poles.setMatrixAt(j, m); });
       poles.instanceMatrix.needsUpdate = true;
-      /* 2026-10-28: Jane's Carousel gets the carved hero horse too (h_carousel_horse), instanced on the rig */
+      /* 2026-10-28: Jane's Carousel gets the carved hero horse too (h_carousel_horse), instanced on the rig; w8b: a copy cut
+         to 1,800 triangles (dumbo/carousel_horse) */
       let steeds: ReturnType<typeof heroInstances> | null = null;
       const hq = new T.Quaternion(), hm = new T.Matrix4();
       const place = (t: number) => {
@@ -288,7 +343,7 @@ export const dumbo: RoomDef = {
         steeds?.commit();
       };
       place(0);
-      void hero(k, 'h_carousel_horse_lo', { height: 1.85 }).then((g) => { if (!g) return; steeds = heroInstances(k, g, NH); for (const pt of steeds.parts) { rig.add(pt.im); pt.im.castShadow = false; } horses.visible = poles.visible = false; place(0); });
+      void hero(k, 'dumbo/carousel_horse', { height: 1.85 }).then((g) => { if (!g) return; steeds = heroInstances(k, g, NH); for (const pt of steeds.parts) { rig.add(pt.im); pt.im.castShadow = false; } horses.visible = poles.visible = false; place(0); });
       const cone = new T.Mesh(new T.CylinderGeometry(0.4, 8.3, 2.2, 24, 1, true), cream); cone.position.y = 5.6; rig.add(cone);
       const board = new T.Mesh(new T.CylinderGeometry(8.35, 8.35, 0.9, 32, 1, true), cream); board.position.y = 4.4; rig.add(board);
       for (const y of [3.95, 4.85]) { const tr = new T.Mesh(new T.TorusGeometry(8.37, 0.05, 6, 64), gilt); tr.rotation.x = PI / 2; tr.position.y = y; rig.add(tr); }
@@ -307,8 +362,9 @@ export const dumbo: RoomDef = {
       g.add(new T.Mesh(mergeGeometries(wins)!, k.flat(0x1a2028, 0.3, 0.3)));
       const lamp = new T.Mesh(new T.BoxGeometry(2.2, 0.3, 0.1), k.glow(0xfff2c8)); lamp.position.set(0, 1.2, dir > 0 ? -9.05 : 9.05 + 7 * 18.6); g.add(lamp);
       g.rotation.y = TH; k.add(g);
-      /* 2026-10-28: the eight box cars become hero cars (h_subway_car_lo), instanced inside the train; boxes stay until it loads */
-      void hero(k, 'h_subway_car_lo', { box: [3.0, 3.6, 18] }).then((h) => {
+      /* 2026-10-28: the eight box cars become hero cars (h_subway_car_lo), instanced inside the train; boxes stay until it loads.
+         w8b: a copy cut from 22,000 to 4,000 triangles (dumbo/subway_car), sixteen cars forty metres up */
+      void hero(k, 'dumbo/subway_car', { box: [3.0, 3.6, 18] }).then((h) => {
         if (!h) return;
         const cars = heroInstances(k, h, 8);
         for (const pt of cars.parts) { g.add(pt.im); pt.im.frustumCulled = false; pt.im.castShadow = false; }
@@ -347,7 +403,8 @@ export const dumbo: RoomDef = {
     }
     /* ---- the people: the picture takers in the middle of the street, a couple in their wedding clothes, everyone else walking ---- */
     const phone = k.flat(0x101214, 0.5, 0.3);
-    for (const [x, z, c] of [[-1.6, -2.5, 0x2a2a34], [1.3, -4.2, 0xe8e2d4], [0.2, -6.0, 0x8a3a3a], [-2.9, -5.2, 0x33477f], [2.8, -1.8, 0x151517], [-0.6, -9.5, 0xc9a25a]] as [number, number, number][]) {
+    /* w8b: the picture takers stand a few metres further down the street now, so the chalk piece in front of them reads */
+    for (const [x, z, c] of [[-1.6, -12.5, 0x2a2a34], [1.3, -14.2, 0xe8e2d4], [0.2, -16.0, 0x8a3a3a], [-2.9, -15.2, 0x33477f], [2.8, -11.8, 0x151517], [-3.6, -18.5, 0xc9a25a]] as [number, number, number][]) {
       figure(k, x, 0, z, c, { rotY: 0 });
       k.box(0.08, 0.15, 0.015, x + 0.05, 1.42, z - 0.3, phone);
       k.keepOut.push({ x, z, r: 0.5 });
@@ -364,6 +421,32 @@ export const dumbo: RoomDef = {
       k.crowd([v(7.4, 0.14, 40), v(7.4, 0.14, -10), v(7.4, 0.14, -54), v(12, 0.1, -64), v(28, 0.1, -66)], 14, { seed: 150, speed: 0.85, spread: 1.4 });
       k.crowd([v(-70, 0.1, 7.2), v(-10, 0.1, 7.2), v(10, 0.1, 5), v(70, 0.1, 7.2)], 12, { seed: 151, speed: 1.0, spread: 1.2 });
       k.crowd([v(-44, 0.1, -64), v(-14, 0.1, -66), v(0, 0.1, -96), v(-44, 0.1, -97)], 14, { seed: 152, speed: 0.7, spread: 2.2, closed: true });
+    }
+    /* ---- w8b: the street furnished with real models ---- */
+    {
+      /* fire escapes up the street fronts of the lofts and water towers on the roofs (the kit's own baked models) */
+      const fe: number[][] = [];
+      for (const s of [-1, 1]) for (const z of [-17.8, -29.8, -42, 20, 41]) for (let f = 0; f < 3; f++) fe.push([s * 9 + -s * 0.82, 6.4 + f * 4.2, z, s < 0 ? -PI / 2 : PI / 2]);
+      place(k, 'dumbo/fire_escape', { height: 4.2 }, fe, (o) => o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.map = null; m.color.setHex(0x26292c); m.metalness = 0.55; m.roughness = 0.55; c.material = m; } }));
+      place(k, 'water_tower', { height: 7.5 }, [[-22, 30, -18, 0.4], [-48, 30, -24, 1.1], [26, 34, -16, 0.2], [52, 34, -22, 2], [-30, 24, -44, 0.7], [34, 27, -46, 1.4], [-26, 26, 22, 0.3], [30, 22, 30, 1]]);
+      /* cast iron street lamps on both sidewalks (Poly Haven street_lamp_01, CC0) */
+      place(k, 'dumbo/gaslamp', { height: 4.4 }, [[-7.0, 0.14, -25.5, PI / 2], [7.0, 0.14, -33.5, -PI / 2], [-7.0, 0.14, -48, PI / 2], [7.0, 0.14, -16, -PI / 2], [-7.0, 0.14, 14, PI / 2], [7.0, 0.14, 26, -PI / 2]]);
+      for (const [x, z] of [[-7, -25.5], [7, -33.5], [-7, -48], [7, -16], [-7, 14], [7, 26]]) k.keepOut.push({ x, z, r: 0.35 });
+      /* cars parked at the kerb between the hung works, a cab among them */
+      for (const [name, x, z, r] of [['h_car_camry_lo', -5.0, -29.8, 0], ['h_taxi', 5.0, -29.8, PI], ['h_car_escape_lo', 5.0, 30, PI], ['h_car_camry_lo', -5.0, 44, 0]] as [string, number, number, number][]) { place(k, name, { length: 4.6 }, [[x, 0.02, z, r]], (o) => o.traverse((c) => { c.userData.cab = true; })); k.block(x - 1.0, x + 1.0, z - 2.4, z + 2.4); }
+      /* crates and barrels on the loading docks, trash cans on the corners (Poly Haven, CC0) */
+      place(k, 'dumbo/crate', { width: 1.0 }, [[-8.2, 0.14, -17.4, 0.2], [-8.25, 0.56, -17.6, 1.4], [8.2, 0.14, -42.3, -0.3], [8.3, 0.14, -41.1, 0.9]]);
+      place(k, 'dumbo/barrel', { height: 0.95 }, [[-8.2, 0.14, -18.6, 0], [8.3, 0.14, -43.4, 1]]);
+      place(k, 'dumbo/trash', { width: 1.2 }, [[6.9, 0.14, 9.2, PI / 2], [-6.9, 0.14, -6.6, -PI / 2]]);
+      for (const [x, z] of [[-8.2, -18], [8.25, -42.2], [6.9, 9.2], [-6.9, -6.6]]) k.keepOut.push({ x, z, r: 0.7 });
+      /* a ghost sign high on the brick, read from the corner */
+      w8Sign(k, 'STORAGE  ·  CARTAGE  ·  LOFTS', 16, 2.2, -8.95, 22, -20, PI / 2, 'rgba(236,226,200,0.55)', '', 'W2 Archivo Expanded', false, undefined, 0.62);
+      w8Sign(k, 'FIREPROOF WAREHOUSE', 14, 1.4, 8.95, 25.5, -19, -PI / 2, 'rgba(236,226,200,0.5)', '', 'W2 Archivo Expanded', false, undefined, 0.62);
+      fireflyPlate(k, 'assets/museum/tex/dumbo/ff_ghost_sign.webp', 16, 5.2, -8.97, 15.6, -19.5, PI / 2, W8_HIDDEN);
+      /* the illusion: SAY CHEESE chalked flat on the cobbles, stretched down the street, so that from the corner it
+         stands up in front of the picture takers like a placard; walk onto it and it smears into the stones */
+      { const t = w8Type(['SAY CHEESE'], ['#f4f0e8', '#f29ab8', '#8fd3f0'], 1024, 256, 'W2 Permanent Marker'); if (t) anamorphTex(k, t, 0, 5, 3, 0.0, 0, 10, 4.2, 0.75, 0.85); }
+      k.egg(v(0, 0.4, -6.5), { id: 'dumbo-chalk', title: 'Chalk that stands up', text: 'SAY CHEESE is chalked flat across the cobbles and stretched down the street, so that from the corner of Water Street it stands up like a placard in front of everyone taking the picture. Take a step onto it and it falls back into long smears on the stones. Pavement artists have done this since the 1980s; the trick is anamorphosis, the same one Hans Holbein used to hide a skull across the floor of The Ambassadors in 1533.', clue: 'Go back to the corner and look down at the cobbles.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
     }
     /* ---- the works: on the brick under the canopies, and on the Water Street corners ---- */
     const mounts: Mount[] = [];
@@ -397,9 +480,10 @@ export const bowbridge: RoomDef = {
     k.sky({ top: 0x3f7fd6, horizon: 0xc4d8ec, ground: 0x6a6a58, fog: 0.0006, sun: { az: 2.3, el: 0.55, color: 0xfff0d6, size: 8 }, env: 0.7 });
     k.hemi(0xd8e6ff, 0x8a8478, 1.2);
     k.sun(0xfff0d6, 2.4, -70, 80, 70, true, 90);
-    const grass = k.pbr('bbGrass', X.grass(0x5f7240, 161), 0.3, { roughness: 1 }), path = k.pbr('bbPath', X.asphalt(0x4c4c50), 0.4, { roughness: 0.9 }),
-      schist = k.pbr('bbRock', X.concrete(0x6c6862, 162), 0.5, { roughness: 0.95 }), granite = k.pbr('bbAbut', X.ashlar(0x7a7266, 163, 4), 0.6),
-      planks = k.pbr('bbDeck', X.planks(0x7a6450, 6, 164), 1.2, { roughness: 0.7 }), iron = k.flat(0xe6dfcc, 0.3, 0.5),
+    /* w8b: lawn, the park's asphalt paths, the dressed stone of the abutments and the deck boards are Poly Haven scans (CC0) */
+    const grass = scan(k, 'bowbridge', 'leafy_grass', 2.4, () => X.grass(0x5f7240, 161), { color: 0xb0b88c, roughness: 1 }), path = scan(k, 'bowbridge', 'asphalt_02', 3, () => X.asphalt(0x4c4c50), { color: 0x9a9a9a, roughness: 0.9 }),
+      schist = k.pbr('bbRock', X.concrete(0x6c6862, 162), 0.5, { roughness: 0.95 }), granite = scan(k, 'bowbridge', 'stone_brick_wall_001', 2.2, () => X.ashlar(0x7a7266, 163, 4), { color: 0xb8b0a4 }),
+      planks = scan(k, 'bowbridge', 'wood_planks_grey', 1.6, () => X.planks(0x7a6450, 6, 164), { color: 0xb8a890, roughness: 0.7 }), iron = k.flat(0xe6dfcc, 0.3, 0.5),
       post = k.flat(0x2c3a30, 0.5, 0.5), wood = k.flat(0x6a4a32, 0, 0.8), buff = k.pbr('bbHouse', X.brick(0xc8b08a, 165), 0.9), copper = k.flat(0x5d7f6e, 0.3, 0.6),
       glass = k.glass(0xcfe6f2, 0.3, 0.1), easelWood = k.flat(0x8a6a44, 0, 0.7), canvasBack = k.flat(0xe8e2d4, 0, 0.9), plant = k.flat(0x4a6a2e, 0, 0.9), bloom = k.flat(0xc8402a, 0, 0.8);
     /* ---- the Lake and its banks: water everywhere, land laid on top in pieces so none of it sits under the water ---- */
@@ -417,9 +501,17 @@ export const bowbridge: RoomDef = {
       for (let x = -13; x > -62; x -= 2.6) pts.push([x, -40 - rnd() * 0.5]);
       for (let x = 13; x < 44; x += 2.6) pts.push([x, -40 - rnd() * 0.5]);
       for (let x = -62; x < 44; x += 3.2) pts.push([x, -128 + rnd() * 0.6]);
-      const rocks = k.instances(new T.DodecahedronGeometry(1, 0), schist, pts.map(([x, z]) => { const s = 0.6 + rnd() * 0.9; return new T.Matrix4().compose(v(x, -0.7 + s * 0.3, z), new T.Quaternion().setFromEuler(new T.Euler(rnd() * 3, rnd() * 3, rnd() * 3)), v(s * 1.3, s * 0.7, s)); }));
-      void rocks;
-      for (let i = 0; i < 26; i++) { const x = 30 + rnd() * 40, z = -40 + rnd() * 50, s = 1 + rnd() * 2.2; const o = k.mesh(new T.DodecahedronGeometry(s, 0), schist, x, s * 0.25, z); o.scale.set(1.4, 0.55, 1.1); o.rotation.y = rnd() * 3; }
+      const sizes = pts.map(() => 0.6 + rnd() * 0.9);
+      const rocks = k.instances(new T.DodecahedronGeometry(1, 0), schist, pts.map(([x, z], i) => { const s = sizes[i]; return new T.Matrix4().compose(v(x, -0.7 + s * 0.3, z), new T.Quaternion().setFromEuler(new T.Euler(rnd() * 3, rnd() * 3, rnd() * 3)), v(s * 1.3, s * 0.7, s)); }));
+      const mark = k.objects.length, big: number[][] = [];
+      for (let i = 0; i < 26; i++) { const x = 30 + rnd() * 40, z = -40 + rnd() * 50, s = 1 + rnd() * 2.2, ry = rnd() * 3; const o = k.mesh(new T.DodecahedronGeometry(s, 0), schist, x, s * 0.25, z); o.scale.set(1.4, 0.55, 1.1); o.rotation.y = ry; big.push([x, -0.15, z, ry, s * 1.2]); }
+      /* w8b: the shore is real scanned boulders now (Poly Haven namaqualand_boulder_02 and rock_07, CC0, cut to 1,500
+         triangles), instanced; the code stones stay until they load */
+      const old = standIn(k, mark);
+      const ra: number[][] = [], rb: number[][] = [];
+      pts.forEach(([x, z], i) => (i % 3 ? ra : rb).push([x, -1.05, z, rnd() * 6.3, sizes[i] * 1.15]));
+      place(k, 'bowbridge/boulder_a', { width: 2.0 }, ra, (o) => o.traverse((c) => { if (c instanceof T.Mesh) (c.material as T.MeshStandardMaterial).color.multiplyScalar(0.8); }), () => { rocks.visible = false; });
+      place(k, 'bowbridge/boulder_b', { width: 1.8 }, [...rb, ...big], undefined, () => hide(old));
     }
     /* the paths: asphalt, the east shore, down each bank and onto the bridge */
     k.box(88, 0.05, 3, 0, 0.02, 7.6, path);
@@ -627,6 +719,53 @@ export const bowbridge: RoomDef = {
       k.crowd(across, 12, { seed: 150, speed: 0.8, spread: 1.4 });
       k.crowd([v(-25, 0, -26), v(-25, 0, 7.6), v(25, 0, 7.6), v(25, 0, -26)], 20, { seed: 151, speed: 0.9, spread: 1.6 });
       k.crowd([v(-44, 0, 7.6), v(44, 0, 7.6)], 8, { seed: 152, speed: 0.7, spread: 1.4 });
+    }
+    /* ---- w8b: benches, swans, the park's sign, and the painter's canvas ---- */
+    {
+      /* Central Park benches along the shore path, facing the water (our cp_bench model) */
+      place(k, 'cp_bench', { width: 1.9 }, [[-15, 0, 5.7, PI], [-10, 0, 5.7, PI], [20.5, 0, 5.7, PI], [25.5, 0, 5.7, PI]]);
+      for (const x of [-15, -10, 20.5, 25.5]) k.block(x - 1, x + 1, 5.3, 6.1);
+      /* a park sign on two posts by the path */
+      for (const dx of [-0.75, 0.75]) k.box(0.1, 1.5, 0.1, -6 + dx, 0.75, 5.9, wood);
+      w8Sign(k, 'BOW BRIDGE  ·  THE LAKE  ·  THE RAMBLE', 1.9, 0.42, -6, 1.3, 5.96, 0, '#f2ead8', '#4a3220', 'W2 Archivo Expanded', false, '#d8c8a8', 0.52);
+      k.keepOut.push({ x: -6, z: 5.9, r: 0.9 });
+      /* two mute swans gliding round the far side of the arch (our swan model) */
+      if (!ctx.reduced) for (const [i, pts] of [[v(-20, -1, -60), v(10, -1, -66), v(18, -1, -84), v(-8, -1, -92), v(-30, -1, -78)], [v(30, -1, -56), v(44, -1, -70), v(30, -1, -90), v(16, -1, -72)]].entries()) {
+        const g = new T.Group(); k.add(g);
+        void hero(k, 'swan', { height: 0.9 }).then((h) => { if (h && k.live) { solid(h); h.position.y = -0.12; h.rotation.y = PI; g.add(h); } });
+        k.rider(g, k.spline(pts, true), 0.45 + i * 0.1, i * 30);
+      }
+    }
+    /* ---- w8b: the illusion. A painter's canvas on a tall easel by the path, painted with exactly the view behind it.
+       From where you come in the picture lines up with the lake and the bridge and all but disappears; step to one side
+       and it is a painting on an easel again. The picture is the scene itself, drawn from the visitor's eye through the
+       canvas's own frame every four seconds, so the boats in it move on a little late. ---- */
+    {
+      const E = v(0, 3, 8), CX = -0.9, CY = 2.5, CZ = 5.0, CW = 1.8, CH = 1.2;
+      for (const s of [-1, 1]) k.beam(v(CX + s * 0.06, CY + CH / 2 + 0.25, CZ - 0.1), v(CX + s * 0.62, 0, CZ - 0.3), 0.035, easelWood, 5);
+      k.beam(v(CX, CY + CH / 2 + 0.25, CZ - 0.12), v(CX, 0, CZ - 1.1), 0.035, easelWood, 5);
+      k.box(CW + 0.2, 0.06, 0.16, CX, CY - CH / 2 - 0.05, CZ + 0.04, easelWood);
+      k.box(CW + 0.08, CH + 0.08, 0.04, CX, CY, CZ - 0.03, canvasBack);
+      k.keepOut.push({ x: CX, z: CZ - 0.2, r: 0.8 });
+      if (W8_DOM && k.o.renderer) {
+        const hi = k.o.quality === 'high', rt = new T.WebGLRenderTarget(hi ? 768 : 384, hi ? 512 : 256, { type: T.HalfFloatType, colorSpace: T.LinearSRGBColorSpace });
+        const near = CZ - E.z < 0 ? E.z - CZ : CZ - E.z;
+        const cam = new T.PerspectiveCamera(); cam.position.copy(E); cam.updateMatrixWorld();
+        /* the near plane sits a metre behind the canvas so the easel itself never gets into its own picture */
+        const f = (near + 1) / near; cam.projectionMatrix.makePerspective((CX - CW / 2 - E.x) * f, (CX + CW / 2 - E.x) * f, (CY + CH / 2 - E.y) * f, (CY - CH / 2 - E.y) * f, near + 1, 3000); cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+        const pic = k.mesh(new T.PlaneGeometry(CW, CH), new T.MeshBasicMaterial({ map: rt.texture, color: 0x000000 }), CX, CY, CZ, true);
+        const r = k.o.renderer; let last = -9, shown = false;
+        k.ticks.push((t) => {
+          if (t - last < (hi ? 4 : 6) || t < 2.5) return;
+          last = t;
+          const prev = r.getRenderTarget(), auto = r.shadowMap.autoUpdate;
+          pic.visible = false; r.shadowMap.autoUpdate = false;
+          r.setRenderTarget(rt); r.render(k.scene, cam); r.setRenderTarget(prev);
+          r.shadowMap.autoUpdate = auto; pic.visible = true;
+          if (!shown) { shown = true; (pic.material as T.MeshBasicMaterial).color.set(0xffffff); }
+        });
+      }
+      k.egg(v(CX, CY, CZ + 0.3), { id: 'bow-magritte', title: 'The painting that is a window', year: '1933', text: 'The canvas on the easel by the path is painted with exactly what stands behind it, so from where you come in it lines up with the lake and the bridge and almost disappears. Step to one side and it is a painting again. René Magritte set up the same puzzle in The Human Condition of 1933: a painting on an easel in front of a window, showing exactly the landscape it hides.', clue: 'Stand where you came in and look for the edge of the picture.', source: { name: 'The Human Condition (Magritte), Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Human_Condition_(Magritte)' } }, { r: 1.2 });
     }
     /* ---- what the Lake knows ---- */
     const src = { name: 'Bow Bridge (Central Park), Wikipedia', url: 'https://en.wikipedia.org/wiki/Bow_Bridge_(Central_Park)' };

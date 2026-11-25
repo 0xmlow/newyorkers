@@ -12,10 +12,92 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero } from './heroes';
+import { hero, heroInstances, standIn, hide } from './heroes';
+import { paintTex, hsign, anamorphTex } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): helpers for this file's rooms ----------
+   The wave 6 pattern (x2.ts), kept local: scanned CC0 surfaces (Poly Haven) from assets/museum/tex/<room>/ that wear a
+   sensible colour until their maps land, real models from assets/museum/props/<room>/ placed once or many at a time
+   (more than six become instanced parts; glass transmission and prop shadows stripped on load), and floor type for the
+   one trick each room gets. Safe in node: the audit builds with no DOM, so scans fall back to paint. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w9 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w9-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w9.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w9-${room}-${id}-${metres}`, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* glass that would make three.js draw the room twice becomes plain transparency */
+function unglass(o: T.Object3D) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const p = m as T.MeshPhysicalMaterial; if (p.transmission) { p.transmission = 0; p.transparent = true; p.opacity = 0.35; p.depthWrite = false; p.needsUpdate = true; } } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?, rotX?, rotZ?]; more than six become instanced parts.
+   `then` gets the placed copies when they are separate objects (six or fewer), for the ones that move. */
+type At = [number, number, number, number, number?, number?, number?];
+function put(k: K, name: string, fit: Parameters<typeof hero>[2], at: At[], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void, shadow = false) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    unglass(h);
+    if (tweak) tweak(h);
+    if (!shadow) h.traverse((c) => { c.castShadow = false; });
+    const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler();
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length);
+      at.forEach(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => ins.setAt(i, m.compose(v(x, y, z), q.setFromEuler(e.set(rx, r, rz, 'YXZ')), v(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(rx, r, rz, 'YXZ'); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* Recolour every material of a loaded model, without touching the shared source. */
+function tint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.2, emissive = 0) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; if (emissive) { n.emissive.setHex(hex); n.emissiveIntensity = emissive; } m = n; cache.set(src, m); } c.material = m; });
+}
+/* wave 9c shadow trim: the debug counter is two to three times the scene because of the sun's shadow pass. After the build,
+   and again every few seconds while models and the cast arrive, every mesh `drop` names stops casting. */
+function shadowTrim(k: K, drop: (o: T.Mesh, c: T.Vector3, r: number) => boolean) {
+  let next = 1.5; const c = new T.Vector3();
+  k.ticks.push((t) => {
+    if (t < next || next > 40) return; next = t + 4;
+    k.scene.traverse((o) => { if (!(o instanceof T.Mesh) || !o.castShadow) return; const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); c.copy(g.boundingSphere!.center).applyMatrix4(o.matrixWorld); if (drop(o, c, g.boundingSphere!.radius)) o.castShadow = false; });
+  });
+}
+/* Painted lettering for an anamorphic floor piece, in a house font, fitted to the canvas. */
+function floorType(text: string, fg: string, w = 1024, h = 256, font = 'W2 Archivo Expanded', stroke?: string) {
+  return paintTex(w, h, (g) => { g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } if (stroke) { g.strokeStyle = stroke; g.lineWidth = s * 0.08; g.lineJoin = 'round'; g.strokeText(text, w / 2, h / 2); } g.fillStyle = fg; g.fillText(text, w / 2, h / 2); }, [font]);
+}
 const ONE = new T.Vector3(1, 1, 1);
 
 /* ---------------- helpers, copied from v14 and v3 (nothing there is exported) ---------------- */
@@ -238,13 +320,15 @@ export const cherryesplanade: RoomDef = {
     k.sky({ top: 0x5a9be0, horizon: 0xe2ecf4, ground: 0x6a7a5a, fog: 0.0021, sun: { az: 2.35, el: 0.72, color: 0xfff4e4, size: 8 }, env: 0.7 });
     k.hemi(0xe4ecf8, 0x5a6a4a, 0.95);
     k.sun(0xfff0dc, 2.4, 40, 70, 30, true, 120);
-    const grass = k.pbr('ceGrass', X.grass(0x4d7a3a, 173), 0.08, { roughness: 1 }),
-      gravel = k.pbr('ceGravel', X.pavers(0xb8ae9c, 174), 0.6, { roughness: 1, normal: 0.3 }),
-      gravelD = k.pbr('ceGravelD', X.pavers(0xa89e8c, 175), 0.6, { roughness: 1, normal: 0.3 }),
+    /* 2026-11-24 (wave 9): scanned CC0 surfaces (Poly Haven): a leafy spring lawn, gravel walks with petals already down on
+       them, and hinoki boards for the viewing deck and the bridge */
+    const grass = sc(k, 'cherryesplanade', 'leafy_grass', 2.6, () => X.grass(0x4d7a3a, 173), { roughness: 1, color: 0xb8d0a0 }, 0x4a6a3a),
+      gravel = sc(k, 'cherryesplanade', 'flower_scattered_gravel', 2.2, () => X.pavers(0xb8ae9c, 174), { roughness: 1, color: 0xffffff }, 0xa89e8c),
+      gravelD = sc(k, 'cherryesplanade', 'flower_scattered_gravel', 1.7, () => X.pavers(0xa89e8c, 175), { roughness: 1, color: 0xf4ece4 }, 0x988e7c),
       bark = k.pbr('bark', X.bark(), 0.7, { roughness: 1 }),
       stone = k.pbr('ceStone', X.ashlar(0xcdbfa4, 176, 5), 0.5, { normal: 0.4, roughness: 0.85 }),
       terra = k.pbr('ceTerra', X.terrazzo(0xb8785a, 177), 0.5, { roughness: 0.6 }),
-      plank = k.pbr('cePlank', X.planks(0x8a6a48, 8, 178), 0.8, { roughness: 0.7 }),
+      plank = sc(k, 'cherryesplanade', 'hinoki_planks', 1.6, () => X.planks(0x8a6a48, 8, 178), { roughness: 0.7, color: 0xc8a888 }, 0x8a6a48),
       darkWood = k.flat(0x3a2818, 0, 0.7), vermilion = k.flat(0xc8321e, 0, 0.55), iron = k.flat(0x1e2226, 0.6, 0.5),
       white = k.flat(0xf2f0ea, 0, 0.6), whiteD = k.flat(0xf2f0ea, 0, 0.6, { side: T.DoubleSide }), rock = k.flat(0x6e6a62, 0, 0.95), rockD = k.flat(0x5a5650, 0, 0.95),
       granite = k.flat(0x8a8680, 0, 0.9), tile = k.flat(0x3a3c40, 0.1, 0.8), soil = k.flat(0x3a2a1c, 0, 1),
@@ -339,20 +423,27 @@ export const cherryesplanade: RoomDef = {
       if (!ctx.reduced) k.ticks.push(place);
     }
     /* benches along the lawn edge facing in, the works on boards between them; a Sakura Matsuri crowd on the grass and the walks */
+    const benchMark = k.objects.length, benchAt: At[] = [];
+    for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const r = s > 0 ? PI / 2 : -PI / 2; bench(k, s * 12.9, -34 + i * 12.5, r, plank, iron); benchAt.push([s * 12.9, 0, -34 + i * 12.5, r + PI]); }
+    /* 2026-11-24 (wave 9): the benches are the real slatted park bench (our cp_bench model), the built ones stand in until it loads */
+    if (k.o.quality === 'high') { const old = standIn(k, benchMark); put(k, 'cherryesplanade/cp_bench', { width: 2.1 }, benchAt, undefined, () => hide(old)); }
     for (const s of [-1, 1]) {
-      for (let i = 0; i < 6; i++) bench(k, s * 12.9, -34 + i * 12.5, s > 0 ? PI / 2 : -PI / 2, plank, iron);
       for (const z of [-27.5, -3.5, 20.5]) boardR(k, mounts, s * 13.1, 0, z, s > 0 ? -PI / 2 : PI / 2, 2.4, 1.7, st, white, iron);
     }
     {
       const seated: { x: number; y: number; z: number; ry: number; sit?: boolean }[] = [];
+      const rugs: [number, number][] = [];
       const blankets = [0xc83a4a, 0x2a4a8a, 0xe8d8a0, 0x4a8a5a, 0xf0f0f0, 0x8a4a9a];
       for (let g = 0; g < 16; g++) {
-        const cx = (rnd() - 0.5) * 20, cz = -34 + rnd() * 60, n = 2 + Math.floor(rnd() * 4);
+        const cx = (rnd() - 0.5) * 20, cz0 = -34 + rnd() * 60, cz = Math.abs(cx) < 9 && cz0 > 7 && cz0 < 25 ? cz0 - 18 : cz0, n = 2 + Math.floor(rnd() * 4);
         k.box(2.2, 0.02, 1.7, cx, 0.02, cz, k.flat(blankets[g % blankets.length], 0, 0.9)).rotation.y = rnd();
         for (let i = 0; i < n; i++) { const a = (i / n) * PI * 2 + rnd(); seated.push({ x: cx + Math.cos(a) * 0.9, y: 0, z: cz + Math.sin(a) * 0.7, ry: a + PI, sit: true }); }
         k.keepOut.push({ x: cx, z: cz, r: 1.5 });
+        rugs.push([cx, cz]);
       }
-      for (let i = 0; i < 14; i++) seated.push({ x: (rnd() - 0.5) * 22, y: 0, z: -36 + rnd() * 64, ry: rnd() * 6.3 });
+      /* 2026-11-24 (wave 9): wicker picnic baskets (Poly Haven, CC0) on the six blankets nearest the gate */
+      if (k.o.quality === 'high') put(k, 'cherryesplanade/ph_wicker_basket_01', { width: 0.5 }, rugs.sort((a, b) => b[1] - a[1]).slice(0, 6).map(([x, z], i): At => [x + 0.35, 0.03, z - 0.2, i * 1.1]));
+      for (let i = 0; i < 14; i++) { const x = (rnd() - 0.5) * 22, z0 = -36 + rnd() * 64; seated.push({ x, y: 0, z: Math.abs(x) < 9 && z0 > 7 && z0 < 25 ? z0 - 18 : z0, ry: rnd() * 6.3 }); }
       still(k, seated, 1733);
       for (const s of [-1, 1]) k.crowd([v(s * 17, 0, 33), v(s * 17.5, 0, 0), v(s * 17, 0, -40)], 14, { seed: 1734 + s, spread: 3.5, speed: 0.7, animate: !ctx.reduced });
       const loop: T.Vector3[] = []; for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; loop.push(v(PX + (PA + 3.2) * Math.cos(a), 0, PZ + (PB + 3.2) * Math.sin(a))); }
@@ -364,6 +455,36 @@ export const cherryesplanade: RoomDef = {
     k.box(12.4, 0.5, 0.6, 0, 3.75, 36.5, stone);
     k.sign('BROOKLYN BOTANIC GARDEN', 8, 0.5, 0, 3.05, 36.15, 'transparent', '#3a3428', 60);
     k.sign('CHERRY ESPLANADE', 4, 0.36, 0, 2.5, 36.15, 'transparent', '#7a2a3a', 60);
+    /* ---- 2026-11-24 (wave 9): the way in, dressed for the festival ----
+       A green finger post at the head of the cross walk, festival banners on iron poles down both sides of the lawn (Firefly
+       plates queued; pink cloth until they land), and one trick (rule 9): SAKURA laid on the lawn in petals, stretched so
+       that from the gate it stands up as a sign. */
+    {
+      const post = k.flat(0x1f3a2a, 0.3, 0.6);
+      const PX = 7.2, PZ = 18.5;
+      k.cyl(0.06, 3.4, PX, 1.7, PZ, post, 0.06, 10); k.sphere(0.1, PX, 3.45, PZ, post, 10); k.keepOut.push({ x: PX, z: PZ, r: 0.35 });
+      const fp: [string, number][] = [['CHERRY ESPLANADE', 2.95], ['JAPANESE HILL AND POND GARDEN', 2.5], ['PALM HOUSE', 2.05], ['STEINHARDT CONSERVATORY', 1.6]];
+      for (const [t, y] of fp) { k.box(2.1, 0.3, 0.05, PX - 0.9, y, PZ, post); hsign(k, t, 2.0, 0.24, PX - 0.9, y, PZ + 0.03, 0, { fg: '#f2ece0', size: 0.5 }); hsign(k, t, 2.0, 0.24, PX - 0.9, y, PZ - 0.03, PI, { fg: '#f2ece0', size: 0.5 }); }
+      const cloth = k.flat(0xe89ab0, 0, 0.85, { side: T.DoubleSide });
+      for (const sx of [-11.6, 11.6]) for (const z of [21, 3, -15]) {
+        k.cyl(0.07, 5.4, sx, 2.7, z, iron, 0.07, 8); k.box(0.9, 0.05, 0.05, sx, 5.1, z, iron); k.keepOut.push({ x: sx, z, r: 0.3 });
+        fireflyPlate(k, 'assets/museum/tex/cherryesplanade/ff_che_matsuri_banner.webp', 0.8, 2.3, sx, 3.9, z + 0.02, 0, cloth);
+        fireflyPlate(k, 'assets/museum/tex/cherryesplanade/ff_che_matsuri_banner.webp', 0.8, 2.3, sx, 3.9, z - 0.02, PI, cloth);
+      }
+      if (HAS_DOM) {
+        const petals = paintTex(1024, 360, (g, w, h) => {
+          g.textAlign = 'center'; g.textBaseline = 'middle'; let sz = h * 0.82; g.font = `800 ${sz}px "W2 Archivo Expanded", Arial, sans-serif`;
+          const tw = g.measureText('SAKURA').width; if (tw > w * 0.94) { sz *= (w * 0.94) / tw; g.font = `800 ${sz}px "W2 Archivo Expanded", Arial, sans-serif`; }
+          g.fillStyle = '#f4b8ca'; g.fillText('SAKURA', w / 2, h / 2);
+          g.globalCompositeOperation = 'source-atop';
+          const r2 = X.mulberry(1739), pk = ['#f8c8d6', '#eea0b8', '#fbd8e2', '#e28aa6', '#fff0f4'];
+          for (let i = 0; i < 2600; i++) { g.fillStyle = pk[Math.floor(r2() * pk.length)]; g.beginPath(); g.ellipse(r2() * w, r2() * h, 5 + r2() * 6, 3 + r2() * 3, r2() * PI, 0, PI * 2); g.fill(); }
+          g.globalCompositeOperation = 'source-over';
+        }, ['W2 Archivo Expanded']);
+        anamorphTex(k, petals, 0, 30, 3, 0, 0, 8, 6, 1.8, 0.95);
+      }
+      k.egg(v(0, 0.4, 16), { id: 'cherry-sakura-letters', title: 'Petals that stand up', text: 'SAKURA is laid flat on the lawn in petals and stretched along it, so that from one spot at the gate it seems to stand upright on the grass. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Stand at the gate and look up the lawn.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
+    }
     /* a screen of trees round the edge of the room */
     for (let i = 0; i < 26; i++) { const a = (i / 26) * PI * 2, x = -27 + Math.cos(a) * 66, z = -14 + Math.sin(a) * 56; if (x > -35 && x < 35 && z > -48 && z < 40) continue; k.tree(x, 0, z, { h: 8 + rnd() * 3, r: 3.6 + rnd(), seed: 1740 + i, leaf: i % 3 ? 0x3a6a34 : 0x4e7c3c }); }
 
@@ -417,6 +538,8 @@ export const cherryesplanade: RoomDef = {
       { const g = new T.ConeGeometry(6.6, 2.4, 4, 1); g.rotateY(PI / 4); g.scale(1.1, 1, 1.1); k.mesh(g, k.flat(0x6a625c, 0.05, 0.75), (DX0 + DX1) / 2, DY + 4.0 + 1.2, 6); }
       k.box(DX1 - DX0 + 2.0, 0.14, DZ1 - DZ0 + 2.0, (DX0 + DX1) / 2, DY + 3.95, 6, plank);
       k.point((DX0 + DX1) / 2, DY + 3.5, 6, 0xfff0e0, 8, 12);
+      /* 2026-11-24 (wave 9): two wooden lanterns (Poly Haven, CC0) hang under the eaves on the water side */
+      if (k.o.quality === 'high') put(k, 'cherryesplanade/ph_wooden_lantern_01', { height: 0.6 }, [[DX0 + 0.5, DY + 3.28, DZ0 + 0.6, 0], [DX0 + 0.5, DY + 3.28, DZ1 - 0.6, 0.8]]);
       /* a rail on the water side, a bench along it */
       k.box(0.08, 0.08, DZ1 - DZ0, DX0 + 0.3, DY + 0.95, 6, darkWood); for (let z = DZ0 + 0.3; z <= DZ1 - 0.3; z += 1.0) k.box(0.06, 0.95, 0.06, DX0 + 0.3, DY + 0.5, z, darkWood);
       for (const z of [DZ0, DZ1]) { k.box(DX1 - DX0 - 0.6, 0.08, 0.08, (DX0 + DX1) / 2, DY + 0.95, z + (z === DZ0 ? 0.3 : -0.3), darkWood); }
@@ -503,6 +626,8 @@ export const cherryesplanade: RoomDef = {
     k.egg(v(0, 2.6, 36), { id: 'cherry-garden-1911', title: 'Fifty two acres since 1911', year: '1911', text: 'The site of Brooklyn Botanic Garden was first designated in 1897 and the garden opened in May 1911 at 990 Washington Avenue. It occupies 52 acres and draws over 800,000 visitors a year.', clue: 'The gate you came in by.', source: src }, { r: 1.6 });
     k.egg(v(-50, 3.2, -12), { id: 'cherry-torii', title: 'The gateway in the water', text: 'The Japanese Hill and Pond Garden has a torii, a gateway, standing in its pond, and a Shinto shrine on the hill above. The garden\'s features include the pond, a waterfall, an island, stone lanterns, wooden bridges and a viewing pavilion, and its pond holds hundreds of Japanese koi.', clue: 'Look at the red gate from the deck, then find the closest point on the path to it.', source: src }, { r: 2.2 });
 
+    /* 2026-11-25 (wave 9c): the falling petals and the pond's water stop casting (the trees keep their shadows on the lawn) */
+    shadowTrim(k, (o, _c, r) => (o instanceof T.InstancedMesh && o.count > 300) || r > 25);
     const floorY = (x: number, z: number) => hillY(x, z);
     return { mounts, spawn: v(0, 3, 30), look: v(0, 4, -50), eye: 3, floorY, bounds: [-95, 40, -72, 42], style: 'white' };
   },
@@ -534,10 +659,13 @@ export const promenade: RoomDef = {
         g.closePath(); g.fill();
       }
     }, true);
-    const hex = new T.MeshStandardMaterial({ map: hexTex, roughness: 0.92 }); hex.userData.density = 0.55;
-    const asph = k.pbr('prAsph', X.asphalt(), 0.3), conc = k.pbr('prConc', X.concrete(0x9a9890, 174), 0.4, { roughness: 0.9 }), concD = k.pbr('prConcD', X.concrete(0x6e6c66, 175), 0.4, { roughness: 0.9 }),
+    const hexOld = new T.MeshStandardMaterial({ map: hexTex, roughness: 0.92 }); hexOld.userData.density = 0.55; void hexOld;
+    /* 2026-11-24 (wave 9): scanned CC0 surfaces (Poly Haven): the hexagonal paving of the walk, red brick for the piers and
+       beds, weathered boards for the garden fences, board marked concrete for the escarpment and the two decks */
+    const hex = sc(k, 'promenade', 'hexagonal_concrete_paving', 1.4, () => X.pavers(0x9a968e, 1740), { roughness: 0.9, color: 0xd8d4cc }, 0x8a8680);
+    const asph = k.pbr('prAsph', X.asphalt(), 0.3), conc = sc(k, 'promenade', 'concrete_wall_006', 3, () => X.concrete(0x9a9890, 174), { roughness: 0.9, color: 0xd0ccc4 }, 0x8a8880), concD = sc(k, 'promenade', 'concrete_wall_006', 4, () => X.concrete(0x6e6c66, 175), { roughness: 0.9, color: 0x9a968e }, 0x6e6c66),
       grass = k.pbr('prGrass', X.grass(0x4a7238, 176), 0.08, { roughness: 1 }), stone = k.pbr('prStone', X.ashlar(0xb8ab92, 177, 4), 0.4, { normal: 0.4, roughness: 0.85 }),
-      brick = k.pbr('prBrick', X.brick(0x7a4838, 178), 0.9), plank = k.pbr('prPlank', X.planks(0x6a4a30, 6, 179), 0.9, { roughness: 0.7 }), fenceW = k.pbr('prFence', X.planks(0x8a7a62, 10, 180), 1.2, { roughness: 0.9 }),
+      brick = sc(k, 'promenade', 'red_brick_03', 1.5, () => X.brick(0x7a4838, 178), { color: 0xe0c4b4 }, 0x7a4838), plank = k.pbr('prPlank', X.planks(0x6a4a30, 6, 179), 0.9, { roughness: 0.7 }), fenceW = sc(k, 'promenade', 'weathered_planks', 2.2, () => X.planks(0x8a7a62, 10, 180), { roughness: 0.9, color: 0xd8ccb8 }, 0x8a7a62),
       iron = k.flat(0x1a1c20, 0.6, 0.5), ironG = k.flat(0x2a3a30, 0.5, 0.5), white = k.flat(0xe8e6de, 0.1, 0.6), soil = k.flat(0x3a2a1c, 0, 1), line = k.flat(0xe8e4d8, 0, 0.8),
       granite = k.pbr('prGranite', X.ashlar(0x8a8278, 181, 3), 0.25, { roughness: 0.9 }), steel = k.flat(0x8a929c, 0.8, 0.4), cable = k.flat(0x6a6e74, 0.6, 0.5),
       glassT = k.flat(0x9fb6cc, 0.7, 0.25), copper = k.flat(0x5f9a8c, 0.2, 0.7), hull = k.flat(0xf0f0ee, 0.2, 0.5), hullD = k.flat(0x1c2a44, 0.3, 0.6);
@@ -558,8 +686,18 @@ export const promenade: RoomDef = {
       k.block(L0, L1, -5.2, -4.35);
     }
     /* benches facing the view, lamp posts, litter bins */
+    /* 2026-11-24 (wave 9): real slatted park benches (our cp_bench) and real cast iron lampposts (our lamppost model) take
+       the place of the built ones, which stand in until they load; the benches now face the harbour, as they do */
+    const prMark = k.objects.length;
     for (let i = 0; i < 12; i++) { const x = -66 + i * 12; bench(k, x, 4.6, PI, plank, iron, 2.2); }
     for (let i = 0; i < 6; i++) { const x = -60 + i * 24; k.cyl(0.07, 3.6, x, 1.8, -3.8, iron, 0.09, 8); k.sphere(0.24, x, 3.75, -3.8, k.glow(k.night > 0.3 ? 0xffe0a8 : 0xf4f2ee), 10); k.keepOut.push({ x, z: -3.8, r: 0.3 }); }
+    {
+      const old = standIn(k, prMark), benches = old.slice(), lamps = benches.splice(benches.length - 12);
+      if (k.o.quality === 'high') put(k, 'promenade/cp_bench', { width: 2.2 }, Array.from({ length: 12 }, (_, i): At => [-66 + i * 12, 0, 4.5, PI]), undefined, () => hide(benches));
+      if (k.o.quality === 'high') put(k, 'promenade/lamppost', { height: 4.4 }, Array.from({ length: 6 }, (_, i): At => [-60 + i * 24, 0, -3.8, 0]), undefined, () => hide(lamps));
+      if (k.o.quality === 'high') put(k, 'promenade/ph_metal_trash_can', { width: 1.1 }, [[-48, 0, 5.4, PI], [-12, 0, 5.4, PI], [24, 0, 5.4, PI], [60, 0, 5.4, PI]]);
+      for (const x of [-48, -12, 24, 60]) k.keepOut.push({ x, z: 5.4, r: 0.7 });
+    }
     /* the flower beds and the garden fences, with the works on the panels facing the walk */
     /* the beds stop for the pergola at the north end and the Montague Street plaza */
     const beds: [number, number][] = [[L0 + 1, -71.5], [-54.5, 35.5], [56.5, L1 - 1]];
@@ -707,6 +845,20 @@ export const promenade: RoomDef = {
       });
     }
 
+    /* ---- 2026-11-24 (wave 9): at the rail where you arrive ----
+       A Parks style lectern with a key to the skyline (a Firefly plate queued; slate grey until it lands), a sign on the
+       railing, and one trick (rule 9): LOWER MANHATTAN painted flat on the hex blocks stands up as a placard from the spot
+       you arrive on. */
+    {
+      const lect = k.flat(0x2a3a30, 0.5, 0.5);
+      k.cyl(0.07, 0.95, 5.2, 0.48, -3.3, lect, 0.09, 10); k.box(1.5, 0.06, 0.62, 5.2, 1.0, -3.3, lect).rotation.x = -0.7; k.keepOut.push({ x: 5.2, z: -3.3, r: 0.6 });
+      const key = fireflyPlate(k, 'assets/museum/tex/promenade/ff_pro_skyline_key.webp', 1.4, 0.52, 5.2, 1.04, -3.27, 0, k.flat(0x5a6470, 0.1, 0.7));
+      key.rotation.x = -0.7;
+      hsign(k, 'BROOKLYN HEIGHTS PROMENADE  ·  NYC PARKS', 3.2, 0.24, -6, 1.12, -4.43, 0, { fg: '#f2efe6', bg: '#1d4a2e', size: 0.56 });
+      if (HAS_DOM) anamorphTex(k, floorType('LOWER MANHATTAN', '#f4f1e8', 1024, 200, 'W2 Archivo Expanded', '#1c2430'), 0, 3.4, 3, 0, 0, 4.6, 5.2, 1.0, 0.92);
+      k.egg(v(0, 0.3, -2.2), { id: 'prom-placard', title: 'A label for the view', text: 'LOWER MANHATTAN is painted flat on the paving and stretched along it, so that from one spot on the walk it seems to stand up as a placard in front of the railing. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Stand where you arrived and look at the railing.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
+    }
+
     /* ---- what the Heights know ---- */
     const srcP = { name: 'Brooklyn Heights Promenade, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn_Heights_Promenade' };
     const srcB = { name: 'Brooklyn Queens Expressway, Wikipedia', url: 'https://en.wikipedia.org/wiki/Brooklyn%E2%80%93Queens_Expressway' };
@@ -717,6 +869,9 @@ export const promenade: RoomDef = {
     k.egg(v(30, 0.6, -4.9), { id: 'prom-repair', title: 'The cantilever\'s next decade', year: '2017', text: 'In 2017 the city\'s Department of Transportation began a project to repair this section of the expressway, and in August 2026 the city government announced a proposal to spend about $4 billion repairing the existing cantilever over ten years.', clue: 'The railing over the decks, towards the Montague Street end.', source: srcB }, { r: 1.8 });
     k.egg(v(-6, 1.2, 4.6), { id: 'prom-park', title: 'A new foreground', text: 'With the construction of Brooklyn Bridge Park on the piers and the shore below, the foreground of the view from the Promenade was given a more landscape like look.', clue: 'Sit on a bench facing the harbour.', source: srcP }, { r: 1.6 });
 
-    return { mounts, spawn: v(0, 3, 1.5), look: v(-30, 8, -200), eye: 3, bounds: [L0 + 1.2, L1 - 1.2, -4.3, 13.6], style: 'black' };
+    /* 2026-11-25 (wave 9c): only the walk casts: the decks, park, harbour, skyline, bridge, ferries and the house backs stop,
+       and so do the instanced crowds and pickets */
+    shadowTrim(k, (o, c, r) => (o instanceof T.InstancedMesh && o.count > 300) || c.z < -6 || c.z > 13 || r > 30 || o.name.startsWith('tripo'));
+    return { mounts, spawn: v(0, 3, 3.4), look: v(-30, -2, -200), eye: 3, bounds: [L0 + 1.2, L1 - 1.2, -4.3, 13.6], style: 'black' };
   },
 };

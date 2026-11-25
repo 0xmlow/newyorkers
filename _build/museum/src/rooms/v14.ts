@@ -12,7 +12,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { standIn, hide } from './heroes';
+import { standIn, hide, hero, heroInstances } from './heroes';
+import { hsign } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -30,6 +31,98 @@ function canvasTex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => 
   if (repeat) t.wrapS = t.wrapT = T.RepeatWrapping;
   return t;
 }
+/* ---------- THE BIG UPGRADE, wave 8d (2026-11-24): helpers for the synagogue rooms in this file ----------
+   Poly Haven scans from assets/museum/tex/<room>/ wearing a set colour until all their maps land, real CC0 models from
+   assets/museum/props/<room>/ fitted once and placed (seven or more as instanced parts, glass made plain, no prop
+   shadows), quiet light that falls through a window onto a wall or floor. All of it a no-op on canvas in node. */
+const W8D_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w8dL = W8D_DOM ? new T.TextureLoader() : null;
+const w8dS = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w8dScan(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w8dL) return k.pbr(`w8d-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w8dS.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w8dL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w8dS.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w8d-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w8d) {
+    m.userData.w8d = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w8dPlace(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length || !W8D_DOM) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    h.userData.w8d = true; h.traverse((c) => { c.userData.w8d = true; });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* everything built since `mark`, to hide once a real model has landed in its place */
+const w8dMark = (k: K) => k.objects.length;
+const w8dSince = (k: K, mark: number): T.Object3D[] => { const ms = k.objects.splice(mark); for (const m of ms) k.dynamic.add(m); return ms; };
+const w8dHide = (os: T.Object3D[]) => { for (const o of os) if (o instanceof T.Mesh) o.visible = false; };
+/* warm the metal of a loaded model toward old brass or bronze */
+function w8dTint(o: T.Object3D, hex: number, rough = 0.4, metal = 0.85) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; if (src.transparent) return; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* wave 8d triangle pass (lead note): the kit turns shadows back on after the build, and the shadow pass is most of the debug
+   counter. A few times over the first 30 s, stop shadows from the light patches, the models placed here, and (when `all`) every
+   instanced crowd of small things, the kit's cab models and figures, and trees further than `near` metres from the point given.
+   The built architecture keeps its shadows. */
+function w8dShadowTrim(k: K, all: boolean, cx = 0, cz = 0, near = 24) {
+  if (!W8D_DOM) return;
+  const run = () => {
+    if (!k.live) return;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined, nm = (mat && mat.name) || '';
+      if (m.userData.noShadow || (mat && mat.blending === T.AdditiveBlending)) { m.castShadow = m.receiveShadow = false; return; }
+      let p: T.Object3D | null = m; while (p && !p.userData.w8d) p = p.parent;
+      if (p) { m.castShadow = false; return; }
+      if (!all) return;
+      if ((m as T.InstancedMesh).isInstancedMesh || m.userData.cab || nm.startsWith('tripo_') || nm.startsWith('MLOW_')) { m.castShadow = false; return; }
+      if (/leaf|bark|twig/.test(nm)) { const w = new T.Vector3(); m.getWorldPosition(w); if (Math.hypot(w.x - cx, w.z - cz) > near) m.castShadow = false; }
+    });
+  };
+  for (const ms of [1500, 5000, 12000, 20000, 30000]) setTimeout(run, ms);
+}
+function w8dSign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6) {
+  if (!W8D_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size });
+}
+/* light through a window: a soft additive patch of the window's own colours laid on a surface, breathing with the clouds */
+function w8dLightPatch(k: K, map: T.Texture | null, color: number, w: number, h: number, x: number, y: number, z: number, rx: number, ry: number, opacity: number, skew = 0) {
+  const g = new T.PlaneGeometry(w, h, 1, 1);
+  if (skew) { const p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setX(i, p.getX(i) + p.getY(i) * skew); p.needsUpdate = true; }
+  const m = new T.MeshBasicMaterial({ map, color, transparent: true, opacity, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, toneMapped: false, fog: false });
+  const o = k.mesh(g, m, x, y, z, true); o.rotation.set(rx, ry, 0, 'YXZ'); o.renderOrder = 2; o.castShadow = o.receiveShadow = false; o.userData.noShadow = true;
+  return { o, m };
+}
+
 const css = (n: number, k2 = 1) => `rgb(${(((n >> 16) & 255) * k2) | 0},${(((n >> 8) & 255) * k2) | 0},${((n & 255) * k2) | 0})`;
 /* an arched window of coloured glass: transparent outside the arch, leaded panes inside */
 function archGlass(seed: number, pal: number[], p: { cell?: number; lead?: string; medallion?: boolean; rose?: boolean } = {}) {
@@ -230,18 +323,21 @@ export const safra2: RoomDef = {
     k.hemi(0xe8e4dc, 0x8a8478, 0.9);
     k.sun(0xfff0d8, 2.6, 30, 70, 40, true, 70);
     const plasterS = X.plaster(0xe2d3b0, 162);
-    const jer = k.pbr('sfJer', X.ashlar(0xd6c298, 161, 6), 0.6, { normal: 0.3, roughness: 0.85 }),
+    /* 2026-11-24 (wave 8d): the Jerusalem stone of the flat walls, the floors, the oak, the street and the seat velvet are Poly Haven scans */
+    const SF = 'safra';
+    w8dShadowTrim(k, false);
+    const jer = w8dScan(k, SF, 'sandstone_blocks_05', 4.5, () => X.ashlar(0xd6c298, 161, 6), { roughness: 0.85, color: 0xf8e8c8 }, 0xd6c298),
       jerPlain = k.pbr('sfJer2', plasterS, 0.3, { roughness: 0.85 }),
       jerPlain2 = k.pbr('sfJer2d', plasterS, 0.3, { roughness: 0.85, side: T.DoubleSide }),
-      jerDark = k.pbr('sfJer3', X.ashlar(0xbca880, 163, 4), 0.6, { normal: 0.35, roughness: 0.9 }),
+      jerDark = w8dScan(k, SF, 'sandstone_blocks_05', 3.2, () => X.ashlar(0xbca880, 163, 4), { roughness: 0.9, color: 0xdcc8a4 }, 0xbca880, 'd'),
       jer2 = k.pbr('sfJerD', X.ashlar(0xd6c298, 161, 6), 0.6, { normal: 0.3, roughness: 0.85, side: T.DoubleSide }),
-      floorM = k.pbr('sfFloor', X.marble(0xb4a68a, 0x8a7a5e, 164), 0.28, { roughness: 0.4 }),
-      wood = k.pbr('sfWood', X.planks(0x6a4428, 6, 165), 0.8, { roughness: 0.55 }), woodDark = k.flat(0x3e2616, 0, 0.5),
+      floorM = w8dScan(k, SF, 'marble_tiles', 2.4, () => X.marble(0xb4a68a, 0x8a7a5e, 164), { roughness: 0.35, color: 0xe8dcc4 }, 0xb4a68a),
+      wood = w8dScan(k, SF, 'walnut', 1.6, () => X.planks(0x6a4428, 6, 165), { roughness: 0.5, color: 0xc89870 }, 0x6a4428), woodDark = k.flat(0x3e2616, 0, 0.5),
       wood2 = k.pbr('sfWoodD', X.planks(0x8a5a30, 6, 165), 0.8, { roughness: 0.55, side: T.DoubleSide }),
       domeWood = k.pbr('sfDome', X.planks(0xb4834c, 10, 169), 0.5, { roughness: 0.6, side: T.BackSide }),
       bronze = k.flat(0x8a6434, 0.9, 0.36), brass = k.flat(0xc8a050, 1, 0.3), silver = k.flat(0xd8dce0, 1, 0.22),
-      leather = k.flat(0x7a1e22, 0, 0.6), lead = k.flat(0x9a968a, 0.3, 0.6),
-      asph = k.pbr('sfAsph', X.asphalt(), 0.3), walk = k.pbr('sfWalk', X.pavers(0x9a968c, 166), 0.5), curb = k.flat(0x8a8680, 0, 0.8),
+      leather = w8dScan(k, SF, 'velour_velvet', 0.8, () => X.velvet(0x7a1e22), { roughness: 1, color: 0xb83038 }, 0x7a1e22), lead = k.flat(0x9a968a, 0.3, 0.6),
+      asph = w8dScan(k, SF, 'asphalt_02', 4, () => X.asphalt(), { roughness: 0.92, color: 0x8c8c8c }, 0x3a3c40), walk = w8dScan(k, SF, 'concrete_pavement', 2.2, () => X.pavers(0x9a968c, 166), { roughness: 0.9, color: 0xd0cac0 }, 0x9a968c), curb = k.flat(0x8a8680, 0, 0.8),
       darkGlass = k.flat(0x2c3640, 0.35, 0.22), iron = k.flat(0x1c1c1c, 0.6, 0.5), cloth = k.flat(0xe8e2d4, 0, 0.9), line = k.flat(0xe8e4d8, 0, 0.8),
       colM = k.pbr('sfCol', X.marble(0xe2d6b8, 0xb8a888, 168), 0.4, { roughness: 0.3 }),
       deck = k.pbr('sfDeck', X.planks(0x8a6a4a, 8, 171), 0.7, { roughness: 0.8 }), soil = k.flat(0x3a2a1c, 0, 1);
@@ -290,6 +386,7 @@ export const safra2: RoomDef = {
     for (const x of [-7.4, -3, 3, 7.4]) k.plane(1.4, 1.6, x, 17.4, -0.28, darkGlass);
     for (const cx of [-6.6, 6.6]) for (let i = -3; i <= 3; i++) k.box(0.04, 3.1, 0.04, cx + i * 0.26, 2.75, 0.02, iron);
     for (let i = -4; i <= 4; i++) k.box(0.04, 5.5, 0.04, i * 0.45, 11, -0.2, bronze);
+    k.box(9.6, 1.0, 0.04, 0, 6.72, 0.33, k.flat(0xeadcc0, 0, 0.85)); // 2026-11-24 (wave 8d): a smooth dressed band so the lettering reads on the scanned stone
     k.sign('EDMOND J. SAFRA SYNAGOGUE', 9, 0.7, 0, 6.72, 0.36, 'transparent', '#5a4a30', 58);
     /* the narrow stone bay to the east that carries the stair up to the roof garden */
     k.box(2.4, 20.6, 0.6, 13.2, 10.3, -0.3, jer);
@@ -320,7 +417,12 @@ export const safra2: RoomDef = {
     wallZ(k, -12, -0.6, 5, 7, 0.4, jer, [{ c: -6.3, w: 2.2, h: 3.4 }]);
     k.box(10.4, 0.4, 12.4, 0, 7.2, -6.3, jerPlain);
     for (const z of [-3, -6.3, -9.6]) k.box(10, 0.3, 0.3, 0, 6.85, z, jerDark);
-    for (const z of [-3, -9.6]) { k.cyl(0.02, 1.4, 0, 6.3, z, bronze); k.lathe([[0.05, 0], [0.32, -0.12], [0.36, -0.3], [0.06, -0.4]], 0, 5.6, z, bronze, 16); bulbs.push({ x: 0, y: 5.25, z }); }
+    { const lmk = w8dMark(k); for (const z of [-3, -9.6]) k.lathe([[0.05, 0], [0.32, -0.12], [0.36, -0.3], [0.06, -0.4]], 0, 5.6, z, bronze, 16); const old = w8dSince(k, lmk);
+      for (const z of [-3, -9.6]) { k.cyl(0.02, 1.4, 0, 6.3, z, bronze); bulbs.push({ x: 0, y: 5.25, z }); }
+      /* 2026-11-24 (wave 8d): the lobby's two lamps as a real brass chandelier (Poly Haven Chandelier_01, CC0) on the old rods;
+         the street gets real lamps (Poly Haven street lamp, CC0) */
+      w8dPlace(k, 'safra/ph_Chandelier_01', { width: 1.45 }, [[0, 4.1, -3, 0], [0, 4.1, -9.6, 0.4]], (h) => w8dTint(h, 0xc09048, 0.32, 0.9), () => w8dHide(old));
+      w8dPlace(k, 'safra/ph_street_lamp_01', { height: 5.6 }, [-30, -18, 22, 32].map((x) => [x, 0, 4.0, -PI / 2])); }
     k.point(0, 5, -4.5, 0xffdcaa, 16, 14); k.point(0, 5, -9.5, 0xffdcaa, 14, 12);
     k.sign('HERITAGE LIBRARY', 2.2, 0.26, -4.78, 4.3, -9.3, 'transparent', '#5a4a30', 44, PI / 2);
     k.sign('SOCIAL HALL', 2.0, 0.26, 4.78, 3.8, -6.3, 'transparent', '#5a4a30', 44, -PI / 2);
@@ -339,6 +441,16 @@ export const safra2: RoomDef = {
     const CZ = -25.5, RW = 10.6, RC = 8.0, SPR = 11, DH = 6, RD = RW - 0.25, GY = 5.2, EA = 0.287, AA = 0.3;
     k.box(22, 0.1, 26.6, 0, 0, -25.4, floorM);
     for (const [a, b] of [[2.9, 3.25], [7.0, 7.3]]) { const g = new T.RingGeometry(a, b, 72); g.rotateX(-PI / 2); k.mesh(g, jerDark, 0, 0.06, CZ); }
+    /* 2026-11-24 (wave 8d), the room's one trick, a quiet one: the sun through the oculus at the crown of the dome lays a soft
+       oval of light on the floor and walks it slowly round between the inlaid rings through the day, so the round room keeps
+       time like a sundial. Stand still for a few minutes and watch it move. */
+    if (W8D_DOM) {
+      const disc = canvasTex(128, 128, (g) => { const gr = g.createRadialGradient(64, 64, 8, 64, 64, 62); gr.addColorStop(0, 'rgba(255,248,232,1)'); gr.addColorStop(0.7, 'rgba(255,242,220,0.8)'); gr.addColorStop(1, 'rgba(255,236,210,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); });
+      const sun = w8dLightPatch(k, disc, 0xfff0d8, 2.6, 3.8, 0, 0.075, CZ, -PI / 2, 0, 0.3);
+      const at = (t: number) => { const a = -0.9 + Math.sin(t * 0.004) * 1.1; sun.o.position.set(Math.sin(a) * 4.9, 0.075, CZ + Math.cos(a) * 4.9); sun.o.rotation.set(-PI / 2, a, 0, 'YXZ'); };
+      at(0); if (!ctx.reduced) k.ticks.push((t) => { at(t); sun.m.opacity = 0.3 * (0.8 + 0.2 * Math.sin(t * 0.06)); });
+    }
+    k.egg(v(0, 0.8, CZ + 4.9), { id: 'oculus-sundial', title: 'The room that keeps time', year: 'an illusion', text: 'The dome is open at its crown, and the sun through that small round eye lays an oval of light on the stone floor. Through the day it walks round the room between the two inlaid rings, the way the light from the oculus of the Pantheon in Rome walks round that dome. The floor turns the sun into a clock.', clue: 'Find the patch of sun on the floor of the round room, then come back later.', source: { name: 'Oculus (architecture), Wikipedia', url: 'https://en.wikipedia.org/wiki/Oculus' } }, { r: 2.2 });
     /* the outer wall: coursed stone to the gallery, plain above, open at the entry and at the ark */
     for (const [t0, t1] of [[EA, PI - AA], [PI + AA, 2 * PI - EA]]) {
       k.mesh(new T.CylinderGeometry(RW, RW, GY, 48, 1, true, t0, t1 - t0), jer2, 0, GY / 2, CZ);

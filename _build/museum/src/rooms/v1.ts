@@ -7,10 +7,132 @@ import { personTag } from '../kit';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
-import { street, blockFront } from './f';
-import { hero } from './heroes';
+import { street, blockFront, paintTex, anamorphTex, hsign } from './f';
+import { hero, heroInstances } from './heroes';
+import { fireflyPlate } from './a';
+import type { Kit } from '../kit';
 const PI = Math.PI;
+const UP = new T.Vector3(0, 1, 0);
 type K = Parameters<RoomDef['build']>[0];
+
+/* ---------- THE BIG UPGRADE, wave 7d (2026-11-24): helpers kept local to this file ----------
+   Scanned CC0 surfaces from assets/museum/tex/<room>/ (Poly Haven, 1k webp) that wear a sensible colour until their maps
+   land; real CC0 models from assets/museum/props/<room>/ (Poly Haven, decimated in Blender, 512 px maps) with any glass
+   transmission and prop shadows stripped on load; seven or more copies of one model become instanced parts.
+   Safe in node: the audit builds with no DOM. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w7 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w7d-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w7.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w7.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const key = `w7d-${room}-${id}-${p.color ?? ''}-${p.side ?? ''}-${p.roughness ?? ''}-${metres}`;
+  const m = k.pbr(key, e.s, 1 / metres, p);
+  if (!m.userData.w7) {
+    m.userData.w7 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* No transmission (it makes three.js draw the room twice) and no prop shadows. */
+function clean(o: T.Object3D) {
+  o.traverse((c) => {
+    if (!(c instanceof T.Mesh)) return;
+    c.castShadow = false;
+    for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const s = m as T.MeshPhysicalMaterial; if (s.transmission) { s.transmission = 0; s.transparent = true; s.opacity = Math.min(s.opacity, 0.35); s.depthWrite = false; } }
+  });
+}
+/* One real model from this room's own props folder. */
+function ph(k: Kit, room: string, name: string, x: number, y: number, z: number, p: { height?: number; rotY?: number; keepOut?: number } = {}, tweak?: (o: T.Object3D) => void) {
+  void Promise.resolve(k.prop(`${room}/${name}`, x, y, z, p)).then((o) => { if (o && (o as T.Object3D).isObject3D) { clean(o); if (tweak) tweak(o); } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function many(k: Kit, room: string, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (!at.length || !HAS_DOM) return;
+  void hero(k, `${room}/${name}`, fit).then((h) => {
+    if (!h || !k.live) return;
+    clean(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion();
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(UP, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      for (const p of ins.parts) p.im.castShadow = false;
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
+/* Recolour every material of a loaded model, keeping its maps' detail. */
+function tintAll(o: T.Object3D, hex: number, rough = 0.5, metal = 0.2) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Many copies of one box as a single instanced draw: [x, y, z, rotY?] each. */
+function boxes(k: Kit, w: number, h: number, d: number, m: T.Material, at: number[][]) {
+  if (!at.length) return null;
+  const q = new T.Quaternion(), one = new T.Vector3(1, 1, 1);
+  return k.instances(new T.BoxGeometry(w, h, d), m, at.map(([x, y, z, r = 0]) => new T.Matrix4().compose(new T.Vector3(x, y, z), q.setFromAxisAngle(UP, r), one)));
+}
+/* One trick a room (rule 9): anamorphic type on the floor that stands up as a sign from one spot. */
+function standUp(k: Kit, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, font = 'W2 Archivo Expanded') {
+  if (!HAS_DOM) return;
+  const w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const tex = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
+}
+/* A vertical blade sign: letters stacked one above the other on a projecting panel, both faces. */
+function blade(k: Kit, text: string, x: number, y: number, z: number, w: number, h: number, rotY: number, bg: string, fg: string, frame: T.Material, lit = false) {
+  k.box(0.18, h + 0.2, w + 0.2, x, y, z, frame).rotation.y = rotY;
+  if (!HAS_DOM) return;
+  const W = 256, H = Math.round((256 * h) / w), chars = [...text];
+  const t = paintTex(W, H, (g) => { g.fillStyle = bg; g.fillRect(0, 0, W, H); g.strokeStyle = fg; g.lineWidth = 6; g.strokeRect(12, 12, W - 24, H - 24); g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; const step = (H - 60) / chars.length, s = Math.min(step * 0.86, W * 0.7); g.font = `800 ${s}px "W2 Archivo Expanded", Arial, sans-serif`; chars.forEach((c, i) => g.fillText(c, W / 2, 30 + step * (i + 0.5))); }, ['W2 Archivo Expanded']);
+  const m = lit ? new T.MeshBasicMaterial({ map: t }) : new T.MeshStandardMaterial({ map: t, roughness: 0.6 });
+  for (const s of [-1, 1]) { const o = k.mesh(new T.PlaneGeometry(w, h), m, x + Math.cos(rotY) * 0.1 * s, y, z - Math.sin(rotY) * 0.1 * s, false); o.rotation.y = rotY + (s > 0 ? PI / 2 : -PI / 2); }
+}
+/* As many(), but each copy takes a full matrix (fish lying on their sides, crates tipped). */
+function manyM(k: Kit, room: string, name: string, fit: Parameters<typeof hero>[2], mats: T.Matrix4[], tweak?: (o: T.Object3D) => void) {
+  if (!mats.length || !HAS_DOM) return;
+  void hero(k, `${room}/${name}`, fit).then((h) => {
+    if (!h || !k.live) return;
+    clean(h); if (tweak) tweak(h);
+    const ins = heroInstances(k, h, mats.length);
+    mats.forEach((m, i) => ins.setAt(i, m));
+    ins.commit();
+    for (const p of ins.parts) p.im.castShadow = false;
+  });
+}
+/* A street with scanned asphalt and pavement (the shared street() keeps its painted ones). */
+function sstreet(k: Kit, room: string, p: { w: number; len: number; z: number; x?: number; walk?: number }, walkTex = 'walk') {
+  const { w, len, z, x = 0, walk = 5 } = p;
+  const asphalt = sc(k, room, 'asph', 3, () => X.asphalt(0x24282d), { color: 0xa8a8a8, roughness: 0.85 }, 0x2a2d31),
+    pav = sc(k, room, walkTex, 2.4, () => X.pavers(0x8e8b84, 5), { color: 0xd8d4cc }, 0x8e8b84),
+    granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35), white = k.flat(0xdedbd2, 0, 0.7), yellow = k.flat(0xe6a626, 0, 0.6);
+  k.box(w, 0.3, len, x, -0.15, z, asphalt);
+  for (const s of [-1, 1]) { k.box(walk, 0.28, len, x + s * (w / 2 + walk / 2), 0.0, z, pav); k.box(0.3, 0.32, len, x + s * (w / 2 + 0.1), 0.02, z, granite); }
+  for (const dx of [-0.14, 0.14]) k.box(0.09, 0.012, len - 6, x + dx, 0.01, z, yellow);
+  for (let cz = z + len / 2 - 6; cz > z - len / 2; cz -= 28) for (let cx = -w / 2 + 1.2; cx <= w / 2 - 1; cx += 1.2) k.box(0.62, 0.014, 2.8, x + cx, 0.012, cz, white);
+}
+const mat4 = (x: number, y: number, z: number, ry = 0, sx = 1, sy = 1, sz = 1) => new T.Matrix4().compose(new T.Vector3(x, y, z), new T.Quaternion().setFromAxisAngle(UP, ry), new T.Vector3(sx, sy, sz));
+
 
 /* Cold vapour, steam, smoke: translucent puffs that rise, spread and fade, one draw call for the lot. */
 function vapour(k: K, pts: T.Vector3[], perPt: number, p: { rise?: number; spread?: number; size?: number; opacity?: number; colour?: number; seed?: number; speed?: number; animate: boolean }) {
@@ -78,10 +200,12 @@ export const fultonfish: RoomDef = {
     k.sky({ top: 0x090f1c, horizon: 0x16243a, ground: 0x090b0f, fog: 0.005, stars: 420, env: 0.4 });
     k.hemi(0xbcd2e2, 0x2a3038, 1.5);
     k.sun(0xaebfe4, 0.4, -50, 46, 70, true, 90);
-    const floor = k.pbr('fmFloor', X.concrete(0x6e7378, 11), 0.5, { roughness: 0.34, metalness: 0.2 }),
-      apron = k.pbr('fmApron', X.asphalt(0x1f2328), 0.11, { roughness: 0.5, metalness: 0.15 }),
-      wallT = k.pbr('fmWall', X.subwayTile(0xdfe4e4, 0x39413f), 0.85, { roughness: 0.3 }),
-      panel = k.pbr('fmPanel', X.steel(0x9aa3ab), 0.5, { metalness: 0.7, roughness: 0.38 }),
+    const FM = 'fultonfish';
+    /* 2026-11-24 wave 7d: scanned wet concrete, white tile, steel plate and apron asphalt (Poly Haven CC0) */
+    const floor = sc(k, FM, 'floor', 3, () => X.concrete(0x6e7378, 11), { color: 0xb8c0c4, roughness: 0.3, metalness: 0.2 }, 0x6e7378),
+      apron = sc(k, FM, 'asph', 3, () => X.asphalt(0x1f2328), { color: 0x8a8a8a, roughness: 0.5, metalness: 0.15 }, 0x1f2328),
+      wallT = sc(k, FM, 'tile', 1.4, () => X.subwayTile(0xdfe4e4, 0x39413f), { color: 0xf0f4f4, roughness: 0.3 }, 0xdfe4e4),
+      panel = sc(k, FM, 'panel', 1.2, () => X.steel(0x9aa3ab), { color: 0xc8d0d6, metalness: 0.7, roughness: 0.38 }, 0x9aa3ab),
       steel = k.flat(0xc3cad0, 0.85, 0.3),
       dark = k.flat(0x161a1f, 0.4, 0.6),
       blue = k.flat(0x2c5f7c, 0.2, 0.6),
@@ -123,6 +247,7 @@ export const fultonfish: RoomDef = {
     k.plane(HX * 2 - 2, Z0 - Z1 - 4, 0, 0.02, (Z0 + Z1) / 2, k.glow(0x6f97ae, 0.1), 0, -PI / 2);
     /* the stalls: nineteen bays a side, tables banked with ice, boxes to the ceiling, a scale on a spring */
     const vapourPts: T.Vector3[] = [];
+    const doorAt: number[][] = [], totes: number[][] = [], handTrucks: number[][] = [];
     const scales: T.Group[] = [];
     const boxM: T.Matrix4[] = [], iceM: T.Matrix4[] = [], fishM: T.Matrix4[] = [];
     const mk = (x: number, y: number, z: number, ry = 0, s = 1) => new T.Matrix4().compose(v(x, y, z), new T.Quaternion().setFromAxisAngle(v(0, 1, 0), ry), v(s, s, s));
@@ -137,6 +262,9 @@ export const fultonfish: RoomDef = {
         /* the bay: a numbered roll up door in the stall front, a table of ice, boxes behind */
         k.sign(String(101 + i + (side > 0 ? 20 : 0)), 1.1, 0.8, fx - side * 0.02, 6.5, z, '#0d1116', '#e8eef2', 150, side > 0 ? -PI / 2 : PI / 2);
         k.box(0.3, 4.3, 5.4, fx - side * 0.06, 2.3, z, dark);
+        doorAt.push([fx - side * 0.3, 0.15, z + 0.2, side > 0 ? -PI / 2 : PI / 2]);
+        for (let c = 0; c < 3; c++) totes.push([fx - side * (2.6 + c * 0.05), 0.0 + c * 0.42, z + 2.55, side > 0 ? -PI / 2 : PI / 2]);
+        if (i % 3 === 1) handTrucks.push([fx - side * 3.2, 0, z - 2.9, side > 0 ? PI / 2 + 0.3 : -PI / 2 - 0.3]);
         k.box(1.6, 1.0, 4.6, fx - side * 1.0, 0.5, z, steel);
         k.box(2.0, 0.1, 5.0, fx - side * 1.1, 1.05, z, k.flat(0xd6dde2, 0.9, 0.22));
         for (let j = 0; j < 7; j++) iceM.push(mk(fx - side * (0.5 + rnd() * 1.4), 1.14 + rnd() * 0.12, z - 2.1 + j * 0.7, rnd() * 3, 0.5 + rnd() * 0.45));
@@ -157,8 +285,20 @@ export const fultonfish: RoomDef = {
     k.instances(new T.BoxGeometry(0.82, 0.3, 0.58), waxB, boxM.filter((_, i) => i % 2 === 1));
     k.instances(new T.BoxGeometry(0.84, 0.05, 0.6), k.flat(0x2a4a6a, 0, 0.7), boxM.map((m2) => m2.clone().multiply(new T.Matrix4().makeTranslation(0, 0.17, 0))));
     k.instances(new T.IcosahedronGeometry(0.16, 0), ice, iceM);
+    /* 2026-11-24 wave 7d: the fish on the ice are a real fish model (our koi, recoloured to a silver catch) lying on their
+       sides, instanced; the capsules wait underneath until it loads and then go. Roll up doors, totes, hand trucks are real too. */
     const fishG = new T.CapsuleGeometry(0.1, 0.36, 2, 6); fishG.rotateZ(PI / 2);
-    k.instances(fishG, fish, fishM);
+    const capsules = k.instances(fishG, fish, fishM);
+    const side90 = new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 0, 1), PI / 2);
+    manyM(k, FM, 'koi', { length: 0.5 }, fishM.map((m0) => { const p = new T.Vector3(), q = new T.Quaternion(), sc0 = new T.Vector3(); m0.decompose(p, q, sc0); p.y += 0.02; return new T.Matrix4().compose(p, q.multiply(new T.Quaternion().setFromAxisAngle(UP, PI / 2)).multiply(side90), new T.Vector3(1, 1, 1)); }), (o) => { tintAll(o, 0xb8c4cc, 0.28, 0.65); capsules.visible = false; });
+    many(k, FM, 'ph_rollershutter_door', { width: 4.2 }, doorAt, (o) => tintAll(o, 0xa8b0b8, 0.45, 0.6));
+    many(k, FM, 'ph_industrial_pastic_container', { height: 0.42 }, totes);
+    many(k, FM, 'ph_hand_truck', { height: 1.35 }, handTrucks);
+    for (const [x, z] of [[-7.8, 8], [7.8, -22], [-7.8, -40]]) ph(k, FM, 'ph_WetFloorSign_01', x, 0, z, { height: 0.62, rotY: x, keepOut: 0.3 });
+    for (const [x, z] of [[-8.3, 20.5], [8.3, -9.2]]) ph(k, FM, 'ph_metal_trash_can', x, 0, z, { height: 0.9, rotY: PI / 2, keepOut: 1.0 });
+    for (const [x, z] of [[-8.6, 1.6], [8.6, -34.4]]) ph(k, FM, 'ph_rubber_boots', x, 0, z, { height: 0.37, rotY: PI / 2 });
+    /* hanging aisle boards down the centre, what each run of houses sells */
+    ['FINFISH', 'SHELLFISH', 'SMOKED  ·  CURED', 'FROZEN  ·  BOXED'].forEach((t, i) => { const z = 14 - i * 18; k.box(6.2, 1.1, 0.12, 0, 7.4, z, dark); for (const s2 of [-2.6, 2.6]) k.beam(v(s2, 7.95, z), v(s2, H - 0.5, z), 0.015, steel, 4); hsign(k, t, 5.8, 0.9, 0, 7.4, z + 0.07, 0, { fg: '#e8eef2', bg: '#0d1116', border: '#d8c24a' }); hsign(k, t, 5.8, 0.9, 0, 7.4, z - 0.07, PI, { fg: '#e8eef2', bg: '#0d1116', border: '#d8c24a' }); });
     if (!ctx.reduced) {
       vapour(k, vapourPts, 3, { rise: 1.1, spread: 0.7, size: 0.13, opacity: 0.13, colour: 0xcfe6f2, seed: 17, speed: 0.2, animate: true });
       k.ticks.push((t) => scales.forEach((s, i) => { s.rotation.z = Math.sin(t * 1.4 + i) * 0.045; }));
@@ -227,6 +367,11 @@ export const fultonfish: RoomDef = {
     }
     for (const x of [-6.4, 0, 6.4]) mounts.push({ position: v(x, 3.4, Z1 + 0.32), rotation: 0, target: v(x, 3, Z1 + 5.5), width: 3.4, height: 2.2, style: 'steel', wash: true });
     /* the census on the tile, north end, where the buyers queue for the scale */
+    /* the Firefly painting inside over the doors (FIREFLY_QUEUE.md): the steel panel until the file lands */
+    fireflyPlate(k, 'assets/museum/tex/fultonfish/ff_fm_south_street.webp', 16, 1.7, 0, 8.4, Z0 - 0.3, PI, panel);
+    /* one trick (rule 9): 183 YEARS painted on the aisle so long that it only stands up from where you come in */
+    standUp(k, '183 YEARS', '#d8c24a', 0, Z0 - 7.5, 3, 0.0, 0, 7, 4.0, 1.7);
+    k.egg(v(0, 1.0, Z0 - 7.5), { id: 'fultonfish-183', title: 'Letters that stand up', year: '1822 to 2005', text: 'The yellow letters on the aisle are painted long and thin, so they only stand up as a sign from the spot where you come in. A picture distorted to come right from one viewpoint is anamorphosis. 183 is how many years the market worked on South Street before it moved to Hunts Point in 2005.', clue: 'Stand where you came in and look down the aisle floor.', source: { name: 'Fulton Fish Market, Wikipedia', url: 'https://en.wikipedia.org/wiki/Fulton_Fish_Market' } }, { r: 1.2 });
     k.censusWall({ x: -14, y: 4.2, z: Z1 + 0.33, rotY: 0, cols: 18, rows: 5, tile: 0.6, gap: 0.05, start: ctx.wallStart(1200, 90), pieces: ctx.all, backing: panel });
     /* what the market knows about itself */
     k.egg(v(0, 2.6, Z0 - 1), { id: 'moved-2005', title: 'The market moves north', year: '2005', text: 'On November 14, 2005 the Fulton Fish Market left the South Street Seaport after 183 years and opened in this refrigerated hall at Hunts Point in the Bronx. About 650 workers came with it.', clue: 'Read the band over the doors, then ask how old the name on it is.', source: { name: 'Fulton Fish Market, Wikipedia', url: 'https://en.wikipedia.org/wiki/Fulton_Fish_Market' } }, { r: 2.4 });
@@ -256,15 +401,18 @@ export const lunarnewyear: RoomDef = {
     const red = k.flat(0xb4201e, 0.1, 0.6),
       gold = k.flat(0xd8a828, 0.7, 0.35),
       dark = k.flat(0x1a1d22, 0.3, 0.7),
-      shutter = k.pbr('cnShutter', X.steel(0x7f868c), 1.6, { metalness: 0.6, roughness: 0.45 }),
+      shutter = sc(k, 'lunarnewyear', 'shutter', 2.2, () => X.steel(0x7f868c), { color: 0xc8ccd0, metalness: 0.5, roughness: 0.5 }, 0x7f868c),
       awning = k.flat(0x1d4a35, 0, 0.75),
       paper = k.glow(0xff5a3c, 0.95),
       cream = k.flat(0xf0e6cc, 0, 0.8);
-    street(k, { w: 9, len: 110, z: -6, x: 0, walk: 4.6 });
+    const CN = 'lunarnewyear';
+    sstreet(k, CN, { w: 9, len: 110, z: -6, x: 0, walk: 4.6 });
     blockFront(k, { x: 9.2, z0: 42, count: 12, face: -1, seed: 55, h: [15, 22] });
     blockFront(k, { x: -9.2, z0: 44, count: 12, face: 1, seed: 56, h: [14, 21] });
     k.skyline({ z: -90, count: 18, spacing: 10, scale: 2.2, base: 0, seed: 58, lit: 0.18, rows: 1 });
     /* storefronts: awnings, shutters, vertical signs, the gate the works hang on */
+    const BLADES = ['茶樓', '麵家', '餅家', '藥材', '燒臘', '海鮮', '珠寶', '書局', '粥店', '雜貨'];
+    const escapes: number[][] = [];
     const names = ['FOOK SING', 'GOLDEN PALACE', 'HOP LEE', 'MEI LAI WAH', 'WO HOP', 'TAI PAN', 'NOM WAH', 'SUN SAI GAI', 'WING ON', 'KAM MAN', 'LUNG MOON', 'SHUN LEE'];
     for (const side of [-1, 1]) {
       for (let i = 0; i < 10; i++) {
@@ -273,11 +421,35 @@ export const lunarnewyear: RoomDef = {
         k.box(2.4, 0.16, 7.4, x - side * 1.1, 4.6, z, awning);
         k.box(0.2, 0.5, 7.4, x - side * 2.2, 4.45, z, dark);
         k.sign(names[(i + (side > 0 ? 0 : 6)) % names.length], 5.6, 0.62, x - side * 0.02, 5.25, z, '#b4201e', '#f4e2b0', 62, side > 0 ? -PI / 2 : PI / 2);
-        k.box(0.36, 3.2, 0.56, x - side * 0.3, 8.2, z + 2.6, red);
-        k.sign('OPEN  ·  ALL DAY', 0.5, 3.0, x - side * 0.52, 8.2, z + 2.6, '#b4201e', '#f4e2b0', 52, side > 0 ? -PI / 2 : PI / 2);
+        /* 2026-11-24 wave 7d: real bilingual blade signs, the characters stacked down a lit panel that sticks out over the
+           sidewalk (generic trades, no business names), and a real fire escape on every front (Poly Haven CC0, instanced) */
+        blade(k, BLADES[(i * 2 + (side > 0 ? 1 : 0)) % BLADES.length], x - side * 0.9, 8.2, z + 2.6, 1.0, 3.4, PI / 2, '#b4201e', '#f4e2b0', dark, true);
+        if (i < 7) escapes.push([x - side * 0.72, 5.62, z - 2.0, side > 0 ? -PI / 2 : PI / 2]);
         for (const dz of [-2.2, 2.2]) { k.cyl(0.26, 0.42, x - side * 1.6, 4.0, z + dz, paper, 0.26, 12); k.point(x - side * 1.6, 3.9, z + dz, 0xff6a3a, 6, 5); }
       }
     }
+    many(k, CN, 'ph_modular_fire_escape', { height: 9.6 }, escapes, (o) => tintAll(o, 0x2a2e30, 0.6, 0.6));
+    /* sidewalk stands of tangerines and pomegranates for the new year, in stacked plastic crates */
+    const crates: number[][] = [], tang: number[][] = [], pom: number[][] = [], rndC = X.mulberry(707);
+    for (const [sx, z0] of [[1, 30], [-1, 22], [1, 6]]) {
+      const x0 = sx * 8.25;
+      for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) {
+        const cz = z0 - 0.9 + c * 0.46, cx = x0 - sx * r * 0.34, y = 0.14 + (1 - r) * 0.27;
+        crates.push([cx, y - 0.27 * (1 - r) + 0.0, cz, PI / 2]); if (r === 0) crates.push([cx, y, cz, PI / 2]);
+        const top = y + 0.26, fl = (c + r) % 3 === 0 ? pom : tang;
+        for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) fl.push([cx - 0.09 + b * 0.18, top - 0.03, cz - 0.07 + a * 0.14, rndC() * 6]);
+      }
+      k.keepOut.push({ x: x0, z: z0, r: 1.1 });
+    }
+    many(k, CN, 'ph_plastic_crate_01', { height: 0.26 }, crates, (o) => tintAll(o, 0xb4201e, 0.6, 0.0));
+    many(k, CN, 'ph_food_lime_01', { height: 0.075 }, tang, (o) => tintAll(o, 0xf08a1c, 0.45, 0.0));
+    many(k, CN, 'ph_food_pomegranate_01', { height: 0.1 }, pom);
+    for (const [x, z] of [[-8.4, 33], [8.4, -18]]) ph(k, CN, 'ph_metal_trash_can', x, 0.14, z, { height: 0.9, rotY: PI / 2, keepOut: 1.0 });
+    /* a tea house set out on the sidewalk under an awning: the carved armchairs, stools and the tea table */
+    ph(k, CN, 'ph_chinese_tea_table', -7.9, 0.14, 13.6, { height: 0.5, keepOut: 1.2 });
+    ph(k, CN, 'ph_chinese_armchair', -8.5, 0.14, 12.5, { height: 1.1, rotY: 0.7 });
+    ph(k, CN, 'ph_chinese_stool', -7.2, 0.14, 14.2, { height: 0.5, rotY: 0.2 });
+    ph(k, CN, 'ph_chinese_screen_panels', -8.75, 0.14, 12.0, { height: 1.5, rotY: PI / 2 });
     /* lanterns on strings across the roadway, and the banner over the parade */
     const lanternGroups: T.Group[] = [];
     for (let i = 0; i < 10; i++) {
@@ -410,9 +582,9 @@ export const lunarnewyear: RoomDef = {
     }
     /* the crowd: both kerbs, four deep, and the ones who stepped into the road */
     if (!ctx.reduced) {
-      k.crowd([v(6.4, 0, 40), v(6.4, 0, -46)], 30, { seed: 61, speed: 0.25, spread: 2.6, colors: [0xb4201e, 0xd8342c, 0x1d242c, 0xf0e2c0, 0xd8a828, 0x2a3f6a] });
-      k.crowd([v(-6.4, 0, -46), v(-6.4, 0, 40)], 30, { seed: 62, speed: 0.22, spread: 2.6, colors: [0xb4201e, 0x8a1a18, 0x24303c, 0xefe6d2, 0xd8a828] });
-      k.crowd([v(3.6, 0, 38), v(-3.6, 0, -44)], 12, { seed: 63, speed: 0.6, spread: 1.4 });
+      k.crowd([v(6.4, 0, 40), v(6.4, 0, -46)], 24, { seed: 61, speed: 0.25, spread: 2.6, colors: [0xb4201e, 0xd8342c, 0x1d242c, 0xf0e2c0, 0xd8a828, 0x2a3f6a] });
+      k.crowd([v(-6.4, 0, -46), v(-6.4, 0, 40)], 24, { seed: 62, speed: 0.22, spread: 2.6, colors: [0xb4201e, 0x8a1a18, 0x24303c, 0xefe6d2, 0xd8a828] });
+      k.crowd([v(3.6, 0, 38), v(-3.6, 0, -44)], 8, { seed: 63, speed: 0.6, spread: 1.4 });
     }
     /* the works: on the shutters, both sides, at the height the crowd stands */
     const mounts: Mount[] = [];
@@ -423,6 +595,12 @@ export const lunarnewyear: RoomDef = {
     for (let i = 0; i < 4; i++) { const z = 28 - i * 8; for (const side of [-1, 1]) mounts.push({ position: v(side * 8.82, 2.6, z - 3.4), rotation: side > 0 ? -PI / 2 : PI / 2, target: v(side * 6.2, 3, z - 3.4), width: 2.2, height: 1.6, style: 'black', wash: false }); }
     k.censusWall({ x: 0, y: 5.4, z: -50, rotY: 0, cols: 16, rows: 4, tile: 0.58, gap: 0.05, start: ctx.wallStart(2000, 64), pieces: ctx.all, backing: shutter });
     k.box(11, 5.6, 0.4, 0, 5.4, -50.25, dark);
+    /* the Firefly mural for the Year of the Horse above the census (FIREFLY_QUEUE.md): the dark panel until the file lands */
+    k.box(11, 3.4, 0.4, 0, 9.9, -50.25, dark);
+    fireflyPlate(k, 'assets/museum/tex/lunarnewyear/ff_cn_horse_mural.webp', 10.6, 3.0, 0, 9.9, -50.03, 0, dark);
+    /* one trick (rule 9): 恭喜發財 painted in gold on the roadway so long that it only stands up from the top of the street */
+    standUp(k, '恭喜發財', '#f0c22a', 0, 36, 3, 0.0, 0, 7, 3.8, 1.7);
+    k.egg(v(0, 1.0, 36), { id: 'lunarnewyear-gung-hay', title: 'A greeting that stands up', text: 'The four gold characters on the road are painted long and thin, so they only stand up as a sign from the top of the street. A picture distorted to come right from one viewpoint is anamorphosis. They read gung hay fat choy in Cantonese, the new year wish for prosperity that the banner over the parade carries too.', clue: 'Stand at the top of the street and look down the roadway.', source: { name: 'Chinese New Year, Wikipedia', url: 'https://en.wikipedia.org/wiki/Chinese_New_Year' } }, { r: 1.2 });
     k.block(-11, 11, -50.6, -49.9);
     /* the street's own history */
     k.egg(v(0, 3.2, 12), { id: 'first-parade', title: 'The parade is younger than it looks', year: '1996', text: 'Better Chinatown USA held the first Chinatown Lunar New Year Parade and Festival in 1996. The neighbourhood had marked the new year for well over a century before that, in family associations and at the temples, without a permit or a route.', clue: 'Read the banner over the road, then ask how old it is.', source: { name: 'Better Chinatown USA', url: 'https://betterchinatown.com/lny-parade/' } }, { r: 3 });
@@ -447,11 +625,13 @@ export const enginecompany: RoomDef = {
     k.sky({ top: 0x2a3d5e, horizon: 0xd88a52, ground: 0x2e2a26, fog: 0.004, sun: { az: 2.5, el: 0.08, color: 0xffb070, size: 20 }, env: 0.6 });
     k.hemi(0xe4e6ee, 0x2a2622, 0.95);
     k.sun(0xffb878, 1.5, -40, 16, 30, true, 60);
-    const tile = k.pbr('ecTile', X.subwayTile(0xe8e2d2, 0x4a4238), 0.95, { roughness: 0.25 }),
-      deck = k.pbr('ecDeck', X.terrazzo(0x9aa0a4, 22), 1.4, { roughness: 0.4, metalness: 0.18 }),
-      lime = k.pbr('ecLime', X.ashlar(0xcfc6b2, 31, 5), 0.45),
-      brick = k.pbr('ecBrick', X.brick(0x7d4236, 32), 0.3),
-      copper = k.pbr('ecCopper', X.patina(0x4f8f7a), 0.7, { metalness: 0.6, roughness: 0.45 }),
+    const EC = 'enginecompany';
+    /* 2026-11-24 wave 7d: scanned glazed tile, painted deck, brick, limestone and weathered copper (Poly Haven CC0) */
+    const tile = sc(k, EC, 'tile', 1.6, () => X.subwayTile(0xe8e2d2, 0x4a4238), { color: 0xfff6e6, roughness: 0.25 }, 0xe8e2d2),
+      deck = sc(k, EC, 'deck', 3, () => X.terrazzo(0x9aa0a4, 22), { color: 0xd8a8a0, roughness: 0.4, metalness: 0.1 }, 0x8a4a44),
+      lime = sc(k, EC, 'lime', 2.4, () => X.ashlar(0xcfc6b2, 31, 5), { color: 0xfffaf0 }, 0xcfc6b2),
+      brick = sc(k, EC, 'brick', 2.2, () => X.brick(0x7d4236, 32), { color: 0xffe4d8 }, 0x7d4236),
+      copper = sc(k, EC, 'copper', 2, () => X.patina(0x4f8f7a), { color: 0xa8e0c8, metalness: 0.5, roughness: 0.5 }, 0x4f8f7a),
       brass = k.flat(0xc79a36, 0.95, 0.22),
       steel = k.flat(0xb9c0c6, 0.8, 0.32),
       dark = k.flat(0x14171c, 0.35, 0.65),
@@ -463,6 +643,10 @@ export const enginecompany: RoomDef = {
     /* Broome Street, the neighbours, the corner */
     const RX = 22, FX = 13;
     street(k, { w: 14, len: 120, z: 0, x: RX });
+    k.box(14, 0.02, 120, RX, 0.005, 0, sc(k, EC, 'asph', 3, () => X.asphalt(0x24282d), { color: 0xa0a0a0, roughness: 0.8 }, 0x2a2d31));
+    /* the alarm box on its post at the kerb, the classic red pull box (Poly Haven CC0 model on a code post) */
+    k.cyl(0.07, 1.3, RX - 8.6, 0.79, -3.2, fireRed, 0.07, 8); ph(k, EC, 'ph_fire_alarm', RX - 8.6, 1.44, -3.2, { height: 0.42, rotY: -PI / 2, keepOut: 0.4 });
+    k.sphere(0.12, RX - 8.6, 2.05, -3.2, k.glow(0xff3a2a), 10);
     blockFront(k, { x: RX + 12, z0: 48, count: 12, face: -1, seed: 71, h: [15, 23] });
     blockFront(k, { x: FX, z0: 46, count: 4, face: 1, seed: 72, h: [16, 22] });
     blockFront(k, { x: FX, z0: -20, count: 4, face: 1, seed: 73, h: [15, 21] });
@@ -506,8 +690,20 @@ export const enginecompany: RoomDef = {
     k.block(LX, FX, D / 2 - 0.4, D / 2 + 0.4);
     k.block(FX - 0.5, FX + 0.5, -D / 2, -3.4);
     k.block(FX - 0.5, FX + 0.5, 3.4, D / 2);
-    for (const dz of [-7, 0, 7]) { k.box(1.3, 0.18, 1.3, FX - 8, H - 0.4, dz, warm); k.point(FX - 8, H - 1.0, dz, 0xffeedc, 22, 15); }
-    for (const dz of [-7, 0, 7]) { k.box(1.3, 0.18, 1.3, FX - 17, H - 0.4, dz, warm); k.point(FX - 17, H - 1.0, dz, 0xffeedc, 20, 15); }
+    /* 2026-11-24 wave 7d: the Guastavino ceiling built, not painted: six shallow tile vaults springing from steel beams
+       across the bay, and caged pendant lamps (Poly Haven CC0) hanging from the crowns where flat light boxes sat */
+    const NV = 6, span = (W - 1) / NV, rise = 0.4, R = (span * span / 4 + rise * rise) / (2 * rise), al = Math.asin(span / 2 / R), crown = H - 0.02;
+    const vaultM = sc(k, EC, 'tile', 1.6, () => X.subwayTile(0xe8e2d2, 0x4a4238), { color: 0xfff6e6, roughness: 0.22, side: T.DoubleSide }, 0xe8e2d2);
+    const lampAt: number[][] = [];
+    for (let i = 0; i < NV; i++) {
+      const xc = LX + span * (i + 0.5);
+      const g = new T.CylinderGeometry(R, R, D - 1.4, 28, 1, true, PI - al, 2 * al); g.rotateX(PI / 2);
+      k.mesh(g, vaultM, xc, crown - R, 0);
+      k.box(0.32, 0.42, D - 3.6, LX + span * i, crown - rise - 0.1, 0, dark);
+      for (const dz of [-6.5, 0, 6.5]) { lampAt.push([xc, crown - 1.25, dz, 0]); k.point(xc, crown - 1.4, dz, 0xffeedc, i % 2 ? 16 : 18, 13); }
+    }
+    many(k, EC, 'ph_caged_hanging_light', { height: 1.0 }, lampAt);
+    void warm;
     /* the brass pole, its hole in the ceiling, the rail around it */
     k.cyl(0.09, H + 2.4, LX + 4.2, (H + 2.4) / 2, -7.4, brass, 0.09, 14);
     k.torus(0.75, 0.08, LX + 4.2, H + 0.05, -7.4, brass, 24);
@@ -547,21 +743,31 @@ export const enginecompany: RoomDef = {
     const spill = k.wash(FX + 3.5, 0.06, 0, 0, 12, 14, 0xff3020, 0.0);
     spill.rotation.x = -PI / 2;
     /* the gear wall, the boots, the helmets, the housewatch desk, the gong */
-    const coats: T.Group[] = [];
+    const coats: T.Group[] = [], bootAt: number[][] = [];
     for (let i = 0; i < 7; i++) {
       const z = -8.4 + i * 2.8, x = LX + 1.1;
       const g = new T.Group(); g.position.set(x, 3.1, z);
       const coat = new T.Mesh(new T.BoxGeometry(0.34, 1.5, 0.95), k.flat(0x2b3138, 0, 0.85)); g.add(coat);
       const band = new T.Mesh(new T.BoxGeometry(0.36, 0.16, 0.97), k.flat(0xd8e24a, 0.2, 0.5)); band.position.y = -0.3; g.add(band);
       k.add(g); coats.push(g);
-      k.box(0.4, 0.5, 0.92, x, 0.25, z, k.flat(0x1a1c20, 0.2, 0.8));
+      bootAt.push([x + 0.05, 0, z, PI / 2]);
       k.box(0.5, 0.26, 0.6, x, 4.3, z, i % 2 ? k.flat(0xd8d2c4, 0.2, 0.5) : k.flat(0x9c1a18, 0.2, 0.5));
       k.beam(v(x - 0.3, 4.0, z), v(x + 0.1, 4.0, z), 0.03, steel, 4);
     }
     k.block(LX, LX + 1.6, -10, 10);
-    k.box(2.2, 1.1, 1.3, LX + 3.2, 0.55, 6.6, k.pbr('ecDesk', X.planks(0x6a4632, 6, 34), 1.4, { roughness: 0.5 }));
-    k.box(0.28, 0.42, 0.3, LX + 3.2, 1.3, 6.6, lamp);
+    /* the boots open under each coat, the housewatch desk with its lamp, stool, clock and megaphone, the tools on the wall */
+    many(k, EC, 'ph_rubber_boots', { height: 0.37 }, bootAt);
+    ph(k, EC, 'ph_metal_office_desk', LX + 3.2, 0, 6.6, { height: 0.8, rotY: PI / 2 });
+    ph(k, EC, 'ph_metal_stool_01', LX + 2.2, 0, 6.6, { height: 0.75 });
+    ph(k, EC, 'ph_Megaphone_01', LX + 3.5, 0.8, 6.1, { height: 0.24, rotY: 0.6 });
+    ph(k, EC, 'ph_wall_clock', LX + 0.24, 4.15, 6.6, { height: 0.5, rotY: PI / 2 });
+    k.box(0.28, 0.42, 0.3, LX + 3.2, 1.01, 7.1, lamp);
     k.point(LX + 3.2, 1.6, 6.6, 0x9ad8a8, 7, 5);
+    for (const [z, r] of [[-D / 2 + 0.3, 0], [D / 2 - 0.3, PI]] as [number, number][]) { ph(k, EC, 'ph_garden_hose_wall_mounted_01', FX - 1.6, 1.0, z, { height: 0.8, rotY: r }); ph(k, EC, 'ph_korean_fire_extinguisher_01', FX - 2.4, 0, z + (r ? -0.2 : 0.2), { height: 0.66, rotY: r }); }
+    ph(k, EC, 'ph_metal_tool_chest', LX + 7.0, 0, -D / 2 + 0.55, { height: 0.9, keepOut: 0.6 });
+    for (let i = 0; i < 4; i++) ph(k, EC, 'ph_wooden_axe', LX + 9.0 + i * 0.32, 1.4, -D / 2 + 0.24, { height: 0.9, rotY: PI / 2 });
+    ph(k, EC, 'ph_ladder_sectioned_01', LX + 2.6, 0.4, -D / 2 + 0.26, { height: 3.4, rotY: 0 });
+    ph(k, EC, 'ph_portable_searchlight', FX - 5.4, 2.62, 1.0, { height: 0.24, rotY: PI / 2 });
     k.keepOut.push({ x: LX + 3.2, z: 6.6, r: 1.5 });
     k.prop('bell', LX + 2.0, 4.4, 9.4, { height: 0.9 });
     const striker = k.mesh(new T.SphereGeometry(0.1, 9, 7), brass, LX + 2.6, 4.4, 9.4, true);
@@ -598,6 +804,11 @@ export const enginecompany: RoomDef = {
     const mounts: Mount[] = [];
     for (let i = 0; i < 6; i++) { const z = -8.6 + i * 3.4; mounts.push({ position: v(LX + 0.42, 3.4, z), rotation: PI / 2, target: v(LX + 4.6, 3, z), width: 2.4, height: 1.7, style: 'black', wash: true }); }
     for (const dz of [-1, 1]) for (let i = 0; i < 5; i++) { const x = FX - 3.6 - i * 3.8; mounts.push({ position: v(x, 3.5, dz * (D / 2 - 0.42)), rotation: dz > 0 ? PI : 0, target: v(x, 3, dz * 4.6), width: 2.8, height: 1.9, style: 'black', wash: true }); }
+    /* the Firefly company emblem on the back wall (FIREFLY_QUEUE.md): the tile until the file lands */
+    fireflyPlate(k, 'assets/museum/tex/enginecompany/ff_ec_company_emblem.webp', 2.4, 1.6, LX + 0.23, 5.15, -3.4, PI / 2, tile);
+    /* one trick (rule 9): KEEP CLEAR painted on the apparatus floor so long that it only stands up from the back of the bay */
+    standUp(k, 'KEEP CLEAR', '#f0e2c0', LX + 5.4, -6.4, 3, 0.0, -PI / 2, 4, 3.4, 1.1);
+    k.egg(v(LX + 5.4, 1.0, -6.4), { id: 'enginecompany-keep-clear', title: 'Letters that stand up', text: 'KEEP CLEAR is painted on the apparatus floor stretched so long that it only reads as an upright sign from one spot at the back of the bay. A picture distorted to come right from one viewpoint is anamorphosis. The floor beside the rig stays clear because the crew runs it in the dark.', clue: 'Stand at the back of the bay by the pole and look along the floor.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
     k.censusWall({ x: LX + 6.5, y: 5.6, z: -D / 2 + 0.43, rotY: 0, cols: 16, rows: 3, tile: 0.55, gap: 0.05, start: ctx.wallStart(900, 48), pieces: ctx.all, backing: tile });
     /* what the house knows */
     k.egg(v(FX - 1.2, 5.2, 0), { id: 'robertson-1899', title: 'One firehouse, one architect', year: '1898 to 1899', text: 'R. H. Robertson drew this house in 1898 and it was finished in March 1899, eight months later. It was the only firehouse he ever designed, in a career otherwise spent on churches, offices and mansions.', clue: 'The name of the company is carved where a church would put a saint.', source: { name: 'Landmarks Preservation Commission, Fire Engine Company 55', url: 'https://s-media.nyc.gov/agencies/lpc/lp/1987.pdf' } }, { r: 2.2 });

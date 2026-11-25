@@ -7,9 +7,100 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
-import { street, blockFront } from './f';
+import { street, blockFront, hsign, paintTex, anamorphTex } from './f';
+import { hero, heroInstances } from './heroes';
+import { fireflyPlate } from './a';
 
 const PI = Math.PI;
+
+/* ---------- THE BIG UPGRADE, wave 7c (2026-11-24): helpers for rooms 129 to 133 ----------
+   The wave 5 and 6 pattern, kept local: scanned CC0 surfaces (Poly Haven) from assets/museum/tex/<room>/ that wear a
+   sensible colour until their maps land, real models from assets/museum/props/<room>/ placed many at once, transmission
+   and shadows stripped from small props. Safe in node: the audit builds with no DOM, so scans fall back to paint. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w7c = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w7c-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w7c.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w7c.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w7c-${room}-${id}`, e.s, 1 / metres, p);
+  if (!m.userData.w7c) {
+    m.userData.w7c = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* Small props: no transmission (three draws the room twice for it), no shadows (they double it again). */
+function plain(o: T.Object3D, shadows = false) {
+  o.traverse((c) => {
+    if (!(c instanceof T.Mesh)) return;
+    c.castShadow = shadows; c.receiveShadow = true;
+    const mm = (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[];
+    mm.forEach((m) => { if (m && (m as T.MeshPhysicalMaterial).transmission) { m.transmission = 0; m.transparent = true; m.opacity = Math.min(m.opacity, 0.5); m.depthWrite = false; } });
+  });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function many(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    plain(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), up = new T.Vector3(0, 1, 0);
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(up, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
+/* A vertical lawn of ivy with depth: instanced leaves standing a hand off a wall. The wall's face is at x (face = +1
+   when the leaves stand on the +x side) between z0 and z1, y0 to y1. One draw for the whole wall. */
+function ivyLeaves(k: Kit, x: number, face: 1 | -1, z0: number, z1: number, y0: number, y1: number, n: number, seed: number, skip?: (y: number, z: number) => boolean) {
+  const g = new T.PlaneGeometry(0.2, 0.17); g.translate(0, 0.07, 0);
+  const rnd = X.mulberry(seed), mats: T.Matrix4[] = [], e = new T.Euler(), q = new T.Quaternion(), c = new T.Color();
+  for (let i = 0; i < n; i++) {
+    const y = y0 + Math.pow(rnd(), 0.8) * (y1 - y0), s = 0.6 + rnd() * 0.9, zz = z0 + rnd() * (z1 - z0);
+    if (skip && skip(y, zz)) continue;
+    e.set((rnd() - 0.5) * 1.2, face * PI / 2 + (rnd() - 0.5) * 1.6, (rnd() - 0.5) * 2.4);
+    mats.push(new T.Matrix4().compose(v(x + face * (0.02 + rnd() * 0.16), y, zz), q.setFromEuler(e), v(s, s, s)));
+  }
+  const inst = k.instances(g, new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.75, side: T.DoubleSide }), mats);
+  for (let i = 0; i < mats.length; i++) inst.setColorAt(i, c.set([0x2f4f24, 0x3a5e2a, 0x48702f, 0x26401e, 0x557a36][i % 5]));
+  if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+  inst.castShadow = false;
+  return inst;
+}
+/* The camera, for the rooms' tricks (Pepper's ghost, the face that follows); undefined in node. */
+const cam = () => (typeof window !== 'undefined' ? (window as unknown as { __museum?: { camera?: T.Camera } }).__museum?.camera : undefined);
+/* A house font placard on a post: dark plate, cream type (Archivo Expanded). */
+function hPlacard(k: Kit, lines: [string, string?], x: number, y: number, z: number, rotY: number, w = 1.6) {
+  k.cyl(0.035, y - 0.2, x, (y - 0.2) / 2, z, k.flat(0x1f242a, 0.65, 0.4), 0.035, 8);
+  k.box(w + 0.08, lines[1] ? 0.62 : 0.4, 0.05, x, y, z, k.flat(0x101214, 0.2, 0.5)).rotation.y = rotY;
+  const dx = Math.sin(rotY) * 0.03, dz = Math.cos(rotY) * 0.03;
+  hsign(k, lines[0], w, 0.26, x + dx, y + (lines[1] ? 0.13 : 0), z + dz, rotY, { fg: '#efe6d2', size: 0.62 });
+  if (lines[1]) hsign(k, lines[1], w, 0.2, x + dx, y - 0.15, z + dz, rotY, { fg: '#a9b4bd', font: 'W2 JetBrains Mono', size: 0.5 });
+  k.keepOut.push({ x, z, r: 0.35 });
+}
 
 /* ---------- shared: a street running along x (street() in f.ts runs along z) ---------- */
 function avenue(k: Kit, p: { w: number; len: number; z: number; x?: number; walk?: number }) {
@@ -73,10 +164,10 @@ function streak() {
   streakTex = new T.CanvasTexture(c);
   return streakTex;
 }
-function waterWall(k: Kit, ctx: RoomCtx, p: { x: number; z: number; w: number; h: number; pool?: number; base?: number }) {
+function waterWall(k: Kit, ctx: RoomCtx, p: { x: number; z: number; w: number; h: number; pool?: number; base?: number; stone?: T.Material; curb?: T.Material }) {
   const { x, z, w, h, pool = 2.6, base = 0 } = p;
-  const granite = k.pbr('wfGranite', X.ashlar(0x15181a, 77, 4), 0.5, { roughness: 0.3, metalness: 0.15 });
-  const curb = k.pbr('wfCurb', X.ashlar(0x8c8c88, 4, 2), 0.35);
+  const granite = p.stone ?? k.pbr('wfGranite', X.ashlar(0x15181a, 77, 4), 0.5, { roughness: 0.3, metalness: 0.15 });
+  const curb = p.curb ?? k.pbr('wfCurb', X.ashlar(0x8c8c88, 4, 2), 0.35);
   k.box(w, h, 0.8, x, base + h / 2, z, granite);
   k.box(w + 0.6, 0.5, 1.3, x, base + h + 0.25, z + 0.1, curb);
   const pz = z + 0.4 + pool / 2;
@@ -344,11 +435,14 @@ export const greenacre: RoomDef = {
     k.sky({ top: 0x6f9dd2, horizon: 0xe4e8e4, ground: 0x4c5648, fog: 0.0028, sun: { az: 0.9, el: 0.8, color: 0xfff1d8, size: 14 }, env: 0.9 });
     k.hemi(0xf0f6ff, 0x3f4a3a, 0.95);
     k.sun(0xfff0d4, 2.2, 18, 52, 26, true, 60);
-    const brick = k.pbr('gaBrick', X.brick(0x7a4a3c, 61), 0.28),
+    /* 2026-11-24 (wave 7c): scanned CC0 surfaces (Poly Haven): the neighbours' brick, granite pavers, the rough stacked
+       stone of the east wall, dark wet rock for the cascade, weathered planks for the trellis */
+    const brick = sc(k, 'greenacre', 'brick', 2.4, () => X.brick(0x7a4a3c, 61), { roughness: 0.9, color: 0xe8d0c4 }, 0x6a4034),
       granite = k.pbr('gaGranite', X.ashlar(0x8c8a84, 62, 3), 0.35),
-      pavers = k.pbr('gaPavers', X.pavers(0x8a8074, 63), 0.5),
+      pavers = sc(k, 'greenacre', 'pav', 1.8, () => X.pavers(0x8a8074, 63), { roughness: 0.8, color: 0xd8d2c8 }, 0x8a8074),
       ivy = k.pbr('ivyWall', X.grass(0x3a5a2c, 64), 0.22, { roughness: 1 }),
-      wood = k.pbr('gaTrellis', X.planks(0x5a3f2c, 4, 65), 0.9),
+      wood = sc(k, 'greenacre', 'wood', 1.4, () => X.planks(0x5a3f2c, 4, 65), { roughness: 0.8, color: 0xc8a888 }, 0x5a3f2c),
+      wetRock = sc(k, 'greenacre', 'rock', 3.0, () => X.ashlar(0x15181a, 77, 4), { roughness: 0.35, metalness: 0.1, color: 0x6a6c70 }, 0x24272a),
       wire = k.flat(0xd6dad6, 0.7, 0.4),
       top = k.pbr('gaTable', X.marble(0xe8e4dc, 0x9a948a, 66), 0.6, { roughness: 0.3 }),
       iron = k.flat(0x1f242a, 0.7, 0.45),
@@ -370,16 +464,28 @@ export const greenacre: RoomDef = {
     k.prop('tree', -20, 0.14, 21, { height: 6, keepOut: 0.6 });
     k.prop('tree', 22, 0.14, 21, { height: 6.5, keepOut: 0.6 });
     // the park: paving, the ivy on the west, the rough ashlar on the east, the front wall with its bronze sign, the runnel, the terrace
-    const ashlarE = k.pbr('gaAshlar', X.ashlar(0x8a847a, 81, 7), 0.45, { roughness: 0.95, normal: 2 });
+    const ashlarE = sc(k, 'greenacre', 'ashlar', 2.6, () => X.ashlar(0x8a847a, 81, 7), { roughness: 0.95, color: 0xe4ddd2 }, 0x8a847a);
     k.box(18.6, 0.3, 36, 0, -0.15, 0, pavers);
     k.box(0.3, 8.4, 36, -9.0, 4.2, 0, ivy); k.box(0.3, 8.4, 36, 9.0, 4.2, 0, ashlarE); k.box(0.34, 1.0, 36, 9.0, 8.3, 0, ivy);
     for (const s of [-1, 1]) k.block(Math.min(s * 8.7, s * 9.8), Math.max(s * 8.7, s * 9.8), -18, 18);
     for (const s of [-1, 1]) { k.box(4, 4.4, 0.6, s * 7, 2.2, 18, brick); k.box(4.2, 0.2, 0.8, s * 7, 4.5, 18, granite); k.block(s * 5, s * 9.2, 17.7, 18.3); }
+    /* 2026-11-24 (wave 7c): planting beds inside the gate walls (scanned hedge, Poly Haven CC0), ferns at the tree pits,
+       and the west wall's ivy given depth: leaves stand off the wall, clear of the frames */
+    for (const s of [-1, 1]) { k.box(4.2, 0.45, 1.6, s * 6.8, 0.22, 16.4, granite); k.block(Math.min(s * 4.6, s * 8.9), Math.max(s * 4.6, s * 8.9), 15.55, 17.25); }
+    many(k, 'greenacre/ph_shrub_02', { height: 1.15 }, [[-6.8, 0.42, 16.45, 0], [6.8, 0.42, 16.45, PI]]);
+    many(k, 'greenacre/ph_fern_02', { height: 0.5 }, [[5.0, 0, -9, 0.3], [3.2, 0, -1, 1.9], [5.4, 0, 7, 3.1], [-2.4, 0, 3, 4.4], [-7.4, 0.9, -9.5, 0.8], [-7.4, 0.9, 4, 2.2], [7.6, 0, 12.6, 5.0]]);
+    ivyLeaves(k, -8.84, 1, -17.6, 17.6, 0.9, 8.6, 5200, 611, (y, z) => y > 0.9 + 3.25 - 1.3 && y < 0.9 + 3.25 + 1.3 && [-9, -4.5, 0, 4.5, 9].some((m) => Math.abs(z - m) < 1.8));
+    ivyLeaves(k, 9.0, 1, -17.6, 17.6, 7.6, 8.9, 1600, 612);
     k.box(18.6, 0.5, 0.4, 0, 4.9, 18, bronze);
     k.sign('GREENACRE PARK', 7, 0.42, 0, 4.9, 18.22, 'transparent', '#e8dcc0', 92, 0);
     k.sign('A PRIVATELY OWNED PARK OPEN TO THE PUBLIC  ·  ESTABLISHED 1971', 5, 0.24, -7, 3.6, 18.32, 'transparent', '#e8dcc0', 52, 0);
     // the waterfall across the back; the runnel at the foot of the rough east wall, fed by trickles
-    waterWall(k, ctx, { x: 0, z: -17.6, w: 18, h: 7.6, pool: 2.8 });
+    waterWall(k, ctx, { x: 0, z: -17.6, w: 18, h: 7.6, pool: 2.8, stone: wetRock });
+    /* 2026-11-24 (wave 7c): the real cascade drops over rough split granite, not a flat slab: scanned rock faces (Poly Haven
+       CC0) stand at both ends of the pool, break the top edge against the sky and sit in the churn at its foot */
+    many(k, 'greenacre/ph_rock_face_01', { height: 2.6 }, [[-7.7, 0, -16.4, 0.5], [7.8, 0, -16.5, 2.7]]);
+    many(k, 'greenacre/ph_rock_face_02', { height: 1.5 }, [[-6.2, 7.75, -17.7, 0.3], [-1.4, 7.75, -17.8, 2.2], [3.4, 7.75, -17.7, 4.1], [7.4, 7.75, -17.6, 1.1]]);
+    many(k, 'greenacre/ph_rock_face_02', { height: 1.0 }, [[-3.6, 0.05, -15.6, 0.9], [2.4, 0.05, -15.4, 3.3], [5.6, 0.05, -15.9, 5.2]]);
     k.box(1.4, 0.3, 24.6, 8.0, -0.1, -2, brookM);
     for (const s of [-1, 1]) k.box(0.22, 0.34, 24.6, 8.0 + s * 0.8, 0.12, -2, granite);
     k.box(1.8, 0.06, 1.2, 8.0, 0.32, 3.5, wood);
@@ -416,6 +522,8 @@ export const greenacre: RoomDef = {
     leaves(k, ctx, 80, { x0: -8.5, x1: 8, z0: -13, z1: 15, top: 8 }, 12);
     sparrows(k, ctx, 12, { x0: -2.8, x1: 6.2, z0: -12.5, z1: 13 }, () => 0, 51);
     placard(k, '"WATERFALL"', -3.2, 1.25, -13.6, -0.2);
+    // the room's trick, the waterfall illusion: stare at the falling water, then at the still rock, and the rock climbs
+    hPlacard(k, ['THE WATERFALL ILLUSION', 'STARE AT THE FALL FOR 30 SECONDS, THEN AT THE ROCK'], 2.9, 1.3, -13.35, 0, 1.9);
     for (const z of [9, 0, -9]) lantern(k, 8.85, 4.6, z, -PI / 2, k.night);
     lantern(k, -8.85, TY + 4.9, -11.5, PI / 2, k.night);
     k.point(0, 7, 4, 0xffe6c0, 12 * k.night, 18);
@@ -426,6 +534,7 @@ export const greenacre: RoomDef = {
     k.egg(v(-6.3, TY + 3.9, 0.5), { id: 'trellis', title: 'The covered overlook', text: 'On the west side a higher terrace, covered by trellising and acrylic domes, gives a protected overlook down into the garden.', clue: 'Climb the low steps and look up through the slats.', source: tclf }, { r: 1.8 });
     k.egg(v(-1.8, 0.8, -4), { id: 'chairs', title: 'Knoll chairs and warm heaters', text: 'Knoll tables and chairs fill the central plaza, and the walls around the planting beds and brook double as built in benches. The covered seating area has overhead heating elements for cooler weather.', clue: 'Pull up a chair, any chair, in the middle of the park.', source: { name: 'Greenacre Park, Design', url: 'https://www.greenacrepark.org/design' } }, { r: 1.1 });
     k.egg(v(0, 4.9, 18.1), { id: 'founder', title: 'A gift from Abby Rockefeller Mauzé', year: '1968 to 1971', text: 'Abby Rockefeller Mauzé, a lifelong New Yorker, set up the Greenacre Foundation in 1968, inspired by Paley Park and the lack of parks in midtown. Greenacre Park officially opened on October 14, 1971.', clue: 'Read the bronze over the gate on your way in.', source: { name: 'Greenacre Park, History', url: 'https://www.greenacrepark.org/history' }, room: 'paley' }, { r: 1.5 });
+    k.egg(v(-7.6, 2.4, -15.4), { id: 'aftereffect', title: 'The waterfall illusion', year: '1834', text: 'Stare at falling water for about thirty seconds, then look at the still rock beside it: the rock seems to drift upward. Robert Addams described it in 1834 after watching the Falls of Foyers in Scotland, and the motion aftereffect is still called the waterfall illusion.', clue: 'Watch the water fall, then watch the rock rise.', source: { name: 'Wikipedia, Motion aftereffect', url: 'https://en.wikipedia.org/wiki/Motion_aftereffect' } }, { r: 1.4 });
     // the hang: two rows on the east wall, a row over the west terrace, two by the gate
     const mounts: Mount[] = [];
     for (let i = 0; i < 7; i++) { const z = 13 - i * 4.5; mounts.push({ position: v(8.8, 3.3, z), rotation: -PI / 2, target: v(3.0, 3, z), width: 3.4, height: 2.3, style: 'black', wash: false }); }
@@ -453,8 +562,9 @@ export const paley: RoomDef = {
     k.hemi(0xf4f8ff, 0x46523e, 1.3);
     k.sun(0xfff4dc, 2.6, 8, 70, 14, true, 50);
     const F = 0.8;
-    const granite = k.pbr('ppGranite', X.ashlar(0x8e8c86, 72, 3), 0.35),
-      pavers = k.pbr('ppPavers', X.pavers(0x9a9488, 73), 0.45),
+    /* 2026-11-24 (wave 7c): scanned CC0 granite (Poly Haven) for the pavers, the steps and the piers, scanned brick behind */
+    const granite = sc(k, 'paley', 'step', 2.2, () => X.ashlar(0x8e8c86, 72, 3), { roughness: 0.85, color: 0xe2ded6 }, 0x8e8c86),
+      pavers = sc(k, 'paley', 'pav', 1.5, () => X.pavers(0x9a9488, 73), { roughness: 0.75, color: 0xe0dcd4 }, 0x9a9488),
       ivy = k.pbr('ivyWall', X.grass(0x3a5a2c, 64), 0.22, { roughness: 1 }),
       wire = k.flat(0xd6dad6, 0.7, 0.4),
       top = k.pbr('ppTable', X.marble(0xe8e4dc, 0x9a948a, 66), 0.6, { roughness: 0.3 }),
@@ -468,7 +578,7 @@ export const paley: RoomDef = {
     cars(k, { z: 34.6, x0: -50, x1: 50, seed: 7 }); cars(k, { z: 23.4, x0: -46, x1: -10, seed: 8 }); cars(k, { z: 23.4, x0: 10, x1: 46, seed: 9 });
     blockFront(k, { x: -7.2, z0: 18, count: 5, face: 1, seed: 75, h: [24, 36] });
     blockFront(k, { x: 7.2, z0: 18, count: 5, face: -1, seed: 76, h: [24, 36] });
-    k.box(30, 30, 12, 0, 15, -22.4, k.pbr('ppBack', X.brick(0x5a4038, 79), 0.28));
+    k.box(30, 30, 12, 0, 15, -22.4, sc(k, 'paley', 'brick', 2.6, () => X.brick(0x5a4038, 79), { roughness: 0.9, color: 0xc8b0a4 }, 0x5a4038));
     k.skyline({ z: -120, count: 18, spacing: 9, scale: 2.8, base: -2, seed: 77, lit: 0.15, glow: 0.4, tint: 0x6e7684, rows: 1 });
     k.skyline({ z: 150, count: 18, spacing: 9, scale: 2.4, base: -2, seed: 78, lit: 0.12, glow: 0.3, tint: 0x7e8290, rows: 1 });
     k.prop('lamppost', -12, 0.14, 19.6, { height: 6, keepOut: 0.5 });
@@ -488,9 +598,37 @@ export const paley: RoomDef = {
     k.box(0.06, 0.06, 2.2, 6.5, 2.85, 16.3, bronze);
     // the water wall across the whole back
     waterWall(k, ctx, { x: 0, z: -15.4, w: 13.4, h: 6.2, pool: 1.6, base: F });
+    /* 2026-11-24 (wave 7c): the vertical lawns given depth, leaves standing off both walls and clear of every frame */
+    const lo = [13, 8.6, 4.2, -0.2, -4.6, -9], hi = [10.8, 6.4, 2, -2.4, -6.8];
+    const clear = (y: number, z: number) => (Math.abs(y - (F + 3.3)) < 1.3 && lo.some((m) => Math.abs(z - m) < 1.7)) || (Math.abs(y - (F + 6.0)) < 1.15 && hi.some((m) => Math.abs(z - m) < 1.55));
+    for (const s of [-1, 1] as const) ivyLeaves(k, s * 6.5, (-s) as 1 | -1, -15.4, 15, F, 9, 6400, 620 + s, clear);
+    /* The room's trick, Pepper's ghost: the water sheet is the glass. Stand on the marked spot in the middle of the park
+       and the Stork Club, which stood on this lot until 1965, shows itself in the falling water; step off and it is gone. */
+    const ghostTex = paintTex(1024, 400, (g, w, h) => {
+      g.clearRect(0, 0, w, h); g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.shadowColor = '#7fd8ff'; g.shadowBlur = 28; g.strokeStyle = '#bfeeff'; g.lineWidth = 6;
+      g.strokeRect(60, 40, w - 120, h - 80);
+      g.fillStyle = '#e8fbff'; g.font = '400 118px "W2 Permanent Marker", Arial, sans-serif'; g.fillText('THE STORK CLUB', w / 2, h * 0.44);
+      g.shadowColor = '#ff9ad8'; g.fillStyle = '#ffd8f0'; g.font = '700 40px "W2 JetBrains Mono", monospace'; g.fillText('3 EAST 53RD STREET', w / 2, h * 0.74);
+    }, ['W2 Permanent Marker', 'W2 JetBrains Mono']);
+    const ghostM = new T.MeshBasicMaterial({ map: ghostTex, transparent: true, opacity: 0, depthWrite: false, blending: T.AdditiveBlending });
+    const ghost = k.mesh(new T.PlaneGeometry(8.4, 3.3), ghostM, 0, F + 3.7, -14.9, true);
+    hPlacard(k, ["PEPPER'S GHOST", 'STAND HERE, WATCH THE WATER'], -1.0, F + 1.25, -8.2, 0, 1.7);
+    if (!ctx.reduced) {
+      const spot = new T.Vector3(-1.0, 0, -6.6), d = new T.Vector3();
+      k.ticks.push((t) => {
+        const c = cam(); if (!c) return;
+        const dist = Math.hypot(c.position.x - spot.x, c.position.z - spot.z);
+        c.getWorldDirection(d);
+        const near = Math.max(0, Math.min(1, (3.2 - dist) / 1.6)), facing = Math.max(0, Math.min(1, (-d.z - 0.55) / 0.3));
+        const target = near * facing * (0.78 + 0.12 * Math.sin(t * 2.3) + 0.06 * Math.sin(t * 7.1));
+        ghostM.opacity += (target - ghostM.opacity) * 0.08;
+        ghost.position.y = F + 3.7 + 0.05 * Math.sin(t * 0.8);
+      });
+    } else ghostM.opacity = 0.35;
     // seventeen honey locusts on the grid: three files, six ranks, one rank short where the kiosk stands
     let seed = 20;
-    for (const x of [-4.0, 0, 4.0]) for (const z of [12, 7.5, 3, -1.5, -6, -10.5]) { if (x < -3 && z === 12) continue; locust(k, x, F, z, 10.8, 1.5, seed++, 0xa4c65e); }
+    for (const x of [-4.0, 0, 4.0]) for (const z of [12, 7.5, 3, -1.5, -6, -10.5]) { if (x < -3 && z === 12) continue; locust(k, x, F, z, 13.5, 1.6, seed++, 0xa4c65e); }
     // the kiosk by the entrance
     const KX = -4.9, KZ = 13.4;
     k.box(3.4, 2.6, 2.6, KX, F + 1.3, KZ, k.flat(0x2a3a34, 0.3, 0.6));
@@ -520,6 +658,7 @@ export const paley: RoomDef = {
     k.egg(v(0, F + 9.6, 3), { id: 'locusts', title: 'Seventeen honey locusts', text: 'Seventeen honey locust trees, planted on a grid over the central seating area, give dappled shade to the movable wire chairs and marble tables on the granite pavers.', clue: 'Count the trunks, then look up.', source: tclf }, { r: 1.6 });
     k.egg(v(5.3, F + 0.8, -3.75), { id: 'bertoia', title: 'Saarinen tables, Bertoia chairs', year: '1967', text: 'The park is furnished with 20 tables designed by Eero Saarinen and 60 modern style Bertoia wire chairs. Paley Park opened to the public on May 23, 1967.', clue: 'Sit down: the answer is under you.', source: { name: 'Paley Park', url: 'https://www.paleypark.org/about' } }, { r: 1.1 });
     k.egg(v(-6.3, F + 1.3, 6.4), { id: 'ivy', title: 'Vertical lawns of ivy', text: 'The two side walls are covered with vertical lawns of English ivy. A food kiosk stands at the park entrance.', clue: 'The walls here are alive: find the green between the frames.', source: tclf }, { r: 0.9 });
+    k.egg(v(-1.0, F + 1.3, -8.2), { id: 'ghost', title: 'The ghost in the water', year: '1965', text: "The Stork Club, the nightclub of columnists, stars and society, stood at 3 East 53rd Street until it closed in 1965. The building came down and Paley Park opened on its lot two years later. Pepper's ghost is the old stage trick of a figure appearing in a pane of glass; here the water is the glass.", clue: 'Stand on the spot in the middle of the park and watch the falling water.', source: { name: 'Wikipedia, Stork Club', url: 'https://en.wikipedia.org/wiki/Stork_Club' } }, { r: 1.0 });
     for (const s of [-1, 1]) for (const z of [8.8, -2.2, -11]) lantern(k, s * 6.5, F + 4.9, z, s < 0 ? PI / 2 : -PI / 2, k.night);
     for (const s of [-1, 1]) k.point(s * 4, F + 6, 0, 0xffe6c0, 10 * k.night, 16);
     // the hang: one portrait per tree bay on each wall, a second row above
@@ -559,16 +698,18 @@ export const stmarks: RoomDef = {
     k.sky({ top: 0x5c8ecb, horizon: 0xe6d9c4, ground: 0x4a4a42, fog: 0.0026, sun: { az: 3.6, el: 0.42, color: 0xffe0b8, size: 16 }, haze: 0.3, env: 0.85 });
     k.hemi(0xf0e8ff, 0x3a3a34, 0.85);
     k.sun(0xffe6c0, 2.2, 22, 34, 46, true, 70);
-    const fs = k.pbr('fieldstone', X.cobble(0x8f887b, 91), 1.7, { roughness: 0.95 }),
+    /* 2026-11-24 (wave 7c): scanned CC0 surfaces (Poly Haven): the fieldstone, the slate roofs, the yard's grass and gravel,
+       the sanctuary's boards and plaster, the neighbours' brick, granite for the steps and posts */
+    const fs = sc(k, 'stmarksyard', 'field', 3.2, () => X.cobble(0x8f887b, 91), { roughness: 0.95, color: 0xe6ddd0 }, 0x8f887b),
       cream = k.pbr('smCream', X.plaster(0xe9e3d4, 92), 0.5),
-      white = k.pbr('smWhite', X.plaster(0xf2efe6, 93), 0.6),
-      slate = k.pbr('smSlate', X.ashlar(0x3a3d42, 94, 6), 0.8, { roughness: 0.7 }),
-      planks = k.pbr('smPlanks', X.planks(0x8a6a48, 5, 95), 1.0),
-      grass = k.pbr('smGrass', X.grass(0x4e6e3c, 96), 0.15),
-      gravel = k.pbr('smGravel', X.cobble(0xa39a86, 97), 1.1),
-      brickY = k.pbr('smBrick', X.brick(0x6b4a3d, 98), 0.28),
+      white = sc(k, 'stmarksyard', 'plaster', 3.0, () => X.plaster(0xf2efe6, 93), { roughness: 0.9, color: 0xfbf8f0 }, 0xe8e4da),
+      slate = sc(k, 'stmarksyard', 'slate', 2.4, () => X.ashlar(0x3a3d42, 94, 6), { roughness: 0.7, color: 0xa8aeb6 }, 0x3a3d42),
+      planks = sc(k, 'stmarksyard', 'floor', 2.2, () => X.planks(0x8a6a48, 5, 95), { roughness: 0.6, color: 0xe8d8c4 }, 0x8a6a48),
+      grass = sc(k, 'stmarksyard', 'grass', 3.0, () => X.grass(0x4e6e3c, 96), { roughness: 1, color: 0xd8e4c8 }, 0x4e6e3c),
+      gravel = sc(k, 'stmarksyard', 'gravel', 1.8, () => X.cobble(0xa39a86, 97), { roughness: 1, color: 0xf0e8dc }, 0xa39a86),
+      brickY = sc(k, 'stmarksyard', 'brick', 2.4, () => X.brick(0x6b4a3d, 98), { roughness: 0.9, color: 0xd8c0b4 }, 0x6b4a3d),
       ivy = k.pbr('ivyWall', X.grass(0x3a5a2c, 64), 0.22, { roughness: 1 }),
-      stone = k.pbr('smStone', X.ashlar(0xb5b0a4, 109, 5), 0.9, { roughness: 0.85 }),
+      stone = sc(k, 'stmarksyard', 'stone', 2.0, () => X.ashlar(0xb5b0a4, 109, 5), { roughness: 0.85, color: 0xf2eee6 }, 0xb5b0a4),
       slab = k.flat(0x8f8a80, 0, 0.9),
       iron = k.flat(0x22272b, 0.7, 0.45),
       ironGreen = k.flat(0x33403a, 0.6, 0.5), portico = k.pbr('smPortico', X.plaster(0xd6cfbf, 108), 0.5),
@@ -592,6 +733,11 @@ export const stmarks: RoomDef = {
     for (const s of [-1, 1]) k.box(2.4, 0.04, 40, s * 9.8, 0.02, -3, gravel);
     k.box(22, 0.04, 2.4, 0, 0.02, -25.4, gravel);
     for (const s of [-1, 1]) { k.rail(s * 11.1, 20, 17.8, iron, 1.7, 'x', 1.2); k.box(0.6, 2.4, 0.6, s * 2.2, 1.2, 20, stone); k.box(0.5, 0.5, 0.5, s * 2.2, 2.6, 20, stone); k.block(s * 1.9, s * 20.2, 19.8, 20.2); }
+    /* 2026-11-24 (wave 7c): the wrought iron gates (Poly Haven CC0) stand open in the fence, gas lamps either side of the path */
+    many(k, 'stmarksyard/ph_large_iron_gate', { box: [1.9, 2.2, 0.1] }, [[-1.86, 0, 18.85, PI / 2], [1.86, 0, 18.85, -PI / 2]]);
+    for (const s of [-1, 1]) k.block(Math.min(s * 1.7, s * 2.0), Math.max(s * 1.7, s * 2.0), 17.8, 19.8);
+    many(k, 'stmarksyard/cp_gaslamp', { height: 3.4 }, [[-3.2, 0, 18.6, 0], [3.2, 0, 18.6, 0], [-3.2, 0, 15.2, 0], [3.2, 0, 15.2, 0]]);
+    for (const [x, z] of [[-3.2, 18.6], [3.2, 18.6], [-3.2, 15.2], [3.2, 15.2]]) { k.keepOut.push({ x, z, r: 0.35 }); k.point(x, 3.1, z, 0xffd28a, 2 + 14 * k.night, 9); }
     for (const s of [-1, 1]) { k.box(0.5, 4.6, 42, s * 20.5, 2.3, -1, brickY); k.box(0.7, 0.9, 42, s * 20.5, 4.6, -1, ivy); k.block(s * 20.2, s * 21, -22, 20); }
     // the east yard behind the church: more grass, the walls carried round, a back wall
     k.box(44, 0.3, 10.4, 0, -0.15, -28.2, grass);
@@ -623,6 +769,8 @@ export const stmarks: RoomDef = {
     const CF = 0.6; // the church floor above the yard
     // Harold Edelman's abstract windows after the 1978 fire: one shared stained glass material, dimmer at night
     const stainedM = new T.MeshBasicMaterial({ map: stained(), color: new T.Color(0xffffff).lerp(new T.Color(0x6a6a6a), k.night * 0.5) });
+    /* 2026-11-24 (wave 7c): a Firefly painting of the windows replaces the canvas when its file lands (FIREFLY_QUEUE.md) */
+    texL?.load('assets/museum/tex/stmarksyard/ff_edelman_glass.webp', (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; stainedM.map = t; stainedM.needsUpdate = true; }, undefined, () => {});
     void glass;
     const wall = (x: number, m: T.Material, th: number) => {
       for (const z of [-19, -13, -7, -1]) { const a = k.arch(2.2, 5.4, th, x, 1.6, z, m, false, 6 / 4.4); a.rotation.y = PI / 2; k.box(th, 1.6, 6, x, 0.8, z, m); k.box(th, 3.3, 6, x, 9.35, z, m); }
@@ -705,18 +853,26 @@ export const stmarks: RoomDef = {
     k.sign('SERVICES SUNDAY 11 AM  ·  THE POETRY PROJECT  ·  DANSPACE  ·  THE OLDEST SITE OF CONTINUOUS WORSHIP IN THE CITY', 4.2, 0.5, -6.5, 1.45, 18.6, '#0d0d0d', '#8899aa', 38, 0);
     for (const x of [-7.6, -5.4]) k.box(0.1, 1.9, 0.1, x, 0.95, 18.55, iron);
     // the sanctuary: folding chairs, the platform, the lectern under a spot, the readers on the back wall, candles at night
-    const seatG = new T.BoxGeometry(0.44, 0.04, 0.44), backG = new T.BoxGeometry(0.44, 0.4, 0.03), legG = new T.BoxGeometry(0.03, 0.46, 0.03);
-    const seats: T.Matrix4[] = [], backs: T.Matrix4[] = [], legs: T.Matrix4[] = [], sit: Seat[] = [];
+    /* 2026-11-24 (wave 7c): real folding chairs (Poly Haven CC0, cut to 300 triangles, instanced) in place of boxes, and a
+       wider centre aisle so the aisle's trick has room */
+    const chairs: number[][] = [], sit: Seat[] = [];
     for (let r = 0; r < 17; r++) for (let x = -5.6; x <= 5.6; x += 0.56) {
-      if (Math.abs(x) < 1.0) continue;
-      const z = -1 - r; seats.push(new T.Matrix4().makeTranslation(x, CF + 0.46, z)); backs.push(new T.Matrix4().makeTranslation(x, CF + 0.68, z + 0.22));
-      for (const [lx, lz] of [[-0.19, -0.19], [0.19, -0.19], [-0.19, 0.19], [0.19, 0.19]]) legs.push(new T.Matrix4().makeTranslation(x + lx, CF + 0.23, z + lz));
+      if (Math.abs(x) < 1.5) continue;
+      const z = -1 - r; chairs.push([x, CF, z, PI]);
       if (rnd() < 0.2) sit.push({ x, z, rotY: PI, y: CF });
     }
-    const chairM = k.flat(0x2a2c30, 0.4, 0.5);
-    k.instances(seatG, chairM, seats); k.instances(backG, chairM, backs); k.instances(legG, chairM, legs);
+    many(k, 'stmarksyard/ph_folding_chair_01', { height: 0.86 }, chairs);
     seated(k, sit, 7, 1);
-    k.block(-5.9, -1.0, -17.6, -0.5); k.block(1.0, 5.9, -17.6, -0.5);
+    k.block(-5.9, -1.4, -17.6, -0.5); k.block(1.4, 5.9, -17.6, -0.5);
+    /* The room's trick, an anamorphic aisle: two words painted long down the boards, unreadable smears until you stand in
+       the doorway, where they stand up off the floor. */
+    const aisleT = paintTex(512, 1024, (g, w, h) => {
+      g.clearRect(0, 0, w, h); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#b8ab92';
+      for (const [t, y] of [['READ', 0.3], ['ALOUD', 0.72]] as const) { let fs = 230; g.font = `400 ${fs}px "W2 Permanent Marker", Arial, sans-serif`; const tw = g.measureText(t).width; if (tw > w * 0.9) { fs *= (w * 0.9) / tw; g.font = `400 ${fs}px "W2 Permanent Marker", Arial, sans-serif`; } g.fillText(t, w / 2, h * y); }
+      g.font = '400 60px "W2 Permanent Marker", Arial, sans-serif'; g.fillStyle = '#c94a3a'; g.fillText('SINCE 1966', w / 2, h * 0.93);
+    }, ['W2 Permanent Marker']);
+    anamorphTex(k, aisleT, 0, 2.8, CF + 3, CF, 0, 3.3, 0.9, 2.0, 0.8);
+    hPlacard(k, ['STAND IN THE DOORWAY', 'AND READ THE AISLE'], 2.5, CF + 1.25, 2.9, 0, 1.6);
     k.box(6, 0.3, 3, 0, CF + 0.15, -21.2, planks); k.keepOut.push({ x: 0, z: -21.2, r: 2.4 });
     k.box(0.6, 1.1, 0.5, 0, CF + 0.85, -20.6, wood); k.box(0.7, 0.05, 0.6, 0, CF + 1.42, -20.6, wood).rotation.x = 0.35;
     k.cyl(0.02, 1.4, 0.5, CF + 1.0, -20.4, iron, 0.02, 6); k.cyl(0.06, 0.16, 0.5, CF + 1.75, -20.4, iron, 0.03, 8);
@@ -746,6 +902,7 @@ export const stmarks: RoomDef = {
     k.egg(v(0, CF + 1.3, -20.6), { id: 'poetry', title: 'The Poetry Project, since 1966', year: '1966', text: "The Poetry Project was founded at St. Mark's in 1966, and the church has hosted the Danspace Project since 1974. The church calls itself New York's oldest site of continuous religious practice.", clue: 'Walk to the far end of the sanctuary and take the lectern.', source: church }, { r: 1.0 });
     k.egg(v(0, 1.8, -24.9), { id: 'vault', title: 'The Stuyvesant vault', text: 'The Stuyvesant family vault is still under the east wall of the church. It was closed for good when the last family member was interred there in 1953. Many flat vault markers can still be seen among the newer pavements.', clue: 'Walk all the way around behind the church, to its east end.', source: { name: 'New York City Cemetery Project', url: 'https://nycemetery.wordpress.com/2011/06/04/st-marks-in-the-bowery-churchyard-and-cemetery/' } }, { r: 1.3 });
     k.egg(v(5, 1.7, -29.2), { id: 'bust', title: 'A bust from the Netherlands', year: '1915', text: 'Dutch sculptor Toon Dupuis made this bust of Peter Stuyvesant. Queen Wilhelmina and the Dutch government presented it as a token of goodwill, and it was unveiled on December 5, 1915.', clue: 'In the yard behind the church, a governor keeps watch from a plinth.', source: { name: 'The Low Countries', url: 'https://www.the-low-countries.com/article/how-peter-stuyvesant-became-an-anachronistic-symbol-of-dutch-american-friendship/' } }, { r: 1.0 });
+    k.egg(v(0, CF + 0.4, -4), { id: 'aisle', title: 'Words that stand up', text: 'Anamorphosis stretches an image so it only comes right from one point. Painters have used it since the Renaissance; Holbein hid a skull in The Ambassadors in 1533. Down this aisle the words are smeared ten metres long, and from the doorway they stand up straight.', clue: 'Read the floor from the door.', source: { name: 'Wikipedia, Anamorphosis', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
     // the hang: the yard walls, then the sanctuary between the windows and either side of the door
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const z = 10 - i * 5.5; mounts.push({ position: v(s * 20.2, 3.2, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 16.5, 3, z), width: 3.2, height: 2.2, style: 'steel', wash: false }); }
@@ -772,24 +929,26 @@ export const kings: RoomDef = {
     k.sky({ top: 0x1e2a4e, horizon: 0x8a6a70, ground: 0x14141a, fog: 0.003, sun: { az: 4.4, el: 0.08, color: 0xff9a60, size: 18 }, haze: 0.4, stars: 100, env: 0.7 });
     k.hemi(0xffe0c8, 0x2a2226, 0.6);
     k.sun(0xffb890, 1.2, -50, 18, 60, false, 80);
-    const limestone = k.pbr('ktLimestone', X.ashlar(0xc8b998, 111, 3), 0.7),
+    /* 2026-11-24 (wave 7c): scanned CC0 surfaces (Poly Haven): pale ashlar for the Flatbush front, marble underfoot,
+       velvet for the curtain, dark walnut for the panels */
+    const limestone = sc(k, 'kingsfoyer', 'lime', 3.0, () => X.ashlar(0xc8b998, 111, 3), { roughness: 0.85, color: 0xeee0c4 }, 0xc8b998),
       terra = k.pbr('ktTerra', X.plaster(0xd9c4a0, 112), 0.4),
       graniteD = k.pbr('ktGranite', X.ashlar(0x3a3a3c, 113, 3), 0.4, { roughness: 0.4 }),
       gilt = k.pbr('ktGilt', X.gilt(0xd8b060), 2, { metalness: 0.85, roughness: 0.3 }),
       giltD = k.pbr('ktGiltD', X.gilt(0x9a7a3a), 2, { metalness: 0.8, roughness: 0.4 }),
       cream = k.pbr('ktCream', X.plaster(0xe8dcc4, 114), 0.4),
       pink = k.pbr('ktPink', X.marble(0xd8b4a8, 0x8a5a5a, 115), 0.4, { roughness: 0.25 }),
-      floorM = k.pbr('ktFloor', X.marble(0xe2d8c8, 0x9a8a78, 116), 0.5, { roughness: 0.3 }),
+      floorM = sc(k, 'kingsfoyer', 'marble', 2.4, () => X.marble(0xe2d8c8, 0x9a8a78, 116), { roughness: 0.25, color: 0xf2ece2 }, 0xe2d8c8),
       terrazzo = k.pbr('ktTerrazzo', X.terrazzo(0xc6c1b2, 117), 0.6),
       carpet = k.pbr('ktCarpet', X.carpet(0x7a1a22, 0xc79a4a), 0.5, { roughness: 0.95 }),
-      velvet = k.pbr('ktVelvet', X.velvet(0x8a1420), 0.3, { roughness: 0.9 }),
+      velvet = sc(k, 'kingsfoyer', 'velvet', 1.2, () => X.velvet(0x8a1420), { roughness: 0.9, color: 0xc8303c }, 0x8a1420),
       bronze = k.flat(0x6a4a2a, 0.85, 0.35),
       dark = k.flat(0x14090a, 0.4, 0.8),
       neon = k.glow(0xff4a3a),
       warm = k.glow(0xffe0b0),
       glassW = k.glass(0xffe0b0, 0.3, 0.1),
-      mirror = k.flat(0x7c848c, 1, 0.08),
-      walnut = k.pbr('ktWalnut', X.planks(0x4a2c1a, 8, 119), 0.8, { roughness: 0.45 }),
+      mirror = k.flat(0x5c646c, 1, 0.12),
+      walnut = sc(k, 'kingsfoyer', 'walnut', 1.6, () => X.planks(0x4a2c1a, 8, 119), { roughness: 0.45, color: 0xb08a6a }, 0x4a2c1a),
       redMarble = k.pbr('ktRedMarble', X.marble(0x8a2a26, 0x3a1010, 118), 0.4, { roughness: 0.25 }),
       tileP = k.pbr('ktTileP', X.marble(0xe2b4ac, 0xa07070, 120), 0.5, { roughness: 0.3 });
     // Flatbush Avenue: the block, the facade, the marquee, the blade sign
@@ -922,9 +1081,40 @@ export const kings: RoomDef = {
     k.box(6, 0.04, S1 - Z1, 0, RISE + 0.06, (S1 + Z1) / 2, carpet);
     for (const s of [-1, 1]) { k.prop('newel_urn', s * 6.2, 0, S0 + 0.6, { height: 2.2, keepOut: 0.7 }); k.prop('newel_urn', s * 6.2, RISE, S1 - 0.5, { height: 2.2, keepOut: 0.7 }); k.prop('torchere', s * 11.5, 0, S0 + 1.2, { height: 2.9, keepOut: 0.6 }); k.point(s * 11.5, 3.0, S0 + 1.2, 0xffd9a0, 14, 9); }
     for (const s of [-1, 1]) { const b = k.bar(v(s * 6.2, 1.0, S0), v(s * 6.2, RISE + 1.0, S1), 0.08, 0.08, gilt); void b; for (let i = 0; i <= 12; i++) { const u = i / 12; k.cyl(0.03, 0.95, s * 6.2, u * RISE + 0.5, S0 - u * (S0 - S1), gilt, 0.03, 6); } }
-    k.box(8.4, 8.4, 0.3, 0, RISE + 4.6, Z1 + 0.35, gilt); k.box(7.6, 7.6, 0.12, 0, RISE + 4.6, Z1 + 0.52, mirror);
+    /* 2026-11-24 (wave 7c): the landing mirror in a real carved frame (Poly Haven CC0), not a gilt square */
+    k.box(4.9, 7.4, 0.12, 0, RISE + 4.75, Z1 + 0.42, mirror);
+    many(k, 'kingsfoyer/ph_ornate_mirror_01', { height: 8.8 }, [[0, RISE + 0.35, Z1 + 0.62, 0]]);
+    // sofas along the walls under the frames, vases on pink marble pedestals, palms in the ticket lobby
+    many(k, 'kingsfoyer/ph_sofa_02', { length: 0.82 }, [-1, 1].flatMap((s) => [0.25, -5.25, -16.25, -21.75].map((z) => [s * 12.85, 0, z, s < 0 ? PI / 2 : -PI / 2])));
+    for (const s of [-1, 1]) for (const z of [0.25, -5.25, -16.25, -21.75]) k.keepOut.push({ x: s * 12.85, z, r: 1.0 });
+    for (const [x, z] of [[-4.3, 3.6], [4.3, 3.6], [-4.3, -22.6], [4.3, -22.6]]) { k.column(x, 0, z, 1.05, 0.32, pink, false, gilt); k.keepOut.push({ x, z, r: 0.55 }); }
+    many(k, 'kingsfoyer/ph_antique_ceramic_vase_01', { height: 1.05 }, [[-4.3, 1.12, 3.6, 0], [4.3, 1.12, 3.6, 1], [-4.3, 1.12, -22.6, 2], [4.3, 1.12, -22.6, 3]]);
+    many(k, 'kingsfoyer/nyb_lobby_palm', { height: 1.7 }, [[-11.4, 0, FZ - 0.9, 0], [11.4, 0, FZ - 0.9, 2], [-5.7, 0, Z0 + 0.95, 1], [5.7, 0, Z0 + 0.95, 3]]);
+    for (const [x, z] of [[-11.4, FZ - 0.9], [11.4, FZ - 0.9], [-5.7, Z0 + 0.95], [5.7, Z0 + 0.95]]) k.keepOut.push({ x, z, r: 0.6 });
+    /* brass stanchions and red velvet ropes either side of the carpet, from the door to the stair */
+    { const ropeM = k.flat(0x8a1420, 0, 0.85), posts: number[] = [];
+      for (let z = 4.2; z >= -24; z -= 3.2) { if (z < -14 && z > -18) continue; posts.push(z); }
+      for (const s of [-1, 1]) {
+        for (const z of posts) { k.cyl(0.035, 0.95, s * 3.35, 0.48, z, gilt, 0.035, 8); k.cyl(0.16, 0.05, s * 3.35, 0.025, z, gilt, 0.18, 12); k.sphere(0.07, s * 3.35, 0.98, z, gilt, 10); k.keepOut.push({ x: s * 3.35, z, r: 0.25 }); }
+        for (let i = 0; i + 1 < posts.length; i++) { const a = posts[i], b = posts[i + 1]; if (a - b > 3.3) continue; k.curve([v(s * 3.35, 0.88, a), v(s * 3.35, 0.62, (a + b) / 2), v(s * 3.35, 0.88, b)], 0.025, ropeM, 12); }
+      } }
+    /* The room's trick, the hollow face: comedy and tragedy over the auditorium arch. A mask seen from inside reads as a
+       face standing out, and as you walk past it seems to turn and watch you go. */
+    const maskM = gilt, featM = k.flat(0x1a0c08, 0.2, 0.7), masks: T.Group[] = [];
+    for (const [z, smile] of [[-10.3, 1], [-13.7, -1]] as const) {
+      const g = new T.Group(); g.rotation.order = 'YXZ'; g.position.set(13.55, 9.3, z);
+      const face = new T.Mesh(new T.SphereGeometry(0.62, 28, 18, 0, PI, 0, PI), maskM); face.scale.set(0.82, 1.12, 0.55); g.add(face);
+      for (const ex of [-0.2, 0.2]) { const e = new T.Mesh(new T.SphereGeometry(0.1, 12, 8), featM); e.scale.set(1.3, 0.75, 0.4); e.position.set(ex, 0.16, 0.31); e.rotation.z = smile * ex * 1.4; g.add(e); }
+      const mouth = new T.Mesh(new T.TorusGeometry(0.17, 0.035, 6, 16, PI), featM); mouth.position.set(0, -0.26 + (smile < 0 ? -0.1 : 0), 0.3); mouth.rotation.z = smile > 0 ? PI : 0; g.add(mouth);
+      g.rotation.y = -PI / 2; k.add(g); masks.push(g);
+    }
+    if (!ctx.reduced) {
+      const tgt = new T.Vector3();
+      k.ticks.push(() => { const c = cam(); if (!c) return; for (const g of masks) { tgt.copy(c.position); const a = Math.atan2(tgt.x - g.position.x, tgt.z - g.position.z), want = Math.max(-PI / 2 - 1.1, Math.min(-PI / 2 + 1.1, a)); g.rotation.y += (want - g.rotation.y) * 0.12; g.rotation.x = Math.max(-0.4, Math.min(0.4, -Math.atan2(tgt.y - g.position.y, Math.hypot(tgt.x - g.position.x, tgt.z - g.position.z)))) * 0.6; } });
+    }
+    k.egg(v(13.4, 9.3, -12), { id: 'hollowface', title: 'The masks that watch you', text: 'A hollow mask seen from inside reads as a face standing out, because the brain expects faces to be convex, and when you walk past it seems to turn and follow you. Psychologists call it the hollow face illusion; Richard Gregory used it to argue that what we see is a best guess.', clue: 'Walk past the arch and keep an eye on the two faces above it.', source: { name: 'Wikipedia, Hollow-Face illusion', url: 'https://en.wikipedia.org/wiki/Hollow-Face_illusion' } }, { r: 1.4 });
     k.sign('KINGS', 3, 0.7, 0, RISE + 9.4, Z1 + 0.32, 'transparent', '#f0e0b0', 130, 0);
-    k.point(0, RISE + 5, Z1 + 3, 0xffe6c0, 30, 16);
+    k.point(0, RISE + 8.6, Z1 + 2.2, 0xffe6c0, 10, 9);   // 2026-11-24 (wave 7c): was 30 at mirror height, a white blob from the door
     // the crowd at the doors and along the carpet
     k.crowd([v(-22, 0.14, 18.6), v(-8, 0.14, 17.2), v(-1, 0.14, 15), v(0, 0, 11), v(0.5, 0, 4), v(-1, 0, -6), v(1, 0, -16), v(0, 0, -24)], 18, { seed: 47, speed: 0.6, spread: 1.4, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0x8a1a22, 0xd8d0c0, 0x1a2a4a, 0xc9a25a, 0x6a4a8a] });
     k.crowd([v(-60, 0.14, 19), v(60, 0.14, 19)], 14, { seed: 48, speed: 1.0, spread: 1.6, animate: !ctx.reduced });
@@ -956,7 +1146,7 @@ export const kings: RoomDef = {
    FZ is the street face of the lobby wall; the facade faces +z onto the sidewalk. */
 function valenciaFront(k: Kit, ctx: RoomCtx, FZ: number) {
   const terra = k.pbr('lvTerra', X.plaster(0xead7b0, 137), 0.5, { roughness: 0.35 }),
-    ybrick = k.pbr('lvYBrick', X.brick(0xc9a45a, 138), 0.3),
+    ybrick = sc(k, 'valencia', 'ybrick', 2.2, () => X.brick(0xc9a45a, 138), { roughness: 0.9, color: 0xf8d898 }, 0xc9a45a),
     rbrick = k.pbr('lvRBrick', X.brick(0x7a3a2c, 139), 0.28),
     tileC = k.flat(0x2a7a8a, 0.1, 0.3),
     bronze = k.flat(0x5a4028, 0.85, 0.35),
@@ -1081,11 +1271,13 @@ export const valencia: RoomDef = {
   build(k, ctx) {
     k.sky({ top: 0x050c26, horizon: 0x1c2a5c, ground: 0x07080c, fog: 0.0018, stars: 1400, haze: 0.2, env: 0.45 });
     k.hemi(0x6f86c8, 0x2a1c16, 0.95);
-    const cream = k.pbr('lvCream', X.plaster(0xd9c6a4, 131), 0.45),
-      plasterD = k.pbr('lvDark', X.plaster(0x8a7458, 132), 0.45),
-      tile = k.pbr('lvTile', X.brick(0xa8563a, 133), 0.5, { roughness: 0.8 }),
+    /* 2026-11-24 (wave 7c): scanned CC0 surfaces (Poly Haven): lime stucco for the courtyard houses, clay plaster for the
+       shadowed walls, barrel tiles for the roofs, velvet for the curtain */
+    const cream = sc(k, 'valencia', 'stucco', 2.6, () => X.plaster(0xd9c6a4, 131), { roughness: 0.9, color: 0xf2dcbc }, 0xd9c6a4),
+      plasterD = sc(k, 'valencia', 'clay', 2.6, () => X.plaster(0x8a7458, 132), { roughness: 0.9, color: 0xb0906c }, 0x8a7458),
+      tile = sc(k, 'valencia', 'roof', 2.0, () => X.brick(0xa8563a, 133), { roughness: 0.8, color: 0xf0b090 }, 0xa8563a),
       gilt = k.pbr('lvGilt', X.gilt(0xd0a852), 2, { metalness: 0.85, roughness: 0.3 }),
-      velvet = k.pbr('lvVelvet', X.velvet(0x8a1420), 0.3, { roughness: 0.9 }),
+      velvet = sc(k, 'valencia', 'velvet', 1.2, () => X.velvet(0x8a1420), { roughness: 0.9, color: 0xc8303c }, 0x8a1420),
       carpet = k.pbr('lvCarpet', X.carpet(0x4a1a22, 0xc79a4a), 0.5, { roughness: 0.95 }),
       seatM = k.pbr('lvSeats', X.velvet(0x7a1a22), 0.4, { roughness: 0.95 }),
       planks = k.pbr('lvStage', X.planks(0x2a2018, 6, 134), 1.2, { roughness: 0.6 }),
@@ -1102,10 +1294,14 @@ export const valencia: RoomDef = {
     k.box(36.4, 0.3, 7, 0, -0.15, 22.5, carpet);
     const ramp = (z: number) => floorAt(z);
     // the seats, in two blocks, on the rake
-    const seatG = new T.BoxGeometry(0.52, 0.62, 0.5); seatG.translate(0, 0.31, 0);
+    /* 2026-11-24 (wave 7c): a real theatre seat in place of a box: tipped cushion, curved back, arms and a cast standard */
+    const sp = (w: number, h: number, d: number, x: number, y: number, z: number, rx = 0) => { const g = new T.BoxGeometry(w, h, d); if (rx) g.rotateX(rx); g.translate(x, y, z); return g; };
+    const backG = new T.CylinderGeometry(0.3, 0.3, 0.5, 4, 1, true, -0.55, 1.1); backG.rotateY(PI); backG.scale(0.92, 1, 0.5); backG.rotateX(-0.16); backG.translate(0, 0.8, 0.36); backG.deleteAttribute('uv'); backG.setAttribute('uv', new T.Float32BufferAttribute(new Float32Array(backG.attributes.position.count * 2), 2));
+    const seatG = mergeGeometries([sp(0.48, 0.1, 0.44, 0, 0.44, -0.02, -0.08), backG, sp(0.05, 0.66, 0.42, -0.27, 0.33, 0.04), sp(0.05, 0.66, 0.42, 0.27, 0.33, 0.04)])!;
     const seatT: T.Matrix4[] = [];
     for (let r = 0; r < 38; r++) { const z = 17 - r * 0.95; for (let x = 1.6; x <= 14.6; x += 0.58) for (const s of [-1, 1]) seatT.push(new T.Matrix4().makeTranslation(s * x, ramp(z), z)); }
-    k.instances(seatG, seatM, seatT);
+    k.instances(seatG, seatM, seatT).castShadow = false;
+    { const al: T.Matrix4[] = []; for (let r = 0; r < 38; r += 1) { const z = 17 - r * 0.95; for (const s of [-1, 1]) al.push(new T.Matrix4().makeTranslation(s * 1.3, ramp(z) + 0.22, z + 0.2)); } const lights = k.instances(new T.BoxGeometry(0.06, 0.12, 0.2), k.glow(0xffb860, 0.9), al); lights.castShadow = false; }
     k.block(-14.9, -1.4, -19.7, 17.6); k.block(1.4, 14.9, -19.7, 17.6);
     // the courtyard walls: four houses a side, each on its own floor level, with an arcade, a balcony, a lit upper storey and a tiled roof
     const balT: T.Matrix4[] = [];
@@ -1135,6 +1331,14 @@ export const valencia: RoomDef = {
       k.block(s * 13.4, s * 18, tz - 2.2, tz + 2.2);
     }
     k.instances(new T.CylinderGeometry(0.06, 0.08, 0.9, 6), cream, balT);
+    /* 2026-11-24 (wave 7c): wrought iron lanterns (CC0, cut to 1,500 triangles) hung under every balcony, urns on the
+       balcony rails, potted palms in the lobby */
+    const lan: number[][] = [], urns: number[][] = [];
+    for (const s of [-1, 1]) for (let seg = 0; seg < 4; seg++) { const zc = 19.5 - seg * 13, base = ramp(zc) - 0.2; for (const dz of [-3.5, 3.5]) { lan.push([s * 15.95, base + 4.35, zc + dz, 0]); k.sphere(0.16, s * 15.95, base + 4.85, zc + dz, warm, 8); } urns.push([s * 16.55, base + 6.02, zc, seg]); }
+    many(k, 'valencia/ph_Lantern_01', { height: 1.35 }, lan);
+    many(k, 'valencia/ph_antique_ceramic_vase_01', { height: 0.8 }, urns);
+    many(k, 'valencia/nyb_lobby_palm', { height: 1.8 }, [[-17.6, 0, 27.4, 0], [17.6, 0, 27.4, 2], [-17.6, 0, 30.6, 1], [17.6, 0, 30.6, 3]]);
+    for (const s of [-1, 1]) for (const z of [27.4, 30.6]) k.keepOut.push({ x: s * 17.6, z, r: 0.6 });
     // the proscenium, the pit rail, the apron, the curtain that breathes
     const PZ = -26, PB = ramp(-20) - 0.2;
     const pro = k.arch(20, 15, 2, 0, PB, PZ, gilt, false, 0.92); void pro;
@@ -1148,14 +1352,35 @@ export const valencia: RoomDef = {
     // the curtain and its pleats are one mesh hung from the top, so it can rise for the show
     const curtParts = [new T.BoxGeometry(22, 14.2, 0.6)]; curtParts[0].translate(0, -7.1, 0);
     for (let x = -10.5; x <= 10.5; x += 1.0) { const pg = new T.BoxGeometry(0.7, 14, 0.5); pg.translate(x, -7, 0.2); curtParts.push(pg); }
-    const curtain = k.mesh(mergeGeometries(curtParts)!, velvet, 0, PB + 15.0, PZ - 1.2, true);
+    const curtain = k.mesh(mergeGeometries(curtParts)!, velvet, 0, PB + 15.0, PZ - 1.2, true); curtain.name = 'lv-curtain';
     // behind it, the stage and the back wall, lit warm
     k.box(22, 0.3, 5, 0, PB + 0.85, PZ - 3.6, planks); k.box(24, 16, 0.4, 0, PB + 8, PZ - 6.2, dark);
     k.point(0, PB + 5, PZ - 3.5, 0xffd9a0, 30, 12);
+    /* The room's trick, forced perspective, after Scamozzi's streets at the Teatro Olimpico: behind the curtain a Spanish
+       street runs off to a far plaza, and it is four metres deep. Each house is smaller and closer in than the last and the
+       floor climbs, so the eye reads distance. The curtain rises on it every ninety seconds. */
+    {
+      const rs2 = X.mulberry(1585), N = 7, winD = k.flat(0x2a1a14, 0.2, 0.8), winL = k.glow(0xffc070, 0.9);
+      const fz = (u: number) => PZ - 1.7 - u * 3.9, fy = (u: number) => PB + 1.0 + u * 1.1, hw = (u: number) => 0.4 + 5.6 * (1 - 0.84 * u);
+      const rake = k.box(hw(0) * 2, 0.08, 3.9, 0, (fy(0) + fy(1)) / 2, (fz(0) + fz(1)) / 2, planks); rake.rotation.x = Math.atan2(1.1, 3.9);
+      for (let i = 0; i < N; i++) {
+        const u0 = i / N, u1 = (i + 1) / N, za = fz(u0), zb = fz(u1), f = 1 - 0.8 * u0, len = za - zb, zm = (za + zb) / 2;
+        for (const sd of [-1, 1]) {
+          const x = sd * (hw(u0) + hw(u1)) / 2, H = (5 + 2.2 * rs2()) * f, y0 = fy(u0), m = (i + (sd > 0 ? 1 : 0)) % 2 ? cream : plasterD;
+          const wall = k.box(0.2, H, len + 0.02, x, y0 + H / 2, zm, m); wall.rotation.y = sd * Math.atan2(hw(u0) - hw(u1), len);
+          k.box(0.6 * f + 0.2, 0.16 * f, len + 0.1, x - sd * 0.2 * f, y0 + H + 0.05, zm, tile);
+          for (const wy of [0.35, 0.65]) k.box(0.04, 0.9 * f, len * 0.35, x - sd * 0.12, y0 + H * wy, zm, rs2() < 0.4 ? winL : winD);
+        }
+      }
+      const endW = 2 * hw(1) + 0.4, ey = fy(1);
+      k.box(endW, 2.2, 0.2, 0, ey + 1.1, fz(1) - 0.1, cream); k.box(0.5, 1.4, 0.2, 0, ey + 2.9, fz(1) - 0.1, cream); k.mesh(new T.ConeGeometry(0.42, 0.6, 4), tile, 0, ey + 3.9, fz(1) - 0.1).rotation.y = PI / 4;
+      k.box(0.3, 0.55, 0.05, 0, ey + 0.4, fz(1) + 0.02, winL);
+      fireflyPlate(k, 'assets/museum/tex/valencia/ff_valencia_vista.webp', 22, 12, 0, PB + 7, PZ - 5.95, 0, k.glow(0x1c2a5c, 0.9), true);
+    }
     for (let i = 0; i < 5; i++) k.spot(-8 + i * 4, PB + 18, PZ + 10, -8 + i * 4, PB + 6, PZ - 1, 0xffd9a0, 90, 0.35, 0.6, 30);
     // every ninety seconds the curtain rises part way, holds, and falls again
     const lift = (t: number) => { const ph = t % 90, e = (u: number) => u * u * (3 - 2 * u); return ph < 60 ? 0 : ph < 66 ? e((ph - 60) / 6) : ph < 78 ? 1 : ph < 84 ? 1 - e((ph - 78) / 6) : 0; };
-    if (!ctx.reduced) k.ticks.push((t) => { curtain.scale.y = (1 - 0.38 * lift(t)) * (1 + 0.018 * Math.sin(t * 0.7)); curtain.scale.x = 1 + 0.01 * Math.sin(t * 0.45 + 1); });
+    if (!ctx.reduced) k.ticks.push((t) => { curtain.scale.y = (1 - 0.62 * lift(t)) * (1 + 0.018 * Math.sin(t * 0.7)); curtain.scale.x = 1 + 0.01 * Math.sin(t * 0.45 + 1); });
     // the rear wall with three doors into the lobby, the exit signs, the lobby with its ticket board
     const RZ = 26;
     for (const x of [-15.5, -5, 5, 15.5]) k.box(7, 14, 0.6, x, 7, RZ, plasterD);
@@ -1204,6 +1429,7 @@ export const valencia: RoomDef = {
     k.egg(front.front, { id: 'facade', title: 'Churrigueresque on Jamaica Avenue', text: 'For the 40 foot wide Jamaica Avenue front, Eberson set glazed terra cotta against yellow brick in the manner of Spanish and Mexican Baroque churches: twisted forms, cherubs, shells, sphinxes and a curving gable crowned by three finials.', clue: 'Walk out through the lobby and turn around.', source: lpc }, { r: 3 });
     k.egg(front.booth, { id: 'opening', title: 'Opening day, January 12, 1929', year: '1929', text: "The Valencia opened on Saturday, January 12, 1929, the first of the five Loew's Wonder Theatres. The opening program ran continuously from 11 a.m. until midnight and drew an estimated 17,000 customers.", clue: 'Buy your ticket at the little booth with eight columns.', source: lpc }, { r: 1.1 });
     k.egg(front.marquee, { id: 'tabernacle', title: 'A church since 1977', year: '1977', text: 'The Valencia entertained Queens for half a century. Since 1977 it has housed the Tabernacle of Prayer for All People, and the city designated it a landmark on May 25, 1999.', clue: 'Under the marquee lights, think of Sunday morning.', source: lpc }, { r: 1.5 });
+    k.egg(v(0, PB + 3, PZ - 2.5), { id: 'forced', title: 'A street four metres long', year: '1585', text: "Behind the stage of Palladio's Teatro Olimpico in Vicenza, opened in 1585, Vincenzo Scamozzi built streets in forced perspective: houses shrink and floors climb so that a few metres of set read as a long avenue. The street behind this curtain is built the same way.", clue: 'Wait for the curtain to rise and look down the street.', source: { name: 'Wikipedia, Teatro Olimpico', url: 'https://en.wikipedia.org/wiki/Teatro_Olimpico' } }, { r: 2.0 });
     // the hang: the piers of the arcades, the upper storeys of the houses, the organ grilles
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) {

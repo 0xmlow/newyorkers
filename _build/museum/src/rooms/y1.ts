@@ -6,19 +6,20 @@ import * as X from '../textures';
 import { v } from '../kit';
 import type { Kit, Mount } from '../kit';
 import type { RoomDef, RoomCtx } from './types';
-import { street, blockFront } from './f';
+import { street, blockFront, paintTex, anamorphTex, fit } from './f';
 import { liberty, LIBERTY_CREDIT } from './b';
-import { hero, standIn, hide } from './heroes';
+import { hero, standIn, hide, heroInstances, followInstances } from './heroes';
+import { fireflyPlate } from './a';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const PI = Math.PI;
 
 /* ---------- shared helpers for this file ---------- */
 /* A street running along x: street() runs along z, the cross streets need this. */
-function avenueX(k: Kit, p: { w: number; len: number; z: number; x?: number; walk?: number; drop?: number }) {
+function avenueX(k: Kit, p: { w: number; len: number; z: number; x?: number; walk?: number; drop?: number; mats?: { asphalt: T.Material; pav: T.Material } }) {
   const { w, len, z, x = 0, walk = 5, drop = 0 } = p;
-  const asphalt = k.pbr('asphaltS', X.asphalt(0x24282d), 0.11, { roughness: 0.62, metalness: 0.12 }),
-    pav = k.pbr('sidewalkS', X.pavers(0x8e8b84, 5), 0.42),
+  const asphalt = p.mats?.asphalt ?? k.pbr('asphaltS', X.asphalt(0x24282d), 0.11, { roughness: 0.62, metalness: 0.12 }),
+    pav = p.mats?.pav ?? k.pbr('sidewalkS', X.pavers(0x8e8b84, 5), 0.42),
     granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35),
     white = k.flat(0xdedbd2, 0, 0.7),
     yellow = k.flat(0xe6a626, 0, 0.6);
@@ -162,7 +163,9 @@ function pigeons(k: Kit, ctx: RoomCtx, spots: T.Vector3[], n: number, seed = 5, 
 }
 
 /* Traffic: cars, cabs and the odd bus in one instanced mesh, each lane one way at one speed so nobody overtakes. */
-function traffic(k: Kit, ctx: RoomCtx, lanes: { a: T.Vector3; b: T.Vector3; n: number }[], speed = 8, seed = 3) {
+/* wave 7b: `model` swaps the boxes for a real car (h_car_escape_lo, the museum's own, about 2.7k triangles) driven by the same
+   matrices; with a model there are no stretched box buses. The boxes stay until it loads. */
+function traffic(k: Kit, ctx: RoomCtx, lanes: { a: T.Vector3; b: T.Vector3; n: number }[], speed = 8, seed = 3, model = '') {
   const body = new T.BoxGeometry(1.9, 0.75, 4.6); body.translate(0, 0.62, 0);
   const cab = new T.BoxGeometry(1.7, 0.62, 2.4); cab.translate(0, 1.3, -0.25);
   const g = mergeGeometries([body, cab]);
@@ -171,7 +174,7 @@ function traffic(k: Kit, ctx: RoomCtx, lanes: { a: T.Vector3; b: T.Vector3; n: n
   const cols = [0xf2c21a, 0xf2c21a, 0xf2c21a, 0x1a1c20, 0xe8e8e4, 0x6a7078, 0x8a1c1c, 0x2a3a5a];
   const rnd = X.mulberry(seed), c = new T.Color();
   const cars: { li: number; len: number; s: number; v: number; sc: T.Vector3 }[] = [];
-  lanes.forEach((l, li) => { const len = l.a.distanceTo(l.b), lv = speed * (0.85 + rnd() * 0.3); for (let j = 0; j < l.n; j++) { const bus = rnd() < 0.12; cars.push({ li, len, s: ((j + rnd() * 0.4) * len) / l.n, v: lv, sc: bus ? new T.Vector3(1.3, 1.9, 2.5) : new T.Vector3(1, 1, 1) }); mesh.setColorAt(cars.length - 1, c.set(bus ? 0x2a5aa8 : cols[Math.floor(rnd() * cols.length)])); } });
+  lanes.forEach((l, li) => { const len = l.a.distanceTo(l.b), lv = speed * (0.85 + rnd() * 0.3); for (let j = 0; j < l.n; j++) { const bus = !model && rnd() < 0.12; cars.push({ li, len, s: ((j + rnd() * 0.4) * len) / l.n, v: lv, sc: bus ? new T.Vector3(1.3, 1.9, 2.5) : new T.Vector3(1, 1, 1) }); mesh.setColorAt(cars.length - 1, c.set(bus ? 0x2a5aa8 : cols[Math.floor(rnd() * cols.length)])); } });
   mesh.frustumCulled = false;
   k.add(mesh);
   const M = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), d = new T.Vector3(), up = new T.Vector3(0, 1, 0);
@@ -189,6 +192,9 @@ function traffic(k: Kit, ctx: RoomCtx, lanes: { a: T.Vector3; b: T.Vector3; n: n
   };
   place(0, 0);
   if (!ctx.reduced) k.ticks.push(place);
+  /* with a model the kit must not also swap these boxes for its own taxis (swapCabs), which added a second fleet of
+     14k triangle cabs casting shadows under the real cars */
+  if (model) { mesh.userData.cab = true; followInstances(k, mesh, model, { length: 4.7 }); }
   return mesh;
 }
 
@@ -269,6 +275,138 @@ function lion(k: Kit, x: number, z: number, stone: T.Material, plinth: T.Materia
   k.block(x - 1.9, x + 1.9, z - 3.4, z + 3.4);
 }
 
+/* ---------- THE BIG UPGRADE, wave 7b (2026-11-24): helpers for Astor Hall, Jefferson Market, City Hall, Castle Clinton ----------
+   Scanned CC0 surfaces (Poly Haven, assets/museum/tex/<room>/<id>_{c,n,r}.webp) that wear a sensible colour until all
+   three maps land; real models from assets/museum/props/<room>/ placed many at once (seven or more become instanced
+   parts); painted canvases in the house fonts for signs, banners and the one illusion a room. Safe in node: the audit
+   builds these rooms with no DOM, so a scan falls back to its painted surface and no canvas is touched. */
+const W7_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w7L = W7_DOM ? new T.TextureLoader() : null;
+const w7S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w7Scan(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w7L) return k.pbr(`w7b-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w7S.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w7L.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w7S.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w7b-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w7b) {
+    m.userData.w7b = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    m.needsUpdate = true;
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* Glass in a Poly Haven model comes as KHR transmission, which makes three draw the room twice; plain transparency reads the same. */
+function w7Solid(o: T.Object3D, shadow = false) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = shadow; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+function w7Tint(o: T.Object3D, hex: number, rough?: number, metal?: number) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); if (rough !== undefined) n.roughness = rough; if (metal !== undefined) { n.metalness = metal; n.metalnessMap = null; } m = n; cache.set(src, m); } c.material = m; });
+}
+/* One real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function w7Place(k: Kit, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: () => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    w7Solid(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      for (const p of ins.parts) p.im.castShadow = false;
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit();
+    } else at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); });
+    then?.();
+  });
+}
+/* A painted canvas plane (banner, plaque, glass) in the house fonts; a grey box in node. */
+function w7Canvas(k: Kit, w: number, h: number, px: number, x: number, y: number, z: number, rotY: number, paint: (g: CanvasRenderingContext2D, W: number, H: number) => void, o: { lit?: boolean; glow?: number; side?: T.Side; transparent?: boolean; fonts?: string[] } = {}) {
+  if (!W7_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x777777));
+  const W = px, H = Math.max(32, Math.round((px * h) / w));
+  const t = paintTex(W, H, (g) => paint(g, W, H), o.fonts ?? ['W2 Archivo Expanded', 'W2 Archivo']);
+  const m = o.lit ? new T.MeshBasicMaterial({ map: t, side: o.side ?? T.FrontSide, transparent: !!o.transparent }) : new T.MeshStandardMaterial({ map: t, roughness: 0.8, side: o.side ?? T.FrontSide, transparent: !!o.transparent });
+  if (o.glow && m instanceof T.MeshStandardMaterial) { m.emissive = new T.Color(0xffffff); m.emissiveMap = t; m.emissiveIntensity = o.glow; }
+  const s = k.mesh(new T.PlaneGeometry(w, h), m, x, y, z, true);
+  s.rotation.y = rotY;
+  return s;
+}
+/* Stacked lines of type centred on a ground: [text, size as a fraction of H, colour, font?] per line. */
+function w7Lines(g: CanvasRenderingContext2D, W: number, H: number, lines: [string, number, string, string?][], top = 0.08, gap = 0.03) {
+  let y = H * top;
+  for (const [text, s, col, fam] of lines) {
+    const px = fit(g, text, fam ?? 'W2 Archivo Expanded', H * s, W * 0.86, '800');
+    g.fillStyle = col; g.textAlign = 'center'; g.textBaseline = 'top';
+    g.fillText(text, W / 2, y);
+    y += px * 1.05 + H * gap;
+  }
+}
+/* A New York street sign post: green blades with white type, one along x and one along z, on a grey pole. */
+function w7StreetSign(k: Kit, x: number, z: number, a: string, b: string, rotY = 0) {
+  k.cyl(0.05, 3.4, x, 1.7, z, k.flat(0x5a5e62, 0.7, 0.45), 0.05, 8);
+  k.keepOut.push({ x, z, r: 0.3 });
+  const blade = (text: string, y: number, r: number) => w7Canvas(k, 1.25, 0.24, 512, x + Math.sin(r) * 0.0, y, z, r, (g, W, H) => { g.fillStyle = '#0f6a3a'; g.fillRect(0, 0, W, H); g.strokeStyle = '#f2f2ea'; g.lineWidth = 6; g.strokeRect(6, 6, W - 12, H - 12); const s = fit(g, text, 'W2 Archivo', H * 0.62, W * 0.86, '700'); g.fillStyle = '#f2f2ea'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, W / 2, H / 2 + s * 0.05); }, { side: T.DoubleSide });
+  blade(a, 3.25, rotY);
+  blade(b, 3.0, rotY + PI / 2);
+}
+/* Painted lettering for an anamorphic floor piece in a house font; null in node. */
+function w7Type(text: string, colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W7_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`;
+    let tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; tw = g.measureText(text).width; }
+    let x = (w - tw) / 2, n = 0;
+    for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, h / 2); x += g.measureText(ch).width; if (ch === ' ') n--; }
+  }, [font]);
+}
+/* Leaded stained glass: quarries in muted jewel tones inside a border, a roundel at the head, lit from behind. */
+function w7Glass(seed: number, hues: string[]) {
+  if (!W7_DOM) return k0Flat;
+  const t = paintTex(256, 512, (g, W, H) => {
+    const r = X.mulberry(seed);
+    g.fillStyle = '#20242a'; g.fillRect(0, 0, W, H);
+    const q = 26;
+    for (let y = 0; y < H; y += q) for (let x = 0; x < W; x += q) {
+      const edge = x < q * 1.5 || x > W - q * 2.5 || y < q * 1.5 || y > H - q * 1.5;
+      g.fillStyle = edge ? hues[Math.floor(r() * 2)] : r() < 0.82 ? ['#d8d0b4', '#cfc6a6', '#e0d8c0', '#c8c0a2'][Math.floor(r() * 4)] : hues[2 + Math.floor(r() * (hues.length - 2))];
+      g.fillRect(x + 2, y + 2, q - 4, q - 4);
+    }
+    g.strokeStyle = '#20242a'; g.lineWidth = 5;
+    for (let i = 0; i < W + H; i += q * 2) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i - H, H); g.stroke(); g.beginPath(); g.moveTo(i - H, 0); g.lineTo(i, H); g.stroke(); }
+    const cx = W / 2, cy = H * 0.26, R = W * 0.3;
+    g.fillStyle = hues[0]; g.beginPath(); g.arc(cx, cy, R, 0, PI * 2); g.fill();
+    for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? hues[1] : hues[2]; g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R * 0.82, (i / 8) * PI * 2, ((i + 1) / 8) * PI * 2); g.fill(); }
+    g.fillStyle = '#f0d890'; g.beginPath(); g.arc(cx, cy, R * 0.28, 0, PI * 2); g.fill();
+    g.strokeStyle = '#20242a'; g.lineWidth = 6; g.beginPath(); g.arc(cx, cy, R, 0, PI * 2); g.stroke(); g.beginPath(); g.arc(cx, cy, R * 0.82, 0, PI * 2); g.stroke();
+  });
+  const m = new T.MeshStandardMaterial({ map: t, emissive: new T.Color(0xffffff), emissiveMap: t, emissiveIntensity: 0.55, roughness: 0.3 });
+  return m;
+}
+const k0Flat = new T.MeshStandardMaterial({ color: 0x8a90a0 });
+/* A lamp's light without the kit's post (the post is a model): bright after dark, a glimmer by day, like k.lamp. */
+function w7Lamp(k: Kit, x: number, y: number, z: number, color: number, i: number, d = 16) {
+  const l = k.point(x, y, z, color, i * (0.04 + 0.96 * k.night), d);
+  k.ticks.push(() => { l.intensity = i * (0.04 + 0.96 * k.night); });
+  return l;
+}
+
 /* ---------------- 122 ASTOR HALL, THE NEW YORK PUBLIC LIBRARY ---------------- */
 export const astor: RoomDef = {
   id: 'astorhall',
@@ -282,12 +420,16 @@ export const astor: RoomDef = {
     k.sky({ top: 0x6f9ad8, horizon: 0xeef0ec, ground: 0x6a6a66, fog: 0.0018, sun: { az: 2.6, el: 0.6, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xf2f6ff, 0x5a5a58, 0.9);
     k.sun(0xfff2dc, 2.4, 70, 60, 50, true, 110);
-    const ashlar = k.pbr('astorAshlar', X.ashlar(0xe2ddd2, 442, 3), 0.25, { roughness: 0.55 }),
-      wall = k.pbr('astorWall', X.marble(0xece8e0, 0xc4beb4, 443), 0.7, { roughness: 0.45 }),
-      vaultM = k.pbr('astorVault', X.marble(0xf0ece4, 0xcfc9bf, 443), 0.7, { roughness: 0.6, side: T.BackSide }),
-      floorG = k.pbr('astorFloor', X.marble(0xb4b0a8, 0x6e6a62, 444), 0.55, { roughness: 0.3 }),
+    /* wave 7b: Vermont marble front and Astor Hall's walls, vault and floor as Poly Haven scans (CC0) */
+    const RM = 'astorhall';
+    const ashlar = w7Scan(k, RM, 'facade', 2.6, () => X.ashlar(0xe2ddd2, 442, 3), { color: 0xf0f4ff, roughness: 0.62 }, 0xa6a196),
+      wall = w7Scan(k, RM, 'marble', 2.2, () => X.marble(0xece8e0, 0xc4beb4, 443), { color: 0xf0f3fa, roughness: 0.32 }, 0xaaa69c),
+      vaultM = w7Scan(k, RM, 'marble', 2.2, () => X.marble(0xf0ece4, 0xcfc9bf, 443), { color: 0xf4f6fc, roughness: 0.5, side: T.BackSide }, 0xaaa69c, 'v'),
+      floorG = w7Scan(k, RM, 'floor', 3.4, () => X.marble(0xb4b0a8, 0x6e6a62, 444), { color: 0xeee8de, roughness: 0.22 }, 0x8a867e),
       pink = k.pbr('lionMarble', X.marble(0xd9c8ba, 0xb39a8c, 445), 0.4, { roughness: 0.5 }),
-      plinth = k.pbr('lionPlinth', X.ashlar(0xc9bfb0, 446, 2), 0.3),
+      plinth = w7Scan(k, RM, 'granite', 1.6, () => X.ashlar(0xc9bfb0, 446, 2), { color: 0xe6e0d6, roughness: 0.6 }, 0x8a8680),
+      asph = w7Scan(k, RM, 'asphalt', 3, () => X.asphalt(0x24282d), { color: 0x8e8e8e, roughness: 0.9 }, 0x2e3034),
+      walkS = w7Scan(k, RM, 'walk', 2.2, () => X.pavers(0x8e8b84, 5), { color: 0xd8d2c6, roughness: 0.85 }, 0x8a867e),
       bronze = k.flat(0x5a4a2e, 0.8, 0.4),
       glass = k.glass(0xdcecf6, 0.16, 0.05),
       warm = k.glow(0xffe4b8),
@@ -298,8 +440,8 @@ export const astor: RoomDef = {
       lawn = k.pbr('bryantLawn', X.grass(0x4a7a3a, 447), 0.08);
     const FZ = 0, TY = 3.4;
     // Fifth Avenue, the plaza, the neighbours and the skyline behind Bryant Park
-    avenueX(k, { w: 22, len: 150, z: FZ + 36, x: 0, walk: 6, drop: 0.02 });
-    k.box(116, 0.3, 16, 0, -0.15, FZ + 11, k.pbr('sidewalkS', X.pavers(0x8e8b84, 5), 0.42));
+    avenueX(k, { w: 22, len: 150, z: FZ + 36, x: 0, walk: 6, drop: 0.02, mats: { asphalt: asph, pav: walkS } });
+    k.box(116, 0.3, 16, 0, -0.15, FZ + 11, walkS);
     k.skyline({ z: FZ + 72, count: 16, spacing: 7, scale: 1.9, base: -1, seed: 446, lit: 0.2, glow: 0.4, tint: 0x6e7684, rows: 1 });
     k.skyline({ z: FZ - 95, count: 18, spacing: 8, scale: 2.6, base: -1, seed: 449, lit: 0.22, glow: 0.4, tint: 0x5e6674, rows: 2 });
     k.box(140, 0.3, 40, 0, -0.16, FZ - 50, lawn);
@@ -307,15 +449,22 @@ export const astor: RoomDef = {
     blockFront(k, { x: 58, z0: FZ + 22, count: 5, face: -1, seed: 448, h: [18, 30] });
     for (const s of [-1, 1]) { k.box(6, 0.3, 60, s * 54, -0.15, FZ - 8, k.pbr('asphaltS', X.asphalt(0x24282d), 0.11)); }
     for (const x of [-30, -42, 30, 42]) k.tree(x, 0, FZ + 21.5, { kind: 'round', h: 6, r: 2.8, seed: 40 + x, leaf: 0x3f6b36 });
-    for (const x of [-18, 18, -48, 48]) k.lamp(x, FZ + 21.5, 6.2, iron, 0xffe0b0, 26);
+    /* wave 7b: the avenue lamps are a real cast iron standard (Poly Haven street_lamp_01, CC0) with the light where its lantern is */
+    w7Place(k, 'astorhall/street_lamp', { height: 5.4 }, [-18, 18, -48, 48].map((x) => [x, 0, FZ + 21.5, PI / 2]));
+    for (const x of [-18, 18, -48, 48]) { w7Lamp(k, x, 5.0, FZ + 21.5, 0xffe0b0, 26); k.keepOut.push({ x, z: FZ + 21.5, r: 0.45 }); }
     for (const x of [-24, 24]) parkBench(k, x, FZ + 9, PI, slat, iron, 2.6);
     k.prop('hydrant', 20, 0, FZ + 24, { height: 1.1, keepOut: 0.5 });
     // the steps and the terrace, the cheek walls, the lions
     for (let i = 0; i < 12; i++) k.box(16, (i + 1) * 0.2833, 1.0, 0, ((i + 1) * 0.2833) / 2, FZ + 14.5 - i, ashlar);
     k.box(46, TY, 4.2, 0, TY / 2, FZ + 1, ashlar);
     for (const s of [-1, 1]) { k.box(1.2, 3.8, 12.8, s * 8.6, 1.9, FZ + 9.2, ashlar); k.box(1.4, 0.2, 13, s * 8.6, 3.9, FZ + 9.2, ashlar); k.block(s * 8 - (s < 0 ? 1.2 : 0), s * 8 + (s > 0 ? 1.2 : 0), FZ + 2.8, FZ + 15.6); }
+    /* wave 7b: Potter's couchant lions are a real scan (CC0 'Lion sculpture', the Morgan's copy) on the built plinths; the
+       sphere lions stay hidden underneath as the stand in until it loads */
+    const lm = k.objects.length;
     lion(k, -11, FZ + 13, pink, plinth);
     lion(k, 11, FZ + 13, pink, plinth);
+    const lionOld = standIn(k, lm).filter((o) => (o as T.Mesh).material !== plinth);
+    w7Place(k, 'astorhall/lion', { length: 5.3 }, [[-11, 1.66, FZ + 12.9, 0], [11, 1.66, FZ + 12.9, 0]], (h) => w7Tint(h, 0xf2e6da, 0.6), () => hide(lionOld));
     k.sign('PATIENCE', 2.4, 0.42, -11, 1.0, FZ + 16.13, '#3a3430', '#e8dcc0', 70, 0);
     k.sign('FORTITUDE', 2.4, 0.42, 11, 1.0, FZ + 16.13, '#3a3430', '#e8dcc0', 70, 0);
     // the facade: the central pavilion with three portals and paired columns, the wings with pilasters
@@ -395,7 +544,7 @@ export const astor: RoomDef = {
     for (const x of [-6, 6]) k.prop('museum_bench', x, TY, FZ - 24.3, { height: 0.58, rotY: PI / 2, keepOut: 1.5 });
     // life: the readers on the steps, the avenue, the hall
     k.crowd([v(-7, 0, FZ + 17), v(-5.5, 1.7, FZ + 9), v(-3, TY, FZ + 2.4), v(3, TY, FZ + 2.4), v(5.5, 1.7, FZ + 9), v(7, 0, FZ + 17)], 16, { seed: 61, speed: 0.3, spread: 2.4, animate: !ctx.reduced });
-    k.crowd([v(-70, 0, FZ + 22), v(70, 0, FZ + 22)], 26, { seed: 62, speed: 1.0, spread: 3, animate: !ctx.reduced });
+    k.crowd([v(-70, 0, FZ + 22), v(70, 0, FZ + 22)], 16, { seed: 62, speed: 1.0, spread: 3, animate: !ctx.reduced });
     k.crowd([v(-9, TY, FZ - 9), v(0, TY, FZ - 22), v(9, TY, FZ - 9)], 10, { seed: 63, speed: 0.45, spread: 2.5, animate: !ctx.reduced, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517] });
     // the Fifth Avenue front in detail: Bartlett's six attic figures and their three plaques
     const carrara = k.pbr('astorCarrara', X.marble(0xf2efe8, 0xd0cbc0, 448), 0.6, { roughness: 0.5 }),
@@ -442,8 +591,12 @@ export const astor: RoomDef = {
     for (const s of [-1, 1]) {
       const bn = k.arch(1.3, 2.5, 0.3, s * 15.92, TY + 0.1, FZ - 1.3, wall, false, 0.72); bn.rotation.y = PI / 2;
       k.box(0.62, 1.1, 0.62, s * 15.45, TY + 0.55, FZ - 1.3, wall);
+      const bm = k.objects.length;
       k.lathe([[0.34, 0], [0.36, 0.1], [0.3, 0.34], [0.13, 0.5], [0.1, 0.6], [0, 0.62]], s * 15.45, TY + 1.1, FZ - 1.3, bronze, 12);
       k.sphere(0.19, s * 15.45, TY + 1.9, FZ - 1.3, bronze, 10);
+      const bustOld = standIn(k, bm);
+      /* wave 7b: a real bust (Poly Haven marble_bust_01, CC0) cast in bronze, turned to the hall */
+      w7Place(k, 'astorhall/bust', { height: 0.95 }, [[s * 15.45, TY + 1.1, FZ - 1.3, -s * PI / 2]], (h) => w7Tint(h, 0x6a5232, 0.38, 0.85), () => hide(bustOld));
       k.keepOut.push({ x: s * 15.4, z: FZ - 1.3, r: 0.55 });
     }
     // McGraw Rotunda: Edward Laning's four arched panels above the frames
@@ -469,7 +622,8 @@ export const astor: RoomDef = {
       stripPanel(k, mural, (s < 0 ? 0 : 2) + j, 4, 4.0, 2.1, s * 8.9, TY + 6.6, z, s < 0 ? PI / 2 : -PI / 2);
     }
     // Fifth Avenue runs one way downtown, pigeons work the plaza
-    traffic(k, ctx, [28.5, 32, 35.5, 39].map((z, i) => ({ a: v(75, 0, FZ + z), b: v(-75, 0, FZ + z), n: 4 + (i % 2) })), 9, 461);
+    traffic(k, ctx, [28.5, 35.5].map((z) => ({ a: v(75, 0, FZ + z), b: v(-75, 0, FZ + z), n: 2 })), 9, 461, 'h_car_escape_lo');
+    traffic(k, ctx, [32, 39].map((z) => ({ a: v(75, 0, FZ + z), b: v(-75, 0, FZ + z), n: 3 })), 9, 463, 'h_car_escape_lo');
     pigeons(k, ctx, [v(-4, 0, FZ + 19), v(4, 0, FZ + 18.4), v(-15, 0, FZ + 18.2), v(15, 0, FZ + 19.4), v(0, 0, FZ + 21)], 18, 462, 2.6);
     // landmark eggs
     const NYPL = { name: 'NYC Landmarks Preservation Commission, LP-2592', url: 'https://s-media.nyc.gov/agencies/lpc/lp/2592.pdf' };
@@ -480,6 +634,38 @@ export const astor: RoomDef = {
     k.egg(v(-15.45, TY + 1.8, FZ - 1.3), { id: 'architects', title: 'The architects at the stair', year: '1911', text: 'Busts of the architects stand in niches at the foot of these stairs: Thomas Hastings by Frederick MacMonnies, 1935, and John Carrère by Jo Davidson, 1940. The pair won the 1897 competition, and President Taft dedicated the library on May 23, 1911.', clue: 'At the foot of the marble stairs, two men watch everyone come in.', source: NYPL }, { r: 1.1 });
     k.egg(v(0, TY + 15.5, FZ - 8), { id: 'first-interior', title: 'The first interior landmark', year: '1974', text: 'Astor Hall, the central stairs and the McGraw Rotunda became New York City\'s first interior landmark in November 1974. The first block of Vermont marble for the building was set in August 1902.', clue: 'Stand under the white vault and look up at the hall itself.', source: NYPL }, { r: 2.2 });
     k.egg(v(-8.9, TY + 6.6, FZ - 24.3), { id: 'recorded-word', title: 'The Story of the Recorded Word', year: '1938 to 1942', room: 'library', text: 'Edward Laning painted these panels for the McGraw Rotunda as a WPA project from 1938 to 1942: Moses with the tablets, a medieval scribe, Gutenberg showing a proof. The rotunda adjoins the catalog room and the Rose Main Reading Room beyond it.', clue: 'In the rotunda, look above the frames for four painted arches.', source: { name: 'NYPL Research Guides, History of the 42nd Street Library', url: 'https://libguides.nypl.org/sasbhistory/architecture' } }, { r: 3.0 });
+    /* ---------- wave 7b: the front as you see it from across Fifth Avenue ----------
+       Two exhibition banners hung between the paired columns as the library hangs them, bronze lamp standards on the
+       terrace, a street sign at the corner, a hot dog cart at the foot of the steps, real cars on the avenue (above). */
+    {
+      const ban = (x: number, ground: string, ink: string, lines: [string, number, string, string?][]) => {
+        w7Canvas(k, 2.9, 6.6, 512, x, TY + 6.6, FZ + 2.3, 0, (g, W, H) => {
+          g.fillStyle = ground; g.fillRect(0, 0, W, H);
+          g.strokeStyle = ink; g.lineWidth = 8; g.strokeRect(22, 22, W - 44, H - 44);
+          w7Lines(g, W, H, lines, 0.07, 0.018);
+        }, { glow: 0.12, side: T.DoubleSide });
+        k.cyl(0.05, 3.1, x, TY + 9.95, FZ + 2.3, bronze, 0.05, 8).rotation.z = PI / 2;
+        k.cyl(0.04, 3.0, x, TY + 3.28, FZ + 2.3, bronze, 0.04, 8).rotation.z = PI / 2;
+      };
+      ban(-8.4, '#8c1d24', '#f2e6cc', [['NEW', 0.12, '#f2e6cc'], ['YORKERS', 0.08, '#f2e6cc'], ['THE CENSUS', 0.045, '#f2c86a', 'W2 Archivo'], ['AS A', 0.045, '#f2c86a', 'W2 Archivo'], ['PORTRAIT', 0.045, '#f2c86a', 'W2 Archivo'], ['BY MLOW', 0.06, '#f2e6cc']]);
+      ban(8.4, '#1b2d52', '#f2e6cc', [['FREE', 0.075, '#f2e6cc'], ['TO ALL', 0.075, '#f2e6cc'], ['ASTOR', 0.06, '#f2c86a'], ['HALL', 0.06, '#f2c86a'], ['ONE CITY', 0.045, '#f2e6cc', 'W2 Archivo'], ['EVERY', 0.045, '#f2e6cc', 'W2 Archivo'], ['FACE', 0.045, '#f2e6cc', 'W2 Archivo'], ['OPEN DAILY', 0.04, '#f2c86a', 'W2 Archivo']]);
+      // bronze lamp standards either side of the steps, on the terrace
+      w7Place(k, 'astorhall/street_lamp', { height: 4.6 }, [[-8.6, 3.9, FZ + 4.2, PI / 2], [8.6, 3.9, FZ + 4.2, PI / 2]], (h) => w7Tint(h, 0x5a4428, 0.4, 0.8));
+      for (const x of [-8.6, 8.6]) w7Lamp(k, x, TY + 4.6, FZ + 4.2, 0xffe2b0, 18, 12);
+      // the street sign at the corner of the plaza and the hot dog cart at the foot of the steps
+      w7StreetSign(k, 23.5, FZ + 23.4, '5 AV', 'E 42 ST', 0);
+      w7StreetSign(k, -23.5, FZ + 23.4, '5 AV', 'E 40 ST', 0);
+      w7Place(k, 'astorhall/hotdog', { height: 2.2 }, [[-15.5, 0, FZ + 20.6, PI]]);
+      k.keepOut.push({ x: -15.5, z: FZ + 20.6, r: 1.3 });
+      // a carved inscription over the side portals, as on the real attic band
+      for (const s of [-1, 1]) w7Canvas(k, 6.4, 0.7, 1024, s * 16.3, TY + 7.0, FZ + 0.66, 0, (g, W, H) => { g.fillStyle = '#d8d0c2'; g.fillRect(0, 0, W, H); const f2 = fit(g, s < 0 ? 'BEAUTY' : 'TRUTH', 'W2 Archivo Expanded', H * 0.6, W * 0.8, '600'); g.fillStyle = '#6a6256'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(s < 0 ? 'BEAUTY' : 'TRUTH', W / 2, H / 2 + f2 * 0.05); });
+    }
+    /* the illusion (one trick a room): QUIET PLEASE painted flat on the marble of Astor Hall, stretched toward the
+       rotunda, so that from the centre portal it stands up off the floor like a library sign. Walk on and it smears. */
+    { const t = w7Type('QUIET PLEASE', ['#1b2d52', '#8c1d24']); if (t) anamorphTex(k, t, 0, FZ + 2.6, TY + 3, TY, 0, 7.0, 4.2, 1.1, 0.86); }
+    k.egg(v(0, TY + 0.4, FZ - 6), { id: 'astor-anamorph', title: 'A sign that is not there', text: 'QUIET PLEASE is painted flat on the marble, stretched toward the rotunda, so that from the centre doorway it stands up off the floor like a sign. Walk onto it and it falls back into long smears of blue and red. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Stand in the middle doorway and look along the floor of the hall.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
+    // Firefly (FIREFLY_QUEUE.md): Laning's four panels as one painted strip; the canvas stays until the file exists
+    if (w7L) w7L.load('assets/museum/tex/astorhall/ff_laning_murals.webp', (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; mural.map = t; mural.emissiveMap = t; mural.needsUpdate = true; }, undefined, () => {});
     // the works: blind arched bays on the hall walls, above the flights, on the landings, in the rotunda, on the wings
     const mounts: Mount[] = [];
     const bay = (x: number, zc: number, dir: 1 | -1, w: number) => { const a = k.arch(w + 1.3, 6.8, 0.25, x, TY, zc - dir * 0.13, wall, false, 0.7); void a; };
@@ -524,18 +710,22 @@ export const jefferson: RoomDef = {
     k.sky({ top: 0x6f9ad8, horizon: 0xf0e8dc, ground: 0x4a5a5c, fog: 0.002, sun: { az: 4.0, el: 0.5, color: 0xfff0d8, size: 12 }, env: 0.9 });
     k.hemi(0xeef4ff, 0x4a4238, 0.85);
     k.sun(0xffe8c8, 2.2, 55, 60, 45, true, 90);
-    const brick = k.pbr('jmBrick', X.brick(0x8a3f34, 461), 0.28),
-      stone = k.pbr('jmStone', X.ashlar(0xd8cdb4, 462, 3), 0.25),
-      slate = k.pbr('jmSlate', X.ashlar(0x3a3f46, 463, 8), 0.4, { roughness: 0.8 }),
+    /* wave 7b: the polychrome brick, its limestone bands, the slate, the floor and plaster as Poly Haven scans (CC0) */
+    const RM = 'jefferson';
+    const brick = w7Scan(k, RM, 'brick', 2.2, () => X.brick(0x8a3f34, 461), { color: 0xf0c4b4, roughness: 0.88 }, 0x6a3328),
+      stone = w7Scan(k, RM, 'band', 2.4, () => X.ashlar(0xd8cdb4, 462, 3), { color: 0xfff4e0, roughness: 0.8 }, 0x9a9282),
+      slate = w7Scan(k, RM, 'slate', 2.2, () => X.ashlar(0x3a3f46, 463, 8), { color: 0xb8c0cc, roughness: 0.75 }, 0x3a3f46),
       timber = k.pbr('jmTimber', X.planks(0x4a3020, 3, 464), 1.2, { roughness: 0.6 }),
       boards = k.pbr('jmBoards', X.planks(0x6a4a30, 8, 465), 0.5, { roughness: 0.7 }),
-      floorW = k.pbr('jmFloor', X.planks(0x7a5334, 8, 466), 0.6, { roughness: 0.55 }),
-      plaster = k.pbr('jmPlaster', X.plaster(0xe4dccb, 467), 0.4, { roughness: 0.85 }),
+      floorW = w7Scan(k, RM, 'floor', 2.2, () => X.planks(0x7a5334, 8, 466), { color: 0xd8b088, roughness: 0.5 }, 0x5a3e28),
+      plaster = w7Scan(k, RM, 'plaster', 2.6, () => X.plaster(0xe4dccb, 467), { color: 0xf4ead6, roughness: 0.88 }, 0x9a9282),
       books = k.pbr('jmBooks', X.planks(0x6a3a2a, 14, 468, 0.5), 0.35, { roughness: 0.85, stretch: 0.3 }),
       books2 = k.pbr('jmBooks2', X.planks(0x2f4a5a, 12, 469, 0.5), 0.35, { roughness: 0.85, stretch: 0.3 }),
       oak = k.pbr('jmOak', X.planks(0x5c3d26, 4, 470), 1.0, { roughness: 0.5 }),
       lawn = k.pbr('jmLawn', X.grass(0x4b7a3a, 471), 0.12),
-      path = k.pbr('jmPath', X.pavers(0x9a9488, 472), 0.35),
+      path = w7Scan(k, RM, 'path', 1.6, () => X.pavers(0x9a9488, 472), { color: 0xd6d0c4, roughness: 0.85 }, 0x7a766c),
+      asphJ = w7Scan(k, RM, 'asphalt', 3, () => X.asphalt(0x24282d), { color: 0x8e8e8e, roughness: 0.9 }, 0x2e3034),
+      walkJ = w7Scan(k, RM, 'walk', 2.2, () => X.pavers(0x8e8b84, 5), { color: 0xd8d2c6, roughness: 0.85 }, 0x8a867e),
       iron = k.flat(0x1f242a, 0.7, 0.45),
       brass = k.flat(0x8a6a2a, 0.85, 0.35),
       lead = k.flat(0x2a2a2e, 0.5, 0.6),
@@ -543,11 +733,19 @@ export const jefferson: RoomDef = {
       green = k.glow(0x8ad48a),
       opal = k.glow(0xfff1d2),
       clockWhite = k.glow(0xf8f2e0),
-      pane = [k.glow(0xd8a850), k.glow(0x4a6ad8), k.glow(0xd84a4a), k.glow(0x4ab070)],
+      /* wave 7b: leaded quarries in muted jewel tones with a roundel at the head, not four flat glows */
+      pane = [w7Glass(491, ['#8a5a1c', '#2a4a7a', '#b0802a', '#6a2a3a', '#3a6a4a']), w7Glass(492, ['#2a3e6a', '#6a2a3a', '#3a5a8a', '#b0802a', '#4a7a5a']), w7Glass(493, ['#6a2a2e', '#2a4a6a', '#9a3a3a', '#c09040', '#3a5a3a']), w7Glass(494, ['#2e5a3e', '#6a4a1c', '#4a8a5a', '#2a3e6a', '#9a6a2a'])],
       petalA = k.flat(0xd86a8a, 0, 0.9), petalB = k.flat(0xf4e6c0, 0, 0.9), petalC = k.flat(0x7a4ad8, 0, 0.9);
     // Sixth Avenue and Tenth Street, the neighbours
-    street(k, { w: 24, len: 150, z: -15, x: 0, walk: 5 });
-    avenueX(k, { w: 12, len: 60, z: 28, x: -47, walk: 5, drop: 0.02 });
+    /* Sixth Avenue (street() along z) in the scanned asphalt and pavement */
+    {
+      const granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35), white = k.flat(0xdedbd2, 0, 0.7), yellow = k.flat(0xe6a626, 0, 0.6);
+      k.box(24, 0.3, 150, 0, -0.15, -15, asphJ);
+      for (const sd of [-1, 1]) { k.box(5, 0.28, 150, sd * 14.5, 0.0, -15, walkJ); k.box(0.3, 0.32, 150, sd * 12.1, 0.02, -15, granite); }
+      for (const dx of [-0.14, 0.14]) k.box(0.09, 0.012, 144, dx, 0.01, -15, yellow);
+      for (let cz = 54; cz > -90; cz -= 28) for (let cx = -10.8; cx <= 11; cx += 1.2) k.box(0.62, 0.014, 2.8, cx, 0.012, cz, white);
+    }
+    avenueX(k, { w: 12, len: 60, z: 28, x: -47, walk: 5, drop: 0.02, mats: { asphalt: asphJ, pav: walkJ } });
     blockFront(k, { x: 17, z0: 46, count: 9, face: -1, seed: 473, h: [14, 22] });
     blockFront(k, { x: -17, z0: 66, count: 4, face: 1, seed: 474, h: [14, 20] });
     blockFront(k, { x: -17, z0: -46, count: 3, face: 1, seed: 475, h: [12, 18] });
@@ -642,22 +840,38 @@ export const jefferson: RoomDef = {
     k.block(X0 - 0.5, X0 + 0.5, Z1 - 0.5, 6.0); k.block(X0 - 0.5, X0 + 0.5, 9.4, Z0 + 0.5);
     k.block(X1 - 0.5, X1 + 0.5, Z1 - 0.5, Z0 + 0.5); k.block(X1, X0, Z1 - 0.5, Z1 + 0.5); k.block(X1, X0, Z0 - 0.5, Z0 + 0.5);
     // inside: the stacks along the west wall, the reading tables with green lamps, chairs
+    const shelfM = k.objects.length;
     for (let i = 0; i < 5; i++) {
       const z = -11 + i * 4.6;
       k.box(0.7, 2.5, 4.2, X1 + 0.97, 1.25, z, oak);
       for (let j = 0; j < 4; j++) k.box(0.5, 0.5, 3.9, X1 + 1.07, 0.5 + j * 0.54, z, j % 2 ? books : books2);
     }
+    /* wave 7b: the stacks are real worn bookcases (Poly Haven wooden_bookshelf_worn, CC0), three to a bay */
+    const shelfOld = standIn(k, shelfM).filter((o) => (o as T.Mesh).material === oak);
+    w7Place(k, 'jefferson/bookshelf', { width: 1.38 }, Array.from({ length: 15 }, (_, i) => [X1 + 1.02, 0, -11 + Math.floor(i / 3) * 4.6 + ((i % 3) - 1) * 1.39, PI / 2]), undefined, () => hide(shelfOld));
     k.block(X1 + 0.5, X1 + 1.25, Z1 + 0.5, Z0 - 0.5);
+    const lampM: number[][] = [], chairM: number[][] = [], lampChairOld: T.Object3D[] = [];
     for (const z of [-8, -1.5, 5]) {
       const x = -25.3;
       k.rounded(5.0, 0.14, 3.2, x, 1.05, z, oak);
       for (const dx of [-2.2, 2.2]) for (const dz of [-1.3, 1.3]) k.box(0.14, 1.0, 0.14, x + dx, 0.5, z + dz, oak);
       k.box(5.0, 0.5, 0.3, x, 1.35, z, oak);
-      for (const dx of [-1.6, 0, 1.6]) { k.lathe([[0.2, 0], [0.2, 0.05], [0.05, 0.1], [0.05, 0.55], [0.28, 0.6]], x + dx, 1.12, z, brass, 12); k.rounded(0.34, 0.16, 0.56, x + dx, 1.8, z, green, 0.05); k.point(x + dx, 1.7, z, 0xd8ffc8, 4, 3.4); }
-      for (const dz of [-2.05, 2.05]) for (const dx of [-1.5, 0, 1.5]) { k.box(0.48, 0.06, 0.48, x + dx, 0.6, z + dz, oak); k.box(0.48, 1.0, 0.06, x + dx, 1.0, z + dz + (dz > 0 ? 0.22 : -0.22), oak); for (const lx of [-0.2, 0.2]) for (const lz of [-0.2, 0.2]) k.box(0.05, 0.6, 0.05, x + dx + lx, 0.3, z + dz + lz, oak); }
+      const lm0 = k.objects.length;
+      for (const dx of [-1.6, 0, 1.6]) { k.lathe([[0.2, 0], [0.2, 0.05], [0.05, 0.1], [0.05, 0.55], [0.28, 0.6]], x + dx, 1.12, z, brass, 12); k.rounded(0.34, 0.16, 0.56, x + dx, 1.8, z, green, 0.05); k.point(x + dx, 1.7, z, 0xd8ffc8, 4, 3.4); lampM.push([x + dx, 1.12, z, PI / 2]); }
+      for (const dz of [-2.05, 2.05]) for (const dx of [-1.5, 0, 1.5]) { k.box(0.48, 0.06, 0.48, x + dx, 0.6, z + dz, oak); k.box(0.48, 1.0, 0.06, x + dx, 1.0, z + dz + (dz > 0 ? 0.22 : -0.22), oak); for (const lx of [-0.2, 0.2]) for (const lz of [-0.2, 0.2]) k.box(0.05, 0.6, 0.05, x + dx + lx, 0.3, z + dz + lz, oak); chairM.push([x + dx, 0, z + dz, dz > 0 ? PI : 0]); }
+      lampChairOld.push(...standIn(k, lm0));
       k.block(x - 2.9, x + 2.9, z - 2.3, z + 2.3);
     }
-    k.prop('globe_stand', -19.5, 0, -11.5, { height: 1.6, keepOut: 0.8 });
+    /* wave 7b: green shaded banker's lamps (the museum's own hf_lamp) and painted wooden chairs (Poly Haven, CC0) at the
+       tables; three brass chandeliers (Poly Haven Chandelier_01, CC0) hung from the trusses; a library globe */
+    let got = 0;
+    const both = () => { if (++got === 2) hide(lampChairOld); };
+    w7Place(k, 'jefferson/banker_lamp', { height: 0.62 }, lampM, undefined, both);
+    w7Place(k, 'jefferson/chair', { height: 0.98 }, chairM, (h) => w7Tint(h, 0x6a4a30, 0.6), both);
+    w7Place(k, 'jefferson/chandelier', { height: 1.5 }, [-8, -1.5, 5].map((z) => [XC, H - 2.4, z, 0]));
+    for (const z of [-8, -1.5, 5]) k.beam(v(XC, H - 0.9, z), v(XC, H - 0.25, z), 0.025, brass, 5);
+    w7Place(k, 'jefferson/globe', { height: 1.5 }, [[-19.5, 0, -11.5, 0.6]]);
+    k.keepOut.push({ x: -19.5, z: -11.5, r: 0.8 });
     k.censusWall({ x: -25.5, y: 4.4, z: Z0 - 0.68, rotY: PI, cols: 14, rows: 5, tile: 0.6, gap: 0.05, start: ctx.wallStart(2400, 70), pieces: ctx.all, backing: oak });
     k.sign('"READING ROOM"', 3.6, 0.6, -25.5, 7.4, Z0 - 0.7, 'transparent', '#2a2a2a', 100, PI);
     // the garden through its iron fence: lawn, a looping path, flowers, trees, benches, the easels
@@ -677,7 +891,7 @@ export const jefferson: RoomDef = {
     for (const [x, z, r] of [[-22, -24, PI / 2], [-22, -32, PI / 2], [-40, -26, -PI / 2]]) parkBench(k, x, z, r, k.pbr('benchW', X.planks(0x5d4939, 3, 32), 1.2), iron, 2.2);
     for (const z of [-24, -30, -36]) k.lamp(GX0 - 5.4, z, 4.5, iron, 0xffe0b0, 20);
     // life: the avenue, the readers, the clock
-    k.crowd([v(14.5, 0, -70), v(14.5, 0, 48), v(-14.5, 0, 48), v(-14.5, 0, -70)], 30, { seed: 64, speed: 1.0, spread: 2.4, animate: !ctx.reduced, closed: true });
+    k.crowd([v(14.5, 0, -70), v(14.5, 0, 48), v(-14.5, 0, 48), v(-14.5, 0, -70)], 20, { seed: 64, speed: 1.0, spread: 2.4, animate: !ctx.reduced, closed: true });
     k.crowd([v(-19.6, 0, -12), v(-19.6, 0, 8), v(-30.6, 0, 8), v(-30.6, 0, -12)], 8, { seed: 65, speed: 0.3, spread: 1.0, animate: !ctx.reduced, closed: true, colors: [0x24262c, 0x8a3a3a, 0x33477f, 0xd8d0c0, 0x151517, 0x4a6a3a] });
     // iron cresting along the ridge and stone finials on the two gables
     for (let z = Z1 + 0.5; z <= Z0 - 0.5; z += 1.2) k.mesh(new T.ConeGeometry(0.09, 0.7, 4), iron, XC, RIDGE + 0.55, z);
@@ -687,7 +901,42 @@ export const jefferson: RoomDef = {
     k.beam(v(TX - 2.6, 20.35, TZ), v(TX + 2.6, 20.35, TZ), 0.12, timber, 6);
     if (!ctx.reduced) k.ticks.push((t) => { const since = (((k.o.hour + t / 3600) % 1) + 1) % 1 * 3600, amp = since < 24 ? 0.45 * (1 - since / 24) : 0; bell.rotation.x = amp * Math.sin(t * 3.4); });
     // Sixth Avenue runs one way uptown; pigeons circle the tower and work the sidewalk; leaves come down in the garden
-    traffic(k, ctx, [-9, -5, -1, 3, 7].map((x, i) => ({ a: v(x, 0, -75), b: v(x, 0, 75), n: 4 + (i % 2) })), 8, 481);
+    traffic(k, ctx, [-9, -1, 7].map((x) => ({ a: v(x, 0, -75), b: v(x, 0, 75), n: 2 })), 8, 481, 'h_car_escape_lo');
+    traffic(k, ctx, [-5, 3].map((x) => ({ a: v(x, 0, -75), b: v(x, 0, 75), n: 3 })), 8, 485, 'h_car_escape_lo');
+    /* ---------- wave 7b: the corner, the banner, and the one trick ---------- */
+    w7StreetSign(k, -13.2, 21.6, '6 AV', 'W 10 ST', 0);
+    w7StreetSign(k, 13.2, -16.4, 'AV OF THE AMERICAS', 'GREENWICH AV', 0);
+    // a library banner hung from the tower over Sixth Avenue, and a bronze plaque by the door
+    w7Canvas(k, 2.2, 6.0, 512, TX + 4.12, 10.6, TZ - 2.2, PI / 2, (g, W, H) => { g.fillStyle = '#7a1c24'; g.fillRect(0, 0, W, H); g.strokeStyle = '#f2e6cc'; g.lineWidth = 8; g.strokeRect(20, 20, W - 40, H - 40); w7Lines(g, W, H, [['READ', 0.1, '#f2e6cc'], ['THE', 0.1, '#f2e6cc'], ['CITY', 0.1, '#f2e6cc'], ['NEW YORKERS', 0.05, '#f2c86a', 'W2 Archivo'], ['BY MLOW', 0.05, '#f2c86a', 'W2 Archivo'], ['UPSTAIRS', 0.04, '#f2e6cc', 'W2 Archivo']], 0.08, 0.02); }, { glow: 0.1, side: T.DoubleSide });
+    k.cyl(0.04, 2.4, TX + 4.14, 13.65, TZ - 2.2, iron, 0.04, 6).rotation.x = PI / 2;
+    w7Canvas(k, 1.0, 0.7, 512, X0 + 0.53, 2.2, 9.95, PI / 2, (g, W, H) => { g.fillStyle = '#4a3a22'; g.fillRect(0, 0, W, H); g.strokeStyle = '#c9a55a'; g.lineWidth = 10; g.strokeRect(10, 10, W - 20, H - 20); w7Lines(g, W, H, [['JEFFERSON MARKET', 0.13, '#e8cf8a', 'W2 Archivo'], ['COURTHOUSE', 0.13, '#e8cf8a', 'W2 Archivo'], ['1874 TO 1877', 0.1, '#e8cf8a', 'W2 Archivo'], ['WITHERS AND VAUX', 0.1, '#e8cf8a', 'W2 Archivo']], 0.12, 0.03); });
+    /* the illusion (one trick a room): a trompe l'oeil on the blank party wall west of the garden, in the manner of the
+       painted walls Richard Haas made round lower Manhattan: an arcade and a second garden that are not there. */
+    {
+      k.box(0.6, 13, 30, -46.6, 6.5, -28, brick);
+      k.box(0.7, 0.4, 30.2, -46.6, 13.1, -28, stone);
+      const VPY = 0.28; // the eye (3 m) over the wall's foot (0.2 m), as a fraction of its 10 m
+      const tp = w7Canvas(k, 16, 10, 1024, -46.28, 5.2, -28, PI / 2, (g, W, H) => {
+        const vx = W / 2, vy = H * (1 - VPY);
+        const sky = g.createLinearGradient(0, 0, 0, vy); sky.addColorStop(0, '#7fa6d6'); sky.addColorStop(1, '#e8e4d6'); g.fillStyle = sky; g.fillRect(0, 0, W, H);
+        g.fillStyle = '#4a6a3a'; g.fillRect(0, vy - H * 0.06, W, H * 0.06);
+        for (let i = 0; i < 26; i++) { g.fillStyle = ['#3f6b36', '#4f7a3e', '#355a2e'][i % 3]; g.beginPath(); g.arc(vx + (i - 13) * W * 0.012, vy - H * 0.06 - (i % 4) * 6, W * 0.022, 0, PI * 2); g.fill(); }
+        g.fillStyle = '#b8ab92'; g.beginPath(); g.moveTo(0, H); g.lineTo(vx - W * 0.02, vy); g.lineTo(vx + W * 0.02, vy); g.lineTo(W, H); g.fill();
+        g.fillStyle = '#4b7a3a'; g.beginPath(); g.moveTo(0, H); g.lineTo(vx - W * 0.02, vy); g.lineTo(0, vy); g.fill(); g.beginPath(); g.moveTo(W, H); g.lineTo(vx + W * 0.02, vy); g.lineTo(W, vy); g.fill();
+        for (let j = 7; j >= 0; j--) {
+          const sc = Math.pow(0.68, j), aw = W * 0.86 * sc, ah = H * 0.86 * sc, ax = vx - aw / 2, base = vy + (H - vy) * sc, top = base - ah;
+          g.fillStyle = j % 2 ? '#c8b89a' : '#d6c6a6';
+          g.fillRect(ax - aw * 0.06, top, aw * 0.12, ah); g.fillRect(ax + aw - aw * 0.06, top, aw * 0.12, ah);
+          g.strokeStyle = '#a89878'; g.lineWidth = Math.max(2, 14 * sc); g.beginPath(); g.arc(vx, top + aw * 0.42, aw * 0.5, PI, 0); g.stroke();
+          g.fillStyle = 'rgba(200,184,154,0.95)'; g.fillRect(ax - aw * 0.06, top - aw * 0.12, aw * 1.12, aw * 0.1);
+        }
+        g.fillStyle = '#8a6a4a'; g.fillRect(0, H * 0.96, W, H * 0.04);
+        for (let i = 0; i < 4; i++) { const sc = Math.pow(0.68, i + 1), x = vx + (i % 2 ? 1 : -1) * W * 0.22 * sc, y = vy + (H - vy) * sc; g.fillStyle = '#2a2a30'; g.fillRect(x - 8 * sc, y - 120 * sc, 16 * sc, 120 * sc); g.beginPath(); g.arc(x, y - 132 * sc, 12 * sc, 0, PI * 2); g.fill(); }
+      });
+      k.egg(v(-45.6, 3.2, -28), { id: 'jefferson-trompe', title: 'A garden that is not there', text: 'The arcade and the second garden on the party wall are paint on a flat wall, drawn to one vanishing point so that from the path they seem to open the block up. Richard Haas painted walls like this across lower Manhattan from the 1970s, most famously the cast iron facade he painted onto the blank side of 112 Prince Street in SoHo in 1975.', clue: 'At the far end of the garden, a wall seems to open onto another garden.', source: { name: 'Wikipedia, Richard Haas', url: 'https://en.wikipedia.org/wiki/Richard_Haas' } }, { r: 3.4 });
+      if (w7L) w7L.load('assets/museum/tex/jefferson/ff_trompe_loeil.webp', (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; const mm = (tp as T.Mesh).material as T.MeshStandardMaterial; mm.map = t; mm.needsUpdate = true; }, undefined, () => {});
+    }
+    if (w7L) w7L.load('assets/museum/tex/jefferson/ff_stained_glass.webp', (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; for (const m of pane as T.MeshStandardMaterial[]) { m.map = t; m.emissiveMap = t; m.needsUpdate = true; } }, undefined, () => {});
     gulls(k, ctx, Array.from({ length: 8 }, (_, i) => { const a = (i / 8) * PI * 2; return v(TX + Math.cos(a) * 13, 29 + (i % 2) * 2, TZ + Math.sin(a) * 13); }), 12, 482, 0x80848e, 0.42);
     pigeons(k, ctx, [v(-14.2, 0, 1), v(-14.4, 0, -9), v(14.6, 0, 20), v(GX0 - 4, 0.15, -27)], 14, 483, 2.2);
     {
@@ -959,17 +1208,20 @@ export const cityhall: RoomDef = {
     k.sky({ top: 0x6f9ad8, horizon: 0xeef0ec, ground: 0x556546, fog: 0.0018, sun: { az: 2.2, el: 0.7, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xf2f6ff, 0x56564c, 0.95);
     k.sun(0xfff2dc, 2.4, 20, 80, 60, true, 110);
-    const marble = k.pbr('chMarbleF', X.ashlar(0xe6e1d6, 491, 3), 0.25, { roughness: 0.5 }),
-      inner = k.pbr('chMarbleIn', X.marble(0xece8e0, 0xc4beb4, 492), 0.7, { roughness: 0.45 }),
-      innerB = k.pbr('chMarbleInB', X.marble(0xece8e0, 0xc4beb4, 492), 0.7, { roughness: 0.45, side: T.BackSide }),
-      floorT = k.pbr('chFloorR', X.terrazzo(0xc8c0b0, 493), 0.4, { roughness: 0.3 }),
+    /* wave 7b: the limestone front, the rotunda's marble, its floor, the dome plaster, the slate, the park's hexagonal
+       pavers and the fountain's granite as Poly Haven scans (CC0) */
+    const RM = 'cityhallrotunda';
+    const marble = w7Scan(k, RM, 'facade', 2.8, () => X.ashlar(0xe6e1d6, 491, 3), { color: 0xf0f4ff, roughness: 0.6 }, 0xa6a196),
+      inner = w7Scan(k, RM, 'marble', 2.2, () => X.marble(0xece8e0, 0xc4beb4, 492), { color: 0xf2f4fa, roughness: 0.32 }, 0xaaa69c),
+      innerB = w7Scan(k, RM, 'marble', 2.2, () => X.marble(0xece8e0, 0xc4beb4, 492), { color: 0xf2f4fa, roughness: 0.32, side: T.BackSide }, 0xaaa69c, 'b'),
+      floorT = w7Scan(k, RM, 'floor', 1.8, () => X.terrazzo(0xc8c0b0, 493), { color: 0xeee8de, roughness: 0.22 }, 0x8a867e),
       floorD = k.pbr('chFloorD', X.marble(0x8a8680, 0x4a4640, 494), 0.5, { roughness: 0.3 }),
-      dome = k.pbr('chDomeP', X.plaster(0xe8e2d4, 495), 0.5, { roughness: 0.85, side: T.DoubleSide }),
-      slate = k.pbr('chRoof', X.ashlar(0x6a6e74, 496, 8), 0.4, { roughness: 0.8 }),
+      dome = w7Scan(k, RM, 'plaster', 2.6, () => X.plaster(0xe8e2d4, 495), { color: 0xfaf4e6, roughness: 0.88, side: T.DoubleSide }, 0x9a9488),
+      slate = w7Scan(k, RM, 'roof', 2.0, () => X.ashlar(0x6a6e74, 496, 8), { color: 0xc8ccd4, roughness: 0.75 }, 0x4a4e54),
       lawn = k.pbr('chLawn', X.grass(0x4a7a3a, 497), 0.12),
-      hex = k.pbr('chPath', X.pavers(0x9a968c, 498), 0.35),
-      granite = k.pbr('chGranite', X.ashlar(0x8c8c88, 499, 3), 0.3),
-      water = k.flat(0x3a6a78, 0.6, 0.15, { transparent: true, opacity: 0.9 }),
+      hex = w7Scan(k, RM, 'hex', 1.4, () => X.pavers(0x9a968c, 498), { color: 0xc8c4ba, roughness: 0.85 }, 0x6a6862),
+      granite = w7Scan(k, RM, 'granite', 1.6, () => X.ashlar(0x8c8c88, 499, 3), { color: 0xd8d4cc, roughness: 0.55 }, 0x7a7872),
+      water = k.flat(0x2e5a66, 0.3, 0.06, { transparent: true, opacity: 0.88 }),
       bronze = k.flat(0x4a3a28, 0.8, 0.4),
       iron = k.flat(0x1f242a, 0.7, 0.45),
       slat = k.pbr('benchW', X.planks(0x5d4939, 3, 32), 1.2),
@@ -989,16 +1241,43 @@ export const cityhall: RoomDef = {
     k.mesh(new T.CylinderGeometry(7, 7.4, 0.9, 48), granite, 0, 0.45, 32);
     k.mesh(new T.CylinderGeometry(6.4, 6.4, 0.9, 48), water, 0, 0.5, 32);
     k.lathe([[0, 0], [1.2, 0], [1.0, 0.6], [0.5, 1.8], [0.6, 2.2], [1.6, 2.4], [1.7, 2.6], [0.4, 2.8], [0.3, 3.8], [0, 3.9]], 0, 0.9, 32, granite, 24);
-    const jets: T.Mesh[] = [];
-    for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2; const j = k.mesh(new T.CylinderGeometry(0.05, 0.14, 3.6, 6), jet, Math.cos(a) * 1.7, 3.2, 32 + Math.sin(a) * 1.7, true); jets.push(j); }
-    const jet0 = k.mesh(new T.CylinderGeometry(0.1, 0.28, 6, 8), jet, 0, 6.5, 32, true);
-    if (!ctx.reduced) k.ticks.push((t) => { jets.forEach((j, i) => { j.scale.y = 0.7 + 0.3 * Math.sin(t * 2 + i); j.position.y = 2.6 + 1.8 * j.scale.y; }); jet0.scale.y = 0.8 + 0.2 * Math.sin(t * 1.3); jet0.position.y = 4.7 + 3 * jet0.scale.y; });
+    /* wave 7b: water, not glowing cones: ten jets arc out of the upper basin into the pool as falling droplets, the
+       centre plume is a thin translucent column, and the pool's skin catches the sky */
+    void jet;
+    const spray = new T.MeshStandardMaterial({ color: 0xeef8ff, roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.4, depthWrite: false });
+    const DROPS = 30, drops = new T.InstancedMesh(new T.SphereGeometry(0.04, 5, 3), spray, 10 * DROPS);
+    drops.frustumCulled = false;
+    k.add(drops);
+    const jet0 = k.mesh(new T.CylinderGeometry(0.05, 0.16, 6, 10, 1, true), spray, 0, 6.5, 32, true);
+    const dM = new T.Matrix4(), dS = new T.Vector3();
+    const arcs = (t: number) => {
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * PI * 2, ca = Math.cos(a), sa = Math.sin(a), pump = 0.85 + 0.15 * Math.sin(t * 1.6 + i);
+        for (let j = 0; j < DROPS; j++) {
+          const u = ((j / DROPS) + t * 0.55 + i * 0.13) % 1, r = 1.7 + u * 3.9 * pump, y = 3.4 + 3.1 * pump * 4 * u * (1 - u) - u * 2.7;
+          dS.setScalar(0.7 + u * 0.9);
+          dM.makeScale(dS.x, dS.y * 3.2, dS.z).setPosition(ca * r, y, 32 + sa * r);
+          drops.setMatrixAt(i * DROPS + j, dM);
+        }
+      }
+      drops.instanceMatrix.needsUpdate = true;
+      jet0.scale.set(1, 0.8 + 0.2 * Math.sin(t * 1.3), 1); jet0.position.y = 3.9 + 3 * jet0.scale.y;
+    };
+    arcs(0);
+    if (!ctx.reduced) k.ticks.push((t) => arcs(t));
     k.keepOut.push({ x: 0, z: 32, r: 8 });
     const rnd = X.mulberry(500);
     for (let i = 0; i < 26; i++) { const x = -70 + rnd() * 140, z = 12 + rnd() * 90; if (Math.abs(x) < 10 && z < 64) continue; if (Math.hypot(x, z - 32) < 20) continue; if (Math.abs(x) < 6 && z > 40) continue; k.tree(x, 0, z, { kind: rnd() > 0.5 ? 'round' : 'column', h: 5 + rnd() * 4, r: 2.6 + rnd() * 2, leaf: 0x3f6b36, seed: i }); k.keepOut.push({ x, z, r: 0.7 }); }
-    for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2; if (Math.abs(Math.sin(a)) < 0.3) continue; parkBench(k, Math.cos(a) * 13, 32 + Math.sin(a) * 13, -a + PI / 2, slat, iron, 2.4); }
-    for (const a of [0.5, 1.5, 2.6, 3.7, 4.7, 5.8]) k.lamp(Math.cos(a) * 18, 32 + Math.sin(a) * 18, 5.5, iron, 0xffe0b0, 22);
-    k.prop('equestrian', -24, 0, 22, { height: 5.2, rotY: PI / 2, keepOut: 3.2 });
+    /* wave 7b: Central Park style benches (the museum's cp_bench) round the fountain, cast iron gas lamps (cp_gaslamp)
+       on the paths, and Horace Greeley (cp_statue) on his granite pedestal where a stray horse used to stand */
+    const benchM = k.objects.length, benchAt: number[][] = [];
+    for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2; if (Math.abs(Math.sin(a)) < 0.3) continue; const bx = Math.cos(a) * 13, bz = 32 + Math.sin(a) * 13; parkBench(k, bx, bz, -a + PI / 2, slat, iron, 2.4); benchAt.push([bx, 0, bz, -a]); }
+    const benchOld = standIn(k, benchM);
+    w7Place(k, 'cp_bench', { width: 2.4 }, benchAt, undefined, () => hide(benchOld));
+    w7Place(k, 'cp_gaslamp', { height: 4.6 }, [0.5, 1.5, 2.6, 3.7, 4.7, 5.8].map((a) => [Math.cos(a) * 18, 0, 32 + Math.sin(a) * 18, a]));
+    for (const a of [0.5, 1.5, 2.6, 3.7, 4.7, 5.8]) { w7Lamp(k, Math.cos(a) * 18, 4.3, 32 + Math.sin(a) * 18, 0xffe0b0, 22); k.keepOut.push({ x: Math.cos(a) * 18, z: 32 + Math.sin(a) * 18, r: 0.4 }); }
+    k.box(2.2, 1.6, 2.2, -24, 0.8, 22, granite); k.box(2.5, 0.2, 2.5, -24, 1.7, 22, granite);
+    k.prop('cp_statue', -24, 1.8, 22, { height: 3.0, rotY: PI / 2, keepOut: 1.8 });
     k.prop('bronze_figure', 24, 0, 22, { height: 3.6, rotY: -PI / 2, keepOut: 2.4 });
     k.skyline({ z: 105, count: 22, spacing: 8, scale: 2.8, base: -1, seed: 501, lit: 0.22, glow: 0.4, tint: 0x6e7684, rows: 2 });
     k.box(28, 96, 28, 36, 47, -74, k.pbr('chMunicipal', X.windows(502, 0.3, 0x8a8680, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.8, roughness: 0.6, stretch: 0.42 }));
@@ -1166,7 +1445,8 @@ export const cityhall: RoomDef = {
       k.cyl(1.6, 3, TXW, 152.5, WZ, pier, 1.2, 8); k.mesh(new T.ConeGeometry(1.2, 4, 8), roof, TXW, 156, WZ);
     }
     // Broadway runs one way downtown; pigeons in the park, and a flock over it
-    traffic(k, ctx, [-91, -87.5, -84].map((x) => ({ a: v(x, 0, -70), b: v(x, 0, 110), n: 5 })), 8.5, 508);
+    traffic(k, ctx, [-91, -84].map((x) => ({ a: v(x, 0, -70), b: v(x, 0, 110), n: 3 })), 8.5, 508, 'h_car_escape_lo');
+    traffic(k, ctx, [-87.5].map((x) => ({ a: v(x, 0, -70), b: v(x, 0, 110), n: 3 })), 8.5, 511, 'h_car_escape_lo');
     pigeons(k, ctx, [v(-10, 0.15, 24), v(9, 0.15, 40), v(-12, 0.15, 38), v(4, 0.15, 20), v(0, 0.15, 50), v(-6, 0.15, 45)], 22, 509, 2.4);
     gulls(k, ctx, Array.from({ length: 8 }, (_, i) => { const a = (i / 8) * PI * 2; return v(Math.cos(a) * 24, 16 + (i % 3) * 2, 40 + Math.sin(a) * 18); }), 14, 510, 0x7c808a, 0.45);
     // landmark eggs
@@ -1177,8 +1457,48 @@ export const cityhall: RoomDef = {
     k.egg(v(0, 3.0, 32), { id: 'mould-fountain', title: 'The fountain that came home', year: '1871', text: 'Jacob Wrey Mould, later chief architect of the Parks Department, designed this fountain in 1871. It was moved to Crotona Park in the Bronx in 1920, and came back for the park\'s reopening in 2000 with its gas lamps made new.', clue: 'Follow the paths to the water at the heart of the park.', source: { name: 'EverGreene, Jacob Wrey Mould Fountain', url: 'https://evergreene.com/projects/jacob-wrey-mould-fountain-city-hall-park/' } }, { r: 3.0 });
     k.egg(v(36, 114, -74), { id: 'civic-fame', title: 'Civic Fame and her crown', text: 'Adolph Weinman\'s Civic Fame, gilded copper, stands barefoot on a sphere atop the Municipal Building, built 1909 to 1914. The five pointed crown in her hand stands for the five boroughs.', clue: 'Behind City Hall, the tallest tower wears something gold.', source: { name: 'NYC DCAS, David N. Dinkins Municipal Building', url: 'https://www.nyc.gov/site/dcas/business/dcasmanagedbuildings/david-n-dinkins-manhattan-municipal-building.page' } }, { r: 5 });
     k.egg(v(-107, 112, -8), { id: 'woolworth', title: 'The cathedral of commerce', year: '1913', room: 'woolworth', text: 'Across Broadway rises Cass Gilbert\'s Woolworth Building, completed in 1913. At 792 feet it was hailed as the cathedral of commerce and stayed the tallest building in the world until 1930.', clue: 'Turn west toward Broadway and look for the tallest crown.', source: { name: 'New York Landmarks Conservancy', url: 'https://nylandmarks.org/explore-ny/the-woolworth-building/' } }, { r: 14 });
+    /* ---------- wave 7b: the front, built and signed ----------
+       White painted sash bars on every window (the flat dark panes read as holes), a Parks sign at the path, the street
+       sign at Broadway and Park Row, a subway entrance with its green globes at the park's east edge. */
+    {
+      const paint = k.flat(0xf2efe6, 0, 0.55);
+      const sash = (x: number, y: number, z: number, w: number, h: number, cols: number, rows: number) => {
+        for (let c = 1; c < cols; c++) k.box(0.06, h, 0.06, x - w / 2 + (c * w) / cols, y, z, paint);
+        for (let r = 1; r < rows; r++) k.box(w, 0.06, 0.06, x, y - h / 2 + (r * h) / rows, z, paint);
+        k.box(w + 0.16, 0.12, 0.12, x, y - h / 2, z + 0.02, paint);
+      };
+      for (const sd of [-1, 1]) for (let i = 0; i < 4; i++) { const x = sd * (17.25 + i * 4.5); sash(x, TY + 2.9, FZ + 0.13, 2.3, 4.2, 3, 4); sash(x, TY + 9.5, FZ + 0.24, 2.3, 3.1, 3, 3); }
+      for (const x of [-9.6, -4.8, 4.8, 9.6]) sash(x, TY + 2.6, FZ + 3.18, 2.8, 4.4, 3, 4);
+      for (const x of [-9.6, -4.8, 0, 4.8, 9.6]) sash(x, TY + 9.8, FZ + 3.14, 2.4, 3.4, 3, 3);
+      // the Parks sign where the path meets the lawn, in the house font, no logo
+      k.box(0.08, 1.0, 0.08, -11.6, 0.5, 38.6, iron); k.box(0.08, 1.0, 0.08, -9.8, 0.5, 38.6, iron);
+      w7Canvas(k, 2.0, 0.7, 512, -10.7, 1.35, 38.64, 0, (g, W, H) => { g.fillStyle = '#1f5a34'; g.fillRect(0, 0, W, H); g.strokeStyle = '#f2efe2'; g.lineWidth = 6; g.strokeRect(10, 10, W - 20, H - 20); w7Lines(g, W, H, [['CITY HALL PARK', 0.3, '#f2efe2', 'W2 Archivo'], ['NYC PARKS', 0.16, '#f2efe2', 'W2 Archivo']], 0.16, 0.06); }, { side: T.DoubleSide });
+      k.keepOut.push({ x: -10.7, z: 38.6, r: 1.1 });
+      w7StreetSign(k, -79.5, 60, 'BROADWAY', 'PARK ROW', 0);
+      // the subway entrance at the park's east side: a stair well in its railing, two green globes on posts, the sign
+      const SX = 40, SZ = 46, green = k.flat(0x1f4a30, 0.6, 0.4), globe = k.glow(0x8ef0a8, 0.9);
+      k.box(3.2, 0.1, 6.2, SX, 0.02, SZ, k.flat(0x1a1c20, 0.2, 0.8));
+      for (const sd of [-1, 1]) { k.box(0.06, 1.1, 6.2, SX + sd * 1.6, 0.6, SZ, green); k.box(0.1, 0.08, 6.3, SX + sd * 1.6, 1.15, SZ, green); for (let j = 0; j < 13; j++) k.box(0.03, 1.05, 0.03, SX + sd * 1.6, 0.55, SZ - 3 + j * 0.5, green); }
+      k.box(3.2, 1.1, 0.06, SX, 0.6, SZ + 3.1, green);
+      for (const sd of [-1, 1]) { k.cyl(0.07, 2.4, SX + sd * 1.6, 1.2, SZ - 3.2, green, 0.09, 8); k.sphere(0.24, SX + sd * 1.6, 2.6, SZ - 3.2, globe, 12); }
+      w7Canvas(k, 3.4, 0.6, 1024, SX, 1.9, SZ - 3.22, PI, (g, W, H) => { g.fillStyle = '#16181c'; g.fillRect(0, 0, W, H); const s2 = fit(g, 'BROOKLYN BRIDGE  CITY HALL', 'W2 Archivo', H * 0.46, W * 0.9, '700'); g.fillStyle = '#f2f2ea'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('BROOKLYN BRIDGE  CITY HALL', W / 2, H / 2 + s2 * 0.05); }, { side: T.DoubleSide, lit: true });
+      k.block(SX - 1.7, SX + 1.7, SZ - 3.1, SZ + 3.15);
+      w7Lamp(k, SX, 2.6, SZ - 3.2, 0x9af0b0, 6, 6);
+    }
+    /* the illusion (one trick a room): a hollow bust. A marble head on a plinth inside the door is shown from inside its
+       own shell, so the face is hollow; the eye reads it as a solid face anyway, and it turns to follow you round the room. */
+    {
+      const HX = -3.2, HZ = CZ + 3.4;
+      k.box(0.8, 1.15, 0.8, HX, TY + 0.575, HZ, inner); k.box(0.95, 0.1, 0.95, HX, TY + 1.2, HZ, inner); k.box(0.95, 0.12, 0.95, HX, TY + 0.06, HZ, inner);
+      k.keepOut.push({ x: HX, z: HZ, r: 0.75 });
+      w7Place(k, 'cityhallrotunda/bust', { height: 0.95 }, [[HX, TY + 1.25, HZ, PI]], (h) => h.traverse((c) => { if (c instanceof T.Mesh) { const src = c.material as T.MeshStandardMaterial; c.material = new T.MeshStandardMaterial({ map: src.map, color: 0xfff8ee, roughness: 0.5, side: T.BackSide }); } }));
+      k.spot(HX + 1.5, TY + 4.2, HZ + 3.5, HX, TY + 1.7, HZ, 0xfff0dc, 60, 0.35, 0.6, 9);
+      k.egg(v(HX, TY + 1.7, HZ), { id: 'hollow-bust', title: 'The bust that watches you', text: 'This marble head is hollow: you are looking into the back of its face. The brain refuses to read a face as hollow, so it flips the depth and sees a solid face, and when you walk past, the face seems to turn to follow you. The effect is called the hollow face illusion, and Richard Gregory used it to argue that seeing is a best guess.', clue: 'Just inside the rotunda, someone on a plinth keeps an eye on everyone who comes in. Walk past them.', source: { name: 'Wikipedia, Hollow face illusion', url: 'https://en.wikipedia.org/wiki/Hollow-face_illusion' } }, { r: 1.3 });
+    }
+    // Firefly (FIREFLY_QUEUE.md): the Governor's Room full length portrait; the canvas stays until the file exists
+    if (w7L) w7L.load('assets/museum/tex/cityhallrotunda/ff_governors_portrait.webp', (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; const pm = portrait as T.MeshStandardMaterial; pm.map = t; pm.needsUpdate = true; }, undefined, () => {});
     // life: the park, the stairs
-    k.crowd([v(-24, 0, 60), v(-14, 0, 40), v(-6, 0, 22), v(6, 0, 22), v(14, 0, 40), v(24, 0, 60)], 30, { seed: 68, speed: 0.6, spread: 3, animate: !ctx.reduced });
+    k.crowd([v(-24, 0, 60), v(-14, 0, 40), v(-6, 0, 22), v(6, 0, 22), v(14, 0, 40), v(24, 0, 60)], 22, { seed: 68, speed: 0.6, spread: 3, animate: !ctx.reduced });
     const stairRoute: T.Vector3[] = [v(0, TY, FZ + 1), v(0, TY, CZ + 5)];
     for (let i = 0; i <= 6; i++) { const a = (140 - i * 15) * (PI / 180); stairRoute.push(v(Math.sin(a) * 8, TY + (5.5 * i) / 6, CZ + Math.cos(a) * 8)); }
     for (let i = 1; i <= 4; i++) { const a = (50 - i * 25) * (PI / 180); stairRoute.push(v(Math.sin(a) * 8, GY, CZ + Math.cos(a) * 8)); }
@@ -1223,16 +1543,19 @@ export const castle: RoomDef = {
     k.sky({ top: 0x5f94d0, horizon: 0xe6eef0, ground: 0x4a5a5c, fog: 0.0016, sun: { az: 2.4, el: 0.55, color: 0xfff6e8, size: 12 }, env: 1.0 });
     k.hemi(0xeaf2ff, 0x3a4a48, 0.95);
     k.sun(0xfff0dc, 2.4, 60, 70, 40, true, 120);
-    const brown = k.pbr('ccBrownstone', X.ashlar(0x8a6a52, 511, 3), 0.28, { roughness: 0.85 }),
-      brownIn = k.pbr('ccBrownIn', X.ashlar(0x7a5c46, 512, 3), 0.28, { roughness: 0.85 }),
-      gravel = k.pbr('ccCourt', X.concrete(0xb8a890, 513), 3.0, { roughness: 0.95 }),
+    /* wave 7b: the fort's red brown sandstone, the court's gravel, the promenade's granite pavers and the seawall as
+       Poly Haven scans (CC0) */
+    const RM = 'castleclinton';
+    const brown = w7Scan(k, RM, 'sandstone', 2.6, () => X.ashlar(0x8a6a52, 511, 3), { color: 0xe8c8b4, roughness: 0.9 }, 0x7a5a46),
+      brownIn = w7Scan(k, RM, 'sandstone', 2.6, () => X.ashlar(0x7a5c46, 512, 3), { color: 0xc8a894, roughness: 0.9 }, 0x6a4c3a, 'i'),
+      gravel = w7Scan(k, RM, 'court', 2.4, () => X.concrete(0xb8a890, 513), { color: 0xe8dcc8, roughness: 0.95 }, 0x9a8c76),
       lawn = k.pbr('ccLawn', X.grass(0x4b7a3a, 514), 0.12),
-      prom = k.pbr('ccProm', X.pavers(0x9a968c, 515), 0.4),
-      granite = k.pbr('ccGranite', X.ashlar(0x8c8c88, 516, 3), 0.3),
+      prom = w7Scan(k, RM, 'prom', 2.0, () => X.pavers(0x9a968c, 515), { color: 0xd8d4cc, roughness: 0.8 }, 0x7a7872),
+      granite = w7Scan(k, RM, 'seawall', 2.4, () => X.ashlar(0x8c8c88, 516, 3), { color: 0xd0ccc4, roughness: 0.7 }, 0x6a6862),
       iron = k.flat(0x1f242a, 0.7, 0.45),
       ironG = k.flat(0x2a2e30, 0.6, 0.5),
       slat = k.pbr('benchW', X.planks(0x5d4939, 3, 32), 1.2),
-      oak = k.pbr('ccOak', X.planks(0x5c4230, 4, 517), 1.0),
+      oak = w7Scan(k, RM, 'oak', 1.4, () => X.planks(0x5c4230, 4, 517), { color: 0xc89a78, roughness: 0.6 }, 0x4a3424),
       white = k.flat(0xf1ede4, 0, 0.7),
       navy = k.flat(0x1d2f5c, 0, 0.7),
       dark = k.flat(0x1a1c20, 0.5, 0.6),
@@ -1261,8 +1584,16 @@ export const castle: RoomDef = {
     k.mesh(new T.CylinderGeometry(RO + 5, RO + 5, 0.32, 48), prom, CX, -0.14, CZ);
     const rnd = X.mulberry(522);
     for (let i = 0; i < 18; i++) { const x = -60 + rnd() * 130, z = CZ + 2 + rnd() * 60; if (Math.hypot(x - CX, z - CZ) < RO + 8) continue; if (Math.abs(x - 34) < 4 || Math.abs(x + 34) < 4) continue; k.tree(x, 0, z, { kind: 'round', h: 5 + rnd() * 4, r: 2.6 + rnd() * 2, leaf: 0x3f6b36, seed: i }); k.keepOut.push({ x, z, r: 0.7 }); }
+    /* wave 7b: the promenade's benches are the museum's Central Park bench (cp_bench), its lamps a real cast iron
+       standard (Poly Haven street_lamp_01, CC0), and life rings hang on the seawall rail */
+    const pbM = k.objects.length;
     for (const x of [-30, -10, 10, 30, 50, 70]) parkBench(k, x, CZ - 34.4, PI, slat, iron, 2.4);
-    for (const x of [-46, -20, 20, 46, 72]) k.prop('lamppost', x, 0, CZ - 33.2, { height: 6.5, keepOut: 0.5 });
+    const pbOld = standIn(k, pbM);
+    w7Place(k, 'cp_bench', { width: 2.4 }, [-30, -10, 10, 30, 50, 70].map((x) => [x, 0, CZ - 34.4, PI - PI / 2]), undefined, () => hide(pbOld));
+    w7Place(k, 'castleclinton/street_lamp', { height: 5.6 }, [-46, -20, 20, 46, 72].map((x) => [x, 0, CZ - 33.2, 0]));
+    for (const x of [-46, -20, 20, 46, 72]) { w7Lamp(k, x, 5.2, CZ - 33.2, 0xffe0b0, 24); k.keepOut.push({ x, z: CZ - 33.2, r: 0.5 }); }
+    w7Place(k, 'castleclinton/lifebuoy', { height: 0.75 }, [-40, -15, 0, 25, 40, 60, 85].map((x) => [x, 0.82, CZ - 39.45, PI]), (h) => w7Tint(h, 0xffffff, 0.7));
+    for (const x of [-40, -15, 0, 25, 40, 60, 85]) k.box(0.1, 1.3, 0.1, x + 0.5, 0.75, CZ - 39.5, iron);
     k.prop('hydrant', 36.8, 0, CZ + 20, { height: 1.1, keepOut: 0.5 });
     k.prop('buoy', -14, -1.2, CZ - 62, { height: 2.4 });
     k.prop('buoy', 60, -1.2, CZ - 80, { height: 2.4 });
@@ -1402,6 +1733,34 @@ export const castle: RoomDef = {
     k.egg(v(0, 1.3, CZ + 20.2), { id: 'cannons', title: 'Twenty eight guns', year: '1811', text: 'When the fort was finished in 1811 it was fully armed with 28 cannons. Each could fire a 32 pound cannonball a mile and a half out over the harbor.', clue: 'In the court, one of the guns still points out through its embrasure.', source: NPS }, { r: 1.8 });
     k.egg(v(24.5, 2.6, CZ), { id: 'castle-garden', title: 'Castle Garden, 1855 to 1890', year: '1855 to 1890', text: 'From August 3, 1855 to April 18, 1890 this fort was Castle Garden, an immigrant landing depot. More than 8 million people entered the United States through it, about two thirds of all immigrants in those years.', clue: 'Walk through the arched gate, the way millions did.', source: NPS }, { r: 2.6 });
     k.egg(v(-7, 1.4, CZ + 2), { id: 'nightingale', title: 'A concert hall, then an aquarium', year: '1850', room: 'coney', text: 'In 1850 the soprano Jenny Lind, the Swedish Nightingale, made her American debut here. From 1896 the fort was the New York Aquarium, until the aquarium moved to Coney Island in 1941.', clue: 'Stand in the open court and picture the crowds it once held.', source: NPS }, { r: 2.0 });
+    /* ---------- wave 7b: what you see from the promenade ----------
+       The East Coast Memorial's eagle on its granite plinth by the water (the museum's own bronze eagle, a stand in for
+       Albino Manca's), the gate signed in bronze letters, a park sign at the path, and the one trick in the court. */
+    {
+      const EX = 31, EZ = CZ - 29.5, bronzeE = k.flat(0x3a3226, 0.85, 0.42);
+      k.box(2.6, 1.8, 2.0, EX, 0.9, EZ, granite); k.box(2.9, 0.18, 2.3, EX, 1.89, EZ, granite); k.box(3.2, 0.3, 2.6, EX, 0.15, EZ, granite);
+      w7Place(k, 'castleclinton/eagle', { height: 3.1 }, [[EX, 1.98, EZ, -PI / 2 - 0.35]], (h) => w7Tint(h, 0x5a4a32, 0.42, 0.85));
+      k.keepOut.push({ x: EX, z: EZ, r: 2.0 });
+      w7Canvas(k, 1.5, 0.5, 512, EX + 1.31, 1.25, EZ, PI / 2, (g, W, H) => { g.fillStyle = '#6a6862'; g.fillRect(0, 0, W, H); w7Lines(g, W, H, [['EAST COAST MEMORIAL', 0.26, '#2a2824', 'W2 Archivo'], ['1941  1945', 0.22, '#2a2824', 'W2 Archivo']], 0.16, 0.08); });
+      void bronzeE;
+      k.egg(v(EX, 4.4, EZ), { id: 'east-coast-memorial', title: 'The eagle by the water', year: '1963', text: 'South of the fort stands the East Coast Memorial to the American servicemen lost in the western Atlantic in the Second World War, their names cut into eight granite pylons nearby. Albino Manca\'s bronze eagle faces the sea, and the memorial was dedicated in 1963.', clue: 'Between the fort and the seawall, a bronze bird keeps watch over the harbor.', source: { name: 'Wikipedia, East Coast Memorial', url: 'https://en.wikipedia.org/wiki/East_Coast_Memorial' } }, { r: 2.4 });
+      // bronze letters over the gate, outside
+      const ga = (5 / 20) * PI * 2;
+      w7Canvas(k, 6.6, 0.62, 1024, CX + Math.sin(ga) * (RO + 0.03), 5.95, CZ + Math.cos(ga) * (RO + 0.03), ga, (g, W, H) => { const s2 = fit(g, 'CASTLE CLINTON', 'W2 Archivo Expanded', H * 0.72, W * 0.94, '800'); g.fillStyle = '#3a2c1c'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('CASTLE CLINTON', W / 2 + 3, H / 2 + s2 * 0.05 + 3); g.fillStyle = '#c9a55a'; g.fillText('CASTLE CLINTON', W / 2, H / 2 + s2 * 0.05); }, { transparent: true });
+      // the park sign where the path leaves the promenade
+      k.box(0.12, 1.4, 0.12, 41, 0.7, CZ - 17.2, oak); k.box(0.12, 1.4, 0.12, 41, 0.7, CZ - 14.8, oak);
+      w7Canvas(k, 2.8, 1.0, 512, 41.08, 1.75, CZ - 16, PI / 2, (g, W, H) => { g.fillStyle = '#4a3020'; g.fillRect(0, 0, W, H); g.strokeStyle = '#eadfc8'; g.lineWidth = 6; g.strokeRect(10, 10, W - 20, H - 20); w7Lines(g, W, H, [['CASTLE CLINTON', 0.24, '#eadfc8', 'W2 Archivo Expanded'], ['NATIONAL MONUMENT', 0.15, '#eadfc8', 'W2 Archivo'], ['THE BATTERY  NEW YORK', 0.11, '#eadfc8', 'W2 Archivo']], 0.14, 0.05); }, { side: T.DoubleSide });
+      k.keepOut.push({ x: 41, z: CZ - 16, r: 1.6 });
+      // Firefly (FIREFLY_QUEUE.md): an engraving of Castle Garden as the immigrant depot on the panel by the gate
+      k.box(0.1, 1.0, 0.1, 31.5, 0.5, CZ + 5.6, iron); k.box(0.1, 1.0, 0.1, 31.5, 0.5, CZ + 8.4, iron);
+      const panel = w7Canvas(k, 3.0, 1.9, 512, 31.56, 1.75, CZ + 7, PI / 2, (g, W, H) => { g.fillStyle = '#d8ccb0'; g.fillRect(0, 0, W, H); g.fillStyle = '#5a4a36'; g.fillRect(W * 0.06, H * 0.08, W * 0.88, H * 0.56); g.fillStyle = '#d8ccb0'; g.beginPath(); g.ellipse(W / 2, H * 0.5, W * 0.3, H * 0.13, 0, PI, 0); g.fill(); w7Lines(g, W, H, [['CASTLE GARDEN  1855 TO 1890', 0.08, '#3a2c1c', 'W2 Archivo'], ['MORE THAN 8 MILLION PEOPLE CAME IN HERE', 0.06, '#3a2c1c', 'W2 Archivo']], 0.7, 0.03); }, { side: T.DoubleSide });
+      k.keepOut.push({ x: 31.5, z: CZ + 7, r: 1.7 });
+      if (w7L) w7L.load('assets/museum/tex/castleclinton/ff_castle_garden.webp', (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; const pm = (panel as T.Mesh).material as T.MeshStandardMaterial; pm.map = t; pm.needsUpdate = true; }, undefined, () => {});
+    }
+    /* the illusion (one trick a room): CASTLE GARDEN painted flat on the court's gravel, stretched away from the gate, so
+       that from the gateway it stands up like the depot's old sign. Walk on and it lies down again. */
+    { const t = w7Type('CASTLE GARDEN', ['#1d2f5c', '#8a1c22']); if (t) anamorphTex(k, t, CX + 23.2, CZ, 3, 0.17, PI / 2, 5.6, 5.4, 1.4, 0.88); }
+    k.egg(v(CX + 13, 0.5, CZ), { id: 'castle-anamorph', title: 'A sign that is not there', text: 'CASTLE GARDEN is painted flat on the gravel, stretched across the court, so that from the gate it stands up like the old depot\'s sign. Walk onto it and it falls back into long smears of blue and red. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Stand in the arched gate and look across the court.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.6 });
     // the works: set into the embrasures round the ring, on the ticket booth, flanking the gate outside
     const mounts: Mount[] = [];
     for (const s of segs) {

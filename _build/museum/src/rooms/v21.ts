@@ -12,10 +12,92 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero, heroInstances } from './heroes';
+import { hero, heroInstances, standIn, hide as hideAll } from './heroes';
+import { paintTex, hsign, anamorphTex } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): helpers for this file's rooms ----------
+   The wave 6 pattern (x2.ts), kept local: scanned CC0 surfaces (Poly Haven) from assets/museum/tex/<room>/ that wear a
+   sensible colour until their maps land, real models from assets/museum/props/<room>/ placed once or many at a time
+   (more than six become instanced parts; glass transmission and prop shadows stripped on load), and floor type for the
+   one trick each room gets. Safe in node: the audit builds with no DOM, so scans fall back to paint. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w9 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w9-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w9.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w9-${room}-${id}-${metres}`, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* glass that would make three.js draw the room twice becomes plain transparency */
+function unglass(o: T.Object3D) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const p = m as T.MeshPhysicalMaterial; if (p.transmission) { p.transmission = 0; p.transparent = true; p.opacity = 0.35; p.depthWrite = false; p.needsUpdate = true; } } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?, rotX?, rotZ?]; more than six become instanced parts.
+   `then` gets the placed copies when they are separate objects (six or fewer), for the ones that move. */
+type At = [number, number, number, number, number?, number?, number?];
+function put(k: K, name: string, fit: Parameters<typeof hero>[2], at: At[], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void, shadow = false) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    unglass(h);
+    if (tweak) tweak(h);
+    if (!shadow) h.traverse((c) => { c.castShadow = false; });
+    const m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler();
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length);
+      at.forEach(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => ins.setAt(i, m.compose(v(x, y, z), q.setFromEuler(e.set(rx, r, rz, 'YXZ')), v(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1, rx = 0, rz = 0], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(rx, r, rz, 'YXZ'); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* Recolour every material of a loaded model, without touching the shared source. */
+function tint(o: T.Object3D, hex: number, rough = 0.6, metal = 0.2, emissive = 0) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; if (emissive) { n.emissive.setHex(hex); n.emissiveIntensity = emissive; } m = n; cache.set(src, m); } c.material = m; });
+}
+/* wave 9c shadow trim: the debug counter is two to three times the scene because of the sun's shadow pass. After the build,
+   and again every few seconds while models and the cast arrive, every mesh `drop` names stops casting. */
+function shadowTrim(k: K, drop: (o: T.Mesh, c: T.Vector3, r: number) => boolean) {
+  let next = 1.5; const c = new T.Vector3();
+  k.ticks.push((t) => {
+    if (t < next || next > 40) return; next = t + 4;
+    k.scene.traverse((o) => { if (!(o instanceof T.Mesh) || !o.castShadow) return; const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); c.copy(g.boundingSphere!.center).applyMatrix4(o.matrixWorld); if (drop(o, c, g.boundingSphere!.radius)) o.castShadow = false; });
+  });
+}
+/* Painted lettering for an anamorphic floor piece, in a house font, fitted to the canvas. */
+function floorType(text: string, fg: string, w = 1024, h = 256, font = 'W2 Archivo Expanded', stroke?: string) {
+  return paintTex(w, h, (g) => { g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } if (stroke) { g.strokeStyle = stroke; g.lineWidth = s * 0.08; g.lineJoin = 'round'; g.strokeText(text, w / 2, h / 2); } g.fillStyle = fg; g.fillText(text, w / 2, h / 2); }, [font]);
+}
 
 /* ---------------- helpers, copied from v14 and v3 (nothing there is exported) ---------------- */
 function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
@@ -178,9 +260,11 @@ export const dykerheights: RoomDef = {
     k.sky({ top: 0x04060c, horizon: 0x1a1a2a, ground: 0x06070b, fog: 0.007, stars: 260, env: 0.3 });
     k.hemi(0x3a4a7a, 0x14161c, 1.1);
     k.sun(0xaebde8, 0.22, -60, 70, 30, true, 90);
-    const asph = k.pbr('dhAsph', X.asphalt(0x1e2126), 0.3, { roughness: 0.6 }), walk = k.pbr('dhWalk', X.pavers(0x8a8c90, 177), 0.5),
-      snow = k.flat(0xbfc9d6, 0, 1), snowRoof = k.flat(0xb4bfcc, 0, 1), curb = k.flat(0x7a7c80, 0, 0.8),
-      brick = k.pbr('dhBrick', X.brick(0x7a4638, 178), 0.9), brick2 = k.pbr('dhBrick2', X.brick(0x9a6a50, 179), 0.9), stone = k.pbr('dhStone', X.ashlar(0xbcb2a0, 180, 5), 0.4, { normal: 0.4 }), stucco = k.pbr('dhStucco', X.plaster(0xd2c8b4, 181), 0.3, { roughness: 0.9 }),
+    /* 2026-11-24 (wave 9): scanned CC0 surfaces (Poly Haven): asphalt with the snow pushed into it, square pavers for the
+       sidewalks, snow on the lawns, and two real brick faces for the houses */
+    const asph = sc(k, 'dykerheights', 'asphalt_snow', 3.4, () => X.asphalt(0x1e2126), { roughness: 0.6, color: 0x9aa0a8 }, 0x1e2126), walk = sc(k, 'dykerheights', 'concrete_pavers', 1.8, () => X.pavers(0x8a8c90, 177), { roughness: 0.8, color: 0xb8bcc4 }, 0x6a6c70),
+      snow = sc(k, 'dykerheights', 'snow_02', 2.6, () => X.concrete(0xbfc9d6, 176), { roughness: 0.95, color: 0xc8d2e0 }, 0x9aa4b2), snowRoof = k.flat(0xb4bfcc, 0, 1), curb = k.flat(0x7a7c80, 0, 0.8),
+      brick = sc(k, 'dykerheights', 'red_brick_03', 1.5, () => X.brick(0x7a4638, 178), { color: 0xd8b8a8 }, 0x7a4638), brick2 = sc(k, 'dykerheights', 'brown_brick_02', 1.6, () => X.brick(0x9a6a50, 179), { color: 0xe0c8b4 }, 0x9a6a50), stone = k.pbr('dhStone', X.ashlar(0xbcb2a0, 180, 5), 0.4, { normal: 0.4 }), stucco = k.pbr('dhStucco', X.plaster(0xd2c8b4, 181), 0.3, { roughness: 0.9 }),
       slate = k.flat(0x2a2c32, 0.1, 0.8), trim = k.flat(0xd6d0c4, 0, 0.6), iron = k.flat(0x1a1c20, 0.6, 0.5), doorM = k.flat(0x3a1c14, 0, 0.5), bark = k.pbr('dhBark', X.bark(), 0.7, { roughness: 1 }),
       winLit = k.flat(0xffd9a0, 0, 0.6, { emissive: 0xffc070, emissiveIntensity: 0.9 }), winDark = k.flat(0x1a2128, 0.6, 0.18),
       wSnow = k.flat(0xe0e6ee, 0, 0.9, { emissive: 0x8a96a8, emissiveIntensity: 0.35 }), red = k.flat(0xc0202a, 0, 0.5, { emissive: 0x7a0a12, emissiveIntensity: 0.6 }),
@@ -233,16 +317,23 @@ export const dykerheights: RoomDef = {
         lineBulbs(p0, p1, 0.22, g, cols);
       }
     };
+    /* 2026-11-24 (wave 9): the display figures are real models (snowmen, angels, canes and reindeer from our LIGHTINGS
+       kit); each built one records where it stands and hides when its model arrives */
+    const dStand: Record<'snow' | 'sold' | 'ang' | 'cane', T.Object3D[]> = { snow: [], sold: [], ang: [], cane: [] };
+    const dAt: Record<'snow' | 'sold' | 'ang' | 'cane', At[]> = { snow: [], sold: [], ang: [], cane: [] };
     const snowman = (x: number, z: number, s = 1) => {
+      const mk = k.objects.length;
       k.sphere(0.62 * s, x, 0.6 * s, z, wSnow, 14); k.sphere(0.46 * s, x, 1.5 * s, z, wSnow, 14); k.sphere(0.34 * s, x, 2.18 * s, z, wSnow, 12);
       k.cyl(0.28 * s, 0.32 * s, x, 2.62 * s, z, black, 0.28 * s, 12); k.cyl(0.42 * s, 0.05 * s, x, 2.47 * s, z, black, 0.42 * s, 12);
       k.cyl(0.03 * s, 0.34 * s, x, 2.18 * s, z + 0.5 * s, k.flat(0xf08a20, 0, 0.7), 0.06 * s, 6).rotation.x = PI / 2;
       k.box(0.7 * s, 0.14 * s, 0.6 * s, x, 1.9 * s, z, red);
       for (const yy of [1.3, 1.55, 1.8]) k.sphere(0.05 * s, x, yy * s, z + 0.44 * s, black, 6);
       for (const sgn of [-1, 1]) k.beam(v(x + sgn * 0.4 * s, 1.55 * s, z), v(x + sgn * 1.05 * s, 2.1 * s, z + 0.1), 0.03, bark, 5);
+      dStand.snow.push(...standIn(k, mk)); dAt.snow.push([x, 0.1, z, z > 0 ? PI : 0, 2.75 * s]);
       k.keepOut.push({ x, z, r: 0.8 * s });
     };
     const soldier = (x: number, z: number, ry: number, h = 2.6) => {
+      const mk = k.objects.length;
       const g = new T.Group(); g.position.set(x, 0, z); g.rotation.y = ry;
       const add = (geo: T.BufferGeometry, m: T.Material, px: number, py: number, pz: number) => { const o = new T.Mesh(geo, m); o.position.set(px, py, pz); g.add(o); return o; };
       const u = h / 2.6;
@@ -256,6 +347,7 @@ export const dykerheights: RoomDef = {
       add(new T.BoxGeometry(0.52 * u, 0.08 * u, 0.06 * u), gold, 0, 2.32 * u, 0.24 * u);
       for (const sgn of [-1, 1]) { add(new T.SphereGeometry(0.04 * u, 6, 4), black, sgn * 0.08 * u, 2.13 * u, 0.22 * u); add(new T.SphereGeometry(0.06 * u, 6, 4), red, sgn * 0.13 * u, 2.02 * u, 0.2 * u); }
       bake(k, g); k.keepOut.push({ x, z, r: 0.5 * u });
+      dStand.sold.push(...standIn(k, mk)); dAt.sold.push([x, 0.1, z, ry, h]);
       soldiers.push({ x, z, ry });
       return g;
     };
@@ -271,6 +363,7 @@ export const dykerheights: RoomDef = {
       k.add(g); k.keepOut.push({ x, z, r: 0.9 }); reindeer.push(g);
     };
     const angel = (x: number, z: number, ry: number) => {
+      const mk = k.objects.length;
       const g = new T.Group(); g.position.set(x, 0, z); g.rotation.y = ry;
       const body = new T.Mesh(new T.ConeGeometry(0.5, 2.0, 10, 3, true), wSnow); body.position.y = 1.0; g.add(body);
       const head = new T.Mesh(new T.SphereGeometry(0.2, 10, 8), skin); head.position.y = 2.2; g.add(head);
@@ -278,12 +371,15 @@ export const dykerheights: RoomDef = {
       for (const w of [-1, 1]) { const wing = new T.Mesh(new T.PlaneGeometry(0.9, 1.4), wire); wing.position.set(w * 0.55, 1.6, -0.25); wing.rotation.y = -w * 0.7; g.add(wing); }
       const horn = new T.Mesh(new T.CylinderGeometry(0.03, 0.12, 1.1, 8), gold); horn.position.set(0.3, 2.1, 0.4); horn.rotation.z = -1.1; horn.rotation.x = 0.5; g.add(horn);
       bake(k, g); k.keepOut.push({ x, z, r: 0.6 });
+      dStand.ang.push(...standIn(k, mk)); dAt.ang.push([x, 0.1, z, ry, 2.5]);
     };
     const cane = (x: number, z: number, h = 2.2) => {
+      const mk = k.objects.length;
       const pts = [v(x, 0, z), v(x, h * 0.8, z), v(x + 0.05, h * 0.97, z), v(x + 0.3, h, z), v(x + 0.55, h * 0.9, z), v(x + 0.6, h * 0.72, z)];
       k.curve(pts, 0.07, red, 24);
       for (let i = 0; i < 8; i++) k.torus(0.075, 0.035, x, 0.15 + i * (h * 0.78) / 8, z, wSnow, 12).rotation.x = PI / 2;
       k.keepOut.push({ x: x + 0.3, z, r: 0.45 });
+      dStand.cane.push(...standIn(k, mk)); dAt.cane.push([x + 0.3, 0.1, z, PI / 2, h * 1.05]);
     };
     const bauble = (x: number, y: number, z: number, r: number, c: number) => { k.sphere(r, x, y, z, k.flat(c, 0.6, 0.25, { emissive: c, emissiveIntensity: 0.5 }), 16); k.cyl(r * 0.2, r * 0.3, x, y + r + r * 0.12, z, gold, r * 0.2, 8); };
     const palettes = [[0xfff4d8], [0xff3b3b, 0x3bff6a, 0x3b8cff, 0xffd23b, 0xffffff], [0x9ad8ff, 0xffffff], [0xff3b3b, 0xffffff], [0xffd23b, 0xff8c3b], [0x3bff6a, 0xff3b3b], [0xfff4d8, 0x3b8cff], [0xff5aa0, 0xffffff, 0x8a5aff], [0xffd23b], [0xffffff, 0xff3b3b, 0x3bff6a]];
@@ -397,6 +493,18 @@ export const dykerheights: RoomDef = {
       if (s < 0 && cx === 0) k.censusWall({ x: gx, y: 1.75, z: dz0 + 0.07, rotY: 0, cols: 9, rows: 5, tile: 0.34, gap: 0.03, start: ctx.wallStart(1450, 45), pieces: ctx.all, backing: black });
     });
 
+    put(k, 'dykerheights/lt_snowman', { height: 1 }, dAt.snow, undefined, () => hideAll(dStand.snow));
+    /* the toy soldiers stay built: the only soldier model we own reads as a garden gnome */
+    void dAt.sold; void dStand.sold;
+    put(k, 'dykerheights/lt_angel', { height: 1 }, dAt.ang, (o) => o.traverse((c) => { if (c instanceof T.Mesh) { const m = (c.material as T.MeshStandardMaterial).clone(); m.emissive.setHex(0xfff1cc); m.emissiveIntensity = 0.35; c.material = m; } }), () => hideAll(dStand.ang));
+    put(k, 'dykerheights/lt_candycane', { height: 1 }, dAt.cane, undefined, () => hideAll(dStand.cane));
+    /* the reindeer keep rocking: the model rides inside each built deer's group, whose own parts hide */
+    void hero(k, 'dykerheights/lt_reindeer', { height: 2.1 }).then((h) => {
+      if (!h || !k.live) return;
+      h.traverse((c) => { c.castShadow = false; });
+      reindeer.forEach((g, i) => { for (const c of g.children) c.visible = false; const o = i ? h.clone() : h; g.add(o); });
+    });
+
     /* ---- the bulbs: one InstancedMesh, per house colour groups, per frame brightness by pattern ---- */
     {
       const NB = bulbs.length, lights = k.instances(new T.SphereGeometry(0.06, 5, 3), new T.MeshBasicMaterial({ color: 0xffffff }), bulbs.map((b) => new T.Matrix4().makeTranslation(b.x, b.y, b.z)));
@@ -499,6 +607,41 @@ export const dykerheights: RoomDef = {
     }
     snowfall(k, ctx, 1400, { x0: -42, x1: 42, z0: -16, z1: 16, h: 14 }, 1782);
 
+    /* ---- 2026-11-24 (wave 9): the first lawns you see, worked in ----
+       Santa, an elf and a heap of presents on the soldiers' lawn (our LIGHTINGS models), a porch banner between the columns
+       (a Firefly plate queued; a painted stand in until it lands), and one trick (rule 9): a Pepper's ghost in the front
+       window, a figure that shows only when you stand square to the glass. */
+    {
+      put(k, 'dykerheights/lt_santa', { height: 2.3 }, [[-11.4, 0.1, -12.5, 0.2]]); k.keepOut.push({ x: -11.4, z: -12.5, r: 0.6 });
+      put(k, 'dykerheights/lt_elf', { height: 1.25 }, [[-15.0, 0.1, -12.2, 0.4]]); k.keepOut.push({ x: -15.0, z: -12.2, r: 0.4 });
+      if (k.o.quality === 'high') put(k, 'dykerheights/lt_gifts', { height: 0.8 }, [[-11.0, 0.1, -11.2, 0.6], [-18.4, 0.1, -11.9, 2.1], [2.4, 0.1, 12.9, 1.0]]);
+      for (const [x, z] of [[-11.0, -11.2], [-18.4, -11.9], [2.4, 12.9]]) k.keepOut.push({ x, z, r: 0.6 });
+      const card = canvasTex(1024, 256, (g) => { g.fillStyle = '#f2ece0'; g.fillRect(0, 0, 1024, 256); g.strokeStyle = '#1e6a34'; g.lineWidth = 14; g.strokeRect(14, 14, 996, 228); g.fillStyle = '#c0202a'; g.font = '700 120px "W2 Permanent Marker", "Marker Felt", cursive'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Merry Christmas', 512, 134); });
+      fireflyPlate(k, 'assets/museum/tex/dykerheights/ff_dyk_porch_banner.webp', 2.3, 0.58, -15.5, 3.38, -11.22, 0, new T.MeshStandardMaterial({ map: card, roughness: 0.8, emissive: 0x3a3430, emissiveIntensity: 0.6 }));
+      /* the ghost: a glowing figure on a plane just inside the right hand front window, faded by how square you stand to it */
+      const gx = -12.9, gy = 2.0, gz = -13.34;
+      const ghostT = canvasTex(256, 340, (g) => {
+        g.fillStyle = 'rgba(0,0,0,0)'; g.fillRect(0, 0, 256, 340);
+        const glow = g.createRadialGradient(128, 190, 10, 128, 190, 150); glow.addColorStop(0, 'rgba(60,140,230,0.6)'); glow.addColorStop(1, 'rgba(60,140,230,0)'); g.fillStyle = glow; g.fillRect(0, 0, 256, 340);
+        g.fillStyle = 'rgba(120,200,255,0.92)';
+        g.beginPath(); g.moveTo(80, 120); g.lineTo(176, 120); g.lineTo(150, 30); g.closePath(); g.fill(); g.beginPath(); g.arc(150, 26, 12, 0, PI * 2); g.fill();
+        g.beginPath(); g.arc(128, 140, 30, 0, PI * 2); g.fill();
+        g.beginPath(); g.moveTo(84, 330); g.quadraticCurveTo(70, 200, 104, 172); g.lineTo(152, 172); g.quadraticCurveTo(186, 200, 172, 330); g.closePath(); g.fill();
+        g.lineWidth = 18; g.lineCap = 'round'; g.strokeStyle = 'rgba(120,200,255,0.92)'; g.beginPath(); g.moveTo(160, 190); g.lineTo(206, 120); g.stroke(); g.beginPath(); g.arc(210, 112, 13, 0, PI * 2); g.fill();
+      });
+      const gm = new T.MeshBasicMaterial({ map: ghostT, transparent: true, opacity: 0, depthWrite: false });
+      const ghost = k.mesh(new T.PlaneGeometry(1.15, 1.55), gm, gx, gy, gz, true);
+      const wv = new T.Vector3();
+      if (!ctx.reduced) k.ticks.push((t) => {
+        const c = cam(); if (!c) return;
+        wv.set(c.position.x - gx, 0, c.position.z - gz); const d = wv.length(); wv.normalize();
+        const sq = clamp01((wv.z - 0.94) / 0.05) * clamp01((30 - d) / 8);
+        gm.opacity = sq * (0.8 + 0.2 * Math.sin(t * 1.7)); ghost.position.y = gy + 0.04 * Math.sin(t * 1.1);
+      });
+      else gm.opacity = 0.5;
+      k.egg(v(gx, 1.2, -12.6), { id: 'dyker-ghost', title: 'The figure in the window', text: 'The figure in the front window is a Pepper\'s ghost: a sheet of glass at an angle reflects a lit figure hidden out of sight, so it shows only from in front and fades as you step aside. John Henry Pepper made the effect famous in London in 1862, from an apparatus devised by Henry Dircks.', clue: 'Stand square to the right hand window of the soldiers\' house.', source: { name: 'Pepper\'s ghost, Wikipedia', url: 'https://en.wikipedia.org/wiki/Pepper%27s_ghost' } }, { r: 1.4 });
+    }
+
     /* ---- what the block knows ---- */
     const src = { name: 'Dyker Heights, Brooklyn, Wikipedia', url: 'https://en.wikipedia.org/wiki/Dyker_Heights,_Brooklyn' };
     k.egg(v(0, 3.6, -13.4), { id: 'dyker-1980s', title: 'Sometime in the 1980s', text: 'Nobody agrees on which December the lights began. Newspaper reports and the tours of the area suggest the tradition started sometime in the 1980s, and it grew house by house from there.', clue: 'The most lit house on the block. Ask how long this has been going on.', source: src }, { r: 3 });
@@ -508,6 +651,8 @@ export const dykerheights: RoomDef = {
     k.egg(v(28, 4, 13.4), { id: 'dyker-1895', title: 'A speculative luxury development, 1895', year: '1895', text: 'Dyker Heights was laid out by Walter Loveridge Johnson from October 1895, and built between 1895 and 1902 as a speculative luxury housing development on the high ground above Gravesend Bay.', clue: 'The oldest thing on the block is the plan of the block. Look at the house at the east end.', source: src }, { r: 3 });
     k.egg(v(-28, 3, 13.4), { id: 'dyker-italian', title: 'Since the 1940s', text: 'Since the 1940s Dyker Heights has had a majority Italian American population, which is the tradition the lights grew out of. By 2020 the neighbourhood\'s Asian population had passed its white population.', clue: 'The house at the west end of the south side.', source: src }, { r: 3 });
 
+    /* 2026-11-25 (wave 9c): the bulbs (seven thousand of them), the snow, the crowds, the back rows and the bridge stop casting */
+    shadowTrim(k, (o, c, r) => (o instanceof T.InstancedMesh && o.count > 300) || r > 20 || Math.abs(c.z) > 24 || Math.abs(c.x) > 40);
     return { mounts, spawn: v(-9, 3.1, 5.6), look: v(-3, 4.5, -13), eye: 3, bounds: [-35, 35, -15.3, 15.3], style: 'gilt' };
   },
 };
@@ -528,9 +673,11 @@ export const huntspoint: RoomDef = {
     k.hemi(0x5a5040, 0x141418, 2.0);
     k.sun(0xaebde8, 0.18, 40, 70, 60, true, 120);
     const sodium = 0xffa848;
-    const conc = k.pbr('hpConc', X.concrete(0x8a8c8a, 182), 0.35, { roughness: 0.95 }), block = k.pbr('hpBlock', X.concrete(0xb4b8b4, 183), 0.25, { roughness: 0.85 }), panel = k.flat(0xaeb2b2, 0.25, 0.6),
-      asph = k.pbr('hpAsph', X.asphalt(0x1c1e22), 0.3, { roughness: 0.65 }), steel = k.pbr('hpSteel', X.steel(0x4a5058, false, 184), 0.5, { roughness: 0.5, metalness: 0.6 }),
-      steelD = k.flat(0x2a2e34, 0.7, 0.45), gal = k.flat(0x8a9098, 0.8, 0.35), doorM = k.flat(0x9a9ea2, 0.6, 0.4), doorD = k.flat(0x6a6e72, 0.6, 0.45), bumper = k.flat(0x141416, 0.2, 0.9),
+    /* 2026-11-24 (wave 9): scanned CC0 surfaces (Poly Haven): a worn warehouse slab for the dock, painted block for the
+       building, ribbed steel cladding for the dock face, painted steel shutters for the doors, worn asphalt in the yard */
+    const conc = sc(k, 'huntspoint', 'hangar_concrete_floor', 3.2, () => X.concrete(0x8a8c8a, 182), { roughness: 0.95, color: 0xc0c0bc }, 0x6a6c6a), block = sc(k, 'huntspoint', 'concrete_block_wall', 1.8, () => X.concrete(0xb4b8b4, 183), { roughness: 0.85, color: 0xd8dcd8 }, 0x8a8e8a), panel = sc(k, 'huntspoint', 'corrugated_iron_02', 1.6, () => X.steel(0xaeb2b2, false, 1830), { color: 0xc8ccd0, metalness: 0.3, roughness: 0.55 }, 0x8a8e8e),
+      asph = sc(k, 'huntspoint', 'worn_asphalt', 3.4, () => X.asphalt(0x1c1e22), { roughness: 0.7, color: 0x8a8a8a }, 0x1c1e22), steel = k.pbr('hpSteel', X.steel(0x4a5058, false, 184), 0.5, { roughness: 0.5, metalness: 0.6 }),
+      steelD = k.flat(0x2a2e34, 0.7, 0.45), gal = k.flat(0x8a9098, 0.8, 0.35), doorM = sc(k, 'huntspoint', 'painted_metal_shutter', 1.5, () => X.steel(0x9a9ea2, false, 1831), { color: 0xd0d4d8, metalness: 0.4, roughness: 0.5 }, 0x9a9ea2), doorD = k.flat(0x6a6e72, 0.6, 0.45), bumper = k.flat(0x141416, 0.2, 0.9),
       yellow = k.flat(0xe8c020, 0.2, 0.55), white = k.flat(0xb8bcc0, 0.4, 0.45), reefer = k.flat(0xd0d4d8, 0.5, 0.4), black = k.flat(0x141416, 0.2, 0.8),
       wood = k.pbr('hpWood', X.planks(0x9a7a50, 4, 185), 1.2, { roughness: 0.9 }), card = k.flat(0xb08a5a, 0, 0.95), glassM = k.glass(0xa8c8d8, 0.25, 0.1),
       cold = k.flat(0xdfeaf4, 0, 0.9, { emissive: 0x9ac0e0, emissiveIntensity: 0.5 }), sodGlow = k.flat(0x6a4020, 0, 0.7, { emissive: 0xd88a38, emissiveIntensity: 0.55 }),
@@ -707,14 +854,18 @@ export const huntspoint: RoomDef = {
       const htW = mergeGeometries([wG.clone().translate(-0.3, 0.12, 0), wG.clone().translate(0.3, 0.12, 0)])!;
       const hts: T.Matrix4[] = [];
       for (const [x, z, ry] of [[-50, -2.2, 0.4], [-31, -3.8, 2.6], [-8, -1.4, 1.2], [3, -4.6, 0.2], [21, -2.0, 3.0], [37, -3.9, 1.9], [52, -1.6, 0.6], [60, -4.4, 2.2]]) hts.push(new T.Matrix4().compose(v(x, DY, z), new T.Quaternion().setFromAxisAngle(up, ry), one));
-      k.instances(htG, gal, hts); k.instances(htW, black, hts);
+      const htA = k.instances(htG, gal, hts), htB = k.instances(htW, black, hts);
+      /* 2026-11-24 (wave 9): the hand trucks are the real one (Poly Haven, CC0); the built ones stand in until it loads */
+      if (k.o.quality === 'high') put(k, 'huntspoint/ph_hand_truck', { height: 1.3 }, hts.map((m): At => { const p = new T.Vector3(), q = new T.Quaternion(); m.decompose(p, q, new T.Vector3()); return [p.x, DY, p.z, new T.Euler().setFromQuaternion(q, 'YXZ').y]; }), undefined, () => { htA.visible = htB.visible = false; });
       /* the coffee cart under the canopy, with steam, and the knot of buyers round it */
-      const CX = -30, CZ = DOCK + 1.5;
+      const CX = -30, CZ = DOCK + 1.5, cartMark = k.objects.length;
       k.box(1.8, 0.9, 0.9, CX, DY + 0.55, CZ, k.flat(0xd8d8dc, 0.6, 0.35)); k.box(1.9, 0.06, 1.0, CX, DY + 1.02, CZ, gal);
       for (const [dx, dz] of [[-0.7, -0.3], [0.7, -0.3], [-0.7, 0.3], [0.7, 0.3]]) { const w = k.mesh(new T.CylinderGeometry(0.16, 0.16, 0.08, 10), black, CX + dx, DY + 0.16, CZ + dz); w.rotation.z = PI / 2; }
       k.box(0.5, 0.5, 0.4, CX - 0.5, DY + 1.3, CZ - 0.1, k.flat(0x8a8a90, 0.7, 0.3)); k.box(0.2, 0.3, 0.2, CX + 0.5, DY + 1.2, CZ - 0.2, k.flat(0xf0ece4, 0, 0.8));
       for (const dx of [-0.85, 0.85]) k.box(0.05, 2.0, 0.05, CX + dx, DY + 2.0, CZ + 0.4, gal);
       k.box(2.1, 0.06, 1.3, CX, DY + 3.0, CZ + 0.2, k.flat(0xa82a2a, 0, 0.7)); k.point(CX, DY + 2.6, CZ + 0.4, 0xffe0b0, 10, 6);
+      /* 2026-11-24 (wave 9): the cart is a real coffee cart (Poly Haven, CC0); the built one stands in until it loads */
+      if (k.o.quality === 'high') { const old = standIn(k, cartMark); put(k, 'huntspoint/ph_CoffeeCart_01', { width: 2.1 }, [[CX, DY, CZ, 0]], undefined, () => hideAll(old)); }
       k.keepOut.push({ x: CX, z: CZ, r: 1.2 });
       vapour(k, [v(CX - 0.5, DY + 1.6, CZ - 0.1), v(CX + 0.3, DY + 1.1, CZ)], 10, { rise: 1.4, spread: 0.3, size: 0.06, opacity: 0.22, colour: 0xe8f0ff, seed: 190, speed: 0.35, animate: !ctx.reduced });
       const knot = [{ x: CX - 1.6, z: CZ + 1.6, ry: -0.8 }, { x: CX + 1.4, z: CZ + 1.8, ry: 0.9 }, { x: CX, z: CZ + 2.4, ry: 0 }, { x: CX + 0.8, z: CZ + 3.2, ry: 0.4 }, { x: CX - 0.9, z: CZ + 3.0, ry: -0.3 }].map((p) => ({ ...p, y: DY }));
@@ -836,6 +987,33 @@ export const huntspoint: RoomDef = {
       for (const i of gaps) { const x = doors[i - 1].x + 3.3; if (x < X0 + 10.5) continue; k.box(2.1, 1.55, 0.06, x, DY + 2.3, DOCK + 0.14, steelD); hang(mounts, x, DY + 2.3, DOCK + 0.18, 0, 1.7, 1.2, st, 3.2); }
     }
 
+    /* ---- 2026-11-24 (wave 9): the dock where you arrive, worked in ----
+       Wooden produce crates, bananas and plastic cases on the pallets nearest you, a sodium wall lamp between every pair of
+       doors, (Poly Haven, CC0), hanging row signs and safety plates in the house fonts,
+       a Bronx mural over the far dock and a chalk price board at the cart (Firefly plates queued), and one trick (rule 9):
+       YIELD TO FORKLIFTS painted on the dock, stretched so it stands up as a sign from the spot you arrive on. */
+    {
+      if (k.o.quality === 'high') put(k, 'huntspoint/ph_wooden_crate_01', { width: 0.82 }, [[4.2, DY + 0.14, DOCK + 1.0, 0.1], [4.2, DY + 0.49, DOCK + 1.0, -0.05], [5.0, DY + 0.14, DOCK + 1.7, 1.5], [7.6, DY + 0.14, DOCK + 0.9, 0.2], [7.6, DY + 0.49, DOCK + 0.9, 0.3], [-3.4, DY + 0.14, DOCK + 1.1, 0], [-3.4, DY + 0.49, DOCK + 1.1, 0.1], [-9.8, DY + 0.14, DOCK + 1.0, 0.4]]);
+      if (k.o.quality === 'high') put(k, 'huntspoint/ph_bananas', { width: 0.6 }, [[4.2, DY + 0.84, DOCK + 1.0, 0.3], [7.6, DY + 0.84, DOCK + 0.9, 1.2], [-3.4, DY + 0.84, DOCK + 1.1, 2.0], [-9.8, DY + 0.49, DOCK + 1.0, 0.9]]);
+      if (k.o.quality === 'high') put(k, 'huntspoint/ph_wooden_crate_02', { length: 1.17 }, [[1.0, DY, DOCK + 4.9, 0.2], [1.5, DY, DOCK + 4.6, 1.5]]);
+      if (k.o.quality === 'high') put(k, 'huntspoint/ph_plastic_crate_01', { width: 0.42 }, [[11.4, DY, -0.9, 0.2], [11.4, DY + 0.27, -0.9, 0.1], [11.4, DY + 0.54, -0.9, -0.15], [11.9, DY, -0.8, 1.6], [2.2, DY, -0.9, 0.3], [2.2, DY + 0.27, -0.9, 0]], (o) => tint(o, 0x2a6ac8, 0.6, 0));
+      for (const [x, z] of [[4.4, DOCK + 1.3], [7.6, DOCK + 0.9], [-3.4, DOCK + 1.1], [-9.8, DOCK + 1.0], [1.2, DOCK + 4.8], [11.6, -0.9], [2.2, -0.9]]) k.keepOut.push({ x, z, r: 0.75 });
+      if (k.o.quality === 'high') put(k, 'huntspoint/ph_industrial_wall_lamp', { height: 0.55 }, doors.slice(1).map((d): At => [d.x - 3.3, DY + 3.9, DOCK + 0.18, 0]), (o) => tint(o, 0xffb060, 0.5, 0.2, 1.6));
+      /* row signs hung under the canopy, facing both ways down the dock, and safety plates on the columns */
+      for (const x of [6, -24, 34]) for (const [r, dx] of [[PI / 2, 0.03], [-PI / 2, -0.03]] as [number, number][]) hsign(k, 'ROW D  ·  DOORS 201 TO 220', 3.4, 0.5, x + dx, 5.7, -3.2, r, { fg: '#16181c', bg: '#e8c020', size: 0.56 });
+      for (const x of [6, -24, 34]) { k.box(0.04, 0.5, 0.04, x, 6.2, -4.6, steelD); k.box(0.04, 0.5, 0.04, x, 6.2, -1.8, steelD); }
+      for (const x of [X0 + 3.3 + 6.6 * 12, X0 + 3.3 + 6.6 * 9, X0 + 3.3 + 6.6 * 5]) {
+        hsign(k, 'CAUTION  FORKLIFT TRAFFIC', 0.9, 0.6, x, DY + 2.0, -0.97, PI, { fg: '#16181c', bg: '#f0c814', border: '#16181c', size: 0.3 });
+        hsign(k, 'NO RIDERS', 0.9, 0.3, x, DY + 1.45, -0.97, PI, { fg: '#ffffff', bg: '#b41d1d', size: 0.5 });
+      }
+      for (const d of doors) if (alive.has(d.i)) hsign(k, 'COLD ROOM  ·  KEEP DOOR CLOSED', 2.8, 0.3, d.x, DY + 3.9, DOCK + 0.36, 0, { fg: '#e8f2ff', bg: '#1a3a6a', size: 0.5 });
+      fireflyPlate(k, 'assets/museum/tex/huntspoint/ff_hpt_bronx_mural.webp', 30, 5, 0, 9.0, 57.88, PI, block);
+      fireflyPlate(k, 'assets/museum/tex/huntspoint/ff_hpt_price_board.webp', 0.9, 0.6, -28.6, DY + 1.55, DOCK + 1.02, 0, k.flat(0x1e2420, 0, 0.9));
+      k.box(0.06, 1.0, 0.06, -28.6, DY + 0.75, DOCK + 1.0, steelD);
+      if (HAS_DOM) anamorphTex(k, floorType('YIELD TO FORKLIFTS', '#f0c814', 1024, 200, 'W2 Archivo Expanded', '#16181c'), 13.2, DOCK + 3.6, DY + 3, DY, PI / 2, 5.0, 3.0, 1.1, 0.92);
+      k.egg(v(6.8, DY + 0.3, DOCK + 3.6), { id: 'hp-yield', title: 'Paint that stands up', text: 'YIELD TO FORKLIFTS is painted flat on the dock and stretched along it, so that from one spot it seems to stand up as a sign. The trick is anamorphosis, the same one traffic engineers use when they stretch the words painted on a road so a driver can read them; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Stand where you arrived and look down the dock.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
+    }
+
     /* ---- what the market knows ---- */
     const srcHP = { name: 'Hunts Point, Bronx, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hunts_Point,_Bronx' };
     const srcFDC = { name: 'Hunts Point Food Distribution Center, Wikipedia', url: 'https://en.wikipedia.org/wiki/Hunts_Point_Food_Distribution_Center' };
@@ -848,6 +1026,8 @@ export const huntspoint: RoomDef = {
     k.egg(v(-38, DY + 1.5, 24), { id: 'hp-rail', title: 'Twenty seven hundred rail cars', text: 'The market is served by rail through the Oak Point Yard, and receives around 2,700 rail cars a year, the rest of the produce arriving by truck.', clue: 'The parked trailers in the yard came by road. Something else comes by rail.', source: srcCoop }, { r: 4 });
     k.egg(v(45.2, DY + 1, DOCK + 1.6), { id: 'hp-merchants', title: 'More than thirty merchants', text: 'The Hunts Point Produce Market spans over a million square feet at 772 Edgewater Road and houses more than thirty produce merchants, in a trade with a history going back more than two hundred years.', clue: 'A pallet on the dock that did not come in with the produce.', source: srcMkt }, { r: 1.8 });
 
+    /* 2026-11-25 (wave 9c): the forklifts (16k triangles each), the cases, the trailers, the building and the yard stop casting */
+    shadowTrim(k, (o, _c, r) => o instanceof T.InstancedMesh || r > 20);
     return { mounts, spawn: v(13.2, DY + 3, DOCK + 3.6), look: v(-40, 3.0, DOCK + 3.0), eye: 3, floorY, bounds: [X0 + 0.4, X1 - 0.4, DOCK + 0.4, 42], style: 'steel' };
   },
 };

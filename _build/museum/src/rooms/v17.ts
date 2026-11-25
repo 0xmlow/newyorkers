@@ -11,12 +11,110 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero } from './heroes';
+import { hero, heroInstances } from './heroes';
+import { paintTex, anamorphTex, hsign } from './f';
+import { fireflyPlate } from './a';
+import type { Kit } from '../kit';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
 const ONE = new T.Vector3(1, 1, 1);
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
+
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): helpers kept local to this file ----------
+   Scanned CC0 surfaces from assets/museum/tex/<room>/ (Poly Haven, 1k webp) that wear a sensible colour until their maps
+   land; real CC0 models from assets/museum/props/<room>/ (Poly Haven, decimated in Blender, 512 px maps) with any glass
+   transmission and prop shadows stripped on load; seven or more copies of one model become instanced parts.
+   Safe in node: the audit builds with no DOM. */
+const W9UP = new T.Vector3(0, 1, 0);
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w9 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w9b-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w9.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const key = `w9b-${room}-${id}-${p.color ?? ''}-${p.side ?? ''}-${p.roughness ?? ''}-${metres}`;
+  const m = k.pbr(key, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* 2026-11-24 wave 9 shadow diet: the counter is about four times the scene because of the shadow passes, and the walking
+   crowd (cast figures of about 14k triangles each) were the biggest casters. For the first half minute, as models arrive,
+   every cast figure or hero model (crowds, the horseman, the clock animals, far boats) and any instanced group of forty
+   or more stop casting; code built architecture keeps its shadows. */
+function shadowDiet(k: Kit) {
+  let left = 30, next = 0;
+  k.ticks.push((t) => {
+    if (left <= 0 || t < next) return;
+    next = t + 1; left--;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined;
+      if ((mat && mat.name.startsWith('tripo_')) || ((o as T.InstancedMesh).isInstancedMesh && (o as T.InstancedMesh).count >= 40)) m.castShadow = false;
+    });
+  });
+}
+/* No transmission (it makes three.js draw the room twice) and no prop shadows. */
+function clean(o: T.Object3D) {
+  o.traverse((c) => {
+    if (!(c instanceof T.Mesh)) return;
+    c.castShadow = false;
+    for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const s = m as T.MeshPhysicalMaterial; if (s.transmission) { s.transmission = 0; s.transparent = true; s.opacity = Math.min(s.opacity, 0.35); s.depthWrite = false; } }
+  });
+}
+/* One real model from this room's own props folder. */
+function ph(k: Kit, room: string, name: string, x: number, y: number, z: number, p: { height?: number; rotY?: number; keepOut?: number } = {}, tweak?: (o: T.Object3D) => void) {
+  void Promise.resolve(k.prop(`${room}/${name}`, x, y, z, p)).then((o) => { if (o && (o as T.Object3D).isObject3D) { clean(o); if (tweak) tweak(o); } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function many(k: Kit, room: string, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, onDone?: () => void) {
+  if (!at.length || !HAS_DOM) return;
+  void hero(k, `${room}/${name}`, fit).then((h) => {
+    if (!h || !k.live) return;
+    clean(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion();
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(W9UP, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      for (const p of ins.parts) p.im.castShadow = false;
+    } else at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+    if (onDone) onDone();
+  });
+}
+/* Recolour every material of a loaded model, keeping its maps' detail. */
+function tintAll(o: T.Object3D, hex: number, rough = 0.5, metal = 0.2) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* One trick a room (rule 9): anamorphic type on the floor that stands up as a sign from one spot. */
+function standUp(k: Kit, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, font = 'W2 Archivo Expanded') {
+  if (!HAS_DOM) return;
+  const w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const tex = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
+}
 /* the camera, read inside a tick only: the audit and the check scripts run in node with no window */
 const cam = (): T.Camera | undefined => (typeof window === 'undefined' ? undefined : (window as unknown as { __museum?: { camera?: T.Camera } }).__museum?.camera);
 
@@ -177,21 +275,23 @@ export const lighthouse: RoomDef = {
     k.sky({ top: 0x4d8ad0, horizon: 0xd6e2ec, ground: 0x4a5a58, fog: 0.0011, sun: { az: 3.7, el: 0.5, color: 0xfff2e0, size: 9 }, env: 0.8 });
     k.hemi(0xd8e6f8, 0x5a6a58, 0.85);
     k.sun(0xfff0dc, 2.4, -70, 80, 40, true, 90);
-    const lawn = k.pbr('lhLawn', X.grass(0x4e6e3c, 169), 0.08),
-      asph = k.pbr('lhAsph', X.asphalt(0x2a2e33), 0.3),
-      stone = k.pbr('lhStone', X.ashlar(0x8a8478, 170, 3), 0.35, { normal: 0.5, roughness: 0.9 }),
-      rock = k.flat(0x5a5650, 0, 0.95), rockDark = k.flat(0x3e3a36, 0, 1),
+    /* 2026-11-24 wave 9: scanned lawn, asphalt, granite seawall, cliff, ballast, concrete, planks and dark rock (Poly Haven CC0) */
+    const LH = 'lighthouse';
+    const lawn = sc(k, LH, 'grass', 2.0, () => X.grass(0x4e6e3c, 169), { color: 0x86c060, roughness: 0.95 }, 0x4e6e3c),
+      asph = sc(k, LH, 'asph', 3.0, () => X.asphalt(0x2a2e33), { color: 0x9a9a9a, roughness: 0.85 }, 0x2a2e33),
+      stone = sc(k, LH, 'stone', 1.9, () => X.ashlar(0x8a8478, 170, 3), { color: 0xd8d4cc, roughness: 0.9 }, 0x8a8478),
+      rock = sc(k, LH, 'rock', 2.4, () => X.ashlar(0x5a5650, 175, 2), { color: 0xc0bab0, roughness: 0.95 }, 0x5a5650), rockDark = k.flat(0x3e3a36, 0, 1),
       red = k.pbr('lhRed', X.steel(0xb0301f, true, 171), 0.9, { roughness: 0.55, metalness: 0.2 }),
       redIn = k.flat(0xd8d0c4, 0, 0.9, { side: T.BackSide }),
       white = k.flat(0xe8e6e0, 0.1, 0.5), black = k.flat(0x141414, 0.4, 0.6),
       glassM = k.glass(0xdfeefa, 0.2, 0.05),
       steel = k.pbr('lhSteel', X.steel(0x6a7078, true, 172), 0.12, { roughness: 0.55, metalness: 0.5 }),
       steelF = k.flat(0x5c636b, 0.6, 0.5), deckM = k.flat(0x7a8088, 0.2, 0.85), cableM = k.flat(0x2e3238, 0.5, 0.5),
-      cliff = k.pbr('lhCliff', X.ashlar(0x4e4238, 173, 2), 0.05, { roughness: 1 }),
-      wood = k.pbr('lhWood', X.planks(0x6a4a30, 6, 174), 0.8), timber = k.flat(0x4a3320, 0, 0.8),
+      cliff = sc(k, LH, 'cliff', 9, () => X.ashlar(0x4e4238, 173, 2), { color: 0xb8a898, roughness: 1 }, 0x4e4238),
+      wood = sc(k, LH, 'wood', 1.0, () => X.planks(0x6a4a30, 6, 174), { color: 0xd8c0a8, roughness: 0.8 }, 0x6a4a30), timber = k.flat(0x4a3320, 0, 0.8),
       fenceM = k.flat(0x8a8f94, 0.6, 0.5, { transparent: true, opacity: 0.35, side: T.DoubleSide }),
-      gravel = k.pbr('lhGravel', X.pavers(0x8a8680, 175), 0.9, { roughness: 1 }),
-      concrete = k.pbr('lhConc', X.concrete(0x9c9a92, 176), 0.3, { roughness: 0.9 }),
+      gravel = sc(k, LH, 'gravel', 2.2, () => X.pavers(0x8a8680, 175), { color: 0xc8c4bc, roughness: 1 }, 0x8a8680),
+      concrete = sc(k, LH, 'conc', 2.0, () => X.concrete(0x9c9a92, 176), { color: 0xe0ddd4, roughness: 0.9 }, 0x9c9a92),
       hullW = k.flat(0xe8e6e0, 0.2, 0.5), hullG = k.flat(0x2e6a3a, 0.2, 0.6), hullD = k.flat(0x1d2a33, 0.3, 0.6), rust = k.flat(0x6a3a26, 0.3, 0.8),
       line = k.flat(0xe8d040, 0, 0.8);
     const mounts: Mount[] = [], st: FrameStyle = 'steel';
@@ -210,11 +310,14 @@ export const lighthouse: RoomDef = {
     {
       const rnd = X.mulberry(1691), rip: T.Matrix4[] = [];
       for (let i = 0; i < 70; i++) { const z = -34 + rnd() * 64, s = 0.6 + rnd() * 0.9; if (z > -23 && z < -5) continue; rip.push(new T.Matrix4().compose(v(-9.6 - rnd() * 2.4, -0.7 + rnd() * 0.6, z), new T.Quaternion().setFromAxisAngle(v(1, 0.4, 0.2).normalize(), rnd() * 6), v(s, s * 0.7, s))); }
-      k.instances(new T.IcosahedronGeometry(0.8, 0), rock, rip);
+      /* 2026-11-24 wave 9: the riprap is real scanned shore rock (Poly Haven CC0), the small stones kept between them */
+      k.instances(new T.IcosahedronGeometry(0.8, 0), rock, rip.filter((_, i) => i % 3 === 0));
+      many(k, LH, 'ph_coast_land_rocks_02', { length: 8.5 }, [[-11.2, -0.6, -29.5, 0.1], [-11.6, -0.6, 2.0, -0.08], [-11.0, -0.6, 11.5, 0.12], [-11.4, -0.6, 21.0, -0.05], [-11.2, -0.6, 29.0, 0.06], [-11.8, -1.1, -36.5, 3.2], [-14.5, -1.1, -21.0, 0.9], [-15.0, -1.1, -7.5, 2.4]]);
     }
     /* the railroad: chain link fence, gravel bed, rails and ties, trees on both sides, the bluff behind */
-    k.box(0.05, 0.05, 64, 22, 2.4, -2, steelF); k.plane(64, 2.4, 22, 1.2, -2, fenceM, PI / 2);
-    for (let z = -34; z <= 30; z += 3) k.box(0.06, 2.45, 0.06, 22, 1.22, z, steelF);
+    /* 2026-11-24 wave 9: the railroad fence is a real chain link run (Poly Haven CC0), eight panels on their posts */
+    const fenceFlat = k.plane(64, 2.4, 22, 1.2, -2, fenceM, PI / 2);
+    many(k, LH, 'ph_modular_chainlink_fence', { length: 8.0 }, Array.from({ length: 8 }, (_, i) => [22.3, 0, -30 + i * 8, PI / 2]), undefined, () => { fenceFlat.visible = false; });
     k.block(21.6, 22.4, -34, 30);
     k.box(6, 0.3, 130, 28, 0.15, -4, gravel);
     for (const x of [27.3, 28.7]) k.box(0.08, 0.15, 130, x, 0.36, -4, steelF);
@@ -312,7 +415,8 @@ export const lighthouse: RoomDef = {
     k.box(9.4, 0.06, 12.4, SX, 0.03, SZ, concrete);
     for (const z of [SZ - 4.4, SZ - 1.5, SZ + 1.5, SZ + 4.4]) hang(mounts, SX + 3.24, 2.3, z, -PI / 2, 2.2, 1.6, st, 3.2);
     k.censusWall({ x: SX + 3.77, y: 1.9, z: SZ, rotY: PI / 2, cols: 10, rows: 5, tile: 0.5, gap: 0.04, start: ctx.wallStart(650, 50), pieces: ctx.all, backing: rockDark });
-    for (const z of [17, 22]) { k.box(2.0, 0.08, 0.9, SX, 0.76, z, wood); for (const s of [-1, 1]) { k.box(2.0, 0.06, 0.32, SX, 0.46, z + s * 0.8, wood); k.box(0.1, 0.76, 1.9, SX + s * 0.8, 0.38, z, timber); } k.keepOut.push({ x: SX, z, r: 1.4 }); }
+    /* 2026-11-24 wave 9: real wooden picnic tables (Poly Haven CC0) */
+    for (const z of [17, 22]) { ph(k, LH, 'ph_wooden_picnic_table', SX, 0, z, { height: 0.75, rotY: PI / 2 }); k.keepOut.push({ x: SX, z, r: 1.7 }); }
     /* five works on plywood panels wired to the fence, facing the walk */
     for (const z of [-27, -19, -11, 15, 23]) { k.box(2.8, 2.2, 0.08, 21.9, 2.4, z, timber); hang(mounts, 21.84, 2.4, z, -PI / 2, 2.2, 1.6, st, 3.2); }
     /* six works on the tall seawall north of the rock, facing the greenway */
@@ -322,7 +426,9 @@ export const lighthouse: RoomDef = {
     k.sign('FORT WASHINGTON PARK', 2.6, 0.5, 0, 1.9, 28.07, '#2a4a2a', '#f0ead8', 64);
     k.sign('JEFFREY\'S HOOK', 2.6, 0.32, 0, 1.45, 28.07, '#2a4a2a', '#f0ead8', 52);
     k.keepOut.push({ x: 0, z: 28, r: 1.5 });
-    for (const [x, z] of [[4, -30], [4, 24], [15, -20], [15, 20]]) bench(k, x, 0, z, x < 8 ? PI / 2 : -PI / 2, wood, steelF, 2.0);
+    /* park benches are our Central Park cast now, turned to face the river */
+    for (const [x, z] of [[4, -30], [4, 24], [15, -20], [15, 20]]) { k.prop('cp_bench', x, 0, z, { height: 1.0, rotY: -PI / 2, keepOut: 1.0 }); }
+    void bench;
     for (const [x, z] of [[8, -26], [16, -8], [18, 26], [6, 26]]) { k.tree(x, 0, z, { h: 6.5, r: 2.8, seed: 172, leaf: 0x3e6a38 }); k.keepOut.push({ x, z, r: 0.6 }); }
 
     /* ---- the George Washington Bridge: the near tower, two decks, the cables, the far tower ---- */
@@ -400,6 +506,27 @@ export const lighthouse: RoomDef = {
     k.egg(v(TX - 3.2, 4, TZ + 16 + 2.6), { id: 'gwb-tower', title: 'The bare steel was never meant to show', year: '1931', text: 'The George Washington Bridge opened to traffic on October 25, 1931, the day after its dedication, with a main span of 3,500 feet (1,100 m) and towers 604 feet (184 m) tall. Othmar Ammann was chief engineer and Cass Gilbert consulting architect. The towers were to be encased in concrete and granite in a Revival style; the stone facades were postponed in 1929 in the Depression and left off for cost, and the lattice you see is the result.', clue: 'Walk to the foot of the great tower.', source: srcB }, { r: 4 });
     k.egg(v(TX - 30, LD - 1.4, TZ + 18), { id: 'gwb-decks', title: 'Fourteen lanes on two decks', year: '1962', text: 'The bridge carries 14 lanes of traffic, eight on the upper level and six on the lower, which opened on August 29, 1962. Four main cables 3 feet (0.91 m) across hold the deck on 592 suspender cables from 38 to 674 feet long. It is the world\'s busiest motor vehicle bridge, carrying over 101 million vehicles in 2025.', clue: 'Look straight up at the underside of the lower deck.', source: srcB }, { r: 6 });
 
+    /* ---- 2026-11-24 wave 9: the greenway dressed for real ---- */
+    /* greenway lamps (a real cast iron post, Poly Haven CC0) and ring buoys on posts along the seawall */
+    { const la: number[][] = []; for (let z = -26; z <= 26; z += 13) { la.push([-1.5, 0, z, 0]); k.point(-1.5, 3.9, z, 0xffd7a0, 6 + 20 * k.night, 12); k.keepOut.push({ x: -1.5, z, r: 0.4 }); }
+      many(k, LH, 'ph_street_lamp_01', { height: 4.2 }, la); }
+    for (const z of [-3, 9, 25]) { k.box(0.12, 1.6, 0.12, -7.3, 0.8, z, timber); ph(k, LH, 'ph_lifebuoy', -7.2, 0.95, z, { height: 0.7, rotY: PI / 2 }); k.keepOut.push({ x: -7.3, z, r: 0.4 }); }
+    /* navigation buoys riding the current off the point */
+    { const bu: T.Group[] = []; for (const [x, z] of [[-34, -6], [-62, -40], [-48, 30]]) { const g = new T.Group(); g.position.set(x, -1.2, z); k.add(g); bu.push(g); void Promise.resolve(k.prop(`${LH}/ph_ocean_buoy`, 0, -500, 0, { height: 2.6 })).then((o) => { if (o) { k.scene.remove(o); clean(o); o.position.set(0, 0, 0); g.add(o); } }); }
+      if (!ctx.reduced) k.ticks.push((t) => bu.forEach((g, i) => { g.position.y = -1.2 + 0.18 * Math.sin(t * 1.1 + i * 2); g.rotation.z = 0.08 * Math.sin(t * 0.9 + i); g.rotation.x = 0.06 * Math.cos(t * 0.8 + i); })); }
+    /* the greenway's own signs and its painted centre words */
+    k.box(0.1, 2.6, 0.1, -6.6, 1.3, 15.6, steelF);
+    hsign(k, 'HUDSON RIVER GREENWAY', 1.9, 0.34, -6.6, 2.4, 15.66, 0, { fg: '#ffffff', bg: '#0f6b3a', border: '#ffffff', size: 0.55, lit: false });
+    hsign(k, 'LITTLE RED LIGHTHOUSE', 1.9, 0.34, -6.6, 2.0, 15.66, 0, { fg: '#ffffff', bg: '#7a2a1e', border: '#ffffff', size: 0.55, lit: false });
+    k.keepOut.push({ x: -6.6, z: 15.6, r: 0.4 });
+    /* the Firefly engraving of the beacon at Sandy Hook on the interpretive panel by the path (FIREFLY_QUEUE.md) */
+    k.box(2.4, 1.7, 0.1, 3.4, 1.55, 27.9, k.flat(0x2a4a2a, 0.1, 0.7)); for (const dx of [-1.05, 1.05]) k.box(0.1, 2.2, 0.1, 3.4 + dx, 1.1, 27.96, timber);
+    fireflyPlate(k, 'assets/museum/tex/lighthouse/ff_lh_north_hook_beacon.webp', 2.2, 1.5, 3.4, 1.55, 27.84, PI, concrete);
+    k.keepOut.push({ x: 3.4, z: 27.9, r: 1.3 });
+    /* one trick (rule 9): LOOK UP painted on the greenway, stretched so long that it only stands up from the park sign */
+    standUp(k, 'LOOK UP', '#f4f0e4', -4, 26.5, 3, 0.02, 0, 6, 2.6, 1.5);
+    k.egg(v(-4, 1.0, 17), { id: 'lh-look-up', title: 'Words that stand up', text: 'LOOK UP is painted on the greenway stretched so long that it only reads as upright letters from one spot by the park sign. A picture distorted to come right from one viewpoint is anamorphosis. Look up from there and the great gray bridge stands over the little red lighthouse, the two the 1942 book put side by side.', clue: 'Stand on the greenway by the park sign and look down the path.', source: srcL }, { r: 1.4 });
+
     const floorY = (x: number, z: number) => {
       const dx = x - LX, dz = z - LZ, r = Math.hypot(dx, dz);
       if (r < 2.15) {
@@ -413,6 +540,7 @@ export const lighthouse: RoomDef = {
       if (r < 8.2) return 0.2 - 1.8 * ((r - 6.5) / 1.7);
       return 0;
     };
+    shadowDiet(k);
     return { mounts, spawn: v(-1, 3, 22), look: v(LX + 2, TY + 9, LZ - 10), eye: 3, floorY, bounds: [-15.5, 21.3, -34, 30], style: st };
   },
 };
@@ -432,14 +560,16 @@ export const fourfreedoms: RoomDef = {
     k.sky({ top: 0x5590d4, horizon: 0xdde6ee, ground: 0x505850, fog: 0.0015, sun: { az: 3.9, el: 0.55, color: 0xfff2e0, size: 9 }, env: 0.8 });
     k.hemi(0xd8e6f8, 0x6a6a5e, 0.85);
     k.sun(0xfff0dc, 2.3, -80, 100, 60, true, 150);
-    const granite = k.pbr('ffGranite', X.ashlar(0xb8b0a2, 177, 5), 0.35, { normal: 0.35, roughness: 0.75 }),
-      graniteP = k.pbr('ffPave', X.pavers(0xb4ada0, 178), 0.5, { roughness: 0.8 }),
+    /* 2026-11-24 wave 9: scanned granite blocks, granite paving, lawn, fine gravel, rubble stone and rubble (Poly Haven CC0) */
+    const FF = 'fourfreedoms';
+    const granite = sc(k, FF, 'granite', 1.8, () => X.ashlar(0xb8b0a2, 177, 5), { color: 0xf4f0ea, roughness: 0.7 }, 0xb8b0a2),
+      graniteP = sc(k, FF, 'pave', 2.3, () => X.pavers(0xb4ada0, 178), { color: 0xeae6de, roughness: 0.8 }, 0xb4ada0),
       graniteD = k.flat(0x9a948a, 0, 0.8), band = k.flat(0xcfc8bc, 0, 0.7),
-      lawnM = k.pbr('ffLawn', X.grass(0x4f7a3c, 179), 0.09),
-      gravel = k.pbr('ffGravel', X.pavers(0xa8a294, 180), 1.2, { roughness: 1 }),
+      lawnM = sc(k, FF, 'grass', 2.0, () => X.grass(0x4f7a3c, 179), { color: 0x86c060, roughness: 0.95 }, 0x4f7a3c),
+      gravel = sc(k, FF, 'gravel', 2.0, () => X.pavers(0xa8a294, 180), { color: 0xf0e8dc, roughness: 1 }, 0xa8a294),
       bronze = k.flat(0x5a4632, 0.9, 0.4),
-      gneiss = k.pbr('ffGneiss', X.ashlar(0x7e7870, 181, 4), 0.5, { normal: 0.5, roughness: 0.95 }),
-      rubble = k.pbr('ffRubble', X.concrete(0x6e6a62, 182), 0.6, { roughness: 1 }),
+      gneiss = sc(k, FF, 'gneiss', 1.5, () => X.ashlar(0x7e7870, 181, 4), { color: 0xd0c8bc, roughness: 0.95 }, 0x7e7870),
+      rubble = sc(k, FF, 'rubble', 2.0, () => X.concrete(0x6e6a62, 182), { color: 0xc8c0b4, roughness: 1 }, 0x6e6a62),
       bank = k.flat(0x3e4a3a, 0, 1), bankStone = k.flat(0x6a665e, 0, 0.9),
       unGlass = k.flat(0x4a7a8a, 0.6, 0.25), steelF = k.flat(0x6a7078, 0.6, 0.5), deckM = k.flat(0x3a3d42, 0.1, 0.9),
       hullW = k.flat(0xe8e6e0, 0.2, 0.5), hullD = k.flat(0x1d2a33, 0.3, 0.6), rust = k.flat(0x6a3a26, 0.3, 0.8),
@@ -456,7 +586,10 @@ export const fourfreedoms: RoomDef = {
     k.box(120, 6, 1100, -320, 2, -40, bank); k.box(120, 6, 1100, 320, 2, -40, bank);
     k.box(4, 7, 1100, -258, 2.5, -40, bankStone); k.box(4, 7, 1100, 258, 2.5, -40, bankStone);
     /* Manhattan to the west: the United Nations slab straight across, Midtown behind it */
-    k.box(24, 154, 88, -300, 80, -60, unGlass); k.box(26, 3, 90, -300, 158, -60, deckM);
+    /* 2026-11-24 wave 9: the Secretariat's green curtain wall with its marble ends, not one flat colour */
+    { const cw = k.pbr('ffUNwall', X.windows(1701, 0.12 + 0.5 * night, 0x3a6a72, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.25 + 1.6 * night, roughness: 0.25, metalness: 0.4, stretch: 0.38 });
+      k.box(22, 154, 88, -300, 80, -60, cw); for (const dz of [-44.6, 44.6]) k.box(23, 155, 1.2, -300, 80.5, -60 + dz, k.flat(0xe8e4da, 0, 0.6)); void unGlass; }
+    k.box(26, 3, 90, -300, 158, -60, deckM);
     k.box(60, 12, 120, -320, 9, -30, k.flat(0xd8d2c4, 0, 0.8));
     {
       const facade = k.pbr('ffWin', X.windows(183, 0.25 + 0.3 * night, 0x4a5262, true), 0.1, { emissive: 0xffffff, emissiveIntensity: 0.35 + 2.0 * night, roughness: 0.6, stretch: 0.42 });
@@ -620,11 +753,37 @@ export const fourfreedoms: RoomDef = {
     k.egg(v(0, PY + 2.2, RZ0 + 1.2), { id: 'ff-head', title: 'The head by Jo Davidson', year: '1933', text: 'The colossal head of Roosevelt is by the sculptor Jo Davidson, who went to Washington in December 1933 to sculpt the President and finished the work in one or two visits. It is shown here as a plain bronze form, with no face modelled.', clue: 'The bronze in the niche, before the Room.', source: srcC }, { r: 1.5 });
     k.egg(v(0, 2.6, RZA + 0.6), { id: 'ff-smallpox', title: 'The only landmarked ruin', year: '1856', text: 'James Renwick Jr. designed the Smallpox Hospital, which opened in 1856 when this was Blackwell\'s Island. In 1875 it closed and became a training centre for nurses attached to City Hospital, and in the 1950s that closed too. It was added to the National Register of Historic Places in 1972 and designated a New York City landmark four years later, the city\'s only landmarked ruin. The Gothic walls have been lit every night since 1995, and a $4.5 million stabilisation followed.', clue: 'The pointed doorway of the shell behind the stair.', source: srcS }, { r: 2.0 });
 
+    /* ---- 2026-11-24 wave 9: the shore, the seams, the signs and the trick ---- */
+    /* the riprap round the point is real scanned shore rock (Poly Haven CC0), half in the river */
+    { const r1: number[][] = [], r2: number[][] = [];
+      for (const sd of [-1, 1]) { const x0 = sd * 41.6, z0 = 30, x1 = sd * 12.7, z1 = -104, ang = Math.atan2(x1 - x0, z1 - z0), nx = -Math.cos(ang) * sd, nz = Math.sin(ang) * sd;
+        for (let i = 0; i < 9; i++) { const u = (i + 0.5) / 9, x = x0 + (x1 - x0) * u + nx * 6.5, z = z0 + (z1 - z0) * u + nz * 6.5; (i % 2 ? r2 : r1).push([x, -1.3, z, ang + i]); }
+        r1.push([sd * 19, -1.3, -115, sd]); }
+      r2.push([0, -1.3, -132, 0.5]);
+      many(k, FF, 'ph_coast_rocks_01', { length: 15 }, r1); many(k, FF, 'ph_coast_rocks_02', { length: 15 }, r2); }
+    /* granite curbs on both long edges of the lawn, the two lines that make the perspective, and a third pair under the trees */
+    for (const sd of [-1, 1]) for (const [xa, xb, w] of [[20.15, 7.15, 0.3], [hwL(20) + 4.6, hwL(-98) + 4.6, 0.22]] as number[][]) {
+      const len = Math.hypot(xa - xb, 118), cb = k.box(w, 0.1, len, sd * (xa + xb) / 2, PY + 0.05, -39, graniteD); cb.rotation.y = Math.atan2(sd * (xb - xa), -118);
+    }
+    /* the joints of the Room: one inch between the blocks, and the river light shows through every one */
+    { const seamM = new T.MeshBasicMaterial({ color: 0xf4f8ff, transparent: true, opacity: 0.55, depthWrite: false }), sm: T.Matrix4[] = [];
+      for (const sd of [-1, 1]) for (let i = 1; i < 12; i++) sm.push(new T.Matrix4().compose(v(sd * (9 + BW / 2), PY + 1.83, RZ0 - i * BW), new T.Quaternion(), v(BW - 0.3, 3.5, 0.02)));
+      k.instances(new T.BoxGeometry(1, 1, 1), seamM, sm); }
+    /* the park's name at the foot of the stair, and the conservancy's panel in the shell */
+    hsign(k, 'FRANKLIN D. ROOSEVELT', 3.0, 0.3, 20.8, 2.02, 42.08, 0, { fg: '#e8e2d4', bg: '#2a2c30', size: 0.55, lit: false });
+    k.box(2.6, 1.8, 0.12, 6.2, 1.6, RZA + 1.2, k.flat(0x2a2c30, 0.1, 0.7)); for (const dx of [-1.15, 1.15]) k.box(0.1, 2.4, 0.1, 6.2 + dx, 1.2, RZA + 1.1, steelF);
+    fireflyPlate(k, 'assets/museum/tex/fourfreedoms/ff_ff_smallpox_engraving.webp', 2.4, 1.6, 6.2, 1.6, RZA + 1.27, 0, graniteD);
+    k.keepOut.push({ x: 6.2, z: RZA + 1.2, r: 1.4 });
+    /* one trick (rule 9): the garden is a forced perspective. The lawn narrows from 40 m to 14 m and the allees close in
+       with it, so from the top of the stair the Room reads farther away than it is; walk back from it and it rushes away */
+    k.egg(v(0, PY + 1.2, 18), { id: 'ff-forced-perspective', title: 'A lawn that lies about distance', text: 'The lawn is a triangle, not a rectangle: it narrows as it runs to the point, and the rows of lindens close in with it. From the top of the stair the converging lines read like a much longer garden, so the Room looks farther off than it is. Painters call this forced perspective; Kahn built it in grass and trees so the walk to the Room would feel like a procession.', clue: 'Stand at the top of the stair and judge how far the Room is. Then pace it.', source: { name: 'Four Freedoms Park Conservancy, The Park', url: 'https://www.fdrfourfreedomspark.org/about/park/' } }, { r: 2.4 });
+
     const floorY = (x: number, z: number) => {
       if (z > 40) return 0;
       if (z > 30) return Math.abs(x) < 15 ? PY * clamp01((40 - z) / 10) : 0;
       return PY;
     };
+    shadowDiet(k);
     return { mounts, spawn: v(0, PY + 3, 25), look: v(0, PY + 1.2, -112), eye: 3, floorY, bounds: [-40, 40, -125, 84], style: st };
   },
 };

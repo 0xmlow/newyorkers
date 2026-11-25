@@ -8,6 +8,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { hero, heroInstances } from './heroes';
+import { hsign } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -95,6 +97,98 @@ function pointed(p: T.Path, cx: number, y0: number, w: number, h: number) {
 }
 type Hole = { cx: number; y0: number; w: number; h: number; pointed?: boolean };
 /* a wall with its openings cut through, one extrusion, base at y 0, centred on x, depth on z */
+/* ---------- THE BIG UPGRADE, wave 8d (2026-11-24): helpers for the synagogue rooms in this file ----------
+   Poly Haven scans from assets/museum/tex/<room>/ wearing a set colour until all their maps land, real CC0 models from
+   assets/museum/props/<room>/ fitted once and placed (seven or more as instanced parts, glass made plain, no prop
+   shadows), quiet light that falls through a window onto a wall or floor. All of it a no-op on canvas in node. */
+const W8D_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w8dL = W8D_DOM ? new T.TextureLoader() : null;
+const w8dS = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w8dScan(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w8dL) return k.pbr(`w8d-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w8dS.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w8dL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w8dS.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w8d-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w8d) {
+    m.userData.w8d = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w8dPlace(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length || !W8D_DOM) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    h.userData.w8d = true; h.traverse((c) => { c.userData.w8d = true; });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* everything built since `mark`, to hide once a real model has landed in its place */
+const w8dMark = (k: K) => k.objects.length;
+const w8dSince = (k: K, mark: number): T.Object3D[] => { const ms = k.objects.splice(mark); for (const m of ms) k.dynamic.add(m); return ms; };
+const w8dHide = (os: T.Object3D[]) => { for (const o of os) if (o instanceof T.Mesh) o.visible = false; };
+/* warm the metal of a loaded model toward old brass or bronze */
+function w8dTint(o: T.Object3D, hex: number, rough = 0.4, metal = 0.85) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; if (src.transparent) return; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* wave 8d triangle pass (lead note): the kit turns shadows back on after the build, and the shadow pass is most of the debug
+   counter. A few times over the first 30 s, stop shadows from the light patches, the models placed here, and (when `all`) every
+   instanced crowd of small things, the kit's cab models and figures, and trees further than `near` metres from the point given.
+   The built architecture keeps its shadows. */
+function w8dShadowTrim(k: K, all: boolean, cx = 0, cz = 0, near = 24) {
+  if (!W8D_DOM) return;
+  const run = () => {
+    if (!k.live) return;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined, nm = (mat && mat.name) || '';
+      if (m.userData.noShadow || (mat && mat.blending === T.AdditiveBlending)) { m.castShadow = m.receiveShadow = false; return; }
+      let p: T.Object3D | null = m; while (p && !p.userData.w8d) p = p.parent;
+      if (p) { m.castShadow = false; return; }
+      if (!all) return;
+      if ((m as T.InstancedMesh).isInstancedMesh || m.userData.cab || nm.startsWith('tripo_') || nm.startsWith('MLOW_')) { m.castShadow = false; return; }
+      if (/leaf|bark|twig/.test(nm)) { const w = new T.Vector3(); m.getWorldPosition(w); if (Math.hypot(w.x - cx, w.z - cz) > near) m.castShadow = false; }
+    });
+  };
+  for (const ms of [1500, 5000, 12000, 20000, 30000]) setTimeout(run, ms);
+}
+function w8dSign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6) {
+  if (!W8D_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size });
+}
+/* light through a window: a soft additive patch of the window's own colours laid on a surface, breathing with the clouds */
+function w8dLightPatch(k: K, map: T.Texture | null, color: number, w: number, h: number, x: number, y: number, z: number, rx: number, ry: number, opacity: number, skew = 0) {
+  const g = new T.PlaneGeometry(w, h, 1, 1);
+  if (skew) { const p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setX(i, p.getX(i) + p.getY(i) * skew); p.needsUpdate = true; }
+  const m = new T.MeshBasicMaterial({ map, color, transparent: true, opacity, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, toneMapped: false, fog: false });
+  const o = k.mesh(g, m, x, y, z, true); o.rotation.set(rx, ry, 0, 'YXZ'); o.renderOrder = 2; o.castShadow = o.receiveShadow = false; o.userData.noShadow = true;
+  return { o, m };
+}
+
 function holedWall(w: number, h: number, depth: number, holes: Hole[]) {
   const s = new T.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(w / 2, h); s.lineTo(-w / 2, h); s.closePath();
   for (const o of holes) {
@@ -164,19 +258,22 @@ export const chabad770: RoomDef = {
     k.sky({ top: 0x4a86d0, horizon: 0xc4d8ea, ground: 0x8a8478, fog: 0.0024, sun: { az: 2.6, el: 0.7, color: 0xfff2dc, size: 8 }, env: 0.7 });
     k.hemi(0xdce8ff, 0x8a8478, 1.15);
     k.sun(0xfff0d8, 2.3, -40, 70, 60, true, 80);
-    const brick = k.pbr('c7Brick', X.brick(0x7e3a2a, 71), 0.9, { roughness: 0.9 }),
+    /* 2026-11-24 (wave 8d): the brick, the walks, the roads, the grass, the hall floor and the table oak are Poly Haven scans */
+    const C7 = 'chabad770';
+    w8dShadowTrim(k, true, 0, -2);
+    const brick = w8dScan(k, C7, 'red_bricks_04', 2.2, () => X.brick(0x7e3a2a, 71), { roughness: 0.9, color: 0xe0a890 }, 0x7e3a2a),
       stone = k.pbr('c7Stone', X.ashlar(0xd8cbb0, 72, 4), 0.45, { roughness: 0.8 }),
       slate = k.flat(0x3c3a3c, 0.1, 0.8), glass = k.glass(0x8aa2b4, 0.55, 0.08), backing = k.flat(0x2a2320, 0, 0.9),
-      walk = k.pbr('c7Walk', X.pavers(0x9e9a90, 73), 0.45), mall = k.pbr('c7Mall', X.pavers(0x85827a, 74), 0.8),
-      road = k.pbr('c7Road', X.asphalt(0x2c2f33), 0.2), curb = k.flat(0xaaa69c, 0, 0.8), iron = k.flat(0x1a1c1e, 0.6, 0.45),
-      grass = k.pbr('c7Grass', X.grass(0x4e6a3a, 75), 0.4, { roughness: 1 }),
+      walk = w8dScan(k, C7, 'concrete_pavement', 2.2, () => X.pavers(0x9e9a90, 73), { roughness: 0.9, color: 0xd0cac0 }, 0x9e9a90), mall = w8dScan(k, C7, 'concrete_pavement', 1.6, () => X.pavers(0x85827a, 74), { roughness: 0.9, color: 0xb0aaa0 }, 0x85827a, 'm'),
+      road = w8dScan(k, C7, 'asphalt_02', 4, () => X.asphalt(0x2c2f33), { roughness: 0.92, color: 0x8c8c8c }, 0x3a3c40), curb = k.flat(0xaaa69c, 0, 0.8), iron = k.flat(0x1a1c1e, 0.6, 0.45),
+      grass = w8dScan(k, C7, 'leafy_grass', 2.5, () => X.grass(0x4e6a3a, 75), { roughness: 1, color: 0xb8c8a8 }, 0x4e6a3a),
       aptA = k.pbr('c7AptA', X.windows(31, 0.06, 0x6e3c2e, false), 0.13, { emissive: 0xffffff, emissiveIntensity: 0.08 + 1.4 * k.night, roughness: 0.8, stretch: 0.5 }),
       aptB = k.pbr('c7AptB', X.windows(32, 0.06, 0x8a6a4e, false), 0.13, { emissive: 0xffffff, emissiveIntensity: 0.08 + 1.4 * k.night, roughness: 0.8, stretch: 0.5 }),
       annexM = k.pbr('c7Annex', X.brick(0xb09a7a, 76), 0.9), roofTop = k.flat(0x2e2e30, 0.1, 0.9),
       terr = k.pbr('c7Terr', X.terrazzo(0xcdc4ae, 77), 1.4, { roughness: 0.5 }), plaster = k.pbr('c7Plas', X.plaster(0xe6decb, 78), 0.4),
-      wood = k.pbr('c7Wood', X.planks(0x5c3c26, 6, 79), 0.7, { roughness: 0.7 }), darkWood = k.flat(0x3a2618, 0, 0.6),
-      hallFloor = k.pbr('c7HFloor', X.terrazzo(0xb8ae9a, 80), 1.2, { roughness: 0.85 }), hallWall = k.pbr('c7HWall', X.plaster(0xe0d6c0, 81), 0.35),
-      tableTop = k.flat(0xa88a62, 0, 0.55), bench = k.flat(0x4a3020, 0, 0.7), book = k.flat(0xe8e0cc, 0, 0.9), bookDark = k.flat(0x3a2a22, 0, 0.8),
+      wood = w8dScan(k, C7, 'wood_table_worn', 1.6, () => X.planks(0x5c3c26, 6, 79), { roughness: 0.65, color: 0xb88a60 }, 0x5c3c26), darkWood = k.flat(0x3a2618, 0, 0.6),
+      hallFloor = w8dScan(k, C7, 'old_linoleum_flooring_01', 2.4, () => X.terrazzo(0xb8ae9a, 80), { roughness: 0.7, color: 0xa8a49c }, 0xb8ae9a), hallWall = w8dScan(k, C7, 'white_stucco', 2.5, () => X.plaster(0xe0d6c0, 81), { roughness: 0.9, color: 0xece2cc }, 0xe0d6c0),
+      tableTop = w8dScan(k, C7, 'wood_table_worn', 1.2, () => X.planks(0xa88a62, 6, 82), { roughness: 0.5, color: 0xe0c098 }, 0xa88a62, 't'), bench = k.flat(0x4a3020, 0, 0.7), book = k.flat(0xe8e0cc, 0, 0.9), bookDark = k.flat(0x3a2a22, 0, 0.8),
       velvet = k.pbr('c7Velvet', X.velvet(0x1c2858), 1.2), gold = k.flat(0xc8a24a, 0.85, 0.35), fluor = k.glow(0xf6f4ea),
       shelfM = new T.MeshStandardMaterial({ map: spines(770), roughness: 0.8 }), board = k.flat(0x1c1e22, 0.2, 0.6), post = k.flat(0x24282e, 0.7, 0.4);
 
@@ -202,7 +299,9 @@ export const chabad770: RoomDef = {
     const slat = k.flat(0x3e5a3a, 0, 0.7);
     for (const x of [-24, -16, -4, 10, 18, 26]) parkBench(k, x, 3.25, 1, slat, iron);
     for (const x of [-20, 14]) parkBench(k, x, 6.75, -1, slat, iron);
-    for (const x of [-28, -7, 6, 28]) { k.lathe([[0.16, 0], [0.16, 0.1], [0.07, 0.3], [0.05, 4.2], [0.08, 4.4]], x, 0, -4.4, iron, 8); k.sphere(0.26, x, 4.6, -4.4, k.glow(0xfff0c8), 10); k.keepOut.push({ x, z: -4.4, r: 0.35 }); }
+    { const lmk = w8dMark(k); for (const x of [-28, -7, 6, 28]) { k.lathe([[0.16, 0], [0.16, 0.1], [0.07, 0.3], [0.05, 4.2], [0.08, 4.4]], x, 0, -4.4, iron, 8); k.sphere(0.26, x, 4.6, -4.4, k.glow(0xfff0c8), 10); k.keepOut.push({ x, z: -4.4, r: 0.35 }); }
+      /* 2026-11-24 (wave 8d): the lamp posts as a real model (Poly Haven street lamp, CC0), arms out over the service road */
+      const old = w8dSince(k, lmk); w8dPlace(k, 'chabad770/ph_street_lamp_01', { height: 5.2 }, [-28, -7, 6, 28].map((x) => [x, 0, -4.4, -PI / 2]), undefined, () => w8dHide(old)); }
 
     /* ----- 770: the house, x -9 .. 9, front at z -10 ----- */
     const HF = -10, HD = 14, WALL = 0.5;
@@ -393,6 +492,20 @@ export const chabad770: RoomDef = {
       ner.scale.setScalar(f); nerL.intensity = 9 * f;
     });
 
+    /* 2026-11-24 (wave 8d), the room's one trick, a quiet one: each time the front door swings open, the daylight from the
+       Parkway comes in through the pointed doorway and lays a pointed arch of light down the hall floor, long and soft;
+       it fades as the door closes. The arch on the floor is the shape of the door, drawn by the sky. */
+    if (W8D_DOM) {
+      const dl = canvasTex(128, 256, (g) => {
+        const gr = g.createLinearGradient(0, 256, 0, 0); gr.addColorStop(0, 'rgba(255,246,228,1)'); gr.addColorStop(0.7, 'rgba(255,240,214,0.55)'); gr.addColorStop(1, 'rgba(255,236,206,0.1)');
+        g.fillStyle = gr; g.beginPath(); g.moveTo(14, 256); g.lineTo(14, 120); g.quadraticCurveTo(14, 30, 64, 4); g.quadraticCurveTo(114, 30, 114, 120); g.lineTo(114, 256); g.closePath(); g.fill();
+      });
+      const dp = w8dLightPatch(k, dl, 0xfff0dc, 2.4, 5.2, 0, LY + 0.015, HF - 0.55 - 2.6, -PI / 2, 0, 0);
+      if (!ctx.reduced) k.ticks.push((t) => { const u = (t % 14) / 14, open = u < 0.1 ? u / 0.1 : u < 0.45 ? 1 : u < 0.6 ? 1 - (u - 0.45) / 0.15 : 0; dp.m.opacity = 0.34 * open; dp.o.scale.set(0.55 + 0.45 * open, 1, 1); });
+      else dp.m.opacity = 0.3;
+    }
+    k.egg(v(0, LY + 0.6, -13.4), { id: 'arch-of-daylight', title: 'The arch on the floor', year: 'an illusion', text: 'When the front door swings open, daylight from Eastern Parkway pours through the pointed Gothic doorway and lays the same pointed arch, stretched long, down the hall floor. When the door closes it is gone. It is the shape of the door, drawn by the sky.', clue: 'Wait inside the front door until somebody opens it.', source: { name: '770 Eastern Parkway, Wikipedia', url: 'https://en.wikipedia.org/wiki/770_Eastern_Parkway' } }, { r: 1.8 });
+
     /* ----- the works ----- */
     const mounts: Mount[] = [];
     /* boards on the sidewalk, standing clear of the house fronts, facing the Parkway */
@@ -456,9 +569,11 @@ export const ohel: RoomDef = {
     k.sky({ top: 0x5a8ccc, horizon: 0xcfdbe6, ground: 0x8a8478, fog: 0.003, sun: { az: 2.2, el: 0.55, color: 0xfff0d8, size: 8 }, env: 0.6 });
     k.hemi(0xdfe6f2, 0x8a8478, 1.05);
     k.sun(0xfff0d8, 2.0, 50, 55, 40, true, 70);
-    const grass = k.pbr('ohGrass', X.grass(0x55703e, 91), 0.35, { roughness: 1 }), walkM = k.pbr('ohWalk', X.pavers(0xa29e94, 92), 0.6),
-      road = k.pbr('ohRoad', X.asphalt(0x2e3135), 0.2), curb = k.flat(0xaaa69c, 0, 0.8), iron = k.flat(0x1a1c1e, 0.6, 0.45),
-      brick = k.pbr('ohBrick', X.brick(0x9a6a4e, 93), 0.9), siding = k.flat(0xe2ded2, 0, 0.8),
+    /* 2026-11-24 (wave 8d): grass, walks, the road, and the brick of the house are Poly Haven scans (the Ohel's own stone keeps its painted ashlar) */
+    const OH = 'ohel';
+    const grass = w8dScan(k, OH, 'leafy_grass', 2.5, () => X.grass(0x55703e, 91), { roughness: 1, color: 0xb8c8a8 }, 0x55703e), walkM = w8dScan(k, OH, 'concrete_pavers', 1.8, () => X.pavers(0xa29e94, 92), { roughness: 0.9, color: 0xd8d2c8 }, 0xa29e94),
+      road = w8dScan(k, OH, 'asphalt_02', 4, () => X.asphalt(0x2e3135), { roughness: 0.92, color: 0x8c8c8c }, 0x3a3c40), curb = k.flat(0xaaa69c, 0, 0.8), iron = k.flat(0x1a1c1e, 0.6, 0.45),
+      brick = w8dScan(k, OH, 'red_brick_03', 2.4, () => X.brick(0x9a6a4e, 93), { roughness: 0.9, color: 0xe8c0a8 }, 0x9a6a4e), siding = k.flat(0xe2ded2, 0, 0.8),
       shingle = k.flat(0x4a4448, 0.05, 0.9), trim = k.flat(0xf2f0ea, 0, 0.6), win = k.flat(0x2a323c, 0.6, 0.18),
       sideA = k.flat(0xcfc6b4, 0, 0.8), sideB = k.flat(0xa8b4b8, 0, 0.8), sideC = k.flat(0xd8c8a8, 0, 0.8),
       floorM = k.pbr('ohFloor', X.planks(0x8a6a4a, 6, 95), 0.8, { roughness: 0.6 }), plaster = k.pbr('ohPlas', X.plaster(0xece4d2, 96), 0.4),
@@ -487,6 +602,7 @@ export const ohel: RoomDef = {
 
     /* ----- the visitors center: x -8 .. 8, z 2 .. 16, brick below and siding above ----- */
     const HZ0 = 2, HZ1 = 16, HX = 8, H1 = 3.6;
+    const ohChairs: T.Object3D[] = [];
     k.box(16, 0.1, 14, 0, 0.0, 9, floorM);
     k.box(16.6, 0.3, 14.6, 0, H1 - 0.05, 9, plaster);
     k.box(16.6, 3.0, 14.6, 0, H1 + 1.5 + 0.1, 9, siding);
@@ -524,7 +640,7 @@ export const ohel: RoomDef = {
     for (const s of [-1, 1]) {
       const cx = s * 4.3;
       k.box(3.4, 0.07, 1.1, cx, 0.78, 4.6, desk); for (const dx of [-1.5, 1.5]) k.box(0.08, 0.75, 0.9, cx + dx, 0.38, 4.6, darkWood);
-      for (let i = 0; i < 4; i++) for (const dz of [-0.85, 0.85]) k.box(0.5, 0.5, 0.5, cx - 1.2 + i * 0.8, 0.25, 4.6 + dz, chair);
+      { const cmk = w8dMark(k); for (let i = 0; i < 4; i++) for (const dz of [-0.85, 0.85]) k.box(0.5, 0.5, 0.5, cx - 1.2 + i * 0.8, 0.25, 4.6 + dz, chair); ohChairs.push(...w8dSince(k, cmk)); }
       for (let i = 0; i < 6; i++) { const p = k.box(0.22, 0.01, 0.3, cx - 1.3 + i * 0.52, 0.82, 4.6 + (i % 2 ? 0.2 : -0.2), paper); p.rotation.y = (i % 3 - 1) * 0.2; }
       k.block(cx - 1.9, cx + 1.9, 3.6, 5.6);
       /* shelves of prayer books by the back wall */
@@ -609,6 +725,11 @@ export const ohel: RoomDef = {
       place(0);
       if (!ctx.reduced) k.ticks.push(place);
     }
+    /* 2026-11-24 (wave 8d): the writing room's chairs as a real folding chair (Poly Haven, CC0), the block hides once it lands;
+       street lamps on the boulevard (Poly Haven, CC0) */
+    w8dPlace(k, 'ohel/ph_folding_chair_01', { height: 0.88 }, [-1, 1].flatMap((s) => [0, 1, 2, 3].flatMap((i) => [-0.85, 0.85].map((dz) => [s * 4.3 - 1.2 + i * 0.8, 0, 4.6 + dz * 1.05, dz < 0 ? 0 : PI]))), (h) => w8dTint(h, 0x3a2a20, 0.6, 0.1), () => w8dHide(ohChairs));
+    w8dPlace(k, 'ohel/ph_street_lamp_01', { height: 5.4 }, [-30, -12, 12, 30].map((x) => [x, 0, 21.6, PI / 2]));
+    /* 2026-11-24 (wave 8d): no illusion here, by design: the Ohel is left as it is, with nothing added inside or over the enclosure */
     /* a few visitors on the walk, slow; a couple passing on the boulevard */
     k.crowd([v(0, 0, 1.2), v(0, 0, -12), v(0, 0, -27.2)], 5, { seed: 16, speed: 0.4, spread: 1.4, scale: FS, colors: [0x141518, 0x1a1b20, 0x2a2c32, 0x3a3a44], animate: !ctx.reduced });
     k.crowd([v(-44, 0, 20.4), v(44, 0, 20.4)], 5, { seed: 17, speed: 1.0, spread: 1.2, scale: FS, animate: !ctx.reduced });

@@ -26,6 +26,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
+import { scan, glbs, fireflyPlate } from './a';
+import { hsign } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -187,6 +189,14 @@ function sunDir(h: number) {
 }
 const GLITCH = [0x00e5ff, 0xff2e63, 0xffe600, 0xffffff, 0x101014, 0x2962ff, 0x39ff88, 0xff8a00];
 
+
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24) ----------
+   Poly Haven CC0 scans in assets/museum/tex/crystalpalace/, CC0 models in assets/museum/props/crystalpalace/. */
+const W9_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+function w9Solid(o: T.Object3D) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+
 /* ================================================================== */
 /* ---------------- 181 THE GLASS HOUSE ---------------- */
 export const crystalpalace: RoomDef = {
@@ -212,14 +222,15 @@ export const crystalpalace: RoomDef = {
     const A = 12, L = 50, N = 6.25, VS = 13, D0 = 21, DR = 15.25;   /* arm half width, arm end, nave half width, vault springing, dome springing and radius */
 
     /* ---- materials ---- */
-    const pine = photoMat(k, 'floor.jpg', 0.32, { roughness: 0.62 });
+    /* wave 9: scanned pine boards (CC0), toned down from raw yellow pine to boards a fair has walked on */
+    const pine = scan(k, 'crystalpalace', 'plank_flooring_02', 2.2, () => X.planks(0xb89a70, 5, 1810), { color: 0xc4ac90, roughness: 0.6 });
     const damask = photoMat(k, 'damask.jpg', 0.42, { roughness: 0.85 });
-    const granite = photoMat(k, 'granite.jpg', 0.1, { roughness: 0.9 });
+    const granite = scan(k, 'crystalpalace', 'granite_wall', 4.5, () => X.ashlar(0x9a9080, 1809, 6), { color: 0xcfc6b8, roughness: 0.9 });
     const timber = photoMat(k, 'timber.jpg', 0.35, { roughness: 0.85 });
     const ironC = k.flat(0xe9dfc6, 0.25, 0.5), ironB = k.flat(0x34588a, 0.35, 0.45), gold = k.flat(0xcaa050, 1, 0.3), ironD = k.flat(0x23272d, 0.6, 0.5);
     const boards = k.pbr('cpBoards', X.planks(0x2c4434, 5, 1811), 0.8, { roughness: 0.6 });
-    const walkM = k.pbr('cpWalk', X.pavers(0x9a958a, 1812), 0.5), cobM = k.pbr('cpCobble', X.cobble(0x6f6c68, 1813), 0.6), curb = k.flat(0x8a8680, 0, 0.8);
-    const lawn = k.pbr('cpLawn', X.grass(), 0.25, { roughness: 1 });
+    const walkM = scan(k, 'crystalpalace', 'concrete_pavement', 2.4, () => X.pavers(0x9a958a, 1812), { color: 0xd4cec2 }), cobM = scan(k, 'crystalpalace', 'cobblestone_04', 2, () => X.cobble(0x6f6c68, 1813), { color: 0xb8b0a4, roughness: 0.85 }), curb = k.flat(0x8a8680, 0, 0.8);
+    const lawn = scan(k, 'crystalpalace', 'leafy_grass', 2.5, () => X.grass(), { color: 0xb8c4a0, roughness: 1 });
     const mahog = k.flat(0x5a2a1a, 0, 0.45);
     /* the glass: a pane grid with cream glazing bars, tiled in world space. After dark the bars go to
        iron silhouettes and the panes take the gaslight, so the house reads as a lantern, not a cage */
@@ -227,7 +238,7 @@ export const crystalpalace: RoomDef = {
     const mixc = (a: number[], b: number[]) => a.map((x, i) => Math.round(x + (b[i] - x) * nt));
     const pane = mixc([190, 214, 232], [255, 196, 120]), bar = mixc([196, 188, 168], [44, 38, 32]);
     const glassT = tex(128, 128, (g) => {
-      g.clearRect(0, 0, 128, 128); g.fillStyle = `rgba(${pane.join(',')},${0.1 + 0.12 * nt})`; g.fillRect(0, 0, 128, 128);
+      g.clearRect(0, 0, 128, 128); g.fillStyle = `rgba(${pane.join(',')},${0.17 + 0.1 * nt})`; g.fillRect(0, 0, 128, 128);
       g.fillStyle = `rgba(${bar.join(',')},0.95)`; g.fillRect(0, 0, 128, 6); g.fillRect(0, 0, 6, 128); g.fillRect(0, 62, 128, 3); g.fillRect(62, 0, 3, 128);
     }, true);
     const glassM = new T.MeshBasicMaterial({ map: glassT, transparent: true, depthWrite: false, side: T.DoubleSide, opacity: 1 });
@@ -247,7 +258,7 @@ export const crystalpalace: RoomDef = {
     /* gas lamps along the pavement, lit from dusk */
     const lampAt: { x: number; y: number; z: number }[] = [];
     for (let x = -42; x <= 42; x += 12) if (Math.abs(x) > 5) lampAt.push({ x, y: 0, z: 61.2 });
-    for (const z of [53, 57]) for (const s of [-1, 1]) lampAt.push({ x: s * 6.5, y: 0, z });
+    for (const z of [55.8, 59]) for (const s of [-1, 1]) lampAt.push({ x: s * 7.4, y: 0, z });
     propMany(k, 'cp_gaslamp', lampAt, 4.2);
     for (const p of lampAt) { k.keepOut.push({ x: p.x, z: p.z, r: 0.4 }); }
     k.instances(new T.SphereGeometry(0.2, 10, 8), k.glow(k.night > 0.3 ? 0xffd890 : 0xfff2d8), lampAt.map((p) => new T.Matrix4().makeTranslation(p.x, 3.75, p.z)));
@@ -819,6 +830,104 @@ export const crystalpalace: RoomDef = {
         if (done || t < 1.5) return; done = true;
         k.scene.traverse((o) => { if ((o instanceof T.Mesh || o instanceof T.Points) && o.castShadow && o.parent && o.parent !== k.scene && o.parent !== plat) o.castShadow = false; });
       });
+    }
+
+
+    /* ================= wave 9: the Sixth Avenue portal, the exhibits of all nations, the ghost of the north arm ================= */
+    {
+      /* the portal: clustered iron columns, an entablature with the exhibition's name, an arched fan over it, steps */
+      const PZ = L + 0.3;
+      for (const x of [-5.6, -4.1, 4.1, 5.6]) for (const z of [PZ + 0.2, PZ + 1.5]) {
+        k.cyl(0.22, 8.8, x, 4.4, z, ironC, 0.26, 14);
+        k.cyl(0.36, 0.5, x, 0.25, z, gold, 0.4, 14); k.cyl(0.36, 0.4, x, 8.85, z, gold, 0.28, 14);
+        for (const y of [3.2, 6.2]) k.cyl(0.3, 0.22, x, y, z, ironB, 0.3, 14);
+        k.keepOut.push({ x, z, r: 0.45 });
+      }
+      k.box(13.2, 0.9, 1.9, 0, 9.5, PZ + 0.85, ironC); k.box(13.6, 0.2, 2.1, 0, 10.05, PZ + 0.85, gold);
+      const fan = new T.Shape(); fan.absarc(0, 0, 6.4, 0, PI, false); fan.lineTo(-5.6, 0); fan.absarc(0, 0, 5.6, PI, 0, true); fan.closePath();
+      k.mesh(new T.ShapeGeometry(fan, 32), ironC, 0, 10.15, PZ + 1.75);
+      { const sh = new T.Shape(); sh.absarc(0, 0, 5.6, 0, PI, false); sh.closePath(); const o = k.mesh(new T.ShapeGeometry(sh, 32), glassM, 0, 10.15, PZ + 1.72, true); o.renderOrder = 1; }
+      const fanBars: [T.Vector3, T.Vector3, number][] = [];
+      for (let i = 0; i <= 10; i++) { const t = (i / 10) * PI; fanBars.push([v(0, 10.15, PZ + 1.74), v(Math.cos(t) * 5.6, 10.15 + Math.sin(t) * 5.6, PZ + 1.74), 0.1]); }
+      bars(k, fanBars, ironC);
+      k.sphere(0.5, 0, 16.5, PZ + 1.7, gold, 14);
+      for (let i = 0; i < 3; i++) k.box(14 - i * 0.6, 0.16, 1.2, 0, 0.08 + i * 0.16, PZ + 2.8 - i * 0.4, k.flat(0xb8b2a6, 0, 0.8));
+      if (HAS_DOM) {
+        hsign(k, 'EXHIBITION OF THE INDUSTRY OF ALL NATIONS', 12.4, 0.72, 0, 9.5, PZ + 1.82, 0, { fg: '#f2d48a', bg: '#22385e', font: 'W2 Archivo Expanded', size: 0.56, lit: false });
+        hsign(k, '1853', 2.2, 0.62, 0, 12.2, PZ + 1.8, 0, { fg: '#22385e', bg: '#e9dfc6', font: 'W2 Archivo Expanded', size: 0.7, border: '#caa050', lit: false });
+      }
+      /* bunting: swags of red, white and blue along the west front under the clerestory */
+      for (const [c, dy] of [[0xb8262a, 0], [0xf2ede0, -0.24], [0x22385e, -0.48]] as [number, number][]) {
+        const m = k.flat(c, 0, 0.8);
+        for (let x = -12; x < 12; x += 3) { if (Math.abs(x + 1.5) < 6) continue; const pts = Array.from({ length: 9 }, (_, i) => { const t = i / 8; return v(x + t * 3, 9.3 + dy - Math.sin(t * PI) * 0.7, L + 0.25); }); k.curve(pts, 0.12, m, 12); }
+      }
+      /* the flags of the nations on the arm's roof: plain colours, no devices */
+      {
+        const fl: T.Mesh[] = [], cols = [0xb8262a, 0xf2ede0, 0x22385e, 0x2a7a3a, 0xe8b830, 0x1a1a1c, 0xd86a2a, 0x6a2a8a];
+        for (let i = 0; i < 9; i++) {
+          const z = 14 + i * 4.4, x = 0, y = VS + N + 0.3;
+          k.cyl(0.05, 4, x, y + 2, z, ironD, 0.05, 6);
+          const g = new T.PlaneGeometry(1.8, 1.0, 6, 1); g.translate(0.9, 0, 0);
+          const o = new T.Mesh(g, new T.MeshStandardMaterial({ color: cols[i % cols.length], side: T.DoubleSide, roughness: 0.8 })); o.position.set(x, y + 3.5, z); k.add(o); fl.push(o);
+        }
+        if (!ctx.reduced) { let acc = 0; k.ticks.push((t, dt) => { acc += dt; if (acc < 0.05) return; acc = 0; fl.forEach((f, j) => { f.rotation.y = 1.1 + 0.25 * Math.sin(t * 0.6 + j); const pa = f.geometry.attributes.position as T.BufferAttribute; for (let q = 0; q < pa.count; q++) { const x = pa.getX(q); pa.setZ(q, Math.sin(x * 2.6 - t * 4 + j) * 0.1 * (x / 1.8)); } pa.needsUpdate = true; }); }); }
+      }
+      /* wrought iron gates (Poly Haven, CC0) closing the lawn either side of the forecourt */
+      glbs(k, 'crystalpalace/ph_large_iron_gate', { width: 5.2 }, [[-10.4, 0, 52.6, 0], [10.4, 0, 52.6, 0]], (os) => os.forEach(w9Solid), 99);
+      k.block(-13.2, -7.6, 52.3, 52.9); k.block(7.6, 13.2, 52.3, 52.9);
+      /* the works of all nations among the paintings: marble busts down the west aisles, a robed figure in the salon,
+         lions' heads by the great work, clocks, a ship model and a spinning wheel in the industry hall, a whale in bronze
+         and a painted screen in the calm half of the north arm (Poly Haven, CC0) */
+      const marble = k.flat(0xece6da, 0, 0.35), plinth = (x: number, z: number, h: number, w = 0.7) => { k.box(w, h, w, x, h / 2, z, marble); k.box(w + 0.12, 0.08, w + 0.12, x, h + 0.04, z, gold); k.box(w + 0.16, 0.12, w + 0.16, x, 0.06, z, ironB); k.keepOut.push({ x, z, r: w * 0.85 }); };
+      const busts: [number, number, number, number][] = [];
+      for (const z of [20.5, 31, 42]) for (const sg of [-1, 1]) { plinth(sg * 9.4, z, 1.25, 0.6); busts.push([sg * 9.4, 1.33, z, sg > 0 ? -PI / 2 : PI / 2]); }
+      glbs(k, 'crystalpalace/ph_marble_bust_01', { height: 0.78 }, busts, (os) => os.forEach(w9Solid), 99);
+      plinth(-25.5, 0, 0.9, 1.7);
+      glbs(k, 'crystalpalace/ph_gothic_statue', { height: 2.5 }, [[-25.5, 0.98, 0, PI / 2]], (os) => os.forEach(w9Solid), 99);
+      for (const sg of [-1, 1]) plinth(-47.1, sg * 6.6, 1.5, 0.7);
+      glbs(k, 'crystalpalace/ph_lion_head', { height: 0.8 }, [[-47.1, 1.58, 6.6, PI / 2], [-47.1, 1.58, -6.6, PI / 2]], (os) => os.forEach(w9Solid), 99);
+      glbs(k, 'crystalpalace/ph_vintage_grandfather_clock_01', { height: 2.4 }, [[-11.2, 0, -24.5, PI / 2], [11.2, 0, -24.5, -PI / 2], [-11.2, 0, -44.5, PI / 2], [11.2, 0, -44.5, -PI / 2]], (os) => os.forEach(w9Solid), 99);
+      for (const [x, z] of [[-11.2, -24.5], [11.2, -24.5], [-11.2, -44.5], [11.2, -44.5]]) k.keepOut.push({ x, z, r: 0.6 });
+      k.box(1.1, 0.9, 3.4, 0, 0.45, -37.6, mahog); k.box(1.3, 0.08, 3.6, 0, 0.94, -37.6, gold); k.keepOut.push({ x: 0, z: -36.6, r: 1.0 }, { x: 0, z: -38.6, r: 1.0 });
+      glbs(k, 'crystalpalace/ph_ship_pinnace', { length: 3.2 }, [[0, 0.98, -37.6, 0]], (os) => os.forEach(w9Solid), 99);
+      glbs(k, 'crystalpalace/ph_spinning_wheel_01', { height: 1.2 }, [[-9.0, 0, -43.2, 0.6]], (os) => os.forEach(w9Solid), 99);
+      k.keepOut.push({ x: -9.0, z: -43.2, r: 0.8 });
+      plinth(26, -9.8, 1.0, 1.6);
+      glbs(k, 'crystalpalace/ph_bronze_whale_statue', { height: 1.4 }, [[26, 1.08, -9.8, 0.8]], (os) => os.forEach(w9Solid), 99);
+      glbs(k, 'crystalpalace/ph_chinese_screen_panels', { width: 2.6 }, [[22.5, 0, 10.4, PI], [27.5, 0, 10.4, PI]], (os) => os.forEach(w9Solid), 99);
+      for (const x of [22.5, 27.5]) k.block(x - 1.4, x + 1.4, 10.1, 10.7);
+      /* a painted banner over the west nave, seen through the glass from the pavement (FIREFLY_QUEUE.md) */
+      fireflyPlate(k, 'assets/museum/tex/crystalpalace/ff_allegory_banner.webp', 9.6, 2.4, 0, 11.6, 47.6, 0, W9_HIDDEN);
+      fireflyPlate(k, 'assets/museum/tex/crystalpalace/ff_allegory_banner.webp', 9.6, 2.4, 0, 11.6, 47.58, PI, W9_HIDDEN);
+
+      /* the trick: Pepper's ghost. A sheet of plate glass at forty five degrees in the calm half of the north arm; stand
+         before it looking into the fire and the arm as it was before 1858 hangs in the air over the flames, iron and glass
+         whole again, then fades as you move off the spot */
+      const GX = 30.2;
+      const frameM = k.flat(0xcaa050, 1, 0.3);
+      const sheet = new T.Group(); sheet.position.set(GX, 0, 0); sheet.rotation.y = PI / 4; k.add(sheet);
+      { const pane = new T.Mesh(new T.PlaneGeometry(3.4, 2.8), new T.MeshStandardMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.12, roughness: 0.05, metalness: 0.2, side: T.DoubleSide, depthWrite: false })); pane.position.y = 2.0; sheet.add(pane);
+        for (const [w, h, x, y] of [[3.6, 0.1, 0, 3.45], [3.6, 0.1, 0, 0.55], [0.1, 3.0, -1.75, 2.0], [0.1, 3.0, 1.75, 2.0]]) { const b = new T.Mesh(new T.BoxGeometry(w, h, 0.08), frameM); b.position.set(x, y, 0); sheet.add(b); }
+        for (const x of [-1.6, 1.6]) { const f = new T.Mesh(new T.BoxGeometry(0.1, 0.55, 0.9), frameM); f.position.set(x, 0.27, 0); sheet.add(f); } }
+      k.block(GX - 1.4, GX + 1.4, -1.4, 1.4);
+      const ghostG: T.BufferGeometry[] = [];
+      for (let sx = 34; sx <= 49.01; sx += 5) { ghostG.push(arc(Nn, sx, N, VS)); for (const c of [-N, N]) { const g = new T.CylinderGeometry(0.16, 0.16, VS, 6); g.translate(sx, VS / 2, c); ghostG.push(g); } }
+      for (const sg of [-1, 1]) { for (const y of [7.65, VS]) { const g = new T.BoxGeometry(FX1 - FX0, 0.1, 0.1); g.translate((FX0 + FX1) / 2, y, sg * (N + 0.3)); ghostG.push(g); } }
+      for (let i = 0; i <= 8; i++) { const a = (i / 8) * PI, g = new T.BoxGeometry(FX1 - FX0, 0.06, 0.06); g.translate((FX0 + FX1) / 2, VS + Math.sin(a) * N, Math.cos(a) * N); ghostG.push(g); }
+      const ghostM = new T.MeshBasicMaterial({ color: 0x1e9cff, transparent: true, opacity: 0, depthWrite: false, depthTest: false, toneMapped: false, fog: false });
+      const ghost = new T.Mesh(mergeGeometries(ghostG.map((g) => g.index ? g.toNonIndexed() : g))!, ghostM); ghost.renderOrder = 7; ghost.visible = false; ghost.frustumCulled = false; k.add(ghost);
+      const fwd = new T.Vector3();
+      k.ticks.push((t, dt) => {
+        const c = cam(); if (!c) return;
+        c.getWorldDirection(fwd);
+        const dx = c.position.x - (GX - 3.4), dz = c.position.z, near = Math.hypot(dx, dz);
+        const look = fwd.x / (Math.hypot(fwd.x, fwd.z) || 1);
+        const want = clamp01((3.2 - near) / 2) * clamp01((look - 0.8) / 0.15);
+        ghostM.opacity += (want * 0.95 - ghostM.opacity) * Math.min(1, dt * 2.5);
+        ghostM.opacity *= 0.96 + 0.04 * Math.sin(t * 7);
+        ghost.visible = ghostM.opacity > 0.01;
+      });
+      k.egg(v(GX, 2.2, 0), { id: 'crystalpalace-ghost', title: "Pepper's ghost", year: '1862', text: "A sheet of plain glass set at forty five degrees will show a lit figure hidden to one side as if it stood in the room behind the glass. Henry Dircks devised it and John Henry Pepper made it famous in London in 1862; theatres used it for ghosts. Here it shows the north arm as it stood before the fire of 1858.", clue: 'Stand a few steps before the glass in the north arm and look into the fire.', source: { name: "Pepper's ghost, Wikipedia", url: "https://en.wikipedia.org/wiki/Pepper%27s_ghost" } }, { r: 1.6 });
     }
 
     /* ---- what the house knows ---- */

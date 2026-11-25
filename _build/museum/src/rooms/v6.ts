@@ -9,6 +9,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { hero, heroInstances } from './heroes';
+import { anamorphTex, paintTex, hsign } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const UP = new T.Vector3(0, 1, 0);
@@ -175,6 +178,79 @@ function bake(k: K, g: T.Object3D) {
   g.traverse((o) => { if (o instanceof T.Mesh && !(o instanceof T.InstancedMesh)) { const geo = (o.geometry as T.BufferGeometry).clone(); geo.applyMatrix4(o.matrixWorld); k.mesh(geo, o.material as T.Material); } });
 }
 
+/* ---------- THE BIG UPGRADE, wave 8c (2026-11-24): scans, real models, painted type ----------
+   Scanned CC0 surfaces from assets/museum/tex/<room>/ (Poly Haven, 1k webp) that wear a sensible colour until their maps
+   land; real models from assets/museum/props/<room>/ placed many at once (seven or more become instanced parts), shadows
+   off; the anamorphic floor type for the room's one trick. Safe in node: the audit builds with no DOM. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w8 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w8-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w8.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w8.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const key = `w8-${room}-${id}-${metres}-${p.color ?? ''}-${p.side ?? ''}-${p.roughness ?? ''}-${p.metalness ?? ''}`;
+  const m = k.pbr(key, e.s, 1 / metres, p);
+  if (!m.userData.w8) {
+    m.userData.w8 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?], shadows off, marked as a cab so the kit's swapCabs
+   never lays a taxi fleet under real cars or a yellow forklift. */
+function many(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (k.o.quality !== 'high' && at.length > 3) at = at.filter((_, i) => i % 2 === 0);
+  if (!at.length || !HAS_DOM) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (c instanceof T.Mesh) { c.castShadow = false; c.userData.cab = true; const m = c.material as T.MeshPhysicalMaterial; if (m && m.transmission) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; } } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion();
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(UP, r), new T.Vector3(s, s, s))));
+      ins.parts.forEach((p) => { p.im.castShadow = false; p.im.userData.cab = true; });
+      ins.commit();
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
+/* Recolour every material of a loaded model. */
+function tintAll(o: T.Object3D, hex: number, rough = 0.6, metal = 0.4) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.multiply(new T.Color(hex)); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Many copies of one box as a single instanced draw: [x, y, z, rotY?, sx?, sy?, sz?] each. */
+function boxes(k: K, m: T.Material, at: number[][]) {
+  if (!at.length) return null;
+  const q = new T.Quaternion();
+  return k.instances(new T.BoxGeometry(1, 1, 1), m, at.map(([x, y, z, r = 0, sx = 1, sy = 1, sz = 1]) => new T.Matrix4().compose(new T.Vector3(x, y, z), q.setFromAxisAngle(UP, r), new T.Vector3(sx, sy, sz))));
+}
+/* Anamorphic floor type (ON LOCATION rule 9): lettering laid flat that stands up as a board from one spot. */
+function standUp(k: K, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, font = 'W2 Archivo Expanded') {
+  if (!HAS_DOM) return;
+  const w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const tex = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
+}
+
 /* ---------------- 151 THE GOLD WALL ---------------- */
 /* the emblem: the world from above the North Pole, circles and meridians, inside two olive branches */
 function emblemTexture() {
@@ -248,15 +324,16 @@ export const unassembly: RoomDef = {
     k.sun(0xfff4e0, 0.6, 10, 40, 30, true, 40);
     const R = ctx.reduced;
     /* the plan: the rostrum at z = -25, the walls splaying from half width 15 to 18 at the back */
+    const DRc = 17, DZc = -2, CYc = 20.5;
     const Z0 = -25, Z1 = 25, HW = (z: number) => 15 + ((z - Z0) / (Z1 - Z0)) * 3, CZ = -40, RIN = 30, ROW = 1.8, NR = 16, TOP = 6.4;
     const floorY = (x: number, z: number) => { const d = Math.hypot(x, z - CZ); return d <= RIN ? 0 : d >= RIN + NR * ROW ? TOP : ((d - RIN) / (NR * ROW)) * TOP; };
     const wn = tileNoise(3, 16);
-    const carpet = k.pbr('unCarpet', canvasSurface(256, (u, v) => { const n = wn(u * 16, v * 16), s = 0.85 + n * 0.25; return [34 * s, 62 * s, 88 * s]; }), 0.5, { roughness: 1 });
+    const carpet = sc(k, 'unassembly', 'carpet', 2.2, () => canvasSurface(256, (u, v) => { const n = wn(u * 16, v * 16), s = 0.85 + n * 0.25; return [34 * s, 62 * s, 88 * s]; }), { color: 0x3c5c90, roughness: 1 }, 0x2a4058);
     const woodS = canvasSurface(256, (u, v) => { const s = 0.72 + 0.28 * Math.abs(Math.sin(u * PI * 12)) + (wn(u * 4, v * 32) - 0.5) * 0.12; return [148 * s, 100 * s, 62 * s]; });
-    const wood = k.pbr('unWood', woodS, 0.5, { roughness: 0.55 }), deskWood = k.flat(0xb88a5a, 0.05, 0.5);
-    const upper = k.pbr('unUpper', canvasSurface(256, (u, v) => { const s = 0.9 + (wn(u * 8, v * 8) - 0.5) * 0.1; return [150 * s, 164 * s, 172 * s]; }), 0.2, { roughness: 0.85 });
-    const gold = k.pbr('unGold', X.gilt(0xc89a3a), 0.35, { metalness: 0.5, roughness: 0.66, envMapIntensity: 0.8 }), goldDark = k.flat(0xb0842c, 0.9, 0.35);
-    const serp = k.pbr('unSerp', X.marble(0x2f5a44, 0x8ab89a, 17), 0.4, { roughness: 0.25 }), serpDark = k.flat(0x1f3f30, 0.1, 0.3);
+    const wood = sc(k, 'unassembly', 'veneer', 1.4, () => woodS, { color: 0xa89078, roughness: 0.5 }, 0x7a5a40), deskWood = sc(k, 'unassembly', 'veneer', 0.9, () => woodS, { color: 0xf0d0a8, roughness: 0.45 }, 0xa07850);
+    const upper = sc(k, 'unassembly', 'upper', 3, () => canvasSurface(256, (u, v) => { const s = 0.9 + (wn(u * 8, v * 8) - 0.5) * 0.1; return [150 * s, 164 * s, 172 * s]; }), { color: 0xc4d0d8, roughness: 0.85 }, 0x8a969e);
+    const gold = sc(k, 'unassembly', 'leaf', 1.1, () => X.gilt(0xc89a3a), { color: 0xffd47a, metalness: 0.45, roughness: 0.42, envMapIntensity: 0.9 }, 0xc89a3a), goldDark = k.flat(0xb0842c, 0.9, 0.35);
+    const serp = sc(k, 'unassembly', 'serp', 1.6, () => X.marble(0x2f5a44, 0x8ab89a, 17), { color: 0x5aa47a, roughness: 0.22 }, 0x2f5a44), serpDark = sc(k, 'unassembly', 'serp', 2.4, () => X.marble(0x1f3f30, 0x4a7a5a, 18), { color: 0x2c6a48, roughness: 0.3 }, 0x1f3f30);
     const ceiling = k.flat(0x3a3f47, 0.1, 0.8, { side: T.DoubleSide }), dome = k.flat(0x6f9cc8, 0, 0.9, { side: T.BackSide }), dark = k.flat(0x16181c, 0.3, 0.7);
     const beige = 0xd8c6a4, blueSeat = 0x2a4f8f, green = k.flat(0x2f6a4a, 0.05, 0.45);
     /* ---- floor: the well in front of the rostrum, the tiers rising in arcs, the back aisle ---- */
@@ -302,7 +379,7 @@ export const unassembly: RoomDef = {
     }
     /* the delegates: most beige chairs taken, some alternates behind; they shift and lean while the speaker talks */
     const people: { p: T.Vector3; a: number; ph: number }[] = [];
-    { const rnd = X.mulberry(193); for (const s of seatSpots) if (rnd() < (s.beige ? 0.62 : 0.22)) people.push({ p: s.p, a: s.a + PI, ph: rnd() * 6.3 }); }
+    { const rnd = X.mulberry(193); for (const s of seatSpots) if (rnd() < (s.beige ? 0.46 : 0.1)) people.push({ p: s.p, a: s.a + PI, ph: rnd() * 6.3 }); }
     const crowdM = k.instances(seatedGeo(), new T.MeshStandardMaterial({ roughness: 0.85 }), people.map(() => new T.Matrix4()));
     crowdM.frustumCulled = false; k.ticks.push(() => { crowdM.castShadow = false; });
     {
@@ -336,8 +413,8 @@ export const unassembly: RoomDef = {
     /* the two Leger murals, across the hall from each other */
     for (const [s, pal, seed] of [[-1, ['#e8722a', '#9a9a96', '#f4f2ec', '#d8581c', '#6e6e6a'], 11], [1, ['#2a5fb8', '#f2c81c', '#f6f4ee', '#1c3f8a', '#e8b010'], 12]] as const) {
       const p = onWall(s, -4, 0.08);
-      const mm = k.mesh(new T.PlaneGeometry(14, 9.2), new T.MeshStandardMaterial({ map: legerTexture([...pal], seed), roughness: 0.85 }), p.x, 14.4, p.z, true);
-      mm.rotation.y = wallRot(s);
+      /* wave 8c: a Firefly plate in the same manner replaces the canvas when ff_un_mural_left / right lands */
+      fireflyPlate(k, `assets/museum/tex/unassembly/ff_un_mural_${s < 0 ? 'left' : 'right'}.webp`, 14, 9.2, p.x, 14.4, p.z, wallRot(s), new T.MeshStandardMaterial({ map: legerTexture([...pal], seed), roughness: 0.85 }));
     }
     /* the voting boards near the front, a light for every name */
     const vbN = 2 * 4 * 50, vbM: T.Matrix4[] = [];
@@ -354,6 +431,51 @@ export const unassembly: RoomDef = {
     const vb = k.instances(new T.BoxGeometry(1, 1, 1), new T.MeshBasicMaterial({ color: 0xffffff }), vbM);
     vb.frustumCulled = false;
     { const c = new T.Color(), rnd = X.mulberry(9); const set = (t: number) => { const ph = Math.floor(t / 7); const r2 = X.mulberry(ph * 13 + 1); for (let i = 0; i < vbN; i++) { const x = r2(); vb.setColorAt(i, c.set(x < 0.62 ? 0x2aff6a : x < 0.8 ? 0xff3a2a : x < 0.9 ? 0xffd23a : 0x202420)); } if (vb.instanceColor) vb.instanceColor.needsUpdate = true; }; set(0); void rnd; if (!R) k.ticks.push(set); }
+    /* ---- wave 8c: the hall as built ---- */
+    {
+      /* the fluted wood: vertical veneer slats the full height of the lower walls, both sides and the back */
+      const slatM = sc(k, 'unassembly', 'veneer', 0.7, () => woodS, { color: 0x907860, roughness: 0.45 }, 0x6a4a30), sl: number[][] = [];
+      for (const s of [-1, 1]) for (let z = Z0 + 0.4; z < Z1 - 0.2; z += 0.55) { const p = onWall(s, z, 0.06); sl.push([p.x, 4.75, p.z, s * splay, 0.1, 9.5, 0.16]); }
+      for (let x = -17.6; x <= 17.6; x += 0.55) if (Math.abs(Math.abs(x) - 7.2) > 1.4) sl.push([x, 4.75, Z1 - 0.06, 0, 0.16, 9.5, 0.1]);
+      boxes(k, slatM, sl);
+      /* a bronze rail along the top of the wood, and gilt reveals at the corners of the gold wall */
+      for (const s of [-1, 1]) { const p = onWall(s, 0, 0.12); const r = k.box(0.12, 0.12, WL, p.x, 9.45, p.z, goldDark); r.rotation.y = s * splay; }
+      /* the two great screens either side of the gold wall: the speaker, the session, the clock */
+      if (HAS_DOM) for (const s of [-1, 1]) {
+        const t = paintTex(1024, 576, (g, w, h) => {
+          const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#1a3a66'); gr.addColorStop(1, '#0a1a30'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+          g.fillStyle = '#d8c79a'; g.fillRect(w * 0.36, h * 0.16, w * 0.28, h * 0.62);
+          g.fillStyle = '#20242c'; g.beginPath(); g.ellipse(w / 2, h * 0.36, w * 0.07, h * 0.13, 0, 0, PI * 2); g.fill(); g.fillRect(w * 0.39, h * 0.5, w * 0.22, h * 0.28);
+          g.fillStyle = 'rgba(8,16,30,0.82)'; g.fillRect(0, h * 0.8, w, h * 0.2);
+          g.fillStyle = '#f4ecd8'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.font = '800 46px "W2 Archivo Expanded", Arial, sans-serif'; g.fillText(s < 0 ? 'GENERAL ASSEMBLY' : 'GENERAL DEBATE', 40, h * 0.87);
+          g.font = '500 30px "W2 JetBrains Mono", monospace'; g.fillStyle = '#9fc0e8'; g.fillText(s < 0 ? 'PLENARY MEETING' : 'HIGH LEVEL WEEK', 40, h * 0.95);
+          g.fillStyle = '#4b92db'; g.fillRect(0, h * 0.8, w, 6);
+        }, ['W2 Archivo Expanded', 'W2 JetBrains Mono']);
+        const sx = s * 12.6, sz = Z0 + 0.5;
+        k.box(6.8, 4.1, 0.3, sx, 14.2, sz - 0.1, dark);
+        k.mesh(new T.PlaneGeometry(6.4, 3.6), new T.MeshBasicMaterial({ map: t, color: 0xd8d8d8 }), sx, 14.2, sz + 0.06, true);
+      }
+      /* the ceiling round the dome: radial ribs and a field of downlights */
+      const rib = k.flat(0x2a2e34, 0.3, 0.7), rb: number[][] = [], dl: T.Matrix4[] = [];
+      for (let i = 0; i < 48; i++) { const a = (i / 48) * PI * 2, r0 = DRc + 0.6, r1 = 34, rm = (r0 + r1) / 2; rb.push([Math.cos(a) * rm, CYc - 0.35, DZc + Math.sin(a) * rm, -a, r1 - r0, 0.6, 0.3]); }
+      boxes(k, rib, rb);
+      for (let i = 0; i < 48; i++) for (const r of [20.5, 24, 27.5, 31]) { const a = ((i + 0.5) / 48) * PI * 2, x = Math.cos(a) * r, z = DZc + Math.sin(a) * r; if (Math.abs(x) < 17.5 && z > Z0 && z < Z1) dl.push(new T.Matrix4().compose(v(x, CYc - 0.04, z), new T.Quaternion(), v(0.6, 1, 0.6))); }
+      k.instances(new T.CylinderGeometry(0.22, 0.22, 0.05, 10), k.glow(0xfff0d0), dl);
+      /* a gooseneck microphone at every delegation desk */
+      const mic: T.Matrix4[] = [], q = new T.Quaternion(), e = new T.Euler();
+      for (const m of tops) { const p = new T.Vector3().setFromMatrixPosition(m), r = new T.Quaternion().setFromRotationMatrix(m), off = new T.Vector3(0.55, 0.22, -0.12).applyQuaternion(r); e.set(0.5, 0, 0); q.setFromEuler(e).premultiply(r); mic.push(new T.Matrix4().compose(p.clone().add(off), q, v(1, 1, 1))); }
+      k.instances(new T.CylinderGeometry(0.008, 0.012, 0.45, 5), k.flat(0x1a1a1c, 0.7, 0.4), mic);
+      /* gilt edges on the rostrum steps and the President's desk */
+      for (const [w, y, z] of [[18.2, 2.42, Z0 + 5.56], [12.2, 3.52, Z0 + 4.56], [11.2, 1.42, Z0 + 7.52], [3.6, 2.82, Z0 + 7.96]] as const) k.box(w, 0.06, 0.06, 0, y, z, goldDark);
+      /* the three chairs behind the President's desk */
+      many(k, 'unassembly/armchair', { height: 1.05 }, [[-3.2, 2.4, Z0 + 2.15, 0], [0, 2.4, Z0 + 2.15, 0], [3.2, 2.4, Z0 + 2.15, 0]], (o) => tintAll(o, 0x6a8a74, 0.7, 0.05));
+      /* exit signs over the two doors */
+      for (const x of [-7.2, 7.2]) hsign(k, 'EXIT', 1.1, 0.34, x, TOP + 3.5, Z1 - 0.12, PI, { fg: '#e8f4ea', bg: '#1d6a3a', lit: true });
+      /* the one trick: WE THE PEOPLES written on the floor of the well, standing up from the centre aisle */
+      const ez = -1.5, eh = floorY(0, ez) + 3;
+      standUp(k, 'WE THE PEOPLES', '#e8c86a', 0, ez, eh, 0, 0, 9, 6, 1.8);
+      k.egg(v(0, 0.8, -13), { id: 'we-the-peoples', title: 'We the peoples', year: '1945', text: 'The Charter of the United Nations opens with the words We the peoples of the United Nations. It was signed in San Francisco on 26 June 1945 and came into force on 24 October 1945, the day still kept as United Nations Day.', clue: 'Walk down the centre aisle until the words on the floor of the well stand up.', source: { name: 'Charter of the United Nations, Wikipedia', url: 'https://en.wikipedia.org/wiki/Charter_of_the_United_Nations' } }, { r: 3 });
+    }
     /* the back wall, with the entrance doors at the ends of the back aisle */
     k.box(40, 9.6, 0.6, 0, 4.8, Z1 + 0.3, wood); k.box(40, WH - 9.6, 0.6, 0, 9.6 + (WH - 9.6) / 2, Z1 + 0.5, upper);
     for (let x = -12; x <= 12; x += 3) { const gl = k.box(2.6, 1.7, 0.08, x, 13.2, Z1 + 0.1, boothGlass); void gl; }
@@ -375,7 +497,7 @@ export const unassembly: RoomDef = {
     k.box(18, 2.4, 5.5, 0, 1.2, Z0 + 2.8, serpDark);
     k.box(12, 1.1, 1.3, 0, 2.95, Z0 + 3.9, serp);
     k.box(12.3, 0.08, 1.5, 0, 3.55, Z0 + 3.9, k.flat(0x1a3a2a, 0.2, 0.2));
-    for (const x of [-3.2, 0, 3.2]) { k.box(0.8, 1.6, 0.2, x, 3.3, Z0 + 2.3, k.flat(0x3a2418, 0.1, 0.6)); figure(k, x, 2.4, Z0 + 2.9, 0x1c1f26, { h: 0.85 }); }
+    for (const x of [-3.2, 0, 3.2]) { if (!HAS_DOM) k.box(0.8, 1.6, 0.2, x, 3.3, Z0 + 2.3, k.flat(0x3a2418, 0.1, 0.6)); figure(k, x, 2.4, Z0 + 2.9, 0x1c1f26, { h: 0.85 }); }
     k.box(11, 1.4, 2.2, 0, 0.7, Z0 + 6.4, serp);
     k.box(3.4, 1.4, 1.5, 0, 2.1, Z0 + 7.2, serp);
     k.box(3.6, 0.08, 1.7, 0, 2.84, Z0 + 7.2, k.flat(0x1a3a2a, 0.2, 0.2));
@@ -389,7 +511,7 @@ export const unassembly: RoomDef = {
     { const a = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 0.55, 6), k.flat(0x1a1c22, 0, 0.8)); a.position.y = -0.26; spArm.add(a); }
     if (!R) k.ticks.push((t) => { spk.rotation.y = 0.35 * Math.sin(t * 0.23); spArm.rotation.x = -0.6 - 0.5 * Math.max(0, Math.sin(t * 1.7)) * (Math.sin(t * 0.4) > 0 ? 1 : 0.3); spArm.rotation.z = 0.2 * Math.sin(t * 1.1); });
     /* ---- the ceiling and the shallow dome with its ring of lights ---- */
-    const DR = 17, DZ = -2, CY = 20.5;
+    const DR = DRc, DZ = DZc, CY = CYc;
     { const ring = new T.RingGeometry(DR, 60, 64, 1); ring.rotateX(PI / 2); k.mesh(ring, ceiling, 0, CY, DZ); }
     { const cap = new T.SphereGeometry(40, 64, 10, 0, PI * 2, 0, Math.asin(DR / 40)); k.mesh(cap, dome, 0, CY + 4.2 - 40, DZ); }
     k.torus(DR - 0.2, 0.28, 0, CY - 0.1, DZ, goldDark, 96).rotation.x = PI / 2;
@@ -450,18 +572,18 @@ export const weitsmanyard: RoomDef = {
     });
     const fragGroundS = canvasSurface(256, (u, v) => { const a = dn(u * 16, v * 16), b = dn2(u * 64, v * 64), s = 0.6 + a * 0.3 + b * 0.3; return [104 * s, 94 * s, 82 * s]; });
     const ribs = (tint: number) => { const [r, g, b] = X.hex(tint); return canvasSurface(256, (u, v) => { const s = 0.78 + 0.22 * Math.abs(Math.sin(u * PI * 16)) + (dn(u * 16, v * 16) - 0.5) * 0.08 - (v > 0.97 ? 0.2 : 0); return [r * s, g * s, b * s]; }); };
-    const dirt = k.pbr('wyDirt', dirtS, 0.06, { roughness: 1 }), fragGround = k.pbr('wyFragG', fragGroundS, 0.12, { roughness: 1 });
-    const greyClad = k.pbr('wyGrey', ribs(0xb3b7ba), 0.25, { roughness: 0.6, metalness: 0.3 }), blueClad = k.pbr('wyBlueC', ribs(0x2f63a8), 0.25, { roughness: 0.55, metalness: 0.3 });
-    const concrete = k.pbr('wyConc', X.concrete(0xa8a398, 72), 0.3), asphalt = k.pbr('wyAsph', X.asphalt(0x3a3b3c), 0.15);
+    const dirt = sc(k, 'weitsmanyard', 'yard', 5, () => dirtS, { color: 0xe0cca8, roughness: 1 }, 0xa8946c), dirtFar = k.pbr('wyDirt', dirtS, 0.06, { roughness: 1 }), fragGround = k.pbr('wyFragG', fragGroundS, 0.12, { roughness: 1 });
+    const greyClad = sc(k, 'weitsmanyard', 'clad', 2.4, () => ribs(0xb3b7ba), { color: 0xd4d8dc, roughness: 0.6, metalness: 0.35 }, 0x9a9ea2), blueClad = sc(k, 'weitsmanyard', 'clad', 2.4, () => ribs(0x2f63a8), { color: 0x4a7ed0, roughness: 0.55, metalness: 0.35 }, 0x2f63a8);
+    const concrete = sc(k, 'weitsmanyard', 'blocks', 2.4, () => X.concrete(0xa8a398, 72), { color: 0xd8d2c4 }, 0xa8a398), asphalt = sc(k, 'weitsmanyard', 'road', 6, () => X.asphalt(0x3a3b3c), { color: 0x8a8a8a, roughness: 0.9 }, 0x3a3b3c);
     const yellow = k.flat(0xf1b407, 0.25, 0.5), cat = k.flat(0xe0a511, 0.25, 0.55), white = k.flat(0xf0f0ea, 0.2, 0.5), glassD = k.flat(0x33424f, 0.85, 0.1),
       dark = k.flat(0x2e3033, 0.5, 0.6), tyre = k.flat(0x161616, 0, 0.92), grab = k.flat(0x5a4c40, 0.7, 0.55), blue = k.flat(0x2a62ad, 0.35, 0.5),
       blueDeep = k.flat(0x1d4c8f, 0.35, 0.5), rail = k.flat(0xf2c200, 0.2, 0.5), mack = k.flat(0x1e4b37, 0.45, 0.4), chrome = k.flat(0xd4d8dc, 1, 0.22),
-      rust = k.flat(0x6b3b24, 0.35, 0.85), rust2 = k.flat(0x57301e, 0.35, 0.85), tub = k.flat(0x1a1d22, 0.5, 0.5), belt = k.flat(0x1c1c1c, 0, 0.9), orange = k.flat(0xe0671d, 0.2, 0.6);
+      rust = sc(k, 'weitsmanyard', 'rust', 3, () => X.steel(0x6b3b24, false, 31), { color: 0xc8987a, roughness: 0.85, metalness: 0.3 }, 0x6b3b24), rust2 = sc(k, 'weitsmanyard', 'rust', 2.2, () => X.steel(0x57301e, false, 32), { color: 0x9a7058, roughness: 0.85, metalness: 0.3 }, 0x57301e), tub = k.flat(0x1a1d22, 0.5, 0.5), belt = k.flat(0x1c1c1c, 0, 0.9), orange = k.flat(0xe0671d, 0.2, 0.6);
     const cars = photo(k, 'cars.jpg', 1 / 10), carsHeap = photo(k, 'cars.jpg', 1 / 8, { color: 0x8a8682 }), pile = photo(k, 'pile.jpg', 1 / 6, { crop: [0, 0, 1, 0.66], mirror: true, color: 0x8e8a86 }),
       frag = photo(k, 'frag.jpg', 1 / 3, { crop: [0, 0.1, 0.85, 1], mirror: true, color: 0x7a7672 }), carsI = photo(k, 'cars.jpg', 0, { rough: 0.6 }), cans = photo(k, 'cans.jpg', 1 / 4, { mirror: true }), briq = photo(k, 'briquettes.jpg', 1 / 3, { mirror: true });
 
     /* ---- the valley: yard floor, fields, the wooded ridges of the Southern Tier ---- */
-    k.cyl(175, 0.3, 0, -0.15, 0, dirt, 175, 64);
+    k.cyl(175, 0.3, 0, -0.15, 0, dirtFar, 175, 64);
     k.box(150, 0.32, 150, 0, -0.14, 0, dirt);
     k.box(12, 0.34, 170, 23, -0.13, 120, asphalt);
     {
@@ -874,6 +996,64 @@ export const weitsmanyard: RoomDef = {
     /* the yard crew in hi vis, and a few walking the scale */
     for (const [x, z, c, r] of [[14, -14, 0xf2c300, 0.5], [18, -24, 0xff7a1a, 2.2], [-12, -16, 0xd8f02a, -0.4], [36, -36, 0xff7a1a, 0], [27, 18, 0xd8f02a, -1.2], [-44, 6, 0xf2c300, 0.8]] as const) figure(k, x, 0, z, c, { rotY: r });
     if (!R) k.crowd([v(28, 0, 14), v(28, 0, 34), v(20, 0, 38), v(12, 0, 30)], 5, { seed: 152, speed: 0.6, spread: 0.8, colors: [0xf2c300, 0xff7a1a, 0xd8f02a, 0x2a3a5a] });
+
+    /* ---- wave 8c: the yard as built ---- */
+    {
+      /* real wrecks on the car mountain, on the feed pile and in a waiting line by the infeed (in house models from THE SHIFT) */
+      const rnd = X.mulberry(8152), onHeap = (H: (x: number, z: number) => number, cx: number, cz: number, rx: number, rz: number, n: number, out: number[][]) => {
+        for (let i = 0, g = 0; i < n && g < n * 6; g++) { const a = rnd() * PI * 2, d = 0.25 + Math.sqrt(rnd()) * 0.65, x = cx + Math.cos(a) * rx * d, z = cz + Math.sin(a) * rz * d, y = H(x, z); if (y < 1) continue; out.push([x, y - 0.45, z, rnd() * PI * 2, 0.92 + rnd() * 0.16]); i++; }
+      };
+      const rusty: number[][] = [], towed: number[][] = [];
+      onHeap(M1.H, -26, -38, 30, 15, 5, rusty); onHeap(M1.H, -26, -38, 30, 15, 4, towed);
+      onHeap(M2.H, -62, -34, 16, 14, 1, rusty); onHeap(HX.H, -19, -4, 5, 4, 1, towed);
+      for (let i = 0; i < 4; i++) (i % 2 ? rusty : towed).push([9 + i * 2.2, 0, -12 - i * 0.8, 0.6 + (i % 3) * 0.3, 1]);
+      many(k, 'weitsmanyard/car_rusty', { length: 4.5 }, rusty);
+      many(k, 'weitsmanyard/car_towed', { length: 4.5 }, towed);
+      /* the canopy as built: a corrugated roof deck seen from below, purlins, knee braces, downpipes */
+      const sheet = sc(k, 'weitsmanyard', 'sheet', 2, () => ribs(0x8a9096), { color: 0xb8c0c8, roughness: 0.55, metalness: 0.45, side: T.DoubleSide }, 0x7a8086);
+      k.box(CX1 - CX0 + 2.6, 0.08, CZF - CZ0 + 1.6, (CX0 + CX1) / 2, CH + 3.1, (CZF + CZ0) / 2 - 0.4, sheet);
+      const pur: number[][] = []; for (let z = CZ0 + 1.5; z < CZF; z += 2.5) pur.push([(CX0 + CX1) / 2, CH + 2.9, z, 0, CX1 - CX0 + 2, 0.3, 0.15]);
+      boxes(k, blueDeep, pur);
+      const kb: T.BufferGeometry[] = [];
+      for (const x of colsX) for (const z of [CZF, CZ0]) { for (const dx of [-1, 1]) if ((dx < 0 && x > CX0) || (dx > 0 && x < CX1)) kb.push(rod(v(x, CH - 3, z), v(x + dx * 3, CH, z), 0.13, 6)); kb.push(rod(v(x, CH - 3, z), v(x, CH, z + (z === CZF ? -3 : 3)), 0.13, 6)); }
+      k.mesh(merge(kb), blue);
+      for (const x of [-44.5, -29.5, -14.5, 0.5]) k.cyl(0.12, CH + 2, x, (CH + 2) / 2, CZF + 0.7, k.flat(0x8a9096, 0.6, 0.4), 0.12, 6);
+      /* a stack of old tyres and a row of oil drums by the gate road, where the spawn looks down the yard */
+      const ty: number[][] = [];
+      for (let c = 0; c < 6; c++) { const bx0 = -9 + (c % 3) * 1.25, bz0 = 23 + Math.floor(c / 3) * 1.25, n = 3 + Math.floor(rnd() * 4); for (let j = 0; j < n; j++) ty.push([bx0 + (rnd() - 0.5) * 0.1, j * 0.27, bz0 + (rnd() - 0.5) * 0.1, rnd() * 6]); }
+      for (let i = 0; i < 9; i++) ty.push([-11.5 + rnd() * 5, 0, 21 + rnd() * 1.4, rnd() * 6]);
+      many(k, 'weitsmanyard/tyre', { width: 1.05 }, ty, (o) => tintAll(o, 0xb0b0b0, 0.95, 0));
+      k.keepOut.push({ x: -8, z: 23.6, r: 2.8 });
+      const dr: number[][] = []; for (let i = 0; i < 8; i++) dr.push([13.2 + (i % 4) * 0.68, 0, 21.2 + Math.floor(i / 4) * 0.68, rnd() * 6]);
+      many(k, 'weitsmanyard/drum_a', { height: 0.9 }, dr.filter((_, i) => i % 2 === 0));
+      many(k, 'weitsmanyard/drum_b', { height: 0.9 }, dr.filter((_, i) => i % 2 === 1));
+      k.keepOut.push({ x: 14.2, z: 21.5, r: 1.5 });
+      /* propane by the scale house, condensers on the office roofs, a forklift at the tyre stack */
+      many(k, 'weitsmanyard/propane', { height: 1.3 }, [[SH.x + 3.6, 0, SH.z + 3.4, 0.3], [SH.x + 3.6, 0, SH.z + 2.4, 0.1]]);
+      many(k, 'weitsmanyard/aircon', { height: 1.1 }, [[-46, 7.45, 37, 0], [-36, 7.45, 37.5, 0.2], [SH.x, 4.15, SH.z + 2.5, PI / 2], [60, 4.4, 34, 0]]);
+      many(k, 'weitsmanyard/forklift', { length: 3.4 }, [[-4.5, 0, 25.5, -0.9]], (o) => tintAll(o, 0xffd060, 0.55, 0.3));
+      k.keepOut.push({ x: -4.5, z: 25.5, r: 2.2 });
+      /* the scale house as built: windows on the scale, a door with steps, its signs */
+      const glassH = k.flat(0x3a4c5c, 0.85, 0.08), trim = k.flat(0xf0f0ea, 0.2, 0.5);
+      for (const z of [SH.z - 2.6, SH.z + 0.6]) { k.box(0.1, 1.3, 2.2, SH.x - 3.04, 2.3, z, glassH); k.box(0.16, 0.12, 2.4, SH.x - 3.04, 1.6, z, trim); }
+      k.box(1.0, 2.2, 0.1, SH.x + 1.2, 1.1, SH.z + 5.04, k.flat(0x2a3a4a, 0.4, 0.5));
+      for (let i = 0; i < 3; i++) k.box(1.6, 0.18, 0.4, SH.x + 1.2, 0.09 + i * 0.18, SH.z + 5.9 - i * 0.3, concrete);
+      k.box(3.2, 0.12, 1.6, SH.x + 1.2, 2.6, SH.z + 5.8, blueDeep);
+      hsign(k, 'SCALE HOUSE', 4.2, 0.6, SH.x - 3.25, 3.55, SH.z, -PI / 2, { fg: '#ffffff', bg: '#1f56a6', lit: false });
+      hsign(k, 'ALL TRUCKS STOP', 2.6, 0.62, SH.x - 3.25, 0.95, SH.z + 3.4, -PI / 2, { fg: '#ffffff', bg: '#b3221c', border: '#ffffff', lit: false });
+      /* the safety board at the edge of the yard, facing the gate */
+      k.mesh(merge([bx(0.14, 3.0, 0.14, -1.6, 1.5, 0), bx(0.14, 3.0, 0.14, 1.6, 1.5, 0)]), dark, -13, 0, 17);
+      hsign(k, 'HARD HATS AND HI VIS BEYOND THIS POINT', 3.6, 0.9, -13, 2.45, 17.06, 0, { fg: '#141414', bg: '#f2c300', border: '#141414', lit: false });
+      hsign(k, 'YARD SPEED 5 MPH', 3.6, 0.5, -13, 1.7, 17.06, 0, { fg: '#ffffff', bg: '#1f56a6', lit: false });
+      k.keepOut.push({ x: -13, z: 17, r: 1.9 });
+      /* concrete lock blocks along the road edge and the scale approach */
+      const lb: number[][] = []; for (let z = 36; z < 60; z += 1.7) lb.push([17.6, 0.4, z, 0, 0.8, 0.8, 1.6]);
+      for (let z = 4; z < 12; z += 1.7) lb.push([20.2, 0.4, z, 0, 0.8, 0.8, 1.6]);
+      boxes(k, concrete, lb);
+      /* the one trick: OWEGO NY painted on the yard, standing up as a board from the gate */
+      standUp(k, 'OWEGO NY', '#f4f6fa', 6, 30, 3, 0, 0, 9, 6, 1.5);
+      k.egg(v(6, 0.6, 16), { id: 'owego-tioga', title: 'Owego, on the Susquehanna', text: 'Owego is a village on the Susquehanna River in the Southern Tier of New York and the county seat of Tioga County. The yard sits in the Tioga County Industrial Park outside it.', clue: 'Stand at the gate and read the yard floor.', source: { name: 'Owego (village), New York, Wikipedia', url: 'https://en.wikipedia.org/wiki/Owego_(village),_New_York' } }, { r: 2.6 });
+    }
 
     /* ---- the works: plates on the canopy columns, plate stood on end in the yard, the scale house, the trailer flanks ---- */
     const mounts: Mount[] = [];

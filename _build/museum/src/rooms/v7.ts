@@ -12,7 +12,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
-import { standIn, hide } from './heroes';
+import { standIn, hide, hero, heroInstances } from './heroes';
+import { scan, glbs, fireflyPlate } from './a';
+import { paintTex, hsign, anamorphTex, fit } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 const one = new T.Vector3(1, 1, 1);
@@ -80,6 +82,57 @@ function trimMountShadows(k: K, expect: number) {
   });
 }
 
+/* ---------- THE BIG UPGRADE, wave 8b (2026-11-24): helpers for 147 and 148 ----------
+   Scanned CC0 surfaces go through a.ts `scan` (assets/museum/tex/<room>/), real CC0 models from assets/museum/props/<room>/
+   are fitted once and set at every spot (seven or more become instanced parts), signs are in the house fonts. All of it
+   runs in node too, where the audit builds the room against a stub canvas and the loaders never resolve. */
+const W8_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const W8_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+/* Poly Haven glass comes as KHR transmission, which makes three draw the room a second time; plain transparency instead,
+   and small props stay out of the shadow pass */
+function solid(o: T.Object3D, shadow = false) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = shadow; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+/* the kit switches shadow casting back on for live meshes when it batches; pin it off for small props */
+function w8NoShadow(o: T.Object3D) { Object.defineProperty(o, 'castShadow', { get: () => false, set: () => {}, configurable: true }); }
+/* One real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function place(k: K, name: string, fitTo: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fitTo).then((h) => {
+    if (!h || !k.live) return;
+    solid(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      for (const p of ins.parts) w8NoShadow(p.im);
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); c.traverse((m) => { if (m instanceof T.Mesh) w8NoShadow(m); }); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* A sign in a house font; a flat plate in node. */
+function w8Sign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, border?: string, size = 0.56) {
+  if (!W8_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, border, size });
+}
+/* Painted lettering for an anamorphic floor piece, lines stacked, `colors` per letter. Null in node. */
+function w8Type(lines: string[], colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W8_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    const lh = h / lines.length;
+    lines.forEach((text, li) => {
+      const s = fit(g, text, font, lh * 0.82, w * 0.94, '800');
+      let x = (w - g.measureText(text).width) / 2, n = 0;
+      for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, lh * (li + 0.5) + s * 0.04); x += g.measureText(ch).width; if (ch === ' ') n--; }
+    });
+  }, [font]);
+}
+
 /* ---------------- 147 THE EIGHTY SIXTH FLOOR ---------------- */
 export const empirestate2: RoomDef = {
   id: 'empirestate',
@@ -101,8 +154,9 @@ export const empirestate2: RoomDef = {
     const W = (x: number, y: number, z: number) => { const s = warpS(x, z); return v(x * s, EYE + (y - EYE) * s, z * s); };
     const GY = -320;
 
-    const lime = k.pbr('esLime', X.ashlar(0xcfc3aa, 81, 6), 0.22, { normal: 0.35 }), limeDark = k.pbr('esLime2', X.ashlar(0xa89a82, 82, 4), 0.5),
-      deckFloor = k.pbr('esDeck', X.pavers(0x9a8e80, 83), 0.9, { roughness: 0.85 }),
+    /* w8b: Indiana limestone in courses and the deck's precast pavers are Poly Haven scans (CC0) at true size */
+    const lime = scan(k, 'empirestate', 'stone_tile_wall', 2.0, () => X.ashlar(0xcfc3aa, 81, 6), { color: 0xe8dcc4, roughness: 0.8 }), limeDark = k.pbr('esLime2', X.ashlar(0xa89a82, 82, 4), 0.5),
+      deckFloor = scan(k, 'empirestate', 'precast_stone_paving', 2.4, () => X.pavers(0x9a8e80, 83), { color: 0xc8beb0, roughness: 0.85 }),
       alu = k.flat(0xd8dade, 0.85, 0.32), steelDark = k.flat(0x2a2d31, 0.7, 0.45), dark = k.flat(0x14171b, 0.3, 0.7),
       darkGlass = k.flat(0x4a6078, 0.9, 0.08, { emissive: 0xffc890, emissiveIntensity: 0.22 }), brass = k.flat(0xc9a25a, 0.9, 0.3),
       tar = k.flat(0x3a3836, 0, 0.95), gravel = k.flat(0x6e6a64, 0, 0.95), roofGreen = k.flat(0x4a5a44, 0, 0.95), roofLight = k.flat(0x9a948a, 0, 0.9);
@@ -367,6 +421,18 @@ export const empirestate2: RoomDef = {
     };
     for (const x of [-12.6, -6.3, -2.1, 2.1, 6.3, 12.6]) { bino(x, -11.25, PI); bino(x, 11.25, 0); }
     for (const z of [-2.2, 2.2, 6.9]) { bino(-14.25, z, -PI / 2); bino(14.25, z, PI / 2); }
+    /* w8b: bronze finder plates on the inside of the parapet, the way the deck tells you what you are looking at */
+    {
+      const plaque = (t: string, x: number, z: number, r: number) => { const o = w8Sign(k, t, 1.9, 0.3, x, 1.12, z, r, '#f2e6c8', '#2a2118', 'W2 Archivo Expanded', false, '#c9a25a', 0.5); o.rotation.x = r === 0 ? -0.5 : r === PI ? 0.5 : 0; };
+      plaque('NORTH  ·  CENTRAL PARK 1.3 MI', -9.45, -11.67, 0); plaque('CHRYSLER BUILDING  ·  0.6 MI', 4.2, -11.67, 0); plaque('ONE VANDERBILT  ·  0.5 MI', 9.45, -11.67, 0); plaque('GEORGE WASHINGTON BRIDGE  ·  8 MI', -4.2, -11.67, 0);
+      plaque('EAST  ·  LONG ISLAND CITY 2 MI', 14.52, -4.6, -PI / 2); plaque('WEST  ·  HUDSON YARDS 0.9 MI', -14.52, -4.6, PI / 2);
+      plaque('SOUTH  ·  ONE WORLD TRADE CENTER 3.3 MI', -9.45, 11.67, PI);
+      w8Sign(k, 'EIGHTY SIXTH FLOOR   ·   1,050 FEET', 9, 0.46, 0, 4.25, -8.27, PI, '#e8c878', '#1e1812', 'W2 Archivo Expanded', false, '#c9a25a', 0.62);
+    }
+    /* w8b: the illusion, painted flat on the north terrace and stretched east, so that from where the lift lets you out it
+       stands up off the pavers like a sign; walk onto it and it falls back into long smears */
+    { const t = w8Type(['1,050 FEET', 'ABOVE FIFTH AVENUE'], ['#e8c878', '#f2e6c8'], 1024, 512); if (t) anamorphTex(k, t, -13.1, -10.2, 3, 0.0, -PI / 2, 7, 1.6, 0.95, 0.9); }
+    k.egg(v(-4.5, 0.4, -10.2), { id: 'es-anamorph', title: 'A sign that is not there', text: 'The words are painted flat on the pavers and stretched along the terrace, so that from the corner where you come out onto the deck they stand up like a sign hanging in the air. Walk onto them and they fall back into long smears. The trick is anamorphosis, the same one that hides a skull across the floor of Hans Holbein\'s The Ambassadors of 1533.', clue: 'Go back to the north west corner and look along the floor.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
     /* the enclosed observatory: limestone and glass, the lift door on the south side */
     const LY = -40;
     const CW = 22, CD = 16;
@@ -423,7 +489,9 @@ export const empirestate2: RoomDef = {
         { a: v(-500, 0, -780), b: v(-500, 0, 780) }, { a: v(440, 0, 780), b: v(440, 0, -780) },
       ];
       const NC = 190, cars = k.instances(new T.BoxGeometry(2.0, 1.6, 4.8), new T.MeshStandardMaterial({ roughness: 0.5, metalness: 0.3 }), Array.from({ length: NC }, () => new T.Matrix4()));
-      cars.frustumCulled = false;
+      /* w8b: a thousand feet down these are dots; marked as cabs so the kit does not swap 190 fourteen thousand triangle
+         taxis in under them (most of this room's triangle count) */
+      cars.frustumCulled = false; cars.userData.cab = true; cars.castShadow = false;
       const rnd = X.mulberry(34), c = new T.Color(), pal = [0xf2c21a, 0xf2c21a, 0xf2c21a, 0x1c1e22, 0xe8e8e8, 0x2a3a5a, 0x8a1a1a, 0x9aa0a8];
       const st = Array.from({ length: NC }, (_, i) => ({ l: i % lanes.length, s: rnd(), v: (9 + rnd() * 5) / 1560 }));
       for (let i = 0; i < NC; i++) cars.setColorAt(i, c.set(pal[Math.floor(rnd() * pal.length)]));
@@ -490,7 +558,7 @@ export const empirestate2: RoomDef = {
     {
       const marbleLow = k.pbr('esMarbleLo', X.marble(0x6a4a34, 0x3a2418, 85), 0.9, { roughness: 0.18 }),
         marbleHi = k.pbr('esMarbleHi', X.marble(0xc8a878, 0x8a6a48, 86), 0.8, { roughness: 0.22 }),
-        floorM = k.pbr('esTerr', X.terrazzo(0x8a7a64, 87), 0.4, { roughness: 0.3 }), gilt = k.pbr('esGilt', X.gilt(), 1.5, { metalness: 0.9, roughness: 0.3 });
+        floorM = scan(k, 'empirestate', 'terrazzo_tiles', 1.6, () => X.terrazzo(0x8a7a64, 87), { color: 0xd8c8b0, roughness: 0.28 }), gilt = k.pbr('esGilt', X.gilt(), 1.5, { metalness: 0.9, roughness: 0.3 });
       k.box(2 * HX + 1, 0.4, 2 * HZ + 8.5, 0, LY - 0.2, 2, floorM);
       /* the floor inlay: a band of dark marble down the middle with brass lines */
       k.box(2 * HX - 1, 0.02, 1.6, 0, LY + 0.01, 0, k.flat(0x3a2a22, 0.1, 0.2)); for (const s of [-1, 1]) k.box(2 * HX - 1, 0.025, 0.06, 0, LY + 0.015, s * 0.85, brass);
@@ -535,12 +603,17 @@ export const empirestate2: RoomDef = {
       for (let i = 0; i <= 4; i++) k.box(0.3, 0.4, 2 * HZ, -HX + i * (2 * HX / 4), LY + HH - 0.2, 0, gilt);
       for (const s of [-1, 1]) k.box(2 * HX, 0.4, 0.3, 0, LY + HH - 0.2, s * (HZ - 0.15), gilt);
       /* the two chandeliers put back in 2009 */
+      /* w8b: a real chandelier (Poly Haven Chandelier_03, CC0) takes over from the code tiers once it loads */
+      const chMark = k.objects.length;
       for (const x of [-5, 5]) {
         k.cyl(0.03, 2.2, x, LY + HH - 1.1, 0, brass);
         for (let j = 0; j < 4; j++) k.cyl(0.7 - j * 0.14, 0.34, x, LY + HH - 2.4 - j * 0.38, 0, k.glow(0xc8a060), 0.8 - j * 0.14, 16);
         k.cyl(0.9, 0.08, x, LY + HH - 2.2, 0, brass, 0.9, 16);
         k.point(x, LY + HH - 3.6, 0, 0xffd8a0, 30, 16);
       }
+      { const old = standIn(k, chMark).filter((o) => !(o instanceof T.Light)); place(k, 'empirestate/chandelier', { height: 2.6 }, [[-5, LY + HH - 2.75, 0, 0], [5, LY + HH - 2.75, 0, 0]], undefined, (os) => { if (os.length) hide(old); }); }
+      /* the Firefly ceiling (FIREFLY_QUEUE.md) lays over the canvas one once the file exists */
+      { const pl = fireflyPlate(k, 'assets/museum/tex/empirestate/ff_lobby_ceiling.webp', 2 * HX - 0.4, 2 * HZ - 0.4, 0, LY + HH - 0.05, 0, 0, W8_HIDDEN, true); pl.rotation.set(PI / 2, 0, 0); }
       /* v7: the west lamp sat a metre off the aluminium relief and burned it white */
       k.point(-7.4, LY + 5.5, 0, 0xffd8a0, 7, 9); k.point(9, LY + 5.5, 0, 0xffd8a0, 18, 9);
       for (let x = -6; x <= 6; x += 6) for (const s of [-1, 1]) k.box(0.3, 0.9, 0.12, x + 3, LY + 5.2, s * (HZ - 0.08), k.glow(0xb89058));
@@ -690,13 +763,16 @@ export const stpatricks2: RoomDef = {
     k.hemi(0xf4e6d0, 0x5a4c3e, 0.62);
     /* the sun from the south, high: through the south clerestory and aisle windows onto the north side */
     k.sun(0xfff0d8, 3.2, 70, 62, 6, true, 70);
-    const stone = k.pbr('spStone', X.plaster(0xe2d8c4, 91), 0.25, { normal: 0.5, roughness: 0.85 }), pierM = k.pbr('spPier', X.marble(0xe6e0d4, 0xb8b2a6, 90), 0.3, { roughness: 0.4 }),
+    /* w8b: the walls, the vaults, the columns and the floor wear Poly Haven scans (CC0) at true size: dressed white stone
+       in courses, rough lime plaster in the webs of the vault, veined marble on the columns and the floor */
+    const stone = scan(k, 'stpatricks', 'stone_tile_wall', 2.2, () => X.plaster(0xe2d8c4, 91), { color: 0xf2eadc, roughness: 0.85 }),
+      pierM = scan(k, 'stpatricks', 'marble_01', 1.6, () => X.marble(0xe6e0d4, 0xb8b2a6, 90), { color: 0xf4efe6, roughness: 0.38 }),
       stoneDark = k.pbr('spStone2', X.ashlar(0xb8ad98, 92, 4), 0.35, { normal: 0.4 }),
-      vaultM = k.pbr('spVault', X.plaster(0xe2d6bc, 93), 0.25, { roughness: 0.9 }),
-      marbleF = k.pbr('spFloor', X.marble(0xcfc8ba, 0x8a8478, 94), 0.22, { roughness: 0.35 }),
+      vaultM = scan(k, 'stpatricks', 'white_plaster_rough_01', 3.2, () => X.plaster(0xe2d6bc, 93), { color: 0xeee4d0, roughness: 0.92 }),
+      marbleF = scan(k, 'stpatricks', 'marble_01', 1.1, () => X.marble(0xcfc8ba, 0x8a8478, 94), { color: 0xd8d0c2, roughness: 0.3 }, PI / 2),
       marbleDark = k.pbr('spFloor2', X.marble(0x6a4a44, 0x3a2622, 95), 0.4, { roughness: 0.3 }),
       altarM = k.pbr('spAltar', X.marble(0xe2ded6, 0x9a968e, 96), 0.5, { roughness: 0.25 }),
-      oak = k.pbr('spOak', X.planks(0x5a3a22, 5, 97), 0.8, { roughness: 0.6 }), oakDark = k.flat(0x3a2616, 0, 0.6),
+      oak = scan(k, 'stpatricks', 'oak_veneer_01', 1.2, () => X.planks(0x5a3a22, 5, 97), { color: 0x8a6448, roughness: 0.5 }), oakDark = k.flat(0x3a2616, 0, 0.6),
       bronze = k.flat(0x7a5a2e, 0.9, 0.38), gilt = k.pbr('spGilt', X.gilt(), 2, { metalness: 0.9, roughness: 0.3 }),
       pipeM = k.flat(0xc8ccd0, 1, 0.25), dark = k.flat(0x0e0c0c, 0, 0.9), iron = k.flat(0x1c1a18, 0.6, 0.5);
     const NX = 7, AX = 14.5, Z0 = 42, ZX = -7, ZC = -21, ZE = -46, TX = 26;
@@ -799,7 +875,9 @@ export const stpatricks2: RoomDef = {
       for (const r of [60, 230, 500]) { g.lineWidth = r === 500 ? 26 : 14; g.beginPath(); g.arc(C, C, r, 0, PI * 2); g.stroke(); }
       g.fillStyle = '#c09a30'; g.beginPath(); g.arc(C, C, 52, 0, PI * 2); g.fill();
     });
-    { const m = new T.MeshBasicMaterial({ map: rose, side: T.DoubleSide, color: 0xf0e8e0, transparent: true, opacity: 0.98 }); const o = k.mesh(new T.CircleGeometry(ROSE_R + 0.05, 48), m, 0, ROSE_Y, Z0 + 0.4); o.rotation.y = PI; }
+    { const m = new T.MeshBasicMaterial({ map: rose, side: T.DoubleSide, color: 0xf0e8e0, transparent: true, opacity: 0.98 }); const o = k.mesh(new T.CircleGeometry(ROSE_R + 0.05, 48), m, 0, ROSE_Y, Z0 + 0.4); o.rotation.y = PI;
+      /* w8b: the Firefly rose (FIREFLY_QUEUE.md) takes over the canvas one as soon as the file exists */
+      if (W8_DOM) new T.TextureLoader().load('assets/museum/tex/stpatricks/ff_rose_window.webp', (t) => { if (!k.live) return; t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.needsUpdate = true; }, undefined, () => {}); }
     k.torus(ROSE_R + 0.15, 0.25, 0, ROSE_Y, Z0 - 0.45, stoneDark, 48);
     /* the gallery and the Gallery Organ: two towers of pipes and a low flat between them, in carved oak */
     const GY = 9.4, GZ = Z0 - 5.6;
@@ -910,8 +988,14 @@ export const stpatricks2: RoomDef = {
         lm.push(new T.Matrix4().makeTranslation(x, y, z)); gm.push(new T.Matrix4().makeTranslation(x, y, z));
         k.beam(v(x, y + 0.9, z), v(x, Math.abs(x) > 8 ? 10.8 + av.prof(Math.abs(x) - (NX + 0.45 + (AX - 0.4 - NX - 0.45) / 2)) - 0.2 : SPRING + nv.prof(x) - 0.2, z), 0.025, iron, 4);
       }
-      noShadow(k.instances(lantern, bronze, lm), k.instances(glowG, k.glow(0xffc070), gm));
+      const codeLanterns = k.instances(lantern, bronze, lm);
+      noShadow(codeLanterns, k.instances(glowG, k.glow(0xffc070), gm));
       for (const z of [35, 21, 7]) for (const x of [-4, 4]) k.point(x, 8.2, z, 0xffc890, 40, 16);
+      /* w8b: the lanterns are a real model now (Poly Haven lantern_chandelier_01, CC0), bronze and glass, instanced, with the
+         glow kept inside; the code lantern stays until it loads */
+      place(k, 'stpatricks/lantern', { height: 1.75 }, lm.map((m) => { const p = new T.Vector3().setFromMatrixPosition(m); return [p.x, p.y - 0.62, p.z, 0]; }), (o) => {
+        o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const ms = (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshStandardMaterial[]; for (const mm of ms) if (/lamp/i.test(mm.name)) { mm.emissive = new T.Color(0xffc070); mm.emissiveIntensity = 2.2; } });
+      }, () => { codeLanterns.visible = false; });
     }
     /* votive candles in racks along the transept walls: red glass, each flame on its own breath */
     {
@@ -994,7 +1078,8 @@ export const stpatricks2: RoomDef = {
       { const old = standIn(k, am); void Promise.resolve(k.prop('armillary', 0, 3.6, Z0 + 43, { height: 10 })).then((o) => { if (o) hide(old); }); }
       if (!ctx.reduced) {
         const NC = 12, cabs = k.instances(new T.BoxGeometry(4.6, 1.5, 2), new T.MeshStandardMaterial({ roughness: 0.5, metalness: 0.3 }), Array.from({ length: NC }, () => new T.Matrix4()));
-        cabs.frustumCulled = false;
+        /* w8b: seen through the doors; kept as painted boxes (marked cabs) so the kit does not swap in 14k triangle taxis */
+        cabs.frustumCulled = false; cabs.userData.cab = true;
         const rnd = X.mulberry(51), c = new T.Color();
         const st = Array.from({ length: NC }, (_, i) => ({ s: rnd() * 120, lane: Z0 + 14 + (i % 4) * 4.2, v: 7 + rnd() * 5 }));
         st.forEach((_, i) => cabs.setColorAt(i, c.set(i % 3 ? 0xf2c21a : [0x1c1e22, 0xe8e8e8, 0x2a3a5a][i % 3 === 0 ? (i / 3) % 3 | 0 : 0])));
@@ -1011,6 +1096,41 @@ export const stpatricks2: RoomDef = {
       k.crowd([v(-0.3, 0, 39.5), v(-0.3, 0, -5.9), v(-9.4, 0, -5.9), v(-9.4, 0, 39.5), v(0.3, 0, 40.2), v(9.4, 0, 39.5), v(9.4, 0, -5.9), v(0.3, 0, -5.9)], 18, { seed: 71, speed: 0.4, spread: 0.9, closed: true, colors: [0x1c232c, 0x2a2a34, 0xe8e2d4, 0x2a3f6a, 0x6a2a2a, 0x3a4a3a, 0x8a8a90, 0xc8b8a0, 0xd82a3a] });
     }
     figure(k, 0, 1.9, ALZ - 1.2, 0xf0ece4, { rotY: 0, h: 0.95 });
+
+    /* ---------- w8b: saints on the piers, candles on the altar, the notices by the door ---------- */
+    {
+      /* a carved stone figure on a corbel on every nave column, facing the centre aisle, the way the cathedral's saints
+         stand on its piers (Poly Haven gothic_statue, CC0); the corbels and the little canopies over them are code */
+      const saints: number[][] = [];
+      for (let i = 1; i <= 6; i++) for (const s of [-1, 1]) {
+        const z = Z0 - i * 7, x = s * 5.75;
+        k.box(1.0, 0.32, 1.1, x, 4.18, z, stoneDark); k.box(0.7, 0.3, 0.8, s * 5.95, 3.88, z, stoneDark);
+        k.box(1.1, 0.16, 1.2, x, 6.7, z, stoneDark);
+        const gab = new T.ConeGeometry(0.72, 0.9, 4); gab.rotateY(PI / 4); k.mesh(gab, stoneDark, x, 7.23, z);
+        saints.push([x + s * 0.05, 4.34, z, s < 0 ? PI / 2 : -PI / 2]);
+      }
+      place(k, 'stpatricks/saint', { height: 2.2 }, saints, (o) => o.traverse((c) => { if (c instanceof T.Mesh) { const m = c.material as T.MeshStandardMaterial; m.color.multiplyScalar(1.25); } }));
+      /* the altar candles: two brass candelabra at the ends of the mensa (Poly Haven brass_candleholders, CC0) */
+      place(k, 'stpatricks/candleholders', { width: 1.3 }, [[-1.25, 2.86, ALZ - 0.25, 0], [1.25, 2.86, ALZ - 0.25, PI]]);
+      /* the hymn board on the first column, read from the door */
+      k.box(0.86, 1.5, 0.08, -7, 2.3, 36.05, oakDark); k.box(0.92, 0.08, 0.12, -7, 3.08, 36.05, gilt);
+      ['HYMNS', '452', '311', '87', '624'].forEach((t, i) => w8Sign(k, t, 0.72, 0.24, -7, 2.86 - i * 0.27, 36.1, 0, i ? '#f2ead8' : '#c9a25a', '#1a120c', i ? 'W2 JetBrains Mono' : 'W2 Archivo Expanded', false, undefined, 0.7));
+      /* a brass stand inside the door asking for quiet */
+      k.cyl(0.025, 1.1, 2.6, 0.55, 35.6, gilt, 0.025, 8); k.cyl(0.18, 0.04, 2.6, 0.02, 35.6, gilt, 0.2, 16);
+      const plate = w8Sign(k, 'PLEASE KEEP SILENCE', 0.62, 0.22, 2.6, 1.22, 35.62, 0, '#f2ead8', '#2a1c12', 'W2 Archivo Expanded', false, '#c9a25a', 0.5); plate.rotation.x = -0.35;
+      k.keepOut.push({ x: 2.6, z: 35.6, r: 0.4 });
+    }
+    /* ---------- w8b: the illusion, a rose of light thrown from the door ----------
+       A projector at the eye of a visitor who has just come in throws the rose window down the nave as coloured light.
+       It lands in pieces on the columns, the arches, the pews and the vault; from the one spot inside the door the pieces
+       line up into a perfect rose hanging in the air, and a step either way breaks it apart again. */
+    if (W8_DOM) {
+      const proj = new T.SpotLight(0xffffff, 9, 0, 0.13, 0.04, 0);
+      proj.position.set(0, 3, 38.6); proj.target.position.set(0, 11.5, 0);
+      proj.map = rose; proj.castShadow = false;
+      k.add(proj); k.add(proj.target);
+    }
+    k.egg(v(0, 3.4, 37.2), { id: 'rose-of-light', title: 'A rose that is not there', text: 'Stand just inside the bronze doors and a second rose window hangs in the middle of the nave, a perfect circle of blue, red and gold. It is light thrown from the door, and it has landed in pieces on the columns, the arches, the pews and the vault. Only from the spot it was thrown from do the pieces line up; take one step and the rose falls apart. The Swiss artist Felice Varini paints buildings the same way, shapes that come together from a single point.', clue: 'Go back to the doors and look up the nave.', source: { name: 'Felice Varini, Wikipedia', url: 'https://en.wikipedia.org/wiki/Felice_Varini' } }, { r: 1.6 });
 
     /* ---------- the works ---------- */
     const mounts: Mount[] = [];

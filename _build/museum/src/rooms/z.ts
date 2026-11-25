@@ -4,9 +4,143 @@ import { personTag } from '../kit';
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { street, blockFront } from './f';
+import { street, blockFront, hsign, paintTex, anamorphTex } from './f';
+import { fireflyPlate } from './a';
+import { hero, heroInstances } from './heroes';
 import { BARNEY_ART } from './barney_art';
 const PI = Math.PI;
+type K7 = Parameters<RoomDef['build']>[0];
+
+/* ---------- THE BIG UPGRADE, wave 7a (2026-11-24): helpers for Katz's and Barney Greengrass ----------
+   Scanned CC0 surfaces (Poly Haven, assets/museum/tex/<room>/<id>_{c,n,r}.webp) that wear a set colour until all
+   three maps land; real models from assets/museum/props/<room>/ fitted once and placed many times (seven or more
+   become instanced parts); house font signs. Safe in node: the audit builds these rooms with no DOM, so a scan falls
+   back to its painted surface, no canvas is touched and the loaders never resolve. */
+const W7_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w7L = W7_DOM ? new T.TextureLoader() : null;
+const w7S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w7Scan(k: K7, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w7L) return k.pbr(`w7a-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w7S.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w7L.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w7S.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w7a-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w7a) {
+    m.userData.w7a = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* Glass in a Poly Haven model comes as KHR transmission (the room drawn twice a frame): plain transparency instead,
+   and props cast no shadows (they doubled the triangles in wave 6). */
+function w7Solid(o: T.Object3D, shadow = false) {
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = shadow; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+}
+/* One real model fitted once (heroes.ts: centred on x and z, standing on y) and set at every [x, y, z, rotY, scale?]. */
+function w7Place(k: K7, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    w7Solid(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit();
+      then?.([]);
+      return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* A sign in a house font, lit (neon, a light box) or not; a grey card in node. */
+function w7Sign(k: K7, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, border?: string, size = 0.6) {
+  if (!W7_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, border, size });
+}
+/* Neon: the lettering twice, a wide soft halo under a crisp tube, both additive, on no ground. */
+function w7Neon(k: K7, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, color: string, font = 'W2 Archivo Expanded') {
+  if (!W7_DOM) return k.box(w, h, 0.02, x, y, z, k.glow(0xff4a3a));
+  const W = 1024, H = Math.max(64, Math.round((W * h) / w));
+  const t = paintTex(W, H, (g) => {
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    let s = H * 0.66; g.font = `800 ${s}px "${font}", Arial, sans-serif`;
+    const tw = g.measureText(text).width; if (tw > W * 0.9) { s *= (W * 0.9) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; }
+    g.shadowColor = color; g.shadowBlur = H * 0.22; g.lineJoin = 'round';
+    g.strokeStyle = color; g.lineWidth = Math.max(4, s * 0.09); g.strokeText(text, W / 2, H / 2);
+    g.shadowBlur = H * 0.08; g.strokeStyle = '#fff6ee'; g.lineWidth = Math.max(2, s * 0.035); g.strokeText(text, W / 2, H / 2);
+  }, [font]);
+  const o = k.mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide }), x, y, z, true);
+  o.rotation.y = rotY;
+  return o;
+}
+const W7_HIDDEN = new T.MeshBasicMaterial({ visible: false });
+/* A Firefly plate (FIREFLY_QUEUE.md) invisible until its file exists. */
+function w7Plate(k: K7, url: string, w: number, h: number, x: number, y: number, z: number, rotY: number, lit = false) {
+  return fireflyPlate(k, url, w, h, x, y, z, rotY, W7_HIDDEN, lit);
+}
+/* Painted lettering for an anamorphic floor piece, `colors` per letter. Null in node. */
+function w7Type(text: string, colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W7_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`;
+    let tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; tw = g.measureText(text).width; }
+    let x = (w - tw) / 2, n = 0;
+    for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, h / 2); x += g.measureText(ch).width; if (ch === ' ') n--; }
+  }, [font]);
+}
+/* A hanging salami: a lathe sausage in a cured skin (deep red, white fat flecks, the string netting), tied at the top. */
+function w7SalamiGeo(len: number, r: number) {
+  const pts: T.Vector2[] = [];
+  for (let i = 0; i <= 10; i++) { const u = i / 10, y = -u * len, rr = r * Math.pow(Math.sin(Math.min(1, u * 1.08 + 0.04) * PI), 0.32) * (1 - 0.12 * u); pts.push(new T.Vector2(Math.max(0.004, rr), y)); }
+  return new T.LatheGeometry(pts, 8);
+}
+/* A street along z at x in scanned asphalt, concrete pavement and granite kerbs, lane paint and crossings. */
+function w7Street(k: K7, room: string, p: { w: number; len: number; z: number; x: number; walk?: number }) {
+  const { w, len, z, x, walk = 5 } = p;
+  const asphalt = w7Scan(k, room, 'asphalt_02', 4, () => X.asphalt(0x24282d), { color: 0x8c8c8c, roughness: 0.92 }, 0x3a3c40),
+    pav = w7Scan(k, room, 'concrete_pavement', 2.2, () => X.pavers(0x8e8b84, 5), { color: 0xc8c2b6, roughness: 0.9 }, 0x8e8b84),
+    granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35),
+    white = k.flat(0xdedbd2, 0, 0.7), yellow = k.flat(0xe6a626, 0, 0.6);
+  k.box(w, 0.3, len, x, -0.15, z, asphalt);
+  for (const s of [-1, 1]) { k.box(walk, 0.28, len, x + s * (w / 2 + walk / 2), 0.0, z, pav); k.box(0.3, 0.32, len, x + s * (w / 2 + 0.1), 0.02, z, granite); }
+  for (const dx of [-0.14, 0.14]) k.box(0.09, 0.012, len - 6, x + dx, 0.01, z, yellow);
+  for (let cz = z + len / 2 - 6; cz > z - len / 2; cz -= 28) for (let cx = -w / 2 + 1.2; cx <= w / 2 - 1; cx += 1.2) k.box(0.62, 0.014, 2.8, x + cx, 0.012, cz, white);
+  // the sidewalk is laid in five foot flags: dark joints every 1.5 m read as the real pour
+  const joints: T.Matrix4[] = [];
+  for (const s of [-1, 1]) for (let cz = z - len / 2; cz < z + len / 2; cz += 1.52) joints.push(new T.Matrix4().compose(v(x + s * (w / 2 + walk / 2), 0.142, cz), new T.Quaternion(), v(walk, 1, 1)));
+  k.instances(new T.BoxGeometry(1, 0.004, 0.025), k.flat(0x55524c, 0, 0.95), joints);
+}
+function w7SalamiMat(k: K7) {
+  if (!W7_DOM) return k.flat(0x6e241f, 0.05, 0.65);
+  const t = paintTex(256, 512, (g, w, h) => {
+    const rnd = X.mulberry(1888);
+    g.fillStyle = '#5e1c18'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 2400; i++) { g.fillStyle = rnd() > 0.55 ? `rgba(240,214,196,${0.25 + rnd() * 0.5})` : `rgba(120,30,26,${0.3 + rnd() * 0.4})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, 0.8 + rnd() * 2.6, 0, PI * 2); g.fill(); }
+    g.fillStyle = 'rgba(235,228,214,0.18)'; for (let i = 0; i < 260; i++) g.fillRect(rnd() * w, rnd() * h, 6 + rnd() * 12, 3 + rnd() * 5);   // the white bloom of the dry cure
+    g.strokeStyle = 'rgba(232,220,196,0.85)'; g.lineWidth = 2.2;                                                                          // the string net
+    for (let y = -h; y < h * 2; y += 34) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y + 70); g.stroke(); g.beginPath(); g.moveTo(0, y + 70); g.lineTo(w, y); g.stroke(); }
+  });
+  return new T.MeshStandardMaterial({ map: t, roughness: 0.62, metalness: 0 });
+}
 
 /* Traffic: every car on the avenue is one instance of a body and one of a cabin, two draw calls for the lot.
    Lanes run along `axis` at a fixed cross position; dir +1 or -1 picks the direction of travel. */
@@ -66,14 +200,16 @@ export const katz: RoomDef = {
     k.sky({ top: 0x6f9ed0, horizon: 0xe9e4d6, ground: 0x5b544a, fog: 0.0028, sun: { az: 0.9, el: 0.55, color: 0xfff0d2, size: 14 }, env: 0.9 });
     k.hemi(0xfff1dc, 0x4a423a, 0.9);
     k.sun(0xffefd0, 2.1, 34, 42, 26, true, 70);
+    // 2026-11-24 wave 7a: the brick, floor, tile, panelling, counter wood and steel are Poly Haven scans (tex/katz/)
     const tin = k.pbr('katzTin', X.ashlar(0xe3dfd4, 15, 6), 1.5, { metalness: 0.45, roughness: 0.45 }),
-      tile = k.pbr('katzTile', X.subwayTile(0xf1eee4, 0x3a3a36), 1.0, { roughness: 0.28 }),
-      floorT = k.pbr('katzTerrazzo', X.terrazzo(0xcfc6b4, 61), 1.6, { roughness: 0.5 }),
+      tile = w7Scan(k, 'katz', 'long_white_tiles', 1.2, () => X.subwayTile(0xf1eee4, 0x3a3a36), { color: 0xf4f0e6, roughness: 0.3 }, 0xe8e4da),
+      floorT = w7Scan(k, 'katz', 'terrazzo_tiles', 1.8, () => X.terrazzo(0xcfc6b4, 61), { color: 0xe2d8c4, roughness: 0.45 }, 0xbdb3a0),
       plaster = k.pbr('katzPlaster', X.plaster(0xe8e0cc, 62), 2.2, { roughness: 0.9 }),
-      wood = k.pbr('katzWood', X.planks(0x5e3f2a, 6, 63), 1.2, { roughness: 0.55 }),
+      wood = w7Scan(k, 'katz', 'wood_table_worn', 1.6, () => X.planks(0x5e3f2a, 6, 63), { color: 0x8a5a3a, roughness: 0.55 }, 0x4e3424),
+      panel = w7Scan(k, 'katz', 'dark_paneled_wood', 2.0, () => X.planks(0x5e3f2a, 6, 66), { color: 0xb08a6a, roughness: 0.5 }, 0x4a3020),
       marble = k.pbr('katzMarble', X.marble(0xe9e5dd, 0x8f8a80, 64), 0.7, { roughness: 0.5 }),
-      brick = k.pbr('katzBrick', X.brick(0x7a4a3c, 65), 0.28),
-      steel = k.flat(0xc9ccd0, 0.85, 0.28),
+      brick = w7Scan(k, 'katz', 'red_brick_03', 2.4, () => X.brick(0x7a4a3c, 65), { color: 0xd8b0a0, roughness: 0.9 }, 0x6e3e32),
+      steel = w7Scan(k, 'katz', 'metal_plate', 1.4, () => X.steel(0xc9ccd0), { color: 0xd8dce0, metalness: 0.85, roughness: 0.3 }, 0xb8bcc0),
       red = k.flat(0xa8181c, 0.1, 0.6),
       cream = k.flat(0xf3ead4, 0, 0.8),
       dark = k.flat(0x1e1a18, 0.2, 0.7),
@@ -84,7 +220,7 @@ export const katz: RoomDef = {
       warm = k.glow(0xffe4bc);
     // Houston Street runs along z at x = 26; the store holds the corner lot west of the sidewalk.
     const RX = 26;
-    street(k, { w: 16, len: 130, z: 0, x: RX });
+    w7Street(k, 'katz', { w: 16, len: 130, z: 0, x: RX });
     blockFront(k, { x: RX + 13, z0: 52, count: 13, face: -1, seed: 71, h: [14, 24] });
     blockFront(k, { x: 13, z0: 50, count: 4, face: 1, seed: 72, h: [14, 20] });
     blockFront(k, { x: 13, z0: -19, count: 5, face: 1, seed: 73, h: [13, 19] });
@@ -101,17 +237,43 @@ export const katz: RoomDef = {
     k.box(W, H + 0.4, 0.4, FX - W / 2, H / 2, -D / 2 - 0.35, brick);
     k.box(0.4, H + 0.4, D + 1.2, FX - W - 0.35, H / 2, 0, brick);
     k.moulding([[0, 0], [0.7, 0], [0.8, 0.2], [0.5, 0.35], [0.6, 0.55], [0.25, 0.75], [0, 0.85]], D, FX - 0.05, H + 15.5, 0, k.pbr('nbCornice', X.plaster(0xb8ad9a, 3), 0.6), 0);
-    for (let y = H + 4.2; y < H + 15; y += 3.4) for (let dz = -11; dz <= 11; dz += 3.6) { k.box(0.2, 2.1, 1.4, FX - 0.06, y, dz, k.flat(0xd6d1c3, 0, 0.8)); k.box(0.05, 1.8, 1.15, FX + 0.06, y, dz, y < H + 8 ? warm : glass); }
-    k.prop('fire_escape', FX + 1.05, H + 3.2, -5, { height: 3.2, rotY: -PI / 2 });
-    k.prop('fire_escape', FX + 1.05, H + 6.6, -5, { height: 3.2, rotY: -PI / 2 });
-    k.prop('fire_escape', FX + 1.05, H + 9.9, 6, { height: 3.2, rotY: -PI / 2 });
-    k.prop('water_tower', FX - 12, H + 16, -4, { height: 6 });
+    // 2026-11-24 wave 7a: the upper windows read as windows (they were blank cream panels): dark sash glass in a cream
+    // frame, a stone sill and a brick soldier lintel, some lit from inside
+    { const pane = k.flat(0x1a2430, 0.7, 0.12), frame = k.flat(0xe6e0d2, 0, 0.7), sill = k.flat(0xb8b0a0, 0, 0.85), lin = k.flat(0x6a3a2e, 0, 0.9), rw = X.mulberry(65);
+      for (let y = H + 4.2; y < H + 15; y += 3.4) for (let dz = -11; dz <= 11; dz += 3.6) {
+        k.box(0.12, 2.1, 1.4, FX + 0.02, y, dz, frame); k.box(0.04, 1.86, 1.16, FX + 0.09, y, dz, rw() > 0.86 ? k.glow(0xb88a58) : pane);
+        k.box(0.06, 0.05, 1.16, FX + 0.11, y, dz, frame);
+        k.box(0.28, 0.12, 1.7, FX + 0.12, y - 1.12, dz, sill); k.box(0.16, 0.3, 1.6, FX + 0.06, y + 1.2, dz, lin);
+      } void glass; }
+    // 2026-11-24 wave 7a budget pass: these four were 145k triangles in the sun's shadow pass alone; they cast none now
+    const noShadow = (o: T.Object3D | null) => o?.traverse((c) => { c.castShadow = false; });
+    void k.prop('fire_escape', FX + 1.05, H + 3.2, -5, { height: 3.2, rotY: -PI / 2 }).then(noShadow);
+    void k.prop('fire_escape', FX + 1.05, H + 6.6, -5, { height: 3.2, rotY: -PI / 2 }).then(noShadow);
+    void k.prop('fire_escape', FX + 1.05, H + 9.9, 6, { height: 3.2, rotY: -PI / 2 }).then(noShadow);
+    void k.prop('water_tower', FX - 12, H + 16, -4, { height: 6 }).then(noShadow);
     // the sign band: KATZ'S DELICATESSEN in cream on red, wrapping the corner, with the neon over the door
-    k.box(0.5, 2.4, D + 0.4, FX + 0.1, H + 1.6, 0, red);
-    k.sign("KATZ’S DELICATESSEN", 22, 1.5, FX + 0.4, H + 1.85, -1, '#a8181c', '#f6e9c8', 54, PI / 2);
-    k.sign('KNOWN AS THE BEST · SINCE 1888', 12, 0.55, FX + 0.4, H + 0.75, -1, '#a8181c', '#f6e9c8', 34, PI / 2);
-    k.box(0.5, 2.4, 1.0, FX - 0.15, H + 1.6, D / 2 + 0.2, red);
-    k.sign("KATZ’S", 5, 1.4, FX + 0.45, H + 4.4, 9.5, 'transparent', '#ff4a3a', 200, PI / 2);
+    // 2026-11-24 wave 7a: a deep box sign in the house lettering (our type, the deli's colours), a running border of
+    // bulbs, and a blade sign on the corner stacked letter over letter in red neon
+    k.box(0.9, 2.5, D + 0.6, FX + 0.3, H + 1.6, 0, red);
+    for (const y of [H + 0.38, H + 2.82]) k.box(1.0, 0.12, D + 0.7, FX + 0.32, y, 0, cream);
+    w7Sign(k, 'KATZ’S DELICATESSEN', 24, 1.45, FX + 0.77, H + 2.0, -0.4, PI / 2, '#f6e9c8', '', 'W2 Archivo Expanded', false, undefined, 0.78);
+    w7Sign(k, 'KNOWN AS THE BEST  ·  SINCE 1888', 13, 0.5, FX + 0.77, H + 0.86, -0.4, PI / 2, '#f6e9c8', '', 'W2 Archivo Expanded', false, undefined, 0.7);
+    k.box(0.9, 2.5, 1.0, FX - 0.15, H + 1.6, D / 2 + 0.3, red);
+    {
+      const ev: T.Matrix4[] = [], od: T.Matrix4[] = [], one = v(1, 1, 1), q = new T.Quaternion();
+      let n = 0; for (const y of [H + 0.5, H + 2.7]) for (let z = -D / 2 - 0.1; z <= D / 2 + 0.2; z += 0.42) (n++ % 2 ? od : ev).push(new T.Matrix4().compose(v(FX + 0.8, y, z), q, one));
+      const bulbA = new T.MeshBasicMaterial({ color: 0xfff0c8 }), bulbB = new T.MeshBasicMaterial({ color: 0x6a5a40 }), bg = new T.SphereGeometry(0.075, 5, 3);
+      k.instances(bg, bulbA, ev).castShadow = false; k.instances(bg, bulbB, od).castShadow = false;
+      if (!ctx.reduced) { let ph = -1; k.ticks.push((t) => { const p = Math.floor(t * 2.6) % 2; if (p === ph) return; ph = p; bulbA.color.setHex(p ? 0x6a5a40 : 0xfff0c8); bulbB.color.setHex(p ? 0xfff0c8 : 0x6a5a40); }); }
+      // the blade on the corner of Ludlow: a red box standing proud of the brick, KATZ'S down both faces
+      const bz = D / 2 - 0.5, bx = FX + 1.05, by0 = H + 3.3;
+      k.box(1.7, 6.4, 0.46, bx, by0 + 3.1, bz, red);
+      k.box(1.78, 0.1, 0.5, bx, by0 - 0.06, bz, cream); k.box(1.78, 0.1, 0.5, bx, by0 + 6.32, bz, cream);
+      for (const [dx, dy] of [[-0.6, 0], [0.6, 0], [0, -0.4]]) k.beam(v(FX, by0 + 1 + dy, bz + dx * 0.3), v(bx + 0.8, by0 + 0.4 + dy, bz), 0.025, k.flat(0x1f262b, 0.75, 0.45), 4);
+      'KATZ’S'.split('').forEach((ch, i) => { for (const sd of [-1, 1]) { const o = w7Neon(k, ch, 1.3, 1.0, bx, by0 + 5.65 - i * 1.02, bz + sd * 0.24, sd > 0 ? 0 : PI, '#ff3020'); void o; } });
+      k.point(bx, by0 + 3, bz + 1.6, 0xff4a3a, 30, 12);
+    }
+    w7Neon(k, 'KATZ’S', 5, 1.4, FX + 0.5, H + 4.4, 9.5, PI / 2, '#ff3a2a');
     const neonTube = k.box(0.08, 0.14, 5.6, FX + 0.42, H + 3.5, 9.5, neon);
     k.point(FX + 1.4, H + 4.2, 9.5, 0xff6a5a, 46, 16);
     // the storefront: two salami windows and the corner door on Houston
@@ -135,9 +297,16 @@ export const katz: RoomDef = {
     k.box(0.1, 0.1, 0.5, FX - 1.0, 1.7, 12.6, steel);
     k.keepOut.push({ x: FX - 1.2, z: 12.6, r: 0.5 });
     // salamis in the windows, hung from a steel rail, the famous shipping sign between them
-    for (let i = 0; i < 12; i++) { const z = -12.4 + i * 1.05; if (z > -0.9 && z < 0.9) continue; k.cyl(0.16, 1.5 + (i % 3) * 0.25, FX - 0.7, 3.9, z, salami, 0.14, 8); k.beam(v(FX - 0.7, 4.7, z), v(FX - 0.7, 5.3, z), 0.02, steel, 4); }
-    for (let i = 0; i < 5; i++) { const z = 1.2 + i * 1.05; k.cyl(0.16, 1.5 + (i % 3) * 0.25, FX - 0.7, 3.9, z, salami, 0.14, 8); k.beam(v(FX - 0.7, 4.7, z), v(FX - 0.7, 5.3, z), 0.02, steel, 4); }
-    k.box(0.05, 0.05, D - 4, FX - 0.7, 5.3, -1, steel);
+    // 2026-11-24 wave 7a: the windows packed the way the real ones are, two rails of cured salamis in their string
+    // nets, a hundred of them in one draw, and a neon in each window in our lettering
+    const salamiGeo = w7SalamiGeo(1.0, 0.13), salamiMat = w7SalamiMat(k), salMs: T.Matrix4[] = [], strMs: T.Matrix4[] = [];
+    const srs = X.mulberry(1888);
+    const hang = (x: number, z: number, top: number, len: number, rail = 5.3, r = 1) => { salMs.push(new T.Matrix4().compose(v(x, top, z), new T.Quaternion().setFromEuler(new T.Euler((srs() - 0.5) * 0.06, srs() * PI, (srs() - 0.5) * 0.06)), v(r * (0.9 + srs() * 0.25), len, r * (0.9 + srs() * 0.25)))); strMs.push(new T.Matrix4().compose(v(x, (top + rail) / 2, z), new T.Quaternion(), v(1, rail - top, 1))); };
+    for (const [z0, z1] of [[-12.7, -1.0], [1.0, 5.7]]) for (const [x, off] of [[FX - 0.5, 0]]) for (let z = z0 + off; z <= z1; z += 0.34) hang(x, z + (srs() - 0.5) * 0.06, 4.95 - srs() * 0.25, 1.0 + srs() * 0.6);
+    k.box(0.05, 0.05, D - 4, FX - 0.5, 5.3, -1, steel);
+    w7Neon(k, 'PASTRAMI', 3.4, 0.8, FX - 0.18, 2.05, -9.6, PI / 2, '#ff3a2a');
+    w7Neon(k, 'CORNED BEEF', 3.6, 0.7, FX - 0.18, 2.05, -3.7, PI / 2, '#3aa8ff');
+    w7Neon(k, 'HOT DOGS', 3.0, 0.7, FX - 0.18, 2.05, 3.3, PI / 2, '#ffc83a');
     const armySign = k.sign('SEND A SALAMI TO YOUR BOY IN THE ARMY', 6.6, 0.7, FX - 0.42, 5.75, -6.7, '#1f4a3a', '#f3ead4', 66, -PI / 2, { double: true });
     // the room: terrazzo, tile to the dado, cream plaster above, tin overhead, three fans
     k.box(W, 0.3, D, FX - W / 2, -0.15, 0, floorT);
@@ -152,8 +321,8 @@ export const katz: RoomDef = {
     k.block(LX - 0.3, LX + 0.3, -D / 2, D / 2);
     k.block(LX, FX, -D / 2 - 0.3, -D / 2 + 0.3);
     k.block(LX, FX, D / 2 - 0.3, D / 2 + 0.3);
-    for (const x of [-12, -2, 8]) for (const z of [-4, 6]) { k.cyl(0.02, 1.1, x, H - 0.55, z, dark, 0.02, 6); k.sphere(0.34, x, H - 1.2, z, warm, 14); k.point(x, H - 1.5, z, 0xffe0b8, 28, 16); }
-    for (const x of [-14, -4, 6]) { const fan = new T.Group(); fan.position.set(x, H - 0.9, 1); for (let b = 0; b < 4; b++) { const bl = new T.Mesh(new T.BoxGeometry(1.5, 0.04, 0.32), k.flat(0x3a2a20, 0.2, 0.7)); bl.position.x = 0.85; const pivot = new T.Group(); pivot.rotation.y = (b * PI) / 2; pivot.add(bl); fan.add(pivot); } k.add(fan); k.cyl(0.05, 0.9, x, H - 0.45, 1, dark, 0.05, 6); if (!ctx.reduced) k.ticks.push((t) => { fan.rotation.y = t * 2.6; }); }
+    // 2026-11-24 wave 7a: the globes and fans are real models now (w7Katz); the lamps' light stays here
+    for (const x of [-12, -2, 8]) for (const z of [-4, 6]) k.point(x, H - 1.5, z, 0xffe0b8, 28, 16);
     // the counter along the back: the long cutting counter, steam tables, the numbered stations, the salami rail
     const CZ = -9.4;
     k.box(W - 6, 1.15, 1.3, FX - W / 2 - 2, 0.58, CZ, wood);
@@ -171,15 +340,20 @@ export const katz: RoomDef = {
       k.beam(v(x, 4.75, CZ - 1.4), v(x, H, CZ - 1.4), 0.015, steel, 4);
       k.box(3.2, 0.14, 0.9, x, 3.6, CZ - 0.6, warm);
       k.point(x, 3.3, CZ - 0.4, 0xffe8c8, 5, 6);
-      for (let b = 0; b < 3; b++) k.cyl(0.13, 0.9, x - 0.5 + b * 0.5, 2.35, CZ - 2.2, salami, 0.11, 8);
+
     }
     k.box(0.05, 0.05, 0.05, 0, 0, 0, steel).visible = false;
     k.box(W - 6, 0.05, 0.05, FX - W / 2 - 2, 2.85, CZ - 2.2, steel);
+    for (let x = LX + 3.6; x < FX - 5.4; x += 1.1) hang(x, CZ - 2.2 + (srs() - 0.5) * 0.08, 2.72 - srs() * 0.1, 0.7 + srs() * 0.45, 2.85, 0.85);
+    k.instances(salamiGeo, salamiMat, salMs).castShadow = false;
+    k.instances(new T.CylinderGeometry(0.006, 0.006, 1, 3), k.flat(0xe8dcc4, 0, 0.9), strMs).castShadow = false;
+    void salami;
     // the menu boards over the steam tables
     k.sign('PASTRAMI · CORNED BEEF · BRISKET · TONGUE · SALAMI · TURKEY', 14, 0.7, LX + 10, 5.5, -D / 2 + 0.35, '#111111', '#f6e9c8', 38, 0, { border: true });
     k.sign('KNISHES · HOT DOGS · MATZO BALL SOUP · EGG CREAMS · DR BROWN’S', 12, 0.6, FX - 12, 5.5, -D / 2 + 0.35, '#111111', '#f6e9c8', 36, 0, { border: true });
     // tables and chairs, and the one table everyone asks for
-    const table = (x: number, z: number) => { k.box(1.6, 0.08, 1.1, x, 1.06, z, k.flat(0xf1ece2, 0, 0.5)); k.box(0.09, 1.0, 0.09, x - 0.6, 0.5, z - 0.4, dark); k.box(0.09, 1.0, 0.09, x + 0.6, 0.5, z + 0.4, dark); k.box(0.09, 1.0, 0.09, x - 0.6, 0.5, z + 0.4, dark); k.box(0.09, 1.0, 0.09, x + 0.6, 0.5, z - 0.4, dark); for (const s of [-1, 1]) { k.box(0.6, 0.08, 0.6, x + s * 1.2, 0.62, z, red); k.box(0.6, 0.55, 0.08, x + s * 1.48, 0.95, z, red); } k.keepOut.push({ x, z, r: 1.55 }); };
+    // 2026-11-24 wave 7a: the tables and chairs are the real models from the ON LOCATION deli set (w7Katz places them)
+    const table = (x: number, z: number) => { k.keepOut.push({ x, z, r: 1.55 }); };
     for (const x of [-13, -8, -3, 2, 7]) for (const z of [-3.5, 2.5]) table(x, z);
     for (const x of [-13, -8, -3, 2]) table(x, 8.5);
     const harrySign = k.sign('WHERE HARRY MET SALLY · HOPE YOU HAVE WHAT SHE HAD!', 3.6, 0.55, -5, 4.3, 2.5, '#f6e9c8', '#7a1a1a', 60, 0, { border: true, double: true });
@@ -188,9 +362,9 @@ export const katz: RoomDef = {
     k.censusWall({ x: LX + 10, y: 3.35, z: D / 2 - 0.34, rotY: PI, cols: 24, rows: 6, tile: 0.62, gap: 0.05, start: ctx.wallStart(2400, 144), pieces: ctx.all, backing: wood });
     // life: the counter line, the sidewalk, a neon that hums
     if (!ctx.reduced) {
-      k.crowd([v(FX - 6, 0, CZ + 1.8), v(LX + 4, 0, CZ + 1.8)], 10, { seed: 19, speed: 0.12, spread: 0.5, colors: [0x2a2f3a, 0x6b4f3a, 0x8f2a2a, 0xd9cbb0, 0x3c5a7a] });
-      k.crowd([v(RX - 10.5, 0, -60), v(RX - 10.5, 0, 60)], 16, { seed: 21, speed: 0.7, spread: 1.6 });
-      k.crowd([v(RX + 10.5, 0, 60), v(RX + 10.5, 0, -60)], 12, { seed: 22, speed: 0.7, spread: 1.6 });
+      k.crowd([v(FX - 6, 0, CZ + 1.8), v(LX + 4, 0, CZ + 1.8)], 6, { seed: 19, speed: 0.12, spread: 0.5, colors: [0x2a2f3a, 0x6b4f3a, 0x8f2a2a, 0xd9cbb0, 0x3c5a7a] });
+      k.crowd([v(RX - 8.7, 0, -60), v(RX - 8.7, 0, 60)], 4, { seed: 21, speed: 0.7, spread: 1.6 });
+      // 2026-11-24 budget pass: the far sidewalk walkers (round the spawn) are gone; the line and the near walk stay
       let hum = 0; k.ticks.push((t) => { hum = 0.86 + 0.14 * Math.sin(t * 9.1) * Math.sin(t * 0.7); (neonTube.material as T.MeshBasicMaterial).opacity = hum; });
     }
     // the painted sign on the Ludlow side of the building, where the signmaker put exactly what he was told
@@ -229,7 +403,7 @@ export const katz: RoomDef = {
     traffic(k, [{ at: RX - 4.6, dir: -1 }, { at: RX - 1.2, dir: 1 }], 'z', 130, 4, !ctx.reduced, 123);
     steamZ(k, Array.from({ length: 7 }, (_, i) => v(LX + 5 + i * 3.7, 1.25, -D / 2 + 1.4)), 4, !ctx.reduced, 124);
     if (!ctx.reduced) {
-      k.crowd([v(LX + 4, 0, -11), v(FX - 6, 0, -11)], 6, { seed: 125, speed: 0.18, spread: 0.3, colors: [0xf4f2ec, 0xeeeae0, 0xe8e4da] });
+      k.crowd([v(LX + 4, 0, -11), v(FX - 6, 0, -11)], 3, { seed: 125, speed: 0.18, spread: 0.3, colors: [0xf4f2ec, 0xeeeae0, 0xe8e4da] });
       k.ticks.push((t) => { const c = t * 5.2; knife.position.x = LX + 5 + 3 * 3.7 + 0.2 + Math.sin(c) * 0.05; knife.position.y = 1.62 - Math.max(0, Math.sin(c + PI / 2)) * 0.08; });
       k.ticks.push((t) => { const u = (t % 9) / 9, o = u < 0.12 ? u / 0.12 : u < 0.4 ? 1 : u < 0.55 ? 1 - (u - 0.4) / 0.15 : 0; door.rotation.y = -o * o * (3 - 2 * o) * 1.25; });
     }
@@ -241,6 +415,7 @@ export const katz: RoomDef = {
     k.egg(harrySign, { id: 'harry-met-sally', title: 'Where Harry met Sally', year: '1989', text: 'The famous deli scene in the 1989 film When Harry Met Sally was shot here. The table where Meg Ryan and Billy Crystal sat is marked with a sign hung over it.', clue: 'One table in this room is more famous than all the others. Look for what hangs above it.', source: wiki }, { r: 1.4 });
     k.egg(thatsAll, { id: 'thats-all', title: 'Katz’s, that’s all', text: 'When a signmaker asked partner Harry Tarowsky what the sign should say, he answered: Katz’s, that’s all. The signmaker painted exactly that, and it is still on the side of the building.', clue: 'Walk up the sidewalk and read the side of the building, high above the corner.', source: wiki }, { r: 3 });
     if (curePastrami) k.egg(curePastrami, { id: 'thirty-day-cure', title: 'Thirty days in the cure', text: 'Katz’s says its pastrami and corned beef can take up to a full 30 days to cure. Commercial corned beef is often pumped with brine to cure in 36 hours.', clue: 'Watch the knife at the fourth station, and ask how long that meat has been waiting.', source: src }, { r: 0.9 });
+    w7Katz(k, ctx, { FX, W, D, H, LX, CZ, RX, tables, panel, wood, cream: k.flat(0xf3ead4, 0, 0.8), wiki });
     // the hang
     const mounts: Mount[] = [];
     const at = (x: number, y: number, z: number, tx: number, tz: number, w: number, h: number, style: FrameStyle = 'black', wash = false): Mount => ({ position: v(x, y, z), rotation: Math.atan2(tx - x, tz - z), target: v(tx, 3, tz), width: w, height: h, style, wash });
@@ -252,6 +427,54 @@ export const katz: RoomDef = {
     return { mounts, spawn: v(RX + 9.5, 3, 15), look: v(FX - 1, 5.2, 5), eye: 3, bounds: [LX + 0.6, RX + 12.4, -D / 2 + 0.6, 44], style: 'oak' };
   },
 };
+
+/* THE BIG UPGRADE wave 7a, Katz's: the room round the hang. Real models from the ON LOCATION When Harry Met Sally
+   set and Poly Haven (assets/museum/props/katz/), the line on Houston Street, the photo wall run up to the ceiling,
+   and the one trick: the ticket rule painted flat on the terrazzo, standing up from just inside the door. */
+function w7Katz(k: K7, ctx: Parameters<RoomDef['build']>[1], g: { FX: number; W: number; D: number; H: number; LX: number; CZ: number; RX: number; tables: [number, number][]; panel: T.Material; wood: T.Material; cream: T.Material; wiki: { name: string; url: string } }) {
+  const { FX, D, H, LX, CZ, RX } = g;
+  // the illusion: from the brass ring inside the door the floor reads DON'T LOSE YOUR TICKET, standing up
+  const eye = v(FX - 1.5, 3, 9.5);
+  { const t = w7Type('DON’T LOSE YOUR TICKET', ['#b8262a', '#b8262a', '#1e1a18'], 1024, 256); if (t) anamorphTex(k, t, eye.x, eye.z, eye.y, 0.0, PI / 2, 3.0, 3.8, 0.95, 0.9); }
+  k.torus(0.3, 0.02, eye.x, 0.016, eye.z, k.flat(0xc9a24a, 0.9, 0.3), 24).rotation.x = PI / 2;
+  k.egg(v(eye.x, 1.2, eye.z), { id: 'ticket-floor', title: 'The rule on the floor', year: 'an illusion', text: 'Stand on the brass ring just inside the door and the house rule stands up in front of you. It is painted flat on the terrazzo and stretched in the perspective of that one spot, the pavement artist\'s trick called anamorphosis. Take a step and the letters lie down again.', clue: 'A brass ring on the floor just inside the door.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 0.7 });
+  // the line on Houston Street: brass posts and a red rope from the door up the sidewalk, people waiting
+  const posts: T.Matrix4[] = [];
+  for (let z = 11.8; z <= 27; z += 2.4) posts.push(new T.Matrix4().setPosition(FX + 3.6, 0.14, z));
+  k.instances(new T.CylinderGeometry(0.04, 0.12, 1.0, 10).translate(0, 0.5, 0), k.flat(0xc9a24a, 0.9, 0.28), posts).castShadow = false;
+  for (let z = 11.8; z < 26; z += 2.4) k.curve([v(FX + 3.6, 1.0, z), v(FX + 3.6, 0.78, z + 1.2), v(FX + 3.6, 1.0, z + 2.4)], 0.025, k.flat(0x8a1418, 0, 0.6), 8);
+  if (!ctx.reduced) k.crowd([v(FX + 2.6, 0.14, 26), v(FX + 2.6, 0.14, 11.2)], 4, { seed: 1888, speed: 0.04, spread: 0.45, colors: [0x2a2f3a, 0x6b4f3a, 0x8f2a2a, 0xd9cbb0, 0x3c5a7a, 0x1e1e22] });
+  k.sign('LINE STARTS HERE', 1.5, 0.3, FX + 3.6, 1.35, 27.2, '#8a1418', '#f6e9c8', 70, PI / 2, { double: true });
+  // Firefly: the painted ghost sign on the Ludlow wall and the window of regulars' photos (FIREFLY_QUEUE.md)
+  w7Plate(k, 'assets/museum/tex/katz/ff_ludlow_ghost_sign.webp', 12, 6, FX - 21, H + 8.2, D / 2 + 0.04, 0);
+  w7Plate(k, 'assets/museum/tex/katz/ff_photo_wall.webp', 9.6, 1.2, LX + 0.33, 5.85, 1.5, PI / 2);
+  // the deli's own furniture: the set's tables and chairs, pickle barrels by the counter, the clock over the door
+  w7Place(k, 'katz/katz_table', { height: 1.1 }, g.tables.map(([x, z]) => [x, 0, z, PI / 2]));
+  const chairs: number[][] = [];
+  g.tables.forEach(([x, z]) => { chairs.push([x - 1.25, 0, z, PI / 2]); chairs.push([x + 1.25, 0, z, -PI / 2]); });
+  w7Place(k, 'katz/katz_chair', { height: 1.35 }, chairs);
+  w7Place(k, 'katz/katz_pickles', { height: 1.25 }, [[FX - 2.6, 0, -12.3, 0.4], [FX - 2.6, 0, -11.0, 2.1]]);
+  for (const [x, z] of [[FX - 2.6, -12.3], [FX - 2.6, -11.0]]) k.keepOut.push({ x, z, r: 0.65 });
+  w7Place(k, 'katz/katz_clock', { width: 0.9 }, [[FX - 0.3, 5.45, 9.5, -PI / 2]]);
+  // the ceiling: three fans turning, six enamel shades where the globes hung
+  w7Place(k, 'katz/ceiling_fan', { width: 2.4 }, [[-14, H - 0.85, 1, 0], [-4, H - 0.85, 1, 1], [6, H - 0.85, 1, 2]], undefined, (os) => {
+    if (!ctx.reduced) k.ticks.push((t) => os.forEach((o, i) => { o.rotation.y = t * 2.6 + i; }));
+  });
+  const shades: number[][] = [];
+  for (const x of [-12, -2, 8]) for (const z of [-4, 6]) shades.push([x, H - 1.35, z, 0]);
+  w7Place(k, 'katz/industrial_lamp', { height: 1.35 }, shades);
+  // the photo wall run up to the ceiling: framed pictures in a row along the top of the walls, two sizes alternating
+  const fa: number[][] = [], fb: number[][] = [];
+  let n = 0;
+  for (const z of [-12.6, -11.7, -10.8, -9.9, -9.0, -8.1, -7.2, -6.3, -5.4, -4.5, 7.2, 8.1, 9.0, 9.9, 10.8, 11.7, 12.6]) (n++ % 2 ? fa : fb).push([LX + 0.32, 5.62 + (n % 3) * 0.08, z, PI / 2]);
+  for (let x = LX + 1.0; x < FX - 0.6; x += 1.3) (n++ % 2 ? fa : fb).push([x, 5.62 + (n % 3) * 0.08, D / 2 - 0.32, PI]);
+  w7Place(k, 'katz/katz_frame_a', { height: 0.6 }, fa);
+  w7Place(k, 'katz/katz_frame_b', { height: 0.55 }, fb);
+  // Sally, from MLow's cast, by the table everybody asks for
+  w7Place(k, 'katz/sally', { height: 2.45 }, [[-6.4, 0, 5.4, 0.6]]);
+  k.keepOut.push({ x: -6.4, z: 5.4, r: 0.5 });
+  void RX; void CZ;
+}
 
 /* ---------------- 123 BARNEY GREENGRASS ---------------- */
 /* The store is MLow's own Blender model of the Amsterdam Avenue shop (assets/museum/props/barney_greengrass.glb),
@@ -269,12 +492,12 @@ export const katz: RoomDef = {
 const SURF = 'assets/museum/surfaces/';
 const KING_H = 970;   // king_cutout.png is 768 wide; its height is written here by hand after the cut (see barney_art.py's neighbour, the cut in the handoff)
 const surfTex = new Map<string, T.Texture>();
-function surf(file: string, srgb: boolean, rx: number, ry: number) {
-  const key = `${file}:${rx}:${ry}`; let t = surfTex.get(key);
-  if (!t) { t = new T.TextureLoader().load(SURF + file); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 8; if (srgb) t.colorSpace = T.SRGBColorSpace; surfTex.set(key, t); }
+function surf(file: string, srgb: boolean, rx: number, ry: number, base = SURF) {
+  const key = `${base}${file}:${rx}:${ry}`; let t = surfTex.get(key);
+  if (!t) { t = new T.TextureLoader().load(base + file); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 8; if (srgb) t.colorSpace = T.SRGBColorSpace; surfTex.set(key, t); }
   return t;
 }
-const RETEX: Record<string, { kind: string; rx: number; ry: number; tint?: number; rough?: number; metal?: number; normal?: number }> = {
+const RETEX: Record<string, { kind: string; rx: number; ry: number; tint?: number; rough?: number; metal?: number; normal?: number; scan?: string }> = {
   terrazzo: { kind: 'terrazzo', rx: 8, ry: 14, rough: 0.35, normal: 0.5 },
   wood_floor: { kind: 'planks', rx: 5, ry: 14, tint: 0xc9a27a, rough: 0.6 },
   rail_wood: { kind: 'planks', rx: 1, ry: 12, tint: 0xa8865f }, fan_wood: { kind: 'planks', rx: 1, ry: 1, tint: 0xa8865f },
@@ -285,7 +508,8 @@ const RETEX: Record<string, { kind: string; rx: number; ry: number; tint?: numbe
   wall_green: { kind: 'plaster', rx: 10, ry: 2, tint: 0x6f8f70, rough: 0.9 }, partition: { kind: 'plaster', rx: 10, ry: 2, tint: 0x6f8f70, rough: 0.9 },
   cream: { kind: 'plaster', rx: 10, ry: 3, tint: 0xe8dcc2, rough: 0.9 },
   brick_flat: { kind: 'brick', rx: 6, ry: 3, tint: 0xa0533f }, sill: { kind: 'concrete', rx: 2, ry: 1 }, cornice: { kind: 'concrete', rx: 6, ry: 1 },
-  sidewalk: { kind: 'concrete', rx: 10, ry: 3, tint: 0xb8b3a8, rough: 0.9 }, curb: { kind: 'concrete', rx: 10, ry: 1, tint: 0x8a8782 }, asphalt: { kind: 'asphalt', rx: 8, ry: 4, tint: 0x3a3c40, rough: 0.85 },
+  // 2026-11-24 wave 7a: the model's own sidewalk and avenue wear the same Poly Haven scans as the blocks beside it
+  sidewalk: { kind: 'concrete', rx: 10, ry: 3, tint: 0xc8c2b6, rough: 0.9, scan: 'concrete_pavement' }, curb: { kind: 'concrete', rx: 10, ry: 1, tint: 0x8a8782 }, asphalt: { kind: 'asphalt', rx: 6, ry: 3, tint: 0x8c8c8c, rough: 0.9, scan: 'asphalt_02' },
   case_white: { kind: 'marble', rx: 2, ry: 6, tint: 0xf1ede4, rough: 0.3, normal: 0.2 }, steel: { kind: 'steel', rx: 1, ry: 6, rough: 0.3, metal: 0.9 },
   formica: { kind: 'terrazzo', rx: 2, ry: 2, tint: 0xf0ece2, rough: 0.35, normal: 0.15 }, tbl_white: { kind: 'terrazzo', rx: 2, ry: 2, tint: 0xf0ece2, rough: 0.35, normal: 0.15 },
   cloth: { kind: 'plaster', rx: 2, ry: 2, tint: 0xf2eee6, rough: 0.9 }, chair_grn: { kind: 'patina', rx: 1, ry: 1, tint: 0x24513a, rough: 0.45, normal: 0.3 },
@@ -333,9 +557,14 @@ function retex(o: T.Object3D) {
     if (m && BOARDS[m.name] && typeof document !== 'undefined') { m.map = board(m.name); m.color.set(0xffffff); m.roughness = 0.9; m.needsUpdate = true; return; }
     const r = m && RETEX[m.name];
     if (!r) return;
+    if (r.scan) {
+      const b = 'assets/museum/tex/barney/';
+      m.map = surf(`${r.scan}_c.webp`, true, r.rx, r.ry, b); m.normalMap = surf(`${r.scan}_n.webp`, false, r.rx, r.ry, b); m.normalScale.setScalar(r.normal ?? 0.8); m.roughnessMap = surf(`${r.scan}_r.webp`, false, r.rx, r.ry, b);
+    } else {
     m.map = surf(`${r.kind}_c_s.jpg`, true, r.rx, r.ry);
     m.normalMap = surf(`${r.kind}_n_s.jpg`, false, r.rx, r.ry); m.normalScale.setScalar(r.normal ?? 0.8);
     m.roughnessMap = surf(`${r.kind}_r_s.jpg`, false, r.rx, r.ry);
+    }
     if (r.tint !== undefined) m.color.set(r.tint); else m.color.set(0xffffff);
     if (r.rough !== undefined) m.roughness = r.rough; if (r.metal !== undefined) m.metalness = r.metal;
     m.needsUpdate = true;
@@ -354,8 +583,8 @@ export const barney: RoomDef = {
     k.hemi(0xfff3e2, 0x4d4640, 0.95);
     k.sun(0xffefd4, 1.6, 60, 52, 14, true, 70);
     const S = 1.5;
-    const asphalt = k.pbr('asphaltS', X.asphalt(0x24282d), 0.11, { roughness: 0.62, metalness: 0.12 }),
-      pav = k.pbr('sidewalkS', X.pavers(0x8e8b84, 5), 0.42),
+    const asphalt = w7Scan(k, 'barney', 'asphalt_02', 4, () => X.asphalt(0x24282d), { color: 0x8c8c8c, roughness: 0.92 }, 0x3a3c40),
+      pav = w7Scan(k, 'barney', 'concrete_pavement', 2.2, () => X.pavers(0x8e8b84, 5), { color: 0xc8c2b6, roughness: 0.9 }, 0x8e8b84),
       granite = k.pbr('curbS', X.ashlar(0x8a8a86, 4, 2), 0.35),
       white = k.flat(0xdedbd2, 0, 0.7),
       yellow = k.flat(0xe6a626, 0, 0.6),
@@ -374,12 +603,32 @@ export const barney: RoomDef = {
     for (const x of [-40, 40]) for (let z = 7.6; z < 16.5; z += 1.2) k.box(2.8, 0.014, 0.62, x, 0.012, z, white);
     // the neighbours: brownstone fronts beside the store, a taller block across the avenue
     const rnd = X.mulberry(88);
-    const fronts = [k.pbr('nbBrickA', X.brick(0x6b4437, 21), 0.28), k.pbr('nbStone', X.ashlar(0xb9ad97, 23, 3), 0.22), k.pbr('nbBrickB', X.brick(0x4f3b36, 22), 0.28)];
-    const cornice = k.pbr('nbCornice', X.plaster(0xb8ad9a, 3), 0.6), glassDark = k.glass(0x9fc4d8, 0.35, 0.08);
+    // 2026-11-24 wave 7a: the neighbours in Poly Haven scans (red brick, brownstone, a darker brick), stone sills and
+    // lintels at every window, and on the store's side a shop at the foot of each one: glass, a fabric awning, a fascia
+    const fronts = [w7Scan(k, 'barney', 'red_brick_03', 2.4, () => X.brick(0x6b4437, 21), { color: 0xc89888 }, 0x6b4437), w7Scan(k, 'barney', 'red_sandstone_wall', 3, () => X.ashlar(0xb9ad97, 23, 3), { color: 0xb08878 }, 0x7a5444), w7Scan(k, 'barney', 'brick_wall_02', 2.4, () => X.brick(0x4f3b36, 22), { color: 0xa08070 }, 0x4f3b36)];
+    const cornice = w7Scan(k, 'barney', 'white_plaster_rough_01', 2, () => X.plaster(0xb8ad9a, 3), { color: 0xc8bca8 }, 0xb8ad9a), glassDark = k.glass(0x9fc4d8, 0.35, 0.08);
+    const shopGlass = k.glass(0x2a3440, 0.55, 0.06), shopLit = k.glow(0xffe2b0, 0.55), bulk = k.flat(0x1c2420, 0.4, 0.5);
+    const shops = ['CLEANERS  ·  TAILOR', 'HARDWARE', 'PHARMACY', 'SHOE REPAIR', 'WINE AND SPIRITS', 'NEWS  ·  CIGARS'], awn = [0x1a4a30, 0x8a1a1a, 0x1d2a4a, 0x2a2a2a, 0x6a3a1a, 0x1a4a30];
+    let shopN = 0;
     const house = (x: number, z: number, w: number, d: number, hh: number, m: T.Material, face: number) => {
       k.box(w, hh, d, x, hh / 2, z, m);
       k.moulding([[0, 0], [0.7, 0], [0.8, 0.2], [0.5, 0.35], [0.6, 0.55], [0.25, 0.75], [0, 0.85]], w, x, hh - 0.5, z + face * d / 2, cornice, face > 0 ? PI / 2 : -PI / 2);
-      for (let y = 3.4; y < hh - 1.5; y += 3.1) for (let dx = -w / 2 + 1.8; dx < w / 2 - 1; dx += 2.7) { k.box(1.35, 1.9, 0.2, x + dx, y, z + face * (d / 2 + 0.06), cornice); k.box(1.1, 1.65, 0.05, x + dx, y, z + face * (d / 2 + 0.12), rnd() > 0.7 ? warm : glassDark); }
+      const fz = z + face * d / 2;
+      for (let y = 5.2; y < hh - 1.5; y += 3.1) for (let dx = -w / 2 + 1.8; dx < w / 2 - 1; dx += 2.7) {
+        k.box(1.35, 1.9, 0.2, x + dx, y, fz + face * 0.06, cornice); k.box(1.1, 1.65, 0.05, x + dx, y, fz + face * 0.19, rnd() > 0.7 ? warm : k.flat(0x1a2430, 0.7, 0.12)); void glassDark;
+        k.box(1.6, 0.14, 0.32, x + dx, y - 1.0, fz + face * 0.14, cornice); k.box(1.55, 0.26, 0.24, x + dx, y + 1.08, fz + face * 0.1, cornice);
+      }
+      if (face > 0) {
+        const sw = w - 1.6, sz = fz + 0.08, i = shopN++ % shops.length;
+        k.box(sw, 0.6, 0.12, x, 0.3, sz + 0.02, bulk);
+        k.box(sw, 2.5, 0.05, x, 1.85, sz, shopGlass);
+        k.box(sw - 0.3, 2.3, 0.02, x, 1.85, sz - 0.25, shopLit);
+        for (const dx of [-sw / 2, sw / 2, 0]) k.box(0.12, 3.2, 0.16, x + dx, 1.6, sz + 0.04, bulk);
+        k.box(w - 0.6, 0.85, 0.18, x, 3.65, sz + 0.06, k.flat(awn[i], 0.1, 0.7));
+        w7Sign(k, shops[i], w - 1.6, 0.62, x, 3.65, sz + 0.17, 0, '#f3ecd6', '', 'W2 Archivo Expanded', false, undefined, 0.62);
+        const a = k.box(w - 1.0, 0.06, 1.6, x, 3.0, sz + 0.75, k.flat(awn[i], 0, 0.85)); a.rotation.x = -0.42;
+        k.box(w - 1.0, 0.28, 0.03, x, 2.62, sz + 1.5, k.flat(awn[i], 0, 0.85));
+      }
       if (rnd() > 0.5) k.prop('fire_escape', x, 6.6 + rnd() * 3, z + face * (d / 2 + 1.05), { height: 3.2, rotY: face > 0 ? 0 : PI });
       if (rnd() > 0.55) k.prop('water_tower', x + 2, hh, z - face * 1.5, { height: 5 });
     };
@@ -390,6 +639,8 @@ export const barney: RoomDef = {
     k.prop('hydrant', 14, 0, 5.3, { height: 1.1, keepOut: 0.5 });
     k.prop('mailbox', -14, 0, 5.4, { height: 1.5, rotY: 0, keepOut: 0.6 });
     for (const x of [-9, 12]) k.prop('tree', x, 0, 19.2, { height: 6.2, keepOut: 0.7 });
+    for (const x of [-10.8, 10.8, -26, 26]) { k.tree(x, 0, 5.9, { kind: 'round', h: 7.2, r: 2.1, seed: Math.round(x * 7), leaf: 0x3f6b36 }); k.keepOut.push({ x, z: 5.9, r: 0.6 }); }
+    for (const x of [-12.8, 12.6, -30, 30]) k.prop('lamppost', x, 0.14, 6.05, { height: 6.4, keepOut: 0.4 });
     k.prop('utility_pole', 22, 0, 18.6, { height: 11 });
     // light: under the awnings, in the dining pendants, over the counter, on the boards
     for (const x of [-6, 0.5, 6]) k.point(x, 4.0, 1.4, 0xffe6c2, 14, 8);

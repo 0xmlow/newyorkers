@@ -13,7 +13,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { hero } from './heroes';
+import { hero, heroInstances } from './heroes';
+import { paintTex, anamorphTex, hsign } from './f';
+import { fireflyPlate } from './a';
+import type { Kit } from '../kit';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -94,6 +97,101 @@ function ringXZ(r0: number, r1: number, a0: number, a1: number, seg = 48) {
   return g;
 }
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
+
+/* ---------- THE BIG UPGRADE, wave 9 (2026-11-24): helpers kept local to this file ----------
+   Scanned CC0 surfaces from assets/museum/tex/<room>/ (Poly Haven, 1k webp) that wear a sensible colour until their maps
+   land; real CC0 models from assets/museum/props/<room>/ (Poly Haven, decimated in Blender, 512 px maps) with any glass
+   transmission and prop shadows stripped on load; seven or more copies of one model become instanced parts.
+   Safe in node: the audit builds with no DOM. */
+const W9UP = new T.Vector3(0, 1, 0);
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w9 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: Kit, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w9b-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w9.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping;
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const key = `w9b-${room}-${id}-${p.color ?? ''}-${p.side ?? ''}-${p.roughness ?? ''}-${metres}`;
+  const m = k.pbr(key, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* 2026-11-24 wave 9 shadow diet: the counter is about four times the scene because of the shadow passes, and the walking
+   crowd (cast figures of about 14k triangles each) were the biggest casters. For the first half minute, as models arrive,
+   every cast figure or hero model (crowds, the horseman, the clock animals, far boats) and any instanced group of forty
+   or more stop casting; code built architecture keeps its shadows. */
+function shadowDiet(k: Kit) {
+  let left = 30, next = 0;
+  k.ticks.push((t) => {
+    if (left <= 0 || t < next) return;
+    next = t + 1; left--;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined;
+      if ((mat && mat.name.startsWith('tripo_')) || ((o as T.InstancedMesh).isInstancedMesh && (o as T.InstancedMesh).count >= 40)) m.castShadow = false;
+    });
+  });
+}
+/* No transmission (it makes three.js draw the room twice) and no prop shadows. */
+function clean(o: T.Object3D) {
+  o.traverse((c) => {
+    if (!(c instanceof T.Mesh)) return;
+    c.castShadow = false;
+    for (const m of Array.isArray(c.material) ? c.material : [c.material]) { const s = m as T.MeshPhysicalMaterial; if (s.transmission) { s.transmission = 0; s.transparent = true; s.opacity = Math.min(s.opacity, 0.35); s.depthWrite = false; } }
+  });
+}
+/* One real model from this room's own props folder. */
+function phw(k: Kit, room: string, name: string, x: number, y: number, z: number, p: { height?: number; rotY?: number; keepOut?: number } = {}, tweak?: (o: T.Object3D) => void) {
+  void Promise.resolve(k.prop(`${room}/${name}`, x, y, z, p)).then((o) => { if (o && (o as T.Object3D).isObject3D) { clean(o); if (tweak) tweak(o); } });
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?]; seven or more become instanced parts. */
+function many(k: Kit, room: string, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, onDone?: () => void) {
+  if (!at.length || !HAS_DOM) return;
+  void hero(k, `${room}/${name}`, fit).then((h) => {
+    if (!h || !k.live) return;
+    clean(h);
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion();
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(W9UP, r), new T.Vector3(s, s, s))));
+      ins.commit();
+      for (const p of ins.parts) p.im.castShadow = false;
+    } else at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+    if (onDone) onDone();
+  });
+}
+/* Recolour every material of a loaded model, keeping its maps' detail. */
+function tintAll(o: T.Object3D, hex: number, rough = 0.5, metal = 0.2) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.setHex(hex); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* One trick a room (rule 9): anamorphic type on the floor that stands up as a sign from one spot. */
+function standUp(k: Kit, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, font = 'W2 Archivo Expanded') {
+  if (!HAS_DOM) return;
+  const w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const tex = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
+}
 const one = new T.Vector3(1, 1, 1), hide = new T.Vector3(0.0001, 0.0001, 0.0001), up = new T.Vector3(0, 1, 0);
 /* the New York clock, read in a tick: hours, minutes, seconds in America/New_York. A ?hour= on the
    page (the screenshot tool and the hang of the day use it) overrides the hour and minute so a room
@@ -130,17 +228,20 @@ export const sealions: RoomDef = {
     k.sky({ top: 0x4f8ad0, horizon: 0xd8e6ee, ground: 0x6a7a5a, fog: 0.0024, sun: { az: 2.4, el: 0.8, color: 0xfff4e0, size: 8 }, env: 0.6 });
     k.hemi(0xe8ecf0, 0x5a6a4a, 0.9);
     k.sun(0xfff0d8, 2.4, 34, 70, 30, true, 90);
-    const brick = k.pbr('slBrick', X.brick(0x8a4a38, 171), 0.9), brickD = k.pbr('slBrickD', X.brick(0x6a3a2c, 172), 0.9),
-      lime = k.pbr('slLime', X.ashlar(0xd2c8ae, 173, 5), 0.45, { normal: 0.35, roughness: 0.8 }),
-      walk = k.pbr('slWalk', X.pavers(0x9a9488, 174), 0.5), grassM = k.pbr('slGrass', X.grass(0x4a6a38, 175), 0.9, { roughness: 1 }),
-      basin = k.flat(0x24404a, 0.05, 0.6, { side: T.DoubleSide }), rockM = k.flat(0x6a6660, 0, 0.95), rockD = k.flat(0x4a4642, 0, 0.95),
-      steel = k.flat(0x8a9098, 0.8, 0.35), iron = k.flat(0x1e2022, 0.6, 0.5), wood = k.pbr('slWood', X.planks(0x5a3e28, 6, 176), 0.7, { roughness: 0.7 }),
+    /* 2026-11-24 wave 9: scanned brick, sandstone, concrete pavers, lawn, weathered planks and dark rock (Poly Haven CC0) */
+    const SL = 'sealions';
+    const brick = sc(k, SL, 'brick', 1.9, () => X.brick(0x8a4a38, 171), { color: 0xffffff, roughness: 0.85 }, 0x8a4a38), brickD = sc(k, SL, 'brick', 1.9, () => X.brick(0x6a3a2c, 172), { color: 0xd8c0b8, roughness: 0.85 }, 0x6a3a2c),
+      lime = sc(k, SL, 'lime', 2.0, () => X.ashlar(0xd2c8ae, 173, 5), { color: 0xfff6e8, roughness: 0.8 }, 0xd2c8ae),
+      walk = sc(k, SL, 'walk', 1.9, () => X.pavers(0x9a9488, 174), { color: 0xe0dcd4, roughness: 0.85 }, 0x9a9488), grassM = sc(k, SL, 'grass', 2.0, () => X.grass(0x4a6a38, 175), { color: 0x86c060, roughness: 1 }, 0x4a6a38),
+      basin = k.flat(0x24404a, 0.05, 0.6, { side: T.DoubleSide }), rockM = sc(k, SL, 'rock', 2.4, () => X.ashlar(0x6a6660, 177, 2), { color: 0xc8c2b8, roughness: 0.95 }, 0x6a6660), rockD = sc(k, SL, 'rock', 2.4, () => X.ashlar(0x4a4642, 178, 2), { color: 0x9a948c, roughness: 0.95 }, 0x4a4642),
+      steel = k.flat(0x8a9098, 0.8, 0.35), iron = k.flat(0x1e2022, 0.6, 0.5), wood = sc(k, SL, 'wood', 1.0, () => X.planks(0x5a3e28, 6, 176), { color: 0xc8b098, roughness: 0.75 }, 0x5a3e28),
       glassM = k.glass(0xcfe6ee, 0.18, 0.08), win = k.flat(0x1a2128, 0.6, 0.18), trim = k.flat(0xe8e2d4, 0, 0.6),
       bronze = k.flat(0x6e5230, 0.85, 0.42), bronzeL = k.flat(0x8a6a3a, 0.85, 0.4), gold = k.flat(0xc8a050, 1, 0.3),
       seal = k.flat(0x3a2a20, 0.05, 0.55), sealW = k.flat(0x5a4a3c, 0.05, 0.6), keeperM = k.flat(0x1e4a8a, 0, 0.85), skin = k.flat(0xc8a284, 0, 0.7),
       penB = k.flat(0x14161a, 0, 0.7), penW = k.flat(0xe8ecf0, 0, 0.7), ice = k.flat(0xbcd4e0, 0, 0.9), blueGlow = new T.MeshBasicMaterial({ color: 0x8fd0ff }),
       bucket = k.flat(0xd8dce0, 0.7, 0.4), fish = k.flat(0xb8c4cc, 0.6, 0.35), bell = k.flat(0xb89448, 1, 0.3);
     const mounts: Mount[] = [], st: FrameStyle = 'oak';
+    const zoo0 = { name: 'Central Park Zoo, the zoo\'s own site', url: 'https://centralparkzoo.com/' };
 
     /* ---- the ground: the paved garden inside the pergola, grass and planes beyond ---- */
     /* the grass and the paving are slabs with a round hole for the pool: a solid box here hides the water */
@@ -193,9 +294,10 @@ export const sealions: RoomDef = {
     for (const x of [-12, -8, 8, 12]) { hang(mounts, x, 2.0, PZ - 0.41, PI, 1.2, 0.9, st, 3.2); }
     for (const x of [-12, 12]) { hang(mounts, x, 2.0, -PZ + 0.41, 0, 1.2, 0.9, st, 3.2); }
     /* benches and plane trees between the pergola and the buildings */
-    for (const [x, z, r] of [[-4.5, 17.5, 0], [4.5, 17.5, 0], [-12, -17.5, PI], [12, -17.5, PI]] as number[][]) { k.bench(x, z, r, wood, iron, 2.2); k.keepOut.push({ x, z, r: 1.3 }); }
+    /* 2026-11-24 wave 9: the benches and the lamps are the park's own cast iron (our Central Park models) */
+    for (const [x, z, r] of [[-4.5, 17.5, 0], [4.5, 17.5, 0], [-12, -17.5, PI], [12, -17.5, PI]] as number[][]) { k.prop('cp_bench', x, 0, z, { height: 1.0, rotY: r + PI }); k.keepOut.push({ x, z, r: 1.3 }); }
     for (const [x, z] of [[-19.5, 17.5], [19.5, 17.5], [-19.5, -17.5], [19.5, -17.5], [-30, 22], [30, 24], [-34, -26], [34, -28], [-38, 0], [-8, 32], [10, 34], [26, 34], [-30, 34]]) { k.tree(x, 0, z, { h: 9 + (x % 3), r: 4.2, seed: 171 + Math.abs(x) }); k.keepOut.push({ x, z, r: 0.9 }); }
-    for (const [x, z] of [[-18, 6], [-18, -6], [18, 6], [18, -6]]) k.lamp(x, z, 3.6, iron, 0xffd7a0, 22);
+    for (const [x, z] of [[-18, 6], [-18, -6], [18, 6], [18, -6], [-5, 15.4], [5, 15.4]]) { k.prop('cp_gaslamp', x, 0, z, { height: 3.8, keepOut: 0.4 }); k.point(x, 3.5, z, 0xffd7a0, 10 + 14 * k.night, 12); }
 
     /* ---- the Arsenal on the east: brick, half octagonal towers, a crenellated parapet, 1851 ---- */
     const AX = 24, AW = 14, AH = 16, AL = 40;
@@ -388,6 +490,24 @@ export const sealions: RoomDef = {
     k.crowd([v(-13.5, 0, -11), v(0, 0, -12.8), v(13.5, 0, -11), v(14.2, 0, 0), v(13.5, 0, 11), v(0, 0, 12.8), v(-13.5, 0, 11), v(-14.2, 0, 0)], 16, { seed: 1718, spread: 1.0, speed: 0.9, animate: !ctx.reduced, closed: true });
     k.crowd([v(0, 0, 27), v(0.6, 0, 16), v(-4, 0, 12.5), v(-11, 0, 8), v(-14, 0, 0), v(-12, 0, -8), v(-4, 0, -12.6), v(0, 0, -20), v(0, 0, -28)], 8, { seed: 1719, spread: 0.8, speed: 1.0, animate: !ctx.reduced });
 
+    /* ---- 2026-11-24 wave 9: real rock, signs, the keeper's bucket and the trick ---- */
+    /* the island is real scanned shore rock (Poly Haven CC0) over the old boulders, where the sea lions haul out */
+    phw(k, SL, 'ph_coast_land_rocks_02', -0.2, -0.7, 0.1, { height: 1.0, rotY: 0.5 });
+    phw(k, SL, 'ph_coast_land_rocks_02', 2.0, -0.85, 1.1, { height: 0.7, rotY: 2.3 });
+    phw(k, SL, 'ph_wooden_bucket_01', 0.9, 0.5, PR - 0.25, { height: 0.42, rotY: 0.4 });
+    /* the zoo's own signs: what lives here, and the way through the arch */
+    k.box(2.2, 1.3, 0.1, -7.0, 1.25, 16.6, k.flat(0x24404a, 0.1, 0.7)); for (const dx of [-1.0, 1.0]) k.box(0.08, 1.9, 0.08, -7.0 + dx, 0.95, 16.66, iron);
+    fireflyPlate(k, 'assets/museum/tex/sealions/ff_sl_sea_lion_panel.webp', 2.0, 1.1, -7.0, 1.25, 16.54, PI, lime);
+    hsign(k, 'CALIFORNIA SEA LIONS', 2.2, 0.26, -7.0, 2.05, 16.54, PI, { fg: '#e8dfc8', bg: '#24404a', size: 0.55, lit: false });
+    k.keepOut.push({ x: -7.0, z: 16.6, r: 1.3 });
+    k.box(0.1, 2.6, 0.1, 5.2, 1.3, CZ + 3.2, iron);
+    hsign(k, "CHILDREN'S ZOO", 1.7, 0.3, 5.2, 2.4, CZ + 3.26, 0, { fg: '#ffffff', bg: '#1f4a30', border: '#ffffff', size: 0.55, lit: false });
+    hsign(k, 'DELACORTE CLOCK', 1.7, 0.3, 5.2, 2.0, CZ + 3.26, 0, { fg: '#ffffff', bg: '#1f4a30', border: '#ffffff', size: 0.55, lit: false });
+    k.keepOut.push({ x: 5.2, z: CZ + 3.2, r: 0.4 });
+    /* one trick (rule 9): SEA LIONS painted on the paving, stretched so long that it only stands up from the gate */
+    standUp(k, 'SEA LIONS', '#f0e6cc', 0, 20.5, 3, 0.02, 0, 4.6, 3.2, 1.5);
+    k.egg(v(0, 1.0, 13.4), { id: 'zoo-sea-lions-letters', title: 'Letters that stand up', text: 'SEA LIONS is painted on the paving stretched so long that it only reads as upright letters from one spot just inside the gate. A picture distorted to come right from one viewpoint is anamorphosis. On the zoo\'s own schedule the sea lions in the pool it points at are fed at half past eleven and half past three.', clue: 'Stand just inside the gate and look at the paving in front of the pool.', source: zoo0 }, { r: 1.3 });
+
     /* ---- what the garden knows ---- */
     const zoo = { name: 'Central Park Zoo, Wikipedia', url: 'https://en.wikipedia.org/wiki/Central_Park_Zoo' };
     k.egg(v(0, 3.4, EZ - 0.4), { id: 'zoo-1864', title: 'The second public zoo', year: '1864', text: 'A menagerie stood here from 1864, which makes this the second publicly owned zoo in the United States, after Philadelphia\'s of 1859. The zoo of 1934 opened on December 2 of that year.', clue: 'Read the name over the way in and ask how long there have been animals behind it.', source: zoo }, { r: 2.4 });
@@ -397,6 +517,7 @@ export const sealions: RoomDef = {
     k.egg(v(AX - 0.8, 5.0, 0), { id: 'arsenal-1851', title: 'Older than the park', year: '1851', text: 'Martin E. Thompson designed the Arsenal and it went up between 1847 and 1851 as a storehouse for the arms of the New York State Militia, a symmetrical brick building with half octagonal towers. Only Blockhouse No. 1 of 1814 is older inside the park. It has been a zoo, a police precinct and a weather bureau, it held the American Museum of Natural History\'s collections while that museum was built, and today the Parks Department has its offices here with the Greensward Plan on the third floor.', clue: 'The brick fort on the east side of the garden was here before Central Park was.', source: { name: 'Arsenal (Central Park), Wikipedia', url: 'https://en.wikipedia.org/wiki/Arsenal_(Central_Park)' } }, { r: 3.0 });
     k.egg(v(HX + 0.6, 3.0, 0), { id: 'zoo-feedings', title: 'Half past eleven and half past three', text: 'On the zoo\'s own schedule the sea lions are fed at 11:30 in the morning and 3:30 in the afternoon, and the penguins at 10:40 and 2:30. The penguin house keeps macaroni, king, chinstrap and gentoo penguins. The zoo opens at ten and closes at five, last entry at four.', clue: 'The blue light on the west side of the garden is the coldest room in the park.', source: { name: 'Central Park Zoo, the zoo\'s own site', url: 'https://centralparkzoo.com/' } }, { r: 2.4 });
 
+    shadowDiet(k);
     return { mounts, spawn: v(0, 3, 19.5), look: v(0, 2.6, -24), eye: 3, bounds: [-21.6, 23.6, -38, 27.5], style: st };
   },
 };
@@ -416,11 +537,13 @@ export const delacorte: RoomDef = {
     k.sky({ top: 0x05070f, horizon: 0x141c30, ground: 0x05070a, fog: 0.0028, stars: 900, env: 0.4 });
     k.hemi(0x6a7aa0, 0x141418, 0.55);
     k.sun(0xaab8e0, 0.35, -30, 80, -40, true, 90);
-    const seatM = k.flat(0x2a3a5a, 0, 0.85), tread = k.pbr('dcTread', X.concrete(0x5a5c60, 172), 0.6, { roughness: 0.9 }), riser = k.flat(0x3a3c42, 0, 0.9),
-      stageM = k.pbr('dcStage', X.planks(0x4a3826, 8, 173), 0.7, { roughness: 0.7 }), setM = k.pbr('dcSet', X.planks(0x6a5038, 6, 174), 0.6, { roughness: 0.7 }),
-      slat = k.pbr('dcSlat', X.planks(0x8a6a48, 10, 175), 0.7, { roughness: 0.65 }), slatD = k.flat(0x3a2c20, 0, 0.8),
-      steel = k.flat(0x3a3e44, 0.7, 0.45), iron = k.flat(0x1a1c20, 0.6, 0.5), grassM = k.pbr('dcGrass', X.grass(0x2a3a24, 176), 1, { roughness: 1 }),
-      walk = k.pbr('dcWalk', X.pavers(0x5a5852, 177), 0.5), rock = k.flat(0x3c3a38, 0, 0.95), castle = k.pbr('dcCastle', X.ashlar(0x8a8478, 178, 5), 0.5, { normal: 0.4, roughness: 0.85 }),
+    /* 2026-11-24 wave 9: scanned concrete treads, stage boards, set planks, the new slat wall, schist, pavers, park ground (Poly Haven CC0) */
+    const DC = 'delacorte';
+    const seatM = k.flat(0x2a3a5a, 0, 0.85), tread = sc(k, DC, 'tread', 2.0, () => X.concrete(0x5a5c60, 172), { color: 0x9a9ca0, roughness: 0.9 }, 0x5a5c60), riser = k.flat(0x3a3c42, 0, 0.9),
+      stageM = sc(k, DC, 'stage', 2.0, () => X.planks(0x4a3826, 8, 173), { color: 0xc8a888, roughness: 0.65 }, 0x4a3826), setM = sc(k, DC, 'set', 1.0, () => X.planks(0x6a5038, 6, 174), { color: 0xd8c0a0, roughness: 0.7 }, 0x6a5038),
+      slat = sc(k, DC, 'slat', 1.9, () => X.planks(0x8a6a48, 10, 175), { color: 0xf0d8b8, roughness: 0.65 }, 0x8a6a48), slatD = k.flat(0x3a2c20, 0, 0.8),
+      steel = k.flat(0x3a3e44, 0.7, 0.45), iron = k.flat(0x1a1c20, 0.6, 0.5), grassM = sc(k, DC, 'grass', 3.0, () => X.grass(0x2a3a24, 176), { color: 0x86c060, roughness: 1 }, 0x2a3a24),
+      walk = sc(k, DC, 'walk', 1.9, () => X.pavers(0x5a5852, 177), { color: 0xb8b4ac, roughness: 0.85 }, 0x5a5852), rock = k.flat(0x3c3a38, 0, 0.95), castle = sc(k, DC, 'castle', 2.5, () => X.ashlar(0x8a8478, 178, 5), { color: 0xe0d8c8, roughness: 0.85 }, 0x8a8478),
       castleLit = k.flat(0xb8a888, 0, 0.8, { emissive: 0x6a5a3a, emissiveIntensity: 0.5 }), cap = k.flat(0x2a2e34, 0.2, 0.7),
       warmWin = new T.MeshBasicMaterial({ color: 0xffd890 }), moonM = new T.MeshBasicMaterial({ color: 0xf4f0e0 }),
       perfM = [0xe63946, 0xf1c40f, 0xe0dcd0, 0x2a9d8f, 0x8a3a8a].map((c) => k.flat(c, 0, 0.8));
@@ -653,6 +776,46 @@ export const delacorte: RoomDef = {
     k.crowd([v(1, 0, QZ1 + 2), v(1, 0, QZ0), v(0, 0, LZ1 - 1), v(0, 0, LZ0 + 0.5), v(0, 0, CZ + OR - 1.5)], 12, { seed: 1726, spread: 0.7, speed: 0.6, animate: !ctx.reduced });
     k.crowd([v(-22, 0, CZ + 20), v(-12, 0, CZ + 27.5), v(0, 0, CZ + 29.4), v(12, 0, CZ + 27.5), v(22, 0, CZ + 20)], 8, { seed: 1727, spread: 0.8, speed: 0.8, animate: !ctx.reduced });
 
+    /* ---- 2026-11-24 wave 9: the rig, the props on the set, the signs and the ghost ---- */
+    /* real instruments on the towers: a flood bar at the top of each and a followspot on each platform (our models) */
+    for (const s of [-1, 1]) {
+      const tx = s * 17, tz = CZ - 6;
+      phw(k, DC, 'ph_flood_lights', tx, bottom + 12.05, tz, { height: 1.1, rotY: s > 0 ? -PI / 2 + 0.5 : PI / 2 - 0.5 });
+      for (const y of [bottom + 6.05, bottom + 8.05]) phw(k, DC, 'followspot', tx + s * 0.1, y, tz, { height: 0.75, rotY: s > 0 ? -2.2 : 2.2 });
+    }
+    /* the play's props at the edges of the set: barrels, crates, a cask by the stair */
+    phw(k, DC, 'ph_wooden_barrels_01', -11.6, SY, SZ1 + 4.6, { height: 0.95, rotY: 0.3, keepOut: 2.0 });
+    phw(k, DC, 'ph_wooden_crate_01', 9.4, SY, SZ1 + 1.3, { height: 0.5, rotY: 0.2 });
+    phw(k, DC, 'ph_wooden_crate_01', 9.6, SY + 0.5, SZ1 + 1.4, { height: 0.5, rotY: -0.3 });
+    phw(k, DC, 'ph_barrel_03', -5.2, SY + 4.15, SZ1 + 1.6, { height: 0.9 });
+    /* the night's signs: the festival over the way in, the box office, and where the line starts */
+    hsign(k, 'SHAKESPEARE IN THE PARK', 6.4, 0.5, 0, 5.05, CZ + OR + 0.98, 0, { fg: '#f2e6c8', bg: '#2a1e16', border: '#c8a050', size: 0.55, lit: true });
+    k.box(6.6, 0.62, 0.12, 0, 5.05, CZ + OR + 0.9, slatD);
+    hsign(k, 'BOX OFFICE', 2.4, 0.36, -6.8, 3.0, LZ1 - 0.53, 0, { fg: '#f2e6c8', bg: '#2a1e16', size: 0.55, lit: true });
+    k.box(0.08, 2.4, 0.08, 2.9, 1.2, QZ1 - 0.6, iron);
+    hsign(k, 'FREE TICKETS  ·  LINE STARTS HERE', 2.6, 0.36, 2.9, 2.2, QZ1 - 0.55, 0, { fg: '#2a1e16', bg: '#f2e6c8', size: 0.5, lit: false });
+    /* the Firefly festival banner over the lobby (FIREFLY_QUEUE.md): the slats until the file lands */
+    fireflyPlate(k, 'assets/museum/tex/delacorte/ff_dc_festival_banner.webp', 7.6, 1.3, 0, 6.05, CZ + OR + 0.97, 0, slatD, true);
+    k.box(7.8, 1.5, 0.12, 0, 6.05, CZ + OR + 0.88, slatD);
+    /* one trick (rule 9): Pepper's ghost. A sheet of glass leans over the balcony of the set; from the middle of the house a
+       pale figure stands on the balcony, walk to the side aisles and it is gone, because it is only a reflection */
+    {
+      const gm = new T.MeshBasicMaterial({ color: 0xcfe4ff, transparent: true, opacity: 0, depthWrite: false, blending: T.AdditiveBlending });
+      const ghost = new T.Group(); ghost.position.set(1.2, SY + 4.15, SZ1 + 2.6); k.add(ghost);
+      const body = new T.Mesh(figureGeo(0.22, 0.95, 1.5), gm); ghost.add(body);
+      const robe = new T.Mesh(new T.ConeGeometry(0.55, 1.45, 14, 1, true), gm); robe.position.y = 0.72; ghost.add(robe);
+      const glassG = k.mesh(new T.PlaneGeometry(4.2, 2.6), new T.MeshBasicMaterial({ color: 0xa8c0d8, transparent: true, opacity: 0.05, depthWrite: false, side: T.DoubleSide }), 1.2, SY + 5.4, SZ1 + 4.3, true);
+      glassG.rotation.x = -0.6;
+      if (!ctx.reduced) k.ticks.push((t, dt) => {
+        const c = cam(); let want = 0;
+        if (c) { const dx = c.position.x - 1.2, dz = c.position.z - (SZ1 + 2.6); const a = Math.atan2(dx, dz); if (dz > 6 && Math.abs(a) < 0.2) want = 0.42 * (0.85 + 0.15 * Math.sin(t * 1.7)); }
+        gm.opacity += (want - gm.opacity) * Math.min(1, dt * 2.5);
+        ghost.visible = gm.opacity > 0.01; ghost.rotation.y = 0.2 * Math.sin(t * 0.3); ghost.position.y = SY + 4.15 + 0.05 * Math.sin(t * 0.9);
+      });
+      else { gm.opacity = 0.35; }
+      k.egg(v(1.2, SY + 5.0, SZ1 + 2.6), { id: 'dc-peppers-ghost', title: "Pepper's ghost", year: '1862', text: 'The pale figure on the balcony is only there from the middle of the house. A sheet of glass leans over the stage and catches a lit figure hidden from the audience, so it seems to stand among the players; step to the side aisles and the reflection misses you. John Henry Pepper showed the trick in London in 1862, in a scene from a Charles Dickens story, and theatres used it for ghosts for the rest of the century.', clue: 'Stand in the centre aisle at the top of the bowl and look at the balcony. Then walk to the side.', source: { name: "Pepper's ghost, Wikipedia", url: 'https://en.wikipedia.org/wiki/Pepper%27s_ghost' } }, { r: 1.8 });
+    }
+
     /* ---- what the house knows ---- */
     const dth = { name: 'Delacorte Theater, Wikipedia', url: 'https://en.wikipedia.org/wiki/Delacorte_Theater' };
     const sip = { name: 'Shakespeare in the Park (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/Shakespeare_in_the_Park_(New_York_City)' };
@@ -671,6 +834,7 @@ export const delacorte: RoomDef = {
       }
       return 0;
     };
+    shadowDiet(k);
     return { mounts, spawn: v(0, 3, CZ + 29.6), look: v(0, SY + 1, SZ0 - 8), eye: 3, floorY, bounds: [-37, 37, CZ + 3, QZ1 + 3], style: st };
   },
 };

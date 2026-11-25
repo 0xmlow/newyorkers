@@ -7,7 +7,75 @@ import { personTag } from '../kit';
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
+import { hsign, paintTex, anamorphTex } from './f';
+import { fireflyPlate } from './a';
+import { hero, heroInstances } from './heroes';
 const PI = Math.PI;
+type KV = Parameters<RoomDef['build']>[0];
+
+/* ---------- THE BIG UPGRADE, wave 7a (2026-11-24): helpers for the Promenade and the Garage ----------
+   Poly Haven scans from assets/museum/tex/<room>/ wearing a set colour until all three maps land, real models fitted
+   once and placed (seven or more as instanced parts), house font signs and floor type. A no-op on canvas in node. */
+const W7V_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w7vL = W7V_DOM ? new T.TextureLoader() : null;
+const w7vS = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w7vScan(k: KV, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w7vL) return k.pbr(`w7v-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  let e = w7vS.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w7vL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w7vS.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w7v-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w7v) {
+    m.userData.w7v = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w7vPlace(k: KV, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+function w7vSign(k: KV, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6, border?: string) {
+  if (!W7V_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size, border });
+}
+/* Floor lettering for the one illusion a room, `colors` per letter. Null in node. */
+function w7vType(text: string, colors: string[], w = 1024, h = 256, font = 'W2 Archivo Expanded') {
+  if (!W7V_DOM) return null;
+  return paintTex(w, h, (g) => {
+    g.textBaseline = 'middle';
+    let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`;
+    let tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; tw = g.measureText(text).width; }
+    let x = (w - tw) / 2, n = 0;
+    for (const ch of text) { g.fillStyle = colors[n++ % colors.length]; g.fillText(ch, x, h / 2); x += g.measureText(ch).width; if (ch === ' ') n--; }
+  }, [font]);
+}
+const W7V_HIDDEN = new T.MeshBasicMaterial({ visible: false });
 
 /* ---------------- 140 THE FOURTH OVER THE EAST RIVER ---------------- */
 export const eastriverfourth: RoomDef = {
@@ -23,8 +91,9 @@ export const eastriverfourth: RoomDef = {
     k.sky({ top: 0x05070f, horizon: 0x141c2c, ground: 0x05070a, fog: 0.0035, stars: 800, env: 0.42 });
     k.hemi(0x46608c, 0x141a22, 1.35);
     k.sun(0xaebde8, 0.3, -60, 40, -40, true, 90);
-    const pav = k.pbr('erPave', X.pavers(0x6a6862, 9), 0.5, { roughness: 0.6 }),
-      stone = k.pbr('erWall', X.ashlar(0x7d7a72, 12, 4), 0.42),
+    // 2026-11-24 wave 7a: the Promenade's hexagonal pavers and the park wall are Poly Haven scans (tex/eastriverfourth/)
+    const pav = w7vScan(k, 'eastriverfourth', 'hexagonal_concrete_paving', 1.6, () => X.pavers(0x6a6862, 9), { color: 0x9a968e, roughness: 0.7 }, 0x5a5852),
+      stone = w7vScan(k, 'eastriverfourth', 'stone_wall_04', 3.0, () => X.ashlar(0x7d7a72, 12, 4), { color: 0xa8a498, roughness: 0.85 }, 0x6d6a62),
       iron = k.flat(0x14181e, 0.65, 0.4),
       wood = k.pbr('erWood', X.planks(0x53402e, 6, 13), 1.3, { roughness: 0.6 }),
       dark = k.flat(0x0e1117, 0.3, 0.7),
@@ -38,7 +107,17 @@ export const eastriverfourth: RoomDef = {
     k.block(-6.2, -4.1, Z1, Z0);
     k.rail(3.9, (Z0 + Z1) / 2, Z0 - Z1, iron, 1.12, 'z', 2.2);
     k.block(3.7, 4.6, Z1, Z0);
-    for (let z = Z0 - 6; z > Z1; z -= 9) { k.bench(2.6, z, PI / 2, wood, iron, 2.0); k.lamp(-3.6, z - 4.5, 4.4, iron, 0xffcf96, 120); }
+    /* 2026-11-24 wave 7a: real benches (slatted park benches from our cast) facing the river, and cast iron lamp
+       standards in place of the code posts; each lamp keeps its light */
+    const benchAt: number[][] = [], lampAt: number[][] = [];
+    for (let z = Z0 - 6; z > Z1; z -= 9) {
+      benchAt.push([2.55, 0, z, PI / 2]); k.keepOut.push({ x: 2.55, z, r: 0.9 });
+      lampAt.push([-3.6, 0, z - 4.5, 0]); k.point(-3.6, 4.5, z - 4.5, 0xffcf96, 120, 16); k.keepOut.push({ x: -3.6, z: z - 4.5, r: 0.4 });
+    }
+    w7vPlace(k, 'cp_bench', { width: 2.4 }, benchAt);
+    w7vPlace(k, 'cp_gaslamp', { height: 4.9 }, lampAt);
+    { const gl: T.Matrix4[] = lampAt.map(([x, , z]) => new T.Matrix4().setPosition(x, 4.55, z)); k.instances(new T.SphereGeometry(0.2, 10, 8), k.glow(0xffe2b0), gl); }
+    void wood;
     for (let z = Z0 - 10; z > Z1; z -= 14) k.tree(-3.4, 0, z, { h: 7, r: 3.0, kind: 'round', seed: z, leaf: 0x24381f });
     /* under it, the expressway: two decks of tail lights running below the parapet */
     k.box(18, 0.4, Z0 - Z1, 11, -6.4, (Z0 + Z1) / 2, dark);
@@ -80,6 +159,33 @@ export const eastriverfourth: RoomDef = {
           if (near && rnd() > 0.8) { for (let s2 = 1; s2 <= 3; s2++) k.box(w - s2 * w * 0.22, 4, d - s2 * d * 0.22, x, -14 + h + s2 * 4, z, facade); k.cyl(0.3, 16, x, -14 + h + 20, z, roof, 0.1, 6); }
         }
     }
+    /* 2026-11-24 wave 7a: One World Trade Center over the rest, an antiprism of glass (a square base turning into a
+       square top set at 45 degrees, eight tall triangles), its spire and beacon. Code until a free model exists. */
+    {
+      const rb = 15, rt = 8.5, hT = 172, base = -14, pos: number[] = [], uv: number[] = [];
+      const B = (i: number) => { const a = PI / 4 + (i * PI) / 2; return [Math.cos(a) * rb, base, Math.sin(a) * rb]; };
+      const Tp = (i: number) => { const a = (i * PI) / 2; return [Math.cos(a) * rt, base + hT, Math.sin(a) * rt]; };
+      const tri = (a: number[], b: number[], c: number[], ua: number[], ub: number[], uc: number[]) => { pos.push(...a, ...b, ...c); uv.push(...ua, ...ub, ...uc); };
+      for (let i = 0; i < 4; i++) {
+        tri(B(i), Tp(i + 1), B(i + 1), [0, 0], [0.5, 1], [1, 0]);
+        tri(Tp(i), Tp(i + 1), B(i), [0, 1], [1, 1], [0.5, 0]);
+      }
+      const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.computeVertexNormals();
+      const wm = k.pbr('erOneWtc', X.windows(2001, 0.42, 0x1a2636, true), 1, { emissive: 0xffffff, emissiveIntensity: 2.2, roughness: 0.25, metalness: 0.6 });
+      if (W7V_DOM && wm.map) { wm.map = wm.map.clone(); wm.map.repeat.set(6, 40); wm.map.needsUpdate = true; }
+      if (W7V_DOM && wm.emissiveMap) { wm.emissiveMap = wm.emissiveMap.clone(); wm.emissiveMap.repeat.set(6, 40); wm.emissiveMap.needsUpdate = true; }
+      const tw = k.mesh(g, wm, 214, 0, 48, true); void tw;
+      k.box(rb * 1.42, 0.8, rb * 1.42, 214, base + 0.4, 48, k.flat(0x141922, 0.2, 0.85)).rotation.y = PI / 4;
+      k.box(rt * 1.42, 3, rt * 1.42, 214, base + hT + 1.5, 48, k.flat(0x1a2028, 0.3, 0.6));
+      k.cyl(0.6, 62, 214, base + hT + 34, 48, k.flat(0x9aa4ae, 0.8, 0.3), 1.2, 8);
+      const beacon = k.sphere(1.1, 214, base + hT + 66, 48, k.glow(0xffffff), 10);
+      if (!ctx.reduced) k.ticks.push((t) => { beacon.visible = Math.sin(t * 2.4) > 0.2; });
+    }
+    /* the one trick: JULY 4 in red, white and blue painted flat on the pavers, standing up from where you arrive */
+    { const t = w7vType('JULY 4', ['#e8303a', '#f4f0ea', '#3a6ae8'], 1024, 256); if (t) anamorphTex(k, t, 0, Z0 - 6, 3, 0, 0, 4.4, 4.0, 1.25, 0.9); }
+    k.egg(v(0, 1.2, Z0 - 6), { id: 'july-on-the-pavers', title: 'Letters that stand up', year: 'an illusion', text: 'From where you arrive, JULY 4 stands up on the Promenade like a sign. It is painted flat on the pavers and stretched in the perspective of that one spot, the trick called anamorphosis. Walk down the Promenade and it lies back down.', clue: 'Look straight down the Promenade from where you came in.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 0.8 });
+    /* Firefly: red, white and blue bunting hung along the park wall (FIREFLY_QUEUE.md), invisible until it lands */
+    { const o = fireflyPlate(k, 'assets/museum/tex/eastriverfourth/ff_bunting.webp', 24, 1.2, -4.2, 4.9, -20, PI / 2, W7V_HIDDEN); void o; }
     const BX = 58;
     for (let i = 0; i < 4; i++) {
       const z = 26 - i * 18;
@@ -87,6 +193,12 @@ export const eastriverfourth: RoomDef = {
       k.box(8, 0.5, 24, BX, -12.2, z, k.flat(0x2b3138, 0.3, 0.7));
       for (const dz of [-9, 0, 9]) k.box(0.4, 0.5, 0.4, BX - 3, -12, z + dz, warm);
     }
+    /* 2026-11-24 wave 7a: the barges carry their racks of mortar tubes, the show's guns, in rows on the deck */
+    { const mm: T.Matrix4[] = [];
+      for (let i = 0; i < 4; i++) for (let r = 0; r < 3; r++) for (let c = 0; c < 9; c++) mm.push(new T.Matrix4().setPosition(BX + 0.6 + r * 1.1, -11.4, 26 - i * 18 - 10 + c * 2.5));
+      k.instances(new T.CylinderGeometry(0.28, 0.32, 1.2, 10), k.flat(0x2a2e34, 0.5, 0.5), mm);
+      const rack: T.Matrix4[] = []; for (let i = 0; i < 4; i++) for (let r = 0; r < 3; r++) rack.push(new T.Matrix4().compose(v(BX + 0.6 + r * 1.1, -11.7, 26 - i * 18), new T.Quaternion(), v(0.9, 0.5, 22)));
+      k.instances(new T.BoxGeometry(1, 1, 1), k.flat(0x4a3a2a, 0, 0.8), rack); }
     /* the Brooklyn Bridge, north end, in silhouette with its necklace of lights */
     const BZ = 118, towerX = [38, 158];
     for (const tx of towerX) {
@@ -183,15 +295,22 @@ export const eastriverfourth: RoomDef = {
     if (!ctx.reduced) {
       k.crowd([v(2.6, 0, Z0 - 4), v(2.6, 0, Z1 + 4)], 26, { seed: 41, speed: 0.12, spread: 1.1, colors: [0x1c232c, 0x8a2a2a, 0xe8e2d4, 0x2a3f6a, 0x3a5a3a, 0xd8c04a] });
       k.crowd([v(-2.2, 0, Z1 + 6), v(-2.2, 0, Z0 - 6)], 18, { seed: 42, speed: 0.3, spread: 1.4 });
+      /* 2026-11-24 wave 7a: the boats out watching are real tugs (h_tug_lo from our cast) once they load, running lights on */
+      const tugs: T.Group[] = [];
       for (let i = 0; i < 6; i++) {
         const g = new T.Group();
         const h = new T.Mesh(new T.BoxGeometry(5.2, 1.1, 1.9), hull); h.position.y = -13.3; g.add(h);
         const cabin = new T.Mesh(new T.BoxGeometry(1.8, 1.0, 1.5), k.flat(0xd8d2c4, 0.2, 0.6)); cabin.position.set(-0.6, -12.4, 0); g.add(cabin);
         const lamp2 = new T.Mesh(new T.SphereGeometry(0.16, 8, 6), warm); lamp2.position.set(2.2, -12.3, 0); g.add(lamp2);
-        k.add(g);
+        k.add(g); tugs.push(g);
         const route = k.spline([v(34 + i * 6, 0, 40 - i * 12), v(60 + i * 7, 0, 10 - i * 9), v(96 + i * 5, 0, -30 - i * 6), v(60, 0, -60), v(30, 0, 20)], true);
         k.rider(g, route, 1.2 + i * 0.25, i * 22);
       }
+      void hero(k, 'h_tug_lo', { length: 13 }).then((t) => {
+        if (!t || !k.live) return;
+        t.traverse((c) => { if (c instanceof T.Mesh) c.castShadow = false; });
+        tugs.forEach((g, i) => { const c = i ? t.clone() : t; c.position.y = -14.35; g.children.slice(0, 2).forEach((o) => (o.visible = false)); g.children[2].position.set(0, -10.2, 4); g.add(c); });
+      });
     }
     /* the works: the park wall on one side, the rail panels on the other */
     const mounts: Mount[] = [];
@@ -225,9 +344,10 @@ export const paradisegarage: RoomDef = {
   build(k, ctx) {
     k.sky({ top: 0x05060c, horizon: 0x0c1018, ground: 0x05060a, fog: 0.008, stars: 240, env: 0.3 });
     k.hemi(0x50597e, 0x14161e, 1.5);
-    const floorW = k.pbr('pgFloor', X.planks(0x4a3a2c, 7, 41), 1.1, { roughness: 0.42, metalness: 0.1 }),
-      black = k.pbr('pgWall', X.plaster(0x2e2836, 42), 1.8, { roughness: 0.88 }),
-      ramp = k.pbr('pgRamp', X.concrete(0x3a3a40, 43), 0.5, { roughness: 0.75 }),
+    // 2026-11-24 wave 7a: the sprung floor, the painted garage walls and the ramp are Poly Haven scans (tex/paradisegarage/)
+    const floorW = w7vScan(k, 'paradisegarage', 'wood_floor_worn', 2.0, () => X.planks(0x4a3a2c, 7, 41), { color: 0x9a7a5a, roughness: 0.42, metalness: 0.05 }, 0x4a3a2c),
+      black = w7vScan(k, 'paradisegarage', 'painted_concrete', 2.5, () => X.plaster(0x2e2836, 42), { color: 0x3c3446, roughness: 0.88 }, 0x2e2836),
+      ramp = w7vScan(k, 'paradisegarage', 'concrete_floor_worn_001', 2.5, () => X.concrete(0x3a3a40, 43), { color: 0x8a8a90, roughness: 0.8 }, 0x3a3a40),
       dark = k.flat(0x0d0e12, 0.3, 0.6),
       grille = k.flat(0x1b1d22, 0.5, 0.5),
       cone = k.flat(0x2a2c32, 0.3, 0.7),
@@ -287,7 +407,7 @@ export const paradisegarage: RoomDef = {
     }
     /* the mirror ball and its speckle: eighty additive flecks on a slow rotating rig */
     const ballRig = new T.Group(); ballRig.position.set(0, 4.6, 0);
-    const ball = new T.Mesh(new T.IcosahedronGeometry(0.62, 1), new T.MeshStandardMaterial({ color: 0xe8eef4, metalness: 1, roughness: 0.08, flatShading: true }));
+    const ball = new T.Mesh(new T.IcosahedronGeometry(0.62, 4), new T.MeshStandardMaterial({ color: 0xe8eef4, metalness: 1, roughness: 0.06, flatShading: true }));   // 2026-11-24: 2,560 facets, each one a mirror tile
     ballRig.add(ball);
     k.add(ballRig);
     k.beam(v(0, 5.2, 0), v(0, H, 0), 0.03, steelM, 4);
@@ -335,10 +455,35 @@ export const paradisegarage: RoomDef = {
       t.rotation.x = -PI / 2;
       tiles.push(t);
     }
+    /* 2026-11-24 wave 7a: the garage it was: concrete beams across the deck every three metres, a sprinkler main, the
+       old painted bay numbers on the piers; and the one trick, UNTIL MORNING painted flat on the floor, standing up
+       from the top of the ramp */
+    {
+      const beamM = w7vScan(k, 'paradisegarage', 'painted_concrete', 2.5, () => X.concrete(0x3a3a40, 44), { color: 0x2a2630, roughness: 0.9 }, 0x2a2630, 'b');
+      const bm: T.Matrix4[] = [];
+      for (let z = -D / 2 + 1.5; z < D / 2; z += 3) bm.push(new T.Matrix4().compose(v(0, H - 0.35, z), new T.Quaternion(), v(W, 0.7, 0.45)));
+      k.instances(new T.BoxGeometry(1, 1, 1), beamM, bm);
+      k.bar(v(-W / 2 + 1, H - 0.85, -D / 2 + 1), v(-W / 2 + 1, H - 0.85, D / 2 - 1), 0.14, 0.14, k.flat(0x8a1a1a, 0.4, 0.6));
+      for (const sx of [-1, 1]) for (let i = 0; i < 4; i++) w7vSign(k, String(i * 2 + (sx > 0 ? 2 : 1)), 0.7, 0.7, sx * (W / 2 - 0.27), 5.4, -10.5 + i * 7, sx > 0 ? -PI / 2 : PI / 2, '#d8d0c0', '', 'W2 Archivo Expanded', false, 0.8);
+      const t = w7vType('UNTIL MORNING', ['#ff3a8a', '#3ad8ff', '#ffd23a']);
+      if (t) anamorphTex(k, t, 0, D / 2 + 3.5, 3, 0, 0.186, 7.0, 6.0, 1.15, 0.85);
+      k.egg(v(-0.9, 1.0, D / 2 - 2.5), { id: 'until-morning', title: 'Words that stand up', year: 'an illusion', text: 'From the top of the ramp, UNTIL MORNING stands up on the dance floor. It is painted flat on the boards and stretched in the perspective of that one spot, the trick called anamorphosis. Step onto the floor and it lies down under the dancers.', clue: 'Look at the floor from where the ramp opens into the room.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 0.8 });
+      const fr = fireflyPlate(k, 'assets/museum/tex/paradisegarage/ff_flyer_frieze.webp', 22, 1.3, 0, 5.35, -D / 2 + 0.27, 0, W7V_HIDDEN); void fr;
+      w7vSign(k, 'MEMBERS  ·  GUESTS WITH MEMBERS ONLY', 3.6, 0.36, 3.22, 3.4, D / 2 + 18, -PI / 2, '#e8d8f0', '#120f16', 'W2 Archivo Expanded', false, 0.6);
+    }
     /* the fruit and the juice, since there is no bar */
     k.box(4.4, 1.0, 1.2, W / 2 - 3.6, 0.5, 6.6, cherry);
     k.block(W / 2 - 6.0, W / 2 - 1.2, 5.6, 7.6);
-    for (let i = 0; i < 14; i++) k.sphere(0.13, W / 2 - 5.4 + (i % 7) * 0.42, 1.12, 6.2 + Math.floor(i / 7) * 0.5, i % 3 ? k.flat(0xe8a02a, 0, 0.6) : k.flat(0xc8342a, 0, 0.6), 9);
+    /* 2026-11-24 wave 7a: real fruit (Poly Haven and our cast, decimated) heaped on the table, crates of juice under it,
+       record crates on the booth */
+    { const rs = X.mulberry(78), or: number[][] = [], ap: number[][] = [];
+      for (let i = 0; i < 22; i++) or.push([W / 2 - 5.3 + (i % 11) * 0.17 + (rs() - 0.5) * 0.05, 1.0 + (i > 10 ? 0.06 : 0), 6.25 + Math.floor(i / 11) * 0.16 + (rs() - 0.5) * 0.05, rs() * 6]);
+      for (let i = 0; i < 16; i++) ap.push([W / 2 - 3.2 + (i % 8) * 0.17 + (rs() - 0.5) * 0.05, 1.0 + (i > 7 ? 0.06 : 0), 6.25 + Math.floor(i / 8) * 0.17, rs() * 6]);
+      w7vPlace(k, 'paradisegarage/orange', { height: 0.15 }, or);
+      w7vPlace(k, 'paradisegarage/apple', { height: 0.14 }, ap);
+      w7vPlace(k, 'paradisegarage/bananas', { width: 0.75 }, [[W / 2 - 3.5, 1.0, 6.95, 0.3], [W / 2 - 2.6, 1.0, 6.95, -0.4], [W / 2 - 4.4, 1.0, 6.95, 0.1]]);
+      w7vPlace(k, 'paradisegarage/crate', { width: 0.58 }, [[W / 2 - 5.2, 0, 7.55, 0], [W / 2 - 4.5, 0, 7.55, 0.1], [W / 2 - 3.8, 0, 7.55, 0], [W / 2 - 4.85, 0.5, 7.55, 0.05]]);
+      w7vPlace(k, 'paradisegarage/records', { width: 1.15 }, [[-W / 2 + 2.6, 1.5, -D / 2 + 1.8, 0.05], [-W / 2 + 3.9, 1.5, -D / 2 + 1.8, -0.04], [-W / 2 + 5.4, 1.5, -D / 2 + 1.8, 0.02]]); }
     k.sign('NO ALCOHOL  ·  FRUIT  ·  JUICE  ·  WATER', 3.0, 0.42, W / 2 - 3.6, 2.4, 6.0, '#120f16', '#c8b8d8', 54, PI);
     /* the beat: 124 to the minute, and everything in the room answers it */
     const dancers = ctx.reduced ? null : k.crowd([v(-7, 0, -8), v(6, 0, -6), v(7, 0, 6), v(-6, 0, 8), v(-7, 0, -8)], 34, { seed: 51, speed: 0.22, spread: 3.2, closed: true, colors: [0xe8e2d4, 0xd82a6a, 0x2ad8c8, 0xf0c22a, 0x2a2a34, 0x8a4ad8, 0xff7a3a] });

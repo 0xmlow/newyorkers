@@ -10,7 +10,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount, type FrameStyle } from '../kit';
 import type { RoomDef } from './types';
-import { followInstances } from './heroes';
+import { followInstances, hero, heroInstances, standIn, hide } from './heroes';
+import { hsign, anamorphTex } from './f';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 type C = Parameters<RoomDef['build']>[1];
@@ -247,6 +248,120 @@ function tablets(k: K, x: number, y: number, z: number, stone: T.Material, edge:
   const r = k.box(2 * (2 * w + 0.12) + 0.1, 0.08, 0.2, x, y - 0.04, z, edge); r.rotation.y = rotY;
 }
 
+
+/* ---------- THE BIG UPGRADE, wave 9a (2026-11-24): helpers for Shearith Israel and Park East ----------
+   Poly Haven scans from assets/museum/tex/<room>/ wearing a set colour until the maps land, real models
+   fitted once and placed (more than six as instanced parts), house font signs. All a no-op in node. */
+const W9_DOM = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const w9L = W9_DOM ? new T.TextureLoader() : null;
+const w9S = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function w9Scan(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number } = {}, wait = 0x777777, tag = '') {
+  if (!w9L) return k.pbr(`w9-${room}-${id}${tag}`, paint(), 1 / metres, p);
+  const key = room + '/' + id;
+  let e = w9S.get(key);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = w9L.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w9S.set(key, e);
+  }
+  k.pending.push(e.ready);
+  const m = k.pbr(`w9-${room}-${id}${tag}`, e.s, 1 / metres, p);
+  if (!m.userData.w9) {
+    m.userData.w9 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null; m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+function w9Place(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void, then?: (os: T.Object3D[]) => void) {
+  if (!at.length) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (!(c instanceof T.Mesh)) return; c.castShadow = false; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshPhysicalMaterial[]) if (m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(0, 0, 0, 'YXZ');
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromEuler(e.set(0, r, 0, 'YXZ')), new T.Vector3(s, s, s))));
+      ins.commit(); then?.([]); return;
+    }
+    const os = at.map(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.set(0, r, 0); c.scale.setScalar(s); k.add(c); return c; });
+    then?.(os);
+  });
+}
+/* a Firefly plate from FIREFLY_QUEUE.md, once the main session has made it, takes over a material's map; the mask keeps
+   the window's shape. Until then (or if it never comes) the painted canvas stays. */
+function w9Swap(k: K, m: T.MeshBasicMaterial | T.MeshStandardMaterial, url: string, mask?: T.Texture) {
+  if (!w9L) return;
+  w9L.load(url, (t) => { if (!k.live) { t.dispose(); return; } t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; m.map = t; if (mask) { m.alphaMap = mask; m.transparent = true; m.alphaTest = 0.4; } m.needsUpdate = true; }, undefined, () => {});
+}
+function w9Mask(kind: 'arch' | 'round' | 'oval') {
+  const W = 256, H = kind === 'arch' ? 640 : kind === 'oval' ? 160 : 256;
+  return canvasTex(W, H, (g) => {
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.fillStyle = '#fff'; g.beginPath();
+    if (kind === 'round') g.arc(W / 2, H / 2, W / 2 - 2, 0, PI * 2);
+    else if (kind === 'oval') g.ellipse(W / 2, H / 2, W / 2 - 4, H / 2 - 4, 0, 0, PI * 2);
+    else { g.moveTo(2, H); g.lineTo(2, W / 2); g.arc(W / 2, W / 2, W / 2 - 2, PI, 0); g.lineTo(W - 2, H); g.closePath(); }
+    g.fill();
+  });
+}
+/* wave 9a triangle pass (lead note): the debug counter runs 2.5 to 3x the scene because of the sun's shadow pass. Once the
+   kit has swapped in its cars and figures, stop shadows from instanced crowds of small things (fence bars, bars of gold,
+   planting, pigeons, the cab models the kit lays on traffic, the crowd figures) and from trees further than `near`
+   metres from the point given. The built architecture keeps its shadows. */
+function w9ShadowTrim(k: K, cx: number, cz: number, near = 24) {
+  if (!W9_DOM) return;
+  const run = () => {
+    if (!k.live) return;
+    k.scene.traverse((o) => {
+      const m = o as T.Mesh; if (!m.isMesh || !m.castShadow) return;
+      const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as T.Material | undefined, nm = (mat && mat.name) || '';
+      if ((m as T.InstancedMesh).isInstancedMesh || nm.startsWith('tripo_') || nm.startsWith('MLOW_')) { m.castShadow = false; return; }
+      if (/leaf|bark|twig/.test(nm)) { const p = new T.Vector3(); m.getWorldPosition(p); if (Math.hypot(p.x - cx, p.z - cz) > near) m.castShadow = false; }
+    });
+  };
+  for (const ms of [1500, 5000, 12000]) setTimeout(run, ms);
+}
+function w9Sign(k: K, text: string, w: number, h: number, x: number, y: number, z: number, rotY: number, fg: string, bg: string, font = 'W2 Archivo Expanded', lit = false, size = 0.6, border?: string) {
+  if (!W9_DOM) return k.box(w, h, 0.02, x, y, z, k.flat(0x333333));
+  return hsign(k, text, w, h, x, y, z, rotY, { fg, bg: bg || undefined, font, lit, size, border });
+}
+/* a New York street name blade pair on a pole: white on green, the second blade turned a quarter */
+function w9StreetSign(k: K, x: number, z: number, a: string, b: string, rotY = 0) {
+  const pole = k.flat(0x3a4a3e, 0.5, 0.5);
+  k.cyl(0.05, 3.24, x, 1.62, z, pole, 0.06, 8);
+  w9Sign(k, a, 1.5, 0.26, x, 3.4, z, rotY, '#ffffff', '#1d6b3c', 'W2 Archivo Narrow', false, 0.62, '#ffffff');
+  w9Sign(k, a, 1.5, 0.26, x, 3.4, z, rotY + PI, '#ffffff', '#1d6b3c', 'W2 Archivo Narrow', false, 0.62, '#ffffff');
+  w9Sign(k, b, 1.2, 0.26, x, 3.72, z, rotY + PI / 2, '#ffffff', '#1d6b3c', 'W2 Archivo Narrow', false, 0.62, '#ffffff');
+  w9Sign(k, b, 1.2, 0.26, x, 3.72, z, rotY - PI / 2, '#ffffff', '#1d6b3c', 'W2 Archivo Narrow', false, 0.62, '#ffffff');
+  k.keepOut.push({ x, z, r: 0.3 });
+}
+/* coloured window light laid on a floor as an anamorph: scattered pools that join into one upright arched window
+   from a single standpoint. Additive, no depth write, so it only ever brightens what it lies on. */
+function w9LightArch(k: K, seed: number, pal: string[], ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, strength = 0.5) {
+  if (!W9_DOM) return null;
+  const tex = canvasTex(256, 512, (g) => {
+    const rnd = X.mulberry(seed), Wc = 256, Hc = 512;
+    g.fillStyle = '#000'; g.fillRect(0, 0, Wc, Hc);
+    g.save(); g.beginPath(); g.moveTo(10, Hc); g.lineTo(10, Wc / 2); g.arc(Wc / 2, Wc / 2, Wc / 2 - 10, PI, 0); g.lineTo(Wc - 10, Hc); g.closePath(); g.clip();
+    for (let y = 0; y < Hc; y += 32) for (let x = 0; x < Wc; x += 32) { g.fillStyle = pal[Math.floor(rnd() * pal.length)]; g.globalAlpha = 0.55 + rnd() * 0.45; g.fillRect(x + 4, y + 4, 24, 24); }
+    g.globalAlpha = 1; g.restore();
+    const grd = g.createLinearGradient(0, 0, 0, Hc); grd.addColorStop(0, 'rgba(0,0,0,0)'); grd.addColorStop(1, 'rgba(0,0,0,0.55)');
+    g.fillStyle = grd; g.fillRect(0, 0, Wc, Hc);
+  });
+  const o = anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H, strength);
+  const m = o.material as T.MeshBasicMaterial; m.blending = T.AdditiveBlending; m.transparent = true; m.toneMapped = false;
+  return o;
+}
+
 /* ================================================================== */
 /* ---------------- 161 SAFRA SYNAGOGUE ---------------- */
 export const safra: RoomDef = {
@@ -467,18 +582,20 @@ export const shearith: RoomDef = {
       if (Math.abs(x) <= 8 && z < 4.6) return FY * (4.6 - z) / 2;
       return 0;
     };
-    const lime = k.pbr('siLime', X.ashlar(0xd6cdb8, 171, 5), 0.5, { normal: 0.45, roughness: 0.85 }),
-      limeDark = k.pbr('siLime2', X.ashlar(0xbcb29c, 172, 4), 0.5, { normal: 0.5, roughness: 0.9 }),
-      colM = k.pbr('siCol', X.plaster(0xddd4c0, 173), 0.3, { roughness: 0.8 }),
-      marbleW = k.pbr('siMarb', X.marble(0xe4ddcc, 0xa89c84, 174), 0.3, { roughness: 0.3 }),
+    /* wave 9a: Poly Haven scans (white sandstone blocks, marble, dark wood, plaster, granite, asphalt, pavement, grass) */
+    const SR = 'shearith';
+    const lime = w9Scan(k, SR, 'lime', 6.0, () => X.ashlar(0xd6cdb8, 171, 5), { color: 0xfff8ec, normal: 0.45, roughness: 0.85 }, 0xd6cdb8),
+      limeDark = w9Scan(k, SR, 'lime', 5.0, () => X.ashlar(0xbcb29c, 172, 4), { color: 0xe8dec8, normal: 0.5, roughness: 0.9 }, 0xbcb29c, '-d'),
+      colM = w9Scan(k, SR, 'plaster', 2.4, () => X.plaster(0xddd4c0, 173), { color: 0xf4ecdc, normal: 0.5, roughness: 0.8 }, 0xddd4c0, '-c'),
+      marbleW = w9Scan(k, SR, 'marble', 1.6, () => X.marble(0xe4ddcc, 0xa89c84, 174), { color: 0xf6f0e4, roughness: 0.3 }, 0xe4ddcc),
       marbleG = k.pbr('siMarbG', X.marble(0x8a9a88, 0x4a5a4a, 175), 0.4, { roughness: 0.3 }),
       marbleR = k.pbr('siMarbR', X.marble(0x9a6a5a, 0x5a3a30, 176), 0.4, { roughness: 0.3 }),
       sand = k.pbr('siSand', X.concrete(0xd8c49a, 177), 0.9, { roughness: 1 }),
-      plaster = k.pbr('siPlas', X.plaster(0xece2cc, 178), 0.3, { roughness: 0.85 }), marbleWall = k.pbr('siMarbWall', X.marble(0xece2ca, 0xc4b494, 185), 0.7, { roughness: 0.45 }),
-      wood = k.pbr('siWood', X.planks(0x5a3a22, 6, 179), 0.8, { roughness: 0.5 }), woodDark = k.flat(0x3a2414, 0, 0.5),
+      plaster = w9Scan(k, SR, 'plaster', 2.2, () => X.plaster(0xece2cc, 178), { color: 0xf6ecd8, roughness: 0.85, normal: 0.5 }, 0xece2cc), marbleWall = w9Scan(k, SR, 'plaster', 3.0, () => X.marble(0xece2ca, 0xc4b494, 185), { color: 0xfaf0dc, roughness: 0.55, normal: 0.4 }, 0xece2ca, '-w'),
+      wood = w9Scan(k, SR, 'wood', 1.4, () => X.planks(0x5a3a22, 6, 179), { color: 0xb88a64, roughness: 0.5 }, 0x5a3a22), woodDark = k.flat(0x3a2414, 0, 0.5),
       brass = k.flat(0xc89a48, 1, 0.3), white = k.flat(0xe8e2d2, 0, 0.6), cream = k.flat(0xd8ceb4, 0, 0.7),
-      asph = k.pbr('siAsph', X.asphalt(), 0.3), walk = k.pbr('siWalk', X.pavers(0x9c988e, 180), 0.5), curb = k.flat(0x8a8680, 0, 0.8),
-      parkWall = k.pbr('siPark', X.ashlar(0x8a8274, 181, 3), 0.6, { normal: 0.6 }), iron = k.flat(0x1e2420, 0.5, 0.5), line = k.flat(0xe8e4d8, 0, 0.8), yellow = k.flat(0xd8b830, 0, 0.8),
+      asph = w9Scan(k, SR, 'asph', 3.2, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.9 }, 0x34363a), walk = w9Scan(k, SR, 'walk', 2.4, () => X.pavers(0x9c988e, 180), { color: 0xd8d2c6 }, 0x9c988e), curb = w9Scan(k, SR, 'granite', 1.2, () => X.ashlar(0x8a8680, 186, 2), { color: 0xc8c4bc }, 0x8a8680, '-k'),
+      parkWall = w9Scan(k, SR, 'granite', 1.8, () => X.ashlar(0x8a8274, 181, 3), { color: 0xc4b8a8, normal: 0.8 }, 0x8a8274), iron = k.flat(0x1e2420, 0.5, 0.5), line = k.flat(0xe8e4d8, 0, 0.8), yellow = k.flat(0xd8b830, 0, 0.8),
       darkGlass = k.flat(0x2c3640, 0.35, 0.22), soil = k.flat(0x4a3e30, 0, 1);
     const bulbs: { x: number; y: number; z: number }[] = [];
     /* ---- Central Park West: the pavement, eight lanes of avenue, the park pavement, wall and trees ---- */
@@ -487,16 +604,18 @@ export const shearith: RoomDef = {
     k.box(70, 0.012, 0.12, 0, 0.005, 12.4, yellow); k.box(70, 0.012, 0.12, 0, 0.005, 12.6, yellow);
     for (const z of [9.3, 15.7]) for (let x = -34; x < 34; x += 3.2) k.box(1.6, 0.012, 0.12, x, 0.005, z, line);
     k.box(70, 1.0, 0.6, 0, 0.5, 23.8, parkWall); k.box(70, 0.12, 0.8, 0, 1.06, 23.8, limeDark);
-    k.box(70, 0.3, 20, 0, 0.3, 34, soil); k.box(70, 0.05, 20, 0, 0.47, 34, k.pbr('siGrass', X.grass(0x4b6b3a, 182), 0.5));
+    k.box(70, 0.3, 20, 0, 0.3, 34, soil); k.box(70, 0.05, 20, 0, 0.47, 34, w9Scan(k, SR, 'grass', 2.2, () => X.grass(0x4b6b3a, 182), { color: 0xb0c09a }, 0x4b6b3a));
     for (let i = 0; i < 14; i++) { const x = -32 + i * 5 + ((i * 37) % 5) - 2, z = 26 + ((i * 53) % 9); k.tree(x, 0.45, z, { h: 7 + (i % 3) * 1.5, r: 3 + (i % 2), seed: 162 + i }); }
     /* park benches against the wall, merged into the static batch */
-    for (const x of [-16, -8, 8, 16]) {
-      for (let j = 0; j < 4; j++) k.box(2.2, 0.05, 0.12, x, 0.62, 22.08 + j * 0.15, wood);
-      for (let j = 0; j < 3; j++) k.box(2.2, 0.13, 0.05, x, 0.85 + j * 0.15, 22.72 + j * 0.02, wood);
-      for (const dx of [-0.9, 0.9]) { k.box(0.07, 0.6, 0.72, x + dx, 0.3, 22.35, iron); k.box(0.07, 0.65, 0.06, x + dx, 0.95, 22.76, iron); }
-      k.keepOut.push({ x, z: 22.3, r: 0.9 });
-    }
-    for (const x of [-22, 22]) { k.lathe([[0.2, 0], [0.2, 0.08], [0.1, 0.16], [0.06, 3.9], [0.09, 4.0], [0.04, 4.2]], x, 0, 20.2, iron, 10); k.sphere(0.24, x, 4.35, 20.2, k.flat(0xf4ecd8, 0, 0.3), 12); k.keepOut.push({ x, z: 20.2, r: 0.4 }); }
+    /* wave 9a: the park benches are the museum's Central Park bench model, the lamps Poly Haven's cast iron street lamp */
+    const benchX = [-28, -16, -8, 8, 16, 28];
+    for (const x of benchX) k.keepOut.push({ x, z: 22.3, r: 1.1 });
+    w9Place(k, 'shearith/cp_bench', { width: 2.2 }, benchX.map((x) => [x, 0, 22.4, PI]));
+    const lampAt = [[-22, 20.2], [22, 20.2], [-34, 20.2], [34, 20.2], [-16, 5.5], [16, 5.5], [-30, 5.5], [30, 5.5]];
+    for (const [x, z] of lampAt) k.keepOut.push({ x, z, r: 0.4 });
+    w9Place(k, 'shearith/street_lamp_lo', { height: 4.4 }, lampAt.map(([x, z]) => [x, 0, z, z > 10 ? PI : 0]));
+    w9StreetSign(k, 26.6, 5.3, 'CENTRAL PARK W', 'W 70 ST');
+    w9StreetSign(k, -27.2, 20.4, 'CENTRAL PARK W', 'W 69 ST', PI);
     traffic(k, ctx, { lanes: [{ z: 8, dir: -1, n: 4, speed: 10 }, { z: 10.6, dir: -1, n: 4, speed: 9 }, { z: 14.4, dir: 1, n: 4, speed: 9 }, { z: 17, dir: 1, n: 4, speed: 10 }], x0: -38, x1: 38, seed: 1621 });
     k.crowd([v(-34, 0, 5.2), v(34, 0, 5.2)], 7, { seed: 1622, spread: 1.2, animate: !ctx.reduced });
     k.crowd([v(-34, 0, 20.6), v(34, 0, 20.6)], 8, { seed: 1623, spread: 1.4, animate: !ctx.reduced });
@@ -532,17 +651,26 @@ export const shearith: RoomDef = {
     for (const s of [-1, 1]) { k.box(0.8, FY + 0.4, 4.8, s * 8.4, (FY + 0.4) / 2, 2.3, limeDark); k.block(s > 0 ? 8 : -8.9, s > 0 ? 8.9 : -8, 0, 4.7); }
     /* four giant Corinthian columns, entablature and pediment */
     const CH = 12;
+    const capOld: T.Object3D[] = [];
     for (const x of [-5.4, -1.8, 1.8, 5.4]) {
       k.column(x, FY, 1.4, CH, 0.55, colM, true, lime);
+      const capMark = k.objects.length;
       /* the Corinthian bell: a flared drum ringed with two rows of acanthus */
       k.lathe([[0.5, 0], [0.62, 0.5], [0.78, 1.05], [0.95, 1.2]], x, FY + CH - 1.2, 1.4, lime, 20);
       for (let i = 0; i < 8; i++) { const a = i / 8 * PI * 2; for (const [r, y, hh] of [[0.62, 0.25, 0.55], [0.76, 0.7, 0.5]]) { const leaf = k.box(0.22, hh, 0.12, x + Math.cos(a + (y > 0.5 ? 0.39 : 0)) * r, FY + CH - 1.2 + y, 1.4 + Math.sin(a + (y > 0.5 ? 0.39 : 0)) * r, limeDark); leaf.rotation.y = -a + PI / 2; leaf.rotation.x = 0.25; } }
+      capOld.push(...standIn(k, capMark));
       k.box(1.9, 0.22, 1.9, x, FY + CH + 0.11, 1.4, lime);
       k.keepOut.push({ x, z: 1.4, r: 0.85 });
     }
+    /* wave 9a: a carved Corinthian capital model on each of the four columns, the code bell hidden when it lands */
+    w9Place(k, 'shearith/corinthian_capital', { width: 1.95 }, [-5.4, -1.8, 1.8, 5.4].map((x) => [x, FY + CH - 1.22, 1.4, 0]), (h) => h.traverse((c) => { if (c instanceof T.Mesh) c.material = colM; }), () => hide(capOld));
     const EY = FY + CH + 0.22;
     k.box(15.4, 1.0, 2.8, 0, EY + 0.5, 1.2, lime); k.box(15.6, 0.9, 2.9, 0, EY + 1.45, 1.2, limeDark); k.box(15.8, 0.35, 3.0, 0, EY + 2.08, 1.22, lime);
-    k.sign('CONGREGATION SHEARITH ISRAEL', 4.4, 0.5, -10.8, 4.2, 0.05, '#6a5430', '#f0e4c0', 50);
+    /* wave 9a: the bronze name plaque by the steps, in the house lettering */
+    k.box(3.6, 1.5, 0.08, -10.8, 3.9, 0.04, k.flat(0x6a4c28, 0.9, 0.42));
+    w9Sign(k, 'CONGREGATION SHEARITH ISRAEL', 3.3, 0.42, -10.8, 4.32, 0.09, 0, '#e8d49a', '', 'W2 Archivo Expanded', false, 0.62);
+    w9Sign(k, 'THE SPANISH AND PORTUGUESE SYNAGOGUE', 3.3, 0.3, -10.8, 3.88, 0.09, 0, '#d8c48a', '', 'W2 Archivo Narrow', false, 0.6);
+    w9Sign(k, 'FOUNDED 1654', 1.6, 0.26, -10.8, 3.46, 0.09, 0, '#d8c48a', '', 'W2 JetBrains Mono', false, 0.6);
     { const s = new T.Shape(); s.moveTo(-8, 0); s.lineTo(8, 0); s.lineTo(0, 3.1); s.closePath(); const g = new T.ExtrudeGeometry(s, { depth: 2.8, bevelEnabled: false }); g.translate(0, 0, -1.4); k.mesh(g, lime, 0, EY + 2.25, 1.15); }
     { const s = new T.Shape(); s.moveTo(-6.9, 0); s.lineTo(6.9, 0); s.lineTo(0, 2.4); s.closePath(); const g = new T.ExtrudeGeometry(s, { depth: 0.1, bevelEnabled: false }); k.mesh(g, limeDark, 0, EY + 2.55, 2.55); }
     k.box(15.6, 0.5, 0.4, 0, FY + CH - 0.05 + 3.1, -0.05, lime);
@@ -603,10 +731,13 @@ export const shearith: RoomDef = {
     nerTamid(k, ctx, SX1 - 1.8, FY + 3.2, DZ, FY + 5.4, brass);
     k.block(SX1 - 1.2, SX1, DZ - 1.5, DZ + 1.5);
     chandelier(k, DX - 2.5, FY + 3.9, DZ, 0.7, 6, brass, FY + 5.4, bulbs);
+    /* wave 9a: oak bookcases of prayer books either side of the lobby */
+    for (const s of [-1, 1]) k.keepOut.push({ x: s * 11.4, z: -5.7, r: 0.8 });
+    w9Place(k, 'shearith/ph_wooden_bookshelf_worn', { height: 2.3 }, [[-11.45, FY + 0.05, -5.7, PI / 2], [11.45, FY + 0.05, -5.7, -PI / 2]]);
     k.point(DX - 2, FY + 3.4, DZ, 0xffd8a0, 7, 9);
     /* ---- the sanctuary ---- */
     const Z0 = -7.0, Z1 = -34, SW = 13, SH = 15, GY = FY + 5.2;
-    k.box(2 * SW, 0.1, Z0 - Z1, 0, FY, (Z0 + Z1) / 2, sand);
+    k.box(2 * SW, 0.1, Z0 - Z1, 0, FY, (Z0 + Z1) / 2, w9Scan(k, SR, 'wood', 1.8, () => X.planks(0x8a6440, 7, 187), { color: 0xd8b48a, roughness: 0.45 }, 0x8a6440, '-f'));
     wallZ(k, Z1, Z0, -SW, SH, 0.5, marbleWall, [], FY); wallZ(k, Z1, Z0, SW, SH, 0.5, marbleWall, [], FY);
     wallX(k, -SW, SW, Z1, SH, 0.5, marbleWall, [], FY);
     k.box(2 * SW + 1, 0.6, Z0 - Z1 + 1, 0, FY + SH + 0.3, (Z0 + Z1) / 2, plaster);
@@ -625,6 +756,7 @@ export const shearith: RoomDef = {
     }
     /* the Tiffany windows over the galleries */
     const tiff = [archGlass(1626, [0xe8c070, 0xd8a850, 0xf0dca0, 0x9ab880, 0x7aa0a8, 0xe8e0c0, 0xc88a40], { medallion: false, cell: 28 }), archGlass(1627, [0xf0d8a0, 0xa8c088, 0xd8b060, 0xe8e4c8, 0x88a8b8, 0xb87838], { medallion: false, cell: 28 })].map((t) => glassMat(t, 0xfff4e0));
+    { const mask = W9_DOM ? w9Mask('arch') : undefined; for (const m of tiff) w9Swap(k, m, 'assets/museum/tex/shearith/ff_tiffany_glass.webp', mask); }
     [-11, -16, -21, -26, -31].forEach((z, i) => { for (const s of [-1, 1]) { k.plane(2.6, 6.4, s * (SW - 0.26), GY + 5.4, z, tiff[(i + (s > 0 ? 1 : 0)) % 2], -s * PI / 2); k.box(0.3, 0.3, 3.1, s * (SW - 0.3), GY + 2.1, z, cream); } });
     /* the reader's desk near the entrance, facing the ark, four brass candlesticks at its corners */
     const TZ = -12.2;
@@ -642,6 +774,13 @@ export const shearith: RoomDef = {
       for (let z = za - 0.5; z > zb; z -= 0.7) if (rnd() < 0.3) seated.push({ x: x - s * 0.02, y: FY + 0.28, z, ry: s > 0 ? -PI / 2 : PI / 2, sit: true });
     }
     for (const s of [-1, 1]) k.block(s > 0 ? 5 : -8.4, s > 0 ? 8.4 : -5, -29.6, -14.8);
+    /* wave 9a: prayer books left on the benches (Poly Haven's book set, decimated, instanced) */
+    { const at: number[][] = [], rb = X.mulberry(1631); for (const s of [-1, 1]) for (let r = 0; r < 3; r++) for (let z = -16.2; z > -28.6; z -= 2.1 + rb() * 1.4) at.push([s * (5.4 + r * 1.25), FY + 0.5, z, PI / 2 + (rb() - 0.5) * 0.3]); w9Place(k, 'shearith/books_lo', { width: 0.42 }, at); }
+    w9Place(k, 'shearith/candleholders_lo', { width: 1.0 }, [[-3.7, FY + 0.3, Z1 + 2.6, 0], [3.7, FY + 0.3, Z1 + 2.6, 0]]);
+    /* the illusion, quiet: scattered pools of window light on the aisle floor join into one upright arched window,
+       but only from the brass disc in the floor at the head of the aisle */
+    w9LightArch(k, 1632, ['#f2d590', '#e8c070', '#c8dca0', '#a8c8c0', '#f6ecc8', '#d8a860'], 0, -15.2, FY + 0.05 + 3, FY + 0.06, 0, 4, 2.6, 2.2, 0.42);
+    k.cyl(0.32, 0.02, 0, FY + 0.06, -15.2, brass, 0.32, 24);
     still(k, seated, 1629);
     /* the ark at the far end: marble steps, columns, a pediment, plain doors, blank tablets, the eternal light */
     k.box(9, 0.3, 3.4, 0, FY + 0.15, Z1 + 1.7, marbleW); k.box(8, 0.3, 2.6, 0, FY + 0.45, Z1 + 1.3, marbleW); k.box(7, 0.3, 1.8, 0, FY + 0.75, Z1 + 0.9, marbleW);
@@ -657,7 +796,12 @@ export const shearith: RoomDef = {
     nerTamid(k, ctx, 0, FY + 6.6, Z1 + 4.2, FY + SH, brass);
     k.point(0, FY + 6, Z1 + 5.5, 0xffd8a0, 16, 13);
     /* brass candle chandeliers down the room, candle sconces on the walls */
-    for (const z of [-17, -22.5, -28]) chandelier(k, 0, FY + 9, z, 1.6, 12, brass, FY + SH - 0.5, bulbs);
+    /* wave 9a: Poly Haven's classic brass chandelier, large, on a chain from the coffers; the ring chandeliers stand in until it lands */
+    const chMark = k.objects.length, chBulbs: { x: number; y: number; z: number }[] = [];
+    for (const z of [-17, -22.5, -28]) chandelier(k, 0, FY + 9, z, 1.6, 12, brass, FY + SH - 0.5, chBulbs);
+    const chOld = standIn(k, chMark);
+    const chGlow = W9_DOM && chBulbs.length ? k.instances(new T.SphereGeometry(0.06, 8, 6), new T.MeshBasicMaterial({ color: 0xffd890 }), chBulbs.map((q) => new T.Matrix4().makeTranslation(q.x, q.y, q.z))) : null;
+    w9Place(k, 'shearith/chandelier_lo', { height: 2.6 }, [-17, -22.5, -28].map((z) => [0, FY + 7.6, z, 0]), undefined, () => { hide(chOld); if (chGlow) chGlow.visible = false; for (const z of [-17, -22.5, -28]) k.cyl(0.02, FY + SH - 0.4 - (FY + 10.2), 0, (FY + 10.2 + FY + SH - 0.4) / 2, z, brass, 0.02, 6); });
     for (const s of [-1, 1]) for (const z of [-12, -18, -24, -30]) { k.box(0.1, 0.5, 0.3, s * (SW - 0.35), FY + 3.3, z, brass); k.cyl(0.03, 0.24, s * (SW - 0.55), FY + 3.7, z, cream, 0.03, 6); bulbs.push({ x: s * (SW - 0.55), y: FY + 3.88, z }); }
     bulbsMesh(k, bulbs, 0xffd890, 0.06);
     k.point(0, FY + 8.4, -17, 0xffd8a0, 16, 16); k.point(0, FY + 8.4, -28, 0xffd8a0, 16, 16);
@@ -680,7 +824,9 @@ export const shearith: RoomDef = {
     k.egg(v(-SW + 0.6, GY + 5.4, -16), { id: 'shearith-tiffany', title: 'Tiffany', text: 'Louis Comfort Tiffany designed the interior and the stained glass, and the building was extensively refurbished in 1921.', clue: 'Look up at the coloured light over the galleries.', source: wiki }, { r: 2 });
     k.egg(v(DX, FY + 1.2, DZ), { id: 'shearith-small-synagogue', title: 'The Small Synagogue', year: '1730', text: 'One room, the Small Synagogue, is furnished in the Georgian style, including furniture original to the 1730 Mill Street synagogue, the congregation\'s first building.', clue: 'Go through the door on the right of the lobby into the white room.', source: dm }, { r: 1.6 });
     k.egg(v(0, FY + 4.8, LZ + 0.4), { id: 'shearith-five-buildings', title: 'Five houses', text: 'The congregation has worshipped in five buildings: on Mill Street in 1730 and again in 1818, at 60 Crosby Street in 1834, on 19th Street in 1860, and here on West 70th Street in 1897.', clue: 'Stand in the lobby and look over the door to the sanctuary.', source: wiki }, { r: 1.2 });
+    k.egg(v(0, FY + 0.4, -15.2), { id: 'shearith-window-light', title: 'One window, from one place', text: 'The coloured light on the aisle floor is laid out as an anamorphosis: a picture drawn stretched so that it looks right only from one point. From the brass disc at the head of the aisle the scattered pools stand up as a single arched window; a step aside and they fall back into pieces on the boards.', clue: 'Walk past the reader\'s desk toward the ark and stand on the brass disc. Look down the aisle.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.2 });
     k.egg(v(-1.9, FY + 0.5, -1.4), { id: 'shearith-millstones', title: 'Two millstones', year: '1730', text: 'Two millstones from the site of the 1730 Mill Street synagogue were set at the entrance of this building.', clue: 'Two old round stones lie just inside the door.', source: dm }, { r: 1.2 });
+    w9ShadowTrim(k, 0, 6);
     return { mounts, spawn: v(-1.5, 3, 20.8), look: v(0, 9, 0), eye: 3, floorY, bounds: [-26, 26, -33, 22.6], style: 'oak' };
   },
 };
@@ -701,14 +847,16 @@ export const parkeast: RoomDef = {
     k.hemi(0xe4ecf8, 0x8a8478, 0.95);
     /* afternoon sun from the south west, onto the front */
     k.sun(0xfff0d8, 2.7, -40, 60, 70, true, 70);
-    const brick = k.pbr('peBrick', X.brick(0x8e4430, 1631), 1.0, { roughness: 0.85 }),
-      stone = k.pbr('peStone', X.ashlar(0xe0d0ac, 1632, 3), 0.4, { normal: 0.4, roughness: 0.8 }), stoneF = k.flat(0xe0d0ac, 0, 0.8),
+    /* wave 9a: Poly Haven scans: red brick, white sandstone bricks, asphalt, pavement, dark wood, velvet, plaster */
+    const PE = 'parkeast';
+    const brick = w9Scan(k, PE, 'brick', 1.4, () => X.brick(0x8e4430, 1631), { color: 0xe0a088, roughness: 0.85 }, 0x8e4430),
+      stone = w9Scan(k, PE, 'stone', 4.0, () => X.ashlar(0xe0d0ac, 1632, 3), { color: 0xfff6e4, normal: 0.45, roughness: 0.8 }, 0xe0d0ac), stoneF = w9Scan(k, PE, 'stone', 3.0, () => X.ashlar(0xe0d0ac, 1639, 3), { color: 0xfff2dc, normal: 0.4, roughness: 0.8 }, 0xe0d0ac, '-b'),
       terra = k.flat(0xb0603a, 0, 0.8), redV = k.flat(0x6e2418, 0, 0.8), slate = k.flat(0x3a3a40, 0.2, 0.7),
-      asph = k.pbr('peAsph', X.asphalt(), 0.3), walk = k.pbr('peWalk', X.pavers(0x9a968c, 1633), 0.5), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8),
+      asph = w9Scan(k, PE, 'asph', 3.2, () => X.asphalt(), { color: 0x9a9a9a, roughness: 0.9 }, 0x34363a), walk = w9Scan(k, PE, 'walk', 2.4, () => X.pavers(0x9a968c, 1633), { color: 0xd8d2c6 }, 0x9a968c), curb = k.flat(0x8a8680, 0, 0.8), line = k.flat(0xe8e4d8, 0, 0.8),
       darkGlass = k.flat(0x2c3640, 0.35, 0.22), iron = k.flat(0x1c1c1c, 0.6, 0.5),
-      wood = k.pbr('peWood', X.planks(0x5a3420, 6, 1634), 0.8, { roughness: 0.5 }), woodDark = k.flat(0x3a2012, 0, 0.5),
+      wood = w9Scan(k, PE, 'wood', 1.4, () => X.planks(0x5a3420, 6, 1634), { color: 0xa87858, roughness: 0.5 }, 0x5a3420), woodDark = k.flat(0x3a2012, 0, 0.5),
       brass = k.flat(0xc89a48, 1, 0.3), gilt = k.pbr('peGilt', X.gilt(0xd0a852), 2, { metalness: 0.9, roughness: 0.3 }),
-      carpet = k.pbr('peCarpet', X.carpet(0x5a1a22, 0xb8903a), 0.6, { roughness: 1 }),
+      carpet = w9Scan(k, PE, 'carpet', 1.2, () => X.carpet(0x5a1a22, 0xb8903a), { color: 0xb04a52, roughness: 1 }, 0x5a1a22),
       schoolB = k.pbr('peSchool', X.brick(0xb89a78, 1635), 1.0, { roughness: 0.85 }), terr = k.pbr('peTerr', X.terrazzo(0xd8d0c0, 1636), 0.4, { roughness: 0.4 }),
       schoolWall = k.flat(0xe8e2d6, 0, 0.8), paleBlue = k.flat(0x9ab4c8, 0, 0.8);
     /* stripes of red and pale stone, world metres, for the arcades inside */
@@ -724,7 +872,21 @@ export const parkeast: RoomDef = {
     houses(k, -36, -11.4, 0, 1, 1638, { hMin: 16, hMax: 20 });
     k.block(-40, -11.3, -40, 0.4); k.block(28.2, 40, -40, 0.4);
     for (const [x, z] of [[-16, 3.6], [-24, 14.4], [-8, 14.4], [8, 14.4], [24, 14.4]]) { k.tree(x, 0, z, { h: 5.5, r: 2, seed: 163 }); k.keepOut.push({ x, z, r: 0.8 }); }
-    traffic(k, ctx, { lanes: [{ z: 8, dir: 1, n: 4, speed: 7 }, { z: 10.4, dir: 1, n: 3, speed: 8 }, { z: 5.6, dir: 0, n: 5 }, { z: 12.4, dir: 0, n: 6 }], x0: -38, x1: 38, seed: 1639 });
+    traffic(k, ctx, { lanes: [{ z: 8, dir: 1, n: 4, speed: 7 }, { z: 10.4, dir: 1, n: 3, speed: 8 }], x0: -38, x1: 38, seed: 1639 });
+    /* wave 9a: the parked cars both kerbs are the museum's sedan and SUV models; lamps, a hydrant, planters, the corner sign */
+    { const parked: number[][] = []; for (const x of [-31, -25.4, -14.2, -8.4, 7.6, 24.6, 30.4]) parked.push([x, 5.7]); for (const x of [-32, -26.2, -20.6, -9.8, -4.2, 6.4, 12, 22.8, 28.6]) parked.push([x, 12.3]);
+      /* the kit's swapCabs must leave real models alone (lead note, wave 9) */
+      const markCab = (h: T.Object3D) => h.traverse((c) => { c.userData.cab = true; });
+      for (const [x, z] of parked) k.block(x - 2.3, x + 2.3, z - 0.95, z + 0.95);
+      w9Place(k, 'parkeast/h_car_camry_lo', { length: 4.6 }, parked.filter((_, i) => i % 2 === 0).map(([x, z]) => [x, 0, z, z < 10 ? -PI / 2 : PI / 2]), markCab);
+      w9Place(k, 'parkeast/h_car_escape_lo', { length: 4.6 }, parked.filter((_, i) => i % 2 === 1).map(([x, z]) => [x, 0, z, z < 10 ? -PI / 2 : PI / 2]), markCab); }
+    { const lampAt = [[-20, 3.9], [3.6, 3.9], [26, 3.9], [-28, 14.1], [-13, 14.1], [20, 14.1]];
+      for (const [x, z] of lampAt) k.keepOut.push({ x, z, r: 0.4 });
+      w9Place(k, 'parkeast/street_lamp_lo', { height: 4.6 }, lampAt.map(([x, z]) => [x, 0, z, z < 10 ? PI : 0])); }
+    k.keepOut.push({ x: 16.2, z: 3.9, r: 0.45 }); w9Place(k, 'parkeast/hydrant', { height: 0.8 }, [[16.2, 0, 3.9, 0]]);
+    for (const x of [16.4, 23.0]) k.keepOut.push({ x, z: 0.9, r: 0.6 });
+    w9Place(k, 'parkeast/ph_planter_box_01', { width: 1.2 }, [[16.4, 0, 0.9, 0], [23.0, 0, 0.9, 0]]);
+    w9StreetSign(k, -34.6, 3.9, 'E 67 ST', 'LEXINGTON AV');
     k.crowd([v(-34, 0, 15.6), v(34, 0, 15.6)], 8, { seed: 16310, spread: 1.6, animate: !ctx.reduced });
     /* school children and their teachers on the near pavement, small and in pairs */
     k.crowd([v(-34, 0, 3.0), v(-12, 0, 3.4), v(12, 0, 3.4), v(19.5, 0, 2.4), v(19.5, 0, 0.8), v(19.5, 0, -2.8), v(23, 0, -3.8)], 14, { seed: 16311, spread: 1.2, scale: 0.72, speed: 0.9, animate: !ctx.reduced, colors: [0x2a4a8a, 0xd83a3a, 0xe8c040, 0x3a8a5a, 0xe8e2d6, 0x6a4a8a, 0x2a2e38] });
@@ -772,8 +934,11 @@ export const parkeast: RoomDef = {
     for (let i = 0; i < 28; i++) { const a = (i + 0.5) / 28 * PI * 2, rr = 2.85; const seg = k.box(3.15 * PI * 2 / 28 + 0.01, 0.62, 0.3, Math.cos(a) * rr, 10.6 + Math.sin(a) * rr, 0.1, i % 2 ? redV : stoneF); seg.rotation.z = a + PI / 2; }
     const rose = glassMat(archGlass(1640, [0x2a4ab8, 0x8a1a22, 0xc8a030, 0x2a7a4a, 0x5a2a7a, 0xd8c890], { rose: true, cell: 16 }), 0xffffff);
     k.plane(5, 5, 0, 10.6, -0.34, rose);
+    if (W9_DOM) w9Swap(k, rose, 'assets/museum/tex/parkeast/ff_rose_window.webp', w9Mask('round'));
     for (const x of [-4.4, 4.4]) k.plane(1.2, 3.2, x, 10, -0.34, darkGlass);
-    k.sign('PARK EAST SYNAGOGUE', 7.6, 0.62, 0, 6.35, 0.08, '#e0d0ac', '#5a2a1a', 72);
+    k.box(7.9, 0.95, 0.1, 0, 6.42, 0.06, k.flat(0x5a2a1a, 0.1, 0.7));
+    w9Sign(k, 'PARK EAST SYNAGOGUE', 7.4, 0.56, 0, 6.56, 0.12, 0, '#f0e2bc', '', 'W2 Archivo Expanded', false, 0.68);
+    w9Sign(k, 'CONGREGATION ZICHRON EPHRAIM', 5.2, 0.3, 0, 6.1, 0.12, 0, '#d8c08a', '', 'W2 Archivo Narrow', false, 0.62);
     /* steps up to the doors, the doors themselves in carved wood, open */
     for (let i = 0; i < 3; i++) k.box(10.4, 0.15, 0.5, 0, 0.075 + i * 0.15, 1.1 - i * 0.4, stoneF);
     const doorM = k.flat(0x4a2a16, 0, 0.55);
@@ -792,7 +957,7 @@ export const parkeast: RoomDef = {
     k.box(SX1 - SX0 + 0.4, 0.6, 0.6, (SX0 + SX1) / 2, 19.2, 0, stoneF);
     k.box(SX1 - SX0, 19, 20, (SX0 + SX1) / 2, 9.5, -17.5, schoolB);
     k.box(5, 0.25, 2.2, 19.7, 3.6, 1.0, iron);
-    k.sign('PARK EAST DAY SCHOOL', 6.2, 0.55, 19.7, 3.25, 2.12, '#1c2a44', '#f0ece0', 70);
+    w9Sign(k, 'PARK EAST DAY SCHOOL', 6.2, 0.55, 19.7, 3.25, 2.12, 0, '#f0ece0', '#1c2a44', 'W2 Archivo Expanded', false, 0.6);
     k.block(SX0, 18.5, -0.8, 0.35); k.block(20.9, SX1, -0.8, 0.35);
     /* the school doors: one swings open and shut as the children come out */
     const sd = new T.Group(); sd.position.set(18.5, 0, -0.3); { const leaf = new T.Mesh(new T.BoxGeometry(1.18, 2.9, 0.06), k.glass(0x9ab8c8, 0.45)); leaf.position.set(0.59, 1.45, 0); sd.add(leaf); const fr = new T.Mesh(new T.BoxGeometry(0.08, 2.94, 0.08), iron); fr.position.set(1.16, 1.45, 0); sd.add(fr); } k.add(sd);
@@ -824,7 +989,40 @@ export const parkeast: RoomDef = {
     starTex.repeat.set(9, 10);
     k.plane(2 * SW, Z0 - Z1, 0, SH - 0.05, (Z0 + Z1) / 2, new T.MeshStandardMaterial({ map: starTex, roughness: 0.7 }), 0, PI / 2);
     k.box(2 * SW + 1, 0.5, Z0 - Z1 + 1, 0, SH + 0.25, (Z0 + Z1) / 2, stone);
-    for (let z = Z0 - 2; z > Z1; z -= 4) k.box(2 * SW, 0.4, 0.3, 0, SH - 0.25, z, gilt);
+    for (let z = Z0 - 2; z > Z1; z -= 4) if (Math.abs(z - -16) > 3.6) k.box(2 * SW, 0.4, 0.3, 0, SH - 0.25, z, gilt);
+    /* wave 9a, the illusion, quiet: a dome painted on the flat ceiling over the reader's platform, coffers and an oculus
+       of sky in perspective. From under it the ceiling seems to rise; from the side it is flat paint. The towers outside
+       lost their domes long ago; this one was never there. */
+    if (W9_DOM) {
+      const dome = canvasTex(1024, 1024, (g) => {
+        const C = 512, R = 508;
+        g.fillStyle = '#1c2e6a'; g.fillRect(0, 0, 1024, 1024);
+        const rings = 7;
+        for (let i = 0; i < rings; i++) {
+          /* each ring of coffers is drawn smaller and closer to the centre as it would be seen rising toward the oculus */
+          const r0 = R * Math.cos((i / rings) * PI / 2 * 0.86), r1 = R * Math.cos(((i + 1) / rings) * PI / 2 * 0.86), n = 24 - i * 2;
+          const shade = 0.55 + 0.45 * (i / rings);
+          g.fillStyle = `rgb(${(232 * shade) | 0},${(214 * shade) | 0},${(168 * shade) | 0})`;
+          g.beginPath(); g.arc(C, C, r0, 0, PI * 2); g.arc(C, C, r1, 0, PI * 2, true); g.fill();
+          for (let j = 0; j < n; j++) {
+            const a0 = (j / n) * PI * 2 + 0.02, a1 = ((j + 1) / n) * PI * 2 - 0.02, ri = r1 + (r0 - r1) * 0.14, ro = r0 - (r0 - r1) * 0.14;
+            const grd = g.createRadialGradient(C, C, ri, C, C, ro); grd.addColorStop(0, '#0e1a44'); grd.addColorStop(1, '#2a3e86');
+            g.fillStyle = grd; g.beginPath(); g.arc(C, C, ro, a0, a1); g.arc(C, C, ri, a1, a0, true); g.closePath(); g.fill();
+            g.fillStyle = '#d8b050'; g.beginPath(); g.arc(C + Math.cos((a0 + a1) / 2) * (ri + ro) / 2, C + Math.sin((a0 + a1) / 2) * (ri + ro) / 2, (ro - ri) * 0.12, 0, PI * 2); g.fill();
+          }
+          g.strokeStyle = '#c8a048'; g.lineWidth = 4; g.beginPath(); g.arc(C, C, r1, 0, PI * 2); g.stroke();
+        }
+        const rO = R * Math.cos(PI / 2 * 0.86);
+        const sky = g.createRadialGradient(C, C, 0, C, C, rO); sky.addColorStop(0, '#f4f2e8'); sky.addColorStop(0.7, '#b8d0e8'); sky.addColorStop(1, '#8aaad0');
+        g.fillStyle = sky; g.beginPath(); g.arc(C, C, rO, 0, PI * 2); g.fill();
+        g.strokeStyle = '#d8b050'; g.lineWidth = 10; g.beginPath(); g.arc(C, C, rO, 0, PI * 2); g.stroke();
+        g.lineWidth = 14; g.beginPath(); g.arc(C, C, R - 7, 0, PI * 2); g.stroke();
+      });
+      const dm = new T.MeshBasicMaterial({ map: dome, transparent: true, alphaTest: 0.01 });
+      const dg = new T.CircleGeometry(3.4, 64); dg.rotateX(PI / 2);
+      k.mesh(dg, dm, 0, SH - 0.07, -16, true);
+      k.torus(3.42, 0.09, 0, SH - 0.12, -16, gilt, 64).rotation.x = PI / 2;
+    }
     for (const x of [-SW + 0.4, SW - 0.4]) k.box(0.5, 0.6, Z0 - Z1, x, SH - 0.3, (Z0 + Z1) / 2, gilt);
     /* the galleries: striped horseshoe arcades on slender painted columns, both sides and over the entrance */
     for (const s of [-1, 1]) {
@@ -842,6 +1040,7 @@ export const parkeast: RoomDef = {
     for (const x of [-4, 4]) { k.cyl(0.14, GY, x, GY / 2, Z0 - 3.2, k.flat(0x3a5a8a, 0.3, 0.5), 0.14, 10); k.keepOut.push({ x, z: Z0 - 3.2, r: 0.45 }); }
     /* stained glass along the upper walls */
     const pg = [archGlass(1641, [0x2a4ab8, 0x1c3a8a, 0xc8a030, 0x8a1a22, 0x2a7a4a, 0xd8c890]), archGlass(1642, [0x8a1a22, 0xc8a030, 0x2a4ab8, 0x3a8a8a, 0xe0d0a0])].map((t) => glassMat(t, 0xfff0e0));
+    { const mask = W9_DOM ? w9Mask('arch') : undefined; for (const m of pg) w9Swap(k, m, 'assets/museum/tex/parkeast/ff_moorish_glass.webp', mask); }
     for (const s of [-1, 1]) [-9.5, -14.5, -19.5, -24.5].forEach((z, i) => k.plane(1.8, 4.8, s * (SW - 0.26), GY + 4.6, z, pg[(i + (s > 0 ? 1 : 0)) % 2], -s * PI / 2));
     for (const s of [-1, 1]) [-9.5, -14.5, -19.5, -24.5].forEach((z, i) => k.plane(1.6, 2.6, s * (SW - 0.26), 2.3, z, pg[(i + 1) % 2], -s * PI / 2));
     /* the ark: a gilt horseshoe arch on marble, plain curtain, blank tablets over it, the eternal light */
@@ -872,9 +1071,16 @@ export const parkeast: RoomDef = {
       for (let x = xa + 0.35; x < xb; x += 0.62) if (rnd() < 0.28) seated.push({ x, y: 0.28, z: z + 0.02, ry: 0, sit: true });
     }
     k.block(-7, -1.2, -27.4, -9.1); k.block(1.2, 7, -27.4, -9.1);
+    /* wave 9a: prayer books on the pews (Poly Haven's book set, decimated, instanced) */
+    { const at: number[][] = [], rb = X.mulberry(1646); for (let z = -9.5; z > -27; z -= 2.2) for (const x of [-5.6, -2.4, 3.2, 5.8]) if (rb() < 0.7 && !(Math.abs(z - BZ) < 2.6 && Math.abs(x) < 3)) at.push([x + (rb() - 0.5) * 0.8, 0.5, z, (rb() - 0.5) * 0.4]); w9Place(k, 'parkeast/books_lo', { width: 0.42 }, at); }
     k.block(-11.3, -6.2, -5.9, 0.45); k.block(6.2, 11.3, -5.9, 0.45);
     still(k, seated, 1644);
-    for (const z of [-10.5, -21]) chandelier(k, 0, 9, z, 1.4, 10, brass, SH - 0.2, bulbs);
+    /* wave 9a: Poly Haven brass chandeliers, the ring chandeliers stand in until they land */
+    const chMark = k.objects.length, chBulbs: { x: number; y: number; z: number }[] = [];
+    for (const z of [-10.5, -21]) chandelier(k, 0, 9, z, 1.4, 10, brass, SH - 0.2, chBulbs);
+    const chOld = standIn(k, chMark);
+    const chGlow = W9_DOM && chBulbs.length ? k.instances(new T.SphereGeometry(0.07, 8, 6), new T.MeshBasicMaterial({ color: 0xffe2a8 }), chBulbs.map((q) => new T.Matrix4().makeTranslation(q.x, q.y, q.z))) : null;
+    w9Place(k, 'parkeast/chandelier_lo', { height: 2.4 }, [[0, 7.9, -10.5, 0], [0, 7.9, -21, 0]], undefined, () => { hide(chOld); if (chGlow) chGlow.visible = false; for (const z of [-10.5, -21]) k.cyl(0.02, SH - 10.3, 0, (SH + 10.3) / 2, z, brass, 0.02, 6); });
     for (const s of [-1, 1]) for (const z of [-11, -21]) chandelier(k, s * 5, 3.8, z, 0.5, 5, brass, GY - 0.2, bulbs);
     bulbsMesh(k, bulbs);
     k.point(0, 8.5, -12, 0xffdcaa, 16, 16); k.point(0, 8.5, -22, 0xffdcaa, 16, 16);
@@ -897,6 +1103,8 @@ export const parkeast: RoomDef = {
     k.egg(v(0, 5.9, 0.4), { id: 'parkeast-founding', title: 'Founded as Orthodox', year: '1890', text: 'Rabbi Bernard Drachman and Jonas Weil founded the congregation in 1890 to promote Orthodox Judaism as an alternative to Reform Judaism. A verse from Psalm 100 is carved over the doorway in granite, in Hebrew.', clue: 'Look over the main door, under the name.', source: src }, { r: 1.4 });
     k.egg(v(19.7, 3.2, 2.2), { id: 'parkeast-day-school', title: 'The school next door', text: 'The Park East Day School, beside the synagogue, teaches children from early childhood through eighth grade.', clue: 'Follow the children.', source: src }, { r: 1.6 });
     k.egg(v(-8.75, 6.8, 0.6), { id: 'parkeast-landmark', title: 'A landmark, and a visit', year: '1980', text: 'The synagogue was designated a New York City landmark on January 8, 1980, and listed on the National Register of Historic Places on August 18, 1983. In 2008 Pope Benedict XVI visited it, the only papal visit to a synagogue in the United States.', clue: 'The west tower has stood since 1890; find what the city decided about it.', source: src }, { r: 1.6 });
+    k.egg(v(0, SH - 1, -16), { id: 'parkeast-painted-dome', title: 'A dome in paint', text: 'Trompe l\'oeil, French for deceive the eye, is painting that makes a flat surface read as depth. Painters have long used it on ceilings: in 1685 Andrea Pozzo painted a dome on the flat ceiling of the church of Sant\'Ignazio in Rome that seems to rise when seen from the right spot below. This one is painted over the reader\'s platform, a dome for a building whose towers lost theirs.', clue: 'Stand beside the reader\'s platform and look straight up.', source: { name: 'Trompe-l\'oeil, Wikipedia', url: 'https://en.wikipedia.org/wiki/Trompe-l%27%C5%93il' } }, { r: 2.2 });
+    w9ShadowTrim(k, 0, 4);
     return { mounts, spawn: v(-3.5, 3, 16.8), look: v(1.5, 9, 0), eye: 3, bounds: [-30, 30, -29, 17.2], style: 'gilt' };
   },
 };

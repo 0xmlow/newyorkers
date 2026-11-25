@@ -11,7 +11,9 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import * as X from '../textures';
 import { v, type Mount } from '../kit';
 import type { RoomDef } from './types';
-import { standIn, hide } from './heroes';
+import { standIn, hide, hero, heroInstances } from './heroes';
+import { anamorphTex, paintTex, hsign } from './f';
+import { fireflyPlate } from './a';
 const PI = Math.PI;
 type K = Parameters<RoomDef['build']>[0];
 
@@ -31,6 +33,81 @@ function figureGeo(r = 0.2, len = 0.82, headY = 1.35) {
 }
 const canvasTex = (c: HTMLCanvasElement) => { const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 8; return t; };
 const mkCanvas = (w: number, h: number) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const UP = new T.Vector3(0, 1, 0);
+
+/* ---------- THE BIG UPGRADE, wave 8c (2026-11-24): scans, real models, painted type ----------
+   Scanned CC0 surfaces from assets/museum/tex/<room>/ (Poly Haven, 1k webp) that wear a sensible colour until their maps
+   land; real models from assets/museum/props/<room>/ placed many at once (seven or more become instanced parts), shadows
+   off; the anamorphic floor type for the room's one trick. Safe in node: the audit builds with no DOM. */
+const HAS_DOM = typeof window !== 'undefined' && typeof HTMLImageElement !== 'undefined';
+const texL = HAS_DOM ? new T.TextureLoader() : null;
+const w8 = new Map<string, { s: X.Surface; ready: Promise<unknown> }>();
+function sc(k: K, room: string, id: string, metres: number, paint: () => X.Surface, p: Partial<T.MeshStandardMaterialParameters> & { normal?: number; stretch?: number } = {}, wait = 0x888888) {
+  if (!texL) return k.pbr(`w8-${room}-${id}`, paint(), 1 / metres, p);
+  let e = w8.get(`${room}/${id}`);
+  if (!e) {
+    const low = k.o.quality !== 'high', waits: Promise<unknown>[] = [];
+    const one = (suf: string, srgb: boolean) => {
+      let done: () => void = () => {};
+      waits.push(new Promise<void>((r) => (done = r)));
+      const t = texL.load(`assets/museum/tex/${room}/${id}_${suf}.webp`, () => done(), undefined, () => done());
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8;
+      if (srgb) t.colorSpace = T.SRGBColorSpace;
+      return t as unknown as T.CanvasTexture;
+    };
+    e = { s: { map: one('c', true), normalMap: one('n', false), roughnessMap: low ? undefined : one('r', false) }, ready: Promise.all(waits) };
+    w8.set(`${room}/${id}`, e);
+  }
+  k.pending.push(e.ready);
+  const key = `w8-${room}-${id}-${metres}-${p.color ?? ''}-${p.side ?? ''}-${p.roughness ?? ''}-${p.metalness ?? ''}`;
+  const m = k.pbr(key, e.s, 1 / metres, p);
+  if (!m.userData.w8) {
+    m.userData.w8 = true;
+    const maps = { map: m.map, normalMap: m.normalMap, roughnessMap: m.roughnessMap }, tint = m.color.clone();
+    m.map = m.normalMap = m.roughnessMap = null;
+    m.color.set(wait);
+    void e.ready.then(() => { Object.assign(m, maps); m.color.copy(tint); m.needsUpdate = true; });
+  }
+  return m;
+}
+/* A real model fitted once and set at every [x, y, z, rotY, scale?], shadows off, marked as a cab so the kit's swapCabs
+   never lays a taxi fleet under real cars or a yellow forklift. */
+function many(k: K, name: string, fit: Parameters<typeof hero>[2], at: number[][], tweak?: (o: T.Object3D) => void) {
+  if (k.o.quality !== 'high' && at.length > 3) at = at.filter((_, i) => i % 2 === 0);
+  if (!at.length || !HAS_DOM) return;
+  void hero(k, name, fit).then((h) => {
+    if (!h || !k.live) return;
+    h.traverse((c) => { if (c instanceof T.Mesh) { c.castShadow = false; c.userData.cab = true; const m = c.material as T.MeshPhysicalMaterial; if (m && m.transmission) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; } } });
+    if (tweak) tweak(h);
+    if (at.length > 6) {
+      const ins = heroInstances(k, h, at.length), m = new T.Matrix4(), q = new T.Quaternion();
+      at.forEach(([x, y, z, r, s = 1], i) => ins.setAt(i, m.compose(new T.Vector3(x, y, z), q.setFromAxisAngle(UP, r), new T.Vector3(s, s, s))));
+      ins.parts.forEach((p) => { p.im.castShadow = false; p.im.userData.cab = true; });
+      ins.commit();
+      return;
+    }
+    at.forEach(([x, y, z, r, s = 1], i) => { const c = i ? h.clone() : h; c.position.set(x, y, z); c.rotation.y = r; c.scale.setScalar(s); k.add(c); });
+  });
+}
+/* Recolour every material of a loaded model. */
+function tintAll(o: T.Object3D, hex: number, rough = 0.6, metal = 0.4) {
+  const cache = new Map<T.Material, T.Material>();
+  o.traverse((c) => { if (!(c instanceof T.Mesh)) return; const src = c.material as T.MeshStandardMaterial; let m = cache.get(src); if (!m) { const n = src.clone(); n.color.multiply(new T.Color(hex)); n.roughness = rough; n.metalness = metal; m = n; cache.set(src, m); } c.material = m; });
+}
+/* Many copies of one box as a single instanced draw: [x, y, z, rotY?, sx?, sy?, sz?] each. */
+function boxes(k: K, m: T.Material, at: number[][]) {
+  if (!at.length) return null;
+  const q = new T.Quaternion();
+  return k.instances(new T.BoxGeometry(1, 1, 1), m, at.map(([x, y, z, r = 0, sx = 1, sy = 1, sz = 1]) => new T.Matrix4().compose(new T.Vector3(x, y, z), q.setFromAxisAngle(UP, r), new T.Vector3(sx, sy, sz))));
+}
+/* Anamorphic floor type (ON LOCATION rule 9): lettering laid flat that stands up as a board from one spot. */
+function standUp(k: K, text: string, fg: string, ex: number, ez: number, eh: number, floor: number, yaw: number, D: number, W: number, H: number, font = 'W2 Archivo Expanded') {
+  if (!HAS_DOM) return;
+  const w = 1024, h = Math.max(96, Math.round((1024 * H) / W));
+  const tex = paintTex(w, h, (g) => { g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; let s = h * 0.8; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(text).width; if (tw > w * 0.94) { s *= (w * 0.94) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(text, w / 2, h / 2); }, [font]);
+  anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
+}
+
 
 /* Diagonal lattice clipped to a w x h rectangle, placed in the world by at(u, v). */
 function lattice(k: K, w: number, h: number, step: number, m: T.Material, at: (u: number, v: number) => T.Vector3, bar = 0.05) {
@@ -142,11 +219,11 @@ export const palmcourt: RoomDef = {
     k.sun(0xfff0d8, 2.0, -30, 70, 60, true, 70);
     const rnd = X.mulberry(1530);
     const W = 10, Z0 = -14, Z1 = 14, ZL = 17.6, H = 8.4;
-    const plaster = k.pbr('pc-plaster', X.plaster(0xe9dfc9, 153), 0.4);
-    const caen = k.pbr('pc-caen', X.marble(0xe8dcc0, 0xbfae8c, 153), 0.35, { roughness: 0.45 });
+    const plaster = sc(k, 'palmcourt', 'plaster', 2.5, () => X.plaster(0xe9dfc9, 153), { color: 0xf2e8d2 }, 0xd8cdb6);
+    const caen = sc(k, 'palmcourt', 'caen', 1.6, () => X.marble(0xe8dcc0, 0xbfae8c, 153), { color: 0xf6e8c8, roughness: 0.45 }, 0xd8caa8);
     const breche = k.pbr('pc-breche', X.marble(0x7c5a68, 0x3c2632, 154), 0.6, { roughness: 0.3 });
-    const floorM = k.pbr('pc-floor', X.marble(0xd8cdb6, 0x8f846f, 155), 0.22, { roughness: 0.42 });
-    const mosaic = k.pbr('pc-mosaic', X.minton(), 0.8, { roughness: 0.4 });
+    const floorM = sc(k, 'palmcourt', 'floor', 2.4, () => X.marble(0xd8cdb6, 0x8f846f, 155), { color: 0xfff8ec, roughness: 0.32 }, 0xd8ccb4);
+    const mosaic = sc(k, 'palmcourt', 'mosaic', 1.0, () => X.minton(), { color: 0xe8dcc4, roughness: 0.35 }, 0xb8a888);
     const gilt = k.flat(0xc9a55a, 0.85, 0.35);
     const mirror = k.flat(0xd8d3c6, 1, 0.08);
     const sage = k.flat(0x93a386, 0, 0.85);
@@ -208,6 +285,8 @@ export const palmcourt: RoomDef = {
       }
       /* the east end of each side: a tall trellis panel on sage */
       k.box(0.06, 5.6, 8.2, wx - s * 0.03, 3.9, 9.6, sage);
+      /* wave 8c: a painted garden behind the trellis once ff_palm_garden lands; the sage stands in */
+      fireflyPlate(k, 'assets/museum/tex/palmcourt/ff_palm_garden.webp', 8.2, 5.6, wx - s * 0.065, 3.9, 9.6, rot, sage);
       lattice(k, 8.2, 5.6, 0.55, trellis, (u, vv) => v(wx - s * 0.08, 3.9 + vv, 9.6 + u), 0.045);
       k.box(0.12, 0.12, 8.4, wx - s * 0.08, 6.75, 9.6, gilt); k.box(0.12, 0.12, 8.4, wx - s * 0.08, 1.05, 9.6, gilt);
       /* the lobby's end wall carries two works */
@@ -251,7 +330,7 @@ export const palmcourt: RoomDef = {
       const ring = (a: number, b: number, y: number, r: number) => k.curve(Array.from({ length: 64 }, (_, i) => { const t = (i / 64) * PI * 2; return v(Math.cos(t) * a, y, LZ + Math.sin(t) * b); }), r, gilt, 128, true);
       ring(LA, LB, H - 0.05, 0.12); ring(LA + 0.7, LB + 0.7, H - 0.04, 0.06);
       for (let i = 0; i < 28; i++) { const t = (i / 28) * PI * 2; k.bar(v(Math.cos(t) * (LA + 0.1), H - 0.06, LZ + Math.sin(t) * (LB + 0.1)), v(Math.cos(t) * (LA + 0.65), H - 0.06, LZ + Math.sin(t) * (LB + 0.65)), 0.1, 0.08, gilt); }
-      const lay = new T.MeshBasicMaterial({ map: laylightTexture(), color: 0xd9cfb8, side: T.DoubleSide });
+      const lay = new T.MeshBasicMaterial({ map: laylightTexture(), color: 0xeee2c4, side: T.DoubleSide });
       const dome = k.mesh(new T.SphereGeometry(1, 64, 14, 0, PI * 2, 0, PI / 2), lay, 0, H, LZ); dome.scale.set(LA, 1.5, LB);
       /* the iron ribs that carry the glass */
       for (let j = 0; j < 16; j++) {
@@ -282,7 +361,7 @@ export const palmcourt: RoomDef = {
     for (const [tx, tz] of tables) {
       k.cyl(0.62, 0.05, tx, 0.76, tz, linen, 0.62, 28);
       k.cyl(0.62, 0.72, tx, 0.39, tz, linen, 0.7, 28);
-      k.lathe([[0, 0], [0.09, 0], [0.11, 0.14], [0.08, 0.26], [0.02, 0.3], [0, 0.3]], tx + 0.12, 0.78, tz - 0.08, silver, 12);
+      if (!HAS_DOM) k.lathe([[0, 0], [0.09, 0], [0.11, 0.14], [0.08, 0.26], [0.02, 0.3], [0, 0.3]], tx + 0.12, 0.78, tz - 0.08, silver, 12);
       k.cyl(0.012, 0.42, tx - 0.15, 0.99, tz + 0.1, gilt, 0.012, 6);
       for (const [y, r] of [[0.84, 0.15], [0.98, 0.12], [1.12, 0.09]]) k.cyl(r, 0.012, tx - 0.15, y, tz + 0.1, k.flat(0xf4f1ea, 0, 0.5), r, 16);
       for (let i = 0; i < 3; i++) {
@@ -345,19 +424,47 @@ export const palmcourt: RoomDef = {
       k.keepOut.push({ x: PX, z: PZ + 0.6, r: 1.6 });
     }
     /* the tea station: a sideboard of silver urns and a pastry trolley */
-    k.box(0.9, 1.0, 4.2, 8.9, 0.5, 9.8, k.flat(0x4a2e1e, 0.1, 0.45));
+    k.box(0.9, 1.0, 4.2, 8.9, 0.5, 9.8, sc(k, 'palmcourt', 'rosewood', 0.8, () => X.planks(0x4a2e1e, 6, 153), { color: 0xc89878, roughness: 0.35 }, 0x4a2e1e));
     k.box(1.0, 0.06, 4.3, 8.9, 1.03, 9.8, breche);
     for (const z of [8.3, 9.3, 10.3, 11.3]) k.lathe([[0, 0], [0.16, 0], [0.2, 0.22], [0.15, 0.42], [0.05, 0.5], [0.06, 0.56], [0, 0.58]], 8.9, 1.06, z, silver, 14);
     k.keepOut.push({ x: 8.9, z: 9.8, r: 1.2 }); k.keepOut.push({ x: 8.9, z: 11.2, r: 1.0 }); k.keepOut.push({ x: 8.9, z: 8.4, r: 1.0 });
 
+    /* ---- wave 8c: the room as built ---- */
+    {
+      /* the tea service on every table (Poly Haven tea set), a croissant on every tier of every stand */
+      const ts: number[][] = [], cr: number[][] = [];
+      for (const [tx, tz] of tables) { ts.push([tx + 0.16, 0.785, tz - 0.12, tx * 1.3 + tz]); cr.push([tx - 0.08, 0.85, tz + 0.1, tx + tz], [tx - 0.22, 0.85, tz + 0.12, tx - tz]); }
+      many(k, 'palmcourt/tea_set', { width: 0.42 }, ts);
+      many(k, 'palmcourt/croissant', { length: 0.11 }, cr);
+      /* the pastry trolley: two cakes on the sideboard by the urns */
+      many(k, 'palmcourt/carrot_cake', { width: 0.3 }, [[8.9, 1.06, 7.95, 0.4]]);
+      many(k, 'palmcourt/choc_cake', { width: 0.3 }, [[8.9, 1.06, 11.75, 1.2]]);
+      /* the ceiling round the laylight: a grid of beams in Caen stone with a gilt rosette at every crossing */
+      const out = (x: number, z: number) => (x / (LA + 1.1)) ** 2 + ((z - LZ) / (LB + 1.1)) ** 2 > 1;
+      const bm: number[][] = [], ro: T.Matrix4[] = [], step = 2.25;
+      for (let x = -W + step; x < W - 0.1; x += step) for (let z = Z0; z < Z1 - 0.1; z += step) if (out(x, z) && out(x, z + step)) bm.push([x, H - 0.16, z + step / 2, 0, 0.22, 0.3, step]);
+      for (let z = Z0 + step; z < Z1 - 0.1; z += step) for (let x = -W; x < W - 0.1; x += step) if (out(x, z) && out(x + step, z)) bm.push([x + step / 2, H - 0.16, z, 0, step, 0.3, 0.22]);
+      boxes(k, caen, bm);
+      for (let x = -W + step; x < W - 0.1; x += step) for (let z = Z0 + step; z < Z1 - 0.1; z += step) if (out(x, z)) ro.push(new T.Matrix4().compose(v(x, H - 0.33, z), new T.Quaternion(), v(1, 1, 1)));
+      k.instances(new T.SphereGeometry(0.11, 10, 6), gilt, ro);
+      /* a gilt bead along the foot of every pilaster, and a fluted face on each */
+      const fl: number[][] = [];
+      for (const s of [-1, 1]) for (const z of pil) for (const dz of [-0.24, -0.08, 0.08, 0.24]) fl.push([s * W - s * 0.27, 3.95, z + dz, 0, 0.03, 5.4, 0.05]);
+      boxes(k, k.flat(0xd8c8a4, 0, 0.5), fl);
+      /* the name in gilt over the arch, read from the room */
+      hsign(k, 'THE PALM COURT', 6.2, 0.62, 0, 6.85, Z1 - 0.02, PI, { fg: '#b8944a', font: 'W2 Archivo Expanded', lit: false });
+      /* the one trick: a line on the floor of the aisle that stands up as a card from the door */
+      standUp(k, 'ELOISE LIVES UPSTAIRS', '#1f4a2e', 0, 12.2, 3, 0, 0, 8, 3.0, 0.9);
+      k.egg(v(0, 0.6, 2.5), { id: 'eloise', title: 'Eloise lives upstairs', year: '1955', text: 'Eloise is a six year old girl who lives at the Plaza, in the books by Kay Thompson with drawings by Hilary Knight. The first, Eloise, came out in 1955.', clue: 'Stand in the arch and read the floor of the aisle.', source: { name: 'Eloise (books), Wikipedia', url: 'https://en.wikipedia.org/wiki/Eloise_(books)' } }, { r: 2 });
+    }
     /* lights: warm pools under the glass, the hero lit */
     k.point(0, 6.6, -8, 0xffe2b0, 26, 16); k.point(0, 6.6, 1, 0xffe2b0, 26, 16); k.point(0, 6.2, 10, 0xffdcaa, 20, 14);
     k.spot(0, 7.6, -6.5, 0, 3, Z0, 0xfff0d6, 90, 0.42, 0.6, 16);
 
     /* ---- outside: Grand Army Plaza, the Pulitzer Fountain, Fifth Avenue, the GM Building ---- */
     {
-      const paver = k.pbr('pc-pavers', X.pavers(0x9a948a, 153), 0.5);
-      const granite = k.pbr('pc-granite', X.concrete(0xb3aca0, 153), 0.4);
+      const paver = sc(k, 'palmcourt', 'pavers', 2.5, () => X.pavers(0x9a948a, 153), { color: 0xd8d2c6 }, 0x9a948a);
+      const granite = sc(k, 'palmcourt', 'granite', 1.5, () => X.concrete(0xb3aca0, 153), { color: 0xe0dad0 }, 0xb3aca0);
       const asphalt = k.pbr('pc-asphalt', X.asphalt(0x2a2d31), 0.25);
       const bronze = k.flat(0x5a6a58, 0.7, 0.45);
       k.box(160, 0.2, 34, 0, -0.1, ZL + 17, paver);
@@ -403,7 +510,8 @@ export const palmcourt: RoomDef = {
       k.skyline({ z: 150, count: 18, spacing: 12, scale: 3.2, base: -2, seed: 153, lit: 0.2, tint: 0x8a8a86, glow: 0.4, x: 0 });
       for (const [x, w, h] of [[-50, 26, 70], [-24, 18, 45], [40, 24, 60], [62, 20, 90]]) k.box(w, h, 20, x, h / 2, 96, k.pbr('pc-mid' + x, X.windows(1532 + x, 0.2, 0x9a9488, true), 0.12, { emissive: 0xffffff, emissiveIntensity: 0.4, roughness: 0.6, stretch: 0.4 }));
       /* Fifth Avenue traffic, all heading downtown */
-      const NC = 14, carG = mergeGeometries([new T.BoxGeometry(4.6, 0.8, 1.9).translate(0, 0.6, 0), new T.BoxGeometry(2.6, 0.6, 1.7).translate(-0.2, 1.3, 0)])!;
+      /* wave 8c: eight cars, not fourteen; each becomes a 14k triangle taxi with a shadow */
+      const NC = 8, carG = mergeGeometries([new T.BoxGeometry(4.6, 0.8, 1.9).translate(0, 0.6, 0), new T.BoxGeometry(2.6, 0.6, 1.7).translate(-0.2, 1.3, 0)])!;
       const cars = k.instances(carG, new T.MeshStandardMaterial({ roughness: 0.4, metalness: 0.3 }), Array.from({ length: NC }, () => new T.Matrix4()));
       cars.frustumCulled = false;
       const cc = new T.Color(), cst = Array.from({ length: NC }, (_, i) => { cars.setColorAt(i, cc.set(i % 3 === 0 ? 0x1b1d22 : i % 5 === 0 ? 0xd8d8d8 : 0xf2b705)); return { lane: 53 + (i % 4) * 2.6, o: rnd() * 160, sp: 7 + rnd() * 4 }; });
@@ -472,15 +580,15 @@ export const chelseamarket: RoomDef = {
     k.sun(0xfff0d8, 2.2, -40, 80, -120, true, 70);
     const rnd = X.mulberry(1540);
     const W = 5, Z9 = 8.5, Z10 = -72, HB = 5.0, HC = 5.6, D = 9;
-    const brick = k.pbr('cm-brick', X.brick(0x7a3e2c, 154), 0.5);
-    const brickDark = k.pbr('cm-brick2', X.brick(0x4e2a20, 155), 0.5);
-    const floorM = k.pbr('cm-floor', X.concrete(0x807970, 154), 0.3, { roughness: 0.7 });
-    const deck = k.pbr('cm-deck', X.planks(0x4a3526, 8, 154), 0.35);
-    const iron = k.pbr('cm-iron', X.steel(0x2e2c2a, true, 154), 0.6, { metalness: 0.5, roughness: 0.55 });
+    const brick = sc(k, 'chelseamarket', 'brick', 2.2, () => X.brick(0x7a3e2c, 154), { color: 0xf0d0c0 }, 0x7a3e2c);
+    const brickDark = sc(k, 'chelseamarket', 'brick2', 2.2, () => X.brick(0x4e2a20, 155), { color: 0x9a7a70 }, 0x4e2a20);
+    const floorM = sc(k, 'chelseamarket', 'floor', 3, () => X.concrete(0x807970, 154), { color: 0xb8b0a4, roughness: 0.6 }, 0x807970);
+    const deck = sc(k, 'chelseamarket', 'deck', 2.4, () => X.planks(0x4a3526, 8, 154), { color: 0x9a7a60, side: T.DoubleSide }, 0x4a3526);
+    const iron = sc(k, 'chelseamarket', 'iron', 1.6, () => X.steel(0x2e2c2a, true, 154), { color: 0x6a6460, metalness: 0.55, roughness: 0.55 }, 0x2e2c2a);
     const rust = k.flat(0x6a3a22, 0.4, 0.7);
     const galv = k.flat(0x9ea3a6, 0.8, 0.35);
     const pipeRed = k.flat(0x8a2a22, 0.3, 0.5), pipeGrey = k.flat(0x55595c, 0.5, 0.5), pipeCopper = k.flat(0xa0643a, 0.8, 0.35);
-    const wood = k.flat(0x5a3a24, 0.1, 0.6);
+    const wood = sc(k, 'chelseamarket', 'planks', 1.4, () => X.planks(0x5a3a24, 6, 155), { color: 0xc8a080, roughness: 0.6 }, 0x5a3a24);
     const steelCounter = k.flat(0xb8bcc0, 0.8, 0.3);
     const shopGlow = k.flat(0x2a1a10, 0, 0.8, { emissive: 0xffc890, emissiveIntensity: 0.55 });
     const glass = k.glass(0xcfe3ea, 0.14, 0.05);
@@ -552,10 +660,55 @@ export const chelseamarket: RoomDef = {
     for (let z = Z9 - 1; z > Z10; z -= 3) k.box(0.95, 0.06, 0.08, 3.3, 5.35, z, iron);
     for (let z = Z9 - 9.5; z > Z10; z -= 5) {
       k.beam(v(0, HC, z), v(0, 4.1, z), 0.012, iron, 4);
-      k.mesh(new T.ConeGeometry(0.34, 0.26, 18, 1, true), k.flat(0x2f4a3a, 0.5, 0.5, { side: T.DoubleSide }), 0, 4.0, z);
-      k.sphere(0.09, 0, 3.9, z, k.glow(0xd9a860), 8);
+      if (!HAS_DOM) k.mesh(new T.ConeGeometry(0.34, 0.26, 18, 1, true), k.flat(0x2f4a3a, 0.5, 0.5, { side: T.DoubleSide }), 0, 4.0, z);
+      k.sphere(0.09, 0, 3.88, z, k.glow(0xd9a860), 8);
     }
     for (const z of [1.5, -16, -33.5, -51, -63.5]) k.point(0, 3.8, z, 0xffd6a0, 42, 22);
+
+    /* ---- wave 8c: the concourse as built ---- */
+    {
+      /* factory pendants (Poly Haven) where the code cones were, two more rows over the stall fronts */
+      const pd: number[][] = [];
+      for (let z = Z9 - 9.5; z > Z10; z -= 5) pd.push([0, 3.72, z, 0]);
+            many(k, 'chelseamarket/pendant', { height: 0.62 }, pd);
+      /* the timber deck as built: joists between the iron beams */
+      const jo: number[][] = [];
+      for (let z = Z9 - 4.5; z > Z10 + 2; z -= 5) for (let x = -W + 0.5; x < W - 0.3; x += 0.62) jo.push([x, HC - 0.13, z, 0, 0.09, 0.26, 4.9]);
+      boxes(k, deck, jo);
+      /* the stalls stocked: a till on every counter, crates and barrels behind, the bakery's croissants, the cheese wheels, the fruit */
+      const till: number[][] = [], crate: number[][] = [], barrel: number[][] = [], cheese: number[][] = [], fruit: number[][] = [], bun: number[][] = [];
+      let si = 0;
+      for (const s of [-1, 1]) for (const z of stalls[s]) {
+        if (s > 0 && z === -7) continue;
+        const cx = s * (W + 1.0), back = s * (D - 0.9), rot = s < 0 ? PI / 2 : -PI / 2, nm = names[si % names.length]; si++;
+        if (si % 2) till.push([cx, 1.11, z + 2.0, rot]);
+        crate.push([back, 0, z + 2.3, rot]);
+        if (nm === 'WINE' || nm === 'OLIVE OIL' || nm === 'SPICES') barrel.push([back, 0, z - 2.2, 0]);
+        if (nm === 'CHEESE' || nm === 'BUTCHER') for (let j = 0; j < 5; j++) cheese.push([cx, 1.11, z - 1.6 + j * 0.45, j]);
+        if (nm === 'BAKERY' || nm === 'DONUTS' || nm === 'COFFEE') for (let j = 0; j < 9; j++) bun.push([cx + (j % 2 ? 0.12 : -0.12), 1.12, z - 1.8 + j * 0.3, j * 1.7]);
+        if (nm === 'FLOWERS' || nm === 'TACOS' || nm === 'NOODLES') for (let j = 0; j < 1; j++) fruit.push([cx, 1.11, z - 1.2 + j * 0.6, j]);
+      }
+      many(k, 'chelseamarket/register', { width: 0.42 }, till);
+      many(k, 'chelseamarket/crate', { width: 0.6 }, crate);
+      many(k, 'chelseamarket/barrel', { height: 1.0 }, barrel);
+      many(k, 'chelseamarket/cheese', { width: 0.36 }, cheese);
+      many(k, 'chelseamarket/croissant', { length: 0.16 }, bun);
+      many(k, 'chelseamarket/apples', { width: 0.3 }, fruit);
+      /* blade signs on iron brackets off the piers, one for every other stall, the old market way */
+      if (HAS_DOM) { let bi = 0; for (const s of [-1, 1]) for (const z of stalls[s]) {
+        if (!(bi++ % 2) || (s > 0 && z === -7)) continue;
+        const nm = names[(bi - 1) % names.length], [bg, fg] = signCols[(bi - 1) % signCols.length], x = s * (W - 0.75), zz = z + 3.0;
+        k.beam(v(s * W, 4.55, zz), v(x - s * 0.62, 4.55, zz), 0.025, iron, 6);
+        const a = hsign(k, nm, 1.2, 0.5, x, 4.15, zz, 0, { fg, bg, border: fg, size: 0.5, lit: false });
+        const b2 = a.clone(); b2.rotation.y = PI; k.add(b2);
+      } }
+      /* the market's own way finding at each end */
+      hsign(k, 'TENTH AVENUE  /  HIGH LINE', 2.6, 0.28, 0, HB - 0.32, Z9 - 7.1, 0, { fg: '#e8dcc0', bg: '#171514', lit: false });
+      hsign(k, 'NINTH AVENUE', 2.4, 0.36, 0, HB - 0.32, Z10 + 8.4, PI, { fg: '#e8dcc0', bg: '#171514', lit: false });
+      /* the one trick: OREO WAY on the concourse floor, standing up as a sign from the Ninth Avenue door */
+      standUp(k, 'OREO WAY', '#efe6d2', 0, 6.2, 3, 0, 0, 9, 3.6, 1.0);
+      k.egg(v(0, 0.6, -4.5), { id: 'one-block', title: 'A whole block of biscuits', text: 'The market fills the whole block between Ninth and Tenth Avenues and 15th and 16th Streets. The old freight line ran into the bakery at the Tenth Avenue end, which is why the High Line crosses the building there.', clue: 'Stand inside the Ninth Avenue door and read the floor.', source: { name: 'Chelsea Market, Wikipedia', url: 'https://en.wikipedia.org/wiki/Chelsea_Market' } }, { r: 2 });
+    }
 
     /* ---- the waterfall: an old iron pipe out of the back of its alcove, pouring into a basin ---- */
     {
@@ -564,6 +717,8 @@ export const chelseamarket: RoomDef = {
       k.mesh(new T.CircleGeometry(1.75, 36).rotateX(-PI / 2), new T.MeshStandardMaterial({ color: 0x2c3a3c, metalness: 0.05, roughness: 0.12, envMapIntensity: 0.3 }), AX, 0.35, AZ);
       for (let i = 0; i < 9; i++) { const a = rnd() * PI * 2, r = 0.6 + rnd() * 1.0; const o = k.mesh(new T.DodecahedronGeometry(0.22 + rnd() * 0.2, 0), k.flat(0x3a3834, 0, 0.9), AX + Math.cos(a) * r, 0.4, AZ + Math.sin(a) * r); o.rotation.set(rnd() * 3, rnd() * 3, 0); }
       k.beam(v(D, 3.1, AZ), v(AX + 0.3, 3.1, AZ), 0.3, rust, 14);
+      /* wave 8c: a ghost sign high on the alcove brick once ff_cm_ghost_sign lands (invisible until then) */
+      fireflyPlate(k, 'assets/museum/tex/chelseamarket/ff_cm_ghost_sign.webp', 4.8, 1.6, D - 0.02, 4.45, AZ, -PI / 2, new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
       k.sphere(0.34, AX, 3.05, AZ, rust, 14);
       k.beam(v(AX, 3.05, AZ), v(AX, 2.72, AZ), 0.3, rust, 14);
       k.torus(0.34, 0.06, AX, 2.74, AZ, rust, 24).rotation.x = PI / 2;
@@ -618,7 +773,7 @@ export const chelseamarket: RoomDef = {
 
     /* ---- outside the Tenth Avenue doors: the High Line crossing overhead, and the avenue ---- */
     {
-      const pav = k.pbr('cm-pav', X.pavers(0x8d887e, 154), 0.5), asph = k.pbr('cm-asph', X.asphalt(0x26292d), 0.25);
+      const pav = sc(k, 'chelseamarket', 'pav', 2.5, () => X.pavers(0x8d887e, 154), { color: 0xd0c8bc }, 0x8d887e), asph = k.pbr('cm-asph', X.asphalt(0x26292d), 0.25);
       const hl = k.pbr('cm-hl', X.steel(0x3e4a44, true, 155), 0.4, { metalness: 0.4, roughness: 0.6 });
       k.box(160, 0.2, 8, 0, -0.1, Z10 - 4, pav);
       k.box(160, 0.2, 16, 0, -0.12, Z10 - 16, asph);
