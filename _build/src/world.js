@@ -117,9 +117,9 @@ export function buildWorld(scene, tex, U) {
       const m5 = m4.clone().multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2)).multiply(new THREE.Matrix4().makeTranslation(0, 0, 0.17)); lens.setMatrixAt(i, m5); });
     W.add(body, lens); U.fixLens = lens;
   }
-  // the rafter banners: four Firefly banners on each end
+  // the Firefly banners hang over the long sides; the retired numbers over the ends are banners.js
   tex.banners.forEach((t, i) => { for (const s of [-1, 1]) { const b = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 6.3), new THREE.MeshStandardMaterial({ map: t, side: THREE.DoubleSide, roughness: 0.9, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.25 }));
-    b.position.set(s * (FL + FR + 14), ROOF_RIM - 7, (i - 1.5) * 5.2); b.rotation.y = s * Math.PI / 2 * -1; W.add(b); } });
+    b.position.set((i - 1.5) * 7.5, ROOF_RIM - 8, s * 27); b.rotation.y = s > 0 ? Math.PI : 0; W.add(b); } });
   // ---- the scoreboard: four faces, the long ones the eye cam, the ends the score; a ring of LED top and bottom
   const sb = new THREE.Group(); sb.position.y = 21.5; W.add(sb);
   const sbBox = new THREE.Mesh(new THREE.BoxGeometry(12.6, 6.6, 8.6), dark); sb.add(sbBox);

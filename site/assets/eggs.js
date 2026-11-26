@@ -1,1 +1,1 @@
-window.EGG_N=24;
+window.EGG_N=26;

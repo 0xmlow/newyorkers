@@ -15,30 +15,44 @@ function imgCircle(ctx, img, cx, cz, r, alpha = 1) { if (!img) return; ctx.save(
 function word(ctx, t, x, z, size, color, rot = 0, font = '"N3W Skyline", Anton') { ctx.save(); ctx.translate(X(x), Z(z)); ctx.rotate(rot); ctx.fillStyle = color; ctx.font = `${size * PX}px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, 0, 0); ctx.restore(); }
 
 export function drawCourt(img) {
-  const [c, ctx] = canvas(); ctx.fillStyle = '#20263f'; ctx.fillRect(0, 0, CW, CH);
-  // maple boards along x, 5.7 cm wide, each a slightly different honey
-  const bx0 = X(-17), bx1 = X(17), bz0 = Z(-9.6), bz1 = Z(9.6);
-  for (let z = bz0; z < bz1; z += 1.9) { const h = 32 + Math.random() * 6, l = 62 + Math.random() * 8; ctx.fillStyle = `hsl(${h},48%,${l}%)`; ctx.fillRect(bx0, z, bx1 - bx0, 2); }
-  for (let i = 0; i < 2600; i++) { ctx.fillStyle = 'rgba(80,50,20,.10)'; ctx.fillRect(bx0 + Math.random() * (bx1 - bx0), bz0 + Math.random() * (bz1 - bz0), 1.2, 1.9); }
-  // the playing court, 28.65 x 15.24 m, painted keys in Evil Eye Blue
-  const L = 14.33, W = 7.62; ctx.strokeStyle = '#f6f3ea'; ctx.lineWidth = 0.05 * PX;
-  ctx.fillStyle = 'rgba(41,98,255,.92)';
-  for (const s of [-1, 1]) { ctx.fillRect(s < 0 ? X(-L) : X(L - 5.79), Z(-2.44), 5.79 * PX, 4.88 * PX); }
-  imgCircle(ctx, img, 0, 0, 4.6, 0.95);
-  ctx.beginPath(); ctx.arc(X(0), Z(0), 1.83 * PX, 0, 7); ctx.stroke();
+  const [c, ctx] = canvas(); ctx.fillStyle = '#141a33'; ctx.fillRect(0, 0, CW, CH);
+  // maple boards along x, 5.7 cm wide, each a slightly different honey; the grain comes from the detail map in the shader
+  const bx0 = X(-17.2), bx1 = X(17.2), bz0 = Z(-9.9), bz1 = Z(9.9);
+  for (let z = bz0; z < bz1; z += 1.9) { let x = bx0; while (x < bx1) { const l = (40 + Math.random() * 60) * PX / 33 * 2.2, h = 30 + Math.random() * 7, li = 60 + Math.random() * 9; ctx.fillStyle = `hsl(${h},${44 + Math.random() * 10}%,${li}%)`; ctx.fillRect(x, z, Math.min(l, bx1 - x), 1.9); x += l; } }
+  const L = 14.33, W = 7.62;
+  // the apron outside the lines: the home side's deep blue, stained into the wood so the boards still show
+  ctx.save(); ctx.globalAlpha = 0.9; ctx.fillStyle = '#0d2d6e'; ctx.beginPath(); ctx.rect(bx0, bz0, bx1 - bx0, bz1 - bz0); ctx.rect(X(L), Z(-W), -2 * L * PX, 2 * W * PX); ctx.fill('evenodd'); ctx.restore();
+  // the painted keys: home blue with an orange edge
+  for (const s of [-1, 1]) { ctx.fillStyle = 'rgba(29,66,160,.94)'; ctx.fillRect(s < 0 ? X(-L) : X(L - 5.79), Z(-2.44), 5.79 * PX, 4.88 * PX);
+    ctx.strokeStyle = '#f58426'; ctx.lineWidth = 0.09 * PX; ctx.strokeRect(s < 0 ? X(-L) + 0.12 * PX : X(L - 5.79) + 0.12 * PX, Z(-2.44) + 0.12 * PX, 5.79 * PX - 0.24 * PX, 4.88 * PX - 0.24 * PX); }
+  imgCircle(ctx, img, 0, 0, 1.83, 0.95);
+  ctx.strokeStyle = '#f58426'; ctx.lineWidth = 0.12 * PX; ctx.beginPath(); ctx.arc(X(0), Z(0), 1.95 * PX, 0, 7); ctx.stroke();
+  ctx.strokeStyle = '#f6f3ea'; ctx.lineWidth = 0.05 * PX;
+  ctx.beginPath(); ctx.arc(X(0), Z(0), 1.83 * PX, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(X(0), Z(0), 0.61 * PX, 0, 7); ctx.stroke();
   ctx.strokeRect(X(-L), Z(-W), 2 * L * PX, 2 * W * PX); ctx.beginPath(); ctx.moveTo(X(0), Z(-W)); ctx.lineTo(X(0), Z(W)); ctx.stroke();
   for (const s of [-1, 1]) {
-    const bx = s * L, rim = s * (L - 1.575);
+    const bx = s * L, rim = s * (L - 1.575), ft = s * (L - 5.79);
     ctx.strokeRect(s < 0 ? X(-L) : X(L - 5.79), Z(-2.44), 5.79 * PX, 4.88 * PX);
-    ctx.beginPath(); ctx.arc(X(s * (L - 5.79)), Z(0), 1.83 * PX, 0, 7); ctx.stroke();
+    // the free throw circle: solid toward half court, dashed inside the lane
+    ctx.beginPath(); ctx.arc(X(ft), Z(0), 1.83 * PX, s > 0 ? Math.PI / 2 : -Math.PI / 2, s > 0 ? Math.PI * 1.5 : Math.PI / 2); ctx.stroke();
+    ctx.setLineDash([0.38 * PX, 0.3 * PX]); ctx.beginPath(); ctx.arc(X(ft), Z(0), 1.83 * PX, s > 0 ? -Math.PI / 2 : Math.PI / 2, s > 0 ? Math.PI / 2 : Math.PI * 1.5); ctx.stroke(); ctx.setLineDash([]);
+    // the restricted area, four feet from the rim
+    ctx.beginPath(); ctx.arc(X(rim), Z(0), 1.22 * PX, s > 0 ? Math.PI / 2 : -Math.PI / 2, s > 0 ? Math.PI * 1.5 : Math.PI / 2); ctx.stroke();
+    // lane hash marks and the block
+    for (const d of [2.13, 3.05, 3.96, 4.88]) for (const zz of [-2.44, 2.44]) { ctx.beginPath(); ctx.moveTo(X(bx - s * d), Z(zz)); ctx.lineTo(X(bx - s * d), Z(zz + Math.sign(zz) * 0.15)); ctx.stroke(); }
+    ctx.fillStyle = '#f6f3ea'; for (const zz of [-2.44, 2.44]) ctx.fillRect(X(bx - s * 2.13) - (s > 0 ? 0.3 * PX : 0), Z(zz) + (zz > 0 ? 0 : -0.2 * PX), 0.3 * PX, 0.2 * PX);
     // the three point line: 7.24 m arc, 6.71 m in the corners
     const a = Math.asin(6.71 / 7.24), cx3 = rim - s * 7.24 * Math.cos(a);
     ctx.beginPath(); ctx.moveTo(X(bx), Z(-6.71)); ctx.lineTo(X(cx3), Z(-6.71));
     if (s > 0) ctx.arc(X(rim), Z(0), 7.24 * PX, Math.PI + a, Math.PI - a, true); else ctx.arc(X(rim), Z(0), 7.24 * PX, -a, a, false);
     ctx.lineTo(X(bx), Z(6.71)); ctx.stroke();
+    // coaching box and the 28 foot marks on the sidelines
+    ctx.beginPath(); ctx.moveTo(X(s * (L - 8.53)), Z(W)); ctx.lineTo(X(s * (L - 8.53)), Z(W + 0.9)); ctx.moveTo(X(s * (L - 8.53)), Z(-W)); ctx.lineTo(X(s * (L - 8.53)), Z(-W - 0.9)); ctx.stroke();
   }
-  word(ctx, 'THE GARDEN', -L + 0.9, 0, 1.4, 'rgba(246,243,234,.9)', -Math.PI / 2); word(ctx, 'THE GARDEN', L - 0.9, 0, 1.4, 'rgba(246,243,234,.9)', Math.PI / 2);
-  word(ctx, 'N3W YORKERS', 0, 8.6, 0.9, 'rgba(41,98,255,.95)'); word(ctx, 'N3W YORKERS', 0, -8.6, 0.9, 'rgba(41,98,255,.95)', Math.PI);
+  word(ctx, 'THE GARDEN', -L - 1.25, 0, 1.25, 'rgba(246,243,234,.92)', -Math.PI / 2); word(ctx, 'THE GARDEN', L + 1.25, 0, 1.25, 'rgba(246,243,234,.92)', Math.PI / 2);
+  word(ctx, 'NEW YORK', 0, 8.75, 0.95, 'rgba(245,132,38,.95)'); word(ctx, 'NEW YORK', 0, -8.75, 0.95, 'rgba(245,132,38,.95)', Math.PI);
+  word(ctx, 'N3W YORKERS', -7.2, 8.75, 0.55, 'rgba(246,243,234,.85)'); word(ctx, 'BY MLOW', 7.2, 8.75, 0.55, 'rgba(246,243,234,.85)');
+  word(ctx, 'N3W YORKERS', 7.2, -8.75, 0.55, 'rgba(246,243,234,.85)', Math.PI); word(ctx, 'BY MLOW', -7.2, -8.75, 0.55, 'rgba(246,243,234,.85)', Math.PI);
   return c;
 }
 export function drawIce(img) {
@@ -88,7 +102,7 @@ export function buildFlipFloor(scene) {
     idx.push(v, v + 2, v + 1, v, v + 3, v + 2); v += 4;
   }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uvA, 2)); g.setAttribute('uvB', new THREE.Float32BufferAttribute(uvB, 2)); g.setAttribute('aC', new THREE.Float32BufferAttribute(cen, 2)); g.setIndex(idx); g.computeVertexNormals();
-  const U = { uProg: { value: 0 }, uOrigin: { value: new THREE.Vector2() }, map2: { value: null }, uRough2: { value: 0.5 } };
+  const U = { uProg: { value: 0 }, uOrigin: { value: new THREE.Vector2() }, map2: { value: null }, uRough2: { value: 0.5 }, detailMap: { value: null }, uDetRep: { value: new THREE.Vector2(44, 62) }, uDetA: { value: 1 }, uDetB: { value: 0 } };
   const mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.08, side: THREE.DoubleSide });
   mat.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, U);
@@ -98,8 +112,8 @@ export function buildFlipFloor(scene) {
         float ca = cos(fa), sa = sin(fa); objectNormal = vec3(objectNormal.x, objectNormal.y * ca - objectNormal.z * sa, objectNormal.y * sa + objectNormal.z * ca);`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 lp = transformed - vec3(aC.x, 0.0, aC.y); transformed = vec3(aC.x + lp.x, lp.y * ca - lp.z * sa + sin(fa) * 1.1, aC.y + lp.y * sa + lp.z * ca); vUvB = uvB;`);
-    sh.fragmentShader = 'uniform sampler2D map2; varying vec2 vUvB;\n' + sh.fragmentShader
-      .replace('#include <map_fragment>', '#ifdef USE_MAP\n vec4 tA = texture2D(map, vMapUv); vec4 tB = texture2D(map2, vUvB); diffuseColor *= gl_FrontFacing ? tA : tB;\n#endif');
+    sh.fragmentShader = 'uniform sampler2D map2, detailMap; uniform vec2 uDetRep; uniform float uDetA, uDetB; varying vec2 vUvB;\n' + sh.fragmentShader
+      .replace('#include <map_fragment>', '#ifdef USE_MAP\n vec4 tA = texture2D(map, vMapUv); vec4 tB = texture2D(map2, vUvB); vec4 tC = gl_FrontFacing ? tA : tB; float dtl = texture2D(detailMap, (gl_FrontFacing ? vMapUv : vUvB) * uDetRep).r * 2.0; tC.rgb *= mix(1.0, dtl, gl_FrontFacing ? uDetA : uDetB); diffuseColor *= tC;\n#endif');
   };
   const mesh = new THREE.Mesh(g, mat); mesh.renderOrder = 1; scene.add(mesh);
   return { mesh, mat, U };

@@ -16,6 +16,8 @@ import { seatedGeometry, standingGeometry, peopleMaterial, peopleMesh } from './
 import { buildFlipFloor, drawCourt, drawIce, drawStage, drawRing, drawCircus } from './floor.js';
 import { buildWorld, buildModeSets, put } from './world.js';
 import * as S from './sound.js';
+import { buildGame } from './players.js';
+import { buildBanners } from './banners.js';
 
 const $ = (s) => document.querySelector(s);
 const Q = new URLSearchParams(location.search);
@@ -84,6 +86,7 @@ async function build() {
   tex.concrete = tx('assets/tex/concrete_c.jpg', 6); tex.concreteN = tx('assets/tex/concrete_n.jpg', 6, false); tex.concreteR = tx('assets/tex/concrete_r.jpg', 6, false);
   tex.concrete2 = tx('assets/tex/concrete_c.jpg', 1); tex.terrazzo = tx('assets/tex/terrazzo_c.jpg', 1); tex.pavers = tx('assets/tex/pavers_c.jpg', 1); tex.asphalt = tx('assets/tex/asphalt_c.jpg', 1); tex.asphalt.repeat.set(6, 90);
   tex.steelC = tx('assets/tex/steel_c.jpg', 1); tex.steelC.repeat.set(20, 2); tex.planks = tx('assets/tex/planks_c.jpg', 1); tex.planks.repeat.set(40, 4);
+  tex.courtD = tx('assets/tex/court_d.jpg', 1, false); tex.courtN = tx('assets/tex/court_n.jpg', 1, false); tex.courtN.repeat.set(44, 62); tex.fabricN = tx('assets/tex/fabric_n.jpg', 1, false);
   const fallbackBand = cvTex(mkCanvas(512, 128, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, '#0d1a5a'); g.addColorStop(0.5, '#2962ff'); g.addColorStop(1, '#0d1a5a'); x.fillStyle = g; x.fillRect(0, 0, w, h); }));
   tex.murals = ['concourse_1', 'concourse_2', 'concourse_3', 'concourse_4'].map((n) => ff(n, fallbackBand));
   tex.fascia = ff('fascia', fallbackBand); tex.drum = ff('drum', tex.concrete2); tex.drum.repeat.set(1, 1);
@@ -125,15 +128,18 @@ async function build() {
   sky.material.map.wrapS = THREE.ClampToEdgeWrapping; sky.material.map.repeat.set(1, 1); scene.add(sky);
   buildWorld(scene, tex, U);
   if (tex.pennWall) scene.traverse((o) => { if (o.isMesh && o.geometry.type === 'BoxGeometry' && o.geometry.parameters.width === 30 && o.geometry.parameters.height === 22) { tex.pennWall.repeat.set(2, 1); o.material = new THREE.MeshStandardMaterial({ map: tex.pennWall, color: 0xb8bcc8, roughness: 0.75 }); } });
+  U.banners = buildBanners(scene, tex, U, U.ceilY); clickables.push(...U.banners.hit);
   buildBowl(scene, tex, U); $('#st-ny').textContent = (window.HANG || []).length;
   // the event floor's base, the flip panels on it
   const base = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshStandardMaterial({ color: 0x0b0e20, roughness: 0.6 }));
   const bshape = new THREE.Shape(); for (let i = 0; i <= 160; i++) { const P = stadiumPoint(i / 160, 1.9); i ? bshape.lineTo(P[0], -P[1]) : bshape.moveTo(P[0], -P[1]); }
   base.geometry = new THREE.ShapeGeometry(bshape, 40).rotateX(-Math.PI / 2); base.position.y = -0.01; scene.add(base);
   U.flip = buildFlipFloor(scene); U.flip.mat.map = U.floors.court; U.flip.U.map2.value = U.floors.ice; U.flip.mat.roughness = U.rough.court; U.flip.mat.clearcoat = U.coat.court;
+  U.flip.U.detailMap.value = tex.courtD; U.flip.mat.normalMap = tex.courtN; U.flip.mat.normalScale.set(0.3, 0.3);
   await loadModels(tex);
   hangAndPieces(tex);
   standingCrowd(tex);
+  U.game = buildGame(U.sets.court, tex, { fans: U.courtFans, phone: PHONE, sound: S, onScore: (team, pts) => { S.cheer(team === 0 ? (pts === 3 ? 1.1 : 0.7) : 0.25, team === 0 ? 2.4 : 1.2); if (team === 0 && pts === 3 && zoneOf(player.pos) !== 'concourse' && started) egg('downtown', 'From downtown', 'A home three, and fourteen thousand people on their feet. The game on this floor plays itself: watch it from courtside, the bridges or the top row.'); } });
   // the floor takes shadows; the furniture on it casts them
   U.flip.mesh.receiveShadow = true; base.receiveShadow = true;
   for (const k in U.sets) U.sets[k].traverse((o) => { if (o.isMesh && !o.isInstancedMesh) o.castShadow = true; if (o.isInstancedMesh) o.castShadow = true; });
@@ -253,8 +259,8 @@ function standingCrowd(tex) { // the general admission floor for the concert: 90
   const gu = { uWave: { value: 0 }, uWaveOn: { value: 0 }, uT: U.wave.uT };
   const mesh = peopleMesh(standingGeometry, peopleMaterial(gu, true), list, { jitter: 0.5, lean: 0.03 }); U.sets.stage.add(mesh); U.gaBodies = mesh;
   // courtside: the front row on the long sides, in the folding chairs, for the court
-  const cs = []; for (const s of [-1, 1]) for (let i = 0; i < 26; i++) if (Math.random() < 0.85 && !(s < 0 && Math.abs(-14 + i * 1.1) < 5)) cs.push([-14 + i * 1.1, 0, s * 9.1, s > 0 ? Math.PI : 0]);
-  U.sets.court.add(peopleMesh(seatedGeometry, peopleMaterial(U.wave), cs, { jitter: 0.25, lean: 0.12 }));
+  const cs = []; for (const s of [-1, 1]) for (let i = 0; i < 26; i++) if (Math.random() < 0.85 && !(s < 0 && Math.abs(-14 + i * 1.1) < 14)) cs.push([-14 + i * 1.1, 0, s * 9.1, s > 0 ? Math.PI : 0]);
+  U.courtFans = cs.map((c) => [c[0], c[2] + (c[2] > 0 ? 0.02 : -0.02), c[3]]);   // drawn by players.js on the jointed rig
 }
 
 // ---------- the floor changes
@@ -269,12 +275,12 @@ const seen = new Set(['court']);
 function setMode(m, origin) {
   if (m === mode || flipping || !U.flip) return;
   const o = origin || new THREE.Vector2(THREE.MathUtils.clamp(player.pos.x, -31, 31), THREE.MathUtils.clamp(player.pos.z, -15, 15));
-  U.flip.U.map2.value = U.floors[m]; U.flip.U.uOrigin.value.copy(o); U.flip.U.uProg.value = 0;
+  U.flip.U.map2.value = U.floors[m]; U.flip.U.uDetB.value = m === 'court' ? 1 : 0; U.flip.U.uOrigin.value.copy(o); U.flip.U.uProg.value = 0;
   flipping = { to: m, from: mode, t: 0, swapped: false }; S.flipClack(28);
   document.querySelectorAll('#console [data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === m));
 }
 function endFlip() {
-  const m = flipping.to; U.flip.mat.map = U.floors[m]; U.flip.mat.roughness = U.rough[m]; U.flip.mat.clearcoat = U.coat[m]; U.flip.U.uProg.value = 0; mode = m; flipping = null; seen.add(m);
+  const m = flipping.to; U.flip.mat.map = U.floors[m]; U.flip.U.uDetA.value = m === 'court' ? 1 : 0; U.flip.mat.normalScale.setScalar(m === 'court' ? 0.3 : m === 'ice' ? 0.08 : 0.15); U.flip.mat.roughness = U.rough[m]; U.flip.mat.clearcoat = U.coat[m]; U.flip.U.uProg.value = 0; mode = m; flipping = null; seen.add(m);
   if (m === 'stage') setHouse(true); else if (houseDown) setHouse(false);
   drawScore(); S.cheer(0.6); if (seen.size === 5) egg('allfloors', 'All five floors', 'Court, ice, stage, ring and circus in one night. The real changeover crew does one of these in about an hour.');
   if (zoneOf(player.pos) === 'floor' || zoneOf(player.pos) === 'bowl') toast(MODE_INFO[m][1], 'THE FLOOR · ' + MODE_INFO[m][0]);
@@ -285,11 +291,23 @@ function setHouse(down) { houseDown = down; $('#b-lights').classList.toggle('on'
 let score = 0, shots = 0;
 function drawScore() {
   const c = U.scoreCanvas, x = c.getContext('2d'), w = c.width, h = c.height; x.fillStyle = '#04050c'; x.fillRect(0, 0, w, h);
-  x.fillStyle = '#2962ff'; x.fillRect(0, 0, w, 86); x.fillStyle = '#eef2f8'; x.font = '62px "N3W Skyline", Anton'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('THE GARDEN', w / 2, 46);
-  x.font = '40px "JetBrains Mono"'; x.fillStyle = '#22d3ee'; x.fillText('TONIGHT · ' + MODE_INFO[flipping ? flipping.to : mode][0], w / 2, 140);
-  x.font = '150px Anton'; x.fillStyle = '#eef2f8'; x.fillText(String(score), w / 2 - 230, 300); x.fillStyle = '#ff4fa3'; x.fillText(String(shots - Math.round(score / 2.4) >= 0 ? shots : 0), w / 2 + 230, 300);
-  x.font = '30px "JetBrains Mono"'; x.fillStyle = '#8a93b0'; x.fillText('YOU', w / 2 - 230, 400); x.fillText('SHOTS', w / 2 + 230, 400);
-  const t = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }); x.fillStyle = '#eef2f8'; x.font = '44px "JetBrains Mono"'; x.fillText(t + ' NEW YORK', w / 2, 470);
+  const m = flipping ? flipping.to : mode, G = U.game && U.game.G;
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  if (m === 'court' && G) {
+    const mm = Math.floor(G.clock / 60), ss = Math.floor(G.clock % 60), clk = G.clock < 60 ? G.clock.toFixed(1) : mm + ':' + String(ss).padStart(2, '0');
+    x.fillStyle = '#1d428a'; x.fillRect(0, 0, w / 2 - 4, 92); x.fillStyle = '#a3202b'; x.fillRect(w / 2 + 4, 0, w / 2 - 4, 92);
+    x.font = '58px "N3W Skyline", Anton'; x.fillStyle = '#f6f3ea'; x.fillText('NEW YORK', w / 4, 50); x.fillText('VISITORS', w * 3 / 4, 50);
+    x.font = '210px Anton'; x.fillStyle = '#f58426'; x.fillText(String(G.score[0]), w / 4, 230); x.fillStyle = '#f6f3ea'; x.fillText(String(G.score[1]), w * 3 / 4, 230);
+    x.fillStyle = '#ffd23a'; x.font = '84px "JetBrains Mono"'; x.fillText(G.final ? 'FINAL' : clk, w / 2, 380);
+    x.font = '36px "JetBrains Mono"'; x.fillStyle = '#8a93b0'; x.fillText('QTR ' + G.q, w / 2 - 300, 380); x.fillStyle = '#ff2a1a'; x.fillText('SHOT ' + Math.ceil(G.shot), w / 2 + 300, 380);
+    x.fillStyle = '#22d3ee'; x.font = '32px "JetBrains Mono"'; x.fillText('POSS ' + (G.off === 0 ? '◀ NEW YORK' : 'VISITORS ▶') + (shots ? '   ·   YOU ' + score + ' PTS ON ' + shots : ''), w / 2, 462);
+  } else {
+    x.fillStyle = '#2962ff'; x.fillRect(0, 0, w, 86); x.fillStyle = '#eef2f8'; x.font = '62px "N3W Skyline", Anton'; x.fillText('THE GARDEN', w / 2, 46);
+    x.font = '40px "JetBrains Mono"'; x.fillStyle = '#22d3ee'; x.fillText('TONIGHT · ' + MODE_INFO[m][0], w / 2, 140);
+    x.font = '150px Anton'; x.fillStyle = '#eef2f8'; x.fillText(String(score), w / 2 - 230, 300); x.fillStyle = '#ff4fa3'; x.fillText(String(shots), w / 2 + 230, 300);
+    x.font = '30px "JetBrains Mono"'; x.fillStyle = '#8a93b0'; x.fillText('YOU', w / 2 - 230, 400); x.fillText('SHOTS', w / 2 + 230, 400);
+    const t = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }); x.fillStyle = '#eef2f8'; x.font = '44px "JetBrains Mono"'; x.fillText(t + ' NEW YORK', w / 2, 470);
+  }
   U.scoreTex.needsUpdate = true;
 }
 function drawCamFrame(on) {
@@ -347,6 +365,7 @@ function act(hit) {
   if (a === 'penn' && d < 12) { S.rumble(4); egg('penn', 'The station under it', 'The Garden sits on the platforms of Penn Station. The old station’s grand building was torn down for it in 1963, and the outcry led to New York’s Landmarks Preservation Commission.'); return; }
   if (a === 'sign') { egg('fourth', 'The fourth Garden', 'This is the fourth arena with the name. The first two stood on Madison Square, the third on Eighth Avenue at 50th Street. This one opened on February 11, 1968, and the name came along each time.'); return; }
   if (a === 'esb') { egg('esb', 'Two blocks east', 'The Empire State Building, at 34th and Fifth. From the street the Garden’s drum hides everything but the top.'); return; }
+  if (a === 'banner' && d < 80) { zoomTo(U.banners.hit[0].getWorldPosition(new THREE.Vector3()), 5); egg('rafters', 'Up in the rafters', 'The numbers the Garden will never hand out again hang over the ends. Among them, one more: N3W YORKERS, 1,111 of 1,111, sold out and retired.'); return; }
   if (a === 'binoc' && d < 5) { zoomTo(new THREE.Vector3(0, 1, 0), 6); egg('binoc', 'The cheap seats', 'Top row, upper bowl. The binoculars show you the centre circle, a hundred and fifty feet away and fifty feet down.'); return; }
 }
 function openArt(p) { $('#c-img').src = 'assets/art/' + p.f; $('#c-k').textContent = 'NEW YORKER No. ' + p.n + ' · ' + p.h.toUpperCase(); $('#c-t').textContent = p.t; $('#c-p').textContent = p.s || ''; $('#c-src').textContent = 'From the census, hung here because it was made on these blocks.'; const a = $('#c-a'); a.style.display = p.u ? '' : 'none'; a.href = p.u ? (p.u.startsWith('http') ? p.u : 'https://n3wyorkers.com' + p.u) : '#'; a.textContent = 'See the record'; openCard(); }
@@ -448,6 +467,7 @@ function loop() {
   if (wave) { wave.t += dt; U.wave.uWaveOn.value = Math.min(1, wave.t * 2, Math.max(0, (11 - wave.t) * 2)); U.wave.uWave.value = -wave.t * 1.25; if (wave.t > 11.5) { wave = null; U.wave.uWaveOn.value = 0; } }
   if (U.taxis) U.taxis.forEach((c, i) => { c.position.z += dt * (9 + (i % 3) * 2); if (c.position.z > 200) c.position.z = -200; });
   stepBalls(dt);
+  if (U.game) U.game.update(dt, t); if (U.bannerT) U.bannerT.value = t; if (frame % 20 === 7 && U.scoreCanvas && U.game && mode === 'court') drawScore();
   // the hang loads as you come near
   if (U.frames && frame % 20 === 0) for (const F of U.frames) if (!F.loaded && F.g.position.distanceTo(camera.position) < 30) { F.loaded = true; TL.load('assets/art/' + F.p.f, (tt) => { tt.colorSpace = THREE.SRGBColorSpace; tt.anisotropy = 4; F.pic.material = new THREE.MeshBasicMaterial({ map: tt, toneMapped: true }); const a = tt.image.width / tt.image.height; if (a > 0) { const h = 1.9, w = Math.min(1.5, h * a); F.pic.scale.set(w / 1.5, (w / a) / 1.9, 1); } }); }
   // the scoreboard clock and the eye cam
@@ -457,7 +477,7 @@ function loop() {
     U.scoreboard.visible = false; renderer.setRenderTarget(U.camRT); renderer.render(scene, camCam); renderer.setRenderTarget(null); U.scoreboard.visible = true;
     camSeen += dt * 3; if (camSeen > 4 && !eggs.has('eyecam')) { drawCamFrame(true); egg('eyecam', 'On the eye cam', 'Look up at the scoreboard. That is you, from the eye cam, on a screen forty feet wide.'); } }
   // hover hint
-  if (started && locked && frame % 6 === 0) { const h = pick(); const a = h && h.o.userData.act; $('#cross').classList.toggle('hot', !!a); $('#hint').textContent = !a ? '' : { art: 'SEE THE NEW YORKER', piece: 'READ THE PLINTH', ball: 'SHOOT', bell: 'RING THE BELL', mic: 'TAP THE MIC', organ: 'PLAY THE ORGAN', lift: 'CALL THE LIFT', penn: 'LISTEN', sign: 'READ THE NAME', esb: 'LOOK', binoc: 'LOOK THROUGH' }[a] || ''; }
+  if (started && locked && frame % 6 === 0) { const h = pick(); const a = h && h.o.userData.act; $('#cross').classList.toggle('hot', !!a); $('#hint').textContent = !a ? '' : { art: 'SEE THE NEW YORKER', piece: 'READ THE PLINTH', ball: 'SHOOT', bell: 'RING THE BELL', mic: 'TAP THE MIC', organ: 'PLAY THE ORGAN', lift: 'CALL THE LIFT', penn: 'LISTEN', sign: 'READ THE NAME', esb: 'LOOK', binoc: 'LOOK THROUGH', banner: 'LOOK UP' }[a] || ''; }
   if (frame % 15 === 0) zoneTick();
   composer.render();
 }
@@ -475,7 +495,7 @@ loop();
 // ---------- hooks for the headless shots
 const VIEWS = {
   avenue: [150, STREET, 30, 1.25, 0.18], hall: [86, STREET * 0.85, 0, 1.5708, 0.25], concourse: [0, 0, -56, -0.25, 0.05], pieces: [20, 0, -50, 0.9, -0.12],
-  bowl: [0, 24, 47, 0, -0.42], crowd: [4, 2.5, -21.5, -0.9, -0.12], courtside: [-6, 0, 7.5, -2.2, 0.02], court: [-21, 0.4, 9, -1.15, 0.0], ring: [6, 0, 9.5, 0.55, 0.02], circus: [9, 0, 10.5, 0.7, 0.0], stage: [24, 3.2, 9, 1.25, 0.02], ice: [36, 4.2, 6, 1.4, -0.16], floor: [-24, 0, 6, -1.35, 0.02], roof: [0, 0.2, 0, 0, 1.45], bridge: [-30, BRIDGE.y, -BRIDGE.z, -1.5708, -0.38], top: [44, 17, 0, 1.5708, -0.38],
+  game: [-3, 0, 8.6, -1.15, -0.06], baseline: [17.2, 0, 3.8, 1.35, 0.02], rafters: [-4, 0.5, 0, 1.5708, 0.5], east: [4, 0.5, 0, -1.5708, 0.45], bowl: [0, 24, 47, 0, -0.42], crowd: [4, 2.5, -21.5, -0.9, -0.12], courtside: [-6, 0, 7.5, -2.2, 0.02], court: [-21, 0.4, 9, -1.15, 0.0], ring: [6, 0, 9.5, 0.55, 0.02], circus: [9, 0, 10.5, 0.7, 0.0], stage: [24, 3.2, 9, 1.25, 0.02], ice: [36, 4.2, 6, 1.4, -0.16], floor: [-24, 0, 6, -1.35, 0.02], roof: [0, 0.2, 0, 0, 1.45], bridge: [-30, BRIDGE.y, -BRIDGE.z, -1.5708, -0.38], top: [44, 17, 0, 1.5708, -0.38],
 };
 function teleport(v) { const V = VIEWS[v]; if (!V) return; player.pos.set(V[0], V[1], V[2]); player.yaw = V[3]; player.pitch = V[4]; zone = ''; }
 window.__garden = { teleport, setMode: (m) => { setMode(m, new THREE.Vector2()); }, flipNow: (m) => { setMode(m, new THREE.Vector2()); if (flipping) { flipping.t = 3.39; } }, wave: startWave, house: setHouse, shoot, U, scene, camera, renderer, player, eggs, VIEWS };
