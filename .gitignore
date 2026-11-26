@@ -1,2 +1,8 @@
 work/
 .DS_Store
+# Blender build: downloads, generated poses and blends, qa renders
+blender/dl/
+blender/work/
+blender/renders/*_qa.png
+blender/renders/qa_sheet.jpg
+blender/__pycache__/
