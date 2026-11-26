@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head><script src="phone-gpu.js" data-cap="512"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>THE GARDEN · the arena over Penn Station, walkable · NEW YORKERS by MLow</title>
+<meta name="description" content="THE GARDEN, a walkable three.js gallery by MLow with NEW YORKERS: the round arena on Seventh Avenue over Penn Station, rebuilt at real size. The cable wheel roof, the two hanging bridges, a concourse hung with New Yorkers and museum pieces from the arena's history, and a floor you can change from a court to ice, a stage, a ring and a circus.">
+<meta property="og:title" content="THE GARDEN · a walkable gallery by MLow">
+<meta property="og:description" content="Walk the round arena over Penn Station at real size. Flip the floor from court to ice to stage to ring to circus, start the wave, find yourself on the eye cam. Free in your browser.">
+<meta property="og:image" content="assets/poster.jpg">
+<link rel="icon" href="assets/logo.png">
+<style>
+@font-face{font-family:"N3W Skyline";src:url(assets/fonts/N3W-Skyline.otf) format("opentype");font-display:swap}
+@font-face{font-family:Anton;src:url(assets/fonts/Anton-Regular.ttf) format("truetype");font-display:swap}
+@font-face{font-family:Archivo;src:url(assets/fonts/Archivo.ttf) format("truetype");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/JetBrainsMono.ttf) format("truetype");font-weight:100 800;font-display:swap}
+:root{--ink:#060818;--paper:#eef2f8;--blue:#2962ff;--cyan:#22d3ee;--pink:#ff4fa3;--dim:#8a93b0;--mono:"JetBrains Mono",Menlo,monospace;--sans:Archivo,system-ui,sans-serif;--disp:Anton,Impact,sans-serif;--sky:"N3W Skyline",Anton,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--paper);font-family:var(--sans);overflow:hidden;-webkit-tap-highlight-color:transparent}
+#stage canvas{display:block;touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer}
+#intro{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 0%,rgba(41,98,255,.35),transparent 60%),radial-gradient(ellipse at 50% 110%,rgba(255,79,163,.22),transparent 55%),#060818;transition:opacity .9s,visibility .9s}
+#intro.off{opacity:0;visibility:hidden}
+#intro .wrap{max-width:760px;width:100%;text-align:center;max-height:100vh;overflow-y:auto;padding:12px 4px}
+#intro img.logo{width:120px;height:120px;border-radius:14px;margin-bottom:14px;box-shadow:0 0 60px rgba(41,98,255,.45)}
+#intro .k{font:600 12px var(--mono);letter-spacing:.28em;color:var(--cyan);text-transform:uppercase}
+#intro h1{font:400 clamp(64px,12vw,140px)/.9 var(--disp);letter-spacing:.01em;margin:10px 0 4px}
+#intro h1 span{display:block;font:500 clamp(15px,2.2vw,20px) var(--sans);color:#c8d0e6;margin-top:12px;letter-spacing:.01em}
+#intro p{color:#c8d0e6;line-height:1.6;margin:16px auto 18px;max-width:580px;font-size:15px}
+#intro .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;margin:14px auto 8px}
+#intro .stats span{font:600 11px var(--mono);letter-spacing:.14em;color:#c8d0e6;border:1px solid rgba(41,98,255,.5);border-radius:999px;padding:7px 12px;background:rgba(0,0,0,.25)}
+#intro .stats b{color:var(--cyan);font-weight:800;margin-right:6px}
+#intro .tricks{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:6px auto 18px;max-width:700px}
+#intro .tricks i{font:500 12px var(--sans);font-style:normal;background:rgba(255,79,163,.12);border:1px solid rgba(255,79,163,.35);border-radius:8px;padding:5px 9px}
+#lbar{width:min(360px,80vw);height:3px;background:#1a1f3a;margin:0 auto 18px;border-radius:2px;overflow:hidden}#lp{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--pink));transition:width .3s}
+#go{background:var(--blue);color:#fff;border:0;border-radius:999px;padding:16px 40px;font:800 15px var(--sans);letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 0 3px rgba(41,98,255,.3),0 10px 40px rgba(41,98,255,.4)}
+#go:disabled{opacity:.5;cursor:wait}
+#intro small{display:block;margin-top:16px;font:500 11px var(--mono);color:var(--dim);letter-spacing:.06em;line-height:1.7}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+#top{position:absolute;left:16px;top:14px;max-width:58vw}
+#top .k{font:600 10px var(--mono);letter-spacing:.26em;color:var(--cyan)}
+#zname{font:400 clamp(24px,3.4vw,38px)/1 var(--disp);margin-top:4px;text-shadow:0 2px 16px #000;letter-spacing:.02em}
+#zk{font:500 13px var(--sans);color:#d4daea;margin-top:5px;text-shadow:0 1px 8px #000}
+#eggbox{position:absolute;left:16px;bottom:16px;font:600 11px var(--mono);letter-spacing:.12em;background:rgba(6,8,24,.66);border:1px solid rgba(238,242,248,.16);border-radius:999px;padding:8px 14px;transition:transform .2s}
+#eggbox b{color:var(--pink)}#eggbox.pop{transform:scale(1.18)}
+#console{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:4px;pointer-events:auto}
+#console .h{font:600 9px var(--mono);letter-spacing:.24em;color:var(--dim);text-align:right;margin:2px 4px}
+#console button{background:rgba(6,8,24,.7);border:1px solid rgba(238,242,248,.16);border-radius:999px;padding:7px 14px;font:700 11px var(--mono);letter-spacing:.14em;text-align:right;backdrop-filter:blur(6px)}
+#console button.on{border-color:var(--cyan);color:var(--cyan)}#console button:hover{border-color:var(--pink)}
+#console button.act{border-color:rgba(255,79,163,.5)}
+#cross{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;border:2px solid rgba(238,242,248,.7);opacity:0;transition:.15s}
+#hud.locked #cross{opacity:1}#cross.hot{transform:scale(1.8);border-color:var(--cyan);background:rgba(34,211,238,.3)}
+#hint{position:absolute;left:50%;top:calc(50% + 18px);transform:translateX(-50%);font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);text-shadow:0 1px 6px #000;white-space:nowrap}
+#toast{position:absolute;left:50%;bottom:28px;transform:translate(-50%,20px);max-width:min(640px,88vw);text-align:center;background:rgba(6,8,24,.88);border:1px solid var(--blue);border-radius:14px;padding:12px 18px;font:500 14px/1.45 var(--sans);opacity:0;transition:.35s}
+#toast.on{opacity:1;transform:translate(-50%,0)}#toast b{color:var(--pink);font:700 11px var(--mono);letter-spacing:.2em;display:block;margin-bottom:4px}
+#stick{position:fixed;width:100px;height:100px;border-radius:50%;border:2px solid rgba(238,242,248,.3);display:none;z-index:11;pointer-events:none}#knob{position:absolute;left:30px;top:30px;width:40px;height:40px;border-radius:50%;background:rgba(41,98,255,.6)}
+#card{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(3,4,12,.8);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s;padding:16px}
+#card.on{opacity:1;visibility:visible}
+#card .in{position:relative;width:min(900px,100%);background:#0a0d22;border:1px solid rgba(41,98,255,.5);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#card .media{background:#000;min-height:300px;display:grid;place-items:center}#card .media img{max-width:100%;max-height:70vh;display:block}
+#card .meta{padding:22px;display:flex;flex-direction:column;gap:8px;justify-content:center}
+#c-k{font:600 11px var(--mono);letter-spacing:.22em;color:var(--cyan)}
+#c-t{font:400 clamp(28px,4vw,44px)/1 var(--disp);letter-spacing:.01em}
+#c-p{color:#c8d0e6;font-size:14px;line-height:1.55}
+#c-src{font:500 11px var(--mono);color:var(--dim)}#c-src a{color:var(--dim)}
+.btn{display:inline-block;text-decoration:none;border-radius:999px;padding:11px 20px;font:800 12px var(--sans);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--blue);color:#fff;background:var(--blue);align-self:flex-start;margin-top:6px}
+#c-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(6,8,24,.75);font-size:20px;z-index:2}
+@media (max-width:760px){#card .in{grid-template-columns:1fr}#card .media{min-height:200px}#card .media img{max-height:42vh}}
+#bars i{position:fixed;left:0;right:0;height:0;background:#000;z-index:9;transition:height .8s;pointer-events:none}#bars i:first-child{top:0}#bars i:last-child{bottom:0}#bars.on i{height:10vh}
+#ride{position:fixed;inset:0;z-index:9;pointer-events:none;background:#000;opacity:0;transition:opacity .5s}
+@media (pointer:coarse),(max-width:700px){#console{top:auto;bottom:70px;flex-direction:row;flex-wrap:wrap;justify-content:flex-end;max-width:70vw}#console .h{display:none}#console button{padding:6px 10px;font-size:10px}#toast{bottom:150px}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="bars"><i></i><i></i></div><div id="ride"></div>
+<div id="intro">
+  <div class="wrap">
+    <img class="logo" src="assets/logo.png" alt="N3W YORKERS by MLow">
+    <div class="k">N3W YORKERS · a walkable gallery by MLow</div>
+    <h1>THE GARDEN<span>The round arena on Seventh Avenue, over the trains of Penn Station, at real size.</span></h1>
+    <div class="stats"><span><b id="st-ny">0</b>NEW YORKERS ON THE WALLS</span><span><b id="st-pc">0</b>PIECES FROM THE GARDEN'S PAST</span><span><b id="st-egg">0</b>EASTER EGGS</span><span><b>5</b>FLOORS</span></div>
+    <div class="tricks"><i>Flip the floor: court, ice, stage, ring, circus</i><i>Start the wave</i><i>Find yourself on the eye cam</i><i>Shoot from the free throw line</i><i>Walk the bridges</i><i>Stand under the hub</i></div>
+    <p>Come up the escalators from Seventh Avenue into the concourse, hung with New Yorkers from these blocks and pieces from a century of fights, horse shows, circuses and championships. Go down a tunnel into the bowl, under a roof of forty eight cables that meet at one ring in the middle, and change the floor from the console.</p>
+    <div id="lbar"><div id="lp"></div></div>
+    <button id="go" disabled>Loading</button>
+    <small>WASD walk, SHIFT hurry, mouse to look, click anything. F shoots, G starts the wave, 1 to 5 flip the floor, M for sound.<br>On a phone: left thumb walks, right thumb looks, tap anything.</small>
+  </div>
+</div>
+<div id="hud">
+  <div id="top"><div class="k">THE GARDEN · <span id="zlvl">SEVENTH AVENUE</span></div><div id="zname">Seventh Avenue</div><div id="zk"></div></div>
+  <div id="console">
+    <div class="h">THE FLOOR</div>
+    <button data-mode="court">1 COURT</button><button data-mode="ice">2 ICE</button><button data-mode="stage">3 STAGE</button><button data-mode="ring">4 RING</button><button data-mode="circus">5 CIRCUS</button>
+    <div class="h">THE HOUSE</div>
+    <button class="act" id="b-wave">G THE WAVE</button><button class="act" id="b-lights">L HOUSE LIGHTS</button><button class="act" id="b-snd">M SOUND OFF</button>
+  </div>
+  <div id="cross"></div><div id="hint"></div>
+  <div id="eggbox">EGGS <b id="eggn">0</b> / <span id="eggt">0</span></div>
+  <div id="toast"></div>
+</div>
+<div id="stick"><div id="knob"></div></div>
+<div id="card"><div class="in"><button id="c-x">×</button><div class="media"><img id="c-img" alt=""></div><div class="meta"><div id="c-k"></div><div id="c-t"></div><div id="c-p"></div><div id="c-src"></div><a id="c-a" class="btn" target="_blank" rel="noopener">See the record</a></div></div></div>
+<script src="assets/data.js?v=@@V@@"></script>
+<script src="assets/eggs.js?v=@@V@@"></script>
+<script type="module" src="assets/gallery.js?v=@@V@@"></script>
+</body>
+</html>
