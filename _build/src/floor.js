@@ -42,7 +42,7 @@ export function drawCourt(img) {
   return c;
 }
 export function drawIce(img) {
-  const [c, ctx] = canvas(); ctx.fillStyle = '#e9f0f6'; ctx.fillRect(0, 0, CW, CH);
+  const [c, ctx] = canvas(); ctx.fillStyle = '#c4cfdc'; ctx.fillRect(0, 0, CW, CH);
   imgCircle(ctx, img, 0, 0, 11, 0.55);
   for (let i = 0; i < 900; i++) { ctx.strokeStyle = `rgba(150,170,200,${0.05 + Math.random() * 0.08})`; ctx.lineWidth = 1; ctx.beginPath(); const x = Math.random() * CW, z = Math.random() * CH, a = Math.random() * 6.28, l = 20 + Math.random() * 120; ctx.moveTo(x, z); ctx.quadraticCurveTo(x + Math.cos(a) * l * 0.5 + 20, z + Math.sin(a) * l * 0.5, x + Math.cos(a) * l, z + Math.sin(a) * l); ctx.stroke(); }
   const H = 30.5, W = 13;
@@ -83,7 +83,7 @@ export function buildFlipFloor(scene) {
   const uvOf = (x, z) => [(x + FW / 2) / FW, 1 - (z + FD / 2) / FD];
   for (let i = 0; i < FW / CELL; i++) for (let j = 0; j < FD / CELL; j++) {
     const cx = -FW / 2 + (i + 0.5) * CELL, cz = -FD / 2 + (j + 0.5) * CELL; if (sd(cx, cz) > 0.4) continue;
-    const h = CELL / 2 - 0.012;
+    const h = CELL / 2 - 0.002;
     for (const [dx, dz] of [[-h, -h], [h, -h], [h, h], [-h, h]]) { const x = cx + dx, z = cz + dz; pos.push(x, 0.012, z); uvA.push(...uvOf(x, z)); uvB.push(...uvOf(x, 2 * cz - z)); cen.push(cx, cz); }
     idx.push(v, v + 2, v + 1, v, v + 3, v + 2); v += 4;
   }

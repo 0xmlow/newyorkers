@@ -93,7 +93,7 @@ export function buildWorld(scene, tex, U) {
   }
   for (const y of [-3.6, 3.6]) { const ring = new THREE.Mesh(new THREE.CylinderGeometry(8.2, 8.2, 0.8, 64, 1, true), new THREE.MeshBasicMaterial({ map: tex.fascia, side: THREE.DoubleSide, toneMapped: false })); ring.position.y = y; sb.add(ring); }
   for (const [x, z] of [[-4, -3], [4, -3], [-4, 3], [4, 3]]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, ROOF_RIM - 26), steel); c.position.set(x, (ROOF_RIM - 21.5 - 3.3) / 2 + 3.3, z); sb.add(c); }
-  const under = new THREE.Mesh(new THREE.CircleGeometry(4.2, 48), new THREE.MeshBasicMaterial({ map: tex.flower, transparent: true, toneMapped: false })); under.rotation.x = Math.PI / 2; under.position.y = -3.32; sb.add(under);
+  const under = new THREE.Mesh(new THREE.CircleGeometry(4.2, 48), new THREE.MeshBasicMaterial({ map: tex.flower, color: 0x8899cc, transparent: true })); under.rotation.x = Math.PI / 2; under.position.y = -3.32; sb.add(under);
   U.scoreboard = sb;
   // ---- the bridges: 233 feet long, 22 wide, hung on rods from the roof, a row of seats facing in
   for (const s of [-1, 1]) {
@@ -136,9 +136,9 @@ export function buildWorld(scene, tex, U) {
   const lights = new THREE.InstancedMesh(new THREE.BoxGeometry(0.2, 0.05, ENTRY.w * 1.8), new THREE.MeshBasicMaterial({ color: 0xe8f0ff, toneMapped: false }), 14);
   for (let i = 0; i < 14; i++) { const x = 66 + i * 2; m4.makeTranslation(x, Math.max(entryY(x) + 6.5, 7.2) > 7.25 ? 7.22 : 7.22, 0); lights.setMatrixAt(i, m4); } hall.add(lights);
   // the tower on Seventh Avenue over the entrance: a plain office slab, lit windows, the name across the canopy
-  const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 112, 64), new THREE.MeshStandardMaterial({ map: tex.windows, color: 0xffffff, emissive: 0xffffff, emissiveMap: tex.windows, emissiveIntensity: 0.22, roughness: 0.4, metalness: 0.3 }));
+  const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 112, 64), new THREE.MeshStandardMaterial({ map: tex.windows, color: 0xffffff, emissive: 0xffffff, emissiveMap: tex.windows, emissiveIntensity: 0.16, roughness: 0.4, metalness: 0.3 }));
   tower.position.set(101, STREET + 10 + 56, 0); W.add(tower);
-  const lobbyGlass = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 64), new THREE.MeshPhysicalMaterial({ color: 0x9fc0ff, transparent: true, opacity: 0.16, roughness: 0.05 })); lobbyGlass.position.set(110.1, STREET + 5, 0); W.add(lobbyGlass);
+  const lobbyGlass = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 64), new THREE.MeshBasicMaterial({ color: 0x9fc0ff, transparent: true, opacity: 0.05, depthWrite: false })); lobbyGlass.position.set(110.1, STREET + 5, 0); W.add(lobbyGlass);
   const lobbyCeil = new THREE.Mesh(new THREE.BoxGeometry(18.2, 0.4, 64.2), dark); lobbyCeil.position.set(101, STREET + 10, 0); W.add(lobbyCeil);
   const lobbyMat = new THREE.MeshStandardMaterial({ map: tex.concrete, color: 0x2a3050, roughness: 0.9 });
   for (const z of [-31.9, 31.9]) { const w = new THREE.Mesh(new THREE.BoxGeometry(18, 10, 0.3), lobbyMat); w.position.set(101, STREET + 5, z); W.add(w); }
@@ -146,10 +146,10 @@ export function buildWorld(scene, tex, U) {
   back.geometry = mergeGeometries([new THREE.BoxGeometry(0.3, 10, 32 - ENTRY.w).translate(0, 0, -(ENTRY.w + (32 - ENTRY.w) / 2)), new THREE.BoxGeometry(0.3, 10, 32 - ENTRY.w).translate(0, 0, ENTRY.w + (32 - ENTRY.w) / 2)]);
   U.canopy = new THREE.Mesh(new THREE.PlaneGeometry(40, 3.2), new THREE.MeshBasicMaterial({ map: tex.canopy, transparent: true, toneMapped: false })); U.canopy.position.set(110.3, STREET + 11.8, 0); U.canopy.rotation.y = Math.PI / 2; W.add(U.canopy);
   // the street: sidewalk, Seventh Avenue, the far side, Penn Station's stair
-  const side = new THREE.Mesh(new THREE.PlaneGeometry(22, 200), new THREE.MeshStandardMaterial({ map: tex.pavers, color: 0x9aa0b0, roughness: 0.8 })); side.rotation.x = -Math.PI / 2; side.position.set(99 + 0, STREET, 0); W.add(side);
+  const side = new THREE.Mesh(new THREE.PlaneGeometry(22, 200), new THREE.MeshStandardMaterial({ map: tex.pavers, color: 0x5c6274, roughness: 0.85 })); side.rotation.x = -Math.PI / 2; side.position.set(99 + 0, STREET, 0); W.add(side);
   side.geometry = new THREE.PlaneGeometry(40, 200); side.position.x = 108; tex.pavers.repeat.set(14, 70);
   const road = new THREE.Mesh(new THREE.PlaneGeometry(26, 400), new THREE.MeshStandardMaterial({ map: tex.asphalt, color: 0x2e313a, roughness: 0.5, metalness: 0.1 })); road.rotation.x = -Math.PI / 2; road.position.set(141, STREET - 0.12, 0); W.add(road);
-  const far = new THREE.Mesh(new THREE.PlaneGeometry(30, 400), new THREE.MeshStandardMaterial({ map: tex.pavers, color: 0x80869a, roughness: 0.8 })); far.rotation.x = -Math.PI / 2; far.position.set(169, STREET, 0); W.add(far);
+  const far = new THREE.Mesh(new THREE.PlaneGeometry(30, 400), new THREE.MeshStandardMaterial({ map: tex.pavers, color: 0x4e5466, roughness: 0.85 })); far.rotation.x = -Math.PI / 2; far.position.set(169, STREET, 0); W.add(far);
   const lanes = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.14, 3), new THREE.MeshBasicMaterial({ color: 0xe8e8e0 }), 160);
   for (let i = 0; i < 160; i++) { const l = i % 4, z = -200 + Math.floor(i / 4) * 10; m4.makeRotationX(-Math.PI / 2).setPosition(130.5 + (l + 1) * 4.4, STREET - 0.1, z); lanes.setMatrixAt(i, m4); } W.add(lanes);
   // the ground plane under everything else outside

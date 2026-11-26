@@ -51,7 +51,7 @@ function wordCanvas(w, h, draw) { return mkCanvas(w, h, draw); }
 
 // ---------- state
 const U = {}; const eggs = new Set(); const EGG_N = window.EGG_N || 0; $('#eggt').textContent = EGG_N; $('#st-egg').textContent = EGG_N;
-const player = { pos: new THREE.Vector3(118, STREET, 0), vy: 0, yaw: Math.PI / 2, pitch: 0, riding: null };
+const player = { pos: new THREE.Vector3(160, STREET, 74), vy: 0, yaw: 1.12, pitch: 0.2, riding: null };
 let mode = 'court', flipping = null, started = false, houseDown = false;
 const clickables = [];
 
@@ -71,7 +71,7 @@ async function build() {
   tex.stageLed = ff('stage_led', fallbackBand); tex.ringCanvas = ff('ring_canvas', fallbackBand);
   tex.banners = ['banner_1', 'banner_2', 'banner_3', 'banner_4'].filter((n) => FF.has(n)).map((n) => ff(n));
   tex.flower = cvTex(flowerCanvas()); tex.flower.wrapS = tex.flower.wrapT = THREE.ClampToEdgeWrapping;
-  tex.windows = cvTex(windowsCanvas(0.38, '#dfe9ff'), 1); tex.windows.repeat.set(4, 30);
+  tex.windows = cvTex(windowsCanvas(0.26, '#dfe9ff'), 1); tex.windows.repeat.set(4, 30);
   tex.windowsCity = cvTex(windowsCanvas(0.3), 1);
   tex.steps = cvTex(mkCanvas(64, 64, (x) => { x.fillStyle = '#c8cedc'; x.fillRect(0, 0, 64, 64); x.fillStyle = '#5a6074'; for (let i = 0; i < 64; i += 4) x.fillRect(0, i, 64, 2); }), 1); tex.steps.repeat.set(40, 2);
   tex.canopy = cvTex(wordCanvas(2048, 164, (x, w, h) => { x.fillStyle = '#eef2f8'; x.font = '118px "N3W Skyline", Anton'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#2962ff'; x.shadowBlur = 24; x.fillText('THE GARDEN', w / 2, h / 2 + 6); x.font = '34px "JetBrains Mono"'; x.fillStyle = '#22d3ee'; x.shadowBlur = 0; x.fillText('N3W YORKERS', 190, h / 2 + 4); x.fillText('BY MLOW', w - 160, h / 2 + 4); }));
@@ -86,7 +86,7 @@ async function build() {
   const [cc, ic, cr] = await Promise.all(['court_center', 'ice_center', 'circus_ring'].map((n) => loadImg(FF.has(n) ? `assets/ff/${n}.webp` : null)));
   U.floors = { court: cvTex(drawCourt(cc)), ice: cvTex(drawIce(ic)), stage: cvTex(drawStage()), ring: cvTex(drawRing()), circus: cvTex(drawCircus(cr)) };
   for (const k in U.floors) { U.floors[k].wrapS = U.floors[k].wrapT = THREE.ClampToEdgeWrapping; U.floors[k].repeat.set(1, 1); }
-  U.rough = { court: 0.28, ice: 0.07, stage: 0.55, ring: 0.8, circus: 0.95 };
+  U.rough = { court: 0.28, ice: 0.12, stage: 0.55, ring: 0.8, circus: 0.95 };
   // the environment: the night sky over Midtown for reflections
   { const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose(); scene.environmentIntensity = 0.45; }
   // lights: one hemisphere, a house light, a cone from the scoreboard, a moon outside
@@ -96,7 +96,7 @@ async function build() {
   for (let i = 0; i < 8; i++) { const a = (i + 0.5) / 8 * Math.PI * 2, l = new THREE.PointLight(0xffe6c8, 40, 30, 1.6); l.position.set(Math.cos(a) * 57, 6.2, Math.sin(a) * 57); scene.add(l); }
   U.moon = new THREE.DirectionalLight(0x8fa6ff, 0.35); U.moon.position.set(200, 120, -80); scene.add(U.moon);
   // sky: a dome with a band of city glow and a few stars
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(1400, 32, 16), new THREE.MeshBasicMaterial({ side: THREE.BackSide, depthWrite: false, fog: false, map: cvTex(mkCanvas(64, 512, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#02030a'); g.addColorStop(0.42, '#0a1030'); g.addColorStop(0.5, '#3a2a5a'); g.addColorStop(0.52, '#0b0d18'); g.addColorStop(1, '#05060c'); x.fillStyle = g; x.fillRect(0, 0, w, h); for (let i = 0; i < 90; i++) { x.fillStyle = `rgba(255,255,255,${Math.random() * 0.8})`; x.fillRect(Math.random() * w, Math.random() * h * 0.4, 1, 1); } })) }));
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(1400, 32, 16), new THREE.MeshBasicMaterial({ side: THREE.BackSide, depthWrite: false, fog: false, map: cvTex(mkCanvas(2048, 1024, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#02030a'); g.addColorStop(0.4, '#0a1030'); g.addColorStop(0.49, '#2a2350'); g.addColorStop(0.52, '#0b0d18'); g.addColorStop(1, '#05060c'); x.fillStyle = g; x.fillRect(0, 0, w, h); for (let i = 0; i < 260; i++) { x.fillStyle = `rgba(255,255,255,${0.2 + Math.random() * 0.6})`; const y = Math.random() * h * 0.36, r = Math.random() < 0.1 ? 1.6 : 0.9; x.beginPath(); x.arc(Math.random() * w, y, r, 0, 7); x.fill(); } })) }));
   sky.material.map.wrapS = THREE.ClampToEdgeWrapping; sky.material.map.repeat.set(1, 1); scene.add(sky);
   buildWorld(scene, tex, U);
   if (tex.pennWall) scene.traverse((o) => { if (o.isMesh && o.geometry.type === 'BoxGeometry' && o.geometry.parameters.width === 30 && o.geometry.parameters.height === 22) { tex.pennWall.repeat.set(2, 1); o.material = new THREE.MeshStandardMaterial({ map: tex.pennWall, color: 0xb8bcc8, roughness: 0.75 }); } });
@@ -117,8 +117,9 @@ const gltf = new GLTFLoader(); const draco = new DRACOLoader(); draco.setDecoder
 function fit(o, size, axis = 'max') { const b = new THREE.Box3().setFromObject(o), s = b.getSize(new THREE.Vector3()); const k = size / (axis === 'max' ? Math.max(s.x, s.y, s.z) : s[axis]); o.scale.multiplyScalar(k); const b2 = new THREE.Box3().setFromObject(o); o.position.y -= b2.min.y; const c = b2.getCenter(new THREE.Vector3()); o.position.x -= c.x; o.position.z -= c.z; const g = new THREE.Group(); g.add(o); return g; }
 const loadGLB = (f) => new Promise((res) => { toLoad++; gltf.load('assets/glb/' + f, (g) => { bump(); res(g.scene); }, undefined, () => { bump(); res(null); }); });
 async function loadModels(tex) {
-  const names = { bell: 'si_dundee_bell.glb', sneakers: 'si_drj_sneakers.glb', glovesA: 'pp_gloves_a.glb', glovesB: 'pp_gloves_b.glb', hockey: 'pp_hockey.glb', horse: 'ph_horse_statue_01.glb', bull: 'ph_bull_head.glb', elephant: 'ph_carved_wooden_elephant.glb', camera: 'ph_vintage_video_camera.glb', megaphone: 'ph_Megaphone_01.glb', boombox: 'ph_boombox.glb', binoc: 'ph_binoculars.glb', flood: 'ph_flood_lights.glb', desk: 'ph_metal_office_desk.glb', chair: 'ph_folding_chair_01.glb', taxi: 'h_taxi.glb', lamp: 'lamppost.glb', hydrant: 'hydrant.glb', searchlight: 'ph_portable_searchlight.glb' };
+  const names = { glovesA: 'pp_gloves_a.glb', glovesB: 'pp_gloves_b.glb', hockey: 'pp_hockey.glb', horse: 'ph_horse_statue_01.glb', bull: 'ph_bull_head.glb', elephant: 'ph_carved_wooden_elephant.glb', camera: 'ph_vintage_video_camera.glb', megaphone: 'ph_Megaphone_01.glb', boombox: 'ph_boombox.glb', binoc: 'ph_binoculars.glb', flood: 'ph_flood_lights.glb', desk: 'ph_metal_office_desk.glb', chair: 'ph_folding_chair_01.glb', taxi: 'h_taxi.glb', lamp: 'lamppost.glb', hydrant: 'hydrant.glb', searchlight: 'ph_portable_searchlight.glb' };
   const M = {}; await Promise.all(Object.entries(names).map(async ([k, f]) => { M[k] = await loadGLB(f); }));
+  M.bellCode = makeBell(); M.ballCode = makeBall(tex); M.bell = M.bellCode;
   U.M = M;
   const sets = { chair: M.chair && fit(M.chair.clone(), 0.86, 'y'), flood: M.flood && fit(M.flood.clone(), 3.2), desk: M.desk && fit(M.desk.clone(), 1.6), bell: M.bell && fit(M.bell.clone(), 0.34),
     elephant: M.elephant && fit(M.elephant.clone(), 3.0, 'y'), horse: M.horse && fit(M.horse.clone(), 2.3, 'y') };
@@ -135,19 +136,35 @@ async function loadModels(tex) {
   U.canopy.userData.act = 'sign'; U.pennSign.userData.act = 'penn'; U.esb.traverse((o) => (o.userData.act = 'esb')); LIFTS.forEach((L) => (L.btn.userData.act = 'lift'));
 }
 
+// the two pieces drawn in code: a ringside bell on its board, and a game ball on a little stand
+function makeBell() {
+  const g = new THREE.Group(), brass = new THREE.MeshStandardMaterial({ color: 0xc9a25a, metalness: 1, roughness: 0.22 }), wood = new THREE.MeshStandardMaterial({ color: 0x4a2c18, roughness: 0.6 });
+  const board = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.42, 0.04), wood); board.position.set(0, 0.21, -0.06); g.add(board);
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(0.13, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), brass); dome.rotation.x = Math.PI / 2; dome.position.set(0, 0.24, -0.04); g.add(dome);
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 8), brass); knob.position.set(0, 0.24, 0.095); g.add(knob);
+  const hammer = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.2), wood); hammer.rotation.z = 0.8; hammer.position.set(0.12, 0.07, 0.03); g.add(hammer);
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.06, 12), brass); head.rotation.z = Math.PI / 2 + 0.8; head.position.set(0.19, 0.14, 0.03); g.add(head);
+  return g;
+}
+function makeBall(tex) {
+  const g = new THREE.Group(); const ball = new THREE.Mesh(new THREE.SphereGeometry(0.12, 32, 20), new THREE.MeshStandardMaterial({ map: tex.ball, roughness: 0.75 })); ball.position.y = 0.16; g.add(ball);
+  const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.05, 24), new THREE.MeshStandardMaterial({ color: 0x2962ff, metalness: 0.6, roughness: 0.3 })); cup.position.y = 0.025; g.add(cup);
+  return g;
+}
+
 // ---------- the concourse: New Yorkers on the drum wall, the Garden's past on plinths
 const PIECES = [
-  { k: 'bell', size: 0.58, title: 'The ringside bell', year: '1971', egg: 'fight', text: 'A ringside bell from the 5th St. Gym in Miami Beach, where Angelo Dundee trained Muhammad Ali. On March 8, 1971 Ali and Joe Frazier, both unbeaten, met here in what was billed as the Fight of the Century. Frazier won on points after fifteen rounds.', src: ['Smithsonian Open Access 3D, CC0', 'https://3d.si.edu'] },
-  { k: 'glovesA', size: 0.67, title: 'A pair of gloves', year: '1879', egg: 'gloves', text: 'Boxing has been part of the Garden since the first one opened on Madison Square in 1879. Joe Louis, Sugar Ray Robinson and Roberto Durán all fought under its lights, and the arena is still called the Mecca of boxing.', src: ['Poly Pizza, CC0', 'https://poly.pizza'] },
-  { k: 'hockey', size: 2.4, title: 'A stick from the Rangers’ ice', year: '1926', egg: 'rangers', text: 'The Rangers were founded by the Garden itself in 1926 to fill the third building at Eighth Avenue and 50th Street, and have played in every Garden since. The ice stays in all season under the court; the crew lays the hardwood over it in a few hours on a game night.', src: ['Poly Pizza, CC0', 'https://poly.pizza'] },
-  { k: 'sneakers', size: 0.64, title: 'A pair of high tops', year: '1946', egg: 'sneakers', text: 'Sneakers worn by Julius “Dr. J” Erving, from the Smithsonian’s open collection, stand in for every pair that has squeaked on this floor. The Knicks played their first game in 1946, one of only two founding teams of the league still in the city they started in.', src: ['Smithsonian Open Access 3D, CC0', 'https://3d.si.edu'] },
+  { k: 'bellCode', size: 0.62, title: 'The ringside bell', year: '1971', egg: 'fight', text: 'A ringside bell: a brass gong on a board, a hammer on a cord. On March 8, 1971 Muhammad Ali and Joe Frazier, both unbeaten, met here in what was billed as the Fight of the Century, and Frazier won on points after fifteen rounds. The same bell rings at ringside when you flip the floor to the ring.', src: ['Built in code for this gallery', 'https://n3wyorkers.com'] },
+  { k: 'glovesA', size: 0.67, title: 'A pair of gloves', year: '1879', egg: 'gloves', text: 'Boxing has been part of the Garden since the first one opened on Madison Square in 1879. Joe Louis, Sugar Ray Robinson and Roberto Dur\u00e1n all fought under its lights, and the arena is still called the Mecca of boxing.', src: ['Quaternius on Poly Pizza, CC0', 'https://poly.pizza/m/39uv7ux42v'] },
+  { k: 'hockey', size: 2.4, title: 'A stick from the Rangers’ ice', year: '1926', egg: 'rangers', text: 'The Rangers were founded by the Garden itself in 1926 to fill the third building at Eighth Avenue and 50th Street, and have played in every Garden since. The ice stays in all season under the court; the crew lays the hardwood over it in a few hours on a game night.', src: ['Quaternius on Poly Pizza, CC0', 'https://poly.pizza/m/0YAR0Lg58p'] },
+  { k: 'ballCode', size: 0.5, title: 'The game ball', year: '1946', egg: 'sneakers', text: 'The Knicks played their first game in 1946, one of only two founding teams of the league still in the city they started in. The Garden is the oldest arena in the league, and the floor you can walk out onto has been here since 1968.', src: ['Built in code for this gallery', 'https://n3wyorkers.com'] },
   { k: 'horse', size: 1.76, title: 'The horse show', year: '1883', egg: 'horses', text: 'The National Horse Show opened in the first Garden in 1883 and stayed for more than a century, a week of jumpers and hackneys on a dirt floor laid over everything else.', src: ['Poly Haven, CC0', 'https://polyhaven.com'] },
   { k: 'elephant', size: 1.12, title: 'The elephant walk', year: '1919', egg: 'elephants', text: 'For close to a century the circus came to the Garden every spring, and the elephants arrived the night before by walking through the Queens Midtown Tunnel and across 34th Street after midnight, trunk to tail.', src: ['Poly Haven, CC0', 'https://polyhaven.com'] },
   { k: 'bull', size: 1.44, title: 'The rodeo', year: '1922', egg: 'rodeo', text: 'From the 1920s to the 1950s the Garden held a championship rodeo every autumn, with dirt trucked in and cowboys put up in Midtown hotels. The bulls came back in this century.', src: ['Poly Haven, CC0', 'https://polyhaven.com'] },
   { k: 'camera', size: 0.8, title: 'The first game on television', year: '1940', egg: 'tv', text: 'On February 28, 1940 an experimental station broadcast a college double header from the third Garden, the first basketball game ever shown on television. Hardly anyone had a set to watch it on.', src: ['Poly Haven, CC0', 'https://polyhaven.com'] },
   { k: 'megaphone', size: 0.96, title: 'One hundred and three ballots', year: '1924', egg: 'ballots', text: 'The Democratic National Convention of 1924 was held in the second Garden and ran for sixteen days and 103 ballots, the longest in American history, before it settled on a candidate.', src: ['Poly Haven, CC0', 'https://polyhaven.com'] },
   { k: 'boombox', size: 1.28, title: 'The house that played everybody', year: '1971', egg: 'concert', text: 'The Concert for Bangladesh, the first great benefit concert, was played here on August 1, 1971. Billy Joel holds the arena record for appearances, 150 shows as of July 2024.', src: ['Poly Haven, CC0', 'https://polyhaven.com'] },
-  { k: 'glovesB', size: 0.67, title: 'The other corner', year: '1971', egg: 'corner', text: 'For the Fight of the Century every seat was sold, Frank Sinatra worked ringside as a photographer for Life magazine, and both fighters were guaranteed two and a half million dollars, a record at the time.', src: ['Poly Pizza, CC0', 'https://poly.pizza'] },
+  { k: 'glovesB', size: 0.67, title: 'The other corner', year: '1971', egg: 'corner', text: 'For the Fight of the Century every seat was sold, Frank Sinatra worked ringside as a photographer for Life magazine, and both fighters were guaranteed two and a half million dollars, a record at the time.', src: ['Polygonal Mind on Poly Pizza, CC0', 'https://poly.pizza/m/3ghMF4tnfq'] },
 ];
 function plinthSpots(n) {
   const out = []; const angs = [-62, -76, -104, -118, -134, 62, 76, 104, 118, 134, -148];
@@ -374,7 +391,7 @@ function loop() {
   requestAnimationFrame(loop); if (document.hidden) return;
   const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime; frame++;
   if (!U.ready) return;
-  if (started) move(dt);
+  if (started && !Q.get('view')) move(dt);
   camera.position.set(player.pos.x, player.pos.y + 1.65, player.pos.z); camera.rotation.set(player.pitch, player.yaw, 0);
   if (zoom) { zoom.t -= dt; camera.lookAt(zoom.target); camera.fov = THREE.MathUtils.lerp(camera.fov, zoom.t > 0.6 ? 14 : 68, 0.08); camera.updateProjectionMatrix(); if (zoom.t <= 0) { zoom = null; camera.fov = 68; camera.updateProjectionMatrix(); } }
   // the flip
@@ -412,7 +429,7 @@ function loop() {
 const go = $('#go');
 build().then(() => { U.ready = true; drawScore(); drawCamFrame(false); go.disabled = false; go.textContent = 'Walk in'; $('#lp').style.width = '100%'; renderer.compile(scene, camera);
   try { JSON.parse(localStorage.getItem('garden-eggs') || '[]').forEach((e) => eggs.add(e)); $('#eggn').textContent = eggs.size; } catch (e) {}
-  const view = Q.get('view'); if (view) { begin(true); teleport(view); }
+  const view = Q.get('view'); if (view) { begin(true); teleport(view); const m = Q.get('mode'); if (m && m !== 'court') window.__garden.flipNow(m); }
 }).catch((e) => { console.error(e); go.textContent = 'Something broke'; window.__err = String(e && e.stack || e); });
 function begin(quiet) { if (started) return; started = true; $('#intro').classList.add('off'); if (!quiet) { S.startSound(); lock(); toast('Go in under the name. Escalators up to the concourse, then a tunnel into the bowl.', 'SEVENTH AVENUE'); } }
 go.addEventListener('click', () => begin(false));
@@ -421,7 +438,7 @@ loop();
 // ---------- hooks for the headless shots
 const VIEWS = {
   avenue: [150, STREET, 30, 1.25, 0.18], hall: [86, STREET * 0.85, 0, 1.5708, 0.25], concourse: [0, 0, -56, -0.25, 0.05], pieces: [20, 0, -50, 0.9, -0.12],
-  bowl: [0, UP.y0 + 6, 38, 0, -0.32], floor: [-24, 0, 6, -1.35, 0.02], roof: [0, 0.2, 0, 0, 1.45], bridge: [-30, BRIDGE.y, -BRIDGE.z, -1.5708, -0.38], top: [44, 17, 0, 1.5708, -0.38],
+  bowl: [0, 24, 47, 0, -0.42], court: [-21, 0.4, 9, -1.15, 0.0], ring: [6, 0, 9.5, 0.55, 0.02], circus: [9, 0, 10.5, 0.7, 0.0], stage: [24, 3.2, 9, 1.25, 0.02], ice: [36, 4.2, 6, 1.4, -0.16], floor: [-24, 0, 6, -1.35, 0.02], roof: [0, 0.2, 0, 0, 1.45], bridge: [-30, BRIDGE.y, -BRIDGE.z, -1.5708, -0.38], top: [44, 17, 0, 1.5708, -0.38],
 };
 function teleport(v) { const V = VIEWS[v]; if (!V) return; player.pos.set(V[0], V[1], V[2]); player.yaw = V[3]; player.pitch = V[4]; zone = ''; }
 window.__garden = { teleport, setMode: (m) => { setMode(m, new THREE.Vector2()); }, flipNow: (m) => { setMode(m, new THREE.Vector2()); if (flipping) { flipping.t = 3.39; } }, wave: startWave, house: setHouse, shoot, U, scene, camera, renderer, player, eggs, VIEWS };

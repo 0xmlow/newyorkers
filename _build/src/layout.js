@@ -58,7 +58,7 @@ export function surfaces(x, z, out) {
   if (d > BACK && r < DRUM_IN - 0.4) out.push(0);               // the concourse
   const row = rowAt(d); if (row && !(t && row.y < TUN_H + 0.3)) out.push(row.y);
   if (Math.abs(z) < ENTRY.w && x > ENTRY.x0 && x < ENTRY.x1) out.push(entryY(x));
-  if (x >= 88 && x < 150 && Math.abs(z) < 80) out.push(STREET);  // Seventh Avenue, sidewalk and street
+  if (x >= 88 && x < 184 && Math.abs(z) < 120) out.push(STREET);  // Seventh Avenue: both sidewalks and the street
   // up top: the catwalks from the lifts and the bridges
   for (const L of LIFTS) if (Math.abs(x - L.x) < 2.4 && z * Math.sign(L.z) > BRIDGE.z - 1 && z * Math.sign(L.z) < Math.abs(L.z) + 2.4) out.push(BRIDGE.y);
   if (Math.abs(x) < BRIDGE.half && Math.abs(Math.abs(z) - BRIDGE.z) < BRIDGE.w) out.push(BRIDGE.y);
