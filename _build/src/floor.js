@@ -83,13 +83,13 @@ export function buildFlipFloor(scene) {
   const uvOf = (x, z) => [(x + FW / 2) / FW, 1 - (z + FD / 2) / FD];
   for (let i = 0; i < FW / CELL; i++) for (let j = 0; j < FD / CELL; j++) {
     const cx = -FW / 2 + (i + 0.5) * CELL, cz = -FD / 2 + (j + 0.5) * CELL; if (sd(cx, cz) > 0.4) continue;
-    const h = CELL / 2 - 0.002;
+    const h = CELL / 2;
     for (const [dx, dz] of [[-h, -h], [h, -h], [h, h], [-h, h]]) { const x = cx + dx, z = cz + dz; pos.push(x, 0.012, z); uvA.push(...uvOf(x, z)); uvB.push(...uvOf(x, 2 * cz - z)); cen.push(cx, cz); }
     idx.push(v, v + 2, v + 1, v, v + 3, v + 2); v += 4;
   }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uvA, 2)); g.setAttribute('uvB', new THREE.Float32BufferAttribute(uvB, 2)); g.setAttribute('aC', new THREE.Float32BufferAttribute(cen, 2)); g.setIndex(idx); g.computeVertexNormals();
   const U = { uProg: { value: 0 }, uOrigin: { value: new THREE.Vector2() }, map2: { value: null }, uRough2: { value: 0.5 } };
-  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0, side: THREE.DoubleSide });
+  const mat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.08, side: THREE.DoubleSide });
   mat.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, U);
     sh.vertexShader = 'attribute vec2 uvB; attribute vec2 aC; uniform float uProg; uniform vec2 uOrigin; varying vec2 vUvB;\n' + sh.vertexShader

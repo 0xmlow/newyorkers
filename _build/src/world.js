@@ -2,6 +2,7 @@
 // the concourse with its hang and its pieces, the escalators down to Seventh Avenue, the street, the floors' furniture.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { STREET, DRUM_IN, DRUM_OUT, ROOF_RIM, HUB_R, BACK, BACK_TOP, LIFTS, BRIDGE, ENTRY, entryY, sd, FL, FR, stadiumPoint } from './layout.js';
 
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
@@ -30,7 +31,7 @@ export function buildWorld(scene, tex, U) {
   W.add(cylWall(DRUM_IN, 0, 7.2, innerMat, { rep: 60, seg: 320, gap: entryGap(DRUM_IN) }));
   // outside: the ribbed precast skin with the Firefly drum mural, cut where the escalator hall comes through
   const H = ROOF_RIM + 2 - STREET, vCut = (8 - STREET) / H;
-  const outMat = new THREE.MeshStandardMaterial({ map: tex.drum, color: 0xffffff, roughness: 0.8, emissive: 0xffffff, emissiveMap: tex.drum, emissiveIntensity: 0.35, side: THREE.DoubleSide });
+  const outMat = new THREE.MeshStandardMaterial({ map: tex.concrete, normalMap: tex.concreteN, color: 0x8c909a, roughness: 0.85, side: THREE.DoubleSide });
   W.add(cylWall(DRUM_OUT, 8, ROOF_RIM + 2, outMat, { rep: 9, seg: 320, inside: false, v: [vCut, 1] }));
   W.add(cylWall(DRUM_OUT, STREET, 8, outMat, { rep: 9, seg: 320, inside: false, v: [0, vCut], gap: entryGap(DRUM_OUT) }));
   // the thickness of the drum at the cut, and a lintel over it
@@ -43,7 +44,21 @@ export function buildWorld(scene, tex, U) {
   // a crown band at the top of the drum, lit
   W.add(cylWall(DRUM_OUT + 1.1, ROOF_RIM - 1, ROOF_RIM + 2.2, new THREE.MeshBasicMaterial({ map: tex.fascia, color: 0xffffff, toneMapped: false }), { rep: 14, inside: false }));
   // ---- the concourse: floor, ceiling at 7 m, the mural band, the hang
-  const cfloor = new THREE.Mesh(ringShape(DRUM_IN, BACK, 0.01), new THREE.MeshStandardMaterial({ map: tex.terrazzo, color: 0xb8bccc, roughness: 0.35 })); W.add(cfloor);
+  const cfloor = new THREE.Mesh(ringShape(DRUM_IN, BACK, 0.01), new THREE.MeshStandardMaterial({ map: tex.concrete2, color: 0x5a5d66, roughness: 0.2, metalness: 0.0 })); W.add(cfloor);
+  // concession stands on the bowl side of the concourse: steel counters, lit menu boards, a header and a hood light
+  { const steelS = new THREE.MeshStandardMaterial({ color: 0xb8bcc6, metalness: 0.85, roughness: 0.32 }), black = new THREE.MeshStandardMaterial({ color: 0x0d0e12, roughness: 0.5 });
+    const R = FR + BACK + 0.5, spots = [[12.5, -R, 0, -1], [-12.5, -R, 0, -1], [12.5, R, 0, 1], [-12.5, R, 0, 1]];
+    for (const sx of [1, -1]) for (const an of [-0.62, 0.62]) spots.push([sx * (FL + R * Math.cos(an)), R * Math.sin(an), sx * Math.cos(an), Math.sin(an)]);
+    spots.forEach((P, i) => {
+      const [x, z, nx, nz] = P, yaw = Math.atan2(nx, nz), st = new THREE.Group(); st.position.set(x, 0, z); st.rotation.y = yaw; W.add(st);
+      const ctr = new THREE.Mesh(new THREE.BoxGeometry(6, 1.05, 0.75), steelS); ctr.position.set(0, 0.525, 1.3); st.add(ctr);
+      const kick = new THREE.Mesh(new THREE.BoxGeometry(6.02, 0.15, 0.77), black); kick.position.set(0, 0.075, 1.3); st.add(kick);
+      const back = new THREE.Mesh(new THREE.BoxGeometry(6.4, 3.2, 0.3), black); back.position.set(0, 1.6, 0.05); st.add(back);
+      const menu = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 1.8), new THREE.MeshBasicMaterial({ map: tex.menus[i % tex.menus.length], toneMapped: false, color: 0xd8d8d8 })); menu.position.set(0, 2.15, 0.21); st.add(menu);
+      const hood = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.25, 1.6), black); hood.position.set(0, 3.3, 0.9); st.add(hood);
+      const hl = new THREE.Mesh(new THREE.PlaneGeometry(6, 0.12), new THREE.MeshBasicMaterial({ color: 0xffe2b8, toneMapped: false })); hl.rotation.x = Math.PI / 2; hl.position.set(0, 3.17, 1.4); st.add(hl);
+      const cooler = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.9, 0.6), new THREE.MeshStandardMaterial({ color: 0x1a1c22, emissive: 0xcfe6ff, emissiveIntensity: 0.25, roughness: 0.2 })); cooler.position.set(2.3, 0.95, 0.5); st.add(cooler);
+    }); }
   const ceil = new THREE.Mesh(ringShape(DRUM_IN, BACK, 7.2), new THREE.MeshStandardMaterial({ color: 0x0f1330, roughness: 0.9, side: THREE.DoubleSide })); W.add(ceil);
   const top = new THREE.Mesh(ringShape(DRUM_IN, BACK, BACK_TOP), new THREE.MeshStandardMaterial({ color: 0x0b0e22, roughness: 0.9, side: THREE.DoubleSide })); W.add(top);
   // the mural: four Firefly panels, 12 x 3 m each, round the concourse wall above the hang, repeated
@@ -74,8 +89,34 @@ export function buildWorld(scene, tex, U) {
     // a strut between the two layers every so often
     for (const t of [0.3, 0.55, 0.8]) { const r = DRUM_IN + (HUB_R - DRUM_IN) * t, ya = ROOF_RIM + 0.4 + (-1.6) * t, yb = ROOF_RIM - 0.6 + (-3.8) * t; const sg = new THREE.CylinderGeometry(0.06, 0.06, ya - yb, 5); sg.translate(c * r, (ya + yb) / 2, s * r); cab.push(sg); } }
   W.add(new THREE.Mesh(mergeGeometries(cab), steel));
-  const deck = new THREE.Mesh(new THREE.ConeGeometry(DRUM_IN + 1, 2.2, 96, 1, true), new THREE.MeshStandardMaterial({ color: 0x070914, roughness: 1, side: THREE.DoubleSide })); deck.position.y = ROOF_RIM + 1.9; deck.rotation.x = Math.PI; W.add(deck);
-  W.add(put(new THREE.Mesh(new THREE.CircleGeometry(DRUM_OUT + 1.2, 96), new THREE.MeshStandardMaterial({ color: 0x1a1d2a, roughness: 1 })), { position: V(0, ROOF_RIM + 3.05, 0), rotation: new THREE.Euler(-Math.PI / 2, 0, 0) }));
+  // the ceiling: the underside of the cable roof, a shallow dish of dark acoustic panels between the 48 lines, the
+  // ribs picked out pale the way the house lights catch them, two catwalk rings and a ring of sports lights
+  { const R = DRUM_IN - 0.5, M = 96, RS = 28, yAt = (r) => ROOF_RIM + 1.2 - (1 - r / R) * 5.2;
+    const p = [], u = [], idx = []; for (let j = 0; j <= RS; j++) { const r = HUB_R + (R - HUB_R) * j / RS; for (let i = 0; i <= M; i++) { const a = i / M * Math.PI * 2; p.push(Math.cos(a) * r, yAt(r), Math.sin(a) * r); u.push(0.5 + Math.cos(a) * r / (2 * R), 0.5 + Math.sin(a) * r / (2 * R)); } }
+    for (let j = 0; j < RS; j++) for (let i = 0; i < M; i++) { const a = j * (M + 1) + i, b = a + M + 1; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+    const cg = new THREE.BufferGeometry(); cg.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); cg.setAttribute('uv', new THREE.Float32BufferAttribute(u, 2)); cg.setIndex(idx); cg.computeVertexNormals();
+    const cv = document.createElement('canvas'); cv.width = cv.height = 2048; const x = cv.getContext('2d'); x.fillStyle = '#16181f'; x.fillRect(0, 0, 2048, 2048); x.translate(1024, 1024);
+    const k = 1024 / R; for (let i = 0; i < 48 * 6; i++) { const a = i / 288 * Math.PI * 2; x.strokeStyle = i % 6 ? 'rgba(255,255,255,.035)' : 'rgba(200,206,220,.55)'; x.lineWidth = i % 6 ? 2 : 7; x.beginPath(); x.moveTo(Math.cos(a) * HUB_R * k, Math.sin(a) * HUB_R * k); x.lineTo(Math.cos(a) * R * k, Math.sin(a) * R * k); x.stroke(); }
+    for (let r = HUB_R + 3; r < R; r += 2.6) { x.strokeStyle = 'rgba(255,255,255,.05)'; x.lineWidth = 2; x.beginPath(); x.arc(0, 0, r * k, 0, 7); x.stroke(); }
+    for (const r of [22, 38]) { x.strokeStyle = 'rgba(150,158,176,.6)'; x.lineWidth = 14; x.beginPath(); x.arc(0, 0, r * k, 0, 7); x.stroke(); }
+    for (let i = 0; i < 6000; i++) { x.fillStyle = `rgba(255,255,255,${Math.random() * 0.03})`; x.fillRect((Math.random() - 0.5) * 2048, (Math.random() - 0.5) * 2048, 3, 3); }
+    const ct = new THREE.CanvasTexture(cv); ct.colorSpace = THREE.SRGBColorSpace; ct.anisotropy = 8;
+    W.add(new THREE.Mesh(cg, new THREE.MeshStandardMaterial({ map: ct, roughness: 0.95, side: THREE.DoubleSide })));
+    U.ceilY = yAt;
+    // catwalk rings with their lights: an LED sports fixture every 2 m on the inner ring, aimed at the floor
+    const cwG = [], fx = [], fl = [];
+    for (const r of [22, 38]) { const y = yAt(r) - 1.6; const t = new THREE.TorusGeometry(r, 0.12, 6, 160); t.rotateX(Math.PI / 2); t.translate(0, y, 0); cwG.push(t); const t2 = t.clone().translate(0, -0.9, 0); cwG.push(t2);
+      const t3 = new THREE.TorusGeometry(r + 0.9, 0.08, 6, 160).rotateX(Math.PI / 2).translate(0, y - 0.45, 0); cwG.push(t3);
+      for (let i = 0; i < 96; i++) { const a = i / 96 * Math.PI * 2; const h = new THREE.CylinderGeometry(0.03, 0.03, yAt(r) - y, 4).translate(Math.cos(a) * r, (yAt(r) + y) / 2, Math.sin(a) * r); cwG.push(h); }
+      const n = r === 22 ? 64 : 80; for (let i = 0; i < n; i++) { const a = (i + 0.5) / n * Math.PI * 2; fx.push([Math.cos(a) * (r + 0.45), y - 1.25, Math.sin(a) * (r + 0.45), a, r]); } }
+    W.add(new THREE.Mesh(mergeGeometries(cwG.map((g) => { g.deleteAttribute('uv'); return g; })), new THREE.MeshStandardMaterial({ color: 0x3a3f4c, metalness: 0.7, roughness: 0.5 })));
+    const body = new THREE.InstancedMesh(new RoundedBoxGeometry(0.62, 0.32, 0.5, 2, 0.06), new THREE.MeshStandardMaterial({ color: 0x15171c, metalness: 0.5, roughness: 0.45 }), fx.length);
+    const lens = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.52, 0.4), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), fx.length);
+    const e = new THREE.Euler(0, 0, 0, 'YXZ');
+    fx.forEach((f, i) => { const yaw = Math.atan2(-Math.cos(f[3]), -Math.sin(f[3])), tilt = Math.atan2(f[4], f[1]) * 0.55; q.setFromEuler(e.set(-(Math.PI / 2 - tilt) * 0 - tilt, yaw, 0)); m4.compose(V(f[0], f[1], f[2]), q, one); body.setMatrixAt(i, m4);
+      const m5 = m4.clone().multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2)).multiply(new THREE.Matrix4().makeTranslation(0, 0, 0.17)); lens.setMatrixAt(i, m5); });
+    W.add(body, lens); U.fixLens = lens;
+  }
   // the rafter banners: four Firefly banners on each end
   tex.banners.forEach((t, i) => { for (const s of [-1, 1]) { const b = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 6.3), new THREE.MeshStandardMaterial({ map: t, side: THREE.DoubleSide, roughness: 0.9, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.25 }));
     b.position.set(s * (FL + FR + 14), ROOF_RIM - 7, (i - 1.5) * 5.2); b.rotation.y = s * Math.PI / 2 * -1; W.add(b); } });
@@ -91,14 +132,19 @@ export function buildWorld(scene, tex, U) {
     const fr = new THREE.Mesh(new THREE.PlaneGeometry(12, 6), new THREE.MeshBasicMaterial({ map: U.camFrameTex, transparent: true, toneMapped: false })); fr.position.z = s * 4.34; if (s < 0) fr.rotation.y = Math.PI; sb.add(fr);
     const e = new THREE.Mesh(new THREE.PlaneGeometry(8, 6), faceMat(U.scoreTex)); e.position.x = s * 6.32; e.rotation.y = s * Math.PI / 2; sb.add(e);
   }
-  for (const y of [-3.6, 3.6]) { const ring = new THREE.Mesh(new THREE.CylinderGeometry(8.2, 8.2, 0.8, 64, 1, true), new THREE.MeshBasicMaterial({ map: tex.fascia, side: THREE.DoubleSide, toneMapped: false })); ring.position.y = y; sb.add(ring); }
+  for (const y of [3.75]) { const ring = new THREE.Mesh(new THREE.CylinderGeometry(7.8, 7.8, 0.9, 64, 1, true), new THREE.MeshBasicMaterial({ map: tex.fascia, side: THREE.DoubleSide, toneMapped: false })); ring.position.y = y; sb.add(ring); }
   for (const [x, z] of [[-4, -3], [4, -3], [-4, 3], [4, 3]]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, ROOF_RIM - 26), steel); c.position.set(x, (ROOF_RIM - 21.5 - 3.3) / 2 + 3.3, z); sb.add(c); }
-  const under = new THREE.Mesh(new THREE.CircleGeometry(4.2, 48), new THREE.MeshBasicMaterial({ map: tex.flower, color: 0x8899cc, transparent: true })); under.rotation.x = Math.PI / 2; under.position.y = -3.32; sb.add(under);
+  const under = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.3, 7.6), dark); under.position.y = -3.45; sb.add(under);
+  // the bezels round each face, and a slanted lower ring of screen the way modern centre hung boards finish
+  for (const s of [-1, 1]) { const bz = new THREE.Mesh(new THREE.BoxGeometry(12.5, 6.5, 0.12), new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 0.35, metalness: 0.3 })); bz.position.z = s * 4.26; sb.add(bz);
+    const bx = new THREE.Mesh(new THREE.BoxGeometry(0.12, 6.5, 8.5), bz.material); bx.position.x = s * 6.26; sb.add(bx); }
+  const lowRing = new THREE.Mesh(new THREE.CylinderGeometry(7.2, 5.4, 1.6, 64, 1, true), new THREE.MeshBasicMaterial({ map: tex.fascia, side: THREE.DoubleSide, toneMapped: false, color: 0xd0d8f0 })); lowRing.position.y = -4.4; sb.add(lowRing);
+  const lowCap = new THREE.Mesh(new THREE.CircleGeometry(5.4, 48), dark); lowCap.rotation.x = Math.PI / 2; lowCap.position.y = -5.2; sb.add(lowCap);
   U.scoreboard = sb;
   // ---- the bridges: 233 feet long, 22 wide, hung on rods from the roof, a row of seats facing in
   for (const s of [-1, 1]) {
     const b = new THREE.Group(); b.position.set(0, BRIDGE.y, s * BRIDGE.z); W.add(b);
-    const dk = new THREE.Mesh(new THREE.BoxGeometry(BRIDGE.half * 2, 0.5, BRIDGE.w * 2), new THREE.MeshStandardMaterial({ map: tex.steelC, color: 0x9098b0, metalness: 0.6, roughness: 0.45 })); dk.position.y = -0.25; b.add(dk);
+    const deckT = tex.planks || tex.steelC; const dk = new THREE.Mesh(new THREE.BoxGeometry(BRIDGE.half * 2, 0.5, BRIDGE.w * 2), new THREE.MeshStandardMaterial({ map: deckT, color: 0x6c6f78, metalness: 0.2, roughness: 0.7 })); dk.position.y = -0.25; b.add(dk);
     const glass = new THREE.Mesh(new THREE.BoxGeometry(BRIDGE.half * 2, 1.1, 0.05), new THREE.MeshPhysicalMaterial({ color: 0xbfd8ff, transmission: 0.0, transparent: true, opacity: 0.22, roughness: 0.05, metalness: 0 })); glass.position.set(0, 0.55, -s * BRIDGE.w); b.add(glass);
     const rail = new THREE.Mesh(new THREE.BoxGeometry(BRIDGE.half * 2, 0.08, 0.12), steel); rail.position.set(0, 1.12, -s * BRIDGE.w); b.add(rail);
     const rail2 = rail.clone(); rail2.position.z = s * BRIDGE.w; b.add(rail2);
@@ -138,6 +184,10 @@ export function buildWorld(scene, tex, U) {
   // the tower on Seventh Avenue over the entrance: a plain office slab, lit windows, the name across the canopy
   const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 112, 64), new THREE.MeshStandardMaterial({ map: tex.windows, color: 0xffffff, emissive: 0xffffff, emissiveMap: tex.windows, emissiveIntensity: 0.16, roughness: 0.4, metalness: 0.3 }));
   tower.position.set(101, STREET + 10 + 56, 0); W.add(tower);
+  tower.material.emissiveIntensity = 0.5; tower.material.metalness = 0.3; tower.material.roughness = 0.3;
+  // the marquee: two big LED screens on the front of the podium over Seventh Avenue, showing the Firefly art
+  for (const [z, t] of [[-17, tex.drum], [17, tex.stageLed]]) { const fr = new THREE.Mesh(new THREE.BoxGeometry(0.6, 9.4, 16.4), new THREE.MeshStandardMaterial({ color: 0x08090c, roughness: 0.4 })); fr.position.set(110.2, STREET + 19.5, z); W.add(fr);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(16, 9), new THREE.MeshBasicMaterial({ map: t, toneMapped: false, color: 0xd0d0d0 })); scr.position.set(110.52, STREET + 19.5, z); scr.rotation.y = Math.PI / 2; W.add(scr); }
   const lobbyGlass = new THREE.Mesh(new THREE.BoxGeometry(0.1, 10, 64), new THREE.MeshBasicMaterial({ color: 0x9fc0ff, transparent: true, opacity: 0.05, depthWrite: false })); lobbyGlass.position.set(110.1, STREET + 5, 0); W.add(lobbyGlass);
   const lobbyCeil = new THREE.Mesh(new THREE.BoxGeometry(18.2, 0.4, 64.2), dark); lobbyCeil.position.set(101, STREET + 10, 0); W.add(lobbyCeil);
   const lobbyMat = new THREE.MeshStandardMaterial({ map: tex.concrete, color: 0x2a3050, roughness: 0.9 });
@@ -191,18 +241,46 @@ export function buildModeSets(scene, tex, U, models) {
   const glassM = new THREE.MeshPhysicalMaterial({ color: 0xdaeaff, transparent: true, opacity: 0.16, roughness: 0.02, metalness: 0, depthWrite: false });
   // court: two stanchions, backboards, rims at 10 feet, a row of courtside chairs down each side, the benches
   { const g = new THREE.Group(); S.court = g; U.rims = [];
+    // the stanchions, at NBA measure: backboard face 4 feet inside the baseline, rim 15 cm over its bottom edge, at 10 feet
+    const pad = new THREE.MeshStandardMaterial({ color: 0x0f1a3a, roughness: 0.62 }), padHi = new THREE.MeshStandardMaterial({ color: 0x1d5fc9, roughness: 0.55 });
+    const white = new THREE.MeshStandardMaterial({ color: 0xf4f6fa, roughness: 0.4 }), orange = new THREE.MeshStandardMaterial({ color: 0xff5a1f, metalness: 0.35, roughness: 0.38 });
+    const netTex = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 128; const x = c.getContext('2d'); x.strokeStyle = '#fff'; x.lineWidth = 3;
+      for (let i = -128; i < 256; i += 21) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 128, 128); x.stroke(); x.beginPath(); x.moveTo(i + 128, 0); x.lineTo(i, 128); x.stroke(); } const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 1); return t; })();
+    const clockTex = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const x = c.getContext('2d'); x.fillStyle = '#060606'; x.fillRect(0, 0, 256, 128); x.fillStyle = '#ff2a1a'; x.font = 'bold 96px "JetBrains Mono", monospace'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#ff2a1a'; x.shadowBlur = 14; x.fillText('24', 128, 68); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
     for (const s of [-1, 1]) {
-      const base = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.2, 1.8), blue); base.position.set(s * 16.4, 0.6, 0); g.add(base);
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3.4, 0.3), steel); arm.position.set(s * 15.8, 2.6, 0); g.add(arm);
-      const boom = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.25, 0.25), steel); boom.position.set(s * 14.8, 4.1, 0); boom.rotation.z = s * -0.35; g.add(boom);
-      const board = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.07, 1.83), glassM); board.position.set(s * 13.73, 3.55, 0); g.add(board);
-      const edge = new THREE.Mesh(new THREE.BoxGeometry(0.07, 1.1, 1.86), new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })); edge.position.copy(board.position); g.add(edge);
-      const sq = new THREE.Mesh(new THREE.PlaneGeometry(0.59, 0.45), new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })); sq.position.set(s * 13.70, 3.3, 0); sq.rotation.y = s * -Math.PI / 2; g.add(sq);
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.2286, 0.012, 8, 32), new THREE.MeshStandardMaterial({ color: 0xff6a3d, metalness: 0.4, roughness: 0.4 })); rim.rotation.x = Math.PI / 2; rim.position.set(s * 12.76, 3.05, 0); g.add(rim); U.rims.push(rim.position.clone());
-      const net = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.14, 0.42, 16, 3, true), new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.8 })); net.position.set(s * 12.76, 2.84, 0); g.add(net);
-      const pad = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.2, 1.9), blue); pad.position.set(s * 16.4, 0.6, 0);
+      const st = new THREE.Group(); st.scale.x = s; g.add(st);   // built for the +x end, mirrored for the other
+      const prof = new THREE.Shape(); prof.moveTo(14.55, 0); prof.lineTo(14.55, 0.32); prof.quadraticCurveTo(14.6, 0.42, 14.75, 0.48); prof.lineTo(15.55, 1.08); prof.quadraticCurveTo(15.65, 1.16, 15.8, 1.16); prof.lineTo(16.75, 1.16); prof.lineTo(16.75, 0); prof.lineTo(14.55, 0);
+      const bg = new THREE.ExtrudeGeometry(prof, { depth: 1.5, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 3, curveSegments: 8 }); bg.translate(0, 0, -0.75); st.add(new THREE.Mesh(bg, pad));
+      const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.18, 1.62), padHi); stripe.position.set(14.535, 0.2, 0); st.add(stripe);
+      const col = new THREE.Mesh(new RoundedBoxGeometry(0.42, 2.9, 0.5, 2, 0.08), pad); col.position.set(16.25, 2.55, 0); st.add(col);
+      // the boom: a padded arm from the column top down to the back of the board
+      const A = new THREE.Vector3(16.25, 3.9, 0), B = new THREE.Vector3(13.32, 3.45, 0), L = A.distanceTo(B);
+      const boom = new THREE.Mesh(new RoundedBoxGeometry(L, 0.34, 0.34, 2, 0.08), pad); boom.position.copy(A).add(B).multiplyScalar(0.5); boom.rotation.z = Math.atan2(B.y - A.y, B.x - A.x) + Math.PI; st.add(boom);
+      const brace = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.5, 8), steel); brace.position.set(15.7, 3.0, 0); brace.rotation.z = 0.95; st.add(brace);
+      // the board: tempered glass in a thin frame, the shooter's square, padding on the bottom edge, the shot clock on top
+      const board = new THREE.Mesh(new THREE.BoxGeometry(0.035, 1.07, 1.83), glassM); board.position.set(13.11, 3.435, 0); st.add(board);
+      const fr = (w, h, d, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), white); m.position.set(13.105, y, z); st.add(m); };
+      fr(0.045, 0.05, 1.83, 3.945, 0); fr(0.045, 0.05, 1.83, 2.925, 0); fr(0.045, 1.07, 0.05, 3.435, 0.89); fr(0.045, 1.07, 0.05, 3.435, -0.89);
+      fr(0.04, 0.05, 0.59, 3.05 + 0.45, 0); fr(0.04, 0.05, 0.59, 3.075, 0); fr(0.04, 0.45, 0.05, 3.275, 0.27); fr(0.04, 0.45, 0.05, 3.275, -0.27);
+      const bpad = new THREE.Mesh(new RoundedBoxGeometry(0.14, 0.12, 1.9, 2, 0.04), pad); bpad.position.set(13.13, 2.86, 0); st.add(bpad);
+      const sc = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.32, 0.6), new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.4 })); sc.position.set(13.16, 4.15, 0); st.add(sc);
+      const scf = new THREE.Mesh(new THREE.PlaneGeometry(0.52, 0.26), new THREE.MeshBasicMaterial({ map: clockTex, toneMapped: false })); scf.position.set(13.005, 4.15, 0); scf.rotation.y = -Math.PI / 2; st.add(scf);
+      // the rim on its flex mount, and the net
+      const mount = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.26), orange); mount.position.set(12.99, 3.0, 0); st.add(mount);
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.2286, 0.0095, 10, 40), orange); rim.rotation.x = Math.PI / 2; rim.position.set(12.755, 3.05, 0); st.add(rim);
+      const net = new THREE.Mesh(new THREE.CylinderGeometry(0.225, 0.13, 0.42, 24, 1, true), new THREE.MeshStandardMaterial({ map: netTex, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9 })); net.position.set(12.755, 2.835, 0); st.add(net);
+      U.rims.push(new THREE.Vector3(s * 12.755, 3.05, 0));
+      st.traverse((o) => { if (o.isMesh) { o.castShadow = true; } });
     }
-    if (models.chair) for (const s of [-1, 1]) for (let i = 0; i < 26; i++) { const c = models.chair.clone(); c.position.set(-14 + i * 1.1, 0, s * 9.1); c.rotation.y = s > 0 ? Math.PI : 0; g.add(c); }
+    // the scorer's table at centre court on the near side: a long LED front, and the two benches either side
+    const ledTex = tex.boards.clone(); ledTex.repeat.set(4, 1); ledTex.needsUpdate = true;
+    const tbl = new THREE.Mesh(new THREE.BoxGeometry(9, 0.78, 0.8), new THREE.MeshStandardMaterial({ color: 0x101218, roughness: 0.4 })); tbl.position.set(0, 0.39, -9.6); g.add(tbl);
+    const tfront = new THREE.Mesh(new THREE.PlaneGeometry(9, 0.62), new THREE.MeshBasicMaterial({ map: ledTex, toneMapped: false, color: 0xbfc8e0 })); tfront.position.set(0, 0.4, -9.19); g.add(tfront);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(9.1, 0.04, 0.86), new THREE.MeshStandardMaterial({ color: 0x2a2d36, roughness: 0.25, metalness: 0.4 })); top.position.set(0, 0.8, -9.6); g.add(top);
+    // the baseline LED boards under each basket
+    for (const s of [-1, 1]) { const bb = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.9, 10), new THREE.MeshStandardMaterial({ color: 0x0a0b10 })); bb.position.set(s * 18.2, 0.45, 0); g.add(bb);
+      const bf = new THREE.Mesh(new THREE.PlaneGeometry(10, 0.78), new THREE.MeshBasicMaterial({ map: ledTex, toneMapped: false, color: 0xbfc8e0 })); bf.position.set(s * 17.99, 0.45, 0); bf.rotation.y = -s * Math.PI / 2; g.add(bf); }
+    if (models.chair) for (const s of [-1, 1]) for (let i = 0; i < 26; i++) { if ((s < 0 && Math.abs(-14 + i * 1.1) < 5) || (s > 0 && Math.abs(-14 + i * 1.1) < 1.2)) continue; const c = models.chair.clone(); c.position.set(-14 + i * 1.1, 0, s * 9.1); c.rotation.y = s > 0 ? Math.PI : 0; g.add(c); }
     // a ball rack at centre court, the thing to click for a shot
     const rack = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 0.5), steel); rack.position.set(0, 0.45, 9.0); g.add(rack);
     for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.12, 20, 14), new THREE.MeshStandardMaterial({ map: tex.ball, roughness: 0.7 })); b.position.set(-0.36 + i * 0.36, 1.0, 9.0); b.userData.act = 'ball'; g.add(b); }
