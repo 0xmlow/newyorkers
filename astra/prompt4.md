@@ -1,0 +1,7 @@
+Do not run any commands or edit any files. Answer in markdown only.
+
+Round 3 check on THE GARDEN. You gave me 18 CG tells (crowd repetition, occupancy, grounding, varnish, light hierarchy, LED look, ribbon tiling, banners, clutter, lens, finish). Attached sheet_v6_tells.jpg is the same layout as last time (rows 1 and 2 full views, rows 3 to 5 100% crops from 2560x1440).
+Done: no neighbour within 1.1 m shares a character; sections fill 95 to 99% with vacancies in runs of 1 to 3; about 5% stand in groups of 2 to 5; seated yaw +-12 deg, lateral +-5 cm, height +-2 cm, scale 0.94 to 1.06; per person brightness 0.76 to 1.08, hue and saturation shift, roughness +-0.04; player soles raycast to 2 mm; court coat 0.75 / 0.2, broad roughness patches +-0.025, 220 shoe marks + traffic haze mask, fine scratch bump; LED: 4 to 6 mm diode grid at 76% fill, 0.96 m cabinets with dark seams and +-3% per cabinet, dark substrate; ribbon now three 25.6 m sheets of ten different layouts at true aspect; banners with folds, curled hems, +-1 deg hang, clips; cable covers, stools; bowl light down 30%, court up 10%, world fill down; DOF re-set (f/4 to 6.3); ball motion blur; post finish: 2% highlight glow, 0.2 stop vignette, 0.25 px corner fringe, 0.45% grain.
+Not done: reposing the players (pose rig limits), animation motion blur on limbs.
+
+Score each of your 18 items: fixed / better / unchanged / worse, one line each. Then list the 6 remaining biggest tells, ranked, each with an exact fix with numbers doable in the same constraints. Then one line: the biggest tell now.

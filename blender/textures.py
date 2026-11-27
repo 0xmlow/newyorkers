@@ -199,7 +199,62 @@ def jerseys():
             im.save(os.path.join(OUT, f'jersey_{team}_{i}.png'))
     print('jerseys', sum(len(K['nums']) for K in KITS.values()))
 
+# ---------------- round 3 (Astra CG tells): three ribbon sheets of ten distinct layouts each, drawn at the ribbon's own aspect
+# (8192 x 256 is 25.6 m x 0.8 m), picked per 25.6 m tile by the shader so the band never repeats in sight
+def ribbon3():
+    rnd = random.Random(3); arts = sorted(os.listdir(ART)); W, H, n = 8192, 256, 10; cw = W // n
+    logo = Image.open(os.path.join(OUT, 'logo_white.png')); fas = Image.open(os.path.join(FF, 'fascia.webp')).convert('RGB')
+    BLUE, NAVY, INK, PINK, ORNG, CLOUD = (41, 98, 255), (13, 26, 90), (10, 12, 18), (255, 79, 163), (245, 132, 38), (240, 244, 248)
+    def lay(kind, k):
+        c = Image.new('RGB', (cw, H), NAVY); d = ImageDraw.Draw(c)
+        if kind == 'score':
+            c.paste(INK, (0, 0, cw, H)); cx(d, 150, 'N3W', 70, font(SKY, 72), CLOUD); cx(d, 150, str(96 + k % 5), 175, font(ANTON, 120), ORNG)
+            cx(d, 410, 'NIGHT', 70, font(SKY, 72), CLOUD); cx(d, 410, str(92 + k % 4), 175, font(ANTON, 120), CLOUD)
+            cx(d, 670, 'Q4', 70, font(MONO, 60), (150, 160, 180)); cx(d, 670, f'{2 - k % 2}:{31 - 7 * (k % 3):02d}', 175, font(MONO, 96), CLOUD)
+        elif kind == 'art':
+            a = Image.open(os.path.join(ART, arts[(k * 7) % len(arts)])).convert('RGB'); a = ImageOps.fit(a, (cw, H), centering=(0.5, rnd.uniform(0.2, 0.8))); c.paste(a)
+        elif kind == 'fascia':
+            x0 = (k * 1311) % max(1, fas.width - cw * fas.height // H); f = fas.crop((x0, 0, x0 + cw * fas.height // H, fas.height)).resize((cw, H)); c.paste(f)
+        elif kind == 'word':
+            c.paste(BLUE, (0, 0, cw, H)); g = logo.copy(); g.thumbnail((220, 220)); c.paste(g, (20, 18), g); cx(d, 520, 'N3W YORKERS', 128, font(SKY, 92), CLOUD)
+        elif kind == 'noise':
+            c.paste(INK, (0, 0, cw, H)); cx(d, cw // 2, ['MAKE SOME NOISE', 'DE-FENSE', 'LOUDER', 'ON YOUR FEET'][k % 4], 128, font(ANTON, 150), [CLOUD, ORNG, PINK, CLOUD][k % 4])
+        elif kind == 'player':
+            c.paste((18, 22, 34), (0, 0, cw, H)); num = ['3', '0', '11', '7', '23'][k % 5]; cx(d, 120, num, 128, font(ANTON, 200), BLUE)
+            cx(d, 480, ['N3W YORKERS', 'NIGHT SHIFT'][k % 2], 80, font(SKY, 64), CLOUD); cx(d, 480, f'{18 + k % 9} PTS  {4 + k % 5} REB  {2 + k % 6} AST', 180, font(MONO, 50), (170, 180, 200))
+        elif kind == 'quiet':
+            c.paste((9, 14, 40), (0, 0, cw, H)); g = logo.copy(); g.thumbnail((120, 120)); c.paste(g, (cw // 2 - 60, 68), g)
+        elif kind == 'calm':
+            c.paste((10, 18, 58), (0, 0, cw, H)); d.rectangle([0, H - 10, cw, H - 4], fill=(41, 98, 255))
+        elif kind == 'house':
+            c.paste(NAVY, (0, 0, cw, H)); cx(d, cw // 2, ['THE GARDEN', 'NEW YORK', 'BY MLOW', 'OPEN EYE'][k % 4], 128, font(SKY, 110), [CLOUD, CLOUD, PINK, BLUE][k % 4])
+        return c
+    kinds = ['score', 'quiet', 'art', 'noise', 'calm', 'fascia', 'player', 'word', 'art', 'calm']
+    for sh, tag in enumerate('abc'):
+        im = Image.new('RGB', (W, H)); ks = kinds[sh * 3:] + kinds[:sh * 3]
+        for i, kd in enumerate(ks): im.paste(lay(kd, sh * 10 + i), (i * cw, 0))
+        im.save(os.path.join(OUT, f'ribbon_{tag}.jpg'), quality=90)
+    print('ribbon3 sheets')
+
+# ---------------- round 3: play wear on the court, in the court image's own UV (62 x 30 m), white = worn
+def court_wear():
+    W, H = 4096, 1982; ppm = W / 62.0; im = Image.new('L', (W, H), 0); d = ImageDraw.Draw(im); rnd = random.Random(21)
+    def P(x, y): return (W / 2 + x * ppm, H / 2 - y * ppm)
+    def zone():
+        r = rnd.random()
+        if r < 0.55: s = rnd.choice((-1, 1)); return s * rnd.uniform(8.6, 14.2), rnd.gauss(0, 1.6)         # the paint and the block
+        if r < 0.75: s = rnd.choice((-1, 1)); a = rnd.uniform(-1.3, 1.3); return s * (12.75 - 7.24 * math.cos(a)), 7.24 * math.sin(a)   # the arc
+        if r < 0.88: s = rnd.choice((-1, 1)); return s * rnd.uniform(13.5, 14.3), rnd.uniform(-7, 7)    # the baseline
+        return rnd.uniform(-12, 12), rnd.uniform(-7, 7)
+    for k in range(220):
+        x, y = zone(); L_ = rnd.uniform(0.05, 0.25); w_ = rnd.uniform(0.005, 0.025); a = rnd.uniform(0, math.pi)
+        x1, y1 = x + L_ * math.cos(a), y + L_ * math.sin(a); d.line([P(x, y), P(x1, y1)], fill=rnd.randint(90, 200), width=max(1, int(w_ * ppm)))
+    for k in range(900):   # the faint haze of traffic in the lanes
+        x, y = zone(); r = rnd.uniform(0.1, 0.5) * ppm; cxp, cyp = P(x, y); d.ellipse([cxp - r, cyp - r * 0.6, cxp + r, cyp + r * 0.6], fill=rnd.randint(10, 30))
+    im = im.filter(ImageFilter.GaussianBlur(1.2)); im.save(os.path.join(OUT, 'court_wear.png')); print('court wear')
+
 if __name__ == '__main__':
     import sys
     if 'jerseys' in sys.argv: jerseys()
+    elif 'round3' in sys.argv: ribbon3(); court_wear()
     else: court(); banners(); scoreboard(); ribbon(); jerseys()

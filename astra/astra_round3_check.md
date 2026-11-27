@@ -1,0 +1,36 @@
+Judging the visible result: the arena reads more convincingly, but the crowd still dominates the remaining CG tells.
+
+1. **Crowd character repetition — better:** identical flower silhouettes still recur conspicuously across neighboring rows.
+2. **Seat occupancy — better:** vacancies break the packing slightly; most sections still read as continuous masses.
+3. **Standing spectators — better:** small groups help, though the overall crowd remains unusually synchronized.
+4. **Seated orientation and placement — better:** variation is visible locally but disappears into regular head bands at distance.
+5. **Crowd material variation — better:** color variation helps; pale petals still produce a repetitive, mottled texture.
+6. **Player poses — unchanged:** several bodies read as held poses, especially raised arms and spread fingers.
+7. **Player grounding — better:** planted feet look more credible; the lighting still gives limited contact information.
+8. **Court varnish — better:** the wood reads well, but the finish remains too uniformly diffuse.
+9. **Court wear — unchanged:** at these crop sizes, scratches and traffic wear contribute little visible history.
+10. **Light hierarchy — better:** the court separates more clearly, but faces, uniforms, and spectators remain muddy.
+11. **LED construction — better:** screens have more substance, though the imagery still reads predominantly as mapped graphics.
+12. **Ribbon tiling — better:** stretching is reduced; repeated white graphics still create conspicuous wallpaper bands.
+13. **Banners — better:** slight deformation helps, but their repeated presentation remains unusually orderly.
+14. **Courtside clutter — better:** equipment and seated figures make the perimeter feel more occupied.
+15. **Lens and depth of field — better:** selective focus helps; some crowd crops still have a miniature-like focus falloff.
+16. **Limb motion blur — unchanged:** crisp hands and forearms reinforce the held-action appearance.
+17. **Ball motion blur — better:** a useful motion cue, although too small here to carry the action alone.
+18. **Post finish — better:** restrained finishing helps cohesion; underlying repetition remains much stronger than the photographic texture.
+
+The six biggest remaining tells, ranked:
+
+1. **The crowd still becomes floral wallpaper.** Expand identity exclusion from **1.1 m to 2.5 m**, including adjacent rows; prohibit the same identity within **three seats in a row**. Cap the most recognizable dark-blue flower at **one per 20 spectators per section**. Offset alternate rows laterally by **±8 cm**, respecting seat centers and armrests. Prioritize silhouette distribution over additional random color.
+
+2. **The action reads as a collection of held poses.** With the rigs unchanged, make one existing player the clear subject: position the camera **0.9–1.2 m high**, use **70–85 mm**, and frame that player at **55–70% of image height**. Change camera azimuth by **15–25°** to overlap the most conspicuous secondary hands and arms with bodies. Keep no more than **three fully readable players** in the action close-up.
+
+3. **The lighting is darker without becoming sufficiently dimensional.** Add a broad court-side key approximately **8 × 12 m**, angled **35–45° downward**; tune it for a **0.4–0.6 stop lift on the featured players**. Keep their shadow sides **1–1.5 stops below the key side** and the visible crowd approximately **1.5–2 stops below white jerseys**. Measure rendered brightness rather than applying another blanket bowl reduction.
+
+4. **The court lacks a recognizable varnished reflection.** Keep coat weight at **0.75**, lower coat roughness from **0.20 to 0.12–0.15**, and introduce **two or three broad overhead sources** whose reflections cross the foreground at grazing angles. Give traffic areas coat roughness **0.18–0.22**. This should create interrupted sheen; adding more tiny scratches alone will barely register.
+
+5. **The ribbon graphics still advertise their repetition.** Within each **25.6 m sheet**, limit the large white logo to **two appearances**, each separated by at least **6 m**. Allocate approximately **50%** of the length to quiet navy fields, **30%** to artwork, and **20%** to typography. Avoid stacking repeated white logos vertically; that is particularly conspicuous in the banner crop.
+
+6. **The focus falloff makes parts of the crowd feel miniature.** Use **f/8–f/11** for wide arena views and **f/6.3–f/8** for action close-ups. Focus on the featured player’s torso; keep the nearest defender within approximately **2 m of that focus plane** where framing permits. Reserve strong foreground blur for objects within **1–2 m of the camera**.
+
+**The biggest tell now: the crowd’s repeating flower-head silhouettes merge into a continuous patterned surface.**

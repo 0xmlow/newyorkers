@@ -105,7 +105,7 @@ M['steel'] = node_mat('steel', (0.55, 0.57, 0.6), 0.35, 1.0)
 M['black_steel'] = node_mat('black_steel', (0.03, 0.03, 0.035), 0.4, 0.8)
 M['glass'] = node_mat('glass', (0.9, 0.95, 1.0), 0.04, trans=1.0, ior=1.45)
 M['rail_glass'] = node_mat('rail_glass', (0.85, 0.9, 0.95), 0.05, trans=0.92, ior=1.5)
-M['seat'] = node_mat('seat', (0.022, 0.03, 0.06), 0.58, coat=0.12)
+M['seat'] = node_mat('seat', (0.022, 0.03, 0.06), 0.4, coat=0.12)
 def _seat_tone(m):
     nt = m.node_tree; oi = nt.nodes.new('ShaderNodeObjectInfo'); mx = nt.nodes.new('ShaderNodeMix'); mx.data_type = 'RGBA'
     mx.inputs[6].default_value = (*srgb_('#152131'), 1); mx.inputs[7].default_value = (*srgb_('#1c293b'), 1); gt = nt.nodes.new('ShaderNodeMath'); gt.operation = 'GREATER_THAN'; gt.inputs[1].default_value = 0.5
@@ -118,16 +118,77 @@ M['pad'] = node_mat('pad', (0.03, 0.06, 0.16), 0.55)
 M['white'] = node_mat('white', (0.85, 0.86, 0.88), 0.35)
 M['orange'] = node_mat('orange', (0.9, 0.22, 0.03), 0.35, 0.6)
 M['net'] = node_mat('net', (0.92, 0.92, 0.92), 0.8)
-M['court'] = node_mat('court', img=TEXP('court.jpg'), rough=0.33, coat=0.35, normal_img=os.path.join(PH, 'laminate_floor_02_n.jpg'), nstr=0.12, nrep=(72, 40))
+M['court'] = node_mat('court', img=TEXP('court.jpg'), rough=0.33, coat=0.75, normal_img=os.path.join(PH, 'laminate_floor_02_n.jpg'), nstr=0.12, nrep=(72, 40))
 def _court_rough(m):
     nt = m.node_tree; b = nt.nodes['Principled BSDF']; tc = nt.nodes.new('ShaderNodeTexCoord'); mp = nt.nodes.new('ShaderNodeMapping'); mp.inputs['Scale'].default_value = (180, 9, 1)
     nz = nt.nodes.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 3.0; mr = nt.nodes.new('ShaderNodeMapRange'); mr.inputs['To Min'].default_value = 0.30; mr.inputs['To Max'].default_value = 0.36
-    nt.links.new(tc.outputs['UV'], mp.inputs['Vector']); nt.links.new(mp.outputs['Vector'], nz.inputs['Vector']); nt.links.new(nz.outputs['Fac'], mr.inputs[0]); nt.links.new(mr.outputs[0], b.inputs['Roughness'])
+    nt.links.new(tc.outputs['UV'], mp.inputs['Vector']); nt.links.new(mp.outputs['Vector'], nz.inputs['Vector']); nt.links.new(nz.outputs['Fac'], mr.inputs[0])
+    # Astra round 3: broad +-0.025 patches 0.3 to 1 m across, and the wear mask (shoe marks in the lanes, the arc and the baseline)
+    bz = nt.nodes.new('ShaderNodeTexNoise'); bz.inputs['Scale'].default_value = 1.6; bz.inputs['Detail'].default_value = 1.0; nt.links.new(tc.outputs['Object'], bz.inputs['Vector'])
+    bm_ = nt.nodes.new('ShaderNodeMapRange'); bm_.inputs['To Min'].default_value = -0.025; bm_.inputs['To Max'].default_value = 0.025; nt.links.new(bz.outputs['Fac'], bm_.inputs[0])
+    wt = nt.nodes.new('ShaderNodeTexImage'); wt.image = bpy.data.images.load(TEXP('court_wear.png'), check_existing=True); wt.image.colorspace_settings.name = 'Non-Color'; nt.links.new(tc.outputs['UV'], wt.inputs['Vector'])
+    wr = nt.nodes.new('ShaderNodeMath'); wr.operation = 'MULTIPLY'; wr.inputs[1].default_value = 0.08; nt.links.new(wt.outputs['Color'], wr.inputs[0])
+    a1 = nt.nodes.new('ShaderNodeMath'); a1.operation = 'ADD'; nt.links.new(mr.outputs[0], a1.inputs[0]); nt.links.new(bm_.outputs[0], a1.inputs[1])
+    a2 = nt.nodes.new('ShaderNodeMath'); a2.operation = 'ADD'; nt.links.new(a1.outputs[0], a2.inputs[0]); nt.links.new(wr.outputs[0], a2.inputs[1]); nt.links.new(a2.outputs[0], b.inputs['Roughness'])
+    img = next(n for n in nt.nodes if n.type == 'TEX_IMAGE' and n.image and n.image.name.startswith('court'))
+    dk = nt.nodes.new('ShaderNodeMix'); dk.data_type = 'RGBA'; dk.blend_type = 'MULTIPLY'; dk.inputs[7].default_value = (0.9, 0.88, 0.85, 1)
+    fw_ = nt.nodes.new('ShaderNodeMath'); fw_.operation = 'MULTIPLY'; fw_.inputs[1].default_value = 0.55; nt.links.new(wt.outputs['Color'], fw_.inputs[0]); nt.links.new(fw_.outputs[0], dk.inputs[0])
+    nt.links.new(img.outputs['Color'], dk.inputs[6]); nt.links.new(dk.outputs[2], b.inputs['Base Color'])
+    # fine scratches through bump only
+    sz = nt.nodes.new('ShaderNodeTexNoise'); sz.inputs['Scale'].default_value = 900; sz.inputs['Detail'].default_value = 2; nt.links.new(tc.outputs['Object'], sz.inputs['Vector'])
+    bp = nt.nodes.new('ShaderNodeBump'); bp.inputs['Strength'].default_value = 0.04; bp.inputs['Distance'].default_value = 0.00005; nt.links.new(sz.outputs['Fac'], bp.inputs['Height'])
+    nm = next((n for n in nt.nodes if n.type == 'NORMAL_MAP'), None)
+    if nm: nt.links.new(nm.outputs['Normal'], bp.inputs['Normal'])
+    nt.links.new(bp.outputs['Normal'], b.inputs['Normal'])
 _court_rough(M['court'])
-M['court'].node_tree.nodes['Principled BSDF'].inputs['Coat Roughness'].default_value = 0.19; M['court'].node_tree.nodes['Principled BSDF'].inputs['IOR'].default_value = 1.48
+M['court'].node_tree.nodes['Principled BSDF'].inputs['Coat Roughness'].default_value = 0.135
+_cn = M['court'].node_tree; _wt = next(n for n in _cn.nodes if n.type == 'TEX_IMAGE' and n.image and n.image.name.startswith('court_wear'))
+_cr = _cn.nodes.new('ShaderNodeMapRange'); _cr.inputs['To Min'].default_value = 0.135; _cr.inputs['To Max'].default_value = 0.21; _cn.links.new(_wt.outputs['Color'], _cr.inputs[0]); _cn.links.new(_cr.outputs[0], _cn.nodes['Principled BSDF'].inputs['Coat Roughness']); M['court'].node_tree.nodes['Principled BSDF'].inputs['IOR'].default_value = 1.48
 M['floorbase'] = node_mat('floorbase', (0.012, 0.014, 0.02), 0.75)
-M['ribbon'] = node_mat('ribbon', img=TEXP('ribbon.jpg'), img_emit=True, estr=2.2, rough=0.3, repeat=(1, 1))
-M['boards'] = node_mat('boards', img=TEXP('boards.jpg'), img_emit=True, estr=2.0, rough=0.3)
+def led(m, pitch=0.006, panel=0.96):
+    """Astra round 3: an LED face is diodes on a dark substrate in 0.96 m cabinets, not artwork pasted on a plane.
+    Emission is masked by a diode grid (76% fill, compensated), cabinet seams go dark, each cabinet varies +-3%.
+    Coordinates in metres: u round the vertical axis (angle x radius), v is height."""
+    nt = m.node_tree; b = nt.nodes['Principled BSDF']; N_ = nt.nodes; Lk = nt.links
+    def mth(op, a, b_=None):
+        n = N_.new('ShaderNodeMath'); n.operation = op
+        for k, v in enumerate((a, b_)):
+            if v is None: continue
+            if isinstance(v, (int, float)): n.inputs[k].default_value = v
+            else: Lk.new(v, n.inputs[k])
+        return n.outputs[0]
+    g = N_.new('ShaderNodeNewGeometry'); sp = N_.new('ShaderNodeSeparateXYZ'); Lk.new(g.outputs['Position'], sp.inputs[0])
+    u = mth('MULTIPLY', mth('ARCTAN2', sp.outputs['Y'], sp.outputs['X']), mth('SQRT', mth('ADD', mth('MULTIPLY', sp.outputs['X'], sp.outputs['X']), mth('MULTIPLY', sp.outputs['Y'], sp.outputs['Y']))))
+    v = sp.outputs['Z']
+    dot = mth('MULTIPLY', mth('LESS_THAN', mth('FRACT', mth('DIVIDE', u, pitch)), 0.87), mth('LESS_THAN', mth('FRACT', mth('DIVIDE', v, pitch)), 0.87))
+    seam = mth('MULTIPLY', mth('GREATER_THAN', mth('FRACT', mth('DIVIDE', u, panel)), 0.006), mth('GREATER_THAN', mth('FRACT', mth('DIVIDE', v, panel)), 0.006))
+    cmb = N_.new('ShaderNodeCombineXYZ'); Lk.new(mth('FLOOR', mth('DIVIDE', u, panel)), cmb.inputs[0]); Lk.new(mth('FLOOR', mth('DIVIDE', v, panel)), cmb.inputs[1])
+    wn = N_.new('ShaderNodeTexWhiteNoise'); wn.noise_dimensions = '3D'; Lk.new(cmb.outputs[0], wn.inputs['Vector'])
+    var = mth('ADD', 0.97, mth('MULTIPLY', wn.outputs['Value'], 0.06))
+    k = mth('MULTIPLY', mth('MULTIPLY', mth('MULTIPLY', dot, 1 / 0.76), mth('ADD', 0.12, mth('MULTIPLY', seam, 0.88))), var)
+    Lk.new(mth('MULTIPLY', k, b.inputs['Emission Strength'].default_value), b.inputs['Emission Strength'])
+    b.inputs['Roughness'].default_value = 0.42; b.inputs['Specular IOR Level'].default_value = 0.3
+    # the substrate is black plastic: the lit colour is mostly emission, the diffuse a dim copy
+    t = next(n for n in N_ if n.type == 'TEX_IMAGE'); dm = N_.new('ShaderNodeMix'); dm.data_type = 'RGBA'; dm.blend_type = 'MULTIPLY'; dm.inputs[0].default_value = 1.0
+    Lk.new(t.outputs['Color'], dm.inputs[6]); dm.inputs[7].default_value = (0.08, 0.08, 0.09, 1); Lk.new(dm.outputs[2], b.inputs['Base Color'])
+    return m
+def ribbon_mat(name, estr, pitch=0.006):
+    """three 25.6 m sheets of ten layouts, chosen per tile by floor(u) mod 3 (u counts tiles)"""
+    m = node_mat(name, img=TEXP('ribbon_a.jpg'), img_emit=True, estr=estr, rough=0.3); nt = m.node_tree; N_ = nt.nodes; Lk = nt.links; b = N_['Principled BSDF']
+    ta = next(n for n in N_ if n.type == 'TEX_IMAGE'); tc = N_.new('ShaderNodeTexCoord'); sp = N_.new('ShaderNodeSeparateXYZ'); Lk.new(tc.outputs['UV'], sp.inputs[0])
+    fl = N_.new('ShaderNodeMath'); fl.operation = 'FLOOR'; Lk.new(sp.outputs['X'], fl.inputs[0]); md = N_.new('ShaderNodeMath'); md.operation = 'FLOORED_MODULO'; md.inputs[1].default_value = 3; Lk.new(fl.outputs[0], md.inputs[0])
+    col = ta.outputs['Color']
+    for k, tag in ((1, 'b'), (2, 'c')):
+        t = N_.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(TEXP(f'ribbon_{tag}.jpg'), check_existing=True); Lk.new(tc.outputs['UV'], t.inputs['Vector'])
+        cp = N_.new('ShaderNodeMath'); cp.operation = 'COMPARE'; cp.inputs[1].default_value = k; cp.inputs[2].default_value = 0.5; Lk.new(md.outputs[0], cp.inputs[0])
+        mx = N_.new('ShaderNodeMix'); mx.data_type = 'RGBA'; Lk.new(cp.outputs[0], mx.inputs[0]); Lk.new(col, mx.inputs[6]); Lk.new(t.outputs['Color'], mx.inputs[7]); col = mx.outputs[2]
+    Lk.new(col, b.inputs['Emission Color']); Lk.new(col, b.inputs['Base Color'])
+    led(m, pitch)
+    # led() re-pointed the base colour at sheet a's texture: send the picked colour through its multiply instead
+    dm = [n for n in N_ if n.type == 'MIX' and n.blend_type == 'MULTIPLY'][-1]; Lk.new(col, dm.inputs[6])
+    return m
+M['ribbon'] = ribbon_mat('ribbon', 2.4)
+M['boards'] = led(node_mat('boards', img=TEXP('boards.jpg'), img_emit=True, estr=2.0, rough=0.3), 0.006)
 M['suite'] = node_mat('suite', (0.01, 0.01, 0.012), 0.08, emit=(1.0, 0.78, 0.52), estr=0.12)
 M['ceiling'] = node_mat('ceiling', (0.028, 0.03, 0.036), 0.9)
 M['fixture'] = node_mat('fixture', (1, 1, 1), 0.3, emit=(1.0, 0.97, 0.92), estr=60)
@@ -144,12 +205,12 @@ low = stairs(LOW['d0'], 0.0, LOW['rows'], LOW['depth'], LOW['rise'])
 sweep('lower_bowl', [(LOW['d0'] - 0.0, 0.0)] + low[1:], M['concrete'], G_BOWL, N)
 # the wall at the front of the lower bowl: padded, with the LED strip round the floor
 sweep('front_wall', [(LOW['d0'] - 0.02, 0.0), (LOW['d0'] - 0.02, 1.0)], M['dark'], G_BOWL, N)
-sweep('front_led', [(LOW['d0'] - 0.04, 0.32), (LOW['d0'] - 0.04, 0.88)], M['ribbon'], G_BOWL, N, u_scale=1 / 24)
+sweep('front_led', [(LOW['d0'] - 0.04, 0.32), (LOW['d0'] - 0.04, 0.88)], M['ribbon'], G_BOWL, N, u_scale=1 / (0.56 * 32))
 sweep('club_floor', [(CLUB_D0, CLUB_Y0), (CLUB_D1, CLUB_Y0)], M['concrete'], G_BOWL, N)
 sweep('club_rail', [(CLUB_D0 + 0.05, CLUB_Y0), (CLUB_D0 + 0.05, CLUB_Y0 + 1.0)], M['rail_glass'], G_BOWL, N)
 sweep('suites', [(CLUB_D1 + 0.6, CLUB_Y0), (CLUB_D1 + 0.6, CLUB_Y0 + 1.15)], M['suite'], G_BOWL, N)
 sweep('fascia_low', [(CLUB_D1 - 0.02, CLUB_Y0 + 1.15), (CLUB_D1 - 0.02, CLUB_Y0 + 1.3)], M['black_steel'], G_BOWL, N)
-sweep('ribbon', [(CLUB_D1 - 0.03, CLUB_Y0 + 1.3), (CLUB_D1 - 0.03, CLUB_Y1 - 0.1)], M['ribbon'], G_BOWL, N, u_scale=1 / 30)
+sweep('ribbon', [(CLUB_D1 - 0.03, CLUB_Y0 + 1.3), (CLUB_D1 - 0.03, CLUB_Y1 - 0.1)], M['ribbon'], G_BOWL, N, u_scale=1 / 25.6)
 sweep('fascia_top', [(CLUB_D1 - 0.02, CLUB_Y1 - 0.1), (CLUB_D1 - 0.02, CLUB_Y1), (UP['d0'], UP['y0'])], M['black_steel'], G_BOWL, N)
 up = stairs(UP['d0'], UP['y0'], UP['rows'], UP['depth'], UP['rise'])
 sweep('upper_bowl', up, M['concrete'], G_BOWL, N)
@@ -331,8 +392,8 @@ def people_material(name, fixed=None):
     L.new(col, b.inputs['Base Color'])
     # skin gets a touch of subsurface, cloth stays matte
     sk = N_.new('ShaderNodeMath'); sk.operation = 'COMPARE'; sk.inputs[1].default_value = 0; sk.inputs[2].default_value = 0.5; L.new(at.outputs['Fac'], sk.inputs[0])
-    ss_ = N_.new('ShaderNodeMath'); ss_.operation = 'MULTIPLY'; ss_.inputs[1].default_value = 0.25; L.new(sk.outputs[0], ss_.inputs[0]); L.new(ss_.outputs[0], b.inputs['Subsurface Weight'])
-    rg = N_.new('ShaderNodeMapRange'); L.new(sk.outputs[0], rg.inputs[0]); rg.inputs['To Min'].default_value = 0.75; rg.inputs['To Max'].default_value = 0.45; L.new(rg.outputs[0], b.inputs['Roughness'])
+    ss_ = N_.new('ShaderNodeMath'); ss_.operation = 'MULTIPLY'; ss_.inputs[1].default_value = 0.06; L.new(sk.outputs[0], ss_.inputs[0]); L.new(ss_.outputs[0], b.inputs['Subsurface Weight'])
+    rg = N_.new('ShaderNodeMapRange'); L.new(sk.outputs[0], rg.inputs[0]); rg.inputs['To Min'].default_value = 0.55 if fixed else 0.74; rg.inputs['To Max'].default_value = 0.48; L.new(rg.outputs[0], b.inputs['Roughness'])
     return m
 def srgb(h):
     h = h.lstrip('#'); c = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]; return tuple(((x + 0.055) / 1.055) ** 2.4 if x > 0.04045 else x / 12.92 for x in c)
@@ -349,15 +410,58 @@ for n in crowd_files:
     o = CAST[n].copy(); o.data = CAST[n].data.copy()
     T_ = Matrix.Scale(0.92, 4) if '_sit' in n else Matrix.Translation((0, -0.16, 0)) @ Matrix.Scale(0.92, 4)
     o.data.transform(T_); o.name = 'crowd_' + n; link(o, G_CROWDV)
-crowd = []
-for p in SEATS:
-    if random.random() < 0.955:
-        off = random.uniform(-0.045, 0.045); crowd.append((p[0] + math.cos(p[3]) * off, p[1] + math.sin(p[3]) * off, p[2], p[3] + random.uniform(-0.12, 0.12), p[4]))
+# Astra round 3, the biggest tell: a repeated field of flower heads. Now: no two neighbours (1.1 m) share a character,
+# sections fill 95 to 99 percent with vacancies in runs of 1 to 3, about 6 percent stand in small cheering groups,
+# and every sitter turns, leans and sits a little differently.
 def _w(n):
     t = n.split('_', 2)[2]
     return {'sit': 0.30, 'sitL': 0.08, 'sitR': 0.08, 'sit_clap': 0.12, 'sit_clapL': 0.04, 'sit_clapR': 0.04, 'sit_lean': 0.10, 'sit_leanL': 0.03, 'sit_leanR': 0.03, 'stand': 0.08}.get(t, 0.02)
-WTS = np.array([_w(n) for n in crowd_files]); WTS /= WTS.sum()
-co = points_obj('crowd', crowd, coll('crowd'), extra={'var': ('INT', np.random.choice(len(crowd_files), len(crowd), p=WTS).astype(np.int32)), 'sc': ('FLOAT', np.random.uniform(0.88, 1.06, len(crowd)).astype(np.float32))})
+SIT_I = [i for i, n in enumerate(crowd_files) if '_sit' in n]; STD_I = [i for i, n in enumerate(crowd_files) if n.endswith('_stand')]
+SIT_W = np.array([_w(crowd_files[i]) for i in SIT_I]); SIT_W /= SIT_W.sum()
+CHAR = [n.split('_')[1] for n in crowd_files]
+crng3 = random.Random(33); SEC_OCC = [crng3.uniform(0.95, 0.99) for _ in range(24)]
+crowd, var, scl, grid = [], [], [], {}
+vac_run = std_run = 0
+for p in SEATS:
+    sec = int(((math.atan2(p[1], p[0]) / math.tau) % 1) * 24)
+    if vac_run > 0: vac_run -= 1; continue
+    if crng3.random() < (1 - SEC_OCC[sec]) / 2: vac_run = crng3.randint(0, 2); continue
+    if std_run == 0 and crng3.random() < 0.016: std_run = crng3.randint(2, 5)
+    standing = std_run > 0; std_run = max(0, std_run - 1)
+    # check round 3: identity exclusion over ~2.5 m and the row above and below; take the least used of 14 candidates
+    cell = (round(p[0] / 1.25), round(p[1] / 1.25), round(p[2] / 0.5))
+    near = {}
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                for ch in grid.get((cell[0] + dx, cell[1] + dy, cell[2] + dz), ()): near[ch] = near.get(ch, 0) + 1
+    cands = [crng3.choice(STD_I) if standing else int(np.random.choice(SIT_I, p=SIT_W)) for _ in range(14)]
+    v = min(cands, key=lambda c: (near.get(CHAR[c], 0), crng3.random()))
+    grid.setdefault(cell, []).append(CHAR[v])
+    off = crng3.uniform(-0.05, 0.05) + (0.08 if (int(p[2] / 0.4) % 2) else -0.08) * crng3.random()
+    crowd.append((p[0] + math.cos(p[3]) * off, p[1] + math.sin(p[3]) * off, p[2] + crng3.uniform(-0.02, 0.02), p[3] + crng3.uniform(-0.21, 0.21), p[4]))
+    var.append(v); scl.append(crng3.uniform(0.94, 1.06))
+co = points_obj('crowd', crowd, coll('crowd'), extra={'var': ('INT', np.array(var, np.int32)), 'sc': ('FLOAT', np.array(scl, np.float32))})
+print('crowd', len(crowd), 'of', len(SEATS), 'seats, standing', sum(1 for v in var if v in STD_I))
+# per person: brightness 0.86 to 1.1, a small hue and saturation shift, so the same costume is never the same exposure twice
+_seen = set()
+for o in G_CROWDV.objects:
+    for mt in o.data.materials:
+        if not mt or mt.name in _seen or not mt.use_nodes: continue
+        _seen.add(mt.name); nt_ = mt.node_tree; bs = next((n for n in nt_.nodes if n.type == 'BSDF_PRINCIPLED'), None)
+        if not bs: continue
+        src = bs.inputs['Base Color'].links[0].from_socket if bs.inputs['Base Color'].links else None
+        hsv = nt_.nodes.new('ShaderNodeHueSaturation'); oi_ = nt_.nodes.new('ShaderNodeObjectInfo')
+        def _mr(a, b_, salt):
+            mm = nt_.nodes.new('ShaderNodeMath'); mm.operation = 'MULTIPLY'; mm.inputs[1].default_value = salt; nt_.links.new(oi_.outputs['Random'], mm.inputs[0])
+            fr = nt_.nodes.new('ShaderNodeMath'); fr.operation = 'FRACT'; nt_.links.new(mm.outputs[0], fr.inputs[0])
+            r_ = nt_.nodes.new('ShaderNodeMapRange'); r_.inputs['To Min'].default_value = a; r_.inputs['To Max'].default_value = b_; nt_.links.new(fr.outputs[0], r_.inputs[0]); return r_.outputs[0]
+        nt_.links.new(_mr(0.76, 1.08, 1.0), hsv.inputs['Value']); nt_.links.new(_mr(0.485, 0.515, 7.7), hsv.inputs['Hue']); nt_.links.new(_mr(0.88, 1.12, 3.3), hsv.inputs['Saturation'])
+        if src: nt_.links.new(src, hsv.inputs['Color'])
+        else: hsv.inputs['Color'].default_value = bs.inputs['Base Color'].default_value
+        nt_.links.new(hsv.outputs[0], bs.inputs['Base Color'])
+        rr_ = nt_.nodes.new('ShaderNodeMath'); rr_.operation = 'ADD'; rr_.inputs[0].default_value = bs.inputs['Roughness'].default_value
+        if not bs.inputs['Roughness'].links: nt_.links.new(_mr(-0.04, 0.04, 5.1), rr_.inputs[1]); nt_.links.new(rr_.outputs[0], bs.inputs['Roughness'])
 gn_instancer(co, G_CROWDV, pick=True, scale_attr='sc'); print('crowd', len(crowd), 'variants', len(crowd_files))
 
 # ---------------- the court furniture: stanchions at NBA measure, the scorer's table, the baseline boards
@@ -376,7 +480,7 @@ def stanchion(s):
     box('st_board', (0.035, 1.83, 1.07), (s * 13.11, 0, 3.435), M['glass'], G_COURT)
     for (w, d, h, z, y) in [(0.045, 1.83, 0.05, 3.945, 0), (0.045, 1.83, 0.05, 2.925, 0), (0.045, 0.05, 1.07, 3.435, 0.89), (0.045, 0.05, 1.07, 3.435, -0.89),
                             (0.04, 0.59, 0.05, 3.5, 0), (0.04, 0.59, 0.05, 3.075, 0), (0.04, 0.05, 0.45, 3.275, 0.27), (0.04, 0.05, 0.45, 3.275, -0.27)]:
-        box('st_frame', (w, d, h), (s * 13.105, y, z), M['white'], G_COURT)
+        box('st_frame', (w, d, h), (s * 13.105, y, z), M['white'], G_COURT, bevel=0.004)
     box('st_bpad', (0.14, 1.9, 0.12), (s * 13.13, 0, 2.86), M['pad'], G_COURT, bevel=0.04)
     box('st_clock', (0.3, 0.6, 0.32), (s * 13.16, 0, 4.15), M['dark'], G_COURT)
     box('st_mount', (0.2, 0.26, 0.12), (s * 12.99, 0, 3.0), M['orange'], G_COURT)
@@ -392,8 +496,9 @@ def stanchion(s):
     no = bpy.data.objects.new('net', cu); cu.materials.append(M['net']); link(no, G_COURT)
 for s in (-1, 1): stanchion(s)
 box('scorers_table', (12, 0.8, 0.75), (0, -9.6, 0.375), M['dark'], G_COURT, bevel=0.02)
+for k in range(1, 6): box('table_seam', (0.005, 0.81, 0.74), (-6 + k * 2, -9.6, 0.375), seam_ := node_mat('tseam', (0.005, 0.005, 0.006), 0.6) if k == 1 else bpy.data.materials['tseam'], G_COURT)
 t = box('scorers_led', (12, 0.02, 0.6), (0, -9.19, 0.38), M['boards'], G_COURT)
-for k in range(8): box('monitor', (0.5, 0.05, 0.32), (-5.0 + k * 1.4, -9.72, 0.95), M['dark'], G_COURT, rot=(-0.25, 0, 0))
+for k in range(8): box('monitor', (0.5, 0.05, 0.32), (-5.0 + k * 1.4, -9.72, 0.95), M['dark'], G_COURT, rot=(-0.25, 0, 0), bevel=0.005)
 for s in (-1, 1):
     box('base_board', (0.4, 10, 0.9), (s * 18.2, 0, 0.45), M['dark'], G_COURT)
     o = box('base_led', (0.02, 10, 0.78), (s * 17.99, 0, 0.45), M['boards'], G_COURT)
@@ -419,7 +524,8 @@ def place(fname, x, y, yaw, cols, z=0.0, scale=1.0, name='p'):
     f = os.path.join(WK, fname + '.npz')
     if not os.path.exists(f): print('missing', f); return None
     me = person_mesh(f); o = bpy.data.objects.new(name, me); me.materials.append(people_material(name + '_m', cols)); link(o, G_FLOORP)
-    o.location = (x, y, z + (0.003 if z == 0 else 0)); o.rotation_euler = (0, 0, yaw); o.scale = (scale,) * 3
+    zmin = min(v.co.z for v in me.vertices)   # Astra round 3: the soles touch (2 mm), they never hover
+    o.location = (x, y, (0.002 - zmin * scale) if z == 0 else z); o.rotation_euler = (0, 0, yaw); o.scale = (scale,) * 3
     md = o.modifiers.new('sub', 'SUBSURF'); md.levels = 0; md.render_levels = 1
     # a NEW YORKERS flower head on the neck, from the cast
     neck = Vector(np.load(f)['neck'].tolist()); hd = FLOWER_HEADS[hash(name) % len(FLOWER_HEADS)]
@@ -480,6 +586,13 @@ for k, (x, y) in enumerate([(15.4, z_) for z_ in (-5.6, -4.2, -2.8, 2.8, 4.2, 5.
     n = crng.choice([q for q in crowd_files if q.endswith('_sit_lean')]); o = bpy.data.objects.new(f'photo{k}', CAST[n].data); link(o, G_FLOORP)
     yaw = math.atan2(-(0 - x), (0 - y)) + math.pi; o.location = (x, y, -0.36); o.rotation_euler = (0, 0, yaw); o.scale = (0.92,) * 3
     fx, fy = math.sin(yaw), -math.cos(yaw); cyl('photo_lens', 0.05, 0.32, (x + fx * 0.42, y + fy * 0.42, 0.95), M['black_steel'], G_COURT, rot=(math.pi / 2, 0, yaw), verts=12)
+# Astra round 3, working clutter: cable covers from the cameras and the table, low stools under the photographers, a rack of balls
+rub = node_mat('rubber', (0.025, 0.025, 0.028), 0.75)
+for (x, y) in ((16.9, 7.0), (16.9, -7.0), (-16.9, 7.0), (-16.9, -7.0)):
+    box('cable_cover', (0.10, 5.0, 0.02), (x + (0.35 if x > 0 else -0.35), y + math.copysign(2.5, y), 0.01), rub, G_COURT, bevel=0.008)
+box('cable_cover', (11.0, 0.10, 0.02), (0, -10.05, 0.01), rub, G_COURT, bevel=0.008)
+for k, (x, y) in enumerate([(15.4, z_) for z_ in (-5.6, -4.2, -2.8, 2.8, 4.2, 5.6)] + [(-15.4, z_) for z_ in (-5.6, -4.2, -2.8, 2.8, 4.2, 5.6)]):
+    cyl('stool', 0.16, 0.17, (x + (0.12 if x > 0 else -0.12), y, 0.085), rub, G_COURT, verts=16)
 # the ball, at the top of the shot
 bpy.ops.mesh.primitive_uv_sphere_add(radius=0.1195, segments=48, ring_count=24, location=(7.15, 3.35, 3.55)); ball = bpy.context.active_object; ball.name = 'ball'; ball.data.shade_smooth()
 bm_ = node_mat('ball', (0.55, 0.16, 0.035), 0.62); nt = bm_.node_tree; tc = nt.nodes.new('ShaderNodeTexCoord'); sep = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Object'], sep.inputs[0])
@@ -494,6 +607,8 @@ ln = _m('MINIMUM', _m('MINIMUM', _m('ABSOLUTE', sep.outputs['X']), _m('ABSOLUTE'
 mask = _m('LESS_THAN', ln, 0.004); mx = nt.nodes.new('ShaderNodeMix'); mx.data_type = 'RGBA'; nt.links.new(mask, mx.inputs[0]); mx.inputs[6].default_value = (0.55, 0.16, 0.035, 1); mx.inputs[7].default_value = (0.02, 0.015, 0.012, 1)
 nt.links.new(mx.outputs[2], nt.nodes['Principled BSDF'].inputs['Base Color'])
 pz = nt.nodes.new('ShaderNodeTexVoronoi'); pz.inputs['Scale'].default_value = 900; bp = nt.nodes.new('ShaderNodeBump'); bp.inputs['Strength'].default_value = 0.25; nt.links.new(pz.outputs['Distance'], bp.inputs['Height']); nt.links.new(bp.outputs[0], nt.nodes['Principled BSDF'].inputs['Normal'])
+sc.frame_set(1); ball.keyframe_insert('location', frame=1); _bv = (Vector((12.755, 0, 3.4)) - ball.location).normalized() * (9.0 / 24)
+ball.location = ball.location + _bv; ball.keyframe_insert('location', frame=2); sc.frame_set(1)
 ball.data.materials.append(bm_); [cc.objects.unlink(ball) for cc in ball.users_collection]; link(ball, G_COURT)
 
 # ---------------- the roof: the dish of dark panels, 48 ribs, two catwalks, sports lights, the scoreboard
@@ -537,7 +652,7 @@ for r, nfix in ((22, 64), (38, 80)):
 G_SB = coll('scoreboard'); SBZ = 21.0; SW, SD, SH = 24.0, 16.0, 11.0   # twice the old board: the faces are 24 x 11 and 16 x 11 m
 box('sb_body', (SW + 0.4, SD + 0.4, SH + 0.4), (0, 0, SBZ), M['dark'], G_SB)
 def face_plane(name, w, h, loc, rot, img, strength=3.2):
-    mat = node_mat(name + '_m', img=img, img_emit=True, estr=strength, rough=0.25)
+    mat = led(node_mat(name + '_m', img=img, img_emit=True, estr=strength, rough=0.25), 0.004)
     o = mesh_obj(name, [(-w / 2, 0, -h / 2), (w / 2, 0, -h / 2), (w / 2, 0, h / 2), (-w / 2, 0, h / 2)], [(0, 1, 2, 3)], mat, G_SB, uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
     o.location = loc; o.rotation_euler = rot; return o
 face_plane('sb_long_s', SW, SH, (0, -SD / 2 - 0.22, SBZ), (0, 0, 0), TEXP('sb_long0.jpg'))
@@ -552,8 +667,8 @@ def ring(name, r_top, r_bot, z_top, z_bot, mat, seg=160, rep=8):
         a = i / seg * math.tau; verts += [(math.cos(a) * r_top, math.sin(a) * r_top, z_top), (math.cos(a) * r_bot, math.sin(a) * r_bot, z_bot)]; uv += [(i / seg * rep, 1), (i / seg * rep, 0)]
     for i in range(seg): faces.append((2 * i, 2 * i + 2, 2 * i + 3, 2 * i + 1))
     return mesh_obj(name, verts, faces, mat, G_SB, uv=uv)
-ring('sb_top_ring', 15.2, 15.2, SBZ + 7.2, SBZ + 5.6, M['ribbon'], rep=round(2 * math.pi * 15.2 / (1.6 * 16)))
-ring('sb_low_ring', 14.2, 10.8, SBZ - 6.0, SBZ - 8.6, M['ribbon'], rep=round(2 * math.pi * 12.5 / (3.2 * 16)))
+ring('sb_top_ring', 15.2, 15.2, SBZ + 7.2, SBZ + 5.6, M['ribbon'], rep=2)
+ring('sb_low_ring', 14.2, 10.8, SBZ - 6.0, SBZ - 8.6, M['ribbon'], rep=1)
 # the belly: a round screen under the board, the logo looking down at centre court
 belly = node_mat('belly', img=TEXP('sb_belly.jpg'), img_emit=True, estr=1.1, rough=0.45)
 bv = [(0, 0, SBZ - 8.65)] + [(math.cos(i / 96 * math.tau) * 10.8, math.sin(i / 96 * math.tau) * 10.8, SBZ - 8.65) for i in range(96)]
@@ -572,22 +687,25 @@ for sgn in (-1, 1):
 G_WALL = coll('wall_screens'); WZ0, WZ1 = BACK_TOP + 4.6, BACK_TOP + 12.2
 for sgn, img in ((-1, 'wall_side0.jpg'), (1, 'wall_side1.jpg')):
     yy = sgn * (FR + BACK + 0.35); w_ = 30.0
-    mesh_obj('wall_side', [(-w_ / 2, yy, WZ0), (w_ / 2, yy, WZ0), (w_ / 2, yy, WZ1), (-w_ / 2, yy, WZ1)], [(0, 1, 2, 3)] if sgn > 0 else [(3, 2, 1, 0)], node_mat('wall_' + img, img=TEXP(img), img_emit=True, estr=2.4), G_WALL,
+    mesh_obj('wall_side', [(-w_ / 2, yy, WZ0), (w_ / 2, yy, WZ0), (w_ / 2, yy, WZ1), (-w_ / 2, yy, WZ1)], [(0, 1, 2, 3)] if sgn > 0 else [(3, 2, 1, 0)], led(node_mat('wall_' + img, img=TEXP(img), img_emit=True, estr=2.4), 0.006), G_WALL,
              uv=[(0, 0), (1, 0), (1, 1), (0, 1)] if sgn < 0 else [(1, 0), (0, 0), (0, 1), (1, 1)])
     box('wall_bez', (w_ + 0.8, 0.3, WZ1 - WZ0 + 0.8), (0, yy + sgn * 0.2, (WZ0 + WZ1) / 2), M['black_steel'], G_WALL)
 P_end = perim(BACK + 0.3)
 for c0 in (0.0, 0.5):
-    sweep('wall_end', [(BACK + 0.3, WZ0), (BACK + 0.3, WZ1)], node_mat('wall_end_' + str(c0), img=TEXP('wall_end.jpg'), img_emit=True, estr=2.4), G_WALL, N=160, s0=c0 - 0.125, s1=c0 + 0.125, u_scale=1 / (0.25 * P_end))
+    sweep('wall_end', [(BACK + 0.3, WZ0), (BACK + 0.3, WZ1)], led(node_mat('wall_end_' + str(c0), img=TEXP('wall_end.jpg'), img_emit=True, estr=2.4), 0.006), G_WALL, N=160, s0=c0 - 0.125, s1=c0 + 0.125, u_scale=1 / (0.25 * P_end))
 
 
 # ---------------- the rafters: the retired banners over each end, cloth with a slight hang
 G_BAN = coll('banners')
 def banner(img, x, y, yaw, z):
     mat = node_mat('ban_' + os.path.basename(img), img=img, rough=0.85, normal_img=os.path.join(ROOT, 'site', 'assets', 'tex', 'fabric_n.jpg'), nstr=0.5, nrep=(3, 6))
-    bm = bmesh.new(); W_, H_ = 2.5, 5.0; nx_, nz_ = 6, 16; vs = []
+    bm = bmesh.new(); W_, H_ = 2.5, 5.0; nx_, nz_ = 12, 24; vs = []; br = random.Random(int(x * 100 + y * 7))
+    ph = br.uniform(0, math.tau); fa = br.uniform(0.008, 0.02); nf = br.choice((3, 4, 5))
     for j in range(nz_ + 1):
         for i in range(nx_ + 1):
             u, v = i / nx_, j / nz_; sag = 0.06 * math.sin(u * math.pi) * (1 - v) + 0.03 * math.sin(v * 7 + x) * (1 - v)
+            sag += fa * math.sin(u * math.pi * nf + ph) * (0.35 + 0.65 * (1 - v))          # vertical folds from the hanging bar
+            if v < 0.1: sag += br.uniform(0.010, 0.025) * ((0.1 - v) / 0.1) ** 2               # the hem curls
             vs.append(bm.verts.new((u * W_ - W_ / 2, sag, v * H_ - H_ / 2)))
     uvl = bm.loops.layers.uv.new('UVMap')
     for j in range(nz_):
@@ -595,8 +713,9 @@ def banner(img, x, y, yaw, z):
             a = j * (nx_ + 1) + i; f = bm.faces.new((vs[a], vs[a + 1], vs[a + nx_ + 2], vs[a + nx_ + 1]))
             for lp, (uu, vv) in zip(f.loops, [(i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1)]): lp[uvl].uv = (uu / nx_, vv / nz_)
     me = bpy.data.meshes.new('banner'); bm.to_mesh(me); bm.free(); me.shade_smooth(); me.materials.append(mat)
-    o = bpy.data.objects.new('banner', me); o.location = (x, y, z); o.rotation_euler = (0, 0, yaw); link(o, G_BAN)
-    sol = o.modifiers.new('s', 'SOLIDIFY'); sol.thickness = 0.01
+    o = bpy.data.objects.new('banner', me); o.location = (x, y, z); o.rotation_euler = (br.uniform(-0.017, 0.017), br.uniform(-0.017, 0.017), yaw + br.uniform(-0.017, 0.017)); link(o, G_BAN)
+    sol = o.modifiers.new('s', 'SOLIDIFY'); sol.thickness = 0.003
+    for cu_ in (-1.0, -0.33, 0.33, 1.0): box('ban_clip', (0.05, 0.03, 0.07), (x + cu_ * math.cos(yaw), y + cu_ * math.sin(yaw), z + 2.5), M['black_steel'], G_BAN)
     bar = cyl('ban_bar', 0.035, 2.7, (x, y, z + 2.56), M['black_steel'], G_BAN, rot=(0, math.pi / 2, yaw), verts=8)
     top = ceil_z(math.hypot(x, y)) - 1.7; L = top - (z + 2.56)
     for sgn in (-1, 1): cyl('ban_wire', 0.008, L, (x + sgn * 1.1 * math.cos(yaw), y + sgn * 1.1 * math.sin(yaw), z + 2.56 + L / 2), M['steel'], G_BAN, verts=4)
@@ -641,7 +760,7 @@ for sy in (-1, 1):
         x = -23 + xi * (46 / 11)
         for h in (23, 25):
             tgt = (x * 0.55 + rng_l.uniform(-2, 2), -sy * rng_l.uniform(1.5, 6.5), 1.4)
-            spot(f'side{sy}{xi}{h}', (x, sy * 15, h), tgt, 2600 * LP * (1.25 if sy < 0 else 0.85) * 1.2, 32, 0.45, K5000, 0.10)
+            spot(f'side{sy}{xi}{h}', (x, sy * 15, h), tgt, 2600 * LP * (1.25 if sy < 0 else 0.85) * 1.32, 32, 0.45, K5000, 0.10)
 # 16 end lights
 for sx in (-1, 1):
     for y in (-9, -3, 3, 9):
@@ -650,11 +769,15 @@ for sx in (-1, 1):
 # 48 bowl fixtures aimed into the seats, warmer and broad
 for k in range(48):
     s_ = (k + 0.5) / 48; x, y, nx, ny = stadium(s_, 14); tx, ty, _, _ = stadium(s_, 22)
-    spot(f'bowl{k}', (x * 0.75, y * 0.75, 27), (tx, ty, 9), 1125 * LP, 75, 0.5, K4200, 0.4)
+    spot(f'bowl{k}', (x * 0.75, y * 0.75, 27), (tx, ty, 9), 780 * LP, 75, 0.5, K4200, 0.4)
 # 32 service lights on stairs, bridges and structure
 for k in range(32):
     s_ = (k + 0.25) / 32; x, y, _, _ = stadium(s_, 26); spot(f'svc{k}', (x * 0.9, y * 0.9, 30), (x, y, 18), 300 * LP, 70, 0.5, K3700, 0.3)
-w = bpy.data.worlds.new('w'); sc.world = w; w.use_nodes = True; w.node_tree.nodes['Background'].inputs[0].default_value = (0.01, 0.012, 0.02, 1); w.node_tree.nodes['Background'].inputs[1].default_value = 0.5
+KEY = float(os.environ.get('GARDEN_KEY', '1.0'))
+if KEY > 0:
+    _k = area('court_key', (12, 8), (0, -24, 22), 26000 * LP * KEY, K5000); _k.rotation_euler = (Vector((0, 0, 1.2)) - Vector((0, -24, 22))).to_track_quat('-Z', 'Y').to_euler()
+    _k.data.spread = math.radians(70); _k.visible_camera = False; _k.visible_glossy = True
+w = bpy.data.worlds.new('w'); sc.world = w; w.use_nodes = True; w.node_tree.nodes['Background'].inputs[0].default_value = (0.01, 0.012, 0.02, 1); w.node_tree.nodes['Background'].inputs[1].default_value = 0.3
 
 # ---------------- haze: the air in a full arena, thin enough to keep the far side, thick enough to show the light
 vol = node_mat('haze'); nt = vol.node_tree; nt.nodes.remove(nt.nodes['Principled BSDF']); pv = nt.nodes.new('ShaderNodeVolumePrincipled'); pv.inputs['Density'].default_value = 0.00028
@@ -673,12 +796,13 @@ CAMS = {
     'broadcast':  ((2, -24.5, 9.5), (7, 1, 1.4), 50),
     'baseline85': ((18.8, -4.2, 1.1), (7.0, 3.3, 2.0), 85),
     'rimcam':     ((13.6, -1.9, 4.3), (8.0, 2.6, 0.8), 20),
+    'hero':       ((18.6, 1.0, 1.0), (6.6, 3.6, 1.75), 70),
 }
 def add_cam(name, loc, tgt, lens):
     cd = bpy.data.cameras.new(name); cd.lens = lens; cd.clip_end = 900; o = bpy.data.objects.new(name, cd); o.location = loc
     d = Vector(tgt) - Vector(loc); o.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler(); link(o); return o
 for k, (l, t, f) in CAMS.items(): add_cam('cam_' + k, l, t, f)
-DOF = {'courtside': (6.6, 3.6, 2.4, 8.0), 'baseline': (7.0, 3.3, 2.4, 3.2), 'crowdcheck': (0, -14, 5, 4), 'baseline85': (6.6, 3.6, 2.3, 3.5), 'broadcast': (7, 1, 1.4, 8)}
+DOF = {'courtside': (6.6, 3.6, 2.4, 7.1), 'baseline': (7.0, 3.3, 2.4, 4.0), 'crowdcheck': (0, -14, 5, 8.0), 'baseline85': (6.6, 3.6, 2.3, 4.5), 'broadcast': (7, 1, 1.4, 8.0), 'rimcam': (7.2, 3.3, 1.5, 5.6), 'hero': (6.6, 3.6, 1.9, 7.1)}
 for k, (x, y, z, f) in DOF.items():
     cam = bpy.data.objects['cam_' + k]; cam.data.dof.use_dof = True; cam.data.dof.focus_distance = (Vector((x, y, z)) - cam.location).length; cam.data.dof.aperture_fstop = f
 
@@ -686,7 +810,7 @@ for k, (x, y, z, f) in DOF.items():
 sc.render.engine = 'CYCLES'; prefs = bpy.context.preferences.addons['cycles'].preferences; prefs.compute_device_type = 'METAL'; prefs.get_devices()
 for d in prefs.devices: d.use = d.type == 'METAL'
 sc.cycles.device = 'GPU'; sc.cycles.samples = 256 if MODE == 'full' else 64; sc.cycles.use_denoising = True; sc.cycles.denoiser = 'OPENIMAGEDENOISE'
-sc.cycles.max_bounces = 8; sc.cycles.glossy_bounces = 4; sc.cycles.transmission_bounces = 6; sc.cycles.caustics_reflective = False; sc.cycles.caustics_refractive = False
+sc.cycles.max_bounces = 6; sc.cycles.diffuse_bounces = 2; sc.cycles.glossy_bounces = 3; sc.cycles.adaptive_threshold = 0.02; sc.render.use_motion_blur = True; sc.render.motion_blur_shutter = 0.06; sc.cycles.transmission_bounces = 6; sc.cycles.caustics_reflective = False; sc.cycles.caustics_refractive = False
 sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Medium High Contrast'; sc.view_settings.exposure = float(os.environ.get('GARDEN_EV', '0.15'))
 sc.render.resolution_x, sc.render.resolution_y = (2560, 1440) if MODE == 'full' else (1280, 720)
 sc.render.image_settings.file_format = 'PNG'
