@@ -6,7 +6,7 @@ import bpy, bmesh, math, os, sys, random, glob
 import numpy as np
 from mathutils import Vector, Matrix, Euler
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE); sys.path.insert(0, HERE)
-from bl_people import person_mesh
+from bl_people import person_mesh, garment_mesh
 TEX = os.path.join(HERE, 'tex'); WK = os.path.join(HERE, 'work'); OUTR = os.path.join(HERE, 'renders'); os.makedirs(OUTR, exist_ok=True)
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else ['qa']
 MODE = argv[0]; VIEWS = argv[1:]
@@ -393,12 +393,20 @@ def people_material(name, fixed=None):
         is_top = N_.new('ShaderNodeMath'); is_top.operation = 'COMPARE'; is_top.inputs[1].default_value = 1; is_top.inputs[2].default_value = 0.5; L.new(at.outputs['Fac'], is_top.inputs[0])
         msk = mth('MULTIPLY', tx.outputs['Alpha'], is_top.outputs[0])
         mx = N_.new('ShaderNodeMix'); mx.data_type = 'RGBA'; L.new(msk, mx.inputs[0]); L.new(col, mx.inputs[6]); L.new(tx.outputs['Color'], mx.inputs[7]); col = mx.outputs[2]
-        b.inputs['Sheen Weight'].default_value = 0.25
+        b.inputs['Sheen Weight'].default_value = 0.08
     L.new(col, b.inputs['Base Color'])
     # skin gets a touch of subsurface, cloth stays matte
     sk = N_.new('ShaderNodeMath'); sk.operation = 'COMPARE'; sk.inputs[1].default_value = 0; sk.inputs[2].default_value = 0.5; L.new(at.outputs['Fac'], sk.inputs[0])
     ss_ = N_.new('ShaderNodeMath'); ss_.operation = 'MULTIPLY'; ss_.inputs[1].default_value = 0.06; L.new(sk.outputs[0], ss_.inputs[0]); L.new(ss_.outputs[0], b.inputs['Subsurface Weight'])
-    rg = N_.new('ShaderNodeMapRange'); L.new(sk.outputs[0], rg.inputs[0]); rg.inputs['To Min'].default_value = 0.55 if fixed else 0.74; rg.inputs['To Max'].default_value = 0.48; L.new(rg.outputs[0], b.inputs['Roughness'])
+    rg = N_.new('ShaderNodeMapRange'); L.new(sk.outputs[0], rg.inputs[0]); rg.inputs['To Min'].default_value = 0.74; rg.inputs['To Max'].default_value = 0.46; L.new(rg.outputs[0], b.inputs['Roughness'])
+    if fixed:   # people pass: a knit weave and soft folds on the cloth only (skin keeps its sculpt)
+        tc = N_.new('ShaderNodeTexCoord'); wv = N_.new('ShaderNodeTexNoise'); wv.inputs['Scale'].default_value = 700; wv.inputs['Detail'].default_value = 1
+        fo = N_.new('ShaderNodeTexNoise'); fo.inputs['Scale'].default_value = 14; fo.inputs['Distortion'].default_value = 1.2; fo.inputs['Detail'].default_value = 3
+        L.new(tc.outputs['Object'], wv.inputs['Vector']); L.new(tc.outputs['Object'], fo.inputs['Vector'])
+        hsum = N_.new('ShaderNodeMath'); hsum.operation = 'MULTIPLY_ADD'; L.new(wv.outputs['Fac'], hsum.inputs[0]); hsum.inputs[1].default_value = 0.15; L.new(fo.outputs['Fac'], hsum.inputs[2])
+        cm = N_.new('ShaderNodeMath'); cm.operation = 'SUBTRACT'; cm.inputs[0].default_value = 1.0; L.new(sk.outputs[0], cm.inputs[1])
+        bp = N_.new('ShaderNodeBump'); bp.inputs['Distance'].default_value = 0.004; L.new(hsum.outputs[0], bp.inputs['Height']); L.new(cm.outputs[0], bp.inputs['Strength'])
+        L.new(bp.outputs['Normal'], b.inputs['Normal'])
     return m
 def srgb(h):
     h = h.lstrip('#'); c = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]; return tuple(((x + 0.055) / 1.055) ** 2.4 if x > 0.04045 else x / 12.92 for x in c)
@@ -409,7 +417,7 @@ with bpy.data.libraries.load(os.path.join(WK, 'cast.blend')) as (src, dst):
     dst.objects = [n for n in src.objects if n.startswith('cast_')]
 CAST = {o.name: o for o in dst.objects if o}
 # seated: the figures whose clothes sit cleanly; coats and dresses tear when seated, so they stand (about 5%)
-SEATED_OK = ('cabbie', 'discoking', 'hustler', 'killer', 'oscar', 'tough', 'wiseguy', 'workgirl', 'writer', 'annieh', 'susan')
+SEATED_OK = ('cabbie', 'discoking', 'hustler', 'killer', 'tough', 'wiseguy', 'workgirl', 'writer', 'susan', 'bartender')   # people pass: under 7% torn (work/cast_torn.json)
 crowd_files = sorted(n for n in CAST if (n.split('_')[1] in SEATED_OK and '_sit' in n) or n.endswith('_stand'))
 for n in crowd_files:
     o = CAST[n].copy(); o.data = CAST[n].data.copy()
@@ -535,25 +543,34 @@ def place(fname, x, y, yaw, cols, z=0.0, scale=1.0, name='p'):
     me = person_mesh(f); o = bpy.data.objects.new(name, me); me.materials.append(people_material(name + '_m', cols)); link(o, G_FLOORP)
     zmin = min(v.co.z for v in me.vertices)   # Astra round 3: the soles touch (2 mm), they never hover
     o.location = (x, y, (0.002 - zmin * scale) if z == 0 else z); o.rotation_euler = (0, 0, yaw); o.scale = (scale,) * 3
-    md = o.modifiers.new('sub', 'SUBSURF'); md.levels = 0; md.render_levels = 1
+    # people pass: the sculpted body needs no subdivision; the clothes are their own shell with a thickness
+    gm = garment_mesh(f)
+    if gm:
+        g = bpy.data.objects.new(name + '_cloth', gm); gm.materials.append(o.data.materials[0]); link(g, G_FLOORP); g.parent = o
+        so = g.modifiers.new('thick', 'SOLIDIFY'); so.thickness = 0.004; so.offset = 1; so.use_even_offset = False   # even offset spikes off the hem corners
     # a NEW YORKERS flower head on the neck, from the cast
     neck = Vector(np.load(f)['neck'].tolist()); hd = FLOWER_HEADS[zlib.crc32(name.encode()) % len(FLOWER_HEADS)]
-    h = bpy.data.objects.new(name + '_head', hd); link(h, G_FLOORP); h.parent = o; h.location = neck - Vector((0, 0, 0.03)); h.scale = (0.78,) * 3
-    bpy.ops.mesh.primitive_torus_add(major_radius=0.06, minor_radius=0.035, major_segments=24, minor_segments=10, location=neck - Vector((0, 0, 0.005))); cx_ = bpy.context.active_object; cx_.name = name + '_calyx'
+    h = bpy.data.objects.new(name + '_head', hd); link(h, G_FLOORP); h.parent = o; h.location = neck - Vector((0, 0, 0.02)); h.scale = (1.0,) * 3
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.045, minor_radius=0.02, major_segments=24, minor_segments=10, location=neck - Vector((0, 0, 0.012))); cx_ = bpy.context.active_object; cx_.name = name + '_calyx'
     [cc.objects.unlink(cx_) for cc in cx_.users_collection]; link(cx_, G_FLOORP); cx_.data.materials.append(CALYX); cx_.data.shade_smooth(); cx_.location = cx_.location; cx_.parent = o; cx_.matrix_parent_inverse = Matrix()
     return o
 def flower_heads():
     out = []
-    for donor in ('cast_oscar_stand', 'cast_workgirl_stand', 'cast_cabbie_stand', 'cast_editor_stand', 'cast_killer_stand', 'cast_rosemary_stand', 'cast_hustler_stand'):
+    # people pass: no hats (oscar), no blue skull back (killer); cut at the head bone's root, not a fraction of the height
+    for donor in ('cast_workgirl_stand', 'cast_cabbie_stand', 'cast_editor_stand', 'cast_rosemary_stand', 'cast_hustler_stand', 'cast_discoking_stand', 'cast_susan_stand'):
         if donor not in CAST: continue
         me = CAST[donor].data.copy(); bm_ = bmesh.new(); bm_.from_mesh(me); H = max(v.co.z for v in bm_.verts)
-        cut = H * 0.735; bmesh.ops.delete(bm_, geom=[v for v in bm_.verts if v.co.z < cut], context='VERTS')
+        cut = CAST[donor]['headpt'][2] + 0.01 if 'headpt' in CAST[donor] else H * 0.8; bmesh.ops.delete(bm_, geom=[v for v in bm_.verts if v.co.z < cut], context='VERTS')
         if not bm_.verts: bm_.free(); continue
+        # keep the flower only: drop a raised hand or prop above the cut and any long sliver (the stray lines over the court)
+        hp_ = CAST[donor].get('headpt', (0, 0, 0)); bm_.edges.ensure_lookup_table()
+        bmesh.ops.delete(bm_, geom=[v for v in bm_.verts if math.hypot(v.co.x - hp_[0], v.co.y - hp_[1]) > 0.32], context='VERTS')
+        bmesh.ops.delete(bm_, geom=[v for v in bm_.verts if not v.link_faces], context='VERTS')
         zs = [v.co.z for v in bm_.verts]; low = min(zs); cxy = Vector((sum(v.co.x for v in bm_.verts) / len(zs), sum(v.co.y for v in bm_.verts) / len(zs), 0))
         # the stem: put the bottom of the flower's own neck at the origin
         neckz = cut + 0.0; bmesh.ops.translate(bm_, vec=Vector((-cxy.x, -cxy.y, -neckz)), verts=bm_.verts); bm_.to_mesh(me); bm_.free(); out.append(me)
     return out
-CALYX = node_mat('calyx', (0.11, 0.16, 0.09), 0.5)
+CALYX = node_mat('calyx', (0.05, 0.08, 0.04), 0.6)   # people pass: a slim dark sepal, not a green collar
 FLOWER_HEADS = flower_heads(); print('flower heads', len(FLOWER_HEADS))
 def face(x, y, tx, ty): return math.atan2(-(tx - x), (ty - y)) + math.pi   # rest pose faces -y
 # a home possession at the east basket: the shooter rises at the right wing, a hand in his face

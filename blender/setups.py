@@ -204,9 +204,7 @@ def hockey(G, rng, scale_lights):
         if i == 0: puck = (blade.x + fwd.x * 0.28, blade.y + fwd.y * 0.28)
         gm = gear[id(cols)]
         for h in (hR, hL): _ellipsoid('glove', h, (0.16, 0.12, 0.11), gm, G, rot=(0, 0, o.rotation_euler.z))
-        for sp_ in (SH_L, SH_R):
-            q = _pt(f, sp_, 0.07, part=[1, 7])
-            if q is not None: _ellipsoid('shoulder', W_ @ Vector(q.tolist()), (0.2, 0.22, 0.13), gm, G, rot=(0, 0, o.rotation_euler.z))
+        # people pass: the shoulder pads live under the sweater now (people.py hockey ease), no blobs stuck on top
         for (c_, zmin, toe, heel) in _feet(f):
             a_, b_ = W_ @ Vector(toe.tolist()), W_ @ Vector(heel.tolist()); mid = (a_ + b_) / 2; L = max(0.28, (a_ - b_).length * 1.05)
             box('runner', (0.006, L, 0.04), (mid.x, mid.y, 0.02), steel_r, G, rot=(0, 0, math.atan2(-(a_ - b_).x, (a_ - b_).y)))
@@ -217,7 +215,25 @@ def hockey(G, rng, scale_lights):
             [c.objects.unlink(o) for c in o.users_collection]; link(o, G); _ground(o, None, 0.0, 1.15); bpy.context.view_layer.update()
             padm = bpy.data.materials.get('pad_w') or node_mat('pad_w', (0.9, 0.9, 0.9), 0.5)
             fx_ = -s
-            for yy in (-0.2, 0.2): box('gk_pad', (0.18, 0.28, 0.82), (x + fx_ * 0.32, yy, 0.41), padm, G, bevel=0.04)
+            # people pass (Astra): leg pads shaped like pads, on the goalie's own feet: tapered, rounded, knee rolls and straps
+            strap = bpy.data.materials.get('pad_strap') or node_mat('pad_strap', (0.03, 0.03, 0.035), 0.6)
+            yaw_ = o.rotation_euler.z; W_ = o.matrix_world
+            for (c_, zmin, toe, heel) in _feet(f):
+                fw = W_ @ Vector(c_.tolist()); fw.z = 0
+                bm_ = bmesh.new()
+                for (zz, w, d) in ((0.02, 0.24, 0.17), (0.3, 0.27, 0.2), (0.62, 0.29, 0.21), (0.86, 0.27, 0.16)):
+                    for (px, py) in ((-w / 2, -d / 2), (w / 2, -d / 2), (w / 2, d / 2), (-w / 2, d / 2)): bm_.verts.new((px, py - 0.05, zz))
+                bm_.verts.ensure_lookup_table()
+                for r in range(3):
+                    for k in range(4): bm_.faces.new([bm_.verts[r * 4 + k], bm_.verts[r * 4 + (k + 1) % 4], bm_.verts[r * 4 + 4 + (k + 1) % 4], bm_.verts[r * 4 + 4 + k]])
+                bm_.faces.new([bm_.verts[k] for k in (3, 2, 1, 0)]); bm_.faces.new([bm_.verts[12 + k] for k in range(4)])
+                me_ = bpy.data.meshes.new('gk_pad'); bm_.to_mesh(me_); bm_.free(); pad = bpy.data.objects.new('gk_pad', me_); link(pad, G); me_.materials.append(padm)
+                pad.location = fw; pad.rotation_euler = (0, 0, yaw_)
+                sb = pad.modifiers.new('round', 'SUBSURF'); sb.levels = sb.render_levels = 2; me_.shade_smooth()
+                for zz in (0.3, 0.6):   # the knee rolls
+                    r_ = cyl('gk_roll', 0.035, 0.27, fw + Matrix.Rotation(yaw_, 3, 'Z') @ Vector((0, -0.16, zz)), padm, G, verts=16); r_.rotation_euler = (0, math.pi / 2, yaw_)
+                for zz in (0.12, 0.45, 0.75):   # straps round the back of the leg
+                    box('gk_strap', (0.3, 0.025, 0.03), fw + Matrix.Rotation(yaw_, 3, 'Z') @ Vector((0, 0.06, zz)), strap, G, rot=(0, 0, yaw_))
             for h in _hands(f): _ellipsoid('gk_glove', o.matrix_world @ Vector(h), (0.3, 0.12, 0.3), padm, G)
     for i, (x, y) in enumerate([(15.5, 11.2), (28.6, -10.2), (8.0, -11.0)]):
         o = place('pose_m_stand_suit', x, y, face(x, y, 21, 2), dict(REF, top='#e6e6e6', skin=SKINS[(i + 2) % 8]), z=0, scale=1.02, name=f'hkref{i}')
@@ -374,8 +390,8 @@ def boxing(G, rng, scale_lights):
     for i, (pz, x, y, trunks, gm) in enumerate([('jab', -0.12, -0.575, '#173b99', gb), ('guard', 0.12, 0.575, '#14161c', gr)]):
         skin = SKINS[(i * 3 + 1) % 8]; boot = '#f0ede5' if i == 0 else '#0c0c0c'
         cols = dict(top=skin, bottom=trunks, shoe=boot, sock=boot, hair='#141010', trim=skin, stripe='#ffffff' if i == 0 else '#d8b574', skin=skin)
-        f = os.path.join(WK, f'pose_m_{pz}_jersey.npz'); other = (0.12, 0.575) if i == 0 else (-0.12, -0.575)
-        o = place(f'pose_m_{pz}_jersey', x, y, face(x, y, *other), cols, z=Hh, scale=1.1, name=f'boxer{i}')
+        f = os.path.join(WK, f'pose_m_{pz}_trunks.npz'); other = (0.12, 0.575) if i == 0 else (-0.12, -0.575)
+        o = place(f'pose_m_{pz}_trunks', x, y, face(x, y, *other), cols, z=Hh, scale=1.1, name=f'boxer{i}')
         if not o: continue
         [c.objects.unlink(o) for c in o.users_collection]; link(o, G); _ground(o, None, Hh, 1.1); bpy.context.view_layer.update(); W_ = o.matrix_world
         hands = _hands(f)

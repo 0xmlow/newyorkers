@@ -10,6 +10,8 @@ from mathutils import Vector, Matrix
 HERE = os.path.dirname(os.path.abspath(__file__)); DESK = os.path.dirname(os.path.dirname(HERE))
 RIG = os.path.join(DESK, 'UPGRADE ALL ROOMS 2026-10-28', 'rig', 'out')
 D = math.pi / 180
+TEAR = float(os.environ.get('CAST_TEAR', '2.0')); TORN, AREA = {}, {}
+HEAD_S = float(os.environ.get('CAST_HEAD_S', '0.7'))
 FACE = {'blindwoman': -90 * D, 'hustler': -90 * D, 'lensman': 90 * D, 'tough': 90 * D, 'sally': 90 * D}   # rigcast.js
 SKIP = {'blindwoman', 'prince', 'clerk', 'felix', 'robber', 'lensman', 'actress', 'gown', 'folksinger', 'sally', 'maitre'}
 NAMES = sorted(f[:-4] for f in os.listdir(RIG) if f.endswith('.glb') and not f.endswith('_lite.glb') and f[:-4] not in SKIP)
@@ -64,9 +66,39 @@ for name in NAMES:
             if P.get('yaw') and 'neck' in arm.pose.bones:
                 bpy.context.view_layer.update(); pb = arm.pose.bones['neck']; ax = (arm.matrix_world.inverted().to_3x3() @ Vector((0, 0, 1))).normalized(); h0 = pb.head.copy()
                 pb.matrix = Matrix.Translation(h0) @ Matrix.Rotation(P['yaw'], 4, ax) @ Matrix.Translation(-h0) @ pb.matrix
+        # Astra people pass (2026-11-27): the flower swallowed the person; the head bone scaled about the neck so the
+        # flower is about shoulder width (HEAD_S of the rigged size), the eye still reads
+        if arm and 'head' in arm.pose.bones: arm.pose.bones['head'].scale = (HEAD_S,) * 3
         bpy.context.view_layer.update(); dg = bpy.context.evaluated_depsgraph_get(); parts = []
         for m in meshes:
-            ev = m.evaluated_get(dg); me = bpy.data.meshes.new_from_object(ev, depsgraph=dg); me.transform(m.matrix_world); parts.append(me)
+            ev = m.evaluated_get(dg); me = bpy.data.meshes.new_from_object(ev, depsgraph=dg)
+            # Astra people pass: torn cloth. Faces whose edges stretched past TEAR x their bind length are the shards
+            # (coats and skirts weighted to the wrong bone); delete them rather than ship them
+            if len(me.vertices) == len(m.data.vertices):
+                import numpy as _np
+                n_ = len(me.vertices); P_ = _np.zeros(n_ * 3); R_ = _np.zeros(n_ * 3); me.vertices.foreach_get('co', P_); m.data.vertices.foreach_get('co', R_)
+                P_ = P_.reshape(-1, 3); R_ = R_.reshape(-1, 3); E_ = _np.zeros(len(me.edges) * 2, int); me.edges.foreach_get('vertices', E_); E_ = E_.reshape(-1, 2)
+                st = _np.linalg.norm(P_[E_[:, 0]] - P_[E_[:, 1]], axis=1) / (_np.linalg.norm(R_[E_[:, 0]] - R_[E_[:, 1]], axis=1) + 1e-6)
+                bad = set(map(int, _np.nonzero(st > TEAR)[0]))
+                if bad:
+                    import bmesh as _bm
+                    b_ = _bm.new(); b_.from_mesh(me); b_.edges.ensure_lookup_table(); bf = {f for i in bad for f in b_.edges[i].link_faces}
+                    TORN[f'{name}_{pname}'] = TORN.get(f'{name}_{pname}', 0) + len(bf)
+                    edge_v = {v for f in bf for v in f.verts}; _bm.ops.delete(b_, geom=list(bf), context='FACES_ONLY')
+                    # then the islands the cut left floating: small pieces that touched a deleted face
+                    seen, nf = set(), len(b_.faces)
+                    for f0 in list(b_.faces):
+                        if f0 in seen: continue
+                        comp, stack = [], [f0]; seen.add(f0)
+                        while stack:
+                            f = stack.pop(); comp.append(f)
+                            for e in f.edges:
+                                for g in e.link_faces:
+                                    if g not in seen: seen.add(g); stack.append(g)
+                        if len(comp) < 0.004 * nf and len(comp) < 60 and any(v in edge_v for f in comp for v in f.verts): _bm.ops.delete(b_, geom=comp, context='FACES')
+                    _bm.ops.delete(b_, geom=[v for v in b_.verts if not v.link_faces], context='VERTS'); b_.to_mesh(me); b_.free()
+                AREA[f'{name}_{pname}'] = AREA.get(f'{name}_{pname}', 0) + len(me.polygons)
+            me.transform(m.matrix_world); parts.append(me)
         objs = []
         for me in parts: o = bpy.data.objects.new('tmp', me); sc.collection.objects.link(o); objs.append(o)
         bpy.ops.object.select_all(action='DESELECT')
@@ -74,15 +106,18 @@ for name in NAMES:
         bpy.context.view_layer.objects.active = objs[0]
         if len(objs) > 1: bpy.ops.object.join()
         o = bpy.context.view_layer.objects.active; o.name = f'cast_{name}_{pname}'
+        hp = Matrix.Rotation(rz, 3, 'Z') @ (arm.matrix_world @ arm.pose.bones['head'].head) if arm and 'head' in arm.pose.bones else None
         o.data.transform(Matrix.Rotation(rz, 4, 'Z'))
         vs = [v.co for v in o.data.vertices]; mn = Vector((min(v.x for v in vs), min(v.y for v in vs), min(v.z for v in vs))); mx = Vector((max(v.x for v in vs), max(v.y for v in vs), max(v.z for v in vs)))
         seated = pname.startswith('sit')
         if seated and arm:
             hip = (arm.matrix_world @ arm.pose.bones['thigh_L'].head + arm.matrix_world @ arm.pose.bones['thigh_R'].head) / 2
             hip = Matrix.Rotation(rz, 3, 'Z') @ hip
-            o.data.transform(Matrix.Translation(Vector((-hip.x, 0.05 - hip.y, 0.55 - hip.z))))
+            T = Vector((-hip.x, 0.05 - hip.y, 0.55 - hip.z))
         else:
-            o.data.transform(Matrix.Translation(Vector((-(mn.x + mx.x) / 2, -(mn.y + mx.y) / 2, -mn.z))))
+            T = Vector((-(mn.x + mx.x) / 2, -(mn.y + mx.y) / 2, -mn.z))
+        o.data.transform(Matrix.Translation(T))
+        if hp is not None: o['headpt'] = list(hp + T)   # where the flower meets the neck (the head bone's root)
         o.data.shade_smooth(); o.location = (0, 0, 0)
         for c in o.users_collection: c.objects.unlink(o)
         out.objects.link(o); o['seated'] = seated; o['height'] = mx.z - mn.z
@@ -93,6 +128,9 @@ for name in NAMES:
     for a in acts: bpy.data.actions.remove(a)
     print('baked', name)
 bpy.ops.outliner.orphans_purge(do_recursive=True)
+import json
+json.dump({k: [TORN.get(k, 0), AREA[k]] for k in AREA}, open(os.path.join(HERE, 'work', 'cast_torn.json'), 'w'), indent=0)
+for k in sorted(AREA): print('TORN', k, TORN.get(k, 0), AREA[k], round(100 * TORN.get(k, 0) / max(1, AREA[k] + TORN.get(k, 0)), 1))
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(HERE, 'work', 'cast.blend'))
 if 'lineup' in sys.argv:
     for o in out.objects: o.hide_render = True

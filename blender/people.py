@@ -29,11 +29,17 @@ def normals(v, lens, flat):
     for k in range(3): np.add.at(nrm, t[:, k], fn)
     return nrm / (np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-9)
 def smooth(v, E, mask, it):
-    deg = np.bincount(E[:, 0], minlength=len(v)).astype(float)[:, None]
-    for _ in range(it):
-        s = np.zeros_like(v); np.add.at(s, E[:, 0], v[E[:, 1]]); avg = s / np.maximum(deg, 1)
-        v = v + (avg - v) * (0.5 * mask[:, None])
+    # people pass: sparse, and the iterations scaled by the density (the sculpted level has edges a quarter as long, so
+    # the same diffusion distance needs 16x the steps)
+    import scipy.sparse as sp
+    n = len(v); key = (n, len(E))
+    if key not in _A:
+        A = sp.csr_matrix((np.ones(len(E)), (E[:, 0], E[:, 1])), shape=(n, n)); A.data[:] = 1
+        deg = np.asarray(A.sum(1)).ravel(); _A[key] = sp.diags(1 / np.maximum(deg, 1)) @ A
+    A = _A[key]; w = (0.5 * mask)[:, None]; it = int(round(it * DENS))
+    for _ in range(it): v = v + (A @ v - v) * w
     return v
+_A = {}; DENS = 1.0
 
 def regions(v, j):
     x, y, z = v[:, 0], v[:, 1], v[:, 2]; ax = np.abs(x)
@@ -75,8 +81,8 @@ POSES = {
     'dribble':   dict(hip=(-0.55, 0.15), knee=(0.85, 0.7), shy=(0.25, 0.15), shx=(-0.6, -0.55), el=(-0.6, -0.9), lean=0.35),
 }
 
-def pose(v, j, R, P):
-    v = v.copy(); x, z = v[:, 0], v[:, 2]
+def pose(v, j, R, P, rest=None):
+    v = v.copy(); src = v if rest is None else rest; x, z = src[:, 0].copy(), src[:, 2].copy()
     for side, sgn in ((0, 1), (1, -1)):
         sel = (np.sign(x) == sgn) | (np.abs(x) < 1e-6)
         H, K = np.array(j['hip']) * [sgn, 1, 1], np.array(j['knee']) * [sgn, 1, 1]
@@ -87,10 +93,10 @@ def pose(v, j, R, P):
         v = rot(v, wk, rx(P['knee'][side]), K); v = rot(v, wl, rx(P['hip'][side]), H)
         if 'ankle' in P: v = rot(v, R['leg'] * sel * ss(0.1, 0.06, z), rx(P['ankle']), np.array(j['ankle']) * [sgn, 1, 1])
         # the arm: elbow first, then the shoulder (in toward the body about y, then forward about x)
-        wa = R['arm'] * sel * ss(0.0, 0.1, R['t']); we = R['arm'] * sel * ss(-0.03, 0.04, R['te'])
+        wa = R.get('armw', R['arm']) * sel * ss(-0.08, 0.1, R['t']); we = R['arm'] * sel * ss(-0.03, 0.04, R['te'])
         v = rot(v, we, rx(P['el'][side]), El); v = rot(v, wa, rx(P['shx'][side]) @ ry(sgn * P['shy'][side]), Sh)
     # the torso leans from the waist, arms and head with it; the head turns a little
-    wt = np.where(R['arm'], 1.0, ss(0.92, 1.12, z))
+    aw = R.get('armw', R['arm'].astype(float)); wt = aw + (1 - aw) * ss(0.92, 1.12, z)
     if P.get('twist'): v = rot(v, wt, rz(P['twist']), (0, 0, 0.98))
     v = rot(v, wt, rx(-P['lean']), (0, 0, 0.98))
     if P.get('head'): v = rot(v, ss(j['neck'] - 0.03, j['neck'] + 0.05, z) * (~R['arm']), rx(-P['head']), (0, 0, j['neck']))
@@ -99,9 +105,10 @@ def pose(v, j, R, P):
 DRESS = {  # sleeves: 'long' covers to the wrist, 'short' to mid upper arm, 'none' a vest; legs: 'long' or 'shorts'
     'winter': dict(sleeve='long', legs='long', smooth_top=30, push=0.016),
     'tee': dict(sleeve='short', legs='long', smooth_top=12, push=0.008),
-    'jersey': dict(sleeve='none', legs='shorts', smooth_top=14, push=0.02),
-    'hockey': dict(sleeve='long', legs='shorts', smooth_top=24, push=0.03),
+    'jersey': dict(sleeve='none', legs='shorts', smooth_top=14, push=0.012),
+    'hockey': dict(sleeve='long', legs='shorts', smooth_top=24, push=0.028),
     'suit': dict(sleeve='long', legs='long', smooth_top=24, push=0.012),
+    'trunks': dict(sleeve='none', legs='shorts', smooth_top=14, push=0.016, bare=True),   # boxing: no top, loose satin trunks
 }
 def dress(v, j, R, D):
     z = v[:, 2]; n = len(v); part = np.zeros(n, int)
@@ -119,6 +126,7 @@ def dress(v, j, R, D):
         E_ = D['_E']; top = part == 1; nb = np.zeros(n, bool); np.logical_or.at(nb, E_[:, 0], (part[E_[:, 1]] == 0)); part[top & nb] = 7
         bot = part == 2; nb2 = np.zeros(n, bool); np.logical_or.at(nb2, E_[:, 0], (part[E_[:, 1]] == 0)); part[bot & nb2] = 8
         lx = np.abs(j['knee'][0]) ; part[bot & (np.abs(v[:, 0]) > np.abs(j['hip'][0]) + 0.075) & (v[:, 1] > -0.03) & (v[:, 1] < 0.04)] = 8
+    if D.get('bare'): part[(part == 1) | (part == 7)] = 0; part[(~R['arm']) & (z > j['crotch'] - 0.1) & (z < j['hip'][2] + 0.11) & (part != 2)] = 8   # trunks ride to the navel, a waistband
     part[(part == 3) & (z < 0.016)] = 9
     head = z > j['neck'] + 0.07; hair = head & ((v[:, 1] > -0.02) | (z > j['H'] - 0.07))
     part[hair] = 4
@@ -129,27 +137,65 @@ def bake():
     plan = [('sit', 'winter'), ('sit', 'tee'), ('sit_hands', 'winter'), ('sit_phone', 'winter'), ('sit_cheer', 'tee'), ('sit_lean', 'winter'), ('sit_hands', 'tee'), ('sit_cheer', 'winter'),
             ('stand', 'suit'), ('stand_cheer', 'winter'), ('sit', 'suit'),
             ('ready', 'jersey'), ('gather', 'jersey'), ('contest', 'jersey'), ('closeout', 'jersey'), ('boxout', 'jersey'), ('cut', 'jersey'), ('rebound', 'jersey'), ('run', 'jersey'), ('run2', 'jersey'), ('shoot', 'jersey'), ('defend', 'jersey'), ('dribble', 'jersey'), ('stand', 'jersey'), ('sit', 'jersey'),
-            ('skate', 'hockey'), ('skate2', 'hockey'), ('hready', 'hockey'), ('guard', 'jersey'), ('jab', 'jersey')]
+            ('skate', 'hockey'), ('skate2', 'hockey'), ('hready', 'hockey'), ('guard', 'jersey'), ('jab', 'jersey'), ('guard', 'trunks'), ('jab', 'trunks')]
     for body in ('male_realistic', 'female_realistic'):
         v0, lens, flat = load(body); j = J[body]; R = regions(v0, j); E = adjacency(len(v0), lens, flat)
+        global DENS; DENS = (len(v0) / 10582) ** 1.0   # level 2 is 16x the verts: 16x the smoothing steps
+        # the region masks are cut by position; on the sculpted level a few stray verts land on the wrong side and stretch into
+        # half metre spikes when the arm swings. A majority vote over the neighbours cleans them.
+        for k in ('arm', 'leg'): R[k] = smooth(R[k].astype(float)[:, None], E, np.ones(len(v0)), 1)[:, 0] > 0.5
+        R['armw'] = np.clip(smooth(R['arm'].astype(float)[:, None], E, np.ones(len(v0)), 5)[:, 0] * 1.6 - 0.3, 0, 1)   # soft armpit: the skin stretches, never spikes
         for pname, dname in plan:
-            if body == 'female_realistic' and dname in ('jersey', 'hockey'): continue
-            D = dict(DRESS[dname], _E=E); part = dress(v0, j, R, D)
-            # clothes: smooth the anatomy away in the rest pose, then push out by the cloth's thickness
-            v = v0.copy(); cl = (part == 1) | (part == 2); v = smooth(v, E, (part == 1).astype(float), D['smooth_top']); v = smooth(v, E, (part == 2).astype(float), 8)
-            v = smooth(v, E, (part == 3).astype(float), 20)
-            nr = normals(v, lens, flat); v = v + nr * (cl * D['push'] + (part == 7) * (D['push'] + 0.008) + (part == 8) * (D['push'] + 0.004) + (part == 3) * 0.016 + (part == 9) * 0.02 + (part == 5) * 0.004 + (part == 4) * 0.006)[:, None]
-            # the head comes off: a NEW YORKERS flower head goes on in Blender at the neck, so keep where the neck went
-            neck = (np.abs(v0[:, 2] - (j['neck'] + 0.0)) < 0.025) & ~R['arm']
-            v = pose(v, j, R, POSES[pname]); neck_p = v[neck].mean(0)
-            cut = v0[:, 2] > j['neck'] + 0.035; keep_f = []; i0 = 0; nl, nf = [], []
+            if body == 'female_realistic' and dname in ('jersey', 'hockey', 'trunks'): continue
+            D = dict(DRESS[dname], _E=E); part = dress(v0, j, R, D); z0 = v0[:, 2]
+            # people pass (Astra): the clothes are their own shell over the sculpted body, not paint on it. The body keeps its
+            # anatomy (pulled in 3 mm under the cloth so it never pokes through); the shell is smoothed, pushed out by the
+            # cloth's ease, flares at the hems, and gets a thickness (Solidify) in Blender so every hem casts a line.
+            G = (part == 1) | (part == 2) | (part == 7) | (part == 8) | ((part == 5) & (dname == 'hockey'))
+            GT = (part == 1) | (part == 7); GB = G & ~GT   # top and bottom are separate shells: the jersey hangs over the shorts
+            def gface(f): return (GT[f].all() or GB[f].all())
+            nr0 = normals(v0, lens, flat)
+            vb = v0 - nr0 * (G * 0.003)[:, None]
+            vb = vb + nr0 * ((part == 3) * 0.012 + (part == 9) * 0.016 + (part == 4) * 0.006)[:, None]
+            vg = smooth(v0.copy(), E, ((part == 1) | (part == 7)).astype(float), D['smooth_top']); vg = smooth(vg, E, ((part == 2) | (part == 8) | (part == 5)).astype(float), 8)
+            nr = normals(vg, lens, flat); top = (part == 1) | (part == 7); bot = (part == 2) | (part == 8)
+            ease = top * (D['push'] + 0.006) + bot * D['push'] + (part == 8) * 0.002
+            if dname in ('jersey', 'trunks'):   # loose: the jersey hangs off the chest, the shorts flare to a wide hem at the knee
+                ease = ease + top * 0.014 * ss(j['crotch'] + 0.3, j['crotch'] + 0.02, z0) + bot * (0.012 + 0.04 * ss(j['crotch'] - 0.05, j['knee'][2] + 0.08, z0))
+            if dname == 'hockey':   # shoulder pads and elbow pads under the sweater, breezers, shin guards under the socks
+                ease = ease + top * 0.035 * ss(j['sh'][2] - 0.22, j['sh'][2] - 0.04, z0) + bot * (0.03 + 0.015 * ss(j['crotch'], j['knee'][2] + 0.1, z0)) + (part == 5) * 0.018 * ss(0.12, 0.3, z0)
+            vg = vg + nr * ease[:, None]
+            # the hems: the cloth region is cut vertex by vertex, so its edge is a staircase that the ease turns into a frill.
+            # Smooth every open edge of the shell along itself (a 1D Laplacian), then blend the next rings in.
+            gfl = []; i1 = 0
+            for L in lens:
+                f = flat[i1:i1 + L]; i1 += L
+                if gface(f) and not (z0[f] > j['neck'] + 0.035).any(): gfl.append(f)
+            gfa = np.array(gfl); ed = np.sort(np.stack([gfa, np.roll(gfa, -1, 1)], 2).reshape(-1, 2), 1)
+            ue, cnt = np.unique(ed, axis=0, return_counts=True); be = ue[cnt == 1]
+            if len(be):
+                for _ in range(int(6 * DENS ** 0.5) * 4):
+                    acc = np.zeros_like(vg); deg = np.zeros(len(vg))
+                    np.add.at(acc, be[:, 0], vg[be[:, 1]]); np.add.at(acc, be[:, 1], vg[be[:, 0]]); np.add.at(deg, be[:, 0], 1); np.add.at(deg, be[:, 1], 1)
+                    m_ = deg > 0; vg[m_] += (acc[m_] / deg[m_, None] - vg[m_]) * 0.5
+                near = np.zeros(len(vg)); near[be.ravel()] = 1
+                near = np.clip(smooth(near[:, None], E, G.astype(float), 0.5)[:, 0] * 3, 0, 1) * G
+                vg = smooth(vg, E, near * 0.8, 0.5)
+            neck = (np.abs(z0 - j['neck']) < 0.025) & ~R['arm']
+            vb = pose(vb, j, R, POSES[pname], rest=v0); vg = pose(vg, j, R, POSES[pname], rest=v0); neck_p = vb[neck].mean(0)
+            cut = z0 > j['neck'] + 0.035; nl, nf, gl, gf = [], [], [], []; i0 = 0
             for L in lens:
                 f = flat[i0:i0 + L]; i0 += L
-                if not cut[f].any(): nl.append(L); nf.extend(f)
-            lens_o, flat_o = np.array(nl), np.array(nf)
-            if pname.startswith('sit'): v[:, 2] -= 0.0      # seat at the origin height is set in Blender
-            else: dz = v[:, 2].min(); v[:, 2] -= dz; neck_p = neck_p - [0, 0, dz]
-            name = f'pose_{body[0]}_{pname}_{dname}'; np.savez(os.path.join(W, name + '.npz'), v=v.astype(np.float32), rest=v0.astype(np.float32), part=part.astype(np.int8), lens=lens_o, flat=flat_o, neck=neck_p.astype(np.float32) - [0, 0, 0 if not pname.startswith('sit') else 0]); out.append(name)
+                if cut[f].any(): continue
+                nl.append(L); nf.extend(f)
+                if gface(f): gl.append(L); gf.extend(f)
+            gf = np.array(gf); used, inv = np.unique(gf, return_inverse=True)
+            if not pname.startswith('sit'):
+                dz = vb[:, 2].min(); vb[:, 2] -= dz; vg[:, 2] -= dz; neck_p = neck_p - [0, 0, dz]
+            name = f'pose_{body[0]}_{pname}_{dname}'
+            np.savez(os.path.join(W, name + '.npz'), v=vb.astype(np.float32), part=part.astype(np.int8), lens=np.array(nl), flat=np.array(nf), neck=neck_p.astype(np.float32), rest=v0.astype(np.float32), g_rest=v0[used].astype(np.float32),
+                     g_v=vg[used].astype(np.float32), g_part=part[used].astype(np.int8), g_lens=np.array(gl), g_flat=inv.astype(np.int64))
+            out.append(name); print(name, flush=True)
     print(len(out), 'poses'); return out
 
 if __name__ == '__main__': bake()
