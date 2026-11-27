@@ -54,7 +54,7 @@ def _beam(G, a, b, col, half=math.radians(2.4), L=26.0):
         tc = nt.nodes.new('ShaderNodeTexCoord'); sp = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Generated'], sp.inputs[0])
         fz = nt.nodes.new('ShaderNodeMath'); fz.operation = 'POWER'; fz.inputs[1].default_value = 1.4; nt.links.new(sp.outputs['Z'], fz.inputs[0])
         m1 = nt.nodes.new('ShaderNodeMath'); m1.operation = 'MULTIPLY'; nt.links.new(sq.outputs[0], m1.inputs[0]); nt.links.new(fz.outputs[0], m1.inputs[1])
-        st = nt.nodes.new('ShaderNodeMath'); st.operation = 'MULTIPLY'; st.inputs[1].default_value = 0.8; nt.links.new(m1.outputs[0], st.inputs[0]); nt.links.new(st.outputs[0], em.inputs['Strength'])
+        st = nt.nodes.new('ShaderNodeMath'); st.operation = 'MULTIPLY'; st.inputs[1].default_value = 0.5; nt.links.new(m1.outputs[0], st.inputs[0]); nt.links.new(st.outputs[0], em.inputs['Strength'])
         ad = nt.nodes.new('ShaderNodeAddShader'); nt.links.new(tr.outputs[0], ad.inputs[0]); nt.links.new(em.outputs[0], ad.inputs[1]); nt.links.new(ad.outputs[0], nt.nodes['Material Output'].inputs['Surface'])
     o.data.materials.append(m); o.visible_shadow = False; o.visible_diffuse = False; o.visible_glossy = False
     return o
@@ -181,13 +181,16 @@ def hockey(G, rng, scale_lights):
     stickm = node_mat('stick', (0.06, 0.06, 0.07), 0.5); tape = node_mat('tape', (0.9, 0.9, 0.88), 0.9); steel_r = node_mat('runner', (0.8, 0.82, 0.85), 0.2, 1.0)
     gear = {id(HOMEH): node_mat('gear_home', (0.07, 0.18, 0.55), 0.55), id(AWAYH): node_mat('gear_away', (0.86, 0.85, 0.82), 0.55)}
     NET = (27.13, 0.0)
-    plays = [('skate', 21.0, 5.6, HOMEH, None), ('hready', 25.4, -1.3, HOMEH, NET), ('hready', 16.6, 8.6, HOMEH, None), ('hready', 16.8, -8.4, HOMEH, None), ('skate2', 21.8, -6.2, HOMEH, None),
-             ('hready', 23.3, 4.0, AWAYH, None), ('hready', 25.9, 0.4, AWAYH, None), ('skate2', 19.2, -5.8, AWAYH, None), ('hready', 18.3, 6.9, AWAYH, None), ('skate', 18.6, -1.6, AWAYH, None)]
+    # Astra round 5: one readable contest 2.5 m off the crease, the carrier and a defender blade to blade, lanes 2 m apart
+    plays = [('skate', 21.2, 1.9, HOMEH, None), ('hready', 24.9, -2.6, HOMEH, NET), ('hready', 16.4, 8.4, HOMEH, None), ('hready', 16.6, -8.2, HOMEH, None), ('skate2', 20.6, -6.4, HOMEH, None),
+             ('hready', 0, 0, AWAYH, 'CONTEST'), ('hready', 23.9, -4.4, AWAYH, None), ('skate2', 18.6, -4.6, AWAYH, None), ('hready', 18.2, 6.4, AWAYH, None), ('skate', 19.0, 3.8, AWAYH, None)]
     puck = None
     for i, (pz, x, y, cols, look) in enumerate(plays):
         f = os.path.join(WK, f'pose_m_{pz}_hockey.npz'); nm = f'hk{i}'
+        if look == 'CONTEST':   # between the puck and the net, 1.15 m off the puck, facing it
+            dn = (Vector((*NET, 0)) - Vector((*puck, 0))).normalized(); x, y = puck[0] + dn.x * 1.15, puck[1] + dn.y * 1.15 - 0.3; look = puck
         tgt = look or (puck[:2] if puck else (NET[0] - 2, 1.0))
-        if i == 0: yaw = face(x, y, NET[0], NET[1] + 2.5)
+        if i == 0: yaw = face(x, y, NET[0] - 1.0, NET[1] + 0.6)
         else: yaw = face(x, y, *tgt)
         o = place(f'pose_m_{pz}_hockey', x, y, yaw, dict(cols), z=0, scale=1.12, name=nm)
         if not o: continue
@@ -222,9 +225,9 @@ def hockey(G, rng, scale_lights):
     puck = puck or (21.5, 4.8); pk = cyl('puck', 0.038, 0.025, (puck[0], puck[1], 0.0185), node_mat('puck', (0.01, 0.01, 0.01), 0.4), G, verts=24)
     pk.keyframe_insert('location', frame=1); pk.location.x += 30 / 24; pk.keyframe_insert('location', frame=2); bpy.context.scene.frame_set(1)
     # ice is twice as bright as maple: the rig comes down, the key too
-    scale_lights(('side', 'end'), 0.62); scale_lights(('court_key',), 0.5)
-    cams = {'wide': ((6, -24.5, 9.5), (21, 1, 0.8), 40), 'glass': ((14.8, -12.4, 1.2), (21.5, 2.0, 0.9), 35), 'net': ((27.75, 1.25, 0.45), (20.5, 3.6, 0.85), 26), 'upper': ((-22, -38.5, 18.5), (5, 1, 1.0), 32)}
-    dof = {'glass': (21, 4.5, 1.0, 5.6), 'net': (21.0, 5.2, 0.8, 5.6)}
+    scale_lights(('side', 'end'), 1.0); scale_lights(('court_key',), 0.5)
+    cams = {'wide': ((8.3, -8.0, 6.0), (22.6, 1.6, 0.8), 38), 'glass': ((14.8, -12.4, 1.2), (21.5, 2.0, 0.9), 35), 'net': ((27.75, 1.25, 0.45), (20.5, 3.6, 0.85), 26), 'upper': ((-22, -38.5, 18.5), (5, 1, 1.0), 32)}
+    dof = {'glass': (21, 2.5, 1.0, 5.6), 'net': (21.0, 2.2, 0.8, 5.6), 'wide': (22.6, 1.6, 0.8, 8.0)}
     return cams, dof
 
 # ------------------------------------------------------------------ concert
@@ -234,12 +237,12 @@ def concert(G, rng, scale_lights):
     box('deck_skirt', (0.03, 20, 1.6), (-15.98, 0, 0.8), node_mat('skirt', (0.01, 0.01, 0.012), 0.9), G)
     # the LED wall: his art at 6 mm pitch, two portrait IMAG screens either side
     art = os.path.join(ROOT, 'site', 'assets', 'ff', 'stage_led.webp')
-    wall = led(node_mat('stage_wall', img=art if os.path.exists(art) else TEXP('sb_long0.jpg'), img_emit=True, estr=3.0), 0.006)
+    wall = led(node_mat('stage_wall', img=art if os.path.exists(art) else TEXP('sb_long0.jpg'), img_emit=True, estr=1.5), 0.006)
     mesh_obj('stage_led', [(-29.8, 13, 1.9), (-29.8, -13, 1.9), (-29.8, -13, 16.5), (-29.8, 13, 16.5)], [(0, 1, 2, 3)], wall, G, uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
     arts = sorted(os.listdir(os.path.join(ROOT, 'site', 'assets', 'art')))
     for s in (-1, 1):
         im = os.path.join(ROOT, 'site', 'assets', 'art', arts[3 if s < 0 else 17])
-        mesh_obj('imag', [(-27, s * 15.2, 6), (-24, s * 17.6, 6), (-24, s * 17.6, 14), (-27, s * 15.2, 14)], [(0, 1, 2, 3)] if s > 0 else [(3, 2, 1, 0)], led(node_mat('imag' + str(s), img=im, img_emit=True, estr=2.6), 0.006), G,
+        mesh_obj('imag', [(-27, s * 15.2, 6), (-24, s * 17.6, 6), (-24, s * 17.6, 14), (-27, s * 15.2, 14)], [(0, 1, 2, 3)] if s > 0 else [(3, 2, 1, 0)], led(node_mat('imag' + str(s), img=im, img_emit=True, estr=1.4), 0.006), G,
                  uv=[(0, 0), (1, 0), (1, 1), (0, 1)] if s > 0 else [(1, 1), (0, 1), (0, 0), (1, 0)])
     # truss: three spans over the deck, a box truss of four chords and lacing
     tm = node_mat('truss_alu', (0.6, 0.62, 0.65), 0.35, 1.0)
@@ -257,13 +260,13 @@ def concert(G, rng, scale_lights):
             if narrow: _beam(G, Vector((x, y, 14.3)), Vector(tgt), cols[(k + i * 2) % 4])
             spot(f'mover{i}{k}', (x, y, 14.3), tgt, (160000 if narrow else 22000) * LP, 4.5 if narrow else 22, 0.15, cols[(k + i * 2) % 4], 0.05)
     for y in (-6, 6): spot(f'front{y}', (-6, y, 15), (-19.5, y * 0.55, 3.0), 4200 * LP, 26, 0.4, (1.0, 0.92, 0.85), 0.2)
-    spot('key_vox', (-4, -2, 13), (-17.4, 0, 3.3), 5200 * LP, 9, 0.35, (1.0, 0.93, 0.86), 0.12)
+    spot('key_vox', (-4, -2, 13), (-17.4, 0, 3.3), 10400 * LP, 9, 0.35, (1.0, 0.93, 0.86), 0.12)
     # the band (Astra round 4): vocalist downstage centre, guitar and bass either side, drums upstage on a riser, keys upstage left,
     # each with the instrument in front of them; six wedges, three mic stands, stairs, line arrays and subs
     stand_names = [n for n in crowd_files if n.endswith('_stand')]
     inst = node_mat('inst_body', (0.55, 0.06, 0.08), 0.25, coat=0.8); inst2 = node_mat('inst_body2', (0.92, 0.9, 0.84), 0.25, coat=0.8); chrome = node_mat('chrome', (0.9, 0.9, 0.92), 0.12, 1.0)
     drumshell = node_mat('drum_shell', (0.05, 0.12, 0.45), 0.3, coat=0.7); head_ = node_mat('drum_head', (0.92, 0.92, 0.88), 0.5); brass = node_mat('cymbal', (0.78, 0.6, 0.25), 0.25, 1.0)
-    band = [('vox', -17.4, 0.0, 1.8), ('gtr', -19.6, -4.0, 1.8), ('bass', -19.6, 4.0, 1.8), ('drums', -26.6, 0.0, 2.4), ('keys', -24.2, -6.2, 1.8)]
+    band = [('vox', -17.4, 0.0, 1.8), ('gtr', -17.9, -3.1, 1.8), ('bass', -17.9, 3.1, 1.8), ('drums', -20.7, 0.0, 2.4), ('keys', -20.2, -5.4, 1.8)]
     for k, (role, x, y, z) in enumerate(band):
         n = stand_names[(k * 5 + 2) % len(stand_names)]; o = bpy.data.objects.new(f'band_{role}', CAST[n].data); link(o, G)
         yaw = face(x, y, 10, y * 0.3) if role != 'drums' else face(x, y, 10, 0)
@@ -285,10 +288,10 @@ def concert(G, rng, scale_lights):
                 p_ = c0 + side * dx + fwd * (-0.15); cyl('tom', r_, 0.22, p_ + Vector((0, 0, h)), drumshell, G, verts=24); cyl('tom_head', r_ * 0.98, 0.005, p_ + Vector((0, 0, h + 0.112)), head_, G, verts=24)
             for dx, h, r_ in ((-0.8, 1.05, 0.25), (0.9, 1.15, 0.28), (0.2, 1.25, 0.22), (-0.55, 0.9, 0.18)):
                 p_ = c0 + side * dx; cyl('cymbal', r_, 0.004, p_ + Vector((0, 0, h)), brass, G, rot=(0.12, 0.05, 0), verts=32); cyl('cym_stand', 0.01, h, p_ + Vector((0, 0, h / 2)), chrome, G, verts=6)
-    box('drum_riser', (3, 4, 0.6), (-26.6, 0, 2.1), deckm, G, bevel=0.01)
-    for (x, y) in ((-17.0, 0.0), (-19.0, -3.6), (-19.0, 3.6)):
+    box('drum_riser', (3, 4, 0.6), (-21.2, 0, 2.1), deckm, G, bevel=0.01)
+    for (x, y) in ((-17.0, 0.0), (-17.5, -2.6), (-17.5, 2.6)):
         cyl('mic_stand', 0.012, 1.55, (x, y, 2.58), M['black_steel'], G, verts=8); cyl('mic', 0.022, 0.18, (x + 0.05, y, 3.38), M['black_steel'], G, rot=(0, -1.2, 0), verts=10); cyl('mic_base', 0.15, 0.02, (x, y, 1.81), M['black_steel'], G, verts=16)
-    for (x, y) in ((-16.5, -1.2), (-16.5, 1.2), (-18.2, -5.0), (-18.2, 5.0), (-23.0, -6.8), (-25.0, 2.2)):
+    for (x, y) in ((-16.4, -1.1), (-16.4, 1.1), (-16.6, -3.6), (-16.6, 3.6), (-19.4, -6.4), (-19.2, 2.4)):
         box('wedge', (0.4, 0.6, 0.3), (x, y, 1.95), M['black_steel'], G, rot=(0, -0.45, 0), bevel=0.02)
     for s_ in (-1, 1):
         for k in range(5): box('stair', (0.35, 1.4, 0.36 * (k + 1)), (-16.9 + (4 - k) * 0.35 - 2.6, s_ * 10.7, 0.18 * (k + 1)), deckm, G)
@@ -334,10 +337,10 @@ def concert(G, rng, scale_lights):
     sel = [(v.co.x, v.co.y, v.co.z + 1.35, 0) for v in cp if rng.random() < 0.033]
     po = points_obj('phones', [(x, y, z, 0, 0) for (x, y, z, _) in sel], G); gn_instancer(po, ph)
     # house lights down, the haze up for the beams
-    scale_lights(('side', 'end', 'court_key'), 0.0); scale_lights(('bowl',), 0.12); scale_lights(('svc',), 0.4)
+    scale_lights(('side', 'end', 'court_key'), 0.0); scale_lights(('bowl',), 0.06); scale_lights(('svc',), 0.4)
     hz = bpy.data.materials['haze'].node_tree.nodes['Principled Volume']; hz.inputs['Density'].default_value = 0.0011
-    cams = {'floor': ((10.6, -0.8, 3.3), (-17.4, 0, 3.6), 40), 'wide': ((18, -30, 16), (-20, 0, 5), 24), 'stage': ((-15.2, -9.5, 2.6), (-22, 0, 3.4), 32), 'bowl': ((38, -27, 17), (-22, 0, 5), 26)}
-    dof = {'stage': (-17.4, 0, 3.2, 4.0), 'floor': (-17.4, 0, 3.4, 5.6)}
+    cams = {'floor': ((10.6, 2.0, 2.8), (-17.4, 0, 3.4), 45), 'wide': ((18, -30, 16), (-20, 0, 5), 24), 'stage': ((-15.2, -9.5, 2.6), (-22, 0, 3.4), 32), 'bowl': ((38, -27, 17), (-22, 0, 5), 26)}
+    dof = {'stage': (-17.4, 0, 3.2, 4.0), 'floor': (-17.4, 0, 3.4, 4.0)}
     return cams, dof
 
 # ------------------------------------------------------------------ boxing
@@ -368,10 +371,10 @@ def boxing(G, rng, scale_lights):
     for k in range(3): box('steps', (0.9, 0.35, 0.3 * (k + 1)), (q + 0.6 + (2 - k) * 0.35, -q - 0.3, 0.15 * (k + 1)), M['dark'], G)
     # the fighters: a jab and a slip, red and blue gloves; the referee
     gr = node_mat('glove_r', (0.55, 0.03, 0.04), 0.35, coat=0.6); gb = node_mat('glove_b', (0.05, 0.16, 0.6), 0.35, coat=0.6); cuff = node_mat('glove_cuff', (0.92, 0.92, 0.9), 0.5)
-    for i, (pz, x, y, trunks, gm) in enumerate([('jab', -0.52, 0.2, '#173b99', gb), ('guard', 0.58, -0.2, '#14161c', gr)]):
+    for i, (pz, x, y, trunks, gm) in enumerate([('jab', -0.12, -0.575, '#173b99', gb), ('guard', 0.12, 0.575, '#14161c', gr)]):
         skin = SKINS[(i * 3 + 1) % 8]; boot = '#f0ede5' if i == 0 else '#0c0c0c'
         cols = dict(top=skin, bottom=trunks, shoe=boot, sock=boot, hair='#141010', trim=skin, stripe='#ffffff' if i == 0 else '#d8b574', skin=skin)
-        f = os.path.join(WK, f'pose_m_{pz}_jersey.npz'); other = (0.58, -0.2) if i == 0 else (-0.52, 0.2)
+        f = os.path.join(WK, f'pose_m_{pz}_jersey.npz'); other = (0.12, 0.575) if i == 0 else (-0.12, -0.575)
         o = place(f'pose_m_{pz}_jersey', x, y, face(x, y, *other), cols, z=Hh, scale=1.1, name=f'boxer{i}')
         if not o: continue
         [c.objects.unlink(o) for c in o.users_collection]; link(o, G); _ground(o, None, Hh, 1.1); bpy.context.view_layer.update(); W_ = o.matrix_world
@@ -382,7 +385,7 @@ def boxing(G, rng, scale_lights):
             dirv = (hw - ew).normalized(); gc = hw + dirv * 0.06
             _ellipsoid('glove', gc, (0.15, 0.14, 0.24), gm, G, rot=_along(ew, hw)); cy_ = cyl('cuff', 0.062, 0.1, hw - dirv * 0.07, cuff, G, verts=16); cy_.rotation_euler = _along(ew, hw)
     # the referee: off the attack line, a step back, watching
-    o = place('pose_m_stand_suit', 0.35, -2.25, face(0.35, -2.25, 0, 0), dict(REF, top='#eeeeee', skin=SKINS[5]), z=Hh, scale=1.02, name='boxref')
+    o = place('pose_m_stand_suit', -2.3, -1.85, face(-2.3, -1.85, 0, 0), dict(REF, top='#eeeeee', skin=SKINS[5]), z=Hh, scale=1.02, name='boxref')
     if o: [c.objects.unlink(o) for c in o.users_collection]; link(o, G); _ground(o, None, Hh, 1.02)
     # judges on three sides, the timekeeper, photographers under the apron
     for k, (x, y, yaw) in enumerate([(0.0, -4.9, 0.0), (4.9, 0.0, math.pi / 2), (-4.9, 0.0, -math.pi / 2), (2.2, -4.9, 0.0)]):
@@ -407,10 +410,10 @@ def boxing(G, rng, scale_lights):
         c_ = cyl('ring_truss', 0.15, 10.3, (a + b_) / 2, tm, G, verts=8); c_.rotation_euler = (b_ - a).to_track_quat('Z', 'Y').to_euler()
     for k in range(16):
         t = k / 16 * math.tau; x, y = 5 * math.cos(t) / max(abs(math.cos(t)), abs(math.sin(t))), 5 * math.sin(t) / max(abs(math.cos(t)), abs(math.sin(t)))
-        spot(f'ringlight{k}', (x, y, 9.3), (x * 0.08, y * 0.08, Hh), 950 * LP, 34, 0.25, (1.0, 0.95, 0.9), 0.12)
-    scale_lights(('side', 'end'), 0.12); scale_lights(('court_key',), 0.0); scale_lights(('bowl',), 0.35)
-    cams = {'ringside': ((-4.7, 0.7, 1.83), (0.05, 0.0, 2.35), 50), 'wide': ((2, -24.5, 9.5), (0, 0, 1.6), 32), 'overhead': ((0.01, 0.0, 11.2), (0, 0, 0), 28), 'corner': ((4.2, 3.9, 3.4), (-0.4, -0.2, 2.3), 24)}
-    dof = {'ringside': (0, 0, 2.5, 5.0), 'corner': (0, 0, 2.3, 5.6)}
+        spot(f'ringlight{k}', (x, y, 9.3), (x * 0.08, y * 0.08, Hh), 1340 * LP, 34, 0.25, (1.0, 0.95, 0.9), 0.12)
+    scale_lights(('side', 'end'), 0.12); scale_lights(('court_key',), 0.0); scale_lights(('bowl',), 0.18)
+    cams = {'ringside': ((0.9, -4.4, 1.83), (0.0, 0.0, 2.35), 50), 'wide': ((2, -24.5, 9.5), (0, 0, 1.6), 32), 'overhead': ((0.01, 0.0, 11.2), (0, 0, 0), 28), 'corner': ((4.5, 3.5, 3.52), (0.0, 0.0, 2.6), 45)}
+    dof = {'ringside': (0, 0, 2.5, 5.0), 'corner': (0.12, 0.575, 2.95, 5.6)}
     return cams, dof
 
 # ------------------------------------------------------------------ circus
@@ -433,8 +436,8 @@ def circus(G, rng, scale_lights):
     # the walker: on the cable, lead foot on it, a 4.6 m balancing pole across the body
     stand_names = [n_ for n_ in crowd_files if n_.endswith('_stand')]
     wx = -1.6; wz = WZ - 0.1 * (1 - (wx / HX) ** 2)
-    o = bpy.data.objects.new('walker', CAST[stand_names[4 % len(stand_names)]].data); link(o, G); o.location = (wx, 0, wz + 0.02); o.rotation_euler = (0, 0, math.pi / 2); o.scale = (0.95,) * 3
-    pole_ = cyl('balance_pole', 0.018, 4.6, (wx + 0.18, 0, wz + 1.05), node_mat('pole_w', (0.85, 0.85, 0.82), 0.4), G, rot=(math.pi / 2, 0, 0), verts=10)
+    o = bpy.data.objects.new('walker', CAST[stand_names[4 % len(stand_names)]].data); link(o, G); o.location = (wx, 0, wz + 0.02); o.rotation_euler = (0, 0, math.pi / 2 - math.radians(20)); o.scale = (0.95,) * 3
+    pole_ = cyl('balance_pole', 0.018, 4.6, (wx + 0.18, 0, wz + 1.05), node_mat('pole_w', (0.85, 0.85, 0.82), 0.4), G, rot=(math.pi / 2 + math.radians(8), 0, 0), verts=10)
     for dy in (-2.3, 2.3): cyl('pole_tip', 0.04, 0.12, (wx + 0.18, dy, wz + 1.05 - abs(dy) * 0.04), M['black_steel'], G, rot=(math.pi / 2, 0, 0), verts=10)
     # the net: 4 m under the wire, 20 x 7 m, 0.15 m mesh, a perimeter rope, sag 0.6 m, on four uprights
     NZ = WZ - 4.0
@@ -448,19 +451,19 @@ def circus(G, rng, scale_lights):
     for (x, y) in pts_[:4]: cyl('net_post', 0.05, NZ, (x * 1.02, y * 1.06, NZ / 2), M['steel'], G, verts=10)
     # the ring acts: a performer on a rolling globe, one on a pedestal with a hoop, one on a rola bola
     acts = node_mat('act_red', (0.75, 0.08, 0.35), 0.35, coat=0.6); gold = node_mat('act_gold', (0.85, 0.65, 0.25), 0.25, 1.0)
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.38, segments=48, ring_count=24, location=(-2.6, 1.6, 0.38)); gl = bpy.context.active_object; gl.data.shade_smooth(); gl.data.materials.append(acts); [c.objects.unlink(gl) for c in gl.users_collection]; link(gl, G)
-    cyl('pedestal', 0.5, 1.2, (0.4, -0.6, 0.6), acts, G, verts=40); cyl('ped_top', 0.52, 0.04, (0.4, -0.6, 1.21), gold, G, verts=40)
-    bpy.ops.mesh.primitive_torus_add(major_radius=0.45, minor_radius=0.02, location=(0.4, -0.6, 2.6)); hp = bpy.context.active_object; hp.rotation_euler = (math.pi / 2, 0, 0.6); hp.data.materials.append(gold); [c.objects.unlink(hp) for c in hp.users_collection]; link(hp, G)
-    cyl('rola_roller', 0.12, 0.6, (2.9, 1.4, 0.12), gold, G, rot=(math.pi / 2, 0, 0.3), verts=24); box('rola_board', (0.7, 0.25, 0.03), (2.9, 1.4, 0.255), acts, G, rot=(0.0, 0.08, 0.3))
-    for k, (x, y, z) in enumerate([(-2.6, 1.6, 0.76), (0.4, -0.6, 1.23), (2.9, 1.4, 0.27)]):
-        o = bpy.data.objects.new(f'perf{k}', CAST[stand_names[(k * 7 + 1) % len(stand_names)]].data); link(o, G); o.location = (x, y, z); o.rotation_euler = (0, 0, face(x, y, 0, -20) + (0.25 * (k - 1)))
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.38, segments=48, ring_count=24, location=(-2.5, -1.0, 0.38)); gl = bpy.context.active_object; gl.data.shade_smooth(); gl.data.materials.append(acts); [c.objects.unlink(gl) for c in gl.users_collection]; link(gl, G)
+    cyl('pedestal', 0.5, 1.2, (0.0, 1.5, 0.6), acts, G, verts=40); cyl('ped_top', 0.52, 0.04, (0.0, 1.5, 1.21), gold, G, verts=40)
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.45, minor_radius=0.02, location=(0.0, 1.5, 2.6)); hp = bpy.context.active_object; hp.rotation_euler = (math.pi / 2, 0, math.atan2(6, 12) + math.radians(20)); hp.data.materials.append(gold); [c.objects.unlink(hp) for c in hp.users_collection]; link(hp, G)
+    cyl('rola_roller', 0.12, 0.6, (2.5, -0.5, 0.12), gold, G, rot=(math.pi / 2, 0, 0.3), verts=24); box('rola_board', (0.7, 0.25, 0.03), (2.5, -0.5, 0.255), acts, G, rot=(0.0, 0.08, 0.3))
+    for k, (x, y, z) in enumerate([(-2.5, -1.0, 0.76), (0.0, 1.5, 1.23), (2.5, -0.5, 0.27)]):
+        o = bpy.data.objects.new(f'perf{k}', CAST[stand_names[(k * 7 + 1) % len(stand_names)]].data); link(o, G); o.location = (x, y, z); o.rotation_euler = (0, 0, face(x, y, 6, -12) + (0.2 * (k - 1)))
     # light: warm follow spots on the ring and the wire, the rig and bowl down
     for k in range(4):   # four warm ring spots at 11 m, 40 deg
-        a = (k + 0.5) / 4 * math.tau; spot(f'circ{k}', (9 * math.cos(a), 9 * math.sin(a), 11), (0, 0, 0.4), 2600 * LP, 40, 0.35, (1.0, 0.88, 0.72), 0.25)
+        a = (k + 0.5) / 4 * math.tau; spot(f'circ{k}', (9 * math.cos(a), 9 * math.sin(a), 11), (0, 0, 0.4), 2600 * LP, 30, 0.4, (1.0, 0.88, 0.72), 0.25)
     for k in range(6):   # follow spots from the bowl on the three acts
-        a = k / 6 * math.tau; t = [(-2.6, 1.6), (0.4, -0.6), (2.9, 1.4)][k % 3]; spot(f'circf{k}', (22 * math.cos(a), 15 * math.sin(a), 22), (t[0], t[1], 1.4), 16000 * LP, 4, 0.4, (1.0, 0.92, 0.82), 0.1)
-    spot('wire_key', (-6, -12, 7.5), (-1.6, 0, 9.4), 2200 * LP, 14, 0.3, (1.0, 0.95, 0.9), 0.1); spot('wire_rim', (3, 10, 12), (-1.6, 0, 9.4), 900 * LP, 14, 0.3, (0.85, 0.9, 1.0), 0.1)
-    scale_lights(('side', 'end', 'court_key'), 0.08); scale_lights(('bowl',), 0.3)
-    cams = {'ring': ((-6.5, -9.5, 2.4), (0.2, 0.3, 1.5), 35), 'wire': ((4.5, -9.5, 7.4), (-2.6, 0, 9.0), 55), 'wide': ((2, -30, 14), (0, 0, 3), 26)}
-    dof = {'wire': (-1.6, 0, 9.4, 5.6), 'ring': (0.4, -0.6, 2.0, 5.6)}
+        a = k / 6 * math.tau; t = [(-2.5, -1.0), (0.0, 1.5), (2.5, -0.5)][k % 3]; spot(f'circf{k}', (22 * math.cos(a), 15 * math.sin(a), 22), (t[0], t[1], 1.4), (26000 if k % 3 == 1 else 16000) * LP, 4, 0.4, (1.0, 0.92, 0.82), 0.1)
+    spot('wire_key', (-6, -12, 7.5), (-1.6, 0, 9.4), 4400 * LP, 14, 0.3, (1.0, 0.95, 0.9), 0.1); spot('wire_rim', (3, 10, 12), (-1.6, 0, 9.4), 900 * LP, 14, 0.3, (0.85, 0.9, 1.0), 0.1)
+    scale_lights(('side', 'end', 'court_key'), 0.05); scale_lights(('bowl',), 0.15)
+    cams = {'ring': ((6.0, -12.0, 1.6), (0.0, 0.0, 1.15), 40), 'wire': ((4.5, -9.5, 7.4), (-2.6, 0, 9.0), 55), 'wide': ((2, -30, 14), (0, 0, 3), 26)}
+    dof = {'wire': (-1.6, 0, 9.4, 5.6), 'ring': (0.0, 1.5, 2.0, 5.6)}
     return cams, dof

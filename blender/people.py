@@ -66,9 +66,9 @@ POSES = {
     'cut':       dict(hip=(-1.05, 0.6), knee=(0.7, 1.75), shy=(0.2, 0.25), shx=(0.9, -1.1), el=(-1.5, -1.6), lean=0.34, twist=0.2),
     'rebound':   dict(hip=(-0.15, -0.3), knee=(0.3, 0.55), shy=(0.1, -0.1), shx=(-2.85, -2.75), el=(-0.25, -0.3), lean=-0.02, ankle=0.6),
     # hockey (2026-11-27): low on the skates, the stick hands low and in front
-    'skate':     dict(hip=(-0.95, 0.4), knee=(1.35, 0.3), shy=(0.2, 0.35), shx=(-0.75, -0.45), el=(-0.95, -1.25), lean=0.55, twist=0.22),
-    'skate2':    dict(hip=(0.4, -0.95), knee=(0.3, 1.35), shy=(0.35, 0.2), shx=(-0.45, -0.8), el=(-1.25, -0.9), lean=0.55, twist=-0.22),
-    'hready':    dict(hip=(-0.7, -0.6), knee=(1.15, 1.05), shy=(0.25, 0.3), shx=(-0.8, -0.5), el=(-0.7, -1.1), lean=0.6, twist=0.1),
+    'skate':     dict(hip=(-0.95, 0.4), knee=(1.35, 0.3), shy=(0.25, 0.4), shx=(-0.42, -0.25), el=(-0.9, -1.2), lean=0.5, twist=0.22),
+    'skate2':    dict(hip=(0.4, -0.95), knee=(0.3, 1.35), shy=(0.4, 0.25), shx=(-0.25, -0.45), el=(-1.2, -0.9), lean=0.5, twist=-0.22),
+    'hready':    dict(hip=(-0.62, -0.55), knee=(0.95, 0.9), shy=(0.3, 0.35), shx=(-0.45, -0.3), el=(-0.8, -1.1), lean=0.44, twist=0.1),
     # boxing: the guard (fists at the chin) and the jab (the lead hand out at shoulder height)
     'guard':     dict(hip=(-0.3, 0.12), knee=(0.42, 0.32), shy=(0.5, 0.5), shx=(-0.8, -0.65), el=(-2.15, -2.25), lean=0.16, twist=0.3),
     'jab':       dict(hip=(-0.35, 0.15), knee=(0.5, 0.35), shy=(0.12, 0.5), shx=(-1.5, -0.65), el=(-0.12, -2.2), lean=0.22, twist=0.4),

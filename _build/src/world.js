@@ -315,6 +315,24 @@ export function buildModeSets(scene, tex, U, models) {
     mic.add(put(new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.5), steel), { position: V(0, 0.75, 0) }));
     mic.add(put(new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.6, roughness: 0.4 })), { position: V(0.03, 1.55, 0) }));
     mic.userData.act = 'mic'; mic.children.forEach((c) => (c.userData.act = 'mic'));
+    // the production (2026-11-27, as the Cycles concert): two line arrays of twelve, curved to the floor, subs under the lip,
+    // a drum riser with a kit, wedges, the barricade and the mix position. One merged mesh per material.
+    { const cab = new THREE.MeshStandardMaterial({ color: 0x0b0c0f, roughness: 0.65 }); const parts = [];
+      for (const s of [-1, 1]) { let tilt = 0, px = -15.8, py = 13.2;
+        for (let k = 0; k < 12; k++) { tilt += k < 6 ? 0 : 0.045 * (k - 5); const b = new THREE.BoxGeometry(0.55, 0.3, 1.2); b.rotateZ(tilt); b.translate(px, py - 0.15, s * 11); parts.push(b); px += Math.sin(tilt) * 0.3; py -= Math.cos(tilt) * 0.3; }
+        for (let k = 0; k < 5; k++) { const b = new THREE.BoxGeometry(0.75, 0.6, 1.1); b.translate(-15.55, 0.3, s * (5 + k * 1.15)); parts.push(b); } }
+      for (const [x, z] of [[-16.4, -1.1], [-16.4, 1.1], [-16.6, -3.6], [-16.6, 3.6]]) { const w = new THREE.BoxGeometry(0.4, 0.3, 0.6); w.rotateZ(0.45); w.translate(x, 1.95, z); parts.push(w); }
+      const riser = new THREE.BoxGeometry(3, 0.6, 4); riser.translate(-21.2, 2.1, 0); parts.push(riser);
+      const foh = new THREE.BoxGeometry(3, 0.9, 1.2); foh.translate(12, 1.05, 0); parts.push(foh); const fohd = new THREE.BoxGeometry(4, 0.6, 5); fohd.translate(12, 0.3, 0); parts.push(fohd);
+      g.add(new THREE.Mesh(mergeGeometries(parts), cab));
+      const kit = new THREE.MeshStandardMaterial({ color: 0x17327a, roughness: 0.3, metalness: 0.1 }); const kp = [];
+      const kick = new THREE.CylinderGeometry(0.28, 0.28, 0.45, 24); kick.rotateZ(Math.PI / 2); kick.translate(-20.0, 2.68, 0); kp.push(kick);
+      for (const [dz, h, r] of [[-0.45, 0.62, 0.2], [0.45, 0.62, 0.2], [0.75, 0.5, 0.23], [-0.25, 0.75, 0.16]]) { const t = new THREE.CylinderGeometry(r, r, 0.22, 20); t.translate(-20.1, 2.4 + h, dz); kp.push(t); }
+      g.add(new THREE.Mesh(mergeGeometries(kp), kit));
+      const brass = new THREE.MeshStandardMaterial({ color: 0xc89b40, roughness: 0.25, metalness: 1 }); const cp = [];
+      for (const [dz, h, r] of [[-0.8, 1.05, 0.25], [0.9, 1.15, 0.28], [0.2, 1.25, 0.22]]) { const c = new THREE.CylinderGeometry(r, r, 0.005, 32); c.translate(-19.9, 2.4 + h, dz); cp.push(c); }
+      g.add(new THREE.Mesh(mergeGeometries(cp), brass));
+      for (const s of [-1, 1]) { const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.15, 11.3), steel); bar.position.set(-14.4, 0.58, s * 7.35); g.add(bar); } }
     // a floor crowd of 900 standing in front of the stage
     const fc = new THREE.Group(); g.add(fc); U.floorCrowdAt = fc;
   }
